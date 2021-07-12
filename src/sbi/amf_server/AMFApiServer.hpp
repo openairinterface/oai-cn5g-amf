@@ -16,6 +16,8 @@
 #include "NonUEN2MessagesCollectionDocumentApiImpl.h"
 #include "NonUEN2MessagesSubscriptionsCollectionDocumentApiImpl.h"
 #include "SubscriptionsCollectionDocumentApiImpl.h"
+#include "SubscriptionsCollectionApiImpl.h"
+#include "NFStatusNotifyApiImpl.h"
 
 #define PISTACHE_SERVER_THREADS 2
 #define PISTACHE_SERVER_MAX_PAYLOAD 32768
@@ -30,6 +32,7 @@ class AMFApiServer {
       Pistache::Address address, amf_application::amf_app* amf_app_inst)
       : m_httpEndpoint(std::make_shared<Pistache::Http::Endpoint>(address)) {
     m_router = std::make_shared<Pistache::Rest::Router>();
+    m_address = address.host() + ":" + (address.port()).toString();
     m_individualSubscriptionDocumentApiImpl =
         std::make_shared<IndividualSubscriptionDocumentApiImpl>(
             m_router, amf_app_inst);
@@ -59,6 +62,11 @@ class AMFApiServer {
     m_subscriptionsCollectionDocumentApiImpl =
         std::make_shared<SubscriptionsCollectionDocumentApiImpl>(
             m_router, amf_app_inst);
+    m_subscriptionsCollectionApiImpl =
+        std::make_shared<SubscriptionsCollectionApiImpl>(
+            m_router, amf_app_inst, m_address);
+    m_nfStatusNotifyApiImpl = std::make_shared<NFStatusNotifyApiImpl>(
+        m_router, amf_app_inst, m_address);
   }
 
   void init(size_t thr = 1);
@@ -88,4 +96,8 @@ class AMFApiServer {
       m_nonUEN2MessagesSubscriptionsCollectionDocumentApiImpl;
   std::shared_ptr<SubscriptionsCollectionDocumentApiImpl>
       m_subscriptionsCollectionDocumentApiImpl;
+  std::shared_ptr<SubscriptionsCollectionApiImpl>
+      m_subscriptionsCollectionApiImpl;
+  std::shared_ptr<NFStatusNotifyApiImpl> m_nfStatusNotifyApiImpl;
+  std::string m_address;
 };
