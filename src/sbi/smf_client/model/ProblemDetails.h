@@ -16,8 +16,8 @@
  *
  */
 
-#ifndef OAI_SMF_MODEL_ProblemDetails_H_
-#define OAI_SMF_MODEL_ProblemDetails_H_
+#ifndef OAI_AMF_MODEL_ProblemDetails_H_
+#define OAI_AMF_MODEL_ProblemDetails_H_
 
 #include "../ModelBase.h"
 
@@ -151,4 +151,4 @@ class ProblemDetails : public ModelBase {
 }  // namespace smf
 }  // namespace oai
 
-#endif /* OAI_SMF_MODEL_ProblemDetails_H_ */
+#endif /* OAI_AMF_MODEL_ProblemDetails_H_ */

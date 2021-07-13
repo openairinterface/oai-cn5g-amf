@@ -411,6 +411,89 @@ class amf_profile : public nf_profile {
   amf_info_t amf_info;
 };
 
+class upf_profile : public nf_profile {
+ public:
+  upf_profile() : nf_profile() {  // custom_info = {};
+    nf_type = "UPF";
+  }
+
+  upf_profile(const std::string& id) : nf_profile(id) {  // custom_info = {};
+  }
+
+  upf_profile& operator=(const upf_profile& s) {
+    nf_instance_id   = s.nf_instance_id;
+    heartBeat_timer  = s.heartBeat_timer;
+    snssais          = s.snssais;
+    ipv4_addresses   = s.ipv4_addresses;
+    priority         = s.priority;
+    capacity         = s.capacity;
+    nf_type          = s.nf_type;
+    nf_instance_name = s.nf_instance_name;
+    nf_status        = s.nf_status;
+    // custom_info = s.custom_info;
+    upf_info = s.upf_info;
+    return *this;
+  }
+  // upf_profile(upf_profile &b) = delete;
+
+  virtual ~upf_profile() {
+    Logger::amf_app().debug("Delete UPF Profile instance...");
+  }
+
+  /*
+   * Set upf info
+   * @param [upf_info_t &] s: upf info
+   * @return void
+   */
+  void set_upf_info(const upf_info_t& s);
+
+  /*
+   * Add an snssai_upf_info_item to the upf info
+   * @param [const snssai_upf_info_item_t &] s: snssai_upf_info_item
+   * @return void
+   */
+  void add_upf_info_item(const snssai_upf_info_item_t& s);
+
+  /*
+   * Get NF instance upf info
+   * @param [upf_info_t &] s: store instance's upf info
+   * @return void:
+   */
+  void get_upf_info(upf_info_t& s) const;
+
+  /*
+   * Print related-information for NF profile
+   * @param void
+   * @return void:
+   */
+  void display() const;
+
+  /*
+   * Represent NF profile as json object
+   * @param [nlohmann::json &] data: Json data
+   * @return void
+   */
+  void to_json(nlohmann::json& data) const;
+
+  /*
+   * Covert from a json represetation to SMF profile
+   * @param [nlohmann::json &] data: Json data
+   * @return void
+   */
+  void from_json(const nlohmann::json& data);
+
+  /*
+   * Handle heartbeart timeout event
+   * @param [uint64_t] ms: current time
+   * @return void
+   */
+  void handle_heartbeart_timeout(uint64_t ms);
+
+ protected:
+  nlohmann::json custom_info;  // store extra json data
+  upf_info_t upf_info;
+};
+
 }  // namespace amf_application
 
 #endif

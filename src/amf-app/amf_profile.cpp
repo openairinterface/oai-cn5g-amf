@@ -443,3 +443,92 @@ void amf_profile::handle_heartbeart_timeout(uint64_t ms) {
       ms);
   set_nf_status("SUSPENDED");
 }
+
+//------------------------------------------------------------------------------
+void upf_profile::add_upf_info_item(const snssai_upf_info_item_t& s) {
+  upf_info.snssai_upf_info_list.push_back(s);
+}
+
+//------------------------------------------------------------------------------
+void upf_profile::get_upf_info(upf_info_t& s) const {
+  s = upf_info;
+}
+
+//------------------------------------------------------------------------------
+void upf_profile::display() const {
+  // display NF part
+  nf_profile::display();
+
+  // UPF info
+  if (upf_info.snssai_upf_info_list.size() > 0) {
+    Logger::amf_app().debug("\tUPF Info:");
+  }
+  for (auto s : upf_info.snssai_upf_info_list) {
+    Logger::amf_app().debug("\t\tParameters supported by the UPF:");
+    Logger::amf_app().debug(
+        "\t\t\tSNSSAI (SST %d, SD %s)", s.snssai.sST, s.snssai.sD.c_str());
+    for (auto d : s.dnn_upf_info_list) {
+      Logger::amf_app().debug("\t\t\tDNN %s", d.dnn.c_str());
+    }
+  }
+}
+
+//------------------------------------------------------------------------------
+void upf_profile::to_json(nlohmann::json& data) const {
+  nf_profile::to_json(data);
+
+  // UPF info
+  data["upfInfo"]                      = {};
+  data["upfInfo"]["sNssaiUpfInfoList"] = nlohmann::json::array();
+  for (auto s : upf_info.snssai_upf_info_list) {
+    nlohmann::json tmp    = {};
+    tmp["sNssai"]["sst"]  = s.snssai.sST;
+    tmp["sNssai"]["sd"]   = s.snssai.sD;
+    tmp["dnnAmfInfoList"] = nlohmann::json::array();
+    for (auto d : s.dnn_upf_info_list) {
+      nlohmann::json dnn_json = {};
+      dnn_json["dnn"]         = d.dnn;
+      tmp["dnnAmfInfoList"].push_back(dnn_json);
+    }
+    data["upfInfo"]["sNssaiUpfInfoList"].push_back(tmp);
+  }
+
+  Logger::amf_app().debug("UPF profile to json:\n %s", data.dump().c_str());
+}
+
+//------------------------------------------------------------------------------
+void upf_profile::from_json(const nlohmann::json& data) {
+  nf_profile::from_json(data);
+
+  // UPF info
+  if (data.find("upfInfo") != data.end()) {
+    nlohmann::json info          = data["upfInfo"];
+    dnn_upf_info_item_t dnn_item = {};
+
+    if (info.find("sNssaiUpfInfoList") != info.end()) {
+      nlohmann::json snssai_upf_info_list =
+          data["upfInfo"]["sNssaiUpfInfoList"];
+
+      for (auto it : snssai_upf_info_list) {
+        snssai_upf_info_item_t upf_info_item = {};
+        if (it.find("sNssai") != it.end()) {
+          if (it["sNssai"].find("sst") != it["sNssai"].end())
+            upf_info_item.snssai.sST = it["sNssai"]["sst"].get<int>();
+          if (it["sNssai"].find("sd") != it["sNssai"].end())
+            upf_info_item.snssai.sD = it["sNssai"]["sd"].get<std::string>();
+        }
+        if (it.find("dnnUpfInfoList") != it.end()) {
+          for (auto d : it["dnnUpfInfoList"]) {
+            if (d.find("dnn") != d.end()) {
+              dnn_item.dnn = d["dnn"].get<std::string>();
+              upf_info_item.dnn_upf_info_list.push_back(dnn_item);
+            }
+          }
+        }
+        upf_info.snssai_upf_info_list.push_back(upf_info_item);
+      }
+    }
+  }
+
+  display();
+}

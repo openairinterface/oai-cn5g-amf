@@ -29,6 +29,39 @@
 #define __AMF_HPP
 
 #include "3gpp_23.003.h"
+#include "string.h"
+#include "inttypes.h"
+#include "stdio.h"
+
+typedef uint64_t supi64_t;
+#define SUPI_64_FMT "%" SCNu64
+
+#define SUPI_DIGITS_MAX 15
+
+typedef struct {
+  uint32_t length;
+  char data[SUPI_DIGITS_MAX + 1];
+} supi_t;
+
+static void amf_string_to_supi(supi_t* const supi, char const* const supi_str) {
+  // strncpy(supi->data, supi_str, SUPI_DIGITS_MAX + 1);
+  memcpy((void*) supi->data, (void*) supi_str, SUPI_DIGITS_MAX + 1);
+  supi->length = strlen(supi->data);
+  return;
+}
+
+static std::string amf_supi_to_string(supi_t const supi) {
+  std::string supi_str;
+  supi_str.assign(supi.data, SUPI_DIGITS_MAX + 1);
+  return supi_str;
+}
+
+static uint64_t amf_supi_to_u64(supi_t supi) {
+  uint64_t uint_supi;
+  sscanf(supi.data, SUPI_64_FMT, &uint_supi);
+  return uint_supi;
+}
+
 /*
 typedef struct {
   std::string mcc;

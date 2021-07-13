@@ -34,6 +34,7 @@
 #include <iostream>
 #include <stdexcept>
 
+#include "3gpp_conversions.hpp"
 #include "DLNASTransport.hpp"
 #include "amf_config.hpp"
 #include "amf_n1.hpp"
@@ -47,6 +48,7 @@ using namespace ngap;
 using namespace nas;
 using namespace amf_application;
 using namespace config;
+using namespace amf;
 
 extern void print_buffer(
     const std::string app, const std::string commit, uint8_t* buf, int len);
@@ -226,6 +228,11 @@ bool amf_app::get_pdu_sessions_context(
 }
 
 //------------------------------------------------------------------------------
+evsub_id_t amf_app::generate_ev_subscription_id() {
+  return evsub_id_generator.get_uid();
+}
+
+//------------------------------------------------------------------------------
 void amf_app::handle_itti_message(
     itti_n1n2_message_transfer_request& itti_msg) {
   // Encode DL NAS TRANSPORT message(NAS message)
@@ -375,8 +382,169 @@ bool amf_app::generate_5g_guti(
 }
 
 //------------------------------------------------------------------------------
+evsub_id_t amf_app::handle_event_exposure_subscription(
+    std::shared_ptr<itti_sbi_event_exposure_request> msg) {
+  Logger::amf_app().info(
+      "Handle an Event Exposure Subscription Request from a NF (HTTP version "
+      "%d)",
+      msg->http_version);
+
+  // Generate a subscription ID Id and store the corresponding information in a
+  // map (subscription id, info)
+  evsub_id_t evsub_id = generate_ev_subscription_id();
+
+  std::shared_ptr<amf_subscription> ss =
+      std::shared_ptr<amf_subscription>(new amf_subscription());
+  ss.get()->sub_id = evsub_id;
+  //if (msg->event_exposure.is_supi_is_set()) {
+  //  supi64_t supi64 = amf_supi_to_u64(msg->event_exposure.get_supi());
+  //  ss.get()->supi  = supi64;
+  //}
+  //ss.get()->notif_id  = msg->event_exposure.get_notif_id();
+  //ss.get()->notif_uri = msg->event_exposure.get_notif_uri();
+
+  //std::vector<event_subscription_t> event_subscriptions =
+  //    msg->event_exposure.get_event_subs();
+  // store subscription
+  //for (auto i : event_subscriptions) {
+  //  ss.get()->ev_type = i.amf_event;
+  //  add_event_subscription(evsub_id, i.amf_event, ss);
+  //}
+  return evsub_id;
+}
+
+//------------------------------------------------------------------------------
+bool amf_app::handle_nf_status_notification(
+    std::shared_ptr<itti_sbi_notification_data>& msg,
+    oai::amf::model::ProblemDetails& problem_details,
+    uint8_t& http_code) {
+  Logger::amf_app().info(
+      "Handle a NF status notification from NRF (HTTP version "
+      "%d)",
+      msg->http_version);
+
+  data_notification_msg notification_msg = msg.get()->notification_msg;
+  std::string event_type = "";
+  //notification_msg.get_notification_event_type(event_type);
+  if (event_type.compare("NF_REGISTERED") == 0) {
+    std::shared_ptr<nf_profile> profile = {};
+    //notification_msg.get_profile(profile);
+    if (profile.get() != nullptr) {
+      std::string nf_type = profile.get()->get_nf_type();
+      if (nf_type.compare("UPF") == 0) {  // UPF
+        upf_info_t upf_info = {};
+        std::static_pointer_cast<upf_profile>(profile).get()->get_upf_info(
+            upf_info);
+        // Verify if the UPF is already exist
+        // if not, add to the DB and send Association request
+        // UPF N4 ipv4 address
+        std::vector<struct in_addr> ipv4_addrs = {};
+        profile.get()->get_nf_ipv4_addresses(ipv4_addrs);
+
+        if (ipv4_addrs.size() < 1) {
+          Logger::amf_app().debug("No IP Addr found");
+          return false;
+        }
+
+        bool found = false;
+        //for (auto node : amf_cfg.upfs) {
+        //  if (node.u1.ipv4_address.s_addr == ipv4_addrs[0].s_addr) {
+        //    found = false;
+        //    break;
+        //  }
+        //}
+        if (!found) {
+          // Add a new UPF node
+          Logger::amf_app().debug(
+              "Add a new UPF node, Ipv4 Addr %s", inet_ntoa(ipv4_addrs[0]));
+          //pfcp::node_id_t n        = {};
+          //n.node_id_type           = pfcp::NODE_ID_TYPE_IPV4_ADDRESS;
+          //n.u1.ipv4_address.s_addr = ipv4_addrs[0].s_addr;
+          // memcpy(&n.u1.ipv4_address, &ipv4_addrs[0], sizeof(struct in_addr));
+          //amf_cfg.upfs.push_back(n);
+          //upf_profile* upf_node_profile =
+          //    dynamic_cast<upf_profile*>(profile.get());
+          //start_upf_association(n, std::ref(*upf_node_profile));
+          // start_upf_association(n,
+          // std::static_pointer_cast<upf_profile>(profile));
+        } else {
+          Logger::amf_app().debug(
+              "UPF node already exist (%s)", inet_ntoa(ipv4_addrs[0]));
+        }
+      }
+    } else {
+      return false;
+    }
+  }
+  if (event_type.compare("NF_DEREGISTERED") == 0) {
+    Logger::amf_app().debug(
+        "This event (%s) has not been supported yet!", event_type);
+    // TODO: Remove UPF from the list UPFs if received DE-REGISTERED Event
+    /*    std::string nf_instance_uri = {};
+        notification_msg.get_nf_instance_uri(nf_instance_uri);
+        std::vector<std::string> split_result;
+
+        boost::split(
+            split_result, nf_instance_uri, boost::is_any_of("/"));
+        if (split_result.size() > 0) {
+          std::string instance_id = split_result[split_result.size() -1];
+          pfcp_associations::get_instance().remove_association(instance_id);
+        }
+     */
+  }
+
+  return true;
+}
+
+
+//------------------------------------------------------------------------------
 void amf_app::generate_uuid() {
   amf_instance_id = to_string(boost::uuids::random_generator()());
+}
+
+//---------------------------------------------------------------------------------------------
+void amf_app::add_event_subscription(
+    evsub_id_t sub_id, amf_event_t ev, std::shared_ptr<amf_subscription> ss) {
+  Logger::amf_app().debug(
+      "Add an Event subscription (Sub ID %d, Event %d)", sub_id, (uint8_t) ev);
+  std::unique_lock lock(m_amf_event_subscriptions);
+  amf_event_subscriptions.emplace(std::make_pair(sub_id, ev), ss);
+}
+
+//---------------------------------------------------------------------------------------------
+void amf_app::get_ee_subscriptions(
+    amf_event_t ev,
+    std::vector<std::shared_ptr<amf_subscription>>& subscriptions) {
+  for (auto const& i : amf_event_subscriptions) {
+    if ((uint8_t) std::get<1>(i.first) == (uint8_t) ev) {
+      Logger::amf_app().debug(
+          "Found an event subscription (Event ID %d, Event %d)",
+          (uint8_t) std::get<0>(i.first), (uint8_t) ev);
+      subscriptions.push_back(i.second);
+    }
+  }
+}
+
+//---------------------------------------------------------------------------------------------
+void amf_app::get_ee_subscriptions(
+    evsub_id_t sub_id,
+    std::vector<std::shared_ptr<amf_subscription>>& subscriptions) {
+  for (auto const& i : amf_event_subscriptions) {
+    if (i.first.first == sub_id) {
+      subscriptions.push_back(i.second);
+    }
+  }
+}
+
+//---------------------------------------------------------------------------------------------
+void amf_app::get_ee_subscriptions(
+    amf_event_t ev, supi64_t supi,
+    std::vector<std::shared_ptr<amf_subscription>>& subscriptions) {
+  for (auto const& i : amf_event_subscriptions) {
+    if ((i.first.second == ev) && (i.second->supi == supi)) {
+      subscriptions.push_back(i.second);
+    }
+  }
 }
 
 //---------------------------------------------------------------------------------------------
