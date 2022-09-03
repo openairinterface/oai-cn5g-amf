@@ -4,3 +4,6 @@ tags
 archives/
 *.html
 *.swp
+
+amf.conf.dev
+amf.entrypoint.sh
