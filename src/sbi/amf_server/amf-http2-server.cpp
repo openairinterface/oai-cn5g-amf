@@ -149,6 +149,28 @@ void amf_http2_server::start() {
         });
       });
 
+  server.handle(
+      NAMF_EVENT_EXPOSURE_BASE + amf_cfg.sbi_api_version + NAMF_EVENT_EXPOSURE_SUBSCRIPTION,
+      [&](const request& request, const response& response) {
+        request.on_data([&](const uint8_t* data, std::size_t len) {
+          std::string msg((char*) data, len);
+          try {
+            std::vector<std::string> split_result;
+            boost::split(split_result, request.uri().path, boost::is_any_of("/"));
+            if (request.method().compare("POST") == 0 && len > 0) {
+
+            }
+          } catch (std::exception& e) {
+            Logger::amf_server().warn(
+                "Invalid request (error: %s)!", e.what());
+            response.write_head(
+                static_cast<uint32_t>(http_response_codes_e::HTTP_RESPONSE_CODE_BAD_REQUEST));
+            response.end();
+            return;
+          }
+        });
+      });
+
   if (server.listen_and_serve(ec, m_address, std::to_string(m_port))) {
     std::cerr << "HTTP Server error: " << ec.message() << std::endl;
   }

@@ -1,0 +1,4 @@
+{
+    "modelPackage"   : "oai.amf.model",
+    "apiPackage"     : "oai.amf.api"
+}
