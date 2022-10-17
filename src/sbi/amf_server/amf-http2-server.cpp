@@ -161,7 +161,7 @@ void amf_http2_server::start() {
             boost::split(
                 split_result, request.uri().path, boost::is_any_of("/"));
             if (request.method().compare("POST") == 0 && len > 0) {
-              if (split_result.size() != 6) {
+              if (split_result.size() != 4) {
                 Logger::amf_server().warn("Requested URL is not implemented");
                 response.write_head(static_cast<uint32_t>(
                     http_response_codes_e::
@@ -174,6 +174,33 @@ void amf_http2_server::start() {
                   .get_to(amfCreateEventSubscription);
               this->createEventSubscriptionHandler(
                   amfCreateEventSubscription, response);
+            } else if (request.method().compare("DELETE") == 0) {
+              if (split_result.size() != 5) {
+                Logger::amf_server().warn("Requested URL is not implemented");
+                response.write_head(static_cast<uint32_t>(
+                    http_response_codes_e::
+                        HTTP_RESPONSE_CODE_NOT_IMPLEMENTED));  // TODO
+                response.end();
+                return;
+              }
+              std::string subscriptionId =
+                  split_result[split_result.size() - 1];
+              Logger::amf_server().debug(
+                  "Delete a subscription with ID %s", subscriptionId.c_str());
+              if (m_amf_app->handle_event_exposure_delete(subscriptionId)) {
+                response.write_head(static_cast<uint32_t>(
+                    http_response_codes_e::HTTP_RESPONSE_CODE_204_NO_CONTENT));
+                response.end();
+              } else {
+                // Send response
+                nlohmann::json json_data                        = {};
+                oai::amf::model::ProblemDetails problem_details = {};
+                problem_details.setCause("SUBSCRIPTION_NOT_FOUND");
+                to_json(json_data, problem_details);
+                response.write_head(static_cast<uint32_t>(
+                    http_response_codes_e::HTTP_RESPONSE_CODE_NOT_FOUND));
+                response.end(json_data.dump().c_str());
+              }
             }
           } catch (std::exception& e) {
             Logger::amf_server().warn("Invalid request (error: %s)!", e.what());
