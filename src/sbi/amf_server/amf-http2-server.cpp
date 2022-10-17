@@ -201,6 +201,29 @@ void amf_http2_server::start() {
                     http_response_codes_e::HTTP_RESPONSE_CODE_NOT_FOUND));
                 response.end(json_data.dump().c_str());
               }
+            } else if (request.method().compare("PATCH") == 0) {
+              if (split_result.size() != 5) {
+                Logger::amf_server().warn("Requested URL is not implemented");
+                response.write_head(static_cast<uint32_t>(
+                    http_response_codes_e::
+                        HTTP_RESPONSE_CODE_NOT_IMPLEMENTED));  // TODO
+                response.end();
+                return;
+              }
+              Logger::amf_server().warn(
+                  "Modify EvenExposureSubscription Not Implemented");
+              response.write_head(static_cast<uint32_t>(
+                  http_response_codes_e::
+                      HTTP_RESPONSE_CODE_NOT_IMPLEMENTED));  // TODO
+              response.end();
+              return;
+            } else {
+              Logger::amf_server().warn(
+                  "Invalid request (error: Invalid Request Method)!");
+              response.write_head(static_cast<uint32_t>(
+                  http_response_codes_e::HTTP_RESPONSE_CODE_BAD_REQUEST));
+              response.end();
+              return;
             }
           } catch (std::exception& e) {
             Logger::amf_server().warn("Invalid request (error: %s)!", e.what());
