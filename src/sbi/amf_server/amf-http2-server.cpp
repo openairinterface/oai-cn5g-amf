@@ -37,6 +37,7 @@
 #include "amf.hpp"
 #include "amf_config.hpp"
 #include "3gpp_29.500.h"
+#include "3gpp_conversions.hpp"
 
 #include "logger.hpp"
 #include "mime_parser.hpp"
@@ -150,21 +151,34 @@ void amf_http2_server::start() {
       });
 
   server.handle(
-      NAMF_EVENT_EXPOSURE_BASE + amf_cfg.sbi_api_version + NAMF_EVENT_EXPOSURE_SUBSCRIPTION,
+      NAMF_EVENT_EXPOSURE_BASE + amf_cfg.sbi_api_version +
+          NAMF_EVENT_EXPOSURE_SUBSCRIPTION,
       [&](const request& request, const response& response) {
         request.on_data([&](const uint8_t* data, std::size_t len) {
           std::string msg((char*) data, len);
           try {
             std::vector<std::string> split_result;
-            boost::split(split_result, request.uri().path, boost::is_any_of("/"));
+            boost::split(
+                split_result, request.uri().path, boost::is_any_of("/"));
             if (request.method().compare("POST") == 0 && len > 0) {
-
+              if (split_result.size() != 6) {
+                Logger::amf_server().warn("Requested URL is not implemented");
+                response.write_head(static_cast<uint32_t>(
+                    http_response_codes_e::
+                        HTTP_RESPONSE_CODE_NOT_IMPLEMENTED));  // TODO
+                response.end();
+                return;
+              }
+              AmfCreateEventSubscription amfCreateEventSubscription;
+              nlohmann::json::parse(msg.c_str())
+                  .get_to(amfCreateEventSubscription);
+              this->createEventSubscriptionHandler(
+                  amfCreateEventSubscription, response);
             }
           } catch (std::exception& e) {
-            Logger::amf_server().warn(
-                "Invalid request (error: %s)!", e.what());
-            response.write_head(
-                static_cast<uint32_t>(http_response_codes_e::HTTP_RESPONSE_CODE_BAD_REQUEST));
+            Logger::amf_server().warn("Invalid request (error: %s)!", e.what());
+            response.write_head(static_cast<uint32_t>(
+                http_response_codes_e::HTTP_RESPONSE_CODE_BAD_REQUEST));
             response.end();
             return;
           }
@@ -177,6 +191,50 @@ void amf_http2_server::start() {
 }
 
 //------------------------------------------------------------------------------
+
+void amf_http2_server::createEventSubscriptionHandler(
+    const AmfCreateEventSubscription& amfCreateEventSubscription,
+    const response& response) {
+  Logger::amf_server().info("Received AmfCreateEventSubscription Request");
+
+  header_map h;
+
+  amf_application::event_exposure_msg event_exposure = {};
+  xgpp_conv::amf_event_subscription_from_openapi(
+      amfCreateEventSubscription, event_exposure);
+
+  std::shared_ptr<itti_sbi_event_exposure_request> itti_msg =
+      std::make_shared<itti_sbi_event_exposure_request>(
+          AMF_SERVER, TASK_AMF_APP);
+  itti_msg->event_exposure = event_exposure;
+  itti_msg->http_version   = 2;
+
+  evsub_id_t sub_id = m_amf_app->handle_event_exposure_subscription(itti_msg);
+
+  nlohmann::json json_data = {};
+  to_json(
+      json_data["subscription"], amfCreateEventSubscription.getSubscription());
+
+  if (sub_id != -1) {
+    std::string location =
+        std::string(inet_ntoa(*((struct in_addr*) &amf_cfg.n11.addr4))) + ":" +
+        std::to_string(amf_cfg.n11.port) + NAMF_EVENT_EXPOSURE_BASE +
+        amf_cfg.sbi_api_version + "/namf-evts/" + std::to_string(sub_id);
+
+    json_data["subscriptionId"] = location;
+    h.insert(std::make_pair<std::string, header_value>(
+        "Location", {location, false}));
+  }
+
+  h.insert(std::make_pair<std::string, header_value>(
+      "Content-Type", {"application/json", false}));
+  response.write_head(
+      static_cast<uint32_t>(
+          http_response_codes_e::HTTP_RESPONSE_CODE_201_CREATED),
+      h);
+  response.end(json_data.dump().c_str());
+}
+
 void amf_http2_server::n1_n2_message_transfer_handler(
     const std::string& ueContextId,
     const N1N2MessageTransferReqData& n1N2MessageTransferReqData,
