@@ -41,6 +41,10 @@ esac
 
 IS_CONTAINER=`egrep -c "docker|kubepods|podman|buildah|libpod" /proc/self/cgroup || true`
 
+if [ -f /.dockerenv ]; then
+  IS_CONTAINER=1
+fi
+
 if [ $IS_CONTAINER -eq 0 ]
 then
   SUDO='sudo -S -E'
