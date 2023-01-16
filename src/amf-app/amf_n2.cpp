@@ -1018,10 +1018,17 @@ void amf_n2::handle_itti_message(itti_initial_context_setup_request& itti_msg) {
       // TODO: Mobility RestrictionList
     }
   }
-
+#if 0
   uint8_t buffer[BUFFER_SIZE_2048];
   int encoded_size = msg->encode2Buffer(buffer, BUFFER_SIZE_2048);
   bstring b        = blk2bstr(buffer, encoded_size);
+#else
+  //Shwetha commented above to avoid huge size buffer going on n/w to RAN
+  uint8_t* buffer    = (uint8_t*) calloc(1, BUFFER_SIZE_2048);
+  int encoded_size   = 0;
+  msg->encode2NewBuffer(buffer, encoded_size);
+  bstring b          = blk2bstr(buffer, encoded_size);
+#endif
   sctp_s_38412.sctp_send_msg(
       gc.get()->sctp_assoc_id, unc.get()->sctp_stream_send, &b);
 }
