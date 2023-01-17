@@ -54,7 +54,8 @@ DNN::~DNN() {}
 void DNN::getValue(bstring& dnn) {
   // dnn = _DNN;
   // dnn = bstrcpy(_DNN);
-  dnn = blk2bstr((uint8_t*) bdata(_DNN) + 1, blength(_DNN) - 1);
+//  dnn = blk2bstr((uint8_t*) bdata(_DNN) + 1, blength(_DNN) - 1); shwetha commenting this to consider the full length of dnn
+  dnn = blk2bstr((uint8_t*) bdata(_DNN), blength(_DNN));  
 }
 
 //------------------------------------------------------------------------------
