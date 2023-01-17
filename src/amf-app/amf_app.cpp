@@ -33,6 +33,7 @@
 #include <cstdlib>
 #include <iostream>
 #include <stdexcept>
+#include <curl/curl.h>
 
 #include "DLNASTransport.hpp"
 #include "amf_config.hpp"
@@ -903,6 +904,23 @@ evsub_id_t amf_app::handle_event_exposure_subscription(
     ss.get()->nf_id      = msg->event_exposure.get_nf_id();
     ss.get()->ev_type    = i.type;
     add_event_subscription(evsub_id, i.type, ss);
+
+    // Determine Location
+    uint8_t http_version = 1;
+    if (amf_cfg.support_features.use_http2) http_version = 2;
+    //InputData input_data = {};
+    //LocationData location_data = {};
+    for(const auto &kvp: supi2ue_ctx){
+      nlohmann::json input_data = {};
+      input_data["supi"] = kvp.first;
+      nlohmann::json location_data = {};
+      if(amf_n11_inst->send_determine_location_request(input_data, location_data, http_version)){
+        Logger::amf_app().info("Determine Location Response (SUPI: %s) : \n%s", kvp.first, location_data.dump(2).c_str());
+      }
+      else{
+        Logger::amf_app().error("Determine Location failed (SUPI: %s)...\n", kvp.first);
+      } 
+    }
     ss.get()->display();
   }
   return evsub_id;

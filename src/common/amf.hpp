@@ -69,6 +69,9 @@ constexpr uint64_t SECONDS_SINCE_FIRST_EPOCH = 2208988800;
 #define NAMF_EVENT_EXPOSURE_BASE "/namf-evts/"
 #define NAMF_EVENT_EXPOSURE_SUBSCRIPTION "/subscriptions"
 
+#define NLMF_BASE "/nlmf-loc/"
+#define NLMF_DETERMINE_LOCATION "/determine-location"
+
 #define NAS_MESSAGE_DOWNLINK 1
 #define NAS_MESSAGE_UPLINK 0
 

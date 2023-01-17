@@ -73,6 +73,7 @@
 
 #define AMF_CONFIG_STRING_AUSF "AUSF"
 #define AMF_CONFIG_STRING_UDM "UDM"
+#define AMF_CONFIG_STRING_LMF "LMF"
 #define AMF_CONFIG_STRING_NSSF "NSSF"
 
 #define AMF_CONFIG_STRING_SCHED_PARAMS "SCHED_PARAMS"
@@ -114,6 +115,7 @@
 #define AMF_CONFIG_STRING_SUPPORT_FEATURES_SMF_SELECTION "SMF_SELECTION"
 #define AMF_CONFIG_STRING_SUPPORT_FEATURES_EXTERNAL_AUSF "EXTERNAL_AUSF"
 #define AMF_CONFIG_STRING_SUPPORT_FEATURES_EXTERNAL_UDM "EXTERNAL_UDM"
+#define AMF_CONFIG_STRING_SUPPORT_FEATURES_EXTERNAL_LMF "EXTERNAL_LMF"
 #define AMF_CONFIG_STRING_SUPPORT_FEATURES_EXTERNAL_NSSF "EXTERNAL_NSSF"
 #define AMF_CONFIG_STRING_SUPPORT_FEATURES_USE_FQDN_DNS "USE_FQDN_DNS"
 #define AMF_CONFIG_STRING_SUPPORT_FEATURES_USE_HTTP2 "USE_HTTP2"
@@ -458,6 +460,13 @@ class amf_config {
   std::string get_ausf_ue_authentications_uri();
 
   /*
+   * Get the URI of LMF Determine Location Service
+   * @param void
+   * @return URI in string format
+   */
+  std::string get_lmf_determine_location_uri();
+
+  /*
    * Display the AMF configuration parameters
    * @param void
    * @return void
@@ -504,6 +513,7 @@ class amf_config {
     bool enable_smf_selection;
     bool enable_external_ausf;
     bool enable_external_udm;
+    bool enable_external_lmf;
     bool enable_external_nssf;
     bool use_fqdn_dns;
     bool use_http2;
@@ -515,6 +525,7 @@ class amf_config {
       json_data["enable_smf_selection"]   = this->enable_smf_selection;
       json_data["enable_external_ausf"]   = this->enable_external_ausf;
       json_data["enable_external_udm"]    = this->enable_external_udm;
+      json_data["enable_external_lmf"]    = this->enable_external_lmf;
       json_data["enable_external_nssf"]   = this->enable_external_nssf;
       json_data["use_fqdn_dns"]           = this->use_fqdn_dns;
       json_data["use_http2"]              = this->use_http2;
@@ -531,6 +542,7 @@ class amf_config {
       this->enable_external_ausf =
           json_data["enable_external_ausf"].get<bool>();
       this->enable_external_udm = json_data["enable_external_udm"].get<bool>();
+      this->enable_external_lmf = json_data["enable_external_lmf"].get<bool>();
       this->enable_external_nssf =
           json_data["enable_external_nssf"].get<bool>();
       this->use_fqdn_dns = json_data["use_fqdn_dns"].get<bool>();
@@ -543,6 +555,7 @@ class amf_config {
   nf_addr_t ausf_addr;
   nf_addr_t udm_addr;
   nf_addr_t nssf_addr;
+  nf_addr_t lmf_addr;
 };
 
 }  // namespace config

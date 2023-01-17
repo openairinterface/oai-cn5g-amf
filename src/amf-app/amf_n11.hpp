@@ -212,6 +212,18 @@ class amf_n11 {
       oai::amf::model::UEAuthenticationCtx& ue_auth_ctx,
       const uint8_t& http_version);
 
+    /*
+   * Send Determine Location Request to LMF
+   * @param [const oai::amf::model::InputData&] input_data: Input Data
+   * @param [oai::amf::model::LocationData& ] location_data: Location Data
+   * @param [const uint8_t] http_version: HTTP versioin
+   * @return true if successful, otherwise return false
+   */
+  bool send_determine_location_request(
+      const nlohmann::json& input_data,
+      nlohmann::json& location_data,
+      const uint8_t& http_version);
+
   /*
    * Get NRF's URI from NSSF/configuration file
    * @param [const snssai_t&] snssai: SNSSAI
