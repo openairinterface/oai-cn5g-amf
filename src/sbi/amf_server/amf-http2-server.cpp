@@ -259,8 +259,8 @@ void amf_http2_server::createEventSubscriptionHandler(
 
   if (sub_id != -1) {
     std::string location =
-        std::string(inet_ntoa(*((struct in_addr*) &amf_cfg.n11.addr4))) + ":" +
-        std::to_string(amf_cfg.n11.port) + NAMF_EVENT_EXPOSURE_BASE +
+        std::string(inet_ntoa(*((struct in_addr*) &amf_cfg.sbi.addr4))) + ":" +
+        std::to_string(amf_cfg.sbi.port) + NAMF_EVENT_EXPOSURE_BASE +
         amf_cfg.sbi_api_version + "/namf-evts/" + std::to_string(sub_id);
 
     json_data["subscriptionId"] = location;

@@ -1026,11 +1026,11 @@ bool amf_sbi::send_ue_authentication_request(
   return true;
 }
 
-bool amf_n11::send_determine_location_request(
+bool amf_sbi::send_determine_location_request(
       const nlohmann::json& input_data,
       nlohmann::json& location_data,
       const uint8_t& http_version){
-    Logger::amf_n11().debug(
+    Logger::amf_sbi().debug(
         "Send Determine Location Request to LMF (HTTP version %d)",
         http_version);
 
@@ -1038,11 +1038,11 @@ bool amf_n11::send_determine_location_request(
 //  to_json(json_data, input_data);
   std::string url = amf_cfg.get_lmf_determine_location_uri();
 
-  Logger::amf_n11().debug(
+  Logger::amf_sbi().debug(
       "Send Determine Location Request to LMF, URL %s", url.c_str());
 
   std::string body = input_data.dump();
-  Logger::amf_n11().debug(
+  Logger::amf_sbi().debug(
       "Send Determine Location Request to AUSF, msg body: \n %s", body.c_str());
 
   //nlohmann::json response_data = {};
@@ -1050,12 +1050,12 @@ bool amf_n11::send_determine_location_request(
   curl_http_client(
       url, "POST", body, location_data, response_code, http_version);
 
-  Logger::amf_n11().debug(
+  Logger::amf_sbi().debug(
       "Determine Location, response from LMF, HTTP Code: %d", response_code);
 
   if ((response_code == 200) or
       (response_code == 201)) {  // TODO: remove hardcoded value
-    Logger::amf_n11().debug(
+    Logger::amf_sbi().debug(
         "Determine Location, response from LMF\n, %s ",
         location_data.dump().c_str());
     try {
@@ -1064,7 +1064,7 @@ bool amf_n11::send_determine_location_request(
       return false;
     }
   } else {
-    Logger::amf_n11().warn(
+    Logger::amf_sbi().warn(
         "Determine Location, could not get response from LMF");
     return false;
   }
