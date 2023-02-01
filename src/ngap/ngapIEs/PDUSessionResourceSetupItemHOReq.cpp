@@ -21,59 +21,55 @@
 
 #include "PDUSessionResourceSetupItemHOReq.hpp"
 
-#include <iostream>
-using namespace std;
-
 namespace ngap {
-PDUSessionResourceSetupItemHOReq::PDUSessionResourceSetupItemHOReq() {
-  pDUSessionID = NULL;
-  s_NSSAI      = NULL;
-}
+
+//------------------------------------------------------------------------------
+PDUSessionResourceSetupItemHOReq::PDUSessionResourceSetupItemHOReq()
+    : PDUSessionResourceItem() {}
+
+//------------------------------------------------------------------------------
 PDUSessionResourceSetupItemHOReq::~PDUSessionResourceSetupItemHOReq() {}
 
-void PDUSessionResourceSetupItemHOReq::setPDUSessionResourceSetupItemHOReq(
-    PDUSessionID* m_pDUSessionID, S_NSSAI* m_s_NSSAI,
-    OCTET_STRING_t m_pDUSessionResourceSetupRequestTransfer) {
-  pDUSessionID = m_pDUSessionID;
-  s_NSSAI      = m_s_NSSAI;
-  pDUSessionResourceSetupRequestTransfer =
-      m_pDUSessionResourceSetupRequestTransfer;
+//------------------------------------------------------------------------------
+void PDUSessionResourceSetupItemHOReq::set(
+    const PDUSessionID& pdu_session_id, const S_NSSAI& s_nssai,
+    const OCTET_STRING_t& handover_request_transfer) {
+  PDUSessionResourceItem::set(pdu_session_id, handover_request_transfer);
+  s_NSSAI = s_nssai;
 }
-bool PDUSessionResourceSetupItemHOReq::encode2PDUSessionResourceSetupItemHOReq(
-    Ngap_PDUSessionResourceSetupItemHOReq_t* pduSessionResourceSetupItemHOReq) {
-  if (!pDUSessionID->encode2PDUSessionID(
-          pduSessionResourceSetupItemHOReq->pDUSessionID))
+
+//------------------------------------------------------------------------------
+void PDUSessionResourceSetupItemHOReq::get(
+    PDUSessionID& pdu_session_id, S_NSSAI& s_nssai,
+    OCTET_STRING_t& handover_request_transfer) {
+  PDUSessionResourceItem::get(pdu_session_id, handover_request_transfer);
+  s_nssai = s_NSSAI;
+}
+
+//------------------------------------------------------------------------------
+bool PDUSessionResourceSetupItemHOReq::encode(
+    Ngap_PDUSessionResourceSetupItemHOReq_t* resource_setup_item) {
+  if (!PDUSessionResourceItem::encode(
+          resource_setup_item->pDUSessionID,
+          resource_setup_item->handoverRequestTransfer))
     return false;
-  if (!s_NSSAI->encode2S_NSSAI(&pduSessionResourceSetupItemHOReq->s_NSSAI))
-    return false;
-  pduSessionResourceSetupItemHOReq->handoverRequestTransfer =
-      pDUSessionResourceSetupRequestTransfer;
+
+  if (!s_NSSAI.encode(&resource_setup_item->s_NSSAI)) return false;
 
   return true;
 }
-bool PDUSessionResourceSetupItemHOReq::
-    decodefromPDUSessionResourceSetupItemHOReq(
-        Ngap_PDUSessionResourceSetupItemHOReq_t*
-            pduSessionResourceSetupItemHOReq) {
-  if (pDUSessionID == nullptr) pDUSessionID = new PDUSessionID();
-  s_NSSAI = new S_NSSAI();
-  if (!pDUSessionID->decodefromPDUSessionID(
-          pduSessionResourceSetupItemHOReq->pDUSessionID))
+
+//------------------------------------------------------------------------------
+bool PDUSessionResourceSetupItemHOReq::decode(
+    Ngap_PDUSessionResourceSetupItemHOReq_t* resource_setup_item) {
+  if (!PDUSessionResourceItem::decode(
+          resource_setup_item->pDUSessionID,
+          resource_setup_item->handoverRequestTransfer))
     return false;
-  if (!s_NSSAI->decodefromS_NSSAI(&pduSessionResourceSetupItemHOReq->s_NSSAI))
-    return false;
-  pDUSessionResourceSetupRequestTransfer =
-      pduSessionResourceSetupItemHOReq->handoverRequestTransfer;
+
+  if (!s_NSSAI.decode(&resource_setup_item->s_NSSAI)) return false;
 
   return true;
-}
-void PDUSessionResourceSetupItemHOReq::getPDUSessionResourceSetupItemHOReq(
-    PDUSessionID*& m_pDUSessionID, S_NSSAI*& m_s_NSSAI,
-    OCTET_STRING_t& m_pDUSessionResourceSetupRequestTransfer) {
-  m_pDUSessionID = pDUSessionID;
-  m_s_NSSAI      = s_NSSAI;
-  m_pDUSessionResourceSetupRequestTransfer =
-      pDUSessionResourceSetupRequestTransfer;
 }
 
 }  // namespace ngap

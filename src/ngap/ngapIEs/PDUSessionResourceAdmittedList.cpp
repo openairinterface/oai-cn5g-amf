@@ -30,42 +30,39 @@ PDUSessionResourceAdmittedList::PDUSessionResourceAdmittedList() {}
 PDUSessionResourceAdmittedList::~PDUSessionResourceAdmittedList() {}
 
 //------------------------------------------------------------------------------
-void PDUSessionResourceAdmittedList::setPDUSessionResourceAdmittedList(
-    const std::vector<PDUSessionResourceAdmittedItem>& list) {
-  admittedItemList = list;
+void PDUSessionResourceAdmittedList::set(
+    const std::vector<PDUSessionResourceItem>& list) {
+  item_list_ = list;
 }
 
 //------------------------------------------------------------------------------
-void PDUSessionResourceAdmittedList::getPDUSessionResourceAdmittedList(
-    std::vector<PDUSessionResourceAdmittedItem>& item) {
-  item = admittedItemList;
+void PDUSessionResourceAdmittedList::get(
+    std::vector<PDUSessionResourceItem>& list) {
+  list = item_list_;
 }
 
 //------------------------------------------------------------------------------
-bool PDUSessionResourceAdmittedList::encode2PDUSessionResourceAdmittedList(
-    Ngap_PDUSessionResourceAdmittedList_t* pduSessionResourceAdmittedList) {
-  for (auto& item : admittedItemList) {
+bool PDUSessionResourceAdmittedList::encode(
+    Ngap_PDUSessionResourceAdmittedList_t* list) {
+  for (auto& item : item_list_) {
     Ngap_PDUSessionResourceAdmittedItem_t* response =
         (Ngap_PDUSessionResourceAdmittedItem_t*) calloc(
             1, sizeof(Ngap_PDUSessionResourceAdmittedItem_t));
     if (!response) return false;
-    if (!item.encode2PDUSessionResourceAdmittedItem(response)) return false;
-    if (ASN_SEQUENCE_ADD(&pduSessionResourceAdmittedList->list, response) != 0)
-      return false;
+    if (!item.encode(response)) return false;
+    if (ASN_SEQUENCE_ADD(&list->list, response) != 0) return false;
   }
 
   return true;
 }
 
 //------------------------------------------------------------------------------
-bool PDUSessionResourceAdmittedList::decodefromPDUSessionResourceAdmittedList(
-    Ngap_PDUSessionResourceAdmittedList_t* pduSessionResourceAdmittedList) {
-  for (int i = 0; i < pduSessionResourceAdmittedList->list.count; i++) {
-    PDUSessionResourceAdmittedItem item = {};
-    if (!item.decodefromPDUSessionResourceAdmittedItem(
-            pduSessionResourceAdmittedList->list.array[i]))
-      return false;
-    admittedItemList.push_back(item);
+bool PDUSessionResourceAdmittedList::decode(
+    Ngap_PDUSessionResourceAdmittedList_t* list) {
+  for (int i = 0; i < list->list.count; i++) {
+    PDUSessionResourceItem item = {};
+    if (!item.decode(list->list.array[i])) return false;
+    item_list_.push_back(item);
   }
 
   return true;

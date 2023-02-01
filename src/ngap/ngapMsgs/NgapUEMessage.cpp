@@ -25,19 +25,19 @@
 namespace ngap {
 
 //------------------------------------------------------------------------------
-NgapUEMessage::NgapUEMessage() {}
+NgapUEMessage::NgapUEMessage() : NgapMessage() {}
 
 //------------------------------------------------------------------------------
 NgapUEMessage::~NgapUEMessage() {}
 
 //------------------------------------------------------------------------------
 unsigned long NgapUEMessage::getAmfUeNgapId() {
-  return amfUeNgapId.getAMF_UE_NGAP_ID();
+  return amfUeNgapId.get();
 }
 
 //------------------------------------------------------------------------------
 uint32_t NgapUEMessage::getRanUeNgapId() {
-  return ranUeNgapId.getRanUeNgapId();
+  return ranUeNgapId.get();
 }
 
 }  // namespace ngap

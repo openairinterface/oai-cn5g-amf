@@ -19,60 +19,57 @@
  *      contact@openairinterface.org
  */
 
-/*! \file
- \brief
- \author  Keliang DU, BUPT
- \date 2020
- \email: contact@openairinterface.org
- */
-
 #ifndef _SERVICE_REQUEST_H_
 #define _SERVICE_REQUEST_H_
 
 #include <string>
 
 #include "bstrlib.h"
-#include "nas_ie_header.hpp"
-
-using namespace std;
+#include "NasIeHeader.hpp"
 
 namespace nas {
 
-class ServiceRequest {
+class ServiceRequest : public NasMmPlainHeader {
  public:
   ServiceRequest();
   ~ServiceRequest();
 
- public:
-  void setHeader(uint8_t security_header_type);
-  void setngKSI(uint8_t tsc, uint8_t key_set_id);
-  void setServiceType(uint8_t stp);
-  void set5G_S_TMSI(uint16_t amfSetId, uint8_t amfPointer, string tmsi);
-  void setUplink_data_status(uint16_t value);
-  void setPDU_session_status(uint16_t value);
-  void setAllowed_PDU_Session_Status(uint16_t value);
-  void setNAS_Message_Container(bstring value);
-  int encode2buffer(uint8_t* buf, int len);
+  void SetHeader(uint8_t security_header_type);
 
- public:
-  int decodefrombuffer(NasMmPlainHeader* header, uint8_t* buf, int len);
+  int Encode(uint8_t* buf, int len);
+  int Decode(NasMmPlainHeader* header, uint8_t* buf, int len);
+
+  void SetNgKsi(uint8_t tsc, uint8_t key_set_id);
   bool getngKSI(uint8_t& ng_ksi);
+
+  void setServiceType(uint8_t value);
   uint8_t getServiceType();
-  bool get5G_S_TMSI(uint16_t& amfSetId, uint8_t& amfPointer, string& tmsi);
+
+  void Set5gSTmsi(uint16_t amfSetId, uint8_t amfPointer, string tmsi);
+  bool Get5gSTmsi(uint16_t& amfSetId, uint8_t& amfPointer, string& tmsi);
+
+  void setUplink_data_status(uint16_t value);
   uint16_t getUplinkDataStatus();
+
+  void SetPduSessionStatus(uint16_t value);
   uint16_t getPduSessionStatus();
+
+  void setAllowed_PDU_Session_Status(uint16_t value);
   uint16_t getAllowedPduSessionStatus();
-  bool getNasMessageContainer(bstring& nas);
+
+  void SetNasMessageContainer(bstring value);
+  bool GetNasMessageContainer(bstring& nas);
 
  private:
-  NasMmPlainHeader* plain_header;
-  NasKeySetIdentifier* ie_ngKSI;
-  ServiceType* ie_service_type;
-  _5GSMobilityIdentity* ie_5g_s_tmsi;
-  UplinkDataStatus* ie_uplink_data_status;
-  PDU_Session_Status* ie_PDU_session_status;
-  Allowed_PDU_Session_Status* ie_allowed_PDU_session_status;
-  NAS_Message_Container* ie_nas_message_container;
+  NasKeySetIdentifier ie_ngKSI;     // Mandatory
+  ServiceType ie_service_type;      // Mandatory
+  _5GSMobileIdentity ie_5g_s_tmsi;  // Mandatory
+
+  std::optional<UplinkDataStatus> ie_uplink_data_status;  // Optional
+  std::optional<PDUSessionStatus> ie_PDU_session_status;  // Optional
+  std::optional<AllowedPDUSessionStatus>
+      ie_allowed_PDU_session_status;                            // Optional
+  std::optional<NasMessageContainer> ie_nas_message_container;  // Optional
 };
 
 }  // namespace nas

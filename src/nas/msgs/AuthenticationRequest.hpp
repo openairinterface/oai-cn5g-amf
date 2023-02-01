@@ -19,40 +19,41 @@
  *      contact@openairinterface.org
  */
 
-/*! \file
- \brief
- \author  Keliang DU, BUPT
- \date 2020
- \email: contact@openairinterface.org
- */
+#ifndef _AUTHENTICATION_REQUEST_H_
+#define _AUTHENTICATION_REQUEST_H_
 
-#ifndef _AuthenticationRequest_H_
-#define _AuthenticationRequest_H_
-
-#include "nas_ie_header.hpp"
+#include "NasIeHeader.hpp"
 
 namespace nas {
 
-class AuthenticationRequest {
+class AuthenticationRequest : public NasMmPlainHeader {
  public:
   AuthenticationRequest();
   ~AuthenticationRequest();
-  int encode2buffer(uint8_t* buf, int len);
-  int decodefrombuffer(NasMmPlainHeader* header, uint8_t* buf, int len);
-  void setHeader(uint8_t security_header_type);
-  void setngKSI(uint8_t tsc, uint8_t key_set_id);
-  void setEAP_Message(bstring eap);
-  void setABBA(uint8_t length, uint8_t* value);
-  void setAuthentication_Parameter_RAND(uint8_t* value);
-  void setAuthentication_Parameter_AUTN(uint8_t* value);
+
+  int Encode(uint8_t* buf, int len);
+  int Decode(uint8_t* buf, int len);
+
+  void SetHeader(uint8_t security_header_type);
+
+  void SetNgKsi(uint8_t tsc, uint8_t key_set_id);
+  void SetEapMessage(bstring eap);
+  void SetAbba(uint8_t length, uint8_t* value);
+  void setAuthentication_Parameter_RAND(
+      uint8_t value[kAuthenticationParameterRandValueLength]);
+  void setAuthentication_Parameter_AUTN(
+      uint8_t value[kAuthenticationParameterAutnValueLength]);
 
  public:
-  NasMmPlainHeader* plain_header;
-  NasKeySetIdentifier* ie_ngKSI;
-  ABBA* ie_abba;
-  Authentication_Parameter_RAND* ie_authentication_parameter_rand;
-  Authentication_Parameter_AUTN* ie_authentication_parameter_autn;
-  EAP_Message* ie_eap_message;
+  NasKeySetIdentifier ie_ngKSI;  // Mandatory
+  // Spare half octet (will be processed together with NgKSI)
+  ABBA ie_abba;  // Mandatory
+
+  std::optional<Authentication_Parameter_RAND>
+      ie_authentication_parameter_rand;  // Optional
+  std::optional<Authentication_Parameter_AUTN>
+      ie_authentication_parameter_autn;      // Optional
+  std::optional<EapMessage> ie_eap_message;  // Optional
 };
 
 }  // namespace nas

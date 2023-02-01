@@ -1,0 +1,36 @@
+# CODEOWNERS  
+src/contexts:
+ - Keliang DU, BUPT
+ - Tien Thinh NGUYEN, Eurecom
+
+src/amf-app
+ - Keliang DU, BUPT
+ - Tien Thinh NGUYEN, Eurecom
+ - Shivam Gandhi, KCL 
+
+src/itti
+ - Lionel GAUTHIER, Eurecom
+ - Tien Thinh NGUYEN, Eurecom
+src/common
+ - Sebastien ROUX, Eurecom  
+ - Lionel Gauthier, Eurecom
+ - Tien Thinh NGUYEN, Eurecom
+ - Keliang DU, BUPT
+
+ Secu_algorithms
+ - Kharbach Othmane
+ - GAUTHIER Lionel, Eurecom
+ - Keliang DU, Bupt
+
+SCTP
+ - Keliang DU, Bupt
+
+NGAP 
+ - Keliang DU, Bupt
+ - Tien Thinh NGUYEN, Eurecom
+SBI
+ - Keliang DU, Bupt
+ - Tien Thinh NGUYEN, Eurecom
+  
+ NAS/UTILS: To be updated
+ 

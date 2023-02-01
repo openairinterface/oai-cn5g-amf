@@ -19,56 +19,49 @@
  *      contact@openairinterface.org
  */
 
-/*! \file
- \brief
- \author  Keliang DU, BUPT
- \date 2020
- \email: contact@openairinterface.org
- */
-
 #include "Tac.hpp"
+#include "logger.hpp"
 
-#include <iostream>
 namespace ngap {
 
 //------------------------------------------------------------------------------
 TAC::TAC() {
-  tac = 0;
+  tac_ = 0;
 }
 
 //------------------------------------------------------------------------------
 TAC::~TAC() {}
 
 //------------------------------------------------------------------------------
-void TAC::setTac(uint32_t m_tac) {
-  tac = m_tac;
+void TAC::set(const uint32_t& tac) {
+  tac_ = tac;
 }
 
 //------------------------------------------------------------------------------
-bool TAC::encode2octetstring(Ngap_TAC_t& m_tac) {
-  m_tac.size   = 3;  // OCTET_STRING(SIZE(3))
-  m_tac.buf    = (uint8_t*) calloc(1, sizeof(uint8_t) + sizeof(uint16_t));
-  m_tac.buf[2] = tac & 0x0000ff;
-  m_tac.buf[1] = (tac & 0x00ff00) >> 8;
-  m_tac.buf[0] = (tac & 0xff0000) >> 16;
+uint32_t TAC::get() const {
+  return tac_;
+}
+
+//------------------------------------------------------------------------------
+bool TAC::encode(Ngap_TAC_t& tac) {
+  tac.size   = 3;  // OCTET_STRING(SIZE(3))
+  tac.buf    = (uint8_t*) calloc(3, sizeof(uint8_t));
+  tac.buf[2] = tac_ & 0x0000ff;
+  tac.buf[1] = (tac_ & 0x00ff00) >> 8;
+  tac.buf[0] = (tac_ & 0xff0000) >> 16;
 
   return true;
 }
 
 //------------------------------------------------------------------------------
-bool TAC::decodefromoctetstring(Ngap_TAC_t& m_tac) {
-  if (!m_tac.buf) return false;
-  tac = 0;
-  for (int i = 0; i < m_tac.size; i++) {
-    tac |= m_tac.buf[i] << ((m_tac.size - 1 - i) * 8);
+bool TAC::decode(Ngap_TAC_t& tac) {
+  if (!tac.buf) return false;
+  tac_ = 0;
+  for (int i = 0; i < tac.size; i++) {
+    tac_ |= tac.buf[i] << ((tac.size - 1 - i) * 8);
   }
-  std::cout << "Received TAC: " << tac << std::endl;
+  Logger::ngap().debug("Received TAC 0x%x", tac_);
   return true;
-}
-
-//------------------------------------------------------------------------------
-uint32_t TAC::getTac() {
-  return tac;
 }
 
 }  // namespace ngap

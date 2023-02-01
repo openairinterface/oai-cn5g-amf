@@ -30,90 +30,6 @@
 SCRIPT=$(readlink -f ${BASH_SOURCE})
 THIS_SCRIPT_PATH=`dirname $SCRIPT`
 source $THIS_SCRIPT_PATH/build_helper
-source $THIS_SCRIPT_PATH/build_helper.fb_folly
-
-#-------------------------------------------------------------------------------
-#arg1 is force (0 or 1) (no interactive script)
-#arg2 is debug (0 or 1) (install debug libraries)
-install_cpprestsdk_from_git() {
-  echo "Starting to install cpprestsdk"
-  if [ $1 -eq 0 ]; then
-    read -p "Do you want to install C++ REST SDK ? <y/N> " prompt
-    OPTION="-y"
-  else
-    prompt='y'
-    OPTION="-y"
-  fi
-  if [ $2 -eq 0 ]; then
-    debug=0
-  else
-    debug=1
-  fi
-
-
-  if [[ $prompt =~ [yY](es)* ]]
-  then
-    GIT_URL=https://github.com/Microsoft/cpprestsdk.git
-    echo "Install C++ REST SDK from $GIT_URL"
-    pushd $OPENAIRCN_DIR/build/ext
-    echo "Downloading C++ REST SDK"
-    if [[ $OPTION =~ -[yY](es)* ]]
-    then
-      $SUDO rm -rf cpprestsdk
-    fi
-
-    git clone $GIT_URL
-    cd cpprestsdk
-    git submodule update --init
-    ret=$?;[[ $ret -ne 0 ]] && popd && return $ret
-    mkdir _build && cd _build
-    $CMAKE -G Ninja .. -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTS=OFF -DBUILD_SAMPLES=OFF
-    ret=$?;[[ $ret -ne 0 ]] && popd && return $ret
-    $SUDO ninja install 
-    ret=$?;[[ $ret -ne 0 ]] && popd && return $ret
-    $SUDO ldconfig -v
-    popd
-  fi
-  echo "cpprestsdk installation complete"
-  return 0
-}
-
-#-------------------------------------------------------------------------------
-#arg1 is force (0 or 1) (no interactive script)
-#arg2 is debug (0 or 1) (install debug libraries)
-install_fmt() {
-  echo "Starting to install fmt"
-  if [ $1 -eq 0 ]; then
-    read -p "Do you want to install open-source formatting library for C++ ? <y/N> " prompt
-    OPTION=""
-  else
-    prompt='y'
-    OPTION="-y"
-  fi
-
-  echo "Install fmt from source"
-
-  if [[ $prompt =~ [yY](es)* ]]
-  then
-    cd /tmp
-    echo "Downloading fmt"
-    $SUDO rm -rf /tmp/fmt*
-    git clone https://github.com/fmtlib/fmt.git
-    ret=$?;[[ $ret -ne 0 ]] && return $ret
-    cd fmt
-    # Looks like since Nov 11 commits, we cannot build
-    git checkout -f 1936dddc3c53c1c0db55a665cf419dc7a257ba62
-    $CMAKE -DFMT_TEST=FALSE  .
-    ret=$?;[[ $ret -ne 0 ]] && return $ret
-    make -j `nproc`
-    ret=$?;[[ $ret -ne 0 ]] && return $ret
-    $SUDO make install
-    cd /tmp
-    rm -rf /tmp/fmt*
-  fi
-  echo "fmt installation complete"
-  return 0
-}
 
 #-------------------------------------------------------------------------------
 #arg1 is force (0 or 1) (no interactive script)
@@ -194,13 +110,14 @@ install_pistache_from_git() {
         -DPISTACHE_BUILD_EXAMPLES=false \
         -DPISTACHE_BUILD_TESTS=false \
         -DPISTACHE_BUILD_DOCS=false \
-        .. 
+        ..
     ret=$?;[[ $ret -ne 0 ]] && popd && return $ret
-    make
+    make -j $(nproc)
     ret=$?;[[ $ret -ne 0 ]] && popd && return $ret
     $SUDO make install
     ret=$?;[[ $ret -ne 0 ]] && popd && return $ret
     popd
+    rm -Rf $OPENAIRCN_DIR/build/ext/pistache/_build
   fi
   echo "pistache installation complete"
   return 0
@@ -247,6 +164,7 @@ install_nlohmann_from_git() {
     $SUDO make install
     ret=$?;[[ $ret -ne 0 ]] && popd && return $ret
     popd
+    rm -Rf $OPENAIRCN_DIR/build/ext/json/_build
   fi
   echo "Nlohmann Json installation complete"
   return 0
@@ -276,7 +194,7 @@ install_nghttp2_from_git() {
     if [[ $OS_DISTRO == "ubuntu" ]]; then
       PACKAGE_LIST="\
       g++ \
-      cmake \
+      $CMAKE \
       binutils \
       autoconf \
       automake \
@@ -287,7 +205,7 @@ install_nghttp2_from_git() {
       libcunit1-dev \
       libssl-dev \
       libxml2-dev libev-dev libevent-dev libjansson-dev libc-ares-dev \
-      libjemalloc-dev libsystemd-dev cython python3-dev python-setuptools"
+      libjemalloc-dev libsystemd-dev python3-dev python-setuptools"
     elif [[ "$OS_BASEDISTRO" == "fedora" ]]; then
       PACKAGE_LIST="\
       gcc-c++ \
@@ -332,12 +250,13 @@ install_nghttp2_from_git() {
     ret=$?;[[ $ret -ne 0 ]] && popd && return $ret
     ./configure --enable-asio-lib --enable-lib-only
     ret=$?;[[ $ret -ne 0 ]] && popd && return $ret
-    make
+    make -j $(nproc)
     ret=$?;[[ $ret -ne 0 ]] && popd && return $ret
     $SUDO make install
     ret=$?;[[ $ret -ne 0 ]] && popd && return $ret
     $SUDO ldconfig
     ret=$?;[[ $ret -ne 0 ]] && popd && return $ret
+    git clean -x -d -ff .
     popd
   fi
   echo "nghttp2 installation complete"
@@ -351,7 +270,7 @@ check_install_amf_deps(){
    
   if [ $1 -gt 0 ]; then
     OPTION="-y"
-  else 
+  else
     OPTION=""
   fi
   if [ $2 -eq 0 ]; then
@@ -360,7 +279,7 @@ check_install_amf_deps(){
     debug=1
   fi
 
-  echo "Check supported distribution" 
+  echo "Check supported distribution"
   check_supported_distribution
   [[ $? -ne 0 ]] && return $?
 
@@ -370,7 +289,9 @@ check_install_amf_deps(){
     #$SUDO systemctl mask apt-daily.timer
     #$SUDO systemctl mask apt-daily-upgrade.service
     #$SUDO systemctl mask apt-daily-upgrade.timer
-    $SUDO sed -i 's/1/0/g' /etc/apt/apt.conf.d/10periodic
+    if [ $IS_CONTAINER -eq 0 ]; then
+      $SUDO sed -i 's/1/0/g' /etc/apt/apt.conf.d/10periodic
+    fi
   fi
 
   update_package_db
@@ -383,26 +304,16 @@ check_install_amf_deps(){
     PACKAGE_LIST="\
       autoconf \
       automake \
-      bison \
       build-essential \
       $CMAKE \
-      daemon \
-      doxygen \
-      flex \
-      gdb \
-      wget \
       git"
   elif [[ "$OS_BASEDISTRO" == "fedora" ]]; then
     PACKAGE_LIST="\
       autoconf \
       automake \
       gcc-c++ \
-      bison \
       $CMAKE \
       make \
-      doxygen \
-      flex \
-      gdb \
       git"
   else
     echo_fatal "$OS_DISTRO is not a supported distribution."
@@ -410,24 +321,28 @@ check_install_amf_deps(){
   echo "Install build tools"
   $SUDO $INSTALLER install $OPTION $PACKAGE_LIST
   ret=$?;[[ $ret -ne 0 ]] && return $ret
-  
+
   # Libraries
   if [[ $OS_DISTRO == "ubuntu" ]]; then
     case "$(get_distribution_release)" in
       "ubuntu18.04")
-      # Currently Ubuntu18.04 has boost 1.65 as the latest
-      # We need at least 1.66
-      # PPA has 1.67
-      $SUDO add-apt-repository ppa:mhier/libboost-latest --yes
-      $SUDO $INSTALLER update       
-      if [ $IS_CONTAINER -eq 0 ]; then
-        specific_packages="libconfig++-dev libasio-dev libboost-all-dev mysql-server"
-      else
-        specific_packages="libconfig++-dev libasio-dev libboost-all-dev"
-      fi
+        # Currently Ubuntu18.04 has boost 1.65 as the latest
+        # We need at least 1.66
+        # PPA has 1.67
+        $SUDO $INSTALLER install $OPTION software-properties-common
+        $SUDO add-apt-repository ppa:mhier/libboost-latest --yes
+        $SUDO $INSTALLER update
+        if [ $IS_CONTAINER -eq 0 ]; then
+          specific_packages="libconfig++-dev libasio-dev libboost-all-dev mysql-server libasan4"
+        else
+          specific_packages="libconfig++-dev libasio-dev libboost-all-dev libasan4"
+        fi
         ;;
       "ubuntu20.04")
-        specific_packages="libconfig++-dev libasio-dev libboost-all-dev libmysqlclient-dev"
+        specific_packages="libconfig++-dev libasio-dev libboost-all-dev libasan5"
+        ;;
+      "ubuntu22.04")
+        specific_packages="libconfig++-dev libasio-dev libboost-all-dev libasan6"
         ;;
     esac
     # removed libspdlog-dev
@@ -435,43 +350,29 @@ check_install_amf_deps(){
       $specific_packages \
       mysql-client \
       libmysqlclient-dev \
-      guile-2.0-dev \
       libcurl4-gnutls-dev \
       libevent-dev \
-      libgcrypt?-dev \
-      libgmp-dev \
-      libhogweed? \
-      libidn2-0-dev \
-      libidn11-dev \
-      libpthread-stubs0-dev \
       libsctp-dev \
       libssl-dev \
       libtool \
       libxml2 \
       libxml2-dev \
       openssl \
-      python \
       nettle-dev \
       libcurl4 \
       net-tools \
       pkg-config \
-      ninja-build \
-      wget \
-      libasan?"
+      ninja-build"
   elif [[ "$OS_BASEDISTRO" == "fedora" ]]; then
     PACKAGE_LIST="\
-      guile-devel \
       mysql \
       mysql-devel \
       mysql-libs \
       libconfig-devel \
       libgcrypt-devel \
-      gmp-devel \
-      libidn-devel \
       lksctp-tools \
       lksctp-tools-devel \
       openssl-devel \
-      libnghttp2 \
       libtool \
       libxml2 \
       libxml2-devel \
@@ -488,38 +389,29 @@ check_install_amf_deps(){
   fi
   echo "Install distro libs"
   $SUDO $INSTALLER install $OPTION $PACKAGE_LIST
-  
+
   # fix issue with libboost in U18 for a bare metal deployment
   if [[ $OS_DISTRO == "ubuntu" ]]; then
     case "$(get_distribution_release)" in
       "ubuntu18.04")
         $SUDO $INSTALLER remove $OPTION libboost1.65-dev || true
+        $SUDO $INSTALLER autoremove $OPTION || true
         $SUDO $INSTALLER install $OPTION libboost1.67-dev
-        ;;    
+        ;;
     esac
-  fi  
+  fi
 
   ret=$?;[[ $ret -ne 0 ]] && return $ret
   echo "distro libs installation complete"
 
-  install_cpprestsdk_from_git $1 $2
-  ret=$?;[[ $ret -ne 0 ]] && return $ret
-  
-  # Use fmt lib included in spdlog
-  # install_fmt $1
-  # ret=$?;[[ $ret -ne 0 ]] && return $ret
-
   install_spdlog_from_git $1 $2
-  ret=$?;[[ $ret -ne 0 ]] && return $ret 
-
-  install_fb_folly_from_source $1 $2
   ret=$?;[[ $ret -ne 0 ]] && return $ret
 
   install_pistache_from_git $1 $2
   ret=$?;[[ $ret -ne 0 ]] && return $ret
 
   install_nlohmann_from_git $1 $2
-  ret=$?;[[ $ret -ne 0 ]] && return $ret 
+  ret=$?;[[ $ret -ne 0 ]] && return $ret
 
   install_nghttp2_from_git $1 $2
   ret=$?;[[ $ret -ne 0 ]] && return $ret

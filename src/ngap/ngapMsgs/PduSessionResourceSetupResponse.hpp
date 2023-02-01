@@ -56,10 +56,11 @@ class PduSessionResourceSetupResponseMsg : public NgapUEMessage {
 
  private:
   Ngap_PDUSessionResourceSetupResponse_t* pduSessionResourceSetupResponseIEs;
-  PDUSessionResourceSetupListSURes*
+  std::optional<PDUSessionResourceSetupListSURes>
       pduSessionResourceSetupResponseList;  // Optional
-  PDUSessionResourceFailedToSetupListSURes*
+  std::optional<PDUSessionResourceFailedToSetupListSURes>
       pduSessionResourceFailedToSetupResponseList;  // Optional
+  // TODO: Criticality Diagnostics (Optional)
 };
 
 }  // namespace ngap

@@ -19,40 +19,41 @@
  *      contact@openairinterface.org
  */
 
-/*! \file
- \brief
- \author  Keliang DU, BUPT
- \date 2020
- \email: contact@openairinterface.org
- */
-
 #include "MICOModeIndication.hpp"
-
-#include <iostream>
-using namespace std;
 
 namespace ngap {
 
 //------------------------------------------------------------------------------
-MICOModeIndication::MICOModeIndication() {}
+MICOModeIndication::MICOModeIndication()
+    : mico_mode_indication_(Ngap_MICOModeIndication_true) {}
 
 //------------------------------------------------------------------------------
 MICOModeIndication::~MICOModeIndication() {}
 
 //------------------------------------------------------------------------------
-bool MICOModeIndication::encode2MICOModeIndication(
-    Ngap_MICOModeIndication_t* micoModeIndication) {
-  if (!micoModeIndication) return false;
-  *micoModeIndication = Ngap_MICOModeIndication_true;
+void MICOModeIndication::set(const long& mico_mode_indication) {
+  mico_mode_indication_ = mico_mode_indication;
+}
+
+//------------------------------------------------------------------------------
+void MICOModeIndication::get(long& mico_mode_indication) {
+  mico_mode_indication = mico_mode_indication_;
+}
+
+//------------------------------------------------------------------------------
+bool MICOModeIndication::encode(
+    Ngap_MICOModeIndication_t* mico_mode_indication) {
+  if (!mico_mode_indication) return false;
+  *mico_mode_indication = mico_mode_indication_;
 
   return true;
 }
 
 //------------------------------------------------------------------------------
-bool MICOModeIndication::decodefromMICOModeIndication(
-    Ngap_MICOModeIndication_t* micoModeIndication) {
-  if (!micoModeIndication) return false;
-  if (*micoModeIndication != Ngap_MICOModeIndication_true) return false;
+bool MICOModeIndication::decode(
+    Ngap_MICOModeIndication_t* mico_mode_indication) {
+  if (!mico_mode_indication) return false;
+  mico_mode_indication_ = *mico_mode_indication;
 
   return true;
 }

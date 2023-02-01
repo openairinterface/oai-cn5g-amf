@@ -19,13 +19,6 @@
  *      contact@openairinterface.org
  */
 
-/*! \file
- \brief
- \author  Keliang DU, BUPT
- \date 2020
- \email: contact@openairinterface.org
- */
-
 #include "AMFRegionID.hpp"
 
 #include <iostream>
@@ -59,7 +52,7 @@ void AMFRegionID::getAMFRegionID(std::string& charid) {
 }
 
 //------------------------------------------------------------------------------
-bool AMFRegionID::encode2bitstring(Ngap_AMFRegionID_t& amfregionid) {
+bool AMFRegionID::encode(Ngap_AMFRegionID_t& amfregionid) {
   amfregionid.size = 1;
   uint8_t* buffer  = (uint8_t*) calloc(1, sizeof(uint8_t));
   if (!buffer) return false;
@@ -71,7 +64,7 @@ bool AMFRegionID::encode2bitstring(Ngap_AMFRegionID_t& amfregionid) {
 }
 
 //------------------------------------------------------------------------------
-bool AMFRegionID::decodefrombitstring(Ngap_AMFRegionID_t& amfregionid) {
+bool AMFRegionID::decode(Ngap_AMFRegionID_t& amfregionid) {
   if (!amfregionid.buf) return false;
   regionid = *amfregionid.buf;
 

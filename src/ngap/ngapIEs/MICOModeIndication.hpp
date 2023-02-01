@@ -33,12 +33,14 @@ class MICOModeIndication {
   MICOModeIndication();
   virtual ~MICOModeIndication();
 
-  // void setMICOModeIndication();
-  // bool getMICOModeIndication();
+  void set(const long& mico_mode_indication);
+  void get(long& mico_mode_indication);
 
-  bool encode2MICOModeIndication(Ngap_MICOModeIndication_t* micoModeIndication);
-  bool decodefromMICOModeIndication(
-      Ngap_MICOModeIndication_t* micoModeIndication);
+  bool encode(Ngap_MICOModeIndication_t* micoModeIndication);
+  bool decode(Ngap_MICOModeIndication_t* micoModeIndication);
+
+ private:
+  long mico_mode_indication_;
 };
 
 }  // namespace ngap

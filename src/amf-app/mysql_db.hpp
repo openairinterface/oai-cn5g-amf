@@ -19,13 +19,6 @@
  *      contact@openairinterface.org
  */
 
-/*! \file mysql_db.hpp
- \brief
- \author  Keliang DU, BUPT
- \date 2020
- \email: contact@openairinterface.org
- */
-
 #ifndef _MYSQL_DB_HANDLERS_H_
 #define _MYSQL_DB_HANDLERS_H_
 
@@ -46,7 +39,6 @@ typedef struct {
 } mysql_auth_info_t;
 
 typedef struct {
-  // mysql reference connector object
   MYSQL* db_conn;
   std::string server;
   std::string user;

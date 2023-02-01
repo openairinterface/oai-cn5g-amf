@@ -19,13 +19,6 @@
  *      contact@openairinterface.org
  */
 
-/*! \file
- \brief
- \author  Keliang DU, BUPT
- \date 2020
- \email: contact@openairinterface.org
- */
-
 #ifndef _FiveGSTmsi_H_
 #define _FiveGSTmsi_H_
 
@@ -45,20 +38,20 @@ class FiveGSTmsi {
   ~FiveGSTmsi();
 
  public:
-  bool decodefrompdu(Ngap_FiveG_S_TMSI_t pdu);
-  void getValue(std::string& value);
-  void getValue(std::string& setId, std::string& pointer, std::string& tmsi);
-  void setValue(
+  bool decodeFromPdu(Ngap_FiveG_S_TMSI_t pdu);
+  void getTmsi(std::string& value);
+  void get(std::string& setId, std::string& pointer, std::string& tmsi);
+  bool set(
       const std::string& setId, const std::string& pointer,
       const std::string& tmsi);
   bool encode2pdu(Ngap_FiveG_S_TMSI_t* pdu);
 
  private:
-  std::string _5g_s_tmsi;
-  std::string tmsi_value;
+  std::string _5g_s_tmsi_;
+  std::string tmsi_value_;
 
-  AMFSetID amfSetid;
-  AMFPointer amfPointer;
+  AMFSetID amf_set_id_;
+  AMFPointer amf_pointer_;
 };
 
 }  // namespace ngap

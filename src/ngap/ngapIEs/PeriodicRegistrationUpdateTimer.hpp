@@ -19,15 +19,8 @@
  *      contact@openairinterface.org
  */
 
-/*! \file
- \brief
- \author  Keliang DU, BUPT
- \date 2020
- \email: contact@openairinterface.org
- */
-
-#ifndef _PERIODICREGISTRATIONUPDATETIMER_H_
-#define _PERIODICREGISTRATIONUPDATETIMER_H_
+#ifndef _PERIODIC_REGISTRATION_UPDATE_TIMER_H_
+#define _PERIODIC_REGISTRATION_UPDATE_TIMER_H_
 
 extern "C" {
 #include "Ngap_PeriodicRegistrationUpdateTimer.h"
@@ -40,16 +33,16 @@ class PeriodicRegistrationUpdateTimer {
   PeriodicRegistrationUpdateTimer();
   virtual ~PeriodicRegistrationUpdateTimer();
 
-  void setPeriodicRegistrationUpdateTimer(uint8_t m_updatetimer);
-  void getPeriodicRegistrationUpdateTimer(uint8_t& m_updatetimer);
+  void set(const uint8_t& update_timer);
+  void get(uint8_t& update_timer) const;
 
-  bool encode2PeriodicRegistrationUpdateTimer(
-      Ngap_PeriodicRegistrationUpdateTimer_t* periodicRegistrationUpdateTimer);
-  bool decodefromPeriodicRegistrationUpdateTimer(
-      Ngap_PeriodicRegistrationUpdateTimer_t* periodicRegistrationUpdateTimer);
+  bool encode(Ngap_PeriodicRegistrationUpdateTimer_t&
+                  periodic_registration_update_timer) const;
+  bool decode(const Ngap_PeriodicRegistrationUpdateTimer_t&
+                  periodic_registration_update_timer);
 
  private:
-  uint8_t updatetimer;
+  uint8_t update_timer_;
 };
 
 }  // namespace ngap

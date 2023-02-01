@@ -47,8 +47,7 @@ void PDUSessionResourceAdmittedItem::getPDUSessionResourceAdmittedItem(
 //------------------------------------------------------------------------------
 bool PDUSessionResourceAdmittedItem::encode2PDUSessionResourceAdmittedItem(
     Ngap_PDUSessionResourceAdmittedItem_t* pdUSessionResourceAdmittedItem) {
-  if (!pDUSessionID.encode2PDUSessionID(
-          pdUSessionResourceAdmittedItem->pDUSessionID))
+  if (!pDUSessionID.encode(pdUSessionResourceAdmittedItem->pDUSessionID))
     return false;
   pdUSessionResourceAdmittedItem->handoverRequestAcknowledgeTransfer =
       handoverRequestAckTransfer;
@@ -59,8 +58,7 @@ bool PDUSessionResourceAdmittedItem::encode2PDUSessionResourceAdmittedItem(
 //------------------------------------------------------------------------------
 bool PDUSessionResourceAdmittedItem::decodefromPDUSessionResourceAdmittedItem(
     Ngap_PDUSessionResourceAdmittedItem_t* pdUSessionResourceAdmittedItem) {
-  if (!pDUSessionID.decodefromPDUSessionID(
-          pdUSessionResourceAdmittedItem->pDUSessionID))
+  if (!pDUSessionID.decode(pdUSessionResourceAdmittedItem->pDUSessionID))
     return false;
   handoverRequestAckTransfer =
       pdUSessionResourceAdmittedItem->handoverRequestAcknowledgeTransfer;

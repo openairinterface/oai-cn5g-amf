@@ -19,186 +19,230 @@
  *      contact@openairinterface.org
  */
 
-/*! \file
- \brief
- \author  Keliang DU, BUPT
- \date 2020
- \email: contact@openairinterface.org
- */
-
 #include "UESecurityCapability.hpp"
 
-#include "logger.hpp"
 using namespace nas;
 
 //------------------------------------------------------------------------------
-UESecurityCapability::UESecurityCapability(uint8_t iei) {
-  _iei      = iei;
-  _5g_EASel = 0;
-  _5g_IASel = 0;
-  EEASel    = 0;
-  EIASel    = 0;
-  length    = 0;
+UESecurityCapability::UESecurityCapability() : Type4NasIe() {
+  _5g_ea_ = 0;
+  _5g_ia_ = 0;
+  eea_    = std::nullopt;
+  eia_    = std::nullopt;
+  SetLengthIndicator(2);
 }
 
 //------------------------------------------------------------------------------
-UESecurityCapability::UESecurityCapability() {
-  _iei      = 0;
-  _5g_EASel = 0;
-  _5g_IASel = 0;
-  EEASel    = 0;
-  EIASel    = 0;
-  length    = 0;
+UESecurityCapability::UESecurityCapability(uint8_t iei) : Type4NasIe(iei) {
+  _5g_ea_ = 0;
+  _5g_ia_ = 0;
+  eea_    = std::nullopt;
+  eia_    = std::nullopt;
+  SetLengthIndicator(2);
+}
+
+//------------------------------------------------------------------------------
+UESecurityCapability::UESecurityCapability(uint8_t _5g_ea, uint8_t _5g_ia)
+    : Type4NasIe() {
+  _5g_ea_ = _5g_ea;
+  _5g_ia_ = _5g_ia;
+  eea_    = std::nullopt;
+  eia_    = std::nullopt;
+  SetLengthIndicator(2);
+}
+
+//------------------------------------------------------------------------------
+UESecurityCapability::UESecurityCapability(
+    uint8_t iei, uint8_t _5g_ea, uint8_t _5g_ia)
+    : Type4NasIe(iei) {
+  _5g_ea_ = _5g_ea;
+  _5g_ia_ = _5g_ia;
+  eea_    = std::nullopt;
+  eia_    = std::nullopt;
+  SetLengthIndicator(2);
+}
+
+//------------------------------------------------------------------------------
+UESecurityCapability::UESecurityCapability(
+    uint8_t iei, uint8_t _5g_ea, uint8_t _5g_ia, uint8_t eea, uint8_t eia)
+    : Type4NasIe(iei) {
+  _5g_ea_ = _5g_ea;
+  _5g_ia_ = _5g_ia;
+  eea_    = std::optional<uint8_t>(eea);
+  eia_    = std::optional<uint8_t>(eia);
+  SetLengthIndicator(4);
+}
+
+//------------------------------------------------------------------------------
+UESecurityCapability::UESecurityCapability(
+    uint8_t _5g_ea, uint8_t _5g_ia, uint8_t eea, uint8_t eia)
+    : Type4NasIe() {
+  _5g_ea_ = _5g_ea;
+  _5g_ia_ = _5g_ia;
+  eea_    = std::optional<uint8_t>(eea);
+  eia_    = std::optional<uint8_t>(eia);
+  SetLengthIndicator(4);
 }
 
 //------------------------------------------------------------------------------
 UESecurityCapability::~UESecurityCapability() {}
 
 //------------------------------------------------------------------------------
-UESecurityCapability::UESecurityCapability(
-    const uint8_t iei, uint8_t _5gg_EASel, uint8_t _5gg_IASel) {
-  _iei      = iei;
-  _5g_EASel = _5gg_EASel;
-  _5g_IASel = _5gg_IASel;
-  EEASel    = 0;
-  EIASel    = 0;
-  length    = 2;
+void UESecurityCapability::SetEa(uint8_t value) {
+  _5g_ea_ = value;
 }
 
 //------------------------------------------------------------------------------
-UESecurityCapability::UESecurityCapability(
-    const uint8_t iei, uint8_t _5gg_EASel, uint8_t _5gg_IASel, uint8_t _EEASel,
-    uint8_t _EIASel) {
-  _iei      = iei;
-  _5g_EASel = _5gg_EASel;
-  _5g_IASel = _5gg_IASel;
-  EEASel    = _EEASel;
-  EIASel    = _EIASel;
-  length    = 4;
+uint8_t UESecurityCapability::GetEa() const {
+  return _5g_ea_;
 }
 
 //------------------------------------------------------------------------------
-void UESecurityCapability::setEASel(uint8_t sel) {
-  _5g_EASel = sel;
+void UESecurityCapability::SetIa(uint8_t value) {
+  _5g_ia_ = value;
 }
 
 //------------------------------------------------------------------------------
-void UESecurityCapability::setIASel(uint8_t sel) {
-  _5g_IASel = sel;
+uint8_t UESecurityCapability::GetIa() const {
+  return _5g_ia_;
 }
 
 //------------------------------------------------------------------------------
-void UESecurityCapability::setEEASel(uint8_t sel) {
-  EEASel = sel;
+void UESecurityCapability::SetEea(uint8_t value) {
+  eea_ = std::make_optional<uint8_t>(value);
 }
 
 //------------------------------------------------------------------------------
-void UESecurityCapability::setEIASel(uint8_t sel) {
-  EIASel = sel;
-}
-
-//------------------------------------------------------------------------------
-uint8_t UESecurityCapability::getEASel() {
-  return _5g_EASel;
-}
-
-//------------------------------------------------------------------------------
-uint8_t UESecurityCapability::getIASel() {
-  return _5g_IASel;
-}
-
-//------------------------------------------------------------------------------
-uint8_t UESecurityCapability::getEEASel() {
-  return EEASel;
-}
-
-//------------------------------------------------------------------------------
-uint8_t UESecurityCapability::getEIASel() {
-  return EIASel;
-}
-
-//------------------------------------------------------------------------------
-void UESecurityCapability::setLength(uint8_t len) {
-  if ((len > 0) && (len <= 4)) {
-    length = len;
-  } else {
-    Logger::nas_mm().debug("Set UESecurityCapability Length fail %d", len);
-    Logger::nas_mm().debug(
-        "UESecurityCapability Length is set to the default value %d", length);
+bool UESecurityCapability::GetEea(uint8_t& value) const {
+  if (eea_.has_value()) {
+    value = eea_.value();
+    return true;
   }
+  return false;
 }
 
 //------------------------------------------------------------------------------
-uint8_t UESecurityCapability::getLength() {
-  return length;
+void UESecurityCapability::SetEia(uint8_t value) {
+  eia_ = std::make_optional<uint8_t>(value);
 }
 
 //------------------------------------------------------------------------------
-int UESecurityCapability::encode2buffer(uint8_t* buf, int len) {
-  Logger::nas_mm().debug("Encoding UESecurityCapability IEI 0x%x", _iei);
-  if (len < length) {
-    Logger::nas_mm().error("len is less than %d", length);
-    return 0;
+bool UESecurityCapability::GetEia(uint8_t& value) const {
+  if (eia_.has_value()) {
+    value = eia_.value();
+    return true;
   }
+  return false;
+}
+
+//------------------------------------------------------------------------------
+void UESecurityCapability::Set(uint8_t _5g_ea, uint8_t _5g_ia) {
+  _5g_ea_ = _5g_ea;
+  _5g_ia_ = _5g_ia;
+}
+
+//------------------------------------------------------------------------------
+void UESecurityCapability::Set(
+    uint8_t _5g_ea, uint8_t _5g_ia, uint8_t eea, uint8_t eia) {
+  _5g_ea_ = _5g_ea;
+  _5g_ia_ = _5g_ia;
+  eea_    = std::optional<uint8_t>(eea);
+  eia_    = std::optional<uint8_t>(eia);
+  SetLengthIndicator(4);
+}
+
+//------------------------------------------------------------------------------
+int UESecurityCapability::Encode(uint8_t* buf, int len) {
+  Logger::nas_mm().debug("Encoding %s", GetIeName().c_str());
+  int ie_len = GetIeLength();
+
+  if (len < ie_len) {  // Length of the content + IEI/Len
+    Logger::nas_mm().error(
+        "Size of the buffer is not enough to store this IE (IE len %d)",
+        ie_len);
+    return KEncodeDecodeError;
+  }
+
   int encoded_size = 0;
-  if (_iei) {
-    *(buf + encoded_size) = _iei;
-    encoded_size++;
-    *(buf + encoded_size) = length;
-    encoded_size++;
-    *(buf + encoded_size) = _5g_EASel;
-    encoded_size++;
-    *(buf + encoded_size) = _5g_IASel;
-    encoded_size++;
-    if (length == 4) {
-      *(buf + encoded_size) = EEASel;  // 0xf0; //TODO: remove hardcoded value
-      encoded_size++;
-      *(buf + encoded_size) = EIASel;  // 0x70; //TODO: remove hardcoded value
-      encoded_size++;
-    }
+  // IEI and Length
+  int encoded_header_size = Type4NasIe::Encode(buf + encoded_size, len);
+  if (encoded_header_size == KEncodeDecodeError) return KEncodeDecodeError;
+  encoded_size += encoded_header_size;
 
-  } else {
-    *(buf + encoded_size) = length;
-    encoded_size++;
-    *(buf + encoded_size) = _5g_EASel;
-    encoded_size++;
-    *(buf + encoded_size) = _5g_IASel;
-    encoded_size++;
-    if (length == 4) {
-      *(buf + encoded_size) = EEASel;  // 0xf0; //TODO: remove hardcoded value
-      encoded_size++;
-      *(buf + encoded_size) = EIASel;  // 0x70; //TODO: remove hardcoded value
-      encoded_size++;
-    }
+  // EA
+  ENCODE_U8(buf + encoded_size, _5g_ea_, encoded_size);
+  // IA
+  ENCODE_U8(buf + encoded_size, _5g_ia_, encoded_size);
+
+  if (eea_.has_value()) {
+    // EEA
+    ENCODE_U8(buf + encoded_size, eea_.value(), encoded_size);
   }
-  Logger::nas_mm().debug("encoded UESecurityCapability (len %d)", encoded_size);
+  if (eia_.has_value()) {
+    // EIA
+    ENCODE_U8(buf + encoded_size, eia_.value(), encoded_size);
+  }
+
+  Logger::nas_mm().debug(
+      "Encoded %s, len (%d)", GetIeName().c_str(), encoded_size);
   return encoded_size;
 }
 
 //------------------------------------------------------------------------------
-int UESecurityCapability::decodefrombuffer(
-    uint8_t* buf, int len, bool is_option) {
-  Logger::nas_mm().debug("Decoding UESecurityCapability IEI 0x%x", *buf);
-  int decoded_size = 0;
-  if (is_option) {
-    decoded_size++;
-  }
-  length = *(buf + decoded_size);
-  decoded_size++;
-  _5g_EASel = *(buf + decoded_size);
-  decoded_size++;
-  _5g_IASel = *(buf + decoded_size);
-  decoded_size++;
+int UESecurityCapability::Decode(uint8_t* buf, int len, bool is_iei) {
+  Logger::nas_mm().debug("Decoding %s", GetIeName().c_str());
 
-  if (length >= 4) {
-    EEASel = *(buf + decoded_size);
-    decoded_size++;
-    EIASel = *(buf + decoded_size);
-    decoded_size++;
-    decoded_size += (length - 4);  // TODO: decoding EEA EIA
+  if (len < kUeSecurityCapabilityMinimumLength) {
+    Logger::nas_mm().error(
+        "Buffer length is less than the minimum length of this IE (%d octet)",
+        kUeSecurityCapabilityMinimumLength);
+    return KEncodeDecodeError;
   }
+
+  int decoded_size = 0;
+  uint8_t octet    = 0;
+
+  // IEI and Length
+  int decoded_header_size = Type4NasIe::Decode(buf + decoded_size, len, is_iei);
+  // decoded_size += Type4NasIe::Decode(buf + decoded_size, len, is_iei);
+  if (decoded_header_size == KEncodeDecodeError) return KEncodeDecodeError;
+  decoded_size += decoded_header_size;
+  // EA
+  DECODE_U8(buf + decoded_size, _5g_ea_, decoded_size);
+  // IA
+  DECODE_U8(buf + decoded_size, _5g_ia_, decoded_size);
+
+  int ie_len = GetIeLength();
+  if (ie_len > decoded_size) {
+    // EEA
+    DECODE_U8(buf + decoded_size, octet, decoded_size);
+    eea_ = std::make_optional<uint8_t>(octet);
+  }
+
+  if (ie_len > decoded_size) {
+    // EIA
+    DECODE_U8(buf + decoded_size, octet, decoded_size);
+    eia_ = std::make_optional<uint8_t>(octet);
+  }
+
+  // TODO: decode the rest as spare for now
+  uint8_t spare = 0;
+  int spare_len = ie_len - decoded_size;
+  for (int i = 0; i < spare_len; i++) {
+    DECODE_U8(buf + decoded_size, spare, decoded_size);
+  }
+
   Logger::nas_mm().debug(
-      "UESecurityCapability (length %d) EA 0x%x,IA 0x%x, EEA 0x%x, EIA 0x%x,",
-      length, _5g_EASel, _5g_IASel, EEASel, EIASel);
+      "Decoded %s, len (%d)", GetIeName().c_str(), decoded_size);
+
+  Logger::nas_mm().debug("5G EA 0x%x, 5G IA 0x%x", _5g_ea_, _5g_ia_);
+  if (eea_.has_value()) {
+    Logger::nas_mm().debug("EEA 0x%x", eea_.value());
+  }
+
+  if (eia_.has_value()) {
+    Logger::nas_mm().debug("EIA 0x%x", eia_.value());
+  }
+
   return decoded_size;
 }

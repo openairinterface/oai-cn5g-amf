@@ -19,8 +19,8 @@
  *      contact@openairinterface.org
  */
 
-#ifndef _UESECURITYCAPABILITIES_H_
-#define _UESECURITYCAPABILITIES_H_
+#ifndef _UE_SECURITY_CAPABILITIES_H_
+#define _UE_SECURITY_CAPABILITIES_H_
 
 extern "C" {
 #include "Ngap_UESecurityCapabilities.h"
@@ -33,23 +33,24 @@ class UESecurityCapabilities {
   UESecurityCapabilities();
   virtual ~UESecurityCapabilities();
 
-  void setUESecurityCapabilities(
-      uint16_t m_NR_EncryptionAlgs, uint16_t m_NR_IntegrityProtectionAlgs,
-      uint16_t m_E_UTRA_EncryptionAlgs,
-      uint16_t m_E_UTRA_IntegrityProtectionAlgs);
-  bool getUESecurityCapabilities(
-      uint16_t& m_NR_EncryptionAlgs, uint16_t& m_NR_IntegrityProtectionAlgs,
-      uint16_t& m_E_UTRA_EncryptionAlgs,
-      uint16_t& m_E_UTRA_IntegrityProtectionAlgs);
+  void set(
+      const uint16_t& nr_encryption_algs,
+      const uint16_t& nr_integrity_protection_algs,
+      const uint16_t& e_utra_encryption_algs,
+      const uint16_t& e_utra_integrity_protection_algs);
+  bool get(
+      uint16_t& nr_encryption_algs, uint16_t& nr_integrity_protection_algs,
+      uint16_t& e_utra_encryption_algs,
+      uint16_t& e_utra_integrity_protection_algs);
 
-  bool encode2UESecurityCapabilities(Ngap_UESecurityCapabilities_t&);
-  bool decodefromUESecurityCapabilities(Ngap_UESecurityCapabilities_t&);
+  bool encode(Ngap_UESecurityCapabilities_t&);
+  bool decode(const Ngap_UESecurityCapabilities_t&);
 
  private:
-  uint16_t NR_EncryptionAlgs;               // Mandatory
-  uint16_t NR_IntegrityProtectionAlgs;      // Mandatory
-  uint16_t E_UTRA_EncryptionAlgs;           // Mandatory
-  uint16_t E_UTRA_IntegrityProtectionAlgs;  // Mandatory
+  uint16_t nr_encryption_algs_;                // Mandatory
+  uint16_t nr_integrity_protection_algs_;      // Mandatory
+  uint16_t e_utra_encryption_algs_;            // Mandatory
+  uint16_t e_utra_integrity_protection_algs_;  // Mandatory
 };
 
 }  // namespace ngap

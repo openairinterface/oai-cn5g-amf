@@ -22,13 +22,16 @@
 #ifndef _INITIAL_UE_MESSAGE_H_
 #define _INITIAL_UE_MESSAGE_H_
 
+#include "AllowedNssai.hpp"
 #include "FiveGSTmsi.hpp"
 #include "NAS-PDU.hpp"
 #include "NgapIEsStruct.hpp"
+#include "NgapMessage.hpp"
 #include "RRCEstablishmentCause.hpp"
 #include "UEContextRequest.hpp"
 #include "UserLocationInformation.hpp"
-#include "NgapMessage.hpp"
+
+#include <optional>
 
 namespace ngap {
 
@@ -43,8 +46,8 @@ class InitialUEMessageMsg : public NgapMessage {
   void setRanUENgapID(const uint32_t& value);
   bool getRanUENgapID(uint32_t& value);
 
-  void setNasPdu(uint8_t* nas, size_t size);
-  bool getNasPdu(uint8_t*& nas, size_t& size);
+  void setNasPdu(const bstring& pdu);
+  bool getNasPdu(bstring& pdu);
 
   void setUserLocationInfoNR(
       const struct NrCgi_s& cig, const struct Tai_s& tai);
@@ -59,20 +62,27 @@ class InitialUEMessageMsg : public NgapMessage {
   bool get5GS_TMSI(
       std ::string& setid, std ::string& pointer, std ::string& tmsi);
 
+  bool getAMFSetID(uint16_t&);
+  bool getAMFSetID(std::string&);
+  bool setAMFSetID(const uint16_t&);
+
   void setUeContextRequest(const e_Ngap_UEContextRequest& ueCtxReq);
-  int getUeContextRequest();
+  int getUeContextRequest() const;
+
+  void setAllowedNssai(const AllowedNSSAI& allowed_nssai);
+  bool getAllowedNssai(AllowedNSSAI& allowed_nssai) const;
 
  private:
   Ngap_InitialUEMessage_t* initialUEMessageIEs;
 
-  RAN_UE_NGAP_ID ranUeNgapId;                       // Mandatory
-  NAS_PDU nasPdu;                                   // Mandatory
-  UserLocationInformation userLocationInformation;  // Mandatory
-  RRCEstablishmentCause rRCEstablishmentCause;      // Mandatory
-  FiveGSTmsi* fivegSTmsi;                           // 5G-S-TMSI (Optional)
-  // TODO: AMF Set ID (Optional)
-  UEContextRequest* uEContextRequest;  // Optional
-  // TODO: Allowed NSSAI (Optional)
+  RAN_UE_NGAP_ID ranUeNgapId;                        // Mandatory
+  NAS_PDU nasPdu;                                    // Mandatory
+  UserLocationInformation userLocationInformation;   // Mandatory
+  RRCEstablishmentCause rRCEstablishmentCause;       // Mandatory
+  std::optional<FiveGSTmsi> fivegSTmsi;              // 5G-S-TMSI (Optional)
+  std::optional<AMFSetID> amfSetId;                  // Optional
+  std::optional<UEContextRequest> uEContextRequest;  // Optional
+  std::optional<AllowedNSSAI> allowedNssai;          // Optional
   // TODO: Source to Target AMF Information Reroute (Optional)
 };
 

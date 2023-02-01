@@ -19,17 +19,7 @@
  *      contact@openairinterface.org
  */
 
-/*! \file
- \brief
- \author
- \date
- \email: contact@openairinterface.org
- */
-
 #include "PDUSessionResourceModifyListModReq.hpp"
-
-#include <iostream>
-using namespace std;
 
 namespace ngap {
 
@@ -40,26 +30,24 @@ PDUSessionResourceModifyListModReq::PDUSessionResourceModifyListModReq() {}
 PDUSessionResourceModifyListModReq::~PDUSessionResourceModifyListModReq() {}
 
 //------------------------------------------------------------------------------
-void PDUSessionResourceModifyListModReq::setPDUSessionResourceModifyListModReq(
-    const std::vector<PDUSessionResourceModifyItemModReq>&
-        m_pduSessionResourceModifyListModReq) {
-  pduSessionResourceModifyListModReq = m_pduSessionResourceModifyListModReq;
+void PDUSessionResourceModifyListModReq::set(
+    const std::vector<PDUSessionResourceModifyItemModReq>& list) {
+  item_list_ = list;
 }
 
 //------------------------------------------------------------------------------
-bool PDUSessionResourceModifyListModReq::
-    encode2PDUSessionResourceModifyListModReq(
-        Ngap_PDUSessionResourceModifyListModReq_t&
-            m_pduSessionResourceModifyListModReq) {
-  for (auto pdu : pduSessionResourceModifyListModReq) {
-    Ngap_PDUSessionResourceModifyItemModReq_t* request =
+bool PDUSessionResourceModifyListModReq::encode(
+    Ngap_PDUSessionResourceModifyListModReq_t&
+        pdu_session_resource_modify_list_mod_req) {
+  for (auto pdu : item_list_) {
+    Ngap_PDUSessionResourceModifyItemModReq_t* item =
         (Ngap_PDUSessionResourceModifyItemModReq_t*) calloc(
             1, sizeof(Ngap_PDUSessionResourceModifyItemModReq_t));
 
-    if (!request) return false;
-    if (!pdu.encode2PDUSessionResourceModifyItemModReq(*request)) return false;
-    if (ASN_SEQUENCE_ADD(&m_pduSessionResourceModifyListModReq.list, request) !=
-        0)
+    if (!item) return false;
+    if (!pdu.encode(*item)) return false;
+    if (ASN_SEQUENCE_ADD(
+            &pdu_session_resource_modify_list_mod_req.list, item) != 0)
       return false;
   }
 
@@ -67,31 +55,27 @@ bool PDUSessionResourceModifyListModReq::
 }
 
 //------------------------------------------------------------------------------
-bool PDUSessionResourceModifyListModReq::
-    decodefromPDUSessionResourceModifyListModReq(
-        Ngap_PDUSessionResourceModifyListModReq_t&
-            pduSessionResourceSetupListSUReq) {
-  uint32_t numberofPDUSessions = pduSessionResourceSetupListSUReq.list.count;
+bool PDUSessionResourceModifyListModReq::decode(
+    Ngap_PDUSessionResourceModifyListModReq_t&
+        pdu_session_resource_modify_list_mod_req) {
+  uint32_t numberofPDUSessions =
+      pdu_session_resource_modify_list_mod_req.list.count;
 
   for (int i = 0; i < numberofPDUSessions; i++) {
-    PDUSessionResourceModifyItemModReq pduSessionResourceModifyItemModReq = {};
+    PDUSessionResourceModifyItemModReq item = {};
 
-    if (!pduSessionResourceModifyItemModReq
-             .decodefromPDUSessionResourceModifyItemModReq(
-                 *pduSessionResourceSetupListSUReq.list.array[i]))
+    if (!item.decode(*pdu_session_resource_modify_list_mod_req.list.array[i]))
       return false;
-    pduSessionResourceModifyListModReq.push_back(
-        pduSessionResourceModifyItemModReq);
+    item_list_.push_back(item);
   }
 
   return true;
 }
 
 //------------------------------------------------------------------------------
-void PDUSessionResourceModifyListModReq::getPDUSessionResourceModifyListModReq(
-    std::vector<PDUSessionResourceModifyItemModReq>&
-        m_pduSessionResourceModifyListModReq) {
-  m_pduSessionResourceModifyListModReq = pduSessionResourceModifyListModReq;
+void PDUSessionResourceModifyListModReq::get(
+    std::vector<PDUSessionResourceModifyItemModReq>& list) {
+  list = item_list_;
 }
 
 }  // namespace ngap

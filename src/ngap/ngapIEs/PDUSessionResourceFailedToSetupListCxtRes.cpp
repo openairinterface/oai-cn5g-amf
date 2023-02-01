@@ -19,13 +19,6 @@
  *      contact@openairinterface.org
  */
 
-/*! \file
- \brief
- \author  Keliang DU, BUPT
- \date 2020
- \email: contact@openairinterface.org
- */
-
 #include "PDUSessionResourceFailedToSetupListCxtRes.hpp"
 
 #include <iostream>
@@ -42,34 +35,30 @@ PDUSessionResourceFailedToSetupListCxtRes::
     ~PDUSessionResourceFailedToSetupListCxtRes() {}
 
 //------------------------------------------------------------------------------
-void PDUSessionResourceFailedToSetupListCxtRes::
-    setPDUSessionResourceFailedToSetupListCxtRes(
-        const std::vector<PDUSessionResourceFailedToSetupItemCxtRes>& list) {
-  itemList = list;
+void PDUSessionResourceFailedToSetupListCxtRes::set(
+    const std::vector<PDUSessionResourceFailedToSetupItemCxtRes>& list) {
+  item_list_ = list;
 }
 
 //------------------------------------------------------------------------------
-void PDUSessionResourceFailedToSetupListCxtRes::
-    getPDUSessionResourceFailedToSetupListCxtRes(
-        std::vector<PDUSessionResourceFailedToSetupItemCxtRes>& list) {
-  list = itemList;
+void PDUSessionResourceFailedToSetupListCxtRes::get(
+    std::vector<PDUSessionResourceFailedToSetupItemCxtRes>& list) {
+  list = item_list_;
 }
 
 //------------------------------------------------------------------------------
-bool PDUSessionResourceFailedToSetupListCxtRes::
-    encode2PDUSessionResourceFailedToSetupListCxtRes(
-        Ngap_PDUSessionResourceFailedToSetupListCxtRes_t*
-            pduSessionResourceFailedToSetupListCxtRes) {
+bool PDUSessionResourceFailedToSetupListCxtRes::encode(
+    Ngap_PDUSessionResourceFailedToSetupListCxtRes_t*
+        pduSessionResourceFailedToSetupListCxtRes) {
   for (std::vector<PDUSessionResourceFailedToSetupItemCxtRes>::iterator it =
-           std::begin(itemList);
-       it < std::end(itemList); ++it) {
+           std::begin(item_list_);
+       it < std::end(item_list_); ++it) {
     Ngap_PDUSessionResourceFailedToSetupItemCxtRes_t* failedToResponse =
         (Ngap_PDUSessionResourceFailedToSetupItemCxtRes_t*) calloc(
             1, sizeof(Ngap_PDUSessionResourceFailedToSetupItemCxtRes_t));
     if (!failedToResponse) return false;
 
-    if (!it->encode2PDUSessionResourceFailedToSetupItemCxtRes(failedToResponse))
-      return false;
+    if (!it->encode(failedToResponse)) return false;
     if (ASN_SEQUENCE_ADD(
             &pduSessionResourceFailedToSetupListCxtRes->list,
             failedToResponse) != 0)
@@ -80,18 +69,16 @@ bool PDUSessionResourceFailedToSetupListCxtRes::
 }
 
 //------------------------------------------------------------------------------
-bool PDUSessionResourceFailedToSetupListCxtRes::
-    decodefromPDUSessionResourceFailedToSetupListCxtRes(
-        Ngap_PDUSessionResourceFailedToSetupListCxtRes_t*
-            pduSessionResourceFailedToSetupListCxtRes) {
-  itemList.reserve(pduSessionResourceFailedToSetupListCxtRes->list.count);
+bool PDUSessionResourceFailedToSetupListCxtRes::decode(
+    Ngap_PDUSessionResourceFailedToSetupListCxtRes_t*
+        pduSessionResourceFailedToSetupListCxtRes) {
+  item_list_.reserve(pduSessionResourceFailedToSetupListCxtRes->list.count);
   for (int i = 0; i < pduSessionResourceFailedToSetupListCxtRes->list.count;
        i++) {
     PDUSessionResourceFailedToSetupItemCxtRes item = {};
-    if (!item.decodefromPDUSessionResourceFailedToSetupItemCxtRes(
-            pduSessionResourceFailedToSetupListCxtRes->list.array[i]))
+    if (!item.decode(pduSessionResourceFailedToSetupListCxtRes->list.array[i]))
       return false;
-    itemList.push_back(item);
+    item_list_.push_back(item);
   }
 
   return true;

@@ -30,8 +30,8 @@
 #include <string.h>
 
 #include "OCTET_STRING.h"
-#include "logger.hpp"
 #include "comUt.hpp"
+#include "logger.hpp"
 
 /************ algorithm f1 **************/
 /*

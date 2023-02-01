@@ -43,8 +43,8 @@ class UplinkNASTransportMsg : public NgapUEMessage {
   void setRanUeNgapId(const uint32_t& id) override;
   bool decodeFromPdu(Ngap_NGAP_PDU_t* ngapMsgPdu) override;
 
-  void setNasPdu(uint8_t* nas, size_t sizeofnas);
-  bool getNasPdu(uint8_t*& nas, size_t& sizeofnas);
+  void setNasPdu(const bstring& pdu);
+  bool getNasPdu(bstring& pdu);
 
   void setUserLocationInfoNR(const NrCgi_t& cig, const Tai_t& tai);
   bool getUserLocationInfoNR(NrCgi_t& cig, Tai_t& tai);

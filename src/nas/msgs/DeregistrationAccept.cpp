@@ -19,58 +19,67 @@
  *      contact@openairinterface.org
  */
 
-/*! \file
- \brief
- \author
- \date 2020
- \email: contact@openairinterface.org
- */
-
 #include "DeregistrationAccept.hpp"
 
-#include "3gpp_ts24501.hpp"
+#include "3gpp_24.501.hpp"
 #include "String2Value.hpp"
 #include "logger.hpp"
 
 using namespace nas;
 
 //------------------------------------------------------------------------------
-DeregistrationAccept::DeregistrationAccept() {
-  plain_header = NULL;
+DeregistrationAccept::DeregistrationAccept(bool is_ue_originating)
+    : NasMmPlainHeader() {
+  NasMmPlainHeader::SetEpd(EPD_5GS_MM_MSG);
+  if (is_ue_originating) {
+    NasMmPlainHeader::SetMessageType(DEREGISTRATION_ACCEPT_UE_ORIGINATING);
+  } else {
+    NasMmPlainHeader::SetMessageType(DEREGISTRATION_ACCEPT_UE_TERMINATED);
+  }
 }
 
 //------------------------------------------------------------------------------
 DeregistrationAccept::~DeregistrationAccept() {}
 
 //------------------------------------------------------------------------------
-void DeregistrationAccept::setHeader(uint8_t security_header_type) {
-  plain_header = new NasMmPlainHeader();
-  plain_header->setHeader(
-      EPD_5GS_MM_MSG, security_header_type,
-      DEREGISTRATION_ACCEPT_UE_ORIGINATING);
+void DeregistrationAccept::SetHeader(uint8_t security_header_type) {
+  NasMmPlainHeader::SetSecurityHeaderType(security_header_type);
 }
 
 //------------------------------------------------------------------------------
-int DeregistrationAccept::encode2buffer(uint8_t* buf, int len) {
+int DeregistrationAccept::Encode(uint8_t* buf, int len) {
   Logger::nas_mm().debug("Encoding De-registration Accept message");
-  int encoded_size = 0;
-  if (!plain_header) {
-    Logger::nas_mm().error("Mandatory IE missing Header");
-    return 0;
+
+  int encoded_size    = 0;
+  int encoded_ie_size = 0;
+
+  // Header
+  if ((encoded_ie_size = NasMmPlainHeader::Encode(buf, len)) ==
+      KEncodeDecodeError) {
+    Logger::nas_mm().error("Encoding NAS Header error");
+    return KEncodeDecodeError;
   }
-  encoded_size = plain_header->encode2buffer(buf, len);
+  encoded_size += encoded_ie_size;
+
   Logger::nas_mm().debug(
       "Encoded De-registration Accept message len (%d)", encoded_size);
   return encoded_size;
 }
 
 //------------------------------------------------------------------------------
-int DeregistrationAccept::decodefrombuffer(
-    NasMmPlainHeader* header, uint8_t* buf, int len) {
-  Logger::nas_mm().debug("Decoding De-registrationReject message");
-  int decoded_size = 3;
-  plain_header     = header;
+int DeregistrationAccept::Decode(uint8_t* buf, int len) {
+  int decoded_size   = 0;
+  int decoded_result = 0;
+
+  // Header
+  decoded_result = NasMmPlainHeader::Decode(buf, len);
+  if (decoded_result == KEncodeDecodeError) {
+    Logger::nas_mm().error("Decoding NAS Header error");
+    return KEncodeDecodeError;
+  }
+  decoded_size += decoded_result;
+
   Logger::nas_mm().debug(
-      "decoded De-registrationReject message len (%d)", decoded_size);
-  return 1;
+      "Decoded De-registrationReject message len (%d)", decoded_size);
+  return decoded_size;
 }

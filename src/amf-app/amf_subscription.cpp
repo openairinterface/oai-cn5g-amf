@@ -19,17 +19,10 @@
  *      contact@openairinterface.org
  */
 
-/*! \file amf_subscription.cpp
- \brief
- \author
- \company
- \date 2021
- \email:
- */
-
 #include "amf_subscription.hpp"
-#include "logger.hpp"
+
 #include "3gpp_conversions.hpp"
+#include "logger.hpp"
 
 using namespace amf_application;
 

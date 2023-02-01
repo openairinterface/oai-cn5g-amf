@@ -30,23 +30,22 @@ SupportedTAList::SupportedTAList() {}
 SupportedTAList::~SupportedTAList() {}
 
 //------------------------------------------------------------------------------
-bool SupportedTAList::encode2SupportedTAList(
-    Ngap_SupportedTAList_t* supportedTAList) {
+bool SupportedTAList::encode(Ngap_SupportedTAList_t& supportedTAList) {
   for (std::vector<SupportedTaItem>::iterator it = std::begin(supportedTAItems);
        it < std::end(supportedTAItems); ++it) {
     Ngap_SupportedTAItem_t* ta =
         (Ngap_SupportedTAItem_t*) calloc(1, sizeof(Ngap_SupportedTAItem_t));
     if (!it->encode2SupportedTaItem(ta)) return false;
-    if (ASN_SEQUENCE_ADD(&supportedTAList->list, ta) != 0) return false;
+    if (ASN_SEQUENCE_ADD(&supportedTAList.list, ta) != 0) return false;
   }
   return true;
 }
 
 //------------------------------------------------------------------------------
-bool SupportedTAList::decodefromSupportedTAList(Ngap_SupportedTAList_t* pdu) {
-  for (int i = 0; i < pdu->list.count; i++) {
+bool SupportedTAList::decode(const Ngap_SupportedTAList_t& pdu) {
+  for (int i = 0; i < pdu.list.count; i++) {
     SupportedTaItem item = {};
-    if (!item.decodefromSupportedTaItem(pdu->list.array[i])) return false;
+    if (!item.decodefromSupportedTaItem(pdu.list.array[i])) return false;
     supportedTAItems.push_back(item);
   }
 

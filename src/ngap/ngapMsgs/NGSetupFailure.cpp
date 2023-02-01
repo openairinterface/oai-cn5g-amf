@@ -32,6 +32,7 @@ namespace ngap {
 NGSetupFailureMsg::NGSetupFailureMsg() : NgapMessage() {
   ngSetupFailureIEs = nullptr;
   // criticalityDiagnostics = NULL;
+  timeToWait = std::nullopt;
   NgapMessage::setMessageType(NgapMessageType::NG_SETUP_FAILURE);
   initialize();
 }
@@ -53,7 +54,7 @@ void NGSetupFailureMsg::addCauseIE() {
   ie->criticality   = Ngap_Criticality_ignore;
   ie->value.present = Ngap_NGSetupFailureIEs__value_PR_Cause;
 
-  if (!cause.encode2Cause(&ie->value.choice.Cause)) {
+  if (!cause.encode(ie->value.choice.Cause)) {
     Logger::ngap().error("Encode NGAP Cause IE error");
     free_wrapper((void**) &ie);
     return;
@@ -65,13 +66,15 @@ void NGSetupFailureMsg::addCauseIE() {
 
 //------------------------------------------------------------------------------
 void NGSetupFailureMsg::addTimeToWaitIE() {
+  if (!timeToWait.has_value()) return;
+
   Ngap_NGSetupFailureIEs_t* ie =
       (Ngap_NGSetupFailureIEs_t*) calloc(1, sizeof(Ngap_NGSetupFailureIEs_t));
   ie->id            = Ngap_ProtocolIE_ID_id_TimeToWait;
   ie->criticality   = Ngap_Criticality_ignore;
   ie->value.present = Ngap_NGSetupFailureIEs__value_PR_TimeToWait;
 
-  if (!timeToWait.encode2TimeToWait(&ie->value.choice.TimeToWait)) {
+  if (!timeToWait.value().encode(ie->value.choice.TimeToWait)) {
     Logger::ngap().error("Encode NGAP Cause IE error");
     free_wrapper((void**) &ie);
     return;
@@ -82,14 +85,14 @@ void NGSetupFailureMsg::addTimeToWaitIE() {
 }
 
 //------------------------------------------------------------------------------
-void NGSetupFailureMsg::setCauseRadioNetwork(
+void NGSetupFailureMsg::set(
     const e_Ngap_CauseRadioNetwork& cause_value,
     const e_Ngap_TimeToWait& time_to_wait) {
   cause.setChoiceOfCause(Ngap_Cause_PR_radioNetwork);
   cause.setValue(cause_value);
   addCauseIE();
 
-  timeToWait.setValue(time_to_wait);
+  timeToWait = std::make_optional<TimeToWait>(time_to_wait);
   addTimeToWaitIE();
 }
 
@@ -102,14 +105,14 @@ void NGSetupFailureMsg::setCauseRadioNetwork(
 }
 
 //------------------------------------------------------------------------------
-void NGSetupFailureMsg::setCauseTransport(
+void NGSetupFailureMsg::set(
     const e_Ngap_CauseTransport& cause_value,
     const e_Ngap_TimeToWait& time_to_wait) {
   cause.setChoiceOfCause(Ngap_Cause_PR_transport);
   cause.setValue(cause_value);
   addCauseIE();
 
-  timeToWait.setValue(time_to_wait);
+  timeToWait = std::make_optional<TimeToWait>(time_to_wait);
   addTimeToWaitIE();
 }
 
@@ -122,13 +125,13 @@ void NGSetupFailureMsg::setCauseTransport(
 }
 
 //------------------------------------------------------------------------------
-void NGSetupFailureMsg::setCauseNas(
+void NGSetupFailureMsg::set(
     const e_Ngap_CauseNas& cause_value, const e_Ngap_TimeToWait& time_to_wait) {
   cause.setChoiceOfCause(Ngap_Cause_PR_nas);
   cause.setValue(cause_value);
   addCauseIE();
 
-  timeToWait.setValue(time_to_wait);
+  timeToWait = std::make_optional<TimeToWait>(time_to_wait);
   addTimeToWaitIE();
 }
 
@@ -140,14 +143,14 @@ void NGSetupFailureMsg::setCauseNas(const e_Ngap_CauseNas& cause_value) {
 }
 
 //------------------------------------------------------------------------------
-void NGSetupFailureMsg::setCauseProtocol(
+void NGSetupFailureMsg::set(
     const e_Ngap_CauseProtocol& cause_value,
     const e_Ngap_TimeToWait& time_to_wait) {
   cause.setChoiceOfCause(Ngap_Cause_PR_protocol);
   cause.setValue(cause_value);
   addCauseIE();
 
-  timeToWait.setValue(time_to_wait);
+  timeToWait = std::make_optional<TimeToWait>(time_to_wait);
   addTimeToWaitIE();
 }
 
@@ -160,14 +163,14 @@ void NGSetupFailureMsg::setCauseProtocol(
 }
 
 //------------------------------------------------------------------------------
-void NGSetupFailureMsg::setCauseMisc(
+void NGSetupFailureMsg::set(
     const e_Ngap_CauseMisc& cause_value,
     const e_Ngap_TimeToWait& time_to_wait) {
   cause.setChoiceOfCause(Ngap_Cause_PR_misc);
   cause.setValue(cause_value);
   addCauseIE();
 
-  timeToWait.setValue(time_to_wait);
+  timeToWait = std::make_optional<TimeToWait>(time_to_wait);
   addTimeToWaitIE();
 }
 
@@ -206,9 +209,8 @@ bool NGSetupFailureMsg::decodeFromPdu(Ngap_NGAP_PDU_t* ngapMsgPdu) {
                 Ngap_Criticality_ignore &&
             ngSetupFailureIEs->protocolIEs.list.array[i]->value.present ==
                 Ngap_NGSetupFailureIEs__value_PR_Cause) {
-          if (!cause.decodefromCause(
-                  &ngSetupFailureIEs->protocolIEs.list.array[i]
-                       ->value.choice.Cause)) {
+          if (!cause.decode(ngSetupFailureIEs->protocolIEs.list.array[i]
+                                ->value.choice.Cause)) {
             Logger::ngap().error("Decoded NGAP Cause IE error");
             return false;
           }
@@ -222,12 +224,13 @@ bool NGSetupFailureMsg::decodeFromPdu(Ngap_NGAP_PDU_t* ngapMsgPdu) {
                 Ngap_Criticality_ignore &&
             ngSetupFailureIEs->protocolIEs.list.array[i]->value.present ==
                 Ngap_NGSetupFailureIEs__value_PR_TimeToWait) {
-          if (!timeToWait.decodefromTimeToWait(
-                  &ngSetupFailureIEs->protocolIEs.list.array[i]
-                       ->value.choice.TimeToWait)) {
+          TimeToWait tmp = {};
+          if (!tmp.decode(ngSetupFailureIEs->protocolIEs.list.array[i]
+                              ->value.choice.TimeToWait)) {
             Logger::ngap().error("Decoded NGAP TimeToWait IE error");
             return false;
           }
+          timeToWait = std::optional<TimeToWait>(tmp);
         } else {
           Logger::ngap().error("Decoded NGAP TimeToWait IE error");
           return false;
@@ -303,11 +306,16 @@ bool NGSetupFailureMsg::getCauseMisc(e_Ngap_CauseMisc& causeMisc) {
 }
 
 //------------------------------------------------------------------------------
-bool NGSetupFailureMsg::getTime2Wait(e_Ngap_TimeToWait& time) {
-  if (timeToWait.getValue() < 0) {
+void NGSetupFailureMsg::setTimeToWait(const e_Ngap_TimeToWait& time) {
+  timeToWait = std::make_optional<TimeToWait>(time);
+}
+
+//------------------------------------------------------------------------------
+bool NGSetupFailureMsg::getTimeToWait(e_Ngap_TimeToWait& time) {
+  if (timeToWait.has_value()) {
     return false;
   }
-  time = (e_Ngap_TimeToWait) timeToWait.getValue();
+  time = (e_Ngap_TimeToWait) timeToWait.value().getValue();
   return true;
 }
 

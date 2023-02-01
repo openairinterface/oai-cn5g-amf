@@ -19,13 +19,6 @@
  *      contact@openairinterface.org
  */
 
-/*! \file
- \brief
- \author  Keliang DU, BUPT
- \date 2020
- \email: contact@openairinterface.org
- */
-
 #include "PDUSessionResourceSetupListCxtRes.hpp"
 
 namespace ngap {
@@ -37,30 +30,29 @@ PDUSessionResourceSetupListCxtRes::PDUSessionResourceSetupListCxtRes() {}
 PDUSessionResourceSetupListCxtRes::~PDUSessionResourceSetupListCxtRes() {}
 
 //------------------------------------------------------------------------------
-void PDUSessionResourceSetupListCxtRes::setPDUSessionResourceSetupListCxtRes(
+void PDUSessionResourceSetupListCxtRes::set(
     const std::vector<PDUSessionResourceSetupItemCxtRes>& list) {
-  itemList = list;
+  item_list_ = list;
 }
 
 //------------------------------------------------------------------------------
-void PDUSessionResourceSetupListCxtRes::getPDUSessionResourceSetupListCxtRes(
+void PDUSessionResourceSetupListCxtRes::get(
     std::vector<PDUSessionResourceSetupItemCxtRes>& list) {
-  list = itemList;
+  list = item_list_;
 }
 
 //------------------------------------------------------------------------------
-bool PDUSessionResourceSetupListCxtRes::
-    encode2PDUSessionResourceSetupListCxtRes(
-        Ngap_PDUSessionResourceSetupListCxtRes_t*
-            pduSessionResourceSetupListCxtRes) {
+bool PDUSessionResourceSetupListCxtRes::encode(
+    Ngap_PDUSessionResourceSetupListCxtRes_t*
+        pduSessionResourceSetupListCxtRes) {
   for (std::vector<PDUSessionResourceSetupItemCxtRes>::iterator it =
-           std::begin(itemList);
-       it < std::end(itemList); ++it) {
+           std::begin(item_list_);
+       it < std::end(item_list_); ++it) {
     Ngap_PDUSessionResourceSetupItemCxtRes_t* response =
         (Ngap_PDUSessionResourceSetupItemCxtRes_t*) calloc(
             1, sizeof(Ngap_PDUSessionResourceSetupItemCxtRes_t));
     if (!response) return false;
-    if (!it->encode2PDUSessionResourceSetupItemCxtRes(response)) return false;
+    if (!it->encode(response)) return false;
     if (ASN_SEQUENCE_ADD(&pduSessionResourceSetupListCxtRes->list, response) !=
         0)
       return false;
@@ -70,17 +62,15 @@ bool PDUSessionResourceSetupListCxtRes::
 }
 
 //------------------------------------------------------------------------------
-bool PDUSessionResourceSetupListCxtRes::
-    decodefromPDUSessionResourceSetupListCxtRes(
-        Ngap_PDUSessionResourceSetupListCxtRes_t*
-            pduSessionResourceSetupListCxtRes) {
-  itemList.reserve(pduSessionResourceSetupListCxtRes->list.count);
+bool PDUSessionResourceSetupListCxtRes::decode(
+    Ngap_PDUSessionResourceSetupListCxtRes_t*
+        pduSessionResourceSetupListCxtRes) {
+  item_list_.reserve(pduSessionResourceSetupListCxtRes->list.count);
   for (int i = 0; i < pduSessionResourceSetupListCxtRes->list.count; i++) {
     PDUSessionResourceSetupItemCxtRes item = {};
-    if (!item.decodefromPDUSessionResourceSetupItemCxtRes(
-            pduSessionResourceSetupListCxtRes->list.array[i]))
+    if (!item.decode(pduSessionResourceSetupListCxtRes->list.array[i]))
       return false;
-    itemList.push_back(item);
+    item_list_.push_back(item);
   }
 
   return true;

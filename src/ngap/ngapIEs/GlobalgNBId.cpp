@@ -24,36 +24,39 @@
 namespace ngap {
 
 //------------------------------------------------------------------------------
-GlobalgNBId::GlobalgNBId() {}
+GlobalgNBId::GlobalgNBId() {
+  plmnId = {};
+  gNB_ID = {};
+}
 
 //------------------------------------------------------------------------------
 GlobalgNBId::~GlobalgNBId() {}
 
 //------------------------------------------------------------------------------
-void GlobalgNBId::setGlobalgNBId(const PlmnId& plmn, const GNB_ID& gnbid) {
+void GlobalgNBId::set(const PlmnId& plmn, const GNB_ID& gnbid) {
   plmnId = plmn;
   gNB_ID = gnbid;
 }
 
 //------------------------------------------------------------------------------
-bool GlobalgNBId::encode2GlobalgNBId(Ngap_GlobalGNB_ID_t* globalgnbid) {
-  if (!plmnId.encode2octetstring(globalgnbid->pLMNIdentity)) return false;
-  if (!gNB_ID.encode2bitstring(globalgnbid->gNB_ID)) return false;
-
-  return true;
-}
-
-//------------------------------------------------------------------------------
-bool GlobalgNBId::decodefromGlobalgNBId(Ngap_GlobalGNB_ID_t* globalgnbid) {
-  if (!plmnId.decodefromoctetstring(globalgnbid->pLMNIdentity)) return false;
-  if (!gNB_ID.decodefrombitstring(globalgnbid->gNB_ID)) return false;
-
-  return true;
-}
-
-//------------------------------------------------------------------------------
-void GlobalgNBId::getGlobalgNBId(PlmnId& plmn, GNB_ID& gnbid) {
+void GlobalgNBId::get(PlmnId& plmn, GNB_ID& gnbid) {
   plmn  = plmnId;
   gnbid = gNB_ID;
+}
+
+//------------------------------------------------------------------------------
+bool GlobalgNBId::encode(Ngap_GlobalGNB_ID_t* globalgnbid) {
+  if (!plmnId.encode(globalgnbid->pLMNIdentity)) return false;
+  if (!gNB_ID.encode(globalgnbid->gNB_ID)) return false;
+
+  return true;
+}
+
+//------------------------------------------------------------------------------
+bool GlobalgNBId::decode(Ngap_GlobalGNB_ID_t* globalgnbid) {
+  if (!plmnId.decode(globalgnbid->pLMNIdentity)) return false;
+  if (!gNB_ID.decode(globalgnbid->gNB_ID)) return false;
+
+  return true;
 }
 }  // namespace ngap

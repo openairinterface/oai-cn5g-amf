@@ -37,16 +37,15 @@ class PLMNSupportItem {
   PLMNSupportItem();
   virtual ~PLMNSupportItem();
 
-  void setPlmnSliceSupportList(
-      const PlmnId& m_plmn, const std::vector<S_NSSAI>& m_snssais);
-  void getPlmnSliceSupportList(PlmnId& m_plmn, std::vector<S_NSSAI>& m_snssais);
+  void set(const PlmnId& plmn_id, const std::vector<S_NSSAI>& snssais);
+  void get(PlmnId& plmn_id, std::vector<S_NSSAI>& snssais);
 
-  bool encode2PLMNSupportItem(Ngap_PLMNSupportItem_t*);
-  bool decodefromPLMNSupportItem(Ngap_PLMNSupportItem_t*);
+  bool encode(Ngap_PLMNSupportItem_t*);
+  bool decode(Ngap_PLMNSupportItem_t*);
 
  private:
-  PlmnId plmn;                   // Mandatory
-  std::vector<S_NSSAI> snssais;  // Mandatory
+  PlmnId plmn_id_;                           // Mandatory
+  std::vector<S_NSSAI> slice_support_list_;  // Mandatory
 };
 
 }  // namespace ngap

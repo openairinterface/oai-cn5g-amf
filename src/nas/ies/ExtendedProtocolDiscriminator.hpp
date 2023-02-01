@@ -19,28 +19,38 @@
  *      contact@openairinterface.org
  */
 
-/*! \file
- \brief
- \author  Keliang DU, BUPT
- \date 2020
- \email: contact@openairinterface.org
- */
+#ifndef EXTENDED_PROTOCOL_DISCRIMINATOR_H_
+#define EXTENDED_PROTOCOL_DISCRIMINATOR_H_
 
-#ifndef _EPD_H_
-#define _EPD_H_
+#include "NasIe.hpp"
 
-#include <stdint.h>
+constexpr uint8_t kExtendedProtocolDiscriminatorLength = 1;
+constexpr auto kExtendedProtocolDiscriminatorIeName =
+    "Extended Protocol Discriminator";
 
 namespace nas {
 
-class ExtendedProtocolDiscriminator {
+class ExtendedProtocolDiscriminator : public NasIe {
  public:
-  void encode2buffer(uint8_t* buf, int len);
-  void setValue(const uint8_t epd);
-  uint8_t getValue();
+  ExtendedProtocolDiscriminator(){};  // TODO: = delete;
+  ExtendedProtocolDiscriminator(const uint8_t& epd);
+  virtual ~ExtendedProtocolDiscriminator();
+
+  static std::string GetIeName() {
+    return kExtendedProtocolDiscriminatorIeName;
+  }
+
+  bool Validate(const int& len) const override;
+  void Set(const uint8_t& epd);
+  void Get(uint8_t& epd) const;
+  uint8_t Get() const;
+
+  int Encode(uint8_t* buf, const int& len) override;
+  int Decode(
+      const uint8_t* const buf, const int& len, bool is_iei = true) override;
 
  private:
-  uint8_t m_epd;
+  uint8_t epd_;
 };
 
 }  // namespace nas

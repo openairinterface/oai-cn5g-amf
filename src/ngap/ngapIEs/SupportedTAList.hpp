@@ -19,13 +19,6 @@
  *      contact@openairinterface.org
  */
 
-/*! \file
- \brief
- \author
- \date 2020
- \email: contact@openairinterface.org
- */
-
 #ifndef _SUPPORTED_TA_LIST_H_
 #define _SUPPORTED_TA_LIST_H_
 
@@ -43,8 +36,8 @@ class SupportedTAList {
   SupportedTAList();
   virtual ~SupportedTAList();
 
-  bool encode2SupportedTAList(Ngap_SupportedTAList_t* ngSetupRequest);
-  bool decodefromSupportedTAList(Ngap_SupportedTAList_t* pdu);
+  bool encode(Ngap_SupportedTAList_t& ngSetupRequest);
+  bool decode(const Ngap_SupportedTAList_t& pdu);
 
   void setSupportedTaItems(const std::vector<SupportedTaItem>& items);
   void getSupportedTaItems(std::vector<SupportedTaItem>& items);

@@ -19,13 +19,6 @@
  *      contact@openairinterface.org
  */
 
-/*! \file security_def.hpp
- \brief
- \author  Keliang DU, BUPT
- \date 2020
- \email: contact@openairinterface.org
- */
-
 #ifndef _SECURITY_DEF_H_
 #define _SECURITY_DEF_H_
 

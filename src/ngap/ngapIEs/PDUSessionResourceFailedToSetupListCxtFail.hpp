@@ -36,17 +36,13 @@ class PDUSessionResourceFailedToSetupListCxtFail {
   PDUSessionResourceFailedToSetupListCxtFail();
   virtual ~PDUSessionResourceFailedToSetupListCxtFail();
 
-  void setPDUSessionResourceFailedToSetupListCxtFail(
-      const std::vector<PDUSessionResourceFailedToSetupItemCxtFail>& list);
-  void getPDUSessionResourceFailedToSetupListCxtFail(
-      std::vector<PDUSessionResourceFailedToSetupItemCxtFail>& list);
+  void set(const std::vector<PDUSessionResourceFailedToSetupItemCxtFail>& list);
+  void get(std::vector<PDUSessionResourceFailedToSetupItemCxtFail>& list);
 
-  bool encode2PDUSessionResourceFailedToSetupListCxtFail(
-      Ngap_PDUSessionResourceFailedToSetupListCxtFail_t*
-          pduSessionResourceFailedToSetupListCxtFail);
-  bool decodefromPDUSessionResourceFailedToSetupListCxtFail(
-      Ngap_PDUSessionResourceFailedToSetupListCxtFail_t*
-          pduSessionResourceFailedToSetupListCxtFail);
+  bool encode(Ngap_PDUSessionResourceFailedToSetupListCxtFail_t*
+                  pduSessionResourceFailedToSetupListCxtFail);
+  bool decode(Ngap_PDUSessionResourceFailedToSetupListCxtFail_t*
+                  pduSessionResourceFailedToSetupListCxtFail);
 
  private:
   std::vector<PDUSessionResourceFailedToSetupItemCxtFail> itemList;

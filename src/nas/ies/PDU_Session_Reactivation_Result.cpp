@@ -18,101 +18,102 @@
  * For more information about the OpenAirInterface (OAI) Software Alliance:
  *      contact@openairinterface.org
  */
-
-/*! \file
- \brief
- \author  Keliang DU, BUPT
- \date 2020
- \email: contact@openairinterface.org
- */
-
 #include "PDU_Session_Reactivation_Result.hpp"
 
+#include "3gpp_24.501.hpp"
+#include "common_defs.h"
+#include "Ie_Const.hpp"
 #include "logger.hpp"
+
 using namespace nas;
 
 //------------------------------------------------------------------------------
-PDU_Session_Reactivation_Result::PDU_Session_Reactivation_Result(uint8_t iei) {
-  _iei   = iei;
-  _value = 0;
-  length = 0;
+PDU_Session_Reactivation_Result::PDU_Session_Reactivation_Result()
+    : Type4NasIe(kIeiPduSessionReactivationResult) {
+  SetLengthIndicator(2);
 }
 
 //------------------------------------------------------------------------------
-PDU_Session_Reactivation_Result::PDU_Session_Reactivation_Result(
-    const uint8_t iei, uint16_t value) {
-  _iei   = iei;
+PDU_Session_Reactivation_Result::PDU_Session_Reactivation_Result(uint16_t value)
+    : Type4NasIe(kIeiPduSessionReactivationResult) {
   _value = value;
-  length = 4;
-}
-
-//------------------------------------------------------------------------------
-PDU_Session_Reactivation_Result::PDU_Session_Reactivation_Result() {
-  _iei   = 0;
-  _value = 0;
-  length = 0;
+  SetLengthIndicator(2);
 }
 
 //------------------------------------------------------------------------------
 PDU_Session_Reactivation_Result::~PDU_Session_Reactivation_Result() {}
 
 //------------------------------------------------------------------------------
-void PDU_Session_Reactivation_Result::setValue(uint8_t iei, uint16_t value) {
-  _iei   = iei;
+void PDU_Session_Reactivation_Result::setValue(uint16_t value) {
   _value = value;
 }
 
 //------------------------------------------------------------------------------
-uint16_t PDU_Session_Reactivation_Result::getValue() {
+uint16_t PDU_Session_Reactivation_Result::getValue() const {
   return _value;
 }
 
 //------------------------------------------------------------------------------
-int PDU_Session_Reactivation_Result::encode2buffer(uint8_t* buf, int len) {
-  Logger::nas_mm().debug(
-      "encoding PDU_Session_Reactivation_Result iei(0x%x)", _iei);
-  if (len < length) {
-    Logger::nas_mm().error("len is less than %d", length);
-    return 0;
+int PDU_Session_Reactivation_Result::Encode(uint8_t* buf, int len) {
+  Logger::nas_mm().debug("Encoding %s", GetIeName().c_str());
+  int ie_len = GetIeLength();
+
+  if (len < ie_len) {
+    Logger::nas_mm().error("Len is less than %d", ie_len);
+    return KEncodeDecodeError;
   }
+
   int encoded_size = 0;
-  if (_iei) {
-    *(buf + encoded_size) = _iei;
-    encoded_size++;
-    *(buf + encoded_size) = length - 2;
-    encoded_size++;
-    *(buf + encoded_size) = (_value & 0x00ff);
-    encoded_size++;
-    *(buf + encoded_size) = (_value & 0xff00) >> 8;
-    encoded_size++;
-  } else {
-    //*(buf + encoded_size) = length - 1; encoded_size++;
-    //*(buf + encoded_size) = _value; encoded_size++; encoded_size++;
+  // IEI and Length
+  int encoded_header_size = Type4NasIe::Encode(buf + encoded_size, len);
+  if (encoded_header_size == KEncodeDecodeError) return KEncodeDecodeError;
+  encoded_size += encoded_header_size;
+
+  // Octet 3
+  ENCODE_U16(buf + encoded_size, _value, encoded_size);
+  // TODO: Encode spare for the rest
+  uint8_t spare = 0;
+  int spare_len = ie_len - encoded_size;
+  for (int i = 0; i < spare_len; i++) {
+    ENCODE_U8(buf + encoded_size, spare, encoded_size);
   }
+
   Logger::nas_mm().debug(
-      "encoded PDU_Session_Reactivation_Result len(%d)", encoded_size);
+      "Encoded %s, len (%d)", GetIeName().c_str(), encoded_size);
   return encoded_size;
 }
 
 //------------------------------------------------------------------------------
-int PDU_Session_Reactivation_Result::decodefrombuffer(
-    uint8_t* buf, int len, bool is_option) {
-  Logger::nas_mm().debug(
-      "decoding PDU_Session_Reactivation_Result iei(0x%x)", *buf);
-  int decoded_size = 0;
-  if (is_option) {
-    decoded_size++;
+int PDU_Session_Reactivation_Result::Decode(
+    uint8_t* buf, int len, bool is_iei) {
+  if (len < kPduSessionReactivationResultMinimumLength) {
+    Logger::nas_mm().error(
+        "Buffer length is less than the minimum length of this IE (%d octet)",
+        kPduSessionReactivationResultMinimumLength);
+    return KEncodeDecodeError;
   }
-  _value = 0x0000;
-  length = *(buf + decoded_size);
-  decoded_size++;
-  _value |= *(buf + decoded_size);
-  decoded_size++;
-  _value |= (*(buf + decoded_size)) << 8;
-  decoded_size++;
+
+  uint8_t decoded_size = 0;
+  uint8_t octet        = 0;
+  Logger::nas_mm().debug("Decoding %s", GetIeName().c_str());
+
+  // IEI and Length
+  int decoded_header_size = Type4NasIe::Decode(buf + decoded_size, len, is_iei);
+  // decoded_size += Type4NasIe::Decode(buf + decoded_size, len, is_iei);
+  if (decoded_header_size == KEncodeDecodeError) return KEncodeDecodeError;
+  decoded_size += decoded_header_size;
+
+  // Value
+  DECODE_U16(buf + decoded_size, _value, decoded_size);
+  // TODO: decode the rest as spare for now
+  uint8_t spare = 0;
+  for (int i = 0; i < (GetLengthIndicator() - 2); i++) {
+    DECODE_U8(buf + decoded_size, spare, decoded_size);
+  }
+
   Logger::nas_mm().debug(
-      "decoded PDU_Session_Reactivation_Result value(0x%4x)", _value);
+      "Decoded %s, Value (0x%x)", GetIeName().c_str(), _value);
   Logger::nas_mm().debug(
-      "decoded PDU_Session_Reactivation_Result len(%d)", decoded_size);
+      "Decoded %s, len (%d)", GetIeName().c_str(), decoded_size);
   return decoded_size;
 }

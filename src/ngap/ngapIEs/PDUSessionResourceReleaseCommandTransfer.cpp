@@ -19,12 +19,6 @@
  *      contact@openairinterface.org
  */
 
-/*! \file
- \brief
- \author  niuxiansheng-niu, BUPT
- \date 2020
- \email: contact@openairinterface.org
- */
 #include "PDUSessionResourceReleaseCommandTransfer.hpp"
 
 extern "C" {
@@ -62,8 +56,8 @@ void PDUSessionResourceReleaseCommandTransfer::setCauseRadioNetwork(
   causeValue->setChoiceOfCause(Ngap_Cause_PR_radioNetwork);
   causeValue->setValue(cause_value);
 
-  int ret = causeValue->encode2Cause(
-      &pduSessionResourceReleaseCommandTransferIEs->cause);
+  int ret =
+      causeValue->encode(pduSessionResourceReleaseCommandTransferIEs->cause);
   if (!ret) {
     cout << "encode CauseRadioNetwork IE error" << endl;
     return;
@@ -76,8 +70,8 @@ void PDUSessionResourceReleaseCommandTransfer::setCauseTransport(
   causeValue->setChoiceOfCause(Ngap_Cause_PR_transport);
   causeValue->setValue(cause_value);
 
-  int ret = causeValue->encode2Cause(
-      &pduSessionResourceReleaseCommandTransferIEs->cause);
+  int ret =
+      causeValue->encode(pduSessionResourceReleaseCommandTransferIEs->cause);
   if (!ret) {
     cout << "encode CauseTransport IE error" << endl;
     return;
@@ -90,8 +84,8 @@ void PDUSessionResourceReleaseCommandTransfer::setCauseNas(
   causeValue->setChoiceOfCause(Ngap_Cause_PR_nas);
   causeValue->setValue(cause_value);
 
-  int ret = causeValue->encode2Cause(
-      &pduSessionResourceReleaseCommandTransferIEs->cause);
+  int ret =
+      causeValue->encode(pduSessionResourceReleaseCommandTransferIEs->cause);
   if (!ret) {
     cout << "encode CauseNas IE error" << endl;
     return;
@@ -104,8 +98,8 @@ void PDUSessionResourceReleaseCommandTransfer::setCauseProtocol(
   causeValue->setChoiceOfCause(Ngap_Cause_PR_protocol);
   causeValue->setValue(cause_value);
 
-  int ret = causeValue->encode2Cause(
-      &pduSessionResourceReleaseCommandTransferIEs->cause);
+  int ret =
+      causeValue->encode(pduSessionResourceReleaseCommandTransferIEs->cause);
   if (!ret) {
     cout << "encode CauseProtocol IE error" << endl;
     return;
@@ -118,15 +112,15 @@ void PDUSessionResourceReleaseCommandTransfer::setCauseMisc(
   causeValue->setChoiceOfCause(Ngap_Cause_PR_misc);
   causeValue->setValue(cause_value);
 
-  int ret = causeValue->encode2Cause(
-      &pduSessionResourceReleaseCommandTransferIEs->cause);
+  int ret =
+      causeValue->encode(pduSessionResourceReleaseCommandTransferIEs->cause);
   if (!ret) {
     cout << "encode CauseMisc IE error" << endl;
     return;
   }
 }
 
-int PDUSessionResourceReleaseCommandTransfer::encode2buffer(
+int PDUSessionResourceReleaseCommandTransfer::Encode(
     uint8_t* buf, int buf_size) {
   asn_fprint(
       stderr, &asn_DEF_Ngap_PDUSessionResourceReleaseCommandTransfer,
@@ -161,8 +155,7 @@ bool PDUSessionResourceReleaseCommandTransfer::decodefromIE(
   // pduSessionResourceSetupUnsuccessfulTransferIEs);
 
   causeValue = new Cause();
-  if (!causeValue->decodefromCause(
-          &pduSessionResourceReleaseCommandTransferIEs->cause)) {
+  if (!causeValue->decode(pduSessionResourceReleaseCommandTransferIEs->cause)) {
     cout << "decoded ngap Cause IE error" << endl;
     return false;
   }

@@ -18,12 +18,7 @@
  * For more information about the OpenAirInterface (OAI) Software Alliance:
  *      contact@openairinterface.org
  */
-/*! \file itti_msg.hpp
- \brief
- \author  Lionel GAUTHIER
- \date 2018
- \email: lionel.gauthier@eurecom.fr
- */
+
 #ifndef SRC_ITTI_ITTI_MSG_HPP_INCLUDED_
 #define SRC_ITTI_ITTI_MSG_HPP_INCLUDED_
 
@@ -38,7 +33,6 @@ typedef enum {
   TASK_NGAP,
   TASK_AMF_N2,
   TASK_AMF_N1,
-  TASK_AMF_N11,
   TASK_AMF_APP,
   TASK_AMF_SBI,
   AMF_SERVER,
@@ -85,15 +79,15 @@ typedef enum {
   REROUTE_NAS_REQ,
   NSMF_PDU_SESSION_CREATE_SM_CTX,
   NSMF_PDU_SESSION_UPDATE_SM_CTX,
-  N11_REGISTER_NF_INSTANCE_REQUEST,
-  N11_REGISTER_NF_INSTANCE_RESPONSE,
-  N11_UPDATE_NF_INSTANCE_REQUEST,
-  N11_UPDATE_NF_INSTANCE_RESPONSE,
-  N11_DEREGISTER_NF_INSTANCE,
-  N11_SLICE_SELECTION_SUBSCRIPTION_DATA,
-  N11_NETWORK_SLICE_SELECTION_INFORMATION,
-  N11_NF_INSTANCE_DISCOVERY,
-  N11_N1_MESSAGE_NOTIFY,
+  SBI_N1_MESSAGE_NOTIFY,
+  SBI_REGISTER_NF_INSTANCE_REQUEST,
+  SBI_REGISTER_NF_INSTANCE_RESPONSE,
+  SBI_UPDATE_NF_INSTANCE_REQUEST,
+  SBI_UPDATE_NF_INSTANCE_RESPONSE,
+  SBI_DEREGISTER_NF_INSTANCE,
+  SBI_SLICE_SELECTION_SUBSCRIPTION_DATA,
+  SBI_NETWORK_SLICE_SELECTION_INFORMATION,
+  SBI_NF_INSTANCE_DISCOVERY,
   SBI_AMF_CONFIGURATION,
   SBI_UPDATE_AMF_CONFIGURATION,
   SBI_EVENT_EXPOSURE_REQUEST,
@@ -102,7 +96,8 @@ typedef enum {
   SBI_N1_MESSAGE_NOTIFICATION,
   SBI_N1N2_MESSAGE_SUBSCRIBE,
   SBI_N1N2_MESSAGE_UNSUBSCRIBE,
-  HANDOVER_REQUIRED,
+  SBI_PDU_SESSION_RELEASE_NOTIF,
+  HANDOVER_REQUIRED_MSG,
   HANDOVER_REQUEST_ACK,
   HANDOVER_NOTIFY,
   UPLINK_RAN_STATUS_TRANSFER,
@@ -154,6 +149,7 @@ class itti_msg_timeout : public itti_msg {
         timer_id(i.timer_id),
         arg1_user(i.arg1_user),
         arg2_user(i.arg2_user) {}
+  virtual ~itti_msg_timeout(){};
   static const char* get_msg_name() { return "TIME_OUT"; };
   uint32_t timer_id;
   uint64_t arg1_user;
@@ -166,6 +162,7 @@ class itti_msg_ping : public itti_msg {
       const task_id_t origin, const task_id_t destination, uint32_t seq)
       : itti_msg(HEALTH_PING, origin, destination), seq(seq) {}
   itti_msg_ping(const itti_msg_ping& i) : itti_msg(i), seq(i.seq) {}
+  virtual ~itti_msg_ping(){};
   static const char* get_msg_name() { return "HEALTH_PING"; };
   uint32_t seq;
 };
@@ -175,6 +172,7 @@ class itti_msg_terminate : public itti_msg {
   itti_msg_terminate(const task_id_t origin, const task_id_t destination)
       : itti_msg(TERMINATE, origin, destination) {}
   itti_msg_terminate(const itti_msg_terminate& i) : itti_msg(i) {}
+  virtual ~itti_msg_terminate(){};
   static const char* get_msg_name() { return "TERMINATE"; };
 };
 

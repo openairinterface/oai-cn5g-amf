@@ -19,19 +19,13 @@
  *      contact@openairinterface.org
  */
 
-/*! \file sctp_server.cpp
- \brief
- \author  Keliang DU, BUPT
- \date 2020
- \email: contact@openairinterface.org
- */
-
 #include "sctp_server.hpp"
 
 #include "logger.hpp"
 extern "C" {
 #include <arpa/inet.h>
 #include <errno.h>
+#include <netdb.h>
 #include <netinet/in.h>
 #include <netinet/sctp.h>
 #include <pthread.h>
@@ -39,10 +33,9 @@ extern "C" {
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <sys/types.h>
 #include <sys/socket.h>
+#include <sys/types.h>
 #include <unistd.h>
-#include <netdb.h>
 
 #include "bstrlib.h"
 }
@@ -214,12 +207,13 @@ int sctp_server::sctp_read_from_socket(int sd, uint32_t ppid) {
         sinfo.sinfo_assoc_id, sd, n, ntohs(addr.sin6_port), sinfo.sinfo_stream,
         ntohl(sinfo.sinfo_ppid));
     bstring payload = blk2bstr(buffer, n);
-    // handle payload
+    // Handle payload
     app_->handle_receive(
         payload, (sctp_assoc_id_t) sinfo.sinfo_assoc_id, sinfo.sinfo_stream,
         association->instreams, association->outstreams);
+    bdestroy_wrapper(&payload);
   }
-  return 0;
+  return RETURNok;
 }
 
 //------------------------------------------------------------------------------
@@ -230,7 +224,7 @@ int sctp_server::sctp_handle_com_down(sctp_assoc_id_t assoc_id) {
 
 //------------------------------------------------------------------------------
 int sctp_server::sctp_handle_reset(const sctp_assoc_id_t assoc_id) {
-  return 0;
+  return RETURNok;
 }
 
 //------------------------------------------------------------------------------
@@ -350,7 +344,7 @@ int sctp_server::sctp_get_peeraddresses(
   } else {
     sctp_freepaddrs((struct sockaddr*) temp_addr_p);
   }
-  return 0;
+  return RETURNok;
 }
 
 //------------------------------------------------------------------------------
@@ -395,7 +389,7 @@ int sctp_server::sctp_get_localaddresses(
       sctp_freeladdrs((struct sockaddr*) temp_addr_p);
     }
   }
-  return 0;
+  return RETURNok;
 }
 
 //------------------------------------------------------------------------------
@@ -417,22 +411,24 @@ int sctp_server::sctp_send_msg(
       "with ppid %d",
       assoc_desc->sd, sctp_assoc_id, bdata(*payload), blength(*payload), stream,
       assoc_desc->ppid);
+
+  // Set timetolive to 100ms
   if (sctp_sendmsg(
           assoc_desc->sd, (const void*) bdata(*payload),
           (size_t) blength(*payload), NULL, 0, htonl(assoc_desc->ppid), 0,
-          stream, 0, 0) < 0) {
+          stream, 100, 0) < 0) {
     Logger::sctp().error(
         "[Socket %d] Send stream %u, ppid %u, len %u failed (%s, %d)",
         assoc_desc->sd, stream, htonl(assoc_desc->ppid), blength(*payload),
         strerror(errno), errno);
-    *payload = NULL;
+    //*payload = NULL;
     return RETURNerror;
   }
   Logger::sctp().debug(
       "Successfully sent %d bytes on stream %d", blength(*payload), stream);
-  *payload = NULL;
+  //*payload = NULL;
   assoc_desc->messages_sent++;
-  return 0;
+  return RETURNok;
 }
 
 }  // namespace sctp

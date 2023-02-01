@@ -19,49 +19,40 @@
  *      contact@openairinterface.org
  */
 
-/*! \file
- \brief
- \author  Keliang DU, BUPT
- \date 2020
- \email: contact@openairinterface.org
- */
-
 #include "RANPagingPriority.hpp"
-
-#include <iostream>
-using namespace std;
 
 namespace ngap {
 
 //------------------------------------------------------------------------------
 RANPagingPriority::RANPagingPriority() {
-  ranPagingPriority = 0;
+  ran_paging_priority_ = 0;
 }
 
 //------------------------------------------------------------------------------
 RANPagingPriority::~RANPagingPriority() {}
 
 //------------------------------------------------------------------------------
-void RANPagingPriority::setRANPagingPriority(uint8_t m_ranPagingPriority) {
-  ranPagingPriority = m_ranPagingPriority;
-}
-
-//------------------------------------------------------------------------------
-uint8_t RANPagingPriority::getRANPagingPriority() {
-  return ranPagingPriority;
-}
-
-//------------------------------------------------------------------------------
-bool RANPagingPriority::encode2RANPagingPriority(
-    Ngap_RANPagingPriority_t& ranpagingpriority) {
-  ranpagingpriority = ranPagingPriority;
+bool RANPagingPriority::set(const uint32_t& ran_paging_priority) {
+  if (ran_paging_priority > kRANPagingPriorityMaxValue) return false;
+  ran_paging_priority_ = ran_paging_priority;
   return true;
 }
 
 //------------------------------------------------------------------------------
-bool RANPagingPriority::decodefromRANPagingPriority(
-    Ngap_RANPagingPriority_t& ranpagingpriority) {
-  ranPagingPriority = ranpagingpriority;
+uint32_t RANPagingPriority::get() {
+  return ran_paging_priority_;
+}
+
+//------------------------------------------------------------------------------
+bool RANPagingPriority::encode(Ngap_RANPagingPriority_t& ran_paging_priority) {
+  ran_paging_priority = ran_paging_priority_;
+  return true;
+}
+
+//------------------------------------------------------------------------------
+bool RANPagingPriority::decode(Ngap_RANPagingPriority_t& ran_paging_priority) {
+  if (ran_paging_priority > kRANPagingPriorityMaxValue) return false;
+  ran_paging_priority_ = ran_paging_priority;
   return true;
 }
 }  // namespace ngap

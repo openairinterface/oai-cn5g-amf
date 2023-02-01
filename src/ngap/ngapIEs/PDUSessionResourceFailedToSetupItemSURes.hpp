@@ -35,23 +35,21 @@ class PDUSessionResourceFailedToSetupItemSURes {
   PDUSessionResourceFailedToSetupItemSURes();
   virtual ~PDUSessionResourceFailedToSetupItemSURes();
 
-  void setPDUSessionResourceFailedToSetupItemSURes(
-      const PDUSessionID& m_pDUSessionID,
-      const OCTET_STRING_t& m_pDUSessionResourceSetupUnsuccessfulTransfer);
-  void getPDUSessionResourceFailedToSetupItemSURes(
-      PDUSessionID& m_pDUSessionID,
-      OCTET_STRING_t& m_pDUSessionResourceSetupUnsuccessfulTransfer);
+  void set(
+      const PDUSessionID& pdu_session_id,
+      const OCTET_STRING_t& pdu_session_resource_setup_unsuccessful_transfer);
+  void get(
+      PDUSessionID& pdu_session_id,
+      OCTET_STRING_t& pdu_session_resource_setup_unsuccessful_transfer);
 
-  bool encode2PDUSessionResourceFailedToSetupItemSURes(
-      Ngap_PDUSessionResourceFailedToSetupItemSURes_t*
-          pduSessionResourceFailedToSetupItemSURes);
-  bool decodefromPDUSessionResourceFailedToSetupItemSURes(
-      Ngap_PDUSessionResourceFailedToSetupItemSURes_t*
-          pduSessionResourceFailedToSetupItemSURes);
+  bool encode(Ngap_PDUSessionResourceFailedToSetupItemSURes_t*
+                  pdu_session_resource_failed_to_setup_item_su_res);
+  bool decode(Ngap_PDUSessionResourceFailedToSetupItemSURes_t*
+                  pdu_session_resource_failed_to_setup_item_su_res);
 
  private:
-  PDUSessionID pDUSessionID;
-  OCTET_STRING_t pDUSessionResourceSetupUnsuccessfulTransfer;
+  PDUSessionID pdu_session_id_;
+  OCTET_STRING_t pdu_session_resource_setup_unsuccessful_transfer_;
 };
 
 }  // namespace ngap

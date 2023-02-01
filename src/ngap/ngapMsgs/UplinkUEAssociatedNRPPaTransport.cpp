@@ -32,6 +32,8 @@ namespace ngap {
 //------------------------------------------------------------------------------
 UplinkUEAssociatedNRPPaTransportMsg::UplinkUEAssociatedNRPPaTransportMsg()
     : NgapUEMessage() {
+  uplinkUEAssociatedNRPPaTransportIEs = nullptr;
+
   setMessageType(NgapMessageType::UPLINK_UE_ASSOCIATED_NRPPA_TRANSPORT);
   initialize();
 }
@@ -49,7 +51,7 @@ void UplinkUEAssociatedNRPPaTransportMsg::initialize() {
 //------------------------------------------------------------------------------
 void UplinkUEAssociatedNRPPaTransportMsg::setAmfUeNgapId(
     const unsigned long& id) {
-  amfUeNgapId.setAMF_UE_NGAP_ID(id);
+  amfUeNgapId.set(id);
 
   Ngap_UplinkUEAssociatedNRPPaTransportIEs_t* ie =
       (Ngap_UplinkUEAssociatedNRPPaTransportIEs_t*) calloc(
@@ -74,7 +76,7 @@ void UplinkUEAssociatedNRPPaTransportMsg::setAmfUeNgapId(
 //------------------------------------------------------------------------------
 void UplinkUEAssociatedNRPPaTransportMsg::setRanUeNgapId(
     const uint32_t& ran_ue_ngap_id) {
-  ranUeNgapId.setRanUeNgapId(ran_ue_ngap_id);
+  ranUeNgapId.set(ran_ue_ngap_id);
 
   Ngap_UplinkUEAssociatedNRPPaTransportIEs_t* ie =
       (Ngap_UplinkUEAssociatedNRPPaTransportIEs_t*) calloc(
@@ -84,7 +86,7 @@ void UplinkUEAssociatedNRPPaTransportMsg::setRanUeNgapId(
   ie->value.present =
       Ngap_UplinkUEAssociatedNRPPaTransportIEs__value_PR_RAN_UE_NGAP_ID;
 
-  int ret = ranUeNgapId.encode2RAN_UE_NGAP_ID(ie->value.choice.RAN_UE_NGAP_ID);
+  int ret = ranUeNgapId.encode(ie->value.choice.RAN_UE_NGAP_ID);
   if (!ret) {
     Logger::ngap().error("Encode RAN_UE_NGAP_ID IE error");
     free_wrapper((void**) &ie);
@@ -150,7 +152,7 @@ bool UplinkUEAssociatedNRPPaTransportMsg::decodeFromPdu(
             uplinkUEAssociatedNRPPaTransportIEs->protocolIEs.list.array[i]
                     ->value.present ==
                 Ngap_UplinkUEAssociatedNRPPaTransportIEs__value_PR_RAN_UE_NGAP_ID) {
-          if (!ranUeNgapId.decodefromRAN_UE_NGAP_ID(
+          if (!ranUeNgapId.decode(
                   uplinkUEAssociatedNRPPaTransportIEs->protocolIEs.list
                       .array[i]
                       ->value.choice.RAN_UE_NGAP_ID)) {

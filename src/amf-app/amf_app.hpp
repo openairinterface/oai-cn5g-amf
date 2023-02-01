@@ -19,36 +19,27 @@
  *      contact@openairinterface.org
  */
 
-/*! \file amf_app.hpp
- \brief
- \author  Keliang DU, BUPT
- \date 2020
- \email: contact@openairinterface.org
- */
-
 #ifndef _AMF_APP_H_
 #define _AMF_APP_H_
 
+#include <boost/thread.hpp>
+#include <boost/thread/future.hpp>
 #include <map>
 #include <shared_mutex>
 #include <string>
 
-#include "amf_config.hpp"
-#include "amf_module_from_config.hpp"
-#include "amf_profile.hpp"
-#include "itti.hpp"
-#include "itti_msg_n11.hpp"
-#include "itti_msg_amf_app.hpp"
-#include "ue_context.hpp"
-#include "amf_subscription.hpp"
-#include "itti_msg_sbi.hpp"
-#include "amf_msg.hpp"
 #include "ProblemDetails.h"
 #include "UeN1N2InfoSubscriptionCreateData.h"
-
+#include "amf_config.hpp"
+#include "amf_module_from_config.hpp"
+#include "amf_msg.hpp"
+#include "amf_profile.hpp"
+#include "amf_subscription.hpp"
+#include "itti.hpp"
+#include "itti_msg_amf_app.hpp"
+#include "itti_msg_sbi.hpp"
+#include "ue_context.hpp"
 #include "uint_generator.hpp"
-#include <boost/thread.hpp>
-#include <boost/thread/future.hpp>
 
 using namespace config;
 
@@ -92,9 +83,9 @@ class amf_app {
   std::map<uint32_t, boost::shared_ptr<boost::promise<std::string>>>
       curl_handle_responses_n2_sm;
 
-  mutable std::shared_mutex m_curl_handle_responses_n11;
+  mutable std::shared_mutex m_curl_handle_responses_sbi;
   std::map<uint32_t, boost::shared_ptr<boost::promise<nlohmann::json>>>
-      curl_handle_responses_n11;
+      curl_handle_responses_sbi;
 
   util::uint_generator<uint32_t> n1n2sub_id_generator;
   std::map<
@@ -108,7 +99,6 @@ class amf_app {
   explicit amf_app(const amf_config& amf_cfg);
   amf_app(amf_app const&) = delete;
   void operator=(amf_app const&) = delete;
-  void allRegistredModulesInit(const amf_modules& modules);
 
   /*
    * Generate AMF UE NGAP ID
@@ -153,6 +143,13 @@ class amf_app {
   void handle_itti_message(itti_sbi_n1n2_message_unsubscribe& itti_msg);
 
   /*
+   * Handle ITTI message (SBI PDU Session Release Notification)
+   * @param [itti_sbi_pdu_session_release_notif&]: ITTI message
+   * @return void
+   */
+  void handle_itti_message(itti_sbi_pdu_session_release_notif& itti_msg);
+
+  /*
    * Handle ITTI message (SBI AMF configuration)
    * @param [itti_sbi_amf_configuration&]: ITTI message
    * @return void
@@ -195,33 +192,9 @@ class amf_app {
   uint32_t get_number_registered_ues() const;
 
   /*
-   * Verify if a UE context associated with an AMF UE NGAP ID exist
-   * @param [const long&] amf_ue_ngap_id: AMF UE NGAP ID
-   * @return true if UE context exist, otherwise false
-   */
-  bool is_amf_ue_id_2_ue_context(const long& amf_ue_ngap_id) const;
-
-  /*
-   * Get UE context associated with an AMF UE NGAP ID
-   * @param [const long&] amf_ue_ngap_id: AMF UE NGAP ID
-   * @return shared pointer to the context
-   */
-  std::shared_ptr<ue_context> amf_ue_id_2_ue_context(
-      const long& amf_ue_ngap_id) const;
-
-  /*
-   * Store an UE context associated with an AMF UE NGAP ID
-   * @param [const long&] amf_ue_ngap_id: AMF UE NGAP ID
-   * @param [std::shared_ptr<ue_context>&] uc: pointer to UE context
-   * @return void
-   */
-  void set_amf_ue_ngap_id_2_ue_context(
-      const long& amf_ue_ngap_id, const std::shared_ptr<ue_context>& uc);
-
-  /*
-   * Verify if a UE context associated with an UE Context Key exist
+   * Verify if a UE context associated with an UE Context Key exist and not null
    * @param [const std::string&] ue_context_key: UE Context Key
-   * @return true if UE context exist, otherwise false
+   * @return true if UE context exist and not null, otherwise false
    */
   bool is_ran_amf_id_2_ue_context(const std::string& ue_context_key) const;
 
@@ -253,9 +226,9 @@ class amf_app {
       const std::string& ue_context_key, const std::shared_ptr<ue_context>& uc);
 
   /*
-   * Verify whether a UE context associated with a SUPI exist
+   * Verify whether a UE context associated with a SUPI exist and not null
    * @param [const std::string&] supi: UE SUPI
-   * @return true if UE context exist, otherwise false
+   * @return true if UE context exist and not null, otherwise false
    */
   bool is_supi_2_ue_context(const string& supi) const;
 
@@ -265,6 +238,15 @@ class amf_app {
    * @return shared pointer to the context
    */
   std::shared_ptr<ue_context> supi_2_ue_context(const string& supi) const;
+
+  /*
+   * Get UE context associated with a SUPI
+   * @param [const std::string&] supi: SUPI
+   * @param [std::shared_ptr<ue_context>&] uc: pointer to UE context if exist
+   * @return true if UE Context exist and not null
+   */
+  bool supi_2_ue_context(
+      const std::string& supi, std::shared_ptr<ue_context>& uc) const;
 
   /*
    * Store an UE context associated with a SUPI
@@ -297,6 +279,18 @@ class amf_app {
   bool get_pdu_sessions_context(
       const string& supi,
       std::vector<std::shared_ptr<pdu_session_context>>& sessions_ctx);
+
+  /*
+   * Update PDU Session Context status
+   * @param [const std::string&] supi: UE SUPI
+   * @param [const uint8_t&] pdu_session_id: PDU Session ID
+   * @param [const oai::amf::model::SmContextStatusNotification&]
+   * statusNotification: Notification information received from SMF
+   * @return true if success, otherwise false
+   */
+  bool update_pdu_sessions_context(
+      const string& supi, const uint8_t& pdu_session_id,
+      const oai::amf::model::SmContextStatusNotification& statusNotification);
 
   /*
    * Generate a TMSI value for UE
@@ -458,14 +452,14 @@ class amf_app {
   void generate_amf_profile();
 
   /*
-   * Send request to N11 task to trigger NF instance registration to NRF
+   * Send request to SBI task to trigger NF instance registration to NRF
    * @param [void]
    * @return void
    */
   void trigger_nf_registration_request();
 
   /*
-   * Send request to N11 task to trigger NF instance deregistration to NRF
+   * Send request to SBI task to trigger NF instance deregistration to NRF
    * @param [void]
    * @return void
    */

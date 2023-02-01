@@ -34,36 +34,42 @@ AllowedNSSAI::AllowedNSSAI() {}
 AllowedNSSAI::~AllowedNSSAI() {}
 
 //------------------------------------------------------------------------------
-void AllowedNSSAI::setAllowedNSSAI(const std::vector<S_NSSAI>& list) {
-  allowedSnssaiList = list;
+void AllowedNSSAI::set(const std::vector<S_NSSAI>& list) {
+  // Get maximum 8 items
+  uint8_t number_items = (list.size() > kAllowedSNSSAIMaxItems) ?
+                             kAllowedSNSSAIMaxItems :
+                             list.size();
+  list_.insert(list_.begin(), list.begin(), list.begin() + number_items);
 }
 
 //------------------------------------------------------------------------------
-void AllowedNSSAI::getAllowedNSSAI(std::vector<S_NSSAI>& list) {
-  list = allowedSnssaiList;
+void AllowedNSSAI::get(std::vector<S_NSSAI>& list) {
+  list = list_;
 }
 //------------------------------------------------------------------------------
-bool AllowedNSSAI::encode2AllowedNSSAI(Ngap_AllowedNSSAI_t* allowedNssaiList) {
-  for (std::vector<S_NSSAI>::iterator it = std::begin(allowedSnssaiList);
-       it < std::end(allowedSnssaiList); ++it) {
-    Ngap_AllowedNSSAI_Item_t* allowednssaiitem =
+bool AllowedNSSAI::encode(Ngap_AllowedNSSAI_t* list) {
+  for (std::vector<S_NSSAI>::iterator it = std::begin(list_);
+       it < std::end(list_); ++it) {
+    Ngap_AllowedNSSAI_Item_t* item =
         (Ngap_AllowedNSSAI_Item_t*) calloc(1, sizeof(Ngap_AllowedNSSAI_Item_t));
-    if (!allowednssaiitem) return false;
-    if (!it->encode2S_NSSAI(&allowednssaiitem->s_NSSAI)) return false;
-    if (ASN_SEQUENCE_ADD(&allowedNssaiList->list, allowednssaiitem) != 0)
-      return false;
+    if (!item) return false;
+    if (!it->encode(&item->s_NSSAI)) return false;
+    if (ASN_SEQUENCE_ADD(&list->list, item) != 0) return false;
   }
   return true;
 }
 
 //------------------------------------------------------------------------------
-bool AllowedNSSAI::decodefromAllowedNSSAI(
-    Ngap_AllowedNSSAI_t* allowedNssaiList) {
-  for (int i = 0; i < allowedNssaiList->list.count; i++) {
+bool AllowedNSSAI::decode(Ngap_AllowedNSSAI_t* list) {
+  list_.clear();
+  // Get maximum 8 items
+  uint8_t number_items = (list->list.count > kAllowedSNSSAIMaxItems) ?
+                             kAllowedSNSSAIMaxItems :
+                             list->list.count;
+  for (int i = 0; i < number_items; i++) {
     S_NSSAI snssai = {};
-    if (!snssai.decodefromS_NSSAI(&allowedNssaiList->list.array[i]->s_NSSAI))
-      return false;
-    allowedSnssaiList.push_back(snssai);
+    if (!snssai.decode(&list->list.array[i]->s_NSSAI)) return false;
+    list_.push_back(snssai);
   }
   return true;
 }

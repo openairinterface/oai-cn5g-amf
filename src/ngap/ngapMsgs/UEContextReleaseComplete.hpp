@@ -24,6 +24,8 @@
 
 #include "NgapUEMessage.hpp"
 #include "UserLocationInformation.hpp"
+#include "PDUSessionResourceListCxtRelCpl.hpp"
+#include <optional>
 
 extern "C" {
 #include "Ngap_UEContextReleaseComplete.h"
@@ -44,13 +46,19 @@ class UEContextReleaseCompleteMsg : public NgapUEMessage {
   void setUserLocationInfoNR(const NrCgi_t& cig, const Tai_t& tai);
   void getUserLocationInfoNR(NrCgi_t& cig, Tai_t& tai);
 
+  void setPduSessionResourceCxtRelCplList(
+      const std::vector<PDUSessionResourceCxtRelCplItem_t>& list);
+  bool getPduSessionResourceCxtRelCplList(
+      std::vector<PDUSessionResourceCxtRelCplItem_t>& list);
+
  private:
   Ngap_UEContextReleaseComplete_t* ies;
   // AMF_UE_NGAP_ID //Mandatory
   // RAN_UE_NGAP_ID //Mandatory
   UserLocationInformation* userLocationInformation;  // Optional
   // TODO: Information on Recommended Cells and RAN Nodes for Paging (Optional)
-  // TODO: PDU Session Resource List (Optional)
+  std::optional<PDUSessionResourceListCxtRelCpl>
+      pduSessionResourceListCxtRelCpl;  // Optional
   // TODO: Criticality Diagnostics (Optional)
 };
 

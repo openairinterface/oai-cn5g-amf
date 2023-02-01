@@ -22,12 +22,13 @@
 #ifndef _HANDOVER_REQUEST_ACK_H_
 #define _HANDOVER_REQUEST_ACK_H_
 
-#include "PDUSessionResourceAdmittedList.hpp"
 #include "NgapUEMessage.hpp"
+
+#include "PDUSessionResourceAdmittedList.hpp"
+#include "PDUSessionResourceFailedToSetupListHOAck.hpp"
 
 extern "C" {
 #include "Ngap_HandoverRequestAcknowledge.h"
-#include "Ngap_PDUSessionResourceFailedToSetupListHOAck.h"
 }
 
 namespace ngap {
@@ -43,24 +44,31 @@ class HandoverRequestAck : public NgapUEMessage {
   void setRanUeNgapId(const uint32_t& id) override;
   bool decodeFromPdu(Ngap_NGAP_PDU_t* ngapMsgPdu) override;
 
-  void setTargetToSource_TransparentContainer(
-      const OCTET_STRING_t& targetTosource);
-  OCTET_STRING_t getTargetToSource_TransparentContainer();
-
   void setPDUSessionResourceAdmittedList(
       const PDUSessionResourceAdmittedList& admittedList);
   bool getPDUSessionResourceAdmittedList(
       std::vector<PDUSessionResourceAdmittedItem_t>& list);
+
+  void setPDUSessionResourceFailedToSetupListHOAck(
+      const PDUSessionResourceFailedToSetupListHOAck& list);
+  void setPDUSessionResourceFailedToSetupListHOAck(
+      std::vector<PDUSessionResourceItem>& list);
+  bool getPDUSessionResourceFailedToSetupListHOAck(
+      std::vector<PDUSessionResourceItem>& list);
+
+  void setTargetToSource_TransparentContainer(
+      const OCTET_STRING_t& targetTosource);
+  OCTET_STRING_t getTargetToSource_TransparentContainer();
 
  private:
   Ngap_HandoverRequestAcknowledge_t* handoverRequestAckIEs;
   // AMF_UE_NGAP_ID (Mandatory)
   // RAN_UE_NGAP_ID (Mandatory)
   PDUSessionResourceAdmittedList pduSessionResourceAdmittedList;  // Mandatory
-  Ngap_PDUSessionResourceFailedToSetupListHOAck_t*
-      PDUSessionResourceFailedToSetupList;                // Optional
-  OCTET_STRING_t TargetToSource_TransparentContainer;     // Mandatory
-  Ngap_CriticalityDiagnostics_t* CriticalityDiagnostics;  // Optional
+  std::optional<PDUSessionResourceFailedToSetupListHOAck>
+      PDUSessionResourceFailedToSetupList;
+  OCTET_STRING_t TargetToSource_TransparentContainer;     // TODO: Mandatory
+  Ngap_CriticalityDiagnostics_t* CriticalityDiagnostics;  // TODO: Optional
 };
 
 }  // namespace ngap

@@ -103,12 +103,8 @@ int main(int argc, char** argv) {
   Logger::init("AMF", Options::getlogStdout(), Options::getlogRotFilelog());
   Logger::amf_app().startup("Options parsed!");
 
-  // TODO: to be optimized
-  struct sigaction sigIntHandler;
-  sigIntHandler.sa_handler = amf_signal_handler;
-  sigemptyset(&sigIntHandler.sa_mask);
-  sigIntHandler.sa_flags = 0;
-  sigaction(SIGINT, &sigIntHandler, NULL);
+  std::signal(SIGTERM, amf_signal_handler);
+  std::signal(SIGINT, amf_signal_handler);
 
   amf_cfg.load(Options::getlibconfigConfig());
   amf_cfg.display();
@@ -119,20 +115,19 @@ int main(int argc, char** argv) {
   itti_inst->start(amf_cfg.itti.itti_timer_sched_params);
 
   amf_app_inst = new amf_app(amf_cfg);
-  amf_app_inst->allRegistredModulesInit(modules);
 
   Logger::amf_app().debug("Initiating AMF server endpoints");
   // AMF HTTP1 server
   Pistache::Address addr(
-      std::string(inet_ntoa(*((struct in_addr*) &amf_cfg.n11.addr4))),
-      Pistache::Port(amf_cfg.n11.port));
+      std::string(inet_ntoa(*((struct in_addr*) &amf_cfg.sbi.addr4))),
+      Pistache::Port(amf_cfg.sbi.port));
   amf_api_server_1 = new AMFApiServer(addr, amf_app_inst);
   amf_api_server_1->init(2);
   // std::thread amf_http1_manager(&AMFApiServer::start, amf_api_server_1);
   amf_api_server_1->start();
   // AMF HTTP2 server
   amf_api_server_2 = new amf_http2_server(
-      conv::toString(amf_cfg.n11.addr4), amf_cfg.sbi_http2_port, amf_app_inst);
+      conv::toString(amf_cfg.sbi.addr4), amf_cfg.sbi_http2_port, amf_app_inst);
   amf_api_server_2->init(1);
   // std::thread amf_http2_manager(&amf_http2_server::start, amf_api_server_2);
   amf_api_server_2->start();

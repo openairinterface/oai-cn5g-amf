@@ -19,38 +19,30 @@
  *      contact@openairinterface.org
  */
 
-/*! \file
- \brief
- \author  Keliang DU, BUPT
- \date 2020
- \email: contact@openairinterface.org
- */
-#ifndef __EPS_NAS_Message_Container_H_
-#define __EPS_NAS_Message_Container_H_
-#include <stdint.h>
+#ifndef _EPS_NAS_MESSAGE_CONTAINER_H_
+#define _EPS_NAS_MESSAGE_CONTAINER_H_
 
-#include <iostream>
-extern "C" {
-#include "TLVDecoder.h"
-#include "TLVEncoder.h"
-#include "bstrlib.h"
-}
+#include "Type6NasIe.hpp"
+
+constexpr auto kEpsNasMessageContainerIeName = "EPS NAS Message Container";
+
 namespace nas {
 
-class EPS_NAS_Message_Container {
+class EPS_NAS_Message_Container : Type6NasIe {
  public:
   EPS_NAS_Message_Container();
-  EPS_NAS_Message_Container(uint8_t iei);
-  EPS_NAS_Message_Container(const uint8_t iei, bstring value);
+  EPS_NAS_Message_Container(bstring value);
   ~EPS_NAS_Message_Container();
-  void setValue(uint8_t iei, uint8_t value);
-  int encode2buffer(uint8_t* buf, int len);
-  int decodefrombuffer(uint8_t* buf, int len, bool is_option);
-  void getValue(bstring& value);
+
+  static std::string GetIeName() { return kEpsNasMessageContainerIeName; }
+
+  // TODO: SetValue(const bstring& value)
+  void getValue(bstring& value) const;
+
+  int Encode(uint8_t* buf, int len);
+  int Decode(uint8_t* buf, int len, bool is_iei);
 
  private:
-  uint8_t _iei;
-  uint16_t length;
   bstring _value;
 };
 

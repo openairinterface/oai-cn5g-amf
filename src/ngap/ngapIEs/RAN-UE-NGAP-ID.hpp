@@ -19,13 +19,6 @@
  *      contact@openairinterface.org
  */
 
-/*! \file
- \brief
- \author  Keliang DU, BUPT
- \date 2020
- \email: contact@openairinterface.org
- */
-
 #ifndef _RAN_UE_NGAP_ID_H_
 #define _RAN_UE_NGAP_ID_H_
 
@@ -38,16 +31,17 @@ namespace ngap {
 class RAN_UE_NGAP_ID {
  public:
   RAN_UE_NGAP_ID();
+  RAN_UE_NGAP_ID(uint32_t);
   virtual ~RAN_UE_NGAP_ID();
 
-  void setRanUeNgapId(uint32_t);
-  uint32_t getRanUeNgapId();
+  void set(const uint32_t&);
+  uint32_t get() const;
 
-  bool encode2RAN_UE_NGAP_ID(Ngap_RAN_UE_NGAP_ID_t&);
-  bool decodefromRAN_UE_NGAP_ID(Ngap_RAN_UE_NGAP_ID_t&);
+  bool encode(Ngap_RAN_UE_NGAP_ID_t&);
+  bool decode(Ngap_RAN_UE_NGAP_ID_t&);
 
  private:
-  uint32_t ranUeNgapId;
+  uint32_t id_;
 };
 
 }  // namespace ngap

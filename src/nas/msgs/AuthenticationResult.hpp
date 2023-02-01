@@ -19,36 +19,36 @@
  *      contact@openairinterface.org
  */
 
-/*! \file
- \brief
- \author  Keliang DU, BUPT
- \date 2020
- \email: contact@openairinterface.org
- */
+#ifndef _AUTHENTICATION_RESULT_H_
+#define _AUTHENTICATION_RESULT_H_
 
-#ifndef _AuthenticationResult_H_
-#define _AuthenticationResult_H_
-
-#include "nas_ie_header.hpp"
+#include "NasIeHeader.hpp"
 
 namespace nas {
 
-class AuthenticationResult {
+class AuthenticationResult : public NasMmPlainHeader {
  public:
   AuthenticationResult();
   ~AuthenticationResult();
-  int encode2buffer(uint8_t* buf, int len);
-  int decodefrombuffer(NasMmPlainHeader* header, uint8_t* buf, int len);
-  void setHeader(uint8_t security_header_type);
-  void setngKSI(uint8_t tsc, uint8_t key_set_id);
-  void setEAP_Message(bstring eap);
-  void setABBA(uint8_t length, uint8_t* value);
+
+  int Encode(uint8_t* buf, int len);
+  int Decode(uint8_t* buf, int len);
+
+  void SetHeader(uint8_t security_header_type);
+
+  void SetNgKsi(uint8_t tsc, uint8_t key_set_id);
+  // TODO: Get
+
+  void SetEapMessage(bstring eap);
+  // TODO: Get
+
+  void SetAbba(uint8_t length, uint8_t* value);
+  // TODO: Get
 
  public:
-  NasMmPlainHeader* plain_header;
-  NasKeySetIdentifier* ie_ngKSI;
-  EAP_Message* ie_eap_message;
-  ABBA* ie_abba;
+  NasKeySetIdentifier ie_ngKSI;  // Mandatory (1/2 lower octet)
+  EapMessage ie_eap_message;     // Mandatory
+  std::optional<ABBA> ie_abba;   // Optional
 };
 
 }  // namespace nas

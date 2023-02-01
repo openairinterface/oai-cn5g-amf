@@ -19,13 +19,6 @@
  *      contact@openairinterface.org
  */
 
-/*! \file
- \brief
- \author  Keliang DU, BUPT
- \date 2020
- \email: contact@openairinterface.org
- */
-
 #ifndef _ASSOCIATEDQOSFLOWLIST_H_
 #define _ASSOCIATEDQOSFLOWLIST_H_
 

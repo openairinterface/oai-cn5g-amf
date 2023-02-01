@@ -53,8 +53,8 @@ class PduSessionResourceReleaseResponseMsg : public NgapUEMessage {
       pduSessionResourceReleaseResponseIEs;
 
   PDUSessionResourceReleasedListRelRes
-      pduSessionResourceReleasedList;                // Mandatory
-  UserLocationInformation* userLocationInformation;  // Optional
+      pduSessionResourceReleasedList;                              // Mandatory
+  std::optional<UserLocationInformation> userLocationInformation;  // Optional
   // TODO: CriticalityDiagnostics *criticalityDiagnostics; //Optional
 };
 

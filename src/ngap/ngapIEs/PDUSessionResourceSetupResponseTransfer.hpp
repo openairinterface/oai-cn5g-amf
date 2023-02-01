@@ -19,13 +19,6 @@
  *      contact@openairinterface.org
  */
 
-/*! \file
- \brief
- \author  Keliang DU, BUPT
- \date 2020
- \email: contact@openairinterface.org
- */
-
 #ifndef _PDUSESSIONRESOURCESETUPRESPONSETRANSFER_H_
 #define _PDUSESSIONRESOURCESETUPRESPONSETRANSFER_H_
 
@@ -54,7 +47,7 @@ class PduSessionResourceSetupResponseTransferIE {
       e_Ngap_ConfidentialityProtectionResult confidentialityProtectionResult);
   // caus待续
 
-  int encode2buffer(uint8_t* buf, int buf_size);
+  int Encode(uint8_t* buf, int buf_size);
   // Decapsulation
   bool decodefromIE(uint8_t* buf, int buf_size);
   bool getDLQoSFlowPerTNLInformation(

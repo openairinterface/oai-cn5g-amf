@@ -19,13 +19,6 @@
  *      contact@openairinterface.org
  */
 
-/*! \file
- \brief
- \author  Keliang DU, BUPT
- \date 2020
- \email: contact@openairinterface.org
- */
-
 #include "ServedGUAMIList.hpp"
 
 namespace ngap {
@@ -37,44 +30,42 @@ ServedGUAMIList::ServedGUAMIList() {}
 ServedGUAMIList::~ServedGUAMIList() {}
 
 //------------------------------------------------------------------------------
-bool ServedGUAMIList::encode2ServedGUAMIList(
-    Ngap_ServedGUAMIList_t* servedGUAMIList) {
+void ServedGUAMIList::set(const std::vector<ServedGUAMIItem>& list) {
+  itemList = list;
+}
+
+//------------------------------------------------------------------------------
+void ServedGUAMIList::get(std::vector<ServedGUAMIItem>& list) const {
+  list = itemList;
+}
+
+//------------------------------------------------------------------------------
+void ServedGUAMIList::addItem(const ServedGUAMIItem& item) {
+  itemList.push_back(item);
+}
+
+//------------------------------------------------------------------------------
+bool ServedGUAMIList::encode(Ngap_ServedGUAMIList_t& servedGUAMIList) {
   for (std::vector<ServedGUAMIItem>::iterator it = std::begin(itemList);
        it != std::end(itemList); ++it) {
     Ngap_ServedGUAMIItem* guamiItem =
         (Ngap_ServedGUAMIItem*) calloc(1, sizeof(Ngap_ServedGUAMIItem));
     if (!guamiItem) return false;
     if (!it->encode2ServedGUAMIItem(guamiItem)) return false;
-    if (ASN_SEQUENCE_ADD(&servedGUAMIList->list, guamiItem) != 0) return false;
+    if (ASN_SEQUENCE_ADD(&servedGUAMIList.list, guamiItem) != 0) return false;
   }
   return true;
 }
 
 //------------------------------------------------------------------------------
-bool ServedGUAMIList::decodefromServedGUAMIList(Ngap_ServedGUAMIList_t* pdu) {
-  // itemList.clear();
-  for (int i = 0; i < pdu->list.count; i++) {
+bool ServedGUAMIList::decode(const Ngap_ServedGUAMIList_t& pdu) {
+  itemList.clear();
+  for (int i = 0; i < pdu.list.count; i++) {
     ServedGUAMIItem item = {};
-    if (item.decodefromServedGUAMIItem(pdu->list.array[i])) return false;
+    if (item.decodefromServedGUAMIItem(pdu.list.array[i])) return false;
     itemList.push_back(item);
   }
   return true;
-}
-
-//------------------------------------------------------------------------------
-void ServedGUAMIList::addServedGUAMIItems(
-    const std::vector<ServedGUAMIItem>& list) {
-  itemList = list;
-}
-
-//------------------------------------------------------------------------------
-void ServedGUAMIList::getServedGUAMIItems(
-    std::vector<ServedGUAMIItem>& list) const {
-  list = itemList;
-}
-
-void ServedGUAMIList::addServedGUAMIItem(const ServedGUAMIItem& item) {
-  itemList.push_back(item);
 }
 
 }  // namespace ngap

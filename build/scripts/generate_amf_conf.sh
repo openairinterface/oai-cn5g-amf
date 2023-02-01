@@ -1,91 +1,73 @@
-# prompt has been removed for easier Ctrl+C Ctrl+V
-# please update the following information according to your configuration
+#!/bin/sh
+################################################################################
+# Licensed to the OpenAirInterface (OAI) Software Alliance under one or more
+# contributor license agreements.  See the NOTICE file distributed with
+# this work for additional information regarding copyright ownership.
+# The OpenAirInterface Software Alliance licenses this file to You under
+# the OAI Public License, Version 1.1  (the "License"); you may not use this file
+# except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.openairinterface.org/?page_id=698
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#-------------------------------------------------------------------------------
+# For more information about the OpenAirInterface (OAI) Software Alliance:
+#      contact@openairinterface.org
+################################################################################
 
-INSTANCE=1
-PREFIX='/usr/local/etc/oai'
-sudo mkdir -m 0777 -p $PREFIX
-cp ../../etc/amf.conf  $PREFIX
+## Sample values for configuration
+export INSTANCE=0
+export PID_DIRECTORY=/var/run
+export MCC=208
+export MNC=95
+export REGION_ID=128
+export AMF_SET_ID=1
+export SERVED_GUAMI_MCC_0=208
+export SERVED_GUAMI_MNC_0=95
+export SERVED_GUAMI_REGION_ID_0=128
+export SERVED_GUAMI_AMF_SET_ID_0=1
+export PLMN_SUPPORT_MCC=208
+export PLMN_SUPPORT_MNC=95
+export PLMN_SUPPORT_TAC=0xa000
+export SST_0=1
+export SD_0=0xFFFFFF
+export SST_1=1
+export SD_1=1
+export AMF_INTERFACE_NAME_FOR_NGAP=eth0
+export AMF_INTERFACE_NAME_FOR_N11=eth0
+export SMF_INSTANCE_ID_0=1
+export SMF_FQDN_0=localhost
+export SMF_IPV4_ADDR_0=127.0.0.1
+export SMF_HTTP_VERSION_0=v1
+export SELECTED_0=true
+export MYSQL_SERVER=127.0.0.1
+export MYSQL_USER=root
+export MYSQL_PASS=linux
+export MYSQL_DB=oai_db
+export NRF_IPV4_ADDRESS=127.0.0.1
+export NRF_PORT=80
+export EXTERNAL_NRF=no
+export NF_REGISTRATION=yes
+export SMF_SELECTION=yes
+export USE_FQDN_DNS=yes
+export EXTERNAL_AUSF=yes
+export EXTERNAL_UDM=no
+export EXTERNAL_NSSF=no
+export USE_HTTP2=no
+export NRF_API_VERSION=v1
+export NRF_FQDN=localhost
+export AUSF_IPV4_ADDRESS=127.0.0.1
+export AUSF_PORT=80
+export AUSF_API_VERSION=v1
+export AUSF_FQDN=localhost
+export UDM_IPV4_ADDRESS=127.0.0.1
+export UDM_PORT=80
+export UDM_API_VERSION=v2
+export UDM_FQDN=localhost
 
-declare -A AMF_CONF
-
-AMF_CONF[@INSTANCE@]=$INSTANCE
-AMF_CONF[@PREFIX@]=$PREFIX
-AMF_CONF[@PID_DIRECTORY@]='/var/run'
-
-AMF_CONF[@MCC@]='208'
-AMF_CONF[@MNC@]='95'
-AMF_CONF[@REGION_ID@]='128'
-AMF_CONF[@AMF_SET_ID@]='1'
-
-AMF_CONF[@SERVED_GUAMI_MCC_0@]='208'
-AMF_CONF[@SERVED_GUAMI_MNC_0@]='95'
-AMF_CONF[@SERVED_GUAMI_REGION_ID_0@]='128'
-AMF_CONF[@SERVED_GUAMI_AMF_SET_ID_0@]='1'
-AMF_CONF[@SERVED_GUAMI_MCC_1@]='460'
-AMF_CONF[@SERVED_GUAMI_MNC_1@]='11'
-AMF_CONF[@SERVED_GUAMI_REGION_ID_1@]='10'
-AMF_CONF[@SERVED_GUAMI_AMF_SET_ID_1@]='1'
-
-AMF_CONF[@PLMN_SUPPORT_MCC@]='208'
-AMF_CONF[@PLMN_SUPPORT_MNC@]='95'
-AMF_CONF[@PLMN_SUPPORT_TAC@]='0xa000'
-AMF_CONF[@SST_0@]='128'
-AMF_CONF[@SD_0@]='128'
-AMF_CONF[@SST_1@]='1'
-AMF_CONF[@SD_1@]='1'
-
-AMF_CONF[@AMF_INTERFACE_NAME_FOR_NGAP@]='eth0'
-AMF_CONF[@AMF_INTERFACE_NAME_FOR_N11@]='eth0'
-
-AMF_CONF[@EXTERNAL_AUSF@]='no'
-AMF_CONF[@EXTERNAL_UDM@]='no'
-AMF_CONF[@EXTERNAL_NRF@]='no'
-AMF_CONF[@EXTERNAL_NSSF@]='no'
-AMF_CONF[@USE_FQDN_DNS@]='no'
-AMF_CONF[@USE_HTTP2@]='no'
-
-AMF_CONF[@NF_REGISTRATION@]='no'
-AMF_CONF[@SMF_SELECTION@]='no'
-
-AMF_CONF[@SMF_INSTANCE_ID_0@]='1'
-AMF_CONF[@SMF_IPV4_ADDR_0@]='192.168.22.208'
-AMF_CONF[@SMF_HTTP_VERSION_0@]='v1'
-AMF_CONF[@SMF_FQDN_0@]='oai-smf'
-AMF_CONF[@SMF_INSTANCE_ID_1@]='2'
-AMF_CONF[@SMF_IPV4_ADDR_1@]='192.168.22.207'
-AMF_CONF[@SMF_HTTP_VERSION_1@]='v1'
-AMF_CONF[@SMF_FQDN_1@]='oai-smf2'
-
-AMF_CONF[@NRF_IPV4_ADDRESS@]='192.168.22.195'
-AMF_CONF[@NRF_PORT@]='80'
-AMF_CONF[@NRF_API_VERSION@]='v1'
-AMF_CONF[@NRF_FQDN@]='oai-nrf'
-
-AMF_CONF[@AUSF_IPV4_ADDRESS@]='192.168.22.199'
-AMF_CONF[@AUSF_PORT@]='80'
-AMF_CONF[@AUSF_API_VERSION@]='v1'
-AMF_CONF[@AUSF_FQDN@]='oai-ausf'
-
-AMF_CONF[@NSSF_IPV4_ADDRESS@]='192.168.22.214'
-AMF_CONF[@NSSF_PORT@]='80'
-AMF_CONF[@NSSF_API_VERSION@]='v1'
-AMF_CONF[@NSSF_FQDN@]='oai-nssf'
-
-AMF_CONF[@UDM_IPV4_ADDRESS@]='192.168.22.209'
-AMF_CONF[@UDM_PORT@]='80'
-AMF_CONF[@UDM_API_VERSION@]='v1'
-AMF_CONF[@UDM_FQDN@]='oai-udm'
-
-AMF_CONF[@NRF_SELECTION@]='no'
-AMF_CONF[@INT_ALGO_LIST@]='[ "NIA0" , "NIA1" , "NIA2" ]'
-AMF_CONF[@CIPH_ALGO_LIST@]='[ "NEA0" , "NEA1" , "NEA2" ]'
-
-AMF_CONF[@MYSQL_SERVER@]='127.0.0.1'
-AMF_CONF[@MYSQL_USER@]='root'
-AMF_CONF[@MYSQL_PASS@]='linux'
-AMF_CONF[@MYSQL_DB@]='oai_db'
-
-for K in "${!AMF_CONF[@]}"; do 
-  egrep -lRZ "$K" $PREFIX | xargs -0 -l sed -i -e "s|$K|${AMF_CONF[$K]}|g"
-  ret=$?;[[ ret -ne 0 ]] && echo "Tried to replace $K with ${AMF_CONF[$K]}"
-done
+../../scripts/entrypoint.py

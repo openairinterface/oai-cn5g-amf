@@ -30,56 +30,56 @@ TAI::TAI() {}
 TAI::~TAI() {}
 
 //------------------------------------------------------------------------------
-void TAI::setTAI(const PlmnId& m_plmnId, const TAC& m_tac) {
-  plmnId = m_plmnId;
-  tac    = m_tac;
+void TAI::setTAI(const PlmnId& plmn_id, const TAC& tac) {
+  plmn_id_ = plmn_id;
+  tac_     = tac;
 }
 
 //------------------------------------------------------------------------------
 void TAI::setTAI(
-    const std::string& mcc, const std::string& mnc, const uint32_t& m_tac) {
-  plmnId.setMccMnc(mcc, mnc);
-  tac.setTac(m_tac);
+    const std::string& mcc, const std::string& mnc, const uint32_t& tac) {
+  plmn_id_.set(mcc, mnc);
+  tac_.set(tac);
 }
 
 //------------------------------------------------------------------------------
-void TAI::getTAI(std::string& mcc, std::string& mnc, uint32_t& m_tac) {
-  plmnId.getMcc(mcc);
-  plmnId.getMnc(mnc);
-  m_tac = tac.getTac();
+void TAI::getTAI(std::string& mcc, std::string& mnc, uint32_t& tac) {
+  plmn_id_.getMcc(mcc);
+  plmn_id_.getMnc(mnc);
+  tac = tac_.get();
 }
 
 //------------------------------------------------------------------------------
 void TAI::setTAI(const Tai_t& tai) {
-  plmnId.setMccMnc(tai.mcc, tai.mnc);
-  tac.setTac(tai.tac);
+  plmn_id_.set(tai.mcc, tai.mnc);
+  tac_.set(tai.tac);
 }
 //------------------------------------------------------------------------------
-bool TAI::encode2TAI(Ngap_TAI_t* tai) {
-  if (!plmnId.encode2octetstring(tai->pLMNIdentity)) return false;
-  if (!tac.encode2octetstring(tai->tAC)) return false;
+bool TAI::encode(Ngap_TAI_t* tai) {
+  if (!plmn_id_.encode(tai->pLMNIdentity)) return false;
+  if (!tac_.encode(tai->tAC)) return false;
 
   return true;
 }
 
 //------------------------------------------------------------------------------
-bool TAI::decodefromTAI(Ngap_TAI_t* tai) {
-  if (!plmnId.decodefromoctetstring(tai->pLMNIdentity)) return false;
-  if (!tac.decodefromoctetstring(tai->tAC)) return false;
+bool TAI::decode(Ngap_TAI_t* tai) {
+  if (!plmn_id_.decode(tai->pLMNIdentity)) return false;
+  if (!tac_.decode(tai->tAC)) return false;
 
   return true;
 }
 
 //------------------------------------------------------------------------------
-void TAI::getTAI(PlmnId& m_plmnId, TAC& m_tac) {
-  m_plmnId = plmnId;
-  m_tac    = tac;
+void TAI::getTAI(PlmnId& plmn_id, TAC& tac) {
+  plmn_id = plmn_id_;
+  tac     = tac_;
 }
 
 //------------------------------------------------------------------------------
 void TAI::getTAI(Tai_t& tai) {
-  plmnId.getMcc(tai.mcc);
-  plmnId.getMnc(tai.mnc);
-  tai.tac = tac.getTac();
+  plmn_id_.getMcc(tai.mcc);
+  plmn_id_.getMnc(tai.mnc);
+  tai.tac = tac_.get();
 }
 }  // namespace ngap

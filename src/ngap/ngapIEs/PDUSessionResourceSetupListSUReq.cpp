@@ -30,27 +30,29 @@ PDUSessionResourceSetupListSUReq::PDUSessionResourceSetupListSUReq() {}
 PDUSessionResourceSetupListSUReq::~PDUSessionResourceSetupListSUReq() {}
 
 //------------------------------------------------------------------------------
-void PDUSessionResourceSetupListSUReq::setPDUSessionResourceSetupListSUReq(
+void PDUSessionResourceSetupListSUReq::set(
     const std::vector<PDUSessionResourceSetupItemSUReq>& list) {
-  itemSUReqList = list;
+  item_list_ = list;
 }
 
 //------------------------------------------------------------------------------
-void PDUSessionResourceSetupListSUReq::getPDUSessionResourceSetupListSUReq(
+void PDUSessionResourceSetupListSUReq::get(
     std::vector<PDUSessionResourceSetupItemSUReq>& list) {
-  list = itemSUReqList;
+  list = item_list_;
 }
 
 //------------------------------------------------------------------------------
-bool PDUSessionResourceSetupListSUReq::encode2PDUSessionResourceSetupListSUReq(
-    Ngap_PDUSessionResourceSetupListSUReq_t* pduSessionResourceSetupListSUReq) {
-  for (auto& item : itemSUReqList) {
+bool PDUSessionResourceSetupListSUReq::encode(
+    Ngap_PDUSessionResourceSetupListSUReq_t*
+        pdu_session_resource_setup_list_su_req) {
+  for (auto& item : item_list_) {
     Ngap_PDUSessionResourceSetupItemSUReq_t* request =
         (Ngap_PDUSessionResourceSetupItemSUReq_t*) calloc(
             1, sizeof(Ngap_PDUSessionResourceSetupItemSUReq_t));
     if (!request) return false;
-    if (!item.encode2PDUSessionResourceSetupItemSUReq(request)) return false;
-    if (ASN_SEQUENCE_ADD(&pduSessionResourceSetupListSUReq->list, request) != 0)
+    if (!item.encode(request)) return false;
+    if (ASN_SEQUENCE_ADD(
+            &pdu_session_resource_setup_list_su_req->list, request) != 0)
       return false;
   }
 
@@ -58,16 +60,14 @@ bool PDUSessionResourceSetupListSUReq::encode2PDUSessionResourceSetupListSUReq(
 }
 
 //------------------------------------------------------------------------------
-bool PDUSessionResourceSetupListSUReq::
-    decodefromPDUSessionResourceSetupListSUReq(
-        Ngap_PDUSessionResourceSetupListSUReq_t*
-            pduSessionResourceSetupListSUReq) {
-  for (int i = 0; i < pduSessionResourceSetupListSUReq->list.count; i++) {
+bool PDUSessionResourceSetupListSUReq::decode(
+    Ngap_PDUSessionResourceSetupListSUReq_t*
+        pdu_session_resource_setup_list_su_req) {
+  for (int i = 0; i < pdu_session_resource_setup_list_su_req->list.count; i++) {
     PDUSessionResourceSetupItemSUReq item = {};
-    if (!item.decodefromPDUSessionResourceSetupItemSUReq(
-            pduSessionResourceSetupListSUReq->list.array[i]))
+    if (!item.decode(pdu_session_resource_setup_list_su_req->list.array[i]))
       return false;
-    itemSUReqList.push_back(item);
+    item_list_.push_back(item);
   }
 
   return true;

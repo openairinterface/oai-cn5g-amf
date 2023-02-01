@@ -21,60 +21,49 @@
 
 #include "PDUSessionResourceSetupListHOReq.hpp"
 
-#include <iostream>
-using namespace std;
-
 namespace ngap {
-PDUSessionResourceSetupListHOReq::PDUSessionResourceSetupListHOReq() {
-  pduSessionResourceSetupItemHOReq      = NULL;
-  numofpduSessionResourceSetupItemHOReq = 0;
-}
+
+//------------------------------------------------------------------------------
+PDUSessionResourceSetupListHOReq::PDUSessionResourceSetupListHOReq() {}
+
+//------------------------------------------------------------------------------
 PDUSessionResourceSetupListHOReq::~PDUSessionResourceSetupListHOReq() {}
 
-void PDUSessionResourceSetupListHOReq::setPDUSessionResourceSetupListHOReq(
-    PDUSessionResourceSetupItemHOReq* m_pduSessionResourceSetupItemHOReq,
-    int num) {
-  pduSessionResourceSetupItemHOReq      = m_pduSessionResourceSetupItemHOReq;
-  numofpduSessionResourceSetupItemHOReq = num;
+//------------------------------------------------------------------------------
+void PDUSessionResourceSetupListHOReq::set(
+    const std::vector<PDUSessionResourceSetupItemHOReq>& list) {
+  list_ = list;
 }
-bool PDUSessionResourceSetupListHOReq::encode2PDUSessionResourceSetupListHOReq(
-    Ngap_PDUSessionResourceSetupListHOReq_t* pduSessionResourceSetupListHOReq) {
-  for (int i = 0; i < numofpduSessionResourceSetupItemHOReq; i++) {
+
+//------------------------------------------------------------------------------
+void PDUSessionResourceSetupListHOReq::get(
+    std::vector<PDUSessionResourceSetupItemHOReq>& list) {
+  list = list_;
+}
+
+//------------------------------------------------------------------------------
+bool PDUSessionResourceSetupListHOReq::encode(
+    Ngap_PDUSessionResourceSetupListHOReq_t* resource_list) {
+  for (auto item : list_) {
     Ngap_PDUSessionResourceSetupItemHOReq_t* request =
         (Ngap_PDUSessionResourceSetupItemHOReq_t*) calloc(
             1, sizeof(Ngap_PDUSessionResourceSetupItemHOReq_t));
     if (!request) return false;
-    if (!pduSessionResourceSetupItemHOReq[i]
-             .encode2PDUSessionResourceSetupItemHOReq(request))
-      return false;
-    if (ASN_SEQUENCE_ADD(&pduSessionResourceSetupListHOReq->list, request) != 0)
-      return false;
+    if (!item.encode(request)) return false;
+    if (ASN_SEQUENCE_ADD(&resource_list->list, request) != 0) return false;
   }
-
   return true;
 }
-bool PDUSessionResourceSetupListHOReq::
-    decodefromPDUSessionResourceSetupListHOReq(
-        Ngap_PDUSessionResourceSetupListHOReq_t*
-            pduSessionResourceSetupListHOReq) {
-  numofpduSessionResourceSetupItemHOReq =
-      pduSessionResourceSetupListHOReq->list.count;
-  pduSessionResourceSetupItemHOReq = new PDUSessionResourceSetupItemHOReq
-      [numofpduSessionResourceSetupItemHOReq]();
-  for (int i = 0; i < numofpduSessionResourceSetupItemHOReq; i++) {
-    if (!pduSessionResourceSetupItemHOReq[i]
-             .decodefromPDUSessionResourceSetupItemHOReq(
-                 pduSessionResourceSetupListHOReq->list.array[i]))
-      return false;
-  }
 
+//------------------------------------------------------------------------------
+bool PDUSessionResourceSetupListHOReq::decode(
+    Ngap_PDUSessionResourceSetupListHOReq_t* resource_list) {
+  for (int i = 0; i < resource_list->list.count; i++) {
+    PDUSessionResourceSetupItemHOReq item = {};
+    if (!item.decode(resource_list->list.array[i])) return false;
+    list_.push_back(item);
+  }
   return true;
-}
-void PDUSessionResourceSetupListHOReq::getPDUSessionResourceSetupListHOReq(
-    PDUSessionResourceSetupItemHOReq*& m_pduSessionResourceSetupItemHOReq,
-    int& num) {
-  m_pduSessionResourceSetupItemHOReq = pduSessionResourceSetupItemHOReq;
-  num                                = numofpduSessionResourceSetupItemHOReq;
 }
 
 }  // namespace ngap

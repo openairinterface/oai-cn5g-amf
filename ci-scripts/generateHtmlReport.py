@@ -195,7 +195,7 @@ class HtmlReport():
 					self.file.write('    <strong>All files in repository follow OAI rules. <span class="glyphicon glyphicon-ok-circle"></span> -> (' + nb_total.strip() + ' were checked)</strong>\n')
 				self.file.write('  </div>\n')
 			else:
-				self.file.write('  <div class="alert alert-warning">\n')
+				self.file.write('  <div class="alert alert-danger">\n')
 				if self.git_pull_request:
 					self.file.write('    <strong>' + nb_fail.strip() + ' modified files in Pull-Request DO NOT follow OAI rules. <span class="glyphicon glyphicon-warning-sign"></span> -> (' + nb_total.strip() + ' were checked)</strong>\n')
 				else:
@@ -463,20 +463,18 @@ class HtmlReport():
 				section_end_pattern = 'build_amf --clean --Verbose --build-type Release --jobs'
 				section_status = False
 				package_install = False
-				folly_build_start = False
-				folly_build_status = False
 				spdlog_build_start = False
 				spdlog_build_status = False
 				pistache_build_start = False
 				pistache_build_status = False
 				json_build_start = False
 				json_build_status = False
-				cpprest_build_start = False
-				cpprest_build_status = False
+				nghttp2_build_start = False
+				nghttp2_build_status = False
 				base_image = False
 				with open(cwd + '/archives/' + logFileName, 'r') as logfile:
 					for line in logfile:
-						result = re.search('FROM oai-amf-base', line)
+						result = re.search('FROM oai-amf-base:latest', line)
 						if result is not None:
 							base_image = True
 						result = re.search(section_start_pattern, line)
@@ -492,18 +490,12 @@ class HtmlReport():
 							result = re.search('distro libs installation complete', line)
 							if result is not None:
 								package_install = True
-							result = re.search('Starting to install cpprestsdk', line)
+							result = re.search('Starting to install nghttp2', line)
 							if result is not None:
-								cpprest_build_start = True
-							result = re.search('cpprestsdk installation complete', line)
-							if result is not None and cpprest_build_start:
-								cpprest_build_status = True
-							result = re.search('Starting to install folly', line)
-							if result is not None:
-								folly_build_start = True
-							result = re.search('folly installation complete', line)
-							if result is not None and folly_build_start:
-								folly_build_status = True
+								nghttp2_build_start = True
+							result = re.search('nghttp2 installation complete', line)
+							if result is not None and nghttp2_build_start:
+								nghttp2_build_status = True
 							result = re.search('Starting to install spdlog', line)
 							if result is not None:
 								spdlog_build_start = True
@@ -540,17 +532,11 @@ class HtmlReport():
 				else:
 					cell_msg += '   ** Packages Installation: KO\n'
 				if base_image:
-					cell_msg += '   ** cpprestsdk Installation: N/A\n'
-				elif cpprest_build_status:
-					cell_msg += '   ** cpprestsdk Installation: OK\n'
+					cell_msg += '   ** nghttp2-asio Installation: N/A\n'
+				elif nghttp2_build_status:
+					cell_msg += '   ** nghttp2-asio Installation: OK\n'
 				else:
-					cell_msg += '   ** cpprestsdk Installation: KO\n'
-				if base_image:
-					cell_msg += '   ** folly Installation: N/A\n'
-				elif folly_build_status:
-					cell_msg += '   ** folly Installation: OK\n'
-				else:
-					cell_msg += '   ** folly Installation: KO\n'
+					cell_msg += '   ** nghttp2-asio Installation: KO\n'
 				if base_image:
 					cell_msg += '   ** spdlog Installation: N/A\n'
 				elif spdlog_build_status:

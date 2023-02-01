@@ -21,6 +21,7 @@
 
 #include <AMFConfigurationApiImpl.h>
 
+#include "3gpp_29.500.h"
 #include "logger.hpp"
 
 extern itti_mw* itti_inst;
@@ -81,7 +82,8 @@ void AMFConfigurationApiImpl::read_configuration(
       http_response_code = result["httpResponseCode"].get<int>();
     }
 
-    if (http_response_code == 200) {
+    if (static_cast<http_response_codes_e>(http_response_code) ==
+        http_response_codes_e::HTTP_RESPONSE_CODE_200_OK) {
       if (result.find("content") != result.end()) {
         json_data = result["content"];
       }
@@ -152,7 +154,8 @@ void AMFConfigurationApiImpl::update_configuration(
       http_response_code = result["httpResponseCode"].get<int>();
     }
 
-    if (http_response_code == 200) {
+    if (static_cast<http_response_codes_e>(http_response_code) ==
+        http_response_codes_e::HTTP_RESPONSE_CODE_200_OK) {
       if (result.find("content") != result.end()) {
         json_data = result["content"];
       }

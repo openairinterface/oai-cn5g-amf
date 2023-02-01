@@ -19,13 +19,6 @@
  *      contact@openairinterface.org
  */
 
-/*! \file
- \brief
- \author  Keliang DU, BUPT
- \date 2020
- \email: contact@openairinterface.org
- */
-
 #include "PDUSessionResourceSetupRequestTransfer.hpp"
 
 extern "C" {
@@ -485,7 +478,7 @@ void PduSessionResourceSetupRequestTransferIE::setQosFlowSetupRequestList(
 }
 
 //------------------------------------------------------------------------------
-int PduSessionResourceSetupRequestTransferIE::encode2buffer(
+int PduSessionResourceSetupRequestTransferIE::Encode(
     uint8_t* buf, int buf_size) {
   asn_fprint(
       stderr, &asn_DEF_Ngap_PDUSessionResourceSetupRequestTransfer,

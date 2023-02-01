@@ -19,13 +19,6 @@
  *      contact@openairinterface.org
  */
 
-/*! \file
- \brief
- \author  Keliang DU, BUPT
- \date 2020
- \email: contact@openairinterface.org
- */
-
 #include "RAN-UE-NGAP-ID.hpp"
 //#include "String2Value.hpp"
 
@@ -36,33 +29,34 @@ namespace ngap {
 
 //------------------------------------------------------------------------------
 RAN_UE_NGAP_ID::RAN_UE_NGAP_ID() {
-  ranUeNgapId = 0;
+  id_ = 0;
 }
+
+//------------------------------------------------------------------------------
+RAN_UE_NGAP_ID::RAN_UE_NGAP_ID(uint32_t id) : id_(id) {}
 
 //------------------------------------------------------------------------------
 RAN_UE_NGAP_ID::~RAN_UE_NGAP_ID() {}
 
 //------------------------------------------------------------------------------
-void RAN_UE_NGAP_ID::setRanUeNgapId(uint32_t m_ranuengapid) {
-  ranUeNgapId = m_ranuengapid;
+void RAN_UE_NGAP_ID::set(const uint32_t& id) {
+  id_ = id;
 }
 
 //------------------------------------------------------------------------------
-uint32_t RAN_UE_NGAP_ID::getRanUeNgapId() {
-  return ranUeNgapId;
+uint32_t RAN_UE_NGAP_ID::get() const {
+  return id_;
 }
 
 //------------------------------------------------------------------------------
-bool RAN_UE_NGAP_ID::encode2RAN_UE_NGAP_ID(Ngap_RAN_UE_NGAP_ID_t& ranuengapid) {
-  ranuengapid = ranUeNgapId;
+bool RAN_UE_NGAP_ID::encode(Ngap_RAN_UE_NGAP_ID_t& ran_ue_ngap_id) {
+  ran_ue_ngap_id = id_;
   return true;
 }
 
 //------------------------------------------------------------------------------
-bool RAN_UE_NGAP_ID::decodefromRAN_UE_NGAP_ID(
-    Ngap_RAN_UE_NGAP_ID_t& ranuengapid) {
-  ranUeNgapId = ranuengapid;
-  cout << "[LibNGAP]Received RanUeNgapId " << ranUeNgapId << endl;
+bool RAN_UE_NGAP_ID::decode(Ngap_RAN_UE_NGAP_ID_t& ran_ue_ngap_id) {
+  id_ = ran_ue_ngap_id;
   return true;
 }
 }  // namespace ngap

@@ -19,19 +19,11 @@
  *      contact@openairinterface.org
  */
 
-/*! \file TLVDecoder.h
- \brief
- \author Philippe MOREL, Sebastien ROUX, Lionel GAUTHIER
- \company Eurecom
- */
-
 #ifndef FILE_TLV_DECODER_SEEN
 #define FILE_TLV_DECODER_SEEN
 
 #include "bstrlib.h"
-//#include "log.h"
 #include "common_defs.h"
-//#include "log.h"
 
 #define IES_DECODE_U8(bUFFER, dECODED, vALUE)                                  \
   DECODE_U8(bUFFER + dECODED, vALUE, dECODED)

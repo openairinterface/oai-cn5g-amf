@@ -19,41 +19,36 @@
  *      contact@openairinterface.org
  */
 
-/*! \file
- \brief
- \author  Keliang DU, BUPT
- \date 2020
- \email: contact@openairinterface.org
- */
+#ifndef _SECURITY_MODE_COMPLETE_H_
+#define _SECURITY_MODE_COMPLETE_H_
 
-#ifndef _SecurityModeComplete_H_
-#define _SecurityModeComplete_H_
-
-#include "nas_ie_header.hpp"
+#include "NasIeHeader.hpp"
 
 namespace nas {
 
-class SecurityModeComplete {
+class SecurityModeComplete : public NasMmPlainHeader {
  public:
   SecurityModeComplete();
   ~SecurityModeComplete();
-  int encode2buffer(uint8_t* buf, int len);
-  int decodefrombuffer(NasMmPlainHeader* header, uint8_t* buf, int len);
-  void setHeader(uint8_t security_header_type);
 
-  void setIMEISV(IMEISV_t imeisv);
-  void setNAS_Message_Container(bstring value);
-  void setNON_IMEISV(IMEISV_t imeisv);
+  void SetHeader(uint8_t security_header_type);
 
-  bool getIMEISV(IMEISV_t& imeisv);
-  bool getNasMessageContainer(bstring& nas);
-  bool getNON_IMEISV(IMEISV_t& imeisv);
+  int Encode(uint8_t* buf, int len);
+  int Decode(uint8_t* buf, int len);
+
+  void SetImeisv(IMEISV_t imeisv);
+  bool GetImeisv(IMEISV_t& imeisv) const;
+
+  void SetNasMessageContainer(bstring value);
+  bool GetNasMessageContainer(bstring& nas) const;
+
+  void SetNonImeisv(IMEISV_t imeisv);
+  bool GetNonImeisv(IMEISV_t& imeisv) const;
 
  public:
-  NasMmPlainHeader* plain_header;
-  _5GSMobilityIdentity* ie_imeisv;
-  NAS_Message_Container* ie_nas_message_container;
-  _5GSMobilityIdentity* ie_non_imeisvpei;
+  std::optional<_5GSMobileIdentity> ie_imeisv;                  // Optional
+  std::optional<NasMessageContainer> ie_nas_message_container;  // Optional
+  std::optional<_5GSMobileIdentity> ie_non_imeisvpei;           // Optional
 };
 
 }  // namespace nas

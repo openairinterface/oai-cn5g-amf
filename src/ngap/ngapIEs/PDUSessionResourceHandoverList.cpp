@@ -30,30 +30,28 @@ PDUSessionResourceHandoverList::PDUSessionResourceHandoverList() {}
 PDUSessionResourceHandoverList::~PDUSessionResourceHandoverList() {}
 
 //------------------------------------------------------------------------------
-void PDUSessionResourceHandoverList::setPDUSessionResourceHandoverList(
-    const std::vector<PDUSessionResourceHandoverItem>& list) {
-  handoverItemList = list;
+void PDUSessionResourceHandoverList::set(
+    const std::vector<PDUSessionResourceItem>& list) {
+  item_list_ = list;
 }
 
 //------------------------------------------------------------------------------
-void PDUSessionResourceHandoverList::getPDUSessionResourceHandoverList(
-    std::vector<PDUSessionResourceHandoverItem>& list) {
-  list = handoverItemList;
+void PDUSessionResourceHandoverList::get(
+    std::vector<PDUSessionResourceItem>& list) {
+  list = item_list_;
 }
 
 //------------------------------------------------------------------------------
 bool PDUSessionResourceHandoverList::encode(
-    Ngap_PDUSessionResourceHandoverList_t& pduSessionResourceHandoverList) {
-  for (auto& item : handoverItemList) {
+    Ngap_PDUSessionResourceHandoverList_t& list) {
+  for (auto& item : item_list_) {
     Ngap_PDUSessionResourceHandoverItem_t* handoverItem =
         (Ngap_PDUSessionResourceHandoverItem_t*) calloc(
             1, sizeof(Ngap_PDUSessionResourceHandoverItem_t));
 
     if (!handoverItem) return false;
-    if (!item.encode(*handoverItem)) return false;
-    if (ASN_SEQUENCE_ADD(&pduSessionResourceHandoverList.list, handoverItem) !=
-        0)
-      return false;
+    if (!item.encode(handoverItem)) return false;
+    if (ASN_SEQUENCE_ADD(&list.list, handoverItem) != 0) return false;
   }
 
   return true;
@@ -61,14 +59,12 @@ bool PDUSessionResourceHandoverList::encode(
 
 //------------------------------------------------------------------------------
 bool PDUSessionResourceHandoverList::decode(
-    const Ngap_PDUSessionResourceHandoverList_t&
-        pduSessionResourceHandoverList) {
-  for (int i = 0; i < pduSessionResourceHandoverList.list.count; i++) {
-    PDUSessionResourceHandoverItem item = {};
+    const Ngap_PDUSessionResourceHandoverList_t& list) {
+  for (int i = 0; i < list.list.count; i++) {
+    PDUSessionResourceItem item = {};
 
-    if (!item.decode(*pduSessionResourceHandoverList.list.array[i]))
-      return false;
-    handoverItemList.push_back(item);
+    if (!item.decode(list.list.array[i])) return false;
+    item_list_.push_back(item);
   }
   return true;
 }

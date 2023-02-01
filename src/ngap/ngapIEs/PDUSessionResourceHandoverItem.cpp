@@ -46,7 +46,7 @@ void PDUSessionResourceHandoverItem::getPDUSessionResourceHandoverItem(
 //------------------------------------------------------------------------------
 bool PDUSessionResourceHandoverItem::encode(
     Ngap_PDUSessionResourceHandoverItem_t& item) {
-  if (!pDUSessionID.encode2PDUSessionID(item.pDUSessionID)) return false;
+  if (!pDUSessionID.encode(item.pDUSessionID)) return false;
   item.handoverCommandTransfer = handoverCommandTransfer;
   return true;
 }
@@ -54,7 +54,7 @@ bool PDUSessionResourceHandoverItem::encode(
 //------------------------------------------------------------------------------
 bool PDUSessionResourceHandoverItem::decode(
     const Ngap_PDUSessionResourceHandoverItem_t& item) {
-  if (!pDUSessionID.decodefromPDUSessionID(item.pDUSessionID)) return false;
+  if (!pDUSessionID.decode(item.pDUSessionID)) return false;
   handoverCommandTransfer = item.handoverCommandTransfer;
   return true;
 }

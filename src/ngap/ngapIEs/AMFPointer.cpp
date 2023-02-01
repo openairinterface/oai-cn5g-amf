@@ -19,61 +19,56 @@
  *      contact@openairinterface.org
  */
 
-/*! \file
- \brief
- \author  Keliang DU, BUPT
- \date 2020
- \email: contact@openairinterface.org
- */
-
 #include "AMFPointer.hpp"
 
-#include <iostream>
-
 #include "String2Value.hpp"
-using namespace std;
 
 namespace ngap {
 
 //------------------------------------------------------------------------------
 AMFPointer::AMFPointer() {
-  pointer = 0;
+  pointer_ = 0;
 }
 
 //------------------------------------------------------------------------------
 AMFPointer::~AMFPointer() {}
 
 //------------------------------------------------------------------------------
-void AMFPointer::setAMFPointer(const std::string charPointer) {
-  pointer = fromString<int>(charPointer);
+bool AMFPointer::set(const std::string& pointer) {
+  uint8_t tmp = fromString<int>(pointer);
+  if (tmp > kAmfPointerMaxValue) return false;
+  pointer_ = tmp;
+  return true;
 }
 
 //------------------------------------------------------------------------------
-void AMFPointer::setAMFPointer(const uint8_t& p) {
-  pointer = p;
+bool AMFPointer::set(const uint8_t& pointer) {
+  if (pointer > kAmfPointerMaxValue) return false;
+  pointer_ = pointer;
+  return true;
 }
 
 //------------------------------------------------------------------------------
-void AMFPointer::getAMFPointer(std::string& charPointer) {
-  charPointer = to_string(pointer);
+void AMFPointer::get(std::string& pointer) {
+  pointer = std::to_string(pointer_);
 }
 
 //------------------------------------------------------------------------------
-bool AMFPointer::encode2bitstring(Ngap_AMFPointer_t& amfpointer) {
-  amfpointer.size = 1;
-  uint8_t* buffer = (uint8_t*) calloc(1, sizeof(uint8_t));
+bool AMFPointer::encode(Ngap_AMFPointer_t& amf_pointer) {
+  amf_pointer.size = 1;
+  uint8_t* buffer  = (uint8_t*) calloc(1, sizeof(uint8_t));
   if (!buffer) return false;
-  *buffer                = ((pointer & 0x3f) << 2);
-  amfpointer.buf         = buffer;
-  amfpointer.bits_unused = 2;
+  *buffer                 = ((pointer_ & 0x3f) << 2);
+  amf_pointer.buf         = buffer;
+  amf_pointer.bits_unused = 2;
 
   return true;
 }
 
 //------------------------------------------------------------------------------
-bool AMFPointer::decodefrombitstring(Ngap_AMFPointer_t& amfpointer) {
-  if (!amfpointer.buf) return false;
-  pointer = (amfpointer.buf[0] & 0xfc) >> 2;  // 1111 1100
+bool AMFPointer::decode(Ngap_AMFPointer_t& amf_pointer) {
+  if (!amf_pointer.buf) return false;
+  pointer_ = (amf_pointer.buf[0] & 0xfc) >> 2;  // 1111 1100
 
   return true;
 }

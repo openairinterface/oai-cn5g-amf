@@ -19,14 +19,8 @@
  *      contact@openairinterface.org
  */
 
-/*! \file
- \brief
- \author  niuxiansheng-niu, BUPT
- \date 2020
- \email: contact@openairinterface.org
- */
 #ifndef _MOBILITY_RESTRICTION_LIST_H_
-#define _MOBILITYRESTRICTION_LIST_H_
+#define _MOBILITY_RESTRICTION_LIST_H_
 #include "PlmnId.hpp"
 
 extern "C" {
@@ -38,11 +32,11 @@ class MobilityRestrictionList {
   MobilityRestrictionList();
   virtual ~MobilityRestrictionList();
 
-  void setMobilityRestrictionList(const PlmnId& sPlmn);
-  void getMobilityRestrictionList(PlmnId& sPlmn);
+  void setPLMN(const PlmnId& sPlmn);
+  void getPLMN(PlmnId& sPlmn);
 
-  bool encodeMobilityRestrictionList(
-      Ngap_MobilityRestrictionList_t* mobilityrestrictionlist);
+  bool encode(Ngap_MobilityRestrictionList_t* mobility_restriction_list);
+  bool decode(Ngap_MobilityRestrictionList_t* mobility_restriction_list);
 
  private:
   PlmnId servingPLMN;  // Mandatory

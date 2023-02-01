@@ -36,17 +36,13 @@ class PDUSessionResourceSetupListCxtReq {
   PDUSessionResourceSetupListCxtReq();
   virtual ~PDUSessionResourceSetupListCxtReq();
 
-  void setPDUSessionResourceSetupListCxtReq(
-      const std::vector<PDUSessionResourceSetupItemCxtReq>& itemList);
-  void getPDUSessionResourceSetupListCxtReq(
-      std::vector<PDUSessionResourceSetupItemCxtReq>& itemList);
+  void set(const std::vector<PDUSessionResourceSetupItemCxtReq>& itemList);
+  void get(std::vector<PDUSessionResourceSetupItemCxtReq>& itemList) const;
 
-  bool encode2PDUSessionResourceSetupListCxtReq(
-      Ngap_PDUSessionResourceSetupListCxtReq_t*
-          pduSessionResourceSetupListCxtReq);
-  bool decodefromPDUSessionResourceSetupListCxtReq(
-      Ngap_PDUSessionResourceSetupListCxtReq_t*
-          pduSessionResourceSetupListCxtReq);
+  bool encode(Ngap_PDUSessionResourceSetupListCxtReq_t*
+                  pduSessionResourceSetupListCxtReq);
+  bool decode(Ngap_PDUSessionResourceSetupListCxtReq_t*
+                  pduSessionResourceSetupListCxtReq);
 
  private:
   std::vector<PDUSessionResourceSetupItemCxtReq>

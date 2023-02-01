@@ -26,6 +26,8 @@
 #include "PDUSessionID.hpp"
 #include "S-NSSAI.hpp"
 
+#include <optional>
+
 extern "C" {
 #include "Ngap_PDUSessionResourceModifyItemModReq.h"
 }
@@ -37,27 +39,25 @@ class PDUSessionResourceModifyItemModReq {
   PDUSessionResourceModifyItemModReq();
   virtual ~PDUSessionResourceModifyItemModReq();
 
-  void setPDUSessionResourceModifyItemModReq(
-      const PDUSessionID& m_pDUSessionID, const NAS_PDU& m_nAS_PDU,
-      const OCTET_STRING_t& m_pDUSessionResourceModifyRequestTransfer,
-      const S_NSSAI& m_s_NSSAI);
-  void getPDUSessionResourceModifyItemModReq(
-      PDUSessionID& m_pDUSessionID, NAS_PDU& m_nAS_PDU,
-      OCTET_STRING_t& m_pDUSessionResourceModifyRequestTransfer,
-      S_NSSAI& m_s_NSSAI);
+  void set(
+      const PDUSessionID& pdu_session_id, const std::optional<NAS_PDU>& nas_pdu,
+      const OCTET_STRING_t& pdu_session_resource_modify_request_transfer,
+      const std::optional<S_NSSAI>& s_nssai);
+  void get(
+      PDUSessionID& pdu_session_id, std::optional<NAS_PDU>& nas_pdu,
+      OCTET_STRING_t& pdu_session_resource_modify_request_transfer,
+      std::optional<S_NSSAI>& s_nssai);
 
-  bool encode2PDUSessionResourceModifyItemModReq(
-      Ngap_PDUSessionResourceModifyItemModReq_t&
-          pduSessionResourceModifyItemModReq);
-  bool decodefromPDUSessionResourceModifyItemModReq(
-      Ngap_PDUSessionResourceModifyItemModReq_t&
-          pduSessionResourceModifyItemModReq);
+  bool encode(Ngap_PDUSessionResourceModifyItemModReq_t&
+                  pduSessionResourceModifyItemModReq);
+  bool decode(Ngap_PDUSessionResourceModifyItemModReq_t&
+                  pduSessionResourceModifyItemModReq);
 
  private:
-  PDUSessionID pDUSessionID;                               // Mandatory
-  NAS_PDU* nAS_PDU;                                        // Optional
-  OCTET_STRING_t pDUSessionResourceModifyRequestTransfer;  // Mandatory
-  S_NSSAI* s_NSSAI;                                        // Optional
+  PDUSessionID pdu_session_id_;                                  // Mandatory
+  std::optional<NAS_PDU> nas_pdu_;                               // Optional
+  OCTET_STRING_t pdu_session_resource_modify_request_transfer_;  // Mandatory
+  std::optional<S_NSSAI> s_nssai_;                               // Optional
 };
 
 }  // namespace ngap

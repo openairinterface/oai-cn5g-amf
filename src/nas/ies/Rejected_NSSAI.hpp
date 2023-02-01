@@ -19,38 +19,33 @@
  *      contact@openairinterface.org
  */
 
-/*! \file
- \brief
- \author  Keliang DU, BUPT
- \date 2020
- \email: contact@openairinterface.org
- */
-#ifndef __Rejected_NSSAI_H_
-#define __Rejected_NSSAI_H_
+#ifndef _REJECTED_NSSAI_H_
+#define _REJECTED_NSSAI_H_
 
-#include <stdint.h>
+#include <Rejected_SNSSAI.hpp>
+#include "Type4NasIe.hpp"
+
+constexpr uint8_t kRejectedNssaiMinimumLength = 4;
+constexpr uint8_t kRejectedNssaiMaximumLength = 42;
+constexpr auto kRejectedNssaiIeName           = "Rejected NSSAI";
 
 namespace nas {
 
-class Rejected_NSSAI {
+class Rejected_NSSAI : public Type4NasIe {
  public:
-  Rejected_NSSAI();
   Rejected_NSSAI(uint8_t iei);
-  Rejected_NSSAI(const uint8_t iei, uint8_t cause, uint8_t SST);
   ~Rejected_NSSAI();
-  void setSST(uint8_t SST);
-  void setCause(uint8_t SST);
-  int encode2buffer(uint8_t* buf, int len);
-  int decodefrombuffer(uint8_t* buf, int len, bool is_option);
-  uint8_t getSST();
-  uint8_t getCause();
+
+  static std::string GetIeName() { return kRejectedNssaiIeName; }
+
+  int Encode(uint8_t* buf, int len);
+  int Decode(uint8_t* buf, int len, bool is_iei);
+
+  void SetRejectedSNssais(const std::vector<Rejected_SNSSAI>& nssais);
+  void GetRejectedSNssais(std::vector<Rejected_SNSSAI>& nssais);
 
  private:
-  uint8_t _iei;
-  uint8_t length;
-  uint8_t _s_nssai_length;
-  uint8_t _cause;
-  uint8_t _s_nssai_SST;
+  std::vector<Rejected_SNSSAI> rejected_nssais_;
 };
 
 }  // namespace nas

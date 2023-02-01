@@ -36,11 +36,11 @@ class GlobalgNBId {
   GlobalgNBId();
   virtual ~GlobalgNBId();
 
-  bool encode2GlobalgNBId(Ngap_GlobalGNB_ID_t*);
-  bool decodefromGlobalgNBId(Ngap_GlobalGNB_ID_t*);
+  bool encode(Ngap_GlobalGNB_ID_t*);
+  bool decode(Ngap_GlobalGNB_ID_t*);
 
-  void setGlobalgNBId(const PlmnId& plmn, const GNB_ID& gnbid);
-  void getGlobalgNBId(PlmnId& plmn, GNB_ID& gnbid);
+  void set(const PlmnId& plmn, const GNB_ID& gnbid);
+  void get(PlmnId& plmn, GNB_ID& gnbid);
 
  private:
   PlmnId plmnId;  // Mandatory

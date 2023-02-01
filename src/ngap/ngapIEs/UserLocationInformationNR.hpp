@@ -35,11 +35,11 @@ class UserLocationInformationNR {
   UserLocationInformationNR();
   virtual ~UserLocationInformationNR();
 
-  void setInformationNR(const NR_CGI&, const TAI&);
-  void getInformationNR(NR_CGI&, TAI&);
+  void set(const NR_CGI&, const TAI&);
+  void get(NR_CGI&, TAI&);
 
-  bool encode2UserLocationInformationNR(Ngap_UserLocationInformationNR_t*);
-  bool decodefromUserLocationInformationNR(Ngap_UserLocationInformationNR_t*);
+  bool encode(Ngap_UserLocationInformationNR_t*);
+  bool decode(Ngap_UserLocationInformationNR_t*);
 
  private:
   NR_CGI nR_CGI;  // Mandatory

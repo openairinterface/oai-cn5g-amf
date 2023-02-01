@@ -19,13 +19,6 @@
  *      contact@openairinterface.org
  */
 
-/*! \file
- \brief
- \author  Keliang DU, BUPT
- \date 2020
- \email: contact@openairinterface.org
- */
-
 #ifndef _UEAGGREGATEMAXBITRATE_H_
 #define _UEAGGREGATEMAXBITRATE_H_
 
@@ -40,17 +33,15 @@ class UEAggregateMaxBitRate {
   UEAggregateMaxBitRate();
   virtual ~UEAggregateMaxBitRate();
 
-  void setUEAggregateMaxBitRate(long bit_rate_downlink, long bit_rate_uplink);
-  bool getUEAggregateMaxBitRate(long& bit_rate_downlink, long& bit_rate_uplink);
+  void set(const uint64_t& dl, const uint64_t& ul);
+  bool get(uint64_t& dl, uint64_t& ul) const;
 
-  bool encode2UEAggregateMaxBitRate(
-      Ngap_UEAggregateMaximumBitRate_t& ueAggregateMaxBitRate);
-  bool decodefromUEAggregateMaxBitRate(
-      Ngap_UEAggregateMaximumBitRate_t& ueAggregateMaxBitRate);
+  bool encode(Ngap_UEAggregateMaximumBitRate_t& bit_rate);
+  bool decode(Ngap_UEAggregateMaximumBitRate_t& bit_rate);
 
  private:
-  long ueaggregatemaxbitratedl;
-  long ueaggregatemaxbitrateul;
+  uint64_t dl_;
+  uint64_t ul_;
 };
 
 }  // namespace ngap

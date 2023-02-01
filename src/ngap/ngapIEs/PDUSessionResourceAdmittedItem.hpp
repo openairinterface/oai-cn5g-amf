@@ -19,8 +19,8 @@
  *      contact@openairinterface.org
  */
 
-#ifndef _PDUSESSIONRESOURCEADMITTEDITEM_H_
-#define _PDUSESSIONRESOURCEADMITTEDITEM_H_
+#ifndef PDU_SESSION_RESOURCE_ADMITTED_ITEM_H_
+#define PDU_SESSION_RESOURCE_ADMITTED_ITEM_H_
 
 #include "PDUSessionID.hpp"
 #include "PDUSessionResourceHandoverRequestAckTransfer.hpp"

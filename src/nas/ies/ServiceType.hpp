@@ -19,34 +19,33 @@
  *      contact@openairinterface.org
  */
 
-/*! \file
- \brief
- \author  Keliang DU, BUPT
- \date 2020
- \email: contact@openairinterface.org
- */
-
 #ifndef _SERVICE_TYPE_H_
 #define _SERVICE_TYPE_H_
 
-#include <stdint.h>
+#include "Type1NasIe.hpp"
+
+constexpr auto kServiceTypeIeName = "Service Type";
 
 namespace nas {
 
-class ServiceType {
+class ServiceType : public Type1NasIe {
  public:
   ServiceType();
+  ServiceType(uint8_t value);
   ~ServiceType();
-  ServiceType(uint8_t iei, uint8_t stp);
 
- public:
-  int encode2buffer(uint8_t* buf, int len);
-  int decodefrombuffer(uint8_t* nuf, int len, bool is_optional, bool is_high);
-  uint8_t getValue();
+  static std::string GetIeName() { return kServiceTypeIeName; }
+
+  // int Encode(uint8_t* buf, int len);
+  // int Decode(uint8_t* nuf, int len, bool is_iei, bool is_high);
+
+  void SetValue(uint8_t value);
+  void GetValue(uint8_t& value);
 
  private:
-  uint8_t _iei;
-  uint8_t value;
+  void SetValue() override;
+  void GetValue() override;
+  uint8_t service_type_value_;
 };
 
 }  // namespace nas

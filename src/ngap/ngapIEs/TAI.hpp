@@ -19,13 +19,6 @@
  *      contact@openairinterface.org
  */
 
-/*! \file
- \brief
- \author  Keliang DU, BUPT
- \date 2020
- \email: contact@openairinterface.org
- */
-
 #ifndef _TAI_H_
 #define _TAI_H_
 
@@ -45,6 +38,8 @@ class TAI {
   virtual ~TAI();
 
   void setTAI(const PlmnId&, const TAC&);
+  void getTAI(PlmnId&, TAC&);
+
   void setTAI(
       const std::string& mcc, const std::string& mnc, const uint32_t& tac);
   void getTAI(std::string& mcc, std::string& mnc, uint32_t& tac);
@@ -52,13 +47,12 @@ class TAI {
   void setTAI(const Tai_t& tai);
   void getTAI(Tai_t& tai);
 
-  bool encode2TAI(Ngap_TAI_t*);
-  bool decodefromTAI(Ngap_TAI_t*);
-  void getTAI(PlmnId&, TAC&);
+  bool encode(Ngap_TAI_t*);
+  bool decode(Ngap_TAI_t*);
 
  private:
-  PlmnId plmnId;  // Mandatory
-  TAC tac;        // Mandatory
+  PlmnId plmn_id_;  // Mandatory
+  TAC tac_;         // Mandatory
 };
 }  // namespace ngap
 

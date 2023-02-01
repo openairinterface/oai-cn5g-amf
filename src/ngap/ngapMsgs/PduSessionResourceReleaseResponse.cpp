@@ -35,7 +35,7 @@ namespace ngap {
 PduSessionResourceReleaseResponseMsg::PduSessionResourceReleaseResponseMsg()
     : NgapUEMessage() {
   pduSessionResourceReleaseResponseIEs = nullptr;
-  userLocationInformation              = nullptr;
+  userLocationInformation              = std::nullopt;
 
   setMessageType(NgapMessageType::PDU_SESSION_RESOURCE_RELEASE_RESPONSE);
   initialize();
@@ -54,7 +54,7 @@ void PduSessionResourceReleaseResponseMsg::initialize() {
 //------------------------------------------------------------------------------
 void PduSessionResourceReleaseResponseMsg::setAmfUeNgapId(
     const unsigned long& id) {
-  amfUeNgapId.setAMF_UE_NGAP_ID(id);
+  amfUeNgapId.set(id);
 
   Ngap_PDUSessionResourceReleaseResponseIEs_t* ie =
       (Ngap_PDUSessionResourceReleaseResponseIEs_t*) calloc(
@@ -80,7 +80,7 @@ void PduSessionResourceReleaseResponseMsg::setAmfUeNgapId(
 //------------------------------------------------------------------------------
 void PduSessionResourceReleaseResponseMsg::setRanUeNgapId(
     const uint32_t& ran_ue_ngap_id) {
-  ranUeNgapId.setRanUeNgapId(ran_ue_ngap_id);
+  ranUeNgapId.set(ran_ue_ngap_id);
 
   Ngap_PDUSessionResourceReleaseResponseIEs_t* ie =
       (Ngap_PDUSessionResourceReleaseResponseIEs_t*) calloc(
@@ -90,7 +90,7 @@ void PduSessionResourceReleaseResponseMsg::setRanUeNgapId(
   ie->value.present =
       Ngap_PDUSessionResourceReleaseResponseIEs__value_PR_RAN_UE_NGAP_ID;
 
-  int ret = ranUeNgapId.encode2RAN_UE_NGAP_ID(ie->value.choice.RAN_UE_NGAP_ID);
+  int ret = ranUeNgapId.encode(ie->value.choice.RAN_UE_NGAP_ID);
   if (!ret) {
     Logger::nas_mm().warn("Encode RAN_UE_NGAP_ID IE error");
     free_wrapper((void**) &ie);
@@ -105,19 +105,18 @@ void PduSessionResourceReleaseResponseMsg::setRanUeNgapId(
 //------------------------------------------------------------------------------
 void PduSessionResourceReleaseResponseMsg::setPduSessionResourceReleasedList(
     const std::vector<PDUSessionResourceReleasedItem_t>& list) {
-  std::vector<PDUSessionResourceReleasedItemRelRes> itemRelResList;
+  std::vector<PDUSessionResourceReleasedItemRelRes> item_rel_res_list;
   for (int i = 0; i < list.size(); i++) {
-    PDUSessionResourceReleasedItemRelRes itemRelRes = {};
-    PDUSessionID pDUSessionID                       = {};
-    pDUSessionID.setPDUSessionID(list[i].pduSessionId);
+    PDUSessionResourceReleasedItemRelRes item_rel_res = {};
+    PDUSessionID pdu_session_id                       = {};
+    pdu_session_id.set(list[i].pduSessionId);
 
-    itemRelRes.setPDUSessionResourceReleasedItemRelRes(
-        pDUSessionID, list[i].pduSessionResourceReleaseResponseTransfer);
-    itemRelResList.push_back(itemRelRes);
+    item_rel_res.set(
+        pdu_session_id, list[i].pduSessionResourceReleaseResponseTransfer);
+    item_rel_res_list.push_back(item_rel_res);
   }
 
-  pduSessionResourceReleasedList.setPDUSessionResourceReleasedListRelRes(
-      itemRelResList);
+  pduSessionResourceReleasedList.set(item_rel_res_list);
 
   Ngap_PDUSessionResourceReleaseResponseIEs_t* ie =
       (Ngap_PDUSessionResourceReleaseResponseIEs_t*) calloc(
@@ -128,9 +127,8 @@ void PduSessionResourceReleaseResponseMsg::setPduSessionResourceReleasedList(
   ie->value.present =
       Ngap_PDUSessionResourceReleaseResponseIEs__value_PR_PDUSessionResourceReleasedListRelRes;
 
-  int ret = pduSessionResourceReleasedList
-                .encode2PDUSessionResourceReleasedListRelRes(
-                    &ie->value.choice.PDUSessionResourceReleasedListRelRes);
+  int ret = pduSessionResourceReleasedList.encode(
+      ie->value.choice.PDUSessionResourceReleasedListRelRes);
   if (!ret) {
     Logger::nas_mm().warn(
         "Encode PDUSessionResourceReleasedListRelRes IE error");
@@ -148,17 +146,15 @@ void PduSessionResourceReleaseResponseMsg::setPduSessionResourceReleasedList(
 //------------------------------------------------------------------------------
 bool PduSessionResourceReleaseResponseMsg::getPduSessionResourceReleasedList(
     std::vector<PDUSessionResourceReleasedItem_t>& list) {
-  std::vector<PDUSessionResourceReleasedItemRelRes> itemRelResList;
-  pduSessionResourceReleasedList.getPDUSessionResourceReleasedListRelRes(
-      itemRelResList);
+  std::vector<PDUSessionResourceReleasedItemRelRes> item_rel_res_list;
+  pduSessionResourceReleasedList.get(item_rel_res_list);
 
-  for (auto& item : itemRelResList) {
+  for (auto& item : item_rel_res_list) {
     PDUSessionResourceReleasedItem_t rel = {};
-    PDUSessionID pDUSessionID            = {};
+    PDUSessionID pdu_session_id          = {};
 
-    item.getPDUSessionResourceReleasedItemRelRes(
-        pDUSessionID, rel.pduSessionResourceReleaseResponseTransfer);
-    pDUSessionID.getPDUSessionID(rel.pduSessionId);
+    item.get(pdu_session_id, rel.pduSessionResourceReleaseResponseTransfer);
+    pdu_session_id.get(rel.pduSessionId);
 
     list.push_back(rel);
   }
@@ -169,16 +165,16 @@ bool PduSessionResourceReleaseResponseMsg::getPduSessionResourceReleasedList(
 //------------------------------------------------------------------------------
 void PduSessionResourceReleaseResponseMsg::setUserLocationInfoNR(
     const NrCgi_t& cig, const Tai_t& tai) {
-  if (!userLocationInformation)
-    userLocationInformation = new UserLocationInformation();
+  UserLocationInformation tmp = {};
 
-  UserLocationInformationNR* informationNR = new UserLocationInformationNR();
+  UserLocationInformationNR information_nr = {};
   NR_CGI nR_CGI                            = {};
   TAI tai_nr                               = {};
   nR_CGI.setNR_CGI(cig.mcc, cig.mnc, cig.nrCellID);
   tai_nr.setTAI(tai);
-  informationNR->setInformationNR(nR_CGI, tai_nr);
-  userLocationInformation->setInformation(informationNR);
+  information_nr.set(nR_CGI, tai_nr);
+  tmp.setInformation(information_nr);
+  userLocationInformation = std::optional<UserLocationInformation>(tmp);
 
   Ngap_PDUSessionResourceReleaseResponseIEs_t* ie =
       (Ngap_PDUSessionResourceReleaseResponseIEs_t*) calloc(
@@ -188,7 +184,7 @@ void PduSessionResourceReleaseResponseMsg::setUserLocationInfoNR(
   ie->value.present =
       Ngap_PDUSessionResourceReleaseResponseIEs__value_PR_UserLocationInformation;
 
-  int ret = userLocationInformation->encodefromUserLocationInformation(
+  int ret = userLocationInformation.value().encode(
       &ie->value.choice.UserLocationInformation);
   if (!ret) {
     Logger::nas_mm().warn("Encode UserLocationInformation IE error");
@@ -206,14 +202,18 @@ void PduSessionResourceReleaseResponseMsg::setUserLocationInfoNR(
 //------------------------------------------------------------------------------
 bool PduSessionResourceReleaseResponseMsg::getUserLocationInfoNR(
     NrCgi_t& cig, Tai_t& tai) {
-  UserLocationInformationNR* informationNR;
-  userLocationInformation->getInformation(informationNR);
-  if (userLocationInformation->getChoiceOfUserLocationInformation() !=
+  if (!userLocationInformation.has_value()) return false;
+
+  UserLocationInformationNR information_nr = {};
+  if (!userLocationInformation.value().getInformation(information_nr))
+    return false;
+
+  if (userLocationInformation.value().getChoiceOfUserLocationInformation() !=
       Ngap_UserLocationInformation_PR_userLocationInformationNR)
     return false;
   NR_CGI nR_CGI = {};
   TAI nR_TAI    = {};
-  informationNR->getInformationNR(nR_CGI, nR_TAI);
+  information_nr.get(nR_CGI, nR_TAI);
   PlmnId cgi_plmnId             = {};
   NRCellIdentity nRCellIdentity = {};
   nR_CGI.getNR_CGI(cig);
@@ -277,7 +277,7 @@ bool PduSessionResourceReleaseResponseMsg::decodeFromPdu(
             pduSessionResourceReleaseResponseIEs->protocolIEs.list.array[i]
                     ->value.present ==
                 Ngap_PDUSessionResourceReleaseResponseIEs__value_PR_RAN_UE_NGAP_ID) {
-          if (!ranUeNgapId.decodefromRAN_UE_NGAP_ID(
+          if (!ranUeNgapId.decode(
                   pduSessionResourceReleaseResponseIEs->protocolIEs.list
                       .array[i]
                       ->value.choice.RAN_UE_NGAP_ID)) {
@@ -296,12 +296,10 @@ bool PduSessionResourceReleaseResponseMsg::decodeFromPdu(
             pduSessionResourceReleaseResponseIEs->protocolIEs.list.array[i]
                     ->value.present ==
                 Ngap_PDUSessionResourceReleaseResponseIEs__value_PR_PDUSessionResourceReleasedListRelRes) {
-          if (!pduSessionResourceReleasedList
-                   .decodefromPDUSessionResourceReleasedListRelRes(
-                       &pduSessionResourceReleaseResponseIEs->protocolIEs.list
-                            .array[i]
-                            ->value.choice
-                            .PDUSessionResourceReleasedListRelRes)) {
+          if (!pduSessionResourceReleasedList.decode(
+                  pduSessionResourceReleaseResponseIEs->protocolIEs.list
+                      .array[i]
+                      ->value.choice.PDUSessionResourceReleasedListRelRes)) {
             Logger::nas_mm().warn(
                 "Decoded NGAP PDUSessionResourceReleasedListRelRes IE error");
             return false;

@@ -19,15 +19,12 @@
  *      contact@openairinterface.org
  */
 
-/*! \file
- \brief
- \author  Keliang DU, BUPT
- \date 2020
- \email: contact@openairinterface.org
- */
+#ifndef _RAN_PAGING_PRIORITY_H_
+#define _RAN_PAGING_PRIORITY_H_
 
-#ifndef _RANPAGINGPRIORITY_H_
-#define _RANPAGINGPRIORITY_H_
+#include <cstdint>
+
+constexpr uint32_t kRANPagingPriorityMaxValue = 256;
 
 extern "C" {
 #include "Ngap_RANPagingPriority.h"
@@ -40,14 +37,14 @@ class RANPagingPriority {
   RANPagingPriority();
   virtual ~RANPagingPriority();
 
-  void setRANPagingPriority(uint8_t);
-  uint8_t getRANPagingPriority();
+  bool set(const uint32_t&);
+  uint32_t get();
 
-  bool encode2RANPagingPriority(Ngap_RANPagingPriority_t&);
-  bool decodefromRANPagingPriority(Ngap_RANPagingPriority_t&);
+  bool encode(Ngap_RANPagingPriority_t&);
+  bool decode(Ngap_RANPagingPriority_t&);
 
  private:
-  uint8_t ranPagingPriority;
+  uint32_t ran_paging_priority_;
 };
 
 }  // namespace ngap

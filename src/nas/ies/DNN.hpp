@@ -19,39 +19,32 @@
  *      contact@openairinterface.org
  */
 
-/*! \file
- \brief
- \author  Keliang DU, BUPT
- \date 2020
- \email: contact@openairinterface.org
- */
-
 #ifndef __DNN_H_
 #define __DNN_H_
-#include <stdint.h>
 
-#include <iostream>
-extern "C" {
-#include "TLVDecoder.h"
-#include "TLVEncoder.h"
-#include "bstrlib.h"
-}
+#include "Type4NasIe.hpp"
+
+constexpr uint8_t kDnnMinimumLength = 3;
+constexpr uint8_t kDnnMaximumLength = 102;
+constexpr auto kDnnIeName           = "DNN";
+
 namespace nas {
 
-class DNN {
+class DNN : public Type4NasIe {
  public:
   DNN();
-  DNN(uint8_t iei);
-  DNN(const uint8_t iei, bstring dnn);
+  DNN(bstring dnn);
   ~DNN();
-  // void setValue(uint8_t iei, uint8_t value);
-  int encode2buffer(uint8_t* buf, int len);
-  int decodefrombuffer(uint8_t* buf, int len, bool is_option);
-  void getValue(bstring& dnn);
+
+  static std::string GetIeName() { return kDnnIeName; }
+
+  int Encode(uint8_t* buf, int len);
+  int Decode(uint8_t* buf, int len, bool is_iei);
+
+  void SetValue(const bstring& dnn);
+  void GetValue(bstring& dnn) const;
 
  private:
-  uint8_t _iei;
-  uint8_t length;
   bstring _DNN;
 };
 

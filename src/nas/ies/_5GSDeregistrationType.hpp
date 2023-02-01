@@ -19,17 +19,10 @@
  *      contact@openairinterface.org
  */
 
-/*! \file
- \brief
- \author
- \date 2020
- \email: contact@openairinterface.org
- */
-
 #ifndef _5GS_DEREGISTRATION_TYPE_H_
 #define _5GS_DEREGISTRATION_TYPE_H_
 
-#include <stdint.h>
+#include "Type1NasIeFormatTv.hpp"
 
 namespace nas {
 typedef struct _5gs_deregistration_type_s {
@@ -39,21 +32,34 @@ typedef struct _5gs_deregistration_type_s {
   uint8_t access_type : 2;
 } _5gs_deregistration_type_t;
 
-class _5GSDeregistrationType {
+constexpr auto k5gsDeregistrationTypeIeName = "5GS De-registration Type";
+
+class _5GSDeregistrationType : public Type1NasIeFormatTv {
  public:
   _5GSDeregistrationType();
-  _5GSDeregistrationType(uint8_t type);
+  _5GSDeregistrationType(uint8_t iei);
+  _5GSDeregistrationType(uint8_t iei, uint8_t value);
   _5GSDeregistrationType(_5gs_deregistration_type_t type);
   ~_5GSDeregistrationType();
-  int decodefrombuffer(uint8_t* buf, int len);
-  int encode2buffer(uint8_t* buf, int len);
+
+  static std::string GetIeName() { return k5gsDeregistrationTypeIeName; }
+
+  // int Decode(uint8_t* buf, int len);
+  // int Encode(uint8_t* buf, int len);
 
   void set(_5gs_deregistration_type_t type);
   void get(_5gs_deregistration_type_t& type);
-  void set(uint8_t type);
-  void get(uint8_t& type);
 
- public:
+  void set(uint8_t value);
+  void get(uint8_t& value);
+
+  void set(uint8_t iei, uint8_t value);
+  void get(uint8_t& iei, uint8_t value);
+
+ private:
+  void setValue();
+  void getValue();
+
   union {
     struct {
       uint8_t iei : 4;

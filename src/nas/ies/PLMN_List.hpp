@@ -19,41 +19,34 @@
  *      contact@openairinterface.org
  */
 
-/*! \file
- \brief
- \author  Keliang DU, BUPT
- \date 2020
- \email: contact@openairinterface.org
- */
+#ifndef _PLMN_LIST_H_
+#define _PLMN_LIST_H_
 
-#ifndef __PLMN_List_H_
-#define __PLMN_List_H_
+#include "Type4NasIe.hpp"
+#include "struct.hpp"
 
-#include <stdint.h>
+constexpr uint8_t kPlmnListMinimumLength = 5;
+constexpr uint8_t kPlmnListMaximumLength = 47;
+constexpr auto kPlmnListIeName           = "PLMN List";
 
 namespace nas {
 
-class PLMN_List {
+class PlmnList : public Type4NasIe {
  public:
-  PLMN_List();
-  PLMN_List(uint8_t iei);
-  PLMN_List(
-      const uint8_t iei, uint8_t MNC_MCC1, uint8_t MNC_MCC2, uint8_t MNC_MCC3);
-  ~PLMN_List();
-  void setMNC_MCC1(uint8_t iei, uint8_t value);
-  void setMNC_MCC2(uint8_t iei, uint8_t value);
-  void setMNC_MCC3(uint8_t iei, uint8_t value);
-  int encode2buffer(uint8_t* buf, int len);
-  int decodefrombuffer(uint8_t* buf, int len, bool is_option);
-  uint8_t getMNC_MCC1();
-  uint8_t getMNC_MCC2();
-  uint8_t getMNC_MCC3();
+  PlmnList();
+  PlmnList(uint8_t iei);
+  ~PlmnList();
+
+  static std::string GetIeName() { return kPlmnListIeName; }
+
+  int Encode(uint8_t* buf, int len);
+  int Decode(uint8_t* buf, int len, bool is_option);
+
+  void Set(uint8_t iei, const std::vector<nas_plmn_t>& list);
+  void GetPLMNList(std::vector<nas_plmn_t>& list) const;
 
  private:
-  uint8_t _iei;
-  uint8_t _MNC_MCC1;
-  uint8_t _MNC_MCC2;
-  uint8_t _MNC_MCC3;
+  std::vector<nas_plmn_t> plmn_list;
 };
 }  // namespace nas
 

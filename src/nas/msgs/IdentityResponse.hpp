@@ -19,40 +19,38 @@
  *      contact@openairinterface.org
  */
 
-/*! \file
- \brief
- \author  Keliang DU, BUPT
- \date 2020
- \email: contact@openairinterface.org
- */
+#ifndef _IDENTITY_RESPONSE_H_
+#define _IDENTITY_RESPONSE_H_
 
-#ifndef _IdentityResponse_H_
-#define _IdentityResponse_H_
-
-#include "nas_ie_header.hpp"
+#include "NasIeHeader.hpp"
 
 namespace nas {
 
-class IdentityResponse {
+class IdentityResponse : public NasMmPlainHeader {
  public:
   IdentityResponse();
   ~IdentityResponse();
-  int encode2buffer(uint8_t* buf, int len);
-  int decodefrombuffer(NasMmPlainHeader* header, uint8_t* buf, int len);
-  void setHeader(uint8_t security_header_type);
-  void setSUCI_SUPI_format_IMSI(
+
+  int Encode(uint8_t* buf, int len);
+  int Decode(uint8_t* buf, int len);
+
+  void SetHeader(uint8_t security_header_type);
+
+  void Get5gsMobileIdentity(_5GSMobileIdentity& mobile_identity) const;
+
+  void SetSuciSupiFormatImsi(
       const string mcc, const string mnc, const string routingInd,
       uint8_t protection_sch_id, const string msin);
-  void setSUCI_SUPI_format_IMSI(
+  void SetSuciSupiFormatImsi(
       const string mcc, const string mnc, const string routingInd,
       uint8_t protection_sch_id, uint8_t hnpki, const string msin);
-  void set5G_GUTI();
-  void setIMEI_IMEISV();
-  void set5G_S_TMSI();
-  /*** belongs to _5GSMobilityIdentity**/
+
+  void Set5gGuti();
+  void SetImeiImeisv();
+  void Set5gSTmsi();
+
  public:
-  NasMmPlainHeader* plain_header;
-  _5GSMobilityIdentity* ie_mobility_id;
+  _5GSMobileIdentity ie_mobile_identity;  // Mandatory
 };
 
 }  // namespace nas

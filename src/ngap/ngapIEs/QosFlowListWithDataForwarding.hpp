@@ -19,13 +19,6 @@
  *      contact@openairinterface.org
  */
 
-/*! \file
- \brief
- \author  niuxiansheng-niu, BUPT
- \date 2020
- \email: contact@openairinterface.org
- */
-
 #ifndef _QOSFLOWLISTWITHDATAFORWRADING_H_
 #define _QOSFLOWLISTWITHDATAFORWRADING_H_
 

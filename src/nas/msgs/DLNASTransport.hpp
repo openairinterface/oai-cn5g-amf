@@ -19,43 +19,47 @@
  *      contact@openairinterface.org
  */
 
-/*! \file
- \brief
- \author  Keliang DU, BUPT
- \date 2020
- \email: contact@openairinterface.org
- */
+#ifndef _DL_NAS_TRANSPORT_H_
+#define _DL_NAS_TRANSPORT_H_
 
-#ifndef _DLNASTransport_H_
-#define _DLNASTransport_H_
-
-#include "nas_ie_header.hpp"
+#include "NasIeHeader.hpp"
 
 namespace nas {
 
-class DLNASTransport {
+class DLNASTransport : public NasMmPlainHeader {
  public:
   DLNASTransport();
   ~DLNASTransport();
-  int encode2buffer(uint8_t* buf, int len);
-  int decodefrombuffer(NasMmPlainHeader* header, uint8_t* buf, int len);
-  void setHeader(uint8_t security_header_type);
-  void setPayload_Container_Type(uint8_t value);
-  void setPayload_Container(std::vector<PayloadContainerEntry> content);
-  void setPayload_Container(uint8_t* buf, int len);
-  void setPDUSessionId(uint8_t value);
-  void setAdditional_Information(uint8_t _length, uint8_t value);
-  void set_5GMM_Cause(uint8_t value);
-  void setBack_off_timer_value(uint8_t unit, uint8_t value);
+
+  void SetHeader(uint8_t security_header_type);
+
+  int Encode(uint8_t* buf, int len);
+  int Decode(uint8_t* buf, int len);
+
+  void SetPayloadContainerType(uint8_t value);
+
+  void SetPayloadContainer(std::vector<PayloadContainerEntry> content);
+  void SetPayloadContainer(uint8_t* buf, int len);
+
+  void SetPduSessionId(uint8_t value);
+  // TODO: Get
+
+  void SetAdditionalInformation(const bstring& value);
+  // TODO: Get
+
+  void Set5gmmCause(uint8_t value);
+  // TODO: Get
+
+  void SetBackOffTimerValue(uint8_t unit, uint8_t value);
+  // TODO: Get
 
  public:
-  NasMmPlainHeader* plain_header;
-  Payload_Container_Type* ie_payload_container_type;
-  Payload_Container* ie_payload_container;
-  PDU_Session_Identity_2* ie_pdu_session_identity_2;
-  Additional_Information* ie_additional_information;
-  _5GMM_Cause* ie_5gmm_cause;
-  GPRS_Timer_3* ie_back_off_timer_value;
+  PayloadContainerType ie_payload_container_type;                  // Mandatory
+  Payload_Container ie_payload_container;                          // Mandatory
+  std::optional<PduSessionIdentity2> ie_pdu_session_identity_2;    // Optional
+  std::optional<AdditionalInformation> ie_additional_information;  // Optional
+  std::optional<_5gmmCause> ie_5gmm_cause;                         // Optional
+  std::optional<GprsTimer3> ie_back_off_timer_value;               // Optional
 };
 
 }  // namespace nas

@@ -19,96 +19,88 @@
  *      contact@openairinterface.org
  */
 
-/*! \file
- \brief
- \author  Keliang DU, BUPT
- \date 2020
- \email: contact@openairinterface.org
- */
-
 #include "Authentication_Parameter_AUTN.hpp"
 
+#include "3gpp_24.501.hpp"
+#include "common_defs.h"
 #include "logger.hpp"
 using namespace nas;
 
 //------------------------------------------------------------------------------
 Authentication_Parameter_AUTN::Authentication_Parameter_AUTN(uint8_t iei)
-    : _value() {
-  _iei = iei;
+    : Type4NasIe(iei), _value() {
+  SetLengthIndicator(0);
 }
 
 //------------------------------------------------------------------------------
 Authentication_Parameter_AUTN::Authentication_Parameter_AUTN(
-    const uint8_t iei, uint8_t* value) {
-  _iei = iei;
-  for (int i = 0; i < 16; i++) {
+    const uint8_t iei, uint8_t value[kAuthenticationParameterAutnValueLength])
+    : Type4NasIe(iei) {
+  for (int i = 0; i < kAuthenticationParameterAutnValueLength; i++) {
     this->_value[i] = value[i];
   }
+  SetLengthIndicator(kAuthenticationParameterAutnValueLength);
 }
 
 //------------------------------------------------------------------------------
 Authentication_Parameter_AUTN::Authentication_Parameter_AUTN()
-    : _iei(), _value() {}
+    : Type4NasIe(), _value() {
+  SetLengthIndicator(0);
+}
 
 //------------------------------------------------------------------------------
 Authentication_Parameter_AUTN::~Authentication_Parameter_AUTN() {}
 
 //------------------------------------------------------------------------------
-uint8_t* Authentication_Parameter_AUTN::getValue() {
-  // for (int j = 0; j < 16; j++) {
-  //	Logger::nas_mm().debug("decoded Authentication_Response_Parameter
-  // value(0x%2x)", _value[j]);
-  //}
-  return _value;
-}
+int Authentication_Parameter_AUTN::Encode(uint8_t* buf, int len) {
+  Logger::nas_mm().debug("Encoding %s", GetIeName().c_str());
+  int ie_len = GetIeLength();
 
-//------------------------------------------------------------------------------
-int Authentication_Parameter_AUTN::encode2buffer(uint8_t* buf, int len) {
-  Logger::nas_mm().debug(
-      "Encoding Authentication_Parameter_AUTN IEI (0x%x)", _iei);
-  if (len < 18) {
-    Logger::nas_mm().error("len is less than 18");
-    return 0;
+  if (len < ie_len) {
+    Logger::nas_mm().error("Len is less than %d", ie_len);
+    return KEncodeDecodeError;
   }
+
   int encoded_size = 0;
-  if (_iei) {
-    *(buf + encoded_size) = _iei;
-    encoded_size++;
-    *(buf + encoded_size) = 16;
-    encoded_size++;
-    for (int i = 0; i < 16; i++) {
-      *(buf + encoded_size) = _value[i];
-      encoded_size++;
-    }
-    return encoded_size;
-  } else {
-    //		*(buf + encoded_size) = length - 1; encoded_size++;
-    //		*(buf + encoded_size) = _value; encoded_size++; encoded_size++;
+  // IEI and Length
+  int encoded_header_size = Type4NasIe::Encode(buf + encoded_size, len);
+  if (encoded_header_size == KEncodeDecodeError) return KEncodeDecodeError;
+  encoded_size += encoded_header_size;
+
+  if (GetLengthIndicator() != kAuthenticationParameterAutnValueLength)
+    return KEncodeDecodeError;
+
+  for (int i = 0; i < kAuthenticationParameterAutnValueLength; i++) {
+    ENCODE_U8(buf + encoded_size, _value[i], encoded_size);
   }
+
   Logger::nas_mm().debug(
       "Encoded Authentication_Parameter_AUTN len (%d)", encoded_size);
   return encoded_size;
 }
 
 //------------------------------------------------------------------------------
-int Authentication_Parameter_AUTN::decodefrombuffer(
-    uint8_t* buf, int len, bool is_option) {
-  Logger::nas_mm().debug(
-      "Decoding Authentication_Parameter_AUTN IEI (0x%x)", *buf);
-  int decoded_size = 0;
-  if (is_option) {
-    decoded_size++;
+int Authentication_Parameter_AUTN::Decode(uint8_t* buf, int len, bool is_iei) {
+  uint8_t decoded_size = 0;
+  uint8_t octet        = 0;
+  Logger::nas_mm().debug("Decoding %s", GetIeName().c_str());
+
+  // IEI and Length
+  int decoded_header_size = Type4NasIe::Decode(buf + decoded_size, len, is_iei);
+  if (decoded_header_size == KEncodeDecodeError) return KEncodeDecodeError;
+  decoded_size += decoded_header_size;
+
+  if (GetLengthIndicator() != kAuthenticationParameterAutnValueLength)
+    return KEncodeDecodeError;
+
+  for (int i = 0; i < kAuthenticationParameterAutnValueLength; i++) {
+    DECODE_U8(buf + decoded_size, _value[i], decoded_size);
   }
-  decoded_size++;
-  for (int i = 0; i < 16; i++) {
-    _value[i] = *(buf + decoded_size);
-    decoded_size++;
-  }
-  for (int j = 0; j < 16; j++) {
+  for (int j = 0; j < kAuthenticationParameterAutnValueLength; j++) {
     Logger::nas_mm().debug(
         "Decoded Authentication_Parameter_AUTN value (0x%2x)", _value[j]);
   }
   Logger::nas_mm().debug(
-      "Decoded Authentication_Parameter_AUTN len (%d)", decoded_size);
+      "Decoded %s, len (%d)", GetIeName().c_str(), decoded_size);
   return decoded_size;
 }

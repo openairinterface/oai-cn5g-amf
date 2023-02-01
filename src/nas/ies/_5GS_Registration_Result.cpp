@@ -19,111 +19,148 @@
  *      contact@openairinterface.org
  */
 
-/*! \file _5GS_Registration_Result.cpp
- \brief
- \author  Keliang DU, BUPT
- \date 2020
- \email: contact@openairinterface.org
- */
-
 #include "_5GS_Registration_Result.hpp"
 
+#include "3gpp_24.501.hpp"
+#include "common_defs.h"
 #include "logger.hpp"
 using namespace nas;
 
 //------------------------------------------------------------------------------
-_5GS_Registration_Result::_5GS_Registration_Result(uint8_t iei) {
-  _iei      = iei;
-  Emergency = false;
-  NSSAA     = false;
-  SMS       = false;
-  _value    = 0;
+_5GS_Registration_Result::_5GS_Registration_Result() : Type4NasIe() {
+  emergency_registered_ = false;
+  nssaa_performed_      = false;
+  sms_allowed_          = false;
+  value_                = 0;
+  SetLengthIndicator(k5gsRegistrationResultContentLength);
+}
+
+//------------------------------------------------------------------------------
+_5GS_Registration_Result::_5GS_Registration_Result(uint8_t iei)
+    : Type4NasIe(iei) {
+  emergency_registered_ = false;
+  nssaa_performed_      = false;
+  sms_allowed_          = false;
+  value_                = 0;
+  SetLengthIndicator(k5gsRegistrationResultContentLength);
 }
 
 //------------------------------------------------------------------------------
 _5GS_Registration_Result::_5GS_Registration_Result(
-    const uint8_t iei, bool emergency, bool nssaa, bool sms, uint8_t value) {
-  _iei      = iei;
-  Emergency = emergency;
-  NSSAA     = nssaa;
-  SMS       = sms;
-  _value    = value;
+    bool emergency, bool nssaa, bool sms, uint8_t value)
+    : Type4NasIe() {
+  emergency_registered_ = emergency;
+  nssaa_performed_      = nssaa;
+  sms_allowed_          = sms;
+  value_                = value & 0x07;
+  SetLengthIndicator(k5gsRegistrationResultContentLength);
 }
 
 //------------------------------------------------------------------------------
-_5GS_Registration_Result::_5GS_Registration_Result() {
-  _iei      = 0;
-  Emergency = false;
-  NSSAA     = false;
-  SMS       = false;
-  _value    = 0;
+_5GS_Registration_Result::_5GS_Registration_Result(
+    uint8_t iei, bool emergency, bool nssaa, bool sms, uint8_t value)
+    : Type4NasIe(iei) {
+  emergency_registered_ = emergency;
+  nssaa_performed_      = nssaa;
+  sms_allowed_          = sms;
+  value_                = value & 0x07;
+  SetLengthIndicator(k5gsRegistrationResultContentLength);
 }
+
+//------------------------------------------------------------------------------
 _5GS_Registration_Result::~_5GS_Registration_Result() {}
 
 //------------------------------------------------------------------------------
 void _5GS_Registration_Result::setValue(uint8_t value) {
-  _value = value;
+  value_ = value & 0x07;
 }
 
 //------------------------------------------------------------------------------
-uint8_t _5GS_Registration_Result::getValue() {
-  return _value;
+uint8_t _5GS_Registration_Result::getValue() const {
+  return value_;
 }
 
 //------------------------------------------------------------------------------
-int _5GS_Registration_Result::encode2buffer(uint8_t* buf, int len) {
-  Logger::nas_mm().debug("encoding _5GS_Registration_Result iei(0x%x)", _iei);
-  if (len < 3) {
-    Logger::nas_mm().error("len is less than 3");
-    return 0;
+void _5GS_Registration_Result::set(
+    uint8_t iei, bool emergency, bool nssaa, bool sms, uint8_t value) {
+  emergency_registered_ = emergency;
+  nssaa_performed_      = nssaa;
+  sms_allowed_          = sms;
+  value_                = value & 0x07;
+  SetIei(iei);
+}
+
+//------------------------------------------------------------------------------
+void _5GS_Registration_Result::set(
+    bool emergency, bool nssaa, bool sms, uint8_t value) {
+  emergency_registered_ = emergency;
+  nssaa_performed_      = nssaa;
+  sms_allowed_          = sms;
+  value_                = value & 0x07;
+}
+
+//------------------------------------------------------------------------------
+int _5GS_Registration_Result::Encode(uint8_t* buf, int len) {
+  Logger::nas_mm().debug("Encoding %s", GetIeName().c_str());
+
+  if (len < k5gsRegistrationResultLength) {
+    Logger::nas_mm().error(
+        "Buffer length is less than the minimum length of this IE (%d octet)",
+        k5gsRegistrationResultLength);
+    return KEncodeDecodeError;
   }
-  uint8_t octet    = 0;
+
   int encoded_size = 0;
-  octet = 0x00 | (Emergency << 5) | (NSSAA << 4) | (SMS << 3) | (_value & 0x07);
-  if (_iei) {
-    *(buf + encoded_size) = _iei;
-    encoded_size++;
-    *(buf + encoded_size) = 1;
-    encoded_size++;
-    *(buf + encoded_size) = octet;
-    encoded_size++;
-    Logger::nas_mm().debug(
-        "encoded _5GS_Registration_Result _value(0x%x),iei(0x%x)",
-        *(buf + encoded_size - 1), _iei);
-  } else {
-    *(buf + encoded_size) = 1;
-    encoded_size++;
-    *(buf + encoded_size) = octet;
-    encoded_size++;
-  }
+  // IEI and Length
+  int encoded_header_size = Type4NasIe::Encode(buf + encoded_size, len);
+  if (encoded_header_size == KEncodeDecodeError) return KEncodeDecodeError;
+  encoded_size += encoded_header_size;
+
+  // Octet 3
+  uint8_t octet = 0;
+  octet = 0x00 | (emergency_registered_ << 5) | (nssaa_performed_ << 4) |
+          (sms_allowed_ << 3) | (value_ & 0x07);
+  ENCODE_U8(buf + encoded_size, octet, encoded_size);
+
   Logger::nas_mm().debug(
-      "encoded _5GS_Registration_Result len(%d)", encoded_size);
+      "Encoded %s, len (%d)", GetIeName().c_str(), encoded_size);
   return encoded_size;
 }
 
 //------------------------------------------------------------------------------
-int _5GS_Registration_Result::decodefrombuffer(
-    uint8_t* buf, int len, bool is_option) {
-  Logger::nas_mm().debug("decoding _5GS_Registration_Result iei(0x%x)", *buf);
-  int decoded_size = 0;
-  if (is_option) {
-    _iei = *buf;
-    decoded_size++;
+int _5GS_Registration_Result::Decode(uint8_t* buf, int len, bool is_iei) {
+  Logger::nas_mm().debug("Decoding %s", GetIeName().c_str());
+
+  if (len < k5gsRegistrationResultLength) {
+    Logger::nas_mm().error(
+        "Buffer length is less than the minimum length of this IE (%d octet)",
+        k5gsRegistrationResultLength);
+    return KEncodeDecodeError;
   }
+
+  int decoded_size = 0;
+
+  // IEI and Length
+  int decoded_header_size = Type4NasIe::Decode(buf + decoded_size, len, true);
+  if (decoded_header_size == KEncodeDecodeError) return KEncodeDecodeError;
+  decoded_size += decoded_header_size;
+
+  // Octet 3
   uint8_t octet = 0;
-  //	length = *(buf + decoded_size);
-  decoded_size++;
-  octet = *(buf + decoded_size);
-  decoded_size++;
-  Emergency = (octet & 0x20) >> 5;
-  NSSAA     = (octet & 0x10) >> 4;
-  SMS       = (octet & 0x08) >> 3;
-  _value    = octet & 0x07;
+  DECODE_U8(buf + decoded_size, octet, decoded_size);
+  emergency_registered_ = (octet & 0x20) >> 5;
+  nssaa_performed_      = (octet & 0x10) >> 4;
+  sms_allowed_          = (octet & 0x08) >> 3;
+  value_                = octet & 0x07;
+
   Logger::nas_mm().debug(
-      "decoded _5GS_Registration_Result Emergency(0x%x) NSSAA(0x%x) SMS(0x%x) "
-      "_value(0x%x)",
-      Emergency, NSSAA, SMS, _value);
+      "Decoded _5GS_Registration_Result, Emergency Registered 0x%x, NSSAA "
+      "Performed 0x%x, SMS Allowed 0x%x, "
+      "Value 0x%x",
+      emergency_registered_, nssaa_performed_, sms_allowed_, value_);
+
   Logger::nas_mm().debug(
-      "decoded _5GS_Registration_Result len(%d)", decoded_size);
+      "Decoded %s, DRX value 0x%x, len %d", GetIeName().c_str(), value_,
+      decoded_size);
   return decoded_size;
 }

@@ -49,7 +49,7 @@ void DownlinkUEAssociatedNRPPaTransportMsg::initialize() {
 //------------------------------------------------------------------------------
 void DownlinkUEAssociatedNRPPaTransportMsg::setAmfUeNgapId(
     const unsigned long& id) {
-  amfUeNgapId.setAMF_UE_NGAP_ID(id);
+  amfUeNgapId.set(id);
 
   Ngap_DownlinkUEAssociatedNRPPaTransportIEs_t* ie =
       (Ngap_DownlinkUEAssociatedNRPPaTransportIEs_t*) calloc(
@@ -74,7 +74,7 @@ void DownlinkUEAssociatedNRPPaTransportMsg::setAmfUeNgapId(
 //------------------------------------------------------------------------------
 void DownlinkUEAssociatedNRPPaTransportMsg::setRanUeNgapId(
     const uint32_t& ran_ue_ngap_id) {
-  ranUeNgapId.setRanUeNgapId(ran_ue_ngap_id);
+  ranUeNgapId.set(ran_ue_ngap_id);
 
   Ngap_DownlinkUEAssociatedNRPPaTransportIEs_t* ie =
       (Ngap_DownlinkUEAssociatedNRPPaTransportIEs_t*) calloc(
@@ -84,7 +84,7 @@ void DownlinkUEAssociatedNRPPaTransportMsg::setRanUeNgapId(
   ie->value.present =
       Ngap_DownlinkUEAssociatedNRPPaTransportIEs__value_PR_RAN_UE_NGAP_ID;
 
-  int ret = ranUeNgapId.encode2RAN_UE_NGAP_ID(ie->value.choice.RAN_UE_NGAP_ID);
+  int ret = ranUeNgapId.encode(ie->value.choice.RAN_UE_NGAP_ID);
   if (!ret) {
     Logger::ngap().error("Encode RAN_UE_NGAP_ID IE error");
     free_wrapper((void**) &ie);
@@ -150,7 +150,7 @@ bool DownlinkUEAssociatedNRPPaTransportMsg::decodeFromPdu(
             downlinkUEAssociatedNRPPaTransportIEs->protocolIEs.list.array[i]
                     ->value.present ==
                 Ngap_DownlinkUEAssociatedNRPPaTransportIEs__value_PR_RAN_UE_NGAP_ID) {
-          if (!ranUeNgapId.decodefromRAN_UE_NGAP_ID(
+          if (!ranUeNgapId.decode(
                   downlinkUEAssociatedNRPPaTransportIEs->protocolIEs.list
                       .array[i]
                       ->value.choice.RAN_UE_NGAP_ID)) {

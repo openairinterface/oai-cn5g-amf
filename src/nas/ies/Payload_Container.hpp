@@ -19,47 +19,43 @@
  *      contact@openairinterface.org
  */
 
-/*! \file
- \brief
- \author  Keliang DU, BUPT
- \date 2020
- \email: contact@openairinterface.org
- */
+#ifndef _PAYLOAD_CONTAINER_H_
+#define _PAYLOAD_CONTAINER_H_
 
-#ifndef __Payload_Container_H_
-#define __Payload_Container_H_
-#include <stdint.h>
+#include "NasIeHeader.hpp"
+#include "Type6NasIe.hpp"
 
-#include <iostream>
-#include <vector>
+constexpr uint8_t kPayloadContainerMinimumLength  = 4;
+constexpr uint32_t kPayloadContainerMaximumLength = 65538;
+constexpr auto kPayloadContainerIeName            = "Payload Container";
 
-#include "nas_ie_header.hpp"
-extern "C" {
-#include "TLVDecoder.h"
-#include "TLVEncoder.h"
-#include "bstrlib.h"
-}
 namespace nas {
-class Payload_Container {
+class Payload_Container : Type6NasIe {
  public:
   Payload_Container();
   Payload_Container(uint8_t iei);
-  Payload_Container(uint8_t iei, bstring b);
+  Payload_Container(const bstring& b);
+  Payload_Container(uint8_t iei, const bstring& b);
+  Payload_Container(const std::vector<PayloadContainerEntry>& content);
   Payload_Container(
-      const uint8_t iei, std::vector<PayloadContainerEntry> content);
+      const uint8_t iei, const std::vector<PayloadContainerEntry>& content);
   ~Payload_Container();
-  void setValue(uint8_t iei, uint8_t value);
-  int encode2buffer(uint8_t* buf, int len);
-  int decodefrombuffer(uint8_t* buf, int len, bool is_option, uint8_t type);
-  int decodefrombuffer(uint8_t* buf, int len, bool is_option);
-  void getValue(std::vector<PayloadContainerEntry>& content);
-  void getValue(bstring& cnt);
+
+  static std::string GetIeName() { return kPayloadContainerIeName; }
+
+  // void setValue(uint8_t iei, uint8_t value);
+  int Encode(uint8_t* buf, int len, uint8_t type);
+  int Decode(uint8_t* buf, int len, bool is_iei, uint8_t type);
+
+  void SetValue(const bstring& cnt);
+  bool GetValue(bstring& cnt) const;
+
+  void SetValue(const std::vector<PayloadContainerEntry>& content);
+  bool GetValue(std::vector<PayloadContainerEntry>& content) const;
 
  private:
-  uint8_t _iei;
-  uint16_t length;
-  bstring content;
-  std::vector<PayloadContainerEntry> CONTENT;
+  std::optional<bstring> content;
+  std::optional<std::vector<PayloadContainerEntry>> CONTENT;
 };
 
 }  // namespace nas

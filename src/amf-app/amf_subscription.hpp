@@ -19,14 +19,6 @@
  *      contact@openairinterface.org
  */
 
-/*! \file amf_subscription.hpp
- \brief
- \author  Shivam Gandhi
- \company KCL
- \date 2021
- \email: shivam.gandhi@kcl.ac.uk
- */
-
 #include "3gpp_29.518.h"
 #include "amf.hpp"
 

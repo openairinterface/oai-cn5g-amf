@@ -19,86 +19,98 @@
  *      contact@openairinterface.org
  */
 
-/*! \file
- \brief
- \author  Keliang DU, BUPT
- \date 2020
- \email: contact@openairinterface.org
- */
-
 #include "GNB-ID.hpp"
 
-#include <iostream>
-using namespace std;
+#include "logger.hpp"
 
 namespace ngap {
 
 //------------------------------------------------------------------------------
 GNB_ID::GNB_ID() {
-  gNBId = {};
+  gnb_id_  = std::nullopt;
+  present_ = Ngap_GNB_ID_PR_NOTHING;
 }
 
 //------------------------------------------------------------------------------
 GNB_ID::~GNB_ID() {}
 
 //------------------------------------------------------------------------------
-void GNB_ID::setValue(uint32_t gnbId) {
-  gNBId.id    = gnbId;
-  uint8_t len = 0;
-  for (uint32_t i = 0x00000001; i <= 0x00000400; i = i << 1, len++) {
-    if ((i & gnbId)) {
-      gNBId.bit_length = 32 - len;
-      break;
-    }
-  }
-  if (!((gNBId.bit_length >= 22) && (gNBId.bit_length <= 32))) {
-    cout << "[warning][gNBID length out of range]" << endl;
-  }
+void GNB_ID::setValue(const gNBId_t& gnb_id) {
+  gnb_id_  = std::optional<gNBId_t>(gnb_id);
+  present_ = Ngap_GNB_ID_PR_gNB_ID;
 }
 
 //------------------------------------------------------------------------------
-void GNB_ID::setValue(uint32_t id, uint8_t bit_length) {
-  gNBId.id         = id;
-  gNBId.bit_length = bit_length;
+bool GNB_ID::setValue(const uint32_t& id, const uint8_t& bit_length) {
+  if (!((bit_length >= NGAP_GNB_ID_SIZE_MIN) &&
+        (bit_length <= NGAP_GNB_ID_SIZE_MAX))) {
+    Logger::ngap().warn("gNBID length out of range!");
+    return false;
+  }
+
+  gNBId_t tmp    = {};
+  tmp.id         = id;
+  tmp.bit_length = bit_length;
+
+  gnb_id_  = std::optional<gNBId_t>(tmp);
+  present_ = Ngap_GNB_ID_PR_gNB_ID;
+  return true;
 }
 
 //------------------------------------------------------------------------------
-bool GNB_ID::encode2bitstring(Ngap_GNB_ID_t& gnbid) {
-  gnbid.present = Ngap_GNB_ID_PR_gNB_ID;
+bool GNB_ID::get(gNBId_t& gnb_id) const {
+  if (gnb_id_.has_value()) {
+    gnb_id = gnb_id_.value();
+    return true;
+  }
+  return false;
+}
 
-  if (!(gNBId.bit_length % 8))
-    gnbid.choice.gNB_ID.size = gNBId.bit_length / 8;
-  else
-    gnbid.choice.gNB_ID.size = gNBId.bit_length / 8 + 1;
+//------------------------------------------------------------------------------
+bool GNB_ID::get(uint32_t& id) const {
+  if (gnb_id_.has_value()) {
+    id = gnb_id_.value().id;
+    return true;
+  }
+  return false;
+}
 
-  // printf("m_gNBId.size(%d)\n",m_gNBId.size);
-  gnbid.choice.gNB_ID.bits_unused = 32 - gNBId.bit_length;
+//------------------------------------------------------------------------------
+bool GNB_ID::encode(Ngap_GNB_ID_t& gnbid) {
+  if (!gnb_id_.has_value()) {
+    gnbid.present = Ngap_GNB_ID_PR_NOTHING;
+    return true;
+  }
+
+  gnbid.present                   = Ngap_GNB_ID_PR_gNB_ID;
+  gnbid.choice.gNB_ID.size        = 4;  // TODO: to be vefified
+  gnbid.choice.gNB_ID.bits_unused = 32 - gnb_id_.value().bit_length;
   gnbid.choice.gNB_ID.buf         = (uint8_t*) calloc(1, 4 * sizeof(uint8_t));
   if (!gnbid.choice.gNB_ID.buf) return false;
-  gnbid.choice.gNB_ID.buf[3] = gNBId.id & 0x000000ff;
-  gnbid.choice.gNB_ID.buf[2] = (gNBId.id & 0x0000ff00) >> 8;
-  gnbid.choice.gNB_ID.buf[1] = (gNBId.id & 0x00ff0000) >> 16;
-  gnbid.choice.gNB_ID.buf[0] = (gNBId.id & 0xff000000) >> 24;
+  gnbid.choice.gNB_ID.buf[3] = gnb_id_.value().id & 0x000000ff;
+  gnbid.choice.gNB_ID.buf[2] = (gnb_id_.value().id & 0x0000ff00) >> 8;
+  gnbid.choice.gNB_ID.buf[1] = (gnb_id_.value().id & 0x00ff0000) >> 16;
+  gnbid.choice.gNB_ID.buf[0] = (gnb_id_.value().id & 0xff000000) >> 24;
 
   return true;
 }
 
 //------------------------------------------------------------------------------
-bool GNB_ID::decodefrombitstring(Ngap_GNB_ID_t& gnbid) {
+bool GNB_ID::decode(Ngap_GNB_ID_t& gnbid) {
   if (gnbid.present != Ngap_GNB_ID_PR_gNB_ID) return false;
   if (!gnbid.choice.gNB_ID.buf) return false;
 
-  gNBId.id = gnbid.choice.gNB_ID.buf[0] << 24;
-  gNBId.id |= gnbid.choice.gNB_ID.buf[1] << 16;
-  gNBId.id |= gnbid.choice.gNB_ID.buf[2] << 8;
-  gNBId.id |= gnbid.choice.gNB_ID.buf[3];
+  gNBId_t tmp = {};
+  tmp.id      = gnbid.choice.gNB_ID.buf[0] << 24;
+  tmp.id |= gnbid.choice.gNB_ID.buf[1] << 16;
+  tmp.id |= gnbid.choice.gNB_ID.buf[2] << 8;
+  tmp.id |= gnbid.choice.gNB_ID.buf[3];
+  tmp.bit_length = 32 - gnbid.choice.gNB_ID.bits_unused;
+
+  gnb_id_  = std::optional<gNBId_t>(tmp);
+  present_ = Ngap_GNB_ID_PR_gNB_ID;
 
   return true;
-}
-
-//------------------------------------------------------------------------------
-long GNB_ID::getValue() {
-  return gNBId.id;
 }
 
 }  // namespace ngap

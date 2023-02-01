@@ -22,6 +22,7 @@
 #define _AMF_SET_ID_H_
 
 #include <string>
+constexpr uint16_t kAmfSetIdMaxValue = 1023;
 
 extern "C" {
 #include "Ngap_AMFSetID.h"
@@ -34,15 +35,16 @@ class AMFSetID {
   AMFSetID();
   virtual ~AMFSetID();
 
-  void setAMFSetID(const std::string&);
-  void setAMFSetID(const uint16_t& set_id);
-  void getAMFSetID(std::string&);
+  bool set(const std::string&);
+  bool set(const uint16_t&);
+  void get(std::string&);
+  void get(uint16_t&);
 
-  bool encode2bitstring(Ngap_AMFSetID_t&);
-  bool decodefrombitstring(Ngap_AMFSetID_t&);
+  bool encode(Ngap_AMFSetID_t&) const;
+  bool decode(const Ngap_AMFSetID_t&);
 
  private:
-  uint16_t setId;
+  uint16_t id_;
 };
 
 }  // namespace ngap

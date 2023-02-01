@@ -19,44 +19,36 @@
  *      contact@openairinterface.org
  */
 
-/*! \file
- \brief
- \author  Keliang DU, BUPT
- \date 2020
- \email: contact@openairinterface.org
- */
-
 #include "UERadioCapabilityForPaging.hpp"
 
 namespace ngap {
 
 //------------------------------------------------------------------------------
 UERadioCapabilityForPaging::UERadioCapabilityForPaging() {
-  ueRadioCapabilityForPagingOfNR    = NULL;
-  ueRadioCapabilityForPagingOfEUTRA = NULL;
+  ueRadioCapabilityForPagingOfNR    = std::nullopt;
+  ueRadioCapabilityForPagingOfEUTRA = std::nullopt;
 }
 
 //------------------------------------------------------------------------------
 UERadioCapabilityForPaging::~UERadioCapabilityForPaging() {}
 
 //------------------------------------------------------------------------------
-bool UERadioCapabilityForPaging::encode2UERadioCapabilityForPaging(
+bool UERadioCapabilityForPaging::encode(
     Ngap_UERadioCapabilityForPaging_t* ueRadioCapabilityForPaging) {
-  if (ueRadioCapabilityForPagingOfNR) {
+  if (ueRadioCapabilityForPagingOfNR.has_value()) {
     ueRadioCapabilityForPaging->uERadioCapabilityForPagingOfNR =
         (Ngap_UERadioCapabilityForPagingOfNR_t*) calloc(
             1, sizeof(Ngap_UERadioCapabilityForPagingOfNR_t));
-    if (!ueRadioCapabilityForPagingOfNR->encode2UERadioCapabilityForPagingOfNR(
+    if (!ueRadioCapabilityForPagingOfNR.value().encode(
             ueRadioCapabilityForPaging->uERadioCapabilityForPagingOfNR))
       return false;
   }
-  if (ueRadioCapabilityForPagingOfEUTRA) {
+  if (ueRadioCapabilityForPagingOfEUTRA.has_value()) {
     ueRadioCapabilityForPaging->uERadioCapabilityForPagingOfEUTRA =
         (Ngap_UERadioCapabilityForPagingOfEUTRA_t*) calloc(
             1, sizeof(Ngap_UERadioCapabilityForPagingOfEUTRA_t));
-    if (!ueRadioCapabilityForPagingOfEUTRA
-             ->encode2UERadioCapabilityForPagingOfEUTRA(
-                 ueRadioCapabilityForPaging->uERadioCapabilityForPagingOfEUTRA))
+    if (!ueRadioCapabilityForPagingOfEUTRA.value().encode(
+            ueRadioCapabilityForPaging->uERadioCapabilityForPagingOfEUTRA))
       return false;
   }
 
@@ -64,41 +56,59 @@ bool UERadioCapabilityForPaging::encode2UERadioCapabilityForPaging(
 }
 
 //------------------------------------------------------------------------------
-bool UERadioCapabilityForPaging::decodefromUERadioCapabilityForPaging(
+bool UERadioCapabilityForPaging::decode(
     Ngap_UERadioCapabilityForPaging_t* ueRadioCapabilityForPaging) {
   if (ueRadioCapabilityForPaging->uERadioCapabilityForPagingOfNR) {
-    ueRadioCapabilityForPagingOfNR = new UERadioCapabilityForPagingOfNR();
-    if (!ueRadioCapabilityForPagingOfNR
-             ->decodefromUERadioCapabilityForPagingOfNR(
-                 ueRadioCapabilityForPaging->uERadioCapabilityForPagingOfNR))
+    UERadioCapabilityForPagingOfNR tmp = {};
+    if (!tmp.decode(ueRadioCapabilityForPaging->uERadioCapabilityForPagingOfNR))
       return false;
+    ueRadioCapabilityForPagingOfNR =
+        std::optional<UERadioCapabilityForPagingOfNR>(tmp);
   }
   if (ueRadioCapabilityForPaging->uERadioCapabilityForPagingOfEUTRA) {
-    ueRadioCapabilityForPagingOfEUTRA = new UERadioCapabilityForPagingOfEUTRA();
-    if (!ueRadioCapabilityForPagingOfEUTRA
-             ->decodefromUERadioCapabilityForPagingOfEUTRA(
-                 ueRadioCapabilityForPaging->uERadioCapabilityForPagingOfEUTRA))
+    UERadioCapabilityForPagingOfEUTRA tmp = {};
+    if (!tmp.decode(
+            ueRadioCapabilityForPaging->uERadioCapabilityForPagingOfEUTRA))
       return false;
+    ueRadioCapabilityForPagingOfEUTRA =
+        std::optional<UERadioCapabilityForPagingOfEUTRA>(tmp);
   }
 
   return true;
 }
 
 //------------------------------------------------------------------------------
-bool UERadioCapabilityForPaging::getUERadioCapabilityForPaging(
-    UERadioCapabilityForPagingOfNR*& m_ueRadioCapabilityForPagingOfNR,
-    UERadioCapabilityForPagingOfEUTRA*& m_ueRadioCapabilityForPagingOfEUTRA) {
-  m_ueRadioCapabilityForPagingOfNR    = ueRadioCapabilityForPagingOfNR;
-  m_ueRadioCapabilityForPagingOfEUTRA = ueRadioCapabilityForPagingOfEUTRA;
-
+bool UERadioCapabilityForPaging::setUERadioCapabilityForPagingOfNR(
+    const OCTET_STRING_t& capability) {
+  UERadioCapabilityForPagingOfNR tmp = {};
+  tmp.set(capability);
+  ueRadioCapabilityForPagingOfNR =
+      std::optional<UERadioCapabilityForPagingOfNR>(tmp);
   return true;
 }
 
 //------------------------------------------------------------------------------
-void UERadioCapabilityForPaging::setUERadioCapabilityForPaging(
-    UERadioCapabilityForPagingOfNR* m_ueRadioCapabilityForPagingOfNR,
-    UERadioCapabilityForPagingOfEUTRA* m_ueRadioCapabilityForPagingOfEUTRA) {
-  ueRadioCapabilityForPagingOfNR    = m_ueRadioCapabilityForPagingOfNR;
-  ueRadioCapabilityForPagingOfEUTRA = m_ueRadioCapabilityForPagingOfEUTRA;
+bool UERadioCapabilityForPaging::getUERadioCapabilityForPagingOfNR(
+    OCTET_STRING_t& capability) {
+  if (!ueRadioCapabilityForPagingOfNR.has_value()) return false;
+  return ueRadioCapabilityForPagingOfNR.value().get(capability);
 }
+
+//------------------------------------------------------------------------------
+bool UERadioCapabilityForPaging::setUERadioCapabilityForPagingOfEUTRA(
+    const OCTET_STRING_t& capability) {
+  UERadioCapabilityForPagingOfEUTRA tmp = {};
+  tmp.set(capability);
+  ueRadioCapabilityForPagingOfEUTRA =
+      std::optional<UERadioCapabilityForPagingOfEUTRA>(tmp);
+  return true;
+}
+
+//------------------------------------------------------------------------------
+bool UERadioCapabilityForPaging::getUERadioCapabilityForPagingOfEUTRA(
+    OCTET_STRING_t& capability) {
+  if (!ueRadioCapabilityForPagingOfEUTRA.has_value()) return false;
+  return ueRadioCapabilityForPagingOfEUTRA.value().get(capability);
+}
+
 }  // namespace ngap

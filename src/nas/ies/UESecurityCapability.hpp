@@ -19,52 +19,55 @@
  *      contact@openairinterface.org
  */
 
-/*! \file
- \brief
- \author  Keliang DU, BUPT
- \date 2020
- \email: contact@openairinterface.org
- */
+#ifndef _UE_SECURITY_CAPABILITY_H
+#define _UE_SECURITY_CAPABILITY_H
 
-#ifndef _UESecurityCapability_H
-#define _UESecurityCapability_H
+#include "Type4NasIe.hpp"
 
-#include <stdint.h>
+constexpr uint8_t kUeSecurityCapabilityMinimumLength = 4;
+constexpr uint8_t kUeSecurityCapabilityMaximumLength = 10;
+constexpr auto kUeSecurityCapabilityIeName           = "UE Security Capability";
 
 namespace nas {
 
-class UESecurityCapability {
+class UESecurityCapability : public Type4NasIe {
  public:
-  UESecurityCapability(uint8_t iei);
   UESecurityCapability();
+  UESecurityCapability(uint8_t iei);
+  UESecurityCapability(uint8_t _5g_ea, uint8_t _5g_ia);
+  UESecurityCapability(uint8_t iei, uint8_t _5g_ea, uint8_t _5g_ia);
+  UESecurityCapability(
+      uint8_t iei, uint8_t _5g_ea, uint8_t _5g_ia, uint8_t eea, uint8_t eia);
+  UESecurityCapability(
+      uint8_t _5g_ea, uint8_t _5g_ia, uint8_t eea, uint8_t eia);
   ~UESecurityCapability();
-  UESecurityCapability(
-      const uint8_t iei, uint8_t _5gg_EASel, uint8_t _5gg_IASel);
-  UESecurityCapability(
-      const uint8_t iei, uint8_t _5gg_EASel, uint8_t _5gg_IASel, uint8_t EEASel,
-      uint8_t EIASel);
-  void setEASel(uint8_t sel);
-  void setIASel(uint8_t sel);
-  uint8_t getEASel();
-  uint8_t getIASel();
 
-  void setEEASel(uint8_t sel);
-  void setEIASel(uint8_t sel);
-  uint8_t getEEASel();
-  uint8_t getEIASel();
+  static std::string GetIeName() { return kUeSecurityCapabilityIeName; }
 
-  void setLength(uint8_t len);
-  uint8_t getLength();
-  int encode2buffer(uint8_t* buf, int len);
-  int decodefrombuffer(uint8_t* buf, int len, bool is_option);
+  void SetEa(uint8_t value);
+  uint8_t GetEa() const;
+
+  void SetIa(uint8_t value);
+  uint8_t GetIa() const;
+
+  void SetEea(uint8_t value);
+  bool GetEea(uint8_t& value) const;
+
+  void SetEia(uint8_t value);
+  bool GetEia(uint8_t& value) const;
+
+  void Set(uint8_t _5g_ea, uint8_t _5g_ia);
+  void Set(uint8_t _5g_ea, uint8_t _5g_ia, uint8_t eea, uint8_t eia);
+
+  int Encode(uint8_t* buf, int len);
+  int Decode(uint8_t* buf, int len, bool is_iei);
 
  private:
-  uint8_t _iei;
-  uint8_t length;
-  uint8_t _5g_EASel;
-  uint8_t _5g_IASel;
-  uint8_t EEASel;
-  uint8_t EIASel;
+  uint8_t _5g_ea_;              // 3rd octet, Mandatory
+  uint8_t _5g_ia_;              // 4th octet, Mandatory
+  std::optional<uint8_t> eea_;  // 5th octet, Optional
+  std::optional<uint8_t> eia_;  // 6th octet, Optional
+  // Spare
 };
 
 }  // namespace nas

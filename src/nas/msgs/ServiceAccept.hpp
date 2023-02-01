@@ -19,39 +19,51 @@
  *      contact@openairinterface.org
  */
 
-/*! \file
- \brief
- \author  Keliang DU, BUPT
- \date 2020
- \email: contact@openairinterface.org
- */
 #ifndef _SERVICE_ACCEPT_H_
 
 #define _SERVICE_ACCEPT_H_
 
 #include <stdint.h>
-
 #include <string>
 
-#include "nas_ie_header.hpp"
+#include "NasIeHeader.hpp"
 
 namespace nas {
 
-class ServiceAccept {
+class ServiceAccept : public NasMmPlainHeader {
  public:
   ServiceAccept();
   ~ServiceAccept();
 
- public:
-  void setHeader(uint8_t security_header_type);
-  void setPDU_session_status(uint16_t value);
-  void setPDU_session_reactivation_result(uint16_t);
-  int encode2buffer(uint8_t* buf, int len);
+  void SetHeader(uint8_t security_header_type);
+
+  int Encode(uint8_t* buf, int len);
+  int Decode(uint8_t* buf, int len);
+
+  void SetPduSessionStatus(uint16_t value);
+  // TODO: Get
+
+  void SetPduSessionReactivationResult(uint16_t);
+  // TODO: Get
+
+  void SetPduSessionReactivationResultErrorCause(
+      uint8_t session_id, uint8_t value);
+  // TODO: Get
+
+  void SetEapMessage(bstring eap);
+  // TODO: Get
+
+  void SetT3448Value(uint8_t unit, uint8_t value);
+  // TODO: Get
 
  private:
-  NasMmPlainHeader* plain_header;
-  PDU_Session_Status* ie_PDU_session_status;
-  PDU_Session_Reactivation_Result* ie_session_reactivation_result;
+  std::optional<PDUSessionStatus> ie_PDU_session_status;  // Optional
+  std::optional<PDU_Session_Reactivation_Result>
+      ie_pdu_session_reactivation_result;  // Optional
+  std::optional<PDU_Session_Reactivation_Result_Error_Cause>
+      ie_pdu_session_reactivation_result_error_cause;  // Optional
+  std::optional<EapMessage> ie_eap_message;            // Optional
+  std::optional<GprsTimer3> ie_T3448_value;            // Optional
 };
 
 }  // namespace nas

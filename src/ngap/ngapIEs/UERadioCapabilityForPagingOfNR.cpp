@@ -19,59 +19,50 @@
  *      contact@openairinterface.org
  */
 
-/*! \file
- \brief
- \author  Keliang DU, BUPT
- \date 2020
- \email: contact@openairinterface.org
- */
-
 #include "UERadioCapabilityForPagingOfNR.hpp"
+
+#include "conversions.hpp"
 
 namespace ngap {
 
 //------------------------------------------------------------------------------
-UERadioCapabilityForPagingOfNR::UERadioCapabilityForPagingOfNR() {
-  nRbuffer       = NULL;
-  sizeofnRbuffer = -1;
-}
+UERadioCapabilityForPagingOfNR::UERadioCapabilityForPagingOfNR() {}
 
 //------------------------------------------------------------------------------
 UERadioCapabilityForPagingOfNR::~UERadioCapabilityForPagingOfNR() {}
 
 //------------------------------------------------------------------------------
-bool UERadioCapabilityForPagingOfNR::encode2UERadioCapabilityForPagingOfNR(
+bool UERadioCapabilityForPagingOfNR::encode(
     Ngap_UERadioCapabilityForPagingOfNR_t* ueRadioCapabilityForPagingOfNR) {
-  int ret;
-  ret = OCTET_STRING_fromBuf(
-      ueRadioCapabilityForPagingOfNR, nRbuffer, sizeofnRbuffer);
-  if (ret != 0) return false;
-  return true;
+  return conv::octet_string_copy(
+      *ueRadioCapabilityForPagingOfNR, ue_radio_capability_);
 }
 
 //------------------------------------------------------------------------------
-bool UERadioCapabilityForPagingOfNR::decodefromUERadioCapabilityForPagingOfNR(
+bool UERadioCapabilityForPagingOfNR::decode(
     Ngap_UERadioCapabilityForPagingOfNR_t* ueRadioCapabilityForPagingOfNR) {
-  nRbuffer       = (char*) ueRadioCapabilityForPagingOfNR->buf;
-  sizeofnRbuffer = ueRadioCapabilityForPagingOfNR->size;
-  return true;
+  return conv::octet_string_copy(
+      ue_radio_capability_, *ueRadioCapabilityForPagingOfNR);
 }
 
 //------------------------------------------------------------------------------
-bool UERadioCapabilityForPagingOfNR::getUERadioCapabilityForPagingOfNR(
-    uint8_t*& buffer, size_t& size) {
-  buffer = (uint8_t*) nRbuffer;
-  size   = sizeofnRbuffer;
-  if (!nRbuffer) return false;
-  if (sizeofnRbuffer < 0) return false;
-
-  return true;
+bool UERadioCapabilityForPagingOfNR::set(const OCTET_STRING_t& capability) {
+  return conv::octet_string_copy(ue_radio_capability_, capability);
 }
 
 //------------------------------------------------------------------------------
-void UERadioCapabilityForPagingOfNR::setUERadioCapabilityForPagingOfNR(
-    uint8_t* buffer, size_t size) {
-  nRbuffer       = (char*) buffer;
-  sizeofnRbuffer = size;
+bool UERadioCapabilityForPagingOfNR::get(OCTET_STRING_t& capability) {
+  return conv::octet_string_copy(capability, ue_radio_capability_);
 }
+
+//------------------------------------------------------------------------------
+bool UERadioCapabilityForPagingOfNR::set(const bstring& capability) {
+  return conv::bstring_2_octet_string(capability, ue_radio_capability_);
+}
+
+//------------------------------------------------------------------------------
+bool UERadioCapabilityForPagingOfNR::get(bstring& capability) {
+  return conv::octet_string_2_bstring(ue_radio_capability_, capability);
+}
+
 }  // namespace ngap

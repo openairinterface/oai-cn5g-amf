@@ -48,7 +48,7 @@ void DownlinkRANStatusTransfer::initialize() {
 
 //------------------------------------------------------------------------------
 void DownlinkRANStatusTransfer::setAmfUeNgapId(const unsigned long& id) {
-  amfUeNgapId.setAMF_UE_NGAP_ID(id);
+  amfUeNgapId.set(id);
 
   Ngap_DownlinkRANStatusTransferIEs_t* ie =
       (Ngap_DownlinkRANStatusTransferIEs_t*) calloc(
@@ -71,7 +71,7 @@ void DownlinkRANStatusTransfer::setAmfUeNgapId(const unsigned long& id) {
 
 //------------------------------------------------------------------------------
 void DownlinkRANStatusTransfer::setRanUeNgapId(const uint32_t& id) {
-  ranUeNgapId.setRanUeNgapId(id);
+  ranUeNgapId.set(id);
 
   Ngap_DownlinkRANStatusTransferIEs_t* ie =
       (Ngap_DownlinkRANStatusTransferIEs_t*) calloc(
@@ -81,7 +81,7 @@ void DownlinkRANStatusTransfer::setRanUeNgapId(const uint32_t& id) {
   ie->value.present =
       Ngap_DownlinkRANStatusTransferIEs__value_PR_RAN_UE_NGAP_ID;
 
-  int ret = ranUeNgapId.encode2RAN_UE_NGAP_ID(ie->value.choice.RAN_UE_NGAP_ID);
+  int ret = ranUeNgapId.encode(ie->value.choice.RAN_UE_NGAP_ID);
   if (!ret) {
     Logger::ngap().error("Encode RAN_UE_NGAP_ID IE error");
     free_wrapper((void**) &ie);
@@ -197,7 +197,7 @@ bool DownlinkRANStatusTransfer::decodeFromPdu(Ngap_NGAP_PDU_t* ngapMsgPdu) {
             downlinkranstatustransferIEs->protocolIEs.list.array[i]
                     ->value.present ==
                 Ngap_DownlinkRANStatusTransferIEs__value_PR_RAN_UE_NGAP_ID) {
-          if (!ranUeNgapId.decodefromRAN_UE_NGAP_ID(
+          if (!ranUeNgapId.decode(
                   downlinkranstatustransferIEs->protocolIEs.list.array[i]
                       ->value.choice.RAN_UE_NGAP_ID)) {
             Logger::ngap().error("Decoded NGAP RAN_UE_NGAP_ID IE error");

@@ -72,7 +72,7 @@ bool PagingMsg::decodeFromPdu(Ngap_NGAP_PDU_t* ngapMsgPdu) {
                 Ngap_Criticality_ignore &&
             pagingIEs->protocolIEs.list.array[i]->value.present ==
                 Ngap_PagingIEs__value_PR_UEPagingIdentity) {
-          if (!uePagingIdentity.decodefrompdu(
+          if (!uePagingIdentity.decodeFromPdu(
                   pagingIEs->protocolIEs.list.array[i]
                       ->value.choice.UEPagingIdentity)) {
             Logger::ngap().error("Decoded NGAP UEPagingIdentity IE error");
@@ -156,8 +156,8 @@ void PagingMsg::setTAIListForPaging(const std::vector<Tai_t>& list) {
   TAC tac[list.size()];
   for (int i = 0; i < list.size(); i++) {
     TAI tai = {};
-    plmnid[i].setMccMnc(list[i].mcc, list[i].mnc);
-    tac[i].setTac(list[i].tac);
+    plmnid[i].set(list[i].mcc, list[i].mnc);
+    tac[i].set(list[i].tac);
     tai.setTAI(plmnid[i], tac[i]);
     tailist.push_back(tai);
   }

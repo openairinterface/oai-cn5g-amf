@@ -19,51 +19,37 @@
  *      contact@openairinterface.org
  */
 
-/*! \file
- \brief
- \author  Keliang DU, BUPT
- \date 2020
- \email: contact@openairinterface.org
- */
-
 #include "PDUSessionID.hpp"
-
-#include <iostream>
-using namespace std;
 
 namespace ngap {
 
 //------------------------------------------------------------------------------
 PDUSessionID::PDUSessionID() {
-  pdusessionid = 0;
+  id_ = 0;
 }
 
 //------------------------------------------------------------------------------
 PDUSessionID::~PDUSessionID() {}
 
 //------------------------------------------------------------------------------
-void PDUSessionID::setPDUSessionID(uint8_t m_pdusessionid) {
-  pdusessionid = m_pdusessionid;
+void PDUSessionID::set(const uint8_t& id) {
+  id_ = id;
 }
 
 //------------------------------------------------------------------------------
-bool PDUSessionID::getPDUSessionID(uint8_t& m_pdusessionid) {
-  m_pdusessionid = pdusessionid;
+void PDUSessionID::get(uint8_t& id) const {
+  id = id_;
+}
 
+//------------------------------------------------------------------------------
+bool PDUSessionID::encode(Ngap_PDUSessionID_t& pdu_session_id) const {
+  pdu_session_id = id_;
   return true;
 }
 
 //------------------------------------------------------------------------------
-bool PDUSessionID::encode2PDUSessionID(Ngap_PDUSessionID_t& pduSessionId) {
-  pduSessionId = pdusessionid;
-
-  return true;
-}
-
-//------------------------------------------------------------------------------
-bool PDUSessionID::decodefromPDUSessionID(Ngap_PDUSessionID_t pduSessionId) {
-  pdusessionid = pduSessionId;
-
+bool PDUSessionID::decode(const Ngap_PDUSessionID_t& pdu_session_id) {
+  id_ = pdu_session_id;
   return true;
 }
 

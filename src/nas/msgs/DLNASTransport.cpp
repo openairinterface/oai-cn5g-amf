@@ -19,211 +19,297 @@
  *      contact@openairinterface.org
  */
 
-/*! \file
- \brief
- \author  Keliang DU, BUPT
- \date 2020
- \email: contact@openairinterface.org
- */
-
 #include "DLNASTransport.hpp"
 
-#include "3gpp_ts24501.hpp"
+#include "3gpp_24.501.hpp"
 #include "bstrlib.h"
 #include "logger.hpp"
 
 using namespace nas;
 
 //------------------------------------------------------------------------------
-DLNASTransport::DLNASTransport() {
-  plain_header              = NULL;
-  ie_payload_container_type = NULL;
-  ie_payload_container      = NULL;
-  ie_pdu_session_identity_2 = NULL;
-  ie_additional_information = NULL;
-  ie_5gmm_cause             = NULL;
-  ie_back_off_timer_value   = NULL;
+DLNASTransport::DLNASTransport()
+    : NasMmPlainHeader(EPD_5GS_MM_MSG, DL_NAS_TRANSPORT) {
+  ie_pdu_session_identity_2 = std::nullopt;
+  ie_additional_information = std::nullopt;
+  ie_5gmm_cause             = std::nullopt;
+  ie_back_off_timer_value   = std::nullopt;
 }
 
 //------------------------------------------------------------------------------
 DLNASTransport::~DLNASTransport() {}
 
 //------------------------------------------------------------------------------
-void DLNASTransport::setHeader(uint8_t security_header_type) {
-  plain_header = new NasMmPlainHeader();
-  plain_header->setHeader(
-      EPD_5GS_MM_MSG, security_header_type, DL_NAS_TRANSPORT);
+void DLNASTransport::SetHeader(uint8_t security_header_type) {
+  NasMmPlainHeader::SetSecurityHeaderType(security_header_type);
 }
 
 //------------------------------------------------------------------------------
-void DLNASTransport::setPayload_Container_Type(uint8_t value) {
-  ie_payload_container_type = new Payload_Container_Type(0x00, value);
+void DLNASTransport::SetPayloadContainerType(uint8_t value) {
+  ie_payload_container_type.SetValue(value);
 }
 
 //------------------------------------------------------------------------------
-void DLNASTransport::setPayload_Container(
+void DLNASTransport::SetPayloadContainer(
     std::vector<PayloadContainerEntry> content) {
-  ie_payload_container = new Payload_Container(0x00, content);
+  ie_payload_container.SetValue(content);
 }
 
 //------------------------------------------------------------------------------
-void DLNASTransport::setPayload_Container(uint8_t* buf, int len) {
-  bstring b            = blk2bstr(buf, len);
-  ie_payload_container = new Payload_Container(0x00, b);
+void DLNASTransport::SetPayloadContainer(uint8_t* buf, int len) {
+  bstring b = blk2bstr(buf, len);
+  ie_payload_container.SetValue(b);
 }
 
 //------------------------------------------------------------------------------
-void DLNASTransport::setPDUSessionId(uint8_t value) {
-  ie_pdu_session_identity_2 = new PDU_Session_Identity_2(0x12, value);
+void DLNASTransport::SetPduSessionId(uint8_t value) {
+  ie_pdu_session_identity_2 =
+      std::make_optional<PduSessionIdentity2>(kIeiPduSessionId, value);
 }
 
 //------------------------------------------------------------------------------
-void DLNASTransport::setAdditional_Information(uint8_t _length, uint8_t value) {
-  ie_additional_information = new Additional_Information(0x24, _length, value);
+void DLNASTransport::SetAdditionalInformation(const bstring& value) {
+  ie_additional_information = std::make_optional<AdditionalInformation>(value);
 }
 
 //------------------------------------------------------------------------------
-void DLNASTransport::set_5GMM_Cause(uint8_t value) {
-  ie_5gmm_cause = new _5GMM_Cause(0x58, value);
+void DLNASTransport::Set5gmmCause(uint8_t value) {
+  ie_5gmm_cause = std::make_optional<_5gmmCause>(kIei5gmmCause, value);
 }
 
 //------------------------------------------------------------------------------
-void DLNASTransport::setBack_off_timer_value(uint8_t unit, uint8_t value) {
-  ie_back_off_timer_value = new GPRS_Timer_3(0x37, unit, value);
+void DLNASTransport::SetBackOffTimerValue(uint8_t unit, uint8_t value) {
+  ie_back_off_timer_value =
+      std::make_optional<GprsTimer3>(kIeiGprsTimer3BackOffTimer, unit, value);
 }
 
 //------------------------------------------------------------------------------
-int DLNASTransport::encode2buffer(uint8_t* buf, int len) {
+int DLNASTransport::Encode(uint8_t* buf, int len) {
   Logger::nas_mm().debug("Encoding DLNASTransport message");
-  int encoded_size = 0;
-  if (!plain_header) {
-    Logger::nas_mm().error("Mandatory IE missing Header");
-    return 0;
+
+  int encoded_size    = 0;
+  int encoded_ie_size = 0;
+
+  // Header
+  if ((encoded_ie_size = NasMmPlainHeader::Encode(buf, len)) ==
+      KEncodeDecodeError) {
+    Logger::nas_mm().error("Encoding NAS Header error");
+    return KEncodeDecodeError;
   }
-  if (!(plain_header->encode2buffer(buf, len))) return 0;
-  encoded_size += 3;
-  if (!ie_payload_container_type) {
-    Logger::nas_mm().warn("IE ie_payload_container_type is not available");
+  encoded_size += encoded_ie_size;
+
+  // Payload container type
+  int size =
+      ie_payload_container_type.Encode(buf + encoded_size, len - encoded_size);
+  if (size == KEncodeDecodeError) {
+    Logger::nas_mm().error(
+        "Encoding %s error", PayloadContainerType::GetIeName().c_str());
+    return KEncodeDecodeError;
+  }
+  if (size == 0)
+    size++;  // 1/2 octet for  ie_payload_container_type, 1/2 octet for spare
+  encoded_size += size;
+
+  // Payload container
+  size = ie_payload_container.Encode(
+      buf + encoded_size, len - encoded_size,
+      ie_payload_container_type.GetValue());
+  if (size != KEncodeDecodeError) {
+    encoded_size += size;
   } else {
-    if (int size = ie_payload_container_type->encode2buffer(
-            buf + encoded_size, len - encoded_size)) {
+    Logger::nas_mm().error(
+        "Encoding %s error", Payload_Container::GetIeName().c_str());
+    return KEncodeDecodeError;
+  }
+
+  // PDU session ID
+  if (!ie_pdu_session_identity_2.has_value()) {
+    Logger::nas_mm().debug(
+        "IE %s is not available", PduSessionIdentity2::GetIeName().c_str());
+  } else {
+    size = ie_pdu_session_identity_2->Encode(
+        buf + encoded_size, len - encoded_size);
+    if (size != KEncodeDecodeError) {
       encoded_size += size;
     } else {
-      Logger::nas_mm().error("Encoding ie_payload_container_type error");
-      return 0;
+      Logger::nas_mm().error(
+          "Encoding IE %s", PduSessionIdentity2::GetIeName().c_str());
+      return KEncodeDecodeError;
     }
   }
-  if (!ie_payload_container) {
-    Logger::nas_mm().warn("IE ie_payload_container is not available");
+
+  // Additional information
+  if (!ie_additional_information.has_value()) {
+    Logger::nas_mm().debug(
+        "IE %s is not available", AdditionalInformation::GetIeName().c_str());
   } else {
-    if (int size = ie_payload_container->encode2buffer(
-            buf + encoded_size, len - encoded_size)) {
+    size = ie_additional_information->Encode(
+        buf + encoded_size, len - encoded_size);
+    if (size != KEncodeDecodeError) {
       encoded_size += size;
     } else {
-      Logger::nas_mm().error("Encoding ie_payload_container error");
-      return 0;
+      Logger::nas_mm().error(
+          "Encoding %s error", AdditionalInformation::GetIeName().c_str());
+      return KEncodeDecodeError;
     }
   }
-  if (!ie_pdu_session_identity_2) {
-    Logger::nas_mm().warn("IE ie_pdu_session_identity_2 is not available");
+
+  // 5GMM cause
+  if (!ie_5gmm_cause.has_value()) {
+    Logger::nas_mm().debug(
+        "IE %s is not available", _5gmmCause::GetIeName().c_str());
   } else {
-    if (int size = ie_pdu_session_identity_2->encode2buffer(
-            buf + encoded_size, len - encoded_size)) {
+    size = ie_5gmm_cause->Encode(buf + encoded_size, len - encoded_size);
+    if (size != KEncodeDecodeError) {
       encoded_size += size;
     } else {
-      Logger::nas_mm().error("Encoding IE ie_pdu_session_identity_2 error");
-      return 0;
+      Logger::nas_mm().error(
+          "Encoding %s error", _5gmmCause::GetIeName().c_str());
+      return KEncodeDecodeError;
     }
   }
-  if (!ie_additional_information) {
-    Logger::nas_mm().warn("IE ie_additional_information is not available");
+
+  // Back-off timer value
+  if (!ie_back_off_timer_value.has_value()) {
+    Logger::nas_mm().debug(
+        "IE %s is not available", GprsTimer3::GetIeName().c_str());
   } else {
-    if (int size = ie_additional_information->encode2buffer(
-            buf + encoded_size, len - encoded_size)) {
+    size =
+        ie_back_off_timer_value->Encode(buf + encoded_size, len - encoded_size);
+    if (size != KEncodeDecodeError) {
       encoded_size += size;
     } else {
-      Logger::nas_mm().error("Encoding IE ie_additional_information error");
-      return 0;
+      Logger::nas_mm().error(
+          "Encoding %s error", GprsTimer3::GetIeName().c_str());
+      return KEncodeDecodeError;
     }
   }
-  if (!ie_5gmm_cause) {
-    Logger::nas_mm().warn("IE ie_5gmm_cause is not available");
-  } else {
-    if (int size = ie_5gmm_cause->encode2buffer(
-            buf + encoded_size, len - encoded_size)) {
-      encoded_size += size;
-    } else {
-      Logger::nas_mm().error("Encoding ie_5gmm_cause error");
-    }
-  }
-  if (!ie_back_off_timer_value) {
-    Logger::nas_mm().warn("IE ie_back_off_timer_value is not available");
-  } else {
-    if (int size = ie_back_off_timer_value->encode2buffer(
-            buf + encoded_size, len - encoded_size)) {
-      encoded_size += size;
-    } else {
-      Logger::nas_mm().error("Encoding ie_back_off_timer_value error");
-      return 0;
-    }
-  }
+
   Logger::nas_mm().debug(
       "Encoded DLNASTransport message len (%d)", encoded_size);
   return encoded_size;
 }
 
 //------------------------------------------------------------------------------
-int DLNASTransport::decodefrombuffer(
-    NasMmPlainHeader* header, uint8_t* buf, int len) {
+int DLNASTransport::Decode(uint8_t* buf, int len) {
   Logger::nas_mm().debug("Decoding DLNASTransport message");
-  int decoded_size          = 3;
-  plain_header              = header;
-  ie_payload_container_type = new Payload_Container_Type();
-  decoded_size += ie_payload_container_type->decodefrombuffer(
+
+  int decoded_size   = 0;
+  int decoded_result = 0;
+
+  // Header
+  decoded_result = NasMmPlainHeader::Decode(buf, len);
+  if (decoded_result == KEncodeDecodeError) {
+    Logger::nas_mm().error("Decoding NAS Header error");
+    return KEncodeDecodeError;
+  }
+  decoded_size += decoded_result;
+
+  // Payload container type
+  decoded_result = ie_payload_container_type.Decode(
       buf + decoded_size, len - decoded_size, false);
-  ie_payload_container = new Payload_Container();
-  decoded_size += ie_payload_container->decodefrombuffer(
-      buf + decoded_size, len - decoded_size, false);
+  if (decoded_result == KEncodeDecodeError) {
+    Logger::nas_mm().error(
+        "Decoding %s error", PayloadContainerType::GetIeName().c_str());
+    return KEncodeDecodeError;
+  }
+  decoded_size++;  // 1/2 octet for PayloadContainerType, 1/2 octet for spare
+
+  // Payload container
+  decoded_result = ie_payload_container.Decode(
+      buf + decoded_size, len - decoded_size, false,
+      N1_SM_INFORMATION);  // TODO: verified Type of Payload Container
+  if (decoded_result == KEncodeDecodeError) {
+    Logger::nas_mm().error(
+        "Decoding %s error", Payload_Container::GetIeName().c_str());
+    return KEncodeDecodeError;
+  }
+  decoded_size += decoded_result;
+
   Logger::nas_mm().debug("Decoded_size (%d)", decoded_size);
-  uint8_t octet = *(buf + decoded_size);
+
+  // Decode other IEs
+  uint8_t octet = 0x00;
+  DECODE_U8_VALUE(buf + decoded_size, octet);
   Logger::nas_mm().debug("First option IEI (0x%x)", octet);
   while ((octet != 0x0)) {
     switch (octet) {
-      case 0x12: {
+      case kIeiPduSessionId: {
         Logger::nas_mm().debug("Decoding IEI (0x12)");
-        ie_pdu_session_identity_2 = new PDU_Session_Identity_2();
-        decoded_size += ie_pdu_session_identity_2->decodefrombuffer(
-            buf + decoded_size, len - decoded_size, true);
-        octet = *(buf + decoded_size);
+        PduSessionIdentity2 ie_pdu_session_identity_2_tmp = {};
+        if ((decoded_result = ie_pdu_session_identity_2_tmp.Decode(
+                 buf + decoded_size, len - decoded_size, true)) ==
+            KEncodeDecodeError) {
+          Logger::nas_mm().error(
+              "Decoding %s error", PduSessionIdentity2::GetIeName().c_str());
+          return decoded_result;
+        }
+        decoded_size += decoded_result;
+        ie_pdu_session_identity_2 =
+            std::optional<PduSessionIdentity2>(ie_pdu_session_identity_2_tmp);
+        DECODE_U8_VALUE(buf + decoded_size, octet);
         Logger::nas_mm().debug("Next IEI (0x%x)", octet);
       } break;
-      case 0x24: {
+
+      case kIeiAdditionalInformation: {
         Logger::nas_mm().debug("Decoding IEI (0x24)");
-        ie_additional_information = new Additional_Information();
-        decoded_size += ie_additional_information->decodefrombuffer(
-            buf + decoded_size, len - decoded_size, true);
-        octet = *(buf + decoded_size);
+        AdditionalInformation ie_additional_information_tmp = {};
+        if ((decoded_result = ie_additional_information_tmp.Decode(
+                 buf + decoded_size, len - decoded_size, true)) ==
+            KEncodeDecodeError) {
+          Logger::nas_mm().error(
+              "Decoding %s error", AdditionalInformation::GetIeName().c_str());
+          return decoded_result;
+        }
+        decoded_size += decoded_result;
+        ie_additional_information =
+            std::optional<AdditionalInformation>(ie_additional_information_tmp);
+        DECODE_U8_VALUE(buf + decoded_size, octet);
         Logger::nas_mm().debug("Next IEI (0x%x)", octet);
       } break;
-      case 0x58: {
+
+      case kIei5gmmCause: {
         Logger::nas_mm().debug("Decoding IEI (0x58)");
-        ie_5gmm_cause = new _5GMM_Cause();
-        decoded_size += ie_5gmm_cause->decodefrombuffer(
-            buf + decoded_size, len - decoded_size, true);
-        octet = *(buf + decoded_size);
+        _5gmmCause ie_5gmm_cause_tmp = {};
+        if ((decoded_result = ie_5gmm_cause_tmp.Decode(
+                 buf + decoded_size, len - decoded_size, true)) ==
+            KEncodeDecodeError) {
+          Logger::nas_mm().error(
+              "Decoding %s error", _5gmmCause::GetIeName().c_str());
+          return decoded_result;
+        }
+        decoded_size += decoded_result;
+        ie_5gmm_cause = std::optional<_5gmmCause>(ie_5gmm_cause_tmp);
+        DECODE_U8_VALUE(buf + decoded_size, octet);
         Logger::nas_mm().debug("Next IEI (0x%x)", octet);
       } break;
-      case 0x37: {
+
+      case kIeiGprsTimer3BackOffTimer: {
         Logger::nas_mm().debug("Decoding IEI (0x37)");
-        ie_back_off_timer_value = new GPRS_Timer_3();
-        decoded_size += ie_back_off_timer_value->decodefrombuffer(
-            buf + decoded_size, len - decoded_size, true);
-        octet = *(buf + decoded_size);
+        GprsTimer3 ie_back_off_timer_value_tmp(kIeiGprsTimer3BackOffTimer);
+        if ((decoded_result = ie_back_off_timer_value_tmp.Decode(
+                 buf + decoded_size, len - decoded_size, true)) ==
+            KEncodeDecodeError) {
+          Logger::nas_mm().error(
+              "Decoding %s error", GprsTimer3::GetIeName().c_str());
+          return decoded_result;
+        }
+        decoded_size += decoded_result;
+        ie_back_off_timer_value =
+            std::optional<GprsTimer3>(ie_back_off_timer_value_tmp);
+        DECODE_U8_VALUE(buf + decoded_size, octet);
         Logger::nas_mm().debug("Next IEI (0x%x)", octet);
+      } break;
+
+      default: {
+        Logger::nas_mm().warn("Unknown IEI 0x%x, stop decoding...", octet);
+        // Stop decoding
+        octet = 0x00;
       } break;
     }
   }
+
   Logger::nas_mm().debug(
       "Decoded DLNASTransport message len (%d)", decoded_size);
-  return 1;
+  return decoded_size;
 }

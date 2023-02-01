@@ -19,37 +19,38 @@
  *      contact@openairinterface.org
  */
 
-/*! \file
- \brief
- \author  Keliang DU, BUPT
- \date 2020
- \email: contact@openairinterface.org
- */
+#ifndef _AUTHENTICATION_FAILURE_H_
+#define _AUTHENTICATION_FAILURE_H_
 
-#ifndef _AuthenticationFailure_H_
-#define _AuthenticationFailure_H_
-
-#include "nas_ie_header.hpp"
+#include "NasIeHeader.hpp"
 
 namespace nas {
 
-class AuthenticationFailure {
+class AuthenticationFailure : public NasMmPlainHeader {
  public:
   AuthenticationFailure();
   ~AuthenticationFailure();
-  int encode2buffer(uint8_t* buf, int len);
-  int decodefrombuffer(NasMmPlainHeader* header, uint8_t* buf, int len);
-  void setHeader(uint8_t security_header_type);
-  void set_5GMM_Cause(uint8_t value);
-  void setAuthentication_Failure_Parameter(bstring auts);
 
-  uint8_t get5GMmCause();
-  bool getAutsInAuthFailPara(bstring& auts);
+  int Encode(uint8_t* buf, int len);
+  int Decode(uint8_t* buf, int len);
+
+  void SetHeader(uint8_t security_header_type);
+
+  void Set5gmmCause(uint8_t value);
+  uint8_t Get5GMmCause();
+
+  //  void SetAuthenticationFailureParameter(const uint8_t
+  //  (&value)[kAuthenticationFailureParameterContentLength]); bool
+  //  GetAuthenticationFailureParameter(uint8_t
+  //  (&value)[kAuthenticationFailureParameterContentLength]) const;
+
+  void SetAuthenticationFailureParameter(const bstring& value);
+  bool GetAuthenticationFailureParameter(bstring& value) const;
 
  public:
-  NasMmPlainHeader* plain_header;
-  _5GMM_Cause* ie_5gmm_cause;
-  Authentication_Failure_Parameter* ie_authentication_failure_parameter;
+  _5gmmCause ie_5gmm_cause;  // Mandatory
+  std::optional<AuthenticationFailureParameter>
+      ie_authentication_failure_parameter;  // Optional
 };
 
 }  // namespace nas

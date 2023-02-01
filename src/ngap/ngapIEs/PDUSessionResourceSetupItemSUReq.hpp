@@ -26,6 +26,8 @@
 #include "PDUSessionID.hpp"
 #include "S-NSSAI.hpp"
 
+#include <optional>
+
 extern "C" {
 #include "Ngap_PDUSessionResourceSetupItemSUReq.h"
 }
@@ -37,27 +39,25 @@ class PDUSessionResourceSetupItemSUReq {
   PDUSessionResourceSetupItemSUReq();
   virtual ~PDUSessionResourceSetupItemSUReq();
 
-  void setPDUSessionResourceSetupItemSUReq(
-      const PDUSessionID& m_pDUSessionID, NAS_PDU* m_nAS_PDU,
-      const S_NSSAI& m_s_NSSAI,
-      const OCTET_STRING_t& m_pDUSessionResourceSetupRequestTransfer);
-  void getPDUSessionResourceSetupItemSUReq(
-      PDUSessionID& m_pDUSessionID, NAS_PDU*& m_nAS_PDU, S_NSSAI& m_s_NSSAI,
-      OCTET_STRING_t& m_pDUSessionResourceSetupRequestTransfer);
+  void set(
+      const PDUSessionID& pdu_session_id, std::optional<NAS_PDU>& nas_pdu,
+      const S_NSSAI& s_nssai,
+      const OCTET_STRING_t& pdu_session_resource_setup_request_transfer);
+  void get(
+      PDUSessionID& pdu_session_id, std::optional<NAS_PDU>& nas_pdu,
+      S_NSSAI& s_nssai,
+      OCTET_STRING_t& pdu_session_resource_setup_request_transfer);
 
-  bool encode2PDUSessionResourceSetupItemSUReq(
-      Ngap_PDUSessionResourceSetupItemSUReq_t*
-          pduSessionResourceSetupItemSUReq);
-  bool decodefromPDUSessionResourceSetupItemSUReq(
-      Ngap_PDUSessionResourceSetupItemSUReq_t*
-          pduSessionResourceSetupItemSUReq);
+  bool encode(Ngap_PDUSessionResourceSetupItemSUReq_t*
+                  pdu_session_resource_setup_item_su_req);
+  bool decode(Ngap_PDUSessionResourceSetupItemSUReq_t*
+                  pdu_session_resource_setup_item_su_req);
 
  private:
-  PDUSessionID pDUSessionID;                              // Mandatory
-  NAS_PDU* nAS_PDU;                                       // Optional
-  S_NSSAI s_NSSAI;                                        // Mandatory
-  OCTET_STRING_t pDUSessionResourceSetupRequestTransfer;  // Mandatory
-  // TODO: UE Aggregate Maximum Bit Rate (Optional)
+  PDUSessionID pdu_session_id_;                                 // Mandatory
+  std::optional<NAS_PDU> nas_pdu_;                              // Optional
+  S_NSSAI s_nssai_;                                             // Mandatory
+  OCTET_STRING_t pdu_session_resource_setup_request_transfer_;  // Mandatory
 };
 
 }  // namespace ngap

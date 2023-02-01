@@ -19,13 +19,6 @@
  *      contact@openairinterface.org
  */
 
-/*! \file
- \brief
- \author  Keliang DU, BUPT
- \date 2020
- \email: contact@openairinterface.org
- */
-
 #include "NR-CGI.hpp"
 
 #include <iostream>
@@ -50,13 +43,13 @@ void NR_CGI::setNR_CGI(
 void NR_CGI::setNR_CGI(
     const std::string& mcc, const std::string& mnc,
     const unsigned long& nrcellidentity) {
-  plmnId.setMccMnc(mcc, mnc);
+  plmnId.set(mcc, mnc);
   nRCellIdentity.setNRCellIdentity(nrcellidentity);
 }
 
 //------------------------------------------------------------------------------
 void NR_CGI::setNR_CGI(const struct NrCgi_s& cig) {
-  plmnId.setMccMnc(cig.mcc, cig.mnc);
+  plmnId.set(cig.mcc, cig.mnc);
   nRCellIdentity.setNRCellIdentity(cig.nrCellID);
 }
 
@@ -69,16 +62,16 @@ void NR_CGI::getNR_CGI(struct NrCgi_s& cig) {
 
 //------------------------------------------------------------------------------
 bool NR_CGI::encode2NR_CGI(Ngap_NR_CGI_t* nr_cgi) {
-  if (!plmnId.encode2octetstring(nr_cgi->pLMNIdentity)) return false;
-  if (!nRCellIdentity.encode2bitstring(nr_cgi->nRCellIdentity)) return false;
+  if (!plmnId.encode(nr_cgi->pLMNIdentity)) return false;
+  if (!nRCellIdentity.encode(nr_cgi->nRCellIdentity)) return false;
 
   return true;
 }
 
 //------------------------------------------------------------------------------
 bool NR_CGI::decodefromNR_CGI(Ngap_NR_CGI_t* nr_cgi) {
-  if (!plmnId.decodefromoctetstring(nr_cgi->pLMNIdentity)) return false;
-  if (!nRCellIdentity.decodefrombitstring(nr_cgi->nRCellIdentity)) return false;
+  if (!plmnId.decode(nr_cgi->pLMNIdentity)) return false;
+  if (!nRCellIdentity.decode(nr_cgi->nRCellIdentity)) return false;
   return true;
 }
 

@@ -31,6 +31,8 @@ namespace ngap {
 //------------------------------------------------------------------------------
 UplinkNonUEAssociatedNRPPaTransportMsg::UplinkNonUEAssociatedNRPPaTransportMsg()
     : NgapMessage() {
+  uplinkNonUEAssociatedNRPPaTransportIEs = nullptr;
+
   setMessageType(NgapMessageType::UPLINK_NON_UE_ASSOCIATED_NRPPA_TRANSPORT);
   initialize();
 }

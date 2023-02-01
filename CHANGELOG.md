@@ -1,5 +1,27 @@
 # RELEASE NOTES: #
 
+## v1.5.0 -- January 2023 ##
+
+* Minimal fix for Decoding RegistrationRequest from COTS UE
+* Fix small issue for NGAP lib
+* NGAP IES code refactoring
+* Fix PDU session release
+* Refactor NGAP message callback
+* Fix nake ptr
+* feat(fqdn): giving some time for FQDN resolution
+* Fix UL NAS transport
+* Fix typo for Rejected NSSAI
+* PDU session release supported
+* Update SST type (int instead of string) in conf file
+* Events exposure: location report with empty supi fixed
+* small fix for event exposure loss of connectivity
+* Minor fix for encoding no SD in PduSessionResourceSetupRequest
+* Fix SST/SD on cots ue
+* Docker images improvements
+* Fixed docker exit by catching SIGTERM
+* release mode does not use libasan anymore --> allocation of 20T virtual memory is no longer done
+* Ubuntu22 and cgroup2 support
+
 ## v1.4.0 -- July 2022 ##
 
 * Fix SCTP NG Shutdown issue

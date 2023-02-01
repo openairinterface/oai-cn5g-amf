@@ -51,7 +51,7 @@ void PDUSessionResourceHandoverRequiredTransfer::
   *DirectForwardingPathAvailability = directForwardingPathAvailability;
 }
 
-int PDUSessionResourceHandoverRequiredTransfer::encode2buffer(
+int PDUSessionResourceHandoverRequiredTransfer::Encode(
     uint8_t* buf, int buf_size) {
   asn_fprint(
       stderr, &asn_DEF_Ngap_HandoverRequiredTransfer,

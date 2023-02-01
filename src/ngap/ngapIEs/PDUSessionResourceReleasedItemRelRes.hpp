@@ -35,24 +35,22 @@ class PDUSessionResourceReleasedItemRelRes {
   PDUSessionResourceReleasedItemRelRes();
   virtual ~PDUSessionResourceReleasedItemRelRes();
 
-  void setPDUSessionResourceReleasedItemRelRes(
-      const PDUSessionID& m_pDUSessionID,
-      const OCTET_STRING_t& m_pDUSessionResourceReleaseResponseTransfer);
+  void set(
+      const PDUSessionID& pdu_session_id,
+      const OCTET_STRING_t& pdu_session_resource_release_response_transfer);
 
-  void getPDUSessionResourceReleasedItemRelRes(
-      PDUSessionID& m_pDUSessionID,
-      OCTET_STRING_t& m_pDUSessionResourceReleaseResponseTransfer);
+  void get(
+      PDUSessionID& pdu_session_id,
+      OCTET_STRING_t& pdu_session_resource_release_response_transfer);
 
-  bool encode2PDUSessionResourceReleasedItemRelRes(
-      Ngap_PDUSessionResourceReleasedItemRelRes_t*
-          pduSessionResourceReleasedItemRelRes);
-  bool decodefromPDUSessionResourceReleasedItemRelRes(
-      Ngap_PDUSessionResourceReleasedItemRelRes_t*
-          pduSessionResourceReleasedItemRelRes);
+  bool encode(Ngap_PDUSessionResourceReleasedItemRelRes_t*
+                  pdu_session_resource_released_item_rel_res);
+  bool decode(Ngap_PDUSessionResourceReleasedItemRelRes_t*
+                  pdu_session_resource_released_item_rel_res);
 
  private:
-  PDUSessionID pDUSessionID;
-  OCTET_STRING_t pDUSessionResourceReleaseResponseTransfer;
+  PDUSessionID pdu_session_id_;
+  OCTET_STRING_t pdu_session_resource_release_response_transfer_;
 };
 
 }  // namespace ngap

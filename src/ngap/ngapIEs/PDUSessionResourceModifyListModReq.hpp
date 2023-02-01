@@ -19,13 +19,6 @@
  *      contact@openairinterface.org
  */
 
-/*! \file
- \brief
- \author
- \date
- \email: contact@openairinterface.org
- */
-
 #ifndef _PDU_SESSION_RESOURCE_MODIFY_LIST_MOD_REQ_H_
 #define _PDU_SESSION_RESOURCE_MODIFY_LIST_MOD_REQ_H_
 
@@ -43,22 +36,15 @@ class PDUSessionResourceModifyListModReq {
   PDUSessionResourceModifyListModReq();
   virtual ~PDUSessionResourceModifyListModReq();
 
-  void setPDUSessionResourceModifyListModReq(
-      const std::vector<PDUSessionResourceModifyItemModReq>&
-          m_pduSessionResourceModifyListModReq);
-  void getPDUSessionResourceModifyListModReq(
-      std::vector<PDUSessionResourceModifyItemModReq>&
-          m_pduSessionResourceModifyListModReq);
-  bool encode2PDUSessionResourceModifyListModReq(
-      Ngap_PDUSessionResourceModifyListModReq_t&
-          m_pduSessionResourceModifyListModReq);
-  bool decodefromPDUSessionResourceModifyListModReq(
-      Ngap_PDUSessionResourceModifyListModReq_t&
-          m_pduSessionResourceModifyListModReq);
+  void set(const std::vector<PDUSessionResourceModifyItemModReq>& list);
+  void get(std::vector<PDUSessionResourceModifyItemModReq>& list);
+  bool encode(Ngap_PDUSessionResourceModifyListModReq_t&
+                  pdu_session_resource_modify_list_mod_req);
+  bool decode(Ngap_PDUSessionResourceModifyListModReq_t&
+                  pdu_session_resource_modify_list_mod_req);
 
  private:
-  std::vector<PDUSessionResourceModifyItemModReq>
-      pduSessionResourceModifyListModReq;
+  std::vector<PDUSessionResourceModifyItemModReq> item_list_;
 };
 
 }  // namespace ngap

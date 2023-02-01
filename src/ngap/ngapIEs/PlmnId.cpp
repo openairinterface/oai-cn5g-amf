@@ -19,13 +19,6 @@
  *      contact@openairinterface.org
  */
 
-/*! \file
- \brief
- \author  Keliang DU, BUPT
- \date 2020
- \email: contact@openairinterface.org
- */
-
 #include "PlmnId.hpp"
 
 #include "String2Value.hpp"
@@ -33,8 +26,6 @@
 extern "C" {
 #include <math.h>
 }
-#include <iostream>
-using namespace std;
 
 namespace ngap {
 
@@ -53,27 +44,33 @@ PlmnId::PlmnId() {
 PlmnId::~PlmnId() {}
 
 //------------------------------------------------------------------------------
-void PlmnId::setMccMnc(const std::string mcc, const std::string mnc) {
-  int mccValue = fromString<int>(mcc);
-  int mncValue = fromString<int>(mnc);
+void PlmnId::set(const std::string& mcc, const std::string& mnc) {
+  int mcc_value = fromString<int>(mcc);
+  int mnc_value = fromString<int>(mnc);
 
-  mcc_digit1 = mccValue / 100;
-  mcc_digit2 = (mccValue - mcc_digit1 * 100) / 10;
-  mcc_digit3 = mccValue % 10;
+  mcc_digit1 = mcc_value / 100;
+  mcc_digit2 = (mcc_value - mcc_digit1 * 100) / 10;
+  mcc_digit3 = mcc_value % 10;
 
-  if (mncValue > 99) {
-    mnc_digit3 = mncValue / 100;
+  if (mnc_value > 99) {
+    mnc_digit3 = mnc_value / 100;
   } else {
     mnc_digit3 = 0xf;
   }
-  mnc_digit1 = (uint8_t) floor((double) (mncValue % 100) / 10);
-  mnc_digit2 = mncValue % 10;
+  mnc_digit1 = (uint8_t) std::floor((double) (mnc_value % 100) / 10);
+  mnc_digit2 = mnc_value % 10;
 }
 
 //------------------------------------------------------------------------------
-void PlmnId::getMcc(std::string& mcc) {
+void PlmnId::get(std::string& mcc, std::string& mnc) const {
+  getMcc(mcc);
+  getMnc(mnc);
+}
+
+//------------------------------------------------------------------------------
+void PlmnId::getMcc(std::string& mcc) const {
   int m_mcc = mcc_digit1 * 100 + mcc_digit2 * 10 + mcc_digit3;
-  mcc       = to_string(m_mcc);
+  mcc       = std::to_string(m_mcc);
   if ((mcc_digit2 == 0) and (mcc_digit1 == 0)) {
     mcc = "00" + mcc;
   } else if (mcc_digit1 == 0) {
@@ -82,37 +79,37 @@ void PlmnId::getMcc(std::string& mcc) {
 }
 
 //------------------------------------------------------------------------------
-void PlmnId::getMnc(std::string& mnc) {
+void PlmnId::getMnc(std::string& mnc) const {
   int m_mnc = 0;
   if (mnc_digit3 == 0xf) {
     m_mnc = mnc_digit1 * 10 + mnc_digit2;
     if (mnc_digit1 == 0) {
-      mnc = "0" + to_string(m_mnc);
+      mnc = "0" + std::to_string(m_mnc);
       return;
     }
   } else {
     m_mnc = mnc_digit3 * 100 + mnc_digit1 * 10 + mnc_digit2;
   }
-  mnc = to_string(m_mnc);
+  mnc = std::to_string(m_mnc);
 }
 
 //------------------------------------------------------------------------------
-bool PlmnId::encode2octetstring(Ngap_PLMNIdentity_t& plmn) {
+bool PlmnId::encode(Ngap_PLMNIdentity_t& plmn) {
   plmn.size = 3;  // OCTET_STRING(SIZE(3))  9.3.3.5, 3gpp ts 38.413 V15.4.0
-  uint8_t* buffer = (uint8_t*) calloc(1, 3 * sizeof(uint8_t));
-  if (!buffer) return false;
+  plmn.buf  = (uint8_t*) calloc(1, 3 * sizeof(uint8_t));
+  if (!plmn.buf) return false;
 
-  buffer[0] = 0x00 | ((mcc_digit2 & 0x0f) << 4) | (mcc_digit1 & 0x0f);
-  buffer[1] = 0x00 | ((mnc_digit3 & 0x0f) << 4) | (mcc_digit3 & 0x0f);
-  buffer[2] = 0x00 | ((mnc_digit2 & 0x0f) << 4) | (mnc_digit1 & 0x0f);
-  plmn.buf  = buffer;
-
+  plmn.buf[0] = 0x00 | ((mcc_digit2 & 0x0f) << 4) | (mcc_digit1 & 0x0f);
+  plmn.buf[1] = 0x00 | ((mnc_digit3 & 0x0f) << 4) | (mcc_digit3 & 0x0f);
+  plmn.buf[2] = 0x00 | ((mnc_digit2 & 0x0f) << 4) | (mnc_digit1 & 0x0f);
   return true;
 }
 
 //------------------------------------------------------------------------------
-bool PlmnId::decodefromoctetstring(Ngap_PLMNIdentity_t& plmn) {
+bool PlmnId::decode(Ngap_PLMNIdentity_t& plmn) {
   if (!plmn.buf) return false;
+  if (plmn.size < 3) return false;
+
   mcc_digit1 = plmn.buf[0] & 0x0f;
   mcc_digit2 = plmn.buf[0] >> 4;
 

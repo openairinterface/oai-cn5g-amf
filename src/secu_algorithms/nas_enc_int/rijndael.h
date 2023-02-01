@@ -19,13 +19,6 @@
  *      contact@openairinterface.org
  */
 
-/*! \file rijndael.h
- \brief
- \author  Keliang DU, BUPT
- \date 2020
- \email: contact@openairinterface.org
- */
-
 #ifndef FILE_RIJNDAEL_SEEN
 #define FILE_RIJNDAEL_SEEN
 /* Rijndael S-box SR */

@@ -19,13 +19,6 @@
  *      contact@openairinterface.org
  */
 
-/*! \file
- \brief
- \author  Keliang DU, BUPT
- \date 2020
- \email: contact@openairinterface.org
- */
-
 #ifndef _IESCRITICALITYDIAGNOSTICS_H_
 #define _IESCRITICALITYDIAGNOSTICS_H_
 
@@ -41,7 +34,7 @@ class IEsCriticalityDiagnostics {
   virtual ~IEsCriticalityDiagnostics();
 
   void encode2pdu(Ngap_CriticalityDiagnostics_IE_Item_t*);
-  void decodefrompdu(Ngap_CriticalityDiagnostics_IE_Item_t*);
+  void decodeFromPdu(Ngap_CriticalityDiagnostics_IE_Item_t*);
   void setIeCriticality(Ngap_Criticality_t);
   void setIeId(Ngap_ProtocolIE_ID_t);
   void setTypeOfError(Ngap_TypeOfError_t);

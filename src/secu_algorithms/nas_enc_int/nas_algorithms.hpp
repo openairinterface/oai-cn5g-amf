@@ -19,13 +19,6 @@
  *      contact@openairinterface.org
  */
 
-/*! \file nas_algorithms.hpp
- \brief
- \author  Keliang DU, BUPT
- \date 2020
- \email: contact@openairinterface.org
- */
-
 #ifndef _NAS_ALGORITHMS_H_
 #define _NAS_ALGORITHMS_H_
 
@@ -46,8 +39,8 @@
 
 #include "authentication_algorithms_with_5gaka.hpp"
 extern "C" {
-#include "snow3g.h"
 #include "conversions.h"
+#include "snow3g.h"
 }
 
 #define SECU_DIRECTION_UPLINK 0

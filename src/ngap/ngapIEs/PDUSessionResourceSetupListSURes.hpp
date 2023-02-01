@@ -36,20 +36,16 @@ class PDUSessionResourceSetupListSURes {
   PDUSessionResourceSetupListSURes();
   virtual ~PDUSessionResourceSetupListSURes();
 
-  void setPDUSessionResourceSetupListSURes(
-      const std::vector<PDUSessionResourceSetupItemSURes>& list);
-  void getPDUSessionResourceSetupListSURes(
-      std::vector<PDUSessionResourceSetupItemSURes>& list);
+  void set(const std::vector<PDUSessionResourceSetupItemSURes>& list);
+  void get(std::vector<PDUSessionResourceSetupItemSURes>& list);
 
-  bool encode2PDUSessionResourceSetupListSURes(
-      Ngap_PDUSessionResourceSetupListSURes_t*
-          pduSessionResourceSetupListSURes);
-  bool decodefromPDUSessionResourceSetupListSURes(
-      Ngap_PDUSessionResourceSetupListSURes_t*
-          pduSessionResourceSetupListSURes);
+  bool encode(Ngap_PDUSessionResourceSetupListSURes_t*
+                  pdu_session_resource_setup_list_su_res);
+  bool decode(Ngap_PDUSessionResourceSetupListSURes_t*
+                  pdu_session_resource_setup_list_su_res);
 
  private:
-  std::vector<PDUSessionResourceSetupItemSURes> itemSUResList;
+  std::vector<PDUSessionResourceSetupItemSURes> item_list_;
 };
 
 }  // namespace ngap

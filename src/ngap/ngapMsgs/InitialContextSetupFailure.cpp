@@ -31,7 +31,7 @@ namespace ngap {
 //------------------------------------------------------------------------------
 InitialContextSetupFailureMsg::InitialContextSetupFailureMsg() {
   initialContextSetupFailureIEs              = nullptr;
-  pduSessionResourceFailedToSetupFailureList = nullptr;
+  pduSessionResourceFailedToSetupFailureList = std::nullopt;
 
   setMessageType(NgapMessageType::INITIAL_CONTEXT_SETUP_FAILURE);
   initialize();
@@ -40,8 +40,6 @@ InitialContextSetupFailureMsg::InitialContextSetupFailureMsg() {
 //------------------------------------------------------------------------------
 InitialContextSetupFailureMsg::~InitialContextSetupFailureMsg() {
   if (initialContextSetupFailureIEs) free(initialContextSetupFailureIEs);
-  if (pduSessionResourceFailedToSetupFailureList)
-    delete (pduSessionResourceFailedToSetupFailureList);
 }
 
 //------------------------------------------------------------------------------
@@ -52,7 +50,7 @@ void InitialContextSetupFailureMsg::initialize() {
 
 //------------------------------------------------------------------------------
 void InitialContextSetupFailureMsg::setAmfUeNgapId(const unsigned long& id) {
-  amfUeNgapId.setAMF_UE_NGAP_ID(id);
+  amfUeNgapId.set(id);
 
   Ngap_InitialContextSetupFailureIEs_t* ie =
       (Ngap_InitialContextSetupFailureIEs_t*) calloc(
@@ -76,7 +74,7 @@ void InitialContextSetupFailureMsg::setAmfUeNgapId(const unsigned long& id) {
 //------------------------------------------------------------------------------
 void InitialContextSetupFailureMsg::setRanUeNgapId(
     const uint32_t& ran_ue_ngap_id) {
-  ranUeNgapId.setRanUeNgapId(ran_ue_ngap_id);
+  ranUeNgapId.set(ran_ue_ngap_id);
 
   Ngap_InitialContextSetupFailureIEs_t* ie =
       (Ngap_InitialContextSetupFailureIEs_t*) calloc(
@@ -86,7 +84,7 @@ void InitialContextSetupFailureMsg::setRanUeNgapId(
   ie->value.present =
       Ngap_InitialContextSetupFailureIEs__value_PR_RAN_UE_NGAP_ID;
 
-  int ret = ranUeNgapId.encode2RAN_UE_NGAP_ID(ie->value.choice.RAN_UE_NGAP_ID);
+  int ret = ranUeNgapId.encode(ie->value.choice.RAN_UE_NGAP_ID);
   if (!ret) {
     Logger::ngap().error("Encode RAN_UE_NGAP_ID IE error");
     free_wrapper((void**) &ie);
@@ -100,25 +98,23 @@ void InitialContextSetupFailureMsg::setRanUeNgapId(
 //------------------------------------------------------------------------------
 void InitialContextSetupFailureMsg::setPduSessionResourceFailedToSetupList(
     const std::vector<PDUSessionResourceFailedToSetupItem_t>& list) {
-  if (!pduSessionResourceFailedToSetupFailureList)
-    pduSessionResourceFailedToSetupFailureList =
-        new PDUSessionResourceFailedToSetupListCxtFail();
+  pduSessionResourceFailedToSetupFailureList =
+      std::make_optional<PDUSessionResourceFailedToSetupListCxtFail>();
 
-  std::vector<PDUSessionResourceFailedToSetupItemCxtFail> itemCxtFailList;
-  itemCxtFailList.reserve(list.size());
+  std::vector<PDUSessionResourceFailedToSetupItemCxtFail> cxt_fail_list;
+  cxt_fail_list.reserve(list.size());
 
   for (int i = 0; i < list.size(); i++) {
-    PDUSessionResourceFailedToSetupItemCxtFail itemCxtFail = {};
-    PDUSessionID pDUSessionID                              = {};
-    pDUSessionID.setPDUSessionID(list[i].pduSessionId);
+    PDUSessionResourceFailedToSetupItemCxtFail item_cxt_fail = {};
+    PDUSessionID pdu_session_id                              = {};
+    pdu_session_id.set(list[i].pduSessionId);
 
-    itemCxtFail.setPDUSessionResourceFailedToSetupItemCxtFail(
-        pDUSessionID, list[i].pduSessionResourceSetupUnsuccessfulTransfer);
-    itemCxtFailList.push_back(itemCxtFail);
+    item_cxt_fail.set(
+        pdu_session_id, list[i].pduSessionResourceSetupUnsuccessfulTransfer);
+    cxt_fail_list.push_back(item_cxt_fail);
   }
 
-  pduSessionResourceFailedToSetupFailureList
-      ->setPDUSessionResourceFailedToSetupListCxtFail(itemCxtFailList);
+  pduSessionResourceFailedToSetupFailureList.value().set(cxt_fail_list);
 
   Ngap_InitialContextSetupFailureIEs_t* ie =
       (Ngap_InitialContextSetupFailureIEs_t*) calloc(
@@ -128,10 +124,8 @@ void InitialContextSetupFailureMsg::setPduSessionResourceFailedToSetupList(
   ie->value.present =
       Ngap_InitialContextSetupFailureIEs__value_PR_PDUSessionResourceFailedToSetupListCxtFail;
 
-  int ret =
-      pduSessionResourceFailedToSetupFailureList
-          ->encode2PDUSessionResourceFailedToSetupListCxtFail(
-              &ie->value.choice.PDUSessionResourceFailedToSetupListCxtFail);
+  int ret = pduSessionResourceFailedToSetupFailureList.value().encode(
+      &ie->value.choice.PDUSessionResourceFailedToSetupListCxtFail);
   if (!ret) {
     Logger::ngap().error(
         "Encode PDUSessionResourceFailedToSetupListCxtFail IE error");
@@ -193,7 +187,7 @@ bool InitialContextSetupFailureMsg::decodeFromPdu(Ngap_NGAP_PDU_t* ngapMsgPdu) {
             initialContextSetupFailureIEs->protocolIEs.list.array[i]
                     ->value.present ==
                 Ngap_InitialContextSetupFailureIEs__value_PR_RAN_UE_NGAP_ID) {
-          if (!ranUeNgapId.decodefromRAN_UE_NGAP_ID(
+          if (!ranUeNgapId.decode(
                   initialContextSetupFailureIEs->protocolIEs.list.array[i]
                       ->value.choice.RAN_UE_NGAP_ID)) {
             Logger::ngap().error("Decoded NGAP RAN_UE_NGAP_ID IE error");
@@ -210,19 +204,19 @@ bool InitialContextSetupFailureMsg::decodeFromPdu(Ngap_NGAP_PDU_t* ngapMsgPdu) {
             initialContextSetupFailureIEs->protocolIEs.list.array[i]
                     ->value.present ==
                 Ngap_InitialContextSetupFailureIEs__value_PR_PDUSessionResourceFailedToSetupListCxtFail) {
-          pduSessionResourceFailedToSetupFailureList =
-              new PDUSessionResourceFailedToSetupListCxtFail();
-          if (!pduSessionResourceFailedToSetupFailureList
-                   ->decodefromPDUSessionResourceFailedToSetupListCxtFail(
-                       &initialContextSetupFailureIEs->protocolIEs.list
-                            .array[i]
-                            ->value.choice
-                            .PDUSessionResourceFailedToSetupListCxtFail)) {
+          PDUSessionResourceFailedToSetupListCxtFail tmp = {};
+          if (!tmp.decode(
+                  &initialContextSetupFailureIEs->protocolIEs.list.array[i]
+                       ->value.choice
+                       .PDUSessionResourceFailedToSetupListCxtFail)) {
             Logger::ngap().error(
                 "Decoded NGAP PDUSessionResourceFailedToSetupListCxtFail IE "
                 "error");
             return false;
           }
+          pduSessionResourceFailedToSetupFailureList =
+              std::optional<PDUSessionResourceFailedToSetupListCxtFail>(tmp);
+
         } else {
           Logger::ngap().error(
               "Decoded NGAP PDUSessionResourceFailedToSetupListCxtFail IE "
@@ -245,28 +239,43 @@ bool InitialContextSetupFailureMsg::decodeFromPdu(Ngap_NGAP_PDU_t* ngapMsgPdu) {
 //------------------------------------------------------------------------------
 bool InitialContextSetupFailureMsg::getPduSessionResourceFailedToSetupList(
     std::vector<PDUSessionResourceFailedToSetupItem_t>& list) {
-  if (!pduSessionResourceFailedToSetupFailureList) return false;
+  if (!pduSessionResourceFailedToSetupFailureList.has_value()) return false;
 
-  std::vector<PDUSessionResourceFailedToSetupItemCxtFail> itemCxtFailList;
+  std::vector<PDUSessionResourceFailedToSetupItemCxtFail> cxt_fail_list;
 
-  pduSessionResourceFailedToSetupFailureList
-      ->getPDUSessionResourceFailedToSetupListCxtFail(itemCxtFailList);
+  pduSessionResourceFailedToSetupFailureList.value().get(cxt_fail_list);
 
   for (std::vector<PDUSessionResourceFailedToSetupItemCxtFail>::iterator it =
-           std::begin(itemCxtFailList);
-       it < std::end(itemCxtFailList); ++it) {
+           std::begin(cxt_fail_list);
+       it < std::end(cxt_fail_list); ++it) {
     PDUSessionResourceFailedToSetupItem_t failedToFailure = {};
 
-    PDUSessionID pDUSessionID = {};
-    it->getPDUSessionResourceFailedToSetupItemCxtFail(
-        pDUSessionID,
+    PDUSessionID pdu_session_id = {};
+    it->get(
+        pdu_session_id,
         failedToFailure.pduSessionResourceSetupUnsuccessfulTransfer);
-    pDUSessionID.getPDUSessionID(failedToFailure.pduSessionId);
+    pdu_session_id.get(failedToFailure.pduSessionId);
 
     list.push_back(failedToFailure);
   }
 
   return true;
+}
+
+//------------------------------------------------------------------------------
+void InitialContextSetupFailureMsg::setCause(
+    const long& cause, const Ngap_Cause_PR& cause_present) {
+  cause_.set(cause, cause_present);
+}
+
+//------------------------------------------------------------------------------
+void InitialContextSetupFailureMsg::setCause(const Cause& cause) {
+  cause_.set(cause.getValue(), cause.getChoiceOfCause());
+}
+
+//------------------------------------------------------------------------------
+void InitialContextSetupFailureMsg::getCause(Cause& cause) const {
+  cause.set(cause_.getValue(), cause_.getChoiceOfCause());
 }
 
 }  // namespace ngap

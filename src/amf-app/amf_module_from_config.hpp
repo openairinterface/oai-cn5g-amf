@@ -19,13 +19,6 @@
  *      contact@openairinterface.org
  */
 
-/*! \file amf_module_from_config.hpp
- \brief
- \author  Keliang DU, BUPT
- \date 2020
- \email: contact@openairinterface.org
- */
-
 #ifndef _AMF_MODULE_FROM_CONFIG_H_
 #define _AMF_MODULE_FROM_CONFIG_H_
 

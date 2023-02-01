@@ -19,13 +19,6 @@
  *      contact@openairinterface.org
  */
 
-/*! \file amf_msg.cpp
- \brief
- \author  Shivam Gandhi
- \company KCL
- \date 2021
- \email: shivam.gandhi@kcl.ac.uk
- */
 #include "amf_msg.hpp"
 
 using namespace amf_application;

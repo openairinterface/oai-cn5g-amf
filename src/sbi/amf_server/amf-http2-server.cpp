@@ -19,14 +19,6 @@
  *      contact@openairinterface.org
  */
 
-/*! \file amf_http2-server.cpp
- \brief
- \author  Tien-Thinh NGUYEN
- \company Eurecom
- \date 2021
- \email: tien-thinh.nguyen@eurecom.fr
- */
-
 #include "amf-http2-server.hpp"
 #include <string>
 #include <boost/algorithm/string.hpp>
@@ -315,29 +307,29 @@ void amf_http2_server::n1_n2_message_transfer_handler(
     return;
   }
 
-  bstring n1sm;
+  bstring n1sm = nullptr;
   conv::msg_str_2_msg_hex(
       n1sm_str.substr(0, n1sm_str.length()), n1sm);  // TODO: verify n1sm_length
 
-  bstring n2sm;
+  bstring n2sm = nullptr;
   if (!n2sm_str.empty()) {
     conv::msg_str_2_msg_hex(n2sm_str, n2sm);
-    psc.get()->n2sm             = n2sm;
-    psc.get()->isn2sm_avaliable = true;
+    psc->n2sm              = bstrcpy(n2sm);
+    psc->is_n2sm_avaliable = true;
   } else {
-    psc.get()->isn2sm_avaliable = false;
+    psc->is_n2sm_avaliable = false;
   }
 
-  psc.get()->n1sm             = n1sm;
-  psc.get()->isn1sm_avaliable = true;
+  psc->n1sm              = bstrcpy(n1sm);
+  psc->is_n1sm_avaliable = true;
 
-  itti_n1n2_message_transfer_request* itti_msg =
-      new itti_n1n2_message_transfer_request(AMF_SERVER, TASK_AMF_APP);
+  auto itti_msg = std::make_shared<itti_n1n2_message_transfer_request>(
+      AMF_SERVER, TASK_AMF_APP);
   itti_msg->supi        = ueContextId;
-  itti_msg->n1sm        = n1sm;
+  itti_msg->n1sm        = bstrcpy(n1sm);
   itti_msg->is_n1sm_set = true;
   if (!n2sm_str.empty()) {
-    itti_msg->n2sm        = n2sm;
+    itti_msg->n2sm        = bstrcpy(n2sm);
     itti_msg->is_n2sm_set = true;
   } else {
     itti_msg->is_n2sm_set = false;
@@ -368,14 +360,15 @@ void amf_http2_server::n1_n2_message_transfer_handler(
   res.end(response_json.dump().c_str());
 
   // Process N1N2 Message Transfer Request
-  std::shared_ptr<itti_n1n2_message_transfer_request> i =
-      std::shared_ptr<itti_n1n2_message_transfer_request>(itti_msg);
-  int ret = itti_inst->send_msg(i);
+  int ret = itti_inst->send_msg(itti_msg);
   if (0 != ret) {
     Logger::amf_server().error(
         "Could not send ITTI message %s to task TASK_AMF_N2",
-        i->get_msg_name());
+        itti_msg->get_msg_name());
   }
+
+  bdestroy_wrapper(&n1sm);
+  bdestroy_wrapper(&n2sm);
 }
 
 //------------------------------------------------------------------------------

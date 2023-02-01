@@ -19,101 +19,124 @@
  *      contact@openairinterface.org
  */
 
-/*! \file __5GS_Network_Feature_Support.cpp
- \brief
- \author  Keliang DU, BUPT
- \date 2020
- \email: contact@openairinterface.org
- */
-
 #include "_5GS_Network_Feature_Support.hpp"
 
+#include "3gpp_24.501.hpp"
+#include "common_defs.h"
+#include "Ie_Const.hpp"
 #include "logger.hpp"
+
 using namespace nas;
 
 //------------------------------------------------------------------------------
-_5GS_Network_Feature_Support::_5GS_Network_Feature_Support(uint8_t iei) {
-  _iei    = iei;
+_5GS_Network_Feature_Support::_5GS_Network_Feature_Support()
+    : Type4NasIe(kIei5gsNetworkFeatureSupport) {
   _value  = 0;
   _value2 = 0;
-  length  = 0;
+  SetLengthIndicator(1);  // With mimimum length of 3
 }
 
 //------------------------------------------------------------------------------
-_5GS_Network_Feature_Support::_5GS_Network_Feature_Support() {
-  _iei    = 0;
-  _value  = 0;
+_5GS_Network_Feature_Support::_5GS_Network_Feature_Support(uint8_t value)
+    : Type4NasIe(kIei5gsNetworkFeatureSupport) {
+  _value  = value;
   _value2 = 0;
-  length  = 0;
+  SetLengthIndicator(1);  // With mimimum length of 3
+}
+
+//------------------------------------------------------------------------------
+_5GS_Network_Feature_Support::_5GS_Network_Feature_Support(
+    uint8_t value, uint8_t value2)
+    : Type4NasIe(kIei5gsNetworkFeatureSupport) {
+  _value  = value;
+  _value2 = value2;
+  SetLengthIndicator(2);
 }
 
 //------------------------------------------------------------------------------
 _5GS_Network_Feature_Support::~_5GS_Network_Feature_Support() {}
 
 //------------------------------------------------------------------------------
-_5GS_Network_Feature_Support::_5GS_Network_Feature_Support(
-    const uint8_t iei, uint8_t value, uint8_t value2) {
-  _iei    = iei;
+void _5GS_Network_Feature_Support::setValue(uint8_t value, uint8_t value2) {
   _value  = value;
   _value2 = value2;
-  length  = 4;
 }
 
-//------------------------------------------------------------------------------
-void _5GS_Network_Feature_Support::setValue(uint8_t value) {
-  _value = value;
-}
-
+/*
 //------------------------------------------------------------------------------
 uint8_t _5GS_Network_Feature_Support::getValue() {
   return _value;
 }
+*/
 
 //------------------------------------------------------------------------------
-int _5GS_Network_Feature_Support::encode2buffer(uint8_t* buf, int len) {
-  Logger::nas_mm().debug(
-      "Encoding _5GS_Network_Feature_Support IEI (0x%x)", _iei);
-  if (len < length) {
-    Logger::nas_mm().error("len is less than %d", length);
-    return 0;
+int _5GS_Network_Feature_Support::Encode(uint8_t* buf, int len) {
+  Logger::nas_mm().debug("Encoding %s", GetIeName().c_str());
+  int ie_len = GetIeLength();
+
+  if (len < ie_len) {
+    Logger::nas_mm().error("Len is less than %d", ie_len);
+    return KEncodeDecodeError;
   }
+
   int encoded_size = 0;
-  if (_iei) {
-    *(buf + encoded_size) = _iei;
-    encoded_size++;
-    *(buf + encoded_size) = length - 2;
-    encoded_size++;
-    *(buf + encoded_size) = _value;
-    encoded_size++;
-    *(buf + encoded_size) = _value2;
-    encoded_size++;
-  } else {
-    *(buf + encoded_size) = length - 1;
-    encoded_size++;
-    //		*(buf + encoded_size) = _5g_EASel; encoded_size++;
-    //		*(buf + encoded_size) = _5g_IASel; encoded_size++;
+  // IEI and Length
+  int encoded_header_size = Type4NasIe::Encode(buf + encoded_size, len);
+  if (encoded_header_size == KEncodeDecodeError) return KEncodeDecodeError;
+  encoded_size += encoded_header_size;
+
+  // Octet 3
+  ENCODE_U8(buf + encoded_size, _value, encoded_size);
+
+  // Octet 4
+  if (GetIeLength() > encoded_size)
+    ENCODE_U8(buf + encoded_size, _value2, encoded_size);
+
+  // Spare
+  if (GetIeLength() > encoded_size) {
+    uint8_t spare = 0;
+    ENCODE_U8(buf + encoded_size, spare, encoded_size);
   }
+
   Logger::nas_mm().debug(
-      "Encoded _5GS_Network_Feature_Support len (%d)", encoded_size);
+      "Encoded %s, len (%d)", GetIeName().c_str(), encoded_size);
   return encoded_size;
 }
 
 //------------------------------------------------------------------------------
-int _5GS_Network_Feature_Support::decodefrombuffer(
-    uint8_t* buf, int len, bool is_option) {
-  Logger::nas_mm().debug(
-      "Decoding _5GS_Network_Feature_Support IEI (0x%x)", *buf);
-  int decoded_size = 0;
-  if (is_option) {
-    decoded_size++;
+int _5GS_Network_Feature_Support::Decode(uint8_t* buf, int len, bool is_iei) {
+  if (len < k5gsNetworkFeatureSupportMinimumLength) {
+    Logger::nas_mm().error(
+        "Buffer length is less than the minimum length of this IE (%d octet)",
+        k5gsNetworkFeatureSupportMinimumLength);
+    return KEncodeDecodeError;
   }
-  length = *(buf + decoded_size);
-  decoded_size++;
-  _value = *(buf + decoded_size);
-  decoded_size++;
+
+  uint8_t decoded_size = 0;
+  uint8_t octet        = 0;
+  Logger::nas_mm().debug("Decoding %s", GetIeName().c_str());
+
+  // IEI and Length
+  int decoded_header_size = Type4NasIe::Decode(buf + decoded_size, len, is_iei);
+  if (decoded_header_size == KEncodeDecodeError) return KEncodeDecodeError;
+  decoded_size += decoded_header_size;
+
+  // Octet 3
+  DECODE_U8(buf + decoded_size, _value, decoded_size);
+  // Octet 4
+  if (GetLengthIndicator() > 1) {
+    DECODE_U8(buf + decoded_size, _value2, decoded_size);
+  }
+  // Spare
+  if (GetLengthIndicator() > 2) {
+    uint8_t spare = 0;
+    DECODE_U8(buf + decoded_size, spare, decoded_size);
+  }
+
   Logger::nas_mm().debug(
-      "Decoded _5GS_Network_Feature_Support value (0x%x)", _value);
+      "Decoded %s, value (0x%x)", GetIeName().c_str(), _value);
+
   Logger::nas_mm().debug(
-      "Decoded _5GS_Network_Feature_Support len (%d)", decoded_size);
+      "Decoded %s, len (%d)", GetIeName().c_str(), decoded_size);
   return decoded_size;
 }

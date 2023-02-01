@@ -19,17 +19,8 @@
  *      contact@openairinterface.org
  */
 
-/*! \file
- \brief
- \author  niuxiansheng-niu, BUPT
- \date 2020
- \email: contact@openairinterface.org
- */
 #include "MobilityRestrictionList.hpp"
 
-#include <iostream>
-
-using namespace std;
 namespace ngap {
 //------------------------------------------------------------------------------
 MobilityRestrictionList::MobilityRestrictionList() {}
@@ -37,19 +28,28 @@ MobilityRestrictionList::MobilityRestrictionList() {}
 MobilityRestrictionList::~MobilityRestrictionList() {}
 
 //------------------------------------------------------------------------------
-void MobilityRestrictionList::setMobilityRestrictionList(const PlmnId& sPLMN) {
+void MobilityRestrictionList::setPLMN(const PlmnId& sPLMN) {
   servingPLMN = sPLMN;
 }
 
 //------------------------------------------------------------------------------
-void MobilityRestrictionList::getMobilityRestrictionList(PlmnId& sPLMN) {
+void MobilityRestrictionList::getPLMN(PlmnId& sPLMN) {
   sPLMN = servingPLMN;
 }
 
 //------------------------------------------------------------------------------
-bool MobilityRestrictionList::encodeMobilityRestrictionList(
-    Ngap_MobilityRestrictionList_t* mobilityrestrictionlist) {
-  if (!servingPLMN.encode2octetstring(mobilityrestrictionlist->servingPLMN)) {
+bool MobilityRestrictionList::encode(
+    Ngap_MobilityRestrictionList_t* mobility_restriction_list) {
+  if (!servingPLMN.encode(mobility_restriction_list->servingPLMN)) {
+    return false;
+  }
+  return true;
+}
+
+//------------------------------------------------------------------------------
+bool MobilityRestrictionList::decode(
+    Ngap_MobilityRestrictionList_t* mobility_restriction_list) {
+  if (!servingPLMN.decode(mobility_restriction_list->servingPLMN)) {
     return false;
   }
   return true;

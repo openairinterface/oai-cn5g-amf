@@ -19,15 +19,8 @@
  *      contact@openairinterface.org
  */
 
-/*! \file
- \brief
- \author  Keliang DU, BUPT
- \date 2020
- \email: contact@openairinterface.org
- */
-
-#ifndef _PDUSESSIONID_H_
-#define _PDUSESSIONID_H_
+#ifndef _PDU_SESSION_ID_H_
+#define _PDU_SESSION_ID_H_
 
 extern "C" {
 #include "Ngap_PDUSessionID.h"
@@ -40,14 +33,14 @@ class PDUSessionID {
   PDUSessionID();
   virtual ~PDUSessionID();
 
-  void setPDUSessionID(uint8_t m_pdusessionid);
-  bool getPDUSessionID(uint8_t& m_pdusessionid);
+  void set(const uint8_t& id);
+  void get(uint8_t& id) const;
 
-  bool encode2PDUSessionID(Ngap_PDUSessionID_t& pduSessionId);
-  bool decodefromPDUSessionID(Ngap_PDUSessionID_t pduSessionId);
+  bool encode(Ngap_PDUSessionID_t& pdu_session_id) const;
+  bool decode(const Ngap_PDUSessionID_t& pdu_session_id);
 
  private:
-  uint8_t pdusessionid;
+  uint8_t id_;
 };
 
 }  // namespace ngap

@@ -19,47 +19,42 @@
  *      contact@openairinterface.org
  */
 
-/*! \file
- \brief
- \author  Keliang DU, BUPT
- \date 2020
- \email: contact@openairinterface.org
- */
-
 #include "TimeToWait.hpp"
-
-#include <iostream>
-using namespace std;
 
 namespace ngap {
 
 //------------------------------------------------------------------------------
 TimeToWait::TimeToWait() {
-  timeValue = -1;
+  time_ = -1;
+}
+
+//------------------------------------------------------------------------------
+TimeToWait::TimeToWait(e_Ngap_TimeToWait time) {
+  time_ = time;
 }
 
 //------------------------------------------------------------------------------
 TimeToWait::~TimeToWait() {}
 
 //------------------------------------------------------------------------------
-void TimeToWait::setValue(e_Ngap_TimeToWait m_timeToWait) {
-  timeValue = m_timeToWait;
+void TimeToWait::setValue(e_Ngap_TimeToWait time) {
+  time_ = time;
 }
 
 //------------------------------------------------------------------------------
-bool TimeToWait::encode2TimeToWait(Ngap_TimeToWait_t* timeToWait) {
-  *timeToWait = timeValue;
+bool TimeToWait::encode(Ngap_TimeToWait_t& time) {
+  time_ = time;
   return true;
 }
 
 //------------------------------------------------------------------------------
-bool TimeToWait::decodefromTimeToWait(Ngap_TimeToWait_t* pdu) {
-  timeValue = *pdu;
+bool TimeToWait::decode(Ngap_TimeToWait_t& time) {
+  time_ = time;
   return true;
 }
 
 //------------------------------------------------------------------------------
 long TimeToWait::getValue() {
-  return timeValue;
+  return time_;
 }
 }  // namespace ngap

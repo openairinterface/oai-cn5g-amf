@@ -30,62 +30,38 @@ UserLocationInformationNR::UserLocationInformationNR() {}
 UserLocationInformationNR::~UserLocationInformationNR() {}
 
 //------------------------------------------------------------------------------
-void UserLocationInformationNR::setInformationNR(
-    const NR_CGI& m_nR_CGI, const TAI& m_tAI) {
+void UserLocationInformationNR::set(const NR_CGI& m_nR_CGI, const TAI& m_tAI) {
   nR_CGI = m_nR_CGI;
   tAI    = m_tAI;
 }
 
 //------------------------------------------------------------------------------
-bool UserLocationInformationNR::encode2UserLocationInformationNR(
-    Ngap_UserLocationInformationNR_t* userLocationInformationNR) {
-  if (!nR_CGI.encode2NR_CGI(&userLocationInformationNR->nR_CGI)) {
+bool UserLocationInformationNR::encode(
+    Ngap_UserLocationInformationNR_t* user_location_info_nr) {
+  if (!nR_CGI.encode2NR_CGI(&user_location_info_nr->nR_CGI)) {
     return false;
   }
-  if (!tAI.encode2TAI(&userLocationInformationNR->tAI)) {
+  if (!tAI.encode(&user_location_info_nr->tAI)) {
     return false;
   }
-#if 0
-		if(istimeStampSet)
-		{
-			Ngap_TimeStamp_t *ieTimeStamp = (Ngap_TimeStamp_t *)calloc(1,sizeof(Ngap_TimeStamp_t));
-			if(!timeStamp->encodefromTimeStamp(ieTimeStamp))
-			{
-				free(ieTimeStamp);
-				return false;
-			}
-			userLocationInformationEUTRA->timeStamp = ieTimeStamp;
-		}
-#endif
   return true;
 }
 
 //------------------------------------------------------------------------------
-bool UserLocationInformationNR::decodefromUserLocationInformationNR(
-    Ngap_UserLocationInformationNR_t* userLocationInformationNR) {
-  if (!nR_CGI.decodefromNR_CGI(&userLocationInformationNR->nR_CGI)) {
+bool UserLocationInformationNR::decode(
+    Ngap_UserLocationInformationNR_t* user_location_info_nr) {
+  if (!nR_CGI.decodefromNR_CGI(&user_location_info_nr->nR_CGI)) {
     return false;
   }
 
-  if (!tAI.decodefromTAI(&userLocationInformationNR->tAI)) {
+  if (!tAI.decode(&user_location_info_nr->tAI)) {
     return false;
   }
-#if 0
-		if(userLocationInformationEUTRA->timeStamp)
-		{
-			istimeStampSet = true;
-			timeStamp = new TimeStamp();
-			if(!timeStamp->decodefromTimeStamp(userLocationInformationEUTRA->timeStamp))
-			{
-				return false;
-			}
-		}
-#endif
   return true;
 }
 
 //------------------------------------------------------------------------------
-void UserLocationInformationNR::getInformationNR(NR_CGI& m_nR_CGI, TAI& m_tAI) {
+void UserLocationInformationNR::get(NR_CGI& m_nR_CGI, TAI& m_tAI) {
   m_nR_CGI = nR_CGI;
   m_tAI    = tAI;
 }

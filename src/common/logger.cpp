@@ -19,12 +19,6 @@
  *      contact@openairinterface.org
  */
 
-/*! \file logger.cpp
- \brief
- \date 2020
- \email: contact@openairinterface.org
- */
-
 #include "logger.hpp"
 
 #include <iostream>
@@ -76,8 +70,8 @@ void Logger::_init(
   m_itti       = new _Logger("itti   ", m_sinks, ss.str().c_str());
   m_amf_n2     = new _Logger("amf_n2 ", m_sinks, ss.str().c_str());
   m_amf_n1     = new _Logger("amf_n1 ", m_sinks, ss.str().c_str());
-  m_amf_n11    = new _Logger("amf_n11", m_sinks, ss.str().c_str());
-  m_amf_server = new _Logger("amf_sbi", m_sinks, ss.str().c_str());
+  m_amf_sbi    = new _Logger("amf_sbi", m_sinks, ss.str().c_str());
+  m_amf_server = new _Logger("amf_server", m_sinks, ss.str().c_str());
 }
 
 //------------------------------------------------------------------------------

@@ -19,13 +19,6 @@
  *      contact@openairinterface.org
  */
 
-/*! \file
- \brief
- \author  Keliang DU, BUPT
- \date 2020
- \email: contact@openairinterface.org
- */
-
 #include "PLMNSupportList.hpp"
 
 using namespace std;
@@ -39,47 +32,44 @@ PLMNSupportList::PLMNSupportList() {}
 PLMNSupportList::~PLMNSupportList() {}
 
 //------------------------------------------------------------------------------
-bool PLMNSupportList::encode2PLMNSupportList(
-    Ngap_PLMNSupportList_t* plmnsupportList) {
-  for (std::vector<PLMNSupportItem>::iterator it = std::begin(plmnSupportItems);
-       it != std::end(plmnSupportItems); ++it) {
+bool PLMNSupportList::encode(Ngap_PLMNSupportList_t& plmn_support_list) {
+  for (std::vector<PLMNSupportItem>::iterator it = std::begin(list_);
+       it != std::end(list_); ++it) {
     Ngap_PLMNSupportItem_t* supportItem =
         (Ngap_PLMNSupportItem_t*) calloc(1, sizeof(Ngap_PLMNSupportItem_t));
     if (!supportItem) return false;
-    if (!it->encode2PLMNSupportItem(supportItem)) return false;
-    if (ASN_SEQUENCE_ADD(&plmnsupportList->list, supportItem) != 0)
+    if (!it->encode(supportItem)) return false;
+    if (ASN_SEQUENCE_ADD(&plmn_support_list.list, supportItem) != 0)
       return false;
   }
   return true;
 }
 
 //------------------------------------------------------------------------------
-bool PLMNSupportList::decodefromPLMNSupportList(
-    Ngap_PLMNSupportList_t* plmnsupportList) {
-  for (int i = 0; i < plmnsupportList->list.count; i++) {
+bool PLMNSupportList::decode(Ngap_PLMNSupportList_t& plmn_support_list) {
+  list_.clear();
+  for (int i = 0; i < plmn_support_list.list.count; i++) {
     PLMNSupportItem item = {};
-    if (!item.decodefromPLMNSupportItem(plmnsupportList->list.array[i]))
-      return false;
-    plmnSupportItems.push_back(item);
+    if (!item.decode(plmn_support_list.list.array[i])) return false;
+    list_.push_back(item);
   }
 
   return true;
 }
 
 //------------------------------------------------------------------------------
-void PLMNSupportList::addPLMNSupportItems(
-    const std::vector<PLMNSupportItem>& items) {
-  plmnSupportItems = items;
+void PLMNSupportList::set(const std::vector<PLMNSupportItem>& items) {
+  list_ = items;
 }
 
 //------------------------------------------------------------------------------
-void PLMNSupportList::getPLMNSupportItems(std::vector<PLMNSupportItem>& items) {
-  items = plmnSupportItems;
+void PLMNSupportList::get(std::vector<PLMNSupportItem>& items) {
+  items = list_;
 }
 
 //------------------------------------------------------------------------------
-void PLMNSupportList::addPLMNSupportItem(const PLMNSupportItem& item) {
-  plmnSupportItems.push_back(item);
+void PLMNSupportList::addItem(const PLMNSupportItem& item) {
+  list_.push_back(item);
 }
 
 }  // namespace ngap

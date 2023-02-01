@@ -19,15 +19,11 @@
  *      contact@openairinterface.org
  */
 
-/*! \file
- \brief
- \author  Keliang DU, BUPT
- \date 2020
- \email: contact@openairinterface.org
- */
 #ifndef _NGAPIESSTRUCT_H_
 #define _NGAPIESSTRUCT_H_
 
+#include "bstrlib.h"
+#include <optional>
 #include <string>
 #include <vector>
 
@@ -77,10 +73,10 @@ typedef struct PlmnSliceSupport_s {
   std::vector<S_Nssai> slice_list;
 } PlmnSliceSupport_t;
 
-typedef struct SupportedItem_s {
+typedef struct SupportedTaItem_s {
   uint32_t tac;
   std::vector<PlmnSliceSupport_t> b_plmn_list;
-} SupportedItem_t;
+} SupportedTaItem_t;
 
 typedef struct GuamiItem_s {
   std::string mcc;
@@ -113,17 +109,15 @@ typedef struct Guami_s {
 
 typedef struct {
   uint8_t pduSessionId;
-  uint8_t* pduSessionNAS_PDU;
-  size_t sizeofpduSessionNAS_PDU;
+  bstring nas_pdu;
   S_Nssai s_nssai;
   OCTET_STRING_t pduSessionResourceSetupRequestTransfer;
 } PDUSessionResourceSetupRequestItem_t;
 
 typedef struct {
   uint8_t pduSessionId;
-  uint8_t* pduSessionNAS_PDU;
-  size_t sizeofpduSessionNAS_PDU;
-  S_Nssai s_nssai;
+  bstring nas_pdu;
+  std::optional<S_Nssai> s_nssai;
   OCTET_STRING_t pduSessionResourceModifyRequestTransfer;
 } PDUSessionResourceModifyRequestItem_t;
 
@@ -145,6 +139,10 @@ typedef struct {
   uint8_t pduSessionId;
   OCTET_STRING_t pduSessionResourceReleaseResponseTransfer;
 } PDUSessionResourceReleasedItem_t;
+
+typedef struct {
+  uint8_t pduSessionId;
+} PDUSessionResourceCxtRelCplItem_t;
 
 typedef struct {
   std::string ip_address;
@@ -249,6 +247,17 @@ typedef struct {
 typedef struct {
   long QFI;
 } QosFlowToBeForwardedItem_t;
+
+typedef struct gNBId_s {
+  uint32_t id;
+  uint8_t bit_length;
+} gNBId_t;  // 22bits to 32bits
+
+typedef struct {
+  uint8_t pduSessionId;
+  OCTET_STRING_t HandoverCommandTransfer;
+} PDUSessionResourceHandoverItem_t;
+
 }  // namespace ngap
 
 #endif

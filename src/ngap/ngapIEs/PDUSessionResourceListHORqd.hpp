@@ -22,7 +22,7 @@
 #ifndef _PDU_SESSION_RESOURCE_LIST_HO_RQD_H_
 #define _PDU_SESSION_RESOURCE_LIST_HO_RQD_H_
 
-#include "PDUSessionResourceItemHORqd.hpp"
+#include "PDUSessionResourceItem.hpp"
 #include <vector>
 
 extern "C" {
@@ -36,18 +36,14 @@ class PDUSessionResourceListHORqd {
   PDUSessionResourceListHORqd();
   virtual ~PDUSessionResourceListHORqd();
 
-  void setPDUSessionResourceListHORqd(
-      const std::vector<PDUSessionResourceItemHORqd>& list);
-  void getPDUSessionResourceListHORqd(
-      std::vector<PDUSessionResourceItemHORqd>& list);
+  void set(const std::vector<PDUSessionResourceItem>& list);
+  void get(std::vector<PDUSessionResourceItem>& list);
 
-  bool encode2PDUSessionResourceListHORqd(
-      Ngap_PDUSessionResourceListHORqd_t* pduSessionResourceListHORQqd);
-  bool decodefromPDUSessionResourceListHORqd(
-      Ngap_PDUSessionResourceListHORqd_t* pduSessionResourceListHORQqd);
+  bool encode(Ngap_PDUSessionResourceListHORqd_t* list);
+  bool decode(Ngap_PDUSessionResourceListHORqd_t* list);
 
  private:
-  std::vector<PDUSessionResourceItemHORqd> itemHORqdList;
+  std::vector<PDUSessionResourceItem> item_list_;
 };
 
 }  // namespace ngap

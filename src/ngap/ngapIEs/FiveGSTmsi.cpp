@@ -19,13 +19,6 @@
  *      contact@openairinterface.org
  */
 
-/*! \file
- \brief
- \author  Keliang DU, BUPT
- \date 2020
- \email: contact@openairinterface.org
- */
-
 #include "FiveGSTmsi.hpp"
 #include "conversions.hpp"
 
@@ -38,47 +31,48 @@ FiveGSTmsi::FiveGSTmsi() {}
 FiveGSTmsi::~FiveGSTmsi() {}
 
 //------------------------------------------------------------------------------
-bool FiveGSTmsi::decodefrompdu(Ngap_FiveG_S_TMSI_t pdu) {
-  amfSetid.decodefrombitstring(pdu.aMFSetID);
-  amfPointer.decodefrombitstring(pdu.aMFPointer);
+bool FiveGSTmsi::decodeFromPdu(Ngap_FiveG_S_TMSI_t pdu) {
+  amf_set_id_.decode(pdu.aMFSetID);
+  amf_pointer_.decode(pdu.aMFPointer);
   uint32_t tmsi = ntohl(*(uint32_t*) pdu.fiveG_TMSI.buf);
   int size      = pdu.fiveG_TMSI.size;
   std::string setId, pointer;
-  amfSetid.getAMFSetID(setId);
-  amfPointer.getAMFPointer(pointer);
-  _5g_s_tmsi = setId + pointer + conv::tmsi_to_string(tmsi);
-  tmsi_value = conv::tmsi_to_string(tmsi);
+  amf_set_id_.get(setId);
+  amf_pointer_.get(pointer);
+  _5g_s_tmsi_ = setId + pointer + conv::tmsi_to_string(tmsi);
+  tmsi_value_ = conv::tmsi_to_string(tmsi);
   return true;
 }
 
 //------------------------------------------------------------------------------
-void FiveGSTmsi::getValue(std::string& tmsi) {
-  tmsi = _5g_s_tmsi;
+void FiveGSTmsi::getTmsi(std::string& tmsi) {
+  tmsi = _5g_s_tmsi_;
 }
 
 //------------------------------------------------------------------------------
-void FiveGSTmsi::getValue(
-    std::string& setid, std::string& pointer, std::string& tmsi) {
-  amfSetid.getAMFSetID(setid);
-  amfPointer.getAMFPointer(pointer);
-  tmsi = tmsi_value;
+void FiveGSTmsi::get(
+    std::string& set_id, std::string& pointer, std::string& tmsi) {
+  amf_set_id_.get(set_id);
+  amf_pointer_.get(pointer);
+  tmsi = tmsi_value_;
 }
 
 //------------------------------------------------------------------------------
-void FiveGSTmsi::setValue(
-    const std::string& setId, const std::string& pointer,
+bool FiveGSTmsi::set(
+    const std::string& set_id, const std::string& pointer,
     const std::string& tmsi) {
-  amfSetid.setAMFSetID(setId);
-  amfPointer.setAMFPointer(pointer);
-  _5g_s_tmsi = tmsi;
+  if (!amf_set_id_.set(set_id)) return false;
+  if (!amf_pointer_.set(pointer)) return false;
+  _5g_s_tmsi_ = tmsi;
+  return true;
 }
 
 //------------------------------------------------------------------------------
 bool FiveGSTmsi::encode2pdu(Ngap_FiveG_S_TMSI_t* pdu) {
-  amfSetid.encode2bitstring(pdu->aMFSetID);
-  amfPointer.encode2bitstring(pdu->aMFPointer);
+  amf_set_id_.encode(pdu->aMFSetID);
+  amf_pointer_.encode(pdu->aMFPointer);
 
-  uint32_t tmsi        = (uint32_t) std::stol(_5g_s_tmsi);
+  uint32_t tmsi        = (uint32_t) std::stol(_5g_s_tmsi_);
   uint8_t* buf         = (uint8_t*) malloc(sizeof(uint32_t));
   *(uint32_t*) buf     = htonl(tmsi);
   pdu->fiveG_TMSI.buf  = buf;

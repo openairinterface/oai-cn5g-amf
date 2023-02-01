@@ -19,13 +19,6 @@
  *      contact@openairinterface.org
  */
 
-/*! \file
- \brief
- \author  Keliang DU, BUPT
- \date 2020
- \email: contact@openairinterface.org
- */
-
 #ifndef _TAC_H_
 #define _TAC_H_
 
@@ -40,14 +33,14 @@ class TAC {
   TAC();
   virtual ~TAC();
 
-  uint32_t getTac();
-  void setTac(uint32_t m_tac);
+  uint32_t get() const;
+  void set(const uint32_t& tac);
 
-  bool encode2octetstring(Ngap_TAC_t&);
-  bool decodefromoctetstring(Ngap_TAC_t& m_tac);
+  bool encode(Ngap_TAC_t&);
+  bool decode(Ngap_TAC_t& m_tac);
 
  private:
-  uint32_t tac : 24;
+  uint32_t tac_ : 24;
 };
 
 }  // namespace ngap

@@ -19,21 +19,13 @@
  *      contact@openairinterface.org
  */
 
-/*! \file
- \brief
- \author  Keliang DU, BUPT
- \date 2020
- \email: contact@openairinterface.org
- */
-
 #include "ServedGUAMIItem.hpp"
 
 namespace ngap {
 
 //------------------------------------------------------------------------------
 ServedGUAMIItem::ServedGUAMIItem() {
-  backupAMFName      = nullptr;
-  backupAMFNameIsSet = false;
+  backupAMFName = std::nullopt;
 }
 
 //------------------------------------------------------------------------------
@@ -45,21 +37,26 @@ void ServedGUAMIItem::setGUAMI(const GUAMI& m_guami) {
 }
 
 //------------------------------------------------------------------------------
-void ServedGUAMIItem::setBackupAMFName(AmfName* m_backupAMFName) {
-  backupAMFNameIsSet = true;
-  backupAMFName      = m_backupAMFName;
+void ServedGUAMIItem::setBackupAMFName(const AmfName& amf_name) {
+  backupAMFName = std::optional<AmfName>(amf_name);
 }
 
+//------------------------------------------------------------------------------
+bool ServedGUAMIItem::getBackupAMFName(AmfName& amf_name) const {
+  if (!backupAMFName.has_value()) return false;
+  amf_name = backupAMFName.value();
+  return true;
+}
 //------------------------------------------------------------------------------
 bool ServedGUAMIItem::encode2ServedGUAMIItem(
     Ngap_ServedGUAMIItem* servedGUAMIItem) {
   if (!guamiGroup.encode2GUAMI(&(servedGUAMIItem->gUAMI))) return false;
-  if (backupAMFNameIsSet) {
-    Ngap_AMFName_t* backupamfname =
+  if (backupAMFName.has_value()) {
+    servedGUAMIItem->backupAMFName =
         (Ngap_AMFName_t*) calloc(1, sizeof(Ngap_AMFName_t));
-    if (!backupamfname) return false;
-    if (!backupAMFName->encode2AmfName(backupamfname)) return false;
-    servedGUAMIItem->backupAMFName = backupamfname;
+    if (!servedGUAMIItem->backupAMFName) return false;
+    if (!backupAMFName.value().encode(servedGUAMIItem->backupAMFName))
+      return false;
   }
   return true;
 }
@@ -68,9 +65,9 @@ bool ServedGUAMIItem::encode2ServedGUAMIItem(
 bool ServedGUAMIItem::decodefromServedGUAMIItem(Ngap_ServedGUAMIItem* pdu) {
   if (!guamiGroup.decodefromGUAMI(&pdu->gUAMI)) return false;
   if (pdu->backupAMFName) {
-    backupAMFNameIsSet = true;
-    backupAMFName      = new AmfName();
-    if (!backupAMFName->decodefromAmfName(pdu->backupAMFName)) return false;
+    AmfName amf_name = {};
+    if (!amf_name.decode(pdu->backupAMFName)) return false;
+    backupAMFName = std::optional<AmfName>(amf_name);
   }
   return true;
 }
@@ -80,9 +77,4 @@ void ServedGUAMIItem::getGUAMI(GUAMI& m_guami) {
   m_guami = guamiGroup;
 }
 
-//------------------------------------------------------------------------------
-bool ServedGUAMIItem::getBackupAMFName(AmfName*& m_backupAMFName) {
-  m_backupAMFName = backupAMFName;
-  return backupAMFNameIsSet;
-}
 }  // namespace ngap

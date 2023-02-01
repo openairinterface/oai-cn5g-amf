@@ -19,41 +19,32 @@
  *      contact@openairinterface.org
  */
 
-/*! \file
- \brief
- \author  Keliang DU, BUPT
- \date 2020
- \email: contact@openairinterface.org
- */
+#ifndef _LADN_Indication_H_
+#define _LADN_Indication_H_
 
-#ifndef __LADN_Indication_H_
-#define __LADN_Indication_H_
-#include <stdint.h>
+#include "Type6NasIe.hpp"
 
-#include <iostream>
-#include <vector>
-extern "C" {
-#include "TLVDecoder.h"
-#include "TLVEncoder.h"
-#include "bstrlib.h"
-}
-using namespace std;
+constexpr uint8_t kLadnIndicationMinimumLength  = 3;
+constexpr uint16_t kLadnIndicationMaximumLength = 1715;
+constexpr auto kLadnIndicationIeName            = "LADN Indication";
+
 namespace nas {
 
-class LADN_Indication {
+class LadnIndication : Type6NasIe {
  public:
-  LADN_Indication();
-  LADN_Indication(uint8_t iei);
-  LADN_Indication(const uint8_t iei, std::vector<bstring> ladn);
-  ~LADN_Indication();
-  void setValue(uint8_t iei, uint8_t value);
-  int encode2buffer(uint8_t* buf, int len);
-  int decodefrombuffer(uint8_t* buf, int len, bool is_option);
-  bool getValue(std::vector<bstring>& ladn);
+  LadnIndication();
+  LadnIndication(const std::vector<bstring>& ladn);
+  ~LadnIndication();
+
+  static std::string GetIeName() { return kLadnIndicationIeName; }
+
+  // void SetValue(const std::vector<bstring>& ladn);
+  void GetValue(std::vector<bstring>& ladn);
+
+  int Encode(uint8_t* buf, int len);
+  int Decode(uint8_t* buf, int len, bool is_option);
 
  private:
-  uint8_t _iei;
-  uint16_t length;
   std::vector<bstring> LADN;
 };
 

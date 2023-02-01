@@ -43,11 +43,11 @@ class PduSessionResourceModifyRequestMsg : public NgapUEMessage {
   void setRanUeNgapId(const uint32_t& id) override;
   bool decodeFromPdu(Ngap_NGAP_PDU_t* ngapMsgPdu) override;
 
-  void setRanPagingPriority(const uint8_t& priority);
+  void setRanPagingPriority(const uint32_t& priority);
   int getRanPagingPriority();
 
-  void setNasPdu(uint8_t* nas, size_t size);
-  bool getNasPdu(uint8_t*& nas, size_t& size);
+  void setNasPdu(const bstring& pdu);
+  bool getNasPdu(bstring& pdu);
 
   void setPduSessionResourceModifyRequestList(
       const std::vector<PDUSessionResourceModifyRequestItem_t>& list);

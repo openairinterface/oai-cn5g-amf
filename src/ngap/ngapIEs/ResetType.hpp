@@ -19,18 +19,11 @@
  *      contact@openairinterface.org
  */
 
-/*! \file
- \brief
- \author
- \date 2021
- \email: contact@openairinterface.org
- */
-
 #ifndef _RESET_TYPE_H_
 #define _RESET_TYPE_H_
 
-#include "UEAssociationLogicalNGConnectionItem.hpp"
-#include "UEAssociationLogicalNGConnectionList.hpp"
+#include "UEAssociatedLogicalNGConnectionItem.hpp"
+#include "UEAssociatedLogicalNGConnectionList.hpp"
 
 extern "C" {
 #include "Ngap_ResetType.h"
@@ -44,7 +37,7 @@ class ResetType {
   virtual ~ResetType();
 
   void setResetType(long);
-  void setResetType(std::vector<UEAssociationLogicalNGConnectionItem> list);
+  void setResetType(std::vector<UEAssociatedLogicalNGConnectionItem> list);
   void getResetType(struct Ngap_UE_associatedLogicalNG_connectionList*&);
   bool encode(Ngap_ResetType_t* type);
   bool decode(Ngap_ResetType_t* type);
@@ -53,18 +46,18 @@ class ResetType {
   uint8_t getResetType();
 
   void setUE_associatedLogicalNG_connectionList(
-      std::vector<UEAssociationLogicalNGConnectionItem> list);
+      std::vector<UEAssociatedLogicalNGConnectionItem> list);
 
   void getUE_associatedLogicalNG_connectionList(
-      std::vector<UEAssociationLogicalNGConnectionItem>& list);
+      std::vector<UEAssociatedLogicalNGConnectionItem>& list);
   void getUE_associatedLogicalNG_connectionList(
       struct Ngap_UE_associatedLogicalNG_connectionList*&);
 
  private:
   Ngap_ResetType_PR present;
   long nG_Interface;
-  UEAssociationLogicalNGConnectionList* partOfNG_Interface;
-  UEAssociationLogicalNGConnectionItem* ueAssociationLogicalNGConnectionItem;
+  UEAssociatedLogicalNGConnectionList* partOfNG_Interface;
+  UEAssociatedLogicalNGConnectionItem* ueAssociatedLogicalNGConnectionItem;
   //	struct Ngap_ProtocolIE_SingleContainer	*choice_Extensions;
 };
 

@@ -19,10 +19,12 @@
  *      contact@openairinterface.org
  */
 
-#ifndef _PDUSESSIONRESOURCESETUPLISTHOREQ_H_
-#define _PDUSESSIONRESOURCESETUPLISTHOREQ_H_
+#ifndef PDU_SESSION_RESOURCE_SETUP_LIST_HO_REQ_H_
+#define PDU_SESSION_RESOURCE_SETUP_LIST_HO_REQ_H_
 
 #include "PDUSessionResourceSetupItemHOReq.hpp"
+
+#include <vector>
 
 extern "C" {
 #include "Ngap_PDUSessionResourceSetupListHOReq.h"
@@ -35,23 +37,16 @@ class PDUSessionResourceSetupListHOReq {
   PDUSessionResourceSetupListHOReq();
   virtual ~PDUSessionResourceSetupListHOReq();
 
-  void setPDUSessionResourceSetupListHOReq(
-      PDUSessionResourceSetupItemHOReq* m_pduSessionResourceSetupItemHOReq,
-      int num);
-  void getPDUSessionResourceSetupListHOReq(
-      PDUSessionResourceSetupItemHOReq*& m_pduSessionResourceSetupItemHOReq,
-      int& num);
+  void set(const std::vector<PDUSessionResourceSetupItemHOReq>& list);
+  void get(std::vector<PDUSessionResourceSetupItemHOReq>& list);
 
-  bool encode2PDUSessionResourceSetupListHOReq(
-      Ngap_PDUSessionResourceSetupListHOReq_t*
-          pduSessionResourceSetupListHOReq);
-  bool decodefromPDUSessionResourceSetupListHOReq(
-      Ngap_PDUSessionResourceSetupListHOReq_t*
-          pduSessionResourceSetupListHOReq);
+  bool encode(Ngap_PDUSessionResourceSetupListHOReq_t*
+                  pduSessionResourceSetupListHOReq);
+  bool decode(Ngap_PDUSessionResourceSetupListHOReq_t*
+                  pduSessionResourceSetupListHOReq);
 
  private:
-  PDUSessionResourceSetupItemHOReq* pduSessionResourceSetupItemHOReq;
-  int numofpduSessionResourceSetupItemHOReq;
+  std::vector<PDUSessionResourceSetupItemHOReq> list_;
 };
 
 }  // namespace ngap

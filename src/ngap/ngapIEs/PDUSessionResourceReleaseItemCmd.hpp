@@ -19,12 +19,6 @@
  *      contact@openairinterface.org
  */
 
-/*! \file
- \brief
- \author  niuxiansheng-niu, BUPT
- \date 2020
- \email: contact@openairinterface.org
- */
 #ifndef _PDUSESSIONRESOURCERELEASEITEMCMD_H_
 #define _PDUSESSIONRESOURCERELEASEITEMCMD_H_
 

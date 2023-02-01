@@ -26,41 +26,42 @@ namespace ngap {
 
 //------------------------------------------------------------------------------
 UESecurityCapabilities::UESecurityCapabilities() {
-  NR_EncryptionAlgs              = 0;
-  NR_IntegrityProtectionAlgs     = 0;
-  E_UTRA_EncryptionAlgs          = 0;
-  E_UTRA_IntegrityProtectionAlgs = 0;
+  nr_encryption_algs_               = 0;
+  nr_integrity_protection_algs_     = 0;
+  e_utra_encryption_algs_           = 0;
+  e_utra_integrity_protection_algs_ = 0;
 }
 
 //------------------------------------------------------------------------------
 UESecurityCapabilities::~UESecurityCapabilities() {}
 
 //------------------------------------------------------------------------------
-void UESecurityCapabilities::setUESecurityCapabilities(
-    uint16_t m_NR_EncryptionAlgs, uint16_t m_NR_IntegrityProtectionAlgs,
-    uint16_t m_E_UTRA_EncryptionAlgs,
-    uint16_t m_E_UTRA_IntegrityProtectionAlgs) {
-  NR_EncryptionAlgs              = m_NR_EncryptionAlgs;
-  NR_IntegrityProtectionAlgs     = m_NR_IntegrityProtectionAlgs;
-  E_UTRA_EncryptionAlgs          = m_E_UTRA_EncryptionAlgs;
-  E_UTRA_IntegrityProtectionAlgs = m_E_UTRA_IntegrityProtectionAlgs;
+void UESecurityCapabilities::set(
+    const uint16_t& nr_encryption_algs,
+    const uint16_t& nr_integrity_protection_algs,
+    const uint16_t& e_utra_encryption_algs,
+    const uint16_t& e_utra_integrity_protection_algs) {
+  nr_encryption_algs_               = nr_encryption_algs;
+  nr_integrity_protection_algs_     = nr_integrity_protection_algs;
+  e_utra_encryption_algs_           = e_utra_encryption_algs;
+  e_utra_integrity_protection_algs_ = e_utra_integrity_protection_algs;
 }
 
 //------------------------------------------------------------------------------
-bool UESecurityCapabilities::getUESecurityCapabilities(
-    uint16_t& m_NR_EncryptionAlgs, uint16_t& m_NR_IntegrityProtectionAlgs,
-    uint16_t& m_E_UTRA_EncryptionAlgs,
-    uint16_t& m_E_UTRA_IntegrityProtectionAlgs) {
-  m_NR_EncryptionAlgs              = NR_EncryptionAlgs;
-  m_NR_IntegrityProtectionAlgs     = NR_IntegrityProtectionAlgs;
-  m_E_UTRA_EncryptionAlgs          = E_UTRA_EncryptionAlgs;
-  m_E_UTRA_IntegrityProtectionAlgs = E_UTRA_IntegrityProtectionAlgs;
+bool UESecurityCapabilities::get(
+    uint16_t& nr_encryption_algs, uint16_t& nr_integrity_protection_algs,
+    uint16_t& e_utra_encryption_algs,
+    uint16_t& e_utra_integrity_protection_algs) {
+  nr_encryption_algs               = nr_encryption_algs_;
+  nr_integrity_protection_algs     = nr_integrity_protection_algs_;
+  e_utra_encryption_algs           = e_utra_encryption_algs_;
+  e_utra_integrity_protection_algs = e_utra_integrity_protection_algs_;
 
   return true;
 }
 
 //------------------------------------------------------------------------------
-bool UESecurityCapabilities::encode2UESecurityCapabilities(
+bool UESecurityCapabilities::encode(
     Ngap_UESecurityCapabilities_t& ueSecurityCapabilities) {
   ueSecurityCapabilities.nRencryptionAlgorithms.bits_unused = 0;
   ueSecurityCapabilities.nRencryptionAlgorithms.size        = sizeof(uint16_t);
@@ -69,7 +70,7 @@ bool UESecurityCapabilities::encode2UESecurityCapabilities(
   if (!ueSecurityCapabilities.nRencryptionAlgorithms.buf) return false;
   for (int i = 0; i < ueSecurityCapabilities.nRencryptionAlgorithms.size; i++) {
     ueSecurityCapabilities.nRencryptionAlgorithms.buf[i] =
-        (NR_EncryptionAlgs & (0xff00 >> i * 8)) >>
+        (nr_encryption_algs_ & (0xff00 >> i * 8)) >>
         ((ueSecurityCapabilities.nRencryptionAlgorithms.size - i - 1) * 8);
   }
 
@@ -83,7 +84,7 @@ bool UESecurityCapabilities::encode2UESecurityCapabilities(
   for (int i = 0;
        i < ueSecurityCapabilities.nRintegrityProtectionAlgorithms.size; i++) {
     ueSecurityCapabilities.nRintegrityProtectionAlgorithms.buf[i] =
-        (NR_IntegrityProtectionAlgs & (0xff00 >> i * 8)) >>
+        (nr_integrity_protection_algs_ & (0xff00 >> i * 8)) >>
         ((ueSecurityCapabilities.nRintegrityProtectionAlgorithms.size - i - 1) *
          8);
   }
@@ -96,7 +97,7 @@ bool UESecurityCapabilities::encode2UESecurityCapabilities(
   for (int i = 0; i < ueSecurityCapabilities.eUTRAencryptionAlgorithms.size;
        i++) {
     ueSecurityCapabilities.eUTRAencryptionAlgorithms.buf[i] =
-        (E_UTRA_EncryptionAlgs & (0xff00 >> i * 8)) >>
+        (e_utra_encryption_algs_ & (0xff00 >> i * 8)) >>
         ((ueSecurityCapabilities.eUTRAencryptionAlgorithms.size - i - 1) * 8);
   }
 
@@ -112,7 +113,7 @@ bool UESecurityCapabilities::encode2UESecurityCapabilities(
        i < ueSecurityCapabilities.eUTRAintegrityProtectionAlgorithms.size;
        i++) {
     ueSecurityCapabilities.eUTRAintegrityProtectionAlgorithms.buf[i] =
-        (E_UTRA_IntegrityProtectionAlgs & (0xff00 >> i * 8)) >>
+        (e_utra_integrity_protection_algs_ & (0xff00 >> i * 8)) >>
         ((ueSecurityCapabilities.eUTRAintegrityProtectionAlgorithms.size - i -
           1) *
          8);
@@ -122,40 +123,40 @@ bool UESecurityCapabilities::encode2UESecurityCapabilities(
 }
 
 //------------------------------------------------------------------------------
-bool UESecurityCapabilities::decodefromUESecurityCapabilities(
-    Ngap_UESecurityCapabilities_t& ueSecurityCapabilities) {
+bool UESecurityCapabilities::decode(
+    const Ngap_UESecurityCapabilities_t& ueSecurityCapabilities) {
   if (!ueSecurityCapabilities.nRencryptionAlgorithms.buf) return false;
   if (!ueSecurityCapabilities.nRintegrityProtectionAlgorithms.buf) return false;
   if (!ueSecurityCapabilities.eUTRAencryptionAlgorithms.buf) return false;
   if (!ueSecurityCapabilities.eUTRAintegrityProtectionAlgorithms.buf)
     return false;
 
-  NR_EncryptionAlgs              = 0;
-  NR_IntegrityProtectionAlgs     = 0;
-  E_UTRA_EncryptionAlgs          = 0;
-  E_UTRA_IntegrityProtectionAlgs = 0;
+  nr_encryption_algs_               = 0;
+  nr_integrity_protection_algs_     = 0;
+  e_utra_encryption_algs_           = 0;
+  e_utra_integrity_protection_algs_ = 0;
 
   for (int i = 0; i < ueSecurityCapabilities.nRencryptionAlgorithms.size; i++) {
-    NR_EncryptionAlgs = NR_EncryptionAlgs << 8;
-    NR_EncryptionAlgs |= ueSecurityCapabilities.nRencryptionAlgorithms.buf[i];
+    nr_encryption_algs_ = nr_encryption_algs_ << 8;
+    nr_encryption_algs_ |= ueSecurityCapabilities.nRencryptionAlgorithms.buf[i];
   }
   for (int i = 0;
        i < ueSecurityCapabilities.nRintegrityProtectionAlgorithms.size; i++) {
-    NR_IntegrityProtectionAlgs = NR_IntegrityProtectionAlgs << 8;
-    NR_IntegrityProtectionAlgs |=
+    nr_integrity_protection_algs_ = nr_integrity_protection_algs_ << 8;
+    nr_integrity_protection_algs_ |=
         ueSecurityCapabilities.nRintegrityProtectionAlgorithms.buf[i];
   }
   for (int i = 0; i < ueSecurityCapabilities.eUTRAencryptionAlgorithms.size;
        i++) {
-    E_UTRA_EncryptionAlgs = E_UTRA_EncryptionAlgs << 8;
-    E_UTRA_EncryptionAlgs |=
+    e_utra_encryption_algs_ = e_utra_encryption_algs_ << 8;
+    e_utra_encryption_algs_ |=
         ueSecurityCapabilities.eUTRAencryptionAlgorithms.buf[i];
   }
   for (int i = 0;
        i < ueSecurityCapabilities.eUTRAintegrityProtectionAlgorithms.size;
        i++) {
-    E_UTRA_IntegrityProtectionAlgs = E_UTRA_IntegrityProtectionAlgs << 8;
-    E_UTRA_IntegrityProtectionAlgs |=
+    e_utra_integrity_protection_algs_ = e_utra_integrity_protection_algs_ << 8;
+    e_utra_integrity_protection_algs_ |=
         ueSecurityCapabilities.eUTRAintegrityProtectionAlgorithms.buf[i];
   }
 

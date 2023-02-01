@@ -32,24 +32,21 @@ PDUSessionResourceFailedToSetupListCxtFail::
     ~PDUSessionResourceFailedToSetupListCxtFail() {}
 
 //------------------------------------------------------------------------------
-void PDUSessionResourceFailedToSetupListCxtFail::
-    setPDUSessionResourceFailedToSetupListCxtFail(
-        const std::vector<PDUSessionResourceFailedToSetupItemCxtFail>& list) {
+void PDUSessionResourceFailedToSetupListCxtFail::set(
+    const std::vector<PDUSessionResourceFailedToSetupItemCxtFail>& list) {
   itemList = list;
 }
 
 //------------------------------------------------------------------------------
-void PDUSessionResourceFailedToSetupListCxtFail::
-    getPDUSessionResourceFailedToSetupListCxtFail(
-        std::vector<PDUSessionResourceFailedToSetupItemCxtFail>& list) {
+void PDUSessionResourceFailedToSetupListCxtFail::get(
+    std::vector<PDUSessionResourceFailedToSetupItemCxtFail>& list) {
   list = itemList;
 }
 
 //------------------------------------------------------------------------------
-bool PDUSessionResourceFailedToSetupListCxtFail::
-    encode2PDUSessionResourceFailedToSetupListCxtFail(
-        Ngap_PDUSessionResourceFailedToSetupListCxtFail_t*
-            pduSessionResourceFailedToSetupListCxtFail) {
+bool PDUSessionResourceFailedToSetupListCxtFail::encode(
+    Ngap_PDUSessionResourceFailedToSetupListCxtFail_t*
+        pduSessionResourceFailedToSetupListCxtFail) {
   for (std::vector<PDUSessionResourceFailedToSetupItemCxtFail>::iterator it =
            std::begin(itemList);
        it < std::end(itemList); ++it) {
@@ -57,8 +54,7 @@ bool PDUSessionResourceFailedToSetupListCxtFail::
         (Ngap_PDUSessionResourceFailedToSetupItemCxtFail_t*) calloc(
             1, sizeof(Ngap_PDUSessionResourceFailedToSetupItemCxtFail_t));
     if (!failedToFailure) return false;
-    if (!it->encode2PDUSessionResourceFailedToSetupItemCxtFail(failedToFailure))
-      return false;
+    if (!it->encode(failedToFailure)) return false;
     if (ASN_SEQUENCE_ADD(
             &pduSessionResourceFailedToSetupListCxtFail->list,
             failedToFailure) != 0)
@@ -69,16 +65,15 @@ bool PDUSessionResourceFailedToSetupListCxtFail::
 }
 
 //------------------------------------------------------------------------------
-bool PDUSessionResourceFailedToSetupListCxtFail::
-    decodefromPDUSessionResourceFailedToSetupListCxtFail(
-        Ngap_PDUSessionResourceFailedToSetupListCxtFail_t*
-            pduSessionResourceFailedToSetupListCxtFail) {
+bool PDUSessionResourceFailedToSetupListCxtFail::decode(
+    Ngap_PDUSessionResourceFailedToSetupListCxtFail_t*
+        pduSessionResourceFailedToSetupListCxtFail) {
   itemList.reserve(pduSessionResourceFailedToSetupListCxtFail->list.count);
 
   for (int i = 0; i < pduSessionResourceFailedToSetupListCxtFail->list.count;
        i++) {
     PDUSessionResourceFailedToSetupItemCxtFail itemCxtFail = {};
-    if (!itemCxtFail.decodefromPDUSessionResourceFailedToSetupItemCxtFail(
+    if (!itemCxtFail.decode(
             pduSessionResourceFailedToSetupListCxtFail->list.array[i]))
       return false;
     itemList.push_back(itemCxtFail);

@@ -54,7 +54,7 @@ void NGResetMsg::setCause(const Cause& c) {
   ie->criticality   = Ngap_Criticality_ignore;
   ie->value.present = Ngap_NGResetIEs__value_PR_Cause;
 
-  if (!cause.encode2Cause(&ie->value.choice.Cause)) {
+  if (!cause.encode(ie->value.choice.Cause)) {
     Logger::ngap().error("Encode NGAP Cause IE error");
     free_wrapper((void**) &ie);
     return;
@@ -121,8 +121,8 @@ bool NGResetMsg::decodeFromPdu(Ngap_NGAP_PDU_t* ngapMsgPdu) {
                     Ngap_Criticality_ignore &&
                 ngResetIEs->protocolIEs.list.array[i]->value.present ==
                     Ngap_NGResetIEs__value_PR_Cause) {
-              if (!cause.decodefromCause(&ngResetIEs->protocolIEs.list.array[i]
-                                              ->value.choice.Cause)) {
+              if (!cause.decode(ngResetIEs->protocolIEs.list.array[i]
+                                    ->value.choice.Cause)) {
                 Logger::ngap().error("Decoded NGAP Cause IE error");
                 return false;
               }

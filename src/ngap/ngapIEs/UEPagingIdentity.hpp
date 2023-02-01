@@ -36,14 +36,14 @@ class UEPagingIdentity {
   virtual ~UEPagingIdentity();
 
   void setUEPagingIdentity(
-      const std::string& setid, const std::string& pointer,
+      const std::string& set_id, const std::string& pointer,
       const std::string& tmsi);
   void getUEPagingIdentity(std::string& _5g_s_tmsi);
   void getUEPagingIdentity(
-      std::string& setid, std::string& pointer, std::string& tmsi);
+      std::string& set_id, std::string& pointer, std::string& tmsi);
 
   bool encode2pdu(Ngap_UEPagingIdentity_t* pdu);
-  bool decodefrompdu(Ngap_UEPagingIdentity_t pdu);
+  bool decodeFromPdu(Ngap_UEPagingIdentity_t pdu);
 
  private:
   FiveGSTmsi fiveGSTmsi;

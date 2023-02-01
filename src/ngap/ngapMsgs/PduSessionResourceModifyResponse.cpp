@@ -32,7 +32,7 @@ namespace ngap {
 //------------------------------------------------------------------------------
 PduSessionResourceModifyResponseMsg::PduSessionResourceModifyResponseMsg()
     : NgapUEMessage() {
-  pduSessionResourceModifyListModResIsSet = false;
+  pduSessionResourceModifyList = std::nullopt;
   setMessageType(NgapMessageType::PDU_SESSION_RESOURCE_MODIFY_RESPONSE);
   initialize();
 }
@@ -52,7 +52,7 @@ void PduSessionResourceModifyResponseMsg::initialize() {
 //------------------------------------------------------------------------------
 void PduSessionResourceModifyResponseMsg::setAmfUeNgapId(
     const unsigned long& id) {
-  amfUeNgapId.setAMF_UE_NGAP_ID(id);
+  amfUeNgapId.set(id);
 
   Ngap_PDUSessionResourceModifyResponseIEs_t* ie =
       (Ngap_PDUSessionResourceModifyResponseIEs_t*) calloc(
@@ -77,7 +77,7 @@ void PduSessionResourceModifyResponseMsg::setAmfUeNgapId(
 //------------------------------------------------------------------------------
 void PduSessionResourceModifyResponseMsg::setRanUeNgapId(
     const uint32_t& ran_ue_ngap_id) {
-  ranUeNgapId.setRanUeNgapId(ran_ue_ngap_id);
+  ranUeNgapId.set(ran_ue_ngap_id);
 
   Ngap_PDUSessionResourceModifyResponseIEs_t* ie =
       (Ngap_PDUSessionResourceModifyResponseIEs_t*) calloc(
@@ -87,7 +87,7 @@ void PduSessionResourceModifyResponseMsg::setRanUeNgapId(
   ie->value.present =
       Ngap_PDUSessionResourceModifyResponseIEs__value_PR_RAN_UE_NGAP_ID;
 
-  int ret = ranUeNgapId.encode2RAN_UE_NGAP_ID(ie->value.choice.RAN_UE_NGAP_ID);
+  int ret = ranUeNgapId.encode(ie->value.choice.RAN_UE_NGAP_ID);
   if (!ret) {
     Logger::ngap().error("Encode NGAP RAN_UE_NGAP_ID IE error");
     free_wrapper((void**) &ie);
@@ -103,22 +103,22 @@ void PduSessionResourceModifyResponseMsg::setRanUeNgapId(
 void PduSessionResourceModifyResponseMsg::
     setPduSessionResourceModifyResponseList(
         const std::vector<PDUSessionResourceModifyResponseItem_t>& list) {
-  std::vector<PDUSessionResourceModifyItemModRes> itemModResList;
-  // itemModResList.reserve(list.size());
-  pduSessionResourceModifyListModResIsSet = true;
+  std::vector<PDUSessionResourceModifyItemModRes> item_mod_res_list;
+  // item_mod_res_list.reserve(list.size());
 
   for (int i = 0; i < list.size(); i++) {
     PDUSessionID pDUSessionID               = {};
     PDUSessionResourceModifyItemModRes item = {};
 
-    pDUSessionID.setPDUSessionID(list[i].pduSessionId);
-    item.setPDUSessionResourceModifyItemModRes(
-        pDUSessionID, list[i].pduSessionResourceModifyResponseTransfer);
-    itemModResList.push_back(item);
+    pDUSessionID.set(list[i].pduSessionId);
+    item.set(pDUSessionID, list[i].pduSessionResourceModifyResponseTransfer);
+    item_mod_res_list.push_back(item);
   }
 
-  pduSessionResourceModifyList.setPDUSessionResourceModifyListModRes(
-      itemModResList);
+  PDUSessionResourceModifyListModRes item_list = {};
+  item_list.set(item_mod_res_list);
+  pduSessionResourceModifyList =
+      std::optional<PDUSessionResourceModifyListModRes>(item_list);
 
   Ngap_PDUSessionResourceModifyResponseIEs_t* ie =
       (Ngap_PDUSessionResourceModifyResponseIEs_t*) calloc(
@@ -128,9 +128,8 @@ void PduSessionResourceModifyResponseMsg::
   ie->value.present =
       Ngap_PDUSessionResourceModifyResponseIEs__value_PR_PDUSessionResourceModifyListModRes;
 
-  int ret =
-      pduSessionResourceModifyList.encode2PDUSessionResourceModifyListModRes(
-          ie->value.choice.PDUSessionResourceModifyListModRes);
+  int ret = pduSessionResourceModifyList.value().encode(
+      ie->value.choice.PDUSessionResourceModifyListModRes);
   if (!ret) {
     Logger::ngap().error(
         "Encode NGAP PDUSessionResourceModifyListModRes IE error");
@@ -149,19 +148,16 @@ void PduSessionResourceModifyResponseMsg::
 bool PduSessionResourceModifyResponseMsg::
     getPduSessionResourceModifyResponseList(
         std::vector<PDUSessionResourceModifyResponseItem_t>& list) {
-  if (!pduSessionResourceModifyListModResIsSet) return false;
+  if (!pduSessionResourceModifyList.has_value()) return false;
 
-  std::vector<PDUSessionResourceModifyItemModRes> itemModResList;
-  pduSessionResourceModifyList.getPDUSessionResourceModifyListModRes(
-      itemModResList);
+  std::vector<PDUSessionResourceModifyItemModRes> item_mod_res_list;
+  pduSessionResourceModifyList.value().get(item_mod_res_list);
 
-  for (auto& it : itemModResList) {
+  for (auto& it : item_mod_res_list) {
     PDUSessionResourceModifyResponseItem_t response = {};
     PDUSessionID pDUSessionID                       = {};
-    it.getPDUSessionResourceModifyItemModRes(
-        pDUSessionID, response.pduSessionResourceModifyResponseTransfer);
-    pDUSessionID.getPDUSessionID(response.pduSessionId);
-
+    it.get(pDUSessionID, response.pduSessionResourceModifyResponseTransfer);
+    pDUSessionID.get(response.pduSessionId);
     list.push_back(response);
   }
 
@@ -223,7 +219,7 @@ bool PduSessionResourceModifyResponseMsg::decodeFromPdu(
             pduSessionResourceModifyResponseIEs->protocolIEs.list.array[i]
                     ->value.present ==
                 Ngap_PDUSessionResourceModifyResponseIEs__value_PR_RAN_UE_NGAP_ID) {
-          if (!ranUeNgapId.decodefromRAN_UE_NGAP_ID(
+          if (!ranUeNgapId.decode(
                   pduSessionResourceModifyResponseIEs->protocolIEs.list
                       .array[i]
                       ->value.choice.RAN_UE_NGAP_ID)) {
@@ -241,15 +237,18 @@ bool PduSessionResourceModifyResponseMsg::decodeFromPdu(
             pduSessionResourceModifyResponseIEs->protocolIEs.list.array[i]
                     ->value.present ==
                 Ngap_PDUSessionResourceModifyResponseIEs__value_PR_PDUSessionResourceModifyListModRes) {
-          if (!pduSessionResourceModifyList
-                   .decodefromPDUSessionResourceModifyListModRes(
-                       pduSessionResourceModifyResponseIEs->protocolIEs.list
-                           .array[i]
-                           ->value.choice.PDUSessionResourceModifyListModRes)) {
+          PDUSessionResourceModifyListModRes item_list = {};
+          if (!item_list.decode(
+                  pduSessionResourceModifyResponseIEs->protocolIEs.list
+                      .array[i]
+                      ->value.choice.PDUSessionResourceModifyListModRes)) {
             Logger::ngap().error(
                 "Decoded NGAP PDUSessionResourceModifyListModRes IE error");
             return false;
           }
+          pduSessionResourceModifyList =
+              std::optional<PDUSessionResourceModifyListModRes>(item_list);
+
         } else {
           Logger::ngap().error(
               "Decoded NGAP PDUSessionResourceModifyListModRes IE error");

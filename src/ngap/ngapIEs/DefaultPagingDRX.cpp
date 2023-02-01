@@ -19,13 +19,6 @@
  *      contact@openairinterface.org
  */
 
-/*! \file
- \brief
- \author  Keliang DU, BUPT
- \date 2020
- \email: contact@openairinterface.org
- */
-
 #include "DefaultPagingDRX.hpp"
 
 #include <iostream>
@@ -35,32 +28,32 @@ namespace ngap {
 
 //------------------------------------------------------------------------------
 DefaultPagingDRX::DefaultPagingDRX() {
-  pagingDrx = 0;
+  paging_drx_ = 0;
 }
 
 //------------------------------------------------------------------------------
 DefaultPagingDRX::~DefaultPagingDRX() {}
 
 //------------------------------------------------------------------------------
-void DefaultPagingDRX::setValue(e_Ngap_PagingDRX m_pagingDrx) {
-  pagingDrx = m_pagingDrx;
+void DefaultPagingDRX::setValue(const e_Ngap_PagingDRX& paging_drx) {
+  paging_drx_ = paging_drx;
 }
 
 //------------------------------------------------------------------------------
-bool DefaultPagingDRX::encode2DefaultPagingDRX(Ngap_PagingDRX_t& pagingdrx) {
-  pagingdrx = pagingDrx;
+int DefaultPagingDRX::getValue() const {
+  return paging_drx_;
+}
+
+//------------------------------------------------------------------------------
+bool DefaultPagingDRX::encode(Ngap_PagingDRX_t& paging_drx) {
+  paging_drx = paging_drx_;
   return true;
 }
 
 //------------------------------------------------------------------------------
-bool DefaultPagingDRX::decodefromDefaultPagingDRX(Ngap_PagingDRX_t& pagingdrx) {
-  pagingDrx = pagingdrx;
+bool DefaultPagingDRX::decode(const Ngap_PagingDRX_t& paging_drx) {
+  paging_drx_ = paging_drx;
   return true;
-}
-
-//------------------------------------------------------------------------------
-int DefaultPagingDRX::getValue() {
-  return pagingDrx;
 }
 
 }  // namespace ngap

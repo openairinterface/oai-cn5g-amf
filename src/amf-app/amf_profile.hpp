@@ -19,14 +19,6 @@
  *      contact@openairinterface.org
  */
 
-/*! \file amf_profile.hpp
- \brief
- \author  Tien-Thinh NGUYEN
- \company Eurecom
- \date 2021
- \email: Tien-Thinh.Nguyen@eurecom.fr
- */
-
 #ifndef FILE_AMF_PROFILE_HPP_SEEN
 #define FILE_AMF_PROFILE_HPP_SEEN
 
@@ -85,6 +77,7 @@ class nf_profile : public std::enable_shared_from_this<nf_profile> {
     return *this;
   }
   // nf_profile(nf_profile &b) = delete;
+  virtual ~nf_profile() {}
 
   /*
    * Set NF instance ID

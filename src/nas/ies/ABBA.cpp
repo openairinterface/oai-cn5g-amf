@@ -18,107 +18,119 @@
  * For more information about the OpenAirInterface (OAI) Software Alliance:
  *      contact@openairinterface.org
  */
-
-/*! \file
- \brief
- \author  Keliang DU, BUPT
- \date 2020
- \email: contact@openairinterface.org
- */
-
 #include "ABBA.hpp"
 
+#include "3gpp_24.501.hpp"
+#include "common_defs.h"
 #include "logger.hpp"
+
 using namespace nas;
 
 //------------------------------------------------------------------------------
-ABBA::ABBA(uint8_t iei) : _value() {
-  _iei    = iei;
-  _length = 0;
+ABBA::ABBA() : Type4NasIe(), value_() {
+  SetLengthIndicator(0);
 }
 
 //------------------------------------------------------------------------------
-ABBA::ABBA(const uint8_t iei, uint8_t length, uint8_t* value) {
-  _iei = iei;
+ABBA::ABBA(uint8_t iei) : Type4NasIe(iei), value_() {
+  SetLengthIndicator(0);
+}
+
+//------------------------------------------------------------------------------
+ABBA::ABBA(uint8_t length, uint8_t* value) : Type4NasIe() {
   for (int i = 0; i < length; i++) {
-    this->_value[i] = value[i];
+    this->value_[i] = value[i];
   }
-  _length = length;
+  SetLengthIndicator(length);
 }
 
 //------------------------------------------------------------------------------
-ABBA::ABBA() : _value(), _length(), _iei() {}
+ABBA::ABBA(uint8_t iei, uint8_t length, uint8_t* value) : Type4NasIe(iei) {
+  for (int i = 0; i < length; i++) {
+    this->value_[i] = value[i];
+  }
+  SetLengthIndicator(length);
+}
 
 //------------------------------------------------------------------------------
 ABBA::~ABBA() {}
 
 //------------------------------------------------------------------------------
-uint8_t ABBA::getValue() {
-  for (int j = 0; j < _length; j++) {
-    Logger::nas_mm().debug("Decoded ABBA value (0x%2x)", _value[j]);
+void ABBA::Set(uint8_t length, uint8_t* value) {
+  for (int i = 0; i < length; i++) {
+    this->value_[i] = value[i];
   }
-  return 1;
+  SetLengthIndicator(length);
 }
 
 //------------------------------------------------------------------------------
-int ABBA::encode2buffer(uint8_t* buf, int len) {
-  Logger::nas_mm().debug("Encoding ABBA IEI (0x%x)", _iei);
-  if (len < _length) {
-    Logger::nas_mm().error("len is less than %d", _length);
-    return 0;
+void ABBA::Set(uint8_t iei, uint8_t length, uint8_t* value) {
+  SetIei(iei);
+  for (int i = 0; i < length; i++) {
+    this->value_[i] = value[i];
   }
+  SetLengthIndicator(length);
+}
+
+//------------------------------------------------------------------------------
+int ABBA::Encode(uint8_t* buf, int len) {
+  Logger::nas_mm().debug("Encoding %s", GetIeName().c_str());
+  int ie_len = GetIeLength();
+
+  if (len < ie_len) {
+    Logger::nas_mm().error("Len is less than %d", ie_len);
+    return KEncodeDecodeError;
+  }
+
   int encoded_size = 0;
-  if (_iei) {  // option
-    *(buf + encoded_size) = _iei;
-    encoded_size++;
-    *(buf + encoded_size) = _length - 2;
-    encoded_size++;
-    int i = 0;
-    while ((_length - 2) != 0) {
-      *(buf + encoded_size) = _value[i];
-      encoded_size++;
-      _length--;
-      i++;
-    }
-  } else {
-    Logger::nas_mm().debug("length(%d)", _length);
-    *(buf + encoded_size) = _length;
-    encoded_size++;
-    int i = 0;
-    while (_length != 0) {
-      *(buf + encoded_size) = _value[i];
-      encoded_size++;
-      _length--;
-      i++;
-    }
+  // IEI and Length
+  int encoded_header_size = Type4NasIe::Encode(buf + encoded_size, len);
+  if (encoded_header_size == KEncodeDecodeError) return KEncodeDecodeError;
+  encoded_size += encoded_header_size;
+  int length = GetLengthIndicator();
+  int i      = 0;
+  while (length != 0) {
+    ENCODE_U8(buf + encoded_size, value_[i], encoded_size);
+    length--;
+    i++;
   }
-  Logger::nas_mm().debug("Encoded ABBA len (%d)", encoded_size);
+
+  Logger::nas_mm().debug(
+      "Encoded %s, len (%d)", GetIeName().c_str(), encoded_size);
   return encoded_size;
 }
 
 //------------------------------------------------------------------------------
-int ABBA::decodefrombuffer(uint8_t* buf, int len, bool is_option) {
-  Logger::nas_mm().debug("Encoding ABBA IEI (0x%x)", *buf);
-  int decoded_size = 0;
-  if (is_option) {
-    decoded_size++;
+int ABBA::Decode(uint8_t* buf, int len, bool is_iei) {
+  if (len < kAbbaMinimumLength) {
+    Logger::nas_mm().error(
+        "Buffer length is less than the minimum length of this IE (%d octet)",
+        kAbbaMinimumLength);
+    return KEncodeDecodeError;
   }
-  _length     = 0x00;
-  _value[255] = {};
-  _length     = *(buf + decoded_size);
-  decoded_size++;
+
+  uint8_t decoded_size = 0;
+  uint8_t octet        = 0;
+  Logger::nas_mm().debug("Decoding %s", GetIeName().c_str());
+
+  // IEI and Length
+  int decoded_header_size = Type4NasIe::Decode(buf + decoded_size, len, is_iei);
+  if (decoded_header_size == KEncodeDecodeError) return KEncodeDecodeError;
+  decoded_size += decoded_header_size;
+
   int i          = 0;
-  uint8_t Length = _length;
-  while (Length != 0) {
-    _value[i] = *(buf + decoded_size);
-    decoded_size++;
-    Length--;
+  uint8_t length = GetLengthIndicator();
+  while (length != 0) {
+    DECODE_U8(buf + decoded_size, value_[i], decoded_size);
+    length--;
     i++;
   }
-  for (int j = 0; j < _length; j++) {
-    Logger::nas_mm().debug(
-        "Decoded ABBA value (0x%4x), length (0x%4x)", _value[j], _length);
+
+  for (int j = 0; j < GetLengthIndicator(); j++) {
+    Logger::nas_mm().debug("Decoded ABBA value (0x%4x)", value_[j]);
   }
-  Logger::nas_mm().debug("Decoded ABBA len (%d)", decoded_size);
+
+  Logger::nas_mm().debug(
+      "Decoded %s, len (%d)", GetIeName().c_str(), decoded_size);
   return decoded_size;
 }

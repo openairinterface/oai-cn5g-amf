@@ -19,58 +19,61 @@
  *      contact@openairinterface.org
  */
 
-/*! \file
- \brief
- \author  Keliang DU, BUPT
- \date 2020
- \email: contact@openairinterface.org
- */
-
 #include "UERadioCapability.hpp"
+
+#include "conversions.hpp"
 
 namespace ngap {
 
 //------------------------------------------------------------------------------
-UERadioCapability::UERadioCapability() {
-  ueRadioCapabilitybuffer       = NULL;
-  sizeofueRadioCapabilitybuffer = -1;
+UERadioCapability::UERadioCapability() {}
+
+/*
+UERadioCapability::UERadioCapability(const OCTET_STRING_t& capability) {
+          if (!capability.buf) return;
+          conv::bstring_2_octet_string(ue_radio_capability_, capability);
 }
 
+UERadioCapability::UERadioCapability(const bstring& capability) {
+        conv::bstring_2_octet_string(capability, ue_radio_capability_);
+}
+*/
 //------------------------------------------------------------------------------
 UERadioCapability::~UERadioCapability() {}
 
 //------------------------------------------------------------------------------
-bool UERadioCapability::encode2UERadioCapability(
-    Ngap_UERadioCapability_t& ueRadioCapability) {
-  int ret;
-  ret = OCTET_STRING_fromBuf(
-      &ueRadioCapability, ueRadioCapabilitybuffer,
-      sizeofueRadioCapabilitybuffer);
-  if (ret != 0) return false;
+bool UERadioCapability::encode(Ngap_UERadioCapability_t& ueRadioCapability) {
+  return conv::bstring_2_octet_string(ue_radio_capability_, ueRadioCapability);
+}
+
+//------------------------------------------------------------------------------
+bool UERadioCapability::decode(Ngap_UERadioCapability_t& ueRadioCapability) {
+  if (!ueRadioCapability.buf) return false;
+  return conv::octet_string_2_bstring(ueRadioCapability, ue_radio_capability_);
+}
+
+//------------------------------------------------------------------------------
+bool UERadioCapability::set(const OCTET_STRING_t& capability) {
+  conv::octet_string_2_bstring(capability, ue_radio_capability_);
   return true;
 }
 
 //------------------------------------------------------------------------------
-bool UERadioCapability::decodefromUERadioCapability(
-    Ngap_UERadioCapability_t& ueRadioCapability) {
-  ueRadioCapabilitybuffer       = (char*) ueRadioCapability.buf;
-  sizeofueRadioCapabilitybuffer = ueRadioCapability.size;
+bool UERadioCapability::get(OCTET_STRING_t& capability) {
+  conv::bstring_2_octet_string(ue_radio_capability_, capability);
   return true;
 }
 
 //------------------------------------------------------------------------------
-bool UERadioCapability::getUERadioCapability(uint8_t*& buffer, size_t& size) {
-  buffer = (uint8_t*) ueRadioCapabilitybuffer;
-  size   = sizeofueRadioCapabilitybuffer;
-  if (!ueRadioCapabilitybuffer) return false;
-  if (sizeofueRadioCapabilitybuffer < 0) return false;
-
+bool UERadioCapability::set(const bstring& capability) {
+  ue_radio_capability_ = bstrcpy(capability);
   return true;
 }
 
 //------------------------------------------------------------------------------
-void UERadioCapability::setUERadioCapability(uint8_t* buffer, size_t size) {
-  ueRadioCapabilitybuffer       = (char*) buffer;
-  sizeofueRadioCapabilitybuffer = size;
+bool UERadioCapability::get(bstring& capability) {
+  capability = bstrcpy(ue_radio_capability_);
+  return true;
 }
+
 }  // namespace ngap

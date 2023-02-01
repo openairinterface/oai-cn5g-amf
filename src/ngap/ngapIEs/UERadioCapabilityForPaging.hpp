@@ -19,18 +19,13 @@
  *      contact@openairinterface.org
  */
 
-/*! \file
- \brief
- \author  Keliang DU, BUPT
- \date 2020
- \email: contact@openairinterface.org
- */
-
-#ifndef _UERADIOCAPABILITYFORPAGING_H_
-#define _UERADIOCAPABILITYFORPAGING_H_
+#ifndef _UE_RADIO_CAPABILITY_FOR_PAGING_H_
+#define _UE_RADIO_CAPABILITY_FOR_PAGING_H_
 
 #include "UERadioCapabilityForPagingOfEUTRA.hpp"
 #include "UERadioCapabilityForPagingOfNR.hpp"
+
+#include <optional>
 
 extern "C" {
 #include "Ngap_UERadioCapabilityForPaging.h"
@@ -43,20 +38,20 @@ class UERadioCapabilityForPaging {
   UERadioCapabilityForPaging();
   virtual ~UERadioCapabilityForPaging();
 
-  bool encode2UERadioCapabilityForPaging(
-      Ngap_UERadioCapabilityForPaging_t* ueRadioCapabilityForPaging);
-  bool decodefromUERadioCapabilityForPaging(
-      Ngap_UERadioCapabilityForPaging_t* ueRadioCapabilityForPaging);
-  bool getUERadioCapabilityForPaging(
-      UERadioCapabilityForPagingOfNR*& m_ueRadioCapabilityForPagingOfNR,
-      UERadioCapabilityForPagingOfEUTRA*& m_ueRadioCapabilityForPagingOfEUTRA);
-  void setUERadioCapabilityForPaging(
-      UERadioCapabilityForPagingOfNR* m_ueRadioCapabilityForPagingOfNR,
-      UERadioCapabilityForPagingOfEUTRA* m_ueRadioCapabilityForPagingOfEUTRA);
+  bool encode(Ngap_UERadioCapabilityForPaging_t* ueRadioCapabilityForPaging);
+  bool decode(Ngap_UERadioCapabilityForPaging_t* ueRadioCapabilityForPaging);
+
+  bool setUERadioCapabilityForPagingOfNR(const OCTET_STRING_t& capability);
+  bool getUERadioCapabilityForPagingOfNR(OCTET_STRING_t& capability);
+
+  bool setUERadioCapabilityForPagingOfEUTRA(const OCTET_STRING_t& capability);
+  bool getUERadioCapabilityForPagingOfEUTRA(OCTET_STRING_t& capability);
 
  private:
-  UERadioCapabilityForPagingOfNR* ueRadioCapabilityForPagingOfNR;
-  UERadioCapabilityForPagingOfEUTRA* ueRadioCapabilityForPagingOfEUTRA;
+  std::optional<UERadioCapabilityForPagingOfNR>
+      ueRadioCapabilityForPagingOfNR;  // Optional
+  std::optional<UERadioCapabilityForPagingOfEUTRA>
+      ueRadioCapabilityForPagingOfEUTRA;  // Optional
 };
 
 }  // namespace ngap

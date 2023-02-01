@@ -19,68 +19,61 @@
  *      contact@openairinterface.org
  */
 
-/*! \file
- \brief
- \author  Keliang DU, BUPT
- \date 2020
- \email: contact@openairinterface.org
- */
-
 #include "UEIdentityIndexValue.hpp"
-
-#include <iostream>
-using namespace std;
 
 namespace ngap {
 
 //------------------------------------------------------------------------------
 UEIdentityIndexValue::UEIdentityIndexValue() {
-  indexLength10 = 0;
+  index_   = 0;
+  present_ = Ngap_UEIdentityIndexValue_PR_NOTHING;
 }
 
 //------------------------------------------------------------------------------
 UEIdentityIndexValue::~UEIdentityIndexValue() {}
 
 //------------------------------------------------------------------------------
-void UEIdentityIndexValue::setUEIdentityIndexValue(
-    uint16_t m_indexLength10 /*10bits*/) {
-  indexLength10 = m_indexLength10;
+void UEIdentityIndexValue::set(const uint16_t& index) {
+  index_   = index;
+  present_ = Ngap_UEIdentityIndexValue_PR_indexLength10;
 }
 
 //------------------------------------------------------------------------------
-bool UEIdentityIndexValue::encode2UEIdentityIndexValue(
-    Ngap_UEIdentityIndexValue_t* ueIdentityIndexValue) {
-  ueIdentityIndexValue->present = Ngap_UEIdentityIndexValue_PR_indexLength10;
-  ueIdentityIndexValue->choice.indexLength10.size        = sizeof(uint16_t);
-  ueIdentityIndexValue->choice.indexLength10.bits_unused = 6;
-  ueIdentityIndexValue->choice.indexLength10.buf =
-      (uint8_t*) calloc(1, ueIdentityIndexValue->choice.indexLength10.size);
-  if (!ueIdentityIndexValue->choice.indexLength10.buf) return false;
-  ueIdentityIndexValue->choice.indexLength10.buf[0] =
-      (indexLength10 >> 8) & 0x03;
-  ueIdentityIndexValue->choice.indexLength10.buf[1] = indexLength10 & 0xff;
+bool UEIdentityIndexValue::encode(
+    Ngap_UEIdentityIndexValue_t& ue_identity_index_value) {
+  ue_identity_index_value.present = Ngap_UEIdentityIndexValue_PR_indexLength10;
+  ue_identity_index_value.choice.indexLength10.size        = sizeof(uint16_t);
+  ue_identity_index_value.choice.indexLength10.bits_unused = 6;
+  ue_identity_index_value.choice.indexLength10.buf =
+      (uint8_t*) calloc(1, ue_identity_index_value.choice.indexLength10.size);
+  if (!ue_identity_index_value.choice.indexLength10.buf) return false;
+  ue_identity_index_value.choice.indexLength10.buf[0] = (index_ >> 8) & 0x03;
+  ue_identity_index_value.choice.indexLength10.buf[1] = index_ & 0xff;
 
   return true;
 }
 
 //------------------------------------------------------------------------------
-bool UEIdentityIndexValue::decodefromUEIdentityIndexValue(
-    Ngap_UEIdentityIndexValue_t* ueIdentityIndexValue) {
-  if (ueIdentityIndexValue->present !=
+bool UEIdentityIndexValue::decode(
+    const Ngap_UEIdentityIndexValue_t& ue_identity_index_value) {
+  if (ue_identity_index_value.present !=
       Ngap_UEIdentityIndexValue_PR_indexLength10)
     return false;
-  if (!ueIdentityIndexValue->choice.indexLength10.buf) return false;
-  indexLength10 = ueIdentityIndexValue->choice.indexLength10.buf[0];
-  indexLength10 = indexLength10 << 8;
-  indexLength10 |= ueIdentityIndexValue->choice.indexLength10.buf[1];
+  if (!ue_identity_index_value.choice.indexLength10.buf) return false;
+  index_ = ue_identity_index_value.choice.indexLength10.buf[0];
+  index_ = index_ << 8;
+  index_ |= ue_identity_index_value.choice.indexLength10.buf[1];
 
   return true;
 }
 
 //------------------------------------------------------------------------------
-void UEIdentityIndexValue::getUEIdentityIndexValue(
-    uint16_t& m_indexLength10 /*10bits*/) {
-  m_indexLength10 = indexLength10;
+bool UEIdentityIndexValue::get(uint16_t& index) const {
+  if (present_ == Ngap_UEIdentityIndexValue_PR_indexLength10) {
+    index = index_;
+    return true;
+  }
+  return false;
 }
 
 }  // namespace ngap

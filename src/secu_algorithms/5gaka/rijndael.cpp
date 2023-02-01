@@ -19,13 +19,6 @@
  *      contact@openairinterface.org
  */
 
-/*! \file rijndael.cpp
- \brief
- \author  Keliang DU, BUPT
- \date 2020
- \email: contact@openairinterface.org
- */
-
 #include "authentication_algorithms_with_5gaka.hpp"
 
 typedef uint8_t u8;

@@ -30,45 +30,47 @@ PDUSessionResourceSetupItemSURes::PDUSessionResourceSetupItemSURes() {}
 PDUSessionResourceSetupItemSURes::~PDUSessionResourceSetupItemSURes() {}
 
 //------------------------------------------------------------------------------
-void PDUSessionResourceSetupItemSURes::setPDUSessionResourceSetupItemSURes(
-    const PDUSessionID& m_pDUSessionID,
-    const OCTET_STRING_t& m_pDUSessionResourceSetupResponseTransfer) {
-  pDUSessionID = m_pDUSessionID;
-  pDUSessionResourceSetupResponseTransfer =
-      m_pDUSessionResourceSetupResponseTransfer;
+void PDUSessionResourceSetupItemSURes::set(
+    const PDUSessionID& pdu_session_id,
+    const OCTET_STRING_t& pdu_session_resource_setup_response_transfer) {
+  pdu_session_id_ = pdu_session_id;
+  pdu_session_resource_setup_response_transfer_ =
+      pdu_session_resource_setup_response_transfer;
 }
 
 //------------------------------------------------------------------------------
-void PDUSessionResourceSetupItemSURes::getPDUSessionResourceSetupItemSURes(
-    PDUSessionID& m_pDUSessionID,
-    OCTET_STRING_t& m_pDUSessionResourceSetupResponseTransfer) {
-  m_pDUSessionID = pDUSessionID;
-  m_pDUSessionResourceSetupResponseTransfer =
-      pDUSessionResourceSetupResponseTransfer;
+void PDUSessionResourceSetupItemSURes::get(
+    PDUSessionID& pdu_session_id,
+    OCTET_STRING_t& pdu_session_resource_setup_response_transfer) {
+  pdu_session_id = pdu_session_id_;
+  pdu_session_resource_setup_response_transfer =
+      pdu_session_resource_setup_response_transfer_;
 }
 
 //------------------------------------------------------------------------------
-bool PDUSessionResourceSetupItemSURes::encode2PDUSessionResourceSetupItemSURes(
-    Ngap_PDUSessionResourceSetupItemSURes_t* pduSessionResourceSetupItemSURes) {
-  if (!pDUSessionID.encode2PDUSessionID(
-          pduSessionResourceSetupItemSURes->pDUSessionID))
+bool PDUSessionResourceSetupItemSURes::encode(
+    Ngap_PDUSessionResourceSetupItemSURes_t*
+        pdu_session_resource_setup_item_su_res) {
+  if (!pdu_session_id_.encode(
+          pdu_session_resource_setup_item_su_res->pDUSessionID))
     return false;
-  pduSessionResourceSetupItemSURes->pDUSessionResourceSetupResponseTransfer =
-      pDUSessionResourceSetupResponseTransfer;
+  pdu_session_resource_setup_item_su_res
+      ->pDUSessionResourceSetupResponseTransfer =
+      pdu_session_resource_setup_response_transfer_;
 
   return true;
 }
 
 //------------------------------------------------------------------------------
-bool PDUSessionResourceSetupItemSURes::
-    decodefromPDUSessionResourceSetupItemSURes(
-        Ngap_PDUSessionResourceSetupItemSURes_t*
-            pduSessionResourceSetupItemSURes) {
-  if (!pDUSessionID.decodefromPDUSessionID(
-          pduSessionResourceSetupItemSURes->pDUSessionID))
+bool PDUSessionResourceSetupItemSURes::decode(
+    Ngap_PDUSessionResourceSetupItemSURes_t*
+        pdu_session_resource_setup_item_su_res) {
+  if (!pdu_session_id_.decode(
+          pdu_session_resource_setup_item_su_res->pDUSessionID))
     return false;
-  pDUSessionResourceSetupResponseTransfer =
-      pduSessionResourceSetupItemSURes->pDUSessionResourceSetupResponseTransfer;
+  pdu_session_resource_setup_response_transfer_ =
+      pdu_session_resource_setup_item_su_res
+          ->pDUSessionResourceSetupResponseTransfer;
 
   return true;
 }

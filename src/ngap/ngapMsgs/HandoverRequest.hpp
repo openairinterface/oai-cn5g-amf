@@ -69,7 +69,7 @@ class HandoverRequest : public NgapMessage {
       const uint16_t& eUTRAIntegrityProtectionAlgs);
   // TODO: getUESecurityCapabilities
 
-  void setSecurityContext(const long& count, uint8_t* buffer);
+  void setSecurityContext(const long& count, bstring& nh);
   // TODO: getSecurityContext
 
   void setPduSessionResourceSetupList(
@@ -84,8 +84,8 @@ class HandoverRequest : public NgapMessage {
   // TODO: getAllowedNSSAI
 
   void setGUAMI(
-      const PlmnId& m_plmnId, const AMFRegionID& m_aMFRegionID,
-      const AMFSetID& m_aMFSetID, const AMFPointer& m_aMFPointer);
+      const PlmnId& plmnId, const AMFRegionID& aMFRegionID,
+      const AMFSetID& aMFSetID, const AMFPointer& aMFPointer);
   void setGUAMI(
       const std::string& mcc, const std::string& mnc,
       const std::string& regionId, const std::string& setId,
@@ -108,12 +108,13 @@ class HandoverRequest : public NgapMessage {
   // New Security Context Indicator (TODO: Optional)
   // NASC - NAS-PDU (TODO: Optional)
   PDUSessionResourceSetupListHOReq pDUSessionResourceSetupList;  // Mandatory
-  Ngap_AllowedNSSAI_t allowedNSSAI;                              // Mandatory
+  Ngap_AllowedNSSAI_t allowedNSSAI;  // TODO: Mandatory
   // Trace Activation (TODO: Optional)
   // Masked IMEISV  (TODO: Optional)
   Ngap_SourceToTarget_TransparentContainer_t
-      SourceToTarget_TransparentContainer;           // TODO: Mandatory
-  MobilityRestrictionList* mobilityRestrictionList;  // Optional
+      SourceToTarget_TransparentContainer;  // TODO: Mandatory
+  std::optional<MobilityRestrictionList>
+      mobilityRestrictionList;  // TODO: Optional
   // Location Reporting Request Type (TODO: Optional)
   // RRC Inactive Transition Report Request (TODO: Optional)
   GUAMI guami;  // Mandatory

@@ -19,15 +19,8 @@
  *      contact@openairinterface.org
  */
 
-/*! \file
- \brief
- \author  Keliang DU, BUPT
- \date 2020
- \email: contact@openairinterface.org
- */
-
-#ifndef _SERVEDGUAMILIST_H_
-#define _SERVEDGUAMILIST_H_
+#ifndef _SERVED_GUAMI_LIST_H_
+#define _SERVED_GUAMI_LIST_H_
 
 #include "ServedGUAMIItem.hpp"
 #include <vector>
@@ -43,13 +36,13 @@ class ServedGUAMIList {
   ServedGUAMIList();
   virtual ~ServedGUAMIList();
 
-  bool encode2ServedGUAMIList(Ngap_ServedGUAMIList_t*);
-  bool decodefromServedGUAMIList(Ngap_ServedGUAMIList_t*);
+  bool encode(Ngap_ServedGUAMIList_t&);
+  bool decode(const Ngap_ServedGUAMIList_t&);
 
-  void addServedGUAMIItems(const std::vector<ServedGUAMIItem>& list);
-  void getServedGUAMIItems(std::vector<ServedGUAMIItem>& list) const;
+  void set(const std::vector<ServedGUAMIItem>& list);
+  void get(std::vector<ServedGUAMIItem>& list) const;
 
-  void addServedGUAMIItem(const ServedGUAMIItem& item);
+  void addItem(const ServedGUAMIItem& item);
 
  private:
   std::vector<ServedGUAMIItem> itemList;

@@ -29,51 +29,62 @@ namespace ngap {
 
 //------------------------------------------------------------------------------
 AMFSetID::AMFSetID() {
-  setId = 0;
+  id_ = 0;
 }
 
 //------------------------------------------------------------------------------
 AMFSetID::~AMFSetID() {}
 
 //------------------------------------------------------------------------------
-void AMFSetID::setAMFSetID(const std::string& charid) {
-  setId = fromString<uint16_t>(charid);
+bool AMFSetID::set(const std::string& id) {
+  uint16_t tmp = fromString<uint16_t>(id);
+  if (tmp > kAmfSetIdMaxValue) return false;
+  id_ = tmp;
+  return true;
 }
 
 //------------------------------------------------------------------------------
-void AMFSetID::setAMFSetID(const uint16_t& set_id) {
-  setId = set_id;
-}
-//------------------------------------------------------------------------------
-void AMFSetID::getAMFSetID(std::string& charid) {
-  charid = std::to_string(setId);
+bool AMFSetID::set(const uint16_t& id) {
+  if (id > kAmfSetIdMaxValue) return false;
+  id_ = id;
+  return true;
 }
 
 //------------------------------------------------------------------------------
-bool AMFSetID::encode2bitstring(Ngap_AMFSetID_t& amfSetId) {
-  amfSetId.size   = 2;
+void AMFSetID::get(std::string& id) {
+  id = std::to_string(id_);
+}
+
+//------------------------------------------------------------------------------
+void AMFSetID::get(uint16_t& id) {
+  id = id_;
+}
+
+//------------------------------------------------------------------------------
+bool AMFSetID::encode(Ngap_AMFSetID_t& amf_set_id) const {
+  amf_set_id.size = 2;
   uint8_t* buffer = (uint8_t*) calloc(1, sizeof(uint16_t));
   if (!buffer) return false;
-  //*(uint16_t *)buffer = setId & 0x3ff;
-  buffer[0]            = ((setId & 0x03fc) >> 2);
-  buffer[1]            = ((setId & 0x0003) << 6);
-  amfSetId.buf         = buffer;
-  amfSetId.bits_unused = 6;
+  //*(uint16_t *)buffer = id_ & 0x3ff;
+  buffer[0]              = ((id_ & 0x03fc) >> 2);
+  buffer[1]              = ((id_ & 0x0003) << 6);
+  amf_set_id.buf         = buffer;
+  amf_set_id.bits_unused = 6;
 
   return true;
 }
 
 //------------------------------------------------------------------------------
-bool AMFSetID::decodefrombitstring(Ngap_AMFSetID_t& amfSetId) {
-  if (!amfSetId.buf) return false;
-  for (int i = 0; i < amfSetId.size; i++) {
-    printf("%x ", amfSetId.buf[i]);
+bool AMFSetID::decode(const Ngap_AMFSetID_t& amf_set_id) {
+  if (!amf_set_id.buf) return false;
+  for (int i = 0; i < amf_set_id.size; i++) {
+    printf("%x ", amf_set_id.buf[i]);
   }
   printf("\n");
   uint16_t temp = 0;
-  temp |= amfSetId.buf[0] << 8;
-  temp |= amfSetId.buf[1];
-  setId = (temp & 0xffc0) >> 6;  // 1111 1111 11 00 0000
+  temp |= amf_set_id.buf[0] << 8;
+  temp |= amf_set_id.buf[1];
+  id_ = (temp & 0xffc0) >> 6;  // 1111 1111 11 00 0000
 
   return true;
 }

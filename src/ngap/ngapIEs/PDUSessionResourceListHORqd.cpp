@@ -30,42 +30,39 @@ PDUSessionResourceListHORqd::PDUSessionResourceListHORqd() {}
 PDUSessionResourceListHORqd::~PDUSessionResourceListHORqd() {}
 
 //------------------------------------------------------------------------------
-void PDUSessionResourceListHORqd::setPDUSessionResourceListHORqd(
-    const std::vector<PDUSessionResourceItemHORqd>& list) {
-  itemHORqdList = list;
+void PDUSessionResourceListHORqd::set(
+    const std::vector<PDUSessionResourceItem>& list) {
+  item_list_ = list;
 }
 
 //------------------------------------------------------------------------------
-void PDUSessionResourceListHORqd::getPDUSessionResourceListHORqd(
-    std::vector<PDUSessionResourceItemHORqd>& list) {
-  list = itemHORqdList;
+void PDUSessionResourceListHORqd::get(
+    std::vector<PDUSessionResourceItem>& list) {
+  list = item_list_;
 }
 
 //------------------------------------------------------------------------------
-bool PDUSessionResourceListHORqd::encode2PDUSessionResourceListHORqd(
-    Ngap_PDUSessionResourceListHORqd_t* pduSessionResourceListHORQqd) {
-  for (auto& item : itemHORqdList) {
+bool PDUSessionResourceListHORqd::encode(
+    Ngap_PDUSessionResourceListHORqd_t* list) {
+  for (auto& item : item_list_) {
     Ngap_PDUSessionResourceItemHORqd_t* itemHORqd =
         (Ngap_PDUSessionResourceItemHORqd_t*) calloc(
             1, sizeof(Ngap_PDUSessionResourceItemHORqd_t));
     if (!itemHORqd) return false;
-    if (!item.encode2PDUSessionResourceItemHORqd(itemHORqd)) return false;
-    if (ASN_SEQUENCE_ADD(&pduSessionResourceListHORQqd->list, itemHORqd) != 0)
-      return false;
+    if (!item.encode(itemHORqd)) return false;
+    if (ASN_SEQUENCE_ADD(&list->list, itemHORqd) != 0) return false;
   }
 
   return true;
 }
 
 //------------------------------------------------------------------------------
-bool PDUSessionResourceListHORqd::decodefromPDUSessionResourceListHORqd(
-    Ngap_PDUSessionResourceListHORqd_t* pduSessionResourceListHORQqd) {
-  for (int i = 0; i < pduSessionResourceListHORQqd->list.count; i++) {
-    PDUSessionResourceItemHORqd item = {};
-    if (!item.decodefromPDUSessionResourceItemHORqd(
-            pduSessionResourceListHORQqd->list.array[i]))
-      return false;
-    itemHORqdList.push_back(item);
+bool PDUSessionResourceListHORqd::decode(
+    Ngap_PDUSessionResourceListHORqd_t* list) {
+  for (int i = 0; i < list->list.count; i++) {
+    PDUSessionResourceItem item = {};
+    if (!item.decode(list->list.array[i])) return false;
+    item_list_.push_back(item);
   }
 
   return true;

@@ -19,39 +19,43 @@
  *      contact@openairinterface.org
  */
 
-/*! \file
- \brief
- \author  Keliang DU, BUPT
- \date 2020
- \email: contact@openairinterface.org
- */
+#ifndef _NAS_KEY_SET_IDENTIFIER_H
+#define _NAS_KEY_SET_IDENTIFIER_H
 
-#ifndef _NasKeySetIdentifier_H
-#define _NasKeySetIdentifier_H
+#include "Type1NasIe.hpp"
 
-#include <stdint.h>
+constexpr auto kNasKeySetIdentifierName = "NAS Key Set Identifier";
 
 namespace nas {
 
-class NasKeySetIdentifier {
+class NasKeySetIdentifier : public Type1NasIe {
  public:
   NasKeySetIdentifier();
-  NasKeySetIdentifier(const uint8_t iei, uint8_t tsc, uint8_t key_id);
-  NasKeySetIdentifier(uint8_t tsc, uint8_t key_id);
+  NasKeySetIdentifier(
+      const uint8_t& iei, const bool& tsc, const uint8_t& key_id);
+  NasKeySetIdentifier(
+      const bool& tsc, const uint8_t& key_id);  // Default: low position
   ~NasKeySetIdentifier();
 
-  int encode2buffer(uint8_t* buf, int len);
-  int decodefrombuffer(uint8_t* buf, int len, bool is_option, bool is_high);
+  static std::string GetIeName() { return kNasKeySetIdentifierName; }
 
-  void setTypeOfSecurityContext(uint8_t type);
-  void setNasKeyIdentifier(uint8_t id);
-  uint8_t getTypeOfSecurityContext();
-  uint8_t getasKeyIdentifier();
+  void Set(const bool& high_pos);
+  // void Set(const bool& tsc, const uint8_t& key_id);
+  // void Set(const bool& tsc, const uint8_t& key_id, const uint8_t& iei);
+  void Get(bool& tsc, uint8_t& key_id);
+
+  void SetTypeOfSecurityContext(const bool& type);
+  bool GetTypeOfSecurityContext() const;
+
+  void SetNasKeyIdentifier(const uint8_t& id);
+  uint8_t GetNasKeyIdentifier() const;
 
  private:
-  uint8_t iei;
-  uint8_t tsc;
-  uint8_t key_id;
+  void SetValue() override;
+  void GetValue() override;
+
+  bool tsc_;
+  uint8_t key_id_;
 };
 
 }  // namespace nas

@@ -19,13 +19,6 @@
  *      contact@openairinterface.org
  */
 
-/*! \file
- \brief
- \author
- \date 2020
- \email: contact@openairinterface.org
- */
-
 #include "BroadcastPLMNItem.hpp"
 
 #include "PlmnId.hpp"
@@ -64,14 +57,14 @@ void BroadcastPLMNItem::getPlmnSliceSupportList(
 //------------------------------------------------------------------------------
 bool BroadcastPLMNItem::encode2BroadcastPLMNItem(
     Ngap_BroadcastPLMNItem_t* plmnItem) {
-  if (!plmn.encode2octetstring(plmnItem->pLMNIdentity)) return false;
+  if (!plmn.encode(plmnItem->pLMNIdentity)) return false;
 
   for (std::vector<S_NSSAI>::iterator it = std::begin(supportedSliceList);
        it < std::end(supportedSliceList); ++it) {
     Ngap_SliceSupportItem_t* slice =
         (Ngap_SliceSupportItem_t*) calloc(1, sizeof(Ngap_SliceSupportItem_t));
     if (!slice) return false;
-    if (!it->encode2S_NSSAI(&slice->s_NSSAI)) return false;
+    if (!it->encode(&slice->s_NSSAI)) return false;
     if (ASN_SEQUENCE_ADD(&plmnItem->tAISliceSupportList.list, slice) != 0)
       return false;
   }
@@ -81,11 +74,10 @@ bool BroadcastPLMNItem::encode2BroadcastPLMNItem(
 //------------------------------------------------------------------------------
 bool BroadcastPLMNItem::decodefromBroadcastPLMNItem(
     Ngap_BroadcastPLMNItem_t* pdu) {
-  if (!plmn.decodefromoctetstring(pdu->pLMNIdentity)) return false;
+  if (!plmn.decode(pdu->pLMNIdentity)) return false;
   for (int i = 0; i < pdu->tAISliceSupportList.list.count; i++) {
     S_NSSAI snssai = {};
-    if (!snssai.decodefromS_NSSAI(
-            &pdu->tAISliceSupportList.list.array[i]->s_NSSAI))
+    if (!snssai.decode(&pdu->tAISliceSupportList.list.array[i]->s_NSSAI))
       return false;
     supportedSliceList.push_back(snssai);
   }

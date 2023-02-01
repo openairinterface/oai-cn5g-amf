@@ -19,13 +19,6 @@
  *      contact@openairinterface.org
  */
 
-/*! \file sha256.hpp
- \brief
- \author  Keliang DU, BUPT
- \date 2020
- \email: contact@openairinterface.org
- */
-
 #ifndef Sha256_H
 #define Sha256_H
 #include <string>

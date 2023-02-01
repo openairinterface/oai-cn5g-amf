@@ -19,38 +19,36 @@
  *      contact@openairinterface.org
  */
 
-/*! \file
- \brief
- \author  Keliang DU, BUPT
- \date 2020
- \email: contact@openairinterface.org
- */
+#ifndef _EXTENDED_DRX_PARAMETERS_H_
+#define _EXTENDED_DRX_PARAMETERS_H_
 
-#ifndef __Extended_DRX_Parameters_H_
-#define __Extended_DRX_Parameters_H_
+#include "Type4NasIe.hpp"
 
-#include <stdint.h>
+constexpr uint8_t kExtendedDrxParametersLength = 3;
+constexpr auto kExtendedDrxParametersIeName    = "Extended DRX Parameters";
 
 namespace nas {
 
-class Extended_DRX_Parameters {
+class Extended_DRX_Parameters : public Type4NasIe {
  public:
   Extended_DRX_Parameters();
-  Extended_DRX_Parameters(uint8_t iei);
-  Extended_DRX_Parameters(
-      const uint8_t iei, uint8_t paging_time, uint8_t value);
+  Extended_DRX_Parameters(uint8_t paging_time, uint8_t value);
   ~Extended_DRX_Parameters();
-  int encode2buffer(uint8_t* buf, int len);
-  int decodefrombuffer(uint8_t* buf, int len, bool is_option);
+
+  static std::string GetIeName() { return kExtendedDrxParametersIeName; }
+
+  int Encode(uint8_t* buf, int len);
+  int Decode(uint8_t* buf, int len, bool is_iei);
+
   void setValue(uint8_t value);
-  uint8_t getValue();
+  uint8_t getValue() const;
+
   void setPaging_time(uint8_t value);
-  uint8_t getPaging_time();
+  uint8_t getPaging_time() const;
 
  private:
-  uint8_t _iei;
-  uint8_t _paging_time;
-  uint8_t _value;
+  uint8_t paging_time_;
+  uint8_t e_drx_value_;
 };
 }  // namespace nas
 

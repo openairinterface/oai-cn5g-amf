@@ -19,13 +19,6 @@
  *      contact@openairinterface.org
  */
 
-/*! \file
- \brief
- \author  Keliang DU, BUPT
- \date 2020
- \email: contact@openairinterface.org
- */
-
 #ifndef _USERLOCATIONINFORMATIONEUTRA_H_
 #define _USERLOCATIONINFORMATIONEUTRA_H_
 
@@ -43,23 +36,19 @@ class UserLocationInformationEUTRA {
   UserLocationInformationEUTRA();
   virtual ~UserLocationInformationEUTRA();
 
-  void setInformationEUTRA(EUTRA_CGI* m_eUTRA_CGI, TAI* m_tAI);
-  // void setInformationEUTRA(EUTRA_CGI* m_eUTRA_CGI,TAI* m_tAI,TimeStamp*
-  // m_timeStamp);
-  bool encode2UserLocationInformationEUTRA(
-      Ngap_UserLocationInformationEUTRA_t* userLocationInformation);
-  bool decodefromUserLocationInformationEUTRA(
-      Ngap_UserLocationInformationEUTRA_t* userLocationInformation);
-  // void getInformationEUTRA(EUTRA_CGI* &m_eUTRA_CGI,TAI* &m_tAI,TimeStamp*
-  // &m_timeStamp);
-  void getInformationEUTRA(EUTRA_CGI*& m_eUTRA_CGI, TAI*& m_tAI);
+  void set(const EUTRA_CGI& m_eUTRA_CGI, const TAI& m_tAI);
+  void get(EUTRA_CGI& m_eUTRA_CGI, TAI& m_tAI);
+
   // bool getTimeStampPresence();
 
+  bool encode(Ngap_UserLocationInformationEUTRA_t* userLocationInformation);
+  bool decode(Ngap_UserLocationInformationEUTRA_t* userLocationInformation);
+
  private:
-  EUTRA_CGI* eUTRA_CGI;
-  TAI* tAI;
-  // bool istimeStampSet;
-  // TimeStamp *timeStamp;
+  EUTRA_CGI eUTRA_CGI;  // Mandatory
+  TAI tAI;              // Mandatory
+  // TODO: TimeStamp *timeStamp; //Age of Location (Optional)
+  // TODO: NG-RAN CGI (PSCell Information) (Optional)
 };
 
 }  // namespace ngap

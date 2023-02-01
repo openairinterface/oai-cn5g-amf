@@ -19,17 +19,7 @@
  *      contact@openairinterface.org
  */
 
-/*! \file
- \brief
- \author  Keliang DU, BUPT
- \date 2020
- \email: contact@openairinterface.org
- */
-
 #include "AdditionalQosFlowInformation.hpp"
-
-#include <iostream>
-using namespace std;
 
 namespace ngap {
 

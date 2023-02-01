@@ -19,13 +19,6 @@
  *      contact@openairinterface.org
  */
 
-/*! \file
- \brief
- \author  Keliang DU, BUPT
- \date 2020
- \email: contact@openairinterface.org
- */
-
 #ifndef _CORENETWORKASSISTANCEINFORMATION_H_
 #define _CORENETWORKASSISTANCEINFORMATION_H_
 
@@ -34,6 +27,8 @@
 #include "PeriodicRegistrationUpdateTimer.hpp"
 #include "TAI.hpp"
 #include "UEIdentityIndexValue.hpp"
+
+#include <optional>
 
 extern "C" {
 #include "Ngap_CoreNetworkAssistanceInformation.h"
@@ -46,31 +41,29 @@ class CoreNetworkAssistanceInfo {
   CoreNetworkAssistanceInfo();
   virtual ~CoreNetworkAssistanceInfo();
 
-  void setCoreNetworkAssistanceInfo(
-      const UEIdentityIndexValue& m_ueIdentityIndexValue,
-      DefaultPagingDRX* m_pagingDRX,
-      const PeriodicRegistrationUpdateTimer& m_periodicRegUpdateTimer,
-      const bool& m_micoModeInd, const std::vector<TAI>& m_tai);
+  void set(
+      const UEIdentityIndexValue& ue_identity_index_value,
+      const DefaultPagingDRX& paging_drx,
+      const PeriodicRegistrationUpdateTimer& periodic_reg_update_timer,
+      const bool& mico_mode_ind, const std::vector<TAI>& tai);
 
-  void getCoreNetworkAssistanceInfo(
-      UEIdentityIndexValue& m_ueIdentityIndexValue,
-      DefaultPagingDRX*& m_pagingDRX,
-      PeriodicRegistrationUpdateTimer& m_periodicRegUpdateTimer,
-      bool& m_micoModeInd, std::vector<TAI>& m_tai);
+  void get(
+      UEIdentityIndexValue& ue_identity_index_value,
+      std::optional<DefaultPagingDRX>& paging_drx,
+      PeriodicRegistrationUpdateTimer& periodic_reg_update_timer,
+      bool& mico_mode_ind, std::vector<TAI>& tai);
 
-  bool encode2CoreNetworkAssistanceInfo(Ngap_CoreNetworkAssistanceInformation_t*
-                                            coreNetworkAssistanceInformation);
-  bool decodefromCoreNetworkAssistanceInfo(
-      Ngap_CoreNetworkAssistanceInformation_t*
-          coreNetworkAssistanceInformation);
+  bool encode(Ngap_CoreNetworkAssistanceInformation_t*
+                  core_network_assistance_information);
+  bool decode(Ngap_CoreNetworkAssistanceInformation_t*
+                  core_network_assistance_information);
 
  private:
   UEIdentityIndexValue ueIdentityIndexValue;  // Mandatory
-  DefaultPagingDRX* pagingDRX;                // UE Specific DRX, Optional
+  std::optional<DefaultPagingDRX> pagingDRX;  // UE Specific DRX, Optional
   PeriodicRegistrationUpdateTimer periodicRegUpdateTimer;  // Mandatory
-  MICOModeIndication* micoModeInd;                         // Optional
-  std::vector<TAI> taiList;                                // Mandatory
-  // int numoftai;
+  std::optional<MICOModeIndication> micoModeInd;           // Optional
+  std::vector<TAI> taiList;  // TAI List for RRC Inactive, Mandatory
   // TODO: Expected UE Behaviour (Optional)
 };
 

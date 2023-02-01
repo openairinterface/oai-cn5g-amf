@@ -29,6 +29,7 @@
 #define FILE_THREAD_SCHED_HPP_SEEN
 
 #include <sched.h>
+
 #include "logger.hpp"
 
 namespace util {

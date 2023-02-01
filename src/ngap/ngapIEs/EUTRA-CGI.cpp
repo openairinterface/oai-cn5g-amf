@@ -19,59 +19,41 @@
  *      contact@openairinterface.org
  */
 
-/*! \file
- \brief
- \author  Keliang DU, BUPT
- \date 2020
- \email: contact@openairinterface.org
- */
 #include "EUTRA-CGI.hpp"
-
-#include <iostream>
-using namespace std;
 
 namespace ngap {
 
 //------------------------------------------------------------------------------
-EUTRA_CGI::EUTRA_CGI() {
-  plmnId            = NULL;
-  eUTRACellIdentity = NULL;
-}
+EUTRA_CGI::EUTRA_CGI() {}
 
 //------------------------------------------------------------------------------
 EUTRA_CGI::~EUTRA_CGI() {}
 
 //------------------------------------------------------------------------------
-void EUTRA_CGI::setEUTRA_CGI(
-    PlmnId* m_plmnId, EUTRACellIdentity* m_eUTRACellIdentity) {
-  plmnId            = m_plmnId;
-  eUTRACellIdentity = m_eUTRACellIdentity;
+void EUTRA_CGI::set(
+    const PlmnId& plmn_id, const EUTRACellIdentity& eUTRA_cell_identity) {
+  plmn_id_             = plmn_id;
+  eUTRA_cell_identity_ = eUTRA_cell_identity;
 }
 
 //------------------------------------------------------------------------------
-bool EUTRA_CGI::encode2EUTRA_CGI(Ngap_EUTRA_CGI_t* eutra_cgi) {
-  if (!plmnId->encode2octetstring(eutra_cgi->pLMNIdentity)) return false;
-  if (!eUTRACellIdentity->encode2bitstring(eutra_cgi->eUTRACellIdentity))
-    return false;
+bool EUTRA_CGI::encode(Ngap_EUTRA_CGI_t& eutra_cgi) {
+  if (!plmn_id_.encode(eutra_cgi.pLMNIdentity)) return false;
+  if (!eUTRA_cell_identity_.encode(eutra_cgi.eUTRACellIdentity)) return false;
 
   return true;
 }
 
 //------------------------------------------------------------------------------
-bool EUTRA_CGI::decodefromEUTRA_CGI(Ngap_EUTRA_CGI_t* eutra_cgi) {
-  if (plmnId == nullptr) plmnId = new PlmnId();
-  if (eUTRACellIdentity == nullptr) eUTRACellIdentity = new EUTRACellIdentity();
-  if (!plmnId->decodefromoctetstring(eutra_cgi->pLMNIdentity)) return false;
-  if (!eUTRACellIdentity->decodefrombitstring(eutra_cgi->eUTRACellIdentity))
-    return false;
-
+bool EUTRA_CGI::decode(Ngap_EUTRA_CGI_t& eutra_cgi) {
+  if (!plmn_id_.decode(eutra_cgi.pLMNIdentity)) return false;
+  if (!eUTRA_cell_identity_.decode(eutra_cgi.eUTRACellIdentity)) return false;
   return true;
 }
 
 //------------------------------------------------------------------------------
-void EUTRA_CGI::getEUTRA_CGI(
-    PlmnId*& m_plmnId, EUTRACellIdentity*& m_eUTRACellIdentity) {
-  m_plmnId            = plmnId;
-  m_eUTRACellIdentity = eUTRACellIdentity;
+void EUTRA_CGI::get(PlmnId& plmn_id, EUTRACellIdentity& eUTRA_cell_identity) {
+  plmn_id             = plmn_id_;
+  eUTRA_cell_identity = eUTRA_cell_identity_;
 }
 }  // namespace ngap

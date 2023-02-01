@@ -19,63 +19,52 @@
  *      contact@openairinterface.org
  */
 
-/*! \file
- \brief
- \author  Keliang DU, BUPT
- \date 2020
- \email: contact@openairinterface.org
- */
-
 #include "UERadioCapabilityForPagingOfEUTRA.hpp"
+
+#include "conversions.hpp"
 
 namespace ngap {
 
 //------------------------------------------------------------------------------
-UERadioCapabilityForPagingOfEUTRA::UERadioCapabilityForPagingOfEUTRA() {
-  EUTRAbuffer       = NULL;
-  sizeofEUTRAbuffer = -1;
-}
+UERadioCapabilityForPagingOfEUTRA::UERadioCapabilityForPagingOfEUTRA() {}
 
 //------------------------------------------------------------------------------
 UERadioCapabilityForPagingOfEUTRA::~UERadioCapabilityForPagingOfEUTRA() {}
 
 //------------------------------------------------------------------------------
-bool UERadioCapabilityForPagingOfEUTRA::
-    encode2UERadioCapabilityForPagingOfEUTRA(
-        Ngap_UERadioCapabilityForPagingOfEUTRA_t*
-            ueRadioCapabilityForPagingOfEUTRA) {
-  int ret;
-  ret = OCTET_STRING_fromBuf(
-      ueRadioCapabilityForPagingOfEUTRA, EUTRAbuffer, sizeofEUTRAbuffer);
-  if (ret != 0) return false;
-  return true;
+bool UERadioCapabilityForPagingOfEUTRA::encode(
+    Ngap_UERadioCapabilityForPagingOfEUTRA_t*
+        ueRadioCapabilityForPagingOfEUTRA) {
+  return conv::octet_string_copy(
+      *ueRadioCapabilityForPagingOfEUTRA, ue_radio_capability_);
 }
 
 //------------------------------------------------------------------------------
-bool UERadioCapabilityForPagingOfEUTRA::
-    decodefromUERadioCapabilityForPagingOfEUTRA(
-        Ngap_UERadioCapabilityForPagingOfEUTRA_t*
-            ueRadioCapabilityForPagingOfEUTRA) {
-  EUTRAbuffer       = (char*) ueRadioCapabilityForPagingOfEUTRA->buf;
-  sizeofEUTRAbuffer = ueRadioCapabilityForPagingOfEUTRA->size;
-  return true;
+bool UERadioCapabilityForPagingOfEUTRA::decode(
+    Ngap_UERadioCapabilityForPagingOfEUTRA_t*
+        ueRadioCapabilityForPagingOfEUTRA) {
+  return conv::octet_string_copy(
+      ue_radio_capability_, *ueRadioCapabilityForPagingOfEUTRA);
 }
 
 //------------------------------------------------------------------------------
-bool UERadioCapabilityForPagingOfEUTRA::getUERadioCapabilityForPagingOfEUTRA(
-    uint8_t*& buffer, size_t& size) {
-  buffer = (uint8_t*) EUTRAbuffer;
-  size   = sizeofEUTRAbuffer;
-  if (!EUTRAbuffer) return false;
-  if (sizeofEUTRAbuffer < 0) return false;
-
-  return true;
+bool UERadioCapabilityForPagingOfEUTRA::set(const OCTET_STRING_t& capability) {
+  return conv::octet_string_copy(ue_radio_capability_, capability);
 }
 
 //------------------------------------------------------------------------------
-void UERadioCapabilityForPagingOfEUTRA::setUERadioCapabilityForPagingOfEUTRA(
-    uint8_t* buffer, size_t size) {
-  EUTRAbuffer       = (char*) buffer;
-  sizeofEUTRAbuffer = size;
+bool UERadioCapabilityForPagingOfEUTRA::get(OCTET_STRING_t& capability) {
+  return conv::octet_string_copy(capability, ue_radio_capability_);
 }
+
+//------------------------------------------------------------------------------
+bool UERadioCapabilityForPagingOfEUTRA::set(const bstring& capability) {
+  return conv::bstring_2_octet_string(capability, ue_radio_capability_);
+}
+
+//------------------------------------------------------------------------------
+bool UERadioCapabilityForPagingOfEUTRA::get(bstring& capability) {
+  return conv::octet_string_2_bstring(ue_radio_capability_, capability);
+}
+
 }  // namespace ngap

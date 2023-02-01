@@ -19,13 +19,6 @@
  *      contact@openairinterface.org
  */
 
-/*! \file
- \brief
- \author
- \date 2021
- \email: contact@openairinterface.org
- */
-
 #include "ResetType.hpp"
 extern "C" {
 #include "dynamic_memory_check.h"
@@ -38,10 +31,10 @@ namespace ngap {
 
 //------------------------------------------------------------------------------
 ResetType::ResetType() {
-  present                              = Ngap_ResetType_PR_NOTHING;
-  nG_Interface                         = 0;
-  partOfNG_Interface                   = nullptr;
-  ueAssociationLogicalNGConnectionItem = nullptr;
+  present                             = Ngap_ResetType_PR_NOTHING;
+  nG_Interface                        = 0;
+  partOfNG_Interface                  = nullptr;
+  ueAssociatedLogicalNGConnectionItem = nullptr;
 }
 
 //------------------------------------------------------------------------------
@@ -55,14 +48,14 @@ void ResetType::setResetType(long nG_Interface) {
 
 //------------------------------------------------------------------------------
 void ResetType::setResetType(
-    std::vector<UEAssociationLogicalNGConnectionItem> list) {
+    std::vector<UEAssociatedLogicalNGConnectionItem> list) {
   this->present = Ngap_ResetType_PR_partOfNG_Interface;
 
   if (!partOfNG_Interface) {
-    partOfNG_Interface = (UEAssociationLogicalNGConnectionList*) calloc(
-        1, sizeof(UEAssociationLogicalNGConnectionList));
+    partOfNG_Interface = (UEAssociatedLogicalNGConnectionList*) calloc(
+        1, sizeof(UEAssociatedLogicalNGConnectionList));
   }
-  partOfNG_Interface->setUEAssociationLogicalNGConnectionItem(list);
+  partOfNG_Interface->set(list);
 }
 
 //------------------------------------------------------------------------------
@@ -86,7 +79,7 @@ bool ResetType::decode(Ngap_ResetType_t* type) {
     return true;
   } else if (type->present == Ngap_ResetType_PR_partOfNG_Interface) {
     int num_item       = type->choice.partOfNG_Interface->list.count;
-    partOfNG_Interface = new UEAssociationLogicalNGConnectionList();
+    partOfNG_Interface = new UEAssociatedLogicalNGConnectionList();
     partOfNG_Interface->decode(type->choice.partOfNG_Interface);
   } else {
     return false;
@@ -111,18 +104,18 @@ void ResetType::getUE_associatedLogicalNG_connectionList(
 
 //------------------------------------------------------------------------------
 void ResetType::setUE_associatedLogicalNG_connectionList(
-    std::vector<UEAssociationLogicalNGConnectionItem> list) {
+    std::vector<UEAssociatedLogicalNGConnectionItem> list) {
   if (!partOfNG_Interface) {
-    partOfNG_Interface = new UEAssociationLogicalNGConnectionList();
+    partOfNG_Interface = new UEAssociatedLogicalNGConnectionList();
   }
-  partOfNG_Interface->setUEAssociationLogicalNGConnectionItem(list);
+  partOfNG_Interface->set(list);
 }
 
 //------------------------------------------------------------------------------
 void ResetType::getUE_associatedLogicalNG_connectionList(
-    std::vector<UEAssociationLogicalNGConnectionItem>& list) {
+    std::vector<UEAssociatedLogicalNGConnectionItem>& list) {
   if (partOfNG_Interface) {
-    partOfNG_Interface->getUEAssociationLogicalNGConnectionItem(list);
+    partOfNG_Interface->get(list);
   }
 }
 

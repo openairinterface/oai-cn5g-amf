@@ -22,8 +22,11 @@
 #ifndef _INITIAL_CONTEXT_SETUP_FAILURE_H_
 #define _INITIAL_CONTEXT_SETUP_FAILURE_H_
 
+#include "Cause.hpp"
 #include "PDUSessionResourceFailedToSetupListCxtFail.hpp"
 #include "NgapUEMessage.hpp"
+
+#include <optional>
 
 extern "C" {
 #include "Ngap_InitialContextSetupFailure.h"
@@ -46,11 +49,17 @@ class InitialContextSetupFailureMsg : public NgapUEMessage {
   bool getPduSessionResourceFailedToSetupList(
       std::vector<PDUSessionResourceFailedToSetupItem_t>& list);
 
+  void setCause(const long& cause, const Ngap_Cause_PR& cause_present);
+  void setCause(const Cause& cause);
+  void getCause(Cause& cause) const;
+
  private:
   Ngap_InitialContextSetupFailure_t* initialContextSetupFailureIEs;
 
-  PDUSessionResourceFailedToSetupListCxtFail*
+  std::optional<PDUSessionResourceFailedToSetupListCxtFail>
       pduSessionResourceFailedToSetupFailureList;  // Optional
+  Cause cause_;                                    // Mandatory
+  // TODO: Criticality Diagnostics //Optional
 };
 
 }  // namespace ngap

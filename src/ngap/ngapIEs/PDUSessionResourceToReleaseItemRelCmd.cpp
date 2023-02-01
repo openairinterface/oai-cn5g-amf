@@ -32,48 +32,44 @@ PDUSessionResourceToReleaseItemRelCmd::
     ~PDUSessionResourceToReleaseItemRelCmd() {}
 
 //------------------------------------------------------------------------------
-void PDUSessionResourceToReleaseItemRelCmd::
-    setPDUSessionResourceToReleaseItemRelCmd(
-        const PDUSessionID& m_pDUSessionID,
-        const OCTET_STRING_t& m_pDUSessionResourceReleaseCommandTransfer) {
-  pDUSessionID = m_pDUSessionID;
-  pDUSessionResourceReleaseCommandTransfer =
-      m_pDUSessionResourceReleaseCommandTransfer;
+void PDUSessionResourceToReleaseItemRelCmd::set(
+    const PDUSessionID& pdu_session_id,
+    const OCTET_STRING_t& pdu_session_resource_release_command_transfer) {
+  pdu_session_id_ = pdu_session_id;
+  pdu_session_resource_release_command_transfer_ =
+      pdu_session_resource_release_command_transfer;
 }
 
 //------------------------------------------------------------------------------
-void PDUSessionResourceToReleaseItemRelCmd::
-    getPDUSessionResourceToReleaseItemRelCmd(
-        PDUSessionID& m_pDUSessionID,
-        OCTET_STRING_t& m_pDUSessionResourceReleaseCommandTransfer) {
-  m_pDUSessionID = pDUSessionID;
-  m_pDUSessionResourceReleaseCommandTransfer =
-      pDUSessionResourceReleaseCommandTransfer;
+void PDUSessionResourceToReleaseItemRelCmd::get(
+    PDUSessionID& pdu_session_id,
+    OCTET_STRING_t& pdu_session_resource_release_command_transfer) {
+  pdu_session_id = pdu_session_id_;
+  pdu_session_resource_release_command_transfer =
+      pdu_session_resource_release_command_transfer_;
 }
 
 //------------------------------------------------------------------------------
-bool PDUSessionResourceToReleaseItemRelCmd::
-    encode2PDUSessionResourceToReleaseItemRelCmd(
-        Ngap_PDUSessionResourceToReleaseItemRelCmd_t*
-            pduSessionResourceToReleaseItemRelCmd) {
-  if (!pDUSessionID.encode2PDUSessionID(
-          pduSessionResourceToReleaseItemRelCmd->pDUSessionID))
+bool PDUSessionResourceToReleaseItemRelCmd::encode(
+    Ngap_PDUSessionResourceToReleaseItemRelCmd_t*
+        pdu_session_resource_to_release_item_rel_cmd) {
+  if (!pdu_session_id_.encode(
+          pdu_session_resource_to_release_item_rel_cmd->pDUSessionID))
     return false;
 
-  pduSessionResourceToReleaseItemRelCmd
+  pdu_session_resource_to_release_item_rel_cmd
       ->pDUSessionResourceReleaseCommandTransfer =
-      pDUSessionResourceReleaseCommandTransfer;
+      pdu_session_resource_release_command_transfer_;
 
   return true;
 }
 
 //------------------------------------------------------------------------------
-bool PDUSessionResourceToReleaseItemRelCmd::
-    decodefromPDUSessionResourceToReleaseItemRelCmd(
-        Ngap_PDUSessionResourceToReleaseItemRelCmd_t*
-            pduSessionResourceToReleaseItemRelCmd) {
-  pDUSessionResourceReleaseCommandTransfer =
-      pduSessionResourceToReleaseItemRelCmd
+bool PDUSessionResourceToReleaseItemRelCmd::decode(
+    Ngap_PDUSessionResourceToReleaseItemRelCmd_t*
+        pdu_session_resource_to_release_item_rel_cmd) {
+  pdu_session_resource_release_command_transfer_ =
+      pdu_session_resource_to_release_item_rel_cmd
           ->pDUSessionResourceReleaseCommandTransfer;
 
   return true;

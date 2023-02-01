@@ -19,52 +19,39 @@
  *      contact@openairinterface.org
  */
 
-/*! \file
- \brief
- \author  Keliang DU, BUPT
- \date 2020
- \email: contact@openairinterface.org
- */
-
 #include "RelativeAMFCapacity.hpp"
-
-#include <iostream>
-using namespace std;
 
 namespace ngap {
 
 //------------------------------------------------------------------------------
 RelativeAMFCapacity::RelativeAMFCapacity() {
-  amfcapacity = 0;
+  amf_capacity_ = 0;
 }
 
 //------------------------------------------------------------------------------
 RelativeAMFCapacity::~RelativeAMFCapacity() {}
 
 //------------------------------------------------------------------------------
-void RelativeAMFCapacity::setValue(long m_amfcapacity) {
-  amfcapacity = m_amfcapacity;
-  if (m_amfcapacity > 255)
-    cout << "[Warning] RelativeAMFCapacity > 255 !" << endl;
+void RelativeAMFCapacity::setValue(uint8_t amf_capacity) {
+  amf_capacity_ = amf_capacity;
 }
 
 //------------------------------------------------------------------------------
-long RelativeAMFCapacity::getValue() {
-  return amfcapacity;
+uint8_t RelativeAMFCapacity::getValue() const {
+  return amf_capacity_;
 }
 
 //------------------------------------------------------------------------------
-bool RelativeAMFCapacity::encode2RelativeAMFCapacity(
-    Ngap_RelativeAMFCapacity_t* amfCapacityIe) {
-  *amfCapacityIe = amfcapacity;
+bool RelativeAMFCapacity::encode(
+    Ngap_RelativeAMFCapacity_t& amf_capacity_ie) const {
+  amf_capacity_ie = amf_capacity_;
   return true;
 }
 
 //------------------------------------------------------------------------------
-bool RelativeAMFCapacity::decodefromRelativeAMFCapacity(
-    Ngap_RelativeAMFCapacity_t* pdu) {
-  amfcapacity = *pdu;
-
+bool RelativeAMFCapacity::decode(
+    const Ngap_RelativeAMFCapacity_t& amf_capacity_ie) {
+  amf_capacity_ = (uint8_t) amf_capacity_ie;
   return true;
 }
 

@@ -19,11 +19,7 @@
  *      contact@openairinterface.org
  */
 
-/*! \file snow3g.c
- \brief
- \date 2020
- \email: contact@openairinterface.org
- */
+#include "snow3g.h"
 
 #include <stdint.h>
 #include <stdio.h>
@@ -31,7 +27,6 @@
 #include <string.h>
 
 #include "rijndael.h"
-#include "snow3g.h"
 
 static uint8_t _MULx(uint8_t V, uint8_t c);
 static uint8_t _MULxPOW(uint8_t V, uint8_t i, uint8_t c);

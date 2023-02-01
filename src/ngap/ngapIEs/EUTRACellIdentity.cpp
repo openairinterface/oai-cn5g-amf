@@ -19,13 +19,6 @@
  *      contact@openairinterface.org
  */
 
-/*! \file
- \brief
- \author  Keliang DU, BUPT
- \date 2020
- \email: contact@openairinterface.org
- */
-
 #include "EUTRACellIdentity.hpp"
 
 #include <iostream>
@@ -35,47 +28,47 @@ namespace ngap {
 
 //------------------------------------------------------------------------------
 EUTRACellIdentity::EUTRACellIdentity() {
-  eutracellidentity = 0;
+  id_ = 0;
 }
 
 //------------------------------------------------------------------------------
 EUTRACellIdentity::~EUTRACellIdentity() {}
 
 //------------------------------------------------------------------------------
-void EUTRACellIdentity::setEUTRACellIdentity(uint32_t m_eutracellidentity) {
-  eutracellidentity = m_eutracellidentity;
+bool EUTRACellIdentity::set(const uint32_t& id) {
+  if (id > kEUTRACellIdentityMaxValue) return false;
+  id_ = id;
+  return true;
 }
 
 //------------------------------------------------------------------------------
-bool EUTRACellIdentity::encode2bitstring(
-    Ngap_EUTRACellIdentity_t& eUTRACellIdentity) {
-  eUTRACellIdentity.bits_unused = 4;
-  eUTRACellIdentity.size        = 4;
-  eUTRACellIdentity.buf         = (uint8_t*) calloc(1, sizeof(uint32_t));
-  if (!eUTRACellIdentity.buf) return false;
-  eUTRACellIdentity.buf[3] = eutracellidentity & 0x000000ff;
-  eUTRACellIdentity.buf[2] = (eutracellidentity & 0x0000ff00) >> 8;
-  eUTRACellIdentity.buf[1] = (eutracellidentity & 0x00ff0000) >> 16;
-  eUTRACellIdentity.buf[0] = (eutracellidentity & 0xff000000) >> 24;
+uint32_t EUTRACellIdentity::get() {
+  return id_;
+}
+
+//------------------------------------------------------------------------------
+bool EUTRACellIdentity::encode(Ngap_EUTRACellIdentity_t& eUTRA_cell_identity) {
+  eUTRA_cell_identity.bits_unused = 4;  // 28 = 4*8 - 4 bits
+  eUTRA_cell_identity.size        = 4;
+  eUTRA_cell_identity.buf         = (uint8_t*) calloc(1, sizeof(uint32_t));
+  if (!eUTRA_cell_identity.buf) return false;
+  eUTRA_cell_identity.buf[3] = id_ & 0x000000ff;
+  eUTRA_cell_identity.buf[2] = (id_ & 0x0000ff00) >> 8;
+  eUTRA_cell_identity.buf[1] = (id_ & 0x00ff0000) >> 16;
+  eUTRA_cell_identity.buf[0] = (id_ & 0xff000000) >> 24;
 
   return true;
 }
 
 //------------------------------------------------------------------------------
-bool EUTRACellIdentity::decodefrombitstring(
-    Ngap_EUTRACellIdentity_t& eUTRACellIdentity) {
-  if (!eUTRACellIdentity.buf) return false;
+bool EUTRACellIdentity::decode(Ngap_EUTRACellIdentity_t& eUTRA_cell_identity) {
+  if (!eUTRA_cell_identity.buf) return false;
 
-  eutracellidentity = eUTRACellIdentity.buf[0] << 24;
-  eutracellidentity |= eUTRACellIdentity.buf[1] << 16;
-  eutracellidentity |= eUTRACellIdentity.buf[2] << 8;
-  eutracellidentity |= eUTRACellIdentity.buf[3];
+  id_ = eUTRA_cell_identity.buf[0] << 24;
+  id_ |= eUTRA_cell_identity.buf[1] << 16;
+  id_ |= eUTRA_cell_identity.buf[2] << 8;
+  id_ |= eUTRA_cell_identity.buf[3];
 
   return true;
-}
-
-//------------------------------------------------------------------------------
-uint32_t EUTRACellIdentity::getEUTRACellIdentity() {
-  return eutracellidentity;
 }
 }  // namespace ngap

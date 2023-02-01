@@ -19,15 +19,10 @@
  *      contact@openairinterface.org
  */
 
-/*! \file
- \brief
- \author  Keliang DU, BUPT
- \date 2020
- \email: contact@openairinterface.org
- */
+#ifndef _UE_RADIO_CAPABILITY_FOR_PAGING_OF_NR_H_
+#define _UE_RADIO_CAPABILITY_FOR_PAGING_OF_NR_H_
 
-#ifndef _UERADIOCAPABILITYFORPAGINGOFNR_H_
-#define _UERADIOCAPABILITYFORPAGINGOFNR_H_
+#include "bstrlib.h"
 
 extern "C" {
 #include "Ngap_UERadioCapabilityForPagingOfNR.h"
@@ -40,16 +35,19 @@ class UERadioCapabilityForPagingOfNR {
   UERadioCapabilityForPagingOfNR();
   virtual ~UERadioCapabilityForPagingOfNR();
 
-  bool encode2UERadioCapabilityForPagingOfNR(
+  bool encode(
       Ngap_UERadioCapabilityForPagingOfNR_t* ueRadioCapabilityForPagingOfNR);
-  bool decodefromUERadioCapabilityForPagingOfNR(
+  bool decode(
       Ngap_UERadioCapabilityForPagingOfNR_t* ueRadioCapabilityForPagingOfNR);
-  bool getUERadioCapabilityForPagingOfNR(uint8_t*& buffer, size_t& size);
-  void setUERadioCapabilityForPagingOfNR(uint8_t* buffer, size_t size);
+
+  bool set(const OCTET_STRING_t& capability);
+  bool get(OCTET_STRING_t& capability);
+
+  bool set(const bstring& capability);
+  bool get(bstring& capability);
 
  private:
-  char* nRbuffer;
-  size_t sizeofnRbuffer;
+  OCTET_STRING_t ue_radio_capability_;
 };
 
 }  // namespace ngap

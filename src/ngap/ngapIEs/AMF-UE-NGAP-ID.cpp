@@ -19,47 +19,40 @@
  *      contact@openairinterface.org
  */
 
-/*! \file
- \brief
- \author  Keliang DU, BUPT
- \date 2020
- \email: contact@openairinterface.org
- */
-
 #include "AMF-UE-NGAP-ID.hpp"
-
-#include <iostream>
-using namespace std;
 
 namespace ngap {
 
 //------------------------------------------------------------------------------
 AMF_UE_NGAP_ID::AMF_UE_NGAP_ID() {
-  amfUeNgapId = 0;
+  id_ = 0;
 }
 
 //------------------------------------------------------------------------------
 AMF_UE_NGAP_ID::~AMF_UE_NGAP_ID() {}
 
 //------------------------------------------------------------------------------
-void AMF_UE_NGAP_ID::setAMF_UE_NGAP_ID(unsigned long m_amfUeNgapId) {
-  amfUeNgapId = m_amfUeNgapId;
+bool AMF_UE_NGAP_ID::set(const uint64_t& id) {
+  if (id > AMF_UE_NGAP_ID_MAX_VALUE) return false;
+  id_ = id;
+  return true;
 }
 
 //------------------------------------------------------------------------------
-unsigned long AMF_UE_NGAP_ID::getAMF_UE_NGAP_ID() {
-  return amfUeNgapId;
+uint64_t AMF_UE_NGAP_ID::get() {
+  return id_;
 }
 
 //------------------------------------------------------------------------------
-bool AMF_UE_NGAP_ID::encode2AMF_UE_NGAP_ID(Ngap_AMF_UE_NGAP_ID_t& amfuengapid) {
-  amfuengapid.size = 5;
-  amfuengapid.buf  = (uint8_t*) calloc(1, amfuengapid.size);
-  if (!amfuengapid.buf) return false;
+bool AMF_UE_NGAP_ID::encode2AMF_UE_NGAP_ID(
+    Ngap_AMF_UE_NGAP_ID_t& amf_ue_ngap_id) {
+  amf_ue_ngap_id.size = 5;
+  amf_ue_ngap_id.buf  = (uint8_t*) calloc(1, amf_ue_ngap_id.size);
+  if (!amf_ue_ngap_id.buf) return false;
 
-  for (int i = 0; i < amfuengapid.size; i++) {
-    amfuengapid.buf[i] = (amfUeNgapId & (0xff00000000 >> i * 8)) >>
-                         ((amfuengapid.size - i - 1) * 8);
+  for (int i = 0; i < amf_ue_ngap_id.size; i++) {
+    amf_ue_ngap_id.buf[i] =
+        (id_ & (0xff00000000 >> i * 8)) >> ((amf_ue_ngap_id.size - i - 1) * 8);
   }
 
   return true;
@@ -67,13 +60,13 @@ bool AMF_UE_NGAP_ID::encode2AMF_UE_NGAP_ID(Ngap_AMF_UE_NGAP_ID_t& amfuengapid) {
 
 //------------------------------------------------------------------------------
 bool AMF_UE_NGAP_ID::decodefromAMF_UE_NGAP_ID(
-    Ngap_AMF_UE_NGAP_ID_t& amfuengapid) {
-  if (!amfuengapid.buf) return false;
+    Ngap_AMF_UE_NGAP_ID_t& amf_ue_ngap_id) {
+  if (!amf_ue_ngap_id.buf) return false;
 
-  amfUeNgapId = 0;
-  for (int i = 0; i < amfuengapid.size; i++) {
-    amfUeNgapId = amfUeNgapId << 8;
-    amfUeNgapId |= amfuengapid.buf[i];
+  id_ = 0;
+  for (int i = 0; i < amf_ue_ngap_id.size; i++) {
+    id_ = id_ << 8;
+    id_ |= amf_ue_ngap_id.buf[i];
   }
 
   return true;

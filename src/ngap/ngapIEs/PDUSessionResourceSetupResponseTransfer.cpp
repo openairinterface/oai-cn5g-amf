@@ -19,13 +19,6 @@
  *      contact@openairinterface.org
  */
 
-/*! \file
- \brief
- \author  Keliang DU, BUPT
- \date 2020
- \email: contact@openairinterface.org
- */
-
 #include "PDUSessionResourceSetupResponseTransfer.hpp"
 
 extern "C" {
@@ -173,7 +166,7 @@ void PduSessionResourceSetupResponseTransferIE::setSecurityResult(
 }
 
 //------------------------------------------------------------------------------
-int PduSessionResourceSetupResponseTransferIE::encode2buffer(
+int PduSessionResourceSetupResponseTransferIE::Encode(
     uint8_t* buf, int buf_size) {
   asn_fprint(
       stderr, &asn_DEF_Ngap_PDUSessionResourceSetupResponseTransfer,

@@ -19,63 +19,40 @@
  *      contact@openairinterface.org
  */
 
-/*! \file
- \brief
- \author  Keliang DU, BUPT
- \date 2020
- \email: contact@openairinterface.org
- */
-
 #include "AMFName.hpp"
 
-extern "C" {
-#include "OCTET_STRING.h"
-}
-
-#include <iostream>
-using namespace std;
+#include "conversions.hpp"
 
 namespace ngap {
 
 //------------------------------------------------------------------------------
-AmfName::AmfName() {
-  amfname = nullptr;
-}
+AmfName::AmfName() {}
 
 //------------------------------------------------------------------------------
-AmfName::~AmfName() {
-  free(amfname);
-  amfname = nullptr;
-}
+AmfName::~AmfName() {}
 
 //------------------------------------------------------------------------------
-void AmfName::setValue(const std::string m_amfName) {
-  if (amfname) {
-    free(amfname);
-    amfname = nullptr;
-  }
-  amfname = (char*) calloc(1, m_amfName.size() + 1);
-  memcpy(amfname, m_amfName.c_str(), m_amfName.size());
-  amfname[m_amfName.size()] = '\0';
-}
-
-//------------------------------------------------------------------------------
-void AmfName::getValue(std::string& m_amfName) {
-  if (amfname) m_amfName = amfname;
-}
-
-//------------------------------------------------------------------------------
-bool AmfName::encode2AmfName(Ngap_AMFName_t* amfNameIe) {
-  if (amfname)
-    if (OCTET_STRING_fromBuf(amfNameIe, amfname, strlen(amfname)) < 0)
-      return false;
+bool AmfName::setValue(const std::string& amf_name) {
+  if (amf_name.size() > AMF_NAME_SIZE_MAX) return false;
+  amf_name_ = amf_name;
   return true;
 }
 
 //------------------------------------------------------------------------------
-bool AmfName::decodefromAmfName(Ngap_AMFName_t* pdu) {
-  if (!pdu->buf) return false;
-  amfname = (char*) pdu->buf;
+void AmfName::getValue(std::string& amf_name) const {
+  amf_name = amf_name_;
+}
+
+//------------------------------------------------------------------------------
+bool AmfName::encode(Ngap_AMFName_t* amf_name_ie) {
+  conv::string_2_octet_string(amf_name_, *amf_name_ie);
+  return true;
+}
+
+//------------------------------------------------------------------------------
+bool AmfName::decode(const Ngap_AMFName_t* amf_name_ie) {
+  if (!amf_name_ie->buf) return false;
+  conv::octet_string_2_string(*amf_name_ie, amf_name_);
   return true;
 }
 

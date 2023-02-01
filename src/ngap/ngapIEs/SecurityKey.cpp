@@ -19,54 +19,55 @@
  *      contact@openairinterface.org
  */
 
-/*! \file
- \brief
- \author  Keliang DU, BUPT
- \date 2020
- \email: contact@openairinterface.org
- */
-
 #include "SecurityKey.hpp"
 
 namespace ngap {
 
 //------------------------------------------------------------------------------
 SecurityKey::SecurityKey() {
-  securitykeybuffer = nullptr;
-  buffersize        = 0;
+  buffer_ = nullptr;
+  size_   = 0;
 }
 
 //------------------------------------------------------------------------------
 SecurityKey::~SecurityKey() {}
 
 //------------------------------------------------------------------------------
-bool SecurityKey::encode2bitstring(Ngap_SecurityKey_t& m_securitykey) {
-  m_securitykey.bits_unused = 0;
-  m_securitykey.size        = 32;
-  uint8_t* buffer           = (uint8_t*) calloc(1, 32);
+bool SecurityKey::encode(Ngap_SecurityKey_t& security_key) {
+  security_key.bits_unused = 0;
+  security_key.size        = 32;
+  uint8_t* buffer          = (uint8_t*) calloc(1, 32);
   if (!buffer) return false;
-  memcpy(buffer, securitykeybuffer, 32);
-  m_securitykey.buf = buffer;
+  memcpy(buffer, buffer_, 32);
+  security_key.buf = buffer;
 
   return true;
 }
 
 //------------------------------------------------------------------------------
-bool SecurityKey::decodefrombitstring(Ngap_SecurityKey_t& m_securitykey) {
-  securitykeybuffer = m_securitykey.buf;
+bool SecurityKey::decode(Ngap_SecurityKey_t& security_key) {
+  buffer_ = security_key.buf;
+  return true;
+}
+
+//------------------------------------------------------------------------------
+bool SecurityKey::getSecurityKey(uint8_t*& buffer, size_t& size) {
+  if (!buffer_) return false;
+  buffer = (uint8_t*) buffer_;
+  size   = size_;
   return true;
 }
 
 //------------------------------------------------------------------------------
 bool SecurityKey::getSecurityKey(uint8_t*& buffer) {
-  buffer = (uint8_t*) securitykeybuffer;
-  if (!securitykeybuffer) return false;
-
+  if (!buffer_) return false;
+  buffer = (uint8_t*) buffer_;
   return true;
 }
 
 //------------------------------------------------------------------------------
-void SecurityKey::setSecurityKey(uint8_t* buffer) {
-  securitykeybuffer = buffer;
+void SecurityKey::setSecurityKey(uint8_t* buffer, const size_t& size) {
+  buffer_ = buffer;
+  size_   = size;
 }
 }  // namespace ngap

@@ -19,13 +19,6 @@
  *      contact@openairinterface.org
  */
 
-/*! \file amf_config.cpp
- \brief
- \author Keliang DU (BUPT), Tien-Thinh NGUYEN (EURECOM)
- \date 2020
- \email: contact@openairinterface.org
- */
-
 #include "amf_config.hpp"
 
 #include <boost/algorithm/string.hpp>
@@ -34,14 +27,15 @@
 #include <iostream>
 #include <libconfig.h++>
 
-#include "3gpp_ts24501.hpp"
+#include "3gpp_29.502.h"
+#include "3gpp_24.501.hpp"
 #include "amf_app.hpp"
+#include "conversions.hpp"
+#include "fqdn.hpp"
 #include "if.hpp"
 #include "logger.hpp"
 #include "string.hpp"
 #include "thread_sched.hpp"
-#include "fqdn.hpp"
-#include "conversions.hpp"
 
 extern "C" {
 #include <arpa/inet.h>
@@ -60,31 +54,31 @@ namespace config {
 //------------------------------------------------------------------------------
 amf_config::amf_config() {
   nrf_addr.ipv4_addr.s_addr               = INADDR_ANY;
-  nrf_addr.port                           = 80;
-  nrf_addr.api_version                    = "v1";
+  nrf_addr.port                           = DEFAULT_HTTP1_PORT;
+  nrf_addr.api_version                    = DEFAULT_SBI_API_VERSION;
   ausf_addr.ipv4_addr.s_addr              = INADDR_ANY;
-  ausf_addr.port                          = 80;
-  ausf_addr.api_version                   = "v1";
+  ausf_addr.port                          = DEFAULT_HTTP1_PORT;
+  ausf_addr.api_version                   = DEFAULT_SBI_API_VERSION;
   udm_addr.ipv4_addr.s_addr               = INADDR_ANY;
-  udm_addr.port                           = 80;
-  udm_addr.api_version                    = "v1";
+  udm_addr.port                           = DEFAULT_HTTP1_PORT;
+  udm_addr.api_version                    = DEFAULT_SBI_API_VERSION;
+  lmf_addr.ipv4_addr.s_addr               = INADDR_ANY;
+  lmf_addr.port                           = DEFAULT_HTTP1_PORT;
+  lmf_addr.api_version                    = DEFAULT_SBI_API_VERSION;
   nssf_addr.ipv4_addr.s_addr              = INADDR_ANY;
-  nssf_addr.port                          = 80;
-  nssf_addr.api_version                   = "v1";
-  lmf_addr.ipv4_addr.s_addr              = INADDR_ANY;
-  lmf_addr.port                          = 80;
-  lmf_addr.api_version                   = "v1";
+  nssf_addr.port                          = DEFAULT_HTTP1_PORT;
+  nssf_addr.api_version                   = DEFAULT_SBI_API_VERSION;
   instance                                = 0;
   n2                                      = {};
-  n11                                     = {};
-  sbi_api_version                         = "v1";
-  sbi_http2_port                          = 8080;
+  sbi                                     = {};
+  sbi_api_version                         = DEFAULT_SBI_API_VERSION;
+  sbi_http2_port                          = DEFAULT_HTTP2_PORT;
   statistics_interval                     = 0;
   guami                                   = {};
   guami_list                              = {};
   relative_amf_capacity                   = 0;
   plmn_list                               = {};
-  auth_conf auth_para                     = {};
+  auth_para                               = {};
   nas_cfg                                 = {};
   smf_pool                                = {};
   support_features.enable_nf_registration = false;
@@ -227,13 +221,13 @@ int amf_config::load(const std::string& config_file) {
       for (int j = 0; j < numOfSlice; j++) {
         slice_t slice;
         const Setting& slice_item = slice_list_cfg[j];
-        std::string sst           = {};
+        unsigned int sst          = 0;
         std::string sd            = {};
         slice_item.lookupValue(AMF_CONFIG_STRING_SST, sst);
+        slice.sst = sst;
         slice_item.lookupValue(AMF_CONFIG_STRING_SD, sd);
         slice.sd = SD_NO_VALUE;  // Default value
         try {
-          slice.sst = std::stoi(sst);
           conv::sd_string_to_int(sd, slice.sd);
         } catch (const std::exception& err) {
           Logger::amf_app().error("Invalid SST/SD");
@@ -355,76 +349,80 @@ int amf_config::load(const std::string& config_file) {
         new_if_cfg[AMF_CONFIG_STRING_INTERFACE_NGAP_AMF];
     load_interface(n2_amf_cfg, n2);
 
-    // N11
-    const Setting& n11_cfg = new_if_cfg[AMF_CONFIG_STRING_INTERFACE_N11];
-    load_interface(n11_cfg, n11);
+    // SBI
+    const Setting& sbi_cfg = new_if_cfg[AMF_CONFIG_STRING_INTERFACE_SBI];
+    load_interface(sbi_cfg, sbi);
 
     // SBI API VERSION
-    if (!(n11_cfg.lookupValue(
+    if (!(sbi_cfg.lookupValue(
             AMF_CONFIG_STRING_API_VERSION, sbi_api_version))) {
       Logger::amf_app().error(AMF_CONFIG_STRING_API_VERSION "failed");
       throw(AMF_CONFIG_STRING_API_VERSION "failed");
     }
 
     // HTTP2 port
-    if (!(n11_cfg.lookupValue(
+    if (!(sbi_cfg.lookupValue(
             AMF_CONFIG_STRING_SBI_HTTP2_PORT, sbi_http2_port))) {
       Logger::amf_app().error(AMF_CONFIG_STRING_SBI_HTTP2_PORT "failed");
       throw(AMF_CONFIG_STRING_SBI_HTTP2_PORT "failed");
     }
 
-    // SMF
-    const Setting& smf_addr_pool =
-        n11_cfg[AMF_CONFIG_STRING_SMF_INSTANCES_POOL];
-    int count = smf_addr_pool.getLength();
-    for (int i = 0; i < count; i++) {
-      const Setting& smf_addr_item = smf_addr_pool[i];
-      smf_inst_t smf_inst          = {};
-      struct in_addr smf_ipv4_addr = {};
-      unsigned int smf_port        = {};
-      uint32_t smf_http2_port      = {};
-      std::string smf_api_version  = {};
-      std::string selected         = {};
+    if (!support_features.enable_smf_selection) {
+      // SMF
+      const Setting& smf_addr_pool =
+          sbi_cfg[AMF_CONFIG_STRING_SMF_INSTANCES_POOL];
+      int count = smf_addr_pool.getLength();
+      for (int i = 0; i < count; i++) {
+        const Setting& smf_addr_item = smf_addr_pool[i];
+        smf_inst_t smf_inst          = {};
+        struct in_addr smf_ipv4_addr = {};
+        unsigned int smf_port        = {};
+        uint32_t smf_http2_port      = {};
+        std::string smf_api_version  = {};
+        std::string selected         = {};
 
-      // Store FQDN
-      smf_addr_item.lookupValue(AMF_CONFIG_STRING_FQDN_DNS, smf_inst.fqdn);
-
-      smf_addr_item.lookupValue(AMF_CONFIG_STRING_SMF_INSTANCE_ID, smf_inst.id);
-      if (!support_features.use_fqdn_dns) {
-        smf_addr_item.lookupValue(
-            AMF_CONFIG_STRING_IPV4_ADDRESS, smf_inst.ipv4);
-        IPV4_STR_ADDR_TO_INADDR(
-            util::trim(smf_inst.ipv4).c_str(), smf_ipv4_addr,
-            "BAD IPv4 ADDRESS FORMAT FOR SMF !");
-        if (!(smf_addr_item.lookupValue(
-                AMF_CONFIG_STRING_SMF_INSTANCE_PORT, smf_inst.port))) {
-          Logger::amf_app().error(AMF_CONFIG_STRING_SMF_INSTANCE_PORT "failed");
-          throw(AMF_CONFIG_STRING_SMF_INSTANCE_PORT "failed");
-        }
-        if (!(smf_addr_item.lookupValue(
-                AMF_CONFIG_STRING_SBI_HTTP2_PORT, smf_inst.http2_port))) {
-          Logger::amf_app().error(AMF_CONFIG_STRING_SBI_HTTP2_PORT "failed");
-          throw(AMF_CONFIG_STRING_SBI_HTTP2_PORT "failed");
-        }
-        smf_addr_item.lookupValue(
-            AMF_CONFIG_STRING_SMF_INSTANCE_VERSION, smf_inst.version);
-        if (!(smf_addr_item.lookupValue(
-                AMF_CONFIG_STRING_SMF_INSTANCE_VERSION, smf_inst.version))) {
-          Logger::amf_app().error(AMF_CONFIG_STRING_SMF_INSTANCE_VERSION
-                                  "failed");
-          throw(AMF_CONFIG_STRING_SMF_INSTANCE_VERSION "failed");
-        }
-      } else {
+        // Store FQDN
         smf_addr_item.lookupValue(AMF_CONFIG_STRING_FQDN_DNS, smf_inst.fqdn);
-      }
 
-      smf_addr_item.lookupValue(
-          AMF_CONFIG_STRING_SMF_INSTANCE_SELECTED, selected);
-      if (boost::iequals(selected, "true"))
-        smf_inst.selected = true;
-      else
-        smf_inst.selected = false;
-      smf_pool.push_back(smf_inst);
+        smf_addr_item.lookupValue(
+            AMF_CONFIG_STRING_SMF_INSTANCE_ID, smf_inst.id);
+        if (!support_features.use_fqdn_dns) {
+          smf_addr_item.lookupValue(
+              AMF_CONFIG_STRING_IPV4_ADDRESS, smf_inst.ipv4);
+          IPV4_STR_ADDR_TO_INADDR(
+              util::trim(smf_inst.ipv4).c_str(), smf_ipv4_addr,
+              "BAD IPv4 ADDRESS FORMAT FOR SMF !");
+          if (!(smf_addr_item.lookupValue(
+                  AMF_CONFIG_STRING_SMF_INSTANCE_PORT, smf_inst.port))) {
+            Logger::amf_app().error(AMF_CONFIG_STRING_SMF_INSTANCE_PORT
+                                    "failed");
+            throw(AMF_CONFIG_STRING_SMF_INSTANCE_PORT "failed");
+          }
+          if (!(smf_addr_item.lookupValue(
+                  AMF_CONFIG_STRING_SBI_HTTP2_PORT, smf_inst.http2_port))) {
+            Logger::amf_app().error(AMF_CONFIG_STRING_SBI_HTTP2_PORT "failed");
+            throw(AMF_CONFIG_STRING_SBI_HTTP2_PORT "failed");
+          }
+          smf_addr_item.lookupValue(
+              AMF_CONFIG_STRING_SMF_INSTANCE_VERSION, smf_inst.version);
+          if (!(smf_addr_item.lookupValue(
+                  AMF_CONFIG_STRING_SMF_INSTANCE_VERSION, smf_inst.version))) {
+            Logger::amf_app().error(AMF_CONFIG_STRING_SMF_INSTANCE_VERSION
+                                    "failed");
+            throw(AMF_CONFIG_STRING_SMF_INSTANCE_VERSION "failed");
+          }
+        } else {
+          smf_addr_item.lookupValue(AMF_CONFIG_STRING_FQDN_DNS, smf_inst.fqdn);
+        }
+
+        smf_addr_item.lookupValue(
+            AMF_CONFIG_STRING_SMF_INSTANCE_SELECTED, selected);
+        if (boost::iequals(selected, "true"))
+          smf_inst.selected = true;
+        else
+          smf_inst.selected = false;
+        smf_pool.push_back(smf_inst);
+      }
     }
 
     // NRF
@@ -474,7 +472,8 @@ int amf_config::load(const std::string& config_file) {
         }
         nrf_addr.port = nrf_port;
         //
-        nrf_addr.api_version = "v1";  // TODO: get API version
+        nrf_addr.api_version =
+            DEFAULT_SBI_API_VERSION;  // TODO: get API version
       }
     }
 
@@ -522,8 +521,9 @@ int amf_config::load(const std::string& config_file) {
             Logger::amf_app().error(AMF_CONFIG_STRING_PORT "failed");
             throw(AMF_CONFIG_STRING_PORT "failed");
           }
-          ausf_addr.port        = ausf_port;
-          ausf_addr.api_version = "v1";  // TODO: get API version
+          ausf_addr.port = ausf_port;
+          ausf_addr.api_version =
+              DEFAULT_SBI_API_VERSION;  // TODO: get API version
         }
       }
     }
@@ -566,9 +566,10 @@ int amf_config::load(const std::string& config_file) {
           IPV4_STR_ADDR_TO_INADDR(
               util::trim(address).c_str(), udm_ipv4_addr,
               "BAD IPv4 ADDRESS FORMAT FOR UDM !");
-          udm_addr.ipv4_addr   = udm_ipv4_addr;
-          udm_addr.port        = udm_port;
-          udm_addr.api_version = "v1";  // TODO: get API version
+          udm_addr.ipv4_addr = udm_ipv4_addr;
+          udm_addr.port      = udm_port;
+          udm_addr.api_version =
+              DEFAULT_SBI_API_VERSION;  // TODO: get API version
         }
       }
     }
@@ -610,9 +611,10 @@ int amf_config::load(const std::string& config_file) {
           IPV4_STR_ADDR_TO_INADDR(
               util::trim(address).c_str(), nssf_ipv4_addr,
               "BAD IPv4 ADDRESS FORMAT FOR NSSF !");
-          nssf_addr.ipv4_addr   = nssf_ipv4_addr;
-          nssf_addr.port        = nssf_port;
-          nssf_addr.api_version = "v1";  // TODO: get API version
+          nssf_addr.ipv4_addr = nssf_ipv4_addr;
+          nssf_addr.port      = nssf_port;
+          nssf_addr.api_version =
+              DEFAULT_SBI_API_VERSION;  // TODO: get API version
         }
       }
     }
@@ -812,10 +814,10 @@ void amf_config::display() {
   Logger::config().info("    Port ..................: %d", n2.port);
 
   Logger::config().info("- SBI Networking:");
-  Logger::config().info("    Iface .................: %s", n11.if_name.c_str());
+  Logger::config().info("    Iface .................: %s", sbi.if_name.c_str());
   Logger::config().info(
-      "    IP Addr ...............: %s", inet_ntoa(n11.addr4));
-  Logger::config().info("    Port ..................: %d", n11.port);
+      "    IP Addr ...............: %s", inet_ntoa(sbi.addr4));
+  Logger::config().info("    Port ..................: %d", sbi.port);
   Logger::config().info("    HTTP2 port ............: %d", sbi_http2_port);
   Logger::config().info(
       "    API version............: %s", sbi_api_version.c_str());
@@ -985,9 +987,9 @@ std::string amf_config::get_amf_n1n2_message_subscribe_uri(
   if (support_features.use_http2) {
     sbi_port = sbi_http2_port;
   } else {
-    sbi_port = n11.port;
+    sbi_port = sbi.port;
   }
-  return std::string(inet_ntoa(*((struct in_addr*) &n11.addr4))) + ":" +
+  return std::string(inet_ntoa(*((struct in_addr*) &sbi.addr4))) + ":" +
          std::to_string(sbi_port) + NAMF_COMMUNICATION_BASE + sbi_api_version +
          "/ue-contexts/" + ue_cxt_id + "/n1-n2-messages/subscriptions";
 }
@@ -1036,6 +1038,53 @@ std::string amf_config::get_lmf_determine_location_uri() {
          lmf_addr.api_version + NLMF_DETERMINE_LOCATION;
 }
 
+bool amf_config::get_smf_pdu_session_context_uri(
+    const std::shared_ptr<pdu_session_context>& psc, std::string& smf_uri) {
+  if (!psc) return false;
+
+  if (!psc->smf_info.info_available) {
+    Logger::amf_sbi().error("No SMF is available for this PDU session");
+    return false;
+  }
+
+  std::string smf_addr    = {};
+  std::string smf_port    = {};
+  std::string smf_ip_addr = {};
+
+  smf_addr = psc->smf_info.addr;
+  smf_port = psc->smf_info.port;
+
+  // remove http port from the URI if existed
+  std::size_t found_port = smf_addr.find(":");
+  if (found_port != std::string::npos)
+    smf_ip_addr = smf_addr.substr(0, found_port - 1);
+  else
+    smf_ip_addr = smf_addr;
+
+  std::size_t found = psc->smf_info.context_location.find(smf_ip_addr);
+  if (found != std::string::npos)
+    smf_uri = psc->smf_info.context_location;
+  else
+    smf_uri = smf_addr + ":" + smf_port + psc->smf_info.context_location;
+  return true;
+}
+
+//------------------------------------------------------------------------------
+std::string amf_config::get_smf_pdu_session_base_uri(
+    const std::string& smf_addr, const std::string& smf_port,
+    const std::string& smf_api_version) {
+  // Remove http port from the URI if existed
+  std::string smf_ip_addr = {};
+  std::size_t found_port  = smf_addr.find(":");
+  if (found_port != std::string::npos)
+    smf_ip_addr = smf_addr.substr(0, found_port);
+  else
+    smf_ip_addr = smf_addr;
+
+  return smf_ip_addr + ":" + smf_port + "/nsmf-pdusession/" + smf_api_version +
+         NSMF_PDU_SESSION_CREATE;
+}
+
 //------------------------------------------------------------------------------
 void amf_config::to_json(nlohmann::json& json_data) const {
   json_data["instance"]   = instance;
@@ -1058,8 +1107,8 @@ void amf_config::to_json(nlohmann::json& json_data) const {
   json_data["auth_para"] = auth_para.to_json();
 
   json_data["n2"]                    = n2.to_json();
-  json_data["n11"]                   = n11.to_json();
-  json_data["n11"]["sbi_http2_port"] = sbi_http2_port;
+  json_data["sbi"]                   = sbi.to_json();
+  json_data["sbi"]["sbi_http2_port"] = sbi_http2_port;
 
   json_data["support_features"] = support_features.to_json();
 
@@ -1140,8 +1189,8 @@ bool amf_config::from_json(nlohmann::json& json_data) {
     if (json_data.find("n2") != json_data.end()) {
       n2.from_json(json_data["n2"]);
     }
-    if (json_data.find("n11") != json_data.end()) {
-      n11.from_json(json_data["n11"]);
+    if (json_data.find("sbi") != json_data.end()) {
+      sbi.from_json(json_data["sbi"]);
     }
 
     if (json_data.find("sbi_http2_port") != json_data.end()) {

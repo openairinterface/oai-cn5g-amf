@@ -19,13 +19,6 @@
  *      contact@openairinterface.org
  */
 
-/*! \file
- \brief
- \author  Keliang DU, BUPT
- \date 2020
- \email: contact@openairinterface.org
- */
-
 #ifndef _INDEXTORFSP_H_
 #define _INDEXTORFSP_H_
 
@@ -38,16 +31,17 @@ namespace ngap {
 class IndexToRFSP {
  public:
   IndexToRFSP();
+  IndexToRFSP(const uint32_t&);
   virtual ~IndexToRFSP();
 
-  void setIndexToRFSP(uint8_t);
-  uint8_t getIndexToRFSP();
+  void set(const uint32_t&);
+  uint32_t get() const;
 
-  bool encode2IndexToRFSP(Ngap_IndexToRFSP_t&);
-  bool decodefromIndexToRFSP(Ngap_IndexToRFSP_t&);
+  bool encode(Ngap_IndexToRFSP_t&);
+  bool decode(Ngap_IndexToRFSP_t&);
 
  private:
-  uint8_t indexToRFSP;
+  uint32_t index_;
 };
 
 }  // namespace ngap

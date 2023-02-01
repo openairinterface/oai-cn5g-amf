@@ -137,4 +137,8 @@ static const std::vector<std::string> n2_sm_info_type_e2str = {
     "HANDOVER_REQ_ACK",       "HANDOVER_RES_ALLOC_FAIL",
     "SECONDARY_RAT_USAGE"};
 
+#define NSMF_PDU_SESSION_CREATE "/sm-contexts"
+#define NSMF_PDU_SESSION_MODIFY "/modify"
+#define NSMF_PDU_SESSION_RELEASE "/release"
+
 #endif

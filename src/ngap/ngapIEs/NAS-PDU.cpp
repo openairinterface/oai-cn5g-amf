@@ -19,54 +19,78 @@
  *      contact@openairinterface.org
  */
 
-/*! \file
- \brief
- \author  Keliang DU, BUPT
- \date 2020
- \email: contact@openairinterface.org
- */
-
 #include "NAS-PDU.hpp"
+#include "conversions.hpp"
 
 namespace ngap {
 
 //------------------------------------------------------------------------------
-NAS_PDU::NAS_PDU() {
-  naspdubuffer = NULL;
-  buffersize   = -1;
-}
+NAS_PDU::NAS_PDU() {}
 
 //------------------------------------------------------------------------------
 NAS_PDU::~NAS_PDU() {}
 
 //------------------------------------------------------------------------------
-bool NAS_PDU::encode2octetstring(Ngap_NAS_PDU_t& m_naspdu) {
-  int ret;
-  ret = OCTET_STRING_fromBuf(&m_naspdu, naspdubuffer, buffersize);
-  if (ret != 0) return false;
+bool NAS_PDU::encode(Ngap_NAS_PDU_t& nas_pdu) {
+  return conv::bstring_2_octet_string(pdu_bstring, nas_pdu);
+}
+
+//------------------------------------------------------------------------------
+bool NAS_PDU::decode(Ngap_NAS_PDU_t& nas_pdu) {
+  if (!nas_pdu.buf) return false;
+  return conv::octet_string_2_bstring(nas_pdu, pdu_bstring);
+}
+/*
+
+//------------------------------------------------------------------------------
+bool NAS_PDU::get(uint8_t*& buffer, size_t& size) const {
+  if (!pdu_.buf) return false;
+  if (pdu_.size < 0) return false;
+  memcpy(buffer, pdu_.buf, pdu_.size);
+  size = pdu_.size;
+  return true;
+}
+*/
+//------------------------------------------------------------------------------
+void NAS_PDU::set(uint8_t* buffer, size_t size) {
+  if (!buffer) return;
+  pdu_bstring = blk2bstr(buffer, size);
+  return;
+}
+
+//------------------------------------------------------------------------------
+bool NAS_PDU::get(OCTET_STRING_t& pdu) const {
+  conv::bstring_2_octet_string(pdu_bstring, pdu);
   return true;
 }
 
 //------------------------------------------------------------------------------
-bool NAS_PDU::decodefromoctetstring(Ngap_NAS_PDU_t& m_naspdu) {
-  naspdubuffer = (char*) m_naspdu.buf;
-  buffersize   = m_naspdu.size;
+bool NAS_PDU::set(const OCTET_STRING_t& pdu) {
+  conv::octet_string_2_bstring(pdu, pdu_bstring);
   return true;
 }
 
 //------------------------------------------------------------------------------
-bool NAS_PDU::getNasPdu(uint8_t*& buffer, size_t& size) const {
-  buffer = (uint8_t*) naspdubuffer;
-  size   = buffersize;
-  if (!naspdubuffer) return false;
-  if (buffersize < 0) return false;
+bool NAS_PDU::get(NAS_PDU& nas_pdu) const {
+  return nas_pdu.set(pdu_bstring);
+}
 
+//------------------------------------------------------------------------------
+bool NAS_PDU::set(const NAS_PDU& nas_pdu) {
+  bstring pdu = {};
+  if (!nas_pdu.get(pdu)) return false;
+  return set(pdu);
+}
+
+//------------------------------------------------------------------------------
+bool NAS_PDU::get(bstring& pdu) const {
+  pdu = bstrcpy(pdu_bstring);
   return true;
 }
 
 //------------------------------------------------------------------------------
-void NAS_PDU::setNasPdu(uint8_t* buffer, size_t size) {
-  naspdubuffer = (char*) buffer;
-  buffersize   = size;
+bool NAS_PDU::set(const bstring& pdu) {
+  pdu_bstring = bstrcpy(pdu);
+  return true;
 }
 }  // namespace ngap

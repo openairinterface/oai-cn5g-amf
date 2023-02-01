@@ -26,6 +26,8 @@
 #include "UserLocationInformationN3IWF.hpp"
 #include "UserLocationInformationNR.hpp"
 
+#include <optional>
+
 extern "C" {
 #include "Ngap_UserLocationInformation.h"
 }
@@ -36,25 +38,23 @@ class UserLocationInformation {
   UserLocationInformation();
   virtual ~UserLocationInformation();
 
-  void setInformation(UserLocationInformationEUTRA*);
-  void getInformation(UserLocationInformationEUTRA*&);
+  void setInformation(const UserLocationInformationEUTRA&);
+  bool getInformation(UserLocationInformationEUTRA&);
 
-  void setInformation(UserLocationInformationNR*);
-  void getInformation(UserLocationInformationNR*&);
+  void setInformation(const UserLocationInformationNR&);
+  bool getInformation(UserLocationInformationNR&);
 
-  // void setInformation(UserLocationInformationN3IWF*);
-  // void getInformation(UserLocationInformationN3IWF*&);
+  // void setInformation(const UserLocationInformationN3IWF&);
+  // void getInformation(UserLocationInformationN3IWF&);
 
-  bool encodefromUserLocationInformation(
-      Ngap_UserLocationInformation_t* userLocationInformation);
-  bool decodefromUserLocationInformation(
-      Ngap_UserLocationInformation_t* userLocationInformation);
+  bool encode(Ngap_UserLocationInformation_t* user_location_information);
+  bool decode(Ngap_UserLocationInformation_t* user_location_information);
   Ngap_UserLocationInformation_PR getChoiceOfUserLocationInformation();
 
  private:
-  Ngap_UserLocationInformation_PR informationPresent;
-  UserLocationInformationEUTRA* userLocationInformationEUTRA;
-  UserLocationInformationNR* userLocationInformationNR;
+  Ngap_UserLocationInformation_PR present_;
+  std::optional<UserLocationInformationEUTRA> user_location_information_eutra_;
+  std::optional<UserLocationInformationNR> user_location_information_nr_;
   // TODO: UserLocationInformationN3IWF *userLocationInformationN3IWF;
 };
 

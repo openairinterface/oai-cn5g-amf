@@ -19,13 +19,6 @@
  *      contact@openairinterface.org
  */
 
-/*! \file
- \brief
- \author  Keliang DU, BUPT
- \date 2020
- \email: contact@openairinterface.org
- */
-
 #ifndef _EUTRA_CGI_H_
 #define _EUTRA_CGI_H_
 
@@ -43,14 +36,15 @@ class EUTRA_CGI {
   EUTRA_CGI();
   virtual ~EUTRA_CGI();
 
-  void setEUTRA_CGI(PlmnId*, EUTRACellIdentity*);
-  bool encode2EUTRA_CGI(Ngap_EUTRA_CGI_t*);
-  bool decodefromEUTRA_CGI(Ngap_EUTRA_CGI_t*);
-  void getEUTRA_CGI(PlmnId*&, EUTRACellIdentity*&);
+  void set(const PlmnId&, const EUTRACellIdentity&);
+  void get(PlmnId&, EUTRACellIdentity&);
+
+  bool encode(Ngap_EUTRA_CGI_t&);
+  bool decode(Ngap_EUTRA_CGI_t&);
 
  private:
-  PlmnId* plmnId;
-  EUTRACellIdentity* eUTRACellIdentity;
+  PlmnId plmn_id_;                         // Mandatory
+  EUTRACellIdentity eUTRA_cell_identity_;  // Mandatory
 };
 }  // namespace ngap
 

@@ -32,48 +32,45 @@ PDUSessionResourceToReleaseListRelCmd::
     ~PDUSessionResourceToReleaseListRelCmd() {}
 
 //------------------------------------------------------------------------------
-void PDUSessionResourceToReleaseListRelCmd::
-    setPDUSessionResourceToReleaseListRelCmd(
-        const std::vector<PDUSessionResourceToReleaseItemRelCmd>& list) {
-  itemRelCmdList = list;
+void PDUSessionResourceToReleaseListRelCmd::set(
+    const std::vector<PDUSessionResourceToReleaseItemRelCmd>& list) {
+  item_list_ = list;
 }
 
 //------------------------------------------------------------------------------
-void PDUSessionResourceToReleaseListRelCmd::
-    getPDUSessionResourceToReleaseListRelCmd(
-        std::vector<PDUSessionResourceToReleaseItemRelCmd>& list) {
-  list = itemRelCmdList;
+void PDUSessionResourceToReleaseListRelCmd::get(
+    std::vector<PDUSessionResourceToReleaseItemRelCmd>& list) {
+  list = item_list_;
 }
 
 //------------------------------------------------------------------------------
-bool PDUSessionResourceToReleaseListRelCmd::
-    encode2PDUSessionResourceToReleaseListRelCmd(
-        Ngap_PDUSessionResourceToReleaseListRelCmd_t*
-            pduSessionResourceToReleaseListRelCmd) {
-  for (auto& item : itemRelCmdList) {
+bool PDUSessionResourceToReleaseListRelCmd::encode(
+    Ngap_PDUSessionResourceToReleaseListRelCmd_t*
+        pdu_session_resource_to_released_list_rel_cmd) {
+  for (auto& item : item_list_) {
     Ngap_PDUSessionResourceToReleaseItemRelCmd_t* rel =
         (Ngap_PDUSessionResourceToReleaseItemRelCmd_t*) calloc(
             1, sizeof(Ngap_PDUSessionResourceToReleaseItemRelCmd_t));
     if (!rel) return false;
-    if (!item.encode2PDUSessionResourceToReleaseItemRelCmd(rel)) return false;
-    if (ASN_SEQUENCE_ADD(&pduSessionResourceToReleaseListRelCmd->list, rel) !=
-        0)
+    if (!item.encode(rel)) return false;
+    if (ASN_SEQUENCE_ADD(
+            &pdu_session_resource_to_released_list_rel_cmd->list, rel) != 0)
       return false;
   }
   return true;
 }
 
 //------------------------------------------------------------------------------
-bool PDUSessionResourceToReleaseListRelCmd::
-    decodefromPDUSessionResourceToReleaseListRelCmd(
-        Ngap_PDUSessionResourceToReleaseListRelCmd_t*
-            pduSessionResourceToReleaseListRelCmd) {
-  for (int i = 0; i < pduSessionResourceToReleaseListRelCmd->list.count; i++) {
+bool PDUSessionResourceToReleaseListRelCmd::decode(
+    Ngap_PDUSessionResourceToReleaseListRelCmd_t*
+        pdu_session_resource_to_released_list_rel_cmd) {
+  for (int i = 0; i < pdu_session_resource_to_released_list_rel_cmd->list.count;
+       i++) {
     PDUSessionResourceToReleaseItemRelCmd item = {};
-    if (!item.decodefromPDUSessionResourceToReleaseItemRelCmd(
-            pduSessionResourceToReleaseListRelCmd->list.array[i]))
+    if (!item.decode(
+            pdu_session_resource_to_released_list_rel_cmd->list.array[i]))
       return false;
-    itemRelCmdList.push_back(item);
+    item_list_.push_back(item);
   }
   return true;
 }

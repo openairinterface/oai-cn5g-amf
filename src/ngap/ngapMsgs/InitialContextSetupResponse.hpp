@@ -26,6 +26,8 @@
 #include "PDUSessionResourceSetupListCxtRes.hpp"
 #include "NgapUEMessage.hpp"
 
+#include <optional>
+
 extern "C" {
 #include "Ngap_InitialContextSetupResponse.h"
 }
@@ -57,9 +59,9 @@ class InitialContextSetupResponseMsg : public NgapUEMessage {
   Ngap_InitialContextSetupResponse_t* initialContextSetupResponseIEs;
   // AMF_UE_NGAP_ID //Mandatory
   // RAN_UE_NGAP_ID //Mandatory
-  PDUSessionResourceSetupListCxtRes*
+  std::optional<PDUSessionResourceSetupListCxtRes>
       pduSessionResourceSetupResponseList;  // Optional
-  PDUSessionResourceFailedToSetupListCxtRes*
+  std::optional<PDUSessionResourceFailedToSetupListCxtRes>
       pduSessionResourceFailedToSetupResponseList;  // Optional
   // TODO: Criticality Diagnostics (Optional)
 };

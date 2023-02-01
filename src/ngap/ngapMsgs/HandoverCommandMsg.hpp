@@ -19,24 +19,21 @@
  *      contact@openairinterface.org
  */
 
-#ifndef _HANDOVERCOMMAND_H_
-#define _HANDOVERCOMMAND_H_
+#ifndef _HANDOVER_COMMAND_H_
+#define _HANDOVER_COMMAND_H_
 
 #include "NgapUEMessage.hpp"
 #include "PDUSessionResourceHandoverList.hpp"
+#include "PDUSessionResourceToReleaseListHOCmd.hpp"
+
+#include <optional>
 
 extern "C" {
 #include "Ngap_NGAP-PDU.h"
-#include "Ngap_NGSetupRequest.h"
 #include "Ngap_HandoverCommand.h"
 }
 
 namespace ngap {
-
-typedef struct {
-  uint8_t pduSessionId;
-  OCTET_STRING_t HandoverCommandTransfer;
-} PDUSessionResourceHandoverItem_t;
 
 class HandoverCommandMsg : public NgapUEMessage {
  public:
@@ -51,9 +48,18 @@ class HandoverCommandMsg : public NgapUEMessage {
   void setHandoverType(const long& type);
   // void getHandoverType(Ngap_HandoverType_t &type);
 
+  void setNASSecurityParametersFromNGRAN(
+      const OCTET_STRING_t& nasSecurityParameters);
+  bool getNASSecurityParametersFromNGRAN(OCTET_STRING_t& nasSecurityParameters);
+
   void setPduSessionResourceHandoverList(
       const PDUSessionResourceHandoverList& list);
-  void getPduSessionResourceHandoverList(PDUSessionResourceHandoverList& list);
+  bool getPduSessionResourceHandoverList(PDUSessionResourceHandoverList& list);
+
+  void setPDUSessionResourceToReleaseListHOCmd(
+      const PDUSessionResourceToReleaseListHOCmd& list);
+  bool getPDUSessionResourceToReleaseListHOCmd(
+      PDUSessionResourceToReleaseListHOCmd& list);
 
   void setTargetToSource_TransparentContainer(
       const OCTET_STRING_t& targetTosource);
@@ -65,14 +71,14 @@ class HandoverCommandMsg : public NgapUEMessage {
   // AMF_UE_NGAP_ID (Mandatory)
   // RAN_UE_NGAP_ID (Mandatory)
   Ngap_HandoverType_t handoverType;  // Mandatory
-  Ngap_NASSecurityParametersFromNGRAN_t*
+  std::optional<Ngap_NASSecurityParametersFromNGRAN_t>
       nASSecurityParametersFromNGRAN;  // TODO: Conditional
-  PDUSessionResourceHandoverList pDUSessionResourceHandoverList;  // Optional
-  bool pDUSessionResourceHandoverListIsSet;
-  Ngap_PDUSessionResourceToReleaseListHOCmd_t*
-      pDUSessionResourceToReleaseListHOCmd;  // TODO: Optional
+  std::optional<PDUSessionResourceHandoverList>
+      pDUSessionResourceHandoverList;  // Optional
+  std::optional<PDUSessionResourceToReleaseListHOCmd>
+      pDUSessionResourceToReleaseListHOCmd;
   Ngap_TargetToSource_TransparentContainer_t
-      targetToSource_TransparentContainer;                // Mandatory
+      targetToSource_TransparentContainer;                // TODO: Mandatory
   Ngap_CriticalityDiagnostics_t* criticalityDiagnostics;  // TODO: Optional
 };
 

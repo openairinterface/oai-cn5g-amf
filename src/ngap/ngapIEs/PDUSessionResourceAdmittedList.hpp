@@ -19,10 +19,12 @@
  *      contact@openairinterface.org
  */
 
-#ifndef _PDUSESSIONRESOURCEADMITTEDLIST_H_
-#define _PDUSESSIONRESOURCEADMITTEDLIST_H_
+#ifndef PDU_SESSION_RESOURCE_ADMITTED_LIST_H_
+#define PDU_SESSION_RESOURCE_ADMITTED_LIST_H_
 
-#include "PDUSessionResourceAdmittedItem.hpp"
+#include "PDUSessionResourceItem.hpp"
+
+#include <vector>
 
 extern "C" {
 #include "Ngap_PDUSessionResourceAdmittedList.h"
@@ -35,18 +37,14 @@ class PDUSessionResourceAdmittedList {
   PDUSessionResourceAdmittedList();
   virtual ~PDUSessionResourceAdmittedList();
 
-  void setPDUSessionResourceAdmittedList(
-      const std::vector<PDUSessionResourceAdmittedItem>& list);
-  void getPDUSessionResourceAdmittedList(
-      std::vector<PDUSessionResourceAdmittedItem>& list);
+  void set(const std::vector<PDUSessionResourceItem>& list);
+  void get(std::vector<PDUSessionResourceItem>& list);
 
-  bool encode2PDUSessionResourceAdmittedList(
-      Ngap_PDUSessionResourceAdmittedList_t* pduSessionResourceAdmittedList);
-  bool decodefromPDUSessionResourceAdmittedList(
-      Ngap_PDUSessionResourceAdmittedList_t* pduSessionResourceAdmittedList);
+  bool encode(Ngap_PDUSessionResourceAdmittedList_t* list);
+  bool decode(Ngap_PDUSessionResourceAdmittedList_t* List);
 
  private:
-  std::vector<PDUSessionResourceAdmittedItem> admittedItemList;
+  std::vector<PDUSessionResourceItem> item_list_;
 };
 
 }  // namespace ngap

@@ -19,17 +19,11 @@
  *      contact@openairinterface.org
  */
 
-/*! \file
- \brief
- \author  Keliang DU, BUPT
- \date 2020
- \email: contact@openairinterface.org
- */
-
 #ifndef _S_NSSAI_H_
 #define _S_NSSAI_H_
 
 #include <string>
+#include <optional>
 
 extern "C" {
 #include "Ngap_S-NSSAI.h"
@@ -43,26 +37,23 @@ class S_NSSAI {
  public:
   S_NSSAI();
   virtual ~S_NSSAI();
-  bool sSTEncode2OctetString(Ngap_SST_t&);
-  bool sSTdecodefromOctetString(Ngap_SST_t);
-  bool sDEncode2OctetString(Ngap_SD_t*);
-  bool sDdecodefromOctetString(Ngap_SD_t*);
-  void setSst(const std::string charSst);
-  void setSst(const uint8_t s);
-  void getSst(std::string& charSst) const;
+  bool EncodeSD(Ngap_SD_t*);
+  bool DecodeSD(Ngap_SD_t*);
+  void setSst(const std::string& sst);
+  void setSst(const uint8_t& sst);
+  void getSst(std::string& sst) const;
   std::string getSst() const;
-  void setSd(const std::string charSd);
-  void setSd(const uint32_t s);
-  bool getSd(std::string& s_nssaiSd) const;
+  void setSd(const std::string& sd_str);
+  void setSd(const uint32_t& sd);
+  bool getSd(std::string& sd) const;
   std::string getSd() const;
   bool getSd(uint32_t& s_nssaiSd) const;
-  bool encode2S_NSSAI(Ngap_S_NSSAI_t*);
-  bool decodefromS_NSSAI(Ngap_S_NSSAI_t*);
+  bool encode(Ngap_S_NSSAI_t*);
+  bool decode(Ngap_S_NSSAI_t*);
 
  private:
-  uint8_t sst;  // mandatory  OCTET_STRING(SIZE(1))
-  uint32_t sd;  // OCTET_STRING(SIZE(3))
-  bool sdIsSet;
+  uint8_t sst_;  // mandatory  OCTET_STRING(SIZE(1))
+  std::optional<uint32_t> sd_;
 };
 
 }  // namespace ngap

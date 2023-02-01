@@ -31,16 +31,14 @@ namespace ngap {
 //------------------------------------------------------------------------------
 NGSetupRequestMsg::NGSetupRequestMsg() : NgapMessage() {
   ngSetupRequestIEs = nullptr;
-  ranNodeName       = nullptr;
+  ranNodeName       = std::nullopt;
 
   NgapMessage::setMessageType(NgapMessageType::NG_SETUP_REQUEST);
   initialize();
 }
 
 //------------------------------------------------------------------------------
-NGSetupRequestMsg::~NGSetupRequestMsg() {
-  if (ranNodeName) delete ranNodeName;
-}
+NGSetupRequestMsg::~NGSetupRequestMsg() {}
 
 //------------------------------------------------------------------------------
 void NGSetupRequestMsg::initialize() {
@@ -51,17 +49,19 @@ void NGSetupRequestMsg::initialize() {
 //------------------------------------------------------------------------------
 void NGSetupRequestMsg::setGlobalRanNodeID(
     const std::string& mcc, const std::string& mnc,
-    const Ngap_GlobalRANNodeID_PR& ranNodeType, const uint32_t& ranNodeId) {
+    const Ngap_GlobalRANNodeID_PR& ranNodeType, const uint32_t& ranNodeId,
+    const uint8_t& ran_node_id_size) {
   GlobalRanNodeId globalRanNodeIdIE = {};
   globalRanNodeIdIE.setChoiceOfRanNodeId(ranNodeType);
 
+  // TODO: other options for GlobalNgENBId/Global N3IWF ID
   GlobalgNBId globalgNBId = {};
   PlmnId plmn             = {};
-  plmn.setMccMnc(mcc, mnc);
+  plmn.set(mcc, mnc);
   GNB_ID gnbid = {};
-  gnbid.setValue(ranNodeId);
-  globalgNBId.setGlobalgNBId(plmn, gnbid);
-  globalRanNodeIdIE.setGlobalgNBID(globalgNBId);
+  gnbid.setValue(ranNodeId, ran_node_id_size);
+  globalgNBId.set(plmn, gnbid);
+  globalRanNodeIdIE.set(globalgNBId);
 
   Ngap_NGSetupRequestIEs_t* ie =
       (Ngap_NGSetupRequestIEs_t*) calloc(1, sizeof(Ngap_NGSetupRequestIEs_t));
@@ -69,8 +69,7 @@ void NGSetupRequestMsg::setGlobalRanNodeID(
   ie->criticality   = Ngap_Criticality_reject;
   ie->value.present = Ngap_NGSetupRequestIEs__value_PR_GlobalRANNodeID;
 
-  if (!globalRanNodeIdIE.encode2GlobalRANNodeID(
-          &ie->value.choice.GlobalRANNodeID)) {
+  if (!globalRanNodeIdIE.encode(&ie->value.choice.GlobalRANNodeID)) {
     Logger::ngap().error("Encode NGAP GlobalRANNodeID IE error");
     free_wrapper((void**) &ie);
     return;
@@ -82,8 +81,12 @@ void NGSetupRequestMsg::setGlobalRanNodeID(
 
 //------------------------------------------------------------------------------
 void NGSetupRequestMsg::setRanNodeName(const std::string& value) {
-  if (!ranNodeName) ranNodeName = new RanNodeName();
-  ranNodeName->setValue(value);
+  RanNodeName tmp = {};
+  if (!tmp.setValue(value)) {
+    return;
+  }
+
+  ranNodeName = std::optional<RanNodeName>(tmp);
 
   Ngap_NGSetupRequestIEs_t* ie =
       (Ngap_NGSetupRequestIEs_t*) calloc(1, sizeof(Ngap_NGSetupRequestIEs_t));
@@ -91,7 +94,7 @@ void NGSetupRequestMsg::setRanNodeName(const std::string& value) {
   ie->criticality   = Ngap_Criticality_ignore;
   ie->value.present = Ngap_NGSetupRequestIEs__value_PR_RANNodeName;
 
-  if (!ranNodeName->encode2RanNodeName(&ie->value.choice.RANNodeName)) {
+  if (!ranNodeName.value().encode(ie->value.choice.RANNodeName)) {
     Logger::ngap().error("Encode NGAP RANNodeName IE error");
     free_wrapper((void**) &ie);
     return;
@@ -103,7 +106,7 @@ void NGSetupRequestMsg::setRanNodeName(const std::string& value) {
 
 //------------------------------------------------------------------------------
 void NGSetupRequestMsg::setSupportedTAList(
-    const std::vector<struct SupportedItem_s> list) {
+    const std::vector<struct SupportedTaItem_s> list) {
   if (list.size() == 0) {
     Logger::ngap().warn("List of Supported Items is empty");
     return;
@@ -115,15 +118,14 @@ void NGSetupRequestMsg::setSupportedTAList(
   for (int i = 0; i < list.size(); i++) {
     SupportedTaItem item = {};
     TAC tac              = {};
-    tac.setTac(list[i].tac);
+    tac.set(list[i].tac);
     item.setTac(tac);
 
     std::vector<BroadcastPLMNItem> broadcastPlmnItems;
     for (int j = 0; j < list[i].b_plmn_list.size(); j++) {
       BroadcastPLMNItem broadcastPlmnItem = {};
       PlmnId broadPlmn                    = {};
-      broadPlmn.setMccMnc(
-          list[i].b_plmn_list[j].mcc, list[i].b_plmn_list[j].mnc);
+      broadPlmn.set(list[i].b_plmn_list[j].mcc, list[i].b_plmn_list[j].mnc);
       std::vector<S_NSSAI> snssais;
 
       for (int k = 0; k < list[i].b_plmn_list[j].slice_list.size(); k++) {
@@ -149,8 +151,7 @@ void NGSetupRequestMsg::setSupportedTAList(
   ie->criticality   = Ngap_Criticality_reject;
   ie->value.present = Ngap_NGSetupRequestIEs__value_PR_SupportedTAList;
 
-  if (!supportedTAListIE.encode2SupportedTAList(
-          &ie->value.choice.SupportedTAList)) {
+  if (!supportedTAListIE.encode(ie->value.choice.SupportedTAList)) {
     Logger::ngap().error("Encode SupportedTAList IE error");
     free_wrapper((void**) &ie);
     return;
@@ -171,7 +172,7 @@ void NGSetupRequestMsg::setDefaultPagingDRX(const e_Ngap_PagingDRX& value) {
   ie->criticality   = Ngap_Criticality_ignore;
   ie->value.present = Ngap_NGSetupRequestIEs__value_PR_PagingDRX;
 
-  if (!defaultPagingDRXIE.encode2DefaultPagingDRX(ie->value.choice.PagingDRX)) {
+  if (!defaultPagingDRXIE.encode(ie->value.choice.PagingDRX)) {
     Logger::ngap().error("Encode DefaultPagingDRX IE error");
     free_wrapper((void**) &ie);
     return;
@@ -203,7 +204,7 @@ bool NGSetupRequestMsg::decodeFromPdu(Ngap_NGAP_PDU_t* ngapMsgPdu) {
                     Ngap_Criticality_reject &&
                 ngSetupRequestIEs->protocolIEs.list.array[i]->value.present ==
                     Ngap_NGSetupRequestIEs__value_PR_GlobalRANNodeID) {
-              if (!globalRanNodeId.decodefromGlobalRANNodeID(
+              if (!globalRanNodeId.decode(
                       &ngSetupRequestIEs->protocolIEs.list.array[i]
                            ->value.choice.GlobalRANNodeID)) {
                 Logger::ngap().error("Decoded NGAP GlobalRanNodeId IE error");
@@ -219,10 +220,10 @@ bool NGSetupRequestMsg::decodeFromPdu(Ngap_NGAP_PDU_t* ngapMsgPdu) {
                     Ngap_Criticality_ignore &&
                 ngSetupRequestIEs->protocolIEs.list.array[i]->value.present ==
                     Ngap_NGSetupRequestIEs__value_PR_RANNodeName) {
-              ranNodeName = new RanNodeName();
-              if (!ranNodeName->decodefromRanNodeName(
-                      &ngSetupRequestIEs->protocolIEs.list.array[i]
-                           ->value.choice.RANNodeName)) {
+              ranNodeName = std::make_optional<RanNodeName>();
+              if (!ranNodeName.value().decode(
+                      ngSetupRequestIEs->protocolIEs.list.array[i]
+                          ->value.choice.RANNodeName)) {
                 Logger::ngap().error("Decoded NGAP RanNodeName IE error");
                 return false;
               }
@@ -236,9 +237,9 @@ bool NGSetupRequestMsg::decodeFromPdu(Ngap_NGAP_PDU_t* ngapMsgPdu) {
                     Ngap_Criticality_reject &&
                 ngSetupRequestIEs->protocolIEs.list.array[i]->value.present ==
                     Ngap_NGSetupRequestIEs__value_PR_SupportedTAList) {
-              if (!supportedTAList.decodefromSupportedTAList(
-                      &ngSetupRequestIEs->protocolIEs.list.array[i]
-                           ->value.choice.SupportedTAList)) {
+              if (!supportedTAList.decode(
+                      ngSetupRequestIEs->protocolIEs.list.array[i]
+                          ->value.choice.SupportedTAList)) {
                 Logger::ngap().error("Decoded NGAP SupportedTAList IE error");
                 return false;
               }
@@ -252,7 +253,7 @@ bool NGSetupRequestMsg::decodeFromPdu(Ngap_NGAP_PDU_t* ngapMsgPdu) {
                     Ngap_Criticality_ignore &&
                 ngSetupRequestIEs->protocolIEs.list.array[i]->value.present ==
                     Ngap_NGSetupRequestIEs__value_PR_PagingDRX) {
-              if (!defaultPagingDrx.decodefromDefaultPagingDRX(
+              if (!defaultPagingDrx.decode(
                       ngSetupRequestIEs->protocolIEs.list.array[i]
                           ->value.choice.PagingDRX)) {
                 Logger::ngap().error("Decoded NGAP DefaultPagingDRX IE error");
@@ -283,33 +284,42 @@ bool NGSetupRequestMsg::decodeFromPdu(Ngap_NGAP_PDU_t* ngapMsgPdu) {
 //------------------------------------------------------------------------------
 bool NGSetupRequestMsg::getGlobalGnbID(
     uint32_t& gnbId, std::string& mcc, std::string& mnc) {
+  // TODO: Only support Global gNB ID for now
   if (globalRanNodeId.getChoiceOfRanNodeId() !=
-      Ngap_GlobalRANNodeID_PR_globalGNB_ID)
+      Ngap_GlobalRANNodeID_PR_globalGNB_ID) {
+    Logger::ngap().warn("RAN node type is not supported!");
     return false;
+  }
 
   GlobalgNBId globalgNBId = {};
-  globalRanNodeId.getGlobalgNBID(globalgNBId);
+  if (!globalRanNodeId.get(globalgNBId)) {
+    Logger::ngap().warn("There's no value for Global RAN Node ID!");
+    return false;
+  }
 
   PlmnId plmn  = {};
   GNB_ID gnbid = {};
-  globalgNBId.getGlobalgNBId(plmn, gnbid);
+  globalgNBId.get(plmn, gnbid);
   plmn.getMcc(mcc);
   plmn.getMnc(mnc);
-  gnbId = gnbid.getValue();
+  if (!gnbid.get(gnbId)) {
+    Logger::ngap().warn("There's no value for gNB ID!");
+    return false;
+  }
 
   return true;
 }
 
 //------------------------------------------------------------------------------
 bool NGSetupRequestMsg::getRanNodeName(std::string& name) {
-  if (!ranNodeName) return false;
-  ranNodeName->getValue(name);
+  if (!ranNodeName.has_value()) return false;
+  ranNodeName.value().getValue(name);
   return true;
 }
 
 //------------------------------------------------------------------------------
 bool NGSetupRequestMsg::getSupportedTAList(
-    std::vector<struct SupportedItem_s>& list) {
+    std::vector<struct SupportedTaItem_s>& list) {
   std::vector<SupportedTaItem> supportedTaItems;
   supportedTAList.getSupportedTaItems(supportedTaItems);
 
@@ -318,8 +328,8 @@ bool NGSetupRequestMsg::getSupportedTAList(
     TAC tac = {};
     it->getTac(tac);
 
-    SupportedItem_t supporteditem_data = {};
-    supporteditem_data.tac             = tac.getTac();
+    SupportedTaItem_t supporteditem_data = {};
+    supporteditem_data.tac               = tac.get();
 
     std::vector<BroadcastPLMNItem> broadcastPLMNItems;
     it->getBroadcastPlmnList(broadcastPLMNItems);

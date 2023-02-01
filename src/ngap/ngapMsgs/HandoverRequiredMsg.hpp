@@ -28,6 +28,8 @@
 #include "GlobalgNBId.hpp"
 #include "TAI.hpp"
 
+#include <optional>
+
 extern "C" {
 #include "Ngap_HandoverRequired.h"
 #include "Ngap_TargetID.h"
@@ -47,17 +49,23 @@ class HandoverRequiredMsg : public NgapUEMessage {
   bool decodeFromPdu(Ngap_NGAP_PDU_t* ngapMsgPdu) override;
 
   Ngap_HandoverType_t getHandoverType();
+  // TODO Setter
 
   Ngap_Cause_PR getChoiceOfCause();
   long getCauseValue();
+  // TODO Setter
 
   bool getTargetID(GlobalgNBId& gnbId, TAI& tai);
+  // TODO Setter
 
-  long getDirectForwardingPathAvailability();
+  bool getDirectForwardingPathAvailability(long& value) const;
+  // TODO: Setter
 
   bool getPDUSessionResourceList(PDUSessionResourceListHORqd& list);
+  // TODO Setter
 
   OCTET_STRING_t getSourceToTarget_TransparentContainer();
+  // TODO Setter
 
  private:
   Ngap_HandoverRequired_t* handoverRequiredIEs;
@@ -66,7 +74,7 @@ class HandoverRequiredMsg : public NgapUEMessage {
   Ngap_HandoverType_t handoverType;  // Mandatory
   Cause cause;                       // Mandatory
   Ngap_TargetID_t targetID;          // Mandatory
-  Ngap_DirectForwardingPathAvailability_t*
+  std::optional<Ngap_DirectForwardingPathAvailability_t>
       directForwardingPathAvailability;                // Optional
   PDUSessionResourceListHORqd pDUSessionResourceList;  // Mandatory
   Ngap_SourceToTarget_TransparentContainer_t

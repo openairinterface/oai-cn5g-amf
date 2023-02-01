@@ -19,50 +19,38 @@
  *      contact@openairinterface.org
  */
 
-/*! \file
- \brief
- \author  Keliang DU, BUPT
- \date 2020
- \email: contact@openairinterface.org
- */
-
 #include "RRCEstablishmentCause.hpp"
-
-#include <iostream>
-using namespace std;
 
 namespace ngap {
 
 //------------------------------------------------------------------------------
 RRCEstablishmentCause::RRCEstablishmentCause() {
-  rrcestablishmentcause = -1;
+  cause_ = -1;
 }
 
 //------------------------------------------------------------------------------
 RRCEstablishmentCause::~RRCEstablishmentCause() {}
 
 //------------------------------------------------------------------------------
-void RRCEstablishmentCause::setRRCEstablishmentCause(
-    e_Ngap_RRCEstablishmentCause m_rrcestablishmentcause) {
-  rrcestablishmentcause = m_rrcestablishmentcause;
+void RRCEstablishmentCause::set(const e_Ngap_RRCEstablishmentCause& cause) {
+  cause_ = cause;
 }
 
 //------------------------------------------------------------------------------
-int RRCEstablishmentCause::getRRCEstablishmentCause() {
-  return rrcestablishmentcause;
+int RRCEstablishmentCause::get() const {
+  return cause_;
 }
 
 //------------------------------------------------------------------------------
-bool RRCEstablishmentCause::encode2RRCEstablishmentCause(
-    Ngap_RRCEstablishmentCause_t& rRCEstablishmentCause) {
-  rRCEstablishmentCause = rrcestablishmentcause;
+bool RRCEstablishmentCause::encode(Ngap_RRCEstablishmentCause_t& cause) const {
+  cause = cause_;
   return true;
 }
 
 //------------------------------------------------------------------------------
-bool RRCEstablishmentCause::decodefromRRCEstablishmentCause(
-    Ngap_RRCEstablishmentCause_t& rRCEstablishmentCause) {
-  rrcestablishmentcause = rRCEstablishmentCause;
+bool RRCEstablishmentCause::decode(const Ngap_RRCEstablishmentCause_t& cause) {
+  cause_ = cause;
+
   return true;
 }
 }  // namespace ngap

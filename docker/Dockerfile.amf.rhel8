@@ -21,7 +21,7 @@
 #---------------------------------------------------------------------
 #
 # Dockerfile for the Open-Air-Interface AMF service
-#   Valid for RHEL 8.2
+#   Valid for UBI 8.6 | RHEL 8.6
 #
 #---------------------------------------------------------------------
 
@@ -30,7 +30,7 @@
 #---------------------------------------------------------------------
 FROM registry.access.redhat.com/ubi8/ubi:latest AS oai-amf-builder
 
-ARG NEEDED_GIT_PROXY
+ENV IS_DOCKERFILE=1
 
 # Copy the entitlements
 COPY ./etc-pki-entitlement /etc/pki/entitlement
@@ -49,17 +49,16 @@ RUN rm -f /etc/rhsm-host && \
         diffutils \
         file \
         gcc-c++ \
-        cmake3 \
         ninja-build \
         boost-devel \
         openssl-devel \
         openssl \
+        wget \
         libasan && \
     echo "/usr/local/lib" > /etc/ld.so.conf.d/local-lib.conf && \
     echo "/usr/local/lib64" >> /etc/ld.so.conf.d/local-lib.conf
 
 # Some GIT configuration command quite useful
-RUN /bin/bash -c "if [[ -v NEEDED_GIT_PROXY ]]; then git config --global http.proxy $NEEDED_GIT_PROXY; fi"
 RUN git config --global https.postBuffer 123289600 && \
     git config --global http.sslverify false
 
@@ -76,51 +75,60 @@ WORKDIR /openair-amf/build/scripts
 RUN ldconfig && \
     ./build_amf --clean --Verbose --build-type Release --jobs && \
     ldd /openair-amf/build/amf/build/amf && \
-    mv /openair-amf/build/amf/build/amf /openair-amf/build/amf/build/oai_amf
+    mv /openair-amf/build/amf/build/amf /openair-amf/build/amf/build/oai_amf && \
+    # Remove entitlements and Subscription Manager configs
+    rm -rf /etc/pki/entitlement && \
+    rm -rf /etc/rhsm
 
 #---------------------------------------------------------------------
 # TARGET IMAGE
 #---------------------------------------------------------------------
-FROM registry.access.redhat.com/ubi8/ubi:latest as oai-amf
+FROM registry.access.redhat.com/ubi8/ubi-minimal:latest as oai-amf
 ENV TZ=Europe/Paris
 # We install some debug tools for the moment in addition of mandatory libraries
-RUN yum update -y && \
-    yum install -y --enablerepo="ubi-8-codeready-builder" \
+
+# Copy the entitlements
+COPY ./etc-pki-entitlement /etc/pki/entitlement
+# Copy the subscription manager configurations
+COPY ./rhsm-conf /etc/rhsm
+COPY ./rhsm-ca /etc/rhsm/ca
+
+
+RUN rm -f /etc/rhsm-host && \
+    microdnf update -y && \
+    microdnf install -y \
       tzdata \
-      libasan \
+#      libasan \
+      lksctp-tools \
       procps-ng \
       psmisc \
       net-tools \
-      libevent && \
-    yum clean all -y && \
-    rm -rf /var/cache/yum /var/cache/dnf
+      libicu \
+      boost \
+      libevent \
+      findutils \
+      python3\
+      python3-jinja2\
+      mysql-libs \
+      libconfig && \
+    microdnf clean all -y && \
+    rm -rf /var/cache/yum /var/cache/dnf && \
+    # Remove entitlements and Subscription Manager configs
+    rm -rf /etc/pki/entitlement && \
+    rm -rf /etc/rhsm
 
 # Copying executable and generated libraries
 WORKDIR /openair-amf/bin
 COPY --from=oai-amf-builder \
     /openair-amf/build/amf/build/oai_amf \
-    /openair-amf/scripts/entrypoint.sh \
+    /openair-amf/scripts/entrypoint.py \
+    /openair-amf/scripts/healthcheck.sh \
     ./
 
 COPY --from=oai-amf-builder \
-    /usr/lib64/libconfig++.so.9 \
-    /usr/lib64/libboost_system.so.1.66.0 \
     /usr/local/lib64/libpistache.so.0 \
     /usr/local/lib/libnghttp2_asio.so \
     /usr/local/lib/libnghttp2_asio.so.1 \
-    /usr/lib64/mysql/libmysqlclient.so.21 \
-    /usr/lib64/libsctp.so.1 \
-    /usr/local/lib64/libcpprest.so.2.10 \
-    /usr/lib64/libboost_random.so.1.66.0 \
-    /usr/lib64/libboost_thread.so.1.66.0 \
-    /usr/lib64/libboost_filesystem.so.1.66.0 \
-    /usr/lib64/libboost_chrono.so.1.66.0 \
-    /usr/lib64/libboost_atomic.so.1.66.0 \
-    /usr/lib64/libboost_date_time.so.1.66.0 \
-    /usr/lib64/libboost_regex.so.1.66.0 \
-    /usr/lib64/libicudata.so.60 \
-    /usr/lib64/libicui18n.so.60 \
-    /usr/lib64/libicuuc.so.60 \
     /usr/lib64/
 
 RUN ldconfig && \
@@ -134,6 +142,11 @@ WORKDIR /openair-amf
 
 # expose ports
 EXPOSE 80/tcp 9090/tcp 38412/sctp
+# healthcheck
+HEALTHCHECK --interval=10s \
+            --timeout=15s \
+            --retries=6 \
+    CMD /openair-amf/bin/healthcheck.sh
 
-ENTRYPOINT ["/openair-amf/bin/entrypoint.sh"]
+ENTRYPOINT ["python3", "/openair-amf/bin/entrypoint.py"]
 CMD ["/openair-amf/bin/oai_amf", "-c", "/openair-amf/etc/amf.conf", "-o"]

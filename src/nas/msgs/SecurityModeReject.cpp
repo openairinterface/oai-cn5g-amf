@@ -19,80 +19,81 @@
  *      contact@openairinterface.org
  */
 
-/*! \file
- \brief
- \author  Keliang DU, BUPT
- \date 2020
- \email: contact@openairinterface.org
- */
-
 #include "SecurityModeReject.hpp"
 
-#include "3gpp_ts24501.hpp"
+#include "3gpp_24.501.hpp"
 #include "logger.hpp"
 
 using namespace nas;
 
 //------------------------------------------------------------------------------
-SecurityModeReject::SecurityModeReject() {
-  Logger::nas_mm().debug("initiating class SecurityModeReject");
-  plain_header  = NULL;
-  ie_5gmm_cause = NULL;
-}
+SecurityModeReject::SecurityModeReject()
+    : NasMmPlainHeader(EPD_5GS_MM_MSG, SECURITY_MODE_REJECT) {}
 
 //------------------------------------------------------------------------------
 SecurityModeReject::~SecurityModeReject() {}
 
 //------------------------------------------------------------------------------
-void SecurityModeReject::setHeader(uint8_t security_header_type) {
-  plain_header = new NasMmPlainHeader();
-  plain_header->setHeader(
-      EPD_5GS_MM_MSG, security_header_type, SECURITY_MODE_REJECT);
+void SecurityModeReject::SetHeader(uint8_t security_header_type) {
+  NasMmPlainHeader::SetSecurityHeaderType(security_header_type);
 }
 
 //------------------------------------------------------------------------------
-void SecurityModeReject::set_5GMM_Cause(uint8_t value) {
-  ie_5gmm_cause = new _5GMM_Cause(0x00, value);
+void SecurityModeReject::Set5gmmCause(uint8_t value) {
+  ie_5gmm_cause.SetValue(value);
 }
 
 //------------------------------------------------------------------------------
-int SecurityModeReject::encode2buffer(uint8_t* buf, int len) {
+int SecurityModeReject::Encode(uint8_t* buf, int len) {
   Logger::nas_mm().debug("encoding SecurityModeReject message");
-  int encoded_size = 0;
-  if (!plain_header) {
-    Logger::nas_mm().error("Mandatory IE missing Header");
-    return 0;
+
+  int encoded_size    = 0;
+  int encoded_ie_size = 0;
+  // Header
+  if ((encoded_ie_size = NasMmPlainHeader::Encode(buf, len)) ==
+      KEncodeDecodeError) {
+    Logger::nas_mm().error("Encoding NAS Header error");
+    return KEncodeDecodeError;
   }
-  if (!(plain_header->encode2buffer(buf, len))) return 0;
-  encoded_size += 3;
-  if (!ie_5gmm_cause) {
-    Logger::nas_mm().warn("IE ie_5gmm_cause is not available");
+  encoded_size += encoded_ie_size;
+
+  // 5GMM Cause
+  if (int size = ie_5gmm_cause.Encode(buf + encoded_size, len - encoded_size)) {
+    encoded_size += size;
   } else {
-    if (int size = ie_5gmm_cause->encode2buffer(
-            buf + encoded_size, len - encoded_size)) {
-      encoded_size += size;
-    } else {
-      Logger::nas_mm().error("encoding ie_5gmm_cause  error");
-    }
+    Logger::nas_mm().error("Encoding ie_5gmm_cause error");
   }
+
   Logger::nas_mm().debug(
       "encoded SecurityModeReject message len(%d)", encoded_size);
-  return 1;
+  return encoded_size;
 }
 
 //------------------------------------------------------------------------------
-int SecurityModeReject::decodefrombuffer(
-    NasMmPlainHeader* header, uint8_t* buf, int len) {
+int SecurityModeReject::Decode(uint8_t* buf, int len) {
   Logger::nas_mm().debug("decoding SecurityModeReject message");
-  int decoded_size = 3;
-  plain_header     = header;
-  ie_5gmm_cause    = new _5GMM_Cause();
-  decoded_size += ie_5gmm_cause->decodefrombuffer(
-      buf + decoded_size, len - decoded_size, false);
-  Logger::nas_mm().debug("decoded_size(%d)", decoded_size);
-  uint8_t octet = *(buf + decoded_size);
-  Logger::nas_mm().debug("first option iei(0x%x)", octet);
+  int decoded_size   = 0;
+  int decoded_result = 0;
+
+  // Header
+  decoded_result = NasMmPlainHeader::Decode(buf, len);
+  if (decoded_result == KEncodeDecodeError) {
+    Logger::nas_mm().error("Decoding NAS Header error");
+    return KEncodeDecodeError;
+  }
+  decoded_size += decoded_result;
+
+  // 5GMM Cause
+  decoded_result =
+      ie_5gmm_cause.Decode(buf + decoded_size, len - decoded_size, false);
+  if (decoded_result != KEncodeDecodeError) {
+    decoded_size += decoded_result;
+  } else {
+    Logger::nas_mm().error("Encoding ie_payload_container error");
+    return KEncodeDecodeError;
+  }
+
   Logger::nas_mm().debug(
       "decoded SecurityModeReject message len(%d)", decoded_size);
-  return 1;
+  return decoded_size;
 }

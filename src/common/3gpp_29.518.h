@@ -22,8 +22,9 @@
 #ifndef FILE_3GPP_29_518_SEEN
 #define FILE_3GPP_29_518_SEEN
 
-#include "amf.hpp"
 #include <vector>
+
+#include "amf.hpp"
 
 typedef enum amf_event_type_e {
   AMF_EVENT_UNKNOWN            = 0,

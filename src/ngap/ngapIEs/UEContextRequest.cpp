@@ -19,50 +19,43 @@
  *      contact@openairinterface.org
  */
 
-/*! \file
- \brief
- \author  Keliang DU, BUPT
- \date 2020
- \email: contact@openairinterface.org
- */
-
 #include "UEContextRequest.hpp"
-
-#include <iostream>
-using namespace std;
 
 namespace ngap {
 
 //------------------------------------------------------------------------------
 UEContextRequest::UEContextRequest() {
-  uecontextrequest = -1;
+  ue_context_request_ = -1;
 }
 
+//------------------------------------------------------------------------------
+UEContextRequest::UEContextRequest(
+    const e_Ngap_UEContextRequest& ue_context_request)
+    : ue_context_request_(ue_context_request) {}
 //------------------------------------------------------------------------------
 UEContextRequest::~UEContextRequest() {}
 
 //------------------------------------------------------------------------------
-void UEContextRequest::setUEContextRequest(
-    e_Ngap_UEContextRequest m_uecontextrequest) {
-  uecontextrequest = m_uecontextrequest;
+void UEContextRequest::set(const e_Ngap_UEContextRequest& ue_context_request) {
+  ue_context_request_ = ue_context_request;
 }
 
 //------------------------------------------------------------------------------
-int UEContextRequest::getUEContextRequest() {
-  return uecontextrequest;
+int UEContextRequest::get() const {
+  return ue_context_request_;
 }
 
 //------------------------------------------------------------------------------
-bool UEContextRequest::encode2UEContextRequest(
-    Ngap_UEContextRequest_t& uEContextRequest) {
-  uEContextRequest = uecontextrequest;
+bool UEContextRequest::encode(
+    Ngap_UEContextRequest_t& ue_context_request) const {
+  ue_context_request = ue_context_request_;
   return true;
 }
 
 //------------------------------------------------------------------------------
-bool UEContextRequest::decodefromUEContextRequest(
-    Ngap_UEContextRequest_t& uEContextRequest) {
-  uecontextrequest = uEContextRequest;
+bool UEContextRequest::decode(
+    const Ngap_UEContextRequest_t& ue_context_request) {
+  ue_context_request_ = ue_context_request;
   return true;
 }
 }  // namespace ngap

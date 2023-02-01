@@ -19,13 +19,6 @@
  *      contact@openairinterface.org
  */
 
-/*! \file
- \brief
- \author  Keliang DU, BUPT
- \date 2020
- \email: contact@openairinterface.org
- */
-
 #ifndef _PLMNSUPPORTLIST_H_
 #define _PLMNSUPPORTLIST_H_
 
@@ -43,16 +36,16 @@ class PLMNSupportList {
   PLMNSupportList();
   virtual ~PLMNSupportList();
 
-  bool encode2PLMNSupportList(Ngap_PLMNSupportList_t*);
-  bool decodefromPLMNSupportList(Ngap_PLMNSupportList_t*);
+  bool encode(Ngap_PLMNSupportList_t&);
+  bool decode(Ngap_PLMNSupportList_t&);
 
-  void addPLMNSupportItems(const std::vector<PLMNSupportItem>& items);
-  void getPLMNSupportItems(std::vector<PLMNSupportItem>& items);
+  void set(const std::vector<PLMNSupportItem>& items);
+  void get(std::vector<PLMNSupportItem>& items);
 
-  void addPLMNSupportItem(const PLMNSupportItem& item);
+  void addItem(const PLMNSupportItem& item);
 
  private:
-  std::vector<PLMNSupportItem> plmnSupportItems;
+  std::vector<PLMNSupportItem> list_;
 };
 
 }  // namespace ngap

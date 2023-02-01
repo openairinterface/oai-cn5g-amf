@@ -19,13 +19,6 @@
  *      contact@openairinterface.org
  */
 
-/*! \file comUt.cpp
- \brief
- \author  Keliang DU, BUPT
- \date 2020
- \email: contact@openairinterface.org
- */
-
 #include "comUt.hpp"
 
 #include "logger.hpp"
@@ -36,7 +29,7 @@ void comUt::print_buffer(
   if (!app.compare("amf_app")) Logger::amf_app().debug(commit.c_str());
   if (!app.compare("amf_n1")) Logger::amf_n1().debug(commit.c_str());
   if (!app.compare("amf_server")) Logger::amf_server().debug(commit.c_str());
-  if (!app.compare("amf_n11")) Logger::amf_n11().debug(commit.c_str());
+  if (!app.compare("amf_sbi")) Logger::amf_sbi().debug(commit.c_str());
 #if DEBUG_IS_ON
   for (int i = 0; i < len; i++) printf("%x ", buf[i]);
   printf("\n");

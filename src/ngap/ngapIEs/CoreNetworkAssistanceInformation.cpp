@@ -19,57 +19,47 @@
  *      contact@openairinterface.org
  */
 
-/*! \file
- \brief
- \author  Keliang DU, BUPT
- \date 2020
- \email: contact@openairinterface.org
- */
-
 #include "CoreNetworkAssistanceInformation.hpp"
 
 extern "C" {
 #include "Ngap_TAIListForInactiveItem.h"
 }
 
-#include <iostream>
-using namespace std;
-
 namespace ngap {
 
 //------------------------------------------------------------------------------
 CoreNetworkAssistanceInfo::CoreNetworkAssistanceInfo() {
-  pagingDRX   = nullptr;
-  micoModeInd = nullptr;
+  pagingDRX   = std::nullopt;
+  micoModeInd = std::nullopt;
 }
 
 //------------------------------------------------------------------------------
 CoreNetworkAssistanceInfo::~CoreNetworkAssistanceInfo() {}
 
 //------------------------------------------------------------------------------
-void CoreNetworkAssistanceInfo::setCoreNetworkAssistanceInfo(
-    const UEIdentityIndexValue& m_ueIdentityIndexValue,
-    DefaultPagingDRX* m_pagingDRX,
+void CoreNetworkAssistanceInfo::set(
+    const UEIdentityIndexValue& ue_identity_index_value,
+    const DefaultPagingDRX& paging_drx,
     const PeriodicRegistrationUpdateTimer& m_periodicRegUpdateTimer,
     const bool& m_micoModeInd, const std::vector<TAI>& m_tai) {
-  ueIdentityIndexValue   = m_ueIdentityIndexValue;
-  pagingDRX              = m_pagingDRX;
+  ueIdentityIndexValue   = ue_identity_index_value;
+  pagingDRX              = std::optional<DefaultPagingDRX>(paging_drx);
   periodicRegUpdateTimer = m_periodicRegUpdateTimer;
   if (m_micoModeInd) {
-    micoModeInd = new MICOModeIndication();
+    micoModeInd = std::make_optional<MICOModeIndication>();
   }
 }
 
 //------------------------------------------------------------------------------
-void CoreNetworkAssistanceInfo::getCoreNetworkAssistanceInfo(
-    UEIdentityIndexValue& m_ueIdentityIndexValue,
-    DefaultPagingDRX*& m_pagingDRX,
+void CoreNetworkAssistanceInfo::get(
+    UEIdentityIndexValue& ue_identity_index_value,
+    std::optional<DefaultPagingDRX>& paging_drx,
     PeriodicRegistrationUpdateTimer& m_periodicRegUpdateTimer,
     bool& m_micoModeInd, std::vector<TAI>& m_tai) {
-  m_ueIdentityIndexValue   = ueIdentityIndexValue;
-  m_pagingDRX              = pagingDRX;
+  ue_identity_index_value  = ueIdentityIndexValue;
+  paging_drx               = pagingDRX;
   m_periodicRegUpdateTimer = periodicRegUpdateTimer;
-  if (micoModeInd)
+  if (micoModeInd.has_value())
     m_micoModeInd = true;
   else
     m_micoModeInd = false;
@@ -77,14 +67,14 @@ void CoreNetworkAssistanceInfo::getCoreNetworkAssistanceInfo(
 }
 
 //------------------------------------------------------------------------------
-bool CoreNetworkAssistanceInfo::encode2CoreNetworkAssistanceInfo(
+bool CoreNetworkAssistanceInfo::encode(
     Ngap_CoreNetworkAssistanceInformation_t* coreNetworkAssistanceInformation) {
-  if (!ueIdentityIndexValue.encode2UEIdentityIndexValue(
-          &coreNetworkAssistanceInformation->uEIdentityIndexValue))
+  if (!ueIdentityIndexValue.encode(
+          coreNetworkAssistanceInformation->uEIdentityIndexValue))
     return false;
 
-  if (!periodicRegUpdateTimer.encode2PeriodicRegistrationUpdateTimer(
-          &coreNetworkAssistanceInformation->periodicRegistrationUpdateTimer))
+  if (!periodicRegUpdateTimer.encode(
+          coreNetworkAssistanceInformation->periodicRegistrationUpdateTimer))
     return false;
 
   for (std::vector<TAI>::iterator it = std::begin(taiList);
@@ -93,28 +83,27 @@ bool CoreNetworkAssistanceInfo::encode2CoreNetworkAssistanceInfo(
         (Ngap_TAIListForInactiveItem_t*) calloc(
             1, sizeof(Ngap_TAIListForInactiveItem_t));
     if (!taiListForInactiveItem) return false;
-    if (!it->encode2TAI(&taiListForInactiveItem->tAI)) return false;
+    if (!it->encode(&taiListForInactiveItem->tAI)) return false;
     if (ASN_SEQUENCE_ADD(
             &coreNetworkAssistanceInformation->tAIListForInactive.list,
             taiListForInactiveItem) != 0)
       return false;
   }
 
-  if (pagingDRX) {
-    Ngap_PagingDRX_t* pagingdrx =
+  if (pagingDRX.has_value()) {
+    Ngap_PagingDRX_t* paging_drx =
         (Ngap_PagingDRX_t*) calloc(1, sizeof(Ngap_PagingDRX_t));
-    if (!pagingdrx) return false;
-    if (!pagingDRX->encode2DefaultPagingDRX(*pagingdrx)) return false;
-    coreNetworkAssistanceInformation->uESpecificDRX = pagingdrx;
+    if (!paging_drx) return false;
+    if (!pagingDRX.value().encode(*paging_drx)) return false;
+    coreNetworkAssistanceInformation->uESpecificDRX = paging_drx;
   }
 
-  if (micoModeInd) {
+  if (micoModeInd.has_value()) {
     Ngap_MICOModeIndication_t* micomodeindication =
         (Ngap_MICOModeIndication_t*) calloc(
             1, sizeof(Ngap_MICOModeIndication_t));
     if (!micomodeindication) return false;
-    if (!micoModeInd->encode2MICOModeIndication(micomodeindication))
-      return false;
+    if (!micoModeInd.value().encode(micomodeindication)) return false;
     coreNetworkAssistanceInformation->mICOModeIndication = micomodeindication;
   }
 
@@ -122,21 +111,21 @@ bool CoreNetworkAssistanceInfo::encode2CoreNetworkAssistanceInfo(
 }
 
 //------------------------------------------------------------------------------
-bool CoreNetworkAssistanceInfo::decodefromCoreNetworkAssistanceInfo(
+bool CoreNetworkAssistanceInfo::decode(
     Ngap_CoreNetworkAssistanceInformation_t* coreNetworkAssistanceInformation) {
-  if (!ueIdentityIndexValue.decodefromUEIdentityIndexValue(
-          &coreNetworkAssistanceInformation->uEIdentityIndexValue))
+  if (!ueIdentityIndexValue.decode(
+          coreNetworkAssistanceInformation->uEIdentityIndexValue))
     return false;
 
-  if (!periodicRegUpdateTimer.decodefromPeriodicRegistrationUpdateTimer(
-          &coreNetworkAssistanceInformation->periodicRegistrationUpdateTimer))
+  if (!periodicRegUpdateTimer.decode(
+          coreNetworkAssistanceInformation->periodicRegistrationUpdateTimer))
     return false;
 
   for (int i = 0;
        i < coreNetworkAssistanceInformation->tAIListForInactive.list.count;
        i++) {
     TAI tai_item = {};
-    if (!tai_item.decodefromTAI(
+    if (!tai_item.decode(
             &coreNetworkAssistanceInformation->tAIListForInactive.list.array[i]
                  ->tAI))
       return false;
@@ -144,17 +133,17 @@ bool CoreNetworkAssistanceInfo::decodefromCoreNetworkAssistanceInfo(
   }
 
   if (coreNetworkAssistanceInformation->uESpecificDRX) {
-    if (pagingDRX == nullptr) pagingDRX = new DefaultPagingDRX();
-    if (!pagingDRX->decodefromDefaultPagingDRX(
-            *(coreNetworkAssistanceInformation->uESpecificDRX)))
+    DefaultPagingDRX tmp = {};
+    if (!tmp.decode(*(coreNetworkAssistanceInformation->uESpecificDRX)))
       return false;
+    pagingDRX = std::optional<DefaultPagingDRX>(tmp);
   }
 
   if (coreNetworkAssistanceInformation->mICOModeIndication) {
-    if (micoModeInd == nullptr) micoModeInd = new MICOModeIndication();
-    if (!micoModeInd->decodefromMICOModeIndication(
-            coreNetworkAssistanceInformation->mICOModeIndication))
+    MICOModeIndication tmp = {};
+    if (!tmp.decode(coreNetworkAssistanceInformation->mICOModeIndication))
       return false;
+    micoModeInd = std::optional<MICOModeIndication>(tmp);
   }
 
   return true;

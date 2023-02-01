@@ -19,18 +19,11 @@
  *      contact@openairinterface.org
  */
 
-/*! \file
- \brief
- \author  Keliang DU, BUPT
- \date 2020
- \email: contact@openairinterface.org
- */
-
 #ifndef _AMFPOINTER_H_
 #define _AMFPOINTER_H_
 
 #include <string>
-
+constexpr uint8_t kAmfPointerMaxValue = 63;  // 6 bits
 extern "C" {
 #include "Ngap_AMFPointer.h"
 }
@@ -42,15 +35,15 @@ class AMFPointer {
   AMFPointer();
   virtual ~AMFPointer();
 
-  void setAMFPointer(const std::string);
-  void getAMFPointer(std::string&);
-  void setAMFPointer(const uint8_t&);
+  bool set(const std::string&);
+  void get(std::string&);
+  bool set(const uint8_t&);
 
-  bool encode2bitstring(Ngap_AMFPointer_t&);
-  bool decodefrombitstring(Ngap_AMFPointer_t&);
+  bool encode(Ngap_AMFPointer_t&);
+  bool decode(Ngap_AMFPointer_t&);
 
  private:
-  uint8_t pointer;
+  uint8_t pointer_;
 };
 
 }  // namespace ngap

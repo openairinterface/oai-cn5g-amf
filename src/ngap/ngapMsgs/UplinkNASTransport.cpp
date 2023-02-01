@@ -32,6 +32,7 @@ namespace ngap {
 //------------------------------------------------------------------------------
 UplinkNASTransportMsg::UplinkNASTransportMsg() : NgapUEMessage() {
   uplinkNASTransportIEs = nullptr;
+
   setMessageType(NgapMessageType::UPLINK_NAS_TRANSPORT);
   initialize();
 }
@@ -47,7 +48,7 @@ void UplinkNASTransportMsg::initialize() {
 
 //------------------------------------------------------------------------------
 void UplinkNASTransportMsg::setAmfUeNgapId(const unsigned long& id) {
-  amfUeNgapId.setAMF_UE_NGAP_ID(id);
+  amfUeNgapId.set(id);
 
   Ngap_UplinkNASTransport_IEs_t* ie = (Ngap_UplinkNASTransport_IEs_t*) calloc(
       1, sizeof(Ngap_UplinkNASTransport_IEs_t));
@@ -68,7 +69,7 @@ void UplinkNASTransportMsg::setAmfUeNgapId(const unsigned long& id) {
 
 //------------------------------------------------------------------------------
 void UplinkNASTransportMsg::setRanUeNgapId(const uint32_t& ran_ue_ngap_id) {
-  ranUeNgapId.setRanUeNgapId(ran_ue_ngap_id);
+  ranUeNgapId.set(ran_ue_ngap_id);
 
   Ngap_UplinkNASTransport_IEs_t* ie = (Ngap_UplinkNASTransport_IEs_t*) calloc(
       1, sizeof(Ngap_UplinkNASTransport_IEs_t));
@@ -76,7 +77,7 @@ void UplinkNASTransportMsg::setRanUeNgapId(const uint32_t& ran_ue_ngap_id) {
   ie->criticality   = Ngap_Criticality_reject;
   ie->value.present = Ngap_UplinkNASTransport_IEs__value_PR_RAN_UE_NGAP_ID;
 
-  int ret = ranUeNgapId.encode2RAN_UE_NGAP_ID(ie->value.choice.RAN_UE_NGAP_ID);
+  int ret = ranUeNgapId.encode(ie->value.choice.RAN_UE_NGAP_ID);
   if (!ret) {
     Logger::ngap().error("Encode NGAP RAN_UE_NGAP_ID IE error");
     free_wrapper((void**) &ie);
@@ -88,8 +89,8 @@ void UplinkNASTransportMsg::setRanUeNgapId(const uint32_t& ran_ue_ngap_id) {
 }
 
 //------------------------------------------------------------------------------
-void UplinkNASTransportMsg::setNasPdu(uint8_t* nas, size_t sizeofnas) {
-  nasPdu.setNasPdu(nas, sizeofnas);
+void UplinkNASTransportMsg::setNasPdu(const bstring& pdu) {
+  nasPdu.set(pdu);
 
   Ngap_UplinkNASTransport_IEs_t* ie = (Ngap_UplinkNASTransport_IEs_t*) calloc(
       1, sizeof(Ngap_UplinkNASTransport_IEs_t));
@@ -97,7 +98,7 @@ void UplinkNASTransportMsg::setNasPdu(uint8_t* nas, size_t sizeofnas) {
   ie->criticality   = Ngap_Criticality_reject;
   ie->value.present = Ngap_UplinkNASTransport_IEs__value_PR_NAS_PDU;
 
-  int ret = nasPdu.encode2octetstring(ie->value.choice.NAS_PDU);
+  int ret = nasPdu.encode(ie->value.choice.NAS_PDU);
   if (!ret) {
     Logger::ngap().error("Encode NGAP NAS_PDU IE error");
     free_wrapper((void**) &ie);
@@ -109,23 +110,21 @@ void UplinkNASTransportMsg::setNasPdu(uint8_t* nas, size_t sizeofnas) {
 }
 
 //------------------------------------------------------------------------------
-bool UplinkNASTransportMsg::getNasPdu(uint8_t*& nas, size_t& sizeofnas) {
-  if (!nasPdu.getNasPdu(nas, sizeofnas)) return false;
-
-  return true;
+bool UplinkNASTransportMsg::getNasPdu(bstring& pdu) {
+  return nasPdu.get(pdu);
 }
 
 //------------------------------------------------------------------------------
 void UplinkNASTransportMsg::setUserLocationInfoNR(
     const NrCgi_t& cig, const Tai_t& tai) {
-  UserLocationInformationNR* informationNR = new UserLocationInformationNR();
-  NR_CGI nR_CGI                            = {};
-  TAI tai_nr                               = {};
+  UserLocationInformationNR information_nr;
+  NR_CGI nR_CGI = {};
+  TAI tai_nr    = {};
 
   nR_CGI.setNR_CGI(cig);
   tai_nr.setTAI(tai);
-  informationNR->setInformationNR(nR_CGI, tai_nr);
-  userLocationInformation.setInformation(informationNR);
+  information_nr.set(nR_CGI, tai_nr);
+  userLocationInformation.setInformation(information_nr);
 
   Ngap_UplinkNASTransport_IEs_t* ie = (Ngap_UplinkNASTransport_IEs_t*) calloc(
       1, sizeof(Ngap_UplinkNASTransport_IEs_t));
@@ -134,8 +133,8 @@ void UplinkNASTransportMsg::setUserLocationInfoNR(
   ie->value.present =
       Ngap_UplinkNASTransport_IEs__value_PR_UserLocationInformation;
 
-  int ret = userLocationInformation.encodefromUserLocationInformation(
-      &ie->value.choice.UserLocationInformation);
+  int ret =
+      userLocationInformation.encode(&ie->value.choice.UserLocationInformation);
   if (!ret) {
     Logger::ngap().error("Encode NGAP UserLocationInformation IE error");
     free_wrapper((void**) &ie);
@@ -149,14 +148,16 @@ void UplinkNASTransportMsg::setUserLocationInfoNR(
 
 //------------------------------------------------------------------------------
 bool UplinkNASTransportMsg::getUserLocationInfoNR(NrCgi_t& cig, Tai_t& tai) {
-  UserLocationInformationNR* informationNR;
-  userLocationInformation.getInformation(informationNR);
+  UserLocationInformationNR information_nr = {};
+  if (!userLocationInformation.getInformation(information_nr)) return false;
+
   if (userLocationInformation.getChoiceOfUserLocationInformation() !=
       Ngap_UserLocationInformation_PR_userLocationInformationNR)
     return false;
+
   NR_CGI nR_CGI = {};
   TAI nR_TAI    = {};
-  informationNR->getInformationNR(nR_CGI, nR_TAI);
+  information_nr.get(nR_CGI, nR_TAI);
   nR_CGI.getNR_CGI(cig);
   nR_TAI.getTAI(tai);
 
@@ -208,7 +209,7 @@ bool UplinkNASTransportMsg::decodeFromPdu(Ngap_NGAP_PDU_t* ngapMsgPdu) {
                 Ngap_Criticality_reject &&
             uplinkNASTransportIEs->protocolIEs.list.array[i]->value.present ==
                 Ngap_UplinkNASTransport_IEs__value_PR_RAN_UE_NGAP_ID) {
-          if (!ranUeNgapId.decodefromRAN_UE_NGAP_ID(
+          if (!ranUeNgapId.decode(
                   uplinkNASTransportIEs->protocolIEs.list.array[i]
                       ->value.choice.RAN_UE_NGAP_ID)) {
             Logger::ngap().error("Decoded NGAP RAN_UE_NGAP_ID IE error");
@@ -224,9 +225,8 @@ bool UplinkNASTransportMsg::decodeFromPdu(Ngap_NGAP_PDU_t* ngapMsgPdu) {
                 Ngap_Criticality_reject &&
             uplinkNASTransportIEs->protocolIEs.list.array[i]->value.present ==
                 Ngap_UplinkNASTransport_IEs__value_PR_NAS_PDU) {
-          if (!nasPdu.decodefromoctetstring(
-                  uplinkNASTransportIEs->protocolIEs.list.array[i]
-                      ->value.choice.NAS_PDU)) {
+          if (!nasPdu.decode(uplinkNASTransportIEs->protocolIEs.list.array[i]
+                                 ->value.choice.NAS_PDU)) {
             Logger::ngap().error("Decoded NGAP NAS_PDU IE error");
             return false;
           }
@@ -240,7 +240,7 @@ bool UplinkNASTransportMsg::decodeFromPdu(Ngap_NGAP_PDU_t* ngapMsgPdu) {
                 Ngap_Criticality_ignore &&
             uplinkNASTransportIEs->protocolIEs.list.array[i]->value.present ==
                 Ngap_UplinkNASTransport_IEs__value_PR_UserLocationInformation) {
-          if (!userLocationInformation.decodefromUserLocationInformation(
+          if (!userLocationInformation.decode(
                   &uplinkNASTransportIEs->protocolIEs.list.array[i]
                        ->value.choice.UserLocationInformation)) {
             Logger::ngap().error(

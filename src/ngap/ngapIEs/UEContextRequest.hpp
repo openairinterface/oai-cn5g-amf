@@ -19,15 +19,8 @@
  *      contact@openairinterface.org
  */
 
-/*! \file
- \brief
- \author  Keliang DU, BUPT
- \date 2020
- \email: contact@openairinterface.org
- */
-
-#ifndef _UECONTEXTREQUEST_H_
-#define _UECONTEXTREQUEST_H_
+#ifndef _UE_CONTEXT_REQUEST_H_
+#define _UE_CONTEXT_REQUEST_H_
 
 extern "C" {
 #include "Ngap_UEContextRequest.h"
@@ -38,16 +31,17 @@ namespace ngap {
 class UEContextRequest {
  public:
   UEContextRequest();
+  UEContextRequest(const e_Ngap_UEContextRequest& ue_context_request);
   virtual ~UEContextRequest();
 
-  void setUEContextRequest(e_Ngap_UEContextRequest m_uecontextrequest);
-  int getUEContextRequest();
+  void set(const e_Ngap_UEContextRequest& ue_context_request);
+  int get() const;
 
-  bool encode2UEContextRequest(Ngap_UEContextRequest_t& uEContextRequest);
-  bool decodefromUEContextRequest(Ngap_UEContextRequest_t& uEContextRequest);
+  bool encode(Ngap_UEContextRequest_t& ue_context_request) const;
+  bool decode(const Ngap_UEContextRequest_t& ue_context_request);
 
  private:
-  int uecontextrequest;
+  int ue_context_request_;
 };
 
 }  // namespace ngap

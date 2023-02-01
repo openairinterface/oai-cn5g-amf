@@ -19,13 +19,6 @@
  *      contact@openairinterface.org
  */
 
-/*! \file
- \brief
- \author  Keliang DU, BUPT
- \date 2020
- \email: contact@openairinterface.org
- */
-
 #ifndef _PDUSESSIONRESOURCESETUPREQUESTTRANSFER_H_
 #define _PDUSESSIONRESOURCESETUPREQUESTTRANSFER_H_
 
@@ -69,7 +62,7 @@ class PduSessionResourceSetupRequestTransferIE {
       e_Ngap_ConfidentialityProtectionIndication confidentiality_protection);
   void setNetworkInstance(long value);
   void setQosFlowSetupRequestList(std::vector<QosFlowSetupReq_t> list);
-  int encode2buffer(uint8_t* buf, int buf_size);
+  int Encode(uint8_t* buf, int buf_size);
   // Decapsulation
   bool decodefromIE(uint8_t* buf, int buf_size);
   bool getPduSessionAggregateMaximumBitRate(

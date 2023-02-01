@@ -19,13 +19,6 @@
  *      contact@openairinterface.org
  */
 
-/*! \file
- \brief
- \author  Keliang DU, BUPT
- \date 2020
- \email: contact@openairinterface.org
- */
-
 #include "IndexToRFSP.hpp"
 
 #include <iostream>
@@ -35,31 +28,32 @@ namespace ngap {
 
 //------------------------------------------------------------------------------
 IndexToRFSP::IndexToRFSP() {
-  indexToRFSP = 0;
+  index_ = 0;
 }
-
+//------------------------------------------------------------------------------
+IndexToRFSP::IndexToRFSP(const uint32_t& index) : index_(index) {}
 //------------------------------------------------------------------------------
 IndexToRFSP::~IndexToRFSP() {}
 
 //------------------------------------------------------------------------------
-void IndexToRFSP::setIndexToRFSP(uint8_t m_indexToRFSP) {
-  indexToRFSP = m_indexToRFSP;
+void IndexToRFSP::set(const uint32_t& index) {
+  index_ = index;
 }
 
 //------------------------------------------------------------------------------
-uint8_t IndexToRFSP::getIndexToRFSP() {
-  return indexToRFSP;
+uint32_t IndexToRFSP::get() const {
+  return index_;
 }
 
 //------------------------------------------------------------------------------
-bool IndexToRFSP::encode2IndexToRFSP(Ngap_IndexToRFSP_t& indextorfsp) {
-  indextorfsp = indexToRFSP;
+bool IndexToRFSP::encode(Ngap_IndexToRFSP_t& index) {
+  index = index_;
   return true;
 }
 
 //------------------------------------------------------------------------------
-bool IndexToRFSP::decodefromIndexToRFSP(Ngap_IndexToRFSP_t& indextorfsp) {
-  indexToRFSP = indextorfsp;
+bool IndexToRFSP::decode(Ngap_IndexToRFSP_t& index) {
+  index_ = index;
   return true;
 }
 }  // namespace ngap

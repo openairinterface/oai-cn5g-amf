@@ -19,26 +19,60 @@
  *      contact@openairinterface.org
  */
 
-/*! \file
- \brief
- \author  Keliang DU, BUPT
- \date 2020
- \email: contact@openairinterface.org
- */
-
 #include "ExtendedProtocolDiscriminator.hpp"
+
+#include "3gpp_24.501.hpp"
+#include "common_defs.h"
+#include "logger.hpp"
 
 using namespace nas;
 
 //------------------------------------------------------------------------------
-void ExtendedProtocolDiscriminator::setValue(const uint8_t epd) {
-  m_epd = epd;
+ExtendedProtocolDiscriminator::ExtendedProtocolDiscriminator(const uint8_t& epd)
+    : NasIe(), epd_(epd) {}
+
+//------------------------------------------------------------------------------
+ExtendedProtocolDiscriminator::~ExtendedProtocolDiscriminator() {}
+
+//------------------------------------------------------------------------------
+bool ExtendedProtocolDiscriminator::Validate(const int& len) const {
+  if (len < kExtendedProtocolDiscriminatorLength) {
+    Logger::nas_mm().error(
+        "Buffer length is less than the minimum length of this IE (%d octet)",
+        kExtendedProtocolDiscriminatorLength);
+    return false;
+  }
+  return true;
 }
 
 //------------------------------------------------------------------------------
-uint8_t ExtendedProtocolDiscriminator::getValue() {
-  return m_epd;
+void ExtendedProtocolDiscriminator::Set(const uint8_t& epd) {
+  epd_ = epd;
 }
 
 //------------------------------------------------------------------------------
-void ExtendedProtocolDiscriminator::encode2buffer(uint8_t* buf, int len) {}
+void ExtendedProtocolDiscriminator::Get(uint8_t& epd) const {
+  epd = epd_;
+}
+
+//------------------------------------------------------------------------------
+uint8_t ExtendedProtocolDiscriminator::Get() const {
+  return epd_;
+}
+
+//------------------------------------------------------------------------------
+int ExtendedProtocolDiscriminator::Encode(uint8_t* buf, const int& len) {
+  if (!Validate(len)) return KEncodeDecodeError;
+  uint32_t encoded_size = 0;
+  ENCODE_U8(buf, epd_, encoded_size);
+  return encoded_size;
+}
+
+//------------------------------------------------------------------------------
+int ExtendedProtocolDiscriminator::Decode(
+    const uint8_t* const buf, const int& len, bool is_iei) {
+  if (!Validate(len)) return KEncodeDecodeError;
+  uint32_t decoded_size = 0;
+  DECODE_U8(buf, epd_, decoded_size);
+  return decoded_size;
+}

@@ -1,0 +1,133 @@
+#/*
+# * Licensed to the OpenAirInterface (OAI) Software Alliance under one or more
+# * contributor license agreements.  See the NOTICE file distributed with
+# * this work for additional information regarding copyright ownership.
+# * The OpenAirInterface Software Alliance licenses this file to You under
+# * the OAI Public License, Version 1.1  (the "License"); you may not use this file
+# * except in compliance with the License.
+# * You may obtain a copy of the License at
+# *
+# *      http://www.openairinterface.org/?page_id=698
+# *
+# * Unless required by applicable law or agreed to in writing, software
+# * distributed under the License is distributed on an "AS IS" BASIS,
+# * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# * See the License for the specific language governing permissions and
+# * limitations under the License.
+# *-------------------------------------------------------------------------------
+# * For more information about the OpenAirInterface (OAI) Software Alliance:
+# *      contact@openairinterface.org
+# */
+#---------------------------------------------------------------------
+#
+# Dockerfile for the Open-Air-Interface AMF service
+#   Valid for Ubuntu-18.04 (bionic),
+#             Ubuntu-20.04 (focal),
+#             Ubuntu-22.04 (jammy)
+#
+#---------------------------------------------------------------------
+
+#---------------------------------------------------------------------
+# BUILDER IMAGE
+#---------------------------------------------------------------------
+ARG BASE_IMAGE=ubuntu:bionic
+FROM oai-amf-base:latest as oai-amf-builder
+
+# Copying source code
+RUN rm -Rf /openair-amf/
+WORKDIR /openair-amf/
+COPY . /openair-amf
+
+# Building AMF
+WORKDIR /openair-amf/build/scripts
+RUN ldconfig && \
+    cp -Rf /openair-amf-ext-ref /openair-amf/build/ext && \
+    ./build_amf --clean --Verbose --build-type Release --jobs && \
+    ldd /openair-amf/build/amf/build/amf && \
+    mv /openair-amf/build/amf/build/amf /openair-amf/build/amf/build/oai_amf
+
+#---------------------------------------------------------------------
+# TARGET IMAGE
+#---------------------------------------------------------------------
+FROM $BASE_IMAGE as oai-amf
+ENV DEBIAN_FRONTEND=noninteractive
+ENV TZ=Europe/Paris
+# We install some debug tools for the moment in addition of mandatory libraries
+RUN apt-get update && \
+    DEBIAN_FRONTEND=noninteractive apt-get upgrade --yes && \
+    DEBIAN_FRONTEND=noninteractive apt-get install --yes \
+      tzdata \
+      psmisc \
+      net-tools \
+      bc \
+      libssh-4 \
+      openssl \
+      libbrotli1 \
+      netbase \
+      python3\
+      python3-jinja2\
+# Ubuntu 18 --> libasan4
+# Ubuntu 20 --> libasan5
+# Ubuntu 22 --> libasan6
+#      libasan? \
+      libgssapi-krb5-2 \
+# Ubuntu 18/20 --> libldap-2.4-2
+# Ubuntu 22 --> libldap-2.5-0
+      libldap-2.?-? \
+      libconfig++9v5 \
+      libsctp1 \
+      librtmp1 \
+      libpsl5 \
+# Ubuntu 18/20 --> mysqlclient20, Ubuntu22 --> mysqlclient21
+      libmysqlclient2? \
+      libsqlite3-0 \
+      libcurl4-gnutls-dev \
+# Ubuntu 18 --> boost62/65 -> will remove both
+# Ubuntu 20 --> boost67/71 -> will remove 67
+# Ubuntu 22 --> boost74
+      libboost-thread1.??.0 \
+      libboost-chrono1.??.0 \
+  && rm -rf /var/lib/apt/lists/* \
+       /lib/x86_64-linux-gnu/libboost_system.so.1.6*.0 \
+       /lib/x86_64-linux-gnu/libboost_chrono.so.1.6*.0 \
+       /lib/x86_64-linux-gnu/libboost_thread.so.1.6*.0
+
+# Copying executable and generated libraries
+WORKDIR /openair-amf/bin
+COPY --from=oai-amf-builder \
+    /openair-amf/build/amf/build/oai_amf \
+    /openair-amf/scripts/entrypoint.py \
+    /openair-amf/scripts/healthcheck.sh \
+    ./
+
+WORKDIR /usr/local/lib
+COPY --from=oai-amf-builder \
+# Copying only the packages built from source
+    /usr/local/lib/libnghttp2.so.14 \
+    /usr/local/lib/libnghttp2_asio.so.1 \
+    /usr/local/lib/libpistache.so \
+# Ubuntu 18 --> boost 67 will be copied
+    /usr/lib/libboost_system.so.1.* \
+    /usr/lib/libboost_thread.so.1.* \
+    /usr/lib/libboost_chrono.so.1.* \
+    ./
+
+RUN ldconfig && \
+    ldd /openair-amf/bin/oai_amf
+
+# Copying template configuration files
+WORKDIR /openair-amf/etc
+COPY --from=oai-amf-builder /openair-amf/etc/amf.conf .
+
+WORKDIR /openair-amf
+
+# expose ports
+EXPOSE 80/tcp 9090/tcp 38412/sctp
+# healthcheck
+HEALTHCHECK --interval=10s \
+            --timeout=15s \
+            --retries=6 \
+    CMD /openair-amf/bin/healthcheck.sh
+
+ENTRYPOINT ["python3", "/openair-amf/bin/entrypoint.py"]
+CMD ["/openair-amf/bin/oai_amf", "-c", "/openair-amf/etc/amf.conf", "-o"]

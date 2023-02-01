@@ -36,20 +36,16 @@ class PDUSessionResourceFailedToSetupListCxtRes {
   PDUSessionResourceFailedToSetupListCxtRes();
   virtual ~PDUSessionResourceFailedToSetupListCxtRes();
 
-  void setPDUSessionResourceFailedToSetupListCxtRes(
-      const std::vector<PDUSessionResourceFailedToSetupItemCxtRes>& list);
-  void getPDUSessionResourceFailedToSetupListCxtRes(
-      std::vector<PDUSessionResourceFailedToSetupItemCxtRes>& list);
+  void set(const std::vector<PDUSessionResourceFailedToSetupItemCxtRes>& list);
+  void get(std::vector<PDUSessionResourceFailedToSetupItemCxtRes>& list);
 
-  bool encode2PDUSessionResourceFailedToSetupListCxtRes(
-      Ngap_PDUSessionResourceFailedToSetupListCxtRes_t*
-          pduSessionResourceFailedToSetupListCxtRes);
-  bool decodefromPDUSessionResourceFailedToSetupListCxtRes(
-      Ngap_PDUSessionResourceFailedToSetupListCxtRes_t*
-          pduSessionResourceFailedToSetupListCxtRes);
+  bool encode(Ngap_PDUSessionResourceFailedToSetupListCxtRes_t*
+                  pduSessionResourceFailedToSetupListCxtRes);
+  bool decode(Ngap_PDUSessionResourceFailedToSetupListCxtRes_t*
+                  pduSessionResourceFailedToSetupListCxtRes);
 
  private:
-  std::vector<PDUSessionResourceFailedToSetupItemCxtRes> itemList;
+  std::vector<PDUSessionResourceFailedToSetupItemCxtRes> item_list_;
 };
 
 }  // namespace ngap

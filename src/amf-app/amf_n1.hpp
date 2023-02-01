@@ -19,13 +19,6 @@
  *      contact@openairinterface.org
  */
 
-/*! \file amf_n1.hpp
- \brief
- \author Keliang DU (BUPT), Tien-Thinh NGUYEN (EURECOM)
- \date 2020
- \email: contact@openairinterface.org
- */
-
 #ifndef _AMF_N1_H_
 #define _AMF_N1_H_
 
@@ -36,22 +29,22 @@
 #include <map>
 #include <shared_mutex>
 
-#include "3gpp_ts24501.hpp"
 #include "3gpp_29.503.h"
+#include "3gpp_24.501.hpp"
+#include "AuthorizedNetworkSliceInfo.h"
+#include "Nssai.h"
+#include "RegistrationAccept.hpp"
+#include "SliceInfoForRegistration.h"
 #include "amf.hpp"
+#include "amf_event.hpp"
 #include "amf_statistics.hpp"
 #include "bstrlib.h"
+#include "itti.hpp"
 #include "itti_msg_n1.hpp"
 #include "mysql_db.hpp"
 #include "nas_context.hpp"
 #include "pdu_session_context.hpp"
-#include "amf_event.hpp"
-#include "RegistrationAccept.hpp"
 #include "ue_context.hpp"
-#include "itti.hpp"
-#include "SliceInfoForRegistration.h"
-#include "AuthorizedNetworkSliceInfo.h"
-#include "Nssai.h"
 
 namespace amf_application {
 
@@ -151,6 +144,15 @@ class amf_n1 {
    * @return true if UE NAS context exist, otherwise false
    */
   bool is_amf_ue_id_2_nas_context(const long& amf_ue_ngap_id) const;
+
+  /*
+   * Verify if a UE NAS context associated with an AMF UE NGAP ID exist
+   * @param [const long& ] amf_ue_ngap_id: AMF UE NGAP ID
+   * @param [std::shared_ptr<nas_context>&] nc: pointer to UE NAS context
+   * @return true if UE NAS context exist, otherwise false
+   */
+  bool is_amf_ue_id_2_nas_context(
+      const long& amf_ue_ngap_id, std::shared_ptr<nas_context>& nc) const;
 
   /*
    * Get UE NAS context associated with an AMF UE NGAP ID
@@ -284,7 +286,8 @@ class amf_n1 {
       std::shared_ptr<nas_context>& nc, bstring& nas_msg);
 
   /*
-   * Generate the Authentication Vectors
+   * Generate the Authentication Vectors (either from AUSF(UDM) or generate
+   * locally in AMF)
    * @param [std::shared_ptr<nas_context>&] nc: Pointer to the UE NAS Context
    * @return true if generated successfully, otherwise return false
    */
@@ -797,10 +800,13 @@ class amf_n1 {
    * @param [std::string] supi: SUPI
    * @param [uint8_t] status: Registration status
    * @param [uint8_t] http_version: HTTP version (for the notification)
+   * @param [uint32_t] ran_ue_ngap_id: RAN UE NGAP ID
+   * @param [long] amf_ue_ngap_id: AMF UE NGAP ID
    * @return void
    */
   void handle_ue_registration_state_change(
-      std::string supi, uint8_t status, uint8_t http_version);
+      std::string supi, uint8_t status, uint8_t http_version,
+      uint32_t ran_ue_ngap_id, long amf_ue_ngap_id);
 
   /*
    * Handle the UE Connectivity State Change event to trigger the notification
@@ -813,7 +819,32 @@ class amf_n1 {
   void handle_ue_connectivity_state_change(
       std::string supi, uint8_t status, uint8_t http_version);
 
- private:
+  /*
+   * Handle the UE Loss of Connectivity Change event to trigger the notification
+   * to the subscribed NFs
+   * @param [std::string] supi: SUPI
+   * @param [uint8_t] status: UE Loss of Connectivity status
+   * @param [uint8_t] http_version: HTTP version (for the notification)
+   * @param [uint32_t] ran_ue_ngap_id: RAN UE NGAP ID
+   * @param [long] amf_ue_ngap_id: AMF UE NGAP ID
+   * @return void
+   */
+  void handle_ue_loss_of_connectivity_change(
+      std::string supi, uint8_t status, uint8_t http_version,
+      uint32_t ran_ue_ngap_id, long amf_ue_ngap_id);
+  /*
+   * Handle the UE Communication Failure event to trigger the notification to
+   * the subscribed NFs
+   * @param [std::string] supi: SUPI
+   * @param [oai::amf::model::CommunicationFailure] comm_failure: Communication
+   * Failure reason
+   * @param [uint8_t] http_version: HTTP version (for the notification)
+   * @return void
+   */
+  void handle_ue_communication_failure_change(
+      std::string supi, oai::amf::model::CommunicationFailure,
+      uint8_t http_version);
+
   /*
    * Handle UE-initiated Deregistration Request message
    * @param [const uint32_t] ran_ue_ngap_id: RAN UE NGAP ID
@@ -958,6 +989,16 @@ class amf_n1 {
       const uint8_t cause_value, const uint32_t ran_ue_ngap_id,
       const long amf_ue_ngap_id);
 
+  // for Event Handling
+  amf_event event_sub;
+  bs2::connection ee_ue_location_report_connection;
+  bs2::connection ee_ue_reachability_status_connection;
+  bs2::connection ee_ue_registration_state_connection;
+  bs2::connection ee_ue_connectivity_state_connection;
+  bs2::connection ee_ue_loss_of_connectivity_connection;
+  bs2::connection ee_ue_communication_failure_connection;
+
+ private:
   std::map<long, std::shared_ptr<nas_context>>
       amfueid2nas_context;  // amf ue ngap id
   mutable std::shared_mutex m_amfueid2nas_context;
@@ -973,14 +1014,7 @@ class amf_n1 {
   static std::map<std::string, std::string> rand_record;
   static uint8_t no_random_delta;
   random_state_t random_state;
-  database_t* db_desc;
-
-  // for Event Handling
-  amf_event event_sub;
-  bs2::connection ee_ue_location_report_connection;
-  bs2::connection ee_ue_reachability_status_connection;
-  bs2::connection ee_ue_registration_state_connection;
-  bs2::connection ee_ue_connectivity_state_connection;
+  database_t db_desc;
 };
 }  // namespace amf_application
 

@@ -19,13 +19,6 @@
  *      contact@openairinterface.org
  */
 
-/*! \file nas_security_context.hpp
- \brief
- \author  Keliang DU, BUPT
- \date 2020
- \email: contact@openairinterface.org
- */
-
 #ifndef _NAS_SECURITY_CONTEXT_H_
 #define _NAS_SECURITY_CONTEXT_H_
 

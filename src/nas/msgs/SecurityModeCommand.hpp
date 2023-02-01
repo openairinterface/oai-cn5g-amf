@@ -19,50 +19,67 @@
  *      contact@openairinterface.org
  */
 
-/*! \file
- \brief
- \author  Keliang DU, BUPT
- \date 2020
- \email: contact@openairinterface.org
- */
+#ifndef _SECURITY_MODE_COMMAND_H_
+#define _SECURITY_MODE_COMMAND_H_
 
-#ifndef _SecurityModeCommand_H_
-#define _SecurityModeCommand_H_
-
-#include "nas_ie_header.hpp"
+#include "NasIeHeader.hpp"
 
 namespace nas {
 
-class SecurityModeCommand {
+class SecurityModeCommand : public NasMmPlainHeader {
  public:
   SecurityModeCommand();
   ~SecurityModeCommand();
-  int encode2buffer(uint8_t* buf, int len);
-  int decodefrombuffer(NasMmPlainHeader* header, uint8_t* buf, int len);
-  void setHeader(uint8_t security_header_type);
-  void setNAS_Security_Algorithms(uint8_t ciphering, uint8_t integrity);
-  void setngKSI(uint8_t tsc, uint8_t key_set_id);
-  void setUE_Security_Capability(uint8_t g_EASel, uint8_t g_IASel);
-  void setUE_Security_Capability(
-      uint8_t g_EASel, uint8_t g_IASel, uint8_t EEASel, uint8_t EIASel);
-  void setIMEISV_Request(uint8_t value);
-  void setEPS_NAS_Security_Algorithms(uint8_t ciphering, uint8_t integrity);
-  void setAdditional_5G_Security_Information(bool rinmr, bool hdp);
-  void setEAP_Message(bstring eap);
-  void setABBA(uint8_t length, uint8_t* value);
-  void setS1_UE_Security_Capability(uint8_t g_EEASel, uint8_t g_EIASel);
+
+  void SetHeader(uint8_t security_header_type);
+
+  int Encode(uint8_t* buf, int len);
+  int Decode(uint8_t* buf, int len);
+
+  void SetNasSecurityAlgorithms(uint8_t ciphering, uint8_t integrity);
+  // TODO: Get
+
+  void SetNgKsi(uint8_t tsc, uint8_t key_set_id);
+  // TODO: Get
+
+  void SetUeSecurityCapability(uint8_t g_EASel, uint8_t g_IASel);
+  // TODO: Get
+  void SetUeSecurityCapability(
+      uint8_t g_EASel, uint8_t g_IASel, uint8_t eea, uint8_t eia);
+  // TODO: Get
+
+  void SetImeisvRequest(uint8_t value);
+  // TODO: Get
+
+  void SetEpsNasSecurityAlgorithms(uint8_t ciphering, uint8_t integrity);
+  // TODO: Get
+
+  void SetAdditional5gSecurityInformation(bool rinmr, bool hdp);
+  // TODO: Get
+
+  void SetEapMessage(bstring eap);
+  // TODO: Get
+
+  void SetAbba(uint8_t length, uint8_t* value);
+  // TODO: Get
+
+  void SetS1UeSecurityCapability(uint8_t g_EEASel, uint8_t g_EIASel);
+  // TODO: Get
 
  public:
-  NasMmPlainHeader* plain_header;
-  NAS_Security_Algorithms* ie_selected_nas_security_algorithms;
-  NasKeySetIdentifier* ie_ngKSI;
-  UESecurityCapability* ie_ue_security_capability;
-  IMEISV_Request* ie_imeisv_request;
-  EPS_NAS_Security_Algorithms* ie_eps_nas_security_algorithms;
-  Additional_5G_Security_Information* ie_additional_5G_security_information;
-  EAP_Message* ie_eap_message;
-  ABBA* ie_abba;
-  S1_UE_Security_Capability* ie_s1_ue_security_capability;
+  NasSecurityAlgorithms ie_selected_nas_security_algorithms;  // Mandatory
+  NasKeySetIdentifier ie_ngKSI;                               // Mandatory
+  UESecurityCapability ie_ue_security_capability;             // Mandatory
+
+  std::optional<ImeisvRequest> ie_imeisv_request;  // Optional
+  std::optional<EpsNasSecurityAlgorithms>
+      ie_eps_nas_security_algorithms;  // Optional
+  std::optional<Additional5gSecurityInformation>
+      ie_additional_5G_security_information;  // Optional
+  std::optional<EapMessage> ie_eap_message;   // Optional
+  std::optional<ABBA> ie_abba;                // Optional
+  std::optional<S1UeSecurityCapability>
+      ie_s1_ue_security_capability;  // Optional
 };
 
 }  // namespace nas

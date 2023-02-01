@@ -19,13 +19,6 @@
  *      contact@openairinterface.org
  */
 
-/*! \file
- \brief
- \author  Keliang DU, BUPT
- \date 2020
- \email: contact@openairinterface.org
- */
-
 #ifndef _NRCellIdentity_H_
 #define _NRCellIdentity_H_
 
@@ -40,8 +33,8 @@ class NRCellIdentity {
   NRCellIdentity();
   virtual ~NRCellIdentity();
 
-  bool encode2bitstring(Ngap_NRCellIdentity_t& nRCellIdentity);
-  bool decodefrombitstring(Ngap_NRCellIdentity_t& nRCellIdentity);
+  bool encode(Ngap_NRCellIdentity_t& nRCellIdentity);
+  bool decode(Ngap_NRCellIdentity_t& nRCellIdentity);
 
   unsigned long getNRCellIdentity();
   void setNRCellIdentity(unsigned long m_nrcellidentity);

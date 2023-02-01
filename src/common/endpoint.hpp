@@ -19,13 +19,6 @@
  *      contact@openairinterface.org
  */
 
-/*! \file endpoint.hpp
- \brief
- \author Lionel Gauthier
- \company Eurecom
- \email: lionel.gauthier@eurecom.fr
- */
-
 #ifndef FILE_ENDPOINT_HPP_SEEN
 #define FILE_ENDPOINT_HPP_SEEN
 

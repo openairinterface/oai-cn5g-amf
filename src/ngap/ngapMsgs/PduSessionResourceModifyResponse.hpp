@@ -50,8 +50,8 @@ class PduSessionResourceModifyResponseMsg : public NgapUEMessage {
  private:
   Ngap_PDUSessionResourceModifyResponse_t* pduSessionResourceModifyResponseIEs;
 
-  PDUSessionResourceModifyListModRes pduSessionResourceModifyList;  // Optional
-  bool pduSessionResourceModifyListModResIsSet;
+  std::optional<PDUSessionResourceModifyListModRes>
+      pduSessionResourceModifyList;  // Optional
   // TODO: PDUSessionResourceFailedToModifyListModRes (Optional)
   // TODO: User Location Information (Optional)
   // TODO: Criticality Diagnostics (Optional)

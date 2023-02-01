@@ -19,60 +19,50 @@
  *      contact@openairinterface.org
  */
 
-/*! \file
- \brief
- \author  Keliang DU, BUPT
- \date 2020
- \email: contact@openairinterface.org
- */
-
 #include "PeriodicRegistrationUpdateTimer.hpp"
-
-#include <iostream>
-using namespace std;
 
 namespace ngap {
 
 //------------------------------------------------------------------------------
 PeriodicRegistrationUpdateTimer::PeriodicRegistrationUpdateTimer() {
-  updatetimer = 0;
+  update_timer_ = 0;
 }
 
 //------------------------------------------------------------------------------
 PeriodicRegistrationUpdateTimer::~PeriodicRegistrationUpdateTimer() {}
 
 //------------------------------------------------------------------------------
-void PeriodicRegistrationUpdateTimer::setPeriodicRegistrationUpdateTimer(
-    uint8_t m_updatetimer) {
-  updatetimer = m_updatetimer;
+void PeriodicRegistrationUpdateTimer::set(const uint8_t& update_timer) {
+  update_timer_ = update_timer;
 }
 
 //------------------------------------------------------------------------------
-bool PeriodicRegistrationUpdateTimer::encode2PeriodicRegistrationUpdateTimer(
-    Ngap_PeriodicRegistrationUpdateTimer_t* periodicRegistrationUpdateTimer) {
-  periodicRegistrationUpdateTimer->size        = sizeof(uint8_t);
-  periodicRegistrationUpdateTimer->bits_unused = 0;
-  periodicRegistrationUpdateTimer->buf =
-      (uint8_t*) calloc(1, periodicRegistrationUpdateTimer->size);
-  if (!periodicRegistrationUpdateTimer->buf) return false;
-  periodicRegistrationUpdateTimer->buf[0] = updatetimer;
+bool PeriodicRegistrationUpdateTimer::encode(
+    Ngap_PeriodicRegistrationUpdateTimer_t& periodic_registration_update_timer)
+    const {
+  periodic_registration_update_timer.size        = sizeof(uint8_t);
+  periodic_registration_update_timer.bits_unused = 0;
+  periodic_registration_update_timer.buf =
+      (uint8_t*) calloc(1, periodic_registration_update_timer.size);
+  if (!periodic_registration_update_timer.buf) return false;
+  periodic_registration_update_timer.buf[0] = update_timer_;
 
   return true;
 }
 
 //------------------------------------------------------------------------------
-bool PeriodicRegistrationUpdateTimer::decodefromPeriodicRegistrationUpdateTimer(
-    Ngap_PeriodicRegistrationUpdateTimer_t* periodicRegistrationUpdateTimer) {
-  if (!periodicRegistrationUpdateTimer->buf) return false;
-  updatetimer = periodicRegistrationUpdateTimer->buf[0];
+bool PeriodicRegistrationUpdateTimer::decode(
+    const Ngap_PeriodicRegistrationUpdateTimer_t&
+        periodic_registration_update_timer) {
+  if (!periodic_registration_update_timer.buf) return false;
+  update_timer_ = periodic_registration_update_timer.buf[0];
 
   return true;
 }
 
 //------------------------------------------------------------------------------
-void PeriodicRegistrationUpdateTimer::getPeriodicRegistrationUpdateTimer(
-    uint8_t& m_updatetimer) {
-  m_updatetimer = updatetimer;
+void PeriodicRegistrationUpdateTimer::get(uint8_t& update_timer) const {
+  update_timer = update_timer_;
 }
 
 }  // namespace ngap

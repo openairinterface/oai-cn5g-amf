@@ -36,45 +36,42 @@ PLMNSupportItem::PLMNSupportItem() {}
 PLMNSupportItem::~PLMNSupportItem() {}
 
 //------------------------------------------------------------------------------
-void PLMNSupportItem::setPlmnSliceSupportList(
-    const PlmnId& m_plmn, const std::vector<S_NSSAI>& m_snssais) {
-  plmn    = m_plmn;
-  snssais = m_snssais;
+void PLMNSupportItem::set(
+    const PlmnId& plmn_id, const std::vector<S_NSSAI>& snssais) {
+  plmn_id_            = plmn_id;
+  slice_support_list_ = snssais;
 }
 
 //------------------------------------------------------------------------------
-bool PLMNSupportItem::encode2PLMNSupportItem(
-    Ngap_PLMNSupportItem_t* plmnsupportItem) {
-  if (!plmn.encode2octetstring(plmnsupportItem->pLMNIdentity)) return false;
-  for (std::vector<S_NSSAI>::iterator it = std::begin(snssais);
-       it < std::end(snssais); ++it) {
+void PLMNSupportItem::get(PlmnId& plmn_id, std::vector<S_NSSAI>& snssais) {
+  plmn_id = plmn_id_;
+  snssais = slice_support_list_;
+}
+
+//------------------------------------------------------------------------------
+bool PLMNSupportItem::encode(Ngap_PLMNSupportItem_t* plmn_support_item) {
+  if (!plmn_id_.encode(plmn_support_item->pLMNIdentity)) return false;
+  for (std::vector<S_NSSAI>::iterator it = std::begin(slice_support_list_);
+       it < std::end(slice_support_list_); ++it) {
     Ngap_SliceSupportItem_t* slice =
         (Ngap_SliceSupportItem_t*) calloc(1, sizeof(Ngap_SliceSupportItem_t));
-    if (!it->encode2S_NSSAI(&slice->s_NSSAI)) return false;
-    ASN_SEQUENCE_ADD(&plmnsupportItem->sliceSupportList.list, slice);
+    if (!it->encode(&slice->s_NSSAI)) return false;
+    ASN_SEQUENCE_ADD(&plmn_support_item->sliceSupportList.list, slice);
   }
   return true;
 }
 
 //------------------------------------------------------------------------------
-bool PLMNSupportItem::decodefromPLMNSupportItem(
-    Ngap_PLMNSupportItem_t* plmnsupportItem) {
-  if (!plmn.decodefromoctetstring(plmnsupportItem->pLMNIdentity)) return false;
+bool PLMNSupportItem::decode(Ngap_PLMNSupportItem_t* plmn_support_item) {
+  if (!plmn_id_.decode(plmn_support_item->pLMNIdentity)) return false;
 
-  for (int i = 0; i < plmnsupportItem->sliceSupportList.list.count; i++) {
+  for (int i = 0; i < plmn_support_item->sliceSupportList.list.count; i++) {
     S_NSSAI snssai = {};
-    if (!snssai.decodefromS_NSSAI(
-            &plmnsupportItem->sliceSupportList.list.array[i]->s_NSSAI))
+    if (!snssai.decode(
+            &plmn_support_item->sliceSupportList.list.array[i]->s_NSSAI))
       return false;
-    snssais.push_back(snssai);
+    slice_support_list_.push_back(snssai);
   }
   return true;
-}
-
-//------------------------------------------------------------------------------
-void PLMNSupportItem::getPlmnSliceSupportList(
-    PlmnId& m_plmn, std::vector<S_NSSAI>& m_snssais) {
-  m_plmn    = plmn;
-  m_snssais = snssais;
 }
 }  // namespace ngap

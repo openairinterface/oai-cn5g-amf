@@ -19,13 +19,6 @@
  *      contact@openairinterface.org
  */
 
-/*! \file nas_context.hpp
- \brief
- \author  Keliang DU, BUPT
- \date 2020
- \email: contact@openairinterface.org
- */
-
 #ifndef _AMF_NAS_CONTEXT_H_
 #define _AMF_NAS_CONTEXT_H_
 
@@ -34,10 +27,10 @@
 #include <string>
 
 #include "authentication_algorithms_with_5gaka.hpp"
+#include "itti.hpp"
 #include "nas_security_context.hpp"
 #include "security_def.hpp"
 #include "struct.hpp"
-#include "itti.hpp"
 
 typedef enum {
   _5GMM_STATE_MIN     = 0,
@@ -62,6 +55,15 @@ typedef enum { CM_IDLE = 0, CM_CONNECTED } cm_state_t;
 static const std::vector<std::string> cm_state_e2str = {"CM_IDLE",
                                                         "CM_CONNECTED"};
 
+typedef enum {
+  DEREGISTERED = 0,
+  MAX_DETECTION_TIME_EXPIRED,
+  PURGED
+} loss_of_connectivity_status_t;
+
+static const std::vector<std::string> loss_of_connectivity_status_e2str = {
+    "DEREGISTERED", "MAX_DETECTION_TIME_EXPIRED", "PURGED"};
+
 class nas_context {
  public:
   nas_context();
@@ -82,7 +84,7 @@ class nas_context {
   uint8_t ngKsi : 4;
   // mobility identity: imsi, supi, 5g-guti, etc
   std::string imsi;
-  uint8_t mmCapability;
+  uint8_t mmCapability;  // TODO: multiple octets
   uint8_t ueSecurityCaplen;
   uint8_t ueSecurityCapEnc;
   uint8_t ueSecurityCapInt;
@@ -96,6 +98,7 @@ class nas_context {
   // Set to true if marked as default
   std::vector<std::pair<bool, nas::SNSSAI_t>> subscribed_snssai;
   std::vector<nas::SNSSAI_t> configured_nssai;
+  // TODO: rejected_nssai;
   // std::vector<nas::SNSSAI_t>  default_configured_nssai;
   // std::vector<nas::SNSSAI_t> s_nssai; //for Network Slice selection
 
@@ -121,7 +124,7 @@ class nas_context {
   uint8_t kamf[MAX_5GS_AUTH_VECTORS][32];
   security_context_t _security;
 
-  nas_secu_ctx* security_ctx;
+  nas_secu_ctx* security_ctx;  // TODO: avoid using naked ptr
 
   bool is_current_security_available;
 

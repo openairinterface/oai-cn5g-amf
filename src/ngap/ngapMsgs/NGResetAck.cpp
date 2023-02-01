@@ -32,16 +32,14 @@ namespace ngap {
 
 //------------------------------------------------------------------------------
 NGResetAckMsg::NGResetAckMsg() {
-  ngResetAckIEs                        = nullptr;
-  ueAssociationLogicalNGConnectionList = nullptr;
-  CriticalityDiagnostics               = nullptr;
+  ngResetAckIEs                       = nullptr;
+  ueAssociatedLogicalNGConnectionList = std::nullopt;
+  CriticalityDiagnostics              = nullptr;
   NgapMessage::setMessageType(NgapMessageType::NG_RESET_ACKNOWLEDGE);
   initialize();
 }
 //------------------------------------------------------------------------------
 NGResetAckMsg::~NGResetAckMsg() {
-  if (ueAssociationLogicalNGConnectionList)
-    free_wrapper((void**) &ueAssociationLogicalNGConnectionList);
   if (CriticalityDiagnostics) free_wrapper((void**) &CriticalityDiagnostics);
 }
 
@@ -53,23 +51,20 @@ void NGResetAckMsg::initialize() {
 
 //------------------------------------------------------------------------------
 void NGResetAckMsg::setUE_associatedLogicalNG_connectionList(
-    std::vector<UEAssociationLogicalNGConnectionItem>& list) {
-  if (!ueAssociationLogicalNGConnectionList) {
-    ueAssociationLogicalNGConnectionList =
-        (UEAssociationLogicalNGConnectionList*) calloc(
-            1, sizeof(UEAssociationLogicalNGConnectionList));
-  }
-  ueAssociationLogicalNGConnectionList->setUEAssociationLogicalNGConnectionItem(
-      list);
+    std::vector<UEAssociatedLogicalNGConnectionItem>& list) {
+  UEAssociatedLogicalNGConnectionList tmp = {};
+  tmp.set(list);
+  ueAssociatedLogicalNGConnectionList =
+      std::make_optional<UEAssociatedLogicalNGConnectionList>(tmp);
+
   addUE_associatedLogicalNG_connectionList();
 }
 
 //------------------------------------------------------------------------------
 void NGResetAckMsg::getUE_associatedLogicalNG_connectionList(
-    std::vector<UEAssociationLogicalNGConnectionItem>& list) {
-  if (ueAssociationLogicalNGConnectionList) {
-    ueAssociationLogicalNGConnectionList
-        ->getUEAssociationLogicalNGConnectionItem(list);
+    std::vector<UEAssociatedLogicalNGConnectionItem>& list) {
+  if (ueAssociatedLogicalNGConnectionList.has_value()) {
+    ueAssociatedLogicalNGConnectionList.value().get(list);
   }
 }
 
@@ -82,7 +77,7 @@ void NGResetAckMsg::addUE_associatedLogicalNG_connectionList() {
   ie->value.present =
       Ngap_NGResetAcknowledgeIEs__value_PR_UE_associatedLogicalNG_connectionList;
 
-  if (!ueAssociationLogicalNGConnectionList->encode(
+  if (!ueAssociatedLogicalNGConnectionList.value().encode(
           &ie->value.choice.UE_associatedLogicalNG_connectionList)) {
     Logger::ngap().error(
         "Encode NGAP UE_associatedLogicalNG_connectionList IE error");
@@ -117,18 +112,17 @@ bool NGResetAckMsg::decodeFromPdu(Ngap_NGAP_PDU_t* ngapMsgPdu) {
                     Ngap_Criticality_ignore &&
                 ngResetAckIEs->protocolIEs.list.array[i]->value.present ==
                     Ngap_NGResetAcknowledgeIEs__value_PR_UE_associatedLogicalNG_connectionList) {
-              ueAssociationLogicalNGConnectionList =
-                  new UEAssociationLogicalNGConnectionList();
-              if (!ueAssociationLogicalNGConnectionList->decode(
-                      &ngResetAckIEs->protocolIEs.list.array[i]
-                           ->value.choice
-                           .UE_associatedLogicalNG_connectionList)) {
+              UEAssociatedLogicalNGConnectionList tmp = {};
+              if (!tmp.decode(&ngResetAckIEs->protocolIEs.list.array[i]
+                                   ->value.choice
+                                   .UE_associatedLogicalNG_connectionList)) {
                 Logger::ngap().error(
                     "Decoded NGAP UE_associatedLogicalNG_connectionList IE "
                     "error");
                 return false;
               }
-
+              ueAssociatedLogicalNGConnectionList =
+                  std::make_optional<UEAssociatedLogicalNGConnectionList>(tmp);
             } else {
               Logger::ngap().error(
                   "Decoded NGAP UE_associatedLogicalNG_connectionList IE "

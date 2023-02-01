@@ -19,15 +19,10 @@
  *      contact@openairinterface.org
  */
 
-/*! \file
- \brief
- \author  Keliang DU, BUPT
- \date 2020
- \email: contact@openairinterface.org
- */
+#ifndef _UE_RADIO_CAPABILITY_FOR_PAGING_OF_EUTRA_H_
+#define _UE_RADIO_CAPABILITY_FOR_PAGING_OF_EUTRA_H_
 
-#ifndef _UERADIOCAPABILITYFORPAGINGOFEUTRA_H_
-#define _UERADIOCAPABILITYFORPAGINGOFEUTRA_H_
+#include "bstrlib.h"
 
 extern "C" {
 #include "Ngap_UERadioCapabilityForPagingOfEUTRA.h"
@@ -40,18 +35,19 @@ class UERadioCapabilityForPagingOfEUTRA {
   UERadioCapabilityForPagingOfEUTRA();
   virtual ~UERadioCapabilityForPagingOfEUTRA();
 
-  bool encode2UERadioCapabilityForPagingOfEUTRA(
-      Ngap_UERadioCapabilityForPagingOfEUTRA_t*
-          ueRadioCapabilityForPagingOfEUTRA);
-  bool decodefromUERadioCapabilityForPagingOfEUTRA(
-      Ngap_UERadioCapabilityForPagingOfEUTRA_t*
-          ueRadioCapabilityForPagingOfEUTRA);
-  bool getUERadioCapabilityForPagingOfEUTRA(uint8_t*& buffer, size_t& size);
-  void setUERadioCapabilityForPagingOfEUTRA(uint8_t* buffer, size_t size);
+  bool encode(Ngap_UERadioCapabilityForPagingOfEUTRA_t*
+                  ueRadioCapabilityForPagingOfEUTRA);
+  bool decode(Ngap_UERadioCapabilityForPagingOfEUTRA_t*
+                  ueRadioCapabilityForPagingOfEUTRA);
+
+  bool set(const OCTET_STRING_t& capability);
+  bool get(OCTET_STRING_t& capability);
+
+  bool set(const bstring& capability);
+  bool get(bstring& capability);
 
  private:
-  char* EUTRAbuffer;
-  size_t sizeofEUTRAbuffer;
+  OCTET_STRING_t ue_radio_capability_;
 };
 
 }  // namespace ngap

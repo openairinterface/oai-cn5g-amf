@@ -19,13 +19,6 @@
  *      contact@openairinterface.org
  */
 
-/*! \file nas_context.cpp
- \brief
- \author  Keliang DU, BUPT
- \date 2020
- \email: contact@openairinterface.org
- */
-
 #include "nas_context.hpp"
 
 //------------------------------------------------------------------------------

@@ -19,13 +19,6 @@
  *      contact@openairinterface.org
  */
 
-/*! \file gNB_context.hpp
- \brief
- \author  Keliang DU, BUPT
- \date 2020
- \email: contact@openairinterface.org
- */
-
 #ifndef _GNB_CONTEXT_H_
 #define _GNB_CONTEXT_H_
 
@@ -51,6 +44,7 @@ typedef enum {
   NGAP_READY,
   NGAP_SHUTDOWN
 } amf_ng_gnb_state_t;
+
 class gnb_context {
  public:
   amf_ng_gnb_state_t ng_state;
@@ -58,7 +52,7 @@ class gnb_context {
   std::string gnb_name;
   long globalRanNodeId;
   e_Ngap_PagingDRX default_paging_drx;  // v32, v64, v128, v256
-  std::vector<SupportedItem_t> s_ta_list;
+  std::vector<SupportedTaItem_t> s_ta_list;
   bstring ue_radio_cap_ind;
 
   sctp_assoc_id_t sctp_assoc_id;

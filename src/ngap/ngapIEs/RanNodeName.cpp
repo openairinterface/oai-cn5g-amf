@@ -19,54 +19,42 @@
  *      contact@openairinterface.org
  */
 
-/*! \file
- \brief
- \author  Keliang DU, BUPT
- \date 2020
- \email: contact@openairinterface.org
- */
-
 #include "RanNodeName.hpp"
 
-#include <iostream>
-using namespace std;
+#include "conversions.hpp"
 
 namespace ngap {
 
 //------------------------------------------------------------------------------
 RanNodeName::RanNodeName() {
-  ranNodeName = NULL;
+  ran_node_name_ = {};
 }
 
 //------------------------------------------------------------------------------
 RanNodeName::~RanNodeName() {}
 
 //------------------------------------------------------------------------------
-void RanNodeName::setValue(const std::string ranName) {
-  ranNodeName = (char*) ranName.c_str();
-}
-
-//------------------------------------------------------------------------------
-bool RanNodeName::getValue(std::string& ranName) {
-  if (!ranNodeName) return false;
-  ranName = ranNodeName;
+bool RanNodeName::setValue(const std::string& value) {
+  if (value.size() > RAN_NODE_NAME_SIZE_MAX) return false;
+  ran_node_name_ = value;
   return true;
 }
 
 //------------------------------------------------------------------------------
-bool RanNodeName::encode2RanNodeName(Ngap_RANNodeName_t* rannodename) {
-  int ret = OCTET_STRING_fromBuf(rannodename, ranNodeName, strlen(ranNodeName));
-
-  if (ret == 0)
-    return true;
-  else
-    return false;
+void RanNodeName::getValue(std::string& value) const {
+  value = ran_node_name_;
 }
 
 //------------------------------------------------------------------------------
-bool RanNodeName::decodefromRanNodeName(Ngap_RANNodeName_t* rannodename) {
-  if (!rannodename->buf) return false;
-  ranNodeName = (char*) rannodename->buf;
+bool RanNodeName::encode(Ngap_RANNodeName_t& ran_node_name) {
+  conv::string_2_octet_string(ran_node_name_, ran_node_name);
+  return true;
+}
+
+//------------------------------------------------------------------------------
+bool RanNodeName::decode(Ngap_RANNodeName_t& ran_node_name) {
+  if (!ran_node_name.buf) return false;
+  conv::octet_string_2_string(ran_node_name, ran_node_name_);
   return true;
 }
 

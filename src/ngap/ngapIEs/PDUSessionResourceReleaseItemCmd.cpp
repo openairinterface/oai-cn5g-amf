@@ -19,12 +19,6 @@
  *      contact@openairinterface.org
  */
 
-/*! \file
- \brief
- \author  niuxiansheng-niu, BUPT
- \date 2020
- \email: contact@openairinterface.org
- */
 #include "PDUSessionResourceReleaseItemCmd.hpp"
 
 #include <iostream>
@@ -48,7 +42,7 @@ void PDUSessionResourceReleaseItemCmd::setPDUSessionResourceReleaseItemCmd(
 bool PDUSessionResourceReleaseItemCmd::encode2PDUSessionResourceReleaseItemCmd(
     Ngap_PDUSessionResourceToReleaseItemRelCmd_t*
         pduSessionResourceReleaseCommandTransfer) {
-  if (!pDUSessionID->encode2PDUSessionID(
+  if (!pDUSessionID->encode(
           pduSessionResourceReleaseCommandTransfer->pDUSessionID))
     return false;
   pduSessionResourceReleaseCommandTransfer
@@ -62,7 +56,7 @@ bool PDUSessionResourceReleaseItemCmd::
         Ngap_PDUSessionResourceToReleaseItemRelCmd_t*
             pduSessionResourceReleaseCommandTransfer) {
   if (pDUSessionID == nullptr) pDUSessionID = new PDUSessionID();
-  if (!pDUSessionID->decodefromPDUSessionID(
+  if (!pDUSessionID->decode(
           pduSessionResourceReleaseCommandTransfer->pDUSessionID))
     return false;
   pDUSessionResourceReleaseCommandTransfer =

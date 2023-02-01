@@ -21,130 +21,114 @@
 
 #include "UserLocationInformation.hpp"
 
+#include "logger.hpp"
+
 namespace ngap {
 
 //------------------------------------------------------------------------------
 UserLocationInformation::UserLocationInformation() {
-  userLocationInformationEUTRA = nullptr;
-  userLocationInformationNR    = nullptr;
-  // userLocationInformationN3IWF = nullptr;
+  present_                         = Ngap_UserLocationInformation_PR_NOTHING;
+  user_location_information_eutra_ = std::nullopt;
+  user_location_information_nr_    = std::nullopt;
+  // userLocationInformationN3IWF = std::nullopt;
 }
 
 //------------------------------------------------------------------------------
 UserLocationInformation::~UserLocationInformation() {}
 
 //------------------------------------------------------------------------------
-void UserLocationInformation::setInformation(
-    UserLocationInformationEUTRA* informationEUTRA) {
-  informationPresent =
-      Ngap_UserLocationInformation_PR_userLocationInformationEUTRA;
-  userLocationInformationEUTRA = informationEUTRA;
-}
-
-//------------------------------------------------------------------------------
-void UserLocationInformation::setInformation(
-    UserLocationInformationNR* informationNR) {
-  informationPresent =
-      Ngap_UserLocationInformation_PR_userLocationInformationNR;
-  userLocationInformationNR = informationNR;
-}
-
-//------------------------------------------------------------------------------
-#if 0
-	void UserLocationInformation::setInformation(UserLocationInformationN3IWF* informationN3IWF)
-	{
-		informationPresent = Ngap_UserLocationInformation_PR_userLocationInformationN3IWF;
-		userLocationInformationN3IWF = informationN3IWF;
-	}
-#endif
-
-//------------------------------------------------------------------------------
-bool UserLocationInformation::encodefromUserLocationInformation(
-    Ngap_UserLocationInformation_t* userLocationInformation) {
-  userLocationInformation->present = informationPresent;
-  switch (informationPresent) {
-    case Ngap_UserLocationInformation_PR_userLocationInformationEUTRA: {
-      Ngap_UserLocationInformationEUTRA* ieEUTRA =
-          (Ngap_UserLocationInformationEUTRA*) calloc(
-              1, sizeof(Ngap_UserLocationInformationEUTRA));
-      userLocationInformationEUTRA->encode2UserLocationInformationEUTRA(
-          ieEUTRA);
-      userLocationInformation->choice.userLocationInformationEUTRA = ieEUTRA;
-      break;
-    }
-    case Ngap_UserLocationInformation_PR_userLocationInformationNR: {
-      Ngap_UserLocationInformationNR* ieNR =
-          (Ngap_UserLocationInformationNR*) calloc(
-              1, sizeof(Ngap_UserLocationInformationNR));
-      userLocationInformationNR->encode2UserLocationInformationNR(ieNR);
-      userLocationInformation->choice.userLocationInformationNR = ieNR;
-      break;
-    }
-#if 0
-			case Ngap_UserLocationInformation_PR_userLocationInformationN3IWF:{
-				Ngap_UserLocationInformationN3IWF *ieN3IWF = (Ngap_UserLocationInformationN3IWF *)calloc(1,sizeof(Ngap_UserLocationInformationN3IWF));
-				userLocationInformationN3IWF->encode2UserLocationInformationN3IWF(ieN3IWF);
-				userLocationInformation->choice.userLocationInformationN3IWF = ieN3IWF;
-			break;}
-#endif
-    default:
-      // cout << "[Warning] UserLocationInformation encode error!" << endl;
-      return false;
-  }
-  return true;
-}
-
-//------------------------------------------------------------------------------
-bool UserLocationInformation::decodefromUserLocationInformation(
-    Ngap_UserLocationInformation_t* userLocationInformation) {
-  informationPresent = userLocationInformation->present;
-  switch (informationPresent) {
-    case Ngap_UserLocationInformation_PR_userLocationInformationEUTRA: {
-      userLocationInformationEUTRA = new UserLocationInformationEUTRA();
-      userLocationInformationEUTRA->decodefromUserLocationInformationEUTRA(
-          userLocationInformation->choice.userLocationInformationEUTRA);
-      break;
-    }
-    case Ngap_UserLocationInformation_PR_userLocationInformationNR: {
-      userLocationInformationNR = new UserLocationInformationNR();
-      userLocationInformationNR->decodefromUserLocationInformationNR(
-          userLocationInformation->choice.userLocationInformationNR);
-      break;
-    }
-#if 0
-			case Ngap_UserLocationInformation_PR_userLocationInformationN3IWF:{
-				userLocationInformationN3IWF  = new UserLocationInformationN3IWF();
-				userLocationInformationN3IWF->decodefromUserLocationInformationN3IWF(userLocationInformation->choice.userLocationInformationN3IWF);
-			break;}
-#endif
-    default:
-      // cout << "[Warning] UserLocationInformation decode error!" << endl;
-      return false;
-  }
-  return true;
-}
-
-//------------------------------------------------------------------------------
 Ngap_UserLocationInformation_PR
 UserLocationInformation::getChoiceOfUserLocationInformation() {
-  return informationPresent;
+  return present_;
 }
 
 //------------------------------------------------------------------------------
-void UserLocationInformation::getInformation(
-    UserLocationInformationEUTRA*& informationEUTRA) {
-  informationEUTRA = userLocationInformationEUTRA;
+bool UserLocationInformation::getInformation(
+    UserLocationInformationEUTRA& information_eutra) {
+  if (!user_location_information_eutra_.has_value()) return false;
+  information_eutra = user_location_information_eutra_.value();
+  return true;
 }
 
 //------------------------------------------------------------------------------
-void UserLocationInformation::getInformation(
-    UserLocationInformationNR*& informationNR) {
-  informationNR = userLocationInformationNR;
+void UserLocationInformation::setInformation(
+    const UserLocationInformationEUTRA& information_eutra) {
+  present_ = Ngap_UserLocationInformation_PR_userLocationInformationEUTRA;
+  user_location_information_eutra_ =
+      std::optional<UserLocationInformationEUTRA>(information_eutra);
 }
-#if 0
-	void UserLocationInformation::getInformation(UserLocationInformationN3IWF* &informationN3IWF)
-	{
-		informationN3IWF = userLocationInformationN3IWF;
-	}
-#endif
+
+//------------------------------------------------------------------------------
+bool UserLocationInformation::getInformation(
+    UserLocationInformationNR& information_nr) {
+  if (!user_location_information_nr_.has_value()) return false;
+  information_nr = user_location_information_nr_.value();
+  return true;
+}
+
+//------------------------------------------------------------------------------
+void UserLocationInformation::setInformation(
+    const UserLocationInformationNR& information_nr) {
+  present_ = Ngap_UserLocationInformation_PR_userLocationInformationNR;
+  user_location_information_nr_ =
+      std::optional<UserLocationInformationNR>(information_nr);
+}
+
+//------------------------------------------------------------------------------
+bool UserLocationInformation::encode(
+    Ngap_UserLocationInformation_t* user_location_information) {
+  user_location_information->present = present_;
+  switch (present_) {
+    case Ngap_UserLocationInformation_PR_userLocationInformationEUTRA: {
+      Ngap_UserLocationInformationEUTRA* ie_eutra =
+          (Ngap_UserLocationInformationEUTRA*) calloc(
+              1, sizeof(Ngap_UserLocationInformationEUTRA));
+      user_location_information_eutra_.value().encode(ie_eutra);
+      user_location_information->choice.userLocationInformationEUTRA = ie_eutra;
+      break;
+    }
+    case Ngap_UserLocationInformation_PR_userLocationInformationNR: {
+      Ngap_UserLocationInformationNR* ie_nr =
+          (Ngap_UserLocationInformationNR*) calloc(
+              1, sizeof(Ngap_UserLocationInformationNR));
+      user_location_information_nr_.value().encode(ie_nr);
+      user_location_information->choice.userLocationInformationNR = ie_nr;
+      break;
+    }
+    default:
+      Logger::ngap().warn("UserLocationInformation encode error!");
+      return false;
+  }
+  return true;
+}
+
+//------------------------------------------------------------------------------
+bool UserLocationInformation::decode(
+    Ngap_UserLocationInformation_t* user_location_information) {
+  present_ = user_location_information->present;
+  switch (present_) {
+    case Ngap_UserLocationInformation_PR_userLocationInformationEUTRA: {
+      UserLocationInformationEUTRA user_location_information_eutra = {};
+      user_location_information_eutra.decode(
+          user_location_information->choice.userLocationInformationEUTRA);
+      user_location_information_eutra_ =
+          std::optional<UserLocationInformationEUTRA>(
+              user_location_information_eutra);
+      break;
+    }
+    case Ngap_UserLocationInformation_PR_userLocationInformationNR: {
+      UserLocationInformationNR user_location_information_nr = {};
+      user_location_information_nr.decode(
+          user_location_information->choice.userLocationInformationNR);
+      user_location_information_nr_ = std::optional<UserLocationInformationNR>(
+          user_location_information_nr);
+      break;
+    }
+    default:
+      Logger::ngap().warn("UserLocationInformation decode error!");
+      return false;
+  }
+  return true;
+}
+
 }  // namespace ngap

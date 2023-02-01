@@ -19,19 +19,10 @@
  *      contact@openairinterface.org
  */
 
-/*! \file
- \brief
- \author
- \date
- \email: contact@openairinterface.org
- */
-
 #ifndef _PDU_SESSION_RESOURCE_MODIFY_ITEM_MOD_RES_H_
 #define _PDU_SESSION_RESOURCE_MODIFY_ITEM_MOD_RES_H_
 
-#include "NAS-PDU.hpp"
 #include "PDUSessionID.hpp"
-#include "S-NSSAI.hpp"
 
 extern "C" {
 #include "Ngap_PDUSessionResourceModifyItemModRes.h"
@@ -44,23 +35,21 @@ class PDUSessionResourceModifyItemModRes {
   PDUSessionResourceModifyItemModRes();
   virtual ~PDUSessionResourceModifyItemModRes();
 
-  void setPDUSessionResourceModifyItemModRes(
-      const PDUSessionID& m_pDUSessionID,
-      const OCTET_STRING_t m_pDUSessionResourceModifyResponseTransfer);
-  void getPDUSessionResourceModifyItemModRes(
-      PDUSessionID& m_pDUSessionID,
-      OCTET_STRING_t& m_pDUSessionResourceModifyResponseTransfer);
+  void set(
+      const PDUSessionID& pdu_session_id,
+      const OCTET_STRING_t pdu_session_resource_modify_response_transfer);
+  void get(
+      PDUSessionID& pdu_session_id,
+      OCTET_STRING_t& pdu_session_resource_modify_response_transfer);
 
-  bool encode2PDUSessionResourceModifyItemModRes(
-      Ngap_PDUSessionResourceModifyItemModRes_t&
-          pduSessionResourceModifyItemModRes);
-  bool decodefromPDUSessionResourceModifyItemModRes(
-      Ngap_PDUSessionResourceModifyItemModRes_t&
-          pduSessionResourceModifyItemModRes);
+  bool encode(Ngap_PDUSessionResourceModifyItemModRes_t&
+                  pdu_session_resource_modify_item_mod_res);
+  bool decode(Ngap_PDUSessionResourceModifyItemModRes_t&
+                  pdu_session_resource_modify_item_mod_res);
 
  private:
-  PDUSessionID pDUSessionID;
-  OCTET_STRING_t pDUSessionResourceModifyResponseTransfer;  // Optional
+  PDUSessionID pdu_session_id_;                                   // Mandatory
+  OCTET_STRING_t pdu_session_resource_modify_response_transfer_;  // Mandatory
 };
 
 }  // namespace ngap

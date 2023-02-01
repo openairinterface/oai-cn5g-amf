@@ -19,38 +19,42 @@
  *      contact@openairinterface.org
  */
 
-/*! \file
- \brief
- \author  Keliang DU, BUPT
- \date 2020
- \email: contact@openairinterface.org
- */
-
 #ifndef _5GS_REGISTRATION_TYPE_H_
 #define _5GS_REGISTRATION_TYPE_H_
 
-#include <stdint.h>
+#include "Type1NasIeFormatTv.hpp"
+
+constexpr auto k5gsRegistrationTypeName = "5GS Registration Type";
 
 namespace nas {
 
-class _5GSRegistrationType {
+class _5GSRegistrationType : public Type1NasIeFormatTv {
  public:
   _5GSRegistrationType();
-  _5GSRegistrationType(bool is_for, uint8_t type);
-  _5GSRegistrationType(uint8_t iei, bool is_for, uint8_t type);
-  ~_5GSRegistrationType();
-  int decodefrombuffer(uint8_t* buf, int len, bool is_option);
-  int encode2buffer(uint8_t* buf, int len);
+  _5GSRegistrationType(const bool& follow_on_req, const uint8_t& type);
+  _5GSRegistrationType(
+      const uint8_t& iei, const bool& follow_on_req, const uint8_t& type);
+  virtual ~_5GSRegistrationType();
+
+  static std::string GetIeName() { return k5gsRegistrationTypeName; }
+
+  void setValue();
+  void getValue();
+
+  bool validateValue(const bool& follow_on_req, const uint8_t& type);
+
+  void set(const bool& follow_on_req, const uint8_t& type, const uint8_t& iei);
+  void set(const bool& follow_on_req, const uint8_t& type);
 
   void setFollowOnReq(const bool is);
-  void setRegType(const uint8_t type);
   bool isFollowOnReq();
+
+  void setRegType(const uint8_t type);
   uint8_t getRegType();
 
  private:
-  uint8_t iei : 4;
-  bool is_for;
-  uint8_t reg_type : 3;
+  bool follow_on_req_;
+  uint8_t reg_type_ : 3;
 };
 
 }  // namespace nas

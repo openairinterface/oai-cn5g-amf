@@ -19,13 +19,6 @@
  *      contact@openairinterface.org
  */
 
-/*! \file amf_config.hpp
- \brief
- \author  Keliang DU, BUPT
- \date 2020
- \email: contact@openairinterface.org
- */
-
 #ifndef _AMF_CONFIG_H_
 #define _AMF_CONFIG_H_
 
@@ -33,18 +26,19 @@
 #include <netinet/in.h>
 #include <sys/socket.h>
 
+#include <boost/algorithm/string.hpp>
 #include <libconfig.h++>
 #include <nlohmann/json.hpp>
 #include <string>
 #include <vector>
-#include <boost/algorithm/string.hpp>
 
-#include "amf_config.hpp"
 #include "amf.hpp"
+#include "amf_config.hpp"
+#include "common_defs.h"
 #include "if.hpp"
+#include "pdu_session_context.hpp"
 #include "string.hpp"
 #include "thread_sched.hpp"
-#include "common_defs.h"
 
 #define AMF_CONFIG_STRING_AMF_CONFIG "AMF"
 #define AMF_CONFIG_STRING_PID_DIRECTORY "PID_DIRECTORY"
@@ -59,7 +53,7 @@
 #define AMF_CONFIG_STRING_PPID "PPID"
 #define AMF_CONFIG_STRING_SBI_HTTP2_PORT "HTTP2_PORT"
 
-#define AMF_CONFIG_STRING_INTERFACE_N11 "N11"
+#define AMF_CONFIG_STRING_INTERFACE_SBI "SBI"
 #define AMF_CONFIG_STRING_SMF_INSTANCES_POOL "SMF_INSTANCES_POOL"
 #define AMF_CONFIG_STRING_SMF_INSTANCE_ID "SMF_INSTANCE_ID"
 #define AMF_CONFIG_STRING_SMF_INSTANCE_PORT "PORT"
@@ -126,7 +120,7 @@ using namespace libconfig;
 
 namespace config {
 
-typedef struct {
+typedef struct auth_conf_s {
   std::string mysql_server;
   std::string mysql_user;
   std::string mysql_pass;
@@ -150,7 +144,7 @@ typedef struct {
     this->random       = json_data["random"].get<std::string>();
   }
 
-} auth_conf;
+} auth_conf_t;
 
 typedef struct interface_cfg_s {
   std::string if_name;
@@ -467,6 +461,28 @@ class amf_config {
   std::string get_lmf_determine_location_uri();
 
   /*
+   * Get the URI of SMF PDU Session Service
+   * @param [const std::shared_ptr<pdu_session_context>&] psc: pointer to the
+   * PDU Session Context
+   * @param [std::string&] smf_uri: based URI of Nsmf_PDUSession Services
+   * @return true if can get the URI. otherwise false
+   */
+  bool get_smf_pdu_session_context_uri(
+      const std::shared_ptr<pdu_session_context>& psc, std::string& smf_uri);
+
+  /*
+   * Get the URI of SMF Services
+   * @param [const std::string&] smf_addr: SMF's Addr in String representation
+   * @param [const std::string&] smf_port: SMF's port in String representation
+   * @param [const std::string&] smf_api_version: SMF's API version in String
+   * representation
+   * @return URI in string format
+   */
+  std::string get_smf_pdu_session_base_uri(
+      const std::string& smf_addr, const std::string& smf_port,
+      const std::string& smf_api_version);
+
+  /*
    * Display the AMF configuration parameters
    * @param void
    * @return void
@@ -490,7 +506,7 @@ class amf_config {
   unsigned int instance;
   std::string pid_dir;
   interface_cfg_t n2;
-  interface_cfg_t n11;
+  interface_cfg_t sbi;
   itti_cfg_t itti;
   std::string sbi_api_version;
   unsigned int sbi_http2_port;
@@ -502,7 +518,7 @@ class amf_config {
   unsigned int relative_amf_capacity;
   std::vector<plmn_item_t> plmn_list;
   std::string is_emergency_support;
-  auth_conf auth_para;
+  auth_conf_t auth_para;
   nas_conf_t nas_cfg;
   std::vector<smf_inst_t> smf_pool;
 

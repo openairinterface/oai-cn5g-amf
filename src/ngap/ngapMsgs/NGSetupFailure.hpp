@@ -25,8 +25,9 @@
 #include "Cause.hpp"
 #include "MessageType.hpp"
 #include "TimeToWait.hpp"
-//#include "CriticalityDiagnostics.hpp"
 #include "NgapMessage.hpp"
+
+#include <optional>
 
 namespace ngap {
 
@@ -37,51 +38,52 @@ class NGSetupFailureMsg : public NgapMessage {
 
   void initialize();
 
-  void setCauseRadioNetwork(
+  void set(
       const e_Ngap_CauseRadioNetwork& cause_value,
       const e_Ngap_TimeToWait& time_to_wait);
+  void set(
+      const e_Ngap_CauseTransport& cause_value,
+      const e_Ngap_TimeToWait& time_to_wait);
+  void set(
+      const e_Ngap_CauseNas& cause_value,
+      const e_Ngap_TimeToWait& time_to_wait);
+  void set(
+      const e_Ngap_CauseProtocol& cause_value,
+      const e_Ngap_TimeToWait& time_to_wait);
+  void set(
+      const e_Ngap_CauseMisc& cause_value,
+      const e_Ngap_TimeToWait& time_to_wait);
+
   void setCauseRadioNetwork(const e_Ngap_CauseRadioNetwork& cause_value);
   bool getCauseRadioNetwork(e_Ngap_CauseRadioNetwork&);
 
-  void setCauseTransport(
-      const e_Ngap_CauseTransport& cause_value,
-      const e_Ngap_TimeToWait& time_to_wait);
   void setCauseTransport(const e_Ngap_CauseTransport& cause_value);
   bool getCauseTransport(e_Ngap_CauseTransport&);
 
-  void setCauseNas(
-      const e_Ngap_CauseNas& cause_value,
-      const e_Ngap_TimeToWait& time_to_wait);
   void setCauseNas(const e_Ngap_CauseNas& cause_value);
   bool getCauseNas(e_Ngap_CauseNas&);
 
-  void setCauseProtocol(
-      const e_Ngap_CauseProtocol& cause_value,
-      const e_Ngap_TimeToWait& time_to_wait);
   void setCauseProtocol(const e_Ngap_CauseProtocol& cause_value);
   bool getCauseProtocol(e_Ngap_CauseProtocol&);
 
-  void setCauseMisc(
-      const e_Ngap_CauseMisc& cause_value,
-      const e_Ngap_TimeToWait& time_to_wait);
   void setCauseMisc(const e_Ngap_CauseMisc& cause_value);
   bool getCauseMisc(e_Ngap_CauseMisc&);
 
   bool getCauseType(Ngap_Cause_PR&);
-  bool getTime2Wait(e_Ngap_TimeToWait&);
+
+  bool getTimeToWait(e_Ngap_TimeToWait&);
+  void setTimeToWait(const e_Ngap_TimeToWait&);
 
   bool decodeFromPdu(Ngap_NGAP_PDU_t* ngapMsgPdu) override;
 
  private:
   Ngap_NGSetupFailure_t* ngSetupFailureIEs;
-
-  Cause cause;            // Mandatory
-  TimeToWait timeToWait;  // Mandatory
+  Cause cause;                           // Mandatory
+  std::optional<TimeToWait> timeToWait;  // Optional
   // TODO: CriticalityDiagnostics *criticalityDiagnostics; //Optional
 
   void addCauseIE();
   void addTimeToWaitIE();
 };
-
 }  // namespace ngap
 #endif

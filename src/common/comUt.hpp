@@ -19,13 +19,6 @@
  *      contact@openairinterface.org
  */
 
-/*! \file comUt.hpp
- \brief
- \author  Keliang DU, BUPT
- \date 2020
- \email: contact@openairinterface.org
- */
-
 #ifndef _PRINT_BUFFER_H
 #define _PRINT_BUFFER_H
 

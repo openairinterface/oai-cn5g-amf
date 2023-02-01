@@ -31,6 +31,7 @@
 #include "AmfEventType.h"
 #include "CmInfo.h"
 #include "CommunicationFailure.h"
+#include "LossOfConnectivityReason.h"
 #include <nlohmann/json.hpp>
 
 namespace oai::amf::model {
@@ -74,8 +75,8 @@ class AmfEventReport {
   /// <summary>
   ///
   /// </summary>
-  std::string getTimeStamp() const;
-  void setTimeStamp(std::string const& value);
+  uint64_t getTimeStamp() const;
+  void setTimeStamp(uint64_t const& value);
   /// <summary>
   ///
   /// </summary>
@@ -177,6 +178,27 @@ class AmfEventReport {
   /// <summary>
   ///
   /// </summary>
+  LossOfConnectivityReason getLossOfConnectReason() const;
+  void setLossOfConnectReason(LossOfConnectivityReason const& value);
+  bool lossOfConnectReasonIsSet() const;
+  void unsetLossOfConnectReason();
+  /// <summary>
+  ///
+  /// </summary>
+  uint32_t getRanUeNgapId() const;
+  void setRanUeNgapId(uint32_t const value);
+  bool ranUeNgapIdIsSet() const;
+  void unsetRanUeNgapId();
+  /// <summary>
+  ///
+  /// </summary>
+  long getAmfUeNgapId() const;
+  void setAmfUeNgapId(long const value);
+  bool amfUeNgapIdIsSet() const;
+  void unsetAmfUeNgapId();
+  /// <summary>
+  ///
+  /// </summary>
   int32_t getNumberOfUes() const;
   void setNumberOfUes(int32_t const value);
   bool numberOfUesIsSet() const;
@@ -200,7 +222,7 @@ class AmfEventReport {
 
   AmfEventState m_State;
 
-  std::string m_TimeStamp;
+  uint64_t m_TimeStamp;
 
   std::string m_SubscriptionId;
   bool m_SubscriptionIdIsSet;
@@ -230,6 +252,12 @@ class AmfEventReport {
   bool m_ReachabilityIsSet;
   CommunicationFailure m_CommFailure;
   bool m_CommFailureIsSet;
+  LossOfConnectivityReason m_LossOfConnectReason;
+  bool m_LossOfConnectReasonIsSet;
+  uint32_t m_RanUeNgapId;
+  bool m_RanUeNgapIdIsSet;
+  long m_AmfUeNgapId;
+  bool m_AmfUeNgapIdIsSet;
   int32_t m_NumberOfUes;
   bool m_NumberOfUesIsSet;
   std::vector<_5GsUserStateInfo> m_r_5gsUserStateList;

@@ -19,13 +19,6 @@
  *      contact@openairinterface.org
  */
 
-/*! \file
- \brief
- \author  Keliang DU, BUPT
- \date 2020
- \email: contact@openairinterface.org
- */
-
 #include "PDUSessionResourceSetupUnsuccessfulTransfer.hpp"
 
 extern "C" {
@@ -62,8 +55,8 @@ void PduSessionResourceSetupUnSuccessfulTransferIE::setCauseRadioNetwork(
   causeValue->setChoiceOfCause(Ngap_Cause_PR_radioNetwork);
   causeValue->setValue(cause_value);
 
-  int ret = causeValue->encode2Cause(
-      &pduSessionResourceSetupUnsuccessfulTransferIEs->cause);
+  int ret =
+      causeValue->encode(pduSessionResourceSetupUnsuccessfulTransferIEs->cause);
   if (!ret) {
     cout << "encode CauseRadioNetwork IE error" << endl;
     return;
@@ -78,8 +71,8 @@ void PduSessionResourceSetupUnSuccessfulTransferIE::setCauseTransport(
   causeValue->setChoiceOfCause(Ngap_Cause_PR_transport);
   causeValue->setValue(cause_value);
 
-  int ret = causeValue->encode2Cause(
-      &pduSessionResourceSetupUnsuccessfulTransferIEs->cause);
+  int ret =
+      causeValue->encode(pduSessionResourceSetupUnsuccessfulTransferIEs->cause);
   if (!ret) {
     cout << "encode CauseTransport IE error" << endl;
     return;
@@ -94,8 +87,8 @@ void PduSessionResourceSetupUnSuccessfulTransferIE::setCauseNas(
   causeValue->setChoiceOfCause(Ngap_Cause_PR_nas);
   causeValue->setValue(cause_value);
 
-  int ret = causeValue->encode2Cause(
-      &pduSessionResourceSetupUnsuccessfulTransferIEs->cause);
+  int ret =
+      causeValue->encode(pduSessionResourceSetupUnsuccessfulTransferIEs->cause);
   if (!ret) {
     cout << "encode CauseNas IE error" << endl;
     return;
@@ -110,8 +103,8 @@ void PduSessionResourceSetupUnSuccessfulTransferIE::setCauseProtocol(
   causeValue->setChoiceOfCause(Ngap_Cause_PR_protocol);
   causeValue->setValue(cause_value);
 
-  int ret = causeValue->encode2Cause(
-      &pduSessionResourceSetupUnsuccessfulTransferIEs->cause);
+  int ret =
+      causeValue->encode(pduSessionResourceSetupUnsuccessfulTransferIEs->cause);
   if (!ret) {
     cout << "encode CauseProtocol IE error" << endl;
     return;
@@ -126,8 +119,8 @@ void PduSessionResourceSetupUnSuccessfulTransferIE::setCauseMisc(
   causeValue->setChoiceOfCause(Ngap_Cause_PR_misc);
   causeValue->setValue(cause_value);
 
-  int ret = causeValue->encode2Cause(
-      &pduSessionResourceSetupUnsuccessfulTransferIEs->cause);
+  int ret =
+      causeValue->encode(pduSessionResourceSetupUnsuccessfulTransferIEs->cause);
   if (!ret) {
     cout << "encode CauseMisc IE error" << endl;
     return;
@@ -135,7 +128,7 @@ void PduSessionResourceSetupUnSuccessfulTransferIE::setCauseMisc(
 }
 
 //------------------------------------------------------------------------------
-int PduSessionResourceSetupUnSuccessfulTransferIE::encode2buffer(
+int PduSessionResourceSetupUnSuccessfulTransferIE::Encode(
     uint8_t* buf, int buf_size) {
   asn_fprint(
       stderr, &asn_DEF_Ngap_PDUSessionResourceSetupUnsuccessfulTransfer,
@@ -172,8 +165,8 @@ bool PduSessionResourceSetupUnSuccessfulTransferIE::decodefromIE(
   // pduSessionResourceSetupUnsuccessfulTransferIEs);
 
   causeValue = new Cause();
-  if (!causeValue->decodefromCause(
-          &pduSessionResourceSetupUnsuccessfulTransferIEs->cause)) {
+  if (!causeValue->decode(
+          pduSessionResourceSetupUnsuccessfulTransferIEs->cause)) {
     cout << "decoded ngap Cause IE error" << endl;
     return false;
   }

@@ -47,8 +47,7 @@ void PDUSessionResourceItemHORqd::getPDUSessionResourceItemHORqd(
 //------------------------------------------------------------------------------
 bool PDUSessionResourceItemHORqd::encode2PDUSessionResourceItemHORqd(
     Ngap_PDUSessionResourceItemHORqd_t* pdUSessionResourceItemHORqd) {
-  if (!pDUSessionID.encode2PDUSessionID(
-          pdUSessionResourceItemHORqd->pDUSessionID))
+  if (!pDUSessionID.encode(pdUSessionResourceItemHORqd->pDUSessionID))
     return false;
   pdUSessionResourceItemHORqd->handoverRequiredTransfer =
       handoverRequiredTransfer;
@@ -59,8 +58,7 @@ bool PDUSessionResourceItemHORqd::encode2PDUSessionResourceItemHORqd(
 //------------------------------------------------------------------------------
 bool PDUSessionResourceItemHORqd::decodefromPDUSessionResourceItemHORqd(
     Ngap_PDUSessionResourceItemHORqd_t* pdUSessionResourceItemHORqd) {
-  if (!pDUSessionID.decodefromPDUSessionID(
-          pdUSessionResourceItemHORqd->pDUSessionID))
+  if (!pDUSessionID.decode(pdUSessionResourceItemHORqd->pDUSessionID))
     return false;
   handoverRequiredTransfer =
       pdUSessionResourceItemHORqd->handoverRequiredTransfer;

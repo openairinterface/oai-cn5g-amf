@@ -48,15 +48,19 @@ void NGSetupResponseMsg::initialize() {
 }
 
 //------------------------------------------------------------------------------
-void NGSetupResponseMsg::setAMFName(const std::string name) {
-  amfName.setValue(name);
+void NGSetupResponseMsg::setAMFName(const std::string& name) {
+  if (!amfName.setValue(name)) {
+    Logger::ngap().warn("Not a valid AMF Name value!");
+    return;
+  }
+
   Ngap_NGSetupResponseIEs_t* ie =
       (Ngap_NGSetupResponseIEs_t*) calloc(1, sizeof(Ngap_NGSetupResponseIEs_t));
   ie->id            = Ngap_ProtocolIE_ID_id_AMFName;
   ie->criticality   = Ngap_Criticality_reject;
   ie->value.present = Ngap_NGSetupResponseIEs__value_PR_AMFName;
 
-  if (!amfName.encode2AmfName(&ie->value.choice.AMFName)) {
+  if (!amfName.encode(&ie->value.choice.AMFName)) {
     Logger::ngap().error("Encode NGAP AMFName IE error");
     free_wrapper((void**) &ie);
     return;
@@ -77,11 +81,12 @@ void NGSetupResponseMsg::setGUAMIList(std::vector<struct GuamiItem_s> list) {
     servedGUAMIItem.setGUAMI(guami);
 
     if (list[i].backupAMFName.size() > 0) {
-      AmfName* backupamfname = new AmfName();
-      backupamfname->setValue(list[i].backupAMFName);
-      servedGUAMIItem.setBackupAMFName(backupamfname);
+      AmfName amf_name = {};
+      if (amf_name.setValue(list[i].backupAMFName)) {
+        servedGUAMIItem.setBackupAMFName(amf_name);
+      }
     }
-    servedGUAMIList.addServedGUAMIItem(servedGUAMIItem);
+    servedGUAMIList.addItem(servedGUAMIItem);
   }
 
   Ngap_NGSetupResponseIEs_t* ie =
@@ -90,8 +95,7 @@ void NGSetupResponseMsg::setGUAMIList(std::vector<struct GuamiItem_s> list) {
   ie->criticality   = Ngap_Criticality_reject;
   ie->value.present = Ngap_NGSetupResponseIEs__value_PR_ServedGUAMIList;
 
-  if (!servedGUAMIList.encode2ServedGUAMIList(
-          &ie->value.choice.ServedGUAMIList)) {
+  if (!servedGUAMIList.encode(ie->value.choice.ServedGUAMIList)) {
     Logger::ngap().error("Encode NGAP ServedGUAMIList IE error");
     free_wrapper((void**) &ie);
     return;
@@ -111,8 +115,7 @@ void NGSetupResponseMsg::setRelativeAmfCapacity(long capacity) {
   ie->criticality   = Ngap_Criticality_ignore;
   ie->value.present = Ngap_NGSetupResponseIEs__value_PR_RelativeAMFCapacity;
 
-  if (!relativeAmfCapacity.encode2RelativeAMFCapacity(
-          &ie->value.choice.RelativeAMFCapacity)) {
+  if (!relativeAmfCapacity.encode(ie->value.choice.RelativeAMFCapacity)) {
     Logger::ngap().error("Encode NGAP RelativeAMFCapacity IE error");
     free_wrapper((void**) &ie);
     return;
@@ -131,7 +134,7 @@ void NGSetupResponseMsg::setPlmnSupportList(
   for (int i = 0; i < list.size(); i++) {
     PLMNSupportItem plmnSupportItem = {};
     PlmnId plmn                     = {};
-    plmn.setMccMnc(list[i].mcc, list[i].mnc);
+    plmn.set(list[i].mcc, list[i].mnc);
     Logger::ngap().debug(
         "MCC %s, MNC %s", list[i].mcc.c_str(), list[i].mnc.c_str());
 
@@ -147,11 +150,11 @@ void NGSetupResponseMsg::setPlmnSupportList(
       snssai.setSd(sd);
       snssais.push_back(snssai);
     }
-    plmnSupportItem.setPlmnSliceSupportList(plmn, snssais);
+    plmnSupportItem.set(plmn, snssais);
     plmnSupportItems.push_back(plmnSupportItem);
   }
 
-  plmnSupportList.addPLMNSupportItems(plmnSupportItems);
+  plmnSupportList.set(plmnSupportItems);
 
   Ngap_NGSetupResponseIEs_t* ie =
       (Ngap_NGSetupResponseIEs_t*) calloc(1, sizeof(Ngap_NGSetupResponseIEs_t));
@@ -159,8 +162,7 @@ void NGSetupResponseMsg::setPlmnSupportList(
   ie->criticality   = Ngap_Criticality_reject;
   ie->value.present = Ngap_NGSetupResponseIEs__value_PR_PLMNSupportList;
 
-  if (!plmnSupportList.encode2PLMNSupportList(
-          &ie->value.choice.PLMNSupportList)) {
+  if (!plmnSupportList.encode(ie->value.choice.PLMNSupportList)) {
     Logger::ngap().error("Encode NGAP PLMNSupportList IE error");
     free_wrapper((void**) &ie);
     return;
@@ -200,9 +202,8 @@ bool NGSetupResponseMsg::decodeFromPdu(Ngap_NGAP_PDU_t* ngapMsgPdu) {
                 Ngap_Criticality_reject &&
             ngSetupResponsIEs->protocolIEs.list.array[i]->value.present ==
                 Ngap_NGSetupResponseIEs__value_PR_AMFName) {
-          if (!amfName.decodefromAmfName(
-                  &ngSetupResponsIEs->protocolIEs.list.array[i]
-                       ->value.choice.AMFName)) {
+          if (!amfName.decode(&ngSetupResponsIEs->protocolIEs.list.array[i]
+                                   ->value.choice.AMFName)) {
             Logger::ngap().error("Decoded NGAP AMFName error");
             return false;
           }
@@ -216,9 +217,9 @@ bool NGSetupResponseMsg::decodeFromPdu(Ngap_NGAP_PDU_t* ngapMsgPdu) {
                 Ngap_Criticality_reject &&
             ngSetupResponsIEs->protocolIEs.list.array[i]->value.present ==
                 Ngap_NGSetupResponseIEs__value_PR_ServedGUAMIList) {
-          if (!servedGUAMIList.decodefromServedGUAMIList(
-                  &ngSetupResponsIEs->protocolIEs.list.array[i]
-                       ->value.choice.ServedGUAMIList)) {
+          if (!servedGUAMIList.decode(
+                  ngSetupResponsIEs->protocolIEs.list.array[i]
+                      ->value.choice.ServedGUAMIList)) {
             Logger::ngap().error("Decoded NGAP ServedGUAMIList error");
             return false;
           }
@@ -232,9 +233,9 @@ bool NGSetupResponseMsg::decodeFromPdu(Ngap_NGAP_PDU_t* ngapMsgPdu) {
                 Ngap_Criticality_ignore &&
             ngSetupResponsIEs->protocolIEs.list.array[i]->value.present ==
                 Ngap_NGSetupResponseIEs__value_PR_RelativeAMFCapacity) {
-          if (!relativeAmfCapacity.decodefromRelativeAMFCapacity(
-                  &ngSetupResponsIEs->protocolIEs.list.array[i]
-                       ->value.choice.RelativeAMFCapacity)) {
+          if (!relativeAmfCapacity.decode(
+                  ngSetupResponsIEs->protocolIEs.list.array[i]
+                      ->value.choice.RelativeAMFCapacity)) {
             Logger::ngap().error("Decoded NGAP RelativeAMFCapacity error");
             return false;
           }
@@ -248,9 +249,9 @@ bool NGSetupResponseMsg::decodeFromPdu(Ngap_NGAP_PDU_t* ngapMsgPdu) {
                 Ngap_Criticality_reject &&
             ngSetupResponsIEs->protocolIEs.list.array[i]->value.present ==
                 Ngap_NGSetupResponseIEs__value_PR_PLMNSupportList) {
-          if (!plmnSupportList.decodefromPLMNSupportList(
-                  &ngSetupResponsIEs->protocolIEs.list.array[i]
-                       ->value.choice.PLMNSupportList)) {
+          if (!plmnSupportList.decode(
+                  ngSetupResponsIEs->protocolIEs.list.array[i]
+                      ->value.choice.PLMNSupportList)) {
             Logger::ngap().error("Decoded NGAP PLMNSupportList error");
             return false;
           }
@@ -273,7 +274,7 @@ bool NGSetupResponseMsg::decodeFromPdu(Ngap_NGAP_PDU_t* ngapMsgPdu) {
 }
 
 //------------------------------------------------------------------------------
-bool NGSetupResponseMsg::getAMFName(std::string& name) {
+bool NGSetupResponseMsg::getAMFName(std::string& name) const {
   amfName.getValue(name);
   return true;
 }
@@ -281,7 +282,7 @@ bool NGSetupResponseMsg::getAMFName(std::string& name) {
 //------------------------------------------------------------------------------
 bool NGSetupResponseMsg::getGUAMIList(std::vector<struct GuamiItem_s>& list) {
   std::vector<ServedGUAMIItem> servedGUAMIItems;
-  servedGUAMIList.getServedGUAMIItems(servedGUAMIItems);
+  servedGUAMIList.get(servedGUAMIItems);
 
   for (std::vector<ServedGUAMIItem>::iterator it = std::begin(servedGUAMIItems);
        it != std::end(servedGUAMIItems); ++it) {
@@ -292,11 +293,9 @@ bool NGSetupResponseMsg::getGUAMIList(std::vector<struct GuamiItem_s>& list) {
         guamiItem.mcc, guamiItem.mnc, guamiItem.regionID, guamiItem.AmfSetID,
         guamiItem.AmfPointer);
 
-    AmfName* backupAMFName;
-    if (it->getBackupAMFName(backupAMFName)) {
-      backupAMFName->getValue(guamiItem.backupAMFName);
-    } else {
-      guamiItem.backupAMFName = "None";
+    AmfName amf_name = {};
+    if (it->getBackupAMFName(amf_name)) {
+      amf_name.getValue(guamiItem.backupAMFName);
     }
 
     list.push_back(guamiItem);
@@ -314,7 +313,7 @@ long NGSetupResponseMsg::getRelativeAmfCapacity() {
 bool NGSetupResponseMsg::getPlmnSupportList(
     std::vector<PlmnSliceSupport_t>& list) {
   std::vector<PLMNSupportItem> plmnsupportItemItems;
-  plmnSupportList.getPLMNSupportItems(plmnsupportItemItems);
+  plmnSupportList.get(plmnsupportItemItems);
 
   for (std::vector<PLMNSupportItem>::iterator it =
            std::begin(plmnsupportItemItems);
@@ -323,7 +322,7 @@ bool NGSetupResponseMsg::getPlmnSupportList(
     PlmnId plmn                         = {};
     std::vector<S_NSSAI> snssais;
 
-    it->getPlmnSliceSupportList(plmn, snssais);
+    it->get(plmn, snssais);
     plmn.getMcc(plmnSliceSupport.mcc);
     plmn.getMnc(plmnSliceSupport.mnc);
     for (std::vector<S_NSSAI>::iterator it = std::begin(snssais);

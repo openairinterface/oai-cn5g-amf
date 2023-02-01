@@ -19,17 +19,7 @@
  *      contact@openairinterface.org
  */
 
-/*! \file
- \brief
- \author  Keliang DU, BUPT
- \date 2020
- \email: contact@openairinterface.org
- */
-
 #include "PDUSessionResourceFailedToSetupItemCxtRes.hpp"
-
-#include <iostream>
-using namespace std;
 
 namespace ngap {
 
@@ -42,49 +32,45 @@ PDUSessionResourceFailedToSetupItemCxtRes::
     ~PDUSessionResourceFailedToSetupItemCxtRes() {}
 
 //------------------------------------------------------------------------------
-void PDUSessionResourceFailedToSetupItemCxtRes::
-    setPDUSessionResourceFailedToSetupItemCxtRes(
-        const PDUSessionID& m_pDUSessionID,
-        const OCTET_STRING_t& m_pDUSessionResourceSetupUnsuccessfulTransfer) {
-  pDUSessionID = m_pDUSessionID;
-  pDUSessionResourceSetupUnsuccessfulTransfer =
-      m_pDUSessionResourceSetupUnsuccessfulTransfer;
+void PDUSessionResourceFailedToSetupItemCxtRes::set(
+    const PDUSessionID& pdu_session_id,
+    const OCTET_STRING_t& pdu_session_resource_setup_unsuccessful_transfer) {
+  pdu_session_id_ = pdu_session_id;
+  pdu_session_resource_setup_unsuccessful_transfer_ =
+      pdu_session_resource_setup_unsuccessful_transfer;
 }
 
 //------------------------------------------------------------------------------
-void PDUSessionResourceFailedToSetupItemCxtRes::
-    getPDUSessionResourceFailedToSetupItemCxtRes(
-        PDUSessionID& m_pDUSessionID,
-        OCTET_STRING_t& m_pDUSessionResourceSetupUnsuccessfulTransfer) {
-  m_pDUSessionID = pDUSessionID;
-  pDUSessionResourceSetupUnsuccessfulTransfer =
-      pDUSessionResourceSetupUnsuccessfulTransfer;
+void PDUSessionResourceFailedToSetupItemCxtRes::get(
+    PDUSessionID& pdu_session_id,
+    OCTET_STRING_t& pdu_session_resource_setup_unsuccessful_transfer) {
+  pdu_session_id = pdu_session_id_;
+  pdu_session_resource_setup_unsuccessful_transfer =
+      pdu_session_resource_setup_unsuccessful_transfer_;
 }
 
 //------------------------------------------------------------------------------
-bool PDUSessionResourceFailedToSetupItemCxtRes::
-    encode2PDUSessionResourceFailedToSetupItemCxtRes(
-        Ngap_PDUSessionResourceFailedToSetupItemCxtRes_t*
-            pduSessionResourceFailedToSetupItemCxtRes) {
-  if (!pDUSessionID.encode2PDUSessionID(
+bool PDUSessionResourceFailedToSetupItemCxtRes::encode(
+    Ngap_PDUSessionResourceFailedToSetupItemCxtRes_t*
+        pduSessionResourceFailedToSetupItemCxtRes) {
+  if (!pdu_session_id_.encode(
           pduSessionResourceFailedToSetupItemCxtRes->pDUSessionID))
     return false;
   pduSessionResourceFailedToSetupItemCxtRes
       ->pDUSessionResourceSetupUnsuccessfulTransfer =
-      pDUSessionResourceSetupUnsuccessfulTransfer;
+      pdu_session_resource_setup_unsuccessful_transfer_;
 
   return true;
 }
 
 //------------------------------------------------------------------------------
-bool PDUSessionResourceFailedToSetupItemCxtRes::
-    decodefromPDUSessionResourceFailedToSetupItemCxtRes(
-        Ngap_PDUSessionResourceFailedToSetupItemCxtRes_t*
-            pduSessionResourceFailedToSetupItemCxtRes) {
-  if (!pDUSessionID.decodefromPDUSessionID(
+bool PDUSessionResourceFailedToSetupItemCxtRes::decode(
+    Ngap_PDUSessionResourceFailedToSetupItemCxtRes_t*
+        pduSessionResourceFailedToSetupItemCxtRes) {
+  if (!pdu_session_id_.decode(
           pduSessionResourceFailedToSetupItemCxtRes->pDUSessionID))
     return false;
-  pDUSessionResourceSetupUnsuccessfulTransfer =
+  pdu_session_resource_setup_unsuccessful_transfer_ =
       pduSessionResourceFailedToSetupItemCxtRes
           ->pDUSessionResourceSetupUnsuccessfulTransfer;
 

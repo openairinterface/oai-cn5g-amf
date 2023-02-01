@@ -19,15 +19,11 @@
  *      contact@openairinterface.org
  */
 
-/*! \file
- \brief
- \author  Keliang DU, BUPT
- \date 2020
- \email: contact@openairinterface.org
- */
-
 #ifndef _AMF_UE_NGAP_ID_H_
 #define _AMF_UE_NGAP_ID_H_
+#include <cstdint>
+
+constexpr uint64_t AMF_UE_NGAP_ID_MAX_VALUE = 1099511627775;  // 2^40 -1
 
 extern "C" {
 #include "Ngap_AMF-UE-NGAP-ID.h"
@@ -40,14 +36,14 @@ class AMF_UE_NGAP_ID {
   AMF_UE_NGAP_ID();
   virtual ~AMF_UE_NGAP_ID();
 
-  void setAMF_UE_NGAP_ID(unsigned long);
-  unsigned long getAMF_UE_NGAP_ID();
+  bool set(const uint64_t&);
+  uint64_t get();
 
   bool encode2AMF_UE_NGAP_ID(Ngap_AMF_UE_NGAP_ID_t&);
   bool decodefromAMF_UE_NGAP_ID(Ngap_AMF_UE_NGAP_ID_t&);
 
  private:
-  unsigned long amfUeNgapId;
+  uint64_t id_;
 };
 
 }  // namespace ngap

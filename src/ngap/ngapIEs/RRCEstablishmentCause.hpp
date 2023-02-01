@@ -19,13 +19,6 @@
  *      contact@openairinterface.org
  */
 
-/*! \file
- \brief
- \author  Keliang DU, BUPT
- \date 2020
- \email: contact@openairinterface.org
- */
-
 #ifndef _RRCESTABLISHMENTCAUSE_H_
 #define _RRCESTABLISHMENTCAUSE_H_
 
@@ -40,15 +33,14 @@ class RRCEstablishmentCause {
   RRCEstablishmentCause();
   virtual ~RRCEstablishmentCause();
 
-  void setRRCEstablishmentCause(
-      e_Ngap_RRCEstablishmentCause m_rrcestablishmentcause);
-  int getRRCEstablishmentCause();
+  void set(const e_Ngap_RRCEstablishmentCause& cause);
+  int get() const;
 
-  bool encode2RRCEstablishmentCause(Ngap_RRCEstablishmentCause_t&);
-  bool decodefromRRCEstablishmentCause(Ngap_RRCEstablishmentCause_t&);
+  bool encode(Ngap_RRCEstablishmentCause_t&) const;
+  bool decode(const Ngap_RRCEstablishmentCause_t&);
 
  private:
-  int rrcestablishmentcause;
+  int cause_;
 };
 
 }  // namespace ngap

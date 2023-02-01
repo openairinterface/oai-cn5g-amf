@@ -19,30 +19,24 @@
  *      contact@openairinterface.org
  */
 
-/*! \file
- \brief
- \author
- \date 2020
- \email: contact@openairinterface.org
- */
-
 #ifndef _DEREGISTRATION_ACCEPT_H_
 #define _DEREGISTRATION_ACCEPT_H_
 
-#include "nas_ie_header.hpp"
+#include "NasIeHeader.hpp"
 
 namespace nas {
 
-class DeregistrationAccept {
+class DeregistrationAccept : public NasMmPlainHeader {
  public:
-  DeregistrationAccept();
+  DeregistrationAccept(bool is_ue_originating = true);
   ~DeregistrationAccept();
-  int encode2buffer(uint8_t* buf, int len);
-  int decodefrombuffer(NasMmPlainHeader* header, uint8_t* buf, int len);
-  void setHeader(uint8_t security_header_type);
+
+  int Encode(uint8_t* buf, int len);
+  int Decode(uint8_t* buf, int len);
+
+  void SetHeader(uint8_t security_header_type);
 
  public:
-  NasMmPlainHeader* plain_header;
 };
 
 }  // namespace nas

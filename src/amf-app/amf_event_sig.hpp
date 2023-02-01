@@ -19,20 +19,14 @@
  *      contact@openairinterface.org
  */
 
-/*! \file amf_event_sig.hpp
- \brief
- \author  Shivam Gandhi (KCL), Tien-Thinh NGUYEN (EURECOM)
- \company
- \date 2021
- \email: contact@openairinterface.org
- */
-
 #ifndef FILE_SMF_EVENT_SIG_HPP_SEEN
 #define FILE_SMF_EVENT_SIG_HPP_SEEN
 
 #include <boost/signals2.hpp>
 #include <string>
+
 #include "UserLocation.h"
+#include "CommunicationFailure.h"
 
 namespace bs2 = boost::signals2;
 
@@ -58,7 +52,7 @@ typedef bs2::signal_type<
 // Signal for UE Registration State Report
 // SUPI, registration state, HTTP version
 typedef bs2::signal_type<
-    void(std::string, uint8_t, uint8_t),
+    void(std::string, uint8_t, uint8_t, uint32_t, long),
     bs2::keywords::mutex_type<bs2::dummy_mutex>>::type
     ue_registration_state_sig_t;
 
@@ -69,9 +63,23 @@ typedef bs2::signal_type<
     bs2::keywords::mutex_type<bs2::dummy_mutex>>::type
     ue_connectivity_state_sig_t;
 
+// Signal for Loss of Connectivity
+// SUPI, status, HTTP version,
+// RAN UE NGAP ID, AMF UE NGAP ID
+typedef bs2::signal_type<
+    void(std::string, uint8_t, uint8_t, uint32_t, long),
+    bs2::keywords::mutex_type<bs2::dummy_mutex>>::type
+    ue_loss_of_connectivity_sig_t;
+
 // TODO: Communication-Failure-Report
+// Signal for Communication Failure Report
+// SUPI, Communication Failure codes, HTTP version
+typedef bs2::signal_type<
+    void(std::string, oai::amf::model::CommunicationFailure, uint8_t),
+    bs2::keywords::mutex_type<bs2::dummy_mutex>>::type
+    ue_communication_failure_sig_t;
+
 // TODO: UEs-In-Area-Report
-// TODO: Loss-of-Connectivity
 
 }  // namespace amf_application
 #endif

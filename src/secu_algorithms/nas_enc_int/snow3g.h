@@ -19,19 +19,9 @@
  *      contact@openairinterface.org
  */
 
-/*! \file snow3g.h
- * \brief
- * \author Open source Adapted from Specification of the 3GPP Confidentiality
- * and Integrity Algorithms UEA2 & UIA2. Document 2: SNOW 3G Specification
- * \integrators  Kharbach Othmane, GAUTHIER Lionel.
- * \date 2014
- * \version
- * \note
- * \bug
- * \warning
- */
 #ifndef FILE_SNOW3G_SEEN
 #define FILE_SNOW3G_SEEN
+#include <stdint.h>
 
 typedef struct snow_3g_context_s {
   uint32_t LFSR_S0;

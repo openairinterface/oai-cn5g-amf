@@ -25,44 +25,41 @@ namespace ngap {
 
 //------------------------------------------------------------------------------
 PDUSessionResourceModifyItemModReq::PDUSessionResourceModifyItemModReq() {
-  nAS_PDU = nullptr;
-  s_NSSAI = nullptr;
+  nas_pdu_ = std::nullopt;
+  s_nssai_ = std::nullopt;
 }
 
 //------------------------------------------------------------------------------
 PDUSessionResourceModifyItemModReq::~PDUSessionResourceModifyItemModReq() {}
 
 //------------------------------------------------------------------------------
-void PDUSessionResourceModifyItemModReq::setPDUSessionResourceModifyItemModReq(
-    const PDUSessionID& m_pDUSessionID, const NAS_PDU& m_nAS_PDU,
-    const OCTET_STRING_t& m_pDUSessionResourceModifyRequestTransfer,
-    const S_NSSAI& m_s_NSSAI) {
-  pDUSessionID     = m_pDUSessionID;
-  uint8_t* nas_buf = nullptr;
-  size_t nas_len   = 0;
-  m_nAS_PDU.getNasPdu(nas_buf, nas_len);
-  if (!nAS_PDU) nAS_PDU = new NAS_PDU();
-  nAS_PDU->setNasPdu(nas_buf, nas_len);
-  pDUSessionResourceModifyRequestTransfer =
-      m_pDUSessionResourceModifyRequestTransfer;
-  s_NSSAI->setSd(m_s_NSSAI.getSd());
-  s_NSSAI->setSst(m_s_NSSAI.getSst());
+void PDUSessionResourceModifyItemModReq::set(
+    const PDUSessionID& pdu_session_id, const std::optional<NAS_PDU>& nas_pdu,
+    const OCTET_STRING_t& pdu_session_resource_modify_request_transfer,
+    const std::optional<S_NSSAI>& s_nssai) {
+  pdu_session_id_ = pdu_session_id;
+  if (nas_pdu.has_value()) {
+    NAS_PDU tmp = {};
+    tmp.set(nas_pdu.value());
+    nas_pdu_ = std::optional<NAS_PDU>(tmp);
+  }
+
+  pdu_session_resource_modify_request_transfer_ =
+      pdu_session_resource_modify_request_transfer;
+  s_nssai_ = s_nssai;
 }
 
 //------------------------------------------------------------------------------
-bool PDUSessionResourceModifyItemModReq::
-    encode2PDUSessionResourceModifyItemModReq(
-        Ngap_PDUSessionResourceModifyItemModReq_t&
-            pduSessionResourceModifyItemModReq) {
-  if (!pDUSessionID.encode2PDUSessionID(
-          pduSessionResourceModifyItemModReq.pDUSessionID))
+bool PDUSessionResourceModifyItemModReq::encode(
+    Ngap_PDUSessionResourceModifyItemModReq_t&
+        pduSessionResourceModifyItemModReq) {
+  if (!pdu_session_id_.encode(pduSessionResourceModifyItemModReq.pDUSessionID))
     return false;
-  if (nAS_PDU) {
+  if (nas_pdu_.has_value()) {
     pduSessionResourceModifyItemModReq.nAS_PDU =
         (Ngap_NAS_PDU_t*) calloc(1, sizeof(Ngap_NAS_PDU_t));
     if (!pduSessionResourceModifyItemModReq.nAS_PDU) return false;
-    if (!nAS_PDU->encode2octetstring(
-            *pduSessionResourceModifyItemModReq.nAS_PDU)) {
+    if (!nas_pdu_.value().encode(*pduSessionResourceModifyItemModReq.nAS_PDU)) {
       if (pduSessionResourceModifyItemModReq.nAS_PDU != nullptr)
         free(pduSessionResourceModifyItemModReq.nAS_PDU);
       return false;
@@ -70,28 +67,25 @@ bool PDUSessionResourceModifyItemModReq::
   }
 
   pduSessionResourceModifyItemModReq.pDUSessionResourceModifyRequestTransfer =
-      pDUSessionResourceModifyRequestTransfer;
+      pdu_session_resource_modify_request_transfer_;
 
   return true;
 }
 
 //------------------------------------------------------------------------------
-bool PDUSessionResourceModifyItemModReq::
-    decodefromPDUSessionResourceModifyItemModReq(
-        Ngap_PDUSessionResourceModifyItemModReq_t&
-            pduSessionResourceModifyItemModReq) {
-  if (!pDUSessionID.decodefromPDUSessionID(
-          pduSessionResourceModifyItemModReq.pDUSessionID))
+bool PDUSessionResourceModifyItemModReq::decode(
+    Ngap_PDUSessionResourceModifyItemModReq_t&
+        pduSessionResourceModifyItemModReq) {
+  if (!pdu_session_id_.decode(pduSessionResourceModifyItemModReq.pDUSessionID))
     return false;
 
   if (pduSessionResourceModifyItemModReq.nAS_PDU) {
-    nAS_PDU = new NAS_PDU();
-    if (!nAS_PDU->decodefromoctetstring(
-            *pduSessionResourceModifyItemModReq.nAS_PDU))
-      return false;
+    NAS_PDU tmp = {};
+    if (!tmp.decode(*pduSessionResourceModifyItemModReq.nAS_PDU)) return false;
+    nas_pdu_ = std::optional<NAS_PDU>(tmp);
   }
 
-  pDUSessionResourceModifyRequestTransfer =
+  pdu_session_resource_modify_request_transfer_ =
       pduSessionResourceModifyItemModReq
           .pDUSessionResourceModifyRequestTransfer;
 
@@ -99,15 +93,21 @@ bool PDUSessionResourceModifyItemModReq::
 }
 
 //------------------------------------------------------------------------------
-void PDUSessionResourceModifyItemModReq::getPDUSessionResourceModifyItemModReq(
-    PDUSessionID& m_pDUSessionID, NAS_PDU& m_nAS_PDU,
-    OCTET_STRING_t& m_pDUSessionResourceModifyRequestTransfer,
-    S_NSSAI& m_s_NSSAI) {
-  m_pDUSessionID = pDUSessionID;
-  m_nAS_PDU      = *nAS_PDU;
-  m_pDUSessionResourceModifyRequestTransfer =
-      pDUSessionResourceModifyRequestTransfer;
-  m_s_NSSAI = *s_NSSAI;
+void PDUSessionResourceModifyItemModReq::get(
+    PDUSessionID& pdu_session_id, std::optional<NAS_PDU>& nas_pdu,
+    OCTET_STRING_t& pdu_session_resource_modify_request_transfer,
+    std::optional<S_NSSAI>& s_nssai) {
+  pdu_session_id = pdu_session_id_;
+  nas_pdu        = *nas_pdu_;
+  if (nas_pdu_.has_value()) {
+    NAS_PDU tmp = {};
+    tmp.set(nas_pdu.value());
+    nas_pdu = std::optional<NAS_PDU>(tmp);
+  }
+
+  pdu_session_resource_modify_request_transfer =
+      pdu_session_resource_modify_request_transfer_;
+  s_nssai = s_nssai_;
 }
 
 }  // namespace ngap

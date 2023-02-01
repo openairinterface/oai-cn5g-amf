@@ -27,6 +27,8 @@
 #include "UEAggregateMaxBitRate.hpp"
 #include "NgapUEMessage.hpp"
 
+#include <optional>
+
 extern "C" {
 #include "Ngap_InitialContextSetupRequest.h"
 }
@@ -44,11 +46,11 @@ class PduSessionResourceSetupRequestMsg : public NgapUEMessage {
   void setRanUeNgapId(const uint32_t& id) override;
   bool decodeFromPdu(Ngap_NGAP_PDU_t* ngapMsgPdu) override;
 
-  void setRanPagingPriority(const uint8_t& priority);
-  int getRanPagingPriority();
+  void setRanPagingPriority(const uint32_t& priority);
+  bool getRanPagingPriority(uint32_t& priority);
 
-  void setNasPdu(uint8_t* nas, size_t size);
-  bool getNasPdu(uint8_t*& nas, size_t& size);
+  void setNasPdu(const bstring& pdu);
+  bool getNasPdu(bstring& pdu);
 
   void setPduSessionResourceSetupRequestList(
       const std::vector<PDUSessionResourceSetupRequestItem_t>& list);
@@ -56,17 +58,18 @@ class PduSessionResourceSetupRequestMsg : public NgapUEMessage {
       std::vector<PDUSessionResourceSetupRequestItem_t>& list);
 
   void setUEAggregateMaxBitRate(
-      const long& bit_rate_downlink, const long& bit_rate_uplink);
-  void getUEAggregateMaxBitRate(long& bit_rate_downlink, long& bit_rate_uplink);
+      const uint64_t& bit_rate_downlink, const uint64_t& bit_rate_uplink);
+  bool getUEAggregateMaxBitRate(
+      uint64_t& bit_rate_downlink, uint64_t& bit_rate_uplink) const;
 
  private:
   Ngap_PDUSessionResourceSetupRequest_t* pduSessionResourceSetupRequestIEs;
 
-  RANPagingPriority* ranPagingPriority;  // Optional
-  NAS_PDU* nasPdu;                       // Optional
+  std::optional<RANPagingPriority> ranPagingPriority;  // Optional
+  std::optional<NAS_PDU> nasPdu;                       // Optional
   PDUSessionResourceSetupListSUReq
-      pduSessionResourceSetupRequestList;        // Mandatory
-  UEAggregateMaxBitRate* uEAggregateMaxBitRate;  // Optional
+      pduSessionResourceSetupRequestList;                      // Mandatory
+  std::optional<UEAggregateMaxBitRate> uEAggregateMaxBitRate;  // Optional
 };
 
 }  // namespace ngap

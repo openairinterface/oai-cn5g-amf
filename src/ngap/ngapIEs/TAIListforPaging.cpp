@@ -47,7 +47,7 @@ bool TAIListForPaging::encode2TAIListForPaging(Ngap_TAIListForPaging_t* pdu) {
   for (auto& tai : taiList) {
     Ngap_TAIListForPagingItem_t* ta = (Ngap_TAIListForPagingItem_t*) calloc(
         1, sizeof(Ngap_TAIListForPagingItem_t));
-    if (!tai.encode2TAI(&ta->tAI)) return false;
+    if (!tai.encode(&ta->tAI)) return false;
     if (ASN_SEQUENCE_ADD(&pdu->list, ta) != 0) return false;
   }
   return true;
@@ -59,7 +59,7 @@ bool TAIListForPaging::decodefromTAIListForPaging(
   if (pdu->list.count < 0) return false;
   for (int i = 0; i < pdu->list.count; i++) {
     TAI tai = {};
-    if (!tai.decodefromTAI(&pdu->list.array[i]->tAI)) return false;
+    if (!tai.decode(&pdu->list.array[i]->tAI)) return false;
     taiList.push_back(tai);
   }
 

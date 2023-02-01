@@ -18,29 +18,28 @@
  * For more information about the OpenAirInterface (OAI) Software Alliance:
  *      contact@openairinterface.org
  */
-
-/*! \file
- \brief
- \author
- \date 2020
- \email: contact@openairinterface.org
- */
-
 #include "_5GSDeregistrationType.hpp"
 
-#include "3gpp_ts24501.hpp"
+#include "3gpp_24.501.hpp"
 #include "logger.hpp"
 
 using namespace nas;
 
 //------------------------------------------------------------------------------
-_5GSDeregistrationType::_5GSDeregistrationType() {
+_5GSDeregistrationType::_5GSDeregistrationType() : Type1NasIeFormatTv() {
   u1.b = 0;
 }
 
 //------------------------------------------------------------------------------
-_5GSDeregistrationType::_5GSDeregistrationType(uint8_t type) {
-  u1.b = type;
+_5GSDeregistrationType::_5GSDeregistrationType(uint8_t iei)
+    : Type1NasIeFormatTv(iei) {
+  u1.bf.iei = iei;
+}
+
+//------------------------------------------------------------------------------
+_5GSDeregistrationType::_5GSDeregistrationType(uint8_t iei, uint8_t value) {
+  u1.b = (iei << 4) | (value && 0x0f);
+  SetValue(value && 0x0f);
 }
 //------------------------------------------------------------------------------
 _5GSDeregistrationType::_5GSDeregistrationType(
@@ -50,10 +49,27 @@ _5GSDeregistrationType::_5GSDeregistrationType(
   u1.bf.re_registration_required = type.re_registration_required;
   u1.bf.access_type              = type.access_type;
   u1.bf.iei                      = type.iei;
+  if (type.iei != 0) {
+    SetIei(type.iei);
+  }
+  SetValue(u1.b && 0x0f);
 }
 
 //------------------------------------------------------------------------------
 _5GSDeregistrationType::~_5GSDeregistrationType() {}
+
+//------------------------------------------------------------------------------
+void _5GSDeregistrationType::setValue() {
+  Type1NasIeFormatTv::SetValue(u1.b && 0x0f);
+}
+
+//------------------------------------------------------------------------------
+void _5GSDeregistrationType::getValue() {
+  u1.b = Type1NasIeFormatTv::GetValue() && 0x0f;
+  if (iei_.has_value()) {
+    u1.b |= iei_.value() && 0xf0;
+  }
+}
 
 //------------------------------------------------------------------------------
 void _5GSDeregistrationType::set(_5gs_deregistration_type_t type) {
@@ -62,6 +78,10 @@ void _5GSDeregistrationType::set(_5gs_deregistration_type_t type) {
   u1.bf.re_registration_required = type.re_registration_required;
   u1.bf.access_type              = type.access_type;
   u1.bf.iei                      = type.iei;
+  if (type.iei != 0) {
+    SetIei(type.iei);
+  }
+  SetValue(u1.b && 0x0f);
 }
 
 //------------------------------------------------------------------------------
@@ -82,8 +102,9 @@ void _5GSDeregistrationType::get(uint8_t& type) {
   type = u1.b;
 }
 
+/*
 //------------------------------------------------------------------------------
-int _5GSDeregistrationType::encode2buffer(uint8_t* buf, int len) {
+int _5GSDeregistrationType::Encode(uint8_t* buf, int len) {
   Logger::nas_mm().error("Encoding 5GSDeregistrationType IE");
   if (len < 1) {
     Logger::nas_mm().error(
@@ -95,10 +116,11 @@ int _5GSDeregistrationType::encode2buffer(uint8_t* buf, int len) {
 }
 
 //------------------------------------------------------------------------------
-int _5GSDeregistrationType::decodefrombuffer(uint8_t* buf, int len) {
+int _5GSDeregistrationType::Decode(uint8_t* buf, int len) {
   Logger::nas_mm().debug("Decoding 5GSDeregistrationType");
   u1.b = *buf;
 
   Logger::nas_mm().debug("Decoded 5GSDeRegistrationType");
   return 0;
 }
+*/

@@ -19,14 +19,6 @@
  *      contact@openairinterface.org
  */
 
-/*! \file amf_profile.cpp
- \brief
- \author  Tien-Thinh NGUYEN
- \company Eurecom
- \date 2020
- \email: Tien-Thinh.Nguyen@eurecom.fr
- */
-
 #include "amf_profile.hpp"
 
 #include <boost/algorithm/string/classification.hpp>

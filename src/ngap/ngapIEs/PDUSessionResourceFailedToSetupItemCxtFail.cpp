@@ -32,50 +32,46 @@ PDUSessionResourceFailedToSetupItemCxtFail::
     ~PDUSessionResourceFailedToSetupItemCxtFail() {}
 
 //------------------------------------------------------------------------------
-void PDUSessionResourceFailedToSetupItemCxtFail::
-    setPDUSessionResourceFailedToSetupItemCxtFail(
-        const PDUSessionID& m_pDUSessionID,
-        const OCTET_STRING_t& m_pDUSessionResourceSetupUnsuccessfulTransfer) {
-  pDUSessionID = m_pDUSessionID;
-  pDUSessionResourceSetupUnsuccessfulTransfer =
-      m_pDUSessionResourceSetupUnsuccessfulTransfer;
+void PDUSessionResourceFailedToSetupItemCxtFail::set(
+    const PDUSessionID& pdu_session_id,
+    const OCTET_STRING_t& pdu_session_resource_setup_unsuccessful_transfer) {
+  pdu_session_id_ = pdu_session_id;
+  pdu_session_resource_setup_unsuccessful_transfer_ =
+      pdu_session_resource_setup_unsuccessful_transfer;
 }
 
 //------------------------------------------------------------------------------
-void PDUSessionResourceFailedToSetupItemCxtFail::
-    getPDUSessionResourceFailedToSetupItemCxtFail(
-        PDUSessionID& m_pDUSessionID,
-        OCTET_STRING_t& m_pDUSessionResourceSetupUnsuccessfulTransfer) {
-  m_pDUSessionID = pDUSessionID;
-  pDUSessionResourceSetupUnsuccessfulTransfer =
-      pDUSessionResourceSetupUnsuccessfulTransfer;
+void PDUSessionResourceFailedToSetupItemCxtFail::get(
+    PDUSessionID& pdu_session_id,
+    OCTET_STRING_t& pdu_session_resource_setup_unsuccessful_transfer) const {
+  pdu_session_id = pdu_session_id_;
+  pdu_session_resource_setup_unsuccessful_transfer =
+      pdu_session_resource_setup_unsuccessful_transfer_;
 }
 
 //------------------------------------------------------------------------------
-bool PDUSessionResourceFailedToSetupItemCxtFail::
-    encode2PDUSessionResourceFailedToSetupItemCxtFail(
-        Ngap_PDUSessionResourceFailedToSetupItemCxtFail_t*
-            pduSessionResourceFailedToSetupItemCxtFail) {
-  if (!pDUSessionID.encode2PDUSessionID(
-          pduSessionResourceFailedToSetupItemCxtFail->pDUSessionID))
+bool PDUSessionResourceFailedToSetupItemCxtFail::encode(
+    Ngap_PDUSessionResourceFailedToSetupItemCxtFail_t*
+        pdu_session_resource_failed_to_setup_item_cxt_fail) {
+  if (!pdu_session_id_.encode(
+          pdu_session_resource_failed_to_setup_item_cxt_fail->pDUSessionID))
     return false;
-  pduSessionResourceFailedToSetupItemCxtFail
+  pdu_session_resource_failed_to_setup_item_cxt_fail
       ->pDUSessionResourceSetupUnsuccessfulTransfer =
-      pDUSessionResourceSetupUnsuccessfulTransfer;
+      pdu_session_resource_setup_unsuccessful_transfer_;
 
   return true;
 }
 
 //------------------------------------------------------------------------------
-bool PDUSessionResourceFailedToSetupItemCxtFail::
-    decodefromPDUSessionResourceFailedToSetupItemCxtFail(
-        Ngap_PDUSessionResourceFailedToSetupItemCxtFail_t*
-            pduSessionResourceFailedToSetupItemCxtFail) {
-  if (!pDUSessionID.decodefromPDUSessionID(
-          pduSessionResourceFailedToSetupItemCxtFail->pDUSessionID))
+bool PDUSessionResourceFailedToSetupItemCxtFail::decode(
+    Ngap_PDUSessionResourceFailedToSetupItemCxtFail_t*
+        pdu_session_resource_failed_to_setup_item_cxt_fail) {
+  if (!pdu_session_id_.decode(
+          pdu_session_resource_failed_to_setup_item_cxt_fail->pDUSessionID))
     return false;
-  pDUSessionResourceSetupUnsuccessfulTransfer =
-      pduSessionResourceFailedToSetupItemCxtFail
+  pdu_session_resource_setup_unsuccessful_transfer_ =
+      pdu_session_resource_failed_to_setup_item_cxt_fail
           ->pDUSessionResourceSetupUnsuccessfulTransfer;
 
   return true;

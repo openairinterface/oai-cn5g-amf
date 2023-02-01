@@ -20,6 +20,8 @@
  */
 
 #include "HandoverRequest.hpp"
+
+#include "conversions.hpp"
 #include "logger.hpp"
 
 extern "C" {
@@ -30,7 +32,7 @@ namespace ngap {
 
 //------------------------------------------------------------------------------
 HandoverRequest::HandoverRequest() : NgapMessage() {
-  mobilityRestrictionList = nullptr;
+  mobilityRestrictionList = std::nullopt;
   handoverRequestIEs      = nullptr;
 
   setMessageType(NgapMessageType::HANDOVER_REQUEST);
@@ -48,7 +50,7 @@ void HandoverRequest::initialize() {
 
 //------------------------------------------------------------------------------
 unsigned long HandoverRequest::getAmfUeNgapId() {
-  return amfUeNgapId.getAMF_UE_NGAP_ID();
+  return amfUeNgapId.get();
 }
 
 //------------------------------------------------------------------------------
@@ -103,7 +105,24 @@ bool HandoverRequest::decodeFromPdu(Ngap_NGAP_PDU_t* ngapMsgPdu) {
           return false;
         }
       } break;
-
+        // TODO: Cause
+        // TODO: UEAggregateMaxBitRate
+        // TODO: Core Network Assistance Information for RRC INACTIVE
+        // TODO:  UESecurityCapabilities ueSecurityCapabilities
+        // TODO: Ngap_SecurityContext_t securityContext
+        // TODO: New Security Context Indicator
+        // TODO: NASC - NAS-PDU
+        // TODO: PDUSessionResourceSetupListHOReq
+        // TODO: AllowedNSSAI
+        // TODO: Trace Activation
+        // TODO: Masked IMEISV
+        // TODO: SourceToTarget_TransparentContainer
+        // TODO: MobilityRestrictionList
+        // TODO: Location Reporting Request Type
+        // TODO: RRC Inactive Transition Report Request
+        // TODO: GUAMI
+        // TODO: Redirection for Voice EPS Fallback
+        // TODO: CN Assisted RAN Parameters Tuning
       default: {
         Logger::ngap().error("Decode NGAP HandoverRequest PDU error");
         return false;
@@ -116,7 +135,7 @@ bool HandoverRequest::decodeFromPdu(Ngap_NGAP_PDU_t* ngapMsgPdu) {
 
 //------------------------------------------------------------------------------
 void HandoverRequest::setAmfUeNgapId(const unsigned long& id) {
-  amfUeNgapId.setAMF_UE_NGAP_ID(id);
+  amfUeNgapId.set(id);
 
   Ngap_HandoverRequestIEs_t* ie =
       (Ngap_HandoverRequestIEs_t*) calloc(1, sizeof(Ngap_HandoverRequestIEs_t));
@@ -159,7 +178,7 @@ void HandoverRequest::setCause(
 
   cause.setChoiceOfCause(causePresent);
   cause.setValue(value);
-  cause.encode2Cause(&(ie->value.choice.Cause));
+  cause.encode(ie->value.choice.Cause);
   int ret = ASN_SEQUENCE_ADD(&handoverRequestIEs->protocolIEs.list, ie);
   if (ret != 0) Logger::ngap().error("Encode Cause IE error");
 }
@@ -167,8 +186,7 @@ void HandoverRequest::setCause(
 //------------------------------------------------------------------------------
 void HandoverRequest::setUEAggregateMaximumBitRate(
     const long& bitRateDownlink, const long& bitRateUplink) {
-  ueAggregateMaximumBitRate.setUEAggregateMaxBitRate(
-      bitRateDownlink, bitRateUplink);
+  ueAggregateMaximumBitRate.set(bitRateDownlink, bitRateUplink);
 
   Ngap_HandoverRequestIEs_t* ie =
       (Ngap_HandoverRequestIEs_t*) calloc(1, sizeof(Ngap_HandoverRequestIEs_t));
@@ -176,8 +194,7 @@ void HandoverRequest::setUEAggregateMaximumBitRate(
   ie->criticality = Ngap_Criticality_reject;
   ie->value.present =
       Ngap_HandoverRequestIEs__value_PR_UEAggregateMaximumBitRate;
-  ueAggregateMaximumBitRate.encode2UEAggregateMaxBitRate(
-      ie->value.choice.UEAggregateMaximumBitRate);
+  ueAggregateMaximumBitRate.encode(ie->value.choice.UEAggregateMaximumBitRate);
 
   int ret = ASN_SEQUENCE_ADD(&handoverRequestIEs->protocolIEs.list, ie);
   if (ret != 0)
@@ -194,11 +211,10 @@ void HandoverRequest::setUESecurityCapabilities(
   ie->id            = Ngap_ProtocolIE_ID_id_UESecurityCapabilities;
   ie->criticality   = Ngap_Criticality_reject;
   ie->value.present = Ngap_HandoverRequestIEs__value_PR_UESecurityCapabilities;
-  ueSecurityCapabilities.setUESecurityCapabilities(
+  ueSecurityCapabilities.set(
       nREncryptionAlgs, nRIntegrityProtectionAlgs, eUTRAEncryptionAlgs,
       eUTRAIntegrityProtectionAlgs);
-  ueSecurityCapabilities.encode2UESecurityCapabilities(
-      (ie->value.choice.UESecurityCapabilities));
+  ueSecurityCapabilities.encode((ie->value.choice.UESecurityCapabilities));
 
   int ret = ASN_SEQUENCE_ADD(&handoverRequestIEs->protocolIEs.list, ie);
   if (ret != 0) Logger::ngap().error("Encode UESecurityCapabilities IE error");
@@ -206,14 +222,14 @@ void HandoverRequest::setUESecurityCapabilities(
 
 //------------------------------------------------------------------------------
 void HandoverRequest::setGUAMI(
-    const PlmnId& m_plmnId, const AMFRegionID& m_aMFRegionID,
-    const AMFSetID& m_aMFSetID, const AMFPointer& m_aMFPointer) {
+    const PlmnId& plmnId, const AMFRegionID& aMFRegionID,
+    const AMFSetID& aMFSetID, const AMFPointer& aMFPointer) {
   Ngap_HandoverRequestIEs_t* ie =
       (Ngap_HandoverRequestIEs_t*) calloc(1, sizeof(Ngap_HandoverRequestIEs_t));
   ie->id            = Ngap_ProtocolIE_ID_id_GUAMI;
   ie->criticality   = Ngap_Criticality_reject;
   ie->value.present = Ngap_HandoverRequestIEs__value_PR_GUAMI;
-  guami.setGUAMI(m_plmnId, m_aMFRegionID, m_aMFSetID, m_aMFPointer);
+  guami.setGUAMI(plmnId, aMFRegionID, aMFSetID, aMFPointer);
   guami.encode2GUAMI(&(ie->value.choice.GUAMI));
 
   int ret = ASN_SEQUENCE_ADD(&handoverRequestIEs->protocolIEs.list, ie);
@@ -242,7 +258,7 @@ void HandoverRequest::setAllowedNSSAI(std::vector<S_NSSAI>& list) {
   for (auto& it : list) {
     Ngap_AllowedNSSAI_Item_t* item =
         (Ngap_AllowedNSSAI_Item_t*) calloc(1, sizeof(Ngap_AllowedNSSAI_Item_t));
-    it.encode2S_NSSAI(&item->s_NSSAI);
+    it.encode(&item->s_NSSAI);
     int ret = ASN_SEQUENCE_ADD(&allowedNSSAI.list, item);
     if (ret != 0)
       Logger::ngap().error(
@@ -260,10 +276,8 @@ void HandoverRequest::setAllowedNSSAI(std::vector<S_NSSAI>& list) {
 }
 
 //------------------------------------------------------------------------------
-void HandoverRequest::setSecurityContext(const long& count, uint8_t* buffer) {
-  SecurityKey securitykey;
-  securitykey.setSecurityKey(buffer);
-  securitykey.encode2bitstring(securityContext.nextHopNH);
+void HandoverRequest::setSecurityContext(const long& count, bstring& nh) {
+  conv::bstring_2_bit_string(nh, securityContext.nextHopNH);
   securityContext.nextHopChainingCount = count;
 
   Ngap_HandoverRequestIEs_t* ie =
@@ -279,22 +293,22 @@ void HandoverRequest::setSecurityContext(const long& count, uint8_t* buffer) {
 //------------------------------------------------------------------------------
 void HandoverRequest::setPduSessionResourceSetupList(
     const std::vector<PDUSessionResourceSetupRequestItem_t>& list) {
-  PDUSessionResourceSetupItemHOReq* m_pduSessionResourceSetupItemHOReq =
-      new PDUSessionResourceSetupItemHOReq[list.size()]();
+  std::vector<PDUSessionResourceSetupItemHOReq> resource_setup_list;
 
   for (int i = 0; i < list.size(); i++) {
-    PDUSessionID* m_pDUSessionID = new PDUSessionID();
-    m_pDUSessionID->setPDUSessionID(list[i].pduSessionId);
-    S_NSSAI* m_s_NSSAI = new S_NSSAI();
-    m_s_NSSAI->setSst(list[i].s_nssai.sst);
-    if (list[i].s_nssai.sd.size()) m_s_NSSAI->setSd(list[i].s_nssai.sd);
-    m_pduSessionResourceSetupItemHOReq[i].setPDUSessionResourceSetupItemHOReq(
-        m_pDUSessionID, m_s_NSSAI,
+    PDUSessionResourceSetupItemHOReq resource_setup_item = {};
+    PDUSessionID pdu_session_id                          = {};
+    pdu_session_id.set(list[i].pduSessionId);
+    S_NSSAI s_nssai = {};
+    s_nssai.setSst(list[i].s_nssai.sst);
+    if (list[i].s_nssai.sd.size()) s_nssai.setSd(list[i].s_nssai.sd);
+    resource_setup_item.set(
+        pdu_session_id, s_nssai,
         list[i].pduSessionResourceSetupRequestTransfer);
+    resource_setup_list.push_back(resource_setup_item);
   }
 
-  pDUSessionResourceSetupList.setPDUSessionResourceSetupListHOReq(
-      m_pduSessionResourceSetupItemHOReq, list.size());
+  pDUSessionResourceSetupList.set(resource_setup_list);
 
   Ngap_HandoverRequestIEs_t* ie =
       (Ngap_HandoverRequestIEs_t*) calloc(1, sizeof(Ngap_HandoverRequestIEs_t));
@@ -303,7 +317,7 @@ void HandoverRequest::setPduSessionResourceSetupList(
   ie->value.present =
       Ngap_HandoverRequestIEs__value_PR_PDUSessionResourceSetupListHOReq;
 
-  int ret = pDUSessionResourceSetupList.encode2PDUSessionResourceSetupListHOReq(
+  int ret = pDUSessionResourceSetupList.encode(
       &ie->value.choice.PDUSessionResourceSetupListHOReq);
   if (!ret) {
     Logger::ngap().error("Encode PDUSessionResourceSetupListSUReq IE error");
@@ -319,7 +333,7 @@ void HandoverRequest::setPduSessionResourceSetupList(
 //------------------------------------------------------------------------------
 void HandoverRequest::setSourceToTarget_TransparentContainer(
     const OCTET_STRING_t& sourceTotarget) {
-  SourceToTarget_TransparentContainer = sourceTotarget;
+  conv::octet_string_copy(SourceToTarget_TransparentContainer, sourceTotarget);
   Ngap_HandoverRequestIEs_t* ie =
       (Ngap_HandoverRequestIEs_t*) calloc(1, sizeof(Ngap_HandoverRequestIEs_t));
   ie->id          = Ngap_ProtocolIE_ID_id_SourceToTarget_TransparentContainer;
@@ -333,17 +347,18 @@ void HandoverRequest::setSourceToTarget_TransparentContainer(
 }
 
 //------------------------------------------------------------------------------
-void HandoverRequest::setMobilityRestrictionList(const PlmnId& m_plmnId) {
-  if (!mobilityRestrictionList) {
-    mobilityRestrictionList = new MobilityRestrictionList();
-  }
+void HandoverRequest::setMobilityRestrictionList(const PlmnId& plmn_id) {
+  MobilityRestrictionList tmp = {};
+  tmp.setPLMN(plmn_id);
+  mobilityRestrictionList = std::optional<MobilityRestrictionList>(tmp);
+
   Ngap_HandoverRequestIEs_t* ie =
       (Ngap_HandoverRequestIEs_t*) calloc(1, sizeof(Ngap_HandoverRequestIEs_t));
   ie->id            = Ngap_ProtocolIE_ID_id_MobilityRestrictionList;
   ie->criticality   = Ngap_Criticality_ignore;
   ie->value.present = Ngap_HandoverRequestIEs__value_PR_MobilityRestrictionList;
-  mobilityRestrictionList->setMobilityRestrictionList(m_plmnId);
-  mobilityRestrictionList->encodeMobilityRestrictionList(
+
+  mobilityRestrictionList.value().encode(
       &(ie->value.choice.MobilityRestrictionList));
   int ret = ASN_SEQUENCE_ADD(&handoverRequestIEs->protocolIEs.list, ie);
   if (ret != 0) Logger::ngap().error("Encode MobilityRestrictionList IE error");

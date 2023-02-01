@@ -19,15 +19,10 @@
  *      contact@openairinterface.org
  */
 
-/*! \file
- \brief
- \author  Keliang DU, BUPT
- \date 2020
- \email: contact@openairinterface.org
- */
-
 #ifndef _NAS_PDU_H_
 #define _NAS_PDU_H_
+
+#include "bstrlib.h"
 
 extern "C" {
 #include "Ngap_NAS-PDU.h"
@@ -40,14 +35,22 @@ class NAS_PDU {
   NAS_PDU();
   virtual ~NAS_PDU();
 
-  bool encode2octetstring(Ngap_NAS_PDU_t&);
-  bool decodefromoctetstring(Ngap_NAS_PDU_t&);
-  bool getNasPdu(uint8_t*& buffer, size_t& size) const;
-  void setNasPdu(uint8_t* buffer, size_t size);
+  bool encode(Ngap_NAS_PDU_t&);
+  bool decode(Ngap_NAS_PDU_t&);
+  // bool get(uint8_t*& buffer, size_t& size) const;
+  void set(uint8_t* buffer, size_t size);
+
+  bool get(OCTET_STRING_t& pdu) const;
+  bool set(const OCTET_STRING_t& pdu);
+
+  bool get(bstring& pdu) const;
+  bool set(const bstring& pdu);
+
+  bool get(NAS_PDU& nas_pdu) const;
+  bool set(const NAS_PDU& nas_pdu);
 
  private:
-  char* naspdubuffer;
-  size_t buffersize;
+  bstring pdu_bstring;
 };
 
 }  // namespace ngap

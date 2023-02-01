@@ -19,15 +19,11 @@
  *      contact@openairinterface.org
  */
 
-/*! \file
- \brief
- \author  Keliang DU, BUPT
- \date 2020
- \email: contact@openairinterface.org
- */
-
 #ifndef _EUTRACellIdentity_H_
 #define _EUTRACellIdentity_H_
+#include <cstdint>
+
+constexpr uint32_t kEUTRACellIdentityMaxValue = 268435455;  // 2^28-1
 
 extern "C" {
 #include "Ngap_EUTRACellIdentity.h"
@@ -40,13 +36,13 @@ class EUTRACellIdentity {
   EUTRACellIdentity();
   virtual ~EUTRACellIdentity();
 
-  bool encode2bitstring(Ngap_EUTRACellIdentity_t& eUTRACellIdentity);
-  bool decodefrombitstring(Ngap_EUTRACellIdentity_t& eUTRACellIdentity);
-  uint32_t getEUTRACellIdentity();
-  void setEUTRACellIdentity(uint32_t m_eutracellidentity);
+  bool encode(Ngap_EUTRACellIdentity_t& eUTRACellIdentity);
+  bool decode(Ngap_EUTRACellIdentity_t& eUTRACellIdentity);
+  uint32_t get();
+  bool set(const uint32_t& m_eutracellidentity);
 
  private:
-  uint32_t eutracellidentity;
+  uint32_t id_;
 };
 }  // namespace ngap
 

@@ -19,13 +19,6 @@
  *      contact@openairinterface.org
  */
 
-/*! \file
- \brief
- \author  Keliang DU, BUPT
- \date 2020
- \email: contact@openairinterface.org
- */
-
 #ifndef _PlmnId_H
 #define _PlmnId_H
 
@@ -42,11 +35,12 @@ class PlmnId {
   PlmnId();
   virtual ~PlmnId();
 
-  bool encode2octetstring(Ngap_PLMNIdentity_t&);
-  bool decodefromoctetstring(Ngap_PLMNIdentity_t&);
-  void setMccMnc(const std::string mcc, const std::string mnc);
-  void getMcc(std::string& mcc);
-  void getMnc(std::string& mnc);
+  bool encode(Ngap_PLMNIdentity_t&);
+  bool decode(Ngap_PLMNIdentity_t&);
+  void set(const std::string& mcc, const std::string& mnc);
+  void get(std::string& mcc, std::string& mnc) const;
+  void getMcc(std::string& mcc) const;
+  void getMnc(std::string& mnc) const;
 
  private:
   uint8_t mcc_digit2;

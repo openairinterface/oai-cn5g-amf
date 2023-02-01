@@ -13,6 +13,8 @@
 
 #include "N1N2IndividualSubscriptionDocumentApiImpl.h"
 
+#include "3gpp_29.500.h"
+
 extern itti_mw* itti_inst;
 namespace oai {
 namespace amf {
@@ -77,7 +79,8 @@ void N1N2IndividualSubscriptionDocumentApiImpl::n1_n2_message_un_subscribe(
       http_response_code = result["httpResponseCode"].get<int>();
     }
 
-    if (http_response_code == 204) {
+    if (static_cast<http_response_codes_e>(http_response_code) ==
+        http_response_codes_e::HTTP_RESPONSE_CODE_204_NO_CONTENT) {
       response.send(Pistache::Http::Code::No_Content);
     } else {
       // Problem//details

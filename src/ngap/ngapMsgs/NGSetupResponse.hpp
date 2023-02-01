@@ -29,7 +29,6 @@
 #include "RelativeAMFCapacity.hpp"
 #include "ServedGUAMIList.hpp"
 #include "NgapMessage.hpp"
-//#include "CriticalityDiagnostics.hpp"
 
 extern "C" {
 #include "Ngap_NGSetupResponse.h"
@@ -44,8 +43,8 @@ class NGSetupResponseMsg : public NgapMessage {
 
   void initialize();
 
-  void setAMFName(const std::string name);
-  bool getAMFName(std::string& name);
+  void setAMFName(const std::string& name);
+  bool getAMFName(std::string& name) const;
 
   void setGUAMIList(std::vector<struct GuamiItem_s> list);
   bool getGUAMIList(std::vector<struct GuamiItem_s>& list);

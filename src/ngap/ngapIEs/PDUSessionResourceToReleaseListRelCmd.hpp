@@ -37,20 +37,16 @@ class PDUSessionResourceToReleaseListRelCmd {
   PDUSessionResourceToReleaseListRelCmd();
   virtual ~PDUSessionResourceToReleaseListRelCmd();
 
-  void setPDUSessionResourceToReleaseListRelCmd(
-      const std::vector<PDUSessionResourceToReleaseItemRelCmd>& list);
-  void getPDUSessionResourceToReleaseListRelCmd(
-      std::vector<PDUSessionResourceToReleaseItemRelCmd>& list);
+  void set(const std::vector<PDUSessionResourceToReleaseItemRelCmd>& list);
+  void get(std::vector<PDUSessionResourceToReleaseItemRelCmd>& list);
 
-  bool encode2PDUSessionResourceToReleaseListRelCmd(
-      Ngap_PDUSessionResourceToReleaseListRelCmd_t*
-          pduSessionResourceToReleaseListRelCmd);
-  bool decodefromPDUSessionResourceToReleaseListRelCmd(
-      Ngap_PDUSessionResourceToReleaseListRelCmd_t*
-          pduSessionResourceToReleaseListRelCmd);
+  bool encode(Ngap_PDUSessionResourceToReleaseListRelCmd_t*
+                  pduSessionResourceToReleaseListRelCmd);
+  bool decode(Ngap_PDUSessionResourceToReleaseListRelCmd_t*
+                  pduSessionResourceToReleaseListRelCmd);
 
  private:
-  std::vector<PDUSessionResourceToReleaseItemRelCmd> itemRelCmdList;
+  std::vector<PDUSessionResourceToReleaseItemRelCmd> item_list_;
 };
 
 }  // namespace ngap
