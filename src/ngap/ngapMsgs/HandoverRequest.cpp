@@ -353,7 +353,8 @@ void HandoverRequest::setSourceToTarget_TransparentContainer(
   ie->value.present =
       Ngap_HandoverRequestIEs__value_PR_SourceToTarget_TransparentContainer;
 
-  conv::octet_string_copy(ie->value.choice.SourceToTarget_TransparentContainer, sourceTotarget);
+  conv::octet_string_copy(
+      ie->value.choice.SourceToTarget_TransparentContainer, sourceTotarget);
   int ret = ASN_SEQUENCE_ADD(&handoverRequestIEs->protocolIEs.list, ie);
   if (ret != 0)
     Logger::ngap().error("Encode SourceToTarget_TransparentContainer IE error");

@@ -221,7 +221,7 @@ bool HandoverCommandMsg::getPDUSessionResourceToReleaseListHOCmd(
 //------------------------------------------------------------------------------
 void HandoverCommandMsg::setTargetToSource_TransparentContainer(
     const OCTET_STRING_t& targetTosource) {
-  conv::octet_string_copy(targetToSource_TransparentContainer,targetTosource);
+  conv::octet_string_copy(targetToSource_TransparentContainer, targetTosource);
 
   Ngap_HandoverCommandIEs_t* ie =
       (Ngap_HandoverCommandIEs_t*) calloc(1, sizeof(Ngap_HandoverCommandIEs_t));
@@ -229,7 +229,8 @@ void HandoverCommandMsg::setTargetToSource_TransparentContainer(
   ie->criticality = Ngap_Criticality_reject;
   ie->value.present =
       Ngap_HandoverCommandIEs__value_PR_TargetToSource_TransparentContainer;
-  conv::octet_string_copy(ie->value.choice.TargetToSource_TransparentContainer,targetTosource);
+  conv::octet_string_copy(
+      ie->value.choice.TargetToSource_TransparentContainer, targetTosource);
 
   int ret = ASN_SEQUENCE_ADD(&handoverCommandIEs->protocolIEs.list, ie);
   if (ret != 0) Logger::ngap().error("Encode HandoverType IE error");
