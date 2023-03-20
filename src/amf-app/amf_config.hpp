@@ -113,6 +113,7 @@
 #define AMF_CONFIG_STRING_SUPPORT_FEATURES_USE_HTTP2 "USE_HTTP2"
 
 #define AMF_CONFIG_STRING_FQDN_DNS "FQDN"
+#define AMF_CONFIG_STRING_LOG_LEVEL "LOG_LEVEL"
 
 using namespace libconfig;
 
@@ -499,6 +500,7 @@ class amf_config {
 
   unsigned int instance;
   std::string pid_dir;
+  spdlog::level::level_enum log_level;
   interface_cfg_t n2;
   interface_cfg_t sbi;
   itti_cfg_t itti;

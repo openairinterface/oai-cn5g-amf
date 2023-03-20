@@ -178,10 +178,6 @@ void Authentication_5gaka::RijndaelEncrypt(
 #if AUTH_ALG_ON
   printf("end of round(%d)\n0x", 0);
 #endif
-#if DEBUG_IS_ON
-  for (int i = 0; i < 16; i++) printf("%x ", state[i & 0x3][i >> 2]);
-  printf("\n");
-#endif
 
   for (r = 1; r <= 9; r++) {
     ByteSub(state);

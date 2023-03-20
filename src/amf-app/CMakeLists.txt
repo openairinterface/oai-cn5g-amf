@@ -19,7 +19,6 @@
 #      contact@openairinterface.org
 ################################################################################
 
-include_directories(${SRC_TOP_DIR}/../build/ext/spdlog/include)
 include_directories(${SRC_TOP_DIR}/amf-app)
 include_directories(${SRC_TOP_DIR}/itti)
 include_directories(${SRC_TOP_DIR}/itti/msgs)
@@ -43,6 +42,7 @@ include_directories(${SRC_TOP_DIR}/secu_algorithms/5gaka)
 include_directories(${SRC_TOP_DIR}/secu_algorithms/nas_enc_int)
 include_directories(${SRC_TOP_DIR}/utils)
 include_directories(${SRC_TOP_DIR}/utils/bstr)
+include_directories(${SRC_TOP_DIR}/${MOUNTED_COMMON}/logger)
 
 file(GLOB AMF_src_files
   ${CMAKE_CURRENT_SOURCE_DIR}/amf_app.cpp
@@ -66,9 +66,9 @@ file(GLOB AMF_src_files
   ${SRC_TOP_DIR}/ngap/libngap/*.c
   ${SRC_TOP_DIR}/ngap/ngap_app/*.cpp
   ${SRC_TOP_DIR}/ngap/ngapMsgs/*.cpp
-  ${SRC_TOP_DIR}/ngap/ngapIEs/*.cpp   
+  ${SRC_TOP_DIR}/ngap/ngapIEs/*.cpp
 )
- 
+
 add_library (AMF STATIC
 ${AMF_src_files}
 )

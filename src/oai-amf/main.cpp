@@ -106,6 +106,7 @@ int main(int argc, char** argv) {
 
   amf_cfg.load(Options::getlibconfigConfig());
   amf_cfg.display();
+  Logger::set_level(amf_cfg.log_level);
 
   itti_inst = new itti_mw();
   itti_inst->start(amf_cfg.itti.itti_timer_sched_params);

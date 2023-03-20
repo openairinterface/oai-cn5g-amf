@@ -21,7 +21,6 @@
 
 set(AMF_API_SERVER_DIR "${SRC_TOP_DIR}/sbi/amf_server")
 
-include_directories(${SRC_TOP_DIR}/../build/ext/spdlog/include)
 include_directories(${SRC_TOP_DIR}/amf-app)
 include_directories(${SRC_TOP_DIR}/itti)
 include_directories(${SRC_TOP_DIR}/itti/msgs)
@@ -39,6 +38,7 @@ include_directories(${SRC_TOP_DIR}/sbi/amf_server)
 include_directories(${SRC_TOP_DIR}/sbi/amf_server/api)
 include_directories(${SRC_TOP_DIR}/sbi/amf_server/impl)
 include_directories(${SRC_TOP_DIR}/sbi/amf_server/model)
+include_directories(${SRC_TOP_DIR}/${MOUNTED_COMMON}/logger)
 
 file(GLOB AMF_API_SERVER_src_files
     ${AMF_API_SERVER_DIR}/amf-http2-server.cpp
@@ -47,8 +47,6 @@ file(GLOB AMF_API_SERVER_src_files
     ${AMF_API_SERVER_DIR}/api/*.cpp
     ${AMF_API_SERVER_DIR}/impl/*.cpp
 )
- 
+
 add_library(AMF_SBI_SERVER STATIC
            ${AMF_API_SERVER_src_files})
-                      
-
