@@ -334,7 +334,7 @@ void amf_n1::handle_itti_message(itti_downlink_nas_transfer& itti_msg) {
                 TASK_AMF_N1, TASK_AMF_N2);
         csr->ran_ue_ngap_id = ran_ue_ngap_id;
         csr->amf_ue_ngap_id = amf_ue_ngap_id;
-        csr->kgnb           = blk2bstr(kgnb, 32);
+        csr->kgnb           = blk2bstr(kgnb, AUTH_VECTOR_LENGTH_OCTETS);
         csr->nas            = protected_nas;
         csr->pdu_session_id = itti_msg.pdu_session_id;
         csr->is_pdu_exist   = true;
@@ -1017,7 +1017,7 @@ void amf_n1::service_request_handle(
     itti_msg->ran_ue_ngap_id = ran_ue_ngap_id;
     itti_msg->amf_ue_ngap_id = amf_ue_ngap_id;
     itti_msg->nas            = bstrcpy(protected_nas);
-    itti_msg->kgnb           = blk2bstr(kgnb, 32);
+    itti_msg->kgnb           = blk2bstr(kgnb, AUTH_VECTOR_LENGTH_OCTETS);
     itti_msg->is_sr          = true;  // Service Request indicator
     itti_msg->is_pdu_exist   = false;
 
@@ -1075,7 +1075,7 @@ void amf_n1::service_request_handle(
     itti_msg->ran_ue_ngap_id = ran_ue_ngap_id;
     itti_msg->amf_ue_ngap_id = amf_ue_ngap_id;
     itti_msg->nas            = bstrcpy(protected_nas);
-    itti_msg->kgnb           = blk2bstr(kgnb, 32);
+    itti_msg->kgnb           = blk2bstr(kgnb, AUTH_VECTOR_LENGTH_OCTETS);
     itti_msg->is_sr          = true;  // Service Request indicator
     itti_msg->pdu_session_id = pdu_session_id;
     itti_msg->is_pdu_exist   = true;
@@ -1909,9 +1909,10 @@ bool amf_n1::_5g_aka_confirmation_from_ausf(
     if (!confirmationdataresponse.kseafIsSet()) return false;
     unsigned char* kseaf_hex =
         conv::format_string_as_hex(confirmationdataresponse.getKseaf());
-    memcpy(nc->_5g_av[0].kseaf, kseaf_hex, 32);
+    memcpy(nc->_5g_av[0].kseaf, kseaf_hex, AUTH_VECTOR_LENGTH_OCTETS);
     output_wrapper::print_buffer(
-        "amf_n1", "5G AV: kseaf", nc->_5g_av[0].kseaf, 32);
+        "amf_n1", "5G AV: kseaf", nc->_5g_av[0].kseaf,
+        AUTH_VECTOR_LENGTH_OCTETS);
     free_wrapper((void**) &kseaf_hex);
 
     Logger::amf_n1().debug("Deriving Kamf");
@@ -1919,7 +1920,8 @@ bool amf_n1::_5g_aka_confirmation_from_ausf(
       Authentication_5gaka::derive_kamf(
           nc->imsi, nc->_5g_av[i].kseaf, nc->kamf[i],
           0x0000);  // second parameter: abba
-      output_wrapper::print_buffer("amf_n1", "Kamf", nc->kamf[i], 32);
+      output_wrapper::print_buffer(
+          "amf_n1", "Kamf", nc->kamf[i], AUTH_VECTOR_LENGTH_OCTETS);
     }
   } catch (nlohmann::json::exception& e) {
     Logger::amf_n1().info("Could not get JSON content from AUSF response");
@@ -1944,15 +1946,16 @@ bool amf_n1::authentication_vectors_generator_in_ausf(
     memcpy(&inputString[i][0], rand[i], 16);
     memcpy(&inputString[i][16], xresStar[i], 16);
     unsigned char sha256Out[Sha256::DIGEST_SIZE];
-    sha256((unsigned char*) inputString[i], 32, sha256Out);
+    sha256(
+        (unsigned char*) inputString[i], AUTH_VECTOR_LENGTH_OCTETS, sha256Out);
     for (int j = 0; j < 16; j++)
       nc->_5g_av[i].hxresStar[j] = (uint8_t) sha256Out[j];
     memcpy(nc->_5g_av[i].rand, nc->_5g_he_av[i].rand, 16);
     memcpy(nc->_5g_av[i].autn, nc->_5g_he_av[i].autn, 16);
-    uint8_t kseaf[32];
+    uint8_t kseaf[AUTH_VECTOR_LENGTH_OCTETS];
     Authentication_5gaka::derive_kseaf(
         nc->serving_network, nc->_5g_he_av[i].kausf, kseaf);
-    memcpy(nc->_5g_av[i].kseaf, kseaf, 32);
+    memcpy(nc->_5g_av[i].kseaf, kseaf, AUTH_VECTOR_LENGTH_OCTETS);
   }
   return true;
 }
@@ -2082,7 +2085,7 @@ void amf_n1::generate_5g_he_av_in_udm(
       ck, ik, serving_network, sqn, ak,
       vector.kausf);  // derive Kausf
   // output_wrapper::print_buffer("amf_n1", "Result For KDF: Kausf(5G HE AV)",
-  // vector.kausf, 32);
+  // vector.kausf, AUTH_VECTOR_LENGTH_OCTETS);
   Logger::amf_n1().debug("Generate_5g_he_av_in_udm finished!");
   return;
 }
@@ -2120,14 +2123,16 @@ void amf_n1::annex_a_4_33501(
   oldS[33] = 0x08;
   output_wrapper::print_buffer(
       "amf_n1", "Input string: ", S, 31 + netName.size);
-  uint8_t key[32];
+  uint8_t key[AUTH_VECTOR_LENGTH_OCTETS];
   memcpy(&key[0], ck, 16);
   memcpy(&key[16], ik, 16);  // KEY
-  // Authentication_5gaka::kdf(key, 32, oldS, 33, output, 16);
-  uint8_t out[32];
+  // Authentication_5gaka::kdf(key, AUTH_VECTOR_LENGTH_OCTETS, oldS, 33, output,
+  // 16);
+  uint8_t out[AUTH_VECTOR_LENGTH_OCTETS];
   Authentication_5gaka::kdf(key, 32, S, 31 + netName.size, out, 32);
   for (int i = 0; i < 16; i++) output[i] = out[16 + i];
-  output_wrapper::print_buffer("amf_n1", "XRES*(new)", out, 32);
+  output_wrapper::print_buffer(
+      "amf_n1", "XRES*(new)", out, AUTH_VECTOR_LENGTH_OCTETS);
 }
 
 //------------------------------------------------------------------------------
@@ -2747,7 +2752,7 @@ void amf_n1::security_mode_complete_handle(
             TASK_AMF_N1, TASK_AMF_N2);
     itti_msg->ran_ue_ngap_id = ran_ue_ngap_id;
     itti_msg->amf_ue_ngap_id = amf_ue_ngap_id;
-    itti_msg->kgnb           = blk2bstr(kgnb, 32);
+    itti_msg->kgnb           = blk2bstr(kgnb, AUTH_VECTOR_LENGTH_OCTETS);
     itti_msg->nas            = protected_nas;
     itti_msg->is_pdu_exist   = false;  // no pdu context
     itti_msg->is_sr          = false;  // TODO: for Service Request procedure
@@ -3486,7 +3491,7 @@ void amf_n1::run_mobility_registration_update_procedure(
           TASK_AMF_N1, TASK_AMF_N2);
   itti_msg->ran_ue_ngap_id = nc->ran_ue_ngap_id;
   itti_msg->amf_ue_ngap_id = nc->amf_ue_ngap_id;
-  itti_msg->kgnb           = blk2bstr(kgnb, 32);
+  itti_msg->kgnb           = blk2bstr(kgnb, AUTH_VECTOR_LENGTH_OCTETS);
   itti_msg->nas            = protected_nas;
   itti_msg->is_sr          = true;  // service request indicator, to be verified
 

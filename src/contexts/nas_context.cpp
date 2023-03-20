@@ -22,8 +22,7 @@
 #include "nas_context.hpp"
 
 //------------------------------------------------------------------------------
-nas_context::nas_context()
-    : _vector(), _5g_he_av(), _5g_av(), kamf(), _5gmm_capability() {
+nas_context::nas_context() : _5g_he_av(), _5g_av(), kamf(), _5gmm_capability() {
   is_imsi_present                                       = false;
   is_stacs_available                                    = false;
   is_auth_vectors_present                               = false;

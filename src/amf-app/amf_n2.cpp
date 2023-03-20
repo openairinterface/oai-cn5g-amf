@@ -1601,7 +1601,7 @@ bool amf_n2::handle_itti_message(itti_handover_required& itti_msg) {
   Authentication_5gaka::handover_ncc_derive_knh(
       ulcount, 0x01, kamf, kgnb, knh,
       unc->ncc);  // TODO: remove hardcoded value
-  bstring knh_bs = blk2bstr(knh, 32);
+  bstring knh_bs = blk2bstr(knh, AUTH_VECTOR_LENGTH_OCTETS);
   handover_request->setSecurityContext(unc->ncc /*NCC count*/, knh_bs);
 
   string supi = conv::imsi_to_supi(nc->imsi);
