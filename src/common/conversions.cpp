@@ -200,7 +200,7 @@ unsigned char* conv::format_string_as_hex(std::string str) {
   memset(data, 0, str_len + 1);
   memcpy((void*) data, (void*) str.c_str(), str_len);
 
-  Logger::amf_app().debug("Data %s (%d bytes)", data, str_len);
+  Logger::amf_app().debug("Data %s (%d bytes)", (void*) data, str_len);
   Logger::amf_app().debug("Data (formatted):");
   for (int i = 0; i < str_len; i++) {
     char datatmp[3] = {0};
@@ -215,18 +215,15 @@ unsigned char* conv::format_string_as_hex(std::string str) {
     // Convert two hexadecimal characters into one character
     unsigned int nAsciiCharacter;
     sscanf(datatmp, "%x", &nAsciiCharacter);
-#if DEBUG_IS_ON
-    printf("%x ", nAsciiCharacter);
-#endif
+    if (Logger::should_log(spdlog::level::debug))
+      printf("%x ", nAsciiCharacter);
     // Concatenate this character onto the output
     datavalue[i / 2] = (unsigned char) nAsciiCharacter;
 
     // Skip the next character
     i++;
   }
-#if DEBUG_IS_ON
-  printf("\n");
-#endif
+  if (Logger::should_log(spdlog::level::debug)) printf("\n");
 
   free_wrapper((void**) &data);
   return datavalue;

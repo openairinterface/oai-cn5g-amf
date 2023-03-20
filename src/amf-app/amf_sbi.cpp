@@ -1079,9 +1079,8 @@ void amf_sbi::curl_http_client(
     curl_easy_setopt(curl, CURLOPT_INTERFACE, amf_cfg.sbi.if_name.c_str());
 
     if (http_version == 2) {
-#if DEBUG_IS_ON
-      curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
-#endif
+      if (Logger::should_log(spdlog::level::debug))
+        curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
       // we use a self-signed test server, skip verification during debugging
       curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
       curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0L);
@@ -1368,9 +1367,8 @@ void amf_sbi::curl_http_client(
     curl_easy_setopt(curl, CURLOPT_INTERFACE, amf_cfg.sbi.if_name.c_str());
 
     if (http_version == 2) {
-#if DEBUG_IS_ON
-      curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
-#endif
+      if (Logger::should_log(spdlog::level::debug))
+        curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
       // we use a self-signed test server, skip verification during debugging
       curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
       curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0L);
@@ -1513,9 +1511,8 @@ void amf_sbi::curl_http_client(
     curl_easy_setopt(curl, CURLOPT_INTERFACE, amf_cfg.sbi.if_name.c_str());
 
     if (http_version == 2) {
-#if DEBUG_IS_ON
-      curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
-#endif
+      if (Logger::should_log(spdlog::level::debug))
+        curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
       // we use a self-signed test server, skip verification during debugging
       curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
       curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0L);

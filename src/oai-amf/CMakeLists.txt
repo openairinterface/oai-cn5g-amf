@@ -156,21 +156,21 @@ add_definitions(-DBSTRLIB_CAN_USE_STL=1 -DBSTRLIB_CAN_USE_IOSTREAM=1 -DBSTRLIB_T
 
 
 if(STATIC_LINKING)
-  set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS} -g -fstack-protector-all -DMALLOC_CHECK_=3 -DINFO_IS_ON=1 -DDEBUG_IS_ON=1 -DTRACE_IS_ON=1 -O0  -fno-omit-frame-pointer")
+  set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS} -g -fstack-protector-all -DMALLOC_CHECK_=3 -O0  -fno-omit-frame-pointer")
 else (STATIC_LINKING)
-  set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS} -g -fstack-protector-all -DMALLOC_CHECK_=3 -DINFO_IS_ON=1 -DDEBUG_IS_ON=1 -DTRACE_IS_ON=1 -O0 -fsanitize=address -fno-omit-frame-pointer")
+  set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS} -g -fstack-protector-all -DMALLOC_CHECK_=3 -O0 -fsanitize=address -fno-omit-frame-pointer")
 endif(STATIC_LINKING)
-set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS} -O2 -fno-omit-frame-pointer -s -DINFO_IS_ON=1 -DDEBUG_IS_ON=1")
-set(CMAKE_C_FLAGS_RELWITHDEBINFO "${CMAKE_C_FLAGS} -g  -O2 -DINFO_IS_ON=1 ")
-set(CMAKE_C_FLAGS_MINSIZEREL "${CMAKE_C_FLAGS} -Os -s -DTRACE_IS_ON=1 -DDEBUG_IS_ON=1 -DINFO_IS_ON=1 -DAUTH_ALG_ON=0")
+set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS} -O2 -fno-omit-frame-pointer -s")
+set(CMAKE_C_FLAGS_RELWITHDEBINFO "${CMAKE_C_FLAGS} -g  -O2 ")
+set(CMAKE_C_FLAGS_MINSIZEREL "${CMAKE_C_FLAGS} -Os -s -DAUTH_ALG_ON=0")
 
 if(STATIC_LINKING)
-  set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS} -std=c++17  -g -fstack-protector-all -DMALLOC_CHECK_=3 -DINFO_IS_ON=1 -DDEBUG_IS_ON=1 -DTRACE_IS_ON=1 -O0 -fno-omit-frame-pointer")
+  set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS} -std=c++17  -g -fstack-protector-all -DMALLOC_CHECK_=3 -O0 -fno-omit-frame-pointer")
 else(STATIC_LINKING)
-  set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS} -std=c++17  -g -fstack-protector-all -DMALLOC_CHECK_=3 -DINFO_IS_ON=1 -DDEBUG_IS_ON=1 -DTRACE_IS_ON=1 -O0 -fsanitize=address -fno-omit-frame-pointer")
+  set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS} -std=c++17  -g -fstack-protector-all -DMALLOC_CHECK_=3 -O0 -fsanitize=address -fno-omit-frame-pointer")
 endif(STATIC_LINKING)
-set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS} -std=c++17  -O2 -fno-omit-frame-pointer -s -DINFO_IS_ON=1 -DDEBUG_IS_ON=1")
-set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS} -std=c++17 -g -O2 -DINFO_IS_ON=1")
+set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS} -std=c++17  -O2 -fno-omit-frame-pointer -s")
+set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS} -std=c++17 -g -O2")
 set(CMAKE_CXX_FLAGS_MINSIZEREL "${CMAKE_CXX_FLAGS} -std=c++17 -Os -s")
 
 
@@ -311,7 +311,6 @@ ADD_SUBDIRECTORY(${CMAKE_CURRENT_SOURCE_DIR}/../../src/secu_algorithms/5gaka ${C
 ADD_SUBDIRECTORY(${CMAKE_CURRENT_SOURCE_DIR}/../../src/secu_algorithms/nas_enc_int ${CMAKE_CURRENT_BINARY_DIR}/secu_algorithms/nas_enc_int)
 
 include_directories(${SRC_TOP_DIR}/oai-amf)
-include_directories(${SRC_TOP_DIR}/../build/ext/spdlog/include)
 include_directories(${SRC_TOP_DIR}/amf-app)
 include_directories(${SRC_TOP_DIR}/itti)
 include_directories(${SRC_TOP_DIR}/itti/msgs)
@@ -335,20 +334,24 @@ include_directories(${SRC_TOP_DIR}/sbi/amf_server/model)
 include_directories(${SRC_TOP_DIR}/sctp)
 include_directories(${SRC_TOP_DIR}/secu_algorithms/5gaka)
 include_directories(${SRC_TOP_DIR}/secu_algorithms/nas_enc_int)
+include_directories(${SRC_TOP_DIR}/${MOUNTED_COMMON}/logger)
 
 add_executable(amf
-	${SRC_TOP_DIR}/oai-amf/main.cpp 
+  ${SRC_TOP_DIR}/oai-amf/main.cpp
   ${SRC_TOP_DIR}/oai-amf/options.cpp
   ${SRC_TOP_DIR}/itti/itti.cpp
   ${SRC_TOP_DIR}/itti/itti_msg.cpp
 )
+
+## Common modules
+include(${SRC_TOP_DIR}/${MOUNTED_COMMON}/logger/logger.cmake)
 
 IF(STATIC_LINKING)
     SET(CMAKE_EXE_LINKER_FLAGS "-static")
     SET_TARGET_PROPERTIES(amf PROPERTIES LINK_SEARCH_END_STATIC 1)
     # asan do not support static linking
     SET(ASAN)
-ENDIF(STATIC_LINKING)   
+ENDIF(STATIC_LINKING)
 
-target_link_libraries(amf ${ASAN}  
-      -Wl,--start-group 3GPP_COMMON_TYPES AMF CONTEXTS AMF_SCTP AMF_SECU_5GAKA AMF_SECU_NAS AMF_UTILS AMF_SBI_SERVER config++ sctp -Wl,--end-group pthread ${NETTLE_LIBRARIES} ${MySQL_LIBRARY} ${CRYPTO_LIBRARIES} ${OPENSSL_LIBRARIES} nghttp2_asio boost_system boost_thread boost_chrono ssl crypt gmp pistache curl)
+target_link_libraries(amf ${ASAN}
+      -Wl,--start-group 3GPP_COMMON_TYPES AMF CONTEXTS AMF_SCTP AMF_SECU_5GAKA AMF_SECU_NAS AMF_UTILS AMF_SBI_SERVER config++ sctp fmt spdlog -Wl,--end-group pthread ${NETTLE_LIBRARIES} ${MySQL_LIBRARY} ${CRYPTO_LIBRARIES} ${OPENSSL_LIBRARIES} nghttp2_asio boost_system boost_thread boost_chrono ssl crypt gmp pistache curl)

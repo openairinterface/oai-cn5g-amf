@@ -1146,7 +1146,8 @@ void amf_n1::registration_request_handle(
 
         set_supi_2_nas_context(supi, nc);
         Logger::amf_n1().info(
-            "Associating SUPI (%s) with nas_context (%p)", supi.c_str(), nc);
+            "Associating SUPI (%s) with nas_context (%p)", supi.c_str(),
+            (void*) nc.get());
         if (!nc->is_stacs_available) {
           ue_info_t ueItem;
           ueItem.connStatus = "5GMM-CONNECTED";  //"CM-CONNECTED";
@@ -1210,7 +1211,7 @@ void amf_n1::registration_request_handle(
             "(" AMF_UE_NGAP_ID_FMT
             ") "
             "for nas_signalling_establishment_request",
-            nc, amf_ue_ngap_id);
+            (void*) nc.get(), amf_ue_ngap_id);
         set_amf_ue_ngap_id_2_nas_context(amf_ue_ngap_id, nc);
         nc->ctx_avaliability_ind = false;
         // change UE connection status CM-IDLE -> CM-CONNECTED
@@ -2216,8 +2217,8 @@ void amf_n1::authentication_response_handle(
   }
 
   Logger::amf_n1().info(
-      "Found nas_context (%p) with amf_ue_ngap_id (" AMF_UE_NGAP_ID_FMT ")", nc,
-      amf_ue_ngap_id);
+      "Found nas_context (%p) with amf_ue_ngap_id (" AMF_UE_NGAP_ID_FMT ")",
+      (void*) nc.get(), amf_ue_ngap_id);
   // Stop timer? common procedure finished!
   nc->is_common_procedure_for_authentication_running = false;
   // MM state: COMMON-PROCEDURE-INITIATED -> DEREGISTRED

@@ -134,7 +134,7 @@ int _5GSMobileIdentity::Decode(uint8_t* buf, int len, bool is_iei) {
 
 //------------------------------------------------------------------------------
 int _5GSMobileIdentity::Encode5gGuti(uint8_t* buf, int len) {
-  Logger::nas_mm().debug("Encoding 5G-GUTI IEI 0x%x", iei_);
+  Logger::nas_mm().debug("Encoding 5G-GUTI IEI 0x%x", iei_.value());
   int encoded_size = 0;
 
   // IEI and Length
