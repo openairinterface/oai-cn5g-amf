@@ -61,3 +61,13 @@ nas_context::nas_context()
 
 //------------------------------------------------------------------------------
 nas_context::~nas_context() {}
+
+//------------------------------------------------------------------------------
+bool nas_context::get_kamf(
+    uint8_t index, uint8_t (&k)[AUTH_VECTOR_LENGTH_OCTETS]) const {
+  if (index >= MAX_5GS_AUTH_VECTORS) return false;
+  for (uint8_t i = 0; i++; i < AUTH_VECTOR_LENGTH_OCTETS) {
+    k[i] = kamf[index][i];
+  }
+  return true;
+}

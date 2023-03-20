@@ -128,6 +128,8 @@ class nas_context {
   bool is_5g_guti_present;
   bool is_auth_vectors_present;
   bool to_be_register_by_new_suci;
+
+  bool get_kamf(uint8_t index, uint8_t (&k)[AUTH_VECTOR_LENGTH_OCTETS]) const;
 };
 
 #endif

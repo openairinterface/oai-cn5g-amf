@@ -405,8 +405,10 @@ void Authentication_5gaka::derive_knas(
 }
 
 void Authentication_5gaka::derive_kgnb(
-    uint32_t uplinkCount, uint8_t accessType, uint8_t kamf[32], uint8_t* kgnb) {
-  Logger::amf_n1().debug("derive_kgnb ...");
+    uint32_t uplinkCount, uint8_t accessType,
+    uint8_t kamf[AUTH_VECTOR_LENGTH_OCTETS],
+    uint8_t (&kgnb)[AUTH_VECTOR_LENGTH_OCTETS]) {
+  Logger::amf_n1().debug("Derive Kgnb ...");
   uint8_t S[20];
   S[0]                 = 0x6E;
   *(uint32_t*) (S + 1) = htonl(uplinkCount);
@@ -417,13 +419,15 @@ void Authentication_5gaka::derive_kgnb(
   S[9]                 = 0x01;
   // output_wrapper::print_buffer("amf_n1", "inputstring S", S, 10);
   // output_wrapper::print_buffer("amf_n1", "key KEY", kamf, 32);
-  kdf(kamf, 32, S, 10, kgnb, 32);
+  kdf(kamf, 32, S, 10, kgnb, AUTH_VECTOR_LENGTH_OCTETS);
   // output_wrapper::print_buffer("amf_n1", "kgnb", kgnb, 32);
   // Logger::amf_n1().debug("derive kgnb finished!");
 }
 void Authentication_5gaka::handover_ncc_derive_knh(
-    uint32_t uplinkCount, uint8_t accessType, uint8_t kamf[32], uint8_t* kgnb,
-    uint8_t* knh, int ncc) {
+    uint32_t uplinkCount, uint8_t accessType,
+    uint8_t kamf[AUTH_VECTOR_LENGTH_OCTETS],
+    uint8_t (&kgnb)[AUTH_VECTOR_LENGTH_OCTETS],
+    uint8_t (&knh)[AUTH_VECTOR_LENGTH_OCTETS], int ncc) {
   Logger::amf_n1().debug("derive_handover_ncc_knh ...");
   uint8_t S[20], SS[ncc][35];
   S[0]                 = 0x6E;

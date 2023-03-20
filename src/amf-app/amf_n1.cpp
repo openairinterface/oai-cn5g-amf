@@ -220,7 +220,7 @@ void amf_n1::handle_itti_message(itti_downlink_nas_transfer& itti_msg) {
   }
 
   if (!nc->security_ctx.has_value()) {
-    Logger::amf_n2().error("No Security Context found");
+    Logger::amf_n1().error("No Security Context found");
     return;
   }
 
@@ -316,12 +316,18 @@ void amf_n1::handle_itti_message(itti_downlink_nas_transfer& itti_msg) {
         }
       } else {
         // send using InitialContextSetupRequest
-        uint8_t* kamf = nc->kamf[nc->security_ctx.value().vector_pointer];
-        uint8_t kgnb[32];
+        uint8_t kamf[AUTH_VECTOR_LENGTH_OCTETS];
+        uint8_t kgnb[AUTH_VECTOR_LENGTH_OCTETS];
+        if (!nc->get_kamf(nc->security_ctx.value().vector_pointer, kamf)) {
+          Logger::amf_n1().warn("No Kamf found");
+          return;
+        }
         uint32_t ulcount = nc->security_ctx.value().ul_count.seq_num |
                            (nc->security_ctx.value().ul_count.overflow << 8);
-        Authentication_5gaka::derive_kgnb(0, 0x01, kamf, kgnb);
-        output_wrapper::print_buffer("amf_n1", "Kamf", kamf, 32);
+        Authentication_5gaka::derive_kgnb(
+            0, 0x01, kamf, kgnb);  // TODO: remove hardcoded value
+        output_wrapper::print_buffer(
+            "amf_n1", "Kamf", kamf, AUTH_VECTOR_LENGTH_OCTETS);
 
         std::shared_ptr<itti_initial_context_setup_request> csr =
             std::make_shared<itti_initial_context_setup_request>(
@@ -592,7 +598,7 @@ void amf_n1::nas_signalling_establishment_request_handle(
         }
          */
       if (nc && nc->security_ctx.has_value())
-        nc->security_ctx->ul_count.seq_num = ulCount;
+        nc->security_ctx.value().ul_count.seq_num = ulCount;
 
       service_request_handle(nc, ran_ue_ngap_id, amf_ue_ngap_id, plain_msg);
     } break;
@@ -883,7 +889,7 @@ void amf_n1::service_request_handle(
   set_amf_ue_ngap_id_2_nas_context(amf_ue_ngap_id, nc);
 
   if (!nc->security_ctx.has_value()) {
-    Logger::amf_n2().error("No Security Context found");
+    Logger::amf_n1().error("No Security Context found");
     return;
   }
 
@@ -989,14 +995,21 @@ void amf_n1::service_request_handle(
     encode_nas_message_protected(
         nc->security_ctx.value(), false, INTEGRITY_PROTECTED_AND_CIPHERED,
         NAS_MESSAGE_DOWNLINK, buffer, encoded_size, protected_nas);
-    uint8_t* kamf = nc->kamf[nc->security_ctx.value().vector_pointer];
-    uint8_t kgnb[32];
+
+    uint8_t kamf[AUTH_VECTOR_LENGTH_OCTETS];
+    uint8_t kgnb[AUTH_VECTOR_LENGTH_OCTETS];
+    if (!nc->get_kamf(nc->security_ctx.value().vector_pointer, kamf)) {
+      Logger::amf_n1().warn("No Kamf found");
+      return;
+    }
     uint32_t ulcount = nc->security_ctx.value().ul_count.seq_num |
                        (nc->security_ctx.value().ul_count.overflow << 8);
     Logger::amf_n1().debug(
         "uplink count(%d)", nc->security_ctx.value().ul_count.seq_num);
-    output_wrapper::print_buffer("amf_n1", "Kamf", kamf, 32);
-    Authentication_5gaka::derive_kgnb(ulcount, 0x01, kamf, kgnb);
+    output_wrapper::print_buffer(
+        "amf_n1", "Kamf", kamf, AUTH_VECTOR_LENGTH_OCTETS);
+    Authentication_5gaka::derive_kgnb(
+        ulcount, 0x01, kamf, kgnb);  // TODO: remove hardcoded value
 
     std::shared_ptr<itti_initial_context_setup_request> itti_msg =
         std::make_shared<itti_initial_context_setup_request>(
@@ -1040,14 +1053,21 @@ void amf_n1::service_request_handle(
     encode_nas_message_protected(
         nc->security_ctx.value(), false, INTEGRITY_PROTECTED_AND_CIPHERED,
         NAS_MESSAGE_DOWNLINK, buffer, encoded_size, protected_nas);
-    uint8_t* kamf = nc->kamf[nc->security_ctx.value().vector_pointer];
-    uint8_t kgnb[32];
+
+    uint8_t kamf[AUTH_VECTOR_LENGTH_OCTETS];
+    uint8_t kgnb[AUTH_VECTOR_LENGTH_OCTETS];
+    if (!nc->get_kamf(nc->security_ctx.value().vector_pointer, kamf)) {
+      Logger::amf_n1().warn("No Kamf found");
+      return;
+    }
     uint32_t ulcount = nc->security_ctx.value().ul_count.seq_num |
                        (nc->security_ctx.value().ul_count.overflow << 8);
     Logger::amf_n1().debug(
         "uplink count(%d)", nc->security_ctx.value().ul_count.seq_num);
-    output_wrapper::print_buffer("amf_n1", "Kamf", kamf, 32);
-    Authentication_5gaka::derive_kgnb(ulcount, 0x01, kamf, kgnb);
+    output_wrapper::print_buffer(
+        "amf_n1", "Kamf", kamf, AUTH_VECTOR_LENGTH_OCTETS);
+    Authentication_5gaka::derive_kgnb(
+        ulcount, 0x01, kamf, kgnb);  // TODO: remove hardcoded value
 
     std::shared_ptr<itti_initial_context_setup_request> itti_msg =
         std::make_shared<itti_initial_context_setup_request>(
@@ -1745,6 +1765,7 @@ bool amf_n1::auth_vectors_generator(std::shared_ptr<nas_context>& nc) {
       Authentication_5gaka::derive_kamf(
           nc->imsi, nc->_5g_av[i].kseaf, nc->kamf[i],
           0x0000);  // second parameter: abba
+                    // TODO: remove hardcoded value
     }
   }
   return true;
@@ -2708,14 +2729,18 @@ void amf_n1::security_mode_complete_handle(
   } else {
     // use InitialContextSetupRequest (NGAP message) to convey Registration
     // Accept
-
-    uint8_t* kamf = nc->kamf[nc->security_ctx.value().vector_pointer];
-    uint8_t kgnb[32];
+    uint8_t kamf[AUTH_VECTOR_LENGTH_OCTETS];
+    uint8_t kgnb[AUTH_VECTOR_LENGTH_OCTETS];
+    if (!nc->get_kamf(nc->security_ctx.value().vector_pointer, kamf)) {
+      Logger::amf_n1().warn("No Kamf found");
+      return;
+    }
     uint32_t ulcount = nc->security_ctx.value().ul_count.seq_num |
                        (nc->security_ctx.value().ul_count.overflow << 8);
-    Authentication_5gaka::derive_kgnb(0, 0x01, kamf, kgnb);
-    output_wrapper::print_buffer("amf_n1", "Kamf", kamf, 32);
-    // Authentication_5gaka::derive_kgnb(ulcount, 0x01, kamf, kgnb);
+    Authentication_5gaka::derive_kgnb(
+        0, 0x01, kamf, kgnb);  // TODO: remove harcoded value
+    output_wrapper::print_buffer(
+        "amf_n1", "Kamf", kamf, AUTH_VECTOR_LENGTH_OCTETS);
 
     std::shared_ptr<itti_initial_context_setup_request> itti_msg =
         std::make_shared<itti_initial_context_setup_request>(
@@ -3443,17 +3468,18 @@ void amf_n1::run_mobility_registration_update_procedure(
     uc->find_pdu_session_context(pdu_session_to_be_activated[0], psc);
   }
 
-  uint8_t* kamf = nc->kamf[nc->security_ctx.value().vector_pointer];
-  if (!kamf) {
-    Logger::amf_n1().error("No Kamf found");
+  uint8_t kamf[AUTH_VECTOR_LENGTH_OCTETS];
+  uint8_t kgnb[AUTH_VECTOR_LENGTH_OCTETS];
+  if (!nc->get_kamf(nc->security_ctx.value().vector_pointer, kamf)) {
+    Logger::amf_n1().warn("No Kamf found");
     return;
   }
-
-  uint8_t kgnb[32];
   uint32_t ulcount = nc->security_ctx.value().ul_count.seq_num |
                      (nc->security_ctx.value().ul_count.overflow << 8);
-  Authentication_5gaka::derive_kgnb(ulcount, 0x01, kamf, kgnb);
-  output_wrapper::print_buffer("amf_n1", "Kamf", kamf, 32);
+  Authentication_5gaka::derive_kgnb(
+      ulcount, 0x01, kamf, kgnb);  // TODO: remove hardcoded value
+  output_wrapper::print_buffer(
+      "amf_n1", "Kamf", kamf, AUTH_VECTOR_LENGTH_OCTETS);
 
   std::shared_ptr<itti_initial_context_setup_request> itti_msg =
       std::make_shared<itti_initial_context_setup_request>(
