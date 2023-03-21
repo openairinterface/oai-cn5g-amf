@@ -1535,10 +1535,14 @@ bool amf_n2::handle_itti_message(itti_handover_required& itti_msg) {
 
   // TODO: T-AMF selection, for now use the same AMF
 
+  // Generate the target AMF UE NGAP ID
+  long target_amf_ue_ngap_id = amf_app_inst->generate_amf_ue_ngap_id();
+  unc->target_amf_ue_ngap_id = target_amf_ue_ngap_id;
+  set_amf_ue_ngap_id_2_ue_ngap_context(target_amf_ue_ngap_id, unc);
   // Create HandoverRequest message to be sent to target gNB
   std::unique_ptr<HandoverRequest> handover_request =
       std::make_unique<HandoverRequest>();
-  handover_request->setAmfUeNgapId(amf_ue_ngap_id);
+  handover_request->setAmfUeNgapId(target_amf_ue_ngap_id);
   handover_request->setHandoverType(0);
   handover_request->setCause(
       Ngap_Cause_PR_radioNetwork,
@@ -1580,6 +1584,9 @@ bool amf_n2::handle_itti_message(itti_handover_required& itti_msg) {
         amf_ue_ngap_id);
     return false;
   }
+
+  // Store the security context with the new AMF ID
+  amf_n1_inst->set_amf_ue_ngap_id_2_nas_context(target_amf_ue_ngap_id, nc);
 
   nas_secu_ctx* secu = nc->security_ctx;
   if (!secu) {
@@ -1811,7 +1818,7 @@ void amf_n2::handle_itti_message(itti_handover_request_Ack& itti_msg) {
     itti_msg->is_n2sm_set    = true;
     itti_msg->n2sm_info_type = "HANDOVER_REQ_ACK";
     itti_msg->ho_state       = "PREPARED";
-    itti_msg->amf_ue_ngap_id = amf_ue_ngap_id;
+    itti_msg->amf_ue_ngap_id = unc->amf_ue_ngap_id;
     itti_msg->ran_ue_ngap_id = unc.get()->ran_ue_ngap_id;
     itti_msg->promise_id     = promise_id;
 
@@ -1826,7 +1833,7 @@ void amf_n2::handle_itti_message(itti_handover_request_Ack& itti_msg) {
   // Send HandoverCommandMsg to Source gNB
   std::unique_ptr<HandoverCommandMsg> handovercommand =
       std::make_unique<HandoverCommandMsg>();
-  handovercommand->setAmfUeNgapId(amf_ue_ngap_id);
+  handovercommand->setAmfUeNgapId(unc->amf_ue_ngap_id);
   handovercommand->setRanUeNgapId(unc->ran_ue_ngap_id);
   handovercommand->setHandoverType(Ngap_HandoverType_intra5gs);
 
@@ -1971,8 +1978,8 @@ void amf_n2::handle_itti_message(itti_handover_notify& itti_msg) {
       itti_n11_msg->is_n2sm_set = false;
       itti_n11_msg->ho_state    = "COMPLETED";
 
-      itti_n11_msg->amf_ue_ngap_id = amf_ue_ngap_id;
-      itti_n11_msg->ran_ue_ngap_id = ran_ue_ngap_id;
+      itti_n11_msg->amf_ue_ngap_id = unc->amf_ue_ngap_id;
+      itti_n11_msg->ran_ue_ngap_id = unc->ran_ue_ngap_id;
       itti_n11_msg->promise_id     = promise_id;
 
       int ret = itti_inst->send_msg(itti_n11_msg);
@@ -2013,7 +2020,7 @@ void amf_n2::handle_itti_message(itti_handover_notify& itti_msg) {
   Logger::ngap().info("Send UE Release Command to source gNB");
   std::unique_ptr<UEContextReleaseCommandMsg> ueContextReleaseCommand =
       std::make_unique<UEContextReleaseCommandMsg>();
-  ueContextReleaseCommand->setUeNgapIdPair(amf_ue_ngap_id, unc->ran_ue_ngap_id);
+  ueContextReleaseCommand->setUeNgapIdPair(unc->amf_ue_ngap_id, unc->ran_ue_ngap_id);
   ueContextReleaseCommand->setCauseRadioNetwork(
       Ngap_CauseRadioNetwork_successful_handover);
 
@@ -2030,12 +2037,33 @@ void amf_n2::handle_itti_message(itti_handover_notify& itti_msg) {
         amf_ue_ngap_id);
     return;
   }
+  
+  // Get UE Context
+  string ue_context_key =
+      conv::get_ue_context_key(unc->ran_ue_ngap_id, unc->amf_ue_ngap_id);
+
+  std::shared_ptr<ue_context> uc = {};
+  if (!amf_app_inst->ran_amf_id_2_ue_context(ue_context_key, uc)) {
+    Logger::amf_app().error(
+        "No UE context for ran_amf_id %s, exit", ue_context_key.c_str());
+    return;
+  }
+  
+  string target_ue_context_key =
+      conv::get_ue_context_key(ran_ue_ngap_id, amf_ue_ngap_id);
+  //associate the ue context to the new UE RAN/AMF NGAP IDs
+  amf_app_inst->set_ran_amf_id_2_ue_context(target_ue_context_key,uc);
+  //remove the association between the nas context and the old amf id
+  amf_n1_inst->remove_amf_ue_ngap_id_2_nas_context(unc->amf_ue_ngap_id);
 
   unc->ran_ue_ngap_id        = ran_ue_ngap_id;  // store new RAN ID
   unc->target_ran_ue_ngap_id = 0;               // Clear target RAN ID
+  unc->amf_ue_ngap_id        = amf_ue_ngap_id;  // store new RAN ID
+  unc->target_amf_ue_ngap_id = 0;               // Clear target RAN ID
   unc->ng_ue_state           = NGAP_UE_CONNECTED;
   unc->gnb_assoc_id          = itti_msg.assoc_id;  // update serving gNB
   set_ran_ue_ngap_id_2_ue_ngap_context(ran_ue_ngap_id, gc->gnb_id, unc);
+
 }
 
 //------------------------------------------------------------------------------

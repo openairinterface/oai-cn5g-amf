@@ -44,6 +44,7 @@ class ue_ngap_context {
     ran_ue_ngap_id        = 0;
     amf_ue_ngap_id        = 0;
     target_ran_ue_ngap_id = 0;
+    target_amf_ue_ngap_id = 0;
 
     sctp_stream_recv = {};
     sctp_stream_send = {};
@@ -70,7 +71,7 @@ class ue_ngap_context {
   uint32_t ran_ue_ngap_id;         // 32bits
   long amf_ue_ngap_id : 40;        // 40bits
   uint32_t target_ran_ue_ngap_id;  // 32bits, for HO
-
+  long target_amf_ue_ngap_id : 40;        // 40bits
   sctp_stream_id_t sctp_stream_recv;  // used to decide which ue in gNB
   sctp_stream_id_t sctp_stream_send;  // used to decide which ue in gNB
 
