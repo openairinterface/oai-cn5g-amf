@@ -22,9 +22,7 @@
 #include "nas_context.hpp"
 
 //------------------------------------------------------------------------------
-nas_context::nas_context()
-    : _vector(), _5g_he_av(), _5g_av(), kamf(), _5gmm_capability() {
-  security_ctx                                          = nullptr;
+nas_context::nas_context() : _5g_he_av(), _5g_av(), kamf(), _5gmm_capability() {
   is_imsi_present                                       = false;
   is_stacs_available                                    = false;
   is_auth_vectors_present                               = false;
@@ -44,7 +42,7 @@ nas_context::nas_context()
   is_common_procedure_for_identification_running        = false;
   is_common_procedure_for_security_mode_control_running = false;
   is_common_procedure_for_nas_transport_running         = false;
-  security_ctx                                          = nullptr;
+  security_ctx                                          = std::nullopt;
   is_current_security_available                         = false;
   registration_attempt_counter                          = 0;
   is_imsi_present                                       = false;
@@ -62,3 +60,13 @@ nas_context::nas_context()
 
 //------------------------------------------------------------------------------
 nas_context::~nas_context() {}
+
+//------------------------------------------------------------------------------
+bool nas_context::get_kamf(
+    uint8_t index, uint8_t (&k)[AUTH_VECTOR_LENGTH_OCTETS]) const {
+  if (index >= MAX_5GS_AUTH_VECTORS) return false;
+  for (uint8_t i = 0; i < AUTH_VECTOR_LENGTH_OCTETS; i++) {
+    k[i] = kamf[index][i];
+  }
+  return true;
+}

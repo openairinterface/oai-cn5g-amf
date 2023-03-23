@@ -203,7 +203,6 @@ void nf_profile::to_json(nlohmann::json& data) const {
     nlohmann::json tmp = {};
     tmp["sst"]         = s.sST;
     tmp["sd"]          = s.sD;
-    ;
     data["sNssais"].push_back(tmp);
   }
   // ipv4_addresses

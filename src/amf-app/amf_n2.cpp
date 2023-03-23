@@ -1581,20 +1581,27 @@ bool amf_n2::handle_itti_message(itti_handover_required& itti_msg) {
     return false;
   }
 
-  nas_secu_ctx* secu = nc->security_ctx;
-  if (!secu) {
+  if (!nc->security_ctx.has_value()) {
     Logger::amf_n2().error("No Security Context found");
     return false;
   }
-  uint8_t* kamf = nc->kamf[secu->vector_pointer];
-  uint8_t kgnb[32];
-  uint32_t ulcount = secu->ul_count.seq_num | (secu->ul_count.overflow << 8);
+
+  uint8_t kamf[AUTH_VECTOR_LENGTH_OCTETS];
+  uint8_t kgnb[AUTH_VECTOR_LENGTH_OCTETS];
+  if (!nc->get_kamf(nc->security_ctx.value().vector_pointer, kamf)) {
+    Logger::amf_n1().warn("No Kamf found");
+    return false;
+  }
+  uint32_t ulcount = nc->security_ctx.value().ul_count.seq_num |
+                     (nc->security_ctx.value().ul_count.overflow << 8);
   Logger::amf_n2().debug(
-      "Handover Required, Uplink count (%d)", secu->ul_count.seq_num);
-  uint8_t knh[32];
+      "Handover Required, Uplink count (%d)",
+      nc->security_ctx.value().ul_count.seq_num);
+  uint8_t knh[AUTH_VECTOR_LENGTH_OCTETS];
   Authentication_5gaka::handover_ncc_derive_knh(
-      ulcount, 0x01, kamf, kgnb, knh, unc->ncc);
-  bstring knh_bs = blk2bstr(knh, 32);
+      ulcount, 0x01, kamf, kgnb, knh,
+      unc->ncc);  // TODO: remove hardcoded value
+  bstring knh_bs = blk2bstr(knh, AUTH_VECTOR_LENGTH_OCTETS);
   handover_request->setSecurityContext(unc->ncc /*NCC count*/, knh_bs);
 
   string supi = conv::imsi_to_supi(nc->imsi);
