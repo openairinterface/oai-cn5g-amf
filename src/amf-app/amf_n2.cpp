@@ -614,7 +614,7 @@ void amf_n2::handle_itti_message(itti_initial_ue_message& init_ue_msg) {
     Logger::amf_n2().debug(
         "Create a new UE NGAP context with ran_ue_ngap_id " GNB_UE_NGAP_ID_FMT,
         ran_ue_ngap_id);
-    unc = std::shared_ptr<ue_ngap_context>();
+    unc = std::shared_ptr<ue_ngap_context>(new ue_ngap_context());
     unc.get()->sctp_stream_recv = init_ue_msg.stream;
     unc.get()->sctp_stream_send = init_ue_msg.stream;
     set_ran_ue_ngap_id_2_ue_ngap_context(ran_ue_ngap_id, gc->gnb_id, unc);
