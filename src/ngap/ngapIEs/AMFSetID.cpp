@@ -22,8 +22,7 @@
 #include "AMFSetID.hpp"
 
 #include "String2Value.hpp"
-
-#include <string>
+#include "output_wrapper.hpp"
 
 namespace ngap {
 
@@ -77,10 +76,9 @@ bool AMFSetID::encode(Ngap_AMFSetID_t& amf_set_id) const {
 //------------------------------------------------------------------------------
 bool AMFSetID::decode(const Ngap_AMFSetID_t& amf_set_id) {
   if (!amf_set_id.buf) return false;
-  for (int i = 0; i < amf_set_id.size; i++) {
-    printf("%x ", amf_set_id.buf[i]);
-  }
-  printf("\n");
+  output_wrapper::print_buffer(
+      "ngap", "AMFSetID", amf_set_id.buf, amf_set_id.size);
+
   uint16_t temp = 0;
   temp |= amf_set_id.buf[0] << 8;
   temp |= amf_set_id.buf[1];

@@ -40,7 +40,7 @@ class IdentityRequest : public NasMmPlainHeader {
   // TODO: Get
 
  public:
-  _5gsIdentityType _5gs_identity_type_;  // Mandatory
+  _5gsIdentityType ie_5gs_identity_type;  // Mandatory
 };
 
 }  // namespace nas

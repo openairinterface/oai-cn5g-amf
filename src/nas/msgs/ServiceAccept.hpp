@@ -20,11 +20,7 @@
  */
 
 #ifndef _SERVICE_ACCEPT_H_
-
 #define _SERVICE_ACCEPT_H_
-
-#include <stdint.h>
-#include <string>
 
 #include "NasIeHeader.hpp"
 
@@ -43,27 +39,27 @@ class ServiceAccept : public NasMmPlainHeader {
   void SetPduSessionStatus(uint16_t value);
   // TODO: Get
 
-  void SetPduSessionReactivationResult(uint16_t);
+  void SetPduSessionReactivationResult(uint16_t value);
   // TODO: Get
 
   void SetPduSessionReactivationResultErrorCause(
       uint8_t session_id, uint8_t value);
   // TODO: Get
 
-  void SetEapMessage(bstring eap);
+  void SetEapMessage(const bstring& eap);
   // TODO: Get
 
   void SetT3448Value(uint8_t unit, uint8_t value);
   // TODO: Get
 
  private:
-  std::optional<PDUSessionStatus> ie_PDU_session_status;  // Optional
+  std::optional<PDUSessionStatus> ie_pdu_session_status;  // Optional
   std::optional<PDU_Session_Reactivation_Result>
       ie_pdu_session_reactivation_result;  // Optional
   std::optional<PDU_Session_Reactivation_Result_Error_Cause>
       ie_pdu_session_reactivation_result_error_cause;  // Optional
   std::optional<EapMessage> ie_eap_message;            // Optional
-  std::optional<GprsTimer3> ie_T3448_value;            // Optional
+  std::optional<GprsTimer3> ie_t3448_value;            // Optional
 };
 
 }  // namespace nas

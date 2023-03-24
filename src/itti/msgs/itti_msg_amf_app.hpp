@@ -35,15 +35,18 @@ class itti_msg_amf_app : public itti_msg {
       const itti_msg_type_t msg_type, const task_id_t origin,
       const task_id_t destination)
       : itti_msg(msg_type, origin, destination) {
+    gnb_id         = 0;
     ran_ue_ngap_id = 0;
     amf_ue_ngap_id = 0;
   }
 
   itti_msg_amf_app(const itti_msg_amf_app& i) : itti_msg(i) {
+    gnb_id         = i.gnb_id;
     ran_ue_ngap_id = i.ran_ue_ngap_id;
     amf_ue_ngap_id = i.amf_ue_ngap_id;
   }
 
+  uint32_t gnb_id;
   uint32_t ran_ue_ngap_id;
   long amf_ue_ngap_id;
 };

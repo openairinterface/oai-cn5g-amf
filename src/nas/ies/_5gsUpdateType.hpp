@@ -42,10 +42,10 @@ class _5gsUpdateType : public Type4NasIe {
   void Set5gsPnbCiot(uint8_t value);
   void SetNgRan(uint8_t value);
   void SetSms(uint8_t value);
-  uint8_t GetEpsPnbCiot();
-  uint8_t Get5gsPnbCiot();
-  bool GetNgRan();
-  bool GetSms();
+  uint8_t GetEpsPnbCiot() const;
+  uint8_t Get5gsPnbCiot() const;
+  bool GetNgRan() const;
+  bool GetSms() const;
 
   int Encode(uint8_t* buf, int len);
   int Decode(uint8_t* buf, int len, bool is_option);

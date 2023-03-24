@@ -22,10 +22,9 @@
 #ifndef _SERVICE_REQUEST_H_
 #define _SERVICE_REQUEST_H_
 
-#include <string>
+#include "NasIeHeader.hpp"
 
 #include "bstrlib.h"
-#include "NasIeHeader.hpp"
 
 namespace nas {
 
@@ -37,38 +36,42 @@ class ServiceRequest : public NasMmPlainHeader {
   void SetHeader(uint8_t security_header_type);
 
   int Encode(uint8_t* buf, int len);
-  int Decode(NasMmPlainHeader* header, uint8_t* buf, int len);
+  int Decode(uint8_t* buf, int len);
 
   void SetNgKsi(uint8_t tsc, uint8_t key_set_id);
-  bool getngKSI(uint8_t& ng_ksi);
+  void GetNgKsi(uint8_t& ng_ksi) const;
 
-  void setServiceType(uint8_t value);
-  uint8_t getServiceType();
+  void SetServiceType(uint8_t value);
+  void GetServiceType(uint8_t& value) const;
 
-  void Set5gSTmsi(uint16_t amfSetId, uint8_t amfPointer, string tmsi);
-  bool Get5gSTmsi(uint16_t& amfSetId, uint8_t& amfPointer, string& tmsi);
+  void Set5gSTmsi(
+      uint16_t amf_set_id, uint8_t amf_pointer, const std::string& tmsi);
+  bool Get5gSTmsi(
+      uint16_t& amf_set_id, uint8_t& amf_pointer, std::string& tmsi) const;
 
-  void setUplink_data_status(uint16_t value);
-  uint16_t getUplinkDataStatus();
+  void SetUplinkDataStatus(uint16_t value);
+  bool GetUplinkDataStatus(uint16_t& value) const;
 
   void SetPduSessionStatus(uint16_t value);
-  uint16_t getPduSessionStatus();
+  bool GetPduSessionStatus(uint16_t& value) const;
+  std::optional<uint16_t> GetPduSessionStatus() const;
 
-  void setAllowed_PDU_Session_Status(uint16_t value);
-  uint16_t getAllowedPduSessionStatus();
+  void SetAllowedPduSessionStatus(uint16_t value);
+  bool GetAllowedPduSessionStatus(uint16_t& value) const;
+  std::optional<uint16_t> GetAllowedPduSessionStatus() const;
 
-  void SetNasMessageContainer(bstring value);
-  bool GetNasMessageContainer(bstring& nas);
+  void SetNasMessageContainer(const bstring& value);
+  bool GetNasMessageContainer(bstring& nas) const;
 
  private:
-  NasKeySetIdentifier ie_ngKSI;     // Mandatory
+  NasKeySetIdentifier ie_ng_ksi;    // Mandatory
   ServiceType ie_service_type;      // Mandatory
   _5GSMobileIdentity ie_5g_s_tmsi;  // Mandatory
 
   std::optional<UplinkDataStatus> ie_uplink_data_status;  // Optional
-  std::optional<PDUSessionStatus> ie_PDU_session_status;  // Optional
+  std::optional<PDUSessionStatus> ie_pdu_session_status;  // Optional
   std::optional<AllowedPDUSessionStatus>
-      ie_allowed_PDU_session_status;                            // Optional
+      ie_allowed_pdu_session_status;                            // Optional
   std::optional<NasMessageContainer> ie_nas_message_container;  // Optional
 };
 

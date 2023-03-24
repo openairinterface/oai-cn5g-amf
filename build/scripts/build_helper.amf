@@ -62,13 +62,64 @@ install_spdlog_from_git() {
     fi
 
     git clone $GIT_URL
-    cd spdlog && git checkout master
+    cd spdlog && git checkout v1.11.0
+    mkdir _build && cd _build
+    $CMAKE -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release -DSPDLOG_FMT_EXTERNAL=ON -DSPDLOG_BUILD_SHARED=ON ..
+    make
     ret=$?;[[ $ret -ne 0 ]] && popd && return $ret
-    # enable syslog, Useless (defined in SMF code)
-    sed -i '/#define SPDLOG_ENABLE_SYSLOG/s/^\/\///g' include/spdlog/tweakme.h
+    $SUDO make install
+    ret=$?;[[ $ret -ne 0 ]] && popd && return $ret
     popd
+    rm -Rf $OPENAIRCN_DIR/build/ext/spdlog/_build
   fi
   echo "spdlog installation complete"
+  return 0
+}
+
+#-------------------------------------------------------------------------------
+#arg1 is force (0 or 1) (no interactive script)
+#arg2 is debug (0 or 1) (install debug libraries)
+install_fmt_from_git() {
+  echo "Starting to install fmt"
+  if [ $1 -eq 0 ]; then
+    read -p "Do you want to install fmt? <y/N> " prompt
+    OPTION=""
+  else
+    prompt='y'
+    OPTION="-y"
+  fi
+  if [ $2 -eq 0 ]; then
+    debug=0
+  else
+    debug=1
+  fi
+
+  if [[ $prompt =~ [yY](es)* ]]
+  then
+    GIT_URL=https://github.com/fmtlib/fmt/
+    echo "Install fmt from $GIT_URL"
+    pushd $OPENAIRCN_DIR/build/ext
+    echo "Downloading fmt"
+    if [[ $OPTION =~ -[yY](es)* ]]
+    then
+      $SUDO rm -rf fmt
+    fi
+
+    git clone $GIT_URL
+    cd fmt && git checkout 9.0.0
+    ret=$?;[[ $ret -ne 0 ]] && popd && return $ret
+
+    mkdir _build && cd _build
+    $CMAKE -G "Unix Makefiles" -DFMT_TEST=OFF -DBUILD_SHARED_LIBS=TRUE ..
+
+    make
+    ret=$?;[[ $ret -ne 0 ]] && popd && return $ret
+    $SUDO make install
+    ret=$?;[[ $ret -ne 0 ]] && popd && return $ret
+    popd
+    rm -Rf $OPENAIRCN_DIR/build/ext/fmt/_build
+  fi
+  echo "fmt installation complete"
   return 0
 }
 
@@ -403,6 +454,9 @@ check_install_amf_deps(){
 
   ret=$?;[[ $ret -ne 0 ]] && return $ret
   echo "distro libs installation complete"
+
+  install_fmt_from_git $1 $2
+  ret=$?;[[ $ret -ne 0 ]] && return $ret
 
   install_spdlog_from_git $1 $2
   ret=$?;[[ $ret -ne 0 ]] && return $ret

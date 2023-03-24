@@ -27,49 +27,48 @@
 using namespace nas;
 
 //------------------------------------------------------------------------------
-NasMmPlainHeader::NasMmPlainHeader(const uint8_t& epd) : epd_(epd) {}
+NasMmPlainHeader::NasMmPlainHeader(uint8_t epd) : epd_(epd) {}
 
 //------------------------------------------------------------------------------
-NasMmPlainHeader::NasMmPlainHeader(const uint8_t& epd, const uint8_t& msg_type)
+NasMmPlainHeader::NasMmPlainHeader(uint8_t epd, uint8_t msg_type)
     : epd_(epd), msg_type_(msg_type) {}
 
 //------------------------------------------------------------------------------
 NasMmPlainHeader::~NasMmPlainHeader() {}
 
 //------------------------------------------------------------------------------
-void NasMmPlainHeader::SetEpd(const uint8_t epd) {
+void NasMmPlainHeader::SetEpd(uint8_t epd) {
   epd_.Set(epd);
 }
 
 //------------------------------------------------------------------------------
-uint8_t NasMmPlainHeader::GetEpd() {
+uint8_t NasMmPlainHeader::GetEpd() const {
   return epd_.Get();
 }
 
 //------------------------------------------------------------------------------
-void NasMmPlainHeader::SetSecurityHeaderType(const uint8_t type) {
+void NasMmPlainHeader::SetSecurityHeaderType(uint8_t type) {
   secu_header_type_.Set(type);
 }
 
 //------------------------------------------------------------------------------
-uint8_t NasMmPlainHeader::GetSecurityHeaderType() {
+uint8_t NasMmPlainHeader::GetSecurityHeaderType() const {
   return secu_header_type_.Get();
 }
 
 //------------------------------------------------------------------------------
-void NasMmPlainHeader::SetMessageType(const uint8_t type) {
+void NasMmPlainHeader::SetMessageType(uint8_t type) {
   msg_type_.Set(type);
 }
 
 //------------------------------------------------------------------------------
-uint8_t NasMmPlainHeader::GetMessageType() {
+uint8_t NasMmPlainHeader::GetMessageType() const {
   return msg_type_.Get();
 }
 
 //------------------------------------------------------------------------------
 void NasMmPlainHeader::SetHeader(
-    const uint8_t& epd, const uint8_t& security_header_type,
-    const uint8_t& msg_type) {
+    uint8_t epd, uint8_t security_header_type, uint8_t msg_type) {
   epd_.Set(epd);
   secu_header_type_.Set(security_header_type);
   msg_type_.Set(msg_type);
@@ -94,7 +93,8 @@ void NasMmPlainHeader::GetMessageName(std::string& name) const {
 int NasMmPlainHeader::Encode(uint8_t* buf, int len) {
   Logger::nas_mm().debug("Encoding NasMmPlainHeader");
   if (len < kNasMmPlainHeaderLength) {
-    Logger::nas_mm().error("buffer length is less than 3 octets");
+    Logger::nas_mm().error(
+        "Buffer length is less than %d octets", kNasMmPlainHeaderLength);
     return KEncodeDecodeError;
   } else {
     uint32_t encoded_size = 0;
@@ -132,7 +132,8 @@ int NasMmPlainHeader::Decode(const uint8_t* const buf, int len) {
 
   int decoded_size = 0;
   if (len < kNasMmPlainHeaderLength) {
-    Logger::nas_mm().error("Buffer length is less than 3 octets");
+    Logger::nas_mm().error(
+        "Buffer length is less than %d octets", kNasMmPlainHeaderLength);
     return KEncodeDecodeError;
   }
 

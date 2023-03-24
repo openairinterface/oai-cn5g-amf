@@ -25,8 +25,6 @@
 #include "NasIeHeader.hpp"
 
 #include <bstrlib.h>
-#include <stdint.h>
-#include <string>
 #include <vector>
 
 using namespace std;
@@ -42,128 +40,132 @@ class RegistrationRequest : public NasMmPlainHeader {
 
   void SetHeader(uint8_t security_header_type);
   void GetSecurityHeaderType(uint8_t security_header_type);
-  bool verifyHeader();
+  bool VerifyHeader();
 
-  void set5gsRegistrationType(bool is_for, uint8_t type);
-  bool get5gsRegistrationType(bool& is_for, uint8_t& reg_type /*3bits*/);
+  void Set5gsRegistrationType(bool is_for, uint8_t type);
+  bool Get5gsRegistrationType(bool& is_for, uint8_t& reg_type);
 
   void SetNgKsi(uint8_t tsc, uint8_t key_set_id);
-  bool getngKSI(uint8_t& ng_ksi);
+  bool GetNgKsi(uint8_t& ng_ksi) const;
 
-  uint8_t getMobileIdentityType();
+  uint8_t GetMobileIdentityType() const;
   // TODO: SetMobileIdentityType(uint8_t);
 
   void SetSuciSupiFormatImsi(
-      const string mcc, const string mnc, const string routingInd,
-      uint8_t protection_sch_id, const string msin);
+      const std::string& mcc, const std::string& mnc,
+      const std::string& routing_ind, uint8_t protection_sch_id,
+      const std::string& msin);
   void SetSuciSupiFormatImsi(
-      const string mcc, const string mnc, const string routingInd,
-      uint8_t protection_sch_id, uint8_t hnpki, const string msin);
-  bool getSuciSupiFormatImsi(nas::SUCI_imsi_t& imsi);
+      const std::string& mcc, const std::string& mnc,
+      const std::string& routing_ind, uint8_t protection_sch_id, uint8_t hnpki,
+      const std::string& msin);
+  bool GetSuciSupiFormatImsi(nas::SUCI_imsi_t& imsi) const;
 
   void Set5gGuti();
-  std::string Get5gGuti();
+  std::string Get5gGuti() const;
 
   void SetImeiImeisv();
   void Set5gSTmsi();
-  void setAdditional_GUTI_SUCI_SUPI_format_IMSI(
-      const string mcc, const string mnc, uint8_t amf_region_id,
-      uint8_t amf_set_id, uint8_t amf_pointer, const string _5g_tmsi);
-  bool getAdditionalGuti(nas::_5G_GUTI_t& guti);
+  void SetAdditionalGuti(
+      const std::string& mcc, const std::string& mnc, uint8_t amf_region_id,
+      uint8_t amf_set_id, uint8_t amf_pointer, const std::string& _5g_tmsi);
+  bool GetAdditionalGuti(nas::_5G_GUTI_t& guti) const;
 
-  void setNonCurrentNativeNasKSI(uint8_t tsc, uint8_t key_set_id);
-  bool getNonCurrentNativeNasKSI(uint8_t& value) const;
+  void SetNonCurrentNativeNasKSI(uint8_t tsc, uint8_t key_set_id);
+  bool GetNonCurrentNativeNasKSI(uint8_t& value) const;
 
-  void set5GMMCapability(uint8_t value);
-  bool get5GMMCapability(uint8_t& value);
+  // TODO: 5GMM Capability as an array[]
+  void Set5gmmCapability(uint8_t value);
+  bool Get5gmmCapability(uint8_t& value) const;
 
-  void setUESecurityCapability(uint8_t g_EASel, uint8_t g_IASel);
-  void setUESecurityCapability(
-      uint8_t g_EASel, uint8_t g_IASel, uint8_t eea, uint8_t eia);
-  bool getUeSecurityCapability(uint8_t& ea, uint8_t& ia);
+  void SetUeSecurityCapability(uint8_t ea, uint8_t ia);
+  void SetUeSecurityCapability(
+      uint8_t ea, uint8_t ia, uint8_t eea, uint8_t eia);
+  bool GetUeSecurityCapability(uint8_t& ea, uint8_t& ia) const;
   // TODO: use std::optional for optional fields eea,eia
-  bool getUeSecurityCapability(
-      uint8_t& ea, uint8_t& ia, uint8_t& eea, uint8_t& eia);
+  bool GetUeSecurityCapability(
+      uint8_t& ea, uint8_t& ia, uint8_t& eea, uint8_t& eia) const;
+  std::optional<UESecurityCapability> GetUeSecurityCapability() const;
 
-  void setRequestedNSSAI(std::vector<struct SNSSAI_s> nssai);
-  bool getRequestedNssai(std::vector<struct SNSSAI_s>& nssai);
+  void SetRequestedNssai(const std::vector<struct SNSSAI_s>& nssai);
+  bool GetRequestedNssai(std::vector<struct SNSSAI_s>& nssai) const;
 
-  void setUENetworkCapability(uint8_t g_EEASel, uint8_t g_EIASel);
-  bool getS1UeNetworkCapability(uint8_t& eea, uint8_t& eia);
+  void SetUeNetworkCapability(uint8_t eea, uint8_t eia);
+  bool GetS1UeNetworkCapability(uint8_t& eea, uint8_t& eia) const;
 
-  void setUplinkDataStatus(const uint16_t& value);
-  bool getUplinkDataStatus(uint16_t& value);
+  void SetUplinkDataStatus(uint16_t value);
+  bool GetUplinkDataStatus(uint16_t& value) const;
 
-  void setLastVisitedRegisteredTAI(
-      const std::string& mcc, const std::string mnc, const uint32_t& tac);
+  void SetLastVisitedRegisteredTai(
+      const std::string& mcc, const std::string& mnc, uint32_t tac);
   // TODO: Getter
 
-  void setPDUSessionStatus(uint16_t value);
-  uint16_t getPduSessionStatus();
+  void SetPduSessionStatus(uint16_t value);
+  uint16_t GetPduSessionStatus() const;
 
-  void setMICOIndication(bool sprti, bool raai);
-  bool getMicoIndication(uint8_t& sprti, uint8_t& raai);
+  void SetMicoIndication(bool sprti, bool raai);
+  bool GetMicoIndication(uint8_t& sprti, uint8_t& raai) const;
 
-  void setUEStatus(bool n1, bool s1);
-  bool getUeStatus(uint8_t& n1ModeReg, uint8_t& s1ModeReg);
+  void SetUeStatus(bool n1, bool s1);
+  bool GetUeStatus(uint8_t& n1_mode, uint8_t& s1_mode) const;
 
-  void setAllowedPDUSessionStatus(uint16_t value);
-  uint16_t getAllowedPduSessionStatus();
+  void SetAllowedPduSessionStatus(uint16_t value);
+  uint16_t GetAllowedPduSessionStatus() const;
 
-  void setUES_Usage_Setting(bool ues_usage_setting);
-  uint8_t getUEsUsageSetting();
+  void SetUeUsageSetting(bool ues_usage_setting);
+  uint8_t GetUeUsageSetting() const;
 
   void Set5gsDrxParameters(uint8_t value);
-  uint8_t get5GSDrxParameters();
+  uint8_t Get5gsDrxParameters() const;
 
-  void setEPS_NAS_Message_Container(bstring value);
+  void SetEpsNasMessageContainer(const bstring& value);
 
-  void setLADN_Indication(std::vector<bstring> ladnValue);
-  bool getLadnIndication(std::vector<bstring>& ladnValue);
+  void SetLadnIndication(const std::vector<bstring>& ladn_value);
+  bool GetLadnIndication(std::vector<bstring>& ladn_value) const;
 
   void SetPayloadContainerType(uint8_t value);
-  uint8_t GetPayloadContainerType();
+  uint8_t GetPayloadContainerType() const;
 
-  void SetPayloadContainer(std::vector<PayloadContainerEntry> content);
-  bool GetPayloadContainer(std::vector<PayloadContainerEntry>& content);
+  void SetPayloadContainer(const std::vector<PayloadContainerEntry>& content);
+  bool GetPayloadContainer(std::vector<PayloadContainerEntry>& content) const;
 
   void SetNetworkSlicingIndication(bool dcni, bool nssci);
-  bool getNetworkSlicingIndication(uint8_t& dcni, uint8_t& nssci);
+  bool GetNetworkSlicingIndication(uint8_t& dcni, uint8_t& nssci) const;
 
-  void set_5GS_Update_Type(
+  void Set5gsUpdateType(
       uint8_t eps_pnb_ciot, uint8_t _5gs_pnb_ciot, bool ng_ran, bool sms);
-  bool get5GSUpdateType(
+  bool Get5gsUpdateType(
       uint8_t& eps_pnb_ciot, uint8_t& _5gs_pnb_ciot, bool& ng_ran_rcu,
-      bool& sms_requested);
+      bool& sms_requested) const;
 
-  void SetNasMessageContainer(bstring value);
-  bool GetNasMessageContainer(bstring& nas);
+  void SetNasMessageContainer(const bstring& value);
+  bool GetNasMessageContainer(bstring& nas) const;
 
-  bool getEpsNasMessageContainer(bstring& epsNas);
-  // bool getEpsNasMessageContainer(bstring& epsNas);
+  bool GetEpsNasMessageContainer(bstring& eps_nas) const;
+  // bool GetEpsNasMessageContainer(bstring& eps_nas);
 
   void SetEpsBearerContextsStatus(uint16_t value);
-  bool getEpsBearerContextStatus(uint16_t& value);
+  bool GetEpsBearerContextStatus(uint16_t& value) const;
 
  public:
   _5GSRegistrationType ie_5gs_registration_type;  // Mandatory
-  NasKeySetIdentifier ie_ngKSI;                   // Mandatory
+  NasKeySetIdentifier ie_ng_ksi;                  // Mandatory
   _5GSMobileIdentity ie_5gs_mobile_identity;      // Mandatory
 
   std::optional<NasKeySetIdentifier> ie_non_current_native_nas_ksi;  // Optional
   std::optional<_5GMMCapability> ie_5g_mm_capability;                // Optional
   std::optional<UESecurityCapability> ie_ue_security_capability;     // Optional
-  std::optional<NSSAI> ie_requested_NSSAI;                           // Optional
+  std::optional<NSSAI> ie_requested_nssai;                           // Optional
   std::optional<_5GSTrackingAreaIdentity>
-      ie_last_visited_registered_TAI;                              // Optional
+      ie_last_visited_registered_tai;                              // Optional
   std::optional<UENetworkCapability> ie_s1_ue_network_capability;  // Optional
   std::optional<UplinkDataStatus> ie_uplink_data_status;           // Optional
-  std::optional<PDUSessionStatus> ie_PDU_session_status;           // Optional
-  std::optional<MicoIndication> ie_MICO_indication;                // Optional
+  std::optional<PDUSessionStatus> ie_pdu_session_status;           // Optional
+  std::optional<MicoIndication> ie_mico_indication;                // Optional
   std::optional<UEStatus> ie_ue_status;                            // Optional
   std::optional<_5GSMobileIdentity> ie_additional_guti;            // Optional
   std::optional<AllowedPDUSessionStatus>
-      ie_allowed_PDU_session_status;                         // Optional
+      ie_allowed_pdu_session_status;                         // Optional
   std::optional<UEUsageSetting> ie_ues_usage_setting;        // Optional
   std::optional<_5GS_DRX_Parameters> ie_5gs_drx_parameters;  // Optional
   std::optional<EPS_NAS_Message_Container>

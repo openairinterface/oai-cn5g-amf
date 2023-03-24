@@ -55,7 +55,7 @@ class UEContextReleaseCompleteMsg : public NgapUEMessage {
   Ngap_UEContextReleaseComplete_t* ies;
   // AMF_UE_NGAP_ID //Mandatory
   // RAN_UE_NGAP_ID //Mandatory
-  UserLocationInformation* userLocationInformation;  // Optional
+  std::optional<UserLocationInformation> userLocationInformation;  // Optional
   // TODO: Information on Recommended Cells and RAN Nodes for Paging (Optional)
   std::optional<PDUSessionResourceListCxtRelCpl>
       pduSessionResourceListCxtRelCpl;  // Optional

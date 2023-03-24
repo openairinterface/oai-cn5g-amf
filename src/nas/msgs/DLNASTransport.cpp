@@ -21,9 +21,7 @@
 
 #include "DLNASTransport.hpp"
 
-#include "3gpp_24.501.hpp"
 #include "bstrlib.h"
-#include "logger.hpp"
 
 using namespace nas;
 
@@ -51,7 +49,7 @@ void DLNASTransport::SetPayloadContainerType(uint8_t value) {
 
 //------------------------------------------------------------------------------
 void DLNASTransport::SetPayloadContainer(
-    std::vector<PayloadContainerEntry> content) {
+    const std::vector<PayloadContainerEntry>& content) {
   ie_payload_container.SetValue(content);
 }
 
@@ -235,7 +233,7 @@ int DLNASTransport::Decode(uint8_t* buf, int len) {
   while ((octet != 0x0)) {
     switch (octet) {
       case kIeiPduSessionId: {
-        Logger::nas_mm().debug("Decoding IEI (0x12)");
+        Logger::nas_mm().debug("Decoding IEI 0x%x", kIeiPduSessionId);
         PduSessionIdentity2 ie_pdu_session_identity_2_tmp = {};
         if ((decoded_result = ie_pdu_session_identity_2_tmp.Decode(
                  buf + decoded_size, len - decoded_size, true)) ==
@@ -252,7 +250,7 @@ int DLNASTransport::Decode(uint8_t* buf, int len) {
       } break;
 
       case kIeiAdditionalInformation: {
-        Logger::nas_mm().debug("Decoding IEI (0x24)");
+        Logger::nas_mm().debug("Decoding IEI 0x%x", kIeiAdditionalInformation);
         AdditionalInformation ie_additional_information_tmp = {};
         if ((decoded_result = ie_additional_information_tmp.Decode(
                  buf + decoded_size, len - decoded_size, true)) ==
@@ -269,7 +267,7 @@ int DLNASTransport::Decode(uint8_t* buf, int len) {
       } break;
 
       case kIei5gmmCause: {
-        Logger::nas_mm().debug("Decoding IEI (0x58)");
+        Logger::nas_mm().debug("Decoding IEI 0x%x", kIei5gmmCause);
         _5gmmCause ie_5gmm_cause_tmp = {};
         if ((decoded_result = ie_5gmm_cause_tmp.Decode(
                  buf + decoded_size, len - decoded_size, true)) ==
@@ -285,7 +283,7 @@ int DLNASTransport::Decode(uint8_t* buf, int len) {
       } break;
 
       case kIeiGprsTimer3BackOffTimer: {
-        Logger::nas_mm().debug("Decoding IEI (0x37)");
+        Logger::nas_mm().debug("Decoding IEI 0x%x", kIeiGprsTimer3BackOffTimer);
         GprsTimer3 ie_back_off_timer_value_tmp(kIeiGprsTimer3BackOffTimer);
         if ((decoded_result = ie_back_off_timer_value_tmp.Decode(
                  buf + decoded_size, len - decoded_size, true)) ==

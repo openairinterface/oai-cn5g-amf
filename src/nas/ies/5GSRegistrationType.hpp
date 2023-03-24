@@ -46,10 +46,10 @@ class _5GSRegistrationType : public Type1NasIeFormatTv {
   void set(const bool& follow_on_req, const uint8_t& type, const uint8_t& iei);
   void set(const bool& follow_on_req, const uint8_t& type);
 
-  void setFollowOnReq(const bool is);
+  void setFollowOnReq(bool is);
   bool isFollowOnReq();
 
-  void setRegType(const uint8_t type);
+  void setRegType(uint8_t type);
   uint8_t getRegType();
 
  private:

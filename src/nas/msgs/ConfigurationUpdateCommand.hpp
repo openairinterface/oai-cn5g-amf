@@ -22,11 +22,8 @@
 #ifndef CONFIGURATION_UPDATE_COMMAND_H_
 #define CONFIGURATION_UPDATE_COMMAND_H_
 
-#include <bstrlib.h>
-#include <stdint.h>
-#include <string>
-
 #include "NasIeHeader.hpp"
+
 namespace nas {
 
 class ConfigurationUpdateCommand : public NasMmPlainHeader {
@@ -36,15 +33,15 @@ class ConfigurationUpdateCommand : public NasMmPlainHeader {
 
   void SetHeader(uint8_t security_header_type);
   void GetSecurityHeaderType(uint8_t security_header_type);
-  bool verifyHeader();
+  bool VerifyHeader();
 
-  void setFullNameForNetwork(const NetworkName& name);
-  void setFullNameForNetwork(const std::string& text_string);
-  void getFullNameForNetwork(std::optional<NetworkName>& name) const;
+  void SetFullNameForNetwork(const NetworkName& name);
+  void SetFullNameForNetwork(const std::string& text_string);
+  void GetFullNameForNetwork(std::optional<NetworkName>& name) const;
 
-  void setShortNameForNetwork(const NetworkName& name);
-  void setShortNameForNetwork(const std::string& text_string);
-  void getShortNameForNetwork(NetworkName& name) const;
+  void SetShortNameForNetwork(const NetworkName& name);
+  void SetShortNameForNetwork(const std::string& text_string);
+  void GetShortNameForNetwork(NetworkName& name) const;
 
   int Encode(uint8_t* buf, int len);
   int Decode(uint8_t* buf, int len);

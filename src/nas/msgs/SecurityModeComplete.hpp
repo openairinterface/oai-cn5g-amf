@@ -36,13 +36,13 @@ class SecurityModeComplete : public NasMmPlainHeader {
   int Encode(uint8_t* buf, int len);
   int Decode(uint8_t* buf, int len);
 
-  void SetImeisv(IMEISV_t imeisv);
+  void SetImeisv(const IMEISV_t& imeisv);
   bool GetImeisv(IMEISV_t& imeisv) const;
 
-  void SetNasMessageContainer(bstring value);
+  void SetNasMessageContainer(const bstring& value);
   bool GetNasMessageContainer(bstring& nas) const;
 
-  void SetNonImeisv(IMEISV_t imeisv);
+  void SetNonImeisv(const IMEISV_t& imeisv);
   bool GetNonImeisv(IMEISV_t& imeisv) const;
 
  public:

@@ -21,9 +21,6 @@
 
 #include "AuthenticationFailure.hpp"
 
-#include "3gpp_24.501.hpp"
-#include "logger.hpp"
-
 using namespace nas;
 
 //------------------------------------------------------------------------------
@@ -46,7 +43,7 @@ void AuthenticationFailure::Set5gmmCause(uint8_t value) {
 }
 
 //------------------------------------------------------------------------------
-uint8_t AuthenticationFailure::Get5GMmCause() {
+uint8_t AuthenticationFailure::Get5gmmCause() const {
   return ie_5gmm_cause.GetValue();
 }
 
@@ -101,11 +98,11 @@ int AuthenticationFailure::Encode(uint8_t* buf, int len) {
   encoded_size += encoded_ie_size;
 
   int size = ie_5gmm_cause.Encode(buf + encoded_size, len - encoded_size);
-
   if (size != KEncodeDecodeError) {
     encoded_size += size;
   } else {
-    Logger::nas_mm().error("Encoding ie_5gmm_cause error");
+    Logger::nas_mm().error(
+        "Encoding %s error", _5gmmCause::GetIeName().c_str());
     return KEncodeDecodeError;
   }
 
@@ -120,7 +117,8 @@ int AuthenticationFailure::Encode(uint8_t* buf, int len) {
       encoded_size += size;
     } else {
       Logger::nas_mm().error(
-          "Encoding ie_authentication_failure_parameter error");
+          "Encoding %s error",
+          AuthenticationFailureParameter::GetIeName().c_str());
       return KEncodeDecodeError;
     }
   }
@@ -148,8 +146,11 @@ int AuthenticationFailure::Decode(uint8_t* buf, int len) {
   // 5GMM Cause
   if ((decoded_result = ie_5gmm_cause.Decode(
            buf + decoded_size, len - decoded_size, false)) ==
-      KEncodeDecodeError)
+      KEncodeDecodeError) {
+    Logger::nas_mm().error(
+        "Decoding %s error", _5gmmCause::GetIeName().c_str());
     return KEncodeDecodeError;
+  }
   decoded_size += decoded_result;
 
   Logger::nas_mm().debug("Decoded_size (%d)", decoded_size);
@@ -161,7 +162,8 @@ int AuthenticationFailure::Decode(uint8_t* buf, int len) {
     Logger::nas_mm().debug("IEI 0x%x", octet);
     switch (octet) {
       case kIeiAuthenticationFailureParameter: {
-        Logger::nas_mm().debug("Decoding IEI (0x30)");
+        Logger::nas_mm().debug(
+            "Decoding IEI 0x%x", kIeiAuthenticationFailureParameter);
         AuthenticationFailureParameter ie_authentication_failure_parameter_tmp =
             {};
         if ((decoded_result = ie_authentication_failure_parameter_tmp.Decode(

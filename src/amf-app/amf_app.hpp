@@ -31,7 +31,6 @@
 #include "ProblemDetails.h"
 #include "UeN1N2InfoSubscriptionCreateData.h"
 #include "amf_config.hpp"
-#include "amf_module_from_config.hpp"
 #include "amf_msg.hpp"
 #include "amf_profile.hpp"
 #include "amf_subscription.hpp"
@@ -199,14 +198,6 @@ class amf_app {
   bool is_ran_amf_id_2_ue_context(const std::string& ue_context_key) const;
 
   /*
-   * Get UE context associated with an UE Context Key
-   * @param [const std::string&] ue_context_key: UE Context Key
-   * @return shared pointer to the context
-   */
-  std::shared_ptr<ue_context> ran_amf_id_2_ue_context(
-      const std::string& ue_context_key) const;
-
-  /*
    * Get UE context associated with an UE Context Key and verify if this pointer
    * is nullptr
    * @param [const std::string&] ue_context_key: UE Context Key
@@ -231,13 +222,6 @@ class amf_app {
    * @return true if UE context exist and not null, otherwise false
    */
   bool is_supi_2_ue_context(const string& supi) const;
-
-  /*
-   * Get UE context associated with a SUPI
-   * @param [const std::string&] supi: UE SUPI
-   * @return shared pointer to the context
-   */
-  std::shared_ptr<ue_context> supi_2_ue_context(const string& supi) const;
 
   /*
    * Get UE context associated with a SUPI

@@ -34,8 +34,8 @@ class EapMessage : public Type6NasIe {
  public:
   EapMessage();
   EapMessage(uint8_t iei);
-  EapMessage(bstring eap);
-  EapMessage(uint8_t iei, bstring eap);
+  EapMessage(const bstring& eap);
+  EapMessage(uint8_t iei, const bstring& eap);
   ~EapMessage();
 
   static std::string GetIeName() { return kEapMessageIeName; }

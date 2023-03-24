@@ -21,9 +21,6 @@
 
 #include "IdentityResponse.hpp"
 
-#include "3gpp_24.501.hpp"
-#include "logger.hpp"
-
 using namespace nas;
 
 //------------------------------------------------------------------------------
@@ -45,8 +42,9 @@ void IdentityResponse::Get5gsMobileIdentity(
 }
 //------------------------------------------------------------------------------
 void IdentityResponse::SetSuciSupiFormatImsi(
-    const string mcc, const string mnc, const string routingInd,
-    uint8_t protection_sch_id, const string msin) {
+    const std::string& mcc, const std::string& mnc,
+    const std::string& routing_ind, uint8_t protection_sch_id,
+    const std::string& msin) {
   if (protection_sch_id != NULL_SCHEME) {
     Logger::nas_mm().error(
         "Encoding suci and supi format for imsi error, please choose right "
@@ -54,14 +52,15 @@ void IdentityResponse::SetSuciSupiFormatImsi(
     return;
   } else {
     ie_mobile_identity.SetSuciWithSupiImsi(
-        mcc, mnc, routingInd, protection_sch_id, msin);
+        mcc, mnc, routing_ind, protection_sch_id, msin);
   }
 }
 
 //------------------------------------------------------------------------------
 void IdentityResponse::SetSuciSupiFormatImsi(
-    const string mcc, const string mnc, const string routingInd,
-    uint8_t protection_sch_id, uint8_t hnpki, const string msin) {
+    const std::string& mcc, const std::string& mnc,
+    const std::string& routingInd, uint8_t protection_sch_id, uint8_t hnpki,
+    const std::string& msin) {
   // TODO:
 }
 
@@ -82,7 +81,7 @@ void IdentityResponse::Set5gSTmsi() {
 
 //------------------------------------------------------------------------------
 int IdentityResponse::Encode(uint8_t* buf, int len) {
-  Logger::nas_mm().debug("encoding IdentityResponse message");
+  Logger::nas_mm().debug("Encoding IdentityResponse message");
   int encoded_size    = 0;
   int encoded_ie_size = 0;
 

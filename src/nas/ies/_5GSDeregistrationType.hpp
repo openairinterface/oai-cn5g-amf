@@ -48,13 +48,13 @@ class _5GSDeregistrationType : public Type1NasIeFormatTv {
   // int Encode(uint8_t* buf, int len);
 
   void set(_5gs_deregistration_type_t type);
-  void get(_5gs_deregistration_type_t& type);
+  void get(_5gs_deregistration_type_t& type) const;
 
   void set(uint8_t value);
-  void get(uint8_t& value);
+  void get(uint8_t& value) const;
 
   void set(uint8_t iei, uint8_t value);
-  void get(uint8_t& iei, uint8_t value);
+  void get(uint8_t& iei, uint8_t value) const;
 
  private:
   void setValue();

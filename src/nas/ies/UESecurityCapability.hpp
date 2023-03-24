@@ -41,6 +41,7 @@ class UESecurityCapability : public Type4NasIe {
   UESecurityCapability(
       uint8_t _5g_ea, uint8_t _5g_ia, uint8_t eea, uint8_t eia);
   ~UESecurityCapability();
+  void operator=(const UESecurityCapability& ue_security_capability);
 
   static std::string GetIeName() { return kUeSecurityCapabilityIeName; }
 

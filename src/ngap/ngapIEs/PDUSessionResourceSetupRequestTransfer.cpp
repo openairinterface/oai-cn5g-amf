@@ -21,6 +21,8 @@
 
 #include "PDUSessionResourceSetupRequestTransfer.hpp"
 
+#include "output_wrapper.hpp"
+
 extern "C" {
 #include "asn_codecs.h"
 #include "constr_TYPE.h"
@@ -480,8 +482,8 @@ void PduSessionResourceSetupRequestTransferIE::setQosFlowSetupRequestList(
 //------------------------------------------------------------------------------
 int PduSessionResourceSetupRequestTransferIE::Encode(
     uint8_t* buf, int buf_size) {
-  asn_fprint(
-      stderr, &asn_DEF_Ngap_PDUSessionResourceSetupRequestTransfer,
+  output_wrapper::print_asn_msg(
+      &asn_DEF_Ngap_PDUSessionResourceSetupRequestTransfer,
       pduSessionResourceSetupRequestTransferIEs);
   asn_enc_rval_t er = aper_encode_to_buffer(
       &asn_DEF_Ngap_PDUSessionResourceSetupRequestTransfer, NULL,

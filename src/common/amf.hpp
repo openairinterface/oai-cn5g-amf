@@ -39,6 +39,7 @@ constexpr auto CURL_MIME_BOUNDARY = "----Boundary";
 
 #define FUTURE_STATUS_TIMEOUT_MS 100
 
+#define GNB_ID_FMT "%" PRIu32
 #define GNB_UE_NGAP_ID_FMT "%" PRIu32
 #define AMF_UE_NGAP_ID_FMT "%" PRIu64
 
@@ -82,4 +83,6 @@ typedef enum {
 constexpr uint32_t DEFAULT_HTTP1_PORT  = 80;
 constexpr uint32_t DEFAULT_HTTP2_PORT  = 8080;
 constexpr auto DEFAULT_SBI_API_VERSION = "v1";
+constexpr auto DEFAULT_SUPI_TYPE =
+    "imsi";  // Set to "imsi" when supporting both IMSI and NAI as SUPI
 #endif

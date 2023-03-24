@@ -23,7 +23,6 @@
 #define _NGAP_APPLICATION_H_
 
 #include <map>
-#include <memory>
 #include <shared_mutex>
 
 #include "gNB_context.hpp"
@@ -32,9 +31,6 @@
 using namespace sctp;
 
 namespace ngap {
-
-static const std::vector<std::string> ng_gnb_state_str = {
-    "NGAP_INIT", "NGAP_RESETTING", "NGAP_READY", "NGAP_SHUTDOWN"};
 
 class ngap_app : public sctp_application {
  public:
@@ -87,21 +83,13 @@ class ngap_app : public sctp_application {
   bool is_assoc_id_2_gnb_context(const sctp_assoc_id_t& assoc_id) const;
 
   /*
-   * Verify whether an association id associated with a GNB context exist
+   *  Get the gNB Context associated with an association Id if exist
    * @param [const sctp_assoc_id_t&] assoc_id: gNB association ID
    * @param [std::shared_ptr<gnb_context>&] gc: store the gNB context if exist
-   * @return true if exist, otherwise return false
+   * @return true if the context exists and not null, otherwise return false
    */
-  bool is_assoc_id_2_gnb_context(
+  bool assoc_id_2_gnb_context(
       const sctp_assoc_id_t& assoc_id, std::shared_ptr<gnb_context>& gc);
-
-  /*
-   * Get the gNB Context associated with an association id
-   * @param [const sctp_assoc_id_t&] assoc_id: gNB association ID
-   * @return the pointer to the gNB context
-   */
-  std::shared_ptr<gnb_context> assoc_id_2_gnb_context(
-      const sctp_assoc_id_t& assoc_id) const;
 
   /*
    * Store gNB Context associated with an association id
@@ -129,11 +117,13 @@ class ngap_app : public sctp_application {
       const long& gnb_id, const std::shared_ptr<gnb_context>& gc);
 
   /*
-   * Get the gNB Context associated with a gNB id
+   * Get the gNB Context associated with a gNB id if exits and not null
    * @param [const long& ] gnb_id: gNB ID
-   * @return the pointer to the gNB context
+   * @param [const std::shared_ptr<gnb_context>&] gc: pointer to the gNB context
+   * @return true if the context exists and not null, otherwise return false
    */
-  std::shared_ptr<gnb_context> gnb_id_2_gnb_context(const long& gnb_id) const;
+  bool gnb_id_2_gnb_context(
+      const long& gnb_id, std::shared_ptr<gnb_context>& gc) const;
 
   /*
    * Remove the gNB Context associated with a gNB id

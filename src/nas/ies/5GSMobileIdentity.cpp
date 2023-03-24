@@ -134,7 +134,7 @@ int _5GSMobileIdentity::Decode(uint8_t* buf, int len, bool is_iei) {
 
 //------------------------------------------------------------------------------
 int _5GSMobileIdentity::Encode5gGuti(uint8_t* buf, int len) {
-  Logger::nas_mm().debug("Encoding 5G-GUTI IEI 0x%x", iei_);
+  Logger::nas_mm().debug("Encoding 5G-GUTI IEI 0x%x", iei_.value());
   int encoded_size = 0;
 
   // IEI and Length
@@ -373,7 +373,7 @@ int _5GSMobileIdentity::DecodeSuci(uint8_t* buf, int len, int ie_len) {
       uint8_t digit_low  = 0;
       uint8_t digit_high = 0;
       int numMsin        = ie_len - decoded_size;
-      for (int i = 0; i < numMsin; i++) {
+      for (int i = 0; i < (numMsin - 1); i++) {
         DECODE_U8(buf + decoded_size, octet, decoded_size);
         digit_high = (octet & 0xf0) >> 4;
         digit_low  = octet & 0x0f;
@@ -381,6 +381,20 @@ int _5GSMobileIdentity::DecodeSuci(uint8_t* buf, int len, int ie_len) {
             ((const std::string)(std::to_string(digit_low)) +
              (const std::string)(std::to_string(digit_high)));
       }
+
+      // Verify if the MSIN includes an odd number of digits,
+      // bits 5 to 8 of the last octet shall be coded as "1111"
+      DECODE_U8(buf + decoded_size, octet, decoded_size);
+      digit_high = (octet & 0xf0) >> 4;
+      digit_low  = octet & 0x0f;
+      if (digit_high != 0x0f) {
+        msin +=
+            ((const std::string)(std::to_string(digit_low)) +
+             (const std::string)(std::to_string(digit_high)));
+      } else {
+        msin += (const std::string)(std::to_string(digit_low));
+      }
+
       supi_format_imsi_tmp.msin = msin;
       Logger::nas_mm().debug(
           "Decoded MSIN %s", supi_format_imsi_tmp.msin.c_str());

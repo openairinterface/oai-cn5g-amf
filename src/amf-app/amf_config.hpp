@@ -115,6 +115,7 @@
 #define AMF_CONFIG_STRING_SUPPORT_FEATURES_USE_HTTP2 "USE_HTTP2"
 
 #define AMF_CONFIG_STRING_FQDN_DNS "FQDN"
+#define AMF_CONFIG_STRING_LOG_LEVEL "LOG_LEVEL"
 
 using namespace libconfig;
 
@@ -126,6 +127,7 @@ typedef struct auth_conf_s {
   std::string mysql_pass;
   std::string mysql_db;
   std::string random;
+
   nlohmann::json to_json() const {
     nlohmann::json json_data  = {};
     json_data["mysql_server"] = this->mysql_server;
@@ -233,6 +235,7 @@ typedef struct guami_s {
 typedef struct slice_s {
   uint8_t sst;
   uint32_t sd;
+
   bool operator==(const struct slice_s& s) const {
     if ((s.sst == this->sst) && (s.sd == this->sd)) {
       return true;
@@ -240,13 +243,15 @@ typedef struct slice_s {
       return false;
     }
   }
+
   bool operator>(const struct slice_s& s) const {
     if (this->sst > s.sst) return true;
     if (this->sst == s.sst) {
-      if (this->sd > s.sd) return true;
-      if (this->sd <= s.sd) return false;
+      return (this->sd > s.sd);
     }
+    return false;
   }
+
   nlohmann::json to_json() const {
     nlohmann::json json_data = {};
     json_data["sst"]         = this->sst;
@@ -330,7 +335,7 @@ typedef struct {
 typedef struct {
   int id;
   std::string ipv4;
-  std::string port;
+  uint32_t port;
   uint32_t http2_port;
   std::string version;
   bool selected;
@@ -349,10 +354,9 @@ typedef struct {
   }
 
   void from_json(nlohmann::json& json_data) {
-    this->id   = json_data["id"].get<int>();
-    this->ipv4 = json_data["ipv4"].get<std::string>();
-    this->port = json_data["port"]
-                     .get<std::string>();  // TODO: use int instead of string
+    this->id         = json_data["id"].get<int>();
+    this->ipv4       = json_data["ipv4"].get<std::string>();
+    this->port       = json_data["port"].get<int>();
     this->http2_port = json_data["http2_port"].get<int>();
     this->version    = json_data["version"].get<std::string>();
     this->selected   = json_data["selected"].get<bool>();
@@ -473,13 +477,13 @@ class amf_config {
   /*
    * Get the URI of SMF Services
    * @param [const std::string&] smf_addr: SMF's Addr in String representation
-   * @param [const std::string&] smf_port: SMF's port in String representation
+   * @param [const uint32_t&] smf_port: SMF's port in String representation
    * @param [const std::string&] smf_api_version: SMF's API version in String
    * representation
    * @return URI in string format
    */
   std::string get_smf_pdu_session_base_uri(
-      const std::string& smf_addr, const std::string& smf_port,
+      const std::string& smf_addr, const uint32_t& smf_port,
       const std::string& smf_api_version);
 
   /*
@@ -505,6 +509,7 @@ class amf_config {
 
   unsigned int instance;
   std::string pid_dir;
+  spdlog::level::level_enum log_level;
   interface_cfg_t n2;
   interface_cfg_t sbi;
   itti_cfg_t itti;

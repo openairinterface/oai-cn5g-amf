@@ -19,18 +19,28 @@
  *      contact@openairinterface.org
  */
 
-#ifndef _PRINT_BUFFER_H
-#define _PRINT_BUFFER_H
-
-#include <string>
+#include "output_wrapper.hpp"
 
 #include "logger.hpp"
 
-class comUt {
- public:
-  static void print_buffer(
-      const std::string app, const std::string commit, uint8_t* buf, int len);
-  static void hexStr2Byte(const char* src, unsigned char* dest, int len);
-};
+//------------------------------------------------------------------------------
+void output_wrapper::print_buffer(
+    const std::string app, const std::string sink, uint8_t* buf, int len) {
+  if (!app.compare("amf_app")) Logger::amf_app().debug(sink.c_str());
+  if (!app.compare("amf_n1")) Logger::amf_n1().debug(sink.c_str());
+  if (!app.compare("amf_n2")) Logger::amf_n2().debug(sink.c_str());
+  if (!app.compare("ngap")) Logger::ngap().debug(sink.c_str());
+  if (!app.compare("amf_server")) Logger::amf_server().debug(sink.c_str());
+  if (!app.compare("amf_sbi")) Logger::amf_sbi().debug(sink.c_str());
+  if (Logger::should_log(spdlog::level::debug)) {
+    for (int i = 0; i < len; i++) printf("%02x ", buf[i]);
+    printf("\n");
+  }
+}
 
-#endif
+//------------------------------------------------------------------------------
+void output_wrapper::print_asn_msg(
+    const asn_TYPE_descriptor_t* td, const void* struct_ptr) {
+  if (Logger::should_log(spdlog::level::debug))
+    asn_fprint(stdout, td, struct_ptr);
+}

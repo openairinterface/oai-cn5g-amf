@@ -72,22 +72,22 @@ void _5gsUpdateType::SetSms(uint8_t value) {
 }
 
 //------------------------------------------------------------------------------
-uint8_t _5gsUpdateType::GetEpsPnbCiot() {
+uint8_t _5gsUpdateType::GetEpsPnbCiot() const {
   return eps_pnb_ciot_;
 }
 
 //------------------------------------------------------------------------------
-uint8_t _5gsUpdateType::Get5gsPnbCiot() {
+uint8_t _5gsUpdateType::Get5gsPnbCiot() const {
   return _5gs_pnb_ciot_;
 }
 
 //------------------------------------------------------------------------------
-bool _5gsUpdateType::GetNgRan() {
+bool _5gsUpdateType::GetNgRan() const {
   return ng_ran_;
 }
 
 //------------------------------------------------------------------------------
-bool _5gsUpdateType::GetSms() {
+bool _5gsUpdateType::GetSms() const {
   return sms_;
 }
 

@@ -32,6 +32,10 @@
 
 #include "amf.hpp"
 #include "logger.hpp"
+#include "output_wrapper.hpp"
+
+constexpr uint8_t kUint32Length =
+    8;  // 4 bytes  -8 characters representation in hex
 
 static const char hex_to_ascii_table[16] = {
     '0', '1', '2', '3', '4', '5', '6', '7',
@@ -110,8 +114,8 @@ std::string conv::mncToString(
 //------------------------------------------------------------------------------
 std::string conv::tmsi_to_string(const uint32_t tmsi) {
   std::string s        = {};
-  std::string tmsi_str = std::to_string(tmsi);
-  uint8_t length       = 4 - tmsi_str.size();
+  std::string tmsi_str = uint32_to_hex_string(tmsi);
+  uint8_t length       = kUint32Length - tmsi_str.size();
   for (uint8_t i = 0; i < length; i++) {
     s.append("0");
   }
@@ -163,11 +167,8 @@ void conv::convert_string_2_hex(
   }
   memset(data, 0, input_str.length() + 1);
   memcpy((void*) data, (void*) input_str.c_str(), input_str.length());
-
-  for (int i = 0; i < input_str.length(); i++) {
-    printf("%02x ", data[i]);
-  }
-  printf("\n");
+  output_wrapper::print_buffer(
+      "amf_app", "Data input", data, input_str.length());
 
   char* datahex = (char*) malloc(input_str.length() * 2 + 1);
   if (!datahex) {
@@ -199,9 +200,8 @@ unsigned char* conv::format_string_as_hex(std::string str) {
   memset(data, 0, str_len + 1);
   memcpy((void*) data, (void*) str.c_str(), str_len);
 
-  // TODO: use logger
-  std::cout << "Data: " << data << " (" << str_len << " bytes)" << std::endl;
-  std::cout << "Data (formatted): \n";
+  Logger::amf_app().debug("Data %s (%d bytes)", (void*) data, str_len);
+  Logger::amf_app().debug("Data (formatted):");
   for (int i = 0; i < str_len; i++) {
     char datatmp[3] = {0};
     memcpy(datatmp, &data[i], 2);
@@ -215,14 +215,15 @@ unsigned char* conv::format_string_as_hex(std::string str) {
     // Convert two hexadecimal characters into one character
     unsigned int nAsciiCharacter;
     sscanf(datatmp, "%x", &nAsciiCharacter);
-    printf("%x ", nAsciiCharacter);
+    if (Logger::should_log(spdlog::level::debug))
+      printf("%x ", nAsciiCharacter);
     // Concatenate this character onto the output
     datavalue[i / 2] = (unsigned char) nAsciiCharacter;
 
     // Skip the next character
     i++;
   }
-  printf("\n");
+  if (Logger::should_log(spdlog::level::debug)) printf("\n");
 
   free_wrapper((void**) &data);
   return datavalue;
@@ -245,7 +246,7 @@ char* conv::bstring2charString(bstring b) {
 void conv::msg_str_2_msg_hex(std::string msg, bstring& b) {
   std::string msg_hex_str = {};
   convert_string_2_hex(msg, msg_hex_str);
-  printf("tmp string: %s\n", msg_hex_str.c_str());
+  Logger::amf_app().debug("Msg hex %s", msg_hex_str.c_str());
   unsigned int msg_len = msg_hex_str.length();
   char* data           = (char*) malloc(msg_len + 1);
   if (!data) {
@@ -255,7 +256,7 @@ void conv::msg_str_2_msg_hex(std::string msg, bstring& b) {
 
   memset(data, 0, msg_len + 1);
   memcpy((void*) data, (void*) msg_hex_str.c_str(), msg_len);
-  printf("data: %s\n", data);
+
   uint8_t* msg_hex = (uint8_t*) malloc(msg_len / 2 + 1);
   if (!msg_hex) {
     free_wrapper((void**) &msg_hex);
@@ -490,4 +491,38 @@ std::string conv::get_serving_network_name(
   else
     snn = "5G:mnc" + mnc + ".mcc" + mcc + ".3gppnetwork.org";
   return snn;
+}
+
+//------------------------------------------------------------------------------
+std::string conv::uint32_to_hex_string(uint32_t value) {
+  char hex_str[kUint32Length + 1];
+  sprintf(hex_str, "%X", value);
+  return std::string(hex_str);
+}
+
+//------------------------------------------------------------------------------
+std::string conv::tmsi_to_guti(
+    const std::string& mcc, const std::string& mnc,
+    const std::string& region_id, const std::string& _5g_s_tmsi) {
+  return {mcc + mnc + region_id + _5g_s_tmsi};
+}
+
+//------------------------------------------------------------------------------
+std::string conv::tmsi_to_guti(
+    const std::string& mcc, const std::string& mnc,
+    const std::string& region_id, const std::string& amf_set_id,
+    const std::string& amf_pointer, const std::string& tmsi) {
+  return {mcc + mnc + region_id + amf_set_id + amf_pointer + tmsi};
+}
+//------------------------------------------------------------------------------
+std::string conv::imsi_to_supi(const std::string& imsi) {
+  std::string supi_type = DEFAULT_SUPI_TYPE;
+  if (!supi_type.empty()) return {supi_type + "-" + imsi};
+  return imsi;
+}
+
+//------------------------------------------------------------------------------
+std::string conv::get_imsi(
+    const std::string& mcc, const std::string& mnc, const std::string& msin) {
+  return {mcc + mnc + msin};
 }

@@ -39,7 +39,7 @@ class LadnIndication : Type6NasIe {
   static std::string GetIeName() { return kLadnIndicationIeName; }
 
   // void SetValue(const std::vector<bstring>& ladn);
-  void GetValue(std::vector<bstring>& ladn);
+  void GetValue(std::vector<bstring>& ladn) const;
 
   int Encode(uint8_t* buf, int len);
   int Decode(uint8_t* buf, int len, bool is_option);

@@ -37,10 +37,10 @@ class AuthenticationResponse : public NasMmPlainHeader {
   void SetHeader(uint8_t security_header_type);
 
   void SetAuthenticationResponseParameter(const bstring& para);
-  bool GetAuthenticationResponseParameter(bstring& para);
+  bool GetAuthenticationResponseParameter(bstring& para) const;
 
   void SetEapMessage(const bstring& eap);
-  bool GetEapMessage(bstring& eap);
+  bool GetEapMessage(bstring& eap) const;
 
  public:
   std::optional<AuthenticationResponseParameter>

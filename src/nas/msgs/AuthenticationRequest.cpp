@@ -21,9 +21,6 @@
 
 #include "AuthenticationRequest.hpp"
 
-#include "3gpp_24.501.hpp"
-#include "logger.hpp"
-
 using namespace nas;
 
 //------------------------------------------------------------------------------
@@ -44,9 +41,9 @@ void AuthenticationRequest::SetHeader(uint8_t security_header_type) {
 
 //------------------------------------------------------------------------------
 void AuthenticationRequest::SetNgKsi(uint8_t tsc, uint8_t key_set_id) {
-  ie_ngKSI.Set(false);  // 4 lower bits
-  ie_ngKSI.SetNasKeyIdentifier(key_set_id);
-  ie_ngKSI.SetTypeOfSecurityContext(tsc);
+  ie_ng_ksi.Set(false);  // 4 lower bits
+  ie_ng_ksi.SetNasKeyIdentifier(key_set_id);
+  ie_ng_ksi.SetTypeOfSecurityContext(tsc);
 }
 
 //------------------------------------------------------------------------------
@@ -55,7 +52,7 @@ void AuthenticationRequest::SetAbba(uint8_t length, uint8_t* value) {
 }
 
 //------------------------------------------------------------------------------
-void AuthenticationRequest::setAuthentication_Parameter_RAND(
+void AuthenticationRequest::SetAuthenticationParameterRand(
     uint8_t value[kAuthenticationParameterRandValueLength]) {
   ie_authentication_parameter_rand =
       std::make_optional<Authentication_Parameter_RAND>(
@@ -63,7 +60,7 @@ void AuthenticationRequest::setAuthentication_Parameter_RAND(
 }
 
 //------------------------------------------------------------------------------
-void AuthenticationRequest::setAuthentication_Parameter_AUTN(
+void AuthenticationRequest::SetAuthenticationParameterAutn(
     uint8_t value[kAuthenticationParameterAutnValueLength]) {
   ie_authentication_parameter_autn =
       std::make_optional<Authentication_Parameter_AUTN>(
@@ -71,7 +68,7 @@ void AuthenticationRequest::setAuthentication_Parameter_AUTN(
 }
 
 //------------------------------------------------------------------------------
-void AuthenticationRequest::SetEapMessage(bstring eap) {
+void AuthenticationRequest::SetEapMessage(const bstring& eap) {
   ie_eap_message = std::make_optional<EapMessage>(kIeiEapMessage, eap);
 }
 
@@ -89,7 +86,7 @@ int AuthenticationRequest::Encode(uint8_t* buf, int len) {
   }
   encoded_size += encoded_ie_size;
 
-  int size = ie_ngKSI.Encode(buf + encoded_size, len - encoded_size);
+  int size = ie_ng_ksi.Encode(buf + encoded_size, len - encoded_size);
   if (size != KEncodeDecodeError) {
     encoded_size += size;
   } else {
@@ -98,7 +95,7 @@ int AuthenticationRequest::Encode(uint8_t* buf, int len) {
     return KEncodeDecodeError;
   }
   // Spare half octet
-  encoded_size++;  // 1/2 octet + 1/2 octet from ie_ngKSI
+  encoded_size++;  // 1/2 octet + 1/2 octet from ie_ng_ksi
 
   // ABBA
   size = ie_abba.Encode(buf + encoded_size, len - encoded_size);
@@ -181,7 +178,7 @@ int AuthenticationRequest::Decode(uint8_t* buf, int len) {
   decoded_size += decoded_result;
 
   // NgKSI
-  decoded_result = ie_ngKSI.Decode(
+  decoded_result = ie_ng_ksi.Decode(
       buf + decoded_size, len - decoded_size, false,
       false);  // length 1/2, low position
   if (decoded_result == KEncodeDecodeError) {
@@ -190,7 +187,7 @@ int AuthenticationRequest::Decode(uint8_t* buf, int len) {
     return KEncodeDecodeError;
   }
   decoded_size += decoded_result;
-  decoded_size++;  // 1/2 octet from ie_ngKSI, 1/2 from Spare half octet
+  decoded_size++;  // 1/2 octet from ie_ng_ksi, 1/2 from Spare half octet
 
   // ABBA
   decoded_result =

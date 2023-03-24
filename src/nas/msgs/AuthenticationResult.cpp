@@ -21,9 +21,6 @@
 
 #include "AuthenticationResult.hpp"
 
-#include "3gpp_24.501.hpp"
-#include "logger.hpp"
-
 using namespace nas;
 
 //------------------------------------------------------------------------------
@@ -42,9 +39,9 @@ void AuthenticationResult::SetHeader(uint8_t security_header_type) {
 
 //------------------------------------------------------------------------------
 void AuthenticationResult::SetNgKsi(uint8_t tsc, uint8_t key_set_id) {
-  ie_ngKSI.Set(false);  // 4 lower bits
-  ie_ngKSI.SetTypeOfSecurityContext(tsc);
-  ie_ngKSI.SetNasKeyIdentifier(key_set_id);
+  ie_ng_ksi.Set(false);  // 4 lower bits
+  ie_ng_ksi.SetTypeOfSecurityContext(tsc);
+  ie_ng_ksi.SetNasKeyIdentifier(key_set_id);
 }
 
 //------------------------------------------------------------------------------
@@ -53,7 +50,7 @@ void AuthenticationResult::SetAbba(uint8_t length, uint8_t* value) {
 }
 
 //------------------------------------------------------------------------------
-void AuthenticationResult::SetEapMessage(bstring eap) {
+void AuthenticationResult::SetEapMessage(const bstring& eap) {
   ie_eap_message.SetValue(eap);
 }
 
@@ -72,7 +69,7 @@ int AuthenticationResult::Encode(uint8_t* buf, int len) {
   encoded_size += encoded_ie_size;
 
   // ngKSI
-  int size = ie_ngKSI.Encode(buf + encoded_size, len - encoded_size);
+  int size = ie_ng_ksi.Encode(buf + encoded_size, len - encoded_size);
   if (size != KEncodeDecodeError) {
     encoded_size += size;
   } else {
@@ -81,7 +78,7 @@ int AuthenticationResult::Encode(uint8_t* buf, int len) {
     return KEncodeDecodeError;
   }
   // Spare half octet
-  encoded_size++;  // 1/2 octet + 1/2 octet from ie_ngKSI
+  encoded_size++;  // 1/2 octet + 1/2 octet from ie_ng_ksi
 
   // EAP message
   size = ie_eap_message.Encode(buf + encoded_size, len - encoded_size);
@@ -126,7 +123,7 @@ int AuthenticationResult::Decode(uint8_t* buf, int len) {
 
   // NAS key set identifier
   decoded_result =
-      ie_ngKSI.Decode(buf + decoded_size, len - decoded_size, false, false);
+      ie_ng_ksi.Decode(buf + decoded_size, len - decoded_size, false, false);
   if (decoded_result == KEncodeDecodeError) {
     Logger::nas_mm().error(
         "Decoding %s error", NasKeySetIdentifier::GetIeName().c_str());
@@ -154,7 +151,7 @@ int AuthenticationResult::Decode(uint8_t* buf, int len) {
   while ((octet != 0x0)) {
     switch (octet) {
       case kIeiAbba: {
-        Logger::nas_mm().debug("Decoding IEI (0x38)");
+        Logger::nas_mm().debug("Decoding IEI 0x%x", kIeiAbba);
         ABBA ie_abba_tmp = {};
         if ((decoded_result = ie_abba_tmp.Decode(
                  buf + decoded_size, len - decoded_size, true)) ==

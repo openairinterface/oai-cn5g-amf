@@ -37,7 +37,7 @@ class AuthenticationFailure : public NasMmPlainHeader {
   void SetHeader(uint8_t security_header_type);
 
   void Set5gmmCause(uint8_t value);
-  uint8_t Get5GMmCause();
+  uint8_t Get5gmmCause() const;
 
   //  void SetAuthenticationFailureParameter(const uint8_t
   //  (&value)[kAuthenticationFailureParameterContentLength]); bool

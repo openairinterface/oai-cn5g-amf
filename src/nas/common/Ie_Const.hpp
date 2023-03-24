@@ -98,6 +98,7 @@ constexpr uint8_t kIeiReleaseAssistanceIndication = 0x0F;  // F-(4 higher bits)
 
 constexpr uint8_t kIei5gmmCapability              = 0x10;
 constexpr uint8_t kIeiUeUsageSetting              = 0x18;
+constexpr uint8_t kIeiS1UeSecurityCapability      = 0x19;
 constexpr uint8_t kIeiAuthenticationParameterAutn = 0x20;
 constexpr uint8_t kIeiAuthenticationParameterRand = 0x21;
 constexpr uint8_t kIei5gsNetworkFeatureSupport    = 0x21;

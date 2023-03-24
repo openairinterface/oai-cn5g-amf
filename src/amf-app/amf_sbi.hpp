@@ -117,7 +117,7 @@ class amf_sbi {
    * Session Context
    * @param [const std::string&] smf_addr: SMF's Address
    * @param [const std::string&] smf_api_version: SMF's API version
-   * @param [const std::string&] smf_port: SMF's HTTP port
+   * @param [const uint32_t&] smf_port: SMF's HTTP port
    * @param [bstring] sm_msg: SM message
    * @param [const std::string&] dnn: DNN
    * @return void
@@ -125,7 +125,7 @@ class amf_sbi {
   void handle_pdu_session_initial_request(
       const std::string& supi, std::shared_ptr<pdu_session_context>& psc,
       const std::string& smf_addr, const std::string& smf_api_version,
-      const std::string& smf_port, bstring sm_msg, const std::string& dnn);
+      const uint32_t& smf_port, bstring sm_msg, const std::string& dnn);
 
   /*
    * Send SM Context response error to AMF
@@ -163,19 +163,18 @@ class amf_sbi {
 
   /*
    * Select SMF from the configuration file
-   * @param [const std::string&] smf_addr: SMF's Address
-   * @param [const std::string&] smf_port: SMF's HTTP port
-   * @param [const std::string&] smf_api_version: SMF's API version
+   * @param [std::string&] smf_addr: SMF's Address
+   * @param [uint32_t&] smf_port: SMF's HTTP port
+   * @param [std::string&] smf_api_version: SMF's API version
    * @return true if successful, otherwise return false
    */
   bool smf_selection_from_configuration(
-      std::string& smf_addr, std::string& smf_port,
-      std::string& smf_api_version);
+      std::string& smf_addr, uint32_t& smf_port, std::string& smf_api_version);
 
   /*
    * Find suitable SMF from NRF (based on snssai, plmn and dnn)
    * @param [std::string&] smf_addr: SMF's Address
-   * @param [std::string&] smf_port: SMF's HTTP port
+   * @param [uint32_t&] smf_port: SMF's HTTP port
    * @param [std::string&] smf_api_version: SMF's API version
    * @param [const snssai_t&] snssai: SNSSAI
    * @param [const plmn_t&] plmn: PLMN
@@ -184,9 +183,9 @@ class amf_sbi {
    * @return true if successful, otherwise return false
    */
   bool discover_smf(
-      std::string& smf_addr, std::string& smf_port,
-      std::string& smf_api_version, const snssai_t& snssai, const plmn_t& plmn,
-      const std::string& dnn, const std::string& nrf_uri = {});
+      std::string& smf_addr, uint32_t& smf_port, std::string& smf_api_version,
+      const snssai_t& snssai, const plmn_t& plmn, const std::string& dnn,
+      const std::string& nrf_uri = {});
 
   /*
    * Send UE Authentication Request to AUSF

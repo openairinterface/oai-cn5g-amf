@@ -48,7 +48,7 @@ LadnIndication::LadnIndication(const std::vector<bstring>& ladn)
 LadnIndication::~LadnIndication() {}
 
 //------------------------------------------------------------------------------
-void LadnIndication::GetValue(std::vector<bstring>& ladn) {
+void LadnIndication::GetValue(std::vector<bstring>& ladn) const {
   ladn.assign(LADN.begin(), LADN.end());
 }
 

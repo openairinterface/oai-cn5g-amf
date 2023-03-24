@@ -37,7 +37,8 @@ EapMessage::EapMessage(uint8_t iei) : Type6NasIe(iei), eap_() {
 }
 
 //------------------------------------------------------------------------------
-EapMessage::EapMessage(const uint8_t iei, bstring eap) : Type6NasIe(iei) {
+EapMessage::EapMessage(const uint8_t iei, const bstring& eap)
+    : Type6NasIe(iei) {
   eap_ = bstrcpy(eap);
   SetLengthIndicator(blength(eap));
 }
