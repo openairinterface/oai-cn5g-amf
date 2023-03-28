@@ -344,6 +344,13 @@ class amf_n2 : public ngap::ngap_app {
       const sctp_assoc_id_t& gnb_assoc_id,
       std::vector<std::shared_ptr<ue_ngap_context>>& ue_contexts);
 
+  /*
+   * Handle ITTI message (UECapabilityIndication)
+   * @param [itti_ue_radio_capability_indication&]: ITTI message
+   * @return void
+   */
+  void handle_itti_message(itti_downlink_ue_associated_nrppa_transport& itti_msg);
+
  private:
   std::map<std::pair<uint32_t, uint32_t>, std::shared_ptr<ue_ngap_context>>
       ranid2uecontext;  // ran ue ngap id

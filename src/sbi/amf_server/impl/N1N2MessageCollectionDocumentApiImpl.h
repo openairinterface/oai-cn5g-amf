@@ -37,6 +37,7 @@
 #include <string>
 
 #include "amf_app.hpp"
+#include "mime_parser.hpp"
 
 namespace oai {
 namespace amf {
@@ -54,16 +55,7 @@ class N1N2MessageCollectionDocumentApiImpl
 
   void n1_n2_message_transfer(
       const std::string& ueContextId,
-      const N1N2MessageTransferReqData& n1N2MessageTransferReqData,
-      Pistache::Http::ResponseWriter& response);
-  void n1_n2_message_transfer(
-      const std::string& ueContextId,
-      const N1N2MessageTransferReqData& n1N2MessageTransferReqData,
-      std::string& n1sm_str, Pistache::Http::ResponseWriter& response);
-  void n1_n2_message_transfer(
-      const std::string& ueContextId,
-      const N1N2MessageTransferReqData& n1N2MessageTransferReqData,
-      std::string& n1sm_str, std::string& n2sm_str,
+      std::unordered_map<std::string, mime_part> &parts,
       Pistache::Http::ResponseWriter& response);
 
  private:

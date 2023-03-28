@@ -237,14 +237,14 @@ void amf_sbi::handle_itti_message(
   nlohmann::json pdu_session_update_request = {};
 
   if (itti_msg.is_n1sm_set) {
-    pdu_session_update_request["n1SmMsg"]["contentId"] = "n1SmMsg";
+    pdu_session_update_request[N1_SM_CONTENT_ID]["contentId"] = N1_SM_CONTENT_ID;
     octet_stream_2_hex_stream(
         (uint8_t*) bdata(itti_msg.n1sm), blength(itti_msg.n1sm), n1sm_msg);
   }
 
   if (itti_msg.is_n2sm_set) {
     pdu_session_update_request["n2SmInfoType"] = itti_msg.n2sm_info_type;
-    pdu_session_update_request["n2SmInfo"]["contentId"] = "n2msg";
+    pdu_session_update_request["n2SmInfo"]["contentId"] = N2_SM_CONTENT_ID;
     octet_stream_2_hex_stream(
         (uint8_t*) bdata(itti_msg.n2sm), blength(itti_msg.n2sm), n2sm_msg);
   }
@@ -419,7 +419,7 @@ void amf_sbi::send_pdu_session_update_sm_context_request(
   Logger::amf_sbi().debug("SMF URI: %s", remote_uri.c_str());
 
   nlohmann::json pdu_session_update_request          = {};
-  pdu_session_update_request["n1SmMsg"]["contentId"] = "n1SmMsg";
+  pdu_session_update_request[N1_SM_CONTENT_ID]["contentId"] = N1_SM_CONTENT_ID;
   std::string json_part = pdu_session_update_request.dump();
 
   std::string n1sm_msg = {};
@@ -478,7 +478,7 @@ void amf_sbi::handle_pdu_session_initial_request(
   pdu_session_establishment_request["n1MessageContainer"]["n1MessageClass"] =
       "SM";
   pdu_session_establishment_request["n1MessageContainer"]["n1MessageContent"]
-                                   ["contentId"] = "n1SmMsg";
+                                   ["contentId"] = N1_SM_CONTENT_ID;
 
   std::string json_part = pdu_session_establishment_request.dump();
 
@@ -700,7 +700,7 @@ void amf_sbi::handle_itti_message(itti_sbi_n1_message_notify& itti_msg) {
   Logger::amf_sbi().debug("Target AMF URI: %s", url.c_str());
 
   nlohmann::json json_data          = {};
-  json_data["n1SmMsg"]["contentId"] = "n1SmMsg";
+  json_data[N1_SM_CONTENT_ID]["contentId"] = N1_SM_CONTENT_ID;
   std::string json_part             = json_data.dump();
 
   std::string n1sm_msg = {};

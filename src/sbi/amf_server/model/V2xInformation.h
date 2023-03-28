@@ -11,16 +11,15 @@
  * the class manually.
  */
 /*
- * Arp.h
+ * V2xInformation.h
  *
  *
  */
 
-#ifndef Arp_H_
-#define Arp_H_
+#ifndef V2xInformation_H_
+#define V2xInformation_H_
 
-#include "PreemptionCapability.h"
-#include "PreemptionVulnerability.h"
+#include "N2InfoContent.h"
 #include <nlohmann/json.hpp>
 
 namespace oai::amf::model {
@@ -28,10 +27,10 @@ namespace oai::amf::model {
 /// <summary>
 ///
 /// </summary>
-class Arp {
+class V2xInformation {
  public:
-  Arp();
-  virtual ~Arp() = default;
+  V2xInformation();
+  virtual ~V2xInformation() = default;
 
   /// <summary>
   /// Validate the current data in the model. Throws a ValidationException on
@@ -51,40 +50,28 @@ class Arp {
   /// </summary>
   bool validate(std::stringstream& msg, const std::string& pathPrefix) const;
 
-  bool operator==(const Arp& rhs) const;
-  bool operator!=(const Arp& rhs) const;
+  bool operator==(const V2xInformation& rhs) const;
+  bool operator!=(const V2xInformation& rhs) const;
 
   /////////////////////////////////////////////
-  /// Arp members
+  /// V2xInformation members
 
-  /// <summary>
-  /// nullable true shall not be used for this attribute
-  /// </summary>
-  int32_t getPriorityLevel() const;
-  void setPriorityLevel(int32_t const value);
   /// <summary>
   ///
   /// </summary>
-  oai::amf::model::PreemptionCapability getPreemptCap() const;
-  void setPreemptCap(oai::amf::model::PreemptionCapability const& value);
-  /// <summary>
-  ///
-  /// </summary>
-  oai::amf::model::PreemptionVulnerability getPreemptVuln() const;
-  void setPreemptVuln(
-      oai::amf::model::PreemptionVulnerability const& value);
+  oai::amf::model::N2InfoContent getN2Pc5Pol() const;
+  void setN2Pc5Pol(oai::amf::model::N2InfoContent const& value);
+  bool n2Pc5PolIsSet() const;
+  void unsetN2Pc5Pol();
 
-  friend void to_json(nlohmann::json& j, const Arp& o);
-  friend void from_json(const nlohmann::json& j, Arp& o);
+  friend void to_json(nlohmann::json& j, const V2xInformation& o);
+  friend void from_json(const nlohmann::json& j, V2xInformation& o);
 
  protected:
-  int32_t m_PriorityLevel;
-
-  oai::amf::model::PreemptionCapability m_PreemptCap;
-
-  oai::amf::model::PreemptionVulnerability m_PreemptVuln;
+  oai::amf::model::N2InfoContent m_N2Pc5Pol;
+  bool m_N2Pc5PolIsSet;
 };
 
 }  // namespace oai::amf::model
 
-#endif /* Arp_H_ */
+#endif /* V2xInformation_H_ */

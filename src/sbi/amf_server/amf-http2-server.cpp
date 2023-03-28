@@ -83,7 +83,7 @@ void amf_http2_server::start() {
               return;
             }
 
-            std::vector<mime_part> parts = {};
+            std::unordered_map<std::string, mime_part> parts = {};
             sp.get_mime_parts(parts);
             uint8_t size = parts.size();
             Logger::amf_server().debug("Number of MIME parts %d", size);
@@ -98,31 +98,28 @@ void amf_http2_server::start() {
               return;
             }
 
-            Logger::amf_server().debug(
-                "Request body, part 1: \n%s", parts[0].body.c_str());
-            Logger::amf_server().debug(
-                "Request body, part 2: \n %s", parts[1].body.c_str());
+            for(auto it: parts) {
+              Logger::amf_server().debug("MIME part: %s (%d)", it.first.c_str(), it.second.body.size());
+            }
 
             bool is_ngap = false;
             if (size > 2) {
               is_ngap = true;
-              Logger::amf_server().debug(
-                  "Request body, part 3: \n %s", parts[2].body.c_str());
             }
 
             N1N2MessageTransferReqData n1N2MessageTransferReqData = {};
 
             try {
-              nlohmann::json::parse(parts[0].body.c_str())
+              nlohmann::json::parse(parts["root"].body.c_str())
                   .get_to(n1N2MessageTransferReqData);
               if (!is_ngap)
                 this->n1_n2_message_transfer_handler(
-                    ue_context_id, n1N2MessageTransferReqData, parts[1].body,
+                    ue_context_id, n1N2MessageTransferReqData, parts[N1_SM_CONTENT_ID].body,
                     res);
               else
                 this->n1_n2_message_transfer_handler(
-                    ue_context_id, n1N2MessageTransferReqData, parts[1].body,
-                    res, parts[2].body);
+                    ue_context_id, n1N2MessageTransferReqData, parts[N1_SM_CONTENT_ID].body,
+                    res, parts[N2_SM_CONTENT_ID].body);
             } catch (nlohmann::detail::exception& e) {
               Logger::amf_server().warn(
                   "Cannot parse the JSON data (error: %s)!", e.what());
@@ -337,11 +334,14 @@ void amf_http2_server::n1_n2_message_transfer_handler(
 
   itti_msg->pdu_session_id =
       (uint8_t) n1N2MessageTransferReqData.getPduSessionId();
-  itti_msg->n2sm_info_type = n1N2MessageTransferReqData.getN2InfoContainer()
+  nlohmann::json ngap_ie_type = {};
+  to_json(
+      ngap_ie_type,
+      n1N2MessageTransferReqData.getN2InfoContainer()
                                  .getSmInfo()
                                  .getN2InfoContent()
-                                 .getNgapIeType()
-                                 .get_value();
+                                 .getNgapIeType().getValue());
+  itti_msg->n2sm_info_type = ngap_ie_type.dump();
 
   // For Paging
   if (n1N2MessageTransferReqData.ppiIsSet()) {

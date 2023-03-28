@@ -326,6 +326,21 @@ void amf_app::handle_itti_message(
           "Could not send ITTI message %s to task TASK_AMF_N2",
           paging_msg->get_msg_name());
     }
+  } else if (itti_msg.is_nrppa_pdu_set) {
+    Logger::amf_app().info(
+        "Handle ITTI N1N2 Message Transfer Request for NRPPa PDU");
+    std::shared_ptr<itti_downlink_ue_associated_nrppa_transport> dl_msg =
+        std::make_shared<itti_downlink_ue_associated_nrppa_transport>(TASK_AMF_APP, TASK_AMF_N2);
+    dl_msg->nrppa_pdu = bstrcpy(itti_msg.nrppa_pdu);
+    dl_msg->routing_id = bstrcpy(itti_msg.routing_id);
+    amf_n1_inst->supi_2_amf_id(itti_msg.supi, dl_msg->amf_ue_ngap_id);
+    amf_n1_inst->supi_2_ran_id(itti_msg.supi, dl_msg->ran_ue_ngap_id);
+    int ret = itti_inst->send_msg(dl_msg);
+    if (ret != RETURNok) {
+      Logger::amf_app().error(
+          "Could not send ITTI message %s to task TASK_AMF_N2",
+          dl_msg->get_msg_name());
+    }
   } else {
     Logger::amf_app().info("Handle ITTI N1N2 Message Transfer Request");
     // Encode DL NAS TRANSPORT message(NAS message)

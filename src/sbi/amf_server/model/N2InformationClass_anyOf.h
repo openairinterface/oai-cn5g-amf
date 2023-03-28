@@ -11,16 +11,14 @@
  * the class manually.
  */
 /*
- * Arp.h
+ * N2InformationClass_anyOf.h
  *
  *
  */
 
-#ifndef Arp_H_
-#define Arp_H_
+#ifndef N2InformationClass_anyOf_H_
+#define N2InformationClass_anyOf_H_
 
-#include "PreemptionCapability.h"
-#include "PreemptionVulnerability.h"
 #include <nlohmann/json.hpp>
 
 namespace oai::amf::model {
@@ -28,10 +26,24 @@ namespace oai::amf::model {
 /// <summary>
 ///
 /// </summary>
-class Arp {
+class N2InformationClass_anyOf {
  public:
-  Arp();
-  virtual ~Arp() = default;
+  N2InformationClass_anyOf();
+  virtual ~N2InformationClass_anyOf() = default;
+
+  enum class eN2InformationClass_anyOf {
+    // To have a valid default value.
+    // Avoiding name clashes with user defined
+    // enum values
+    INVALID_VALUE_OPENAPI_GENERATED = 0,
+    SM,
+    NRPPA,
+    PWS,
+    PWS_BCAL,
+    PWS_RF,
+    RAN,
+    V2X
+  };
 
   /// <summary>
   /// Validate the current data in the model. Throws a ValidationException on
@@ -51,40 +63,24 @@ class Arp {
   /// </summary>
   bool validate(std::stringstream& msg, const std::string& pathPrefix) const;
 
-  bool operator==(const Arp& rhs) const;
-  bool operator!=(const Arp& rhs) const;
+  bool operator==(const N2InformationClass_anyOf& rhs) const;
+  bool operator!=(const N2InformationClass_anyOf& rhs) const;
 
   /////////////////////////////////////////////
-  /// Arp members
+  /// N2InformationClass_anyOf members
 
-  /// <summary>
-  /// nullable true shall not be used for this attribute
-  /// </summary>
-  int32_t getPriorityLevel() const;
-  void setPriorityLevel(int32_t const value);
-  /// <summary>
-  ///
-  /// </summary>
-  oai::amf::model::PreemptionCapability getPreemptCap() const;
-  void setPreemptCap(oai::amf::model::PreemptionCapability const& value);
-  /// <summary>
-  ///
-  /// </summary>
-  oai::amf::model::PreemptionVulnerability getPreemptVuln() const;
-  void setPreemptVuln(
-      oai::amf::model::PreemptionVulnerability const& value);
+  N2InformationClass_anyOf::eN2InformationClass_anyOf getValue() const;
+  void setValue(N2InformationClass_anyOf::eN2InformationClass_anyOf value);
 
-  friend void to_json(nlohmann::json& j, const Arp& o);
-  friend void from_json(const nlohmann::json& j, Arp& o);
+  friend void to_json(nlohmann::json& j, const N2InformationClass_anyOf& o);
+  friend void from_json(const nlohmann::json& j, N2InformationClass_anyOf& o);
 
  protected:
-  int32_t m_PriorityLevel;
-
-  oai::amf::model::PreemptionCapability m_PreemptCap;
-
-  oai::amf::model::PreemptionVulnerability m_PreemptVuln;
+  N2InformationClass_anyOf::eN2InformationClass_anyOf m_value =
+      N2InformationClass_anyOf::eN2InformationClass_anyOf::
+          INVALID_VALUE_OPENAPI_GENERATED;
 };
 
 }  // namespace oai::amf::model
 
-#endif /* Arp_H_ */
+#endif /* N2InformationClass_anyOf_H_ */

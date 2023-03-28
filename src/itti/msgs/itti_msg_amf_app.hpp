@@ -93,8 +93,11 @@ class itti_n1n2_message_transfer_request : public itti_msg_amf_app {
     supi        = {};
     n1sm        = nullptr;
     n2sm        = nullptr;
+    nrppa_pdu   = nullptr;
+    routing_id  = nullptr;
     is_n2sm_set = false;
     is_n1sm_set = false;
+    is_nrppa_pdu_set = false;
     is_ppi_set  = false;
 
     n2sm_info_type = {};
@@ -107,8 +110,11 @@ class itti_n1n2_message_transfer_request : public itti_msg_amf_app {
     supi        = i.supi;
     n1sm        = i.n1sm;
     n2sm        = i.n2sm;
+    nrppa_pdu   = i.nrppa_pdu;
+    routing_id  = i.routing_id;
     is_n2sm_set = i.is_n2sm_set;
     is_n1sm_set = i.is_n1sm_set;
+    is_nrppa_pdu_set = i.is_nrppa_pdu_set;
     is_ppi_set  = i.is_ppi_set;
 
     n2sm_info_type = i.n2sm_info_type;
@@ -119,8 +125,11 @@ class itti_n1n2_message_transfer_request : public itti_msg_amf_app {
   std::string supi;
   bstring n1sm;
   bstring n2sm;
+  bstring nrppa_pdu;
+  bstring routing_id;
   bool is_n2sm_set;
   bool is_n1sm_set;
+  bool is_nrppa_pdu_set;
   uint8_t pdu_session_id;
   std::string n2sm_info_type;
   bool is_ppi_set;

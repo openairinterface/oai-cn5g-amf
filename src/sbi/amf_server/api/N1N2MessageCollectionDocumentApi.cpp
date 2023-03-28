@@ -13,7 +13,6 @@
 
 #include "N1N2MessageCollectionDocumentApi.h"
 #include "Helpers.h"
-#include "mime_parser.hpp"
 #include "logger.hpp"
 #include "amf_config.hpp"
 
@@ -67,12 +66,12 @@ void N1N2MessageCollectionDocumentApi::n1_n2_message_transfer_handler(
   mime_parser sp = {};
   sp.parse(request.body());
 
-  std::vector<mime_part> parts = {};
+  std::unordered_map<std::string, mime_part> parts = {};
   sp.get_mime_parts(parts);
   uint8_t size = parts.size();
   Logger::amf_server().debug("Number of MIME parts %d", size);
 
-  // at least 2 parts for Json data and N1 (+ N2)
+  // at least 2 parts for Json data and (N1 or N2 or N1+N2)
   if (size < 2) {
     response.send(Pistache::Http::Code::Bad_Request);
     Logger::amf_server().debug(
@@ -80,30 +79,14 @@ void N1N2MessageCollectionDocumentApi::n1_n2_message_transfer_handler(
     return;
   }
 
-  Logger::amf_server().debug(
-      "Request body, part 1: \n%s", parts[0].body.c_str());
-  Logger::amf_server().debug(
-      "Request body, part 2: \n %s", parts[1].body.c_str());
-
-  bool is_ngap = false;
-  if (size > 2) {
-    is_ngap = true;
-    Logger::amf_server().debug(
-        "Request body, part 3: \n %s", parts[2].body.c_str());
+  for(auto it: parts) {
+    Logger::amf_server().debug("MIME part: %s (%d)", it.first.c_str(), it.second.body.size());
+    
   }
 
-  N1N2MessageTransferReqData n1N2MessageTransferReqData = {};
-
   try {
-    nlohmann::json::parse(parts[0].body.c_str())
-        .get_to(n1N2MessageTransferReqData);
-    if (!is_ngap)
-      this->n1_n2_message_transfer(
-          ueContextId, n1N2MessageTransferReqData, parts[1].body, response);
-    else
-      this->n1_n2_message_transfer(
-          ueContextId, n1N2MessageTransferReqData, parts[1].body, parts[2].body,
-          response);
+    this->n1_n2_message_transfer(
+          ueContextId, parts, response);
   } catch (nlohmann::detail::exception& e) {
     // send a 400 error
     Logger::amf_server().error(

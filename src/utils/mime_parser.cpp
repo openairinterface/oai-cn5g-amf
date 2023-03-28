@@ -24,52 +24,66 @@
 #include "conversions.hpp"
 #include "output_wrapper.hpp"
 #include "logger.hpp"
+#include "amf.hpp"
 
 extern "C" {
 #include "dynamic_memory_check.h"
 }
 
 bool mime_parser::parse(const std::string& str) {
-  std::string CRLF = "\r\n";
   Logger::amf_app().debug("Parsing the message with Simple Parser");
+  Logger::amf_app().debug("%s", str.c_str());
 
-  // find boundary
-  std::size_t content_type_pos = str.find("Content-Type");  // first part
-  if ((content_type_pos <= 4) or (content_type_pos == std::string::npos))
+  std::string CRLF = "\r\n";
+  std::string DOUBLE_CRLF = "\r\n\r\n";
+  std::string boundary = "----Boundary";
+  std::string boundary_full = "--" + boundary + CRLF;
+
+  std:size_t start_pos, boundary_pos, content_type_pos, content_id_pos, crlf_pos, double_crlf_pos;
+  mime_part p = {};
+
+  start_pos = str.find(boundary_full);
+  if(start_pos == std::string::npos)
     return false;
-
-  std::string boundary_str =
-      str.substr(2, content_type_pos - 4);  // 2 for -- and 2 for CRLF
-  Logger::amf_app().debug("Boundary: %s", boundary_str.c_str());
-  std::string boundary_full = "--" + boundary_str + CRLF;
-  std::string last_boundary = "--" + boundary_str + "--" + CRLF;
-
-  std::size_t crlf_pos           = str.find(CRLF, content_type_pos);
-  std::size_t boundary_pos       = str.find(boundary_full);
-  std::size_t boundary_last_post = str.find(last_boundary);
-
-  while (boundary_pos < boundary_last_post) {
-    mime_part p      = {};
-    content_type_pos = str.find("Content-Type", boundary_pos);
-    crlf_pos         = str.find(CRLF, content_type_pos);
-    if ((content_type_pos == std::string::npos) or
-        (crlf_pos == std::string::npos))
-      break;
-    p.content_type =
-        str.substr(content_type_pos + 14, crlf_pos - (content_type_pos + 14));
-    Logger::amf_app().debug("Content Type: %s", p.content_type.c_str());
-
-    crlf_pos = str.find(CRLF + CRLF, content_type_pos);  // beginning of content
-    boundary_pos = str.find(boundary_full, crlf_pos);
-    if (boundary_pos == std::string::npos) {
-      boundary_pos = str.find(last_boundary, crlf_pos);
+  boundary_pos = str.find(boundary_full, start_pos + boundary_full.length());
+  
+  while(start_pos != std::string::npos){
+    p = {};
+    Logger::amf_server().debug("Debugging :: start_pos = %d, boundary_pos = %d", start_pos, boundary_pos);
+    content_type_pos = str.find("Content-Type", start_pos + boundary_full.length());
+    if(content_type_pos == std::string::npos)
+      return false;
+    crlf_pos = str.find(CRLF, content_type_pos);
+    if(crlf_pos == std::string::npos)
+      return false;
+    p.content_type = str.find(content_type_pos + 14, crlf_pos - content_type_pos - 14);
+    content_id_pos = str.find("Content-Id", start_pos);
+    if(content_id_pos == std::string::npos || content_id_pos > boundary_pos){
+      if(mime_parts.count("root")!=0){
+        Logger::amf_app().debug("Root Mime part already exists (Only 1 part allowed without Content-Id)");
+        return false;
+      }
+      else{
+        p.content_id = "root";
+      }
     }
-    if (boundary_pos > 0) {
-      p.body = str.substr(crlf_pos + 4, boundary_pos - 2 - (crlf_pos + 4));
-      Logger::amf_app().debug("Body: %s", p.body.c_str());
-      mime_parts.push_back(p);
+    else {
+      crlf_pos = str.find(CRLF, content_id_pos);
+      if(crlf_pos == std::string::npos)
+        return false;
+      p.content_id = str.substr(content_id_pos + 12, crlf_pos - content_id_pos - 12);
     }
+    double_crlf_pos = str.find(DOUBLE_CRLF, start_pos + boundary_full.length());
+    if(boundary_pos != std::string::npos)
+      p.body = str.substr(double_crlf_pos + 4, boundary_pos - double_crlf_pos - 4 - 2);
+    else
+      p.body = str.substr(double_crlf_pos + 4, str.length() - double_crlf_pos - 4 - 2);
+    mime_parts[p.content_id] = p;
+    start_pos = boundary_pos;
+    boundary_pos = str.find(boundary_full, start_pos + boundary_full.length());
   }
+  if(mime_parts.size() == 0)
+    return false;
   return true;
 }
 
@@ -79,22 +93,22 @@ uint8_t mime_parser::parse(
     std::string& n2sm) {
   if (!parse(input)) return 0;
   uint8_t size = mime_parts.size();
-  if (size > 0) {
-    jsonData = mime_parts[0].body;
+  if (mime_parts.count("root") != 0) {
+    jsonData = mime_parts["root"].body;
   }
-  if (size > 1) {
-    n1sm = mime_parts[1].body;
+  if (mime_parts.count(N1_SM_CONTENT_ID) != 0) {
+    n1sm = mime_parts[N1_SM_CONTENT_ID].body;
   }
-  if (size > 2) {
-    n2sm = mime_parts[2].body;
+  if (mime_parts.count(N2_SM_CONTENT_ID) != 0) {
+    n2sm = mime_parts[N2_SM_CONTENT_ID].body;
   }
   return size;
 }
 
 //------------------------------------------------------------------------------
-void mime_parser::get_mime_parts(std::vector<mime_part>& parts) const {
+void mime_parser::get_mime_parts(std::unordered_map<std::string, mime_part>& parts) const {
   for (auto it : mime_parts) {
-    parts.push_back(it);
+    parts[it.first] = it.second;
   }
 }
 
@@ -138,12 +152,12 @@ void mime_parser::create_multipart_related_content(
   body.append("--" + boundary + CRLF);
   body.append(
       "Content-Type: application/vnd.3gpp.5gnas" + CRLF +
-      "Content-Id: n1SmMsg" + CRLF);
+      "Content-Id: " + N1_SM_CONTENT_ID + CRLF);
   body.append(CRLF);
   body.append(std::string((char*) n1_msg_hex, n1_message.length() / 2) + CRLF);
   body.append("--" + boundary + CRLF);
   body.append(
-      "Content-Type: application/vnd.3gpp.ngap" + CRLF + "Content-Id: n2msg" +
+      "Content-Type: application/vnd.3gpp.ngap" + CRLF + "Content-Id: " + N2_SM_CONTENT_ID +
       CRLF);
   body.append(CRLF);
   body.append(std::string((char*) n2_msg_hex, n2_message.length() / 2) + CRLF);
@@ -169,10 +183,10 @@ void mime_parser::create_multipart_related_content(
   if (content_type == multipart_related_content_part_e::NAS) {  // NAS
     body.append(
         "Content-Type: application/vnd.3gpp.5gnas" + CRLF +
-        "Content-Id: n1SmMsg" + CRLF);
+        "Content-Id: " + N1_SM_CONTENT_ID + CRLF);
   } else if (content_type == multipart_related_content_part_e::NGAP) {  // NGAP
     body.append(
-        "Content-Type: application/vnd.3gpp.ngap" + CRLF + "Content-Id: n2msg" +
+        "Content-Type: application/vnd.3gpp.ngap" + CRLF + "Content-Id: " + N2_SM_CONTENT_ID +
         CRLF);
   }
   body.append(CRLF);
