@@ -50,7 +50,7 @@ void N1N2MessageCollectionDocumentApiImpl::n1_n2_message_transfer(
 void N1N2MessageCollectionDocumentApiImpl::n1_n2_message_transfer(
     const std::string& ueContextId,
     const N1N2MessageTransferReqData& n1N2MessageTransferReqData,
-    std::string& n1sm_str, Pistache::Http::ResponseWriter& response) {
+    std::string& msg_transfer, Pistache::Http::ResponseWriter& response) {
   Logger::amf_server().debug(
       "Receive N1N2MessageTransfer Request, handling...");
 
@@ -75,7 +75,7 @@ void N1N2MessageCollectionDocumentApiImpl::n1_n2_message_transfer(
     request_valid = false;
   }
 
-  if (n1sm_str.length() == 0) {
+  if (msg_transfer.length() == 0) {
     request_valid = false;
   }
 
@@ -88,22 +88,44 @@ void N1N2MessageCollectionDocumentApiImpl::n1_n2_message_transfer(
     return;
   }
 
-  bstring n1sm = nullptr;
-  conv::msg_str_2_msg_hex(n1sm_str.substr(0, n1sm_str.length()), n1sm);
-  output_wrapper::print_buffer(
-      "amf_server", "Received N1 SM", (uint8_t*) bdata(n1sm), blength(n1sm));
-
-  psc->n1sm              = bstrcpy(n1sm);
-  psc->is_n1sm_avaliable = true;
-  psc->is_n2sm_avaliable = false;
-
   auto itti_msg = std::make_shared<itti_n1n2_message_transfer_request>(
       AMF_SERVER, TASK_AMF_APP);
-  itti_msg->supi        = ueContextId;
-  itti_msg->n1sm        = bstrcpy(n1sm);
-  itti_msg->is_n1sm_set = true;
-  itti_msg->n2sm        = nullptr;
-  itti_msg->is_n2sm_set = false;
+
+  bstring nx_sm = nullptr;
+  conv::msg_str_2_msg_hex(msg_transfer.substr(0, msg_transfer.length()), nx_sm);
+  output_wrapper::print_buffer(
+      "amf_server", "Received N1/N2 SM", (uint8_t*) bdata(nx_sm),
+      blength(nx_sm));
+
+  if (n1N2MessageTransferReqData.n1MessageContainerIsSet()) {  // N1
+    psc->n1sm              = bstrcpy(nx_sm);
+    psc->is_n1sm_avaliable = true;
+    psc->is_n2sm_avaliable = false;
+
+    itti_msg->n1sm        = bstrcpy(nx_sm);
+    itti_msg->is_n1sm_set = true;
+    itti_msg->n2sm        = nullptr;
+    itti_msg->is_n2sm_set = false;
+  } else if (n1N2MessageTransferReqData.n2InfoContainerIsSet()) {  // N2
+    psc->n2sm              = bstrcpy(nx_sm);
+    psc->is_n2sm_avaliable = true;
+    psc->is_n1sm_avaliable = false;
+
+    itti_msg->n2sm        = bstrcpy(nx_sm);
+    itti_msg->is_n2sm_set = true;
+    itti_msg->n1sm        = nullptr;
+    itti_msg->is_n1sm_set = false;
+  } else {
+    // TODO:
+    code = Pistache::Http::Code::Bad_Request;
+    response_json["cause"] =
+        n1_n2_message_transfer_cause_e2str[N1_MSG_NOT_TRANSFERRED];
+    // Send response to the NF Service Consumer (e.g., SMF)
+    response.send(code, response_json.dump().c_str());
+    return;
+  }
+
+  itti_msg->supi = ueContextId;
   itti_msg->pdu_session_id =
       (uint8_t) n1N2MessageTransferReqData.getPduSessionId();
 
@@ -129,7 +151,7 @@ void N1N2MessageCollectionDocumentApiImpl::n1_n2_message_transfer(
         itti_msg->get_msg_name());
   }
 
-  bdestroy_wrapper(&n1sm);
+  bdestroy_wrapper(&nx_sm);
 }
 
 void N1N2MessageCollectionDocumentApiImpl::n1_n2_message_transfer(

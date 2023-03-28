@@ -85,9 +85,7 @@ void N1N2MessageCollectionDocumentApi::n1_n2_message_transfer_handler(
   Logger::amf_server().debug(
       "Request body, part 2: \n %s", parts[1].body.c_str());
 
-  bool is_ngap = false;
-  if (size > 2) {
-    is_ngap = true;
+  if (size > 2) {  // message includes both NAS and NGAP
     Logger::amf_server().debug(
         "Request body, part 3: \n %s", parts[2].body.c_str());
   }
@@ -97,10 +95,11 @@ void N1N2MessageCollectionDocumentApi::n1_n2_message_transfer_handler(
   try {
     nlohmann::json::parse(parts[0].body.c_str())
         .get_to(n1N2MessageTransferReqData);
-    if (!is_ngap)
+
+    if (size == 2)  // contain either N1 or N2 SM
       this->n1_n2_message_transfer(
           ueContextId, n1N2MessageTransferReqData, parts[1].body, response);
-    else
+    else  // both N1 and N2
       this->n1_n2_message_transfer(
           ueContextId, n1N2MessageTransferReqData, parts[1].body, parts[2].body,
           response);

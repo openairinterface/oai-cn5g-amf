@@ -327,23 +327,25 @@ void amf_app::handle_itti_message(
     }
   } else {
     Logger::amf_app().info("Handle ITTI N1N2 Message Transfer Request");
-    // Encode DL NAS TRANSPORT message(NAS message)
-    auto dl = std::make_unique<DLNASTransport>();
-    dl->SetHeader(PLAIN_5GS_MSG);
-    dl->SetPayloadContainerType(N1_SM_INFORMATION);
-    dl->SetPayloadContainer(
-        (uint8_t*) bdata(bstrcpy(itti_msg.n1sm)), blength(itti_msg.n1sm));
-    dl->SetPduSessionId(itti_msg.pdu_session_id);
-
-    uint8_t nas[BUFFER_SIZE_1024];
-    int encoded_size = dl->Encode(nas, BUFFER_SIZE_1024);
-    output_wrapper::print_buffer(
-        "amf_app", "N1N2 message transfer", nas, encoded_size);
 
     std::shared_ptr<itti_downlink_nas_transfer> dl_msg =
         std::make_shared<itti_downlink_nas_transfer>(TASK_AMF_APP, TASK_AMF_N1);
+    if (itti_msg.is_n1sm_set) {
+      // Encode DL NAS TRANSPORT message(NAS message)
+      auto dl = std::make_unique<DLNASTransport>();
+      dl->SetHeader(PLAIN_5GS_MSG);
+      dl->SetPayloadContainerType(N1_SM_INFORMATION);
+      dl->SetPayloadContainer(
+          (uint8_t*) bdata(bstrcpy(itti_msg.n1sm)), blength(itti_msg.n1sm));
+      dl->SetPduSessionId(itti_msg.pdu_session_id);
 
-    dl_msg->dl_nas = blk2bstr(nas, encoded_size);
+      uint8_t nas[BUFFER_SIZE_1024];
+      int encoded_size = dl->Encode(nas, BUFFER_SIZE_1024);
+      output_wrapper::print_buffer(
+          "amf_app", "N1N2 message transfer", nas, encoded_size);
+      dl_msg->dl_nas = blk2bstr(nas, encoded_size);
+    }
+
     if (!itti_msg.is_n2sm_set) {
       dl_msg->is_n2sm_set = false;
     } else {

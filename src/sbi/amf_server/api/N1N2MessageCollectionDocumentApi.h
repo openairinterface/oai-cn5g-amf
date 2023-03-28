@@ -72,7 +72,7 @@ class N1N2MessageCollectionDocumentApi {
   virtual void n1_n2_message_transfer(
       const std::string& ueContextId,
       const N1N2MessageTransferReqData& n1N2MessageTransferReqData,
-      std::string& n1sm_str, Pistache::Http::ResponseWriter& response) = 0;
+      std::string& msg_transer, Pistache::Http::ResponseWriter& response) = 0;
   virtual void n1_n2_message_transfer(
       const std::string& ueContextId,
       const N1N2MessageTransferReqData& n1N2MessageTransferReqData,
