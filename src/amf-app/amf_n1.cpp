@@ -4512,7 +4512,7 @@ void amf_n1::initialize_registration_accept(
   // Network Feature Support
   // TODO: remove hardcoded values
   registration_accept->Set5gsNetworkFeatureSupport(
-      0x01, 0x00);  // 0x00, 0x00 to disable IMS
+      0x00, 0x00);  // 0x00, 0x00 to disable IMS
 
   // Allowed/Rejected/Configured NSSAI
   // Get the list of common SST, SD between UE and AMF
@@ -4590,7 +4590,7 @@ void amf_n1::initialize_registration_accept(
 
   registration_accept->SetAllowedNssai(allowed_nssais);
   registration_accept->SetRejectedNssai(rejected_nssais);
-  registration_accept->SetConfiguredNssai(allowed_nssais);  // TODO
+  // registration_accept->SetConfiguredNssai(allowed_nssais);  // TODO
   return;
 }
 

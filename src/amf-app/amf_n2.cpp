@@ -831,12 +831,6 @@ void amf_n2::handle_itti_message(itti_initial_context_setup_request& itti_msg) {
   guami.AmfSetID   = amf_cfg.guami.AmfSetID;
   guami.AmfPointer = amf_cfg.guami.AmfPointer;
   msg->setGuami(guami);
-  msg->setUESecurityCapability(
-      0xe000, 0xe000, 0xe000,
-      0xe000);  // TODO: remove hardcoded value
-  msg->setSecurityKey((uint8_t*) bdata(itti_msg.kgnb));
-  msg->setNasPdu(itti_msg.nas);
-
   // Get the list allowed NSSAI from the common PLMN between gNB and AMF
   std::vector<S_Nssai> list;
   /*  for (auto p : amf_cfg.plmn_list) {
@@ -859,6 +853,13 @@ void amf_n2::handle_itti_message(itti_initial_context_setup_request& itti_msg) {
     }
   }
   msg->setAllowedNssai(list);
+
+  msg->setUESecurityCapability(
+      0xe000, 0xe000, 0x0000,
+      0x0000);  // TODO: remove hardcoded value
+  msg->setSecurityKey((uint8_t*) bdata(itti_msg.kgnb));
+  msg->setNasPdu(itti_msg.nas);
+
 
   if (itti_msg.is_sr or itti_msg.is_pdu_exist) {
     // Set UE Radio Capability if available

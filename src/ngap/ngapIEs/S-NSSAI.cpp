@@ -132,7 +132,7 @@ std::string S_NSSAI::getSd() const {
 //------------------------------------------------------------------------------
 bool S_NSSAI::encode(Ngap_S_NSSAI_t* s_NSSAI) {
   conv::int8_2_octet_string(sst_, s_NSSAI->sST);
-  if (sd_.has_value()) {
+  if (sd_.has_value() && (sd_.value() != SD_NO_VALUE)) {
     s_NSSAI->sD = (Ngap_SD_t*) calloc(1, sizeof(Ngap_SD_t));
     if (!s_NSSAI->sD) return false;
     if (!EncodeSD(s_NSSAI->sD)) {
