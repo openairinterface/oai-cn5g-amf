@@ -71,8 +71,7 @@ class Arp {
   ///
   /// </summary>
   oai::amf::model::PreemptionVulnerability getPreemptVuln() const;
-  void setPreemptVuln(
-      oai::amf::model::PreemptionVulnerability const& value);
+  void setPreemptVuln(oai::amf::model::PreemptionVulnerability const& value);
 
   friend void to_json(nlohmann::json& j, const Arp& o);
   friend void from_json(const nlohmann::json& j, Arp& o);

@@ -67,8 +67,7 @@ class N1N2MessageTransferReqData {
   ///
   /// </summary>
   oai::amf::model::N1MessageContainer getN1MessageContainer() const;
-  void setN1MessageContainer(
-      oai::amf::model::N1MessageContainer const& value);
+  void setN1MessageContainer(oai::amf::model::N1MessageContainer const& value);
   bool n1MessageContainerIsSet() const;
   void unsetN1MessageContainer();
   /// <summary>

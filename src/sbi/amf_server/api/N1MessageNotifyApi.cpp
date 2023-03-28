@@ -77,14 +77,16 @@ void N1MessageNotifyApi::n1_message_notify_handler(
     return;
   }
 
-  for(auto it: parts) {
-    Logger::amf_server().debug("MIME part: %s (%d)", it.first.c_str(), it.second.body.size());
+  for (auto it : parts) {
+    Logger::amf_server().debug(
+        "MIME part: %s (%d)", it.first.c_str(), it.second.body.size());
   }
 
   try {
     nlohmann::json::parse(parts["root"].body).get_to(n1MessageNotification);
     this->receive_n1_message_notification(
-        ueContextId, n1MessageNotification, parts[N1_SM_CONTENT_ID].body, response);
+        ueContextId, n1MessageNotification, parts[N1_SM_CONTENT_ID].body,
+        response);
   } catch (nlohmann::detail::exception& e) {
     // send a 400 error
     response.send(Pistache::Http::Code::Bad_Request, e.what());

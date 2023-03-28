@@ -79,14 +79,13 @@ void N1N2MessageCollectionDocumentApi::n1_n2_message_transfer_handler(
     return;
   }
 
-  for(auto it: parts) {
-    Logger::amf_server().debug("MIME part: %s (%d)", it.first.c_str(), it.second.body.size());
-    
+  for (auto it : parts) {
+    Logger::amf_server().debug(
+        "MIME part: %s (%d)", it.first.c_str(), it.second.body.size());
   }
 
   try {
-    this->n1_n2_message_transfer(
-          ueContextId, parts, response);
+    this->n1_n2_message_transfer(ueContextId, parts, response);
   } catch (nlohmann::detail::exception& e) {
     // send a 400 error
     Logger::amf_server().error(

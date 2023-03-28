@@ -88,16 +88,15 @@ void from_json(const nlohmann::json& j, N1MessageContainer& o) {
   }
 }
 
-oai::amf::model::N1MessageClass N1MessageContainer::getN1MessageClass()
-    const {
+oai::amf::model::N1MessageClass N1MessageContainer::getN1MessageClass() const {
   return m_N1MessageClass;
 }
 void N1MessageContainer::setN1MessageClass(
     oai::amf::model::N1MessageClass const& value) {
   m_N1MessageClass = value;
 }
-oai::amf::model::RefToBinaryData
-N1MessageContainer::getN1MessageContent() const {
+oai::amf::model::RefToBinaryData N1MessageContainer::getN1MessageContent()
+    const {
   return m_N1MessageContent;
 }
 void N1MessageContainer::setN1MessageContent(

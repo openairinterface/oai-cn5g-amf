@@ -344,8 +344,7 @@ bool N1N2MessageTransferReqData::n2InfoContainerIsSet() const {
 void N1N2MessageTransferReqData::unsetN2InfoContainer() {
   m_N2InfoContainerIsSet = false;
 }
-oai::amf::model::RefToBinaryData N1N2MessageTransferReqData::getMtData()
-    const {
+oai::amf::model::RefToBinaryData N1N2MessageTransferReqData::getMtData() const {
   return m_MtData;
 }
 void N1N2MessageTransferReqData::setMtData(
@@ -427,8 +426,7 @@ void N1N2MessageTransferReqData::unsetPpi() {
 oai::amf::model::Arp N1N2MessageTransferReqData::getArp() const {
   return m_Arp;
 }
-void N1N2MessageTransferReqData::setArp(
-    oai::amf::model::Arp const& value) {
+void N1N2MessageTransferReqData::setArp(oai::amf::model::Arp const& value) {
   m_Arp      = value;
   m_ArpIsSet = true;
 }
@@ -478,8 +476,8 @@ bool N1N2MessageTransferReqData::smfReallocationIndIsSet() const {
 void N1N2MessageTransferReqData::unsetSmfReallocationInd() {
   m_SmfReallocationIndIsSet = false;
 }
-oai::amf::model::AreaOfValidity
-N1N2MessageTransferReqData::getAreaOfValidity() const {
+oai::amf::model::AreaOfValidity N1N2MessageTransferReqData::getAreaOfValidity()
+    const {
   return m_AreaOfValidity;
 }
 void N1N2MessageTransferReqData::setAreaOfValidity(

@@ -462,7 +462,8 @@ class itti_downlink_ue_associated_nrppa_transport : public itti_msg_n2 {
  public:
   itti_downlink_ue_associated_nrppa_transport(
       const task_id_t origin, const task_id_t destination)
-      : itti_msg_n2(DOWNLINK_UE_ASSOCIATED_NRPPA_TRANSPORT, origin, destination) {
+      : itti_msg_n2(
+            DOWNLINK_UE_ASSOCIATED_NRPPA_TRANSPORT, origin, destination) {
     nrppa_pdu      = nullptr;
     routing_id     = nullptr;
     ran_ue_ngap_id = 0;
@@ -479,8 +480,7 @@ class itti_downlink_ue_associated_nrppa_transport : public itti_msg_n2 {
   virtual ~itti_downlink_ue_associated_nrppa_transport() {
     bdestroy_wrapper(&nrppa_pdu);
     bdestroy_wrapper(&routing_id);
-  }
-;
+  };
   uint32_t ran_ue_ngap_id;
   long amf_ue_ngap_id;
   bstring nrppa_pdu;

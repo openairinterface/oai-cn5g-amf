@@ -71,8 +71,7 @@ void from_json(const nlohmann::json& j, V2xInformation& o) {
 oai::amf::model::N2InfoContent V2xInformation::getN2Pc5Pol() const {
   return m_N2Pc5Pol;
 }
-void V2xInformation::setN2Pc5Pol(
-    oai::amf::model::N2InfoContent const& value) {
+void V2xInformation::setN2Pc5Pol(oai::amf::model::N2InfoContent const& value) {
   m_N2Pc5Pol      = value;
   m_N2Pc5PolIsSet = true;
 }

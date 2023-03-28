@@ -330,8 +330,9 @@ void amf_app::handle_itti_message(
     Logger::amf_app().info(
         "Handle ITTI N1N2 Message Transfer Request for NRPPa PDU");
     std::shared_ptr<itti_downlink_ue_associated_nrppa_transport> dl_msg =
-        std::make_shared<itti_downlink_ue_associated_nrppa_transport>(TASK_AMF_APP, TASK_AMF_N2);
-    dl_msg->nrppa_pdu = bstrcpy(itti_msg.nrppa_pdu);
+        std::make_shared<itti_downlink_ue_associated_nrppa_transport>(
+            TASK_AMF_APP, TASK_AMF_N2);
+    dl_msg->nrppa_pdu  = bstrcpy(itti_msg.nrppa_pdu);
     dl_msg->routing_id = bstrcpy(itti_msg.routing_id);
     amf_n1_inst->supi_2_amf_id(itti_msg.supi, dl_msg->amf_ue_ngap_id);
     amf_n1_inst->supi_2_ran_id(itti_msg.supi, dl_msg->ran_ue_ngap_id);
@@ -943,18 +944,21 @@ evsub_id_t amf_app::handle_event_exposure_subscription(
     // Determine Location
     uint8_t http_version = 1;
     if (amf_cfg.support_features.use_http2) http_version = 2;
-    //InputData input_data = {};
-    //LocationData location_data = {};
-    for(const auto &kvp: supi2ue_ctx){
-      nlohmann::json input_data = {};
-      input_data["supi"] = kvp.first;
+    // InputData input_data = {};
+    // LocationData location_data = {};
+    for (const auto& kvp : supi2ue_ctx) {
+      nlohmann::json input_data    = {};
+      input_data["supi"]           = kvp.first;
       nlohmann::json location_data = {};
-      if(amf_sbi_inst->send_determine_location_request(input_data, location_data, http_version)){
-        Logger::amf_app().info("Determine Location Response (SUPI: %s) : \n%s", kvp.first, location_data.dump(2).c_str());
+      if (amf_sbi_inst->send_determine_location_request(
+              input_data, location_data, http_version)) {
+        Logger::amf_app().info(
+            "Determine Location Response (SUPI: %s) : \n%s", kvp.first,
+            location_data.dump(2).c_str());
+      } else {
+        Logger::amf_app().error(
+            "Determine Location failed (SUPI: %s)...\n", kvp.first);
       }
-      else{
-        Logger::amf_app().error("Determine Location failed (SUPI: %s)...\n", kvp.first);
-      } 
     }
     ss->display();
   }

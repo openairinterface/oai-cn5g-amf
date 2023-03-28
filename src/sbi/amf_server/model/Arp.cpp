@@ -93,8 +93,7 @@ void Arp::setPriorityLevel(int32_t const value) {
 oai::amf::model::PreemptionCapability Arp::getPreemptCap() const {
   return m_PreemptCap;
 }
-void Arp::setPreemptCap(
-    oai::amf::model::PreemptionCapability const& value) {
+void Arp::setPreemptCap(oai::amf::model::PreemptionCapability const& value) {
   m_PreemptCap = value;
 }
 oai::amf::model::PreemptionVulnerability Arp::getPreemptVuln() const {

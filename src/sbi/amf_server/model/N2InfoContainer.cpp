@@ -112,8 +112,8 @@ void from_json(const nlohmann::json& j, N2InfoContainer& o) {
   }
 }
 
-oai::amf::model::N2InformationClass
-N2InfoContainer::getN2InformationClass() const {
+oai::amf::model::N2InformationClass N2InfoContainer::getN2InformationClass()
+    const {
   return m_N2InformationClass;
 }
 void N2InfoContainer::setN2InformationClass(
@@ -123,8 +123,7 @@ void N2InfoContainer::setN2InformationClass(
 oai::amf::model::N2SmInformation N2InfoContainer::getSmInfo() const {
   return m_SmInfo;
 }
-void N2InfoContainer::setSmInfo(
-    oai::amf::model::N2SmInformation const& value) {
+void N2InfoContainer::setSmInfo(oai::amf::model::N2SmInformation const& value) {
   m_SmInfo      = value;
   m_SmInfoIsSet = true;
 }
@@ -165,8 +164,7 @@ void N2InfoContainer::unsetNrppaInfo() {
 oai::amf::model::PwsInformation N2InfoContainer::getPwsInfo() const {
   return m_PwsInfo;
 }
-void N2InfoContainer::setPwsInfo(
-    oai::amf::model::PwsInformation const& value) {
+void N2InfoContainer::setPwsInfo(oai::amf::model::PwsInformation const& value) {
   m_PwsInfo      = value;
   m_PwsInfoIsSet = true;
 }
@@ -179,8 +177,7 @@ void N2InfoContainer::unsetPwsInfo() {
 oai::amf::model::V2xInformation N2InfoContainer::getV2xInfo() const {
   return m_V2xInfo;
 }
-void N2InfoContainer::setV2xInfo(
-    oai::amf::model::V2xInformation const& value) {
+void N2InfoContainer::setV2xInfo(oai::amf::model::V2xInformation const& value) {
   m_V2xInfo      = value;
   m_V2xInfoIsSet = true;
 }

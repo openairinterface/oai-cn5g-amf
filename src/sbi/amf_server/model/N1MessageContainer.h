@@ -67,8 +67,7 @@ class N1MessageContainer {
   ///
   /// </summary>
   oai::amf::model::RefToBinaryData getN1MessageContent() const;
-  void setN1MessageContent(
-      oai::amf::model::RefToBinaryData const& value);
+  void setN1MessageContent(oai::amf::model::RefToBinaryData const& value);
   /// <summary>
   ///
   /// </summary>

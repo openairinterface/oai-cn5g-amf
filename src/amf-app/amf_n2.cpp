@@ -218,9 +218,10 @@ void amf_n2_task(void* args_p) {
       } break;
       case DOWNLINK_UE_ASSOCIATED_NRPPA_TRANSPORT: {
         Logger::amf_n2().info(
-            "Received DOWNLINK_UE_ASSOCIATED_NRPPA_TRANSPORT message, handling");
-        itti_downlink_ue_associated_nrppa_transport* m = dynamic_cast<
-            itti_downlink_ue_associated_nrppa_transport*>(msg);
+            "Received DOWNLINK_UE_ASSOCIATED_NRPPA_TRANSPORT message, "
+            "handling");
+        itti_downlink_ue_associated_nrppa_transport* m =
+            dynamic_cast<itti_downlink_ue_associated_nrppa_transport*>(msg);
         amf_n2_inst->handle_itti_message(ref(*m));
       } break;
       case TERMINATE: {
@@ -955,7 +956,7 @@ void amf_n2::handle_itti_message(itti_initial_context_setup_request& itti_msg) {
       // TODO: Mobility RestrictionList
     }
   }
-  
+
   uint8_t buffer[BUFFER_SIZE_2048];
   int encoded_size = msg->Encode(buffer, BUFFER_SIZE_2048);
   bstring b        = blk2bstr(buffer, encoded_size);
@@ -2199,9 +2200,8 @@ void amf_n2::handle_itti_message(
   duant.setRoutingID(itti_msg.routing_id);
 
   uint8_t buffer[BUFFER_SIZE_4096];
-  int encoded_size =
-      duant.Encode(buffer, BUFFER_SIZE_1024);
-  bstring b = blk2bstr(buffer, encoded_size);
+  int encoded_size = duant.Encode(buffer, BUFFER_SIZE_1024);
+  bstring b        = blk2bstr(buffer, encoded_size);
 
   sctp_s_38412.sctp_send_msg(gc->sctp_assoc_id, unc->sctp_stream_send, &b);
   bdestroy_wrapper(&b);

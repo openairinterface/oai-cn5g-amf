@@ -134,8 +134,7 @@ int32_t N2SmInformation::getPduSessionId() const {
 void N2SmInformation::setPduSessionId(int32_t const value) {
   m_PduSessionId = value;
 }
-oai::amf::model::N2InfoContent N2SmInformation::getN2InfoContent()
-    const {
+oai::amf::model::N2InfoContent N2SmInformation::getN2InfoContent() const {
   return m_N2InfoContent;
 }
 void N2SmInformation::setN2InfoContent(
@@ -165,8 +164,7 @@ void N2SmInformation::unsetSNssai() {
 oai::amf::model::Snssai N2SmInformation::getHomePlmnSnssai() const {
   return m_HomePlmnSnssai;
 }
-void N2SmInformation::setHomePlmnSnssai(
-    oai::amf::model::Snssai const& value) {
+void N2SmInformation::setHomePlmnSnssai(oai::amf::model::Snssai const& value) {
   m_HomePlmnSnssai      = value;
   m_HomePlmnSnssaiIsSet = true;
 }
@@ -179,8 +177,7 @@ void N2SmInformation::unsetHomePlmnSnssai() {
 oai::amf::model::Snssai N2SmInformation::getIwkSnssai() const {
   return m_IwkSnssai;
 }
-void N2SmInformation::setIwkSnssai(
-    oai::amf::model::Snssai const& value) {
+void N2SmInformation::setIwkSnssai(oai::amf::model::Snssai const& value) {
   m_IwkSnssai      = value;
   m_IwkSnssaiIsSet = true;
 }

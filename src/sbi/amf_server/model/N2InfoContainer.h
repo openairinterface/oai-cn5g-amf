@@ -65,8 +65,7 @@ class N2InfoContainer {
   ///
   /// </summary>
   oai::amf::model::N2InformationClass getN2InformationClass() const;
-  void setN2InformationClass(
-      oai::amf::model::N2InformationClass const& value);
+  void setN2InformationClass(oai::amf::model::N2InformationClass const& value);
   /// <summary>
   ///
   /// </summary>

@@ -98,8 +98,10 @@ void amf_http2_server::start() {
               return;
             }
 
-            for(auto it: parts) {
-              Logger::amf_server().debug("MIME part: %s (%d)", it.first.c_str(), it.second.body.size());
+            for (auto it : parts) {
+              Logger::amf_server().debug(
+                  "MIME part: %s (%d)", it.first.c_str(),
+                  it.second.body.size());
             }
 
             bool is_ngap = false;
@@ -114,12 +116,13 @@ void amf_http2_server::start() {
                   .get_to(n1N2MessageTransferReqData);
               if (!is_ngap)
                 this->n1_n2_message_transfer_handler(
-                    ue_context_id, n1N2MessageTransferReqData, parts[N1_SM_CONTENT_ID].body,
-                    res);
+                    ue_context_id, n1N2MessageTransferReqData,
+                    parts[N1_SM_CONTENT_ID].body, res);
               else
                 this->n1_n2_message_transfer_handler(
-                    ue_context_id, n1N2MessageTransferReqData, parts[N1_SM_CONTENT_ID].body,
-                    res, parts[N2_SM_CONTENT_ID].body);
+                    ue_context_id, n1N2MessageTransferReqData,
+                    parts[N1_SM_CONTENT_ID].body, res,
+                    parts[N2_SM_CONTENT_ID].body);
             } catch (nlohmann::detail::exception& e) {
               Logger::amf_server().warn(
                   "Cannot parse the JSON data (error: %s)!", e.what());
@@ -336,11 +339,11 @@ void amf_http2_server::n1_n2_message_transfer_handler(
       (uint8_t) n1N2MessageTransferReqData.getPduSessionId();
   nlohmann::json ngap_ie_type = {};
   to_json(
-      ngap_ie_type,
-      n1N2MessageTransferReqData.getN2InfoContainer()
-                                 .getSmInfo()
-                                 .getN2InfoContent()
-                                 .getNgapIeType().getValue());
+      ngap_ie_type, n1N2MessageTransferReqData.getN2InfoContainer()
+                        .getSmInfo()
+                        .getN2InfoContent()
+                        .getNgapIeType()
+                        .getValue());
   itti_msg->n2sm_info_type = ngap_ie_type.dump();
 
   // For Paging

@@ -61,8 +61,7 @@ void from_json(const nlohmann::json& j, N2RanInformation& o) {
   j.at("n2InfoContent").get_to(o.m_N2InfoContent);
 }
 
-oai::amf::model::N2InfoContent N2RanInformation::getN2InfoContent()
-    const {
+oai::amf::model::N2InfoContent N2RanInformation::getN2InfoContent() const {
   return m_N2InfoContent;
 }
 void N2RanInformation::setN2InfoContent(

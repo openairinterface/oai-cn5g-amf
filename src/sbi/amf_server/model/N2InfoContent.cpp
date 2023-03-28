@@ -109,8 +109,7 @@ void N2InfoContent::unsetNgapMessageType() {
 oai::amf::model::NgapIeType N2InfoContent::getNgapIeType() const {
   return m_NgapIeType;
 }
-void N2InfoContent::setNgapIeType(
-    oai::amf::model::NgapIeType const& value) {
+void N2InfoContent::setNgapIeType(oai::amf::model::NgapIeType const& value) {
   m_NgapIeType      = value;
   m_NgapIeTypeIsSet = true;
 }
@@ -123,8 +122,7 @@ void N2InfoContent::unsetNgapIeType() {
 oai::amf::model::RefToBinaryData N2InfoContent::getNgapData() const {
   return m_NgapData;
 }
-void N2InfoContent::setNgapData(
-    oai::amf::model::RefToBinaryData const& value) {
+void N2InfoContent::setNgapData(oai::amf::model::RefToBinaryData const& value) {
   m_NgapData = value;
 }
 

@@ -237,7 +237,8 @@ void amf_sbi::handle_itti_message(
   nlohmann::json pdu_session_update_request = {};
 
   if (itti_msg.is_n1sm_set) {
-    pdu_session_update_request[N1_SM_CONTENT_ID]["contentId"] = N1_SM_CONTENT_ID;
+    pdu_session_update_request[N1_SM_CONTENT_ID]["contentId"] =
+        N1_SM_CONTENT_ID;
     octet_stream_2_hex_stream(
         (uint8_t*) bdata(itti_msg.n1sm), blength(itti_msg.n1sm), n1sm_msg);
   }
@@ -418,7 +419,7 @@ void amf_sbi::send_pdu_session_update_sm_context_request(
 
   Logger::amf_sbi().debug("SMF URI: %s", remote_uri.c_str());
 
-  nlohmann::json pdu_session_update_request          = {};
+  nlohmann::json pdu_session_update_request                 = {};
   pdu_session_update_request[N1_SM_CONTENT_ID]["contentId"] = N1_SM_CONTENT_ID;
   std::string json_part = pdu_session_update_request.dump();
 
@@ -699,9 +700,9 @@ void amf_sbi::handle_itti_message(itti_sbi_n1_message_notify& itti_msg) {
 
   Logger::amf_sbi().debug("Target AMF URI: %s", url.c_str());
 
-  nlohmann::json json_data          = {};
+  nlohmann::json json_data                 = {};
   json_data[N1_SM_CONTENT_ID]["contentId"] = N1_SM_CONTENT_ID;
-  std::string json_part             = json_data.dump();
+  std::string json_part                    = json_data.dump();
 
   std::string n1sm_msg = {};
   octet_stream_2_hex_stream(
@@ -1011,15 +1012,13 @@ bool amf_sbi::send_ue_authentication_request(
 }
 
 bool amf_sbi::send_determine_location_request(
-      const nlohmann::json& input_data,
-      nlohmann::json& location_data,
-      const uint8_t& http_version){
-    Logger::amf_sbi().debug(
-        "Send Determine Location Request to LMF (HTTP version %d)",
-        http_version);
+    const nlohmann::json& input_data, nlohmann::json& location_data,
+    const uint8_t& http_version) {
+  Logger::amf_sbi().debug(
+      "Send Determine Location Request to LMF (HTTP version %d)", http_version);
 
-//    nlohmann::json json_data = {};
-//  to_json(json_data, input_data);
+  //    nlohmann::json json_data = {};
+  //  to_json(json_data, input_data);
   std::string url = amf_cfg.get_lmf_determine_location_uri();
 
   Logger::amf_sbi().debug(
@@ -1029,8 +1028,8 @@ bool amf_sbi::send_determine_location_request(
   Logger::amf_sbi().debug(
       "Send Determine Location Request to AUSF, msg body: \n %s", body.c_str());
 
-  //nlohmann::json response_data = {};
-  uint32_t response_code       = 0;
+  // nlohmann::json response_data = {};
+  uint32_t response_code = 0;
   curl_http_client(
       url, "POST", body, location_data, response_code, http_version);
 
@@ -1043,7 +1042,7 @@ bool amf_sbi::send_determine_location_request(
         "Determine Location, response from LMF\n, %s ",
         location_data.dump().c_str());
     try {
-      //from_json(response_data, location_data);
+      // from_json(response_data, location_data);
     } catch (std::exception& e) {
       return false;
     }

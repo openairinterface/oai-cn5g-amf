@@ -201,7 +201,7 @@ class amf_sbi {
       oai::amf::model::UEAuthenticationCtx& ue_auth_ctx,
       const uint8_t& http_version);
 
-    /*
+  /*
    * Send Determine Location Request to LMF
    * @param [const oai::amf::model::InputData&] input_data: Input Data
    * @param [oai::amf::model::LocationData& ] location_data: Location Data
@@ -209,8 +209,7 @@ class amf_sbi {
    * @return true if successful, otherwise return false
    */
   bool send_determine_location_request(
-      const nlohmann::json& input_data,
-      nlohmann::json& location_data,
+      const nlohmann::json& input_data, nlohmann::json& location_data,
       const uint8_t& http_version);
 
   /*

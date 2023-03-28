@@ -77,8 +77,7 @@ class PwsInformation {
   /// <summary>
   ///
   /// </summary>
-  std::vector<oai::amf::model::GlobalRanNodeId> getBcEmptyAreaList()
-      const;
+  std::vector<oai::amf::model::GlobalRanNodeId> getBcEmptyAreaList() const;
   void setBcEmptyAreaList(
       std::vector<oai::amf::model::GlobalRanNodeId> const& value);
   bool bcEmptyAreaListIsSet() const;

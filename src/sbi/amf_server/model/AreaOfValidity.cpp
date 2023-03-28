@@ -39,7 +39,7 @@ bool AreaOfValidity::validate(
 
   /* TaiList */ {
     const std::vector<oai::amf::model::Tai>& value = m_TaiList;
-    const std::string currentValuePath = _pathPrefix + ".taiList";
+    const std::string currentValuePath             = _pathPrefix + ".taiList";
 
     if (value.size() < 0) {
       success = false;

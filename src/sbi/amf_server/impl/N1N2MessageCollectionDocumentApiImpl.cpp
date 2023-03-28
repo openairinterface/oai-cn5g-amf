@@ -37,9 +37,9 @@ N1N2MessageCollectionDocumentApiImpl::N1N2MessageCollectionDocumentApiImpl(
     : N1N2MessageCollectionDocumentApi(rtr), m_amf_app(amf_app_inst) {}
 
 void N1N2MessageCollectionDocumentApiImpl::n1_n2_message_transfer(
-      const std::string& ueContextId,
-      std::unordered_map<std::string, mime_part>& parts,
-      Pistache::Http::ResponseWriter& response){
+    const std::string& ueContextId,
+    std::unordered_map<std::string, mime_part>& parts,
+    Pistache::Http::ResponseWriter& response) {
   Logger::amf_server().debug(
       "Receive N1N2MessageTransfer Request, handling...");
 
@@ -49,11 +49,12 @@ void N1N2MessageCollectionDocumentApiImpl::n1_n2_message_transfer(
   Pistache::Http::Code code = Pistache::Http::Code::Ok;
 
   std::string supi = ueContextId;
-  
-  N1N2MessageTransferReqData n1N2MessageTransferReqData = {};
-  nlohmann::json::parse(parts["root"].body.c_str()).get_to(n1N2MessageTransferReqData);
 
-  if(n1N2MessageTransferReqData.n2InfoContainerIsSet()){
+  N1N2MessageTransferReqData n1N2MessageTransferReqData = {};
+  nlohmann::json::parse(parts["root"].body.c_str())
+      .get_to(n1N2MessageTransferReqData);
+
+  if (n1N2MessageTransferReqData.n2InfoContainerIsSet()) {
     // N2 Container Present
     Logger::amf_server().debug(
         "Receive N1N2MessageTransfer Request, handling...");
@@ -64,34 +65,55 @@ void N1N2MessageCollectionDocumentApiImpl::n1_n2_message_transfer(
     Pistache::Http::Code code = Pistache::Http::Code::Ok;
 
     std::string supi = ueContextId;
-    if(n1N2MessageTransferReqData.getN2InfoContainer().getN2InformationClass().getEnumValue() == N2InformationClass_anyOf::eN2InformationClass_anyOf::SM) {
+    if (n1N2MessageTransferReqData.getN2InfoContainer()
+            .getN2InformationClass()
+            .getEnumValue() ==
+        N2InformationClass_anyOf::eN2InformationClass_anyOf::SM) {
       // N2 SM Container Present
-      Logger::amf_server().debug("N2 Information Class is N2_INFORMATION_CLASS_SM");
       Logger::amf_server().debug(
-        "Key for PDU Session context: SUPI (%s)", supi.c_str());
+          "N2 Information Class is N2_INFORMATION_CLASS_SM");
+      Logger::amf_server().debug(
+          "Key for PDU Session context: SUPI (%s)", supi.c_str());
       std::shared_ptr<pdu_session_context> psc = {};
       bool request_valid                       = true;
 
       if (!amf_app_inst->find_pdu_session_context(
-              supi, (uint8_t) n1N2MessageTransferReqData.getPduSessionId(), psc)) {
+              supi, (uint8_t) n1N2MessageTransferReqData.getPduSessionId(),
+              psc)) {
         Logger::amf_server().error(
             "Cannot get pdu_session_context with SUPI (%s)", supi.c_str());
         request_valid = false;
       }
 
-      if(!n1N2MessageTransferReqData.n1MessageContainerIsSet() || n1N2MessageTransferReqData.getN1MessageContainer().getN1MessageClass().getEnumValue() != N1MessageClass_anyOf::eN1MessageClass_anyOf::SM){
-        Logger::amf_server().error("N1 Message Container is not present or N1 Message Class is not N1_MESSAGE_CLASS_SM");
+      if (!n1N2MessageTransferReqData.n1MessageContainerIsSet() ||
+          n1N2MessageTransferReqData.getN1MessageContainer()
+                  .getN1MessageClass()
+                  .getEnumValue() !=
+              N1MessageClass_anyOf::eN1MessageClass_anyOf::SM) {
+        Logger::amf_server().error(
+            "N1 Message Container is not present or N1 Message Class is not "
+            "N1_MESSAGE_CLASS_SM");
         request_valid = false;
       }
 
-      std::string n1_content_id = n1N2MessageTransferReqData.getN1MessageContainer().getN1MessageContent().getContentId();
-      std::string n2_content_id = n1N2MessageTransferReqData.getN2InfoContainer().getSmInfo().getN2InfoContent().getNgapData().getContentId();
+      std::string n1_content_id =
+          n1N2MessageTransferReqData.getN1MessageContainer()
+              .getN1MessageContent()
+              .getContentId();
+      std::string n2_content_id =
+          n1N2MessageTransferReqData.getN2InfoContainer()
+              .getSmInfo()
+              .getN2InfoContent()
+              .getNgapData()
+              .getContentId();
 
       Logger::amf_server().debug("n1_content_id: %s", n1_content_id.c_str());
       Logger::amf_server().debug("n2_content_id: %s", n2_content_id.c_str());
-      if (parts.count(n1_content_id) == 0 || parts[n1_content_id].body.size() == 0 || parts.count(n2_content_id) == 0 || parts[n2_content_id].body.size() == 0) {
-        Logger::amf_server().error(
-            "Missing n1sm or n2sm Mime Part");
+      if (parts.count(n1_content_id) == 0 ||
+          parts[n1_content_id].body.size() == 0 ||
+          parts.count(n2_content_id) == 0 ||
+          parts[n2_content_id].body.size() == 0) {
+        Logger::amf_server().error("Missing n1sm or n2sm Mime Part");
         request_valid = false;
       }
 
@@ -105,7 +127,10 @@ void N1N2MessageCollectionDocumentApiImpl::n1_n2_message_transfer(
       }
 
       bstring n1sm = nullptr;
-      conv::msg_str_2_msg_hex(parts[n1_content_id].body.substr(0, parts[n1_content_id].body.length()), n1sm);
+      conv::msg_str_2_msg_hex(
+          parts[n1_content_id].body.substr(
+              0, parts[n1_content_id].body.length()),
+          n1sm);
 
       bstring n2sm = nullptr;
       conv::msg_str_2_msg_hex(parts[n2_content_id].body, n2sm);
@@ -114,7 +139,8 @@ void N1N2MessageCollectionDocumentApiImpl::n1_n2_message_transfer(
       psc->is_n1sm_avaliable = true;
       psc->n2sm              = bstrcpy(n2sm);
       psc->is_n2sm_avaliable = true;
-      Logger::amf_server().debug("n2sm size in amf_server(%d)", blength(psc->n2sm));
+      Logger::amf_server().debug(
+          "n2sm size in amf_server(%d)", blength(psc->n2sm));
 
       auto itti_msg = std::make_shared<itti_n1n2_message_transfer_request>(
           AMF_SERVER, TASK_AMF_APP);
@@ -133,7 +159,7 @@ void N1N2MessageCollectionDocumentApiImpl::n1_n2_message_transfer(
                             .getNgapIeType()
                             .getValue());
       std::string ngap_type = ngap_ie_type.dump();
-      ngap_type = ngap_type.substr(1, ngap_type.length()-2);
+      ngap_type             = ngap_type.substr(1, ngap_type.length() - 2);
       Logger::amf_server().debug(
           "This is testing.... NGAP IE Type: %s", ngap_type.c_str());
       itti_msg->n2sm_info_type = ngap_type;
@@ -161,15 +187,23 @@ void N1N2MessageCollectionDocumentApiImpl::n1_n2_message_transfer(
       }
       bdestroy_wrapper(&n1sm);
       bdestroy_wrapper(&n2sm);
-    }
-    else if(n1N2MessageTransferReqData.getN2InfoContainer().getN2InformationClass().getEnumValue() == N2InformationClass_anyOf::eN2InformationClass_anyOf::NRPPA) {
+    } else if (
+        n1N2MessageTransferReqData.getN2InfoContainer()
+            .getN2InformationClass()
+            .getEnumValue() ==
+        N2InformationClass_anyOf::eN2InformationClass_anyOf::NRPPA) {
       // N2 NRPPA Container Present
-      bool request_valid                       = true;
-      std::string n2_content_id = n1N2MessageTransferReqData.getN2InfoContainer().getNrppaInfo().getNrppaPdu().getNgapData().getContentId();
+      bool request_valid = true;
+      std::string n2_content_id =
+          n1N2MessageTransferReqData.getN2InfoContainer()
+              .getNrppaInfo()
+              .getNrppaPdu()
+              .getNgapData()
+              .getContentId();
       Logger::amf_server().debug("n2_content_id: %s", n2_content_id.c_str());
-      if (parts.count(n2_content_id) == 0 || parts[n2_content_id].body.size() == 0) {
-        Logger::amf_server().error(
-            "Missing N2 Mime Part");
+      if (parts.count(n2_content_id) == 0 ||
+          parts[n2_content_id].body.size() == 0) {
+        Logger::amf_server().error("Missing N2 Mime Part");
         request_valid = false;
       }
 
@@ -182,11 +216,14 @@ void N1N2MessageCollectionDocumentApiImpl::n1_n2_message_transfer(
         return;
       }
 
-      bstring nrppa_pdu = nullptr;
+      bstring nrppa_pdu  = nullptr;
       bstring routing_id = nullptr;
       conv::msg_str_2_msg_hex(parts[n2_content_id].body, nrppa_pdu);
-      conv::string_2_bstring(n1N2MessageTransferReqData.getN2InfoContainer()
-                            .getNrppaInfo().getNfId(), routing_id);
+      conv::string_2_bstring(
+          n1N2MessageTransferReqData.getN2InfoContainer()
+              .getNrppaInfo()
+              .getNfId(),
+          routing_id);
       auto itti_msg = std::make_shared<itti_n1n2_message_transfer_request>(
           AMF_SERVER, TASK_AMF_APP);
       itti_msg->supi        = ueContextId;
@@ -195,7 +232,7 @@ void N1N2MessageCollectionDocumentApiImpl::n1_n2_message_transfer(
       itti_msg->nrppa_pdu   = bstrcpy(nrppa_pdu);
       itti_msg->routing_id  = bstrcpy(routing_id);
 
-      itti_msg->is_nrppa_pdu_set = true;
+      itti_msg->is_nrppa_pdu_set  = true;
       nlohmann::json ngap_ie_type = {};
       to_json(
           ngap_ie_type, n1N2MessageTransferReqData.getN2InfoContainer()
@@ -204,7 +241,7 @@ void N1N2MessageCollectionDocumentApiImpl::n1_n2_message_transfer(
                             .getNgapIeType()
                             .getValue());
       std::string ngap_type = ngap_ie_type.dump();
-      ngap_type = ngap_type.substr(1, ngap_type.length()-2);
+      ngap_type             = ngap_type.substr(1, ngap_type.length() - 2);
       Logger::amf_server().debug(
           "This is testing.... NGAP IE Type: %s", ngap_type.c_str());
       itti_msg->n2sm_info_type = ngap_type;
@@ -218,29 +255,35 @@ void N1N2MessageCollectionDocumentApiImpl::n1_n2_message_transfer(
             itti_msg->get_msg_name());
       }
       bdestroy_wrapper(&nrppa_pdu);
-    }
-    else {
+    } else {
       response.send(
-        Pistache::Http::Code::Ok,
-        "N1N2MessageCollectionDocumentApiImpl::n1_n2_message_transfer API (Unsupported N2 Message Class)");
+          Pistache::Http::Code::Ok,
+          "N1N2MessageCollectionDocumentApiImpl::n1_n2_message_transfer API "
+          "(Unsupported N2 Message Class)");
     }
-  }
-  else if(n1N2MessageTransferReqData.n1MessageContainerIsSet()){
+  } else if (n1N2MessageTransferReqData.n1MessageContainerIsSet()) {
     // N1 Container Present
-    if(n1N2MessageTransferReqData.getN1MessageContainer().getN1MessageClass().getEnumValue() == N1MessageClass_anyOf::eN1MessageClass_anyOf::SM){
+    if (n1N2MessageTransferReqData.getN1MessageContainer()
+            .getN1MessageClass()
+            .getEnumValue() ==
+        N1MessageClass_anyOf::eN1MessageClass_anyOf::SM) {
       // N1 SM Container Present
       Logger::amf_server().debug(
-        "Key for PDU Session context: SUPI (%s)", supi.c_str());
+          "Key for PDU Session context: SUPI (%s)", supi.c_str());
       std::shared_ptr<pdu_session_context> psc = {};
       bool request_valid                       = true;
       if (!amf_app_inst->find_pdu_session_context(
-              supi, (uint8_t) n1N2MessageTransferReqData.getPduSessionId(), psc)) {
+              supi, (uint8_t) n1N2MessageTransferReqData.getPduSessionId(),
+              psc)) {
         Logger::amf_server().error(
             "Cannot get pdu_session_context with SUPI (%s)", supi.c_str());
         request_valid = false;
       }
 
-      std::string content_id = n1N2MessageTransferReqData.getN1MessageContainer().getN1MessageContent().getContentId();
+      std::string content_id =
+          n1N2MessageTransferReqData.getN1MessageContainer()
+              .getN1MessageContent()
+              .getContentId();
       Logger::amf_server().debug("n1_content_id: %s", content_id.c_str());
 
       if (parts.count(content_id) == 0 || parts[content_id].body.size() == 0) {
@@ -256,16 +299,19 @@ void N1N2MessageCollectionDocumentApiImpl::n1_n2_message_transfer(
       }
 
       bstring n1sm = nullptr;
-      conv::msg_str_2_msg_hex(parts[content_id].body.substr(0, parts[content_id].body.length()), n1sm);
+      conv::msg_str_2_msg_hex(
+          parts[content_id].body.substr(0, parts[content_id].body.length()),
+          n1sm);
       output_wrapper::print_buffer(
-          "amf_server", "Received N1 SM", (uint8_t*) bdata(n1sm), blength(n1sm));
+          "amf_server", "Received N1 SM", (uint8_t*) bdata(n1sm),
+          blength(n1sm));
 
       psc->n1sm              = bstrcpy(n1sm);
       psc->is_n1sm_avaliable = true;
       psc->is_n2sm_avaliable = false;
 
       auto itti_msg = std::make_shared<itti_n1n2_message_transfer_request>(
-      AMF_SERVER, TASK_AMF_APP);
+          AMF_SERVER, TASK_AMF_APP);
       itti_msg->supi        = ueContextId;
       itti_msg->n1sm        = bstrcpy(n1sm);
       itti_msg->is_n1sm_set = true;
@@ -297,20 +343,23 @@ void N1N2MessageCollectionDocumentApiImpl::n1_n2_message_transfer(
       }
 
       bdestroy_wrapper(&n1sm);
-    }
-    else if(n1N2MessageTransferReqData.getN1MessageContainer().getN1MessageClass().getEnumValue() == N1MessageClass_anyOf::eN1MessageClass_anyOf::LPP){
+    } else if (
+        n1N2MessageTransferReqData.getN1MessageContainer()
+            .getN1MessageClass()
+            .getEnumValue() ==
+        N1MessageClass_anyOf::eN1MessageClass_anyOf::LPP) {
       // N1 LPP Container Present
       response.send(
-        Pistache::Http::Code::Ok,
-        "N1N2MessageCollectionDocumentApiImpl::n1_n2_message_transfer API (Unsupported N1 Message Class)");
-    }
-    else {
+          Pistache::Http::Code::Ok,
+          "N1N2MessageCollectionDocumentApiImpl::n1_n2_message_transfer API "
+          "(Unsupported N1 Message Class)");
+    } else {
       response.send(
-        Pistache::Http::Code::Ok,
-        "N1N2MessageCollectionDocumentApiImpl::n1_n2_message_transfer API (Unsupported N1 Message Class)");
+          Pistache::Http::Code::Ok,
+          "N1N2MessageCollectionDocumentApiImpl::n1_n2_message_transfer API "
+          "(Unsupported N1 Message Class)");
     }
   }
-
 }
 
 }  // namespace api
