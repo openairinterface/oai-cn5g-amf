@@ -221,22 +221,22 @@ class amf_n1 {
   bool remove_supi_2_ran_id(const std::string& supi);
 
   /*
-   * Get UE NAS context associated with an IMSI
-   * @param [const std::string&] imsi: UE IMSI
+   * Get UE NAS context associated with an SUPI
+   * @param [const std::string&] imsi: UE SUPI
    * @param [const std::shared_ptr<nas_context>&] nc: pointer to UE NAS context
    * @return true if the NAS context exists and is not null, otherwise return
    * false
    */
-  bool imsi_2_nas_context(
+  bool supi_2_nas_context(
       const std::string& imsi, std::shared_ptr<nas_context>&) const;
 
   /*
-   * Store an UE NAS context associated with an IMSI
-   * @param [const std::string&] imsi: UE IMSI
+   * Store an UE NAS context associated with an SUPI
+   * @param [const std::string&] imsi: UE SUPI
    * @param [const std::shared_ptr<nas_context>&] nc: pointer to UE NAS context
    * @return void
    */
-  void set_imsi_2_nas_context(
+  void set_supi_2_nas_context(
       const std::string& imsi, const std::shared_ptr<nas_context>& nc);
 
   /*
@@ -244,7 +244,7 @@ class amf_n1 {
    * @param [const std::string&] imsi: UE IMSI
    * @return true if successful, otherwise return false
    */
-  bool remove_imsi_2_nas_context(const std::string& imsi);
+  bool remove_supi_2_nas_context(const std::string& imsi);
 
   /*
    * Perform Registration procedure
@@ -366,7 +366,7 @@ class amf_n1 {
 
   /*
    * Encode the NAS message with corresponding integrity and ciphered algorithms
-   * @param [nas_secu_ctx*] nsc: NAS Security context
+   * @param [nas_secu_ctx&] nsc: NAS Security context
    * @param [bool] is_secu_ctx_new: indicate the status of the security context
    * (new/old)
    * @param [uint8_t] security_header_type: Security Header Type
@@ -377,13 +377,13 @@ class amf_n1 {
    * @return void
    */
   void encode_nas_message_protected(
-      nas_secu_ctx* nsc, bool is_secu_ctx_new, uint8_t security_header_type,
+      nas_secu_ctx& nsc, bool is_secu_ctx_new, uint8_t security_header_type,
       uint8_t direction, uint8_t* input_nas_buf, int input_nas_len,
       bstring& encrypted_nas);
 
   /*
    * Encrypt with integrity algorithm
-   * @param [nas_secu_ctx*] nsc: NAS Security context
+   * @param [nas_secu_ctx&] nsc: NAS Security context
    * @param [uint8_t] direction: Direction
    * @param [uint8_t*] input_nas_buf: Buffer of the input NAS
    * @param [int] input_nas_les: Length of the buffer
@@ -391,19 +391,19 @@ class amf_n1 {
    * @return true if MAC can be calculated successfully, otherwise return false
    */
   bool nas_message_integrity_protected(
-      nas_secu_ctx* nsc, uint8_t direction, uint8_t* input_nas,
+      nas_secu_ctx& nsc, uint8_t direction, uint8_t* input_nas,
       int input_nas_len, uint32_t& mac);
 
   /*
    * Cipher NAS message with the corresponding ciphered algorithm
-   * @param [nas_secu_ctx*] nsc: NAS Security context
+   * @param [nas_secu_ctx&] nsc: NAS Security context
    * @param [uint8_t] direction: Direction
    * @param [bstring] input_nas: Input NAS message
    * @param [bstring&] output_nas: Output NAS message
    * @return true if message is successfully ciphered, otherwise return false
    */
   bool nas_message_cipher_protected(
-      nas_secu_ctx* nsc, uint8_t direction, bstring input_nas,
+      nas_secu_ctx& nsc, uint8_t direction, bstring input_nas,
       bstring& output_nas);
 
   // NOTE: All the MySQL-related functions are currently implemented in
@@ -994,7 +994,7 @@ class amf_n1 {
       amfueid2nas_context;  // amf ue ngap id
   mutable std::shared_mutex m_amfueid2nas_context;
 
-  std::map<std::string, std::shared_ptr<nas_context>> imsi2nas_context;
+  std::map<std::string, std::shared_ptr<nas_context>> supi2nas_context;
   std::map<std::string, long> supi2amfId;
   std::map<std::string, uint32_t> supi2ranId;
   mutable std::shared_mutex m_nas_context;

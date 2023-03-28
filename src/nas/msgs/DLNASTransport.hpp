@@ -38,7 +38,7 @@ class DLNASTransport : public NasMmPlainHeader {
 
   void SetPayloadContainerType(uint8_t value);
 
-  void SetPayloadContainer(std::vector<PayloadContainerEntry> content);
+  void SetPayloadContainer(const std::vector<PayloadContainerEntry>& content);
   void SetPayloadContainer(uint8_t* buf, int len);
 
   void SetPduSessionId(uint8_t value);

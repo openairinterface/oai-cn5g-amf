@@ -37,43 +37,46 @@ class ULNASTransport : public NasMmPlainHeader {
   int Decode(uint8_t* buf, int len);
 
   void SetPayloadContainerType(uint8_t value);
-  uint8_t GetPayloadContainerType();
+  uint8_t GetPayloadContainerType() const;
 
-  void SetPayloadContainer(std::vector<PayloadContainerEntry> content);
-  void GetPayloadContainer(std::vector<PayloadContainerEntry>& content);
-  void GetPayloadContainer(bstring& content);
+  void SetPayloadContainer(const std::vector<PayloadContainerEntry>& content);
+  void GetPayloadContainer(std::vector<PayloadContainerEntry>& content) const;
+  void GetPayloadContainer(bstring& content) const;
 
-  void SetPduSessionIdentity2(uint8_t value);
-  uint8_t GetPduSessionId();
+  void SetPduSessionId(uint8_t value);
+  bool GetPduSessionId(uint8_t& value) const;
 
-  void SetOldPduSessionIdentity2(uint8_t value);
-  bool GetOldPduSessionId(uint8_t& value);
+  void SetOldPduSessionId(uint8_t value);
+  bool GetOldPduSessionId(uint8_t& value) const;
 
   void SetRequestType(uint8_t value);
-  bool GetRequestType(uint8_t& value);
+  bool GetRequestType(uint8_t& value) const;
 
-  void SetSNssai(SNSSAI_s snssai);
-  bool GetSNssai(SNSSAI_s& snssai);
+  void SetSNssai(const SNSSAI_s& snssai);
+  bool GetSNssai(SNSSAI_s& snssai) const;
 
-  void setDNN(bstring dnn);
-  bool getDnn(bstring& dnn);
+  void SetDnn(const bstring& dnn);
+  bool GetDnn(bstring& dnn) const;
 
   void SetAdditionalInformation(const bstring& value);
+  // TODO: Get
 
   void SetMaPduSessionInformation(uint8_t value);
+  // TODO: Get
 
   void SetReleaseAssistanceIndication(uint8_t value);
+  // TODO: Get
 
  public:
   PayloadContainerType ie_payload_container_type;  // Mandatory
   Payload_Container ie_payload_container;          // Mandatory
 
-  std::optional<PduSessionIdentity2> ie_pdu_session_identity_2;      // Optional
-  std::optional<PduSessionIdentity2> ie_old_pdu_session_identity_2;  // Optional
-  std::optional<RequestType> ie_request_type;                        // Optional
-  std::optional<S_NSSAI> ie_s_nssai;                                 // Optional
-  std::optional<DNN> ie_dnn;                                         // Optional
-  std::optional<AdditionalInformation> ie_additional_information;    // Optional
+  std::optional<PduSessionIdentity2> ie_pdu_session_id;            // Optional
+  std::optional<PduSessionIdentity2> ie_old_pdu_session_id;        // Optional
+  std::optional<RequestType> ie_request_type;                      // Optional
+  std::optional<S_NSSAI> ie_s_nssai;                               // Optional
+  std::optional<DNN> ie_dnn;                                       // Optional
+  std::optional<AdditionalInformation> ie_additional_information;  // Optional
   std::optional<MaPduSessionInformation>
       ie_ma_pdu_session_information;  // Optional
   std::optional<ReleaseAssistanceIndication>

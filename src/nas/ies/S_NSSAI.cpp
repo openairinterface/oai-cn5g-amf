@@ -81,7 +81,7 @@ S_NSSAI::S_NSSAI(std::optional<uint8_t> iei, SNSSAI_s snssai) {
 S_NSSAI::~S_NSSAI() {}
 
 //------------------------------------------------------------------------------
-void S_NSSAI::getValue(SNSSAI_t& snssai) {
+void S_NSSAI::getValue(SNSSAI_t& snssai) const {
   uint8_t len = {0};
   // SST
   snssai.sst = sst_;

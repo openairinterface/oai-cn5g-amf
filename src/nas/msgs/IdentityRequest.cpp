@@ -21,9 +21,6 @@
 
 #include "IdentityRequest.hpp"
 
-#include "3gpp_24.501.hpp"
-#include "logger.hpp"
-
 using namespace nas;
 
 //------------------------------------------------------------------------------
@@ -40,12 +37,12 @@ void IdentityRequest::SetHeader(uint8_t security_header_type) {
 
 //------------------------------------------------------------------------------
 void IdentityRequest::Set5gsIdentityType(uint8_t value) {
-  _5gs_identity_type_.SetValue(value);
+  ie_5gs_identity_type.SetValue(value);
 }
 
 //------------------------------------------------------------------------------
 int IdentityRequest::Encode(uint8_t* buf, int len) {
-  Logger::nas_mm().debug("encoding IdentityRequest message");
+  Logger::nas_mm().debug("Encoding IdentityRequest message");
   int encoded_size    = 0;
   int encoded_ie_size = 0;
 
@@ -57,8 +54,8 @@ int IdentityRequest::Encode(uint8_t* buf, int len) {
   }
   encoded_size += encoded_ie_size;
 
-  int size = _5gs_identity_type_.Encode(buf + encoded_size, len - encoded_size);
-
+  int size =
+      ie_5gs_identity_type.Encode(buf + encoded_size, len - encoded_size);
   if (size != KEncodeDecodeError) {
     encoded_size += size;
   } else {
@@ -90,8 +87,8 @@ int IdentityRequest::Decode(uint8_t* buf, int len) {
   }
   decoded_size += decoded_result;
 
-  decoded_result =
-      _5gs_identity_type_.Decode(buf + decoded_size, len - decoded_size, false);
+  decoded_result = ie_5gs_identity_type.Decode(
+      buf + decoded_size, len - decoded_size, false);
   if (decoded_result == KEncodeDecodeError) {
     Logger::nas_mm().error(
         "Decoding %s error", _5gsIdentityType::GetIeName().c_str());

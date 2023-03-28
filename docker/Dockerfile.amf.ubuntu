@@ -49,17 +49,20 @@ RUN git config --global https.postBuffer 123289600 && \
 
 # Copying source code
 WORKDIR /openair-amf/
-COPY . /openair-amf
+COPY ./build/scripts /openair-amf/build/scripts
+COPY ./build/amf/CMakeLists.txt /openair-amf/build/amf/CMakeLists.txt
+COPY ./build/cmake_modules /openair-amf/cmake_modules
 
 # Installing all the needed libraries/packages to build and run AMF
 WORKDIR /openair-amf/build/scripts
-RUN ./build_amf --install-deps --force && \
-    cp -Rf /openair-amf/build/ext /openair-amf-ext-ref
+RUN ./build_amf --install-deps --force
 
 #---------------------------------------------------------------------
 # BUILDER IMAGE
 #---------------------------------------------------------------------
 FROM oai-amf-base as oai-amf-builder
+# Copying source code
+COPY . /openair-amf
 # Building AMF
 WORKDIR /openair-amf/build/scripts
 RUN ldconfig && \
@@ -127,6 +130,7 @@ COPY --from=oai-amf-builder \
     /usr/local/lib/libnghttp2.so.14 \
     /usr/local/lib/libnghttp2_asio.so.1 \
     /usr/local/lib/libpistache.so \
+    /usr/local/lib/libfmt.so \
 # Ubuntu 18 --> boost 67 will be copied
     /usr/lib/libboost_system.so.1.* \
     /usr/lib/libboost_thread.so.1.* \

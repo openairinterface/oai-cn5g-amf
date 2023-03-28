@@ -22,15 +22,13 @@
 #ifndef _PDU_SESSION_CONTEXT_H_
 #define _PDU_SESSION_CONTEXT_H_
 
-#include <string>
-
 #include "amf.hpp"
 #include "bstrlib.h"
 
 typedef struct smf_context_info_s {
   bool info_available;
   std::string addr;
-  std::string port;  // TODO: define as uint32_t
+  uint32_t port;
   std::string api_version;
   std::string context_location;
 } smf_context_info_t;
@@ -52,7 +50,6 @@ class pdu_session_context {
   smf_context_info_t smf_info;
   snssai_t snssai;
   plmn_t plmn;
-
   bool is_ho_accepted;
 };
 

@@ -22,6 +22,7 @@
 #ifndef _NAS_MM_PLAIN_HEADER_H_
 #define _NAS_MM_PLAIN_HEADER_H_
 
+#include "3gpp_24.501.hpp"
 #include "ExtendedProtocolDiscriminator.hpp"
 #include "NasMessageType.hpp"
 #include "SecurityHeaderType.hpp"
@@ -33,13 +34,11 @@ namespace nas {
 class NasMmPlainHeader {
  public:
   NasMmPlainHeader(){};
-  NasMmPlainHeader(const uint8_t& epd);
-  NasMmPlainHeader(const uint8_t& epd, const uint8_t& msg_type);
+  NasMmPlainHeader(uint8_t epd);
+  NasMmPlainHeader(uint8_t epd, uint8_t msg_type);
   virtual ~NasMmPlainHeader();
 
-  void SetHeader(
-      const uint8_t& epd, const uint8_t& security_header_type,
-      const uint8_t& msg_type);
+  void SetHeader(uint8_t epd, uint8_t security_header_type, uint8_t msg_type);
   void SetMessageName(const std::string& name);
   std::string GetMessageName() const;
   void GetMessageName(std::string& name) const;
@@ -47,14 +46,14 @@ class NasMmPlainHeader {
   int Encode(uint8_t* buf, int len);
   int Decode(const uint8_t* const buf, int len);
 
-  void SetEpd(const uint8_t epd);
-  uint8_t GetEpd();
+  void SetEpd(uint8_t epd);
+  uint8_t GetEpd() const;
 
-  void SetSecurityHeaderType(const uint8_t type);
-  uint8_t GetSecurityHeaderType();
+  void SetSecurityHeaderType(uint8_t type);
+  uint8_t GetSecurityHeaderType() const;
 
-  void SetMessageType(const uint8_t type);
-  uint8_t GetMessageType();
+  void SetMessageType(uint8_t type);
+  uint8_t GetMessageType() const;
 
  private:
   ExtendedProtocolDiscriminator epd_;    // Mandatory

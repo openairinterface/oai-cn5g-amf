@@ -21,12 +21,7 @@
 
 #include "DeregistrationRequest.hpp"
 
-#include <string>
-
-#include "3gpp_24.501.hpp"
 #include "conversions.hpp"
-#include "logger.hpp"
-#include "String2Value.hpp"
 
 using namespace nas;
 
@@ -49,45 +44,45 @@ void DeregistrationRequest::SetHeader(uint8_t security_header_type) {
 }
 
 //------------------------------------------------------------------------------
-void DeregistrationRequest::setDeregistrationType(uint8_t dereg_type) {
+void DeregistrationRequest::SetDeregistrationType(uint8_t dereg_type) {
   ie_deregistrationtype.set(dereg_type);
 }
 
 //------------------------------------------------------------------------------
-void DeregistrationRequest::setDeregistrationType(
-    _5gs_deregistration_type_t type) {
+void DeregistrationRequest::SetDeregistrationType(
+    const _5gs_deregistration_type_t& type) {
   ie_deregistrationtype.set(type);
 }
 
 //------------------------------------------------------------------------------
 void DeregistrationRequest::SetNgKsi(uint8_t tsc, uint8_t key_set_id) {
-  ie_ngKSI.Set(true);  // high position
-  ie_ngKSI.SetTypeOfSecurityContext(tsc);
-  ie_ngKSI.SetNasKeyIdentifier(key_set_id);
+  ie_ng_ksi.Set(true);  // high position
+  ie_ng_ksi.SetTypeOfSecurityContext(tsc);
+  ie_ng_ksi.SetNasKeyIdentifier(key_set_id);
 }
 
 //------------------------------------------------------------------------------
-void DeregistrationRequest::getDeregistrationType(uint8_t& dereg_type) {
+void DeregistrationRequest::GetDeregistrationType(uint8_t& dereg_type) const {
   ie_deregistrationtype.get(dereg_type);
 }
 
 //------------------------------------------------------------------------------
-void DeregistrationRequest::getDeregistrationType(
-    _5gs_deregistration_type_t& type) {
+void DeregistrationRequest::GetDeregistrationType(
+    _5gs_deregistration_type_t& type) const {
   ie_deregistrationtype.get(type);
 }
 
 //------------------------------------------------------------------------------
-bool DeregistrationRequest::getngKSI(uint8_t& ng_ksi) {
+bool DeregistrationRequest::GetNgKsi(uint8_t& ng_ksi) const {
   ng_ksi =
-      (ie_ngKSI.GetTypeOfSecurityContext()) | ie_ngKSI.GetNasKeyIdentifier();
+      (ie_ng_ksi.GetTypeOfSecurityContext()) | ie_ng_ksi.GetNasKeyIdentifier();
   return true;
 }
 
 //------------------------------------------------------------------------------
 void DeregistrationRequest::SetSuciSupiFormatImsi(
-    const string mcc, const string mnc, const string routingInd,
-    uint8_t protection_sch_id, const string msin) {
+    const string& mcc, const string& mnc, const string& routing_ind,
+    uint8_t protection_sch_id, const string& msin) {
   if (protection_sch_id != NULL_SCHEME) {
     Logger::nas_mm().error(
         "Encoding SUCI and SUPI format for IMSI error, please choose correct "
@@ -95,23 +90,24 @@ void DeregistrationRequest::SetSuciSupiFormatImsi(
     return;
   } else {
     ie_5gs_mobility_id.SetSuciWithSupiImsi(
-        mcc, mnc, routingInd, protection_sch_id, msin);
+        mcc, mnc, routing_ind, protection_sch_id, msin);
   }
 }
 
 //------------------------------------------------------------------------------
-void DeregistrationRequest::getMobilityIdentityType(uint8_t& type) {
+void DeregistrationRequest::GetMobilityIdentityType(uint8_t& type) const {
   type = ie_5gs_mobility_id.GetTypeOfIdentity();
 }
 
 //------------------------------------------------------------------------------
-bool DeregistrationRequest::getSuciSupiFormatImsi(nas::SUCI_imsi_t& imsi) {
+bool DeregistrationRequest::GetSuciSupiFormatImsi(
+    nas::SUCI_imsi_t& imsi) const {
   ie_5gs_mobility_id.GetSuciWithSupiImsi(imsi);
   return true;
 }
 
 //------------------------------------------------------------------------------
-std::string DeregistrationRequest::Get5gGuti() {
+std::string DeregistrationRequest::Get5gGuti() const {
   std::optional<nas::_5G_GUTI_t> guti = std::nullopt;
   ie_5gs_mobility_id.Get5gGuti(guti);
   if (!guti.has_value()) return {};
@@ -127,8 +123,10 @@ std::string DeregistrationRequest::Get5gGuti() {
 
 //------------------------------------------------------------------------------
 void DeregistrationRequest::SetSuciSupiFormatImsi(
-    const string mcc, const string mnc, const string routingInd,
-    uint8_t protection_sch_id, uint8_t hnpki, const string msin) {}
+    const string& mcc, const string& mnc, const string& routing_ind,
+    uint8_t protection_sch_id, uint8_t hnpki, const string& msin) {
+  // TODO:
+}
 
 //------------------------------------------------------------------------------
 void DeregistrationRequest::Set5gGuti() {}
@@ -169,7 +167,7 @@ int DeregistrationRequest::Encode(uint8_t* buf, int len) {
     return KEncodeDecodeError;
   }
 
-  size = ie_ngKSI.Encode(buf + encoded_size, len - encoded_size);
+  size = ie_ng_ksi.Encode(buf + encoded_size, len - encoded_size);
   if (size != KEncodeDecodeError) {
     encoded_size++;  // 1/2 octet for Deregistration Type, 1/2 for ngKSI
   } else {
@@ -216,7 +214,7 @@ int DeregistrationRequest::Decode(uint8_t* buf, int len) {
         "Decoding %s error", _5GSDeregistrationType::GetIeName().c_str());
     return KEncodeDecodeError;
   }
-  decoded_result = ie_ngKSI.Decode(
+  decoded_result = ie_ng_ksi.Decode(
       buf + decoded_size, len - decoded_size, true, false);  // 4 higher bits
   if (decoded_result == KEncodeDecodeError) {
     Logger::nas_mm().error(

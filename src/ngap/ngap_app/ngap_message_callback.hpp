@@ -37,6 +37,7 @@
 #include "logger.hpp"
 #include "nas_context.hpp"
 #include "pdu_session_context.hpp"
+#include "output_wrapper.hpp"
 
 using namespace sctp;
 using namespace ngap;
@@ -59,8 +60,10 @@ constexpr uint8_t NGAP_PRESENT_MAX_VALUE        = 3;
 int ngap_amf_handle_ng_setup_request(
     const sctp_assoc_id_t assoc_id, const sctp_stream_id_t stream,
     struct Ngap_NGAP_PDU* message_p) {
-  Logger::ngap().debug("Sending ITTI NG Setup Request message to TASK_AMF_N2");
-  asn_fprint(stderr, &asn_DEF_Ngap_NGAP_PDU, message_p);
+  Logger::ngap().debug(
+      "[gNB Assoc Id %d] Sending ITTI NG Setup Request message to TASK_AMF_N2",
+      assoc_id);
+  output_wrapper::print_asn_msg(&asn_DEF_Ngap_NGAP_PDU, message_p);
   NGSetupRequestMsg* ng_setup_req = new NGSetupRequestMsg();
   if (!ng_setup_req->decodeFromPdu(message_p)) {
     Logger::ngap().error("Decoding NGSetupRequest message error");
@@ -105,9 +108,11 @@ int ngap_handle_ng_setup_failure(
 int ngap_amf_handle_initial_ue_message(
     const sctp_assoc_id_t assoc_id, const sctp_stream_id_t stream,
     struct Ngap_NGAP_PDU* message_p) {
-  Logger::ngap().debug("Sending ITTI Initial UE Message to TASK_AMF_N2");
+  Logger::ngap().debug(
+      "[gNB Assoc ID %d] Sending ITTI Initial UE Message to TASK_AMF_N2",
+      assoc_id);
 
-  asn_fprint(stderr, &asn_DEF_Ngap_NGAP_PDU, message_p);
+  output_wrapper::print_asn_msg(&asn_DEF_Ngap_NGAP_PDU, message_p);
   InitialUEMessageMsg* init_ue_msg = new InitialUEMessageMsg();
   if (!init_ue_msg->decodeFromPdu(message_p)) {
     Logger::ngap().error("Decoding InitialUEMessage error");
@@ -136,7 +141,7 @@ int ngap_amf_handle_uplink_nas_transport(
     struct Ngap_NGAP_PDU* message_p) {
   Logger::ngap().debug(
       "Sending ITTI Uplink NAS Transport message to TASK_AMF_N2");
-  asn_fprint(stderr, &asn_DEF_Ngap_NGAP_PDU, message_p);
+  output_wrapper::print_asn_msg(&asn_DEF_Ngap_NGAP_PDU, message_p);
   UplinkNASTransportMsg* uplink_nas_transport = new UplinkNASTransportMsg();
   if (!uplink_nas_transport->decodeFromPdu(message_p)) {
     Logger::ngap().error("Decoding UplinkNasTransport message error");
@@ -433,7 +438,7 @@ int ngap_amf_handle_pdu_session_resource_setup_response(
           "No UE NAS context with amf_ue_ngap_id (0x%x)", amf_ue_ngap_id);
       return RETURNerror;
     }
-    itti_msg->supi           = "imsi-" + nct->imsi;
+    itti_msg->supi           = conv::imsi_to_supi(nct->imsi);
     itti_msg->pdu_session_id = list[0].pduSessionId;
     itti_msg->n2sm           = blk2bstr(
         list[0].pduSessionResourceSetupResponseTransfer.buf,
@@ -503,7 +508,7 @@ int ngap_amf_handle_pdu_session_resource_setup_response(
         return RETURNerror;
       }
 
-      string supi                              = "imsi-" + nct->imsi;
+      string supi                              = conv::imsi_to_supi(nct->imsi);
       std::shared_ptr<pdu_session_context> psc = {};
       if (amf_app_inst->find_pdu_session_context(
               supi, list_fail[0].pduSessionId, psc)) {
@@ -736,7 +741,7 @@ int handover_preparation(
     struct Ngap_NGAP_PDU* message_p) {
   Logger::ngap().debug("Sending ITTI Handover Preparation to TASK_AMF_N2");
 
-  asn_fprint(stderr, &asn_DEF_Ngap_NGAP_PDU, message_p);
+  output_wrapper::print_asn_msg(&asn_DEF_Ngap_NGAP_PDU, message_p);
   HandoverRequiredMsg* handover_required = new HandoverRequiredMsg();
   if (!handover_required->decodeFromPdu(message_p)) {
     Logger::ngap().error("Decoding HandoverRequired message error");
@@ -782,7 +787,7 @@ int handover_notification(
     const sctp_assoc_id_t assoc_id, const sctp_stream_id_t stream,
     struct Ngap_NGAP_PDU* message_p) {
   Logger::ngap().debug("Sending ITTI Handover Notification to TASK_AMF_N2");
-  asn_fprint(stderr, &asn_DEF_Ngap_NGAP_PDU, message_p);
+  output_wrapper::print_asn_msg(&asn_DEF_Ngap_NGAP_PDU, message_p);
   HandoverNotifyMsg* handover_notify = new HandoverNotifyMsg();
   if (!handover_notify->decodeFromPdu(message_p)) {
     Logger::ngap().error("Decoding HandoverNotify message error");
@@ -813,7 +818,7 @@ int handover_request(
       "Sending ITTI Handover Resource Allocation (HandoverRequest) to "
       "TASK_AMF_N2");
 
-  asn_fprint(stderr, &asn_DEF_Ngap_NGAP_PDU, message_p);
+  output_wrapper::print_asn_msg(&asn_DEF_Ngap_NGAP_PDU, message_p);
   HandoverRequestAck* handover_request_ack = new HandoverRequestAck();
   if (!handover_request_ack->decodeFromPdu(message_p)) {
     Logger::ngap().error("Decoding Handover Request Acknowledge message error");
@@ -899,7 +904,7 @@ int ng_reset(
     struct Ngap_NGAP_PDU* message_p) {
   Logger::ngap().debug("Sending ITTI NG Reset to TASK_AMF_N2");
 
-  asn_fprint(stderr, &asn_DEF_Ngap_NGAP_PDU, message_p);
+  output_wrapper::print_asn_msg(&asn_DEF_Ngap_NGAP_PDU, message_p);
   NGResetMsg* ng_reset = new NGResetMsg();
   if (!ng_reset->decodeFromPdu(message_p)) {
     Logger::ngap().error("Decoding NGReset message error");
@@ -1198,7 +1203,7 @@ int uplink_ran_status_transfer(
   Logger::ngap().debug(
       "Sending ITTI Uplink RAN Status Transfer to TASK_AMF_N2");
 
-  asn_fprint(stderr, &asn_DEF_Ngap_NGAP_PDU, message_p);
+  output_wrapper::print_asn_msg(&asn_DEF_Ngap_NGAP_PDU, message_p);
   UplinkRANStatusTransfer* uplink_ran_status_transfer =
       new UplinkRANStatusTransfer();
   if (!uplink_ran_status_transfer->decodeFromPdu(message_p)) {

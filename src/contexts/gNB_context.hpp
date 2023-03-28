@@ -22,11 +22,9 @@
 #ifndef _GNB_CONTEXT_H_
 #define _GNB_CONTEXT_H_
 
-#include <stdint.h>
-
-#include <string>
 #include <vector>
 
+#include "3gpp_23.003.h"
 #include "NgapIEsStruct.hpp"
 #include "sctp_server.hpp"
 
@@ -53,7 +51,8 @@ class gnb_context {
   ng_gnb_state_t ng_state;
 
   std::string gnb_name;
-  long globalRanNodeId;
+  uint32_t gnb_id;  // Global RAN Node ID
+  plmn_t plmn;
   e_Ngap_PagingDRX default_paging_drx;  // v32, v64, v128, v256
   std::vector<SupportedTaItem_t> s_ta_list;
   bstring ue_radio_cap_ind;

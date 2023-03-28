@@ -72,11 +72,7 @@
     }                                                                          \
   } while (0)
 
-#if DEBUG_IS_ON
 #define _ASSERT_FINAL_ _Assert_SegFault_
-#else
-#define _ASSERT_FINAL_ _Assert_Exit_
-#endif
 
 #define AssertFatal(cOND, ...) _Assert_(cOND, _ASSERT_FINAL_, ##__VA_ARGS__)
 #define DevCheck(cOND, vALUE1, vALUE2, vALUE3)                                 \

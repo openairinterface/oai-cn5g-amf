@@ -26,22 +26,24 @@
 
 namespace nas {
 
-class RegistrationComplete {
+class RegistrationComplete : public NasMmPlainHeader {
  public:
   RegistrationComplete();
   ~RegistrationComplete();
 
   int Encode(uint8_t* buf, int len);
-  int Decode(NasMmPlainHeader* header, uint8_t* buf, int len);
+  int Decode(uint8_t* buf, int len);
 
   void SetHeader(uint8_t security_header_type);
 
-  void SetSorTransparentContainer(uint8_t header, const uint8_t (&value)[16]);
+  void SetSorTransparentContainer(
+      uint8_t header,
+      const uint8_t (&value)[kSorTransparentContainerIeMacLength]);
   // TODO: Get
 
  public:
-  NasMmPlainHeader* plain_header;
-  SorTransparentContainer* ie_sor_transparent_container;
+  std::optional<SorTransparentContainer>
+      ie_sor_transparent_container;  // Optional
 };
 
 }  // namespace nas

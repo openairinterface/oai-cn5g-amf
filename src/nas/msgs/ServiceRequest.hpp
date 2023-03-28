@@ -22,8 +22,9 @@
 #ifndef _SERVICE_REQUEST_H_
 #define _SERVICE_REQUEST_H_
 
-#include "bstrlib.h"
 #include "NasIeHeader.hpp"
+
+#include "bstrlib.h"
 
 namespace nas {
 
@@ -35,15 +36,16 @@ class ServiceRequest : public NasMmPlainHeader {
   void SetHeader(uint8_t security_header_type);
 
   int Encode(uint8_t* buf, int len);
-  int Decode(NasMmPlainHeader* header, uint8_t* buf, int len);
+  int Decode(uint8_t* buf, int len);
 
   void SetNgKsi(uint8_t tsc, uint8_t key_set_id);
   void GetNgKsi(uint8_t& ng_ksi) const;
 
   void SetServiceType(uint8_t value);
-  void GetServiceType(uint8_t& value);
+  void GetServiceType(uint8_t& value) const;
 
-  void Set5gSTmsi(uint16_t amf_set_id, uint8_t amf_pointer, std::string tmsi);
+  void Set5gSTmsi(
+      uint16_t amf_set_id, uint8_t amf_pointer, const std::string& tmsi);
   bool Get5gSTmsi(
       uint16_t& amf_set_id, uint8_t& amf_pointer, std::string& tmsi) const;
 
@@ -58,7 +60,7 @@ class ServiceRequest : public NasMmPlainHeader {
   bool GetAllowedPduSessionStatus(uint16_t& value) const;
   std::optional<uint16_t> GetAllowedPduSessionStatus() const;
 
-  void SetNasMessageContainer(bstring value);
+  void SetNasMessageContainer(const bstring& value);
   bool GetNasMessageContainer(bstring& nas) const;
 
  private:

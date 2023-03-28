@@ -32,7 +32,8 @@ SorTransparentContainer::SorTransparentContainer()
 
 //------------------------------------------------------------------------------
 SorTransparentContainer::SorTransparentContainer(
-    uint8_t header, const uint8_t (&value)[16]) {
+    uint8_t header,
+    const uint8_t (&value)[kSorTransparentContainerIeMacLength]) {
   header_ = header;
   for (int i = 0; i < 16; i++) {
     this->sor_mac_i_[i] = value[i];
@@ -44,7 +45,8 @@ SorTransparentContainer::SorTransparentContainer(
 SorTransparentContainer::~SorTransparentContainer() {}
 
 //------------------------------------------------------------------------------
-void SorTransparentContainer::getValue(uint8_t (&value)[16]) const {
+void SorTransparentContainer::getValue(
+    uint8_t (&value)[kSorTransparentContainerIeMacLength]) const {
   for (int i = 0; i < 16; i++) {
     value[i] = sor_mac_i_[i];
   }

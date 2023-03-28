@@ -39,16 +39,16 @@ class AuthenticationResult : public NasMmPlainHeader {
   void SetNgKsi(uint8_t tsc, uint8_t key_set_id);
   // TODO: Get
 
-  void SetEapMessage(bstring eap);
+  void SetEapMessage(const bstring& eap);
   // TODO: Get
 
   void SetAbba(uint8_t length, uint8_t* value);
   // TODO: Get
 
  public:
-  NasKeySetIdentifier ie_ngKSI;  // Mandatory (1/2 lower octet)
-  EapMessage ie_eap_message;     // Mandatory
-  std::optional<ABBA> ie_abba;   // Optional
+  NasKeySetIdentifier ie_ng_ksi;  // Mandatory (1/2 lower octet)
+  EapMessage ie_eap_message;      // Mandatory
+  std::optional<ABBA> ie_abba;    // Optional
 };
 
 }  // namespace nas

@@ -22,25 +22,19 @@
 #include "nas_context.hpp"
 
 //------------------------------------------------------------------------------
-nas_context::nas_context() : _vector(), _5g_he_av(), _5g_av(), kamf() {
-  security_ctx              = nullptr;
-  is_imsi_present           = false;
-  is_stacs_available        = false;
-  is_auth_vectors_present   = false;
-  auts                      = nullptr;
-  ctx_avaliability_ind      = false;
-  amf_ue_ngap_id            = 0;
-  ran_ue_ngap_id            = 0;
-  _5gmm_state               = {};
-  registration_type         = 0;
-  follow_on_req_pending_ind = false;
-  ngKsi                     = 0;
-  mmCapability              = 0;
-  ueSecurityCapEnc          = 0;
-  ueSecurityCapInt          = 0;
-  ueSecurityCapEEA          = 0;
-  ueSecurityCapEIA          = 0;
-  //  requestedNssai                                        = {};
+nas_context::nas_context() : _5g_he_av(), _5g_av(), kamf(), _5gmm_capability() {
+  is_imsi_present                                       = false;
+  is_stacs_available                                    = false;
+  is_auth_vectors_present                               = false;
+  auts                                                  = nullptr;
+  ctx_avaliability_ind                                  = false;
+  amf_ue_ngap_id                                        = 0;
+  ran_ue_ngap_id                                        = 0;
+  _5gmm_state                                           = {};
+  registration_type                                     = 0;
+  follow_on_req_pending_ind                             = false;
+  ngksi                                                 = 0;
+  ue_security_capability                                = {};
   is_specific_procedure_for_registration_running        = false;
   is_specific_procedure_for_deregistration_running      = false;
   is_specific_procedure_for_eCell_inactivity_running    = false;
@@ -48,21 +42,31 @@ nas_context::nas_context() : _vector(), _5g_he_av(), _5g_av(), kamf() {
   is_common_procedure_for_identification_running        = false;
   is_common_procedure_for_security_mode_control_running = false;
   is_common_procedure_for_nas_transport_running         = false;
-  _security                                             = {};
-  security_ctx                                          = nullptr;
+  security_ctx                                          = std::nullopt;
   is_current_security_available                         = false;
   registration_attempt_counter                          = 0;
   is_imsi_present                                       = false;
   is_5g_guti_present                                    = false;
   is_auth_vectors_present                               = false;
   to_be_register_by_new_suci                            = false;
-  ueSecurityCaplen                                      = 0;
   registration_request_is_set                           = false;
+  registration_request                                  = nullptr;
   nas_status                                            = CM_IDLE;
   is_mobile_reachable_timer_timeout                     = false;
   mobile_reachable_timer                                = ITTI_INVALID_TIMER_ID;
   implicit_deregistration_timer                         = ITTI_INVALID_TIMER_ID;
+  href                                                  = {};
 }
 
 //------------------------------------------------------------------------------
 nas_context::~nas_context() {}
+
+//------------------------------------------------------------------------------
+bool nas_context::get_kamf(
+    uint8_t index, uint8_t (&k)[AUTH_VECTOR_LENGTH_OCTETS]) const {
+  if (index >= MAX_5GS_AUTH_VECTORS) return false;
+  for (uint8_t i = 0; i < AUTH_VECTOR_LENGTH_OCTETS; i++) {
+    k[i] = kamf[index][i];
+  }
+  return true;
+}

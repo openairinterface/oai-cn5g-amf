@@ -37,15 +37,24 @@ class AuthenticationRequest : public NasMmPlainHeader {
   void SetHeader(uint8_t security_header_type);
 
   void SetNgKsi(uint8_t tsc, uint8_t key_set_id);
-  void SetEapMessage(bstring eap);
+  // TODO: Get
+
+  void SetEapMessage(const bstring& eap);
+  // TODO: Get
+
   void SetAbba(uint8_t length, uint8_t* value);
-  void setAuthentication_Parameter_RAND(
+  // TODO: Get
+
+  void SetAuthenticationParameterRand(
       uint8_t value[kAuthenticationParameterRandValueLength]);
-  void setAuthentication_Parameter_AUTN(
+  // TODO: Get
+
+  void SetAuthenticationParameterAutn(
       uint8_t value[kAuthenticationParameterAutnValueLength]);
+  // TODO: Get
 
  public:
-  NasKeySetIdentifier ie_ngKSI;  // Mandatory
+  NasKeySetIdentifier ie_ng_ksi;  // Mandatory
   // Spare half octet (will be processed together with NgKSI)
   ABBA ie_abba;  // Mandatory
 

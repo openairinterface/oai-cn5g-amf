@@ -25,6 +25,7 @@
 
 constexpr uint8_t kSorTransparentContainerMinimumLength   = 20;
 constexpr uint8_t kSorTransparentContainerIeMinimumLength = 17;
+constexpr uint8_t kSorTransparentContainerIeMacLength     = 16;
 constexpr auto kSorTransparentContainerIeName = "SOR Transparent Container";
 
 namespace nas {
@@ -32,7 +33,9 @@ namespace nas {
 class SorTransparentContainer : Type6NasIe {
  public:
   SorTransparentContainer();
-  SorTransparentContainer(uint8_t header, const uint8_t (&value)[16]);
+  SorTransparentContainer(
+      uint8_t header,
+      const uint8_t (&value)[kSorTransparentContainerIeMacLength]);
   ~SorTransparentContainer();
 
   static std::string GetIeName() { return kSorTransparentContainerIeName; }
@@ -40,11 +43,11 @@ class SorTransparentContainer : Type6NasIe {
   int Encode(uint8_t* buf, int len);
   int Decode(uint8_t* buf, int len, bool is_iei);
 
-  void getValue(uint8_t (&value)[16]) const;
+  void getValue(uint8_t (&value)[kSorTransparentContainerIeMacLength]) const;
 
  private:
   uint8_t header_;
-  uint8_t sor_mac_i_[16];
+  uint8_t sor_mac_i_[kSorTransparentContainerIeMacLength];
   std::optional<uint8_t> counter_;
   // Other IEs
 };

@@ -21,9 +21,6 @@
 
 #include "AuthenticationResponse.hpp"
 
-#include "3gpp_24.501.hpp"
-#include "logger.hpp"
-
 using namespace nas;
 
 //------------------------------------------------------------------------------
@@ -49,7 +46,8 @@ void AuthenticationResponse::SetAuthenticationResponseParameter(
 }
 
 //------------------------------------------------------------------------------
-bool AuthenticationResponse::GetAuthenticationResponseParameter(bstring& para) {
+bool AuthenticationResponse::GetAuthenticationResponseParameter(
+    bstring& para) const {
   if (ie_authentication_response_parameter.has_value()) {
     ie_authentication_response_parameter.value().GetValue(para);
     return true;
@@ -64,7 +62,7 @@ void AuthenticationResponse::SetEapMessage(const bstring& eap) {
 }
 
 //------------------------------------------------------------------------------
-bool AuthenticationResponse::GetEapMessage(bstring& eap) {
+bool AuthenticationResponse::GetEapMessage(bstring& eap) const {
   if (ie_eap_message.has_value()) {
     ie_eap_message.value().GetValue(eap);
     return true;

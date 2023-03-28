@@ -20,6 +20,8 @@
  */
 
 #include "PDUSessionResourceHandoverCommandTransfer.hpp"
+
+#include "output_wrapper.hpp"
 extern "C" {
 #include "asn_codecs.h"
 #include "constr_TYPE.h"
@@ -101,8 +103,8 @@ void PDUSessionResourceHandoverCommandTransfer::setUPTransportLayerInformation(
 int PDUSessionResourceHandoverCommandTransfer::
     encodePDUSessionResourceHandoverCommandTransfer(
         uint8_t* buf, int buf_size) {
-  asn_fprint(
-      stderr, &asn_DEF_Ngap_HandoverCommandTransfer, handovercommandtransferIE);
+  output_wrapper::print_asn_msg(
+      &asn_DEF_Ngap_HandoverCommandTransfer, handovercommandtransferIE);
   asn_enc_rval_t er = aper_encode_to_buffer(
       &asn_DEF_Ngap_HandoverCommandTransfer, NULL, handovercommandtransferIE,
       buf, buf_size);

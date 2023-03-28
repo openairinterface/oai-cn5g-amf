@@ -85,7 +85,7 @@ void _5GSDeregistrationType::set(_5gs_deregistration_type_t type) {
 }
 
 //------------------------------------------------------------------------------
-void _5GSDeregistrationType::get(_5gs_deregistration_type_t& type) {
+void _5GSDeregistrationType::get(_5gs_deregistration_type_t& type) const {
   type.switch_off               = u1.bf.switch_off;
   type.re_registration_required = u1.bf.re_registration_required;
   type.access_type              = u1.bf.access_type;
@@ -98,7 +98,7 @@ void _5GSDeregistrationType::set(uint8_t type) {
 }
 
 //------------------------------------------------------------------------------
-void _5GSDeregistrationType::get(uint8_t& type) {
+void _5GSDeregistrationType::get(uint8_t& type) const {
   type = u1.b;
 }
 

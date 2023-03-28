@@ -21,17 +21,15 @@
 
 #include "ServiceReject.hpp"
 
-#include "3gpp_24.501.hpp"
-#include "logger.hpp"
 using namespace nas;
 
 //------------------------------------------------------------------------------
 ServiceReject::ServiceReject()
     : NasMmPlainHeader(EPD_5GS_MM_MSG, SERVICE_REJECT) {
-  ie_PDU_session_status = std::nullopt;
-  ie_T3346_value        = std::nullopt;
+  ie_pdu_session_status = std::nullopt;
+  ie_t3346_value        = std::nullopt;
   ie_eap_message        = std::nullopt;
-  ie_T3448_value        = std::nullopt;
+  ie_t3448_value        = std::nullopt;
 }
 
 //------------------------------------------------------------------------------
@@ -54,12 +52,12 @@ uint8_t ServiceReject::Get5GMmCause() {
 
 //------------------------------------------------------------------------------
 void ServiceReject::SetPduSessionStatus(uint16_t value) {
-  ie_PDU_session_status = std::make_optional<PDUSessionStatus>(value);
+  ie_pdu_session_status = std::make_optional<PDUSessionStatus>(value);
 }
 
 //------------------------------------------------------------------------------
 void ServiceReject::SetT3346Value(uint8_t value) {
-  ie_T3346_value = std::make_optional<GprsTimer2>(kT3346Value, value);
+  ie_t3346_value = std::make_optional<GprsTimer2>(kT3346Value, value);
 }
 
 //------------------------------------------------------------------------------
@@ -69,7 +67,7 @@ void ServiceReject::SetEapMessage(bstring eap) {
 
 //------------------------------------------------------------------------------
 void ServiceReject::SetT3448Value(uint8_t unit, uint8_t value) {
-  ie_T3448_value =
+  ie_t3448_value =
       std::make_optional<GprsTimer3>(kIeiGprsTimer3T3448, unit, value);
 }
 
@@ -87,9 +85,10 @@ int ServiceReject::Encode(uint8_t* buf, int len) {
   encoded_size += encoded_ie_size;
 
   // 5GMM cause
-  int size = ie_5gmm_cause.Encode(buf + encoded_size, len - encoded_size);
-  if (size != KEncodeDecodeError) {
-    encoded_size += size;
+  encoded_ie_size =
+      ie_5gmm_cause.Encode(buf + encoded_size, len - encoded_size);
+  if (encoded_ie_size != KEncodeDecodeError) {
+    encoded_size += encoded_ie_size;
   } else {
     Logger::nas_mm().error(
         "Encoding %s error", _5gmmCause::GetIeName().c_str());
@@ -97,11 +96,11 @@ int ServiceReject::Encode(uint8_t* buf, int len) {
   }
 
   // PDU session status
-  if (!ie_PDU_session_status.has_value()) {
+  if (!ie_pdu_session_status.has_value()) {
     Logger::nas_mm().debug(
         "IE %s is not available", PDUSessionStatus::GetIeName().c_str());
   } else {
-    encoded_ie_size = ie_PDU_session_status.value().Encode(
+    encoded_ie_size = ie_pdu_session_status.value().Encode(
         buf + encoded_size, len - encoded_size);
     if (encoded_ie_size != KEncodeDecodeError) {
       encoded_size += encoded_ie_size;
@@ -113,13 +112,14 @@ int ServiceReject::Encode(uint8_t* buf, int len) {
   }
 
   // T3346 value
-  if (!ie_T3346_value.has_value()) {
+  if (!ie_t3346_value.has_value()) {
     Logger::nas_mm().debug(
         "IE %s is not available", GprsTimer2::GetIeName().c_str());
   } else {
-    if (int size = ie_T3346_value.value().Encode(
-            buf + encoded_size, len - encoded_size)) {
-      encoded_size += size;
+    encoded_ie_size =
+        ie_t3346_value.value().Encode(buf + encoded_size, len - encoded_size);
+    if (encoded_ie_size != KEncodeDecodeError) {
+      encoded_size += encoded_ie_size;
     } else {
       Logger::nas_mm().error(
           "Encoding %s error", GprsTimer2::GetIeName().c_str());
@@ -144,12 +144,12 @@ int ServiceReject::Encode(uint8_t* buf, int len) {
   }
 
   // T3448 value
-  if (!ie_T3448_value.has_value()) {
+  if (!ie_t3448_value.has_value()) {
     Logger::nas_mm().debug(
         "IE %s is not available", GprsTimer3::GetIeName().c_str());
   } else {
     encoded_ie_size =
-        ie_T3448_value.value().Encode(buf + encoded_size, len - encoded_size);
+        ie_t3448_value.value().Encode(buf + encoded_size, len - encoded_size);
     if (encoded_ie_size != KEncodeDecodeError) {
       encoded_size += encoded_ie_size;
     } else {
@@ -187,7 +187,7 @@ int ServiceReject::Decode(uint8_t* buf, int len) {
     return KEncodeDecodeError;
   }
   decoded_size += decoded_result;
-  Logger::nas_mm().debug("Decoded_size(%d)", decoded_size);
+  Logger::nas_mm().debug("Decoded_size (%d)", decoded_size);
 
   // Decode other IEs
   uint8_t octet = 0x00;
@@ -199,27 +199,27 @@ int ServiceReject::Decode(uint8_t* buf, int len) {
     switch (octet) {
       case kIeiPduSessionStatus: {
         Logger::nas_mm().debug("Decoding IEI 0x%x", kIeiPduSessionStatus);
-        PDUSessionStatus ie_PDU_session_status_tmp = {};
-        if ((decoded_result = ie_PDU_session_status_tmp.Decode(
+        PDUSessionStatus ie_pdu_session_status_tmp = {};
+        if ((decoded_result = ie_pdu_session_status_tmp.Decode(
                  buf + decoded_size, len - decoded_size, true)) ==
             KEncodeDecodeError)
-          return decoded_result;
+          return KEncodeDecodeError;
         decoded_size += decoded_result;
-        ie_PDU_session_status =
-            std::optional<PDUSessionStatus>(ie_PDU_session_status_tmp);
+        ie_pdu_session_status =
+            std::optional<PDUSessionStatus>(ie_pdu_session_status_tmp);
         DECODE_U8_VALUE(buf + decoded_size, octet);
         Logger::nas_mm().debug("Next IEI (0x%x)", octet);
       } break;
 
       case kT3346Value: {
         Logger::nas_mm().debug("Decoding IEI 0x5F: T3346 Value");
-        GprsTimer2 ie_T3346_value_tmp(kT3346Value);
-        if ((decoded_result = ie_T3346_value_tmp.Decode(
+        GprsTimer2 ie_t3346_value_tmp(kT3346Value);
+        if ((decoded_result = ie_t3346_value_tmp.Decode(
                  buf + decoded_size, len - decoded_size, true)) ==
             KEncodeDecodeError)
-          return decoded_result;
+          return KEncodeDecodeError;
         decoded_size += decoded_result;
-        ie_T3346_value = std::optional<GprsTimer2>(ie_T3346_value_tmp);
+        ie_t3346_value = std::optional<GprsTimer2>(ie_t3346_value_tmp);
         DECODE_U8_VALUE(buf + decoded_size, octet);
         Logger::nas_mm().debug("Next IEI (0x%x)", octet);
       } break;
@@ -230,7 +230,7 @@ int ServiceReject::Decode(uint8_t* buf, int len) {
         if ((decoded_result = ie_eap_message_tmp.Decode(
                  buf + decoded_size, len - decoded_size, true)) ==
             KEncodeDecodeError)
-          return decoded_result;
+          return KEncodeDecodeError;
         decoded_size += decoded_result;
         ie_eap_message = std::optional<EapMessage>(ie_eap_message_tmp);
         DECODE_U8_VALUE(buf + decoded_size, octet);
@@ -239,13 +239,13 @@ int ServiceReject::Decode(uint8_t* buf, int len) {
 
       case kIeiGprsTimer3T3448: {
         Logger::nas_mm().debug("Decoding IEI 0x%x", kIeiGprsTimer3T3448);
-        GprsTimer3 ie_T3448_value_tmp(kIeiGprsTimer3T3448);
-        if ((decoded_result = ie_T3448_value_tmp.Decode(
+        GprsTimer3 ie_t3448_value_tmp(kIeiGprsTimer3T3448);
+        if ((decoded_result = ie_t3448_value_tmp.Decode(
                  buf + decoded_size, len - decoded_size, true)) ==
             KEncodeDecodeError)
-          return decoded_result;
+          return KEncodeDecodeError;
         decoded_size += decoded_result;
-        ie_T3448_value = std::optional<GprsTimer3>(ie_T3448_value_tmp);
+        ie_t3448_value = std::optional<GprsTimer3>(ie_t3448_value_tmp);
         DECODE_U8_VALUE(buf + decoded_size, octet);
         Logger::nas_mm().debug("Next IEI (0x%x)", octet);
       } break;

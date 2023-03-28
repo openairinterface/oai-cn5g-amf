@@ -23,6 +23,7 @@
 
 #include "conversions.hpp"
 #include "logger.hpp"
+#include "output_wrapper.hpp"
 
 extern "C" {
 #include "dynamic_memory_check.h"
@@ -264,7 +265,7 @@ void HandoverRequest::setAllowedNSSAI(std::vector<S_NSSAI>& list) {
       Logger::ngap().error(
           "Encode PDUSessionResourceHandoverListItem IE error");
   }
-  asn_fprint(stderr, &asn_DEF_Ngap_AllowedNSSAI, &allowedNSSAI);
+  output_wrapper::print_asn_msg(&asn_DEF_Ngap_AllowedNSSAI, &allowedNSSAI);
   Ngap_HandoverRequestIEs_t* ie =
       (Ngap_HandoverRequestIEs_t*) calloc(1, sizeof(Ngap_HandoverRequestIEs_t));
   ie->id            = Ngap_ProtocolIE_ID_id_AllowedNSSAI;

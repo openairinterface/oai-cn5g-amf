@@ -22,6 +22,7 @@
 #include "mime_parser.hpp"
 
 #include "conversions.hpp"
+#include "output_wrapper.hpp"
 #include "logger.hpp"
 
 extern "C" {
@@ -110,11 +111,9 @@ unsigned char* mime_parser::format_string_as_hex(const std::string& str) {
   Logger::amf_app().debug(
       "[Format string as Hex] Input string (%d bytes): %s ", str_len,
       str.c_str());
-  Logger::amf_app().debug("Data (formatted):");
-#if DEBUG_IS_ON
-  for (int i = 0; i < str_len / 2; i++) printf(" %02x ", data_hex[i]);
-  printf("\n");
-#endif
+  output_wrapper::print_buffer(
+      "amf_app", "Data (formatted):", data_hex, str_len / 2);
+
   // free memory
   free_wrapper((void**) &data);
   return data_hex;

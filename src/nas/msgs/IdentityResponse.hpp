@@ -39,11 +39,13 @@ class IdentityResponse : public NasMmPlainHeader {
   void Get5gsMobileIdentity(_5GSMobileIdentity& mobile_identity) const;
 
   void SetSuciSupiFormatImsi(
-      const string mcc, const string mnc, const string routingInd,
-      uint8_t protection_sch_id, const string msin);
+      const std::string& mcc, const std::string& mnc,
+      const std::string& routing_ind, uint8_t protection_sch_id,
+      const std::string& msin);
   void SetSuciSupiFormatImsi(
-      const string mcc, const string mnc, const string routingInd,
-      uint8_t protection_sch_id, uint8_t hnpki, const string msin);
+      const std::string& mcc, const std::string& mnc,
+      const std::string& routing_ind, uint8_t protection_sch_id, uint8_t hnpki,
+      const std::string& msin);
 
   void Set5gGuti();
   void SetImeiImeisv();

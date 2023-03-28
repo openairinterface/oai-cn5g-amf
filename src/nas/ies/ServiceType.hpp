@@ -40,7 +40,7 @@ class ServiceType : public Type1NasIe {
   // int Decode(uint8_t* nuf, int len, bool is_iei, bool is_high);
 
   void SetValue(uint8_t value);
-  void GetValue(uint8_t& value);
+  void GetValue(uint8_t& value) const;
 
  private:
   void SetValue() override;

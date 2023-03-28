@@ -33,28 +33,28 @@ class RegistrationAccept : public NasMmPlainHeader {
 
   void SetHeader(uint8_t security_header_type);
   void GetSecurityHeaderType(uint8_t security_header_type);  // TODO
-  bool verifyHeader();                                       // TODO
+  bool VerifyHeader();                                       // TODO
 
   int Encode(uint8_t* buf, int len);
   int Decode(uint8_t* buf, int len);
 
   void Set5gsRegistrationResult(
-      bool emergency, bool nssaa, bool sms, const uint8_t& value);
+      bool emergency, bool nssaa, bool sms, uint8_t value);
   // TODO: Get
 
   // 5GSMobileIdentity
   void SetSuciSupiFormatImsi(
       const std::string& mcc, const std::string& mnc,
-      const std::string& routingInd, const uint8_t& protection_sch_id,
+      const std::string& routing_ind, uint8_t protection_sch_id,
       const std::string& msin);
   void SetSuciSupiFormatImsi(
       const std::string& mcc, const std::string& mnc,
-      const std::string& routingInd, const uint8_t& protection_sch_id,
+      const std::string& routing_ind, uint8_t protection_sch_id,
       const uint8_t& hnpki, const std::string& msin);
   void Set5gGuti(
       const std::string& mcc, const std::string& mnc,
-      const std::string& amfRegionId, const std::string& amfSetId,
-      const std::string& amfPointer, const uint32_t& tmsi);
+      const std::string& amf_region_id, const std::string& amf_set_id,
+      const std::string& amf_pointer, uint32_t tmsi);
   void SetImeiImeisv();  // TODO:
   void Set5gSTmsi();     // TODO:
   // TODO: Get
@@ -63,12 +63,15 @@ class RegistrationAccept : public NasMmPlainHeader {
   void SetEquivalentPlmns(const std::vector<nas_plmn_t>& list);
   // TODO: Get
 
-  void setTaiList(std::vector<p_tai_t> tai_list);
+  void SetTaiList(const std::vector<p_tai_t>& tai_list);
+  // TODO: Get
 
   void SetAllowedNssai(const std::vector<struct SNSSAI_s>& nssai);
   // TODO: Get
+
   void SetRejectedNssai(const std::vector<Rejected_SNSSAI>& nssai);
   // TODO: Get
+
   void SetConfiguredNssai(const std::vector<struct SNSSAI_s>& nssai);
   // TODO: Get
 
@@ -110,7 +113,7 @@ class RegistrationAccept : public NasMmPlainHeader {
   void SetSorTransparentContainer(uint8_t header, const uint8_t (&value)[16]);
   // TODO: Get
 
-  void SetEapMessage(bstring eap);
+  void SetEapMessage(const bstring& eap);
   // TODO: Get
 
   void SetNssaiInclusionMode(uint8_t value);
@@ -139,10 +142,10 @@ class RegistrationAccept : public NasMmPlainHeader {
   void SetT3324Value(uint8_t unit, uint8_t value);
   // TODO: Get
 
-  void SetUeRadioCapabilityId(bstring value);
+  void SetUeRadioCapabilityId(const bstring& value);
   // TODO: Get
 
-  void SetPendingNssai(std::vector<struct SNSSAI_s> nssai);
+  void SetPendingNssai(const std::vector<struct SNSSAI_s>& nssai);
   // TODO: Get
 
  public:
@@ -156,21 +159,20 @@ class RegistrationAccept : public NasMmPlainHeader {
   std::optional<NSSAI> ie_configured_nssai;           // Optional
   std::optional<_5GS_Network_Feature_Support>
       ie_5gs_network_feature_support;                     // Optional
-  std::optional<PDUSessionStatus> ie_PDU_session_status;  // Optional
+  std::optional<PDUSessionStatus> ie_pdu_session_status;  // Optional
   std::optional<PDU_Session_Reactivation_Result>
       ie_pdu_session_reactivation_result;  // Optional
   std::optional<PDU_Session_Reactivation_Result_Error_Cause>
       ie_pdu_session_reactivation_result_error_cause;  // Optional
   // TODO: std::optional<LadnInformation> ie_ladn_information;               //
   // Optional
-  std::optional<MicoIndication> ie_MICO_indication;  // Optional
+  std::optional<MicoIndication> ie_mico_indication;  // Optional
   std::optional<NetworkSlicingIndication>
       ie_network_slicing_indication;  // Optional
   // TODO: Service Area List
-  std::optional<GprsTimer3> ie_T3512_value;  // Optional
-  std::optional<GprsTimer2>
-      ie_Non_3GPP_de_registration_timer_value;  // Optional
-  std::optional<GprsTimer2> ie_T3502_value;     // Optional
+  std::optional<GprsTimer3> ie_t3512_value;                          // Optional
+  std::optional<GprsTimer2> ie_non_3gpp_deregistration_timer_value;  // Optional
+  std::optional<GprsTimer2> ie_t3502_value;                          // Optional
   // TODO: Emergency number list
   // TODO: Extended emergency number list
   std::optional<SorTransparentContainer>
@@ -185,9 +187,9 @@ class RegistrationAccept : public NasMmPlainHeader {
       ie_eps_bearer_context_status;  // Optional
   std::optional<Extended_DRX_Parameters>
       ie_extended_drx_parameters;            // Optional
-  std::optional<GprsTimer3> ie_T3447_value;  // Optional
-  std::optional<GprsTimer3> ie_T3448_value;  // Optional
-  std::optional<GprsTimer3> ie_T3324_value;  // Optional
+  std::optional<GprsTimer3> ie_t3447_value;  // Optional
+  std::optional<GprsTimer3> ie_t3448_value;  // Optional
+  std::optional<GprsTimer3> ie_t3324_value;  // Optional
   std::optional<UeRadioCapabilityId>
       ie_ue_radio_capability_id;  // Release 16.4.1
   // TODO: UE radio capability ID deletion indication

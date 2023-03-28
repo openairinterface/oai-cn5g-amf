@@ -33,28 +33,30 @@ class RegistrationReject : public NasMmPlainHeader {
 
   void SetHeader(uint8_t security_header_type);
   void GetSecurityHeaderType(uint8_t security_header_type);
-  bool verifyHeader();
+  bool VerifyHeader();
 
   int Encode(uint8_t* buf, int len);
-  int Decode(NasMmPlainHeader* header, uint8_t* buf, int len);
+  int Decode(uint8_t* buf, int len);
 
   void Set5gmmCause(uint8_t value);
   // TODO: Get
 
-  void setGPRS_Timer_2_3346(uint8_t value);
+  void SetT3346(uint8_t value);
   // TODO: Get
 
-  void setGPRS_Timer_2_3502(uint8_t value);
+  void SetT3502(uint8_t value);
   // TOGO: Get
 
-  void SetEapMessage(bstring eap);
+  void SetEapMessage(const bstring& eap);
+  // TODO: Get
+
   void SetRejectedNssai(const std::vector<Rejected_SNSSAI>& nssai);
   // TODO: Get
 
  public:
   _5gmmCause ie_5gmm_cause;                         // Mandatory
-  std::optional<GprsTimer2> ie_T3346_value;         // Optional
-  std::optional<GprsTimer2> ie_T3502_value;         // Optional
+  std::optional<GprsTimer2> ie_t3346_value;         // Optional
+  std::optional<GprsTimer2> ie_t3502_value;         // Optional
   std::optional<EapMessage> ie_eap_message;         // Optional
   std::optional<Rejected_NSSAI> ie_rejected_nssai;  // Release 16.4.1
 };

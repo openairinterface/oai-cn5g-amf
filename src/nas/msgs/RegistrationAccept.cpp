@@ -21,9 +21,7 @@
 
 #include "RegistrationAccept.hpp"
 
-#include "3gpp_24.501.hpp"
 #include "String2Value.hpp"
-#include "logger.hpp"
 
 using namespace nas;
 
@@ -36,28 +34,28 @@ RegistrationAccept::RegistrationAccept()
   ie_rejected_nssai                              = std::nullopt;
   ie_configured_nssai                            = std::nullopt;
   ie_5gs_network_feature_support                 = std::nullopt;
-  ie_PDU_session_status                          = std::nullopt;
+  ie_pdu_session_status                          = std::nullopt;
   ie_pdu_session_reactivation_result             = std::nullopt;
   ie_pdu_session_reactivation_result_error_cause = std::nullopt;
   // ie_ladn_information = std::nullopt;
-  ie_MICO_indication                      = std::nullopt;
-  ie_network_slicing_indication           = std::nullopt;
-  ie_T3512_value                          = std::nullopt;
-  ie_Non_3GPP_de_registration_timer_value = std::nullopt;
-  ie_T3502_value                          = std::nullopt;
-  ie_sor_transparent_container            = std::nullopt;
-  ie_eap_message                          = std::nullopt;
-  ie_nssai_inclusion_mode                 = std::nullopt;
-  ie_negotiated_drx_parameters            = std::nullopt;
-  ie_non_3gpp_nw_policies                 = std::nullopt;
-  ie_eps_bearer_context_status            = std::nullopt;
-  ie_extended_drx_parameters              = std::nullopt;
-  ie_T3447_value                          = std::nullopt;
-  ie_T3448_value                          = std::nullopt;
-  ie_T3324_value                          = std::nullopt;
-  ie_ue_radio_capability_id               = std::nullopt;
-  ie_pending_nssai                        = std::nullopt;
-  ie_tai_list                             = std::nullopt;
+  ie_mico_indication                     = std::nullopt;
+  ie_network_slicing_indication          = std::nullopt;
+  ie_t3512_value                         = std::nullopt;
+  ie_non_3gpp_deregistration_timer_value = std::nullopt;
+  ie_t3502_value                         = std::nullopt;
+  ie_sor_transparent_container           = std::nullopt;
+  ie_eap_message                         = std::nullopt;
+  ie_nssai_inclusion_mode                = std::nullopt;
+  ie_negotiated_drx_parameters           = std::nullopt;
+  ie_non_3gpp_nw_policies                = std::nullopt;
+  ie_eps_bearer_context_status           = std::nullopt;
+  ie_extended_drx_parameters             = std::nullopt;
+  ie_t3447_value                         = std::nullopt;
+  ie_t3448_value                         = std::nullopt;
+  ie_t3324_value                         = std::nullopt;
+  ie_ue_radio_capability_id              = std::nullopt;
+  ie_pending_nssai                       = std::nullopt;
+  ie_tai_list                            = std::nullopt;
 }
 
 //------------------------------------------------------------------------------
@@ -70,14 +68,14 @@ void RegistrationAccept::SetHeader(uint8_t security_header_type) {
 
 //------------------------------------------------------------------------------
 void RegistrationAccept::Set5gsRegistrationResult(
-    bool emergency, bool nssaa, bool sms, const uint8_t& value) {
+    bool emergency, bool nssaa, bool sms, uint8_t value) {
   ie_5gs_registration_result.set(emergency, nssaa, sms, value);
 }
 
 //------------------------------------------------------------------------------
 void RegistrationAccept::SetSuciSupiFormatImsi(
     const std::string& mcc, const std::string& mnc,
-    const std::string& routingInd, const uint8_t& protection_sch_id,
+    const std::string& routing_ind, uint8_t protection_sch_id,
     const std::string& msin) {
   if (protection_sch_id != NULL_SCHEME) {
     Logger::nas_mm().error(
@@ -88,7 +86,7 @@ void RegistrationAccept::SetSuciSupiFormatImsi(
     _5GSMobileIdentity ie_5g_guti_tmp = {};
     ie_5g_guti_tmp.SetIei(kIei5gGuti);
     ie_5g_guti_tmp.SetSuciWithSupiImsi(
-        mcc, mnc, routingInd, protection_sch_id, msin);
+        mcc, mnc, routing_ind, protection_sch_id, msin);
     ie_5g_guti = std::optional<_5GSMobileIdentity>(ie_5g_guti_tmp);
   }
 }
@@ -96,7 +94,7 @@ void RegistrationAccept::SetSuciSupiFormatImsi(
 //------------------------------------------------------------------------------
 void RegistrationAccept::SetSuciSupiFormatImsi(
     const std::string& mcc, const std::string& mnc,
-    const std::string& routingInd, const uint8_t& protection_sch_id,
+    const std::string& routing_ind, uint8_t protection_sch_id,
     const uint8_t& hnpki, const std::string& msin) {
   // TODO:
 }
@@ -104,12 +102,12 @@ void RegistrationAccept::SetSuciSupiFormatImsi(
 //------------------------------------------------------------------------------
 void RegistrationAccept::Set5gGuti(
     const std::string& mcc, const std::string& mnc,
-    const std::string& amfRegionId, const std::string& amfSetId,
-    const std::string& amfPointer, const uint32_t& tmsi) {
+    const std::string& amf_region_id, const std::string& amf_set_id,
+    const std::string& amf_pointer, uint32_t tmsi) {
   _5GSMobileIdentity ie_5g_guti_tmp = {};
-  int regionId                      = fromString<int>(amfRegionId);
-  int setId                         = fromString<int>(amfSetId);
-  int pointer                       = fromString<int>(amfPointer);
+  int regionId                      = fromString<int>(amf_region_id);
+  int setId                         = fromString<int>(amf_set_id);
+  int pointer                       = fromString<int>(amf_pointer);
   ie_5g_guti_tmp.SetIei(kIei5gGuti);
   ie_5g_guti_tmp.Set5gGuti(
       mcc, mnc, (uint8_t) regionId, (uint16_t) setId, (uint8_t) pointer, tmsi);
@@ -164,7 +162,7 @@ void RegistrationAccept::Set5gsNetworkFeatureSupport(
 
 //------------------------------------------------------------------------------
 void RegistrationAccept::SetPduSessionStatus(uint16_t value) {
-  ie_PDU_session_status = std::make_optional<PDUSessionStatus>(value);
+  ie_pdu_session_status = std::make_optional<PDUSessionStatus>(value);
 }
 
 //------------------------------------------------------------------------------
@@ -183,7 +181,7 @@ void RegistrationAccept::SetPduSessionReactivationResultErrorCause(
 
 //------------------------------------------------------------------------------
 void RegistrationAccept::SetMicoIndication(bool sprti, bool raai) {
-  ie_MICO_indication = std::make_optional<MicoIndication>(sprti, raai);
+  ie_mico_indication = std::make_optional<MicoIndication>(sprti, raai);
 }
 
 /*
@@ -201,19 +199,19 @@ void RegistrationAccept::SetNetworkSlicingIndication(bool dcni, bool nssci) {
 
 //------------------------------------------------------------------------------
 void RegistrationAccept::SetT3512Value(uint8_t unit, uint8_t value) {
-  ie_T3512_value =
+  ie_t3512_value =
       std::make_optional<GprsTimer3>(kIeiGprsTimer3T3512, unit, value);
 }
 
 //------------------------------------------------------------------------------
 void RegistrationAccept::SetNon3gppDeregistrationTimerValue(uint8_t value) {
-  ie_Non_3GPP_de_registration_timer_value = std::make_optional<GprsTimer2>(
+  ie_non_3gpp_deregistration_timer_value = std::make_optional<GprsTimer2>(
       kIeiGprsTimer2Non3gppDeregistration, value);
 }
 
 //------------------------------------------------------------------------------
 void RegistrationAccept::SetT3502Value(uint8_t value) {
-  ie_T3502_value = std::make_optional<GprsTimer2>(kIeiGprsTimer2T3502, value);
+  ie_t3502_value = std::make_optional<GprsTimer2>(kIeiGprsTimer2T3502, value);
 }
 
 //------------------------------------------------------------------------------
@@ -224,8 +222,8 @@ void RegistrationAccept::SetSorTransparentContainer(
 }
 
 //------------------------------------------------------------------------------
-void RegistrationAccept::SetEapMessage(bstring eap) {
-  ie_eap_message = std::make_optional<EapMessage>(0x78, eap);
+void RegistrationAccept::SetEapMessage(const bstring& eap) {
+  ie_eap_message = std::make_optional<EapMessage>(kIeiEapMessage, eap);
 }
 
 //------------------------------------------------------------------------------
@@ -259,31 +257,35 @@ void RegistrationAccept::SetExtendedDrxParameters(
 
 //------------------------------------------------------------------------------
 void RegistrationAccept::SetT3447Value(uint8_t unit, uint8_t value) {
-  ie_T3447_value = std::make_optional<GprsTimer3>(0x6C, unit, value);
+  ie_t3447_value =
+      std::make_optional<GprsTimer3>(kIeiGprsTimer3T3447, unit, value);
 }
 
 //------------------------------------------------------------------------------
 void RegistrationAccept::SetT3448Value(uint8_t unit, uint8_t value) {
-  ie_T3448_value = std::make_optional<GprsTimer3>(0x6B, unit, value);
+  ie_t3448_value =
+      std::make_optional<GprsTimer3>(kIeiGprsTimer3T3448, unit, value);
 }
 
 //------------------------------------------------------------------------------
 void RegistrationAccept::SetT3324Value(uint8_t unit, uint8_t value) {
-  ie_T3324_value = std::make_optional<GprsTimer3>(0x6A, unit, value);
+  ie_t3324_value =
+      std::make_optional<GprsTimer3>(kIeiGprsTimer3T3324, unit, value);
 }
 
 //------------------------------------------------------------------------------
-void RegistrationAccept::SetUeRadioCapabilityId(bstring value) {
+void RegistrationAccept::SetUeRadioCapabilityId(const bstring& value) {
   ie_ue_radio_capability_id = std::make_optional<UeRadioCapabilityId>(value);
 }
 
 //------------------------------------------------------------------------------
-void RegistrationAccept::SetPendingNssai(std::vector<struct SNSSAI_s> nssai) {
-  ie_pending_nssai = std::make_optional<NSSAI>(0x39, nssai);
+void RegistrationAccept::SetPendingNssai(
+    const std::vector<struct SNSSAI_s>& nssai) {
+  ie_pending_nssai = std::make_optional<NSSAI>(kIeiNSSAIPending, nssai);
 }
 
 //------------------------------------------------------------------------------
-void RegistrationAccept::setTaiList(std::vector<p_tai_t> tai_list) {
+void RegistrationAccept::SetTaiList(const std::vector<p_tai_t>& tai_list) {
   ie_tai_list = std::make_optional<_5GSTrackingAreaIdList>(tai_list);
 }
 
@@ -416,11 +418,11 @@ int RegistrationAccept::Encode(uint8_t* buf, int len) {
     }
   }
 
-  if (!ie_PDU_session_status.has_value()) {
+  if (!ie_pdu_session_status.has_value()) {
     Logger::nas_mm().debug(
         "IE %s is not available", PDUSessionStatus::GetIeName().c_str());
   } else {
-    int size = ie_PDU_session_status.value().Encode(
+    int size = ie_pdu_session_status.value().Encode(
         buf + encoded_size, len - encoded_size);
     if (size != KEncodeDecodeError) {
       encoded_size += size;
@@ -477,11 +479,11 @@ int RegistrationAccept::Encode(uint8_t* buf, int len) {
     }
   }*/
 
-  if (!ie_MICO_indication.has_value()) {
+  if (!ie_mico_indication.has_value()) {
     Logger::nas_mm().debug(
         "IE %s is not available", MicoIndication::GetIeName().c_str());
   } else {
-    int size = ie_MICO_indication.value().Encode(
+    int size = ie_mico_indication.value().Encode(
         buf + encoded_size, len - encoded_size);
     if (size != KEncodeDecodeError) {
       encoded_size += size;
@@ -508,12 +510,12 @@ int RegistrationAccept::Encode(uint8_t* buf, int len) {
     }
   }
 
-  if (!ie_T3512_value.has_value()) {
+  if (!ie_t3512_value.has_value()) {
     Logger::nas_mm().debug(
         "IE %s is not available", GprsTimer3::GetIeName().c_str());
   } else {
     int size =
-        ie_T3512_value.value().Encode(buf + encoded_size, len - encoded_size);
+        ie_t3512_value.value().Encode(buf + encoded_size, len - encoded_size);
     if (size != KEncodeDecodeError) {
       encoded_size += size;
     } else {
@@ -523,11 +525,11 @@ int RegistrationAccept::Encode(uint8_t* buf, int len) {
     }
   }
 
-  if (!ie_Non_3GPP_de_registration_timer_value.has_value()) {
+  if (!ie_non_3gpp_deregistration_timer_value.has_value()) {
     Logger::nas_mm().debug(
         "IE %s is not available", GprsTimer2::GetIeName().c_str());
   } else {
-    int size = ie_Non_3GPP_de_registration_timer_value.value().Encode(
+    int size = ie_non_3gpp_deregistration_timer_value.value().Encode(
         buf + encoded_size, len - encoded_size);
     if (size != KEncodeDecodeError) {
       encoded_size += size;
@@ -538,12 +540,12 @@ int RegistrationAccept::Encode(uint8_t* buf, int len) {
     }
   }
 
-  if (!ie_T3502_value.has_value()) {
+  if (!ie_t3502_value.has_value()) {
     Logger::nas_mm().debug(
         "IE %s is not available", GprsTimer2::GetIeName().c_str());
   } else {
     int size =
-        ie_T3502_value.value().Encode(buf + encoded_size, len - encoded_size);
+        ie_t3502_value.value().Encode(buf + encoded_size, len - encoded_size);
     if (size != KEncodeDecodeError) {
       encoded_size += size;
     } else {
@@ -660,12 +662,12 @@ int RegistrationAccept::Encode(uint8_t* buf, int len) {
     }
   }
 
-  if (!ie_T3447_value.has_value()) {
+  if (!ie_t3447_value.has_value()) {
     Logger::nas_mm().debug(
         "IE %s is not available", GprsTimer3::GetIeName().c_str());
   } else {
     int size =
-        ie_T3447_value.value().Encode(buf + encoded_size, len - encoded_size);
+        ie_t3447_value.value().Encode(buf + encoded_size, len - encoded_size);
     if (size != KEncodeDecodeError) {
       encoded_size += size;
     } else {
@@ -675,12 +677,12 @@ int RegistrationAccept::Encode(uint8_t* buf, int len) {
     }
   }
 
-  if (!ie_T3448_value.has_value()) {
+  if (!ie_t3448_value.has_value()) {
     Logger::nas_mm().debug(
         "IE %s is not available", GprsTimer3::GetIeName().c_str());
   } else {
     int size =
-        ie_T3448_value.value().Encode(buf + encoded_size, len - encoded_size);
+        ie_t3448_value.value().Encode(buf + encoded_size, len - encoded_size);
     if (size != KEncodeDecodeError) {
       encoded_size += size;
     } else {
@@ -690,12 +692,12 @@ int RegistrationAccept::Encode(uint8_t* buf, int len) {
     }
   }
 
-  if (!ie_T3324_value.has_value()) {
+  if (!ie_t3324_value.has_value()) {
     Logger::nas_mm().debug(
         "IE %s is not available", GprsTimer3::GetIeName().c_str());
   } else {
     int size =
-        ie_T3324_value.value().Encode(buf + encoded_size, len - encoded_size);
+        ie_t3324_value.value().Encode(buf + encoded_size, len - encoded_size);
     if (size != KEncodeDecodeError) {
       encoded_size += size;
     } else {
@@ -773,8 +775,8 @@ int RegistrationAccept::Decode(uint8_t* buf, int len) {
     switch ((octet & 0xf0) >> 4) {
       case kIeiMicoIndication: {
         Logger::nas_mm().debug("Decoding IEI 0x%x", kIeiMicoIndication);
-        MicoIndication ie_MICO_indication_tmp = {};
-        if ((decoded_result = ie_MICO_indication_tmp.Decode(
+        MicoIndication ie_mico_indication_tmp = {};
+        if ((decoded_result = ie_mico_indication_tmp.Decode(
                  buf + decoded_size, len - decoded_size, true)) ==
             KEncodeDecodeError) {
           Logger::nas_mm().error(
@@ -782,15 +784,15 @@ int RegistrationAccept::Decode(uint8_t* buf, int len) {
           return KEncodeDecodeError;
         }
         decoded_size += decoded_result;
-        ie_MICO_indication =
-            std::optional<MicoIndication>(ie_MICO_indication_tmp);
+        ie_mico_indication =
+            std::optional<MicoIndication>(ie_mico_indication_tmp);
         DECODE_U8_VALUE(buf + decoded_size, octet);
         Logger::nas_mm().debug("Next IEI (0x%x)", octet);
       } break;
 
       case kIeiNetworkSlicingIndication: {
         Logger::nas_mm().debug(
-            "Decoding IEI 0x%x9", kIeiNetworkSlicingIndication);
+            "Decoding IEI 0x%x", kIeiNetworkSlicingIndication);
         NetworkSlicingIndication ie_network_slicing_indication_tmp = {};
         if ((decoded_result = ie_network_slicing_indication_tmp.Decode(
                  buf + decoded_size, len - decoded_size, true)) ==
@@ -808,7 +810,7 @@ int RegistrationAccept::Decode(uint8_t* buf, int len) {
       } break;
 
       case kIeiNssaiInclusionMode: {
-        Logger::nas_mm().debug("Decoding IEI (0xA)");
+        Logger::nas_mm().debug("Decoding IEI 0x%x", kIeiNssaiInclusionMode);
         NssaiInclusionMode ie_nssai_inclusion_mode_tmp = {};
         if ((decoded_result = ie_nssai_inclusion_mode_tmp.Decode(
                  buf + decoded_size, len - decoded_size, true)) ==
@@ -825,7 +827,8 @@ int RegistrationAccept::Decode(uint8_t* buf, int len) {
       } break;
 
       case kIeiNon3gppNwProvidedPolicies: {
-        Logger::nas_mm().debug("Decoding IEI (0xD)");
+        Logger::nas_mm().debug(
+            "Decoding IEI 0x%x", kIeiNon3gppNwProvidedPolicies);
         Non_3GPP_NW_Provided_Policies ie_non_3gpp_nw_policies_tmp = {};
         if ((decoded_result = ie_non_3gpp_nw_policies_tmp.Decode(
                  buf + decoded_size, len - decoded_size, true)) ==
@@ -849,7 +852,7 @@ int RegistrationAccept::Decode(uint8_t* buf, int len) {
 
     switch (octet) {
       case kIei5gGuti: {
-        Logger::nas_mm().debug("Decoding IEI (0x77)");
+        Logger::nas_mm().debug("Decoding IEI 0x%x", kIei5gGuti);
         _5GSMobileIdentity ie_5g_guti_tmp = {};
         if ((decoded_result = ie_5g_guti_tmp.Decode(
                  buf + decoded_size, len - decoded_size, true)) ==
@@ -881,7 +884,7 @@ int RegistrationAccept::Decode(uint8_t* buf, int len) {
       } break;
 
       case kIeiRejectedNssaiRa: {
-        Logger::nas_mm().debug("Decoding IEI (0x11)");
+        Logger::nas_mm().debug("Decoding IEI 0x%x", kIeiRejectedNssaiRa);
         Rejected_NSSAI ie_rejected_nssai_tmp(kIeiRejectedNssaiRa);
         if ((decoded_result = ie_rejected_nssai_tmp.Decode(
                  buf + decoded_size, len - decoded_size, true)) ==
@@ -914,7 +917,8 @@ int RegistrationAccept::Decode(uint8_t* buf, int len) {
       } break;
 
       case kIei5gsNetworkFeatureSupport: {
-        Logger::nas_mm().debug("Decoding IEI (0x21)");
+        Logger::nas_mm().debug(
+            "Decoding IEI 0x%x", kIei5gsNetworkFeatureSupport);
         _5GS_Network_Feature_Support ie_5gs_network_feature_support_tmp = {};
         if ((decoded_result = ie_5gs_network_feature_support_tmp.Decode(
                  buf + decoded_size, len - decoded_size, true)) ==
@@ -934,8 +938,8 @@ int RegistrationAccept::Decode(uint8_t* buf, int len) {
 
       case kIeiPduSessionStatus: {
         Logger::nas_mm().debug("Decoding IEI 0x%x", kIeiPduSessionStatus);
-        PDUSessionStatus ie_PDU_session_status_tmp = {};
-        if ((decoded_result = ie_PDU_session_status_tmp.Decode(
+        PDUSessionStatus ie_pdu_session_status_tmp = {};
+        if ((decoded_result = ie_pdu_session_status_tmp.Decode(
                  buf + decoded_size, len - decoded_size, true)) ==
             KEncodeDecodeError) {
           Logger::nas_mm().error(
@@ -943,8 +947,8 @@ int RegistrationAccept::Decode(uint8_t* buf, int len) {
           return KEncodeDecodeError;
         }
         decoded_size += decoded_result;
-        ie_PDU_session_status =
-            std::optional<PDUSessionStatus>(ie_PDU_session_status_tmp);
+        ie_pdu_session_status =
+            std::optional<PDUSessionStatus>(ie_pdu_session_status_tmp);
         DECODE_U8_VALUE(buf + decoded_size, octet);
         Logger::nas_mm().debug("Next IEI (0x%x)", octet);
       } break;
@@ -971,7 +975,8 @@ int RegistrationAccept::Decode(uint8_t* buf, int len) {
       } break;
 
       case kIeiPduSessionReactivationResultErrorCause: {
-        Logger::nas_mm().debug("Decoding IEI (0x72)");
+        Logger::nas_mm().debug(
+            "Decoding IEI 0x%x", kIeiPduSessionReactivationResultErrorCause);
         PDU_Session_Reactivation_Result_Error_Cause
             ie_pdu_session_reactivation_result_error_cause_tmp = {};
         if ((decoded_result =
@@ -1003,8 +1008,8 @@ int RegistrationAccept::Decode(uint8_t* buf, int len) {
        */
       case kIeiGprsTimer3T3512: {
         Logger::nas_mm().debug("Decoding IEI 0x%x", kIeiGprsTimer3T3512);
-        GprsTimer3 ie_T3512_value_tmp(kIeiGprsTimer3T3512);
-        if ((decoded_result = ie_T3512_value_tmp.Decode(
+        GprsTimer3 ie_t3512_value_tmp(kIeiGprsTimer3T3512);
+        if ((decoded_result = ie_t3512_value_tmp.Decode(
                  buf + decoded_size, len - decoded_size, true)) ==
             KEncodeDecodeError) {
           Logger::nas_mm().error(
@@ -1012,7 +1017,7 @@ int RegistrationAccept::Decode(uint8_t* buf, int len) {
           return KEncodeDecodeError;
         }
         decoded_size += decoded_result;
-        ie_T3512_value = std::optional<GprsTimer3>(ie_T3512_value_tmp);
+        ie_t3512_value = std::optional<GprsTimer3>(ie_t3512_value_tmp);
         DECODE_U8_VALUE(buf + decoded_size, octet);
         Logger::nas_mm().debug("Next IEI (0x%x)", octet);
       } break;
@@ -1020,27 +1025,9 @@ int RegistrationAccept::Decode(uint8_t* buf, int len) {
       case kIeiGprsTimer2Non3gppDeregistration: {
         Logger::nas_mm().debug(
             "Decoding IEI 0x%x", kIeiGprsTimer2Non3gppDeregistration);
-        GprsTimer2 ie_Non_3GPP_de_registration_timer_value_tmp(
+        GprsTimer2 ie_non_3gpp_deregistration_timer_value_tmp(
             kIeiGprsTimer2Non3gppDeregistration);
-        if ((decoded_result =
-                 ie_Non_3GPP_de_registration_timer_value_tmp.Decode(
-                     buf + decoded_size, len - decoded_size, true)) ==
-            KEncodeDecodeError) {
-          Logger::nas_mm().error(
-              "Decoding %s error", GprsTimer2::GetIeName().c_str());
-          return KEncodeDecodeError;
-        }
-        decoded_size += decoded_result;
-        ie_Non_3GPP_de_registration_timer_value = std::optional<GprsTimer2>(
-            ie_Non_3GPP_de_registration_timer_value_tmp);
-        DECODE_U8_VALUE(buf + decoded_size, octet);
-        Logger::nas_mm().debug("Next IEI (0x%x)", octet);
-      } break;
-
-      case kIeiGprsTimer2T3502: {
-        Logger::nas_mm().debug("Decoding IEI 0x%x", kIeiGprsTimer2T3502);
-        GprsTimer2 ie_T3502_value_tmp(kIeiGprsTimer2T3502);
-        if ((decoded_result = ie_T3502_value_tmp.Decode(
+        if ((decoded_result = ie_non_3gpp_deregistration_timer_value_tmp.Decode(
                  buf + decoded_size, len - decoded_size, true)) ==
             KEncodeDecodeError) {
           Logger::nas_mm().error(
@@ -1048,13 +1035,31 @@ int RegistrationAccept::Decode(uint8_t* buf, int len) {
           return KEncodeDecodeError;
         }
         decoded_size += decoded_result;
-        ie_T3502_value = std::optional<GprsTimer2>(ie_T3502_value_tmp);
+        ie_non_3gpp_deregistration_timer_value = std::optional<GprsTimer2>(
+            ie_non_3gpp_deregistration_timer_value_tmp);
+        DECODE_U8_VALUE(buf + decoded_size, octet);
+        Logger::nas_mm().debug("Next IEI (0x%x)", octet);
+      } break;
+
+      case kIeiGprsTimer2T3502: {
+        Logger::nas_mm().debug("Decoding IEI 0x%x", kIeiGprsTimer2T3502);
+        GprsTimer2 ie_t3502_value_tmp(kIeiGprsTimer2T3502);
+        if ((decoded_result = ie_t3502_value_tmp.Decode(
+                 buf + decoded_size, len - decoded_size, true)) ==
+            KEncodeDecodeError) {
+          Logger::nas_mm().error(
+              "Decoding %s error", GprsTimer2::GetIeName().c_str());
+          return KEncodeDecodeError;
+        }
+        decoded_size += decoded_result;
+        ie_t3502_value = std::optional<GprsTimer2>(ie_t3502_value_tmp);
         DECODE_U8_VALUE(buf + decoded_size, octet);
         Logger::nas_mm().debug("Next IEI (0x%x)", octet);
       } break;
 
       case kIeiSorTransparentContainer: {
-        Logger::nas_mm().debug("Decoding IEI (0x73)");
+        Logger::nas_mm().debug(
+            "Decoding IEI 0x%x", kIeiSorTransparentContainer);
         SorTransparentContainer ie_sor_transparent_container_tmp = {};
         if ((decoded_result = ie_sor_transparent_container_tmp.Decode(
                  buf + decoded_size, len - decoded_size, true)) ==
@@ -1072,7 +1077,7 @@ int RegistrationAccept::Decode(uint8_t* buf, int len) {
       } break;
 
       case kIeiEapMessage: {
-        Logger::nas_mm().debug("Decoding IEI (0x78)");
+        Logger::nas_mm().debug("Decoding IEI 0x%x", kIeiEapMessage);
         EapMessage ie_eap_message_tmp = {};
         if ((decoded_result = ie_eap_message_tmp.Decode(
                  buf + decoded_size, len - decoded_size, true)) ==
@@ -1105,7 +1110,7 @@ int RegistrationAccept::Decode(uint8_t* buf, int len) {
       } break;
 
       case kIeiEpsBearerContextStatus: {
-        Logger::nas_mm().debug("Decoding IEI (0x60)");
+        Logger::nas_mm().debug("Decoding IEI 0x%x", kIeiEpsBearerContextStatus);
         EpsBearerContextStatus ie_eps_bearer_context_status_tmp = {};
         if ((decoded_result = ie_eps_bearer_context_status_tmp.Decode(
                  buf + decoded_size, len - decoded_size, true)) ==
@@ -1122,7 +1127,7 @@ int RegistrationAccept::Decode(uint8_t* buf, int len) {
       } break;
 
       case kIeiExtendedDrxParameters: {
-        Logger::nas_mm().debug("Decoding IEI (0x6E)");
+        Logger::nas_mm().debug("Decoding IEI 0x%x", kIeiExtendedDrxParameters);
         Extended_DRX_Parameters ie_extended_drx_parameters_tmp = {};
         if ((decoded_result = ie_extended_drx_parameters_tmp.Decode(
                  buf + decoded_size, len - decoded_size, true)) ==
@@ -1141,8 +1146,8 @@ int RegistrationAccept::Decode(uint8_t* buf, int len) {
 
       case kIeiGprsTimer3T3447: {
         Logger::nas_mm().debug("Decoding IEI 0x%x", kIeiGprsTimer3T3447);
-        GprsTimer3 ie_T3447_value_tmp(kIeiGprsTimer3T3447);
-        if ((decoded_result = ie_T3447_value_tmp.Decode(
+        GprsTimer3 ie_t3447_value_tmp(kIeiGprsTimer3T3447);
+        if ((decoded_result = ie_t3447_value_tmp.Decode(
                  buf + decoded_size, len - decoded_size, true)) ==
             KEncodeDecodeError) {
           Logger::nas_mm().error(
@@ -1150,15 +1155,15 @@ int RegistrationAccept::Decode(uint8_t* buf, int len) {
           return KEncodeDecodeError;
         }
         decoded_size += decoded_result;
-        ie_T3447_value = std::optional<GprsTimer3>(ie_T3447_value_tmp);
+        ie_t3447_value = std::optional<GprsTimer3>(ie_t3447_value_tmp);
         DECODE_U8_VALUE(buf + decoded_size, octet);
         Logger::nas_mm().debug("Next IEI (0x%x)", octet);
       } break;
 
       case kIeiGprsTimer3T3448: {
         Logger::nas_mm().debug("Decoding IEI 0x%x", kIeiGprsTimer3T3448);
-        GprsTimer3 ie_T3448_value_tmp(kIeiGprsTimer3T3448);
-        if ((decoded_result = ie_T3448_value_tmp.Decode(
+        GprsTimer3 ie_t3448_value_tmp(kIeiGprsTimer3T3448);
+        if ((decoded_result = ie_t3448_value_tmp.Decode(
                  buf + decoded_size, len - decoded_size, true)) ==
             KEncodeDecodeError) {
           Logger::nas_mm().error(
@@ -1166,15 +1171,15 @@ int RegistrationAccept::Decode(uint8_t* buf, int len) {
           return KEncodeDecodeError;
         }
         decoded_size += decoded_result;
-        ie_T3448_value = std::optional<GprsTimer3>(ie_T3448_value_tmp);
+        ie_t3448_value = std::optional<GprsTimer3>(ie_t3448_value_tmp);
         DECODE_U8_VALUE(buf + decoded_size, octet);
         Logger::nas_mm().debug("Next IEI (0x%x)", octet);
       } break;
 
       case kIeiGprsTimer3T3324: {
         Logger::nas_mm().debug("Decoding IEI 0x%x", kIeiGprsTimer3T3324);
-        GprsTimer3 ie_T3324_value_tmp(kIeiGprsTimer3T3324);
-        if ((decoded_result = ie_T3324_value_tmp.Decode(
+        GprsTimer3 ie_t3324_value_tmp(kIeiGprsTimer3T3324);
+        if ((decoded_result = ie_t3324_value_tmp.Decode(
                  buf + decoded_size, len - decoded_size, true)) ==
             KEncodeDecodeError) {
           Logger::nas_mm().error(
@@ -1182,13 +1187,13 @@ int RegistrationAccept::Decode(uint8_t* buf, int len) {
           return KEncodeDecodeError;
         }
         decoded_size += decoded_result;
-        ie_T3324_value = std::optional<GprsTimer3>(ie_T3324_value_tmp);
+        ie_t3324_value = std::optional<GprsTimer3>(ie_t3324_value_tmp);
         DECODE_U8_VALUE(buf + decoded_size, octet);
         Logger::nas_mm().debug("Next IEI (0x%x)", octet);
       } break;
 
       case kIeiUeRadioCapabilityId: {
-        Logger::nas_mm().debug("Decoding IEI (0x67)");
+        Logger::nas_mm().debug("Decoding IEI 0x%x", kIeiUeRadioCapabilityId);
         UeRadioCapabilityId ie_ue_radio_capability_id_tmp = {};
         if ((decoded_result = ie_ue_radio_capability_id_tmp.Decode(
                  buf + decoded_size, len - decoded_size, true)) ==
@@ -1205,7 +1210,7 @@ int RegistrationAccept::Decode(uint8_t* buf, int len) {
       } break;
 
       case kIeiNSSAIPending: {
-        Logger::nas_mm().debug("Decoding IEI (0x39)");
+        Logger::nas_mm().debug("Decoding IEI 0x%x", kIeiNSSAIPending);
         NSSAI ie_pending_nssai_tmp = {};
         if ((decoded_result = ie_pending_nssai_tmp.Decode(
                  buf + decoded_size, len - decoded_size, true)) ==
@@ -1221,7 +1226,7 @@ int RegistrationAccept::Decode(uint8_t* buf, int len) {
       } break;
 
       case kEquivalentPlmns: {
-        Logger::nas_mm().debug("Decoding IEI (0x4A)");
+        Logger::nas_mm().debug("Decoding IEI 0x%x", kEquivalentPlmns);
         PlmnList ie_equivalent_plmns_tmp = {};
         if ((decoded_result = ie_equivalent_plmns_tmp.Decode(
                  buf + decoded_size, len - decoded_size, true)) ==

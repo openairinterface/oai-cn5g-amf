@@ -20,11 +20,7 @@
  */
 
 #ifndef _SERVICE_REJECT_H_
-
 #define _SERVICE_REJECT_H_
-
-#include <stdint.h>
-#include <string>
 
 #include "NasIeHeader.hpp"
 
@@ -58,10 +54,10 @@ class ServiceReject : public NasMmPlainHeader {
  private:
   _5gmmCause ie_5gmm_cause;  // Mandatory
 
-  std::optional<PDUSessionStatus> ie_PDU_session_status;  // Optional
-  std::optional<GprsTimer2> ie_T3346_value;               // Optional
+  std::optional<PDUSessionStatus> ie_pdu_session_status;  // Optional
+  std::optional<GprsTimer2> ie_t3346_value;               // Optional
   std::optional<EapMessage> ie_eap_message;               // Optional
-  std::optional<GprsTimer3> ie_T3448_value;               // Optional
+  std::optional<GprsTimer3> ie_t3448_value;               // Optional
 };
 
 }  // namespace nas

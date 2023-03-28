@@ -21,9 +21,6 @@
 
 #include "SecurityModeReject.hpp"
 
-#include "3gpp_24.501.hpp"
-#include "logger.hpp"
-
 using namespace nas;
 
 //------------------------------------------------------------------------------
@@ -45,7 +42,7 @@ void SecurityModeReject::Set5gmmCause(uint8_t value) {
 
 //------------------------------------------------------------------------------
 int SecurityModeReject::Encode(uint8_t* buf, int len) {
-  Logger::nas_mm().debug("encoding SecurityModeReject message");
+  Logger::nas_mm().debug("Encoding SecurityModeReject message");
 
   int encoded_size    = 0;
   int encoded_ie_size = 0;
@@ -58,20 +55,24 @@ int SecurityModeReject::Encode(uint8_t* buf, int len) {
   encoded_size += encoded_ie_size;
 
   // 5GMM Cause
-  if (int size = ie_5gmm_cause.Encode(buf + encoded_size, len - encoded_size)) {
-    encoded_size += size;
+  encoded_ie_size =
+      ie_5gmm_cause.Encode(buf + encoded_size, len - encoded_size);
+  if (encoded_ie_size != KEncodeDecodeError) {
+    encoded_size += encoded_ie_size;
   } else {
-    Logger::nas_mm().error("Encoding ie_5gmm_cause error");
+    Logger::nas_mm().error(
+        "Encoding %s error", _5gmmCause::GetIeName().c_str());
+    return KEncodeDecodeError;
   }
 
   Logger::nas_mm().debug(
-      "encoded SecurityModeReject message len(%d)", encoded_size);
+      "Encoded SecurityModeReject message len(%d)", encoded_size);
   return encoded_size;
 }
 
 //------------------------------------------------------------------------------
 int SecurityModeReject::Decode(uint8_t* buf, int len) {
-  Logger::nas_mm().debug("decoding SecurityModeReject message");
+  Logger::nas_mm().debug("Decoding SecurityModeReject message");
   int decoded_size   = 0;
   int decoded_result = 0;
 
@@ -89,11 +90,12 @@ int SecurityModeReject::Decode(uint8_t* buf, int len) {
   if (decoded_result != KEncodeDecodeError) {
     decoded_size += decoded_result;
   } else {
-    Logger::nas_mm().error("Encoding ie_payload_container error");
+    Logger::nas_mm().error(
+        "Decoding %s error", _5gmmCause::GetIeName().c_str());
     return KEncodeDecodeError;
   }
 
   Logger::nas_mm().debug(
-      "decoded SecurityModeReject message len(%d)", decoded_size);
+      "Decoded SecurityModeReject message len(%d)", decoded_size);
   return decoded_size;
 }

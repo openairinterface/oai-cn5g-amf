@@ -43,7 +43,7 @@ class S_NSSAI : public Type4NasIe {
   int Encode(uint8_t* buf, int len);
   int Decode(uint8_t* buf, int len, const bool is_option = true);
 
-  void getValue(SNSSAI_t& snssai);
+  void getValue(SNSSAI_t& snssai) const;
 
   void SetSNSSAI(
       std::optional<int8_t> iei, uint8_t sst, std::optional<int32_t> sd,

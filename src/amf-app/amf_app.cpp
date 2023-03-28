@@ -37,7 +37,7 @@
 #include "amf_n2.hpp"
 #include "amf_sbi.hpp"
 #include "amf_statistics.hpp"
-#include "comUt.hpp"
+#include "output_wrapper.hpp"
 #include "itti.hpp"
 #include "ngap_app.hpp"
 
@@ -204,7 +204,6 @@ long amf_app::generate_amf_ue_ngap_id() {
 //------------------------------------------------------------------------------
 bool amf_app::is_ran_amf_id_2_ue_context(const string& ue_context_key) const {
   std::shared_lock lock(m_ue_ctx_key);
-  // return bool{ue_ctx_key.count(ue_context_key) > 0};
   if (ue_ctx_key.count(ue_context_key) > 0) {
     if (ue_ctx_key.at(ue_context_key) != nullptr) {
       return true;
@@ -338,7 +337,8 @@ void amf_app::handle_itti_message(
 
     uint8_t nas[BUFFER_SIZE_1024];
     int encoded_size = dl->Encode(nas, BUFFER_SIZE_1024);
-    comUt::print_buffer("amf_app", "n1n2 transfer", nas, encoded_size);
+    output_wrapper::print_buffer(
+        "amf_app", "N1N2 message transfer", nas, encoded_size);
 
     std::shared_ptr<itti_downlink_nas_transfer> dl_msg =
         std::make_shared<itti_downlink_nas_transfer>(TASK_AMF_APP, TASK_AMF_N1);
@@ -388,11 +388,14 @@ void amf_app::handle_itti_message(
 
   // Update AMF UE NGAP ID
   std::shared_ptr<ue_ngap_context> unc = {};
-  if (!amf_n2_inst->ran_ue_id_2_ue_ngap_context(itti_msg.ran_ue_ngap_id, unc)) {
+  if (!amf_n2_inst->ran_ue_id_2_ue_ngap_context(
+          itti_msg.ran_ue_ngap_id, itti_msg.gnb_id, unc)) {
     Logger::amf_n1().error(
         "Could not find UE NGAP Context with ran_ue_ngap_id "
-        "(" GNB_UE_NGAP_ID_FMT ")",
-        itti_msg.ran_ue_ngap_id);
+        "(" GNB_UE_NGAP_ID_FMT
+        "), gNB ID "
+        "(" GNB_ID_FMT ")",
+        itti_msg.ran_ue_ngap_id, itti_msg.gnb_id);
   } else {
     unc->amf_ue_ngap_id = amf_ue_ngap_id;
     amf_n2_inst->set_amf_ue_ngap_id_2_ue_ngap_context(amf_ue_ngap_id, unc);
@@ -404,17 +407,20 @@ void amf_app::handle_itti_message(
   if (itti_msg.rrc_cause != -1)
     uc->rrc_estb_cause = (e_Ngap_RRCEstablishmentCause) itti_msg.rrc_cause;
   if (itti_msg.ueCtxReq == -1)
-    uc->isUeContextRequest = false;
+    uc->is_ue_context_request = false;
   else
-    uc->isUeContextRequest = true;
+    uc->is_ue_context_request = true;
+
   uc->ran_ue_ngap_id = itti_msg.ran_ue_ngap_id;
   uc->amf_ue_ngap_id = amf_ue_ngap_id;
+  uc->gnb_id         = itti_msg.gnb_id;
 
   std::string guti   = {};
   bool is_guti_valid = false;
   if (itti_msg.is_5g_s_tmsi_present) {
-    guti = itti_msg.tai.mcc + itti_msg.tai.mnc + amf_cfg.guami.regionID +
-           itti_msg._5g_s_tmsi;
+    guti = conv::tmsi_to_guti(
+        itti_msg.tai.mcc, itti_msg.tai.mnc, amf_cfg.guami.regionID,
+        itti_msg._5g_s_tmsi);
     is_guti_valid = true;
     Logger::amf_app().debug("Receiving GUTI %s", guti.c_str());
   }
@@ -471,11 +477,10 @@ void amf_app::handle_itti_message(itti_sbi_n1_message_notification& itti_msg) {
       registration_context.getRanNodeId();
   // RAN UE NGAP ID
   uint32_t ran_ue_ngap_id = registration_context.getAnN2ApId();
+  uint32_t gnb_id         = {};
 
   if (ran_node_id.gNbIdIsSet()) {
     oai::amf::model::GNbId gnb_id_model = ran_node_id.getGNbId();
-    uint32_t gnb_id                     = {};
-
     try {
       gnb_id = std::stoul(gnb_id_model.getGNBValue(), nullptr, 10);
     } catch (const std::exception& e) {
@@ -485,7 +490,7 @@ void amf_app::handle_itti_message(itti_sbi_n1_message_notification& itti_msg) {
       return;
     }
 
-    gc->globalRanNodeId = gnb_id;
+    gc->gnb_id = gnb_id;
     // TODO:   gc->gnb_name
     // TODO: DefaultPagingDRX
     // TODO: Supported TA List
@@ -516,6 +521,7 @@ void amf_app::handle_itti_message(itti_sbi_n1_message_notification& itti_msg) {
       uc                 = std::shared_ptr<ue_context>(new ue_context());
       uc->amf_ue_ngap_id = -1;
       uc->supi           = supi;
+      uc->gnb_id         = gnb_id;
       set_supi_2_ue_context(supi, uc);
     }
   }
@@ -553,7 +559,8 @@ void amf_app::handle_itti_message(itti_sbi_n1_message_notification& itti_msg) {
       Logger::amf_app().debug(
           "Create a new UE Context with UE Context Key",
           ue_context_key.c_str());
-      uc = std::make_shared<ue_context>();
+      uc         = std::make_shared<ue_context>();
+      uc->gnb_id = gnb_id;
     }
     set_ran_amf_id_2_ue_context(ue_context_key, uc);
   }
@@ -577,17 +584,18 @@ void amf_app::handle_itti_message(itti_sbi_n1_message_notification& itti_msg) {
     uc->rrc_estb_cause = (e_Ngap_RRCEstablishmentCause) rrc_cause;
   }
   // ueContextRequest
-  uc->isUeContextRequest = registration_context.isUeContextRequest();
+  uc->is_ue_context_request = registration_context.isUeContextRequest();
 
   // Step 4. Create UE NGAP Context if necessary
   // Create/Update UE NGAP Context
   std::shared_ptr<ue_ngap_context> unc = {};
-  if (!amf_n2_inst->ran_ue_id_2_ue_ngap_context(ran_ue_ngap_id, unc)) {
+  if (!amf_n2_inst->ran_ue_id_2_ue_ngap_context(ran_ue_ngap_id, gnb_id, unc)) {
     Logger::amf_app().debug(
         "Create a new UE NGAP context with ran_ue_ngap_id " GNB_UE_NGAP_ID_FMT,
         ran_ue_ngap_id);
     unc = std::shared_ptr<ue_ngap_context>(new ue_ngap_context());
-    amf_n2_inst->set_ran_ue_ngap_id_2_ue_ngap_context(ran_ue_ngap_id, unc);
+    amf_n2_inst->set_ran_ue_ngap_id_2_ue_ngap_context(
+        ran_ue_ngap_id, gnb_id, unc);
   }
 
   // Store related information into UE NGAP context
@@ -822,6 +830,7 @@ uint32_t amf_app::get_number_registered_ues() const {
   std::shared_lock lock(m_amf_ue_ngap_id2ue_ctx);
   return amf_ue_ngap_id2ue_ctx.size();
 }
+
 //---------------------------------------------------------------------------------------------
 void amf_app::add_n1n2_message_subscription(
     const std::string& ue_ctx_id, const n1n2sub_id_t& sub_id,

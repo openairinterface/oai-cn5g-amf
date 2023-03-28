@@ -21,6 +21,8 @@
 
 #include "PDUSessionResourceSetupUnsuccessfulTransfer.hpp"
 
+#include "output_wrapper.hpp"
+
 extern "C" {
 #include "asn_codecs.h"
 #include "constr_TYPE.h"
@@ -130,8 +132,8 @@ void PduSessionResourceSetupUnSuccessfulTransferIE::setCauseMisc(
 //------------------------------------------------------------------------------
 int PduSessionResourceSetupUnSuccessfulTransferIE::Encode(
     uint8_t* buf, int buf_size) {
-  asn_fprint(
-      stderr, &asn_DEF_Ngap_PDUSessionResourceSetupUnsuccessfulTransfer,
+  output_wrapper::output_wrapper::print_asn_msg(
+      &asn_DEF_Ngap_PDUSessionResourceSetupUnsuccessfulTransfer,
       pduSessionResourceSetupUnsuccessfulTransferIEs);
   asn_enc_rval_t er = aper_encode_to_buffer(
       &asn_DEF_Ngap_PDUSessionResourceSetupUnsuccessfulTransfer, NULL,

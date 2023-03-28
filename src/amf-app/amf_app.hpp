@@ -31,7 +31,6 @@
 #include "ProblemDetails.h"
 #include "UeN1N2InfoSubscriptionCreateData.h"
 #include "amf_config.hpp"
-#include "amf_module_from_config.hpp"
 #include "amf_msg.hpp"
 #include "amf_profile.hpp"
 #include "amf_subscription.hpp"

@@ -21,10 +21,6 @@
 
 #include "ConfigurationUpdateCommand.hpp"
 
-#include "3gpp_24.501.hpp"
-#include "String2Value.hpp"
-#include "logger.hpp"
-
 using namespace nas;
 
 //------------------------------------------------------------------------------
@@ -43,50 +39,52 @@ void ConfigurationUpdateCommand::SetHeader(uint8_t security_header_type) {
 }
 
 //------------------------------------------------------------------------------
-void ConfigurationUpdateCommand::setFullNameForNetwork(
+void ConfigurationUpdateCommand::SetFullNameForNetwork(
     const NetworkName& name) {
   full_name_for_network = std::optional<NetworkName>(name);
 }
 
 //------------------------------------------------------------------------------
-void ConfigurationUpdateCommand::setFullNameForNetwork(
+void ConfigurationUpdateCommand::SetFullNameForNetwork(
     const std::string& text_string) {
   NetworkName full_name_for_network_tmp;
   full_name_for_network_tmp.setIEI(kIeiFullNameForNetwork);
   full_name_for_network_tmp.setCodingScheme(0);
   full_name_for_network_tmp.setAddCI(0);
-  full_name_for_network_tmp.setNumberOfSpareBits(0x07);  // TODO:
+  full_name_for_network_tmp.setNumberOfSpareBits(
+      0x07);  // TODO: remove hardcoded value
   full_name_for_network_tmp.setTextString(text_string);
   full_name_for_network = std::optional<NetworkName>(full_name_for_network_tmp);
 }
 
 //------------------------------------------------------------------------------
-void ConfigurationUpdateCommand::getFullNameForNetwork(
+void ConfigurationUpdateCommand::GetFullNameForNetwork(
     std::optional<NetworkName>& name) const {
   name = full_name_for_network;
 }
 
 //------------------------------------------------------------------------------
-void ConfigurationUpdateCommand::setShortNameForNetwork(
+void ConfigurationUpdateCommand::SetShortNameForNetwork(
     const std::string& text_string) {
   NetworkName short_name_for_network_tmp;
   short_name_for_network_tmp.setIEI(kIeiShortNameForNetwork);  // TODO
   short_name_for_network_tmp.setCodingScheme(0);
   short_name_for_network_tmp.setAddCI(0);
-  short_name_for_network_tmp.setNumberOfSpareBits(0x07);  // TODO
+  short_name_for_network_tmp.setNumberOfSpareBits(
+      0x07);  // TODO: remove hardcoded value
   short_name_for_network_tmp.setTextString(text_string);
   short_name_for_network =
       std::optional<NetworkName>(short_name_for_network_tmp);
 }
 
 //------------------------------------------------------------------------------
-void ConfigurationUpdateCommand::setShortNameForNetwork(
+void ConfigurationUpdateCommand::SetShortNameForNetwork(
     const NetworkName& name) {
   short_name_for_network = std::optional<NetworkName>(name);
 }
 
 //------------------------------------------------------------------------------
-void ConfigurationUpdateCommand::getShortNameForNetwork(
+void ConfigurationUpdateCommand::GetShortNameForNetwork(
     NetworkName& name) const {}
 
 //------------------------------------------------------------------------------

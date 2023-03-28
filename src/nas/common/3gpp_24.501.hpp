@@ -150,7 +150,7 @@ static const std::vector<std::string> nas_ciphering_algorithm_list_e2str = {
 /************************** cause value for 5g mobility management(Annex A)
  * ********************************/
 #define _5GMM_CAUSE_ILLEGAL_UE 3
-#define _5GMM_CAUSE_SYNCH_FAILURE 0b00010101
+#define _5GMM_CAUSE_SYNCH_FAILURE 0b00010101  // 21
 #define _5GMM_CAUSE_IMPLICITLY_DE_REGISTERED 10
 #define _5GMM_CAUSE_UE_IDENTITY_CANNOT_BE_DERIVED 9
 #define _5GMM_CAUSE_NGKSI_ALREADY_IN_USE 0b01000111  // 71

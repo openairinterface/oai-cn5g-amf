@@ -129,6 +129,8 @@ COPY --from=oai-amf-builder \
     /usr/local/lib64/libpistache.so.0 \
     /usr/local/lib/libnghttp2_asio.so \
     /usr/local/lib/libnghttp2_asio.so.1 \
+    /usr/local/lib64/libspdlog.so \
+    /usr/local/lib64/libfmt.so \
     /usr/lib64/
 
 RUN ldconfig && \
