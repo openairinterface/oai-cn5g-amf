@@ -848,10 +848,10 @@ void amf_n1::service_request_handle(
       if (guti_2_nas_context(guti, old_nc)) {
         Logger::amf_app().debug("Get Security Context from old NAS Context");
         nc->security_ctx =
-         std::make_optional<nas_secu_ctx>(old_nc->security_ctx.value);
-        nc->imsi           = old_nc->imsi;
-        nc->requestedNssai = old_nc->requestedNssai;
-        nc->allowed_nssai  = old_nc->allowed_nssai;
+            std::make_optional<nas_secu_ctx>(old_nc->security_ctx.value());
+        nc->imsi            = old_nc->imsi;
+        nc->requested_nssai = old_nc->requested_nssai;
+        nc->allowed_nssai   = old_nc->allowed_nssai;
         for (auto r : nc->allowed_nssai) {
           Logger::nas_mm().debug("Allowed NSSAI: %s", r.ToString().c_str());
         }
@@ -924,8 +924,11 @@ void amf_n1::service_request_handle(
 
   // First send UEContextReleaseCommand to release old NAS signalling
   std::shared_ptr<ue_ngap_context> unc = {};
+  string ue_context_key                = conv::get_ue_context_key(
+      ran_ue_ngap_id_old_nas_connection, amf_ue_ngap_id_old_nas_connection);
+
   if (!amf_n2_inst->ran_ue_id_2_ue_ngap_context(
-          ran_ue_ngap_id_old_nas_connection, unc)) {
+          ran_ue_ngap_id_old_nas_connection, ue_context_key, unc)) {
     Logger::amf_n1().warn(
         "No UE NGAP context with ran_ue_ngap_id (" GNB_UE_NGAP_ID_FMT ")",
         ran_ue_ngap_id_old_nas_connection);
@@ -1110,13 +1113,15 @@ void amf_n1::service_request_handle(
     int encoded_size      = service_accept->Encode(buffer, BUFFER_SIZE_256);
     bstring protected_nas = nullptr;
     encode_nas_message_protected(
-        secu, false, INTEGRITY_PROTECTED_AND_CIPHERED, NAS_MESSAGE_DOWNLINK,
-        buffer, encoded_size, protected_nas);
-    uint8_t* kamf = nc->kamf[secu->vector_pointer];
+        nc->security_ctx.value(), false, INTEGRITY_PROTECTED_AND_CIPHERED,
+        NAS_MESSAGE_DOWNLINK, buffer, encoded_size, protected_nas);
+    uint8_t* kamf = nc->kamf[nc->security_ctx.value().vector_pointer];
     uint8_t kgnb[32];
-    uint32_t ulcount = secu->ul_count.seq_num | (secu->ul_count.overflow << 8);
-    Logger::amf_n1().debug("uplink count(%d)", secu->ul_count.seq_num);
-    comUt::print_buffer("amf_n1", "kamf", kamf, 32);
+    uint32_t ulcount = nc->security_ctx.value().ul_count.seq_num |
+                       (nc->security_ctx.value().ul_count.overflow << 8);
+    Logger::amf_n1().debug(
+        "uplink count(%d)", nc->security_ctx.value().ul_count.seq_num);
+    output_wrapper::print_buffer("amf_n1", "kamf", kamf, 32);
     Authentication_5gaka::derive_kgnb(ulcount, 0x01, kamf, kgnb);
 
     std::shared_ptr<itti_initial_context_setup_request> itti_msg =
@@ -1165,7 +1170,7 @@ void amf_n1::service_request_handle(
   std::unique_ptr<ServiceRequest> service_request =
       std::make_unique<ServiceRequest>();
   int decoded_size =
-      service_request->Decode(nullptr, (uint8_t*) bdata(nas), blength(nas));
+      service_request->Decode((uint8_t*) bdata(nas), blength(nas));
   // bdestroy_wrapper(&nas);
 
   if (decoded_size != KEncodeDecodeError) {
@@ -1210,7 +1215,7 @@ void amf_n1::service_request_handle(
 
     uint8_t buffer[BUFFER_SIZE_512] = {0};
     int encoded_size = service_reject->Encode(buffer, BUFFER_SIZE_512);
-    comUt::print_buffer(
+    output_wrapper::print_buffer(
         "amf_n1", "Service-Reject message buffer", buffer, encoded_size);
     if (!encoded_size) {
       Logger::amf_n1().error("Encode Service-Reject message error");
@@ -1234,16 +1239,18 @@ void amf_n1::service_request_handle(
 
   // Otherwise, continue to process Service Request message
   set_amf_ue_ngap_id_2_nas_context(amf_ue_ngap_id, nc);
-  nas_secu_ctx* secu = nc->security_ctx;  // TODO: remove naked ptr
-  if (!secu) {
+
+  if (!nc->security_ctx.has_value()) {
     Logger::amf_n1().error("No Security Context found");
     return;
   }
 
   // First send UEContextReleaseCommand to release old NAS signalling
   std::shared_ptr<ue_ngap_context> unc = {};
+  string ue_context_key                = conv::get_ue_context_key(
+      ran_ue_ngap_id_old_nas_connection, amf_ue_ngap_id_old_nas_connection);
   if (!amf_n2_inst->ran_ue_id_2_ue_ngap_context(
-          ran_ue_ngap_id_old_nas_connection, unc)) {
+          ran_ue_ngap_id_old_nas_connection, ue_context_key, unc)) {
     Logger::amf_n1().warn(
         "No UE NGAP context with ran_ue_ngap_id (" GNB_UE_NGAP_ID_FMT ")",
         ran_ue_ngap_id_old_nas_connection);
@@ -1332,7 +1339,7 @@ void amf_n1::service_request_handle(
           std::unique_ptr<ServiceRequest> service_request_nas =
               std::make_unique<ServiceRequest>();
           service_request_nas->Decode(
-              nullptr, (uint8_t*) bdata(plain_msg), blength(plain_msg));
+              (uint8_t*) bdata(plain_msg), blength(plain_msg));
           bdestroy_wrapper(&plain_msg);
 
           if (!service_request_nas->GetPduSessionStatus(pdu_session_status)) {
@@ -1369,13 +1376,15 @@ void amf_n1::service_request_handle(
     int encoded_size      = service_accept->Encode(buffer, BUFFER_SIZE_256);
     bstring protected_nas = nullptr;
     encode_nas_message_protected(
-        secu, false, INTEGRITY_PROTECTED_AND_CIPHERED, NAS_MESSAGE_DOWNLINK,
-        buffer, encoded_size, protected_nas);
-    uint8_t* kamf = nc->kamf[secu->vector_pointer];
+        nc->security_ctx.value(), false, INTEGRITY_PROTECTED_AND_CIPHERED,
+        NAS_MESSAGE_DOWNLINK, buffer, encoded_size, protected_nas);
+    uint8_t* kamf = nc->kamf[nc->security_ctx.value().vector_pointer];
     uint8_t kgnb[32];
-    uint32_t ulcount = secu->ul_count.seq_num | (secu->ul_count.overflow << 8);
-    Logger::amf_n1().debug("uplink count(%d)", secu->ul_count.seq_num);
-    comUt::print_buffer("amf_n1", "kamf", kamf, 32);
+    uint32_t ulcount = nc->security_ctx.value().ul_count.seq_num |
+                       (nc->security_ctx.value().ul_count.overflow << 8);
+    Logger::amf_n1().debug(
+        "uplink count(%d)", nc->security_ctx.value().ul_count.seq_num);
+    output_wrapper::print_buffer("amf_n1", "kamf", kamf, 32);
     Authentication_5gaka::derive_kgnb(ulcount, 0x01, kamf, kgnb);
 
     std::shared_ptr<itti_initial_context_setup_request> itti_msg =
@@ -3701,7 +3710,14 @@ void amf_n1::ul_nas_transport_handle(
 
         if (!found) {
           std::vector<struct SNSSAI_s> common_nssais;
-          amf_n2_inst->get_common_NSSAI(nc->ran_ue_ngap_id, common_nssais);
+          // Find UE Context
+          std::shared_ptr<ue_context> uc = {};
+          if (!find_ue_context(nc->ran_ue_ngap_id, nc->amf_ue_ngap_id, uc)) {
+            Logger::amf_n1().warn("Cannot find the UE context");
+            return;
+          }
+          amf_n2_inst->get_common_NSSAI(
+              nc->ran_ue_ngap_id, uc->gnb_id, common_nssais);
 
           // Allowed NSSAI
           for (auto s : common_nssais) {
