@@ -144,7 +144,15 @@ int SecurityModeCommand::Encode(uint8_t* buf, int len) {
   // NAS key set identifier
   size = ie_ng_ksi.Encode(buf + encoded_size, len - encoded_size);
   if (size != KEncodeDecodeError) {
-    encoded_size++;  // 1/2 octet for ngKSI, 1/2 for Spare half octet
+    // 1/2 octet for ngKSI, 1/2 for Spare half octet
+    // TODO:do it in NAS Key Set Identifier
+    uint8_t octet    = 0;
+    int decoded_size = 0;
+    DECODE_U8(buf + encoded_size, octet, decoded_size);
+    // clear spare half
+    octet = octet & 0x0f;
+    ENCODE_U8(buf + encoded_size, octet, encoded_size);
+    // encoded_size++;  // 1/2 octet for ngKSI, 1/2 for Spare half octet
   } else {
     Logger::nas_mm().error(
         "Encoding %s error", NasKeySetIdentifier::GetIeName().c_str());

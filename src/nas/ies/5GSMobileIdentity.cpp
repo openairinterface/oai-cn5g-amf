@@ -656,7 +656,7 @@ int _5GSMobileIdentity::DecodeImeisv(uint8_t* buf, int len) {
   }
   imeisv_ = std::optional<IMEISV_t>(imeisv_tmp);
   Logger::nas_mm().debug(
-      "decoded 5GSMobilityIdentity IMEISV len (%d)", decoded_size);
+      "Decoded 5GSMobilityIdentity IMEISV len (%d)", decoded_size);
   return decoded_size;
 }
 

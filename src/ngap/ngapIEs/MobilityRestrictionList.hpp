@@ -32,8 +32,8 @@ class MobilityRestrictionList {
   MobilityRestrictionList();
   virtual ~MobilityRestrictionList();
 
-  void setPLMN(const PlmnId& sPlmn);
-  void getPLMN(PlmnId& sPlmn);
+  void setPLMN(const PlmnId& plmn);
+  void getPLMN(PlmnId& plmn) const;
 
   bool encode(Ngap_MobilityRestrictionList_t* mobility_restriction_list);
   bool decode(Ngap_MobilityRestrictionList_t* mobility_restriction_list);

@@ -56,6 +56,7 @@ nas_context::nas_context() : _5g_he_av(), _5g_av(), kamf(), _5gmm_capability() {
   mobile_reachable_timer                                = ITTI_INVALID_TIMER_ID;
   implicit_deregistration_timer                         = ITTI_INVALID_TIMER_ID;
   href                                                  = {};
+  imeisv                                                = std::nullopt;
 }
 
 //------------------------------------------------------------------------------

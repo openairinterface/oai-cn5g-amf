@@ -849,7 +849,11 @@ void amf_n1::service_request_handle(
         Logger::amf_app().debug("Get Security Context from old NAS Context");
         nc->security_ctx =
             std::make_optional<nas_secu_ctx>(old_nc->security_ctx.value());
-        nc->imsi            = old_nc->imsi;
+        nc->imsi = old_nc->imsi;
+        if (old_nc->imeisv.has_value()) {
+          nc->imeisv =
+              std::make_optional<nas::IMEISV_t>(old_nc->imeisv.value());
+        }
         nc->requested_nssai = old_nc->requested_nssai;
         nc->allowed_nssai   = old_nc->allowed_nssai;
         for (auto r : nc->allowed_nssai) {
@@ -1179,9 +1183,9 @@ void amf_n1::service_request_handle(
     uint8_t amf_pointer = {};
     string tmsi         = {};
     if (service_request->Get5gSTmsi(amf_set_id, amf_pointer, tmsi)) {
-      std::string guti = uc->tai.mcc + uc->tai.mnc + amf_cfg.guami.regionID +
-                         std::to_string(amf_set_id) +
-                         std::to_string(amf_pointer) + tmsi;
+      std::string guti = conv::tmsi_to_guti(
+          uc->tai.mcc, uc->tai.mnc, amf_cfg.guami.regionID,
+          std::to_string(amf_set_id), std::to_string(amf_pointer), tmsi);
 
       Logger::amf_app().debug(
           "GUTI %s, 5G-TMSI %s", guti.c_str(), tmsi.c_str());
@@ -1193,6 +1197,26 @@ void amf_n1::service_request_handle(
         nc->imsi                           = old_nc->imsi;
         ran_ue_ngap_id_old_nas_connection  = old_nc->ran_ue_ngap_id;
         amf_ue_ngap_id_old_nas_connection  = old_nc->amf_ue_ngap_id;
+        if (old_nc->imeisv.has_value()) {
+          nc->imeisv =
+              std::make_optional<nas::IMEISV_t>(old_nc->imeisv.value());
+        }
+        nc->requested_nssai = old_nc->requested_nssai;
+        nc->allowed_nssai   = old_nc->allowed_nssai;
+        for (auto r : nc->allowed_nssai) {
+          Logger::nas_mm().debug("Allowed NSSAI: %s", r.ToString().c_str());
+        }
+        nc->subscribed_snssai = old_nc->subscribed_snssai;
+        nc->configured_nssai  = old_nc->configured_nssai;
+
+        for (const auto& sn : nc->subscribed_snssai) {
+          if (sn.first) {
+            SNSSAI_t snssai = {};
+            snssai          = sn.second;
+            Logger::amf_n1().debug(
+                "Configured S-NSSAI %s", snssai.ToString().c_str());
+          }
+        }
         Logger::amf_n2().debug(
             "Old ran_ue_ngap_id (" GNB_UE_NGAP_ID_FMT
             "), old amf_ue_ngap_id (" AMF_UE_NGAP_ID_FMT ")",
@@ -2913,6 +2937,13 @@ void amf_n1::security_mode_complete_handle(
       "amf_n1", "Security Mode Complete message buffer",
       (uint8_t*) bdata(nas_msg), blength(nas_msg));
 
+  // Store UE Id (IMEISV) if available
+  nas::IMEISV_t imeisv = {};
+  if (security_mode_complete->GetNonImeisv(imeisv)) {
+    nc->imeisv = std::make_optional<nas::IMEISV_t>(imeisv);
+  }
+
+  // Process NAS Container
   bstring nas_msg_container = nullptr;
   if (security_mode_complete->GetNasMessageContainer(nas_msg_container)) {
     output_wrapper::print_buffer(

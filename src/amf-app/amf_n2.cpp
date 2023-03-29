@@ -875,8 +875,25 @@ void amf_n2::handle_itti_message(itti_initial_context_setup_request& itti_msg) {
       0xe000, 0xe000, 0x0000,
       0x0000);  // TODO: remove hardcoded value
   msg->setSecurityKey((uint8_t*) bdata(itti_msg.kgnb));
-  msg->setNasPdu(itti_msg.nas);
 
+  ngap::PlmnId plmn_id = {};
+  plmn_id.set(amf_cfg.guami.mcc, amf_cfg.guami.mnc);
+  msg->setMobilityRestrictionList(plmn_id);
+
+  // IMEISV
+  std::shared_ptr<nas_context> nc = {};
+  if (!amf_n1_inst->amf_ue_id_2_nas_context(itti_msg.amf_ue_ngap_id, nc)) {
+    Logger::amf_n2().warn(
+        "No existed nas_context with amf_ue_ngap_id(" AMF_UE_NGAP_ID_FMT ")",
+        itti_msg.amf_ue_ngap_id);
+    // TODO:
+  } else {
+    if (nc->imeisv.has_value()) {
+      msg->setMaskedIMEISV(nc->imeisv.value().identity);
+    }
+  }
+
+  msg->setNasPdu(itti_msg.nas);
 
   if (itti_msg.is_sr or itti_msg.is_pdu_exist) {
     // Set UE Radio Capability if available

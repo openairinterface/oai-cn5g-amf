@@ -28,13 +28,13 @@ MobilityRestrictionList::MobilityRestrictionList() {}
 MobilityRestrictionList::~MobilityRestrictionList() {}
 
 //------------------------------------------------------------------------------
-void MobilityRestrictionList::setPLMN(const PlmnId& sPLMN) {
-  servingPLMN = sPLMN;
+void MobilityRestrictionList::setPLMN(const PlmnId& plmn) {
+  servingPLMN = plmn;
 }
 
 //------------------------------------------------------------------------------
-void MobilityRestrictionList::getPLMN(PlmnId& sPLMN) {
-  sPLMN = servingPLMN;
+void MobilityRestrictionList::getPLMN(PlmnId& plmn) const {
+  plmn = servingPLMN;
 }
 
 //------------------------------------------------------------------------------

@@ -81,6 +81,8 @@ class nas_context {
   uint8_t ngksi;  // 4 bits
 
   std::string imsi;  // TODO: use SUPI instead
+  std::optional<nas::IMEISV_t> imeisv;
+
   std::uint8_t _5gmm_capability[13];
   nas::UESecurityCapability ue_security_capability;
 
