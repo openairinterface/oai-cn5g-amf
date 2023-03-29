@@ -44,11 +44,11 @@ class ue_ngap_context {
     ran_ue_ngap_id        = 0;
     amf_ue_ngap_id        = 0;
     target_ran_ue_ngap_id = 0;
-    last_ran_ue_ngap_id   = 0;
 
     sctp_stream_recv = {};
     sctp_stream_send = {};
 
+    release_gnb         = {};
     release_cause       = {};
     gnb_assoc_id        = {};
     target_gnb_assoc_id = {};
@@ -69,7 +69,6 @@ class ue_ngap_context {
     initialUEMsg.size = 0;
   }
 
-  uint32_t last_ran_ue_ngap_id;
   uint32_t ran_ue_ngap_id;         // 32bits
   long amf_ue_ngap_id : 40;        // 40bits
   uint32_t target_ran_ue_ngap_id;  // 32bits, for HO
@@ -95,8 +94,9 @@ class ue_ngap_context {
 
   OCTET_STRING_t initialUEMsg;
 
-  //store the cause of Release Command
+  //Release Command Cause and source gNB ID in case of HO
   Ngap_CauseRadioNetwork_t release_cause;
+  uint32_t release_gnb;
 };
 
 #endif
