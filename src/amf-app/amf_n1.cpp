@@ -325,7 +325,7 @@ void amf_n1::handle_itti_message(itti_downlink_nas_transfer& itti_msg) {
         uint32_t ulcount = nc->security_ctx.value().ul_count.seq_num |
                            (nc->security_ctx.value().ul_count.overflow << 8);
         Authentication_5gaka::derive_kgnb(
-            0, 0x01, kamf, kgnb);  // TODO: remove hardcoded value
+            ulcount, 0x01, kamf, kgnb);  // TODO: remove hardcoded value
         output_wrapper::print_buffer(
             "amf_n1", "Kamf", kamf, AUTH_VECTOR_LENGTH_OCTETS);
 
@@ -3153,7 +3153,7 @@ void amf_n1::security_mode_complete_handle(
     uint32_t ulcount = nc->security_ctx.value().ul_count.seq_num |
                        (nc->security_ctx.value().ul_count.overflow << 8);
     Authentication_5gaka::derive_kgnb(
-        0, 0x01, kamf, kgnb);  // TODO: remove harcoded value
+        ulcount, 0x01, kamf, kgnb);  // TODO: remove harcoded value
     output_wrapper::print_buffer(
         "amf_n1", "Kamf", kamf, AUTH_VECTOR_LENGTH_OCTETS);
 
