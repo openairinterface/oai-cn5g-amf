@@ -4555,6 +4555,13 @@ void amf_n1::initialize_registration_accept(
   // Timer T3512
   registration_accept->SetT3512Value(0x5, T3512_TIMER_VALUE_MIN);
 
+  // Timer T3502
+  registration_accept->SetT3502Value(12);  // TODO: remove hardcoded value
+
+  // LADN info
+  LadnInformation ladn_information = {};
+  registration_accept->SetLadnInformation(ladn_information);
+
   // Find UE Context
   std::shared_ptr<ue_context> uc = {};
   if (!find_ue_context(nc->ran_ue_ngap_id, nc->amf_ue_ngap_id, uc)) {
