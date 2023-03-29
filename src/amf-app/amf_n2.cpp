@@ -1309,6 +1309,28 @@ void amf_n2::handle_itti_message(itti_ue_context_release_complete& itti_msg) {
     return;
   }
 
+  std::shared_ptr<ue_ngap_context> unc = {};
+
+  if (!amf_ue_id_2_ue_ngap_context(amf_ue_ngap_id, unc)) {
+    Logger::amf_app().error(
+        "No UE NGAP context for amf_ngap_id %s, exit", amf_ue_ngap_id);
+    return;
+  }
+
+  //verify release cause -> if HandoverSuccessful no further operations required
+  if(unc->release_cause == Ngap_CauseRadioNetwork_successful_handover){
+    std::shared_ptr<gnb_context> gc = {};
+    if (!assoc_id_2_gnb_context(itti_msg.assoc_id, gc)) {
+      Logger::amf_n2().error(
+          "gNB with assoc_id (%d) is illegal", itti_msg.assoc_id);
+      return;
+    }
+    remove_ran_ue_ngap_id_2_ngap_context(ran_ue_ngap_id, gc->gnb_id);
+    unc->release_cause = 0;
+    return;
+  }
+
+
   // Change UE status from CM-CONNECTED to CM-IDLE
   std::shared_ptr<nas_context> nc = {};
   if (!amf_n1_inst->amf_ue_id_2_nas_context(amf_ue_ngap_id, nc)) {
@@ -2031,10 +2053,13 @@ void amf_n2::handle_itti_message(itti_handover_notify& itti_msg) {
     return;
   }
 
+  unc->release_cause         = Ngap_CauseRadioNetwork_successful_handover;
+  unc->last_ran_ue_ngap_id   = unc->ran_ue_ngap_id;
   unc->ran_ue_ngap_id        = ran_ue_ngap_id;  // store new RAN ID
   unc->target_ran_ue_ngap_id = 0;               // Clear target RAN ID
   unc->ng_ue_state           = NGAP_UE_CONNECTED;
   unc->gnb_assoc_id          = itti_msg.assoc_id;  // update serving gNB
+
   set_ran_ue_ngap_id_2_ue_ngap_context(ran_ue_ngap_id, gc->gnb_id, unc);
 }
 
