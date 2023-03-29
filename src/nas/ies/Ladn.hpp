@@ -19,33 +19,30 @@
  *      contact@openairinterface.org
  */
 
-#ifndef _LADN_INDICATION_H_
-#define _LADN_INDICATION_H_
+#ifndef _LADN_H_
+#define _LADN_H_
 
+#include "DNN.hpp"
+#include "_5GSTrackingAreaIdList.hpp"
 #include "Type6NasIe.hpp"
-
-constexpr uint8_t kLadnIndicationMinimumLength  = 3;
-constexpr uint16_t kLadnIndicationMaximumLength = 811;
-constexpr auto kLadnIndicationIeName            = "LADN Indication";
 
 namespace nas {
 
-class LadnIndication : Type6NasIe {
+class ladn {
  public:
-  LadnIndication();
-  LadnIndication(const std::vector<bstring>& ladn);
-  ~LadnIndication();
+  ladn();
+  ~ladn();
 
-  static std::string GetIeName() { return kLadnIndicationIeName; }
-
-  // void SetValue(const std::vector<bstring>& ladn);
-  void GetValue(std::vector<bstring>& ladn) const;
+  void Set(const DNN& value);
+  void Set(const _5GSTrackingAreaIdList& value);
+  uint32_t GetLength() const;
 
   int Encode(uint8_t* buf, int len);
-  int Decode(uint8_t* buf, int len, bool is_option);
+  int Decode(uint8_t* buf, int len);
 
  private:
-  std::vector<bstring> LADN;
+  DNN dnn;
+  _5GSTrackingAreaIdList ta_list;
 };
 
 }  // namespace nas
