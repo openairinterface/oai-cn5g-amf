@@ -527,33 +527,31 @@ std::string conv::get_imsi(
 
 //------------------------------------------------------------------------------
 bool conv::string_2_masked_imeisv(
-    const std::string& str, BIT_STRING_t& imeisv) {
-  if (str.length() != 16) return false;  // Must contain 16 digits
+    const std::string& imeisv_str, BIT_STRING_t& imeisv) {
+  int len = imeisv_str.length();
+  if (len != 16) return false;  // Must contain 16 digits
 
   imeisv.buf = (uint8_t*) calloc(8, sizeof(uint8_t));
   if (!imeisv.buf) {
     return false;
   }
 
-  bstring b_str             = {};
-  std::string imeisv_masked = {};
-  // TODO: last 4 digits of the SNR masked by setting the corresponding bits to
-  // 1
-  imeisv_masked      = str.substr(0, 10) + "1111" + str.substr(14, 2);
   uint8_t digit_low  = 0;
   uint8_t digit_high = 0;
 
-  int i   = 0;
-  int len = imeisv_masked.length();
-  int j   = 0;
+  int i = 0;
+  int j = 0;
   while (i < len) {
-    string_to_int8(imeisv_masked.substr(i, 1), digit_low);
-    string_to_int8(imeisv_masked.substr(i + 1, 1), digit_high);
+    string_to_int8(imeisv_str.substr(i, 1), digit_low);
+    string_to_int8(imeisv_str.substr(i + 1, 1), digit_high);
     i             = i + 2;
     uint8_t octet = (0xf0 & (digit_high << 4)) | (digit_low & 0x0f);
     imeisv.buf[j] = octet;
     j++;
   }
+  // last 4 digits of the SNR masked by setting the corresponding bits to 1
+  imeisv.buf[5] = 0xff;
+  imeisv.buf[6] = 0xff;
 
   imeisv.size        = 8;
   imeisv.bits_unused = 0;
