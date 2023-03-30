@@ -107,7 +107,7 @@ class InitialContextSetupRequestMsg : public NgapUEMessage {
   void setUERadioCapability(const bstring& ue_radio_capability);
   void getUERadioCapability(bstring& ue_radio_capability);
 
-  void setMaskedIMEISV(const bstring& imeisv);
+  void setMaskedIMEISV(const std::string& imeisv);
   // bool getMaskedIMEISV();
 
   void setNasPdu(const bstring& pdu);

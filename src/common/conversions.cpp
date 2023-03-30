@@ -524,3 +524,38 @@ std::string conv::get_imsi(
     const std::string& mcc, const std::string& mnc, const std::string& msin) {
   return {mcc + mnc + msin};
 }
+
+//------------------------------------------------------------------------------
+bool conv::string_2_masked_imeisv(
+    const std::string& str, BIT_STRING_t& imeisv) {
+  if (str.length() != 16) return false;  // Must contain 16 digits
+
+  imeisv.buf = (uint8_t*) calloc(8, sizeof(uint8_t));
+  if (!imeisv.buf) {
+    return false;
+  }
+
+  bstring b_str             = {};
+  std::string imeisv_masked = {};
+  // TODO: last 4 digits of the SNR masked by setting the corresponding bits to
+  // 1
+  imeisv_masked      = str.substr(0, 10) + "1111" + str.substr(14, 2);
+  uint8_t digit_low  = 0;
+  uint8_t digit_high = 0;
+
+  int i   = 0;
+  int len = imeisv_masked.length();
+  int j   = 0;
+  while (i < len) {
+    string_to_int8(imeisv_masked.substr(i, 1), digit_low);
+    string_to_int8(imeisv_masked.substr(i + 1, 1), digit_high);
+    i             = i + 2;
+    uint8_t octet = (0xf0 & (digit_high << 4)) | (digit_low & 0x0f);
+    imeisv.buf[j] = octet;
+    j++;
+  }
+
+  imeisv.size        = 8;
+  imeisv.bits_unused = 0;
+  return true;
+}

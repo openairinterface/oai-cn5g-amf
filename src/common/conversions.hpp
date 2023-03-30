@@ -110,5 +110,7 @@ class conv {
   static std::string imsi_to_supi(const std::string& imsi);
   static std::string get_imsi(
       const std::string& mcc, const std::string& mnc, const std::string& msin);
+  static bool string_2_masked_imeisv(
+      const std::string& str, BIT_STRING_t& imeisv);
 };
 #endif /* FILE_CONVERSIONS_HPP_SEEN */

@@ -597,7 +597,7 @@ void InitialContextSetupRequestMsg::setUERadioCapability(
 
   Ngap_InitialContextSetupRequestIEs_t* ie =
       (Ngap_InitialContextSetupRequestIEs_t*) calloc(
-          1, sizeof(Ngap_PDUSessionResourceSetupRequestIEs_t));
+          1, sizeof(Ngap_InitialContextSetupRequestIEs_t));
   ie->id          = Ngap_ProtocolIE_ID_id_UERadioCapability;
   ie->criticality = Ngap_Criticality_ignore;
   ie->value.present =
@@ -623,10 +623,23 @@ void InitialContextSetupRequestMsg::getUERadioCapability(
 }
 
 //------------------------------------------------------------------------------
-void InitialContextSetupRequestMsg::setMaskedIMEISV(const bstring& imeisv) {
-  Ngap_MaskedIMEISV_t tmp = {};
-  conv::bstring_2_bit_string(imeisv, tmp);
-  maskedIMEISV = std::make_optional<Ngap_MaskedIMEISV_t>(tmp);
+void InitialContextSetupRequestMsg::setMaskedIMEISV(const std::string& imeisv) {
+  Ngap_InitialContextSetupRequestIEs_t* ie =
+      (Ngap_InitialContextSetupRequestIEs_t*) calloc(
+          1, sizeof(Ngap_InitialContextSetupRequestIEs_t));
+  ie->id            = Ngap_ProtocolIE_ID_id_MaskedIMEISV;
+  ie->criticality   = Ngap_Criticality_ignore;
+  ie->value.present = Ngap_InitialContextSetupRequestIEs__value_PR_MaskedIMEISV;
+
+  if (!conv::string_2_masked_imeisv(imeisv, ie->value.choice.MaskedIMEISV)) {
+    Logger::ngap().error("Encode MaskedIMEISV IE error!");
+    free_wrapper((void**) &ie);
+    return;
+  }
+
+  int ret =
+      ASN_SEQUENCE_ADD(&initialContextSetupRequestIEs->protocolIEs.list, ie);
+  if (ret != 0) Logger::ngap().error("Encode MaskedIMEISV IE error!");
 }
 
 //------------------------------------------------------------------------------

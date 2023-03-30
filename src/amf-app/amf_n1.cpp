@@ -852,7 +852,10 @@ void amf_n1::service_request_handle(
         nc->imsi = old_nc->imsi;
         if (old_nc->imeisv.has_value()) {
           nc->imeisv =
-              std::make_optional<nas::IMEISV_t>(old_nc->imeisv.value());
+              std::make_optional<nas::IMEI_IMEISV_t>(old_nc->imeisv.value());
+          Logger::nas_mm().debug(
+              "Stored IMEISV in the new NAS Context: %s",
+              nc->imeisv.value().identity.c_str());
         }
         nc->requested_nssai = old_nc->requested_nssai;
         nc->allowed_nssai   = old_nc->allowed_nssai;
@@ -1199,7 +1202,10 @@ void amf_n1::service_request_handle(
         amf_ue_ngap_id_old_nas_connection  = old_nc->amf_ue_ngap_id;
         if (old_nc->imeisv.has_value()) {
           nc->imeisv =
-              std::make_optional<nas::IMEISV_t>(old_nc->imeisv.value());
+              std::make_optional<nas::IMEI_IMEISV_t>(old_nc->imeisv.value());
+          Logger::nas_mm().debug(
+              "Stored IMEISV in the new NAS Context: %s",
+              nc->imeisv.value().identity.c_str());
         }
         nc->requested_nssai = old_nc->requested_nssai;
         nc->allowed_nssai   = old_nc->allowed_nssai;
@@ -2938,9 +2944,11 @@ void amf_n1::security_mode_complete_handle(
       (uint8_t*) bdata(nas_msg), blength(nas_msg));
 
   // Store UE Id (IMEISV) if available
-  nas::IMEISV_t imeisv = {};
-  if (security_mode_complete->GetNonImeisv(imeisv)) {
-    nc->imeisv = std::make_optional<nas::IMEISV_t>(imeisv);
+  nas::IMEI_IMEISV_t imeisv = {};
+  if (security_mode_complete->GetImeisv(imeisv)) {
+    Logger::nas_mm().debug(
+        "Stored IMEISV in the NAS Context: %s", imeisv.identity.c_str());
+    nc->imeisv = std::make_optional<nas::IMEI_IMEISV_t>(imeisv);
   }
 
   // Process NAS Container

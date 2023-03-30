@@ -889,7 +889,12 @@ void amf_n2::handle_itti_message(itti_initial_context_setup_request& itti_msg) {
     // TODO:
   } else {
     if (nc->imeisv.has_value()) {
+      Logger::nas_mm().debug(
+          "Set IMEISV InitialContextSetupRequestMsg: %s",
+          nc->imeisv.value().identity.c_str());
       msg->setMaskedIMEISV(nc->imeisv.value().identity);
+    } else {
+      Logger::nas_mm().debug("No IMEISV info available");
     }
   }
 
