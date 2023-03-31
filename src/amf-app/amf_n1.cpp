@@ -849,6 +849,12 @@ void amf_n1::service_request_handle(
         Logger::amf_app().debug("Get Security Context from old NAS Context");
         nc->security_ctx =
             std::make_optional<nas_secu_ctx>(old_nc->security_ctx.value());
+        // Copy Kamf
+        for (uint8_t j = 0; j < MAX_5GS_AUTH_VECTORS; j++) {
+          for (uint8_t i = 0; i < AUTH_VECTOR_LENGTH_OCTETS; i++) {
+            nc->kamf[j][i] = old_nc->kamf[j][i];
+          }
+        }
         nc->imsi = old_nc->imsi;
         if (old_nc->imeisv.has_value()) {
           nc->imeisv =
