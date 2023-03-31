@@ -48,6 +48,8 @@ class ue_ngap_context {
     sctp_stream_recv = {};
     sctp_stream_send = {};
 
+    release_gnb         = {};
+    release_cause       = {};
     gnb_assoc_id        = {};
     target_gnb_assoc_id = {};
     ueContextRequest    = false;
@@ -91,6 +93,10 @@ class ue_ngap_context {
   uint8_t ncc;  // Next Hop Chaining Counter
 
   OCTET_STRING_t initialUEMsg;
+
+  //Release Command Cause and source gNB ID in case of HO
+  Ngap_CauseRadioNetwork_t release_cause;
+  uint32_t release_gnb;
 };
 
 #endif
