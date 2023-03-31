@@ -1195,11 +1195,21 @@ void amf_n1::service_request_handle(
       std::shared_ptr<nas_context> old_nc = {};
       if (guti_2_nas_context(guti, old_nc)) {
         Logger::amf_app().debug("Get Security Context from old NAS Context");
-        nc->security_ctx                   = old_nc->security_ctx;
-        nc->security_ctx->ul_count.seq_num = ulCount;
-        nc->imsi                           = old_nc->imsi;
-        ran_ue_ngap_id_old_nas_connection  = old_nc->ran_ue_ngap_id;
-        amf_ue_ngap_id_old_nas_connection  = old_nc->amf_ue_ngap_id;
+        nc->security_ctx =
+            std::make_optional<nas_secu_ctx>(old_nc->security_ctx.value());
+        // Copy Kamf
+        for (uint8_t j = 0; j < MAX_5GS_AUTH_VECTORS; j++) {
+          for (uint8_t i = 0; i < AUTH_VECTOR_LENGTH_OCTETS; i++) {
+            nc->kamf[j][i] = old_nc->kamf[j][i];
+          }
+        }
+
+        nc->security_ctx.value().ul_count.seq_num = ulCount;
+        Logger::amf_app().debug(
+            "Get Security Context from old NAS Context: ulcount %d", ulCount);
+        nc->imsi                          = old_nc->imsi;
+        ran_ue_ngap_id_old_nas_connection = old_nc->ran_ue_ngap_id;
+        amf_ue_ngap_id_old_nas_connection = old_nc->amf_ue_ngap_id;
         if (old_nc->imeisv.has_value()) {
           nc->imeisv =
               std::make_optional<nas::IMEI_IMEISV_t>(old_nc->imeisv.value());
@@ -1408,14 +1418,20 @@ void amf_n1::service_request_handle(
     encode_nas_message_protected(
         nc->security_ctx.value(), false, INTEGRITY_PROTECTED_AND_CIPHERED,
         NAS_MESSAGE_DOWNLINK, buffer, encoded_size, protected_nas);
-    uint8_t* kamf = nc->kamf[nc->security_ctx.value().vector_pointer];
-    uint8_t kgnb[32];
+
+    // send using InitialContextSetupRequest
+    uint8_t kamf[AUTH_VECTOR_LENGTH_OCTETS];
+    uint8_t kgnb[AUTH_VECTOR_LENGTH_OCTETS];
+    if (!nc->get_kamf(nc->security_ctx.value().vector_pointer, kamf)) {
+      Logger::amf_n1().warn("No Kamf found");
+      return;
+    }
     uint32_t ulcount = nc->security_ctx.value().ul_count.seq_num |
                        (nc->security_ctx.value().ul_count.overflow << 8);
-    Logger::amf_n1().debug(
-        "uplink count(%d)", nc->security_ctx.value().ul_count.seq_num);
-    output_wrapper::print_buffer("amf_n1", "kamf", kamf, 32);
-    Authentication_5gaka::derive_kgnb(ulcount, 0x01, kamf, kgnb);
+    Authentication_5gaka::derive_kgnb(
+        ulcount, 0x01, kamf, kgnb);  // TODO: remove hardcoded value
+    output_wrapper::print_buffer(
+        "amf_n1", "Kamf", kamf, AUTH_VECTOR_LENGTH_OCTETS);
 
     std::shared_ptr<itti_initial_context_setup_request> itti_msg =
         std::make_shared<itti_initial_context_setup_request>(
