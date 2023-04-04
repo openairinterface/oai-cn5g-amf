@@ -908,7 +908,7 @@ void amf_n2::handle_itti_message(itti_initial_context_setup_request& itti_msg) {
     }
 
     if (itti_msg.is_sr)
-      Logger::amf_n2().debug("Encoding parameters for Service Request");
+      Logger::amf_n2().debug("Encoding parameters for Service Accept");
     else
       Logger::amf_n2().debug(
           "Encoding parameters for Initial Context Setup Request");
@@ -2287,9 +2287,8 @@ void amf_n2::remove_ue_context_with_ran_ue_ngap_id(
   if (amf_n1_inst->amf_ue_id_2_nas_context(unc->amf_ue_ngap_id, nc)) {
     // Remove all NAS context
     string supi = conv::imsi_to_supi(nc->imsi);
-    if (nc->is_stacs_available) {
-      stacs.update_5gmm_state(nc->imsi, "5GMM-DEREGISTERED");
-    }
+    stacs.update_5gmm_state(nc->imsi, "5GMM-DEREGISTERED");
+
     // Trigger UE Loss of Connectivity Status Notify
     Logger::amf_n1().debug(
         "Signal the UE Loss of Connectivity Event notification for SUPI %s",
@@ -2372,9 +2371,8 @@ void amf_n2::remove_ue_context_with_amf_ue_ngap_id(const long& amf_ue_ngap_id) {
     // Remove all NAS context
     string supi = conv::imsi_to_supi(nc->imsi);
     // Update UE status
-    if (nc->is_stacs_available) {
-      stacs.update_5gmm_state(nc->imsi, "5GMM-DEREGISTERED");
-    }
+    stacs.update_5gmm_state(nc->imsi, "5GMM-DEREGISTERED");
+
     // Trigger UE Loss of Connectivity Status Notify
     Logger::amf_n1().debug(
         "Signal the UE Loss of Connectivity Event notification for SUPI %s",

@@ -774,31 +774,26 @@ void amf_n1::identity_response_handle(
 
   // Continue the Registration Procedure
   if (nc->to_be_register_by_new_suci) {
-    if (!nc->is_stacs_available) {
-      ue_info_t ueItem;
-      ueItem.connStatus = "5GMM-CONNECTED";  //"CM-CONNECTED";
-      ueItem.registerStatus =
-          "5GMM-REG-INITIATED";  // 5GMM-COMMON-PROCEDURE-INITIATED
-      ueItem.ranid = ran_ue_ngap_id;
-      ueItem.amfid = amf_ue_ngap_id;
-      ueItem.imsi  = nc->imsi;
+    // Update 5GMM State
+    ue_info_t ueItem;
+    ueItem.connStatus = "5GMM-CONNECTED";  //"CM-CONNECTED";
+    ueItem.registerStatus =
+        "5GMM-REG-INITIATED";  // 5GMM-COMMON-PROCEDURE-INITIATED
+    ueItem.ranid = ran_ue_ngap_id;
+    ueItem.amfid = amf_ue_ngap_id;
+    ueItem.imsi  = nc->imsi;
 
-      // Find UE context
-      std::shared_ptr<ue_context> uc = {};
-      if (!find_ue_context(ran_ue_ngap_id, amf_ue_ngap_id, uc)) {
-        Logger::amf_n1().warn("Cannot find the UE context");
-      } else {
-        ueItem.mcc    = uc->cgi.mcc;
-        ueItem.mnc    = uc->cgi.mnc;
-        ueItem.cellId = uc->cgi.nrCellID;
-      }
-
-      stacs.update_ue_info(ueItem);
-      set_5gmm_state(nc, _5GMM_COMMON_PROCEDURE_INITIATED);
-      // stacs.display();
-      nc->is_stacs_available = true;
+    // Find UE context
+    std::shared_ptr<ue_context> uc = {};
+    if (!find_ue_context(ran_ue_ngap_id, amf_ue_ngap_id, uc)) {
+      Logger::amf_n1().warn("Cannot find the UE context");
+    } else {
+      ueItem.mcc    = uc->cgi.mcc;
+      ueItem.mnc    = uc->cgi.mnc;
+      ueItem.cellId = uc->cgi.nrCellID;
     }
 
+    stacs.update_ue_info(ueItem);
     set_5gmm_state(nc, _5GMM_COMMON_PROCEDURE_INITIATED);
 
     Logger::amf_n1().debug(
@@ -923,7 +918,13 @@ void amf_n1::service_request_handle(
       Logger::amf_n1().error(
           "Could not send ITTI message %s to task TASK_AMF_N2",
           dnt->get_msg_name());
+    } else {
+      // Update 5GMM State
+      stacs.update_5gmm_state(nc->imsi, "5GMM-DEREGISTERED");
+      set_5gmm_state(nc, _5GMM_DEREGISTERED);
+      stacs.display();
     }
+
     return;
   }
 
@@ -1063,8 +1064,8 @@ void amf_n1::service_request_handle(
   if (pdu_session_to_be_activated.size() == 0) {
     Logger::amf_n1().debug("There is no PDU session to be activated");
     // service_accept->SetPduSessionStatus(0x0000);
-    uint8_t buffer[BUFFER_SIZE_256];
-    int encoded_size      = service_accept->Encode(buffer, BUFFER_SIZE_256);
+    uint8_t buffer[BUFFER_SIZE_1024];
+    int encoded_size      = service_accept->Encode(buffer, BUFFER_SIZE_1024);
     bstring protected_nas = nullptr;
     encode_nas_message_protected(
         nc->security_ctx.value(), false, INTEGRITY_PROTECTED_AND_CIPHERED,
@@ -1100,10 +1101,14 @@ void amf_n1::service_request_handle(
       Logger::amf_n1().error(
           "Could not send ITTI message %s to task TASK_AMF_N2",
           itti_msg->get_msg_name());
+    } else {
+      // Update 5GMM State
+      stacs.update_5gmm_state(nc->imsi, "5GMM-REGISTERED");
+      set_5gmm_state(nc, _5GMM_REGISTERED);
+      stacs.display();
     }
     bdestroy_wrapper(&protected_nas);
     return;
-
   } else {
     // TODO: Contact SMF to activate UP for these sessions
     // TODO: modify itti_initial_context_setup_request for supporting multiple
@@ -1122,8 +1127,8 @@ void amf_n1::service_request_handle(
       service_accept->SetPduSessionReactivationResult(0x0000);
     }
 
-    uint8_t buffer[BUFFER_SIZE_256];
-    int encoded_size      = service_accept->Encode(buffer, BUFFER_SIZE_256);
+    uint8_t buffer[BUFFER_SIZE_1024];
+    int encoded_size      = service_accept->Encode(buffer, BUFFER_SIZE_1024);
     bstring protected_nas = nullptr;
     encode_nas_message_protected(
         nc->security_ctx.value(), false, INTEGRITY_PROTECTED_AND_CIPHERED,
@@ -1161,7 +1166,13 @@ void amf_n1::service_request_handle(
       Logger::amf_n1().error(
           "Could not send ITTI message %s to task TASK_AMF_N2",
           itti_msg->get_msg_name());
+    } else {
+      // Update 5GMM State
+      stacs.update_5gmm_state(nc->imsi, "5GMM-REGISTERED");
+      set_5gmm_state(nc, _5GMM_REGISTERED);
+      stacs.display();
     }
+
     bdestroy_wrapper(&protected_nas);
   }
 }
@@ -1279,7 +1290,13 @@ void amf_n1::service_request_handle(
       Logger::amf_n1().error(
           "Could not send ITTI message %s to task TASK_AMF_N2",
           dnt->get_msg_name());
+    } else {
+      // Update 5GMM State
+      stacs.update_5gmm_state(nc->imsi, "5GMM-DEREGISTERED");
+      set_5gmm_state(nc, _5GMM_DEREGISTERED);
+      stacs.display();
     }
+
     return;
   }
 
@@ -1418,8 +1435,8 @@ void amf_n1::service_request_handle(
   if (pdu_session_to_be_activated.size() == 0) {
     Logger::amf_n1().debug("There is no PDU session to be activated");
     // service_accept->SetPduSessionStatus(0x0000);
-    uint8_t buffer[BUFFER_SIZE_256];
-    int encoded_size      = service_accept->Encode(buffer, BUFFER_SIZE_256);
+    uint8_t buffer[BUFFER_SIZE_1024];
+    int encoded_size      = service_accept->Encode(buffer, BUFFER_SIZE_1024);
     bstring protected_nas = nullptr;
     encode_nas_message_protected(
         nc->security_ctx.value(), false, INTEGRITY_PROTECTED_AND_CIPHERED,
@@ -1454,7 +1471,13 @@ void amf_n1::service_request_handle(
       Logger::amf_n1().error(
           "Could not send ITTI message %s to task TASK_AMF_N2",
           itti_msg->get_msg_name());
+    } else {
+      // Update 5GMM State
+      stacs.update_5gmm_state(nc->imsi, "5GMM-REGISTERED");
+      set_5gmm_state(nc, _5GMM_REGISTERED);
+      stacs.display();
     }
+
     bdestroy_wrapper(&protected_nas);
     return;
 
@@ -1476,8 +1499,8 @@ void amf_n1::service_request_handle(
       service_accept->SetPduSessionReactivationResult(0x0000);
     }
 
-    uint8_t buffer[BUFFER_SIZE_256];
-    int encoded_size      = service_accept->Encode(buffer, BUFFER_SIZE_256);
+    uint8_t buffer[BUFFER_SIZE_1024];
+    int encoded_size      = service_accept->Encode(buffer, BUFFER_SIZE_1024);
     bstring protected_nas = nullptr;
     encode_nas_message_protected(
         nc->security_ctx.value(), false, INTEGRITY_PROTECTED_AND_CIPHERED,
@@ -1523,6 +1546,11 @@ void amf_n1::service_request_handle(
           "Could not send ITTI message %s to task TASK_AMF_N2",
           itti_msg->get_msg_name());
     }
+    // Update 5GMM State
+    stacs.update_5gmm_state(nc->imsi, "5GMM-REGISTERED");
+    set_5gmm_state(nc, _5GMM_REGISTERED);
+    stacs.display();
+
     bdestroy_wrapper(&protected_nas);
   }
 }
@@ -1605,24 +1633,20 @@ void amf_n1::registration_request_handle(
         Logger::amf_n1().info(
             "Associating SUPI (%s) with nas_context (%p)", supi.c_str(),
             (void*) nc.get());
-        if (!nc->is_stacs_available) {
-          ue_info_t ueItem;
-          ueItem.connStatus = "5GMM-CONNECTED";  //"CM-CONNECTED";
-          ueItem.registerStatus =
-              "5GMM-REG-INITIATED";  // 5GMM-COMMON-PROCEDURE-INITIATED
-          ueItem.ranid  = ran_ue_ngap_id;
-          ueItem.amfid  = amf_ue_ngap_id;
-          ueItem.imsi   = nc->imsi;
-          ueItem.mcc    = uc->cgi.mcc;
-          ueItem.mnc    = uc->cgi.mnc;
-          ueItem.cellId = uc->cgi.nrCellID;
+        // Update 5GMM state
+        ue_info_t ueItem;
+        ueItem.connStatus = "5GMM-CONNECTED";  //"CM-CONNECTED";
+        ueItem.registerStatus =
+            "5GMM-REG-INITIATED";  // 5GMM-COMMON-PROCEDURE-INITIATED
+        ueItem.ranid  = ran_ue_ngap_id;
+        ueItem.amfid  = amf_ue_ngap_id;
+        ueItem.imsi   = nc->imsi;
+        ueItem.mcc    = uc->cgi.mcc;
+        ueItem.mnc    = uc->cgi.mnc;
+        ueItem.cellId = uc->cgi.nrCellID;
 
-          stacs.update_ue_info(ueItem);
-          set_5gmm_state(nc, _5GMM_COMMON_PROCEDURE_INITIATED);
-          // stacs.display();
-
-          nc->is_stacs_available = true;
-        }
+        stacs.update_ue_info(ueItem);
+        set_5gmm_state(nc, _5GMM_COMMON_PROCEDURE_INITIATED);
       }
     } break;
 
@@ -3057,11 +3081,8 @@ void amf_n1::security_mode_complete_handle(
       "UE (IMSI %s, GUTI %s, current RAN ID %d, current AMF ID %d) has been "
       "registered to the network",
       nc->imsi.c_str(), guti.c_str(), ran_ue_ngap_id, amf_ue_ngap_id);
-  if (nc->is_stacs_available) {
-    stacs.update_5gmm_state(nc->imsi, "5GMM-REGISTERED");
-  } else {
-    nc->is_stacs_available = true;
-  }
+
+  stacs.update_5gmm_state(nc->imsi, "5GMM-REGISTERED");
   set_5gmm_state(nc, _5GMM_REGISTERED);
   stacs.display();
 
@@ -3648,9 +3669,8 @@ void amf_n1::ue_initiate_de_registration_handle(
   // event_sub.ue_loss_of_connectivity(supi, PURGED, 1, ran_ue_ngap_id,
   // amf_ue_ngap_id);
 
-  if (nc->is_stacs_available) {
-    stacs.update_5gmm_state(nc->imsi, "5GMM-DEREGISTERED");
-  }
+  // Update 5GMM state
+  stacs.update_5gmm_state(nc->imsi, "5GMM-DEREGISTERED");
 
   // Remove NC context
   if (remove_amf_ue_ngap_id_2_nas_context(amf_ue_ngap_id)) {

@@ -66,7 +66,6 @@ class nas_context {
   nas_context();
   ~nas_context();
   bool ctx_avaliability_ind;
-  bool is_stacs_available;
   long amf_ue_ngap_id;
   uint32_t ran_ue_ngap_id;
   cm_state_t nas_status;
