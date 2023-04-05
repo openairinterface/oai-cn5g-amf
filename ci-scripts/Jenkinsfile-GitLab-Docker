@@ -392,6 +392,37 @@ pipeline {
             }
           }
         }
+        // Home-made RAN emulator
+        stage ('NGAP-Tester') {
+          steps {
+            script {
+              gitlabCommitStatus(name: "NGAP-Tester") {
+                localStatus = build job: 'OAI-CN5G-NGAP-Tester',
+                  parameters: [
+                    string(name: 'AMF_TAG', value: String.valueOf(amf_tag)),
+                    string(name: 'AMF_BRANCH', value: String.valueOf(amf_branch))
+                  ], propagate: false
+                localResult = localStatus.getResult()
+
+                if (localStatus.resultIsBetterOrEqualTo('SUCCESS')) {
+                  echo "NGAP-Tester is OK"
+                } else {
+                  echo "NGAP-Tester is is KO"
+                  sh "ci-scripts/fail.sh"
+                }
+              }
+            }
+          }
+          post {
+            always {
+              script {
+                copyArtifacts(projectName: 'OAI-CN5G-NGAP-Tester',
+                              filter: '*_results_oai_cn5g*.html',
+                              selector: lastCompleted())
+              }
+            }
+          }
+        }
       }
     }
     // We are only publishing the Ubuntu image to Docker-Hub
@@ -399,21 +430,23 @@ pipeline {
     // Temporary Images from Merge-Request Runs are kept in local private registry
     stage ('Pushing Image to Official Registry') {
       steps {
-        script {
-          // Only in case of push to target branch!
-          if ("PUSH".equals(env.gitlabActionType)) {
-            withCredentials([
-              [$class: 'UsernamePasswordMultiBinding', credentialsId: "${params.DockerHubCredentials}", usernameVariable: 'DH_Username', passwordVariable: 'DH_Password']
-            ]) {
-              sh "echo ${DH_Password} | docker login --username ${DH_Username} --password-stdin"
+        lock(ubuntuBuildResource) {
+          script {
+            // Only in case of push to target branch!
+            if ("PUSH".equals(env.gitlabActionType)) {
+              withCredentials([
+                [$class: 'UsernamePasswordMultiBinding', credentialsId: "${params.DockerHubCredentials}", usernameVariable: 'DH_Username', passwordVariable: 'DH_Password']
+              ]) {
+                sh "echo ${DH_Password} | docker login --username ${DH_Username} --password-stdin"
+              }
+              sh "docker login -u oaicicd -p oaicicd ${PrivateRegistryURL}"
+              sh "docker pull ${PrivateRegistryURL}/oai-amf:${amf_tag}"
+              sh "docker image tag ${PrivateRegistryURL}/oai-amf:${amf_tag} ${DH_Account}/oai-amf:develop"
+              sh "docker push ${DH_Account}/oai-amf:develop"
+              sh "docker rmi ${DH_Account}/oai-amf:develop ${PrivateRegistryURL}/oai-amf:${amf_tag}"
+              sh "docker logout ${PrivateRegistryURL}"
+              sh "docker logout"
             }
-            sh "docker login -u oaicicd -p oaicicd ${PrivateRegistryURL}"
-            sh "docker pull ${PrivateRegistryURL}/oai-amf:${amf_tag}"
-            sh "docker image tag ${PrivateRegistryURL}/oai-amf:${amf_tag} ${DH_Account}/oai-amf:develop"
-            sh "docker push ${DH_Account}/oai-amf:develop"
-            sh "docker rmi ${DH_Account}/oai-amf:develop ${PrivateRegistryURL}/oai-amf:${amf_tag}"
-            sh "docker logout ${PrivateRegistryURL}"
-            sh "docker logout"
           }
         }
       }

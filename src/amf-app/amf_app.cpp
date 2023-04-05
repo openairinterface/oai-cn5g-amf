@@ -407,9 +407,9 @@ void amf_app::handle_itti_message(
   if (itti_msg.rrc_cause != -1)
     uc->rrc_estb_cause = (e_Ngap_RRCEstablishmentCause) itti_msg.rrc_cause;
   if (itti_msg.ueCtxReq == -1)
-    uc->isUeContextRequest = false;
+    uc->is_ue_context_request = false;
   else
-    uc->isUeContextRequest = true;
+    uc->is_ue_context_request = true;
 
   uc->ran_ue_ngap_id = itti_msg.ran_ue_ngap_id;
   uc->amf_ue_ngap_id = amf_ue_ngap_id;
@@ -584,7 +584,7 @@ void amf_app::handle_itti_message(itti_sbi_n1_message_notification& itti_msg) {
     uc->rrc_estb_cause = (e_Ngap_RRCEstablishmentCause) rrc_cause;
   }
   // ueContextRequest
-  uc->isUeContextRequest = registration_context.isUeContextRequest();
+  uc->is_ue_context_request = registration_context.isUeContextRequest();
 
   // Step 4. Create UE NGAP Context if necessary
   // Create/Update UE NGAP Context

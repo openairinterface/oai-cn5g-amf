@@ -366,7 +366,7 @@ class amf_n1 {
 
   /*
    * Encode the NAS message with corresponding integrity and ciphered algorithms
-   * @param [nas_secu_ctx*] nsc: NAS Security context
+   * @param [nas_secu_ctx&] nsc: NAS Security context
    * @param [bool] is_secu_ctx_new: indicate the status of the security context
    * (new/old)
    * @param [uint8_t] security_header_type: Security Header Type
@@ -377,13 +377,13 @@ class amf_n1 {
    * @return void
    */
   void encode_nas_message_protected(
-      nas_secu_ctx* nsc, bool is_secu_ctx_new, uint8_t security_header_type,
+      nas_secu_ctx& nsc, bool is_secu_ctx_new, uint8_t security_header_type,
       uint8_t direction, uint8_t* input_nas_buf, int input_nas_len,
       bstring& encrypted_nas);
 
   /*
    * Encrypt with integrity algorithm
-   * @param [nas_secu_ctx*] nsc: NAS Security context
+   * @param [nas_secu_ctx&] nsc: NAS Security context
    * @param [uint8_t] direction: Direction
    * @param [uint8_t*] input_nas_buf: Buffer of the input NAS
    * @param [int] input_nas_les: Length of the buffer
@@ -391,19 +391,19 @@ class amf_n1 {
    * @return true if MAC can be calculated successfully, otherwise return false
    */
   bool nas_message_integrity_protected(
-      nas_secu_ctx* nsc, uint8_t direction, uint8_t* input_nas,
+      nas_secu_ctx& nsc, uint8_t direction, uint8_t* input_nas,
       int input_nas_len, uint32_t& mac);
 
   /*
    * Cipher NAS message with the corresponding ciphered algorithm
-   * @param [nas_secu_ctx*] nsc: NAS Security context
+   * @param [nas_secu_ctx&] nsc: NAS Security context
    * @param [uint8_t] direction: Direction
    * @param [bstring] input_nas: Input NAS message
    * @param [bstring&] output_nas: Output NAS message
    * @return true if message is successfully ciphered, otherwise return false
    */
   bool nas_message_cipher_protected(
-      nas_secu_ctx* nsc, uint8_t direction, bstring input_nas,
+      nas_secu_ctx& nsc, uint8_t direction, bstring input_nas,
       bstring& output_nas);
 
   // NOTE: All the MySQL-related functions are currently implemented in

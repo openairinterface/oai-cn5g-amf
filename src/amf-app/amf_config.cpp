@@ -66,6 +66,7 @@ amf_config::amf_config() {
   nssf_addr.port                          = DEFAULT_HTTP1_PORT;
   nssf_addr.api_version                   = DEFAULT_SBI_API_VERSION;
   instance                                = 0;
+  log_level                               = spdlog::level::debug;
   n2                                      = {};
   sbi                                     = {};
   sbi_api_version                         = DEFAULT_SBI_API_VERSION;
@@ -154,6 +155,16 @@ int amf_config::load(const std::string& config_file) {
   // AMF Name
   try {
     amf_cfg.lookupValue(AMF_CONFIG_STRING_AMF_NAME, amf_name);
+  } catch (const SettingNotFoundException& nfex) {
+    Logger::amf_app().error(
+        "%s : %s, using defaults", nfex.what(), nfex.getPath());
+  }
+
+  // Log Level
+  try {
+    std::string string_level;
+    amf_cfg.lookupValue(AMF_CONFIG_STRING_LOG_LEVEL, string_level);
+    log_level = spdlog::level::from_str(string_level);
   } catch (const SettingNotFoundException& nfex) {
     Logger::amf_app().error(
         "%s : %s, using defaults", nfex.what(), nfex.getPath());
@@ -814,8 +825,8 @@ void amf_config::display() {
                                  smf_pool[i].fqdn :
                                  smf_pool[i].ipv4.c_str();
       Logger::config().info(
-          "    SMF_INSTANCE_ID %d (%s:%s, version %s) is selected: %s",
-          smf_pool[i].id, smf_info.c_str(), smf_pool[i].port.c_str(),
+          "    SMF_INSTANCE_ID %d (%s:%d, version %s) is selected: %s",
+          smf_pool[i].id, smf_info.c_str(), smf_pool[i].port,
           smf_pool[i].version.c_str(), selected.c_str());
     }
   }
@@ -848,6 +859,9 @@ void amf_config::display() {
   Logger::config().info(
       "    Use HTTP2..............: %s",
       support_features.use_http2 ? "Yes" : "No");
+  Logger::config().info(
+      "- Log Level will be .......: %s",
+      spdlog::level::to_string_view(log_level));
 }
 
 //------------------------------------------------------------------------------
@@ -919,7 +933,7 @@ bool amf_config::resolve_fqdn(
 //------------------------------------------------------------------------------
 std::string amf_config::get_amf_n1n2_message_subscribe_uri(
     const std::string& ue_cxt_id) {
-  unsigned int sbi_port = 80;
+  unsigned int sbi_port = DEFAULT_HTTP1_PORT;
   if (support_features.use_http2) {
     sbi_port = sbi_http2_port;
   } else {
@@ -978,11 +992,9 @@ bool amf_config::get_smf_pdu_session_context_uri(
   }
 
   std::string smf_addr    = {};
-  std::string smf_port    = {};
   std::string smf_ip_addr = {};
 
   smf_addr = psc->smf_info.addr;
-  smf_port = psc->smf_info.port;
 
   // remove http port from the URI if existed
   std::size_t found_port = smf_addr.find(":");
@@ -995,13 +1007,14 @@ bool amf_config::get_smf_pdu_session_context_uri(
   if (found != std::string::npos)
     smf_uri = psc->smf_info.context_location;
   else
-    smf_uri = smf_addr + ":" + smf_port + psc->smf_info.context_location;
+    smf_uri = smf_addr + ":" + std::to_string(psc->smf_info.port) +
+              psc->smf_info.context_location;
   return true;
 }
 
 //------------------------------------------------------------------------------
 std::string amf_config::get_smf_pdu_session_base_uri(
-    const std::string& smf_addr, const std::string& smf_port,
+    const std::string& smf_addr, const uint32_t& smf_port,
     const std::string& smf_api_version) {
   // Remove http port from the URI if existed
   std::string smf_ip_addr = {};
@@ -1011,14 +1024,15 @@ std::string amf_config::get_smf_pdu_session_base_uri(
   else
     smf_ip_addr = smf_addr;
 
-  return smf_ip_addr + ":" + smf_port + "/nsmf-pdusession/" + smf_api_version +
-         NSMF_PDU_SESSION_CREATE;
+  return smf_ip_addr + ":" + std::to_string(smf_port) + "/nsmf-pdusession/" +
+         smf_api_version + NSMF_PDU_SESSION_CREATE;
 }
 
 //------------------------------------------------------------------------------
 void amf_config::to_json(nlohmann::json& json_data) const {
   json_data["instance"]   = instance;
   json_data["pid_dir"]    = pid_dir;
+  json_data["log_level"]  = log_level;
   json_data["amf_name"]   = amf_name;
   json_data["guami"]      = guami.to_json();
   json_data["guami_list"] = nlohmann::json::array();
@@ -1076,6 +1090,9 @@ bool amf_config::from_json(nlohmann::json& json_data) {
     }
     if (json_data.find("amf_name") != json_data.end()) {
       amf_name = json_data["amf_name"].get<std::string>();
+    }
+    if (json_data.find("log_level") != json_data.end()) {
+      log_level = json_data["log_level"].get<spdlog::level::level_enum>();
     }
     if (json_data.find("guami") != json_data.end()) {
       guami.from_json(json_data["guami"]);

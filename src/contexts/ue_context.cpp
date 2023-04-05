@@ -21,48 +21,52 @@
 
 #include "ue_context.hpp"
 
+#include "amf.hpp"
+
 //------------------------------------------------------------------------------
 ue_context::ue_context() {
-  ran_ue_ngap_id     = 0;
-  amf_ue_ngap_id     = -1;
-  gnb_id             = 0;
-  rrc_estb_cause     = {};
-  isUeContextRequest = false;
-  cgi                = {};
-  tai                = {};
-  pdu_sessions       = {};
-  tmsi               = 0;
+  ran_ue_ngap_id        = 0;
+  amf_ue_ngap_id        = INVALID_AMF_UE_NGAP_ID;
+  gnb_id                = 0;
+  supi                  = {};
+  tmsi                  = 0;
+  rrc_estb_cause        = {};
+  is_ue_context_request = false;
+  cgi                   = {};
+  tai                   = {};
+  pdu_sessions          = {};
 }
 
 //------------------------------------------------------------------------------
 bool ue_context::find_pdu_session_context(
-    const std::uint8_t& session_id,
+    std::uint8_t session_id,
     std::shared_ptr<pdu_session_context>& context) const {
   std::shared_lock lock(m_pdu_session);
   if (pdu_sessions.count(session_id) > 0) {
-    context = pdu_sessions.at(session_id);
-    return true;
-  } else {
-    return false;
+    if (pdu_sessions.at(session_id) != nullptr) {
+      context = pdu_sessions.at(session_id);
+      return true;
+    }
   }
+  return false;
 }
 
 //------------------------------------------------------------------------------
 void ue_context::add_pdu_session_context(
-    const std::uint8_t& session_id,
+    std::uint8_t session_id,
     const std::shared_ptr<pdu_session_context>& context) {
   std::unique_lock lock(m_pdu_session);
   pdu_sessions[session_id] = context;
 }
 
 //------------------------------------------------------------------------------
-void ue_context::copy_pdu_sessions(std::shared_ptr<ue_context>& ue_ctx) {
+void ue_context::copy_pdu_sessions(const std::shared_ptr<ue_context>& ue_ctx) {
   pdu_sessions = ue_ctx->pdu_sessions;
 }
 
 //------------------------------------------------------------------------------
 bool ue_context::get_pdu_sessions_context(
-    std::vector<std::shared_ptr<pdu_session_context>>& sessions_ctx) {
+    std::vector<std::shared_ptr<pdu_session_context>>& sessions_ctx) const {
   std::shared_lock lock(m_pdu_session);
   for (auto s : pdu_sessions) {
     sessions_ctx.push_back(s.second);
@@ -71,7 +75,7 @@ bool ue_context::get_pdu_sessions_context(
 }
 
 //------------------------------------------------------------------------------
-bool ue_context::remove_pdu_sessions_context(const uint8_t& pdu_session_id) {
+bool ue_context::remove_pdu_sessions_context(uint8_t pdu_session_id) {
   std::shared_lock lock(m_pdu_session);
   pdu_sessions.erase(pdu_session_id);
   return true;

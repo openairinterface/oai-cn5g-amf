@@ -74,6 +74,7 @@ class RegistrationRequest : public NasMmPlainHeader {
   void SetNonCurrentNativeNasKSI(uint8_t tsc, uint8_t key_set_id);
   bool GetNonCurrentNativeNasKSI(uint8_t& value) const;
 
+  // TODO: 5GMM Capability as an array[]
   void Set5gmmCapability(uint8_t value);
   bool Get5gmmCapability(uint8_t& value) const;
 
@@ -84,6 +85,7 @@ class RegistrationRequest : public NasMmPlainHeader {
   // TODO: use std::optional for optional fields eea,eia
   bool GetUeSecurityCapability(
       uint8_t& ea, uint8_t& ia, uint8_t& eea, uint8_t& eia) const;
+  std::optional<UESecurityCapability> GetUeSecurityCapability() const;
 
   void SetRequestedNssai(const std::vector<struct SNSSAI_s>& nssai);
   bool GetRequestedNssai(std::vector<struct SNSSAI_s>& nssai) const;

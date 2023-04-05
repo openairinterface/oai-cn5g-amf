@@ -22,12 +22,7 @@
 #ifndef _UE_NGAP_CONTEXT_H_
 #define _UE_NGAP_CONTEXT_H_
 
-#include <stdint.h>
-
-#include <map>
-
 #include "amf.hpp"
-#include "gNB_context.hpp"
 
 using namespace sctp;
 typedef enum {
@@ -60,26 +55,27 @@ class ue_ngap_context {
     tai                 = {};
     ng_ue_state         = NGAP_UE_INVALID_STATE;
     ncc                 = 0;
-    initialUEMsg.buf    = new uint8_t[BUFFER_SIZE_1024];
-    initialUEMsg.size   = 0;
+    initial_ue_msg.buf    = new uint8_t[BUFFER_SIZE_1024];
+    initial_ue_msg.size   = 0;
   }
+
   virtual ~ue_ngap_context() {
-    delete[] initialUEMsg.buf;
-    initialUEMsg.buf  = nullptr;
-    initialUEMsg.size = 0;
+    delete[] initial_ue_msg.buf;
+    initial_ue_msg.buf  = nullptr;
+    initial_ue_msg.size = 0;
   }
 
   uint32_t ran_ue_ngap_id;         // 32bits
-  long amf_ue_ngap_id : 40;        // 40bits
+  long amf_ue_ngap_id;             // 40bits
   uint32_t target_ran_ue_ngap_id;  // 32bits, for HO
 
-  sctp_stream_id_t sctp_stream_recv;  // used to decide which ue in gNB
-  sctp_stream_id_t sctp_stream_send;  // used to decide which ue in gNB
-
+  sctp_stream_id_t sctp_stream_recv;    // used to decide which ue in gNB
+  sctp_stream_id_t sctp_stream_send;    // used to decide which ue in gNB
   sctp_assoc_id_t gnb_assoc_id;         // to find which gnb this UE belongs to
   sctp_assoc_id_t target_gnb_assoc_id;  // for HO
 
-  bool ueContextRequest;
+  bool ue_context_request;
+
   uint32_t s_tmsi_5g;
 
   std ::string s_setid;
@@ -88,11 +84,11 @@ class ue_ngap_context {
 
   Tai_t tai;
 
-  // state management, ue status over the air
+  // State management, ue status over the air
   ng_ue_state_t ng_ue_state;
   uint8_t ncc;  // Next Hop Chaining Counter
 
-  OCTET_STRING_t initialUEMsg;
+  OCTET_STRING_t initial_ue_msg;  // for AMF re-allocation
 
   //Release Command Cause and source gNB ID in case of HO
   Ngap_CauseRadioNetwork_t release_cause;

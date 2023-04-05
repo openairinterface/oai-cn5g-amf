@@ -252,6 +252,12 @@ bool RegistrationRequest::GetUeSecurityCapability(
 }
 
 //------------------------------------------------------------------------------
+std::optional<UESecurityCapability>
+RegistrationRequest::GetUeSecurityCapability() const {
+  return ie_ue_security_capability;
+}
+
+//------------------------------------------------------------------------------
 void RegistrationRequest::SetRequestedNssai(
     const std::vector<struct SNSSAI_s>& nssai) {
   ie_requested_nssai = std::make_optional<NSSAI>(kIeiNSSAIRequested, nssai);

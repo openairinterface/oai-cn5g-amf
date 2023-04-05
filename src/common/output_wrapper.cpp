@@ -32,16 +32,15 @@ void output_wrapper::print_buffer(
   if (!app.compare("ngap")) Logger::ngap().debug(sink.c_str());
   if (!app.compare("amf_server")) Logger::amf_server().debug(sink.c_str());
   if (!app.compare("amf_sbi")) Logger::amf_sbi().debug(sink.c_str());
-#if DEBUG_IS_ON
-  for (int i = 0; i < len; i++) printf("%02x ", buf[i]);
-  printf("\n");
-#endif
+  if (Logger::should_log(spdlog::level::debug)) {
+    for (int i = 0; i < len; i++) printf("%02x ", buf[i]);
+    printf("\n");
+  }
 }
 
 //------------------------------------------------------------------------------
 void output_wrapper::print_asn_msg(
     const asn_TYPE_descriptor_t* td, const void* struct_ptr) {
-#if DEBUG_IS_ON
-  asn_fprint(stdout, td, struct_ptr);
-#endif
+  if (Logger::should_log(spdlog::level::debug))
+    asn_fprint(stdout, td, struct_ptr);
 }

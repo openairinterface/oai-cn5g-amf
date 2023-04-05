@@ -338,7 +338,7 @@ void amf_sbi::handle_itti_message(itti_nsmf_pdusession_create_sm_context& smf) {
 
   std::string smf_addr        = {};
   std::string smf_api_version = {};
-  std::string smf_port        = "80";  // Set to default port number
+  uint32_t smf_port           = DEFAULT_HTTP1_PORT;
   if (!psc->smf_info.info_available) {
     if (amf_cfg.support_features.enable_smf_selection) {
       // Get NRF URI
@@ -369,9 +369,9 @@ void amf_sbi::handle_itti_message(itti_nsmf_pdusession_create_sm_context& smf) {
     psc->smf_info.port           = smf_port;
     psc->smf_info.api_version    = smf_api_version;
   } else {
-    smf_addr             = psc->smf_info.addr;
-    smf_api_version      = psc->smf_info.api_version;
-    std::string smf_port = psc->smf_info.port;
+    smf_addr        = psc->smf_info.addr;
+    smf_api_version = psc->smf_info.api_version;
+    smf_port        = psc->smf_info.port;
   }
 
   switch (smf.req_type & 0x07) {
@@ -438,7 +438,7 @@ void amf_sbi::send_pdu_session_update_sm_context_request(
 void amf_sbi::handle_pdu_session_initial_request(
     const std::string& supi, std::shared_ptr<pdu_session_context>& psc,
     const std::string& smf_addr, const std::string& smf_api_version,
-    const std::string& smf_port, bstring sm_msg, const std::string& dnn) {
+    const uint32_t& smf_port, bstring sm_msg, const std::string& dnn) {
   Logger::amf_sbi().debug(
       "Handle PDU Session Establishment Request (SUPI %s, PDU Session ID %d)",
       supi.c_str(), psc->pdu_session_id);
@@ -749,8 +749,7 @@ void amf_sbi::handle_itti_message(itti_sbi_nf_instance_discovery& itti_msg) {
 
 //------------------------------------------------------------------------------
 bool amf_sbi::smf_selection_from_configuration(
-    std::string& smf_addr, std::string& smf_port,
-    std::string& smf_api_version) {
+    std::string& smf_addr, uint32_t& smf_port, std::string& smf_api_version) {
   for (int i = 0; i < amf_cfg.smf_pool.size(); i++) {
     if (amf_cfg.smf_pool[i].selected) {
       if (!amf_cfg.support_features.use_fqdn_dns) {
@@ -759,7 +758,7 @@ bool amf_sbi::smf_selection_from_configuration(
           smf_port = amf_cfg.smf_pool[i].port;
         } else {
           smf_addr = amf_cfg.smf_pool[i].ipv4;
-          smf_port = std::to_string(amf_cfg.smf_pool[i].http2_port);
+          smf_port = amf_cfg.smf_pool[i].http2_port;
         }
 
         smf_api_version = amf_cfg.smf_pool[i].version;
@@ -767,18 +766,19 @@ bool amf_sbi::smf_selection_from_configuration(
       } else {
         // resolve IP addr from a FQDN/DNS name
         uint8_t addr_type          = 0;
-        uint32_t smf_port_resolved = 0;
+        uint32_t smf_port_resolved = DEFAULT_HTTP1_PORT;
         fqdn::resolve(
             amf_cfg.smf_pool[i].fqdn, amf_cfg.smf_pool[i].ipv4,
             smf_port_resolved, addr_type);
         // TODO for HTTP2
-        if (amf_cfg.support_features.use_http2) smf_port_resolved = 8080;
+        if (amf_cfg.support_features.use_http2)
+          smf_port_resolved = DEFAULT_HTTP2_PORT;
         if (addr_type != 0) {  // IPv6: TODO
           Logger::amf_sbi().warn("Do not support IPv6 Addr for SMF");
           return false;
         } else {  // IPv4
           smf_addr        = amf_cfg.smf_pool[i].ipv4;
-          smf_port        = std::to_string(smf_port_resolved);
+          smf_port        = smf_port_resolved;
           smf_api_version = "v1";  // TODO: get API version
           return true;
         }
@@ -814,7 +814,7 @@ void amf_sbi::handle_post_sm_context_response_error(
 
 //-----------------------------------------------------------------------------------------------------
 bool amf_sbi::discover_smf(
-    std::string& smf_addr, std::string& smf_port, std::string& smf_api_version,
+    std::string& smf_addr, uint32_t& smf_port, std::string& smf_api_version,
     const snssai_t& snssai, const plmn_t& plmn, const std::string& dnn,
     const std::string& nrf_uri) {
   Logger::amf_sbi().debug(
@@ -899,7 +899,7 @@ bool amf_sbi::discover_smf(
             if (nf_service.find("ipEndPoints") != nf_service.end()) {
               nlohmann::json nf_ip_endpoint = nf_service["ipEndPoints"].at(0);
               if (nf_ip_endpoint.find("port") != nf_ip_endpoint.end()) {
-                smf_port = std::to_string(nf_ip_endpoint["port"].get<int>());
+                smf_port = nf_ip_endpoint["port"].get<int>();
               }
             }
 
@@ -919,8 +919,8 @@ bool amf_sbi::discover_smf(
     }
 
     Logger::amf_sbi().debug(
-        "NFDiscovery, SMF Addr %s, SMF port %s, SMF Api Version %s",
-        smf_addr.c_str(), smf_port.c_str(), smf_api_version.c_str());
+        "NFDiscovery, SMF Info: Addr %s, Port %d, API Version %s",
+        smf_addr.c_str(), smf_port, smf_api_version.c_str());
   }
 
   return result;
@@ -1079,9 +1079,8 @@ void amf_sbi::curl_http_client(
     curl_easy_setopt(curl, CURLOPT_INTERFACE, amf_cfg.sbi.if_name.c_str());
 
     if (http_version == 2) {
-#if DEBUG_IS_ON
-      curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
-#endif
+      if (Logger::should_log(spdlog::level::debug))
+        curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
       // we use a self-signed test server, skip verification during debugging
       curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
       curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0L);
@@ -1368,9 +1367,8 @@ void amf_sbi::curl_http_client(
     curl_easy_setopt(curl, CURLOPT_INTERFACE, amf_cfg.sbi.if_name.c_str());
 
     if (http_version == 2) {
-#if DEBUG_IS_ON
-      curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
-#endif
+      if (Logger::should_log(spdlog::level::debug))
+        curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
       // we use a self-signed test server, skip verification during debugging
       curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
       curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0L);
@@ -1513,9 +1511,8 @@ void amf_sbi::curl_http_client(
     curl_easy_setopt(curl, CURLOPT_INTERFACE, amf_cfg.sbi.if_name.c_str());
 
     if (http_version == 2) {
-#if DEBUG_IS_ON
-      curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
-#endif
+      if (Logger::should_log(spdlog::level::debug))
+        curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
       // we use a self-signed test server, skip verification during debugging
       curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
       curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0L);

@@ -65,17 +65,31 @@ void N1N2MessageCollectionDocumentApiImpl::n1_n2_message_transfer(
   std::string supi = ueContextId;
   Logger::amf_server().debug(
       "Key for PDU Session context: SUPI (%s)", supi.c_str());
-  std::shared_ptr<pdu_session_context> psc;
+  std::shared_ptr<pdu_session_context> psc = {};
+  bool request_valid                       = true;
 
   if (!amf_app_inst->find_pdu_session_context(
           supi, (uint8_t) n1N2MessageTransferReqData.getPduSessionId(), psc)) {
     Logger::amf_server().error(
         "Cannot get pdu_session_context with SUPI (%s)", supi.c_str());
+    request_valid = false;
+  }
+
+  if (n1sm_str.length() == 0) {
+    request_valid = false;
+  }
+
+  if (!request_valid) {
+    code = Pistache::Http::Code::Bad_Request;
+    response_json["cause"] =
+        n1_n2_message_transfer_cause_e2str[N1_MSG_NOT_TRANSFERRED];
+    // Send response to the NF Service Consumer (e.g., SMF)
+    response.send(code, response_json.dump().c_str());
+    return;
   }
 
   bstring n1sm = nullptr;
-  conv::msg_str_2_msg_hex(
-      n1sm_str.substr(0, n1sm_str.length()), n1sm);  // TODO: verify n1sm_length
+  conv::msg_str_2_msg_hex(n1sm_str.substr(0, n1sm_str.length()), n1sm);
   output_wrapper::print_buffer(
       "amf_server", "Received N1 SM", (uint8_t*) bdata(n1sm), blength(n1sm));
 
@@ -134,17 +148,31 @@ void N1N2MessageCollectionDocumentApiImpl::n1_n2_message_transfer(
   std::string supi = ueContextId;
   Logger::amf_server().debug(
       "Key for PDU Session context: SUPI (%s)", supi.c_str());
-  std::shared_ptr<pdu_session_context> psc;
+  std::shared_ptr<pdu_session_context> psc = {};
+  bool request_valid                       = true;
 
   if (!amf_app_inst->find_pdu_session_context(
           supi, (uint8_t) n1N2MessageTransferReqData.getPduSessionId(), psc)) {
     Logger::amf_server().error(
         "Cannot get pdu_session_context with SUPI (%s)", supi.c_str());
+    request_valid = false;
+  }
+
+  if ((n1sm_str.length() == 0) or (n2sm_str.length() == 0)) {
+    request_valid = false;
+  }
+
+  if (!request_valid) {
+    code = Pistache::Http::Code::Bad_Request;
+    response_json["cause"] =
+        n1_n2_message_transfer_cause_e2str[N1_MSG_NOT_TRANSFERRED];
+    // Send response to the NF Service Consumer (e.g., SMF)
+    response.send(code, response_json.dump().c_str());
+    return;
   }
 
   bstring n1sm = nullptr;
-  conv::msg_str_2_msg_hex(
-      n1sm_str.substr(0, n1sm_str.length()), n1sm);  // TODO: verify n1sm_length
+  conv::msg_str_2_msg_hex(n1sm_str.substr(0, n1sm_str.length()), n1sm);
 
   bstring n2sm = nullptr;
   conv::msg_str_2_msg_hex(n2sm_str, n2sm);

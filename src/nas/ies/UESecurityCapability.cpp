@@ -87,6 +87,23 @@ UESecurityCapability::UESecurityCapability(
 //------------------------------------------------------------------------------
 UESecurityCapability::~UESecurityCapability() {}
 
+void UESecurityCapability::operator=(
+    const UESecurityCapability& ue_security_capability) {
+  UESecurityCapability m_ue_security_capability;
+  _5g_ea_     = ue_security_capability.GetEa();
+  _5g_ia_     = ue_security_capability.GetIa();
+  uint8_t eea = 0;
+  uint8_t eia = 0;
+
+  if (ue_security_capability.GetEea(eea)) {
+    eea_ = std::make_optional<uint8_t>(eea);
+  }
+
+  if (ue_security_capability.GetEia(eia)) {
+    eia_ = std::make_optional<uint8_t>(eia);
+  }
+}
+
 //------------------------------------------------------------------------------
 void UESecurityCapability::SetEa(uint8_t value) {
   _5g_ea_ = value;

@@ -66,6 +66,22 @@ void SecurityModeCommand::SetUeSecurityCapability(
 }
 
 //------------------------------------------------------------------------------
+void SecurityModeCommand::SetUeSecurityCapability(
+    const UESecurityCapability& ue_security_capability) {
+  uint8_t eea = 0;
+  uint8_t eia = 0;
+  if (ue_security_capability.GetEea(eea) &&
+      ue_security_capability.GetEia(eia)) {
+    ie_ue_security_capability.Set(
+        ue_security_capability.GetEa(), ue_security_capability.GetIa(), eea,
+        eia);
+  } else {
+    ie_ue_security_capability.Set(
+        ue_security_capability.GetEa(), ue_security_capability.GetIa());
+  }
+}
+
+//------------------------------------------------------------------------------
 void SecurityModeCommand::SetImeisvRequest(uint8_t value) {
   ie_imeisv_request = std::make_optional<ImeisvRequest>(value);
 }

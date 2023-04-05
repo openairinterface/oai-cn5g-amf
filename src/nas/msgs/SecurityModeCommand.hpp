@@ -47,6 +47,8 @@ class SecurityModeCommand : public NasMmPlainHeader {
   void SetUeSecurityCapability(
       uint8_t ea, uint8_t ia, uint8_t eea, uint8_t eia);
   // TODO: Get
+  void SetUeSecurityCapability(
+      const UESecurityCapability& ue_security_capability);
 
   void SetImeisvRequest(uint8_t value);
   // TODO: Get
