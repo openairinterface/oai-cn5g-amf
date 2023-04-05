@@ -519,6 +519,8 @@ OAI CI Team''',
 
 def prepareWorkspaceMergeCase () {
   sh "git clean -x -d -f > /dev/null 2>&1"
+  sh "git submodule foreach --recursive 'git clean -x -d -ff' > /dev/null 2>&1"
+  sh "git submodule deinit --force --all > /dev/null 2>&1"
   if ("MERGE".equals(env.gitlabActionType)) {
     sh "./ci-scripts/doGitLabMerge.sh --src-branch ${env.gitlabSourceBranch} --src-commit ${env.gitlabMergeRequestLastCommit} --target-branch ${env.gitlabTargetBranch} --target-commit ${GIT_COMMIT}"
   }
