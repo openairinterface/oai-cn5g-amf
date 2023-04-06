@@ -3800,7 +3800,7 @@ void amf_n1::ul_nas_transport_handle(
           amf_n2_inst->get_common_NSSAI(
               nc->ran_ue_ngap_id, uc->gnb_id, common_nssais);
 
-          // Allowed NSSAI
+          // Use common NSSAI between gNB and AMF
           for (auto s : common_nssais) {
             snssai.sst = s.sst;
             snssai.sd  = s.sd;
@@ -3810,19 +3810,18 @@ void amf_n1::ul_nas_transport_handle(
               snssai.length = SST_LENGTH + SD_LENGTH;
             }
             Logger::amf_n1().debug(
-                "Allowed S-NSSAI (SST 0x%x, SD 0x%x)", s.sst, s.sd);
+                "Use common S-NSSAI (SST 0x%x, SD 0x%x)", s.sst, s.sd);
             found = true;
             break;
           }
         }
 
         if (!found) {
-          snssai.sst    = 1;  // TODO: Get default value
+          snssai.sst    = DEFAULT_SST;
           snssai.sd     = SD_NO_VALUE;
           snssai.length = SST_LENGTH;
           Logger::amf_n1().debug(
-              "Default allowed S-NSSAI (SST 0x%x, SD 0x%x)", snssai.sst,
-              snssai.sd);
+              "Default S-NSSAI (SST 0x%x, SD 0x%x)", snssai.sst, snssai.sd);
         }
       }
     }
@@ -3830,11 +3829,12 @@ void amf_n1::ul_nas_transport_handle(
     Logger::amf_n1().debug(
         "S_NSSAI for this PDU Session %s", snssai.ToString().c_str());
 
-    bstring dnn = bfromcstr("default");
+    bstring dnn = bfromcstr(DEFAULT_DNN);
 
     if (!ul_nas->GetDnn(dnn)) {
       Logger::amf_n1().debug(
-          "No DNN available in ULNASTransport, use default DNN!");
+          "No DNN available in ULNASTransport, use default DNN: %s",
+          DEFAULT_DNN);
       // TODO: use default DNN for the corresponding NSSAI
     }
 
@@ -4606,9 +4606,9 @@ void amf_n1::initialize_registration_accept(
   registration_accept->SetT3512Value(0x5, T3512_TIMER_VALUE_MIN);
 
   // Timer T3502
-  registration_accept->SetT3502Value(12);  // TODO: remove hardcoded value
+  registration_accept->SetT3502Value(T3502_TIMER_DEFAULT_VALUE_MIN);
 
-  // LADN info
+  // LADN info (TODO)
   LadnInformation ladn_information = {};
   registration_accept->SetLadnInformation(ladn_information);
 
@@ -4636,7 +4636,7 @@ void amf_n1::initialize_registration_accept(
   // Network Feature Support
   // TODO: remove hardcoded values
   registration_accept->Set5gsNetworkFeatureSupport(
-      0x00, 0x00);  // 0x00, 0x00 to disable IMS
+      0x01, 0x00);  // 0x00, 0x00 to disable IMS
 
   // Allowed/Rejected/Configured NSSAI
   // Get the list of common SST, SD between UE and AMF
@@ -4714,7 +4714,8 @@ void amf_n1::initialize_registration_accept(
 
   registration_accept->SetAllowedNssai(allowed_nssais);
   registration_accept->SetRejectedNssai(rejected_nssais);
-  // registration_accept->SetConfiguredNssai(allowed_nssais);  // TODO
+  registration_accept->SetConfiguredNssai(
+      allowed_nssais);  // TODO: use Allowed NSSAIs for now
   return;
 }
 

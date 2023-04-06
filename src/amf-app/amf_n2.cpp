@@ -871,6 +871,7 @@ void amf_n2::handle_itti_message(itti_initial_context_setup_request& itti_msg) {
   }
   msg->setAllowedNssai(list);
 
+  // TODO: get from ue_security_capability@NAS Context
   msg->setUESecurityCapability(
       0xe000, 0xe000, 0x0000,
       0x0000);  // TODO: remove hardcoded value
@@ -1340,19 +1341,20 @@ void amf_n2::handle_itti_message(itti_ue_context_release_complete& itti_msg) {
   }
 
   std::shared_ptr<gnb_context> gc = {};
-    if (!assoc_id_2_gnb_context(itti_msg.assoc_id, gc)) {
-      Logger::amf_n2().error(
-          "gNB with assoc_id (%d) is illegal", itti_msg.assoc_id);
-      return;
-    }
+  if (!assoc_id_2_gnb_context(itti_msg.assoc_id, gc)) {
+    Logger::amf_n2().error(
+        "gNB with assoc_id (%d) is illegal", itti_msg.assoc_id);
+    return;
+  }
 
-  //verify release cause -> if HandoverSuccessful no further operations required
-  if(unc->release_cause == Ngap_CauseRadioNetwork_successful_handover && gc->gnb_id == unc->release_gnb){
+  // verify release cause -> if HandoverSuccessful no further operations
+  // required
+  if (unc->release_cause == Ngap_CauseRadioNetwork_successful_handover &&
+      gc->gnb_id == unc->release_gnb) {
     remove_ran_ue_ngap_id_2_ngap_context(ran_ue_ngap_id, gc->gnb_id);
     unc->release_cause = 0;
     return;
   }
-
 
   // Change UE status from CM-CONNECTED to CM-IDLE
   std::shared_ptr<nas_context> nc = {};
@@ -2085,7 +2087,7 @@ void amf_n2::handle_itti_message(itti_handover_notify& itti_msg) {
     return;
   }
 
-  //update the NGAP Context
+  // update the NGAP Context
   unc->release_cause         = Ngap_CauseRadioNetwork_successful_handover;
   unc->release_gnb           = uc->gnb_id;
   unc->ran_ue_ngap_id        = ran_ue_ngap_id;  // store new RAN ID
@@ -2093,12 +2095,12 @@ void amf_n2::handle_itti_message(itti_handover_notify& itti_msg) {
   unc->ng_ue_state           = NGAP_UE_CONNECTED;
   unc->gnb_assoc_id          = itti_msg.assoc_id;  // update serving gNB
 
-  //update NAS Context
+  // update NAS Context
   nc->ran_ue_ngap_id = ran_ue_ngap_id;
- 
-  //update User Context
+
+  // update User Context
   uc->ran_ue_ngap_id = ran_ue_ngap_id;
-  uc->gnb_id = gc->gnb_id;
+  uc->gnb_id         = gc->gnb_id;
 
   set_ran_ue_ngap_id_2_ue_ngap_context(ran_ue_ngap_id, gc->gnb_id, unc);
 }

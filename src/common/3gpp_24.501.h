@@ -22,6 +22,8 @@
 #ifndef FILE_3GPP_24_501_SEEN
 #define FILE_3GPP_24_501_SEEN
 
+#define T3502_TIMER_DEFAULT_VALUE_MIN 12  // 12 minutes
+
 // Table 10.3.1 @3GPP TS 24.501 V16.1.0 (2019-06)
 #define T3512_TIMER_VALUE_SEC 3240  // 54 minutes
 #define T3512_TIMER_VALUE_MIN 54    // 54 minutes
