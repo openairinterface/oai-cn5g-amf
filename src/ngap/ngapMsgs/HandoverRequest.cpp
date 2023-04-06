@@ -36,6 +36,17 @@ HandoverRequest::HandoverRequest() : NgapMessage() {
   mobilityRestrictionList = std::nullopt;
   handoverRequestIEs      = nullptr;
 
+  amfUeNgapId                         = {};
+  handoverType                        = {};
+  cause                               = {};
+  ueAggregateMaximumBitRate           = {};
+  ueSecurityCapabilities              = {};
+  securityContext                     = {};
+  pDUSessionResourceSetupList         = {};
+  allowedNSSAI                        = {};
+  SourceToTarget_TransparentContainer = {};
+  guami                               = {};
+
   setMessageType(NgapMessageType::HANDOVER_REQUEST);
   initialize();
 }
@@ -341,7 +352,9 @@ void HandoverRequest::setSourceToTarget_TransparentContainer(
   ie->criticality = Ngap_Criticality_reject;
   ie->value.present =
       Ngap_HandoverRequestIEs__value_PR_SourceToTarget_TransparentContainer;
-  ie->value.choice.SourceToTarget_TransparentContainer = sourceTotarget;
+
+  conv::octet_string_copy(
+      ie->value.choice.SourceToTarget_TransparentContainer, sourceTotarget);
   int ret = ASN_SEQUENCE_ADD(&handoverRequestIEs->protocolIEs.list, ie);
   if (ret != 0)
     Logger::ngap().error("Encode SourceToTarget_TransparentContainer IE error");

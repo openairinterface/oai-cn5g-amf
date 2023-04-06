@@ -303,24 +303,23 @@ bool conv::octet_string_2_bit_string(
 
 //------------------------------------------------------------------------------
 bool conv::bstring_2_bit_string(const bstring& b_str, BIT_STRING_t& bit_str) {
-  // OCTET_STRING_t octet_str;
-  // bstring_2_octet_string(b_str, octet_str);
-  // octet_string_2_bit_string(octet_str, bit_str, 0);
-  int size = blength(b_str);
-  if (!b_str or size <= 0) return false;
-  if (!bdata(b_str)) return false;
 
-  bit_str.buf = (uint8_t*) calloc(size + 1, sizeof(uint8_t));
-  if (!bit_str.buf) return false;
+    int size = blength(b_str);
+    if (!b_str or size <= 0) return false;
+    if (!bdata(b_str)) return false;
 
-  if (check_bstring(b_str))
-    memcpy((void*) bit_str.buf, (char*) b_str->data, blength(b_str));
-  ((uint8_t*) bit_str.buf)[size] = '\0';
-  bit_str.size                   = size;
+    bit_str.buf = (uint8_t*) calloc(size + 1, sizeof(uint8_t));
+    if (!bit_str.buf) return false;
 
-  bit_str.bits_unused = 0;
+    if (check_bstring (b_str)) memcpy((void*) bit_str.buf, (char*)b_str->data,
+    blength(b_str));
+    ((uint8_t*) bit_str.buf)[size] = '\0';
+    bit_str.size                   = size;
 
+          bit_str.bits_unused            = 0;
+  
   return true;
+
 }
 
 //------------------------------------------------------------------------------

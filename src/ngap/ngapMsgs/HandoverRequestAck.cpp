@@ -20,6 +20,7 @@
  */
 
 #include "HandoverRequestAck.hpp"
+#include "conversions.hpp"
 
 #include "logger.hpp"
 
@@ -107,7 +108,8 @@ void HandoverRequestAck::setTargetToSource_TransparentContainer(
   ie->criticality = Ngap_Criticality_reject;
   ie->value.present =
       Ngap_HandoverRequestAcknowledgeIEs__value_PR_TargetToSource_TransparentContainer;
-  ie->value.choice.TargetToSource_TransparentContainer = targetTosource;
+  conv::octet_string_copy(
+      ie->value.choice.TargetToSource_TransparentContainer, targetTosource);
   int ret = ASN_SEQUENCE_ADD(&handoverRequestAckIEs->protocolIEs.list, ie);
   if (ret != 0)
     Logger::ngap().error(
@@ -313,9 +315,10 @@ bool HandoverRequestAck::decodeFromPdu(Ngap_NGAP_PDU_t* ngapMsgPdu) {
                 Ngap_Criticality_reject &&
             handoverRequestAckIEs->protocolIEs.list.array[i]->value.present ==
                 Ngap_HandoverRequestAcknowledgeIEs__value_PR_TargetToSource_TransparentContainer) {
-          TargetToSource_TransparentContainer =
+          conv::octet_string_copy(
+              TargetToSource_TransparentContainer,
               handoverRequestAckIEs->protocolIEs.list.array[i]
-                  ->value.choice.TargetToSource_TransparentContainer;
+                  ->value.choice.TargetToSource_TransparentContainer);
         } else {
           Logger::ngap().error(
               "Decoded NGAP TargetToSource_TransparentContainer IE error");

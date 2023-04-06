@@ -20,6 +20,8 @@
  */
 
 #include "HandoverRequiredMsg.hpp"
+
+#include "conversions.hpp"
 #include "logger.hpp"
 
 extern "C" {
@@ -269,9 +271,10 @@ bool HandoverRequiredMsg::decodeFromPdu(Ngap_NGAP_PDU_t* ngapMsgPdu) {
                 Ngap_Criticality_reject &&
             handoverRequiredIEs->protocolIEs.list.array[i]->value.present ==
                 Ngap_HandoverRequiredIEs__value_PR_SourceToTarget_TransparentContainer) {
-          sourceToTarget_TransparentContainer =
+          conv::octet_string_copy(
+              sourceToTarget_TransparentContainer,
               handoverRequiredIEs->protocolIEs.list.array[i]
-                  ->value.choice.SourceToTarget_TransparentContainer;
+                  ->value.choice.SourceToTarget_TransparentContainer);
         } else {
           Logger::ngap().error(
               "Decoded NGAP SourceToTarget_TransparentContainer IE error");
