@@ -71,7 +71,7 @@ void octet_stream_2_hex_stream(uint8_t* buf, int len, std::string& out) {
   }
   tmp[2 * len] = '\0';
   out          = tmp;
-  Logger::amf_sbi().debug("n1sm buffer: %s", out.c_str());
+  Logger::amf_sbi().debug("Buffer: %s", out.c_str());
 }
 
 //------------------------------------------------------------------------------
