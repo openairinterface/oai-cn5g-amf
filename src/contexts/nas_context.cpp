@@ -21,24 +21,28 @@
 
 #include "nas_context.hpp"
 
+#include "amf.hpp"
+
 //------------------------------------------------------------------------------
 nas_context::nas_context() : _5g_he_av(), _5g_av(), kamf(), _5gmm_capability() {
-  is_imsi_present                                       = false;
-  is_auth_vectors_present                               = false;
-  auts                                                  = nullptr;
-  ctx_avaliability_ind                                  = false;
-  amf_ue_ngap_id                                        = 0;
-  ran_ue_ngap_id                                        = 0;
-  _5gmm_state                                           = {};
-  registration_type                                     = 0;
-  follow_on_req_pending_ind                             = false;
-  ngksi                                                 = 0;
-  ue_security_capability                                = {};
-  is_specific_procedure_for_registration_running        = false;
-  is_specific_procedure_for_deregistration_running      = false;
-  is_specific_procedure_for_eCell_inactivity_running    = false;
-  is_common_procedure_for_authentication_running        = false;
-  is_common_procedure_for_identification_running        = false;
+  is_imsi_present                                    = false;
+  is_auth_vectors_present                            = false;
+  auts                                               = nullptr;
+  ctx_avaliability_ind                               = false;
+  amf_ue_ngap_id                                     = 0;
+  ran_ue_ngap_id                                     = 0;
+  old_amf_ue_ngap_id                                 = INVALID_AMF_UE_NGAP_ID;
+  old_ran_ue_ngap_id                                 = 0;
+  _5gmm_state                                        = {};
+  registration_type                                  = 0;
+  follow_on_req_pending_ind                          = false;
+  ngksi                                              = 0;
+  ue_security_capability                             = {};
+  is_specific_procedure_for_registration_running     = false;
+  is_specific_procedure_for_deregistration_running   = false;
+  is_specific_procedure_for_eCell_inactivity_running = false;
+  is_common_procedure_for_authentication_running     = false;
+  is_common_procedure_for_identification_running     = false;
   is_common_procedure_for_security_mode_control_running = false;
   is_common_procedure_for_nas_transport_running         = false;
   security_ctx                                          = std::nullopt;
@@ -56,6 +60,7 @@ nas_context::nas_context() : _5g_he_av(), _5g_av(), kamf(), _5gmm_capability() {
   implicit_deregistration_timer                         = ITTI_INVALID_TIMER_ID;
   href                                                  = {};
   imeisv                                                = std::nullopt;
+  guti                                                  = std::nullopt;
 }
 
 //------------------------------------------------------------------------------
