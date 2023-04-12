@@ -1366,7 +1366,8 @@ void amf_n2::handle_itti_message(itti_ue_context_release_complete& itti_msg) {
 
   if (nc != nullptr) {
     // Do nothing in case of old NAS Context (Service Request handling)
-    if (nc->old_amf_ue_ngap_id != INVALID_AMF_UE_NGAP_ID) {
+    if ((nc->old_amf_ue_ngap_id != INVALID_AMF_UE_NGAP_ID) and
+        (!nc->guti.has_value())) {
       Logger::amf_n2().debug("UE Context Release Complete for the old context");
       return;
     }

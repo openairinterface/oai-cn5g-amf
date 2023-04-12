@@ -1017,9 +1017,10 @@ void amf_n1::service_request_handle(
       std::string guti = conv::tmsi_to_guti(
           uc->tai.mcc, uc->tai.mnc, amf_cfg.guami.regionID,
           std::to_string(amf_set_id), std::to_string(amf_pointer), tmsi);
-
+      // nc->guti               = std::make_optional<std::string>(guti);
       Logger::amf_app().debug(
           "GUTI %s, 5G-TMSI %s", guti.c_str(), tmsi.c_str());
+
       // Get Security Context from old NAS Context if neccesary
       std::shared_ptr<nas_context> old_nc = {};
       if (guti_2_nas_context(guti, old_nc)) {
@@ -1100,33 +1101,37 @@ void amf_n1::service_request_handle(
         "Send UEContextReleaseCommand to release the old NAS connection if "
         "necessary");
 
-    std::shared_ptr<ue_ngap_context> unc = {};
-    string ue_context_key                = conv::get_ue_context_key(
+    // Get UE Context
+    string ue_context_key = conv::get_ue_context_key(
         nc->old_ran_ue_ngap_id, nc->old_amf_ue_ngap_id);
-    if (!amf_n2_inst->ran_ue_id_2_ue_ngap_context(
-            nc->old_ran_ue_ngap_id, ue_context_key, unc)) {
-      Logger::amf_n1().warn(
-          "No UE NGAP context with ran_ue_ngap_id (" GNB_UE_NGAP_ID_FMT ")",
-          nc->old_ran_ue_ngap_id);
-    } else {
-      std::shared_ptr<gnb_context> gc = {};
-      if (!amf_n2_inst->assoc_id_2_gnb_context(unc->gnb_assoc_id, gc)) {
-        Logger::amf_n1().error(
-            "No existed gNB context with assoc_id (%d)", unc->gnb_assoc_id);
-      }
-      std::shared_ptr<itti_ue_context_release_command> itti_msg =
-          std::make_shared<itti_ue_context_release_command>(
-              TASK_AMF_N1, TASK_AMF_N2);
-      itti_msg->amf_ue_ngap_id = nc->old_amf_ue_ngap_id;
-      itti_msg->ran_ue_ngap_id = nc->old_ran_ue_ngap_id;
-      itti_msg->cause.setChoiceOfCause(Ngap_Cause_PR_radioNetwork);
-      itti_msg->cause.setValue(3);  // TODO: remove hardcoded value cause nas(3)
+    std::shared_ptr<ue_context> uc = {};
 
-      int ret = itti_inst->send_msg(itti_msg);
-      if (0 != ret) {
-        Logger::amf_n1().error(
-            "Could not send ITTI message %s to task TASK_AMF_N2",
-            itti_msg->get_msg_name());
+    if (!amf_app_inst->ran_amf_id_2_ue_context(ue_context_key, uc)) {
+      Logger::amf_app().error(
+          "No UE context for ran_amf_id %s, exit", ue_context_key.c_str());
+    } else {
+      std::shared_ptr<ue_ngap_context> unc = {};
+      if (!amf_n2_inst->ran_ue_id_2_ue_ngap_context(
+              nc->old_ran_ue_ngap_id, uc->gnb_id, unc)) {
+        Logger::amf_n1().warn(
+            "No UE NGAP context with ran_ue_ngap_id (" GNB_UE_NGAP_ID_FMT ")",
+            nc->old_ran_ue_ngap_id);
+      } else {
+        std::shared_ptr<itti_ue_context_release_command> itti_msg =
+            std::make_shared<itti_ue_context_release_command>(
+                TASK_AMF_N1, TASK_AMF_N2);
+        itti_msg->amf_ue_ngap_id = nc->old_amf_ue_ngap_id;
+        itti_msg->ran_ue_ngap_id = nc->old_ran_ue_ngap_id;
+        itti_msg->cause.setChoiceOfCause(Ngap_Cause_PR_radioNetwork);
+        itti_msg->cause.setValue(
+            3);  // TODO: remove hardcoded value cause nas(3)
+
+        int ret = itti_inst->send_msg(itti_msg);
+        if (0 != ret) {
+          Logger::amf_n1().error(
+              "Could not send ITTI message %s to task TASK_AMF_N2",
+              itti_msg->get_msg_name());
+        }
       }
     }
   }
