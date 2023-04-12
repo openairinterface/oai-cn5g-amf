@@ -942,8 +942,7 @@ evsub_id_t amf_app::handle_event_exposure_subscription(
     add_event_subscription(evsub_id, i.type, ss);
 
     // Determine Location
-    uint8_t http_version = 1;
-    if (amf_cfg.support_features.use_http2) http_version = 2;
+    uint8_t http_version = amf_cfg.support_features.use_http2 ? 2 : 1;
     // InputData input_data = {};
     // LocationData location_data = {};
     for (const auto& kvp : supi2ue_ctx) {
