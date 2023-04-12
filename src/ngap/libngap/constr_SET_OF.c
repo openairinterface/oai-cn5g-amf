@@ -690,11 +690,11 @@ asn_enc_rval_t SET_OF_encode_xer(
   asn_enc_rval_t er;
   const asn_SET_OF_specifics_t* specs =
       (const asn_SET_OF_specifics_t*) td->specifics;
-  const asn_TYPE_member_t* elm         = td->elements;
-  const asn_anonymous_set_* list       = _A_CSET_FROM_VOID(sptr);
-  const char* mname                    = specs->as_XMLValueList ?
-                                             0 :
-                                             ((*elm->name) ? elm->name : elm->type->xml_tag);
+  const asn_TYPE_member_t* elm   = td->elements;
+  const asn_anonymous_set_* list = _A_CSET_FROM_VOID(sptr);
+  const char* mname              = specs->as_XMLValueList ?
+                          0 :
+                          ((*elm->name) ? elm->name : elm->type->xml_tag);
   size_t mlen                          = mname ? strlen(mname) : 0;
   int xcan                             = (flags & XER_F_CANONICAL);
   xer_tmp_enc_t* encs                  = 0;

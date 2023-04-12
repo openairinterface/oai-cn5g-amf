@@ -1458,28 +1458,27 @@ asn_random_fill_result_t CHOICE_random_fill(
   return res;
 }
 
-asn_TYPE_operation_t asn_OP_CHOICE = {
-    CHOICE_free,
-    CHOICE_print,
-    CHOICE_compare,
-    CHOICE_decode_ber,
-    CHOICE_encode_der,
-    CHOICE_decode_xer,
-    CHOICE_encode_xer,
+asn_TYPE_operation_t asn_OP_CHOICE = {CHOICE_free,
+                                      CHOICE_print,
+                                      CHOICE_compare,
+                                      CHOICE_decode_ber,
+                                      CHOICE_encode_der,
+                                      CHOICE_decode_xer,
+                                      CHOICE_encode_xer,
 #ifdef ASN_DISABLE_OER_SUPPORT
-    0,
-    0,
+                                      0,
+                                      0,
 #else
-    CHOICE_decode_oer,  CHOICE_encode_oer,
+                                      CHOICE_decode_oer,  CHOICE_encode_oer,
 #endif /* ASN_DISABLE_OER_SUPPORT */
 #ifdef ASN_DISABLE_PER_SUPPORT
-    0,
-    0,
-    0,
-    0,
+                                      0,
+                                      0,
+                                      0,
+                                      0,
 #else
-    CHOICE_decode_uper, CHOICE_encode_uper, CHOICE_decode_aper,
-    CHOICE_encode_aper,
+                                      CHOICE_decode_uper, CHOICE_encode_uper,
+                                      CHOICE_decode_aper, CHOICE_encode_aper,
 #endif /* ASN_DISABLE_PER_SUPPORT */
-    CHOICE_random_fill,
-    CHOICE_outmost_tag};
+                                      CHOICE_random_fill,
+                                      CHOICE_outmost_tag};
