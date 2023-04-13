@@ -3479,6 +3479,7 @@ void amf_n1::ue_initiate_de_registration_handle(
     usleep(200000);
   }
 
+  stacs.update_5gmm_state(nc->imsi, "5GMM-DEREGISTERED");
   set_5gmm_state(nc, _5GMM_DEREGISTERED);
   stacs.display();
 

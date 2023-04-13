@@ -1481,7 +1481,8 @@ void amf_n2::handle_itti_message(itti_ue_context_release_complete& itti_msg) {
   }
 
   // Remove UE NGAP context
-  remove_ue_context_with_ran_ue_ngap_id(ran_ue_ngap_id, uc->gnb_id);
+  remove_amf_ue_ngap_id_2_ue_ngap_context(amf_ue_ngap_id);
+  remove_ran_ue_ngap_id_2_ngap_context(ran_ue_ngap_id, gc->gnb_id);
 }
 
 //------------------------------------------------------------------------------
@@ -2328,6 +2329,7 @@ void amf_n2::remove_ue_context_with_ran_ue_ngap_id(
   // Remove all NAS context if still exist
   std::shared_ptr<nas_context> nc = {};
   if (amf_n1_inst->amf_ue_id_2_nas_context(unc->amf_ue_ngap_id, nc)) {
+    // TODO: Verify where it's current context
     // Remove all NAS context
     string supi = conv::imsi_to_supi(nc->imsi);
     stacs.update_5gmm_state(nc->imsi, "5GMM-DEREGISTERED");
