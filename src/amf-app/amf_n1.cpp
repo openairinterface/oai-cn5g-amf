@@ -3440,8 +3440,11 @@ void amf_n1::ue_initiate_de_registration_handle(
           uint32_t http_response_code = smf_responses.begin()->second.get();
 
           // Remove PDU session
+          // TODO for multiple sessions
           if ((http_response_code == 200) or (http_response_code == 204)) {
-            uc->remove_pdu_sessions_context(session->pdu_session_id);
+            for (auto session : sessions_ctx) {
+              uc->remove_pdu_sessions_context(session->pdu_session_id);
+            }
           }
         }
         smf_responses.erase(smf_responses.begin());
