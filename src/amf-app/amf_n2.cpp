@@ -1319,8 +1319,8 @@ void amf_n2::handle_itti_message(itti_ue_context_release_command& itti_msg) {
 //------------------------------------------------------------------------------
 void amf_n2::handle_itti_message(itti_ue_context_release_complete& itti_msg) {
   Logger::amf_n2().debug("Handle UE Context Release Complete ...");
-  unsigned long amf_ue_ngap_id = itti_msg.ueCtxRelCmpl->getAmfUeNgapId();
-  uint32_t ran_ue_ngap_id      = itti_msg.ueCtxRelCmpl->getRanUeNgapId();
+  long amf_ue_ngap_id     = itti_msg.ueCtxRelCmpl->getAmfUeNgapId();
+  uint32_t ran_ue_ngap_id = itti_msg.ueCtxRelCmpl->getRanUeNgapId();
 
   // Get UE Context
   string ue_context_key =
@@ -1366,21 +1366,35 @@ void amf_n2::handle_itti_message(itti_ue_context_release_complete& itti_msg) {
 
   if (nc != nullptr) {
     // Do nothing in case of old NAS Context (Service Request handling)
-    if ((nc->old_amf_ue_ngap_id != INVALID_AMF_UE_NGAP_ID) and
-        (!nc->guti.has_value())) {
+    /*   if ((nc->old_amf_ue_ngap_id != INVALID_AMF_UE_NGAP_ID) and
+           (!nc->guti.has_value())) {
+         Logger::amf_n2().debug("UE Context Release Complete for the old
+       context"); return;
+       }
+   */
+    // Get SUPI
+    std::string supi = conv::imsi_to_supi(nc->imsi);
+    // Get the current AMF UE NGAP ID and compare with the one from
+    // UEContextReleaseComplete
+    long current_amf_ue_ngap_id = INVALID_AMF_UE_NGAP_ID;
+    amf_n1_inst->supi_2_amf_id(supi, current_amf_ue_ngap_id);
+    if (current_amf_ue_ngap_id != amf_ue_ngap_id) {
+      // Remove UE NGAP context
       Logger::amf_n2().debug("UE Context Release Complete for the old context");
+      remove_amf_ue_ngap_id_2_ue_ngap_context(amf_ue_ngap_id);
+      remove_ran_ue_ngap_id_2_ngap_context(ran_ue_ngap_id, gc->gnb_id);
       return;
+    } else {
+      amf_n1_inst->set_5gcm_state(nc, CM_IDLE);
+      // Start/reset the Mobile Reachable Timer
+      timer_id_t tid = itti_inst->timer_setup(
+          MOBILE_REACHABLE_TIMER_NO_EMERGENCY_SERVICES_MIN * 60, 0, TASK_AMF_N1,
+          TASK_AMF_MOBILE_REACHABLE_TIMER_EXPIRE, amf_ue_ngap_id);
+      Logger::amf_n2().startup("Started mobile reachable timer (tid %d)", tid);
+
+      amf_n1_inst->set_mobile_reachable_timer(nc, tid);
+      amf_n1_inst->set_mobile_reachable_timer_timeout(nc, false);
     }
-    amf_n1_inst->set_5gcm_state(nc, CM_IDLE);
-
-    // Start/reset the Mobile Reachable Timer
-    timer_id_t tid = itti_inst->timer_setup(
-        MOBILE_REACHABLE_TIMER_NO_EMERGENCY_SERVICES_MIN * 60, 0, TASK_AMF_N1,
-        TASK_AMF_MOBILE_REACHABLE_TIMER_EXPIRE, amf_ue_ngap_id);
-    Logger::amf_n2().startup("Started mobile reachable timer (tid %d)", tid);
-
-    amf_n1_inst->set_mobile_reachable_timer(nc, tid);
-    amf_n1_inst->set_mobile_reachable_timer_timeout(nc, false);
   } else {
     return;
   }
@@ -1470,6 +1484,10 @@ void amf_n2::handle_itti_message(itti_ue_context_release_complete& itti_msg) {
           "Got result for PDU Session ID %d", curl_responses.begin()->first);
       if (pdu_session_id_str.size() > 0) {
         result = result && true;
+        // TODO: Remove PDU Session
+        uint8_t psi = 0;
+        if (conv::string_to_int8(pdu_session_id_str, psi))
+          uc->remove_pdu_sessions_context(psi);
       } else {
         result = false;
       }
