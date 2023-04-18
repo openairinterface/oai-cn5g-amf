@@ -914,7 +914,9 @@ void amf_n2::handle_itti_message(itti_initial_context_setup_request& itti_msg) {
       Logger::amf_n2().debug(
           "Encoding parameters for Initial Context Setup Request");
 
-    if (itti_msg.is_pdu_exist) {
+    // ANURAG | Disable it for now
+    //if (itti_msg.is_pdu_exist) {
+    if (0) {
       // TODO: with multiple PDU Sessions
       std::vector<PDUSessionResourceSetupRequestItem_t> list;
       PDUSessionResourceSetupRequestItem_t item = {};

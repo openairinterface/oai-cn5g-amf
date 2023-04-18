@@ -953,10 +953,15 @@ void amf_n1::service_request_handle(
           "Cannot get pdu_session_context with SUPI (%s)", supi.c_str());
       // TODO:
       // Set PDU session Status to 0x00
-      // service_accept->SetPduSessionStatus(0x00);
-    } else {
-      service_accept->SetPduSessionStatus(pdu_session_status);
+      service_accept->SetPduSessionStatus(0x00);
       service_accept->SetPduSessionReactivationResult(0x0000);
+      //service_accept->SetPduSessionReactivationResultErrorCause(0xFF);
+    } else {
+      Logger::amf_n1().info("[FC] PDU Session Status %d\n", pdu_session_status);
+      service_accept->SetPduSessionStatus(0x00);
+      //service_accept->SetPduSessionStatus(pdu_session_status);
+      service_accept->SetPduSessionReactivationResult(0x0000);
+      service_accept->SetPduSessionReactivationResultErrorCause(pdu_session_id, 0x3c);
     }
 
     uint8_t buffer[BUFFER_SIZE_1024];
@@ -1292,7 +1297,9 @@ void amf_n1::service_request_handle(
       // Set PDU session Status to 0x00
       // service_accept->SetPduSessionStatus(0x00);
     } else {
-      service_accept->SetPduSessionStatus(pdu_session_status);
+      Logger::amf_n1().info("[FC-1] PDU Session status: %d\n", pdu_session_status);
+      //service_accept->SetPduSessionStatus(pdu_session_status);
+      service_accept->SetPduSessionStatus(0x00);
       service_accept->SetPduSessionReactivationResult(0x0000);
     }
 
@@ -3443,6 +3450,8 @@ void amf_n1::ue_initiate_de_registration_handle(
           // TODO for multiple sessions
           if ((http_response_code == 200) or (http_response_code == 204)) {
             for (auto session : sessions_ctx) {
+              Logger::amf_n1().info(
+              "THIS IS UNHOLY, RELEASING ALL PDU");
               uc->remove_pdu_sessions_context(session->pdu_session_id);
             }
           }
