@@ -38,6 +38,7 @@ pdu_session_context::pdu_session_context() {
   snssai                  = {};
   plmn                    = {};
   is_ho_accepted          = false;
+  up_cnx_state            = up_cnx_state_e::UPCNX_STATE_UNKNOWN;
 }
 
 //------------------------------------------------------------------------------

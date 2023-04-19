@@ -85,3 +85,15 @@ bool ue_context::remove_pdu_sessions_context(uint8_t pdu_session_id) {
   }
   return false;
 }
+
+//------------------------------------------------------------------------------
+bool ue_context::set_up_cnx_state(
+    uint8_t pdu_session_id, const up_cnx_state_e& state) {
+  std::shared_ptr<pdu_session_context> psc = {};
+  if (find_pdu_session_context(pdu_session_id, psc)) {
+    std::unique_lock lock(m_pdu_session);
+    psc->up_cnx_state = state;
+    return true;
+  }
+  return false;
+}

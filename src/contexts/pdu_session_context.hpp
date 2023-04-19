@@ -22,6 +22,7 @@
 #ifndef _PDU_SESSION_CONTEXT_H_
 #define _PDU_SESSION_CONTEXT_H_
 
+#include "3gpp_29.502.h"
 #include "amf.hpp"
 #include "bstrlib.h"
 
@@ -51,6 +52,8 @@ class pdu_session_context {
   snssai_t snssai;
   plmn_t plmn;
   bool is_ho_accepted;
+  up_cnx_state_e
+      up_cnx_state;  // N3 tunnel status (ACTIVATED, DEACTIVATED, ACTIVATING)
 };
 
 #endif

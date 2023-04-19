@@ -51,6 +51,7 @@ class ue_context {
       std::vector<std::shared_ptr<pdu_session_context>>& sessions_ctx) const;
 
   bool remove_pdu_sessions_context(uint8_t pdu_session_id);
+  bool set_up_cnx_state(uint8_t pdu_session_id, const up_cnx_state_e& state);
 
  public:
   uint32_t ran_ue_ngap_id;  // 32bits

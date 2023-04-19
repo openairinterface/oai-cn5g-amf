@@ -1431,6 +1431,8 @@ void amf_n2::handle_itti_message(itti_ue_context_release_complete& itti_msg) {
   std::map<uint32_t, boost::shared_future<std::string>> curl_responses;
 
   for (auto pdu_session : pdu_sessions_to_be_released) {
+    Logger::amf_n2().debug(
+        "Releasing PDU Session ID %d", pdu_session.pduSessionId);
     // Generate a promise and associate this promise to the curl handle
     uint32_t promise_id = amf_app_inst->generate_promise_id();
     Logger::amf_n2().debug("Promise ID generated %d", promise_id);
@@ -1479,15 +1481,21 @@ void amf_n2::handle_itti_message(itti_ue_context_release_complete& itti_msg) {
       assert(curl_responses.begin()->second.has_value());
       assert(!curl_responses.begin()->second.has_exception());
       // Wait for the result from APP and send reply to AMF
-      std::string pdu_session_id_str = curl_responses.begin()->second.get();
+
+      std::string http_code_str = curl_responses.begin()->second.get();
       Logger::ngap().debug(
           "Got result for PDU Session ID %d", curl_responses.begin()->first);
-      if (pdu_session_id_str.size() > 0) {
-        result = result && true;
-        // TODO: Remove PDU Session
-        uint8_t psi = 0;
-        if (conv::string_to_int8(pdu_session_id_str, psi))
-          uc->remove_pdu_sessions_context(psi);
+      if (http_code_str.size() > 0) {
+        result            = result && true;
+        uint8_t http_code = 0;
+        if (conv::string_to_int8(http_code_str, http_code)) {
+          if ((http_code == 200) or (http_code == 204)) {
+            // uc->remove_pdu_sessions_context(curl_responses.begin()->first);
+            uc->set_up_cnx_state(
+                curl_responses.begin()->first,
+                up_cnx_state_e::UPCNX_STATE_DEACTIVATED);
+          }
+        }
       } else {
         result = false;
       }
