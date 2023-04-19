@@ -23,6 +23,7 @@
 #define _NGAP_APPLICATION_H_
 
 #include <map>
+#include <memory>
 #include <shared_mutex>
 
 #include "gNB_context.hpp"
