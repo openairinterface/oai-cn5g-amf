@@ -1279,21 +1279,105 @@ void amf_n1::service_request_handle(
     return;
 
   } else {
-    // TODO: Contact SMF to activate UP for these sessions
-    // TODO: modify itti_initial_context_setup_request for supporting multiple
-    // PDU sessions
-
     std::shared_ptr<pdu_session_context> psc = {};
 
     uint8_t pdu_session_id = pdu_session_to_be_activated.at(0);
     if (!amf_app_inst->find_pdu_session_context(supi, pdu_session_id, psc)) {
-      Logger::amf_n1().error(
+      Logger::amf_n1().debug(
           "Cannot get pdu_session_context with SUPI (%s)", supi.c_str());
       // Set PDU session Status to 0x00
       // service_accept->SetPduSessionStatus(0x00);
     } else {
       service_accept->SetPduSessionStatus(pdu_session_status);
       service_accept->SetPduSessionReactivationResult(0x0000);
+    }
+
+    if (psc and
+        (psc->up_cnx_state == up_cnx_state_e::UPCNX_STATE_DEACTIVATED)) {
+      // TODO: Contact SMF to activate UP for these sessions
+      // TODO: modify itti_initial_context_setup_request for supporting multiple
+      // PDU sessions
+
+      // Send PDUSessionUpdateSMContextRequest to SMF for each PDU session
+      std::map<uint32_t, boost::shared_future<nlohmann::json>> curl_responses;
+
+      // Generate a promise and associate this promise to the curl handle
+      uint32_t promise_id = amf_app_inst->generate_promise_id();
+      Logger::amf_n2().debug("Promise ID generated %d", promise_id);
+
+      boost::shared_ptr<boost::promise<nlohmann::json>> p =
+          boost::make_shared<boost::promise<nlohmann::json>>();
+      boost::shared_future<nlohmann::json> f = p->get_future();
+      amf_app_inst->add_promise(promise_id, p);
+
+      curl_responses.emplace(pdu_session_id, f);
+
+      Logger::amf_n2().debug(
+          "Sending ITTI to trigger PDUSessionUpdateSMContextRequest to SMF to "
+          "task TASK_AMF_SBI");
+
+      std::shared_ptr<itti_nsmf_pdusession_update_sm_context> itti_n11_msg =
+          std::make_shared<itti_nsmf_pdusession_update_sm_context>(
+              TASK_NGAP, TASK_AMF_SBI);
+
+      itti_n11_msg->pdu_session_id = pdu_session_id;
+
+      // TODO:
+      itti_n11_msg->is_n2sm_set = false;
+
+      itti_n11_msg->amf_ue_ngap_id = amf_ue_ngap_id;
+      itti_n11_msg->ran_ue_ngap_id = ran_ue_ngap_id;
+      itti_n11_msg->promise_id     = promise_id;
+      itti_n11_msg->up_cnx_state   = "ACTIVATING";
+
+      int ret = itti_inst->send_msg(itti_n11_msg);
+      if (0 != ret) {
+        Logger::ngap().error(
+            "Could not send ITTI message %s to task TASK_AMF_SBI",
+            itti_n11_msg->get_msg_name());
+      }
+
+      bool result                 = false;
+      boost::future_status status = {};
+      // wait for timeout or ready
+      status =
+          f.wait_for(boost::chrono::milliseconds(FUTURE_STATUS_TIMEOUT_MS));
+      if (status == boost::future_status::ready) {
+        assert(f.is_ready());
+        assert(f.has_value());
+        assert(!f.has_exception());
+        // Wait for the result from SMF
+        nlohmann::json response_data = f.get();
+        if (!response_data.empty()) {
+          Logger::amf_n1().debug(
+              "Got response from SMF: %s", response_data.dump().c_str());
+          // TODO: Get N2 SM info and send to AM
+          if (response_data.find("json") != response_data.end())
+            nlohmann::json json_result = response_data.at("json");
+          if (response_data.find("n2sm") != response_data.end()) {
+            bstring n2sm_hex = nullptr;
+            // conv::msg_str_2_msg_hex(
+            //    response_data.at("n2sm").get<std::string>(), n2sm_hex);
+            // conv::string_2_bstring(
+            //         response_data.at("n2sm").get<std::string>(), n2sm_hex);
+
+            // output_wrapper::print_buffer(
+            //      "amf_sbi", "Get response N2 SM:", (uint8_t*)
+            //      bdata(n2sm_hex), blength(n2sm_hex));
+            // store in PDU session context
+            // psc->n2sm              = bstrcpy(n2sm_hex);
+            // psc->is_n2sm_avaliable = true;
+          }
+
+        } else {
+          Logger::amf_n1().debug("Could not get response from SMF");
+          // TODO:
+        }
+
+      } else {
+        Logger::amf_n1().debug("Could not get response from SMF");
+        // TODO:
+      }
     }
 
     uint8_t buffer[BUFFER_SIZE_1024];
@@ -1334,7 +1418,7 @@ void amf_n1::service_request_handle(
     } else {
       itti_msg->is_n2sm_avaliable = false;
       itti_msg->is_pdu_exist      = false;
-      Logger::amf_n1().error("Cannot get PDU session information");
+      Logger::amf_n1().debug("Cannot get PDU session information");
     }
 
     int ret = itti_inst->send_msg(itti_msg);

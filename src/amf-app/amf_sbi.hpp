@@ -223,9 +223,9 @@ class amf_sbi {
    * @param [const std::string&] pdu_session_id: PDU Session ID
    * @param [const uint8_t&] http_version: HTTP versioin
    * @param [const uint32_t&] promise_id: Promise ID
-   * @return void
+   * @return true if successful, otherwise return false
    */
-  void curl_http_client(
+  bool curl_http_client(
       const std::string& remote_uri, const std::string& json_data,
       const std::string& n1sm_msg, const std::string& n2sm_msg,
       const std::string& supi, const uint8_t& pdu_session_id,
