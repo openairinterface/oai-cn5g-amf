@@ -38,15 +38,15 @@ from common.python.generate_html import (
 from common.python.code_format_checker import (
     coding_formatting_log_check,
 )
- 
+
 from common.python.static_code_analysis import (
     analyze_sca_log_check,
 )
- 
+
 from common.python.building_report import (
     build_summary,
 )
- 
+
 REPORT_NAME = 'test_results_oai_amf.html'
 
 class HtmlReport():
