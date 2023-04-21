@@ -66,9 +66,11 @@ class nas_context {
   nas_context();
   ~nas_context();
   bool ctx_avaliability_ind;
-  bool is_stacs_available;
   long amf_ue_ngap_id;
   uint32_t ran_ue_ngap_id;
+  long old_amf_ue_ngap_id;
+  uint32_t old_ran_ue_ngap_id;
+
   cm_state_t nas_status;
   _5gmm_state_t _5gmm_state;
   bool is_mobile_reachable_timer_timeout;
@@ -81,6 +83,9 @@ class nas_context {
   uint8_t ngksi;  // 4 bits
 
   std::string imsi;  // TODO: use SUPI instead
+  std::optional<nas::IMEI_IMEISV_t> imeisv;
+  std::optional<std::string> guti;
+
   std::uint8_t _5gmm_capability[13];
   nas::UESecurityCapability ue_security_capability;
 

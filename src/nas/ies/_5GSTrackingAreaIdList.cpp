@@ -36,6 +36,18 @@ _5GSTrackingAreaIdList::_5GSTrackingAreaIdList()
       k5gsTrackingAreaIdListMinimumLength -
       2);  // Minimim length - 2 bytes for header
 }
+
+//------------------------------------------------------------------------------
+_5GSTrackingAreaIdList::_5GSTrackingAreaIdList(bool iei)
+    : Type4NasIe(), m_tai_list() {
+  if (iei) {
+    SetIei(kIei5gsTrackingAreaIdentityList);
+  }
+  SetLengthIndicator(
+      k5gsTrackingAreaIdListMinimumLength -
+      2);  // Minimim length - 2 bytes for header
+}
+
 //------------------------------------------------------------------------------
 _5GSTrackingAreaIdList::_5GSTrackingAreaIdList(
     const std::vector<p_tai_t>& tai_list)

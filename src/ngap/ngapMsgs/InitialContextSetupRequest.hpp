@@ -32,6 +32,7 @@
 #include "UERadioCapability.hpp"
 #include "UESecurityCapabilities.hpp"
 #include "NgapUEMessage.hpp"
+#include "MobilityRestrictionList.hpp"
 
 #include <optional>
 
@@ -100,8 +101,14 @@ class InitialContextSetupRequestMsg : public NgapUEMessage {
   void setSecurityKey(uint8_t* key);   // 256bits
   bool getSecurityKey(uint8_t*& key);  // 256bits
 
+  void setMobilityRestrictionList(const PlmnId& plmn_id);
+  // TODO: getMobilityRestrictionList
+
   void setUERadioCapability(const bstring& ue_radio_capability);
   void getUERadioCapability(bstring& ue_radio_capability);
+
+  void setMaskedIMEISV(const std::string& imeisv);
+  // bool getMaskedIMEISV();
 
   void setNasPdu(const bstring& pdu);
   bool getNasPdu(bstring& pdu);
@@ -120,11 +127,11 @@ class InitialContextSetupRequestMsg : public NgapUEMessage {
   UESecurityCapabilities uESecurityCapabilities;  // Mandatory
   SecurityKey securityKey;                        // Mandatory
   // TODO: Trace Activation (Optional)
-  // TODO: Mobility Restriction List
+  std::optional<MobilityRestrictionList> mobilityRestrictionList;
   std::optional<UERadioCapability> ueRadioCapability;  // Optional
   // TODO: Index to RAT/Frequency Selection Priority
-  // TODO: Masked IMEISV
-  std::optional<NAS_PDU> nasPdu;  // Optional
+  std::optional<Ngap_MaskedIMEISV_t> maskedIMEISV;  // Optional
+  std::optional<NAS_PDU> nasPdu;                    // Optional
   // TODO: Emergency Fallback Indicator
   // TODO: RRC Inactive Transition Report Request
   // TODO: UE Radio Capability for Paging

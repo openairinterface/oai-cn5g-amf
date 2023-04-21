@@ -34,6 +34,7 @@ class DNN : public Type4NasIe {
  public:
   DNN();
   DNN(bstring dnn);
+  DNN(bool iei);
   ~DNN();
 
   static std::string GetIeName() { return kDnnIeName; }
