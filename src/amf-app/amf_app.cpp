@@ -123,6 +123,13 @@ void amf_app_task(void*) {
         amf_app_inst->handle_itti_message(ref(*m));
       } break;
 
+      case NON_UE_N2_MESSAGE_TRANSFER_REQ: {
+        Logger::amf_app().debug("Received NON_UE_N2_MESSAGE_TRANSFER_REQ");
+        itti_non_ue_n2_message_transfer_request* m =
+            dynamic_cast<itti_non_ue_n2_message_transfer_request*>(msg);
+        amf_app_inst->handle_itti_message(ref(*m));
+      } break;
+
       case SBI_N1_MESSAGE_NOTIFICATION: {
         Logger::amf_app().debug("Received SBI_N1_MESSAGE_NOTIFICATION");
         itti_sbi_n1_message_notification* m =
@@ -378,6 +385,28 @@ void amf_app::handle_itti_message(
           "Could not send ITTI message %s to task TASK_AMF_N1",
           dl_msg->get_msg_name());
     }
+  }
+}
+
+//------------------------------------------------------------------------------
+void amf_app::handle_itti_message(
+    itti_non_ue_n2_message_transfer_request& itti_msg) {
+  if (itti_msg.is_nrppa_pdu_set) {
+    Logger::amf_app().info(
+        "Handle ITTI Non Ue N2 Message Transfer Request for NRPPa PDU");
+    std::shared_ptr<itti_downlink_non_ue_associated_nrppa_transport> dl_msg =
+        std::make_shared<itti_downlink_non_ue_associated_nrppa_transport>(
+            TASK_AMF_APP, TASK_AMF_N2);
+    dl_msg->nrppa_pdu  = bstrcpy(itti_msg.nrppa_pdu);
+    dl_msg->routing_id = bstrcpy(itti_msg.routing_id);
+    int ret = itti_inst->send_msg(dl_msg);
+    if (ret != RETURNok) {
+      Logger::amf_app().error(
+          "Could not send ITTI message %s to task TASK_AMF_N2",
+          dl_msg->get_msg_name());
+    }
+  } else {
+    Logger::amf_app().info("Handle ITTI Non UE N2 Message Transfer Request : Unsupported");    
   }
 }
 

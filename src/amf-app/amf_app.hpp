@@ -121,6 +121,13 @@ class amf_app {
   void handle_itti_message(itti_n1n2_message_transfer_request& itti_msg);
 
   /*
+   * Handle ITTI message (NonUeN2MessageTransferRequest)
+   * @param [itti_non_ue_n2_message_transfer_request&]: ITTI message
+   * @return void
+   */
+  void handle_itti_message(itti_non_ue_n2_message_transfer_request& itti_msg);
+
+  /*
    * Handle ITTI message (SBI N1 Message Notification)
    * @param [itti_sbi_n1_message_notification&]: ITTI message
    * @return void

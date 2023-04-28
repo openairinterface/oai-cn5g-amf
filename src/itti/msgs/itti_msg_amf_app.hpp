@@ -137,4 +137,27 @@ class itti_n1n2_message_transfer_request : public itti_msg_amf_app {
   // other parameters
 };
 
+class itti_non_ue_n2_message_transfer_request : public itti_msg_amf_app {
+ public:
+  itti_non_ue_n2_message_transfer_request(
+      const task_id_t origin, const task_id_t destination)
+      : itti_msg_amf_app(NON_UE_N2_MESSAGE_TRANSFER_REQ, origin, destination) {
+    nrppa_pdu        = nullptr;
+    routing_id       = nullptr;
+    is_nrppa_pdu_set = false;
+  }
+  itti_non_ue_n2_message_transfer_request(
+      const itti_non_ue_n2_message_transfer_request& i)
+      : itti_msg_amf_app(i) {
+    nrppa_pdu        = i.nrppa_pdu;
+    routing_id       = i.routing_id;
+    is_nrppa_pdu_set = i.is_nrppa_pdu_set;
+  }
+
+  bstring nrppa_pdu;
+  bstring routing_id;
+  bool is_nrppa_pdu_set;
+  // other parameters
+};
+
 #endif

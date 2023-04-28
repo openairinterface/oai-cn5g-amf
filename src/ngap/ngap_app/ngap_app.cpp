@@ -149,6 +149,15 @@ bool ngap_app::assoc_id_2_gnb_context(
   return false;
 }
 
+std::vector<sctp::sctp_assoc_id_t> ngap_app::get_all_assoc_ids() {
+  std::shared_lock lock(m_assoc2gnbContext);
+  std::vector<sctp::sctp_assoc_id_t> assoc_ids;
+  for (auto& it : assoc2gnbContext) {
+    assoc_ids.push_back(it.first);
+  }
+  return assoc_ids;
+}
+
 //------------------------------------------------------------------------------
 void ngap_app::set_assoc_id_2_gnb_context(
     const sctp_assoc_id_t& assoc_id, std::shared_ptr<gnb_context> gc) {

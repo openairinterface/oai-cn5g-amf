@@ -29,6 +29,8 @@
 #include "N2InformationTransferRspData.h"
 #include "ProblemDetails.h"
 
+#include "mime_parser.hpp"
+
 namespace oai {
 namespace amf {
 namespace api {
@@ -63,7 +65,7 @@ class NonUEN2MessagesCollectionDocumentApi {
   /// </remarks>
   /// <param name="n2InformationTransferReqData"></param>
   virtual void non_ue_n2_message_transfer(
-      const N2InformationTransferReqData& n2InformationTransferReqData,
+      std::unordered_map<std::string, mime_part>& parts,
       Pistache::Http::ResponseWriter& response) = 0;
 };
 

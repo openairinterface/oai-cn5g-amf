@@ -38,6 +38,7 @@
 #include "fqdn.hpp"
 #include "itti.hpp"
 #include "itti_msg_amf_app.hpp"
+#include "itti_msg_n2.hpp"
 #include "mime_parser.hpp"
 #include "nas_context.hpp"
 #include "ue_context.hpp"

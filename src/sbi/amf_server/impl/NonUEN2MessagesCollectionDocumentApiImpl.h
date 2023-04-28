@@ -35,6 +35,7 @@
 #include "ProblemDetails.h"
 
 #include "amf_app.hpp"
+#include "mime_parser.hpp"
 
 namespace oai {
 namespace amf {
@@ -51,7 +52,7 @@ class NonUEN2MessagesCollectionDocumentApiImpl
   ~NonUEN2MessagesCollectionDocumentApiImpl() {}
 
   void non_ue_n2_message_transfer(
-      const N2InformationTransferReqData& n2InformationTransferReqData,
+      std::unordered_map<std::string, mime_part>& parts,
       Pistache::Http::ResponseWriter& response);
 
  private:

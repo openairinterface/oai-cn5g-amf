@@ -642,7 +642,7 @@ int amf_config::load(const std::string& config_file) {
       unsigned int lmf_port        = {};
       std::string lmf_api_version  = {};
 
-      if (!support_features.use_fqdn_dns) {
+      if (support_features.use_fqdn_dns) {
         // Store FQDN
         lmf_cfg.lookupValue(AMF_CONFIG_STRING_FQDN_DNS, lmf_addr.fqdn);
 

@@ -242,8 +242,6 @@ void N1N2MessageCollectionDocumentApiImpl::n1_n2_message_transfer(
                             .getValue());
       std::string ngap_type = ngap_ie_type.dump();
       ngap_type             = ngap_type.substr(1, ngap_type.length() - 2);
-      Logger::amf_server().debug(
-          "This is testing.... NGAP IE Type: %s", ngap_type.c_str());
       itti_msg->n2sm_info_type = ngap_type;
       response.send(code, response_json.dump().c_str());
 
