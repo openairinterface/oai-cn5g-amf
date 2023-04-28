@@ -1183,7 +1183,6 @@ void amf_n1::service_request_handle(
         return;
       }
 
-      // uint8_t* buf_nas     = (uint8_t*) bdata(plain_msg);  // TODO
       uint8_t message_type = *((uint8_t*) bdata(plain_msg) + 2);
       Logger::amf_n1().debug("NAS message type 0x%x", message_type);
 
@@ -1294,7 +1293,6 @@ void amf_n1::service_request_handle(
 
     if (psc and
         (psc->up_cnx_state == up_cnx_state_e::UPCNX_STATE_DEACTIVATED)) {
-      // TODO: Contact SMF to activate UP for these sessions
       // TODO: modify itti_initial_context_setup_request for supporting multiple
       // PDU sessions
 
@@ -1321,10 +1319,7 @@ void amf_n1::service_request_handle(
               TASK_NGAP, TASK_AMF_SBI);
 
       itti_n11_msg->pdu_session_id = pdu_session_id;
-
-      // TODO:
-      itti_n11_msg->is_n2sm_set = false;
-
+      itti_n11_msg->is_n2sm_set    = false;
       itti_n11_msg->amf_ue_ngap_id = amf_ue_ngap_id;
       itti_n11_msg->ran_ue_ngap_id = ran_ue_ngap_id;
       itti_n11_msg->promise_id     = promise_id;
@@ -1351,24 +1346,8 @@ void amf_n1::service_request_handle(
         if (!response_data.empty()) {
           Logger::amf_n1().debug(
               "Got response from SMF: %s", response_data.dump().c_str());
-          // TODO: Get N2 SM info and send to AM
           if (response_data.find("json") != response_data.end())
             nlohmann::json json_result = response_data.at("json");
-          if (response_data.find("n2sm") != response_data.end()) {
-            bstring n2sm_hex = nullptr;
-            // conv::msg_str_2_msg_hex(
-            //    response_data.at("n2sm").get<std::string>(), n2sm_hex);
-            // conv::string_2_bstring(
-            //         response_data.at("n2sm").get<std::string>(), n2sm_hex);
-
-            // output_wrapper::print_buffer(
-            //      "amf_sbi", "Get response N2 SM:", (uint8_t*)
-            //      bdata(n2sm_hex), blength(n2sm_hex));
-            // store in PDU session context
-            // psc->n2sm              = bstrcpy(n2sm_hex);
-            // psc->is_n2sm_avaliable = true;
-          }
-
         } else {
           Logger::amf_n1().debug("Could not get response from SMF");
           // TODO:
@@ -1436,6 +1415,7 @@ void amf_n1::service_request_handle(
   }
 }
 
+//------------------------------------------------------------------------------
 void amf_n1::send_service_reject(
     std::shared_ptr<nas_context>& nc, uint8_t cause) {
   Logger::amf_n1().debug("Send Service Reject to UE");

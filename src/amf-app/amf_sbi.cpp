@@ -1254,9 +1254,7 @@ bool amf_sbi::curl_http_client(
         response_data.at("upCnxState").get_to(up_cnx_state);
         if (up_cnx_state.compare("DEACTIVATED") == 0) {
           is_up_deactivation_procedure = true;
-          // if (response_data.find("pduSessionId") != response_data.end())
-          //  response_data.at("pduSessionId").get_to(promise_result);
-          promise_result = std::to_string(httpCode);
+          promise_result               = std::to_string(httpCode);
         }
 
         // Service Request
@@ -1298,12 +1296,8 @@ bool amf_sbi::curl_http_client(
       // Service Request
       // Notify to the result
       if ((promise_id > 0) and (is_service_request)) {
-        // if ((number_parts > 1) and (n1sm.size() > 0)) {
-        //    std::string n2sm_hex_str               = {};
-        //    conv::convert_string_2_hex(n1sm, n2sm_hex_str);
         nlohmann::json promise_result_json = {};
         promise_result_json["json"]        = response_data;
-        // promise_result_json["n2sm"]        = n2sm_hex_str;  // N2 SM
         amf_app_inst->trigger_process_response(promise_id, promise_result_json);
         curl_slist_free_all(headers);
         curl_easy_cleanup(curl);
@@ -1311,7 +1305,6 @@ bool amf_sbi::curl_http_client(
         free_wrapper((void**) &body_data);
         bdestroy_wrapper(&n1sm_hex);
         return curl_result;
-        // }
       }
 
       // Transfer N1/N2 to gNB/UE if available
