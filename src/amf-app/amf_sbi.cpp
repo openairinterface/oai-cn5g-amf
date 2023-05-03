@@ -1012,16 +1012,14 @@ bool amf_sbi::send_ue_authentication_request(
   return true;
 }
 
+//-----------------------------------------------------------------------------------------------------
 bool amf_sbi::send_determine_location_request(
     const nlohmann::json& input_data, nlohmann::json& location_data,
     const uint8_t& http_version) {
   Logger::amf_sbi().debug(
       "Send Determine Location Request to LMF (HTTP version %d)", http_version);
 
-  //    nlohmann::json json_data = {};
-  //  to_json(json_data, input_data);
   std::string url = amf_cfg.get_lmf_determine_location_uri();
-
   Logger::amf_sbi().debug(
       "Send Determine Location Request to LMF, URL %s", url.c_str());
 
@@ -1029,7 +1027,6 @@ bool amf_sbi::send_determine_location_request(
   Logger::amf_sbi().debug(
       "Send Determine Location Request to AUSF, msg body: \n %s", body.c_str());
 
-  // nlohmann::json response_data = {};
   uint32_t response_code = 0;
   curl_http_client(
       url, "POST", body, location_data, response_code, http_version);

@@ -971,23 +971,24 @@ evsub_id_t amf_app::handle_event_exposure_subscription(
     add_event_subscription(evsub_id, i.type, ss);
 
     // Determine Location
-    uint8_t http_version = amf_cfg.support_features.use_http2 ? 2 : 1;
-    // InputData input_data = {};
-    // LocationData location_data = {};
-    for (const auto& kvp : supi2ue_ctx) {
-      nlohmann::json input_data    = {};
-      input_data["supi"]           = kvp.first;
-      nlohmann::json location_data = {};
-      if (amf_sbi_inst->send_determine_location_request(
-              input_data, location_data, http_version)) {
-        Logger::amf_app().info(
-            "Determine Location Response (SUPI: %s) : \n%s", kvp.first,
-            location_data.dump(2).c_str());
-      } else {
-        Logger::amf_app().error(
-            "Determine Location failed (SUPI: %s)...\n", kvp.first);
+    if (amf_cfg.support_features.enable_external_lmf) {
+      uint8_t http_version = amf_cfg.support_features.use_http2 ? 2 : 1;
+      for (const auto& kvp : supi2ue_ctx) {
+        nlohmann::json input_data    = {};
+        input_data["supi"]           = kvp.first;
+        nlohmann::json location_data = {};
+        if (amf_sbi_inst->send_determine_location_request(
+                input_data, location_data, http_version)) {
+          Logger::amf_app().info(
+              "Determine Location Response (SUPI: %s) : \n%s", kvp.first,
+              location_data.dump(2).c_str());
+        } else {
+          Logger::amf_app().error(
+              "Determine Location failed (SUPI: %s)...\n", kvp.first);
+        }
       }
     }
+
     ss->display();
   }
   return evsub_id;
