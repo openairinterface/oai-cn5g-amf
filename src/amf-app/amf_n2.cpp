@@ -232,7 +232,7 @@ void amf_n2_task(void* args_p) {
         itti_downlink_non_ue_associated_nrppa_transport* m =
             dynamic_cast<itti_downlink_non_ue_associated_nrppa_transport*>(msg);
         amf_n2_inst->handle_itti_message(ref(*m));
-      }
+      } break;
       case TERMINATE: {
         if (itti_msg_terminate* terminate =
                 dynamic_cast<itti_msg_terminate*>(msg)) {
@@ -2201,7 +2201,7 @@ void amf_n2::handle_itti_message(
     return;
   }
 
-  DownlinkUEAssociatedNRPPaTransportMsg duant;
+  DownlinkUEAssociatedNRPPaTransportMsg duant = {};
   duant.setAmfUeNgapId(itti_msg.amf_ue_ngap_id);
   duant.setRanUeNgapId(itti_msg.ran_ue_ngap_id);
 
@@ -2210,16 +2210,18 @@ void amf_n2::handle_itti_message(
 
   uint8_t buffer[BUFFER_SIZE_4096];
   int encoded_size = duant.Encode(buffer, BUFFER_SIZE_1024);
-  bstring b        = blk2bstr(buffer, encoded_size);
-
-  sctp_s_38412.sctp_send_msg(gc->sctp_assoc_id, unc->sctp_stream_send, &b);
-  bdestroy_wrapper(&b);
+  if (encoded_size > 0) {
+    bstring b = blk2bstr(buffer, encoded_size);
+    sctp_s_38412.sctp_send_msg(gc->sctp_assoc_id, unc->sctp_stream_send, &b);
+    bdestroy_wrapper(&b);
+  }
 }
 
 //------------------------------------------------------------------------------
 void amf_n2::handle_itti_message(
     itti_downlink_non_ue_associated_nrppa_transport& itti_msg) {
-  Logger::amf_n2().debug("Handle Downlink Non UE Associated NRPPa Transport ...");
+  Logger::amf_n2().debug(
+      "Handle Downlink Non UE Associated NRPPa Transport ...");
 
   // std::shared_ptr<gnb_context> gc = {};
   // if (!assoc_id_2_gnb_context(unc->gnb_assoc_id, gc)) {
@@ -2228,20 +2230,21 @@ void amf_n2::handle_itti_message(
   //   return;
   // }
 
-  DownlinkNonUEAssociatedNRPPaTransportMsg dnuant;
+  DownlinkNonUEAssociatedNRPPaTransportMsg dnuant = {};
   dnuant.setNRPPaPdu(itti_msg.nrppa_pdu);
   dnuant.setRoutingID(itti_msg.routing_id);
 
   uint8_t buffer[BUFFER_SIZE_4096];
   int encoded_size = dnuant.Encode(buffer, BUFFER_SIZE_1024);
-  bstring b        = blk2bstr(buffer, encoded_size);
-
-  std::vector<sctp::sctp_assoc_id_t> assoc_ids = get_all_assoc_ids();
-
-  for (auto& assoc_id : assoc_ids) {
-    sctp_s_38412.sctp_send_msg(assoc_id, 0, &b);
+  if (encoded_size > 0) {
+    bstring b = blk2bstr(buffer, encoded_size);
+    // TODO: Should be verified
+    std::vector<sctp::sctp_assoc_id_t> assoc_ids = get_all_assoc_ids();
+    for (auto& assoc_id : assoc_ids) {
+      sctp_s_38412.sctp_send_msg(assoc_id, 0, &b);
+    }
+    bdestroy_wrapper(&b);
   }
-  bdestroy_wrapper(&b);
 }
 
 //------------------------------------------------------------------------------
