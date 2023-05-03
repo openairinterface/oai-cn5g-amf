@@ -138,7 +138,7 @@ COPY --from=oai-amf-builder \
 
 RUN ldconfig && \
     echo "ldd of target amf executable" && \
-    ldd /usr/local/bin/bin/oai_amf && \
+    ldd /usr/local/bin/oai_amf && \
     echo "end of ldd"
 
 # Copying template configuration files
