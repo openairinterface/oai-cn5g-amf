@@ -71,7 +71,7 @@ RUN ldconfig && \
     ldd /openair-amf/build/amf/build/amf && \
     echo "end of ldd" && \
     mv /openair-amf/build/amf/build/amf /openair-amf/build/amf/build/oai_amf && \
-    sed -i -e "s@nf-root-folder@amf@" -e "s@nf-config-file@amf.conf@" \
+    sed -i -e "s@/openair-nf-root-folder@/usr/local@" -e "s@nf-config-file@amf.conf@" \
       ../common-build/docker-scripts/entrypoint.py
 
 #---------------------------------------------------------------------
