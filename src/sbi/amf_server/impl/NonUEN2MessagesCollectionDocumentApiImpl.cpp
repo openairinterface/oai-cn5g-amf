@@ -41,7 +41,7 @@ void NonUEN2MessagesCollectionDocumentApiImpl::non_ue_n2_message_transfer(
   Pistache::Http::Code code = Pistache::Http::Code::Ok;
 
   N2InformationTransferReqData n2InformationTransferReqData = {};
-  nlohmann::json::parse(parts["root"].body.c_str())
+  nlohmann::json::parse(parts[JSON_CONTENT_ID_MIME].body.c_str())
       .get_to(n2InformationTransferReqData);
 
   bool request_valid = true;
@@ -77,14 +77,13 @@ void NonUEN2MessagesCollectionDocumentApiImpl::non_ue_n2_message_transfer(
   conv::string_2_bstring(
       n2InformationTransferReqData.getN2Information().getNrppaInfo().getNfId(),
       routing_id);
-  auto itti_msg =
-      std::make_shared<itti_non_ue_n2_message_transfer_request>(
-          AMF_SERVER, TASK_AMF_APP);
+  auto itti_msg = std::make_shared<itti_non_ue_n2_message_transfer_request>(
+      AMF_SERVER, TASK_AMF_APP);
 
-  itti_msg->nrppa_pdu  = bstrcpy(nrppa_pdu);
-  itti_msg->routing_id = bstrcpy(routing_id);
-  itti_msg->is_nrppa_pdu_set  = true;
-  
+  itti_msg->nrppa_pdu        = bstrcpy(nrppa_pdu);
+  itti_msg->routing_id       = bstrcpy(routing_id);
+  itti_msg->is_nrppa_pdu_set = true;
+
   response.send(code, response_json.dump().c_str());
   int ret = itti_inst->send_msg(itti_msg);
   if (0 != ret) {

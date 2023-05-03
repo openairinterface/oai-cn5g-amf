@@ -72,6 +72,7 @@ constexpr uint64_t SECONDS_SINCE_FIRST_EPOCH = 2208988800;
 #define NAS_MESSAGE_DOWNLINK 1
 #define NAS_MESSAGE_UPLINK 0
 
+#define JSON_CONTENT_ID_MIME "root"
 #define N1_SM_CONTENT_ID "n1SmMsg"
 #define N2_SM_CONTENT_ID "n2msg"
 #define N2_NRPPa_CONTENT_ID "n2NrppaMsg"

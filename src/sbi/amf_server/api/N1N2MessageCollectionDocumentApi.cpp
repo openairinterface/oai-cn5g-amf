@@ -71,7 +71,7 @@ void N1N2MessageCollectionDocumentApi::n1_n2_message_transfer_handler(
   uint8_t size = parts.size();
   Logger::amf_server().debug("Number of MIME parts %d", size);
 
-  // at least 2 parts for Json data and (N1 or N2 or N1+N2)
+  // at least 2 parts:Json data and N1/N2 or N1+N2)
   if (size < 2) {
     response.send(Pistache::Http::Code::Bad_Request);
     Logger::amf_server().debug(
@@ -81,7 +81,8 @@ void N1N2MessageCollectionDocumentApi::n1_n2_message_transfer_handler(
 
   for (auto it : parts) {
     Logger::amf_server().debug(
-        "MIME part: %s (%d)", it.first.c_str(), it.second.body.size());
+        "MIME part: %s (size %d bytes)", it.first.c_str(),
+        it.second.body.size());
   }
 
   try {

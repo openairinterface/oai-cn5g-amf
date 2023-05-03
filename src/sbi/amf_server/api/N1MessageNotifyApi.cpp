@@ -83,7 +83,8 @@ void N1MessageNotifyApi::n1_message_notify_handler(
   }
 
   try {
-    nlohmann::json::parse(parts["root"].body).get_to(n1MessageNotification);
+    nlohmann::json::parse(parts[JSON_CONTENT_ID_MIME].body)
+        .get_to(n1MessageNotification);
     this->receive_n1_message_notification(
         ueContextId, n1MessageNotification, parts[N1_SM_CONTENT_ID].body,
         response);

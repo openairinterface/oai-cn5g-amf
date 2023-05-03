@@ -120,7 +120,6 @@ void to_json(nlohmann::json& j, const NgapIeType_anyOf& o) {
 
 void from_json(const nlohmann::json& j, NgapIeType_anyOf& o) {
   auto s = j.get<std::string>();
-  Logger::amf_server().debug("NgapIeType_anyOf: %s", s.c_str());
   if (s == "PDU_RES_SETUP_REQ") {
     o.setValue(NgapIeType_anyOf::eNgapIeType_anyOf::PDU_RES_SETUP_REQ);
   } else if (s == "PDU_RES_REL_CMD") {

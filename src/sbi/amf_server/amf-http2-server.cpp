@@ -112,7 +112,7 @@ void amf_http2_server::start() {
             N1N2MessageTransferReqData n1N2MessageTransferReqData = {};
 
             try {
-              nlohmann::json::parse(parts["root"].body.c_str())
+              nlohmann::json::parse(parts[JSON_CONTENT_ID_MIME].body.c_str())
                   .get_to(n1N2MessageTransferReqData);
               if (!is_ngap)
                 this->n1_n2_message_transfer_handler(

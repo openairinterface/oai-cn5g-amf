@@ -58,6 +58,10 @@ class N1N2MessageCollectionDocumentApiImpl
       std::unordered_map<std::string, mime_part>& parts,
       Pistache::Http::ResponseWriter& response);
 
+  void send_response(
+      const Pistache::Http::Code& code, const nlohmann::json& response_json,
+      Pistache::Http::ResponseWriter& response);
+
  private:
   amf_application::amf_app* m_amf_app;
 };

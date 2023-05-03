@@ -26,7 +26,6 @@
 #include <cstdlib>
 #include <iostream>
 #include <stdexcept>
-#include <curl/curl.h>
 
 #include "3gpp_29.500.h"
 #include "DLNASTransport.hpp"
@@ -399,14 +398,15 @@ void amf_app::handle_itti_message(
             TASK_AMF_APP, TASK_AMF_N2);
     dl_msg->nrppa_pdu  = bstrcpy(itti_msg.nrppa_pdu);
     dl_msg->routing_id = bstrcpy(itti_msg.routing_id);
-    int ret = itti_inst->send_msg(dl_msg);
+    int ret            = itti_inst->send_msg(dl_msg);
     if (ret != RETURNok) {
       Logger::amf_app().error(
           "Could not send ITTI message %s to task TASK_AMF_N2",
           dl_msg->get_msg_name());
     }
   } else {
-    Logger::amf_app().info("Handle ITTI Non UE N2 Message Transfer Request : Unsupported");    
+    Logger::amf_app().info(
+        "Handle ITTI Non UE N2 Message Transfer Request : Unsupported");
   }
 }
 
