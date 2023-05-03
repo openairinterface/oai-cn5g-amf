@@ -74,14 +74,13 @@ def perform_flattening(tag):
       cmd += ' --change "ENV PATH /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin" '
     else:
       cmd += ' --change "ENV PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin" '
-    cmd += ' --change "WORKDIR /openair-amf" '
     cmd += ' --change "EXPOSE 80/tcp" '
     cmd += ' --change "EXPOSE 9090/tcp" '
     if cli == 'docker':
         cmd += ' --change "EXPOSE 38412/sctp" '
-    cmd += ' --change "HEALTHCHECK --interval=10s --timeout=15s --retries=6 CMD /openair-amf/bin/healthcheck.sh" '
-    cmd += ' --change "CMD [\\"/openair-amf/bin/oai_amf\\", \\"-c\\", \\"/openair-amf/etc/amf.conf\\", \\"-o\\"]" '
-    cmd += ' --change "ENTRYPOINT [\\"python3\\", \\"/openair-amf/bin/entrypoint.py\\"]" '
+    cmd += ' --change "HEALTHCHECK --interval=10s --timeout=15s --retries=6 CMD /usr/local/bin/healthcheck.sh" '
+    cmd += ' --change "CMD [\\"/usr/local/bin/oai_amf\\", \\"-c\\", \\"/usr/local/etc/amf.conf\\", \\"-o\\"]" '
+    cmd += ' --change "ENTRYPOINT [\\"python3\\", \\"/usr/local/bin/entrypoint.py\\"]" '
     cmd += ' - ' + image_prefix + tag
     print (cmd)
     subprocess.check_output(cmd, shell=True, universal_newlines=True)

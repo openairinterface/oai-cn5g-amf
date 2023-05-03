@@ -74,7 +74,9 @@ RUN ./build_amf --install-deps --force
 WORKDIR /openair-amf/build/scripts
 RUN ldconfig && \
     ./build_amf --clean --Verbose --build-type Release --jobs && \
+    echo "ldd of builder amf executable" && \
     ldd /openair-amf/build/amf/build/amf && \
+    echo "end of ldd" && \
     mv /openair-amf/build/amf/build/amf /openair-amf/build/amf/build/oai_amf && \
     sed -i -e "s@nf-root-folder@amf@" -e "s@nf-config-file@amf.conf@" \
       ../common-build/docker-scripts/entrypoint.py && \
@@ -120,12 +122,11 @@ RUN rm -f /etc/rhsm-host && \
     rm -rf /etc/rhsm
 
 # Copying executable and generated libraries
-WORKDIR /openair-amf/bin
 COPY --from=oai-amf-builder \
     /openair-amf/build/amf/build/oai_amf \
     /openair-amf/build/common-build/docker-scripts/entrypoint.py \
     /openair-amf/scripts/healthcheck.sh \
-    ./
+    /usr/local/bin/
 
 COPY --from=oai-amf-builder \
     /usr/local/lib64/libpistache.so.0 \
@@ -136,13 +137,12 @@ COPY --from=oai-amf-builder \
     /usr/lib64/
 
 RUN ldconfig && \
-    ldd /openair-amf/bin/oai_amf
+    echo "ldd of target amf executable" && \
+    ldd /usr/local/bin/bin/oai_amf && \
+    echo "end of ldd"
 
 # Copying template configuration files
-WORKDIR /openair-amf/etc
-COPY --from=oai-amf-builder /openair-amf/etc/amf.conf .
-
-WORKDIR /openair-amf
+COPY --from=oai-amf-builder /openair-amf/etc/amf.conf /usr/local/etc/
 
 # expose ports
 EXPOSE 80/tcp 9090/tcp 38412/sctp
@@ -150,7 +150,7 @@ EXPOSE 80/tcp 9090/tcp 38412/sctp
 HEALTHCHECK --interval=10s \
             --timeout=15s \
             --retries=6 \
-    CMD /openair-amf/bin/healthcheck.sh
+    CMD /usr/local/bin/healthcheck.sh
 
-ENTRYPOINT ["python3", "/openair-amf/bin/entrypoint.py"]
-CMD ["/openair-amf/bin/oai_amf", "-c", "/openair-amf/etc/amf.conf", "-o"]
+ENTRYPOINT ["python3", "/usr/local/bin/entrypoint.py"]
+CMD ["/usr/local/bin/oai_amf", "-c", "/usr/local/etc/amf.conf", "-o"]

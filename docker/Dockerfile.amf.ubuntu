@@ -67,7 +67,9 @@ COPY . /openair-amf
 WORKDIR /openair-amf/build/scripts
 RUN ldconfig && \
     ./build_amf --clean --Verbose --build-type Release --jobs && \
+    echo "ldd of builder amf executable" && \
     ldd /openair-amf/build/amf/build/amf && \
+    echo "end of ldd" && \
     mv /openair-amf/build/amf/build/amf /openair-amf/build/amf/build/oai_amf && \
     sed -i -e "s@nf-root-folder@amf@" -e "s@nf-config-file@amf.conf@" \
       ../common-build/docker-scripts/entrypoint.py
@@ -119,14 +121,12 @@ RUN apt-get update && \
        /lib/x86_64-linux-gnu/libboost_thread.so.1.6*.0
 
 # Copying executable and generated libraries
-WORKDIR /openair-amf/bin
 COPY --from=oai-amf-builder \
     /openair-amf/build/amf/build/oai_amf \
     /openair-amf/build/common-build/docker-scripts/entrypoint.py \
     /openair-amf/scripts/healthcheck.sh \
-    ./
+    /usr/local/bin/
 
-WORKDIR /usr/local/lib
 COPY --from=oai-amf-builder \
 # Copying only the packages built from source
     /usr/local/lib/libnghttp2.so.14 \
@@ -137,16 +137,15 @@ COPY --from=oai-amf-builder \
     /usr/lib/libboost_system.so.1.* \
     /usr/lib/libboost_thread.so.1.* \
     /usr/lib/libboost_chrono.so.1.* \
-    ./
+    /usr/local/lib/
 
 RUN ldconfig && \
-    ldd /openair-amf/bin/oai_amf
+    echo "ldd of target amf executable" && \
+    ldd /usr/local/bin/oai_amf && \
+    echo "end of ldd"
 
 # Copying template configuration files
-WORKDIR /openair-amf/etc
-COPY --from=oai-amf-builder /openair-amf/etc/amf.conf .
-
-WORKDIR /openair-amf
+COPY --from=oai-amf-builder /openair-amf/etc/amf.conf /usr/local/etc/
 
 # expose ports
 EXPOSE 80/tcp 9090/tcp 38412/sctp
@@ -154,7 +153,7 @@ EXPOSE 80/tcp 9090/tcp 38412/sctp
 HEALTHCHECK --interval=10s \
             --timeout=15s \
             --retries=6 \
-    CMD /openair-amf/bin/healthcheck.sh
+    CMD /usr/local/bin/healthcheck.sh
 
-ENTRYPOINT ["python3", "/openair-amf/bin/entrypoint.py"]
-CMD ["/openair-amf/bin/oai_amf", "-c", "/openair-amf/etc/amf.conf", "-o"]
+ENTRYPOINT ["python3", "/usr/local/bin/entrypoint.py"]
+CMD ["/usr/local/bin/oai_amf", "-c", "/usr/local/etc/amf.conf", "-o"]
