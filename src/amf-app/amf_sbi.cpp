@@ -1323,8 +1323,9 @@ void amf_sbi::curl_http_client(
           itti_msg->n2sm        = bstrcpy(n2sm_hex);
           itti_msg->is_n2sm_set = true;
           itti_msg->n2sm_info_type =
-              response_data["n2InfoContainer"]["smInfo"]["n2InfoContent"]
-                           ["ngapIeType"];
+              response_data["n2SmInfoType"].get<std::string>();
+          // response_data["n2InfoContainer"]["smInfo"]["n2InfoContent"]
+          //             ["ngapIeType"];
         }
 
         itti_msg->supi           = supi;
