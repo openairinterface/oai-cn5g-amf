@@ -19,33 +19,32 @@
  *      contact@openairinterface.org
  */
 
-/*! \file
- \brief
- \author  Keliang DU, BUPT
- \date 2020
- \email: contact@openairinterface.org
- */
+#ifndef _NON_3GPP_NW_PROVIDED_POLICIES_H
+#define _NON_3GPP_NW_PROVIDED_POLICIES_H
 
-#ifndef _Non_3GPP_NW_Provided_Policies_H
-#define _Non_3GPP_NW_Provided_Policies_H
+#include "Type1NasIeFormatTv.hpp"
 
-#include <stdint.h>
+constexpr uint8_t kNon3gppNwProvidedPoliciesLength = 1;
+constexpr auto kNon3gppNwProvidedPoliciesIeName =
+    "Non-3GPP NW Provided Policies";
 
 namespace nas {
 
-class Non_3GPP_NW_Provided_Policies {
+class Non_3GPP_NW_Provided_Policies : public Type1NasIeFormatTv {
  public:
   Non_3GPP_NW_Provided_Policies();
-  Non_3GPP_NW_Provided_Policies(const uint8_t iei, uint8_t value);
+  Non_3GPP_NW_Provided_Policies(uint8_t value);
   ~Non_3GPP_NW_Provided_Policies();
-  int encode2buffer(uint8_t* buf, int len);
-  int decodefrombuffer(uint8_t* buf, int len, bool is_option);
-  void setValue(const uint8_t value);
-  uint8_t getValue();
+
+  static std::string GetIeName() { return kNon3gppNwProvidedPoliciesIeName; }
+
+  // int Encode(uint8_t* buf, int len);
+  // int Decode(uint8_t* buf, int len, bool is_iei);
+
+  void setValue(uint8_t value);
+  uint8_t getValue() const;
 
  private:
-  uint8_t _iei;
-  uint8_t _value;
 };
 
 }  // namespace nas

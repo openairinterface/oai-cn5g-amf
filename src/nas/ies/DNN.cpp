@@ -19,82 +19,94 @@
  *      contact@openairinterface.org
  */
 
-/*! \file
- \brief
- \author  Keliang DU, BUPT
- \date 2020
- \email: contact@openairinterface.org
- */
-
 #include "DNN.hpp"
 
 #include "logger.hpp"
 using namespace nas;
 
 //------------------------------------------------------------------------------
-DNN::DNN(uint8_t iei) : _DNN() {
-  _iei   = iei;
-  length = 0;
+DNN::DNN() : Type4NasIe(kIeiDnn), _DNN() {
+  SetLengthIndicator(1);
 }
 
 //------------------------------------------------------------------------------
-DNN::DNN(const uint8_t iei, bstring dnn) {
-  _iei   = iei;
-  _DNN   = bstrcpy(dnn);
-  length = blength(dnn) + 2;
+DNN::DNN(bstring dnn) : Type4NasIe(kIeiDnn) {
+  _DNN = bstrcpy(dnn);
+  SetLengthIndicator(blength(dnn));
 }
 
 //------------------------------------------------------------------------------
-DNN::DNN() : _iei(), _DNN(), length() {}
+DNN::DNN(bool iei) : Type4NasIe(), _DNN() {
+  if (iei) SetIei(kIeiDnn);
+  SetLengthIndicator(1);
+}
 
 //------------------------------------------------------------------------------
 DNN::~DNN() {}
 
 //------------------------------------------------------------------------------
-void DNN::getValue(bstring& dnn) {
-  dnn = blk2bstr((uint8_t*) bdata(_DNN) + 1, blength(_DNN) - 1);
+void DNN::SetValue(const bstring& dnn) {
+  _DNN = bstrcpy(dnn);
 }
 
 //------------------------------------------------------------------------------
-int DNN::encode2buffer(uint8_t* buf, int len) {
-  Logger::nas_mm().debug("Encoding DNN IEI (0x%x)", _iei);
-  if (len < length) {
-    Logger::nas_mm().error("len is less than %d", length);
-    return 0;
-  }
-  int encoded_size = 0;
-  if (_iei) {
-    *(buf + encoded_size) = _iei;
-    encoded_size++;
-    *(buf + encoded_size) = (length - 2);
-    encoded_size++;
-    int size = encode_bstring(_DNN, (buf + encoded_size), len - encoded_size);
-    encoded_size += size;
+void DNN::GetValue(bstring& dnn) const {
+  dnn = bstrcpy(_DNN);
+}
 
-  } else {
-    *(buf + encoded_size) = (length - 1);
-    encoded_size++;
-    int size = encode_bstring(_DNN, (buf + encoded_size), len - encoded_size);
-    encoded_size += size;
+//------------------------------------------------------------------------------
+int DNN::Encode(uint8_t* buf, int len) {
+  Logger::nas_mm().debug("Encoding %s", GetIeName().c_str());
+  int ie_len = GetIeLength();
+
+  if (len < ie_len) {
+    Logger::nas_mm().error("Len is less than %d", ie_len);
+    return KEncodeDecodeError;
   }
-  Logger::nas_mm().debug("encoded DNN len: %d", encoded_size);
+
+  int encoded_size = 0;
+  // IEI and Length
+  int encoded_header_size = Type4NasIe::Encode(buf + encoded_size, len);
+  if (encoded_header_size == KEncodeDecodeError) return KEncodeDecodeError;
+  encoded_size += encoded_header_size;
+
+  // Value
+  int size = encode_bstring(_DNN, (buf + encoded_size), len - encoded_size);
+  encoded_size += size;
+
+  Logger::nas_mm().debug(
+      "Encoded %s, len (%d)", GetIeName().c_str(), encoded_size);
   return encoded_size;
 }
 
 //------------------------------------------------------------------------------
-int DNN::decodefrombuffer(uint8_t* buf, int len, bool is_option) {
-  Logger::nas_mm().debug("Decoding DNN IEI (0x%x)", *buf);
-  int decoded_size = 0;
-  if (is_option) {
-    decoded_size++;
+int DNN::Decode(uint8_t* buf, int len, bool is_iei) {
+  if (len < kDnnMinimumLength) {
+    Logger::nas_mm().error(
+        "Buffer length is less than the minimum length of this IE (%d octet)",
+        kDnnMinimumLength);
+    return KEncodeDecodeError;
   }
-  length = *(buf + decoded_size);
-  decoded_size++;
-  decode_bstring(&_DNN, length, (buf + decoded_size), len - decoded_size);
-  decoded_size += length;
-  for (int i = 0; i < blength(_DNN); i++) {
-    Logger::nas_mm().debug("Decoded DNN value: 0x%x", (uint8_t) bdata(_DNN)[i]);
+
+  uint8_t decoded_size = 0;
+  uint8_t octet        = 0;
+  Logger::nas_mm().debug("Decoding %s", GetIeName().c_str());
+
+  // IEI and Length
+  int decoded_header_size = Type4NasIe::Decode(buf + decoded_size, len, is_iei);
+  if (decoded_header_size == KEncodeDecodeError) return KEncodeDecodeError;
+  decoded_size += decoded_header_size;
+
+  // DNN
+  uint8_t ie_len = GetLengthIndicator();
+  decode_bstring(&_DNN, ie_len, (buf + decoded_size), len - decoded_size);
+  decoded_size += ie_len;
+
+  for (int i = 0; i < ie_len; i++) {
+    Logger::nas_mm().debug("Decoded value 0x%x", (uint8_t) _DNN->data[i]);
   }
-  Logger::nas_mm().debug("Decoded DNN len: %d", decoded_size);
+
+  Logger::nas_mm().debug(
+      "Decoded %s, len (%d)", GetIeName().c_str(), decoded_size);
   return decoded_size;
 }

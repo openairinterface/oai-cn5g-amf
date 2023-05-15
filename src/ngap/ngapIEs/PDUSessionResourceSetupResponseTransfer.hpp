@@ -47,7 +47,7 @@ class PduSessionResourceSetupResponseTransferIE {
       e_Ngap_ConfidentialityProtectionResult confidentialityProtectionResult);
   // caus待续
 
-  int encode2buffer(uint8_t* buf, int buf_size);
+  int Encode(uint8_t* buf, int buf_size);
   // Decapsulation
   bool decodefromIE(uint8_t* buf, int buf_size);
   bool getDLQoSFlowPerTNLInformation(

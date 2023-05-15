@@ -39,7 +39,7 @@ class PDUSessionResourceHandoverRequiredTransfer {
   virtual ~PDUSessionResourceHandoverRequiredTransfer();
   void setDirectForwardingPathAvailability(
       Ngap_DirectForwardingPathAvailability_t directForwardingPathAvailability);
-  int encode2buffer(uint8_t* buf, int buf_size);
+  int Encode(uint8_t* buf, int buf_size);
   // Decapsulation
   bool decodefromIE(uint8_t* buf, int buf_size);
   bool getDirectForwardingPathAvailability(

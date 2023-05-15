@@ -28,37 +28,52 @@ namespace ngap {
 //------------------------------------------------------------------------------
 UERadioCapability::UERadioCapability() {}
 
+/*
+UERadioCapability::UERadioCapability(const OCTET_STRING_t& capability) {
+          if (!capability.buf) return;
+          conv::bstring_2_octet_string(ue_radio_capability_, capability);
+}
+
+UERadioCapability::UERadioCapability(const bstring& capability) {
+        conv::bstring_2_octet_string(capability, ue_radio_capability_);
+}
+*/
 //------------------------------------------------------------------------------
 UERadioCapability::~UERadioCapability() {}
 
 //------------------------------------------------------------------------------
 bool UERadioCapability::encode(Ngap_UERadioCapability_t& ueRadioCapability) {
-  return conv::octet_string_copy(ueRadioCapability, ue_radio_capability_);
+  return conv::bstring_2_octet_string(ue_radio_capability_, ueRadioCapability);
 }
 
 //------------------------------------------------------------------------------
 bool UERadioCapability::decode(Ngap_UERadioCapability_t& ueRadioCapability) {
-  return conv::octet_string_copy(ue_radio_capability_, ueRadioCapability);
+  if (!ueRadioCapability.buf) return false;
+  return conv::octet_string_2_bstring(ueRadioCapability, ue_radio_capability_);
 }
 
 //------------------------------------------------------------------------------
 bool UERadioCapability::set(const OCTET_STRING_t& capability) {
-  return conv::octet_string_copy(ue_radio_capability_, capability);
+  conv::octet_string_2_bstring(capability, ue_radio_capability_);
+  return true;
 }
 
 //------------------------------------------------------------------------------
 bool UERadioCapability::get(OCTET_STRING_t& capability) {
-  return conv::octet_string_copy(capability, ue_radio_capability_);
+  conv::bstring_2_octet_string(ue_radio_capability_, capability);
+  return true;
 }
 
 //------------------------------------------------------------------------------
 bool UERadioCapability::set(const bstring& capability) {
-  return conv::bstring_2_octet_string(capability, ue_radio_capability_);
+  ue_radio_capability_ = bstrcpy(capability);
+  return true;
 }
 
 //------------------------------------------------------------------------------
 bool UERadioCapability::get(bstring& capability) {
-  return conv::octet_string_2_bstring(ue_radio_capability_, capability);
+  capability = bstrcpy(ue_radio_capability_);
+  return true;
 }
 
 }  // namespace ngap

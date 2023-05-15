@@ -19,12 +19,6 @@
  *      contact@openairinterface.org
  */
 
-/*! \file TLVDecoder.c
- \brief
- \author Philippe MOREL, Sebastien ROUX, Lionel GAUTHIER
- \company Eurecom
- */
-
 #include "TLVDecoder.h"
 
 #include <stdint.h>

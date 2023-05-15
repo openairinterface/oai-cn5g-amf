@@ -40,16 +40,16 @@ extern "C" {
 #include "bstrlib.h"
 }
 
-#include <iostream>
-
 namespace sctp {
 
 //------------------------------------------------------------------------------
+sctp_application::~sctp_application() {}
+
+//------------------------------------------------------------------------------
 sctp_server::sctp_server(const char* address, const uint16_t port_num) {
-  Logger::sctp().debug("creating socket!!");
+  Logger::sctp().debug("Creating socket!");
   create_socket(address, port_num);
-  app_ = nullptr;
-  // pthread_t thread_;
+  app_        = nullptr;
   sctp_desc   = {};
   serverAddr_ = {};
   events_     = {};
@@ -64,13 +64,13 @@ int sctp_server::create_socket(const char* address, const uint16_t port_num) {
   struct addrinfo* res;
   if (getaddrinfo(address, 0, NULL, &res) < 0) {
     Logger::sctp().error(
-        "getaddrinfo on %s: %s:%d", address, strerror(errno), errno);
+        "Getaddrinfo on %s: %s:%d", address, strerror(errno), errno);
     return RETURNerror;
   } else {
-    Logger::sctp().debug("getaddrinfo on %s was OK", address);
+    Logger::sctp().debug("Getaddrinfo on %s was OK", address);
   }
   if ((socket_ = socket(res->ai_family, SOCK_STREAM, IPPROTO_SCTP)) < 0) {
-    Logger::sctp().error("socket: %s:%d", strerror(errno), errno);
+    Logger::sctp().error("Socket: %s:%d", strerror(errno), errno);
     return RETURNerror;
   }
   Logger::sctp().info("Created socket (%d)", socket_);
@@ -88,9 +88,16 @@ int sctp_server::create_socket(const char* address, const uint16_t port_num) {
   events_.sctp_data_io_event     = 1;
   events_.sctp_shutdown_event    = 1;
   events_.sctp_association_event = 1;
-  setsockopt(socket_, IPPROTO_SCTP, SCTP_EVENTS, &events_, 8);
-  listen(socket_, 5);
-  return 0;
+  // TODO:
+  // events_.sctp_send_failure_event = 1;
+  // events_.sctp_partial_delivery_event = 1;
+  // events_.sctp_address_event = 1;
+  // events_.sctp_peer_error_event = 1;
+
+  setsockopt(socket_, IPPROTO_SCTP, SCTP_EVENTS, &events_, sizeof(events_));
+  listen(socket_, 5);  // the queue length for completely established sockets
+                       // waiting to be accepted
+  return RETURNok;
 }
 
 //------------------------------------------------------------------------------
@@ -102,17 +109,19 @@ void sctp_server::start_receive(sctp_application* app) {
 //------------------------------------------------------------------------------
 void* sctp_server::sctp_receiver_thread(void* arg) {
   sctp_server* ptr = (sctp_server*) arg;
-  Logger::sctp().info("Create pthread to receive sctp message");
+  Logger::sctp().info("Create pthread to receive SCTP message");
   int fdmax;
   int clientsock;
   fd_set master;
   fd_set read_fds;
+
   if (arg == NULL) pthread_exit(NULL);
   FD_ZERO(&master);
   FD_ZERO(&read_fds);
   FD_SET(ptr->getSocket(), &master);
   fdmax = ptr->getSocket();
-  while (1) {
+
+  while (true) {
     memcpy(&read_fds, &master, sizeof(master));
     if (select(fdmax + 1, &read_fds, NULL, NULL, NULL) == -1) {
       Logger::sctp().error(
@@ -125,7 +134,7 @@ void* sctp_server::sctp_receiver_thread(void* arg) {
         if (i == ptr->getSocket()) {
           if ((clientsock = accept(ptr->getSocket(), NULL, NULL)) < 0) {
             Logger::sctp().error(
-                "[socket(%d)] accept() error: %s:%d", ptr->getSocket(),
+                "[socket(%d)] Accept() error: %s:%d", ptr->getSocket(),
                 strerror(errno), errno);
             pthread_exit(NULL);
           } else {
@@ -159,19 +168,24 @@ int sctp_server::sctp_read_from_socket(int sd, uint32_t ppid) {
   struct sctp_sndrcvinfo sinfo = {0};
   struct sockaddr_in6 addr     = {0};
   uint8_t buffer[SCTP_RECV_BUFFER_SIZE];
+
   if (sd < 0) return RETURNerror;
   memset((void*) &addr, 0, sizeof(struct sockaddr_in6));
   from_len = (socklen_t) sizeof(struct sockaddr_in6);
   memset((void*) &sinfo, 0, sizeof(struct sctp_sndrcvinfo));
+
   int n = sctp_recvmsg(
       sd, (void*) buffer, SCTP_RECV_BUFFER_SIZE, (struct sockaddr*) &addr,
       &from_len, &sinfo, &flags);
+
   if (n < 0) {
     Logger::sctp().error("sctp_recvmsg error:: %s:%d", strerror(errno), errno);
     return SCTP_RC_ERROR;
   }
+
   if (flags & MSG_NOTIFICATION) {
     union sctp_notification* snp = (union sctp_notification*) buffer;
+
     switch (snp->sn_header.sn_type) {
       case SCTP_SHUTDOWN_EVENT: {
         Logger::sctp().debug("SCTP Shutdown Event received");
@@ -181,6 +195,7 @@ int sctp_server::sctp_read_from_socket(int sd, uint32_t ppid) {
       case SCTP_ASSOC_CHANGE: {
         Logger::sctp().debug("SCTP Association Change event received");
         return handle_assoc_change(sd, ppid, &snp->sn_assoc_change);
+        break;
       }
       default: {
         Logger::sctp().error(
@@ -195,17 +210,20 @@ int sctp_server::sctp_read_from_socket(int sd, uint32_t ppid) {
       return SCTP_RC_ERROR;
     }
     association->messages_recv++;
+
     if (ntohl(sinfo.sinfo_ppid) != association->ppid) {
       Logger::sctp().error(
           "Received data from peer with unsolicited PPID (%d), expecting (%d)",
           ntohl(sinfo.sinfo_ppid), association->ppid);
       return SCTP_RC_ERROR;
     }
+
     Logger::sctp().info(
-        "****[Assoc_id %d, Socket %d] Received a msg (length %d) from port %d, "
-        "on stream %d, PPID %d ****",
+        "[Assoc_id %d, Socket %d] Received a msg (length %d) from port %d, "
+        "on stream %d, PPID %d",
         sinfo.sinfo_assoc_id, sd, n, ntohs(addr.sin6_port), sinfo.sinfo_stream,
         ntohl(sinfo.sinfo_ppid));
+
     bstring payload = blk2bstr(buffer, n);
     // Handle payload
     app_->handle_receive(
@@ -231,6 +249,7 @@ int sctp_server::sctp_handle_reset(const sctp_assoc_id_t assoc_id) {
 int sctp_server::handle_assoc_change(
     int sd, uint32_t ppid, struct sctp_assoc_change* sctp_assoc_changed) {
   int rc = SCTP_RC_NORMAL_READ;
+
   switch (sctp_assoc_changed->sac_state) {
     case SCTP_COMM_UP: {
       if (add_new_association(sd, ppid, sctp_assoc_changed) == NULL) {
@@ -260,9 +279,10 @@ int sctp_server::handle_assoc_change(
     }
     default:
       Logger::sctp().error(
-          "Unhandled sctp message (%d)", sctp_assoc_changed->sac_state);
+          "Unhandled SCTP message (%d)", sctp_assoc_changed->sac_state);
       break;
   }
+
   return rc;
 }
 
@@ -280,7 +300,9 @@ sctp_association_t* sctp_server::add_new_association(
   Logger::sctp().debug(
       "Add new association with id (%d)",
       (sctp_assoc_id_t) sctp_assoc_changed->sac_assoc_id);
+
   sctp_ctx.push_back(new_association);
+
   sctp_get_localaddresses(sd, NULL, NULL);
   sctp_get_peeraddresses(
       sd, &new_association->peer_addresses,
@@ -288,6 +310,7 @@ sctp_association_t* sctp_server::add_new_association(
   app_->handle_sctp_new_association(
       new_association->assoc_id, new_association->instreams,
       new_association->outstreams);
+
   return new_association;
 }
 
@@ -295,14 +318,17 @@ sctp_association_t* sctp_server::add_new_association(
 sctp_association_t* sctp_server::sctp_is_assoc_in_list(
     sctp_assoc_id_t assoc_id) {
   sctp_association_t* assoc_desc = NULL;
+
   if (assoc_id < 0) {
     return NULL;
   }
+
   for (int i = 0; i < sctp_ctx.size(); i++) {
     if (sctp_ctx[i]->assoc_id == assoc_id) {
       return sctp_ctx[i];
     }
   }
+
   return assoc_desc;
 }
 
@@ -311,12 +337,15 @@ int sctp_server::sctp_get_peeraddresses(
     int sock, struct sockaddr** remote_addr, int* nb_remote_addresses) {
   int nb;
   struct sockaddr* temp_addr_p = NULL;
+
   if ((nb = sctp_getpaddrs(sock, -1, &temp_addr_p)) <= 0) {
     Logger::sctp().error("Failed to retrieve peer addresses");
     return RETURNerror;
   }
+
   Logger::sctp().info("----------------------");
   Logger::sctp().info("Peer addresses:");
+
   for (int j = 0; j < nb; j++) {
     if (temp_addr_p[j].sa_family == AF_INET) {
       char address[16]         = {0};
@@ -337,13 +366,16 @@ int sctp_server::sctp_get_peeraddresses(
       }
     }
   }
+
   Logger::sctp().info("----------------------");
+
   if (remote_addr != NULL && nb_remote_addresses != NULL) {
     *nb_remote_addresses = nb;
     *remote_addr         = temp_addr_p;
   } else {
     sctp_freepaddrs((struct sockaddr*) temp_addr_p);
   }
+
   return RETURNok;
 }
 
@@ -356,6 +388,7 @@ int sctp_server::sctp_get_localaddresses(
     Logger::sctp().error("Failed to retrieve local addresses");
     return RETURNerror;
   }
+
   if (temp_addr_p) {
     Logger::sctp().info("----------------------");
     Logger::sctp().info("Local addresses:");
@@ -382,6 +415,7 @@ int sctp_server::sctp_get_localaddresses(
             "    - Unknown address family %d", temp_addr_p[j].sa_family);
       }
     }
+
     if (local_addr != NULL && nb_local_addresses != NULL) {
       *nb_local_addresses = nb;
       *local_addr         = temp_addr_p;
@@ -389,6 +423,7 @@ int sctp_server::sctp_get_localaddresses(
       sctp_freeladdrs((struct sockaddr*) temp_addr_p);
     }
   }
+
   return RETURNok;
 }
 

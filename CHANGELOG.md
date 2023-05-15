@@ -1,5 +1,27 @@
 # RELEASE NOTES: #
 
+## v1.5.1 -- May 2023 ##
+
+* Fix Service Request handling (Service Type: Signalling)
+* Fix N2 handover
+* Support usage of SUPI-type IMSI
+* Fix mapping between RAN UE NGAP ID and UE context
+* Fix SBI port for UDM in case of FQDN resolution
+* Fix TMSI handling
+* Fix PDU Session Ressource Release Response message
+* Fix issue for decoding MSIN with an odd number of digits
+* Fix usage of lower-case for DNN value (case insensitive)
+* Fix: NSSF port number was not read from config file
+* Code Refactoring for:
+  * NAS layer
+  * Registration Complete Message
+  * UE context refactor
+  * Logging mechanism (runtime log level selection)
+  * Installation / build scripts
+  * Continuous Integration scripts
+* Published image on Docker-Hub is using now Ubuntu-20 as base image
+  * We will soon obsolete the build system for Ubuntu18.04
+
 ## v1.5.0 -- January 2023 ##
 
 * Minimal fix for Decoding RegistrationRequest from COTS UE

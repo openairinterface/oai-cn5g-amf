@@ -111,7 +111,7 @@ void NetworkName::setTextString(const bstring& str) {
 }
 
 //------------------------------------------------------------------------------
-int NetworkName::encode2buffer(uint8_t* buf, int len) {
+int NetworkName::Encode(uint8_t* buf, int len) {
   Logger::nas_mm().debug("Encoding NetworkName");
 
   if (len < kNetworkNameMinimumLength) {

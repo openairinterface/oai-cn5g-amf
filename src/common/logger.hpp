@@ -19,104 +19,93 @@
  *      contact@openairinterface.org
  */
 
-#ifndef __LOGGER_H
-#define __LOGGER_H
+#pragma once
 
-#include <cstdarg>
-#include <stdexcept>
-#include <vector>
+#include "logger_base.hpp"
 
-#define SPDLOG_LEVEL_NAMES                                                     \
-  {"trace", "debug", "info ", "start", "warn ", "error", "off  "};
-
-#define SPDLOG_ENABLE_SYSLOG
-#include "spdlog/spdlog.h"
-
-class LoggerException : public std::runtime_error {
- public:
-  explicit LoggerException(const char* m) : std::runtime_error(m) {}
-  explicit LoggerException(const std::string& m) : std::runtime_error(m) {}
-};
-
-class _Logger {
- public:
-  _Logger(
-      const char* category, std::vector<spdlog::sink_ptr>& sinks,
-      const char* pattern);
-
-  void trace(const char* format, ...);
-  void trace(const std::string& format, ...);
-  void debug(const char* format, ...);
-  void debug(const std::string& format, ...);
-  void info(const char* format, ...);
-  void info(const std::string& format, ...);
-  void startup(const char* format, ...);
-  void startup(const std::string& format, ...);
-  void warn(const char* format, ...);
-  void warn(const std::string& format, ...);
-  void error(const char* format, ...);
-  void error(const std::string& format, ...);
-
- private:
-  _Logger();
-  enum _LogType { _ltTrace, _ltDebug, _ltInfo, _ltStartup, _ltWarn, _ltError };
-
-  void log(_LogType lt, const char* format, va_list& args);
-  spdlog::logger m_log;
-};
+static const std::string ASYNC_CMD      = "async_cmd";
+static const std::string AMF_APP        = "amf_app";
+static const std::string CONFIG         = "config";
+static const std::string SYSTEM         = "system";
+static const std::string SCTP           = "sctp";
+static const std::string NAS_MM         = "nas_mm";
+static const std::string NGAP           = "ngap";
+static const std::string ITTI           = "itti";
+static const std::string AMF_N2         = "amf_n2";
+static const std::string AMF_N1         = "amf_n1";
+static const std::string AMF_SBI        = "amf_sbi";
+static const std::string AMF_SERVER_LOG = "amf_server";
 
 class Logger {
  public:
   static void init(
-      const char* app, const bool log_stdout, const bool log_rot_file) {
-    singleton()._init(app, log_stdout, log_rot_file);
+      const std::string& name, const bool log_stdout, const bool log_rot_file) {
+    oai::logger::logger_registry::register_logger(
+        name, ASYNC_CMD, log_stdout, log_rot_file);
+    oai::logger::logger_registry::register_logger(
+        name, AMF_APP, log_stdout, log_rot_file);
+    oai::logger::logger_registry::register_logger(
+        name, CONFIG, log_stdout, log_rot_file);
+    oai::logger::logger_registry::register_logger(
+        name, SYSTEM, log_stdout, log_rot_file);
+    oai::logger::logger_registry::register_logger(
+        name, SCTP, log_stdout, log_rot_file);
+    oai::logger::logger_registry::register_logger(
+        name, NAS_MM, log_stdout, log_rot_file);
+    oai::logger::logger_registry::register_logger(
+        name, NGAP, log_stdout, log_rot_file);
+    oai::logger::logger_registry::register_logger(
+        name, ITTI, log_stdout, log_rot_file);
+    oai::logger::logger_registry::register_logger(
+        name, AMF_N2, log_stdout, log_rot_file);
+    oai::logger::logger_registry::register_logger(
+        name, AMF_N1, log_stdout, log_rot_file);
+    oai::logger::logger_registry::register_logger(
+        name, AMF_SBI, log_stdout, log_rot_file);
+    oai::logger::logger_registry::register_logger(
+        name, AMF_SERVER_LOG, log_stdout, log_rot_file);
   }
-  static void init(
-      const std::string& app, const bool log_stdout, const bool log_rot_file) {
-    init(app.c_str(), log_stdout, log_rot_file);
+  static void set_level(spdlog::level::level_enum level) {
+    oai::logger::logger_registry::set_level(level);
+  }
+  static bool should_log(spdlog::level::level_enum level) {
+    return oai::logger::logger_registry::should_log(level);
   }
 
-  static _Logger& async_cmd() { return *singleton().m_async_cmd; }
-  static _Logger& amf_app() { return *singleton().m_amf_app; }
-  static _Logger& config() { return *singleton().m_config; }
-  static _Logger& system() { return *singleton().m_system; }
-  static _Logger& sctp() { return *singleton().m_sctp; }
-  static _Logger& nas_mm() { return *singleton().m_nas_mm; }
-  static _Logger& ngap() { return *singleton().m_ngap; }
-  static _Logger& itti() { return *singleton().m_itti; }
-  static _Logger& amf_n2() { return *singleton().m_amf_n2; }
-  static _Logger& amf_n1() { return *singleton().m_amf_n1; }
-  static _Logger& amf_sbi() { return *singleton().m_amf_sbi; }
-  static _Logger& amf_server() { return *singleton().m_amf_server; }
-
- private:
-  static Logger* m_singleton;
-  static Logger& singleton() {
-    if (!m_singleton) m_singleton = new Logger();
-    return *m_singleton;
+  static const oai::logger::printf_logger& async_cmd() {
+    return oai::logger::logger_registry::get_logger(ASYNC_CMD);
   }
-
-  Logger() {}
-  ~Logger() {}
-
-  void _init(const char* app, const bool log_stdout, const bool log_rot_file);
-
-  std::vector<spdlog::sink_ptr> m_sinks;
-
-  std::string m_pattern;
-
-  _Logger* m_async_cmd;
-  _Logger* m_amf_app;
-  _Logger* m_config;
-  _Logger* m_system;
-  _Logger* m_sctp;
-  _Logger* m_nas_mm;
-  _Logger* m_ngap;
-  _Logger* m_itti;
-  _Logger* m_amf_n2;
-  _Logger* m_amf_n1;
-  _Logger* m_amf_sbi;
-  _Logger* m_amf_server;
+  static const oai::logger::printf_logger& amf_app() {
+    return oai::logger::logger_registry::get_logger(AMF_APP);
+  }
+  static const oai::logger::printf_logger& config() {
+    return oai::logger::logger_registry::get_logger(CONFIG);
+  }
+  static const oai::logger::printf_logger& system() {
+    return oai::logger::logger_registry::get_logger(SYSTEM);
+  }
+  static const oai::logger::printf_logger& sctp() {
+    return oai::logger::logger_registry::get_logger(SCTP);
+  }
+  static const oai::logger::printf_logger& nas_mm() {
+    return oai::logger::logger_registry::get_logger(NAS_MM);
+  }
+  static const oai::logger::printf_logger& ngap() {
+    return oai::logger::logger_registry::get_logger(NGAP);
+  }
+  static const oai::logger::printf_logger& itti() {
+    return oai::logger::logger_registry::get_logger(ITTI);
+  }
+  static const oai::logger::printf_logger& amf_n2() {
+    return oai::logger::logger_registry::get_logger(AMF_N2);
+  }
+  static const oai::logger::printf_logger& amf_n1() {
+    return oai::logger::logger_registry::get_logger(AMF_N1);
+  }
+  static const oai::logger::printf_logger& amf_sbi() {
+    return oai::logger::logger_registry::get_logger(AMF_SBI);
+  }
+  static const oai::logger::printf_logger& amf_server() {
+    return oai::logger::logger_registry::get_logger(AMF_SERVER_LOG);
+  }
 };
-
-#endif

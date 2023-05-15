@@ -22,10 +22,11 @@
 #ifndef _SCTP_SERVER_H_
 #define _SCTP_SERVER_H_
 
-#include <thread>
-
 #include "common_defs.h"
 #include "endpoint.hpp"
+
+#include <thread>
+#include <vector>
 
 extern "C" {
 #include <netinet/in.h>
@@ -33,8 +34,6 @@ extern "C" {
 
 #include "bstrlib.h"
 }
-#include <iostream>
-#include <vector>
 
 #define SCTP_RECV_BUFFER_SIZE 2048
 #define SCTP_RC_ERROR -1
@@ -47,20 +46,19 @@ typedef uint16_t sctp_stream_id_t;
 typedef uint32_t sctp_assoc_id_t;
 
 typedef struct sctp_association_s {
-  struct sctp_association_s* next_assoc;  ///< Next association in the list
+  struct sctp_association_s* next_assoc;  // Next association in the list
   struct sctp_association_s*
-      previous_assoc;  ///< Previous association in the list
-  int sd;              ///< Socket descriptor
-  uint32_t ppid;       ///< Payload protocol Identifier
+      previous_assoc;  // Previous association in the list
+  int sd;              // Socket descriptor
+  uint32_t ppid;       // Payload protocol Identifier
+  uint16_t instreams;  // Number of input streams negociated for this connection
   uint16_t
-      instreams;  ///< Number of input streams negociated for this connection
-  uint16_t
-      outstreams;  ///< Number of output strams negotiated for this connection
-  sctp_assoc_id_t assoc_id;  ///< SCTP association id for the connection
-  uint32_t messages_recv;    ///< Number of messages received on this connection
-  uint32_t messages_sent;    ///< Number of messages sent on this connection
+      outstreams;  // Number of output strams negotiated for this connection
+  sctp_assoc_id_t assoc_id;  // SCTP association id for the connection
+  uint32_t messages_recv;    // Number of messages received on this connection
+  uint32_t messages_sent;    // Number of messages sent on this connection
 
-  struct sockaddr* peer_addresses;  ///< A list of peer addresses
+  struct sockaddr* peer_addresses;  // A list of peer addresses
   int nb_peer_addresses;
 } sctp_association_t;
 
@@ -75,6 +73,7 @@ typedef struct sctp_descriptor_s {
 
 class sctp_application {
  public:
+  virtual ~sctp_application();
   virtual void handle_receive(
       bstring payload, sctp_assoc_id_t assoc_id, sctp_stream_id_t stream,
       sctp_stream_id_t instreams, sctp_stream_id_t outstreams) = 0;

@@ -19,40 +19,44 @@
  *      contact@openairinterface.org
  */
 
-#ifndef _UENetworkCapability_H
-#define _UENetworkCapability_H
+#ifndef _UE_NETWORK_CAPABILITY_H
+#define _UE_NETWORK_CAPABILITY_H
 
-#include <stdint.h>
+#include "Type4NasIe.hpp"
 
 constexpr uint8_t kUeNetworkCapabilityMinimumLength = 4;
 constexpr uint8_t kUeNetworkCapabilityMaximumLength = 15;
+constexpr auto kUeNetworkCapabilityIeName = "S1 UE Network Capability";
 
 namespace nas {
 
-class UENetworkCapability {
+class UENetworkCapability : public Type4NasIe {
  public:
   UENetworkCapability();
   UENetworkCapability(uint8_t iei);
+  UENetworkCapability(const uint8_t iei, uint8_t eea, uint8_t eia);
   ~UENetworkCapability();
-  UENetworkCapability(
-      const uint8_t iei, uint8_t _5gg_EEASel, uint8_t _5gg_EIASel);
-  void setEEASel(uint8_t sel);
-  void setEIASel(uint8_t sel);
-  uint8_t getEEASel();
-  uint8_t getEIASel();
-  int encode2buffer(uint8_t* buf, int len);
-  int decodefrombuffer(uint8_t* buf, int len, bool is_option = true);
+
+  static std::string GetIeName() { return kUeNetworkCapabilityIeName; }
+
+  void SetEea(uint8_t value);
+  void SetEia(uint8_t value);
+
+  uint8_t GetEea() const;
+  uint8_t GetEia() const;
+
+  int Encode(uint8_t* buf, int len);
+  int Decode(uint8_t* buf, int len, bool is_option = true);
 
  private:
-  uint8_t _iei;
-  uint8_t length;
-  uint8_t _5g_EEASel;
-  uint8_t _5g_EIASel;
-  // TODO: uint8_t uEASel;
-  // TODO: uint8_t uIASel;
-  // TODO: uint8_t octet_7;
-  // TODO: uint8_t octet_8;
-  // TODO: uint8_t octet_9;
+  uint8_t eea_;  // Mandatory
+  uint8_t eia_;  // Mandatory
+  // TODO: uint8_t uea_; //Optional
+  // TODO: uint8_t uia_; //Optional
+  // TODO: uint8_t octet7_; //Optional
+  // TODO: uint8_t octet8_;//Optional
+  // TODO: uint8_t octet9_; //Optional
+  // TODO: spare octet 10-15
 };
 
 }  // namespace nas

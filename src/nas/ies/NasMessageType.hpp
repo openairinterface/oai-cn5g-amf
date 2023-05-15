@@ -19,27 +19,36 @@
  *      contact@openairinterface.org
  */
 
-/*! \file
- \brief
- \author  Keliang DU, BUPT
- \date 2020
- \email: contact@openairinterface.org
- */
-
 #ifndef _MESSAGE_TYPE_H_
 #define _MESSAGE_TYPE_H_
 
-#include <stdint.h>
+#include "NasIe.hpp"
+
+constexpr uint8_t kNasMessageTypeIeSize = 1;
+constexpr auto kNasMessageTypeIeName    = "Nas Message Type";
 
 namespace nas {
 
-class NasMessageType {
+class NasMessageType : public NasIe {
  public:
-  void setValue(const uint8_t type);
-  uint8_t getValue();
+  NasMessageType(){};  // TODO: = delete;
+  NasMessageType(const uint8_t& message_type);
+  virtual ~NasMessageType();
+
+  static std::string GetIeName() { return kNasMessageTypeIeName; }
+
+  bool Validate(const int& len) const override;
+
+  void Set(const uint8_t& message_type);
+  void Get(uint8_t& message_type) const;
+  uint8_t Get() const;
+
+  int Encode(uint8_t* buf, const int& len) override;
+  int Decode(
+      const uint8_t* const buf, const int& len, bool is_iei = false) override;
 
  private:
-  uint8_t m_type;
+  uint8_t message_type_;
 };
 
 }  // namespace nas

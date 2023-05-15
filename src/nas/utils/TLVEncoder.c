@@ -19,12 +19,6 @@
  *      contact@openairinterface.org
  */
 
-/*! \file TLVEncoder.c
- \brief
- \author Philippe MOREL, Sebastien ROUX, Lionel GAUTHIER
- \company Eurecom
- */
-
 #include "TLVEncoder.h"
 
 #include <stdbool.h>

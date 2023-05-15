@@ -21,6 +21,7 @@
 
 #include "Rejected_SNSSAI.hpp"
 
+#include "3gpp_24.501.hpp"
 #include "common_defs.h"
 #include "logger.hpp"
 using namespace nas;
@@ -54,8 +55,8 @@ uint8_t Rejected_SNSSAI::getLength() {
 
 //------------------------------------------------------------------------------
 void Rejected_SNSSAI::setSST(const uint8_t& sst) {
-  sst_    = sst;
-  length_ = 1;
+  sst_ = sst;
+  // length_ = 1;
 }
 
 //------------------------------------------------------------------------------
@@ -71,7 +72,7 @@ uint8_t Rejected_SNSSAI::getSST() {
 //------------------------------------------------------------------------------
 void Rejected_SNSSAI::setSd(const uint32_t& sd) {
   sd_.emplace(sd);
-  length_ += 3;
+  length_ = 4;
 }
 
 //------------------------------------------------------------------------------
@@ -106,11 +107,11 @@ void Rejected_SNSSAI::getCause(uint8_t& cause) {
 }
 
 //------------------------------------------------------------------------------
-int Rejected_SNSSAI::encode2buffer(uint8_t* buf, int len) {
+int Rejected_SNSSAI::Encode(uint8_t* buf, int len) {
   Logger::nas_mm().debug("Encoding Rejected_SNSSAI");
   if (len < length_ + 1) {
     Logger::nas_mm().error("len is less than %d", length_);
-    return -1;
+    return KEncodeDecodeError;
   }
 
   int encoded_size = 0;
@@ -120,10 +121,16 @@ int Rejected_SNSSAI::encode2buffer(uint8_t* buf, int len) {
   } else {
     length_ = 1;
   }
+
+  // Length + Cause
   octet = (length_ << 4) | (0x0f & cause_);
   ENCODE_U8(buf + encoded_size, octet, encoded_size);
+
+  // SST
   ENCODE_U8(buf + encoded_size, sst_, encoded_size);
   Logger::nas_mm().debug("SST %d", sst_);
+
+  // SD
   if (sd_.has_value()) {
     ENCODE_U24(buf + encoded_size, sd_.value(), encoded_size);
     /*ENCODE_U8(
@@ -134,24 +141,30 @@ int Rejected_SNSSAI::encode2buffer(uint8_t* buf, int len) {
     */
     Logger::nas_mm().debug("SD 0x%x", sd_.value());
   }
+
   Logger::nas_mm().debug("Encoded Rejected_SNSSAI (len %d)", encoded_size);
   return encoded_size;
 }
 
 //------------------------------------------------------------------------------
-int Rejected_SNSSAI::decodefrombuffer(uint8_t* buf, int len) {
+int Rejected_SNSSAI::Decode(uint8_t* buf, int len) {
   Logger::nas_mm().debug("Decoding Rejected_SNSSAI");
   int decoded_size = 0;
   uint8_t octet    = 0;
+
+  // Length and Cause
   DECODE_U8(buf + decoded_size, octet, decoded_size);
   length_ = (octet >> 4) & 0x0f;
   cause_  = octet & 0x0f;
+
+  // SST
   DECODE_U8(buf + decoded_size, sst_, decoded_size);
   if (length_ == 1) {
     Logger::nas_mm().debug(
         "Decoded Rejected_SNSSAI length 0x%x,cause 0x%x, SST 0x%x", length_,
         cause_, sst_);
   } else if (length_ == 4) {
+    // SD
     uint32_t sd = 0;
     DECODE_U24(buf + decoded_size, sd, decoded_size);
     sd_ = std::optional<uint32_t>(sd);
@@ -159,7 +172,7 @@ int Rejected_SNSSAI::decodefrombuffer(uint8_t* buf, int len) {
         "Decoded Rejected_SNSSAI length 0x%x, cause 0x%x, SST 0x%x, SD 0x%x",
         length_, cause_, sst_, sd);
   } else {
-    return -1;  // invalid value
+    return KEncodeDecodeError;  // invalid value
   }
 
   Logger::nas_mm().debug("Decoded Rejected_SNSSAI (len %d)", decoded_size);

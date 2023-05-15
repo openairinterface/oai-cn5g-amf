@@ -110,6 +110,13 @@ class statistics {
   void add_gnb(const uint32_t& gnb_id, const gnb_infos& gnb);
 
   /*
+   * Add gNB to the list connected gNB to this AMF
+   * @param [const std::shared_ptr<gnb_context> &] gc: pointer to gNB Context
+   * @return void
+   */
+  void add_gnb(const std::shared_ptr<gnb_context>& gc);
+
+  /*
    * Update gNB info
    * @param [const uint32_t&] gnb_id: gNB ID
    * @param [const gnb_infos&] gnb: gNB Info

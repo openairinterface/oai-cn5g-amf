@@ -25,7 +25,7 @@
 namespace ngap {
 
 //------------------------------------------------------------------------------
-NgapUEMessage::NgapUEMessage() {}
+NgapUEMessage::NgapUEMessage() : NgapMessage() {}
 
 //------------------------------------------------------------------------------
 NgapUEMessage::~NgapUEMessage() {}

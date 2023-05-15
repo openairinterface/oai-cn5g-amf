@@ -30,7 +30,7 @@
 #include <shared_mutex>
 
 #include "3gpp_29.503.h"
-#include "3gpp_ts24501.hpp"
+#include "3gpp_24.501.hpp"
 #include "AuthorizedNetworkSliceInfo.h"
 #include "Nssai.h"
 #include "RegistrationAccept.hpp"
@@ -108,19 +108,21 @@ class amf_n1 {
       SecurityHeaderType_t& type, const uint8_t* buffer, const uint32_t length);
 
   /*
-   * Verify if a UE NAS context associated with a GUTI exist
+   * Verify if a UE NAS context associated with a GUTI exists
    * @param [const std::string&] guti: UE GUTI
-   * @return true if UE NAS context exist, otherwise false
+   * @return true if the UE NAS context exists, otherwise false
    */
   bool is_guti_2_nas_context(const std::string& guti) const;
 
   /*
-   * Get UE NAS context associated with a GUTI
+   * Get UE NAS context associated with a GUTI if the context exists and is not
+   * null
    * @param [const std::string&] guti: UE GUTI
-   * @return shared pointer to the UE NAS context
+   * @param [std::shared_ptr<nas_context>&] nc: UE NAS Context
+   * @return true if the context exists and is not null, otherwise return false
    */
-  std::shared_ptr<nas_context> guti_2_nas_context(
-      const std::string& guti) const;
+  bool guti_2_nas_context(
+      const std::string& guti, std::shared_ptr<nas_context>& nc) const;
 
   /*
    * Store an UE NAS context associated with a GUTI
@@ -139,28 +141,21 @@ class amf_n1 {
   bool remove_guti_2_nas_context(const std::string& guti);
 
   /*
-   * Verify if a UE NAS context associated with an AMF UE NGAP ID exist
+   * Verify if a UE NAS context associated with an AMF UE NGAP ID exists
    * @param [const long& ] amf_ue_ngap_id: AMF UE NGAP ID
-   * @return true if UE NAS context exist, otherwise false
+   * @return true if UE NAS context exists, otherwise false
    */
   bool is_amf_ue_id_2_nas_context(const long& amf_ue_ngap_id) const;
 
   /*
-   * Verify if a UE NAS context associated with an AMF UE NGAP ID exist
+   * Verify if a UE NAS context associated with an AMF UE NGAP ID exists and is
+   * not null
    * @param [const long& ] amf_ue_ngap_id: AMF UE NGAP ID
    * @param [std::shared_ptr<nas_context>&] nc: pointer to UE NAS context
-   * @return true if UE NAS context exist, otherwise false
+   * @return true if the UE NAS context exists (and not null), otherwise false
    */
-  bool is_amf_ue_id_2_nas_context(
+  bool amf_ue_id_2_nas_context(
       const long& amf_ue_ngap_id, std::shared_ptr<nas_context>& nc) const;
-
-  /*
-   * Get UE NAS context associated with an AMF UE NGAP ID
-   * @param [const long& ] amf_ue_ngap_id: AMF UE NGAP ID
-   * @return shared pointer to the UE NAS context
-   */
-  std::shared_ptr<nas_context> amf_ue_id_2_nas_context(
-      const long& amf_ue_ngap_id) const;
 
   /*
    * Store an UE NAS context associated with an AMF UE NGAP ID
@@ -226,20 +221,22 @@ class amf_n1 {
   bool remove_supi_2_ran_id(const std::string& supi);
 
   /*
-   * Get UE NAS context associated with an IMSI
-   * @param [const std::string&] imsi: UE IMSI
-   * @return shared pointer to the UE NAS context
+   * Get UE NAS context associated with an SUPI
+   * @param [const std::string&] imsi: UE SUPI
+   * @param [const std::shared_ptr<nas_context>&] nc: pointer to UE NAS context
+   * @return true if the NAS context exists and is not null, otherwise return
+   * false
    */
-  std::shared_ptr<nas_context> imsi_2_nas_context(
-      const std::string& imsi) const;
+  bool supi_2_nas_context(
+      const std::string& imsi, std::shared_ptr<nas_context>&) const;
 
   /*
-   * Store an UE NAS context associated with an IMSI
-   * @param [const std::string&] imsi: UE IMSI
+   * Store an UE NAS context associated with an SUPI
+   * @param [const std::string&] imsi: UE SUPI
    * @param [const std::shared_ptr<nas_context>&] nc: pointer to UE NAS context
    * @return void
    */
-  void set_imsi_2_nas_context(
+  void set_supi_2_nas_context(
       const std::string& imsi, const std::shared_ptr<nas_context>& nc);
 
   /*
@@ -247,7 +244,7 @@ class amf_n1 {
    * @param [const std::string&] imsi: UE IMSI
    * @return true if successful, otherwise return false
    */
-  bool remove_imsi_2_nas_context(const std::string& imsi);
+  bool remove_supi_2_nas_context(const std::string& imsi);
 
   /*
    * Perform Registration procedure
@@ -369,7 +366,7 @@ class amf_n1 {
 
   /*
    * Encode the NAS message with corresponding integrity and ciphered algorithms
-   * @param [nas_secu_ctx*] nsc: NAS Security context
+   * @param [nas_secu_ctx&] nsc: NAS Security context
    * @param [bool] is_secu_ctx_new: indicate the status of the security context
    * (new/old)
    * @param [uint8_t] security_header_type: Security Header Type
@@ -380,13 +377,13 @@ class amf_n1 {
    * @return void
    */
   void encode_nas_message_protected(
-      nas_secu_ctx* nsc, bool is_secu_ctx_new, uint8_t security_header_type,
+      nas_secu_ctx& nsc, bool is_secu_ctx_new, uint8_t security_header_type,
       uint8_t direction, uint8_t* input_nas_buf, int input_nas_len,
       bstring& encrypted_nas);
 
   /*
    * Encrypt with integrity algorithm
-   * @param [nas_secu_ctx*] nsc: NAS Security context
+   * @param [nas_secu_ctx&] nsc: NAS Security context
    * @param [uint8_t] direction: Direction
    * @param [uint8_t*] input_nas_buf: Buffer of the input NAS
    * @param [int] input_nas_les: Length of the buffer
@@ -394,19 +391,19 @@ class amf_n1 {
    * @return true if MAC can be calculated successfully, otherwise return false
    */
   bool nas_message_integrity_protected(
-      nas_secu_ctx* nsc, uint8_t direction, uint8_t* input_nas,
+      nas_secu_ctx& nsc, uint8_t direction, uint8_t* input_nas,
       int input_nas_len, uint32_t& mac);
 
   /*
    * Cipher NAS message with the corresponding ciphered algorithm
-   * @param [nas_secu_ctx*] nsc: NAS Security context
+   * @param [nas_secu_ctx&] nsc: NAS Security context
    * @param [uint8_t] direction: Direction
    * @param [bstring] input_nas: Input NAS message
    * @param [bstring&] output_nas: Output NAS message
    * @return true if message is successfully ciphered, otherwise return false
    */
   bool nas_message_cipher_protected(
-      nas_secu_ctx* nsc, uint8_t direction, bstring input_nas,
+      nas_secu_ctx& nsc, uint8_t direction, bstring input_nas,
       bstring& output_nas);
 
   // NOTE: All the MySQL-related functions are currently implemented in
@@ -489,15 +486,6 @@ class amf_n1 {
   void get_pdu_session_to_be_activated(
       const uint16_t pdu_session_status,
       std::vector<uint8_t>& pdu_session_to_be_activated);
-
-  /*
-   * Initialize Registration Accept with default parameters
-   * @param [std::unique_ptr<nas::RegistrationAccept>&] registration_accept:
-   * Pointer to the Registration Accept message
-   * @return void
-   */
-  void initialize_registration_accept(
-      std::unique_ptr<nas::RegistrationAccept>& registration_accept);
 
   /*
    * Initialize Registration Accept with the parameters from NAS context
@@ -935,6 +923,12 @@ class amf_n1 {
       std::shared_ptr<nas_context> nc, const uint32_t ran_ue_ngap_id,
       const long amf_ue_ngap_id, bstring nas);
 
+  void service_request_handle(
+      std::shared_ptr<nas_context> nc, const uint32_t ran_ue_ngap_id,
+      const long amf_ue_ngap_id, bstring nas, uint8_t ulCount);
+
+  void send_service_reject(std::shared_ptr<nas_context>& nc, uint8_t cause);
+
   /*
    * Handle Identity Response message
    * @param [const uint32_t] ran_ue_ngap_id: RAN UE NGAP ID
@@ -1003,7 +997,7 @@ class amf_n1 {
       amfueid2nas_context;  // amf ue ngap id
   mutable std::shared_mutex m_amfueid2nas_context;
 
-  std::map<std::string, std::shared_ptr<nas_context>> imsi2nas_context;
+  std::map<std::string, std::shared_ptr<nas_context>> supi2nas_context;
   std::map<std::string, long> supi2amfId;
   std::map<std::string, uint32_t> supi2ranId;
   mutable std::shared_mutex m_nas_context;

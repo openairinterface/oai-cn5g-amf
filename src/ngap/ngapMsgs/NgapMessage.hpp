@@ -125,7 +125,7 @@ class NgapMessage {
 
   void setMessageType(NgapMessageType messageType);
   virtual bool decodeFromPdu(Ngap_NGAP_PDU_t* msgPdu) = 0;
-  int encode2Buffer(uint8_t* buf, int bufSize);
+  int Encode(uint8_t* buf, int bufSize);
   void encode2NewBuffer(uint8_t*& buf, int& encoded_size);
 
  protected:

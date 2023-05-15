@@ -19,101 +19,101 @@
  *      contact@openairinterface.org
  */
 
-/*! \file
- \brief
- \author  Keliang DU, BUPT
- \date 2020
- \email: contact@openairinterface.org
- */
 #include "Extended_DRX_Parameters.hpp"
 
 #include "logger.hpp"
 using namespace nas;
 
 //------------------------------------------------------------------------------
-Extended_DRX_Parameters::Extended_DRX_Parameters(uint8_t iei) {
-  _iei         = iei;
-  _paging_time = 0;
-  _value       = 0;
+Extended_DRX_Parameters::Extended_DRX_Parameters()
+    : Type4NasIe(kIeiExtendedDrxParameters), paging_time_(), e_drx_value_() {
+  SetLengthIndicator(1);
 }
 
 //------------------------------------------------------------------------------
 Extended_DRX_Parameters::Extended_DRX_Parameters(
-    const uint8_t iei, uint8_t paging_time, uint8_t value) {
-  _iei         = iei;
-  _paging_time = paging_time & 0x0F;
-  _value       = value & 0x0F;
+    uint8_t paging_time, uint8_t value)
+    : Type4NasIe(kIeiExtendedDrxParameters) {
+  paging_time_ = paging_time & 0x0F;
+  e_drx_value_ = value & 0x0F;
+  SetLengthIndicator(1);
 }
-
-//------------------------------------------------------------------------------
-Extended_DRX_Parameters::Extended_DRX_Parameters()
-    : _iei(), _paging_time(), _value() {}
 
 //------------------------------------------------------------------------------
 Extended_DRX_Parameters::~Extended_DRX_Parameters() {}
 
 //------------------------------------------------------------------------------
 void Extended_DRX_Parameters::setValue(uint8_t value) {
-  _value = value & 0x0F;
+  e_drx_value_ = value & 0x0F;
 }
 
 //------------------------------------------------------------------------------
 void Extended_DRX_Parameters::setPaging_time(uint8_t value) {
-  _paging_time = value & 0x0F;
+  paging_time_ = value & 0x0F;
 }
 
 //------------------------------------------------------------------------------
-uint8_t Extended_DRX_Parameters::getValue() {
-  return _value;
+uint8_t Extended_DRX_Parameters::getValue() const {
+  return e_drx_value_;
 }
 
 //------------------------------------------------------------------------------
-uint8_t Extended_DRX_Parameters::getPaging_time() {
-  return _paging_time;
+uint8_t Extended_DRX_Parameters::getPaging_time() const {
+  return paging_time_;
 }
 
 //------------------------------------------------------------------------------
-int Extended_DRX_Parameters::encode2buffer(uint8_t* buf, int len) {
-  Logger::nas_mm().debug("encoding Extended_DRX_Parameters iei(0x%x)", _iei);
-  if (len < 3) {
-    Logger::nas_mm().error("len is less than 3");
-    return 0;
+int Extended_DRX_Parameters::Encode(uint8_t* buf, int len) {
+  Logger::nas_mm().debug("Encoding %s", GetIeName().c_str());
+  int ie_len = GetIeLength();
+
+  if (len < ie_len) {
+    Logger::nas_mm().error("Len is less than %d", ie_len);
+    return KEncodeDecodeError;
   }
+
   int encoded_size = 0;
-  if (_iei) {
-    *(buf + encoded_size) = _iei;
-    encoded_size++;
-    *(buf + encoded_size) = 1;
-    encoded_size++;
-    *(buf + encoded_size) = (0x0F & _value) | ((_paging_time & 0x0f) << 4);
-    encoded_size++;
-  } else {
-    //	*(buf + encoded_size) = length - 1; encoded_size++;
-    //	*(buf + encoded_size) = _value; encoded_size++; encoded_size++;
-  }
+  // IEI and Length
+  int encoded_header_size = Type4NasIe::Encode(buf + encoded_size, len);
+  if (encoded_header_size == KEncodeDecodeError) return KEncodeDecodeError;
+  encoded_size += encoded_header_size;
+
+  // Octet 3
+  uint8_t octet = (0x0F & e_drx_value_) | ((paging_time_ & 0x0f) << 4);
+  ENCODE_U8(buf + encoded_size, octet, encoded_size);
+
   Logger::nas_mm().debug(
-      "encoded Extended_DRX_Parameters len(%d)", encoded_size);
+      "Encoded %s, len (%d)", GetIeName().c_str(), encoded_size);
   return encoded_size;
 }
 
 //------------------------------------------------------------------------------
-int Extended_DRX_Parameters::decodefrombuffer(
-    uint8_t* buf, int len, bool is_option) {
-  Logger::nas_mm().debug("decoding Extended_DRX_Parameters iei(0x%x)", *buf);
-  int decoded_size = 0;
-  if (is_option) {
-    decoded_size++;
+int Extended_DRX_Parameters::Decode(uint8_t* buf, int len, bool is_iei) {
+  if (len < kExtendedDrxParametersLength) {
+    Logger::nas_mm().error(
+        "Buffer length is less than the minimum length of this IE (%d octet)",
+        kExtendedDrxParametersLength);
+    return KEncodeDecodeError;
   }
-  _value = 0x00;
-  //	length = *(buf + decoded_size);
-  decoded_size++;
-  _value       = *(buf + decoded_size) & 0x0f;
-  _paging_time = *(buf + decoded_size) & 0xf0;
-  decoded_size++;
+
+  uint8_t decoded_size = 0;
+  uint8_t octet        = 0;
+  Logger::nas_mm().debug("Decoding %s", GetIeName().c_str());
+
+  // IEI and Length
+  int decoded_header_size = Type4NasIe::Decode(buf + decoded_size, len, is_iei);
+  if (decoded_header_size == KEncodeDecodeError) return KEncodeDecodeError;
+  decoded_size += decoded_header_size;
+
+  DECODE_U8(buf + decoded_size, octet, decoded_size);
+
+  e_drx_value_ = octet & 0x0f;
+  paging_time_ = (octet & 0xf0) >> 4;
+
   Logger::nas_mm().debug(
-      "decoded Extended_DRX_Parameters paging_time(0x%x) value(0x%x) ",
-      _paging_time, _value);
+      "Decoded %s, Paging Time Window 0x%x, eDRX value 0x%x",
+      GetIeName().c_str(), paging_time_, e_drx_value_);
   Logger::nas_mm().debug(
-      "decoded Extended_DRX_Parameters len(%d)", decoded_size);
+      "Decoded %s, len (%d)", GetIeName().c_str(), decoded_size);
   return decoded_size;
 }

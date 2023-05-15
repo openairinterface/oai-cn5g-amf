@@ -31,7 +31,6 @@
 #include "ProblemDetails.h"
 #include "UeN1N2InfoSubscriptionCreateData.h"
 #include "amf_config.hpp"
-#include "amf_module_from_config.hpp"
 #include "amf_msg.hpp"
 #include "amf_profile.hpp"
 #include "amf_subscription.hpp"
@@ -99,7 +98,6 @@ class amf_app {
   explicit amf_app(const amf_config& amf_cfg);
   amf_app(amf_app const&) = delete;
   void operator=(amf_app const&) = delete;
-  void allRegistredModulesInit(const amf_modules& modules);
 
   /*
    * Generate AMF UE NGAP ID
@@ -193,43 +191,11 @@ class amf_app {
   uint32_t get_number_registered_ues() const;
 
   /*
-   * Verify if a UE context associated with an AMF UE NGAP ID exist
-   * @param [const long&] amf_ue_ngap_id: AMF UE NGAP ID
-   * @return true if UE context exist, otherwise false
-   */
-  bool is_amf_ue_id_2_ue_context(const long& amf_ue_ngap_id) const;
-
-  /*
-   * Get UE context associated with an AMF UE NGAP ID
-   * @param [const long&] amf_ue_ngap_id: AMF UE NGAP ID
-   * @return shared pointer to the context
-   */
-  std::shared_ptr<ue_context> amf_ue_id_2_ue_context(
-      const long& amf_ue_ngap_id) const;
-
-  /*
-   * Store an UE context associated with an AMF UE NGAP ID
-   * @param [const long&] amf_ue_ngap_id: AMF UE NGAP ID
-   * @param [std::shared_ptr<ue_context>&] uc: pointer to UE context
-   * @return void
-   */
-  void set_amf_ue_ngap_id_2_ue_context(
-      const long& amf_ue_ngap_id, const std::shared_ptr<ue_context>& uc);
-
-  /*
-   * Verify if a UE context associated with an UE Context Key exist
+   * Verify if a UE context associated with an UE Context Key exist and not null
    * @param [const std::string&] ue_context_key: UE Context Key
-   * @return true if UE context exist, otherwise false
+   * @return true if UE context exist and not null, otherwise false
    */
   bool is_ran_amf_id_2_ue_context(const std::string& ue_context_key) const;
-
-  /*
-   * Get UE context associated with an UE Context Key
-   * @param [const std::string&] ue_context_key: UE Context Key
-   * @return shared pointer to the context
-   */
-  std::shared_ptr<ue_context> ran_amf_id_2_ue_context(
-      const std::string& ue_context_key) const;
 
   /*
    * Get UE context associated with an UE Context Key and verify if this pointer
@@ -251,18 +217,20 @@ class amf_app {
       const std::string& ue_context_key, const std::shared_ptr<ue_context>& uc);
 
   /*
-   * Verify whether a UE context associated with a SUPI exist
+   * Verify whether a UE context associated with a SUPI exist and not null
    * @param [const std::string&] supi: UE SUPI
-   * @return true if UE context exist, otherwise false
+   * @return true if UE context exist and not null, otherwise false
    */
   bool is_supi_2_ue_context(const string& supi) const;
 
   /*
    * Get UE context associated with a SUPI
-   * @param [const std::string&] supi: UE SUPI
-   * @return shared pointer to the context
+   * @param [const std::string&] supi: SUPI
+   * @param [std::shared_ptr<ue_context>&] uc: pointer to UE context if exist
+   * @return true if UE Context exist and not null
    */
-  std::shared_ptr<ue_context> supi_2_ue_context(const string& supi) const;
+  bool supi_2_ue_context(
+      const std::string& supi, std::shared_ptr<ue_context>& uc) const;
 
   /*
    * Store an UE context associated with a SUPI
@@ -298,14 +266,14 @@ class amf_app {
 
   /*
    * Update PDU Session Context status
-   * @param [const std::string&] ue_id: UE SUPI
+   * @param [const std::string&] supi: UE SUPI
    * @param [const uint8_t&] pdu_session_id: PDU Session ID
    * @param [const oai::amf::model::SmContextStatusNotification&]
    * statusNotification: Notification information received from SMF
    * @return true if success, otherwise false
    */
   bool update_pdu_sessions_context(
-      const string& ue_id, const uint8_t& pdu_session_id,
+      const string& supi, const uint8_t& pdu_session_id,
       const oai::amf::model::SmContextStatusNotification& statusNotification);
 
   /*

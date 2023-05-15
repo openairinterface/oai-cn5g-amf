@@ -19,95 +19,110 @@
  *      contact@openairinterface.org
  */
 
-/*! \file
- \brief
- \author  Keliang DU, BUPT
- \date 2020
- \email: contact@openairinterface.org
- */
-
 #include "RegistrationComplete.hpp"
-
-#include "3gpp_ts24501.hpp"
-#include "logger.hpp"
 
 using namespace nas;
 
 //------------------------------------------------------------------------------
-RegistrationComplete::RegistrationComplete() {
-  Logger::nas_mm().debug("Initiating class RegistrationComplete");
-  plain_header                 = nullptr;
-  ie_sor_transparent_container = nullptr;
+RegistrationComplete::RegistrationComplete()
+    : NasMmPlainHeader(EPD_5GS_MM_MSG, REGISTRATION_COMPLETE) {
+  ie_sor_transparent_container = std::nullopt;
 }
 
 //------------------------------------------------------------------------------
 RegistrationComplete::~RegistrationComplete() {}
 
 //------------------------------------------------------------------------------
-void RegistrationComplete::setHeader(uint8_t security_header_type) {
-  plain_header = new NasMmPlainHeader();
-  plain_header->setHeader(
-      EPD_5GS_MM_MSG, security_header_type, REGISTRATION_COMPLETE);
+void RegistrationComplete::SetHeader(uint8_t security_header_type) {
+  NasMmPlainHeader::SetSecurityHeaderType(security_header_type);
 }
 
 //------------------------------------------------------------------------------
-void RegistrationComplete::setSOR_Transparent_Container(
-    uint8_t header, uint8_t* value) {
+void RegistrationComplete::SetSorTransparentContainer(
+    uint8_t header,
+    const uint8_t (&value)[kSorTransparentContainerIeMacLength]) {
   ie_sor_transparent_container =
-      new SOR_Transparent_Container(0x73, header, value);
+      std::make_optional<SorTransparentContainer>(header, value);
 }
 
 //------------------------------------------------------------------------------
-int RegistrationComplete::encode2buffer(uint8_t* buf, int len) {
+int RegistrationComplete::Encode(uint8_t* buf, int len) {
   Logger::nas_mm().debug("Encoding RegistrationComplete message");
-  int encoded_size = 0;
-  if (!plain_header) {
-    Logger::nas_mm().error("Mandatory IE missing Header");
-    return 0;
+
+  int encoded_size    = 0;
+  int encoded_ie_size = 0;
+
+  // Header
+  if ((encoded_ie_size = NasMmPlainHeader::Encode(buf, len)) ==
+      KEncodeDecodeError) {
+    Logger::nas_mm().error("Encoding NAS Header error");
+    return KEncodeDecodeError;
   }
-  if (!(plain_header->encode2buffer(buf, len))) return 0;
-  encoded_size += 3;
-  if (!ie_sor_transparent_container) {
-    Logger::nas_mm().warn("IE ie_sor_transparent_container is not available");
+  encoded_size += encoded_ie_size;
+
+  if (!ie_sor_transparent_container.has_value()) {
+    Logger::nas_mm().debug(
+        "IE %s is not available", SorTransparentContainer::GetIeName().c_str());
   } else {
-    if (int size = ie_sor_transparent_container->encode2buffer(
-            buf + encoded_size, len - encoded_size)) {
-      encoded_size += size;
+    encoded_ie_size = ie_sor_transparent_container.value().Encode(
+        buf + encoded_size, len - encoded_size);
+    if (encoded_ie_size != KEncodeDecodeError) {
+      encoded_size += encoded_ie_size;
     } else {
-      Logger::nas_mm().error("Encoding ie_sor_transparent_container error");
-      return 0;
+      Logger::nas_mm().error(
+          "Encoding %s error", SorTransparentContainer::GetIeName().c_str());
+      return KEncodeDecodeError;
     }
   }
+
   Logger::nas_mm().debug(
       "Encoded RegistrationComplete message len (%d)", encoded_size);
-  return 1;
+  return encoded_size;
 }
 
 //------------------------------------------------------------------------------
-int RegistrationComplete::decodefrombuffer(
-    NasMmPlainHeader* header, uint8_t* buf, int len) {
+int RegistrationComplete::Decode(uint8_t* buf, int len) {
   Logger::nas_mm().debug("Decoding RegistrationComplete message");
-  int decoded_size = 3;
-  plain_header     = header;
+
+  int decoded_size   = 0;
+  int decoded_result = 0;
+
+  // Header
+  decoded_result = NasMmPlainHeader::Decode(buf, len);
+  if (decoded_result == KEncodeDecodeError) {
+    Logger::nas_mm().error("Decoding NAS Header error");
+    return KEncodeDecodeError;
+  }
+  decoded_size += decoded_result;
+
   Logger::nas_mm().debug("Decoded_size (%d)", decoded_size);
-  uint8_t octet = *(buf + decoded_size);
+
+  // Decode other IEs
+  uint8_t octet = 0x00;
+  DECODE_U8_VALUE(buf + decoded_size, octet);
   Logger::nas_mm().debug("First option IEI (0x%x)", octet);
   while ((octet != 0x0)) {
     switch (octet) {
-      case 0x73: {
-        Logger::nas_mm().debug("Decoding IEI (0x73)");
-        ie_sor_transparent_container = new SOR_Transparent_Container();
-        decoded_size += ie_sor_transparent_container->decodefrombuffer(
-            buf + decoded_size, len - decoded_size, true);
-        octet = *(buf + decoded_size);
+      case kIeiSorTransparentContainer: {
+        Logger::nas_mm().debug(
+            "Decoding IEI 0x%x", kIeiSorTransparentContainer);
+        SorTransparentContainer ie_sor_transparent_container_tmp = {};
+        if ((decoded_result = ie_sor_transparent_container_tmp.Decode(
+                 buf + decoded_size, len - decoded_size, true)) ==
+            KEncodeDecodeError)
+          return KEncodeDecodeError;
+        decoded_size += decoded_result;
+        ie_sor_transparent_container = std::optional<SorTransparentContainer>(
+            ie_sor_transparent_container_tmp);
+        DECODE_U8_VALUE(buf + decoded_size, octet);
         Logger::nas_mm().debug("Next IEI (0x%x)", octet);
       } break;
+
       default: {
-        Logger::nas_mm().debug("Unknown IEI");
-        // Stop the decoding process
+        Logger::nas_mm().warn("Unknown IEI 0x%x, stop decoding...", octet);
+        // Stop decoding
         octet = 0x00;
-        break;
-      }
+      } break;
     }
   }
   Logger::nas_mm().debug(

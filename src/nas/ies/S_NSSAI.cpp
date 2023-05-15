@@ -26,14 +26,24 @@
 using namespace nas;
 
 //------------------------------------------------------------------------------
+S_NSSAI::S_NSSAI(std::optional<uint8_t> iei) : Type4NasIe() {
+  if (iei_.has_value()) {
+    SetIei(iei.value());
+  }
+  sst_              = {0};
+  sd_               = std::nullopt;
+  mapped_hplmn_sst_ = std::nullopt;
+  mapped_hplmn_sd_  = std::nullopt;
+  SetLengthIndicator(1);  // SST
+}
+
+//------------------------------------------------------------------------------
 S_NSSAI::S_NSSAI(std::optional<uint8_t> iei, SNSSAI_s snssai) {
   // IEI
-  iei_ = iei;
   if (iei_.has_value()) {
-    length = snssai.length + 1;
-  } else {
-    length = snssai.length;
+    SetIei(iei.value());
   }
+
   // SST
   sst_ = snssai.sst;
 
@@ -63,23 +73,15 @@ S_NSSAI::S_NSSAI(std::optional<uint8_t> iei, SNSSAI_s snssai) {
   } else {
     sd_ = std::nullopt;
   }
-}
 
-//------------------------------------------------------------------------------
-S_NSSAI::S_NSSAI() {
-  iei_              = std::nullopt;
-  sst_              = {0};
-  sd_               = std::nullopt;
-  mapped_hplmn_sst_ = std::nullopt;
-  mapped_hplmn_sd_  = std::nullopt;
-  length            = {0};
+  SetLengthIndicator(snssai.length);
 }
 
 //------------------------------------------------------------------------------
 S_NSSAI::~S_NSSAI() {}
 
 //------------------------------------------------------------------------------
-void S_NSSAI::getValue(SNSSAI_t& snssai) {
+void S_NSSAI::getValue(SNSSAI_t& snssai) const {
   uint8_t len = {0};
   // SST
   snssai.sst = sst_;
@@ -119,11 +121,10 @@ void S_NSSAI::SetSNSSAI(
     std::optional<int8_t> mapped_hplmn_sst,
     std::optional<int32_t> mapped_hplmn_sd) {
   // IEI
-  iei_ = iei;
   if (iei_.has_value()) {
-    length += 1;
+    SetIei(iei.value());
   }
-
+  uint8_t length = 0;
   // SST
   sst_ = sst;
   length += SST_LENGTH;
@@ -145,11 +146,8 @@ void S_NSSAI::SetSNSSAI(
   if (mapped_hplmn_sd_.has_value()) {
     length += SD_LENGTH;
   }
-}
 
-//------------------------------------------------------------------------------
-uint8_t S_NSSAI::GetLength() {
-  return length;
+  SetLengthIndicator(length);
 }
 
 //------------------------------------------------------------------------------
@@ -172,20 +170,20 @@ std::string S_NSSAI::ToString() {
 }
 
 //------------------------------------------------------------------------------
-int S_NSSAI::encode2buffer(uint8_t* buf, int len) {
-  Logger::nas_mm().debug("Encoding S-NSSAI");
-  if (len < length) {
-    Logger::nas_mm().error("len is less than %d", length);
-    return 0;
+int S_NSSAI::Encode(uint8_t* buf, int len) {
+  Logger::nas_mm().debug("Encoding %s", GetIeName().c_str());
+  int ie_len = GetIeLength();
+
+  if (len < ie_len) {
+    Logger::nas_mm().error("Len is less than %d", ie_len);
+    return KEncodeDecodeError;
   }
+
   int encoded_size = 0;
-
-  // IEI
-  if (iei_.has_value())
-    ENCODE_U8(buf + encoded_size, iei_.value(), encoded_size);
-
-  // LENGTH
-  ENCODE_U8(buf + encoded_size, length - 2, encoded_size);
+  // IEI and Length
+  int encoded_header_size = Type4NasIe::Encode(buf + encoded_size, len);
+  if (encoded_header_size == KEncodeDecodeError) return KEncodeDecodeError;
+  encoded_size += encoded_header_size;
 
   // SST
   ENCODE_U8(buf + encoded_size, sst_, encoded_size);
@@ -202,27 +200,30 @@ int S_NSSAI::encode2buffer(uint8_t* buf, int len) {
   if (mapped_hplmn_sd_.has_value())
     ENCODE_U24(buf + encoded_size, mapped_hplmn_sd_.value(), encoded_size);
 
-  Logger::nas_mm().debug("Encoded S-NSSAI len (%d)", encoded_size);
+  Logger::nas_mm().debug(
+      "Encoded %s, len (%d)", GetIeName().c_str(), encoded_size);
   return encoded_size;
 }
 
 //------------------------------------------------------------------------------
-int S_NSSAI::decodefrombuffer(uint8_t* buf, int len, const bool is_option) {
-  Logger::nas_mm().debug("Decoding S_NSSAI");
-  int decoded_size = {0};
-
-  if (is_option) {
-    uint8_t iei_value = {0};
-    DECODE_U8(buf + decoded_size, iei_value, decoded_size);
-    iei_ = std::optional<uint8_t>{iei_value};
-    Logger::nas_mm().debug("IEI (0x%x)", iei_value);
-  } else {
-    iei_ = std::nullopt;
+int S_NSSAI::Decode(uint8_t* buf, int len, const bool is_iei) {
+  if (len < kSNssaiMinimumLength) {
+    Logger::nas_mm().error(
+        "Buffer length is less than the minimum length of this IE (%d octet)",
+        kSNssaiMinimumLength);
+    return KEncodeDecodeError;
   }
 
-  DECODE_U8(buf + decoded_size, length, decoded_size);
+  uint8_t decoded_size = 0;
+  uint8_t octet        = 0;
+  Logger::nas_mm().debug("Decoding %s", GetIeName().c_str());
 
-  switch (length) {
+  // IEI and Length
+  int decoded_header_size = Type4NasIe::Decode(buf + decoded_size, len, is_iei);
+  if (decoded_header_size == KEncodeDecodeError) return KEncodeDecodeError;
+  decoded_size += decoded_header_size;
+
+  switch (GetLengthIndicator()) {
     case 1: {
       DECODE_U8(buf + decoded_size, sst_, decoded_size);
       sd_               = std::nullopt;
@@ -274,6 +275,7 @@ int S_NSSAI::decodefrombuffer(uint8_t* buf, int len, const bool is_option) {
   }
 
   Logger::nas_mm().debug("Decoded S-NSSAI %s", ToString().c_str());
-  Logger::nas_mm().debug("Decoded S-NSSAI len (%d)", decoded_size);
+  Logger::nas_mm().debug(
+      "Decoded %s, len (%d)", GetIeName().c_str(), decoded_size);
   return decoded_size;
 }

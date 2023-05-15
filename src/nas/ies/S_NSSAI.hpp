@@ -19,41 +19,42 @@
  *      contact@openairinterface.org
  */
 
-/*! \file
- \brief
- \author  Keliang DU, BUPT
- \date 2020
- \email: contact@openairinterface.org
- */
+#ifndef _S_NSSAI_NAS_H_
+#define _S_NSSAI_NAS_H_
 
-#ifndef __S_NSSAI_H_
-#define __S_NSSAI_H_
+#include "Type4NasIe.hpp"
+#include "struct.hpp"
 
-#include <stdint.h>
-
-#include "nas_ie_header.hpp"
-#include <optional>
+constexpr uint8_t kSNssaiMinimumLength = 3;
+constexpr uint8_t kSNssaiMaximumLength = 10;
+constexpr auto kSNssaiIeName           = "S-NSSAI";
 
 namespace nas {
 
-class S_NSSAI {
+class S_NSSAI : public Type4NasIe {
  public:
-  S_NSSAI();
+  S_NSSAI(std::optional<uint8_t> iei);
   S_NSSAI(std::optional<uint8_t> iei, SNSSAI_s snssai);
   ~S_NSSAI();
-  int encode2buffer(uint8_t* buf, int len);
-  int decodefrombuffer(uint8_t* buf, int len, const bool is_option = true);
-  void getValue(SNSSAI_t& snssai);
+
+  static std::string GetIeName() { return kSNssaiIeName; }
+
+  // void SetSNssai(SNSSAI_s snssai);
+  int Encode(uint8_t* buf, int len);
+  int Decode(uint8_t* buf, int len, const bool is_option = true);
+
+  void getValue(SNSSAI_t& snssai) const;
+
   void SetSNSSAI(
       std::optional<int8_t> iei, uint8_t sst, std::optional<int32_t> sd,
       std::optional<int8_t> mapped_hplmn_sst,
       std::optional<int32_t> mapped_hplmn_sd);
+
   uint8_t GetLength();
+
   std::string ToString();
 
  private:
-  std::optional<int8_t> iei_;
-  uint8_t length;
   uint8_t sst_;
   std::optional<int32_t> sd_;
   std::optional<int8_t> mapped_hplmn_sst_;

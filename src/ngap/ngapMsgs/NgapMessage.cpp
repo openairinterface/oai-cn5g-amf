@@ -20,7 +20,9 @@
  */
 
 #include "NgapMessage.hpp"
+
 #include "logger.hpp"
+#include "output_wrapper.hpp"
 
 extern "C" {
 #include "asn_codecs.h"
@@ -460,17 +462,19 @@ void NgapMessage::setMessageType(NgapMessageType messageType) {
 }
 
 //------------------------------------------------------------------------------
-int NgapMessage::encode2Buffer(uint8_t* buf, int bufSize) {
-  asn_fprint(stderr, &asn_DEF_Ngap_NGAP_PDU, ngapPdu);
+int NgapMessage::Encode(uint8_t* buf, int bufSize) {
+  output_wrapper::print_asn_msg(&asn_DEF_Ngap_NGAP_PDU, ngapPdu);
   asn_enc_rval_t er = aper_encode_to_buffer(
       &asn_DEF_Ngap_NGAP_PDU, NULL, ngapPdu, buf, bufSize);
-  Logger::ngap().debug("er.encoded (%d)", er.encoded);
-  return er.encoded;
+
+  int encoded_size = (er.encoded + 7) >> 3;
+  Logger::ngap().debug("Encoded size (%d)", encoded_size);
+  return encoded_size;
 }
 
 //------------------------------------------------------------------------------
 void NgapMessage::encode2NewBuffer(uint8_t*& buf, int& encoded_size) {
-  asn_fprint(stderr, &asn_DEF_Ngap_NGAP_PDU, ngapPdu);
+  output_wrapper::print_asn_msg(&asn_DEF_Ngap_NGAP_PDU, ngapPdu);
   encoded_size = aper_encode_to_new_buffer(
       &asn_DEF_Ngap_NGAP_PDU, NULL, ngapPdu, (void**) &buf);
   Logger::ngap().debug("Encoded message size ( %d )", encoded_size);

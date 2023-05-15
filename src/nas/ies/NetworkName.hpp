@@ -27,6 +27,7 @@
 #include <string>
 
 constexpr uint8_t kNetworkNameMinimumLength = 3;
+constexpr auto kNetworkNameIeName           = "Network Name";
 
 namespace nas {
 
@@ -35,6 +36,8 @@ class NetworkName {
   NetworkName();
   NetworkName(const uint8_t& iei);
   ~NetworkName();
+
+  static std::string GetIeName() { return kNetworkNameIeName; }
 
   void setIEI(const uint8_t& iei);
   void setCodingScheme(const uint8_t& value);
@@ -47,7 +50,7 @@ class NetworkName {
   void setTextString(const std::string& str);
   void setTextString(const bstring& str);
 
-  int encode2buffer(uint8_t* buf, int len);
+  int Encode(uint8_t* buf, int len);
   int decodefrombuffer(uint8_t* buf, int len, bool is_option = true);
 
  private:

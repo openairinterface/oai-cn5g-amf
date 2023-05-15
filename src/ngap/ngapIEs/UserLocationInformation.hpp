@@ -47,6 +47,7 @@ class UserLocationInformation {
   // void setInformation(const UserLocationInformationN3IWF&);
   // void getInformation(UserLocationInformationN3IWF&);
 
+  // TODO: use reference instead of raw pointer
   bool encode(Ngap_UserLocationInformation_t* user_location_information);
   bool decode(Ngap_UserLocationInformation_t* user_location_information);
   Ngap_UserLocationInformation_PR getChoiceOfUserLocationInformation();

@@ -18,35 +18,35 @@
  * For more information about the OpenAirInterface (OAI) Software Alliance:
  *      contact@openairinterface.org
  */
+#ifndef _AUTHENTICATION_PARAMETER_AUTN_H_
+#define _AUTHENTICATION_PARAMETER_AUTN_H_
 
-/*! \file
- \brief
- \author  Keliang DU, BUPT
- \date 2020
- \email: contact@openairinterface.org
- */
+#include "Type4NasIe.hpp"
 
-#ifndef __Authentication_Parameter_AUTN_H_
-#define __Authentication_Parameter_AUTN_H_
-
-#include <stdint.h>
+constexpr uint8_t kAuthenticationParameterAutnLength = 18;
+constexpr uint8_t kAuthenticationParameterAutnValueLength =
+    kAuthenticationParameterAutnLength - 2;
+constexpr auto kAuthenticationParameterAutnIeName =
+    "Authentication Parameter AUTN";
 
 namespace nas {
 
-class Authentication_Parameter_AUTN {
+class Authentication_Parameter_AUTN : public Type4NasIe {
  public:
   Authentication_Parameter_AUTN();
   Authentication_Parameter_AUTN(uint8_t iei);
-  Authentication_Parameter_AUTN(const uint8_t iei, uint8_t* value);
+  Authentication_Parameter_AUTN(
+      const uint8_t iei,
+      uint8_t value[kAuthenticationParameterAutnValueLength]);
   ~Authentication_Parameter_AUTN();
-  // void setValue(uint8_t iei, uint8_t value);
-  int encode2buffer(uint8_t* buf, int len);
-  int decodefrombuffer(uint8_t* buf, int len, bool is_option);
-  uint8_t* getValue();
+
+  static std::string GetIeName() { return kAuthenticationParameterAutnIeName; }
+
+  int Encode(uint8_t* buf, int len);
+  int Decode(uint8_t* buf, int len, bool is_option);
 
  private:
-  uint8_t _iei;
-  uint8_t _value[16];
+  uint8_t _value[kAuthenticationParameterAutnValueLength];
 };
 
 }  // namespace nas

@@ -33,6 +33,8 @@ namespace ngap {
 class UERadioCapability {
  public:
   UERadioCapability();
+  // UERadioCapability(const OCTET_STRING_t& capability);
+  // UERadioCapability(const bstring& capability);
   virtual ~UERadioCapability();
 
   bool encode(Ngap_UERadioCapability_t& ueRadioCapability);
@@ -45,7 +47,7 @@ class UERadioCapability {
   bool get(bstring& capability);
 
  private:
-  OCTET_STRING_t ue_radio_capability_;
+  bstring ue_radio_capability_;
 };
 
 }  // namespace ngap

@@ -19,34 +19,36 @@
  *      contact@openairinterface.org
  */
 
-/*! \file
- \brief
- \author  Keliang DU, BUPT
- \date 2020
- \email: contact@openairinterface.org
- */
+#ifndef _AUTHENTICATION_PARAMETER_RAND_H_
+#define _AUTHENTICATION_PARAMETER_RAND_H_
 
-#ifndef __Authentication_Parameter_RAND_H_
-#define __Authentication_Parameter_RAND_H_
+#include "Type3NasIe.hpp"
 
-#include <stdint.h>
+constexpr uint8_t kAuthenticationParameterRandLength = 17;
+constexpr uint8_t kAuthenticationParameterRandValueLength =
+    kAuthenticationParameterRandLength - 1;
+constexpr auto kAuthenticationParameterRandIeName =
+    "Authentication Parameter RAND";
 
 namespace nas {
 
-class Authentication_Parameter_RAND {
+class Authentication_Parameter_RAND : public Type3NasIe {
  public:
   Authentication_Parameter_RAND();
   Authentication_Parameter_RAND(uint8_t iei);
-  Authentication_Parameter_RAND(const uint8_t iei, uint8_t* value);
+  Authentication_Parameter_RAND(
+      uint8_t iei, uint8_t value[kAuthenticationParameterRandValueLength]);
   ~Authentication_Parameter_RAND();
-  // void setValue(uint8_t iei, uint8_t value);
-  int encode2buffer(uint8_t* buf, int len);
-  int decodefrombuffer(uint8_t* buf, int len, bool is_option);
-  uint8_t* getValue();
+
+  static std::string GetIeName() { return kAuthenticationParameterRandIeName; }
+
+  int Encode(uint8_t* buf, int len);
+  int Decode(uint8_t* buf, int len, bool is_option);
+
+  // uint8_t* getValue();
 
  private:
-  uint8_t _iei;
-  uint8_t _value[16];
+  uint8_t _value[kAuthenticationParameterRandValueLength];
 };
 
 }  // namespace nas

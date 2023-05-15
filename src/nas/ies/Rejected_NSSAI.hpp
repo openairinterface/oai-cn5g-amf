@@ -23,26 +23,29 @@
 #define _REJECTED_NSSAI_H_
 
 #include <Rejected_SNSSAI.hpp>
+#include "Type4NasIe.hpp"
 
-#include <stdint.h>
-#include <vector>
+constexpr uint8_t kRejectedNssaiMinimumLength = 4;
+constexpr uint8_t kRejectedNssaiMaximumLength = 42;
+constexpr auto kRejectedNssaiIeName           = "Rejected NSSAI";
 
 namespace nas {
 
-class Rejected_NSSAI {
+class Rejected_NSSAI : public Type4NasIe {
  public:
-  Rejected_NSSAI();
   Rejected_NSSAI(uint8_t iei);
   ~Rejected_NSSAI();
-  void setRejectedSNSSAIs(const std::vector<Rejected_SNSSAI>& nssais);
-  void getRejectedSNSSAIs(std::vector<Rejected_SNSSAI>& nssais);
-  int encode2buffer(uint8_t* buf, int len);
-  int decodefrombuffer(uint8_t* buf, int len, bool is_option);
+
+  static std::string GetIeName() { return kRejectedNssaiIeName; }
+
+  int Encode(uint8_t* buf, int len);
+  int Decode(uint8_t* buf, int len, bool is_iei);
+
+  void SetRejectedSNssais(const std::vector<Rejected_SNSSAI>& nssais);
+  void GetRejectedSNssais(std::vector<Rejected_SNSSAI>& nssais);
 
  private:
-  uint8_t _iei;
-  uint8_t length;
-  std::vector<Rejected_SNSSAI> rejected_nssais;
+  std::vector<Rejected_SNSSAI> rejected_nssais_;
 };
 
 }  // namespace nas

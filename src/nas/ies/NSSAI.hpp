@@ -19,38 +19,35 @@
  *      contact@openairinterface.org
  */
 
-/*! \file
- \brief
- \author  Keliang DU, BUPT
- \date 2020
- \email: contact@openairinterface.org
- */
+#ifndef _NSSAI_H_
+#define _NSSAI_H_
 
-#ifndef __NSSAI_H_
-#define __NSSAI_H_
-#include <stdint.h>
+#include "NasIeHeader.hpp"
+#include "Type4NasIe.hpp"
 
-#include <vector>
-
-#include "nas_ie_header.hpp"
+constexpr uint8_t kNssaiMinimumLength = 4;
+constexpr uint8_t kNssaiMaximumLength = 146;
+constexpr auto kNssaiIeName           = "NSSAI";
 
 namespace nas {
 
-class NSSAI {
+class NSSAI : public Type4NasIe {
  public:
   NSSAI();
   NSSAI(uint8_t iei);
-  NSSAI(const uint8_t iei, std::vector<struct SNSSAI_s> nssai);
+  NSSAI(uint8_t iei, const std::vector<struct SNSSAI_s>& nssai);
   ~NSSAI();
-  void setS_NAASI(uint8_t SST);
-  int encode2buffer(uint8_t* buf, int len);
-  int decodefrombuffer(uint8_t* buf, int len, bool is_option);
-  void getValue(std::vector<struct SNSSAI_s>& nssai);
+
+  static std::string GetIeName() { return kNssaiIeName; }
+
+  int Encode(uint8_t* buf, int len);
+  int Decode(uint8_t* buf, int len, bool is_iei);
+
+  void GetValue(std::vector<struct SNSSAI_s>& nssai) const;
 
  private:
-  uint8_t _iei;
-  uint8_t length;
-  std::vector<struct SNSSAI_s> S_NSSAIs;
+  std::vector<struct SNSSAI_s>
+      S_NSSAIs;  // TODO: use class S-NSSAI instead of struct SNSSAI_s
 };
 
 }  // namespace nas

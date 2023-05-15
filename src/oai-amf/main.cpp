@@ -33,7 +33,6 @@
 #include "amf-http2-server.hpp"
 #include "amf_app.hpp"
 #include "amf_config.hpp"
-#include "amf_module_from_config.hpp"
 #include "amf_statistics.hpp"
 #include "itti.hpp"
 #include "logger.hpp"
@@ -48,7 +47,6 @@ using namespace config;
 using namespace amf_application;
 
 amf_config amf_cfg;
-amf_modules modules;
 itti_mw* itti_inst    = nullptr;
 amf_app* amf_app_inst = nullptr;
 statistics stacs;
@@ -108,14 +106,12 @@ int main(int argc, char** argv) {
 
   amf_cfg.load(Options::getlibconfigConfig());
   amf_cfg.display();
-  modules.load(Options::getlibconfigConfig());
-  modules.display();
+  Logger::set_level(amf_cfg.log_level);
 
   itti_inst = new itti_mw();
   itti_inst->start(amf_cfg.itti.itti_timer_sched_params);
 
   amf_app_inst = new amf_app(amf_cfg);
-  amf_app_inst->allRegistredModulesInit(modules);
 
   Logger::amf_app().debug("Initiating AMF server endpoints");
   // AMF HTTP1 server

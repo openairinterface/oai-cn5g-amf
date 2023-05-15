@@ -19,7 +19,6 @@
 #      contact@openairinterface.org
 ################################################################################
 
-include_directories(${SRC_TOP_DIR}/../build/ext/spdlog/include)
 include_directories(${SRC_TOP_DIR}/common)
 include_directories(${SRC_TOP_DIR}/common/unicode)
 include_directories(${SRC_TOP_DIR}/nas/common)
@@ -30,6 +29,7 @@ include_directories(${SRC_TOP_DIR}/amf-app)
 include_directories(${SRC_TOP_DIR}/itti)
 include_directories(${SRC_TOP_DIR}/itti/msgs)
 include_directories(${SRC_TOP_DIR}/sbi/amf_server/model)
+include_directories(${SRC_TOP_DIR}/${MOUNTED_COMMON}/logger)
 
 add_library (AMF_UTILS STATIC
  ${CMAKE_CURRENT_SOURCE_DIR}/backtrace.c
@@ -39,6 +39,7 @@ add_library (AMF_UTILS STATIC
  ${CMAKE_CURRENT_SOURCE_DIR}/thread_sched.cpp
  ${CMAKE_CURRENT_SOURCE_DIR}/mime_parser.cpp
  ${CMAKE_CURRENT_SOURCE_DIR}/fqdn.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/3gpp_conversions.cpp
+ ${CMAKE_CURRENT_SOURCE_DIR}/3gpp_conversions.cpp
+ ${CMAKE_CURRENT_SOURCE_DIR}/NasUtils.cpp
  )
 

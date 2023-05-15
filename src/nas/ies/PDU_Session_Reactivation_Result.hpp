@@ -18,36 +18,35 @@
  * For more information about the OpenAirInterface (OAI) Software Alliance:
  *      contact@openairinterface.org
  */
+#ifndef _PDU_SESSION_REACTIVATION_RESULT_H_
+#define _PDU_SESSION_REACTIVATION_RESULT_H_
 
-/*! \file
- \brief
- \author  Keliang DU, BUPT
- \date 2020
- \email: contact@openairinterface.org
- */
+#include "Type4NasIe.hpp"
 
-#ifndef __PDU_Session_Reactivation_Result_H_
-#define __PDU_Session_Reactivation_Result_H_
-
-#include <stdint.h>
+constexpr uint8_t kPduSessionReactivationResultMinimumLength = 4;
+constexpr uint8_t kPduSessionReactivationResultMaximumLength = 34;
+constexpr auto kPduSessionReactivationResultIeName =
+    "PDU Session Reactivation Result";
 
 namespace nas {
 
-class PDU_Session_Reactivation_Result {
+class PDU_Session_Reactivation_Result : public Type4NasIe {
  public:
   PDU_Session_Reactivation_Result();
-  PDU_Session_Reactivation_Result(uint8_t iei);
-  PDU_Session_Reactivation_Result(const uint8_t iei, uint16_t value);
+  PDU_Session_Reactivation_Result(uint16_t value);
   ~PDU_Session_Reactivation_Result();
-  void setValue(uint8_t iei, uint16_t value);
-  int encode2buffer(uint8_t* buf, int len);
-  int decodefrombuffer(uint8_t* buf, int len, bool is_option);
-  uint16_t getValue();
+
+  static std::string GetIeName() { return kPduSessionReactivationResultIeName; }
+
+  void setValue(uint16_t value);
+  uint16_t getValue() const;
+
+  int Encode(uint8_t* buf, int len);
+  int Decode(uint8_t* buf, int len, bool is_iei);
 
  private:
-  uint8_t _iei;
-  uint8_t length;
   uint16_t _value;
+  // Spare
 };
 
 }  // namespace nas

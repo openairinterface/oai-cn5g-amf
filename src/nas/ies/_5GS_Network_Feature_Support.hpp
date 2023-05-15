@@ -19,37 +19,36 @@
  *      contact@openairinterface.org
  */
 
-/*! \file __5GS_Network_Feature_Support.hpp
- \brief
- \author  Keliang DU, BUPT
- \date 2020
- \email: contact@openairinterface.org
- */
+#ifndef _5GS_NETWORK_FEATURE_SUPPORT_H
+#define _5GS_NETWORK_FEATURE_SUPPORT_H
 
-#ifndef __5GS_Network_Feature_Support_H
-#define __5GS_Network_Feature_Support_H
+#include "Type4NasIe.hpp"
 
-#include <stdint.h>
+constexpr uint8_t k5gsNetworkFeatureSupportMinimumLength = 3;
+constexpr uint8_t k5gsNetworkFeatureSupportMaximumLength = 5;
+constexpr auto k5gsNetworkFeatureSupportIeName = "5GS Network Feature Support";
 
 namespace nas {
 
-class _5GS_Network_Feature_Support {
+class _5GS_Network_Feature_Support : public Type4NasIe {
  public:
-  _5GS_Network_Feature_Support(uint8_t iei);
   _5GS_Network_Feature_Support();
+  _5GS_Network_Feature_Support(uint8_t value);
+  _5GS_Network_Feature_Support(uint8_t value, uint8_t value2);
   ~_5GS_Network_Feature_Support();
-  _5GS_Network_Feature_Support(
-      const uint8_t iei, uint8_t value, uint8_t value2);
-  void setValue(uint8_t value);
-  uint8_t getValue();
-  int encode2buffer(uint8_t* buf, int len);
-  int decodefrombuffer(uint8_t* buf, int len, bool is_option);
+
+  static std::string GetIeName() { return k5gsNetworkFeatureSupportIeName; }
+
+  void setValue(uint8_t value, uint8_t value2);
+  // uint8_t getValue() const;
+
+  int Encode(uint8_t* buf, int len);
+  int Decode(uint8_t* buf, int len, bool is_option);
 
  private:
-  uint8_t _iei;
-  uint8_t length;
   uint8_t _value;
   uint8_t _value2;
+  // Spare
 };
 
 }  // namespace nas

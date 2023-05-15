@@ -19,37 +19,40 @@
  *      contact@openairinterface.org
  */
 
-/*! \file
- \brief
- \author  Keliang DU, BUPT
- \date 2020
- \email: contact@openairinterface.org
- */
+#ifndef _PDU_SESSION_REACTIVATION_RESULT_ERROR_CAUSE_H_
+#define _PDU_SESSION_REACTIVATION_RESULT_ERROR_CAUSE_H_
 
-#ifndef __PDU_Session_Reactivation_Result_Error_Cause_H_
-#define __PDU_Session_Reactivation_Result_Error_Cause_H_
+#include "Type6NasIe.hpp"
 
-#include <stdint.h>
+constexpr uint8_t kPduSessionReactivationResultErrorCauseMinimumLength  = 5;
+constexpr uint32_t kPduSessionReactivationResultErrorCauseMaximumLength = 515;
+constexpr auto kPduSessionReactivationResultErrorCauseIeName =
+    "PDU Session Reactivation Result Error Cause";
 
 namespace nas {
 
-class PDU_Session_Reactivation_Result_Error_Cause {
+class PDU_Session_Reactivation_Result_Error_Cause : public Type6NasIe {
  public:
   PDU_Session_Reactivation_Result_Error_Cause();
-  PDU_Session_Reactivation_Result_Error_Cause(uint8_t iei);
   PDU_Session_Reactivation_Result_Error_Cause(
-      const uint8_t iei, uint8_t session_id, uint8_t value);
+      uint8_t session_id, uint8_t value);
   ~PDU_Session_Reactivation_Result_Error_Cause();
-  void setValue(uint8_t session_id, uint8_t value);
-  int encode2buffer(uint8_t* buf, int len);
-  int decodefrombuffer(uint8_t* buf, int len, bool is_option);
-  uint8_t getValue();
+
+  static std::string GetIeName() {
+    return kPduSessionReactivationResultErrorCauseIeName;
+  }
+
+  void setValue(uint8_t session_id, uint8_t cause);
+  std::pair<uint8_t, uint8_t> getValue() const;
+
+  void setValue(const std::vector<std::pair<uint8_t, uint8_t>>& value);
+  void getValue(std::vector<std::pair<uint8_t, uint8_t>>& value) const;
+
+  int Encode(uint8_t* buf, int len);
+  int Decode(uint8_t* buf, int len, bool is_option);
 
  private:
-  uint8_t _iei;
-  uint16_t length;
-  uint8_t SESSION_ID;
-  uint8_t _value;
+  std::vector<std::pair<uint8_t, uint8_t>> pdu_session_id_cause_value_pair;
 };
 
 }  // namespace nas

@@ -21,100 +21,96 @@
 
 #include "Rejected_NSSAI.hpp"
 
-#include "common_defs.h"
-#include "logger.hpp"
 using namespace nas;
 
 //------------------------------------------------------------------------------
-Rejected_NSSAI::Rejected_NSSAI(uint8_t iei) {
-  _iei   = iei;
-  length = 0;
-}
-
-//------------------------------------------------------------------------------
-Rejected_NSSAI::Rejected_NSSAI() {
-  _iei   = 0;
-  length = 0;
+Rejected_NSSAI::Rejected_NSSAI(uint8_t iei) : Type4NasIe(iei) {
+  SetLengthIndicator(2);  // 1 for Length/Cause and 1 for SST of the 1st S-NSSAI
 }
 
 //------------------------------------------------------------------------------
 Rejected_NSSAI::~Rejected_NSSAI() {}
 
 //------------------------------------------------------------------------------
-void Rejected_NSSAI::setRejectedSNSSAIs(
+void Rejected_NSSAI::SetRejectedSNssais(
     const std::vector<Rejected_SNSSAI>& nssais) {
-  rejected_nssais = nssais;
+  uint8_t length   = 0;
+  rejected_nssais_ = nssais;
   for (auto n : nssais) {
     length += n.getLength();
   }
+
+  SetLengthIndicator(length);
 }
 
 //------------------------------------------------------------------------------
-void Rejected_NSSAI::getRejectedSNSSAIs(std::vector<Rejected_SNSSAI>& nssais) {
-  nssais = rejected_nssais;
+void Rejected_NSSAI::GetRejectedSNssais(std::vector<Rejected_SNSSAI>& nssais) {
+  nssais = rejected_nssais_;
 }
 //------------------------------------------------------------------------------
-int Rejected_NSSAI::encode2buffer(uint8_t* buf, int len) {
-  Logger::nas_mm().debug("Encoding Rejected_NSSAI");
-  uint8_t ie_len = 0;
-  if (_iei) {
-    ie_len = length + 2;
-  } else {
-    ie_len = length + 1;
-  }
+
+int Rejected_NSSAI::Encode(uint8_t* buf, int len) {
+  Logger::nas_mm().debug("Encoding %s", GetIeName().c_str());
+  int ie_len = GetIeLength();
+
   if (len < ie_len) {
-    Logger::nas_mm().error("len is less than %d", ie_len);
-    return 0;
+    Logger::nas_mm().error("Len is less than %d", ie_len);
+    return KEncodeDecodeError;
   }
 
   int encoded_size = 0;
-  if (_iei) {
-    ENCODE_U8(buf + encoded_size, _iei, encoded_size);
-  }
+  // IEI and Length
+  int encoded_header_size = Type4NasIe::Encode(buf + encoded_size, len);
+  if (encoded_header_size == KEncodeDecodeError) return KEncodeDecodeError;
+  encoded_size += encoded_header_size;
 
-  // Skip Length for now
-  uint8_t len_pos = encoded_size;
-  encoded_size++;
-  uint8_t payload_len = 0;
-
-  for (auto n : rejected_nssais) {
-    int size = n.encode2buffer(buf + encoded_size, len - encoded_size);
-    if (size > -1) {
+  for (auto n : rejected_nssais_) {
+    int size = n.Encode(buf + encoded_size, len - encoded_size);
+    if (size != KEncodeDecodeError) {
       encoded_size += size;
-      payload_len += size;
     } else {
-      return -1;
+      return KEncodeDecodeError;
     }
   }
 
-  // Length
-  uint8_t encoded_size_length = 0;
-  ENCODE_U8(buf + len_pos, payload_len, encoded_size_length);
-
-  Logger::nas_mm().debug("Encoded Rejected_NSSAI (len %d)", encoded_size);
+  Logger::nas_mm().debug(
+      "Encoded %s, len (%d)", GetIeName().c_str(), encoded_size);
   return encoded_size;
 }
 
 //------------------------------------------------------------------------------
-int Rejected_NSSAI::decodefrombuffer(uint8_t* buf, int len, bool is_option) {
-  Logger::nas_mm().debug("Decoding Rejected_NSSAI");
-  int decoded_size = 0;
-  if (is_option) {
-    DECODE_U8(buf + decoded_size, _iei, decoded_size);
+int Rejected_NSSAI::Decode(uint8_t* buf, int len, bool is_iei) {
+  if (len < kRejectedNssaiMinimumLength) {
+    Logger::nas_mm().error(
+        "Buffer length is less than the minimum length of this IE (%d octet)",
+        kRejectedNssaiMinimumLength);
+    return KEncodeDecodeError;
   }
-  DECODE_U8(buf + decoded_size, length, decoded_size);
-  int ie_len = length;
+
+  uint8_t decoded_size = 0;
+  uint8_t octet        = 0;
+  Logger::nas_mm().debug("Decoding %s", GetIeName().c_str());
+
+  // IEI and Length
+  int decoded_header_size = Type4NasIe::Decode(buf + decoded_size, len, is_iei);
+  // decoded_size += Type4NasIe::Decode(buf + decoded_size, len, is_iei);
+  if (decoded_header_size == KEncodeDecodeError) return KEncodeDecodeError;
+  decoded_size += decoded_header_size;
+
+  int ie_len = GetLengthIndicator();
   while (ie_len > 0) {
     Rejected_SNSSAI snssai = {};
-    int size = snssai.decodefrombuffer(buf + decoded_size, len - decoded_size);
-    if (size > -1) {
+    int size = snssai.Decode(buf + decoded_size, len - decoded_size);
+    if (size != KEncodeDecodeError) {
       decoded_size += size;
       ie_len -= size;
-      rejected_nssais.push_back(snssai);
+      rejected_nssais_.push_back(snssai);
     } else {
-      return -1;
+      return KEncodeDecodeError;
     }
   }
-  Logger::nas_mm().debug("Decoded Rejected_NSSAI (len %d)", decoded_size);
+
+  Logger::nas_mm().debug(
+      "Decoded %s, len (%d)", GetIeName().c_str(), decoded_size);
   return decoded_size;
 }

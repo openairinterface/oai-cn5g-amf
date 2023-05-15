@@ -22,29 +22,32 @@
 #ifndef _5GMM_CAPABILITY_H_
 #define _5GMM_CAPABILITY_H_
 
-#include <stdint.h>
+#include "Type4NasIe.hpp"
 
 constexpr uint8_t k5gmmCapabilityMinimumLength = 3;
 constexpr uint8_t k5gmmCapabilityMaximumLength = 15;
+constexpr auto k5gmmCapabilityIeName           = "5GMM Capability";
 
 namespace nas {
 
-class _5GMMCapability {
+class _5GMMCapability : public Type4NasIe {
  public:
   _5GMMCapability();
-  _5GMMCapability(const uint8_t iei, uint8_t value);
+  _5GMMCapability(const uint8_t iei, uint8_t octet3);
   ~_5GMMCapability();
 
-  void setValue(uint8_t iei, uint8_t value);
-  uint8_t getValue();
+  void SetOctet3(const uint8_t iei, uint8_t octet3);
+  uint8_t GetOctet3() const;
 
-  int encode2buffer(uint8_t* buf, int len);
-  int decodefrombuffer(uint8_t* buf, int len, bool is_option = true);
+  int Encode(uint8_t* buf, int len);
+  int Decode(uint8_t* buf, int len, bool is_iei = true);
+
+  static std::string GetIeName() { return k5gmmCapabilityIeName; }
 
  private:
-  uint8_t m_iei;
   uint8_t octet3_;  // minimum length of 3 octets
-  uint8_t length;
+  std::optional<uint8_t> octet4_;
+  std::optional<uint8_t> octet5_;
 };
 
 }  // namespace nas

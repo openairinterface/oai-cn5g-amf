@@ -19,129 +19,139 @@
  *      contact@openairinterface.org
  */
 
-/*! \file
- \brief
- \author  Keliang DU, BUPT
- \date 2020
- \email: contact@openairinterface.org
- */
-
 #include "RegistrationReject.hpp"
-
-#include "3gpp_ts24501.hpp"
-#include "logger.hpp"
 
 using namespace nas;
 
 //------------------------------------------------------------------------------
-RegistrationReject::RegistrationReject() {
-  Logger::nas_mm().debug("initiating class RegistrationReject");
-  plain_header      = NULL;
-  ie_5gmm_cause     = NULL;
-  ie_T3346_value    = NULL;
-  ie_T3502_value    = NULL;
-  ie_eap_message    = NULL;
-  ie_rejected_nssai = NULL;
+RegistrationReject::RegistrationReject()
+    : NasMmPlainHeader(EPD_5GS_MM_MSG, REGISTRATION_REJECT) {
+  Logger::nas_mm().debug("Initiating RegistrationReject");
+  ie_t3346_value    = std::nullopt;
+  ie_t3502_value    = std::nullopt;
+  ie_eap_message    = std::nullopt;
+  ie_rejected_nssai = std::nullopt;
 }
 
 //------------------------------------------------------------------------------
 RegistrationReject::~RegistrationReject() {}
 
 //------------------------------------------------------------------------------
-void RegistrationReject::setHeader(uint8_t security_header_type) {
-  plain_header = new NasMmPlainHeader();
-  plain_header->setHeader(
-      EPD_5GS_MM_MSG, security_header_type, REGISTRATION_REJECT);
+void RegistrationReject::SetHeader(uint8_t security_header_type) {
+  NasMmPlainHeader::SetSecurityHeaderType(security_header_type);
 }
 
 //------------------------------------------------------------------------------
-void RegistrationReject::set_5GMM_Cause(uint8_t value) {
-  ie_5gmm_cause = new _5GMM_Cause(0x00, value);
+void RegistrationReject::Set5gmmCause(uint8_t value) {
+  ie_5gmm_cause.SetValue(value);
 }
 
 //------------------------------------------------------------------------------
-void RegistrationReject::setGPRS_Timer_2_3346(uint8_t value) {
-  ie_T3346_value = new GPRS_Timer_2(0x5f, value);
+void RegistrationReject::SetT3346(uint8_t value) {
+  ie_t3346_value = std::make_optional<GprsTimer2>(kT3346Value, value);
 }
 
 //------------------------------------------------------------------------------
-void RegistrationReject::setGPRS_Timer_2_3502(uint8_t value) {
-  ie_T3502_value = new GPRS_Timer_2(0x16, value);
+void RegistrationReject::SetT3502(uint8_t value) {
+  ie_t3502_value = std::make_optional<GprsTimer2>(kT3502Value, value);
 }
 
 //------------------------------------------------------------------------------
-void RegistrationReject::setEAP_Message(bstring eap) {
-  ie_eap_message = new EAP_Message(0x78, eap);
+void RegistrationReject::SetEapMessage(const bstring& eap) {
+  ie_eap_message = std::make_optional<EapMessage>(kIeiEapMessage, eap);
 }
 
 //------------------------------------------------------------------------------
-void RegistrationReject::setRejected_NSSAI(
+void RegistrationReject::SetRejectedNssai(
     const std::vector<Rejected_SNSSAI>& nssai) {
-  ie_rejected_nssai = new Rejected_NSSAI(0x69);
-  ie_rejected_nssai->setRejectedSNSSAIs(nssai);
+  ie_rejected_nssai = std::make_optional<Rejected_NSSAI>(kIeiRejectedNssaiRr);
+  ie_rejected_nssai.value().SetRejectedSNssais(nssai);
 }
 
 //------------------------------------------------------------------------------
-int RegistrationReject::encode2buffer(uint8_t* buf, int len) {
+int RegistrationReject::Encode(uint8_t* buf, int len) {
   Logger::nas_mm().debug("Encoding RegistrationReject message");
-  int encoded_size = 0;
-  if (!plain_header) {
-    Logger::nas_mm().error("Mandatory IE missing Header");
-    return 0;
+  int encoded_size    = 0;
+  int encoded_ie_size = 0;
+  // Header
+  if ((encoded_ie_size = NasMmPlainHeader::Encode(buf, len)) ==
+      KEncodeDecodeError) {
+    Logger::nas_mm().error("Encoding NAS Header error");
+    return KEncodeDecodeError;
   }
-  if (!(plain_header->encode2buffer(buf, len))) return 0;
-  encoded_size += 3;
-  if (!ie_5gmm_cause) {
-    Logger::nas_mm().warn("IE ie_5gmm_cause is not available");
+  encoded_size += encoded_ie_size;
+
+  // 5GMM Cause
+  int size = ie_5gmm_cause.Encode(buf + encoded_size, len - encoded_size);
+  if (size != KEncodeDecodeError) {
+    encoded_size += size;
   } else {
-    if (int size = ie_5gmm_cause->encode2buffer(
-            buf + encoded_size, len - encoded_size)) {
+    Logger::nas_mm().error(
+        "Encoding %s error", _5gmmCause::GetIeName().c_str());
+    return KEncodeDecodeError;
+  }
+
+  // Timer 3346
+  if (!ie_t3346_value.has_value()) {
+    Logger::nas_mm().debug(
+        "IE %s is not available", GprsTimer2::GetIeName().c_str());
+  } else {
+    size =
+        ie_t3346_value.value().Encode(buf + encoded_size, len - encoded_size);
+    if (size != KEncodeDecodeError) {
       encoded_size += size;
     } else {
-      Logger::nas_mm().error("Encoding ie_5gmm_cause error");
+      Logger::nas_mm().error(
+          "Encoding %s error", GprsTimer2::GetIeName().c_str());
+      return KEncodeDecodeError;
     }
   }
-  if (!ie_T3346_value) {
-    Logger::nas_mm().warn("IE ie_T3346_value is not available");
+
+  // Timer T3502
+  if (!ie_t3502_value.has_value()) {
+    Logger::nas_mm().debug(
+        "IE %s is not available", GprsTimer2::GetIeName().c_str());
   } else {
-    if (int size = ie_T3346_value->encode2buffer(
-            buf + encoded_size, len - encoded_size)) {
+    size =
+        ie_t3502_value.value().Encode(buf + encoded_size, len - encoded_size);
+    if (size != KEncodeDecodeError) {
       encoded_size += size;
     } else {
-      Logger::nas_mm().error("Encoding ie_T3346_value error");
-      return 0;
+      Logger::nas_mm().error(
+          "Encoding %s error", GprsTimer2::GetIeName().c_str());
+      return KEncodeDecodeError;
     }
   }
-  if (!ie_T3502_value) {
-    Logger::nas_mm().warn("IE ie_T3502_value is not available");
+
+  // EAP Message
+  if (!ie_eap_message.has_value()) {
+    Logger::nas_mm().debug(
+        "IE %s is not available", EapMessage::GetIeName().c_str());
   } else {
-    if (int size = ie_T3502_value->encode2buffer(
-            buf + encoded_size, len - encoded_size)) {
+    size =
+        ie_eap_message.value().Encode(buf + encoded_size, len - encoded_size);
+    if (size != KEncodeDecodeError) {
       encoded_size += size;
     } else {
-      Logger::nas_mm().error("Encoding ie_T3502_value error");
-      return 0;
+      Logger::nas_mm().error(
+          "Encoding %s error", EapMessage::GetIeName().c_str());
+      return KEncodeDecodeError;
     }
   }
-  if (!ie_eap_message) {
-    Logger::nas_mm().warn("IE ie_eap_message is not available");
+
+  // Rejected NSSAI
+  if (!ie_rejected_nssai.has_value()) {
+    Logger::nas_mm().debug(
+        "IE %s is not available", Rejected_NSSAI::GetIeName().c_str());
   } else {
-    if (int size = ie_eap_message->encode2buffer(
-            buf + encoded_size, len - encoded_size)) {
+    size = ie_rejected_nssai.value().Encode(
+        buf + encoded_size, len - encoded_size);
+    if (size != KEncodeDecodeError) {
       encoded_size += size;
     } else {
-      Logger::nas_mm().error("Encoding ie_eap_message error");
-      return 0;
-    }
-  }
-  if (!ie_rejected_nssai) {
-    Logger::nas_mm().warn("IE ie_rejected_nssai is not available");
-  } else {
-    if (int size = ie_rejected_nssai->encode2buffer(
-            buf + encoded_size, len - encoded_size)) {
-      encoded_size += size;
-    } else {
-      Logger::nas_mm().error("Encoding ie_rejected_nssai error");
+      Logger::nas_mm().error(
+          "Encoding %s error", Rejected_NSSAI::GetIeName().c_str());
+      return KEncodeDecodeError;
     }
   }
   Logger::nas_mm().debug(
@@ -150,54 +160,91 @@ int RegistrationReject::encode2buffer(uint8_t* buf, int len) {
 }
 
 //------------------------------------------------------------------------------
-int RegistrationReject::decodefrombuffer(
-    NasMmPlainHeader* header, uint8_t* buf, int len) {
+int RegistrationReject::Decode(uint8_t* buf, int len) {
   Logger::nas_mm().debug("Decoding RegistrationReject message");
-  int decoded_size = 3;
-  plain_header     = header;
-  ie_5gmm_cause    = new _5GMM_Cause();
-  decoded_size += ie_5gmm_cause->decodefrombuffer(
-      buf + decoded_size, len - decoded_size, false);
+  int decoded_size   = 0;
+  int decoded_result = 0;
+
+  // Header
+  decoded_result = NasMmPlainHeader::Decode(buf, len);
+  if (decoded_result == KEncodeDecodeError) {
+    Logger::nas_mm().error("Decoding NAS Header error");
+    return KEncodeDecodeError;
+  }
+  decoded_size += decoded_result;
+
+  // 5GMM Cause
+  decoded_size +=
+      ie_5gmm_cause.Decode(buf + decoded_size, len - decoded_size, false);
   Logger::nas_mm().debug("Decoded_size (%d)", decoded_size);
-  uint8_t octet = *(buf + decoded_size);
+
+  // Decode other IEs
+  uint8_t octet = 0x00;
+  DECODE_U8_VALUE(buf + decoded_size, octet);
   Logger::nas_mm().debug("First option IEI (0x%x)", octet);
   while ((octet != 0x0)) {
+    Logger::nas_mm().debug("IEI 0x%x", octet);
     switch (octet) {
-      case 0x5F: {
-        Logger::nas_mm().debug("Decoding IEI (0x5F)");
-        ie_T3346_value = new GPRS_Timer_2();
-        decoded_size += ie_T3346_value->decodefrombuffer(
-            buf + decoded_size, len - decoded_size, true);
-        octet = *(buf + decoded_size);
+      case kT3346Value: {
+        Logger::nas_mm().debug("Decoding IEI 0x%x", kT3346Value);
+        GprsTimer2 ie_t3346_value_tmp(kT3346Value);
+        if ((decoded_result = ie_t3346_value_tmp.Decode(
+                 buf + decoded_size, len - decoded_size, true)) ==
+            KEncodeDecodeError)
+          return KEncodeDecodeError;
+        decoded_size += decoded_result;
+        ie_t3346_value = std::optional<GprsTimer2>(ie_t3346_value_tmp);
+        DECODE_U8_VALUE(buf + decoded_size, octet);
         Logger::nas_mm().debug("Next IEI (0x%x)", octet);
       } break;
-      case 0x16: {
-        Logger::nas_mm().debug("Decoding iei(0x16)");
-        ie_T3502_value = new GPRS_Timer_2();
-        decoded_size += ie_T3502_value->decodefrombuffer(
-            buf + decoded_size, len - decoded_size, true);
-        octet = *(buf + decoded_size);
+
+      case kT3502Value: {
+        Logger::nas_mm().debug("Decoding IEI 0x%x", kT3502Value);
+        GprsTimer2 ie_t3502_value_tmp(kT3502Value);
+        if ((decoded_result = ie_t3502_value_tmp.Decode(
+                 buf + decoded_size, len - decoded_size, true)) ==
+            KEncodeDecodeError)
+          return KEncodeDecodeError;
+        decoded_size += decoded_result;
+        ie_t3502_value = std::optional<GprsTimer2>(ie_t3502_value_tmp);
+        DECODE_U8_VALUE(buf + decoded_size, octet);
         Logger::nas_mm().debug("Next IEI (0x%x)", octet);
       } break;
-      case 0x78: {
-        Logger::nas_mm().debug("Decoding iei(0x78)");
-        ie_eap_message = new EAP_Message();
-        decoded_size += ie_eap_message->decodefrombuffer(
-            buf + decoded_size, len - decoded_size, true);
-        octet = *(buf + decoded_size);
+
+      case kIeiEapMessage: {
+        Logger::nas_mm().debug("Decoding IEI 0x%x", kIeiEapMessage);
+        EapMessage ie_eap_message_tmp = {};
+        if ((decoded_result = ie_eap_message_tmp.Decode(
+                 buf + decoded_size, len - decoded_size, true)) ==
+            KEncodeDecodeError)
+          return KEncodeDecodeError;
+        decoded_size += decoded_result;
+        ie_eap_message = std::optional<EapMessage>(ie_eap_message_tmp);
+        DECODE_U8_VALUE(buf + decoded_size, octet);
         Logger::nas_mm().debug("Next IEI (0x%x)", octet);
       } break;
-      case 0x69: {
-        Logger::nas_mm().debug("Decoding IEI (0x69)");
-        ie_rejected_nssai = new Rejected_NSSAI();
-        decoded_size += ie_rejected_nssai->decodefrombuffer(
-            buf + decoded_size, len - decoded_size, true);
-        octet = *(buf + decoded_size);
+
+      case kIeiRejectedNssaiRr: {
+        Logger::nas_mm().debug("Decoding IEI 0x%x", kIeiRejectedNssaiRr);
+        Rejected_NSSAI ie_rejected_nssai_tmp(kIeiRejectedNssaiRr);
+        if ((decoded_result = ie_rejected_nssai_tmp.Decode(
+                 buf + decoded_size, len - decoded_size, true)) ==
+            KEncodeDecodeError)
+          return KEncodeDecodeError;
+        decoded_size += decoded_result;
+        ie_rejected_nssai =
+            std::optional<Rejected_NSSAI>(ie_rejected_nssai_tmp);
+        DECODE_U8_VALUE(buf + decoded_size, octet);
         Logger::nas_mm().debug("Next IEI (0x%x)", octet);
+      } break;
+      default: {
+        Logger::nas_mm().warn("Unknown IEI 0x%x, stop decoding...", octet);
+        // Stop decoding
+        octet = 0x00;
       } break;
     }
   }
   Logger::nas_mm().debug(
-      "decoded RegistrationReject message len(%d)", decoded_size);
-  return 1;
+      "Decoded RegistrationReject message len(%d)", decoded_size);
+  return decoded_size;
 }

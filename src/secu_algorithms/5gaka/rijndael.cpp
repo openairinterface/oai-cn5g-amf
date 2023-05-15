@@ -94,15 +94,6 @@ void Authentication_5gaka::RijndaelKeySchedule(const uint8_t key[16]) {
      roundConst = (2*roundConst) ^ 283;
      */
   }
-//#if AUTH_ALG_ON
-#if 0 
-  for(int m=0; m<11; m++){
-    printf("roundKeys(%d)\n0x", m);
-    for(int i=0; i<16; i++)
-      printf("%x ", roundKeys[m][i & 0x3][i >> 2]);
-    printf("\n");
-    }
-#endif
   return;
 }
 
@@ -187,8 +178,7 @@ void Authentication_5gaka::RijndaelEncrypt(
 #if AUTH_ALG_ON
   printf("end of round(%d)\n0x", 0);
 #endif
-  for (int i = 0; i < 16; i++) printf("%x ", state[i & 0x3][i >> 2]);
-  printf("\n");
+
   for (r = 1; r <= 9; r++) {
     ByteSub(state);
     ShiftRow(state);

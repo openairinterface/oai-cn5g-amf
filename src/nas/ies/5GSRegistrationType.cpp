@@ -19,100 +19,83 @@
  *      contact@openairinterface.org
  */
 
-/*! \file
- \brief
- \author  Keliang DU, BUPT
- \date 2020
- \email: contact@openairinterface.org
- */
-
 #include "5GSRegistrationType.hpp"
+#include "3gpp_24.501.hpp"
 
-#include "3gpp_ts24501.hpp"
 #include "logger.hpp"
 
 using namespace nas;
 
 //------------------------------------------------------------------------------
-_5GSRegistrationType::_5GSRegistrationType() {
-  iei      = 0;
-  is_for   = false;
-  reg_type = 0;
-}
+_5GSRegistrationType::_5GSRegistrationType()
+    : Type1NasIeFormatTv(), follow_on_req_(false), reg_type_(0) {}
 
 //------------------------------------------------------------------------------
-_5GSRegistrationType::_5GSRegistrationType(bool is_for, uint8_t type) {
-  this->is_for   = is_for;
-  this->reg_type = 0x07 & type;
-  this->iei      = 0;
+_5GSRegistrationType::_5GSRegistrationType(
+    const bool& follow_on_req, const uint8_t& type)
+    : Type1NasIeFormatTv(), follow_on_req_(follow_on_req) {
+  if (validateValue(follow_on_req, type)) reg_type_ = type;
+  setValue();
 }
 
 //------------------------------------------------------------------------------
 _5GSRegistrationType::_5GSRegistrationType(
-    uint8_t iei, bool is_for, uint8_t type) {
-  this->is_for   = is_for;
-  this->reg_type = 0x07 & type;
-  this->iei      = 0x0f & iei;
+    const uint8_t& iei, const bool& follow_on_req, const uint8_t& type)
+    : Type1NasIeFormatTv(iei) {
+  follow_on_req_ = follow_on_req;
+  if (validateValue(follow_on_req, type)) reg_type_ = type;
+  setValue();
 }
 
 //------------------------------------------------------------------------------
 _5GSRegistrationType::~_5GSRegistrationType() {}
 
 //------------------------------------------------------------------------------
-int _5GSRegistrationType::encode2buffer(uint8_t* buf, int len) {
-  Logger::nas_mm().error("encoding 5gsregistrationtype IE");
-  if (len < 1) {
-    Logger::nas_mm().error(
-        "encoding 5gsregistrationtype error(len is less than one)");
-    return -1;
-  }
-  uint8_t octet = 0;
-  if (is_for) octet = 0x08;
-  octet |= reg_type;
-  if (!(iei & 0x0f)) {
-    *buf = 0x0f & octet;
-    Logger::nas_mm().debug("encoded 5GSRegistrationType IE(len(1/2 octet))");
-    return 0;
-  } else {
-    *buf = (iei << 4) | octet;
-    Logger::nas_mm().debug("encoded 5GSRegistrationType IE(len(1 octet))");
-    return 1;
-  }
-}
-
-//------------------------------------------------------------------------------
-int _5GSRegistrationType::decodefrombuffer(
-    uint8_t* buf, int len, bool is_option) {
-  if (is_option) {
-    return -1;
-  }
-  Logger::nas_mm().debug("Decoding 5GSRegistrationType");
-  uint8_t octet = *buf;
-  if (octet & 0x08)
-    is_for = FOLLOW_ON_REQ_PENDING;
+void _5GSRegistrationType::setValue() {
+  if (follow_on_req_)
+    value_ = 0b1000 | (0x07 & reg_type_);
   else
-    is_for = NO_FOLLOW_ON_REQ_PENDING;
-  reg_type = 0x07 & octet;
-  Logger::nas_mm().debug("Decoded 5GSRegistrationType len (1/2 octet)");
-  return 0;
+    value_ = 0x07 & reg_type_;
 }
 
 //------------------------------------------------------------------------------
-void _5GSRegistrationType::setFollowOnReq(const bool is) {
-  is_for = is;
+void _5GSRegistrationType::getValue() {
+  follow_on_req_ = (0b1000 & value_) >> 3;
+  reg_type_      = value_ & 0b00000111;
 }
 
 //------------------------------------------------------------------------------
-void _5GSRegistrationType::setRegType(const uint8_t type) {
-  reg_type = 0x07 & type;
+bool _5GSRegistrationType::validateValue(
+    const bool& follow_on_req, const uint8_t& type) {
+  if (type > static_cast<uint8_t>(_5GSMobilityIdentityEnum::MAX_VALUE))
+    return false;
+  return true;
+}
+
+//------------------------------------------------------------------------------
+void _5GSRegistrationType::set(
+    const bool& follow_on_req, const uint8_t& type, const uint8_t& iei) {
+  follow_on_req_ = follow_on_req;
+  if (validateValue(follow_on_req, type)) reg_type_ = type;
+  setValue();
+  SetIei(iei);
+}
+
+//------------------------------------------------------------------------------
+void _5GSRegistrationType::set(const bool& follow_on_req, const uint8_t& type) {
+  follow_on_req_ = follow_on_req;
+  if (validateValue(follow_on_req, type)) reg_type_ = type;
+  setValue();
 }
 
 //------------------------------------------------------------------------------
 bool _5GSRegistrationType::isFollowOnReq() {
-  return is_for;
+  getValue();
+  return follow_on_req_;
 }
 
 //------------------------------------------------------------------------------
 uint8_t _5GSRegistrationType::getRegType() {
-  return reg_type;
+  getValue();
+  return reg_type_;
 }

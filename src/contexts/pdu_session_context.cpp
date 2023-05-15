@@ -34,7 +34,7 @@ pdu_session_context::pdu_session_context() {
   smf_info.info_available = false;
   smf_info.addr           = {};
   smf_info.api_version    = "v1";
-  smf_info.port           = "80";
+  smf_info.port           = DEFAULT_HTTP1_PORT;
   snssai                  = {};
   plmn                    = {};
   is_ho_accepted          = false;

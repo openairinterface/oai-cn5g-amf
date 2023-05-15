@@ -23,6 +23,7 @@
 
 #include "conversions.hpp"
 #include "logger.hpp"
+#include "output_wrapper.hpp"
 
 extern "C" {
 #include "dynamic_memory_check.h"
@@ -34,6 +35,17 @@ namespace ngap {
 HandoverRequest::HandoverRequest() : NgapMessage() {
   mobilityRestrictionList = std::nullopt;
   handoverRequestIEs      = nullptr;
+
+  amfUeNgapId                         = {};
+  handoverType                        = {};
+  cause                               = {};
+  ueAggregateMaximumBitRate           = {};
+  ueSecurityCapabilities              = {};
+  securityContext                     = {};
+  pDUSessionResourceSetupList         = {};
+  allowedNSSAI                        = {};
+  SourceToTarget_TransparentContainer = {};
+  guami                               = {};
 
   setMessageType(NgapMessageType::HANDOVER_REQUEST);
   initialize();
@@ -264,7 +276,7 @@ void HandoverRequest::setAllowedNSSAI(std::vector<S_NSSAI>& list) {
       Logger::ngap().error(
           "Encode PDUSessionResourceHandoverListItem IE error");
   }
-  asn_fprint(stderr, &asn_DEF_Ngap_AllowedNSSAI, &allowedNSSAI);
+  output_wrapper::print_asn_msg(&asn_DEF_Ngap_AllowedNSSAI, &allowedNSSAI);
   Ngap_HandoverRequestIEs_t* ie =
       (Ngap_HandoverRequestIEs_t*) calloc(1, sizeof(Ngap_HandoverRequestIEs_t));
   ie->id            = Ngap_ProtocolIE_ID_id_AllowedNSSAI;
@@ -340,7 +352,9 @@ void HandoverRequest::setSourceToTarget_TransparentContainer(
   ie->criticality = Ngap_Criticality_reject;
   ie->value.present =
       Ngap_HandoverRequestIEs__value_PR_SourceToTarget_TransparentContainer;
-  ie->value.choice.SourceToTarget_TransparentContainer = sourceTotarget;
+
+  conv::octet_string_copy(
+      ie->value.choice.SourceToTarget_TransparentContainer, sourceTotarget);
   int ret = ASN_SEQUENCE_ADD(&handoverRequestIEs->protocolIEs.list, ie);
   if (ret != 0)
     Logger::ngap().error("Encode SourceToTarget_TransparentContainer IE error");

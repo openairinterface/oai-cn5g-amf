@@ -41,6 +41,8 @@
 #define KASME_LENGTH_OCTETS (32)
 #define MAC_S_LENGTH (8)
 
+#define AUTH_VECTOR_LENGTH_OCTETS 32
+
 typedef mpz_t random_t;
 typedef mpz_t sqn_t;
 
@@ -140,11 +142,14 @@ class Authentication_5gaka {
       algorithm_type_dist_t nas_alg_type, uint8_t nas_alg_id, uint8_t kamf[32],
       uint8_t* knas);
   static void derive_kgnb(
-      uint32_t uplinkCount, uint8_t accessType, uint8_t kamf[32],
-      uint8_t* kgnb);
+      uint32_t uplinkCount, uint8_t accessType,
+      uint8_t kamf[AUTH_VECTOR_LENGTH_OCTETS],
+      uint8_t (&kgnb)[AUTH_VECTOR_LENGTH_OCTETS]);
   static void handover_ncc_derive_knh(
-      uint32_t uplinkCount, uint8_t accessType, uint8_t kamf[32], uint8_t* kgnb,
-      uint8_t* knh, int ncc);
+      uint32_t uplinkCount, uint8_t accessType,
+      uint8_t kamf[AUTH_VECTOR_LENGTH_OCTETS],
+      uint8_t (&kgnb)[AUTH_VECTOR_LENGTH_OCTETS],
+      uint8_t (&knh)[AUTH_VECTOR_LENGTH_OCTETS], int ncc);
   static uint8_t* sqn_ms_derive(
       const uint8_t opc[16], uint8_t* key, uint8_t* auts, uint8_t* rand);
 
