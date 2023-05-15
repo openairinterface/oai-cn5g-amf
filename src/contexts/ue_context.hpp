@@ -25,6 +25,8 @@
 #include <stdint.h>
 
 #include <map>
+#include <memory>
+#include <mutex>
 #include <shared_mutex>
 
 #include "NgapIEsStruct.hpp"
