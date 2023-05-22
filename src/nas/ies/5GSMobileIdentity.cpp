@@ -111,11 +111,11 @@ int _5GSMobileIdentity::Decode(uint8_t* buf, int len, bool is_iei) {
       type_of_identity_ = _5G_GUTI;
       decoded_size += Decode5gGuti(buf + decoded_size, len - decoded_size);
     } break;
-    // TODO: IMEI
     case _5G_S_TMSI: {
       type_of_identity_ = _5G_S_TMSI;
       decoded_size += Decode5gSTmsi(buf + decoded_size, len - decoded_size);
     } break;
+    // TODO: IMEI
     case IMEISV: {
       type_of_identity_ = IMEISV;
       decoded_size += DecodeImeisv(buf + decoded_size, ie_len);
@@ -625,13 +625,29 @@ int _5GSMobileIdentity::EncodeImeisv(uint8_t* buf, int len) {
   if (encoded_header_size == KEncodeDecodeError) return KEncodeDecodeError;
   encoded_size += encoded_header_size;
 
-  int size = encode_bstring(
-      imeisv_.value().identity, (buf + encoded_size), len - encoded_size);
-  encoded_size += size;
+  uint8_t octet = {0};
 
-  // Update Type of identity (3 bits of Octet 3/4)
-  *(buf + GetHeaderLength()) |= (0x01 << 3) | IMEISV;
-  // TODO: odd/even indic
+  uint8_t digit_low  = 0;
+  uint8_t digit_high = 0;
+
+  int i = 0;
+  while (i < imeisv_.value().identity.length()) {
+    if (i == 0) {
+      digit_low = 0x07 & IMEISV;  // TODO: odd/even indic
+      conv::string_to_int8(imeisv_.value().identity.substr(i, 1), digit_high);
+    } else if (i < imeisv_.value().identity.length() - 1) {
+      conv::string_to_int8(imeisv_.value().identity.substr(i, 1), digit_low);
+      conv::string_to_int8(
+          imeisv_.value().identity.substr(i + 1, 1), digit_high);
+      i++;
+    } else if (i == imeisv_.value().identity.length() - 1) {
+      conv::string_to_int8(imeisv_.value().identity.substr(i, 1), digit_low);
+      digit_high = 0x0f;
+    }
+    uint8_t octet = (0xf0 & (digit_high << 4)) | (digit_low & 0x0f);
+    ENCODE_U8(buf + encoded_size, octet, encoded_size);
+    i++;
+  }
 
   // Encode length
   int encoded_len_ie = 0;
@@ -644,39 +660,57 @@ int _5GSMobileIdentity::EncodeImeisv(uint8_t* buf, int len) {
 //------------------------------------------------------------------------------
 int _5GSMobileIdentity::DecodeImeisv(uint8_t* buf, int len) {
   Logger::nas_mm().debug("Decoding 5GSMobilityIdentity IMEISV");
-  int decoded_size    = 0;
-  IMEISV_t imeisv_tmp = {};
-  decode_bstring(
-      &(imeisv_tmp.identity), len, (buf + decoded_size), len - decoded_size);
-  decoded_size += len;
+  int decoded_size             = 0;
+  IMEI_IMEISV_t imeisv_tmp     = {};
+  imeisv_tmp.type_of_identity_ = IMEISV;
+  imeisv_tmp.identity          = {};
+
+  uint8_t digit_low  = 0;
+  uint8_t digit_high = 0;
+  uint8_t octet      = 0;
   for (int i = 0; i < len; i++) {
-    Logger::nas_mm().debug(
-        "Decoded 5GSMobilityIdentity IMEISV value(0x%x)",
-        (uint8_t) imeisv_tmp.identity->data[i]);
+    DECODE_U8(buf + decoded_size, octet, decoded_size);
+    digit_high = (octet & 0xf0) >> 4;
+    digit_low  = octet & 0x0f;
+    if (i == 0) {
+      imeisv_tmp.identity += (const std::string)(std::to_string(
+          digit_high));  // octet 4 (Identity digit 1 4bits, odd/even indic 1
+                         // bit, type of identity 3 bits)
+    } else if (i < (len - 1)) {
+      imeisv_tmp.identity +=
+          ((const std::string)(std::to_string(digit_low)) +
+           (const std::string)(std::to_string(digit_high)));
+    } else {  // Bits 5 to 8 of the last octet: end mark coded as "1111"
+      imeisv_tmp.identity += (const std::string)(std::to_string(digit_low));
+      if (digit_high != 0x0f) {
+        Logger::nas_mm().warn(
+            "IMEISV: Bits 5 to 8 of the last octet should filled with an end "
+            "mark coded as 1111");
+      }
+    }
   }
-  imeisv_ = std::optional<IMEISV_t>(imeisv_tmp);
+
   Logger::nas_mm().debug(
-      "decoded 5GSMobilityIdentity IMEISV len (%d)", decoded_size);
+      "Decoded 5GSMobilityIdentity IMEISV: %s", imeisv_tmp.identity.c_str());
+
+  imeisv_ = std::optional<IMEI_IMEISV_t>(imeisv_tmp);
+  Logger::nas_mm().debug(
+      "Decoded 5GSMobilityIdentity IMEISV len (%d)", decoded_size);
   return decoded_size;
 }
 
 //------------------------------------------------------------------------------
-void _5GSMobileIdentity::SetImeisv(const IMEISV_t& imeisv) {
+void _5GSMobileIdentity::SetImeisv(const IMEI_IMEISV_t& imeisv) {
   // Clear all identity types first
   ClearIe();
 
   // Set value for IMEISV
-  type_of_identity_ = IMEISV;
-  // length              = blength(imeisv.identity) - 1 + 4;
-  IMEISV_t imeisv_tmp = {};
-  imeisv_tmp.identity = bstrcpy(imeisv.identity);
-  imeisv_tmp.identity->data[blength(imeisv.identity) - 1] |= 0xf0;
-  imeisv_ = std::optional<IMEISV_t>(imeisv_tmp);
+  imeisv_ = std::optional<IMEI_IMEISV_t>(imeisv);
 }
 
 //------------------------------------------------------------------------------
-bool _5GSMobileIdentity::GetImeisv(IMEISV_t& imeisv) const {
+bool _5GSMobileIdentity::GetImeisv(IMEI_IMEISV_t& imeisv) const {
   if (!imeisv_.has_value()) return false;
-  imeisv.identity = bstrcpy(imeisv_.value().identity);
+  imeisv = imeisv_.value();
   return true;
 }

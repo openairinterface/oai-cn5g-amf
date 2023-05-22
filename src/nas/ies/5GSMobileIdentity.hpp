@@ -31,53 +31,6 @@ constexpr auto k5gsMobileIdentityIeName             = "5GS Mobile Identity";
 
 namespace nas {
 
-// 5G-GUTI
-typedef struct _5G_GUTI_s {
-  std::string mcc;
-  std::string mnc;
-  uint8_t amf_region_id;
-  uint8_t amf_set_id;
-  uint16_t amf_pointer;
-  uint32_t _5g_tmsi;
-} _5G_GUTI_t;
-
-// IMEI or IMEISV
-typedef struct IMEI_or_IMEISV_s {
-  uint8_t type_of_identity_ : 3;
-  bool odd_even_indic;   // for imei, even means bits 5 to 8 of last octet is
-                         // "1111", for imeisv, bits 5 to 8 of last octet is
-                         // "1111"
-  std::string identity;  // "46011000001"
-} IMEI_IMEISV_t;
-
-// TODO:
-// 5GS mobile identity information element for type of identity "SUCI" and SUPI
-// format "IMSI"
-
-// SUCI and SUPI format IMSI and
-// Protection scheme Id "Null scheme"
-typedef struct SUCI_imsi_s {
-  uint8_t supi_format : 3;
-  std::string mcc;
-  std::string mnc;
-  std::optional<std::string> routing_indicator;  //"1234"
-  uint8_t protection_scheme_id : 4;              // 0000
-  uint8_t home_network_pki;                      // 00000000
-  std::string msin;  // two types of coding; BCD & hexadecimal
-} SUCI_imsi_t;       // SUPI format "IMSI"
-
-// TODO: SUCI and SUPI format "Network specific identifier"
-
-// 5G-S-TMSI
-typedef struct _5G_S_TMSI_s {
-  uint16_t amf_set_id;
-  uint8_t amf_pointer;
-  std::string _5g_tmsi;
-} _5G_S_TMSI_t;
-
-// TODO: 5GS mobile identity information element for type of identity "MAC
-// address"
-
 class _5GSMobileIdentity : public Type6NasIe {
  public:
   _5GSMobileIdentity();
@@ -128,12 +81,12 @@ class _5GSMobileIdentity : public Type6NasIe {
   bool Get5gSTmsi(
       uint16_t& amf_set_id, uint8_t& amf_pointer, std::string& tmsi) const;
 
-  // IMEISV
+  // IMEI/IMEISV
   int EncodeImeisv(uint8_t* buf, int len);
   int DecodeImeisv(uint8_t* buf, int len);
 
-  void SetImeisv(const IMEISV_t& imeisv);
-  bool GetImeisv(IMEISV_t& imeisv) const;
+  void SetImeisv(const IMEI_IMEISV_t& imeisv);
+  bool GetImeisv(IMEI_IMEISV_t& imeisv) const;
 
  private:
   uint8_t type_of_identity_ : 3;
@@ -141,7 +94,7 @@ class _5GSMobileIdentity : public Type6NasIe {
   std::optional<SUCI_imsi_t> supi_format_imsi_;
   std::optional<_5G_GUTI_t> _5g_guti_;
   std::optional<IMEI_IMEISV_t> imei_;  // TODO:
-  std::optional<IMEISV_t> imeisv_;
+  std::optional<IMEI_IMEISV_t> imeisv_;
   std::optional<_5G_S_TMSI_t> _5g_s_tmsi_;
 };
 

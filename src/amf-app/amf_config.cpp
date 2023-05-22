@@ -628,7 +628,11 @@ int amf_config::load(const std::string& config_file) {
               util::trim(address).c_str(), nssf_ipv4_addr,
               "BAD IPv4 ADDRESS FORMAT FOR NSSF !");
           nssf_addr.ipv4_addr = nssf_ipv4_addr;
-          nssf_addr.port      = nssf_port;
+          if (!(nssf_cfg.lookupValue(AMF_CONFIG_STRING_PORT, nssf_port))) {
+            Logger::amf_app().error(AMF_CONFIG_STRING_PORT "failed");
+            throw(AMF_CONFIG_STRING_PORT "failed");
+          }
+          nssf_addr.port = nssf_port;
           nssf_addr.api_version =
               DEFAULT_SBI_API_VERSION;  // TODO: get API version
         }

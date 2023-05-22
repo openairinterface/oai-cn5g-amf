@@ -76,6 +76,8 @@ RUN ldconfig && \
     ./build_amf --clean --Verbose --build-type Release --jobs && \
     ldd /openair-amf/build/amf/build/amf && \
     mv /openair-amf/build/amf/build/amf /openair-amf/build/amf/build/oai_amf && \
+    sed -i -e "s@nf-root-folder@amf@" -e "s@nf-config-file@amf.conf@" \
+      ../common-build/docker-scripts/entrypoint.py && \
     # Remove entitlements and Subscription Manager configs
     rm -rf /etc/pki/entitlement && \
     rm -rf /etc/rhsm
@@ -121,7 +123,7 @@ RUN rm -f /etc/rhsm-host && \
 WORKDIR /openair-amf/bin
 COPY --from=oai-amf-builder \
     /openair-amf/build/amf/build/oai_amf \
-    /openair-amf/scripts/entrypoint.py \
+    /openair-amf/build/common-build/docker-scripts/entrypoint.py \
     /openair-amf/scripts/healthcheck.sh \
     ./
 

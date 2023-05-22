@@ -212,7 +212,7 @@ pipeline {
               script {
                 sh "sudo podman image prune --force"
                 sh "rm -Rf ./etc-pki-entitlement ./rhsm-conf ./rhsm-ca"
-                stash includes: 'archives/amf_podman_image_build.log', name: 'podmanBuildLog'
+                stash allowEmpty: true, includes: 'archives/amf_podman_image_build.log', name: 'podmanBuildLog'
               }
             }
           }
@@ -227,7 +227,8 @@ pipeline {
                   // It's a different agent from main one.
                   prepareWorkspaceMergeCase()
                   // Moving to focal and cppcheck 1.90 and a dockerfile approach
-                  sh 'docker build --target amf-cppcheck --tag amf-cppcheck:test --file ci-scripts/docker/Dockerfile.ci.cppcheck . > archives/cppcheck_install.log 2>&1'
+                  sh 'sed -i -e "s@nfName@amf@" ci-scripts/common/docker/Dockerfile.ci.cppcheck'
+                  sh 'docker build --target amf-cppcheck --tag amf-cppcheck:test --file ci-scripts/common/docker/Dockerfile.ci.cppcheck . > archives/cppcheck_install.log 2>&1'
                   sh 'docker run --name amf-ci-cppcheck --entrypoint /bin/true amf-cppcheck:test'
                   sh 'docker cp amf-ci-cppcheck:/home/cppcheck.xml archives'
                   sh 'docker cp amf-ci-cppcheck:/home/cppcheck_build.log archives'
@@ -246,7 +247,7 @@ pipeline {
             }
             cleanup {
               script {
-                stash includes: 'archives/cppcheck*.*', name: 'cppcheckLogs'
+                stash allowEmpty: true, includes: 'archives/cppcheck*.*', name: 'cppcheckLogs'
                 // no need to keep the cppcheck container
                 sh 'docker rm -f amf-ci-cppcheck || true'
                 sh 'docker rmi amf-cppcheck:test || true'
@@ -263,10 +264,11 @@ pipeline {
                 gitlabCommitStatus(name: "Code Formatting Checker") {
                   // It's a different agent from main one.
                   prepareWorkspaceMergeCase()
+                  sh 'sed -i -e "s@nfName@amf@" ci-scripts/common/docker/Dockerfile.ci.clang-format'
                   if ("MERGE".equals(env.gitlabActionType)) {
-                    sh 'docker build --target amf-clang-format-check --tag amf-clang-format-check:test --file ci-scripts/docker/Dockerfile.ci.clang-format --build-arg MERGE_REQUEST_CHECK=True --build-arg SOURCE_BRANCH=' + env.gitlabSourceBranch + ' --build-arg TARGET_BRANCH=' + env.gitlabTargetBranch + ' . > archives/clang_format_install.log 2>&1'
+                    sh 'docker build --target amf-clang-format-check --tag amf-clang-format-check:test --file ci-scripts/common/docker/Dockerfile.ci.clang-format --build-arg MERGE_REQUEST_CHECK=True --build-arg SOURCE_BRANCH=' + env.gitlabSourceBranch + ' --build-arg TARGET_BRANCH=' + env.gitlabTargetBranch + ' . > archives/clang_format_install.log 2>&1'
                   } else {
-                    sh 'docker build --target amf-clang-format-check --tag amf-clang-format-check:test --file ci-scripts/docker/Dockerfile.ci.clang-format . > archives/clang_format_install.log 2>&1'
+                    sh 'docker build --target amf-clang-format-check --tag amf-clang-format-check:test --file ci-scripts/common/docker/Dockerfile.ci.clang-format . > archives/clang_format_install.log 2>&1'
                   }
                   sh 'docker run --name amf-ci-clang-format --entrypoint /bin/true amf-clang-format-check:test'
                   sh 'docker cp amf-ci-clang-format:/home/src/oai_rules_result.txt src'
@@ -282,7 +284,7 @@ pipeline {
           post {
             cleanup {
               script {
-                stash includes: 'src/oai_rules_result*.txt', name: 'formatCheckLogs'
+                stash allowEmpty: true, includes: 'src/oai_rules_result*.txt, archives/clang_format_install.log', name: 'formatCheckLogs'
                 sh 'docker rm -f amf-ci-clang-format || true'
                 sh 'docker rmi amf-clang-format-check:test || true'
               }
@@ -316,8 +318,7 @@ pipeline {
                 if (localStatus.resultIsBetterOrEqualTo('SUCCESS')) {
                   echo "Tutorials Test Job is OK"
                 } else {
-                  echo "Tutorials Test Job is KO"
-                  sh "ci-scripts/fail.sh"
+                  error "Tutorials Test Job is KO"
                 }
               }
             }
@@ -346,8 +347,7 @@ pipeline {
                 if (localStatus.resultIsBetterOrEqualTo('SUCCESS')) {
                   echo "Test Job with COTS-UE is OK"
                 } else {
-                  echo "Test Job with COTS-UE is is KO"
-                  sh "ci-scripts/fail.sh"
+                  error "Test Job with COTS-UE is is KO"
                 }
               }
             }
@@ -376,8 +376,7 @@ pipeline {
                 if (localStatus.resultIsBetterOrEqualTo('SUCCESS')) {
                   echo "Load Testing is OK"
                 } else {
-                  echo "Load Testing is is KO"
-                  sh "ci-scripts/fail.sh"
+                  error "Load Testing is is KO"
                 }
               }
             }
@@ -386,6 +385,36 @@ pipeline {
             always {
               script {
                 copyArtifacts(projectName: 'OAI-CN5G-Load-Test',
+                              filter: '*_results_oai_cn5g*.html',
+                              selector: lastCompleted())
+              }
+            }
+          }
+        }
+        // Home-made RAN emulator
+        stage ('NGAP-Tester') {
+          steps {
+            script {
+              gitlabCommitStatus(name: "NGAP-Tester") {
+                localStatus = build job: 'OAI-CN5G-NGAP-Tester',
+                  parameters: [
+                    string(name: 'AMF_TAG', value: String.valueOf(amf_tag)),
+                    string(name: 'AMF_BRANCH', value: String.valueOf(amf_branch))
+                  ], propagate: false
+                localResult = localStatus.getResult()
+
+                if (localStatus.resultIsBetterOrEqualTo('SUCCESS')) {
+                  echo "NGAP-Tester is OK"
+                } else {
+                  error "NGAP-Tester is is KO"
+                }
+              }
+            }
+          }
+          post {
+            always {
+              script {
+                copyArtifacts(projectName: 'OAI-CN5G-NGAP-Tester',
                               filter: '*_results_oai_cn5g*.html',
                               selector: lastCompleted())
               }
@@ -450,9 +479,9 @@ pipeline {
 
         // Generating the HTML report(s)
         if ("MERGE".equals(env.gitlabActionType)) {
-          sh "python3 ci-scripts/generateHtmlReport.py --job_name=${JOB_NAME} --job_id=${BUILD_ID} --job_url=${BUILD_URL} --git_url=${GIT_URL} --git_src_branch=${env.gitlabSourceBranch} --git_src_commit=${env.gitlabMergeRequestLastCommit} --git_pull_request=True --git_target_branch=${env.gitlabTargetBranch} --git_target_commit=${GIT_COMMIT}"
+          sh "./ci-scripts/generateHtmlReport.py --job-name ${JOB_NAME} --build-id ${BUILD_ID} --build-url ${BUILD_URL} --git-url ${GIT_URL} --git-src-branch ${env.gitlabSourceBranch} --git-src-commit ${env.gitlabMergeRequestLastCommit} --git-merge-request --git-dst-branch ${env.gitlabTargetBranch} --git-dst-commit ${GIT_COMMIT}"
         } else {
-          sh "python3 ci-scripts/generateHtmlReport.py --job_name=${JOB_NAME} --job_id=${BUILD_ID} --job_url=${BUILD_URL} --git_url=${GIT_URL} --git_src_branch=${GIT_BRANCH} --git_src_commit=${GIT_COMMIT}"
+          sh "./ci-scripts/generateHtmlReport.py --job-name ${JOB_NAME} --build-id ${BUILD_ID} --build-url ${BUILD_URL} --git-url ${GIT_URL} --git-src-branch ${GIT_BRANCH} --git-src-commit ${GIT_COMMIT}"
         }
         listOfFiles = sh returnStdout: true, script: 'ls test_results*.html'
         String[] htmlFiles = listOfFiles.split("\\n")
@@ -488,6 +517,8 @@ OAI CI Team''',
 
 def prepareWorkspaceMergeCase () {
   sh "git clean -x -d -f > /dev/null 2>&1"
+  sh "git submodule foreach --recursive 'git clean -x -d -ff' > /dev/null 2>&1"
+  sh "git submodule deinit --force --all > /dev/null 2>&1"
   if ("MERGE".equals(env.gitlabActionType)) {
     sh "./ci-scripts/doGitLabMerge.sh --src-branch ${env.gitlabSourceBranch} --src-commit ${env.gitlabMergeRequestLastCommit} --target-branch ${env.gitlabTargetBranch} --target-commit ${GIT_COMMIT}"
   }

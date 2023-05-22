@@ -113,8 +113,7 @@ class HandoverRequest : public NgapMessage {
   // Masked IMEISV  (TODO: Optional)
   Ngap_SourceToTarget_TransparentContainer_t
       SourceToTarget_TransparentContainer;  // TODO: Mandatory
-  std::optional<MobilityRestrictionList>
-      mobilityRestrictionList;  // TODO: Optional
+  std::optional<MobilityRestrictionList> mobilityRestrictionList;
   // Location Reporting Request Type (TODO: Optional)
   // RRC Inactive Transition Report Request (TODO: Optional)
   GUAMI guami;  // Mandatory

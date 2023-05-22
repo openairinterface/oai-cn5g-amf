@@ -19,33 +19,35 @@
  *      contact@openairinterface.org
  */
 
-#ifndef _LADN_INDICATION_H_
-#define _LADN_INDICATION_H_
+#ifndef _LADN_INFORMATION_H_
+#define _LADN_INFORMATION_H_
 
+#include "DNN.hpp"
+#include "_5GSTrackingAreaIdList.hpp"
+#include "Ladn.hpp"
 #include "Type6NasIe.hpp"
 
-constexpr uint8_t kLadnIndicationMinimumLength  = 3;
-constexpr uint16_t kLadnIndicationMaximumLength = 811;
-constexpr auto kLadnIndicationIeName            = "LADN Indication";
+constexpr uint8_t kLadnInformationMinimumLength  = 3;
+constexpr uint16_t kLadnInformationMaximumLength = 1715;
+constexpr auto kLadnInformationIeName            = "LADN Information";
 
 namespace nas {
 
-class LadnIndication : Type6NasIe {
+class LadnInformation : Type6NasIe {
  public:
-  LadnIndication();
-  LadnIndication(const std::vector<bstring>& ladn);
-  ~LadnIndication();
+  LadnInformation();
+  ~LadnInformation();
 
-  static std::string GetIeName() { return kLadnIndicationIeName; }
+  static std::string GetIeName() { return kLadnInformationIeName; }
 
-  // void SetValue(const std::vector<bstring>& ladn);
-  void GetValue(std::vector<bstring>& ladn) const;
+  void Set(const vector<ladn>& value);
+  void Add(const ladn& value);
 
   int Encode(uint8_t* buf, int len);
   int Decode(uint8_t* buf, int len, bool is_option);
 
  private:
-  std::vector<bstring> LADN;
+  std::vector<ladn> ladn_list;
 };
 
 }  // namespace nas

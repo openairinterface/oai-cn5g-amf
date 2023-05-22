@@ -814,6 +814,7 @@ int handover_notification(
 int handover_request(
     const sctp_assoc_id_t assoc_id, const sctp_stream_id_t stream,
     struct Ngap_NGAP_PDU* message_p) {
+  // TODO: To be verified
   Logger::ngap().debug(
       "Sending ITTI Handover Resource Allocation (HandoverRequest) to "
       "TASK_AMF_N2");
@@ -846,7 +847,27 @@ int handover_request_ack(
     const sctp_assoc_id_t assoc_id, const sctp_stream_id_t stream,
     struct Ngap_NGAP_PDU* message_p) {
   Logger::ngap().debug("Handling Handover Request Ack (AMF->AN)");
-  // TODO:
+
+  output_wrapper::print_asn_msg(&asn_DEF_Ngap_NGAP_PDU, message_p);
+  HandoverRequestAck* handover_request_ack = new HandoverRequestAck();
+  if (!handover_request_ack->decodeFromPdu(message_p)) {
+    Logger::ngap().error("Decoding Handover Request Acknowledge message error");
+    return RETURNerror;
+  }
+
+  auto itti_msg =
+      std::make_shared<itti_handover_request_Ack>(TASK_NGAP, TASK_AMF_N2);
+  itti_msg->assoc_id           = assoc_id;
+  itti_msg->stream             = stream;
+  itti_msg->handoverrequestAck = handover_request_ack;
+
+  int ret = itti_inst->send_msg(itti_msg);
+  if (0 != ret) {
+    Logger::ngap().error(
+        "Could not send ITTI message %s to task TASK_AMF_N2",
+        itti_msg->get_msg_name());
+    return RETURNerror;
+  }
   return RETURNok;
 }
 

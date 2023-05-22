@@ -303,25 +303,19 @@ bool conv::octet_string_2_bit_string(
 
 //------------------------------------------------------------------------------
 bool conv::bstring_2_bit_string(const bstring& b_str, BIT_STRING_t& bit_str) {
-  OCTET_STRING_t octet_str;
-  bstring_2_octet_string(b_str, octet_str);
-  octet_string_2_bit_string(octet_str, bit_str, 0);
-  /*
+  int size = blength(b_str);
+  if (!b_str or size <= 0) return false;
+  if (!bdata(b_str)) return false;
 
-    int size = blength(b_str);
-    if (!b_str or size <= 0) return false;
-    if (!bdata(b_str)) return false;
+  bit_str.buf = (uint8_t*) calloc(size + 1, sizeof(uint8_t));
+  if (!bit_str.buf) return false;
 
-    bit_str.buf = (uint8_t*) calloc(size + 1, sizeof(uint8_t));
-    if (!bit_str.buf) return false;
+  if (check_bstring(b_str))
+    memcpy((void*) bit_str.buf, (char*) b_str->data, blength(b_str));
+  ((uint8_t*) bit_str.buf)[size] = '\0';
+  bit_str.size                   = size;
+  bit_str.bits_unused            = 0;
 
-    if (check_bstring (b_str)) memcpy((void*) bit_str.buf, (char*)octet_str.buf,
-    blength(b_str));
-    ((uint8_t*) bit_str.buf)[size] = '\0';
-    bit_str.size                   = size;
-
-          bit_str.bits_unused            = 0;
-  */
   return true;
 }
 
@@ -525,4 +519,37 @@ std::string conv::imsi_to_supi(const std::string& imsi) {
 std::string conv::get_imsi(
     const std::string& mcc, const std::string& mnc, const std::string& msin) {
   return {mcc + mnc + msin};
+}
+
+//------------------------------------------------------------------------------
+bool conv::string_2_masked_imeisv(
+    const std::string& imeisv_str, BIT_STRING_t& imeisv) {
+  int len = imeisv_str.length();
+  if (len != 16) return false;  // Must contain 16 digits
+
+  imeisv.buf = (uint8_t*) calloc(8, sizeof(uint8_t));
+  if (!imeisv.buf) {
+    return false;
+  }
+
+  uint8_t digit_low  = 0;
+  uint8_t digit_high = 0;
+
+  int i = 0;
+  int j = 0;
+  while (i < len) {
+    string_to_int8(imeisv_str.substr(i, 1), digit_low);
+    string_to_int8(imeisv_str.substr(i + 1, 1), digit_high);
+    i             = i + 2;
+    uint8_t octet = (0xf0 & (digit_high << 4)) | (digit_low & 0x0f);
+    imeisv.buf[j] = octet;
+    j++;
+  }
+  // last 4 digits of the SNR masked by setting the corresponding bits to 1
+  imeisv.buf[5] = 0xff;
+  imeisv.buf[6] = 0xff;
+
+  imeisv.size        = 8;
+  imeisv.bits_unused = 0;
+  return true;
 }

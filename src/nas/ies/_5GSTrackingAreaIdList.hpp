@@ -36,6 +36,7 @@ namespace nas {
 class _5GSTrackingAreaIdList : public Type4NasIe {
  public:
   _5GSTrackingAreaIdList();
+  _5GSTrackingAreaIdList(bool iei);
   _5GSTrackingAreaIdList(const std::vector<p_tai_t>& tai_list);
   int Encode(uint8_t* buf, int len);
 

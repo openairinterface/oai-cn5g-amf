@@ -45,6 +45,7 @@
 #include "GprsTimer3.hpp"
 #include "ImeisvRequest.hpp"
 #include "LADN_Indication.hpp"
+#include "LadnInformation.hpp"
 #include "MaPduSessionInformation.hpp"
 #include "NasMessageContainer.hpp"
 #include "NasSecurityAlgorithms.hpp"

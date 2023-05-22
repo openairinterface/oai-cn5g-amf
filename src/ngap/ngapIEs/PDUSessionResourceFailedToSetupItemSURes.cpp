@@ -21,6 +21,8 @@
 
 #include "PDUSessionResourceFailedToSetupItemSURes.hpp"
 
+#include "conversions.hpp"
+
 namespace ngap {
 
 //------------------------------------------------------------------------------
@@ -56,9 +58,10 @@ bool PDUSessionResourceFailedToSetupItemSURes::encode(
   if (!pdu_session_id_.encode(
           pdu_session_resource_failed_to_setup_item_su_res->pDUSessionID))
     return false;
-  pdu_session_resource_failed_to_setup_item_su_res
-      ->pDUSessionResourceSetupUnsuccessfulTransfer =
-      pdu_session_resource_setup_unsuccessful_transfer_;
+  conv::octet_string_copy(
+      pdu_session_resource_failed_to_setup_item_su_res
+          ->pDUSessionResourceSetupUnsuccessfulTransfer,
+      pdu_session_resource_setup_unsuccessful_transfer_);
 
   return true;
 }
@@ -70,10 +73,10 @@ bool PDUSessionResourceFailedToSetupItemSURes::decode(
   if (!pdu_session_id_.decode(
           pdu_session_resource_failed_to_setup_item_su_res->pDUSessionID))
     return false;
-  pdu_session_resource_setup_unsuccessful_transfer_ =
+  conv::octet_string_copy(
+      pdu_session_resource_setup_unsuccessful_transfer_,
       pdu_session_resource_failed_to_setup_item_su_res
-          ->pDUSessionResourceSetupUnsuccessfulTransfer;
-
+          ->pDUSessionResourceSetupUnsuccessfulTransfer);
   return true;
 }
 

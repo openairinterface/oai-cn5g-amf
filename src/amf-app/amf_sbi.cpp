@@ -72,7 +72,7 @@ void octet_stream_2_hex_stream(uint8_t* buf, int len, std::string& out) {
   }
   tmp[2 * len] = '\0';
   out          = tmp;
-  Logger::amf_sbi().debug("n1sm buffer: %s", out.c_str());
+  Logger::amf_sbi().debug("Buffer: %s", out.c_str());
 }
 
 //------------------------------------------------------------------------------
@@ -989,7 +989,7 @@ bool amf_sbi::send_ue_authentication_request(
       url, "POST", body, response_data, response_code, http_version);
 
   Logger::amf_sbi().debug(
-      "UE Authentication, response from AUSF, HTTP Code: %d", response_code);
+      "UE Authentication, response from AUSF, HTTP Code: %lu", response_code);
 
   if ((static_cast<http_response_codes_e>(response_code) ==
        http_response_codes_e::HTTP_RESPONSE_CODE_200_OK) or
@@ -1156,7 +1156,7 @@ void amf_sbi::curl_http_client(
     bstring n1sm_hex               = nullptr;
     bstring n2sm_hex               = nullptr;
 
-    Logger::amf_sbi().info("Get response with HTTP code (%d)", httpCode);
+    Logger::amf_sbi().info("Get response with HTTP code (%ld)", httpCode);
     Logger::amf_sbi().info("Response body %s", response.c_str());
 
     if (static_cast<http_response_codes_e>(httpCode) ==
@@ -1449,7 +1449,7 @@ void amf_sbi::curl_http_client(
     n2sm_msg  = {};
     json_data = {};
 
-    Logger::amf_sbi().info("Get response with HTTP code (%d)", httpCode);
+    Logger::amf_sbi().info("Get response with HTTP code (%ld)", httpCode);
     Logger::amf_sbi().info("Response body %s", response.c_str());
 
     response_code = httpCode;
@@ -1587,7 +1587,7 @@ void amf_sbi::curl_http_client(
     std::string response = *httpData.get();
     std::string resMsg   = {};
     bool is_response_ok  = true;
-    Logger::amf_sbi().info("Get response with HTTP code (%d)", httpCode);
+    Logger::amf_sbi().info("Get response with HTTP code (%ld)", httpCode);
 
     response_code = httpCode;
 

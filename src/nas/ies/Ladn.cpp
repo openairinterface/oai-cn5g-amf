@@ -19,39 +19,70 @@
  *      contact@openairinterface.org
  */
 
-#include "MobilityRestrictionList.hpp"
+#include "Ladn.hpp"
 
-namespace ngap {
-//------------------------------------------------------------------------------
-MobilityRestrictionList::MobilityRestrictionList() {}
-//------------------------------------------------------------------------------
-MobilityRestrictionList::~MobilityRestrictionList() {}
+#include "3gpp_24.501.hpp"
+#include "common_defs.h"
+#include "Ie_Const.hpp"
+#include "logger.hpp"
+
+using namespace nas;
 
 //------------------------------------------------------------------------------
-void MobilityRestrictionList::setPLMN(const PlmnId& plmn) {
-  servingPLMN = plmn;
+ladn::ladn() : dnn(false), ta_list(false) {}
+
+//------------------------------------------------------------------------------
+ladn::~ladn() {}
+
+//------------------------------------------------------------------------------
+void ladn::Set(const DNN& value) {
+  dnn = value;
 }
 
 //------------------------------------------------------------------------------
-void MobilityRestrictionList::getPLMN(PlmnId& plmn) const {
-  plmn = servingPLMN;
+void ladn::Set(const _5GSTrackingAreaIdList& value) {
+  ta_list = value;
 }
 
 //------------------------------------------------------------------------------
-bool MobilityRestrictionList::encode(
-    Ngap_MobilityRestrictionList_t* mobility_restriction_list) {
-  if (!servingPLMN.encode(mobility_restriction_list->servingPLMN)) {
-    return false;
+uint32_t ladn::GetLength() const {
+  return (dnn.GetIeLength() + ta_list.GetIeLength());
+}
+//------------------------------------------------------------------------------
+int ladn::Encode(uint8_t* buf, int len) {
+  Logger::nas_mm().debug("Encoding LADN");
+
+  int ie_len = dnn.GetIeLength();
+  ie_len += ta_list.GetIeLength();
+
+  if (len < ie_len) {  // Length of the content + IEI/Len
+    Logger::nas_mm().error(
+        "Size of the buffer is not enough to store this IE (IE len %d)",
+        ie_len);
+    return KEncodeDecodeError;
   }
-  return true;
+
+  int encoded_size    = 0;
+  int encoded_ie_size = 0;
+
+  encoded_ie_size = dnn.Encode(buf + encoded_size, len);
+  if (encoded_ie_size == KEncodeDecodeError) return KEncodeDecodeError;
+  encoded_size += encoded_ie_size;
+
+  encoded_ie_size = ta_list.Encode(buf + encoded_size, len);
+  if (encoded_ie_size == KEncodeDecodeError) return KEncodeDecodeError;
+  encoded_size += encoded_ie_size;
+
+  Logger::nas_mm().debug("Encoded LADN, len (%d)", encoded_size);
+  return encoded_size;
 }
 
 //------------------------------------------------------------------------------
-bool MobilityRestrictionList::decode(
-    Ngap_MobilityRestrictionList_t* mobility_restriction_list) {
-  if (!servingPLMN.decode(mobility_restriction_list->servingPLMN)) {
-    return false;
-  }
-  return true;
+int ladn::Decode(uint8_t* buf, int len) {
+  Logger::nas_mm().debug("Decoding LADN");
+  int decoded_size = 0;
+  // TODO:
+
+  Logger::nas_mm().debug("Decoded LADN (len %d)", decoded_size);
+  return decoded_size;
 }
-}  // namespace ngap

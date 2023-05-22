@@ -868,12 +868,6 @@ void amf_n2::handle_itti_message(itti_initial_context_setup_request& itti_msg) {
   guami.AmfSetID   = amf_cfg.guami.AmfSetID;
   guami.AmfPointer = amf_cfg.guami.AmfPointer;
   msg->setGuami(guami);
-  msg->setUESecurityCapability(
-      0xe000, 0xe000, 0xe000,
-      0xe000);  // TODO: remove hardcoded value
-  msg->setSecurityKey((uint8_t*) bdata(itti_msg.kgnb));
-  msg->setNasPdu(itti_msg.nas);
-
   // Get the list allowed NSSAI from the common PLMN between gNB and AMF
   std::vector<S_Nssai> list;
   /*  for (auto p : amf_cfg.plmn_list) {
@@ -897,6 +891,36 @@ void amf_n2::handle_itti_message(itti_initial_context_setup_request& itti_msg) {
   }
   msg->setAllowedNssai(list);
 
+  // TODO: get from ue_security_capability@NAS Context
+  msg->setUESecurityCapability(
+      0xe000, 0xe000, 0x0000,
+      0x0000);  // TODO: remove hardcoded value
+  msg->setSecurityKey((uint8_t*) bdata(itti_msg.kgnb));
+
+  ngap::PlmnId plmn_id = {};
+  plmn_id.set(amf_cfg.guami.mcc, amf_cfg.guami.mnc);
+  msg->setMobilityRestrictionList(plmn_id);
+
+  // IMEISV
+  std::shared_ptr<nas_context> nc = {};
+  if (!amf_n1_inst->amf_ue_id_2_nas_context(itti_msg.amf_ue_ngap_id, nc)) {
+    Logger::amf_n2().warn(
+        "No existed nas_context with amf_ue_ngap_id(" AMF_UE_NGAP_ID_FMT ")",
+        itti_msg.amf_ue_ngap_id);
+    // TODO:
+  } else {
+    if (nc->imeisv.has_value()) {
+      Logger::nas_mm().debug(
+          "Set IMEISV InitialContextSetupRequestMsg: %s",
+          nc->imeisv.value().identity.c_str());
+      msg->setMaskedIMEISV(nc->imeisv.value().identity);
+    } else {
+      Logger::nas_mm().debug("No IMEISV info available");
+    }
+  }
+
+  msg->setNasPdu(itti_msg.nas);
+
   if (itti_msg.is_sr or itti_msg.is_pdu_exist) {
     // Set UE Radio Capability if available
     if (gc->ue_radio_cap_ind) {
@@ -905,7 +929,7 @@ void amf_n2::handle_itti_message(itti_initial_context_setup_request& itti_msg) {
     }
 
     if (itti_msg.is_sr)
-      Logger::amf_n2().debug("Encoding parameters for Service Request");
+      Logger::amf_n2().debug("Encoding parameters for Service Accept");
     else
       Logger::amf_n2().debug(
           "Encoding parameters for Initial Context Setup Request");
@@ -1329,6 +1353,29 @@ void amf_n2::handle_itti_message(itti_ue_context_release_complete& itti_msg) {
     return;
   }
 
+  std::shared_ptr<ue_ngap_context> unc = {};
+  if (!amf_ue_id_2_ue_ngap_context(amf_ue_ngap_id, unc)) {
+    Logger::amf_app().error(
+        "No UE NGAP context for amf_ngap_id %s, exit", amf_ue_ngap_id);
+    return;
+  }
+
+  std::shared_ptr<gnb_context> gc = {};
+  if (!assoc_id_2_gnb_context(itti_msg.assoc_id, gc)) {
+    Logger::amf_n2().error(
+        "gNB with assoc_id (%d) is illegal", itti_msg.assoc_id);
+    return;
+  }
+
+  // verify release cause -> if HandoverSuccessful no further operations
+  // required
+  if (unc->release_cause == Ngap_CauseRadioNetwork_successful_handover &&
+      gc->gnb_id == unc->release_gnb) {
+    remove_ran_ue_ngap_id_2_ngap_context(ran_ue_ngap_id, gc->gnb_id);
+    unc->release_cause = 0;
+    return;
+  }
+
   // Change UE status from CM-CONNECTED to CM-IDLE
   std::shared_ptr<nas_context> nc = {};
   if (!amf_n1_inst->amf_ue_id_2_nas_context(amf_ue_ngap_id, nc)) {
@@ -1338,6 +1385,12 @@ void amf_n2::handle_itti_message(itti_ue_context_release_complete& itti_msg) {
   }
 
   if (nc != nullptr) {
+    // Do nothing in case of old NAS Context (Service Request handling)
+    if ((nc->old_amf_ue_ngap_id != INVALID_AMF_UE_NGAP_ID) and
+        (!nc->guti.has_value())) {
+      Logger::amf_n2().debug("UE Context Release Complete for the old context");
+      return;
+    }
     amf_n1_inst->set_5gcm_state(nc, CM_IDLE);
 
     // Start/reset the Mobile Reachable Timer
@@ -1448,7 +1501,8 @@ void amf_n2::handle_itti_message(itti_ue_context_release_complete& itti_msg) {
   }
 
   // Remove UE NGAP context
-  remove_ue_context_with_ran_ue_ngap_id(ran_ue_ngap_id, uc->gnb_id);
+  remove_amf_ue_ngap_id_2_ue_ngap_context(amf_ue_ngap_id);
+  remove_ran_ue_ngap_id_2_ngap_context(ran_ue_ngap_id, gc->gnb_id);
 }
 
 //------------------------------------------------------------------------------
@@ -1742,8 +1796,8 @@ bool amf_n2::handle_itti_message(itti_handover_required& itti_msg) {
   // Request to Target RAN
   handover_request->setPduSessionResourceSetupList(list);
 
-  uint8_t buffer[BUFFER_SIZE_4096];
-  int encoded_size = handover_request->Encode(buffer, BUFFER_SIZE_4096);
+  uint8_t buffer[BUFFER_SIZE_8192];
+  int encoded_size = handover_request->Encode(buffer, BUFFER_SIZE_8192);
   bstring b        = blk2bstr(buffer, encoded_size);
   std::shared_ptr<gnb_context> gc_target = {};
   if (!gnb_id_2_gnb_context(gnb_id_value, gc_target)) {
@@ -1839,7 +1893,7 @@ void amf_n2::handle_itti_message(itti_handover_request_Ack& itti_msg) {
     itti_msg->n2sm_info_type = "HANDOVER_REQ_ACK";
     itti_msg->ho_state       = "PREPARED";
     itti_msg->amf_ue_ngap_id = amf_ue_ngap_id;
-    itti_msg->ran_ue_ngap_id = ran_ue_ngap_id;
+    itti_msg->ran_ue_ngap_id = unc.get()->ran_ue_ngap_id;
     itti_msg->promise_id     = promise_id;
 
     int ret = itti_inst->send_msg(itti_msg);
@@ -2051,17 +2105,30 @@ void amf_n2::handle_itti_message(itti_handover_notify& itti_msg) {
   sctp_s_38412.sctp_send_msg(unc->gnb_assoc_id, 0, &b);
   bdestroy_wrapper(&b);
 
-  if (!amf_ue_id_2_ue_ngap_context(amf_ue_ngap_id, unc)) {
-    Logger::amf_n2().error(
-        "No UE NGAP context with amf_ue_ngap_id (" AMF_UE_NGAP_ID_FMT ")",
-        amf_ue_ngap_id);
+  string ue_context_key =
+      conv::get_ue_context_key(unc->ran_ue_ngap_id, amf_ue_ngap_id);
+  std::shared_ptr<ue_context> uc = {};
+  if (!amf_app_inst->ran_amf_id_2_ue_context(ue_context_key, uc)) {
+    Logger::amf_app().error(
+        "No UE context for ran_amf_id %s, exit", ue_context_key.c_str());
     return;
   }
 
+  // update the NGAP Context
+  unc->release_cause         = Ngap_CauseRadioNetwork_successful_handover;
+  unc->release_gnb           = uc->gnb_id;
   unc->ran_ue_ngap_id        = ran_ue_ngap_id;  // store new RAN ID
   unc->target_ran_ue_ngap_id = 0;               // Clear target RAN ID
   unc->ng_ue_state           = NGAP_UE_CONNECTED;
   unc->gnb_assoc_id          = itti_msg.assoc_id;  // update serving gNB
+
+  // update NAS Context
+  nc->ran_ue_ngap_id = ran_ue_ngap_id;
+
+  // update User Context
+  uc->ran_ue_ngap_id = ran_ue_ngap_id;
+  uc->gnb_id         = gc->gnb_id;
+
   set_ran_ue_ngap_id_2_ue_ngap_context(ran_ue_ngap_id, gc->gnb_id, unc);
 }
 
@@ -2353,11 +2420,11 @@ void amf_n2::remove_ue_context_with_ran_ue_ngap_id(
   // Remove all NAS context if still exist
   std::shared_ptr<nas_context> nc = {};
   if (amf_n1_inst->amf_ue_id_2_nas_context(unc->amf_ue_ngap_id, nc)) {
+    // TODO: Verify where it's current context
     // Remove all NAS context
     string supi = conv::imsi_to_supi(nc->imsi);
-    if (nc->is_stacs_available) {
-      stacs.update_5gmm_state(nc->imsi, "5GMM-DEREGISTERED");
-    }
+    stacs.update_5gmm_state(nc->imsi, "5GMM-DEREGISTERED");
+
     // Trigger UE Loss of Connectivity Status Notify
     Logger::amf_n1().debug(
         "Signal the UE Loss of Connectivity Event notification for SUPI %s",
@@ -2440,9 +2507,8 @@ void amf_n2::remove_ue_context_with_amf_ue_ngap_id(const long& amf_ue_ngap_id) {
     // Remove all NAS context
     string supi = conv::imsi_to_supi(nc->imsi);
     // Update UE status
-    if (nc->is_stacs_available) {
-      stacs.update_5gmm_state(nc->imsi, "5GMM-DEREGISTERED");
-    }
+    stacs.update_5gmm_state(nc->imsi, "5GMM-DEREGISTERED");
+
     // Trigger UE Loss of Connectivity Status Notify
     Logger::amf_n1().debug(
         "Signal the UE Loss of Connectivity Event notification for SUPI %s",

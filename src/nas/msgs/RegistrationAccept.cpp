@@ -37,25 +37,25 @@ RegistrationAccept::RegistrationAccept()
   ie_pdu_session_status                          = std::nullopt;
   ie_pdu_session_reactivation_result             = std::nullopt;
   ie_pdu_session_reactivation_result_error_cause = std::nullopt;
-  // ie_ladn_information = std::nullopt;
-  ie_mico_indication                     = std::nullopt;
-  ie_network_slicing_indication          = std::nullopt;
-  ie_t3512_value                         = std::nullopt;
-  ie_non_3gpp_deregistration_timer_value = std::nullopt;
-  ie_t3502_value                         = std::nullopt;
-  ie_sor_transparent_container           = std::nullopt;
-  ie_eap_message                         = std::nullopt;
-  ie_nssai_inclusion_mode                = std::nullopt;
-  ie_negotiated_drx_parameters           = std::nullopt;
-  ie_non_3gpp_nw_policies                = std::nullopt;
-  ie_eps_bearer_context_status           = std::nullopt;
-  ie_extended_drx_parameters             = std::nullopt;
-  ie_t3447_value                         = std::nullopt;
-  ie_t3448_value                         = std::nullopt;
-  ie_t3324_value                         = std::nullopt;
-  ie_ue_radio_capability_id              = std::nullopt;
-  ie_pending_nssai                       = std::nullopt;
-  ie_tai_list                            = std::nullopt;
+  ie_ladn_information                            = std::nullopt;
+  ie_mico_indication                             = std::nullopt;
+  ie_network_slicing_indication                  = std::nullopt;
+  ie_t3512_value                                 = std::nullopt;
+  ie_non_3gpp_deregistration_timer_value         = std::nullopt;
+  ie_t3502_value                                 = std::nullopt;
+  ie_sor_transparent_container                   = std::nullopt;
+  ie_eap_message                                 = std::nullopt;
+  ie_nssai_inclusion_mode                        = std::nullopt;
+  ie_negotiated_drx_parameters                   = std::nullopt;
+  ie_non_3gpp_nw_policies                        = std::nullopt;
+  ie_eps_bearer_context_status                   = std::nullopt;
+  ie_extended_drx_parameters                     = std::nullopt;
+  ie_t3447_value                                 = std::nullopt;
+  ie_t3448_value                                 = std::nullopt;
+  ie_t3324_value                                 = std::nullopt;
+  ie_ue_radio_capability_id                      = std::nullopt;
+  ie_pending_nssai                               = std::nullopt;
+  ie_tai_list                                    = std::nullopt;
 }
 
 //------------------------------------------------------------------------------
@@ -184,12 +184,11 @@ void RegistrationAccept::SetMicoIndication(bool sprti, bool raai) {
   ie_mico_indication = std::make_optional<MicoIndication>(sprti, raai);
 }
 
-/*
 //------------------------------------------------------------------------------
-void RegistrationAccept::setLADN_Information(std::vector<bstring> ladnValue) {
-  ie_ladn_information = std::make_optional<LadnInformation>(ladnValue);
+void RegistrationAccept::SetLadnInformation(
+    const LadnInformation& ladn_information) {
+  ie_ladn_information = std::make_optional<LadnInformation>(ladn_information);
 }
-*/
 
 //------------------------------------------------------------------------------
 void RegistrationAccept::SetNetworkSlicingIndication(bool dcni, bool nssci) {
@@ -466,18 +465,20 @@ int RegistrationAccept::Encode(uint8_t* buf, int len) {
       return KEncodeDecodeError;
     }
   }
-  /*
+
   if (!ie_ladn_information.has_value()) {
     Logger::nas_mm().warn("IE ie_ladn_information is not available");
   } else {
-    if (int size = ie_ladn_information.value().Encode(
-            buf + encoded_size, len - encoded_size)) {
+    int size = ie_ladn_information.value().Encode(
+        buf + encoded_size, len - encoded_size);
+    if (size != KEncodeDecodeError) {
       encoded_size += size;
     } else {
-      Logger::nas_mm().error("encoding ie_ladn_information  error");
-      return 0;
+      Logger::nas_mm().error(
+          "Encoding %s error", LadnInformation::GetIeName().c_str());
+      return KEncodeDecodeError;
     }
-  }*/
+  }
 
   if (!ie_mico_indication.has_value()) {
     Logger::nas_mm().debug(
@@ -994,18 +995,24 @@ int RegistrationAccept::Decode(uint8_t* buf, int len) {
                 ie_pdu_session_reactivation_result_error_cause_tmp);
         DECODE_U8_VALUE(buf + decoded_size, octet);
         Logger::nas_mm().debug("Next IEI (0x%x)", octet);
-      } break; /*
-       case kIeiLadnInformation: {
-         Logger::nas_mm().debug("Decoding IEI(0x74)");
-         LadnInformation ie_ladn_information_tmp = {};
-         decoded_size += ie_ladn_information_tmp.Decode(
-             buf + decoded_size, len - decoded_size, true);
-         ie_ladn_information =
-             std::optional<LadnInformation>(ie_ladn_information_tmp);
-         octet = *(buf + decoded_size);
-         Logger::nas_mm().debug("Next IEI 0x%x", octet);
-       } break;
-       */
+      } break;
+      case kIeiLadnInformation: {
+        Logger::nas_mm().debug("Decoding IEI 0x%x", kIeiLadnInformation);
+        LadnInformation ie_ladn_information_tmp = {};
+        if ((decoded_result = ie_ladn_information_tmp.Decode(
+                 buf + decoded_size, len - decoded_size, true)) ==
+            KEncodeDecodeError) {
+          Logger::nas_mm().error(
+              "Decoding %s error", LadnInformation::GetIeName().c_str());
+          return KEncodeDecodeError;
+        }
+        decoded_size += decoded_result;
+        ie_ladn_information =
+            std::optional<LadnInformation>(ie_ladn_information_tmp);
+        DECODE_U8_VALUE(buf + decoded_size, octet);
+        Logger::nas_mm().debug("Next IEI 0x%x", octet);
+      } break;
+
       case kIeiGprsTimer3T3512: {
         Logger::nas_mm().debug("Decoding IEI 0x%x", kIeiGprsTimer3T3512);
         GprsTimer3 ie_t3512_value_tmp(kIeiGprsTimer3T3512);

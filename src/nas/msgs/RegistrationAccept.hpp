@@ -89,6 +89,7 @@ class RegistrationAccept : public NasMmPlainHeader {
   // TODO: Get
 
   // TODO: LADN information
+  void SetLadnInformation(const LadnInformation& ladn_information);
 
   void SetMicoIndication(bool sprti, bool raai);
   // TODO: Get
@@ -164,7 +165,7 @@ class RegistrationAccept : public NasMmPlainHeader {
       ie_pdu_session_reactivation_result;  // Optional
   std::optional<PDU_Session_Reactivation_Result_Error_Cause>
       ie_pdu_session_reactivation_result_error_cause;  // Optional
-  // TODO: std::optional<LadnInformation> ie_ladn_information;               //
+  std::optional<LadnInformation> ie_ladn_information;  //
   // Optional
   std::optional<MicoIndication> ie_mico_indication;  // Optional
   std::optional<NetworkSlicingIndication>
