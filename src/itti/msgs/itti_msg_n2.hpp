@@ -516,21 +516,20 @@ class itti_uplink_ue_associated_nrppa_transport : public itti_msg_n2 {
   bstring routing_id;
 };
 
-
 class itti_downlink_non_ue_associated_nrppa_transport : public itti_msg_n2 {
  public:
   itti_downlink_non_ue_associated_nrppa_transport(
       const task_id_t origin, const task_id_t destination)
       : itti_msg_n2(
             DOWNLINK_NON_UE_ASSOCIATED_NRPPA_TRANSPORT, origin, destination) {
-    nrppa_pdu      = nullptr;
-    routing_id     = nullptr;
+    nrppa_pdu  = nullptr;
+    routing_id = nullptr;
   }
   itti_downlink_non_ue_associated_nrppa_transport(
       const itti_downlink_non_ue_associated_nrppa_transport& i)
       : itti_msg_n2(i) {
-    nrppa_pdu      = bstrcpy(i.nrppa_pdu);
-    routing_id     = bstrcpy(i.routing_id);
+    nrppa_pdu  = bstrcpy(i.nrppa_pdu);
+    routing_id = bstrcpy(i.routing_id);
   }
   virtual ~itti_downlink_non_ue_associated_nrppa_transport() {
     bdestroy_wrapper(&nrppa_pdu);
@@ -544,15 +543,16 @@ class itti_uplink_non_ue_associated_nrppa_transport : public itti_msg_n2 {
  public:
   itti_uplink_non_ue_associated_nrppa_transport(
       const task_id_t origin, const task_id_t destination)
-      : itti_msg_n2(UPLINK_NON_UE_ASSOCIATED_NRPPA_TRANSPORT, origin, destination) {
-    nrppa_pdu      = nullptr;
-    routing_id     = nullptr;
+      : itti_msg_n2(
+            UPLINK_NON_UE_ASSOCIATED_NRPPA_TRANSPORT, origin, destination) {
+    nrppa_pdu  = nullptr;
+    routing_id = nullptr;
   }
   itti_uplink_non_ue_associated_nrppa_transport(
       const itti_uplink_ue_associated_nrppa_transport& i)
       : itti_msg_n2(i) {
-    nrppa_pdu      = bstrcpy(i.nrppa_pdu);
-    routing_id     = bstrcpy(i.routing_id);
+    nrppa_pdu  = bstrcpy(i.nrppa_pdu);
+    routing_id = bstrcpy(i.routing_id);
   }
   virtual ~itti_uplink_non_ue_associated_nrppa_transport() {
     bdestroy_wrapper(&nrppa_pdu);

@@ -86,7 +86,8 @@ bool DownlinkNonUEAssociatedNRPPaTransportMsg::decodeFromPdu(
                     ->value.present ==
                 Ngap_DownlinkNonUEAssociatedNRPPaTransportIEs__value_PR_RoutingID) {
           conv::octet_string_2_bstring(
-              downlinkNonUEAssociatedNRPPaTransportIEs->protocolIEs.list.array[i]
+              downlinkNonUEAssociatedNRPPaTransportIEs->protocolIEs.list
+                  .array[i]
                   ->value.choice.RoutingID,
               routingID);
         } else {
@@ -102,7 +103,8 @@ bool DownlinkNonUEAssociatedNRPPaTransportMsg::decodeFromPdu(
                     ->value.present ==
                 Ngap_DownlinkNonUEAssociatedNRPPaTransportIEs__value_PR_NRPPa_PDU) {
           conv::octet_string_2_bstring(
-              downlinkNonUEAssociatedNRPPaTransportIEs->protocolIEs.list.array[i]
+              downlinkNonUEAssociatedNRPPaTransportIEs->protocolIEs.list
+                  .array[i]
                   ->value.choice.NRPPa_PDU,
               nRPPaPDU);
         } else {
@@ -141,14 +143,12 @@ void DownlinkNonUEAssociatedNRPPaTransportMsg::setRoutingID(
 }
 
 //------------------------------------------------------------------------------
-void DownlinkNonUEAssociatedNRPPaTransportMsg::getRoutingID(
-    bstring& pdu) {
+void DownlinkNonUEAssociatedNRPPaTransportMsg::getRoutingID(bstring& pdu) {
   pdu = bstrcpy(routingID);
 }
 
 //------------------------------------------------------------------------------
-void DownlinkNonUEAssociatedNRPPaTransportMsg::setNRPPaPdu(
-    const bstring& pdu) {
+void DownlinkNonUEAssociatedNRPPaTransportMsg::setNRPPaPdu(const bstring& pdu) {
   nRPPaPDU = bstrcpy(pdu);
   Ngap_DownlinkNonUEAssociatedNRPPaTransportIEs_t* ie =
       (Ngap_DownlinkNonUEAssociatedNRPPaTransportIEs_t*) calloc(
@@ -166,8 +166,7 @@ void DownlinkNonUEAssociatedNRPPaTransportMsg::setNRPPaPdu(
 }
 
 //------------------------------------------------------------------------------
-void DownlinkNonUEAssociatedNRPPaTransportMsg::getNRPPaPdu(
-    bstring& pdu) {
+void DownlinkNonUEAssociatedNRPPaTransportMsg::getNRPPaPdu(bstring& pdu) {
   pdu = nRPPaPDU;
 }
 
