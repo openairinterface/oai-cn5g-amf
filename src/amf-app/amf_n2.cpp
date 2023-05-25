@@ -2111,26 +2111,25 @@ void amf_n2::handle_itti_message(itti_handover_notify& itti_msg) {
 
   set_ran_ue_ngap_id_2_ue_ngap_context(ran_ue_ngap_id, gc->gnb_id, unc);
 
-
-
-  // Retrieve new location from the UE and notify generate location change signal
+  // Retrieve new location from the UE and notify generate location change
+  // signal
   oai::amf::model::UserLocation user_location = {};
   oai::amf::model::NrLocation nr_location     = {};
 
   oai::amf::model::Ncgi ncgi;
   oai::amf::model::Tai tai;
   oai::amf::model::PlmnId plmnId;
-  oai::amf::model::GlobalRanNodeId ranid; 
+  oai::amf::model::GlobalRanNodeId ranid;
   oai::amf::model::GNbId gnbid;
- 
+
   plmnId.setMcc(NR_CGI.mcc);
   plmnId.setMnc(NR_CGI.mnc);
- 
+
   gnbid.setBitLength(32);
   gnbid.setGNBValue(std::to_string(gc->gnb_id));
   ranid.setGNbId(gnbid);
   ranid.setPlmnId(plmnId);
- 
+
   ncgi.setNid("");
   ncgi.setNrCellId(std::to_string(NR_CGI.nrCellID));
   ncgi.setPlmnId(plmnId);
@@ -2139,10 +2138,9 @@ void amf_n2::handle_itti_message(itti_handover_notify& itti_msg) {
   nr_location.setNcgi(ncgi);
   nr_location.setTai(tai);
   nr_location.setGlobalGnbId(ranid);
-  
+
   user_location.setNrLocation(nr_location);
-  amf_n1_inst->event_sub.ue_location_report(supi, user_location, 1); 
-  
+  amf_n1_inst->event_sub.ue_location_report(supi, user_location, 1);
 }
 
 //------------------------------------------------------------------------------
