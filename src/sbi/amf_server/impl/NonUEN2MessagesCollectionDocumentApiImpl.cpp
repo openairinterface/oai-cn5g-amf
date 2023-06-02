@@ -12,6 +12,10 @@
  */
 
 #include "NonUEN2MessagesCollectionDocumentApiImpl.h"
+#include "itti.hpp"
+#include "conversions.hpp"
+
+extern itti_mw* itti_inst;
 
 namespace oai {
 namespace amf {
@@ -26,12 +30,68 @@ NonUEN2MessagesCollectionDocumentApiImpl::
     : NonUEN2MessagesCollectionDocumentApi(rtr), m_amf_app(amf_app_inst) {}
 
 void NonUEN2MessagesCollectionDocumentApiImpl::non_ue_n2_message_transfer(
-    const N2InformationTransferReqData& n2InformationTransferReqData,
+    std::unordered_map<std::string, mime_part>& parts,
     Pistache::Http::ResponseWriter& response) {
-  response.send(
-      Pistache::Http::Code::Ok,
-      "NonUEN2MessagesCollectionDocumentApiImpl::non_ue_n2_message_transfer "
-      "API has not been implemented yet!\n");
+  Logger::amf_server().debug(
+      "Receive N2InformationTransfer Request, handling...");
+
+  nlohmann::json response_json = {};
+  response_json["cause"] =
+      non_ue_n2_message_transfer_cause_e2str[NON_UE_N2_TRANSFER_INITIATED];
+  Pistache::Http::Code code = Pistache::Http::Code::Ok;
+
+  N2InformationTransferReqData n2InformationTransferReqData = {};
+  nlohmann::json::parse(parts[JSON_CONTENT_ID_MIME].body.c_str())
+      .get_to(n2InformationTransferReqData);
+
+  bool request_valid = true;
+
+  std::string n2_content_id = "";
+
+  if (n2InformationTransferReqData.getN2Information()
+          .getN2InformationClass()
+          .getEnumValue() !=
+      N2InformationClass_anyOf::eN2InformationClass_anyOf::NRPPA) {
+    request_valid = false;
+  } else {
+    n2_content_id = n2InformationTransferReqData.getN2Information()
+                        .getNrppaInfo()
+                        .getNrppaPdu()
+                        .getNgapData()
+                        .getContentId();
+    Logger::amf_server().debug("n2_content_id: %s", n2_content_id.c_str());
+  }
+
+  if (!request_valid) {
+    code = Pistache::Http::Code::Bad_Request;
+    response_json["cause"] =
+        n1_n2_message_transfer_cause_e2str[N1_MSG_NOT_TRANSFERRED];
+    // Send response to the NF Service Consumer (e.g., SMF)
+    response.send(code, response_json.dump().c_str());
+    return;
+  }
+
+  bstring nrppa_pdu  = nullptr;
+  bstring routing_id = nullptr;
+  conv::msg_str_2_msg_hex(parts[n2_content_id].body, nrppa_pdu);
+  conv::string_2_bstring(
+      n2InformationTransferReqData.getN2Information().getNrppaInfo().getNfId(),
+      routing_id);
+  auto itti_msg = std::make_shared<itti_non_ue_n2_message_transfer_request>(
+      AMF_SERVER, TASK_AMF_APP);
+
+  itti_msg->nrppa_pdu        = bstrcpy(nrppa_pdu);
+  itti_msg->routing_id       = bstrcpy(routing_id);
+  itti_msg->is_nrppa_pdu_set = true;
+
+  response.send(code, response_json.dump().c_str());
+  int ret = itti_inst->send_msg(itti_msg);
+  if (0 != ret) {
+    Logger::amf_server().error(
+        "Could not send ITTI message %s to task TASK_AMF_N2",
+        itti_msg->get_msg_name());
+  }
+  bdestroy_wrapper(&nrppa_pdu);
 }
 
 }  // namespace api

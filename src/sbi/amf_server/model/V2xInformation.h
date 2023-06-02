@@ -11,16 +11,15 @@
  * the class manually.
  */
 /*
- * N2InfoContent.h
+ * V2xInformation.h
  *
  *
  */
 
-#ifndef N2InfoContent_H_
-#define N2InfoContent_H_
+#ifndef V2xInformation_H_
+#define V2xInformation_H_
 
-#include "RefToBinaryData.h"
-#include "NgapIeType.h"
+#include "N2InfoContent.h"
 #include <nlohmann/json.hpp>
 
 namespace oai::amf::model {
@@ -28,10 +27,10 @@ namespace oai::amf::model {
 /// <summary>
 ///
 /// </summary>
-class N2InfoContent {
+class V2xInformation {
  public:
-  N2InfoContent();
-  virtual ~N2InfoContent() = default;
+  V2xInformation();
+  virtual ~V2xInformation() = default;
 
   /// <summary>
   /// Validate the current data in the model. Throws a ValidationException on
@@ -51,43 +50,28 @@ class N2InfoContent {
   /// </summary>
   bool validate(std::stringstream& msg, const std::string& pathPrefix) const;
 
-  bool operator==(const N2InfoContent& rhs) const;
-  bool operator!=(const N2InfoContent& rhs) const;
+  bool operator==(const V2xInformation& rhs) const;
+  bool operator!=(const V2xInformation& rhs) const;
 
   /////////////////////////////////////////////
-  /// N2InfoContent members
+  /// V2xInformation members
 
   /// <summary>
   ///
   /// </summary>
-  int32_t getNgapMessageType() const;
-  void setNgapMessageType(int32_t const value);
-  bool ngapMessageTypeIsSet() const;
-  void unsetNgapMessageType();
-  /// <summary>
-  ///
-  /// </summary>
-  oai::amf::model::NgapIeType getNgapIeType() const;
-  void setNgapIeType(oai::amf::model::NgapIeType const& value);
-  bool ngapIeTypeIsSet() const;
-  void unsetNgapIeType();
-  /// <summary>
-  ///
-  /// </summary>
-  oai::amf::model::RefToBinaryData getNgapData() const;
-  void setNgapData(oai::amf::model::RefToBinaryData const& value);
+  oai::amf::model::N2InfoContent getN2Pc5Pol() const;
+  void setN2Pc5Pol(oai::amf::model::N2InfoContent const& value);
+  bool n2Pc5PolIsSet() const;
+  void unsetN2Pc5Pol();
 
-  friend void to_json(nlohmann::json& j, const N2InfoContent& o);
-  friend void from_json(const nlohmann::json& j, N2InfoContent& o);
+  friend void to_json(nlohmann::json& j, const V2xInformation& o);
+  friend void from_json(const nlohmann::json& j, V2xInformation& o);
 
  protected:
-  int32_t m_NgapMessageType;
-  bool m_NgapMessageTypeIsSet;
-  oai::amf::model::NgapIeType m_NgapIeType;
-  bool m_NgapIeTypeIsSet;
-  oai::amf::model::RefToBinaryData m_NgapData;
+  oai::amf::model::N2InfoContent m_N2Pc5Pol;
+  bool m_N2Pc5PolIsSet;
 };
 
 }  // namespace oai::amf::model
 
-#endif /* N2InfoContent_H_ */
+#endif /* V2xInformation_H_ */

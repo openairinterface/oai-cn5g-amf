@@ -62,6 +62,9 @@ amf_config::amf_config() {
   udm_addr.ipv4_addr.s_addr               = INADDR_ANY;
   udm_addr.port                           = DEFAULT_HTTP1_PORT;
   udm_addr.api_version                    = DEFAULT_SBI_API_VERSION;
+  lmf_addr.ipv4_addr.s_addr               = INADDR_ANY;
+  lmf_addr.port                           = DEFAULT_HTTP1_PORT;
+  lmf_addr.api_version                    = DEFAULT_SBI_API_VERSION;
   nssf_addr.ipv4_addr.s_addr              = INADDR_ANY;
   nssf_addr.port                          = DEFAULT_HTTP1_PORT;
   nssf_addr.api_version                   = DEFAULT_SBI_API_VERSION;
@@ -85,6 +88,7 @@ amf_config::amf_config() {
   support_features.enable_smf_selection   = false;
   support_features.enable_external_ausf   = false;
   support_features.enable_external_udm    = false;
+  support_features.enable_external_lmf    = false;
   support_features.enable_external_nssf   = false;
   support_features.use_fqdn_dns           = false;
   support_features.use_http2              = false;
@@ -302,6 +306,14 @@ int amf_config::load(const std::string& config_file) {
       support_features.enable_external_udm = true;
     } else {
       support_features.enable_external_udm = false;
+    }
+
+    support_features_cfg.lookupValue(
+        AMF_CONFIG_STRING_SUPPORT_FEATURES_EXTERNAL_LMF, opt);
+    if (boost::iequals(opt, "yes")) {
+      support_features.enable_external_lmf = true;
+    } else {
+      support_features.enable_external_lmf = false;
     }
 
     support_features_cfg.lookupValue(
@@ -626,6 +638,51 @@ int amf_config::load(const std::string& config_file) {
         }
       }
     }
+
+    // LMF
+    if (support_features.enable_external_lmf) {
+      const Setting& lmf_cfg       = new_if_cfg[AMF_CONFIG_STRING_LMF];
+      struct in_addr lmf_ipv4_addr = {};
+      unsigned int lmf_port        = {};
+      std::string lmf_api_version  = {};
+
+      if (support_features.use_fqdn_dns) {
+        // Store FQDN
+        lmf_cfg.lookupValue(AMF_CONFIG_STRING_FQDN_DNS, lmf_addr.fqdn);
+
+        lmf_cfg.lookupValue(AMF_CONFIG_STRING_IPV4_ADDRESS, address);
+        IPV4_STR_ADDR_TO_INADDR(
+            util::trim(address).c_str(), lmf_ipv4_addr,
+            "BAD IPv4 ADDRESS FORMAT FOR LMF !");
+        lmf_addr.ipv4_addr = lmf_ipv4_addr;
+        if (!(lmf_cfg.lookupValue(AMF_CONFIG_STRING_PORT, lmf_port))) {
+          Logger::amf_app().error(AMF_CONFIG_STRING_PORT "failed");
+          throw(AMF_CONFIG_STRING_PORT "failed");
+        }
+        lmf_addr.port = lmf_port;
+
+        if (!(lmf_cfg.lookupValue(
+                AMF_CONFIG_STRING_API_VERSION, lmf_api_version))) {
+          Logger::amf_app().error(AMF_CONFIG_STRING_API_VERSION "failed");
+          throw(AMF_CONFIG_STRING_API_VERSION "failed");
+        }
+        lmf_addr.api_version = lmf_api_version;
+      } else {
+        lmf_cfg.lookupValue(AMF_CONFIG_STRING_FQDN_DNS, lmf_addr.fqdn);
+        uint8_t addr_type = {};
+        fqdn::resolve(lmf_addr.fqdn, address, lmf_port, addr_type);
+        if (addr_type != 0) {  // IPv6: TODO
+          throw("DO NOT SUPPORT IPV6 ADDR FOR LMF!");
+        } else {  // IPv4
+          IPV4_STR_ADDR_TO_INADDR(
+              util::trim(address).c_str(), lmf_ipv4_addr,
+              "BAD IPv4 ADDRESS FORMAT FOR LMF !");
+          lmf_addr.ipv4_addr   = lmf_ipv4_addr;
+          lmf_addr.port        = lmf_port;
+          lmf_addr.api_version = "v1";  // TODO: get API version
+        }
+      }
+    }
   } catch (const SettingNotFoundException& nfex) {
     Logger::amf_app().error(
         "%s : %s, using defaults", nfex.what(), nfex.getPath());
@@ -821,6 +878,15 @@ void amf_config::display() {
         "    API version ...........: %s", udm_addr.api_version.c_str());
   }
 
+  if (support_features.enable_external_lmf) {
+    Logger::config().info("- LMF:");
+    Logger::config().info(
+        "    IP Addr ...............: %s", inet_ntoa(lmf_addr.ipv4_addr));
+    Logger::config().info("    Port ..................: %d", lmf_addr.port);
+    Logger::config().info(
+        "    API version ...........: %s", lmf_addr.api_version.c_str());
+  }
+
   if (!support_features.enable_smf_selection) {
     Logger::config().info("- SMF Pool: ");
     for (int i = 0; i < smf_pool.size(); i++) {
@@ -854,6 +920,9 @@ void amf_config::display() {
   Logger::config().info(
       "    External UDM ..........: %s",
       support_features.enable_external_udm ? "Yes" : "No");
+  Logger::config().info(
+      "    External LMF ..........: %s",
+      support_features.enable_external_lmf ? "Yes" : "No");
   Logger::config().info(
       "    External NSSF .........: %s",
       support_features.enable_external_nssf ? "Yes" : "No");
@@ -986,6 +1055,12 @@ std::string amf_config::get_ausf_ue_authentications_uri() {
 }
 
 //------------------------------------------------------------------------------
+std::string amf_config::get_lmf_determine_location_uri() {
+  return std::string(inet_ntoa(*((struct in_addr*) &lmf_addr.ipv4_addr))) +
+         ":" + std::to_string(lmf_addr.port) + NLMF_BASE +
+         lmf_addr.api_version + NLMF_DETERMINE_LOCATION;
+}
+
 bool amf_config::get_smf_pdu_session_context_uri(
     const std::shared_ptr<pdu_session_context>& psc, std::string& smf_uri) {
   if (!psc) return false;
@@ -1074,6 +1149,10 @@ void amf_config::to_json(nlohmann::json& json_data) const {
 
   if (support_features.enable_external_udm) {
     json_data["udm"] = udm_addr.to_json();
+  }
+
+  if (support_features.enable_external_lmf) {
+    json_data["lmf"] = lmf_addr.to_json();
   }
 
   json_data["smf_pool"] = nlohmann::json::array();
@@ -1184,6 +1263,16 @@ bool amf_config::from_json(nlohmann::json& json_data) {
         // if use FQDN -> update IP addr accordingly
         if (support_features.use_fqdn_dns) {
           resolve_fqdn(udm_addr.fqdn, udm_addr.ipv4_addr);
+        }
+      }
+    }
+
+    if (support_features.enable_external_lmf) {
+      if (json_data.find("lmf") != json_data.end()) {
+        lmf_addr.from_json(json_data["lmf"]);
+        // if use FQDN -> update IP addr accordingly
+        if (support_features.use_fqdn_dns) {
+          resolve_fqdn(lmf_addr.fqdn, lmf_addr.ipv4_addr);
         }
       }
     }

@@ -64,8 +64,19 @@ constexpr uint64_t SECONDS_SINCE_FIRST_EPOCH = 2208988800;
 #define NAMF_COMMUNICATION_N1N2_MESSAGE_TRANSFER_URL                           \
   "/ue-contexts/{}/n1-n2-messages"  // context id
 
+#define NAMF_EVENT_EXPOSURE_BASE "/namf-evts/"
+#define NAMF_EVENT_EXPOSURE_SUBSCRIPTION "/subscriptions"
+
+#define NLMF_BASE "/nlmf-loc/"
+#define NLMF_DETERMINE_LOCATION "/determine-location"
+
 #define NAS_MESSAGE_DOWNLINK 1
 #define NAS_MESSAGE_UPLINK 0
+
+#define JSON_CONTENT_ID_MIME "root"
+#define N1_SM_CONTENT_ID "n1SmMsg"
+#define N2_SM_CONTENT_ID "n2msg"
+#define N2_NRPPa_CONTENT_ID "n2NrppaMsg"
 
 typedef enum {
   PlainNasMsg                                              = 0x0,

@@ -122,6 +122,13 @@ void amf_app_task(void*) {
         amf_app_inst->handle_itti_message(ref(*m));
       } break;
 
+      case NON_UE_N2_MESSAGE_TRANSFER_REQ: {
+        Logger::amf_app().debug("Received NON_UE_N2_MESSAGE_TRANSFER_REQ");
+        itti_non_ue_n2_message_transfer_request* m =
+            dynamic_cast<itti_non_ue_n2_message_transfer_request*>(msg);
+        amf_app_inst->handle_itti_message(ref(*m));
+      } break;
+
       case SBI_N1_MESSAGE_NOTIFICATION: {
         Logger::amf_app().debug("Received SBI_N1_MESSAGE_NOTIFICATION");
         itti_sbi_n1_message_notification* m =
@@ -325,25 +332,43 @@ void amf_app::handle_itti_message(
           "Could not send ITTI message %s to task TASK_AMF_N2",
           paging_msg->get_msg_name());
     }
-  } else {
+  } else if (itti_msg.is_nrppa_pdu_set) {
+    Logger::amf_app().info(
+        "Handle ITTI N1N2 Message Transfer Request for NRPPa PDU");
+    std::shared_ptr<itti_downlink_ue_associated_nrppa_transport> dl_msg =
+        std::make_shared<itti_downlink_ue_associated_nrppa_transport>(
+            TASK_AMF_APP, TASK_AMF_N2);
+    dl_msg->nrppa_pdu  = bstrcpy(itti_msg.nrppa_pdu);
+    dl_msg->routing_id = bstrcpy(itti_msg.routing_id);
+    amf_n1_inst->supi_2_amf_id(itti_msg.supi, dl_msg->amf_ue_ngap_id);
+    amf_n1_inst->supi_2_ran_id(itti_msg.supi, dl_msg->ran_ue_ngap_id);
+    int ret = itti_inst->send_msg(dl_msg);
+    if (ret != RETURNok) {
+      Logger::amf_app().error(
+          "Could not send ITTI message %s to task TASK_AMF_N2",
+          dl_msg->get_msg_name());
+    }
+  } else if (itti_msg.is_n1sm_set or itti_msg.is_n2sm_set) {
     Logger::amf_app().info("Handle ITTI N1N2 Message Transfer Request");
-    // Encode DL NAS TRANSPORT message(NAS message)
-    auto dl = std::make_unique<DLNASTransport>();
-    dl->SetHeader(PLAIN_5GS_MSG);
-    dl->SetPayloadContainerType(N1_SM_INFORMATION);
-    dl->SetPayloadContainer(
-        (uint8_t*) bdata(bstrcpy(itti_msg.n1sm)), blength(itti_msg.n1sm));
-    dl->SetPduSessionId(itti_msg.pdu_session_id);
-
-    uint8_t nas[BUFFER_SIZE_1024];
-    int encoded_size = dl->Encode(nas, BUFFER_SIZE_1024);
-    output_wrapper::print_buffer(
-        "amf_app", "N1N2 message transfer", nas, encoded_size);
-
     std::shared_ptr<itti_downlink_nas_transfer> dl_msg =
         std::make_shared<itti_downlink_nas_transfer>(TASK_AMF_APP, TASK_AMF_N1);
 
-    dl_msg->dl_nas = blk2bstr(nas, encoded_size);
+    if (itti_msg.is_n1sm_set) {
+      // Encode DL NAS TRANSPORT message(NAS message)
+      auto dl = std::make_unique<DLNASTransport>();
+      dl->SetHeader(PLAIN_5GS_MSG);
+      dl->SetPayloadContainerType(N1_SM_INFORMATION);
+      dl->SetPayloadContainer(
+          (uint8_t*) bdata(bstrcpy(itti_msg.n1sm)), blength(itti_msg.n1sm));
+      dl->SetPduSessionId(itti_msg.pdu_session_id);
+
+      uint8_t nas[BUFFER_SIZE_1024];
+      int encoded_size = dl->Encode(nas, BUFFER_SIZE_1024);
+      output_wrapper::print_buffer(
+          "amf_app", "N1N2 message transfer", nas, encoded_size);
+      dl_msg->dl_nas = blk2bstr(nas, encoded_size);
+    }
+
     if (!itti_msg.is_n2sm_set) {
       dl_msg->is_n2sm_set = false;
     } else {
@@ -361,6 +386,31 @@ void amf_app::handle_itti_message(
           "Could not send ITTI message %s to task TASK_AMF_N1",
           dl_msg->get_msg_name());
     }
+  } else {
+    Logger::amf_app().warn("Unknown N1N2 Message Transfer Request type");
+  }
+}
+
+//------------------------------------------------------------------------------
+void amf_app::handle_itti_message(
+    itti_non_ue_n2_message_transfer_request& itti_msg) {
+  if (itti_msg.is_nrppa_pdu_set) {
+    Logger::amf_app().info(
+        "Handle ITTI Non Ue N2 Message Transfer Request for NRPPa PDU");
+    std::shared_ptr<itti_downlink_non_ue_associated_nrppa_transport> dl_msg =
+        std::make_shared<itti_downlink_non_ue_associated_nrppa_transport>(
+            TASK_AMF_APP, TASK_AMF_N2);
+    dl_msg->nrppa_pdu  = bstrcpy(itti_msg.nrppa_pdu);
+    dl_msg->routing_id = bstrcpy(itti_msg.routing_id);
+    int ret            = itti_inst->send_msg(dl_msg);
+    if (ret != RETURNok) {
+      Logger::amf_app().error(
+          "Could not send ITTI message %s to task TASK_AMF_N2",
+          dl_msg->get_msg_name());
+    }
+  } else {
+    Logger::amf_app().info(
+        "Handle ITTI Non UE N2 Message Transfer Request : Unsupported");
   }
 }
 
@@ -923,6 +973,26 @@ evsub_id_t amf_app::handle_event_exposure_subscription(
     ss->nf_id                 = msg->event_exposure.get_nf_id();
     ss->ev_type               = i.type;
     add_event_subscription(evsub_id, i.type, ss);
+
+    // Determine Location
+    if (amf_cfg.support_features.enable_external_lmf) {
+      uint8_t http_version = amf_cfg.support_features.use_http2 ? 2 : 1;
+      for (const auto& kvp : supi2ue_ctx) {
+        nlohmann::json input_data    = {};
+        input_data["supi"]           = kvp.first;
+        nlohmann::json location_data = {};
+        if (amf_sbi_inst->send_determine_location_request(
+                input_data, location_data, http_version)) {
+          Logger::amf_app().info(
+              "Determine Location Response (SUPI: %s) : \n%s", kvp.first,
+              location_data.dump(2).c_str());
+        } else {
+          Logger::amf_app().error(
+              "Determine Location failed (SUPI: %s)...\n", kvp.first);
+        }
+      }
+    }
+
     ss->display();
   }
   return evsub_id;

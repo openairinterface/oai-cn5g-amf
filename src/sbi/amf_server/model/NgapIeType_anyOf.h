@@ -11,15 +11,14 @@
  * the class manually.
  */
 /*
- * NgapIeType.h
+ * NgapIeType_anyOf.h
  *
  *
  */
 
-#ifndef NgapIeType_H_
-#define NgapIeType_H_
+#ifndef NgapIeType_anyOf_H_
+#define NgapIeType_anyOf_H_
 
-#include "NgapIeType_anyOf.h"
 #include <nlohmann/json.hpp>
 
 namespace oai::amf::model {
@@ -27,10 +26,34 @@ namespace oai::amf::model {
 /// <summary>
 ///
 /// </summary>
-class NgapIeType {
+class NgapIeType_anyOf {
  public:
-  NgapIeType();
-  virtual ~NgapIeType() = default;
+  NgapIeType_anyOf();
+  virtual ~NgapIeType_anyOf() = default;
+
+  enum class eNgapIeType_anyOf {
+    // To have a valid default value.
+    // Avoiding name clashes with user defined
+    // enum values
+    INVALID_VALUE_OPENAPI_GENERATED = 0,
+    PDU_RES_SETUP_REQ,
+    PDU_RES_REL_CMD,
+    PDU_RES_MOD_REQ,
+    HANDOVER_CMD,
+    HANDOVER_REQUIRED,
+    HANDOVER_PREP_FAIL,
+    SRC_TO_TAR_CONTAINER,
+    TAR_TO_SRC_CONTAINER,
+    TAR_TO_SRC_FAIL_CONTAINER,
+    RAN_STATUS_TRANS_CONTAINER,
+    SON_CONFIG_TRANSFER,
+    NRPPA_PDU,
+    UE_RADIO_CAPABILITY,
+    RIM_INFO_TRANSFER,
+    SECONDARY_RAT_USAGE,
+    PC5_QOS_PARA,
+    EARLY_STATUS_TRANS_CONTAINER
+  };
 
   /// <summary>
   /// Validate the current data in the model. Throws a ValidationException on
@@ -50,25 +73,23 @@ class NgapIeType {
   /// </summary>
   bool validate(std::stringstream& msg, const std::string& pathPrefix) const;
 
-  bool operator==(const NgapIeType& rhs) const;
-  bool operator!=(const NgapIeType& rhs) const;
+  bool operator==(const NgapIeType_anyOf& rhs) const;
+  bool operator!=(const NgapIeType_anyOf& rhs) const;
 
   /////////////////////////////////////////////
-  /// NgapIeType members
+  /// NgapIeType_anyOf members
 
-  NgapIeType_anyOf getValue() const;
-  void setValue(NgapIeType_anyOf value);
-  NgapIeType_anyOf::eNgapIeType_anyOf getEnumValue() const;
-  void setEnumValue(NgapIeType_anyOf::eNgapIeType_anyOf value);
-  friend void to_json(nlohmann::json& j, const NgapIeType& o);
-  friend void from_json(const nlohmann::json& j, NgapIeType& o);
+  NgapIeType_anyOf::eNgapIeType_anyOf getValue() const;
+  void setValue(NgapIeType_anyOf::eNgapIeType_anyOf value);
+
   friend void to_json(nlohmann::json& j, const NgapIeType_anyOf& o);
   friend void from_json(const nlohmann::json& j, NgapIeType_anyOf& o);
 
  protected:
-  NgapIeType_anyOf m_value;
+  NgapIeType_anyOf::eNgapIeType_anyOf m_value =
+      NgapIeType_anyOf::eNgapIeType_anyOf::INVALID_VALUE_OPENAPI_GENERATED;
 };
 
 }  // namespace oai::amf::model
 
-#endif /* NgapIeType_H_ */
+#endif /* NgapIeType_anyOf_H_ */

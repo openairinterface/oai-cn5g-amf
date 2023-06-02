@@ -90,12 +90,15 @@ class itti_n1n2_message_transfer_request : public itti_msg_amf_app {
   itti_n1n2_message_transfer_request(
       const task_id_t origin, const task_id_t destination)
       : itti_msg_amf_app(N1N2_MESSAGE_TRANSFER_REQ, origin, destination) {
-    supi        = {};
-    n1sm        = nullptr;
-    n2sm        = nullptr;
-    is_n2sm_set = false;
-    is_n1sm_set = false;
-    is_ppi_set  = false;
+    supi             = {};
+    n1sm             = nullptr;
+    n2sm             = nullptr;
+    nrppa_pdu        = nullptr;
+    routing_id       = nullptr;
+    is_n2sm_set      = false;
+    is_n1sm_set      = false;
+    is_nrppa_pdu_set = false;
+    is_ppi_set       = false;
 
     n2sm_info_type = {};
     pdu_session_id = 0;
@@ -104,12 +107,15 @@ class itti_n1n2_message_transfer_request : public itti_msg_amf_app {
   itti_n1n2_message_transfer_request(
       const itti_n1n2_message_transfer_request& i)
       : itti_msg_amf_app(i) {
-    supi        = i.supi;
-    n1sm        = i.n1sm;
-    n2sm        = i.n2sm;
-    is_n2sm_set = i.is_n2sm_set;
-    is_n1sm_set = i.is_n1sm_set;
-    is_ppi_set  = i.is_ppi_set;
+    supi             = i.supi;
+    n1sm             = i.n1sm;
+    n2sm             = i.n2sm;
+    nrppa_pdu        = i.nrppa_pdu;
+    routing_id       = i.routing_id;
+    is_n2sm_set      = i.is_n2sm_set;
+    is_n1sm_set      = i.is_n1sm_set;
+    is_nrppa_pdu_set = i.is_nrppa_pdu_set;
+    is_ppi_set       = i.is_ppi_set;
 
     n2sm_info_type = i.n2sm_info_type;
     pdu_session_id = i.pdu_session_id;
@@ -119,12 +125,38 @@ class itti_n1n2_message_transfer_request : public itti_msg_amf_app {
   std::string supi;
   bstring n1sm;
   bstring n2sm;
+  bstring nrppa_pdu;
+  bstring routing_id;
   bool is_n2sm_set;
   bool is_n1sm_set;
+  bool is_nrppa_pdu_set;
   uint8_t pdu_session_id;
   std::string n2sm_info_type;
   bool is_ppi_set;
   uint8_t ppi;
+  // other parameters
+};
+
+class itti_non_ue_n2_message_transfer_request : public itti_msg_amf_app {
+ public:
+  itti_non_ue_n2_message_transfer_request(
+      const task_id_t origin, const task_id_t destination)
+      : itti_msg_amf_app(NON_UE_N2_MESSAGE_TRANSFER_REQ, origin, destination) {
+    nrppa_pdu        = nullptr;
+    routing_id       = nullptr;
+    is_nrppa_pdu_set = false;
+  }
+  itti_non_ue_n2_message_transfer_request(
+      const itti_non_ue_n2_message_transfer_request& i)
+      : itti_msg_amf_app(i) {
+    nrppa_pdu        = i.nrppa_pdu;
+    routing_id       = i.routing_id;
+    is_nrppa_pdu_set = i.is_nrppa_pdu_set;
+  }
+
+  bstring nrppa_pdu;
+  bstring routing_id;
+  bool is_nrppa_pdu_set;
   // other parameters
 };
 

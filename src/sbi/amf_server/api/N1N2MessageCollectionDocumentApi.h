@@ -31,6 +31,8 @@
 #include "ProblemDetails_2.h"
 #include <string>
 
+#include "mime_parser.hpp"
+
 namespace oai {
 namespace amf {
 namespace api {
@@ -67,16 +69,7 @@ class N1N2MessageCollectionDocumentApi {
   /// <param name="n1N2MessageTransferReqData"></param>
   virtual void n1_n2_message_transfer(
       const std::string& ueContextId,
-      const N1N2MessageTransferReqData& n1N2MessageTransferReqData,
-      Pistache::Http::ResponseWriter& response) = 0;
-  virtual void n1_n2_message_transfer(
-      const std::string& ueContextId,
-      const N1N2MessageTransferReqData& n1N2MessageTransferReqData,
-      std::string& n1sm_str, Pistache::Http::ResponseWriter& response) = 0;
-  virtual void n1_n2_message_transfer(
-      const std::string& ueContextId,
-      const N1N2MessageTransferReqData& n1N2MessageTransferReqData,
-      std::string& n1sm_str, std::string& n2sm_str,
+      std::unordered_map<std::string, mime_part>& parts,
       Pistache::Http::ResponseWriter& response) = 0;
 };
 

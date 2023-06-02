@@ -38,6 +38,7 @@
 #include "fqdn.hpp"
 #include "itti.hpp"
 #include "itti_msg_amf_app.hpp"
+#include "itti_msg_n2.hpp"
 #include "mime_parser.hpp"
 #include "nas_context.hpp"
 #include "ue_context.hpp"
@@ -237,14 +238,15 @@ void amf_sbi::handle_itti_message(
   nlohmann::json pdu_session_update_request = {};
 
   if (itti_msg.is_n1sm_set) {
-    pdu_session_update_request["n1SmMsg"]["contentId"] = "n1SmMsg";
+    pdu_session_update_request[N1_SM_CONTENT_ID]["contentId"] =
+        N1_SM_CONTENT_ID;
     octet_stream_2_hex_stream(
         (uint8_t*) bdata(itti_msg.n1sm), blength(itti_msg.n1sm), n1sm_msg);
   }
 
   if (itti_msg.is_n2sm_set) {
     pdu_session_update_request["n2SmInfoType"] = itti_msg.n2sm_info_type;
-    pdu_session_update_request["n2SmInfo"]["contentId"] = "n2msg";
+    pdu_session_update_request["n2SmInfo"]["contentId"] = N2_SM_CONTENT_ID;
     octet_stream_2_hex_stream(
         (uint8_t*) bdata(itti_msg.n2sm), blength(itti_msg.n2sm), n2sm_msg);
   }
@@ -418,8 +420,8 @@ void amf_sbi::send_pdu_session_update_sm_context_request(
 
   Logger::amf_sbi().debug("SMF URI: %s", remote_uri.c_str());
 
-  nlohmann::json pdu_session_update_request          = {};
-  pdu_session_update_request["n1SmMsg"]["contentId"] = "n1SmMsg";
+  nlohmann::json pdu_session_update_request                 = {};
+  pdu_session_update_request[N1_SM_CONTENT_ID]["contentId"] = N1_SM_CONTENT_ID;
   std::string json_part = pdu_session_update_request.dump();
 
   std::string n1sm_msg = {};
@@ -478,7 +480,7 @@ void amf_sbi::handle_pdu_session_initial_request(
   pdu_session_establishment_request["n1MessageContainer"]["n1MessageClass"] =
       "SM";
   pdu_session_establishment_request["n1MessageContainer"]["n1MessageContent"]
-                                   ["contentId"] = "n1SmMsg";
+                                   ["contentId"] = N1_SM_CONTENT_ID;
 
   std::string json_part = pdu_session_establishment_request.dump();
 
@@ -699,9 +701,9 @@ void amf_sbi::handle_itti_message(itti_sbi_n1_message_notify& itti_msg) {
 
   Logger::amf_sbi().debug("Target AMF URI: %s", url.c_str());
 
-  nlohmann::json json_data          = {};
-  json_data["n1SmMsg"]["contentId"] = "n1SmMsg";
-  std::string json_part             = json_data.dump();
+  nlohmann::json json_data                 = {};
+  json_data[N1_SM_CONTENT_ID]["contentId"] = N1_SM_CONTENT_ID;
+  std::string json_part                    = json_data.dump();
 
   std::string n1sm_msg = {};
   octet_stream_2_hex_stream(
@@ -1010,6 +1012,47 @@ bool amf_sbi::send_ue_authentication_request(
   return true;
 }
 
+//-----------------------------------------------------------------------------------------------------
+bool amf_sbi::send_determine_location_request(
+    const nlohmann::json& input_data, nlohmann::json& location_data,
+    const uint8_t& http_version) {
+  Logger::amf_sbi().debug(
+      "Send Determine Location Request to LMF (HTTP version %d)", http_version);
+
+  std::string url = amf_cfg.get_lmf_determine_location_uri();
+  Logger::amf_sbi().debug(
+      "Send Determine Location Request to LMF, URL %s", url.c_str());
+
+  std::string body = input_data.dump();
+  Logger::amf_sbi().debug(
+      "Send Determine Location Request to AUSF, msg body: \n %s", body.c_str());
+
+  uint32_t response_code = 0;
+  curl_http_client(
+      url, "POST", body, location_data, response_code, http_version);
+
+  Logger::amf_sbi().debug(
+      "Determine Location, response from LMF, HTTP Code: %d", response_code);
+
+  if ((response_code == 200) or
+      (response_code == 201)) {  // TODO: remove hardcoded value
+    Logger::amf_sbi().debug(
+        "Determine Location, response from LMF\n, %s ",
+        location_data.dump().c_str());
+    try {
+      // from_json(response_data, location_data);
+    } catch (std::exception& e) {
+      return false;
+    }
+  } else {
+    Logger::amf_sbi().warn(
+        "Determine Location, could not get response from LMF");
+    return false;
+  }
+
+  return true;
+}
+
 //------------------------------------------------------------------------------
 void amf_sbi::curl_http_client(
     const std::string& remote_uri, const std::string& json_data,
@@ -1277,10 +1320,12 @@ void amf_sbi::curl_http_client(
           output_wrapper::print_buffer(
               "amf_sbi", "Get response N2 SM:", (uint8_t*) bdata(n2sm_hex),
               blength(n2sm_hex));
-          itti_msg->n2sm           = bstrcpy(n2sm_hex);
-          itti_msg->is_n2sm_set    = true;
-          itti_msg->n2sm_info_type = response_data
-              ["n2SmInfoType"];  // response_data["n2InfoContainer"]["smInfo"]["n2InfoContent"]["ngapIeType"];
+          itti_msg->n2sm        = bstrcpy(n2sm_hex);
+          itti_msg->is_n2sm_set = true;
+          itti_msg->n2sm_info_type =
+              response_data["n2SmInfoType"].get<std::string>();
+          // response_data["n2InfoContainer"]["smInfo"]["n2InfoContent"]
+          //             ["ngapIeType"];
         }
 
         itti_msg->supi           = supi;

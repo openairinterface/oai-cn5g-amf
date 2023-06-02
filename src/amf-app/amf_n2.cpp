@@ -43,6 +43,8 @@
 #include "PduSessionResourceModifyRequest.hpp"
 #include "PduSessionResourceReleaseCommand.hpp"
 #include "PduSessionResourceSetupRequest.hpp"
+#include "DownlinkUEAssociatedNRPPaTransport.hpp"
+#include "DownlinkNonUEAssociatedNRPPaTransport.hpp"
 #include "RerouteNASRequest.hpp"
 #include "UEContextReleaseCommand.hpp"
 #include "amf_app.hpp"
@@ -213,6 +215,22 @@ void amf_n2_task(void* args_p) {
       case REROUTE_NAS_REQ: {
         Logger::amf_n2().info("Received Reroute NAS Req message, handling");
         itti_rereoute_nas* m = dynamic_cast<itti_rereoute_nas*>(msg);
+        amf_n2_inst->handle_itti_message(ref(*m));
+      } break;
+      case DOWNLINK_UE_ASSOCIATED_NRPPA_TRANSPORT: {
+        Logger::amf_n2().info(
+            "Received DOWNLINK_UE_ASSOCIATED_NRPPA_TRANSPORT message, "
+            "handling");
+        itti_downlink_ue_associated_nrppa_transport* m =
+            dynamic_cast<itti_downlink_ue_associated_nrppa_transport*>(msg);
+        amf_n2_inst->handle_itti_message(ref(*m));
+      } break;
+      case DOWNLINK_NON_UE_ASSOCIATED_NRPPA_TRANSPORT: {
+        Logger::amf_n2().info(
+            "Received DOWNLINK_NON_UE_ASSOCIATED_NRPPA_TRANSPORT message, "
+            "handling");
+        itti_downlink_non_ue_associated_nrppa_transport* m =
+            dynamic_cast<itti_downlink_non_ue_associated_nrppa_transport*>(msg);
         amf_n2_inst->handle_itti_message(ref(*m));
       } break;
       case TERMINATE: {
@@ -614,7 +632,9 @@ void amf_n2::handle_itti_message(itti_initial_ue_message& init_ue_msg) {
     Logger::amf_n2().debug(
         "Create a new UE NGAP context with ran_ue_ngap_id " GNB_UE_NGAP_ID_FMT,
         ran_ue_ngap_id);
-    unc = std::make_shared<ue_ngap_context>();
+    unc = std::shared_ptr<ue_ngap_context>(new ue_ngap_context());
+    unc.get()->sctp_stream_recv = init_ue_msg.stream;
+    unc.get()->sctp_stream_send = init_ue_msg.stream;
     set_ran_ue_ngap_id_2_ue_ngap_context(ran_ue_ngap_id, gc->gnb_id, unc);
   }
 
@@ -2252,6 +2272,77 @@ void amf_n2::handle_itti_message(itti_rereoute_nas& itti_msg) {
   amf_n2_inst->sctp_s_38412.sctp_send_msg(
       unc->gnb_assoc_id, unc->sctp_stream_send, &b);
   bdestroy_wrapper(&b);
+}
+
+//------------------------------------------------------------------------------
+void amf_n2::handle_itti_message(
+    itti_downlink_ue_associated_nrppa_transport& itti_msg) {
+  Logger::amf_n2().debug("Handle Downlink UE Associated NRPPa Transport ...");
+
+  // Get UE NGAP Context
+  std::shared_ptr<ue_ngap_context> unc = {};
+  std::string ue_context_key           = conv::get_ue_context_key(
+      itti_msg.ran_ue_ngap_id, itti_msg.amf_ue_ngap_id);
+
+  if (!amf_n2_inst->ran_ue_id_2_ue_ngap_context(
+          itti_msg.ran_ue_ngap_id, ue_context_key, unc)) {
+    Logger::amf_n2().error(
+        "No UE NGAP context with ran_ue_ngap_id (" GNB_UE_NGAP_ID_FMT ")",
+        itti_msg.ran_ue_ngap_id);
+    return;
+  }
+
+  std::shared_ptr<gnb_context> gc = {};
+  if (!assoc_id_2_gnb_context(unc->gnb_assoc_id, gc)) {
+    Logger::amf_n2().error(
+        "No existing gNG context with assoc_id (%d)", unc->gnb_assoc_id);
+    return;
+  }
+
+  DownlinkUEAssociatedNRPPaTransportMsg duant = {};
+  duant.setAmfUeNgapId(itti_msg.amf_ue_ngap_id);
+  duant.setRanUeNgapId(itti_msg.ran_ue_ngap_id);
+
+  duant.setNRPPaPdu(itti_msg.nrppa_pdu);
+  duant.setRoutingID(itti_msg.routing_id);
+
+  uint8_t buffer[BUFFER_SIZE_4096];
+  int encoded_size = duant.Encode(buffer, BUFFER_SIZE_1024);
+  if (encoded_size > 0) {
+    bstring b = blk2bstr(buffer, encoded_size);
+    sctp_s_38412.sctp_send_msg(gc->sctp_assoc_id, unc->sctp_stream_send, &b);
+    bdestroy_wrapper(&b);
+  }
+}
+
+//------------------------------------------------------------------------------
+void amf_n2::handle_itti_message(
+    itti_downlink_non_ue_associated_nrppa_transport& itti_msg) {
+  Logger::amf_n2().debug(
+      "Handle Downlink Non UE Associated NRPPa Transport ...");
+
+  // std::shared_ptr<gnb_context> gc = {};
+  // if (!assoc_id_2_gnb_context(unc->gnb_assoc_id, gc)) {
+  //   Logger::amf_n2().error(
+  //       "No existing gNG context with assoc_id (%d)", unc->gnb_assoc_id);
+  //   return;
+  // }
+
+  DownlinkNonUEAssociatedNRPPaTransportMsg dnuant = {};
+  dnuant.setNRPPaPdu(itti_msg.nrppa_pdu);
+  dnuant.setRoutingID(itti_msg.routing_id);
+
+  uint8_t buffer[BUFFER_SIZE_4096];
+  int encoded_size = dnuant.Encode(buffer, BUFFER_SIZE_1024);
+  if (encoded_size > 0) {
+    bstring b = blk2bstr(buffer, encoded_size);
+    // TODO: Should be verified
+    std::vector<sctp::sctp_assoc_id_t> assoc_ids = get_all_assoc_ids();
+    for (auto& assoc_id : assoc_ids) {
+      sctp_s_38412.sctp_send_msg(assoc_id, 0, &b);
+    }
+    bdestroy_wrapper(&b);
+  }
 }
 
 //------------------------------------------------------------------------------

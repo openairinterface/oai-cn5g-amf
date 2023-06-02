@@ -30,6 +30,7 @@
 #include "uint_generator.hpp"
 #include "amf.hpp"
 
+#include "AmfCreateEventSubscription.h"
 #include "N1N2MessageTransferError.h"
 #include "N1N2MessageTransferReqData.h"
 #include "N1N2MessageTransferRspData.h"
@@ -46,6 +47,10 @@ class amf_http2_server {
   virtual ~amf_http2_server(){};
   void start();
   void init(size_t thr) {}
+
+  void createEventSubscriptionHandler(
+      const AmfCreateEventSubscription& amfCreateEventSubscription,
+      const response& response);
 
   void n1_n2_message_transfer_handler(
       const std::string& ueContextId,

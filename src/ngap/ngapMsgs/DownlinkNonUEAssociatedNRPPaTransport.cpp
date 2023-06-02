@@ -21,6 +21,7 @@
 
 #include "DownlinkNonUEAssociatedNRPPaTransport.hpp"
 #include "logger.hpp"
+#include "conversions.hpp"
 
 extern "C" {
 #include "dynamic_memory_check.h"
@@ -84,9 +85,11 @@ bool DownlinkNonUEAssociatedNRPPaTransportMsg::decodeFromPdu(
             downlinkNonUEAssociatedNRPPaTransportIEs->protocolIEs.list.array[i]
                     ->value.present ==
                 Ngap_DownlinkNonUEAssociatedNRPPaTransportIEs__value_PR_RoutingID) {
-          routingID = downlinkNonUEAssociatedNRPPaTransportIEs->protocolIEs.list
-                          .array[i]
-                          ->value.choice.RoutingID;
+          conv::octet_string_2_bstring(
+              downlinkNonUEAssociatedNRPPaTransportIEs->protocolIEs.list
+                  .array[i]
+                  ->value.choice.RoutingID,
+              routingID);
         } else {
           Logger::ngap().error("Decode NGAP RoutingID IE error");
           return false;
@@ -99,9 +102,11 @@ bool DownlinkNonUEAssociatedNRPPaTransportMsg::decodeFromPdu(
             downlinkNonUEAssociatedNRPPaTransportIEs->protocolIEs.list.array[i]
                     ->value.present ==
                 Ngap_DownlinkNonUEAssociatedNRPPaTransportIEs__value_PR_NRPPa_PDU) {
-          nRPPaPDU = downlinkNonUEAssociatedNRPPaTransportIEs->protocolIEs.list
-                         .array[i]
-                         ->value.choice.NRPPa_PDU;
+          conv::octet_string_2_bstring(
+              downlinkNonUEAssociatedNRPPaTransportIEs->protocolIEs.list
+                  .array[i]
+                  ->value.choice.NRPPa_PDU,
+              nRPPaPDU);
         } else {
           Logger::ngap().error("Decode NGAP NRPPa PDU IE error");
           return false;
@@ -120,8 +125,8 @@ bool DownlinkNonUEAssociatedNRPPaTransportMsg::decodeFromPdu(
 
 //------------------------------------------------------------------------------
 void DownlinkNonUEAssociatedNRPPaTransportMsg::setRoutingID(
-    const OCTET_STRING_t& id) {
-  routingID = id;
+    const bstring& pdu) {
+  routingID = bstrcpy(pdu);
   Ngap_DownlinkNonUEAssociatedNRPPaTransportIEs_t* ie =
       (Ngap_DownlinkNonUEAssociatedNRPPaTransportIEs_t*) calloc(
           1, sizeof(Ngap_DownlinkNonUEAssociatedNRPPaTransportIEs_t));
@@ -130,7 +135,7 @@ void DownlinkNonUEAssociatedNRPPaTransportMsg::setRoutingID(
   ie->value.present =
       Ngap_DownlinkNonUEAssociatedNRPPaTransportIEs__value_PR_RoutingID;
 
-  ie->value.choice.RoutingID = routingID;
+  conv::bstring_2_octet_string(routingID, ie->value.choice.RoutingID);
 
   int ret = ASN_SEQUENCE_ADD(
       &downlinkNonUEAssociatedNRPPaTransportIEs->protocolIEs.list, ie);
@@ -138,15 +143,13 @@ void DownlinkNonUEAssociatedNRPPaTransportMsg::setRoutingID(
 }
 
 //------------------------------------------------------------------------------
-void DownlinkNonUEAssociatedNRPPaTransportMsg::getRoutingID(
-    OCTET_STRING_t& id) {
-  id = routingID;
+void DownlinkNonUEAssociatedNRPPaTransportMsg::getRoutingID(bstring& pdu) {
+  pdu = bstrcpy(routingID);
 }
 
 //------------------------------------------------------------------------------
-void DownlinkNonUEAssociatedNRPPaTransportMsg::setNRPPaPdu(
-    const OCTET_STRING_t& pdu) {
-  nRPPaPDU = pdu;
+void DownlinkNonUEAssociatedNRPPaTransportMsg::setNRPPaPdu(const bstring& pdu) {
+  nRPPaPDU = bstrcpy(pdu);
   Ngap_DownlinkNonUEAssociatedNRPPaTransportIEs_t* ie =
       (Ngap_DownlinkNonUEAssociatedNRPPaTransportIEs_t*) calloc(
           1, sizeof(Ngap_DownlinkNonUEAssociatedNRPPaTransportIEs_t));
@@ -155,7 +158,7 @@ void DownlinkNonUEAssociatedNRPPaTransportMsg::setNRPPaPdu(
   ie->value.present =
       Ngap_DownlinkNonUEAssociatedNRPPaTransportIEs__value_PR_NRPPa_PDU;
 
-  ie->value.choice.NRPPa_PDU = nRPPaPDU;
+  conv::bstring_2_octet_string(nRPPaPDU, ie->value.choice.NRPPa_PDU);
 
   int ret = ASN_SEQUENCE_ADD(
       &downlinkNonUEAssociatedNRPPaTransportIEs->protocolIEs.list, ie);
@@ -163,8 +166,7 @@ void DownlinkNonUEAssociatedNRPPaTransportMsg::setNRPPaPdu(
 }
 
 //------------------------------------------------------------------------------
-void DownlinkNonUEAssociatedNRPPaTransportMsg::getNRPPaPdu(
-    OCTET_STRING_t& pdu) {
+void DownlinkNonUEAssociatedNRPPaTransportMsg::getNRPPaPdu(bstring& pdu) {
   pdu = nRPPaPDU;
 }
 

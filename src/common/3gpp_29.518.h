@@ -94,4 +94,13 @@ static const std::vector<std::string> n1_n2_message_transfer_cause_e2str = {
     "N1_MSG_NOT_TRANSFERRED",
     "UE_NOT_REACHABLE_FOR_SESSION"};
 
+enum non_ue_n2_message_transfer_cause_e {
+  NON_UE_N2_TRANSFER_INITIATED         = 1,
+  WAITING_FOR_ASYNCHRONOUS_N2_TRANSFER = 2
+};
+
+static const std::vector<std::string> non_ue_n2_message_transfer_cause_e2str = {
+    "UNKNOWN ERROR", "NON_UE_N2_TRANSFER_INITIATED",
+    "WAITING_FOR_ASYNCHRONOUS_TRANSFER"};
+
 #endif

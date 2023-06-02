@@ -200,7 +200,7 @@ unsigned char* conv::format_string_as_hex(std::string str) {
   memset(data, 0, str_len + 1);
   memcpy((void*) data, (void*) str.c_str(), str_len);
 
-  Logger::amf_app().debug("Data %s (%d bytes)", (void*) data, str_len);
+  Logger::amf_app().debug("Data %s (%d bytes)", str.c_str(), str_len);
   Logger::amf_app().debug("Data (formatted):");
   for (int i = 0; i < str_len; i++) {
     char datatmp[3] = {0};

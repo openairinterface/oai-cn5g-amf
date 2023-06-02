@@ -55,11 +55,28 @@ void NonUEN2MessagesCollectionDocumentApi::non_ue_n2_message_transfer_handler(
     Pistache::Http::ResponseWriter response) {
   // Getting the body param
 
-  N2InformationTransferReqData n2InformationTransferReqData;
+  mime_parser sp = {};
+  sp.parse(request.body());
+
+  std::unordered_map<std::string, mime_part> parts = {};
+  sp.get_mime_parts(parts);
+  uint8_t size = parts.size();
+  Logger::amf_server().debug("Number of MIME parts %d", size);
+
+  if (size < 2) {
+    response.send(Pistache::Http::Code::Bad_Request);
+    Logger::amf_server().debug(
+        "Bad request: should have at least 2 MIME parts");
+    return;
+  }
+
+  for (auto it : parts) {
+    Logger::amf_server().debug(
+        "MIME part: %s (%d)", it.first.c_str(), it.second.body.size());
+  }
 
   try {
-    nlohmann::json::parse(request.body()).get_to(n2InformationTransferReqData);
-    this->non_ue_n2_message_transfer(n2InformationTransferReqData, response);
+    this->non_ue_n2_message_transfer(parts, response);
   } catch (nlohmann::detail::exception& e) {
     // send a 400 error
     response.send(Pistache::Http::Code::Bad_Request, e.what());

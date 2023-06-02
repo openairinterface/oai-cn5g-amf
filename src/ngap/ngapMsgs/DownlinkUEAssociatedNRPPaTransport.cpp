@@ -21,6 +21,7 @@
 
 #include "DownlinkUEAssociatedNRPPaTransport.hpp"
 #include "logger.hpp"
+#include "conversions.hpp"
 
 extern "C" {
 #include "dynamic_memory_check.h"
@@ -169,9 +170,10 @@ bool DownlinkUEAssociatedNRPPaTransportMsg::decodeFromPdu(
             downlinkUEAssociatedNRPPaTransportIEs->protocolIEs.list.array[i]
                     ->value.present ==
                 Ngap_DownlinkUEAssociatedNRPPaTransportIEs__value_PR_RoutingID) {
-          routingID =
+          conv::octet_string_2_bstring(
               downlinkUEAssociatedNRPPaTransportIEs->protocolIEs.list.array[i]
-                  ->value.choice.RoutingID;
+                  ->value.choice.RoutingID,
+              routingID);
         } else {
           Logger::ngap().error("Decode NGAP RoutingID IE error");
           return false;
@@ -184,9 +186,10 @@ bool DownlinkUEAssociatedNRPPaTransportMsg::decodeFromPdu(
             downlinkUEAssociatedNRPPaTransportIEs->protocolIEs.list.array[i]
                     ->value.present ==
                 Ngap_DownlinkUEAssociatedNRPPaTransportIEs__value_PR_NRPPa_PDU) {
-          nRPPaPDU =
+          conv::octet_string_2_bstring(
               downlinkUEAssociatedNRPPaTransportIEs->protocolIEs.list.array[i]
-                  ->value.choice.NRPPa_PDU;
+                  ->value.choice.NRPPa_PDU,
+              nRPPaPDU);
         } else {
           Logger::ngap().error("Decode NGAP NRPPa PDU IE error");
           return false;
@@ -204,9 +207,8 @@ bool DownlinkUEAssociatedNRPPaTransportMsg::decodeFromPdu(
 }
 
 //------------------------------------------------------------------------------
-void DownlinkUEAssociatedNRPPaTransportMsg::setRoutingID(
-    const OCTET_STRING_t& id) {
-  routingID = id;
+void DownlinkUEAssociatedNRPPaTransportMsg::setRoutingID(const bstring& pdu) {
+  routingID = bstrcpy(pdu);
   Ngap_DownlinkUEAssociatedNRPPaTransportIEs_t* ie =
       (Ngap_DownlinkUEAssociatedNRPPaTransportIEs_t*) calloc(
           1, sizeof(Ngap_DownlinkUEAssociatedNRPPaTransportIEs_t));
@@ -215,7 +217,7 @@ void DownlinkUEAssociatedNRPPaTransportMsg::setRoutingID(
   ie->value.present =
       Ngap_DownlinkUEAssociatedNRPPaTransportIEs__value_PR_RoutingID;
 
-  ie->value.choice.RoutingID = routingID;
+  conv::bstring_2_octet_string(routingID, ie->value.choice.RoutingID);
 
   int ret = ASN_SEQUENCE_ADD(
       &downlinkUEAssociatedNRPPaTransportIEs->protocolIEs.list, ie);
@@ -223,14 +225,13 @@ void DownlinkUEAssociatedNRPPaTransportMsg::setRoutingID(
 }
 
 //------------------------------------------------------------------------------
-void DownlinkUEAssociatedNRPPaTransportMsg::getRoutingID(OCTET_STRING_t& id) {
-  id = routingID;
+void DownlinkUEAssociatedNRPPaTransportMsg::getRoutingID(bstring& pdu) {
+  pdu = bstrcpy(routingID);
 }
 
 //------------------------------------------------------------------------------
-void DownlinkUEAssociatedNRPPaTransportMsg::setNRPPaPdu(
-    const OCTET_STRING_t& pdu) {
-  nRPPaPDU = pdu;
+void DownlinkUEAssociatedNRPPaTransportMsg::setNRPPaPdu(const bstring& pdu) {
+  nRPPaPDU = bstrcpy(pdu);
 
   Ngap_DownlinkUEAssociatedNRPPaTransportIEs_t* ie =
       (Ngap_DownlinkUEAssociatedNRPPaTransportIEs_t*) calloc(
@@ -240,7 +241,7 @@ void DownlinkUEAssociatedNRPPaTransportMsg::setNRPPaPdu(
   ie->value.present =
       Ngap_DownlinkUEAssociatedNRPPaTransportIEs__value_PR_NRPPa_PDU;
 
-  ie->value.choice.NRPPa_PDU = nRPPaPDU;
+  conv::bstring_2_octet_string(nRPPaPDU, ie->value.choice.NRPPa_PDU);
 
   int ret = ASN_SEQUENCE_ADD(
       &downlinkUEAssociatedNRPPaTransportIEs->protocolIEs.list, ie);
@@ -248,7 +249,7 @@ void DownlinkUEAssociatedNRPPaTransportMsg::setNRPPaPdu(
 }
 
 //------------------------------------------------------------------------------
-void DownlinkUEAssociatedNRPPaTransportMsg::getNRPPaPdu(OCTET_STRING_t& pdu) {
+void DownlinkUEAssociatedNRPPaTransportMsg::getNRPPaPdu(bstring& pdu) {
   pdu = nRPPaPDU;
 }
 

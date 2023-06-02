@@ -46,11 +46,11 @@ class DownlinkUEAssociatedNRPPaTransportMsg : public NgapUEMessage {
   void setRanUeNgapId(const uint32_t& id) override;
   bool decodeFromPdu(Ngap_NGAP_PDU_t* ngapMsgPdu) override;
 
-  void setRoutingID(const OCTET_STRING_t& pdu);
-  void getRoutingID(OCTET_STRING_t& pdu);
+  void setRoutingID(const bstring& pdu);
+  void getRoutingID(bstring& pdu);
 
-  void setNRPPaPdu(const OCTET_STRING_t& pdu);
-  void getNRPPaPdu(OCTET_STRING_t& pdu);
+  void setNRPPaPdu(const bstring& pdu);
+  void getNRPPaPdu(bstring& pdu);
 
  private:
   Ngap_DownlinkUEAssociatedNRPPaTransport_t*
@@ -58,8 +58,8 @@ class DownlinkUEAssociatedNRPPaTransportMsg : public NgapUEMessage {
 
   // AMF_UE_NGAP_ID  //Mandatory
   // RAN_UE_NGAP_ID //Mandatory
-  OCTET_STRING_t routingID;  // Mandatory
-  OCTET_STRING_t nRPPaPDU;   // Mandatory
+  bstring routingID;  // Mandatory
+  bstring nRPPaPDU;   // Mandatory
 };
 
 }  // namespace ngap

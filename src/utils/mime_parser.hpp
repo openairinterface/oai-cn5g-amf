@@ -27,7 +27,7 @@
  */
 #ifndef FILE_MIME_PARSER_HPP_SEEN
 #define FILE_MIME_PARSER_HPP_SEEN
-#include <map>
+#include <unordered_map>
 #include <string>
 #include <vector>
 
@@ -38,6 +38,7 @@ static const std::vector<std::string> multipart_related_content_part_e2str = {
 
 typedef struct mime_part {
   std::string content_type;
+  std::string content_id;
   std::string body;
 } mime_part;
 
@@ -59,7 +60,7 @@ class mime_parser {
    * @param [std::vector<mime_part> &] parts: store vector of Mime parts
    * @return void
    */
-  void get_mime_parts(std::vector<mime_part>& parts) const;
+  void get_mime_parts(std::unordered_map<std::string, mime_part>& parts) const;
 
   /*
    * Represent a string as hex
@@ -97,7 +98,7 @@ class mime_parser {
       const multipart_related_content_part_e content_type);
 
  private:
-  std::vector<mime_part> mime_parts;
+  std::unordered_map<std::string, mime_part> mime_parts;
 };
 
 #endif /* FILE_MIME_PARSER_HPP_SEEN */
