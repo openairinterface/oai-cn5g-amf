@@ -172,6 +172,7 @@ check_install_amf_deps(){
   # latest usage of yaml-cpp suggests that we should be using 0.7+ version
   # To be sure, let's install from source all the time for the moment
   if [[ $OS_DISTRO == "ubuntu" ]]; then
+    case "$(get_distribution_release)" in
       "ubuntu20.04")
         # definitely, 0.6.2 as PPA installed is not enough
         install_libyaml_cpp_from_git $1 $2
