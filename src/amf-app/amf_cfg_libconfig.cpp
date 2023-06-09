@@ -348,8 +348,19 @@ int amf_cfg_libconfig::load(
                                     "failed");
             throw(AMF_CONFIG_STRING_SMF_INSTANCE_PORT "failed");
           }
-          amf_cfg_value.smf_addr.uri_root =
-              util::trim(address) + ":" + smf_port_str;
+          if (!(smf_addr_item.lookupValue(
+                  AMF_CONFIG_STRING_SBI_HTTP2_PORT, smf_http2_port))) {
+            Logger::amf_app().error(AMF_CONFIG_STRING_SBI_HTTP2_PORT "failed");
+            throw(AMF_CONFIG_STRING_SBI_HTTP2_PORT "failed");
+          }
+
+          if (!amf_cfg_value.support_features.use_http2) {
+            amf_cfg_value.smf_addr.uri_root =
+                util::trim(address) + ":" + smf_port_str;
+          } else {
+            amf_cfg_value.smf_addr.uri_root =
+                util::trim(address) + ":" + std::to_string(smf_http2_port);
+          }
 
           smf_addr_item.lookupValue(
               AMF_CONFIG_STRING_SMF_INSTANCE_VERSION,
@@ -382,9 +393,22 @@ int amf_cfg_libconfig::load(
               Logger::amf_app().error(AMF_CONFIG_STRING_PORT "failed");
               throw(AMF_CONFIG_STRING_PORT "failed");
             }
+            if (!(smf_addr_item.lookupValue(
+                    AMF_CONFIG_STRING_SBI_HTTP2_PORT, smf_http2_port))) {
+              Logger::amf_app().error(AMF_CONFIG_STRING_SBI_HTTP2_PORT
+                                      "failed");
+              throw(AMF_CONFIG_STRING_SBI_HTTP2_PORT "failed");
+            }
+
             // amf_cfg_value.smf_addr.port = smf_port;
-            amf_cfg_value.smf_addr.uri_root =
-                util::trim(address) + ":" + smf_port_str;
+            if (!amf_cfg_value.support_features.use_http2) {
+              amf_cfg_value.smf_addr.uri_root =
+                  util::trim(address) + ":" + smf_port_str;
+            } else {
+              amf_cfg_value.smf_addr.uri_root =
+                  util::trim(address) + ":" + std::to_string(smf_http2_port);
+            }
+
             amf_cfg_value.smf_addr.api_version =
                 DEFAULT_SBI_API_VERSION;  // TODO: get API version
           }
