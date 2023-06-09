@@ -98,19 +98,6 @@ check_install_amf_deps(){
   # Libraries
   if [[ $OS_DISTRO == "ubuntu" ]]; then
     case "$(get_distribution_release)" in
-      "ubuntu18.04")
-        # Currently Ubuntu18.04 has boost 1.65 as the latest
-        # We need at least 1.66
-        # PPA has 1.67
-        $SUDO $INSTALLER install $OPTION software-properties-common
-        $SUDO add-apt-repository ppa:mhier/libboost-latest --yes
-        $SUDO $INSTALLER update
-        if [ $IS_CONTAINER -eq 0 ]; then
-          specific_packages="libconfig++-dev libasio-dev libboost-all-dev mysql-server libasan4"
-        else
-          specific_packages="libconfig++-dev libasio-dev libboost-all-dev libasan4"
-        fi
-        ;;
       "ubuntu20.04")
         specific_packages="libconfig++-dev libasio-dev libboost-all-dev libasan5"
         ;;
@@ -162,17 +149,6 @@ check_install_amf_deps(){
   fi
   echo "Install distro libs"
   $SUDO $INSTALLER install $OPTION $PACKAGE_LIST
-
-  # fix issue with libboost in U18 for a bare metal deployment
-  if [[ $OS_DISTRO == "ubuntu" ]]; then
-    case "$(get_distribution_release)" in
-      "ubuntu18.04")
-        $SUDO $INSTALLER remove $OPTION libboost1.65-dev || true
-        $SUDO $INSTALLER autoremove $OPTION || true
-        $SUDO $INSTALLER install $OPTION libboost1.67-dev
-        ;;
-    esac
-  fi
 
   ret=$?;[[ $ret -ne 0 ]] && return $ret
   echo "distro libs installation complete"
