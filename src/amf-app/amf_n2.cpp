@@ -63,7 +63,7 @@ extern "C" {
 }
 
 using namespace amf_application;
-using namespace config;
+using namespace oai::config;
 using namespace ngap;
 using namespace std;
 extern itti_mw* itti_inst;
@@ -439,9 +439,9 @@ void amf_n2::handle_itti_message(
     GuamiItem_t tmp = {};
     tmp.mcc         = amf_cfg.guami_list[i].mcc;
     tmp.mnc         = amf_cfg.guami_list[i].mnc;
-    tmp.regionID    = amf_cfg.guami_list[i].regionID;
-    tmp.AmfSetID    = amf_cfg.guami_list[i].AmfSetID;
-    tmp.AmfPointer  = amf_cfg.guami_list[i].AmfPointer;
+    tmp.region_id   = amf_cfg.guami_list[i].region_id;
+    tmp.amf_set_id  = amf_cfg.guami_list[i].amf_set_id;
+    tmp.amf_pointer = amf_cfg.guami_list[i].amf_pointer;
     guami_list.push_back(tmp);
   }
   ngSetupResp.setGUAMIList(guami_list);
@@ -861,12 +861,12 @@ void amf_n2::handle_itti_message(itti_initial_context_setup_request& itti_msg) {
       std::make_unique<InitialContextSetupRequestMsg>();
   msg->setAmfUeNgapId(itti_msg.amf_ue_ngap_id);
   msg->setRanUeNgapId(itti_msg.ran_ue_ngap_id);
-  Guami_t guami    = {};
-  guami.mcc        = amf_cfg.guami.mcc;
-  guami.mnc        = amf_cfg.guami.mnc;
-  guami.regionID   = amf_cfg.guami.regionID;
-  guami.AmfSetID   = amf_cfg.guami.AmfSetID;
-  guami.AmfPointer = amf_cfg.guami.AmfPointer;
+  Guami_t guami     = {};
+  guami.mcc         = amf_cfg.guami.mcc;
+  guami.mnc         = amf_cfg.guami.mnc;
+  guami.region_id   = amf_cfg.guami.region_id;
+  guami.amf_set_id  = amf_cfg.guami.amf_set_id;
+  guami.amf_pointer = amf_cfg.guami.amf_pointer;
   msg->setGuami(guami);
   // Get the list allowed NSSAI from the common PLMN between gNB and AMF
   std::vector<S_Nssai> list;
@@ -1643,8 +1643,8 @@ bool amf_n2::handle_itti_message(itti_handover_required& itti_msg) {
 
   handover_request->setMobilityRestrictionList(plmn_id);
   handover_request->setGUAMI(
-      amf_cfg.guami.mcc, amf_cfg.guami.mnc, amf_cfg.guami.regionID,
-      amf_cfg.guami.AmfSetID, amf_cfg.guami.AmfPointer);
+      amf_cfg.guami.mcc, amf_cfg.guami.mnc, amf_cfg.guami.region_id,
+      amf_cfg.guami.amf_set_id, amf_cfg.guami.amf_pointer);
 
   // Security context
   std::shared_ptr<nas_context> nc = {};

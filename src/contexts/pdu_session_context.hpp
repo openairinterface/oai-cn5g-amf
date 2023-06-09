@@ -29,6 +29,7 @@ typedef struct smf_context_info_s {
   bool info_available;
   std::string addr;
   uint32_t port;
+  std::string uri_root;
   std::string api_version;
   std::string context_location;
 } smf_context_info_t;

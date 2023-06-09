@@ -24,7 +24,7 @@
 #include "logger.hpp"
 
 using namespace amf_application;
-using namespace config;
+using namespace oai::config;
 
 extern amf_config amf_cfg;
 

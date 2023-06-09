@@ -33,6 +33,8 @@
 #include "amf-http2-server.hpp"
 #include "amf_app.hpp"
 #include "amf_config.hpp"
+#include "amf_cfg_libconfig.hpp"
+#include "amf_config_yaml.hpp"
 #include "amf_statistics.hpp"
 #include "itti.hpp"
 #include "logger.hpp"
@@ -43,7 +45,7 @@
 #include "pistache/http.h"
 #include "pistache/router.h"
 
-using namespace config;
+using namespace oai::config;
 using namespace amf_application;
 
 amf_config amf_cfg;
@@ -53,6 +55,8 @@ statistics stacs;
 
 AMFApiServer* amf_api_server_1     = nullptr;
 amf_http2_server* amf_api_server_2 = nullptr;
+
+std::unique_ptr<amf_config_yaml> amf_cfg_yaml;
 
 //------------------------------------------------------------------------------
 void amf_signal_handler(int s) {
@@ -104,9 +108,27 @@ int main(int argc, char** argv) {
   std::signal(SIGTERM, amf_signal_handler);
   std::signal(SIGINT, amf_signal_handler);
 
-  amf_cfg.load(Options::getlibconfigConfig());
-  amf_cfg.display();
-  Logger::set_level(amf_cfg.log_level);
+  std::string conf_file_name = Options::getlibconfigConfig();
+  std::string file_ext       = ".conf";
+  if (conf_file_name.find(file_ext) != std::string::npos) {
+    Logger::system().debug("Parsing the configuration file, file type CONF.");
+    amf_cfg_libconfig::load(conf_file_name, amf_cfg);
+    Logger::set_level(amf_cfg.log_level);
+    amf_cfg.display();
+  } else {
+    // By default, considering the config file as yaml
+    Logger::system().debug("Parsing the configuration file, file type YAML.");
+    amf_cfg_yaml = std::make_unique<amf_config_yaml>(
+        conf_file_name, Options::getlogStdout(), Options::getlogRotFilelog());
+    if (!amf_cfg_yaml->init()) {
+      Logger::system().error("Reading the configuration failed. Exiting.");
+      return 1;
+    }
+    amf_cfg_yaml->pre_process();
+    amf_cfg_yaml->display();
+    // Convert from YAML to internal structure
+    amf_cfg_yaml->to_amf_config(amf_cfg);
+  }
 
   itti_inst = new itti_mw();
   itti_inst->start(amf_cfg.itti.itti_timer_sched_params);
@@ -114,23 +136,27 @@ int main(int argc, char** argv) {
   amf_app_inst = new amf_app(amf_cfg);
 
   Logger::amf_app().debug("Initiating AMF server endpoints");
-  // AMF HTTP1 server
-  Pistache::Address addr(
-      std::string(inet_ntoa(*((struct in_addr*) &amf_cfg.sbi.addr4))),
-      Pistache::Port(amf_cfg.sbi.port));
-  amf_api_server_1 = new AMFApiServer(addr, amf_app_inst);
-  amf_api_server_1->init(2);
-  // std::thread amf_http1_manager(&AMFApiServer::start, amf_api_server_1);
-  amf_api_server_1->start();
-  // AMF HTTP2 server
-  amf_api_server_2 = new amf_http2_server(
-      conv::toString(amf_cfg.sbi.addr4), amf_cfg.sbi_http2_port, amf_app_inst);
-  amf_api_server_2->init(1);
-  // std::thread amf_http2_manager(&amf_http2_server::start, amf_api_server_2);
-  amf_api_server_2->start();
-
-  // amf_http1_manager.join();
-  // amf_http2_manager.join();
+  if (!amf_cfg.support_features.use_http2) {
+    // AMF HTTP1 server
+    Pistache::Address addr(
+        std::string(inet_ntoa(*((struct in_addr*) &amf_cfg.sbi.addr4))),
+        Pistache::Port(amf_cfg.sbi.port));
+    amf_api_server_1 = new AMFApiServer(addr, amf_app_inst);
+    amf_api_server_1->init(2);
+    // std::thread amf_http1_manager(&AMFApiServer::start, amf_api_server_1);
+    amf_api_server_1->start();
+    // amf_http1_manager.join();
+  } else {
+    // AMF HTTP2 server
+    amf_api_server_2 = new amf_http2_server(
+        conv::toString(amf_cfg.sbi.addr4), amf_cfg.sbi_http2_port,
+        amf_app_inst);
+    amf_api_server_2->init(1);
+    // std::thread amf_http2_manager(&amf_http2_server::start,
+    // amf_api_server_2);
+    amf_api_server_2->start();
+    // amf_http2_manager.join();
+  }
 
   Logger::amf_app().debug("Initiation Done!");
   pause();

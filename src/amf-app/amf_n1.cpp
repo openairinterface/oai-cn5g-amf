@@ -71,7 +71,7 @@ extern "C" {
 
 using namespace nas;
 using namespace amf_application;
-using namespace config;
+using namespace oai::config;
 using namespace boost::placeholders;
 
 extern itti_mw* itti_inst;
@@ -849,7 +849,7 @@ void amf_n1::service_request_handle(
     string tmsi         = {};
     if (service_request->Get5gSTmsi(amf_set_id, amf_pointer, tmsi)) {
       std::string guti = conv::tmsi_to_guti(
-          uc->tai.mcc, uc->tai.mnc, amf_cfg.guami.regionID,
+          uc->tai.mcc, uc->tai.mnc, amf_cfg.guami.region_id,
           std::to_string(amf_set_id), std::to_string(amf_pointer), tmsi);
 
       Logger::amf_app().debug(
@@ -1015,7 +1015,7 @@ void amf_n1::service_request_handle(
     string tmsi         = {};
     if (service_request->Get5gSTmsi(amf_set_id, amf_pointer, tmsi)) {
       std::string guti = conv::tmsi_to_guti(
-          uc->tai.mcc, uc->tai.mnc, amf_cfg.guami.regionID,
+          uc->tai.mcc, uc->tai.mnc, amf_cfg.guami.region_id,
           std::to_string(amf_set_id), std::to_string(amf_pointer), tmsi);
       // nc->guti               = std::make_optional<std::string>(guti);
       Logger::amf_app().debug(
@@ -1728,7 +1728,7 @@ void amf_n1::registration_request_handle(
     } break;
 
     case EMERGENCY_REGISTRATION: {
-      if (!amf_cfg.is_emergency_support.compare("false")) {
+      if (!amf_cfg.is_emergency_support) {
         Logger::amf_n1().error(
             "Network does not support emergency registration, reject ...");
         send_registration_reject_msg(
@@ -2316,8 +2316,8 @@ bool amf_n1::authentication_vectors_generator_in_udm(
 void amf_n1::generate_random(uint8_t* random_p, ssize_t length) {
   gmp_randinit_default(random_state.state);
   gmp_randseed_ui(random_state.state, time(NULL));
-  if (!amf_cfg.auth_para.random.compare("true")) {
-    Logger::amf_n1().debug("AMF config random -> true");
+  if (amf_cfg.auth_para.random) {
+    Logger::amf_n1().debug("Database config random -> true");
     random_t random_nb;
     mpz_init(random_nb);
     mpz_init_set_ui(random_nb, 0);
@@ -2333,7 +2333,7 @@ void amf_n1::generate_random(uint8_t* random_p, ssize_t length) {
       random_p[i] = (r & mask) >> shift;
     }
   } else {
-    Logger::amf_n1().error("AMF config random -> false");
+    Logger::amf_n1().error("Database config random -> false");
     pthread_mutex_lock(&random_state.lock);
     for (int i = 0; i < length; i++) {
       random_p[i] = i + no_random_delta;
@@ -2780,18 +2780,20 @@ bool amf_n1::security_select_algorithms(
     uint8_t nea, uint8_t nia, uint8_t& amf_nea, uint8_t& amf_nia) {
   bool found_nea = false;
   bool found_nia = false;
-  for (int i = 0; i < 8; i++) {
-    if (nea & (0x80 >> amf_cfg.nas_cfg.prefered_ciphering_algorithm[i])) {
-      amf_nea = amf_cfg.nas_cfg.prefered_ciphering_algorithm[i];
-      Logger::amf_n1().debug("amf_nea: 0x%x", amf_nea);
+  for (int i = 0; i < amf_cfg.nas_cfg.prefered_ciphering_algorithm.size();
+       i++) {
+    if (nea & (0x80 >> (int) amf_cfg.nas_cfg.prefered_ciphering_algorithm[i])) {
+      amf_nea = (int) amf_cfg.nas_cfg.prefered_ciphering_algorithm[i];
+      Logger::amf_n1().debug("Selected AMF NEA: 0x%x", amf_nea);
       found_nea = true;
       break;
     }
   }
-  for (int i = 0; i < 8; i++) {
-    if (nia & (0x80 >> amf_cfg.nas_cfg.prefered_integrity_algorithm[i])) {
-      amf_nia = amf_cfg.nas_cfg.prefered_integrity_algorithm[i];
-      Logger::amf_n1().debug("amf_nia: 0x%x", amf_nia);
+  for (int i = 0; i < amf_cfg.nas_cfg.prefered_integrity_algorithm.size();
+       i++) {
+    if (nia & (0x80 >> (int) amf_cfg.nas_cfg.prefered_integrity_algorithm[i])) {
+      amf_nia = (int) amf_cfg.nas_cfg.prefered_integrity_algorithm[i];
+      Logger::amf_n1().debug("Selected AMF NIA: 0x%x", amf_nia);
       found_nia = true;
       break;
     }
@@ -2893,12 +2895,12 @@ void amf_n1::security_mode_complete_handle(
     return;
   }
   registration_accept->Set5gGuti(
-      mcc, mnc, amf_cfg.guami.regionID, amf_cfg.guami.AmfSetID,
-      amf_cfg.guami.AmfPointer, tmsi);
+      mcc, mnc, amf_cfg.guami.region_id, amf_cfg.guami.amf_set_id,
+      amf_cfg.guami.amf_pointer, tmsi);
 
   std::string guti = conv::tmsi_to_guti(
-      mcc, mnc, amf_cfg.guami.regionID, amf_cfg.guami.AmfSetID,
-      amf_cfg.guami.AmfPointer, conv::tmsi_to_string(tmsi));
+      mcc, mnc, amf_cfg.guami.region_id, amf_cfg.guami.amf_set_id,
+      amf_cfg.guami.amf_pointer, conv::tmsi_to_string(tmsi));
   Logger::amf_n1().debug(
       "Allocated GUTI %s (TMSI %s)", guti.c_str(),
       conv::tmsi_to_string(tmsi).c_str());
@@ -3786,8 +3788,8 @@ void amf_n1::run_mobility_registration_update_procedure(
   initialize_registration_accept(reg_accept, nc);
 
   reg_accept->Set5gGuti(
-      amf_cfg.guami.mcc, amf_cfg.guami.mnc, amf_cfg.guami.regionID,
-      amf_cfg.guami.AmfSetID, amf_cfg.guami.AmfPointer, uc->tmsi);
+      amf_cfg.guami.mcc, amf_cfg.guami.mnc, amf_cfg.guami.region_id,
+      amf_cfg.guami.amf_set_id, amf_cfg.guami.amf_pointer, uc->tmsi);
 
   uint8_t buffer[BUFFER_SIZE_1024] = {0};
   int encoded_size = reg_accept->Encode(buffer, BUFFER_SIZE_1024);
@@ -3866,8 +3868,8 @@ void amf_n1::run_periodic_registration_update_procedure(
   }
 
   reg_accept->Set5gGuti(
-      amf_cfg.guami.mcc, amf_cfg.guami.mnc, amf_cfg.guami.regionID,
-      amf_cfg.guami.AmfSetID, amf_cfg.guami.AmfPointer, uc->tmsi);
+      amf_cfg.guami.mcc, amf_cfg.guami.mnc, amf_cfg.guami.region_id,
+      amf_cfg.guami.amf_set_id, amf_cfg.guami.amf_pointer, uc->tmsi);
 
   if (pdu_session_status == 0x0000) {
     reg_accept->SetPduSessionStatus(0x0000);
@@ -3932,8 +3934,8 @@ void amf_n1::run_periodic_registration_update_procedure(
   }
 
   reg_accept->Set5gGuti(
-      amf_cfg.guami.mcc, amf_cfg.guami.mnc, amf_cfg.guami.regionID,
-      amf_cfg.guami.AmfSetID, amf_cfg.guami.AmfPointer, uc->tmsi);
+      amf_cfg.guami.mcc, amf_cfg.guami.mnc, amf_cfg.guami.region_id,
+      amf_cfg.guami.amf_set_id, amf_cfg.guami.amf_pointer, uc->tmsi);
 
   uint16_t pdu_session_status = 0xffff;
   pdu_session_status          = registration_request->GetPduSessionStatus();
@@ -5197,7 +5199,7 @@ bool amf_n1::get_network_slice_selection(
     return false;
   }
 
-  if (amf_cfg.support_features.enable_external_nssf) {
+  if (amf_cfg.support_features.enable_nssf) {
     // Get Authorized Network Slice Info from an  external NSSF
     std::shared_ptr<itti_sbi_network_slice_selection_information> itti_msg =
         std::make_shared<itti_sbi_network_slice_selection_information>(

@@ -40,7 +40,7 @@
 #include "ue_context.hpp"
 #include "uint_generator.hpp"
 
-using namespace config;
+using namespace oai::config;
 
 static uint32_t amf_app_ue_ngap_id_generator = 1;
 

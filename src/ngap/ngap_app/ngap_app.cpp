@@ -30,7 +30,7 @@ extern "C" {
 }
 
 using namespace sctp;
-using namespace config;
+using namespace oai::config;
 using namespace ngap;
 
 //------------------------------------------------------------------------------

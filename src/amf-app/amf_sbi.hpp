@@ -115,17 +115,16 @@ class amf_sbi {
    * @param [const std::string&] supi: SUPI
    * @param [std::shared_ptr<pdu_session_context>&] psc: Pointer to the PDU
    * Session Context
-   * @param [const std::string&] smf_addr: SMF's Address
+   * @param [const std::string&] smf_uri_root: SMF's Address:Port
    * @param [const std::string&] smf_api_version: SMF's API version
-   * @param [const uint32_t&] smf_port: SMF's HTTP port
    * @param [bstring] sm_msg: SM message
    * @param [const std::string&] dnn: DNN
    * @return void
    */
   void handle_pdu_session_initial_request(
       const std::string& supi, std::shared_ptr<pdu_session_context>& psc,
-      const std::string& smf_addr, const std::string& smf_api_version,
-      const uint32_t& smf_port, bstring sm_msg, const std::string& dnn);
+      const std::string& smf_uri_root, const std::string& smf_api_version,
+      bstring sm_msg, const std::string& dnn);
 
   /*
    * Send SM Context response error to AMF
@@ -163,18 +162,16 @@ class amf_sbi {
 
   /*
    * Select SMF from the configuration file
-   * @param [std::string&] smf_addr: SMF's Address
-   * @param [uint32_t&] smf_port: SMF's HTTP port
+   * @param [std::string&] smf_uri_root: in form SMF's Address:Port
    * @param [std::string&] smf_api_version: SMF's API version
    * @return true if successful, otherwise return false
    */
   bool smf_selection_from_configuration(
-      std::string& smf_addr, uint32_t& smf_port, std::string& smf_api_version);
+      std::string& smf_uri_root, std::string& smf_api_version);
 
   /*
    * Find suitable SMF from NRF (based on snssai, plmn and dnn)
-   * @param [std::string&] smf_addr: SMF's Address
-   * @param [uint32_t&] smf_port: SMF's HTTP port
+   * @param [std::string&] smf_uri_root: in the form of ADDR:PORT
    * @param [std::string&] smf_api_version: SMF's API version
    * @param [const snssai_t&] snssai: SNSSAI
    * @param [const plmn_t&] plmn: PLMN
@@ -183,7 +180,7 @@ class amf_sbi {
    * @return true if successful, otherwise return false
    */
   bool discover_smf(
-      std::string& smf_addr, uint32_t& smf_port, std::string& smf_api_version,
+      std::string& smf_uri_root, std::string& smf_api_version,
       const snssai_t& snssai, const plmn_t& plmn, const std::string& dnn,
       const std::string& nrf_uri = {});
 

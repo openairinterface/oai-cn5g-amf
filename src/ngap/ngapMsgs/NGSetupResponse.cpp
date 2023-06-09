@@ -76,13 +76,13 @@ void NGSetupResponseMsg::setGUAMIList(std::vector<struct GuamiItem_s> list) {
   for (int i = 0; i < list.size(); i++) {
     GUAMI guami = {};
     guami.setGUAMI(
-        list[i].mcc, list[i].mnc, list[i].regionID, list[i].AmfSetID,
-        list[i].AmfPointer);
+        list[i].mcc, list[i].mnc, list[i].region_id, list[i].amf_set_id,
+        list[i].amf_pointer);
     servedGUAMIItem.setGUAMI(guami);
 
-    if (list[i].backupAMFName.size() > 0) {
+    if (list[i].backup_amf_name.size() > 0) {
       AmfName amf_name = {};
-      if (amf_name.setValue(list[i].backupAMFName)) {
+      if (amf_name.setValue(list[i].backup_amf_name)) {
         servedGUAMIItem.setBackupAMFName(amf_name);
       }
     }
@@ -290,12 +290,12 @@ bool NGSetupResponseMsg::getGUAMIList(std::vector<struct GuamiItem_s>& list) {
     GUAMI guami           = {};
     it->getGUAMI(guami);
     guami.getGUAMI(
-        guamiItem.mcc, guamiItem.mnc, guamiItem.regionID, guamiItem.AmfSetID,
-        guamiItem.AmfPointer);
+        guamiItem.mcc, guamiItem.mnc, guamiItem.region_id, guamiItem.amf_set_id,
+        guamiItem.amf_pointer);
 
     AmfName amf_name = {};
     if (it->getBackupAMFName(amf_name)) {
-      amf_name.getValue(guamiItem.backupAMFName);
+      amf_name.getValue(guamiItem.backup_amf_name);
     }
 
     list.push_back(guamiItem);

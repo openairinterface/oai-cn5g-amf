@@ -128,6 +128,7 @@ COPY --from=oai-amf-builder \
     /usr/local/lib/libnghttp2_asio.so.1 \
     /usr/local/lib/libpistache.so \
     /usr/local/lib/libfmt.so \
+    /usr/local/lib/libyaml-cpp.so.0.? \
     ./
 
 RUN ldconfig && \

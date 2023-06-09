@@ -44,7 +44,7 @@
 using namespace ngap;
 using namespace nas;
 using namespace amf_application;
-using namespace config;
+using namespace oai::config;
 
 extern amf_app* amf_app_inst;
 extern itti_mw* itti_inst;
@@ -89,9 +89,7 @@ amf_app::amf_app(const amf_config& amf_cfg)
   generate_amf_profile();
 
   // Register to NRF if needed
-  if (amf_cfg.support_features.enable_nf_registration and
-      amf_cfg.support_features.enable_external_nrf)
-    register_to_nrf();
+  if (amf_cfg.support_features.enable_nf_registration) register_to_nrf();
 
   timer_id_t tid = itti_inst->timer_setup(
       amf_cfg.statistics_interval, 0, TASK_AMF_APP,
@@ -469,7 +467,7 @@ void amf_app::handle_itti_message(
   bool is_guti_valid = false;
   if (itti_msg.is_5g_s_tmsi_present) {
     guti = conv::tmsi_to_guti(
-        itti_msg.tai.mcc, itti_msg.tai.mnc, amf_cfg.guami.regionID,
+        itti_msg.tai.mcc, itti_msg.tai.mnc, amf_cfg.guami.region_id,
         itti_msg._5g_s_tmsi);
     is_guti_valid = true;
     Logger::amf_app().debug("Receiving GUTI %s", guti.c_str());
@@ -833,9 +831,7 @@ void amf_app::handle_itti_message(itti_sbi_update_amf_configuration& itti_msg) {
 
     // Update AMF profile (complete replacement of the existing profile by a new
     // one)
-    if (amf_cfg.support_features.enable_nf_registration and
-        amf_cfg.support_features.enable_external_nrf)
-      register_to_nrf();
+    if (amf_cfg.support_features.enable_nf_registration) register_to_nrf();
 
   } else {
     response_data["httpResponseCode"] = static_cast<uint32_t>(
@@ -975,7 +971,7 @@ evsub_id_t amf_app::handle_event_exposure_subscription(
     add_event_subscription(evsub_id, i.type, ss);
 
     // Determine Location
-    if (amf_cfg.support_features.enable_external_lmf) {
+    if (amf_cfg.support_features.enable_lmf) {
       uint8_t http_version = amf_cfg.support_features.use_http2 ? 2 : 1;
       for (const auto& kvp : supi2ue_ctx) {
         nlohmann::json input_data    = {};
@@ -1133,12 +1129,12 @@ void amf_app::generate_amf_profile() {
   // TODO: custom info
   // AMF info
   amf_info_t info    = {};
-  info.amf_region_id = amf_cfg.guami.regionID;
-  info.amf_set_id    = amf_cfg.guami.AmfSetID;
+  info.amf_region_id = amf_cfg.guami.region_id;
+  info.amf_set_id    = amf_cfg.guami.amf_set_id;
   for (auto g : amf_cfg.guami_list) {
     guami_5g_t guami = {};
-    guami.amf_id =
-        g.regionID + ":" + g.AmfSetID + ":" + g.AmfPointer;  // TODO verify??
+    guami.amf_id     = g.region_id + ":" + g.amf_set_id + ":" +
+                   g.amf_pointer;  // TODO verify??
     guami.plmn.mcc = g.mcc;
     guami.plmn.mnc = g.mnc;
     info.guami_list.push_back(guami);
