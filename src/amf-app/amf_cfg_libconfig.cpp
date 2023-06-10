@@ -692,7 +692,11 @@ int amf_cfg_libconfig::load(
               util::trim(address).c_str(), nssf_ipv4_addr,
               "BAD IPv4 ADDRESS FORMAT FOR NSSF !");
           amf_cfg_value.nssf_addr.ipv4_addr = nssf_ipv4_addr;
-          amf_cfg_value.nssf_addr.port      = nssf_port;
+          if (!(nssf_cfg.lookupValue(AMF_CONFIG_STRING_PORT, nssf_port))) {
+            Logger::amf_app().error(AMF_CONFIG_STRING_PORT "failed");
+            throw(AMF_CONFIG_STRING_PORT "failed");
+          }
+          amf_cfg_value.nssf_addr.port = nssf_port;
           amf_cfg_value.nssf_addr.uri_root =
               util::trim(address) + ":" + std::to_string(nssf_port);
           amf_cfg_value.nssf_addr.api_version =
