@@ -38,7 +38,7 @@ using namespace nghttp2::asio_http2;
 using namespace nghttp2::asio_http2::server;
 using namespace oai::amf::model;
 
-extern config::amf_config amf_cfg;
+extern oai::config::amf_config amf_cfg;
 extern itti_mw* itti_inst;
 
 //------------------------------------------------------------------------------

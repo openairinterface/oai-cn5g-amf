@@ -47,7 +47,7 @@ extern "C" {
 #include "dynamic_memory_check.h"
 }
 
-using namespace config;
+using namespace oai::config;
 using namespace amf_application;
 extern itti_mw* itti_inst;
 extern amf_config amf_cfg;
@@ -338,9 +338,8 @@ void amf_sbi::handle_itti_message(itti_nsmf_pdusession_create_sm_context& smf) {
   Logger::amf_sbi().debug("Requested DNN: %s", dnn.c_str());
   psc->dnn = dnn;
 
-  std::string smf_addr        = {};
+  std::string smf_uri_root    = {};
   std::string smf_api_version = {};
-  uint32_t smf_port           = DEFAULT_HTTP1_PORT;
   if (!psc->smf_info.info_available) {
     if (amf_cfg.support_features.enable_smf_selection) {
       // Get NRF URI
@@ -352,14 +351,14 @@ void amf_sbi::handle_itti_message(itti_nsmf_pdusession_create_sm_context& smf) {
       Logger::amf_sbi().debug("NRF NF Discover URI: %s", nrf_uri.c_str());
       // use NRF to find suitable SMF based on snssai, plmn and dnn
       if (!discover_smf(
-              smf_addr, smf_port, smf_api_version, psc->snssai, psc->plmn,
-              psc->dnn, nrf_uri)) {
+              smf_uri_root, smf_api_version, psc->snssai, psc->plmn, psc->dnn,
+              nrf_uri)) {
         Logger::amf_sbi().error("SMF Selection, no SMF candidate is available");
         return;
       }
 
     } else if (!smf_selection_from_configuration(
-                   smf_addr, smf_port, smf_api_version)) {
+                   smf_uri_root, smf_api_version)) {
       Logger::amf_sbi().error(
           "No SMF candidate is available (from configuration file)");
       return;
@@ -367,13 +366,11 @@ void amf_sbi::handle_itti_message(itti_nsmf_pdusession_create_sm_context& smf) {
 
     // store smf info to be used with this PDU session
     psc->smf_info.info_available = true;
-    psc->smf_info.addr           = smf_addr;
-    psc->smf_info.port           = smf_port;
+    psc->smf_info.uri_root       = smf_uri_root;
     psc->smf_info.api_version    = smf_api_version;
   } else {
-    smf_addr        = psc->smf_info.addr;
+    smf_uri_root    = psc->smf_info.uri_root;
     smf_api_version = psc->smf_info.api_version;
-    smf_port        = psc->smf_info.port;
   }
 
   switch (smf.req_type & 0x07) {
@@ -385,7 +382,7 @@ void amf_sbi::handle_itti_message(itti_nsmf_pdusession_create_sm_context& smf) {
           "Decoded PTI for PDUSessionEstablishmentRequest(0x%x)", pti);
       psc->is_n2sm_avaliable = false;
       handle_pdu_session_initial_request(
-          supi, psc, smf_addr, smf_api_version, smf_port, smf.sm_msg, dnn);
+          supi, psc, smf_uri_root, smf_api_version, smf.sm_msg, dnn);
     } break;
     case EXISTING_PDU_SESSION: {
       // TODO:
@@ -439,8 +436,8 @@ void amf_sbi::send_pdu_session_update_sm_context_request(
 //------------------------------------------------------------------------------
 void amf_sbi::handle_pdu_session_initial_request(
     const std::string& supi, std::shared_ptr<pdu_session_context>& psc,
-    const std::string& smf_addr, const std::string& smf_api_version,
-    const uint32_t& smf_port, bstring sm_msg, const std::string& dnn) {
+    const std::string& smf_uri_root, const std::string& smf_api_version,
+    bstring sm_msg, const std::string& dnn) {
   Logger::amf_sbi().debug(
       "Handle PDU Session Establishment Request (SUPI %s, PDU Session ID %d)",
       supi.c_str(), psc->pdu_session_id);
@@ -451,7 +448,7 @@ void amf_sbi::handle_pdu_session_initial_request(
     amf_port = to_string(amf_cfg.sbi_http2_port);
 
   std::string remote_uri =
-      amf_cfg.get_smf_pdu_session_base_uri(smf_addr, smf_port, smf_api_version);
+      amf_cfg.get_smf_pdu_session_base_uri(smf_uri_root, smf_api_version);
 
   Logger::amf_sbi().debug("SMF URI: %s", remote_uri.c_str());
 
@@ -751,44 +748,12 @@ void amf_sbi::handle_itti_message(itti_sbi_nf_instance_discovery& itti_msg) {
 
 //------------------------------------------------------------------------------
 bool amf_sbi::smf_selection_from_configuration(
-    std::string& smf_addr, uint32_t& smf_port, std::string& smf_api_version) {
-  for (int i = 0; i < amf_cfg.smf_pool.size(); i++) {
-    if (amf_cfg.smf_pool[i].selected) {
-      if (!amf_cfg.support_features.use_fqdn_dns) {
-        if (!amf_cfg.support_features.use_http2) {
-          smf_addr = amf_cfg.smf_pool[i].ipv4;
-          smf_port = amf_cfg.smf_pool[i].port;
-        } else {
-          smf_addr = amf_cfg.smf_pool[i].ipv4;
-          smf_port = amf_cfg.smf_pool[i].http2_port;
-        }
-
-        smf_api_version = amf_cfg.smf_pool[i].version;
-        return true;
-      } else {
-        // resolve IP addr from a FQDN/DNS name
-        uint8_t addr_type          = 0;
-        uint32_t smf_port_resolved = DEFAULT_HTTP1_PORT;
-        fqdn::resolve(
-            amf_cfg.smf_pool[i].fqdn, amf_cfg.smf_pool[i].ipv4,
-            smf_port_resolved, addr_type);
-        // TODO for HTTP2
-        if (amf_cfg.support_features.use_http2)
-          smf_port_resolved = DEFAULT_HTTP2_PORT;
-        if (addr_type != 0) {  // IPv6: TODO
-          Logger::amf_sbi().warn("Do not support IPv6 Addr for SMF");
-          return false;
-        } else {  // IPv4
-          smf_addr        = amf_cfg.smf_pool[i].ipv4;
-          smf_port        = smf_port_resolved;
-          smf_api_version = "v1";  // TODO: get API version
-          return true;
-        }
-      }
-      return true;
-    }
-  }
-  return false;
+    std::string& smf_uri_root, std::string& smf_api_version) {
+  smf_uri_root = amf_cfg.smf_addr.uri_root;
+  // smf_uri_root.append(inet_ntoa(amf_cfg.smf_addr.ipv4_addr)).append(":").append(std::to_string(
+  // amf_cfg.smf_addr.port));
+  smf_api_version = amf_cfg.smf_addr.api_version;
+  return true;
 }
 
 //------------------------------------------------------------------------------
@@ -816,12 +781,14 @@ void amf_sbi::handle_post_sm_context_response_error(
 
 //-----------------------------------------------------------------------------------------------------
 bool amf_sbi::discover_smf(
-    std::string& smf_addr, uint32_t& smf_port, std::string& smf_api_version,
+    std::string& smf_uri_root, std::string& smf_api_version,
     const snssai_t& snssai, const plmn_t& plmn, const std::string& dnn,
     const std::string& nrf_uri) {
   Logger::amf_sbi().debug(
       "Send NFDiscovery to NRF to discover the available SMFs");
-  bool result = false;
+  bool result          = false;
+  std::string smf_addr = {};
+  int smf_port         = DEFAULT_HTTP1_PORT;
 
   uint8_t http_version = 1;
   if (amf_cfg.support_features.use_http2) http_version = 2;
@@ -923,6 +890,8 @@ bool amf_sbi::discover_smf(
     Logger::amf_sbi().debug(
         "NFDiscovery, SMF Info: Addr %s, Port %d, API Version %s",
         smf_addr.c_str(), smf_port, smf_api_version.c_str());
+    smf_uri_root = {};
+    smf_uri_root.append(smf_addr).append(":").append(std::to_string(smf_port));
   }
 
   return result;
@@ -1642,16 +1611,10 @@ void amf_sbi::curl_http_client(
 bool amf_sbi::get_nrf_uri(
     const snssai_t& snssai, const plmn_t& plmn, const std::string& dnn,
     std::string& nrf_uri) {
-  if (!amf_cfg.support_features.enable_nrf_selection) {
+  if (!amf_cfg.support_features.enable_nssf) {
     // Get NRF info from configuration file if available
-    if (amf_cfg.support_features.enable_external_nrf) {
-      nrf_uri = amf_cfg.get_nrf_nf_discovery_service_uri();
-      return true;
-    } else {
-      Logger::amf_sbi().debug("No NRF information from the configuration file");
-      return false;
-    }
-
+    nrf_uri = amf_cfg.get_nrf_nf_discovery_service_uri();
+    return true;
   } else {  // Get NRF info from NSSF
             // TODO: check if external NSSF feature is supported
     Logger::amf_sbi().debug(

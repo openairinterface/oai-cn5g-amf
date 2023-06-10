@@ -18,7 +18,7 @@
 #include "amf_config.hpp"
 #include "mime_parser.hpp"
 
-extern config::amf_config amf_cfg;
+extern oai::config::amf_config amf_cfg;
 
 namespace oai {
 namespace amf {

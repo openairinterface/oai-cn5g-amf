@@ -340,6 +340,7 @@ include_directories(${SRC_TOP_DIR}/sctp)
 include_directories(${SRC_TOP_DIR}/secu_algorithms/5gaka)
 include_directories(${SRC_TOP_DIR}/secu_algorithms/nas_enc_int)
 include_directories(${SRC_TOP_DIR}/${MOUNTED_COMMON}/logger)
+include_directories(${SRC_TOP_DIR}/${MOUNTED_COMMON}/config)
 
 add_executable(amf
   ${SRC_TOP_DIR}/oai-amf/main.cpp
@@ -350,6 +351,7 @@ add_executable(amf
 
 ## Common modules
 include(${SRC_TOP_DIR}/${MOUNTED_COMMON}/logger/logger.cmake)
+include(${SRC_TOP_DIR}/${MOUNTED_COMMON}/config/config.cmake)
 
 IF(STATIC_LINKING)
     SET(CMAKE_EXE_LINKER_FLAGS "-static")
@@ -359,4 +361,4 @@ IF(STATIC_LINKING)
 ENDIF(STATIC_LINKING)
 
 target_link_libraries(amf ${ASAN}
-      -Wl,--start-group 3GPP_COMMON_TYPES AMF CONTEXTS AMF_SCTP AMF_SECU_5GAKA AMF_SECU_NAS AMF_UTILS AMF_SBI_SERVER config++ sctp fmt spdlog -Wl,--end-group pthread ${NETTLE_LIBRARIES} ${MySQL_LIBRARY} ${CRYPTO_LIBRARIES} ${OPENSSL_LIBRARIES} nghttp2_asio boost_system boost_thread boost_chrono ssl crypt gmp pistache curl)
+      -Wl,--start-group 3GPP_COMMON_TYPES AMF CONTEXTS AMF_SCTP AMF_SECU_5GAKA AMF_SECU_NAS AMF_UTILS AMF_SBI_SERVER config++ sctp fmt spdlog -Wl,--end-group pthread ${NETTLE_LIBRARIES} ${MySQL_LIBRARY} ${CRYPTO_LIBRARIES} ${OPENSSL_LIBRARIES} nghttp2_asio boost_system boost_thread boost_chrono ssl crypt gmp pistache curl yaml-cpp)

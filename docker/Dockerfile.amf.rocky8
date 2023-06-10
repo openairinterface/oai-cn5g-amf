@@ -112,6 +112,7 @@ COPY --from=oai-amf-builder \
     /usr/local/lib/libnghttp2_asio.so.1 \
     /usr/local/lib64/libspdlog.so \
     /usr/local/lib64/libfmt.so \
+    /usr/local/lib64/libyaml-cpp.so.0.* \
     /usr/lib64/
 
 RUN ldconfig && \

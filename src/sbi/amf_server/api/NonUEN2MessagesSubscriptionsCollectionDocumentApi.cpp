@@ -15,7 +15,7 @@
 #include "Helpers.h"
 #include "amf_config.hpp"
 
-extern config::amf_config amf_cfg;
+extern oai::config::amf_config amf_cfg;
 
 namespace oai {
 namespace amf {

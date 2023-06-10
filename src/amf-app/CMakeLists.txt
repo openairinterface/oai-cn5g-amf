@@ -43,10 +43,13 @@ include_directories(${SRC_TOP_DIR}/secu_algorithms/nas_enc_int)
 include_directories(${SRC_TOP_DIR}/utils)
 include_directories(${SRC_TOP_DIR}/utils/bstr)
 include_directories(${SRC_TOP_DIR}/${MOUNTED_COMMON}/logger)
+include_directories(${SRC_TOP_DIR}/${MOUNTED_COMMON}/config)
 
 file(GLOB AMF_src_files
   ${CMAKE_CURRENT_SOURCE_DIR}/amf_app.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/amf_config.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/amf_cfg_libconfig.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/amf_config_yaml.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/amf_n1.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/amf_n2.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/amf_sbi.cpp

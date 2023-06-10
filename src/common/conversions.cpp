@@ -132,6 +132,16 @@ struct in_addr conv::fromString(const std::string addr4) {
 }
 
 //------------------------------------------------------------------------------
+struct in6_addr conv::fromStringV6(const std::string& addr6) {
+  unsigned char buf[sizeof(struct in6_addr)] = {};
+  struct in6_addr ipv6_addr {};
+  if (inet_pton(AF_INET6, addr6.c_str(), buf) == 1) {
+    memcpy(&ipv6_addr, buf, sizeof(struct in6_addr));
+  }
+  return ipv6_addr;
+}
+
+//------------------------------------------------------------------------------
 std::string conv::toString(const struct in_addr& inaddr) {
   std::string s              = {};
   char str[INET6_ADDRSTRLEN] = {};
