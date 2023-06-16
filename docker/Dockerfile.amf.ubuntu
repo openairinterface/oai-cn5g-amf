@@ -30,7 +30,7 @@
 #---------------------------------------------------------------------
 # BASE IMAGE
 #---------------------------------------------------------------------
-ARG BASE_IMAGE=ubuntu:bionic
+ARG BASE_IMAGE=ubuntu:focal
 FROM $BASE_IMAGE as oai-amf-base
 
 ENV DEBIAN_FRONTEND=noninteractive
@@ -50,8 +50,8 @@ RUN git config --global https.postBuffer 123289600 && \
 # Copying source code
 WORKDIR /openair-amf/
 COPY ./build/scripts /openair-amf/build/scripts
+COPY ./build/common-build /openair-amf/build/common-build
 COPY ./build/amf/CMakeLists.txt /openair-amf/build/amf/CMakeLists.txt
-COPY ./build/cmake_modules /openair-amf/cmake_modules
 
 # Installing all the needed libraries/packages to build and run AMF
 WORKDIR /openair-amf/build/scripts
@@ -68,7 +68,9 @@ WORKDIR /openair-amf/build/scripts
 RUN ldconfig && \
     ./build_amf --clean --Verbose --build-type Release --jobs && \
     ldd /openair-amf/build/amf/build/amf && \
-    mv /openair-amf/build/amf/build/amf /openair-amf/build/amf/build/oai_amf
+    mv /openair-amf/build/amf/build/amf /openair-amf/build/amf/build/oai_amf && \
+    sed -i -e "s@nf-root-folder@amf@" -e "s@nf-config-file@amf.conf@" \
+      ../common-build/docker-scripts/entrypoint.py
 
 #---------------------------------------------------------------------
 # TARGET IMAGE
@@ -120,7 +122,7 @@ RUN apt-get update && \
 WORKDIR /openair-amf/bin
 COPY --from=oai-amf-builder \
     /openair-amf/build/amf/build/oai_amf \
-    /openair-amf/scripts/entrypoint.py \
+    /openair-amf/build/common-build/docker-scripts/entrypoint.py \
     /openair-amf/scripts/healthcheck.sh \
     ./
 

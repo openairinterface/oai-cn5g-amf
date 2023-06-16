@@ -218,7 +218,7 @@ add_definitions("-DPACKAGE_NAME=\"AMF\"")
 # Include CMake modules to find other library
 ###############################################################################
 
-set(CMAKE_MODULE_PATH "${OPENAIRCN_DIR}/build/cmake_modules" "${CMAKE_MODULE_PATH}")
+set(CMAKE_MODULE_PATH "${OPENAIRCN_DIR}/build/common-build/cmake_modules" "${CMAKE_MODULE_PATH}")
 include(FindPkgConfig)
 
 ###############################################################################
