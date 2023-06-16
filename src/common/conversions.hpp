@@ -74,6 +74,7 @@ class conv {
       const uint8_t& bits_unused);
   static bool bstring_2_bit_string(const bstring& b_str, BIT_STRING_t& bit_str);
   static bool sd_string_to_int(const std::string& sd_str, uint32_t& sd);
+  static void sd_int_to_string_hex(uint32_t sd, std::string& sd_str);
   static bool string_to_int(
       const std::string& str, uint32_t& value, const uint8_t& base);
   static bool string_to_int8(const std::string& str, uint8_t& value);

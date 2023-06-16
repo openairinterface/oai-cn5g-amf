@@ -27,6 +27,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdlib.h>
+#include <sstream>
 
 #include <boost/algorithm/string.hpp>
 
@@ -351,6 +352,13 @@ bool conv::sd_string_to_int(const std::string& sd_str, uint32_t& sd) {
   return true;
 }
 
+//------------------------------------------------------------------------------
+void conv::sd_int_to_string_hex(uint32_t sd, std::string& sd_str) {
+  std::stringstream stream_str;
+  stream_str << std::hex << sd;
+  std::string sd_tmp(stream_str.str());
+  sd_str = sd_tmp;
+}
 //------------------------------------------------------------------------------
 bool conv::string_to_int(
     const std::string& str, uint32_t& value, const uint8_t& base) {

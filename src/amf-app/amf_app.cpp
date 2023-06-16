@@ -1142,6 +1142,17 @@ void amf_app::generate_amf_profile() {
 
   nf_instance_profile.set_amf_info(info);
 
+  std::vector<snssai_t> amf_snssai;
+  for (auto p : amf_cfg.plmn_list) {
+    for (auto s : p.slice_list) {
+      snssai_t nssai = {};
+      nssai.sST      = s.sst;
+      conv::sd_int_to_string_hex(s.sd, nssai.sD);
+      amf_snssai.push_back(nssai);
+    }
+  }
+  nf_instance_profile.set_nf_snssais(amf_snssai);
+
   // Display the profile
   nf_instance_profile.display();
 }
