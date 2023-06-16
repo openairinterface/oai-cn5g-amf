@@ -552,6 +552,22 @@ void amf_n2::handle_itti_message(itti_ng_shutdown& itti_msg) {
   std::vector<std::shared_ptr<ue_ngap_context>> ue_contexts;
   get_ue_ngap_contexts(itti_msg.assoc_id, ue_contexts);
 
+  // Release all PDUs session for the associated UEs
+  for (auto context : ue_contexts) {
+    // Get UE Context
+    string ue_context_key = conv::get_ue_context_key(
+        context->ran_ue_ngap_id, context->amf_ue_ngap_id);
+    std::shared_ptr<ue_context> uc = {};
+
+    if (!amf_app_inst->ran_amf_id_2_ue_context(ue_context_key, uc)) {
+      Logger::amf_app().error(
+          "No UE context for ran_amf_id %s, exit", ue_context_key.c_str());
+      continue;
+    }
+    amf_app_inst->trigger_pdu_session_release(uc);
+  }
+
+  // Remove UEs' contexts
   for (auto ue_context : ue_contexts) {
     remove_ue_context_with_amf_ue_ngap_id(ue_context->amf_ue_ngap_id);
     remove_ue_context_with_ran_ue_ngap_id(

@@ -522,6 +522,13 @@ class amf_app {
       const uint32_t pid, const nlohmann::json& json_data);
 
   /*
+   * Send request to SBI task to trigger PDU session release to SMF
+   * @param [const std::shared_ptr<ue_context>&]uc: UE Context
+   * @return void
+   */
+  void trigger_pdu_session_release(const std::shared_ptr<ue_context>& uc) const;
+
+  /*
    * Get the AMF's NF instance
    * @return NF instance in string format
    */
