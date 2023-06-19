@@ -266,23 +266,14 @@ typedef struct nf_addr_s {
 
   nlohmann::json to_json() const {
     nlohmann::json json_data = {};
-    // json_data["ipv4_addr"]   = inet_ntoa(this->ipv4_addr);
-    // json_data["port"]        = this->port;
     json_data["uri_root"]    = this->uri_root;
     json_data["api_version"] = this->api_version;
-    // json_data["fqdn"]        = this->fqdn;
     return json_data;
   }
 
   void from_json(nlohmann::json& json_data) {
-    // std::string ipv4_addr_str = json_data["ipv4_addr"].get<std::string>();
-    // IPV4_STR_ADDR_TO_INADDR(
-    //    util::trim(ipv4_addr_str).c_str(), this->ipv4_addr,
-    //    "BAD IPv4 ADDRESS FORMAT FOR INTERFACE !");
-    // this->port        = json_data["port"].get<int>();
     this->uri_root    = json_data["uri_root"].get<std::string>();
     this->api_version = json_data["api_version"].get<std::string>();
-    // this->fqdn        = json_data["fqdn"].get<std::string>();
   }
 
 } nf_addr_t;
