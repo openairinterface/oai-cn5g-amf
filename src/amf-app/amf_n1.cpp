@@ -953,7 +953,8 @@ void amf_n1::service_request_handle(
           "Cannot get pdu_session_context with SUPI (%s)", supi.c_str());
       // TODO:
       // Set PDU session Status to 0x00
-      // service_accept->SetPduSessionStatus(0x00);
+      service_accept->SetPduSessionStatus(0x00);
+      service_accept->SetPduSessionReactivationResult(0x0000);
     } else {
       service_accept->SetPduSessionStatus(pdu_session_status);
       service_accept->SetPduSessionReactivationResult(0x0000);
@@ -970,8 +971,8 @@ void amf_n1::service_request_handle(
     std::shared_ptr<itti_pdu_session_resource_setup_request> psrsr =
         std::make_shared<itti_pdu_session_resource_setup_request>(
             TASK_AMF_N1, TASK_AMF_N2);
-    psrsr->nas            = bstrcpy(protected_nas);
-    psrsr->n2sm           = bstrcpy(psc->n2sm);
+    psrsr->nas = bstrcpy(protected_nas);
+    // psrsr->n2sm           = bstrcpy(psc->n2sm);
     psrsr->amf_ue_ngap_id = amf_ue_ngap_id;
     psrsr->ran_ue_ngap_id = ran_ue_ngap_id;
     psrsr->pdu_session_id = pdu_session_id;
