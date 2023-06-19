@@ -652,7 +652,7 @@ amf_config_yaml::amf_config_yaml(
   m_used_sbi_values = {
       oai::config::AMF_CONFIG_NAME, oai::config::AUSF_CONFIG_NAME,
       oai::config::SMF_CONFIG_NAME, oai::config::UDM_CONFIG_NAME,
-      oai::config::NRF_CONFIG_NAME};
+      oai::config::NRF_CONFIG_NAME, oai::config::NSSF_CONFIG_NAME};
   m_used_config_values = {
       oai::config::LOG_LEVEL_CONFIG_NAME, oai::config::REGISTER_NF_CONFIG_NAME,
       oai::config::NF_CONFIG_HTTP_NAME,   oai::config::NF_LIST_CONFIG_NAME,
@@ -673,16 +673,20 @@ amf_config_yaml::amf_config_yaml(
   add_nf("smf", m_smf);
 
   auto m_ausf = std::make_shared<nf>(
-      "AUSF", "oai-ausf", sbi_interface("SBI", "oai-ausf", 80, "v1", "eth0"));
+      "AUSF", "oai-ausf", sbi_interface("SBI", "oai-ausf", 80, "v1", ""));
   add_nf("ausf", m_ausf);
 
   auto m_udm = std::make_shared<nf>(
-      "UDM", "oai-udm", sbi_interface("SBI", "oai-udm", 80, "v1", "eth0"));
+      "UDM", "oai-udm", sbi_interface("SBI", "oai-udm", 80, "v1", ""));
   add_nf("udm", m_udm);
 
   auto m_nrf = std::make_shared<nf>(
-      "NRF", "oai-nrf", sbi_interface("SBI", "oai-nrf", 80, "v1", "eth0"));
+      "NRF", "oai-nrf", sbi_interface("SBI", "oai-nrf", 80, "v1", ""));
   add_nf("nrf", m_nrf);
+
+  auto m_nssf = std::make_shared<nf>(
+      "NSSF", "oai-nssf", sbi_interface("SBI", "oai-nssf", 80, "v1", ""));
+  add_nf("nssf", m_nssf);
 
   update_used_nfs();
 }
@@ -702,6 +706,9 @@ void amf_config_yaml::pre_process() {
     udm->set_config();
     std::shared_ptr<nf> nrf = get_nf(NRF_CONFIG_NAME);
     nrf->set_config();
+    if (amf_local->get_support_features().get_option_enable_nssf()) {
+      get_nf(NSSF_CONFIG_NAME)->set_config();
+    }
   } else {
     std::shared_ptr<nf> ausf = get_nf(AUSF_CONFIG_NAME);
     ausf->unset_config();
@@ -826,6 +833,12 @@ void amf_config_yaml::to_amf_config(amf_config& cfg) {
   if (get_nf(oai::config::NRF_CONFIG_NAME)) {
     cfg.nrf_addr.api_version = get_nf("nrf")->get_sbi().get_api_version();
     cfg.nrf_addr.uri_root    = get_nf(oai::config::NRF_CONFIG_NAME)->get_url();
+  }
+
+  if (get_nf(oai::config::NSSF_CONFIG_NAME)) {
+    cfg.nssf_addr.api_version =
+        get_nf(NSSF_CONFIG_NAME)->get_sbi().get_api_version();
+    cfg.nssf_addr.uri_root = get_nf(NSSF_CONFIG_NAME)->get_sbi().get_url();
   }
 
   // NAS conf

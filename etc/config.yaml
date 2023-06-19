@@ -52,9 +52,7 @@ register_nf:
   ausf: no
   nssf: no
 
-http_version: 
-  version: 1
-  port: 80
+http_version: 1.1
 
 ############## SBI Interfaces
 ### Each NF takes its local SBI interfaces and remote interfaces from here, unless it gets them using NRF discovery mechanisms
