@@ -94,8 +94,8 @@ bool amf_support_features::get_option_enable_smf_selection() const {
 
 //------------------------------------------------------------------------------
 guami::guami() : m_amf_region_id(), m_amf_set_id(), m_amf_pointer() {
-  m_mcc = string_config_value(AMF_CONFIG_MCC, "001");  // TODO: test PLMN
-  m_mnc = string_config_value(AMF_CONFIG_MNC, "01");   // TODO: test PLMN
+  m_mcc = string_config_value(AMF_CONFIG_MCC, AMF_CONFIG_TEST_PLMN_MCC);
+  m_mnc = string_config_value(AMF_CONFIG_MNC, AMF_CONFIG_TEST_PLMN_MNC);
   m_set = true;
 }
 
@@ -358,16 +358,24 @@ supported_integrity_algorithms::supported_integrity_algorithms() {
 
 //------------------------------------------------------------------------------
 void supported_integrity_algorithms::from_yaml(const YAML::Node& node) {
+  bool no_item_available = false;
   if (!node.IsSequence()) {
     Logger::amf_app().warn(
         "Could not parse %s", AMF_CONFIG_SUPPORTED_INTEGRITY_ALGORITHMS_LABEL);
-
+    no_item_available = true;
   } else {
     for (int i = 0; i < node.size(); i++) {
       string_config_value value{};
       value.from_yaml(node[i]);
       m_5g_ia_list.push_back(value);
     }
+    if (node.size() == 0) no_item_available = true;
+  }
+  // Default values
+  if (no_item_available) {
+    m_5g_ia_list.push_back(string_config_value("NIA", "NIA0"));
+    m_5g_ia_list.push_back(string_config_value("NIA", "NIA1"));
+    m_5g_ia_list.push_back(string_config_value("NIA", "NIA2"));
   }
 }
 
@@ -392,6 +400,12 @@ supported_integrity_algorithms::get_supported_integrity_algorithms() const {
   for (const auto& i : m_5g_ia_list) {
     _5g_ia_str_list.push_back(i.get_value());
   }
+  // Default values
+  if (_5g_ia_str_list.size() == 0) {
+    _5g_ia_str_list.push_back("NIA0");
+    _5g_ia_str_list.push_back("NIA1");
+    _5g_ia_str_list.push_back("NIA2");
+  }
   return _5g_ia_str_list;
 }
 
@@ -408,15 +422,24 @@ supported_encryption_algorithms::supported_encryption_algorithms() {
 
 //------------------------------------------------------------------------------
 void supported_encryption_algorithms::from_yaml(const YAML::Node& node) {
+  bool no_item_available = false;
   if (!node.IsSequence()) {
     Logger::amf_app().warn(
         "Could not parse %s", AMF_CONFIG_SUPPORTED_ENCRYPTION_ALGORITHMS_LABEL);
+    no_item_available = true;
   } else {
     for (int i = 0; i < node.size(); i++) {
       string_config_value value{};
       value.from_yaml(node[i]);
       m_5g_ea_list.push_back(value);
     }
+    if (node.size() == 0) no_item_available = true;
+  }
+  // Default values
+  if (no_item_available) {
+    m_5g_ea_list.push_back(string_config_value("NEA", "NEA0"));
+    m_5g_ea_list.push_back(string_config_value("NEA", "NEA1"));
+    m_5g_ea_list.push_back(string_config_value("NEA", "NEA2"));
   }
 }
 
@@ -441,6 +464,12 @@ supported_encryption_algorithms::get_supported_encryption_algorithms() const {
   for (const auto& i : m_5g_ea_list) {
     _5g_ea_str_list.push_back(i.get_value());
   }
+  // Default values
+  if (m_5g_ea_list.size() == 0) {
+    _5g_ea_str_list.push_back("NEA0");
+    _5g_ea_str_list.push_back("NEA1");
+    _5g_ea_str_list.push_back("NEA2");
+  }
   return _5g_ea_str_list;
 }
 
@@ -456,6 +485,7 @@ amf::amf(
     const local_interface& local)
     : nf(name, host, sbi, local) {}
 
+//------------------------------------------------------------------------------
 void amf::from_yaml(const YAML::Node& node) {
   nf::from_yaml(node);
 
@@ -664,25 +694,25 @@ amf_config_yaml::amf_config_yaml(
   auto m_amf = std::make_shared<amf>(
       "AMF", "oai-amf", sbi_interface("SBI", "oai-amf1", 80, "v1", "eth0"),
       local_interface("N2", "oai-amf", 38412, "eth0"));
-  add_nf("amf", m_amf);
+  add_nf(oai::config::AMF_CONFIG_NAME, m_amf);
 
   // TODO: enable N4-local interface only for testing purpose
   auto m_smf = std::make_shared<nf>(
       "SMF", "oai-smf", sbi_interface("SBI", "oai-smf", 80, "v1", "eth0"),
       local_interface("n4", "oai-smf", 8805, "eth0"));
-  add_nf("smf", m_smf);
+  add_nf(oai::config::SMF_CONFIG_NAME, m_smf);
 
   auto m_ausf = std::make_shared<nf>(
       "AUSF", "oai-ausf", sbi_interface("SBI", "oai-ausf", 80, "v1", ""));
-  add_nf("ausf", m_ausf);
+  add_nf(oai::config::AUSF_CONFIG_NAME, m_ausf);
 
   auto m_udm = std::make_shared<nf>(
       "UDM", "oai-udm", sbi_interface("SBI", "oai-udm", 80, "v1", ""));
-  add_nf("udm", m_udm);
+  add_nf(oai::config::UDM_CONFIG_NAME, m_udm);
 
   auto m_nrf = std::make_shared<nf>(
       "NRF", "oai-nrf", sbi_interface("SBI", "oai-nrf", 80, "v1", ""));
-  add_nf("nrf", m_nrf);
+  add_nf(oai::config::NRF_CONFIG_NAME, m_nrf);
 
   auto m_nssf = std::make_shared<nf>(
       "NSSF", "oai-nssf", sbi_interface("SBI", "oai-nssf", 80, "v1", ""));
@@ -826,13 +856,15 @@ void amf_config_yaml::to_amf_config(amf_config& cfg) {
   }
 
   if (get_nf(oai::config::UDM_CONFIG_NAME)) {
-    cfg.udm_addr.api_version = get_nf("udm")->get_sbi().get_api_version();
-    cfg.udm_addr.uri_root    = get_nf(oai::config::UDM_CONFIG_NAME)->get_url();
+    cfg.udm_addr.api_version =
+        get_nf(oai::config::UDM_CONFIG_NAME)->get_sbi().get_api_version();
+    cfg.udm_addr.uri_root = get_nf(oai::config::UDM_CONFIG_NAME)->get_url();
   }
 
   if (get_nf(oai::config::NRF_CONFIG_NAME)) {
-    cfg.nrf_addr.api_version = get_nf("nrf")->get_sbi().get_api_version();
-    cfg.nrf_addr.uri_root    = get_nf(oai::config::NRF_CONFIG_NAME)->get_url();
+    cfg.nrf_addr.api_version =
+        get_nf(oai::config::NRF_CONFIG_NAME)->get_sbi().get_api_version();
+    cfg.nrf_addr.uri_root = get_nf(oai::config::NRF_CONFIG_NAME)->get_url();
   }
 
   if (get_nf(oai::config::NSSF_CONFIG_NAME)) {
@@ -869,6 +901,13 @@ void amf_config_yaml::to_amf_config(amf_config& cfg) {
     }
   }
 
+  // Default values
+  if (amf_local->get_supported_integrity_algorithms().size() == 0) {
+    cfg.nas_cfg.prefered_integrity_algorithm.push_back(_5g_ia_e::_5G_IA0);
+    cfg.nas_cfg.prefered_integrity_algorithm.push_back(_5g_ia_e::_5G_IA1);
+    cfg.nas_cfg.prefered_integrity_algorithm.push_back(_5g_ia_e::_5G_IA2);
+  }
+
   for (const auto& s : amf_local->get_supported_encryption_algorithms()) {
     if (!s.compare("NEA0")) {
       cfg.nas_cfg.prefered_ciphering_algorithm.push_back(_5g_ea_e::_5G_EA0);
@@ -894,6 +933,13 @@ void amf_config_yaml::to_amf_config(amf_config& cfg) {
     if (!s.compare("NEA7")) {
       cfg.nas_cfg.prefered_ciphering_algorithm.push_back(_5g_ea_e::_5G_EA7);
     }
+  }
+
+  // Default values
+  if (amf_local->get_supported_encryption_algorithms().size() == 0) {
+    cfg.nas_cfg.prefered_ciphering_algorithm.push_back(_5g_ea_e::_5G_EA0);
+    cfg.nas_cfg.prefered_ciphering_algorithm.push_back(_5g_ea_e::_5G_EA1);
+    cfg.nas_cfg.prefered_ciphering_algorithm.push_back(_5g_ea_e::_5G_EA2);
   }
 }
 }  // namespace oai::config
