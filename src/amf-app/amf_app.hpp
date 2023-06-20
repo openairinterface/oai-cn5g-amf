@@ -528,6 +528,8 @@ class amf_app {
    */
   void trigger_pdu_session_release(const std::shared_ptr<ue_context>& uc) const;
 
+  void trigger_pdu_session_up_deactivation(
+      const std::shared_ptr<ue_context>& uc) const;
   /*
    * Get the AMF's NF instance
    * @return NF instance in string format

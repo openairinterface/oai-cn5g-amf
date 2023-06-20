@@ -1267,3 +1267,95 @@ void amf_app::trigger_pdu_session_release(
     Logger::amf_app().debug("No PDU session available");
   }
 }
+
+//------------------------------------------------------------------------------
+void amf_app::trigger_pdu_session_up_deactivation(
+    const std::shared_ptr<ue_context>& uc) const {
+  Logger::amf_app().debug("Trigger PDU Session UP Deactivation towards SMF");
+
+  std::vector<std::shared_ptr<pdu_session_context>> sessions_ctx;
+  if (uc->get_pdu_sessions_context(sessions_ctx)) {
+    // Send PDUSessionUpdateSMContextRequest to SMF for each PDU session
+    std::map<uint32_t, boost::shared_future<std::string>> curl_responses;
+    for (auto session : sessions_ctx) {
+      Logger::amf_n2().debug(
+          "Releasing PDU Session ID %d", session->pdu_session_id);
+      // Generate a promise and associate this promise to the curl handle
+      uint32_t promise_id = amf_app_inst->generate_promise_id();
+      Logger::amf_n2().debug("Promise ID generated %d", promise_id);
+
+      boost::shared_ptr<boost::promise<std::string>> p =
+          boost::make_shared<boost::promise<std::string>>();
+      boost::shared_future<std::string> f = p->get_future();
+
+      // Store the future to be processed later
+      curl_responses.emplace(promise_id, f);
+      amf_app_inst->add_promise(promise_id, p);
+
+      Logger::amf_n2().debug(
+          "Sending ITTI to trigger PDUSessionUpdateSMContextRequest to SMF to "
+          "task TASK_AMF_SBI");
+
+      std::shared_ptr<itti_nsmf_pdusession_update_sm_context> itti_n11_msg =
+          std::make_shared<itti_nsmf_pdusession_update_sm_context>(
+              TASK_NGAP, TASK_AMF_SBI);
+
+      itti_n11_msg->pdu_session_id = session->pdu_session_id;
+
+      // TODO:
+      itti_n11_msg->is_n2sm_set = false;
+
+      itti_n11_msg->amf_ue_ngap_id = uc->amf_ue_ngap_id;
+      itti_n11_msg->ran_ue_ngap_id = uc->ran_ue_ngap_id;
+      itti_n11_msg->supi           = uc->supi;
+      itti_n11_msg->pdu_session_id = session->pdu_session_id;
+
+      itti_n11_msg->promise_id   = promise_id;
+      itti_n11_msg->up_cnx_state = "DEACTIVATED";
+
+      int ret = itti_inst->send_msg(itti_n11_msg);
+      if (0 != ret) {
+        Logger::ngap().error(
+            "Could not send ITTI message %s to task TASK_AMF_SBI",
+            itti_n11_msg->get_msg_name());
+      }
+    }
+
+    bool result = true;
+    while (!curl_responses.empty()) {
+      boost::future_status status;
+      // wait for timeout or ready
+      status = curl_responses.begin()->second.wait_for(
+          boost::chrono::milliseconds(FUTURE_STATUS_TIMEOUT_MS));
+      if (status == boost::future_status::ready) {
+        assert(curl_responses.begin()->second.is_ready());
+        assert(curl_responses.begin()->second.has_value());
+        assert(!curl_responses.begin()->second.has_exception());
+
+        // Wait for the result from APP and send reply to AMF
+        std::string http_code_str = curl_responses.begin()->second.get();
+        // uint32_t http_response_code = curl_responses.begin()->second.get();
+
+        Logger::ngap().debug(
+            "Got result for PDU Session ID %d", curl_responses.begin()->first);
+
+        uint8_t http_response_code = 0;
+        if (conv::string_to_int8(http_code_str, http_response_code)) {
+        }
+        result = result && true;
+        if ((http_response_code == 200) or (http_response_code == 204)) {
+          // uc->remove_pdu_sessions_context(curl_responses.begin()->first);
+          uc->set_up_cnx_state(
+              curl_responses.begin()->first,
+              up_cnx_state_e::UPCNX_STATE_DEACTIVATED);
+        }
+
+      } else {
+        result = true;
+      }
+      curl_responses.erase(curl_responses.begin());
+    }
+  } else {
+    Logger::amf_app().debug("No PDU session available");
+  }
+}

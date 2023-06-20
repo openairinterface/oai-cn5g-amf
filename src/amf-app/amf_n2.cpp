@@ -564,7 +564,7 @@ void amf_n2::handle_itti_message(itti_ng_shutdown& itti_msg) {
           "No UE context for ran_amf_id %s, exit", ue_context_key.c_str());
       continue;
     }
-    amf_app_inst->trigger_pdu_session_release(uc);
+    amf_app_inst->trigger_pdu_session_up_deactivation(uc);
   }
 
   // Remove UEs' contexts
