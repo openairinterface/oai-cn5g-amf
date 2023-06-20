@@ -965,6 +965,8 @@ void amf_n1::service_request_handle(
       // TODO: modify itti_initial_context_setup_request for supporting multiple
       // PDU sessions
 
+      amf_app_inst->trigger_pdu_session_up_activation(uc);
+      /*
       // Send PDUSessionUpdateSMContextRequest to SMF for each PDU session
       std::map<uint32_t, boost::shared_future<nlohmann::json>> curl_responses;
 
@@ -1026,6 +1028,11 @@ void amf_n1::service_request_handle(
         Logger::amf_n1().debug("Could not get response from SMF");
         // TODO:
       }
+      */
+    } else {
+      Logger::amf_n1().warn(
+          "UP CNX State: %s",
+          up_cnx_state_e2str[static_cast<int>(psc->up_cnx_state)].c_str());
     }
 
     uint8_t buffer[BUFFER_SIZE_1024];
@@ -1039,8 +1046,7 @@ void amf_n1::service_request_handle(
     std::shared_ptr<itti_pdu_session_resource_setup_request> psrsr =
         std::make_shared<itti_pdu_session_resource_setup_request>(
             TASK_AMF_N1, TASK_AMF_N2);
-    psrsr->nas = bstrcpy(protected_nas);
-    // psrsr->n2sm           = bstrcpy(psc->n2sm);
+    psrsr->nas            = bstrcpy(protected_nas);
     psrsr->amf_ue_ngap_id = amf_ue_ngap_id;
     psrsr->ran_ue_ngap_id = ran_ue_ngap_id;
     psrsr->pdu_session_id = pdu_session_id;
@@ -1364,68 +1370,72 @@ void amf_n1::service_request_handle(
         (psc->up_cnx_state == up_cnx_state_e::UPCNX_STATE_DEACTIVATED)) {
       // TODO: modify itti_initial_context_setup_request for supporting multiple
       // PDU sessions
+      amf_app_inst->trigger_pdu_session_up_activation(uc);
 
-      // Send PDUSessionUpdateSMContextRequest to SMF for each PDU session
-      std::map<uint32_t, boost::shared_future<nlohmann::json>> curl_responses;
+      /*
+    // Send PDUSessionUpdateSMContextRequest to SMF for each PDU session
+    std::map<uint32_t, boost::shared_future<nlohmann::json>> curl_responses;
 
-      // Generate a promise and associate this promise to the curl handle
-      uint32_t promise_id = amf_app_inst->generate_promise_id();
-      Logger::amf_n2().debug("Promise ID generated %d", promise_id);
+    // Generate a promise and associate this promise to the curl handle
+    uint32_t promise_id = amf_app_inst->generate_promise_id();
+    Logger::amf_n2().debug("Promise ID generated %d", promise_id);
 
-      boost::shared_ptr<boost::promise<nlohmann::json>> p =
-          boost::make_shared<boost::promise<nlohmann::json>>();
-      boost::shared_future<nlohmann::json> f = p->get_future();
-      amf_app_inst->add_promise(promise_id, p);
+    boost::shared_ptr<boost::promise<nlohmann::json>> p =
+        boost::make_shared<boost::promise<nlohmann::json>>();
+    boost::shared_future<nlohmann::json> f = p->get_future();
+    amf_app_inst->add_promise(promise_id, p);
 
-      curl_responses.emplace(pdu_session_id, f);
+    curl_responses.emplace(pdu_session_id, f);
 
-      Logger::amf_n2().debug(
-          "Sending ITTI to trigger PDUSessionUpdateSMContextRequest to SMF to "
-          "task TASK_AMF_SBI");
+    Logger::amf_n2().debug(
+        "Sending ITTI to trigger PDUSessionUpdateSMContextRequest to SMF to "
+        "task TASK_AMF_SBI");
 
-      std::shared_ptr<itti_nsmf_pdusession_update_sm_context> itti_n11_msg =
-          std::make_shared<itti_nsmf_pdusession_update_sm_context>(
-              TASK_NGAP, TASK_AMF_SBI);
+    std::shared_ptr<itti_nsmf_pdusession_update_sm_context> itti_n11_msg =
+        std::make_shared<itti_nsmf_pdusession_update_sm_context>(
+            TASK_NGAP, TASK_AMF_SBI);
 
-      itti_n11_msg->pdu_session_id = pdu_session_id;
-      itti_n11_msg->is_n2sm_set    = false;
-      itti_n11_msg->amf_ue_ngap_id = amf_ue_ngap_id;
-      itti_n11_msg->ran_ue_ngap_id = ran_ue_ngap_id;
-      itti_n11_msg->promise_id     = promise_id;
-      itti_n11_msg->up_cnx_state   = "ACTIVATING";
+    itti_n11_msg->pdu_session_id = pdu_session_id;
+    itti_n11_msg->is_n2sm_set    = false;
+    itti_n11_msg->amf_ue_ngap_id = amf_ue_ngap_id;
+    itti_n11_msg->ran_ue_ngap_id = ran_ue_ngap_id;
+    itti_n11_msg->promise_id     = promise_id;
+    itti_n11_msg->up_cnx_state   = "ACTIVATING";
 
-      int ret = itti_inst->send_msg(itti_n11_msg);
-      if (0 != ret) {
-        Logger::ngap().error(
-            "Could not send ITTI message %s to task TASK_AMF_SBI",
-            itti_n11_msg->get_msg_name());
-      }
+    int ret = itti_inst->send_msg(itti_n11_msg);
+    if (0 != ret) {
+      Logger::ngap().error(
+          "Could not send ITTI message %s to task TASK_AMF_SBI",
+          itti_n11_msg->get_msg_name());
+    }
 
-      bool result                 = false;
-      boost::future_status status = {};
-      // wait for timeout or ready
-      status =
-          f.wait_for(boost::chrono::milliseconds(FUTURE_STATUS_TIMEOUT_MS));
-      if (status == boost::future_status::ready) {
-        assert(f.is_ready());
-        assert(f.has_value());
-        assert(!f.has_exception());
-        // Wait for the result from SMF
-        nlohmann::json response_data = f.get();
-        if (!response_data.empty()) {
-          Logger::amf_n1().debug(
-              "Got response from SMF: %s", response_data.dump().c_str());
-          if (response_data.find("json") != response_data.end())
-            nlohmann::json json_result = response_data.at("json");
-        } else {
-          Logger::amf_n1().debug("Could not get response from SMF");
-          // TODO:
-        }
-
+    bool result                 = false;
+    boost::future_status status = {};
+    // wait for timeout or ready
+    status =
+        f.wait_for(boost::chrono::milliseconds(FUTURE_STATUS_TIMEOUT_MS));
+    if (status == boost::future_status::ready) {
+      assert(f.is_ready());
+      assert(f.has_value());
+      assert(!f.has_exception());
+      // Wait for the result from SMF
+      nlohmann::json response_data = f.get();
+      if (!response_data.empty()) {
+        Logger::amf_n1().debug(
+            "Got response from SMF: %s", response_data.dump().c_str());
+        if (response_data.find("json") != response_data.end())
+          nlohmann::json json_result = response_data.at("json");
       } else {
         Logger::amf_n1().debug("Could not get response from SMF");
         // TODO:
       }
+
+    } else {
+      Logger::amf_n1().debug("Could not get response from SMF");
+      // TODO:
+    }
+
+   */
     }
 
     uint8_t buffer[BUFFER_SIZE_1024];
