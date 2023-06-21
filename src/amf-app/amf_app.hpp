@@ -538,13 +538,23 @@ class amf_app {
       const std::shared_ptr<ue_context>& uc) const;
 
   /*
-   * Send request to SBI task to trigger UP Activation of a PDU session towards
-   * SMF
+   * Send request to SBI task to trigger UP Activation of all PDU sessions
+   * associated with an UE context towards SMF
    * @param [const std::shared_ptr<ue_context>&]uc: UE Context
    * @return void
    */
   void trigger_pdu_session_up_activation(
       const std::shared_ptr<ue_context>& uc) const;
+
+  /*
+   * Send request to SBI task to trigger UP Activation of a PDU session towards
+   * SMF
+   * @param [uint8_t]pdu_session_id: PDU Session ID
+   * @param [const std::shared_ptr<ue_context>&]uc: UE Context
+   * @return void
+   */
+  void trigger_pdu_session_up_activation(
+      uint8_t pdu_session_id, const std::shared_ptr<ue_context>& uc) const;
 
   /*
    * Get the AMF's NF instance
