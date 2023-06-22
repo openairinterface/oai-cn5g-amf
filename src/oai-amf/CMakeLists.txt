@@ -307,13 +307,18 @@ else(STATIC_LINKING)
 endif(STATIC_LINKING)
 
 ADD_SUBDIRECTORY(${CMAKE_CURRENT_SOURCE_DIR}/../../src/common ${CMAKE_CURRENT_BINARY_DIR}/common)
-ADD_SUBDIRECTORY(${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf-app ${CMAKE_CURRENT_BINARY_DIR}/amf-app)
 ADD_SUBDIRECTORY(${CMAKE_CURRENT_SOURCE_DIR}/../../src/contexts ${CMAKE_CURRENT_BINARY_DIR}/contexts)
 ADD_SUBDIRECTORY(${CMAKE_CURRENT_SOURCE_DIR}/../../src/sbi/amf_server ${CMAKE_CURRENT_BINARY_DIR}/sbi/amf_server)
 ADD_SUBDIRECTORY(${CMAKE_CURRENT_SOURCE_DIR}/../../src/sctp ${CMAKE_CURRENT_BINARY_DIR}/sctp)
+ADD_SUBDIRECTORY(${CMAKE_CURRENT_SOURCE_DIR}/../../src/amf-app ${CMAKE_CURRENT_BINARY_DIR}/amf-app)
+ADD_SUBDIRECTORY(${CMAKE_CURRENT_SOURCE_DIR}/../../src/ngap ${CMAKE_CURRENT_BINARY_DIR}/ngap)
+ADD_SUBDIRECTORY(${CMAKE_CURRENT_SOURCE_DIR}/../../src/nas ${CMAKE_CURRENT_BINARY_DIR}/nas)
 ADD_SUBDIRECTORY(${CMAKE_CURRENT_SOURCE_DIR}/../../src/utils ${CMAKE_CURRENT_BINARY_DIR}/utils)
 ADD_SUBDIRECTORY(${CMAKE_CURRENT_SOURCE_DIR}/../../src/secu_algorithms/5gaka ${CMAKE_CURRENT_BINARY_DIR}/secu_algorithms/5gaka)
 ADD_SUBDIRECTORY(${CMAKE_CURRENT_SOURCE_DIR}/../../src/secu_algorithms/nas_enc_int ${CMAKE_CURRENT_BINARY_DIR}/secu_algorithms/nas_enc_int)
+
+# Specific part for oai_smf folder
+add_definitions("-DPACKAGE_NAME=\"AMF\"")
 
 include_directories(${SRC_TOP_DIR}/oai-amf)
 include_directories(${SRC_TOP_DIR}/amf-app)
@@ -361,4 +366,4 @@ IF(STATIC_LINKING)
 ENDIF(STATIC_LINKING)
 
 target_link_libraries(amf ${ASAN}
-      -Wl,--start-group 3GPP_COMMON_TYPES AMF CONTEXTS AMF_SCTP AMF_SECU_5GAKA AMF_SECU_NAS AMF_UTILS AMF_SBI_SERVER config++ sctp fmt spdlog -Wl,--end-group pthread ${NETTLE_LIBRARIES} ${MySQL_LIBRARY} ${CRYPTO_LIBRARIES} ${OPENSSL_LIBRARIES} nghttp2_asio boost_system boost_thread boost_chrono ssl crypt gmp pistache curl yaml-cpp)
+      -Wl,--start-group 3GPP_COMMON_TYPES AMF_APP CONTEXTS AMF_SCTP AMF_NGAP AMF_NAS AMF_SECU_5GAKA AMF_SECU_NAS AMF_UTILS AMF_SBI_SERVER config++ sctp fmt spdlog -Wl,--end-group pthread ${NETTLE_LIBRARIES} ${MySQL_LIBRARY} ${CRYPTO_LIBRARIES} ${OPENSSL_LIBRARIES} nghttp2_asio boost_system boost_thread boost_chrono ssl crypt gmp pistache curl yaml-cpp)

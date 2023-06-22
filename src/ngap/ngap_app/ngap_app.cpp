@@ -23,6 +23,7 @@
 
 #include "logger.hpp"
 #include "ngap_message_callback.hpp"
+#include "amf_config.hpp"
 
 extern "C" {
 #include "Ngap_InitiatingMessage.h"

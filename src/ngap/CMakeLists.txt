@@ -18,29 +18,27 @@
 # For more information about the OpenAirInterface (OAI) Software Alliance:
 #      contact@openairinterface.org
 ################################################################################
-
-include_directories(${SRC_TOP_DIR}/common)
-include_directories(${SRC_TOP_DIR}/common/unicode)
-include_directories(${SRC_TOP_DIR}/nas/common)
-include_directories(${SRC_TOP_DIR}/ngap/libngap)
-include_directories(${SRC_TOP_DIR}/utils)
-include_directories(${SRC_TOP_DIR}/utils/bstr)
-include_directories(${SRC_TOP_DIR}/amf-app)
+set(NGAP_DIR "${SRC_TOP_DIR}/ngap")
+include_directories(${NGAP_DIR}/libngap)
+include_directories(${NGAP_DIR}/ngapIEs)
+include_directories(${NGAP_DIR}/ngapMsgs)
 include_directories(${SRC_TOP_DIR}/itti)
 include_directories(${SRC_TOP_DIR}/itti/msgs)
+include_directories(${SRC_TOP_DIR}/common)
+include_directories(${SRC_TOP_DIR}/common/unicode)
+include_directories(${SRC_TOP_DIR}/sctp)
+include_directories(${SRC_TOP_DIR}/utils)
+include_directories(${SRC_TOP_DIR}/utils/bstr)
 include_directories(${SRC_TOP_DIR}/sbi/amf_server/model)
 include_directories(${SRC_TOP_DIR}/${MOUNTED_COMMON}/logger)
 
-add_library (AMF_UTILS STATIC
- ${CMAKE_CURRENT_SOURCE_DIR}/backtrace.c
- ${CMAKE_CURRENT_SOURCE_DIR}/dynamic_memory_check.c
- ${CMAKE_CURRENT_SOURCE_DIR}/if.cpp
- ${CMAKE_CURRENT_SOURCE_DIR}/string.cpp
- ${CMAKE_CURRENT_SOURCE_DIR}/thread_sched.cpp
- ${CMAKE_CURRENT_SOURCE_DIR}/mime_parser.cpp
- ${CMAKE_CURRENT_SOURCE_DIR}/fqdn.cpp
- ${CMAKE_CURRENT_SOURCE_DIR}/3gpp_conversions.cpp
- ${CMAKE_CURRENT_SOURCE_DIR}/NasUtils.cpp
- ${CMAKE_CURRENT_SOURCE_DIR}/bstr/bstrlib.c 
- )
+file(GLOB AMF_NGAP_src_files
+  ${SRC_TOP_DIR}/ngap/libngap/*.c
+  ${SRC_TOP_DIR}/ngap/ngapMsgs/*.cpp
+  ${SRC_TOP_DIR}/ngap/ngapIEs/*.cpp
+)
+
+add_library (AMF_NGAP STATIC
+${AMF_NGAP_src_files}
+)
 

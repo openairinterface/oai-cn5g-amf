@@ -18,29 +18,32 @@
 # For more information about the OpenAirInterface (OAI) Software Alliance:
 #      contact@openairinterface.org
 ################################################################################
+set(NAS_DIR "${SRC_TOP_DIR}/nas")
+include_directories(${NAS_DIR}/ies)
+include_directories(${NAS_DIR}/common)
+include_directories(${NAS_DIR}/msgs)
+include_directories(${NAS_DIR}/utils)
+include_directories(${SRC_TOP_DIR}/ngap/libngap)
 
+#include_directories(${SRC_TOP_DIR}/itti)
+#include_directories(${SRC_TOP_DIR}/itti/msgs)
 include_directories(${SRC_TOP_DIR}/common)
 include_directories(${SRC_TOP_DIR}/common/unicode)
-include_directories(${SRC_TOP_DIR}/nas/common)
-include_directories(${SRC_TOP_DIR}/ngap/libngap)
+#include_directories(${SRC_TOP_DIR}/contexts)
+include_directories(${SRC_TOP_DIR}/sbi/amf_server/model)
+include_directories(${SRC_TOP_DIR}/sctp)
+include_directories(${SRC_TOP_DIR}/secu_algorithms/5gaka)
+include_directories(${SRC_TOP_DIR}/secu_algorithms/nas_enc_int)
 include_directories(${SRC_TOP_DIR}/utils)
 include_directories(${SRC_TOP_DIR}/utils/bstr)
-include_directories(${SRC_TOP_DIR}/amf-app)
-include_directories(${SRC_TOP_DIR}/itti)
-include_directories(${SRC_TOP_DIR}/itti/msgs)
-include_directories(${SRC_TOP_DIR}/sbi/amf_server/model)
 include_directories(${SRC_TOP_DIR}/${MOUNTED_COMMON}/logger)
 
-add_library (AMF_UTILS STATIC
- ${CMAKE_CURRENT_SOURCE_DIR}/backtrace.c
- ${CMAKE_CURRENT_SOURCE_DIR}/dynamic_memory_check.c
- ${CMAKE_CURRENT_SOURCE_DIR}/if.cpp
- ${CMAKE_CURRENT_SOURCE_DIR}/string.cpp
- ${CMAKE_CURRENT_SOURCE_DIR}/thread_sched.cpp
- ${CMAKE_CURRENT_SOURCE_DIR}/mime_parser.cpp
- ${CMAKE_CURRENT_SOURCE_DIR}/fqdn.cpp
- ${CMAKE_CURRENT_SOURCE_DIR}/3gpp_conversions.cpp
- ${CMAKE_CURRENT_SOURCE_DIR}/NasUtils.cpp
- ${CMAKE_CURRENT_SOURCE_DIR}/bstr/bstrlib.c 
- )
+file(GLOB AMF_NAS_src_files
+  ${NAS_DIR}/msgs/*.cpp
+  ${NAS_DIR}/ies/*.cpp
+  ${NAS_DIR}/utils/*.c
+)
+
+add_library (AMF_NAS STATIC ${AMF_NAS_src_files}
+)
 

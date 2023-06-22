@@ -60,19 +60,10 @@ file(GLOB AMF_src_files
   ${CMAKE_CURRENT_SOURCE_DIR}/mysql_db.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/amf_msg.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/amf_subscription.cpp
-  ${SRC_TOP_DIR}/nas/msgs/*.cpp
-  ${SRC_TOP_DIR}/nas/ies/*.cpp
-  ${SRC_TOP_DIR}/nas/utils/*.c
-  ${SRC_TOP_DIR}/utils/*.cpp
-  ${SRC_TOP_DIR}/utils/*.c
-  ${SRC_TOP_DIR}/utils/bstr/*.c
-  ${SRC_TOP_DIR}/ngap/libngap/*.c
   ${SRC_TOP_DIR}/ngap/ngap_app/*.cpp
-  ${SRC_TOP_DIR}/ngap/ngapMsgs/*.cpp
-  ${SRC_TOP_DIR}/ngap/ngapIEs/*.cpp
 )
 
-add_library (AMF STATIC
+add_library (AMF_APP STATIC
 ${AMF_src_files}
 )
 
