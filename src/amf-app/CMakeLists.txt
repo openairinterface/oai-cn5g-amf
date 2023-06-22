@@ -64,6 +64,6 @@ file(GLOB AMF_src_files
 )
 
 add_library (AMF_APP STATIC
-${AMF_src_files}
+  ${AMF_src_files}
 )
 

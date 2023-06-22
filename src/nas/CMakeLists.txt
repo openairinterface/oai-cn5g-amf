@@ -24,12 +24,8 @@ include_directories(${NAS_DIR}/common)
 include_directories(${NAS_DIR}/msgs)
 include_directories(${NAS_DIR}/utils)
 include_directories(${SRC_TOP_DIR}/ngap/libngap)
-
-#include_directories(${SRC_TOP_DIR}/itti)
-#include_directories(${SRC_TOP_DIR}/itti/msgs)
 include_directories(${SRC_TOP_DIR}/common)
 include_directories(${SRC_TOP_DIR}/common/unicode)
-#include_directories(${SRC_TOP_DIR}/contexts)
 include_directories(${SRC_TOP_DIR}/sbi/amf_server/model)
 include_directories(${SRC_TOP_DIR}/sctp)
 include_directories(${SRC_TOP_DIR}/secu_algorithms/5gaka)
@@ -44,6 +40,5 @@ file(GLOB AMF_NAS_src_files
   ${NAS_DIR}/utils/*.c
 )
 
-add_library (AMF_NAS STATIC ${AMF_NAS_src_files}
-)
+add_library (AMF_NAS STATIC ${AMF_NAS_src_files})
 

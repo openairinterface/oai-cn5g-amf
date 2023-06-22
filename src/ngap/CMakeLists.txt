@@ -39,6 +39,6 @@ file(GLOB AMF_NGAP_src_files
 )
 
 add_library (AMF_NGAP STATIC
-${AMF_NGAP_src_files}
+  ${AMF_NGAP_src_files}
 )
 
