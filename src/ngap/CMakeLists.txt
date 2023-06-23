@@ -18,27 +18,25 @@
 # For more information about the OpenAirInterface (OAI) Software Alliance:
 #      contact@openairinterface.org
 ################################################################################
-set(NGAP_DIR "${SRC_TOP_DIR}/ngap")
-include_directories(${NGAP_DIR}/libngap)
-include_directories(${NGAP_DIR}/ngapIEs)
-include_directories(${NGAP_DIR}/ngapMsgs)
-include_directories(${SRC_TOP_DIR}/itti)
-include_directories(${SRC_TOP_DIR}/itti/msgs)
-include_directories(${SRC_TOP_DIR}/common)
-include_directories(${SRC_TOP_DIR}/common/unicode)
-include_directories(${SRC_TOP_DIR}/sctp)
-include_directories(${SRC_TOP_DIR}/utils)
-include_directories(${SRC_TOP_DIR}/utils/bstr)
-include_directories(${SRC_TOP_DIR}/sbi/amf_server/model)
-include_directories(${SRC_TOP_DIR}/${MOUNTED_COMMON}/logger)
-
 file(GLOB AMF_NGAP_src_files
-  ${SRC_TOP_DIR}/ngap/libngap/*.c
-  ${SRC_TOP_DIR}/ngap/ngapMsgs/*.cpp
-  ${SRC_TOP_DIR}/ngap/ngapIEs/*.cpp
+  libngap/*.c
+  ngapMsgs/*.cpp
+  ngapIEs/*.cpp
 )
-
 add_library (AMF_NGAP STATIC
   ${AMF_NGAP_src_files}
 )
 
+set(NGAP_DIR "${SRC_TOP_DIR}/ngap")
+target_include_directories(AMF_NGAP PUBLIC ${NGAP_DIR}/libngap)
+target_include_directories(AMF_NGAP PUBLIC ${NGAP_DIR}/ngapIEs)
+target_include_directories(AMF_NGAP PUBLIC ${NGAP_DIR}/ngapMsgs)
+target_include_directories(AMF_NGAP PUBLIC ${SRC_TOP_DIR}/itti)
+target_include_directories(AMF_NGAP PUBLIC ${SRC_TOP_DIR}/itti/msgs)
+target_include_directories(AMF_NGAP PUBLIC ${SRC_TOP_DIR}/common)
+target_include_directories(AMF_NGAP PUBLIC ${SRC_TOP_DIR}/common/unicode)
+target_include_directories(AMF_NGAP PUBLIC ${SRC_TOP_DIR}/sctp)
+target_include_directories(AMF_NGAP PUBLIC ${SRC_TOP_DIR}/utils)
+target_include_directories(AMF_NGAP PUBLIC ${SRC_TOP_DIR}/utils/bstr)
+target_include_directories(AMF_NGAP PUBLIC ${SRC_TOP_DIR}/sbi/amf_server/model)
+target_include_directories(AMF_NGAP PUBLIC ${SRC_TOP_DIR}/${MOUNTED_COMMON}/logger)

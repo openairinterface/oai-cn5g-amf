@@ -19,51 +19,46 @@
 #      contact@openairinterface.org
 ################################################################################
 
-include_directories(${SRC_TOP_DIR}/amf-app)
-include_directories(${SRC_TOP_DIR}/itti)
-include_directories(${SRC_TOP_DIR}/itti/msgs)
-include_directories(${SRC_TOP_DIR}/common)
-include_directories(${SRC_TOP_DIR}/common/unicode)
-include_directories(${SRC_TOP_DIR}/contexts)
-include_directories(${SRC_TOP_DIR}/nas/ies)
-include_directories(${SRC_TOP_DIR}/nas/common)
-include_directories(${SRC_TOP_DIR}/nas/msgs)
-include_directories(${SRC_TOP_DIR}/nas/utils)
-include_directories(${SRC_TOP_DIR}/ngap/libngap)
-include_directories(${SRC_TOP_DIR}/ngap/ngap_app)
-include_directories(${SRC_TOP_DIR}/ngap/ngapIEs)
-include_directories(${SRC_TOP_DIR}/ngap/ngapMsgs)
-include_directories(${SRC_TOP_DIR}/sbi/amf_server)
-include_directories(${SRC_TOP_DIR}/sbi/amf_server/api)
-include_directories(${SRC_TOP_DIR}/sbi/amf_server/impl)
-include_directories(${SRC_TOP_DIR}/sbi/amf_server/model)
-include_directories(${SRC_TOP_DIR}/sctp)
-include_directories(${SRC_TOP_DIR}/secu_algorithms/5gaka)
-include_directories(${SRC_TOP_DIR}/secu_algorithms/nas_enc_int)
-include_directories(${SRC_TOP_DIR}/utils)
-include_directories(${SRC_TOP_DIR}/utils/bstr)
-include_directories(${SRC_TOP_DIR}/${MOUNTED_COMMON}/logger)
-include_directories(${SRC_TOP_DIR}/${MOUNTED_COMMON}/config)
-
-file(GLOB AMF_src_files
-  ${CMAKE_CURRENT_SOURCE_DIR}/amf_app.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/amf_config.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/amf_cfg_libconfig.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/amf_config_yaml.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/amf_n1.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/amf_n2.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/amf_sbi.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/amf_event.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/amf_profile.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/amf_statistics.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/amf_statistics.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/mysql_db.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/amf_msg.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/amf_subscription.cpp
-  ${SRC_TOP_DIR}/ngap/ngap_app/*.cpp
-)
-
 add_library (AMF_APP STATIC
-  ${AMF_src_files}
+  amf_app.cpp
+  amf_config.cpp
+  amf_cfg_libconfig.cpp
+  amf_config_yaml.cpp
+  amf_n1.cpp
+  amf_n2.cpp
+  amf_sbi.cpp
+  amf_event.cpp
+  amf_profile.cpp
+  amf_statistics.cpp
+  amf_statistics.cpp
+  mysql_db.cpp
+  amf_msg.cpp
+  amf_subscription.cpp
+  ${SRC_TOP_DIR}/ngap/ngap_app/ngap_app.cpp
 )
 
+target_include_directories(AMF_APP PUBLIC ${SRC_TOP_DIR}/amf-app)
+target_include_directories(AMF_APP PUBLIC ${SRC_TOP_DIR}/itti)
+target_include_directories(AMF_APP PUBLIC ${SRC_TOP_DIR}/itti/msgs)
+target_include_directories(AMF_APP PUBLIC ${SRC_TOP_DIR}/common)
+target_include_directories(AMF_APP PUBLIC ${SRC_TOP_DIR}/common/unicode)
+target_include_directories(AMF_APP PUBLIC ${SRC_TOP_DIR}/contexts)
+target_include_directories(AMF_APP PUBLIC ${SRC_TOP_DIR}/nas/ies)
+target_include_directories(AMF_APP PUBLIC ${SRC_TOP_DIR}/nas/common)
+target_include_directories(AMF_APP PUBLIC ${SRC_TOP_DIR}/nas/msgs)
+target_include_directories(AMF_APP PUBLIC ${SRC_TOP_DIR}/nas/utils)
+target_include_directories(AMF_APP PUBLIC ${SRC_TOP_DIR}/ngap/libngap)
+target_include_directories(AMF_APP PUBLIC ${SRC_TOP_DIR}/ngap/ngap_app)
+target_include_directories(AMF_APP PUBLIC ${SRC_TOP_DIR}/ngap/ngapIEs)
+target_include_directories(AMF_APP PUBLIC ${SRC_TOP_DIR}/ngap/ngapMsgs)
+target_include_directories(AMF_APP PUBLIC ${SRC_TOP_DIR}/sbi/amf_server)
+target_include_directories(AMF_APP PUBLIC ${SRC_TOP_DIR}/sbi/amf_server/api)
+target_include_directories(AMF_APP PUBLIC ${SRC_TOP_DIR}/sbi/amf_server/impl)
+target_include_directories(AMF_APP PUBLIC ${SRC_TOP_DIR}/sbi/amf_server/model)
+target_include_directories(AMF_APP PUBLIC ${SRC_TOP_DIR}/sctp)
+target_include_directories(AMF_APP PUBLIC ${SRC_TOP_DIR}/secu_algorithms/5gaka)
+target_include_directories(AMF_APP PUBLIC ${SRC_TOP_DIR}/secu_algorithms/nas_enc_int)
+target_include_directories(AMF_APP PUBLIC ${SRC_TOP_DIR}/utils)
+target_include_directories(AMF_APP PUBLIC ${SRC_TOP_DIR}/utils/bstr)
+target_include_directories(AMF_APP PUBLIC ${SRC_TOP_DIR}/${MOUNTED_COMMON}/logger)
+target_include_directories(AMF_APP PUBLIC ${SRC_TOP_DIR}/${MOUNTED_COMMON}/config)

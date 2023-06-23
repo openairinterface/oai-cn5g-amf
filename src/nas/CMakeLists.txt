@@ -18,27 +18,26 @@
 # For more information about the OpenAirInterface (OAI) Software Alliance:
 #      contact@openairinterface.org
 ################################################################################
-set(NAS_DIR "${SRC_TOP_DIR}/nas")
-include_directories(${NAS_DIR}/ies)
-include_directories(${NAS_DIR}/common)
-include_directories(${NAS_DIR}/msgs)
-include_directories(${NAS_DIR}/utils)
-include_directories(${SRC_TOP_DIR}/ngap/libngap)
-include_directories(${SRC_TOP_DIR}/common)
-include_directories(${SRC_TOP_DIR}/common/unicode)
-include_directories(${SRC_TOP_DIR}/sbi/amf_server/model)
-include_directories(${SRC_TOP_DIR}/sctp)
-include_directories(${SRC_TOP_DIR}/secu_algorithms/5gaka)
-include_directories(${SRC_TOP_DIR}/secu_algorithms/nas_enc_int)
-include_directories(${SRC_TOP_DIR}/utils)
-include_directories(${SRC_TOP_DIR}/utils/bstr)
-include_directories(${SRC_TOP_DIR}/${MOUNTED_COMMON}/logger)
-
 file(GLOB AMF_NAS_src_files
-  ${NAS_DIR}/msgs/*.cpp
-  ${NAS_DIR}/ies/*.cpp
-  ${NAS_DIR}/utils/*.c
+  msgs/*.cpp
+  ies/*.cpp
+  utils/*.c
 )
 
 add_library (AMF_NAS STATIC ${AMF_NAS_src_files})
 
+set(NAS_DIR "${SRC_TOP_DIR}/nas")
+target_include_directories(AMF_NAS PUBLIC ${NAS_DIR}/ies)
+target_include_directories(AMF_NAS PUBLIC ${NAS_DIR}/common)
+target_include_directories(AMF_NAS PUBLIC ${NAS_DIR}/msgs)
+target_include_directories(AMF_NAS PUBLIC ${NAS_DIR}/utils)
+target_include_directories(AMF_NAS PUBLIC ${SRC_TOP_DIR}/ngap/libngap)
+target_include_directories(AMF_NAS PUBLIC ${SRC_TOP_DIR}/common)
+target_include_directories(AMF_NAS PUBLIC ${SRC_TOP_DIR}/common/unicode)
+target_include_directories(AMF_NAS PUBLIC ${SRC_TOP_DIR}/sbi/amf_server/model)
+target_include_directories(AMF_NAS PUBLIC ${SRC_TOP_DIR}/sctp)
+target_include_directories(AMF_NAS PUBLIC ${SRC_TOP_DIR}/secu_algorithms/5gaka)
+target_include_directories(AMF_NAS PUBLIC ${SRC_TOP_DIR}/secu_algorithms/nas_enc_int)
+target_include_directories(AMF_NAS PUBLIC ${SRC_TOP_DIR}/utils)
+target_include_directories(AMF_NAS PUBLIC ${SRC_TOP_DIR}/utils/bstr)
+target_include_directories(AMF_NAS PUBLIC ${SRC_TOP_DIR}/${MOUNTED_COMMON}/logger)
