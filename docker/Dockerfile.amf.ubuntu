@@ -67,9 +67,9 @@ WORKDIR /openair-amf/build/scripts
 RUN ldconfig && \
     ./build_amf --clean --Verbose --build-type Release --jobs && \
     ldd /openair-amf/build/amf/build/amf && \
-    mv /openair-amf/build/amf/build/amf /openair-amf/build/amf/build/oai_amf && \
-    sed -i -e "s@nf-root-folder@amf@" -e "s@nf-config-file@amf.conf@" \
-      ../common-build/docker-scripts/entrypoint.py
+    mv /openair-amf/build/amf/build/amf /openair-amf/build/amf/build/oai_amf
+
+FROM mikefarah/yq:latest as yq-source
 
 #---------------------------------------------------------------------
 # TARGET IMAGE
@@ -89,8 +89,6 @@ RUN apt-get update && \
       openssl \
       libbrotli1 \
       netbase \
-      python3\
-      python3-jinja2\
 # Ubuntu 20 --> libasan5
 # Ubuntu 22 --> libasan6
 #      libasan? \
@@ -117,9 +115,9 @@ RUN apt-get update && \
 WORKDIR /openair-amf/bin
 COPY --from=oai-amf-builder \
     /openair-amf/build/amf/build/oai_amf \
-    /openair-amf/build/common-build/docker-scripts/entrypoint.py \
     /openair-amf/scripts/healthcheck.sh \
     ./
+COPY --from=yq-source /usr/bin/yq /usr/bin
 
 WORKDIR /usr/local/lib
 COPY --from=oai-amf-builder \
@@ -148,5 +146,4 @@ HEALTHCHECK --interval=10s \
             --retries=6 \
     CMD /openair-amf/bin/healthcheck.sh
 
-ENTRYPOINT ["python3", "/openair-amf/bin/entrypoint.py"]
-CMD ["/openair-amf/bin/oai_amf", "-c", "/openair-amf/etc/amf.conf", "-o"]
+CMD ["/openair-amf/bin/oai_amf", "-c", "/openair-amf/etc/config.yaml", "-o"]
