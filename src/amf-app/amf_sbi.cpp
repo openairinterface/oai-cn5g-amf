@@ -1272,15 +1272,7 @@ bool amf_sbi::curl_http_client(
         // Service Request
         if (up_cnx_state.compare("ACTIVATING") == 0) {
           is_service_request = true;
-          if (response_data.find("n2InfoContainer") != response_data.end()) {
-            if (response_data.at("n2InfoContainer").find("smInfo") !=
-                response_data.at("n2InfoContainer").end())
-              response_data.at("n2InfoContainer")
-                  .at("smInfo")
-                  .at("PduSessionId")
-                  .get<int>();
-          }
-
+          promise_result     = std::to_string(httpCode);
           // Update Pdu Session Context
           if (n1sm.size() > 0) {
             conv::msg_str_2_msg_hex(n1sm, n1sm_hex);
@@ -1295,22 +1287,9 @@ bool amf_sbi::curl_http_client(
 
       // Notify to the result
       if ((promise_id > 0) and
-          (is_ho_procedure or is_up_deactivation_procedure)) {
+          (is_ho_procedure or is_up_deactivation_procedure or
+           is_service_request)) {
         amf_app_inst->trigger_process_response(promise_id, promise_result);
-        curl_slist_free_all(headers);
-        curl_easy_cleanup(curl);
-        curl_global_cleanup();
-        free_wrapper((void**) &body_data);
-        bdestroy_wrapper(&n1sm_hex);
-        return curl_result;
-      }
-
-      // Service Request
-      // Notify to the result
-      if ((promise_id > 0) and (is_service_request)) {
-        nlohmann::json promise_result_json = {};
-        promise_result_json["json"]        = response_data;
-        amf_app_inst->trigger_process_response(promise_id, promise_result_json);
         curl_slist_free_all(headers);
         curl_easy_cleanup(curl);
         curl_global_cleanup();
