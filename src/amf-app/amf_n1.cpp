@@ -959,6 +959,18 @@ void amf_n1::service_request_handle(
       service_accept->SetPduSessionReactivationResult(0x0000);
     }
 
+    if (psc and
+        (psc->up_cnx_state == up_cnx_state_e::UPCNX_STATE_DEACTIVATED)) {
+      // TODO: modify itti_initial_context_setup_request for supporting multiple
+      // PDU sessions
+
+      amf_app_inst->trigger_pdu_session_up_activation(uc);
+    } else {
+      Logger::amf_n1().warn(
+          "UP CNX State: %s",
+          up_cnx_state_e2str[static_cast<int>(psc->up_cnx_state)].c_str());
+    }
+
     uint8_t buffer[BUFFER_SIZE_1024];
     int encoded_size      = service_accept->Encode(buffer, BUFFER_SIZE_1024);
     bstring protected_nas = nullptr;
@@ -971,7 +983,6 @@ void amf_n1::service_request_handle(
         std::make_shared<itti_pdu_session_resource_setup_request>(
             TASK_AMF_N1, TASK_AMF_N2);
     psrsr->nas            = bstrcpy(protected_nas);
-    psrsr->n2sm           = bstrcpy(psc->n2sm);
     psrsr->amf_ue_ngap_id = amf_ue_ngap_id;
     psrsr->ran_ue_ngap_id = ran_ue_ngap_id;
     psrsr->pdu_session_id = pdu_session_id;
@@ -1183,7 +1194,6 @@ void amf_n1::service_request_handle(
         return;
       }
 
-      // uint8_t* buf_nas     = (uint8_t*) bdata(plain_msg);  // TODO
       uint8_t message_type = *((uint8_t*) bdata(plain_msg) + 2);
       Logger::amf_n1().debug("NAS message type 0x%x", message_type);
 
@@ -1279,21 +1289,24 @@ void amf_n1::service_request_handle(
     return;
 
   } else {
-    // TODO: Contact SMF to activate UP for these sessions
-    // TODO: modify itti_initial_context_setup_request for supporting multiple
-    // PDU sessions
-
     std::shared_ptr<pdu_session_context> psc = {};
 
     uint8_t pdu_session_id = pdu_session_to_be_activated.at(0);
     if (!amf_app_inst->find_pdu_session_context(supi, pdu_session_id, psc)) {
-      Logger::amf_n1().error(
+      Logger::amf_n1().debug(
           "Cannot get pdu_session_context with SUPI (%s)", supi.c_str());
       // Set PDU session Status to 0x00
       // service_accept->SetPduSessionStatus(0x00);
     } else {
       service_accept->SetPduSessionStatus(pdu_session_status);
       service_accept->SetPduSessionReactivationResult(0x0000);
+    }
+
+    if (psc and
+        (psc->up_cnx_state == up_cnx_state_e::UPCNX_STATE_DEACTIVATED)) {
+      // TODO: modify itti_initial_context_setup_request for supporting multiple
+      // PDU sessions
+      amf_app_inst->trigger_pdu_session_up_activation(uc);
     }
 
     uint8_t buffer[BUFFER_SIZE_1024];
@@ -1334,7 +1347,7 @@ void amf_n1::service_request_handle(
     } else {
       itti_msg->is_n2sm_avaliable = false;
       itti_msg->is_pdu_exist      = false;
-      Logger::amf_n1().error("Cannot get PDU session information");
+      Logger::amf_n1().debug("Cannot get PDU session information");
     }
 
     int ret = itti_inst->send_msg(itti_msg);
@@ -1352,6 +1365,7 @@ void amf_n1::service_request_handle(
   }
 }
 
+//------------------------------------------------------------------------------
 void amf_n1::send_service_reject(
     std::shared_ptr<nas_context>& nc, uint8_t cause) {
   Logger::amf_n1().debug("Send Service Reject to UE");

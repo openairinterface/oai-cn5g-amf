@@ -265,14 +265,24 @@ void amf_sbi::handle_itti_message(
     pdu_session_update_request["upCnxState"] = "DEACTIVATED";
   }
 
+  // For Service Request
+  if (itti_msg.up_cnx_state.compare("ACTIVATING") == 0) {
+    pdu_session_update_request["upCnxState"] = "ACTIVATING";
+  }
+
   std::string json_part = pdu_session_update_request.dump();
 
   uint8_t http_version = 1;
   if (amf_cfg.support_features.use_http2) http_version = 2;
 
-  curl_http_client(
+  bool curl_result = curl_http_client(
       remote_uri, json_part, n1sm_msg, n2sm_msg, supi, itti_msg.pdu_session_id,
       http_version, itti_msg.promise_id);
+
+  if (curl_result and
+      (itti_msg.n2sm_info_type.compare("PDU_RES_SETUP_RSP") == 0)) {
+    psc->up_cnx_state = up_cnx_state_e::UPCNX_STATE_ACTIVATED;
+  }
 }
 
 //------------------------------------------------------------------------------
@@ -305,6 +315,7 @@ void amf_sbi::handle_itti_message(itti_nsmf_pdusession_create_sm_context& smf) {
   if (!uc->find_pdu_session_context(smf.pdu_sess_id, psc)) {
     psc = std::shared_ptr<pdu_session_context>(new pdu_session_context());
     uc->add_pdu_session_context(smf.pdu_sess_id, psc);
+    psc->up_cnx_state = up_cnx_state_e::UPCNX_STATE_DEACTIVATED;
     Logger::amf_sbi().debug("Create a PDU Session Context");
   }
 
@@ -1023,11 +1034,12 @@ bool amf_sbi::send_determine_location_request(
 }
 
 //------------------------------------------------------------------------------
-void amf_sbi::curl_http_client(
+bool amf_sbi::curl_http_client(
     const std::string& remote_uri, const std::string& json_data,
     const std::string& n1sm_msg, const std::string& n2sm_msg,
     const std::string& supi, const uint8_t& pdu_session_id,
     const uint8_t& http_version, const uint32_t& promise_id) {
+  bool curl_result = false;
   Logger::amf_sbi().debug("Call SMF service: %s", remote_uri.c_str());
 
   uint8_t number_parts                     = 0;
@@ -1040,7 +1052,7 @@ void amf_sbi::curl_http_client(
     Logger::amf_sbi().warn(
         "PDU Session context for SUPI %s doesn't exit!", supi.c_str());
     // TODO:
-    return;
+    return curl_result;
   }
 
   if ((n1sm_msg.size() > 0) and (n2sm_msg.size() > 0)) {
@@ -1138,7 +1150,7 @@ void amf_sbi::curl_http_client(
       curl_easy_cleanup(curl);
       curl_global_cleanup();
       free_wrapper((void**) &body_data);
-      return;
+      return curl_result;
     }
 
     if (response.size() > 0) {
@@ -1165,7 +1177,7 @@ void amf_sbi::curl_http_client(
         curl_global_cleanup();
         free_wrapper((void**) &body_data);
         // TODO: send context response error
-        return;
+        return curl_result;
       }
       // TODO: HO
 
@@ -1224,13 +1236,16 @@ void amf_sbi::curl_http_client(
         curl_global_cleanup();
         free_wrapper((void**) &body_data);
         // TODO:
-        return;
+        return curl_result;
       }
+
+      curl_result = true;
 
       std::string promise_result = {};
 
       bool is_ho_procedure              = false;
       bool is_up_deactivation_procedure = false;
+      bool is_service_request           = false;
       // For N2 HO
       if (response_data.find("hoState") != response_data.end()) {
         is_ho_procedure = true;
@@ -1245,13 +1260,36 @@ void amf_sbi::curl_http_client(
         }
       }
 
+      // UP deactivation
       if (response_data.find("upCnxState") != response_data.end()) {
         std::string up_cnx_state = {};
         response_data.at("upCnxState").get_to(up_cnx_state);
         if (up_cnx_state.compare("DEACTIVATED") == 0) {
           is_up_deactivation_procedure = true;
-          if (response_data.find("pduSessionId") != response_data.end())
-            response_data.at("pduSessionId").get_to(promise_result);
+          promise_result               = std::to_string(httpCode);
+        }
+
+        // Service Request
+        if (up_cnx_state.compare("ACTIVATING") == 0) {
+          is_service_request = true;
+          if (response_data.find("n2InfoContainer") != response_data.end()) {
+            if (response_data.at("n2InfoContainer").find("smInfo") !=
+                response_data.at("n2InfoContainer").end())
+              response_data.at("n2InfoContainer")
+                  .at("smInfo")
+                  .at("PduSessionId")
+                  .get<int>();
+          }
+
+          // Update Pdu Session Context
+          if (n1sm.size() > 0) {
+            conv::msg_str_2_msg_hex(n1sm, n1sm_hex);
+            output_wrapper::print_buffer(
+                "amf_sbi", "Get response N1 SM:", (uint8_t*) bdata(n1sm_hex),
+                blength(n1sm_hex));
+            psc->n2sm              = bstrcpy(n1sm_hex);
+            psc->is_n2sm_avaliable = true;
+          }
         }
       }
 
@@ -1264,7 +1302,21 @@ void amf_sbi::curl_http_client(
         curl_global_cleanup();
         free_wrapper((void**) &body_data);
         bdestroy_wrapper(&n1sm_hex);
-        return;
+        return curl_result;
+      }
+
+      // Service Request
+      // Notify to the result
+      if ((promise_id > 0) and (is_service_request)) {
+        nlohmann::json promise_result_json = {};
+        promise_result_json["json"]        = response_data;
+        amf_app_inst->trigger_process_response(promise_id, promise_result_json);
+        curl_slist_free_all(headers);
+        curl_easy_cleanup(curl);
+        curl_global_cleanup();
+        free_wrapper((void**) &body_data);
+        bdestroy_wrapper(&n1sm_hex);
+        return curl_result;
       }
 
       // Transfer N1/N2 to gNB/UE if available
@@ -1318,6 +1370,7 @@ void amf_sbi::curl_http_client(
 
   curl_global_cleanup();
   free_wrapper((void**) &body_data);
+  return curl_result;
 }
 
 //------------------------------------------------------------------------------

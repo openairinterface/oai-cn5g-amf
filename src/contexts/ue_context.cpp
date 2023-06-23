@@ -22,6 +22,7 @@
 #include "ue_context.hpp"
 
 #include "amf.hpp"
+#include "logger.hpp"
 
 //------------------------------------------------------------------------------
 ue_context::ue_context() {
@@ -76,7 +77,23 @@ bool ue_context::get_pdu_sessions_context(
 
 //------------------------------------------------------------------------------
 bool ue_context::remove_pdu_sessions_context(uint8_t pdu_session_id) {
-  std::shared_lock lock(m_pdu_session);
-  pdu_sessions.erase(pdu_session_id);
-  return true;
+  std::unique_lock lock(m_pdu_session);
+  if (pdu_sessions.count(pdu_session_id) > 0) {
+    pdu_sessions.erase(pdu_session_id);
+    Logger::amf_app().debug("PDU Session ID %d removed", pdu_session_id);
+    return true;
+  }
+  return false;
+}
+
+//------------------------------------------------------------------------------
+bool ue_context::set_up_cnx_state(
+    uint8_t pdu_session_id, const up_cnx_state_e& state) {
+  std::shared_ptr<pdu_session_context> psc = {};
+  if (find_pdu_session_context(pdu_session_id, psc)) {
+    std::unique_lock lock(m_pdu_session);
+    psc->up_cnx_state = state;
+    return true;
+  }
+  return false;
 }

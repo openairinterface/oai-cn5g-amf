@@ -529,6 +529,41 @@ class amf_app {
       const uint32_t pid, const nlohmann::json& json_data);
 
   /*
+   * Send request to SBI task to trigger PDU session release to SMF
+   * @param [const std::shared_ptr<ue_context>&]uc: UE Context
+   * @return void
+   */
+  void trigger_pdu_session_release(const std::shared_ptr<ue_context>& uc) const;
+
+  /*
+   * Send request to SBI task to trigger UP Deactivation of a PDU session
+   * towards SMF
+   * @param [const std::shared_ptr<ue_context>&]uc: UE Context
+   * @return void
+   */
+  void trigger_pdu_session_up_deactivation(
+      const std::shared_ptr<ue_context>& uc) const;
+
+  /*
+   * Send request to SBI task to trigger UP Activation of all PDU sessions
+   * associated with an UE context towards SMF
+   * @param [const std::shared_ptr<ue_context>&]uc: UE Context
+   * @return void
+   */
+  void trigger_pdu_session_up_activation(
+      const std::shared_ptr<ue_context>& uc) const;
+
+  /*
+   * Send request to SBI task to trigger UP Activation of a PDU session towards
+   * SMF
+   * @param [uint8_t]pdu_session_id: PDU Session ID
+   * @param [const std::shared_ptr<ue_context>&]uc: UE Context
+   * @return void
+   */
+  void trigger_pdu_session_up_activation(
+      uint8_t pdu_session_id, const std::shared_ptr<ue_context>& uc) const;
+
+  /*
    * Get the AMF's NF instance
    * @return NF instance in string format
    */
