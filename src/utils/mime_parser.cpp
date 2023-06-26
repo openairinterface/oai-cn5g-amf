@@ -115,6 +115,23 @@ uint8_t mime_parser::parse(
 }
 
 //------------------------------------------------------------------------------
+bool mime_parser::get(const std::string& content_id, std::string& content) {
+  if (mime_parts.count(content_id) != 0) {
+    content = mime_parts[content_id].body;
+    return true;
+  }
+  return false;
+}
+
+//------------------------------------------------------------------------------
+void mime_parser::get(
+    const std::string& content_id, std::optional<std::string>& content) {
+  if (mime_parts.count(content_id) != 0) {
+    content = std::make_optional<std::string>(mime_parts[content_id].body);
+  }
+}
+
+//------------------------------------------------------------------------------
 void mime_parser::get_mime_parts(
     std::unordered_map<std::string, mime_part>& parts) const {
   for (auto it : mime_parts) {

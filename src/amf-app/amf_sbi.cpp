@@ -1042,7 +1042,6 @@ bool amf_sbi::curl_http_client(
   bool curl_result = false;
   Logger::amf_sbi().debug("Call NF service: %s", remote_uri.c_str());
 
-  uint8_t number_parts                     = 0;
   mime_parser parser                       = {};
   std::string body                         = {};
   std::shared_ptr<pdu_session_context> psc = {};
@@ -1051,7 +1050,6 @@ bool amf_sbi::curl_http_client(
   if (!amf_app_inst->find_pdu_session_context(supi, pdu_session_id, psc)) {
     Logger::amf_sbi().warn(
         "PDU Session context for SUPI %s doesn't exit!", supi.c_str());
-    // TODO:
     return curl_result;
   }
 
@@ -1128,13 +1126,13 @@ bool amf_sbi::curl_http_client(
     curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &httpCode);
 
     // get cause from the response
-    std::string response           = *httpData.get();
-    std::string json_data_response = {};
-    std::string n1sm               = {};
-    std::string n2sm               = {};
-    nlohmann::json response_data   = {};
-    bstring n1sm_hex               = nullptr;
-    bstring n2sm_hex               = nullptr;
+    std::string response            = *httpData.get();
+    std::string json_data_response  = {};
+    std::optional<std::string> n1sm = {};
+    std::optional<std::string> n2sm = {};
+    nlohmann::json response_data    = {};
+    bstring n1sm_hex                = nullptr;
+    bstring n2sm_hex                = nullptr;
 
     Logger::amf_sbi().info("Get response with HTTP code (%ld)", httpCode);
     Logger::amf_sbi().info("Response body %s", response.c_str());
@@ -1153,11 +1151,13 @@ bool amf_sbi::curl_http_client(
     }
 
     if (response.size() > 0) {
-      number_parts = parser.parse(response, json_data_response, n1sm, n2sm);
-    }
-
-    if (number_parts == 0) {
-      json_data_response = response;
+      if (!parser.parse(response)) {
+        json_data_response = response;
+      } else {
+        parser.get(JSON_CONTENT_ID_MIME, json_data_response);
+        parser.get(N1_SM_CONTENT_ID, n1sm);
+        parser.get(N2_SM_CONTENT_ID, n2sm);
+      }
     }
 
     Logger::amf_sbi().info("JSON part %s", json_data_response.c_str());
@@ -1181,7 +1181,7 @@ bool amf_sbi::curl_http_client(
       // TODO: HO
 
       // Transfer N1 to gNB/UE if available
-      if (number_parts > 1) {
+      if (n1sm.has_value()) {
         try {
           response_data = nlohmann::json::parse(json_data_response);
         } catch (nlohmann::json::exception& e) {
@@ -1193,7 +1193,7 @@ bool amf_sbi::curl_http_client(
 
         Logger::amf_sbi().debug(
             "Get response with json_data: %s", json_data_response.c_str());
-        conv::msg_str_2_msg_hex(n1sm, n1sm_hex);
+        conv::msg_str_2_msg_hex(n1sm.value(), n1sm_hex);
         output_wrapper::print_buffer(
             "amf_sbi", "Get response with n1sm:", (uint8_t*) bdata(n1sm_hex),
             blength(n1sm_hex));
@@ -1254,8 +1254,8 @@ bool amf_sbi::curl_http_client(
         if (ho_state.compare("COMPLETED") == 0) {
           if (response_data.find("pduSessionId") != response_data.end())
             response_data.at("pduSessionId").get_to(promise_result);
-        } else if (number_parts > 1) {
-          promise_result = n2sm;  // actually, N2 SM Info
+        } else if (n2sm.has_value()) {
+          promise_result = n2sm.value();
         }
       }
 
@@ -1273,8 +1273,8 @@ bool amf_sbi::curl_http_client(
           is_service_request = true;
           promise_result     = std::to_string(httpCode);
           // Update Pdu Session Context
-          if (n2sm.size() > 0) {
-            conv::msg_str_2_msg_hex(n2sm, n2sm_hex);
+          if (n2sm.has_value()) {
+            conv::msg_str_2_msg_hex(n2sm.value(), n2sm_hex);
             output_wrapper::print_buffer(
                 "amf_sbi", "[Service Request] Get response N2 SM:",
                 (uint8_t*) bdata(n2sm_hex), blength(n2sm_hex));
@@ -1298,7 +1298,7 @@ bool amf_sbi::curl_http_client(
       }
 
       // Transfer N1/N2 to gNB/UE if available
-      if (number_parts > 1) {
+      if (n1sm.has_value() or n2sm.has_value()) {
         itti_n1n2_message_transfer_request* itti_msg =
             new itti_n1n2_message_transfer_request(TASK_AMF_SBI, TASK_AMF_APP);
 
@@ -1306,16 +1306,16 @@ bool amf_sbi::curl_http_client(
         itti_msg->is_n2sm_set = false;
         itti_msg->is_ppi_set  = false;
 
-        if (n1sm.size() > 0) {
-          conv::msg_str_2_msg_hex(n1sm, n1sm_hex);
+        if (n1sm.has_value() > 0) {
+          conv::msg_str_2_msg_hex(n1sm.value(), n1sm_hex);
           output_wrapper::print_buffer(
               "amf_sbi", "Get response N1 SM:", (uint8_t*) bdata(n1sm_hex),
               blength(n1sm_hex));
           itti_msg->n1sm        = bstrcpy(n1sm_hex);
           itti_msg->is_n1sm_set = true;
         }
-        if (n2sm.size() > 0) {
-          conv::msg_str_2_msg_hex(n2sm, n2sm_hex);
+        if (n2sm.has_value() > 0) {
+          conv::msg_str_2_msg_hex(n2sm.value(), n2sm_hex);
           output_wrapper::print_buffer(
               "amf_sbi", "Get response N2 SM:", (uint8_t*) bdata(n2sm_hex),
               blength(n2sm_hex));
@@ -1323,8 +1323,6 @@ bool amf_sbi::curl_http_client(
           itti_msg->is_n2sm_set = true;
           itti_msg->n2sm_info_type =
               response_data["n2SmInfoType"].get<std::string>();
-          // response_data["n2InfoContainer"]["smInfo"]["n2InfoContent"]
-          //             ["ngapIeType"];
         }
 
         itti_msg->supi           = supi;
