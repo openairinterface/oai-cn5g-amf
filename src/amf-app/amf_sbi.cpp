@@ -1040,7 +1040,7 @@ bool amf_sbi::curl_http_client(
     const std::string& supi, const uint8_t& pdu_session_id,
     const uint8_t& http_version, const uint32_t& promise_id) {
   bool curl_result = false;
-  Logger::amf_sbi().debug("Call SMF service: %s", remote_uri.c_str());
+  Logger::amf_sbi().debug("Call NF service: %s", remote_uri.c_str());
 
   uint8_t number_parts                     = 0;
   mime_parser parser                       = {};
@@ -1074,8 +1074,7 @@ bool amf_sbi::curl_http_client(
     is_multipart = false;
   }
 
-  Logger::amf_sbi().debug(
-      "Send HTTP message to SMF with body %s", body.c_str());
+  Logger::amf_sbi().debug("Send HTTP message to NF with body %s", body.c_str());
 
   uint32_t str_len = body.length();
   char* body_data  = (char*) malloc(str_len + 1);
@@ -1277,8 +1276,8 @@ bool amf_sbi::curl_http_client(
           if (n2sm.size() > 0) {
             conv::msg_str_2_msg_hex(n2sm, n2sm_hex);
             output_wrapper::print_buffer(
-                "amf_sbi", "Get response N2 SM:", (uint8_t*) bdata(n2sm_hex),
-                blength(n2sm_hex));
+                "amf_sbi", "[Service Request] Get response N2 SM:",
+                (uint8_t*) bdata(n2sm_hex), blength(n2sm_hex));
             psc->n2sm              = bstrcpy(n2sm_hex);
             psc->is_n2sm_avaliable = true;
           }
@@ -1357,7 +1356,7 @@ void amf_sbi::curl_http_client(
     const std::string& remote_uri, std::string& json_data,
     std::string& n1sm_msg, std::string& n2sm_msg, const uint8_t& http_version,
     uint32_t& response_code, const uint32_t& promise_id) {
-  Logger::amf_sbi().debug("Call SMF service: %s", remote_uri.c_str());
+  Logger::amf_sbi().debug("Call NF service: %s", remote_uri.c_str());
 
   uint8_t number_parts = 0;
   mime_parser parser   = {};
@@ -1384,8 +1383,7 @@ void amf_sbi::curl_http_client(
     is_multipart = false;
   }
 
-  Logger::amf_sbi().debug(
-      "Send HTTP message to SMF with body %s", body.c_str());
+  Logger::amf_sbi().debug("Send HTTP message to NF with body %s", body.c_str());
 
   uint32_t str_len = body.length();
   char* body_data  = (char*) malloc(str_len + 1);
