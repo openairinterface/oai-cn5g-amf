@@ -1256,7 +1256,7 @@ bool amf_sbi::curl_http_client(
           if (response_data.find("pduSessionId") != response_data.end())
             response_data.at("pduSessionId").get_to(promise_result);
         } else if (number_parts > 1) {
-          promise_result = n1sm;  // actually, N2 SM Info
+          promise_result = n2sm;  // actually, N2 SM Info
         }
       }
 
@@ -1274,12 +1274,12 @@ bool amf_sbi::curl_http_client(
           is_service_request = true;
           promise_result     = std::to_string(httpCode);
           // Update Pdu Session Context
-          if (n1sm.size() > 0) {
-            conv::msg_str_2_msg_hex(n1sm, n1sm_hex);
+          if (n2sm.size() > 0) {
+            conv::msg_str_2_msg_hex(n2sm, n2sm_hex);
             output_wrapper::print_buffer(
-                "amf_sbi", "Get response N1 SM:", (uint8_t*) bdata(n1sm_hex),
-                blength(n1sm_hex));
-            psc->n2sm              = bstrcpy(n1sm_hex);
+                "amf_sbi", "Get response N2 SM:", (uint8_t*) bdata(n2sm_hex),
+                blength(n2sm_hex));
+            psc->n2sm              = bstrcpy(n2sm_hex);
             psc->is_n2sm_avaliable = true;
           }
         }
