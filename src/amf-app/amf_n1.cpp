@@ -688,6 +688,19 @@ void amf_n1::uplink_nas_msg_handle(
         Logger::amf_n1().debug("No NAS context available");
       }
     } break;
+    case REGISTRATION_REQUEST: {
+      Logger::amf_n1().debug("Received Registration Request, handling...");
+      std::string snn = conv::get_serving_network_name(plmn.mnc, plmn.mcc);
+      Logger::amf_n1().debug("Serving network name %s", snn.c_str());
+      std::shared_ptr<nas_context> nc = {};
+      if (amf_ue_id_2_nas_context(amf_ue_ngap_id, nc)) {
+        registration_request_handle(
+            nc, ran_ue_ngap_id, amf_ue_ngap_id, snn, plain_msg);
+      } else {
+        Logger::amf_n1().debug("No NAS context available");
+      }
+
+    } break;
     default: {
       Logger::amf_n1().debug(
           "Received Unknown message type 0x%x, ignoring...", message_type);
@@ -3844,19 +3857,11 @@ void amf_n1::run_mobility_registration_update_procedure(
   output_wrapper::print_buffer(
       "amf_n1", "Kamf", kamf, AUTH_VECTOR_LENGTH_OCTETS);
 
-  std::shared_ptr<itti_initial_context_setup_request> itti_msg =
-      std::make_shared<itti_initial_context_setup_request>(
-          TASK_AMF_N1, TASK_AMF_N2);
+  std::shared_ptr<itti_dl_nas_transport> itti_msg =
+      std::make_shared<itti_dl_nas_transport>(TASK_AMF_N1, TASK_AMF_N2);
   itti_msg->ran_ue_ngap_id = nc->ran_ue_ngap_id;
   itti_msg->amf_ue_ngap_id = nc->amf_ue_ngap_id;
-  itti_msg->kgnb           = blk2bstr(kgnb, AUTH_VECTOR_LENGTH_OCTETS);
   itti_msg->nas            = protected_nas;
-  itti_msg->is_sr          = true;  // service request indicator, to be verified
-
-  if (psc != nullptr) {
-    itti_msg->pdu_session_id = psc->pdu_session_id;
-    itti_msg->n2sm           = psc->n2sm;
-  }
 
   int ret = itti_inst->send_msg(itti_msg);
   if (0 != ret) {

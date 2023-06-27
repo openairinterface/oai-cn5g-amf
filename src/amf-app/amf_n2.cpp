@@ -2047,6 +2047,24 @@ void amf_n2::handle_itti_message(itti_handover_notify& itti_msg) {
     return;
   }
 
+  // Get UE context, if the context doesn't exist, create a new one
+  std::shared_ptr<ue_context> uc = {};
+  std::string ue_context_key =
+      conv::get_ue_context_key(ran_ue_ngap_id, amf_ue_ngap_id);
+  if (!amf_app_inst->ran_amf_id_2_ue_context(ue_context_key, uc)) {
+    Logger::amf_app().debug(
+        "No existing UE Context, Create a new one with ran_amf_id %s",
+        ue_context_key.c_str());
+    uc = std::make_shared<ue_context>();
+    amf_app_inst->set_ran_amf_id_2_ue_context(ue_context_key, uc);
+  }
+  // Store related information
+  uc->cgi            = NR_CGI;
+  uc->tai            = TAI;
+  uc->ran_ue_ngap_id = ran_ue_ngap_id;
+  uc->amf_ue_ngap_id = amf_ue_ngap_id;
+  uc->gnb_id         = gc->gnb_id;
+
   string supi = conv::imsi_to_supi(nc->imsi);
 
   std::vector<std::shared_ptr<pdu_session_context>> sessions_ctx;
@@ -2139,15 +2157,6 @@ void amf_n2::handle_itti_message(itti_handover_notify& itti_msg) {
 
   sctp_s_38412.sctp_send_msg(unc->gnb_assoc_id, 0, &b);
   bdestroy_wrapper(&b);
-
-  string ue_context_key =
-      conv::get_ue_context_key(unc->ran_ue_ngap_id, amf_ue_ngap_id);
-  std::shared_ptr<ue_context> uc = {};
-  if (!amf_app_inst->ran_amf_id_2_ue_context(ue_context_key, uc)) {
-    Logger::amf_app().error(
-        "No UE context for ran_amf_id %s, exit", ue_context_key.c_str());
-    return;
-  }
 
   // update the NGAP Context
   unc->release_cause         = Ngap_CauseRadioNetwork_successful_handover;
