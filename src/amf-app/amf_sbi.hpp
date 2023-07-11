@@ -233,7 +233,7 @@ class amf_sbi {
    * @param [const uint32_t&] promise_id: Promise ID
    * @return void
    */
-  void curl_http_client(
+  bool curl_http_client(
       const std::string& remote_uri, const std::string& json_data,
       const std::string& n1sm_msg, const std::string& n2sm_msg,
       const std::string& supi, const uint8_t& pdu_session_id,

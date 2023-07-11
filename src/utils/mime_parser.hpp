@@ -56,6 +56,22 @@ class mime_parser {
       std::string& n2sm);
 
   /*
+   * Get content of a Mime part with corresponding Content ID
+   * @param [const std::string&] content_id: Content ID
+   * @param [std::string&] content: Mime content
+   * @return true if content with Content ID exist, otherwise false
+   */
+  bool get(const std::string& content_id, std::string& content);
+
+  /*
+   * Get content of a Mime part with corresponding Content ID
+   * @param [const std::string&] content_id: Content ID
+   * @param [std::optional<std::string>&] content: Mime content
+   * @return true if content with Content ID exist, otherwise false
+   */
+  void get(const std::string& content_id, std::optional<std::string>& content);
+
+  /*
    * Get vector of Mime parts
    * @param [std::vector<mime_part> &] parts: store vector of Mime parts
    * @return void

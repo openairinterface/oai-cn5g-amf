@@ -22,6 +22,9 @@
 #ifndef FILE_3GPP_29_502_SMF_SEEN
 #define FILE_3GPP_29_502_SMF_SEEN
 
+#include <vector>
+#include <string>
+
 enum pdu_session_application_error_e {
   PDU_SESSION_APPLICATION_ERROR_N1_SM_ERROR                            = 1,
   PDU_SESSION_APPLICATION_ERROR_SNSSAI_DENIED                          = 2,
@@ -136,6 +139,17 @@ static const std::vector<std::string> n2_sm_info_type_e2str = {
     "HANDOVER_CMD",           "HANDOVER_PREP_FAIL",
     "HANDOVER_REQ_ACK",       "HANDOVER_RES_ALLOC_FAIL",
     "SECONDARY_RAT_USAGE"};
+
+enum class up_cnx_state_e {
+  UPCNX_STATE_UNKNOWN     = 0,
+  UPCNX_STATE_ACTIVATED   = 1,
+  UPCNX_STATE_DEACTIVATED = 2,
+  UPCNX_STATE_ACTIVATING  = 3
+};
+
+static const std::vector<std::string> up_cnx_state_e2str = {
+    "UPCNX_STATE_UNKNOWN", "UPCNX_STATE_ACTIVATED", "UPCNX_STATE_DEACTIVATED",
+    "UPCNX_STATE_ACTIVATING"};
 
 #define NSMF_PDU_SESSION_CREATE "/sm-contexts"
 #define NSMF_PDU_SESSION_MODIFY "/modify"

@@ -570,6 +570,22 @@ void amf_n2::handle_itti_message(itti_ng_shutdown& itti_msg) {
   std::vector<std::shared_ptr<ue_ngap_context>> ue_contexts;
   get_ue_ngap_contexts(itti_msg.assoc_id, ue_contexts);
 
+  // Release all PDUs session for the associated UEs
+  for (auto context : ue_contexts) {
+    // Get UE Context
+    string ue_context_key = conv::get_ue_context_key(
+        context->ran_ue_ngap_id, context->amf_ue_ngap_id);
+    std::shared_ptr<ue_context> uc = {};
+
+    if (!amf_app_inst->ran_amf_id_2_ue_context(ue_context_key, uc)) {
+      Logger::amf_app().error(
+          "No UE context for ran_amf_id %s, exit", ue_context_key.c_str());
+      continue;
+    }
+    amf_app_inst->trigger_pdu_session_up_deactivation(uc);
+  }
+
+  // Remove UEs' contexts
   for (auto ue_context : ue_contexts) {
     remove_ue_context_with_amf_ue_ngap_id(ue_context->amf_ue_ngap_id);
     remove_ue_context_with_ran_ue_ngap_id(
@@ -1385,22 +1401,29 @@ void amf_n2::handle_itti_message(itti_ue_context_release_complete& itti_msg) {
   }
 
   if (nc != nullptr) {
-    // Do nothing in case of old NAS Context (Service Request handling)
-    if ((nc->old_amf_ue_ngap_id != INVALID_AMF_UE_NGAP_ID) and
-        (!nc->guti.has_value())) {
+    // Get SUPI
+    std::string supi = conv::imsi_to_supi(nc->imsi);
+    // Get the current AMF UE NGAP ID and compare with the one from
+    // UEContextReleaseComplete
+    long current_amf_ue_ngap_id = INVALID_AMF_UE_NGAP_ID;
+    amf_n1_inst->supi_2_amf_id(supi, current_amf_ue_ngap_id);
+    if (current_amf_ue_ngap_id != amf_ue_ngap_id) {
+      // Remove UE NGAP context
       Logger::amf_n2().debug("UE Context Release Complete for the old context");
+      remove_amf_ue_ngap_id_2_ue_ngap_context(amf_ue_ngap_id);
+      remove_ran_ue_ngap_id_2_ngap_context(ran_ue_ngap_id, gc->gnb_id);
       return;
+    } else {
+      amf_n1_inst->set_5gcm_state(nc, CM_IDLE);
+      // Start/reset the Mobile Reachable Timer
+      timer_id_t tid = itti_inst->timer_setup(
+          MOBILE_REACHABLE_TIMER_NO_EMERGENCY_SERVICES_MIN * 60, 0, TASK_AMF_N1,
+          TASK_AMF_MOBILE_REACHABLE_TIMER_EXPIRE, amf_ue_ngap_id);
+      Logger::amf_n2().startup("Started mobile reachable timer (tid %d)", tid);
+
+      amf_n1_inst->set_mobile_reachable_timer(nc, tid);
+      amf_n1_inst->set_mobile_reachable_timer_timeout(nc, false);
     }
-    amf_n1_inst->set_5gcm_state(nc, CM_IDLE);
-
-    // Start/reset the Mobile Reachable Timer
-    timer_id_t tid = itti_inst->timer_setup(
-        MOBILE_REACHABLE_TIMER_NO_EMERGENCY_SERVICES_MIN * 60, 0, TASK_AMF_N1,
-        TASK_AMF_MOBILE_REACHABLE_TIMER_EXPIRE, amf_ue_ngap_id);
-    Logger::amf_n2().startup("Started mobile reachable timer (tid %d)", tid);
-
-    amf_n1_inst->set_mobile_reachable_timer(nc, tid);
-    amf_n1_inst->set_mobile_reachable_timer_timeout(nc, false);
   } else {
     return;
   }
@@ -1437,6 +1460,8 @@ void amf_n2::handle_itti_message(itti_ue_context_release_complete& itti_msg) {
   std::map<uint32_t, boost::shared_future<std::string>> curl_responses;
 
   for (auto pdu_session : pdu_sessions_to_be_released) {
+    Logger::amf_n2().debug(
+        "Releasing PDU Session ID %d", pdu_session.pduSessionId);
     // Generate a promise and associate this promise to the curl handle
     uint32_t promise_id = amf_app_inst->generate_promise_id();
     Logger::amf_n2().debug("Promise ID generated %d", promise_id);
@@ -1485,11 +1510,21 @@ void amf_n2::handle_itti_message(itti_ue_context_release_complete& itti_msg) {
       assert(curl_responses.begin()->second.has_value());
       assert(!curl_responses.begin()->second.has_exception());
       // Wait for the result from APP and send reply to AMF
-      std::string pdu_session_id_str = curl_responses.begin()->second.get();
+
+      std::string http_code_str = curl_responses.begin()->second.get();
       Logger::ngap().debug(
           "Got result for PDU Session ID %d", curl_responses.begin()->first);
-      if (pdu_session_id_str.size() > 0) {
-        result = result && true;
+      if (http_code_str.size() > 0) {
+        result            = result && true;
+        uint8_t http_code = 0;
+        if (conv::string_to_int8(http_code_str, http_code)) {
+          if ((http_code == 200) or (http_code == 204)) {
+            // uc->remove_pdu_sessions_context(curl_responses.begin()->first);
+            uc->set_up_cnx_state(
+                curl_responses.begin()->first,
+                up_cnx_state_e::UPCNX_STATE_DEACTIVATED);
+          }
+        }
       } else {
         result = false;
       }
@@ -2012,6 +2047,24 @@ void amf_n2::handle_itti_message(itti_handover_notify& itti_msg) {
     return;
   }
 
+  // Get UE context, if the context doesn't exist, create a new one
+  std::shared_ptr<ue_context> uc = {};
+  std::string ue_context_key =
+      conv::get_ue_context_key(ran_ue_ngap_id, amf_ue_ngap_id);
+  if (!amf_app_inst->ran_amf_id_2_ue_context(ue_context_key, uc)) {
+    Logger::amf_app().debug(
+        "No existing UE Context, Create a new one with ran_amf_id %s",
+        ue_context_key.c_str());
+    uc = std::make_shared<ue_context>();
+    amf_app_inst->set_ran_amf_id_2_ue_context(ue_context_key, uc);
+  }
+  // Store related information
+  uc->cgi            = NR_CGI;
+  uc->tai            = TAI;
+  uc->ran_ue_ngap_id = ran_ue_ngap_id;
+  uc->amf_ue_ngap_id = amf_ue_ngap_id;
+  uc->gnb_id         = gc->gnb_id;
+
   string supi = conv::imsi_to_supi(nc->imsi);
 
   std::vector<std::shared_ptr<pdu_session_context>> sessions_ctx;
@@ -2104,15 +2157,6 @@ void amf_n2::handle_itti_message(itti_handover_notify& itti_msg) {
 
   sctp_s_38412.sctp_send_msg(unc->gnb_assoc_id, 0, &b);
   bdestroy_wrapper(&b);
-
-  string ue_context_key =
-      conv::get_ue_context_key(unc->ran_ue_ngap_id, amf_ue_ngap_id);
-  std::shared_ptr<ue_context> uc = {};
-  if (!amf_app_inst->ran_amf_id_2_ue_context(ue_context_key, uc)) {
-    Logger::amf_app().error(
-        "No UE context for ran_amf_id %s, exit", ue_context_key.c_str());
-    return;
-  }
 
   // update the NGAP Context
   unc->release_cause         = Ngap_CauseRadioNetwork_successful_handover;

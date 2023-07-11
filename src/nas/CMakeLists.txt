@@ -18,29 +18,26 @@
 # For more information about the OpenAirInterface (OAI) Software Alliance:
 #      contact@openairinterface.org
 ################################################################################
+file(GLOB AMF_NAS_src_files
+  msgs/*.cpp
+  ies/*.cpp
+  utils/*.c
+)
 
-include_directories(${SRC_TOP_DIR}/common)
-include_directories(${SRC_TOP_DIR}/common/unicode)
-include_directories(${SRC_TOP_DIR}/nas/common)
-include_directories(${SRC_TOP_DIR}/ngap/libngap)
-include_directories(${SRC_TOP_DIR}/utils)
-include_directories(${SRC_TOP_DIR}/utils/bstr)
-include_directories(${SRC_TOP_DIR}/amf-app)
-include_directories(${SRC_TOP_DIR}/itti)
-include_directories(${SRC_TOP_DIR}/itti/msgs)
-include_directories(${SRC_TOP_DIR}/sbi/amf_server/model)
-include_directories(${SRC_TOP_DIR}/${MOUNTED_COMMON}/logger)
+add_library (AMF_NAS STATIC ${AMF_NAS_src_files})
 
-add_library (AMF_UTILS STATIC
- ${CMAKE_CURRENT_SOURCE_DIR}/backtrace.c
- ${CMAKE_CURRENT_SOURCE_DIR}/dynamic_memory_check.c
- ${CMAKE_CURRENT_SOURCE_DIR}/if.cpp
- ${CMAKE_CURRENT_SOURCE_DIR}/string.cpp
- ${CMAKE_CURRENT_SOURCE_DIR}/thread_sched.cpp
- ${CMAKE_CURRENT_SOURCE_DIR}/mime_parser.cpp
- ${CMAKE_CURRENT_SOURCE_DIR}/fqdn.cpp
- ${CMAKE_CURRENT_SOURCE_DIR}/3gpp_conversions.cpp
- ${CMAKE_CURRENT_SOURCE_DIR}/NasUtils.cpp
- ${CMAKE_CURRENT_SOURCE_DIR}/bstr/bstrlib.c 
- )
-
+set(NAS_DIR "${SRC_TOP_DIR}/nas")
+target_include_directories(AMF_NAS PUBLIC ${NAS_DIR}/ies)
+target_include_directories(AMF_NAS PUBLIC ${NAS_DIR}/common)
+target_include_directories(AMF_NAS PUBLIC ${NAS_DIR}/msgs)
+target_include_directories(AMF_NAS PUBLIC ${NAS_DIR}/utils)
+target_include_directories(AMF_NAS PUBLIC ${SRC_TOP_DIR}/ngap/libngap)
+target_include_directories(AMF_NAS PUBLIC ${SRC_TOP_DIR}/common)
+target_include_directories(AMF_NAS PUBLIC ${SRC_TOP_DIR}/common/unicode)
+target_include_directories(AMF_NAS PUBLIC ${SRC_TOP_DIR}/sbi/amf_server/model)
+target_include_directories(AMF_NAS PUBLIC ${SRC_TOP_DIR}/sctp)
+target_include_directories(AMF_NAS PUBLIC ${SRC_TOP_DIR}/secu_algorithms/5gaka)
+target_include_directories(AMF_NAS PUBLIC ${SRC_TOP_DIR}/secu_algorithms/nas_enc_int)
+target_include_directories(AMF_NAS PUBLIC ${SRC_TOP_DIR}/utils)
+target_include_directories(AMF_NAS PUBLIC ${SRC_TOP_DIR}/utils/bstr)
+target_include_directories(AMF_NAS PUBLIC ${SRC_TOP_DIR}/${MOUNTED_COMMON}/logger)

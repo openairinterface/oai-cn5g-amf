@@ -18,29 +18,25 @@
 # For more information about the OpenAirInterface (OAI) Software Alliance:
 #      contact@openairinterface.org
 ################################################################################
+file(GLOB AMF_NGAP_src_files
+  libngap/*.c
+  ngapMsgs/*.cpp
+  ngapIEs/*.cpp
+)
+add_library (AMF_NGAP STATIC
+  ${AMF_NGAP_src_files}
+)
 
-include_directories(${SRC_TOP_DIR}/common)
-include_directories(${SRC_TOP_DIR}/common/unicode)
-include_directories(${SRC_TOP_DIR}/nas/common)
-include_directories(${SRC_TOP_DIR}/ngap/libngap)
-include_directories(${SRC_TOP_DIR}/utils)
-include_directories(${SRC_TOP_DIR}/utils/bstr)
-include_directories(${SRC_TOP_DIR}/amf-app)
-include_directories(${SRC_TOP_DIR}/itti)
-include_directories(${SRC_TOP_DIR}/itti/msgs)
-include_directories(${SRC_TOP_DIR}/sbi/amf_server/model)
-include_directories(${SRC_TOP_DIR}/${MOUNTED_COMMON}/logger)
-
-add_library (AMF_UTILS STATIC
- ${CMAKE_CURRENT_SOURCE_DIR}/backtrace.c
- ${CMAKE_CURRENT_SOURCE_DIR}/dynamic_memory_check.c
- ${CMAKE_CURRENT_SOURCE_DIR}/if.cpp
- ${CMAKE_CURRENT_SOURCE_DIR}/string.cpp
- ${CMAKE_CURRENT_SOURCE_DIR}/thread_sched.cpp
- ${CMAKE_CURRENT_SOURCE_DIR}/mime_parser.cpp
- ${CMAKE_CURRENT_SOURCE_DIR}/fqdn.cpp
- ${CMAKE_CURRENT_SOURCE_DIR}/3gpp_conversions.cpp
- ${CMAKE_CURRENT_SOURCE_DIR}/NasUtils.cpp
- ${CMAKE_CURRENT_SOURCE_DIR}/bstr/bstrlib.c 
- )
-
+set(NGAP_DIR "${SRC_TOP_DIR}/ngap")
+target_include_directories(AMF_NGAP PUBLIC ${NGAP_DIR}/libngap)
+target_include_directories(AMF_NGAP PUBLIC ${NGAP_DIR}/ngapIEs)
+target_include_directories(AMF_NGAP PUBLIC ${NGAP_DIR}/ngapMsgs)
+target_include_directories(AMF_NGAP PUBLIC ${SRC_TOP_DIR}/itti)
+target_include_directories(AMF_NGAP PUBLIC ${SRC_TOP_DIR}/itti/msgs)
+target_include_directories(AMF_NGAP PUBLIC ${SRC_TOP_DIR}/common)
+target_include_directories(AMF_NGAP PUBLIC ${SRC_TOP_DIR}/common/unicode)
+target_include_directories(AMF_NGAP PUBLIC ${SRC_TOP_DIR}/sctp)
+target_include_directories(AMF_NGAP PUBLIC ${SRC_TOP_DIR}/utils)
+target_include_directories(AMF_NGAP PUBLIC ${SRC_TOP_DIR}/utils/bstr)
+target_include_directories(AMF_NGAP PUBLIC ${SRC_TOP_DIR}/sbi/amf_server/model)
+target_include_directories(AMF_NGAP PUBLIC ${SRC_TOP_DIR}/${MOUNTED_COMMON}/logger)
