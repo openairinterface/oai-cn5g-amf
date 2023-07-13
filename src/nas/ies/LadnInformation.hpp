@@ -22,8 +22,8 @@
 #ifndef _LADN_INFORMATION_H_
 #define _LADN_INFORMATION_H_
 
-#include "DNN.hpp"
-#include "_5GSTrackingAreaIdList.hpp"
+#include "Dnn.hpp"
+#include "_5gsTrackingAreaIdList.hpp"
 #include "Ladn.hpp"
 #include "Type6NasIe.hpp"
 

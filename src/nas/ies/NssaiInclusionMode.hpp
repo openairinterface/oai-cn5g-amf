@@ -37,9 +37,6 @@ class NssaiInclusionMode : public Type1NasIeFormatTv {
 
   static std::string GetIeName() { return kNssaiInclusionModeIeName; }
 
-  // int Encode(uint8_t* buf, int len);
-  // int Decode(uint8_t* buf, int len, bool is_iei);
-
   void setValue(uint8_t value);
   uint8_t getValue() const;
 

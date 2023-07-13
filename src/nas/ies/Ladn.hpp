@@ -22,8 +22,8 @@
 #ifndef _LADN_H_
 #define _LADN_H_
 
-#include "DNN.hpp"
-#include "_5GSTrackingAreaIdList.hpp"
+#include "Dnn.hpp"
+#include "_5gsTrackingAreaIdList.hpp"
 #include "Type6NasIe.hpp"
 
 namespace nas {
@@ -33,16 +33,16 @@ class ladn {
   ladn();
   ~ladn();
 
-  void Set(const DNN& value);
-  void Set(const _5GSTrackingAreaIdList& value);
+  void Set(const Dnn& value);
+  void Set(const _5gsTrackingAreaIdList& value);
   uint32_t GetLength() const;
 
   int Encode(uint8_t* buf, int len);
   int Decode(uint8_t* buf, int len);
 
  private:
-  DNN dnn;
-  _5GSTrackingAreaIdList ta_list;
+  Dnn dnn;
+  _5gsTrackingAreaIdList ta_list;
 };
 
 }  // namespace nas

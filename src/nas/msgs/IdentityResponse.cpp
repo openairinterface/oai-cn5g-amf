@@ -37,7 +37,7 @@ void IdentityResponse::SetHeader(uint8_t security_header_type) {
 
 //------------------------------------------------------------------------------
 void IdentityResponse::Get5gsMobileIdentity(
-    _5GSMobileIdentity& mobile_identity) const {
+    _5gsMobileIdentity& mobile_identity) const {
   mobile_identity = ie_mobile_identity;
 }
 //------------------------------------------------------------------------------
@@ -99,7 +99,7 @@ int IdentityResponse::Encode(uint8_t* buf, int len) {
     encoded_size += size;
   } else {
     Logger::nas_mm().error(
-        "Encoding %s error", _5GSMobileIdentity::GetIeName().c_str());
+        "Encoding %s error", _5gsMobileIdentity::GetIeName().c_str());
     return KEncodeDecodeError;
   }
 
@@ -128,7 +128,7 @@ int IdentityResponse::Decode(uint8_t* buf, int len) {
       ie_mobile_identity.Decode(buf + decoded_size, len - decoded_size, false);
   if (decoded_result == KEncodeDecodeError) {
     Logger::nas_mm().error(
-        "Decoding %s error", _5GSMobileIdentity::GetIeName().c_str());
+        "Decoding %s error", _5gsMobileIdentity::GetIeName().c_str());
     return KEncodeDecodeError;
   }
   decoded_size += decoded_result;

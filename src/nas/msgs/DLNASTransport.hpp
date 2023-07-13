@@ -55,7 +55,7 @@ class DLNASTransport : public NasMmPlainHeader {
 
  public:
   PayloadContainerType ie_payload_container_type;                  // Mandatory
-  Payload_Container ie_payload_container;                          // Mandatory
+  PayloadContainer ie_payload_container;                           // Mandatory
   std::optional<PduSessionIdentity2> ie_pdu_session_identity_2;    // Optional
   std::optional<AdditionalInformation> ie_additional_information;  // Optional
   std::optional<_5gmmCause> ie_5gmm_cause;                         // Optional

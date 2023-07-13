@@ -148,31 +148,31 @@ class RegistrationRequest : public NasMmPlainHeader {
   bool GetEpsBearerContextStatus(uint16_t& value) const;
 
  public:
-  _5GSRegistrationType ie_5gs_registration_type;  // Mandatory
+  _5gsRegistrationType ie_5gs_registration_type;  // Mandatory
   NasKeySetIdentifier ie_ng_ksi;                  // Mandatory
-  _5GSMobileIdentity ie_5gs_mobile_identity;      // Mandatory
+  _5gsMobileIdentity ie_5gs_mobile_identity;      // Mandatory
 
   std::optional<NasKeySetIdentifier> ie_non_current_native_nas_ksi;  // Optional
-  std::optional<_5GMMCapability> ie_5g_mm_capability;                // Optional
+  std::optional<_5gmmCapability> ie_5g_mm_capability;                // Optional
   std::optional<UESecurityCapability> ie_ue_security_capability;     // Optional
   std::optional<NSSAI> ie_requested_nssai;                           // Optional
-  std::optional<_5GSTrackingAreaIdentity>
+  std::optional<_5gsTrackingAreaIdentity>
       ie_last_visited_registered_tai;                              // Optional
   std::optional<UENetworkCapability> ie_s1_ue_network_capability;  // Optional
   std::optional<UplinkDataStatus> ie_uplink_data_status;           // Optional
   std::optional<PDUSessionStatus> ie_pdu_session_status;           // Optional
   std::optional<MicoIndication> ie_mico_indication;                // Optional
   std::optional<UEStatus> ie_ue_status;                            // Optional
-  std::optional<_5GSMobileIdentity> ie_additional_guti;            // Optional
+  std::optional<_5gsMobileIdentity> ie_additional_guti;            // Optional
   std::optional<AllowedPDUSessionStatus>
-      ie_allowed_pdu_session_status;                         // Optional
-  std::optional<UEUsageSetting> ie_ues_usage_setting;        // Optional
-  std::optional<_5GS_DRX_Parameters> ie_5gs_drx_parameters;  // Optional
-  std::optional<EPS_NAS_Message_Container>
+      ie_allowed_pdu_session_status;                       // Optional
+  std::optional<UEUsageSetting> ie_ues_usage_setting;      // Optional
+  std::optional<_5gsDrxParameters> ie_5gs_drx_parameters;  // Optional
+  std::optional<EpsNasMessageContainer>
       ie_eps_nas_message_container;                               // Optional
   std::optional<LadnIndication> ie_ladn_indication;               // Optional
   std::optional<PayloadContainerType> ie_payload_container_type;  // Optional
-  std::optional<Payload_Container> ie_payload_container;          // Optional
+  std::optional<PayloadContainer> ie_payload_container;           // Optional
   std::optional<NetworkSlicingIndication>
       ie_network_slicing_indication;                 // Optional
   std::optional<_5gsUpdateType> ie_5gs_update_type;  // Optional

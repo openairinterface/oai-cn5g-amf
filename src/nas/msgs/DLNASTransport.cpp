@@ -116,7 +116,7 @@ int DLNASTransport::Encode(uint8_t* buf, int len) {
     encoded_size += size;
   } else {
     Logger::nas_mm().error(
-        "Encoding %s error", Payload_Container::GetIeName().c_str());
+        "Encoding %s error", PayloadContainer::GetIeName().c_str());
     return KEncodeDecodeError;
   }
 
@@ -219,7 +219,7 @@ int DLNASTransport::Decode(uint8_t* buf, int len) {
       N1_SM_INFORMATION);  // TODO: verified Type of Payload Container
   if (decoded_result == KEncodeDecodeError) {
     Logger::nas_mm().error(
-        "Decoding %s error", Payload_Container::GetIeName().c_str());
+        "Decoding %s error", PayloadContainer::GetIeName().c_str());
     return KEncodeDecodeError;
   }
   decoded_size += decoded_result;

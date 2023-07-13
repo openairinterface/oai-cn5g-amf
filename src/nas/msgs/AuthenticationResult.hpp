@@ -48,7 +48,7 @@ class AuthenticationResult : public NasMmPlainHeader {
  public:
   NasKeySetIdentifier ie_ng_ksi;  // Mandatory (1/2 lower octet)
   EapMessage ie_eap_message;      // Mandatory
-  std::optional<ABBA> ie_abba;    // Optional
+  std::optional<Abba> ie_abba;    // Optional
 };
 
 }  // namespace nas

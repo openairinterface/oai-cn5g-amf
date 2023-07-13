@@ -66,7 +66,7 @@ class ServiceRequest : public NasMmPlainHeader {
  private:
   NasKeySetIdentifier ie_ng_ksi;    // Mandatory
   ServiceType ie_service_type;      // Mandatory
-  _5GSMobileIdentity ie_5g_s_tmsi;  // Mandatory
+  _5gsMobileIdentity ie_5g_s_tmsi;  // Mandatory
 
   std::optional<UplinkDataStatus> ie_uplink_data_status;  // Optional
   std::optional<PDUSessionStatus> ie_pdu_session_status;  // Optional

@@ -191,7 +191,7 @@ int ServiceRequest::Encode(uint8_t* buf, int len) {
     encoded_size += size;
   } else {
     Logger::nas_mm().debug(
-        "Encoding %s error", _5GSMobileIdentity::GetIeName().c_str());
+        "Encoding %s error", _5gsMobileIdentity::GetIeName().c_str());
     return KEncodeDecodeError;
   }
 

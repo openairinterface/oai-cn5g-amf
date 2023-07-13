@@ -47,14 +47,14 @@ void ServiceAccept::SetPduSessionStatus(uint16_t value) {
 //------------------------------------------------------------------------------
 void ServiceAccept::SetPduSessionReactivationResult(uint16_t value) {
   ie_pdu_session_reactivation_result =
-      std::make_optional<PDU_Session_Reactivation_Result>(value);
+      std::make_optional<PduSessionReactivationResult>(value);
 }
 
 //------------------------------------------------------------------------------
 void ServiceAccept::SetPduSessionReactivationResultErrorCause(
     uint8_t session_id, uint8_t value) {
   ie_pdu_session_reactivation_result_error_cause =
-      std::make_optional<PDU_Session_Reactivation_Result_Error_Cause>(
+      std::make_optional<PduSessionReactivationResultErrorCause>(
           session_id, value);
 }
 
@@ -100,7 +100,7 @@ int ServiceAccept::Encode(uint8_t* buf, int len) {
   if (!ie_pdu_session_reactivation_result.has_value()) {
     Logger::nas_mm().debug(
         "IE %s is not available",
-        PDU_Session_Reactivation_Result::GetIeName().c_str());
+        PduSessionReactivationResult::GetIeName().c_str());
   } else {
     encoded_ie_size = ie_pdu_session_reactivation_result.value().Encode(
         buf + encoded_size, len - encoded_size);
@@ -109,7 +109,7 @@ int ServiceAccept::Encode(uint8_t* buf, int len) {
     } else {
       Logger::nas_mm().debug(
           "Encoding %s error",
-          PDU_Session_Reactivation_Result::GetIeName().c_str());
+          PduSessionReactivationResult::GetIeName().c_str());
       return KEncodeDecodeError;
     }
   }
@@ -117,7 +117,7 @@ int ServiceAccept::Encode(uint8_t* buf, int len) {
   if (!ie_pdu_session_reactivation_result_error_cause.has_value()) {
     Logger::nas_mm().debug(
         "IE %s is not available",
-        PDU_Session_Reactivation_Result_Error_Cause::GetIeName().c_str());
+        PduSessionReactivationResultErrorCause::GetIeName().c_str());
   } else {
     encoded_ie_size =
         ie_pdu_session_reactivation_result_error_cause.value().Encode(
@@ -127,7 +127,7 @@ int ServiceAccept::Encode(uint8_t* buf, int len) {
     } else {
       Logger::nas_mm().debug(
           "Encoding %s error",
-          PDU_Session_Reactivation_Result_Error_Cause::GetIeName().c_str());
+          PduSessionReactivationResultErrorCause::GetIeName().c_str());
       return KEncodeDecodeError;
     }
   }
@@ -206,7 +206,7 @@ int ServiceAccept::Decode(uint8_t* buf, int len) {
       case kIeiPduSessionReactivationResult: {
         Logger::nas_mm().debug(
             "Decoding IEI 0x%x", kIeiPduSessionReactivationResult);
-        PDU_Session_Reactivation_Result ie_pdu_session_reactivation_result_tmp =
+        PduSessionReactivationResult ie_pdu_session_reactivation_result_tmp =
             {};
         if ((decoded_result = ie_pdu_session_reactivation_result_tmp.Decode(
                  buf + decoded_size, len - decoded_size, true)) ==
@@ -214,7 +214,7 @@ int ServiceAccept::Decode(uint8_t* buf, int len) {
           return decoded_result;
         decoded_size += decoded_result;
         ie_pdu_session_reactivation_result =
-            std::optional<PDU_Session_Reactivation_Result>(
+            std::optional<PduSessionReactivationResult>(
                 ie_pdu_session_reactivation_result_tmp);
         DECODE_U8_VALUE(buf + decoded_size, octet);
         Logger::nas_mm().debug("Next IEI (0x%x)", octet);
@@ -223,7 +223,7 @@ int ServiceAccept::Decode(uint8_t* buf, int len) {
       case kIeiPduSessionReactivationResultErrorCause: {
         Logger::nas_mm().debug(
             "Decoding IEI 0x%x", kIeiPduSessionReactivationResultErrorCause);
-        PDU_Session_Reactivation_Result_Error_Cause
+        PduSessionReactivationResultErrorCause
             ie_pdu_session_reactivation_result_error_cause_tmp = {};
         if ((decoded_result =
                  ie_pdu_session_reactivation_result_error_cause_tmp.Decode(
@@ -232,7 +232,7 @@ int ServiceAccept::Decode(uint8_t* buf, int len) {
           return decoded_result;
         decoded_size += decoded_result;
         ie_pdu_session_reactivation_result_error_cause =
-            std::optional<PDU_Session_Reactivation_Result_Error_Cause>(
+            std::optional<PduSessionReactivationResultErrorCause>(
                 ie_pdu_session_reactivation_result_error_cause_tmp);
         DECODE_U8_VALUE(buf + decoded_size, octet);
         Logger::nas_mm().debug("Next IEI (0x%x)", octet);

@@ -116,6 +116,6 @@ int EapMessage::Decode(uint8_t* buf, int len, bool is_iei) {
   }
 
   Logger::nas_mm().debug(
-      "Decoded EPS_NAS_Message_Container (len %d)", decoded_size);
+      "Decoded %s (len %d)", GetIeName().c_str(), decoded_size);
   return decoded_size;
 }

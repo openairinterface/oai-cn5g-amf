@@ -63,8 +63,8 @@ void RegistrationReject::SetEapMessage(const bstring& eap) {
 
 //------------------------------------------------------------------------------
 void RegistrationReject::SetRejectedNssai(
-    const std::vector<Rejected_SNSSAI>& nssai) {
-  ie_rejected_nssai = std::make_optional<Rejected_NSSAI>(kIeiRejectedNssaiRr);
+    const std::vector<RejectedSNssai>& nssai) {
+  ie_rejected_nssai = std::make_optional<RejectedNssai>(kIeiRejectedNssaiRr);
   ie_rejected_nssai.value().SetRejectedSNssais(nssai);
 }
 
@@ -142,7 +142,7 @@ int RegistrationReject::Encode(uint8_t* buf, int len) {
   // Rejected NSSAI
   if (!ie_rejected_nssai.has_value()) {
     Logger::nas_mm().debug(
-        "IE %s is not available", Rejected_NSSAI::GetIeName().c_str());
+        "IE %s is not available", RejectedNssai::GetIeName().c_str());
   } else {
     size = ie_rejected_nssai.value().Encode(
         buf + encoded_size, len - encoded_size);
@@ -150,7 +150,7 @@ int RegistrationReject::Encode(uint8_t* buf, int len) {
       encoded_size += size;
     } else {
       Logger::nas_mm().error(
-          "Encoding %s error", Rejected_NSSAI::GetIeName().c_str());
+          "Encoding %s error", RejectedNssai::GetIeName().c_str());
       return KEncodeDecodeError;
     }
   }
@@ -226,14 +226,13 @@ int RegistrationReject::Decode(uint8_t* buf, int len) {
 
       case kIeiRejectedNssaiRr: {
         Logger::nas_mm().debug("Decoding IEI 0x%x", kIeiRejectedNssaiRr);
-        Rejected_NSSAI ie_rejected_nssai_tmp(kIeiRejectedNssaiRr);
+        RejectedNssai ie_rejected_nssai_tmp(kIeiRejectedNssaiRr);
         if ((decoded_result = ie_rejected_nssai_tmp.Decode(
                  buf + decoded_size, len - decoded_size, true)) ==
             KEncodeDecodeError)
           return KEncodeDecodeError;
         decoded_size += decoded_result;
-        ie_rejected_nssai =
-            std::optional<Rejected_NSSAI>(ie_rejected_nssai_tmp);
+        ie_rejected_nssai = std::optional<RejectedNssai>(ie_rejected_nssai_tmp);
         DECODE_U8_VALUE(buf + decoded_size, octet);
         Logger::nas_mm().debug("Next IEI (0x%x)", octet);
       } break;

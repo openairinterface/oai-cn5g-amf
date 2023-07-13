@@ -50,15 +50,15 @@ class RegistrationReject : public NasMmPlainHeader {
   void SetEapMessage(const bstring& eap);
   // TODO: Get
 
-  void SetRejectedNssai(const std::vector<Rejected_SNSSAI>& nssai);
+  void SetRejectedNssai(const std::vector<RejectedSNssai>& nssai);
   // TODO: Get
 
  public:
-  _5gmmCause ie_5gmm_cause;                         // Mandatory
-  std::optional<GprsTimer2> ie_t3346_value;         // Optional
-  std::optional<GprsTimer2> ie_t3502_value;         // Optional
-  std::optional<EapMessage> ie_eap_message;         // Optional
-  std::optional<Rejected_NSSAI> ie_rejected_nssai;  // Release 16.4.1
+  _5gmmCause ie_5gmm_cause;                        // Mandatory
+  std::optional<GprsTimer2> ie_t3346_value;        // Optional
+  std::optional<GprsTimer2> ie_t3502_value;        // Optional
+  std::optional<EapMessage> ie_eap_message;        // Optional
+  std::optional<RejectedNssai> ie_rejected_nssai;  // Release 16.4.1
 };
 
 }  // namespace nas

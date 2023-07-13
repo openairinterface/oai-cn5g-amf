@@ -79,7 +79,7 @@ class SecurityModeCommand : public NasMmPlainHeader {
   std::optional<Additional5gSecurityInformation>
       ie_additional_5g_security_information;  // Optional
   std::optional<EapMessage> ie_eap_message;   // Optional
-  std::optional<ABBA> ie_abba;                // Optional
+  std::optional<Abba> ie_abba;                // Optional
   std::optional<S1UeSecurityCapability>
       ie_s1_ue_security_capability;  // Optional
 };

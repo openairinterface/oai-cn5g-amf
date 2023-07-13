@@ -23,7 +23,7 @@
 
 #include "3gpp_24.501.hpp"
 #include "common_defs.h"
-#include "Ie_Const.hpp"
+#include "IeConst.hpp"
 #include "logger.hpp"
 
 using namespace nas;
@@ -35,12 +35,12 @@ ladn::ladn() : dnn(false), ta_list(false) {}
 ladn::~ladn() {}
 
 //------------------------------------------------------------------------------
-void ladn::Set(const DNN& value) {
+void ladn::Set(const Dnn& value) {
   dnn = value;
 }
 
 //------------------------------------------------------------------------------
-void ladn::Set(const _5GSTrackingAreaIdList& value) {
+void ladn::Set(const _5gsTrackingAreaIdList& value) {
   ta_list = value;
 }
 

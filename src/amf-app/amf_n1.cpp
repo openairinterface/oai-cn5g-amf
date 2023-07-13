@@ -32,23 +32,23 @@
 #include "AuthenticationInfo.h"
 #include "AuthenticationRequest.hpp"
 #include "AuthenticationResponse.hpp"
+#include "ConfigurationUpdateCommand.hpp"
 #include "ConfirmationData.h"
 #include "ConfirmationDataResponse.h"
-#include "ConfigurationUpdateCommand.hpp"
 #include "DeregistrationAccept.hpp"
 #include "DeregistrationRequest.hpp"
 #include "IdentityRequest.hpp"
 #include "IdentityResponse.hpp"
 #include "RegistrationAccept.hpp"
+#include "RegistrationComplete.hpp"
 #include "RegistrationReject.hpp"
 #include "RegistrationRequest.hpp"
-#include "RegistrationComplete.hpp"
-#include "Rejected_SNSSAI.hpp"
+#include "RejectedSNssai.hpp"
 #include "SecurityModeCommand.hpp"
 #include "SecurityModeComplete.hpp"
 #include "ServiceAccept.hpp"
-#include "ServiceRequest.hpp"
 #include "ServiceReject.hpp"
+#include "ServiceRequest.hpp"
 #include "String2Value.hpp"
 #include "UEAuthenticationCtx.h"
 #include "ULNASTransport.hpp"
@@ -56,12 +56,12 @@
 #include "amf_config.hpp"
 #include "amf_n2.hpp"
 #include "amf_sbi.hpp"
-#include "output_wrapper.hpp"
 #include "itti.hpp"
 #include "itti_msg_n2.hpp"
 #include "itti_msg_sbi.hpp"
 #include "logger.hpp"
 #include "nas_algorithms.hpp"
+#include "output_wrapper.hpp"
 #include "sha256.hpp"
 
 extern "C" {
@@ -4509,7 +4509,7 @@ void amf_n1::initialize_registration_accept(
   amf_n2_inst->get_common_NSSAI(nc->ran_ue_ngap_id, uc->gnb_id, common_nssais);
 
   std::vector<struct SNSSAI_s> allowed_nssais;
-  std::vector<Rejected_SNSSAI> rejected_nssais;
+  std::vector<RejectedSNssai> rejected_nssais;
   std::vector<struct SNSSAI_s> requested_nssai;
 
   // If no requested NSSAI available, use subscribed S-NSSAIs instead
@@ -4564,7 +4564,7 @@ void amf_n1::initialize_registration_accept(
 
     if (!found) {
       // Add to list of Rejected NSSAIs
-      Rejected_SNSSAI rejected_snssai = {};
+      RejectedSNssai rejected_snssai = {};
       rejected_snssai.setSST(rn.sst);
       if (rn.sd != SD_NO_VALUE) {
         rejected_snssai.setSd(rn.sd);

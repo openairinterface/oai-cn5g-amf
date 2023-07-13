@@ -24,7 +24,7 @@
 
 #include "3gpp_24.501.hpp"
 #include "common_defs.h"
-#include "Ie_Const.hpp"
+#include "IeConst.hpp"
 #include "logger.hpp"
 
 #include <optional>
