@@ -35,7 +35,9 @@ extern "C" {
 #include "TLVEncoder.h"
 #include "bstrlib.h"
 }
+
 using namespace std;
+
 namespace nas {
 
 typedef struct SNSSAI_s {

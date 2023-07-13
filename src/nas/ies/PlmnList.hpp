@@ -23,7 +23,7 @@
 #define _PLMN_LIST_H_
 
 #include "Type4NasIe.hpp"
-#include "struct.hpp"
+#include "Struct.hpp"
 
 constexpr uint8_t kPlmnListMinimumLength = 5;
 constexpr uint8_t kPlmnListMaximumLength = 47;

@@ -22,10 +22,10 @@
 #ifndef _3GPP_TS_24501_H_
 #define _3GPP_TS_24501_H_
 
-#include "3gpp_24.007.hpp"
-
 #include <string>
 #include <vector>
+
+#include "3gpp_24.007.hpp"
 
 // Security Header Type
 #define PLAIN_5GS_MSG 0b0000
@@ -136,11 +136,6 @@ enum class _5gsMobileIdentityEnum : uint8_t {
 #define EA0_5G 0b000
 #define EA1_128_5G 0b001
 #define EA2_128_5G 0b010
-
-static const std::vector<std::string> nas_itegrity_algorithm_list_e2str = {
-    "NIA0", "NIA1", "NIA2"};
-static const std::vector<std::string> nas_ciphering_algorithm_list_e2str = {
-    "NEA0", "NEA1", "NEA2"};
 
 // 5G MM CAUSE value for 5g mobility management (Annex A)
 #define _5GMM_CAUSE_ILLEGAL_UE 3

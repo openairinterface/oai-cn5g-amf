@@ -25,7 +25,7 @@
 #include <vector>
 
 #include "Type4NasIe.hpp"
-#include "struct.hpp"
+#include "Struct.hpp"
 
 constexpr uint8_t k5gsTrackingAreaIdListMinimumLength = 9;
 constexpr uint8_t k5gsTrackingAreaIdListMaximumLength = 114;

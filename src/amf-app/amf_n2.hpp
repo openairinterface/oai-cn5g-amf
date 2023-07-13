@@ -29,7 +29,7 @@
 #include "itti_msg_n2.hpp"
 #include "ngap_app.hpp"
 #include "ue_ngap_context.hpp"
-#include "struct.hpp"
+#include "Struct.hpp"
 
 namespace amf_application {
 

@@ -23,7 +23,7 @@
 #define _S_NSSAI_NAS_H_
 
 #include "Type4NasIe.hpp"
-#include "struct.hpp"
+#include "Struct.hpp"
 
 constexpr uint8_t kSNssaiMinimumLength = 3;
 constexpr uint8_t kSNssaiMaximumLength = 10;
