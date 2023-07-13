@@ -51,7 +51,7 @@
 #include "ServiceRequest.hpp"
 #include "String2Value.hpp"
 #include "UEAuthenticationCtx.h"
-#include "ULNASTransport.hpp"
+#include "UlNasTransport.hpp"
 #include "amf_app.hpp"
 #include "amf_config.hpp"
 #include "amf_n2.hpp"
@@ -3612,7 +3612,7 @@ void amf_n1::ul_nas_transport_handle(
     const plmn_t& plmn) {
   // Decode UL_NAS_TRANSPORT message
   Logger::amf_n1().debug("Handling UL NAS Transport");
-  auto ul_nas = std::make_unique<ULNASTransport>();
+  auto ul_nas = std::make_unique<UlNasTransport>();
   ul_nas->Decode((uint8_t*) bdata(nas), blength(nas));
   uint8_t payload_type   = ul_nas->GetPayloadContainerType();
   uint8_t pdu_session_id = 0;
@@ -3633,7 +3633,7 @@ void amf_n1::ul_nas_transport_handle(
     if (!ul_nas->GetSNssai(snssai)) {  // If no SNSSAI in this message, use the
                                        // one in Registration Request
       Logger::amf_n1().debug(
-          "No Requested NSSAI available in ULNASTransport, use NSSAI from "
+          "No Requested NSSAI available in UlNasTransport, use NSSAI from "
           "Requested/Configured NSSAI!");
 
       std::shared_ptr<nas_context> nc = {};
@@ -3706,7 +3706,7 @@ void amf_n1::ul_nas_transport_handle(
 
     if (!ul_nas->GetDnn(dnn)) {
       Logger::amf_n1().debug(
-          "No DNN available in ULNASTransport, use default DNN: %s",
+          "No DNN available in UlNasTransport, use default DNN: %s",
           DEFAULT_DNN);
       // TODO: use default DNN for the corresponding NSSAI
     }

@@ -26,10 +26,10 @@
 
 namespace nas {
 
-class ULNASTransport : public NasMmPlainHeader {
+class UlNasTransport : public NasMmPlainHeader {
  public:
-  ULNASTransport();
-  ~ULNASTransport();
+  UlNasTransport();
+  ~UlNasTransport();
 
   void SetHeader(uint8_t security_header_type);
 

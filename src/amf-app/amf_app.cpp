@@ -28,7 +28,7 @@
 #include <stdexcept>
 
 #include "3gpp_29.500.h"
-#include "DLNASTransport.hpp"
+#include "DlNasTransport.hpp"
 #include "GlobalRanNodeId.h"
 #include "RegistrationContextContainer.h"
 #include "UeN1N2InfoSubscriptionCreatedData.h"
@@ -353,7 +353,7 @@ void amf_app::handle_itti_message(
 
     if (itti_msg.is_n1sm_set) {
       // Encode DL NAS TRANSPORT message(NAS message)
-      auto dl = std::make_unique<DLNASTransport>();
+      auto dl = std::make_unique<DlNasTransport>();
       dl->SetHeader(PLAIN_5GS_MSG);
       dl->SetPayloadContainerType(N1_SM_INFORMATION);
       dl->SetPayloadContainer(

@@ -19,12 +19,12 @@
  *      contact@openairinterface.org
  */
 
-#include "ULNASTransport.hpp"
+#include "UlNasTransport.hpp"
 
 using namespace nas;
 
 //------------------------------------------------------------------------------
-ULNASTransport::ULNASTransport()
+UlNasTransport::UlNasTransport()
     : NasMmPlainHeader(EPD_5GS_MM_MSG, UL_NAS_TRANSPORT) {
   ie_pdu_session_id                = std::nullopt;
   ie_old_pdu_session_id            = std::nullopt;
@@ -37,48 +37,48 @@ ULNASTransport::ULNASTransport()
 }
 
 //------------------------------------------------------------------------------
-ULNASTransport::~ULNASTransport() {}
+UlNasTransport::~UlNasTransport() {}
 
 //------------------------------------------------------------------------------
-void ULNASTransport::SetHeader(uint8_t security_header_type) {
+void UlNasTransport::SetHeader(uint8_t security_header_type) {
   NasMmPlainHeader::SetSecurityHeaderType(security_header_type);
 }
 
 //------------------------------------------------------------------------------
-void ULNASTransport::SetPayloadContainerType(uint8_t value) {
+void UlNasTransport::SetPayloadContainerType(uint8_t value) {
   ie_payload_container_type.SetValue(value);
 }
 
 //------------------------------------------------------------------------------
-uint8_t ULNASTransport::GetPayloadContainerType() const {
+uint8_t UlNasTransport::GetPayloadContainerType() const {
   return ie_payload_container_type.GetValue();
 }
 
 //------------------------------------------------------------------------------
-void ULNASTransport::SetPayloadContainer(
+void UlNasTransport::SetPayloadContainer(
     const std::vector<PayloadContainerEntry>& content) {
   ie_payload_container.SetValue(content);
 }
 
 //------------------------------------------------------------------------------
-void ULNASTransport::GetPayloadContainer(bstring& content) const {
+void UlNasTransport::GetPayloadContainer(bstring& content) const {
   ie_payload_container.GetValue(content);
 }
 
 //------------------------------------------------------------------------------
-void ULNASTransport::GetPayloadContainer(
+void UlNasTransport::GetPayloadContainer(
     std::vector<PayloadContainerEntry>& content) const {
   ie_payload_container.GetValue(content);
 }
 
 //------------------------------------------------------------------------------
-void ULNASTransport::SetPduSessionId(uint8_t value) {
+void UlNasTransport::SetPduSessionId(uint8_t value) {
   ie_pdu_session_id =
       std::make_optional<PduSessionIdentity2>(kIeiPduSessionId, value);
 }
 
 //------------------------------------------------------------------------------
-bool ULNASTransport::GetPduSessionId(uint8_t& value) const {
+bool UlNasTransport::GetPduSessionId(uint8_t& value) const {
   if (ie_pdu_session_id.has_value()) {
     value = ie_pdu_session_id.value().GetValue();
     return true;
@@ -88,13 +88,13 @@ bool ULNASTransport::GetPduSessionId(uint8_t& value) const {
 }
 
 //------------------------------------------------------------------------------
-void ULNASTransport::SetOldPduSessionId(uint8_t value) {
+void UlNasTransport::SetOldPduSessionId(uint8_t value) {
   ie_old_pdu_session_id =
       std::make_optional<PduSessionIdentity2>(kIeiOldPduSessionId, value);
 }
 
 //------------------------------------------------------------------------------
-bool ULNASTransport::GetOldPduSessionId(uint8_t& value) const {
+bool UlNasTransport::GetOldPduSessionId(uint8_t& value) const {
   if (ie_old_pdu_session_id.has_value()) {
     value = ie_old_pdu_session_id.value().GetValue();
     return true;
@@ -104,12 +104,12 @@ bool ULNASTransport::GetOldPduSessionId(uint8_t& value) const {
 }
 
 //------------------------------------------------------------------------------
-void ULNASTransport::SetRequestType(uint8_t value) {
+void UlNasTransport::SetRequestType(uint8_t value) {
   ie_request_type = std::make_optional<RequestType>(value);
 }
 
 //------------------------------------------------------------------------------
-bool ULNASTransport::GetRequestType(uint8_t& value) const {
+bool UlNasTransport::GetRequestType(uint8_t& value) const {
   if (ie_request_type.has_value()) {
     value = ie_request_type.value().GetValue();
     return true;
@@ -119,13 +119,13 @@ bool ULNASTransport::GetRequestType(uint8_t& value) const {
 }
 
 //------------------------------------------------------------------------------
-void ULNASTransport::SetSNssai(const SNSSAI_s& snssai) {
+void UlNasTransport::SetSNssai(const SNSSAI_s& snssai) {
   ie_s_nssai =
       std::make_optional<SNssai>(std::optional<uint8_t>{kIeiSNssai}, snssai);
 }
 
 //------------------------------------------------------------------------------
-bool ULNASTransport::GetSNssai(SNSSAI_s& snssai) const {
+bool UlNasTransport::GetSNssai(SNSSAI_s& snssai) const {
   if (ie_s_nssai.has_value()) {
     ie_s_nssai.value().getValue(snssai);
     return true;
@@ -135,12 +135,12 @@ bool ULNASTransport::GetSNssai(SNSSAI_s& snssai) const {
 }
 
 //------------------------------------------------------------------------------
-void ULNASTransport::SetDnn(const bstring& dnn) {
+void UlNasTransport::SetDnn(const bstring& dnn) {
   ie_dnn = std::make_optional<Dnn>(dnn);
 }
 
 //------------------------------------------------------------------------------
-bool ULNASTransport::GetDnn(bstring& dnn) const {
+bool UlNasTransport::GetDnn(bstring& dnn) const {
   if (ie_dnn.has_value()) {
     ie_dnn.value().GetValue(dnn);
     return true;
@@ -150,24 +150,24 @@ bool ULNASTransport::GetDnn(bstring& dnn) const {
 }
 
 //------------------------------------------------------------------------------
-void ULNASTransport::SetAdditionalInformation(const bstring& value) {
+void UlNasTransport::SetAdditionalInformation(const bstring& value) {
   ie_additional_information = std::make_optional<AdditionalInformation>(value);
 }
 
 //------------------------------------------------------------------------------
-void ULNASTransport::SetMaPduSessionInformation(uint8_t value) {
+void UlNasTransport::SetMaPduSessionInformation(uint8_t value) {
   ie_ma_pdu_session_information =
       std::make_optional<MaPduSessionInformation>(value);
 }
 
 //------------------------------------------------------------------------------
-void ULNASTransport::SetReleaseAssistanceIndication(uint8_t value) {
+void UlNasTransport::SetReleaseAssistanceIndication(uint8_t value) {
   ie_release_assistance_indication =
       std::make_optional<ReleaseAssistanceIndication>(value);
 }
 
 //------------------------------------------------------------------------------
-int ULNASTransport::Encode(uint8_t* buf, int len) {
+int UlNasTransport::Encode(uint8_t* buf, int len) {
   Logger::nas_mm().debug("Encoding UL NAS Transport message");
   int encoded_size    = 0;
   int encoded_ie_size = 0;
@@ -324,8 +324,8 @@ int ULNASTransport::Encode(uint8_t* buf, int len) {
 }
 
 //------------------------------------------------------------------------------
-int ULNASTransport::Decode(uint8_t* buf, int len) {
-  Logger::nas_mm().debug("Decoding ULNASTransport message");
+int UlNasTransport::Decode(uint8_t* buf, int len) {
+  Logger::nas_mm().debug("Decoding UlNasTransport message");
   int decoded_size   = 0;
   int decoded_result = 0;
 
@@ -501,6 +501,6 @@ int ULNASTransport::Decode(uint8_t* buf, int len) {
   }
 
   Logger::nas_mm().debug(
-      "Decoded ULNASTransport message len (%d)", decoded_size);
+      "Decoded UlNasTransport message len (%d)", decoded_size);
   return decoded_size;
 }
