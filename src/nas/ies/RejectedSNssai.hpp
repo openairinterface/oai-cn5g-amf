@@ -23,6 +23,7 @@
 #define _REJECTED_SNSSAI_H_
 
 #include <stdint.h>
+
 #include <optional>
 
 namespace nas {

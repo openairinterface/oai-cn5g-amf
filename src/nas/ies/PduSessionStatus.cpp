@@ -22,40 +22,40 @@
 #include "PduSessionStatus.hpp"
 
 #include "3gpp_24.501.hpp"
-#include "common_defs.h"
 #include "IeConst.hpp"
+#include "common_defs.h"
 #include "logger.hpp"
 
 using namespace nas;
 
 //------------------------------------------------------------------------------
-PDUSessionStatus::PDUSessionStatus() : Type4NasIe(kIeiPduSessionStatus) {
+PduSessionStatus::PduSessionStatus() : Type4NasIe(kIeiPduSessionStatus) {
   _value = 0;
   SetLengthIndicator(2);
 }
 
 //------------------------------------------------------------------------------
-PDUSessionStatus::PDUSessionStatus(uint16_t value)
+PduSessionStatus::PduSessionStatus(uint16_t value)
     : Type4NasIe(kIeiPduSessionStatus) {
   _value = value;
   SetLengthIndicator(2);
 }
 
 //------------------------------------------------------------------------------
-PDUSessionStatus::~PDUSessionStatus() {}
+PduSessionStatus::~PduSessionStatus() {}
 
 //------------------------------------------------------------------------------
-void PDUSessionStatus::SetValue(uint16_t value) {
+void PduSessionStatus::SetValue(uint16_t value) {
   _value = value;
 }
 
 //------------------------------------------------------------------------------
-uint16_t PDUSessionStatus::GetValue() const {
+uint16_t PduSessionStatus::GetValue() const {
   return _value;
 }
 
 //------------------------------------------------------------------------------
-int PDUSessionStatus::Encode(uint8_t* buf, int len) {
+int PduSessionStatus::Encode(uint8_t* buf, int len) {
   Logger::nas_mm().debug("Encoding %s", GetIeName().c_str());
 
   int encoded_size = 0;
@@ -73,7 +73,7 @@ int PDUSessionStatus::Encode(uint8_t* buf, int len) {
 }
 
 //------------------------------------------------------------------------------
-int PDUSessionStatus::Decode(uint8_t* buf, int len, bool is_iei) {
+int PduSessionStatus::Decode(uint8_t* buf, int len, bool is_iei) {
   Logger::nas_mm().debug("Decoding %s", GetIeName().c_str());
 
   int decoded_size = 0;

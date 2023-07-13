@@ -19,12 +19,12 @@
  *      contact@openairinterface.org
  */
 
-#include "UESecurityCapability.hpp"
+#include "UeSecurityCapability.hpp"
 
 using namespace nas;
 
 //------------------------------------------------------------------------------
-UESecurityCapability::UESecurityCapability() : Type4NasIe() {
+UeSecurityCapability::UeSecurityCapability() : Type4NasIe() {
   _5g_ea_ = 0;
   _5g_ia_ = 0;
   eea_    = std::nullopt;
@@ -33,7 +33,7 @@ UESecurityCapability::UESecurityCapability() : Type4NasIe() {
 }
 
 //------------------------------------------------------------------------------
-UESecurityCapability::UESecurityCapability(uint8_t iei) : Type4NasIe(iei) {
+UeSecurityCapability::UeSecurityCapability(uint8_t iei) : Type4NasIe(iei) {
   _5g_ea_ = 0;
   _5g_ia_ = 0;
   eea_    = std::nullopt;
@@ -42,7 +42,7 @@ UESecurityCapability::UESecurityCapability(uint8_t iei) : Type4NasIe(iei) {
 }
 
 //------------------------------------------------------------------------------
-UESecurityCapability::UESecurityCapability(uint8_t _5g_ea, uint8_t _5g_ia)
+UeSecurityCapability::UeSecurityCapability(uint8_t _5g_ea, uint8_t _5g_ia)
     : Type4NasIe() {
   _5g_ea_ = _5g_ea;
   _5g_ia_ = _5g_ia;
@@ -52,7 +52,7 @@ UESecurityCapability::UESecurityCapability(uint8_t _5g_ea, uint8_t _5g_ia)
 }
 
 //------------------------------------------------------------------------------
-UESecurityCapability::UESecurityCapability(
+UeSecurityCapability::UeSecurityCapability(
     uint8_t iei, uint8_t _5g_ea, uint8_t _5g_ia)
     : Type4NasIe(iei) {
   _5g_ea_ = _5g_ea;
@@ -63,7 +63,7 @@ UESecurityCapability::UESecurityCapability(
 }
 
 //------------------------------------------------------------------------------
-UESecurityCapability::UESecurityCapability(
+UeSecurityCapability::UeSecurityCapability(
     uint8_t iei, uint8_t _5g_ea, uint8_t _5g_ia, uint8_t eea, uint8_t eia)
     : Type4NasIe(iei) {
   _5g_ea_ = _5g_ea;
@@ -74,7 +74,7 @@ UESecurityCapability::UESecurityCapability(
 }
 
 //------------------------------------------------------------------------------
-UESecurityCapability::UESecurityCapability(
+UeSecurityCapability::UeSecurityCapability(
     uint8_t _5g_ea, uint8_t _5g_ia, uint8_t eea, uint8_t eia)
     : Type4NasIe() {
   _5g_ea_ = _5g_ea;
@@ -85,11 +85,11 @@ UESecurityCapability::UESecurityCapability(
 }
 
 //------------------------------------------------------------------------------
-UESecurityCapability::~UESecurityCapability() {}
+UeSecurityCapability::~UeSecurityCapability() {}
 
-void UESecurityCapability::operator=(
-    const UESecurityCapability& ue_security_capability) {
-  UESecurityCapability m_ue_security_capability;
+void UeSecurityCapability::operator=(
+    const UeSecurityCapability& ue_security_capability) {
+  UeSecurityCapability m_ue_security_capability;
   _5g_ea_     = ue_security_capability.GetEa();
   _5g_ia_     = ue_security_capability.GetIa();
   uint8_t eea = 0;
@@ -105,32 +105,32 @@ void UESecurityCapability::operator=(
 }
 
 //------------------------------------------------------------------------------
-void UESecurityCapability::SetEa(uint8_t value) {
+void UeSecurityCapability::SetEa(uint8_t value) {
   _5g_ea_ = value;
 }
 
 //------------------------------------------------------------------------------
-uint8_t UESecurityCapability::GetEa() const {
+uint8_t UeSecurityCapability::GetEa() const {
   return _5g_ea_;
 }
 
 //------------------------------------------------------------------------------
-void UESecurityCapability::SetIa(uint8_t value) {
+void UeSecurityCapability::SetIa(uint8_t value) {
   _5g_ia_ = value;
 }
 
 //------------------------------------------------------------------------------
-uint8_t UESecurityCapability::GetIa() const {
+uint8_t UeSecurityCapability::GetIa() const {
   return _5g_ia_;
 }
 
 //------------------------------------------------------------------------------
-void UESecurityCapability::SetEea(uint8_t value) {
+void UeSecurityCapability::SetEea(uint8_t value) {
   eea_ = std::make_optional<uint8_t>(value);
 }
 
 //------------------------------------------------------------------------------
-bool UESecurityCapability::GetEea(uint8_t& value) const {
+bool UeSecurityCapability::GetEea(uint8_t& value) const {
   if (eea_.has_value()) {
     value = eea_.value();
     return true;
@@ -139,12 +139,12 @@ bool UESecurityCapability::GetEea(uint8_t& value) const {
 }
 
 //------------------------------------------------------------------------------
-void UESecurityCapability::SetEia(uint8_t value) {
+void UeSecurityCapability::SetEia(uint8_t value) {
   eia_ = std::make_optional<uint8_t>(value);
 }
 
 //------------------------------------------------------------------------------
-bool UESecurityCapability::GetEia(uint8_t& value) const {
+bool UeSecurityCapability::GetEia(uint8_t& value) const {
   if (eia_.has_value()) {
     value = eia_.value();
     return true;
@@ -153,13 +153,13 @@ bool UESecurityCapability::GetEia(uint8_t& value) const {
 }
 
 //------------------------------------------------------------------------------
-void UESecurityCapability::Set(uint8_t _5g_ea, uint8_t _5g_ia) {
+void UeSecurityCapability::Set(uint8_t _5g_ea, uint8_t _5g_ia) {
   _5g_ea_ = _5g_ea;
   _5g_ia_ = _5g_ia;
 }
 
 //------------------------------------------------------------------------------
-void UESecurityCapability::Set(
+void UeSecurityCapability::Set(
     uint8_t _5g_ea, uint8_t _5g_ia, uint8_t eea, uint8_t eia) {
   _5g_ea_ = _5g_ea;
   _5g_ia_ = _5g_ia;
@@ -169,7 +169,7 @@ void UESecurityCapability::Set(
 }
 
 //------------------------------------------------------------------------------
-int UESecurityCapability::Encode(uint8_t* buf, int len) {
+int UeSecurityCapability::Encode(uint8_t* buf, int len) {
   Logger::nas_mm().debug("Encoding %s", GetIeName().c_str());
   int ie_len = GetIeLength();
 
@@ -206,7 +206,7 @@ int UESecurityCapability::Encode(uint8_t* buf, int len) {
 }
 
 //------------------------------------------------------------------------------
-int UESecurityCapability::Decode(uint8_t* buf, int len, bool is_iei) {
+int UeSecurityCapability::Decode(uint8_t* buf, int len, bool is_iei) {
   Logger::nas_mm().debug("Decoding %s", GetIeName().c_str());
 
   if (len < kUeSecurityCapabilityMinimumLength) {

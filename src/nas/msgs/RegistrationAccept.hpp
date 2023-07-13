@@ -160,7 +160,7 @@ class RegistrationAccept : public NasMmPlainHeader {
   std::optional<NSSAI> ie_configured_nssai;           // Optional
   std::optional<_5gsNetworkFeatureSupport>
       ie_5gs_network_feature_support;                     // Optional
-  std::optional<PDUSessionStatus> ie_pdu_session_status;  // Optional
+  std::optional<PduSessionStatus> ie_pdu_session_status;  // Optional
   std::optional<PduSessionReactivationResult>
       ie_pdu_session_reactivation_result;  // Optional
   std::optional<PduSessionReactivationResultErrorCause>

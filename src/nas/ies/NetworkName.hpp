@@ -22,9 +22,11 @@
 #ifndef _NETWORK_NAME_H_
 #define _NETWORK_NAME_H_
 
-#include "bstrlib.h"
 #include <stdint.h>
+
 #include <string>
+
+#include "bstrlib.h"
 
 constexpr uint8_t kNetworkNameMinimumLength = 3;
 constexpr auto kNetworkNameIeName           = "Network Name";

@@ -22,6 +22,7 @@
 #include "RequestType.hpp"
 
 #include "logger.hpp"
+
 using namespace nas;
 
 //------------------------------------------------------------------------------

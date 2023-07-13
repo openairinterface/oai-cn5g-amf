@@ -22,10 +22,10 @@
 #include "_5gsTrackingAreaIdentity.hpp"
 
 #include "3gpp_24.501.hpp"
+#include "IeConst.hpp"
+#include "NasUtils.hpp"
 #include "common_defs.h"
 #include "logger.hpp"
-#include "NasUtils.hpp"
-#include "IeConst.hpp"
 
 using namespace nas;
 

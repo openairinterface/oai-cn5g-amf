@@ -210,14 +210,14 @@ bool RegistrationRequest::Get5gmmCapability(uint8_t& value) const {
 
 //------------------------------------------------------------------------------
 void RegistrationRequest::SetUeSecurityCapability(uint8_t ea, uint8_t ia) {
-  ie_ue_security_capability = std::make_optional<UESecurityCapability>(
+  ie_ue_security_capability = std::make_optional<UeSecurityCapability>(
       kIeiUeSecurityCapability, ea, ia);
 }
 
 //------------------------------------------------------------------------------
 void RegistrationRequest::SetUeSecurityCapability(
     uint8_t ea, uint8_t ia, uint8_t eea, uint8_t eia) {
-  ie_ue_security_capability = std::make_optional<UESecurityCapability>(
+  ie_ue_security_capability = std::make_optional<UeSecurityCapability>(
       kIeiUeSecurityCapability, ea, ia, eea, eia);
 }
 
@@ -252,7 +252,7 @@ bool RegistrationRequest::GetUeSecurityCapability(
 }
 
 //------------------------------------------------------------------------------
-std::optional<UESecurityCapability>
+std::optional<UeSecurityCapability>
 RegistrationRequest::GetUeSecurityCapability() const {
   return ie_ue_security_capability;
 }
@@ -283,7 +283,7 @@ void RegistrationRequest::SetLastVisitedRegisteredTai(
 
 //------------------------------------------------------------------------------
 void RegistrationRequest::SetUeNetworkCapability(uint8_t eea, uint8_t eia) {
-  ie_s1_ue_network_capability = std::make_optional<UENetworkCapability>(
+  ie_s1_ue_network_capability = std::make_optional<UeNetworkCapability>(
       kIeiUeNetworkCapability, eea, eia);
 }
 
@@ -316,7 +316,7 @@ bool RegistrationRequest::GetUplinkDataStatus(uint16_t& value) const {
 
 //------------------------------------------------------------------------------
 void RegistrationRequest::SetPduSessionStatus(uint16_t value) {
-  ie_pdu_session_status = std::make_optional<PDUSessionStatus>(value);
+  ie_pdu_session_status = std::make_optional<PduSessionStatus>(value);
 }
 
 //------------------------------------------------------------------------------
@@ -347,7 +347,7 @@ bool RegistrationRequest::GetMicoIndication(
 
 //------------------------------------------------------------------------------
 void RegistrationRequest::SetUeStatus(bool n1, bool s1) {
-  ie_ue_status = std::make_optional<UEStatus>(n1, s1);
+  ie_ue_status = std::make_optional<UeStatus>(n1, s1);
 }
 
 //------------------------------------------------------------------------------
@@ -365,7 +365,7 @@ bool RegistrationRequest::GetUeStatus(
 //------------------------------------------------------------------------------
 void RegistrationRequest::SetAllowedPduSessionStatus(uint16_t value) {
   ie_allowed_pdu_session_status =
-      std::make_optional<AllowedPDUSessionStatus>(value);
+      std::make_optional<AllowedPduSessionStatus>(value);
 }
 
 //------------------------------------------------------------------------------
@@ -379,7 +379,7 @@ uint16_t RegistrationRequest::GetAllowedPduSessionStatus() const {
 
 //------------------------------------------------------------------------------
 void RegistrationRequest::SetUeUsageSetting(bool ues_usage_setting) {
-  ie_ues_usage_setting = std::make_optional<UEUsageSetting>(ues_usage_setting);
+  ie_ues_usage_setting = std::make_optional<UeUsageSetting>(ues_usage_setting);
 }
 
 //------------------------------------------------------------------------------
@@ -614,12 +614,12 @@ int RegistrationRequest::Encode(uint8_t* buf, int len) {
   // UE security capability
   if (!ie_ue_security_capability.has_value()) {
     Logger::nas_mm().debug(
-        "IE %s is not available", UESecurityCapability::GetIeName().c_str());
+        "IE %s is not available", UeSecurityCapability::GetIeName().c_str());
   } else {
     if ((encoded_ie_size = ie_ue_security_capability.value().Encode(
              buf + encoded_size, len - encoded_size)) == KEncodeDecodeError) {
       Logger::nas_mm().error(
-          "Encoding %s error", UESecurityCapability::GetIeName().c_str());
+          "Encoding %s error", UeSecurityCapability::GetIeName().c_str());
       return KEncodeDecodeError;
     } else {
       encoded_size += encoded_ie_size;
@@ -659,12 +659,12 @@ int RegistrationRequest::Encode(uint8_t* buf, int len) {
   // S1 UE network capability
   if (!ie_s1_ue_network_capability.has_value()) {
     Logger::nas_mm().debug(
-        "IE %s is not available", UENetworkCapability::GetIeName().c_str());
+        "IE %s is not available", UeNetworkCapability::GetIeName().c_str());
   } else {
     if ((encoded_ie_size = ie_s1_ue_network_capability.value().Encode(
              buf + encoded_size, len - encoded_size)) == KEncodeDecodeError) {
       Logger::nas_mm().error(
-          "Encoding %s error", UENetworkCapability::GetIeName().c_str());
+          "Encoding %s error", UeNetworkCapability::GetIeName().c_str());
       return KEncodeDecodeError;
     } else {
       encoded_size += encoded_ie_size;
@@ -687,12 +687,12 @@ int RegistrationRequest::Encode(uint8_t* buf, int len) {
 
   if (!ie_pdu_session_status.has_value()) {
     Logger::nas_mm().debug(
-        "IE %s is not available", PDUSessionStatus::GetIeName().c_str());
+        "IE %s is not available", PduSessionStatus::GetIeName().c_str());
   } else {
     if ((encoded_ie_size = ie_pdu_session_status.value().Encode(
              buf + encoded_size, len - encoded_size)) == KEncodeDecodeError) {
       Logger::nas_mm().error(
-          "Encoding %s error", PDUSessionStatus::GetIeName().c_str());
+          "Encoding %s error", PduSessionStatus::GetIeName().c_str());
       return KEncodeDecodeError;
     } else {
       encoded_size += encoded_ie_size;
@@ -715,12 +715,12 @@ int RegistrationRequest::Encode(uint8_t* buf, int len) {
 
   if (!ie_ue_status.has_value()) {
     Logger::nas_mm().debug(
-        "IE %s is not available", UEStatus::GetIeName().c_str());
+        "IE %s is not available", UeStatus::GetIeName().c_str());
   } else {
     if ((encoded_ie_size = ie_ue_status.value().Encode(
              buf + encoded_size, len - encoded_size)) == KEncodeDecodeError) {
       Logger::nas_mm().error(
-          "Encoding %s error", UEStatus::GetIeName().c_str());
+          "Encoding %s error", UeStatus::GetIeName().c_str());
       return KEncodeDecodeError;
     } else {
       encoded_size += encoded_ie_size;
@@ -743,12 +743,12 @@ int RegistrationRequest::Encode(uint8_t* buf, int len) {
 
   if (!ie_allowed_pdu_session_status.has_value()) {
     Logger::nas_mm().debug(
-        "IE %s is not available", AllowedPDUSessionStatus::GetIeName().c_str());
+        "IE %s is not available", AllowedPduSessionStatus::GetIeName().c_str());
   } else {
     if ((encoded_ie_size = ie_allowed_pdu_session_status.value().Encode(
              buf + encoded_size, len - encoded_size)) == KEncodeDecodeError) {
       Logger::nas_mm().error(
-          "Encoding %s error", AllowedPDUSessionStatus::GetIeName().c_str());
+          "Encoding %s error", AllowedPduSessionStatus::GetIeName().c_str());
       return KEncodeDecodeError;
     } else {
       encoded_size += encoded_ie_size;
@@ -757,12 +757,12 @@ int RegistrationRequest::Encode(uint8_t* buf, int len) {
 
   if (!ie_ues_usage_setting.has_value()) {
     Logger::nas_mm().debug(
-        "IE %s is not available", UEUsageSetting::GetIeName().c_str());
+        "IE %s is not available", UeUsageSetting::GetIeName().c_str());
   } else {
     if ((encoded_ie_size = ie_ues_usage_setting.value().Encode(
              buf + encoded_size, len - encoded_size)) == KEncodeDecodeError) {
       Logger::nas_mm().error(
-          "Encoding %s error", UEUsageSetting::GetIeName().c_str());
+          "Encoding %s error", UeUsageSetting::GetIeName().c_str());
       return KEncodeDecodeError;
     } else {
       encoded_size += encoded_ie_size;
@@ -1015,7 +1015,7 @@ int RegistrationRequest::Decode(uint8_t* buf, int len) {
 
       case kIeiUeSecurityCapability: {
         Logger::nas_mm().debug("Decoding IEI 0x%x", kIeiUeSecurityCapability);
-        UESecurityCapability ie_ue_security_capability_tmp = {};
+        UeSecurityCapability ie_ue_security_capability_tmp = {};
         if ((decoded_result = ie_ue_security_capability_tmp.Decode(
                  buf + decoded_size, len - decoded_size, true)) ==
             KEncodeDecodeError) {
@@ -1023,7 +1023,7 @@ int RegistrationRequest::Decode(uint8_t* buf, int len) {
         }
         decoded_size += decoded_result;
         ie_ue_security_capability =
-            std::optional<UESecurityCapability>(ie_ue_security_capability_tmp);
+            std::optional<UeSecurityCapability>(ie_ue_security_capability_tmp);
         DECODE_U8_VALUE(buf + decoded_size, octet);
         Logger::nas_mm().debug("Next IEI 0x%x", octet);
       } break;
@@ -1061,7 +1061,7 @@ int RegistrationRequest::Decode(uint8_t* buf, int len) {
 
       case kIeiUeNetworkCapability: {
         Logger::nas_mm().debug("Decoding IEI 0x%x", kIeiUeNetworkCapability);
-        UENetworkCapability ie_s1_ue_network_capability_tmp = {};
+        UeNetworkCapability ie_s1_ue_network_capability_tmp = {};
         if ((decoded_result = ie_s1_ue_network_capability_tmp.Decode(
                  buf + decoded_size, len - decoded_size, true)) ==
             KEncodeDecodeError) {
@@ -1069,7 +1069,7 @@ int RegistrationRequest::Decode(uint8_t* buf, int len) {
         }
         decoded_size += decoded_result;
         ie_s1_ue_network_capability =
-            std::optional<UENetworkCapability>(ie_s1_ue_network_capability_tmp);
+            std::optional<UeNetworkCapability>(ie_s1_ue_network_capability_tmp);
         DECODE_U8_VALUE(buf + decoded_size, octet);
         Logger::nas_mm().debug("Next IEI 0x%x", octet);
       } break;
@@ -1091,7 +1091,7 @@ int RegistrationRequest::Decode(uint8_t* buf, int len) {
 
       case kIeiPduSessionStatus: {
         Logger::nas_mm().debug("Decoding IEI 0x%x", kIeiPduSessionStatus);
-        PDUSessionStatus ie_pdu_session_status_tmp = {};
+        PduSessionStatus ie_pdu_session_status_tmp = {};
         if ((decoded_result = ie_pdu_session_status_tmp.Decode(
                  buf + decoded_size, len - decoded_size, true)) ==
             KEncodeDecodeError) {
@@ -1099,21 +1099,21 @@ int RegistrationRequest::Decode(uint8_t* buf, int len) {
         }
         decoded_size += decoded_result;
         ie_pdu_session_status =
-            std::optional<PDUSessionStatus>(ie_pdu_session_status_tmp);
+            std::optional<PduSessionStatus>(ie_pdu_session_status_tmp);
         DECODE_U8_VALUE(buf + decoded_size, octet);
         Logger::nas_mm().debug("Next IEI 0x%x", octet);
       } break;
 
       case kIeiUeStatus: {
         Logger::nas_mm().debug("Decoding IEI 0x%x", kIeiUeStatus);
-        UEStatus ie_ue_status_tmp = {};
+        UeStatus ie_ue_status_tmp = {};
         if ((decoded_result = ie_ue_status_tmp.Decode(
                  buf + decoded_size, len - decoded_size, true)) ==
             KEncodeDecodeError) {
           return KEncodeDecodeError;
         }
         decoded_size += decoded_result;
-        ie_ue_status = std::optional<UEStatus>(ie_ue_status_tmp);
+        ie_ue_status = std::optional<UeStatus>(ie_ue_status_tmp);
         DECODE_U8_VALUE(buf + decoded_size, octet);
         Logger::nas_mm().debug("Next IEI 0x%x", octet);
       } break;
@@ -1136,14 +1136,14 @@ int RegistrationRequest::Decode(uint8_t* buf, int len) {
       case kIeiAllowedPduSessionStatus: {
         Logger::nas_mm().debug(
             "Decoding IEI 0x%x", kIeiAllowedPduSessionStatus);
-        AllowedPDUSessionStatus ie_allowed_pdu_session_status_tmp = {};
+        AllowedPduSessionStatus ie_allowed_pdu_session_status_tmp = {};
         if ((decoded_result = ie_allowed_pdu_session_status_tmp.Decode(
                  buf + decoded_size, len - decoded_size, true)) ==
             KEncodeDecodeError) {
           return KEncodeDecodeError;
         }
         decoded_size += decoded_result;
-        ie_allowed_pdu_session_status = std::optional<AllowedPDUSessionStatus>(
+        ie_allowed_pdu_session_status = std::optional<AllowedPduSessionStatus>(
             ie_allowed_pdu_session_status_tmp);
         DECODE_U8_VALUE(buf + decoded_size, octet);
         Logger::nas_mm().debug("Next IEI 0x%x", octet);
@@ -1151,7 +1151,7 @@ int RegistrationRequest::Decode(uint8_t* buf, int len) {
 
       case kIeiUeUsageSetting: {
         Logger::nas_mm().debug("Decoding IEI 0x%x", kIeiUeUsageSetting);
-        UEUsageSetting ie_ues_usage_setting_tmp = {};
+        UeUsageSetting ie_ues_usage_setting_tmp = {};
         if ((decoded_result = ie_ues_usage_setting_tmp.Decode(
                  buf + decoded_size, len - decoded_size, true)) ==
             KEncodeDecodeError) {
@@ -1159,7 +1159,7 @@ int RegistrationRequest::Decode(uint8_t* buf, int len) {
         }
         decoded_size += decoded_result;
         ie_ues_usage_setting =
-            std::optional<UEUsageSetting>(ie_ues_usage_setting_tmp);
+            std::optional<UeUsageSetting>(ie_ues_usage_setting_tmp);
         DECODE_U8_VALUE(buf + decoded_size, octet);
         Logger::nas_mm().debug("Next IEI 0x%x", octet);
       } break;

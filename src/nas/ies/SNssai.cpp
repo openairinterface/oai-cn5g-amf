@@ -20,9 +20,10 @@
  */
 
 #include "SNssai.hpp"
-#include "amf.hpp"
 
+#include "amf.hpp"
 #include "logger.hpp"
+
 using namespace nas;
 
 //------------------------------------------------------------------------------

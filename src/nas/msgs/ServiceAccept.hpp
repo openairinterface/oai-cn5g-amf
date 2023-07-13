@@ -53,7 +53,7 @@ class ServiceAccept : public NasMmPlainHeader {
   // TODO: Get
 
  private:
-  std::optional<PDUSessionStatus> ie_pdu_session_status;  // Optional
+  std::optional<PduSessionStatus> ie_pdu_session_status;  // Optional
   std::optional<PduSessionReactivationResult>
       ie_pdu_session_reactivation_result;  // Optional
   std::optional<PduSessionReactivationResultErrorCause>

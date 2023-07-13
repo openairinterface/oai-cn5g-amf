@@ -21,13 +21,14 @@
 
 #ifndef _STRUCT_H_
 #define _STRUCT_H_
+
 #include <stdint.h>
 
 #include <iostream>
 #include <vector>
-#include "spdlog/fmt/fmt.h"
 
 #include "3gpp_23.003.h"
+#include "spdlog/fmt/fmt.h"
 
 extern "C" {
 #include "TLVDecoder.h"

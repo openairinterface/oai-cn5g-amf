@@ -22,9 +22,9 @@
 #ifndef _5GS_TRACKING_AREA_ID_LIST_H_
 #define _5GS_TRACKING_AREA_ID_LIST_H_
 
-#include "Type4NasIe.hpp"
 #include <vector>
 
+#include "Type4NasIe.hpp"
 #include "struct.hpp"
 
 constexpr uint8_t k5gsTrackingAreaIdListMinimumLength = 9;

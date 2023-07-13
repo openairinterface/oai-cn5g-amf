@@ -19,32 +19,36 @@
  *      contact@openairinterface.org
  */
 
-#ifndef _UES_USAGE_SETTING_H_
-#define _UES_USAGE_SETTING_H_
+#ifndef _UE_STATUS_H_
+#define _UE_STATUS_H_
 
 #include "Type4NasIe.hpp"
 
-constexpr uint8_t kUeUsageSettingLength = 3;
-constexpr auto kUeUsageSettingIeName    = "UE's Usage Setting";
+constexpr uint8_t kUeStatusIeLength = 3;
+constexpr auto kUeStatusIeName      = "UE Status";
 
 namespace nas {
 
-class UEUsageSetting : public Type4NasIe {
+class UeStatus : public Type4NasIe {
  public:
-  UEUsageSetting();
-  UEUsageSetting(bool ues_usage_setting);
-  ~UEUsageSetting();
+  UeStatus();
+  UeStatus(bool n1, bool s1);
+  ~UeStatus();
 
-  static std::string GetIeName() { return kUeUsageSettingIeName; }
+  static std::string GetIeName() { return kUeStatusIeName; }
 
   int Encode(uint8_t* buf, int len);
-  int Decode(uint8_t* buf, int len, bool is_iei = true);
+  int Decode(uint8_t* buf, int len, bool is_iei);
 
-  void SetValue(bool value);
-  bool GetValue() const;
+  void SetN1(bool value);
+  bool GetN1() const;
+
+  void SetS1(bool value);
+  bool GetS1() const;
 
  private:
-  bool ues_usage_setting_;
+  bool n1_;
+  bool s1_;
 };
 }  // namespace nas
 

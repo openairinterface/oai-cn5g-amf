@@ -22,12 +22,10 @@
 #include "_5gsMobileIdentity.hpp"
 
 #include "3gpp_24.501.hpp"
-#include "conversions.hpp"
-#include "logger.hpp"
 #include "NasUtils.hpp"
 #include "String2Value.hpp"
-
-#include <math.h>
+#include "conversions.hpp"
+#include "logger.hpp"
 
 using namespace nas;
 
@@ -146,7 +144,8 @@ int _5gsMobileIdentity::Encode5gGuti(uint8_t* buf, int len) {
 
   // Type of Identity
   ENCODE_U8(
-      buf + encoded_size, 0xf0 | _5G_GUTI, encoded_size);  // Type of Identity
+      buf + encoded_size, 0xf0 | _5G_GUTI,
+      encoded_size);  // Type of Identity
   // MCC/MNC
   encoded_size += NasUtils::encodeMccMnc2Buffer(
       _5g_guti_.value().mcc, _5g_guti_.value().mnc, buf + encoded_size,

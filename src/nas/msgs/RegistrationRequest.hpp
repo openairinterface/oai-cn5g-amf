@@ -22,10 +22,11 @@
 #ifndef _REGISTRATION_REQUEST_H_
 #define _REGISTRATION_REQUEST_H_
 
-#include "NasIeHeader.hpp"
-
 #include <bstrlib.h>
+
 #include <vector>
+
+#include "NasIeHeader.hpp"
 
 using namespace std;
 namespace nas {
@@ -85,7 +86,7 @@ class RegistrationRequest : public NasMmPlainHeader {
   // TODO: use std::optional for optional fields eea,eia
   bool GetUeSecurityCapability(
       uint8_t& ea, uint8_t& ia, uint8_t& eea, uint8_t& eia) const;
-  std::optional<UESecurityCapability> GetUeSecurityCapability() const;
+  std::optional<UeSecurityCapability> GetUeSecurityCapability() const;
 
   void SetRequestedNssai(const std::vector<struct SNSSAI_s>& nssai);
   bool GetRequestedNssai(std::vector<struct SNSSAI_s>& nssai) const;
@@ -154,19 +155,19 @@ class RegistrationRequest : public NasMmPlainHeader {
 
   std::optional<NasKeySetIdentifier> ie_non_current_native_nas_ksi;  // Optional
   std::optional<_5gmmCapability> ie_5g_mm_capability;                // Optional
-  std::optional<UESecurityCapability> ie_ue_security_capability;     // Optional
+  std::optional<UeSecurityCapability> ie_ue_security_capability;     // Optional
   std::optional<NSSAI> ie_requested_nssai;                           // Optional
   std::optional<_5gsTrackingAreaIdentity>
       ie_last_visited_registered_tai;                              // Optional
-  std::optional<UENetworkCapability> ie_s1_ue_network_capability;  // Optional
+  std::optional<UeNetworkCapability> ie_s1_ue_network_capability;  // Optional
   std::optional<UplinkDataStatus> ie_uplink_data_status;           // Optional
-  std::optional<PDUSessionStatus> ie_pdu_session_status;           // Optional
+  std::optional<PduSessionStatus> ie_pdu_session_status;           // Optional
   std::optional<MicoIndication> ie_mico_indication;                // Optional
-  std::optional<UEStatus> ie_ue_status;                            // Optional
+  std::optional<UeStatus> ie_ue_status;                            // Optional
   std::optional<_5gsMobileIdentity> ie_additional_guti;            // Optional
-  std::optional<AllowedPDUSessionStatus>
+  std::optional<AllowedPduSessionStatus>
       ie_allowed_pdu_session_status;                       // Optional
-  std::optional<UEUsageSetting> ie_ues_usage_setting;      // Optional
+  std::optional<UeUsageSetting> ie_ues_usage_setting;      // Optional
   std::optional<_5gsDrxParameters> ie_5gs_drx_parameters;  // Optional
   std::optional<EpsNasMessageContainer>
       ie_eps_nas_message_container;                               // Optional

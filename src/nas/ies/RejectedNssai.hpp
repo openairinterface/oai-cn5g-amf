@@ -23,6 +23,7 @@
 #define _REJECTED_NSSAI_H_
 
 #include <RejectedSNssai.hpp>
+
 #include "Type4NasIe.hpp"
 
 constexpr uint8_t kRejectedNssaiMinimumLength = 4;

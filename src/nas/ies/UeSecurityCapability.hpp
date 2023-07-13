@@ -30,18 +30,18 @@ constexpr auto kUeSecurityCapabilityIeName           = "UE Security Capability";
 
 namespace nas {
 
-class UESecurityCapability : public Type4NasIe {
+class UeSecurityCapability : public Type4NasIe {
  public:
-  UESecurityCapability();
-  UESecurityCapability(uint8_t iei);
-  UESecurityCapability(uint8_t _5g_ea, uint8_t _5g_ia);
-  UESecurityCapability(uint8_t iei, uint8_t _5g_ea, uint8_t _5g_ia);
-  UESecurityCapability(
+  UeSecurityCapability();
+  UeSecurityCapability(uint8_t iei);
+  UeSecurityCapability(uint8_t _5g_ea, uint8_t _5g_ia);
+  UeSecurityCapability(uint8_t iei, uint8_t _5g_ea, uint8_t _5g_ia);
+  UeSecurityCapability(
       uint8_t iei, uint8_t _5g_ea, uint8_t _5g_ia, uint8_t eea, uint8_t eia);
-  UESecurityCapability(
+  UeSecurityCapability(
       uint8_t _5g_ea, uint8_t _5g_ia, uint8_t eea, uint8_t eia);
-  ~UESecurityCapability();
-  void operator=(const UESecurityCapability& ue_security_capability);
+  ~UeSecurityCapability();
+  void operator=(const UeSecurityCapability& ue_security_capability);
 
   static std::string GetIeName() { return kUeSecurityCapabilityIeName; }
 

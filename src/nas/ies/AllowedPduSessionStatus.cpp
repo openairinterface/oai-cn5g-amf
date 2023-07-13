@@ -19,49 +19,49 @@
  *      contact@openairinterface.org
  */
 
-#include "UEUsageSetting.hpp"
+#include "AllowedPduSessionStatus.hpp"
 
-#include "IeConst.hpp"
 #include "3gpp_24.501.hpp"
+#include "IeConst.hpp"
 #include "common_defs.h"
 #include "logger.hpp"
 
 using namespace nas;
 
 //------------------------------------------------------------------------------
-UEUsageSetting::UEUsageSetting() : Type4NasIe(kIeiUeUsageSetting) {
-  ues_usage_setting_ = false;
-  SetLengthIndicator(1);
+AllowedPduSessionStatus::AllowedPduSessionStatus()
+    : Type4NasIe(kIeiAllowedPduSessionStatus) {
+  _value = 0;
+  SetLengthIndicator(2);
 }
 
 //------------------------------------------------------------------------------
-UEUsageSetting::UEUsageSetting(bool ues_usage_setting)
-    : Type4NasIe(kIeiUeUsageSetting) {
-  ues_usage_setting_ = ues_usage_setting;
-  SetLengthIndicator(1);
+AllowedPduSessionStatus::AllowedPduSessionStatus(uint16_t value)
+    : Type4NasIe(kIeiAllowedPduSessionStatus) {
+  _value = value;
+  SetLengthIndicator(2);
 }
 
 //------------------------------------------------------------------------------
-UEUsageSetting::~UEUsageSetting() {}
+AllowedPduSessionStatus::~AllowedPduSessionStatus() {}
 
 //------------------------------------------------------------------------------
-void UEUsageSetting::SetValue(bool value) {
-  ues_usage_setting_ = value;
+void AllowedPduSessionStatus::SetValue(uint16_t value) {
+  _value = value;
 }
 
 //------------------------------------------------------------------------------
-bool UEUsageSetting::GetValue() const {
-  return ues_usage_setting_;
+uint16_t AllowedPduSessionStatus::GetValue() const {
+  return _value;
 }
 
 //------------------------------------------------------------------------------
-int UEUsageSetting::Encode(uint8_t* buf, int len) {
+int AllowedPduSessionStatus::Encode(uint8_t* buf, int len) {
   Logger::nas_mm().debug("Encoding %s", GetIeName().c_str());
+  int ie_len = GetIeLength();
 
-  if (len < kUeUsageSettingLength) {
-    Logger::nas_mm().error(
-        "Buffer length is less than the minimum length of this IE (%d octet)",
-        kUeUsageSettingLength);
+  if (len < ie_len) {
+    Logger::nas_mm().error("Len is less than %d", ie_len);
     return KEncodeDecodeError;
   }
 
@@ -71,38 +71,51 @@ int UEUsageSetting::Encode(uint8_t* buf, int len) {
   if (encoded_header_size == KEncodeDecodeError) return KEncodeDecodeError;
   encoded_size += encoded_header_size;
 
-  ENCODE_U8(buf + encoded_size, 0x01 & ues_usage_setting_, encoded_size);
+  ENCODE_U16(buf + encoded_size, _value, encoded_size);
+
+  // TODO: Encode spare for the rest
+  uint8_t spare = 0;
+  int spare_len = ie_len - encoded_size;
+  for (int i = 0; i < spare_len; i++) {
+    ENCODE_U8(buf + encoded_size, spare, encoded_size);
+  }
 
   Logger::nas_mm().debug(
-      "Encoded %s, len (%d)", GetIeName().c_str(), encoded_size);
+      "Decoded %s, len (%d)", GetIeName().c_str(), encoded_size);
   return encoded_size;
 }
 
 //------------------------------------------------------------------------------
-int UEUsageSetting::Decode(uint8_t* buf, int len, bool is_iei) {
-  Logger::nas_mm().debug("Decoding %s", GetIeName().c_str());
-
-  if (len < kUeUsageSettingLength) {
+int AllowedPduSessionStatus::Decode(uint8_t* buf, int len, bool is_iei) {
+  if (len < kAllowedPduSessionStatusMinimumLength) {
     Logger::nas_mm().error(
         "Buffer length is less than the minimum length of this IE (%d octet)",
-        kUeUsageSettingLength);
+        kAllowedPduSessionStatusMinimumLength);
     return KEncodeDecodeError;
   }
 
-  int decoded_size = 0;
+  uint8_t decoded_size = 0;
+  uint8_t octet        = 0;
+  Logger::nas_mm().debug("Decoding %s", GetIeName().c_str());
 
   // IEI and Length
-  int decoded_header_size = Type4NasIe::Decode(buf + decoded_size, len, true);
+  int decoded_header_size = Type4NasIe::Decode(buf + decoded_size, len, is_iei);
+  // decoded_size += Type4NasIe::Decode(buf + decoded_size, len, is_iei);
   if (decoded_header_size == KEncodeDecodeError) return KEncodeDecodeError;
   decoded_size += decoded_header_size;
 
-  uint8_t octet = 0;
-  DECODE_U8(buf + decoded_size, octet, decoded_size);
+  DECODE_U16(buf + decoded_size, _value, decoded_size);
 
-  ues_usage_setting_ = octet & 0x01;
+  // TODO: decode the rest as spare for now
+  uint8_t spare = 0;
+  int spare_len = GetLengthIndicator() - sizeof(uint16_t);
+  for (int i = 0; i < spare_len; i++) {
+    DECODE_U8(buf + decoded_size, spare, decoded_size);
+  }
 
   Logger::nas_mm().debug(
-      "Decoded %s, UE's Usage Setting 0x%x, len %d", GetIeName().c_str(),
-      ues_usage_setting_, decoded_size);
+      "Decoded %s (value 0x%4x)", GetIeName().c_str(), _value);
+  Logger::nas_mm().debug(
+      "Decoded %s, len (%d)", GetIeName().c_str(), decoded_size);
   return decoded_size;
 }

@@ -21,11 +21,11 @@
 
 #include "Nssai.hpp"
 
+#include <vector>
+
 #include "3gpp_24.501.hpp"
 #include "amf.hpp"
 #include "logger.hpp"
-
-#include <vector>
 
 using namespace nas;
 

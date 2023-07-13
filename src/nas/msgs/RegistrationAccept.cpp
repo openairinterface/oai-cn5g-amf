@@ -162,7 +162,7 @@ void RegistrationAccept::Set5gsNetworkFeatureSupport(
 
 //------------------------------------------------------------------------------
 void RegistrationAccept::SetPduSessionStatus(uint16_t value) {
-  ie_pdu_session_status = std::make_optional<PDUSessionStatus>(value);
+  ie_pdu_session_status = std::make_optional<PduSessionStatus>(value);
 }
 
 //------------------------------------------------------------------------------
@@ -418,7 +418,7 @@ int RegistrationAccept::Encode(uint8_t* buf, int len) {
 
   if (!ie_pdu_session_status.has_value()) {
     Logger::nas_mm().debug(
-        "IE %s is not available", PDUSessionStatus::GetIeName().c_str());
+        "IE %s is not available", PduSessionStatus::GetIeName().c_str());
   } else {
     int size = ie_pdu_session_status.value().Encode(
         buf + encoded_size, len - encoded_size);
@@ -426,7 +426,7 @@ int RegistrationAccept::Encode(uint8_t* buf, int len) {
       encoded_size += size;
     } else {
       Logger::nas_mm().error(
-          "Encoding %s error", PDUSessionStatus::GetIeName().c_str());
+          "Encoding %s error", PduSessionStatus::GetIeName().c_str());
       return KEncodeDecodeError;
     }
   }
@@ -936,17 +936,17 @@ int RegistrationAccept::Decode(uint8_t* buf, int len) {
 
       case kIeiPduSessionStatus: {
         Logger::nas_mm().debug("Decoding IEI 0x%x", kIeiPduSessionStatus);
-        PDUSessionStatus ie_pdu_session_status_tmp = {};
+        PduSessionStatus ie_pdu_session_status_tmp = {};
         if ((decoded_result = ie_pdu_session_status_tmp.Decode(
                  buf + decoded_size, len - decoded_size, true)) ==
             KEncodeDecodeError) {
           Logger::nas_mm().error(
-              "Decoding %s error", PDUSessionStatus::GetIeName().c_str());
+              "Decoding %s error", PduSessionStatus::GetIeName().c_str());
           return KEncodeDecodeError;
         }
         decoded_size += decoded_result;
         ie_pdu_session_status =
-            std::optional<PDUSessionStatus>(ie_pdu_session_status_tmp);
+            std::optional<PduSessionStatus>(ie_pdu_session_status_tmp);
         DECODE_U8_VALUE(buf + decoded_size, octet);
         Logger::nas_mm().debug("Next IEI (0x%x)", octet);
       } break;

@@ -22,9 +22,9 @@
 #include "PlmnList.hpp"
 
 #include "3gpp_24.501.hpp"
+#include "NasUtils.hpp"
 #include "common_defs.h"
 #include "logger.hpp"
-#include "NasUtils.hpp"
 
 using namespace nas;
 

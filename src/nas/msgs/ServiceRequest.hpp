@@ -23,7 +23,6 @@
 #define _SERVICE_REQUEST_H_
 
 #include "NasIeHeader.hpp"
-
 #include "bstrlib.h"
 
 namespace nas {
@@ -69,8 +68,8 @@ class ServiceRequest : public NasMmPlainHeader {
   _5gsMobileIdentity ie_5g_s_tmsi;  // Mandatory
 
   std::optional<UplinkDataStatus> ie_uplink_data_status;  // Optional
-  std::optional<PDUSessionStatus> ie_pdu_session_status;  // Optional
-  std::optional<AllowedPDUSessionStatus>
+  std::optional<PduSessionStatus> ie_pdu_session_status;  // Optional
+  std::optional<AllowedPduSessionStatus>
       ie_allowed_pdu_session_status;                            // Optional
   std::optional<NasMessageContainer> ie_nas_message_container;  // Optional
 };

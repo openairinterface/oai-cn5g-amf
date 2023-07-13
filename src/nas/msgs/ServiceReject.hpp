@@ -54,7 +54,7 @@ class ServiceReject : public NasMmPlainHeader {
  private:
   _5gmmCause ie_5gmm_cause;  // Mandatory
 
-  std::optional<PDUSessionStatus> ie_pdu_session_status;  // Optional
+  std::optional<PduSessionStatus> ie_pdu_session_status;  // Optional
   std::optional<GprsTimer2> ie_t3346_value;               // Optional
   std::optional<EapMessage> ie_eap_message;               // Optional
   std::optional<GprsTimer3> ie_t3448_value;               // Optional

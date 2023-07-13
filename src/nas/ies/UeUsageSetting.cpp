@@ -19,92 +19,59 @@
  *      contact@openairinterface.org
  */
 
-#include "UENetworkCapability.hpp"
+#include "UeUsageSetting.hpp"
 
 #include "3gpp_24.501.hpp"
+#include "IeConst.hpp"
 #include "common_defs.h"
 #include "logger.hpp"
 
 using namespace nas;
 
 //------------------------------------------------------------------------------
-UENetworkCapability::UENetworkCapability() : Type4NasIe() {
-  eea_ = 0;
-  eia_ = 0;
-  SetLengthIndicator(2);
+UeUsageSetting::UeUsageSetting() : Type4NasIe(kIeiUeUsageSetting) {
+  ues_usage_setting_ = false;
+  SetLengthIndicator(1);
 }
 
 //------------------------------------------------------------------------------
-UENetworkCapability::UENetworkCapability(uint8_t iei) : Type4NasIe(iei) {
-  eea_ = 0;
-  eia_ = 0;
-  SetLengthIndicator(2);
+UeUsageSetting::UeUsageSetting(bool ues_usage_setting)
+    : Type4NasIe(kIeiUeUsageSetting) {
+  ues_usage_setting_ = ues_usage_setting;
+  SetLengthIndicator(1);
 }
 
 //------------------------------------------------------------------------------
-UENetworkCapability::~UENetworkCapability() {}
+UeUsageSetting::~UeUsageSetting() {}
 
 //------------------------------------------------------------------------------
-UENetworkCapability::UENetworkCapability(
-    const uint8_t iei, uint8_t eea, uint8_t eia)
-    : Type4NasIe(iei) {
-  eea_ = eea;
-  eia_ = eia;
-  SetLengthIndicator(2);
-  Logger::nas_mm().debug(
-      "Initialized %s EEA 0x%x, EIA 0x%x", GetIeName().c_str(), eea_, eia_);
+void UeUsageSetting::SetValue(bool value) {
+  ues_usage_setting_ = value;
 }
 
 //------------------------------------------------------------------------------
-void UENetworkCapability::SetEea(uint8_t value) {
-  eea_ = value;
+bool UeUsageSetting::GetValue() const {
+  return ues_usage_setting_;
 }
 
 //------------------------------------------------------------------------------
-void UENetworkCapability::SetEia(uint8_t value) {
-  eia_ = value;
-}
-
-//------------------------------------------------------------------------------
-uint8_t UENetworkCapability::GetEea() const {
-  return eea_;
-}
-
-//------------------------------------------------------------------------------
-uint8_t UENetworkCapability::GetEia() const {
-  return eia_;
-}
-
-//------------------------------------------------------------------------------
-int UENetworkCapability::Encode(uint8_t* buf, int len) {
+int UeUsageSetting::Encode(uint8_t* buf, int len) {
   Logger::nas_mm().debug("Encoding %s", GetIeName().c_str());
-  int ie_len = GetIeLength();
 
-  if (len < ie_len) {  // Length of the content + IEI/Len
+  if (len < kUeUsageSettingLength) {
     Logger::nas_mm().error(
-        "Size of the buffer is not enough to store this IE (IE len %d)",
-        ie_len);
+        "Buffer length is less than the minimum length of this IE (%d octet)",
+        kUeUsageSettingLength);
     return KEncodeDecodeError;
   }
 
   int encoded_size = 0;
-
   // IEI and Length
   int encoded_header_size = Type4NasIe::Encode(buf + encoded_size, len);
   if (encoded_header_size == KEncodeDecodeError) return KEncodeDecodeError;
   encoded_size += encoded_header_size;
 
-  // EEA
-  ENCODE_U8(buf + encoded_size, eea_, encoded_size);
-  // EIA
-  ENCODE_U8(buf + encoded_size, eia_, encoded_size);
-
-  // TODO: Encode the rest as spare for now
-  uint8_t spare = 0;
-  int spare_len = ie_len - encoded_size;
-  for (int i = 0; i < spare_len; i++) {
-    ENCODE_U8(buf + encoded_size, spare, encoded_size);
-  }
+  ENCODE_U8(buf + encoded_size, 0x01 & ues_usage_setting_, encoded_size);
 
   Logger::nas_mm().debug(
       "Encoded %s, len (%d)", GetIeName().c_str(), encoded_size);
@@ -112,38 +79,30 @@ int UENetworkCapability::Encode(uint8_t* buf, int len) {
 }
 
 //------------------------------------------------------------------------------
-int UENetworkCapability::Decode(uint8_t* buf, int len, bool is_iei) {
+int UeUsageSetting::Decode(uint8_t* buf, int len, bool is_iei) {
   Logger::nas_mm().debug("Decoding %s", GetIeName().c_str());
 
-  if (len < kUeNetworkCapabilityMinimumLength) {
+  if (len < kUeUsageSettingLength) {
     Logger::nas_mm().error(
         "Buffer length is less than the minimum length of this IE (%d octet)",
-        kUeNetworkCapabilityMinimumLength);
+        kUeUsageSettingLength);
     return KEncodeDecodeError;
   }
 
   int decoded_size = 0;
 
   // IEI and Length
-  int decoded_header_size = Type4NasIe::Decode(buf + decoded_size, len, is_iei);
-  // decoded_size += Type4NasIe::Decode(buf + decoded_size, len, is_iei);
+  int decoded_header_size = Type4NasIe::Decode(buf + decoded_size, len, true);
   if (decoded_header_size == KEncodeDecodeError) return KEncodeDecodeError;
   decoded_size += decoded_header_size;
 
-  DECODE_U8(buf + decoded_size, eea_, decoded_size);
-  DECODE_U8(buf + decoded_size, eia_, decoded_size);
+  uint8_t octet = 0;
+  DECODE_U8(buf + decoded_size, octet, decoded_size);
 
-  int ie_len = GetIeLength();
-
-  // TODO: decode the rest as spare for now
-  uint8_t spare = 0;
-  int spare_len = ie_len - decoded_size;
-  for (int i = 0; i < spare_len; i++) {
-    ENCODE_U8(buf + decoded_size, spare, decoded_size);
-  }
+  ues_usage_setting_ = octet & 0x01;
 
   Logger::nas_mm().debug(
-      "Decoded %s, len (%d)", GetIeName().c_str(), decoded_size);
-  Logger::nas_mm().debug("EEA 0x%x, EIA 0x%x", eea_, eia_);
+      "Decoded %s, UE's Usage Setting 0x%x, len %d", GetIeName().c_str(),
+      ues_usage_setting_, decoded_size);
   return decoded_size;
 }

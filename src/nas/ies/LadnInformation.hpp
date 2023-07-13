@@ -23,9 +23,9 @@
 #define _LADN_INFORMATION_H_
 
 #include "Dnn.hpp"
-#include "_5gsTrackingAreaIdList.hpp"
 #include "Ladn.hpp"
 #include "Type6NasIe.hpp"
+#include "_5gsTrackingAreaIdList.hpp"
 
 constexpr uint8_t kLadnInformationMinimumLength  = 3;
 constexpr uint16_t kLadnInformationMaximumLength = 1715;

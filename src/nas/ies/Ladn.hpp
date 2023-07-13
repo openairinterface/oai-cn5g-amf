@@ -23,8 +23,8 @@
 #define _LADN_H_
 
 #include "Dnn.hpp"
-#include "_5gsTrackingAreaIdList.hpp"
 #include "Type6NasIe.hpp"
+#include "_5gsTrackingAreaIdList.hpp"
 
 namespace nas {
 

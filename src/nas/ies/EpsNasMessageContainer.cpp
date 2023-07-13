@@ -21,10 +21,11 @@
 
 #include "EpsNasMessageContainer.hpp"
 
-#include "IeConst.hpp"
 #include "3gpp_24.501.hpp"
+#include "IeConst.hpp"
 #include "common_defs.h"
 #include "logger.hpp"
+
 using namespace nas;
 
 //------------------------------------------------------------------------------

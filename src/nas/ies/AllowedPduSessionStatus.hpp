@@ -24,19 +24,19 @@
 
 #include "Type4NasIe.hpp"
 
-constexpr uint8_t kAllowedPDUSessionStatusMinimumLength = 4;
-constexpr uint8_t kAllowedPDUSessionStatusMaximumLength = 34;
-constexpr auto kAllowedPDUSessionStatusIeName = "Allowed PDU Session Status";
+constexpr uint8_t kAllowedPduSessionStatusMinimumLength = 4;
+constexpr uint8_t kAllowedPduSessionStatusMaximumLength = 34;
+constexpr auto kAllowedPduSessionStatusIeName = "Allowed PDU Session Status";
 
 namespace nas {
 
-class AllowedPDUSessionStatus : public Type4NasIe {
+class AllowedPduSessionStatus : public Type4NasIe {
  public:
-  AllowedPDUSessionStatus();
-  AllowedPDUSessionStatus(uint16_t value);
-  ~AllowedPDUSessionStatus();
+  AllowedPduSessionStatus();
+  AllowedPduSessionStatus(uint16_t value);
+  ~AllowedPduSessionStatus();
 
-  static std::string GetIeName() { return kAllowedPDUSessionStatusIeName; }
+  static std::string GetIeName() { return kAllowedPduSessionStatusIeName; }
 
   void SetValue(uint16_t value);
   uint16_t GetValue() const;

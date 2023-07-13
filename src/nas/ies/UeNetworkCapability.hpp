@@ -26,16 +26,16 @@
 
 constexpr uint8_t kUeNetworkCapabilityMinimumLength = 4;
 constexpr uint8_t kUeNetworkCapabilityMaximumLength = 15;
-constexpr auto kUeNetworkCapabilityIeName = "S1 UE Network Capability";
+constexpr auto kUeNetworkCapabilityIeName           = "UE Network Capability";
 
 namespace nas {
 
-class UENetworkCapability : public Type4NasIe {
+class UeNetworkCapability : public Type4NasIe {
  public:
-  UENetworkCapability();
-  UENetworkCapability(uint8_t iei);
-  UENetworkCapability(const uint8_t iei, uint8_t eea, uint8_t eia);
-  ~UENetworkCapability();
+  UeNetworkCapability();
+  UeNetworkCapability(uint8_t iei);
+  UeNetworkCapability(const uint8_t iei, uint8_t eea, uint8_t eia);
+  ~UeNetworkCapability();
 
   static std::string GetIeName() { return kUeNetworkCapabilityIeName; }
 
