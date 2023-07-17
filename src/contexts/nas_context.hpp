@@ -22,12 +22,12 @@
 #ifndef _AMF_NAS_CONTEXT_H_
 #define _AMF_NAS_CONTEXT_H_
 
-#include "UESecurityCapability.hpp"
+#include "UeSecurityCapability.hpp"
 #include "authentication_algorithms_with_5gaka.hpp"
 #include "itti.hpp"
 #include "nas_security_context.hpp"
 #include "security_def.hpp"
-#include "struct.hpp"
+#include "Struct.hpp"
 
 typedef enum {
   _5GMM_STATE_MIN     = 0,
@@ -87,7 +87,7 @@ class nas_context {
   std::optional<std::string> guti;
 
   std::uint8_t _5gmm_capability[13];
-  nas::UESecurityCapability ue_security_capability;
+  nas::UeSecurityCapability ue_security_capability;
 
   std::vector<nas::SNSSAI_t> requested_nssai;
   std::vector<nas::SNSSAI_t> allowed_nssai;  // in Registration Accept

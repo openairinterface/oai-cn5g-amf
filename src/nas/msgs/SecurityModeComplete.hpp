@@ -46,9 +46,9 @@ class SecurityModeComplete : public NasMmPlainHeader {
   bool GetNonImeisv(IMEI_IMEISV_t& imeisv) const;
 
  public:
-  std::optional<_5GSMobileIdentity> ie_imeisv;                  // Optional
+  std::optional<_5gsMobileIdentity> ie_imeisv;                  // Optional
   std::optional<NasMessageContainer> ie_nas_message_container;  // Optional
-  std::optional<_5GSMobileIdentity> ie_non_imeisvpei;           // Optional
+  std::optional<_5gsMobileIdentity> ie_non_imeisvpei;           // Optional
 };
 
 }  // namespace nas

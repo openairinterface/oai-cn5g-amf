@@ -92,7 +92,7 @@ bool ServiceRequest::GetUplinkDataStatus(uint16_t& value) const {
 
 //------------------------------------------------------------------------------
 void ServiceRequest::SetPduSessionStatus(uint16_t value) {
-  ie_pdu_session_status = std::make_optional<PDUSessionStatus>(value);
+  ie_pdu_session_status = std::make_optional<PduSessionStatus>(value);
 }
 
 //------------------------------------------------------------------------------
@@ -116,7 +116,7 @@ std::optional<uint16_t> ServiceRequest::GetPduSessionStatus() const {
 //------------------------------------------------------------------------------
 void ServiceRequest::SetAllowedPduSessionStatus(uint16_t value) {
   ie_allowed_pdu_session_status =
-      std::make_optional<AllowedPDUSessionStatus>(value);
+      std::make_optional<AllowedPduSessionStatus>(value);
 }
 
 //------------------------------------------------------------------------------
@@ -191,7 +191,7 @@ int ServiceRequest::Encode(uint8_t* buf, int len) {
     encoded_size += size;
   } else {
     Logger::nas_mm().debug(
-        "Encoding %s error", _5GSMobileIdentity::GetIeName().c_str());
+        "Encoding %s error", _5gsMobileIdentity::GetIeName().c_str());
     return KEncodeDecodeError;
   }
 
@@ -214,7 +214,7 @@ int ServiceRequest::Encode(uint8_t* buf, int len) {
   // PDU session status
   if (!ie_pdu_session_status.has_value()) {
     Logger::nas_mm().debug(
-        "IE %s is not available", PDUSessionStatus::GetIeName().c_str());
+        "IE %s is not available", PduSessionStatus::GetIeName().c_str());
   } else {
     size = ie_pdu_session_status.value().Encode(
         buf + encoded_size, len - encoded_size);
@@ -222,7 +222,7 @@ int ServiceRequest::Encode(uint8_t* buf, int len) {
       encoded_size += size;
     } else {
       Logger::nas_mm().debug(
-          "Encoding %s error", PDUSessionStatus::GetIeName().c_str());
+          "Encoding %s error", PduSessionStatus::GetIeName().c_str());
       return KEncodeDecodeError;
     }
   }
@@ -230,7 +230,7 @@ int ServiceRequest::Encode(uint8_t* buf, int len) {
   // Allowed PDU session status
   if (!ie_allowed_pdu_session_status.has_value()) {
     Logger::nas_mm().debug(
-        "IE %s is not available", AllowedPDUSessionStatus::GetIeName().c_str());
+        "IE %s is not available", AllowedPduSessionStatus::GetIeName().c_str());
   } else {
     size = ie_allowed_pdu_session_status.value().Encode(
         buf + encoded_size, len - encoded_size);
@@ -238,7 +238,7 @@ int ServiceRequest::Encode(uint8_t* buf, int len) {
       encoded_size += size;
     } else {
       Logger::nas_mm().debug(
-          "Encoding %s error", AllowedPDUSessionStatus::GetIeName().c_str());
+          "Encoding %s error", AllowedPduSessionStatus::GetIeName().c_str());
       return KEncodeDecodeError;
     }
   }
@@ -315,14 +315,14 @@ int ServiceRequest::Decode(uint8_t* buf, int len) {
 
       case kIeiPduSessionStatus: {
         Logger::nas_mm().debug("Decoding IEI 0x%x", kIeiPduSessionStatus);
-        PDUSessionStatus ie_pdu_session_status_tmp = {};
+        PduSessionStatus ie_pdu_session_status_tmp = {};
         if ((decoded_result = ie_pdu_session_status_tmp.Decode(
                  buf + decoded_size, len - decoded_size, true)) ==
             KEncodeDecodeError)
           return KEncodeDecodeError;
         decoded_size += decoded_result;
         ie_pdu_session_status =
-            std::optional<PDUSessionStatus>(ie_pdu_session_status_tmp);
+            std::optional<PduSessionStatus>(ie_pdu_session_status_tmp);
         DECODE_U8_VALUE(buf + decoded_size, octet);
         Logger::nas_mm().debug("Next IEI (0x%x)", octet);
       } break;
@@ -330,13 +330,13 @@ int ServiceRequest::Decode(uint8_t* buf, int len) {
       case kIeiAllowedPduSessionStatus: {
         Logger::nas_mm().debug(
             "Decoding IEI 0x%x", kIeiAllowedPduSessionStatus);
-        AllowedPDUSessionStatus ie_allowed_pdu_session_status_tmp = {};
+        AllowedPduSessionStatus ie_allowed_pdu_session_status_tmp = {};
         if ((decoded_result = ie_allowed_pdu_session_status_tmp.Decode(
                  buf + decoded_size, len - decoded_size, true)) ==
             KEncodeDecodeError)
           return KEncodeDecodeError;
         decoded_size += decoded_result;
-        ie_allowed_pdu_session_status = std::optional<AllowedPDUSessionStatus>(
+        ie_allowed_pdu_session_status = std::optional<AllowedPduSessionStatus>(
             ie_allowed_pdu_session_status_tmp);
         DECODE_U8_VALUE(buf + decoded_size, octet);
         Logger::nas_mm().debug("Next IEI (0x%x)", octet);

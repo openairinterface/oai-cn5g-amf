@@ -69,7 +69,7 @@ class RegistrationAccept : public NasMmPlainHeader {
   void SetAllowedNssai(const std::vector<struct SNSSAI_s>& nssai);
   // TODO: Get
 
-  void SetRejectedNssai(const std::vector<Rejected_SNSSAI>& nssai);
+  void SetRejectedNssai(const std::vector<RejectedSNssai>& nssai);
   // TODO: Get
 
   void SetConfiguredNssai(const std::vector<struct SNSSAI_s>& nssai);
@@ -150,20 +150,20 @@ class RegistrationAccept : public NasMmPlainHeader {
   // TODO: Get
 
  public:
-  _5GS_Registration_Result ie_5gs_registration_result;  // Mandatory
+  _5gsRegistrationResult ie_5gs_registration_result;  // Mandatory
 
-  std::optional<_5GSMobileIdentity> ie_5g_guti;       // Optional
+  std::optional<_5gsMobileIdentity> ie_5g_guti;       // Optional
   std::optional<PlmnList> ie_equivalent_plmns;        // Optional
-  std::optional<_5GSTrackingAreaIdList> ie_tai_list;  // Optional
-  std::optional<NSSAI> ie_allowed_nssai;              // Optional
-  std::optional<Rejected_NSSAI> ie_rejected_nssai;    // Optional
-  std::optional<NSSAI> ie_configured_nssai;           // Optional
-  std::optional<_5GS_Network_Feature_Support>
+  std::optional<_5gsTrackingAreaIdList> ie_tai_list;  // Optional
+  std::optional<Nssai> ie_allowed_nssai;              // Optional
+  std::optional<RejectedNssai> ie_rejected_nssai;     // Optional
+  std::optional<Nssai> ie_configured_nssai;           // Optional
+  std::optional<_5gsNetworkFeatureSupport>
       ie_5gs_network_feature_support;                     // Optional
-  std::optional<PDUSessionStatus> ie_pdu_session_status;  // Optional
-  std::optional<PDU_Session_Reactivation_Result>
+  std::optional<PduSessionStatus> ie_pdu_session_status;  // Optional
+  std::optional<PduSessionReactivationResult>
       ie_pdu_session_reactivation_result;  // Optional
-  std::optional<PDU_Session_Reactivation_Result_Error_Cause>
+  std::optional<PduSessionReactivationResultErrorCause>
       ie_pdu_session_reactivation_result_error_cause;  // Optional
   std::optional<LadnInformation> ie_ladn_information;  //
   // Optional
@@ -181,20 +181,18 @@ class RegistrationAccept : public NasMmPlainHeader {
   std::optional<EapMessage> ie_eap_message;                   // Optional
   std::optional<NssaiInclusionMode> ie_nssai_inclusion_mode;  // Optional
   // TODO: Operator-defined access category definitions
-  std::optional<_5GS_DRX_Parameters> ie_negotiated_drx_parameters;  // Optional
-  std::optional<Non_3GPP_NW_Provided_Policies>
-      ie_non_3gpp_nw_policies;  // Optional
+  std::optional<_5gsDrxParameters> ie_negotiated_drx_parameters;     // Optional
+  std::optional<Non3gppNwProvidedPolicies> ie_non_3gpp_nw_policies;  // Optional
   std::optional<EpsBearerContextStatus>
-      ie_eps_bearer_context_status;  // Optional
-  std::optional<Extended_DRX_Parameters>
-      ie_extended_drx_parameters;            // Optional
-  std::optional<GprsTimer3> ie_t3447_value;  // Optional
-  std::optional<GprsTimer3> ie_t3448_value;  // Optional
-  std::optional<GprsTimer3> ie_t3324_value;  // Optional
+      ie_eps_bearer_context_status;                                 // Optional
+  std::optional<ExtendedDrxParameters> ie_extended_drx_parameters;  // Optional
+  std::optional<GprsTimer3> ie_t3447_value;                         // Optional
+  std::optional<GprsTimer3> ie_t3448_value;                         // Optional
+  std::optional<GprsTimer3> ie_t3324_value;                         // Optional
   std::optional<UeRadioCapabilityId>
       ie_ue_radio_capability_id;  // Release 16.4.1
   // TODO: UE radio capability ID deletion indication
-  std::optional<NSSAI> ie_pending_nssai;  // Release 16.4.1
+  std::optional<Nssai> ie_pending_nssai;  // Release 16.4.1
   // TODO: Ciphering key data (Release 16.4.1)
   // TODO: CAG information list (Release 16.4.1)
   // TODO: Truncated 5G-S-TMSI configuration (Release 16.4.1)

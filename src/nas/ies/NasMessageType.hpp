@@ -25,7 +25,7 @@
 #include "NasIe.hpp"
 
 constexpr uint8_t kNasMessageTypeIeSize = 1;
-constexpr auto kNasMessageTypeIeName    = "Nas Message Type";
+constexpr auto kNasMessageTypeIeName    = "NAS Message Type";
 
 namespace nas {
 

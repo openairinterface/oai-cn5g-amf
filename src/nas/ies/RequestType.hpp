@@ -22,8 +22,8 @@
 #ifndef _REQUEST_TYPE_H_
 #define _REQUEST_TYPE_H_
 
-#include "Type1NasIeFormatTv.hpp"
 #include "NasIe.hpp"
+#include "Type1NasIeFormatTv.hpp"
 
 constexpr auto kRequestTypeIeName = "Request Type";
 

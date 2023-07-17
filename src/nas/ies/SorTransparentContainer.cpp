@@ -22,6 +22,7 @@
 #include "SorTransparentContainer.hpp"
 
 #include "logger.hpp"
+
 using namespace nas;
 
 //------------------------------------------------------------------------------

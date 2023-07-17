@@ -32,36 +32,36 @@
 #include "AuthenticationInfo.h"
 #include "AuthenticationRequest.hpp"
 #include "AuthenticationResponse.hpp"
+#include "ConfigurationUpdateCommand.hpp"
 #include "ConfirmationData.h"
 #include "ConfirmationDataResponse.h"
-#include "ConfigurationUpdateCommand.hpp"
 #include "DeregistrationAccept.hpp"
 #include "DeregistrationRequest.hpp"
 #include "IdentityRequest.hpp"
 #include "IdentityResponse.hpp"
 #include "RegistrationAccept.hpp"
+#include "RegistrationComplete.hpp"
 #include "RegistrationReject.hpp"
 #include "RegistrationRequest.hpp"
-#include "RegistrationComplete.hpp"
-#include "Rejected_SNSSAI.hpp"
+#include "RejectedSNssai.hpp"
 #include "SecurityModeCommand.hpp"
 #include "SecurityModeComplete.hpp"
 #include "ServiceAccept.hpp"
-#include "ServiceRequest.hpp"
 #include "ServiceReject.hpp"
+#include "ServiceRequest.hpp"
 #include "String2Value.hpp"
 #include "UEAuthenticationCtx.h"
-#include "ULNASTransport.hpp"
+#include "UlNasTransport.hpp"
 #include "amf_app.hpp"
 #include "amf_config.hpp"
 #include "amf_n2.hpp"
 #include "amf_sbi.hpp"
-#include "output_wrapper.hpp"
 #include "itti.hpp"
 #include "itti_msg_n2.hpp"
 #include "itti_msg_sbi.hpp"
 #include "logger.hpp"
 #include "nas_algorithms.hpp"
+#include "output_wrapper.hpp"
 #include "sha256.hpp"
 
 extern "C" {
@@ -3612,7 +3612,7 @@ void amf_n1::ul_nas_transport_handle(
     const plmn_t& plmn) {
   // Decode UL_NAS_TRANSPORT message
   Logger::amf_n1().debug("Handling UL NAS Transport");
-  auto ul_nas = std::make_unique<ULNASTransport>();
+  auto ul_nas = std::make_unique<UlNasTransport>();
   ul_nas->Decode((uint8_t*) bdata(nas), blength(nas));
   uint8_t payload_type   = ul_nas->GetPayloadContainerType();
   uint8_t pdu_session_id = 0;
@@ -3633,7 +3633,7 @@ void amf_n1::ul_nas_transport_handle(
     if (!ul_nas->GetSNssai(snssai)) {  // If no SNSSAI in this message, use the
                                        // one in Registration Request
       Logger::amf_n1().debug(
-          "No Requested NSSAI available in ULNASTransport, use NSSAI from "
+          "No Requested NSSAI available in UlNasTransport, use NSSAI from "
           "Requested/Configured NSSAI!");
 
       std::shared_ptr<nas_context> nc = {};
@@ -3706,7 +3706,7 @@ void amf_n1::ul_nas_transport_handle(
 
     if (!ul_nas->GetDnn(dnn)) {
       Logger::amf_n1().debug(
-          "No DNN available in ULNASTransport, use default DNN: %s",
+          "No DNN available in UlNasTransport, use default DNN: %s",
           DEFAULT_DNN);
       // TODO: use default DNN for the corresponding NSSAI
     }
@@ -4509,7 +4509,7 @@ void amf_n1::initialize_registration_accept(
   amf_n2_inst->get_common_NSSAI(nc->ran_ue_ngap_id, uc->gnb_id, common_nssais);
 
   std::vector<struct SNSSAI_s> allowed_nssais;
-  std::vector<Rejected_SNSSAI> rejected_nssais;
+  std::vector<RejectedSNssai> rejected_nssais;
   std::vector<struct SNSSAI_s> requested_nssai;
 
   // If no requested NSSAI available, use subscribed S-NSSAIs instead
@@ -4564,7 +4564,7 @@ void amf_n1::initialize_registration_accept(
 
     if (!found) {
       // Add to list of Rejected NSSAIs
-      Rejected_SNSSAI rejected_snssai = {};
+      RejectedSNssai rejected_snssai = {};
       rejected_snssai.setSST(rn.sst);
       if (rn.sd != SD_NO_VALUE) {
         rejected_snssai.setSd(rn.sd);

@@ -48,7 +48,7 @@ class SecurityModeCommand : public NasMmPlainHeader {
       uint8_t ea, uint8_t ia, uint8_t eea, uint8_t eia);
   // TODO: Get
   void SetUeSecurityCapability(
-      const UESecurityCapability& ue_security_capability);
+      const UeSecurityCapability& ue_security_capability);
 
   void SetImeisvRequest(uint8_t value);
   // TODO: Get
@@ -71,7 +71,7 @@ class SecurityModeCommand : public NasMmPlainHeader {
  public:
   NasSecurityAlgorithms ie_selected_nas_security_algorithms;  // Mandatory
   NasKeySetIdentifier ie_ng_ksi;                              // Mandatory
-  UESecurityCapability ie_ue_security_capability;             // Mandatory
+  UeSecurityCapability ie_ue_security_capability;             // Mandatory
 
   std::optional<ImeisvRequest> ie_imeisv_request;  // Optional
   std::optional<EpsNasSecurityAlgorithms>
@@ -79,7 +79,7 @@ class SecurityModeCommand : public NasMmPlainHeader {
   std::optional<Additional5gSecurityInformation>
       ie_additional_5g_security_information;  // Optional
   std::optional<EapMessage> ie_eap_message;   // Optional
-  std::optional<ABBA> ie_abba;                // Optional
+  std::optional<Abba> ie_abba;                // Optional
   std::optional<S1UeSecurityCapability>
       ie_s1_ue_security_capability;  // Optional
 };

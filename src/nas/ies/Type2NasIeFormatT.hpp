@@ -21,6 +21,7 @@
 
 #ifndef _TYPE2_NAS_IE_FORMAT_T_H_
 #define _TYPE2_NAS_IE_FORMAT_T_H_
+
 #include "NasIe.hpp"
 
 constexpr uint8_t kType2NasIeFormatTLength = 1;

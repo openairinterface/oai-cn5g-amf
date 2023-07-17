@@ -34,7 +34,8 @@ class NasKeySetIdentifier : public Type1NasIe {
   NasKeySetIdentifier(
       const uint8_t& iei, const bool& tsc, const uint8_t& key_id);
   NasKeySetIdentifier(
-      const bool& tsc, const uint8_t& key_id);  // Default: low position
+      const bool& tsc,
+      const uint8_t& key_id);  // Default: low position
   ~NasKeySetIdentifier();
 
   static std::string GetIeName() { return kNasKeySetIdentifierName; }

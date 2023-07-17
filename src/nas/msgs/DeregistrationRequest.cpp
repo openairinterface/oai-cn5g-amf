@@ -157,13 +157,13 @@ int DeregistrationRequest::Encode(uint8_t* buf, int len) {
       ie_deregistrationtype.Encode(buf + encoded_size, len - encoded_size);
   if (size == KEncodeDecodeError) {
     Logger::nas_mm().error(
-        "Encoding %s error", _5GSDeregistrationType::GetIeName().c_str());
+        "Encoding %s error", _5gsDeregistrationType::GetIeName().c_str());
     return KEncodeDecodeError;
   }
   // only 1/2 octet
   if (size != 0) {
     Logger::nas_mm().error(
-        "Encoding %s error", _5GSDeregistrationType::GetIeName().c_str());
+        "Encoding %s error", _5gsDeregistrationType::GetIeName().c_str());
     return KEncodeDecodeError;
   }
 
@@ -182,7 +182,7 @@ int DeregistrationRequest::Encode(uint8_t* buf, int len) {
     encoded_size += size;
   } else {
     Logger::nas_mm().error(
-        "Encoding %s error", _5GSMobileIdentity::GetIeName().c_str());
+        "Encoding %s error", _5gsMobileIdentity::GetIeName().c_str());
     return KEncodeDecodeError;
   }
 
@@ -211,7 +211,7 @@ int DeregistrationRequest::Decode(uint8_t* buf, int len) {
       buf + decoded_size, len - decoded_size, false);
   if (decoded_result == KEncodeDecodeError) {
     Logger::nas_mm().error(
-        "Decoding %s error", _5GSDeregistrationType::GetIeName().c_str());
+        "Decoding %s error", _5gsDeregistrationType::GetIeName().c_str());
     return KEncodeDecodeError;
   }
   decoded_result = ie_ng_ksi.Decode(
@@ -227,7 +227,7 @@ int DeregistrationRequest::Decode(uint8_t* buf, int len) {
       ie_5gs_mobility_id.Decode(buf + decoded_size, len - decoded_size, false);
   if (decoded_result == KEncodeDecodeError) {
     Logger::nas_mm().error(
-        "Decoding %s error", _5GSMobileIdentity::GetIeName().c_str());
+        "Decoding %s error", _5gsMobileIdentity::GetIeName().c_str());
     return KEncodeDecodeError;
   }
   decoded_size += decoded_result;

@@ -22,13 +22,12 @@
 #ifndef _3GPP_TS_24501_H_
 #define _3GPP_TS_24501_H_
 
-#include "3gpp_24.007.hpp"
-
 #include <string>
 #include <vector>
 
-/********** security header type **************/
+#include "3gpp_24.007.hpp"
 
+// Security Header Type
 #define PLAIN_5GS_MSG 0b0000
 #define INTEGRITY_PROTECTED 0b0001
 #define INTEGRITY_PROTECTED_AND_CIPHERED 0b0010
@@ -37,8 +36,7 @@
 #define INTEGRITY_PROTECTED_AND_CIPHERED_WITH_NEW_SECU_CTX                     \
   0b0100  // only for SECURITY MODE COMPLETE
 
-/********** message type ********************/
-
+// Message Type
 #define REGISTRATION_REQUEST 0b01000001
 #define REGISTRATION_ACCEPT 0b01000010
 #define REGISTRATION_COMPLETE 0b01000011
@@ -73,8 +71,7 @@
 
 #define UE_INIT_DEREGISTER 0b01000101
 
-/********* registration type ***************/
-
+// Registration Type
 #define NO_FOLLOW_ON_REQ_PENDING false
 #define FOLLOW_ON_REQ_PENDING true
 
@@ -91,15 +88,13 @@ enum class RegistrationTypeEnum {
 #define PERIODIC_REGISTRATION_UPDATING 0b011
 #define EMERGENCY_REGISTRATION 0b100
 
-/********* NAS Key Set identifier **********/
-
+// NAS Key Set Identifier
 #define NAS_KEY_SET_IDENTIFIER_NATIVE 0b0
 #define NAS_KEY_SET_IDENTIFIER_MAPPED 0b1
 #define NAS_KEY_SET_IDENTIFIER_NOT_AVAILABLE 0b111
 
-/********* 5GSMobilityIdentity **********/
-
-enum class _5GSMobilityIdentityEnum : uint8_t {
+// 5GS Mobilile Identity
+enum class _5gsMobileIdentityEnum : uint8_t {
   NO_IDENTITY = 0b000,
   SUCI        = 0b001,
   _5G_GUTI    = 0b010,
@@ -125,7 +120,7 @@ enum class _5GSMobilityIdentityEnum : uint8_t {
 // SUPI format
 #define SUPI_FORMAT_IMSI 0b000
 #define SUPI_FORMAT_NETWORK_SPECIFIC_IDENTIFIER 0b001
-
+// Scheme
 #define NULL_SCHEME 0b0000
 #define ECIES_SCHEME_PROFILE_A 0b0001
 #define ECIES_SCHEME_PROFILE_B 0b0010
@@ -133,8 +128,7 @@ enum class _5GSMobilityIdentityEnum : uint8_t {
 #define HOME_NETWORK_PKI_0_WHEN_PSI_0 0b00000000
 #define HOME_NETWORK_PKI_RESERVED 0b11111111
 
-/************************** security algorithms
- * ***********************************************************/
+// Security algorithms
 #define IA0_5G 0b000
 #define IA1_128_5G 0b001
 #define IA2_128_5G 0b010
@@ -143,12 +137,7 @@ enum class _5GSMobilityIdentityEnum : uint8_t {
 #define EA1_128_5G 0b001
 #define EA2_128_5G 0b010
 
-static const std::vector<std::string> nas_itegrity_algorithm_list_e2str = {
-    "NIA0", "NIA1", "NIA2"};
-static const std::vector<std::string> nas_ciphering_algorithm_list_e2str = {
-    "NEA0", "NEA1", "NEA2"};
-/************************** cause value for 5g mobility management(Annex A)
- * ********************************/
+// 5G MM CAUSE value for 5g mobility management (Annex A)
 #define _5GMM_CAUSE_ILLEGAL_UE 3
 #define _5GMM_CAUSE_SYNCH_FAILURE 0b00010101  // 21
 #define _5GMM_CAUSE_IMPLICITLY_DE_REGISTERED 10
@@ -165,8 +154,7 @@ static const std::vector<std::string> nas_ciphering_algorithm_list_e2str = {
 #define _5GMM_CAUSE_MESSAGE_NOT_COMPATIBLE 101
 #define _5GMM_CAUSE_PROTOCOL_ERROR 111
 
-/********************* UL NAS TRANSPORT payload container type
- * **************************/
+// UL NAS TRANSPORT payload container type
 // TODO: define enum class
 #define N1_SM_INFORMATION 0x01
 #define SMS_CONTAINER 0x02

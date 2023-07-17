@@ -22,8 +22,8 @@
 #include "LadnInformation.hpp"
 
 #include "3gpp_24.501.hpp"
+#include "IeConst.hpp"
 #include "common_defs.h"
-#include "Ie_Const.hpp"
 #include "logger.hpp"
 
 using namespace nas;
@@ -37,12 +37,12 @@ LadnInformation::LadnInformation() : Type6NasIe(kIeiLadnInformation) {
 LadnInformation::~LadnInformation() {}
 
 //------------------------------------------------------------------------------
-void LadnInformation::Set(const vector<ladn>& value) {
+void LadnInformation::Set(const vector<Ladn>& value) {
   ladn_list.assign(value.begin(), value.end());
 }
 
 //------------------------------------------------------------------------------
-void LadnInformation::Add(const ladn& value) {
+void LadnInformation::Add(const Ladn& value) {
   // TODO: Check maximum items  - 8
   ladn_list.push_back(value);
   int ie_len = GetIeLength();

@@ -46,7 +46,7 @@ void AuthenticationResult::SetNgKsi(uint8_t tsc, uint8_t key_set_id) {
 
 //------------------------------------------------------------------------------
 void AuthenticationResult::SetAbba(uint8_t length, uint8_t* value) {
-  ie_abba = std::make_optional<ABBA>(kIeiAbba, length, value);
+  ie_abba = std::make_optional<Abba>(kIeiAbba, length, value);
 }
 
 //------------------------------------------------------------------------------
@@ -92,13 +92,13 @@ int AuthenticationResult::Encode(uint8_t* buf, int len) {
 
   // ABBA
   if (!ie_abba.has_value()) {
-    Logger::nas_mm().debug("IE %s is not available", ABBA::GetIeName().c_str());
+    Logger::nas_mm().debug("IE %s is not available", Abba::GetIeName().c_str());
   } else {
     size = ie_abba.value().Encode(buf + encoded_size, len - encoded_size);
     if (size != KEncodeDecodeError) {
       encoded_size += size;
     } else {
-      Logger::nas_mm().error("Encoding %s error", ABBA::GetIeName().c_str());
+      Logger::nas_mm().error("Encoding %s error", Abba::GetIeName().c_str());
       return KEncodeDecodeError;
     }
   }
@@ -152,16 +152,16 @@ int AuthenticationResult::Decode(uint8_t* buf, int len) {
     switch (octet) {
       case kIeiAbba: {
         Logger::nas_mm().debug("Decoding IEI 0x%x", kIeiAbba);
-        ABBA ie_abba_tmp = {};
+        Abba ie_abba_tmp = {};
         if ((decoded_result = ie_abba_tmp.Decode(
                  buf + decoded_size, len - decoded_size, true)) ==
             KEncodeDecodeError) {
           Logger::nas_mm().error(
-              "Decoding %s error", ABBA::GetIeName().c_str());
+              "Decoding %s error", Abba::GetIeName().c_str());
           return KEncodeDecodeError;
         }
         decoded_size += decoded_result;
-        ie_abba = std::optional<ABBA>(ie_abba_tmp);
+        ie_abba = std::optional<Abba>(ie_abba_tmp);
         DECODE_U8_VALUE(buf + decoded_size, octet);
         Logger::nas_mm().debug("Next IEI (0x%x)", octet);
       } break;
