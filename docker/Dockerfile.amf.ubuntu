@@ -134,7 +134,9 @@ RUN ldconfig && \
 
 # Copying template configuration files
 WORKDIR /openair-amf/etc
-COPY --from=oai-amf-builder /openair-amf/etc/amf.conf .
+COPY --from=oai-amf-builder \
+    /openair-amf/etc/amf.conf \
+    /openair-amf/etc/config.yaml ./
 
 WORKDIR /openair-amf
 
