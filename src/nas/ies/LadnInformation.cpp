@@ -37,12 +37,12 @@ LadnInformation::LadnInformation() : Type6NasIe(kIeiLadnInformation) {
 LadnInformation::~LadnInformation() {}
 
 //------------------------------------------------------------------------------
-void LadnInformation::Set(const vector<ladn>& value) {
+void LadnInformation::Set(const vector<Ladn>& value) {
   ladn_list.assign(value.begin(), value.end());
 }
 
 //------------------------------------------------------------------------------
-void LadnInformation::Add(const ladn& value) {
+void LadnInformation::Add(const Ladn& value) {
   // TODO: Check maximum items  - 8
   ladn_list.push_back(value);
   int ie_len = GetIeLength();

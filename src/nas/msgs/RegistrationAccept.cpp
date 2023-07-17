@@ -132,7 +132,7 @@ void RegistrationAccept::SetEquivalentPlmns(
 void RegistrationAccept::SetAllowedNssai(
     const std::vector<struct SNSSAI_s>& nssai) {
   if (nssai.size() > 0) {
-    ie_allowed_nssai = std::make_optional<NSSAI>(kIeiNSSAIAllowed, nssai);
+    ie_allowed_nssai = std::make_optional<Nssai>(kIeiNSSAIAllowed, nssai);
   }
 }
 
@@ -149,7 +149,7 @@ void RegistrationAccept::SetRejectedNssai(
 void RegistrationAccept::SetConfiguredNssai(
     const std::vector<struct SNSSAI_s>& nssai) {
   if (nssai.size() > 0) {
-    ie_configured_nssai = std::make_optional<NSSAI>(kIeiNSSAIConfigured, nssai);
+    ie_configured_nssai = std::make_optional<Nssai>(kIeiNSSAIConfigured, nssai);
   }
 }
 
@@ -280,7 +280,7 @@ void RegistrationAccept::SetUeRadioCapabilityId(const bstring& value) {
 //------------------------------------------------------------------------------
 void RegistrationAccept::SetPendingNssai(
     const std::vector<struct SNSSAI_s>& nssai) {
-  ie_pending_nssai = std::make_optional<NSSAI>(kIeiNSSAIPending, nssai);
+  ie_pending_nssai = std::make_optional<Nssai>(kIeiNSSAIPending, nssai);
 }
 
 //------------------------------------------------------------------------------
@@ -359,14 +359,14 @@ int RegistrationAccept::Encode(uint8_t* buf, int len) {
 
   if (!ie_allowed_nssai.has_value()) {
     Logger::nas_mm().debug(
-        "IE %s is not available", NSSAI::GetIeName().c_str());
+        "IE %s is not available", Nssai::GetIeName().c_str());
   } else {
     int size =
         ie_allowed_nssai.value().Encode(buf + encoded_size, len - encoded_size);
     if (size != KEncodeDecodeError) {
       encoded_size += size;
     } else {
-      Logger::nas_mm().error("Encoding %s error", NSSAI::GetIeName().c_str());
+      Logger::nas_mm().error("Encoding %s error", Nssai::GetIeName().c_str());
       return KEncodeDecodeError;
     }
   }
@@ -388,14 +388,14 @@ int RegistrationAccept::Encode(uint8_t* buf, int len) {
 
   if (!ie_configured_nssai.has_value()) {
     Logger::nas_mm().debug(
-        "IE %s is not available", NSSAI::GetIeName().c_str());
+        "IE %s is not available", Nssai::GetIeName().c_str());
   } else {
     int size = ie_configured_nssai.value().Encode(
         buf + encoded_size, len - encoded_size);
     if (size != KEncodeDecodeError) {
       encoded_size += size;
     } else {
-      Logger::nas_mm().error("Encoding %s error", NSSAI::GetIeName().c_str());
+      Logger::nas_mm().error("Encoding %s error", Nssai::GetIeName().c_str());
       return KEncodeDecodeError;
     }
   }
@@ -723,14 +723,14 @@ int RegistrationAccept::Encode(uint8_t* buf, int len) {
 
   if (!ie_pending_nssai.has_value()) {
     Logger::nas_mm().debug(
-        "IE %s is not available", NSSAI::GetIeName().c_str());
+        "IE %s is not available", Nssai::GetIeName().c_str());
   } else {
     int size =
         ie_pending_nssai.value().Encode(buf + encoded_size, len - encoded_size);
     if (size != KEncodeDecodeError) {
       encoded_size += size;
     } else {
-      Logger::nas_mm().error("Encoding %s error", NSSAI::GetIeName().c_str());
+      Logger::nas_mm().error("Encoding %s error", Nssai::GetIeName().c_str());
       return KEncodeDecodeError;
     }
   }
@@ -868,16 +868,16 @@ int RegistrationAccept::Decode(uint8_t* buf, int len) {
 
       case kIeiNSSAIAllowed: {
         Logger::nas_mm().debug("Decoding IEI 0x%x", kIeiNSSAIAllowed);
-        NSSAI ie_allowed_nssai_tmp = {};
+        Nssai ie_allowed_nssai_tmp = {};
         if ((decoded_result = ie_allowed_nssai_tmp.Decode(
                  buf + decoded_size, len - decoded_size, true)) ==
             KEncodeDecodeError) {
           Logger::nas_mm().error(
-              "Decoding %s error", NSSAI::GetIeName().c_str());
+              "Decoding %s error", Nssai::GetIeName().c_str());
           return KEncodeDecodeError;
         }
         decoded_size += decoded_result;
-        ie_allowed_nssai = std::optional<NSSAI>(ie_allowed_nssai_tmp);
+        ie_allowed_nssai = std::optional<Nssai>(ie_allowed_nssai_tmp);
         DECODE_U8_VALUE(buf + decoded_size, octet);
         Logger::nas_mm().debug("Next IEI (0x%x)", octet);
       } break;
@@ -900,16 +900,16 @@ int RegistrationAccept::Decode(uint8_t* buf, int len) {
 
       case kIeiNSSAIConfigured: {
         Logger::nas_mm().debug("Decoding IEI 0x%x", kIeiNSSAIConfigured);
-        NSSAI ie_configured_nssai_tmp = {};
+        Nssai ie_configured_nssai_tmp = {};
         if ((decoded_result = ie_configured_nssai_tmp.Decode(
                  buf + decoded_size, len - decoded_size, true)) ==
             KEncodeDecodeError) {
           Logger::nas_mm().error(
-              "Decoding %s error", NSSAI::GetIeName().c_str());
+              "Decoding %s error", Nssai::GetIeName().c_str());
           return KEncodeDecodeError;
         }
         decoded_size += decoded_result;
-        ie_configured_nssai = std::optional<NSSAI>(ie_configured_nssai_tmp);
+        ie_configured_nssai = std::optional<Nssai>(ie_configured_nssai_tmp);
         DECODE_U8_VALUE(buf + decoded_size, octet);
         Logger::nas_mm().debug("Next IEI (0x%x)", octet);
       } break;
@@ -1214,16 +1214,16 @@ int RegistrationAccept::Decode(uint8_t* buf, int len) {
 
       case kIeiNSSAIPending: {
         Logger::nas_mm().debug("Decoding IEI 0x%x", kIeiNSSAIPending);
-        NSSAI ie_pending_nssai_tmp = {};
+        Nssai ie_pending_nssai_tmp = {};
         if ((decoded_result = ie_pending_nssai_tmp.Decode(
                  buf + decoded_size, len - decoded_size, true)) ==
             KEncodeDecodeError) {
           Logger::nas_mm().error(
-              "Decoding %s error", NSSAI::GetIeName().c_str());
+              "Decoding %s error", Nssai::GetIeName().c_str());
           return KEncodeDecodeError;
         }
         decoded_size += decoded_result;
-        ie_pending_nssai = std::optional<NSSAI>(ie_pending_nssai_tmp);
+        ie_pending_nssai = std::optional<Nssai>(ie_pending_nssai_tmp);
         DECODE_U8_VALUE(buf + decoded_size, octet);
         Logger::nas_mm().debug("Next IEI (0x%x)", octet);
       } break;

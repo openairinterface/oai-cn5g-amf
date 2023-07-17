@@ -155,9 +155,9 @@ class RegistrationAccept : public NasMmPlainHeader {
   std::optional<_5gsMobileIdentity> ie_5g_guti;       // Optional
   std::optional<PlmnList> ie_equivalent_plmns;        // Optional
   std::optional<_5gsTrackingAreaIdList> ie_tai_list;  // Optional
-  std::optional<NSSAI> ie_allowed_nssai;              // Optional
+  std::optional<Nssai> ie_allowed_nssai;              // Optional
   std::optional<RejectedNssai> ie_rejected_nssai;     // Optional
-  std::optional<NSSAI> ie_configured_nssai;           // Optional
+  std::optional<Nssai> ie_configured_nssai;           // Optional
   std::optional<_5gsNetworkFeatureSupport>
       ie_5gs_network_feature_support;                     // Optional
   std::optional<PduSessionStatus> ie_pdu_session_status;  // Optional
@@ -192,7 +192,7 @@ class RegistrationAccept : public NasMmPlainHeader {
   std::optional<UeRadioCapabilityId>
       ie_ue_radio_capability_id;  // Release 16.4.1
   // TODO: UE radio capability ID deletion indication
-  std::optional<NSSAI> ie_pending_nssai;  // Release 16.4.1
+  std::optional<Nssai> ie_pending_nssai;  // Release 16.4.1
   // TODO: Ciphering key data (Release 16.4.1)
   // TODO: CAG information list (Release 16.4.1)
   // TODO: Truncated 5G-S-TMSI configuration (Release 16.4.1)

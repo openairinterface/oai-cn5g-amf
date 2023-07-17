@@ -28,10 +28,10 @@
 
 namespace nas {
 
-class ladn {
+class Ladn {
  public:
-  ladn();
-  ~ladn();
+  Ladn();
+  ~Ladn();
 
   void Set(const Dnn& value);
   void Set(const _5gsTrackingAreaIdList& value);

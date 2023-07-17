@@ -40,14 +40,14 @@ class LadnInformation : Type6NasIe {
 
   static std::string GetIeName() { return kLadnInformationIeName; }
 
-  void Set(const vector<ladn>& value);
-  void Add(const ladn& value);
+  void Set(const vector<Ladn>& value);
+  void Add(const Ladn& value);
 
   int Encode(uint8_t* buf, int len);
   int Decode(uint8_t* buf, int len, bool is_option);
 
  private:
-  std::vector<ladn> ladn_list;
+  std::vector<Ladn> ladn_list;
 };
 
 }  // namespace nas

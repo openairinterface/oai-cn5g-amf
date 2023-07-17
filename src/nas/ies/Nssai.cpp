@@ -30,15 +30,15 @@
 using namespace nas;
 
 //------------------------------------------------------------------------------
-NSSAI::NSSAI(uint8_t iei) : Type4NasIe(iei) {
+Nssai::Nssai(uint8_t iei) : Type4NasIe(iei) {
   SetLengthIndicator(0);
 }
 
 //------------------------------------------------------------------------------
-NSSAI::NSSAI(uint8_t iei, const std::vector<struct SNSSAI_s>& nssai)
+Nssai::Nssai(uint8_t iei, const std::vector<struct SNSSAI_s>& nssai)
     : Type4NasIe(iei) {
   int length = 0;
-  S_NSSAIs.assign(nssai.begin(), nssai.end());
+  s_nssais.assign(nssai.begin(), nssai.end());
   for (int i = 0; i < nssai.size(); i++) {
     length += (1 + nssai[i].length);  // 1 for length IE
   }
@@ -46,18 +46,18 @@ NSSAI::NSSAI(uint8_t iei, const std::vector<struct SNSSAI_s>& nssai)
 }
 
 //------------------------------------------------------------------------------
-NSSAI::NSSAI() : Type4NasIe(), S_NSSAIs() {}
+Nssai::Nssai() : Type4NasIe(), s_nssais() {}
 
 //------------------------------------------------------------------------------
-NSSAI::~NSSAI() {}
+Nssai::~Nssai() {}
 
 //------------------------------------------------------------------------------
-void NSSAI::GetValue(std::vector<struct SNSSAI_s>& nssai) const {
-  nssai.assign(S_NSSAIs.begin(), S_NSSAIs.end());
+void Nssai::GetValue(std::vector<struct SNSSAI_s>& nssai) const {
+  nssai.assign(s_nssais.begin(), s_nssais.end());
 }
 
 //------------------------------------------------------------------------------
-int NSSAI::Encode(uint8_t* buf, int len) {
+int Nssai::Encode(uint8_t* buf, int len) {
   Logger::nas_mm().debug("Encoding %s", GetIeName().c_str());
   int ie_len = GetIeLength();
 
@@ -73,27 +73,27 @@ int NSSAI::Encode(uint8_t* buf, int len) {
   if (encoded_header_size == KEncodeDecodeError) return KEncodeDecodeError;
   encoded_size += encoded_header_size;
 
-  for (int i = 0; i < S_NSSAIs.size(); i++) {
+  for (int i = 0; i < s_nssais.size(); i++) {
     // TODO: Define encode for SNSSAI_s
     int len_s_nssai = SST_LENGTH;
-    encoded_size++;  // Store the length of S-NSSAI contents later
+    encoded_size++;  // Store the length of S-Nssai contents later
 
-    ENCODE_U8(buf + encoded_size, S_NSSAIs.at(i).sst, encoded_size);
+    ENCODE_U8(buf + encoded_size, s_nssais.at(i).sst, encoded_size);
 
-    if (S_NSSAIs.at(i).sd != SD_NO_VALUE) {
+    if (s_nssais.at(i).sd != SD_NO_VALUE) {
       len_s_nssai += SD_LENGTH;
-      ENCODE_U24(buf + encoded_size, S_NSSAIs.at(i).sd, encoded_size);
-      Logger::nas_mm().debug("Encoded NSSAI SD (0x%x)", S_NSSAIs.at(i).sd);
+      ENCODE_U24(buf + encoded_size, s_nssais.at(i).sd, encoded_size);
+      Logger::nas_mm().debug("Encoded Nssai SD (0x%x)", s_nssais.at(i).sd);
     }
-    if (S_NSSAIs.at(i).length > (SST_LENGTH + SD_LENGTH)) {
-      if (S_NSSAIs.at(i).mHplmnSst != -1) {
+    if (s_nssais.at(i).length > (SST_LENGTH + SD_LENGTH)) {
+      if (s_nssais.at(i).mHplmnSst != -1) {
         len_s_nssai += SST_LENGTH;
-        *(buf + encoded_size) = S_NSSAIs.at(i).mHplmnSst;
+        *(buf + encoded_size) = s_nssais.at(i).mHplmnSst;
         encoded_size++;
       }
-      if (S_NSSAIs.at(i).mHplmnSd != SD_NO_VALUE) {
+      if (s_nssais.at(i).mHplmnSd != SD_NO_VALUE) {
         len_s_nssai += SD_LENGTH;
-        ENCODE_U24(buf + encoded_size, S_NSSAIs.at(i).mHplmnSd, encoded_size);
+        ENCODE_U24(buf + encoded_size, s_nssais.at(i).mHplmnSd, encoded_size);
       }
     }
 
@@ -102,12 +102,12 @@ int NSSAI::Encode(uint8_t* buf, int len) {
         buf + encoded_size - len_s_nssai - 1, len_s_nssai, encoded_size_tmp);
   }
 
-  Logger::nas_mm().debug("Encoded NSSAI len (%d)", encoded_size);
+  Logger::nas_mm().debug("Encoded Nssai len (%d)", encoded_size);
   return encoded_size;
 }
 
 //------------------------------------------------------------------------------
-int NSSAI::Decode(uint8_t* buf, int len, bool is_iei) {
+int Nssai::Decode(uint8_t* buf, int len, bool is_iei) {
   Logger::nas_mm().debug("Decoding %s", GetIeName().c_str());
   if (len < kNssaiMinimumLength) {
     Logger::nas_mm().error(
@@ -180,13 +180,13 @@ int NSSAI::Decode(uint8_t* buf, int len, bool is_iei) {
       } break;
     }
 
-    S_NSSAIs.insert(S_NSSAIs.end(), a);
+    s_nssais.insert(s_nssais.end(), a);
     a = {0, 0, 0, 0};
   }
 
-  for (int i = 0; i < S_NSSAIs.size(); i++) {
+  for (int i = 0; i < s_nssais.size(); i++) {
     Logger::nas_mm().debug(
-        "Decoded NSSAI %s", S_NSSAIs.at(i).ToString().c_str());
+        "Decoded Nssai %s", s_nssais.at(i).ToString().c_str());
   }
 
   Logger::nas_mm().debug(

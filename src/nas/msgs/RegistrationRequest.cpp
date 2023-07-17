@@ -260,7 +260,7 @@ RegistrationRequest::GetUeSecurityCapability() const {
 //------------------------------------------------------------------------------
 void RegistrationRequest::SetRequestedNssai(
     const std::vector<struct SNSSAI_s>& nssai) {
-  ie_requested_nssai = std::make_optional<NSSAI>(kIeiNSSAIRequested, nssai);
+  ie_requested_nssai = std::make_optional<Nssai>(kIeiNSSAIRequested, nssai);
 }
 
 //------------------------------------------------------------------------------
@@ -629,11 +629,11 @@ int RegistrationRequest::Encode(uint8_t* buf, int len) {
   // Requested NSSAI
   if (!ie_requested_nssai.has_value()) {
     Logger::nas_mm().debug(
-        "IE %s is not available", NSSAI::GetIeName().c_str());
+        "IE %s is not available", Nssai::GetIeName().c_str());
   } else {
     if ((encoded_ie_size = ie_requested_nssai.value().Encode(
              buf + encoded_size, len - encoded_size)) == KEncodeDecodeError) {
-      Logger::nas_mm().error("Encoding %s error", NSSAI::GetIeName().c_str());
+      Logger::nas_mm().error("Encoding %s error", Nssai::GetIeName().c_str());
       return KEncodeDecodeError;
     } else {
       encoded_size += encoded_ie_size;
@@ -1030,14 +1030,14 @@ int RegistrationRequest::Decode(uint8_t* buf, int len) {
 
       case kIeiNSSAIRequested: {
         Logger::nas_mm().debug("Decoding IEI %d", kIeiNSSAIRequested);
-        NSSAI ie_requested_nssai_tmp = {};
+        Nssai ie_requested_nssai_tmp = {};
         if ((decoded_result = ie_requested_nssai_tmp.Decode(
                  buf + decoded_size, len - decoded_size, true)) ==
             KEncodeDecodeError) {
           return KEncodeDecodeError;
         }
         decoded_size += decoded_result;
-        ie_requested_nssai = std::make_optional<NSSAI>(ie_requested_nssai_tmp);
+        ie_requested_nssai = std::make_optional<Nssai>(ie_requested_nssai_tmp);
         DECODE_U8_VALUE(buf + decoded_size, octet);
         Logger::nas_mm().debug("Next IEI 0x%x", octet);
       } break;

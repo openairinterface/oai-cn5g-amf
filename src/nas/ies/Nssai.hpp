@@ -31,12 +31,12 @@ constexpr auto kNssaiIeName           = "NSSAI";
 
 namespace nas {
 
-class NSSAI : public Type4NasIe {
+class Nssai : public Type4NasIe {
  public:
-  NSSAI();
-  NSSAI(uint8_t iei);
-  NSSAI(uint8_t iei, const std::vector<struct SNSSAI_s>& nssai);
-  ~NSSAI();
+  Nssai();
+  Nssai(uint8_t iei);
+  Nssai(uint8_t iei, const std::vector<struct SNSSAI_s>& nssai);
+  ~Nssai();
 
   static std::string GetIeName() { return kNssaiIeName; }
 
@@ -47,7 +47,7 @@ class NSSAI : public Type4NasIe {
 
  private:
   std::vector<struct SNSSAI_s>
-      S_NSSAIs;  // TODO: use class S-NSSAI instead of struct SNSSAI_s
+      s_nssais;  // TODO: use class S-NSSAI instead of struct SNSSAI_s
 };
 
 }  // namespace nas
