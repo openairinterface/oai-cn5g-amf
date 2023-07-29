@@ -44,7 +44,7 @@ void SubscriptionsCollectionDocumentApiImplEventExposure::create_subscription(
   Logger::amf_server().debug(
       "Create an Event Exposure message and store the necessary information");
 
-  amf_application::event_exposure_msg event_exposure = {};
+  event_exposure_msg event_exposure = {};
 
   // Convert from AmfCreateEventSubscription to event_exposure_msg
   xgpp_conv::amf_event_subscription_from_openapi(

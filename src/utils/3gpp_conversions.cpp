@@ -29,7 +29,7 @@
 
 void xgpp_conv::amf_event_subscription_from_openapi(
     const oai::amf::model::AmfCreateEventSubscription& event_subscription,
-    amf_application::event_exposure_msg& event_exposure) {
+    event_exposure_msg& event_exposure) {
   event_exposure.set_notify_uri(
       event_subscription.getSubscription().getEventNotifyUri());
   event_exposure.set_notify_correlation_id(
