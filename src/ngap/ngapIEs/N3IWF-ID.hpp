@@ -41,7 +41,7 @@ class N3IWF_ID {
 
   bool encode(Ngap_N3IWF_ID_t&);
   bool decode(Ngap_N3IWF_ID_t&);
-  void setValue(const n3iwfId_t& );
+  void setValue(const n3iwfId_t&);
   bool setValue(const uint16_t& id, const uint8_t& bit_length);
   // long getValue() const;
   bool get(n3iwfId_t& n3iwf_id) const;

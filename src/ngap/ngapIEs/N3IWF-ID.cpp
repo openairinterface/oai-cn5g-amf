@@ -27,8 +27,8 @@ namespace ngap {
 
 //------------------------------------------------------------------------------
 N3IWF_ID::N3IWF_ID() {
-  n3iwf_id_  = std::nullopt;
-  present_ = Ngap_N3IWF_ID_PR_NOTHING;
+  n3iwf_id_ = std::nullopt;
+  present_  = Ngap_N3IWF_ID_PR_NOTHING;
 }
 
 //------------------------------------------------------------------------------
@@ -36,8 +36,8 @@ N3IWF_ID::~N3IWF_ID() {}
 
 //------------------------------------------------------------------------------
 void N3IWF_ID::setValue(const n3iwfId_t& n3iwf_id) {
-  n3iwf_id_  = std::optional<n3iwfId_t>(n3iwf_id);
-  present_ = Ngap_N3IWF_ID_PR_N3IWF_ID;
+  n3iwf_id_ = std::optional<n3iwfId_t>(n3iwf_id);
+  present_  = Ngap_N3IWF_ID_PR_N3IWF_ID;
 }
 
 //------------------------------------------------------------------------------
@@ -48,12 +48,12 @@ bool N3IWF_ID::setValue(const uint16_t& id, const uint8_t& bit_length) {
     return false;
   }
 
-  n3iwfId_t tmp    = {};
+  n3iwfId_t tmp  = {};
   tmp.id         = id;
   tmp.bit_length = bit_length;
 
-  n3iwf_id_  = std::optional<n3iwfId_t>(tmp);
-  present_ = Ngap_N3IWF_ID_PR_N3IWF_ID;
+  n3iwf_id_ = std::optional<n3iwfId_t>(tmp);
+  present_  = Ngap_N3IWF_ID_PR_N3IWF_ID;
   return true;
 }
 
@@ -82,10 +82,10 @@ bool N3IWF_ID::encode(Ngap_N3IWF_ID_t& n3iwfid) {
     return true;
   }
 
-  n3iwfid.present                   = Ngap_N3IWF_ID_PR_N3IWF_ID;
+  n3iwfid.present                     = Ngap_N3IWF_ID_PR_N3IWF_ID;
   n3iwfid.choice.n3IWF_ID.size        = 2;  // TODO: to be vefified
   n3iwfid.choice.n3IWF_ID.bits_unused = 16 - n3iwf_id_.value().bit_length;
-  n3iwfid.choice.n3IWF_ID.buf         = (uint8_t*) calloc(1, 2 * sizeof(uint8_t));
+  n3iwfid.choice.n3IWF_ID.buf = (uint8_t*) calloc(1, 2 * sizeof(uint8_t));
   if (!n3iwfid.choice.n3IWF_ID.buf) return false;
   n3iwfid.choice.n3IWF_ID.buf[1] = n3iwf_id_.value().id & 0x000000ff;
   n3iwfid.choice.n3IWF_ID.buf[0] = (n3iwf_id_.value().id & 0x0000ff00) >> 8;
@@ -99,12 +99,12 @@ bool N3IWF_ID::decode(Ngap_N3IWF_ID_t& n3iwfid) {
   if (!n3iwfid.choice.n3IWF_ID.buf) return false;
 
   n3iwfId_t tmp = {};
-  tmp.id = n3iwfid.choice.n3IWF_ID.buf[0] << 8;
+  tmp.id        = n3iwfid.choice.n3IWF_ID.buf[0] << 8;
   tmp.id |= n3iwfid.choice.n3IWF_ID.buf[1];
   tmp.bit_length = 16 - n3iwfid.choice.n3IWF_ID.bits_unused;
 
-  n3iwf_id_  = std::optional<n3iwfId_t>(tmp);
-  present_ = Ngap_N3IWF_ID_PR_N3IWF_ID;
+  n3iwf_id_ = std::optional<n3iwfId_t>(tmp);
+  present_  = Ngap_N3IWF_ID_PR_N3IWF_ID;
 
   return true;
 }
