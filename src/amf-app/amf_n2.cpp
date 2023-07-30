@@ -479,7 +479,7 @@ void amf_n2::handle_itti_message(
         "gNB with gNB_id 0x%x, assoc_id %d has been attached to AMF",
         gc->gnb_id, itti_msg->assoc_id);
     // store gNB info for statistic purpose
-    // stacs.add_gnb(gc);
+    stacs.add_n3iwf(n3c);
 
     bdestroy_wrapper(&b);
     Logger::amf_n2().info("Sent NG_SETUP_RESPONSE Ok !!!");

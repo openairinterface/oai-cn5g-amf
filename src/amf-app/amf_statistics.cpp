@@ -24,10 +24,11 @@
 #include "logger.hpp"
 
 //------------------------------------------------------------------------------
-statistics::statistics() : m_ue_infos(), m_gnbs() {
-  gNB_connected = 0;
-  UE_connected  = 0;
-  UE_registred  = 0;
+statistics::statistics() : m_ue_infos(), m_gnbs(), m_n3iwfs() {
+  gNB_connected   = 0;
+  n3iwf_connected = 0;
+  UE_connected    = 0;
+  UE_registred    = 0;
 }
 
 //------------------------------------------------------------------------------
@@ -64,6 +65,42 @@ void statistics::display() {
     // Logger::amf_app().info(
     //    "| Supported TA list: %s|", gnb.second.plmn_to_string().c_str());
     i++;
+  }
+
+  if (n3iwfs.size() > 0) {
+    Logger::amf_app().info("");
+
+    Logger::amf_app().info(
+        "|---------------------------------------------------------------------"
+        "--"
+        "-----------------------------------------|");
+    Logger::amf_app().info(
+        "|----------------------------------------------------N3iWFs' "
+        "information-------------------------------------------|");
+    Logger::amf_app().info(
+        "|    Index    |      Status      |       Global ID       |       gNB "
+        "Name       |               PLMN             |");
+    if (n3iwfs.size() == 0) {
+      Logger::amf_app().info(
+          "|      -      |          -       |           -           |          "
+          " "
+          "-          |               -                |");
+    }
+
+    int i = 1;
+    for (auto const& n3iwf : n3iwfs) {
+      Logger::amf_app().info(
+          "|      %d      |    Connected     |         0x%x         |         "
+          "%s "
+          "      "
+          "      |            %s, %s             | ",
+          i, n3iwf.second.n3iwf_id, n3iwf.second.n3iwf_name.c_str(),
+          n3iwf.second.mcc.c_str(), n3iwf.second.mnc.c_str());
+      // Comment out to show the supported TA list
+      // Logger::amf_app().info(
+      //    "| Supported TA list: %s|", n3iwf.second.plmn_to_string().c_str());
+      i++;
+    }
   }
 
   Logger::amf_app().info(
@@ -177,4 +214,19 @@ void statistics::update_gnb(const uint32_t& gnb_id, const gnb_infos& gnb) {
 uint32_t statistics::get_number_connected_gnbs() const {
   std::shared_lock lock(m_gnbs);
   return gnbs.size();
+}
+
+//------------------------------------------------------------------------------
+void statistics::add_n3iwf(const std::shared_ptr<n3iwf_context>& n3c) {
+  n3iwf_infos n3iwf = {};
+  n3iwf.n3iwf_id    = n3c->n3iwf_id;
+  n3iwf.mcc         = n3c->plmn.mcc;
+  n3iwf.mnc         = n3c->plmn.mnc;
+  n3iwf.n3iwf_name  = n3c->n3iwf_name;
+  for (auto i : n3c->s_ta_list) {
+    n3iwf.plmn_list.push_back(i);
+  }
+  std::unique_lock lock(m_n3iwfs);
+  n3iwfs.insert(std::pair<uint32_t, n3iwf_infos>(n3c->n3iwf_id, n3iwf));
+  n3iwf_connected += 1;
 }

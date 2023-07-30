@@ -55,6 +55,33 @@ typedef struct {
   }
 } gnb_infos;
 
+typedef struct {
+  uint16_t n3iwf_id;
+  // TODO: list of PLMNs
+  std::vector<SupportedTaItem_t> plmn_list;
+  std::string mcc;
+  std::string mnc;
+  std::string n3iwf_name;
+  uint32_t tac;
+  // long nrCellId;
+  std::string plmn_to_string() const {
+    std::string s = {};
+    for (auto supported_item : plmn_list) {
+      s.append("TAC " + std::to_string(supported_item.tac));
+      for (auto plmn_slice : supported_item.b_plmn_list) {
+        s.append("( MCC " + plmn_slice.mcc);
+        s.append(", MNC " + plmn_slice.mnc);
+        for (auto slice : plmn_slice.slice_list) {
+          s.append("(SST " + slice.sst + ", SD " + slice.sd + "),");
+        }
+        s.append(")");
+      }
+      s.append("),");
+    }
+    return s;
+  }
+} n3iwf_infos;
+
 typedef struct ue_info_s {
   std::string connStatus;
   std::string registerStatus;
@@ -131,12 +158,23 @@ class statistics {
    */
   uint32_t get_number_connected_gnbs() const;
 
+  /*
+   * Add N3IWF to the list connected N3IWF to this AMF
+   * @param [const uint32_t&] n3iwf_id: n3iwf_id
+   * @param [const n3iwf_infos&] n3iwf: N3IWF Info
+   * @return void
+   */
+  void add_n3iwf(const std::shared_ptr<n3iwf_context>& n3c);
+
  private:
   uint32_t gNB_connected;
+  uint32_t n3iwf_connected;
   uint32_t UE_connected;
   uint32_t UE_registred;
   std::map<uint32_t, gnb_infos> gnbs;
   mutable std::shared_mutex m_gnbs;
+  std::map<uint32_t, n3iwf_infos> n3iwfs;
+  mutable std::shared_mutex m_n3iwfs;
   std::map<std::string, ue_info_t> ue_infos;
   mutable std::shared_mutex m_ue_infos;
 };
