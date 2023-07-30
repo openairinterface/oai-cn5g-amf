@@ -253,6 +253,11 @@ typedef struct gNBId_s {
   uint8_t bit_length;
 } gNBId_t;  // 22bits to 32bits
 
+typedef struct n3iwfId_s {
+  uint16_t id;
+  uint8_t bit_length;
+} n3iwfId_t;  // 22bits to 32bits
+
 typedef struct {
   uint8_t pduSessionId;
   OCTET_STRING_t HandoverCommandTransfer;

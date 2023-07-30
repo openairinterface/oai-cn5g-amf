@@ -53,7 +53,7 @@ void NGSetupRequestMsg::setGlobalRanNodeID(
     const uint8_t& ran_node_id_size) {
   GlobalRanNodeId globalRanNodeIdIE = {};
   globalRanNodeIdIE.setChoiceOfRanNodeId(ranNodeType);
-
+  Logger::ngap().error("Setting GlobalRanNodeID");
   // TODO: other options for GlobalNgENBId/Global N3IWF ID
   GlobalgNBId globalgNBId = {};
   PlmnId plmn             = {};
@@ -281,6 +281,32 @@ bool NGSetupRequestMsg::decodeFromPdu(Ngap_NGAP_PDU_t* ngapMsgPdu) {
   return true;
 }
 
+//------------------------------------------------------------------------------
+int NGSetupRequestMsg::getGlobalRanNodeIDType() {
+  return globalRanNodeId.getChoiceOfRanNodeId();
+}
+
+//------------------------------------------------------------------------------
+bool NGSetupRequestMsg::getGlobalN3iwfID(
+    uint16_t& n3iwfId, std::string& mcc, std::string& mnc) {
+  GlobalN3iwfId globalN3iwfId = {};
+  if (!globalRanNodeId.get(globalN3iwfId)) {
+    Logger::ngap().warn("N3IWF: There's no value for Global RAN Node ID!");
+    return false;
+  }
+
+  PlmnId plmn      = {};
+  N3IWF_ID n3iwfid = {};
+  globalN3iwfId.get(plmn, n3iwfid);
+  plmn.getMcc(mcc);
+  plmn.getMnc(mnc);
+  if (!n3iwfid.get(n3iwfId)) {
+    Logger::ngap().warn("There's no value for N3IWF ID!");
+    return false;
+  }
+
+  return true;
+}
 //------------------------------------------------------------------------------
 bool NGSetupRequestMsg::getGlobalGnbID(
     uint32_t& gnbId, std::string& mcc, std::string& mnc) {

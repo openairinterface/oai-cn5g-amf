@@ -88,7 +88,8 @@ void ngap_app::handle_sctp_new_association(
   Logger::ngap().debug(
       "Ready to handle new NGAP SCTP association request (id %d)", assoc_id);
 
-  std::shared_ptr<gnb_context> gc = {};
+  std::shared_ptr<gnb_context> gc    = {};
+  std::shared_ptr<n3iwf_context> n3c = {};
   if (!assoc_id_2_gnb_context(assoc_id, gc)) {
     Logger::ngap().debug(
         "Create a new gNB context with assoc_id (%d)", assoc_id);
@@ -204,4 +205,20 @@ void ngap_app::remove_gnb_context(const long& gnb_id) {
     gnbid2gnbContext.erase(gnb_id);
     return;
   }
+}
+
+//------------------------------------------------------------------------------
+void ngap_app::set_n3iwf_id_2_n3iwf_context(
+    const long& n3iwf_id, const std::shared_ptr<n3iwf_context>& n3c) {
+  std::unique_lock lock(m_n3iwfid2n3iwfContext);
+  n3iwfid2n3iwfContext[n3iwf_id] = n3c;
+  return;
+}
+
+//------------------------------------------------------------------------------
+void ngap_app::set_assoc_id_2_n3iwf_context(
+    const sctp_assoc_id_t& assoc_id, std::shared_ptr<n3iwf_context> n3c) {
+  std::shared_lock lock(m_assoc2n3iwfContext);
+  assoc2n3iwfContext[assoc_id] = n3c;
+  return;
 }

@@ -19,46 +19,32 @@
  *      contact@openairinterface.org
  */
 
-#ifndef _GLOBAL_RAN_NODE_ID_H_
-#define _GLOBAL_RAN_NODE_ID_H_
+#ifndef _GLOBAL_N3IWF_ID_H
+#define _GLOBAL_N3IWF_ID_H
+
+#include "N3IWF-ID.hpp"
+#include "PlmnId.hpp"
 
 extern "C" {
-#include "Ngap_GlobalRANNodeID.h"
+#include "Ngap_GlobalN3IWF-ID.h"
 }
-
-#include "GlobalgNBId.hpp"
-#include "GlobalNgENBId.hpp"
-#include "GlobalN3iwfId.hpp"
-
-#include <optional>
 
 namespace ngap {
 
-class GlobalRanNodeId {
+class GlobalN3iwfId {
  public:
-  GlobalRanNodeId();
-  virtual ~GlobalRanNodeId();
+  GlobalN3iwfId();
+  virtual ~GlobalN3iwfId();
 
-  void set(const GlobalgNBId& global_gnb_id);
-  void set(const GlobalNgENBId& global_ng_enb_id);
-  void set(const GlobalN3iwfId& global_n3iwf_id);
+  bool encode(Ngap_GlobalN3IWF_ID_t*);
+  bool decode(Ngap_GlobalN3IWF_ID_t*);
 
-  bool get(GlobalgNBId& global_gnb_id) const;
-  bool get(GlobalNgENBId& global_ng_enb_id) const;
-  bool get(GlobalN3iwfId& global_n3iwf_id) const;
-
-  void setChoiceOfRanNodeId(const Ngap_GlobalRANNodeID_PR& id_present);
-  Ngap_GlobalRANNodeID_PR getChoiceOfRanNodeId();
-
-  bool encode(Ngap_GlobalRANNodeID_t*);
-  bool decode(Ngap_GlobalRANNodeID_t*);
+  void set(const PlmnId& plmn, const N3IWF_ID& n3iwfid);
+  void get(PlmnId& plmn, N3IWF_ID& n3iwfid);
 
  private:
-  std::optional<GlobalgNBId> global_gnb_id_;
-  std::optional<GlobalNgENBId> global_ng_enb_id_;
-  std::optional<GlobalN3iwfId> global_n3iwf_id_;
-
-  Ngap_GlobalRANNodeID_PR id_present_;
+  PlmnId plmnId;     // Mandatory
+  N3IWF_ID n3iwfId;  // Mandatory
 };
 
 }  // namespace ngap

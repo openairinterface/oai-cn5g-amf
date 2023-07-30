@@ -27,6 +27,7 @@
 #include <shared_mutex>
 
 #include "gNB_context.hpp"
+#include "n3iwf_context.hpp"
 #include "sctp_server.hpp"
 
 using namespace sctp;
@@ -139,6 +140,25 @@ class ngap_app : public sctp_application {
    */
   void remove_gnb_context(const long& gnb_id);
 
+  /*
+   * Store N3IWF Context associated with an association id
+   * @param [const long&] gnb_id: gNB ID
+   * @param [const std::shared_ptr<n3iwf_context>&] gc: pointer to the gNB
+   * context
+   * @return void
+   */
+  void set_n3iwf_id_2_n3iwf_context(
+      const long& n3iwf_id, const std::shared_ptr<n3iwf_context>& n3c);
+
+  /*
+   * Store N3IWF Context associated with an association id
+   * @param [const sctp_assoc_id_t&] assoc_id: gNB association ID
+   * @param [std::shared_ptr<n3iwf_context>&] gc: pointer to the gNB context
+   * @return void
+   */
+  void set_assoc_id_2_n3iwf_context(
+      const sctp_assoc_id_t& assoc_id, std::shared_ptr<n3iwf_context> n3c);
+
  protected:
   sctp_server sctp_s_38412;
   uint32_t ppid_;
@@ -146,6 +166,11 @@ class ngap_app : public sctp_application {
   mutable std::shared_mutex m_assoc2gnbContext;
   std::map<long, std::shared_ptr<gnb_context>> gnbid2gnbContext;
   mutable std::shared_mutex m_gnbid2gnbContext;
+
+  std::map<sctp_assoc_id_t, std::shared_ptr<n3iwf_context>> assoc2n3iwfContext;
+  mutable std::shared_mutex m_assoc2n3iwfContext;
+  std::map<long, std::shared_ptr<n3iwf_context>> n3iwfid2n3iwfContext;
+  mutable std::shared_mutex m_n3iwfid2n3iwfContext;
 };
 
 }  // namespace ngap

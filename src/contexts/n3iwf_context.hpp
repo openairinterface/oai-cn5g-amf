@@ -19,48 +19,49 @@
  *      contact@openairinterface.org
  */
 
-#ifndef _GLOBAL_RAN_NODE_ID_H_
-#define _GLOBAL_RAN_NODE_ID_H_
+#ifndef _N3IWF_CONTEXT_H_
+#define _N3IWF_CONTEXT_H_
+
+#include <vector>
+
+#include "3gpp_23.003.h"
+#include "NgapIEsStruct.hpp"
+#include "sctp_server.hpp"
 
 extern "C" {
-#include "Ngap_GlobalRANNodeID.h"
+#include "Ngap_PagingDRX.h"
+#include "bstrlib.h"
 }
 
-#include "GlobalgNBId.hpp"
-#include "GlobalNgENBId.hpp"
-#include "GlobalN3iwfId.hpp"
+using namespace sctp;
+using namespace ngap;
 
-#include <optional>
+typedef enum {
+  NGAP_N3IWF_INIT,
+  NGAP_N3IWF_RESETING,
+  NGAP_N3IWF_READY,
+  NGAP_N3IWF_SHUTDOWN
+} ng_n3iwf_state_t;
 
-namespace ngap {
+static const std::vector<std::string> ng_n3iwf_state_str = {
+    "NGAP_N3IWF_INIT", "NGAP_N3IWF_RESETTING", "NGAP_N3IWF_READY",
+    "NGAP_N3IWF_SHUTDOWN"};
 
-class GlobalRanNodeId {
+class n3iwf_context {
  public:
-  GlobalRanNodeId();
-  virtual ~GlobalRanNodeId();
+  ng_n3iwf_state_t ng_state;
 
-  void set(const GlobalgNBId& global_gnb_id);
-  void set(const GlobalNgENBId& global_ng_enb_id);
-  void set(const GlobalN3iwfId& global_n3iwf_id);
+  std::string n3iwf_name;
+  uint16_t n3iwf_id;  // Global RAN Node ID
+  plmn_t plmn;
+  e_Ngap_PagingDRX default_paging_drx;  // v32, v64, v128, v256
+  std::vector<SupportedTaItem_t> s_ta_list;
+  bstring ue_radio_cap_ind;
 
-  bool get(GlobalgNBId& global_gnb_id) const;
-  bool get(GlobalNgENBId& global_ng_enb_id) const;
-  bool get(GlobalN3iwfId& global_n3iwf_id) const;
-
-  void setChoiceOfRanNodeId(const Ngap_GlobalRANNodeID_PR& id_present);
-  Ngap_GlobalRANNodeID_PR getChoiceOfRanNodeId();
-
-  bool encode(Ngap_GlobalRANNodeID_t*);
-  bool decode(Ngap_GlobalRANNodeID_t*);
-
- private:
-  std::optional<GlobalgNBId> global_gnb_id_;
-  std::optional<GlobalNgENBId> global_ng_enb_id_;
-  std::optional<GlobalN3iwfId> global_n3iwf_id_;
-
-  Ngap_GlobalRANNodeID_PR id_present_;
+  sctp_assoc_id_t sctp_assoc_id;
+  sctp_stream_id_t next_sctp_stream;
+  sctp_stream_id_t instreams;
+  sctp_stream_id_t outstreams;
 };
-
-}  // namespace ngap
 
 #endif

@@ -22,7 +22,7 @@ extern "C" {
 /* Dependencies */
 typedef enum Ngap_N3IWF_ID_PR {
   Ngap_N3IWF_ID_PR_NOTHING, /* No components present */
-  Ngap_N3IWF_ID_PR_n3IWF_ID,
+  Ngap_N3IWF_ID_PR_N3IWF_ID,
   Ngap_N3IWF_ID_PR_choice_Extensions
 } Ngap_N3IWF_ID_PR;
 

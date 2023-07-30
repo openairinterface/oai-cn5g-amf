@@ -58,6 +58,12 @@ void GlobalRanNodeId::set(const GlobalNgENBId& global_ng_enb_id) {
 }
 
 //------------------------------------------------------------------------------
+void GlobalRanNodeId::set(const GlobalN3iwfId& global_n3iwf_id) {
+  global_n3iwf_id_ = std::optional<GlobalN3iwfId>{global_n3iwf_id};
+  id_present_      = Ngap_GlobalRANNodeID_PR_globalN3IWF_ID;
+}
+
+//------------------------------------------------------------------------------
 bool GlobalRanNodeId::get(GlobalgNBId& global_gnb_id) const {
   if (global_gnb_id_.has_value()) {
     global_gnb_id = global_gnb_id_.value();
@@ -70,6 +76,14 @@ bool GlobalRanNodeId::get(GlobalgNBId& global_gnb_id) const {
 bool GlobalRanNodeId::get(GlobalNgENBId& global_ng_enb_id) const {
   if (global_ng_enb_id_.has_value()) {
     global_ng_enb_id = global_ng_enb_id_.value();
+    return true;
+  }
+  return false;
+}
+//------------------------------------------------------------------------------
+bool GlobalRanNodeId::get(GlobalN3iwfId& global_n3iwf_id) const {
+  if (global_n3iwf_id_.has_value()) {
+    global_n3iwf_id = global_n3iwf_id_.value();
     return true;
   }
   return false;
@@ -120,8 +134,9 @@ bool GlobalRanNodeId::decode(Ngap_GlobalRANNodeID_t* globalRANNodeID) {
       break;
     }
     case Ngap_GlobalRANNodeID_PR_globalN3IWF_ID: {
-      // TODO:
-      Logger::ngap().warn("GlobalRANNodeID Present is globalN3IWF!");
+      GlobalN3iwfId tmp = {};
+      if (!tmp.decode(globalRANNodeID->choice.globalN3IWF_ID)) return false;
+      global_n3iwf_id_ = std::optional<GlobalN3iwfId>(tmp);
       break;
     }
     default:

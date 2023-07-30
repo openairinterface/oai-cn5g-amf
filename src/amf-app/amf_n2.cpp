@@ -345,6 +345,147 @@ void amf_n2::handle_itti_message(
     return;
   }
 
+  bool IsRanNodeTypeGnb = true;
+
+  if (itti_msg->ngSetupReq->getGlobalRanNodeIDType() ==
+      Ngap_GlobalRANNodeID_PR_globalGNB_ID) {
+    Logger::amf_n2().debug("GlobalRANNode type is GNB");
+  }
+  if (itti_msg->ngSetupReq->getGlobalRanNodeIDType() ==
+      Ngap_GlobalRANNodeID_PR_globalN3IWF_ID) {
+    Logger::amf_n2().debug("GlobalRANNode type is N3IWF");
+    IsRanNodeTypeGnb = false;
+
+    std::shared_ptr<n3iwf_context> n3c = {};
+    // Copy gNB context to N3IWF context
+    n3c = std::make_shared<n3iwf_context>();
+    set_assoc_id_2_n3iwf_context(gc->sctp_assoc_id, n3c);
+    n3c->sctp_assoc_id    = gc->sctp_assoc_id;
+    n3c->instreams        = gc->instreams;
+    n3c->outstreams       = gc->outstreams;
+    n3c->next_sctp_stream = gc->next_sctp_stream;
+    // n3c->ng_state         = gc->ng_state;
+    n3c->ng_state = NGAP_N3IWF_INIT;
+    // Get IE Global RAN Node ID
+    uint16_t n3iwf_id     = {};
+    std::string n3iwf_mcc = {};
+    std::string n3iwf_mnc = {};
+
+    if (!itti_msg->ngSetupReq->getGlobalN3iwfID(
+            n3iwf_id, n3iwf_mcc, n3iwf_mnc)) {
+      Logger::amf_n2().error(
+          "[gNB Assoc ID %d] Missing Mandatory IE Global RAN Node ID",
+          itti_msg->assoc_id);
+      return;
+    }
+    Logger::amf_n2().debug(
+        "RAN Node Info, Global RAN Node ID: 0x%x, MCC %s, MNC %s", n3iwf_id,
+        n3iwf_mcc.c_str(), n3iwf_mnc.c_str());
+
+    // Store N3IWF info in the N3IWF context
+    n3c->n3iwf_id = n3iwf_id;
+    n3c->plmn.mcc = n3iwf_mcc;
+    n3c->plmn.mnc = n3iwf_mnc;
+
+    std::string n3iwf_name = {};
+    if (!itti_msg->ngSetupReq->getRanNodeName(n3iwf_name)) {
+      Logger::amf_n2().warn("Missing IE RanNodeName");
+    } else {
+      n3c->n3iwf_name = n3iwf_name;
+      Logger::amf_n2().debug("IE RanNodeName: %s", n3iwf_name.c_str());
+    }
+    // store Paging DRX in gNB context
+    // TODO: To fix DefaultPagingDRX value
+    int defPagingDrx = itti_msg->ngSetupReq->getDefaultPagingDRX();
+    if (defPagingDrx == -1) {
+      Logger::amf_n2().error("Missing Mandatory IE DefaultPagingDRX");
+      return;
+    }
+    Logger::amf_n2().debug("IE DefaultPagingDRX: %d", defPagingDrx);
+
+    // Get supported TA List
+    vector<SupportedTaItem_t> s_ta_list;
+    if (!itti_msg->ngSetupReq->getSupportedTAList(s_ta_list)) {
+      Logger::amf_n2().error("Missing Mandatory IE Supported TA List");
+      return;
+    }
+
+    if (!get_common_plmn(s_ta_list, n3c->s_ta_list)) {
+      // encode NG SETUP FAILURE MESSAGE and send back
+      uint8_t* buffer = (uint8_t*) calloc(1, BUFFER_SIZE_1024);
+      NGSetupFailureMsg ngSetupFailure;
+      ngSetupFailure.set(
+          Ngap_CauseRadioNetwork_unspecified, Ngap_TimeToWait_v5s);
+      int encoded = ngSetupFailure.Encode((uint8_t*) buffer, BUFFER_SIZE_1024);
+
+      if (encoded < 1) {
+        Logger::amf_n2().error("Encode NG Setup Failure message error!");
+        return;
+      }
+      bstring b = blk2bstr(buffer, encoded);
+      sctp_s_38412.sctp_send_msg(itti_msg->assoc_id, itti_msg->stream, &b);
+      Logger::amf_n2().error(
+          "[N3IWF ID %d] No common PLMN between N3IWF and AMF, encoding "
+          "NG_SETUP_FAILURE with cause (Unknown PLMN)",
+          n3c->n3iwf_id);
+      bdestroy_wrapper(&b);
+      return;
+    }
+    Logger::amf_n2().info("PLMN Matched !!!");
+    set_n3iwf_id_2_n3iwf_context(n3iwf_id, n3c);
+    Logger::amf_n2().debug("Encoding NG_SETUP_RESPONSE for N3IWF...");
+    // encode NG SETUP RESPONSE message with information stored in configuration
+    // file and send_msg
+    uint8_t* buffer                = (uint8_t*) calloc(1, BUFFER_SIZE_1024);
+    NGSetupResponseMsg ngSetupResp = {};
+    ngSetupResp.setAMFName(amf_cfg.amf_name);
+    std::vector<GuamiItem_t> guami_list;
+    for (int i = 0; i < amf_cfg.guami_list.size(); i++) {
+      GuamiItem_t tmp = {};
+      tmp.mcc         = amf_cfg.guami_list[i].mcc;
+      tmp.mnc         = amf_cfg.guami_list[i].mnc;
+      tmp.region_id   = amf_cfg.guami_list[i].region_id;
+      tmp.amf_set_id  = amf_cfg.guami_list[i].amf_set_id;
+      tmp.amf_pointer = amf_cfg.guami_list[i].amf_pointer;
+      guami_list.push_back(tmp);
+    }
+    ngSetupResp.setGUAMIList(guami_list);
+    ngSetupResp.setRelativeAmfCapacity(amf_cfg.relative_amf_capacity);
+    std::vector<PlmnSliceSupport_t> plmn_list;
+    for (int i = 0; i < amf_cfg.plmn_list.size(); i++) {
+      PlmnSliceSupport_t tmp = {};
+      tmp.mcc                = amf_cfg.plmn_list[i].mcc;
+      tmp.mnc                = amf_cfg.plmn_list[i].mnc;
+      for (int j = 0; j < amf_cfg.plmn_list[i].slice_list.size(); j++) {
+        S_Nssai s_tmp = {};
+        s_tmp.sst     = std::to_string(amf_cfg.plmn_list[i].slice_list[j].sst);
+        s_tmp.sd      = std::to_string(amf_cfg.plmn_list[i].slice_list[j].sd);
+        tmp.slice_list.push_back(s_tmp);
+      }
+      plmn_list.push_back(tmp);
+    }
+    ngSetupResp.setPlmnSupportList(plmn_list);
+    int encoded = ngSetupResp.Encode((uint8_t*) buffer, BUFFER_SIZE_1024);
+
+    if (encoded < 1) {
+      Logger::amf_n2().error("Encode NG Setup Response message error!");
+      return;
+    }
+    bstring b = blk2bstr(buffer, encoded);
+    sctp_s_38412.sctp_send_msg(itti_msg->assoc_id, itti_msg->stream, &b);
+    Logger::amf_n2().debug("Sending NG_SETUP_RESPONSE Ok");
+    gc->ng_state = NGAP_READY;
+    Logger::amf_n2().debug(
+        "gNB with gNB_id 0x%x, assoc_id %d has been attached to AMF",
+        gc->gnb_id, itti_msg->assoc_id);
+    // store gNB info for statistic purpose
+    // stacs.add_gnb(gc);
+
+    bdestroy_wrapper(&b);
+    Logger::amf_n2().info("Sent NG_SETUP_RESPONSE Ok !!!");
+    return;
+  }
+
   if (gc->ng_state == NGAP_RESETING || gc->ng_state == NGAP_SHUTDOWN) {
     Logger::amf_n2().warn(
         "[gNB Assoc ID %d] Received a new association request on an "
