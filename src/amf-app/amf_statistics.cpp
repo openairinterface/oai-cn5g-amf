@@ -75,10 +75,11 @@ void statistics::display() {
         "--"
         "-----------------------------------------|");
     Logger::amf_app().info(
-        "|----------------------------------------------------N3iWFs' "
-        "information-------------------------------------------|");
+        "|----------------------------------------------------N3IWFs' "
+        "information------------------------------------------|");
     Logger::amf_app().info(
-        "|    Index    |      Status      |       Global ID       |       gNB "
+        "|    Index    |      Status      |       Global ID       |       "
+        "N3IWF "
         "Name       |               PLMN             |");
     if (n3iwfs.size() == 0) {
       Logger::amf_app().info(
