@@ -32,7 +32,6 @@ add_library (AMF_APP STATIC
   amf_statistics.cpp
   amf_statistics.cpp
   mysql_db.cpp
-  amf_msg.cpp
   amf_subscription.cpp
   ${SRC_TOP_DIR}/ngap/ngap_app/ngap_app.cpp
 )

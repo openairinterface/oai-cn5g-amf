@@ -241,7 +241,7 @@ void amf_http2_server::createEventSubscriptionHandler(
 
   header_map h;
 
-  amf_application::event_exposure_msg event_exposure = {};
+  event_exposure_msg event_exposure = {};
   xgpp_conv::amf_event_subscription_from_openapi(
       amfCreateEventSubscription, event_exposure);
 

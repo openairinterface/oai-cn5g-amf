@@ -63,6 +63,7 @@ void N1N2MessageCollectionDocumentApiImpl::n1_n2_message_transfer(
   auto itti_msg = std::make_shared<itti_n1n2_message_transfer_request>(
       AMF_SERVER, TASK_AMF_APP);  // TODO: May not be used
   itti_msg->supi = ueContextId;
+  Logger::amf_server().debug("SUPI %s", ueContextId.c_str());
 
   if (n1N2MessageTransferReqData.n2InfoContainerIsSet()) {
     // N2 Container Present
