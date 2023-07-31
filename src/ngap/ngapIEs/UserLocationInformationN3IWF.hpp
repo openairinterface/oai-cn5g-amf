@@ -34,8 +34,10 @@ class UserLocationInformationN3IWF {
   UserLocationInformationN3IWF();
   virtual ~UserLocationInformationN3IWF();
 
-  void set(const Ngap_TransportLayerAddress_t&, const Ngap_PortNumber_t&);
-  void get(Ngap_TransportLayerAddress_t&, Ngap_PortNumber_t&);
+  void setN3iwfTransportLayerInformation(
+      TransportLayerAddress* m_transportLayerAddress);
+  bool getN3iwfTransportLayerInformation(
+      TransportLayerAddress*& m_transportLayerAddress);
 
   bool encode(Ngap_UserLocationInformationN3IWF_t*);
   bool decode(Ngap_UserLocationInformationN3IWF_t*);

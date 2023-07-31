@@ -36,17 +36,20 @@ class itti_msg_amf_app : public itti_msg {
       const task_id_t destination)
       : itti_msg(msg_type, origin, destination) {
     gnb_id         = 0;
+    n3iwf_id       = 0;
     ran_ue_ngap_id = 0;
     amf_ue_ngap_id = 0;
   }
 
   itti_msg_amf_app(const itti_msg_amf_app& i) : itti_msg(i) {
     gnb_id         = i.gnb_id;
+    n3iwf_id       = i.n3iwf_id;
     ran_ue_ngap_id = i.ran_ue_ngap_id;
     amf_ue_ngap_id = i.amf_ue_ngap_id;
   }
 
   uint32_t gnb_id;
+  uint16_t n3iwf_id;
   uint32_t ran_ue_ngap_id;
   long amf_ue_ngap_id;
 };
@@ -80,6 +83,7 @@ class itti_nas_signalling_establishment_request : public itti_msg_amf_app {
   int ueCtxReq;
   NrCgi_t cgi;
   Tai_t tai;
+  n3iwfAddr_t n3iwfAddr;
   bstring nas_buf;
   bool is_5g_s_tmsi_present;
   std::string _5g_s_tmsi;

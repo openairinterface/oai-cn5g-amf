@@ -75,6 +75,21 @@ void UserLocationInformation::setInformation(
 }
 
 //------------------------------------------------------------------------------
+bool UserLocationInformation::getInformation(
+    UserLocationInformationN3IWF& information_n3iwf) {
+  if (!user_location_information_n3iwf_.has_value()) return false;
+  information_n3iwf = user_location_information_n3iwf_.value();
+  return true;
+}
+
+//------------------------------------------------------------------------------
+void UserLocationInformation::setInformation(
+    const UserLocationInformationN3IWF& information_n3iwf) {
+  present_ = Ngap_UserLocationInformation_PR_userLocationInformationN3IWF;
+  user_location_information_n3iwf_ =
+      std::optional<UserLocationInformationN3IWF>(information_n3iwf);
+}
+//------------------------------------------------------------------------------
 bool UserLocationInformation::encode(
     Ngap_UserLocationInformation_t* user_location_information) {
   user_location_information->present = present_;

@@ -24,27 +24,24 @@
 namespace ngap {
 
 //------------------------------------------------------------------------------
-UserLocationInformationN3IWF::UserLocationInformationN3IWF() {}
+UserLocationInformationN3IWF::UserLocationInformationN3IWF() {
+  transportLayerAddress = NULL;
+}
 
 //------------------------------------------------------------------------------
 UserLocationInformationN3IWF::~UserLocationInformationN3IWF() {}
 
 //------------------------------------------------------------------------------
-void UserLocationInformationN3IWF::set(
-    const Ngap_TransportLayerAddress_t& m_iPAddress,
-    const Ngap_PortNumber_t& m_portNumber) {
-  iPAddress  = m_iPAddress;
-  portNumber = m_portNumber;
+bool UserLocationInformationN3IWF::getN3iwfTransportLayerInformation(
+    TransportLayerAddress*& m_transportLayerAddress) {
+  m_transportLayerAddress = transportLayerAddress;
+  return true;
 }
-
 //------------------------------------------------------------------------------
-void UserLocationInformationN3IWF::get(
-    Ngap_TransportLayerAddress_t& m_iPAddress,
-    Ngap_PortNumber_t& m_portNumber) {
-  m_iPAddress  = iPAddress;
-  m_portNumber = portNumber;
+void UserLocationInformationN3IWF::setN3iwfTransportLayerInformation(
+    TransportLayerAddress* m_transportLayerAddress) {
+  transportLayerAddress = m_transportLayerAddress;
 }
-
 //------------------------------------------------------------------------------
 bool UserLocationInformationN3IWF::encode(
     Ngap_UserLocationInformationN3IWF_t* user_location_info_n3iwf) {
