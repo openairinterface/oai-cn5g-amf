@@ -124,6 +124,15 @@ bool UserLocationInformation::decode(
           user_location_information_nr);
       break;
     }
+    case Ngap_UserLocationInformation_PR_userLocationInformationN3IWF: {
+      UserLocationInformationN3IWF user_location_information_n3iwf = {};
+      user_location_information_n3iwf.decode(
+          user_location_information->choice.userLocationInformationN3IWF);
+      user_location_information_n3iwf_ =
+          std::optional<UserLocationInformationN3IWF>(
+              user_location_information_n3iwf);
+      break;
+    }
     default:
       Logger::ngap().warn("UserLocationInformation decode error!");
       return false;

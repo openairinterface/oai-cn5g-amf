@@ -56,7 +56,7 @@ class UserLocationInformation {
   Ngap_UserLocationInformation_PR present_;
   std::optional<UserLocationInformationEUTRA> user_location_information_eutra_;
   std::optional<UserLocationInformationNR> user_location_information_nr_;
-  // TODO: UserLocationInformationN3IWF *userLocationInformationN3IWF;
+  std::optional<UserLocationInformationN3IWF> user_location_information_n3iwf_;
 };
 
 }  // namespace ngap
