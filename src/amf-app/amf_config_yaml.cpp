@@ -483,7 +483,9 @@ void supported_encryption_algorithms::validate() {
 amf::amf(
     const std::string& name, const std::string& host, const sbi_interface& sbi,
     const local_interface& local)
-    : nf(name, host, sbi, local) {}
+    : nf(name, host, sbi) {
+  m_n2 = local;
+}
 
 //------------------------------------------------------------------------------
 void amf::from_yaml(const YAML::Node& node) {
@@ -492,6 +494,11 @@ void amf::from_yaml(const YAML::Node& node) {
   // Load AMF specified parameter
   for (const auto& elem : node) {
     auto key = elem.first.as<std::string>();
+
+    if (key == AMF_CONFIG_N2) {
+      m_n2.set_host(get_host());
+      m_n2.from_yaml(elem.second);
+    }
 
     if (key == AMF_CONFIG_INSTANCE_ID) {
       m_instance_id.from_yaml(elem.second);
@@ -565,6 +572,10 @@ std::string amf::to_string(const std::string& indent) const {
   out.append(nf::to_string(indent));
 
   out.append(inner_indent)
+      .append(fmt::format("{} {}\n", OUTER_LIST_ELEM, m_n2.get_config_name()));
+  out.append(m_n2.to_string(add_indent(inner_indent)));
+
+  out.append(inner_indent)
       .append(fmt::format(
           BASE_FORMATTER, OUTER_LIST_ELEM, AMF_CONFIG_INSTANCE_ID_LABEL,
           inner_width, m_instance_id.get_value()));
@@ -625,6 +636,12 @@ std::string amf::to_string(const std::string& indent) const {
   return out;
 }
 
+void amf::validate() {
+  nf::validate();
+  // TODO validate all the other AMF values
+  m_n2.validate();
+}
+
 //------------------------------------------------------------------------------
 const uint32_t amf::get_instance_id() const {
   return m_instance_id.get_value();
@@ -674,6 +691,10 @@ const uint32_t amf::get_statistics_timer_interval() const {
   return m_statistics_timer_interval.get_value();
 }
 
+const local_interface& amf::get_n2() const {
+  return m_n2;
+}
+
 //------------------------------------------------------------------------------
 amf_config_yaml::amf_config_yaml(
     const std::string& config_path, bool log_stdout, bool log_rot_file)
@@ -693,13 +714,11 @@ amf_config_yaml::amf_config_yaml(
   // use case
   auto m_amf = std::make_shared<amf>(
       "AMF", "oai-amf", sbi_interface("SBI", "oai-amf1", 80, "v1", "eth0"),
-      local_interface("N2", "oai-amf", 38412, "eth0"));
+      local_interface(AMF_CONFIG_N2_LABEL, "oai-amf", 38412, "eth0"));
   add_nf(oai::config::AMF_CONFIG_NAME, m_amf);
 
-  // TODO: enable N4-local interface only for testing purpose
   auto m_smf = std::make_shared<nf>(
-      "SMF", "oai-smf", sbi_interface("SBI", "oai-smf", 80, "v1", "eth0"),
-      local_interface("n4", "oai-smf", 8805, "eth0"));
+      "SMF", "oai-smf", sbi_interface("SBI", "oai-smf", 80, "v1", "eth0"));
   add_nf(oai::config::SMF_CONFIG_NAME, m_smf);
 
   auto m_ausf = std::make_shared<nf>(
@@ -839,9 +858,9 @@ void amf_config_yaml::to_amf_config(amf_config& cfg) {
   cfg.sbi.addr4       = local().get_sbi().get_addr4();
   cfg.sbi.if_name     = local().get_sbi().get_if_name();
 
-  cfg.n2.if_name = local().get_nx().get_if_name();
-  cfg.n2.addr4   = local().get_nx().get_addr4();
-  cfg.n2.port    = local().get_nx().get_port();
+  cfg.n2.if_name = amf_local->get_n2().get_if_name();
+  cfg.n2.addr4   = amf_local->get_n2().get_addr4();
+  cfg.n2.port    = amf_local->get_n2().get_port();
 
   if (get_nf(oai::config::SMF_CONFIG_NAME)) {
     cfg.smf_addr.api_version =

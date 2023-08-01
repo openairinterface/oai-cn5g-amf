@@ -80,6 +80,8 @@ constexpr auto AMF_CONFIG_SST                     = "sst";
 constexpr auto AMF_CONFIG_SST_LABEL               = "SST";
 constexpr auto AMF_CONFIG_SD                      = "sd";
 constexpr auto AMF_CONFIG_SD_LABEL                = "SD";
+constexpr auto AMF_CONFIG_N2                      = "n2";
+constexpr auto AMF_CONFIG_N2_LABEL                = "N2";
 
 constexpr auto AMF_CONFIG_SUPPORTED_INTEGRITY_ALGORITHMS =
     "supported_integrity_algorithms";
@@ -224,6 +226,7 @@ class amf : public nf {
   std::vector<plmn_support_item> m_plmn_support_list;
   supported_integrity_algorithms m_supported_integrity_algorithms;
   supported_encryption_algorithms m_supported_encryption_algorithms;
+  local_interface m_n2;
 
  public:
   explicit amf(
@@ -233,6 +236,8 @@ class amf : public nf {
   void from_yaml(const YAML::Node& node) override;
 
   [[nodiscard]] std::string to_string(const std::string& indent) const override;
+  void validate() override;
+
   [[nodiscard]] const uint32_t get_instance_id() const;
   [[nodiscard]] const std::string get_pid_directory() const;
   [[nodiscard]] const std::string get_amf_name() const;
@@ -245,6 +250,7 @@ class amf : public nf {
       const;
   [[nodiscard]] std::vector<std::string> get_supported_encryption_algorithms()
       const;
+  [[nodiscard]] const local_interface& get_n2() const;
 };
 
 class amf_config_yaml : public config {
