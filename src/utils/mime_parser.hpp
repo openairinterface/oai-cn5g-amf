@@ -30,6 +30,7 @@
 #include <unordered_map>
 #include <string>
 #include <vector>
+#include <optional>
 
 enum class multipart_related_content_part_e { JSON = 0, NAS = 1, NGAP = 2 };
 
