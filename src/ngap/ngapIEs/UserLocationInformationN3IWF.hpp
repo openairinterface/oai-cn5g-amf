@@ -18,3 +18,36 @@
  * For more information about the OpenAirInterface (OAI) Software Alliance:
  *      contact@openairinterface.org
  */
+
+#ifndef _USER_LOCATION_INFORMATION_N3IWF_H_
+#define _USER_LOCATION_INFORMATION_N3IWF_H_
+
+#include "TransportLayerAddress.hpp"
+
+extern "C" {
+#include "Ngap_UserLocationInformationN3IWF.h"
+}
+
+namespace ngap {
+class UserLocationInformationN3IWF {
+ public:
+  UserLocationInformationN3IWF();
+  virtual ~UserLocationInformationN3IWF();
+
+  void setN3iwfTransportLayerInformation(
+      TransportLayerAddress* m_transportLayerAddress);
+  bool getN3iwfTransportLayerInformation(
+      TransportLayerAddress*& m_transportLayerAddress);
+
+  bool encode(Ngap_UserLocationInformationN3IWF_t*);
+  bool decode(Ngap_UserLocationInformationN3IWF_t*);
+
+ private:
+  Ngap_TransportLayerAddress_t iPAddress;  // Mandatory
+  Ngap_PortNumber_t portNumber;            // Mandatory
+  TransportLayerAddress* transportLayerAddress;
+};
+
+}  // namespace ngap
+
+#endif

@@ -369,6 +369,19 @@ bool InitialUEMessageMsg::getUserLocationInfoNR(
 }
 
 //------------------------------------------------------------------------------
+bool InitialUEMessageMsg::getUserLocationInfoN3IWF(
+    struct n3iwfAddr_s& n3iwf_addr) {
+  UserLocationInformationN3IWF information_n3iwf = {};
+  userLocationInformation.getInformation(information_n3iwf);
+  if (userLocationInformation.getChoiceOfUserLocationInformation() !=
+      Ngap_UserLocationInformation_PR_userLocationInformationN3IWF)
+    return false;
+  TransportLayerAddress* tladdr;
+  information_n3iwf.getN3iwfTransportLayerInformation(tladdr);
+  tladdr->getTransportLayerAddress(n3iwf_addr.ipv4_addr);
+  return true;
+}
+//------------------------------------------------------------------------------
 int InitialUEMessageMsg::getRRCEstablishmentCause() {
   return rRCEstablishmentCause.get();
 }

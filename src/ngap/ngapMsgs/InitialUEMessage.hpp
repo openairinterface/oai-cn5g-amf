@@ -53,6 +53,9 @@ class InitialUEMessageMsg : public NgapMessage {
       const struct NrCgi_s& cig, const struct Tai_s& tai);
   bool getUserLocationInfoNR(struct NrCgi_s& cig, struct Tai_s& tai);
 
+  void setUserLocationInfoN3IWF(const struct n3iwfAddr_s& n3iwf_addr);
+  bool getUserLocationInfoN3IWF(struct n3iwfAddr_s& n3iwf_addr);
+
   void setRRCEstablishmentCause(const e_Ngap_RRCEstablishmentCause& cause);
   int getRRCEstablishmentCause();
 

@@ -44,8 +44,8 @@ class UserLocationInformation {
   void setInformation(const UserLocationInformationNR&);
   bool getInformation(UserLocationInformationNR&);
 
-  // void setInformation(const UserLocationInformationN3IWF&);
-  // void getInformation(UserLocationInformationN3IWF&);
+  void setInformation(const UserLocationInformationN3IWF&);
+  bool getInformation(UserLocationInformationN3IWF&);
 
   // TODO: use reference instead of raw pointer
   bool encode(Ngap_UserLocationInformation_t* user_location_information);
@@ -56,7 +56,7 @@ class UserLocationInformation {
   Ngap_UserLocationInformation_PR present_;
   std::optional<UserLocationInformationEUTRA> user_location_information_eutra_;
   std::optional<UserLocationInformationNR> user_location_information_nr_;
-  // TODO: UserLocationInformationN3IWF *userLocationInformationN3IWF;
+  std::optional<UserLocationInformationN3IWF> user_location_information_n3iwf_;
 };
 
 }  // namespace ngap
