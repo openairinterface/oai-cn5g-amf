@@ -739,13 +739,18 @@ void amf_n2::handle_itti_message(itti_initial_ue_message& init_ue_msg) {
   unc->gnb_assoc_id = init_ue_msg.assoc_id;
 
   // User Location Info NR (Mandatory)
-  NrCgi_t cgi = {};
-  Tai_t tai   = {};
+  NrCgi_t cgi           = {};
+  Tai_t tai             = {};
+  n3iwfAddr_t n3iwfAddr = {};
   if (init_ue_msg.initUeMsg->getUserLocationInfoNR(cgi, tai)) {
     itti_msg->cgi = cgi;
     itti_msg->tai = tai;
     unc->tai      = tai;
-  } else {
+  } else if (init_ue_msg.initUeMsg->getUserLocationInfoN3IWF(n3iwfAddr)) {
+    itti_msg->n3iwfAddr = n3iwfAddr;
+  }
+
+  else {
     Logger::amf_n2().error("Missing Mandatory IE UserLocationInfoNR");
     return;
   }
