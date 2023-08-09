@@ -94,7 +94,15 @@ int sctp_server::create_socket(const char* address, const uint16_t port_num) {
   // events_.sctp_address_event = 1;
   // events_.sctp_peer_error_event = 1;
 
-  setsockopt(socket_, IPPROTO_SCTP, SCTP_EVENTS, &events_, sizeof(events_));
+  // HACK on the sizeof(events_)!
+  // it SHALL be equal to the minimal value across OS version
+  // socklen_t len = (socklen_t) sizeof(events_);
+  // - Ubuntu-20    host: 13 bytes
+  // - Ubuntu-22    host: 14 bytes
+  // - RHEL8/Rocky8 host: 14 bytes
+  // - RHEL9/Rocky9 host: 14 bytes
+  // 12 is chosen as minimal value.
+  setsockopt(socket_, IPPROTO_SCTP, SCTP_EVENTS, &events_, 12);
   listen(socket_, 5);  // the queue length for completely established sockets
                        // waiting to be accepted
   return RETURNok;
