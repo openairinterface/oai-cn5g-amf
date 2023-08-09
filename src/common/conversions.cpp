@@ -353,6 +353,23 @@ bool conv::sd_string_to_int(const std::string& sd_str, uint32_t& sd) {
 }
 
 //------------------------------------------------------------------------------
+bool conv::sd_string_hex_to_int(const std::string& sd_str, uint32_t& sd) {
+  sd = SD_NO_VALUE;
+  if (sd_str.empty()) return false;
+  uint8_t base = 16;
+  try {
+    sd = std::stoul(sd_str, nullptr, base);
+  } catch (const std::exception& e) {
+    Logger::amf_app().error(
+        "Error when converting from string to int for S-NSSAI SD, error: %s",
+        e.what());
+    sd = SD_NO_VALUE;
+    return false;
+  }
+  return true;
+}
+
+//------------------------------------------------------------------------------
 void conv::sd_int_to_string_hex(uint32_t sd, std::string& sd_str) {
   std::stringstream stream_str;
   stream_str << std::hex << sd;

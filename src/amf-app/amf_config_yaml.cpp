@@ -93,9 +93,20 @@ bool amf_support_features::get_option_enable_smf_selection() const {
 }
 
 //------------------------------------------------------------------------------
-guami::guami() : m_amf_region_id(), m_amf_set_id(), m_amf_pointer() {
+guami::guami() {
   m_mcc = string_config_value(AMF_CONFIG_MCC, AMF_CONFIG_TEST_PLMN_MCC);
+  m_mcc.set_validation_regex(MCC_REGEX);
   m_mnc = string_config_value(AMF_CONFIG_MNC, AMF_CONFIG_TEST_PLMN_MNC);
+  m_mnc.set_validation_regex(MNC_REGEX);
+  m_amf_region_id = string_config_value(
+      AMF_CONFIG_AMF_REGION_ID, AMF_CONFIG_AMF_REGION_ID_DEFAULT_VALUE);
+  m_amf_region_id.set_validation_regex(AMF_REGION_ID_REGEX);
+  m_amf_set_id = string_config_value(
+      AMF_CONFIG_AMF_SET_ID, AMF_CONFIG_AMF_SET_ID_DEFAULT_VALUE);
+  m_amf_set_id.set_validation_regex(AMF_SET_ID_REGEX);
+  m_amf_pointer = string_config_value(
+      AMF_CONFIG_AMF_POINTER, AMF_CONFIG_AMF_POINTER_DEFAULT_VALUE);
+  m_amf_pointer.set_validation_regex(AMF_POINTER_REGEX);
   m_set = true;
 }
 
@@ -104,6 +115,17 @@ guami::guami(const std::string& mcc, const std::string& mnc)
     : m_amf_region_id(), m_amf_set_id(), m_amf_pointer() {
   m_mcc = string_config_value(AMF_CONFIG_MCC, mcc);
   m_mnc = string_config_value(AMF_CONFIG_MNC, mnc);
+  m_mcc.set_validation_regex(MCC_REGEX);
+  m_mnc.set_validation_regex(MNC_REGEX);
+  m_amf_region_id = string_config_value(
+      AMF_CONFIG_AMF_REGION_ID, AMF_CONFIG_AMF_REGION_ID_DEFAULT_VALUE);
+  m_amf_region_id.set_validation_regex(AMF_REGION_ID_REGEX);
+  m_amf_set_id = string_config_value(
+      AMF_CONFIG_AMF_SET_ID, AMF_CONFIG_AMF_SET_ID_DEFAULT_VALUE);
+  m_amf_set_id.set_validation_regex(AMF_SET_ID_REGEX);
+  m_amf_pointer = string_config_value(
+      AMF_CONFIG_AMF_POINTER, AMF_CONFIG_AMF_POINTER_DEFAULT_VALUE);
+  m_amf_pointer.set_validation_regex(AMF_POINTER_REGEX);
   m_set = true;
 }
 
@@ -165,17 +187,17 @@ std::string guami::get_mnc() const {
 }
 
 //------------------------------------------------------------------------------
-int guami::get_amf_region_id() const {
+std::string guami::get_amf_region_id() const {
   return m_amf_region_id.get_value();
 }
 
 //------------------------------------------------------------------------------
-int guami::get_amf_set_id() const {
+std::string guami::get_amf_set_id() const {
   return m_amf_set_id.get_value();
 }
 
 //------------------------------------------------------------------------------
-int guami::get_amf_pointer() const {
+std::string guami::get_amf_pointer() const {
   return m_amf_pointer.get_value();
 }
 
@@ -192,13 +214,18 @@ void guami::validate() {
 //------------------------------------------------------------------------------
 s_nssai::s_nssai(const uint8_t sst) {
   m_sst = int_config_value(AMF_CONFIG_SST, sst);
+  m_sst.set_validation_interval(SST_MIN_VALUE, SST_MAX_VALUE);
+  m_sd = string_config_value(AMF_CONFIG_SD, AMF_CONFIG_SD_DEFAULT_VALUE);
+  m_sd.set_validation_regex(SD_REGEX);
   m_set = true;
 }
 
 //------------------------------------------------------------------------------
 s_nssai::s_nssai(const uint8_t sst, const std::string& sd) {
   m_sst = int_config_value(AMF_CONFIG_SST, sst);
-  m_sd  = string_config_value(AMF_CONFIG_SD, sd);
+  m_sst.set_validation_interval(SST_MIN_VALUE, SST_MAX_VALUE);
+  m_sd = string_config_value(AMF_CONFIG_SD, sd);
+  m_sd.set_validation_regex(SD_REGEX);
   m_set = true;
 }
 
@@ -260,8 +287,11 @@ void s_nssai::validate() {
 //------------------------------------------------------------------------------
 plmn_support_item::plmn_support_item() {
   m_mcc = string_config_value(AMF_CONFIG_MCC, AMF_CONFIG_TEST_PLMN_MCC);
+  m_mcc.set_validation_regex(MCC_REGEX);
   m_mnc = string_config_value(AMF_CONFIG_MNC, AMF_CONFIG_TEST_PLMN_MNC);
-  m_tac = int_config_value(AMF_CONFIG_TAC, 1);
+  m_mnc.set_validation_regex(MNC_REGEX);
+  m_tac = int_config_value(AMF_CONFIG_TAC, AMF_CONFIG_TAC_DEFAULT_VALUE);
+  m_tac.set_validation_interval(TAC_MIN_VALUE, TAC_MAX_VALUE);
   m_set = true;
 }
 
@@ -269,8 +299,11 @@ plmn_support_item::plmn_support_item() {
 plmn_support_item::plmn_support_item(
     const std::string& mcc, const std::string& mnc) {
   m_mcc = string_config_value(AMF_CONFIG_MCC, mcc);
+  m_mcc.set_validation_regex(MCC_REGEX);
   m_mnc = string_config_value(AMF_CONFIG_MNC, mnc);
-  m_tac = int_config_value(AMF_CONFIG_TAC, 1);
+  m_mnc.set_validation_regex(MNC_REGEX);
+  m_tac = int_config_value(AMF_CONFIG_TAC, AMF_CONFIG_TAC_DEFAULT_VALUE);
+  m_tac.set_validation_interval(TAC_MIN_VALUE, TAC_MAX_VALUE);
   m_set = true;
 }
 
@@ -348,7 +381,9 @@ void plmn_support_item::validate() {
   m_mcc.validate();
   m_mnc.validate();
   m_tac.validate();
-  // TODO: NSSAI
+  for (auto& n : m_nssai) {
+    n.validate();
+  }
 }
 
 //------------------------------------------------------------------------------
@@ -366,7 +401,9 @@ void supported_integrity_algorithms::from_yaml(const YAML::Node& node) {
   } else {
     for (int i = 0; i < node.size(); i++) {
       string_config_value value{};
+      value.set_validation_regex(SUPPORTED_INTEGRITY_ALGORITHMS_REGEX);
       value.from_yaml(node[i]);
+
       m_5g_ia_list.push_back(value);
     }
     if (node.size() == 0) no_item_available = true;
@@ -412,7 +449,9 @@ supported_integrity_algorithms::get_supported_integrity_algorithms() const {
 //------------------------------------------------------------------------------
 void supported_integrity_algorithms::validate() {
   if (!m_set) return;
-  // TODO:
+  for (auto& ia : m_5g_ia_list) {
+    ia.validate();
+  }
 }
 
 //------------------------------------------------------------------------------
@@ -430,6 +469,7 @@ void supported_encryption_algorithms::from_yaml(const YAML::Node& node) {
   } else {
     for (int i = 0; i < node.size(); i++) {
       string_config_value value{};
+      value.set_validation_regex(SUPPORTED_ENCRYPTION_ALGORITHMS_REGEX);
       value.from_yaml(node[i]);
       m_5g_ea_list.push_back(value);
     }
@@ -476,7 +516,9 @@ supported_encryption_algorithms::get_supported_encryption_algorithms() const {
 //------------------------------------------------------------------------------
 void supported_encryption_algorithms::validate() {
   if (!m_set) return;
-  // TODO:
+  for (auto& ea : m_5g_ea_list) {
+    ea.validate();
+  }
 }
 
 //------------------------------------------------------------------------------
@@ -484,9 +526,23 @@ amf::amf(
     const std::string& name, const std::string& host, const sbi_interface& sbi,
     const local_interface& local)
     : nf(name, host, sbi) {
-  m_n2 = local;
+  m_n2            = local;
+  m_pid_directory = string_config_value(
+      AMF_CONFIG_PID_DIRECTORY, AMF_CONFIG_PID_DIRECTORY_DEFAULT_VALUE);
+  m_instance_id = int_config_value(
+      AMF_CONFIG_INSTANCE_ID, AMF_CONFIG_INSTANCE_ID_DEFAULT_VALUE);
+  m_relative_capacity = int_config_value(
+      AMF_CONFIG_RELATIVE_CAPACITY, AMF_CONFIG_RELATIVE_CAPACITY_DEFAULT_VALUE);
+  m_relative_capacity.set_validation_interval(
+      AMF_CONFIG_RELATIVE_CAPACITY_MIN_VALUE,
+      AMF_CONFIG_RELATIVE_CAPACITY_MAX_VALUE);
+  m_statistics_timer_interval = int_config_value(
+      AMF_CONFIG_STATISTICS_TIMER_INTERVAL,
+      AMF_CONFIG_STATISTICS_TIMER_INTERVAL_DEFAULT_VALUE);
+  m_statistics_timer_interval.set_validation_interval(
+      AMF_CONFIG_STATISTICS_TIMER_INTERVAL_MIN_VALUE,
+      AMF_CONFIG_STATISTICS_TIMER_INTERVAL_MAX_VALUE);
 }
-
 //------------------------------------------------------------------------------
 void amf::from_yaml(const YAML::Node& node) {
   nf::from_yaml(node);
@@ -638,7 +694,17 @@ std::string amf::to_string(const std::string& indent) const {
 
 void amf::validate() {
   nf::validate();
-  // TODO validate all the other AMF values
+  m_instance_id.validate();
+  m_relative_capacity.validate();
+  m_statistics_timer_interval.validate();
+  for (auto& g : m_guami_list) {
+    g.validate();
+  }
+  for (auto& p : m_plmn_support_list) {
+    p.validate();
+  }
+  m_supported_integrity_algorithms.validate();
+  m_supported_encryption_algorithms.validate();
   m_n2.validate();
 }
 
@@ -805,13 +871,12 @@ void amf_config_yaml::to_amf_config(amf_config& cfg) {
   // cfg.support_features.use_fqdn_dns = true;
 
   for (const auto& i : amf_local->get_guami_list()) {
-    guami_t guami_item    = {};
-    guami_item.mcc        = i.get_mcc();
-    guami_item.mnc        = i.get_mnc();
-    guami_item.amf_set_id = std::to_string(i.get_amf_set_id());  // TODO: use
-                                                                 // int
-    guami_item.region_id   = std::to_string(i.get_amf_region_id());
-    guami_item.amf_pointer = std::to_string(i.get_amf_pointer());
+    guami_t guami_item     = {};
+    guami_item.mcc         = i.get_mcc();
+    guami_item.mnc         = i.get_mnc();
+    guami_item.amf_set_id  = i.get_amf_set_id();
+    guami_item.region_id   = i.get_amf_region_id();
+    guami_item.amf_pointer = i.get_amf_pointer();
     cfg.guami              = guami_item;
     cfg.guami_list.push_back(guami_item);
   }
@@ -826,7 +891,7 @@ void amf_config_yaml::to_amf_config(amf_config& cfg) {
       slice.sst      = s.get_sst();
       std::string sd = {};
       if (s.get_sd(sd)) {
-        if (conv::sd_string_to_int(sd, slice.sd)) {
+        if (conv::sd_string_hex_to_int(sd, slice.sd)) {
           // TODO:
         }
       } else {

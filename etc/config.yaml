@@ -109,28 +109,27 @@ database:
 
 ############## NF-specific configuration
 amf:
-  pid_directory: "/var/run"
   amf_name: "OAI-AMF"
   # This really depends on if we want to keep the "mini" version or not
   support_features_options:
-    enable_simple_scenario: no
+    enable_simple_scenario: no #"no" by default with the normal deployment scenarios with AMF/SMF/UPF/AUSF/UDM/UDR/NRF. 
+                               # set it to "yes" to use with the minimanist deployment scenario (including only AMF/SMF and UPF) by using the internal AUSF/UDM implemented inside AMF. There's no NRF in this scenario, SMF info is get from "nfs" section.   
     enable_nssf: no
     enable_smf_selection: yes
-    use_external_udm: no
   relative_capacity: 30
   statistics_timer_interval: 20  #in seconds
   emergency_support: false
   served_guami_list:
     - mcc: 208
       mnc: 95
-      amf_region_id: 128
-      amf_set_id: 1
-      amf_pointer: 1
+      amf_region_id: ff
+      amf_set_id: 001
+      amf_pointer: 01
     - mcc: 460
       mnc: 11
       amf_region_id: 10
-      amf_set_id: 1
-      amf_pointer: 1
+      amf_set_id: 001
+      amf_pointer: 01
   plmn_support_list:
     - mcc: 208
       mnc: 95
@@ -138,9 +137,9 @@ amf:
       nssai:
         - sst: 1
         - sst: 1
-          sd: 1
-        - sst: 222
-          sd: 123
+          sd: 000001
+        - sst: 2
+          sd: ffffff
   supported_integrity_algorithms:
     - "NIA0"
     - "NIA1"
