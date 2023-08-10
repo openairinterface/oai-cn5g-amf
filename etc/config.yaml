@@ -113,7 +113,8 @@ amf:
   # This really depends on if we want to keep the "mini" version or not
   support_features_options:
     enable_simple_scenario: no #"no" by default with the normal deployment scenarios with AMF/SMF/UPF/AUSF/UDM/UDR/NRF. 
-                               # set it to "yes" to use with the minimanist deployment scenario (including only AMF/SMF and UPF) by using the internal AUSF/UDM implemented inside AMF. There's no NRF in this scenario, SMF info is get from "nfs" section.   
+                               # set it to "yes" to use with the minimalist deployment scenario (including only AMF/SMF and UPF) by using the internal AUSF/UDM implemented inside AMF. 
+                               # There's no NRF in this scenario, SMF info is taken from "nfs" section.
     enable_nssf: no
     enable_smf_selection: yes
   relative_capacity: 30
@@ -125,9 +126,9 @@ amf:
       amf_region_id: ff
       amf_set_id: 001
       amf_pointer: 01
-    - mcc: 460
-      mnc: 11
-      amf_region_id: 10
+    - mcc: 001
+      mnc: 01
+      amf_region_id: ff
       amf_set_id: 001
       amf_pointer: 01
   plmn_support_list:
@@ -137,9 +138,9 @@ amf:
       nssai:
         - sst: 1
         - sst: 1
-          sd: 000001
-        - sst: 2
-          sd: ffffff
+          sd: 000001 # in hex
+        - sst: 222
+          sd: 00007B # in hex
   supported_integrity_algorithms:
     - "NIA0"
     - "NIA1"
