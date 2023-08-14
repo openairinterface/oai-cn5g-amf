@@ -136,9 +136,9 @@ typedef struct itti_cfg_s {
 typedef struct guami_s {
   std::string mcc;
   std::string mnc;
-  std::string region_id;
-  std::string amf_set_id;
-  std::string amf_pointer;
+  uint8_t region_id;
+  uint16_t amf_set_id;
+  uint8_t amf_pointer;
 
   nlohmann::json to_json() const {
     nlohmann::json json_data = {};
@@ -153,9 +153,9 @@ typedef struct guami_s {
   void from_json(nlohmann::json& json_data) {
     this->mcc         = json_data["mcc"].get<std::string>();
     this->mnc         = json_data["mnc"].get<std::string>();
-    this->region_id   = json_data["region_id"].get<std::string>();
-    this->amf_set_id  = json_data["amf_set_id"].get<std::string>();
-    this->amf_pointer = json_data["amf_pointer"].get<std::string>();
+    this->region_id   = json_data["region_id"].get<int>();
+    this->amf_set_id  = json_data["amf_set_id"].get<int>();
+    this->amf_pointer = json_data["amf_pointer"].get<int>();
   }
 } guami_t;
 

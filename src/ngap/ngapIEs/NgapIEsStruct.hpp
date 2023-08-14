@@ -81,9 +81,9 @@ typedef struct SupportedTaItem_s {
 typedef struct GuamiItem_s {
   std::string mcc;
   std::string mnc;
-  std::string region_id;
-  std::string amf_set_id;
-  std::string amf_pointer;
+  uint8_t region_id;            // 8 bits
+  uint16_t amf_set_id;          // 10 bits
+  uint8_t amf_pointer;          // 6 bits
   std::string backup_amf_name;  // optional
 } GuamiItem_t;
 
@@ -102,9 +102,9 @@ typedef struct Tai_s {
 typedef struct Guami_s {
   std::string mcc;
   std::string mnc;
-  std::string region_id;
-  std::string amf_set_id;
-  std::string amf_pointer;
+  uint8_t region_id;
+  uint8_t amf_set_id;
+  uint8_t amf_pointer;
 } Guami_t;
 
 typedef struct {

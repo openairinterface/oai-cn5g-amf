@@ -38,6 +38,7 @@ class AMFPointer {
   bool set(const std::string&);
   void get(std::string&);
   bool set(const uint8_t&);
+  void get(uint8_t&);
 
   bool encode(Ngap_AMFPointer_t&);
   bool decode(Ngap_AMFPointer_t&);

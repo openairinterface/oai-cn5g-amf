@@ -52,9 +52,8 @@ class RegistrationAccept : public NasMmPlainHeader {
       const std::string& routing_ind, uint8_t protection_sch_id,
       const uint8_t& hnpki, const std::string& msin);
   void Set5gGuti(
-      const std::string& mcc, const std::string& mnc,
-      const std::string& amf_region_id, const std::string& amf_set_id,
-      const std::string& amf_pointer, uint32_t tmsi);
+      const std::string& mcc, const std::string& mnc, uint8_t amf_region_id,
+      uint16_t amf_set_id, uint8_t amf_pointer, uint32_t tmsi);
   void SetImeiImeisv();  // TODO:
   void Set5gSTmsi();     // TODO:
   // TODO: Get

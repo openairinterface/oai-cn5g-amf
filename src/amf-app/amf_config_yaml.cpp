@@ -111,8 +111,7 @@ guami::guami() {
 }
 
 //------------------------------------------------------------------------------
-guami::guami(const std::string& mcc, const std::string& mnc)
-    : m_amf_region_id(), m_amf_set_id(), m_amf_pointer() {
+guami::guami(const std::string& mcc, const std::string& mnc) : guami() {
   m_mcc = string_config_value(AMF_CONFIG_MCC, mcc);
   m_mnc = string_config_value(AMF_CONFIG_MNC, mnc);
   m_mcc.set_validation_regex(MCC_REGEX);
@@ -874,9 +873,9 @@ void amf_config_yaml::to_amf_config(amf_config& cfg) {
     guami_t guami_item     = {};
     guami_item.mcc         = i.get_mcc();
     guami_item.mnc         = i.get_mnc();
-    guami_item.amf_set_id  = i.get_amf_set_id();
-    guami_item.region_id   = i.get_amf_region_id();
-    guami_item.amf_pointer = i.get_amf_pointer();
+    guami_item.amf_set_id  = conv::string_hex_to_int(i.get_amf_set_id());
+    guami_item.region_id   = conv::string_hex_to_int(i.get_amf_region_id());
+    guami_item.amf_pointer = conv::string_hex_to_int(i.get_amf_pointer());
     cfg.guami              = guami_item;
     cfg.guami_list.push_back(guami_item);
   }

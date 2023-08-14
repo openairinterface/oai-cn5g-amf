@@ -266,6 +266,23 @@ void HandoverRequest::setGUAMI(
 }
 
 //------------------------------------------------------------------------------
+void HandoverRequest::setGUAMI(
+    const std::string& mcc, const std::string& mnc, uint8_t regionId,
+    uint16_t setId, uint8_t pointer) {
+  Ngap_HandoverRequestIEs_t* ie =
+      (Ngap_HandoverRequestIEs_t*) calloc(1, sizeof(Ngap_HandoverRequestIEs_t));
+  ie->id            = Ngap_ProtocolIE_ID_id_GUAMI;
+  ie->criticality   = Ngap_Criticality_reject;
+  ie->value.present = Ngap_HandoverRequestIEs__value_PR_GUAMI;
+  guami.setGUAMI(mcc, mnc, regionId, setId, pointer);
+  guami.encode2GUAMI(&(ie->value.choice.GUAMI));
+
+  int ret = ASN_SEQUENCE_ADD(&handoverRequestIEs->protocolIEs.list, ie);
+
+  if (ret != 0) Logger::ngap().error("Encode GUAMI IE error");
+}
+
+//------------------------------------------------------------------------------
 void HandoverRequest::setAllowedNSSAI(std::vector<S_NSSAI>& list) {
   for (auto& it : list) {
     Ngap_AllowedNSSAI_Item_t* item =

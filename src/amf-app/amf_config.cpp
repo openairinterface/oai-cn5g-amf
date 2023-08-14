@@ -81,6 +81,7 @@ amf_config::amf_config() {
   support_features.use_fqdn_dns           = false;
   support_features.use_http2              = false;
   support_features.enable_external_nrf    = true;
+  is_emergency_support                    = false;
   // TODO:
 }
 
@@ -100,15 +101,14 @@ void amf_config::display() {
   Logger::config().info(
       "- GUAMI (MCC, MNC, Region ID, AMF Set ID, AMF pointer): ");
   Logger::config().info(
-      "    (%s, %s, %s, %s, %s)", guami.mcc.c_str(), guami.mnc.c_str(),
-      guami.region_id.c_str(), guami.amf_set_id.c_str(),
-      guami.amf_pointer.c_str());
+      "    (%s, %s, %d, %d, %d)", guami.mcc.c_str(), guami.mnc.c_str(),
+      guami.region_id, guami.amf_set_id, guami.amf_pointer);
   Logger::config().info("- Served Guami List:");
   for (int i = 0; i < guami_list.size(); i++) {
     Logger::config().info(
-        "    (%s, %s, %s , %s, %s)", guami_list[i].mcc.c_str(),
-        guami_list[i].mnc.c_str(), guami_list[i].region_id.c_str(),
-        guami_list[i].amf_set_id.c_str(), guami_list[i].amf_pointer.c_str());
+        "    (%s, %s, %d , %d, %d)", guami_list[i].mcc.c_str(),
+        guami_list[i].mnc.c_str(), guami_list[i].region_id,
+        guami_list[i].amf_set_id, guami_list[i].amf_pointer);
   }
   Logger::config().info(
       "- Relative Capacity .......: %d", relative_amf_capacity);

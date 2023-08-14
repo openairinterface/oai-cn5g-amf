@@ -90,6 +90,9 @@ class HandoverRequest : public NgapMessage {
       const std::string& mcc, const std::string& mnc,
       const std::string& regionId, const std::string& setId,
       const std::string& pointer);
+  void setGUAMI(
+      const std::string& mcc, const std::string& mnc, uint8_t regionId,
+      uint16_t setId, uint8_t pointer);
   // TODO: getGUAMI
 
   void setMobilityRestrictionList(const PlmnId& m_plmnId);

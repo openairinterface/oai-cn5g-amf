@@ -54,6 +54,11 @@ void AMFPointer::get(std::string& pointer) {
 }
 
 //------------------------------------------------------------------------------
+void AMFPointer::get(uint8_t& pointer) {
+  pointer = pointer_;
+}
+
+//------------------------------------------------------------------------------
 bool AMFPointer::encode(Ngap_AMFPointer_t& amf_pointer) {
   amf_pointer.size = 1;
   uint8_t* buffer  = (uint8_t*) calloc(1, sizeof(uint8_t));
