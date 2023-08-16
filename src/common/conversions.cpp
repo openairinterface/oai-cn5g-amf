@@ -353,6 +353,23 @@ bool conv::sd_string_to_int(const std::string& sd_str, uint32_t& sd) {
 }
 
 //------------------------------------------------------------------------------
+bool conv::sd_string_hex_to_int(const std::string& sd_str, uint32_t& sd) {
+  sd = SD_NO_VALUE;
+  if (sd_str.empty()) return false;
+  uint8_t base = 16;
+  try {
+    sd = std::stoul(sd_str, nullptr, base);
+  } catch (const std::exception& e) {
+    Logger::amf_app().error(
+        "Error when converting from string to int for S-NSSAI SD, error: %s",
+        e.what());
+    sd = SD_NO_VALUE;
+    return false;
+  }
+  return true;
+}
+
+//------------------------------------------------------------------------------
 void conv::sd_int_to_string_hex(uint32_t sd, std::string& sd_str) {
   std::stringstream stream_str;
   stream_str << std::hex << sd;
@@ -405,6 +422,43 @@ bool conv::string_to_int32(const std::string& str, uint32_t& value) {
     return false;
   }
   return true;
+}
+
+//------------------------------------------------------------------------------
+void conv::int_to_string_hex(uint32_t value, std::string& value_str) {
+  std::stringstream stream_str;
+  stream_str << std::hex << value;
+  std::string value_tmp(stream_str.str());
+  value_str = value_tmp;
+}
+
+//------------------------------------------------------------------------------
+bool conv::string_hex_to_int(const std::string& value_str, uint32_t& value) {
+  if (value_str.empty()) return false;
+  uint8_t base = 16;
+  try {
+    value = std::stoul(value_str, nullptr, base);
+  } catch (const std::exception& e) {
+    Logger::amf_app().error(
+        "Error when converting from string to int, error: %s", e.what());
+    return false;
+  }
+  return true;
+}
+
+//------------------------------------------------------------------------------
+uint32_t conv::string_hex_to_int(const std::string& value_str) {
+  uint32_t value = {};
+  if (value_str.empty()) return value;
+  uint8_t base = 16;
+  try {
+    value = std::stoul(value_str, nullptr, base);
+  } catch (const std::exception& e) {
+    Logger::amf_app().error(
+        "Error when converting from string to int, error: %s", e.what());
+    value = {};
+  }
+  return value;
 }
 
 //------------------------------------------------------------------------------
@@ -514,17 +568,22 @@ std::string conv::uint32_to_hex_string(uint32_t value) {
 
 //------------------------------------------------------------------------------
 std::string conv::tmsi_to_guti(
-    const std::string& mcc, const std::string& mnc,
-    const std::string& region_id, const std::string& _5g_s_tmsi) {
-  return {mcc + mnc + region_id + _5g_s_tmsi};
+    const std::string& mcc, const std::string& mnc, uint8_t region_id,
+    const std::string& _5g_s_tmsi) {
+  std::string region_id_str = {};
+  int_to_string_hex(region_id, region_id_str);
+  return {mcc + mnc + region_id_str + _5g_s_tmsi};
 }
 
 //------------------------------------------------------------------------------
 std::string conv::tmsi_to_guti(
-    const std::string& mcc, const std::string& mnc,
-    const std::string& region_id, const std::string& amf_set_id,
-    const std::string& amf_pointer, const std::string& tmsi) {
-  return {mcc + mnc + region_id + amf_set_id + amf_pointer + tmsi};
+    const std::string& mcc, const std::string& mnc, uint8_t region_id,
+    uint16_t amf_set_id, uint8_t amf_pointer, const std::string& tmsi) {
+  uint32_t amf_id        = {};
+  std::string amf_id_str = {};
+  get_amf_id(region_id, amf_set_id, amf_pointer, amf_id);
+  int_to_string_hex(amf_id, amf_id_str);
+  return {mcc + mnc + amf_id_str + tmsi};
 }
 //------------------------------------------------------------------------------
 std::string conv::imsi_to_supi(const std::string& imsi) {
@@ -570,4 +629,27 @@ bool conv::string_2_masked_imeisv(
   imeisv.size        = 8;
   imeisv.bits_unused = 0;
   return true;
+}
+
+//------------------------------------------------------------------------------
+void conv::get_amf_id(
+    uint8_t amf_region_id, uint16_t amf_set_id, uint8_t amf_pointer,
+    uint32_t& amf_id) {
+  // AMF Region ID: 8bits
+  // AMF Set ID: 10 bits
+  // AMF Pointer: 6 bits
+  amf_id = 0x00ffffff & ((amf_region_id << 16) | ((amf_set_id & 0x03ff) << 6) |
+                         (amf_pointer & 0x3f));
+}
+//------------------------------------------------------------------------------
+void conv::get_amf_id(
+    const std::string& amf_region_id, const std::string& amf_set_id,
+    const std::string& amf_pointer, uint32_t& amf_id) {
+  uint8_t amf_region_id_int = {};
+  uint16_t amf_set_id_int   = {};
+  uint8_t amf_pointer_int   = {};
+
+  get_amf_id(
+      string_hex_to_int(amf_region_id), string_hex_to_int(amf_set_id),
+      string_hex_to_int(amf_pointer), amf_id);
 }

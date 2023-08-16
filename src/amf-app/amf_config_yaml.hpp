@@ -24,10 +24,6 @@
 #include "config.hpp"
 #include "amf_config.hpp"
 
-constexpr auto AMF_CONFIG_TEST_PLMN_MCC = "001";
-constexpr auto AMF_CONFIG_TEST_PLMN_MNC = "01";
-constexpr auto AMF_CONFIG_DEFAULT_SST   = 1;
-
 constexpr auto AMF_CONFIG_INSTANCE_ID         = "instance_id";
 constexpr auto AMF_CONFIG_INSTANCE_ID_LABEL   = "Instance ID";
 constexpr auto AMF_CONFIG_PID_DIRECTORY       = "pid_directory";
@@ -92,6 +88,43 @@ constexpr auto AMF_CONFIG_SUPPORTED_ENCRYPTION_ALGORITHMS =
 constexpr auto AMF_CONFIG_SUPPORTED_ENCRYPTION_ALGORITHMS_LABEL =
     "Supported Encryption Algorithms";
 
+// Regular Expression
+constexpr auto MCC_REGEX           = "^[0-9]{3}$";
+constexpr auto MNC_REGEX           = "^[0-9]{2,3}$";
+constexpr auto AMF_REGION_ID_REGEX = "^[A-Fa-f0-9]{2}$";
+constexpr auto AMF_SET_ID_REGEX    = "^[0-3][A-Fa-f0-9]{2}$";
+constexpr auto AMF_POINTER_REGEX   = "^[0-4][A-Fa-f0-9]$";
+
+constexpr auto SUPPORTED_INTEGRITY_ALGORITHMS_REGEX  = "^NIA[0-7]$";
+constexpr auto SUPPORTED_ENCRYPTION_ALGORITHMS_REGEX = "^NEA[0-7]$";
+
+constexpr uint8_t SST_MIN_VALUE  = 0;
+constexpr uint8_t SST_MAX_VALUE  = 255;
+constexpr auto SD_REGEX          = "^[A-Fa-f0-9]{6}$";
+constexpr uint32_t TAC_MIN_VALUE = 0;
+constexpr uint32_t TAC_MAX_VALUE = 16777215;  // 0xffffff
+constexpr uint8_t AMF_CONFIG_RELATIVE_CAPACITY_MIN_VALUE = 0;
+constexpr uint8_t AMF_CONFIG_RELATIVE_CAPACITY_MAX_VALUE = 255;
+constexpr uint32_t AMF_CONFIG_STATISTICS_TIMER_INTERVAL_MIN_VALUE =
+    5;  // in seconds
+constexpr uint32_t AMF_CONFIG_STATISTICS_TIMER_INTERVAL_MAX_VALUE =
+    600;  // in seconds
+
+// Default values
+constexpr auto AMF_CONFIG_INSTANCE_ID_DEFAULT_VALUE       = 1;
+constexpr auto AMF_CONFIG_PID_DIRECTORY_DEFAULT_VALUE     = "/var/run";
+constexpr auto AMF_CONFIG_TEST_PLMN_MCC                   = "001";
+constexpr auto AMF_CONFIG_TEST_PLMN_MNC                   = "01";
+constexpr auto AMF_CONFIG_DEFAULT_SST                     = 1;
+constexpr auto AMF_CONFIG_SD_DEFAULT_VALUE                = "ffffff";  // hex
+constexpr auto AMF_CONFIG_AMF_REGION_ID_DEFAULT_VALUE     = "ff";      // hex
+constexpr auto AMF_CONFIG_AMF_SET_ID_DEFAULT_VALUE        = "001";     // hex
+constexpr auto AMF_CONFIG_AMF_POINTER_DEFAULT_VALUE       = "01";      // hex
+constexpr auto AMF_CONFIG_TAC_DEFAULT_VALUE               = 1;
+constexpr auto AMF_CONFIG_RELATIVE_CAPACITY_DEFAULT_VALUE = 10;
+constexpr uint32_t AMF_CONFIG_STATISTICS_TIMER_INTERVAL_DEFAULT_VALUE =
+    20;  // in seconds
+
 namespace oai::config {
 
 class amf_support_features : public config_type {
@@ -115,9 +148,9 @@ class guami : public config_type {
  private:
   string_config_value m_mcc{};
   string_config_value m_mnc{};
-  int_config_value m_amf_region_id{};
-  int_config_value m_amf_set_id{};
-  int_config_value m_amf_pointer{};
+  string_config_value m_amf_region_id{};
+  string_config_value m_amf_set_id{};
+  string_config_value m_amf_pointer{};
 
  public:
   explicit guami();
@@ -131,9 +164,9 @@ class guami : public config_type {
   [[nodiscard]] std::string to_string(const std::string& indent) const override;
   [[nodiscard]] std::string get_mcc() const;
   [[nodiscard]] std::string get_mnc() const;
-  [[nodiscard]] int get_amf_region_id() const;
-  [[nodiscard]] int get_amf_set_id() const;
-  [[nodiscard]] int get_amf_pointer() const;
+  [[nodiscard]] std::string get_amf_region_id() const;
+  [[nodiscard]] std::string get_amf_set_id() const;
+  [[nodiscard]] std::string get_amf_pointer() const;
 };
 
 class s_nssai : public config_type {
@@ -148,7 +181,6 @@ class s_nssai : public config_type {
   void from_yaml(const YAML::Node& node) override;
 
   void validate() override;
-  void set_validation_regex(const std::string& regex);
 
   [[nodiscard]] std::string to_string(const std::string& indent) const override;
   [[nodiscard]] bool get_sd(std::string& sd) const;
@@ -160,7 +192,7 @@ class plmn_support_item : public config_type {
  private:
   string_config_value m_mcc{};
   string_config_value m_mnc{};
-  int_config_value m_tac{};
+  int_config_value m_tac{};  // TODO: string
   std::vector<s_nssai> m_nssai;
 
  public:
@@ -170,7 +202,6 @@ class plmn_support_item : public config_type {
   void from_yaml(const YAML::Node& node) override;
 
   void validate() override;
-  void set_validation_regex(const std::string& regex);
 
   [[nodiscard]] std::string to_string(const std::string& indent) const override;
   [[nodiscard]] std::string get_mcc() const;
@@ -189,7 +220,6 @@ class supported_integrity_algorithms : public config_type {
   void from_yaml(const YAML::Node& node) override;
 
   void validate() override;
-  void set_validation_regex(const std::string& regex);
 
   [[nodiscard]] std::string to_string(const std::string& indent) const override;
   [[nodiscard]] std::vector<std::string> get_supported_integrity_algorithms()
@@ -206,7 +236,6 @@ class supported_encryption_algorithms : public config_type {
   void from_yaml(const YAML::Node& node) override;
 
   void validate() override;
-  void set_validation_regex(const std::string& regex);
 
   [[nodiscard]] std::string to_string(const std::string& indent) const override;
   [[nodiscard]] std::vector<std::string> get_supported_encryption_algorithms()

@@ -138,7 +138,7 @@ typedef struct allowed_nssai_s
 
 typedef struct guami_5g_s {
   plmn_t plmn;
-  std::string amf_id;
+  uint32_t amf_id;
 } guami_5g_t;
 
 #endif

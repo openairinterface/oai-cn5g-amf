@@ -104,4 +104,14 @@ void GUAMI::getGUAMI(
   aMFPointer.get(pointer);
 }
 
+void GUAMI::getGUAMI(
+    std::string& mcc, std::string& mnc, uint8_t regionId, uint16_t setId,
+    uint8_t pointer) {
+  plmnId.getMcc(mcc);
+  plmnId.getMnc(mnc);
+  aMFRegionID.getAMFRegionID(regionId);
+  aMFSetID.get(setId);
+  aMFPointer.get(pointer);
+}
+
 }  // namespace ngap

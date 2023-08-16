@@ -862,8 +862,8 @@ void amf_n1::service_request_handle(
     string tmsi         = {};
     if (service_request->Get5gSTmsi(amf_set_id, amf_pointer, tmsi)) {
       std::string guti = conv::tmsi_to_guti(
-          uc->tai.mcc, uc->tai.mnc, amf_cfg.guami.region_id,
-          std::to_string(amf_set_id), std::to_string(amf_pointer), tmsi);
+          uc->tai.mcc, uc->tai.mnc, amf_cfg.guami.region_id, amf_set_id,
+          amf_pointer, tmsi);
 
       Logger::amf_app().debug(
           "GUTI %s, 5G-TMSI %s", guti.c_str(), tmsi.c_str());
@@ -1039,8 +1039,8 @@ void amf_n1::service_request_handle(
     string tmsi         = {};
     if (service_request->Get5gSTmsi(amf_set_id, amf_pointer, tmsi)) {
       std::string guti = conv::tmsi_to_guti(
-          uc->tai.mcc, uc->tai.mnc, amf_cfg.guami.region_id,
-          std::to_string(amf_set_id), std::to_string(amf_pointer), tmsi);
+          uc->tai.mcc, uc->tai.mnc, amf_cfg.guami.region_id, amf_set_id,
+          amf_pointer, tmsi);
       // nc->guti               = std::make_optional<std::string>(guti);
       Logger::amf_app().debug(
           "GUTI %s, 5G-TMSI %s", guti.c_str(), tmsi.c_str());

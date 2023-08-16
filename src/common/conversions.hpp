@@ -74,11 +74,15 @@ class conv {
       const uint8_t& bits_unused);
   static bool bstring_2_bit_string(const bstring& b_str, BIT_STRING_t& bit_str);
   static bool sd_string_to_int(const std::string& sd_str, uint32_t& sd);
+  static bool sd_string_hex_to_int(const std::string& sd_str, uint32_t& sd);
   static void sd_int_to_string_hex(uint32_t sd, std::string& sd_str);
   static bool string_to_int(
       const std::string& str, uint32_t& value, const uint8_t& base);
   static bool string_to_int8(const std::string& str, uint8_t& value);
   static bool string_to_int32(const std::string& str, uint32_t& value);
+  static bool string_hex_to_int(const std::string& value_str, uint32_t& value);
+  static uint32_t string_hex_to_int(const std::string& value_str);
+  static void int_to_string_hex(uint32_t value, std::string& value_str);
   static void bstring_2_string(const bstring& b_str, std::string& str);
   static void string_2_bstring(const std::string& str, bstring& b_str);
   static void octet_string_2_string(
@@ -103,16 +107,21 @@ class conv {
       const std::string& mnc, const std::string& mcc);
   static std::string uint32_to_hex_string(uint32_t value);
   static std::string tmsi_to_guti(
-      const std::string& mcc, const std::string& mnc,
-      const std::string& region_id, const std::string& _5g_s_tmsi);
+      const std::string& mcc, const std::string& mnc, uint8_t region_id,
+      const std::string& _5g_s_tmsi);
   static std::string tmsi_to_guti(
-      const std::string& mcc, const std::string& mnc,
-      const std::string& region_id, const std::string& amf_set_id,
-      const std::string& amf_pointer, const std::string& tmsi);
+      const std::string& mcc, const std::string& mnc, uint8_t region_id,
+      uint16_t amf_set_id, uint8_t amf_pointer, const std::string& tmsi);
   static std::string imsi_to_supi(const std::string& imsi);
   static std::string get_imsi(
       const std::string& mcc, const std::string& mnc, const std::string& msin);
   static bool string_2_masked_imeisv(
       const std::string& str, BIT_STRING_t& imeisv);
+  static void get_amf_id(
+      uint8_t amf_region_id, uint16_t amf_set_id, uint8_t amf_pointer,
+      uint32_t& amf_id);
+  static void get_amf_id(
+      const std::string& amf_region_id, const std::string& amf_set_id,
+      const std::string& amf_pointer, uint32_t& amf_id);
 };
 #endif /* FILE_CONVERSIONS_HPP_SEEN */

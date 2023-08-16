@@ -57,6 +57,10 @@ class GUAMI {
       std::string& mcc, std::string& mnc, std::string& regionId,
       std::string& setId, std::string& pointer);
 
+  void getGUAMI(
+      std::string& mcc, std::string& mnc, uint8_t regionId, uint16_t setId,
+      uint8_t pointer);
+
   bool encode2GUAMI(Ngap_GUAMI_t* guami);
   bool decodefromGUAMI(Ngap_GUAMI_t* pdu);
 

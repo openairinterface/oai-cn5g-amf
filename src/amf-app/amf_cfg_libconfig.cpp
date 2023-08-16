@@ -142,12 +142,15 @@ int amf_cfg_libconfig::load(
     const Setting& guami_cfg = amf_cfg[AMF_CONFIG_STRING_GUAMI];
     guami_cfg.lookupValue(AMF_CONFIG_STRING_MCC, amf_cfg_value.guami.mcc);
     guami_cfg.lookupValue(AMF_CONFIG_STRING_MNC, amf_cfg_value.guami.mnc);
-    guami_cfg.lookupValue(
-        AMF_CONFIG_STRING_REGION_ID, amf_cfg_value.guami.region_id);
-    guami_cfg.lookupValue(
-        AMF_CONFIG_STRING_AMF_SET_ID, amf_cfg_value.guami.amf_set_id);
-    guami_cfg.lookupValue(
-        AMF_CONFIG_STRING_AMF_POINTER, amf_cfg_value.guami.amf_pointer);
+    int region_id = {};
+    guami_cfg.lookupValue(AMF_CONFIG_STRING_REGION_ID, region_id);
+    amf_cfg_value.guami.region_id = region_id & 0xff;
+    int amf_set_id                = {};
+    guami_cfg.lookupValue(AMF_CONFIG_STRING_AMF_SET_ID, amf_set_id);
+    amf_cfg_value.guami.amf_set_id = amf_set_id & 0x03ff;
+    int amf_pointer                = {};
+    guami_cfg.lookupValue(AMF_CONFIG_STRING_AMF_POINTER, amf_pointer);
+    amf_cfg_value.guami.amf_pointer = amf_pointer & 0x3f;
   } catch (const SettingNotFoundException& nfex) {
     Logger::amf_app().error(
         "%s : %s, using defaults", nfex.what(), nfex.getPath());
@@ -163,9 +166,15 @@ int amf_cfg_libconfig::load(
       const Setting& guami_item = guami_list_cfg[i];
       guami_item.lookupValue(AMF_CONFIG_STRING_MCC, guami.mcc);
       guami_item.lookupValue(AMF_CONFIG_STRING_MNC, guami.mnc);
-      guami_item.lookupValue(AMF_CONFIG_STRING_REGION_ID, guami.region_id);
-      guami_item.lookupValue(AMF_CONFIG_STRING_AMF_SET_ID, guami.amf_set_id);
-      guami_item.lookupValue(AMF_CONFIG_STRING_AMF_POINTER, guami.amf_pointer);
+      int region_id = {};
+      guami_item.lookupValue(AMF_CONFIG_STRING_REGION_ID, region_id);
+      guami.region_id = region_id & 0xff;
+      int amf_set_id  = {};
+      guami_item.lookupValue(AMF_CONFIG_STRING_AMF_SET_ID, amf_set_id);
+      guami.amf_set_id = amf_set_id & 0x03ff;
+      int amf_pointer  = {};
+      guami_item.lookupValue(AMF_CONFIG_STRING_AMF_POINTER, amf_pointer);
+      guami.amf_pointer = amf_pointer & 0x3f;
       amf_cfg_value.guami_list.push_back(guami);
     }
   } catch (const SettingNotFoundException& nfex) {

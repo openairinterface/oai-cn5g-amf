@@ -52,6 +52,11 @@ void AMFRegionID::getAMFRegionID(std::string& charid) {
 }
 
 //------------------------------------------------------------------------------
+void AMFRegionID::getAMFRegionID(uint8_t& id) {
+  id = regionid;
+}
+
+//------------------------------------------------------------------------------
 bool AMFRegionID::encode(Ngap_AMFRegionID_t& amfregionid) {
   amfregionid.size = 1;
   uint8_t* buffer  = (uint8_t*) calloc(1, sizeof(uint8_t));

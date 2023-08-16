@@ -101,16 +101,12 @@ void RegistrationAccept::SetSuciSupiFormatImsi(
 
 //------------------------------------------------------------------------------
 void RegistrationAccept::Set5gGuti(
-    const std::string& mcc, const std::string& mnc,
-    const std::string& amf_region_id, const std::string& amf_set_id,
-    const std::string& amf_pointer, uint32_t tmsi) {
+    const std::string& mcc, const std::string& mnc, uint8_t amf_region_id,
+    uint16_t amf_set_id, uint8_t amf_pointer, uint32_t tmsi) {
   _5gsMobileIdentity ie_5g_guti_tmp = {};
-  int regionId                      = fromString<int>(amf_region_id);
-  int setId                         = fromString<int>(amf_set_id);
-  int pointer                       = fromString<int>(amf_pointer);
   ie_5g_guti_tmp.SetIei(kIei5gGuti);
   ie_5g_guti_tmp.Set5gGuti(
-      mcc, mnc, (uint8_t) regionId, (uint16_t) setId, (uint8_t) pointer, tmsi);
+      mcc, mnc, amf_region_id, amf_set_id, amf_pointer, tmsi);
   ie_5g_guti = std::optional<_5gsMobileIdentity>(ie_5g_guti_tmp);
 }
 

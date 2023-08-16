@@ -24,6 +24,7 @@
 #include <boost/algorithm/string/classification.hpp>
 #include <boost/algorithm/string/split.hpp>
 
+#include "conversions.hpp"
 #include "logger.hpp"
 #include "string.hpp"
 
@@ -337,11 +338,11 @@ void amf_profile::display() const {
   // AMF info
   Logger::amf_app().debug("\tAMF Info");
   Logger::amf_app().debug(
-      "\t\tAMF Set ID: %s, AMF Region ID: %s", amf_info.amf_set_id.c_str(),
-      amf_info.amf_region_id.c_str());
+      "\t\tAMF Set ID: %d, AMF Region ID: %d", amf_info.amf_set_id,
+      amf_info.amf_region_id);
 
   for (auto g : amf_info.guami_list) {
-    Logger::amf_app().debug("\t\tAMF GUAMI List, AMF_ID: %s", g.amf_id.c_str());
+    Logger::amf_app().debug("\t\tAMF GUAMI List, AMF_ID: 0x%x", g.amf_id);
     Logger::amf_app().debug(
         "\t\tAMF GUAMI List, PLMN (MCC: %s, MNC: %s)", g.plmn.mcc.c_str(),
         g.plmn.mnc.c_str());
@@ -417,7 +418,7 @@ void amf_profile::from_json(const nlohmann::json& data) {
       guami_5g_t guami = {};
 
       if (it.find("amfId") != it.end()) {
-        guami.amf_id = it["amfId"].get<std::string>();
+        conv::string_hex_to_int(it["amfId"].get<std::string>(), guami.amf_id);
       }
       if (it.find("plmnId") != it.end()) {
         nlohmann::json plmn = it["plmnId"];
