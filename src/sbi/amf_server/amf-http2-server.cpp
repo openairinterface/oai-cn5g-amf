@@ -20,17 +20,18 @@
  */
 
 #include "amf-http2-server.hpp"
-#include <string>
+
 #include <boost/algorithm/string.hpp>
 #include <boost/thread.hpp>
 #include <boost/thread/future.hpp>
 #include <nlohmann/json.hpp>
-#include "conversions.hpp"
-#include "amf.hpp"
-#include "amf_config.hpp"
+#include <string>
+
 #include "3gpp_29.500.h"
 #include "3gpp_conversions.hpp"
-
+#include "amf.hpp"
+#include "amf_config.hpp"
+#include "conversions.hpp"
 #include "logger.hpp"
 #include "mime_parser.hpp"
 
@@ -227,20 +228,177 @@ void amf_http2_server::start() {
         });
       });
 
+  // AMF configuration-related APIs
+  server.handle(
+      NAMF_CUSTOMIZED_API_BASE + amf_cfg.sbi_api_version +
+          NAMF_CUSTOMIZED_API_CONFIGURATION_URL,
+      [&](const request& request, const response& response) {
+        request.on_data([&](const uint8_t* data, std::size_t len) {
+          try {
+            if (request.method().compare("GET") == 0) {
+              this->get_configuration_handler(response);
+            }
+            if (request.method().compare("PUT") == 0 && len > 0) {
+              std::string msg((char*) data, len);
+              auto configuration_info = nlohmann::json::parse(msg.c_str());
+              this->update_configuration_handler(configuration_info, response);
+            }
+          } catch (nlohmann::detail::exception& e) {
+            Logger::amf_sbi().warn(
+                "Can not parse the JSON data (error: %s)!", e.what());
+            response.write_head(static_cast<uint32_t>(
+                http_response_codes_e::HTTP_RESPONSE_CODE_BAD_REQUEST));
+            response.end();
+            return;
+          }
+        });
+      });
+  // TODO: N1 Message Notify
+  // TODO: N1N2 Subscription
+  // TODO: NonUEN2MessageTransfer
+  server.handle(
+      NAMF_COMMUNICATION_BASE + amf_cfg.sbi_api_version +
+          NAMF_COMMUNICATION_NON_UE_N2_MESSAGE_TRANSFER_URL,
+      [&](const request& request, const response& res) {
+        request.on_data([&](const uint8_t* data, std::size_t len) {
+          if (len > 0) {
+            std::string msg((char*) data, len);
+            Logger::amf_server().debug("");
+            Logger::amf_server().info(
+                "Received NonUEN2MessageTransfer Request");
+            Logger::amf_server().debug("Message content \n %s", msg.c_str());
+
+            // simple parser
+            mime_parser sp = {};
+            if (!sp.parse(msg)) {
+              // send reply!!!
+              res.write_head(static_cast<uint32_t>(
+                  http_response_codes_e::HTTP_RESPONSE_CODE_BAD_REQUEST));
+              res.end();
+              return;
+            }
+
+            std::unordered_map<std::string, mime_part> parts = {};
+            sp.get_mime_parts(parts);
+            uint8_t size = parts.size();
+            Logger::amf_server().debug("Number of MIME parts %d", size);
+
+            // at least 2 parts for Json data and N2
+            if (size < 2) {
+              res.write_head(static_cast<uint32_t>(
+                  http_response_codes_e::HTTP_RESPONSE_CODE_BAD_REQUEST));
+              res.end();
+              Logger::amf_server().debug(
+                  "Bad request: should have at least 2 MIME parts");
+              return;
+            }
+
+            for (auto it : parts) {
+              Logger::amf_server().debug(
+                  "MIME part: %s (%d)", it.first.c_str(),
+                  it.second.body.size());
+            }
+
+            nlohmann::json response_json = {};
+            response_json["cause"] = non_ue_n2_message_transfer_cause_e2str
+                [NON_UE_N2_TRANSFER_INITIATED];
+            auto code = static_cast<uint32_t>(
+                http_response_codes_e::HTTP_RESPONSE_CODE_200_OK);
+
+            oai::amf::model::N2InformationTransferReqData
+                n2InformationTransferReqData = {};
+
+            try {
+              nlohmann::json::parse(parts[JSON_CONTENT_ID_MIME].body.c_str())
+                  .get_to(n2InformationTransferReqData);
+
+            } catch (nlohmann::detail::exception& e) {
+              Logger::amf_server().warn(
+                  "Cannot parse the JSON data (error: %s)!", e.what());
+              res.write_head(static_cast<uint32_t>(
+                  http_response_codes_e::HTTP_RESPONSE_CODE_BAD_REQUEST));
+              res.end();
+              return;
+            } catch (std::exception& e) {
+              Logger::amf_server().warn("Error: %s!", e.what());
+              res.write_head(static_cast<uint32_t>(
+                  http_response_codes_e::
+                      HTTP_RESPONSE_CODE_INTERNAL_SERVER_ERROR));
+              res.end();
+              return;
+            }
+
+            bool request_valid        = true;
+            std::string n2_content_id = "";
+
+            if (n2InformationTransferReqData.getN2Information()
+                    .getN2InformationClass()
+                    .getEnumValue() !=
+                N2InformationClass_anyOf::eN2InformationClass_anyOf::NRPPA) {
+              request_valid = false;
+            } else {
+              n2_content_id = n2InformationTransferReqData.getN2Information()
+                                  .getNrppaInfo()
+                                  .getNrppaPdu()
+                                  .getNgapData()
+                                  .getContentId();
+              Logger::amf_server().debug(
+                  "n2_content_id: %s", n2_content_id.c_str());
+            }
+
+            if (!request_valid) {
+              response_json["cause"] =
+                  n1_n2_message_transfer_cause_e2str[N1_MSG_NOT_TRANSFERRED];
+              // Send response to the NF Service Consumer (e.g., SMF)
+              res.write_head(static_cast<uint32_t>(
+                  http_response_codes_e::HTTP_RESPONSE_CODE_BAD_REQUEST));
+              res.end(response_json.dump().c_str());
+              return;
+            }
+
+            bstring nrppa_pdu  = nullptr;
+            bstring routing_id = nullptr;
+            conv::msg_str_2_msg_hex(parts[n2_content_id].body, nrppa_pdu);
+            conv::string_2_bstring(
+                n2InformationTransferReqData.getN2Information()
+                    .getNrppaInfo()
+                    .getNfId(),
+                routing_id);
+            auto itti_msg =
+                std::make_shared<itti_non_ue_n2_message_transfer_request>(
+                    AMF_SERVER, TASK_AMF_APP);
+
+            itti_msg->nrppa_pdu        = bstrcpy(nrppa_pdu);
+            itti_msg->routing_id       = bstrcpy(routing_id);
+            itti_msg->is_nrppa_pdu_set = true;
+
+            res.write_head(code);
+            res.end(response_json.dump().c_str());
+
+            int ret = itti_inst->send_msg(itti_msg);
+            if (0 != ret) {
+              Logger::amf_server().error(
+                  "Could not send ITTI message %s to task TASK_AMF_N2",
+                  itti_msg->get_msg_name());
+            }
+            bdestroy_wrapper(&nrppa_pdu);
+          }
+        });
+      });
+
+  // TODO: NF Status Notify
   if (server.listen_and_serve(ec, m_address, std::to_string(m_port))) {
     std::cerr << "HTTP Server error: " << ec.message() << std::endl;
   }
 }
 
 //------------------------------------------------------------------------------
-
 void amf_http2_server::createEventSubscriptionHandler(
     const AmfCreateEventSubscription& amfCreateEventSubscription,
     const response& response) {
   Logger::amf_server().info("Received AmfCreateEventSubscription Request");
 
   header_map h;
-
   event_exposure_msg event_exposure = {};
   xgpp_conv::amf_event_subscription_from_openapi(
       amfCreateEventSubscription, event_exposure);
@@ -277,6 +435,7 @@ void amf_http2_server::createEventSubscriptionHandler(
   response.end(json_data.dump().c_str());
 }
 
+//------------------------------------------------------------------------------
 void amf_http2_server::n1_n2_message_transfer_handler(
     const std::string& ueContextId,
     const N1N2MessageTransferReqData& n1N2MessageTransferReqData,
@@ -309,7 +468,8 @@ void amf_http2_server::n1_n2_message_transfer_handler(
 
   bstring n1sm = nullptr;
   conv::msg_str_2_msg_hex(
-      n1sm_str.substr(0, n1sm_str.length()), n1sm);  // TODO: verify n1sm_length
+      n1sm_str.substr(0, n1sm_str.length()),
+      n1sm);  // TODO: verify n1sm_length
 
   bstring n2sm = nullptr;
   if (!n2sm_str.empty()) {
@@ -372,6 +532,159 @@ void amf_http2_server::n1_n2_message_transfer_handler(
 
   bdestroy_wrapper(&n1sm);
   bdestroy_wrapper(&n2sm);
+}
+
+//------------------------------------------------------------------------------
+void amf_http2_server::get_configuration_handler(const response& response) {
+  Logger::amf_server().debug("Get AMFConfiguration, handling...");
+  header_map h;
+
+  // Generate a promise and associate this promise to the ITTI message
+  uint32_t promise_id = m_amf_app->generate_promise_id();
+  Logger::amf_n1().debug("Promise ID generated %d", promise_id);
+
+  boost::shared_ptr<boost::promise<nlohmann::json>> p =
+      boost::make_shared<boost::promise<nlohmann::json>>();
+  boost::shared_future<nlohmann::json> f = p->get_future();
+  m_amf_app->add_promise(promise_id, p);
+
+  // Handle the AMFConfiguration in amf_app
+  std::shared_ptr<itti_sbi_amf_configuration> itti_msg =
+      std::make_shared<itti_sbi_amf_configuration>(
+          TASK_AMF_SBI, TASK_AMF_APP, promise_id);
+
+  itti_msg->http_version = 2;
+  itti_msg->promise_id   = promise_id;
+
+  int ret = itti_inst->send_msg(itti_msg);
+  if (0 != ret) {
+    Logger::amf_server().error(
+        "Could not send ITTI message %s to task TASK_AMF_APP",
+        itti_msg->get_msg_name());
+  }
+
+  boost::future_status status;
+  // wait for timeout or ready
+  status = f.wait_for(boost::chrono::milliseconds(FUTURE_STATUS_TIMEOUT_MS));
+  if (status == boost::future_status::ready) {
+    assert(f.is_ready());
+    assert(f.has_value());
+    assert(!f.has_exception());
+    // Wait for the result from APP
+    // result includes json content and http response code
+    nlohmann::json result = f.get();
+    Logger::amf_server().debug("Got result for promise ID %d", promise_id);
+
+    // process data
+    uint32_t http_response_code = 0;
+    nlohmann::json json_data    = {};
+
+    if (result.find("httpResponseCode") != result.end()) {
+      http_response_code = result["httpResponseCode"].get<int>();
+    }
+
+    if (static_cast<http_response_codes_e>(http_response_code) ==
+        http_response_codes_e::HTTP_RESPONSE_CODE_200_OK) {
+      if (result.find("content") != result.end()) {
+        json_data = result["content"];
+      }
+
+      h.emplace("content-type", header_value{"application/json"});
+      response.write_head(http_response_code);
+      response.end(json_data.dump().c_str());
+
+    } else {
+      // Problem details
+      if (result.find("ProblemDetails") != result.end()) {
+        json_data = result["ProblemDetails"];
+      }
+
+      h.emplace("content-type", header_value{"application/problem+json"});
+      response.write_head(http_response_code);
+      response.end(json_data.dump().c_str());
+    }
+  } else {
+    response.write_head(static_cast<uint32_t>(
+        http_response_codes_e::HTTP_RESPONSE_CODE_REQUEST_TIMEOUT));
+    response.end();
+  }
+}
+
+//------------------------------------------------------------------------------
+void amf_http2_server::update_configuration_handler(
+    nlohmann::json& configuration_info, const response& response) {
+  header_map h;
+
+  Logger::amf_server().debug("Update AMFConfiguration, handling...");
+
+  // Generate a promise and associate this promise to the ITTI message
+  uint32_t promise_id = m_amf_app->generate_promise_id();
+  Logger::amf_n1().debug("Promise ID generated %d", promise_id);
+
+  boost::shared_ptr<boost::promise<nlohmann::json>> p =
+      boost::make_shared<boost::promise<nlohmann::json>>();
+  boost::shared_future<nlohmann::json> f = p->get_future();
+  m_amf_app->add_promise(promise_id, p);
+
+  // Handle the AMFConfiguration in amf_app
+  std::shared_ptr<itti_sbi_update_amf_configuration> itti_msg =
+      std::make_shared<itti_sbi_update_amf_configuration>(
+          TASK_AMF_SBI, TASK_AMF_APP, promise_id);
+
+  itti_msg->http_version  = 2;
+  itti_msg->promise_id    = promise_id;
+  itti_msg->configuration = configuration_info;
+
+  int ret = itti_inst->send_msg(itti_msg);
+  if (0 != ret) {
+    Logger::amf_server().error(
+        "Could not send ITTI message %s to task TASK_AMF_APP",
+        itti_msg->get_msg_name());
+  }
+
+  boost::future_status status;
+  // wait for timeout or ready
+  status = f.wait_for(boost::chrono::milliseconds(FUTURE_STATUS_TIMEOUT_MS));
+  if (status == boost::future_status::ready) {
+    assert(f.is_ready());
+    assert(f.has_value());
+    assert(!f.has_exception());
+    // Wait for the result from APP
+    // result includes json content and http response code
+    nlohmann::json result = f.get();
+    Logger::amf_server().debug("Got result for promise ID %d", promise_id);
+
+    // process data
+    uint32_t http_response_code = {0};
+    nlohmann::json json_data    = {};
+
+    if (result.find("httpResponseCode") != result.end()) {
+      http_response_code = result["httpResponseCode"].get<int>();
+    }
+
+    if (static_cast<http_response_codes_e>(http_response_code) ==
+        http_response_codes_e::HTTP_RESPONSE_CODE_200_OK) {
+      if (result.find("content") != result.end()) {
+        json_data = result["content"];
+      }
+      h.emplace("content-type", header_value{"application/json"});
+      response.write_head(http_response_code);
+      response.end(json_data.dump().c_str());
+    } else {
+      // Problem details
+      if (result.find("ProblemDetails") != result.end()) {
+        json_data = result["ProblemDetails"];
+      }
+
+      h.emplace("content-type", header_value{"application/problem+json"});
+      response.write_head(http_response_code);
+      response.end(json_data.dump().c_str());
+    }
+  } else {
+    response.write_head(static_cast<uint32_t>(
+        http_response_codes_e::HTTP_RESPONSE_CODE_REQUEST_TIMEOUT));
+    response.end();
+  }
 }
 
 //------------------------------------------------------------------------------
