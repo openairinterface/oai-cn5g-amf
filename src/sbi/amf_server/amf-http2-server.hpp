@@ -31,6 +31,7 @@
 #include "N2InformationTransferReqData.h"
 #include "amf.hpp"
 #include "amf_app.hpp"
+#include "mime_parser.hpp"
 #include "pistache/endpoint.h"
 #include "pistache/http.h"
 #include "pistache/router.h"
@@ -55,9 +56,7 @@ class amf_http2_server {
 
   void n1_n2_message_transfer_handler(
       const std::string& ueContextId,
-      const N1N2MessageTransferReqData& n1N2MessageTransferReqData,
-      const std::string& n1sm_str, const response& res,
-      const std::string& n2sm_str = "");
+      std::unordered_map<std::string, mime_part>& parts, const response& res);
 
   void get_configuration_handler(const response& response);
   void update_configuration_handler(
