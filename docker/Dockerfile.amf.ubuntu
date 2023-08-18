@@ -81,10 +81,14 @@ ENV TZ=Europe/Paris
 RUN apt-get update && \
     DEBIAN_FRONTEND=noninteractive apt-get upgrade --yes && \
     DEBIAN_FRONTEND=noninteractive apt-get install --yes \
+# Debug Tools that are not mandatory
       tzdata \
       psmisc \
       net-tools \
+      tcpdump \
+      iputils-ping \
       bc \
+# Mandatory packages for the NF to run
       libssh-4 \
       openssl \
       libbrotli1 \

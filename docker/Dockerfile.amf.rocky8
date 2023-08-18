@@ -83,11 +83,15 @@ ENV TZ=Europe/Paris
 
 RUN microdnf update -y && \
     microdnf install -y \
+# Debug Tools that are not mandatory
       tzdata \
-      lksctp-tools \
       procps-ng \
       psmisc \
       net-tools \
+      iputils \
+      tcpdump \
+# Mandatory packages for the NF to run
+      lksctp-tools \
       libicu \
       boost \
       libevent \
