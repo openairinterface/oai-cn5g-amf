@@ -343,8 +343,7 @@ std::string amf_config::get_smf_pdu_session_base_uri(
 
 //------------------------------------------------------------------------------
 void amf_config::to_json(nlohmann::json& json_data) const {
-  json_data["instance"] = instance;
-  //  json_data["pid_dir"]    = pid_dir;
+  json_data["instance"]   = instance;
   json_data["log_level"]  = log_level;
   json_data["amf_name"]   = amf_name;
   json_data["guami"]      = guami.to_json();

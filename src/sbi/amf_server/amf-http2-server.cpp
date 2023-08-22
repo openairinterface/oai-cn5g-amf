@@ -296,14 +296,20 @@ void amf_http2_server::start() {
               return;
             }
 
-            bool request_valid        = true;
-            std::string n2_content_id = "";
+            std::string n2_content_id = {};
 
             if (n2InformationTransferReqData.getN2Information()
                     .getN2InformationClass()
                     .getEnumValue() !=
                 N2InformationClass_anyOf::eN2InformationClass_anyOf::NRPPA) {
-              request_valid = false;
+              // TODO: Only support NRPPA for now
+              response_json["cause"] =
+                  n1_n2_message_transfer_cause_e2str[N1_MSG_NOT_TRANSFERRED];
+              // Send response to the NF Service Consumer (e.g., SMF)
+              res.write_head(static_cast<uint32_t>(
+                  http_response_codes_e::HTTP_RESPONSE_CODE_BAD_REQUEST));
+              res.end(response_json.dump().c_str());
+              return;
             } else {
               n2_content_id = n2InformationTransferReqData.getN2Information()
                                   .getNrppaInfo()
@@ -312,16 +318,6 @@ void amf_http2_server::start() {
                                   .getContentId();
               Logger::amf_server().debug(
                   "n2_content_id: %s", n2_content_id.c_str());
-            }
-
-            if (!request_valid) {
-              response_json["cause"] =
-                  n1_n2_message_transfer_cause_e2str[N1_MSG_NOT_TRANSFERRED];
-              // Send response to the NF Service Consumer (e.g., SMF)
-              res.write_head(static_cast<uint32_t>(
-                  http_response_codes_e::HTTP_RESPONSE_CODE_BAD_REQUEST));
-              res.end(response_json.dump().c_str());
-              return;
             }
 
             bstring nrppa_pdu  = nullptr;
@@ -553,13 +549,8 @@ void amf_http2_server::n1_n2_message_transfer_handler(
       } break;
 
       default: {
-        /*
-        response_json["cause"] =
-            n1_n2_message_transfer_cause_e2str[N1_MSG_NOT_TRANSFERRED];
-        code = Pistache::Http::Code::Bad_Request;
-        */
         response.write_head(static_cast<uint32_t>(
-            http_response_codes_e::HTTP_RESPONSE_CODE_200_OK));
+            http_response_codes_e::HTTP_RESPONSE_CODE_BAD_REQUEST));
         response.end(
             "N1N2MessageCollectionDocumentApiImpl::n1_n2_message_transfer API "
             "(Unsupported N2 Message Class)");
