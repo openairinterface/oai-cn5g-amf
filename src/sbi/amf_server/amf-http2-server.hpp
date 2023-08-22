@@ -22,18 +22,20 @@
 #ifndef FILE_AMF_HTTP2_SERVER_SEEN
 #define FILE_AMF_HTTP2_SERVER_SEEN
 
-#include "amf_app.hpp"
 #include <nghttp2/asio_http2_server.h>
-#include "pistache/endpoint.h"
-#include "pistache/http.h"
-#include "pistache/router.h"
-#include "uint_generator.hpp"
-#include "amf.hpp"
 
 #include "AmfCreateEventSubscription.h"
 #include "N1N2MessageTransferError.h"
 #include "N1N2MessageTransferReqData.h"
 #include "N1N2MessageTransferRspData.h"
+#include "N2InformationTransferReqData.h"
+#include "amf.hpp"
+#include "amf_app.hpp"
+#include "mime_parser.hpp"
+#include "pistache/endpoint.h"
+#include "pistache/http.h"
+#include "pistache/router.h"
+#include "uint_generator.hpp"
 
 using namespace nghttp2::asio_http2;
 using namespace nghttp2::asio_http2::server;
@@ -54,9 +56,11 @@ class amf_http2_server {
 
   void n1_n2_message_transfer_handler(
       const std::string& ueContextId,
-      const N1N2MessageTransferReqData& n1N2MessageTransferReqData,
-      const std::string& n1sm_str, const response& res,
-      const std::string& n2sm_str = "");
+      std::unordered_map<std::string, mime_part>& parts, const response& res);
+
+  void get_configuration_handler(const response& response);
+  void update_configuration_handler(
+      nlohmann::json& configuration_info, const response& response);
 
   void stop();
 
