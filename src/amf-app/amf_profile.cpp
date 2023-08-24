@@ -24,6 +24,7 @@
 #include <boost/algorithm/string/classification.hpp>
 #include <boost/algorithm/string/split.hpp>
 
+#include "amf_config_yaml.hpp"
 #include "conversions.hpp"
 #include "logger.hpp"
 #include "string.hpp"
@@ -390,8 +391,10 @@ void amf_profile::to_json(nlohmann::json& data) const {
   // guamiList
   data["amfInfo"]["guamiList"] = nlohmann::json::array();
   for (auto guami : amf_info.guami_list) {
-    nlohmann::json tmp   = {};
-    tmp["amfId"]         = guami.amf_id;
+    nlohmann::json tmp     = {};
+    std::string amf_id_str = {};
+    conv::int_to_string_hex(guami.amf_id, amf_id_str, AMF_ID_LENGTH);
+    tmp["amfId"]         = amf_id_str;
     tmp["plmnId"]["mnc"] = guami.plmn.mnc;
     tmp["plmnId"]["mcc"] = guami.plmn.mcc;
     data["amfInfo"]["guamiList"].push_back(tmp);
