@@ -89,11 +89,14 @@ constexpr auto AMF_CONFIG_SUPPORTED_ENCRYPTION_ALGORITHMS_LABEL =
     "Supported Encryption Algorithms";
 
 // Regular Expression
-constexpr auto MCC_REGEX           = "^[0-9]{3}$";
-constexpr auto MNC_REGEX           = "^[0-9]{2,3}$";
-constexpr auto AMF_REGION_ID_REGEX = "^[A-Fa-f0-9]{2}$";
-constexpr auto AMF_SET_ID_REGEX    = "^[0-3][A-Fa-f0-9]{2}$";
-constexpr auto AMF_POINTER_REGEX   = "^[0-4][A-Fa-f0-9]$";
+constexpr auto MCC_REGEX               = "^[0-9]{3}$";
+constexpr auto MNC_REGEX               = "^[0-9]{2,3}$";
+constexpr auto AMF_REGION_ID_REGEX     = "^[A-Fa-f0-9]{2}$";
+constexpr uint8_t AMF_REGION_ID_LENGTH = 2;
+constexpr auto AMF_SET_ID_REGEX        = "^[0-3][A-Fa-f0-9]{2}$";
+constexpr uint8_t AMF_SET_ID_LENGTH    = 3;
+constexpr auto AMF_POINTER_REGEX       = "^[0-3][A-Fa-f0-9]$";
+constexpr uint8_t AMF_ID_LENGTH        = 6;
 
 constexpr auto SUPPORTED_INTEGRITY_ALGORITHMS_REGEX  = "^NIA[0-7]$";
 constexpr auto SUPPORTED_ENCRYPTION_ALGORITHMS_REGEX = "^NEA[0-7]$";

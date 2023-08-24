@@ -33,6 +33,7 @@
 #include "RegistrationContextContainer.h"
 #include "UeN1N2InfoSubscriptionCreatedData.h"
 #include "amf_config.hpp"
+#include "amf_config_yaml.hpp"
 #include "amf_n1.hpp"
 #include "amf_n2.hpp"
 #include "amf_sbi.hpp"
@@ -1129,8 +1130,10 @@ void amf_app::generate_amf_profile() {
   // TODO: custom info
   // AMF info
   amf_info_t info = {};
-  conv::int_to_string_hex(amf_cfg.guami.region_id, info.amf_region_id);
-  conv::int_to_string_hex(amf_cfg.guami.amf_set_id, info.amf_set_id);
+  conv::int_to_string_hex(
+      amf_cfg.guami.region_id, info.amf_region_id, AMF_REGION_ID_LENGTH);
+  conv::int_to_string_hex(
+      amf_cfg.guami.amf_set_id, info.amf_set_id, AMF_SET_ID_LENGTH);
   for (auto g : amf_cfg.guami_list) {
     guami_5g_t guami = {};
     conv::get_amf_id(g.region_id, g.amf_set_id, g.amf_pointer, guami.amf_id);

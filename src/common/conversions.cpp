@@ -24,6 +24,7 @@
 #include <arpa/inet.h>
 #include <ctype.h>
 #include <inttypes.h>
+#include <iomanip>
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdlib.h>
@@ -425,9 +426,15 @@ bool conv::string_to_int32(const std::string& str, uint32_t& value) {
 }
 
 //------------------------------------------------------------------------------
-void conv::int_to_string_hex(uint32_t value, std::string& value_str) {
+void conv::int_to_string_hex(
+    uint32_t value, std::string& value_str, uint8_t length) {
   std::stringstream stream_str;
-  stream_str << std::hex << value;
+  if (length > 0) {
+    stream_str << std::setfill('0') << std::setw(length) << std::hex << value;
+  } else {
+    stream_str << std::hex << value;
+  }
+
   std::string value_tmp(stream_str.str());
   value_str = value_tmp;
 }

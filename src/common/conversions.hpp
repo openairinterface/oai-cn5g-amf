@@ -82,7 +82,8 @@ class conv {
   static bool string_to_int32(const std::string& str, uint32_t& value);
   static bool string_hex_to_int(const std::string& value_str, uint32_t& value);
   static uint32_t string_hex_to_int(const std::string& value_str);
-  static void int_to_string_hex(uint32_t value, std::string& value_str);
+  static void int_to_string_hex(
+      uint32_t value, std::string& value_str, uint8_t length = 0);
   static void bstring_2_string(const bstring& b_str, std::string& str);
   static void string_2_bstring(const std::string& str, bstring& b_str);
   static void octet_string_2_string(
