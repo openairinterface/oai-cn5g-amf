@@ -53,7 +53,7 @@ itti_mw* itti_inst    = nullptr;
 amf_app* amf_app_inst = nullptr;
 statistics stacs;
 
-amf_http1_server* http1_server     = nullptr;
+amf_http1_server* http1_server = nullptr;
 amf_http2_server* http2_server = nullptr;
 
 std::unique_ptr<amf_config_yaml> amf_cfg_yaml;
