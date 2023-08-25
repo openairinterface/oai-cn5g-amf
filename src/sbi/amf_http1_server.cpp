@@ -1,9 +1,9 @@
-#include "AMFApiServer.hpp"
+#include "amf_http1_server.hpp"
 #include "logger.hpp"
 
 using namespace oai::amf::api;
 
-void AMFApiServer::init(size_t thr) {
+void amf_http1_server::init(size_t thr) {
   auto opts = Pistache::Http::Endpoint::options().threads(thr);
   opts.flags(Pistache::Tcp::Options::ReuseAddr);
   opts.maxRequestSize(PISTACHE_SERVER_MAX_PAYLOAD);
@@ -26,7 +26,7 @@ void AMFApiServer::init(size_t thr) {
   Logger::amf_server().debug("Initiate AMF Server Endpoints done!");
 }
 
-void AMFApiServer::start() {
+void amf_http1_server::start() {
   if (m_aMFConfigurationApiImpl != nullptr)
     Logger::amf_server().debug("AMF handler for AMFConfigurationApiImpl");
 
@@ -79,6 +79,6 @@ void AMFApiServer::start() {
   m_httpEndpoint->setHandler(m_router->handler());
   m_httpEndpoint->serveThreaded();
 }
-void AMFApiServer::shutdown() {
+void amf_http1_server::shutdown() {
   m_httpEndpoint->shutdown();
 }

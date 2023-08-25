@@ -28,7 +28,7 @@ include_directories(${SRC_TOP_DIR}/utils/bstr)
 include_directories(${SRC_TOP_DIR}/amf-app)
 include_directories(${SRC_TOP_DIR}/itti)
 include_directories(${SRC_TOP_DIR}/itti/msgs)
-include_directories(${SRC_TOP_DIR}/sbi/amf_server/model)
+include_directories(${SRC_TOP_DIR}/sbi/model)
 include_directories(${SRC_TOP_DIR}/${MOUNTED_COMMON}/logger)
 
 add_library (AMF_UTILS STATIC

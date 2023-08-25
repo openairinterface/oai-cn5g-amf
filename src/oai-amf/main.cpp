@@ -29,8 +29,8 @@
 #include <string>
 #include <thread>
 
-#include "AMFApiServer.hpp"
-#include "amf-http2-server.hpp"
+#include "amf_http1_server.hpp"
+#include "amf_http2_server.hpp"
 #include "amf_app.hpp"
 #include "amf_config.hpp"
 #include "amf_cfg_libconfig.hpp"
@@ -53,8 +53,8 @@ itti_mw* itti_inst    = nullptr;
 amf_app* amf_app_inst = nullptr;
 statistics stacs;
 
-AMFApiServer* amf_api_server_1     = nullptr;
-amf_http2_server* amf_api_server_2 = nullptr;
+amf_http1_server* http1_server     = nullptr;
+amf_http2_server* http2_server = nullptr;
 
 std::unique_ptr<amf_config_yaml> amf_cfg_yaml;
 
@@ -72,15 +72,15 @@ void amf_signal_handler(int s) {
     amf_app_inst = nullptr;
     std::cout << "AMF APP memory done." << std::endl;
   }
-  if (amf_api_server_1) {
-    amf_api_server_1->shutdown();
-    delete amf_api_server_1;
-    amf_api_server_1 = nullptr;
+  if (http1_server) {
+    http1_server->shutdown();
+    delete http1_server;
+    http1_server = nullptr;
   }
-  if (amf_api_server_2) {
-    amf_api_server_2->stop();
-    delete amf_api_server_2;
-    amf_api_server_2 = nullptr;
+  if (http2_server) {
+    http2_server->stop();
+    delete http2_server;
+    http2_server = nullptr;
   }
   std::cout << "AMF API Server memory done." << std::endl;
 
@@ -141,16 +141,16 @@ int main(int argc, char** argv) {
     Pistache::Address addr(
         std::string(inet_ntoa(*((struct in_addr*) &amf_cfg.sbi.addr4))),
         Pistache::Port(amf_cfg.sbi.port));
-    amf_api_server_1 = new AMFApiServer(addr, amf_app_inst);
-    amf_api_server_1->init(2);
-    std::thread amf_http1_manager(&AMFApiServer::start, amf_api_server_1);
+    http1_server = new amf_http1_server(addr, amf_app_inst);
+    http1_server->init(2);
+    std::thread amf_http1_manager(&amf_http1_server::start, http1_server);
     amf_http1_manager.join();
   } else {
     // AMF HTTP2 server
-    amf_api_server_2 = new amf_http2_server(
+    http2_server = new amf_http2_server(
         conv::toString(amf_cfg.sbi.addr4), amf_cfg.sbi_http2_port,
         amf_app_inst);
-    std::thread amf_http2_manager(&amf_http2_server::start, amf_api_server_2);
+    std::thread amf_http2_manager(&amf_http2_server::start, http2_server);
     amf_http2_manager.join();
   }
 

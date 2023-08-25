@@ -1,3 +1,6 @@
+#ifndef FILE_AMF_HTTP1_SERVER_SEEN
+#define FILE_AMF_HTTP1_SERVER_SEEN
+
 #include "pistache/endpoint.h"
 #include "pistache/http.h"
 #include "pistache/router.h"
@@ -29,9 +32,9 @@
 
 using namespace oai::amf::api;
 
-class AMFApiServer {
+class amf_http1_server {
  public:
-  AMFApiServer(
+  amf_http1_server(
       Pistache::Address address, amf_application::amf_app* amf_app_inst)
       : m_httpEndpoint(std::make_shared<Pistache::Http::Endpoint>(address)) {
     m_router  = std::make_shared<Pistache::Rest::Router>();
@@ -118,3 +121,5 @@ class AMFApiServer {
 
   std::string m_address;
 };
+
+#endif
