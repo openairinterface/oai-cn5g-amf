@@ -58,7 +58,26 @@ class amf_http2_server {
       const std::string& ueContextId,
       std::unordered_map<std::string, mime_part>& parts, const response& res);
 
+  void n1_message_notify_handler(
+      const std::string& ueContextId,
+      std::unordered_map<std::string, mime_part>& parts, const response& res);
+
+  void n1_n2_message_subscribe_handler(
+      const std::string& ueContextId,
+      const UeN1N2InfoSubscriptionCreateData& ueN1N2InfoSubscriptionCreateData,
+      const response& response);
+
+  void n1_n2_message_unsubscribe_handler(
+      const std::string& ueContextId, const std::string& subscriptionId,
+      const response& response);
+
+  void status_notify_handler(
+      const std::string& ueContextId, uint8_t pduSessionId,
+      const SmContextStatusNotification& statusNotification,
+      const response& response);
+
   void get_configuration_handler(const response& response);
+
   void update_configuration_handler(
       nlohmann::json& configuration_info, const response& response);
 
