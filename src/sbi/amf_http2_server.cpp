@@ -48,12 +48,12 @@ void amf_http2_server::start() {
   boost::system::error_code ec;
 
   Logger::amf_server().info("HTTP2 server started");
-  // n1_n2_message_transfer request (URI:
-  // /ue-contexts/{ueContextId}/n1-n2-messages) N1 Message Notify
-  // (URI:/ue-contexts/{ueContextId}/n1-message-notify) N1N2MessageSubscribe:
-  // /ue-contexts/{ueContextId}/n1-n2-messages/subscription
-  // N1N2MessageUnSubscribe:
-  // /ue-contexts/{ueContextId}/n1-n2-messages/subscriptions/{subscriptionId}:
+  // N1N2MessageTransfer (URI:/ue-contexts/{ueContextId}/n1-n2-messages)
+  // N1 Message Notify (URI:/ue-contexts/{ueContextId}/n1-message-notify)
+  // N1N2MessageSubscribe (URI:
+  // /ue-contexts/{ueContextId}/n1-n2-messages/subscription)
+  // N1N2MessageUnSubscribe (URI:
+  // /ue-contexts/{ueContextId}/n1-n2-messages/subscriptions/{subscriptionId})
   server.handle(
       NAMF_COMMUNICATION_BASE + amf_cfg.sbi_api_version + "/ue-contexts/",
       [&](const request& request, const response& res) {
@@ -264,8 +264,6 @@ void amf_http2_server::start() {
           }
         });
       });
-
-  // TODO: N1N2 Subscription
 
   // NonUEN2MessageTransfer
   server.handle(
