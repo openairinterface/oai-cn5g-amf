@@ -85,10 +85,9 @@ void amf_n2_task(void* args_p) {
     switch (msg->msg_type) {
       case NEW_SCTP_ASSOCIATION: {
         Logger::amf_n2().info("Received new SCTP_ASSOCIATION");
-        // TODO:
-        itti_new_sctp_association* m =
-            dynamic_cast<itti_new_sctp_association*>(msg);
-        amf_n2_inst->handle_itti_message(ref(*m));
+        auto msg =
+            std::dynamic_pointer_cast<itti_new_sctp_association>(shared_msg);
+        amf_n2_inst->handle_itti_message(msg);
       } break;
       case NG_SETUP_REQ: {
         Logger::amf_n2().info("Received NGSetupRequest message, handling");
@@ -327,7 +326,8 @@ void amf_n2::handle_itti_message(itti_paging& itti_msg) {
 }
 
 //------------------------------------------------------------------------------
-void amf_n2::handle_itti_message(itti_new_sctp_association& new_assoc) {}
+void amf_n2::handle_itti_message(
+    std::shared_ptr<itti_new_sctp_association>& new_assoc) {}
 
 //------------------------------------------------------------------------------
 void amf_n2::handle_itti_message(
@@ -406,8 +406,8 @@ void amf_n2::handle_itti_message(
 
   if (!get_common_plmn(s_ta_list, gc->s_ta_list)) {
     // encode NG SETUP FAILURE MESSAGE and send back
-    uint8_t* buffer = (uint8_t*) calloc(1, BUFFER_SIZE_1024);
-    NGSetupFailureMsg ngSetupFailure;
+    uint8_t* buffer                  = (uint8_t*) calloc(1, BUFFER_SIZE_1024);
+    NGSetupFailureMsg ngSetupFailure = {};
     ngSetupFailure.set(Ngap_CauseRadioNetwork_unspecified, Ngap_TimeToWait_v5s);
     int encoded = ngSetupFailure.Encode((uint8_t*) buffer, BUFFER_SIZE_1024);
 
