@@ -19,7 +19,7 @@
  *      contact@openairinterface.org
  */
 
-#include "amf-http2-server.hpp"
+#include "amf_http2_server.hpp"
 
 #include <boost/algorithm/string.hpp>
 #include <boost/thread.hpp>

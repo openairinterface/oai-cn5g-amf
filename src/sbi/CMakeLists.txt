@@ -19,7 +19,7 @@
 #      contact@openairinterface.org
 ################################################################################
 
-set(AMF_API_SERVER_DIR "${SRC_TOP_DIR}/sbi/amf_server")
+set(AMF_API_SERVER_DIR "${SRC_TOP_DIR}/sbi")
 
 include_directories(${SRC_TOP_DIR}/amf-app)
 include_directories(${SRC_TOP_DIR}/itti)
@@ -34,15 +34,15 @@ include_directories(${SRC_TOP_DIR}/secu_algorithms/5gaka)
 include_directories(${SRC_TOP_DIR}/secu_algorithms/nas_enc_int)
 include_directories(${SRC_TOP_DIR}/utils)
 include_directories(${SRC_TOP_DIR}/utils/bstr)
-include_directories(${SRC_TOP_DIR}/sbi/amf_server)
-include_directories(${SRC_TOP_DIR}/sbi/amf_server/api)
-include_directories(${SRC_TOP_DIR}/sbi/amf_server/impl)
-include_directories(${SRC_TOP_DIR}/sbi/amf_server/model)
+include_directories(${SRC_TOP_DIR}/sbi)
+include_directories(${SRC_TOP_DIR}/sbi/api)
+include_directories(${SRC_TOP_DIR}/sbi/impl)
+include_directories(${SRC_TOP_DIR}/sbi/model)
 include_directories(${SRC_TOP_DIR}/${MOUNTED_COMMON}/logger)
 
 file(GLOB AMF_API_SERVER_src_files
-    ${AMF_API_SERVER_DIR}/amf-http2-server.cpp
-    ${AMF_API_SERVER_DIR}/AMFApiServer.cpp
+    ${AMF_API_SERVER_DIR}/amf_http1_server.cpp
+    ${AMF_API_SERVER_DIR}/amf_http2_server.cpp
     ${AMF_API_SERVER_DIR}/model/*.cpp
     ${AMF_API_SERVER_DIR}/api/*.cpp
     ${AMF_API_SERVER_DIR}/impl/*.cpp
