@@ -981,9 +981,9 @@ void amf_n2::handle_itti_message(
 
   if (itti_msg->is_sr or itti_msg->is_pdu_exist) {
     // Set UE Radio Capability if available
-    if (gc->ue_radio_cap_ind) {
+    if (unc->ue_radio_cap_ind) {
       // TODO: Disable this for the moment
-      // msg->setUERadioCapability(bstrcpy(gc->ue_radio_cap_ind));
+      // msg->setUERadioCapability(bstrcpy(unc->ue_radio_cap_ind));
     }
 
     if (itti_msg->is_sr)
@@ -1601,7 +1601,18 @@ void amf_n2::handle_itti_message(
   ran_ue_ngap_id               = itti_msg->ueRadioCap->getRanUeNgapId();
   OCTET_STRING_t ue_radio_cap;
   itti_msg->ueRadioCap->getUERadioCapability(ue_radio_cap);
-  gc->ue_radio_cap_ind = blk2bstr(ue_radio_cap.buf, ue_radio_cap.size);
+
+  // Store UE Radio Capability in UE NGAP Context
+  std::shared_ptr<ue_ngap_context> unc = {};
+  if (!ran_ue_id_2_ue_ngap_context(ran_ue_ngap_id, gc->gnb_id, unc)) {
+    Logger::amf_n2().error(
+        "No UE NGAP context with ran_ue_ngap_id (" GNB_UE_NGAP_ID_FMT
+        ") gNB ID (" GNB_ID_FMT ")",
+        ran_ue_ngap_id, gc->gnb_id);
+    return;
+  }
+
+  unc->ue_radio_cap_ind = blk2bstr(ue_radio_cap.buf, ue_radio_cap.size);
 }
 
 //------------------------------------------------------------------------------
