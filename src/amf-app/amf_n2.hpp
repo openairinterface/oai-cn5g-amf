@@ -169,11 +169,11 @@ class amf_n2 : public ngap::ngap_app {
 
   /*
    * Handle ITTI message (HandoverRequestAck)
-   * @param [std::shared_ptr<itti_handover_request_Ack>&]: ITTI message
+   * @param [std::shared_ptr<itti_handover_request_ack>&]: ITTI message
    * @return void
    */
   void handle_itti_message(
-      std::shared_ptr<itti_handover_request_Ack>& itti_msg);
+      std::shared_ptr<itti_handover_request_ack>& itti_msg);
 
   /*
    * Handle ITTI message (HandoverNotify)

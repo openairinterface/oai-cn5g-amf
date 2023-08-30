@@ -798,7 +798,7 @@ int handover_notification(
 
   itti_msg->assoc_id       = assoc_id;
   itti_msg->stream         = stream;
-  itti_msg->handovernotify = handover_notify;
+  itti_msg->handoverNotify = handover_notify;
 
   int ret = itti_inst->send_msg(itti_msg);
   if (0 != ret) {
@@ -827,10 +827,10 @@ int handover_request(
   }
 
   auto itti_msg =
-      std::make_shared<itti_handover_request_Ack>(TASK_NGAP, TASK_AMF_N2);
+      std::make_shared<itti_handover_request_ack>(TASK_NGAP, TASK_AMF_N2);
   itti_msg->assoc_id           = assoc_id;
   itti_msg->stream             = stream;
-  itti_msg->handoverrequestAck = handover_request_ack;
+  itti_msg->handoverRequestAck = handover_request_ack;
 
   int ret = itti_inst->send_msg(itti_msg);
   if (0 != ret) {
@@ -856,10 +856,10 @@ int handover_request_ack(
   }
 
   auto itti_msg =
-      std::make_shared<itti_handover_request_Ack>(TASK_NGAP, TASK_AMF_N2);
+      std::make_shared<itti_handover_request_ack>(TASK_NGAP, TASK_AMF_N2);
   itti_msg->assoc_id           = assoc_id;
   itti_msg->stream             = stream;
-  itti_msg->handoverrequestAck = handover_request_ack;
+  itti_msg->handoverRequestAck = handover_request_ack;
 
   int ret = itti_inst->send_msg(itti_msg);
   if (0 != ret) {
@@ -1236,7 +1236,7 @@ int uplink_ran_status_transfer(
       std::make_shared<itti_uplink_ran_status_transfer>(TASK_NGAP, TASK_AMF_N2);
   itti_msg->assoc_id          = assoc_id;
   itti_msg->stream            = stream;
-  itti_msg->uplinkrantransfer = uplink_ran_status_transfer;
+  itti_msg->uplinkRanTransfer = uplink_ran_status_transfer;
 
   int ret = itti_inst->send_msg(itti_msg);
   if (0 != ret) {

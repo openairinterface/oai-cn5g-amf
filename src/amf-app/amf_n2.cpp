@@ -219,7 +219,7 @@ void amf_n2_task(void* args_p) {
         Logger::amf_n2().info(
             "Received Handover Request Ack message, handling");
         auto msg_ptr =
-            std::dynamic_pointer_cast<itti_handover_request_Ack>(shared_msg);
+            std::dynamic_pointer_cast<itti_handover_request_ack>(shared_msg);
         amf_n2_inst->handle_itti_message(msg_ptr);
       } break;
 
@@ -1894,10 +1894,10 @@ bool amf_n2::handle_itti_message(
 
 //------------------------------------------------------------------------------
 void amf_n2::handle_itti_message(
-    std::shared_ptr<itti_handover_request_Ack>& itti_msg) {
+    std::shared_ptr<itti_handover_request_ack>& itti_msg) {
   Logger::amf_n2().debug("Handling Handover Request Ack ...");
-  unsigned long amf_ue_ngap_id = itti_msg->handoverrequestAck->getAmfUeNgapId();
-  uint32_t ran_ue_ngap_id      = itti_msg->handoverrequestAck->getRanUeNgapId();
+  unsigned long amf_ue_ngap_id = itti_msg->handoverRequestAck->getAmfUeNgapId();
+  uint32_t ran_ue_ngap_id      = itti_msg->handoverRequestAck->getRanUeNgapId();
   Logger::amf_n2().debug(
       "Handover Request Ack ran_ue_ngap_id (" GNB_UE_NGAP_ID_FMT
       ") amf_ue_ngap_id (" AMF_UE_NGAP_ID_FMT ")",
@@ -1925,14 +1925,14 @@ void amf_n2::handle_itti_message(
   unc->target_ran_ue_ngap_id = ran_ue_ngap_id;  // store target RAN ID
 
   std::vector<PDUSessionResourceAdmittedItem_t> list;
-  if (!itti_msg->handoverrequestAck->getPDUSessionResourceAdmittedList(list)) {
+  if (!itti_msg->handoverRequestAck->getPDUSessionResourceAdmittedList(list)) {
     Logger::ngap().error(
         "Decoding HandoverRequestACK getPDUSessionResourceList IE error");
     return;
   }
 
   OCTET_STRING_t targetTosource =
-      itti_msg->handoverrequestAck->getTargetToSource_TransparentContainer();
+      itti_msg->handoverRequestAck->getTargetToSource_TransparentContainer();
 
   std::shared_ptr<nas_context> nc = {};
   if (!amf_n1_inst->amf_ue_id_2_nas_context(amf_ue_ngap_id, nc)) {
@@ -2054,8 +2054,8 @@ void amf_n2::handle_itti_message(
 void amf_n2::handle_itti_message(
     std::shared_ptr<itti_handover_notify>& itti_msg) {
   Logger::amf_n2().info("Handle Handover Notify ...");
-  unsigned long amf_ue_ngap_id = itti_msg->handovernotify->getAmfUeNgapId();
-  uint32_t ran_ue_ngap_id      = itti_msg->handovernotify->getRanUeNgapId();
+  unsigned long amf_ue_ngap_id = itti_msg->handoverNotify->getAmfUeNgapId();
+  uint32_t ran_ue_ngap_id      = itti_msg->handoverNotify->getRanUeNgapId();
   Logger::amf_n2().debug(
       "Handover Notify ran_ue_ngap_id (" GNB_UE_NGAP_ID_FMT
       ") amf_ue_ngap_id (" AMF_UE_NGAP_ID_FMT ")",
@@ -2082,7 +2082,7 @@ void amf_n2::handle_itti_message(
 
   NrCgi_t NR_CGI = {};
   Tai_t TAI      = {};
-  if (!itti_msg->handovernotify->getUserLocationInfoNR(NR_CGI, TAI)) {
+  if (!itti_msg->handoverNotify->getUserLocationInfoNR(NR_CGI, TAI)) {
     Logger::amf_n2().debug("Missing IE UserLocationInformationNR");
     return;
   }
@@ -2259,7 +2259,7 @@ void amf_n2::handle_itti_message(
 void amf_n2::handle_itti_message(
     std::shared_ptr<itti_uplink_ran_status_transfer>& itti_msg) {
   Logger::amf_n2().debug("Handling Uplink RAN Status Transfer ...");
-  unsigned long amf_ue_ngap_id = itti_msg->uplinkrantransfer->getAmfUeNgapId();
+  unsigned long amf_ue_ngap_id = itti_msg->uplinkRanTransfer->getAmfUeNgapId();
   Logger::amf_n2().debug(
       "Uplink RAN Status Transfer amf_ue_ngap_id (" AMF_UE_NGAP_ID_FMT ")",
       amf_ue_ngap_id);
@@ -2279,7 +2279,7 @@ void amf_n2::handle_itti_message(
   }
 
   RANStatusTransferTransparentContainer ran_status_transfer = {};
-  itti_msg->uplinkrantransfer->getRANStatusTransfer_TransparentContainer(
+  itti_msg->uplinkRanTransfer->getRANStatusTransfer_TransparentContainer(
       ran_status_transfer);
   dRBSubjectList amf_m_list = {};
   ran_status_transfer.getdRBSubject_list(amf_m_list);
