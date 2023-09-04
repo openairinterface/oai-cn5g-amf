@@ -235,6 +235,20 @@ class amf_n2 : public ngap::ngap_app {
       const sctp_assoc_id_t& gnb_assoc_id);
 
   /*
+   * Send NG Setup Failure
+   * @param [const T&] cause: Cause
+   * @param [const e_Ngap_TimeToWait&] time_to_wait: Time to Wait IE
+   * @param [const uint32_t] ran_ue_ngap_id: RAN UE NGAP ID
+   * @param [const sctp_assoc_id_t&] assoc_id: gNB Association ID
+   * @param [const sctp_stream_id_t&] stream: Stream ID
+   * @return void
+   */
+  template<typename T>
+  void send_ng_setup_failure(
+      const T& cause, const e_Ngap_TimeToWait& time_to_wait,
+      const sctp_assoc_id_t& assoc_id, const sctp_stream_id_t& stream);
+
+  /*
    * Get list of common PLMN between AMF and gNB
    * @param [const std::vector<SupportedTaItem_t>&] list: Supported TA list from
    * gNB

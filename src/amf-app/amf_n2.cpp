@@ -381,6 +381,9 @@ void amf_n2::handle_itti_message(
   if (!assoc_id_2_gnb_context(itti_msg->assoc_id, gc)) {
     Logger::amf_n2().error(
         "No existed gNB context with assoc_id (%d)", itti_msg->assoc_id);
+    send_ng_setup_failure(
+        Ngap_CauseProtocol_message_not_compatible_with_receiver_state,
+        Ngap_TimeToWait_v5s, itti_msg->assoc_id, itti_msg->stream);
     return;
   }
 
@@ -404,6 +407,9 @@ void amf_n2::handle_itti_message(
     Logger::amf_n2().error(
         "[gNB Assoc ID %d] Missing Mandatory IE Global RAN Node ID",
         itti_msg->assoc_id);
+    send_ng_setup_failure(
+        Ngap_CauseProtocol_abstract_syntax_error_falsely_constructed_message,
+        Ngap_TimeToWait_v5s, itti_msg->assoc_id, itti_msg->stream);
     return;
   }
   Logger::amf_n2().debug(
@@ -431,6 +437,9 @@ void amf_n2::handle_itti_message(
   vector<SupportedTaItem_t> supported_ta_list;
   if (!itti_msg->ngSetupReq->getSupportedTAList(supported_ta_list)) {
     Logger::amf_n2().error("Missing Mandatory IE Supported TA List");
+    send_ng_setup_failure(
+        Ngap_CauseProtocol_abstract_syntax_error_falsely_constructed_message,
+        Ngap_TimeToWait_v5s, itti_msg->assoc_id, itti_msg->stream);
     return;
   }
 
@@ -439,23 +448,13 @@ void amf_n2::handle_itti_message(
   if (!get_common_plmn(supported_ta_list, gc->supported_ta_list)) {
     // If there's no common PLMN between AMF and GNB, send NG SETUP FAILURE
     // MESSAGE with cause "Unknown PLMN"(Section 9.3.1.2, 3GPP TS 38.413)
-    uint8_t* buffer                  = (uint8_t*) calloc(1, BUFFER_SIZE_1024);
-    NGSetupFailureMsg ngSetupFailure = {};
-    ngSetupFailure.set(Ngap_CauseRadioNetwork_unspecified, Ngap_TimeToWait_v5s);
-    int encoded = ngSetupFailure.Encode((uint8_t*) buffer, BUFFER_SIZE_1024);
-
-    if (encoded < 1) {
-      Logger::amf_n2().error("Encode NG Setup Failure message error!");
-      return;
-    }
-
-    bstring b = blk2bstr(buffer, encoded);
-    sctp_s_38412.sctp_send_msg(itti_msg->assoc_id, itti_msg->stream, &b);
     Logger::amf_n2().error(
         "[gNB ID %d] No common PLMN between gNB and AMF, encoding "
         "NG_SETUP_FAILURE with cause (Unknown PLMN)",
         gc->gnb_id);
-    bdestroy_wrapper(&b);
+    send_ng_setup_failure(
+        Ngap_CauseMisc_unknown_PLMN, Ngap_TimeToWait_v5s, itti_msg->assoc_id,
+        itti_msg->stream);
     return;
   }
 
@@ -498,6 +497,9 @@ void amf_n2::handle_itti_message(
 
   if (encoded < 1) {
     Logger::amf_n2().error("Encode NG Setup Response message error!");
+    send_ng_setup_failure(
+        Ngap_CauseMisc_unspecified, Ngap_TimeToWait_v5s, itti_msg->assoc_id,
+        itti_msg->stream);
     return;
   }
 
@@ -2462,6 +2464,26 @@ void amf_n2::send_handover_preparation_failure(
   bstring b = blk2bstr(buffer, encoded_size);
 
   sctp_s_38412.sctp_send_msg(gnb_assoc_id, 0, &b);
+  bdestroy_wrapper(&b);
+}
+
+//------------------------------------------------------------------------------
+template<typename T>
+void amf_n2::send_ng_setup_failure(
+    const T& cause, const e_Ngap_TimeToWait& time_to_wait,
+    const sctp_assoc_id_t& assoc_id, const sctp_stream_id_t& stream_id) {
+  uint8_t* buffer                  = (uint8_t*) calloc(1, BUFFER_SIZE_1024);
+  NGSetupFailureMsg ngSetupFailure = {};
+  ngSetupFailure.set(cause, time_to_wait);
+  int encoded = ngSetupFailure.Encode((uint8_t*) buffer, BUFFER_SIZE_1024);
+
+  if (encoded < 1) {
+    Logger::amf_n2().error("Encode NG Setup Failure message error!");
+    return;
+  }
+
+  bstring b = blk2bstr(buffer, encoded);
+  sctp_s_38412.sctp_send_msg(assoc_id, stream_id, &b);
   bdestroy_wrapper(&b);
 }
 
