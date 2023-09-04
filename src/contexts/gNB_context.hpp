@@ -48,13 +48,13 @@ static const std::vector<std::string> ng_gnb_state_str = {
 
 class gnb_context {
  public:
-  ng_gnb_state_t ng_state;
-
   std::string gnb_name;
   uint32_t gnb_id;  // Global RAN Node ID
+
+  ng_gnb_state_t ng_state;
   plmn_t plmn;
   e_Ngap_PagingDRX default_paging_drx;  // v32, v64, v128, v256
-  std::vector<SupportedTaItem_t> s_ta_list;
+  std::vector<SupportedTaItem_t> supported_ta_list;
 
   sctp_assoc_id_t sctp_assoc_id;
   sctp_stream_id_t next_sctp_stream;

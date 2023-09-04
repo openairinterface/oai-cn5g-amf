@@ -364,7 +364,9 @@ void amf_n2::handle_itti_message(std::shared_ptr<itti_paging>& itti_msg) {
 
 //------------------------------------------------------------------------------
 void amf_n2::handle_itti_message(
-    std::shared_ptr<itti_new_sctp_association>& new_assoc) {}
+    std::shared_ptr<itti_new_sctp_association>& new_assoc) {
+  // TODO:
+}
 
 //------------------------------------------------------------------------------
 void amf_n2::handle_itti_message(
@@ -421,28 +423,22 @@ void amf_n2::handle_itti_message(
     Logger::amf_n2().debug("IE RanNodeName: %s", gnb_name.c_str());
   }
 
-  // store Paging DRX in gNB context
-  // TODO: To fix DefaultPagingDRX value
-  int defPagingDrx = itti_msg->ngSetupReq->getDefaultPagingDRX();
-  if (defPagingDrx == -1) {
-    Logger::amf_n2().error("Missing Mandatory IE DefaultPagingDRX");
-    return;
-  }
-  Logger::amf_n2().debug("IE DefaultPagingDRX: %d", defPagingDrx);
+  // Store Paging DRX in gNB context
+  gc->default_paging_drx = itti_msg->ngSetupReq->getDefaultPagingDRX();
+  Logger::amf_n2().debug("IE DefaultPagingDRX: %d", gc->default_paging_drx);
 
   // Get supported TA List
-  vector<SupportedTaItem_t> s_ta_list;
-  if (!itti_msg->ngSetupReq->getSupportedTAList(s_ta_list)) {
+  vector<SupportedTaItem_t> supported_ta_list;
+  if (!itti_msg->ngSetupReq->getSupportedTAList(supported_ta_list)) {
     Logger::amf_n2().error("Missing Mandatory IE Supported TA List");
     return;
   }
 
   // Verify PLMN Identity and TAC with configuration and store supportedTAList
-  // in gNB context, if verified; else response NG SETUP FAILURE with cause
-  // "Unknown PLMN"(9.3.1.2, ts38413)
-
-  if (!get_common_plmn(s_ta_list, gc->s_ta_list)) {
-    // encode NG SETUP FAILURE MESSAGE and send back
+  // in gNB context
+  if (!get_common_plmn(supported_ta_list, gc->supported_ta_list)) {
+    // If there's no common PLMN between AMF and GNB, send NG SETUP FAILURE
+    // MESSAGE with cause "Unknown PLMN"(Section 9.3.1.2, 3GPP TS 38.413)
     uint8_t* buffer                  = (uint8_t*) calloc(1, BUFFER_SIZE_1024);
     NGSetupFailureMsg ngSetupFailure = {};
     ngSetupFailure.set(Ngap_CauseRadioNetwork_unspecified, Ngap_TimeToWait_v5s);
@@ -465,9 +461,8 @@ void amf_n2::handle_itti_message(
 
   set_gnb_id_2_gnb_context(gnb_id, gc);
 
+  // Send NG SETUP RESPONSE message
   Logger::amf_n2().debug("Encoding NG_SETUP_RESPONSE ...");
-  // encode NG SETUP RESPONSE message with information stored in configuration
-  // file and send_msg
   uint8_t* buffer                = (uint8_t*) calloc(1, BUFFER_SIZE_1024);
   NGSetupResponseMsg ngSetupResp = {};
   ngSetupResp.setAMFName(amf_cfg.amf_name);
@@ -514,7 +509,7 @@ void amf_n2::handle_itti_message(
       "gNB with gNB_id 0x%x, assoc_id %d has been attached to AMF", gc->gnb_id,
       itti_msg->assoc_id);
 
-  // store gNB info for statistic purpose
+  // Store gNB info for statistic purpose
   stacs.add_gnb(gc);
 
   bdestroy_wrapper(&b);
@@ -574,7 +569,7 @@ void amf_n2::handle_itti_message(std::shared_ptr<itti_ng_reset>& itti_msg) {
     }
   }
 
-  // TODO: create NGResetAck and reply to gNB
+  // Create NGResetAck and reply to gNB
   std::unique_ptr<NGResetAckMsg> ng_reset_ack =
       std::make_unique<NGResetAckMsg>();
   // UEAssociatedLogicalNGConnectionList
@@ -937,7 +932,7 @@ void amf_n2::handle_itti_message(
       }
     }
   */
-  for (auto s : gc->s_ta_list) {
+  for (auto s : gc->supported_ta_list) {
     for (auto p : s.b_plmn_list) {
       for (auto s : p.slice_list) {
         S_Nssai item;
@@ -2760,7 +2755,7 @@ bool amf_n2::get_common_NSSAI(
     return false;
   }
 
-  for (const auto& ta : gc->s_ta_list) {
+  for (const auto& ta : gc->supported_ta_list) {
     for (const auto& plmn : ta.b_plmn_list) {
       for (const auto& slice : plmn.slice_list) {
         nas::SNSSAI_t snssai = {};

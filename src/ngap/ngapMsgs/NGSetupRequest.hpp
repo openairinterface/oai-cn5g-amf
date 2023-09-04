@@ -54,7 +54,7 @@ class NGSetupRequestMsg : public NgapMessage {
   bool getSupportedTAList(std::vector<struct SupportedTaItem_s>& list);
 
   void setDefaultPagingDRX(const e_Ngap_PagingDRX& value);
-  int getDefaultPagingDRX();
+  e_Ngap_PagingDRX getDefaultPagingDRX();
 
   bool decodeFromPdu(Ngap_NGAP_PDU_t* ngapMsgPdu) override;
 

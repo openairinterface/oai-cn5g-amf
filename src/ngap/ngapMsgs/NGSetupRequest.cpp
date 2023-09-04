@@ -362,7 +362,7 @@ bool NGSetupRequestMsg::getSupportedTAList(
 }
 
 //------------------------------------------------------------------------------
-int NGSetupRequestMsg::getDefaultPagingDRX() {
+e_Ngap_PagingDRX NGSetupRequestMsg::getDefaultPagingDRX() {
   return defaultPagingDrx.getValue();
 }
 }  // namespace ngap
