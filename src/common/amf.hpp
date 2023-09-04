@@ -61,10 +61,10 @@ constexpr uint64_t SECONDS_SINCE_FIRST_EPOCH = 2208988800;
 #define UE_AGGREGATE_MAXIMUM_BIT_RATE_UL 1000000000
 
 #define NAMF_COMMUNICATION_BASE "/namf-comm/"
-#define NAMF_COMMUNICATION_N1N2_MESSAGE_TRANSFER_URL                           \
-  "/ue-contexts/{}/n1-n2-messages"  // context id
+#define NAMF_COMMUNICATION_N1N2_MESSAGE_TRANSFER_URL "n1-n2-messages"
 #define NAMF_COMMUNICATION_NON_UE_N2_MESSAGE_TRANSFER_URL                      \
   "/non-ue-n2-messages/transfer"
+#define NAMF_COMMUNICATION_N1_MESSAGE_NOTIFY_URL "n1-message-notify"
 
 #define NAMF_EVENT_EXPOSURE_BASE "/namf-evts/"
 #define NAMF_EVENT_EXPOSURE_SUBSCRIPTION "/subscriptions"
@@ -74,6 +74,9 @@ constexpr uint64_t SECONDS_SINCE_FIRST_EPOCH = 2208988800;
 
 #define NAMF_CUSTOMIZED_API_BASE "/namf-oai/"
 #define NAMF_CUSTOMIZED_API_CONFIGURATION_URL "/configuration"
+
+#define NAMF_STATUS_NOTIFY_API_BASE "/namf-status-notify/"
+#define NAMF_STATUS_NOTIFY_API_URL "/pdu-session-release/callback/"
 
 #define NAS_MESSAGE_DOWNLINK 1
 #define NAS_MESSAGE_UPLINK 0

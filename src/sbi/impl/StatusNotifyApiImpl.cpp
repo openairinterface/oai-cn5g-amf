@@ -55,8 +55,7 @@ void StatusNotifyApiImpl::receive_pdu_session_status_notification(
     const std::string& ueContextId, const std::string& pduSessionId,
     const SmContextStatusNotification& statusNotification,
     Pistache::Http::ResponseWriter& response) {
-  Logger::amf_server().debug(
-      "Receive PDU Session Release notification, handling...");
+  Logger::amf_server().debug("Receive an NF Status Notify, handling...");
 
   uint8_t pdu_session_id = 0;
   if (conv::string_to_int8(pduSessionId, pdu_session_id)) {
