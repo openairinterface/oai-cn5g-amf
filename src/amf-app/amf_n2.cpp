@@ -380,7 +380,7 @@ void amf_n2::handle_itti_message(
   std::shared_ptr<gnb_context> gc = {};
   if (!assoc_id_2_gnb_context(itti_msg->assoc_id, gc)) {
     Logger::amf_n2().error(
-        "No existed gNB context with assoc_id (%d)", itti_msg->assoc_id);
+        "No gNB context with assoc_id (%d)", itti_msg->assoc_id);
     send_ng_setup_failure(
         Ngap_CauseProtocol_message_not_compatible_with_receiver_state,
         Ngap_TimeToWait_v5s, itti_msg->assoc_id, itti_msg->stream);
@@ -514,6 +514,8 @@ void amf_n2::handle_itti_message(
   // Store gNB info for statistic purpose
   stacs.add_gnb(gc);
 
+  // TODO: Do we need to store gNB context in UDSF (if available)?
+
   bdestroy_wrapper(&b);
   return;
 }
@@ -528,7 +530,7 @@ void amf_n2::handle_itti_message(std::shared_ptr<itti_ng_reset>& itti_msg) {
   std::shared_ptr<gnb_context> gc = {};
   if (!assoc_id_2_gnb_context(itti_msg->assoc_id, gc)) {
     Logger::amf_n2().error(
-        "No existed gNB context with assoc_id(%d)", itti_msg->assoc_id);
+        "No gNB context with assoc_id (%d)", itti_msg->assoc_id);
     return;
   }
 
@@ -595,7 +597,7 @@ void amf_n2::handle_itti_message(std::shared_ptr<itti_ng_shutdown>& itti_msg) {
   std::shared_ptr<gnb_context> gc = {};
   if (!assoc_id_2_gnb_context(itti_msg->assoc_id, gc)) {
     Logger::amf_n2().error(
-        "No existed gNB context with assoc_id(%d)", itti_msg->assoc_id);
+        "No gNB context with assoc_id (%d)", itti_msg->assoc_id);
     return;
   }
 
@@ -1588,7 +1590,7 @@ void amf_n2::handle_itti_message(
   std::shared_ptr<gnb_context> gc = {};
   if (!assoc_id_2_gnb_context(itti_msg->assoc_id, gc)) {
     Logger::amf_n2().error(
-        "No existed gNB context with assoc_id (%d)", itti_msg->assoc_id);
+        "No gNB context with assoc_id (%d)", itti_msg->assoc_id);
     return;
   }
 
@@ -2773,7 +2775,7 @@ bool amf_n2::get_common_NSSAI(
   std::shared_ptr<gnb_context> gc = {};
   if (!amf_n2_inst->assoc_id_2_gnb_context(unc->gnb_assoc_id, gc)) {
     Logger::amf_n1().error(
-        "No existed gNB context with assoc_id (%d)", unc->gnb_assoc_id);
+        "No gNB context with assoc_id (%d)", unc->gnb_assoc_id);
     return false;
   }
 
