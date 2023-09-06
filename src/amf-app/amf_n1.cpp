@@ -5153,7 +5153,7 @@ bool amf_n1::get_slice_selection_subscription_data_from_conf_file(
   std::vector<oai::amf::model::Snssai> common_snssais;
   // bool default_subscribed_snssai = true;
 
-  for (auto ta : gc->s_ta_list) {
+  for (auto ta : gc->supported_ta_list) {
     for (auto p : ta.b_plmn_list) {
       for (auto s : p.slice_list) {
         oai::amf::model::Snssai nssai = {};

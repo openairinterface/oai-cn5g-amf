@@ -157,7 +157,7 @@ void statistics::add_gnb(const std::shared_ptr<gnb_context>& gc) {
   gnb.mcc       = gc->plmn.mcc;
   gnb.mnc       = gc->plmn.mnc;
   gnb.gnb_name  = gc->gnb_name;
-  for (auto i : gc->s_ta_list) {
+  for (auto i : gc->supported_ta_list) {
     gnb.plmn_list.push_back(i);
   }
   std::unique_lock lock(m_gnbs);

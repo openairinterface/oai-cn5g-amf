@@ -57,6 +57,7 @@ class ue_ngap_context {
     ncc                 = 0;
     initial_ue_msg.buf  = new uint8_t[BUFFER_SIZE_1024];
     initial_ue_msg.size = 0;
+    ue_radio_cap_ind    = nullptr;
   }
 
   virtual ~ue_ngap_context() {
@@ -93,6 +94,7 @@ class ue_ngap_context {
   // Release Command Cause and source gNB ID in case of HO
   Ngap_CauseRadioNetwork_t release_cause;
   uint32_t release_gnb;
+  bstring ue_radio_cap_ind;
 };
 
 #endif

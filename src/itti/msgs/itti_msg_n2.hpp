@@ -394,33 +394,33 @@ class itti_paging : public itti_msg_n2 {
   long amf_ue_ngap_id;
 };
 
-class itti_handover_request_Ack : public itti_msg_n2 {
+class itti_handover_request_ack : public itti_msg_n2 {
  public:
-  itti_handover_request_Ack(const task_id_t origin, const task_id_t destination)
+  itti_handover_request_ack(const task_id_t origin, const task_id_t destination)
       : itti_msg_n2(HANDOVER_REQUEST_ACK, origin, destination) {
-    handoverrequestAck = nullptr;
+    handoverRequestAck = nullptr;
   }
-  itti_handover_request_Ack(const itti_handover_request_Ack& i)
+  itti_handover_request_ack(const itti_handover_request_ack& i)
       : itti_msg_n2(i) {
-    handoverrequestAck = i.handoverrequestAck;
+    handoverRequestAck = i.handoverRequestAck;
   }
-  virtual ~itti_handover_request_Ack() { delete handoverrequestAck; }
+  virtual ~itti_handover_request_ack() { delete handoverRequestAck; }
 
-  HandoverRequestAck* handoverrequestAck;
+  HandoverRequestAck* handoverRequestAck;
 };
 
 class itti_handover_notify : public itti_msg_n2 {
  public:
   itti_handover_notify(const task_id_t origin, const task_id_t destination)
       : itti_msg_n2(HANDOVER_NOTIFY, origin, destination) {
-    handovernotify = nullptr;
+    handoverNotify = nullptr;
   }
   itti_handover_notify(const itti_handover_notify& i) : itti_msg_n2(i) {
-    handovernotify = i.handovernotify;
+    handoverNotify = i.handoverNotify;
   }
-  virtual ~itti_handover_notify() { delete handovernotify; }
+  virtual ~itti_handover_notify() { delete handoverNotify; }
 
-  HandoverNotifyMsg* handovernotify;
+  HandoverNotifyMsg* handoverNotify;
 };
 
 class itti_uplink_ran_status_transfer : public itti_msg_n2 {
@@ -428,15 +428,15 @@ class itti_uplink_ran_status_transfer : public itti_msg_n2 {
   itti_uplink_ran_status_transfer(
       const task_id_t origin, const task_id_t destination)
       : itti_msg_n2(UPLINK_RAN_STATUS_TRANSFER, origin, destination) {
-    uplinkrantransfer = nullptr;
+    uplinkRanTransfer = nullptr;
   }
   itti_uplink_ran_status_transfer(const itti_uplink_ran_status_transfer& i)
       : itti_msg_n2(i) {
-    uplinkrantransfer = i.uplinkrantransfer;
+    uplinkRanTransfer = i.uplinkRanTransfer;
   }
-  virtual ~itti_uplink_ran_status_transfer() { delete uplinkrantransfer; }
+  virtual ~itti_uplink_ran_status_transfer() { delete uplinkRanTransfer; }
 
-  UplinkRANStatusTransfer* uplinkrantransfer;
+  UplinkRANStatusTransfer* uplinkRanTransfer;
 };
 
 class itti_rereoute_nas : public itti_msg_n2 {

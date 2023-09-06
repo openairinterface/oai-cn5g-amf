@@ -28,7 +28,7 @@ namespace ngap {
 
 //------------------------------------------------------------------------------
 DefaultPagingDRX::DefaultPagingDRX() {
-  paging_drx_ = 0;
+  paging_drx_ = Ngap_PagingDRX_v32;
 }
 
 //------------------------------------------------------------------------------
@@ -40,7 +40,7 @@ void DefaultPagingDRX::setValue(const e_Ngap_PagingDRX& paging_drx) {
 }
 
 //------------------------------------------------------------------------------
-int DefaultPagingDRX::getValue() const {
+e_Ngap_PagingDRX DefaultPagingDRX::getValue() const {
   return paging_drx_;
 }
 
@@ -52,8 +52,28 @@ bool DefaultPagingDRX::encode(Ngap_PagingDRX_t& paging_drx) {
 
 //------------------------------------------------------------------------------
 bool DefaultPagingDRX::decode(const Ngap_PagingDRX_t& paging_drx) {
-  paging_drx_ = paging_drx;
+  switch (paging_drx) {
+    case 32: {
+      paging_drx_ = Ngap_PagingDRX_v32;
+    } break;
+    case 64: {
+      paging_drx_ = Ngap_PagingDRX_v64;
+    } break;
+
+    case 128: {
+      paging_drx_ = Ngap_PagingDRX_v128;
+    } break;
+
+    case 256: {
+      paging_drx_ = Ngap_PagingDRX_v256;
+    } break;
+
+    default: {
+      paging_drx_ = (e_Ngap_PagingDRX) paging_drx;
+    }
+  }
+
   return true;
-}
+}  // namespace ngap
 
 }  // namespace ngap
