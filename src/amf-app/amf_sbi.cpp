@@ -119,7 +119,7 @@ void amf_sbi_task(void*) {
             "Receive Register NF Instance Request, handling ...");
         itti_sbi_register_nf_instance_request* m =
             dynamic_cast<itti_sbi_register_nf_instance_request*>(msg);
-        // TODO: Handle ITTI
+        amf_sbi_inst->handle_itti_message(ref(*m));
       } break;
 
       case SBI_NOTIFY_SUBSCRIBED_EVENT: {
@@ -164,6 +164,16 @@ void amf_sbi_task(void*) {
             dynamic_cast<itti_sbi_nf_instance_discovery*>(msg);
         amf_sbi_inst->handle_itti_message(ref(*m));
       } break;
+
+      case SBI_DETERMINE_LOCATION_REQUEST: {
+        Logger::amf_sbi().info(
+            "Receive Determine Location Request message, "
+            "handling ...");
+        itti_sbi_determine_location_request* m =
+            dynamic_cast<itti_sbi_determine_location_request*>(msg);
+        amf_sbi_inst->handle_itti_message(ref(*m));
+      } break;
+
       case TERMINATE: {
         if (itti_msg_terminate* terminate =
                 dynamic_cast<itti_msg_terminate*>(msg)) {
@@ -757,6 +767,82 @@ void amf_sbi::handle_itti_message(itti_sbi_nf_instance_discovery& itti_msg) {
   }
 }
 
+//------------------------------------------------------------------------------
+void amf_sbi::handle_itti_message(
+    itti_sbi_register_nf_instance_request& itti_msg) {
+  Logger::amf_sbi().debug(
+      "Send NF Instance Registration to NRF (HTTP version %d)",
+      itti_msg.http_version);
+  nlohmann::json json_data = {};
+  itti_msg.profile.to_json(json_data);
+
+  std::string url = amf_cfg.get_nrf_nf_registration_uri(
+      itti_msg.profile.get_nf_instance_id());
+
+  Logger::amf_sbi().debug(
+      "Send NF Instance Registration to NRF, NRF URL %s", url.c_str());
+
+  std::string body = json_data.dump();
+  Logger::amf_sbi().debug(
+      "Send NF Instance Registration to NRF, msg body: \n %s", body.c_str());
+
+  uint8_t http_version = 1;
+  if (amf_cfg.support_features.use_http2) http_version = 2;
+
+  nlohmann::json response_data = {};
+  uint32_t response_code       = 0;
+  curl_http_client(
+      url, "PUT", body, response_data, response_code, http_version);
+
+  Logger::amf_sbi().debug(
+      "NF Registration, response from NRF, json data: \n %s",
+      response_data.dump().c_str());
+
+  if (response_code == 201) {
+    Logger::amf_sbi().debug("NFRegistration, got successful response from NRF");
+  }
+}
+
+//------------------------------------------------------------------------------
+void amf_sbi::handle_itti_message(
+    itti_sbi_determine_location_request& itti_msg) {
+  Logger::amf_sbi().debug(
+      "Send Determine Location Request to LMF (HTTP version %d)",
+      itti_msg.http_version);
+
+  std::string url = amf_cfg.get_lmf_determine_location_uri();
+  Logger::amf_sbi().debug(
+      "Send Determine Location Request to LMF, URL %s", url.c_str());
+
+  std::string body = itti_msg.input_data.dump();
+  Logger::amf_sbi().debug(
+      "Send Determine Location Request to AUSF, msg body: \n %s", body.c_str());
+
+  uint32_t response_code       = 0;
+  nlohmann::json response_data = {};
+  curl_http_client(
+      url, "POST", body, response_data, response_code, itti_msg.http_version);
+
+  Logger::amf_sbi().debug(
+      "Determine Location, response from LMF, HTTP Code: %d", response_code);
+
+  if ((response_code == 200) or
+      (response_code == 201)) {  // TODO: remove hardcoded value
+    Logger::amf_sbi().debug(
+        "Determine Location, response from LMF\n, %s ",
+        response_data.dump().c_str());
+
+  } else {
+    Logger::amf_sbi().warn(
+        "Determine Location, could not get response from LMF");
+  }
+
+  // Notify to the result
+  if (itti_msg.promise_id > 0) {
+    amf_app_inst->trigger_process_response(itti_msg.promise_id, response_data);
+    return;
+  }
+}
 //------------------------------------------------------------------------------
 bool amf_sbi::smf_selection_from_configuration(
     std::string& smf_uri_root, std::string& smf_api_version) {

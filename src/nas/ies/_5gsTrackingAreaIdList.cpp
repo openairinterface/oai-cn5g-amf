@@ -22,10 +22,10 @@
 
 #include "3gpp_24.501.hpp"
 #include "IeConst.hpp"
-#include "NasUtils.hpp"
-#include "String2Value.hpp"
 #include "common_defs.h"
 #include "logger.hpp"
+#include "String2Value.hpp"
+#include "utils.hpp"
 
 using namespace nas;
 
@@ -119,7 +119,7 @@ int _5gsTrackingAreaIdList::encode_00_type(
   ENCODE_U8(buf + encoded_size, octet, encoded_size);
 
   // Encode PLMN
-  encoded_size += NasUtils::encodeMccMnc2Buffer(
+  encoded_size += utils::encodeMccMnc2Buffer(
       item.plmn_list[0].mcc, item.plmn_list[0].mnc, buf + encoded_size,
       len - encoded_size);
 

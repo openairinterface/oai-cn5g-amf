@@ -22,10 +22,10 @@
 #include "_5gsMobileIdentity.hpp"
 
 #include "3gpp_24.501.hpp"
-#include "NasUtils.hpp"
-#include "String2Value.hpp"
 #include "conversions.hpp"
 #include "logger.hpp"
+#include "String2Value.hpp"
+#include "utils.hpp"
 
 using namespace nas;
 
@@ -147,7 +147,7 @@ int _5gsMobileIdentity::Encode5gGuti(uint8_t* buf, int len) {
       buf + encoded_size, 0xf0 | _5G_GUTI,
       encoded_size);  // Type of Identity
   // MCC/MNC
-  encoded_size += NasUtils::encodeMccMnc2Buffer(
+  encoded_size += utils::encodeMccMnc2Buffer(
       _5g_guti_.value().mcc, _5g_guti_.value().mnc, buf + encoded_size,
       len - encoded_size);
   // AMF Region ID
@@ -186,7 +186,7 @@ int _5gsMobileIdentity::Decode5gGuti(uint8_t* buf, int len) {
   // TODO:validate Type of Identity
 
   _5G_GUTI_t tmp = {};
-  decoded_size += NasUtils::decodeMccMncFromBuffer(
+  decoded_size += utils::decodeMccMncFromBuffer(
       tmp.mcc, tmp.mnc, buf + decoded_size, len - decoded_size);
 
   Logger::nas_mm().debug("MCC %s, MNC %s", tmp.mcc.c_str(), tmp.mnc.c_str());
@@ -255,7 +255,7 @@ int _5gsMobileIdentity::EncodeSuci(uint8_t* buf, int len) {
       encoded_size);
 
   // MCC/MNC
-  encoded_size += NasUtils::encodeMccMnc2Buffer(
+  encoded_size += utils::encodeMccMnc2Buffer(
       supi_format_imsi_.value().mcc, supi_format_imsi_.value().mnc,
       buf + encoded_size, len - encoded_size);
 
@@ -317,7 +317,7 @@ int _5gsMobileIdentity::DecodeSuci(uint8_t* buf, int len, int ie_len) {
       SUCI_imsi_t supi_format_imsi_tmp = {};
       supi_format_imsi_tmp.supi_format = SUPI_FORMAT_IMSI;
 
-      decoded_size += NasUtils::decodeMccMncFromBuffer(
+      decoded_size += utils::decodeMccMncFromBuffer(
           supi_format_imsi_tmp.mcc, supi_format_imsi_tmp.mnc,
           buf + decoded_size, len - decoded_size);
       Logger::nas_mm().debug(

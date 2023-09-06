@@ -19,20 +19,46 @@
  *      contact@openairinterface.org
  */
 
-#ifndef FILE_NAS_UTILS_HPP_SEEN
-#define FILE_NAS_UTILS_HPP_SEEN
+#ifndef FILE_UTILS_HPP_SEEN
+#define FILE_UTILS_HPP_SEEN
 
+#include <boost/thread.hpp>
+#include <boost/thread/future.hpp>
 #include <iostream>
 #include <string>
-constexpr uint8_t kMccMncLength = 3;
 
-class NasUtils {
+#include "amf.hpp"
+
+constexpr uint8_t kMccMncLength = 3;
+// constexpr uint32_t FUTURE_STATUS_TIMEOUT_MS  = 1000
+
+class utils {
  public:
+  // For NAS
   static int encodeMccMnc2Buffer(
       const std::string& mcc_str, const std::string& mnc_str, uint8_t* buf,
       int len);
-
   static int decodeMccMncFromBuffer(
       std::string& mcc_str, std::string& mnc_str, uint8_t* buf, int len);
+
+  // For Boost
+  template<typename T>
+  static void wait_for_result(
+      boost::shared_future<T>& f, std::optional<T>& result) {
+    boost::future_status status;
+    // wait for timeout or ready
+    status = f.wait_for(boost::chrono::milliseconds(FUTURE_STATUS_TIMEOUT_MS));
+    if (status == boost::future_status::ready) {
+      assert(f.is_ready());
+      assert(f.has_value());
+      assert(!f.has_exception());
+      // return the result when available
+      result = std::make_optional<T>(f.get());
+      return;
+    } else {
+      result = std::nullopt;
+      return;
+    }
+  }
 };
-#endif /* FILE_NAS_UTILS_HPP_SEEN */
+#endif /* FILE_UTILS_HPP_SEEN */

@@ -22,9 +22,9 @@
 #include "PlmnList.hpp"
 
 #include "3gpp_24.501.hpp"
-#include "NasUtils.hpp"
 #include "common_defs.h"
 #include "logger.hpp"
+#include "utils.hpp"
 
 using namespace nas;
 
@@ -78,7 +78,7 @@ int PlmnList::Encode(uint8_t* buf, int len) {
   encoded_size += encoded_header_size;
 
   for (auto it : plmn_list)
-    encoded_size += NasUtils::encodeMccMnc2Buffer(
+    encoded_size += utils::encodeMccMnc2Buffer(
         it.mcc, it.mnc, buf + encoded_size, len - encoded_size);
 
   Logger::nas_mm().debug(
@@ -107,7 +107,7 @@ int PlmnList::Decode(uint8_t* buf, int len, bool is_iei) {
   uint8_t len_ie = GetLengthIndicator();
   while (len_ie > 0) {
     nas_plmn_t nas_plmn = {};
-    uint8_t size        = NasUtils::decodeMccMncFromBuffer(
+    uint8_t size        = utils::decodeMccMncFromBuffer(
         nas_plmn.mcc, nas_plmn.mnc, buf + decoded_size, len - decoded_size);
     if (size > 0) {
       len_ie -= size;

@@ -19,7 +19,7 @@
  *      contact@openairinterface.org
  */
 
-#include "NasUtils.hpp"
+#include "utils.hpp"
 
 #include "3gpp_24.501.hpp"
 #include "common_defs.h"
@@ -27,7 +27,7 @@
 #include "logger.hpp"
 
 //------------------------------------------------------------------------------
-int NasUtils::encodeMccMnc2Buffer(
+int utils::encodeMccMnc2Buffer(
     const std::string& mcc_str, const std::string& mnc_str, uint8_t* buf,
     int len) {
   int encoded_size = 0;
@@ -60,7 +60,7 @@ int NasUtils::encodeMccMnc2Buffer(
 }
 
 //------------------------------------------------------------------------------
-int NasUtils::decodeMccMncFromBuffer(
+int utils::decodeMccMncFromBuffer(
     std::string& mcc_str, std::string& mnc_str, uint8_t* buf, int len) {
   if (len < kMccMncLength) {
     Logger::nas_mm().error(
@@ -104,3 +104,24 @@ int NasUtils::decodeMccMncFromBuffer(
   Logger::nas_mm().debug("MCC %s, MNC %s", mcc_str.c_str(), mnc_str.c_str());
   return decoded_size;
 }
+/*
+//------------------------------------------------------------------------------
+template<typename T>
+ void utils::wait_for_result(
+     boost::shared_future<T>& f, std::optional<T>& result){
+   boost::future_status status;
+   // wait for timeout or ready
+   status = f.wait_for(boost::chrono::milliseconds(FUTURE_STATUS_TIMEOUT_MS));
+   if (status == boost::future_status::ready) {
+     assert(f.is_ready());
+     assert(f.has_value());
+     assert(!f.has_exception());
+     // return the result when available
+     result = std::make_optional<f.get()>;
+     return;
+   } else {
+     result = std::nullopt;
+     return;
+   }
+ }
+*/
