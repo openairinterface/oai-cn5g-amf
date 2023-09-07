@@ -96,9 +96,8 @@ void AMFConfigurationApiImpl::read_configuration(
           Pistache::Http::Code(http_response_code), json_data.dump().c_str());
     }
   } else {
-    response.headers().add<Pistache::Http::Header::ContentType>(
-        Pistache::Http::Mime::MediaType("application/problem+json"));
-    response.send(Pistache::Http::Code::Internal_Server_Error);
+    // TODO:
+    response.send(Pistache::Http::Code::Gateway_Timeout);
   }
 }
 
@@ -132,38 +131,30 @@ void AMFConfigurationApiImpl::update_configuration(
         itti_msg->get_msg_name());
   }
 
-  boost::future_status status;
-  // wait for timeout or ready
-  status = f.wait_for(boost::chrono::milliseconds(FUTURE_STATUS_TIMEOUT_MS));
-  if (status == boost::future_status::ready) {
-    assert(f.is_ready());
-    assert(f.has_value());
-    assert(!f.has_exception());
-    // Wait for the result from APP
-    // result includes json content and http response code
-    nlohmann::json result = f.get();
+  std::optional<nlohmann::json> result = std::nullopt;
+  utils::wait_for_result(f, result);
+  if (result.has_value()) {
     Logger::amf_server().debug("Got result for promise ID %d", promise_id);
-
     // process data
     uint32_t http_response_code = 0;
     nlohmann::json json_data    = {};
 
-    if (result.find("httpResponseCode") != result.end()) {
-      http_response_code = result["httpResponseCode"].get<int>();
+    if (result.value().find("httpResponseCode") != result.value().end()) {
+      http_response_code = result.value()["httpResponseCode"].get<int>();
     }
 
     if (static_cast<http_response_codes_e>(http_response_code) ==
         http_response_codes_e::HTTP_RESPONSE_CODE_200_OK) {
-      if (result.find("content") != result.end()) {
-        json_data = result["content"];
+      if (result.value().find("content") != result.value().end()) {
+        json_data = result.value()["content"];
       }
       response.headers().add<Pistache::Http::Header::ContentType>(
           Pistache::Http::Mime::MediaType("application/json"));
       response.send(Pistache::Http::Code::Ok, json_data.dump().c_str());
     } else {
       // Problem details
-      if (result.find("ProblemDetails") != result.end()) {
-        json_data = result["ProblemDetails"];
+      if (result.value().find("ProblemDetails") != result.value().end()) {
+        json_data = result.value()["ProblemDetails"];
       }
 
       response.headers().add<Pistache::Http::Header::ContentType>(
@@ -171,6 +162,9 @@ void AMFConfigurationApiImpl::update_configuration(
       response.send(
           Pistache::Http::Code(http_response_code), json_data.dump().c_str());
     }
+  } else {
+    // TODO:
+    response.send(Pistache::Http::Code::Gateway_Timeout);
   }
 }
 

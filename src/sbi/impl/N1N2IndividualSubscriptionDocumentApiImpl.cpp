@@ -14,6 +14,7 @@
 #include "N1N2IndividualSubscriptionDocumentApiImpl.h"
 
 #include "3gpp_29.500.h"
+#include "utils.hpp"
 
 extern itti_mw* itti_inst;
 namespace oai {
@@ -60,23 +61,16 @@ void N1N2IndividualSubscriptionDocumentApiImpl::n1_n2_message_un_subscribe(
         itti_msg->get_msg_name());
   }
 
-  boost::future_status status;
-  // wait for timeout or ready
-  status = f.wait_for(boost::chrono::milliseconds(FUTURE_STATUS_TIMEOUT_MS));
-  if (status == boost::future_status::ready) {
-    assert(f.is_ready());
-    assert(f.has_value());
-    assert(!f.has_exception());
-    // Wait for the result from APP and send reply to AMF
-    // result includes location, UeN1N2InfoSubscriptionCreatedData, and http
-    // response code
-    nlohmann::json result = f.get();
-    Logger::amf_server().debug("Got result for promise ID %d", promise_id);
+  // Wait for the result available and process accordingly
+  std::optional<nlohmann::json> result = std::nullopt;
+  utils::wait_for_result(f, result);
 
+  if (result.has_value()) {
+    Logger::amf_server().debug("Got result for promise ID %d", promise_id);
     // process data
     uint32_t http_response_code = 0;
-    if (result.find("httpResponseCode") != result.end()) {
-      http_response_code = result["httpResponseCode"].get<int>();
+    if (result.value().find("httpResponseCode") != result.value().end()) {
+      http_response_code = result.value()["httpResponseCode"].get<int>();
     }
 
     if (static_cast<http_response_codes_e>(http_response_code) ==
@@ -85,8 +79,8 @@ void N1N2IndividualSubscriptionDocumentApiImpl::n1_n2_message_un_subscribe(
     } else {
       // Problem//details
       nlohmann::json json_data = {};
-      if (result.find("ProblemDetails") != result.end()) {
-        json_data = result["ProblemDetails"];
+      if (result.value().find("ProblemDetails") != result.value().end()) {
+        json_data = result.value()["ProblemDetails"];
       }
 
       response.headers().add<Pistache::Http::Header::ContentType>(
@@ -94,6 +88,9 @@ void N1N2IndividualSubscriptionDocumentApiImpl::n1_n2_message_un_subscribe(
       response.send(
           Pistache::Http::Code(http_response_code), json_data.dump().c_str());
     }
+  } else {
+    // TODO:
+    response.send(Pistache::Http::Code::Gateway_Timeout);
   }
 }
 
