@@ -1547,16 +1547,16 @@ void amf_n2::handle_itti_message(
   // Wait for the response available and process accordingly
   bool result = true;
   while (!curl_responses.empty()) {
-    std::optional<std::string> http_code_str = std::nullopt;
-    utils::wait_for_result(curl_responses.begin()->second, http_code_str);
+    std::optional<std::string> response_code_str = std::nullopt;
+    utils::wait_for_result(curl_responses.begin()->second, response_code_str);
 
-    if (http_code_str.has_value()) {
+    if (response_code_str.has_value()) {
       Logger::ngap().debug(
           "Got result for PDU Session ID %d", curl_responses.begin()->first);
-      result            = result && true;
-      uint8_t http_code = 0;
-      if (conv::string_to_int8(http_code_str.value(), http_code)) {
-        if ((http_code == 200) or (http_code == 204)) {
+      result                = result && true;
+      uint8_t response_code = 0;
+      if (conv::string_to_int8(response_code_str.value(), response_code)) {
+        if ((response_code == 200) or (response_code == 204)) {
           // uc->remove_pdu_sessions_context(curl_responses.begin()->first);
           uc->set_up_cnx_state(
               curl_responses.begin()->first,

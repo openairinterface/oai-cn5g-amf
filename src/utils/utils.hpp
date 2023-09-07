@@ -25,15 +25,22 @@
 #include <boost/thread.hpp>
 #include <boost/thread/future.hpp>
 #include <iostream>
+#include <sstream>
 #include <string>
 
-#include "amf.hpp"
-
-constexpr uint8_t kMccMncLength = 3;
-// constexpr uint32_t FUTURE_STATUS_TIMEOUT_MS  = 1000
+constexpr uint8_t kMccMncLength             = 3;
+constexpr uint32_t FUTURE_STATUS_TIMEOUT_MS = 1000;
 
 class utils {
  public:
+  template<class T>
+  static inline T fromString(const std::string& str) {
+    std::istringstream is(str);
+    T v;
+    is >> v;
+    return v;
+  }
+
   // For NAS
   static int encodeMccMnc2Buffer(
       const std::string& mcc_str, const std::string& mnc_str, uint8_t* buf,

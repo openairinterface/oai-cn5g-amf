@@ -3458,14 +3458,14 @@ void amf_n1::ue_initiate_de_registration_handle(
 
       // Wait for the response available and process accordingly
       while (!smf_responses.empty()) {
-        std::optional<uint32_t> http_response_code = std::nullopt;
-        utils::wait_for_result(
-            smf_responses.begin()->second, http_response_code);
+        std::optional<uint32_t> response_code = std::nullopt;
+        utils::wait_for_result(smf_responses.begin()->second, response_code);
 
-        if (http_response_code.has_value()) {
+        if (response_code.has_value()) {
           // Remove PDU session
           // TODO for multiple sessions
-          if ((http_response_code == 200) or (http_response_code == 204)) {
+          if ((response_code.value() == 200) or
+              (response_code.value() == 204)) {
             for (auto session : sessions_ctx) {
               uc->remove_pdu_sessions_context(session->pdu_session_id);
             }

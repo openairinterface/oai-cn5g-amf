@@ -38,8 +38,6 @@ constexpr auto CURL_MIME_BOUNDARY = "----Boundary";
 #define BUFFER_SIZE_512 512
 #define BUFFER_SIZE_256 256
 
-#define FUTURE_STATUS_TIMEOUT_MS 1000
-
 #define GNB_ID_FMT "%" PRIu32
 #define GNB_UE_NGAP_ID_FMT "%" PRIu32
 #define AMF_UE_NGAP_ID_FMT "%" PRIu64

@@ -1344,13 +1344,13 @@ void amf_app::trigger_pdu_session_release(
 
     // Wait for the response available and process accordingly
     while (!smf_responses.empty()) {
-      std::optional<uint32_t> http_response_code = std::nullopt;
-      utils::wait_for_result(smf_responses.begin()->second, http_response_code);
+      std::optional<uint32_t> response_code = std::nullopt;
+      utils::wait_for_result(smf_responses.begin()->second, response_code);
 
-      if (http_response_code.has_value()) {
+      if (response_code.has_value()) {
         // Remove PDU session
         // TODO for multiple sessions
-        if ((http_response_code == 200) or (http_response_code == 204)) {
+        if ((response_code.value() == 200) or (response_code.value() == 204)) {
           for (auto session : sessions_ctx) {
             uc->remove_pdu_sessions_context(session->pdu_session_id);
           }
@@ -1421,17 +1421,17 @@ void amf_app::trigger_pdu_session_up_deactivation(
     // Wait for the response available and process accordingly
     bool result = true;
     while (!curl_responses.empty()) {
-      std::optional<std::string> http_code_str = std::nullopt;
-      utils::wait_for_result(curl_responses.begin()->second, http_code_str);
+      std::optional<std::string> response_code_str = std::nullopt;
+      utils::wait_for_result(curl_responses.begin()->second, response_code_str);
 
-      if (http_code_str.has_value()) {
+      if (response_code_str.has_value()) {
         Logger::ngap().debug(
             "Got result for PDU Session ID %d", curl_responses.begin()->first);
 
-        result             = result && true;
-        uint32_t http_code = 0;
-        if (conv::string_to_int32(http_code_str.value(), http_code)) {
-          if ((http_code == 200) or (http_code == 204)) {
+        result                 = result && true;
+        uint32_t response_code = 0;
+        if (conv::string_to_int32(response_code_str.value(), response_code)) {
+          if ((response_code == 200) or (response_code == 204)) {
             // uc->remove_pdu_sessions_context(curl_responses.begin()->first);
             uc->set_up_cnx_state(
                 curl_responses.begin()->first,
@@ -1505,19 +1505,18 @@ void amf_app::trigger_pdu_session_up_activation(
     // Wait for the response available and process accordingly
     bool result = true;
     while (!curl_responses.empty()) {
-      std::optional<std::string> http_response_code = std::nullopt;
-      utils::wait_for_result(
-          curl_responses.begin()->second, http_response_code);
+      std::optional<std::string> response_code_str = std::nullopt;
+      utils::wait_for_result(curl_responses.begin()->second, response_code_str);
 
-      if (http_response_code.has_value()) {
+      if (response_code_str.has_value()) {
         Logger::ngap().debug(
             "Got result for PDU Session ID %d", curl_responses.begin()->first);
-        uint8_t http_response = 0;
-        if (!conv::string_to_int8(http_response_code.value(), http_response)) {
+        uint8_t response_code = 0;
+        if (!conv::string_to_int8(response_code_str.value(), response_code)) {
           Logger::ngap().warn("Couldn't get the HTTP response code");
         }
         result = result && true;
-        if ((http_response == 200) or (http_response == 204)) {
+        if ((response_code == 200) or (response_code == 204)) {
           uc->set_up_cnx_state(
               curl_responses.begin()->first,
               up_cnx_state_e::UPCNX_STATE_ACTIVATED);
@@ -1589,20 +1588,18 @@ void amf_app::trigger_pdu_session_up_activation(
     // Wait for the response available and process accordingly
     bool result = true;
     while (!curl_responses.empty()) {
-      std::optional<std::string> http_response_code_str = std::nullopt;
-      utils::wait_for_result(
-          curl_responses.begin()->second, http_response_code_str);
+      std::optional<std::string> response_code_str = std::nullopt;
+      utils::wait_for_result(curl_responses.begin()->second, response_code_str);
 
-      if (http_response_code_str.has_value()) {
+      if (response_code_str.has_value()) {
         Logger::ngap().debug(
             "Got result for PDU Session ID %d", curl_responses.begin()->first);
-        uint8_t http_response_code = 0;
-        if (!conv::string_to_int8(
-                http_response_code_str.value(), http_response_code)) {
+        uint8_t response_code = 0;
+        if (!conv::string_to_int8(response_code_str.value(), response_code)) {
           Logger::ngap().warn("Couldn't get the HTTP response code");
         }
         result = result && true;
-        if ((http_response_code == 200) or (http_response_code == 204)) {
+        if ((response_code == 200) or (response_code == 204)) {
           uc->set_up_cnx_state(
               curl_responses.begin()->first,
               up_cnx_state_e::UPCNX_STATE_ACTIVATED);
