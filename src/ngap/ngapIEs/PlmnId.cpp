@@ -21,7 +21,7 @@
 
 #include "PlmnId.hpp"
 
-#include "String2Value.hpp"
+#include "utils.hpp"
 
 extern "C" {
 #include <math.h>
@@ -45,8 +45,8 @@ PlmnId::~PlmnId() {}
 
 //------------------------------------------------------------------------------
 void PlmnId::set(const std::string& mcc, const std::string& mnc) {
-  int mcc_value = fromString<int>(mcc);
-  int mnc_value = fromString<int>(mnc);
+  int mcc_value = utils::fromString<int>(mcc);
+  int mnc_value = utils::fromString<int>(mnc);
 
   mcc_digit1 = mcc_value / 100;
   mcc_digit2 = (mcc_value - mcc_digit1 * 100) / 10;

@@ -24,7 +24,6 @@
 #include "3gpp_24.501.hpp"
 #include "conversions.hpp"
 #include "logger.hpp"
-#include "String2Value.hpp"
 #include "utils.hpp"
 
 using namespace nas;
@@ -480,7 +479,7 @@ int _5gsMobileIdentity::EncodeRoutingIndicator(
 
   Logger::nas_mm().debug(
       "Routing Indicator (%s)", routing_indicator.value().c_str());
-  int rooutid = fromString<int>(routing_indicator.value());
+  int rooutid = utils::fromString<int>(routing_indicator.value());
   switch (routing_indicator.value().length()) {
     case 1: {
       *buf = 0xf0 | (0x0f & rooutid);
@@ -545,7 +544,7 @@ int _5gsMobileIdentity::Encode5gSTmsi(uint8_t* buf, int len) {
       encoded_size);
 
   // 5G-TMSI
-  int tmsi = fromString<int>(_5g_s_tmsi_.value()._5g_tmsi);
+  int tmsi = utils::fromString<int>(_5g_s_tmsi_.value()._5g_tmsi);
   ENCODE_U32(buf + encoded_size, tmsi, encoded_size);
 
   Logger::nas_mm().debug(

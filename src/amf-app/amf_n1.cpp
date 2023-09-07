@@ -49,7 +49,6 @@
 #include "ServiceAccept.hpp"
 #include "ServiceReject.hpp"
 #include "ServiceRequest.hpp"
-#include "String2Value.hpp"
 #include "UEAuthenticationCtx.h"
 #include "UlNasTransport.hpp"
 #include "amf_app.hpp"
@@ -2381,7 +2380,7 @@ void amf_n1::generate_5g_he_av_in_udm(
   uint8_t ck[16];
   uint8_t ik[16];
   uint8_t ak[6];
-  uint64_t _imsi = fromString<uint64_t>(imsi);
+  uint64_t _imsi = utils::fromString<uint64_t>(imsi);
 
   Authentication_5gaka::f1(
       opc, key, vector.rand, sqn, amf,
