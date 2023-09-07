@@ -3456,7 +3456,7 @@ void amf_n1::ue_initiate_de_registration_handle(
         }
       }
 
-      // Wait for the response from SMF
+      // Wait for the response available and process accordingly
       while (!smf_responses.empty()) {
         std::optional<uint32_t> http_response_code = std::nullopt;
         utils::wait_for_result(
@@ -5053,6 +5053,7 @@ bool amf_n1::get_slice_selection_subscription_data(
           itti_msg->get_msg_name());
     }
 
+    // Wait for the response available and process accordingly
     std::optional<nlohmann::json> nssai_json = std::nullopt;
     utils::wait_for_result(f, nssai_json);
     if (nssai_json.has_value()) {
@@ -5236,6 +5237,7 @@ bool amf_n1::get_network_slice_selection(
           itti_msg->get_msg_name());
     }
 
+    // Wait for the response available and process accordingly
     std::optional<nlohmann::json> network_slice_info = std::nullopt;
     utils::wait_for_result(f, network_slice_info);
     if (network_slice_info.has_value()) {
@@ -5347,6 +5349,7 @@ bool amf_n1::get_target_amf(
           itti_msg->get_msg_name());
     }
 
+    // Wait for the response available and process accordingly
     std::optional<nlohmann::json> amf_candidate_list = std::nullopt;
     utils::wait_for_result(f, amf_candidate_list);
     if (amf_candidate_list.has_value()) {

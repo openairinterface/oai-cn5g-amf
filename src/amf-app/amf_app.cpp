@@ -1005,6 +1005,7 @@ evsub_id_t amf_app::handle_event_exposure_subscription(
               itti_msg->get_msg_name());
         }
 
+        // Wait for the response available and process accordingly
         std::optional<nlohmann::json> location_data = std::nullopt;
         utils::wait_for_result(f, location_data);
         if (location_data.has_value()) {
@@ -1341,7 +1342,7 @@ void amf_app::trigger_pdu_session_release(
       }
     }
 
-    // Wait for the response from SMF
+    // Wait for the response available and process accordingly
     while (!smf_responses.empty()) {
       std::optional<uint32_t> http_response_code = std::nullopt;
       utils::wait_for_result(smf_responses.begin()->second, http_response_code);
@@ -1417,6 +1418,7 @@ void amf_app::trigger_pdu_session_up_deactivation(
       }
     }
 
+    // Wait for the response available and process accordingly
     bool result = true;
     while (!curl_responses.empty()) {
       std::optional<std::string> http_code_str = std::nullopt;
@@ -1500,6 +1502,7 @@ void amf_app::trigger_pdu_session_up_activation(
       }
     }
 
+    // Wait for the response available and process accordingly
     bool result = true;
     while (!curl_responses.empty()) {
       std::optional<std::string> http_response_code = std::nullopt;
@@ -1583,6 +1586,7 @@ void amf_app::trigger_pdu_session_up_activation(
     }
     //}
 
+    // Wait for the response available and process accordingly
     bool result = true;
     while (!curl_responses.empty()) {
       std::optional<std::string> http_response_code_str = std::nullopt;

@@ -1054,6 +1054,7 @@ void amf_http2_server::status_notify_handler(
         itti_msg->get_msg_name());
   }
 
+  // Wait for the response available and process accordingly
   std::optional<nlohmann::json> result = std::nullopt;
   utils::wait_for_result(f, result);
 
@@ -1124,6 +1125,7 @@ void amf_http2_server::get_configuration_handler(const response& response) {
         itti_msg->get_msg_name());
   }
 
+  // Wait for the response available and process accordingly
   std::optional<nlohmann::json> result = std::nullopt;
   utils::wait_for_result(f, result);
 
@@ -1197,6 +1199,7 @@ void amf_http2_server::update_configuration_handler(
         itti_msg->get_msg_name());
   }
 
+  // Wait for the response available and process accordingly
   std::optional<nlohmann::json> result = std::nullopt;
   utils::wait_for_result(f, result);
 

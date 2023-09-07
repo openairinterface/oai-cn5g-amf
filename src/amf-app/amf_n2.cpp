@@ -1544,6 +1544,7 @@ void amf_n2::handle_itti_message(
     }
   }
 
+  // Wait for the response available and process accordingly
   bool result = true;
   while (!curl_responses.empty()) {
     std::optional<std::string> http_code_str = std::nullopt;
@@ -1830,6 +1831,7 @@ bool amf_n2::handle_itti_message(
   // Wait until receiving all responses from SMFs before sending Handover
   std::vector<PDUSessionResourceSetupRequestItem_t> list;
 
+  // Wait for the response available and process accordingly
   bool result = true;
   while (!curl_responses.empty()) {
     std::optional<std::string> n2_sm = std::nullopt;
@@ -2151,6 +2153,7 @@ void amf_n2::handle_itti_message(
     }
   }
 
+  // Wait for the response available and process accordingly
   bool result = true;
   while (!curl_responses.empty()) {
     std::optional<std::string> pdu_session_id_str = std::nullopt;

@@ -63,6 +63,7 @@ void AMFConfigurationApiImpl::read_configuration(
         itti_msg->get_msg_name());
   }
 
+  // Wait for the response available and process accordingly
   std::optional<nlohmann::json> result = std::nullopt;
   utils::wait_for_result(f, result);
 
@@ -131,6 +132,7 @@ void AMFConfigurationApiImpl::update_configuration(
         itti_msg->get_msg_name());
   }
 
+  // Wait for the response available and process accordingly
   std::optional<nlohmann::json> result = std::nullopt;
   utils::wait_for_result(f, result);
   if (result.has_value()) {
