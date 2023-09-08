@@ -21,8 +21,6 @@
 
 #include "RegistrationAccept.hpp"
 
-#include "String2Value.hpp"
-
 using namespace nas;
 
 //------------------------------------------------------------------------------

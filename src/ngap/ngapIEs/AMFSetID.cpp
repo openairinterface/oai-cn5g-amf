@@ -21,7 +21,7 @@
 
 #include "AMFSetID.hpp"
 
-#include "String2Value.hpp"
+#include "utils.hpp"
 #include "output_wrapper.hpp"
 
 namespace ngap {
@@ -36,7 +36,7 @@ AMFSetID::~AMFSetID() {}
 
 //------------------------------------------------------------------------------
 bool AMFSetID::set(const std::string& id) {
-  uint16_t tmp = fromString<uint16_t>(id);
+  uint16_t tmp = utils::fromString<uint16_t>(id);
   if (tmp > kAmfSetIdMaxValue) return false;
   id_ = tmp;
   return true;

@@ -21,9 +21,8 @@
 
 #include "AMFRegionID.hpp"
 
-#include <iostream>
+#include "utils.hpp"
 
-#include "String2Value.hpp"
 using namespace std;
 
 namespace ngap {
@@ -38,7 +37,7 @@ AMFRegionID::~AMFRegionID() {}
 
 //------------------------------------------------------------------------------
 void AMFRegionID::setAMFRegionID(const std::string charid) {
-  regionid = fromString<int>(charid);
+  regionid = utils::fromString<int>(charid);
 }
 
 //------------------------------------------------------------------------------

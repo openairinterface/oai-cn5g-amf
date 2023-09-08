@@ -24,7 +24,8 @@
 #include <iostream>
 #include <vector>
 
-#include "String2Value.hpp"
+#include "utils.hpp"
+
 using namespace std;
 
 namespace ngap {
@@ -38,7 +39,7 @@ TransportLayerAddress::~TransportLayerAddress() {}
 //------------------------------------------------------------------------------
 void TransportLayerAddress::setTransportLayerAddress(
     const std::string m_ipaddress) {
-  // ipaddress = fromString<long>(m_ipaddress);
+  // ipaddress = utils::fromString<long>(m_ipaddress);
   ipaddress = m_ipaddress;
 }
 
@@ -80,7 +81,7 @@ bool TransportLayerAddress::encode2TransportLayerAddress(
   vector<string> ip_address = splite(ipaddress, ".");
 
   for (int i = 0; i < transportLayerAddress.size; i++) {
-    transportLayerAddress.buf[i] = fromString<int>(ip_address[i]);
+    transportLayerAddress.buf[i] = utils::fromString<int>(ip_address[i]);
   }
 
   return true;

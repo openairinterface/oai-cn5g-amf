@@ -19,12 +19,6 @@
  *      contact@openairinterface.org
  */
 
-/*! \file 3gpp_conversions.cpp
- * \brief
- * \author
- * \company Eurecom
- * \email:
- */
 #include "3gpp_conversions.hpp"
 
 void xgpp_conv::amf_event_subscription_from_openapi(

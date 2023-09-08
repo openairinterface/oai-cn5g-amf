@@ -111,6 +111,21 @@ class amf_sbi {
   void handle_itti_message(itti_sbi_nf_instance_discovery& itti_msg);
 
   /*
+   * Handle ITTI message to register to NRF
+   * @param [itti_sbi_register_nf_instance_request&]: ITTI message
+   * @return void
+   */
+  void handle_itti_message(itti_sbi_register_nf_instance_request& itti_msg);
+
+  /*
+   * Handle ITTI message to trigger Determine Location Request procedure towards
+   * LMF
+   * @param [itti_sbi_determine_location_request&]: ITTI message
+   * @return void
+   */
+  void handle_itti_message(itti_sbi_determine_location_request& itti_msg);
+
+  /*
    * Handle request to create a new PDU Session
    * @param [const std::string&] supi: SUPI
    * @param [std::shared_ptr<pdu_session_context>&] psc: Pointer to the PDU

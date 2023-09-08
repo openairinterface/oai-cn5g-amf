@@ -21,7 +21,7 @@
 
 #include "AMFPointer.hpp"
 
-#include "String2Value.hpp"
+#include "utils.hpp"
 
 namespace ngap {
 
@@ -35,7 +35,7 @@ AMFPointer::~AMFPointer() {}
 
 //------------------------------------------------------------------------------
 bool AMFPointer::set(const std::string& pointer) {
-  uint8_t tmp = fromString<int>(pointer);
+  uint8_t tmp = utils::fromString<int>(pointer);
   if (tmp > kAmfPointerMaxValue) return false;
   pointer_ = tmp;
   return true;

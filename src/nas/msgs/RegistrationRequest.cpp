@@ -22,7 +22,7 @@
 #include "RegistrationRequest.hpp"
 
 #include "conversions.hpp"
-#include "String2Value.hpp"
+#include "utils.hpp"
 
 using namespace nas;
 
@@ -137,7 +137,7 @@ void RegistrationRequest::SetAdditionalGuti(
     uint8_t amf_set_id, uint8_t amf_pointer, const std::string& _5g_tmsi) {
   _5gsMobileIdentity ie_additional_guti_tmp = {};
   ie_additional_guti_tmp.SetIei(kIei5gGuti);
-  uint32_t tmsi = fromString<uint32_t>(_5g_tmsi);
+  uint32_t tmsi = utils::fromString<uint32_t>(_5g_tmsi);
   ie_additional_guti_tmp.Set5gGuti(
       mcc, mnc, amf_region_id, amf_set_id, amf_pointer, tmsi);
   ie_additional_guti =

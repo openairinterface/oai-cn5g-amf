@@ -49,7 +49,6 @@
 #include "ServiceAccept.hpp"
 #include "ServiceReject.hpp"
 #include "ServiceRequest.hpp"
-#include "String2Value.hpp"
 #include "UEAuthenticationCtx.h"
 #include "UlNasTransport.hpp"
 #include "amf_app.hpp"
@@ -63,6 +62,7 @@
 #include "nas_algorithms.hpp"
 #include "output_wrapper.hpp"
 #include "sha256.hpp"
+#include "utils.hpp"
 
 extern "C" {
 #include "bstrlib.h"
@@ -2380,7 +2380,7 @@ void amf_n1::generate_5g_he_av_in_udm(
   uint8_t ck[16];
   uint8_t ik[16];
   uint8_t ak[6];
-  uint64_t _imsi = fromString<uint64_t>(imsi);
+  uint64_t _imsi = utils::fromString<uint64_t>(imsi);
 
   Authentication_5gaka::f1(
       opc, key, vector.rand, sqn, amf,
@@ -3455,26 +3455,22 @@ void amf_n1::ue_initiate_de_registration_handle(
         }
       }
 
-      // Wait for the response from SMF
+      // Wait for the response available and process accordingly
       while (!smf_responses.empty()) {
-        boost::future_status status;
-        // wait for timeout or ready
-        status = smf_responses.begin()->second.wait_for(
-            boost::chrono::milliseconds(FUTURE_STATUS_TIMEOUT_MS));
-        if (status == boost::future_status::ready) {
-          assert(smf_responses.begin()->second.is_ready());
-          assert(smf_responses.begin()->second.has_value());
-          assert(!smf_responses.begin()->second.has_exception());
-          // Wait for the result from APP and send reply to AMF
-          uint32_t http_response_code = smf_responses.begin()->second.get();
+        std::optional<uint32_t> response_code = std::nullopt;
+        utils::wait_for_result(smf_responses.begin()->second, response_code);
 
+        if (response_code.has_value()) {
           // Remove PDU session
           // TODO for multiple sessions
-          if ((http_response_code == 200) or (http_response_code == 204)) {
+          if ((response_code.value() == 200) or
+              (response_code.value() == 204)) {
             for (auto session : sessions_ctx) {
               uc->remove_pdu_sessions_context(session->pdu_session_id);
             }
           }
+        } else {
+          // TODO:
         }
         smf_responses.erase(smf_responses.begin());
       }
@@ -5056,52 +5052,42 @@ bool amf_n1::get_slice_selection_subscription_data(
           itti_msg->get_msg_name());
     }
 
-    bool result = false;
-    boost::future_status status;
-    // wait for timeout or ready
-    status = f.wait_for(boost::chrono::milliseconds(FUTURE_STATUS_TIMEOUT_MS));
-    if (status == boost::future_status::ready) {
-      assert(f.is_ready());
-      assert(f.has_value());
-      assert(!f.has_exception());
-      // Wait for the result from UDM
-      nlohmann::json nssai_json = f.get();
-      if (!nssai_json.empty()) {
-        Logger::amf_n1().debug(
-            "Got NSSAI from UDM: %s", nssai_json.dump().c_str());
-        try {
-          from_json(nssai_json, nssai);
-        } catch (std::exception& e) {
-          return false;
-        }
-
-        // Store this info in UE NAS Context
-        std::vector<oai::amf::model::Snssai> default_snssais =
-            nssai.getDefaultSingleNssais();
-        // bool default_subscribed_snssai = true;
-        for (const auto& ds : default_snssais) {
-          nas::SNSSAI_t subscribed_snssai = {};
-          subscribed_snssai.sst           = ds.getSst();
-          uint32_t subscribed_snssai_sd   = SD_NO_VALUE;
-          conv::sd_string_to_int(ds.getSd(), subscribed_snssai_sd);
-          subscribed_snssai.sd = subscribed_snssai_sd;
-          std::pair<bool, nas::SNSSAI_t> tmp;
-          tmp.second = subscribed_snssai;
-          tmp.first  = true;
-          /*
-          if (default_subscribed_snssai) {
-            tmp.first                 = true;
-            default_subscribed_snssai = false;
-          } else {
-            tmp.first = false;
-          }
-          */
-          nc->subscribed_snssai.push_back(tmp);
-        }
-        return true;
-      } else {
+    // Wait for the response available and process accordingly
+    std::optional<nlohmann::json> nssai_json = std::nullopt;
+    utils::wait_for_result(f, nssai_json);
+    if (nssai_json.has_value()) {
+      Logger::amf_n1().debug(
+          "Got NSSAI from UDM: %s", nssai_json.value().dump().c_str());
+      try {
+        from_json(nssai_json.value(), nssai);
+      } catch (std::exception& e) {
         return false;
       }
+
+      // Store this info in UE NAS Context
+      std::vector<oai::amf::model::Snssai> default_snssais =
+          nssai.getDefaultSingleNssais();
+      // bool default_subscribed_snssai = true;
+      for (const auto& ds : default_snssais) {
+        nas::SNSSAI_t subscribed_snssai = {};
+        subscribed_snssai.sst           = ds.getSst();
+        uint32_t subscribed_snssai_sd   = SD_NO_VALUE;
+        conv::sd_string_to_int(ds.getSd(), subscribed_snssai_sd);
+        subscribed_snssai.sd = subscribed_snssai_sd;
+        std::pair<bool, nas::SNSSAI_t> tmp;
+        tmp.second = subscribed_snssai;
+        tmp.first  = true;
+        /*
+        if (default_subscribed_snssai) {
+          tmp.first                 = true;
+          default_subscribed_snssai = false;
+        } else {
+          tmp.first = false;
+        }
+        */
+        nc->subscribed_snssai.push_back(tmp);
+      }
+      return true;
 
     } else {
       return false;
@@ -5250,30 +5236,18 @@ bool amf_n1::get_network_slice_selection(
           itti_msg->get_msg_name());
     }
 
-    bool result                 = false;
-    boost::future_status status = {};
-    // wait for timeout or ready
-    status = f.wait_for(boost::chrono::milliseconds(FUTURE_STATUS_TIMEOUT_MS));
-    if (status == boost::future_status::ready) {
-      assert(f.is_ready());
-      assert(f.has_value());
-      assert(!f.has_exception());
-      // Wait for the result from NSSF
-      nlohmann::json network_slice_info = f.get();
-      if (!network_slice_info.empty()) {
-        Logger::amf_n1().debug(
-            "Got Authorized Network Slice Info from NSSF: %s",
-            network_slice_info.dump().c_str());
-        try {
-          from_json(network_slice_info, authorized_network_slice_info);
-        } catch (std::exception& e) {
-          Logger::amf_n1().warn(
-              "Could not parse Authorized Network Slice Info from Json");
-          return false;
-        }
-      } else {
-        Logger::amf_n1().debug(
-            "Could not get Authorized Network Slice Info from NSSF");
+    // Wait for the response available and process accordingly
+    std::optional<nlohmann::json> network_slice_info = std::nullopt;
+    utils::wait_for_result(f, network_slice_info);
+    if (network_slice_info.has_value()) {
+      Logger::amf_n1().debug(
+          "Got Authorized Network Slice Info from NSSF: %s",
+          network_slice_info.value().dump().c_str());
+      try {
+        from_json(network_slice_info.value(), authorized_network_slice_info);
+      } catch (std::exception& e) {
+        Logger::amf_n1().warn(
+            "Could not parse Authorized Network Slice Info from Json");
         return false;
       }
 
@@ -5374,33 +5348,21 @@ bool amf_n1::get_target_amf(
           itti_msg->get_msg_name());
     }
 
-    bool result                 = false;
-    boost::future_status status = {};
-    // wait for timeout or ready
-    status = f.wait_for(boost::chrono::milliseconds(FUTURE_STATUS_TIMEOUT_MS));
-    if (status == boost::future_status::ready) {
-      assert(f.is_ready());
-      assert(f.has_value());
-      assert(!f.has_exception());
-      // Wait for the result from NRF
-      nlohmann::json amf_candidate_list = f.get();
-      if (!amf_candidate_list.empty()) {
+    // Wait for the response available and process accordingly
+    std::optional<nlohmann::json> amf_candidate_list = std::nullopt;
+    utils::wait_for_result(f, amf_candidate_list);
+    if (amf_candidate_list.has_value()) {
+      Logger::amf_n1().debug(
+          "Got List of AMF candidates from NRF: %s",
+          amf_candidate_list.value().dump().c_str());
+      // TODO: Select an AMF from the candidate list
+      if (!select_target_amf(nc, target_amf, amf_candidate_list.value())) {
         Logger::amf_n1().debug(
-            "Got List of AMF candidates from NRF: %s",
-            amf_candidate_list.dump().c_str());
-        // TODO: Select an AMF from the candidate list
-        if (!select_target_amf(nc, target_amf, amf_candidate_list)) {
-          Logger::amf_n1().debug(
-              "Could not select an appropriate AMF from the AMF candidates");
-          return false;
-        } else {
-          Logger::amf_n1().debug("Candidate AMF: %s", target_amf.c_str());
-          return true;
-        }
-
-      } else {
-        Logger::amf_n1().debug("Could not get List of AMF candidates from NRF");
+            "Could not select an appropriate AMF from the AMF candidates");
         return false;
+      } else {
+        Logger::amf_n1().debug("Candidate AMF: %s", target_amf.c_str());
+        return true;
       }
 
     } else {

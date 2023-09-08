@@ -22,15 +22,11 @@
 #include "SupportedTaItem.hpp"
 
 #include "BroadcastPLMNItem.hpp"
-#include "String2Value.hpp"
 
 extern "C" {
 #include "Ngap_BroadcastPLMNItem.h"
 #include "Ngap_SupportedTAItem.h"
 }
-
-#include <string>
-using namespace std;
 
 namespace ngap {
 

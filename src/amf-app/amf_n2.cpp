@@ -57,6 +57,7 @@
 #include "itti_msg_amf_app.hpp"
 #include "logger.hpp"
 #include "sctp_server.hpp"
+#include "utils.hpp"
 
 extern "C" {
 #include "dynamic_memory_check.h"
@@ -1567,39 +1568,29 @@ void amf_n2::handle_itti_message(
     }
   }
 
+  // Wait for the response available and process accordingly
   bool result = true;
   while (!curl_responses.empty()) {
-    boost::future_status status;
-    // wait for timeout or ready
-    status = curl_responses.begin()->second.wait_for(
-        boost::chrono::milliseconds(FUTURE_STATUS_TIMEOUT_MS));
-    if (status == boost::future_status::ready) {
-      assert(curl_responses.begin()->second.is_ready());
-      assert(curl_responses.begin()->second.has_value());
-      assert(!curl_responses.begin()->second.has_exception());
-      // Wait for the result from APP and send reply to AMF
+    std::optional<std::string> response_code_str = std::nullopt;
+    utils::wait_for_result(curl_responses.begin()->second, response_code_str);
 
-      std::string http_code_str = curl_responses.begin()->second.get();
+    if (response_code_str.has_value()) {
       Logger::ngap().debug(
           "Got result for PDU Session ID %d", curl_responses.begin()->first);
-      if (http_code_str.size() > 0) {
-        result            = result && true;
-        uint8_t http_code = 0;
-        if (conv::string_to_int8(http_code_str, http_code)) {
-          if ((http_code == 200) or (http_code == 204)) {
-            // uc->remove_pdu_sessions_context(curl_responses.begin()->first);
-            uc->set_up_cnx_state(
-                curl_responses.begin()->first,
-                up_cnx_state_e::UPCNX_STATE_DEACTIVATED);
-          }
+      result                = result && true;
+      uint8_t response_code = 0;
+      if (conv::string_to_int8(response_code_str.value(), response_code)) {
+        if ((response_code == 200) or (response_code == 204)) {
+          // uc->remove_pdu_sessions_context(curl_responses.begin()->first);
+          uc->set_up_cnx_state(
+              curl_responses.begin()->first,
+              up_cnx_state_e::UPCNX_STATE_DEACTIVATED);
         }
-      } else {
-        result = false;
       }
-
     } else {
-      result = true;
+      result = false;
     }
+
     curl_responses.erase(curl_responses.begin());
   }
 
@@ -1864,46 +1855,40 @@ bool amf_n2::handle_itti_message(
   // Wait until receiving all responses from SMFs before sending Handover
   std::vector<PDUSessionResourceSetupRequestItem_t> list;
 
+  // Wait for the response available and process accordingly
   bool result = true;
   while (!curl_responses.empty()) {
-    boost::future_status status;
-    // wait for timeout or ready
-    status = curl_responses.begin()->second.wait_for(
-        boost::chrono::milliseconds(FUTURE_STATUS_TIMEOUT_MS));
-    if (status == boost::future_status::ready) {
-      assert(curl_responses.begin()->second.is_ready());
-      assert(curl_responses.begin()->second.has_value());
-      assert(!curl_responses.begin()->second.has_exception());
-      // Wait for the result from APP and send reply to AMF
-      std::string n2_sm = curl_responses.begin()->second.get();
+    std::optional<std::string> n2_sm = std::nullopt;
+    utils::wait_for_result(curl_responses.begin()->second, n2_sm);
+
+    if (n2_sm.has_value()) {
       Logger::ngap().debug(
           "Got result for PDU Session ID %d", curl_responses.begin()->first);
-      if (n2_sm.size() > 0) {
-        result = result && true;
 
-        std::shared_ptr<pdu_session_context> psc = {};
-        if (amf_app_inst->find_pdu_session_context(
-                supi, curl_responses.begin()->first, psc)) {
-          PDUSessionResourceSetupRequestItem_t item = {};
-          item.pduSessionId                         = psc->pdu_session_id;
-          item.s_nssai.sst = std::to_string(psc->snssai.sST);
-          item.s_nssai.sd  = psc->snssai.sD;
-          // item.pduSessionNAS_PDU = nullptr;
-          unsigned int data_len = n2_sm.length();
-          item.pduSessionResourceSetupRequestTransfer.buf =
-              (unsigned char*) malloc(data_len + 1);
-          memcpy(
-              (void*) item.pduSessionResourceSetupRequestTransfer.buf,
-              (void*) n2_sm.c_str(), data_len);
-          item.pduSessionResourceSetupRequestTransfer.size = data_len;
-          list.push_back(item);
-        }
-      } else {
-        result = false;
+      result = result && true;
+
+      std::shared_ptr<pdu_session_context> psc = {};
+      if (amf_app_inst->find_pdu_session_context(
+              supi, curl_responses.begin()->first, psc)) {
+        PDUSessionResourceSetupRequestItem_t item = {};
+        item.pduSessionId                         = psc->pdu_session_id;
+        item.s_nssai.sst = std::to_string(psc->snssai.sST);
+        item.s_nssai.sd  = psc->snssai.sD;
+        // item.pduSessionNAS_PDU = nullptr;
+        unsigned int data_len = n2_sm.value().length();
+        item.pduSessionResourceSetupRequestTransfer.buf =
+            (unsigned char*) malloc(data_len + 1);
+        memcpy(
+            (void*) item.pduSessionResourceSetupRequestTransfer.buf,
+            (void*) n2_sm.value().c_str(), data_len);
+        item.pduSessionResourceSetupRequestTransfer.size = data_len;
+        list.push_back(item);
       }
+
     } else {
-      result = true;
+      result = false;
     }
+
     curl_responses.erase(curl_responses.begin());
   }
   // TODO: process result
@@ -2035,41 +2020,33 @@ void amf_n2::handle_itti_message(
   // T-UPF to the source gNB
   bool result = true;
   while (!curl_responses.empty()) {
-    boost::future_status status;
-    // wait for timeout or ready
-    status = curl_responses.begin()->second.wait_for(
-        boost::chrono::milliseconds(FUTURE_STATUS_TIMEOUT_MS));
-    if (status == boost::future_status::ready) {
-      assert(curl_responses.begin()->second.is_ready());
-      assert(curl_responses.begin()->second.has_value());
-      assert(!curl_responses.begin()->second.has_exception());
-      // Wait for the result from APP and send reply to AMF
-      std::string n2_sm = curl_responses.begin()->second.get();
+    std::optional<std::string> n2_sm = std::nullopt;
+    utils::wait_for_result(curl_responses.begin()->second, n2_sm);
+
+    if (n2_sm.has_value()) {
       Logger::ngap().debug(
           "Got result for PDU Session ID %d", curl_responses.begin()->first);
-      if (n2_sm.size() > 0) {
-        result                                 = result && true;
-        uint8_t pdu_session_id_value           = curl_responses.begin()->first;
-        unsigned int data_len                  = n2_sm.length();
-        PDUSessionID pdu_session_id            = {};
-        OCTET_STRING_t handoverCommandTransfer = {};
-        pdu_session_id.set(pdu_session_id_value);
-        OCTET_STRING_fromBuf(
-            &handoverCommandTransfer, n2_sm.c_str(), n2_sm.length());
-        handoverItem.set(pdu_session_id, handoverCommandTransfer);
-        handoverItemList.push_back(handoverItem);
-        handoverList.set(handoverItemList);
 
-        std::shared_ptr<pdu_session_context> psc = {};
-        if (amf_app_inst->find_pdu_session_context(
-                supi, pdu_session_id_value, psc)) {
-          psc->is_ho_accepted = true;
-        }
-      } else {
-        result = false;
+      result                                 = result && true;
+      uint8_t pdu_session_id_value           = curl_responses.begin()->first;
+      unsigned int data_len                  = n2_sm.value().length();
+      PDUSessionID pdu_session_id            = {};
+      OCTET_STRING_t handoverCommandTransfer = {};
+      pdu_session_id.set(pdu_session_id_value);
+      OCTET_STRING_fromBuf(
+          &handoverCommandTransfer, n2_sm.value().c_str(),
+          n2_sm.value().length());
+      handoverItem.set(pdu_session_id, handoverCommandTransfer);
+      handoverItemList.push_back(handoverItem);
+      handoverList.set(handoverItemList);
+
+      std::shared_ptr<pdu_session_context> psc = {};
+      if (amf_app_inst->find_pdu_session_context(
+              supi, pdu_session_id_value, psc)) {
+        psc->is_ho_accepted = true;
       }
     } else {
-      result = true;
+      result = false;
     }
     curl_responses.erase(curl_responses.begin());
   }
@@ -2200,28 +2177,18 @@ void amf_n2::handle_itti_message(
     }
   }
 
+  // Wait for the response available and process accordingly
   bool result = true;
   while (!curl_responses.empty()) {
-    boost::future_status status;
-    // wait for timeout or ready
-    status = curl_responses.begin()->second.wait_for(
-        boost::chrono::milliseconds(FUTURE_STATUS_TIMEOUT_MS));
-    if (status == boost::future_status::ready) {
-      assert(curl_responses.begin()->second.is_ready());
-      assert(curl_responses.begin()->second.has_value());
-      assert(!curl_responses.begin()->second.has_exception());
-      // Wait for the result from APP and send reply to AMF
-      std::string pdu_session_id_str = curl_responses.begin()->second.get();
-      Logger::ngap().debug(
-          "Got result for PDU Session ID %d", curl_responses.begin()->first);
-      if (pdu_session_id_str.size() > 0) {
-        result = result && true;
-      } else {
-        result = false;
-      }
+    std::optional<std::string> pdu_session_id_str = std::nullopt;
+    utils::wait_for_result(curl_responses.begin()->second, pdu_session_id_str);
+
+    if (pdu_session_id_str.has_value()) {
+      result = result && true;
     } else {
-      result = true;
+      result = false;
     }
+
     curl_responses.erase(curl_responses.begin());
   }
 

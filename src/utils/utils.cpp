@@ -19,21 +19,20 @@
  *      contact@openairinterface.org
  */
 
-#include "NasUtils.hpp"
+#include "utils.hpp"
 
 #include "3gpp_24.501.hpp"
 #include "common_defs.h"
-#include "String2Value.hpp"
 #include "logger.hpp"
 
 //------------------------------------------------------------------------------
-int NasUtils::encodeMccMnc2Buffer(
+int utils::encodeMccMnc2Buffer(
     const std::string& mcc_str, const std::string& mnc_str, uint8_t* buf,
     int len) {
   int encoded_size = 0;
   uint8_t value    = 0;
-  int mcc          = fromString<int>(mcc_str);
-  int mnc          = fromString<int>(mnc_str);
+  int mcc          = utils::fromString<int>(mcc_str);
+  int mnc          = utils::fromString<int>(mnc_str);
 
   value = (0x0f & (mcc / 100)) | ((0x0f & ((mcc % 100) / 10)) << 4);
   ENCODE_U8(buf + encoded_size, value, encoded_size);
@@ -60,7 +59,7 @@ int NasUtils::encodeMccMnc2Buffer(
 }
 
 //------------------------------------------------------------------------------
-int NasUtils::decodeMccMncFromBuffer(
+int utils::decodeMccMncFromBuffer(
     std::string& mcc_str, std::string& mnc_str, uint8_t* buf, int len) {
   if (len < kMccMncLength) {
     Logger::nas_mm().error(

@@ -19,12 +19,6 @@
  *      contact@openairinterface.org
  */
 
-/*! \file uint_uid_generator.hpp
- \author  Lionel GAUTHIER
- \date 2019
- \email: lionel.gauthier@eurecom.fr
- */
-
 #ifndef FILE_UINT_GENERATOR_HPP_SEEN
 #define FILE_UINT_GENERATOR_HPP_SEEN
 
