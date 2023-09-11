@@ -33,7 +33,6 @@
 #include "N1N2MessageTransferReqData.h"
 #include "N1N2MessageTransferRspData.h"
 #include "ProblemDetails.h"
-#include "ProblemDetails_2.h"
 #include <string>
 
 #include "amf_app.hpp"

@@ -58,7 +58,7 @@ class PWSResponseData {
   /// <summary>
   ///
   /// </summary>
-  std::vector<Tai>& getUnknownTaiList();
+  std::vector<oai::model::common::Tai>& getUnknownTaiList();
   bool unknownTaiListIsSet() const;
   void unsetUnknownTaiList();
 
@@ -72,7 +72,7 @@ class PWSResponseData {
 
   int32_t m_MessageIdentifier;
 
-  std::vector<Tai> m_UnknownTaiList;
+  std::vector<oai::model::common::Tai> m_UnknownTaiList;
   bool m_UnknownTaiListIsSet;
 };
 

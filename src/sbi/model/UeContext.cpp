@@ -377,10 +377,10 @@ bool UeContext::usedRfspIsSet() const {
 void UeContext::unsetUsedRfsp() {
   m_UsedRfspIsSet = false;
 }
-Ambr UeContext::getSubUeAmbr() const {
+oai::model::common::Ambr UeContext::getSubUeAmbr() const {
   return m_SubUeAmbr;
 }
-void UeContext::setSubUeAmbr(Ambr const& value) {
+void UeContext::setSubUeAmbr(oai::model::common::Ambr const& value) {
   m_SubUeAmbr      = value;
   m_SubUeAmbrIsSet = true;
 }
@@ -512,7 +512,7 @@ bool UeContext::hpcfIdIsSet() const {
 void UeContext::unsetHpcfId() {
   m_HpcfIdIsSet = false;
 }
-std::vector<RatType>& UeContext::getRestrictedRatList() {
+std::vector<oai::model::common::RatType>& UeContext::getRestrictedRatList() {
   return m_RestrictedRatList;
 }
 bool UeContext::restrictedRatListIsSet() const {
@@ -521,7 +521,7 @@ bool UeContext::restrictedRatListIsSet() const {
 void UeContext::unsetRestrictedRatList() {
   m_RestrictedRatListIsSet = false;
 }
-std::vector<Area>& UeContext::getForbiddenAreaList() {
+std::vector<oai::model::common::Area>& UeContext::getForbiddenAreaList() {
   return m_ForbiddenAreaList;
 }
 bool UeContext::forbiddenAreaListIsSet() const {
@@ -530,10 +530,12 @@ bool UeContext::forbiddenAreaListIsSet() const {
 void UeContext::unsetForbiddenAreaList() {
   m_ForbiddenAreaListIsSet = false;
 }
-ServiceAreaRestriction UeContext::getServiceAreaRestriction() const {
+oai::model::common::ServiceAreaRestriction
+UeContext::getServiceAreaRestriction() const {
   return m_ServiceAreaRestriction;
 }
-void UeContext::setServiceAreaRestriction(ServiceAreaRestriction const& value) {
+void UeContext::setServiceAreaRestriction(
+    oai::model::common::ServiceAreaRestriction const& value) {
   m_ServiceAreaRestriction      = value;
   m_ServiceAreaRestrictionIsSet = true;
 }
@@ -543,7 +545,8 @@ bool UeContext::serviceAreaRestrictionIsSet() const {
 void UeContext::unsetServiceAreaRestriction() {
   m_ServiceAreaRestrictionIsSet = false;
 }
-std::vector<CoreNetworkType>& UeContext::getRestrictedCoreNwTypeList() {
+std::vector<oai::model::common::CoreNetworkType>&
+UeContext::getRestrictedCoreNwTypeList() {
   return m_RestrictedCoreNwTypeList;
 }
 bool UeContext::restrictedCoreNwTypeListIsSet() const {
@@ -579,10 +582,10 @@ bool UeContext::sessionContextListIsSet() const {
 void UeContext::unsetSessionContextList() {
   m_SessionContextListIsSet = false;
 }
-TraceData UeContext::getTraceData() const {
+oai::model::common::TraceData UeContext::getTraceData() const {
   return m_TraceData;
 }
-void UeContext::setTraceData(TraceData const& value) {
+void UeContext::setTraceData(oai::model::common::TraceData const& value) {
   m_TraceData      = value;
   m_TraceDataIsSet = true;
 }

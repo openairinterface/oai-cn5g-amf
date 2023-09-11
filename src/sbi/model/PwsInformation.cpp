@@ -31,7 +31,7 @@ PwsInformation::PwsInformation() {
 void PwsInformation::validate() const {
   std::stringstream msg;
   if (!validate(msg)) {
-    throw oai::amf::helpers::ValidationException(msg.str());
+    throw oai::model::common::helpers::ValidationException(msg.str());
   }
 }
 
@@ -74,7 +74,7 @@ bool PwsInformation::validate(
   }
 
   if (bcEmptyAreaListIsSet()) {
-    const std::vector<oai::amf::model::GlobalRanNodeId>& value =
+    const std::vector<oai::model::common::GlobalRanNodeId>& value =
         m_BcEmptyAreaList;
     const std::string currentValuePath = _pathPrefix + ".bcEmptyAreaList";
 
@@ -85,7 +85,7 @@ bool PwsInformation::validate(
     {  // Recursive validation of array elements
       const std::string oldValuePath = currentValuePath;
       int i                          = 0;
-      for (const oai::amf::model::GlobalRanNodeId& value : value) {
+      for (const oai::model::common::GlobalRanNodeId& value : value) {
         const std::string currentValuePath =
             oldValuePath + "[" + std::to_string(i) + "]";
 
@@ -175,12 +175,12 @@ void PwsInformation::setPwsContainer(
     oai::amf::model::N2InfoContent const& value) {
   m_PwsContainer = value;
 }
-std::vector<oai::amf::model::GlobalRanNodeId>
+std::vector<oai::model::common::GlobalRanNodeId>
 PwsInformation::getBcEmptyAreaList() const {
   return m_BcEmptyAreaList;
 }
 void PwsInformation::setBcEmptyAreaList(
-    std::vector<oai::amf::model::GlobalRanNodeId> const& value) {
+    std::vector<oai::model::common::GlobalRanNodeId> const& value) {
   m_BcEmptyAreaList      = value;
   m_BcEmptyAreaListIsSet = true;
 }

@@ -80,8 +80,8 @@ class N1N2MessageTransferReqData {
   /// <summary>
   ///
   /// </summary>
-  oai::amf::model::RefToBinaryData getMtData() const;
-  void setMtData(oai::amf::model::RefToBinaryData const& value);
+  oai::model::common::RefToBinaryData getMtData() const;
+  void setMtData(oai::model::common::RefToBinaryData const& value);
   bool mtDataIsSet() const;
   void unsetMtData();
   /// <summary>
@@ -122,8 +122,8 @@ class N1N2MessageTransferReqData {
   /// <summary>
   ///
   /// </summary>
-  oai::amf::model::Arp getArp() const;
-  void setArp(oai::amf::model::Arp const& value);
+  oai::model::common::Arp getArp() const;
+  void setArp(oai::model::common::Arp const& value);
   bool arpIsSet() const;
   void unsetArp();
   /// <summary>
@@ -164,8 +164,8 @@ class N1N2MessageTransferReqData {
   /// <summary>
   ///
   /// </summary>
-  oai::amf::model::Guami getOldGuami() const;
-  void setOldGuami(oai::amf::model::Guami const& value);
+  oai::model::common::Guami getOldGuami() const;
+  void setOldGuami(oai::model::common::Guami const& value);
   bool oldGuamiIsSet() const;
   void unsetOldGuami();
   /// <summary>
@@ -185,8 +185,8 @@ class N1N2MessageTransferReqData {
   /// <summary>
   ///
   /// </summary>
-  oai::amf::model::AccessType getTargetAccess() const;
-  void setTargetAccess(oai::amf::model::AccessType const& value);
+  oai::model::common::AccessType getTargetAccess() const;
+  void setTargetAccess(oai::model::common::AccessType const& value);
   bool targetAccessIsSet() const;
   void unsetTargetAccess();
 
@@ -198,7 +198,7 @@ class N1N2MessageTransferReqData {
   bool m_N1MessageContainerIsSet;
   oai::amf::model::N2InfoContainer m_N2InfoContainer;
   bool m_N2InfoContainerIsSet;
-  oai::amf::model::RefToBinaryData m_MtData;
+  oai::model::common::RefToBinaryData m_MtData;
   bool m_MtDataIsSet;
   bool m_SkipInd;
   bool m_SkipIndIsSet;
@@ -210,7 +210,7 @@ class N1N2MessageTransferReqData {
   bool m_LcsCorrelationIdIsSet;
   int32_t m_Ppi;
   bool m_PpiIsSet;
-  oai::amf::model::Arp m_Arp;
+  oai::model::common::Arp m_Arp;
   bool m_ArpIsSet;
   int32_t m_r_5qi;
   bool m_r_5qiIsSet;
@@ -222,13 +222,13 @@ class N1N2MessageTransferReqData {
   bool m_AreaOfValidityIsSet;
   std::string m_SupportedFeatures;
   bool m_SupportedFeaturesIsSet;
-  oai::amf::model::Guami m_OldGuami;
+  oai::model::common::Guami m_OldGuami;
   bool m_OldGuamiIsSet;
   bool m_MaAcceptedInd;
   bool m_MaAcceptedIndIsSet;
   bool m_ExtBufSupport;
   bool m_ExtBufSupportIsSet;
-  oai::amf::model::AccessType m_TargetAccess;
+  oai::model::common::AccessType m_TargetAccess;
   bool m_TargetAccessIsSet;
 };
 

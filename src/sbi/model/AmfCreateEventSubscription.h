@@ -67,8 +67,8 @@ class AmfCreateEventSubscription {
   /// <summary>
   ///
   /// </summary>
-  Guami getOldGuami() const;
-  void setOldGuami(Guami const& value);
+  oai::model::common::Guami getOldGuami() const;
+  void setOldGuami(oai::model::common::Guami const& value);
   bool oldGuamiIsSet() const;
   void unsetOldGuami();
 
@@ -80,7 +80,7 @@ class AmfCreateEventSubscription {
 
   std::string m_SupportedFeatures;
   bool m_SupportedFeaturesIsSet;
-  Guami m_OldGuami;
+  oai::model::common::Guami m_OldGuami;
   bool m_OldGuamiIsSet;
 
   // Helper overload for validate. Used when one model stores another model and

@@ -522,14 +522,14 @@ void amf_app::handle_itti_message(itti_sbi_n1_message_notification& itti_msg) {
   std::shared_ptr<gnb_context> gc = {};
 
   // GlobalRAN Node ID (~in NGSetupRequest)
-  oai::amf::model::GlobalRanNodeId ran_node_id =
+  oai::model::common::GlobalRanNodeId ran_node_id =
       registration_context.getRanNodeId();
   // RAN UE NGAP ID
   uint32_t ran_ue_ngap_id = registration_context.getAnN2ApId();
   uint32_t gnb_id         = {};
 
   if (ran_node_id.gNbIdIsSet()) {
-    oai::amf::model::GNbId gnb_id_model = ran_node_id.getGNbId();
+    oai::model::common::GNbId gnb_id_model = ran_node_id.getGNbId();
     try {
       gnb_id = std::stoul(gnb_id_model.getGNBValue(), nullptr, 10);
     } catch (const std::exception& e) {
@@ -736,7 +736,7 @@ void amf_app::handle_itti_message(itti_sbi_n1n2_message_unsubscribe& itti_msg) {
   } else {
     response_data["httpResponseCode"] = static_cast<uint32_t>(
         http_response_codes_e::HTTP_RESPONSE_CODE_BAD_REQUEST);
-    oai::amf::model::ProblemDetails problem_details = {};
+    oai::model::common::ProblemDetails problem_details = {};
     // TODO set problem_details
     to_json(response_data["ProblemDetails"], problem_details);
   }
@@ -798,7 +798,7 @@ void amf_app::handle_itti_message(itti_sbi_amf_configuration& itti_msg) {
   } else {
     response_data["httpResponseCode"] = static_cast<uint32_t>(
         http_response_codes_e::HTTP_RESPONSE_CODE_BAD_REQUEST);
-    oai::amf::model::ProblemDetails problem_details = {};
+    oai::model::common::ProblemDetails problem_details = {};
     // TODO set problem_details
     to_json(response_data["ProblemDetails"], problem_details);
   }
@@ -837,7 +837,7 @@ void amf_app::handle_itti_message(itti_sbi_update_amf_configuration& itti_msg) {
   } else {
     response_data["httpResponseCode"] = static_cast<uint32_t>(
         http_response_codes_e::HTTP_RESPONSE_CODE_BAD_REQUEST);
-    oai::amf::model::ProblemDetails problem_details = {};
+    oai::model::common::ProblemDetails problem_details = {};
     // TODO set problem_details
     to_json(response_data["ProblemDetails"], problem_details);
   }
@@ -1014,7 +1014,7 @@ bool amf_app::handle_event_exposure_delete(const std::string& subscription_id) {
 //------------------------------------------------------------------------------
 bool amf_app::handle_nf_status_notification(
     std::shared_ptr<itti_sbi_notification_data>& msg,
-    oai::amf::model::ProblemDetails& problem_details, uint32_t& http_code) {
+    oai::model::common::ProblemDetails& problem_details, uint32_t& http_code) {
   Logger::amf_app().info(
       "Handle a NF status notification from NRF (HTTP version "
       "%d)",

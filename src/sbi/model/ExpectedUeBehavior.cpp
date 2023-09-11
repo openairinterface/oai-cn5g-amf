@@ -38,7 +38,8 @@ void from_json(const nlohmann::json& j, ExpectedUeBehavior& o) {
   j.at("validityTime").get_to(o.m_ValidityTime);
 }
 
-std::vector<UserLocation>& ExpectedUeBehavior::getExpMoveTrajectory() {
+std::vector<oai::model::common::UserLocation>&
+ExpectedUeBehavior::getExpMoveTrajectory() {
   return m_ExpMoveTrajectory;
 }
 std::string ExpectedUeBehavior::getValidityTime() const {

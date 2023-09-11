@@ -54,8 +54,8 @@ class AmfEventArea {
   /// <summary>
   ///
   /// </summary>
-  PresenceInfo getPresenceInfo() const;
-  void setPresenceInfo(PresenceInfo const& value);
+  oai::model::common::PresenceInfo getPresenceInfo() const;
+  void setPresenceInfo(oai::model::common::PresenceInfo const& value);
   bool presenceInfoIsSet() const;
   void unsetPresenceInfo();
   /// <summary>
@@ -73,7 +73,7 @@ class AmfEventArea {
   bool validate(std::stringstream& msg, const std::string& pathPrefix) const;
 
  protected:
-  PresenceInfo m_PresenceInfo;
+  oai::model::common::PresenceInfo m_PresenceInfo;
   bool m_PresenceInfoIsSet;
   LadnInfo m_LadnInfo;
   bool m_LadnInfoIsSet;

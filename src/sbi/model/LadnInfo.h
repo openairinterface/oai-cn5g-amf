@@ -59,8 +59,8 @@ class LadnInfo {
   /// <summary>
   ///
   /// </summary>
-  PresenceState getPresence() const;
-  void setPresence(PresenceState const& value);
+  oai::model::common::PresenceState getPresence() const;
+  void setPresence(oai::model::common::PresenceState const& value);
   bool presenceIsSet() const;
   void unsetPresence();
 
@@ -70,7 +70,7 @@ class LadnInfo {
  protected:
   std::string m_Ladn;
 
-  PresenceState m_Presence;
+  oai::model::common::PresenceState m_Presence;
   bool m_PresenceIsSet;
 
   // Helper overload for validate. Used when one model stores another model and

@@ -82,13 +82,14 @@ bool Nssai::supportedFeaturesIsSet() const {
 void Nssai::unsetSupportedFeatures() {
   m_SupportedFeaturesIsSet = false;
 }
-std::vector<Snssai>& Nssai::getDefaultSingleNssais() {
+std::vector<oai::model::common::Snssai>& Nssai::getDefaultSingleNssais() {
   return m_DefaultSingleNssais;
 }
-void Nssai::setDefaultSingleNssais(std::vector<Snssai>& snssais) {
+void Nssai::setDefaultSingleNssais(
+    std::vector<oai::model::common::Snssai>& snssais) {
   m_DefaultSingleNssais = snssais;
 }
-std::vector<Snssai>& Nssai::getSingleNssais() {
+std::vector<oai::model::common::Snssai>& Nssai::getSingleNssais() {
   return m_SingleNssais;
 }
 bool Nssai::singleNssaisIsSet() const {

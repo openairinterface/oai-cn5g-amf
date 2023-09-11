@@ -59,8 +59,8 @@ class _5GsUserStateInfo {
   /// <summary>
   ///
   /// </summary>
-  AccessType getAccessType() const;
-  void setAccessType(AccessType const& value);
+  oai::model::common::AccessType getAccessType() const;
+  void setAccessType(oai::model::common::AccessType const& value);
 
   friend void to_json(nlohmann::json& j, const _5GsUserStateInfo& o);
   friend void from_json(const nlohmann::json& j, _5GsUserStateInfo& o);
@@ -72,7 +72,7 @@ class _5GsUserStateInfo {
  protected:
   _5GsUserState m_r_5gsUserState;
 
-  AccessType m_AccessType;
+  oai::model::common::AccessType m_AccessType;
 };
 
 }  // namespace oai::amf::model

@@ -23,7 +23,7 @@ CmInfo::CmInfo() {}
 void CmInfo::validate() const {
   std::stringstream msg;
   if (!validate(msg)) {
-    throw oai::amf::helpers::ValidationException(msg.str());
+    throw oai::model::common::helpers::ValidationException(msg.str());
   }
 }
 
@@ -70,10 +70,10 @@ CmState CmInfo::getCmState() const {
 void CmInfo::setCmState(CmState const& value) {
   m_CmState = value;
 }
-AccessType CmInfo::getAccessType() const {
+oai::model::common::AccessType CmInfo::getAccessType() const {
   return m_AccessType;
 }
-void CmInfo::setAccessType(AccessType const& value) {
+void CmInfo::setAccessType(oai::model::common::AccessType const& value) {
   m_AccessType = value;
 }
 

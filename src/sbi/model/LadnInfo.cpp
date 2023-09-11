@@ -26,7 +26,7 @@ LadnInfo::LadnInfo() {
 void LadnInfo::validate() const {
   std::stringstream msg;
   if (!validate(msg)) {
-    throw oai::amf::helpers::ValidationException(msg.str());
+    throw oai::model::common::helpers::ValidationException(msg.str());
   }
 }
 
@@ -78,10 +78,10 @@ std::string LadnInfo::getLadn() const {
 void LadnInfo::setLadn(std::string const& value) {
   m_Ladn = value;
 }
-PresenceState LadnInfo::getPresence() const {
+oai::model::common::PresenceState LadnInfo::getPresence() const {
   return m_Presence;
 }
-void LadnInfo::setPresence(PresenceState const& value) {
+void LadnInfo::setPresence(oai::model::common::PresenceState const& value) {
   m_Presence      = value;
   m_PresenceIsSet = true;
 }

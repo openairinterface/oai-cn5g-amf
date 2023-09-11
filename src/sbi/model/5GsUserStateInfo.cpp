@@ -23,7 +23,7 @@ _5GsUserStateInfo::_5GsUserStateInfo() {}
 void _5GsUserStateInfo::validate() const {
   std::stringstream msg;
   if (!validate(msg)) {
-    throw oai::amf::helpers::ValidationException(msg.str());
+    throw oai::model::common::helpers::ValidationException(msg.str());
   }
 }
 
@@ -71,10 +71,11 @@ _5GsUserState _5GsUserStateInfo::getR5gsUserState() const {
 void _5GsUserStateInfo::setR5gsUserState(_5GsUserState const& value) {
   m_r_5gsUserState = value;
 }
-AccessType _5GsUserStateInfo::getAccessType() const {
+oai::model::common::AccessType _5GsUserStateInfo::getAccessType() const {
   return m_AccessType;
 }
-void _5GsUserStateInfo::setAccessType(AccessType const& value) {
+void _5GsUserStateInfo::setAccessType(
+    oai::model::common::AccessType const& value) {
   m_AccessType = value;
 }
 

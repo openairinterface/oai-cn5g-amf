@@ -88,8 +88,8 @@ class UeContextCreateData {
   /// <summary>
   ///
   /// </summary>
-  NgApCause getNgapCause() const;
-  void setNgapCause(NgApCause const& value);
+  oai::model::common::NgApCause getNgapCause() const;
+  void setNgapCause(oai::model::common::NgApCause const& value);
   bool ngapCauseIsSet() const;
   void unsetNgapCause();
   /// <summary>
@@ -118,7 +118,7 @@ class UeContextCreateData {
   bool m_N2NotifyUriIsSet;
   N2InfoContent m_UeRadioCapability;
   bool m_UeRadioCapabilityIsSet;
-  NgApCause m_NgapCause;
+  oai::model::common::NgApCause m_NgapCause;
   bool m_NgapCauseIsSet;
   std::string m_SupportedFeatures;
   bool m_SupportedFeaturesIsSet;

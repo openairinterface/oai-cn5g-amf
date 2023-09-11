@@ -49,7 +49,7 @@ class N2InformationTransferReqData {
   /// <summary>
   ///
   /// </summary>
-  std::vector<Tai>& getTaiList();
+  std::vector<oai::model::common::Tai>& getTaiList();
   bool taiListIsSet() const;
   void unsetTaiList();
   /// <summary>
@@ -62,19 +62,19 @@ class N2InformationTransferReqData {
   /// <summary>
   ///
   /// </summary>
-  std::vector<Ecgi>& getEcgiList();
+  std::vector<oai::model::common::Ecgi>& getEcgiList();
   bool ecgiListIsSet() const;
   void unsetEcgiList();
   /// <summary>
   ///
   /// </summary>
-  std::vector<Ncgi>& getNcgiList();
+  std::vector<oai::model::common::Ncgi>& getNcgiList();
   bool ncgiListIsSet() const;
   void unsetNcgiList();
   /// <summary>
   ///
   /// </summary>
-  std::vector<GlobalRanNodeId>& getGlobalRanNodeList();
+  std::vector<oai::model::common::GlobalRanNodeId>& getGlobalRanNodeList();
   bool globalRanNodeListIsSet() const;
   void unsetGlobalRanNodeList();
   /// <summary>
@@ -95,15 +95,15 @@ class N2InformationTransferReqData {
       const nlohmann::json& j, N2InformationTransferReqData& o);
 
  protected:
-  std::vector<Tai> m_TaiList;
+  std::vector<oai::model::common::Tai> m_TaiList;
   bool m_TaiListIsSet;
   RatSelector m_RatSelector;
   bool m_RatSelectorIsSet;
-  std::vector<Ecgi> m_EcgiList;
+  std::vector<oai::model::common::Ecgi> m_EcgiList;
   bool m_EcgiListIsSet;
-  std::vector<Ncgi> m_NcgiList;
+  std::vector<oai::model::common::Ncgi> m_NcgiList;
   bool m_NcgiListIsSet;
-  std::vector<GlobalRanNodeId> m_GlobalRanNodeList;
+  std::vector<oai::model::common::GlobalRanNodeId> m_GlobalRanNodeList;
   bool m_GlobalRanNodeListIsSet;
   N2InfoContainer m_N2Information;
 

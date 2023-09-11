@@ -53,7 +53,7 @@ AmfEventReport::AmfEventReport() {
 void AmfEventReport::validate() const {
   std::stringstream msg;
   if (!validate(msg)) {
-    throw oai::amf::helpers::ValidationException(msg.str());
+    throw oai::model::common::helpers::ValidationException(msg.str());
   }
 }
 
@@ -106,8 +106,8 @@ bool AmfEventReport::validate(
   }
 
   if (accessTypeListIsSet()) {
-    const std::vector<AccessType>& value = m_AccessTypeList;
-    const std::string currentValuePath   = _pathPrefix + ".accessTypeList";
+    const std::vector<oai::model::common::AccessType>& value = m_AccessTypeList;
+    const std::string currentValuePath = _pathPrefix + ".accessTypeList";
 
     if (value.size() < 1) {
       success = false;
@@ -116,7 +116,7 @@ bool AmfEventReport::validate(
     {  // Recursive validation of array elements
       const std::string oldValuePath = currentValuePath;
       int i                          = 0;
-      for (const AccessType& value : value) {
+      for (const oai::model::common::AccessType& value : value) {
         const std::string currentValuePath =
             oldValuePath + "[" + std::to_string(i) + "]";
 
@@ -509,10 +509,11 @@ bool AmfEventReport::peiIsSet() const {
 void AmfEventReport::unsetPei() {
   m_PeiIsSet = false;
 }
-UserLocation AmfEventReport::getLocation() const {
+oai::model::common::UserLocation AmfEventReport::getLocation() const {
   return m_Location;
 }
-void AmfEventReport::setLocation(UserLocation const& value) {
+void AmfEventReport::setLocation(
+    oai::model::common::UserLocation const& value) {
   m_Location      = value;
   m_LocationIsSet = true;
 }
@@ -535,10 +536,12 @@ bool AmfEventReport::timezoneIsSet() const {
 void AmfEventReport::unsetTimezone() {
   m_TimezoneIsSet = false;
 }
-std::vector<AccessType> AmfEventReport::getAccessTypeList() const {
+std::vector<oai::model::common::AccessType> AmfEventReport::getAccessTypeList()
+    const {
   return m_AccessTypeList;
 }
-void AmfEventReport::setAccessTypeList(std::vector<AccessType> const& value) {
+void AmfEventReport::setAccessTypeList(
+    std::vector<oai::model::common::AccessType> const& value) {
   m_AccessTypeList      = value;
   m_AccessTypeListIsSet = true;
 }

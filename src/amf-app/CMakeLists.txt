@@ -61,3 +61,5 @@ target_include_directories(AMF_APP PUBLIC ${SRC_TOP_DIR}/utils)
 target_include_directories(AMF_APP PUBLIC ${SRC_TOP_DIR}/utils/bstr)
 target_include_directories(AMF_APP PUBLIC ${SRC_TOP_DIR}/${MOUNTED_COMMON}/logger)
 target_include_directories(AMF_APP PUBLIC ${SRC_TOP_DIR}/${MOUNTED_COMMON}/config)
+
+include(${BUILD_TOP_DIR}/amf/used_models.cmake)

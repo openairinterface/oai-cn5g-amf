@@ -66,7 +66,7 @@ int32_t PWSResponseData::getMessageIdentifier() const {
 void PWSResponseData::setMessageIdentifier(int32_t const value) {
   m_MessageIdentifier = value;
 }
-std::vector<Tai>& PWSResponseData::getUnknownTaiList() {
+std::vector<oai::model::common::Tai>& PWSResponseData::getUnknownTaiList() {
   return m_UnknownTaiList;
 }
 bool PWSResponseData::unknownTaiListIsSet() const {

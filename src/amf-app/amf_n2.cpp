@@ -66,6 +66,7 @@ using namespace amf_application;
 using namespace oai::config;
 using namespace ngap;
 using namespace std;
+using namespace oai::model::common;
 extern itti_mw* itti_inst;
 extern amf_n2* amf_n2_inst;
 extern amf_n1* amf_n1_inst;
@@ -2235,14 +2236,14 @@ void amf_n2::handle_itti_message(
 
   // Retrieve new location from the UE and notify generate location change
   // signal
-  oai::amf::model::UserLocation user_location = {};
-  oai::amf::model::NrLocation nr_location     = {};
+  UserLocation user_location = {};
+  NrLocation nr_location     = {};
 
-  oai::amf::model::Ncgi ncgi;
-  oai::amf::model::Tai tai;
-  oai::amf::model::PlmnId plmnId;
-  oai::amf::model::GlobalRanNodeId ranid;
-  oai::amf::model::GNbId gnbid;
+  Ncgi ncgi;
+  Tai tai;
+  oai::model::common::PlmnId plmnId;
+  oai::model::common::GlobalRanNodeId ranid;
+  GNbId gnbid;
 
   plmnId.setMcc(NR_CGI.mcc);
   plmnId.setMnc(NR_CGI.mnc);

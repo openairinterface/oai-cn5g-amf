@@ -59,8 +59,8 @@ class RmInfo {
   /// <summary>
   ///
   /// </summary>
-  AccessType getAccessType() const;
-  void setAccessType(AccessType const& value);
+  oai::model::common::AccessType getAccessType() const;
+  void setAccessType(oai::model::common::AccessType const& value);
 
   friend void to_json(nlohmann::json& j, const RmInfo& o);
   friend void from_json(const nlohmann::json& j, RmInfo& o);
@@ -72,7 +72,7 @@ class RmInfo {
  protected:
   RmState m_RmState;
 
-  AccessType m_AccessType;
+  oai::model::common::AccessType m_AccessType;
 };
 
 }  // namespace oai::amf::model

@@ -45,8 +45,6 @@
 
 #include "Snssai.h"
 
-using namespace oai::amf::model;
-
 namespace oai {
 namespace amf {
 namespace model {
@@ -74,12 +72,12 @@ class Nssai {
   /// <summary>
   ///
   /// </summary>
-  std::vector<Snssai>& getDefaultSingleNssais();
-  void setDefaultSingleNssais(std::vector<Snssai>& snssais);
+  std::vector<oai::model::common::Snssai>& getDefaultSingleNssais();
+  void setDefaultSingleNssais(std::vector<oai::model::common::Snssai>& snssais);
   /// <summary>
   ///
   /// </summary>
-  std::vector<Snssai>& getSingleNssais();
+  std::vector<oai::model::common::Snssai>& getSingleNssais();
   bool singleNssaisIsSet() const;
   void unsetSingleNssais();
 
@@ -89,9 +87,9 @@ class Nssai {
  protected:
   std::string m_SupportedFeatures;
   bool m_SupportedFeaturesIsSet;
-  std::vector<Snssai> m_DefaultSingleNssais;
+  std::vector<oai::model::common::Snssai> m_DefaultSingleNssais;
 
-  std::vector<Snssai> m_SingleNssais;
+  std::vector<oai::model::common::Snssai> m_SingleNssais;
   bool m_SingleNssaisIsSet;
 };
 

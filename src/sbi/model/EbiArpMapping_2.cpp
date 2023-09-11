@@ -44,10 +44,10 @@ int32_t EbiArpMapping_2::getEpsBearerId() const {
 void EbiArpMapping_2::setEpsBearerId(int32_t const value) {
   m_EpsBearerId = value;
 }
-Arp EbiArpMapping_2::getArp() const {
+oai::model::common::Arp EbiArpMapping_2::getArp() const {
   return m_Arp;
 }
-void EbiArpMapping_2::setArp(Arp const& value) {
+void EbiArpMapping_2::setArp(oai::model::common::Arp const& value) {
   m_Arp = value;
 }
 

@@ -36,16 +36,17 @@ void from_json(const nlohmann::json& j, NgRanTargetId& o) {
   j.at("tai").get_to(o.m_Tai);
 }
 
-GlobalRanNodeId NgRanTargetId::getRanNodeId() const {
+oai::model::common::GlobalRanNodeId NgRanTargetId::getRanNodeId() const {
   return m_RanNodeId;
 }
-void NgRanTargetId::setRanNodeId(GlobalRanNodeId const& value) {
+void NgRanTargetId::setRanNodeId(
+    oai::model::common::GlobalRanNodeId const& value) {
   m_RanNodeId = value;
 }
-Tai NgRanTargetId::getTai() const {
+oai::model::common::Tai NgRanTargetId::getTai() const {
   return m_Tai;
 }
-void NgRanTargetId::setTai(Tai const& value) {
+void NgRanTargetId::setTai(oai::model::common::Tai const& value) {
   m_Tai = value;
 }
 

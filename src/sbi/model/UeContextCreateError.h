@@ -20,7 +20,7 @@
 #define UeContextCreateError_H_
 
 #include "NgApCause.h"
-#include "ProblemDetails_2.h"
+#include "ProblemDetails.h"
 #include <nlohmann/json.hpp>
 
 namespace oai {
@@ -43,13 +43,13 @@ class UeContextCreateError {
   /// <summary>
   ///
   /// </summary>
-  ProblemDetails_2 getError() const;
-  void setError(ProblemDetails_2 const& value);
+  oai::model::common::ProblemDetails getError() const;
+  void setError(oai::model::common::ProblemDetails const& value);
   /// <summary>
   ///
   /// </summary>
-  NgApCause getNgapCause() const;
-  void setNgapCause(NgApCause const& value);
+  oai::model::common::NgApCause getNgapCause() const;
+  void setNgapCause(oai::model::common::NgApCause const& value);
   bool ngapCauseIsSet() const;
   void unsetNgapCause();
 
@@ -57,9 +57,9 @@ class UeContextCreateError {
   friend void from_json(const nlohmann::json& j, UeContextCreateError& o);
 
  protected:
-  ProblemDetails_2 m_Error;
+  oai::model::common::ProblemDetails m_Error;
 
-  NgApCause m_NgapCause;
+  oai::model::common::NgApCause m_NgapCause;
   bool m_NgapCauseIsSet;
 };
 

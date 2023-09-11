@@ -94,15 +94,17 @@ class AuthorizedNetworkSliceInfo {
   /// <summary>
   ///
   /// </summary>
-  std::vector<Snssai> getRejectedNssaiInPlmn() const;
-  void setRejectedNssaiInPlmn(std::vector<Snssai> const& value);
+  std::vector<oai::model::common::Snssai> getRejectedNssaiInPlmn() const;
+  void setRejectedNssaiInPlmn(
+      std::vector<oai::model::common::Snssai> const& value);
   bool rejectedNssaiInPlmnIsSet() const;
   void unsetRejectedNssaiInPlmn();
   /// <summary>
   ///
   /// </summary>
-  std::vector<Snssai> getRejectedNssaiInTa() const;
-  void setRejectedNssaiInTa(std::vector<Snssai> const& value);
+  std::vector<oai::model::common::Snssai> getRejectedNssaiInTa() const;
+  void setRejectedNssaiInTa(
+      std::vector<oai::model::common::Snssai> const& value);
   bool rejectedNssaiInTaIsSet() const;
   void unsetRejectedNssaiInTa();
   /// <summary>
@@ -160,9 +162,9 @@ class AuthorizedNetworkSliceInfo {
   bool m_TargetAmfSetIsSet;
   std::vector<std::string> m_CandidateAmfList;
   bool m_CandidateAmfListIsSet;
-  std::vector<Snssai> m_RejectedNssaiInPlmn;
+  std::vector<oai::model::common::Snssai> m_RejectedNssaiInPlmn;
   bool m_RejectedNssaiInPlmnIsSet;
-  std::vector<Snssai> m_RejectedNssaiInTa;
+  std::vector<oai::model::common::Snssai> m_RejectedNssaiInTa;
   bool m_RejectedNssaiInTaIsSet;
   NsiInformation m_NsiInformation;
   bool m_NsiInformationIsSet;

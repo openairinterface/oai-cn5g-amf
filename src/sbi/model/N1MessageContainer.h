@@ -66,8 +66,8 @@ class N1MessageContainer {
   /// <summary>
   ///
   /// </summary>
-  oai::amf::model::RefToBinaryData getN1MessageContent() const;
-  void setN1MessageContent(oai::amf::model::RefToBinaryData const& value);
+  oai::model::common::RefToBinaryData getN1MessageContent() const;
+  void setN1MessageContent(oai::model::common::RefToBinaryData const& value);
   /// <summary>
   ///
   /// </summary>
@@ -89,7 +89,7 @@ class N1MessageContainer {
  protected:
   oai::amf::model::N1MessageClass m_N1MessageClass;
 
-  oai::amf::model::RefToBinaryData m_N1MessageContent;
+  oai::model::common::RefToBinaryData m_N1MessageContent;
 
   std::string m_NfId;
   bool m_NfIdIsSet;

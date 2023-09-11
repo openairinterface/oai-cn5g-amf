@@ -59,8 +59,8 @@ class CmInfo {
   /// <summary>
   ///
   /// </summary>
-  AccessType getAccessType() const;
-  void setAccessType(AccessType const& value);
+  oai::model::common::AccessType getAccessType() const;
+  void setAccessType(oai::model::common::AccessType const& value);
 
   friend void to_json(nlohmann::json& j, const CmInfo& o);
   friend void from_json(const nlohmann::json& j, CmInfo& o);
@@ -72,7 +72,7 @@ class CmInfo {
  protected:
   CmState m_CmState;
 
-  AccessType m_AccessType;
+  oai::model::common::AccessType m_AccessType;
 };
 
 }  // namespace oai::amf::model

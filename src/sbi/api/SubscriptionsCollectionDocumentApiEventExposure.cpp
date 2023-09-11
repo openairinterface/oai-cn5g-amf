@@ -19,7 +19,7 @@ extern oai::config::amf_config amf_cfg;
 
 namespace oai::amf::api {
 
-using namespace oai::amf::helpers;
+using namespace oai::model::common::helpers;
 using namespace oai::amf::model;
 
 SubscriptionsCollectionDocumentApiEventExposure::
@@ -55,7 +55,7 @@ SubscriptionsCollectionDocumentApiEventExposure::handleParsingException(
     throw ex;
   } catch (nlohmann::detail::exception& e) {
     return std::make_pair(Pistache::Http::Code::Bad_Request, e.what());
-  } catch (oai::amf::helpers::ValidationException& e) {
+  } catch (ValidationException& e) {
     return std::make_pair(Pistache::Http::Code::Bad_Request, e.what());
   }
 }

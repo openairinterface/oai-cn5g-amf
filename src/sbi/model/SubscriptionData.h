@@ -49,7 +49,7 @@ class SubscriptionData {
   /// <summary>
   ///
   /// </summary>
-  std::vector<Guami>& getGuamiList();
+  std::vector<oai::model::common::Guami>& getGuamiList();
   bool guamiListIsSet() const;
   void unsetGuamiList();
 
@@ -59,7 +59,7 @@ class SubscriptionData {
  protected:
   std::string m_AmfStatusUri;
 
-  std::vector<Guami> m_GuamiList;
+  std::vector<oai::model::common::Guami> m_GuamiList;
   bool m_GuamiListIsSet;
 };
 

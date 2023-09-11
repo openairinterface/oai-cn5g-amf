@@ -75,16 +75,18 @@ void from_json(const nlohmann::json& j, ConfiguredSnssai& o) {
   }
 }
 
-Snssai ConfiguredSnssai::getConfiguredSnssai() const {
+oai::model::common::Snssai ConfiguredSnssai::getConfiguredSnssai() const {
   return m_ConfiguredSnssai;
 }
-void ConfiguredSnssai::setConfiguredSnssai(Snssai const& value) {
+void ConfiguredSnssai::setConfiguredSnssai(
+    oai::model::common::Snssai const& value) {
   m_ConfiguredSnssai = value;
 }
-Snssai ConfiguredSnssai::getMappedHomeSnssai() const {
+oai::model::common::Snssai ConfiguredSnssai::getMappedHomeSnssai() const {
   return m_MappedHomeSnssai;
 }
-void ConfiguredSnssai::setMappedHomeSnssai(Snssai const& value) {
+void ConfiguredSnssai::setMappedHomeSnssai(
+    oai::model::common::Snssai const& value) {
   m_MappedHomeSnssai      = value;
   m_MappedHomeSnssaiIsSet = true;
 }

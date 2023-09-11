@@ -94,10 +94,10 @@ void from_json(const nlohmann::json& j, MmContext& o) {
   }
 }
 
-AccessType MmContext::getAccessType() const {
+oai::model::common::AccessType MmContext::getAccessType() const {
   return m_AccessType;
 }
-void MmContext::setAccessType(AccessType const& value) {
+void MmContext::setAccessType(oai::model::common::AccessType const& value) {
   m_AccessType = value;
 }
 NasSecurityMode MmContext::getNasSecurityMode() const {
@@ -165,7 +165,7 @@ bool MmContext::s1UeNetworkCapabilityIsSet() const {
 void MmContext::unsetS1UeNetworkCapability() {
   m_S1UeNetworkCapabilityIsSet = false;
 }
-std::vector<Snssai>& MmContext::getAllowedNssai() {
+std::vector<oai::model::common::Snssai>& MmContext::getAllowedNssai() {
   return m_AllowedNssai;
 }
 bool MmContext::allowedNssaiIsSet() const {

@@ -27,7 +27,7 @@ N2InfoContent::N2InfoContent() {
 void N2InfoContent::validate() const {
   std::stringstream msg;
   if (!validate(msg)) {
-    throw oai::amf::helpers::ValidationException(msg.str());
+    throw oai::model::common::helpers::ValidationException(msg.str());
   }
 }
 
@@ -119,10 +119,11 @@ bool N2InfoContent::ngapIeTypeIsSet() const {
 void N2InfoContent::unsetNgapIeType() {
   m_NgapIeTypeIsSet = false;
 }
-oai::amf::model::RefToBinaryData N2InfoContent::getNgapData() const {
+oai::model::common::RefToBinaryData N2InfoContent::getNgapData() const {
   return m_NgapData;
 }
-void N2InfoContent::setNgapData(oai::amf::model::RefToBinaryData const& value) {
+void N2InfoContent::setNgapData(
+    oai::model::common::RefToBinaryData const& value) {
   m_NgapData = value;
 }
 

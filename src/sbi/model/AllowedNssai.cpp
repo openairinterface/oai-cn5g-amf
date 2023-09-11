@@ -99,10 +99,10 @@ void AllowedNssai::setAllowedSnssaiList(
     std::vector<AllowedSnssai> const& value) {
   m_AllowedSnssaiList = value;
 }
-AccessType AllowedNssai::getAccessType() const {
+oai::model::common::AccessType AllowedNssai::getAccessType() const {
   return m_AccessType;
 }
-void AllowedNssai::setAccessType(AccessType const& value) {
+void AllowedNssai::setAccessType(oai::model::common::AccessType const& value) {
   m_AccessType = value;
 }
 

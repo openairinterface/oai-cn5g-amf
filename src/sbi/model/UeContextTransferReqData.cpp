@@ -63,16 +63,18 @@ TransferReason UeContextTransferReqData::getReason() const {
 void UeContextTransferReqData::setReason(TransferReason const& value) {
   m_Reason = value;
 }
-AccessType UeContextTransferReqData::getAccessType() const {
+oai::model::common::AccessType UeContextTransferReqData::getAccessType() const {
   return m_AccessType;
 }
-void UeContextTransferReqData::setAccessType(AccessType const& value) {
+void UeContextTransferReqData::setAccessType(
+    oai::model::common::AccessType const& value) {
   m_AccessType = value;
 }
-PlmnId UeContextTransferReqData::getPlmnId() const {
+oai::model::common::PlmnId UeContextTransferReqData::getPlmnId() const {
   return m_PlmnId;
 }
-void UeContextTransferReqData::setPlmnId(PlmnId const& value) {
+void UeContextTransferReqData::setPlmnId(
+    oai::model::common::PlmnId const& value) {
   m_PlmnId      = value;
   m_PlmnIdIsSet = true;
 }

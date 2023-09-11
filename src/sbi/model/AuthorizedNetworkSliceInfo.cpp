@@ -131,7 +131,8 @@ bool AuthorizedNetworkSliceInfo::validate(
   }
 
   if (rejectedNssaiInPlmnIsSet()) {
-    const std::vector<Snssai>& value   = m_RejectedNssaiInPlmn;
+    const std::vector<oai::model::common::Snssai>& value =
+        m_RejectedNssaiInPlmn;
     const std::string currentValuePath = _pathPrefix + ".rejectedNssaiInPlmn";
 
     if (value.size() < 1) {
@@ -141,7 +142,7 @@ bool AuthorizedNetworkSliceInfo::validate(
     {  // Recursive validation of array elements
       const std::string oldValuePath = currentValuePath;
       int i                          = 0;
-      for (const Snssai& value : value) {
+      for (const oai::model::common::Snssai& value : value) {
         const std::string currentValuePath =
             oldValuePath + "[" + std::to_string(i) + "]";
 
@@ -155,7 +156,7 @@ bool AuthorizedNetworkSliceInfo::validate(
   }
 
   if (rejectedNssaiInTaIsSet()) {
-    const std::vector<Snssai>& value   = m_RejectedNssaiInTa;
+    const std::vector<oai::model::common::Snssai>& value = m_RejectedNssaiInTa;
     const std::string currentValuePath = _pathPrefix + ".rejectedNssaiInTa";
 
     if (value.size() < 1) {
@@ -165,7 +166,7 @@ bool AuthorizedNetworkSliceInfo::validate(
     {  // Recursive validation of array elements
       const std::string oldValuePath = currentValuePath;
       int i                          = 0;
-      for (const Snssai& value : value) {
+      for (const oai::model::common::Snssai& value : value) {
         const std::string currentValuePath =
             oldValuePath + "[" + std::to_string(i) + "]";
 
@@ -381,11 +382,12 @@ bool AuthorizedNetworkSliceInfo::candidateAmfListIsSet() const {
 void AuthorizedNetworkSliceInfo::unsetCandidateAmfList() {
   m_CandidateAmfListIsSet = false;
 }
-std::vector<Snssai> AuthorizedNetworkSliceInfo::getRejectedNssaiInPlmn() const {
+std::vector<oai::model::common::Snssai>
+AuthorizedNetworkSliceInfo::getRejectedNssaiInPlmn() const {
   return m_RejectedNssaiInPlmn;
 }
 void AuthorizedNetworkSliceInfo::setRejectedNssaiInPlmn(
-    std::vector<Snssai> const& value) {
+    std::vector<oai::model::common::Snssai> const& value) {
   m_RejectedNssaiInPlmn      = value;
   m_RejectedNssaiInPlmnIsSet = true;
 }
@@ -395,11 +397,12 @@ bool AuthorizedNetworkSliceInfo::rejectedNssaiInPlmnIsSet() const {
 void AuthorizedNetworkSliceInfo::unsetRejectedNssaiInPlmn() {
   m_RejectedNssaiInPlmnIsSet = false;
 }
-std::vector<Snssai> AuthorizedNetworkSliceInfo::getRejectedNssaiInTa() const {
+std::vector<oai::model::common::Snssai>
+AuthorizedNetworkSliceInfo::getRejectedNssaiInTa() const {
   return m_RejectedNssaiInTa;
 }
 void AuthorizedNetworkSliceInfo::setRejectedNssaiInTa(
-    std::vector<Snssai> const& value) {
+    std::vector<oai::model::common::Snssai> const& value) {
   m_RejectedNssaiInTa      = value;
   m_RejectedNssaiInTaIsSet = true;
 }

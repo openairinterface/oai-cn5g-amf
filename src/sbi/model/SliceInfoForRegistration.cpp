@@ -75,7 +75,7 @@ bool SliceInfoForRegistration::validate(
   }
 
   if (sNssaiForMappingIsSet()) {
-    const std::vector<Snssai>& value   = m_SNssaiForMapping;
+    const std::vector<oai::model::common::Snssai>& value = m_SNssaiForMapping;
     const std::string currentValuePath = _pathPrefix + ".sNssaiForMapping";
 
     if (value.size() < 1) {
@@ -85,7 +85,7 @@ bool SliceInfoForRegistration::validate(
     {  // Recursive validation of array elements
       const std::string oldValuePath = currentValuePath;
       int i                          = 0;
-      for (const Snssai& value : value) {
+      for (const oai::model::common::Snssai& value : value) {
         const std::string currentValuePath =
             oldValuePath + "[" + std::to_string(i) + "]";
 
@@ -98,7 +98,7 @@ bool SliceInfoForRegistration::validate(
   }
 
   if (requestedNssaiIsSet()) {
-    const std::vector<Snssai>& value   = m_RequestedNssai;
+    const std::vector<oai::model::common::Snssai>& value = m_RequestedNssai;
     const std::string currentValuePath = _pathPrefix + ".requestedNssai";
 
     if (value.size() < 1) {
@@ -108,7 +108,7 @@ bool SliceInfoForRegistration::validate(
     {  // Recursive validation of array elements
       const std::string oldValuePath = currentValuePath;
       int i                          = 0;
-      for (const Snssai& value : value) {
+      for (const oai::model::common::Snssai& value : value) {
         const std::string currentValuePath =
             oldValuePath + "[" + std::to_string(i) + "]";
 
@@ -294,11 +294,12 @@ bool SliceInfoForRegistration::allowedNssaiOtherAccessIsSet() const {
 void SliceInfoForRegistration::unsetAllowedNssaiOtherAccess() {
   m_AllowedNssaiOtherAccessIsSet = false;
 }
-std::vector<Snssai> SliceInfoForRegistration::getSNssaiForMapping() const {
+std::vector<oai::model::common::Snssai>
+SliceInfoForRegistration::getSNssaiForMapping() const {
   return m_SNssaiForMapping;
 }
 void SliceInfoForRegistration::setSNssaiForMapping(
-    std::vector<Snssai> const& value) {
+    std::vector<oai::model::common::Snssai> const& value) {
   m_SNssaiForMapping      = value;
   m_SNssaiForMappingIsSet = true;
 }
@@ -308,11 +309,12 @@ bool SliceInfoForRegistration::sNssaiForMappingIsSet() const {
 void SliceInfoForRegistration::unsetSNssaiForMapping() {
   m_SNssaiForMappingIsSet = false;
 }
-std::vector<Snssai> SliceInfoForRegistration::getRequestedNssai() const {
+std::vector<oai::model::common::Snssai>
+SliceInfoForRegistration::getRequestedNssai() const {
   return m_RequestedNssai;
 }
 void SliceInfoForRegistration::setRequestedNssai(
-    std::vector<Snssai> const& value) {
+    std::vector<oai::model::common::Snssai> const& value) {
   m_RequestedNssai      = value;
   m_RequestedNssaiIsSet = true;
 }

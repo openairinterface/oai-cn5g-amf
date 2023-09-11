@@ -60,11 +60,12 @@ Av5gAka UEAuthenticationCtx::getR5gAuthData() const {
 void UEAuthenticationCtx::setR5gAuthData(Av5gAka const& value) {
   m_r_5gAuthData = value;
 }
-std::map<std::string, LinksValueSchema>& UEAuthenticationCtx::getLinks() {
+std::map<std::string, oai::model::common::LinksValueSchema>&
+UEAuthenticationCtx::getLinks() {
   return m__links;
 }
 void UEAuthenticationCtx::setLinks(
-    std::map<std::string, LinksValueSchema> const& value) {
+    std::map<std::string, oai::model::common::LinksValueSchema> const& value) {
   m__links = value;
 }
 std::string UEAuthenticationCtx::getServingNetworkName() const {

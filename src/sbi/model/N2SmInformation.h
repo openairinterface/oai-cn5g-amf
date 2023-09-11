@@ -72,22 +72,22 @@ class N2SmInformation {
   /// <summary>
   ///
   /// </summary>
-  oai::amf::model::Snssai getSNssai() const;
-  void setSNssai(oai::amf::model::Snssai const& value);
+  oai::model::common::Snssai getSNssai() const;
+  void setSNssai(oai::model::common::Snssai const& value);
   bool sNssaiIsSet() const;
   void unsetSNssai();
   /// <summary>
   ///
   /// </summary>
-  oai::amf::model::Snssai getHomePlmnSnssai() const;
-  void setHomePlmnSnssai(oai::amf::model::Snssai const& value);
+  oai::model::common::Snssai getHomePlmnSnssai() const;
+  void setHomePlmnSnssai(oai::model::common::Snssai const& value);
   bool homePlmnSnssaiIsSet() const;
   void unsetHomePlmnSnssai();
   /// <summary>
   ///
   /// </summary>
-  oai::amf::model::Snssai getIwkSnssai() const;
-  void setIwkSnssai(oai::amf::model::Snssai const& value);
+  oai::model::common::Snssai getIwkSnssai() const;
+  void setIwkSnssai(oai::model::common::Snssai const& value);
   bool iwkSnssaiIsSet() const;
   void unsetIwkSnssai();
   /// <summary>
@@ -106,11 +106,11 @@ class N2SmInformation {
 
   oai::amf::model::N2InfoContent m_N2InfoContent;
   bool m_N2InfoContentIsSet;
-  oai::amf::model::Snssai m_SNssai;
+  oai::model::common::Snssai m_SNssai;
   bool m_SNssaiIsSet;
-  oai::amf::model::Snssai m_HomePlmnSnssai;
+  oai::model::common::Snssai m_HomePlmnSnssai;
   bool m_HomePlmnSnssaiIsSet;
-  oai::amf::model::Snssai m_IwkSnssai;
+  oai::model::common::Snssai m_IwkSnssai;
   bool m_IwkSnssaiIsSet;
   bool m_SubjectToHo;
   bool m_SubjectToHoIsSet;

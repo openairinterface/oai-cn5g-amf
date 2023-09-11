@@ -135,10 +135,11 @@ bool UeContextCreateData::ueRadioCapabilityIsSet() const {
 void UeContextCreateData::unsetUeRadioCapability() {
   m_UeRadioCapabilityIsSet = false;
 }
-NgApCause UeContextCreateData::getNgapCause() const {
+oai::model::common::NgApCause UeContextCreateData::getNgapCause() const {
   return m_NgapCause;
 }
-void UeContextCreateData::setNgapCause(NgApCause const& value) {
+void UeContextCreateData::setNgapCause(
+    oai::model::common::NgApCause const& value) {
   m_NgapCause      = value;
   m_NgapCauseIsSet = true;
 }

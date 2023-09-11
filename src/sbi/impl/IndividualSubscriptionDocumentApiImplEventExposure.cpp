@@ -17,7 +17,7 @@ namespace oai {
 namespace amf {
 namespace api {
 
-using namespace oai::amf::model;
+using namespace oai::model::common;
 
 IndividualSubscriptionDocumentApiImplEventExposure::
     IndividualSubscriptionDocumentApiImplEventExposure(
@@ -41,7 +41,7 @@ void IndividualSubscriptionDocumentApiImplEventExposure::delete_subscription(
   } else {
     // Send response
     nlohmann::json json_data                        = {};
-    oai::amf::model::ProblemDetails problem_details = {};
+    ProblemDetails problem_details = {};
     problem_details.setCause("SUBSCRIPTION_NOT_FOUND");
     to_json(json_data, problem_details);
     response.send(Pistache::Http::Code::Not_Found, json_data.dump().c_str());

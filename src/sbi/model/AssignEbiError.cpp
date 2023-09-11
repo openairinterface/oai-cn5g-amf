@@ -36,10 +36,10 @@ void from_json(const nlohmann::json& j, AssignEbiError& o) {
   j.at("failureDetails").get_to(o.m_FailureDetails);
 }
 
-ProblemDetails_2 AssignEbiError::getError() const {
+oai::model::common::ProblemDetails AssignEbiError::getError() const {
   return m_Error;
 }
-void AssignEbiError::setError(ProblemDetails_2 const& value) {
+void AssignEbiError::setError(oai::model::common::ProblemDetails const& value) {
   m_Error = value;
 }
 AssignEbiFailed AssignEbiError::getFailureDetails() const {

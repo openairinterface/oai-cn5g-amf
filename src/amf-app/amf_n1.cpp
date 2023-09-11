@@ -73,6 +73,8 @@ using namespace nas;
 using namespace amf_application;
 using namespace oai::config;
 using namespace boost::placeholders;
+using namespace oai::model::common;
+using namespace oai::amf::model;
 
 extern itti_mw* itti_inst;
 extern amf_n1* amf_n1_inst;
@@ -2967,10 +2969,10 @@ void amf_n1::security_mode_complete_handle(
           "No existed gNB context with assoc_id (%d)", unc->gnb_assoc_id);
     } else {
       // TODO: get_user_location(uc);
-      oai::amf::model::UserLocation user_location = {};
-      oai::amf::model::NrLocation nr_location     = {};
+      UserLocation user_location = {};
+      NrLocation nr_location     = {};
 
-      oai::amf::model::Tai tai  = {};
+      Tai tai                   = {};
       nlohmann::json tai_json   = {};
       tai_json["plmnId"]["mcc"] = uc->cgi.mcc;
       tai_json["plmnId"]["mnc"] = uc->cgi.mnc;
@@ -2981,7 +2983,7 @@ void amf_n1::security_mode_complete_handle(
       global_ran_node_id_json["plmnId"]["mnc"]      = uc->cgi.mnc;
       global_ran_node_id_json["gNbId"]["bitLength"] = 32;
       global_ran_node_id_json["gNbId"]["gNBValue"] = std::to_string(gc->gnb_id);
-      oai::amf::model::GlobalRanNodeId global_ran_node_id = {};
+      oai::model::common::GlobalRanNodeId global_ran_node_id = {};
 
       try {
         from_json(tai_json, tai);
@@ -4031,8 +4033,7 @@ void amf_n1::get_5gcm_state(
 
 //------------------------------------------------------------------------------
 void amf_n1::handle_ue_location_change(
-    std::string supi, oai::amf::model::UserLocation user_location,
-    uint8_t http_version) {
+    std::string supi, UserLocation user_location, uint8_t http_version) {
   Logger::amf_n1().debug(
       "Send request to SBI to trigger UE Location Report (SUPI "
       "%s )",
@@ -4209,7 +4210,7 @@ void amf_n1::handle_ue_registration_state_change(
         rm_state.set_value("REGISTERED");
       rm_info.setRmState(rm_state);
 
-      oai::amf::model::AccessType access_type = {};
+      AccessType access_type = {};
       access_type.setValue(
           AccessType::eAccessType::_3GPP_ACCESS);  // hard-coded
       rm_info.setAccessType(access_type);
@@ -4287,7 +4288,7 @@ void amf_n1::handle_ue_connectivity_state_change(
         cm_state.set_value("CONNECTED");
       cm_info.setCmState(cm_state);
 
-      oai::amf::model::AccessType access_type = {};
+      AccessType access_type = {};
       access_type.setValue(
           AccessType::eAccessType::_3GPP_ACCESS);  // hard-coded
       cm_info.setAccessType(access_type);
@@ -4806,9 +4807,9 @@ bool amf_n1::reroute_registration_request(
   slice_info.setSubscribedNssai(subscribed_snssais);
 
   // Requested NSSAIs
-  std::vector<oai::amf::model::Snssai> requested_nssais;
+  std::vector<Snssai> requested_nssais;
   for (auto s : nc->requested_nssai) {
-    oai::amf::model::Snssai nssai = {};
+    Snssai nssai = {};
     nssai.setSst(s.sst);
     nssai.setSd(std::to_string(s.sd));
     requested_nssais.push_back(nssai);
@@ -4931,7 +4932,7 @@ bool amf_n1::check_subscribed_nssai(
     Logger::amf_n1().debug(
         "Find the common NSSAIs between Requested NSSAIs and Subscribed "
         "NSSAIs");
-    std::vector<oai::amf::model::Snssai> common_snssais;
+    std::vector<Snssai> common_snssais;
     for (auto s : nc->requested_nssai) {
       // std::string sd = std::to_string(s.sd);
       // Check with default subscribed NSSAIs
@@ -5076,8 +5077,7 @@ bool amf_n1::get_slice_selection_subscription_data(
         }
 
         // Store this info in UE NAS Context
-        std::vector<oai::amf::model::Snssai> default_snssais =
-            nssai.getDefaultSingleNssais();
+        std::vector<Snssai> default_snssais = nssai.getDefaultSingleNssais();
         // bool default_subscribed_snssai = true;
         for (const auto& ds : default_snssais) {
           nas::SNSSAI_t subscribed_snssai = {};
@@ -5150,14 +5150,14 @@ bool amf_n1::get_slice_selection_subscription_data_from_conf_file(
   }
 
   // Find the common NSSAIs between Requested NSSAIs and Subscribed NSSAIs
-  std::vector<oai::amf::model::Snssai> common_snssais;
+  std::vector<Snssai> common_snssais;
   // bool default_subscribed_snssai = true;
 
   for (auto ta : gc->supported_ta_list) {
     for (auto p : ta.b_plmn_list) {
       for (auto s : p.slice_list) {
-        oai::amf::model::Snssai nssai = {};
-        uint8_t sst                   = 0;
+        Snssai nssai = {};
+        uint8_t sst  = 0;
         try {
           sst = std::stoi(s.sst);
         } catch (const std::exception& err) {

@@ -46,13 +46,13 @@ class NonUeN2InfoSubscriptionCreateData {
   /// <summary>
   ///
   /// </summary>
-  std::vector<GlobalRanNodeId>& getGlobalRanNodeList();
+  std::vector<oai::model::common::GlobalRanNodeId>& getGlobalRanNodeList();
   bool globalRanNodeListIsSet() const;
   void unsetGlobalRanNodeList();
   /// <summary>
   ///
   /// </summary>
-  std::vector<AccessType>& getAnTypeList();
+  std::vector<oai::model::common::AccessType>& getAnTypeList();
   bool anTypeListIsSet() const;
   void unsetAnTypeList();
   /// <summary>
@@ -86,9 +86,9 @@ class NonUeN2InfoSubscriptionCreateData {
       const nlohmann::json& j, NonUeN2InfoSubscriptionCreateData& o);
 
  protected:
-  std::vector<GlobalRanNodeId> m_GlobalRanNodeList;
+  std::vector<oai::model::common::GlobalRanNodeId> m_GlobalRanNodeList;
   bool m_GlobalRanNodeListIsSet;
-  std::vector<AccessType> m_AnTypeList;
+  std::vector<oai::model::common::AccessType> m_AnTypeList;
   bool m_AnTypeListIsSet;
   N2InformationClass m_N2InformationClass;
 

@@ -48,8 +48,8 @@ class MmContext {
   /// <summary>
   ///
   /// </summary>
-  AccessType getAccessType() const;
-  void setAccessType(AccessType const& value);
+  oai::model::common::AccessType getAccessType() const;
+  void setAccessType(oai::model::common::AccessType const& value);
   /// <summary>
   ///
   /// </summary>
@@ -88,7 +88,7 @@ class MmContext {
   /// <summary>
   ///
   /// </summary>
-  std::vector<Snssai>& getAllowedNssai();
+  std::vector<oai::model::common::Snssai>& getAllowedNssai();
   bool allowedNssaiIsSet() const;
   void unsetAllowedNssai();
   /// <summary>
@@ -115,7 +115,7 @@ class MmContext {
   friend void from_json(const nlohmann::json& j, MmContext& o);
 
  protected:
-  AccessType m_AccessType;
+  oai::model::common::AccessType m_AccessType;
 
   NasSecurityMode m_NasSecurityMode;
   bool m_NasSecurityModeIsSet;
@@ -127,7 +127,7 @@ class MmContext {
   bool m_UeSecurityCapabilityIsSet;
   std::string m_S1UeNetworkCapability;
   bool m_S1UeNetworkCapabilityIsSet;
-  std::vector<Snssai> m_AllowedNssai;
+  std::vector<oai::model::common::Snssai> m_AllowedNssai;
   bool m_AllowedNssaiIsSet;
   std::vector<NssaiMapping> m_NssaiMappingList;
   bool m_NssaiMappingListIsSet;

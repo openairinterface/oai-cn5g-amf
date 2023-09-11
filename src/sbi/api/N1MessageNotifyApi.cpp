@@ -24,7 +24,7 @@ namespace oai {
 namespace amf {
 namespace api {
 
-using namespace oai::amf::helpers;
+using namespace oai::model::common::helpers;
 using namespace oai::amf::model;
 
 N1MessageNotifyApi::N1MessageNotifyApi(

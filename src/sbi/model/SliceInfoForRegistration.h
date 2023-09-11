@@ -86,15 +86,16 @@ class SliceInfoForRegistration {
   /// <summary>
   ///
   /// </summary>
-  std::vector<Snssai> getSNssaiForMapping() const;
-  void setSNssaiForMapping(std::vector<Snssai> const& value);
+  std::vector<oai::model::common::Snssai> getSNssaiForMapping() const;
+  void setSNssaiForMapping(
+      std::vector<oai::model::common::Snssai> const& value);
   bool sNssaiForMappingIsSet() const;
   void unsetSNssaiForMapping();
   /// <summary>
   ///
   /// </summary>
-  std::vector<Snssai> getRequestedNssai() const;
-  void setRequestedNssai(std::vector<Snssai> const& value);
+  std::vector<oai::model::common::Snssai> getRequestedNssai() const;
+  void setRequestedNssai(std::vector<oai::model::common::Snssai> const& value);
   bool requestedNssaiIsSet() const;
   void unsetRequestedNssai();
   /// <summary>
@@ -129,9 +130,9 @@ class SliceInfoForRegistration {
   bool m_AllowedNssaiCurrentAccessIsSet;
   AllowedNssai m_AllowedNssaiOtherAccess;
   bool m_AllowedNssaiOtherAccessIsSet;
-  std::vector<Snssai> m_SNssaiForMapping;
+  std::vector<oai::model::common::Snssai> m_SNssaiForMapping;
   bool m_SNssaiForMappingIsSet;
-  std::vector<Snssai> m_RequestedNssai;
+  std::vector<oai::model::common::Snssai> m_RequestedNssai;
   bool m_RequestedNssaiIsSet;
   bool m_DefaultConfiguredSnssaiInd;
   bool m_DefaultConfiguredSnssaiIndIsSet;

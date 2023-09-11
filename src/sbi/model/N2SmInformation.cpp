@@ -31,7 +31,7 @@ N2SmInformation::N2SmInformation() {
 void N2SmInformation::validate() const {
   std::stringstream msg;
   if (!validate(msg)) {
-    throw oai::amf::helpers::ValidationException(msg.str());
+    throw oai::model::common::helpers::ValidationException(msg.str());
   }
 }
 
@@ -148,10 +148,10 @@ bool N2SmInformation::n2InfoContentIsSet() const {
 void N2SmInformation::unsetN2InfoContent() {
   m_N2InfoContentIsSet = false;
 }
-oai::amf::model::Snssai N2SmInformation::getSNssai() const {
+oai::model::common::Snssai N2SmInformation::getSNssai() const {
   return m_SNssai;
 }
-void N2SmInformation::setSNssai(oai::amf::model::Snssai const& value) {
+void N2SmInformation::setSNssai(oai::model::common::Snssai const& value) {
   m_SNssai      = value;
   m_SNssaiIsSet = true;
 }
@@ -161,10 +161,11 @@ bool N2SmInformation::sNssaiIsSet() const {
 void N2SmInformation::unsetSNssai() {
   m_SNssaiIsSet = false;
 }
-oai::amf::model::Snssai N2SmInformation::getHomePlmnSnssai() const {
+oai::model::common::Snssai N2SmInformation::getHomePlmnSnssai() const {
   return m_HomePlmnSnssai;
 }
-void N2SmInformation::setHomePlmnSnssai(oai::amf::model::Snssai const& value) {
+void N2SmInformation::setHomePlmnSnssai(
+    oai::model::common::Snssai const& value) {
   m_HomePlmnSnssai      = value;
   m_HomePlmnSnssaiIsSet = true;
 }
@@ -174,10 +175,10 @@ bool N2SmInformation::homePlmnSnssaiIsSet() const {
 void N2SmInformation::unsetHomePlmnSnssai() {
   m_HomePlmnSnssaiIsSet = false;
 }
-oai::amf::model::Snssai N2SmInformation::getIwkSnssai() const {
+oai::model::common::Snssai N2SmInformation::getIwkSnssai() const {
   return m_IwkSnssai;
 }
-void N2SmInformation::setIwkSnssai(oai::amf::model::Snssai const& value) {
+void N2SmInformation::setIwkSnssai(oai::model::common::Snssai const& value) {
   m_IwkSnssai      = value;
   m_IwkSnssaiIsSet = true;
 }

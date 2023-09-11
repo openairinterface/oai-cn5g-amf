@@ -28,7 +28,7 @@ N1MessageContainer::N1MessageContainer() {
 void N1MessageContainer::validate() const {
   std::stringstream msg;
   if (!validate(msg)) {
-    throw oai::amf::helpers::ValidationException(msg.str());
+    throw oai::model::common::helpers::ValidationException(msg.str());
   }
 }
 
@@ -95,12 +95,12 @@ void N1MessageContainer::setN1MessageClass(
     oai::amf::model::N1MessageClass const& value) {
   m_N1MessageClass = value;
 }
-oai::amf::model::RefToBinaryData N1MessageContainer::getN1MessageContent()
+oai::model::common::RefToBinaryData N1MessageContainer::getN1MessageContent()
     const {
   return m_N1MessageContent;
 }
 void N1MessageContainer::setN1MessageContent(
-    oai::amf::model::RefToBinaryData const& value) {
+    oai::model::common::RefToBinaryData const& value) {
   m_N1MessageContent = value;
 }
 std::string N1MessageContainer::getNfId() const {

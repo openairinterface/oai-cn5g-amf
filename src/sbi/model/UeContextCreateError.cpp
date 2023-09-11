@@ -41,16 +41,18 @@ void from_json(const nlohmann::json& j, UeContextCreateError& o) {
   }
 }
 
-ProblemDetails_2 UeContextCreateError::getError() const {
+oai::model::common::ProblemDetails UeContextCreateError::getError() const {
   return m_Error;
 }
-void UeContextCreateError::setError(ProblemDetails_2 const& value) {
+void UeContextCreateError::setError(
+    oai::model::common::ProblemDetails const& value) {
   m_Error = value;
 }
-NgApCause UeContextCreateError::getNgapCause() const {
+oai::model::common::NgApCause UeContextCreateError::getNgapCause() const {
   return m_NgapCause;
 }
-void UeContextCreateError::setNgapCause(NgApCause const& value) {
+void UeContextCreateError::setNgapCause(
+    oai::model::common::NgApCause const& value) {
   m_NgapCause      = value;
   m_NgapCauseIsSet = true;
 }

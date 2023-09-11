@@ -21,7 +21,7 @@ namespace oai {
 namespace amf {
 namespace api {
 
-using namespace oai::amf::helpers;
+using namespace oai::model::common::helpers;
 using namespace oai::amf::model;
 
 IndividualSubscriptionDocumentApiEventExposure::
@@ -65,7 +65,7 @@ IndividualSubscriptionDocumentApiEventExposure::handleParsingException(
     throw ex;
   } catch (nlohmann::detail::exception& e) {
     return std::make_pair(Pistache::Http::Code::Bad_Request, e.what());
-  } catch (oai::amf::helpers::ValidationException& e) {
+  } catch (ValidationException& e) {
     return std::make_pair(Pistache::Http::Code::Bad_Request, e.what());
   }
 }

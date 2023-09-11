@@ -93,10 +93,10 @@ std::string PduSessionContext::getSmContextRef() const {
 void PduSessionContext::setSmContextRef(std::string const& value) {
   m_SmContextRef = value;
 }
-Snssai PduSessionContext::getSNssai() const {
+oai::model::common::Snssai PduSessionContext::getSNssai() const {
   return m_SNssai;
 }
-void PduSessionContext::setSNssai(Snssai const& value) {
+void PduSessionContext::setSNssai(oai::model::common::Snssai const& value) {
   m_SNssai = value;
 }
 std::string PduSessionContext::getDnn() const {
@@ -105,10 +105,11 @@ std::string PduSessionContext::getDnn() const {
 void PduSessionContext::setDnn(std::string const& value) {
   m_Dnn = value;
 }
-AccessType PduSessionContext::getAccessType() const {
+oai::model::common::AccessType PduSessionContext::getAccessType() const {
   return m_AccessType;
 }
-void PduSessionContext::setAccessType(AccessType const& value) {
+void PduSessionContext::setAccessType(
+    oai::model::common::AccessType const& value) {
   m_AccessType = value;
 }
 std::vector<EbiArpMapping_2>& PduSessionContext::getAllocatedEbiList() {

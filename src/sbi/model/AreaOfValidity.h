@@ -60,14 +60,14 @@ class AreaOfValidity {
   /// <summary>
   ///
   /// </summary>
-  std::vector<oai::amf::model::Tai> getTaiList() const;
-  void setTaiList(std::vector<oai::amf::model::Tai> const& value);
+  std::vector<oai::model::common::Tai> getTaiList() const;
+  void setTaiList(std::vector<oai::model::common::Tai> const& value);
 
   friend void to_json(nlohmann::json& j, const AreaOfValidity& o);
   friend void from_json(const nlohmann::json& j, AreaOfValidity& o);
 
  protected:
-  std::vector<oai::amf::model::Tai> m_TaiList;
+  std::vector<oai::model::common::Tai> m_TaiList;
 };
 
 }  // namespace oai::amf::model

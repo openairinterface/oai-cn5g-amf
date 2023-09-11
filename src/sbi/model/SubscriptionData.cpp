@@ -48,7 +48,7 @@ std::string SubscriptionData::getAmfStatusUri() const {
 void SubscriptionData::setAmfStatusUri(std::string const& value) {
   m_AmfStatusUri = value;
 }
-std::vector<Guami>& SubscriptionData::getGuamiList() {
+std::vector<oai::model::common::Guami>& SubscriptionData::getGuamiList() {
   return m_GuamiList;
 }
 bool SubscriptionData::guamiListIsSet() const {
