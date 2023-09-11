@@ -34,6 +34,7 @@
 #include "conversions.hpp"
 #include "logger.hpp"
 #include "output_wrapper.hpp"
+#include "utils.hpp"
 
 using namespace nghttp2::asio_http2;
 using namespace nghttp2::asio_http2::server;
@@ -895,34 +896,28 @@ void amf_http2_server::n1_n2_message_subscribe_handler(
         itti_msg->get_msg_name());
   }
 
-  boost::future_status status;
-  // wait for timeout or ready
-  status = f.wait_for(boost::chrono::milliseconds(FUTURE_STATUS_TIMEOUT_MS));
-  if (status == boost::future_status::ready) {
-    assert(f.is_ready());
-    assert(f.has_value());
-    assert(!f.has_exception());
-    // Wait for the result from APP and send reply to AMF
-    // result includes location, UeN1N2InfoSubscriptionCreatedData, and http
-    // response code
-    nlohmann::json result = f.get();
+  // Wait for the result available and process accordingly
+  std::optional<nlohmann::json> result = std::nullopt;
+  utils::wait_for_result(f, result);
+
+  if (result.has_value()) {
     Logger::amf_server().debug("Got result for promise ID %d", promise_id);
 
     // process data
     std::string location        = {};
     uint32_t http_response_code = 0;
-    if (result.find("location") != result.end()) {
-      location = result["location"].get<std::string>();
+    if (result.value().find("location") != result.value().end()) {
+      location = result.value()["location"].get<std::string>();
     }
 
-    if (result.find("httpResponseCode") != result.end()) {
-      http_response_code = result["httpResponseCode"].get<int>();
+    if (result.value().find("httpResponseCode") != result.value().end()) {
+      http_response_code = result.value()["httpResponseCode"].get<int>();
     }
 
     // UeN1N2InfoSubscriptionCreatedData
     nlohmann::json json_data = {};
-    if (result.find("createdData") != result.end()) {
-      json_data = result["createdData"];
+    if (result.value().find("createdData") != result.value().end()) {
+      json_data = result.value()["createdData"];
     }
 
     if (static_cast<http_response_codes_e>(http_response_code) ==
@@ -942,6 +937,10 @@ void amf_http2_server::n1_n2_message_subscribe_handler(
       response.write_head(http_response_code);
       response.end();
     }
+  } else {
+    response.write_head(static_cast<uint32_t>(
+        http_response_codes_e::HTTP_RESPONSE_CODE_REQUEST_TIMEOUT));
+    response.end();
   }
 }
 
@@ -982,24 +981,19 @@ void amf_http2_server::n1_n2_message_unsubscribe_handler(
         itti_msg->get_msg_name());
   }
 
-  boost::future_status status;
-  // wait for timeout or ready
-  status = f.wait_for(boost::chrono::milliseconds(FUTURE_STATUS_TIMEOUT_MS));
-  if (status == boost::future_status::ready) {
-    assert(f.is_ready());
-    assert(f.has_value());
-    assert(!f.has_exception());
-    // Wait for the result from APP
-    // result includes json content and http response code
-    nlohmann::json result = f.get();
+  // Wait for the result available and process accordingly
+  std::optional<nlohmann::json> result = std::nullopt;
+  utils::wait_for_result(f, result);
+
+  if (result.has_value()) {
     Logger::amf_server().debug("Got result for promise ID %d", promise_id);
 
     // process data
     uint32_t http_response_code = 0;
     nlohmann::json json_data    = {};
 
-    if (result.find("httpResponseCode") != result.end()) {
-      http_response_code = result["httpResponseCode"].get<int>();
+    if (result.value().find("httpResponseCode") != result.value().end()) {
+      http_response_code = result.value()["httpResponseCode"].get<int>();
     }
 
     if (static_cast<http_response_codes_e>(http_response_code) ==
@@ -1009,14 +1003,20 @@ void amf_http2_server::n1_n2_message_unsubscribe_handler(
 
     } else {
       // Problem details
-      if (result.find("ProblemDetails") != result.end()) {
-        json_data = result["ProblemDetails"];
+      if (result.value().find("ProblemDetails") != result.value().end()) {
+        json_data = result.value()["ProblemDetails"];
       }
 
       h.emplace("content-type", header_value{"application/problem+json"});
       response.write_head(http_response_code);
       response.end(json_data.dump().c_str());
     }
+  } else {
+    response.write_head(
+        static_cast<uint32_t>(
+            http_response_codes_e::HTTP_RESPONSE_CODE_GATEWAY_TIMEOUT),
+        h);
+    response.end();
   }
 }
 
@@ -1055,30 +1055,25 @@ void amf_http2_server::status_notify_handler(
         itti_msg->get_msg_name());
   }
 
-  boost::future_status status;
-  // wait for timeout or ready
-  status = f.wait_for(boost::chrono::milliseconds(FUTURE_STATUS_TIMEOUT_MS));
-  if (status == boost::future_status::ready) {
-    assert(f.is_ready());
-    assert(f.has_value());
-    assert(!f.has_exception());
-    // Wait for the result from APP
-    // result includes json content and http response code
-    nlohmann::json result = f.get();
+  // Wait for the response available and process accordingly
+  std::optional<nlohmann::json> result = std::nullopt;
+  utils::wait_for_result(f, result);
+
+  if (result.has_value()) {
     Logger::amf_server().debug("Got result for promise ID %d", promise_id);
 
     // process data
     uint32_t http_response_code = 0;
     nlohmann::json json_data    = {};
 
-    if (result.find("httpResponseCode") != result.end()) {
-      http_response_code = result["httpResponseCode"].get<int>();
+    if (result.value().find("httpResponseCode") != result.value().end()) {
+      http_response_code = result.value()["httpResponseCode"].get<int>();
     }
 
     if (static_cast<http_response_codes_e>(http_response_code) ==
         http_response_codes_e::HTTP_RESPONSE_CODE_200_OK) {
-      if (result.find("content") != result.end()) {
-        json_data = result["content"];
+      if (result.value().find("content") != result.value().end()) {
+        json_data = result.value()["content"];
       }
 
       h.emplace("content-type", header_value{"application/json"});
@@ -1087,14 +1082,15 @@ void amf_http2_server::status_notify_handler(
 
     } else {
       // Problem details
-      if (result.find("ProblemDetails") != result.end()) {
-        json_data = result["ProblemDetails"];
+      if (result.value().find("ProblemDetails") != result.value().end()) {
+        json_data = result.value()["ProblemDetails"];
       }
 
       h.emplace("content-type", header_value{"application/problem+json"});
       response.write_head(http_response_code);
       response.end(json_data.dump().c_str());
     }
+
   } else {
     response.write_head(static_cast<uint32_t>(
         http_response_codes_e::HTTP_RESPONSE_CODE_REQUEST_TIMEOUT));
@@ -1130,30 +1126,25 @@ void amf_http2_server::get_configuration_handler(const response& response) {
         itti_msg->get_msg_name());
   }
 
-  boost::future_status status;
-  // wait for timeout or ready
-  status = f.wait_for(boost::chrono::milliseconds(FUTURE_STATUS_TIMEOUT_MS));
-  if (status == boost::future_status::ready) {
-    assert(f.is_ready());
-    assert(f.has_value());
-    assert(!f.has_exception());
-    // Wait for the result from APP
-    // result includes json content and http response code
-    nlohmann::json result = f.get();
+  // Wait for the response available and process accordingly
+  std::optional<nlohmann::json> result = std::nullopt;
+  utils::wait_for_result(f, result);
+
+  if (result.has_value()) {
     Logger::amf_server().debug("Got result for promise ID %d", promise_id);
 
     // process data
     uint32_t http_response_code = 0;
     nlohmann::json json_data    = {};
 
-    if (result.find("httpResponseCode") != result.end()) {
-      http_response_code = result["httpResponseCode"].get<int>();
+    if (result.value().find("httpResponseCode") != result.value().end()) {
+      http_response_code = result.value()["httpResponseCode"].get<int>();
     }
 
     if (static_cast<http_response_codes_e>(http_response_code) ==
         http_response_codes_e::HTTP_RESPONSE_CODE_200_OK) {
-      if (result.find("content") != result.end()) {
-        json_data = result["content"];
+      if (result.value().find("content") != result.value().end()) {
+        json_data = result.value()["content"];
       }
 
       h.emplace("content-type", header_value{"application/json"});
@@ -1162,8 +1153,8 @@ void amf_http2_server::get_configuration_handler(const response& response) {
 
     } else {
       // Problem details
-      if (result.find("ProblemDetails") != result.end()) {
-        json_data = result["ProblemDetails"];
+      if (result.value().find("ProblemDetails") != result.value().end()) {
+        json_data = result.value()["ProblemDetails"];
       }
 
       h.emplace("content-type", header_value{"application/problem+json"});
@@ -1209,44 +1200,39 @@ void amf_http2_server::update_configuration_handler(
         itti_msg->get_msg_name());
   }
 
-  boost::future_status status;
-  // wait for timeout or ready
-  status = f.wait_for(boost::chrono::milliseconds(FUTURE_STATUS_TIMEOUT_MS));
-  if (status == boost::future_status::ready) {
-    assert(f.is_ready());
-    assert(f.has_value());
-    assert(!f.has_exception());
-    // Wait for the result from APP
-    // result includes json content and http response code
-    nlohmann::json result = f.get();
-    Logger::amf_server().debug("Got result for promise ID %d", promise_id);
+  // Wait for the response available and process accordingly
+  std::optional<nlohmann::json> result = std::nullopt;
+  utils::wait_for_result(f, result);
 
+  if (result.has_value()) {
+    Logger::amf_server().debug("Got result for promise ID %d", promise_id);
     // process data
     uint32_t http_response_code = {0};
     nlohmann::json json_data    = {};
 
-    if (result.find("httpResponseCode") != result.end()) {
-      http_response_code = result["httpResponseCode"].get<int>();
+    if (result.value().find("httpResponseCode") != result.value().end()) {
+      http_response_code = result.value()["httpResponseCode"].get<int>();
     }
 
     if (static_cast<http_response_codes_e>(http_response_code) ==
         http_response_codes_e::HTTP_RESPONSE_CODE_200_OK) {
-      if (result.find("content") != result.end()) {
-        json_data = result["content"];
+      if (result.value().find("content") != result.value().end()) {
+        json_data = result.value()["content"];
       }
       h.emplace("content-type", header_value{"application/json"});
       response.write_head(http_response_code);
       response.end(json_data.dump().c_str());
     } else {
       // Problem details
-      if (result.find("ProblemDetails") != result.end()) {
-        json_data = result["ProblemDetails"];
+      if (result.value().find("ProblemDetails") != result.value().end()) {
+        json_data = result.value()["ProblemDetails"];
       }
 
       h.emplace("content-type", header_value{"application/problem+json"});
       response.write_head(http_response_code);
       response.end(json_data.dump().c_str());
     }
+
   } else {
     response.write_head(static_cast<uint32_t>(
         http_response_codes_e::HTTP_RESPONSE_CODE_REQUEST_TIMEOUT));

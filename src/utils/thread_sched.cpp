@@ -19,12 +19,6 @@
  *      contact@openairinterface.org
  */
 
-/*! \file thread_sched.cpp
- \brief
- \company Eurecom
- \email: lionel.gauthier@eurecom.fr
- */
-
 #include "thread_sched.hpp"
 using namespace oai::logger;
 

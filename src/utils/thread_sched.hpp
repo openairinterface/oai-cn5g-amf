@@ -19,12 +19,6 @@
  *      contact@openairinterface.org
  */
 
-/*! \file thread_sched.hpp
- \brief
- \company Eurecom
- \email: lionel.gauthier@eurecom.fr
- */
-
 #ifndef FILE_THREAD_SCHED_HPP_SEEN
 #define FILE_THREAD_SCHED_HPP_SEEN
 

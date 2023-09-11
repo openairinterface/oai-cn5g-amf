@@ -20,9 +20,7 @@
  */
 
 #include "RAN-UE-NGAP-ID.hpp"
-//#include "String2Value.hpp"
 
-#include <iostream>
 using namespace std;
 
 namespace ngap {

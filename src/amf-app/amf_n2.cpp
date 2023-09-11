@@ -57,6 +57,7 @@
 #include "itti_msg_amf_app.hpp"
 #include "logger.hpp"
 #include "sctp_server.hpp"
+#include "utils.hpp"
 
 extern "C" {
 #include "dynamic_memory_check.h"
@@ -463,7 +464,10 @@ void amf_n2::handle_itti_message(
 
   // Send NG SETUP RESPONSE message
   Logger::amf_n2().debug("Encoding NG_SETUP_RESPONSE ...");
-  uint8_t* buffer                = (uint8_t*) calloc(1, BUFFER_SIZE_1024);
+  auto buffer = new (nothrow) uint8_t[BUFFER_SIZE_1024]();
+  if (buffer == nullptr) {
+    return;
+  }
   NGSetupResponseMsg ngSetupResp = {};
   ngSetupResp.setAMFName(amf_cfg.amf_name);
   std::vector<GuamiItem_t> guami_list;
@@ -494,7 +498,7 @@ void amf_n2::handle_itti_message(
   }
 
   ngSetupResp.setPlmnSupportList(plmn_list);
-  int encoded = ngSetupResp.Encode((uint8_t*) buffer, BUFFER_SIZE_1024);
+  int encoded = ngSetupResp.Encode(buffer, BUFFER_SIZE_1024);
 
   if (encoded < 1) {
     Logger::amf_n2().error("Encode NG Setup Response message error!");
@@ -517,6 +521,7 @@ void amf_n2::handle_itti_message(
 
   // TODO: Do we need to store gNB context in UDSF (if available)?
 
+  delete[] buffer;
   bdestroy_wrapper(&b);
   return;
 }
@@ -749,8 +754,12 @@ void amf_n2::handle_itti_message(
   if (unc->initial_ue_msg.buf) {
     Logger::amf_n2().debug(
         "Store InitialUEMessage for Reroute NAS (if necessary)");
-    uint8_t* initial_ue_msg_buf = (uint8_t*) calloc(1, BUFFER_SIZE_1024);
-    int encoded_size            = 0;
+    auto initial_ue_msg_buf = new (nothrow) uint8_t[BUFFER_SIZE_1024]();
+    if (initial_ue_msg_buf == nullptr) {
+      return;
+    }
+
+    int encoded_size = 0;
     init_ue_msg->initUeMsg->Encode(initial_ue_msg_buf, encoded_size);
 
     if (encoded_size > 0) {
@@ -762,6 +771,7 @@ void amf_n2::handle_itti_message(
           "ngap", "InitialUEMessage", unc->initial_ue_msg.buf, encoded_size);
       unc->initial_ue_msg.size = encoded_size;
     }
+    delete[] initial_ue_msg_buf;
   }
 
   itti_msg->gnb_id         = gc->gnb_id;
@@ -1126,9 +1136,13 @@ void amf_n2::handle_itti_message(
   psrsr->setPduSessionResourceSetupRequestList(list);
   psrsr->setUEAggregateMaxBitRate(
       UE_AGGREGATE_MAXIMUM_BIT_RATE_DL, UE_AGGREGATE_MAXIMUM_BIT_RATE_UL);
-  uint8_t* buffer  = (uint8_t*) calloc(1, BUFFER_SIZE_4096);
-  int encoded_size = 0;
 
+  auto buffer = new (nothrow) uint8_t[BUFFER_SIZE_4096]();
+  if (buffer == nullptr) {
+    return;
+  }
+
+  int encoded_size = 0;
   psrsr->encode2NewBuffer(buffer, encoded_size);
   output_wrapper::print_buffer(
       "amf_n2", "N2 SM buffer data:", buffer, encoded_size);
@@ -1137,6 +1151,7 @@ void amf_n2::handle_itti_message(
   bstring b = blk2bstr(buffer, encoded_size);
   sctp_s_38412.sctp_send_msg(gc->sctp_assoc_id, unc->sctp_stream_send, &b);
   bdestroy_wrapper(&b);
+  delete[] buffer;
 }
 
 //------------------------------------------------------------------------------
@@ -1186,7 +1201,11 @@ void amf_n2::handle_itti_message(
 
   modify_request_msg->setPduSessionResourceModifyRequestList(list);
 
-  uint8_t* buffer  = (uint8_t*) calloc(1, BUFFER_SIZE_4096);
+  auto buffer = new (nothrow) uint8_t[BUFFER_SIZE_4096]();
+  if (buffer == nullptr) {
+    return;
+  }
+
   int encoded_size = 0;
   modify_request_msg->encode2NewBuffer(buffer, encoded_size);
   output_wrapper::print_buffer(
@@ -1197,6 +1216,7 @@ void amf_n2::handle_itti_message(
   sctp_s_38412.sctp_send_msg(gc->sctp_assoc_id, unc->sctp_stream_send, &b);
   // free memory
   bdestroy_wrapper(&b);
+  delete[] buffer;
 }
 
 //------------------------------------------------------------------------------
@@ -1240,7 +1260,11 @@ void amf_n2::handle_itti_message(
   list.push_back(item);
   release_cmd_msg->setPduSessionResourceToReleaseList(list);
 
-  uint8_t* buffer  = (uint8_t*) calloc(1, BUFFER_SIZE_4096);
+  auto buffer = new (nothrow) uint8_t[BUFFER_SIZE_4096]();
+  if (buffer == nullptr) {
+    return;
+  }
+
   int encoded_size = 0;
   release_cmd_msg->encode2NewBuffer(buffer, encoded_size);
   output_wrapper::print_buffer(
@@ -1251,6 +1275,7 @@ void amf_n2::handle_itti_message(
   sctp_s_38412.sctp_send_msg(gc->sctp_assoc_id, unc->sctp_stream_send, &b);
   // free memory
   bdestroy_wrapper(&b);
+  delete[] buffer;
 }
 
 //------------------------------------------------------------------------------
@@ -1544,39 +1569,29 @@ void amf_n2::handle_itti_message(
     }
   }
 
+  // Wait for the response available and process accordingly
   bool result = true;
   while (!curl_responses.empty()) {
-    boost::future_status status;
-    // wait for timeout or ready
-    status = curl_responses.begin()->second.wait_for(
-        boost::chrono::milliseconds(FUTURE_STATUS_TIMEOUT_MS));
-    if (status == boost::future_status::ready) {
-      assert(curl_responses.begin()->second.is_ready());
-      assert(curl_responses.begin()->second.has_value());
-      assert(!curl_responses.begin()->second.has_exception());
-      // Wait for the result from APP and send reply to AMF
+    std::optional<std::string> response_code_str = std::nullopt;
+    utils::wait_for_result(curl_responses.begin()->second, response_code_str);
 
-      std::string http_code_str = curl_responses.begin()->second.get();
+    if (response_code_str.has_value()) {
       Logger::ngap().debug(
           "Got result for PDU Session ID %d", curl_responses.begin()->first);
-      if (http_code_str.size() > 0) {
-        result            = result && true;
-        uint8_t http_code = 0;
-        if (conv::string_to_int8(http_code_str, http_code)) {
-          if ((http_code == 200) or (http_code == 204)) {
-            // uc->remove_pdu_sessions_context(curl_responses.begin()->first);
-            uc->set_up_cnx_state(
-                curl_responses.begin()->first,
-                up_cnx_state_e::UPCNX_STATE_DEACTIVATED);
-          }
+      result                = result && true;
+      uint8_t response_code = 0;
+      if (conv::string_to_int8(response_code_str.value(), response_code)) {
+        if ((response_code == 200) or (response_code == 204)) {
+          // uc->remove_pdu_sessions_context(curl_responses.begin()->first);
+          uc->set_up_cnx_state(
+              curl_responses.begin()->first,
+              up_cnx_state_e::UPCNX_STATE_DEACTIVATED);
         }
-      } else {
-        result = false;
       }
-
     } else {
-      result = true;
+      result = false;
     }
+
     curl_responses.erase(curl_responses.begin());
   }
 
@@ -1841,46 +1856,40 @@ bool amf_n2::handle_itti_message(
   // Wait until receiving all responses from SMFs before sending Handover
   std::vector<PDUSessionResourceSetupRequestItem_t> list;
 
+  // Wait for the response available and process accordingly
   bool result = true;
   while (!curl_responses.empty()) {
-    boost::future_status status;
-    // wait for timeout or ready
-    status = curl_responses.begin()->second.wait_for(
-        boost::chrono::milliseconds(FUTURE_STATUS_TIMEOUT_MS));
-    if (status == boost::future_status::ready) {
-      assert(curl_responses.begin()->second.is_ready());
-      assert(curl_responses.begin()->second.has_value());
-      assert(!curl_responses.begin()->second.has_exception());
-      // Wait for the result from APP and send reply to AMF
-      std::string n2_sm = curl_responses.begin()->second.get();
+    std::optional<std::string> n2_sm = std::nullopt;
+    utils::wait_for_result(curl_responses.begin()->second, n2_sm);
+
+    if (n2_sm.has_value()) {
       Logger::ngap().debug(
           "Got result for PDU Session ID %d", curl_responses.begin()->first);
-      if (n2_sm.size() > 0) {
-        result = result && true;
 
-        std::shared_ptr<pdu_session_context> psc = {};
-        if (amf_app_inst->find_pdu_session_context(
-                supi, curl_responses.begin()->first, psc)) {
-          PDUSessionResourceSetupRequestItem_t item = {};
-          item.pduSessionId                         = psc->pdu_session_id;
-          item.s_nssai.sst = std::to_string(psc->snssai.sST);
-          item.s_nssai.sd  = psc->snssai.sD;
-          // item.pduSessionNAS_PDU = nullptr;
-          unsigned int data_len = n2_sm.length();
-          item.pduSessionResourceSetupRequestTransfer.buf =
-              (unsigned char*) malloc(data_len + 1);
-          memcpy(
-              (void*) item.pduSessionResourceSetupRequestTransfer.buf,
-              (void*) n2_sm.c_str(), data_len);
-          item.pduSessionResourceSetupRequestTransfer.size = data_len;
-          list.push_back(item);
-        }
-      } else {
-        result = false;
+      result = result && true;
+
+      std::shared_ptr<pdu_session_context> psc = {};
+      if (amf_app_inst->find_pdu_session_context(
+              supi, curl_responses.begin()->first, psc)) {
+        PDUSessionResourceSetupRequestItem_t item = {};
+        item.pduSessionId                         = psc->pdu_session_id;
+        item.s_nssai.sst = std::to_string(psc->snssai.sST);
+        item.s_nssai.sd  = psc->snssai.sD;
+        // item.pduSessionNAS_PDU = nullptr;
+        unsigned int data_len = n2_sm.value().length();
+        item.pduSessionResourceSetupRequestTransfer.buf =
+            (unsigned char*) malloc(data_len + 1);
+        memcpy(
+            (void*) item.pduSessionResourceSetupRequestTransfer.buf,
+            (void*) n2_sm.value().c_str(), data_len);
+        item.pduSessionResourceSetupRequestTransfer.size = data_len;
+        list.push_back(item);
       }
+
     } else {
-      result = true;
+      result = false;
     }
+
     curl_responses.erase(curl_responses.begin());
   }
   // TODO: process result
@@ -2012,41 +2021,33 @@ void amf_n2::handle_itti_message(
   // T-UPF to the source gNB
   bool result = true;
   while (!curl_responses.empty()) {
-    boost::future_status status;
-    // wait for timeout or ready
-    status = curl_responses.begin()->second.wait_for(
-        boost::chrono::milliseconds(FUTURE_STATUS_TIMEOUT_MS));
-    if (status == boost::future_status::ready) {
-      assert(curl_responses.begin()->second.is_ready());
-      assert(curl_responses.begin()->second.has_value());
-      assert(!curl_responses.begin()->second.has_exception());
-      // Wait for the result from APP and send reply to AMF
-      std::string n2_sm = curl_responses.begin()->second.get();
+    std::optional<std::string> n2_sm = std::nullopt;
+    utils::wait_for_result(curl_responses.begin()->second, n2_sm);
+
+    if (n2_sm.has_value()) {
       Logger::ngap().debug(
           "Got result for PDU Session ID %d", curl_responses.begin()->first);
-      if (n2_sm.size() > 0) {
-        result                                 = result && true;
-        uint8_t pdu_session_id_value           = curl_responses.begin()->first;
-        unsigned int data_len                  = n2_sm.length();
-        PDUSessionID pdu_session_id            = {};
-        OCTET_STRING_t handoverCommandTransfer = {};
-        pdu_session_id.set(pdu_session_id_value);
-        OCTET_STRING_fromBuf(
-            &handoverCommandTransfer, n2_sm.c_str(), n2_sm.length());
-        handoverItem.set(pdu_session_id, handoverCommandTransfer);
-        handoverItemList.push_back(handoverItem);
-        handoverList.set(handoverItemList);
 
-        std::shared_ptr<pdu_session_context> psc = {};
-        if (amf_app_inst->find_pdu_session_context(
-                supi, pdu_session_id_value, psc)) {
-          psc->is_ho_accepted = true;
-        }
-      } else {
-        result = false;
+      result                                 = result && true;
+      uint8_t pdu_session_id_value           = curl_responses.begin()->first;
+      unsigned int data_len                  = n2_sm.value().length();
+      PDUSessionID pdu_session_id            = {};
+      OCTET_STRING_t handoverCommandTransfer = {};
+      pdu_session_id.set(pdu_session_id_value);
+      OCTET_STRING_fromBuf(
+          &handoverCommandTransfer, n2_sm.value().c_str(),
+          n2_sm.value().length());
+      handoverItem.set(pdu_session_id, handoverCommandTransfer);
+      handoverItemList.push_back(handoverItem);
+      handoverList.set(handoverItemList);
+
+      std::shared_ptr<pdu_session_context> psc = {};
+      if (amf_app_inst->find_pdu_session_context(
+              supi, pdu_session_id_value, psc)) {
+        psc->is_ho_accepted = true;
       }
     } else {
-      result = true;
+      result = false;
     }
     curl_responses.erase(curl_responses.begin());
   }
@@ -2177,28 +2178,18 @@ void amf_n2::handle_itti_message(
     }
   }
 
+  // Wait for the response available and process accordingly
   bool result = true;
   while (!curl_responses.empty()) {
-    boost::future_status status;
-    // wait for timeout or ready
-    status = curl_responses.begin()->second.wait_for(
-        boost::chrono::milliseconds(FUTURE_STATUS_TIMEOUT_MS));
-    if (status == boost::future_status::ready) {
-      assert(curl_responses.begin()->second.is_ready());
-      assert(curl_responses.begin()->second.has_value());
-      assert(!curl_responses.begin()->second.has_exception());
-      // Wait for the result from APP and send reply to AMF
-      std::string pdu_session_id_str = curl_responses.begin()->second.get();
-      Logger::ngap().debug(
-          "Got result for PDU Session ID %d", curl_responses.begin()->first);
-      if (pdu_session_id_str.size() > 0) {
-        result = result && true;
-      } else {
-        result = false;
-      }
+    std::optional<std::string> pdu_session_id_str = std::nullopt;
+    utils::wait_for_result(curl_responses.begin()->second, pdu_session_id_str);
+
+    if (pdu_session_id_str.has_value()) {
+      result = result && true;
     } else {
-      result = true;
+      result = false;
     }
+
     curl_responses.erase(curl_responses.begin());
   }
 
@@ -2475,7 +2466,11 @@ template<typename T>
 void amf_n2::send_ng_setup_failure(
     const T& cause, const e_Ngap_TimeToWait& time_to_wait,
     const sctp_assoc_id_t& assoc_id, const sctp_stream_id_t& stream_id) {
-  uint8_t* buffer                  = (uint8_t*) calloc(1, BUFFER_SIZE_1024);
+  auto buffer = new (nothrow) uint8_t[BUFFER_SIZE_1024]();
+  if (buffer == nullptr) {
+    return;
+  }
+
   NGSetupFailureMsg ngSetupFailure = {};
   ngSetupFailure.set(cause, time_to_wait);
   int encoded = ngSetupFailure.Encode((uint8_t*) buffer, BUFFER_SIZE_1024);
@@ -2488,6 +2483,7 @@ void amf_n2::send_ng_setup_failure(
   bstring b = blk2bstr(buffer, encoded);
   sctp_s_38412.sctp_send_msg(assoc_id, stream_id, &b);
   bdestroy_wrapper(&b);
+  delete[] buffer;
 }
 
 //------------------------------------------------------------------------------

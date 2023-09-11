@@ -33,10 +33,11 @@
  */
 
 #include "3gpp_29.500.h"
-#include "logger.hpp"
-#include "itti_msg_sbi.hpp"
-#include "StatusNotifyApiImpl.h"
 #include "conversions.hpp"
+#include "itti_msg_sbi.hpp"
+#include "logger.hpp"
+#include "StatusNotifyApiImpl.h"
+#include "utils.hpp"
 
 extern itti_mw* itti_inst;
 
@@ -91,19 +92,17 @@ void StatusNotifyApiImpl::receive_pdu_session_status_notification(
         itti_msg->get_msg_name());
   }
 
-  boost::future_status status;
-  // wait for timeout or ready
-  status = f.wait_for(boost::chrono::milliseconds(FUTURE_STATUS_TIMEOUT_MS));
-  if (status == boost::future_status::ready) {
-    assert(f.is_ready());
-    assert(f.has_value());
-    assert(!f.has_exception());
-    // Wait for the result from APP
-    // result includes json content and http response code
-    nlohmann::json result = f.get();
+  // Wait for the result available and process accordingly
+  std::optional<nlohmann::json> result = std::nullopt;
+  utils::wait_for_result(f, result);
+
+  if (result.has_value()) {
     Logger::amf_server().debug("Got result for promise ID %d", promise_id);
 
     response.send(Pistache::Http::Code::No_Content);
+  } else {
+    // TODO:
+    response.send(Pistache::Http::Code::Gateway_Timeout);
   }
 }
 

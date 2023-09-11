@@ -389,12 +389,13 @@ class amf_n2 : public ngap::ngap_app {
       std::vector<std::shared_ptr<ue_ngap_context>>& ue_contexts);
 
  private:
+  // <RAN UE NGAP ID, gNB ID> <-> UE Context
   std::map<std::pair<uint32_t, uint32_t>, std::shared_ptr<ue_ngap_context>>
-      ranid2uecontext;  // ran ue ngap id
+      ranid2uecontext;
   mutable std::shared_mutex m_ranid2uecontext;
 
-  std::map<unsigned long, std::shared_ptr<ue_ngap_context>>
-      amfueid2uecontext;  // amf ue id
+  // AMF UE ID <-> UE Context
+  std::map<unsigned long, std::shared_ptr<ue_ngap_context>> amfueid2uecontext;
   mutable std::shared_mutex m_amfueid2uecontext;
 };
 

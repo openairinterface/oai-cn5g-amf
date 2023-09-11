@@ -19,12 +19,6 @@
  *      contact@openairinterface.org
  */
 
-/*! \file string.hpp
- \brief
- \author  Lionel GAUTHIER
- \date 2018
- \email: lionel.gauthier@eurecom.fr
- */
 #ifndef FILE_STRING_HPP_FILE_SEEN
 #define FILE_STRING_HPP_FILE_SEEN
 

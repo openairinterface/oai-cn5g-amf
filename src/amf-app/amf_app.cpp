@@ -41,6 +41,7 @@
 #include "output_wrapper.hpp"
 #include "itti.hpp"
 #include "ngap_app.hpp"
+#include "utils.hpp"
 
 using namespace ngap;
 using namespace nas;
@@ -975,14 +976,42 @@ evsub_id_t amf_app::handle_event_exposure_subscription(
     if (amf_cfg.support_features.enable_lmf) {
       uint8_t http_version = amf_cfg.support_features.use_http2 ? 2 : 1;
       for (const auto& kvp : supi2ue_ctx) {
-        nlohmann::json input_data    = {};
-        input_data["supi"]           = kvp.first;
-        nlohmann::json location_data = {};
-        if (amf_sbi_inst->send_determine_location_request(
-                input_data, location_data, http_version)) {
+        nlohmann::json input_data = {};
+        input_data["supi"]        = kvp.first;
+
+        // Generate a promise and associate this promise to the ITTI message
+        uint32_t promise_id = generate_promise_id();
+        Logger::amf_app().debug("Promise ID generated %d", promise_id);
+
+        std::shared_ptr<itti_sbi_determine_location_request> itti_msg =
+            std::make_shared<itti_sbi_determine_location_request>(
+                TASK_AMF_APP, TASK_AMF_SBI, promise_id);
+
+        boost::shared_ptr<boost::promise<nlohmann::json>> p =
+            boost::make_shared<boost::promise<nlohmann::json>>();
+        boost::shared_future<nlohmann::json> f = p->get_future();
+
+        add_promise(promise_id, p);
+
+        itti_msg->input_data   = input_data;
+        itti_msg->http_version = msg->http_version;
+
+        itti_msg->promise_id = promise_id;
+
+        int ret = itti_inst->send_msg(itti_msg);
+        if (0 != ret) {
+          Logger::amf_n1().error(
+              "Could not send ITTI message %s to task TASK_AMF_SBI",
+              itti_msg->get_msg_name());
+        }
+
+        // Wait for the response available and process accordingly
+        std::optional<nlohmann::json> location_data = std::nullopt;
+        utils::wait_for_result(f, location_data);
+        if (location_data.has_value()) {
           Logger::amf_app().info(
               "Determine Location Response (SUPI: %s) : \n%s", kvp.first,
-              location_data.dump(2).c_str());
+              location_data.value().dump(2).c_str());
         } else {
           Logger::amf_app().error(
               "Determine Location failed (SUPI: %s)...\n", kvp.first);
@@ -1180,17 +1209,12 @@ void amf_app::trigger_nf_registration_request() {
           TASK_AMF_APP, TASK_AMF_SBI);
   itti_msg->profile = nf_instance_profile;
 
-  // TODO: use ITTI to send message between N1 and SBI
-  amf_sbi_inst->register_nf_instance(itti_msg);
-  /*
-
-  int ret           = itti_inst->send_msg(itti_msg);
+  int ret = itti_inst->send_msg(itti_msg);
   if (RETURNok != ret) {
     Logger::amf_app().error(
         "Could not send ITTI message %s to task TASK_AMF_SBI",
         itti_msg->get_msg_name());
   }
-  */
 }
 
 //------------------------------------------------------------------------------
@@ -1318,26 +1342,21 @@ void amf_app::trigger_pdu_session_release(
       }
     }
 
-    // Wait for the response from SMF
+    // Wait for the response available and process accordingly
     while (!smf_responses.empty()) {
-      boost::future_status status;
-      // wait for timeout or ready
-      status = smf_responses.begin()->second.wait_for(
-          boost::chrono::milliseconds(FUTURE_STATUS_TIMEOUT_MS));
-      if (status == boost::future_status::ready) {
-        assert(smf_responses.begin()->second.is_ready());
-        assert(smf_responses.begin()->second.has_value());
-        assert(!smf_responses.begin()->second.has_exception());
-        // Wait for the result from APP and send reply to AMF
-        uint32_t http_response_code = smf_responses.begin()->second.get();
+      std::optional<uint32_t> response_code = std::nullopt;
+      utils::wait_for_result(smf_responses.begin()->second, response_code);
 
+      if (response_code.has_value()) {
         // Remove PDU session
         // TODO for multiple sessions
-        if ((http_response_code == 200) or (http_response_code == 204)) {
+        if ((response_code.value() == 200) or (response_code.value() == 204)) {
           for (auto session : sessions_ctx) {
             uc->remove_pdu_sessions_context(session->pdu_session_id);
           }
         }
+      } else {
+        // TODO:
       }
       smf_responses.erase(smf_responses.begin());
     }
@@ -1399,41 +1418,31 @@ void amf_app::trigger_pdu_session_up_deactivation(
       }
     }
 
+    // Wait for the response available and process accordingly
     bool result = true;
     while (!curl_responses.empty()) {
-      boost::future_status status;
-      // wait for timeout or ready
-      status = curl_responses.begin()->second.wait_for(
-          boost::chrono::milliseconds(FUTURE_STATUS_TIMEOUT_MS));
-      if (status == boost::future_status::ready) {
-        assert(curl_responses.begin()->second.is_ready());
-        assert(curl_responses.begin()->second.has_value());
-        assert(!curl_responses.begin()->second.has_exception());
+      std::optional<std::string> response_code_str = std::nullopt;
+      utils::wait_for_result(curl_responses.begin()->second, response_code_str);
 
-        // Wait for the result from APP and send reply to AMF
-        std::string http_code_str = curl_responses.begin()->second.get();
+      if (response_code_str.has_value()) {
         Logger::ngap().debug(
             "Got result for PDU Session ID %d", curl_responses.begin()->first);
 
-        if (http_code_str.size() > 0) {
-          result             = result && true;
-          uint32_t http_code = 0;
-          if (conv::string_to_int32(http_code_str, http_code)) {
-            if ((http_code == 200) or (http_code == 204)) {
-              // uc->remove_pdu_sessions_context(curl_responses.begin()->first);
-              uc->set_up_cnx_state(
-                  curl_responses.begin()->first,
-                  up_cnx_state_e::UPCNX_STATE_DEACTIVATED);
-            }
+        result                 = result && true;
+        uint32_t response_code = 0;
+        if (conv::string_to_int32(response_code_str.value(), response_code)) {
+          if ((response_code == 200) or (response_code == 204)) {
+            // uc->remove_pdu_sessions_context(curl_responses.begin()->first);
+            uc->set_up_cnx_state(
+                curl_responses.begin()->first,
+                up_cnx_state_e::UPCNX_STATE_DEACTIVATED);
           }
-        } else {
-          result = false;
-          Logger::ngap().warn("Couldn't get the HTTP response code");
         }
-
       } else {
-        result = true;
+        result = false;
+        Logger::ngap().warn("Couldn't get the HTTP response code");
       }
+
       curl_responses.erase(curl_responses.begin());
     }
   } else {
@@ -1493,35 +1502,30 @@ void amf_app::trigger_pdu_session_up_activation(
       }
     }
 
+    // Wait for the response available and process accordingly
     bool result = true;
     while (!curl_responses.empty()) {
-      boost::future_status status;
-      // wait for timeout or ready
-      status = curl_responses.begin()->second.wait_for(
-          boost::chrono::milliseconds(FUTURE_STATUS_TIMEOUT_MS));
-      if (status == boost::future_status::ready) {
-        assert(curl_responses.begin()->second.is_ready());
-        assert(curl_responses.begin()->second.has_value());
-        assert(!curl_responses.begin()->second.has_exception());
+      std::optional<std::string> response_code_str = std::nullopt;
+      utils::wait_for_result(curl_responses.begin()->second, response_code_str);
 
-        // Wait for the result from APP and send reply to AMF
-        std::string http_code_str = curl_responses.begin()->second.get();
+      if (response_code_str.has_value()) {
         Logger::ngap().debug(
             "Got result for PDU Session ID %d", curl_responses.begin()->first);
-        uint8_t http_response_code = 0;
-        if (!conv::string_to_int8(http_code_str, http_response_code)) {
+        uint8_t response_code = 0;
+        if (!conv::string_to_int8(response_code_str.value(), response_code)) {
           Logger::ngap().warn("Couldn't get the HTTP response code");
         }
         result = result && true;
-        if ((http_response_code == 200) or (http_response_code == 204)) {
+        if ((response_code == 200) or (response_code == 204)) {
           uc->set_up_cnx_state(
               curl_responses.begin()->first,
               up_cnx_state_e::UPCNX_STATE_ACTIVATED);
         }
 
       } else {
-        result = true;
+        result = true;  // TODO: To be verified
       }
+
       curl_responses.erase(curl_responses.begin());
     }
   } else {
@@ -1581,35 +1585,29 @@ void amf_app::trigger_pdu_session_up_activation(
     }
     //}
 
+    // Wait for the response available and process accordingly
     bool result = true;
     while (!curl_responses.empty()) {
-      boost::future_status status;
-      // wait for timeout or ready
-      status = curl_responses.begin()->second.wait_for(
-          boost::chrono::milliseconds(FUTURE_STATUS_TIMEOUT_MS));
-      if (status == boost::future_status::ready) {
-        assert(curl_responses.begin()->second.is_ready());
-        assert(curl_responses.begin()->second.has_value());
-        assert(!curl_responses.begin()->second.has_exception());
+      std::optional<std::string> response_code_str = std::nullopt;
+      utils::wait_for_result(curl_responses.begin()->second, response_code_str);
 
-        // Wait for the result from APP and send reply to AMF
-        std::string http_code_str = curl_responses.begin()->second.get();
+      if (response_code_str.has_value()) {
         Logger::ngap().debug(
             "Got result for PDU Session ID %d", curl_responses.begin()->first);
-        uint8_t http_response_code = 0;
-        if (!conv::string_to_int8(http_code_str, http_response_code)) {
+        uint8_t response_code = 0;
+        if (!conv::string_to_int8(response_code_str.value(), response_code)) {
           Logger::ngap().warn("Couldn't get the HTTP response code");
         }
         result = result && true;
-        if ((http_response_code == 200) or (http_response_code == 204)) {
+        if ((response_code == 200) or (response_code == 204)) {
           uc->set_up_cnx_state(
               curl_responses.begin()->first,
               up_cnx_state_e::UPCNX_STATE_ACTIVATED);
         }
-
       } else {
         result = true;
       }
+
       curl_responses.erase(curl_responses.begin());
     }
 
