@@ -40,7 +40,7 @@ void IndividualSubscriptionDocumentApiImplEventExposure::delete_subscription(
     response.send(Pistache::Http::Code::No_Content);
   } else {
     // Send response
-    nlohmann::json json_data                        = {};
+    nlohmann::json json_data       = {};
     ProblemDetails problem_details = {};
     problem_details.setCause("SUBSCRIPTION_NOT_FOUND");
     to_json(json_data, problem_details);

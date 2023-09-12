@@ -5066,8 +5066,7 @@ bool amf_n1::get_slice_selection_subscription_data(
       }
 
       // Store this info in UE NAS Context
-      std::vector<Snssai> default_snssais =
-          nssai.getDefaultSingleNssais();
+      std::vector<Snssai> default_snssais = nssai.getDefaultSingleNssais();
       // bool default_subscribed_snssai = true;
       for (const auto& ds : default_snssais) {
         nas::SNSSAI_t subscribed_snssai = {};

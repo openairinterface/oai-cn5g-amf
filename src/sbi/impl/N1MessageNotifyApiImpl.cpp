@@ -49,7 +49,7 @@ void N1MessageNotifyApiImpl::receive_n1_message_notification(
   itti_msg->http_version     = 1;
 
   oai::model::common::ProblemDetails problem_details = {};
-  uint32_t http_code                              = {0};
+  uint32_t http_code                                 = {0};
 
   // Send response
   response.send(Pistache::Http::Code::No_Content);
