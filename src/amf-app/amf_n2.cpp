@@ -520,7 +520,7 @@ void amf_n2::handle_itti_message(
 
   // TODO: Do we need to store gNB context in UDSF (if available)?
 
-  delete[] buffer;
+  // delete[] buffer;//Free in destructor of NgapMessage
   bdestroy_wrapper(&b);
   return;
 }
@@ -770,7 +770,7 @@ void amf_n2::handle_itti_message(
           "ngap", "InitialUEMessage", unc->initial_ue_msg.buf, encoded_size);
       unc->initial_ue_msg.size = encoded_size;
     }
-    delete[] initial_ue_msg_buf;
+    // delete[] initial_ue_msg_buf;//Free in destructor of NgapMessage
   }
 
   itti_msg->gnb_id         = gc->gnb_id;
@@ -1150,7 +1150,7 @@ void amf_n2::handle_itti_message(
   bstring b = blk2bstr(buffer, encoded_size);
   sctp_s_38412.sctp_send_msg(gc->sctp_assoc_id, unc->sctp_stream_send, &b);
   bdestroy_wrapper(&b);
-  delete[] buffer;
+  // delete[] buffer;//Free in destructor of NgapMessage
 }
 
 //------------------------------------------------------------------------------
@@ -1215,7 +1215,7 @@ void amf_n2::handle_itti_message(
   sctp_s_38412.sctp_send_msg(gc->sctp_assoc_id, unc->sctp_stream_send, &b);
   // free memory
   bdestroy_wrapper(&b);
-  delete[] buffer;
+  // delete[] buffer;//Free in destructor of NgapMessage
 }
 
 //------------------------------------------------------------------------------
@@ -1274,7 +1274,7 @@ void amf_n2::handle_itti_message(
   sctp_s_38412.sctp_send_msg(gc->sctp_assoc_id, unc->sctp_stream_send, &b);
   // free memory
   bdestroy_wrapper(&b);
-  delete[] buffer;
+  // delete[] buffer;//Free in destructor of NgapMessage
 }
 
 //------------------------------------------------------------------------------
@@ -2482,7 +2482,7 @@ void amf_n2::send_ng_setup_failure(
   bstring b = blk2bstr(buffer, encoded);
   sctp_s_38412.sctp_send_msg(assoc_id, stream_id, &b);
   bdestroy_wrapper(&b);
-  delete[] buffer;
+  // delete[] buffer;//Free in destructor of NgapMessage
 }
 
 //------------------------------------------------------------------------------
