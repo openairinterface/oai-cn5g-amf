@@ -57,8 +57,8 @@ class UEContextRelease {
   /// <summary>
   ///
   /// </summary>
-  NgApCause getNgapCause() const;
-  void setNgapCause(NgApCause const& value);
+  oai::model::common::NgApCause getNgapCause() const;
+  void setNgapCause(oai::model::common::NgApCause const& value);
 
   friend void to_json(nlohmann::json& j, const UEContextRelease& o);
   friend void from_json(const nlohmann::json& j, UEContextRelease& o);
@@ -68,7 +68,7 @@ class UEContextRelease {
   bool m_SupiIsSet;
   bool m_UnauthenticatedSupi;
   bool m_UnauthenticatedSupiIsSet;
-  NgApCause m_NgapCause;
+  oai::model::common::NgApCause m_NgapCause;
 };
 
 }  // namespace model

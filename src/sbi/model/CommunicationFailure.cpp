@@ -27,7 +27,7 @@ CommunicationFailure::CommunicationFailure() {
 void CommunicationFailure::validate() const {
   std::stringstream msg;
   if (!validate(msg)) {
-    throw oai::amf::helpers::ValidationException(msg.str());
+    throw oai::model::common::helpers::ValidationException(msg.str());
   }
 }
 
@@ -92,10 +92,11 @@ bool CommunicationFailure::nasReleaseCodeIsSet() const {
 void CommunicationFailure::unsetNasReleaseCode() {
   m_NasReleaseCodeIsSet = false;
 }
-NgApCause CommunicationFailure::getRanReleaseCode() const {
+oai::model::common::NgApCause CommunicationFailure::getRanReleaseCode() const {
   return m_RanReleaseCode;
 }
-void CommunicationFailure::setRanReleaseCode(NgApCause const& value) {
+void CommunicationFailure::setRanReleaseCode(
+    oai::model::common::NgApCause const& value) {
   m_RanReleaseCode      = value;
   m_RanReleaseCodeIsSet = true;
 }

@@ -42,21 +42,21 @@ class NssaiMapping {
   /// <summary>
   ///
   /// </summary>
-  Snssai getMappedSnssai() const;
-  void setMappedSnssai(Snssai const& value);
+  oai::model::common::Snssai getMappedSnssai() const;
+  void setMappedSnssai(oai::model::common::Snssai const& value);
   /// <summary>
   ///
   /// </summary>
-  Snssai getHSnssai() const;
-  void setHSnssai(Snssai const& value);
+  oai::model::common::Snssai getHSnssai() const;
+  void setHSnssai(oai::model::common::Snssai const& value);
 
   friend void to_json(nlohmann::json& j, const NssaiMapping& o);
   friend void from_json(const nlohmann::json& j, NssaiMapping& o);
 
  protected:
-  Snssai m_MappedSnssai;
+  oai::model::common::Snssai m_MappedSnssai;
 
-  Snssai m_HSnssai;
+  oai::model::common::Snssai m_HSnssai;
 };
 
 }  // namespace model

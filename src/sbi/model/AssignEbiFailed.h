@@ -48,7 +48,7 @@ class AssignEbiFailed {
   /// <summary>
   ///
   /// </summary>
-  std::vector<Arp>& getFailedArpList();
+  std::vector<oai::model::common::Arp>& getFailedArpList();
   bool failedArpListIsSet() const;
   void unsetFailedArpList();
 
@@ -58,7 +58,7 @@ class AssignEbiFailed {
  protected:
   int32_t m_PduSessionId;
 
-  std::vector<Arp> m_FailedArpList;
+  std::vector<oai::model::common::Arp> m_FailedArpList;
   bool m_FailedArpListIsSet;
 };
 

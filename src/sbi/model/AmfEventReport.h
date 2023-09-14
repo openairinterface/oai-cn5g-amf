@@ -129,8 +129,8 @@ class AmfEventReport {
   /// <summary>
   ///
   /// </summary>
-  UserLocation getLocation() const;
-  void setLocation(UserLocation const& value);
+  oai::model::common::UserLocation getLocation() const;
+  void setLocation(oai::model::common::UserLocation const& value);
   bool locationIsSet() const;
   void unsetLocation();
   /// <summary>
@@ -143,8 +143,9 @@ class AmfEventReport {
   /// <summary>
   ///
   /// </summary>
-  std::vector<AccessType> getAccessTypeList() const;
-  void setAccessTypeList(std::vector<AccessType> const& value);
+  std::vector<oai::model::common::AccessType> getAccessTypeList() const;
+  void setAccessTypeList(
+      std::vector<oai::model::common::AccessType> const& value);
   bool accessTypeListIsSet() const;
   void unsetAccessTypeList();
   /// <summary>
@@ -238,11 +239,11 @@ class AmfEventReport {
   bool m_GpsiIsSet;
   std::string m_Pei;
   bool m_PeiIsSet;
-  UserLocation m_Location;
+  oai::model::common::UserLocation m_Location;
   bool m_LocationIsSet;
   std::string m_Timezone;
   bool m_TimezoneIsSet;
-  std::vector<AccessType> m_AccessTypeList;
+  std::vector<oai::model::common::AccessType> m_AccessTypeList;
   bool m_AccessTypeListIsSet;
   std::vector<RmInfo> m_RmInfoList;
   bool m_RmInfoListIsSet;

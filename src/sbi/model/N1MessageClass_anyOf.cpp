@@ -23,7 +23,7 @@ N1MessageClass_anyOf::N1MessageClass_anyOf() {}
 void N1MessageClass_anyOf::validate() const {
   std::stringstream msg;
   if (!validate(msg)) {
-    throw oai::amf::helpers::ValidationException(msg.str());
+    throw oai::model::common::helpers::ValidationException(msg.str());
   }
 }
 

@@ -56,8 +56,8 @@ class PduSessionContext {
   /// <summary>
   ///
   /// </summary>
-  Snssai getSNssai() const;
-  void setSNssai(Snssai const& value);
+  oai::model::common::Snssai getSNssai() const;
+  void setSNssai(oai::model::common::Snssai const& value);
   /// <summary>
   ///
   /// </summary>
@@ -66,8 +66,8 @@ class PduSessionContext {
   /// <summary>
   ///
   /// </summary>
-  AccessType getAccessType() const;
-  void setAccessType(AccessType const& value);
+  oai::model::common::AccessType getAccessType() const;
+  void setAccessType(oai::model::common::AccessType const& value);
   /// <summary>
   ///
   /// </summary>
@@ -111,11 +111,11 @@ class PduSessionContext {
 
   std::string m_SmContextRef;
 
-  Snssai m_SNssai;
+  oai::model::common::Snssai m_SNssai;
 
   std::string m_Dnn;
 
-  AccessType m_AccessType;
+  oai::model::common::AccessType m_AccessType;
 
   std::vector<EbiArpMapping_2> m_AllocatedEbiList;
   bool m_AllocatedEbiListIsSet;

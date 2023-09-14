@@ -44,7 +44,7 @@ class ExpectedUeBehavior {
   /// <summary>
   ///
   /// </summary>
-  std::vector<UserLocation>& getExpMoveTrajectory();
+  std::vector<oai::model::common::UserLocation>& getExpMoveTrajectory();
   /// <summary>
   ///
   /// </summary>
@@ -55,7 +55,7 @@ class ExpectedUeBehavior {
   friend void from_json(const nlohmann::json& j, ExpectedUeBehavior& o);
 
  protected:
-  std::vector<UserLocation> m_ExpMoveTrajectory;
+  std::vector<oai::model::common::UserLocation> m_ExpMoveTrajectory;
 
   std::string m_ValidityTime;
 };

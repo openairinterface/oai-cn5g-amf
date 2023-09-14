@@ -53,7 +53,7 @@ class AssignedEbiData {
   /// <summary>
   ///
   /// </summary>
-  std::vector<Arp>& getFailedArpList();
+  std::vector<oai::model::common::Arp>& getFailedArpList();
   bool failedArpListIsSet() const;
   void unsetFailedArpList();
   /// <summary>
@@ -71,7 +71,7 @@ class AssignedEbiData {
 
   std::vector<EbiArpMapping> m_AssignedEbiList;
 
-  std::vector<Arp> m_FailedArpList;
+  std::vector<oai::model::common::Arp> m_FailedArpList;
   bool m_FailedArpListIsSet;
   std::vector<int32_t> m_ReleasedEbiList;
   bool m_ReleasedEbiListIsSet;

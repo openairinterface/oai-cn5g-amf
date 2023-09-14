@@ -130,8 +130,8 @@ class UeContext {
   /// <summary>
   ///
   /// </summary>
-  Ambr getSubUeAmbr() const;
-  void setSubUeAmbr(Ambr const& value);
+  oai::model::common::Ambr getSubUeAmbr() const;
+  void setSubUeAmbr(oai::model::common::Ambr const& value);
   bool subUeAmbrIsSet() const;
   void unsetSubUeAmbr();
   /// <summary>
@@ -205,26 +205,28 @@ class UeContext {
   /// <summary>
   ///
   /// </summary>
-  std::vector<RatType>& getRestrictedRatList();
+  std::vector<oai::model::common::RatType>& getRestrictedRatList();
   bool restrictedRatListIsSet() const;
   void unsetRestrictedRatList();
   /// <summary>
   ///
   /// </summary>
-  std::vector<Area>& getForbiddenAreaList();
+  std::vector<oai::model::common::Area>& getForbiddenAreaList();
   bool forbiddenAreaListIsSet() const;
   void unsetForbiddenAreaList();
   /// <summary>
   ///
   /// </summary>
-  ServiceAreaRestriction getServiceAreaRestriction() const;
-  void setServiceAreaRestriction(ServiceAreaRestriction const& value);
+  oai::model::common::ServiceAreaRestriction getServiceAreaRestriction() const;
+  void setServiceAreaRestriction(
+      oai::model::common::ServiceAreaRestriction const& value);
   bool serviceAreaRestrictionIsSet() const;
   void unsetServiceAreaRestriction();
   /// <summary>
   ///
   /// </summary>
-  std::vector<CoreNetworkType>& getRestrictedCoreNwTypeList();
+  std::vector<oai::model::common::CoreNetworkType>&
+  getRestrictedCoreNwTypeList();
   bool restrictedCoreNwTypeListIsSet() const;
   void unsetRestrictedCoreNwTypeList();
   /// <summary>
@@ -248,8 +250,8 @@ class UeContext {
   /// <summary>
   ///
   /// </summary>
-  TraceData getTraceData() const;
-  void setTraceData(TraceData const& value);
+  oai::model::common::TraceData getTraceData() const;
+  void setTraceData(oai::model::common::TraceData const& value);
   bool traceDataIsSet() const;
   void unsetTraceData();
   /// <summary>
@@ -286,7 +288,7 @@ class UeContext {
   bool m_SubRfspIsSet;
   int32_t m_UsedRfsp;
   bool m_UsedRfspIsSet;
-  Ambr m_SubUeAmbr;
+  oai::model::common::Ambr m_SubUeAmbr;
   bool m_SubUeAmbrIsSet;
   SmsSupport m_SmsSupport;
   bool m_SmsSupportIsSet;
@@ -308,13 +310,13 @@ class UeContext {
   bool m_UePolicyReqTriggerListIsSet;
   std::string m_HpcfId;
   bool m_HpcfIdIsSet;
-  std::vector<RatType> m_RestrictedRatList;
+  std::vector<oai::model::common::RatType> m_RestrictedRatList;
   bool m_RestrictedRatListIsSet;
-  std::vector<Area> m_ForbiddenAreaList;
+  std::vector<oai::model::common::Area> m_ForbiddenAreaList;
   bool m_ForbiddenAreaListIsSet;
-  ServiceAreaRestriction m_ServiceAreaRestriction;
+  oai::model::common::ServiceAreaRestriction m_ServiceAreaRestriction;
   bool m_ServiceAreaRestrictionIsSet;
-  std::vector<CoreNetworkType> m_RestrictedCoreNwTypeList;
+  std::vector<oai::model::common::CoreNetworkType> m_RestrictedCoreNwTypeList;
   bool m_RestrictedCoreNwTypeListIsSet;
   std::vector<AmfEventSubscription> m_EventSubscriptionList;
   bool m_EventSubscriptionListIsSet;
@@ -322,7 +324,7 @@ class UeContext {
   bool m_MmContextListIsSet;
   std::vector<PduSessionContext> m_SessionContextList;
   bool m_SessionContextListIsSet;
-  TraceData m_TraceData;
+  oai::model::common::TraceData m_TraceData;
   bool m_TraceDataIsSet;
   int32_t m_RemainingServiceGapTimer;
   bool m_RemainingServiceGapTimerIsSet;

@@ -53,7 +53,7 @@ N1N2MessageTransferReqData::N1N2MessageTransferReqData() {
 void N1N2MessageTransferReqData::validate() const {
   std::stringstream msg;
   if (!validate(msg)) {
-    throw oai::amf::helpers::ValidationException(msg.str());
+    throw oai::model::common::helpers::ValidationException(msg.str());
   }
 }
 
@@ -344,11 +344,12 @@ bool N1N2MessageTransferReqData::n2InfoContainerIsSet() const {
 void N1N2MessageTransferReqData::unsetN2InfoContainer() {
   m_N2InfoContainerIsSet = false;
 }
-oai::amf::model::RefToBinaryData N1N2MessageTransferReqData::getMtData() const {
+oai::model::common::RefToBinaryData N1N2MessageTransferReqData::getMtData()
+    const {
   return m_MtData;
 }
 void N1N2MessageTransferReqData::setMtData(
-    oai::amf::model::RefToBinaryData const& value) {
+    oai::model::common::RefToBinaryData const& value) {
   m_MtData      = value;
   m_MtDataIsSet = true;
 }
@@ -423,10 +424,10 @@ bool N1N2MessageTransferReqData::ppiIsSet() const {
 void N1N2MessageTransferReqData::unsetPpi() {
   m_PpiIsSet = false;
 }
-oai::amf::model::Arp N1N2MessageTransferReqData::getArp() const {
+oai::model::common::Arp N1N2MessageTransferReqData::getArp() const {
   return m_Arp;
 }
-void N1N2MessageTransferReqData::setArp(oai::amf::model::Arp const& value) {
+void N1N2MessageTransferReqData::setArp(oai::model::common::Arp const& value) {
   m_Arp      = value;
   m_ArpIsSet = true;
 }
@@ -505,11 +506,11 @@ bool N1N2MessageTransferReqData::supportedFeaturesIsSet() const {
 void N1N2MessageTransferReqData::unsetSupportedFeatures() {
   m_SupportedFeaturesIsSet = false;
 }
-oai::amf::model::Guami N1N2MessageTransferReqData::getOldGuami() const {
+oai::model::common::Guami N1N2MessageTransferReqData::getOldGuami() const {
   return m_OldGuami;
 }
 void N1N2MessageTransferReqData::setOldGuami(
-    oai::amf::model::Guami const& value) {
+    oai::model::common::Guami const& value) {
   m_OldGuami      = value;
   m_OldGuamiIsSet = true;
 }
@@ -545,12 +546,12 @@ bool N1N2MessageTransferReqData::extBufSupportIsSet() const {
 void N1N2MessageTransferReqData::unsetExtBufSupport() {
   m_ExtBufSupportIsSet = false;
 }
-oai::amf::model::AccessType N1N2MessageTransferReqData::getTargetAccess()
+oai::model::common::AccessType N1N2MessageTransferReqData::getTargetAccess()
     const {
   return m_TargetAccess;
 }
 void N1N2MessageTransferReqData::setTargetAccess(
-    oai::amf::model::AccessType const& value) {
+    oai::model::common::AccessType const& value) {
   m_TargetAccess      = value;
   m_TargetAccessIsSet = true;
 }

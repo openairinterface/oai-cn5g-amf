@@ -61,13 +61,13 @@ class ConfiguredSnssai {
   /// <summary>
   ///
   /// </summary>
-  Snssai getConfiguredSnssai() const;
-  void setConfiguredSnssai(Snssai const& value);
+  oai::model::common::Snssai getConfiguredSnssai() const;
+  void setConfiguredSnssai(oai::model::common::Snssai const& value);
   /// <summary>
   ///
   /// </summary>
-  Snssai getMappedHomeSnssai() const;
-  void setMappedHomeSnssai(Snssai const& value);
+  oai::model::common::Snssai getMappedHomeSnssai() const;
+  void setMappedHomeSnssai(oai::model::common::Snssai const& value);
   bool mappedHomeSnssaiIsSet() const;
   void unsetMappedHomeSnssai();
 
@@ -75,9 +75,9 @@ class ConfiguredSnssai {
   friend void from_json(const nlohmann::json& j, ConfiguredSnssai& o);
 
  protected:
-  Snssai m_ConfiguredSnssai;
+  oai::model::common::Snssai m_ConfiguredSnssai;
 
-  Snssai m_MappedHomeSnssai;
+  oai::model::common::Snssai m_MappedHomeSnssai;
   bool m_MappedHomeSnssaiIsSet;
 };
 

@@ -48,7 +48,7 @@ int32_t AssignEbiFailed::getPduSessionId() const {
 void AssignEbiFailed::setPduSessionId(int32_t const value) {
   m_PduSessionId = value;
 }
-std::vector<Arp>& AssignEbiFailed::getFailedArpList() {
+std::vector<oai::model::common::Arp>& AssignEbiFailed::getFailedArpList() {
   return m_FailedArpList;
 }
 bool AssignEbiFailed::failedArpListIsSet() const {

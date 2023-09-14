@@ -51,7 +51,7 @@ void from_json(const nlohmann::json& j, AmfStatusInfo& o) {
   }
 }
 
-std::vector<Guami>& AmfStatusInfo::getGuamiList() {
+std::vector<oai::model::common::Guami>& AmfStatusInfo::getGuamiList() {
   return m_GuamiList;
 }
 StatusChange AmfStatusInfo::getStatusChange() const {

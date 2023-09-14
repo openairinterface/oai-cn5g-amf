@@ -48,7 +48,7 @@ class AssignEbiData {
   /// <summary>
   ///
   /// </summary>
-  std::vector<Arp>& getArpList();
+  std::vector<oai::model::common::Arp>& getArpList();
   bool arpListIsSet() const;
   void unsetArpList();
   /// <summary>
@@ -64,7 +64,7 @@ class AssignEbiData {
  protected:
   int32_t m_PduSessionId;
 
-  std::vector<Arp> m_ArpList;
+  std::vector<oai::model::common::Arp> m_ArpList;
   bool m_ArpListIsSet;
   std::vector<int32_t> m_ReleasedEbiList;
   bool m_ReleasedEbiListIsSet;

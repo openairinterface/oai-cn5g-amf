@@ -59,7 +59,7 @@ void AssignedEbiData::setPduSessionId(int32_t const value) {
 std::vector<EbiArpMapping>& AssignedEbiData::getAssignedEbiList() {
   return m_AssignedEbiList;
 }
-std::vector<Arp>& AssignedEbiData::getFailedArpList() {
+std::vector<oai::model::common::Arp>& AssignedEbiData::getFailedArpList() {
   return m_FailedArpList;
 }
 bool AssignedEbiData::failedArpListIsSet() const {

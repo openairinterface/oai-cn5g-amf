@@ -76,10 +76,11 @@ bool UEContextRelease::unauthenticatedSupiIsSet() const {
 void UEContextRelease::unsetUnauthenticatedSupi() {
   m_UnauthenticatedSupiIsSet = false;
 }
-NgApCause UEContextRelease::getNgapCause() const {
+oai::model::common::NgApCause UEContextRelease::getNgapCause() const {
   return m_NgapCause;
 }
-void UEContextRelease::setNgapCause(NgApCause const& value) {
+void UEContextRelease::setNgapCause(
+    oai::model::common::NgApCause const& value) {
   m_NgapCause = value;
 }
 

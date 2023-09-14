@@ -59,10 +59,11 @@ bool N1N2MsgTxfrErrDetail::retryAfterIsSet() const {
 void N1N2MsgTxfrErrDetail::unsetRetryAfter() {
   m_RetryAfterIsSet = false;
 }
-Arp N1N2MsgTxfrErrDetail::getHighestPrioArp() const {
+oai::model::common::Arp N1N2MsgTxfrErrDetail::getHighestPrioArp() const {
   return m_HighestPrioArp;
 }
-void N1N2MsgTxfrErrDetail::setHighestPrioArp(Arp const& value) {
+void N1N2MsgTxfrErrDetail::setHighestPrioArp(
+    oai::model::common::Arp const& value) {
   m_HighestPrioArp      = value;
   m_HighestPrioArpIsSet = true;
 }

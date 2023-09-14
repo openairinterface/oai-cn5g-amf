@@ -68,8 +68,8 @@ class AllowedNssai {
   /// <summary>
   ///
   /// </summary>
-  AccessType getAccessType() const;
-  void setAccessType(AccessType const& value);
+  oai::model::common::AccessType getAccessType() const;
+  void setAccessType(oai::model::common::AccessType const& value);
 
   friend void to_json(nlohmann::json& j, const AllowedNssai& o);
   friend void from_json(const nlohmann::json& j, AllowedNssai& o);
@@ -77,7 +77,7 @@ class AllowedNssai {
  protected:
   std::vector<AllowedSnssai> m_AllowedSnssaiList;
 
-  AccessType m_AccessType;
+  oai::model::common::AccessType m_AccessType;
 };
 
 }  // namespace model

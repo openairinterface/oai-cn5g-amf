@@ -61,8 +61,8 @@ class SubscribedSnssai {
   /// <summary>
   ///
   /// </summary>
-  Snssai getSubscribedSnssai() const;
-  void setSubscribedSnssai(Snssai const& value);
+  oai::model::common::Snssai getSubscribedSnssai() const;
+  void setSubscribedSnssai(oai::model::common::Snssai const& value);
   /// <summary>
   ///
   /// </summary>
@@ -75,7 +75,7 @@ class SubscribedSnssai {
   friend void from_json(const nlohmann::json& j, SubscribedSnssai& o);
 
  protected:
-  Snssai m_SubscribedSnssai;
+  oai::model::common::Snssai m_SubscribedSnssai;
 
   bool m_DefaultIndication;
   bool m_DefaultIndicationIsSet;

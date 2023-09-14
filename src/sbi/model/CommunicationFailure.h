@@ -61,8 +61,8 @@ class CommunicationFailure {
   /// <summary>
   ///
   /// </summary>
-  NgApCause getRanReleaseCode() const;
-  void setRanReleaseCode(NgApCause const& value);
+  oai::model::common::NgApCause getRanReleaseCode() const;
+  void setRanReleaseCode(oai::model::common::NgApCause const& value);
   bool ranReleaseCodeIsSet() const;
   void unsetRanReleaseCode();
 
@@ -72,7 +72,7 @@ class CommunicationFailure {
  protected:
   std::string m_NasReleaseCode;
   bool m_NasReleaseCodeIsSet;
-  NgApCause m_RanReleaseCode;
+  oai::model::common::NgApCause m_RanReleaseCode;
   bool m_RanReleaseCodeIsSet;
 
   // Helper overload for validate. Used when one model stores another model and

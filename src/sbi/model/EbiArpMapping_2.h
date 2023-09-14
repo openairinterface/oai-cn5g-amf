@@ -47,8 +47,8 @@ class EbiArpMapping_2 {
   /// <summary>
   ///
   /// </summary>
-  Arp getArp() const;
-  void setArp(Arp const& value);
+  oai::model::common::Arp getArp() const;
+  void setArp(oai::model::common::Arp const& value);
 
   friend void to_json(nlohmann::json& j, const EbiArpMapping_2& o);
   friend void from_json(const nlohmann::json& j, EbiArpMapping_2& o);
@@ -56,7 +56,7 @@ class EbiArpMapping_2 {
  protected:
   int32_t m_EpsBearerId;
 
-  Arp m_Arp;
+  oai::model::common::Arp m_Arp;
 };
 
 }  // namespace model

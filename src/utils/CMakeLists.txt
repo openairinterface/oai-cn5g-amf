@@ -31,6 +31,8 @@ include_directories(${SRC_TOP_DIR}/itti/msgs)
 include_directories(${SRC_TOP_DIR}/sbi/model)
 include_directories(${SRC_TOP_DIR}/${MOUNTED_COMMON}/logger)
 
+include(${BUILD_TOP_DIR}/amf/used_models.cmake)
+
 add_library (AMF_UTILS STATIC
  ${CMAKE_CURRENT_SOURCE_DIR}/backtrace.c
  ${CMAKE_CURRENT_SOURCE_DIR}/dynamic_memory_check.c

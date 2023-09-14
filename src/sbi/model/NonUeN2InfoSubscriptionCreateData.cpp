@@ -66,7 +66,7 @@ void from_json(const nlohmann::json& j, NonUeN2InfoSubscriptionCreateData& o) {
   }
 }
 
-std::vector<GlobalRanNodeId>&
+std::vector<oai::model::common::GlobalRanNodeId>&
 NonUeN2InfoSubscriptionCreateData::getGlobalRanNodeList() {
   return m_GlobalRanNodeList;
 }
@@ -76,7 +76,8 @@ bool NonUeN2InfoSubscriptionCreateData::globalRanNodeListIsSet() const {
 void NonUeN2InfoSubscriptionCreateData::unsetGlobalRanNodeList() {
   m_GlobalRanNodeListIsSet = false;
 }
-std::vector<AccessType>& NonUeN2InfoSubscriptionCreateData::getAnTypeList() {
+std::vector<oai::model::common::AccessType>&
+NonUeN2InfoSubscriptionCreateData::getAnTypeList() {
   return m_AnTypeList;
 }
 bool NonUeN2InfoSubscriptionCreateData::anTypeListIsSet() const {

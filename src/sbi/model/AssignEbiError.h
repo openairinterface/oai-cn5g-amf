@@ -19,7 +19,7 @@
 #ifndef AssignEbiError_H_
 #define AssignEbiError_H_
 
-#include "ProblemDetails_2.h"
+#include "ProblemDetails.h"
 #include "AssignEbiFailed.h"
 #include <nlohmann/json.hpp>
 
@@ -43,8 +43,8 @@ class AssignEbiError {
   /// <summary>
   ///
   /// </summary>
-  ProblemDetails_2 getError() const;
-  void setError(ProblemDetails_2 const& value);
+  oai::model::common::ProblemDetails getError() const;
+  void setError(oai::model::common::ProblemDetails const& value);
   /// <summary>
   ///
   /// </summary>
@@ -55,7 +55,7 @@ class AssignEbiError {
   friend void from_json(const nlohmann::json& j, AssignEbiError& o);
 
  protected:
-  ProblemDetails_2 m_Error;
+  oai::model::common::ProblemDetails m_Error;
 
   AssignEbiFailed m_FailureDetails;
 };

@@ -769,7 +769,7 @@ class amf_n1 {
    * @return void
    */
   void handle_ue_location_change(
-      std::string supi, oai::amf::model::UserLocation, uint8_t http_version);
+      std::string supi, oai::model::common::UserLocation, uint8_t http_version);
 
   /*
    * Handle the UE Reachability Status Change event to trigger the notification

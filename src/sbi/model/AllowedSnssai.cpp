@@ -110,10 +110,10 @@ void from_json(const nlohmann::json& j, AllowedSnssai& o) {
   }
 }
 
-Snssai AllowedSnssai::getAllowedSnssai() const {
+oai::model::common::Snssai AllowedSnssai::getAllowedSnssai() const {
   return m_AllowedSnssai;
 }
-void AllowedSnssai::setAllowedSnssai(Snssai const& value) {
+void AllowedSnssai::setAllowedSnssai(oai::model::common::Snssai const& value) {
   m_AllowedSnssai = value;
 }
 std::vector<NsiInformation> AllowedSnssai::getNsiInformationList() const {
@@ -130,10 +130,11 @@ bool AllowedSnssai::nsiInformationListIsSet() const {
 void AllowedSnssai::unsetNsiInformationList() {
   m_NsiInformationListIsSet = false;
 }
-Snssai AllowedSnssai::getMappedHomeSnssai() const {
+oai::model::common::Snssai AllowedSnssai::getMappedHomeSnssai() const {
   return m_MappedHomeSnssai;
 }
-void AllowedSnssai::setMappedHomeSnssai(Snssai const& value) {
+void AllowedSnssai::setMappedHomeSnssai(
+    oai::model::common::Snssai const& value) {
   m_MappedHomeSnssai      = value;
   m_MappedHomeSnssaiIsSet = true;
 }

@@ -68,16 +68,17 @@ void from_json(const nlohmann::json& j, MappingOfSnssai& o) {
   j.at("homeSnssai").get_to(o.m_HomeSnssai);
 }
 
-Snssai MappingOfSnssai::getServingSnssai() const {
+oai::model::common::Snssai MappingOfSnssai::getServingSnssai() const {
   return m_ServingSnssai;
 }
-void MappingOfSnssai::setServingSnssai(Snssai const& value) {
+void MappingOfSnssai::setServingSnssai(
+    oai::model::common::Snssai const& value) {
   m_ServingSnssai = value;
 }
-Snssai MappingOfSnssai::getHomeSnssai() const {
+oai::model::common::Snssai MappingOfSnssai::getHomeSnssai() const {
   return m_HomeSnssai;
 }
-void MappingOfSnssai::setHomeSnssai(Snssai const& value) {
+void MappingOfSnssai::setHomeSnssai(oai::model::common::Snssai const& value) {
   m_HomeSnssai = value;
 }
 

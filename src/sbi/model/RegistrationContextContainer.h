@@ -62,8 +62,8 @@ class RegistrationContextContainer {
   /// <summary>
   ///
   /// </summary>
-  AccessType getAnType() const;
-  void setAnType(AccessType const& value);
+  oai::model::common::AccessType getAnType() const;
+  void setAnType(oai::model::common::AccessType const& value);
   /// <summary>
   ///
   /// </summary>
@@ -72,8 +72,8 @@ class RegistrationContextContainer {
   /// <summary>
   ///
   /// </summary>
-  GlobalRanNodeId getRanNodeId() const;
-  void setRanNodeId(GlobalRanNodeId const& value);
+  oai::model::common::GlobalRanNodeId getRanNodeId() const;
+  void setRanNodeId(oai::model::common::GlobalRanNodeId const& value);
   /// <summary>
   ///
   /// </summary>
@@ -82,8 +82,8 @@ class RegistrationContextContainer {
   /// <summary>
   ///
   /// </summary>
-  UserLocation getUserLocation() const;
-  void setUserLocation(UserLocation const& value);
+  oai::model::common::UserLocation getUserLocation() const;
+  void setUserLocation(oai::model::common::UserLocation const& value);
   /// <summary>
   ///
   /// </summary>
@@ -128,13 +128,13 @@ class RegistrationContextContainer {
   /// <summary>
   ///
   /// </summary>
-  std::vector<Snssai>& getRejectedNssaiInPlmn();
+  std::vector<oai::model::common::Snssai>& getRejectedNssaiInPlmn();
   bool rejectedNssaiInPlmnIsSet() const;
   void unsetRejectedNssaiInPlmn();
   /// <summary>
   ///
   /// </summary>
-  std::vector<Snssai>& getRejectedNssaiInTa();
+  std::vector<oai::model::common::Snssai>& getRejectedNssaiInTa();
   bool rejectedNssaiInTaIsSet() const;
   void unsetRejectedNssaiInTa();
 
@@ -147,15 +147,15 @@ class RegistrationContextContainer {
 
   std::string m_LocalTimeZone;
   bool m_LocalTimeZoneIsSet;
-  AccessType m_AnType;
+  oai::model::common::AccessType m_AnType;
 
   int32_t m_AnN2ApId;
 
-  GlobalRanNodeId m_RanNodeId;
+  oai::model::common::GlobalRanNodeId m_RanNodeId;
 
   std::string m_InitialAmfName;
 
-  UserLocation m_UserLocation;
+  oai::model::common::UserLocation m_UserLocation;
 
   std::string m_RrcEstCause;
   bool m_RrcEstCauseIsSet;
@@ -169,9 +169,9 @@ class RegistrationContextContainer {
   bool m_AllowedNssaiIsSet;
   std::vector<ConfiguredSnssai> m_ConfiguredNssai;
   bool m_ConfiguredNssaiIsSet;
-  std::vector<Snssai> m_RejectedNssaiInPlmn;
+  std::vector<oai::model::common::Snssai> m_RejectedNssaiInPlmn;
   bool m_RejectedNssaiInPlmnIsSet;
-  std::vector<Snssai> m_RejectedNssaiInTa;
+  std::vector<oai::model::common::Snssai> m_RejectedNssaiInTa;
   bool m_RejectedNssaiInTaIsSet;
 };
 

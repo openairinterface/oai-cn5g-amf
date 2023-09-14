@@ -45,7 +45,7 @@ class AmfStatusInfo {
   /// <summary>
   ///
   /// </summary>
-  std::vector<Guami>& getGuamiList();
+  std::vector<oai::model::common::Guami>& getGuamiList();
   /// <summary>
   ///
   /// </summary>
@@ -70,7 +70,7 @@ class AmfStatusInfo {
   friend void from_json(const nlohmann::json& j, AmfStatusInfo& o);
 
  protected:
-  std::vector<Guami> m_GuamiList;
+  std::vector<oai::model::common::Guami> m_GuamiList;
 
   StatusChange m_StatusChange;
 

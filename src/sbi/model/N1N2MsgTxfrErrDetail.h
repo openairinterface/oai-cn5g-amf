@@ -49,8 +49,8 @@ class N1N2MsgTxfrErrDetail {
   /// <summary>
   ///
   /// </summary>
-  Arp getHighestPrioArp() const;
-  void setHighestPrioArp(Arp const& value);
+  oai::model::common::Arp getHighestPrioArp() const;
+  void setHighestPrioArp(oai::model::common::Arp const& value);
   bool highestPrioArpIsSet() const;
   void unsetHighestPrioArp();
 
@@ -60,7 +60,7 @@ class N1N2MsgTxfrErrDetail {
  protected:
   int32_t m_RetryAfter;
   bool m_RetryAfterIsSet;
-  Arp m_HighestPrioArp;
+  oai::model::common::Arp m_HighestPrioArp;
   bool m_HighestPrioArpIsSet;
 };
 

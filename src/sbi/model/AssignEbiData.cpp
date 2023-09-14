@@ -54,7 +54,7 @@ int32_t AssignEbiData::getPduSessionId() const {
 void AssignEbiData::setPduSessionId(int32_t const value) {
   m_PduSessionId = value;
 }
-std::vector<Arp>& AssignEbiData::getArpList() {
+std::vector<oai::model::common::Arp>& AssignEbiData::getArpList() {
   return m_ArpList;
 }
 bool AssignEbiData::arpListIsSet() const {

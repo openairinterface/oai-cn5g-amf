@@ -51,8 +51,8 @@ class N1N2MessageTransferError
   /// <summary>
   ///
   /// </summary>
-  ProblemDetails getError() const;
-  void setError(ProblemDetails const& value);
+  oai::model::common::ProblemDetails getError() const;
+  void setError(oai::model::common::ProblemDetails const& value);
   /// <summary>
   ///
   /// </summary>
@@ -62,7 +62,7 @@ class N1N2MessageTransferError
   void unsetErrInfo();
 
  protected:
-  ProblemDetails m_Error;
+  oai::model::common::ProblemDetails m_Error;
 
   N1N2MsgTxfrErrDetail m_ErrInfo;
   bool m_ErrInfoIsSet;

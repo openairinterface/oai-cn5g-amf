@@ -43,10 +43,11 @@ void from_json(const nlohmann::json& j, N1N2MessageTransferError& o) {
   }
 }
 
-ProblemDetails N1N2MessageTransferError::getError() const {
+oai::model::common::ProblemDetails N1N2MessageTransferError::getError() const {
   return m_Error;
 }
-void N1N2MessageTransferError::setError(ProblemDetails const& value) {
+void N1N2MessageTransferError::setError(
+    oai::model::common::ProblemDetails const& value) {
   m_Error = value;
 }
 N1N2MsgTxfrErrDetail N1N2MessageTransferError::getErrInfo() const {

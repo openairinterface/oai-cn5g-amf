@@ -21,7 +21,7 @@ namespace oai {
 namespace amf {
 namespace api {
 
-using namespace oai::amf::helpers;
+using namespace oai::model::common::helpers;
 
 N1N2IndividualSubscriptionDocumentApi::N1N2IndividualSubscriptionDocumentApi(
     std::shared_ptr<Pistache::Rest::Router> rtr) {

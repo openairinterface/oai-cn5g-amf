@@ -56,8 +56,9 @@ class UEAuthenticationCtx {
   /// <summary>
   ///
   /// </summary>
-  std::map<std::string, LinksValueSchema>& getLinks();
-  void setLinks(std::map<std::string, LinksValueSchema> const& value);
+  std::map<std::string, oai::model::common::LinksValueSchema>& getLinks();
+  void setLinks(
+      std::map<std::string, oai::model::common::LinksValueSchema> const& value);
   /// <summary>
   ///
   /// </summary>
@@ -74,7 +75,7 @@ class UEAuthenticationCtx {
 
   Av5gAka m_r_5gAuthData;
 
-  std::map<std::string, LinksValueSchema> m__links;
+  std::map<std::string, oai::model::common::LinksValueSchema> m__links;
 
   std::string m_ServingNetworkName;
   bool m_ServingNetworkNameIsSet;

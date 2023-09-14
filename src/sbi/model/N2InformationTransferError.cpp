@@ -41,10 +41,12 @@ void from_json(const nlohmann::json& j, N2InformationTransferError& o) {
   }
 }
 
-ProblemDetails_2 N2InformationTransferError::getError() const {
+oai::model::common::ProblemDetails N2InformationTransferError::getError()
+    const {
   return m_Error;
 }
-void N2InformationTransferError::setError(ProblemDetails_2 const& value) {
+void N2InformationTransferError::setError(
+    oai::model::common::ProblemDetails const& value) {
   m_Error = value;
 }
 PWSErrorData N2InformationTransferError::getPwdErrorInfo() const {

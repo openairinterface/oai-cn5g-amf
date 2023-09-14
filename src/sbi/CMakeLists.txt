@@ -37,6 +37,8 @@ include_directories(${SRC_TOP_DIR}/sbi/impl)
 include_directories(${SRC_TOP_DIR}/sbi/model)
 include_directories(${SRC_TOP_DIR}/${MOUNTED_COMMON}/logger)
 
+include(${BUILD_TOP_DIR}/amf/used_models.cmake)
+
 file(GLOB AMF_API_SERVER_src_files
     ${AMF_API_SERVER_DIR}/amf_http1_server.cpp
     ${AMF_API_SERVER_DIR}/amf_http2_server.cpp

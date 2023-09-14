@@ -63,8 +63,8 @@ class AllowedSnssai {
   /// <summary>
   ///
   /// </summary>
-  Snssai getAllowedSnssai() const;
-  void setAllowedSnssai(Snssai const& value);
+  oai::model::common::Snssai getAllowedSnssai() const;
+  void setAllowedSnssai(oai::model::common::Snssai const& value);
   /// <summary>
   ///
   /// </summary>
@@ -75,8 +75,8 @@ class AllowedSnssai {
   /// <summary>
   ///
   /// </summary>
-  Snssai getMappedHomeSnssai() const;
-  void setMappedHomeSnssai(Snssai const& value);
+  oai::model::common::Snssai getMappedHomeSnssai() const;
+  void setMappedHomeSnssai(oai::model::common::Snssai const& value);
   bool mappedHomeSnssaiIsSet() const;
   void unsetMappedHomeSnssai();
 
@@ -84,11 +84,11 @@ class AllowedSnssai {
   friend void from_json(const nlohmann::json& j, AllowedSnssai& o);
 
  protected:
-  Snssai m_AllowedSnssai;
+  oai::model::common::Snssai m_AllowedSnssai;
 
   std::vector<NsiInformation> m_NsiInformationList;
   bool m_NsiInformationListIsSet;
-  Snssai m_MappedHomeSnssai;
+  oai::model::common::Snssai m_MappedHomeSnssai;
   bool m_MappedHomeSnssaiIsSet;
 };
 

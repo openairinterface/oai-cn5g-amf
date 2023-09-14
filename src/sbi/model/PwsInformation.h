@@ -77,9 +77,9 @@ class PwsInformation {
   /// <summary>
   ///
   /// </summary>
-  std::vector<oai::amf::model::GlobalRanNodeId> getBcEmptyAreaList() const;
+  std::vector<oai::model::common::GlobalRanNodeId> getBcEmptyAreaList() const;
   void setBcEmptyAreaList(
-      std::vector<oai::amf::model::GlobalRanNodeId> const& value);
+      std::vector<oai::model::common::GlobalRanNodeId> const& value);
   bool bcEmptyAreaListIsSet() const;
   void unsetBcEmptyAreaList();
   /// <summary>
@@ -107,7 +107,7 @@ class PwsInformation {
 
   oai::amf::model::N2InfoContent m_PwsContainer;
 
-  std::vector<oai::amf::model::GlobalRanNodeId> m_BcEmptyAreaList;
+  std::vector<oai::model::common::GlobalRanNodeId> m_BcEmptyAreaList;
   bool m_BcEmptyAreaListIsSet;
   bool m_SendRanResponse;
   bool m_SendRanResponseIsSet;

@@ -19,7 +19,7 @@
 #ifndef N2InformationTransferError_H_
 #define N2InformationTransferError_H_
 
-#include "ProblemDetails_2.h"
+#include "ProblemDetails.h"
 #include "PWSErrorData.h"
 #include <nlohmann/json.hpp>
 
@@ -43,8 +43,8 @@ class N2InformationTransferError {
   /// <summary>
   ///
   /// </summary>
-  ProblemDetails_2 getError() const;
-  void setError(ProblemDetails_2 const& value);
+  oai::model::common::ProblemDetails getError() const;
+  void setError(oai::model::common::ProblemDetails const& value);
   /// <summary>
   ///
   /// </summary>
@@ -57,7 +57,7 @@ class N2InformationTransferError {
   friend void from_json(const nlohmann::json& j, N2InformationTransferError& o);
 
  protected:
-  ProblemDetails_2 m_Error;
+  oai::model::common::ProblemDetails m_Error;
 
   PWSErrorData m_PwdErrorInfo;
   bool m_PwdErrorInfoIsSet;

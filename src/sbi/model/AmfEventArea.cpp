@@ -26,7 +26,7 @@ AmfEventArea::AmfEventArea() {
 void AmfEventArea::validate() const {
   std::stringstream msg;
   if (!validate(msg)) {
-    throw oai::amf::helpers::ValidationException(msg.str());
+    throw oai::model::common::helpers::ValidationException(msg.str());
   }
 }
 
@@ -78,10 +78,11 @@ void from_json(const nlohmann::json& j, AmfEventArea& o) {
   }
 }
 
-PresenceInfo AmfEventArea::getPresenceInfo() const {
+oai::model::common::PresenceInfo AmfEventArea::getPresenceInfo() const {
   return m_PresenceInfo;
 }
-void AmfEventArea::setPresenceInfo(PresenceInfo const& value) {
+void AmfEventArea::setPresenceInfo(
+    oai::model::common::PresenceInfo const& value) {
   m_PresenceInfo      = value;
   m_PresenceInfoIsSet = true;
 }

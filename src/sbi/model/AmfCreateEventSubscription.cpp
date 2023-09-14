@@ -27,7 +27,7 @@ AmfCreateEventSubscription::AmfCreateEventSubscription() {
 void AmfCreateEventSubscription::validate() const {
   std::stringstream msg;
   if (!validate(msg)) {
-    throw oai::amf::helpers::ValidationException(msg.str());
+    throw oai::model::common::helpers::ValidationException(msg.str());
   }
 }
 
@@ -112,10 +112,11 @@ bool AmfCreateEventSubscription::supportedFeaturesIsSet() const {
 void AmfCreateEventSubscription::unsetSupportedFeatures() {
   m_SupportedFeaturesIsSet = false;
 }
-Guami AmfCreateEventSubscription::getOldGuami() const {
+oai::model::common::Guami AmfCreateEventSubscription::getOldGuami() const {
   return m_OldGuami;
 }
-void AmfCreateEventSubscription::setOldGuami(Guami const& value) {
+void AmfCreateEventSubscription::setOldGuami(
+    oai::model::common::Guami const& value) {
   m_OldGuami      = value;
   m_OldGuamiIsSet = true;
 }

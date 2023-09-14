@@ -39,6 +39,7 @@
 using namespace nghttp2::asio_http2;
 using namespace nghttp2::asio_http2::server;
 using namespace oai::amf::model;
+using namespace oai::model::common;
 
 extern oai::config::amf_config amf_cfg;
 extern itti_mw* itti_inst;
@@ -198,8 +199,8 @@ void amf_http2_server::start() {
                 response.end();
               } else {
                 // Send response
-                nlohmann::json json_data                        = {};
-                oai::amf::model::ProblemDetails problem_details = {};
+                nlohmann::json json_data       = {};
+                ProblemDetails problem_details = {};
                 problem_details.setCause("SUBSCRIPTION_NOT_FOUND");
                 to_json(json_data, problem_details);
                 response.write_head(static_cast<uint32_t>(

@@ -27,7 +27,7 @@ extern oai::config::amf_config amf_cfg;
 
 namespace oai::amf::api {
 
-using namespace oai::amf::helpers;
+using namespace oai::model::common::helpers;
 
 AMFConfigurationApi::AMFConfigurationApi(
     std::shared_ptr<Pistache::Rest::Router> rtr) {

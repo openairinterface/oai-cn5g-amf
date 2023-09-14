@@ -77,10 +77,11 @@ void from_json(const nlohmann::json& j, SubscribedSnssai& o) {
   }
 }
 
-Snssai SubscribedSnssai::getSubscribedSnssai() const {
+oai::model::common::Snssai SubscribedSnssai::getSubscribedSnssai() const {
   return m_SubscribedSnssai;
 }
-void SubscribedSnssai::setSubscribedSnssai(Snssai const& value) {
+void SubscribedSnssai::setSubscribedSnssai(
+    oai::model::common::Snssai const& value) {
   m_SubscribedSnssai = value;
 }
 bool SubscribedSnssai::isDefaultIndication() const {

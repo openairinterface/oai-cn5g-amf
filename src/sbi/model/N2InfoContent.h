@@ -74,8 +74,8 @@ class N2InfoContent {
   /// <summary>
   ///
   /// </summary>
-  oai::amf::model::RefToBinaryData getNgapData() const;
-  void setNgapData(oai::amf::model::RefToBinaryData const& value);
+  oai::model::common::RefToBinaryData getNgapData() const;
+  void setNgapData(oai::model::common::RefToBinaryData const& value);
 
   friend void to_json(nlohmann::json& j, const N2InfoContent& o);
   friend void from_json(const nlohmann::json& j, N2InfoContent& o);
@@ -85,7 +85,7 @@ class N2InfoContent {
   bool m_NgapMessageTypeIsSet;
   oai::amf::model::NgapIeType m_NgapIeType;
   bool m_NgapIeTypeIsSet;
-  oai::amf::model::RefToBinaryData m_NgapData;
+  oai::model::common::RefToBinaryData m_NgapData;
 };
 
 }  // namespace oai::amf::model

@@ -51,13 +51,13 @@ class UeContextTransferReqData {
   /// <summary>
   ///
   /// </summary>
-  AccessType getAccessType() const;
-  void setAccessType(AccessType const& value);
+  oai::model::common::AccessType getAccessType() const;
+  void setAccessType(oai::model::common::AccessType const& value);
   /// <summary>
   ///
   /// </summary>
-  PlmnId getPlmnId() const;
-  void setPlmnId(PlmnId const& value);
+  oai::model::common::PlmnId getPlmnId() const;
+  void setPlmnId(oai::model::common::PlmnId const& value);
   bool plmnIdIsSet() const;
   void unsetPlmnId();
   /// <summary>
@@ -81,9 +81,9 @@ class UeContextTransferReqData {
  protected:
   TransferReason m_Reason;
 
-  AccessType m_AccessType;
+  oai::model::common::AccessType m_AccessType;
 
-  PlmnId m_PlmnId;
+  oai::model::common::PlmnId m_PlmnId;
   bool m_PlmnIdIsSet;
   N1MessageContainer m_RegRequest;
   bool m_RegRequestIsSet;

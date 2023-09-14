@@ -126,10 +126,11 @@ bool RegistrationContextContainer::localTimeZoneIsSet() const {
 void RegistrationContextContainer::unsetLocalTimeZone() {
   m_LocalTimeZoneIsSet = false;
 }
-AccessType RegistrationContextContainer::getAnType() const {
+oai::model::common::AccessType RegistrationContextContainer::getAnType() const {
   return m_AnType;
 }
-void RegistrationContextContainer::setAnType(AccessType const& value) {
+void RegistrationContextContainer::setAnType(
+    oai::model::common::AccessType const& value) {
   m_AnType = value;
 }
 int32_t RegistrationContextContainer::getAnN2ApId() const {
@@ -138,10 +139,12 @@ int32_t RegistrationContextContainer::getAnN2ApId() const {
 void RegistrationContextContainer::setAnN2ApId(int32_t const value) {
   m_AnN2ApId = value;
 }
-GlobalRanNodeId RegistrationContextContainer::getRanNodeId() const {
+oai::model::common::GlobalRanNodeId RegistrationContextContainer::getRanNodeId()
+    const {
   return m_RanNodeId;
 }
-void RegistrationContextContainer::setRanNodeId(GlobalRanNodeId const& value) {
+void RegistrationContextContainer::setRanNodeId(
+    oai::model::common::GlobalRanNodeId const& value) {
   m_RanNodeId = value;
 }
 std::string RegistrationContextContainer::getInitialAmfName() const {
@@ -150,10 +153,12 @@ std::string RegistrationContextContainer::getInitialAmfName() const {
 void RegistrationContextContainer::setInitialAmfName(std::string const& value) {
   m_InitialAmfName = value;
 }
-UserLocation RegistrationContextContainer::getUserLocation() const {
+oai::model::common::UserLocation RegistrationContextContainer::getUserLocation()
+    const {
   return m_UserLocation;
 }
-void RegistrationContextContainer::setUserLocation(UserLocation const& value) {
+void RegistrationContextContainer::setUserLocation(
+    oai::model::common::UserLocation const& value) {
   m_UserLocation = value;
 }
 std::string RegistrationContextContainer::getRrcEstCause() const {
@@ -231,7 +236,8 @@ bool RegistrationContextContainer::configuredNssaiIsSet() const {
 void RegistrationContextContainer::unsetConfiguredNssai() {
   m_ConfiguredNssaiIsSet = false;
 }
-std::vector<Snssai>& RegistrationContextContainer::getRejectedNssaiInPlmn() {
+std::vector<oai::model::common::Snssai>&
+RegistrationContextContainer::getRejectedNssaiInPlmn() {
   return m_RejectedNssaiInPlmn;
 }
 bool RegistrationContextContainer::rejectedNssaiInPlmnIsSet() const {
@@ -240,7 +246,8 @@ bool RegistrationContextContainer::rejectedNssaiInPlmnIsSet() const {
 void RegistrationContextContainer::unsetRejectedNssaiInPlmn() {
   m_RejectedNssaiInPlmnIsSet = false;
 }
-std::vector<Snssai>& RegistrationContextContainer::getRejectedNssaiInTa() {
+std::vector<oai::model::common::Snssai>&
+RegistrationContextContainer::getRejectedNssaiInTa() {
   return m_RejectedNssaiInTa;
 }
 bool RegistrationContextContainer::rejectedNssaiInTaIsSet() const {

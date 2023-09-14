@@ -23,7 +23,7 @@ AreaOfValidity::AreaOfValidity() {}
 void AreaOfValidity::validate() const {
   std::stringstream msg;
   if (!validate(msg)) {
-    throw oai::amf::helpers::ValidationException(msg.str());
+    throw oai::model::common::helpers::ValidationException(msg.str());
   }
 }
 
@@ -38,8 +38,8 @@ bool AreaOfValidity::validate(
       pathPrefix.empty() ? "AreaOfValidity" : pathPrefix;
 
   /* TaiList */ {
-    const std::vector<oai::amf::model::Tai>& value = m_TaiList;
-    const std::string currentValuePath             = _pathPrefix + ".taiList";
+    const std::vector<oai::model::common::Tai>& value = m_TaiList;
+    const std::string currentValuePath = _pathPrefix + ".taiList";
 
     if (value.size() < 0) {
       success = false;
@@ -48,7 +48,7 @@ bool AreaOfValidity::validate(
     {  // Recursive validation of array elements
       const std::string oldValuePath = currentValuePath;
       int i                          = 0;
-      for (const oai::amf::model::Tai& value : value) {
+      for (const oai::model::common::Tai& value : value) {
         const std::string currentValuePath =
             oldValuePath + "[" + std::to_string(i) + "]";
 
@@ -83,11 +83,11 @@ void from_json(const nlohmann::json& j, AreaOfValidity& o) {
   j.at("taiList").get_to(o.m_TaiList);
 }
 
-std::vector<oai::amf::model::Tai> AreaOfValidity::getTaiList() const {
+std::vector<oai::model::common::Tai> AreaOfValidity::getTaiList() const {
   return m_TaiList;
 }
 void AreaOfValidity::setTaiList(
-    std::vector<oai::amf::model::Tai> const& value) {
+    std::vector<oai::model::common::Tai> const& value) {
   m_TaiList = value;
 }
 
