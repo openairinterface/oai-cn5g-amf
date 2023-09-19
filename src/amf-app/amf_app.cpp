@@ -943,7 +943,6 @@ void amf_app::find_n1n2_info_subscriptions(
                   std::shared_ptr<
                       oai::amf::model::UeN1N2InfoSubscriptionCreateData>>(
                   subscription.first.second, subscription.second));
-          return;
         }
       }
       if (n2_info_class.has_value()) {
@@ -955,7 +954,6 @@ void amf_app::find_n1n2_info_subscriptions(
                   std::shared_ptr<
                       oai::amf::model::UeN1N2InfoSubscriptionCreateData>>(
                   subscription.first.second, subscription.second));
-          return;
         }
       }
     }
