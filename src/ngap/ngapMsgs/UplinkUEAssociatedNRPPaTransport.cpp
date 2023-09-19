@@ -225,8 +225,14 @@ void UplinkUEAssociatedNRPPaTransportMsg::setRoutingID(
 }
 
 //------------------------------------------------------------------------------
-void UplinkUEAssociatedNRPPaTransportMsg::getRoutingID(OCTET_STRING_t& id) {
+void UplinkUEAssociatedNRPPaTransportMsg::getRoutingID(
+    OCTET_STRING_t& id) const {
   id = routingID;
+}
+
+//------------------------------------------------------------------------------
+OCTET_STRING_t UplinkUEAssociatedNRPPaTransportMsg::getRoutingID() const {
+  return routingID;
 }
 
 //------------------------------------------------------------------------------
@@ -250,8 +256,14 @@ void UplinkUEAssociatedNRPPaTransportMsg::setNRPPaPdu(
 }
 
 //------------------------------------------------------------------------------
-void UplinkUEAssociatedNRPPaTransportMsg::getNRPPaPdu(OCTET_STRING_t& pdu) {
+void UplinkUEAssociatedNRPPaTransportMsg::getNRPPaPdu(
+    OCTET_STRING_t& pdu) const {
   pdu = nRPPaPDU;
+}
+
+//------------------------------------------------------------------------------
+OCTET_STRING_t UplinkUEAssociatedNRPPaTransportMsg::getNRPPaPdu() const {
+  return nRPPaPDU;
 }
 
 }  // namespace ngap

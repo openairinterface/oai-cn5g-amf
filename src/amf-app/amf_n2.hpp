@@ -224,6 +224,15 @@ class amf_n2 : public ngap::ngap_app {
           itti_msg);
 
   /*
+   * Handle ITTI message (itti_uplink_ue_associated_nrppa_transport)
+   * @param [std::shared_ptr<itti_uplink_ue_associated_nrppa_transport>&]:
+   * ITTI message
+   * @return void
+   */
+  void handle_itti_message(
+      std::shared_ptr<itti_uplink_ue_associated_nrppa_transport>& itti_msg);
+
+  /*
    * Send Handover Preparaton Failure message
    * @param [const unsigned long] amf_ue_ngap_id: AMF UE NGAP ID
    * @param [const uint32_t] ran_ue_ngap_id: RAN UE NGAP ID

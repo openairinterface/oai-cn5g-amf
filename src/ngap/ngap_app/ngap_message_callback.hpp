@@ -38,6 +38,7 @@
 #include "nas_context.hpp"
 #include "pdu_session_context.hpp"
 #include "output_wrapper.hpp"
+#include "UplinkUEAssociatedNRPPaTransport.hpp"
 
 using namespace sctp;
 using namespace ngap;
@@ -1254,7 +1255,34 @@ int uplink_ue_associated_nrppa_transport(
     struct Ngap_NGAP_PDU* message_p) {
   Logger::ngap().debug(
       "Sending ITTI Uplink UE Associated NRPPA Transport to TASK_AMF_N2");
-  // TODO:
+
+  output_wrapper::print_asn_msg(&asn_DEF_Ngap_NGAP_PDU, message_p);
+
+  UplinkUEAssociatedNRPPaTransportMsg nrppa_msg = {};
+
+  if (!nrppa_msg.decodeFromPdu(message_p)) {
+    Logger::ngap().error(
+        "Decoding UplinkUEAssociatedNRPPaTransportMsg message error");
+    return RETURNerror;
+  }
+
+  auto itti_msg = std::make_shared<itti_uplink_ue_associated_nrppa_transport>(
+      TASK_NGAP, TASK_AMF_N2);
+  itti_msg->assoc_id       = assoc_id;
+  itti_msg->stream         = stream;
+  itti_msg->amf_ue_ngap_id = nrppa_msg.getAmfUeNgapId();
+  itti_msg->ran_ue_ngap_id = nrppa_msg.getRanUeNgapId();
+  conv::octet_string_2_bstring(nrppa_msg.getNRPPaPdu(), itti_msg->nrppa_pdu);
+  conv::octet_string_2_bstring(nrppa_msg.getRoutingID(), itti_msg->routing_id);
+
+  int ret = itti_inst->send_msg(itti_msg);
+  if (0 != ret) {
+    Logger::ngap().error(
+        "Could not send ITTI message %s to task TASK_AMF_N2",
+        itti_msg->get_msg_name());
+    return RETURNerror;
+  }
+
   return RETURNok;
 }
 

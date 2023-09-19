@@ -30,7 +30,8 @@
 #include "amf_profile.hpp"
 #include "bstrlib.h"
 #include "itti_msg.hpp"
-#include <SmContextStatusNotification.h>
+#include "N2InformationNotification.h"
+#include "SmContextStatusNotification.h"
 
 extern "C" {
 #include "dynamic_memory_check.h"
@@ -343,6 +344,29 @@ class itti_sbi_n1_message_notify : public itti_sbi_msg {
   std::string target_amf_uri;
   std::string supi;
   bstring registration_request;
+};
+
+//-----------------------------------------------------------------------------
+class itti_sbi_n2_info_notify : public itti_sbi_msg {
+ public:
+  itti_sbi_n2_info_notify(const task_id_t orig, const task_id_t dest)
+      : itti_sbi_msg(SBI_N2_INFO_NOTIFY, orig, dest) {
+    nf_uri               = {};
+    n2_info_notification = {};
+    n1_message           = std::nullopt;
+    n2_info              = std::nullopt;
+  }
+  virtual ~itti_sbi_n2_info_notify() {
+    if (n1_message.has_value()) bdestroy_wrapper(&n1_message.value());
+    if (n2_info.has_value()) bdestroy_wrapper(&n2_info.value());
+  };
+
+  const char* get_msg_name() { return "SBI_N2_INFO_NOTIFY"; };
+
+  std::string nf_uri;
+  oai::amf::model::N2InformationNotification n2_info_notification;
+  std::optional<bstring> n1_message;
+  std::optional<bstring> n2_info;
 };
 
 //-----------------------------------------------------------------------------
