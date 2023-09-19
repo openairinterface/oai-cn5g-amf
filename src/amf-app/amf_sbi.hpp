@@ -104,6 +104,13 @@ class amf_sbi {
   void handle_itti_message(itti_sbi_n1_message_notify& itti_msg);
 
   /*
+   * Handle ITTI message to send N2 Info Notify to the subscribed NFs
+   * @param [itti_sbi_n2_info_notify&]: ITTI message
+   * @return void
+   */
+  void handle_itti_message(itti_sbi_n2_info_notify& itti_msg);
+
+  /*
    * Handle ITTI message to discover NF instance information from NRF
    * @param [itti_sbi_nf_instance_discovery&]: ITTI message
    * @return void

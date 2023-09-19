@@ -156,6 +156,16 @@ void amf_sbi_task(void*) {
             dynamic_cast<itti_sbi_n1_message_notify*>(msg);
         amf_sbi_inst->handle_itti_message(ref(*m));
       } break;
+
+      case SBI_N2_INFO_NOTIFY: {
+        Logger::amf_sbi().info(
+            "Receive N2 Info Notify message, "
+            "handling ...");
+        itti_sbi_n2_info_notify* m =
+            dynamic_cast<itti_sbi_n2_info_notify*>(msg);
+        amf_sbi_inst->handle_itti_message(ref(*m));
+      } break;
+
       case SBI_NF_INSTANCE_DISCOVERY: {
         Logger::amf_sbi().info(
             "Receive N1 NF Instance Discovery message, "
@@ -736,6 +746,38 @@ void amf_sbi::handle_itti_message(itti_sbi_n1_message_notify& itti_msg) {
       url, json_part, n1sm_msg, n2sm_msg, http_version, response_code);
 
   // TODO: handle response
+  return;
+}
+
+//------------------------------------------------------------------------------
+void amf_sbi::handle_itti_message(itti_sbi_n2_info_notify& itti_msg) {
+  Logger::amf_sbi().debug("Send N2 Info Notify to the subscribed NF");
+
+  Logger::amf_sbi().debug("NF URI: %s", itti_msg.nf_uri.c_str());
+
+  nlohmann::json json_data = {};
+  to_json(json_data, itti_msg.n2_info_notification);
+  std::string json_part = json_data.dump();
+
+  std::string n2_info_msg = {};
+  octet_stream_2_hex_stream(
+      (uint8_t*) bdata(itti_msg.n2_info.value()),
+      blength(itti_msg.n2_info.value()), n2_info_msg);
+
+  uint8_t http_version   = 1;
+  uint32_t response_code = 0;
+  std::string n1sm_msg   = {};
+  if (amf_cfg.support_features.use_http2) {
+    http_version = 2;
+  }
+
+  curl_http_client(
+      itti_msg.nf_uri, json_part, n1sm_msg, n2_info_msg, http_version,
+      response_code);
+
+  if (response_code == 204) {
+    Logger::amf_sbi().debug("Sent notification successfully!");
+  }
   return;
 }
 
