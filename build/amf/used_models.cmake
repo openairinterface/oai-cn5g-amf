@@ -55,6 +55,9 @@ list(APPEND USED_COMMON_MODEL_SRC_FILES
         ${COMMON_MODEL_DIR}/Ncgi.cpp
         ${COMMON_MODEL_DIR}/NgApCause.cpp
         ${COMMON_MODEL_DIR}/NrLocation.cpp
+        ${COMMON_MODEL_DIR}/PatchItem.cpp
+        ${COMMON_MODEL_DIR}/PatchOperation.cpp
+        ${COMMON_MODEL_DIR}/PatchOperation_anyOf.cpp
         ${COMMON_MODEL_DIR}/PlmnId.cpp
         ${COMMON_MODEL_DIR}/PlmnIdNid.cpp
         ${COMMON_MODEL_DIR}/PreemptionCapability.cpp
