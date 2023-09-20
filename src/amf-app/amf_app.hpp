@@ -179,6 +179,13 @@ class amf_app {
   void handle_itti_message(itti_sbi_register_nf_instance_response& r);
 
   /*
+   * Handle ITTI message (Update NF Instance Response)
+   * @param [itti_sbi_update_nf_instance_response&]: ITTI message
+   * @return void
+   */
+  void handle_itti_message(itti_sbi_update_nf_instance_response& r);
+
+  /*
    * Get the current AMF's configuration
    * @param [nlohmann::json&]: json_data: Store AMF configuration
    * @return true if success, otherwise return false
