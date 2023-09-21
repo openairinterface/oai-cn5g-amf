@@ -963,6 +963,49 @@ bool amf_app::remove_n1n2_message_subscription(
   return true;
 }
 
+//---------------------------------------------------------------------------------------------
+void amf_app::find_n1n2_info_subscriptions(
+    const std::string& ue_ctx_id,
+    std::optional<oai::amf::model::N1MessageClass_anyOf::eN1MessageClass_anyOf>&
+        n1_message_class,
+    std::optional<
+        oai::amf::model::N2InformationClass_anyOf::eN2InformationClass_anyOf>&
+        n2_info_class,
+    std::map<
+        n1n2sub_id_t,
+        std::shared_ptr<oai::amf::model::UeN1N2InfoSubscriptionCreateData>>&
+        subscriptions) {
+  Logger::amf_app().debug("Find an N1N2 Info Subscription");
+
+  std::shared_lock lock(m_n1n2_message_subscribe);
+  for (auto subscription : n1n2_message_subscribe) {
+    if ((subscription.first.first == ue_ctx_id)) {
+      if (n1_message_class.has_value()) {
+        if (subscription.second.get()->getN1MessageClass().getEnumValue() ==
+            n1_message_class.value()) {
+          subscriptions.insert(
+              std::pair<
+                  n1n2sub_id_t,
+                  std::shared_ptr<
+                      oai::amf::model::UeN1N2InfoSubscriptionCreateData>>(
+                  subscription.first.second, subscription.second));
+        }
+      }
+      if (n2_info_class.has_value()) {
+        if (subscription.second.get()->getN2InformationClass().getEnumValue() ==
+            n2_info_class.value()) {
+          subscriptions.insert(
+              std::pair<
+                  n1n2sub_id_t,
+                  std::shared_ptr<
+                      oai::amf::model::UeN1N2InfoSubscriptionCreateData>>(
+                  subscription.first.second, subscription.second));
+        }
+      }
+    }
+  }
+}
+
 //------------------------------------------------------------------------------
 uint32_t amf_app::generate_tmsi() {
   return tmsi_generator.get_uid();

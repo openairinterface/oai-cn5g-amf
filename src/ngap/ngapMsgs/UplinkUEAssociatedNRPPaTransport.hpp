@@ -42,10 +42,12 @@ class UplinkUEAssociatedNRPPaTransportMsg : public NgapUEMessage {
   bool decodeFromPdu(Ngap_NGAP_PDU_t* ngapMsgPdu) override;
 
   void setRoutingID(const OCTET_STRING_t& pdu);
-  void getRoutingID(OCTET_STRING_t& pdu);
+  void getRoutingID(OCTET_STRING_t& pdu) const;
+  OCTET_STRING_t getRoutingID() const;
 
   void setNRPPaPdu(const OCTET_STRING_t& pdu);
-  void getNRPPaPdu(OCTET_STRING_t& pdu);
+  void getNRPPaPdu(OCTET_STRING_t& pdu) const;
+  OCTET_STRING_t getNRPPaPdu() const;
 
  private:
   Ngap_UplinkUEAssociatedNRPPaTransport_t* uplinkUEAssociatedNRPPaTransportIEs;

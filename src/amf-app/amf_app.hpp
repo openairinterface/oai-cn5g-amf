@@ -39,6 +39,8 @@
 #include "itti_msg_sbi.hpp"
 #include "ue_context.hpp"
 #include "uint_generator.hpp"
+#include "N1MessageClass_anyOf.h"
+#include "N2InformationClass_anyOf.h"
 
 using namespace oai::config;
 
@@ -356,6 +358,19 @@ class amf_app {
    */
   bool remove_n1n2_message_subscription(
       const std::string& ue_ctx_id, const std::string& sub_id);
+
+  void find_n1n2_info_subscriptions(
+      const std::string& ue_ctx_id,
+      std::optional<
+          oai::amf::model::N1MessageClass_anyOf::eN1MessageClass_anyOf>&
+          n1_message_class,
+      std::optional<
+          oai::amf::model::N2InformationClass_anyOf::eN2InformationClass_anyOf>&
+          n2_info_class,
+      std::map<
+          n1n2sub_id_t,
+          std::shared_ptr<oai::amf::model::UeN1N2InfoSubscriptionCreateData>>&
+          subscriptions);
 
   /*
    * Trigger NF instance registration to NRF
