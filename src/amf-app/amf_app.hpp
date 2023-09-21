@@ -51,6 +51,8 @@ namespace amf_application {
 #define TASK_AMF_APP_PERIODIC_STATISTICS (0)
 #define TASK_AMF_MOBILE_REACHABLE_TIMER_EXPIRE (1)
 #define TASK_AMF_IMPLICIT_DEREGISTRATION_TIMER_EXPIRE (2)
+#define TASK_AMF_APP_TIMEOUT_NRF_HEARTBEAT (3)
+#define TASK_AMF_APP_TIMEOUT_NRF_DEREGISTRATION (4)
 
 class amf_app {
  private:
@@ -170,6 +172,20 @@ class amf_app {
    * @return void
    */
   void handle_itti_message(itti_sbi_update_amf_configuration& itti_msg);
+
+  /*
+   * Handle ITTI message (Register NF Instance Response)
+   * @param [itti_sbi_register_nf_instance_response&]: ITTI message
+   * @return void
+   */
+  void handle_itti_message(itti_sbi_register_nf_instance_response& r);
+
+  /*
+   * Handle ITTI message (Update NF Instance Response)
+   * @param [itti_sbi_update_nf_instance_response&]: ITTI message
+   * @return void
+   */
+  void handle_itti_message(itti_sbi_update_nf_instance_response& r);
 
   /*
    * Get the current AMF's configuration
@@ -471,6 +487,7 @@ class amf_app {
    */
   void trigger_nf_deregistration() const;
 
+  void timer_nrf_heartbeat_timeout(timer_id_t timer_id, uint64_t arg2_user);
   /*
    * Store the promise
    * @param [const uint32_t] pid: promise id

@@ -171,6 +171,20 @@ void amf_app_task(void*) {
         amf_app_inst->handle_itti_message(ref(*m));
       } break;
 
+      case SBI_REGISTER_NF_INSTANCE_RESPONSE: {
+        Logger::amf_app().debug("Received SBI_REGISTER_NF_INSTANCE_RESPONSE");
+        itti_sbi_register_nf_instance_response* m =
+            dynamic_cast<itti_sbi_register_nf_instance_response*>(msg);
+        amf_app_inst->handle_itti_message(ref(*m));
+      } break;
+
+      case SBI_UPDATE_NF_INSTANCE_RESPONSE: {
+        Logger::amf_app().debug("Received SBI_UPDATE_NF_INSTANCE_RESPONSE");
+        itti_sbi_update_nf_instance_response* m =
+            dynamic_cast<itti_sbi_update_nf_instance_response*>(msg);
+        amf_app_inst->handle_itti_message(ref(*m));
+      } break;
+
       case TIME_OUT: {
         if (itti_msg_timeout* to = dynamic_cast<itti_msg_timeout*>(msg)) {
           switch (to->arg1_user) {
@@ -179,6 +193,10 @@ void amf_app_task(void*) {
                   amf_cfg.statistics_interval, 0, TASK_AMF_APP,
                   TASK_AMF_APP_PERIODIC_STATISTICS, 0);
               stacs.display();
+              break;
+            case TASK_AMF_APP_TIMEOUT_NRF_HEARTBEAT:
+              amf_app_inst->timer_nrf_heartbeat_timeout(
+                  to->timer_id, to->arg2_user);
               break;
             default:
               Logger::amf_app().info(
@@ -850,6 +868,34 @@ void amf_app::handle_itti_message(itti_sbi_update_amf_configuration& itti_msg) {
   }
 }
 
+//------------------------------------------------------------------------------
+void amf_app::handle_itti_message(itti_sbi_register_nf_instance_response& r) {
+  Logger::amf_app().debug("Handle NF Instance Registration response");
+
+  nf_instance_profile = r.profile;
+  // Set heartbeat timer
+  Logger::amf_app().debug(
+      "Set value of NRF Heartbeat timer to %d",
+      r.profile.get_nf_heartBeat_timer());
+  timer_nrf_heartbeat = itti_inst->timer_setup(
+      r.profile.get_nf_heartBeat_timer(), 0, TASK_AMF_APP,
+      TASK_AMF_APP_TIMEOUT_NRF_HEARTBEAT,
+      0);  // TODO arg2_user
+
+  /*  //Set timer to send NF Deregistration (for testing purpose)
+    itti_inst->timer_setup(50, 0,
+                               TASK_AMF_APP,
+    TASK_AMF_APP_TIMEOUT_NRF_DEREGISTRATION, 0);  // TODO arg2_user
+  */
+}
+
+//------------------------------------------------------------------------------
+void amf_app::handle_itti_message(itti_sbi_update_nf_instance_response& r) {
+  Logger::amf_app().debug("Handle NF Update response");
+
+  // TODO:
+}
+
 //---------------------------------------------------------------------------------------------
 bool amf_app::read_amf_configuration(nlohmann::json& json_data) {
   amf_cfg.to_json(json_data);
@@ -1274,6 +1320,41 @@ void amf_app::trigger_nf_deregistration() const {
     Logger::amf_app().error(
         "Could not send ITTI message %s to task TASK_AMF_SBI",
         itti_msg->get_msg_name());
+  }
+}
+
+//---------------------------------------------------------------------------------------------
+void amf_app::timer_nrf_heartbeat_timeout(
+    timer_id_t timer_id, uint64_t arg2_user) {
+  Logger::amf_app().debug("Send ITTI msg to SBI task to trigger NRF Heartbeat");
+
+  std::shared_ptr<itti_sbi_update_nf_instance_request> itti_msg =
+      std::make_shared<itti_sbi_update_nf_instance_request>(
+          TASK_AMF_APP, TASK_AMF_SBI);
+
+  oai::model::common::PatchItem patch_item = {};
+  oai::model::common::PatchOperation op;
+  op.setEnumValue(
+      oai::model::common::PatchOperation_anyOf::ePatchOperation_anyOf::REPLACE);
+  patch_item.setOp(op);
+  patch_item.setPath("/nfStatus");
+  patch_item.setValue("REGISTERED");
+  itti_msg->patch_items.push_back(patch_item);
+  itti_msg->amf_instance_id = amf_instance_id;
+
+  int ret = itti_inst->send_msg(itti_msg);
+  if (RETURNok != ret) {
+    Logger::amf_app().error(
+        "Could not send ITTI message %s to task TASK_AMF_SBI",
+        itti_msg->get_msg_name());
+  } else {
+    Logger::amf_app().debug(
+        "Set a timer to the next Heart-beat (%d)",
+        nf_instance_profile.get_nf_heartBeat_timer());
+    timer_nrf_heartbeat = itti_inst->timer_setup(
+        nf_instance_profile.get_nf_heartBeat_timer(), 0, TASK_AMF_APP,
+        TASK_AMF_APP_TIMEOUT_NRF_HEARTBEAT,
+        0);  // TODO arg2_user
   }
 }
 

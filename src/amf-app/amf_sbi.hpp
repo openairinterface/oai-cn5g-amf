@@ -125,6 +125,13 @@ class amf_sbi {
   void handle_itti_message(itti_sbi_register_nf_instance_request& itti_msg);
 
   /*
+   * Handle ITTI message to update to NRF
+   * @param [itti_sbi_update_nf_instance_request&]: ITTI message
+   * @return void
+   */
+  void handle_itti_message(itti_sbi_update_nf_instance_request& itti_msg);
+
+  /*
    * Handle ITTI message to trigger Determine Location Request procedure towards
    * LMF
    * @param [itti_sbi_determine_location_request&]: ITTI message
@@ -160,14 +167,6 @@ class amf_sbi {
   void handle_post_sm_context_response_error(
       const long code, const std::string& cause, bstring n1sm,
       const std::string& supi, const uint8_t pdu_session_id);
-
-  /*
-   * Handle ITTI message to register to NRF
-   * @param [itti_sbi_register_nf_instance_request&]: ITTI message
-   * @return void
-   */
-  void register_nf_instance(
-      std::shared_ptr<itti_sbi_register_nf_instance_request> msg);
 
   /*
    * Send the request to update PDU session context at SMF

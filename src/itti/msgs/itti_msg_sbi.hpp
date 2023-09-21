@@ -32,6 +32,7 @@
 #include "itti_msg.hpp"
 #include "N2InformationNotification.h"
 #include "SmContextStatusNotification.h"
+#include "PatchItem.h"
 
 extern "C" {
 #include "dynamic_memory_check.h"
@@ -248,8 +249,8 @@ class itti_sbi_update_nf_instance_request : public itti_sbi_msg {
   virtual ~itti_sbi_update_nf_instance_request(){};
   const char* get_msg_name() { return "SBI_UPDATE_NF_INSTANCE_REQUEST"; };
 
-  //  std::vector<oai::amf::model::PatchItem> patch_items;
-  std::string smf_instance_id;
+  std::vector<oai::model::common::PatchItem> patch_items;
+  std::string amf_instance_id;
 };
 
 //-----------------------------------------------------------------------------
