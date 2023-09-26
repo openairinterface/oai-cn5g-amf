@@ -52,8 +52,8 @@ static asn_TYPE_member_t
          "iE-Extensions"},
 };
 static const int
-    asn_MAP_Ngap_HandoverResourceAllocationUnsuccessfulTransfer_oms_1[] = {1,
-                                                                           2};
+    asn_MAP_Ngap_HandoverResourceAllocationUnsuccessfulTransfer_oms_1[] = {
+        1, 2};
 static const ber_tlv_tag_t
     asn_DEF_Ngap_HandoverResourceAllocationUnsuccessfulTransfer_tags_1[] = {
         (ASN_TAG_CLASS_UNIVERSAL | (16 << 2))};

@@ -310,8 +310,8 @@ void Authentication_5gaka::derive_kseaf(
   S[0] = 0x6C;  // FC
   memcpy(&S[1], netName.buf, netName.size);
   // memcpy (&S[1+netName.size], &netName.size, 2);
-  S[1 + netName.size] = (uint8_t)((netName.size & 0xff00) >> 8);
-  S[2 + netName.size] = (uint8_t)(netName.size & 0x00ff);
+  S[1 + netName.size] = (uint8_t) ((netName.size & 0xff00) >> 8);
+  S[2 + netName.size] = (uint8_t) (netName.size & 0x00ff);
   // output_wrapper::print_buffer("amf_n1", "inputstring S", S, 3+netName.size);
   // output_wrapper::print_buffer("amf_n1", "key KEY", kausf, 32);
   kdf(kausf, 32, S, 3 + netName.size, kseaf, 32);
@@ -336,8 +336,8 @@ void Authentication_5gaka::derive_kausf(
   S[0] = 0x6A;
   memcpy(&S[1], netName.buf, netName.size);
   // memcpy (&S[1+netName.size], &netName.size, 2);
-  S[1 + netName.size] = (uint8_t)((netName.size & 0xff00) >> 8);
-  S[2 + netName.size] = (uint8_t)(netName.size & 0x00ff);
+  S[1 + netName.size] = (uint8_t) ((netName.size & 0xff00) >> 8);
+  S[2 + netName.size] = (uint8_t) (netName.size & 0x00ff);
   for (int i = 0; i < 6; i++) {
     S[3 + netName.size + i] = sqn[i] ^ ak[i];
   }
@@ -369,8 +369,8 @@ void Authentication_5gaka::derive_kamf(
   S[0] = 0x6D;  // FC = 0x6D
   memcpy(&S[1], supi.buf, supiLen);
   // memcpy (&S[1+supiLen], &supiLen, 2);
-  S[1 + supiLen] = (uint8_t)((supiLen & 0xff00) >> 8);
-  S[2 + supiLen] = (uint8_t)(supiLen & 0x00ff);
+  S[1 + supiLen] = (uint8_t) ((supiLen & 0xff00) >> 8);
+  S[2 + supiLen] = (uint8_t) (supiLen & 0x00ff);
   S[3 + supiLen] = abba & 0x00ff;
   S[4 + supiLen] = (abba & 0xff00) >> 8;
   S[5 + supiLen] = 0x00;
@@ -389,7 +389,7 @@ void Authentication_5gaka::derive_knas(
   uint8_t S[20];
   uint8_t out[32] = {0};
   S[0]            = 0x69;  // FC
-  S[1]            = (uint8_t)(nas_alg_type & 0xFF);
+  S[1]            = (uint8_t) (nas_alg_type & 0xFF);
   S[2]            = 0x00;
   S[3]            = 0x01;
   S[4]            = nas_alg_id;

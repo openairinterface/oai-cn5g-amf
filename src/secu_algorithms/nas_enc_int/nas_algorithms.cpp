@@ -84,7 +84,7 @@ int nas_algorithms::nas_stream_encrypt_nea1(
   KS = (uint32_t*) malloc(4 * n);
   snow3g_generate_key_stream(n, (uint32_t*) KS, &snow_3g_context);
   if (zero_bit > 0) {
-    KS[n - 1] = KS[n - 1] & (uint32_t)(0xFFFFFFFF << (8 - zero_bit));
+    KS[n - 1] = KS[n - 1] & (uint32_t) (0xFFFFFFFF << (8 - zero_bit));
   }
   for (int i = 0; i < n; i++) {
     KS[i] = hton_int32(KS[i]);
@@ -97,7 +97,7 @@ int nas_algorithms::nas_stream_encrypt_nea1(
     ceil_index = (stream_cipher->blength + 7) >> 3;
     stream_cipher->message[ceil_index - 1] =
         stream_cipher->message[ceil_index - 1] &
-        (uint8_t)(0xFF << (8 - zero_bit));
+        (uint8_t) (0xFF << (8 - zero_bit));
   }
   free(KS);
   KS = NULL;
@@ -135,10 +135,10 @@ int nas_algorithms::nas_stream_encrypt_nia1(
   K[0]  = hton_int32(K[0]);
   IV[3] = (uint32_t) stream_cipher->count;
   IV[2] = ((((uint32_t) stream_cipher->bearer) & 0x0000001F) << 27);
-  IV[1] = (uint32_t)(stream_cipher->count) ^
-          ((uint32_t)(stream_cipher->direction) << 31);
+  IV[1] = (uint32_t) (stream_cipher->count) ^
+          ((uint32_t) (stream_cipher->direction) << 31);
   IV[0] = ((((uint32_t) stream_cipher->bearer) & 0x0000001F) << 27) ^
-          ((uint32_t)(stream_cipher->direction & 0x00000001) << 15);
+          ((uint32_t) (stream_cipher->direction & 0x00000001) << 15);
   z[0] = z[1] = z[2] = z[3] = z[4] = 0;
   snow3g_initialize(K, IV, &snow_3g_context);
   snow3g_generate_key_stream(5, z, &snow_3g_context);
@@ -157,7 +157,7 @@ int nas_algorithms::nas_stream_encrypt_nia1(
   mask = mask32bit(rem_bits % 32);
   if (rem_bits > 32) {
     M_D_2 = ((uint64_t) hton_int32(message[2 * (D - 2)]) << 32) |
-            (uint64_t)(hton_int32(message[2 * (D - 2) + 1]) & mask);
+            (uint64_t) (hton_int32(message[2 * (D - 2) + 1]) & mask);
   } else {
     M_D_2 = ((uint64_t) hton_int32(message[2 * (D - 2)]) & mask) << 32;
   }
@@ -165,7 +165,7 @@ int nas_algorithms::nas_stream_encrypt_nia1(
   EVAL = MUL64(V, P, c);
   EVAL ^= stream_cipher->blength;
   EVAL  = MUL64(EVAL, Q, c);
-  MAC_I = (uint32_t)(EVAL >> 32) ^ z[4];
+  MAC_I = (uint32_t) (EVAL >> 32) ^ z[4];
   MAC_I = hton_int32(MAC_I);
   memcpy((void*) out, &MAC_I, 4);
   return 0;
@@ -210,7 +210,7 @@ int nas_algorithms::nas_stream_encrypt_nea2(
 
   if (zero_bit > 0)
     data[byte_length - 1] =
-        data[byte_length - 1] & (uint8_t)(0xFF << (8 - zero_bit));
+        data[byte_length - 1] & (uint8_t) (0xFF << (8 - zero_bit));
 
   memcpy(out, data, byte_length);
   free(data);

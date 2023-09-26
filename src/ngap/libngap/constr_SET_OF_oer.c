@@ -101,7 +101,7 @@ static ssize_t oer_fetch_quantity(const void* ptr, size_t size, size_t* qty_r) {
   }
 
   *qty_r = qty;
-  assert((size_t) len_len + len == (size_t)(bend - (const uint8_t*) ptr));
+  assert((size_t) len_len + len == (size_t) (bend - (const uint8_t*) ptr));
   return len_len + len;
 }
 

@@ -60,7 +60,7 @@ asn_enc_rval_t der_encode_to_buffer(
       type_descriptor, struct_ptr, /* Pointer to the destination structure */
       0, 0, encode_to_buffer_cb, &arg);
   if (ec.encoded != -1) {
-    assert(ec.encoded == (ssize_t)(buffer_size - arg.left));
+    assert(ec.encoded == (ssize_t) (buffer_size - arg.left));
     /* Return the encoded contents size */
   }
   return ec;

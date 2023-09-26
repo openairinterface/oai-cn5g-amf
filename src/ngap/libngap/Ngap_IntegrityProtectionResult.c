@@ -13,8 +13,9 @@
  * so here we adjust the DEF accordingly.
  */
 static asn_oer_constraints_t
-    asn_OER_type_Ngap_IntegrityProtectionResult_constr_1 CC_NOTUSED = {{0, 0},
-                                                                       -1};
+    asn_OER_type_Ngap_IntegrityProtectionResult_constr_1 CC_NOTUSED = {
+        {0, 0},
+        -1};
 asn_per_constraints_t asn_PER_type_Ngap_IntegrityProtectionResult_constr_1
     CC_NOTUSED = {
         {APC_CONSTRAINED | APC_EXTENSIBLE, 1, 1, 0, 1} /* (0..1,...) */,

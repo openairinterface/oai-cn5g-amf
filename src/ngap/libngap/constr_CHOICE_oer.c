@@ -278,7 +278,7 @@ static ssize_t oer_put_tag(
   ber_tlv_tag_t tval = BER_TAG_VALUE(tag);
 
   if (tval < 0x3F) {
-    uint8_t b = (uint8_t)((tclass << 6) | tval);
+    uint8_t b = (uint8_t) ((tclass << 6) | tval);
     if (cb(&b, 1, app_key) < 0) {
       return -1;
     }
@@ -295,7 +295,7 @@ static ssize_t oer_put_tag(
         break;
       }
     }
-    *b      = (uint8_t)((tclass << 6) | 0x3F);
+    *b      = (uint8_t) ((tclass << 6) | 0x3F);
     encoded = sizeof(buf) - (b - buf);
     if (cb(b, encoded, app_key) < 0) {
       return -1;

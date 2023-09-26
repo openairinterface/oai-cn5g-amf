@@ -2104,7 +2104,7 @@ void OCTET_STRING_free(
 
   specs = td->specifics ? (const asn_OCTET_STRING_specifics_t*) td->specifics :
                           &asn_SPC_OCTET_STRING_specs;
-  ctx = (asn_struct_ctx_t*) ((char*) st + specs->ctx_offset);
+  ctx   = (asn_struct_ctx_t*) ((char*) st + specs->ctx_offset);
 
   ASN_DEBUG("Freeing %s as OCTET STRING", td->name);
 

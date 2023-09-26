@@ -119,13 +119,13 @@ typedef enum {
   } while (0)
 
 #define NIPADDR(addr)                                                          \
-  (uint8_t)(addr & 0x000000FF), (uint8_t)((addr & 0x0000FF00) >> 8),           \
-      (uint8_t)((addr & 0x00FF0000) >> 16),                                    \
-      (uint8_t)((addr & 0xFF000000) >> 24)
+  (uint8_t)(addr & 0x000000FF), (uint8_t) ((addr & 0x0000FF00) >> 8),          \
+      (uint8_t) ((addr & 0x00FF0000) >> 16),                                   \
+      (uint8_t) ((addr & 0xFF000000) >> 24)
 
 #define HIPADDR(addr)                                                          \
-  (uint8_t)((addr & 0xFF000000) >> 24), (uint8_t)((addr & 0x00FF0000) >> 16),  \
-      (uint8_t)((addr & 0x0000FF00) >> 8), (uint8_t)(addr & 0x000000FF)
+  (uint8_t)((addr & 0xFF000000) >> 24), (uint8_t) ((addr & 0x00FF0000) >> 16), \
+      (uint8_t) ((addr & 0x0000FF00) >> 8), (uint8_t) (addr & 0x000000FF)
 
 #define NIP6ADDR(addr)                                                         \
   ntohs((addr)->s6_addr16[0]), ntohs((addr)->s6_addr16[1]),                    \

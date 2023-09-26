@@ -133,7 +133,7 @@ xer_check_tag_e xer_check_tag(
   }
 
   /* Sometimes we don't care about the tag */
-  if (!need_tag || !*need_tag) return (xer_check_tag_e)(XCT__UNK__MASK | ct);
+  if (!need_tag || !*need_tag) return (xer_check_tag_e) (XCT__UNK__MASK | ct);
 
   /*
    * Determine the tag name.
@@ -152,11 +152,11 @@ xer_check_tag_e xer_check_tag(
             return ct;
         }
       }
-      return (xer_check_tag_e)(XCT__UNK__MASK | ct);
+      return (xer_check_tag_e) (XCT__UNK__MASK | ct);
     }
     if (b == 0) return XCT_BROKEN; /* Embedded 0 in buf?! */
   }
-  if (*need_tag) return (xer_check_tag_e)(XCT__UNK__MASK | ct);
+  if (*need_tag) return (xer_check_tag_e) (XCT__UNK__MASK | ct);
 
   return ct;
 }

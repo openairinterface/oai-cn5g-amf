@@ -233,24 +233,25 @@ struct tagbstring {
 /* Static constant block parameter pair */
 #define bsStaticBlkParms(q) ((void*) ("" q "")), ((int) sizeof(q) - 1)
 
-#define bcatStatic(b, s) ((bcatblk)((b), bsStaticBlkParms(s)))
-#define bfromStatic(s) ((blk2bstr)(bsStaticBlkParms(s)))
-#define bassignStatic(b, s) ((bassignblk)((b), bsStaticBlkParms(s)))
+#define bcatStatic(b, s) ((bcatblk) ((b), bsStaticBlkParms(s)))
+#define bfromStatic(s) ((blk2bstr) (bsStaticBlkParms(s)))
+#define bassignStatic(b, s) ((bassignblk) ((b), bsStaticBlkParms(s)))
 #define binsertStatic(b, p, s, f)                                              \
-  ((binsertblk)((b), (p), bsStaticBlkParms(s), (f)))
-#define bjoinStatic(b, s) ((bjoinblk)((b), bsStaticBlkParms(s)))
-#define biseqStatic(b, s) ((biseqblk)((b), bsStaticBlkParms(s)))
-#define bisstemeqStatic(b, s) ((bisstemeqblk)((b), bsStaticBlkParms(s)))
-#define biseqcaselessStatic(b, s) ((biseqcaselessblk)((b), bsStaticBlkParms(s)))
+  ((binsertblk) ((b), (p), bsStaticBlkParms(s), (f)))
+#define bjoinStatic(b, s) ((bjoinblk) ((b), bsStaticBlkParms(s)))
+#define biseqStatic(b, s) ((biseqblk) ((b), bsStaticBlkParms(s)))
+#define bisstemeqStatic(b, s) ((bisstemeqblk) ((b), bsStaticBlkParms(s)))
+#define biseqcaselessStatic(b, s)                                              \
+  ((biseqcaselessblk) ((b), bsStaticBlkParms(s)))
 #define bisstemeqcaselessStatic(b, s)                                          \
-  ((bisstemeqcaselessblk)((b), bsStaticBlkParms(s)))
+  ((bisstemeqcaselessblk) ((b), bsStaticBlkParms(s)))
 
 /* Reference building macros */
 #define cstr2tbstr btfromcstr
 #define btfromcstr(t, s)                                                       \
   {                                                                            \
     (t).data = (unsigned char*) (s);                                           \
-    (t).slen = ((t).data) ? ((int) (strlen)((char*) (t).data)) : 0;            \
+    (t).slen = ((t).data) ? ((int) (strlen) ((char*) (t).data)) : 0;           \
     (t).mlen = -1;                                                             \
   }
 #define blk2tbstr(t, s, l)                                                     \
