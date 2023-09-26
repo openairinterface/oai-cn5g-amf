@@ -22,6 +22,7 @@
 #ifndef ITTI_MSG_SBI_HPP_INCLUDED_
 #define ITTI_MSG_SBI_HPP_INCLUDED_
 
+#include <optional>
 #include "N1MessageNotification.h"
 #include "SliceInfoForRegistration.h"
 #include "UeN1N2InfoSubscriptionCreateData.h"
