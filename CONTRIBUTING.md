@@ -32,18 +32,16 @@ If the synchronization fails, you may need to go into the path of the failing gi
 
 We are using `clang-format` as formatting tool on the C/C++ code.
 
-At the time of writing (March 30th, 2020), we are using `clang-format` version 8.0.0 or above. By default, on a Ubuntu bionic Desktop edition, you would install version 6.0.0.
+At the time of writing (September 27th, 2023), we are using `clang-format` version 12.0.0.
 
-So it is very likely you will have to install it manually. Again, at the time of writing, the working version we found was 9.0.0.
+On a Ubuntu-20/22 server:
 
 ```bash
-$ wget https://releases.llvm.org/9.0.0/clang+llvm-9.0.0-x86_64-linux-gnu-ubuntu-18.04.tar.xz
-$ mkdir clang_tmp
-$ tar xvfJ  clang+llvm-9.0.0-x86_64-linux-gnu-ubuntu-18.04.tar.xz -C ./clang_tmp
-$ sudo cp clang_tmp/clang+llvm-9.0.0-x86_64-linux-gnu-ubuntu-18.04/bin/clang-format /usr/bin/clang-format
-$ rm -Rf clang*
+$ sudo apt-get update
+$ sudo apt-get install clang-format-12 dos2unix
+$ sudo update-alternatives --install /usr/bin/clang-format clang-format /usr/bin/clang-format-12 20
 $ clang-format --version
-clang-format version 9.0.0 (tags/RELEASE_900/final)
+Ubuntu clang-format version 12.0.0-3ubuntu1~20.04.5
 ```
 
 How to format:
@@ -51,6 +49,7 @@ How to format:
 ```bash
 $ cd myClonedWorkspace/src
 $ clang-format -i theFilesYouWantToFormat
+$ dos2unix theFilesYouWantToFormat
 ```
 
 ## License ##
