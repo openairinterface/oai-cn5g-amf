@@ -91,8 +91,8 @@ asn_TYPE_member_t asn_MBR_Ngap_PDUSessionResourceModifyItemModReq_1[] = {
      0, /* No default value */
      "iE-Extensions"},
 };
-static const int asn_MAP_Ngap_PDUSessionResourceModifyItemModReq_oms_1[] = {1,
-                                                                            3};
+static const int asn_MAP_Ngap_PDUSessionResourceModifyItemModReq_oms_1[] = {
+    1, 3};
 static const ber_tlv_tag_t
     asn_DEF_Ngap_PDUSessionResourceModifyItemModReq_tags_1[] = {
         (ASN_TAG_CLASS_UNIVERSAL | (16 << 2))};

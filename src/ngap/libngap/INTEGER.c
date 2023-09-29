@@ -186,7 +186,7 @@ static ssize_t INTEGER__dump(
   /* TODO: replace with generic algorithm (Knuth TAOCP Vol 2, 4.3.1) */
   for (p = scratch; buf < buf_end; buf++) {
     const char* const h2c = "0123456789ABCDEF";
-    if ((p - scratch) >= (ssize_t)(sizeof(scratch) - 4)) {
+    if ((p - scratch) >= (ssize_t) (sizeof(scratch) - 4)) {
       /* Flush buffer */
       if (cb(scratch, p - scratch, app_key) < 0) return -1;
       wrote += p - scratch;
@@ -1083,7 +1083,7 @@ static intmax_t asn__integer_convert(const uint8_t* b, const uint8_t* end) {
   /* Perform the sign initialization */
   /* Actually value = -(*b >> 7); gains nothing, yet unreadable! */
   if ((*b >> 7)) {
-    value = (uintmax_t)(-1);
+    value = (uintmax_t) (-1);
   } else {
     value = 0;
   }
@@ -1198,7 +1198,7 @@ int asn_umax2INTEGER(INTEGER_t* st, uintmax_t value) {
   end    = buf + (sizeof(value) + 1);
   buf[0] = 0; /* INTEGERs are signed. 0-byte indicates positive. */
   for (b = buf + 1, shr = (sizeof(value) - 1) * 8; b < end; shr -= 8, b++)
-    *b = (uint8_t)(value >> shr);
+    *b = (uint8_t) (value >> shr);
 
   if (st->buf) FREEMEM(st->buf);
   st->buf  = buf;
@@ -1310,7 +1310,7 @@ int asn_uint642INTEGER(INTEGER_t* st, uint64_t value) {
   end    = buf + (sizeof(value) + 1);
   buf[0] = 0;
   for (b = buf + 1, shr = (sizeof(value) - 1) * 8; b < end; shr -= 8, b++)
-    *b = (uint8_t)(value >> shr);
+    *b = (uint8_t) (value >> shr);
 
   if (st->buf) FREEMEM(st->buf);
   st->buf  = buf;

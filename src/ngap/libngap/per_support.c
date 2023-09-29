@@ -171,7 +171,7 @@ ssize_t uper_put_length(asn_per_outp_t* po, size_t length, int* need_eom) {
     length    = 4;
   }
 
-  return per_put_few_bits(po, 0xC0 | length, 8) ? -1 : (ssize_t)(length << 14);
+  return per_put_few_bits(po, 0xC0 | length, 8) ? -1 : (ssize_t) (length << 14);
 }
 
 /*
@@ -379,7 +379,7 @@ ssize_t aper_put_length(asn_per_outp_t* po, int range, size_t length) {
   length >>= 14;
   if (length > 4) length = 4;
 
-  return per_put_few_bits(po, 0xC0 | length, 8) ? -1 : (ssize_t)(length << 14);
+  return per_put_few_bits(po, 0xC0 | length, 8) ? -1 : (ssize_t) (length << 14);
 }
 
 int aper_put_nslength(asn_per_outp_t* po, size_t length) {

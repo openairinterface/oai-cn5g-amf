@@ -62,8 +62,9 @@ static int memb_Ngap_value_constraint_1(
       td, sptr, ctfailcb, app_key);
 }
 
-static asn_oer_constraints_t asn_OER_memb_Ngap_id_constr_2 CC_NOTUSED = {{0, 0},
-                                                                         -1};
+static asn_oer_constraints_t asn_OER_memb_Ngap_id_constr_2 CC_NOTUSED = {
+    {0, 0},
+    -1};
 static asn_per_constraints_t asn_PER_memb_Ngap_id_constr_2 CC_NOTUSED = {
     {APC_CONSTRAINED, 1, 1, 0, 1} /* (0..1) */,
     {APC_UNCONSTRAINED, -1, -1, 0, 0},

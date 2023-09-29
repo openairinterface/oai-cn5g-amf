@@ -67,7 +67,7 @@ asn_enc_rval_t oer_encode_to_buffer(
         struct_ptr, /* Pointer to the destination structure */
         encode_to_buffer_cb, &arg);
     if (ec.encoded != -1) {
-      assert(ec.encoded == (ssize_t)(buffer_size - arg.left));
+      assert(ec.encoded == (ssize_t) (buffer_size - arg.left));
       /* Return the encoded contents size */
     }
   }

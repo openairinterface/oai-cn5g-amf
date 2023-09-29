@@ -49,8 +49,8 @@ static const std::vector<std::string> _5gmm_state_e2str = {
 
 typedef enum { CM_IDLE = 0, CM_CONNECTED } cm_state_t;
 
-static const std::vector<std::string> cm_state_e2str = {"CM_IDLE",
-                                                        "CM_CONNECTED"};
+static const std::vector<std::string> cm_state_e2str = {
+    "CM_IDLE", "CM_CONNECTED"};
 
 typedef enum {
   DEREGISTERED = 0,
