@@ -264,7 +264,7 @@ class itti_sbi_update_nf_instance_response : public itti_sbi_msg {
   const char* get_msg_name() { return "SBI_UPDATE_NF_INSTANCE_RESPONSE"; };
 
   std::string amf_instance_id;
-  uint8_t http_response_code;
+  uint16_t http_response_code;
 };
 
 //-----------------------------------------------------------------------------
