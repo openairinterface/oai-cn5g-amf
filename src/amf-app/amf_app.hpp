@@ -53,6 +53,7 @@ namespace amf_application {
 #define TASK_AMF_IMPLICIT_DEREGISTRATION_TIMER_EXPIRE (2)
 #define TASK_AMF_APP_TIMEOUT_NRF_HEARTBEAT (3)
 #define TASK_AMF_APP_TIMEOUT_NRF_DEREGISTRATION (4)
+#define TASK_AMF_APP_TIMEOUT_NRF_REGISTRATION (5)
 
 class amf_app {
  private:
@@ -487,7 +488,22 @@ class amf_app {
    */
   void trigger_nf_deregistration() const;
 
+  /*
+   * Handle Heartbeat timeout
+   * @param [timer_id_t] timer_id
+   * @param [uint64_t] arg2_user
+   * @return void
+   */
   void timer_nrf_heartbeat_timeout(timer_id_t timer_id, uint64_t arg2_user);
+
+  /*
+   * Handle NF registration timeout
+   * @param [timer_id_t] timer_id
+   * @param [uint64_t] arg2_user
+   * @return void
+   */
+  void timer_nrf_registration_timeout(timer_id_t timer_id, uint64_t arg2_user);
+
   /*
    * Store the promise
    * @param [const uint32_t] pid: promise id

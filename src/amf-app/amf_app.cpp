@@ -198,6 +198,10 @@ void amf_app_task(void*) {
               amf_app_inst->timer_nrf_heartbeat_timeout(
                   to->timer_id, to->arg2_user);
               break;
+            case TASK_AMF_APP_TIMEOUT_NRF_REGISTRATION:
+              amf_app_inst->timer_nrf_registration_timeout(
+                  to->timer_id, to->arg2_user);
+              break;
             default:
               Logger::amf_app().info(
                   "No handler for timer(%d) with arg1_user(%d) ", to->timer_id,
@@ -872,28 +876,49 @@ void amf_app::handle_itti_message(itti_sbi_update_amf_configuration& itti_msg) {
 void amf_app::handle_itti_message(itti_sbi_register_nf_instance_response& r) {
   Logger::amf_app().debug("Handle NF Instance Registration response");
 
-  nf_instance_profile = r.profile;
-  // Set heartbeat timer
-  Logger::amf_app().debug(
-      "Set value of NRF Heartbeat timer to %d",
-      r.profile.get_nf_heartBeat_timer());
-  timer_nrf_heartbeat = itti_inst->timer_setup(
-      r.profile.get_nf_heartBeat_timer(), 0, TASK_AMF_APP,
-      TASK_AMF_APP_TIMEOUT_NRF_HEARTBEAT,
-      0);  // TODO arg2_user
+  if (r.http_response_code ==
+      static_cast<uint32_t>(
+          http_response_codes_e::HTTP_RESPONSE_CODE_201_CREATED)) {
+    nf_instance_profile = r.profile;
+    // Set heartbeat timer
+    Logger::amf_app().debug(
+        "Set value of NRF Heartbeat timer to %d",
+        r.profile.get_nf_heartBeat_timer());
+    timer_nrf_heartbeat = itti_inst->timer_setup(
+        r.profile.get_nf_heartBeat_timer(), 0, TASK_AMF_APP,
+        TASK_AMF_APP_TIMEOUT_NRF_HEARTBEAT,
+        0);  // TODO arg2_user
 
-  /*  //Set timer to send NF Deregistration (for testing purpose)
-    itti_inst->timer_setup(50, 0,
-                               TASK_AMF_APP,
-    TASK_AMF_APP_TIMEOUT_NRF_DEREGISTRATION, 0);  // TODO arg2_user
-  */
+    /*  //Set timer to send NF Deregistration (for testing purpose)
+      itti_inst->timer_setup(50, 0,
+                                 TASK_AMF_APP,
+      TASK_AMF_APP_TIMEOUT_NRF_DEREGISTRATION, 0);  // TODO arg2_user
+    */
+  } else {
+    // Set timer to try again with NF Registration
+    itti_inst->timer_setup(
+        20, 0, TASK_AMF_APP, TASK_AMF_APP_TIMEOUT_NRF_REGISTRATION,
+        0);  // TODO arg2_user
+  }
 }
 
 //------------------------------------------------------------------------------
 void amf_app::handle_itti_message(itti_sbi_update_nf_instance_response& r) {
   Logger::amf_app().debug("Handle NF Update response");
-
-  // TODO:
+  if (r.http_response_code !=
+      static_cast<uint16_t>(
+          http_response_codes_e::HTTP_RESPONSE_CODE_204_NO_CONTENT)) {
+    // trigger again registration procedure
+    register_to_nrf();
+  } else {
+    Logger::amf_app().debug(
+        "Set a timer to the next Heart-beat (%d)",
+        nf_instance_profile.get_nf_heartBeat_timer());
+    timer_nrf_heartbeat = itti_inst->timer_setup(
+        nf_instance_profile.get_nf_heartBeat_timer(), 0, TASK_AMF_APP,
+        TASK_AMF_APP_TIMEOUT_NRF_HEARTBEAT,
+        0);  // TODO arg2_user
+  }
 }
 
 //---------------------------------------------------------------------------------------------
@@ -1348,16 +1373,22 @@ void amf_app::timer_nrf_heartbeat_timeout(
         "Could not send ITTI message %s to task TASK_AMF_SBI",
         itti_msg->get_msg_name());
   } else {
-    Logger::amf_app().debug(
-        "Set a timer to the next Heart-beat (%d)",
-        nf_instance_profile.get_nf_heartBeat_timer());
-    timer_nrf_heartbeat = itti_inst->timer_setup(
-        nf_instance_profile.get_nf_heartBeat_timer(), 0, TASK_AMF_APP,
-        TASK_AMF_APP_TIMEOUT_NRF_HEARTBEAT,
-        0);  // TODO arg2_user
+    /*   Logger::amf_app().debug(
+           "Set a timer to the next Heart-beat (%d)",
+           nf_instance_profile.get_nf_heartBeat_timer());
+       timer_nrf_heartbeat = itti_inst->timer_setup(
+           nf_instance_profile.get_nf_heartBeat_timer(), 0, TASK_AMF_APP,
+           TASK_AMF_APP_TIMEOUT_NRF_HEARTBEAT,
+           0);  // TODO arg2_user
+     */
   }
 }
 
+//---------------------------------------------------------------------------------------------
+void amf_app::timer_nrf_registration_timeout(
+    timer_id_t timer_id, uint64_t arg2_user) {
+  register_to_nrf();
+}
 //---------------------------------------------------------------------------------------------
 void amf_app::add_promise(
     const uint32_t pid, const boost::shared_ptr<boost::promise<uint32_t>>& p) {
