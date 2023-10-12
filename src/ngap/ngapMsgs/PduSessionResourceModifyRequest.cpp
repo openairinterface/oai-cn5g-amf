@@ -102,7 +102,7 @@ void PduSessionResourceModifyRequestMsg::setRanUeNgapId(
 //------------------------------------------------------------------------------
 void PduSessionResourceModifyRequestMsg::setRanPagingPriority(
     const uint32_t& priority) {
-  if (!ranPagingPriority) ranPagingPriority = new RANPagingPriority();
+  if (!ranPagingPriority) ranPagingPriority = new RanPagingPriority();
 
   ranPagingPriority->set(priority);
 
@@ -135,11 +135,11 @@ int PduSessionResourceModifyRequestMsg::getRanPagingPriority() {
 //------------------------------------------------------------------------------
 void PduSessionResourceModifyRequestMsg::setPduSessionResourceModifyRequestList(
     const std::vector<PDUSessionResourceModifyRequestItem_t>& list) {
-  std::vector<PDUSessionResourceModifyItemModReq>
+  std::vector<PduSessionResourceModifyItemModReq>
       m_pduSessionResourceModifyItemModReq;
 
   for (int i = 0; i < list.size(); i++) {
-    PDUSessionID pDUSessionID = {};
+    PduSessionId pDUSessionID = {};
     pDUSessionID.set(list[i].pduSessionId);
     NasPdu nAS_PDU = {};
     if (conv::check_bstring(list[i].nas_pdu)) {
@@ -153,7 +153,7 @@ void PduSessionResourceModifyRequestMsg::setPduSessionResourceModifyRequestList(
       s_NSSAI = std::optional<S_NSSAI>(tmp);
     }
 
-    PDUSessionResourceModifyItemModReq item = {};
+    PduSessionResourceModifyItemModReq item = {};
 
     item.set(
         pDUSessionID, nAS_PDU, list[i].pduSessionResourceModifyRequestTransfer,
@@ -190,7 +190,7 @@ void PduSessionResourceModifyRequestMsg::setPduSessionResourceModifyRequestList(
 //------------------------------------------------------------------------------
 bool PduSessionResourceModifyRequestMsg::getPduSessionResourceModifyRequestList(
     std::vector<PDUSessionResourceModifyRequestItem_t>& list) {
-  std::vector<PDUSessionResourceModifyItemModReq>
+  std::vector<PduSessionResourceModifyItemModReq>
       m_pduSessionResourceModifyItemModReq;
   int num = 0;
   pduSessionResourceModifyList.get(m_pduSessionResourceModifyItemModReq);
@@ -198,7 +198,7 @@ bool PduSessionResourceModifyRequestMsg::getPduSessionResourceModifyRequestList(
   for (int i = 0; i < m_pduSessionResourceModifyItemModReq.size(); i++) {
     PDUSessionResourceModifyRequestItem_t request = {};
 
-    PDUSessionID pDUSessionID      = {};
+    PduSessionId pDUSessionID      = {};
     std::optional<NasPdu> nAS_PDU  = std::nullopt;
     std::optional<S_NSSAI> s_NSSAI = std::nullopt;
 
@@ -289,7 +289,7 @@ bool PduSessionResourceModifyRequestMsg::decode(Ngap_NGAP_PDU_t* ngapMsgPdu) {
             pduSessionResourceModifyRequestIEs->protocolIEs.list.array[i]
                     ->value.present ==
                 Ngap_PDUSessionResourceModifyRequestIEs__value_PR_RANPagingPriority) {
-          ranPagingPriority = new RANPagingPriority();
+          ranPagingPriority = new RanPagingPriority();
           if (!ranPagingPriority->decode(
                   pduSessionResourceModifyRequestIEs->protocolIEs.list.array[i]
                       ->value.choice.RANPagingPriority)) {

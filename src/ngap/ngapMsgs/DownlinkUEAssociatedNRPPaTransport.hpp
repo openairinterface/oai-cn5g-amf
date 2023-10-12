@@ -26,7 +26,7 @@
 #include "MessageType.hpp"
 #include "NasPdu.hpp"
 #include "NgapUEMessage.hpp"
-#include "RANPagingPriority.hpp"
+#include "RanPagingPriority.hpp"
 #include "RanUeNgapId.hpp"
 
 extern "C" {
@@ -46,8 +46,8 @@ class DownlinkUEAssociatedNRPPaTransportMsg : public NgapUEMessage {
   void setRanUeNgapId(const uint32_t& id) override;
   bool decode(Ngap_NGAP_PDU_t* ngapMsgPdu) override;
 
-  void setRoutingID(const bstring& pdu);
-  void getRoutingID(bstring& pdu);
+  void setRoutingId(const bstring& pdu);
+  void getRoutingId(bstring& pdu);
 
   void setNRPPaPdu(const bstring& pdu);
   void getNRPPaPdu(bstring& pdu);

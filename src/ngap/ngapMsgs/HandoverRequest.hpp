@@ -27,7 +27,7 @@
 #include "GUAMI.hpp"
 #include "MobilityRestrictionList.hpp"
 #include "NgapMessage.hpp"
-#include "PDUSessionResourceSetupListHOReq.hpp"
+#include "PduSessionResourceSetupListHoReq.hpp"
 #include "S-NSSAI.hpp"
 #include "SecurityKey.hpp"
 #include "UEAggregateMaxBitRate.hpp"
@@ -84,8 +84,8 @@ class HandoverRequest : public NgapMessage {
   // TODO: getAllowedNSSAI
 
   void setGUAMI(
-      const PlmnId& plmnId, const AMFRegionID& aMFRegionID,
-      const AMFSetID& aMFSetID, const AMFPointer& aMFPointer);
+      const PlmnId& plmnId, const AmfRegionId& aMFRegionID,
+      const AmfSetId& aMFSetID, const AmfPointer& aMFPointer);
   void setGUAMI(
       const std::string& mcc, const std::string& mnc,
       const std::string& regionId, const std::string& setId,
@@ -110,7 +110,7 @@ class HandoverRequest : public NgapMessage {
   Ngap_SecurityContext_t securityContext;         // TODO: Mandatory
   // New Security Context Indicator (TODO: Optional)
   // NASC - NAS-PDU (TODO: Optional)
-  PDUSessionResourceSetupListHOReq pDUSessionResourceSetupList;  // Mandatory
+  PduSessionResourceSetupListHoReq pDUSessionResourceSetupList;  // Mandatory
   Ngap_AllowedNSSAI_t allowedNSSAI;  // TODO: Mandatory
   // Trace Activation (TODO: Optional)
   // Masked IMEISV  (TODO: Optional)

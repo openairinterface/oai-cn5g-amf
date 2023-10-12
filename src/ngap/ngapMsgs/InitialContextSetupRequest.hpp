@@ -24,13 +24,13 @@
 
 #include <optional>
 
-#include "AMFName.hpp"
+#include "AmfName.hpp"
 #include "AllowedNssai.hpp"
 #include "CoreNetworkAssistanceInformation.hpp"
 #include "GUAMI.hpp"
 #include "MobilityRestrictionList.hpp"
 #include "NgapUEMessage.hpp"
-#include "PDUSessionResourceSetupListCxtReq.hpp"
+#include "PduSessionResourceSetupListCxtReq.hpp"
 #include "SecurityKey.hpp"
 #include "UEAggregateMaxBitRate.hpp"
 #include "UERadioCapability.hpp"
@@ -121,7 +121,7 @@ class InitialContextSetupRequestMsg : public NgapUEMessage {
   std::optional<CoreNetworkAssistanceInfo>
       coreNetworkAssistanceInfo;  // Optional
   GUAMI guami;                    // Mandatory
-  std::optional<PDUSessionResourceSetupListCxtReq>
+  std::optional<PduSessionResourceSetupListCxtReq>
       pduSessionResourceSetupRequestList;         // Optional
   AllowedNSSAI allowedNssai;                      // Mandatory
   UESecurityCapabilities uESecurityCapabilities;  // Mandatory

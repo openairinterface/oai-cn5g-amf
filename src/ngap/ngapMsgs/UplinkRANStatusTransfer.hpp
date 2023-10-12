@@ -23,7 +23,7 @@
 #define _UPLINK_RAN_STATUS_TRANSFER_H_
 
 #include "NgapUEMessage.hpp"
-#include "RANStatusTransferTransparentContainer.hpp"
+#include "RanStatusTransferTransparentContainer.hpp"
 
 extern "C" {
 #include "Ngap_UplinkRANStatusTransfer.h"
@@ -42,15 +42,15 @@ class UplinkRANStatusTransfer : public NgapUEMessage {
   bool decode(Ngap_NGAP_PDU_t* ngapMsgPdu) override;
 
   void getRANStatusTransfer_TransparentContainer(
-      RANStatusTransferTransparentContainer& ranContainer);
+      RanStatusTransferTransparentContainer& ranContainer);
   void setRANStatusTransfer_TransparentContainer(
-      const RANStatusTransferTransparentContainer& ranContainer);
+      const RanStatusTransferTransparentContainer& ranContainer);
 
  private:
   Ngap_UplinkRANStatusTransfer_t* uplinkRANStatusTransferIEs;
   // AMF_UE_NGAP_ID (Mandatory)
   // RAN_UE_NGAP_ID (Mandatory)
-  RANStatusTransferTransparentContainer
+  RanStatusTransferTransparentContainer
       ranStatusTransfer_TransparentContainer;  // Mandatory
 };
 }  // namespace ngap

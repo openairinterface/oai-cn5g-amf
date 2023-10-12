@@ -105,10 +105,10 @@ void PduSessionResourceReleaseResponseMsg::setRanUeNgapId(
 //------------------------------------------------------------------------------
 void PduSessionResourceReleaseResponseMsg::setPduSessionResourceReleasedList(
     const std::vector<PDUSessionResourceReleasedItem_t>& list) {
-  std::vector<PDUSessionResourceReleasedItemRelRes> item_rel_res_list;
+  std::vector<PduSessionResourceReleasedItemRelRes> item_rel_res_list;
   for (int i = 0; i < list.size(); i++) {
-    PDUSessionResourceReleasedItemRelRes item_rel_res = {};
-    PDUSessionID pdu_session_id                       = {};
+    PduSessionResourceReleasedItemRelRes item_rel_res = {};
+    PduSessionId pdu_session_id                       = {};
     pdu_session_id.set(list[i].pduSessionId);
 
     item_rel_res.set(
@@ -146,12 +146,12 @@ void PduSessionResourceReleaseResponseMsg::setPduSessionResourceReleasedList(
 //------------------------------------------------------------------------------
 bool PduSessionResourceReleaseResponseMsg::getPduSessionResourceReleasedList(
     std::vector<PDUSessionResourceReleasedItem_t>& list) {
-  std::vector<PDUSessionResourceReleasedItemRelRes> item_rel_res_list;
+  std::vector<PduSessionResourceReleasedItemRelRes> item_rel_res_list;
   pduSessionResourceReleasedList.get(item_rel_res_list);
 
   for (auto& item : item_rel_res_list) {
     PDUSessionResourceReleasedItem_t rel = {};
-    PDUSessionID pdu_session_id          = {};
+    PduSessionId pdu_session_id          = {};
 
     item.get(pdu_session_id, rel.pduSessionResourceReleaseResponseTransfer);
     pdu_session_id.get(rel.pduSessionId);

@@ -92,7 +92,7 @@ void UplinkRANStatusTransfer::setRanUeNgapId(const uint32_t& ran_ue_ngap_id) {
 
 //------------------------------------------------------------------------------
 void UplinkRANStatusTransfer::setRANStatusTransfer_TransparentContainer(
-    const RANStatusTransferTransparentContainer& ranContainer) {
+    const RanStatusTransferTransparentContainer& ranContainer) {
   ranStatusTransfer_TransparentContainer = ranContainer;
 
   Ngap_UplinkRANStatusTransferIEs_t* ie =
@@ -118,7 +118,7 @@ void UplinkRANStatusTransfer::setRANStatusTransfer_TransparentContainer(
 
 //------------------------------------------------------------------------------
 void UplinkRANStatusTransfer::getRANStatusTransfer_TransparentContainer(
-    RANStatusTransferTransparentContainer& ranContainer) {
+    RanStatusTransferTransparentContainer& ranContainer) {
   ranContainer = ranStatusTransfer_TransparentContainer;
 }
 

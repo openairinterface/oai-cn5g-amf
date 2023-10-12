@@ -22,7 +22,7 @@
 #ifndef _EUTRA_CGI_H_
 #define _EUTRA_CGI_H_
 
-#include "EUTRACellIdentity.hpp"
+#include "EUtraCellIdentity.hpp"
 #include "PlmnId.hpp"
 
 extern "C" {
@@ -36,15 +36,15 @@ class EUtraCgi {
   EUtraCgi();
   virtual ~EUtraCgi();
 
-  void set(const PlmnId&, const EUTRACellIdentity&);
-  void get(PlmnId&, EUTRACellIdentity&) const;
+  void set(const PlmnId&, const EUtraCellIdentity&);
+  void get(PlmnId&, EUtraCellIdentity&) const;
 
   bool encode(Ngap_EUTRA_CGI_t&);
   bool decode(Ngap_EUTRA_CGI_t&);
 
  private:
   PlmnId plmn_id_;                         // Mandatory
-  EUTRACellIdentity eUTRA_cell_identity_;  // Mandatory
+  EUtraCellIdentity eUTRA_cell_identity_;  // Mandatory
 };
 }  // namespace ngap
 

@@ -205,7 +205,7 @@ bool UplinkUEAssociatedNRPPaTransportMsg::decode(Ngap_NGAP_PDU_t* ngapMsgPdu) {
 }
 
 //------------------------------------------------------------------------------
-void UplinkUEAssociatedNRPPaTransportMsg::setRoutingID(
+void UplinkUEAssociatedNRPPaTransportMsg::setRoutingId(
     const OCTET_STRING_t& id) {
   routingID = id;
   Ngap_UplinkUEAssociatedNRPPaTransportIEs_t* ie =
@@ -224,13 +224,13 @@ void UplinkUEAssociatedNRPPaTransportMsg::setRoutingID(
 }
 
 //------------------------------------------------------------------------------
-void UplinkUEAssociatedNRPPaTransportMsg::getRoutingID(
+void UplinkUEAssociatedNRPPaTransportMsg::getRoutingId(
     OCTET_STRING_t& id) const {
   id = routingID;
 }
 
 //------------------------------------------------------------------------------
-OCTET_STRING_t UplinkUEAssociatedNRPPaTransportMsg::getRoutingID() const {
+OCTET_STRING_t UplinkUEAssociatedNRPPaTransportMsg::getRoutingId() const {
   return routingID;
 }
 

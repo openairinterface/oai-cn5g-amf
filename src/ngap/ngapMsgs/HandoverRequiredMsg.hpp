@@ -27,7 +27,7 @@
 #include "Cause.hpp"
 #include "GlobalgNBId.hpp"
 #include "NgapUEMessage.hpp"
-#include "PDUSessionResourceListHORqd.hpp"
+#include "PduSessionResourceListHandoverRqd.hpp"
 #include "TAI.hpp"
 
 extern "C" {
@@ -61,7 +61,7 @@ class HandoverRequiredMsg : public NgapUEMessage {
   bool getDirectForwardingPathAvailability(long& value) const;
   // TODO: Setter
 
-  bool getPDUSessionResourceList(PDUSessionResourceListHORqd& list);
+  bool getPDUSessionResourceList(PduSessionResourceListHandoverRqd& list);
   // TODO Setter
 
   OCTET_STRING_t getSourceToTarget_TransparentContainer();
@@ -75,8 +75,8 @@ class HandoverRequiredMsg : public NgapUEMessage {
   Cause cause;                       // Mandatory
   Ngap_TargetID_t targetID;          // Mandatory
   std::optional<Ngap_DirectForwardingPathAvailability_t>
-      directForwardingPathAvailability;                // Optional
-  PDUSessionResourceListHORqd pDUSessionResourceList;  // Mandatory
+      directForwardingPathAvailability;                      // Optional
+  PduSessionResourceListHandoverRqd pDUSessionResourceList;  // Mandatory
   Ngap_SourceToTarget_TransparentContainer_t
       sourceToTarget_TransparentContainer;  // Mandatory
 };

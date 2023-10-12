@@ -87,10 +87,10 @@ void UEContextReleaseRequestMsg::setRanUeNgapId(
 
 //------------------------------------------------------------------------------
 void UEContextReleaseRequestMsg::setPDUSessionResourceList(
-    const PDUSessionResourceListCxtRelReq&
+    const PduSessionResourceListCxtRelReq&
         pdu_session_resource_list_cxt_rel_req) {
   pdu_session_resource_list_cxt_rel_req_ =
-      std::optional<PDUSessionResourceListCxtRelReq>(
+      std::optional<PduSessionResourceListCxtRelReq>(
           pdu_session_resource_list_cxt_rel_req);
 
   Ngap_UEContextReleaseRequest_IEs* ie =
@@ -222,7 +222,7 @@ bool UEContextReleaseRequestMsg::decode(Ngap_NGAP_PDU_t* ngapMsgPdu) {
             return false;
           }
           pdu_session_resource_list_cxt_rel_req_ =
-              std::optional<PDUSessionResourceListCxtRelReq>(tmp);
+              std::optional<PduSessionResourceListCxtRelReq>(tmp);
         } else {
           Logger::ngap().error(
               "Decode NGAP PDUSessionResourceListCxtRelReq IE error");

@@ -158,13 +158,13 @@ void UEContextReleaseCompleteMsg::getUserLocationInfoNR(
 //------------------------------------------------------------------------------
 void UEContextReleaseCompleteMsg::setPduSessionResourceCxtRelCplList(
     const std::vector<PDUSessionResourceCxtRelCplItem_t>& list) {
-  PDUSessionResourceListCxtRelCpl m_pduSessionResourceListCxtRelCpl = {};
+  PduSessionResourceListCxtRelCpl m_pduSessionResourceListCxtRelCpl = {};
 
-  std::vector<PDUSessionResourceItemCxtRelCpl> cxt_rel_cpl_list;
+  std::vector<PduSessionResourceItemCxtRelCpl> cxt_rel_cpl_list;
 
   for (int i = 0; i < list.size(); i++) {
-    PDUSessionResourceItemCxtRelCpl item = {};
-    PDUSessionID pdu_session_id          = {};
+    PduSessionResourceItemCxtRelCpl item = {};
+    PduSessionId pdu_session_id          = {};
     pdu_session_id.set(list[i].pduSessionId);
 
     item.set(pdu_session_id);
@@ -192,7 +192,7 @@ void UEContextReleaseCompleteMsg::setPduSessionResourceCxtRelCplList(
   }
 
   pduSessionResourceListCxtRelCpl =
-      std::optional<PDUSessionResourceListCxtRelCpl>{
+      std::optional<PduSessionResourceListCxtRelCpl>{
           m_pduSessionResourceListCxtRelCpl};
 
   ret = ASN_SEQUENCE_ADD(&ies->protocolIEs.list, ie);
@@ -204,7 +204,7 @@ void UEContextReleaseCompleteMsg::setPduSessionResourceCxtRelCplList(
 //------------------------------------------------------------------------------
 bool UEContextReleaseCompleteMsg::getPduSessionResourceCxtRelCplList(
     std::vector<PDUSessionResourceCxtRelCplItem_t>& list) {
-  std::vector<PDUSessionResourceItemCxtRelCpl> cxt_rel_cpl_list;
+  std::vector<PduSessionResourceItemCxtRelCpl> cxt_rel_cpl_list;
 
   if (pduSessionResourceListCxtRelCpl.has_value()) {
     pduSessionResourceListCxtRelCpl.value().get(cxt_rel_cpl_list);
@@ -214,7 +214,7 @@ bool UEContextReleaseCompleteMsg::getPduSessionResourceCxtRelCplList(
 
   for (auto& item : cxt_rel_cpl_list) {
     PDUSessionResourceCxtRelCplItem_t rel = {};
-    PDUSessionID pdu_session_id           = {};
+    PduSessionId pdu_session_id           = {};
     item.get(pdu_session_id);
     pdu_session_id.get(rel.pduSessionId);
     list.push_back(rel);
@@ -318,7 +318,7 @@ bool UEContextReleaseCompleteMsg::decode(Ngap_NGAP_PDU_t* ngapMsgPdu) {
             return false;
           }
           pduSessionResourceListCxtRelCpl =
-              std::optional<PDUSessionResourceListCxtRelCpl>{
+              std::optional<PduSessionResourceListCxtRelCpl>{
                   m_pduSessionResourceListCxtRelCpl};
         } else {
           Logger::ngap().error(

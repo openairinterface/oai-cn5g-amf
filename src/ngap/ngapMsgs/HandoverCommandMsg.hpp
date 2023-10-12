@@ -25,8 +25,8 @@
 #include <optional>
 
 #include "NgapUEMessage.hpp"
-#include "PDUSessionResourceHandoverList.hpp"
-#include "PDUSessionResourceToReleaseListHOCmd.hpp"
+#include "PduSessionResourceHandoverList.hpp"
+#include "PduSessionResourceToReleaseListHandoverCmd.hpp"
 
 extern "C" {
 #include "Ngap_HandoverCommand.h"
@@ -53,13 +53,13 @@ class HandoverCommandMsg : public NgapUEMessage {
   bool getNASSecurityParametersFromNGRAN(OCTET_STRING_t& nasSecurityParameters);
 
   void setPduSessionResourceHandoverList(
-      const PDUSessionResourceHandoverList& list);
-  bool getPduSessionResourceHandoverList(PDUSessionResourceHandoverList& list);
+      const PduSessionResourceHandoverList& list);
+  bool getPduSessionResourceHandoverList(PduSessionResourceHandoverList& list);
 
   void setPDUSessionResourceToReleaseListHOCmd(
-      const PDUSessionResourceToReleaseListHOCmd& list);
+      const PduSessionResourceToReleaseListHandoverCmd& list);
   bool getPDUSessionResourceToReleaseListHOCmd(
-      PDUSessionResourceToReleaseListHOCmd& list);
+      PduSessionResourceToReleaseListHandoverCmd& list);
 
   void setTargetToSource_TransparentContainer(
       const OCTET_STRING_t& targetTosource);
@@ -73,9 +73,9 @@ class HandoverCommandMsg : public NgapUEMessage {
   Ngap_HandoverType_t handoverType;  // Mandatory
   std::optional<Ngap_NASSecurityParametersFromNGRAN_t>
       nASSecurityParametersFromNGRAN;  // TODO: Conditional
-  std::optional<PDUSessionResourceHandoverList>
+  std::optional<PduSessionResourceHandoverList>
       pDUSessionResourceHandoverList;  // Optional
-  std::optional<PDUSessionResourceToReleaseListHOCmd>
+  std::optional<PduSessionResourceToReleaseListHandoverCmd>
       pDUSessionResourceToReleaseListHOCmd;
   Ngap_TargetToSource_TransparentContainer_t
       targetToSource_TransparentContainer;                // TODO: Mandatory

@@ -122,9 +122,9 @@ void NGSetupRequestMsg::setSupportedTAList(
     tac.set(list[i].tac);
     item.setTac(tac);
 
-    std::vector<BroadcastPLMNItem> broadcastPlmnItems;
+    std::vector<BroadcastPlmnItem> broadcastPlmnItems;
     for (int j = 0; j < list[i].b_plmn_list.size(); j++) {
-      BroadcastPLMNItem broadcastPlmnItem = {};
+      BroadcastPlmnItem broadcastPlmnItem = {};
       PlmnId broadPlmn                    = {};
       broadPlmn.set(list[i].b_plmn_list[j].mcc, list[i].b_plmn_list[j].mnc);
       std::vector<S_NSSAI> snssais;
@@ -164,7 +164,7 @@ void NGSetupRequestMsg::setSupportedTAList(
 
 //------------------------------------------------------------------------------
 void NGSetupRequestMsg::setDefaultPagingDRX(const e_Ngap_PagingDRX& value) {
-  DefaultPagingDRX defaultPagingDRXIE;
+  DefaultPagingDrx defaultPagingDRXIE;
   defaultPagingDRXIE.setValue(value);
 
   Ngap_NGSetupRequestIEs_t* ie =
@@ -332,10 +332,10 @@ bool NGSetupRequestMsg::getSupportedTAList(
     SupportedTaItem_t supporteditem_data = {};
     supporteditem_data.tac               = tac.get();
 
-    std::vector<BroadcastPLMNItem> broadcastPLMNItems;
+    std::vector<BroadcastPlmnItem> broadcastPLMNItems;
     it->getBroadcastPlmnList(broadcastPLMNItems);
 
-    for (std::vector<BroadcastPLMNItem>::iterator it =
+    for (std::vector<BroadcastPlmnItem>::iterator it =
              std::begin(broadcastPLMNItems);
          it < std::end(broadcastPLMNItems); ++it) {
       PlmnId plmnId_decode = {};

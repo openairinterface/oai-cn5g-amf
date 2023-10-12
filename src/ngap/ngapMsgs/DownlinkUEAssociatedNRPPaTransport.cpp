@@ -208,7 +208,7 @@ bool DownlinkUEAssociatedNRPPaTransportMsg::decode(
 }
 
 //------------------------------------------------------------------------------
-void DownlinkUEAssociatedNRPPaTransportMsg::setRoutingID(const bstring& pdu) {
+void DownlinkUEAssociatedNRPPaTransportMsg::setRoutingId(const bstring& pdu) {
   routingID = bstrcpy(pdu);
   Ngap_DownlinkUEAssociatedNRPPaTransportIEs_t* ie =
       (Ngap_DownlinkUEAssociatedNRPPaTransportIEs_t*) calloc(
@@ -226,7 +226,7 @@ void DownlinkUEAssociatedNRPPaTransportMsg::setRoutingID(const bstring& pdu) {
 }
 
 //------------------------------------------------------------------------------
-void DownlinkUEAssociatedNRPPaTransportMsg::getRoutingID(bstring& pdu) {
+void DownlinkUEAssociatedNRPPaTransportMsg::getRoutingId(bstring& pdu) {
   pdu = bstrcpy(routingID);
 }
 

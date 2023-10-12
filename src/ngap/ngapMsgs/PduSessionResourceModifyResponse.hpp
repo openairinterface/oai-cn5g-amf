@@ -23,7 +23,7 @@
 #define PDU_SESSION_RESOURCE_MODIFY_RESPONSE_H_
 
 #include "NgapUEMessage.hpp"
-#include "PDUSessionResourceModifyListModRes.hpp"
+#include "PduSessionResourceModifyListModRes.hpp"
 
 extern "C" {
 #include "Ngap_PDUSessionResourceModifyResponse.h"
@@ -50,7 +50,7 @@ class PduSessionResourceModifyResponseMsg : public NgapUEMessage {
  private:
   Ngap_PDUSessionResourceModifyResponse_t* pduSessionResourceModifyResponseIEs;
 
-  std::optional<PDUSessionResourceModifyListModRes>
+  std::optional<PduSessionResourceModifyListModRes>
       pduSessionResourceModifyList;  // Optional
   // TODO: PDUSessionResourceFailedToModifyListModRes (Optional)
   // TODO: User Location Information (Optional)

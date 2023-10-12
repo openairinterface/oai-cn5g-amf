@@ -23,8 +23,8 @@
 #define PDU_SESSION_RESOURCE_MODIFY_REQUEST_H_
 
 #include "NgapUEMessage.hpp"
-#include "PDUSessionResourceModifyListModReq.hpp"
-#include "RANPagingPriority.hpp"
+#include "PduSessionResourceModifyListModReq.hpp"
+#include "RanPagingPriority.hpp"
 
 extern "C" {
 #include "Ngap_PDUSessionResourceModifyRequest.h"
@@ -57,8 +57,8 @@ class PduSessionResourceModifyRequestMsg : public NgapUEMessage {
  private:
   Ngap_PDUSessionResourceModifyRequest_t* pduSessionResourceModifyRequestIEs;
 
-  RANPagingPriority* ranPagingPriority;                             // Optional
-  PDUSessionResourceModifyListModReq pduSessionResourceModifyList;  // Mandatory
+  RanPagingPriority* ranPagingPriority;                             // Optional
+  PduSessionResourceModifyListModReq pduSessionResourceModifyList;  // Mandatory
 };
 
 }  // namespace ngap

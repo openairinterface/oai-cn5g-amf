@@ -39,8 +39,8 @@ class UplinkNonUEAssociatedNRPPaTransportMsg : public NgapMessage {
 
   bool decode(Ngap_NGAP_PDU_t* ngapMsgPdu) override;
 
-  void setRoutingID(const OCTET_STRING_t& pdu);
-  void getRoutingID(OCTET_STRING_t& pdu);
+  void setRoutingId(const OCTET_STRING_t& pdu);
+  void getRoutingId(OCTET_STRING_t& pdu);
 
   void setNRPPaPdu(const OCTET_STRING_t& pdu);
   void getNRPPaPdu(OCTET_STRING_t& pdu);

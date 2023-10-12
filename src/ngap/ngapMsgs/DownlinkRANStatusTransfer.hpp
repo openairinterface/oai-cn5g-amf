@@ -23,7 +23,7 @@
 #define _DOWNLINK_RAN_STATUS_TRANSFER_H_
 
 #include "NgapUEMessage.hpp"
-#include "RANStatusTransferTransparentContainer.hpp"
+#include "RanStatusTransferTransparentContainer.hpp"
 
 extern "C" {
 #include "Ngap_RANStatusTransfer-TransparentContainer.h"
@@ -51,7 +51,7 @@ class DownlinkRANStatusTransfer : public NgapUEMessage {
   Ngap_DownlinkRANStatusTransfer_t* downlinkranstatustransferIEs;
   // AMF_UE_NGAP_ID (Mandatory)
   // RAN_UE_NGAP_ID (Mandatory)
-  RANStatusTransferTransparentContainer
+  RanStatusTransferTransparentContainer
       ranStatusTransfer_TransparentContainer;  // Mandatory
 };
 }  // namespace ngap

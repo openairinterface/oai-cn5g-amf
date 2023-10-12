@@ -22,7 +22,7 @@
 #ifndef _GTP_TUNNEL_H_
 #define _GTP_TUNNEL_H_
 
-#include "GTP-TEID.hpp"
+#include "GtpTeid.hpp"
 #include "TransportLayerAddress.hpp"
 
 extern "C" {

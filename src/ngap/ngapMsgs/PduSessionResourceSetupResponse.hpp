@@ -23,8 +23,8 @@
 #define _PDU_SESSION_RESOURCE_SETUP_RESPONSE_H_
 
 #include "NgapUEMessage.hpp"
-#include "PDUSessionResourceFailedToSetupListSURes.hpp"
-#include "PDUSessionResourceSetupListSURes.hpp"
+#include "PduSessionResourceFailedToSetupListSURes.hpp"
+#include "PduSessionResourceSetupListSURes.hpp"
 
 extern "C" {
 #include "Ngap_PDUSessionResourceSetupResponse.h"
@@ -56,9 +56,9 @@ class PduSessionResourceSetupResponseMsg : public NgapUEMessage {
 
  private:
   Ngap_PDUSessionResourceSetupResponse_t* pduSessionResourceSetupResponseIEs;
-  std::optional<PDUSessionResourceSetupListSURes>
+  std::optional<PduSessionResourceSetupListSURes>
       pduSessionResourceSetupResponseList;  // Optional
-  std::optional<PDUSessionResourceFailedToSetupListSURes>
+  std::optional<PduSessionResourceFailedToSetupListSURes>
       pduSessionResourceFailedToSetupResponseList;  // Optional
   // TODO: Criticality Diagnostics (Optional)
 };

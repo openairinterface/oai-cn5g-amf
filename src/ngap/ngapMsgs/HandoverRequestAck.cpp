@@ -119,12 +119,12 @@ void HandoverRequestAck::setTargetToSource_TransparentContainer(
 //------------------------------------------------------------------------------
 bool HandoverRequestAck::getPDUSessionResourceAdmittedList(
     std::vector<PDUSessionResourceAdmittedItem_t>& list) {
-  std::vector<PDUSessionResourceItem> admittedItemList;
+  std::vector<PduSessionResourceItem> admittedItemList;
   pduSessionResourceAdmittedList.get(admittedItemList);
 
   for (auto& item : admittedItemList) {
     PDUSessionResourceAdmittedItem_t response = {};
-    PDUSessionID pDUSessionID                 = {};
+    PduSessionId pDUSessionID                 = {};
     item.get(pDUSessionID, response.handoverRequestAcknowledgeTransfer);
     pDUSessionID.get(response.pduSessionId);
     list.push_back(response);
@@ -135,7 +135,7 @@ bool HandoverRequestAck::getPDUSessionResourceAdmittedList(
 
 //------------------------------------------------------------------------------
 void HandoverRequestAck::setPDUSessionResourceAdmittedList(
-    const PDUSessionResourceAdmittedList& admittedList) {
+    const PduSessionResourceAdmittedList& admittedList) {
   pduSessionResourceAdmittedList = admittedList;
   Ngap_HandoverRequestAcknowledgeIEs_t* ie =
       (Ngap_HandoverRequestAcknowledgeIEs_t*) calloc(
@@ -156,9 +156,9 @@ void HandoverRequestAck::setPDUSessionResourceAdmittedList(
 
 //------------------------------------------------------------------------------
 void HandoverRequestAck::setPDUSessionResourceFailedToSetupListHOAck(
-    const PDUSessionResourceFailedToSetupListHOAck& list) {
+    const PduSessionResourceFailedToSetupListHoAck& list) {
   PDUSessionResourceFailedToSetupList =
-      std::optional<PDUSessionResourceFailedToSetupListHOAck>(list);
+      std::optional<PduSessionResourceFailedToSetupListHoAck>(list);
 
   Ngap_HandoverRequestAcknowledgeIEs_t* ie =
       (Ngap_HandoverRequestAcknowledgeIEs_t*) calloc(
@@ -180,11 +180,11 @@ void HandoverRequestAck::setPDUSessionResourceFailedToSetupListHOAck(
 
 //------------------------------------------------------------------------------
 void HandoverRequestAck::setPDUSessionResourceFailedToSetupListHOAck(
-    std::vector<PDUSessionResourceItem>& list) {
-  PDUSessionResourceFailedToSetupListHOAck tmp = {};
+    std::vector<PduSessionResourceItem>& list) {
+  PduSessionResourceFailedToSetupListHoAck tmp = {};
   tmp.set(list);
   PDUSessionResourceFailedToSetupList =
-      std::optional<PDUSessionResourceFailedToSetupListHOAck>(tmp);
+      std::optional<PduSessionResourceFailedToSetupListHoAck>(tmp);
 
   Ngap_HandoverRequestAcknowledgeIEs_t* ie =
       (Ngap_HandoverRequestAcknowledgeIEs_t*) calloc(
@@ -206,7 +206,7 @@ void HandoverRequestAck::setPDUSessionResourceFailedToSetupListHOAck(
 
 //------------------------------------------------------------------------------
 bool HandoverRequestAck::getPDUSessionResourceFailedToSetupListHOAck(
-    std::vector<PDUSessionResourceItem>& list) {
+    std::vector<PduSessionResourceItem>& list) {
   if (!PDUSessionResourceFailedToSetupList.has_value()) return false;
   PDUSessionResourceFailedToSetupList.value().get(list);
   return true;
@@ -293,7 +293,7 @@ bool HandoverRequestAck::decode(Ngap_NGAP_PDU_t* ngapMsgPdu) {
                 Ngap_Criticality_ignore &&
             handoverRequestAckIEs->protocolIEs.list.array[i]->value.present ==
                 Ngap_HandoverRequestAcknowledgeIEs__value_PR_PDUSessionResourceFailedToSetupListHOAck) {
-          PDUSessionResourceFailedToSetupListHOAck tmp = {};
+          PduSessionResourceFailedToSetupListHoAck tmp = {};
           if (!tmp.decode(&handoverRequestAckIEs->protocolIEs.list.array[i]
                                ->value.choice
                                .PDUSessionResourceFailedToSetupListHOAck)) {
@@ -303,7 +303,7 @@ bool HandoverRequestAck::decode(Ngap_NGAP_PDU_t* ngapMsgPdu) {
             return false;
           }
           PDUSessionResourceFailedToSetupList =
-              std::optional<PDUSessionResourceFailedToSetupListHOAck>(tmp);
+              std::optional<PduSessionResourceFailedToSetupListHoAck>(tmp);
         } else {
           Logger::ngap().error(
               "Decoded NGAP PDUSessionResourceFailedToSetupListHOAck IE error");

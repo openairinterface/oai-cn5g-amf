@@ -24,7 +24,7 @@
 
 #include <optional>
 
-#include "GTP-TEID.hpp"
+#include "GtpTeid.hpp"
 #include "GtpTunnel.hpp"
 #include "TransportLayerAddress.hpp"
 

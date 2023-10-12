@@ -24,7 +24,7 @@
 
 #include "CriticalityDiagnostics.hpp"
 #include "NgapUEMessage.hpp"
-#include "PDUSessionResourceReleasedListRelRes.hpp"
+#include "PduSessionResourceReleasedListRelRes.hpp"
 #include "UserLocationInformation.hpp"
 
 namespace ngap {
@@ -52,7 +52,7 @@ class PduSessionResourceReleaseResponseMsg : public NgapUEMessage {
   Ngap_PDUSessionResourceReleaseResponse_t*
       pduSessionResourceReleaseResponseIEs;
 
-  PDUSessionResourceReleasedListRelRes
+  PduSessionResourceReleasedListRelRes
       pduSessionResourceReleasedList;                              // Mandatory
   std::optional<UserLocationInformation> userLocationInformation;  // Optional
   // TODO: CriticalityDiagnostics *criticalityDiagnostics; //Optional

@@ -26,8 +26,8 @@
 
 #include "NasPdu.hpp"
 #include "NgapUEMessage.hpp"
-#include "PDUSessionResourceToReleaseListRelCmd.hpp"
-#include "RANPagingPriority.hpp"
+#include "PduSessionResourceToReleaseListRelCmd.hpp"
+#include "RanPagingPriority.hpp"
 
 namespace ngap {
 
@@ -56,9 +56,9 @@ class PduSessionResourceReleaseCommandMsg : public NgapUEMessage {
  private:
   Ngap_PDUSessionResourceReleaseCommand_t* pduSessionResourceReleaseCommandIEs;
 
-  std::optional<RANPagingPriority> ranPagingPriority;  // Optional
+  std::optional<RanPagingPriority> ranPagingPriority;  // Optional
   std::optional<NasPdu> nasPdu;                        // Optional
-  PDUSessionResourceToReleaseListRelCmd
+  PduSessionResourceToReleaseListRelCmd
       pduSessionResourceToReleaseList;  // Mandatory
 };
 

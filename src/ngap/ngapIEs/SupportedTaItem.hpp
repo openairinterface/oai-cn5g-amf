@@ -24,7 +24,7 @@
 
 #include <vector>
 
-#include "BroadcastPLMNItem.hpp"
+#include "BroadcastPlmnItem.hpp"
 #include "Tac.hpp"
 
 extern "C" {
@@ -41,15 +41,15 @@ class SupportedTaItem {
   void setTac(const TAC& m_tac);
   void getTac(TAC& m_tac);
 
-  void setBroadcastPlmnList(const std::vector<BroadcastPLMNItem>& list);
-  void getBroadcastPlmnList(std::vector<BroadcastPLMNItem>& list);
+  void setBroadcastPlmnList(const std::vector<BroadcastPlmnItem>& list);
+  void getBroadcastPlmnList(std::vector<BroadcastPlmnItem>& list);
 
   bool encode(Ngap_SupportedTAItem_t* ta);
   bool decode(Ngap_SupportedTAItem_t* ta);
 
  private:
   TAC tac;                                           // Mandatory
-  std::vector<BroadcastPLMNItem> broadcastPLMNList;  // Mandatory
+  std::vector<BroadcastPlmnItem> broadcastPLMNList;  // Mandatory
 };
 
 }  // namespace ngap

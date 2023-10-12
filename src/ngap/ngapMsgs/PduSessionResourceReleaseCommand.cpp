@@ -104,9 +104,9 @@ void PduSessionResourceReleaseCommandMsg::setRanUeNgapId(
 //------------------------------------------------------------------------------
 void PduSessionResourceReleaseCommandMsg::setRanPagingPriority(
     const uint32_t& priority) {
-  RANPagingPriority tmp = {};
+  RanPagingPriority tmp = {};
   tmp.set(priority);
-  ranPagingPriority = std::optional<RANPagingPriority>(tmp);
+  ranPagingPriority = std::optional<RanPagingPriority>(tmp);
 
   Ngap_PDUSessionResourceReleaseCommandIEs_t* ie =
       (Ngap_PDUSessionResourceReleaseCommandIEs_t*) calloc(
@@ -172,11 +172,11 @@ bool PduSessionResourceReleaseCommandMsg::getNasPdu(bstring& pdu) {
 //------------------------------------------------------------------------------
 void PduSessionResourceReleaseCommandMsg::setPduSessionResourceToReleaseList(
     const std::vector<PDUSessionResourceToReleaseItem_t>& list) {
-  std::vector<PDUSessionResourceToReleaseItemRelCmd> item_rel_cmd_list;
+  std::vector<PduSessionResourceToReleaseItemRelCmd> item_rel_cmd_list;
 
   for (int i = 0; i < list.size(); i++) {
-    PDUSessionResourceToReleaseItemRelCmd item_rel_cmd = {};
-    PDUSessionID pdu_session_id                        = {};
+    PduSessionResourceToReleaseItemRelCmd item_rel_cmd = {};
+    PduSessionId pdu_session_id                        = {};
     pdu_session_id.set(list[i].pduSessionId);
     item_rel_cmd.set(
         pdu_session_id, list[i].pduSessionResourceReleaseCommandTransfer);
@@ -212,12 +212,12 @@ void PduSessionResourceReleaseCommandMsg::setPduSessionResourceToReleaseList(
 //------------------------------------------------------------------------------
 bool PduSessionResourceReleaseCommandMsg::getPduSessionResourceToReleaseList(
     std::vector<PDUSessionResourceToReleaseItem_t>& list) {
-  std::vector<PDUSessionResourceToReleaseItemRelCmd> item_rel_cmd_list;
+  std::vector<PduSessionResourceToReleaseItemRelCmd> item_rel_cmd_list;
   pduSessionResourceToReleaseList.get(item_rel_cmd_list);
 
   for (auto& item : item_rel_cmd_list) {
     PDUSessionResourceToReleaseItem_t rel = {};
-    PDUSessionID pdu_session_id           = {};
+    PduSessionId pdu_session_id           = {};
 
     item.get(pdu_session_id, rel.pduSessionResourceReleaseCommandTransfer);
     pdu_session_id.get(rel.pduSessionId);
@@ -301,14 +301,14 @@ bool PduSessionResourceReleaseCommandMsg::decode(Ngap_NGAP_PDU_t* ngapMsgPdu) {
             pduSessionResourceReleaseCommandIEs->protocolIEs.list.array[i]
                     ->value.present ==
                 Ngap_PDUSessionResourceReleaseCommandIEs__value_PR_RANPagingPriority) {
-          RANPagingPriority tmp = {};
+          RanPagingPriority tmp = {};
           if (!tmp.decode(pduSessionResourceReleaseCommandIEs->protocolIEs.list
                               .array[i]
                               ->value.choice.RANPagingPriority)) {
             Logger::nas_mm().warn("Decoded NGAP RANPagingPriority IE error");
             return false;
           }
-          ranPagingPriority = std::optional<RANPagingPriority>(tmp);
+          ranPagingPriority = std::optional<RanPagingPriority>(tmp);
         } else {
           Logger::nas_mm().warn("Decoded NGAP RANPagingPriority IE error");
           return false;

@@ -123,7 +123,7 @@ bool HandoverRequest::decode(Ngap_NGAP_PDU_t* ngapMsgPdu) {
         // TODO: Ngap_SecurityContext_t securityContext
         // TODO: New Security Context Indicator
         // TODO: NASC - NAS-PDU
-        // TODO: PDUSessionResourceSetupListHOReq
+        // TODO: PduSessionResourceSetupListHoReq
         // TODO: AllowedNSSAI
         // TODO: Trace Activation
         // TODO: Masked IMEISV
@@ -233,8 +233,8 @@ void HandoverRequest::setUESecurityCapabilities(
 
 //------------------------------------------------------------------------------
 void HandoverRequest::setGUAMI(
-    const PlmnId& plmnId, const AMFRegionID& aMFRegionID,
-    const AMFSetID& aMFSetID, const AMFPointer& aMFPointer) {
+    const PlmnId& plmnId, const AmfRegionId& aMFRegionID,
+    const AmfSetId& aMFSetID, const AmfPointer& aMFPointer) {
   Ngap_HandoverRequestIEs_t* ie =
       (Ngap_HandoverRequestIEs_t*) calloc(1, sizeof(Ngap_HandoverRequestIEs_t));
   ie->id            = Ngap_ProtocolIE_ID_id_GUAMI;
@@ -321,11 +321,11 @@ void HandoverRequest::setSecurityContext(const long& count, bstring& nh) {
 //------------------------------------------------------------------------------
 void HandoverRequest::setPduSessionResourceSetupList(
     const std::vector<PDUSessionResourceSetupRequestItem_t>& list) {
-  std::vector<PDUSessionResourceSetupItemHOReq> resource_setup_list;
+  std::vector<PduSessionResourceSetupItemHoReq> resource_setup_list;
 
   for (int i = 0; i < list.size(); i++) {
-    PDUSessionResourceSetupItemHOReq resource_setup_item = {};
-    PDUSessionID pdu_session_id                          = {};
+    PduSessionResourceSetupItemHoReq resource_setup_item = {};
+    PduSessionId pdu_session_id                          = {};
     pdu_session_id.set(list[i].pduSessionId);
     S_NSSAI s_nssai = {};
     s_nssai.setSst(list[i].s_nssai.sst);

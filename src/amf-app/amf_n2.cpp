@@ -27,7 +27,7 @@
 #include <boost/chrono/system_clocks.hpp>
 
 #include "3gpp_24.501.h"
-#include "DefaultPagingDRX.hpp"
+#include "DefaultPagingDrx.hpp"
 #include "DownlinkNasTransport.hpp"
 #include "HandoverPreparationFailure.hpp"
 #include "InitialContextSetupRequest.hpp"
@@ -38,7 +38,7 @@
 #include "Ngap_CauseNas.h"
 #include "Ngap_CauseRadioNetwork.h"
 #include "Ngap_TimeToWait.h"
-#include "PDUSessionResourceHandoverCommandTransfer.hpp"
+#include "PduSessionResourceHandoverCommandTransfer.hpp"
 #include "Paging.hpp"
 #include "PduSessionResourceModifyRequest.hpp"
 #include "PduSessionResourceReleaseCommand.hpp"
@@ -1798,7 +1798,7 @@ bool amf_n2::handle_itti_message(
   Logger::amf_n2().debug(
       "Received Handover Required for UE (SUPI %s)", supi.c_str());
 
-  PDUSessionResourceListHORqd pDUSessionResourceListHORqd = {};
+  PduSessionResourceListHandoverRqd pDUSessionResourceListHORqd = {};
   std::vector<PDUSessionResourceItem_t> pdu_session_resource_list;
   if (!itti_msg->handoverReq->getPDUSessionResourceList(
           pDUSessionResourceListHORqd)) {
@@ -1806,7 +1806,7 @@ bool amf_n2::handle_itti_message(
         "Decoding PDU Session Resource List IE error or IE missing");
   }
 
-  std::vector<PDUSessionResourceItem> item_ho_required_list;
+  std::vector<PduSessionResourceItem> item_ho_required_list;
   pDUSessionResourceListHORqd.get(item_ho_required_list);
 
   std::map<uint8_t, boost::shared_future<std::string>> curl_responses;
@@ -1814,7 +1814,7 @@ bool amf_n2::handle_itti_message(
   // Send PDUSessionUpdateSMContextRequest to SMF for all PDU sessions included
   // in HO Required message
   for (auto& item : item_ho_required_list) {
-    PDUSessionID pdu_session_id               = {};
+    PduSessionId pdu_session_id               = {};
     OCTET_STRING_t handover_required_transfer = {};
     item.get(pdu_session_id, handover_required_transfer);
     uint8_t pdu_session_id_value = 0;
@@ -2022,9 +2022,9 @@ void amf_n2::handle_itti_message(
   handovercommand->setRanUeNgapId(unc->ran_ue_ngap_id);
   handovercommand->setHandoverType(Ngap_HandoverType_intra5gs);
 
-  PDUSessionResourceHandoverList handoverList = {};
-  std::vector<PDUSessionResourceItem> handoverItemList;
-  PDUSessionResourceItem handoverItem = {};
+  PduSessionResourceHandoverList handoverList = {};
+  std::vector<PduSessionResourceItem> handoverItemList;
+  PduSessionResourceItem handoverItem = {};
 
   // TODO: wait for response from SMF and transfer T-RAN N3 information/ or
   // T-UPF to the source gNB
@@ -2040,7 +2040,7 @@ void amf_n2::handle_itti_message(
       result                                 = result && true;
       uint8_t pdu_session_id_value           = curl_responses.begin()->first;
       unsigned int data_len                  = n2_sm.value().length();
-      PDUSessionID pdu_session_id            = {};
+      PduSessionId pdu_session_id            = {};
       OCTET_STRING_t handoverCommandTransfer = {};
       pdu_session_id.set(pdu_session_id_value);
       OCTET_STRING_fromBuf(
@@ -2289,7 +2289,7 @@ void amf_n2::handle_itti_message(
     return;
   }
 
-  RANStatusTransferTransparentContainer ran_status_transfer = {};
+  RanStatusTransferTransparentContainer ran_status_transfer = {};
   itti_msg->uplinkRanTransfer->getRANStatusTransfer_TransparentContainer(
       ran_status_transfer);
   DrbSubjectToStatusTransferList amf_m_list = {};
@@ -2409,7 +2409,7 @@ void amf_n2::handle_itti_message(
   duant.setRanUeNgapId(itti_msg->ran_ue_ngap_id);
 
   duant.setNRPPaPdu(itti_msg->nrppa_pdu);
-  duant.setRoutingID(itti_msg->routing_id);
+  duant.setRoutingId(itti_msg->routing_id);
 
   uint8_t buffer[BUFFER_SIZE_4096];
   int encoded_size = duant.Encode(buffer, BUFFER_SIZE_1024);
@@ -2436,7 +2436,7 @@ void amf_n2::handle_itti_message(
 
   DownlinkNonUEAssociatedNRPPaTransportMsg dnuant = {};
   dnuant.setNRPPaPdu(itti_msg->nrppa_pdu);
-  dnuant.setRoutingID(itti_msg->routing_id);
+  dnuant.setRoutingId(itti_msg->routing_id);
 
   uint8_t buffer[BUFFER_SIZE_4096];
   int encoded_size = dnuant.Encode(buffer, BUFFER_SIZE_1024);

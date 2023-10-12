@@ -22,13 +22,13 @@
 #ifndef _NG_SETUP_RESPONSE_H_
 #define _NG_SETUP_RESPONSE_H_
 
-#include "AMFName.hpp"
+#include "AmfName.hpp"
 #include "MessageType.hpp"
 #include "NgapIEsStruct.hpp"
 #include "NgapMessage.hpp"
-#include "PLMNSupportList.hpp"
-#include "RelativeAMFCapacity.hpp"
-#include "ServedGUAMIList.hpp"
+#include "PlmnSupportList.hpp"
+#include "RelativeAmfCapacity.hpp"
+#include "ServedGuamiList.hpp"
 
 extern "C" {
 #include "Ngap_NGSetupResponse.h"
@@ -61,9 +61,9 @@ class NGSetupResponseMsg : public NgapMessage {
   Ngap_NGSetupResponse_t* ngSetupResponsIEs;
 
   AmfName amfName;                          // Mandatory
-  ServedGUAMIList servedGUAMIList;          // Mandatory
-  RelativeAMFCapacity relativeAmfCapacity;  // Mandatory
-  PLMNSupportList plmnSupportList;          // Mandatory
+  ServedGuamiList servedGUAMIList;          // Mandatory
+  RelativeAmfCapacity relativeAmfCapacity;  // Mandatory
+  PlmnSupportList plmnSupportList;          // Mandatory
   // CriticalityDiagnostics //Optional, TODO
   // UE Retention Information //Optional, TODO
 };

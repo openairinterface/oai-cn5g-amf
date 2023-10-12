@@ -141,9 +141,9 @@ void PduSessionResourceSetupRequestMsg::setRanUeNgapId(
 //------------------------------------------------------------------------------
 void PduSessionResourceSetupRequestMsg::setRanPagingPriority(
     const uint32_t& priority) {
-  RANPagingPriority tmp = {};
+  RanPagingPriority tmp = {};
   tmp.set(priority);
-  ranPagingPriority = std::optional<RANPagingPriority>(tmp);
+  ranPagingPriority = std::optional<RanPagingPriority>(tmp);
 
   Ngap_PDUSessionResourceSetupRequestIEs_t* ie =
       (Ngap_PDUSessionResourceSetupRequestIEs_t*) calloc(
@@ -208,11 +208,11 @@ bool PduSessionResourceSetupRequestMsg::getNasPdu(bstring& pdu) {
 //------------------------------------------------------------------------------
 void PduSessionResourceSetupRequestMsg::setPduSessionResourceSetupRequestList(
     const std::vector<PDUSessionResourceSetupRequestItem_t>& list) {
-  std::vector<PDUSessionResourceSetupItemSUReq> itemSUReqList;
+  std::vector<PduSessionResourceSetupItemSUReq> itemSUReqList;
 
   for (int i = 0; i < list.size(); i++) {
-    PDUSessionResourceSetupItemSUReq itemSUReq = {};
-    PDUSessionID pDUSessionID                  = {};
+    PduSessionResourceSetupItemSUReq itemSUReq = {};
+    PduSessionId pDUSessionID                  = {};
     pDUSessionID.set(list[i].pduSessionId);
     std::optional<NasPdu> m_nAS_PDU = std::nullopt;
     if (conv::check_bstring(list[i].nas_pdu)) {
@@ -263,13 +263,13 @@ void PduSessionResourceSetupRequestMsg::setPduSessionResourceSetupRequestList(
 //------------------------------------------------------------------------------
 bool PduSessionResourceSetupRequestMsg::getPduSessionResourceSetupRequestList(
     std::vector<PDUSessionResourceSetupRequestItem_t>& list) {
-  std::vector<PDUSessionResourceSetupItemSUReq> itemSUReqList;
+  std::vector<PduSessionResourceSetupItemSUReq> itemSUReqList;
   pduSessionResourceSetupRequestList.get(itemSUReqList);
 
   for (auto& item : itemSUReqList) {
     PDUSessionResourceSetupRequestItem_t request = {};
 
-    PDUSessionID pDUSessionID     = {};
+    PduSessionId pDUSessionID     = {};
     std::optional<NasPdu> nAS_PDU = std::nullopt;
     S_NSSAI s_NSSAI               = {};
     item.get(
@@ -355,14 +355,14 @@ bool PduSessionResourceSetupRequestMsg::decode(Ngap_NGAP_PDU_t* ngapMsgPdu) {
             pduSessionResourceSetupRequestIEs->protocolIEs.list.array[i]
                     ->value.present ==
                 Ngap_PDUSessionResourceSetupRequestIEs__value_PR_RANPagingPriority) {
-          RANPagingPriority tmp = {};
+          RanPagingPriority tmp = {};
           if (!tmp.decode(
                   pduSessionResourceSetupRequestIEs->protocolIEs.list.array[i]
                       ->value.choice.RANPagingPriority)) {
             Logger::ngap().error("Decoded NGAP RANPagingPriority IE error");
             return false;
           }
-          ranPagingPriority = std::optional<RANPagingPriority>(tmp);
+          ranPagingPriority = std::optional<RanPagingPriority>(tmp);
         } else {
           Logger::ngap().error("Decoded NGAP RANPagingPriority IE error");
           return false;

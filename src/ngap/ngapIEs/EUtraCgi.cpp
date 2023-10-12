@@ -31,14 +31,14 @@ EUtraCgi::~EUtraCgi() {}
 
 //------------------------------------------------------------------------------
 void EUtraCgi::set(
-    const PlmnId& plmn_id, const EUTRACellIdentity& eUTRA_cell_identity) {
+    const PlmnId& plmn_id, const EUtraCellIdentity& eUTRA_cell_identity) {
   plmn_id_             = plmn_id;
   eUTRA_cell_identity_ = eUTRA_cell_identity;
 }
 
 //------------------------------------------------------------------------------
 void EUtraCgi::get(
-    PlmnId& plmn_id, EUTRACellIdentity& eUTRA_cell_identity) const {
+    PlmnId& plmn_id, EUtraCellIdentity& eUTRA_cell_identity) const {
   plmn_id             = plmn_id_;
   eUTRA_cell_identity = eUTRA_cell_identity_;
 }

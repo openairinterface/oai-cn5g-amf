@@ -39,21 +39,21 @@ CoreNetworkAssistanceInfo::~CoreNetworkAssistanceInfo() {}
 //------------------------------------------------------------------------------
 void CoreNetworkAssistanceInfo::set(
     const UEIdentityIndexValue& ue_identity_index_value,
-    const DefaultPagingDRX& paging_drx,
+    const DefaultPagingDrx& paging_drx,
     const PeriodicRegistrationUpdateTimer& m_periodicRegUpdateTimer,
     const bool& m_micoModeInd, const std::vector<TAI>& m_tai) {
   ueIdentityIndexValue   = ue_identity_index_value;
-  pagingDRX              = std::optional<DefaultPagingDRX>(paging_drx);
+  pagingDRX              = std::optional<DefaultPagingDrx>(paging_drx);
   periodicRegUpdateTimer = m_periodicRegUpdateTimer;
   if (m_micoModeInd) {
-    micoModeInd = std::make_optional<MICOModeIndication>();
+    micoModeInd = std::make_optional<MicoModeIndication>();
   }
 }
 
 //------------------------------------------------------------------------------
 void CoreNetworkAssistanceInfo::get(
     UEIdentityIndexValue& ue_identity_index_value,
-    std::optional<DefaultPagingDRX>& paging_drx,
+    std::optional<DefaultPagingDrx>& paging_drx,
     PeriodicRegistrationUpdateTimer& m_periodicRegUpdateTimer,
     bool& m_micoModeInd, std::vector<TAI>& m_tai) const {
   ue_identity_index_value  = ueIdentityIndexValue;
@@ -133,17 +133,17 @@ bool CoreNetworkAssistanceInfo::decode(
   }
 
   if (coreNetworkAssistanceInformation->uESpecificDRX) {
-    DefaultPagingDRX tmp = {};
+    DefaultPagingDrx tmp = {};
     if (!tmp.decode(*(coreNetworkAssistanceInformation->uESpecificDRX)))
       return false;
-    pagingDRX = std::optional<DefaultPagingDRX>(tmp);
+    pagingDRX = std::optional<DefaultPagingDrx>(tmp);
   }
 
   if (coreNetworkAssistanceInformation->mICOModeIndication) {
-    MICOModeIndication tmp = {};
+    MicoModeIndication tmp = {};
     if (!tmp.decode(coreNetworkAssistanceInformation->mICOModeIndication))
       return false;
-    micoModeInd = std::optional<MICOModeIndication>(tmp);
+    micoModeInd = std::optional<MicoModeIndication>(tmp);
   }
 
   return true;

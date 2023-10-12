@@ -24,8 +24,8 @@
 
 #include <string>
 
-#include "AMFPointer.hpp"
-#include "AMFSetID.hpp"
+#include "AmfPointer.hpp"
+#include "AmfSetId.hpp"
 
 extern "C" {
 #include "Ngap_FiveG-S-TMSI.h"
@@ -53,8 +53,8 @@ class FiveGSTmsi {
   std::string _5g_s_tmsi_;
   std::string tmsi_value_;
 
-  AMFSetID amf_set_id_;
-  AMFPointer amf_pointer_;
+  AmfSetId amf_set_id_;
+  AmfPointer amf_pointer_;
 };
 
 }  // namespace ngap

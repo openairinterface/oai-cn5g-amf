@@ -125,7 +125,7 @@ bool DownlinkNonUEAssociatedNRPPaTransportMsg::decode(
 }
 
 //------------------------------------------------------------------------------
-void DownlinkNonUEAssociatedNRPPaTransportMsg::setRoutingID(
+void DownlinkNonUEAssociatedNRPPaTransportMsg::setRoutingId(
     const bstring& pdu) {
   routingID = bstrcpy(pdu);
   Ngap_DownlinkNonUEAssociatedNRPPaTransportIEs_t* ie =
@@ -144,7 +144,7 @@ void DownlinkNonUEAssociatedNRPPaTransportMsg::setRoutingID(
 }
 
 //------------------------------------------------------------------------------
-void DownlinkNonUEAssociatedNRPPaTransportMsg::getRoutingID(bstring& pdu) {
+void DownlinkNonUEAssociatedNRPPaTransportMsg::getRoutingId(bstring& pdu) {
   pdu = bstrcpy(routingID);
 }
 

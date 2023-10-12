@@ -24,7 +24,7 @@
 
 #include <optional>
 
-#include "DefaultPagingDRX.hpp"
+#include "DefaultPagingDrx.hpp"
 #include "GlobalRanNodeId.hpp"
 #include "MessageType.hpp"
 #include "NgapIEsStruct.hpp"
@@ -64,7 +64,7 @@ class NGSetupRequestMsg : public NgapMessage {
   GlobalRanNodeId globalRanNodeId;         // Mandatory
   std::optional<RanNodeName> ranNodeName;  // Optional
   SupportedTAList supportedTAList;         // Mandatory
-  DefaultPagingDRX defaultPagingDrx;       // Mandatory
+  DefaultPagingDrx defaultPagingDrx;       // Mandatory
   // TODO: UE Retention Information (Optional)
 };
 

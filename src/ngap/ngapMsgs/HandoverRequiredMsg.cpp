@@ -125,7 +125,7 @@ OCTET_STRING_t HandoverRequiredMsg::getSourceToTarget_TransparentContainer() {
 
 //------------------------------------------------------------------------------
 bool HandoverRequiredMsg::getPDUSessionResourceList(
-    PDUSessionResourceListHORqd& list) {
+    PduSessionResourceListHandoverRqd& list) {
   list = pDUSessionResourceList;
   return true;
 }

@@ -25,8 +25,8 @@
 #include <optional>
 
 #include "NgapUEMessage.hpp"
-#include "PDUSessionResourceSetupListSUReq.hpp"
-#include "RANPagingPriority.hpp"
+#include "PduSessionResourceSetupListSUReq.hpp"
+#include "RanPagingPriority.hpp"
 #include "UEAggregateMaxBitRate.hpp"
 
 extern "C" {
@@ -65,9 +65,9 @@ class PduSessionResourceSetupRequestMsg : public NgapUEMessage {
  private:
   Ngap_PDUSessionResourceSetupRequest_t* pduSessionResourceSetupRequestIEs;
 
-  std::optional<RANPagingPriority> ranPagingPriority;  // Optional
+  std::optional<RanPagingPriority> ranPagingPriority;  // Optional
   std::optional<NasPdu> nasPdu;                        // Optional
-  PDUSessionResourceSetupListSUReq
+  PduSessionResourceSetupListSUReq
       pduSessionResourceSetupRequestList;                      // Mandatory
   std::optional<UEAggregateMaxBitRate> uEAggregateMaxBitRate;  // Optional
 };

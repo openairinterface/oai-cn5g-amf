@@ -22,9 +22,9 @@
 #ifndef _GUAMI_H_
 #define _GUAMI_H_
 
-#include "AMFPointer.hpp"
-#include "AMFRegionID.hpp"
-#include "AMFSetID.hpp"
+#include "AmfPointer.hpp"
+#include "AmfRegionId.hpp"
+#include "AmfSetId.hpp"
 #include "PlmnId.hpp"
 
 extern "C" {
@@ -39,11 +39,11 @@ class GUAMI {
   virtual ~GUAMI();
 
   void setGUAMI(
-      const PlmnId& m_plmnId, const AMFRegionID& m_aMFRegionID,
-      const AMFSetID& m_aMFSetID, const AMFPointer& m_aMFPointer);
+      const PlmnId& m_plmnId, const AmfRegionId& m_aMFRegionID,
+      const AmfSetId& m_aMFSetID, const AmfPointer& m_aMFPointer);
   void getGUAMI(
-      PlmnId& m_plmnId, AMFRegionID& m_aMFRegionID, AMFSetID& m_aMFSetID,
-      AMFPointer& m_aMFPointer);
+      PlmnId& m_plmnId, AmfRegionId& m_aMFRegionID, AmfSetId& m_aMFSetID,
+      AmfPointer& m_aMFPointer);
 
   bool setGUAMI(
       const std::string& mcc, const std::string& mnc, const uint8_t& regionId,
@@ -65,9 +65,9 @@ class GUAMI {
 
  private:
   PlmnId plmnId;            // Mandatory
-  AMFRegionID aMFRegionID;  // Mandatory
-  AMFSetID aMFSetID;        // Mandatory
-  AMFPointer aMFPointer;    // Mandatory
+  AmfRegionId aMFRegionID;  // Mandatory
+  AmfSetId aMFSetID;        // Mandatory
+  AmfPointer aMFPointer;    // Mandatory
 };
 
 }  // namespace ngap

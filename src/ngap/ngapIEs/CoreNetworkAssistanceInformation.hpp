@@ -24,8 +24,8 @@
 
 #include <optional>
 
-#include "DefaultPagingDRX.hpp"
-#include "MICOModeIndication.hpp"
+#include "DefaultPagingDrx.hpp"
+#include "MicoModeIndication.hpp"
 #include "PeriodicRegistrationUpdateTimer.hpp"
 #include "TAI.hpp"
 #include "UEIdentityIndexValue.hpp"
@@ -43,13 +43,13 @@ class CoreNetworkAssistanceInfo {
 
   void set(
       const UEIdentityIndexValue& ue_identity_index_value,
-      const DefaultPagingDRX& paging_drx,
+      const DefaultPagingDrx& paging_drx,
       const PeriodicRegistrationUpdateTimer& periodic_reg_update_timer,
       const bool& mico_mode_ind, const std::vector<TAI>& tai);
 
   void get(
       UEIdentityIndexValue& ue_identity_index_value,
-      std::optional<DefaultPagingDRX>& paging_drx,
+      std::optional<DefaultPagingDrx>& paging_drx,
       PeriodicRegistrationUpdateTimer& periodic_reg_update_timer,
       bool& mico_mode_ind, std::vector<TAI>& tai) const;
 
@@ -60,9 +60,9 @@ class CoreNetworkAssistanceInfo {
 
  private:
   UEIdentityIndexValue ueIdentityIndexValue;  // Mandatory
-  std::optional<DefaultPagingDRX> pagingDRX;  // UE Specific DRX, Optional
+  std::optional<DefaultPagingDrx> pagingDRX;  // UE Specific DRX, Optional
   PeriodicRegistrationUpdateTimer periodicRegUpdateTimer;  // Mandatory
-  std::optional<MICOModeIndication> micoModeInd;           // Optional
+  std::optional<MicoModeIndication> micoModeInd;           // Optional
   std::vector<TAI> taiList;  // TAI List for RRC Inactive, Mandatory
   // TODO: Expected UE Behaviour (Optional)
 };

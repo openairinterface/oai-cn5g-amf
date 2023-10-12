@@ -184,9 +184,9 @@ bool InitialUEMessageMsg::getAMFSetID(std::string& amf_set_id) {
 
 //------------------------------------------------------------------------------
 bool InitialUEMessageMsg::setAMFSetID(const uint16_t& amf_set_id) {
-  AMFSetID tmp = {};
+  AmfSetId tmp = {};
   if (!tmp.set(amf_set_id)) return false;
-  amfSetId = std::optional<AMFSetID>(tmp);
+  amfSetId = std::optional<AmfSetId>(tmp);
   return true;
 }
 
@@ -319,13 +319,13 @@ bool InitialUEMessageMsg::decode(Ngap_NGAP_PDU_t* ngapMsgPdu) {
                 Ngap_Criticality_ignore &&
             initialUEMessageIEs->protocolIEs.list.array[i]->value.present ==
                 Ngap_InitialUEMessage_IEs__value_PR_AMFSetID) {
-          AMFSetID tmp = {};
+          AmfSetId tmp = {};
           if (!tmp.decode(initialUEMessageIEs->protocolIEs.list.array[i]
                               ->value.choice.AMFSetID)) {
             Logger::ngap().error("Decoded NGAP AMF Set ID IE error");
             return false;
           }
-          amfSetId = std::optional<AMFSetID>(tmp);
+          amfSetId = std::optional<AmfSetId>(tmp);
         }
 
       } break;

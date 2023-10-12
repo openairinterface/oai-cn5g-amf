@@ -25,7 +25,7 @@
 #include <optional>
 
 #include "NgapUEMessage.hpp"
-#include "PDUSessionResourceListCxtRelCpl.hpp"
+#include "PduSessionResourceListCxtRelCpl.hpp"
 #include "UserLocationInformation.hpp"
 
 extern "C" {
@@ -58,7 +58,7 @@ class UEContextReleaseCompleteMsg : public NgapUEMessage {
   // RAN_UE_NGAP_ID //Mandatory
   std::optional<UserLocationInformation> userLocationInformation;  // Optional
   // TODO: Information on Recommended Cells and RAN Nodes for Paging (Optional)
-  std::optional<PDUSessionResourceListCxtRelCpl>
+  std::optional<PduSessionResourceListCxtRelCpl>
       pduSessionResourceListCxtRelCpl;  // Optional
   // TODO: Criticality Diagnostics (Optional)
 };

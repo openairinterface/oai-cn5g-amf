@@ -26,7 +26,7 @@
 #include "NGReset.hpp"
 #include "NGResetAck.hpp"
 #include "NGSetupRequest.hpp"
-#include "PDUSessionResourceSetupUnsuccessfulTransfer.hpp"
+#include "PduSessionResourceSetupUnsuccessfulTransfer.hpp"
 #include "PduSessionResourceReleaseResponse.hpp"
 #include "PduSessionResourceSetupResponse.hpp"
 #include "PduSessionResourceModifyResponse.hpp"
@@ -1273,7 +1273,7 @@ int uplink_ue_associated_nrppa_transport(
   itti_msg->amf_ue_ngap_id = nrppa_msg.getAmfUeNgapId();
   itti_msg->ran_ue_ngap_id = nrppa_msg.getRanUeNgapId();
   conv::octet_string_2_bstring(nrppa_msg.getNRPPaPdu(), itti_msg->nrppa_pdu);
-  conv::octet_string_2_bstring(nrppa_msg.getRoutingID(), itti_msg->routing_id);
+  conv::octet_string_2_bstring(nrppa_msg.getRoutingId(), itti_msg->routing_id);
 
   int ret = itti_inst->send_msg(itti_msg);
   if (0 != ret) {

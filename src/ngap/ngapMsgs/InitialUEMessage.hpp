@@ -29,7 +29,7 @@
 #include "NasPdu.hpp"
 #include "NgapIEsStruct.hpp"
 #include "NgapMessage.hpp"
-#include "RRCEstablishmentCause.hpp"
+#include "RrcEstablishmentCause.hpp"
 #include "UEContextRequest.hpp"
 #include "UserLocationInformation.hpp"
 
@@ -78,9 +78,9 @@ class InitialUEMessageMsg : public NgapMessage {
   RanUeNgapId ranUeNgapId;                           // Mandatory
   NasPdu nasPdu;                                     // Mandatory
   UserLocationInformation userLocationInformation;   // Mandatory
-  RRCEstablishmentCause rRCEstablishmentCause;       // Mandatory
+  RrcEstablishmentCause rRCEstablishmentCause;       // Mandatory
   std::optional<FiveGSTmsi> fivegSTmsi;              // 5G-S-TMSI (Optional)
-  std::optional<AMFSetID> amfSetId;                  // Optional
+  std::optional<AmfSetId> amfSetId;                  // Optional
   std::optional<UEContextRequest> uEContextRequest;  // Optional
   std::optional<AllowedNSSAI> allowedNssai;          // Optional
   // TODO: Source to Target AMF Information Reroute (Optional)

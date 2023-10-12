@@ -50,7 +50,7 @@ void UplinkNonUEAssociatedNRPPaTransportMsg::initialize() {
 }
 
 //------------------------------------------------------------------------------
-void UplinkNonUEAssociatedNRPPaTransportMsg::setRoutingID(
+void UplinkNonUEAssociatedNRPPaTransportMsg::setRoutingId(
     const OCTET_STRING_t& id) {
   routingID = id;
   Ngap_UplinkNonUEAssociatedNRPPaTransportIEs_t* ie =
@@ -69,7 +69,7 @@ void UplinkNonUEAssociatedNRPPaTransportMsg::setRoutingID(
 }
 
 //------------------------------------------------------------------------------
-void UplinkNonUEAssociatedNRPPaTransportMsg::getRoutingID(OCTET_STRING_t& id) {
+void UplinkNonUEAssociatedNRPPaTransportMsg::getRoutingId(OCTET_STRING_t& id) {
   id = routingID;
 }
 

@@ -22,7 +22,7 @@
 #ifndef _REROUTE_NAS_REQUEST_H_
 #define _REROUTE_NAS_REQUEST_H_
 
-#include "AMFSetID.hpp"
+#include "AmfSetId.hpp"
 #include "AllowedNssai.hpp"
 #include "NgapMessage.hpp"
 
@@ -61,7 +61,7 @@ class RerouteNASRequest : public NgapMessage {
   RanUeNgapId ranUeNgapId;                   // Mandatory
   std::optional<AmfUeNgapId> amfUeNgapId;    // Optional
   OCTET_STRING_t ngapMessage;                // Mandatory
-  AMFSetID amfSetID;                         // Mandatory
+  AmfSetId amfSetID;                         // Mandatory
   std::optional<AllowedNSSAI> allowedNssai;  // Optional
   // SourceToTarget-AMFInformationReroute //Optional
 };
