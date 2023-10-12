@@ -35,16 +35,15 @@ class PDUSessionResourceItemHORqd {
   PDUSessionResourceItemHORqd();
   virtual ~PDUSessionResourceItemHORqd();
 
-  void setPDUSessionResourceItemHORqd(
+  void set(
       const PDUSessionID& m_pDUSessionID,
       const OCTET_STRING_t& m_handoverRequiredTransfer);
-  void getPDUSessionResourceItemHORqd(
-      PDUSessionID& m_pDUSessionID, OCTET_STRING_t& m_handoverRequiredTransfer);
+  void get(
+      PDUSessionID& m_pDUSessionID,
+      OCTET_STRING_t& m_handoverRequiredTransfer) const;
 
-  bool encode2PDUSessionResourceItemHORqd(
-      Ngap_PDUSessionResourceItemHORqd_t* pdUSessionResourceItemHORqd);
-  bool decodefromPDUSessionResourceItemHORqd(
-      Ngap_PDUSessionResourceItemHORqd_t* pdUSessionResourceItemHORqd);
+  bool encode(Ngap_PDUSessionResourceItemHORqd_t* pdUSessionResourceItemHORqd);
+  bool decode(Ngap_PDUSessionResourceItemHORqd_t* pdUSessionResourceItemHORqd);
 
  private:
   PDUSessionID pDUSessionID;                // Mandatory

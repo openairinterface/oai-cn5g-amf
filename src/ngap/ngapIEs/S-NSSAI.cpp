@@ -20,6 +20,7 @@
  */
 
 #include "S-NSSAI.hpp"
+
 #include "amf.hpp"
 #include "conversions.hpp"
 
@@ -37,7 +38,7 @@ S_NSSAI::S_NSSAI() {
 S_NSSAI::~S_NSSAI() {}
 
 //------------------------------------------------------------------------------
-bool S_NSSAI::EncodeSD(Ngap_SD_t* m_sd) {
+bool S_NSSAI::encodeSD(Ngap_SD_t* m_sd) {
   if (!sd_.has_value()) {
     return false;
   }
@@ -51,7 +52,7 @@ bool S_NSSAI::EncodeSD(Ngap_SD_t* m_sd) {
 }
 
 //------------------------------------------------------------------------------
-bool S_NSSAI::DecodeSD(Ngap_SD_t* m_sd) {
+bool S_NSSAI::decodeSD(Ngap_SD_t* m_sd) {
   if (!m_sd->buf) return false;
 
   uint32_t value = SD_NO_VALUE;
@@ -134,7 +135,7 @@ bool S_NSSAI::encode(Ngap_S_NSSAI_t* s_NSSAI) {
   if (sd_.has_value() && (sd_.value() != SD_NO_VALUE)) {
     s_NSSAI->sD = (Ngap_SD_t*) calloc(1, sizeof(Ngap_SD_t));
     if (!s_NSSAI->sD) return false;
-    if (!EncodeSD(s_NSSAI->sD)) {
+    if (!encodeSD(s_NSSAI->sD)) {
       return false;
     }
   }
@@ -145,7 +146,7 @@ bool S_NSSAI::encode(Ngap_S_NSSAI_t* s_NSSAI) {
 bool S_NSSAI::decode(Ngap_S_NSSAI_t* s_NSSAI) {
   if (!conv::octet_string_2_int8(s_NSSAI->sST, sst_)) return false;
   if (s_NSSAI->sD) {
-    if (!DecodeSD(s_NSSAI->sD)) return false;
+    if (!decodeSD(s_NSSAI->sD)) return false;
   }
   return true;
 }

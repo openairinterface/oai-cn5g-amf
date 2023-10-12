@@ -21,30 +21,26 @@
 
 #include "QosFlowLevelQosParameters.hpp"
 
-#include <iostream>
-using namespace std;
-
 namespace ngap {
 
 //------------------------------------------------------------------------------
 QosFlowLevelQosParameters::QosFlowLevelQosParameters() {
-  qosCharacteristics             = NULL;
-  allocationAndRetentionPriority = NULL;
-  gBR_QosInformation             = NULL;
-  reflectiveQosAttribute         = NULL;
-  additionalQosFlowInformation   = NULL;
+  gBR_QosInformation           = std::nullopt;
+  reflectiveQosAttribute       = std::nullopt;
+  additionalQosFlowInformation = std::nullopt;
 }
 
 //------------------------------------------------------------------------------
 QosFlowLevelQosParameters::~QosFlowLevelQosParameters() {}
 
 //------------------------------------------------------------------------------
-void QosFlowLevelQosParameters::setQosFlowLevelQosParameters(
-    QosCharacteristics* m_qosCharacteristics,
-    AllocationAndRetentionPriority* m_allocationAndRetentionPriority,
-    GBR_QosInformation* m_gBR_QosInformation,
-    ReflectiveQosAttribute* m_reflectiveQosAttribute,
-    AdditionalQosFlowInformation* m_additionalQosFlowInformation) {
+void QosFlowLevelQosParameters::set(
+    const QosCharacteristics& m_qosCharacteristics,
+    const AllocationAndRetentionPriority& m_allocationAndRetentionPriority,
+    const std::optional<GbrQoSFlowInformation>& m_gBR_QosInformation,
+    const std::optional<ReflectiveQosAttribute>& m_reflectiveQosAttribute,
+    const std::optional<AdditionalQosFlowInformation>&
+        m_additionalQosFlowInformation) {
   qosCharacteristics             = m_qosCharacteristics;
   allocationAndRetentionPriority = m_allocationAndRetentionPriority;
   gBR_QosInformation             = m_gBR_QosInformation;
@@ -53,94 +49,91 @@ void QosFlowLevelQosParameters::setQosFlowLevelQosParameters(
 }
 
 //------------------------------------------------------------------------------
-bool QosFlowLevelQosParameters::getQosFlowLevelQosParameters(
-    QosCharacteristics*& m_qosCharacteristics,
-    AllocationAndRetentionPriority*& m_allocationAndRetentionPriority,
-    GBR_QosInformation*& m_gBR_QosInformation,
-    ReflectiveQosAttribute*& m_reflectiveQosAttribute,
-    AdditionalQosFlowInformation*& m_additionalQosFlowInformation) {
+void QosFlowLevelQosParameters::get(
+    QosCharacteristics& m_qosCharacteristics,
+    AllocationAndRetentionPriority& m_allocationAndRetentionPriority,
+    std::optional<GbrQoSFlowInformation>& m_gBR_QosInformation,
+    std::optional<ReflectiveQosAttribute>& m_reflectiveQosAttribute,
+    std::optional<AdditionalQosFlowInformation>& m_additionalQosFlowInformation)
+    const {
   m_qosCharacteristics             = qosCharacteristics;
   m_allocationAndRetentionPriority = allocationAndRetentionPriority;
   m_gBR_QosInformation             = gBR_QosInformation;
   m_reflectiveQosAttribute         = reflectiveQosAttribute;
   m_additionalQosFlowInformation   = additionalQosFlowInformation;
-
-  return true;
 }
 
 //------------------------------------------------------------------------------
-bool QosFlowLevelQosParameters::encode2QosFlowLevelQosParameters(
+bool QosFlowLevelQosParameters::encode(
     Ngap_QosFlowLevelQosParameters_t* qosFlowLevelQosParameters) {
-  if (!qosCharacteristics->encode2QosCharacteristics(
+  if (!qosCharacteristics.encode(
           &qosFlowLevelQosParameters->qosCharacteristics))
     return false;
-  if (!allocationAndRetentionPriority->encode2AllocationAndRetentionPriority(
+  if (!allocationAndRetentionPriority.encode(
           &qosFlowLevelQosParameters->allocationAndRetentionPriority))
     return false;
 
-  if (gBR_QosInformation) {
-    Ngap_GBR_QosInformation_t* gbrQosInfo = (Ngap_GBR_QosInformation_t*) calloc(
-        1, sizeof(Ngap_GBR_QosInformation_t));
-    if (!gbrQosInfo) return false;
-    if (!gBR_QosInformation->encode2GBR_QosInformation(gbrQosInfo))
+  if (gBR_QosInformation.has_value()) {
+    qosFlowLevelQosParameters->gBR_QosInformation =
+        (Ngap_GBR_QosInformation_t*) calloc(
+            1, sizeof(Ngap_GBR_QosInformation_t));
+    if (!qosFlowLevelQosParameters->gBR_QosInformation) return false;
+    if (!gBR_QosInformation.value().encode(
+            qosFlowLevelQosParameters->gBR_QosInformation))
       return false;
-    qosFlowLevelQosParameters->gBR_QosInformation = gbrQosInfo;
   }
-  if (reflectiveQosAttribute) {
-    Ngap_ReflectiveQosAttribute_t* reflective =
+
+  if (reflectiveQosAttribute.has_value()) {
+    qosFlowLevelQosParameters->reflectiveQosAttribute =
         (Ngap_ReflectiveQosAttribute_t*) calloc(
             1, sizeof(Ngap_ReflectiveQosAttribute_t));
-    if (!reflective) return false;
-    if (!reflectiveQosAttribute->encode2ReflectiveQosAttribute(reflective))
+    if (!qosFlowLevelQosParameters->reflectiveQosAttribute) return false;
+    if (!reflectiveQosAttribute.value().encode(
+            qosFlowLevelQosParameters->reflectiveQosAttribute))
       return false;
-    qosFlowLevelQosParameters->reflectiveQosAttribute = reflective;
   }
-  if (additionalQosFlowInformation) {
-    Ngap_AdditionalQosFlowInformation_t* additional =
+
+  if (additionalQosFlowInformation.has_value()) {
+    qosFlowLevelQosParameters->additionalQosFlowInformation =
         (Ngap_AdditionalQosFlowInformation_t*) calloc(
             1, sizeof(Ngap_AdditionalQosFlowInformation_t));
-    if (!additional) return false;
-    if (!additionalQosFlowInformation->encode2AdditionalQosFlowInformation(
-            additional))
+    if (!qosFlowLevelQosParameters->additionalQosFlowInformation) return false;
+    if (!additionalQosFlowInformation.value().encode(
+            qosFlowLevelQosParameters->additionalQosFlowInformation))
       return false;
-    qosFlowLevelQosParameters->additionalQosFlowInformation = additional;
   }
 
   return true;
 }
 
 //------------------------------------------------------------------------------
-bool QosFlowLevelQosParameters::decodefromQosFlowLevelQosParameters(
+bool QosFlowLevelQosParameters::decode(
     Ngap_QosFlowLevelQosParameters_t* qosFlowLevelQosParameters) {
-  if (qosCharacteristics == nullptr)
-    qosCharacteristics = new QosCharacteristics();
-  if (allocationAndRetentionPriority == nullptr)
-    allocationAndRetentionPriority = new AllocationAndRetentionPriority();
-
-  if (!qosCharacteristics->decodefromQosCharacteristics(
+  if (!qosCharacteristics.decode(
           &qosFlowLevelQosParameters->qosCharacteristics))
     return false;
-  if (!allocationAndRetentionPriority->decodefromAllocationAndRetentionPriority(
+  if (!allocationAndRetentionPriority.decode(
           &qosFlowLevelQosParameters->allocationAndRetentionPriority))
     return false;
 
   if (qosFlowLevelQosParameters->gBR_QosInformation) {
-    gBR_QosInformation = new GBR_QosInformation();
-    if (!gBR_QosInformation->decodefromGBR_QosInformation(
-            qosFlowLevelQosParameters->gBR_QosInformation))
+    GbrQoSFlowInformation tmp = {};
+    if (!tmp.decode(qosFlowLevelQosParameters->gBR_QosInformation))
       return false;
+    gBR_QosInformation = std::make_optional<GbrQoSFlowInformation>(tmp);
   }
   if (qosFlowLevelQosParameters->reflectiveQosAttribute) {
-    reflectiveQosAttribute = new ReflectiveQosAttribute();
-    if (!reflectiveQosAttribute->decodefromReflectiveQosAttribute(
-            qosFlowLevelQosParameters->reflectiveQosAttribute))
+    ReflectiveQosAttribute tmp = {};
+    if (!tmp.decode(qosFlowLevelQosParameters->reflectiveQosAttribute))
       return false;
+    reflectiveQosAttribute = std::make_optional<ReflectiveQosAttribute>(tmp);
   }
   if (qosFlowLevelQosParameters->additionalQosFlowInformation) {
-    additionalQosFlowInformation = new AdditionalQosFlowInformation();
-    if (!additionalQosFlowInformation->decodefromAdditionalQosFlowInformation(
-            qosFlowLevelQosParameters->additionalQosFlowInformation))
+    AdditionalQosFlowInformation tmp = {};
+    if (!tmp.decode(qosFlowLevelQosParameters->additionalQosFlowInformation))
       return false;
+    additionalQosFlowInformation =
+        std::make_optional<AdditionalQosFlowInformation>(tmp);
   }
 
   return true;

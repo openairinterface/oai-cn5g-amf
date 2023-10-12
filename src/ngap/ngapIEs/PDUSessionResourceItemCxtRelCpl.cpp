@@ -35,7 +35,7 @@ void PDUSessionResourceItemCxtRelCpl::set(const PDUSessionID& pdu_session_id) {
 }
 
 //------------------------------------------------------------------------------
-void PDUSessionResourceItemCxtRelCpl::get(PDUSessionID& pdu_session_id) {
+void PDUSessionResourceItemCxtRelCpl::get(PDUSessionID& pdu_session_id) const {
   pdu_session_id = pdu_session_id_;
 }
 

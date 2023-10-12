@@ -36,7 +36,7 @@ void MICOModeIndication::set(const long& mico_mode_indication) {
 }
 
 //------------------------------------------------------------------------------
-void MICOModeIndication::get(long& mico_mode_indication) {
+void MICOModeIndication::get(long& mico_mode_indication) const {
   mico_mode_indication = mico_mode_indication_;
 }
 

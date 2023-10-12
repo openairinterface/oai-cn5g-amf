@@ -19,32 +19,41 @@
  *      contact@openairinterface.org
  */
 
-#ifndef _PDUSessionResourceHandoverCommandTransfer_H_
-#define _PDUSessionResourceHandoverCommandTransfer_H_
+#ifndef _PDU_SESSION_RESOURCE_HANDOVER_COMMAND_TRANSFER_H_
+#define _PDU_SESSION_RESOURCE_HANDOVER_COMMAND_TRANSFER_H_
 
 #include "NgapIEsStruct.hpp"
 #include "QosFlowToBeForwardedList.hpp"
 #include "UPTransportLayerInformation.hpp"
+
 extern "C" {
 #include "Ngap_HandoverCommandTransfer.h"
 #include "Ngap_ProtocolIE-Field.h"
 }
+
 namespace ngap {
 class PDUSessionResourceHandoverCommandTransfer {
- private:
-  /* data */
-  Ngap_HandoverCommandTransfer_t* handovercommandtransferIE;
-  UpTransportLayerInformation* dLForwardingUP_TNLInformation;
-  QosFlowToBeForwardedList* qosFlowToBeForwardedList;
-
  public:
-  PDUSessionResourceHandoverCommandTransfer(/* args */);
+  PDUSessionResourceHandoverCommandTransfer();
   virtual ~PDUSessionResourceHandoverCommandTransfer();
+
   void setUPTransportLayerInformation(GtpTunnel_t uptlinfo);
   void setQosFlowToBeForwardedList(
       std::vector<QosFlowToBeForwardedItem_t> list);
-  int encodePDUSessionResourceHandoverCommandTransfer(
-      uint8_t* buf, int buf_size);
+
+  int encode(uint8_t* buf, int buf_size);
+
+ private:
+  Ngap_HandoverCommandTransfer_t* handovercommandtransferIE;
+  std::optional<UpTransportLayerInformation>
+      dLForwardingUP_TNLInformation;  // Optional
+  std::optional<QosFlowToBeForwardedList>
+      qosFlowToBeForwardedList;  // Optional (list 0..1)
+  // TODO: Data Forwarding Response DRB List //Optional
+  // TODO: Additional DL Forwarding UP TNL Information //Optional
+  // TODO: UL Forwarding UP TNL Information //Optional
+  // TODO: Additional UL Forwarding UP TNL Information //Optional
+  // TODO: Data Forwarding Response E-RAB List //Optional
 };
 
 }  // namespace ngap

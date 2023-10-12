@@ -19,56 +19,43 @@
  *      contact@openairinterface.org
  */
 
-#include "AMF-UE-NGAP-ID.hpp"
+#include "EUtraCgi.hpp"
 
 namespace ngap {
 
 //------------------------------------------------------------------------------
-AMF_UE_NGAP_ID::AMF_UE_NGAP_ID() {
-  id_ = 0;
+EUtraCgi::EUtraCgi() {}
+
+//------------------------------------------------------------------------------
+EUtraCgi::~EUtraCgi() {}
+
+//------------------------------------------------------------------------------
+void EUtraCgi::set(
+    const PlmnId& plmn_id, const EUTRACellIdentity& eUTRA_cell_identity) {
+  plmn_id_             = plmn_id;
+  eUTRA_cell_identity_ = eUTRA_cell_identity;
 }
 
 //------------------------------------------------------------------------------
-AMF_UE_NGAP_ID::~AMF_UE_NGAP_ID() {}
-
-//------------------------------------------------------------------------------
-bool AMF_UE_NGAP_ID::set(const uint64_t& id) {
-  if (id > AMF_UE_NGAP_ID_MAX_VALUE) return false;
-  id_ = id;
-  return true;
+void EUtraCgi::get(
+    PlmnId& plmn_id, EUTRACellIdentity& eUTRA_cell_identity) const {
+  plmn_id             = plmn_id_;
+  eUTRA_cell_identity = eUTRA_cell_identity_;
 }
 
 //------------------------------------------------------------------------------
-uint64_t AMF_UE_NGAP_ID::get() {
-  return id_;
-}
-
-//------------------------------------------------------------------------------
-bool AMF_UE_NGAP_ID::encode2AMF_UE_NGAP_ID(
-    Ngap_AMF_UE_NGAP_ID_t& amf_ue_ngap_id) {
-  amf_ue_ngap_id.size = 5;
-  amf_ue_ngap_id.buf  = (uint8_t*) calloc(1, amf_ue_ngap_id.size);
-  if (!amf_ue_ngap_id.buf) return false;
-
-  for (int i = 0; i < amf_ue_ngap_id.size; i++) {
-    amf_ue_ngap_id.buf[i] =
-        (id_ & (0xff00000000 >> i * 8)) >> ((amf_ue_ngap_id.size - i - 1) * 8);
-  }
+bool EUtraCgi::encode(Ngap_EUTRA_CGI_t& eutra_cgi) {
+  if (!plmn_id_.encode(eutra_cgi.pLMNIdentity)) return false;
+  if (!eUTRA_cell_identity_.encode(eutra_cgi.eUTRACellIdentity)) return false;
 
   return true;
 }
 
 //------------------------------------------------------------------------------
-bool AMF_UE_NGAP_ID::decodefromAMF_UE_NGAP_ID(
-    Ngap_AMF_UE_NGAP_ID_t& amf_ue_ngap_id) {
-  if (!amf_ue_ngap_id.buf) return false;
-
-  id_ = 0;
-  for (int i = 0; i < amf_ue_ngap_id.size; i++) {
-    id_ = id_ << 8;
-    id_ |= amf_ue_ngap_id.buf[i];
-  }
-
+bool EUtraCgi::decode(Ngap_EUTRA_CGI_t& eutra_cgi) {
+  if (!plmn_id_.decode(eutra_cgi.pLMNIdentity)) return false;
+  if (!eUTRA_cell_identity_.decode(eutra_cgi.eUTRACellIdentity)) return false;
   return true;
 }
+
 }  // namespace ngap

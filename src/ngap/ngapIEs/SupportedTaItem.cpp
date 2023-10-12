@@ -59,7 +59,7 @@ void SupportedTaItem::getBroadcastPlmnList(
 }
 
 //------------------------------------------------------------------------------
-bool SupportedTaItem::encode2SupportedTaItem(Ngap_SupportedTAItem_t* ta) {
+bool SupportedTaItem::encode(Ngap_SupportedTAItem_t* ta) {
   if (!tac.encode(ta->tAC)) return false;
 
   for (std::vector<BroadcastPLMNItem>::iterator it =
@@ -67,7 +67,7 @@ bool SupportedTaItem::encode2SupportedTaItem(Ngap_SupportedTAItem_t* ta) {
        it < std::end(broadcastPLMNList); ++it) {
     Ngap_BroadcastPLMNItem_t* plmnItem =
         (Ngap_BroadcastPLMNItem*) calloc(1, sizeof(Ngap_BroadcastPLMNItem));
-    if (!it->encode2BroadcastPLMNItem(plmnItem)) return false;
+    if (!it->encode(plmnItem)) return false;
     if (ASN_SEQUENCE_ADD(&ta->broadcastPLMNList.list, plmnItem) != 0)
       return false;
   }
@@ -75,12 +75,11 @@ bool SupportedTaItem::encode2SupportedTaItem(Ngap_SupportedTAItem_t* ta) {
 }
 
 //------------------------------------------------------------------------------
-bool SupportedTaItem::decodefromSupportedTaItem(Ngap_SupportedTAItem_t* pdu) {
+bool SupportedTaItem::decode(Ngap_SupportedTAItem_t* pdu) {
   if (!tac.decode(pdu->tAC)) return false;
   for (int i = 0; i < pdu->broadcastPLMNList.list.count; i++) {
     BroadcastPLMNItem item = {};
-    if (!item.decodefromBroadcastPLMNItem(pdu->broadcastPLMNList.list.array[i]))
-      return false;
+    if (!item.decode(pdu->broadcastPLMNList.list.array[i])) return false;
     broadcastPLMNList.push_back(item);
   }
   return true;

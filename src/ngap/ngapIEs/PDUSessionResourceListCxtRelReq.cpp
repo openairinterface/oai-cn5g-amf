@@ -40,7 +40,7 @@ void PDUSessionResourceListCxtRelReq::set(
 
 //------------------------------------------------------------------------------
 void PDUSessionResourceListCxtRelReq::get(
-    std::vector<PDUSessionResourceItemCxtRelReq>& list) {
+    std::vector<PDUSessionResourceItemCxtRelReq>& list) const {
   list.clear();
   for (auto i : item_list_) {
     list.push_back(i);

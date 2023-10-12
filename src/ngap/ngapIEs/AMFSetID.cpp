@@ -21,8 +21,8 @@
 
 #include "AMFSetID.hpp"
 
-#include "utils.hpp"
 #include "output_wrapper.hpp"
+#include "utils.hpp"
 
 namespace ngap {
 
@@ -50,12 +50,12 @@ bool AMFSetID::set(const uint16_t& id) {
 }
 
 //------------------------------------------------------------------------------
-void AMFSetID::get(std::string& id) {
+void AMFSetID::get(std::string& id) const {
   id = std::to_string(id_);
 }
 
 //------------------------------------------------------------------------------
-void AMFSetID::get(uint16_t& id) {
+void AMFSetID::get(uint16_t& id) const {
   id = id_;
 }
 

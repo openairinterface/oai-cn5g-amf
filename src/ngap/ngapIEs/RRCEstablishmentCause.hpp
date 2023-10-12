@@ -19,8 +19,8 @@
  *      contact@openairinterface.org
  */
 
-#ifndef _RRCESTABLISHMENTCAUSE_H_
-#define _RRCESTABLISHMENTCAUSE_H_
+#ifndef _RRC_ESTABLISHMENT_CAUSE_H_
+#define _RRC_ESTABLISHMENT_CAUSE_H_
 
 extern "C" {
 #include "Ngap_RRCEstablishmentCause.h"

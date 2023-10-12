@@ -21,7 +21,7 @@
 
 #include "MessageType.hpp"
 
-#include <iostream>
+#include "logger.hpp"
 
 extern "C" {
 #include "Ngap_Criticality.h"
@@ -31,8 +31,6 @@ extern "C" {
 #include "Ngap_SuccessfulOutcome.h"
 #include "Ngap_UnsuccessfulOutcome.h"
 }
-
-using namespace std;
 
 namespace ngap {
 
@@ -100,7 +98,7 @@ Ngap_Criticality MessageType::getCriticality() {
 }
 
 //------------------------------------------------------------------------------
-int MessageType::encode2pdu(Ngap_NGAP_PDU_t*& pdu) {
+int MessageType::encode(Ngap_NGAP_PDU_t*& pdu) {
   pdu->present = typeOfMessage;
   switch (typeOfMessage) {
     case Ngap_NGAP_PDU_PR_initiatingMessage: {
@@ -130,8 +128,8 @@ int MessageType::encode2pdu(Ngap_NGAP_PDU_t*& pdu) {
       break;
     }
     case Ngap_NGAP_PDU_PR_NOTHING: {
-      cout << "Ngap_NGAP_PDU_PR_NOTHING"
-           << "(messageType encode error)" << endl;
+      Logger::ngap().debug(
+          "Ngap_NGAP_PDU_PR_NOTHING (messageType encode error)");
       return 0;
     }
   }

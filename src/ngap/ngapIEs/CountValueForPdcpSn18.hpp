@@ -19,37 +19,29 @@
  *      contact@openairinterface.org
  */
 
-#ifndef _DRBS_SUBJECT_TO_STATUS_TRANSFERT_ITEM_H_
-#define _DRBS_SUBJECT_TO_STATUS_TRANSFERT_ITEM_H_
-
-#include "dRBStatusDL.hpp"
-#include "dRBStatusUL.hpp"
+#ifndef _COUNT_VALUE_FOR_PDCP_SN_18_H_
+#define _COUNT_VALUE_FOR_PDCP_SN_18_H_
 
 extern "C" {
-#include "Ngap_DRBsSubjectToStatusTransferItem.h"
+#include "Ngap_COUNTValueForPDCP-SN18.h"
 }
 
 namespace ngap {
-
-class dRBSubjectItem {
+class CountValueForPdcpSn18 {
  public:
-  dRBSubjectItem();
-  virtual ~dRBSubjectItem();
+  CountValueForPdcpSn18();
+  virtual ~CountValueForPdcpSn18();
 
-  void getdRBSubjectItem(
-      Ngap_DRB_ID_t& dRB_ID, dRBStatusUL& dRB_UL, dRBStatusDL& dRB_DL);
-  void setdRBSubjectItem(
-      const Ngap_DRB_ID_t& dRB_ID, const dRBStatusUL& dRB_UL,
-      const dRBStatusDL& dRB_DL);
+  void setvalue(long pDCP, long hfn_PDCP);
+  void getvalue(long& pDCP, long& hFN_PDCP) const;
 
-  bool decodefromdRBSubjectItem(
-      Ngap_DRBsSubjectToStatusTransferItem_t* dRB_item);
-  bool encodedRBSubjectItem(Ngap_DRBsSubjectToStatusTransferItem_t* dRB_item);
+  bool encode(Ngap_COUNTValueForPDCP_SN18_t* countvalue);
+  bool decode(Ngap_COUNTValueForPDCP_SN18_t& countValue);
 
  private:
-  Ngap_DRB_ID_t drbID;  // Mandatory
-  dRBStatusUL drbUL;    // Mandatory
-  dRBStatusDL drbDL;    // Mandatory
+  long pdcp;      // Mandatory (18 bits)
+  long hfn_pdcp;  // Mandatory (14 bits)
 };
+
 }  // namespace ngap
 #endif

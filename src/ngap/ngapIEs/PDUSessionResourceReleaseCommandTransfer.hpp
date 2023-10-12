@@ -19,8 +19,8 @@
  *      contact@openairinterface.org
  */
 
-#ifndef _PDUSESSIONRESOURCERELEASECOMMANDTRANSFER_H_
-#define _PDUSESSIONRESOURCERELEASECOMMANDTRANSFER_H_
+#ifndef _PDU_SESSION_RESOURCE_RELEASE_COMMAND_TRANSFER_H_
+#define _PDU_SESSION_RESOURCE_RELEASE_COMMAND_TRANSFER_H_
 
 #include "Cause.hpp"
 #include "NgapIEsStruct.hpp"
@@ -42,17 +42,18 @@ class PDUSessionResourceReleaseCommandTransfer {
   void setCauseNas(e_Ngap_CauseNas cause_value);
   void setCauseProtocol(e_Ngap_CauseProtocol cause_value);
   void setCauseMisc(e_Ngap_CauseMisc cause_value);
-  int Encode(uint8_t* buf, int buf_size);
-  // Decapsulation
-  bool decodefromIE(uint8_t* buf, int buf_size);
+
   long getChoiceOfCause();
   long getCause();
+
+  int encode(uint8_t* buf, int buf_size);
+  bool decode(uint8_t* buf, int buf_size);
 
  private:
   Ngap_PDUSessionResourceReleaseCommandTransfer_t*
       pduSessionResourceReleaseCommandTransferIEs;
 
-  Cause* causeValue;
+  Cause causeValue_;  // Mandatory
 };
 
 }  // namespace ngap

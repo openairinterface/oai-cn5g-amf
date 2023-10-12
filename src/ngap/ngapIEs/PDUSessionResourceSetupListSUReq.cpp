@@ -37,7 +37,7 @@ void PDUSessionResourceSetupListSUReq::set(
 
 //------------------------------------------------------------------------------
 void PDUSessionResourceSetupListSUReq::get(
-    std::vector<PDUSessionResourceSetupItemSUReq>& list) {
+    std::vector<PDUSessionResourceSetupItemSUReq>& list) const {
   list = item_list_;
 }
 

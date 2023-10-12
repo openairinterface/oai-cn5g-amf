@@ -20,6 +20,7 @@
  */
 
 #include "RANStatusTransferTransparentContainer.hpp"
+
 #include "logger.hpp"
 
 namespace ngap {
@@ -33,22 +34,21 @@ RANStatusTransferTransparentContainer::
     ~RANStatusTransferTransparentContainer() {}
 
 //------------------------------------------------------------------------------
-void RANStatusTransferTransparentContainer::getdRBSubject_list(
-    dRBSubjectList& drblist) {
+void RANStatusTransferTransparentContainer::getDRBSubjectList(
+    DrbSubjectToStatusTransferList& drblist) {
   drblist = drb_sub_list;
 }
 
 //------------------------------------------------------------------------------
-void RANStatusTransferTransparentContainer::setdRBSubject_list(
-    const dRBSubjectList& drblist) {
+void RANStatusTransferTransparentContainer::setDRBSubjectList(
+    const DrbSubjectToStatusTransferList& drblist) {
   drb_sub_list = drblist;
 }
 
 //------------------------------------------------------------------------------
-bool RANStatusTransferTransparentContainer::
-    encoderanstatustransfer_transparentcontainer(
-        Ngap_RANStatusTransfer_TransparentContainer_t*
-            ranstatustransfer_transparentcontainer) {
+bool RANStatusTransferTransparentContainer::encode(
+    Ngap_RANStatusTransfer_TransparentContainer_t*
+        ranstatustransfer_transparentcontainer) {
   if (!drb_sub_list.encodefromdRBSubjectlist(
           ranstatustransfer_transparentcontainer
               ->dRBsSubjectToStatusTransferList)) {
@@ -60,10 +60,9 @@ bool RANStatusTransferTransparentContainer::
 }
 
 //------------------------------------------------------------------------------
-bool RANStatusTransferTransparentContainer::
-    decoderanstatustransfer_transparentcontainer(
-        Ngap_RANStatusTransfer_TransparentContainer_t&
-            ranstatustransfer_transparentcontainer) {
+bool RANStatusTransferTransparentContainer::decode(
+    Ngap_RANStatusTransfer_TransparentContainer_t&
+        ranstatustransfer_transparentcontainer) {
   if (!drb_sub_list.decodefromdRBSubjectlist(
           ranstatustransfer_transparentcontainer
               .dRBsSubjectToStatusTransferList)) {

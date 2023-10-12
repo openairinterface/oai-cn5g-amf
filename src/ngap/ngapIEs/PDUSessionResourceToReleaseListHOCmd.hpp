@@ -22,8 +22,9 @@
 #ifndef _PDU_SESSION_RESOURCE_TO_RELEASE_LIST_HO_CMD_H_
 #define _PDU_SESSION_RESOURCE_TO_RELEASE_LIST_HO_CMD_H_
 
-#include "PDUSessionResourceItem.hpp"
 #include <vector>
+
+#include "PDUSessionResourceItem.hpp"
 
 extern "C" {
 #include "Ngap_PDUSessionResourceToReleaseListHOCmd.h"

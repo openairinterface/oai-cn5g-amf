@@ -22,10 +22,10 @@
 #ifndef _NGAP_MESSAGE_H_
 #define _NGAP_MESSAGE_H_
 
-#include "AMF-UE-NGAP-ID.hpp"
+#include "AmfUeNgapId.hpp"
 #include "MessageType.hpp"
 #include "NgapIEsStruct.hpp"
-#include "RAN-UE-NGAP-ID.hpp"
+#include "RanUeNgapId.hpp"
 
 extern "C" {
 #include "Ngap_ProtocolIE-Field.h"
@@ -124,7 +124,7 @@ class NgapMessage {
   virtual ~NgapMessage();
 
   void setMessageType(NgapMessageType messageType);
-  virtual bool decodeFromPdu(Ngap_NGAP_PDU_t* msgPdu) = 0;
+  virtual bool decode(Ngap_NGAP_PDU_t* msgPdu) = 0;
   int Encode(uint8_t* buf, int bufSize);
   void encode2NewBuffer(uint8_t*& buf, int& encoded_size);
 

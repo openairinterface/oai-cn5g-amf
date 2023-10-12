@@ -28,11 +28,11 @@ extern "C" {
 
 namespace ngap {
 
-class RAN_UE_NGAP_ID {
+class RanUeNgapId {
  public:
-  RAN_UE_NGAP_ID();
-  RAN_UE_NGAP_ID(uint32_t);
-  virtual ~RAN_UE_NGAP_ID();
+  RanUeNgapId();
+  RanUeNgapId(uint32_t);
+  virtual ~RanUeNgapId();
 
   void set(const uint32_t&);
   uint32_t get() const;

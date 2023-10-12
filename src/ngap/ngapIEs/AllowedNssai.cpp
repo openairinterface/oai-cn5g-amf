@@ -43,7 +43,7 @@ void AllowedNSSAI::set(const std::vector<S_NSSAI>& list) {
 }
 
 //------------------------------------------------------------------------------
-void AllowedNSSAI::get(std::vector<S_NSSAI>& list) {
+void AllowedNSSAI::get(std::vector<S_NSSAI>& list) const {
   list = list_;
 }
 //------------------------------------------------------------------------------

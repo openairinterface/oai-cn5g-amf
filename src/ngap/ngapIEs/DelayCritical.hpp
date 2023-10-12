@@ -19,8 +19,8 @@
  *      contact@openairinterface.org
  */
 
-#ifndef _DELAYCRITICAL_H_
-#define _DELAYCRITICAL_H_
+#ifndef _DELAY_CRITICAL_H_
+#define _DELAY_CRITICAL_H_
 
 extern "C" {
 #include "Ngap_DelayCritical.h"
@@ -34,13 +34,13 @@ class DelayCritical {
   virtual ~DelayCritical();
 
   void setDelayCritical(e_Ngap_DelayCritical value);
-  bool getDelayCritical(e_Ngap_DelayCritical& value);
+  bool getDelayCritical(e_Ngap_DelayCritical& value) const;
 
-  bool encode2DelayCritical(Ngap_DelayCritical_t*);
-  bool decodefromDelayCritical(Ngap_DelayCritical_t*);
+  bool encode(Ngap_DelayCritical_t*);
+  bool decode(Ngap_DelayCritical_t*);
 
  private:
-  long delaycritical;
+  long delay_critical_;
 };
 
 }  // namespace ngap

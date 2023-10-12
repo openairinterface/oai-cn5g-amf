@@ -19,8 +19,10 @@
  *      contact@openairinterface.org
  */
 
-#ifndef _CRITICALITYDIAGNOSTICS_H_
-#define _CRITICALITYDIAGNOSTICS_H_
+#ifndef _CRITICALITY_DIAGNOSTICS_H_
+#define _CRITICALITY_DIAGNOSTICS_H_
+
+#include <vector>
 
 #include "IEsCriticalityDiagnostics.hpp"
 
@@ -31,6 +33,8 @@ extern "C" {
 #include "Ngap_ProtocolIE-Field.h"
 }
 
+constexpr uint16_t kCriticalityDiagnosticsMaxNoOfErrors = 256;
+
 namespace ngap {
 
 class CriticalityDiagnostics {
@@ -38,26 +42,31 @@ class CriticalityDiagnostics {
   CriticalityDiagnostics();
   virtual ~CriticalityDiagnostics();
 
-  int encode2pdu(Ngap_NGSetupFailure_t*);
-  bool decodeFromPdu(Ngap_CriticalityDiagnostics_t*);
+  int encode(Ngap_NGSetupFailure_t*);
+  bool decode(Ngap_CriticalityDiagnostics_t*);
+
   void setProcedureCodeValue(Ngap_ProcedureCode_t);
+  bool getProcedureCodeValue(Ngap_ProcedureCode_t&) const;
+
   void setTriggeringMessageValue(Ngap_TriggeringMessage_t);
+  bool getTriggeringMessageValue(Ngap_TriggeringMessage_t&) const;
+
   void setCriticalityValue(Ngap_Criticality_t);
+  bool getCriticalityValue(Ngap_Criticality_t&) const;
+
   void setIEsCriticalityDiagnosticsList(
-      IEsCriticalityDiagnostics* m_iEsCriticalityDiagnostics, int num);
-  bool getProcedureCodeValue(Ngap_ProcedureCode_t&);
-  bool getTriggeringMessageValue(Ngap_TriggeringMessage_t&);
-  bool getCriticalityValue(Ngap_Criticality_t&);
-  bool getIEsCriticalityDiagnosticsList(
-      IEsCriticalityDiagnostics*& m_iEsCriticalityDiagnostics, int& num);
+      const std::vector<IEsCriticalityDiagnostics>&
+          m_iEsCriticalityDiagnostics);
+  void getIEsCriticalityDiagnosticsList(std::vector<IEsCriticalityDiagnostics>&
+                                            m_iEsCriticalityDiagnostics) const;
 
  private:
-  Ngap_ProcedureCode_t procedureCode;         /* OPTIONAL */
-  Ngap_TriggeringMessage_t triggeringMessage; /* OPTIONAL */
-  Ngap_Criticality_t procedureCriticality;    /* OPTIONAL */
+  Ngap_ProcedureCode_t procedureCode;          // TODO: Optional
+  Ngap_TriggeringMessage_t triggeringMessage;  // TODO: Optional
+  Ngap_Criticality_t procedureCriticality;     // TODO: Optional
   // Ngap_CriticalityDiagnostics_IE_List_t iEsCriticalityDiagnostics;	/*
-  // OPTIONAL */
-  IEsCriticalityDiagnostics* iEsCriticalityDiagnostics;
+  // TODO: Optional
+  std::vector<IEsCriticalityDiagnostics> iEsCriticalityDiagnostics;
 
   bool procedureCodeIsSet;
   bool triggeringMessageIsSet;

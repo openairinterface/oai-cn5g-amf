@@ -20,9 +20,10 @@
  */
 
 #include "NGSetupResponse.hpp"
-#include "logger.hpp"
+
 #include "amf.hpp"
 #include "conversions.hpp"
+#include "logger.hpp"
 
 extern "C" {
 #include "dynamic_memory_check.h"
@@ -173,7 +174,7 @@ void NGSetupResponseMsg::setPlmnSupportList(
 }
 
 //------------------------------------------------------------------------------
-bool NGSetupResponseMsg::decodeFromPdu(Ngap_NGAP_PDU_t* ngapMsgPdu) {
+bool NGSetupResponseMsg::decode(Ngap_NGAP_PDU_t* ngapMsgPdu) {
   ngapPdu = ngapMsgPdu;
 
   if (ngapPdu->present == Ngap_NGAP_PDU_PR_successfulOutcome) {

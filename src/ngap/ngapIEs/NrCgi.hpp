@@ -19,40 +19,41 @@
  *      contact@openairinterface.org
  */
 
-#ifndef _NAS_PDU_H_
-#define _NAS_PDU_H_
+#ifndef _NR_CGI_H_
+#define _NR_CGI_H_
 
-#include "bstrlib.h"
+#include "NRCellIdentity.hpp"
+#include "NgapIEsStruct.hpp"
+#include "PlmnId.hpp"
 
 extern "C" {
-#include "Ngap_NAS-PDU.h"
+#include "Ngap_NR-CGI.h"
 }
 
 namespace ngap {
 
-class NAS_PDU {
+class NrCgi {
  public:
-  NAS_PDU();
-  virtual ~NAS_PDU();
+  NrCgi();
+  virtual ~NrCgi();
 
-  bool encode(Ngap_NAS_PDU_t&);
-  bool decode(Ngap_NAS_PDU_t&);
-  // bool get(uint8_t*& buffer, size_t& size) const;
-  void set(uint8_t* buffer, size_t size);
+  void set(const PlmnId&, const NRCellIdentity&);
+  void get(PlmnId&, NRCellIdentity&) const;
 
-  bool get(OCTET_STRING_t& pdu) const;
-  bool set(const OCTET_STRING_t& pdu);
+  void set(
+      const std::string& mcc, const std::string& mnc,
+      const unsigned long& nrcellidentity);
 
-  bool get(bstring& pdu) const;
-  bool set(const bstring& pdu);
+  void set(const struct NrCgi_s& cig);
+  void get(struct NrCgi_s& cig) const;
 
-  bool get(NAS_PDU& nas_pdu) const;
-  bool set(const NAS_PDU& nas_pdu);
+  bool encode(Ngap_NR_CGI_t*);
+  bool decode(Ngap_NR_CGI_t*);
 
  private:
-  bstring pdu_bstring;
+  PlmnId plmnId;                  // Mandatory
+  NRCellIdentity nRCellIdentity;  // Mandatory
 };
-
 }  // namespace ngap
 
 #endif

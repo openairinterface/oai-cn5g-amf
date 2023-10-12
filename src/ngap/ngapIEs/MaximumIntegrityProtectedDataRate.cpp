@@ -21,49 +21,46 @@
 
 #include "MaximumIntegrityProtectedDataRate.hpp"
 
-#include <iostream>
-using namespace std;
-
 namespace ngap {
 
 //------------------------------------------------------------------------------
 MaximumIntegrityProtectedDataRate::MaximumIntegrityProtectedDataRate() {
-  maxintprotdatarate = 0;
+  value_ = 0;
 }
 
+//------------------------------------------------------------------------------
+MaximumIntegrityProtectedDataRate::MaximumIntegrityProtectedDataRate(
+    e_Ngap_MaximumIntegrityProtectedDataRate value) {
+  value_ = value;
+}
 //------------------------------------------------------------------------------
 MaximumIntegrityProtectedDataRate::~MaximumIntegrityProtectedDataRate() {}
 
 //------------------------------------------------------------------------------
-void MaximumIntegrityProtectedDataRate::setMaximumIntegrityProtectedDataRate(
-    e_Ngap_MaximumIntegrityProtectedDataRate m_maxintprotdatarate) {
-  maxintprotdatarate = m_maxintprotdatarate;
+void MaximumIntegrityProtectedDataRate::set(
+    e_Ngap_MaximumIntegrityProtectedDataRate value) {
+  value_ = value;
 }
 
 //------------------------------------------------------------------------------
-bool MaximumIntegrityProtectedDataRate::getMaximumIntegrityProtectedDataRate(
-    long& m_maxintprotdatarate) {
-  m_maxintprotdatarate = maxintprotdatarate;
+bool MaximumIntegrityProtectedDataRate::get(long& value) const {
+  value = value_;
 
   return true;
 }
 
 //------------------------------------------------------------------------------
-bool MaximumIntegrityProtectedDataRate::
-    encode2MaximumIntegrityProtectedDataRate(
-        Ngap_MaximumIntegrityProtectedDataRate_t&
-            maximumIntegrityProtectedDataRate) {
-  maximumIntegrityProtectedDataRate = maxintprotdatarate;
+bool MaximumIntegrityProtectedDataRate::encode(
+    Ngap_MaximumIntegrityProtectedDataRate_t& value) {
+  value = value_;
 
   return true;
 }
 
 //------------------------------------------------------------------------------
-bool MaximumIntegrityProtectedDataRate::
-    decodefromMaximumIntegrityProtectedDataRate(
-        Ngap_MaximumIntegrityProtectedDataRate_t
-            maximumIntegrityProtectedDataRate) {
-  maxintprotdatarate = maximumIntegrityProtectedDataRate;
+bool MaximumIntegrityProtectedDataRate::decode(
+    Ngap_MaximumIntegrityProtectedDataRate_t value) {
+  value_ = value;
 
   return true;
 }

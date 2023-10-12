@@ -21,9 +21,6 @@
 
 #include "DefaultPagingDRX.hpp"
 
-#include <iostream>
-using namespace std;
-
 namespace ngap {
 
 //------------------------------------------------------------------------------
@@ -74,6 +71,6 @@ bool DefaultPagingDRX::decode(const Ngap_PagingDRX_t& paging_drx) {
   }
 
   return true;
-}  // namespace ngap
+}
 
 }  // namespace ngap

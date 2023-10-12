@@ -1372,15 +1372,6 @@ void amf_app::timer_nrf_heartbeat_timeout(
     Logger::amf_app().error(
         "Could not send ITTI message %s to task TASK_AMF_SBI",
         itti_msg->get_msg_name());
-  } else {
-    /*   Logger::amf_app().debug(
-           "Set a timer to the next Heart-beat (%d)",
-           nf_instance_profile.get_nf_heartBeat_timer());
-       timer_nrf_heartbeat = itti_inst->timer_setup(
-           nf_instance_profile.get_nf_heartBeat_timer(), 0, TASK_AMF_APP,
-           TASK_AMF_APP_TIMEOUT_NRF_HEARTBEAT,
-           0);  // TODO arg2_user
-     */
   }
 }
 

@@ -20,6 +20,7 @@
  */
 
 #include "NGSetupFailure.hpp"
+
 #include "logger.hpp"
 
 extern "C" {
@@ -182,7 +183,7 @@ void NGSetupFailureMsg::setCauseMisc(const e_Ngap_CauseMisc& cause_value) {
 }
 
 //------------------------------------------------------------------------------
-bool NGSetupFailureMsg::decodeFromPdu(Ngap_NGAP_PDU_t* ngapMsgPdu) {
+bool NGSetupFailureMsg::decode(Ngap_NGAP_PDU_t* ngapMsgPdu) {
   ngapPdu = ngapMsgPdu;
   if (ngapPdu->present == Ngap_NGAP_PDU_PR_unsuccessfulOutcome) {
     if (ngapPdu->choice.unsuccessfulOutcome &&

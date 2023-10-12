@@ -29,9 +29,6 @@ extern "C" {
 #include "Ngap_SliceSupportItem.h"
 }
 
-#include <iostream>
-using namespace std;
-
 namespace ngap {
 
 //------------------------------------------------------------------------------
@@ -49,14 +46,13 @@ void BroadcastPLMNItem::setPlmnSliceSupportList(
 
 //------------------------------------------------------------------------------
 void BroadcastPLMNItem::getPlmnSliceSupportList(
-    PlmnId& m_plmn, std::vector<S_NSSAI>& sliceList) {
+    PlmnId& m_plmn, std::vector<S_NSSAI>& sliceList) const {
   m_plmn    = plmn;
   sliceList = supportedSliceList;
 }
 
 //------------------------------------------------------------------------------
-bool BroadcastPLMNItem::encode2BroadcastPLMNItem(
-    Ngap_BroadcastPLMNItem_t* plmnItem) {
+bool BroadcastPLMNItem::encode(Ngap_BroadcastPLMNItem_t* plmnItem) {
   if (!plmn.encode(plmnItem->pLMNIdentity)) return false;
 
   for (std::vector<S_NSSAI>::iterator it = std::begin(supportedSliceList);
@@ -72,8 +68,7 @@ bool BroadcastPLMNItem::encode2BroadcastPLMNItem(
 }
 
 //------------------------------------------------------------------------------
-bool BroadcastPLMNItem::decodefromBroadcastPLMNItem(
-    Ngap_BroadcastPLMNItem_t* pdu) {
+bool BroadcastPLMNItem::decode(Ngap_BroadcastPLMNItem_t* pdu) {
   if (!plmn.decode(pdu->pLMNIdentity)) return false;
   for (int i = 0; i < pdu->tAISliceSupportList.list.count; i++) {
     S_NSSAI snssai = {};

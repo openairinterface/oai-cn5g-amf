@@ -40,7 +40,7 @@ class PDUSessionResourceModifyItemModRes {
       const OCTET_STRING_t pdu_session_resource_modify_response_transfer);
   void get(
       PDUSessionID& pdu_session_id,
-      OCTET_STRING_t& pdu_session_resource_modify_response_transfer);
+      OCTET_STRING_t& pdu_session_resource_modify_response_transfer) const;
 
   bool encode(Ngap_PDUSessionResourceModifyItemModRes_t&
                   pdu_session_resource_modify_item_mod_res);

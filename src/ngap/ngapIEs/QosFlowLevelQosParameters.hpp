@@ -19,12 +19,12 @@
  *      contact@openairinterface.org
  */
 
-#ifndef _QOSFLOWLEVELQOSPARAMETERS_H_
-#define _QOSFLOWLEVELQOSPARAMETERS_H_
+#ifndef _QOS_FLOW_LEVEL_QOS_PARAMETERS_H_
+#define _QOS_FLOW_LEVEL_QOS_PARAMETERS_H_
 
 #include "AdditionalQosFlowInformation.hpp"
 #include "AllocationAndRetentionPriority.hpp"
-#include "GBR-QosInformation.hpp"
+#include "GbrQoSFlowInformation.hpp"
 #include "QosCharacteristics.hpp"
 #include "ReflectiveQosAttribute.hpp"
 
@@ -39,28 +39,32 @@ class QosFlowLevelQosParameters {
   QosFlowLevelQosParameters();
   virtual ~QosFlowLevelQosParameters();
 
-  void setQosFlowLevelQosParameters(
-      QosCharacteristics* m_qosCharacteristics,
-      AllocationAndRetentionPriority* m_allocationAndRetentionPriority,
-      GBR_QosInformation* m_gBR_QosInformation,
-      ReflectiveQosAttribute* m_reflectiveQosAttribute,
-      AdditionalQosFlowInformation* m_additionalQosFlowInformation);
-  bool getQosFlowLevelQosParameters(
-      QosCharacteristics*& m_qosCharacteristics,
-      AllocationAndRetentionPriority*& m_allocationAndRetentionPriority,
-      GBR_QosInformation*& m_gBR_QosInformation,
-      ReflectiveQosAttribute*& m_reflectiveQosAttribute,
-      AdditionalQosFlowInformation*& m_additionalQosFlowInformation);
+  void set(
+      const QosCharacteristics& m_qosCharacteristics,
+      const AllocationAndRetentionPriority& m_allocationAndRetentionPriority,
+      const std::optional<GbrQoSFlowInformation>& m_gBR_QosInformation,
+      const std::optional<ReflectiveQosAttribute>& m_reflectiveQosAttribute,
+      const std::optional<AdditionalQosFlowInformation>&
+          m_additionalQosFlowInformation);
 
-  bool encode2QosFlowLevelQosParameters(Ngap_QosFlowLevelQosParameters_t*);
-  bool decodefromQosFlowLevelQosParameters(Ngap_QosFlowLevelQosParameters_t*);
+  void get(
+      QosCharacteristics& m_qosCharacteristics,
+      AllocationAndRetentionPriority& m_allocationAndRetentionPriority,
+      std::optional<GbrQoSFlowInformation>& m_gBR_QosInformation,
+      std::optional<ReflectiveQosAttribute>& m_reflectiveQosAttribute,
+      std::optional<AdditionalQosFlowInformation>&
+          m_additionalQosFlowInformation) const;
+
+  bool encode(Ngap_QosFlowLevelQosParameters_t*);
+  bool decode(Ngap_QosFlowLevelQosParameters_t*);
 
  private:
-  QosCharacteristics* qosCharacteristics;
-  AllocationAndRetentionPriority* allocationAndRetentionPriority;
-  GBR_QosInformation* gBR_QosInformation;                     /* OPTIONAL */
-  ReflectiveQosAttribute* reflectiveQosAttribute;             /* OPTIONAL */
-  AdditionalQosFlowInformation* additionalQosFlowInformation; /* OPTIONAL */
+  QosCharacteristics qosCharacteristics;                          // Mandatory
+  AllocationAndRetentionPriority allocationAndRetentionPriority;  // Mandatory
+  std::optional<GbrQoSFlowInformation> gBR_QosInformation;        // Optional
+  std::optional<ReflectiveQosAttribute> reflectiveQosAttribute;   // Optional
+  std::optional<AdditionalQosFlowInformation>
+      additionalQosFlowInformation;  // Optional
 };
 
 }  // namespace ngap

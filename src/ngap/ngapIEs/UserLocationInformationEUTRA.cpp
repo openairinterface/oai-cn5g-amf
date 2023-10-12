@@ -20,6 +20,7 @@
  */
 
 #include "UserLocationInformationEUTRA.hpp"
+
 #include "logger.hpp"
 
 namespace ngap {
@@ -32,13 +33,13 @@ UserLocationInformationEUTRA::~UserLocationInformationEUTRA() {}
 
 //------------------------------------------------------------------------------
 void UserLocationInformationEUTRA::set(
-    const EUTRA_CGI& m_eUTRA_CGI, const TAI& m_tAI) {
+    const EUtraCgi& m_eUTRA_CGI, const TAI& m_tAI) {
   eUTRA_CGI = m_eUTRA_CGI;
   tAI       = m_tAI;
 }
 
 //------------------------------------------------------------------------------
-void UserLocationInformationEUTRA::get(EUTRA_CGI& m_eUTRA_CGI, TAI& m_tAI) {
+void UserLocationInformationEUTRA::get(EUtraCgi& m_eUTRA_CGI, TAI& m_tAI) {
   m_eUTRA_CGI = eUTRA_CGI;
   m_tAI       = tAI;
 }

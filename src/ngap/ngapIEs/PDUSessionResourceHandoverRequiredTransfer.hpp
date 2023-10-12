@@ -19,11 +19,13 @@
  *      contact@openairinterface.org
  */
 
-#ifndef _PDUSESSIONRESOURCEHANDOVERREQUIREDTRANSFER_H_
-#define _PDUSESSIONRESOURCEHANDOVERREQUIREDTRANSFER_H_
+#ifndef _PDU_SESSION_RESOURCE_HANDOVER_REQUIRED_TRANSFER_H_
+#define _PDU_SESSION_RESOURCE_HANDOVER_REQUIRED_TRANSFER_H_
 
-#include "DLQoSFlowPerTNLInformation.hpp"
+#include <optional>
+
 #include "NgapIEsStruct.hpp"
+#include "QoSFlowPerTNLInformation.hpp"
 #include "SecurityResult.hpp"
 
 extern "C" {
@@ -37,17 +39,19 @@ class PDUSessionResourceHandoverRequiredTransfer {
  public:
   PDUSessionResourceHandoverRequiredTransfer();
   virtual ~PDUSessionResourceHandoverRequiredTransfer();
+
   void setDirectForwardingPathAvailability(
       Ngap_DirectForwardingPathAvailability_t directForwardingPathAvailability);
-  int Encode(uint8_t* buf, int buf_size);
-  // Decapsulation
-  bool decodefromIE(uint8_t* buf, int buf_size);
   bool getDirectForwardingPathAvailability(
-      long* directForwardingPathAvailability);
+      long& directForwardingPathAvailability) const;
+
+  int encode(uint8_t* buf, int buf_size);
+  bool decode(uint8_t* buf, int buf_size);
 
  private:
   Ngap_HandoverRequiredTransfer_t* handoverrquiredTransferIEs;
-  Ngap_DirectForwardingPathAvailability_t* DirectForwardingPathAvailability;
+  std::optional<Ngap_DirectForwardingPathAvailability_t>
+      directForwardingPathAvailability_;  // Optional
 };
 
 }  // namespace ngap

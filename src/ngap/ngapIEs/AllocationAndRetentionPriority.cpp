@@ -24,50 +24,42 @@
 namespace ngap {
 
 //------------------------------------------------------------------------------
-AllocationAndRetentionPriority::AllocationAndRetentionPriority() {
-  priorityLevelARP         = nullptr;
-  pre_emptionCapability    = nullptr;
-  pre_emptionVulnerability = nullptr;
-}
+AllocationAndRetentionPriority::AllocationAndRetentionPriority() {}
 
 //------------------------------------------------------------------------------
 AllocationAndRetentionPriority::~AllocationAndRetentionPriority() {}
 
 //------------------------------------------------------------------------------
-void AllocationAndRetentionPriority::setAllocationAndRetentionPriority(
-    PriorityLevelARP* m_priorityLevelARP,
-    Pre_emptionCapability* m_pre_emptionCapability,
-    Pre_emptionVulnerability* m_pre_emptionVulnerability) {
+void AllocationAndRetentionPriority::set(
+    const PriorityLevelARP& m_priorityLevelARP,
+    const Pre_emptionCapability& m_pre_emptionCapability,
+    const Pre_emptionVulnerability& m_pre_emptionVulnerability) {
   priorityLevelARP         = m_priorityLevelARP;
   pre_emptionCapability    = m_pre_emptionCapability;
   pre_emptionVulnerability = m_pre_emptionVulnerability;
 }
 
 //------------------------------------------------------------------------------
-bool AllocationAndRetentionPriority::getAllocationAndRetentionPriority(
-    PriorityLevelARP*& m_priorityLevelARP,
-    Pre_emptionCapability*& m_pre_emptionCapability,
-    Pre_emptionVulnerability*& m_pre_emptionVulnerability) {
-  if (!priorityLevelARP) return false;
-  m_priorityLevelARP = priorityLevelARP;
-  if (!pre_emptionCapability) return false;
-  m_pre_emptionCapability = pre_emptionCapability;
-  if (!pre_emptionVulnerability) return false;
+bool AllocationAndRetentionPriority::get(
+    PriorityLevelARP& m_priorityLevelARP,
+    Pre_emptionCapability& m_pre_emptionCapability,
+    Pre_emptionVulnerability& m_pre_emptionVulnerability) const {
+  m_priorityLevelARP         = priorityLevelARP;
+  m_pre_emptionCapability    = pre_emptionCapability;
   m_pre_emptionVulnerability = pre_emptionVulnerability;
-
   return true;
 }
 
 //------------------------------------------------------------------------------
-bool AllocationAndRetentionPriority::encode2AllocationAndRetentionPriority(
+bool AllocationAndRetentionPriority::encode(
     Ngap_AllocationAndRetentionPriority_t* allocationAndRetentionPriority) {
-  if (!priorityLevelARP->encode2PriorityLevelARP(
+  if (!priorityLevelARP.encode(
           &allocationAndRetentionPriority->priorityLevelARP))
     return false;
-  if (!pre_emptionCapability->encode2Pre_emptionCapability(
+  if (!pre_emptionCapability.encode(
           &allocationAndRetentionPriority->pre_emptionCapability))
     return false;
-  if (!pre_emptionVulnerability->encode2Pre_emptionVulnerability(
+  if (!pre_emptionVulnerability.encode(
           &allocationAndRetentionPriority->pre_emptionVulnerability))
     return false;
 
@@ -75,20 +67,15 @@ bool AllocationAndRetentionPriority::encode2AllocationAndRetentionPriority(
 }
 
 //------------------------------------------------------------------------------
-bool AllocationAndRetentionPriority::decodefromAllocationAndRetentionPriority(
+bool AllocationAndRetentionPriority::decode(
     Ngap_AllocationAndRetentionPriority_t* allocationAndRetentionPriority) {
-  if (priorityLevelARP == nullptr) priorityLevelARP = new PriorityLevelARP();
-  if (pre_emptionCapability == nullptr)
-    pre_emptionCapability = new Pre_emptionCapability();
-  if (pre_emptionVulnerability == nullptr)
-    pre_emptionVulnerability = new Pre_emptionVulnerability();
-  if (!priorityLevelARP->decodefromPriorityLevelARP(
+  if (!priorityLevelARP.decode(
           &allocationAndRetentionPriority->priorityLevelARP))
     return false;
-  if (!pre_emptionCapability->decodefromPre_emptionCapability(
+  if (!pre_emptionCapability.decode(
           &allocationAndRetentionPriority->pre_emptionCapability))
     return false;
-  if (!pre_emptionVulnerability->decodefromPre_emptionVulnerability(
+  if (!pre_emptionVulnerability.decode(
           &allocationAndRetentionPriority->pre_emptionVulnerability))
     return false;
 

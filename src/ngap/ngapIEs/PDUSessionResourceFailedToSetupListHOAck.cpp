@@ -39,7 +39,7 @@ void PDUSessionResourceFailedToSetupListHOAck::set(
 
 //------------------------------------------------------------------------------
 void PDUSessionResourceFailedToSetupListHOAck::get(
-    std::vector<PDUSessionResourceItem>& list) {
+    std::vector<PDUSessionResourceItem>& list) const {
   list = item_list_;
 }
 

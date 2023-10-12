@@ -22,8 +22,9 @@
 #ifndef _PDU_SESSION_RESOURCE_FAILED_TO_SETUP_LIST_SU_RES_H_
 #define _PDU_SESSION_RESOURCE_FAILED_TO_SETUP_LIST_SU_RES_H_
 
-#include "PDUSessionResourceFailedToSetupItemSURes.hpp"
 #include <vector>
+
+#include "PDUSessionResourceFailedToSetupItemSURes.hpp"
 
 extern "C" {
 #include "Ngap_PDUSessionResourceFailedToSetupListSURes.h"
@@ -37,12 +38,12 @@ class PDUSessionResourceFailedToSetupListSURes {
   virtual ~PDUSessionResourceFailedToSetupListSURes();
 
   void set(const std::vector<PDUSessionResourceFailedToSetupItemSURes>& item);
-  void get(std::vector<PDUSessionResourceFailedToSetupItemSURes>& item);
+  void get(std::vector<PDUSessionResourceFailedToSetupItemSURes>& item) const;
 
   bool encode(Ngap_PDUSessionResourceFailedToSetupListSURes_t*
-                  pdu_session_resource_failed_to_setup_list_su_res);
+                  pdu_session_resource_res);
   bool decode(Ngap_PDUSessionResourceFailedToSetupListSURes_t*
-                  pdu_session_resource_failed_to_setup_list_su_res);
+                  pdu_session_resource_res);
 
  private:
   std::vector<PDUSessionResourceFailedToSetupItemSURes> item_list_;

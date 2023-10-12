@@ -19,8 +19,8 @@
  *      contact@openairinterface.org
  */
 
-#ifndef _MESSAGE_TYPE_H_
-#define _MESSAGE_TYPE_H_
+#ifndef _NAS_MESSAGE_TYPE_H_
+#define _NAS_MESSAGE_TYPE_H_
 
 #include "NasIe.hpp"
 

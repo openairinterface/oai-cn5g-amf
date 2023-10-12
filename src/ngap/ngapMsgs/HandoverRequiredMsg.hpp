@@ -22,13 +22,13 @@
 #ifndef _HANDOVER_REQUIRED_H_
 #define _HANDOVER_REQUIRED_H_
 
+#include <optional>
+
 #include "Cause.hpp"
+#include "GlobalgNBId.hpp"
 #include "NgapUEMessage.hpp"
 #include "PDUSessionResourceListHORqd.hpp"
-#include "GlobalgNBId.hpp"
 #include "TAI.hpp"
-
-#include <optional>
 
 extern "C" {
 #include "Ngap_HandoverRequired.h"
@@ -46,7 +46,7 @@ class HandoverRequiredMsg : public NgapUEMessage {
 
   void setAmfUeNgapId(const unsigned long& id) override;
   void setRanUeNgapId(const uint32_t& id) override;
-  bool decodeFromPdu(Ngap_NGAP_PDU_t* ngapMsgPdu) override;
+  bool decode(Ngap_NGAP_PDU_t* ngapMsgPdu) override;
 
   Ngap_HandoverType_t getHandoverType();
   // TODO Setter

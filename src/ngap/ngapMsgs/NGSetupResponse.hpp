@@ -25,10 +25,10 @@
 #include "AMFName.hpp"
 #include "MessageType.hpp"
 #include "NgapIEsStruct.hpp"
+#include "NgapMessage.hpp"
 #include "PLMNSupportList.hpp"
 #include "RelativeAMFCapacity.hpp"
 #include "ServedGUAMIList.hpp"
-#include "NgapMessage.hpp"
 
 extern "C" {
 #include "Ngap_NGSetupResponse.h"
@@ -55,7 +55,7 @@ class NGSetupResponseMsg : public NgapMessage {
   void setPlmnSupportList(std::vector<PlmnSliceSupport_t> list);
   bool getPlmnSupportList(std::vector<PlmnSliceSupport_t>& list);
 
-  bool decodeFromPdu(Ngap_NGAP_PDU_t* ngapMsgPdu) override;
+  bool decode(Ngap_NGAP_PDU_t* ngapMsgPdu) override;
 
  private:
   Ngap_NGSetupResponse_t* ngSetupResponsIEs;

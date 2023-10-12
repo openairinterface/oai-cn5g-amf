@@ -64,7 +64,7 @@ void PduSessionResourceReleaseCommandMsg::setAmfUeNgapId(
   ie->value.present =
       Ngap_PDUSessionResourceReleaseCommandIEs__value_PR_AMF_UE_NGAP_ID;
 
-  int ret = amfUeNgapId.encode2AMF_UE_NGAP_ID(ie->value.choice.AMF_UE_NGAP_ID);
+  int ret = amfUeNgapId.encode(ie->value.choice.AMF_UE_NGAP_ID);
   if (!ret) {
     Logger::nas_mm().warn("Encode AMF_UE_NGAP_ID IE error");
     free_wrapper((void**) &ie);
@@ -139,9 +139,9 @@ bool PduSessionResourceReleaseCommandMsg::getRanPagingPriority(
 
 //------------------------------------------------------------------------------
 void PduSessionResourceReleaseCommandMsg::setNasPdu(const bstring& pdu) {
-  NAS_PDU tmp = {};
+  NasPdu tmp = {};
   tmp.set(pdu);
-  nasPdu = std::optional<NAS_PDU>(tmp);
+  nasPdu = std::optional<NasPdu>(tmp);
 
   Ngap_PDUSessionResourceReleaseCommandIEs_t* ie =
       (Ngap_PDUSessionResourceReleaseCommandIEs_t*) calloc(
@@ -229,8 +229,7 @@ bool PduSessionResourceReleaseCommandMsg::getPduSessionResourceToReleaseList(
 }
 
 //------------------------------------------------------------------------------
-bool PduSessionResourceReleaseCommandMsg::decodeFromPdu(
-    Ngap_NGAP_PDU_t* ngapMsgPdu) {
+bool PduSessionResourceReleaseCommandMsg::decode(Ngap_NGAP_PDU_t* ngapMsgPdu) {
   ngapPdu = ngapMsgPdu;
 
   if (ngapPdu->present == Ngap_NGAP_PDU_PR_initiatingMessage) {
@@ -264,7 +263,7 @@ bool PduSessionResourceReleaseCommandMsg::decodeFromPdu(
             pduSessionResourceReleaseCommandIEs->protocolIEs.list.array[i]
                     ->value.present ==
                 Ngap_PDUSessionResourceReleaseCommandIEs__value_PR_AMF_UE_NGAP_ID) {
-          if (!amfUeNgapId.decodefromAMF_UE_NGAP_ID(
+          if (!amfUeNgapId.decode(
                   pduSessionResourceReleaseCommandIEs->protocolIEs.list
                       .array[i]
                       ->value.choice.AMF_UE_NGAP_ID)) {
@@ -322,14 +321,14 @@ bool PduSessionResourceReleaseCommandMsg::decodeFromPdu(
             pduSessionResourceReleaseCommandIEs->protocolIEs.list.array[i]
                     ->value.present ==
                 Ngap_PDUSessionResourceReleaseCommandIEs__value_PR_NAS_PDU) {
-          NAS_PDU tmp = {};
+          NasPdu tmp = {};
           if (!tmp.decode(pduSessionResourceReleaseCommandIEs->protocolIEs.list
                               .array[i]
                               ->value.choice.NAS_PDU)) {
             Logger::nas_mm().warn("Decoded NGAP NAS_PDU IE error");
             return false;
           }
-          nasPdu = std::optional<NAS_PDU>(tmp);
+          nasPdu = std::optional<NasPdu>(tmp);
         } else {
           Logger::nas_mm().warn("Decoded NGAP NAS_PDU IE error");
           return false;

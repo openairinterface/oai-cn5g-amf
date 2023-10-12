@@ -21,43 +21,36 @@
 
 #include "MaximumDataBurstVolume.hpp"
 
-#include <iostream>
-using namespace std;
-
 namespace ngap {
 
 //------------------------------------------------------------------------------
 MaximumDataBurstVolume::MaximumDataBurstVolume() {
-  maximumdataburstvolume = 0;
+  volume_ = 0;
 }
 
 //------------------------------------------------------------------------------
 MaximumDataBurstVolume::~MaximumDataBurstVolume() {}
 
 //------------------------------------------------------------------------------
-void MaximumDataBurstVolume::setMaximumDataBurstVolume(long value) {
-  maximumdataburstvolume = value;
+void MaximumDataBurstVolume::set(long value) {
+  volume_ = value;
 }
 
 //------------------------------------------------------------------------------
-bool MaximumDataBurstVolume::getMaximumDataBurstVolume(long& value) {
-  value = maximumdataburstvolume;
+void MaximumDataBurstVolume::get(long& value) const {
+  value = volume_;
+}
+
+//------------------------------------------------------------------------------
+bool MaximumDataBurstVolume::encode(Ngap_MaximumDataBurstVolume_t* value) {
+  *value = volume_;
 
   return true;
 }
 
 //------------------------------------------------------------------------------
-bool MaximumDataBurstVolume::encode2MaximumDataBurstVolume(
-    Ngap_MaximumDataBurstVolume_t* maximumDataBurstVolume) {
-  *maximumDataBurstVolume = maximumdataburstvolume;
-
-  return true;
-}
-
-//------------------------------------------------------------------------------
-bool MaximumDataBurstVolume::decodefromMaximumDataBurstVolume(
-    Ngap_MaximumDataBurstVolume_t* maximumDataBurstVolume) {
-  maximumdataburstvolume = *maximumDataBurstVolume;
+bool MaximumDataBurstVolume::decode(Ngap_MaximumDataBurstVolume_t* value) {
+  volume_ = *value;
 
   return true;
 }

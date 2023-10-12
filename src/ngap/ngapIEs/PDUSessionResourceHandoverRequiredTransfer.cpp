@@ -21,65 +21,66 @@
 
 #include "PDUSessionResourceHandoverRequiredTransfer.hpp"
 
+#include "logger.hpp"
 #include "output_wrapper.hpp"
 
-extern "C" {
-#include "asn_codecs.h"
-#include "constr_TYPE.h"
-#include "constraints.h"
-#include "per_decoder.h"
-#include "per_encoder.h"
-}
-
-#include <iostream>
-using namespace std;
-
 namespace ngap {
+
+//------------------------------------------------------------------------------
 PDUSessionResourceHandoverRequiredTransfer::
     PDUSessionResourceHandoverRequiredTransfer() {
   handoverrquiredTransferIEs = (Ngap_HandoverRequiredTransfer_t*) calloc(
       1, sizeof(Ngap_HandoverRequiredTransfer_t));
-  DirectForwardingPathAvailability = NULL;
+  directForwardingPathAvailability_ = std::nullopt;
 }
+
+//------------------------------------------------------------------------------
 PDUSessionResourceHandoverRequiredTransfer::
     ~PDUSessionResourceHandoverRequiredTransfer() {}
 
+//------------------------------------------------------------------------------
 void PDUSessionResourceHandoverRequiredTransfer::
     setDirectForwardingPathAvailability(Ngap_DirectForwardingPathAvailability_t
                                             directForwardingPathAvailability) {
-  if (!DirectForwardingPathAvailability)
-    DirectForwardingPathAvailability =
-        new Ngap_DirectForwardingPathAvailability_t();
-  *DirectForwardingPathAvailability = directForwardingPathAvailability;
+  directForwardingPathAvailability_ =
+      std::make_optional<Ngap_DirectForwardingPathAvailability_t>(
+          directForwardingPathAvailability);
+  handoverrquiredTransferIEs->directForwardingPathAvailability =
+      (Ngap_DirectForwardingPathAvailability_t*) calloc(
+          1, sizeof(Ngap_DirectForwardingPathAvailability_t));
+  *handoverrquiredTransferIEs->directForwardingPathAvailability =
+      directForwardingPathAvailability;
 }
 
-int PDUSessionResourceHandoverRequiredTransfer::Encode(
+//------------------------------------------------------------------------------
+int PDUSessionResourceHandoverRequiredTransfer::encode(
     uint8_t* buf, int buf_size) {
   output_wrapper::print_asn_msg(
       &asn_DEF_Ngap_HandoverRequiredTransfer, handoverrquiredTransferIEs);
   asn_enc_rval_t er = aper_encode_to_buffer(
       &asn_DEF_Ngap_HandoverRequiredTransfer, NULL, handoverrquiredTransferIEs,
       buf, buf_size);
-  cout << "er.encoded(" << er.encoded << ")" << endl;
+  Logger::ngap().debug("er.encoded %d", er.encoded);
   return er.encoded;
 }
-// Decapsulation
-bool PDUSessionResourceHandoverRequiredTransfer::decodefromIE(
+
+//------------------------------------------------------------------------------
+bool PDUSessionResourceHandoverRequiredTransfer::decode(
     uint8_t* buf, int buf_size) {
   asn_dec_rval_t rc = asn_decode(
       NULL, ATS_ALIGNED_CANONICAL_PER, &asn_DEF_Ngap_HandoverRequiredTransfer,
       (void**) &handoverrquiredTransferIEs, buf, buf_size);
   if (rc.code == RC_OK) {
-    cout << "Decoded successfully" << endl;
+    Logger::ngap().debug("Decoded successfully");
   } else if (rc.code == RC_WMORE) {
-    cout << "More data expected, call again" << endl;
+    Logger::ngap().debug("More data expected, call again");
     return false;
   } else {
-    cout << "Failure to decode data" << endl;
+    Logger::ngap().debug("Failure to decode data");
     return false;
   }
-  cout << "rc.consumed to decode = " << rc.consumed << endl;
-  cout << endl;
+  Logger::ngap().debug("rc.consumed to decode %d", rc.consumed);
+
   // asn_fprint(stderr, &asn_DEF_Ngap_PDUSessionResourceSetupResponseTransfer,
   // pduSessionResourceSetupResponseTransferIEs);
   if (handoverrquiredTransferIEs->directForwardingPathAvailability) {
@@ -92,11 +93,16 @@ bool PDUSessionResourceHandoverRequiredTransfer::decodefromIE(
   return true;
 }
 
+//------------------------------------------------------------------------------
 bool PDUSessionResourceHandoverRequiredTransfer::
     getDirectForwardingPathAvailability(
-        long* directForwardingPathAvailability) {
-  *directForwardingPathAvailability = (long) *DirectForwardingPathAvailability;
-  return true;
+        long& directForwardingPathAvailability) const {
+  if (directForwardingPathAvailability_.has_value()) {
+    directForwardingPathAvailability =
+        (long) directForwardingPathAvailability_.value();
+    return true;
+  }
+  return false;
 }
 
 }  // namespace ngap

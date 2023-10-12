@@ -21,9 +21,6 @@
 
 #include "DataForwardingNotPossible.hpp"
 
-#include <iostream>
-using namespace std;
-
 namespace ngap {
 
 //------------------------------------------------------------------------------
@@ -33,19 +30,28 @@ DataForwardingNotPossible::DataForwardingNotPossible() {}
 DataForwardingNotPossible::~DataForwardingNotPossible() {}
 
 //------------------------------------------------------------------------------
-bool DataForwardingNotPossible::encode2DataForwardingNotPossible(
-    Ngap_DataForwardingNotPossible_t& dataForwardingNotPossible) {
-  dataForwardingNotPossible =
-      Ngap_DataForwardingNotPossible_data_forwarding_not_possible;
+void DataForwardingNotPossible::set(const long value) {
+  value_ = value;
+}
+
+//------------------------------------------------------------------------------
+void DataForwardingNotPossible::get(long& value) const {
+  value = value_;
+}
+//------------------------------------------------------------------------------
+bool DataForwardingNotPossible::encode(
+    Ngap_DataForwardingNotPossible_t& value) {
+  // TODO:
+  value = Ngap_DataForwardingNotPossible_data_forwarding_not_possible;
 
   return true;
 }
 
 //------------------------------------------------------------------------------
-bool DataForwardingNotPossible::decodefromDataForwardingNotPossible(
-    Ngap_DataForwardingNotPossible_t& dataForwardingNotPossible) {
-  if (dataForwardingNotPossible !=
-      Ngap_DataForwardingNotPossible_data_forwarding_not_possible)
+bool DataForwardingNotPossible::decode(
+    Ngap_DataForwardingNotPossible_t& value) {
+  // TODO:
+  if (value != Ngap_DataForwardingNotPossible_data_forwarding_not_possible)
     return false;
 
   return true;

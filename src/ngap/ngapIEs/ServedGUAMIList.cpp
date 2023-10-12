@@ -51,7 +51,7 @@ bool ServedGUAMIList::encode(Ngap_ServedGUAMIList_t& servedGUAMIList) {
     Ngap_ServedGUAMIItem* guamiItem =
         (Ngap_ServedGUAMIItem*) calloc(1, sizeof(Ngap_ServedGUAMIItem));
     if (!guamiItem) return false;
-    if (!it->encode2ServedGUAMIItem(guamiItem)) return false;
+    if (!it->encode(guamiItem)) return false;
     if (ASN_SEQUENCE_ADD(&servedGUAMIList.list, guamiItem) != 0) return false;
   }
   return true;
@@ -62,7 +62,7 @@ bool ServedGUAMIList::decode(const Ngap_ServedGUAMIList_t& pdu) {
   itemList.clear();
   for (int i = 0; i < pdu.list.count; i++) {
     ServedGUAMIItem item = {};
-    if (item.decodefromServedGUAMIItem(pdu.list.array[i])) return false;
+    if (item.decode(pdu.list.array[i])) return false;
     itemList.push_back(item);
   }
   return true;

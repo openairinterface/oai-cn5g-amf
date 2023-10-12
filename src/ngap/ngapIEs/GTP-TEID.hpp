@@ -34,10 +34,10 @@ class GtpTeid {
   virtual ~GtpTeid();
 
   void setGtpTeid(const uint32_t m_gtp_teid);
-  bool getGtpTeid(uint32_t& m_gtp_teid);
+  bool getGtpTeid(uint32_t& m_gtp_teid) const;
 
-  bool encode2GtpTeid(Ngap_GTP_TEID_t& gtpTeid);
-  bool decodefromGtpTeid(Ngap_GTP_TEID_t& gtpTeid);
+  bool encode(Ngap_GTP_TEID_t& gtpTeid);
+  bool decode(Ngap_GTP_TEID_t& gtpTeid);
 
  private:
   uint32_t gtp_teid;

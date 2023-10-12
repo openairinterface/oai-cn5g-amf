@@ -25,8 +25,6 @@ extern "C" {
 #include "Ngap_SliceSupportItem.h"
 }
 
-using namespace std;
-
 namespace ngap {
 
 //------------------------------------------------------------------------------

@@ -40,7 +40,7 @@ class PDUSessionResourceSetupItemSURes {
       const OCTET_STRING_t& pdu_session_resource_setup_response_transfer);
   void get(
       PDUSessionID& pdu_session_id,
-      OCTET_STRING_t& pdu_session_resource_setup_response_transfer);
+      OCTET_STRING_t& pdu_session_resource_setup_response_transfer) const;
 
   bool encode(Ngap_PDUSessionResourceSetupItemSURes_t*
                   pdu_session_resource_setup_item_su_res);

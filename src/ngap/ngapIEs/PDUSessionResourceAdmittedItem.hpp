@@ -24,6 +24,7 @@
 
 #include "PDUSessionID.hpp"
 #include "PDUSessionResourceHandoverRequestAckTransfer.hpp"
+
 extern "C" {
 #include "Ngap_PDUSessionResourceAdmittedItem.h"
 }
@@ -35,17 +36,15 @@ class PDUSessionResourceAdmittedItem {
   PDUSessionResourceAdmittedItem();
   virtual ~PDUSessionResourceAdmittedItem();
 
-  void setPDUSessionResourceAdmittedItem(
+  void set(
       const PDUSessionID& m_pDUSessionID,
       const OCTET_STRING_t& m_handoverRequestAckTransfer);
-  void getPDUSessionResourceAdmittedItem(
+  void get(
       PDUSessionID& m_pDUSessionID,
       OCTET_STRING_t& m_handoverRequestAckTransfer);
 
-  bool encode2PDUSessionResourceAdmittedItem(
-      Ngap_PDUSessionResourceAdmittedItem_t* pdUSessionResourceAdmittedItem);
-  bool decodefromPDUSessionResourceAdmittedItem(
-      Ngap_PDUSessionResourceAdmittedItem_t* pdUSessionResourceAdmittedItem);
+  bool encode(Ngap_PDUSessionResourceAdmittedItem_t* pduItem);
+  bool decode(Ngap_PDUSessionResourceAdmittedItem_t* pduItem);
 
  private:
   PDUSessionID pDUSessionID;                  // Mandatory

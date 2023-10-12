@@ -19,8 +19,10 @@
  *      contact@openairinterface.org
  */
 
-#ifndef _DYNAMIC5QIDESCRIPTOR_H_
-#define _DYNAMIC5QIDESCRIPTOR_H_
+#ifndef _DYNAMIC_5QI_DESCRIPTOR_H_
+#define _DYNAMIC_5QI_DESCRIPTOR_H_
+
+#include <optional>
 
 #include "AveragingWindow.hpp"
 #include "DelayCritical.hpp"
@@ -41,31 +43,35 @@ class Dynamic5QIDescriptor {
   Dynamic5QIDescriptor();
   virtual ~Dynamic5QIDescriptor();
 
-  void setDynamic5QIDescriptor(
-      PriorityLevelQos* m_priorityLevelQos,
-      PacketDelayBudget* m_packetDelayBudget,
-      PacketErrorRate* m_packetErrorRate, FiveQI* m_fiveQI,
-      DelayCritical* m_delayCritical, AveragingWindow* m_averagingWindow,
-      MaximumDataBurstVolume* m_maximumDataBurstVolume);
-  bool getDynamic5QIDescriptor(
-      PriorityLevelQos*& m_priorityLevelQos,
-      PacketDelayBudget*& m_packetDelayBudget,
-      PacketErrorRate*& m_packetErrorRate, FiveQI*& m_fiveQI,
-      DelayCritical*& m_delayCritical, AveragingWindow*& m_averagingWindow,
-      MaximumDataBurstVolume*& m_maximumDataBurstVolume);
+  void set(
+      const PriorityLevelQos& m_priorityLevelQos,
+      const PacketDelayBudget& m_packetDelayBudget,
+      const PacketErrorRate& m_packetErrorRate,
+      const std::optional<FiveQI>& m_fiveQI,
+      const std::optional<DelayCritical>& m_delayCritical,
+      const std::optional<AveragingWindow>& m_averagingWindow,
+      const std::optional<MaximumDataBurstVolume>& m_maximumDataBurstVolume);
 
-  bool encode2Dynamic5QIDescriptor(Ngap_Dynamic5QIDescriptor_t*);
-  bool decodefromDynamic5QIDescriptor(Ngap_Dynamic5QIDescriptor_t*);
+  bool get(
+      PriorityLevelQos& m_priorityLevelQos,
+      PacketDelayBudget& m_packetDelayBudget,
+      PacketErrorRate& m_packetErrorRate, std::optional<FiveQI>& m_fiveQI,
+      std::optional<DelayCritical>& m_delayCritical,
+      std::optional<AveragingWindow>& m_averagingWindow,
+      std::optional<MaximumDataBurstVolume>& m_maximumDataBurstVolume) const;
+
+  bool encode(Ngap_Dynamic5QIDescriptor_t*);
+  bool decode(Ngap_Dynamic5QIDescriptor_t*);
 
  private:
-  PriorityLevelQos* priorityLevelQos;
-  PacketDelayBudget* packetDelayBudget;
-  PacketErrorRate* packetErrorRate;
+  PriorityLevelQos priorityLevelQos;    // Mandatory
+  PacketDelayBudget packetDelayBudget;  // Mandatory
+  PacketErrorRate packetErrorRate;      // Mandatory
 
-  FiveQI* fiveQI;                                 /* OPTIONAL */
-  DelayCritical* delayCritical;                   /* OPTIONAL */
-  AveragingWindow* averagingWindow;               /* OPTIONAL */
-  MaximumDataBurstVolume* maximumDataBurstVolume; /* OPTIONAL */
+  std::optional<FiveQI> fiveQI;                                  // Optional
+  std::optional<DelayCritical> delayCritical;                    // Conditional
+  std::optional<AveragingWindow> averagingWindow;                // Conditional
+  std::optional<MaximumDataBurstVolume> maximumDataBurstVolume;  // Optional
 };
 }  // namespace ngap
 

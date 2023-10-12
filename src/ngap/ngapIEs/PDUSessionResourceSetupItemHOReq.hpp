@@ -42,7 +42,7 @@ class PDUSessionResourceSetupItemHOReq : public PDUSessionResourceItem {
       const OCTET_STRING_t& handover_request_transfer);
   void get(
       PDUSessionID& pdu_session_id, S_NSSAI& s_nssai,
-      OCTET_STRING_t& handover_request_transfer);
+      OCTET_STRING_t& handover_request_transfer) const;
 
   bool encode(Ngap_PDUSessionResourceSetupItemHOReq_t*
                   pduSessionResourceSetupItemHOReq);
@@ -50,7 +50,7 @@ class PDUSessionResourceSetupItemHOReq : public PDUSessionResourceItem {
                   pduSessionResourceSetupItemHOReq);
 
  private:
-  // PDUSessionID - Mandatory;
+  // PDUSessionID //Mandatory;
   S_NSSAI s_NSSAI;  // Mandatory
   // Handover Request Transfer - Mandatory
 };

@@ -35,16 +35,16 @@ class UERadioCapabilityForPagingOfEUTRA {
   UERadioCapabilityForPagingOfEUTRA();
   virtual ~UERadioCapabilityForPagingOfEUTRA();
 
+  bool set(const OCTET_STRING_t& capability);
+  bool get(OCTET_STRING_t& capability) const;
+
+  bool set(const bstring& capability);
+  bool get(bstring& capability) const;
+
   bool encode(Ngap_UERadioCapabilityForPagingOfEUTRA_t*
                   ueRadioCapabilityForPagingOfEUTRA);
   bool decode(Ngap_UERadioCapabilityForPagingOfEUTRA_t*
                   ueRadioCapabilityForPagingOfEUTRA);
-
-  bool set(const OCTET_STRING_t& capability);
-  bool get(OCTET_STRING_t& capability);
-
-  bool set(const bstring& capability);
-  bool get(bstring& capability);
 
  private:
   OCTET_STRING_t ue_radio_capability_;

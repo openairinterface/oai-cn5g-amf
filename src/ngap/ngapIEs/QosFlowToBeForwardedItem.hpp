@@ -19,23 +19,29 @@
  *      contact@openairinterface.org
  */
 
-#ifndef _QOSFLOWTOBEFORWARDEDITEM_H_
-#define _QOSFLOWTOBEFORWARDEDITEM_H_
+#ifndef _QOS_FLOW_TO_BE_FORWARDED_ITEM_H_
+#define _QOS_FLOW_TO_BE_FORWARDED_ITEM_H_
+
 #include "QosFlowIdentifier.hpp"
+
 extern "C" {
 #include "Ngap_QosFlowToBeForwardedItem.h"
 }
+
 namespace ngap {
 class QosFlowToBeForwardedItem {
  public:
   QosFlowToBeForwardedItem();
   virtual ~QosFlowToBeForwardedItem();
-  void setQosFlowIdentifier(QosFlowIdentifier* m_qosflowidentifier);
-  bool encodeQosFlowToBeForwardedItem(
-      Ngap_QosFlowToBeForwardedItem_t* qosflowtobeforwardeditem);
+
+  void setQosFlowIdentifier(const QosFlowIdentifier& qfi);
+  // TODO: Get
+
+  bool encode(Ngap_QosFlowToBeForwardedItem_t* qos_flow_item);
+  // TODO: decode
 
  private:
-  QosFlowIdentifier* qosflowidentifier;
+  QosFlowIdentifier qfi_;  // Mandatory
 };
 }  // namespace ngap
 #endif

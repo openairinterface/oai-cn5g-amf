@@ -21,32 +21,37 @@
 
 #include "QosFlowListWithDataForwarding.hpp"
 
-#include <iostream>
-using namespace std;
 namespace ngap {
-QosFlowListWithDataForwarding::QosFlowListWithDataForwarding() {
-  qosFlowItemWithDataForwarding      = NULL;
-  numofQosFlowItemWithDataForwarding = 0;
-}
+
+//------------------------------------------------------------------------------
+QosFlowListWithDataForwarding::QosFlowListWithDataForwarding() {}
+
+//------------------------------------------------------------------------------
 QosFlowListWithDataForwarding::~QosFlowListWithDataForwarding() {}
 
-bool QosFlowListWithDataForwarding::decodeFormQosFlowListWithDataForwarding(
+//------------------------------------------------------------------------------
+bool QosFlowListWithDataForwarding::decode(
     Ngap_QosFlowSetupResponseListHOReqAck_t qosFlowSetupResponseList) {
-  numofQosFlowItemWithDataForwarding = qosFlowSetupResponseList.list.count;
-  qosFlowItemWithDataForwarding =
-      new QosFlowItemWithDataForWarding[numofQosFlowItemWithDataForwarding]();
-  for (int i = 0; i < numofQosFlowItemWithDataForwarding; i++) {
-    if (!qosFlowItemWithDataForwarding[i]
-             .decodeformQosFlowItemWithDataForWarding(
-                 qosFlowSetupResponseList.list.array[i]))
-      return false;
+  for (int i = 0; i < qosFlowSetupResponseList.list.count; i++) {
+    QosFlowItemWithDataForWarding item = {};
+    if (!item.decode(qosFlowSetupResponseList.list.array[i])) return false;
+    list_.push_back(item);
   }
   return true;
 }
-bool QosFlowListWithDataForwarding::getQosFlowListWithDataForwarding(
-    QosFlowItemWithDataForWarding*& m_QosFlowItemWithDataForwarding, int& num) {
-  m_QosFlowItemWithDataForwarding = qosFlowItemWithDataForwarding;
-  num                             = numofQosFlowItemWithDataForwarding;
-  return true;
+
+//------------------------------------------------------------------------------
+void QosFlowListWithDataForwarding::set(
+    const std::vector<QosFlowItemWithDataForWarding>& list) {
+  uint8_t number_items =
+      (list.size() > kMaxNoQoSFlows) ? kMaxNoQoSFlows : list.size();
+  list_.insert(list_.begin(), list.begin(), list.begin() + number_items);
 }
+
+//------------------------------------------------------------------------------
+void QosFlowListWithDataForwarding::get(
+    std::vector<QosFlowItemWithDataForWarding>& list) const {
+  list = list_;
+}
+
 }  // namespace ngap

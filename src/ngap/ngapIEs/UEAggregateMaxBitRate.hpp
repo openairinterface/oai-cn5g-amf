@@ -19,8 +19,8 @@
  *      contact@openairinterface.org
  */
 
-#ifndef _UEAGGREGATEMAXBITRATE_H_
-#define _UEAGGREGATEMAXBITRATE_H_
+#ifndef _UE_AGGREGATE_MAX_BITRATE_H_
+#define _UE_AGGREGATE_MAX_BITRATE_H_
 
 extern "C" {
 #include "Ngap_UEAggregateMaximumBitRate.h"

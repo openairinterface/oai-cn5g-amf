@@ -26,8 +26,8 @@
 #include "NgapUEMessage.hpp"
 
 extern "C" {
-#include "Ngap_HandoverPreparationFailure.h"
 #include "Ngap_CriticalityDiagnostics.h"
+#include "Ngap_HandoverPreparationFailure.h"
 }
 
 namespace ngap {
@@ -40,7 +40,7 @@ class HandoverPreparationFailure : public NgapUEMessage {
   void initialize();
   void setAmfUeNgapId(const unsigned long& id) override;
   void setRanUeNgapId(const uint32_t& id) override;
-  bool decodeFromPdu(Ngap_NGAP_PDU_t* ngapMsgPdu) override;
+  bool decode(Ngap_NGAP_PDU_t* ngapMsgPdu) override;
 
   void getCause(Cause& cause) const;
   void setCause(const Ngap_Cause_PR& causePresent, const long& value = 0);

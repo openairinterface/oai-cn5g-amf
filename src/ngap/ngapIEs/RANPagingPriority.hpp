@@ -38,7 +38,7 @@ class RANPagingPriority {
   virtual ~RANPagingPriority();
 
   bool set(const uint32_t&);
-  uint32_t get();
+  uint32_t get() const;
 
   bool encode(Ngap_RANPagingPriority_t&);
   bool decode(Ngap_RANPagingPriority_t&);

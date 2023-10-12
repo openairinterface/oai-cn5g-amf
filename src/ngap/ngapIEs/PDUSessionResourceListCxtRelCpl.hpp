@@ -22,8 +22,9 @@
 #ifndef _PDU_SESSION_RESOURCE_LIST_CXT_REL_CPL_H_
 #define _PDU_SESSION_RESOURCE_LIST_CXT_REL_CPL_H_
 
-#include "PDUSessionResourceItemCxtRelCpl.hpp"
 #include <vector>
+
+#include "PDUSessionResourceItemCxtRelCpl.hpp"
 
 extern "C" {
 #include "Ngap_PDUSessionResourceItemCxtRelCpl.h"
@@ -37,18 +38,15 @@ class PDUSessionResourceListCxtRelCpl {
   PDUSessionResourceListCxtRelCpl();
   virtual ~PDUSessionResourceListCxtRelCpl();
 
-  void setPDUSessionResourceListCxtRelCpl(
-      const std::vector<PDUSessionResourceItemCxtRelCpl>& list);
+  void set(const std::vector<PDUSessionResourceItemCxtRelCpl>& list);
 
-  void getPDUSessionResourceListCxtRelCpl(
-      std::vector<PDUSessionResourceItemCxtRelCpl>& list);
+  void get(std::vector<PDUSessionResourceItemCxtRelCpl>& list) const;
 
-  bool encode2PDUSessionResourceListCxtRelCpl(
+  bool encode(
       Ngap_PDUSessionResourceListCxtRelCpl_t& pduSessionResourceListCxtRelCpl);
 
-  bool decodefromPDUSessionResourceListCxtRelCpl(
-      const Ngap_PDUSessionResourceListCxtRelCpl_t&
-          pduSessionResourceListCxtRelCpl);
+  bool decode(const Ngap_PDUSessionResourceListCxtRelCpl_t&
+                  pduSessionResourceListCxtRelCpl);
 
  private:
   std::vector<PDUSessionResourceItemCxtRelCpl> cxtRelCplList;

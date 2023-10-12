@@ -39,7 +39,7 @@ void GlobalgNBId::set(const PlmnId& plmn, const GNB_ID& gnbid) {
 }
 
 //------------------------------------------------------------------------------
-void GlobalgNBId::get(PlmnId& plmn, GNB_ID& gnbid) {
+void GlobalgNBId::get(PlmnId& plmn, GNB_ID& gnbid) const {
   plmn  = plmnId;
   gnbid = gNB_ID;
 }

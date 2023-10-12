@@ -21,41 +21,38 @@
 
 #include "PDUSessionType.hpp"
 
-#include <iostream>
-using namespace std;
-
 namespace ngap {
 
 //------------------------------------------------------------------------------
 PDUSessionType::PDUSessionType() {
-  pdusessiontype = 0;
+  pdu_session_type_ = 0;
 }
 
 //------------------------------------------------------------------------------
 PDUSessionType::~PDUSessionType() {}
 
 //------------------------------------------------------------------------------
-void PDUSessionType::setPDUSessionType(e_Ngap_PDUSessionType m_pdusessiontype) {
-  pdusessiontype = m_pdusessiontype;
+void PDUSessionType::set(e_Ngap_PDUSessionType pdu_session_type) {
+  pdu_session_type_ = pdu_session_type;
 }
 
 //------------------------------------------------------------------------------
-bool PDUSessionType::getPDUSessionType(long& m_pdusessiontype) {
-  m_pdusessiontype = pdusessiontype;
+bool PDUSessionType::get(long& pdu_session_type) const {
+  pdu_session_type = pdu_session_type_;
 
   return true;
 }
 
 //------------------------------------------------------------------------------
-bool PDUSessionType::encode2PDUSessionType(Ngap_PDUSessionType_t& Type) {
-  Type = pdusessiontype;
+bool PDUSessionType::encode(Ngap_PDUSessionType_t& type) {
+  type = pdu_session_type_;
 
   return true;
 }
 
 //------------------------------------------------------------------------------
-bool PDUSessionType::decodefromPDUSessionType(Ngap_PDUSessionType_t type) {
-  pdusessiontype = type;
+bool PDUSessionType::decode(Ngap_PDUSessionType_t type) {
+  pdu_session_type_ = type;
 
   return true;
 }

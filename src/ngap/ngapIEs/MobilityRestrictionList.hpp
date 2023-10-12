@@ -21,12 +21,15 @@
 
 #ifndef _MOBILITY_RESTRICTION_LIST_H_
 #define _MOBILITY_RESTRICTION_LIST_H_
+
 #include "PlmnId.hpp"
 
 extern "C" {
 #include "Ngap_MobilityRestrictionList.h"
 }
+
 namespace ngap {
+
 class MobilityRestrictionList {
  public:
   MobilityRestrictionList();

@@ -30,14 +30,14 @@ PDUSessionResourceAdmittedItem::PDUSessionResourceAdmittedItem() {}
 PDUSessionResourceAdmittedItem::~PDUSessionResourceAdmittedItem() {}
 
 //------------------------------------------------------------------------------
-void PDUSessionResourceAdmittedItem::setPDUSessionResourceAdmittedItem(
+void PDUSessionResourceAdmittedItem::set(
     const PDUSessionID& m_pDUSessionID,
     const OCTET_STRING_t& m_handoverRequestAckTransfer) {
   pDUSessionID               = m_pDUSessionID;
   handoverRequestAckTransfer = m_handoverRequestAckTransfer;
 }
 //------------------------------------------------------------------------------
-void PDUSessionResourceAdmittedItem::getPDUSessionResourceAdmittedItem(
+void PDUSessionResourceAdmittedItem::get(
     PDUSessionID& m_pDUSessionID,
     OCTET_STRING_t& m_handoverRequestAckTransfer) {
   m_pDUSessionID               = pDUSessionID;
@@ -45,23 +45,19 @@ void PDUSessionResourceAdmittedItem::getPDUSessionResourceAdmittedItem(
 }
 
 //------------------------------------------------------------------------------
-bool PDUSessionResourceAdmittedItem::encode2PDUSessionResourceAdmittedItem(
-    Ngap_PDUSessionResourceAdmittedItem_t* pdUSessionResourceAdmittedItem) {
-  if (!pDUSessionID.encode(pdUSessionResourceAdmittedItem->pDUSessionID))
-    return false;
-  pdUSessionResourceAdmittedItem->handoverRequestAcknowledgeTransfer =
-      handoverRequestAckTransfer;
+bool PDUSessionResourceAdmittedItem::encode(
+    Ngap_PDUSessionResourceAdmittedItem_t* pduItem) {
+  if (!pDUSessionID.encode(pduItem->pDUSessionID)) return false;
+  pduItem->handoverRequestAcknowledgeTransfer = handoverRequestAckTransfer;
 
   return true;
 }
 
 //------------------------------------------------------------------------------
-bool PDUSessionResourceAdmittedItem::decodefromPDUSessionResourceAdmittedItem(
-    Ngap_PDUSessionResourceAdmittedItem_t* pdUSessionResourceAdmittedItem) {
-  if (!pDUSessionID.decode(pdUSessionResourceAdmittedItem->pDUSessionID))
-    return false;
-  handoverRequestAckTransfer =
-      pdUSessionResourceAdmittedItem->handoverRequestAcknowledgeTransfer;
+bool PDUSessionResourceAdmittedItem::decode(
+    Ngap_PDUSessionResourceAdmittedItem_t* pduItem) {
+  if (!pDUSessionID.decode(pduItem->pDUSessionID)) return false;
+  handoverRequestAckTransfer = pduItem->handoverRequestAcknowledgeTransfer;
 
   return true;
 }

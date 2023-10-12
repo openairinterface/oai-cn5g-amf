@@ -19,8 +19,8 @@
  *      contact@openairinterface.org
  */
 
-#ifndef _RELATIVEAMFCAPACITY_H_
-#define _RELATIVEAMFCAPACITY_H_
+#ifndef _RELATIVE_AMF_CAPACITY_H_
+#define _RELATIVE_AMF_CAPACITY_H_
 
 extern "C" {
 #include "Ngap_RelativeAMFCapacity.h"
@@ -35,6 +35,7 @@ class RelativeAMFCapacity {
 
   bool encode(Ngap_RelativeAMFCapacity_t&) const;
   bool decode(const Ngap_RelativeAMFCapacity_t&);
+
   void setValue(uint8_t amf_capacity);
   uint8_t getValue() const;
 

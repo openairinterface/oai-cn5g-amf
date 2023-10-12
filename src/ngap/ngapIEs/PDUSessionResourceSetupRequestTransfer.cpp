@@ -21,19 +21,12 @@
 
 #include "PDUSessionResourceSetupRequestTransfer.hpp"
 
+#include "logger.hpp"
 #include "output_wrapper.hpp"
 
 extern "C" {
-#include "asn_codecs.h"
-#include "constr_TYPE.h"
-#include "constraints.h"
 #include "dynamic_memory_check.h"
-#include "per_decoder.h"
-#include "per_encoder.h"
 }
-
-#include <iostream>
-using namespace std;
 
 namespace ngap {
 
@@ -43,13 +36,10 @@ PduSessionResourceSetupRequestTransferIE::
   pduSessionResourceSetupRequestTransferIEs =
       (Ngap_PDUSessionResourceSetupRequestTransfer_t*) calloc(
           1, sizeof(Ngap_PDUSessionResourceSetupRequestTransfer_t));
-  pduSessionAggregateMaximumBitRateIE = NULL;
-  upTransportLayerInformation         = NULL;
-  dataForwardingNotPossible           = NULL;
-  pduSessionType                      = NULL;
-  securityIndication                  = NULL;
-  networkInstance                     = NULL;
-  qosFlowSetupRequestList             = NULL;
+  pduSessionAggregateMaximumBitRateIE = std::nullopt;
+  dataForwardingNotPossible           = std::nullopt;
+  securityIndication                  = std::nullopt;
+  networkInstance                     = std::nullopt;
 }
 
 //------------------------------------------------------------------------------
@@ -60,11 +50,9 @@ PduSessionResourceSetupRequestTransferIE::
 void PduSessionResourceSetupRequestTransferIE::
     setPduSessionAggregateMaximumBitRate(
         long bit_rate_downlink, long bit_rate_uplink) {
-  if (!pduSessionAggregateMaximumBitRateIE)
-    pduSessionAggregateMaximumBitRateIE =
-        new PduSessionAggregateMaximumBitRate();
-  pduSessionAggregateMaximumBitRateIE->setPduSessionAggregateMaximumBitRate(
-      bit_rate_downlink, bit_rate_uplink);
+  pduSessionAggregateMaximumBitRateIE =
+      std::make_optional<PduSessionAggregateMaximumBitRate>(
+          bit_rate_downlink, bit_rate_uplink);
 
   Ngap_PDUSessionResourceSetupRequestTransferIEs_t* ie =
       (Ngap_PDUSessionResourceSetupRequestTransferIEs_t*) calloc(
@@ -74,11 +62,10 @@ void PduSessionResourceSetupRequestTransferIE::
   ie->value.present =
       Ngap_PDUSessionResourceSetupRequestTransferIEs__value_PR_PDUSessionAggregateMaximumBitRate;
 
-  int ret = pduSessionAggregateMaximumBitRateIE
-                ->encode2PduSessionAggregateMaximumBitRate(
-                    ie->value.choice.PDUSessionAggregateMaximumBitRate);
+  int ret = pduSessionAggregateMaximumBitRateIE.value().encode(
+      ie->value.choice.PDUSessionAggregateMaximumBitRate);
   if (!ret) {
-    cout << "encode PDUSessionAggregateMaximumBitRate IE error" << endl;
+    Logger::ngap().error("Encode PDUSessionAggregateMaximumBitRate IE error");
     free_wrapper((void**) &ie);
     return;
   }
@@ -86,21 +73,19 @@ void PduSessionResourceSetupRequestTransferIE::
   ret = ASN_SEQUENCE_ADD(
       &pduSessionResourceSetupRequestTransferIEs->protocolIEs.list, ie);
   if (ret != 0)
-    cout << "encode PDUSessionAggregateMaximumBitRate IE error" << endl;
+    Logger::ngap().error("Encode PDUSessionAggregateMaximumBitRate IE error");
   // free_wrapper((void**) &ie);
 }
 
 //------------------------------------------------------------------------------
-void PduSessionResourceSetupRequestTransferIE::setUL_NG_U_UP_TNL_Information(
+void PduSessionResourceSetupRequestTransferIE::setUlNgUUpTnlInformation(
     GtpTunnel_t upTnlInfo) {
-  if (!upTransportLayerInformation)
-    upTransportLayerInformation = new UpTransportLayerInformation();
-  TransportLayerAddress* m_transportLayerAddress = new TransportLayerAddress();
-  m_transportLayerAddress->setTransportLayerAddress(upTnlInfo.ip_address);
-  GtpTeid* m_gtpTeid = new GtpTeid();
-  m_gtpTeid->setGtpTeid(upTnlInfo.gtp_teid);
-  upTransportLayerInformation->setUpTransportLayerInformation(
-      m_transportLayerAddress, m_gtpTeid);
+  TransportLayerAddress transport_layer_address = {};
+  transport_layer_address.setTransportLayerAddress(upTnlInfo.ip_address);
+  GtpTeid gtp_teid = {};
+  gtp_teid.setGtpTeid(upTnlInfo.gtp_teid);
+  upTransportLayerInformation.setUpTransportLayerInformation(
+      transport_layer_address, gtp_teid);
 
   Ngap_PDUSessionResourceSetupRequestTransferIEs_t* ie =
       (Ngap_PDUSessionResourceSetupRequestTransferIEs_t*) calloc(
@@ -110,26 +95,24 @@ void PduSessionResourceSetupRequestTransferIE::setUL_NG_U_UP_TNL_Information(
   ie->value.present =
       Ngap_PDUSessionResourceSetupRequestTransferIEs__value_PR_UPTransportLayerInformation;
 
-  int ret = upTransportLayerInformation->encode2UpTransportLayerInformation(
+  int ret = upTransportLayerInformation.encode(
       ie->value.choice.UPTransportLayerInformation);
   if (!ret) {
-    cout << "encode UPTransportLayerInformation IE error" << endl;
+    Logger::ngap().error("Encode UPTransportLayerInformation IE error");
     free_wrapper((void**) &ie);
     return;
   }
 
   ret = ASN_SEQUENCE_ADD(
       &pduSessionResourceSetupRequestTransferIEs->protocolIEs.list, ie);
-  if (ret != 0) cout << "encode UPTransportLayerInformation IE error" << endl;
+  if (ret != 0)
+    Logger::ngap().error("Encode UPTransportLayerInformation IE error");
   // free_wrapper((void**) &ie);
 }
 
 //------------------------------------------------------------------------------
-// void
-// PduSessionResourceSetupRequestTransferIE::setAdditionalUL_NG_U_UP_TNL_Information(std::vector<GtpTunnel>list);//O
 void PduSessionResourceSetupRequestTransferIE::setDataForwardingNotPossible() {
-  if (!dataForwardingNotPossible)
-    dataForwardingNotPossible = new DataForwardingNotPossible();
+  DataForwardingNotPossible tmp = {};
 
   Ngap_PDUSessionResourceSetupRequestTransferIEs_t* ie =
       (Ngap_PDUSessionResourceSetupRequestTransferIEs_t*) calloc(
@@ -139,26 +122,27 @@ void PduSessionResourceSetupRequestTransferIE::setDataForwardingNotPossible() {
   ie->value.present =
       Ngap_PDUSessionResourceSetupRequestTransferIEs__value_PR_DataForwardingNotPossible;
 
-  int ret = dataForwardingNotPossible->encode2DataForwardingNotPossible(
-      ie->value.choice.DataForwardingNotPossible);
+  int ret = tmp.encode(ie->value.choice.DataForwardingNotPossible);
+  dataForwardingNotPossible =
+      std::make_optional<DataForwardingNotPossible>(tmp);
+
   if (!ret) {
-    cout << "encode DataForwardingNotPossible IE error" << endl;
+    Logger::ngap().error("Encode DataForwardingNotPossible IE error");
     free_wrapper((void**) &ie);
     return;
   }
 
   ret = ASN_SEQUENCE_ADD(
       &pduSessionResourceSetupRequestTransferIEs->protocolIEs.list, ie);
-  if (ret != 0) cout << "encode DataForwardingNotPossible IE error" << endl;
+  if (ret != 0)
+    Logger::ngap().error("Encode DataForwardingNotPossible IE error");
   // free_wrapper((void**) &ie);
 }
 
 //------------------------------------------------------------------------------
 void PduSessionResourceSetupRequestTransferIE::setPduSessionType(
     e_Ngap_PDUSessionType type) {
-  if (!pduSessionType) pduSessionType = new PDUSessionType();
-
-  pduSessionType->setPDUSessionType(type);
+  pduSessionType.set(type);
 
   Ngap_PDUSessionResourceSetupRequestTransferIEs_t* ie =
       (Ngap_PDUSessionResourceSetupRequestTransferIEs_t*) calloc(
@@ -168,42 +152,76 @@ void PduSessionResourceSetupRequestTransferIE::setPduSessionType(
   ie->value.present =
       Ngap_PDUSessionResourceSetupRequestTransferIEs__value_PR_PDUSessionType;
 
+  int ret = pduSessionType.encode(ie->value.choice.PDUSessionType);
+  if (!ret) {
+    Logger::ngap().error("Encode PDUSessionType IE error");
+    free_wrapper((void**) &ie);
+    return;
+  }
+
+  ret = ASN_SEQUENCE_ADD(
+      &pduSessionResourceSetupRequestTransferIEs->protocolIEs.list, ie);
+  if (ret != 0) Logger::ngap().error("Encode PDUSessionType IE error");
+  // free_wrapper((void**) &ie);
+}
+
+//------------------------------------------------------------------------------
+void PduSessionResourceSetupRequestTransferIE::setSecurityIndication(
+    e_Ngap_IntegrityProtectionIndication e_integrity_protection,
+    e_Ngap_ConfidentialityProtectionIndication e_confidentiality_protection,
+    e_Ngap_MaximumIntegrityProtectedDataRate
+        e_max_integrity_protected_data_rate) {
+  IntegrityProtectionIndication integrity_protection_indication = {};
+  ConfidentialityProtectionIndication confidentiality_protection_indication =
+      {};
+  std::optional<MaximumIntegrityProtectedDataRate>
+      maximum_integrity_protected_data_rate =
+          std::make_optional<MaximumIntegrityProtectedDataRate>(
+              e_max_integrity_protected_data_rate);
+  integrity_protection_indication.set(e_integrity_protection);
+  confidentiality_protection_indication.set(e_confidentiality_protection);
+
+  securityIndication = std::make_optional<SecurityIndication>(
+      integrity_protection_indication, confidentiality_protection_indication,
+      maximum_integrity_protected_data_rate,
+      maximum_integrity_protected_data_rate);
+
+  Ngap_PDUSessionResourceSetupRequestTransferIEs_t* ie =
+      (Ngap_PDUSessionResourceSetupRequestTransferIEs_t*) calloc(
+          1, sizeof(Ngap_PDUSessionResourceSetupRequestTransferIEs_t));
+  ie->id          = Ngap_ProtocolIE_ID_id_SecurityIndication;
+  ie->criticality = Ngap_Criticality_reject;
+  ie->value.present =
+      Ngap_PDUSessionResourceSetupRequestTransferIEs__value_PR_SecurityIndication;
+
   int ret =
-      pduSessionType->encode2PDUSessionType(ie->value.choice.PDUSessionType);
+      securityIndication.value().encode(&ie->value.choice.SecurityIndication);
   if (!ret) {
-    cout << "encode PDUSessionType IE error" << endl;
+    Logger::ngap().error("Encode SecurityIndication IE error");
     free_wrapper((void**) &ie);
     return;
   }
 
   ret = ASN_SEQUENCE_ADD(
       &pduSessionResourceSetupRequestTransferIEs->protocolIEs.list, ie);
-  if (ret != 0) cout << "encode PDUSessionType IE error" << endl;
+  if (ret != 0) Logger::ngap().error("Encode SecurityIndication IE error");
   // free_wrapper((void**) &ie);
 }
 
 //------------------------------------------------------------------------------
 void PduSessionResourceSetupRequestTransferIE::setSecurityIndication(
-    e_Ngap_IntegrityProtectionIndication integrity_protection,
-    e_Ngap_ConfidentialityProtectionIndication confidentiality_protection,
-    e_Ngap_MaximumIntegrityProtectedDataRate maxIntProtDataRate) {
-  if (!securityIndication) securityIndication = new SecurityIndication();
+    e_Ngap_IntegrityProtectionIndication e_integrity_protection,
+    e_Ngap_ConfidentialityProtectionIndication e_confidentiality_protection) {
+  IntegrityProtectionIndication integrity_protection_indication = {};
+  ConfidentialityProtectionIndication confidentiality_protection_indication =
+      {};
 
-  IntegrityProtectionIndication* m_integrityProtectionIndication =
-      new IntegrityProtectionIndication();
-  ConfidentialityProtectionIndication* m_confidentialityProtectionIndication =
-      new ConfidentialityProtectionIndication();
-  MaximumIntegrityProtectedDataRate* m_maximumIntegrityProtectedDataRate =
-      new MaximumIntegrityProtectedDataRate();
-  m_integrityProtectionIndication->setIntegrityProtectionIndication(
-      integrity_protection);
-  m_confidentialityProtectionIndication->setConfidentialityProtectionIndication(
-      confidentiality_protection);
-  m_maximumIntegrityProtectedDataRate->setMaximumIntegrityProtectedDataRate(
-      maxIntProtDataRate);
-  securityIndication->setSecurityIndication(
-      m_integrityProtectionIndication, m_confidentialityProtectionIndication,
-      m_maximumIntegrityProtectedDataRate);
+  integrity_protection_indication.set(e_integrity_protection);
+  confidentiality_protection_indication.set(e_confidentiality_protection);
+
+  securityIndication = std::make_optional<SecurityIndication>(
+      integrity_protection_indication, confidentiality_protection_indication,
+      std::nullopt, std::nullopt);
 
   Ngap_PDUSessionResourceSetupRequestTransferIEs_t* ie =
       (Ngap_PDUSessionResourceSetupRequestTransferIEs_t*) calloc(
@@ -213,67 +231,23 @@ void PduSessionResourceSetupRequestTransferIE::setSecurityIndication(
   ie->value.present =
       Ngap_PDUSessionResourceSetupRequestTransferIEs__value_PR_SecurityIndication;
 
-  int ret = securityIndication->encode2SecurityIndication(
-      &ie->value.choice.SecurityIndication);
+  int ret =
+      securityIndication.value().encode(&ie->value.choice.SecurityIndication);
   if (!ret) {
-    cout << "encode SecurityIndication IE error" << endl;
+    Logger::ngap().error("Encode SecurityIndication IE error");
     free_wrapper((void**) &ie);
     return;
   }
 
   ret = ASN_SEQUENCE_ADD(
       &pduSessionResourceSetupRequestTransferIEs->protocolIEs.list, ie);
-  if (ret != 0) cout << "encode SecurityIndication IE error" << endl;
-  // free_wrapper((void**) &ie);
-}
-
-//------------------------------------------------------------------------------
-void PduSessionResourceSetupRequestTransferIE::setSecurityIndication(
-    e_Ngap_IntegrityProtectionIndication integrity_protection,
-    e_Ngap_ConfidentialityProtectionIndication confidentiality_protection) {
-  if (!securityIndication) securityIndication = new SecurityIndication();
-
-  IntegrityProtectionIndication* m_integrityProtectionIndication =
-      new IntegrityProtectionIndication();
-  ConfidentialityProtectionIndication* m_confidentialityProtectionIndication =
-      new ConfidentialityProtectionIndication();
-
-  m_integrityProtectionIndication->setIntegrityProtectionIndication(
-      integrity_protection);
-  m_confidentialityProtectionIndication->setConfidentialityProtectionIndication(
-      confidentiality_protection);
-
-  securityIndication->setSecurityIndication(
-      m_integrityProtectionIndication, m_confidentialityProtectionIndication,
-      NULL);
-
-  Ngap_PDUSessionResourceSetupRequestTransferIEs_t* ie =
-      (Ngap_PDUSessionResourceSetupRequestTransferIEs_t*) calloc(
-          1, sizeof(Ngap_PDUSessionResourceSetupRequestTransferIEs_t));
-  ie->id          = Ngap_ProtocolIE_ID_id_SecurityIndication;
-  ie->criticality = Ngap_Criticality_reject;
-  ie->value.present =
-      Ngap_PDUSessionResourceSetupRequestTransferIEs__value_PR_SecurityIndication;
-
-  int ret = securityIndication->encode2SecurityIndication(
-      &ie->value.choice.SecurityIndication);
-  if (!ret) {
-    cout << "encode SecurityIndication IE error" << endl;
-    free_wrapper((void**) &ie);
-    return;
-  }
-
-  ret = ASN_SEQUENCE_ADD(
-      &pduSessionResourceSetupRequestTransferIEs->protocolIEs.list, ie);
-  if (ret != 0) cout << "encode SecurityIndication IE error" << endl;
+  if (ret != 0) Logger::ngap().error("Encode SecurityIndication IE error");
   // free_wrapper((void**) &ie);
 }
 
 //------------------------------------------------------------------------------
 void PduSessionResourceSetupRequestTransferIE::setNetworkInstance(long value) {
-  if (!networkInstance) networkInstance = new NetworkInstance();
-
-  networkInstance->setNetworkInstance(value);
+  networkInstance = std::make_optional<NetworkInstance>(value);
 
   Ngap_PDUSessionResourceSetupRequestTransferIEs_t* ie =
       (Ngap_PDUSessionResourceSetupRequestTransferIEs_t*) calloc(
@@ -283,179 +257,176 @@ void PduSessionResourceSetupRequestTransferIE::setNetworkInstance(long value) {
   ie->value.present =
       Ngap_PDUSessionResourceSetupRequestTransferIEs__value_PR_NetworkInstance;
 
-  int ret =
-      networkInstance->encode2NetworkInstance(ie->value.choice.NetworkInstance);
+  int ret = networkInstance.value().encode(ie->value.choice.NetworkInstance);
   if (!ret) {
-    cout << "encode NetworkInstance IE error" << endl;
+    Logger::ngap().error("Encode NetworkInstance IE error");
     free_wrapper((void**) &ie);
     return;
   }
 
   ret = ASN_SEQUENCE_ADD(
       &pduSessionResourceSetupRequestTransferIEs->protocolIEs.list, ie);
-  if (ret != 0) cout << "encode NetworkInstance IE error" << endl;
+  if (ret != 0) Logger::ngap().error("Encode NetworkInstance IE error");
   // free_wrapper((void**) &ie);
 }
 
 //------------------------------------------------------------------------------
 void PduSessionResourceSetupRequestTransferIE::setQosFlowSetupRequestList(
     std::vector<QosFlowSetupReq_t> list) {
-  if (!qosFlowSetupRequestList)
-    qosFlowSetupRequestList = new QosFlowSetupRequestList();
-
-  QosFlowSetupRequestItem* m_items = new QosFlowSetupRequestItem[list.size()]();
+  std::vector<QosFlowSetupRequestItem> vector_items;
 
   for (int i = 0; i < list.size(); i++) {
-    QosFlowIdentifier* m_qosFlowIdentifier = new QosFlowIdentifier();
-    m_qosFlowIdentifier->setQosFlowIdentifier(list[i].qos_flow_id);
+    QosFlowIdentifier qos_flow_identifier = {};
+    qos_flow_identifier.setQosFlowIdentifier(list[i].qos_flow_id);
 
-    QosCharacteristics* m_qosCharacteristics = new QosCharacteristics();
+    QosCharacteristics qos_characteristics = {};
     if (list[i].qflqp.qosc.nonDy) {
-      FiveQI* m_fiveQI                                 = new FiveQI();
-      PriorityLevelQos* m_priorityLevelQos             = NULL;
-      AveragingWindow* m_averagingWindow               = NULL;
-      MaximumDataBurstVolume* m_maximumDataBurstVolume = NULL;
+      FiveQI five_qi                                     = {};
+      std::optional<PriorityLevelQos> priority_level_qos = std::nullopt;
+      std::optional<AveragingWindow> averaging_window    = std::nullopt;
+      std::optional<MaximumDataBurstVolume> max_data_burst_volume =
+          std::nullopt;
 
-      m_fiveQI->setFiveQI(list[i].qflqp.qosc.nonDy->_5QI);
+      five_qi.setFiveQI(list[i].qflqp.qosc.nonDy->_5QI);
       if (list[i].qflqp.qosc.nonDy->priorityLevelQos) {
-        m_priorityLevelQos = new PriorityLevelQos();
-        m_priorityLevelQos->setPriorityLevelQos(
-            *list[i].qflqp.qosc.nonDy->priorityLevelQos);
+        PriorityLevelQos tmp = {};
+        tmp.setPriorityLevelQos(*list[i].qflqp.qosc.nonDy->priorityLevelQos);
+        priority_level_qos = std::make_optional<PriorityLevelQos>(tmp);
       }
       if (list[i].qflqp.qosc.nonDy->averagingWindow) {
-        m_averagingWindow = new AveragingWindow();
-        m_averagingWindow->setAveragingWindow(
-            *list[i].qflqp.qosc.nonDy->averagingWindow);
+        AveragingWindow tmp = {};
+        tmp.setAveragingWindow(*list[i].qflqp.qosc.nonDy->averagingWindow);
+        averaging_window = std::make_optional<AveragingWindow>(tmp);
       }
       if (list[i].qflqp.qosc.nonDy->maximumDataBurstVolume) {
-        m_maximumDataBurstVolume = new MaximumDataBurstVolume();
-        m_maximumDataBurstVolume->setMaximumDataBurstVolume(
-            *list[i].qflqp.qosc.nonDy->maximumDataBurstVolume);
+        MaximumDataBurstVolume tmp = {};
+        tmp.set(*list[i].qflqp.qosc.nonDy->maximumDataBurstVolume);
+        max_data_burst_volume = std::make_optional<MaximumDataBurstVolume>(tmp);
       }
 
-      NonDynamic5QIDescriptor* m_nonDynamic5QIDescriptor =
-          new NonDynamic5QIDescriptor();
-      m_nonDynamic5QIDescriptor->setNonDynamic5QIDescriptor(
-          m_fiveQI, m_priorityLevelQos, m_averagingWindow,
-          m_maximumDataBurstVolume);
+      NonDynamic5QIDescriptor non_dynamic_5qi_descriptor = {};
+      non_dynamic_5qi_descriptor.set(
+          five_qi, priority_level_qos, averaging_window, max_data_burst_volume);
 
-      m_qosCharacteristics->setQosCharacteristics(m_nonDynamic5QIDescriptor);
+      qos_characteristics.setQosCharacteristics(non_dynamic_5qi_descriptor);
     } else {
-      PriorityLevelQos* m_priorityLevelQos   = new PriorityLevelQos();
-      PacketDelayBudget* m_packetDelayBudget = new PacketDelayBudget();
-      PacketErrorRate* m_packetErrorRate     = new PacketErrorRate();
-      FiveQI* m_fiveQI                       = NULL;
-      DelayCritical* m_delayCritical         = NULL;
-      AveragingWindow* m_averagingWindow     = NULL;
-      MaximumDataBurstVolume* m_maximumDataBurstVolume = NULL;
+      PriorityLevelQos priority_level_qos             = {};
+      PacketDelayBudget packet_delay_budget           = {};
+      PacketErrorRate packet_error_rate               = {};
+      std::optional<FiveQI> five_qi                   = std::nullopt;
+      std::optional<DelayCritical> delay_critical     = std::nullopt;
+      std::optional<AveragingWindow> averaging_window = std::nullopt;
+      std::optional<MaximumDataBurstVolume> max_data_burst_volume =
+          std::nullopt;
 
-      m_priorityLevelQos->setPriorityLevelQos(
+      priority_level_qos.setPriorityLevelQos(
           list[i].qflqp.qosc.dy->priorityLevelQos);
-      m_packetDelayBudget->setPacketDelayBudget(
+      packet_delay_budget.setPacketDelayBudget(
           list[i].qflqp.qosc.dy->packetDelayBudget);
-      m_packetErrorRate->setPacketErrorRate(
+      packet_error_rate.setPacketErrorRate(
           list[i].qflqp.qosc.dy->packetErrorRate.pERScalar,
           list[i].qflqp.qosc.dy->packetErrorRate.pERExponent);
       if (list[i].qflqp.qosc.dy->_5QI) {
-        m_fiveQI = new FiveQI();
-        m_fiveQI->setFiveQI(*list[i].qflqp.qosc.dy->_5QI);
+        FiveQI tmp = {};
+        tmp.setFiveQI(*list[i].qflqp.qosc.dy->_5QI);
+        five_qi = std::make_optional<FiveQI>(tmp);
       }
       if (list[i].qflqp.qosc.dy->delayCritical) {
-        m_delayCritical = new DelayCritical();
-        m_delayCritical->setDelayCritical(
-            *list[i].qflqp.qosc.dy->delayCritical);
+        DelayCritical tmp = {};
+        tmp.setDelayCritical(*list[i].qflqp.qosc.dy->delayCritical);
+        delay_critical = std::make_optional<DelayCritical>(tmp);
       }
       if (list[i].qflqp.qosc.dy->averagingWindow) {
-        m_averagingWindow = new AveragingWindow();
-        m_averagingWindow->setAveragingWindow(
-            *list[i].qflqp.qosc.dy->averagingWindow);
+        AveragingWindow tmp = {};
+        tmp.setAveragingWindow(*list[i].qflqp.qosc.dy->averagingWindow);
+        averaging_window = std::make_optional<AveragingWindow>(tmp);
       }
       if (list[i].qflqp.qosc.dy->maximumDataBurstVolume) {
-        m_maximumDataBurstVolume = new MaximumDataBurstVolume();
-        m_maximumDataBurstVolume->setMaximumDataBurstVolume(
-            *list[i].qflqp.qosc.dy->maximumDataBurstVolume);
+        MaximumDataBurstVolume tmp = {};
+        tmp.set(*list[i].qflqp.qosc.dy->maximumDataBurstVolume);
+        max_data_burst_volume = std::make_optional<MaximumDataBurstVolume>(tmp);
       }
 
-      Dynamic5QIDescriptor* m_dynamic5QIDescriptor = new Dynamic5QIDescriptor();
-      m_dynamic5QIDescriptor->setDynamic5QIDescriptor(
-          m_priorityLevelQos, m_packetDelayBudget, m_packetErrorRate, m_fiveQI,
-          m_delayCritical, m_averagingWindow, m_maximumDataBurstVolume);
+      Dynamic5QIDescriptor dynamic_5qi_descriptor = {};
+      dynamic_5qi_descriptor.set(
+          priority_level_qos, packet_delay_budget, packet_error_rate, five_qi,
+          delay_critical, averaging_window, max_data_burst_volume);
 
-      m_qosCharacteristics->setQosCharacteristics(m_dynamic5QIDescriptor);
+      qos_characteristics.setQosCharacteristics(dynamic_5qi_descriptor);
     }
 
-    PriorityLevelARP* m_priorityLevelARP = new PriorityLevelARP();
-    m_priorityLevelARP->setPriorityLevelARP(list[i].qflqp.arp.priorityLevelARP);
-    Pre_emptionCapability* m_pre_emptionCapability =
-        new Pre_emptionCapability();
-    m_pre_emptionCapability->setPre_emptionCapability(
-        list[i].qflqp.arp.pre_emptionCapability);
-    Pre_emptionVulnerability* m_pre_emptionVulnerability =
-        new Pre_emptionVulnerability();
-    m_pre_emptionVulnerability->setPre_emptionVulnerability(
-        list[i].qflqp.arp.pre_emptionVulnerability);
-    AllocationAndRetentionPriority* m_allocationAndRetentionPriority =
-        new AllocationAndRetentionPriority();
-    m_allocationAndRetentionPriority->setAllocationAndRetentionPriority(
-        m_priorityLevelARP, m_pre_emptionCapability,
-        m_pre_emptionVulnerability);
+    PriorityLevelARP priority_level_arp = {};
+    priority_level_arp.setPriorityLevelARP(list[i].qflqp.arp.priorityLevelARP);
+    Pre_emptionCapability pre_emption_capability = {};
+    pre_emption_capability.set(list[i].qflqp.arp.pre_emptionCapability);
+    Pre_emptionVulnerability pre_emption_vulnerability = {};
+    pre_emption_vulnerability.set(list[i].qflqp.arp.pre_emptionVulnerability);
+    AllocationAndRetentionPriority arp = {};
+    arp.set(
+        priority_level_arp, pre_emption_capability, pre_emption_vulnerability);
 
-    GBR_QosInformation* m_gBR_QosInformation = NULL;
+    std::optional<GbrQoSFlowInformation> gbr_qos_information = std::nullopt;
     if (list[i].qflqp.gbr_qos_info) {
-      NotificationControl* m_notificationControl = NULL;
+      std::optional<NotificationControl> m_notificationControl = std::nullopt;
       if (list[i].qflqp.gbr_qos_info->notificationControl) {
-        m_notificationControl = new NotificationControl();
-        m_notificationControl->setNotificationControl(
+        NotificationControl tmp = {};
+        tmp.setNotificationControl(
             *list[i].qflqp.gbr_qos_info->notificationControl);
-      }
-      PacketLossRate* m_maximumPacketLossRateDL = NULL;
-      if (list[i].qflqp.gbr_qos_info->maximumPacketLossRateDL) {
-        m_maximumPacketLossRateDL = new PacketLossRate();
-        m_maximumPacketLossRateDL->setPacketLossRate(
-            *list[i].qflqp.gbr_qos_info->maximumPacketLossRateDL);
-      }
-      PacketLossRate* m_maximumPacketLossRateUL = NULL;
-      if (list[i].qflqp.gbr_qos_info->maximumPacketLossRateUL) {
-        m_maximumPacketLossRateUL = new PacketLossRate();
-        m_maximumPacketLossRateUL->setPacketLossRate(
-            *list[i].qflqp.gbr_qos_info->maximumPacketLossRateUL);
+        m_notificationControl = std::make_optional<NotificationControl>(tmp);
       }
 
-      m_gBR_QosInformation = new GBR_QosInformation();
-      m_gBR_QosInformation->setGBR_QosInformation(
+      std::optional<PacketLossRate> max_packet_loss_rate_dl = std::nullopt;
+      if (list[i].qflqp.gbr_qos_info->maximumPacketLossRateDL) {
+        PacketLossRate tmp = {};
+        tmp.setPacketLossRate(
+            *list[i].qflqp.gbr_qos_info->maximumPacketLossRateDL);
+        max_packet_loss_rate_dl = std::make_optional<PacketLossRate>(tmp);
+      }
+
+      std::optional<PacketLossRate> max_packet_loss_rate_ul = std::nullopt;
+      if (list[i].qflqp.gbr_qos_info->maximumPacketLossRateUL) {
+        PacketLossRate tmp = {};
+        tmp.setPacketLossRate(
+            *list[i].qflqp.gbr_qos_info->maximumPacketLossRateUL);
+        max_packet_loss_rate_ul = std::make_optional<PacketLossRate>(tmp);
+      }
+
+      gbr_qos_information = std::make_optional<GbrQoSFlowInformation>(
           list[i].qflqp.gbr_qos_info->maximumFlowBitRateDL,
           list[i].qflqp.gbr_qos_info->maximumFlowBitRateUL,
           list[i].qflqp.gbr_qos_info->guaranteedFlowBitRateDL,
           list[i].qflqp.gbr_qos_info->guaranteedFlowBitRateUL,
-          m_notificationControl, m_maximumPacketLossRateDL,
-          m_maximumPacketLossRateUL);
+          m_notificationControl, max_packet_loss_rate_dl,
+          max_packet_loss_rate_ul);
     }
 
-    ReflectiveQosAttribute* m_reflectiveQosAttribute = NULL;
+    std::optional<ReflectiveQosAttribute> reflective_qos_attribute =
+        std::nullopt;
     if (list[i].qflqp.reflectiveQosAttribute) {
-      m_reflectiveQosAttribute = new ReflectiveQosAttribute();
-      m_reflectiveQosAttribute->setReflectiveQosAttribute(
+      reflective_qos_attribute = std::make_optional<ReflectiveQosAttribute>(
           *list[i].qflqp.reflectiveQosAttribute);
     }
-    AdditionalQosFlowInformation* m_additionalQosFlowInformation = NULL;
+
+    std::optional<AdditionalQosFlowInformation>
+        additional_qos_flow_information = std::nullopt;
     if (list[i].qflqp.additionalQosFlowInformation) {
-      m_additionalQosFlowInformation = new AdditionalQosFlowInformation();
-      m_additionalQosFlowInformation->setAdditionalQosFlowInformation(
-          *list[i].qflqp.additionalQosFlowInformation);
+      additional_qos_flow_information =
+          std::make_optional<AdditionalQosFlowInformation>(
+              *list[i].qflqp.additionalQosFlowInformation);
     }
 
-    QosFlowLevelQosParameters* m_qosFlowLevelQosParameters =
-        new QosFlowLevelQosParameters();
-    m_qosFlowLevelQosParameters->setQosFlowLevelQosParameters(
-        m_qosCharacteristics, m_allocationAndRetentionPriority,
-        m_gBR_QosInformation, m_reflectiveQosAttribute,
-        m_additionalQosFlowInformation);
+    QosFlowLevelQosParameters qos_flow_level_qos_parameters = {};
+    qos_flow_level_qos_parameters.set(
+        qos_characteristics, arp, gbr_qos_information, reflective_qos_attribute,
+        additional_qos_flow_information);
 
-    m_items[i].setQosFlowSetupRequestItem(
-        m_qosFlowIdentifier, m_qosFlowLevelQosParameters);
+    QosFlowSetupRequestItem qos_flow_setup_request_item = {};
+    qos_flow_setup_request_item.set(
+        qos_flow_identifier, qos_flow_level_qos_parameters);
+    vector_items.push_back(qos_flow_setup_request_item);
   }
 
-  qosFlowSetupRequestList->setQosFlowSetupRequestList(m_items, list.size());
+  qosFlowSetupRequestList.set(vector_items);
 
   Ngap_PDUSessionResourceSetupRequestTransferIEs_t* ie =
       (Ngap_PDUSessionResourceSetupRequestTransferIEs_t*) calloc(
@@ -465,22 +436,22 @@ void PduSessionResourceSetupRequestTransferIE::setQosFlowSetupRequestList(
   ie->value.present =
       Ngap_PDUSessionResourceSetupRequestTransferIEs__value_PR_QosFlowSetupRequestList;
 
-  int ret = qosFlowSetupRequestList->encode2QosFlowSetupRequestList(
-      &ie->value.choice.QosFlowSetupRequestList);
+  int ret =
+      qosFlowSetupRequestList.encode(&ie->value.choice.QosFlowSetupRequestList);
   if (!ret) {
-    cout << "encode QosFlowSetupRequestList IE error" << endl;
+    Logger::ngap().error("Encode QosFlowSetupRequestList IE error");
     free_wrapper((void**) &ie);
     return;
   }
 
   ret = ASN_SEQUENCE_ADD(
       &pduSessionResourceSetupRequestTransferIEs->protocolIEs.list, ie);
-  if (ret != 0) cout << "encode QosFlowSetupRequestList IE error" << endl;
+  if (ret != 0) Logger::ngap().error("Encode QosFlowSetupRequestList IE error");
   // free_wrapper((void**) &ie);
 }
 
 //------------------------------------------------------------------------------
-int PduSessionResourceSetupRequestTransferIE::Encode(
+int PduSessionResourceSetupRequestTransferIE::encode(
     uint8_t* buf, int buf_size) {
   output_wrapper::print_asn_msg(
       &asn_DEF_Ngap_PDUSessionResourceSetupRequestTransfer,
@@ -488,29 +459,29 @@ int PduSessionResourceSetupRequestTransferIE::Encode(
   asn_enc_rval_t er = aper_encode_to_buffer(
       &asn_DEF_Ngap_PDUSessionResourceSetupRequestTransfer, NULL,
       pduSessionResourceSetupRequestTransferIEs, buf, buf_size);
-  cout << "er.encoded(" << er.encoded << ")" << endl;
+  Logger::ngap().debug("er.encoded( %d)", er.encoded);
   // asn_fprint(stderr, er.failed_type, er.structure_ptr);
   return er.encoded;
 }
 
 //------------------------------------------------------------------------------
 // Decapsulation
-bool PduSessionResourceSetupRequestTransferIE::decodefromIE(
+bool PduSessionResourceSetupRequestTransferIE::decode(
     uint8_t* buf, int buf_size) {
   asn_dec_rval_t rc = asn_decode(
       NULL, ATS_ALIGNED_CANONICAL_PER,
       &asn_DEF_Ngap_PDUSessionResourceSetupRequestTransfer,
       (void**) &pduSessionResourceSetupRequestTransferIEs, buf, buf_size);
   if (rc.code == RC_OK) {
-    cout << "Decoded successfully" << endl;
+    Logger::ngap().debug("Decoded successfully");
   } else if (rc.code == RC_WMORE) {
-    cout << "More data expected, call again" << endl;
+    Logger::ngap().debug("More data expected, call again");
     return false;
   } else {
-    cout << "Failure to decode data" << endl;
+    Logger::ngap().debug("Failure to decode data");
     return false;
   }
-  cout << endl;
+
   // asn_fprint(stderr, &asn_DEF_Ngap_PDUSessionResourceSetupRequestTransfer,
   // pduSessionResourceSetupRequestTransferIEs);
 
@@ -528,20 +499,22 @@ bool PduSessionResourceSetupRequestTransferIE::decodefromIE(
                     .array[i]
                     ->value.present ==
                 Ngap_PDUSessionResourceSetupRequestTransferIEs__value_PR_PDUSessionAggregateMaximumBitRate) {
-          pduSessionAggregateMaximumBitRateIE =
-              new PduSessionAggregateMaximumBitRate();
-          if (!pduSessionAggregateMaximumBitRateIE
-                   ->decodefromPduSessionAggregateMaximumBitRate(
-                       pduSessionResourceSetupRequestTransferIEs->protocolIEs
-                           .list.array[i]
-                           ->value.choice.PDUSessionAggregateMaximumBitRate)) {
-            cout << "decoded ngap PDUSessionAggregateMaximumBitRate IE error"
-                 << endl;
+          PduSessionAggregateMaximumBitRate aggregate_maximum_bit_rate = {};
+
+          if (!aggregate_maximum_bit_rate.decode(
+                  pduSessionResourceSetupRequestTransferIEs->protocolIEs.list
+                      .array[i]
+                      ->value.choice.PDUSessionAggregateMaximumBitRate)) {
+            Logger::ngap().error(
+                "Decode NGAP PDUSessionAggregateMaximumBitRate IE error");
             return false;
           }
+          pduSessionAggregateMaximumBitRateIE =
+              std::make_optional<PduSessionAggregateMaximumBitRate>(
+                  aggregate_maximum_bit_rate);
         } else {
-          cout << "decoded ngap PDUSessionAggregateMaximumBitRate IE error"
-               << endl;
+          Logger::ngap().error(
+              "Decode NGAP PDUSessionAggregateMaximumBitRate IE error");
           return false;
         }
       } break;
@@ -553,17 +526,18 @@ bool PduSessionResourceSetupRequestTransferIE::decodefromIE(
                     .array[i]
                     ->value.present ==
                 Ngap_PDUSessionResourceSetupRequestTransferIEs__value_PR_UPTransportLayerInformation) {
-          upTransportLayerInformation = new UpTransportLayerInformation();
-          if (!upTransportLayerInformation
-                   ->decodefromUpTransportLayerInformation(
-                       pduSessionResourceSetupRequestTransferIEs->protocolIEs
-                           .list.array[i]
-                           ->value.choice.UPTransportLayerInformation)) {
-            cout << "decoded ngap UPTransportLayerInformation IE error" << endl;
+          if (!upTransportLayerInformation.decode(
+                  pduSessionResourceSetupRequestTransferIEs->protocolIEs.list
+                      .array[i]
+                      ->value.choice.UPTransportLayerInformation)) {
+            Logger::ngap().error(
+                "Decode NGAP UPTransportLayerInformation IE error");
+
             return false;
           }
         } else {
-          cout << "decoded ngap UPTransportLayerInformation IE error" << endl;
+          Logger::ngap().error(
+              "Decode NGAP UPTransportLayerInformation IE error");
           return false;
         }
       } break;
@@ -575,16 +549,21 @@ bool PduSessionResourceSetupRequestTransferIE::decodefromIE(
                  .array[i]
                  ->value.present ==
              Ngap_PDUSessionResourceSetupRequestTransferIEs__value_PR_DataForwardingNotPossible)) {
-          dataForwardingNotPossible = new DataForwardingNotPossible();
-          if (!dataForwardingNotPossible->decodefromDataForwardingNotPossible(
+          DataForwardingNotPossible data_forwarding_not_possible = {};
+          if (!data_forwarding_not_possible.decode(
                   pduSessionResourceSetupRequestTransferIEs->protocolIEs.list
                       .array[i]
                       ->value.choice.DataForwardingNotPossible)) {
-            cout << "decoded ngap DataForwardingNotPossible IE error" << endl;
+            Logger::ngap().error(
+                "Decode NGAP DataForwardingNotPossible IE error");
             return false;
           }
+          dataForwardingNotPossible =
+              std::make_optional<DataForwardingNotPossible>(
+                  data_forwarding_not_possible);
         } else {
-          cout << "decoded ngap DataForwardingNotPossible IE error!" << endl;
+          Logger::ngap().error(
+              "Decode NGAP DataForwardingNotPossible IE error");
           return false;
         }
       } break;
@@ -596,16 +575,15 @@ bool PduSessionResourceSetupRequestTransferIE::decodefromIE(
                     .array[i]
                     ->value.present ==
                 Ngap_PDUSessionResourceSetupRequestTransferIEs__value_PR_PDUSessionType) {
-          pduSessionType = new PDUSessionType();
-          if (!pduSessionType->decodefromPDUSessionType(
+          if (!pduSessionType.decode(
                   pduSessionResourceSetupRequestTransferIEs->protocolIEs.list
                       .array[i]
                       ->value.choice.PDUSessionType)) {
-            cout << "decoded ngap PDUSessionType IE error" << endl;
+            Logger::ngap().error("Decode NGAP PDUSessionType IE error");
             return false;
           }
         } else {
-          cout << "decoded ngap PDUSessionType IE error" << endl;
+          Logger::ngap().error("Decode NGAP PDUSessionType IE error");
           return false;
         }
       } break;
@@ -617,16 +595,19 @@ bool PduSessionResourceSetupRequestTransferIE::decodefromIE(
                     .array[i]
                     ->value.present ==
                 Ngap_PDUSessionResourceSetupRequestTransferIEs__value_PR_SecurityIndication) {
-          securityIndication = new SecurityIndication();
-          if (!securityIndication->decodefromSecurityIndication(
+          SecurityIndication security_indication = {};
+          if (!security_indication.decode(
                   &pduSessionResourceSetupRequestTransferIEs->protocolIEs.list
                        .array[i]
                        ->value.choice.SecurityIndication)) {
-            cout << "decoded ngap SecurityIndication IE error" << endl;
+            Logger::ngap().error("Decode NGAP SecurityIndication IE error");
+
             return false;
           }
+          securityIndication =
+              std::make_optional<SecurityIndication>(security_indication);
         } else {
-          cout << "decoded ngap SecurityIndication IE error" << endl;
+          Logger::ngap().error("Decode NGAP SecurityIndication IE error");
           return false;
         }
       } break;
@@ -638,16 +619,18 @@ bool PduSessionResourceSetupRequestTransferIE::decodefromIE(
                     .array[i]
                     ->value.present ==
                 Ngap_PDUSessionResourceSetupRequestTransferIEs__value_PR_NetworkInstance) {
-          networkInstance = new NetworkInstance();
-          if (!networkInstance->decodefromNetworkInstance(
+          NetworkInstance network_instance = {};
+          if (!network_instance.decode(
                   pduSessionResourceSetupRequestTransferIEs->protocolIEs.list
                       .array[i]
                       ->value.choice.NetworkInstance)) {
-            cout << "decoded ngap NetworkInstance IE error" << endl;
+            Logger::ngap().error("Decode NGAP NetworkInstance IE error");
             return false;
           }
+          networkInstance =
+              std::make_optional<NetworkInstance>(network_instance);
         } else {
-          cout << "decoded ngap NetworkInstance IE error" << endl;
+          Logger::ngap().error("Decode NGAP NetworkInstance IE error");
           return false;
         }
       } break;
@@ -659,24 +642,24 @@ bool PduSessionResourceSetupRequestTransferIE::decodefromIE(
                     .array[i]
                     ->value.present ==
                 Ngap_PDUSessionResourceSetupRequestTransferIEs__value_PR_QosFlowSetupRequestList) {
-          qosFlowSetupRequestList = new QosFlowSetupRequestList();
-          if (!qosFlowSetupRequestList->decodefromQosFlowSetupRequestList(
+          if (!qosFlowSetupRequestList.decode(
                   &pduSessionResourceSetupRequestTransferIEs->protocolIEs.list
                        .array[i]
                        ->value.choice.QosFlowSetupRequestList)) {
-            cout << "decoded ngap QosFlowSetupRequestList IE error" << endl;
+            Logger::ngap().error(
+                "Decode NGAP QosFlowSetupRequestList IE error");
             return false;
           }
         } else {
-          cout << "decoded ngap QosFlowSetupRequestList IE error" << endl;
+          Logger::ngap().error("Decode NGAP QosFlowSetupRequestList IE error");
           return false;
         }
       } break;
 
       default: {
-        cout << "decoded ngap message PduSessionResourceSetupRequestTransferIE "
-                "error"
-             << endl;
+        Logger::ngap().error(
+            "Decode NGAP message PduSessionResourceSetupRequestTransferIE "
+            "error");
         return false;
       }
     }
@@ -688,47 +671,43 @@ bool PduSessionResourceSetupRequestTransferIE::decodefromIE(
 //------------------------------------------------------------------------------
 bool PduSessionResourceSetupRequestTransferIE::
     getPduSessionAggregateMaximumBitRate(
-        long& bit_rate_downlink, long& bit_rate_uplink) {
-  if (!pduSessionAggregateMaximumBitRateIE) return false;
+        long& bit_rate_downlink, long& bit_rate_uplink) const {
+  if (!pduSessionAggregateMaximumBitRateIE.has_value()) return false;
 
-  if (!pduSessionAggregateMaximumBitRateIE
-           ->getPduSessionAggregateMaximumBitRate(
-               bit_rate_downlink, bit_rate_uplink))
+  if (!pduSessionAggregateMaximumBitRateIE.value().get(
+          bit_rate_downlink, bit_rate_uplink))
     return false;
 
   return true;
 }
 
 //------------------------------------------------------------------------------
-bool PduSessionResourceSetupRequestTransferIE::getUL_NG_U_UP_TNL_Information(
-    GtpTunnel_t& upTnlInfo) {
-  if (!upTransportLayerInformation) return false;
-
-  TransportLayerAddress* m_transportLayerAddress;
-  GtpTeid* m_gtpTeid;
-  if (!upTransportLayerInformation->getUpTransportLayerInformation(
-          m_transportLayerAddress, m_gtpTeid))
+bool PduSessionResourceSetupRequestTransferIE::getUlNgUUpTnlInformation(
+    GtpTunnel_t& upTnlInfo) const {
+  TransportLayerAddress transport_layer_address = {};
+  GtpTeid gtp_teid                              = {};
+  if (!upTransportLayerInformation.getUpTransportLayerInformation(
+          transport_layer_address, gtp_teid))
     return false;
-  if (!m_transportLayerAddress->getTransportLayerAddress(upTnlInfo.ip_address))
+  if (!transport_layer_address.getTransportLayerAddress(upTnlInfo.ip_address))
     return false;
-  if (!m_gtpTeid->getGtpTeid(upTnlInfo.gtp_teid)) return false;
+  if (!gtp_teid.getGtpTeid(upTnlInfo.gtp_teid)) return false;
 
   return true;
 }
 
 //------------------------------------------------------------------------------
-// bool getAdditionalUL_NG_U_UP_TNL_Information(std::vector<GtpTunnel>&list);//O
-bool PduSessionResourceSetupRequestTransferIE::getDataForwardingNotPossible() {
-  if (!dataForwardingNotPossible) return false;
+bool PduSessionResourceSetupRequestTransferIE::getDataForwardingNotPossible()
+    const {
+  if (!dataForwardingNotPossible.has_value()) return false;
 
   return true;
 }
 
 //------------------------------------------------------------------------------
-bool PduSessionResourceSetupRequestTransferIE::getPduSessionType(long& type) {
-  if (!pduSessionType) return false;
-
-  if (!pduSessionType->getPDUSessionType(type)) return false;
+bool PduSessionResourceSetupRequestTransferIE::getPduSessionType(
+    long& type) const {
+  if (!pduSessionType.get(type)) return false;
 
   return true;
 }
@@ -736,26 +715,27 @@ bool PduSessionResourceSetupRequestTransferIE::getPduSessionType(long& type) {
 //------------------------------------------------------------------------------
 bool PduSessionResourceSetupRequestTransferIE::getSecurityIndication(
     long& integrity_protection, long& confidentiality_protection,
-    long& maxIntProtDataRate) {
-  if (!securityIndication) return false;
+    long& maxIntProtDataRate) const {
+  if (!securityIndication.has_value()) return false;
 
-  IntegrityProtectionIndication* m_integrityProtectionIndication;
-  ConfidentialityProtectionIndication* m_confidentialityProtectionIndication;
-  MaximumIntegrityProtectedDataRate* m_maximumIntegrityProtectedDataRate;
+  IntegrityProtectionIndication m_integrityProtectionIndication = {};
+  ConfidentialityProtectionIndication m_confidentialityProtectionIndication =
+      {};
+  std::optional<MaximumIntegrityProtectedDataRate>
+      m_maximumIntegrityProtectedDataRateUL = std::nullopt;
+  std::optional<MaximumIntegrityProtectedDataRate>
+      m_maximumIntegrityProtectedDataRateDL = std::nullopt;
 
-  securityIndication->getSecurityIndication(
+  securityIndication.value().getSecurityIndication(
       m_integrityProtectionIndication, m_confidentialityProtectionIndication,
-      m_maximumIntegrityProtectedDataRate);
+      m_maximumIntegrityProtectedDataRateUL,
+      m_maximumIntegrityProtectedDataRateDL);
 
-  if (!m_integrityProtectionIndication->getIntegrityProtectionIndication(
-          integrity_protection))
+  if (!m_integrityProtectionIndication.get(integrity_protection)) return false;
+  if (!m_confidentialityProtectionIndication.get(confidentiality_protection))
     return false;
-  if (!m_confidentialityProtectionIndication
-           ->getConfidentialityProtectionIndication(confidentiality_protection))
-    return false;
-  if (m_maximumIntegrityProtectedDataRate)
-    m_maximumIntegrityProtectedDataRate->getMaximumIntegrityProtectedDataRate(
-        maxIntProtDataRate);
+  if (m_maximumIntegrityProtectedDataRateUL.has_value())
+    m_maximumIntegrityProtectedDataRateUL.value().get(maxIntProtDataRate);
   else
     maxIntProtDataRate = -1;
 
@@ -763,220 +743,242 @@ bool PduSessionResourceSetupRequestTransferIE::getSecurityIndication(
 }
 
 //------------------------------------------------------------------------------
-bool PduSessionResourceSetupRequestTransferIE::getNetworkInstance(long& value) {
-  if (!networkInstance) return false;
+bool PduSessionResourceSetupRequestTransferIE::getNetworkInstance(
+    long& value) const {
+  if (!networkInstance.has_value()) return false;
 
-  if (!networkInstance->getNetworkInstance(value)) return false;
+  if (!networkInstance.value().get(value)) return false;
 
   return true;
 }
 
 //------------------------------------------------------------------------------
 bool PduSessionResourceSetupRequestTransferIE::getQosFlowSetupRequestList(
-    std::vector<QosFlowSetupReq_t>& list) {
-  if (!qosFlowSetupRequestList) return false;
+    std::vector<QosFlowSetupReq_t>& list) const {
+  std::vector<QosFlowSetupRequestItem> vector_items;
+  qosFlowSetupRequestList.get(vector_items);
 
-  QosFlowSetupRequestItem* m_items;
-  int m_numofitems;
-  if (!qosFlowSetupRequestList->getQosFlowSetupRequestList(
-          m_items, m_numofitems))
-    return false;
-  for (int i = 0; i < m_numofitems; i++) {
-    QosFlowIdentifier* m_qosFlowIdentifier;
-    QosFlowLevelQosParameters* m_qosFlowLevelQosParameters;
+  for (int i = 0; i < vector_items.size(); i++) {
+    QosFlowIdentifier qos_flow_identifier                   = {};
+    QosFlowLevelQosParameters qos_flow_level_qos_parameters = {};
 
-    m_items[i].getQosFlowSetupRequestItem(
-        m_qosFlowIdentifier, m_qosFlowLevelQosParameters);
+    vector_items[i].get(qos_flow_identifier, qos_flow_level_qos_parameters);
 
-    QosFlowSetupReq_t qosflowsetuprequest;
-    if (!m_qosFlowIdentifier->getQosFlowIdentifier(
-            qosflowsetuprequest.qos_flow_id))
+    QosFlowSetupReq_t qos_flow_setup_request;
+    if (!qos_flow_identifier.getQosFlowIdentifier(
+            qos_flow_setup_request.qos_flow_id))
       return false;
-    QosCharacteristics* m_qosCharacteristics;
-    AllocationAndRetentionPriority* m_allocationAndRetentionPriority;
-    GBR_QosInformation* m_gBR_QosInformation;
-    ReflectiveQosAttribute* m_reflectiveQosAttribute;
-    AdditionalQosFlowInformation* m_additionalQosFlowInformation;
-    if (!m_qosFlowLevelQosParameters->getQosFlowLevelQosParameters(
-            m_qosCharacteristics, m_allocationAndRetentionPriority,
-            m_gBR_QosInformation, m_reflectiveQosAttribute,
-            m_additionalQosFlowInformation))
-      return false;
+    QosCharacteristics qos_characteristics                   = {};
+    AllocationAndRetentionPriority arp                       = {};
+    std::optional<GbrQoSFlowInformation> gbr_qos_information = std::nullopt;
+    std::optional<ReflectiveQosAttribute> reflective_qos_attribute =
+        std::nullopt;
+    std::optional<AdditionalQosFlowInformation>
+        additional_qos_flow_information = std::nullopt;
+    qos_flow_level_qos_parameters.get(
+        qos_characteristics, arp, gbr_qos_information, reflective_qos_attribute,
+        additional_qos_flow_information);
 
-    if (m_qosCharacteristics->QosCharacteristicsPresent() ==
+    if (qos_characteristics.QosCharacteristicsPresent() ==
         Ngap_QosCharacteristics_PR_nonDynamic5QI) {
-      qosflowsetuprequest.qflqp.qosc.nonDy =
+      qos_flow_setup_request.qflqp.qosc.nonDy =
           (NonDynamic5QI_t*) calloc(1, sizeof(NonDynamic5QI_t));
-      NonDynamic5QIDescriptor* m_nonDynamic5QIDescriptor;
-      m_qosCharacteristics->getQosCharacteristics(m_nonDynamic5QIDescriptor);
-      FiveQI* m_fiveQI;
-      PriorityLevelQos* m_priorityLevelQos;
-      AveragingWindow* m_averagingWindow;
-      MaximumDataBurstVolume* m_maximumDataBurstVolume;
-      m_nonDynamic5QIDescriptor->getNonDynamic5QIDescriptor(
-          m_fiveQI, m_priorityLevelQos, m_averagingWindow,
-          m_maximumDataBurstVolume);
+      std::optional<NonDynamic5QIDescriptor> non_dynamic_5qi_descriptor =
+          std::nullopt;
+      qos_characteristics.getQosCharacteristics(non_dynamic_5qi_descriptor);
+      FiveQI five_qi                                     = {};
+      std::optional<PriorityLevelQos> priority_level_qos = std::nullopt;
+      std::optional<AveragingWindow> averaging_window    = std::nullopt;
+      std::optional<MaximumDataBurstVolume> max_data_burst_volume =
+          std::nullopt;
 
-      m_fiveQI->getFiveQI(qosflowsetuprequest.qflqp.qosc.nonDy->_5QI);
-      if (m_priorityLevelQos) {
-        qosflowsetuprequest.qflqp.qosc.nonDy->priorityLevelQos =
+      if (non_dynamic_5qi_descriptor.has_value())
+        non_dynamic_5qi_descriptor.value().get(
+            five_qi, priority_level_qos, averaging_window,
+            max_data_burst_volume);
+
+      five_qi.getFiveQI(qos_flow_setup_request.qflqp.qosc.nonDy->_5QI);
+
+      if (priority_level_qos.has_value()) {
+        qos_flow_setup_request.qflqp.qosc.nonDy->priorityLevelQos =
             (long*) calloc(1, sizeof(long));
-        m_priorityLevelQos->getPriorityLevelQos(
-            *qosflowsetuprequest.qflqp.qosc.nonDy->priorityLevelQos);
+        priority_level_qos.value().getPriorityLevelQos(
+            *qos_flow_setup_request.qflqp.qosc.nonDy->priorityLevelQos);
       } else {
-        qosflowsetuprequest.qflqp.qosc.nonDy->priorityLevelQos = NULL;
+        qos_flow_setup_request.qflqp.qosc.nonDy->priorityLevelQos = NULL;
       }
-      if (m_averagingWindow) {
-        qosflowsetuprequest.qflqp.qosc.nonDy->averagingWindow =
+
+      if (averaging_window.has_value()) {
+        qos_flow_setup_request.qflqp.qosc.nonDy->averagingWindow =
             (long*) calloc(1, sizeof(long));
-        m_averagingWindow->getAveragingWindow(
-            *qosflowsetuprequest.qflqp.qosc.nonDy->averagingWindow);
+        averaging_window.value().getAveragingWindow(
+            *qos_flow_setup_request.qflqp.qosc.nonDy->averagingWindow);
       } else {
-        qosflowsetuprequest.qflqp.qosc.nonDy->averagingWindow = NULL;
+        qos_flow_setup_request.qflqp.qosc.nonDy->averagingWindow = NULL;
       }
-      if (m_maximumDataBurstVolume) {
-        qosflowsetuprequest.qflqp.qosc.nonDy->maximumDataBurstVolume =
+
+      if (max_data_burst_volume.has_value()) {
+        qos_flow_setup_request.qflqp.qosc.nonDy->maximumDataBurstVolume =
             (long*) calloc(1, sizeof(long));
-        m_maximumDataBurstVolume->getMaximumDataBurstVolume(
-            *qosflowsetuprequest.qflqp.qosc.nonDy->maximumDataBurstVolume);
+        max_data_burst_volume.value().get(
+            *qos_flow_setup_request.qflqp.qosc.nonDy->maximumDataBurstVolume);
       } else {
-        qosflowsetuprequest.qflqp.qosc.nonDy->maximumDataBurstVolume = NULL;
+        qos_flow_setup_request.qflqp.qosc.nonDy->maximumDataBurstVolume = NULL;
       }
     } else if (
-        m_qosCharacteristics->QosCharacteristicsPresent() ==
+        qos_characteristics.QosCharacteristicsPresent() ==
         Ngap_QosCharacteristics_PR_dynamic5QI) {
-      qosflowsetuprequest.qflqp.qosc.dy =
+      qos_flow_setup_request.qflqp.qosc.dy =
           (Dynamic5QI_t*) calloc(1, sizeof(Dynamic5QI_t));
-      Dynamic5QIDescriptor* m_dynamic5QIDescriptor;
-      m_qosCharacteristics->getQosCharacteristics(m_dynamic5QIDescriptor);
-      PriorityLevelQos* m_priorityLevelQos;
-      PacketDelayBudget* m_packetDelayBudget;
-      PacketErrorRate* m_packetErrorRate;
+      std::optional<Dynamic5QIDescriptor> dynamic_5qi_descriptor = std::nullopt;
+      qos_characteristics.getQosCharacteristics(dynamic_5qi_descriptor);
+      PriorityLevelQos priority_level_qos   = {};
+      PacketDelayBudget packet_delay_budget = {};
+      PacketErrorRate packet_error_rate     = {};
 
-      FiveQI* m_fiveQI;
-      DelayCritical* m_delayCritical;
-      AveragingWindow* m_averagingWindow;
-      MaximumDataBurstVolume* m_maximumDataBurstVolume;
-      m_dynamic5QIDescriptor->getDynamic5QIDescriptor(
-          m_priorityLevelQos, m_packetDelayBudget, m_packetErrorRate, m_fiveQI,
-          m_delayCritical, m_averagingWindow, m_maximumDataBurstVolume);
+      std::optional<FiveQI> five_qi                   = std::nullopt;
+      std::optional<DelayCritical> delay_critical     = std::nullopt;
+      std::optional<AveragingWindow> averaging_window = std::nullopt;
+      std::optional<MaximumDataBurstVolume> max_data_burst_volume =
+          std::nullopt;
+      if (dynamic_5qi_descriptor.has_value())
+        dynamic_5qi_descriptor.value().get(
+            priority_level_qos, packet_delay_budget, packet_error_rate, five_qi,
+            delay_critical, averaging_window, max_data_burst_volume);
 
-      m_priorityLevelQos->getPriorityLevelQos(
-          qosflowsetuprequest.qflqp.qosc.dy->priorityLevelQos);
-      m_packetDelayBudget->getPacketDelayBudget(
-          qosflowsetuprequest.qflqp.qosc.dy->packetDelayBudget);
-      m_packetErrorRate->getPacketErrorRate(
-          qosflowsetuprequest.qflqp.qosc.dy->packetErrorRate.pERScalar,
-          qosflowsetuprequest.qflqp.qosc.dy->packetErrorRate.pERExponent);
-      if (m_fiveQI) {
-        qosflowsetuprequest.qflqp.qosc.dy->_5QI =
+      priority_level_qos.getPriorityLevelQos(
+          qos_flow_setup_request.qflqp.qosc.dy->priorityLevelQos);
+      packet_delay_budget.getPacketDelayBudget(
+          qos_flow_setup_request.qflqp.qosc.dy->packetDelayBudget);
+      packet_error_rate.getPacketErrorRate(
+          qos_flow_setup_request.qflqp.qosc.dy->packetErrorRate.pERScalar,
+          qos_flow_setup_request.qflqp.qosc.dy->packetErrorRate.pERExponent);
+
+      if (five_qi.has_value()) {
+        qos_flow_setup_request.qflqp.qosc.dy->_5QI =
             (long*) calloc(1, sizeof(long));
-        m_fiveQI->getFiveQI(*qosflowsetuprequest.qflqp.qosc.dy->_5QI);
+        five_qi.value().getFiveQI(*qos_flow_setup_request.qflqp.qosc.dy->_5QI);
       } else {
-        qosflowsetuprequest.qflqp.qosc.dy->_5QI = NULL;
+        qos_flow_setup_request.qflqp.qosc.dy->_5QI = NULL;
       }
-      if (m_delayCritical) {
-        qosflowsetuprequest.qflqp.qosc.dy->delayCritical =
+
+      if (delay_critical.has_value()) {
+        qos_flow_setup_request.qflqp.qosc.dy->delayCritical =
             (e_Ngap_DelayCritical*) calloc(1, sizeof(e_Ngap_DelayCritical));
-        m_delayCritical->getDelayCritical(
-            *qosflowsetuprequest.qflqp.qosc.dy->delayCritical);
+        delay_critical.value().getDelayCritical(
+            *qos_flow_setup_request.qflqp.qosc.dy->delayCritical);
       } else {
-        qosflowsetuprequest.qflqp.qosc.dy->delayCritical = NULL;
+        qos_flow_setup_request.qflqp.qosc.dy->delayCritical = NULL;
       }
-      if (m_averagingWindow) {
-        qosflowsetuprequest.qflqp.qosc.dy->averagingWindow =
+
+      if (averaging_window.has_value()) {
+        qos_flow_setup_request.qflqp.qosc.dy->averagingWindow =
             (long*) calloc(1, sizeof(long));
-        m_averagingWindow->getAveragingWindow(
-            *qosflowsetuprequest.qflqp.qosc.dy->averagingWindow);
+        averaging_window.value().getAveragingWindow(
+            *qos_flow_setup_request.qflqp.qosc.dy->averagingWindow);
       } else {
-        qosflowsetuprequest.qflqp.qosc.dy->averagingWindow = NULL;
+        qos_flow_setup_request.qflqp.qosc.dy->averagingWindow = NULL;
       }
-      if (m_maximumDataBurstVolume) {
-        qosflowsetuprequest.qflqp.qosc.dy->maximumDataBurstVolume =
+
+      if (max_data_burst_volume.has_value()) {
+        qos_flow_setup_request.qflqp.qosc.dy->maximumDataBurstVolume =
             (long*) calloc(1, sizeof(long));
-        m_maximumDataBurstVolume->getMaximumDataBurstVolume(
-            *qosflowsetuprequest.qflqp.qosc.dy->maximumDataBurstVolume);
+        max_data_burst_volume.value().get(
+            *qos_flow_setup_request.qflqp.qosc.dy->maximumDataBurstVolume);
       } else {
-        qosflowsetuprequest.qflqp.qosc.dy->maximumDataBurstVolume = NULL;
+        qos_flow_setup_request.qflqp.qosc.dy->maximumDataBurstVolume = NULL;
       }
+
     } else
       return false;
 
-    PriorityLevelARP* m_priorityLevelARP;
-    Pre_emptionCapability* m_pre_emptionCapability;
-    Pre_emptionVulnerability* m_pre_emptionVulnerability;
-    if (!m_allocationAndRetentionPriority->getAllocationAndRetentionPriority(
-            m_priorityLevelARP, m_pre_emptionCapability,
-            m_pre_emptionVulnerability))
-      return false;
-    m_priorityLevelARP->getPriorityLevelARP(
-        qosflowsetuprequest.qflqp.arp.priorityLevelARP);
-    m_pre_emptionCapability->getPre_emptionCapability(
-        qosflowsetuprequest.qflqp.arp.pre_emptionCapability);
-    m_pre_emptionVulnerability->getPre_emptionVulnerability(
-        qosflowsetuprequest.qflqp.arp.pre_emptionVulnerability);
+    PriorityLevelARP priority_level_arp                = {};
+    Pre_emptionCapability pre_emption_capability       = {};
+    Pre_emptionVulnerability pre_emption_vulnerability = {};
 
-    if (m_gBR_QosInformation) {
-      qosflowsetuprequest.qflqp.gbr_qos_info =
+    if (!arp.get(
+            priority_level_arp, pre_emption_capability,
+            pre_emption_vulnerability))
+      return false;
+
+    priority_level_arp.getPriorityLevelARP(
+        qos_flow_setup_request.qflqp.arp.priorityLevelARP);
+    pre_emption_capability.get(
+        qos_flow_setup_request.qflqp.arp.pre_emptionCapability);
+    pre_emption_vulnerability.get(
+        qos_flow_setup_request.qflqp.arp.pre_emptionVulnerability);
+
+    if (gbr_qos_information.has_value()) {
+      qos_flow_setup_request.qflqp.gbr_qos_info =
           (GBR_QosInformation_t*) calloc(1, sizeof(GBR_QosInformation_t));
-      NotificationControl* m_notificationControl;
-      PacketLossRate* m_maximumPacketLossRateDL;
-      PacketLossRate* m_maximumPacketLossRateUL;
-      m_gBR_QosInformation->getGBR_QosInformation(
-          qosflowsetuprequest.qflqp.gbr_qos_info->maximumFlowBitRateDL,
-          qosflowsetuprequest.qflqp.gbr_qos_info->maximumFlowBitRateUL,
-          qosflowsetuprequest.qflqp.gbr_qos_info->guaranteedFlowBitRateDL,
-          qosflowsetuprequest.qflqp.gbr_qos_info->guaranteedFlowBitRateUL,
-          m_notificationControl, m_maximumPacketLossRateDL,
-          m_maximumPacketLossRateUL);
+      std::optional<NotificationControl> m_notificationControl = std::nullopt;
+      std::optional<PacketLossRate> max_packet_loss_rate_dl    = std::nullopt;
+      std::optional<PacketLossRate> max_packet_loss_rate_ul    = std::nullopt;
+
+      gbr_qos_information.value().get(
+          qos_flow_setup_request.qflqp.gbr_qos_info->maximumFlowBitRateDL,
+          qos_flow_setup_request.qflqp.gbr_qos_info->maximumFlowBitRateUL,
+          qos_flow_setup_request.qflqp.gbr_qos_info->guaranteedFlowBitRateDL,
+          qos_flow_setup_request.qflqp.gbr_qos_info->guaranteedFlowBitRateUL,
+          m_notificationControl, max_packet_loss_rate_dl,
+          max_packet_loss_rate_ul);
+
       if (m_notificationControl) {
-        qosflowsetuprequest.qflqp.gbr_qos_info->notificationControl =
+        qos_flow_setup_request.qflqp.gbr_qos_info->notificationControl =
             (e_Ngap_NotificationControl*) calloc(
                 1, sizeof(e_Ngap_NotificationControl));
         m_notificationControl->getNotificationControl(
-            *qosflowsetuprequest.qflqp.gbr_qos_info->notificationControl);
+            *qos_flow_setup_request.qflqp.gbr_qos_info->notificationControl);
       } else {
-        qosflowsetuprequest.qflqp.gbr_qos_info->notificationControl = NULL;
+        qos_flow_setup_request.qflqp.gbr_qos_info->notificationControl = NULL;
       }
-      if (m_maximumPacketLossRateDL) {
-        qosflowsetuprequest.qflqp.gbr_qos_info->maximumPacketLossRateDL =
+
+      if (max_packet_loss_rate_dl) {
+        qos_flow_setup_request.qflqp.gbr_qos_info->maximumPacketLossRateDL =
             (long*) calloc(1, sizeof(long));
-        m_maximumPacketLossRateDL->getPacketLossRate(
-            *qosflowsetuprequest.qflqp.gbr_qos_info->maximumPacketLossRateDL);
+        max_packet_loss_rate_dl->getPacketLossRate(
+            *qos_flow_setup_request.qflqp.gbr_qos_info
+                 ->maximumPacketLossRateDL);
       } else {
-        qosflowsetuprequest.qflqp.gbr_qos_info->maximumPacketLossRateDL = NULL;
+        qos_flow_setup_request.qflqp.gbr_qos_info->maximumPacketLossRateDL =
+            NULL;
       }
-      if (m_maximumPacketLossRateUL) {
-        qosflowsetuprequest.qflqp.gbr_qos_info->maximumPacketLossRateUL =
+
+      if (max_packet_loss_rate_ul) {
+        qos_flow_setup_request.qflqp.gbr_qos_info->maximumPacketLossRateUL =
             (long*) calloc(1, sizeof(long));
-        m_maximumPacketLossRateUL->getPacketLossRate(
-            *qosflowsetuprequest.qflqp.gbr_qos_info->maximumPacketLossRateUL);
+        max_packet_loss_rate_ul->getPacketLossRate(
+            *qos_flow_setup_request.qflqp.gbr_qos_info
+                 ->maximumPacketLossRateUL);
       } else {
-        qosflowsetuprequest.qflqp.gbr_qos_info->maximumPacketLossRateUL = NULL;
+        qos_flow_setup_request.qflqp.gbr_qos_info->maximumPacketLossRateUL =
+            NULL;
       }
     } else {
-      qosflowsetuprequest.qflqp.gbr_qos_info = NULL;
-    }
-    if (m_reflectiveQosAttribute) {
-      qosflowsetuprequest.qflqp.reflectiveQosAttribute =
-          (e_Ngap_ReflectiveQosAttribute*) calloc(
-              1, sizeof(e_Ngap_ReflectiveQosAttribute));
-      m_reflectiveQosAttribute->getReflectiveQosAttribute(
-          *qosflowsetuprequest.qflqp.reflectiveQosAttribute);
-    } else {
-      qosflowsetuprequest.qflqp.reflectiveQosAttribute = NULL;
-    }
-    if (m_additionalQosFlowInformation) {
-      qosflowsetuprequest.qflqp.additionalQosFlowInformation =
-          (e_Ngap_AdditionalQosFlowInformation*) calloc(
-              1, sizeof(e_Ngap_AdditionalQosFlowInformation));
-      m_additionalQosFlowInformation->getAdditionalQosFlowInformation(
-          *qosflowsetuprequest.qflqp.additionalQosFlowInformation);
-    } else {
-      qosflowsetuprequest.qflqp.additionalQosFlowInformation = NULL;
+      qos_flow_setup_request.qflqp.gbr_qos_info = NULL;
     }
 
-    list.push_back(qosflowsetuprequest);
+    if (reflective_qos_attribute.has_value()) {
+      qos_flow_setup_request.qflqp.reflectiveQosAttribute =
+          (e_Ngap_ReflectiveQosAttribute*) calloc(
+              1, sizeof(e_Ngap_ReflectiveQosAttribute));
+      reflective_qos_attribute.value().get(
+          *qos_flow_setup_request.qflqp.reflectiveQosAttribute);
+    } else {
+      qos_flow_setup_request.qflqp.reflectiveQosAttribute = NULL;
+    }
+
+    if (additional_qos_flow_information) {
+      qos_flow_setup_request.qflqp.additionalQosFlowInformation =
+          (e_Ngap_AdditionalQosFlowInformation*) calloc(
+              1, sizeof(e_Ngap_AdditionalQosFlowInformation));
+      additional_qos_flow_information->get(
+          *qos_flow_setup_request.qflqp.additionalQosFlowInformation);
+    } else {
+      qos_flow_setup_request.qflqp.additionalQosFlowInformation = NULL;
+    }
+
+    list.push_back(qos_flow_setup_request);
   }
 
   return true;

@@ -35,7 +35,7 @@ void PDUSessionResourceItemCxtRelReq::set(const PDUSessionID& pdu_session_id) {
 }
 
 //------------------------------------------------------------------------------
-void PDUSessionResourceItemCxtRelReq::get(PDUSessionID& pdu_session_id) {
+void PDUSessionResourceItemCxtRelReq::get(PDUSessionID& pdu_session_id) const {
   pdu_session_id = pdu_session_id_;
 }
 

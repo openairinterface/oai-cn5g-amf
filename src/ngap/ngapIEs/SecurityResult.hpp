@@ -19,8 +19,8 @@
  *      contact@openairinterface.org
  */
 
-#ifndef _SECURITYRESULT_H_
-#define _SECURITYRESULT_H_
+#ifndef _SECURITY_RESULT_H_
+#define _SECURITY_RESULT_H_
 
 #include "ConfidentialityProtectionResult.hpp"
 #include "IntegrityProtectionResult.hpp"
@@ -37,18 +37,18 @@ class SecurityResult {
   virtual ~SecurityResult();
 
   void setSecurityResult(
-      IntegrityProtectionResult* m_integrityProtectionResult,
-      ConfidentialityProtectionResult* m_confidentialityProtectionResult);
+      const IntegrityProtectionResult& m_integrityProtectionResult,
+      const ConfidentialityProtectionResult& m_confidentialityProtectionResult);
   bool getSecurityResult(
-      IntegrityProtectionResult*& m_integrityProtectionResult,
-      ConfidentialityProtectionResult*& m_confidentialityProtectionResult);
+      IntegrityProtectionResult& m_integrityProtectionResult,
+      ConfidentialityProtectionResult& m_confidentialityProtectionResult) const;
 
-  bool encode2SecurityResult(Ngap_SecurityResult_t*);
-  bool decodefromSecurityResult(Ngap_SecurityResult_t*);
+  bool encode(Ngap_SecurityResult_t*);
+  bool decode(Ngap_SecurityResult_t*);
 
  private:
-  IntegrityProtectionResult* integrityProtectionResult;
-  ConfidentialityProtectionResult* confidentialityProtectionResult;
+  IntegrityProtectionResult integrityProtectionResult;              // Mandatory
+  ConfidentialityProtectionResult confidentialityProtectionResult;  // Mandatory
 };
 
 }  // namespace ngap

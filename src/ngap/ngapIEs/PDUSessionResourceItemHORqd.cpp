@@ -30,7 +30,7 @@ PDUSessionResourceItemHORqd::PDUSessionResourceItemHORqd() {}
 PDUSessionResourceItemHORqd::~PDUSessionResourceItemHORqd() {}
 
 //------------------------------------------------------------------------------
-void PDUSessionResourceItemHORqd::setPDUSessionResourceItemHORqd(
+void PDUSessionResourceItemHORqd::set(
     const PDUSessionID& m_pDUSessionID,
     const OCTET_STRING_t& m_handoverRequiredTransfer) {
   pDUSessionID             = m_pDUSessionID;
@@ -38,14 +38,15 @@ void PDUSessionResourceItemHORqd::setPDUSessionResourceItemHORqd(
 }
 
 //------------------------------------------------------------------------------
-void PDUSessionResourceItemHORqd::getPDUSessionResourceItemHORqd(
-    PDUSessionID& m_pDUSessionID, OCTET_STRING_t& m_handoverRequiredTransfer) {
+void PDUSessionResourceItemHORqd::get(
+    PDUSessionID& m_pDUSessionID,
+    OCTET_STRING_t& m_handoverRequiredTransfer) const {
   m_pDUSessionID             = pDUSessionID;
   m_handoverRequiredTransfer = handoverRequiredTransfer;
 }
 
 //------------------------------------------------------------------------------
-bool PDUSessionResourceItemHORqd::encode2PDUSessionResourceItemHORqd(
+bool PDUSessionResourceItemHORqd::encode(
     Ngap_PDUSessionResourceItemHORqd_t* pdUSessionResourceItemHORqd) {
   if (!pDUSessionID.encode(pdUSessionResourceItemHORqd->pDUSessionID))
     return false;
@@ -56,7 +57,7 @@ bool PDUSessionResourceItemHORqd::encode2PDUSessionResourceItemHORqd(
 }
 
 //------------------------------------------------------------------------------
-bool PDUSessionResourceItemHORqd::decodefromPDUSessionResourceItemHORqd(
+bool PDUSessionResourceItemHORqd::decode(
     Ngap_PDUSessionResourceItemHORqd_t* pdUSessionResourceItemHORqd) {
   if (!pDUSessionID.decode(pdUSessionResourceItemHORqd->pDUSessionID))
     return false;

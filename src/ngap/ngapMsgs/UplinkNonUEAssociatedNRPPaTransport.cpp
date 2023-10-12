@@ -20,6 +20,7 @@
  */
 
 #include "UplinkNonUEAssociatedNRPPaTransport.hpp"
+
 #include "logger.hpp"
 
 extern "C" {
@@ -98,7 +99,7 @@ void UplinkNonUEAssociatedNRPPaTransportMsg::getNRPPaPdu(OCTET_STRING_t& pdu) {
 }
 
 //------------------------------------------------------------------------------
-bool UplinkNonUEAssociatedNRPPaTransportMsg::decodeFromPdu(
+bool UplinkNonUEAssociatedNRPPaTransportMsg::decode(
     Ngap_NGAP_PDU_t* ngapMsgPdu) {
   ngapPdu = ngapMsgPdu;
 

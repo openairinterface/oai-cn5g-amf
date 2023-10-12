@@ -24,6 +24,7 @@
 extern "C" {
 #include "conversions.h"
 }
+
 namespace ngap {
 
 NgENB_ID::NgENB_ID() {

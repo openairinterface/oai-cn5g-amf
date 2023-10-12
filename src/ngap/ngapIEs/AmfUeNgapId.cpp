@@ -19,65 +19,54 @@
  *      contact@openairinterface.org
  */
 
-#include "dRBsSubjectToStatusTransferList.hpp"
-#include "logger.hpp"
-
-extern "C" {
-#include "dynamic_memory_check.h"
-}
+#include "AmfUeNgapId.hpp"
 
 namespace ngap {
-//------------------------------------------------------------------------------
-dRBSubjectList::dRBSubjectList() {}
 
 //------------------------------------------------------------------------------
-dRBSubjectList::~dRBSubjectList() {}
-
-//------------------------------------------------------------------------------
-void dRBSubjectList::setdRBSubjectItem(
-    const std::vector<dRBSubjectItem>& list) {
-  itemList = list;
+AmfUeNgapId::AmfUeNgapId() {
+  id_ = 0;
 }
 
 //------------------------------------------------------------------------------
-void dRBSubjectList::getdRBSubjectItem(std::vector<dRBSubjectItem>& list) {
-  list = itemList;
-}
+AmfUeNgapId::~AmfUeNgapId() {}
 
 //------------------------------------------------------------------------------
-bool dRBSubjectList::encodefromdRBSubjectlist(
-    Ngap_DRBsSubjectToStatusTransferList_t& dRBsSubjectToStatusTransferList) {
-  for (auto& item : itemList) {
-    Ngap_DRBsSubjectToStatusTransferItem_t* ie =
-        (Ngap_DRBsSubjectToStatusTransferItem_t*) calloc(
-            1, sizeof(Ngap_DRBsSubjectToStatusTransferItem_t));
-    if (!ie) return false;
-
-    if (!item.encodedRBSubjectItem(ie)) {
-      Logger::ngap().error("Encode dRBSubjectList IE error!");
-      free_wrapper((void**) &ie);
-      return false;
-    }
-    if (ASN_SEQUENCE_ADD(&dRBsSubjectToStatusTransferList.list, ie) != 0) {
-      Logger::ngap().error("ASN_SEQUENCE_ADD dRBSubjectList IE error!");
-      return false;
-    }
-  }
+bool AmfUeNgapId::set(const uint64_t& id) {
+  if (id > AMF_UE_NGAP_ID_MAX_VALUE) return false;
+  id_ = id;
   return true;
 }
 
 //------------------------------------------------------------------------------
-bool dRBSubjectList::decodefromdRBSubjectlist(
-    Ngap_DRBsSubjectToStatusTransferList_t& dRBsSubjectToStatusTransferList) {
-  for (int i = 0; i < dRBsSubjectToStatusTransferList.list.count; i++) {
-    dRBSubjectItem item = {};
-    if (!item.decodefromdRBSubjectItem(
-            dRBsSubjectToStatusTransferList.list.array[i])) {
-      Logger::ngap().error("Decode dRBSubjectList IE error!");
-      return false;
-    }
-    itemList.push_back(item);
+uint64_t AmfUeNgapId::get() const {
+  return id_;
+}
+
+//------------------------------------------------------------------------------
+bool AmfUeNgapId::encode(Ngap_AMF_UE_NGAP_ID_t& amf_ue_ngap_id) {
+  amf_ue_ngap_id.size = 5;
+  amf_ue_ngap_id.buf  = (uint8_t*) calloc(1, amf_ue_ngap_id.size);
+  if (!amf_ue_ngap_id.buf) return false;
+
+  for (int i = 0; i < amf_ue_ngap_id.size; i++) {
+    amf_ue_ngap_id.buf[i] =
+        (id_ & (0xff00000000 >> i * 8)) >> ((amf_ue_ngap_id.size - i - 1) * 8);
   }
+
+  return true;
+}
+
+//------------------------------------------------------------------------------
+bool AmfUeNgapId::decode(Ngap_AMF_UE_NGAP_ID_t& amf_ue_ngap_id) {
+  if (!amf_ue_ngap_id.buf) return false;
+
+  id_ = 0;
+  for (int i = 0; i < amf_ue_ngap_id.size; i++) {
+    id_ = id_ << 8;
+    id_ |= amf_ue_ngap_id.buf[i];
+  }
+
   return true;
 }
 }  // namespace ngap

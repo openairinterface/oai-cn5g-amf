@@ -30,21 +30,21 @@ RoutingID::~RoutingID() {}
 
 //------------------------------------------------------------------------------
 void RoutingID::setRoutingID(const OCTET_STRING_t& id) {
-  routingID = id;
+  routing_id_ = id;
 }
 
 //------------------------------------------------------------------------------
 void RoutingID::getRoutingID(OCTET_STRING_t& id) {
-  id = routingID;
+  id = routing_id_;
 }
 
 //------------------------------------------------------------------------------
-void RoutingID::encode2RoutingID(Ngap_RoutingID_t& id) {
-  id = routingID;
+void RoutingID::encode(Ngap_RoutingID_t& id) {
+  id = routing_id_;
 }
 
 //------------------------------------------------------------------------------
-void RoutingID::decodefromRoutingID(Ngap_RoutingID_t& id) {
-  routingID = id;
+void RoutingID::decode(Ngap_RoutingID_t& id) {
+  routing_id_ = id;
 }
 }  // namespace ngap

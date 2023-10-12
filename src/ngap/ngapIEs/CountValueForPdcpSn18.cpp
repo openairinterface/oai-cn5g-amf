@@ -19,42 +19,39 @@
  *      contact@openairinterface.org
  */
 
-#include "RAN-UE-NGAP-ID.hpp"
-
-using namespace std;
+#include "CountValueForPdcpSn18.hpp"
 
 namespace ngap {
-
 //------------------------------------------------------------------------------
-RAN_UE_NGAP_ID::RAN_UE_NGAP_ID() {
-  id_ = 0;
+CountValueForPdcpSn18::CountValueForPdcpSn18() {
+  pdcp     = 0;
+  hfn_pdcp = 0;
 }
 
 //------------------------------------------------------------------------------
-RAN_UE_NGAP_ID::RAN_UE_NGAP_ID(uint32_t id) : id_(id) {}
-
-//------------------------------------------------------------------------------
-RAN_UE_NGAP_ID::~RAN_UE_NGAP_ID() {}
-
-//------------------------------------------------------------------------------
-void RAN_UE_NGAP_ID::set(const uint32_t& id) {
-  id_ = id;
+CountValueForPdcpSn18::~CountValueForPdcpSn18() {}
+void CountValueForPdcpSn18::setvalue(long pDCP, long hfn_PDCP) {
+  pdcp     = pDCP;
+  hfn_pdcp = hfn_PDCP;
 }
 
 //------------------------------------------------------------------------------
-uint32_t RAN_UE_NGAP_ID::get() const {
-  return id_;
+void CountValueForPdcpSn18::getvalue(long& pDCP, long& hFN_PDCP) const {
+  pDCP     = pdcp;
+  hFN_PDCP = hfn_pdcp;
 }
 
 //------------------------------------------------------------------------------
-bool RAN_UE_NGAP_ID::encode(Ngap_RAN_UE_NGAP_ID_t& ran_ue_ngap_id) {
-  ran_ue_ngap_id = id_;
+bool CountValueForPdcpSn18::encode(Ngap_COUNTValueForPDCP_SN18_t* countvalue) {
+  countvalue->pDCP_SN18     = pdcp;
+  countvalue->hFN_PDCP_SN18 = hfn_pdcp;
   return true;
 }
 
 //------------------------------------------------------------------------------
-bool RAN_UE_NGAP_ID::decode(Ngap_RAN_UE_NGAP_ID_t& ran_ue_ngap_id) {
-  id_ = ran_ue_ngap_id;
+bool CountValueForPdcpSn18::decode(Ngap_COUNTValueForPDCP_SN18_t& countValue) {
+  pdcp     = countValue.pDCP_SN18;
+  hfn_pdcp = countValue.hFN_PDCP_SN18;
   return true;
 }
 }  // namespace ngap

@@ -20,6 +20,7 @@
  */
 
 #include "PDUSessionResourceSetupItemCxtReq.hpp"
+
 #include "logger.hpp"
 
 extern "C" {
@@ -38,7 +39,7 @@ PDUSessionResourceSetupItemCxtReq::~PDUSessionResourceSetupItemCxtReq() {}
 
 //------------------------------------------------------------------------------
 void PDUSessionResourceSetupItemCxtReq::set(
-    const PDUSessionID& pdu_session_id, const std::optional<NAS_PDU>& nas_pdu,
+    const PDUSessionID& pdu_session_id, const std::optional<NasPdu>& nas_pdu,
     const S_NSSAI& s_nssai,
     const OCTET_STRING_t& pdu_session_resource_setup_request_transfer) {
   pdu_session_id_ = pdu_session_id;
@@ -50,7 +51,7 @@ void PDUSessionResourceSetupItemCxtReq::set(
 
 //------------------------------------------------------------------------------
 void PDUSessionResourceSetupItemCxtReq::get(
-    PDUSessionID& pdu_session_id, std::optional<NAS_PDU>& nas_pdu,
+    PDUSessionID& pdu_session_id, std::optional<NasPdu>& nas_pdu,
     S_NSSAI& s_nssai,
     OCTET_STRING_t& pdu_session_resource_setup_request_transfer) const {
   pdu_session_id = pdu_session_id_;
@@ -96,9 +97,9 @@ bool PDUSessionResourceSetupItemCxtReq::decode(
     return false;
 
   if (pduSessionResourceSetupItemCxtReq->nAS_PDU) {
-    NAS_PDU tmp = {};
+    NasPdu tmp = {};
     if (!tmp.decode(*pduSessionResourceSetupItemCxtReq->nAS_PDU)) return false;
-    nas_pdu_ = std::optional<NAS_PDU>(tmp);
+    nas_pdu_ = std::optional<NasPdu>(tmp);
   }
 
   pdu_session_resource_setup_request_transfer_ =

@@ -19,8 +19,8 @@
  *      contact@openairinterface.org
  */
 
-#ifndef _CONFIDENTIALITYPROTECTIONRESULT_H_
-#define _CONFIDENTIALITYPROTECTIONRESULT_H_
+#ifndef _CONFIDENTIALITY_PROTECTION_RESULT_H_
+#define _CONFIDENTIALITY_PROTECTION_RESULT_H_
 
 extern "C" {
 #include "Ngap_ConfidentialityProtectionResult.h"
@@ -33,18 +33,14 @@ class ConfidentialityProtectionResult {
   ConfidentialityProtectionResult();
   virtual ~ConfidentialityProtectionResult();
 
-  void setConfidentialityProtectionResult(
-      e_Ngap_ConfidentialityProtectionResult m_confidentialityProtectionResult);
-  bool getConfidentialityProtectionResult(
-      long& m_confidentialityProtectionResult);
+  void set(e_Ngap_ConfidentialityProtectionResult value);
+  bool get(long& value) const;
 
-  bool encode2ConfidentialityProtectionResult(
-      Ngap_ConfidentialityProtectionResult_t&);
-  bool decodefromConfidentialityProtectionResult(
-      Ngap_ConfidentialityProtectionResult_t);
+  bool encode(Ngap_ConfidentialityProtectionResult_t&);
+  bool decode(Ngap_ConfidentialityProtectionResult_t);
 
  private:
-  long confidentialityProtectionResult;
+  long value_;
 };
 
 }  // namespace ngap

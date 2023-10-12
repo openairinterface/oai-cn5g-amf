@@ -22,8 +22,9 @@
 #ifndef _PDU_SESSION_RESOURCE_SETUP_LIST_SU_REQ_H_
 #define _PDU_SESSION_RESOURCE_SETUP_LIST_SU_REQ_H_
 
-#include "PDUSessionResourceSetupItemSUReq.hpp"
 #include <vector>
+
+#include "PDUSessionResourceSetupItemSUReq.hpp"
 
 extern "C" {
 #include "Ngap_PDUSessionResourceSetupListSUReq.h"
@@ -37,7 +38,7 @@ class PDUSessionResourceSetupListSUReq {
   virtual ~PDUSessionResourceSetupListSUReq();
 
   void set(const std::vector<PDUSessionResourceSetupItemSUReq>& list);
-  void get(std::vector<PDUSessionResourceSetupItemSUReq>& list);
+  void get(std::vector<PDUSessionResourceSetupItemSUReq>& list) const;
 
   bool encode(Ngap_PDUSessionResourceSetupListSUReq_t*
                   pdu_session_resource_setup_list_su_req);

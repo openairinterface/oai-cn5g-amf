@@ -26,10 +26,10 @@ extern "C" {
 #include "Ngap_GlobalRANNodeID.h"
 }
 
-#include "GlobalgNBId.hpp"
-#include "GlobalNgENBId.hpp"
-
 #include <optional>
+
+#include "GlobalNgENBId.hpp"
+#include "GlobalgNBId.hpp"
 
 namespace ngap {
 
@@ -39,13 +39,13 @@ class GlobalRanNodeId {
   virtual ~GlobalRanNodeId();
 
   void set(const GlobalgNBId& global_gnb_id);
-  void set(const GlobalNgENBId& global_ng_enb_id);
-
   bool get(GlobalgNBId& global_gnb_id) const;
+
+  void set(const GlobalNgENBId& global_ng_enb_id);
   bool get(GlobalNgENBId& global_ng_enb_id) const;
 
   void setChoiceOfRanNodeId(const Ngap_GlobalRANNodeID_PR& id_present);
-  Ngap_GlobalRANNodeID_PR getChoiceOfRanNodeId();
+  Ngap_GlobalRANNodeID_PR getChoiceOfRanNodeId() const;
 
   bool encode(Ngap_GlobalRANNodeID_t*);
   bool decode(Ngap_GlobalRANNodeID_t*);

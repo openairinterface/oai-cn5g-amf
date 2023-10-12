@@ -19,8 +19,8 @@
  *      contact@openairinterface.org
  */
 
-#ifndef _AMFNAME_H_
-#define _AMFNAME_H_
+#ifndef _AMF_NAME_H_
+#define _AMF_NAME_H_
 
 #include <string>
 
@@ -38,6 +38,7 @@ class AmfName {
 
   bool encode(Ngap_AMFName_t*);
   bool decode(const Ngap_AMFName_t*);
+
   bool setValue(const std::string& amf_name);
   void getValue(std::string& amf_name) const;
 

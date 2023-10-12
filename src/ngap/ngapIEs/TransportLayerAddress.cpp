@@ -21,12 +21,9 @@
 
 #include "TransportLayerAddress.hpp"
 
-#include <iostream>
 #include <vector>
 
 #include "utils.hpp"
-
-using namespace std;
 
 namespace ngap {
 
@@ -39,23 +36,22 @@ TransportLayerAddress::~TransportLayerAddress() {}
 //------------------------------------------------------------------------------
 void TransportLayerAddress::setTransportLayerAddress(
     const std::string m_ipaddress) {
-  // ipaddress = utils::fromString<long>(m_ipaddress);
-  ipaddress = m_ipaddress;
+  // ip_address_ = utils::fromString<long>(m_ipaddress);
+  ip_address_ = m_ipaddress;
 }
 
 //------------------------------------------------------------------------------
 bool TransportLayerAddress::getTransportLayerAddress(std::string& m_ipaddress) {
-  // m_ipaddress = to_string(ipaddress);
-  m_ipaddress = ipaddress;
+  // m_ipaddress = to_string(ip_address_);
+  m_ipaddress = ip_address_;
 
   return true;
 }
 
 //------------------------------------------------------------------------------
-vector<string> splite(const string& s, const string& c)  //分割字符用的
-{
+std::vector<std::string> splite(const std::string& s, const std::string& c) {
   std::string::size_type pos1, pos2;
-  vector<string> v;
+  std::vector<std::string> v;
   pos2 = s.find(c);
   pos1 = 0;
   while (std::string::npos != pos2) {
@@ -71,14 +67,14 @@ vector<string> splite(const string& s, const string& c)  //分割字符用的
 }
 
 //------------------------------------------------------------------------------
-bool TransportLayerAddress::encode2TransportLayerAddress(
+bool TransportLayerAddress::encode(
     Ngap_TransportLayerAddress_t& transportLayerAddress) {
   transportLayerAddress.size        = sizeof(uint32_t);
   transportLayerAddress.bits_unused = 0;
   transportLayerAddress.buf = (uint8_t*) calloc(1, transportLayerAddress.size);
   if (!transportLayerAddress.buf) return false;
 
-  vector<string> ip_address = splite(ipaddress, ".");
+  std::vector<std::string> ip_address = splite(ip_address_, ".");
 
   for (int i = 0; i < transportLayerAddress.size; i++) {
     transportLayerAddress.buf[i] = utils::fromString<int>(ip_address[i]);
@@ -88,13 +84,14 @@ bool TransportLayerAddress::encode2TransportLayerAddress(
 }
 
 //------------------------------------------------------------------------------
-bool TransportLayerAddress::decodefromTransportLayerAddress(
+bool TransportLayerAddress::decode(
     Ngap_TransportLayerAddress_t& transportLayerAddress) {
   if (!transportLayerAddress.buf) return false;
 
-  ipaddress = to_string(transportLayerAddress.buf[0]);
+  ip_address_ = std::to_string(transportLayerAddress.buf[0]);
   for (int i = 1; i < transportLayerAddress.size; i++) {
-    ipaddress = ipaddress + '.' + to_string(transportLayerAddress.buf[i]);
+    ip_address_ =
+        ip_address_ + '.' + std::to_string(transportLayerAddress.buf[i]);
   }
 
   return true;

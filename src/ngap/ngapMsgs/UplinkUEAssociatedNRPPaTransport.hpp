@@ -39,7 +39,7 @@ class UplinkUEAssociatedNRPPaTransportMsg : public NgapUEMessage {
 
   void setAmfUeNgapId(const unsigned long& id) override;
   void setRanUeNgapId(const uint32_t& id) override;
-  bool decodeFromPdu(Ngap_NGAP_PDU_t* ngapMsgPdu) override;
+  bool decode(Ngap_NGAP_PDU_t* ngapMsgPdu) override;
 
   void setRoutingID(const OCTET_STRING_t& pdu);
   void getRoutingID(OCTET_STRING_t& pdu) const;

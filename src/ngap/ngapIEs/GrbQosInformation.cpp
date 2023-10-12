@@ -19,7 +19,7 @@
  *      contact@openairinterface.org
  */
 
-#include "GBR-QosInformation.hpp"
+#include "GrbQosInformation.hpp"
 
 #include <iostream>
 using namespace std;
@@ -27,7 +27,7 @@ using namespace std;
 namespace ngap {
 
 //------------------------------------------------------------------------------
-GBR_QosInformation::GBR_QosInformation() {
+GrbQosInformation::GrbQosInformation() {
   notificationControl     = nullptr;
   maximumPacketLossRateDL = nullptr;
   maximumPacketLossRateUL = nullptr;
@@ -38,10 +38,10 @@ GBR_QosInformation::GBR_QosInformation() {
 }
 
 //------------------------------------------------------------------------------
-GBR_QosInformation::~GBR_QosInformation() {}
+GrbQosInformation::~GrbQosInformation() {}
 
 //------------------------------------------------------------------------------
-void GBR_QosInformation::setGBR_QosInformation(
+void GrbQosInformation::setGBR_QosInformation(
     long m_maximumFlowBitRateDL, long m_maximumFlowBitRateUL,
     long m_guaranteedFlowBitRateDL, long m_guaranteedFlowBitRateUL,
     NotificationControl* m_notificationControl,
@@ -58,7 +58,7 @@ void GBR_QosInformation::setGBR_QosInformation(
 }
 
 //------------------------------------------------------------------------------
-bool GBR_QosInformation::getGBR_QosInformation(
+bool GrbQosInformation::getGBR_QosInformation(
     long& m_maximumFlowBitRateDL, long& m_maximumFlowBitRateUL,
     long& m_guaranteedFlowBitRateDL, long& m_guaranteedFlowBitRateUL,
     NotificationControl*& m_notificationControl,
@@ -77,7 +77,7 @@ bool GBR_QosInformation::getGBR_QosInformation(
 }
 
 //------------------------------------------------------------------------------
-bool GBR_QosInformation::encode2GBR_QosInformation(
+bool GrbQosInformation::encode2GBR_QosInformation(
     Ngap_GBR_QosInformation_t* gBR_QosInformation) {
   gBR_QosInformation->maximumFlowBitRateDL.size = 6;
   gBR_QosInformation->maximumFlowBitRateDL.buf =
@@ -127,21 +127,21 @@ bool GBR_QosInformation::encode2GBR_QosInformation(
     Ngap_NotificationControl_t* nc = (Ngap_NotificationControl_t*) calloc(
         1, sizeof(Ngap_NotificationControl_t));
     if (!nc) return false;
-    if (!notificationControl->encode2NotificationControl(nc)) return false;
+    if (!notificationControl->encode(nc)) return false;
     gBR_QosInformation->notificationControl = nc;
   }
   if (maximumPacketLossRateDL) {
     Ngap_PacketLossRate_t* mplrd =
         (Ngap_PacketLossRate_t*) calloc(1, sizeof(Ngap_PacketLossRate_t));
     if (!mplrd) return false;
-    if (!maximumPacketLossRateDL->encode2PacketLossRate(mplrd)) return false;
+    if (!maximumPacketLossRateDL->encode(mplrd)) return false;
     gBR_QosInformation->maximumPacketLossRateDL = mplrd;
   }
   if (maximumPacketLossRateUL) {
     Ngap_PacketLossRate_t* mplru =
         (Ngap_PacketLossRate_t*) calloc(1, sizeof(Ngap_PacketLossRate_t));
     if (!mplru) return false;
-    if (!maximumPacketLossRateUL->encode2PacketLossRate(mplru)) return false;
+    if (!maximumPacketLossRateUL->encode(mplru)) return false;
     gBR_QosInformation->maximumPacketLossRateUL = mplru;
   }
 
@@ -149,7 +149,7 @@ bool GBR_QosInformation::encode2GBR_QosInformation(
 }
 
 //------------------------------------------------------------------------------
-bool GBR_QosInformation::decodefromGBR_QosInformation(
+bool GrbQosInformation::decodefromGBR_QosInformation(
     Ngap_GBR_QosInformation_t* gBR_QosInformation) {
   if (!gBR_QosInformation->maximumFlowBitRateDL.buf) return false;
   if (!gBR_QosInformation->maximumFlowBitRateUL.buf) return false;
@@ -182,19 +182,18 @@ bool GBR_QosInformation::decodefromGBR_QosInformation(
 
   if (gBR_QosInformation->notificationControl) {
     notificationControl = new NotificationControl();
-    if (!notificationControl->decodefromNotificationControl(
-            gBR_QosInformation->notificationControl))
+    if (!notificationControl->decode(gBR_QosInformation->notificationControl))
       return false;
   }
   if (gBR_QosInformation->maximumPacketLossRateDL) {
     maximumPacketLossRateDL = new PacketLossRate();
-    if (!maximumPacketLossRateDL->decodefromPacketLossRate(
+    if (!maximumPacketLossRateDL->decode(
             gBR_QosInformation->maximumPacketLossRateDL))
       return false;
   }
   if (gBR_QosInformation->maximumPacketLossRateUL) {
     maximumPacketLossRateUL = new PacketLossRate();
-    if (!maximumPacketLossRateUL->decodefromPacketLossRate(
+    if (!maximumPacketLossRateUL->decode(
             gBR_QosInformation->maximumPacketLossRateUL))
       return false;
   }

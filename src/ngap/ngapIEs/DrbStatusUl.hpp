@@ -19,33 +19,36 @@
  *      contact@openairinterface.org
  */
 
-#ifndef _AMF_UE_NGAP_ID_H_
-#define _AMF_UE_NGAP_ID_H_
-#include <cstdint>
+#ifndef _DRB_STATUS_UL_H_
+#define _DRB_STATUS_UL_H_
 
-constexpr uint64_t AMF_UE_NGAP_ID_MAX_VALUE = 1099511627775;  // 2^40 -1
+#include <optional>
+
+#include "DrbStatusUl12.hpp"
+#include "DrbStatusUl18.hpp"
 
 extern "C" {
-#include "Ngap_AMF-UE-NGAP-ID.h"
+#include "Ngap_DRBStatusUL.h"
 }
 
 namespace ngap {
-
-class AMF_UE_NGAP_ID {
+class DrbStatusUl {
  public:
-  AMF_UE_NGAP_ID();
-  virtual ~AMF_UE_NGAP_ID();
+  DrbStatusUl();
+  virtual ~DrbStatusUl();
 
-  bool set(const uint64_t&);
-  uint64_t get();
+  void setdRBStatusUL(const DrbStatusUl18& ul18);
+  void getdRBStatusUL(std::optional<DrbStatusUl18>& ul18) const;
 
-  bool encode2AMF_UE_NGAP_ID(Ngap_AMF_UE_NGAP_ID_t&);
-  bool decodefromAMF_UE_NGAP_ID(Ngap_AMF_UE_NGAP_ID_t&);
+  void setdRBStatusUL(const DrbStatusUl12& ul12);
+  void getdRBStatusUL(std::optional<DrbStatusUl12>& ul12) const;
+
+  bool encodedRBStatusUL(Ngap_DRBStatusUL_t* uL);
+  bool decodedRBStatusUL(Ngap_DRBStatusUL_t* uL);
 
  private:
-  uint64_t id_;
+  std::optional<DrbStatusUl18> ul18_;
+  std::optional<DrbStatusUl12> ul12_;
 };
-
 }  // namespace ngap
-
 #endif

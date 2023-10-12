@@ -55,7 +55,7 @@ void CoreNetworkAssistanceInfo::get(
     UEIdentityIndexValue& ue_identity_index_value,
     std::optional<DefaultPagingDRX>& paging_drx,
     PeriodicRegistrationUpdateTimer& m_periodicRegUpdateTimer,
-    bool& m_micoModeInd, std::vector<TAI>& m_tai) {
+    bool& m_micoModeInd, std::vector<TAI>& m_tai) const {
   ue_identity_index_value  = ueIdentityIndexValue;
   paging_drx               = pagingDRX;
   m_periodicRegUpdateTimer = periodicRegUpdateTimer;

@@ -24,8 +24,8 @@
 
 #include "Cause.hpp"
 #include "NgapIEsStruct.hpp"
-#include "ResetType.hpp"
 #include "NgapMessage.hpp"
+#include "ResetType.hpp"
 
 namespace ngap {
 
@@ -42,7 +42,7 @@ class NGResetMsg : public NgapMessage {
   void setResetType(const ResetType&);
   bool getResetType(ResetType&);
 
-  bool decodeFromPdu(Ngap_NGAP_PDU_t* ngapMsgPdu) override;
+  bool decode(Ngap_NGAP_PDU_t* ngapMsgPdu) override;
 
  private:
   Ngap_NGReset_t* ngResetIEs;

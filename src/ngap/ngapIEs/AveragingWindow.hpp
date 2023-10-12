@@ -19,8 +19,8 @@
  *      contact@openairinterface.org
  */
 
-#ifndef _AVERAGINGWINDOW_H_
-#define _AVERAGINGWINDOW_H_
+#ifndef _AVERAGING_WINDOW_H_
+#define _AVERAGING_WINDOW_H_
 
 extern "C" {
 #include "Ngap_AveragingWindow.h"
@@ -33,14 +33,14 @@ class AveragingWindow {
   AveragingWindow();
   virtual ~AveragingWindow();
 
-  void setAveragingWindow(long value);
-  bool getAveragingWindow(long& value);
+  void setAveragingWindow(const long& value);
+  bool getAveragingWindow(long& value) const;
 
-  bool encode2AveragingWindow(Ngap_AveragingWindow_t*);
-  bool decodefromAveragingWindow(Ngap_AveragingWindow_t*);
+  bool encode(Ngap_AveragingWindow_t*);
+  bool decode(Ngap_AveragingWindow_t*);
 
  private:
-  long averagingwindow;
+  long averaging_window_;  // Madatory
 };
 
 }  // namespace ngap

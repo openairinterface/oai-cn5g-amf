@@ -22,28 +22,29 @@
 #ifndef _RAN_STATUS_TRANSFER_TRANSPARENT_CONTAINER_H_
 #define _RAN_STATUS_TRANSFER_TRANSPARENT_CONTAINER_H_
 
-#include "dRBsSubjectToStatusTransferList.hpp"
+#include "DrbsSubjectToStatusTransferList.hpp"
+
 extern "C" {
 #include "Ngap_RANStatusTransfer-TransparentContainer.h"
 }
+
 namespace ngap {
+
 class RANStatusTransferTransparentContainer {
  public:
   RANStatusTransferTransparentContainer();
   virtual ~RANStatusTransferTransparentContainer();
 
-  void getdRBSubject_list(dRBSubjectList& drblist);
-  void setdRBSubject_list(const dRBSubjectList& drblist);
+  void getDRBSubjectList(DrbSubjectToStatusTransferList& drblist);
+  void setDRBSubjectList(const DrbSubjectToStatusTransferList& drblist);
 
-  bool encoderanstatustransfer_transparentcontainer(
-      Ngap_RANStatusTransfer_TransparentContainer_t*
-          ranstatustransfer_transparentcontainer);
-  bool decoderanstatustransfer_transparentcontainer(
-      Ngap_RANStatusTransfer_TransparentContainer_t&
-          ranstatustransfer_transparentcontainer);
+  bool encode(Ngap_RANStatusTransfer_TransparentContainer_t*
+                  ranstatustransfer_transparentcontainer);
+  bool decode(Ngap_RANStatusTransfer_TransparentContainer_t&
+                  ranstatustransfer_transparentcontainer);
 
  private:
-  dRBSubjectList drb_sub_list;  // Mandatory
+  DrbSubjectToStatusTransferList drb_sub_list;  // Mandatory
 };
 
 }  // namespace ngap

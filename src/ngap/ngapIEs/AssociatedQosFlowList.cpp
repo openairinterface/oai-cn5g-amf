@@ -20,50 +20,42 @@
  */
 
 #include "AssociatedQosFlowList.hpp"
-#include "dynamic_memory_check.h"
 
-#include <iostream>
-using namespace std;
+#include "dynamic_memory_check.h"
 
 namespace ngap {
 
 //------------------------------------------------------------------------------
-AssociatedQosFlowList::AssociatedQosFlowList() {
-  associatedQosFlowItem      = nullptr;
-  numofassociatedQosFlowItem = 0;
-}
+AssociatedQosFlowList::AssociatedQosFlowList() {}
 
 //------------------------------------------------------------------------------
 AssociatedQosFlowList::~AssociatedQosFlowList() {}
 
 //------------------------------------------------------------------------------
 void AssociatedQosFlowList::setAssociatedQosFlowList(
-    AssociatedQosFlowItem* m_associatedQosFlowItem, int numofitem) {
-  associatedQosFlowItem      = m_associatedQosFlowItem;
-  numofassociatedQosFlowItem = numofitem;
+    const std::vector<AssociatedQosFlowItem>& item_list) {
+  uint8_t actual_size = (item_list.size() > kMaxNoOfQoSFlows) ?
+                            kMaxNoOfQoSFlows :
+                            item_list.size();
+  for (int i = 0; i < actual_size; i++) {
+    list_.push_back(item_list[i]);
+  }
 }
 
 //------------------------------------------------------------------------------
-bool AssociatedQosFlowList::getAssociatedQosFlowList(
-    AssociatedQosFlowItem*& m_associatedQosFlowItem, int& numofitem) {
-  m_associatedQosFlowItem = associatedQosFlowItem;
-  numofitem               = numofassociatedQosFlowItem;
-
-  return true;
+void AssociatedQosFlowList::getAssociatedQosFlowList(
+    std::vector<AssociatedQosFlowItem>& item_list) const {
+  item_list = list_;
 }
 
 //------------------------------------------------------------------------------
-bool AssociatedQosFlowList::encode2AssociatedQosFlowList(
+bool AssociatedQosFlowList::encode(
     Ngap_AssociatedQosFlowList_t& associatedQosFlowList) {
-  for (int i = 0; i < numofassociatedQosFlowItem; i++) {
+  for (int i = 0; i < list_.size(); i++) {
     Ngap_AssociatedQosFlowItem_t* ie = (Ngap_AssociatedQosFlowItem_t*) calloc(
         1, sizeof(Ngap_AssociatedQosFlowItem_t));
     if (!ie) return false;
-    if (!associatedQosFlowItem) {
-      free_wrapper((void**) &ie);
-      return false;
-    }
-    if (!associatedQosFlowItem[i].encode2AssociatedQosFlowItem(ie)) {
+    if (!list_[i].encode(ie)) {
       free_wrapper((void**) &ie);
       return false;
     }
@@ -77,17 +69,16 @@ bool AssociatedQosFlowList::encode2AssociatedQosFlowList(
 }
 
 //------------------------------------------------------------------------------
-bool AssociatedQosFlowList::decodefromAssociatedQosFlowList(
+bool AssociatedQosFlowList::decode(
     Ngap_AssociatedQosFlowList_t& associatedQosFlowList) {
-  numofassociatedQosFlowItem = associatedQosFlowList.list.count;
-  associatedQosFlowItem =
-      new AssociatedQosFlowItem[numofassociatedQosFlowItem]();
-  for (int i = 0; i < numofassociatedQosFlowItem; i++) {
-    if (!associatedQosFlowItem[i].decodefromAssociatedQosFlowItem(
-            associatedQosFlowList.list.array[i]))
-      return false;
+  uint8_t actual_size = (associatedQosFlowList.list.count > kMaxNoOfQoSFlows) ?
+                            kMaxNoOfQoSFlows :
+                            associatedQosFlowList.list.count;
+  for (int i = 0; i < actual_size; i++) {
+    AssociatedQosFlowItem item = {};
+    if (!item.decode(associatedQosFlowList.list.array[i])) return false;
+    list_.push_back(item);
   }
-
   return true;
 }
 

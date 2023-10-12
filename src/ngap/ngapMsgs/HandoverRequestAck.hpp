@@ -23,7 +23,6 @@
 #define _HANDOVER_REQUEST_ACK_H_
 
 #include "NgapUEMessage.hpp"
-
 #include "PDUSessionResourceAdmittedList.hpp"
 #include "PDUSessionResourceFailedToSetupListHOAck.hpp"
 
@@ -42,7 +41,7 @@ class HandoverRequestAck : public NgapUEMessage {
 
   void setAmfUeNgapId(const unsigned long& id) override;
   void setRanUeNgapId(const uint32_t& id) override;
-  bool decodeFromPdu(Ngap_NGAP_PDU_t* ngapMsgPdu) override;
+  bool decode(Ngap_NGAP_PDU_t* ngapMsgPdu) override;
 
   void setPDUSessionResourceAdmittedList(
       const PDUSessionResourceAdmittedList& admittedList);

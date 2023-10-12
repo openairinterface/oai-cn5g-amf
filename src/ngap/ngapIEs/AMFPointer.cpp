@@ -49,12 +49,12 @@ bool AMFPointer::set(const uint8_t& pointer) {
 }
 
 //------------------------------------------------------------------------------
-void AMFPointer::get(std::string& pointer) {
+void AMFPointer::get(std::string& pointer) const {
   pointer = std::to_string(pointer_);
 }
 
 //------------------------------------------------------------------------------
-void AMFPointer::get(uint8_t& pointer) {
+void AMFPointer::get(uint8_t& pointer) const {
   pointer = pointer_;
 }
 

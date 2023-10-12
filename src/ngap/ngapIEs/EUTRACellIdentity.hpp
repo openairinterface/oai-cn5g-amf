@@ -19,8 +19,8 @@
  *      contact@openairinterface.org
  */
 
-#ifndef _EUTRACellIdentity_H_
-#define _EUTRACellIdentity_H_
+#ifndef _EUTRA_CELL_IDENTITY_H_
+#define _EUTRA_CELL_IDENTITY_H_
 #include <cstdint>
 
 constexpr uint32_t kEUTRACellIdentityMaxValue = 268435455;  // 2^28-1
@@ -38,7 +38,8 @@ class EUTRACellIdentity {
 
   bool encode(Ngap_EUTRACellIdentity_t& eUTRACellIdentity);
   bool decode(Ngap_EUTRACellIdentity_t& eUTRACellIdentity);
-  uint32_t get();
+
+  uint32_t get() const;
   bool set(const uint32_t& m_eutracellidentity);
 
  private:

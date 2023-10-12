@@ -20,21 +20,18 @@
  */
 
 #include "ResetType.hpp"
+
 extern "C" {
 #include "dynamic_memory_check.h"
 }
-
-#include <iostream>
-using namespace std;
 
 namespace ngap {
 
 //------------------------------------------------------------------------------
 ResetType::ResetType() {
-  present                             = Ngap_ResetType_PR_NOTHING;
-  nG_Interface                        = 0;
-  partOfNG_Interface                  = nullptr;
-  ueAssociatedLogicalNGConnectionItem = nullptr;
+  present            = Ngap_ResetType_PR_NOTHING;
+  nG_Interface       = std::nullopt;
+  partOfNG_Interface = std::nullopt;
 }
 
 //------------------------------------------------------------------------------
@@ -43,19 +40,20 @@ ResetType::~ResetType() {}
 //------------------------------------------------------------------------------
 void ResetType::setResetType(long nG_Interface) {
   this->present      = Ngap_ResetType_PR_nG_Interface;
-  this->nG_Interface = nG_Interface;
+  this->nG_Interface = std::make_optional<long>(nG_Interface);
+  partOfNG_Interface = std::nullopt;
 }
 
 //------------------------------------------------------------------------------
 void ResetType::setResetType(
     std::vector<UEAssociatedLogicalNGConnectionItem> list) {
   this->present = Ngap_ResetType_PR_partOfNG_Interface;
+  nG_Interface  = std::nullopt;
 
-  if (!partOfNG_Interface) {
-    partOfNG_Interface = (UEAssociatedLogicalNGConnectionList*) calloc(
-        1, sizeof(UEAssociatedLogicalNGConnectionList));
-  }
-  partOfNG_Interface->set(list);
+  UEAssociatedLogicalNGConnectionList list_tmp = {};
+  list_tmp.set(list);
+  partOfNG_Interface =
+      std::make_optional<UEAssociatedLogicalNGConnectionList>(list_tmp);
 }
 
 //------------------------------------------------------------------------------
@@ -75,12 +73,13 @@ bool ResetType::encode(Ngap_ResetType_t* type) {
 bool ResetType::decode(Ngap_ResetType_t* type) {
   present = type->present;
   if (type->present == Ngap_ResetType_PR_nG_Interface) {
-    nG_Interface = (long) type->choice.nG_Interface;
+    nG_Interface = std::make_optional<long>((long) type->choice.nG_Interface);
     return true;
   } else if (type->present == Ngap_ResetType_PR_partOfNG_Interface) {
-    int num_item       = type->choice.partOfNG_Interface->list.count;
-    partOfNG_Interface = new UEAssociatedLogicalNGConnectionList();
-    partOfNG_Interface->decode(type->choice.partOfNG_Interface);
+    UEAssociatedLogicalNGConnectionList list_tmp = {};
+    list_tmp.decode(type->choice.partOfNG_Interface);
+    partOfNG_Interface =
+        std::make_optional<UEAssociatedLogicalNGConnectionList>(list_tmp);
   } else {
     return false;
   }
@@ -97,7 +96,7 @@ uint8_t ResetType::getResetType() {
 }
 
 //------------------------------------------------------------------------------
-void ResetType::getUE_associatedLogicalNG_connectionList(
+void ResetType::getUEAssociatedLogicalNGConnectionList(
     struct Ngap_UE_associatedLogicalNG_connectionList*& list) {
   // TODO:
 }
@@ -105,17 +104,19 @@ void ResetType::getUE_associatedLogicalNG_connectionList(
 //------------------------------------------------------------------------------
 void ResetType::setUE_associatedLogicalNG_connectionList(
     std::vector<UEAssociatedLogicalNGConnectionItem> list) {
-  if (!partOfNG_Interface) {
-    partOfNG_Interface = new UEAssociatedLogicalNGConnectionList();
-  }
-  partOfNG_Interface->set(list);
+  this->present = Ngap_ResetType_PR_partOfNG_Interface;
+  nG_Interface  = std::nullopt;
+  UEAssociatedLogicalNGConnectionList list_tmp = {};
+  list_tmp.set(list);
+  partOfNG_Interface =
+      std::make_optional<UEAssociatedLogicalNGConnectionList>(list_tmp);
 }
 
 //------------------------------------------------------------------------------
-void ResetType::getUE_associatedLogicalNG_connectionList(
+void ResetType::getUEAssociatedLogicalNGConnectionList(
     std::vector<UEAssociatedLogicalNGConnectionItem>& list) {
-  if (partOfNG_Interface) {
-    partOfNG_Interface->get(list);
+  if (partOfNG_Interface.has_value()) {
+    partOfNG_Interface.value().get(list);
   }
 }
 

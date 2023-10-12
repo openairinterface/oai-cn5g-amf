@@ -63,7 +63,7 @@ void PduSessionResourceSetupResponseMsg::setAmfUeNgapId(
   ie->value.present =
       Ngap_PDUSessionResourceSetupResponseIEs__value_PR_AMF_UE_NGAP_ID;
 
-  int ret = amfUeNgapId.encode2AMF_UE_NGAP_ID(ie->value.choice.AMF_UE_NGAP_ID);
+  int ret = amfUeNgapId.encode(ie->value.choice.AMF_UE_NGAP_ID);
   if (!ret) {
     Logger::ngap().error("Encode NGAP AMF_UE_NGAP_ID IE error");
     free_wrapper((void**) &ie);
@@ -232,8 +232,7 @@ bool PduSessionResourceSetupResponseMsg::getPduSessionResourceFailedToSetupList(
 }
 
 //------------------------------------------------------------------------------
-bool PduSessionResourceSetupResponseMsg::decodeFromPdu(
-    Ngap_NGAP_PDU_t* ngapMsgPdu) {
+bool PduSessionResourceSetupResponseMsg::decode(Ngap_NGAP_PDU_t* ngapMsgPdu) {
   ngapPdu = ngapMsgPdu;
 
   if (ngapPdu->present == Ngap_NGAP_PDU_PR_successfulOutcome) {
@@ -266,7 +265,7 @@ bool PduSessionResourceSetupResponseMsg::decodeFromPdu(
             pduSessionResourceSetupResponseIEs->protocolIEs.list.array[i]
                 ->value.present ==
             Ngap_PDUSessionResourceSetupResponseIEs__value_PR_AMF_UE_NGAP_ID) {
-          if (!amfUeNgapId.decodefromAMF_UE_NGAP_ID(
+          if (!amfUeNgapId.decode(
                   pduSessionResourceSetupResponseIEs->protocolIEs.list.array[i]
                       ->value.choice.AMF_UE_NGAP_ID)) {
             Logger::ngap().error("Decoded NGAP AMF_UE_NGAP_ID IE error!");

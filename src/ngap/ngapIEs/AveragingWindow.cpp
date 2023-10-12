@@ -21,43 +21,38 @@
 
 #include "AveragingWindow.hpp"
 
-#include <iostream>
-using namespace std;
-
 namespace ngap {
 
 //------------------------------------------------------------------------------
 AveragingWindow::AveragingWindow() {
-  averagingwindow = 0;
+  averaging_window_ = 0;
 }
 
 //------------------------------------------------------------------------------
 AveragingWindow::~AveragingWindow() {}
 
 //------------------------------------------------------------------------------
-void AveragingWindow::setAveragingWindow(long value) {
-  averagingwindow = value;
+void AveragingWindow::setAveragingWindow(const long& value) {
+  averaging_window_ = value;
 }
 
 //------------------------------------------------------------------------------
-bool AveragingWindow::getAveragingWindow(long& value) {
-  value = averagingwindow;
+bool AveragingWindow::getAveragingWindow(long& value) const {
+  value = averaging_window_;
 
   return true;
 }
 
 //------------------------------------------------------------------------------
-bool AveragingWindow::encode2AveragingWindow(
-    Ngap_AveragingWindow_t* averagingWindow) {
-  *averagingWindow = averagingwindow;
+bool AveragingWindow::encode(Ngap_AveragingWindow_t* value) {
+  *value = averaging_window_;
 
   return true;
 }
 
 //------------------------------------------------------------------------------
-bool AveragingWindow::decodefromAveragingWindow(
-    Ngap_AveragingWindow_t* averagingWindow) {
-  averagingwindow = *averagingWindow;
+bool AveragingWindow::decode(Ngap_AveragingWindow_t* value) {
+  averaging_window_ = *value;
 
   return true;
 }

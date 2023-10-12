@@ -21,49 +21,43 @@
 
 #include "PacketErrorRate.hpp"
 
-#include <iostream>
-using namespace std;
-
 namespace ngap {
 
 //------------------------------------------------------------------------------
 PacketErrorRate::PacketErrorRate() {
-  pERScalar   = 0;
-  pERExponent = 0;
+  scalar_   = 0;
+  exponent_ = 0;
 }
 
 //------------------------------------------------------------------------------
 PacketErrorRate::~PacketErrorRate() {}
 
 //------------------------------------------------------------------------------
-void PacketErrorRate::setPacketErrorRate(long m_pERScalar, long m_pERExponent) {
-  pERScalar   = m_pERScalar;
-  pERExponent = m_pERExponent;
+void PacketErrorRate::setPacketErrorRate(long scalar, long exponent) {
+  scalar_   = scalar;
+  exponent_ = exponent;
 }
 
 //------------------------------------------------------------------------------
-bool PacketErrorRate::getPacketErrorRate(
-    long& m_pERScalar, long& m_pERExponent) {
-  m_pERScalar   = pERScalar;
-  m_pERExponent = pERExponent;
+bool PacketErrorRate::getPacketErrorRate(long& scalar, long& exponent) const {
+  scalar   = scalar_;
+  exponent = exponent_;
 
   return true;
 }
 
 //------------------------------------------------------------------------------
-bool PacketErrorRate::encode2PacketErrorRate(
-    Ngap_PacketErrorRate_t* packetErrorRate) {
-  packetErrorRate->pERScalar   = pERScalar;
-  packetErrorRate->pERExponent = pERExponent;
+bool PacketErrorRate::encode(Ngap_PacketErrorRate_t* packet_error_rate) {
+  packet_error_rate->pERScalar   = scalar_;
+  packet_error_rate->pERExponent = exponent_;
 
   return true;
 }
 
 //------------------------------------------------------------------------------
-bool PacketErrorRate::decodefromPacketErrorRate(
-    Ngap_PacketErrorRate_t* packetErrorRate) {
-  pERScalar   = packetErrorRate->pERScalar;
-  pERExponent = packetErrorRate->pERExponent;
+bool PacketErrorRate::decode(Ngap_PacketErrorRate_t* packet_error_rate) {
+  scalar_   = packet_error_rate->pERScalar;
+  exponent_ = packet_error_rate->pERExponent;
 
   return true;
 }

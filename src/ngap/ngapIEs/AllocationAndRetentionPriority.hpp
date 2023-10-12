@@ -19,8 +19,8 @@
  *      contact@openairinterface.org
  */
 
-#ifndef _ALLOCATIONANDRETENTIONPRIORITY_H_
-#define _ALLOCATIONANDRETENTIONPRIORITY_H_
+#ifndef _ALLOCATION_AND_RETENTION_PRIORITY_H_
+#define _ALLOCATION_AND_RETENTION_PRIORITY_H_
 
 #include "Pre-emptionCapability.hpp"
 #include "Pre-emptionVulnerability.hpp"
@@ -37,24 +37,22 @@ class AllocationAndRetentionPriority {
   AllocationAndRetentionPriority();
   virtual ~AllocationAndRetentionPriority();
 
-  void setAllocationAndRetentionPriority(
-      PriorityLevelARP* m_priorityLevelARP,
-      Pre_emptionCapability* m_pre_emptionCapability,
-      Pre_emptionVulnerability* m_pre_emptionVulnerability);
-  bool getAllocationAndRetentionPriority(
-      PriorityLevelARP*& m_priorityLevelARP,
-      Pre_emptionCapability*& m_pre_emptionCapability,
-      Pre_emptionVulnerability*& m_pre_emptionVulnerability);
+  void set(
+      const PriorityLevelARP& m_priorityLevelARP,
+      const Pre_emptionCapability& m_pre_emptionCapability,
+      const Pre_emptionVulnerability& m_pre_emptionVulnerability);
+  bool get(
+      PriorityLevelARP& m_priorityLevelARP,
+      Pre_emptionCapability& m_pre_emptionCapability,
+      Pre_emptionVulnerability& m_pre_emptionVulnerability) const;
 
-  bool encode2AllocationAndRetentionPriority(
-      Ngap_AllocationAndRetentionPriority_t*);
-  bool decodefromAllocationAndRetentionPriority(
-      Ngap_AllocationAndRetentionPriority_t*);
+  bool encode(Ngap_AllocationAndRetentionPriority_t*);
+  bool decode(Ngap_AllocationAndRetentionPriority_t*);
 
  private:
-  PriorityLevelARP* priorityLevelARP;
-  Pre_emptionCapability* pre_emptionCapability;
-  Pre_emptionVulnerability* pre_emptionVulnerability;
+  PriorityLevelARP priorityLevelARP;                  // Mandatory
+  Pre_emptionCapability pre_emptionCapability;        // Mandatory
+  Pre_emptionVulnerability pre_emptionVulnerability;  // Mandatory
 };
 }  // namespace ngap
 

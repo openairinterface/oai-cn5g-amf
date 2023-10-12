@@ -19,8 +19,10 @@
  *      contact@openairinterface.org
  */
 
-#ifndef _QOSFLOWSETUPREQUESTLIST_H_
-#define _QOSFLOWSETUPREQUESTLIST_H_
+#ifndef _QOS_FLOW_SETUP_REQUEST_LIST_H_
+#define _QOS_FLOW_SETUP_REQUEST_LIST_H_
+
+#include <vector>
 
 #include "QosFlowSetupRequestItem.hpp"
 
@@ -35,18 +37,15 @@ class QosFlowSetupRequestList {
   QosFlowSetupRequestList();
   virtual ~QosFlowSetupRequestList();
 
-  void setQosFlowSetupRequestList(
-      QosFlowSetupRequestItem* m_items, int m_numofitems);
-  bool getQosFlowSetupRequestList(
-      QosFlowSetupRequestItem*& m_items, int& m_numofitems);
-  bool encode2QosFlowSetupRequestList(
-      Ngap_QosFlowSetupRequestList_t* qosFlowSetupRequestList);
-  bool decodefromQosFlowSetupRequestList(
-      Ngap_QosFlowSetupRequestList_t* qosFlowSetupRequestList);
+  void set(const std::vector<QosFlowSetupRequestItem>& list);
+  void get(std::vector<QosFlowSetupRequestItem>& list) const;
+
+  bool encode(Ngap_QosFlowSetupRequestList_t* qosFlowSetupRequestList);
+  bool decode(Ngap_QosFlowSetupRequestList_t* qosFlowSetupRequestList);
 
  private:
-  QosFlowSetupRequestItem* items;
-  int numofitems;
+  std::vector<QosFlowSetupRequestItem> list_;
+  constexpr static uint8_t kMaxNoOfQoSFlows = 64;
 };
 }  // namespace ngap
 #endif

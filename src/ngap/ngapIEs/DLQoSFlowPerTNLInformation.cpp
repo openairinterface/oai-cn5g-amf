@@ -57,11 +57,11 @@ bool DLQoSFlowPerTNLInformation::getDLQoSFlowPerTNLInformation(
 bool DLQoSFlowPerTNLInformation::encode2DLQoSFlowPerTNLInformation(
     Ngap_QosFlowPerTNLInformation_t* qosFlowPerTNLInformation) {
   if (!uPTransportLayerInformation) return false;
-  if (!uPTransportLayerInformation->encode2UpTransportLayerInformation(
+  if (!uPTransportLayerInformation->encode(
           qosFlowPerTNLInformation->uPTransportLayerInformation))
     return false;
   if (!associatedQosFlowList) return false;
-  if (!associatedQosFlowList->encode2AssociatedQosFlowList(
+  if (!associatedQosFlowList->encode(
           qosFlowPerTNLInformation->associatedQosFlowList))
     return false;
 
@@ -75,10 +75,10 @@ bool DLQoSFlowPerTNLInformation::decodefromDLQoSFlowPerTNLInformation(
     uPTransportLayerInformation = new UpTransportLayerInformation();
   if (associatedQosFlowList == nullptr)
     associatedQosFlowList = new AssociatedQosFlowList();
-  if (!uPTransportLayerInformation->decodefromUpTransportLayerInformation(
+  if (!uPTransportLayerInformation->decode(
           qosFlowPerTNLInformation->uPTransportLayerInformation))
     return false;
-  if (!associatedQosFlowList->decodefromAssociatedQosFlowList(
+  if (!associatedQosFlowList->decode(
           qosFlowPerTNLInformation->associatedQosFlowList))
     return false;
 

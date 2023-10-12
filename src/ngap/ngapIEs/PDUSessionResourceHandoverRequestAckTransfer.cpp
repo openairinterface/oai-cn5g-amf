@@ -21,28 +21,23 @@
 
 #include "PDUSessionResourceHandoverRequestAckTransfer.hpp"
 
-extern "C" {
-#include "asn_codecs.h"
-#include "constr_TYPE.h"
-#include "constraints.h"
-#include "per_decoder.h"
-#include "per_encoder.h"
-}
-
-#include <iostream>
-using namespace std;
+#include "logger.hpp"
 
 namespace ngap {
+
+//------------------------------------------------------------------------------
 PDUSessionResourceHandoverRequestAckTransfer::
     PDUSessionResourceHandoverRequestAckTransfer() {
   handoverRequestAcknowledegTransferIEs =
       (Ngap_HandoverRequestAcknowledgeTransfer_t*) calloc(
           1, sizeof(Ngap_HandoverRequestAcknowledgeTransfer_t));
-  dLForwardingUP_TNLInformation = NULL;
-  QosFlowSetupResponseList      = NULL;
 }
+
+//------------------------------------------------------------------------------
 PDUSessionResourceHandoverRequestAckTransfer::
     ~PDUSessionResourceHandoverRequestAckTransfer() {}
+
+//------------------------------------------------------------------------------
 bool PDUSessionResourceHandoverRequestAckTransfer::
     decodefromHandoverRequestAckTransfer(uint8_t* buf, int buf_size) {
   asn_dec_rval_t rc = asn_decode(
@@ -50,60 +45,61 @@ bool PDUSessionResourceHandoverRequestAckTransfer::
       &asn_DEF_Ngap_HandoverRequestAcknowledgeTransfer,
       (void**) &handoverRequestAcknowledegTransferIEs, buf, buf_size);
   if (rc.code == RC_OK) {
-    cout << "Decoded handoverRequestAcknowledegTransfer successfully" << endl;
+    Logger::ngap().debug(
+        "Decoded handoverRequestAcknowledegTransfer successfully");
   } else if (rc.code == RC_WMORE) {
-    cout << "More data expected, call again" << endl;
+    Logger::ngap().debug("More data expected, call again");
     return false;
   } else {
-    cout << "Failure to decode handoverRequestAcknowledegTransfer data" << endl;
+    Logger::ngap().debug(
+        "Failure to decode handoverRequestAcknowledegTransfer data");
     // return false;
   }
-  cout << "rc.consumed to decode = " << rc.consumed << endl;
-  dLForwardingUP_TNLInformation = new UpTransportLayerInformation();
-  if (!dLForwardingUP_TNLInformation->decodefromUpTransportLayerInformation(
+  Logger::ngap().debug("rc.consumed to decode: %d", rc.consumed);
+
+  if (!dLForwardingUP_TNLInformation.decode(
           *handoverRequestAcknowledegTransferIEs
                ->dLForwardingUP_TNLInformation)) {
-    cout << "decoded ngap DL_NGU_UP_TNLInformation IE error" << endl;
+    Logger::ngap().error("Decode NGAP DL_NGU_UP_TNLInformation IE error");
     return false;
   }
-  QosFlowSetupResponseList = new QosFlowListWithDataForwarding();
-  if (!QosFlowSetupResponseList->decodeFormQosFlowListWithDataForwarding(
+
+  if (!QosFlowSetupResponseList.decode(
           handoverRequestAcknowledegTransferIEs->qosFlowSetupResponseList)) {
-    cout << "decoded ngap QosFlowSetupResponseList IE error" << endl;
+    Logger::ngap().error("Decode NGAP QosFlowSetupResponseList IE error");
     return false;
   }
   return true;
 }
+
+//------------------------------------------------------------------------------
 bool PDUSessionResourceHandoverRequestAckTransfer::
     getUpTransportLayerInformation2(GtpTunnel_t*& upTnlInfo) {
-  if (!dLForwardingUP_TNLInformation->decodefromUpTransportLayerInformation(
+  if (!dLForwardingUP_TNLInformation.decode(
           *handoverRequestAcknowledegTransferIEs
                ->dLForwardingUP_TNLInformation))
     return false;
-  TransportLayerAddress* m_transportLayerAddress;
-  GtpTeid* m_gtpTeid;
-  if (!dLForwardingUP_TNLInformation->getUpTransportLayerInformation(
+  TransportLayerAddress m_transportLayerAddress = {};
+  GtpTeid m_gtpTeid                             = {};
+  if (!dLForwardingUP_TNLInformation.getUpTransportLayerInformation(
           m_transportLayerAddress, m_gtpTeid))
     return false;
-  if (!m_transportLayerAddress->getTransportLayerAddress(upTnlInfo->ip_address))
+  if (!m_transportLayerAddress.getTransportLayerAddress(upTnlInfo->ip_address))
     return false;
-  if (!m_gtpTeid->getGtpTeid(upTnlInfo->gtp_teid)) return false;
+  if (!m_gtpTeid.getGtpTeid(upTnlInfo->gtp_teid)) return false;
   return true;
 }
+
+//------------------------------------------------------------------------------
 bool PDUSessionResourceHandoverRequestAckTransfer::getqosFlowSetupResponseList(
     std::vector<QosFlowLItemWithDataForwarding_t>& list) {
-  if (!QosFlowSetupResponseList) return false;
-  QosFlowItemWithDataForWarding* m_qosflowitemwithdataforwarding;
-  int num = 0;
-  if (QosFlowSetupResponseList->getQosFlowListWithDataForwarding(
-          m_qosflowitemwithdataforwarding, num)) {
-    cout << "successful decode QosFlowList" << endl;
-  }
-  for (int i = 0; i < num; i++) {
-    QosFlowLItemWithDataForwarding_t response;
-    m_qosflowitemwithdataforwarding[i].getQosFlowItemWithDataForWarding(
-        response.qosFlowIdentifier);
-    list.push_back(response);
+  std::vector<QosFlowItemWithDataForWarding> m_qosflowitemwithdataforwarding;
+  QosFlowSetupResponseList.get(m_qosflowitemwithdataforwarding);
+  for (int i = 0; i < m_qosflowitemwithdataforwarding.size(); i++) {
+    QosFlowLItemWithDataForwarding_t item;
+    m_qosflowitemwithdataforwarding[i].getQosFlowIdentifier(
+        item.qosFlowIdentifier);
+    list.push_back(item);
   }
   return true;
 }

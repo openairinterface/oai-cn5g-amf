@@ -22,14 +22,14 @@
 #ifndef _PAGING_H_
 #define _PAGING_H_
 
-#include "UEPagingIdentity.hpp"
-#include "TAIListforPaging.hpp"
 #include "NgapMessage.hpp"
+#include "TAIListforPaging.hpp"
+#include "UEPagingIdentity.hpp"
 
 extern "C" {
 #include "Ngap_NGAP-PDU.h"
-#include "Ngap_ProtocolIE-Field.h"
 #include "Ngap_Paging.h"
+#include "Ngap_ProtocolIE-Field.h"
 }
 
 namespace ngap {
@@ -40,7 +40,7 @@ class PagingMsg : public NgapMessage {
   virtual ~PagingMsg();
 
   void initialize();
-  bool decodeFromPdu(Ngap_NGAP_PDU_t* ngap_msg_pdu) override;
+  bool decode(Ngap_NGAP_PDU_t* ngap_msg_pdu) override;
 
   void setUEPagingIdentity(
       const std::string& setId, const std::string& pointer,

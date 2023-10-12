@@ -21,29 +21,40 @@
 
 #include "QosFlowItemWithDataForwarding.hpp"
 
-#include <iostream>
-using namespace std;
-
 namespace ngap {
+
+//------------------------------------------------------------------------------
 QosFlowItemWithDataForWarding::QosFlowItemWithDataForWarding() {
-  qosFlowIdentifier = nullptr;
-  value             = 0;
+  data_forwarding_accepted_ = std::nullopt;
 }
+
+//------------------------------------------------------------------------------
 QosFlowItemWithDataForWarding::~QosFlowItemWithDataForWarding() {}
-void QosFlowItemWithDataForWarding::getQosFlowItemWithDataForWarding(
-    Ngap_QosFlowIdentifier_t& m_QosFlowIdentifier) {
-  if (!qosFlowIdentifier) return;
-  if (qosFlowIdentifier->getQosFlowIdentifier(value)) {
-    m_QosFlowIdentifier = (Ngap_QosFlowIdentifier_t) value;
+
+void QosFlowItemWithDataForWarding::set(
+    const QosFlowIdentifier& qfi,
+    const std::optional<long>& data_forwarding_accepted) {
+  qfi_                      = qfi;
+  data_forwarding_accepted_ = data_forwarding_accepted;
+}
+//------------------------------------------------------------------------------
+void QosFlowItemWithDataForWarding::getQosFlowIdentifier(
+    Ngap_QosFlowIdentifier_t& qfi) {
+  long value = {};
+  if (qfi_.getQosFlowIdentifier(value)) {
+    qfi = (Ngap_QosFlowIdentifier_t) value;
   }
 }
-bool QosFlowItemWithDataForWarding::decodeformQosFlowItemWithDataForWarding(
-    Ngap_QosFlowSetupResponseItemHOReqAck_t* qosFlowItemWithDataForWarding) {
-  if (qosFlowIdentifier == nullptr) qosFlowIdentifier = new QosFlowIdentifier();
-  if (!qosFlowIdentifier->decodefromQosFlowIdentifier(
-          &(qosFlowItemWithDataForWarding->qosFlowIdentifier))) {
+
+//------------------------------------------------------------------------------
+bool QosFlowItemWithDataForWarding::decode(
+    Ngap_QosFlowSetupResponseItemHOReqAck_t* qos_flow_item) {
+  if (!qfi_.decode(&(qos_flow_item->qosFlowIdentifier))) {
     return false;
   }
+  if (qos_flow_item->dataForwardingAccepted)
+    data_forwarding_accepted_ =
+        std::make_optional<long>(*qos_flow_item->dataForwardingAccepted);
   return true;
 }
 }  // namespace ngap

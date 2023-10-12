@@ -39,7 +39,7 @@ bool RANPagingPriority::set(const uint32_t& ran_paging_priority) {
 }
 
 //------------------------------------------------------------------------------
-uint32_t RANPagingPriority::get() {
+uint32_t RANPagingPriority::get() const {
   return ran_paging_priority_;
 }
 

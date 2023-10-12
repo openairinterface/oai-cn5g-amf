@@ -19,8 +19,8 @@
  *      contact@openairinterface.org
  */
 
-#ifndef _PRE_EMPTIONCAPABILITY_H_
-#define _PRE_EMPTIONCAPABILITY_H_
+#ifndef _PRE_EMPTION_CAPABILITY_H_
+#define _PRE_EMPTION_CAPABILITY_H_
 
 extern "C" {
 #include "Ngap_Pre-emptionCapability.h"
@@ -33,14 +33,14 @@ class Pre_emptionCapability {
   Pre_emptionCapability();
   virtual ~Pre_emptionCapability();
 
-  void setPre_emptionCapability(e_Ngap_Pre_emptionCapability value);
-  bool getPre_emptionCapability(e_Ngap_Pre_emptionCapability& value);
+  void set(e_Ngap_Pre_emptionCapability value);
+  bool get(e_Ngap_Pre_emptionCapability& value);
 
-  bool encode2Pre_emptionCapability(Ngap_Pre_emptionCapability_t*);
-  bool decodefromPre_emptionCapability(Ngap_Pre_emptionCapability_t*);
+  bool encode(Ngap_Pre_emptionCapability_t*);
+  bool decode(Ngap_Pre_emptionCapability_t*);
 
  private:
-  long capability;
+  long pre_emption_capability_;
 };
 
 }  // namespace ngap

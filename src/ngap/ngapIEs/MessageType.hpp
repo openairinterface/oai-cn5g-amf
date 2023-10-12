@@ -19,8 +19,8 @@
  *      contact@openairinterface.org
  */
 
-#ifndef _MessageType_H_
-#define _MessageType_H_
+#ifndef _MESSAGE_TYPE_H_
+#define _MESSAGE_TYPE_H_
 
 extern "C" {
 #include "Ngap_Criticality.h"
@@ -40,23 +40,27 @@ class MessageType {
       Ngap_ProcedureCode_t m_procedureCode, Ngap_NGAP_PDU_PR m_typeOfMessage);
   virtual ~MessageType();
 
-  int encode2pdu(Ngap_NGAP_PDU_t*&);
+  int encode(Ngap_NGAP_PDU_t*&);
+  // void decode(Ngap_NGAP_PDU_t*);
+
   void setProcedureCode(Ngap_ProcedureCode_t m_procedureCode);
+  Ngap_ProcedureCode_t getProcedureCode();
+
   void setTypeOfMessage(Ngap_NGAP_PDU_PR m_typeOfMessage);
+  Ngap_NGAP_PDU_PR getTypeOfMessage();
+
   void setCriticality(Ngap_Criticality m_criticality);
+  Ngap_Criticality getCriticality();
+
   void setValuePresent(Ngap_InitiatingMessage__value_PR m_valuePresent);
   void setValuePresent(Ngap_SuccessfulOutcome__value_PR m_valuePresent);
   void setValuePresent(Ngap_UnsuccessfulOutcome__value_PR m_valuePresent);
-
-  // void decodeFromPdu(Ngap_NGAP_PDU_t*);
-  Ngap_ProcedureCode_t getProcedureCode();
-  Ngap_NGAP_PDU_PR getTypeOfMessage();
-  Ngap_Criticality getCriticality();
 
  private:
   Ngap_ProcedureCode_t procedureCode;  // Ngap_ProcedureCode.h
   Ngap_NGAP_PDU_PR typeOfMessage;      // Ngap_NGAP-PDU.h
   Ngap_Criticality criticality;        // Ngap_Criticality.h
+
   Ngap_InitiatingMessage__value_PR
       initiatingMsgValuePresent;  // Ngap_InitiatingMessage.h
   Ngap_SuccessfulOutcome__value_PR

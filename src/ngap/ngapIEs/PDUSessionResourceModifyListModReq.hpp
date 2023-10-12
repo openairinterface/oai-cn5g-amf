@@ -22,8 +22,9 @@
 #ifndef _PDU_SESSION_RESOURCE_MODIFY_LIST_MOD_REQ_H_
 #define _PDU_SESSION_RESOURCE_MODIFY_LIST_MOD_REQ_H_
 
-#include "PDUSessionResourceModifyItemModReq.hpp"
 #include <vector>
+
+#include "PDUSessionResourceModifyItemModReq.hpp"
 
 extern "C" {
 #include "Ngap_PDUSessionResourceModifyListModReq.h"
@@ -37,7 +38,8 @@ class PDUSessionResourceModifyListModReq {
   virtual ~PDUSessionResourceModifyListModReq();
 
   void set(const std::vector<PDUSessionResourceModifyItemModReq>& list);
-  void get(std::vector<PDUSessionResourceModifyItemModReq>& list);
+  void get(std::vector<PDUSessionResourceModifyItemModReq>& list) const;
+
   bool encode(Ngap_PDUSessionResourceModifyListModReq_t&
                   pdu_session_resource_modify_list_mod_req);
   bool decode(Ngap_PDUSessionResourceModifyListModReq_t&

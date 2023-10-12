@@ -19,37 +19,39 @@
  *      contact@openairinterface.org
  */
 
-#include "dRBStatusUL18.hpp"
+#include "DrbStatusDl18.hpp"
 
 namespace ngap {
 
 //------------------------------------------------------------------------------
-dRBStatusUL18::dRBStatusUL18() {}
+DrbStatusDl18::DrbStatusDl18() {}
 
 //------------------------------------------------------------------------------
-dRBStatusUL18::~dRBStatusUL18() {}
+DrbStatusDl18::~DrbStatusDl18() {}
 
 //------------------------------------------------------------------------------
-void dRBStatusUL18::getcountvalue(COUNTValueForPDCP_SN18& count_value) {
-  count_value = pdcp_value;
+void DrbStatusDl18::get(CountValueForPdcpSn18& value) const {
+  value = dl_count_value_;
 }
 
 //------------------------------------------------------------------------------
-void dRBStatusUL18::setcountvalue(const COUNTValueForPDCP_SN18& count_value) {
-  pdcp_value = count_value;
+void DrbStatusDl18::set(const CountValueForPdcpSn18& value) {
+  dl_count_value_ = value;
 }
 
 //------------------------------------------------------------------------------
-bool dRBStatusUL18::encodeddRBStatusUL18(Ngap_DRBStatusUL18_t* UL18) {
-  if (!pdcp_value.encodedCOUNTValueForPDCP_SN18(&UL18->uL_COUNTValue)) {
+bool DrbStatusDl18::encode(Ngap_DRBStatusDL18_t* DL18) {
+  if (!dl_count_value_.encode(&DL18->dL_COUNTValue)) {
+    Logger::ngap().error("Encode DRBStatusDL18 IE error");
     return false;
   }
   return true;
 }
 
 //------------------------------------------------------------------------------
-bool dRBStatusUL18::decodeddRBStatusUL18(Ngap_DRBStatusUL18_t* UL18) {
-  if (!pdcp_value.decodedCOUNTValueForPDCP_SN18(UL18->uL_COUNTValue)) {
+bool DrbStatusDl18::decode(Ngap_DRBStatusDL18_t* DL18) {
+  if (!dl_count_value_.decode(DL18->dL_COUNTValue)) {
+    Logger::ngap().error("Decode DRBStatusDL18 IE error");
     return false;
   }
   return true;

@@ -21,78 +21,77 @@
 
 #include "NonDynamic5QIDescriptor.hpp"
 
-#include <iostream>
-using namespace std;
-
 namespace ngap {
 
 //------------------------------------------------------------------------------
 NonDynamic5QIDescriptor::NonDynamic5QIDescriptor() {
-  fiveQI                 = NULL;
-  priorityLevelQos       = NULL;
-  averagingWindow        = NULL;
-  maximumDataBurstVolume = NULL;
+  priorityLevelQos       = std::nullopt;
+  averagingWindow        = std::nullopt;
+  maximumDataBurstVolume = std::nullopt;
+}
+
+//------------------------------------------------------------------------------
+NonDynamic5QIDescriptor::NonDynamic5QIDescriptor(
+    const FiveQI& m_fiveQI,
+    const std::optional<PriorityLevelQos>& m_priorityLevelQos,
+    const std::optional<AveragingWindow>& m_averagingWindow,
+    const std::optional<MaximumDataBurstVolume>& m_maximumDataBurstVolume) {
+  fiveQI                 = m_fiveQI;
+  priorityLevelQos       = m_priorityLevelQos;
+  averagingWindow        = m_averagingWindow;
+  maximumDataBurstVolume = m_maximumDataBurstVolume;
 }
 
 //------------------------------------------------------------------------------
 NonDynamic5QIDescriptor::~NonDynamic5QIDescriptor() {}
 
 //------------------------------------------------------------------------------
-void NonDynamic5QIDescriptor::setNonDynamic5QIDescriptor(
-    FiveQI* m_fiveQI, PriorityLevelQos* m_priorityLevelQos,
-    AveragingWindow* m_averagingWindow,
-    MaximumDataBurstVolume* m_maximumDataBurstVolume) {
-  fiveQI = m_fiveQI;
-  if (m_priorityLevelQos) {
-    priorityLevelQos = m_priorityLevelQos;
-  }
-  if (m_averagingWindow) {
-    averagingWindow = m_averagingWindow;
-  }
-  if (m_maximumDataBurstVolume) {
-    maximumDataBurstVolume = m_maximumDataBurstVolume;
-  }
+void NonDynamic5QIDescriptor::set(
+    const FiveQI& m_fiveQI,
+    const std::optional<PriorityLevelQos>& m_priorityLevelQos,
+    const std::optional<AveragingWindow>& m_averagingWindow,
+    const std::optional<MaximumDataBurstVolume>& m_maximumDataBurstVolume) {
+  fiveQI                 = m_fiveQI;
+  priorityLevelQos       = m_priorityLevelQos;
+  averagingWindow        = m_averagingWindow;
+  maximumDataBurstVolume = m_maximumDataBurstVolume;
 }
 
 //------------------------------------------------------------------------------
-bool NonDynamic5QIDescriptor::getNonDynamic5QIDescriptor(
-    FiveQI*& m_fiveQI, PriorityLevelQos*& m_priorityLevelQos,
-    AveragingWindow*& m_averagingWindow,
-    MaximumDataBurstVolume*& m_maximumDataBurstVolume) {
-  if (!fiveQI) return false;
-  m_fiveQI = fiveQI;
-  if (priorityLevelQos) m_priorityLevelQos = priorityLevelQos;
-  if (averagingWindow) m_averagingWindow = averagingWindow;
-  if (maximumDataBurstVolume) m_maximumDataBurstVolume = maximumDataBurstVolume;
-
-  return true;
+void NonDynamic5QIDescriptor::get(
+    FiveQI& m_fiveQI, std::optional<PriorityLevelQos>& m_priorityLevelQos,
+    std::optional<AveragingWindow>& m_averagingWindow,
+    std::optional<MaximumDataBurstVolume>& m_maximumDataBurstVolume) const {
+  m_fiveQI                 = fiveQI;
+  m_priorityLevelQos       = priorityLevelQos;
+  m_averagingWindow        = averagingWindow;
+  m_maximumDataBurstVolume = maximumDataBurstVolume;
 }
 
 //------------------------------------------------------------------------------
-bool NonDynamic5QIDescriptor::encode2NonDynamic5QIDescriptor(
+bool NonDynamic5QIDescriptor::encode(
     Ngap_NonDynamic5QIDescriptor_t* nonDynamic5QIDescriptor) {
-  if (!fiveQI->encode2FiveQI(&nonDynamic5QIDescriptor->fiveQI)) return false;
-  if (priorityLevelQos) {
+  if (!fiveQI.encode(&nonDynamic5QIDescriptor->fiveQI)) return false;
+  if (priorityLevelQos.has_value()) {
     Ngap_PriorityLevelQos_t* plq =
         (Ngap_PriorityLevelQos_t*) calloc(1, sizeof(Ngap_PriorityLevelQos_t));
     if (!plq) return false;
-    if (!priorityLevelQos->encode2PriorityLevelQos(plq)) return false;
+    if (!priorityLevelQos.value().encode(plq)) return false;
     nonDynamic5QIDescriptor->priorityLevelQos = plq;
   }
-  if (averagingWindow) {
+  if (averagingWindow.has_value()) {
     Ngap_AveragingWindow_t* aw =
         (Ngap_AveragingWindow_t*) calloc(1, sizeof(Ngap_AveragingWindow_t));
     if (!aw) return false;
-    if (!averagingWindow->encode2AveragingWindow(aw)) return false;
+    if (!averagingWindow.value().encode(aw)) return false;
     nonDynamic5QIDescriptor->averagingWindow = aw;
   }
-  if (maximumDataBurstVolume) {
+  if (maximumDataBurstVolume.has_value()) {
     Ngap_MaximumDataBurstVolume_t* mdbv =
         (Ngap_MaximumDataBurstVolume_t*) calloc(
             1, sizeof(Ngap_MaximumDataBurstVolume_t));
     if (!mdbv) return false;
-    if (!maximumDataBurstVolume->encode2MaximumDataBurstVolume(mdbv))
-      return false;
+    if (!maximumDataBurstVolume.value().encode(mdbv)) return false;
     nonDynamic5QIDescriptor->maximumDataBurstVolume = mdbv;
   }
 
@@ -100,27 +99,24 @@ bool NonDynamic5QIDescriptor::encode2NonDynamic5QIDescriptor(
 }
 
 //------------------------------------------------------------------------------
-bool NonDynamic5QIDescriptor::decodefromNonDynamic5QIDescriptor(
+bool NonDynamic5QIDescriptor::decode(
     Ngap_NonDynamic5QIDescriptor_t* nonDynamic5QIDescriptor) {
-  if (fiveQI == nullptr) fiveQI = new FiveQI();
-  if (!fiveQI->decodefromFiveQI(&nonDynamic5QIDescriptor->fiveQI)) return false;
+  if (!fiveQI.decode(&nonDynamic5QIDescriptor->fiveQI)) return false;
   if (nonDynamic5QIDescriptor->priorityLevelQos) {
-    priorityLevelQos = new PriorityLevelQos();
-    if (!priorityLevelQos->decodefromPriorityLevelQos(
-            nonDynamic5QIDescriptor->priorityLevelQos))
-      return false;
+    PriorityLevelQos tmp = {};
+    if (!tmp.decode(nonDynamic5QIDescriptor->priorityLevelQos)) return false;
+    priorityLevelQos = std::make_optional<PriorityLevelQos>(tmp);
   }
   if (nonDynamic5QIDescriptor->averagingWindow) {
-    averagingWindow = new AveragingWindow();
-    if (!averagingWindow->decodefromAveragingWindow(
-            nonDynamic5QIDescriptor->averagingWindow))
-      return false;
+    AveragingWindow tmp = {};
+    if (!tmp.decode(nonDynamic5QIDescriptor->averagingWindow)) return false;
+    averagingWindow = std::make_optional<AveragingWindow>(tmp);
   }
   if (nonDynamic5QIDescriptor->maximumDataBurstVolume) {
-    maximumDataBurstVolume = new MaximumDataBurstVolume();
-    if (!maximumDataBurstVolume->decodefromMaximumDataBurstVolume(
-            nonDynamic5QIDescriptor->maximumDataBurstVolume))
+    MaximumDataBurstVolume tmp = {};
+    if (!tmp.decode(nonDynamic5QIDescriptor->maximumDataBurstVolume))
       return false;
+    maximumDataBurstVolume = std::make_optional<MaximumDataBurstVolume>(tmp);
   }
 
   return true;

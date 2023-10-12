@@ -74,7 +74,7 @@ bool PDUSessionResourceModifyListModReq::decode(
 
 //------------------------------------------------------------------------------
 void PDUSessionResourceModifyListModReq::get(
-    std::vector<PDUSessionResourceModifyItemModReq>& list) {
+    std::vector<PDUSessionResourceModifyItemModReq>& list) const {
   list = item_list_;
 }
 

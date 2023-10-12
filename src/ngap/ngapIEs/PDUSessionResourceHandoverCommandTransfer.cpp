@@ -21,94 +21,95 @@
 
 #include "PDUSessionResourceHandoverCommandTransfer.hpp"
 
+#include <vector>
+
+#include "logger.hpp"
 #include "output_wrapper.hpp"
-extern "C" {
-#include "asn_codecs.h"
-#include "constr_TYPE.h"
-#include "constraints.h"
-#include "per_decoder.h"
-#include "per_encoder.h"
-}
-#include <iostream>
-using namespace std;
+
 namespace ngap {
+
+//------------------------------------------------------------------------------
 PDUSessionResourceHandoverCommandTransfer::
     PDUSessionResourceHandoverCommandTransfer() {
   handovercommandtransferIE = (Ngap_HandoverCommandTransfer_t*) calloc(
       1, sizeof(Ngap_HandoverCommandTransfer_t));
-  dLForwardingUP_TNLInformation = NULL;
-  qosFlowToBeForwardedList      = NULL;
+  dLForwardingUP_TNLInformation = std::nullopt;
+  qosFlowToBeForwardedList      = std::nullopt;
 }
+
+//------------------------------------------------------------------------------
 PDUSessionResourceHandoverCommandTransfer::
     ~PDUSessionResourceHandoverCommandTransfer() {}
 void PDUSessionResourceHandoverCommandTransfer::setQosFlowToBeForwardedList(
     std::vector<QosFlowToBeForwardedItem_t> list) {
-  if (!qosFlowToBeForwardedList)
-    qosFlowToBeForwardedList = new QosFlowToBeForwardedList();
-  QosFlowToBeForwardedItem* m_item =
-      new QosFlowToBeForwardedItem[list.size()]();
+  QosFlowToBeForwardedList qos_list = {};
+
+  std::vector<QosFlowToBeForwardedItem> item_list;
+
   for (int i = 0; i < list.size(); i++) {
-    QosFlowIdentifier* m_qosFlowIdentifier = new QosFlowIdentifier();
-    m_qosFlowIdentifier->setQosFlowIdentifier(list[i].QFI);
-    m_item[i].setQosFlowIdentifier(m_qosFlowIdentifier);
+    QosFlowIdentifier qfi             = {};
+    QosFlowToBeForwardedItem qos_item = {};
+    qfi.setQosFlowIdentifier(list[i].QFI);
+
+    qos_item.setQosFlowIdentifier(qfi);
+    item_list.push_back(qos_item);
   }
-  qosFlowToBeForwardedList->setQosFlowToBeForwardedItem(m_item, list.size());
-  int ret = qosFlowToBeForwardedList->encodeQosFlowToBeForwardedList(
+
+  qos_list.set(item_list);
+  qosFlowToBeForwardedList =
+      std::make_optional<QosFlowToBeForwardedList>(qos_list);
+  int ret = qosFlowToBeForwardedList.value().encode(
       handovercommandtransferIE->qosFlowToBeForwardedList);
-  cout << "QFI in list "
-       << handovercommandtransferIE->qosFlowToBeForwardedList->list.count
-       << endl;
+  Logger::ngap().debug(
+      "Number of QoS flows in the list %d",
+      handovercommandtransferIE->qosFlowToBeForwardedList->list.count);
   if (handovercommandtransferIE->qosFlowToBeForwardedList->list.array) {
-    cout << "array OK" << endl;
     if (handovercommandtransferIE->qosFlowToBeForwardedList->list.array[0]) {
-      cout << "QFI in list "
-           << handovercommandtransferIE->qosFlowToBeForwardedList->list
-                  .array[0]
-                  ->qosFlowIdentifier
-           << endl;
-    } else {
-      cout << "error1" << endl;
+      Logger::ngap().debug(
+          "QFI in the list %d",
+          handovercommandtransferIE->qosFlowToBeForwardedList->list.array[0]
+              ->qosFlowIdentifier);
     }
-  } else {
-    cout << "error2" << endl;
   }
 
   if (!ret) {
-    cout << "encode QosFlowToBeForwardedList IE error" << endl;
+    Logger::ngap().debug("Encode QosFlowToBeForwardedList IE error");
     return;
   }
 }
+
+//------------------------------------------------------------------------------
 void PDUSessionResourceHandoverCommandTransfer::setUPTransportLayerInformation(
     GtpTunnel_t uptlinfo) {
-  if (!dLForwardingUP_TNLInformation) {
-    dLForwardingUP_TNLInformation = new UpTransportLayerInformation();
-  }
-  TransportLayerAddress* m_transportLayerAddress = new TransportLayerAddress();
-  GtpTeid* m_gtpTeid                             = new GtpTeid();
-  m_transportLayerAddress->setTransportLayerAddress(uptlinfo.ip_address);
-  m_gtpTeid->setGtpTeid(uptlinfo.gtp_teid);
-  dLForwardingUP_TNLInformation->setUpTransportLayerInformation(
-      m_transportLayerAddress, m_gtpTeid);
-  Ngap_UPTransportLayerInformation* test =
+  UpTransportLayerInformation tmp               = {};
+  TransportLayerAddress m_transportLayerAddress = {};
+  GtpTeid m_gtpTeid                             = {};
+  m_transportLayerAddress.setTransportLayerAddress(uptlinfo.ip_address);
+  m_gtpTeid.setGtpTeid(uptlinfo.gtp_teid);
+  tmp.setUpTransportLayerInformation(m_transportLayerAddress, m_gtpTeid);
+  dLForwardingUP_TNLInformation =
+      std::make_optional<UpTransportLayerInformation>(tmp);
+
+  handovercommandtransferIE->dLForwardingUP_TNLInformation =
       (Ngap_UPTransportLayerInformation*) calloc(
           1, sizeof(Ngap_UPTransportLayerInformation));
-  handovercommandtransferIE->dLForwardingUP_TNLInformation = test;
-  int ret =
-      dLForwardingUP_TNLInformation->encode2UpTransportLayerInformation(*test);
+  int ret = dLForwardingUP_TNLInformation.value().encode(
+      *handovercommandtransferIE->dLForwardingUP_TNLInformation);
   if (!ret) {
-    cout << "encode dLForwardingUP_TNLInformation IE error";
+    Logger::ngap().debug("Encode dLForwardingUP_TNLInformation IE error");
     return;
   }
 }
-int PDUSessionResourceHandoverCommandTransfer::
-    encodePDUSessionResourceHandoverCommandTransfer(
-        uint8_t* buf, int buf_size) {
+
+//------------------------------------------------------------------------------
+int PDUSessionResourceHandoverCommandTransfer::encode(
+    uint8_t* buf, int buf_size) {
   output_wrapper::print_asn_msg(
       &asn_DEF_Ngap_HandoverCommandTransfer, handovercommandtransferIE);
   asn_enc_rval_t er = aper_encode_to_buffer(
       &asn_DEF_Ngap_HandoverCommandTransfer, NULL, handovercommandtransferIE,
       buf, buf_size);
-  cout << "er.encoded(" << er.encoded << ")" << endl;
+  Logger::ngap().debug("er.encoded( %d)", er.encoded);
   return er.encoded;
 }
 

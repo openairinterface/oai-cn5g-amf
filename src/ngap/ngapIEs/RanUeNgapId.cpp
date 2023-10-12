@@ -19,25 +19,40 @@
  *      contact@openairinterface.org
  */
 
-#ifndef _COUNTVALUEFORPDCP_SN18_H_
-#define _COUNTVALUEFORPDCP_SN18_H_
-extern "C" {
-#include "Ngap_COUNTValueForPDCP-SN18.h"
-}
+#include "RanUeNgapId.hpp"
+
 namespace ngap {
-class COUNTValueForPDCP_SN18 {
- private:
-  long pdcp;      // Mandatory (18 bits)
-  long hfn_pdcp;  // Mandatory (14 bits)
 
- public:
-  COUNTValueForPDCP_SN18(/* args */);
-  virtual ~COUNTValueForPDCP_SN18();
-  void getvalue(long& pDCP, long& hFN_PDCP);
-  void setvalue(long pDCP, long hfn_PDCP);
-  bool encodedCOUNTValueForPDCP_SN18(Ngap_COUNTValueForPDCP_SN18_t* countvalue);
-  bool decodedCOUNTValueForPDCP_SN18(Ngap_COUNTValueForPDCP_SN18_t& countValue);
-};
+//------------------------------------------------------------------------------
+RanUeNgapId::RanUeNgapId() {
+  id_ = 0;
+}
 
+//------------------------------------------------------------------------------
+RanUeNgapId::RanUeNgapId(uint32_t id) : id_(id) {}
+
+//------------------------------------------------------------------------------
+RanUeNgapId::~RanUeNgapId() {}
+
+//------------------------------------------------------------------------------
+void RanUeNgapId::set(const uint32_t& id) {
+  id_ = id;
+}
+
+//------------------------------------------------------------------------------
+uint32_t RanUeNgapId::get() const {
+  return id_;
+}
+
+//------------------------------------------------------------------------------
+bool RanUeNgapId::encode(Ngap_RAN_UE_NGAP_ID_t& ran_ue_ngap_id) {
+  ran_ue_ngap_id = id_;
+  return true;
+}
+
+//------------------------------------------------------------------------------
+bool RanUeNgapId::decode(Ngap_RAN_UE_NGAP_ID_t& ran_ue_ngap_id) {
+  id_ = ran_ue_ngap_id;
+  return true;
+}
 }  // namespace ngap
-#endif

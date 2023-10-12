@@ -19,8 +19,8 @@
  *      contact@openairinterface.org
  */
 
-#ifndef _DATAFORWARDINGNOTPOSSIBLE_H_
-#define _DATAFORWARDINGNOTPOSSIBLE_H_
+#ifndef _DATA_FORWARDING_NOT_POSSIBLE_H_
+#define _DATA_FORWARDING_NOT_POSSIBLE_H_
 
 extern "C" {
 #include "Ngap_DataForwardingNotPossible.h"
@@ -33,13 +33,14 @@ class DataForwardingNotPossible {
   DataForwardingNotPossible();
   virtual ~DataForwardingNotPossible();
 
-  // void setDataForwardingNotPossible(const bool m_gtp_teid);
-  // bool getDataForwardingNotPossible(uint32_t &m_gtp_teid);
+  void set(const long value);
+  void get(long& value) const;
 
-  bool encode2DataForwardingNotPossible(
-      Ngap_DataForwardingNotPossible_t& dataForwardingNotPossible);
-  bool decodefromDataForwardingNotPossible(
-      Ngap_DataForwardingNotPossible_t& dataForwardingNotPossible);
+  bool encode(Ngap_DataForwardingNotPossible_t& value);
+  bool decode(Ngap_DataForwardingNotPossible_t& value);
+
+ private:
+  long value_;
 };
 
 }  // namespace ngap

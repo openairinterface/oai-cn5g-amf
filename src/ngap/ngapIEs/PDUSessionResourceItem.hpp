@@ -25,12 +25,12 @@
 #include "PDUSessionID.hpp"
 
 extern "C" {
-#include "Ngap_PDUSessionResourceSetupItemCxtRes.h"
-#include "Ngap_PDUSessionResourceToReleaseItemHOCmd.h"
-#include "Ngap_PDUSessionResourceHandoverItem.h"
 #include "Ngap_PDUSessionResourceAdmittedItem.h"
 #include "Ngap_PDUSessionResourceFailedToSetupItemHOAck.h"
+#include "Ngap_PDUSessionResourceHandoverItem.h"
 #include "Ngap_PDUSessionResourceItemHORqd.h"
+#include "Ngap_PDUSessionResourceSetupItemCxtRes.h"
+#include "Ngap_PDUSessionResourceToReleaseItemHOCmd.h"
 }
 
 namespace ngap {

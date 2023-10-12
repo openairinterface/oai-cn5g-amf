@@ -22,11 +22,11 @@
 #ifndef _INITIAL_CONTEXT_SETUP_RESPONSE_H_
 #define _INITIAL_CONTEXT_SETUP_RESPONSE_H_
 
+#include <optional>
+
+#include "NgapUEMessage.hpp"
 #include "PDUSessionResourceFailedToSetupListCxtRes.hpp"
 #include "PDUSessionResourceSetupListCxtRes.hpp"
-#include "NgapUEMessage.hpp"
-
-#include <optional>
 
 extern "C" {
 #include "Ngap_InitialContextSetupResponse.h"
@@ -43,7 +43,7 @@ class InitialContextSetupResponseMsg : public NgapUEMessage {
 
   void setAmfUeNgapId(const unsigned long& id) override;
   void setRanUeNgapId(const uint32_t& id) override;
-  bool decodeFromPdu(Ngap_NGAP_PDU_t* ngapMsgPdu) override;
+  bool decode(Ngap_NGAP_PDU_t* ngapMsgPdu) override;
 
   void setPduSessionResourceSetupResponseList(
       const std::vector<PDUSessionResourceSetupResponseItem_t>& list);

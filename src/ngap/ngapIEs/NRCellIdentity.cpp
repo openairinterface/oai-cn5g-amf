@@ -21,14 +21,11 @@
 
 #include "NRCellIdentity.hpp"
 
-#include <iostream>
-using namespace std;
-
 namespace ngap {
 
 //------------------------------------------------------------------------------
 NRCellIdentity::NRCellIdentity() {
-  nrcellidentity = 0;
+  nr_cell_identity_ = 0;
 }
 
 //------------------------------------------------------------------------------
@@ -36,7 +33,7 @@ NRCellIdentity::~NRCellIdentity() {}
 
 //------------------------------------------------------------------------------
 void NRCellIdentity::setNRCellIdentity(unsigned long m_nrcellidentity) {
-  nrcellidentity = m_nrcellidentity;
+  nr_cell_identity_ = m_nrcellidentity;
 }
 
 //------------------------------------------------------------------------------
@@ -45,11 +42,11 @@ bool NRCellIdentity::encode(Ngap_NRCellIdentity_t& nRCellIdentity) {
   nRCellIdentity.size        = 5;
   nRCellIdentity.buf = (uint8_t*) calloc(1, sizeof(uint32_t) + sizeof(uint8_t));
   if (!nRCellIdentity.buf) return false;
-  nRCellIdentity.buf[4] = nrcellidentity & 0x00000000ff;
-  nRCellIdentity.buf[3] = (nrcellidentity & 0x000000ff00) >> 8;
-  nRCellIdentity.buf[2] = (nrcellidentity & 0x0000ff0000) >> 16;
-  nRCellIdentity.buf[1] = (nrcellidentity & 0x00ff000000) >> 24;
-  nRCellIdentity.buf[0] = (nrcellidentity & 0xff00000000) >> 32;
+  nRCellIdentity.buf[4] = nr_cell_identity_ & 0x00000000ff;
+  nRCellIdentity.buf[3] = (nr_cell_identity_ & 0x000000ff00) >> 8;
+  nRCellIdentity.buf[2] = (nr_cell_identity_ & 0x0000ff0000) >> 16;
+  nRCellIdentity.buf[1] = (nr_cell_identity_ & 0x00ff000000) >> 24;
+  nRCellIdentity.buf[0] = (nr_cell_identity_ & 0xff00000000) >> 32;
 
   return true;
 }
@@ -58,18 +55,18 @@ bool NRCellIdentity::encode(Ngap_NRCellIdentity_t& nRCellIdentity) {
 bool NRCellIdentity::decode(Ngap_NRCellIdentity_t& nRCellIdentity) {
   if (!nRCellIdentity.buf) return false;
 
-  nrcellidentity = nRCellIdentity.buf[0];
-  nrcellidentity = nrcellidentity << 32;
-  nrcellidentity |= nRCellIdentity.buf[1] << 24;
-  nrcellidentity |= nRCellIdentity.buf[2] << 16;
-  nrcellidentity |= nRCellIdentity.buf[3] << 8;
-  nrcellidentity |= nRCellIdentity.buf[4];
+  nr_cell_identity_ = nRCellIdentity.buf[0];
+  nr_cell_identity_ = nr_cell_identity_ << 32;
+  nr_cell_identity_ |= nRCellIdentity.buf[1] << 24;
+  nr_cell_identity_ |= nRCellIdentity.buf[2] << 16;
+  nr_cell_identity_ |= nRCellIdentity.buf[3] << 8;
+  nr_cell_identity_ |= nRCellIdentity.buf[4];
 
   return true;
 }
 
 //------------------------------------------------------------------------------
-unsigned long NRCellIdentity::getNRCellIdentity() {
-  return nrcellidentity;
+unsigned long NRCellIdentity::getNRCellIdentity() const {
+  return nr_cell_identity_;
 }
 }  // namespace ngap

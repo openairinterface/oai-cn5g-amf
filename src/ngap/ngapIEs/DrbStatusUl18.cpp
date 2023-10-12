@@ -19,45 +19,37 @@
  *      contact@openairinterface.org
  */
 
-#include "dRBStatusUL.hpp"
-#include "logger.hpp"
-
-using namespace std;
+#include "DrbStatusUl18.hpp"
 
 namespace ngap {
 
 //------------------------------------------------------------------------------
-dRBStatusUL::dRBStatusUL() {}
+DrbStatusUl18::DrbStatusUl18() {}
 
 //------------------------------------------------------------------------------
-dRBStatusUL::~dRBStatusUL() {}
+DrbStatusUl18::~DrbStatusUl18() {}
 
 //------------------------------------------------------------------------------
-void dRBStatusUL::setdRBStatusUL(const dRBStatusUL18& uL18) {
-  ul18 = uL18;
+void DrbStatusUl18::get(CountValueForPdcpSn18& count_value) const {
+  count_value = pdcp_value;
 }
 
 //------------------------------------------------------------------------------
-void dRBStatusUL::getdRBStatusUL(dRBStatusUL18& uL18) {
-  uL18 = ul18;
+void DrbStatusUl18::set(const CountValueForPdcpSn18& count_value) {
+  pdcp_value = count_value;
 }
 
 //------------------------------------------------------------------------------
-bool dRBStatusUL::encodedRBStatusUL(Ngap_DRBStatusUL_t* uL) {
-  uL->present = Ngap_DRBStatusUL_PR_dRBStatusUL18;
-  uL->choice.dRBStatusUL18 =
-      (Ngap_DRBStatusUL18_t*) calloc(1, sizeof(Ngap_DRBStatusUL18_t));
-  if (!ul18.encodeddRBStatusUL18(uL->choice.dRBStatusUL18)) {
-    Logger::ngap().error("Encode DRBStatusUL18 IE error");
+bool DrbStatusUl18::encode(Ngap_DRBStatusUL18_t* UL18) {
+  if (!pdcp_value.encode(&UL18->uL_COUNTValue)) {
     return false;
   }
   return true;
 }
 
 //------------------------------------------------------------------------------
-bool dRBStatusUL::decodedRBStatusUL(Ngap_DRBStatusUL_t* uL) {
-  if (!ul18.decodeddRBStatusUL18(uL->choice.dRBStatusUL18)) {
-    Logger::ngap().error("Decode DRBStatusUL18 IE error");
+bool DrbStatusUl18::decode(Ngap_DRBStatusUL18_t* UL18) {
+  if (!pdcp_value.decode(UL18->uL_COUNTValue)) {
     return false;
   }
   return true;

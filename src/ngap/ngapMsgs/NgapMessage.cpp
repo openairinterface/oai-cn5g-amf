@@ -458,7 +458,7 @@ void NgapMessage::setMessageType(NgapMessageType messageType) {
     } break;
   }
 
-  messageTypeIE.encode2pdu(ngapPdu);
+  messageTypeIE.encode(ngapPdu);
 }
 
 //------------------------------------------------------------------------------

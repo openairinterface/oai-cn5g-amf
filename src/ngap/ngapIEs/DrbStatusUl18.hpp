@@ -22,24 +22,27 @@
 #ifndef _DRB_STATUS_UL18_H_
 #define _DRB_STATUS_UL18_H_
 
-#include "COUNTValueForPDCP_SN18.hpp"
+#include "CountValueForPdcpSn18.hpp"
+
 extern "C" {
 #include "Ngap_DRBStatusUL18.h"
 }
+
 namespace ngap {
-class dRBStatusUL18 {
+
+class DrbStatusUl18 {
  public:
-  dRBStatusUL18();
-  virtual ~dRBStatusUL18();
+  DrbStatusUl18();
+  virtual ~DrbStatusUl18();
 
-  void getcountvalue(COUNTValueForPDCP_SN18& count_value);
-  void setcountvalue(const COUNTValueForPDCP_SN18& count_value);
+  void get(CountValueForPdcpSn18& count_value) const;
+  void set(const CountValueForPdcpSn18& count_value);
 
-  bool encodeddRBStatusUL18(Ngap_DRBStatusUL18_t* UL18);
-  bool decodeddRBStatusUL18(Ngap_DRBStatusUL18_t* UL18);
+  bool encode(Ngap_DRBStatusUL18_t* UL18);
+  bool decode(Ngap_DRBStatusUL18_t* UL18);
 
  private:
-  COUNTValueForPDCP_SN18 pdcp_value;  // Mandatory
+  CountValueForPdcpSn18 pdcp_value;  // Mandatory
   // TODO: Receive Status of UL PDCP SDUs //Optional
 };
 

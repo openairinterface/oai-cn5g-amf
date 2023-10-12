@@ -22,9 +22,9 @@
 #ifndef _TAI_H_
 #define _TAI_H_
 
+#include "NgapIEsStruct.hpp"
 #include "PlmnId.hpp"
 #include "Tac.hpp"
-#include "NgapIEsStruct.hpp"
 
 extern "C" {
 #include "Ngap_TAI.h"

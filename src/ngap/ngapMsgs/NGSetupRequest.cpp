@@ -20,6 +20,7 @@
  */
 
 #include "NGSetupRequest.hpp"
+
 #include "logger.hpp"
 
 extern "C" {
@@ -184,7 +185,7 @@ void NGSetupRequestMsg::setDefaultPagingDRX(const e_Ngap_PagingDRX& value) {
 }
 
 //------------------------------------------------------------------------------
-bool NGSetupRequestMsg::decodeFromPdu(Ngap_NGAP_PDU_t* ngapMsgPdu) {
+bool NGSetupRequestMsg::decode(Ngap_NGAP_PDU_t* ngapMsgPdu) {
   ngapPdu = ngapMsgPdu;
 
   if (ngapPdu->present == Ngap_NGAP_PDU_PR_initiatingMessage) {

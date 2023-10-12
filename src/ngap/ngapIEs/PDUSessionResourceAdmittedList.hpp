@@ -22,9 +22,9 @@
 #ifndef PDU_SESSION_RESOURCE_ADMITTED_LIST_H_
 #define PDU_SESSION_RESOURCE_ADMITTED_LIST_H_
 
-#include "PDUSessionResourceItem.hpp"
-
 #include <vector>
+
+#include "PDUSessionResourceItem.hpp"
 
 extern "C" {
 #include "Ngap_PDUSessionResourceAdmittedList.h"

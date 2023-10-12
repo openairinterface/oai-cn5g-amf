@@ -19,10 +19,13 @@
  *      contact@openairinterface.org
  */
 
-#ifndef _UPTRANSPORTLAYERINFORMATION_H_
-#define _UPTRANSPORTLAYERINFORMATION_H_
+#ifndef _UP_TRANSPORT_LAYER_INFORMATION_H_
+#define _UP_TRANSPORT_LAYER_INFORMATION_H_
+
+#include <optional>
 
 #include "GTP-TEID.hpp"
+#include "GtpTunnel.hpp"
 #include "TransportLayerAddress.hpp"
 
 extern "C" {
@@ -37,18 +40,21 @@ class UpTransportLayerInformation {
   virtual ~UpTransportLayerInformation();
 
   void setUpTransportLayerInformation(
-      TransportLayerAddress* m_transportLayerAddress, GtpTeid* m_gtpTeid);
+      const TransportLayerAddress& m_transportLayerAddress,
+      const GtpTeid& m_gtpTeid);
   bool getUpTransportLayerInformation(
-      TransportLayerAddress*& m_transportLayerAddress, GtpTeid*& m_gtpTeid);
+      TransportLayerAddress& m_transportLayerAddress, GtpTeid& m_gtpTeid) const;
 
-  bool encode2UpTransportLayerInformation(
-      Ngap_UPTransportLayerInformation_t& upTransportLayerInfo);
-  bool decodefromUpTransportLayerInformation(
-      Ngap_UPTransportLayerInformation_t& upTransportLayerInfo);
+  void set(const GtpTunnel& gtpTunnel);
+  void get(std::optional<GtpTunnel>& gtpTunnel) const;
+
+  bool encode(Ngap_UPTransportLayerInformation_t& upTransportLayerInfo);
+  bool decode(Ngap_UPTransportLayerInformation_t& upTransportLayerInfo);
 
  private:
-  TransportLayerAddress* transportLayerAddress;
-  GtpTeid* gtpTeid;
+  TransportLayerAddress transportLayerAddress;  // TODO: should be removed
+  GtpTeid gtpTeid;                              // TODO: should be removed
+  std::optional<GtpTunnel> gtpTunnel_;
 };
 
 }  // namespace ngap

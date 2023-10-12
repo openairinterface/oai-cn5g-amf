@@ -19,8 +19,8 @@
  *      contact@openairinterface.org
  */
 
-#ifndef _INDEXTORFSP_H_
-#define _INDEXTORFSP_H_
+#ifndef _INDEX_TO_RFSP_H_
+#define _INDEX_TO_RFSP_H_
 
 extern "C" {
 #include "Ngap_IndexToRFSP.h"

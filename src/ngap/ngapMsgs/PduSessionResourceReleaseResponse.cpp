@@ -65,7 +65,7 @@ void PduSessionResourceReleaseResponseMsg::setAmfUeNgapId(
   ie->value.present =
       Ngap_PDUSessionResourceReleaseResponseIEs__value_PR_AMF_UE_NGAP_ID;
 
-  int ret = amfUeNgapId.encode2AMF_UE_NGAP_ID(ie->value.choice.AMF_UE_NGAP_ID);
+  int ret = amfUeNgapId.encode(ie->value.choice.AMF_UE_NGAP_ID);
   if (!ret) {
     Logger::nas_mm().warn("Encode AMF_UE_NGAP_ID IE error");
     free_wrapper((void**) &ie);
@@ -168,9 +168,9 @@ void PduSessionResourceReleaseResponseMsg::setUserLocationInfoNR(
   UserLocationInformation tmp = {};
 
   UserLocationInformationNR information_nr = {};
-  NR_CGI nR_CGI                            = {};
+  NrCgi nR_CGI                             = {};
   TAI tai_nr                               = {};
-  nR_CGI.setNR_CGI(cig.mcc, cig.mnc, cig.nrCellID);
+  nR_CGI.set(cig.mcc, cig.mnc, cig.nrCellID);
   tai_nr.setTAI(tai);
   information_nr.set(nR_CGI, tai_nr);
   tmp.setInformation(information_nr);
@@ -211,20 +211,19 @@ bool PduSessionResourceReleaseResponseMsg::getUserLocationInfoNR(
   if (userLocationInformation.value().getChoiceOfUserLocationInformation() !=
       Ngap_UserLocationInformation_PR_userLocationInformationNR)
     return false;
-  NR_CGI nR_CGI = {};
-  TAI nR_TAI    = {};
+  NrCgi nR_CGI = {};
+  TAI nR_TAI   = {};
   information_nr.get(nR_CGI, nR_TAI);
   PlmnId cgi_plmnId             = {};
   NRCellIdentity nRCellIdentity = {};
-  nR_CGI.getNR_CGI(cig);
+  nR_CGI.get(cig);
   nR_TAI.getTAI(tai);
 
   return true;
 }
 
 //------------------------------------------------------------------------------
-bool PduSessionResourceReleaseResponseMsg::decodeFromPdu(
-    Ngap_NGAP_PDU_t* ngapMsgPdu) {
+bool PduSessionResourceReleaseResponseMsg::decode(Ngap_NGAP_PDU_t* ngapMsgPdu) {
   ngapPdu = ngapMsgPdu;
 
   if (ngapPdu->present == Ngap_NGAP_PDU_PR_successfulOutcome) {
@@ -258,7 +257,7 @@ bool PduSessionResourceReleaseResponseMsg::decodeFromPdu(
             pduSessionResourceReleaseResponseIEs->protocolIEs.list.array[i]
                     ->value.present ==
                 Ngap_PDUSessionResourceReleaseResponseIEs__value_PR_AMF_UE_NGAP_ID) {
-          if (!amfUeNgapId.decodefromAMF_UE_NGAP_ID(
+          if (!amfUeNgapId.decode(
                   pduSessionResourceReleaseResponseIEs->protocolIEs.list
                       .array[i]
                       ->value.choice.AMF_UE_NGAP_ID)) {

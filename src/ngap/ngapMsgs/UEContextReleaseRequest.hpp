@@ -41,7 +41,7 @@ class UEContextReleaseRequestMsg : public NgapUEMessage {
 
   void setAmfUeNgapId(const unsigned long& id) override;
   void setRanUeNgapId(const uint32_t& id) override;
-  bool decodeFromPdu(Ngap_NGAP_PDU_t* ngapMsgPdu) override;
+  bool decode(Ngap_NGAP_PDU_t* ngapMsgPdu) override;
 
   void setPDUSessionResourceList(const PDUSessionResourceListCxtRelReq&
                                      pdu_session_resource_list_cxt_rel_req);

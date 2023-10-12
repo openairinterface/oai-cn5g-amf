@@ -19,8 +19,8 @@
  *      contact@openairinterface.org
  */
 
-#ifndef _ASSOCIATEDQOSFLOWITEM_H_
-#define _ASSOCIATEDQOSFLOWITEM_H_
+#ifndef _ASSOCIATED_QOS_FLOW_ITEM_H_
+#define _ASSOCIATED_QOS_FLOW_ITEM_H_
 
 #include "QosFlowIdentifier.hpp"
 
@@ -36,22 +36,20 @@ class AssociatedQosFlowItem {
   virtual ~AssociatedQosFlowItem();
 
   void setAssociatedQosFlowItem(
-      e_Ngap_AssociatedQosFlowItem__qosFlowMappingIndication
+      const e_Ngap_AssociatedQosFlowItem__qosFlowMappingIndication&
           m_qosFlowMappingIndication,
-      QosFlowIdentifier* m_qosFlowIdentifier);
-  void setAssociatedQosFlowItem(QosFlowIdentifier* m_qosFlowIdentifier);
+      const QosFlowIdentifier& m_qosFlowIdentifier);
+  void setAssociatedQosFlowItem(const QosFlowIdentifier& m_qosFlowIdentifier);
   bool getAssociatedQosFlowItem(
       long& m_qosFlowMappingIndication,
-      QosFlowIdentifier*& m_qosFlowIdentifier);
+      QosFlowIdentifier& m_qosFlowIdentifier) const;
 
-  bool encode2AssociatedQosFlowItem(
-      Ngap_AssociatedQosFlowItem_t* associatedQosFlowItem);
-  bool decodefromAssociatedQosFlowItem(
-      Ngap_AssociatedQosFlowItem_t* associatedQosFlowItem);
+  bool encode(Ngap_AssociatedQosFlowItem_t* associatedQosFlowItem);
+  bool decode(Ngap_AssociatedQosFlowItem_t* associatedQosFlowItem);
 
  private:
-  QosFlowIdentifier* qosFlowIdentifier;
-  long qosFlowMappingIndication;
+  QosFlowIdentifier qosFlowIdentifier;  // Mandatory
+  long qosFlowMappingIndication;        // TODO: Optional
 };
 
 }  // namespace ngap

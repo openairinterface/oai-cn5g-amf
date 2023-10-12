@@ -19,8 +19,8 @@
  *      contact@openairinterface.org
  */
 
-#ifndef _NRCellIdentity_H_
-#define _NRCellIdentity_H_
+#ifndef _NR_CELL_IDENTITY_H_
+#define _NR_CELL_IDENTITY_H_
 
 extern "C" {
 #include "Ngap_NRCellIdentity.h"
@@ -36,11 +36,12 @@ class NRCellIdentity {
   bool encode(Ngap_NRCellIdentity_t& nRCellIdentity);
   bool decode(Ngap_NRCellIdentity_t& nRCellIdentity);
 
-  unsigned long getNRCellIdentity();
+  unsigned long getNRCellIdentity() const;
   void setNRCellIdentity(unsigned long m_nrcellidentity);
 
  private:
-  unsigned long nrcellidentity;
+  unsigned long
+      nr_cell_identity_;  // TODO: only 32 bits while NRCELL is a bitstring(36)
 };
 }  // namespace ngap
 

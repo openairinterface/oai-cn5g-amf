@@ -19,8 +19,8 @@
  *      contact@openairinterface.org
  */
 
-#ifndef _QOSFLOWIDENTIFIER_H_
-#define _QOSFLOWIDENTIFIER_H_
+#ifndef _QOS_FLOW_IDENTIFIER_H_
+#define _QOS_FLOW_IDENTIFIER_H_
 
 extern "C" {
 #include "Ngap_QosFlowIdentifier.h"
@@ -34,13 +34,13 @@ class QosFlowIdentifier {
   virtual ~QosFlowIdentifier();
 
   void setQosFlowIdentifier(long value);
-  bool getQosFlowIdentifier(long& value);
+  bool getQosFlowIdentifier(long& value) const;
 
-  bool encode2QosFlowIdentifier(Ngap_QosFlowIdentifier_t*);
-  bool decodefromQosFlowIdentifier(Ngap_QosFlowIdentifier_t*);
+  bool encode(Ngap_QosFlowIdentifier_t*);
+  bool decode(Ngap_QosFlowIdentifier_t*);
 
  private:
-  long identifier;
+  long identifier_;
 };
 
 }  // namespace ngap

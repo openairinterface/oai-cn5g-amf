@@ -22,11 +22,11 @@
 #ifndef _PDU_SESSION_RESOURCE_SETUP_ITEM_CXT_REQ_H_
 #define _PDU_SESSION_RESOURCE_SETUP_ITEM_CXT_REQ_H_
 
-#include "NAS-PDU.hpp"
+#include <optional>
+
+#include "NasPdu.hpp"
 #include "PDUSessionID.hpp"
 #include "S-NSSAI.hpp"
-
-#include <optional>
 
 extern "C" {
 #include "Ngap_PDUSessionResourceSetupItemCxtReq.h"
@@ -41,10 +41,10 @@ class PDUSessionResourceSetupItemCxtReq {
 
   void set(
       const PDUSessionID& m_pDUSessionID,
-      const std::optional<NAS_PDU>& m_nAS_PDU, const S_NSSAI& m_s_NSSAI,
+      const std::optional<NasPdu>& m_nAS_PDU, const S_NSSAI& m_s_NSSAI,
       const OCTET_STRING_t& pdu_session_resource_setup_request_transfer);
   void get(
-      PDUSessionID& m_pDUSessionID, std::optional<NAS_PDU>& m_nAS_PDU,
+      PDUSessionID& m_pDUSessionID, std::optional<NasPdu>& m_nAS_PDU,
       S_NSSAI& m_s_NSSAI,
       OCTET_STRING_t& pdu_session_resource_setup_request_transfer) const;
 
@@ -55,7 +55,7 @@ class PDUSessionResourceSetupItemCxtReq {
 
  private:
   PDUSessionID pdu_session_id_;                                 // Mandatory
-  std::optional<NAS_PDU> nas_pdu_;                              // Optional
+  std::optional<NasPdu> nas_pdu_;                               // Optional
   S_NSSAI s_nssai_;                                             // Mandatory
   OCTET_STRING_t pdu_session_resource_setup_request_transfer_;  // Mandatory
 };

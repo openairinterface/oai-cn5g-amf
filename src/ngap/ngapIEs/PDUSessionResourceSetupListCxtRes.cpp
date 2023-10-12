@@ -37,7 +37,7 @@ void PDUSessionResourceSetupListCxtRes::set(
 
 //------------------------------------------------------------------------------
 void PDUSessionResourceSetupListCxtRes::get(
-    std::vector<PDUSessionResourceSetupItemCxtRes>& list) {
+    std::vector<PDUSessionResourceSetupItemCxtRes>& list) const {
   list = item_list_;
 }
 

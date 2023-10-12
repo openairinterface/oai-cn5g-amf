@@ -19,8 +19,8 @@
  *      contact@openairinterface.org
  */
 
-#ifndef _PDUSESSIONRESOURCESETUPUNSUCCESSFULTRANSFER_H_
-#define _PDUSESSIONRESOURCESETUPUNSUCCESSFULTRANSFER_H_
+#ifndef _PDU_SESSION_RESOURCE_SETUP_UNSUCCESSFUL_TRANSFER_H_
+#define _PDU_SESSION_RESOURCE_SETUP_UNSUCCESSFUL_TRANSFER_H_
 
 #include "Cause.hpp"
 #include "NgapIEsStruct.hpp"
@@ -42,17 +42,18 @@ class PduSessionResourceSetupUnSuccessfulTransferIE {
   void setCauseNas(e_Ngap_CauseNas cause_value);
   void setCauseProtocol(e_Ngap_CauseProtocol cause_value);
   void setCauseMisc(e_Ngap_CauseMisc cause_value);
-  int Encode(uint8_t* buf, int buf_size);
-  // Decapsulation
-  bool decodefromIE(uint8_t* buf, int buf_size);
-  long getChoiceOfCause();
-  long getCause();
+  long getChoiceOfCause() const;
+  long getCause() const;
+
+  int encode(uint8_t* buf, int buf_size);
+  bool decode(uint8_t* buf, int buf_size);
 
  private:
   Ngap_PDUSessionResourceSetupUnsuccessfulTransfer_t*
       pduSessionResourceSetupUnsuccessfulTransferIEs;
 
-  Cause* causeValue;
+  Cause cause_;  // Mandatory
+  // TODO: Criticality Diagnostics //Optional
 };
 
 }  // namespace ngap

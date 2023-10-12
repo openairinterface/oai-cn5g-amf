@@ -19,8 +19,8 @@
  *      contact@openairinterface.org
  */
 
-#ifndef _PDUSESSIONRESOURCEFAILEDTOSETUPITEMCXTFAIL_H_
-#define _PDUSESSIONRESOURCEFAILEDTOSETUPITEMCXTFAIL_H_
+#ifndef _PDU_SESSION_RESOURCE_FAILED_TO_SETUP_ITEM_CXT_FAIL_H_
+#define _PDU_SESSION_RESOURCE_FAILED_TO_SETUP_ITEM_CXT_FAIL_H_
 
 #include "PDUSessionID.hpp"
 
@@ -37,15 +37,12 @@ class PDUSessionResourceFailedToSetupItemCxtFail {
 
   void set(
       const PDUSessionID& pdu_session_id,
-      const OCTET_STRING_t& pdu_session_resource_setup_unsuccessful_transfer);
+      const OCTET_STRING_t& pdu_session_resource);
   void get(
-      PDUSessionID& pdu_session_id,
-      OCTET_STRING_t& pdu_session_resource_setup_unsuccessful_transfer) const;
+      PDUSessionID& pdu_session_id, OCTET_STRING_t& pdu_session_resource) const;
 
-  bool encode(Ngap_PDUSessionResourceFailedToSetupItemCxtFail_t*
-                  pdu_session_resource_failed_to_setup_item_cxt_fail);
-  bool decode(Ngap_PDUSessionResourceFailedToSetupItemCxtFail_t*
-                  pdu_session_resource_failed_to_setup_item_cxt_fail);
+  bool encode(Ngap_PDUSessionResourceFailedToSetupItemCxtFail_t* pdu_cxt);
+  bool decode(Ngap_PDUSessionResourceFailedToSetupItemCxtFail_t* pdu_cxt);
 
  private:
   PDUSessionID pdu_session_id_;  // Mandatory

@@ -19,11 +19,13 @@
  *      contact@openairinterface.org
  */
 
-#ifndef _AMFPOINTER_H_
-#define _AMFPOINTER_H_
+#ifndef _AMF_POINTER_H_
+#define _AMF_POINTER_H_
 
 #include <string>
+
 constexpr uint8_t kAmfPointerMaxValue = 63;  // 6 bits
+
 extern "C" {
 #include "Ngap_AMFPointer.h"
 }
@@ -36,9 +38,9 @@ class AMFPointer {
   virtual ~AMFPointer();
 
   bool set(const std::string&);
-  void get(std::string&);
+  void get(std::string&) const;
   bool set(const uint8_t&);
-  void get(uint8_t&);
+  void get(uint8_t&) const;
 
   bool encode(Ngap_AMFPointer_t&);
   bool decode(Ngap_AMFPointer_t&);

@@ -22,8 +22,9 @@
 #ifndef _PDU_SESSION_RESOURCE_RELEASED_LIST_REL_RES_H_
 #define _PDU_SESSION_RESOURCE_RELEASED_LIST_REL_RES_H_
 
-#include "PDUSessionResourceReleasedItemRelRes.hpp"
 #include <vector>
+
+#include "PDUSessionResourceReleasedItemRelRes.hpp"
 
 extern "C" {
 #include "Ngap_PDUSessionResourceReleasedItemRelRes.h"

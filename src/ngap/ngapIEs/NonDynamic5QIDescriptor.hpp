@@ -19,8 +19,10 @@
  *      contact@openairinterface.org
  */
 
-#ifndef _NONDYNAMIC5QIDESCRIPTOR_H_
-#define _NONDYNAMIC5QIDESCRIPTOR_H_
+#ifndef _NON_DYNAMIC_5QI_DESCRIPTOR_H_
+#define _NON_DYNAMIC_5QI_DESCRIPTOR_H_
+
+#include <optional>
 
 #include "AveragingWindow.hpp"
 #include "FiveQI.hpp"
@@ -36,25 +38,31 @@ namespace ngap {
 class NonDynamic5QIDescriptor {
  public:
   NonDynamic5QIDescriptor();
+  NonDynamic5QIDescriptor(
+      const FiveQI& m_fiveQI,
+      const std::optional<PriorityLevelQos>& m_priorityLevelQos,
+      const std::optional<AveragingWindow>& m_averagingWindow,
+      const std::optional<MaximumDataBurstVolume>& m_maximumDataBurstVolume);
   virtual ~NonDynamic5QIDescriptor();
 
-  void setNonDynamic5QIDescriptor(
-      FiveQI* m_fiveQI, PriorityLevelQos* m_priorityLevelQos,
-      AveragingWindow* m_averagingWindow,
-      MaximumDataBurstVolume* m_maximumDataBurstVolume);
-  bool getNonDynamic5QIDescriptor(
-      FiveQI*& m_fiveQI, PriorityLevelQos*& m_priorityLevelQos,
-      AveragingWindow*& m_averagingWindow,
-      MaximumDataBurstVolume*& m_maximumDataBurstVolume);
+  void set(
+      const FiveQI& m_fiveQI,
+      const std::optional<PriorityLevelQos>& m_priorityLevelQos,
+      const std::optional<AveragingWindow>& m_averagingWindow,
+      const std::optional<MaximumDataBurstVolume>& m_maximumDataBurstVolume);
+  void get(
+      FiveQI& m_fiveQI, std::optional<PriorityLevelQos>& m_priorityLevelQos,
+      std::optional<AveragingWindow>& m_averagingWindow,
+      std::optional<MaximumDataBurstVolume>& m_maximumDataBurstVolume) const;
 
-  bool encode2NonDynamic5QIDescriptor(Ngap_NonDynamic5QIDescriptor_t*);
-  bool decodefromNonDynamic5QIDescriptor(Ngap_NonDynamic5QIDescriptor_t*);
+  bool encode(Ngap_NonDynamic5QIDescriptor_t*);
+  bool decode(Ngap_NonDynamic5QIDescriptor_t*);
 
  private:
-  FiveQI* fiveQI;
-  PriorityLevelQos* priorityLevelQos;             /* OPTIONAL */
-  AveragingWindow* averagingWindow;               /* OPTIONAL */
-  MaximumDataBurstVolume* maximumDataBurstVolume; /* OPTIONAL */
+  FiveQI fiveQI;                                                 // Mandatory
+  std::optional<PriorityLevelQos> priorityLevelQos;              // Optional
+  std::optional<AveragingWindow> averagingWindow;                // Optional
+  std::optional<MaximumDataBurstVolume> maximumDataBurstVolume;  // Optional
 };
 }  // namespace ngap
 

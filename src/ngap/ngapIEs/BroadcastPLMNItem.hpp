@@ -19,12 +19,13 @@
  *      contact@openairinterface.org
  */
 
-#ifndef _BroadcastPLMNItem_H
-#define _BroadcastPLMNItem_H
+#ifndef _BROADCAST_PLMN_ITEM_H
+#define _BROADCAST_PLMN_ITEM_H
+
+#include <vector>
 
 #include "PlmnId.hpp"
 #include "S-NSSAI.hpp"
-#include <vector>
 
 extern "C" {
 #include "Ngap_BroadcastPLMNItem.h"
@@ -39,10 +40,11 @@ class BroadcastPLMNItem {
 
   void setPlmnSliceSupportList(
       const PlmnId& m_plmn, const std::vector<S_NSSAI>& sliceList);
-  void getPlmnSliceSupportList(PlmnId& m_plmn, std::vector<S_NSSAI>& sliceList);
+  void getPlmnSliceSupportList(
+      PlmnId& m_plmn, std::vector<S_NSSAI>& sliceList) const;
 
-  bool encode2BroadcastPLMNItem(Ngap_BroadcastPLMNItem_t*);
-  bool decodefromBroadcastPLMNItem(Ngap_BroadcastPLMNItem_t* pdu);
+  bool encode(Ngap_BroadcastPLMNItem_t*);
+  bool decode(Ngap_BroadcastPLMNItem_t* pdu);
 
  private:
   PlmnId plmn;                              // Mandatory

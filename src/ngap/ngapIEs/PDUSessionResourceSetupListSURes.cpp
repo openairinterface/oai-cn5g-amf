@@ -37,7 +37,7 @@ void PDUSessionResourceSetupListSURes::set(
 
 //------------------------------------------------------------------------------
 void PDUSessionResourceSetupListSURes::get(
-    std::vector<PDUSessionResourceSetupItemSURes>& list) {
+    std::vector<PDUSessionResourceSetupItemSURes>& list) const {
   list = item_list_;
 }
 

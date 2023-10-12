@@ -21,9 +21,6 @@
 
 #include "IndexToRFSP.hpp"
 
-#include <iostream>
-using namespace std;
-
 namespace ngap {
 
 //------------------------------------------------------------------------------

@@ -19,8 +19,8 @@
  *      contact@openairinterface.org
  */
 
-#ifndef _INTEGRITYPROTECTIONINDICATION_H_
-#define _INTEGRITYPROTECTIONINDICATION_H_
+#ifndef _INTEGRITY_PROTECTION_INDICATION_H_
+#define _INTEGRITY_PROTECTION_INDICATION_H_
 
 extern "C" {
 #include "Ngap_IntegrityProtectionIndication.h"
@@ -33,17 +33,14 @@ class IntegrityProtectionIndication {
   IntegrityProtectionIndication();
   virtual ~IntegrityProtectionIndication();
 
-  void setIntegrityProtectionIndication(
-      e_Ngap_IntegrityProtectionIndication m_indication);
-  bool getIntegrityProtectionIndication(long& m_indication);
+  void set(const e_Ngap_IntegrityProtectionIndication& indication);
+  bool get(long& indication) const;
 
-  bool encode2IntegrityProtectionIndication(
-      Ngap_IntegrityProtectionIndication_t&);
-  bool decodefromIntegrityProtectionIndication(
-      Ngap_IntegrityProtectionIndication_t);
+  bool encode(Ngap_IntegrityProtectionIndication_t&);
+  bool decode(const Ngap_IntegrityProtectionIndication_t&);
 
  private:
-  long indication;
+  long indication_;
 };
 
 }  // namespace ngap

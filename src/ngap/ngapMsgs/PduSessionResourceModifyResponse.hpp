@@ -22,8 +22,8 @@
 #ifndef PDU_SESSION_RESOURCE_MODIFY_RESPONSE_H_
 #define PDU_SESSION_RESOURCE_MODIFY_RESPONSE_H_
 
-#include "PDUSessionResourceModifyListModRes.hpp"
 #include "NgapUEMessage.hpp"
+#include "PDUSessionResourceModifyListModRes.hpp"
 
 extern "C" {
 #include "Ngap_PDUSessionResourceModifyResponse.h"
@@ -40,7 +40,7 @@ class PduSessionResourceModifyResponseMsg : public NgapUEMessage {
 
   void setAmfUeNgapId(const unsigned long& id) override;
   void setRanUeNgapId(const uint32_t& id) override;
-  bool decodeFromPdu(Ngap_NGAP_PDU_t* ngapMsgPdu) override;
+  bool decode(Ngap_NGAP_PDU_t* ngapMsgPdu) override;
 
   void setPduSessionResourceModifyResponseList(
       const std::vector<PDUSessionResourceModifyResponseItem_t>& list);

@@ -22,12 +22,12 @@
 #ifndef _DOWNLINK_UE_ASSOCIATED_NRPPA_TRANSPORT_H_
 #define _DOWNLINK_UE_ASSOCIATED_NRPPA_TRANSPORT_H_
 
-#include "AMF-UE-NGAP-ID.hpp"
+#include "AmfUeNgapId.hpp"
 #include "MessageType.hpp"
-#include "NAS-PDU.hpp"
-#include "RAN-UE-NGAP-ID.hpp"
-#include "RANPagingPriority.hpp"
+#include "NasPdu.hpp"
 #include "NgapUEMessage.hpp"
+#include "RANPagingPriority.hpp"
+#include "RanUeNgapId.hpp"
 
 extern "C" {
 #include "Ngap_DownlinkUEAssociatedNRPPaTransport.h"
@@ -44,7 +44,7 @@ class DownlinkUEAssociatedNRPPaTransportMsg : public NgapUEMessage {
 
   void setAmfUeNgapId(const unsigned long& id) override;
   void setRanUeNgapId(const uint32_t& id) override;
-  bool decodeFromPdu(Ngap_NGAP_PDU_t* ngapMsgPdu) override;
+  bool decode(Ngap_NGAP_PDU_t* ngapMsgPdu) override;
 
   void setRoutingID(const bstring& pdu);
   void getRoutingID(bstring& pdu);

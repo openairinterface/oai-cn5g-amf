@@ -19,41 +19,65 @@
  *      contact@openairinterface.org
  */
 
-#include "EUTRA-CGI.hpp"
+#include "DrbsSubjectToStatusTransferItem.hpp"
+
+#include "logger.hpp"
 
 namespace ngap {
 
 //------------------------------------------------------------------------------
-EUTRA_CGI::EUTRA_CGI() {}
+DrbSubjectToStatusTransferItem::DrbSubjectToStatusTransferItem() {}
 
 //------------------------------------------------------------------------------
-EUTRA_CGI::~EUTRA_CGI() {}
+DrbSubjectToStatusTransferItem::~DrbSubjectToStatusTransferItem() {}
 
 //------------------------------------------------------------------------------
-void EUTRA_CGI::set(
-    const PlmnId& plmn_id, const EUTRACellIdentity& eUTRA_cell_identity) {
-  plmn_id_             = plmn_id;
-  eUTRA_cell_identity_ = eUTRA_cell_identity;
+void DrbSubjectToStatusTransferItem::setdRBSubjectItem(
+    const Ngap_DRB_ID_t& dRB_ID, const DrbStatusUl& dRB_UL,
+    const DrbStatusDl& dRB_DL) {
+  drbID = dRB_ID;
+  drbUL = dRB_UL;
+  drbDL = dRB_DL;
 }
 
 //------------------------------------------------------------------------------
-bool EUTRA_CGI::encode(Ngap_EUTRA_CGI_t& eutra_cgi) {
-  if (!plmn_id_.encode(eutra_cgi.pLMNIdentity)) return false;
-  if (!eUTRA_cell_identity_.encode(eutra_cgi.eUTRACellIdentity)) return false;
+void DrbSubjectToStatusTransferItem::getdRBSubjectItem(
+    Ngap_DRB_ID_t& dRB_ID, DrbStatusUl& dRB_UL, DrbStatusDl& dRB_DL) const {
+  dRB_ID = drbID;
+  dRB_UL = drbUL;
+  dRB_DL = drbDL;
+}
 
+//------------------------------------------------------------------------------
+bool DrbSubjectToStatusTransferItem::decodefromdRBSubjectItem(
+    Ngap_DRBsSubjectToStatusTransferItem_t* dRB_item) {
+  if (dRB_item->dRB_ID) {
+    drbID = dRB_item->dRB_ID;
+  }
+  if (!drbUL.decodedRBStatusUL(&dRB_item->dRBStatusUL)) {
+    return false;
+  }
+  if (!drbDL.decode(&dRB_item->dRBStatusDL)) {
+    return false;
+  }
   return true;
 }
 
 //------------------------------------------------------------------------------
-bool EUTRA_CGI::decode(Ngap_EUTRA_CGI_t& eutra_cgi) {
-  if (!plmn_id_.decode(eutra_cgi.pLMNIdentity)) return false;
-  if (!eUTRA_cell_identity_.decode(eutra_cgi.eUTRACellIdentity)) return false;
-  return true;
-}
+bool DrbSubjectToStatusTransferItem::encodedRBSubjectItem(
+    Ngap_DRBsSubjectToStatusTransferItem_t* dRB_item) {
+  dRB_item->dRB_ID = drbID;
 
-//------------------------------------------------------------------------------
-void EUTRA_CGI::get(PlmnId& plmn_id, EUTRACellIdentity& eUTRA_cell_identity) {
-  plmn_id             = plmn_id_;
-  eUTRA_cell_identity = eUTRA_cell_identity_;
+  if (!drbUL.encodedRBStatusUL(&dRB_item->dRBStatusUL)) {
+    return false;
+  }
+
+  if (!drbDL.encode(&dRB_item->dRBStatusDL)) {
+    return false;
+  }
+
+  Logger::ngap().debug(
+      "Encode from DrbSubjectToStatusTransferItem successfully");
+  return true;
 }
 }  // namespace ngap

@@ -22,9 +22,9 @@
 #ifndef PDU_SESSION_RESOURCE_FAILED_TO_SETUP_LIST_HO_ACK_H_
 #define PDU_SESSION_RESOURCE_FAILED_TO_SETUP_LIST_HO_ACK_H_
 
-#include "PDUSessionResourceItem.hpp"
-
 #include <vector>
+
+#include "PDUSessionResourceItem.hpp"
 
 extern "C" {
 #include "Ngap_PDUSessionResourceFailedToSetupListHOAck.h"
@@ -38,7 +38,7 @@ class PDUSessionResourceFailedToSetupListHOAck {
   virtual ~PDUSessionResourceFailedToSetupListHOAck();
 
   void set(const std::vector<PDUSessionResourceItem>& list);
-  void get(std::vector<PDUSessionResourceItem>& list);
+  void get(std::vector<PDUSessionResourceItem>& list) const;
 
   bool encode(Ngap_PDUSessionResourceFailedToSetupListHOAck_t* list);
   bool decode(Ngap_PDUSessionResourceFailedToSetupListHOAck_t* List);

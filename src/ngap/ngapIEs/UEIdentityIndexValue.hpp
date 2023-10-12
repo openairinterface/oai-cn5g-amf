@@ -19,8 +19,8 @@
  *      contact@openairinterface.org
  */
 
-#ifndef _UEIDENTITYINDEXVALUE_H_
-#define _UEIDENTITYINDEXVALUE_H_
+#ifndef _UE_IDENTITY_INDEX_VALUE_H_
+#define _UE_IDENTITY_INDEX_VALUE_H_
 
 extern "C" {
 #include "Ngap_UEIdentityIndexValue.h"

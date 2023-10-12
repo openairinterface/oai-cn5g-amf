@@ -21,30 +21,30 @@
 
 #include "ReflectiveQosAttribute.hpp"
 
-#include <iostream>
-using namespace std;
-
 namespace ngap {
 
 //------------------------------------------------------------------------------
 ReflectiveQosAttribute::ReflectiveQosAttribute() {
-  attribute = 0;
+  attribute_ = 0;
 }
 
+//------------------------------------------------------------------------------
+ReflectiveQosAttribute::ReflectiveQosAttribute(
+    e_Ngap_ReflectiveQosAttribute value) {
+  attribute_ = value;
+}
 //------------------------------------------------------------------------------
 ReflectiveQosAttribute::~ReflectiveQosAttribute() {}
 
 //------------------------------------------------------------------------------
-void ReflectiveQosAttribute::setReflectiveQosAttribute(
-    e_Ngap_ReflectiveQosAttribute value) {
-  attribute = value;
+void ReflectiveQosAttribute::set(e_Ngap_ReflectiveQosAttribute value) {
+  attribute_ = value;
 }
 
 //------------------------------------------------------------------------------
-bool ReflectiveQosAttribute::getReflectiveQosAttribute(
-    e_Ngap_ReflectiveQosAttribute& value) {
-  if (attribute == 0)
-    value = (e_Ngap_ReflectiveQosAttribute) attribute;
+bool ReflectiveQosAttribute::get(e_Ngap_ReflectiveQosAttribute& value) {
+  if (attribute_ == 0)
+    value = (e_Ngap_ReflectiveQosAttribute) attribute_;
   else
     return false;
 
@@ -52,17 +52,15 @@ bool ReflectiveQosAttribute::getReflectiveQosAttribute(
 }
 
 //------------------------------------------------------------------------------
-bool ReflectiveQosAttribute::encode2ReflectiveQosAttribute(
-    Ngap_ReflectiveQosAttribute_t* reflectiveQosAttribute) {
-  *reflectiveQosAttribute = attribute;
+bool ReflectiveQosAttribute::encode(Ngap_ReflectiveQosAttribute_t* value) {
+  *value = attribute_;
 
   return true;
 }
 
 //------------------------------------------------------------------------------
-bool ReflectiveQosAttribute::decodefromReflectiveQosAttribute(
-    Ngap_ReflectiveQosAttribute_t* reflectiveQosAttribute) {
-  attribute = *reflectiveQosAttribute;
+bool ReflectiveQosAttribute::decode(Ngap_ReflectiveQosAttribute_t* value) {
+  attribute_ = *value;
 
   return true;
 }

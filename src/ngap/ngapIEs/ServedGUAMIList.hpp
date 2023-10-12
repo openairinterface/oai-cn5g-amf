@@ -22,8 +22,9 @@
 #ifndef _SERVED_GUAMI_LIST_H_
 #define _SERVED_GUAMI_LIST_H_
 
-#include "ServedGUAMIItem.hpp"
 #include <vector>
+
+#include "ServedGUAMIItem.hpp"
 
 extern "C" {
 #include "Ngap_ServedGUAMIList.h"

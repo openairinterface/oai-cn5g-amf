@@ -19,33 +19,40 @@
  *      contact@openairinterface.org
  */
 
-#ifndef _EUTRA_CGI_H_
-#define _EUTRA_CGI_H_
+#ifndef _DRB_STATUS_DL_H_
+#define _DRB_STATUS_DL_H_
 
-#include "EUTRACellIdentity.hpp"
-#include "PlmnId.hpp"
+#include <optional>
+
+#include "DrbStatusDl12.hpp"
+#include "DrbStatusDl18.hpp"
 
 extern "C" {
-#include "Ngap_EUTRA-CGI.h"
+#include "Ngap_DRBStatusDL.h"
+#include "Ngap_DRBStatusDL12.h"
+#include "Ngap_DRBStatusDL18.h"
 }
 
 namespace ngap {
 
-class EUTRA_CGI {
+class DrbStatusDl {
  public:
-  EUTRA_CGI();
-  virtual ~EUTRA_CGI();
+  DrbStatusDl();
+  virtual ~DrbStatusDl();
 
-  void set(const PlmnId&, const EUTRACellIdentity&);
-  void get(PlmnId&, EUTRACellIdentity&);
+  void setDRBStatusDL18(const DrbStatusDl18& dL18);
+  void getDRBStatusDL18(std::optional<DrbStatusDl18>& dL18) const;
 
-  bool encode(Ngap_EUTRA_CGI_t&);
-  bool decode(Ngap_EUTRA_CGI_t&);
+  void setDRBStatusDL12(const DrbStatusDl12& dL12);
+  void getDRBStatusDL12(std::optional<DrbStatusDl12>& dL12) const;
+
+  bool encode(Ngap_DRBStatusDL_t* dL);
+  bool decode(Ngap_DRBStatusDL_t* dL);
 
  private:
-  PlmnId plmn_id_;                         // Mandatory
-  EUTRACellIdentity eUTRA_cell_identity_;  // Mandatory
+  std::optional<DrbStatusDl18> dl18_;
+  std::optional<DrbStatusDl12> dl12_;
 };
-}  // namespace ngap
 
+}  // namespace ngap
 #endif

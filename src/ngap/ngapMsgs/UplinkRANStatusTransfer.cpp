@@ -57,7 +57,7 @@ void UplinkRANStatusTransfer::setAmfUeNgapId(const unsigned long& id) {
   ie->criticality   = Ngap_Criticality_reject;
   ie->value.present = Ngap_UplinkRANStatusTransferIEs__value_PR_AMF_UE_NGAP_ID;
 
-  int ret = amfUeNgapId.encode2AMF_UE_NGAP_ID(ie->value.choice.AMF_UE_NGAP_ID);
+  int ret = amfUeNgapId.encode(ie->value.choice.AMF_UE_NGAP_ID);
   if (!ret) {
     Logger::ngap().error("Encode AMF_UE_NGAP_ID IE error!");
     free_wrapper((void**) &ie);
@@ -103,9 +103,8 @@ void UplinkRANStatusTransfer::setRANStatusTransfer_TransparentContainer(
   ie->value.present =
       Ngap_UplinkRANStatusTransferIEs__value_PR_RANStatusTransfer_TransparentContainer;
 
-  int ret = ranStatusTransfer_TransparentContainer
-                .encoderanstatustransfer_transparentcontainer(
-                    &ie->value.choice.RANStatusTransfer_TransparentContainer);
+  int ret = ranStatusTransfer_TransparentContainer.encode(
+      &ie->value.choice.RANStatusTransfer_TransparentContainer);
   if (!ret) {
     Logger::ngap().error(
         "Encode RANStatusTransfer_TransparentContainer IE error!");
@@ -124,7 +123,7 @@ void UplinkRANStatusTransfer::getRANStatusTransfer_TransparentContainer(
 }
 
 //------------------------------------------------------------------------------
-bool UplinkRANStatusTransfer::decodeFromPdu(Ngap_NGAP_PDU_t* ngapMsgPdu) {
+bool UplinkRANStatusTransfer::decode(Ngap_NGAP_PDU_t* ngapMsgPdu) {
   ngapPdu = ngapMsgPdu;
   if (ngapPdu->present == Ngap_NGAP_PDU_PR_initiatingMessage) {
     if (ngapPdu->choice.initiatingMessage &&
@@ -152,7 +151,7 @@ bool UplinkRANStatusTransfer::decodeFromPdu(Ngap_NGAP_PDU_t* ngapMsgPdu) {
             uplinkRANStatusTransferIEs->protocolIEs.list.array[i]
                     ->value.present ==
                 Ngap_UplinkRANStatusTransferIEs__value_PR_AMF_UE_NGAP_ID) {
-          if (!amfUeNgapId.decodefromAMF_UE_NGAP_ID(
+          if (!amfUeNgapId.decode(
                   uplinkRANStatusTransferIEs->protocolIEs.list.array[i]
                       ->value.choice.AMF_UE_NGAP_ID)) {
             Logger::ngap().error("Decoded NGAP AMF_UE_NGAP_ID IE error");
@@ -186,11 +185,9 @@ bool UplinkRANStatusTransfer::decodeFromPdu(Ngap_NGAP_PDU_t* ngapMsgPdu) {
             uplinkRANStatusTransferIEs->protocolIEs.list.array[i]
                     ->value.present ==
                 Ngap_UplinkRANStatusTransferIEs__value_PR_RANStatusTransfer_TransparentContainer) {
-          if (!ranStatusTransfer_TransparentContainer
-                   .decoderanstatustransfer_transparentcontainer(
-                       uplinkRANStatusTransferIEs->protocolIEs.list.array[i]
-                           ->value.choice
-                           .RANStatusTransfer_TransparentContainer)) {
+          if (!ranStatusTransfer_TransparentContainer.decode(
+                  uplinkRANStatusTransferIEs->protocolIEs.list.array[i]
+                      ->value.choice.RANStatusTransfer_TransparentContainer)) {
             Logger::ngap().error(
                 "Decoded NGAP RANStatusTransfer_TransparentContainer IE error");
             return false;

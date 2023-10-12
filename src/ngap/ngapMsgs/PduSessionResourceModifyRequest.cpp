@@ -62,7 +62,7 @@ void PduSessionResourceModifyRequestMsg::setAmfUeNgapId(
   ie->value.present =
       Ngap_PDUSessionResourceModifyRequestIEs__value_PR_AMF_UE_NGAP_ID;
 
-  int ret = amfUeNgapId.encode2AMF_UE_NGAP_ID(ie->value.choice.AMF_UE_NGAP_ID);
+  int ret = amfUeNgapId.encode(ie->value.choice.AMF_UE_NGAP_ID);
   if (!ret) {
     Logger::ngap().error("Encode NGAP AMF_UE_NGAP_ID IE error");
     free_wrapper((void**) &ie);
@@ -141,7 +141,7 @@ void PduSessionResourceModifyRequestMsg::setPduSessionResourceModifyRequestList(
   for (int i = 0; i < list.size(); i++) {
     PDUSessionID pDUSessionID = {};
     pDUSessionID.set(list[i].pduSessionId);
-    NAS_PDU nAS_PDU = {};
+    NasPdu nAS_PDU = {};
     if (conv::check_bstring(list[i].nas_pdu)) {
       nAS_PDU.set(list[i].nas_pdu);
     }
@@ -199,7 +199,7 @@ bool PduSessionResourceModifyRequestMsg::getPduSessionResourceModifyRequestList(
     PDUSessionResourceModifyRequestItem_t request = {};
 
     PDUSessionID pDUSessionID      = {};
-    std::optional<NAS_PDU> nAS_PDU = std::nullopt;
+    std::optional<NasPdu> nAS_PDU  = std::nullopt;
     std::optional<S_NSSAI> s_NSSAI = std::nullopt;
 
     m_pduSessionResourceModifyItemModReq[i].get(
@@ -222,8 +222,7 @@ bool PduSessionResourceModifyRequestMsg::getPduSessionResourceModifyRequestList(
 }
 
 //------------------------------------------------------------------------------
-bool PduSessionResourceModifyRequestMsg::decodeFromPdu(
-    Ngap_NGAP_PDU_t* ngapMsgPdu) {
+bool PduSessionResourceModifyRequestMsg::decode(Ngap_NGAP_PDU_t* ngapMsgPdu) {
   ngapPdu = ngapMsgPdu;
 
   if (ngapPdu->present == Ngap_NGAP_PDU_PR_initiatingMessage) {
@@ -256,7 +255,7 @@ bool PduSessionResourceModifyRequestMsg::decodeFromPdu(
             pduSessionResourceModifyRequestIEs->protocolIEs.list.array[i]
                     ->value.present ==
                 Ngap_PDUSessionResourceModifyRequestIEs__value_PR_AMF_UE_NGAP_ID) {
-          if (!amfUeNgapId.decodefromAMF_UE_NGAP_ID(
+          if (!amfUeNgapId.decode(
                   pduSessionResourceModifyRequestIEs->protocolIEs.list.array[i]
                       ->value.choice.AMF_UE_NGAP_ID)) {
             Logger::ngap().error("Decoded NGAP AMF_UE_NGAP_ID IE error");

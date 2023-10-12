@@ -575,7 +575,7 @@ void amf_n2::handle_itti_message(std::shared_ptr<itti_ng_reset>& itti_msg) {
   } else if (
       reset_type.getResetType() == Ngap_ResetType_PR_partOfNG_Interface) {
     // TODO:
-    reset_type.getUE_associatedLogicalNG_connectionList(
+    reset_type.getUEAssociatedLogicalNGConnectionList(
         ueAssociatedLogicalNGConnectionList);
     for (auto ue : ueAssociatedLogicalNGConnectionList) {
       unsigned long amf_ue_ngap_id = {0};
@@ -2292,25 +2292,26 @@ void amf_n2::handle_itti_message(
   RANStatusTransferTransparentContainer ran_status_transfer = {};
   itti_msg->uplinkRanTransfer->getRANStatusTransfer_TransparentContainer(
       ran_status_transfer);
-  dRBSubjectList amf_m_list = {};
-  ran_status_transfer.getdRBSubject_list(amf_m_list);
-  std::vector<dRBSubjectItem> drb_subject_item_list;
+  DrbSubjectToStatusTransferList amf_m_list = {};
+  ran_status_transfer.getDRBSubjectList(amf_m_list);
+  std::vector<DrbSubjectToStatusTransferItem> drb_subject_item_list;
   amf_m_list.getdRBSubjectItem(drb_subject_item_list);
   // TODO: check size
 
-  dRBStatusDL status_dl = {};
-  dRBStatusUL status_ul = {};
+  DrbStatusDl status_dl = {};
+  DrbStatusUl status_ul = {};
   Ngap_DRB_ID_t drb_id  = {};
   drb_subject_item_list[0].getdRBSubjectItem(drb_id, status_ul, status_dl);
-
-  dRBStatusUL18 status_ul_18 = {};
-  DRBStatusDL18 status_dl_18 = {};
+  // TODO:dRBStatusUL18 or dRBStatusUL12
+  std::optional<DrbStatusUl18> status_ul_18 = {};
+  // TODO: DRBStatusDL18 or DRBStatusDL18
+  std::optional<DrbStatusDl18> status_dl_18 = std::nullopt;
   status_dl.getDRBStatusDL18(status_dl_18);
   status_ul.getdRBStatusUL(status_ul_18);
-  COUNTValueForPDCP_SN18 count_value_ul = {};
-  COUNTValueForPDCP_SN18 count_value_dl = {};
-  status_ul_18.getcountvalue(count_value_ul);
-  status_dl_18.getcountvalue(count_value_dl);
+  CountValueForPdcpSn18 count_value_ul = {};
+  CountValueForPdcpSn18 count_value_dl = {};
+  if (status_ul_18.has_value()) status_ul_18.value().get(count_value_ul);
+  if (status_dl_18.has_value()) status_dl_18.value().get(count_value_dl);
   long amf_ul_pdcp     = {0};
   long amf_hfn_ul_pdcp = {0};
   count_value_ul.getvalue(amf_ul_pdcp, amf_hfn_ul_pdcp);

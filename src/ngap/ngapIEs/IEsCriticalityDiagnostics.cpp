@@ -21,9 +21,6 @@
 
 #include "IEsCriticalityDiagnostics.hpp"
 
-#include <iostream>
-using namespace std;
-
 namespace ngap {
 
 //------------------------------------------------------------------------------
@@ -50,7 +47,7 @@ void IEsCriticalityDiagnostics::setTypeOfError(
 }
 
 //------------------------------------------------------------------------------
-void IEsCriticalityDiagnostics::encode2pdu(
+void IEsCriticalityDiagnostics::encode(
     Ngap_CriticalityDiagnostics_IE_Item_t* IE_Item) {
   IE_Item->iECriticality = criticality;
   IE_Item->iE_ID         = protocolIE_ID;
@@ -58,7 +55,7 @@ void IEsCriticalityDiagnostics::encode2pdu(
 }
 
 //------------------------------------------------------------------------------
-void IEsCriticalityDiagnostics::decodeFromPdu(
+void IEsCriticalityDiagnostics::decode(
     Ngap_CriticalityDiagnostics_IE_Item_t* pdu) {
   criticality   = pdu->iECriticality;
   protocolIE_ID = pdu->iE_ID;
@@ -66,17 +63,17 @@ void IEsCriticalityDiagnostics::decodeFromPdu(
 }
 
 //------------------------------------------------------------------------------
-Ngap_Criticality_t IEsCriticalityDiagnostics::getIeCriticality() {
+Ngap_Criticality_t IEsCriticalityDiagnostics::getIeCriticality() const {
   return criticality;
 }
 
 //------------------------------------------------------------------------------
-Ngap_ProtocolIE_ID_t IEsCriticalityDiagnostics::getIeId() {
+Ngap_ProtocolIE_ID_t IEsCriticalityDiagnostics::getIeId() const {
   return protocolIE_ID;
 }
 
 //------------------------------------------------------------------------------
-Ngap_TypeOfError_t IEsCriticalityDiagnostics::getTypeOfError() {
+Ngap_TypeOfError_t IEsCriticalityDiagnostics::getTypeOfError() const {
   return typeOfError;
 }
 }  // namespace ngap

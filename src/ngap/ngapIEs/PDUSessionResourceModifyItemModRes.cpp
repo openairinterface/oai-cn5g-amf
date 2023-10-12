@@ -21,9 +21,6 @@
 
 #include "PDUSessionResourceModifyItemModRes.hpp"
 
-#include <iostream>
-using namespace std;
-
 namespace ngap {
 
 //------------------------------------------------------------------------------
@@ -74,7 +71,7 @@ bool PDUSessionResourceModifyItemModRes::decode(
 //------------------------------------------------------------------------------
 void PDUSessionResourceModifyItemModRes::get(
     PDUSessionID& pdu_session_id,
-    OCTET_STRING_t& pdu_session_resource_modify_response_transfer) {
+    OCTET_STRING_t& pdu_session_resource_modify_response_transfer) const {
   pdu_session_id = pdu_session_id_;
   pdu_session_resource_modify_response_transfer =
       pdu_session_resource_modify_response_transfer_;

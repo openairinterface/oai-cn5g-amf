@@ -25,23 +25,28 @@ namespace ngap {
 
 //------------------------------------------------------------------------------
 AdditionalQosFlowInformation::AdditionalQosFlowInformation() {
-  additional = 0;
+  qos_flow_info_ = 0;
 }
 
+//------------------------------------------------------------------------------
+AdditionalQosFlowInformation::AdditionalQosFlowInformation(
+    e_Ngap_AdditionalQosFlowInformation value) {
+  qos_flow_info_ = value;
+}
 //------------------------------------------------------------------------------
 AdditionalQosFlowInformation::~AdditionalQosFlowInformation() {}
 
 //------------------------------------------------------------------------------
-void AdditionalQosFlowInformation::setAdditionalQosFlowInformation(
+void AdditionalQosFlowInformation::set(
     e_Ngap_AdditionalQosFlowInformation value) {
-  additional = value;
+  qos_flow_info_ = value;
 }
 
 //------------------------------------------------------------------------------
-bool AdditionalQosFlowInformation::getAdditionalQosFlowInformation(
+bool AdditionalQosFlowInformation::get(
     e_Ngap_AdditionalQosFlowInformation& value) {
-  if (additional == Ngap_AdditionalQosFlowInformation_more_likely)
-    value = (e_Ngap_AdditionalQosFlowInformation) additional;
+  if (qos_flow_info_ == Ngap_AdditionalQosFlowInformation_more_likely)
+    value = (e_Ngap_AdditionalQosFlowInformation) qos_flow_info_;
   else
     return false;
 
@@ -49,17 +54,17 @@ bool AdditionalQosFlowInformation::getAdditionalQosFlowInformation(
 }
 
 //------------------------------------------------------------------------------
-bool AdditionalQosFlowInformation::encode2AdditionalQosFlowInformation(
-    Ngap_AdditionalQosFlowInformation_t* additionalQosFlowInfo) {
-  *additionalQosFlowInfo = additional;
+bool AdditionalQosFlowInformation::encode(
+    Ngap_AdditionalQosFlowInformation_t* value) {
+  *value = qos_flow_info_;
 
   return true;
 }
 
 //------------------------------------------------------------------------------
-bool AdditionalQosFlowInformation::decodefromAdditionalQosFlowInformation(
-    Ngap_AdditionalQosFlowInformation_t* additionalQosFlowInfo) {
-  additional = *additionalQosFlowInfo;
+bool AdditionalQosFlowInformation::decode(
+    Ngap_AdditionalQosFlowInformation_t* value) {
+  qos_flow_info_ = *value;
 
   return true;
 }

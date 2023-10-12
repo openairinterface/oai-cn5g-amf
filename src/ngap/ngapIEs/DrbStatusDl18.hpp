@@ -19,36 +19,31 @@
  *      contact@openairinterface.org
  */
 
-#include "COUNTValueForPDCP_SN18.hpp"
+#ifndef _DRB_STATUS_DL18_H_
+#define _DRB_STATUS_DL18_H_
 
-#include <iostream>
-#include <vector>
+#include "CountValueForPdcpSn18.hpp"
+#include "logger.hpp"
 
-using namespace std;
+extern "C" {
+#include "Ngap_DRBStatusDL18.h"
+}
+
 namespace ngap {
-COUNTValueForPDCP_SN18::COUNTValueForPDCP_SN18() {
-  pdcp     = 0;
-  hfn_pdcp = 0;
-}
-COUNTValueForPDCP_SN18::~COUNTValueForPDCP_SN18() {}
-void COUNTValueForPDCP_SN18::setvalue(long pDCP, long hfn_PDCP) {
-  pdcp     = pDCP;
-  hfn_pdcp = hfn_PDCP;
-}
-void COUNTValueForPDCP_SN18::getvalue(long& pDCP, long& hFN_PDCP) {
-  pDCP     = pdcp;
-  hFN_PDCP = hfn_pdcp;
-}
-bool COUNTValueForPDCP_SN18::encodedCOUNTValueForPDCP_SN18(
-    Ngap_COUNTValueForPDCP_SN18_t* countvalue) {
-  countvalue->pDCP_SN18     = pdcp;
-  countvalue->hFN_PDCP_SN18 = hfn_pdcp;
-  return true;
-}
-bool COUNTValueForPDCP_SN18::decodedCOUNTValueForPDCP_SN18(
-    Ngap_COUNTValueForPDCP_SN18_t& countValue) {
-  pdcp     = countValue.pDCP_SN18;
-  hfn_pdcp = countValue.hFN_PDCP_SN18;
-  return true;
-}
+
+class DrbStatusDl18 {
+ public:
+  DrbStatusDl18();
+  virtual ~DrbStatusDl18();
+
+  void get(CountValueForPdcpSn18& value) const;
+  void set(const CountValueForPdcpSn18& value);
+
+  bool encode(Ngap_DRBStatusDL18_t* DL18);
+  bool decode(Ngap_DRBStatusDL18_t* DL18);
+
+ private:
+  CountValueForPdcpSn18 dl_count_value_;  // Mandatory
+};
 }  // namespace ngap
+#endif

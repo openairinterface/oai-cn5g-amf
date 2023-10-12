@@ -19,33 +19,33 @@
  *      contact@openairinterface.org
  */
 
-#ifndef _DRB_STATUS_DL_H_
-#define _DRB_STATUS_DL_H_
+#ifndef _AMF_UE_NGAP_ID_H_
+#define _AMF_UE_NGAP_ID_H_
+#include <cstdint>
 
-#include "dRBStatusDL18.hpp"
+constexpr uint64_t AMF_UE_NGAP_ID_MAX_VALUE = 1099511627775;  // 2^40 -1
 
 extern "C" {
-#include "Ngap_DRBStatusDL.h"
-#include "Ngap_DRBStatusDL18.h"
+#include "Ngap_AMF-UE-NGAP-ID.h"
 }
 
 namespace ngap {
 
-class dRBStatusDL {
+class AmfUeNgapId {
  public:
-  dRBStatusDL();
-  virtual ~dRBStatusDL();
+  AmfUeNgapId();
+  virtual ~AmfUeNgapId();
 
-  void getDRBStatusDL18(DRBStatusDL18& dL18);
-  void setDRBStatusDL18(const DRBStatusDL18& dL18);
+  bool set(const uint64_t&);
+  uint64_t get() const;
 
-  bool encodedRBStatusDL(Ngap_DRBStatusDL_t* dL);
-  bool decodedRBStatusDL(Ngap_DRBStatusDL_t* dL);
+  bool encode(Ngap_AMF_UE_NGAP_ID_t&);
+  bool decode(Ngap_AMF_UE_NGAP_ID_t&);
 
  private:
-  DRBStatusDL18 dl18;
-  // TODO:  DRBStatusDL12 dl12;
+  uint64_t id_;
 };
 
 }  // namespace ngap
+
 #endif

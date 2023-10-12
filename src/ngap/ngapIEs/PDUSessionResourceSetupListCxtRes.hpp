@@ -22,8 +22,9 @@
 #ifndef _PDU_SESSION_RESOURCE_SETUP_LIST_CXT_RES_H_
 #define _PDU_SESSION_RESOURCE_SETUP_LIST_CXT_RES_H_
 
-#include "PDUSessionResourceSetupItemCxtRes.hpp"
 #include <vector>
+
+#include "PDUSessionResourceSetupItemCxtRes.hpp"
 
 extern "C" {
 #include "Ngap_PDUSessionResourceSetupListCxtRes.h"
@@ -37,7 +38,7 @@ class PDUSessionResourceSetupListCxtRes {
   virtual ~PDUSessionResourceSetupListCxtRes();
 
   void set(const std::vector<PDUSessionResourceSetupItemCxtRes>& list);
-  void get(std::vector<PDUSessionResourceSetupItemCxtRes>& list);
+  void get(std::vector<PDUSessionResourceSetupItemCxtRes>& list) const;
 
   bool encode(Ngap_PDUSessionResourceSetupListCxtRes_t*
                   pduSessionResourceSetupListCxtRes);

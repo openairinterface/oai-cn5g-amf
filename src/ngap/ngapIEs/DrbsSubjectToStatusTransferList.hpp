@@ -22,21 +22,24 @@
 #ifndef _DRBS_SUBJECT_TO_STATUS_TRANSFER_LIST_H_
 #define _DRBS_SUBJECT_TO_STATUS_TRANSFER_LIST_H_
 
-#include "dRBsSubjectToStatusTransferItem.hpp"
 #include <vector>
+
+#include "DrbsSubjectToStatusTransferItem.hpp"
 
 extern "C" {
 #include "Ngap_DRBsSubjectToStatusTransferList.h"
 }
 
 namespace ngap {
-class dRBSubjectList {
+class DrbSubjectToStatusTransferList {
  public:
-  dRBSubjectList();
-  virtual ~dRBSubjectList();
+  DrbSubjectToStatusTransferList();
+  virtual ~DrbSubjectToStatusTransferList();
 
-  void setdRBSubjectItem(const std::vector<dRBSubjectItem>& list);
-  void getdRBSubjectItem(std::vector<dRBSubjectItem>& list);
+  void setdRBSubjectItem(
+      const std::vector<DrbSubjectToStatusTransferItem>& list);
+  void getdRBSubjectItem(
+      std::vector<DrbSubjectToStatusTransferItem>& list) const;
 
   bool decodefromdRBSubjectlist(
       Ngap_DRBsSubjectToStatusTransferList_t& dRBsSubjectToStatusTransferList);
@@ -44,7 +47,7 @@ class dRBSubjectList {
       Ngap_DRBsSubjectToStatusTransferList_t& dRBsSubjectToStatusTransferList);
 
  private:
-  std::vector<dRBSubjectItem> itemList;
+  std::vector<DrbSubjectToStatusTransferItem> itemList;
 };
 }  // namespace ngap
 #endif

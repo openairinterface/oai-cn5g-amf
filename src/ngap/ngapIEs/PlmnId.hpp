@@ -19,8 +19,8 @@
  *      contact@openairinterface.org
  */
 
-#ifndef _PlmnId_H
-#define _PlmnId_H
+#ifndef _PLMN_ID_H
+#define _PLMN_ID_H
 
 extern "C" {
 #include "Ngap_PLMNIdentity.h"
@@ -35,12 +35,14 @@ class PlmnId {
   PlmnId();
   virtual ~PlmnId();
 
-  bool encode(Ngap_PLMNIdentity_t&);
-  bool decode(Ngap_PLMNIdentity_t&);
   void set(const std::string& mcc, const std::string& mnc);
   void get(std::string& mcc, std::string& mnc) const;
+
   void getMcc(std::string& mcc) const;
   void getMnc(std::string& mnc) const;
+
+  bool encode(Ngap_PLMNIdentity_t&);
+  bool decode(Ngap_PLMNIdentity_t&);
 
  private:
   uint8_t mcc_digit2;

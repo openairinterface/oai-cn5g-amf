@@ -19,8 +19,8 @@
  *      contact@openairinterface.org
  */
 
-#ifndef _QOSFLOWSETUPREQUESTITEM_H_
-#define _QOSFLOWSETUPREQUESTITEM_H_
+#ifndef _QOS_FLOW_SETUP_REQUEST_ITEM_H_
+#define _QOS_FLOW_SETUP_REQUEST_ITEM_H_
 
 #include "QosFlowIdentifier.hpp"
 #include "QosFlowLevelQosParameters.hpp"
@@ -36,19 +36,20 @@ class QosFlowSetupRequestItem {
   QosFlowSetupRequestItem();
   virtual ~QosFlowSetupRequestItem();
 
-  void setQosFlowSetupRequestItem(
-      QosFlowIdentifier* m_qosFlowIdentifier,
-      QosFlowLevelQosParameters* m_qosFlowLevelQosParameters);
-  bool getQosFlowSetupRequestItem(
-      QosFlowIdentifier*& m_qosFlowIdentifier,
-      QosFlowLevelQosParameters*& m_qosFlowLevelQosParameters);
+  void set(
+      const QosFlowIdentifier& m_qosFlowIdentifier,
+      const QosFlowLevelQosParameters& m_qosFlowLevelQosParameters);
+  bool get(
+      QosFlowIdentifier& m_qosFlowIdentifier,
+      QosFlowLevelQosParameters& m_qosFlowLevelQosParameters) const;
 
-  bool encode2QosFlowSetupRequestItem(Ngap_QosFlowSetupRequestItem_t*);
-  bool decodefromQosFlowSetupRequestItem(Ngap_QosFlowSetupRequestItem_t*);
+  bool encode(Ngap_QosFlowSetupRequestItem_t*);
+  bool decode(Ngap_QosFlowSetupRequestItem_t*);
 
  private:
-  QosFlowIdentifier* qosFlowIdentifier;
-  QosFlowLevelQosParameters* qosFlowLevelQosParameters;
+  QosFlowIdentifier qosFlowIdentifier;                  // Mandatory
+  QosFlowLevelQosParameters qosFlowLevelQosParameters;  // Mandatory
+  // TODO: E-RAB ID //Optional
 };
 
 }  // namespace ngap

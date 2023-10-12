@@ -22,9 +22,9 @@
 #ifndef _PDU_SESSION_RESOURCE_SETUP_RESPONSE_H_
 #define _PDU_SESSION_RESOURCE_SETUP_RESPONSE_H_
 
+#include "NgapUEMessage.hpp"
 #include "PDUSessionResourceFailedToSetupListSURes.hpp"
 #include "PDUSessionResourceSetupListSURes.hpp"
-#include "NgapUEMessage.hpp"
 
 extern "C" {
 #include "Ngap_PDUSessionResourceSetupResponse.h"
@@ -41,7 +41,7 @@ class PduSessionResourceSetupResponseMsg : public NgapUEMessage {
 
   void setAmfUeNgapId(const unsigned long& id) override;
   void setRanUeNgapId(const uint32_t& id) override;
-  bool decodeFromPdu(Ngap_NGAP_PDU_t* ngapMsgPdu) override;
+  bool decode(Ngap_NGAP_PDU_t* ngapMsgPdu) override;
 
   void setPduSessionResourceSetupResponseList(
       const std::vector<PDUSessionResourceSetupResponseItem_t>& list);

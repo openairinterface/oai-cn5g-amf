@@ -22,15 +22,15 @@
 #ifndef _HANDOVER_COMMAND_H_
 #define _HANDOVER_COMMAND_H_
 
+#include <optional>
+
 #include "NgapUEMessage.hpp"
 #include "PDUSessionResourceHandoverList.hpp"
 #include "PDUSessionResourceToReleaseListHOCmd.hpp"
 
-#include <optional>
-
 extern "C" {
-#include "Ngap_NGAP-PDU.h"
 #include "Ngap_HandoverCommand.h"
+#include "Ngap_NGAP-PDU.h"
 }
 
 namespace ngap {
@@ -43,7 +43,7 @@ class HandoverCommandMsg : public NgapUEMessage {
   void initialize();
   void setAmfUeNgapId(const unsigned long& id) override;
   void setRanUeNgapId(const uint32_t& id) override;
-  bool decodeFromPdu(Ngap_NGAP_PDU_t* ngapMsgPdu) override;
+  bool decode(Ngap_NGAP_PDU_t* ngapMsgPdu) override;
 
   void setHandoverType(const long& type);
   // void getHandoverType(Ngap_HandoverType_t &type);

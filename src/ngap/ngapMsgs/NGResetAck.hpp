@@ -22,12 +22,12 @@
 #ifndef _NG_RESET_ACK_H_
 #define _NG_RESET_ACK_H_
 
+#include <optional>
+
 #include "NgapIEsStruct.hpp"
+#include "NgapMessage.hpp"
 #include "UEAssociatedLogicalNGConnectionItem.hpp"
 #include "UEAssociatedLogicalNGConnectionList.hpp"
-#include "NgapMessage.hpp"
-
-#include <optional>
 
 namespace ngap {
 
@@ -45,7 +45,7 @@ class NGResetAckMsg : public NgapMessage {
 
   void addUE_associatedLogicalNG_connectionList();
 
-  bool decodeFromPdu(Ngap_NGAP_PDU_t* ngapMsgPdu) override;
+  bool decode(Ngap_NGAP_PDU_t* ngapMsgPdu) override;
   // TODO: CriticalityDiagnostics
 
  private:

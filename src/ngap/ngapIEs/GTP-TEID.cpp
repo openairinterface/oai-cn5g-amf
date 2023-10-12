@@ -21,9 +21,6 @@
 
 #include "GTP-TEID.hpp"
 
-#include <iostream>
-using namespace std;
-
 namespace ngap {
 
 //------------------------------------------------------------------------------
@@ -40,14 +37,14 @@ void GtpTeid::setGtpTeid(const uint32_t m_gtp_teid) {
 }
 
 //------------------------------------------------------------------------------
-bool GtpTeid::getGtpTeid(uint32_t& m_gtp_teid) {
+bool GtpTeid::getGtpTeid(uint32_t& m_gtp_teid) const {
   m_gtp_teid = gtp_teid;
 
   return true;
 }
 
 //------------------------------------------------------------------------------
-bool GtpTeid::encode2GtpTeid(Ngap_GTP_TEID_t& gtpTeid) {
+bool GtpTeid::encode(Ngap_GTP_TEID_t& gtpTeid) {
   gtpTeid.size = sizeof(uint32_t);
   gtpTeid.buf  = (uint8_t*) calloc(1, sizeof(uint32_t));
   if (!gtpTeid.buf) return false;
@@ -60,7 +57,7 @@ bool GtpTeid::encode2GtpTeid(Ngap_GTP_TEID_t& gtpTeid) {
 }
 
 //------------------------------------------------------------------------------
-bool GtpTeid::decodefromGtpTeid(Ngap_GTP_TEID_t& gtpTeid) {
+bool GtpTeid::decode(Ngap_GTP_TEID_t& gtpTeid) {
   if (!gtpTeid.buf) return false;
 
   gtp_teid = 0;

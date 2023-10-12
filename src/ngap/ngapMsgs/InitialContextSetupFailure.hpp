@@ -22,11 +22,11 @@
 #ifndef _INITIAL_CONTEXT_SETUP_FAILURE_H_
 #define _INITIAL_CONTEXT_SETUP_FAILURE_H_
 
-#include "Cause.hpp"
-#include "PDUSessionResourceFailedToSetupListCxtFail.hpp"
-#include "NgapUEMessage.hpp"
-
 #include <optional>
+
+#include "Cause.hpp"
+#include "NgapUEMessage.hpp"
+#include "PDUSessionResourceFailedToSetupListCxtFail.hpp"
 
 extern "C" {
 #include "Ngap_InitialContextSetupFailure.h"
@@ -42,7 +42,7 @@ class InitialContextSetupFailureMsg : public NgapUEMessage {
   void initialize();
   void setAmfUeNgapId(const unsigned long& id) override;
   void setRanUeNgapId(const uint32_t& id) override;
-  bool decodeFromPdu(Ngap_NGAP_PDU_t* ngapMsgPdu) override;
+  bool decode(Ngap_NGAP_PDU_t* ngapMsgPdu) override;
 
   void setPduSessionResourceFailedToSetupList(
       const std::vector<PDUSessionResourceFailedToSetupItem_t>& list);

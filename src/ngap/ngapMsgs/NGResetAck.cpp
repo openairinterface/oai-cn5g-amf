@@ -20,9 +20,10 @@
  */
 
 #include "NGResetAck.hpp"
-#include "logger.hpp"
 
 #include <vector>
+
+#include "logger.hpp"
 
 extern "C" {
 #include "dynamic_memory_check.h"
@@ -92,7 +93,7 @@ void NGResetAckMsg::addUE_associatedLogicalNG_connectionList() {
 }
 
 //------------------------------------------------------------------------------
-bool NGResetAckMsg::decodeFromPdu(Ngap_NGAP_PDU_t* ngapMsgPdu) {
+bool NGResetAckMsg::decode(Ngap_NGAP_PDU_t* ngapMsgPdu) {
   ngapPdu = ngapMsgPdu;
 
   if (ngapPdu->present == Ngap_NGAP_PDU_PR_successfulOutcome) {

@@ -22,8 +22,9 @@
 #ifndef _PDU_SESSION_RESOURCE_FAILED_TO_SETUP_LIST_CXT_FAIL_H_
 #define _PDU_SESSION_RESOURCE_FAILED_TO_SETUP_LIST_CXT_FAIL_H_
 
-#include "PDUSessionResourceFailedToSetupItemCxtFail.hpp"
 #include <vector>
+
+#include "PDUSessionResourceFailedToSetupItemCxtFail.hpp"
 
 extern "C" {
 #include "Ngap_PDUSessionResourceFailedToSetupListCxtFail.h"
@@ -37,7 +38,7 @@ class PDUSessionResourceFailedToSetupListCxtFail {
   virtual ~PDUSessionResourceFailedToSetupListCxtFail();
 
   void set(const std::vector<PDUSessionResourceFailedToSetupItemCxtFail>& list);
-  void get(std::vector<PDUSessionResourceFailedToSetupItemCxtFail>& list);
+  void get(std::vector<PDUSessionResourceFailedToSetupItemCxtFail>& list) const;
 
   bool encode(Ngap_PDUSessionResourceFailedToSetupListCxtFail_t*
                   pduSessionResourceFailedToSetupListCxtFail);

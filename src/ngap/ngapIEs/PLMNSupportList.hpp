@@ -19,11 +19,12 @@
  *      contact@openairinterface.org
  */
 
-#ifndef _PLMNSUPPORTLIST_H_
-#define _PLMNSUPPORTLIST_H_
+#ifndef _PLMN_SUPPORT_LIST_H_
+#define _PLMN_SUPPORT_LIST_H_
+
+#include <vector>
 
 #include "PLMNSupportItem.hpp"
-#include <vector>
 
 extern "C" {
 #include "Ngap_PLMNSupportList.h"

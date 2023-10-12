@@ -22,15 +22,15 @@
 #ifndef _NG_SETUP_REQUEST_H_
 #define _NG_SETUP_REQUEST_H_
 
+#include <optional>
+
 #include "DefaultPagingDRX.hpp"
 #include "GlobalRanNodeId.hpp"
 #include "MessageType.hpp"
 #include "NgapIEsStruct.hpp"
+#include "NgapMessage.hpp"
 #include "RanNodeName.hpp"
 #include "SupportedTAList.hpp"
-#include "NgapMessage.hpp"
-
-#include <optional>
 
 namespace ngap {
 
@@ -56,7 +56,7 @@ class NGSetupRequestMsg : public NgapMessage {
   void setDefaultPagingDRX(const e_Ngap_PagingDRX& value);
   e_Ngap_PagingDRX getDefaultPagingDRX();
 
-  bool decodeFromPdu(Ngap_NGAP_PDU_t* ngapMsgPdu) override;
+  bool decode(Ngap_NGAP_PDU_t* ngapMsgPdu) override;
 
  private:
   Ngap_NGSetupRequest_t* ngSetupRequestIEs;

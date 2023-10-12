@@ -30,7 +30,7 @@ UserLocationInformationNR::UserLocationInformationNR() {}
 UserLocationInformationNR::~UserLocationInformationNR() {}
 
 //------------------------------------------------------------------------------
-void UserLocationInformationNR::set(const NR_CGI& m_nR_CGI, const TAI& m_tAI) {
+void UserLocationInformationNR::set(const NrCgi& m_nR_CGI, const TAI& m_tAI) {
   nR_CGI = m_nR_CGI;
   tAI    = m_tAI;
 }
@@ -38,7 +38,7 @@ void UserLocationInformationNR::set(const NR_CGI& m_nR_CGI, const TAI& m_tAI) {
 //------------------------------------------------------------------------------
 bool UserLocationInformationNR::encode(
     Ngap_UserLocationInformationNR_t* user_location_info_nr) {
-  if (!nR_CGI.encode2NR_CGI(&user_location_info_nr->nR_CGI)) {
+  if (!nR_CGI.encode(&user_location_info_nr->nR_CGI)) {
     return false;
   }
   if (!tAI.encode(&user_location_info_nr->tAI)) {
@@ -50,7 +50,7 @@ bool UserLocationInformationNR::encode(
 //------------------------------------------------------------------------------
 bool UserLocationInformationNR::decode(
     Ngap_UserLocationInformationNR_t* user_location_info_nr) {
-  if (!nR_CGI.decodefromNR_CGI(&user_location_info_nr->nR_CGI)) {
+  if (!nR_CGI.decode(&user_location_info_nr->nR_CGI)) {
     return false;
   }
 
@@ -61,7 +61,7 @@ bool UserLocationInformationNR::decode(
 }
 
 //------------------------------------------------------------------------------
-void UserLocationInformationNR::get(NR_CGI& m_nR_CGI, TAI& m_tAI) {
+void UserLocationInformationNR::get(NrCgi& m_nR_CGI, TAI& m_tAI) {
   m_nR_CGI = nR_CGI;
   m_tAI    = tAI;
 }

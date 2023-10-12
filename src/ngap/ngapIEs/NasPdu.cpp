@@ -19,65 +19,79 @@
  *      contact@openairinterface.org
  */
 
-#include "NR-CGI.hpp"
+#include "NasPdu.hpp"
 
-#include <iostream>
-using namespace std;
+#include "conversions.hpp"
 
 namespace ngap {
 
 //------------------------------------------------------------------------------
-NR_CGI::NR_CGI() {}
+NasPdu::NasPdu() {}
 
 //------------------------------------------------------------------------------
-NR_CGI::~NR_CGI() {}
+NasPdu::~NasPdu() {}
 
 //------------------------------------------------------------------------------
-void NR_CGI::setNR_CGI(
-    const PlmnId& m_plmnId, const NRCellIdentity& m_nRCellIdentity) {
-  plmnId         = m_plmnId;
-  nRCellIdentity = m_nRCellIdentity;
+bool NasPdu::encode(Ngap_NAS_PDU_t& nas_pdu) {
+  return conv::bstring_2_octet_string(pdu_bstring, nas_pdu);
 }
 
 //------------------------------------------------------------------------------
-void NR_CGI::setNR_CGI(
-    const std::string& mcc, const std::string& mnc,
-    const unsigned long& nrcellidentity) {
-  plmnId.set(mcc, mnc);
-  nRCellIdentity.setNRCellIdentity(nrcellidentity);
+bool NasPdu::decode(Ngap_NAS_PDU_t& nas_pdu) {
+  if (!nas_pdu.buf) return false;
+  return conv::octet_string_2_bstring(nas_pdu, pdu_bstring);
+}
+/*
+
+//------------------------------------------------------------------------------
+bool NasPdu::get(uint8_t*& buffer, size_t& size) const {
+  if (!pdu_.buf) return false;
+  if (pdu_.size < 0) return false;
+  memcpy(buffer, pdu_.buf, pdu_.size);
+  size = pdu_.size;
+  return true;
+}
+*/
+//------------------------------------------------------------------------------
+void NasPdu::set(uint8_t* buffer, size_t size) {
+  if (!buffer) return;
+  pdu_bstring = blk2bstr(buffer, size);
+  return;
 }
 
 //------------------------------------------------------------------------------
-void NR_CGI::setNR_CGI(const struct NrCgi_s& cig) {
-  plmnId.set(cig.mcc, cig.mnc);
-  nRCellIdentity.setNRCellIdentity(cig.nrCellID);
-}
-
-//------------------------------------------------------------------------------
-void NR_CGI::getNR_CGI(struct NrCgi_s& cig) {
-  plmnId.getMcc(cig.mcc);
-  plmnId.getMnc(cig.mnc);
-  cig.nrCellID = nRCellIdentity.getNRCellIdentity();
-}
-
-//------------------------------------------------------------------------------
-bool NR_CGI::encode2NR_CGI(Ngap_NR_CGI_t* nr_cgi) {
-  if (!plmnId.encode(nr_cgi->pLMNIdentity)) return false;
-  if (!nRCellIdentity.encode(nr_cgi->nRCellIdentity)) return false;
-
+bool NasPdu::get(OCTET_STRING_t& pdu) const {
+  conv::bstring_2_octet_string(pdu_bstring, pdu);
   return true;
 }
 
 //------------------------------------------------------------------------------
-bool NR_CGI::decodefromNR_CGI(Ngap_NR_CGI_t* nr_cgi) {
-  if (!plmnId.decode(nr_cgi->pLMNIdentity)) return false;
-  if (!nRCellIdentity.decode(nr_cgi->nRCellIdentity)) return false;
+bool NasPdu::set(const OCTET_STRING_t& pdu) {
+  conv::octet_string_2_bstring(pdu, pdu_bstring);
   return true;
 }
 
 //------------------------------------------------------------------------------
-void NR_CGI::getNR_CGI(PlmnId& m_plmnId, NRCellIdentity& m_nRCellIdentity) {
-  m_plmnId         = plmnId;
-  m_nRCellIdentity = nRCellIdentity;
+bool NasPdu::get(NasPdu& nas_pdu) const {
+  return nas_pdu.set(pdu_bstring);
+}
+
+//------------------------------------------------------------------------------
+bool NasPdu::set(const NasPdu& nas_pdu) {
+  bstring pdu = {};
+  if (!nas_pdu.get(pdu)) return false;
+  return set(pdu);
+}
+
+//------------------------------------------------------------------------------
+bool NasPdu::get(bstring& pdu) const {
+  pdu = bstrcpy(pdu_bstring);
+  return true;
+}
+
+//------------------------------------------------------------------------------
+bool NasPdu::set(const bstring& pdu) {
+  pdu_bstring = bstrcpy(pdu);
+  return true;
 }
 }  // namespace ngap

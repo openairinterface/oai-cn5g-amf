@@ -36,7 +36,7 @@ class PDUSessionResourceItemCxtRelCpl {
   virtual ~PDUSessionResourceItemCxtRelCpl();
 
   void set(const PDUSessionID& pdu_session_id);
-  void get(PDUSessionID& pdu_session_id);
+  void get(PDUSessionID& pdu_session_id) const;
 
   bool encode(Ngap_PDUSessionResourceItemCxtRelCpl_t*
                   pdu_session_resource_item_cxt_rel_cpl);

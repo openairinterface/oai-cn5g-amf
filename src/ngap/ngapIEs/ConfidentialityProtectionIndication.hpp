@@ -19,8 +19,8 @@
  *      contact@openairinterface.org
  */
 
-#ifndef _CONFIDENTIALITYPROTECTIONINDICATION_H_
-#define _CONFIDENTIALITYPROTECTIONINDICATION_H_
+#ifndef _CONFIDENTIALITY_PROTECTION_INDICATION_H_
+#define _CONFIDENTIALITY_PROTECTION_INDICATION_H_
 
 extern "C" {
 #include "Ngap_ConfidentialityProtectionIndication.h"
@@ -33,17 +33,14 @@ class ConfidentialityProtectionIndication {
   ConfidentialityProtectionIndication();
   virtual ~ConfidentialityProtectionIndication();
 
-  void setConfidentialityProtectionIndication(
-      e_Ngap_ConfidentialityProtectionIndication m_indication);
-  bool getConfidentialityProtectionIndication(long& m_indication);
+  void set(e_Ngap_ConfidentialityProtectionIndication indication);
+  bool get(long& indication) const;
 
-  bool encode2ConfidentialityProtectionIndication(
-      Ngap_ConfidentialityProtectionIndication_t&);
-  bool decodefromConfidentialityProtectionIndication(
-      Ngap_ConfidentialityProtectionIndication_t);
+  bool encode(Ngap_ConfidentialityProtectionIndication_t&);
+  bool decode(Ngap_ConfidentialityProtectionIndication_t);
 
  private:
-  long indication;
+  long indication_;
 };
 
 }  // namespace ngap

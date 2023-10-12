@@ -22,8 +22,8 @@
 #ifndef _S_NSSAI_H_
 #define _S_NSSAI_H_
 
-#include <string>
 #include <optional>
+#include <string>
 
 extern "C" {
 #include "Ngap_S-NSSAI.h"
@@ -37,17 +37,23 @@ class S_NSSAI {
  public:
   S_NSSAI();
   virtual ~S_NSSAI();
-  bool EncodeSD(Ngap_SD_t*);
-  bool DecodeSD(Ngap_SD_t*);
+
   void setSst(const std::string& sst);
-  void setSst(const uint8_t& sst);
   void getSst(std::string& sst) const;
   std::string getSst() const;
+
+  void setSst(const uint8_t& sst);
+
   void setSd(const std::string& sd_str);
-  void setSd(const uint32_t& sd);
   bool getSd(std::string& sd) const;
   std::string getSd() const;
-  bool getSd(uint32_t& s_nssaiSd) const;
+
+  void setSd(const uint32_t& sd);
+  bool getSd(uint32_t& sd) const;
+
+  bool encodeSD(Ngap_SD_t*);
+  bool decodeSD(Ngap_SD_t*);
+
   bool encode(Ngap_S_NSSAI_t*);
   bool decode(Ngap_S_NSSAI_t*);
 

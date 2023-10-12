@@ -19,14 +19,18 @@
  *      contact@openairinterface.org
  */
 
-#ifndef _PDUSESSIONRESOURCERELEASELISTCMD_H_
-#define _PDUSESSIONRESOURCERELEASELISTCMD_H_
+#ifndef _PDU_SESSION_RESOURCE_RELEASE_LIST_CMD_H_
+#define _PDU_SESSION_RESOURCE_RELEASE_LIST_CMD_H_
+
+#include <vector>
 
 #include "PDUSessionResourceReleaseItemCmd.hpp"
 
 extern "C" {
 #include "Ngap_PDUSessionResourceToReleaseListRelCmd.h"
 }
+
+constexpr uint16_t kMaxNoOfPduSessions = 256;
 
 namespace ngap {
 
@@ -36,22 +40,17 @@ class PDUSessionResourceReleaseListCmd {
   virtual ~PDUSessionResourceReleaseListCmd();
 
   void setPDUSessionResourceReleaseListCmd(
-      PDUSessionResourceReleaseItemCmd* m_pduSessionResourceReleaseItemCmd,
-      int num);
+      const std::vector<PDUSessionResourceReleaseItemCmd>& list_item);
   void getPDUSessionResourceReleaseListCmd(
-      PDUSessionResourceReleaseItemCmd*& m_pduSessionResourceReleaseItemCmd,
-      int& num);
+      std::vector<PDUSessionResourceReleaseItemCmd>& list_item) const;
 
-  bool encode2PDUSessionResourceReleaseListCmd(
-      Ngap_PDUSessionResourceToReleaseListRelCmd_t*
-          pduSessionResourceReleaseListCmd);
-  bool decodefromPDUSessionResourceReleaseListCmd(
-      Ngap_PDUSessionResourceToReleaseListRelCmd_t*
-          pduSessionResourceReleaseListCmd);
+  bool encode(Ngap_PDUSessionResourceToReleaseListRelCmd_t*
+                  pduSessionResourceReleaseListCmd);
+  bool decode(Ngap_PDUSessionResourceToReleaseListRelCmd_t*
+                  pduSessionResourceReleaseListCmd);
 
  private:
-  PDUSessionResourceReleaseItemCmd* pduSessionResourceReleaseItemCmd;
-  int numofpduSessionResourceReleaseItemCmd;
+  std::vector<PDUSessionResourceReleaseItemCmd> list_;
 };
 
 }  // namespace ngap

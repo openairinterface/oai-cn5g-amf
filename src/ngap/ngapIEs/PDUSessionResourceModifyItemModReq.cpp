@@ -34,14 +34,14 @@ PDUSessionResourceModifyItemModReq::~PDUSessionResourceModifyItemModReq() {}
 
 //------------------------------------------------------------------------------
 void PDUSessionResourceModifyItemModReq::set(
-    const PDUSessionID& pdu_session_id, const std::optional<NAS_PDU>& nas_pdu,
+    const PDUSessionID& pdu_session_id, const std::optional<NasPdu>& nas_pdu,
     const OCTET_STRING_t& pdu_session_resource_modify_request_transfer,
     const std::optional<S_NSSAI>& s_nssai) {
   pdu_session_id_ = pdu_session_id;
   if (nas_pdu.has_value()) {
-    NAS_PDU tmp = {};
+    NasPdu tmp = {};
     tmp.set(nas_pdu.value());
-    nas_pdu_ = std::optional<NAS_PDU>(tmp);
+    nas_pdu_ = std::optional<NasPdu>(tmp);
   }
 
   pdu_session_resource_modify_request_transfer_ =
@@ -80,9 +80,9 @@ bool PDUSessionResourceModifyItemModReq::decode(
     return false;
 
   if (pduSessionResourceModifyItemModReq.nAS_PDU) {
-    NAS_PDU tmp = {};
+    NasPdu tmp = {};
     if (!tmp.decode(*pduSessionResourceModifyItemModReq.nAS_PDU)) return false;
-    nas_pdu_ = std::optional<NAS_PDU>(tmp);
+    nas_pdu_ = std::optional<NasPdu>(tmp);
   }
 
   pdu_session_resource_modify_request_transfer_ =
@@ -94,15 +94,15 @@ bool PDUSessionResourceModifyItemModReq::decode(
 
 //------------------------------------------------------------------------------
 void PDUSessionResourceModifyItemModReq::get(
-    PDUSessionID& pdu_session_id, std::optional<NAS_PDU>& nas_pdu,
+    PDUSessionID& pdu_session_id, std::optional<NasPdu>& nas_pdu,
     OCTET_STRING_t& pdu_session_resource_modify_request_transfer,
-    std::optional<S_NSSAI>& s_nssai) {
+    std::optional<S_NSSAI>& s_nssai) const {
   pdu_session_id = pdu_session_id_;
   nas_pdu        = *nas_pdu_;
   if (nas_pdu_.has_value()) {
-    NAS_PDU tmp = {};
+    NasPdu tmp = {};
     tmp.set(nas_pdu.value());
-    nas_pdu = std::optional<NAS_PDU>(tmp);
+    nas_pdu = std::optional<NasPdu>(tmp);
   }
 
   pdu_session_resource_modify_request_transfer =

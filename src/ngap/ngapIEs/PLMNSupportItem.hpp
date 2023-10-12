@@ -22,9 +22,10 @@
 #ifndef _PLMN_SUPPORT_ITEM_H_
 #define _PLMN_SUPPORT_ITEM_H_
 
+#include <vector>
+
 #include "PlmnId.hpp"
 #include "S-NSSAI.hpp"
-#include <vector>
 
 extern "C" {
 #include "Ngap_PLMNSupportItem.h"

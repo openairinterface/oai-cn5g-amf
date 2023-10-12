@@ -37,7 +37,7 @@ PDUSessionResourceSetupItemSUReq::~PDUSessionResourceSetupItemSUReq() {}
 
 //------------------------------------------------------------------------------
 void PDUSessionResourceSetupItemSUReq::set(
-    const PDUSessionID& pdu_session_id, std::optional<NAS_PDU>& nas_pdu,
+    const PDUSessionID& pdu_session_id, std::optional<NasPdu>& nas_pdu,
     const S_NSSAI& s_nssai,
     const OCTET_STRING_t& pdu_session_resource_setup_request_transfer) {
   pdu_session_id_ = pdu_session_id;
@@ -49,9 +49,9 @@ void PDUSessionResourceSetupItemSUReq::set(
 
 //------------------------------------------------------------------------------
 void PDUSessionResourceSetupItemSUReq::get(
-    PDUSessionID& pdu_session_id, std::optional<NAS_PDU>& nas_pdu,
+    PDUSessionID& pdu_session_id, std::optional<NasPdu>& nas_pdu,
     S_NSSAI& s_nssai,
-    OCTET_STRING_t& pdu_session_resource_setup_request_transfer) {
+    OCTET_STRING_t& pdu_session_resource_setup_request_transfer) const {
   pdu_session_id = pdu_session_id_;
   nas_pdu        = nas_pdu_;
   s_nssai        = s_nssai_;
@@ -96,10 +96,10 @@ bool PDUSessionResourceSetupItemSUReq::decode(
     return false;
 
   if (pdu_session_resource_setup_item_su_req->pDUSessionNAS_PDU) {
-    NAS_PDU tmp = {};
+    NasPdu tmp = {};
     if (!tmp.decode(*pdu_session_resource_setup_item_su_req->pDUSessionNAS_PDU))
       return false;
-    nas_pdu_ = std::optional<NAS_PDU>(tmp);
+    nas_pdu_ = std::optional<NasPdu>(tmp);
   }
 
   pdu_session_resource_setup_request_transfer_ =

@@ -22,8 +22,8 @@
 #ifndef _DOWNLINK_RAN_STATUS_TRANSFER_H_
 #define _DOWNLINK_RAN_STATUS_TRANSFER_H_
 
-#include "RANStatusTransferTransparentContainer.hpp"
 #include "NgapUEMessage.hpp"
+#include "RANStatusTransferTransparentContainer.hpp"
 
 extern "C" {
 #include "Ngap_RANStatusTransfer-TransparentContainer.h"
@@ -37,7 +37,7 @@ class DownlinkRANStatusTransfer : public NgapUEMessage {
   void initialize();
   void setAmfUeNgapId(const unsigned long& id) override;
   void setRanUeNgapId(const uint32_t& id) override;
-  bool decodeFromPdu(Ngap_NGAP_PDU_t* ngapMsgPdu) override;
+  bool decode(Ngap_NGAP_PDU_t* ngapMsgPdu) override;
 
   void setRANStatusTransfer_TransparentContainer(
       const long& drbIDValue, const long& ulPdcpValue,

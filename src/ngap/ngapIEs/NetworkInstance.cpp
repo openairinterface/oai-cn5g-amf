@@ -21,41 +21,42 @@
 
 #include "NetworkInstance.hpp"
 
-#include <iostream>
-using namespace std;
-
 namespace ngap {
 
 //------------------------------------------------------------------------------
 NetworkInstance::NetworkInstance() {
-  networkinstance = 0;
+  network_instance_ = 0;
 }
 
+//------------------------------------------------------------------------------
+NetworkInstance::NetworkInstance(long m_networkinstance) {
+  network_instance_ = m_networkinstance;
+}
 //------------------------------------------------------------------------------
 NetworkInstance::~NetworkInstance() {}
 
 //------------------------------------------------------------------------------
-void NetworkInstance::setNetworkInstance(long m_networkinstance) {
-  networkinstance = m_networkinstance;
+void NetworkInstance::set(long m_networkinstance) {
+  network_instance_ = m_networkinstance;
 }
 
 //------------------------------------------------------------------------------
-bool NetworkInstance::getNetworkInstance(long& m_networkinstance) {
-  m_networkinstance = networkinstance;
+bool NetworkInstance::get(long& m_networkinstance) const {
+  m_networkinstance = network_instance_;
 
   return true;
 }
 
 //------------------------------------------------------------------------------
-bool NetworkInstance::encode2NetworkInstance(Ngap_NetworkInstance_t& value) {
-  value = networkinstance;
+bool NetworkInstance::encode(Ngap_NetworkInstance_t& value) {
+  value = network_instance_;
 
   return true;
 }
 
 //------------------------------------------------------------------------------
-bool NetworkInstance::decodefromNetworkInstance(Ngap_NetworkInstance_t value) {
-  networkinstance = value;
+bool NetworkInstance::decode(Ngap_NetworkInstance_t value) {
+  network_instance_ = value;
 
   return true;
 }

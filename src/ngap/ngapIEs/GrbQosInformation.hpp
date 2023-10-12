@@ -19,8 +19,8 @@
  *      contact@openairinterface.org
  */
 
-#ifndef _GBR_QOSINFORMATION_H_
-#define _GBR_QOSINFORMATION_H_
+#ifndef _GBR_QOS_INFORMATION_H_
+#define _GBR_QOS_INFORMATION_H_
 
 #include "NotificationControl.hpp"
 #include "PacketLossRate.hpp"
@@ -31,10 +31,10 @@ extern "C" {
 
 namespace ngap {
 
-class GBR_QosInformation {
+class GrbQosInformation {
  public:
-  GBR_QosInformation();
-  virtual ~GBR_QosInformation();
+  GrbQosInformation();
+  virtual ~GrbQosInformation();
 
   void setGBR_QosInformation(
       long m_maximumFlowBitRateDL, long m_maximumFlowBitRateUL,

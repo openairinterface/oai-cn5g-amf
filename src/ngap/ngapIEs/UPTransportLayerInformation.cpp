@@ -26,30 +26,25 @@ extern "C" {
 #include "dynamic_memory_check.h"
 }
 
-#include <iostream>
-using namespace std;
-
 namespace ngap {
 
 //------------------------------------------------------------------------------
-UpTransportLayerInformation::UpTransportLayerInformation() {
-  transportLayerAddress = NULL;
-  gtpTeid               = NULL;
-}
+UpTransportLayerInformation::UpTransportLayerInformation() {}
 
 //------------------------------------------------------------------------------
 UpTransportLayerInformation::~UpTransportLayerInformation() {}
 
 //------------------------------------------------------------------------------
 void UpTransportLayerInformation::setUpTransportLayerInformation(
-    TransportLayerAddress* m_transportLayerAddress, GtpTeid* m_gtpTeid) {
+    const TransportLayerAddress& m_transportLayerAddress,
+    const GtpTeid& m_gtpTeid) {
   transportLayerAddress = m_transportLayerAddress;
   gtpTeid               = m_gtpTeid;
 }
 
 //------------------------------------------------------------------------------
 bool UpTransportLayerInformation::getUpTransportLayerInformation(
-    TransportLayerAddress*& m_transportLayerAddress, GtpTeid*& m_gtpTeid) {
+    TransportLayerAddress& m_transportLayerAddress, GtpTeid& m_gtpTeid) const {
   m_transportLayerAddress = transportLayerAddress;
   m_gtpTeid               = gtpTeid;
 
@@ -57,19 +52,29 @@ bool UpTransportLayerInformation::getUpTransportLayerInformation(
 }
 
 //------------------------------------------------------------------------------
-bool UpTransportLayerInformation::encode2UpTransportLayerInformation(
+void UpTransportLayerInformation::set(const GtpTunnel& gtpTunnel) {
+  gtpTunnel_ = std::make_optional<GtpTunnel>(gtpTunnel);
+}
+
+//------------------------------------------------------------------------------
+void UpTransportLayerInformation::get(
+    std::optional<GtpTunnel>& gtpTunnel) const {
+  gtpTunnel = gtpTunnel_;
+}
+
+//------------------------------------------------------------------------------
+bool UpTransportLayerInformation::encode(
     Ngap_UPTransportLayerInformation_t& upTransportLayerInfo) {
   upTransportLayerInfo.present = Ngap_UPTransportLayerInformation_PR_gTPTunnel;
   Ngap_GTPTunnel_t* gtptunnel =
       (Ngap_GTPTunnel_t*) calloc(1, sizeof(Ngap_GTPTunnel_t));
   if (!gtptunnel) return false;
-  if (!transportLayerAddress->encode2TransportLayerAddress(
-          gtptunnel->transportLayerAddress)) {
+  if (!transportLayerAddress.encode(gtptunnel->transportLayerAddress)) {
     free_wrapper((void**) &gtptunnel);
     return false;
   }
 
-  if (!gtpTeid->encode2GtpTeid(gtptunnel->gTP_TEID)) {
+  if (!gtpTeid.encode(gtptunnel->gTP_TEID)) {
     free_wrapper((void**) &gtptunnel);
     return false;
   }
@@ -78,20 +83,17 @@ bool UpTransportLayerInformation::encode2UpTransportLayerInformation(
 }
 
 //------------------------------------------------------------------------------
-bool UpTransportLayerInformation::decodefromUpTransportLayerInformation(
+bool UpTransportLayerInformation::decode(
     Ngap_UPTransportLayerInformation_t& upTransportLayerInfo) {
   if (upTransportLayerInfo.present !=
       Ngap_UPTransportLayerInformation_PR_gTPTunnel)
     return false;
   if (!upTransportLayerInfo.choice.gTPTunnel) return false;
-  transportLayerAddress = new TransportLayerAddress();
-  gtpTeid               = new GtpTeid();
 
-  if (!transportLayerAddress->decodefromTransportLayerAddress(
+  if (!transportLayerAddress.decode(
           upTransportLayerInfo.choice.gTPTunnel->transportLayerAddress))
     return false;
-  if (!gtpTeid->decodefromGtpTeid(
-          upTransportLayerInfo.choice.gTPTunnel->gTP_TEID))
+  if (!gtpTeid.decode(upTransportLayerInfo.choice.gTPTunnel->gTP_TEID))
     return false;
 
   return true;

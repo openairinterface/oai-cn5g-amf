@@ -22,8 +22,9 @@
 #ifndef _PDU_SESSION_RESOURCE_SETUP_LIST_CXT_REQ_H_
 #define _PDU_SESSION_RESOURCE_SETUP_LIST_CXT_REQ_H_
 
-#include "PDUSessionResourceSetupItemCxtReq.hpp"
 #include <vector>
+
+#include "PDUSessionResourceSetupItemCxtReq.hpp"
 
 extern "C" {
 #include "Ngap_PDUSessionResourceSetupListCxtReq.h"

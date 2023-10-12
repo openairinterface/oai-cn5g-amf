@@ -22,11 +22,11 @@
 #ifndef _USER_LOCATION_INFORMATION_H_
 #define _USER_LOCATION_INFORMATION_H_
 
+#include <optional>
+
 #include "UserLocationInformationEUTRA.hpp"
 #include "UserLocationInformationN3IWF.hpp"
 #include "UserLocationInformationNR.hpp"
-
-#include <optional>
 
 extern "C" {
 #include "Ngap_UserLocationInformation.h"

@@ -21,14 +21,11 @@
 
 #include "FiveQI.hpp"
 
-#include <iostream>
-using namespace std;
-
 namespace ngap {
 
 //------------------------------------------------------------------------------
 FiveQI::FiveQI() {
-  fiveqi = 0;
+  fiveqi_ = 0;
 }
 
 //------------------------------------------------------------------------------
@@ -36,26 +33,26 @@ FiveQI::~FiveQI() {}
 
 //------------------------------------------------------------------------------
 void FiveQI::setFiveQI(long value) {
-  fiveqi = value;
+  fiveqi_ = value;
 }
 
 //------------------------------------------------------------------------------
-bool FiveQI::getFiveQI(long& value) {
-  value = fiveqi;
+bool FiveQI::getFiveQI(long& value) const {
+  value = fiveqi_;
 
   return true;
 }
 
 //------------------------------------------------------------------------------
-bool FiveQI::encode2FiveQI(Ngap_FiveQI_t* fiveQI) {
-  *fiveQI = fiveqi;
+bool FiveQI::encode(Ngap_FiveQI_t* value) {
+  *value = fiveqi_;
 
   return true;
 }
 
 //------------------------------------------------------------------------------
-bool FiveQI::decodefromFiveQI(Ngap_FiveQI_t* fiveQI) {
-  fiveqi = *fiveQI;
+bool FiveQI::decode(Ngap_FiveQI_t* value) {
+  fiveqi_ = *value;
 
   return true;
 }

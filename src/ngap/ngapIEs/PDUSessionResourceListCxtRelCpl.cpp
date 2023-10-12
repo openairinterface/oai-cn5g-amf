@@ -30,7 +30,7 @@ PDUSessionResourceListCxtRelCpl::PDUSessionResourceListCxtRelCpl() {}
 PDUSessionResourceListCxtRelCpl::~PDUSessionResourceListCxtRelCpl() {}
 
 //------------------------------------------------------------------------------
-void PDUSessionResourceListCxtRelCpl::setPDUSessionResourceListCxtRelCpl(
+void PDUSessionResourceListCxtRelCpl::set(
     const std::vector<PDUSessionResourceItemCxtRelCpl>& list) {
   cxtRelCplList.clear();
   for (auto i : list) {
@@ -39,8 +39,8 @@ void PDUSessionResourceListCxtRelCpl::setPDUSessionResourceListCxtRelCpl(
 }
 
 //------------------------------------------------------------------------------
-void PDUSessionResourceListCxtRelCpl::getPDUSessionResourceListCxtRelCpl(
-    std::vector<PDUSessionResourceItemCxtRelCpl>& list) {
+void PDUSessionResourceListCxtRelCpl::get(
+    std::vector<PDUSessionResourceItemCxtRelCpl>& list) const {
   list.clear();
   for (auto i : cxtRelCplList) {
     list.push_back(i);
@@ -48,7 +48,7 @@ void PDUSessionResourceListCxtRelCpl::getPDUSessionResourceListCxtRelCpl(
 }
 
 //------------------------------------------------------------------------------
-bool PDUSessionResourceListCxtRelCpl::encode2PDUSessionResourceListCxtRelCpl(
+bool PDUSessionResourceListCxtRelCpl::encode(
     Ngap_PDUSessionResourceListCxtRelCpl_t& pduSessionResourceListCxtRelCpl) {
   for (auto& cxtRelCpl : cxtRelCplList) {
     Ngap_PDUSessionResourceItemCxtRelCpl_t* item =
@@ -63,7 +63,7 @@ bool PDUSessionResourceListCxtRelCpl::encode2PDUSessionResourceListCxtRelCpl(
 }
 
 //------------------------------------------------------------------------------
-bool PDUSessionResourceListCxtRelCpl::decodefromPDUSessionResourceListCxtRelCpl(
+bool PDUSessionResourceListCxtRelCpl::decode(
     const Ngap_PDUSessionResourceListCxtRelCpl_t&
         pduSessionResourceListCxtRelCpl) {
   for (int i = 0; i < pduSessionResourceListCxtRelCpl.list.count; i++) {

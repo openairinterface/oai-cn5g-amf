@@ -19,38 +19,32 @@
  *      contact@openairinterface.org
  */
 
-#ifndef _NR_CGI_H_
-#define _NR_CGI_H_
+#ifndef _EUTRA_CGI_H_
+#define _EUTRA_CGI_H_
 
-#include "NRCellIdentity.hpp"
+#include "EUTRACellIdentity.hpp"
 #include "PlmnId.hpp"
-#include "NgapIEsStruct.hpp"
 
 extern "C" {
-#include "Ngap_NR-CGI.h"
+#include "Ngap_EUTRA-CGI.h"
 }
 
 namespace ngap {
 
-class NR_CGI {
+class EUtraCgi {
  public:
-  NR_CGI();
-  virtual ~NR_CGI();
+  EUtraCgi();
+  virtual ~EUtraCgi();
 
-  void setNR_CGI(const PlmnId&, const NRCellIdentity&);
-  void getNR_CGI(PlmnId&, NRCellIdentity&);
-  void setNR_CGI(
-      const std::string& mcc, const std::string& mnc,
-      const unsigned long& nrcellidentity);
-  void setNR_CGI(const struct NrCgi_s& cig);
-  void getNR_CGI(struct NrCgi_s& cig);
+  void set(const PlmnId&, const EUTRACellIdentity&);
+  void get(PlmnId&, EUTRACellIdentity&) const;
 
-  bool encode2NR_CGI(Ngap_NR_CGI_t*);
-  bool decodefromNR_CGI(Ngap_NR_CGI_t*);
+  bool encode(Ngap_EUTRA_CGI_t&);
+  bool decode(Ngap_EUTRA_CGI_t&);
 
  private:
-  PlmnId plmnId;                  // Mandatory
-  NRCellIdentity nRCellIdentity;  // Mandatory
+  PlmnId plmn_id_;                         // Mandatory
+  EUTRACellIdentity eUTRA_cell_identity_;  // Mandatory
 };
 }  // namespace ngap
 

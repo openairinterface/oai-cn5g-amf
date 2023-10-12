@@ -22,12 +22,12 @@
 #ifndef _NG_SETUP_FAILURE_H_
 #define _NG_SETUP_FAILURE_H_
 
+#include <optional>
+
 #include "Cause.hpp"
 #include "MessageType.hpp"
-#include "TimeToWait.hpp"
 #include "NgapMessage.hpp"
-
-#include <optional>
+#include "TimeToWait.hpp"
 
 namespace ngap {
 
@@ -74,7 +74,7 @@ class NGSetupFailureMsg : public NgapMessage {
   bool getTimeToWait(e_Ngap_TimeToWait&);
   void setTimeToWait(const e_Ngap_TimeToWait&);
 
-  bool decodeFromPdu(Ngap_NGAP_PDU_t* ngapMsgPdu) override;
+  bool decode(Ngap_NGAP_PDU_t* ngapMsgPdu) override;
 
  private:
   Ngap_NGSetupFailure_t* ngSetupFailureIEs;

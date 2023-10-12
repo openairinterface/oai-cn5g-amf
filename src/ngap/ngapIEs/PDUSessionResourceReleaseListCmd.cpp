@@ -21,65 +21,59 @@
 
 #include "PDUSessionResourceReleaseListCmd.hpp"
 
-#include <iostream>
-using namespace std;
-
 namespace ngap {
-PDUSessionResourceReleaseListCmd::PDUSessionResourceReleaseListCmd() {
-  pduSessionResourceReleaseItemCmd      = NULL;
-  numofpduSessionResourceReleaseItemCmd = 0;
-}
-PDUSessionResourceReleaseListCmd::~PDUSessionResourceReleaseListCmd() {
-  if (pduSessionResourceReleaseItemCmd)
-    delete[] pduSessionResourceReleaseItemCmd;
+
+//------------------------------------------------------------------------------
+PDUSessionResourceReleaseListCmd::PDUSessionResourceReleaseListCmd() {}
+
+//------------------------------------------------------------------------------
+PDUSessionResourceReleaseListCmd::~PDUSessionResourceReleaseListCmd() {}
+
+//------------------------------------------------------------------------------
+void PDUSessionResourceReleaseListCmd::setPDUSessionResourceReleaseListCmd(
+    const std::vector<PDUSessionResourceReleaseItemCmd>& list_item) {
+  uint8_t number_items = (list_item.size() > kMaxNoOfPduSessions) ?
+                             kMaxNoOfPduSessions :
+                             list_item.size();
+  list_.insert(
+      list_.begin(), list_item.begin(), list_item.begin() + number_items);
 }
 
-void PDUSessionResourceReleaseListCmd::setPDUSessionResourceReleaseListCmd(
-    PDUSessionResourceReleaseItemCmd* m_pduSessionResourceReleaseItemCmd,
-    int num) {
-  pduSessionResourceReleaseItemCmd      = m_pduSessionResourceReleaseItemCmd;
-  numofpduSessionResourceReleaseItemCmd = num;
+//------------------------------------------------------------------------------
+void PDUSessionResourceReleaseListCmd::getPDUSessionResourceReleaseListCmd(
+    std::vector<PDUSessionResourceReleaseItemCmd>& list_item) const {
+  list_item = list_;
 }
-bool PDUSessionResourceReleaseListCmd::encode2PDUSessionResourceReleaseListCmd(
+
+//------------------------------------------------------------------------------
+bool PDUSessionResourceReleaseListCmd::encode(
     Ngap_PDUSessionResourceToReleaseListRelCmd_t*
         pduSessionResourceReleaseListCmd) {
-  for (int i = 0; i < numofpduSessionResourceReleaseItemCmd; i++) {
-    Ngap_PDUSessionResourceToReleaseItemRelCmd_t* response =
+  for (int i = 0; i < list_.size(); i++) {
+    Ngap_PDUSessionResourceToReleaseItemRelCmd_t* item =
         (Ngap_PDUSessionResourceToReleaseItemRelCmd_t*) calloc(
             1, sizeof(Ngap_PDUSessionResourceToReleaseItemRelCmd_t));
-    if (!response) return false;
-    if (!pduSessionResourceReleaseItemCmd[i]
-             .encode2PDUSessionResourceReleaseItemCmd(response))
-      return false;
-    if (ASN_SEQUENCE_ADD(&pduSessionResourceReleaseListCmd->list, response) !=
-        0)
+    if (!item) return false;
+    if (!list_[i].encode2PDUSessionResourceReleaseItemCmd(item)) return false;
+    if (ASN_SEQUENCE_ADD(&pduSessionResourceReleaseListCmd->list, item) != 0)
       return false;
   }
 
   return true;
 }
-bool PDUSessionResourceReleaseListCmd::
-    decodefromPDUSessionResourceReleaseListCmd(
-        Ngap_PDUSessionResourceToReleaseListRelCmd_t*
-            pduSessionResourceReleaseListCmd) {
-  numofpduSessionResourceReleaseItemCmd =
-      pduSessionResourceReleaseListCmd->list.count;
-  pduSessionResourceReleaseItemCmd = new PDUSessionResourceReleaseItemCmd
-      [numofpduSessionResourceReleaseItemCmd]();
-  for (int i = 0; i < numofpduSessionResourceReleaseItemCmd; i++) {
-    if (!pduSessionResourceReleaseItemCmd[i]
-             .decodefromPDUSessionResourceReleaseItemCmd(
-                 pduSessionResourceReleaseListCmd->list.array[i]))
+
+//------------------------------------------------------------------------------
+bool PDUSessionResourceReleaseListCmd::decode(
+    Ngap_PDUSessionResourceToReleaseListRelCmd_t*
+        pduSessionResourceReleaseListCmd) {
+  for (int i = 0; i < pduSessionResourceReleaseListCmd->list.count; i++) {
+    PDUSessionResourceReleaseItemCmd item = {};
+    if (!item.decodefromPDUSessionResourceReleaseItemCmd(
+            pduSessionResourceReleaseListCmd->list.array[i]))
       return false;
+    list_.push_back(item);
   }
 
   return true;
 }
-void PDUSessionResourceReleaseListCmd::getPDUSessionResourceReleaseListCmd(
-    PDUSessionResourceReleaseItemCmd*& m_pduSessionResourceReleaseItemCmd,
-    int& num) {
-  m_pduSessionResourceReleaseItemCmd = pduSessionResourceReleaseItemCmd;
-  num                                = numofpduSessionResourceReleaseItemCmd;
-}
-
 }  // namespace ngap

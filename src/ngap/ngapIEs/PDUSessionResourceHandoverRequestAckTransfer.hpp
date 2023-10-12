@@ -19,24 +19,28 @@
  *      contact@openairinterface.org
  */
 
-#ifndef _PDUSESSIONRESOURCEHANDOVERREQUESTACKTRANSFER_H_
-#define _PDUSESSIONRESOURCEHANDOVERREQUESTACKTRANSFER_H_
+#ifndef _PDU_SESSION_RESOURCE_HANDOVER_REQUEST_ACK_TRANSFER_H_
+#define _PDU_SESSION_RESOURCE_HANDOVER_REQUEST_ACK_TRANSFER_H_
 
-#include "DLQoSFlowPerTNLInformation.hpp"
 #include "NgapIEsStruct.hpp"
+#include "QoSFlowPerTNLInformation.hpp"
 #include "QosFlowListWithDataForwarding.hpp"
 #include "SecurityResult.hpp"
 #include "UPTransportLayerInformation.hpp"
+
 extern "C" {
 #include "Ngap_HandoverRequestAcknowledgeTransfer.h"
 #include "Ngap_ProtocolIE-Field.h"
 }
+
 namespace ngap {
 class PDUSessionResourceHandoverRequestAckTransfer {
  public:
   PDUSessionResourceHandoverRequestAckTransfer();
   virtual ~PDUSessionResourceHandoverRequestAckTransfer();
+
   bool decodefromHandoverRequestAckTransfer(uint8_t* buf, int buf_size);
+
   bool getUpTransportLayerInformation2(GtpTunnel_t*& upTnlInfo);
   bool getqosFlowSetupResponseList(
       std::vector<QosFlowLItemWithDataForwarding_t>& list);
@@ -44,8 +48,16 @@ class PDUSessionResourceHandoverRequestAckTransfer {
  private:
   Ngap_HandoverRequestAcknowledgeTransfer_t*
       handoverRequestAcknowledegTransferIEs;
-  UpTransportLayerInformation* dLForwardingUP_TNLInformation;
-  QosFlowListWithDataForwarding* QosFlowSetupResponseList;
+  // TODO: DL NG-U UP TNL Information //Mandatory
+  UpTransportLayerInformation dLForwardingUP_TNLInformation;  // Mandatory
+  // TODO: Security Result //Optional
+  QosFlowListWithDataForwarding QosFlowSetupResponseList;  // Mandatory
+  // TODO: QoS Flow Failed to Setup List //Optional
+  // TODO: Data Forwarding Response DRB List //Optional
+  // TODO: Additional DL UP TNL Information for HO List //Range 0..1
+  // TODO: UL Forwarding UP TNL Information //Optional
+  // TODO: Additional UL Forwarding UP TNL Information
+  // TODO: Data Forwarding Response E-RAB List //Optional
 };
 }  // namespace ngap
 

@@ -21,37 +21,40 @@
 
 #include "QosFlowToBeForwardedList.hpp"
 
-#include <iostream>
-using namespace std;
+#include "logger.hpp"
+
 namespace ngap {
-QosFlowToBeForwardedList::QosFlowToBeForwardedList() {
-  Qosflowtobeforwardeditem      = NULL;
-  numofqosflowtobeforwardeditem = 0;
+
+//------------------------------------------------------------------------------
+QosFlowToBeForwardedList::QosFlowToBeForwardedList() {}
+
+//------------------------------------------------------------------------------
+void QosFlowToBeForwardedList::set(
+    std::vector<QosFlowToBeForwardedItem> qos_list) {
+  uint8_t number_items =
+      (qos_list.size() > kMaxNoOfQosFlows) ? kMaxNoOfQosFlows : qos_list.size();
+  list_.insert(
+      list_.begin(), qos_list.begin(), qos_list.begin() + number_items);
 }
-QosFlowToBeForwardedList::~QosFlowToBeForwardedList() {}
-void QosFlowToBeForwardedList::setQosFlowToBeForwardedItem(
-    QosFlowToBeForwardedItem* m_qosflowtobeforwardeditem, int num) {
-  Qosflowtobeforwardeditem      = m_qosflowtobeforwardeditem;
-  numofqosflowtobeforwardeditem = num;
-}
-bool QosFlowToBeForwardedList::encodeQosFlowToBeForwardedList(
-    Ngap_QosFlowToBeForwardedList*& m_ngap_qosflowtobeforwardedlist) {
-  m_ngap_qosflowtobeforwardedlist = (Ngap_QosFlowToBeForwardedList_t*) calloc(
+
+//------------------------------------------------------------------------------
+bool QosFlowToBeForwardedList::encode(
+    Ngap_QosFlowToBeForwardedList*& qos_list) {
+  qos_list = (Ngap_QosFlowToBeForwardedList_t*) calloc(
       1, sizeof(Ngap_QosFlowToBeForwardedList_t));
-  for (int i = 0; i < numofqosflowtobeforwardeditem; i++) {
-    cout << "encoding list..." << endl;
+  for (int i = 0; i < list_.size(); i++) {
     Ngap_QosFlowToBeForwardedItem_t* response =
         (Ngap_QosFlowToBeForwardedItem_t*) calloc(
             1, sizeof(Ngap_QosFlowToBeForwardedItem_t));
     if (!response) return false;
-    if (!Qosflowtobeforwardeditem[i].encodeQosFlowToBeForwardedItem(response)) {
-      cout << "encode QosFlowTowardedItem error" << endl;
+    if (!list_[i].encode(response)) {
+      Logger::ngap().debug("Encode QosFlowTowardedItem error");
       return false;
     }
-    cout << "QFI is " << response->qosFlowIdentifier << endl;
-    if (ASN_SEQUENCE_ADD(&m_ngap_qosflowtobeforwardedlist->list, response) !=
-        0) {
-      cout << "encode QosFlowTowardedList error" << endl;
+    Logger::ngap().debug("QFI %d", response->qosFlowIdentifier);
+
+    if (ASN_SEQUENCE_ADD(&qos_list->list, response) != 0) {
+      Logger::ngap().debug("Encode QosFlowTowardedList error");
       return false;
     }
   }

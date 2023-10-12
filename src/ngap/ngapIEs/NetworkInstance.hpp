@@ -19,8 +19,8 @@
  *      contact@openairinterface.org
  */
 
-#ifndef _NETWORKINSTANCE_H_
-#define _NETWORKINSTANCE_H_
+#ifndef _NETWORK_INSTANCE_H_
+#define _NETWORK_INSTANCE_H_
 
 extern "C" {
 #include "Ngap_NetworkInstance.h"
@@ -31,16 +31,17 @@ namespace ngap {
 class NetworkInstance {
  public:
   NetworkInstance();
+  NetworkInstance(long m_networkinstance);
   virtual ~NetworkInstance();
 
-  void setNetworkInstance(long m_networkinstance);
-  bool getNetworkInstance(long& m_networkinstance);
+  void set(long m_networkinstance);
+  bool get(long& m_networkinstance) const;
 
-  bool encode2NetworkInstance(Ngap_NetworkInstance_t&);
-  bool decodefromNetworkInstance(Ngap_NetworkInstance_t);
+  bool encode(Ngap_NetworkInstance_t&);
+  bool decode(Ngap_NetworkInstance_t);
 
  private:
-  long networkinstance;
+  long network_instance_;
 };
 
 }  // namespace ngap

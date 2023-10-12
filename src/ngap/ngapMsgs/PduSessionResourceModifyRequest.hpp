@@ -22,9 +22,9 @@
 #ifndef PDU_SESSION_RESOURCE_MODIFY_REQUEST_H_
 #define PDU_SESSION_RESOURCE_MODIFY_REQUEST_H_
 
+#include "NgapUEMessage.hpp"
 #include "PDUSessionResourceModifyListModReq.hpp"
 #include "RANPagingPriority.hpp"
-#include "NgapUEMessage.hpp"
 
 extern "C" {
 #include "Ngap_PDUSessionResourceModifyRequest.h"
@@ -41,7 +41,7 @@ class PduSessionResourceModifyRequestMsg : public NgapUEMessage {
 
   void setAmfUeNgapId(const unsigned long& id) override;
   void setRanUeNgapId(const uint32_t& id) override;
-  bool decodeFromPdu(Ngap_NGAP_PDU_t* ngapMsgPdu) override;
+  bool decode(Ngap_NGAP_PDU_t* ngapMsgPdu) override;
 
   void setRanPagingPriority(const uint32_t& priority);
   int getRanPagingPriority();

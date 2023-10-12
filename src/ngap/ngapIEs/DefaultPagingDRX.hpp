@@ -35,6 +35,7 @@ class DefaultPagingDRX {
 
   void setValue(const e_Ngap_PagingDRX& paging_drx);
   e_Ngap_PagingDRX getValue() const;
+
   bool encode(Ngap_PagingDRX_t&);
   bool decode(const Ngap_PagingDRX_t&);
 

@@ -21,9 +21,6 @@
 
 #include "GUAMI.hpp"
 
-#include <iostream>
-using namespace std;
-
 namespace ngap {
 
 //------------------------------------------------------------------------------
@@ -65,7 +62,7 @@ bool GUAMI::setGUAMI(
 }
 
 //------------------------------------------------------------------------------
-bool GUAMI::encode2GUAMI(Ngap_GUAMI_t* guami) {
+bool GUAMI::encode(Ngap_GUAMI_t* guami) {
   if (!plmnId.encode(guami->pLMNIdentity)) return false;
   if (!aMFRegionID.encode(guami->aMFRegionID)) return false;
   if (!aMFSetID.encode(guami->aMFSetID)) return false;
@@ -75,7 +72,7 @@ bool GUAMI::encode2GUAMI(Ngap_GUAMI_t* guami) {
 }
 
 //------------------------------------------------------------------------------
-bool GUAMI::decodefromGUAMI(Ngap_GUAMI_t* pdu) {
+bool GUAMI::decode(Ngap_GUAMI_t* pdu) {
   if (!plmnId.decode(pdu->pLMNIdentity)) return false;
   if (!aMFRegionID.decode(pdu->aMFRegionID)) return false;
   if (!aMFSetID.decode(pdu->aMFSetID)) return false;

@@ -19,10 +19,10 @@
  *      contact@openairinterface.org
  */
 
-#ifndef _PDUSESSIONRESOURCERELEASEITEMCMD_H_
-#define _PDUSESSIONRESOURCERELEASEITEMCMD_H_
+#ifndef _PDU_SESSION_RESOURCE_RELEASE_ITEM_CMD_H_
+#define _PDU_SESSION_RESOURCE_RELEASE_ITEM_CMD_H_
 
-#include "NAS-PDU.hpp"
+#include "NasPdu.hpp"
 #include "PDUSessionID.hpp"
 #include "PDUSessionResourceReleaseCommandTransfer.hpp"
 #include "S-NSSAI.hpp"
@@ -39,22 +39,22 @@ class PDUSessionResourceReleaseItemCmd {
   virtual ~PDUSessionResourceReleaseItemCmd();
 
   void setPDUSessionResourceReleaseItemCmd(
-      PDUSessionID* m_pDUSessionID,
-      OCTET_STRING_t m_pDUSessionResourceReleaseCommandTransfer);
+      const PDUSessionID& pdu_session_id,
+      const OCTET_STRING_t& pdu_session_resource_release);
   void getPDUSessionResourceReleaseItemCmd(
-      PDUSessionID*& m_pDUSessionID,
-      OCTET_STRING_t& m_pDUSessionResourceReleaseCommandTransfer);
+      PDUSessionID& pdu_session_id,
+      OCTET_STRING_t& pdu_session_resource_release) const;
 
   bool encode2PDUSessionResourceReleaseItemCmd(
       Ngap_PDUSessionResourceToReleaseItemRelCmd_t*
-          pduSessionResourceReleaseCommandTransfer);
+          pdu_session_resource_release_item);
   bool decodefromPDUSessionResourceReleaseItemCmd(
       Ngap_PDUSessionResourceToReleaseItemRelCmd_t*
-          pduSessionResourceReleaseCommandTransfer);
+          pdu_session_resource_release_item);
 
  private:
-  PDUSessionID* pDUSessionID;
-  OCTET_STRING_t pDUSessionResourceReleaseCommandTransfer;
+  PDUSessionID pdu_session_id_;                                   // Mandatory
+  OCTET_STRING_t pdu_session_resource_release_command_transfer_;  // Mandatory
 };
 
 }  // namespace ngap

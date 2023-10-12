@@ -21,9 +21,6 @@
 
 #include "EUTRACellIdentity.hpp"
 
-#include <iostream>
-using namespace std;
-
 namespace ngap {
 
 //------------------------------------------------------------------------------
@@ -42,7 +39,7 @@ bool EUTRACellIdentity::set(const uint32_t& id) {
 }
 
 //------------------------------------------------------------------------------
-uint32_t EUTRACellIdentity::get() {
+uint32_t EUTRACellIdentity::get() const {
   return id_;
 }
 

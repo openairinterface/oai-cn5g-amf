@@ -22,13 +22,12 @@
 #ifndef _UE_ASSOCIATED_LOGICAL_NG_CONNECTION_LIST_H_
 #define _UE_ASSOCIATED_LOGICAL_NG_CONNECTION_LIST_H_
 
-#include "UEAssociatedLogicalNGConnectionItem.hpp"
-
 #include <vector>
+
+#include "UEAssociatedLogicalNGConnectionItem.hpp"
 
 extern "C" {
 #include "Ngap_ProtocolIE-Field.h"
-//#include "Ngap_UE-associatedLogicalNG-connectionItem.h"
 #include "Ngap_UE-associatedLogicalNG-connectionList.h"
 }
 

@@ -19,16 +19,16 @@
  *      contact@openairinterface.org
  */
 
-#ifndef _CORENETWORKASSISTANCEINFORMATION_H_
-#define _CORENETWORKASSISTANCEINFORMATION_H_
+#ifndef _CORE_NETWORK_ASSISTANCE_INFORMATION_H_
+#define _CORE_NETWORK_ASSISTANCE_INFORMATION_H_
+
+#include <optional>
 
 #include "DefaultPagingDRX.hpp"
 #include "MICOModeIndication.hpp"
 #include "PeriodicRegistrationUpdateTimer.hpp"
 #include "TAI.hpp"
 #include "UEIdentityIndexValue.hpp"
-
-#include <optional>
 
 extern "C" {
 #include "Ngap_CoreNetworkAssistanceInformation.h"
@@ -51,7 +51,7 @@ class CoreNetworkAssistanceInfo {
       UEIdentityIndexValue& ue_identity_index_value,
       std::optional<DefaultPagingDRX>& paging_drx,
       PeriodicRegistrationUpdateTimer& periodic_reg_update_timer,
-      bool& mico_mode_ind, std::vector<TAI>& tai);
+      bool& mico_mode_ind, std::vector<TAI>& tai) const;
 
   bool encode(Ngap_CoreNetworkAssistanceInformation_t*
                   core_network_assistance_information);

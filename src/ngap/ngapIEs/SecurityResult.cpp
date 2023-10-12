@@ -21,32 +21,26 @@
 
 #include "SecurityResult.hpp"
 
-#include <iostream>
-using namespace std;
-
 namespace ngap {
 
 //------------------------------------------------------------------------------
-SecurityResult::SecurityResult() {
-  integrityProtectionResult       = NULL;
-  confidentialityProtectionResult = NULL;
-}
+SecurityResult::SecurityResult() {}
 
 //------------------------------------------------------------------------------
 SecurityResult::~SecurityResult() {}
 
 //------------------------------------------------------------------------------
 void SecurityResult::setSecurityResult(
-    IntegrityProtectionResult* m_integrityProtectionResult,
-    ConfidentialityProtectionResult* m_confidentialityProtectionResult) {
+    const IntegrityProtectionResult& m_integrityProtectionResult,
+    const ConfidentialityProtectionResult& m_confidentialityProtectionResult) {
   integrityProtectionResult       = m_integrityProtectionResult;
   confidentialityProtectionResult = m_confidentialityProtectionResult;
 }
 
 //------------------------------------------------------------------------------
 bool SecurityResult::getSecurityResult(
-    IntegrityProtectionResult*& m_integrityProtectionResult,
-    ConfidentialityProtectionResult*& m_confidentialityProtectionResult) {
+    IntegrityProtectionResult& m_integrityProtectionResult,
+    ConfidentialityProtectionResult& m_confidentialityProtectionResult) const {
   m_integrityProtectionResult       = integrityProtectionResult;
   m_confidentialityProtectionResult = confidentialityProtectionResult;
 
@@ -54,15 +48,11 @@ bool SecurityResult::getSecurityResult(
 }
 
 //------------------------------------------------------------------------------
-bool SecurityResult::encode2SecurityResult(
-    Ngap_SecurityResult_t* securityResult) {
-  if (!integrityProtectionResult) return false;
-  if (!confidentialityProtectionResult) return false;
-
-  if (!integrityProtectionResult->encode2IntegrityProtectionResult(
+bool SecurityResult::encode(Ngap_SecurityResult_t* securityResult) {
+  if (!integrityProtectionResult.encode(
           securityResult->integrityProtectionResult))
     return false;
-  if (!confidentialityProtectionResult->encode2ConfidentialityProtectionResult(
+  if (!confidentialityProtectionResult.encode(
           securityResult->confidentialityProtectionResult))
     return false;
 
@@ -70,19 +60,12 @@ bool SecurityResult::encode2SecurityResult(
 }
 
 //------------------------------------------------------------------------------
-bool SecurityResult::decodefromSecurityResult(
-    Ngap_SecurityResult_t* securityResult) {
-  if (integrityProtectionResult == nullptr)
-    integrityProtectionResult = new IntegrityProtectionResult();
-  if (integrityProtectionResult == nullptr)
-    confidentialityProtectionResult = new ConfidentialityProtectionResult();
-
-  if (!integrityProtectionResult->decodefromIntegrityProtectionResult(
+bool SecurityResult::decode(Ngap_SecurityResult_t* securityResult) {
+  if (!integrityProtectionResult.decode(
           securityResult->integrityProtectionResult))
     return false;
-  if (!confidentialityProtectionResult
-           ->decodefromConfidentialityProtectionResult(
-               securityResult->confidentialityProtectionResult))
+  if (!confidentialityProtectionResult.decode(
+          securityResult->confidentialityProtectionResult))
     return false;
 
   return true;

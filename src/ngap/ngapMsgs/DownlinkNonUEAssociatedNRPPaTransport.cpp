@@ -20,8 +20,9 @@
  */
 
 #include "DownlinkNonUEAssociatedNRPPaTransport.hpp"
-#include "logger.hpp"
+
 #include "conversions.hpp"
+#include "logger.hpp"
 
 extern "C" {
 #include "dynamic_memory_check.h"
@@ -49,7 +50,7 @@ void DownlinkNonUEAssociatedNRPPaTransportMsg::initialize() {
 }
 
 //------------------------------------------------------------------------------
-bool DownlinkNonUEAssociatedNRPPaTransportMsg::decodeFromPdu(
+bool DownlinkNonUEAssociatedNRPPaTransportMsg::decode(
     Ngap_NGAP_PDU_t* ngapMsgPdu) {
   ngapPdu = ngapMsgPdu;
 

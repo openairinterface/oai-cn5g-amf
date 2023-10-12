@@ -19,8 +19,10 @@
  *      contact@openairinterface.org
  */
 
-#ifndef _ASSOCIATEDQOSFLOWLIST_H_
-#define _ASSOCIATEDQOSFLOWLIST_H_
+#ifndef _ASSOCIATED_QOS_FLOW_LIST_H_
+#define _ASSOCIATED_QOS_FLOW_LIST_H_
+
+#include <vector>
 
 #include "AssociatedQosFlowItem.hpp"
 
@@ -36,18 +38,16 @@ class AssociatedQosFlowList {
   virtual ~AssociatedQosFlowList();
 
   void setAssociatedQosFlowList(
-      AssociatedQosFlowItem* m_associatedQosFlowItem, int numofitem);
-  bool getAssociatedQosFlowList(
-      AssociatedQosFlowItem*& m_associatedQosFlowItem, int& numofitem);
+      const std::vector<AssociatedQosFlowItem>& item_list);
+  void getAssociatedQosFlowList(
+      std::vector<AssociatedQosFlowItem>& item_list) const;
 
-  bool encode2AssociatedQosFlowList(
-      Ngap_AssociatedQosFlowList_t& associatedQosFlowList);
-  bool decodefromAssociatedQosFlowList(
-      Ngap_AssociatedQosFlowList_t& associatedQosFlowList);
+  bool encode(Ngap_AssociatedQosFlowList_t& associatedQosFlowList);
+  bool decode(Ngap_AssociatedQosFlowList_t& associatedQosFlowList);
 
  private:
-  AssociatedQosFlowItem* associatedQosFlowItem;
-  int numofassociatedQosFlowItem;
+  std::vector<AssociatedQosFlowItem> list_;
+  constexpr static uint8_t kMaxNoOfQoSFlows = 64;
 };
 
 }  // namespace ngap

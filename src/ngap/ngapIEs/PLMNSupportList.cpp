@@ -21,8 +21,6 @@
 
 #include "PLMNSupportList.hpp"
 
-using namespace std;
-
 namespace ngap {
 
 //------------------------------------------------------------------------------

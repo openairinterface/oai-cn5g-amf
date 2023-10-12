@@ -34,13 +34,13 @@ class PacketLossRate {
   virtual ~PacketLossRate();
 
   void setPacketLossRate(long value);
-  bool getPacketLossRate(long& value);
+  bool getPacketLossRate(long& value) const;
 
-  bool encode2PacketLossRate(Ngap_PacketLossRate_t*);
-  bool decodefromPacketLossRate(Ngap_PacketLossRate_t*);
+  bool encode(Ngap_PacketLossRate_t*);
+  bool decode(Ngap_PacketLossRate_t*);
 
  private:
-  long packetlossrate;
+  long packet_loss_rate_;
 };
 
 }  // namespace ngap

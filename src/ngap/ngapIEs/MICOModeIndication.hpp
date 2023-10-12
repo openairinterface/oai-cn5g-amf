@@ -19,8 +19,8 @@
  *      contact@openairinterface.org
  */
 
-#ifndef _MICOMODEINDICATION_H_
-#define _MICOMODEINDICATION_H_
+#ifndef _MICO_MODE_INDICATION_H_
+#define _MICO_MODE_INDICATION_H_
 
 extern "C" {
 #include "Ngap_MICOModeIndication.h"
@@ -34,7 +34,7 @@ class MICOModeIndication {
   virtual ~MICOModeIndication();
 
   void set(const long& mico_mode_indication);
-  void get(long& mico_mode_indication);
+  void get(long& mico_mode_indication) const;
 
   bool encode(Ngap_MICOModeIndication_t* micoModeIndication);
   bool decode(Ngap_MICOModeIndication_t* micoModeIndication);

@@ -37,15 +37,13 @@ class PDUSessionResourceFailedToSetupItemSURes {
 
   void set(
       const PDUSessionID& pdu_session_id,
-      const OCTET_STRING_t& pdu_session_resource_setup_unsuccessful_transfer);
-  void get(
-      PDUSessionID& pdu_session_id,
-      OCTET_STRING_t& pdu_session_resource_setup_unsuccessful_transfer);
+      const OCTET_STRING_t& pdu_session_resource);
+  void get(PDUSessionID& pdu_session_id, OCTET_STRING_t& pdu_session_resource);
 
   bool encode(Ngap_PDUSessionResourceFailedToSetupItemSURes_t*
-                  pdu_session_resource_failed_to_setup_item_su_res);
+                  pdu_session_resource_item);
   bool decode(Ngap_PDUSessionResourceFailedToSetupItemSURes_t*
-                  pdu_session_resource_failed_to_setup_item_su_res);
+                  pdu_session_resource_item);
 
  private:
   PDUSessionID pdu_session_id_;

@@ -37,7 +37,7 @@ void PDUSessionResourceSetupListHOReq::set(
 
 //------------------------------------------------------------------------------
 void PDUSessionResourceSetupListHOReq::get(
-    std::vector<PDUSessionResourceSetupItemHOReq>& list) {
+    std::vector<PDUSessionResourceSetupItemHOReq>& list) const {
   list = list_;
 }
 

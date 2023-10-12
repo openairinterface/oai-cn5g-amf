@@ -20,8 +20,9 @@
  */
 
 #include "DownlinkUEAssociatedNRPPaTransport.hpp"
-#include "logger.hpp"
+
 #include "conversions.hpp"
+#include "logger.hpp"
 
 extern "C" {
 #include "dynamic_memory_check.h"
@@ -60,7 +61,7 @@ void DownlinkUEAssociatedNRPPaTransportMsg::setAmfUeNgapId(
   ie->value.present =
       Ngap_DownlinkUEAssociatedNRPPaTransportIEs__value_PR_AMF_UE_NGAP_ID;
 
-  int ret = amfUeNgapId.encode2AMF_UE_NGAP_ID(ie->value.choice.AMF_UE_NGAP_ID);
+  int ret = amfUeNgapId.encode(ie->value.choice.AMF_UE_NGAP_ID);
   if (!ret) {
     Logger::ngap().error("Encode AMF_UE_NGAP_ID IE error");
     free_wrapper((void**) &ie);
@@ -98,7 +99,7 @@ void DownlinkUEAssociatedNRPPaTransportMsg::setRanUeNgapId(
 }
 
 //------------------------------------------------------------------------------
-bool DownlinkUEAssociatedNRPPaTransportMsg::decodeFromPdu(
+bool DownlinkUEAssociatedNRPPaTransportMsg::decode(
     Ngap_NGAP_PDU_t* ngapMsgPdu) {
   ngapPdu = ngapMsgPdu;
 
@@ -133,7 +134,7 @@ bool DownlinkUEAssociatedNRPPaTransportMsg::decodeFromPdu(
             downlinkUEAssociatedNRPPaTransportIEs->protocolIEs.list.array[i]
                     ->value.present ==
                 Ngap_DownlinkUEAssociatedNRPPaTransportIEs__value_PR_AMF_UE_NGAP_ID) {
-          if (!amfUeNgapId.decodefromAMF_UE_NGAP_ID(
+          if (!amfUeNgapId.decode(
                   downlinkUEAssociatedNRPPaTransportIEs->protocolIEs.list
                       .array[i]
                       ->value.choice.AMF_UE_NGAP_ID)) {

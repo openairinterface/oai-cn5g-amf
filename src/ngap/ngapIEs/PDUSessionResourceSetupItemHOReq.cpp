@@ -41,7 +41,7 @@ void PDUSessionResourceSetupItemHOReq::set(
 //------------------------------------------------------------------------------
 void PDUSessionResourceSetupItemHOReq::get(
     PDUSessionID& pdu_session_id, S_NSSAI& s_nssai,
-    OCTET_STRING_t& handover_request_transfer) {
+    OCTET_STRING_t& handover_request_transfer) const {
   PDUSessionResourceItem::get(pdu_session_id, handover_request_transfer);
   s_nssai = s_NSSAI;
 }

@@ -19,8 +19,8 @@
  *      contact@openairinterface.org
  */
 
-#ifndef _RANNODENAME_H_
-#define _RANNODENAME_H_
+#ifndef _RAN_NODE_NAME_H_
+#define _RAN_NODE_NAME_H_
 
 extern "C" {
 #include "Ngap_RANNodeName.h"

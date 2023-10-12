@@ -21,56 +21,57 @@
 
 #include "PDUSessionResourceReleaseItemCmd.hpp"
 
-#include <iostream>
-using namespace std;
-
 namespace ngap {
-PDUSessionResourceReleaseItemCmd::PDUSessionResourceReleaseItemCmd() {
-  pDUSessionID = NULL;
-}
-PDUSessionResourceReleaseItemCmd::~PDUSessionResourceReleaseItemCmd() {
-  if (pDUSessionID) delete pDUSessionID;
+
+//------------------------------------------------------------------------------
+PDUSessionResourceReleaseItemCmd::PDUSessionResourceReleaseItemCmd() {}
+
+//------------------------------------------------------------------------------
+PDUSessionResourceReleaseItemCmd::~PDUSessionResourceReleaseItemCmd() {}
+
+//------------------------------------------------------------------------------
+void PDUSessionResourceReleaseItemCmd::setPDUSessionResourceReleaseItemCmd(
+    const PDUSessionID& pdu_session_id,
+    const OCTET_STRING_t& pdu_session_resource_release) {
+  pdu_session_id_                                = pdu_session_id;
+  pdu_session_resource_release_command_transfer_ = pdu_session_resource_release;
 }
 
-void PDUSessionResourceReleaseItemCmd::setPDUSessionResourceReleaseItemCmd(
-    PDUSessionID* m_pDUSessionID,
-    OCTET_STRING_t m_pDUSessionResourceReleaseCommandTransfer) {
-  pDUSessionID = m_pDUSessionID;
-  pDUSessionResourceReleaseCommandTransfer =
-      m_pDUSessionResourceReleaseCommandTransfer;
-}
+//------------------------------------------------------------------------------
 bool PDUSessionResourceReleaseItemCmd::encode2PDUSessionResourceReleaseItemCmd(
     Ngap_PDUSessionResourceToReleaseItemRelCmd_t*
         pduSessionResourceReleaseCommandTransfer) {
-  if (!pDUSessionID->encode(
+  if (!pdu_session_id_.encode(
           pduSessionResourceReleaseCommandTransfer->pDUSessionID))
     return false;
   pduSessionResourceReleaseCommandTransfer
       ->pDUSessionResourceReleaseCommandTransfer =
-      pDUSessionResourceReleaseCommandTransfer;
+      pdu_session_resource_release_command_transfer_;
 
   return true;
 }
+
+//------------------------------------------------------------------------------
 bool PDUSessionResourceReleaseItemCmd::
     decodefromPDUSessionResourceReleaseItemCmd(
         Ngap_PDUSessionResourceToReleaseItemRelCmd_t*
             pduSessionResourceReleaseCommandTransfer) {
-  if (pDUSessionID == nullptr) pDUSessionID = new PDUSessionID();
-  if (!pDUSessionID->decode(
+  if (!pdu_session_id_.decode(
           pduSessionResourceReleaseCommandTransfer->pDUSessionID))
     return false;
-  pDUSessionResourceReleaseCommandTransfer =
+  pdu_session_resource_release_command_transfer_ =
       pduSessionResourceReleaseCommandTransfer
           ->pDUSessionResourceReleaseCommandTransfer;
 
   return true;
 }
+
+//------------------------------------------------------------------------------
 void PDUSessionResourceReleaseItemCmd::getPDUSessionResourceReleaseItemCmd(
-    PDUSessionID*& m_pDUSessionID,
-    OCTET_STRING_t& m_pDUSessionResourceReleaseCommandTransfer) {
-  m_pDUSessionID = pDUSessionID;
-  m_pDUSessionResourceReleaseCommandTransfer =
-      pDUSessionResourceReleaseCommandTransfer;
+    PDUSessionID& pdu_session_id,
+    OCTET_STRING_t& pdu_session_resource_release) const {
+  pdu_session_id               = pdu_session_id_;
+  pdu_session_resource_release = pdu_session_resource_release_command_transfer_;
 }
 
 }  // namespace ngap

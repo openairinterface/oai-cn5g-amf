@@ -39,7 +39,7 @@ void PDUSessionResourceFailedToSetupListCxtFail::set(
 
 //------------------------------------------------------------------------------
 void PDUSessionResourceFailedToSetupListCxtFail::get(
-    std::vector<PDUSessionResourceFailedToSetupItemCxtFail>& list) {
+    std::vector<PDUSessionResourceFailedToSetupItemCxtFail>& list) const {
   list = itemList;
 }
 

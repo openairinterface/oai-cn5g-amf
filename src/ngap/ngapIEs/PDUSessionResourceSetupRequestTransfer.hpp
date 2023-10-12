@@ -19,8 +19,8 @@
  *      contact@openairinterface.org
  */
 
-#ifndef _PDUSESSIONRESOURCESETUPREQUESTTRANSFER_H_
-#define _PDUSESSIONRESOURCESETUPREQUESTTRANSFER_H_
+#ifndef _PDU_SESSION_RESOURCE_SETUP_REQUEST_TRANSFER_H_
+#define _PDU_SESSION_RESOURCE_SETUP_REQUEST_TRANSFER_H_
 
 #include <vector>
 
@@ -46,13 +46,24 @@ class PduSessionResourceSetupRequestTransferIE {
   virtual ~PduSessionResourceSetupRequestTransferIE();
 
   void setPduSessionAggregateMaximumBitRate(
-      long bit_rate_downlink,
-      long bit_rate_uplink);                                  // O
-  void setUL_NG_U_UP_TNL_Information(GtpTunnel_t upTnlInfo);  // M
+      long bit_rate_downlink, long bit_rate_uplink);
+  bool getPduSessionAggregateMaximumBitRate(
+      long& bit_rate_downlink, long& bit_rate_uplink) const;
+
+  void setUlNgUUpTnlInformation(GtpTunnel_t upTnlInfo);
+  bool getUlNgUUpTnlInformation(GtpTunnel_t& upTnlInfo) const;
+
   // void
-  // setAdditionalUL_NG_U_UP_TNL_Information(std::vector<GtpTunnel>list);//O
-  void setDataForwardingNotPossible();                 // O
-  void setPduSessionType(e_Ngap_PDUSessionType type);  // M
+  // setAdditionalUlNgUUpTnlInformation(std::vector<GtpTunnel>list);
+  // bool
+  // getAdditionalUlNgUUpTnlInformation(std::vector<GtpTunnel>&list);
+
+  void setDataForwardingNotPossible();
+  bool getDataForwardingNotPossible() const;
+
+  void setPduSessionType(e_Ngap_PDUSessionType type);
+  bool getPduSessionType(long& type) const;
+
   void setSecurityIndication(
       e_Ngap_IntegrityProtectionIndication integrity_protection,
       e_Ngap_ConfidentialityProtectionIndication confidentiality_protection,
@@ -60,36 +71,35 @@ class PduSessionResourceSetupRequestTransferIE {
   void setSecurityIndication(
       e_Ngap_IntegrityProtectionIndication integrity_protection,
       e_Ngap_ConfidentialityProtectionIndication confidentiality_protection);
-  void setNetworkInstance(long value);
-  void setQosFlowSetupRequestList(std::vector<QosFlowSetupReq_t> list);
-  int Encode(uint8_t* buf, int buf_size);
-  // Decapsulation
-  bool decodefromIE(uint8_t* buf, int buf_size);
-  bool getPduSessionAggregateMaximumBitRate(
-      long& bit_rate_downlink,
-      long& bit_rate_uplink);                                  // O
-  bool getUL_NG_U_UP_TNL_Information(GtpTunnel_t& upTnlInfo);  // M
-  // bool
-  // getAdditionalUL_NG_U_UP_TNL_Information(std::vector<GtpTunnel>&list);//O
-  bool getDataForwardingNotPossible();  // O
-  bool getPduSessionType(long& type);   // M
   bool getSecurityIndication(
       long& integrity_protection, long& confidentiality_protection,
-      long& maxIntProtDataRate);
-  bool getNetworkInstance(long& value);
-  bool getQosFlowSetupRequestList(std::vector<QosFlowSetupReq_t>& list);
+      long& maxIntProtDataRate) const;
+
+  void setNetworkInstance(long value);
+  bool getNetworkInstance(long& value) const;
+
+  void setQosFlowSetupRequestList(std::vector<QosFlowSetupReq_t> list);
+  bool getQosFlowSetupRequestList(std::vector<QosFlowSetupReq_t>& list) const;
+
+  int encode(uint8_t* buf, int buf_size);
+  bool decode(uint8_t* buf, int buf_size);
 
  private:
   Ngap_PDUSessionResourceSetupRequestTransfer_t*
       pduSessionResourceSetupRequestTransferIEs;
 
-  PduSessionAggregateMaximumBitRate* pduSessionAggregateMaximumBitRateIE;
-  UpTransportLayerInformation* upTransportLayerInformation;
-  DataForwardingNotPossible* dataForwardingNotPossible;
-  PDUSessionType* pduSessionType;
-  SecurityIndication* securityIndication;
-  NetworkInstance* networkInstance;
-  QosFlowSetupRequestList* qosFlowSetupRequestList;
+  std::optional<PduSessionAggregateMaximumBitRate>
+      pduSessionAggregateMaximumBitRateIE;                  // Optional
+  UpTransportLayerInformation upTransportLayerInformation;  // Mandatory
+  // TODO: Additional UL NG-U UP TNL Information //Optional
+  std::optional<DataForwardingNotPossible>
+      dataForwardingNotPossible;                         // Optional
+  PDUSessionType pduSessionType;                         // Mandatory
+  std::optional<SecurityIndication> securityIndication;  // Optional
+  std::optional<NetworkInstance> networkInstance;        // Optional
+  QosFlowSetupRequestList qosFlowSetupRequestList;       // Mandatory
+  // TODO: Common Network Instance //Optional
+  // TODO: Direct Forwarding Path Availability //Optional
 };
 
 }  // namespace ngap

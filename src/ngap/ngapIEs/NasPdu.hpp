@@ -19,30 +19,41 @@
  *      contact@openairinterface.org
  */
 
-#ifndef _DRB_STATUS_DL18_H_
-#define _DRB_STATUS_DL18_H_
+#ifndef _NAS_PDU_H_
+#define _NAS_PDU_H_
 
-#include "COUNTValueForPDCP_SN18.hpp"
-#include "logger.hpp"
+#include "bstrlib.h"
 
 extern "C" {
-#include "Ngap_DRBStatusDL18.h"
+#include "Ngap_NAS-PDU.h"
 }
+
 namespace ngap {
-class DRBStatusDL18 {
+
+class NasPdu {
  public:
-  DRBStatusDL18();
-  virtual ~DRBStatusDL18();
+  NasPdu();
+  virtual ~NasPdu();
 
-  void getcountvalue(COUNTValueForPDCP_SN18& value);
-  void setcountvalue(const COUNTValueForPDCP_SN18& value);
+  bool encode(Ngap_NAS_PDU_t&);
+  bool decode(Ngap_NAS_PDU_t&);
 
-  bool encodeddRBStatusDL18(Ngap_DRBStatusDL18_t* DL18);
-  bool decodeddRBStatusDL18(Ngap_DRBStatusDL18_t* DL18);
+  // bool get(uint8_t*& buffer, size_t& size) const;
+  void set(uint8_t* buffer, size_t size);
+
+  bool get(OCTET_STRING_t& pdu) const;
+  bool set(const OCTET_STRING_t& pdu);
+
+  bool get(bstring& pdu) const;
+  bool set(const bstring& pdu);
+
+  bool get(NasPdu& nas_pdu) const;
+  bool set(const NasPdu& nas_pdu);
 
  private:
-  COUNTValueForPDCP_SN18 pdcp_value;  // Mandatory
-  // TODO: Old Associated QoS Flow List - UL End Marker Expected (Optional)
+  bstring pdu_bstring;
 };
+
 }  // namespace ngap
+
 #endif

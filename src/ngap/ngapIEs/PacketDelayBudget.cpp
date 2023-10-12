@@ -21,14 +21,11 @@
 
 #include "PacketDelayBudget.hpp"
 
-#include <iostream>
-using namespace std;
-
 namespace ngap {
 
 //------------------------------------------------------------------------------
 PacketDelayBudget::PacketDelayBudget() {
-  packetdelaybudget = 0;
+  packet_delay_budget_ = 0;
 }
 
 //------------------------------------------------------------------------------
@@ -36,28 +33,26 @@ PacketDelayBudget::~PacketDelayBudget() {}
 
 //------------------------------------------------------------------------------
 void PacketDelayBudget::setPacketDelayBudget(long value) {
-  packetdelaybudget = value;
+  packet_delay_budget_ = value;
 }
 
 //------------------------------------------------------------------------------
-bool PacketDelayBudget::getPacketDelayBudget(long& value) {
-  value = packetdelaybudget;
+bool PacketDelayBudget::getPacketDelayBudget(long& value) const {
+  value = packet_delay_budget_;
 
   return true;
 }
 
 //------------------------------------------------------------------------------
-bool PacketDelayBudget::encode2PacketDelayBudget(
-    Ngap_PacketDelayBudget_t* packetDelayBudget) {
-  *packetDelayBudget = packetdelaybudget;
+bool PacketDelayBudget::encode(Ngap_PacketDelayBudget_t* value) {
+  *value = packet_delay_budget_;
 
   return true;
 }
 
 //------------------------------------------------------------------------------
-bool PacketDelayBudget::decodefromPacketDelayBudget(
-    Ngap_PacketDelayBudget_t* packetDelayBudget) {
-  packetdelaybudget = *packetDelayBudget;
+bool PacketDelayBudget::decode(Ngap_PacketDelayBudget_t* value) {
+  packet_delay_budget_ = *value;
 
   return true;
 }

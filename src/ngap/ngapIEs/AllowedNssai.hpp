@@ -22,8 +22,10 @@
 #ifndef _ALLOWED_NSSAI_H_
 #define _ALLOWED_NSSAI_H_
 
-#include "S-NSSAI.hpp"
 #include <vector>
+
+#include "S-NSSAI.hpp"
+
 constexpr uint8_t kAllowedSNSSAIMaxItems = 8;
 
 extern "C" {
@@ -38,7 +40,7 @@ class AllowedNSSAI {
   virtual ~AllowedNSSAI();
 
   void set(const std::vector<S_NSSAI>& list);
-  void get(std::vector<S_NSSAI>& list);
+  void get(std::vector<S_NSSAI>& list) const;
 
   bool encode(Ngap_AllowedNSSAI_t* allowedNssaiList);
   bool decode(Ngap_AllowedNSSAI_t* allowedNssaiList);

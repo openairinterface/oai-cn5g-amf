@@ -22,11 +22,11 @@
 #ifndef _PDU_SESSION_RESOURCE_MODIFY_ITEM_MOD_REQ_H_
 #define _PDU_SESSION_RESOURCE_MODIFY_ITEM_MOD_REQ_H_
 
-#include "NAS-PDU.hpp"
+#include <optional>
+
+#include "NasPdu.hpp"
 #include "PDUSessionID.hpp"
 #include "S-NSSAI.hpp"
-
-#include <optional>
 
 extern "C" {
 #include "Ngap_PDUSessionResourceModifyItemModReq.h"
@@ -40,13 +40,13 @@ class PDUSessionResourceModifyItemModReq {
   virtual ~PDUSessionResourceModifyItemModReq();
 
   void set(
-      const PDUSessionID& pdu_session_id, const std::optional<NAS_PDU>& nas_pdu,
+      const PDUSessionID& pdu_session_id, const std::optional<NasPdu>& nas_pdu,
       const OCTET_STRING_t& pdu_session_resource_modify_request_transfer,
       const std::optional<S_NSSAI>& s_nssai);
   void get(
-      PDUSessionID& pdu_session_id, std::optional<NAS_PDU>& nas_pdu,
+      PDUSessionID& pdu_session_id, std::optional<NasPdu>& nas_pdu,
       OCTET_STRING_t& pdu_session_resource_modify_request_transfer,
-      std::optional<S_NSSAI>& s_nssai);
+      std::optional<S_NSSAI>& s_nssai) const;
 
   bool encode(Ngap_PDUSessionResourceModifyItemModReq_t&
                   pduSessionResourceModifyItemModReq);
@@ -55,7 +55,7 @@ class PDUSessionResourceModifyItemModReq {
 
  private:
   PDUSessionID pdu_session_id_;                                  // Mandatory
-  std::optional<NAS_PDU> nas_pdu_;                               // Optional
+  std::optional<NasPdu> nas_pdu_;                                // Optional
   OCTET_STRING_t pdu_session_resource_modify_request_transfer_;  // Mandatory
   std::optional<S_NSSAI> s_nssai_;                               // Optional
 };

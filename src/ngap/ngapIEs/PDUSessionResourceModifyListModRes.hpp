@@ -22,8 +22,9 @@
 #ifndef _PDU_SESSION_RESOURCE_MODIFY_LIST_MOD_RES_H_
 #define _PDU_SESSION_RESOURCE_MODIFY_LIST_MOD_RES_H_
 
-#include "PDUSessionResourceModifyItemModRes.hpp"
 #include <vector>
+
+#include "PDUSessionResourceModifyItemModRes.hpp"
 
 extern "C" {
 #include "Ngap_PDUSessionResourceModifyListModRes.h"
@@ -40,6 +41,7 @@ class PDUSessionResourceModifyListModRes {
                m_pduSessionResourceModifyListModRes);
   void get(std::vector<PDUSessionResourceModifyItemModRes>&
                m_pduSessionResourceModifyListModRes) const;
+
   bool encode(Ngap_PDUSessionResourceModifyListModRes_t&
                   m_pduSessionResourceModifyListModRes) const;
   bool decode(const Ngap_PDUSessionResourceModifyListModRes_t&

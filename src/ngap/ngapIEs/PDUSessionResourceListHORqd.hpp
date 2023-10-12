@@ -22,8 +22,9 @@
 #ifndef _PDU_SESSION_RESOURCE_LIST_HO_RQD_H_
 #define _PDU_SESSION_RESOURCE_LIST_HO_RQD_H_
 
-#include "PDUSessionResourceItem.hpp"
 #include <vector>
+
+#include "PDUSessionResourceItem.hpp"
 
 extern "C" {
 #include "Ngap_PDUSessionResourceListHORqd.h"
@@ -37,7 +38,7 @@ class PDUSessionResourceListHORqd {
   virtual ~PDUSessionResourceListHORqd();
 
   void set(const std::vector<PDUSessionResourceItem>& list);
-  void get(std::vector<PDUSessionResourceItem>& list);
+  void get(std::vector<PDUSessionResourceItem>& list) const;
 
   bool encode(Ngap_PDUSessionResourceListHORqd_t* list);
   bool decode(Ngap_PDUSessionResourceListHORqd_t* list);

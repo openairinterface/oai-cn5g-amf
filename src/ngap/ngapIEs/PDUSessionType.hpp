@@ -19,8 +19,8 @@
  *      contact@openairinterface.org
  */
 
-#ifndef _PDUSESSIONTYPE_H_
-#define _PDUSESSIONTYPE_H_
+#ifndef _PDU_SESSION_TYPE_H_
+#define _PDU_SESSION_TYPE_H_
 
 extern "C" {
 #include "Ngap_PDUSessionType.h"
@@ -33,14 +33,14 @@ class PDUSessionType {
   PDUSessionType();
   virtual ~PDUSessionType();
 
-  void setPDUSessionType(e_Ngap_PDUSessionType m_pdusessiontype);
-  bool getPDUSessionType(long& m_pdusessiontype);
+  void set(e_Ngap_PDUSessionType pdu_session_type);
+  bool get(long& pdu_session_type) const;
 
-  bool encode2PDUSessionType(Ngap_PDUSessionType_t&);
-  bool decodefromPDUSessionType(Ngap_PDUSessionType_t);
+  bool encode(Ngap_PDUSessionType_t&);
+  bool decode(Ngap_PDUSessionType_t);
 
  private:
-  long pdusessiontype;
+  long pdu_session_type_;
 };
 
 }  // namespace ngap

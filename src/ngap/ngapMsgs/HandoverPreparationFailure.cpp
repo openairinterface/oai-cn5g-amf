@@ -61,7 +61,7 @@ void HandoverPreparationFailure::setAmfUeNgapId(const unsigned long& id) {
   ie->value.present =
       Ngap_HandoverPreparationFailureIEs__value_PR_AMF_UE_NGAP_ID;
 
-  int ret = amfUeNgapId.encode2AMF_UE_NGAP_ID(ie->value.choice.AMF_UE_NGAP_ID);
+  int ret = amfUeNgapId.encode(ie->value.choice.AMF_UE_NGAP_ID);
   if (!ret) {
     Logger::ngap().error("Encode AMF_UE_NGAP_ID IE error");
     free_wrapper((void**) &ie);
@@ -98,7 +98,8 @@ void HandoverPreparationFailure::setRanUeNgapId(
 
 //------------------------------------------------------------------------------
 void HandoverPreparationFailure::setCause(
-    const Ngap_Cause_PR& causePresent, const long& value)  //
+    const Ngap_Cause_PR& causePresent,
+    const long& value)  //
 {
   Ngap_HandoverPreparationFailureIEs_t* ie =
       (Ngap_HandoverPreparationFailureIEs_t*) calloc(
@@ -120,7 +121,7 @@ Ngap_Cause_PR HandoverPreparationFailure::getChoiceOfCause() {
 }
 
 //------------------------------------------------------------------------------
-bool HandoverPreparationFailure::decodeFromPdu(Ngap_NGAP_PDU_t* ngapMsgPdu) {
+bool HandoverPreparationFailure::decode(Ngap_NGAP_PDU_t* ngapMsgPdu) {
   if (!ngapMsgPdu) return false;
   ngapPdu = ngapMsgPdu;
 
@@ -150,7 +151,7 @@ bool HandoverPreparationFailure::decodeFromPdu(Ngap_NGAP_PDU_t* ngapMsgPdu) {
                 Ngap_Criticality_ignore &&
             hoPreparationFailureIEs->protocolIEs.list.array[i]->value.present ==
                 Ngap_HandoverPreparationFailureIEs__value_PR_AMF_UE_NGAP_ID) {
-          if (!amfUeNgapId.decodefromAMF_UE_NGAP_ID(
+          if (!amfUeNgapId.decode(
                   hoPreparationFailureIEs->protocolIEs.list.array[i]
                       ->value.choice.AMF_UE_NGAP_ID)) {
             Logger::ngap().error("Decoded NGAP AMF_UE_NGAP_ID IE error");

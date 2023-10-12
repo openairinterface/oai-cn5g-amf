@@ -23,54 +23,52 @@
 
 #include "utils.hpp"
 
-using namespace std;
-
 namespace ngap {
 
 //------------------------------------------------------------------------------
 AMFRegionID::AMFRegionID() {
-  regionid = 0;
+  region_id_ = 0;
 }
 
 //------------------------------------------------------------------------------
 AMFRegionID::~AMFRegionID() {}
 
 //------------------------------------------------------------------------------
-void AMFRegionID::setAMFRegionID(const std::string charid) {
-  regionid = utils::fromString<int>(charid);
+void AMFRegionID::setAMFRegionID(const std::string& id) {
+  region_id_ = utils::fromString<int>(id);
 }
 
 //------------------------------------------------------------------------------
 void AMFRegionID::setAMFRegionID(const uint8_t& id) {
-  regionid = id;
+  region_id_ = id;
 }
 
 //------------------------------------------------------------------------------
-void AMFRegionID::getAMFRegionID(std::string& charid) {
-  charid = to_string(regionid);
+void AMFRegionID::getAMFRegionID(std::string& id) const {
+  id = std::to_string(region_id_);
 }
 
 //------------------------------------------------------------------------------
-void AMFRegionID::getAMFRegionID(uint8_t& id) {
-  id = regionid;
+void AMFRegionID::getAMFRegionID(uint8_t& id) const {
+  id = region_id_;
 }
 
 //------------------------------------------------------------------------------
-bool AMFRegionID::encode(Ngap_AMFRegionID_t& amfregionid) {
-  amfregionid.size = 1;
-  uint8_t* buffer  = (uint8_t*) calloc(1, sizeof(uint8_t));
+bool AMFRegionID::encode(Ngap_AMFRegionID_t& id) {
+  id.size         = 1;
+  uint8_t* buffer = (uint8_t*) calloc(1, sizeof(uint8_t));
   if (!buffer) return false;
-  *buffer                 = regionid;
-  amfregionid.buf         = buffer;
-  amfregionid.bits_unused = 0;
+  *buffer        = region_id_;
+  id.buf         = buffer;
+  id.bits_unused = 0;
 
   return true;
 }
 
 //------------------------------------------------------------------------------
-bool AMFRegionID::decode(Ngap_AMFRegionID_t& amfregionid) {
-  if (!amfregionid.buf) return false;
-  regionid = *amfregionid.buf;
+bool AMFRegionID::decode(Ngap_AMFRegionID_t& id) {
+  if (!id.buf) return false;
+  region_id_ = *id.buf;
 
   return true;
 }

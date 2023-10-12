@@ -19,30 +19,38 @@
  *      contact@openairinterface.org
  */
 
-#ifndef _DRB_STATUS_UL_H_
-#define _DRB_STATUS_UL_H_
+#ifndef _DRBS_SUBJECT_TO_STATUS_TRANSFERT_ITEM_H_
+#define _DRBS_SUBJECT_TO_STATUS_TRANSFERT_ITEM_H_
 
-#include "dRBStatusUL18.hpp"
+#include "DrbStatusDl.hpp"
+#include "DrbStatusUl.hpp"
 
 extern "C" {
-#include "Ngap_DRBStatusUL.h"
+#include "Ngap_DRBsSubjectToStatusTransferItem.h"
 }
 
 namespace ngap {
-class dRBStatusUL {
- private:
-  dRBStatusUL18 ul18;
-  // TODO: dRBStatusUL12* ul12;
 
+class DrbSubjectToStatusTransferItem {
  public:
-  dRBStatusUL();
-  virtual ~dRBStatusUL();
+  DrbSubjectToStatusTransferItem();
+  virtual ~DrbSubjectToStatusTransferItem();
 
-  void setdRBStatusUL(const dRBStatusUL18& uL18);
-  void getdRBStatusUL(dRBStatusUL18& uL18);
+  void getdRBSubjectItem(
+      Ngap_DRB_ID_t& dRB_ID, DrbStatusUl& dRB_UL, DrbStatusDl& dRB_DL) const;
+  void setdRBSubjectItem(
+      const Ngap_DRB_ID_t& dRB_ID, const DrbStatusUl& dRB_UL,
+      const DrbStatusDl& dRB_DL);
 
-  bool encodedRBStatusUL(Ngap_DRBStatusUL_t* uL);
-  bool decodedRBStatusUL(Ngap_DRBStatusUL_t* uL);
+  bool decodefromdRBSubjectItem(
+      Ngap_DRBsSubjectToStatusTransferItem_t* dRB_item);
+  bool encodedRBSubjectItem(Ngap_DRBsSubjectToStatusTransferItem_t* dRB_item);
+
+ private:
+  Ngap_DRB_ID_t drbID;  // Mandatory
+  DrbStatusUl drbUL;    // Mandatory
+  DrbStatusDl drbDL;    // Mandatory
+  // TODO: Old Associated QoS Flow List - UL End Marker Expected
 };
 }  // namespace ngap
 #endif

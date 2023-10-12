@@ -21,9 +21,6 @@
 
 #include "PDUSessionResourceFailedToSetupListCxtRes.hpp"
 
-#include <iostream>
-using namespace std;
-
 namespace ngap {
 
 //------------------------------------------------------------------------------
@@ -42,7 +39,7 @@ void PDUSessionResourceFailedToSetupListCxtRes::set(
 
 //------------------------------------------------------------------------------
 void PDUSessionResourceFailedToSetupListCxtRes::get(
-    std::vector<PDUSessionResourceFailedToSetupItemCxtRes>& list) {
+    std::vector<PDUSessionResourceFailedToSetupItemCxtRes>& list) const {
   list = item_list_;
 }
 
