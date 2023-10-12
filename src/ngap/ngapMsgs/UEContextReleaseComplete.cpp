@@ -308,7 +308,7 @@ bool UEContextReleaseCompleteMsg::decode(Ngap_NGAP_PDU_t* ngapMsgPdu) {
                 Ngap_Criticality_reject &&
             ies->protocolIEs.list.array[i]->value.present ==
                 Ngap_UEContextReleaseComplete_IEs__value_PR_PDUSessionResourceListCxtRelCpl) {
-          PDUSessionResourceListCxtRelCpl m_pduSessionResourceListCxtRelCpl =
+          PduSessionResourceListCxtRelCpl m_pduSessionResourceListCxtRelCpl =
               {};
           if (!m_pduSessionResourceListCxtRelCpl.decode(
                   ies->protocolIEs.list.array[i]

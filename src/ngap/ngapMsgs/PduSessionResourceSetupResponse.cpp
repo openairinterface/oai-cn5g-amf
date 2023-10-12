@@ -323,7 +323,7 @@ bool PduSessionResourceSetupResponseMsg::decode(Ngap_NGAP_PDU_t* ngapMsgPdu) {
             pduSessionResourceSetupResponseIEs->protocolIEs.list.array[i]
                     ->value.present ==
                 Ngap_PDUSessionResourceSetupResponseIEs__value_PR_PDUSessionResourceFailedToSetupListSURes) {
-          PDUSessionResourceFailedToSetupListSURes tmp = {};
+          PduSessionResourceFailedToSetupListSURes tmp = {};
           if (!pduSessionResourceFailedToSetupResponseList->decode(
                   &pduSessionResourceSetupResponseIEs->protocolIEs.list
                        .array[i]

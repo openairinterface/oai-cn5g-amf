@@ -236,7 +236,7 @@ bool PduSessionResourceModifyResponseMsg::decode(Ngap_NGAP_PDU_t* ngapMsgPdu) {
             pduSessionResourceModifyResponseIEs->protocolIEs.list.array[i]
                     ->value.present ==
                 Ngap_PDUSessionResourceModifyResponseIEs__value_PR_PDUSessionResourceModifyListModRes) {
-          PDUSessionResourceModifyListModRes item_list = {};
+          PduSessionResourceModifyListModRes item_list = {};
           if (!item_list.decode(
                   pduSessionResourceModifyResponseIEs->protocolIEs.list
                       .array[i]

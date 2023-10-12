@@ -116,7 +116,7 @@ void UEContextReleaseRequestMsg::setPDUSessionResourceList(
 
 //------------------------------------------------------------------------------
 bool UEContextReleaseRequestMsg::getPDUSessionResourceList(
-    PDUSessionResourceListCxtRelReq& pdu_session_resource_list_cxt_rel_req) {
+    PduSessionResourceListCxtRelReq& pdu_session_resource_list_cxt_rel_req) {
   if (!pdu_session_resource_list_cxt_rel_req_.has_value()) return false;
   pdu_session_resource_list_cxt_rel_req =
       pdu_session_resource_list_cxt_rel_req_.value();
@@ -214,7 +214,7 @@ bool UEContextReleaseRequestMsg::decode(Ngap_NGAP_PDU_t* ngapMsgPdu) {
                 Ngap_Criticality_reject &&
             ies->protocolIEs.list.array[i]->value.present ==
                 Ngap_UEContextReleaseRequest_IEs__value_PR_PDUSessionResourceListCxtRelReq) {
-          PDUSessionResourceListCxtRelReq tmp = {};
+          PduSessionResourceListCxtRelReq tmp = {};
           if (!tmp.decode(ies->protocolIEs.list.array[i]
                               ->value.choice.PDUSessionResourceListCxtRelReq)) {
             Logger::ngap().error(
