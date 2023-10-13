@@ -22,8 +22,8 @@
 #ifndef _REROUTE_NAS_REQUEST_H_
 #define _REROUTE_NAS_REQUEST_H_
 
+#include "AmfSetId.hpp"
 #include "AllowedNssai.hpp"
-#include "AMFSetID.hpp"
 #include "NgapMessage.hpp"
 
 extern "C" {
@@ -38,7 +38,7 @@ class RerouteNASRequest : public NgapMessage {
   virtual ~RerouteNASRequest();
 
   void initialize();
-  bool decodeFromPdu(Ngap_NGAP_PDU_t* ngap_msg_pdu) override;
+  bool decode(Ngap_NGAP_PDU_t* ngap_msg_pdu) override;
 
   void setAmfUeNgapId(const unsigned long& id);  // 40 bits
   bool getAmfUeNgapId(unsigned long& id);
@@ -58,11 +58,11 @@ class RerouteNASRequest : public NgapMessage {
  private:
   Ngap_RerouteNASRequest_t* rerouteNASRequestIEs;
 
-  RAN_UE_NGAP_ID ranUeNgapId;                 // Mandatory
-  std::optional<AMF_UE_NGAP_ID> amfUeNgapId;  // Optional
-  OCTET_STRING_t ngapMessage;                 // Mandatory
-  AMFSetID amfSetID;                          // Mandatory
-  std::optional<AllowedNSSAI> allowedNssai;   // Optional
+  RanUeNgapId ranUeNgapId;                   // Mandatory
+  std::optional<AmfUeNgapId> amfUeNgapId;    // Optional
+  OCTET_STRING_t ngapMessage;                // Mandatory
+  AmfSetId amfSetID;                         // Mandatory
+  std::optional<AllowedNSSAI> allowedNssai;  // Optional
   // SourceToTarget-AMFInformationReroute //Optional
 };
 

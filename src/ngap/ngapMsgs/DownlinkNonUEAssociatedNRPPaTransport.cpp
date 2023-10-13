@@ -20,8 +20,9 @@
  */
 
 #include "DownlinkNonUEAssociatedNRPPaTransport.hpp"
-#include "logger.hpp"
+
 #include "conversions.hpp"
+#include "logger.hpp"
 
 extern "C" {
 #include "dynamic_memory_check.h"
@@ -49,7 +50,7 @@ void DownlinkNonUEAssociatedNRPPaTransportMsg::initialize() {
 }
 
 //------------------------------------------------------------------------------
-bool DownlinkNonUEAssociatedNRPPaTransportMsg::decodeFromPdu(
+bool DownlinkNonUEAssociatedNRPPaTransportMsg::decode(
     Ngap_NGAP_PDU_t* ngapMsgPdu) {
   ngapPdu = ngapMsgPdu;
 
@@ -124,7 +125,7 @@ bool DownlinkNonUEAssociatedNRPPaTransportMsg::decodeFromPdu(
 }
 
 //------------------------------------------------------------------------------
-void DownlinkNonUEAssociatedNRPPaTransportMsg::setRoutingID(
+void DownlinkNonUEAssociatedNRPPaTransportMsg::setRoutingId(
     const bstring& pdu) {
   routingID = bstrcpy(pdu);
   Ngap_DownlinkNonUEAssociatedNRPPaTransportIEs_t* ie =
@@ -143,7 +144,7 @@ void DownlinkNonUEAssociatedNRPPaTransportMsg::setRoutingID(
 }
 
 //------------------------------------------------------------------------------
-void DownlinkNonUEAssociatedNRPPaTransportMsg::getRoutingID(bstring& pdu) {
+void DownlinkNonUEAssociatedNRPPaTransportMsg::getRoutingId(bstring& pdu) {
   pdu = bstrcpy(routingID);
 }
 

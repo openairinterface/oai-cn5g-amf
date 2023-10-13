@@ -22,10 +22,10 @@
 #ifndef _UE_ASSOCIATED_LOGICAL_NG_CONNECTION_ITEM_H_
 #define _UE_ASSOCIATED_LOGICAL_NG_CONNECTION_ITEM_H_
 
-#include "AMF-UE-NGAP-ID.hpp"
-#include "RAN-UE-NGAP-ID.hpp"
-
 #include <optional>
+
+#include "AmfUeNgapId.hpp"
+#include "RanUeNgapId.hpp"
 
 extern "C" {
 #include "Ngap_ProtocolIE-Field.h"
@@ -51,8 +51,8 @@ class UEAssociatedLogicalNGConnectionItem {
   bool decode(Ngap_UE_associatedLogicalNG_connectionItem_t* item);
 
  private:
-  std::optional<AMF_UE_NGAP_ID> amf_ue_ngap_id_;  // Optional
-  std::optional<RAN_UE_NGAP_ID> ran_ue_ngap_id_;  // Optional
+  std::optional<AmfUeNgapId> amf_ue_ngap_id_;  // Optional
+  std::optional<RanUeNgapId> ran_ue_ngap_id_;  // Optional
 };
 
 }  // namespace ngap

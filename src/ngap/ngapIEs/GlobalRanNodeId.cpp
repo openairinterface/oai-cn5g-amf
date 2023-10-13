@@ -20,6 +20,7 @@
  */
 
 #include "GlobalRanNodeId.hpp"
+
 #include "logger.hpp"
 
 namespace ngap {
@@ -41,7 +42,7 @@ void GlobalRanNodeId::setChoiceOfRanNodeId(
 }
 
 //------------------------------------------------------------------------------
-Ngap_GlobalRANNodeID_PR GlobalRanNodeId::getChoiceOfRanNodeId() {
+Ngap_GlobalRANNodeID_PR GlobalRanNodeId::getChoiceOfRanNodeId() const {
   return id_present_;
 }
 

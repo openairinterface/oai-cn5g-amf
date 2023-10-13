@@ -66,7 +66,7 @@ void HandoverCommandMsg::setAmfUeNgapId(const unsigned long& id) {
   ie->criticality   = Ngap_Criticality_reject;
   ie->value.present = Ngap_HandoverCommandIEs__value_PR_AMF_UE_NGAP_ID;
 
-  int ret = amfUeNgapId.encode2AMF_UE_NGAP_ID(ie->value.choice.AMF_UE_NGAP_ID);
+  int ret = amfUeNgapId.encode(ie->value.choice.AMF_UE_NGAP_ID);
   if (!ret) {
     Logger::ngap().error("Encode AMF_UE_NGAP_ID IE error");
     free_wrapper((void**) &ie);
@@ -148,9 +148,9 @@ bool HandoverCommandMsg::getNASSecurityParametersFromNGRAN(
 
 //------------------------------------------------------------------------------
 void HandoverCommandMsg::setPduSessionResourceHandoverList(
-    const PDUSessionResourceHandoverList& list) {
+    const PduSessionResourceHandoverList& list) {
   pDUSessionResourceHandoverList =
-      std::optional<PDUSessionResourceHandoverList>(list);
+      std::optional<PduSessionResourceHandoverList>(list);
 
   Ngap_HandoverCommandIEs_t* ie =
       (Ngap_HandoverCommandIEs_t*) calloc(1, sizeof(Ngap_HandoverCommandIEs_t));
@@ -174,7 +174,7 @@ void HandoverCommandMsg::setPduSessionResourceHandoverList(
 
 //------------------------------------------------------------------------------
 bool HandoverCommandMsg::getPduSessionResourceHandoverList(
-    PDUSessionResourceHandoverList& list) {
+    PduSessionResourceHandoverList& list) {
   if (pDUSessionResourceHandoverList.has_value()) {
     list = pDUSessionResourceHandoverList.value();
     return true;
@@ -184,9 +184,9 @@ bool HandoverCommandMsg::getPduSessionResourceHandoverList(
 
 //------------------------------------------------------------------------------
 void HandoverCommandMsg::setPDUSessionResourceToReleaseListHOCmd(
-    const PDUSessionResourceToReleaseListHOCmd& list) {
+    const PduSessionResourceToReleaseListHandoverCmd& list) {
   pDUSessionResourceToReleaseListHOCmd =
-      std::optional<PDUSessionResourceToReleaseListHOCmd>(list);
+      std::optional<PduSessionResourceToReleaseListHandoverCmd>(list);
 
   Ngap_HandoverCommandIEs_t* ie =
       (Ngap_HandoverCommandIEs_t*) calloc(1, sizeof(Ngap_HandoverCommandIEs_t));
@@ -212,7 +212,7 @@ void HandoverCommandMsg::setPDUSessionResourceToReleaseListHOCmd(
 
 //------------------------------------------------------------------------------
 bool HandoverCommandMsg::getPDUSessionResourceToReleaseListHOCmd(
-    PDUSessionResourceToReleaseListHOCmd& list) {
+    PduSessionResourceToReleaseListHandoverCmd& list) {
   if (!pDUSessionResourceToReleaseListHOCmd.has_value()) return false;
   list = pDUSessionResourceToReleaseListHOCmd.value();
   return true;
@@ -242,7 +242,7 @@ void HandoverCommandMsg::getTargetToSource_TransparentContainer(
   targetTosource = targetToSource_TransparentContainer;
 }
 //------------------------------------------------------------------------------
-bool HandoverCommandMsg::decodeFromPdu(Ngap_NGAP_PDU_t* ngapMsgPdu) {
+bool HandoverCommandMsg::decode(Ngap_NGAP_PDU_t* ngapMsgPdu) {
   if (!ngapMsgPdu) return false;
   ngapPdu = ngapMsgPdu;
 
@@ -271,9 +271,8 @@ bool HandoverCommandMsg::decodeFromPdu(Ngap_NGAP_PDU_t* ngapMsgPdu) {
                 Ngap_Criticality_reject &&
             handoverCommandIEs->protocolIEs.list.array[i]->value.present ==
                 Ngap_HandoverCommandIEs__value_PR_AMF_UE_NGAP_ID) {
-          if (!amfUeNgapId.decodefromAMF_UE_NGAP_ID(
-                  handoverCommandIEs->protocolIEs.list.array[i]
-                      ->value.choice.AMF_UE_NGAP_ID)) {
+          if (!amfUeNgapId.decode(handoverCommandIEs->protocolIEs.list.array[i]
+                                      ->value.choice.AMF_UE_NGAP_ID)) {
             Logger::ngap().error("Decoded NGAP AMF_UE_NGAP_ID IE error");
             return false;
           }
@@ -314,11 +313,11 @@ bool HandoverCommandMsg::decodeFromPdu(Ngap_NGAP_PDU_t* ngapMsgPdu) {
                 Ngap_Criticality_ignore &&
             handoverCommandIEs->protocolIEs.list.array[i]->value.present ==
                 Ngap_HandoverCommandIEs__value_PR_PDUSessionResourceHandoverList) {
-          PDUSessionResourceHandoverList tmp = {};
+          PduSessionResourceHandoverList tmp = {};
           if (tmp.decode(handoverCommandIEs->protocolIEs.list.array[i]
                              ->value.choice.PDUSessionResourceHandoverList)) {
             pDUSessionResourceHandoverList =
-                std::optional<PDUSessionResourceHandoverList>(tmp);
+                std::optional<PduSessionResourceHandoverList>(tmp);
           } else {
             Logger::ngap().error(
                 "Decoded NGAP PDUSessionResourceHandoverList IE error");
@@ -335,12 +334,12 @@ bool HandoverCommandMsg::decodeFromPdu(Ngap_NGAP_PDU_t* ngapMsgPdu) {
                 Ngap_Criticality_ignore &&
             handoverCommandIEs->protocolIEs.list.array[i]->value.present ==
                 Ngap_HandoverCommandIEs__value_PR_PDUSessionResourceToReleaseListHOCmd) {
-          PDUSessionResourceToReleaseListHOCmd tmp = {};
+          PduSessionResourceToReleaseListHandoverCmd tmp = {};
           if (tmp.decode(
                   handoverCommandIEs->protocolIEs.list.array[i]
                       ->value.choice.PDUSessionResourceToReleaseListHOCmd)) {
             pDUSessionResourceToReleaseListHOCmd =
-                std::optional<PDUSessionResourceToReleaseListHOCmd>(tmp);
+                std::optional<PduSessionResourceToReleaseListHandoverCmd>(tmp);
           } else {
             Logger::ngap().error(
                 "Decoded NGAP PDUSessionResourceToReleaseListHOCmd IE error");

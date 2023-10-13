@@ -19,8 +19,8 @@
  *      contact@openairinterface.org
  */
 
-#ifndef _PRIORITYLEVELARP_H_
-#define _PRIORITYLEVELARP_H_
+#ifndef _PRIORITY_LEVEL_ARP_H_
+#define _PRIORITY_LEVEL_ARP_H_
 
 extern "C" {
 #include "Ngap_PriorityLevelARP.h"
@@ -34,13 +34,13 @@ class PriorityLevelARP {
   virtual ~PriorityLevelARP();
 
   void setPriorityLevelARP(long value);
-  bool getPriorityLevelARP(long& value);
+  bool getPriorityLevelARP(long& value) const;
 
-  bool encode2PriorityLevelARP(Ngap_PriorityLevelARP_t*);
-  bool decodefromPriorityLevelARP(Ngap_PriorityLevelARP_t*);
+  bool encode(Ngap_PriorityLevelARP_t*);
+  bool decode(Ngap_PriorityLevelARP_t*);
 
  private:
-  long prioritylevelarp;
+  long priority_level_arp_;
 };
 
 }  // namespace ngap

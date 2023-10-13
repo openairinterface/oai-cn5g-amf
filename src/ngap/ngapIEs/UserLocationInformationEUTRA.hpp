@@ -19,12 +19,11 @@
  *      contact@openairinterface.org
  */
 
-#ifndef _USERLOCATIONINFORMATIONEUTRA_H_
-#define _USERLOCATIONINFORMATIONEUTRA_H_
+#ifndef _USER_LOCATION_INFORMATION_EUTRA_H_
+#define _USER_LOCATION_INFORMATION_EUTRA_H_
 
-#include "EUTRA-CGI.hpp"
+#include "EUtraCgi.hpp"
 #include "TAI.hpp"
-//#include "TimeStamp.hpp"
 
 extern "C" {
 #include "Ngap_UserLocationInformationEUTRA.h"
@@ -36,8 +35,8 @@ class UserLocationInformationEUTRA {
   UserLocationInformationEUTRA();
   virtual ~UserLocationInformationEUTRA();
 
-  void set(const EUTRA_CGI& m_eUTRA_CGI, const TAI& m_tAI);
-  void get(EUTRA_CGI& m_eUTRA_CGI, TAI& m_tAI);
+  void set(const EUtraCgi& m_eUTRA_CGI, const TAI& m_tAI);
+  void get(EUtraCgi& m_eUTRA_CGI, TAI& m_tAI);
 
   // bool getTimeStampPresence();
 
@@ -45,8 +44,8 @@ class UserLocationInformationEUTRA {
   bool decode(Ngap_UserLocationInformationEUTRA_t* userLocationInformation);
 
  private:
-  EUTRA_CGI eUTRA_CGI;  // Mandatory
-  TAI tAI;              // Mandatory
+  EUtraCgi eUTRA_CGI;  // Mandatory
+  TAI tAI;             // Mandatory
   // TODO: TimeStamp *timeStamp; //Age of Location (Optional)
   // TODO: NG-RAN CGI (PSCell Information) (Optional)
 };

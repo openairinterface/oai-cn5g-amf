@@ -21,14 +21,11 @@
 
 #include "PacketLossRate.hpp"
 
-#include <iostream>
-using namespace std;
-
 namespace ngap {
 
 //------------------------------------------------------------------------------
 PacketLossRate::PacketLossRate() {
-  packetlossrate = 0;
+  packet_loss_rate_ = 0;
 }
 
 //------------------------------------------------------------------------------
@@ -36,28 +33,26 @@ PacketLossRate::~PacketLossRate() {}
 
 //------------------------------------------------------------------------------
 void PacketLossRate::setPacketLossRate(long value) {
-  packetlossrate = value;
+  packet_loss_rate_ = value;
 }
 
 //------------------------------------------------------------------------------
-bool PacketLossRate::getPacketLossRate(long& value) {
-  value = packetlossrate;
+bool PacketLossRate::getPacketLossRate(long& value) const {
+  value = packet_loss_rate_;
 
   return true;
 }
 
 //------------------------------------------------------------------------------
-bool PacketLossRate::encode2PacketLossRate(
-    Ngap_PacketLossRate_t* packetLossRate) {
-  *packetLossRate = packetlossrate;
+bool PacketLossRate::encode(Ngap_PacketLossRate_t* packetLossRate) {
+  *packetLossRate = packet_loss_rate_;
 
   return true;
 }
 
 //------------------------------------------------------------------------------
-bool PacketLossRate::decodefromPacketLossRate(
-    Ngap_PacketLossRate_t* packetLossRate) {
-  packetlossrate = *packetLossRate;
+bool PacketLossRate::decode(Ngap_PacketLossRate_t* packetLossRate) {
+  packet_loss_rate_ = *packetLossRate;
 
   return true;
 }

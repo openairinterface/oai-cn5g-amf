@@ -24,7 +24,7 @@
 
 #include "Cause.hpp"
 #include "NgapUEMessage.hpp"
-#include "PDUSessionResourceListCxtRelReq.hpp"
+#include "PduSessionResourceListCxtRelReq.hpp"
 
 extern "C" {
 #include "Ngap_UEContextReleaseRequest.h"
@@ -41,12 +41,12 @@ class UEContextReleaseRequestMsg : public NgapUEMessage {
 
   void setAmfUeNgapId(const unsigned long& id) override;
   void setRanUeNgapId(const uint32_t& id) override;
-  bool decodeFromPdu(Ngap_NGAP_PDU_t* ngapMsgPdu) override;
+  bool decode(Ngap_NGAP_PDU_t* ngapMsgPdu) override;
 
-  void setPDUSessionResourceList(const PDUSessionResourceListCxtRelReq&
+  void setPDUSessionResourceList(const PduSessionResourceListCxtRelReq&
                                      pdu_session_resource_list_cxt_rel_req);
   bool getPDUSessionResourceList(
-      PDUSessionResourceListCxtRelReq& pdu_session_resource_list_cxt_rel_req);
+      PduSessionResourceListCxtRelReq& pdu_session_resource_list_cxt_rel_req);
 
   void addCauseIE();
   void setCauseRadioNetwork(const e_Ngap_CauseRadioNetwork& cause);
@@ -57,7 +57,7 @@ class UEContextReleaseRequestMsg : public NgapUEMessage {
 
   // AMF_UE_NGAP_ID //Mandatory
   // RAN_UE_NGAP_ID //Mandatory
-  std::optional<PDUSessionResourceListCxtRelReq>
+  std::optional<PduSessionResourceListCxtRelReq>
       pdu_session_resource_list_cxt_rel_req_;  // Optional
   Cause causeValue;                            // Mandatory
 };

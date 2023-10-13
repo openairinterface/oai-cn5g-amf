@@ -22,12 +22,12 @@
 #ifndef _PDU_SESSION_RESOURCE_SETUP_REQUEST_H_
 #define _PDU_SESSION_RESOURCE_SETUP_REQUEST_H_
 
-#include "PDUSessionResourceSetupListSUReq.hpp"
-#include "RANPagingPriority.hpp"
-#include "UEAggregateMaxBitRate.hpp"
-#include "NgapUEMessage.hpp"
-
 #include <optional>
+
+#include "NgapUEMessage.hpp"
+#include "PduSessionResourceSetupListSUReq.hpp"
+#include "RanPagingPriority.hpp"
+#include "UEAggregateMaxBitRate.hpp"
 
 extern "C" {
 #include "Ngap_InitialContextSetupRequest.h"
@@ -44,7 +44,7 @@ class PduSessionResourceSetupRequestMsg : public NgapUEMessage {
 
   void setAmfUeNgapId(const unsigned long& id) override;
   void setRanUeNgapId(const uint32_t& id) override;
-  bool decodeFromPdu(Ngap_NGAP_PDU_t* ngapMsgPdu) override;
+  bool decode(Ngap_NGAP_PDU_t* ngapMsgPdu) override;
 
   void setRanPagingPriority(const uint32_t& priority);
   bool getRanPagingPriority(uint32_t& priority);
@@ -65,9 +65,9 @@ class PduSessionResourceSetupRequestMsg : public NgapUEMessage {
  private:
   Ngap_PDUSessionResourceSetupRequest_t* pduSessionResourceSetupRequestIEs;
 
-  std::optional<RANPagingPriority> ranPagingPriority;  // Optional
-  std::optional<NAS_PDU> nasPdu;                       // Optional
-  PDUSessionResourceSetupListSUReq
+  std::optional<RanPagingPriority> ranPagingPriority;  // Optional
+  std::optional<NasPdu> nasPdu;                        // Optional
+  PduSessionResourceSetupListSUReq
       pduSessionResourceSetupRequestList;                      // Mandatory
   std::optional<UEAggregateMaxBitRate> uEAggregateMaxBitRate;  // Optional
 };

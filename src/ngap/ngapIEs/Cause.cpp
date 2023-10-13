@@ -20,6 +20,7 @@
  */
 
 #include "Cause.hpp"
+
 #include "logger.hpp"
 
 namespace ngap {

@@ -19,8 +19,8 @@
  *      contact@openairinterface.org
  */
 
-#ifndef _PRIORITYLEVELQOS_H_
-#define _PRIORITYLEVELQOS_H_
+#ifndef _PRIORITY_LEVEL_QOS_H_
+#define _PRIORITY_LEVEL_QOS_H_
 
 extern "C" {
 #include "Ngap_PriorityLevelQos.h"
@@ -34,13 +34,13 @@ class PriorityLevelQos {
   virtual ~PriorityLevelQos();
 
   void setPriorityLevelQos(long value);
-  bool getPriorityLevelQos(long& value);
+  bool getPriorityLevelQos(long& value) const;
 
-  bool encode2PriorityLevelQos(Ngap_PriorityLevelQos_t*);
-  bool decodefromPriorityLevelQos(Ngap_PriorityLevelQos_t*);
+  bool encode(Ngap_PriorityLevelQos_t*);
+  bool decode(Ngap_PriorityLevelQos_t*);
 
  private:
-  long prioritylevelqos;
+  long priority_level_;
 };
 
 }  // namespace ngap

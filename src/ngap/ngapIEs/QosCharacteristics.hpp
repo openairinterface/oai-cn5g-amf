@@ -19,8 +19,10 @@
  *      contact@openairinterface.org
  */
 
-#ifndef _QOSCHARACTERISTICS_H_
-#define _QOSCHARACTERISTICS_H_
+#ifndef _QOS_CHARACTERISTICS_H_
+#define _QOS_CHARACTERISTICS_H_
+
+#include <optional>
 
 #include "Dynamic5QIDescriptor.hpp"
 #include "NonDynamic5QIDescriptor.hpp"
@@ -36,19 +38,24 @@ class QosCharacteristics {
   QosCharacteristics();
   virtual ~QosCharacteristics();
 
-  void setQosCharacteristics(
-      NonDynamic5QIDescriptor* m_nonDynamic5QIDescriptor);
-  void setQosCharacteristics(Dynamic5QIDescriptor* m_dynamic5QIDescriptor);
   int QosCharacteristicsPresent();
-  bool getQosCharacteristics(
-      NonDynamic5QIDescriptor*& m_nonDynamic5QIDescriptor);
-  bool getQosCharacteristics(Dynamic5QIDescriptor*& m_dynamic5QIDescriptor);
-  bool encode2QosCharacteristics(Ngap_QosCharacteristics_t*);
-  bool decodefromQosCharacteristics(Ngap_QosCharacteristics_t*);
+
+  void setQosCharacteristics(
+      const NonDynamic5QIDescriptor& m_nonDynamic5QIDescriptor);
+  void getQosCharacteristics(
+      std::optional<NonDynamic5QIDescriptor>& m_nonDynamic5QIDescriptor) const;
+
+  void setQosCharacteristics(
+      const Dynamic5QIDescriptor& m_dynamic5QIDescriptor);
+  void getQosCharacteristics(
+      std::optional<Dynamic5QIDescriptor>& m_dynamic5QIDescriptor) const;
+
+  bool encode(Ngap_QosCharacteristics_t*);
+  bool decode(Ngap_QosCharacteristics_t*);
 
  private:
-  NonDynamic5QIDescriptor* nonDynamic5QIDescriptor;
-  Dynamic5QIDescriptor* dynamic5QIDescriptor;
+  std::optional<NonDynamic5QIDescriptor> nonDynamic5QIDescriptor;
+  std::optional<Dynamic5QIDescriptor> dynamic5QIDescriptor;
 };
 }  // namespace ngap
 

@@ -21,112 +21,83 @@
 
 #include "PduSessionAggregateMaximumBitRate.hpp"
 
-#include <iostream>
-using namespace std;
-
 namespace ngap {
 
 //------------------------------------------------------------------------------
 PduSessionAggregateMaximumBitRate::PduSessionAggregateMaximumBitRate() {
-  aggregatemaxbitratedl = 0;
-  aggregatemaxbitrateul = 0;
+  dl_ = 0;
+  ul_ = 0;
 }
 
+//------------------------------------------------------------------------------
+PduSessionAggregateMaximumBitRate::PduSessionAggregateMaximumBitRate(
+    long bit_rate_downlink, long bit_rate_uplink) {
+  dl_ = bit_rate_downlink;
+  ul_ = bit_rate_uplink;
+}
 //------------------------------------------------------------------------------
 PduSessionAggregateMaximumBitRate::~PduSessionAggregateMaximumBitRate() {}
 
 //------------------------------------------------------------------------------
-void PduSessionAggregateMaximumBitRate::setPduSessionAggregateMaximumBitRate(
+void PduSessionAggregateMaximumBitRate::set(
     long bit_rate_downlink, long bit_rate_uplink) {
-  aggregatemaxbitratedl = bit_rate_downlink;
-  aggregatemaxbitrateul = bit_rate_uplink;
+  dl_ = bit_rate_downlink;
+  ul_ = bit_rate_uplink;
 }
 
 //------------------------------------------------------------------------------
-bool PduSessionAggregateMaximumBitRate::getPduSessionAggregateMaximumBitRate(
-    long& bit_rate_downlink, long& bit_rate_uplink) {
-  bit_rate_downlink = aggregatemaxbitratedl;
-  bit_rate_uplink   = aggregatemaxbitrateul;
+bool PduSessionAggregateMaximumBitRate::get(
+    long& bit_rate_downlink, long& bit_rate_uplink) const {
+  bit_rate_downlink = dl_;
+  bit_rate_uplink   = ul_;
 
   return true;
 }
 
 //------------------------------------------------------------------------------
-bool PduSessionAggregateMaximumBitRate::
-    encode2PduSessionAggregateMaximumBitRate(
-        Ngap_PDUSessionAggregateMaximumBitRate_t&
-            pdusessionAggregateMaxBitRate) {
-  pdusessionAggregateMaxBitRate.pDUSessionAggregateMaximumBitRateDL.size = 6;
-  pdusessionAggregateMaxBitRate.pDUSessionAggregateMaximumBitRateDL
-      .buf = (uint8_t*) calloc(
-      1,
-      pdusessionAggregateMaxBitRate.pDUSessionAggregateMaximumBitRateDL.size);
-  if (!pdusessionAggregateMaxBitRate.pDUSessionAggregateMaximumBitRateDL.buf)
-    return false;
+bool PduSessionAggregateMaximumBitRate::encode(
+    Ngap_PDUSessionAggregateMaximumBitRate_t& bit_rate) {
+  bit_rate.pDUSessionAggregateMaximumBitRateDL.size = 6;
+  bit_rate.pDUSessionAggregateMaximumBitRateDL.buf =
+      (uint8_t*) calloc(1, bit_rate.pDUSessionAggregateMaximumBitRateDL.size);
+  if (!bit_rate.pDUSessionAggregateMaximumBitRateDL.buf) return false;
 
-  for (int i = 0;
-       i <
-       pdusessionAggregateMaxBitRate.pDUSessionAggregateMaximumBitRateDL.size;
-       i++) {
-    pdusessionAggregateMaxBitRate.pDUSessionAggregateMaximumBitRateDL.buf[i] =
-        (aggregatemaxbitratedl & (0xff0000000000 >> i * 8)) >>
-        ((pdusessionAggregateMaxBitRate.pDUSessionAggregateMaximumBitRateDL
-              .size -
-          i - 1) *
-         8);
+  for (int i = 0; i < bit_rate.pDUSessionAggregateMaximumBitRateDL.size; i++) {
+    bit_rate.pDUSessionAggregateMaximumBitRateDL.buf[i] =
+        (dl_ & (0xff0000000000 >> i * 8)) >>
+        ((bit_rate.pDUSessionAggregateMaximumBitRateDL.size - i - 1) * 8);
   }
 
-  pdusessionAggregateMaxBitRate.pDUSessionAggregateMaximumBitRateUL.size = 6;
-  pdusessionAggregateMaxBitRate.pDUSessionAggregateMaximumBitRateUL
-      .buf = (uint8_t*) calloc(
-      1,
-      pdusessionAggregateMaxBitRate.pDUSessionAggregateMaximumBitRateUL.size);
-  if (!pdusessionAggregateMaxBitRate.pDUSessionAggregateMaximumBitRateUL.buf)
-    return false;
+  bit_rate.pDUSessionAggregateMaximumBitRateUL.size = 6;
+  bit_rate.pDUSessionAggregateMaximumBitRateUL.buf =
+      (uint8_t*) calloc(1, bit_rate.pDUSessionAggregateMaximumBitRateUL.size);
+  if (!bit_rate.pDUSessionAggregateMaximumBitRateUL.buf) return false;
 
-  for (int i = 0;
-       i <
-       pdusessionAggregateMaxBitRate.pDUSessionAggregateMaximumBitRateUL.size;
-       i++) {
-    pdusessionAggregateMaxBitRate.pDUSessionAggregateMaximumBitRateUL.buf[i] =
-        (aggregatemaxbitrateul & (0xff0000000000 >> i * 8)) >>
-        ((pdusessionAggregateMaxBitRate.pDUSessionAggregateMaximumBitRateUL
-              .size -
-          i - 1) *
-         8);
+  for (int i = 0; i < bit_rate.pDUSessionAggregateMaximumBitRateUL.size; i++) {
+    bit_rate.pDUSessionAggregateMaximumBitRateUL.buf[i] =
+        (ul_ & (0xff0000000000 >> i * 8)) >>
+        ((bit_rate.pDUSessionAggregateMaximumBitRateUL.size - i - 1) * 8);
   }
 
   return true;
 }
 
 //------------------------------------------------------------------------------
-bool PduSessionAggregateMaximumBitRate::
-    decodefromPduSessionAggregateMaximumBitRate(
-        Ngap_PDUSessionAggregateMaximumBitRate_t&
-            pdusessionAggregateMaxBitRate) {
-  if (!pdusessionAggregateMaxBitRate.pDUSessionAggregateMaximumBitRateDL.buf)
-    return false;
-  if (!pdusessionAggregateMaxBitRate.pDUSessionAggregateMaximumBitRateUL.buf)
-    return false;
+bool PduSessionAggregateMaximumBitRate::decode(
+    Ngap_PDUSessionAggregateMaximumBitRate_t& bit_rate) {
+  if (!bit_rate.pDUSessionAggregateMaximumBitRateDL.buf) return false;
+  if (!bit_rate.pDUSessionAggregateMaximumBitRateUL.buf) return false;
 
-  aggregatemaxbitratedl = 0;
-  aggregatemaxbitrateul = 0;
+  dl_ = 0;
+  ul_ = 0;
 
-  for (int i = 0;
-       i <
-       pdusessionAggregateMaxBitRate.pDUSessionAggregateMaximumBitRateDL.size;
-       i++) {
-    aggregatemaxbitratedl = aggregatemaxbitratedl << 8;
-    aggregatemaxbitratedl |= pdusessionAggregateMaxBitRate
-                                 .pDUSessionAggregateMaximumBitRateDL.buf[i];
+  for (int i = 0; i < bit_rate.pDUSessionAggregateMaximumBitRateDL.size; i++) {
+    dl_ = dl_ << 8;
+    dl_ |= bit_rate.pDUSessionAggregateMaximumBitRateDL.buf[i];
   }
-  for (int i = 0;
-       i <
-       pdusessionAggregateMaxBitRate.pDUSessionAggregateMaximumBitRateUL.size;
-       i++) {
-    aggregatemaxbitrateul = aggregatemaxbitrateul << 8;
-    aggregatemaxbitrateul |= pdusessionAggregateMaxBitRate
-                                 .pDUSessionAggregateMaximumBitRateUL.buf[i];
+  for (int i = 0; i < bit_rate.pDUSessionAggregateMaximumBitRateUL.size; i++) {
+    ul_ = ul_ << 8;
+    ul_ |= bit_rate.pDUSessionAggregateMaximumBitRateUL.buf[i];
   }
 
   return true;

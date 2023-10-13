@@ -19,8 +19,8 @@
  *      contact@openairinterface.org
  */
 
-#ifndef _TRANSPORTLAYERADDRESS_H_
-#define _TRANSPORTLAYERADDRESS_H_
+#ifndef _TRANSPORT_LAYER_ADDRESS_H_
+#define _TRANSPORT_LAYER_ADDRESS_H_
 
 #include <string>
 
@@ -38,13 +38,11 @@ class TransportLayerAddress {
   void setTransportLayerAddress(const std::string m_ipaddress);
   bool getTransportLayerAddress(std::string& m_ipaddress);
 
-  bool encode2TransportLayerAddress(
-      Ngap_TransportLayerAddress_t& transportLayerAddress);
-  bool decodefromTransportLayerAddress(
-      Ngap_TransportLayerAddress_t& transportLayerAddress);
+  bool encode(Ngap_TransportLayerAddress_t& transportLayerAddress);
+  bool decode(Ngap_TransportLayerAddress_t& transportLayerAddress);
 
  private:
-  std::string ipaddress;
+  std::string ip_address_;
 };
 
 }  // namespace ngap

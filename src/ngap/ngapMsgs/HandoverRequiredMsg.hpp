@@ -22,13 +22,13 @@
 #ifndef _HANDOVER_REQUIRED_H_
 #define _HANDOVER_REQUIRED_H_
 
-#include "Cause.hpp"
-#include "NgapUEMessage.hpp"
-#include "PDUSessionResourceListHORqd.hpp"
-#include "GlobalgNBId.hpp"
-#include "TAI.hpp"
-
 #include <optional>
+
+#include "Cause.hpp"
+#include "GlobalgNBId.hpp"
+#include "NgapUEMessage.hpp"
+#include "PduSessionResourceListHandoverRqd.hpp"
+#include "TAI.hpp"
 
 extern "C" {
 #include "Ngap_HandoverRequired.h"
@@ -46,7 +46,7 @@ class HandoverRequiredMsg : public NgapUEMessage {
 
   void setAmfUeNgapId(const unsigned long& id) override;
   void setRanUeNgapId(const uint32_t& id) override;
-  bool decodeFromPdu(Ngap_NGAP_PDU_t* ngapMsgPdu) override;
+  bool decode(Ngap_NGAP_PDU_t* ngapMsgPdu) override;
 
   Ngap_HandoverType_t getHandoverType();
   // TODO Setter
@@ -61,7 +61,7 @@ class HandoverRequiredMsg : public NgapUEMessage {
   bool getDirectForwardingPathAvailability(long& value) const;
   // TODO: Setter
 
-  bool getPDUSessionResourceList(PDUSessionResourceListHORqd& list);
+  bool getPDUSessionResourceList(PduSessionResourceListHandoverRqd& list);
   // TODO Setter
 
   OCTET_STRING_t getSourceToTarget_TransparentContainer();
@@ -75,8 +75,8 @@ class HandoverRequiredMsg : public NgapUEMessage {
   Cause cause;                       // Mandatory
   Ngap_TargetID_t targetID;          // Mandatory
   std::optional<Ngap_DirectForwardingPathAvailability_t>
-      directForwardingPathAvailability;                // Optional
-  PDUSessionResourceListHORqd pDUSessionResourceList;  // Mandatory
+      directForwardingPathAvailability;                      // Optional
+  PduSessionResourceListHandoverRqd pDUSessionResourceList;  // Mandatory
   Ngap_SourceToTarget_TransparentContainer_t
       sourceToTarget_TransparentContainer;  // Mandatory
 };

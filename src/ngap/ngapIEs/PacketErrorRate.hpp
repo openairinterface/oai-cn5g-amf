@@ -19,8 +19,8 @@
  *      contact@openairinterface.org
  */
 
-#ifndef _PACKETERRORRATE_H_
-#define _PACKETERRORRATE_H_
+#ifndef _PACKET_ERROR_RATE_H_
+#define _PACKET_ERROR_RATE_H_
 
 extern "C" {
 #include "Ngap_PacketErrorRate.h"
@@ -33,15 +33,15 @@ class PacketErrorRate {
   PacketErrorRate();
   virtual ~PacketErrorRate();
 
-  void setPacketErrorRate(long m_pERScalar, long m_pERExponent);
-  bool getPacketErrorRate(long& m_pERScalar, long& m_pERExponent);
+  void setPacketErrorRate(long scalar, long exponent);
+  bool getPacketErrorRate(long& scalar, long& exponent) const;
 
-  bool encode2PacketErrorRate(Ngap_PacketErrorRate_t*);
-  bool decodefromPacketErrorRate(Ngap_PacketErrorRate_t*);
+  bool encode(Ngap_PacketErrorRate_t*);
+  bool decode(Ngap_PacketErrorRate_t*);
 
  private:
-  long pERScalar;
-  long pERExponent;
+  long scalar_;
+  long exponent_;
 };
 
 }  // namespace ngap

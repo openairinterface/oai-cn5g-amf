@@ -19,8 +19,10 @@
  *      contact@openairinterface.org
  */
 
-#ifndef _SECURITYINDICATION_H_
-#define _SECURITYINDICATION_H_
+#ifndef _SECURITY_INDICATION_H_
+#define _SECURITY_INDICATION_H_
+
+#include <optional>
 
 #include "ConfidentialityProtectionIndication.hpp"
 #include "IntegrityProtectionIndication.hpp"
@@ -35,27 +37,45 @@ namespace ngap {
 class SecurityIndication {
  public:
   SecurityIndication();
+  SecurityIndication(
+      const IntegrityProtectionIndication& m_integrityProtectionIndication,
+      const ConfidentialityProtectionIndication&
+          m_confidentialityProtectionIndication,
+      const std::optional<MaximumIntegrityProtectedDataRate>&
+          m_maximumIntegrityProtectedDataRateUL,
+      const std::optional<MaximumIntegrityProtectedDataRate>&
+          m_maximumIntegrityProtectedDataRateDL);
   virtual ~SecurityIndication();
 
   void setSecurityIndication(
-      IntegrityProtectionIndication* m_integrityProtectionIndication,
-      ConfidentialityProtectionIndication*
+      const IntegrityProtectionIndication& m_integrityProtectionIndication,
+      const ConfidentialityProtectionIndication&
           m_confidentialityProtectionIndication,
-      MaximumIntegrityProtectedDataRate* m_maximumIntegrityProtectedDataRate);
-  void getSecurityIndication(
-      IntegrityProtectionIndication*& m_integrityProtectionIndication,
-      ConfidentialityProtectionIndication*&
-          m_confidentialityProtectionIndication,
-      MaximumIntegrityProtectedDataRate*& m_maximumIntegrityProtectedDataRate);
+      const std::optional<MaximumIntegrityProtectedDataRate>&
+          m_maximumIntegrityProtectedDataRateUL,
+      const std::optional<MaximumIntegrityProtectedDataRate>&
+          m_maximumIntegrityProtectedDataRateDL);
 
-  bool encode2SecurityIndication(Ngap_SecurityIndication_t* securityIndication);
-  bool decodefromSecurityIndication(
-      Ngap_SecurityIndication_t* securityIndication);
+  void getSecurityIndication(
+      IntegrityProtectionIndication& m_integrityProtectionIndication,
+      ConfidentialityProtectionIndication&
+          m_confidentialityProtectionIndication,
+      std::optional<MaximumIntegrityProtectedDataRate>&
+          m_maximumIntegrityProtectedDataRateUL,
+      std::optional<MaximumIntegrityProtectedDataRate>&
+          m_maximumIntegrityProtectedDataRateDL) const;
+
+  bool encode(Ngap_SecurityIndication_t* securityIndication);
+  bool decode(Ngap_SecurityIndication_t* securityIndication);
 
  private:
-  IntegrityProtectionIndication* integrityProtectionIndication;
-  ConfidentialityProtectionIndication* confidentialityProtectionIndication;
-  MaximumIntegrityProtectedDataRate* maximumIntegrityProtectedDataRate;
+  IntegrityProtectionIndication integrityProtectionIndication;  // Mandatory
+  ConfidentialityProtectionIndication
+      confidentialityProtectionIndication;  // Mandatory
+  std::optional<MaximumIntegrityProtectedDataRate>
+      maximumIntegrityProtectedDataRateUL;  // Conditional
+  std::optional<MaximumIntegrityProtectedDataRate>
+      maximumIntegrityProtectedDataRateDL;  // Optional
 };
 
 }  // namespace ngap

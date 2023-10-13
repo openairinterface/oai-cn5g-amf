@@ -22,19 +22,19 @@
 #ifndef _INITIAL_CONTEXT_SETUP_REQUEST_H_
 #define _INITIAL_CONTEXT_SETUP_REQUEST_H_
 
-#include "AMFName.hpp"
+#include <optional>
+
+#include "AmfName.hpp"
 #include "AllowedNssai.hpp"
 #include "CoreNetworkAssistanceInformation.hpp"
 #include "GUAMI.hpp"
-#include "PDUSessionResourceSetupListCxtReq.hpp"
+#include "MobilityRestrictionList.hpp"
+#include "NgapUEMessage.hpp"
+#include "PduSessionResourceSetupListCxtReq.hpp"
 #include "SecurityKey.hpp"
 #include "UEAggregateMaxBitRate.hpp"
 #include "UERadioCapability.hpp"
 #include "UESecurityCapabilities.hpp"
-#include "NgapUEMessage.hpp"
-#include "MobilityRestrictionList.hpp"
-
-#include <optional>
 
 extern "C" {
 #include "Ngap_InitialContextSetupRequest.h"
@@ -51,7 +51,7 @@ class InitialContextSetupRequestMsg : public NgapUEMessage {
 
   void setAmfUeNgapId(const unsigned long& id) override;
   void setRanUeNgapId(const uint32_t& id) override;
-  bool decodeFromPdu(Ngap_NGAP_PDU_t* ngapMsgPdu) override;
+  bool decode(Ngap_NGAP_PDU_t* ngapMsgPdu) override;
 
   void setOldAmf(const std::string& name);
   bool getOldAmf(std::string& name);
@@ -121,7 +121,7 @@ class InitialContextSetupRequestMsg : public NgapUEMessage {
   std::optional<CoreNetworkAssistanceInfo>
       coreNetworkAssistanceInfo;  // Optional
   GUAMI guami;                    // Mandatory
-  std::optional<PDUSessionResourceSetupListCxtReq>
+  std::optional<PduSessionResourceSetupListCxtReq>
       pduSessionResourceSetupRequestList;         // Optional
   AllowedNSSAI allowedNssai;                      // Mandatory
   UESecurityCapabilities uESecurityCapabilities;  // Mandatory
@@ -131,7 +131,7 @@ class InitialContextSetupRequestMsg : public NgapUEMessage {
   std::optional<UERadioCapability> ueRadioCapability;  // Optional
   // TODO: Index to RAT/Frequency Selection Priority
   std::optional<Ngap_MaskedIMEISV_t> maskedIMEISV;  // Optional
-  std::optional<NAS_PDU> nasPdu;                    // Optional
+  std::optional<NasPdu> nasPdu;                     // Optional
   // TODO: Emergency Fallback Indicator
   // TODO: RRC Inactive Transition Report Request
   // TODO: UE Radio Capability for Paging

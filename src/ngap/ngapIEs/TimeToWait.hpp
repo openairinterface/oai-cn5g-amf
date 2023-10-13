@@ -19,8 +19,8 @@
  *      contact@openairinterface.org
  */
 
-#ifndef _TIMETOWAIT_H_
-#define _TIMETOWAIT_H_
+#ifndef _TIME_TO_WAIT_H_
+#define _TIME_TO_WAIT_H_
 
 extern "C" {
 #include "Ngap_NGSetupFailure.h"
@@ -36,10 +36,11 @@ class TimeToWait {
   TimeToWait(e_Ngap_TimeToWait);
   virtual ~TimeToWait();
 
-  bool encode(Ngap_TimeToWait_t&);
-  bool decode(Ngap_TimeToWait_t&);
   void setValue(e_Ngap_TimeToWait);
   long getValue();
+
+  bool encode(Ngap_TimeToWait_t&);
+  bool decode(Ngap_TimeToWait_t&);
 
  private:
   long time_;

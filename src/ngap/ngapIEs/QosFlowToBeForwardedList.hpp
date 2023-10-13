@@ -19,26 +19,32 @@
  *      contact@openairinterface.org
  */
 
-#ifndef _QOSFLOWTOBEFORWARDEDLIST_H_
-#define _QOSFLOWTOBEFORWARDEDLIST_H_
+#ifndef _QOS_FLOW_TO_BE_FORWARDED_LIST_H_
+#define _QOS_FLOW_TO_BE_FORWARDED_LIST_H_
+
+#include <vector>
 
 #include "QosFlowToBeForwardedItem.hpp"
+
 extern "C" {
 #include "Ngap_QosFlowToBeForwardedList.h"
 }
+
 namespace ngap {
 class QosFlowToBeForwardedList {
  public:
   QosFlowToBeForwardedList();
   virtual ~QosFlowToBeForwardedList();
-  void setQosFlowToBeForwardedItem(
-      QosFlowToBeForwardedItem* m_qosflowtobeforwardeditem, int num);
-  bool encodeQosFlowToBeForwardedList(
-      Ngap_QosFlowToBeForwardedList*& m_ngap_qosflowtobeforwardedlist);
+
+  void set(std::vector<QosFlowToBeForwardedItem> qos_list);
+  // TODO: get
+
+  bool encode(Ngap_QosFlowToBeForwardedList*& qos_list);
+  // TODO: decode
 
  private:
-  QosFlowToBeForwardedItem* Qosflowtobeforwardeditem;
-  int numofqosflowtobeforwardeditem;
+  std::vector<QosFlowToBeForwardedItem> list_;
+  constexpr static uint8_t kMaxNoOfQosFlows = 64;
 };
 }  // namespace ngap
 #endif

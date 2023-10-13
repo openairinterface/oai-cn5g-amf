@@ -78,13 +78,13 @@ bool UERadioCapabilityForPaging::decode(
 }
 
 //------------------------------------------------------------------------------
-bool UERadioCapabilityForPaging::setUERadioCapabilityForPagingOfNR(
+void UERadioCapabilityForPaging::setUERadioCapabilityForPagingOfNR(
     const OCTET_STRING_t& capability) {
   UERadioCapabilityForPagingOfNR tmp = {};
   tmp.set(capability);
   ueRadioCapabilityForPagingOfNR =
       std::optional<UERadioCapabilityForPagingOfNR>(tmp);
-  return true;
+  ueRadioCapabilityForPagingOfEUTRA = std::nullopt;
 }
 
 //------------------------------------------------------------------------------
@@ -95,13 +95,14 @@ bool UERadioCapabilityForPaging::getUERadioCapabilityForPagingOfNR(
 }
 
 //------------------------------------------------------------------------------
-bool UERadioCapabilityForPaging::setUERadioCapabilityForPagingOfEUTRA(
+void UERadioCapabilityForPaging::setUERadioCapabilityForPagingOfEUTRA(
     const OCTET_STRING_t& capability) {
   UERadioCapabilityForPagingOfEUTRA tmp = {};
   tmp.set(capability);
   ueRadioCapabilityForPagingOfEUTRA =
       std::optional<UERadioCapabilityForPagingOfEUTRA>(tmp);
-  return true;
+
+  ueRadioCapabilityForPagingOfNR = std::nullopt;
 }
 
 //------------------------------------------------------------------------------

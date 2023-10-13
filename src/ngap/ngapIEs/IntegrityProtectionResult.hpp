@@ -19,8 +19,8 @@
  *      contact@openairinterface.org
  */
 
-#ifndef _INTEGRITYPROTECTIONRESULT_H_
-#define _INTEGRITYPROTECTIONRESULT_H_
+#ifndef _INTEGRITY_PROTECTION_RESULT_H_
+#define _INTEGRITY_PROTECTION_RESULT_H_
 
 extern "C" {
 #include "Ngap_IntegrityProtectionResult.h"
@@ -33,15 +33,14 @@ class IntegrityProtectionResult {
   IntegrityProtectionResult();
   virtual ~IntegrityProtectionResult();
 
-  void setIntegrityProtectionResult(
-      e_Ngap_IntegrityProtectionResult m_integrityProtectionResult);
-  bool getIntegrityProtectionResult(long& m_integrityProtectionResult);
+  void set(e_Ngap_IntegrityProtectionResult value);
+  bool get(long& value) const;
 
-  bool encode2IntegrityProtectionResult(Ngap_IntegrityProtectionResult_t&);
-  bool decodefromIntegrityProtectionResult(Ngap_IntegrityProtectionResult_t);
+  bool encode(Ngap_IntegrityProtectionResult_t&);
+  bool decode(Ngap_IntegrityProtectionResult_t);
 
  private:
-  long integrityProtectionResult;
+  long result_;
 };
 
 }  // namespace ngap

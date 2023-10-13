@@ -27,7 +27,7 @@
 #include <boost/chrono/system_clocks.hpp>
 
 #include "3gpp_24.501.h"
-#include "DefaultPagingDRX.hpp"
+#include "DefaultPagingDrx.hpp"
 #include "DownlinkNasTransport.hpp"
 #include "HandoverPreparationFailure.hpp"
 #include "InitialContextSetupRequest.hpp"
@@ -38,7 +38,7 @@
 #include "Ngap_CauseNas.h"
 #include "Ngap_CauseRadioNetwork.h"
 #include "Ngap_TimeToWait.h"
-#include "PDUSessionResourceHandoverCommandTransfer.hpp"
+#include "PduSessionResourceHandoverCommandTransfer.hpp"
 #include "Paging.hpp"
 #include "PduSessionResourceModifyRequest.hpp"
 #include "PduSessionResourceReleaseCommand.hpp"
@@ -575,7 +575,7 @@ void amf_n2::handle_itti_message(std::shared_ptr<itti_ng_reset>& itti_msg) {
   } else if (
       reset_type.getResetType() == Ngap_ResetType_PR_partOfNG_Interface) {
     // TODO:
-    reset_type.getUE_associatedLogicalNG_connectionList(
+    reset_type.getUEAssociatedLogicalNGConnectionList(
         ueAssociatedLogicalNGConnectionList);
     for (auto ue : ueAssociatedLogicalNGConnectionList) {
       unsigned long amf_ue_ngap_id = {0};
@@ -1798,7 +1798,7 @@ bool amf_n2::handle_itti_message(
   Logger::amf_n2().debug(
       "Received Handover Required for UE (SUPI %s)", supi.c_str());
 
-  PDUSessionResourceListHORqd pDUSessionResourceListHORqd = {};
+  PduSessionResourceListHandoverRqd pDUSessionResourceListHORqd = {};
   std::vector<PDUSessionResourceItem_t> pdu_session_resource_list;
   if (!itti_msg->handoverReq->getPDUSessionResourceList(
           pDUSessionResourceListHORqd)) {
@@ -1806,7 +1806,7 @@ bool amf_n2::handle_itti_message(
         "Decoding PDU Session Resource List IE error or IE missing");
   }
 
-  std::vector<PDUSessionResourceItem> item_ho_required_list;
+  std::vector<PduSessionResourceItem> item_ho_required_list;
   pDUSessionResourceListHORqd.get(item_ho_required_list);
 
   std::map<uint8_t, boost::shared_future<std::string>> curl_responses;
@@ -1814,7 +1814,7 @@ bool amf_n2::handle_itti_message(
   // Send PDUSessionUpdateSMContextRequest to SMF for all PDU sessions included
   // in HO Required message
   for (auto& item : item_ho_required_list) {
-    PDUSessionID pdu_session_id               = {};
+    PduSessionId pdu_session_id               = {};
     OCTET_STRING_t handover_required_transfer = {};
     item.get(pdu_session_id, handover_required_transfer);
     uint8_t pdu_session_id_value = 0;
@@ -2022,9 +2022,9 @@ void amf_n2::handle_itti_message(
   handovercommand->setRanUeNgapId(unc->ran_ue_ngap_id);
   handovercommand->setHandoverType(Ngap_HandoverType_intra5gs);
 
-  PDUSessionResourceHandoverList handoverList = {};
-  std::vector<PDUSessionResourceItem> handoverItemList;
-  PDUSessionResourceItem handoverItem = {};
+  PduSessionResourceHandoverList handoverList = {};
+  std::vector<PduSessionResourceItem> handoverItemList;
+  PduSessionResourceItem handoverItem = {};
 
   // TODO: wait for response from SMF and transfer T-RAN N3 information/ or
   // T-UPF to the source gNB
@@ -2040,7 +2040,7 @@ void amf_n2::handle_itti_message(
       result                                 = result && true;
       uint8_t pdu_session_id_value           = curl_responses.begin()->first;
       unsigned int data_len                  = n2_sm.value().length();
-      PDUSessionID pdu_session_id            = {};
+      PduSessionId pdu_session_id            = {};
       OCTET_STRING_t handoverCommandTransfer = {};
       pdu_session_id.set(pdu_session_id_value);
       OCTET_STRING_fromBuf(
@@ -2289,28 +2289,29 @@ void amf_n2::handle_itti_message(
     return;
   }
 
-  RANStatusTransferTransparentContainer ran_status_transfer = {};
+  RanStatusTransferTransparentContainer ran_status_transfer = {};
   itti_msg->uplinkRanTransfer->getRANStatusTransfer_TransparentContainer(
       ran_status_transfer);
-  dRBSubjectList amf_m_list = {};
-  ran_status_transfer.getdRBSubject_list(amf_m_list);
-  std::vector<dRBSubjectItem> drb_subject_item_list;
+  DrbSubjectToStatusTransferList amf_m_list = {};
+  ran_status_transfer.getDRBSubjectList(amf_m_list);
+  std::vector<DrbSubjectToStatusTransferItem> drb_subject_item_list;
   amf_m_list.getdRBSubjectItem(drb_subject_item_list);
   // TODO: check size
 
-  dRBStatusDL status_dl = {};
-  dRBStatusUL status_ul = {};
+  DrbStatusDl status_dl = {};
+  DrbStatusUl status_ul = {};
   Ngap_DRB_ID_t drb_id  = {};
   drb_subject_item_list[0].getdRBSubjectItem(drb_id, status_ul, status_dl);
-
-  dRBStatusUL18 status_ul_18 = {};
-  DRBStatusDL18 status_dl_18 = {};
+  // TODO:dRBStatusUL18 or dRBStatusUL12
+  std::optional<DrbStatusUl18> status_ul_18 = {};
+  // TODO: DRBStatusDL18 or DRBStatusDL18
+  std::optional<DrbStatusDl18> status_dl_18 = std::nullopt;
   status_dl.getDRBStatusDL18(status_dl_18);
   status_ul.getdRBStatusUL(status_ul_18);
-  COUNTValueForPDCP_SN18 count_value_ul = {};
-  COUNTValueForPDCP_SN18 count_value_dl = {};
-  status_ul_18.getcountvalue(count_value_ul);
-  status_dl_18.getcountvalue(count_value_dl);
+  CountValueForPdcpSn18 count_value_ul = {};
+  CountValueForPdcpSn18 count_value_dl = {};
+  if (status_ul_18.has_value()) status_ul_18.value().get(count_value_ul);
+  if (status_dl_18.has_value()) status_dl_18.value().get(count_value_dl);
   long amf_ul_pdcp     = {0};
   long amf_hfn_ul_pdcp = {0};
   count_value_ul.getvalue(amf_ul_pdcp, amf_hfn_ul_pdcp);
@@ -2408,7 +2409,7 @@ void amf_n2::handle_itti_message(
   duant.setRanUeNgapId(itti_msg->ran_ue_ngap_id);
 
   duant.setNRPPaPdu(itti_msg->nrppa_pdu);
-  duant.setRoutingID(itti_msg->routing_id);
+  duant.setRoutingId(itti_msg->routing_id);
 
   uint8_t buffer[BUFFER_SIZE_4096];
   int encoded_size = duant.Encode(buffer, BUFFER_SIZE_1024);
@@ -2435,7 +2436,7 @@ void amf_n2::handle_itti_message(
 
   DownlinkNonUEAssociatedNRPPaTransportMsg dnuant = {};
   dnuant.setNRPPaPdu(itti_msg->nrppa_pdu);
-  dnuant.setRoutingID(itti_msg->routing_id);
+  dnuant.setRoutingId(itti_msg->routing_id);
 
   uint8_t buffer[BUFFER_SIZE_4096];
   int encoded_size = dnuant.Encode(buffer, BUFFER_SIZE_1024);

@@ -20,10 +20,10 @@
  */
 
 #include "RerouteNASRequest.hpp"
-#include "common_defs.h"
-#include "amf.hpp"
-#include "conversions.hpp"
 
+#include "amf.hpp"
+#include "common_defs.h"
+#include "conversions.hpp"
 #include "logger.hpp"
 
 extern "C" {
@@ -53,9 +53,9 @@ void RerouteNASRequest::initialize() {
 
 //------------------------------------------------------------------------------
 void RerouteNASRequest::setAmfUeNgapId(const unsigned long& id) {
-  AMF_UE_NGAP_ID tmp = {};
+  AmfUeNgapId tmp = {};
   tmp.set(id);
-  amfUeNgapId = std::optional<AMF_UE_NGAP_ID>(tmp);
+  amfUeNgapId = std::optional<AmfUeNgapId>(tmp);
 
   Ngap_RerouteNASRequest_IEs_t* ie = (Ngap_RerouteNASRequest_IEs_t*) calloc(
       1, sizeof(Ngap_RerouteNASRequest_IEs_t));
@@ -63,8 +63,7 @@ void RerouteNASRequest::setAmfUeNgapId(const unsigned long& id) {
   ie->criticality   = Ngap_Criticality_ignore;
   ie->value.present = Ngap_RerouteNASRequest_IEs__value_PR_AMF_UE_NGAP_ID;
 
-  int ret = amfUeNgapId.value().encode2AMF_UE_NGAP_ID(
-      ie->value.choice.AMF_UE_NGAP_ID);
+  int ret = amfUeNgapId.value().encode(ie->value.choice.AMF_UE_NGAP_ID);
   if (!ret) {
     Logger::ngap().error("Encode AMF_UE_NGAP_ID IE error!");
     free_wrapper((void**) &ie);
@@ -210,7 +209,7 @@ void RerouteNASRequest::getAMFSetID(std::string& amf_set_id) {
 }
 
 //------------------------------------------------------------------------------
-bool RerouteNASRequest::decodeFromPdu(Ngap_NGAP_PDU_t* ngapMsgPdu) {
+bool RerouteNASRequest::decode(Ngap_NGAP_PDU_t* ngapMsgPdu) {
   ngapPdu = ngapMsgPdu;
 
   if (ngapPdu->present == Ngap_NGAP_PDU_PR_initiatingMessage) {
@@ -238,14 +237,13 @@ bool RerouteNASRequest::decodeFromPdu(Ngap_NGAP_PDU_t* ngapMsgPdu) {
                 Ngap_Criticality_ignore &&
             rerouteNASRequestIEs->protocolIEs.list.array[i]->value.present ==
                 Ngap_RerouteNASRequest_IEs__value_PR_AMF_UE_NGAP_ID) {
-          AMF_UE_NGAP_ID tmp = {};
-          if (!tmp.decodefromAMF_UE_NGAP_ID(
-                  rerouteNASRequestIEs->protocolIEs.list.array[i]
-                      ->value.choice.AMF_UE_NGAP_ID)) {
+          AmfUeNgapId tmp = {};
+          if (!tmp.decode(rerouteNASRequestIEs->protocolIEs.list.array[i]
+                              ->value.choice.AMF_UE_NGAP_ID)) {
             Logger::ngap().error("Decoded NGAP AMF_UE_NGAP_ID IE error");
             return false;
           }
-          amfUeNgapId = std::optional<AMF_UE_NGAP_ID>(tmp);
+          amfUeNgapId = std::optional<AmfUeNgapId>(tmp);
         } else {
           Logger::ngap().error("Decoded NGAP AMF_UE_NGAP_ID IE error");
           return false;

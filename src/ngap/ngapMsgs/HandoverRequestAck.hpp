@@ -23,9 +23,8 @@
 #define _HANDOVER_REQUEST_ACK_H_
 
 #include "NgapUEMessage.hpp"
-
-#include "PDUSessionResourceAdmittedList.hpp"
-#include "PDUSessionResourceFailedToSetupListHOAck.hpp"
+#include "PduSessionResourceAdmittedList.hpp"
+#include "PduSessionResourceFailedToSetupListHoAck.hpp"
 
 extern "C" {
 #include "Ngap_HandoverRequestAcknowledge.h"
@@ -42,19 +41,19 @@ class HandoverRequestAck : public NgapUEMessage {
 
   void setAmfUeNgapId(const unsigned long& id) override;
   void setRanUeNgapId(const uint32_t& id) override;
-  bool decodeFromPdu(Ngap_NGAP_PDU_t* ngapMsgPdu) override;
+  bool decode(Ngap_NGAP_PDU_t* ngapMsgPdu) override;
 
   void setPDUSessionResourceAdmittedList(
-      const PDUSessionResourceAdmittedList& admittedList);
+      const PduSessionResourceAdmittedList& admittedList);
   bool getPDUSessionResourceAdmittedList(
       std::vector<PDUSessionResourceAdmittedItem_t>& list);
 
   void setPDUSessionResourceFailedToSetupListHOAck(
-      const PDUSessionResourceFailedToSetupListHOAck& list);
+      const PduSessionResourceFailedToSetupListHoAck& list);
   void setPDUSessionResourceFailedToSetupListHOAck(
-      std::vector<PDUSessionResourceItem>& list);
+      std::vector<PduSessionResourceItem>& list);
   bool getPDUSessionResourceFailedToSetupListHOAck(
-      std::vector<PDUSessionResourceItem>& list);
+      std::vector<PduSessionResourceItem>& list);
 
   void setTargetToSource_TransparentContainer(
       const OCTET_STRING_t& targetTosource);
@@ -64,8 +63,8 @@ class HandoverRequestAck : public NgapUEMessage {
   Ngap_HandoverRequestAcknowledge_t* handoverRequestAckIEs;
   // AMF_UE_NGAP_ID (Mandatory)
   // RAN_UE_NGAP_ID (Mandatory)
-  PDUSessionResourceAdmittedList pduSessionResourceAdmittedList;  // Mandatory
-  std::optional<PDUSessionResourceFailedToSetupListHOAck>
+  PduSessionResourceAdmittedList pduSessionResourceAdmittedList;  // Mandatory
+  std::optional<PduSessionResourceFailedToSetupListHoAck>
       PDUSessionResourceFailedToSetupList;
   OCTET_STRING_t TargetToSource_TransparentContainer;     // TODO: Mandatory
   Ngap_CriticalityDiagnostics_t* CriticalityDiagnostics;  // TODO: Optional

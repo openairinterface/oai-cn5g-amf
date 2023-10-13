@@ -22,15 +22,15 @@
 #ifndef _HANDOVER_REQUEST_H_
 #define _HANDOVER_REQUEST_H_
 
-#include "AMF-UE-NGAP-ID.hpp"
+#include "AmfUeNgapId.hpp"
 #include "Cause.hpp"
-#include "UEAggregateMaxBitRate.hpp"
-#include "NgapMessage.hpp"
 #include "GUAMI.hpp"
 #include "MobilityRestrictionList.hpp"
-#include "PDUSessionResourceSetupListHOReq.hpp"
+#include "NgapMessage.hpp"
+#include "PduSessionResourceSetupListHoReq.hpp"
 #include "S-NSSAI.hpp"
 #include "SecurityKey.hpp"
+#include "UEAggregateMaxBitRate.hpp"
 #include "UESecurityCapabilities.hpp"
 
 extern "C" {
@@ -47,7 +47,7 @@ class HandoverRequest : public NgapMessage {
   virtual ~HandoverRequest();
 
   void initialize();
-  bool decodeFromPdu(Ngap_NGAP_PDU_t* ngapMsgPdu) override;
+  bool decode(Ngap_NGAP_PDU_t* ngapMsgPdu) override;
 
   void setAmfUeNgapId(const unsigned long& id);  // 40 bits
   unsigned long getAmfUeNgapId();
@@ -84,8 +84,8 @@ class HandoverRequest : public NgapMessage {
   // TODO: getAllowedNSSAI
 
   void setGUAMI(
-      const PlmnId& plmnId, const AMFRegionID& aMFRegionID,
-      const AMFSetID& aMFSetID, const AMFPointer& aMFPointer);
+      const PlmnId& plmnId, const AmfRegionId& aMFRegionID,
+      const AmfSetId& aMFSetID, const AmfPointer& aMFPointer);
   void setGUAMI(
       const std::string& mcc, const std::string& mnc,
       const std::string& regionId, const std::string& setId,
@@ -101,7 +101,7 @@ class HandoverRequest : public NgapMessage {
  private:
   Ngap_HandoverRequest_t* handoverRequestIEs;
 
-  AMF_UE_NGAP_ID amfUeNgapId;                       // Mandatory
+  AmfUeNgapId amfUeNgapId;                          // Mandatory
   Ngap_HandoverType_t handoverType;                 // Mandatory
   Cause cause;                                      // Mandatory
   UEAggregateMaxBitRate ueAggregateMaximumBitRate;  // Mandatory
@@ -110,7 +110,7 @@ class HandoverRequest : public NgapMessage {
   Ngap_SecurityContext_t securityContext;         // TODO: Mandatory
   // New Security Context Indicator (TODO: Optional)
   // NASC - NAS-PDU (TODO: Optional)
-  PDUSessionResourceSetupListHOReq pDUSessionResourceSetupList;  // Mandatory
+  PduSessionResourceSetupListHoReq pDUSessionResourceSetupList;  // Mandatory
   Ngap_AllowedNSSAI_t allowedNSSAI;  // TODO: Mandatory
   // Trace Activation (TODO: Optional)
   // Masked IMEISV  (TODO: Optional)

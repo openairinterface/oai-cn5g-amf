@@ -61,7 +61,7 @@ void UplinkUEAssociatedNRPPaTransportMsg::setAmfUeNgapId(
   ie->value.present =
       Ngap_UplinkUEAssociatedNRPPaTransportIEs__value_PR_AMF_UE_NGAP_ID;
 
-  int ret = amfUeNgapId.encode2AMF_UE_NGAP_ID(ie->value.choice.AMF_UE_NGAP_ID);
+  int ret = amfUeNgapId.encode(ie->value.choice.AMF_UE_NGAP_ID);
   if (!ret) {
     Logger::ngap().error("Encode AMF_UE_NGAP_ID IE error");
     free_wrapper((void**) &ie);
@@ -99,8 +99,7 @@ void UplinkUEAssociatedNRPPaTransportMsg::setRanUeNgapId(
 }
 
 //------------------------------------------------------------------------------
-bool UplinkUEAssociatedNRPPaTransportMsg::decodeFromPdu(
-    Ngap_NGAP_PDU_t* ngapMsgPdu) {
+bool UplinkUEAssociatedNRPPaTransportMsg::decode(Ngap_NGAP_PDU_t* ngapMsgPdu) {
   ngapPdu = ngapMsgPdu;
 
   if (ngapPdu->present == Ngap_NGAP_PDU_PR_initiatingMessage) {
@@ -134,7 +133,7 @@ bool UplinkUEAssociatedNRPPaTransportMsg::decodeFromPdu(
             uplinkUEAssociatedNRPPaTransportIEs->protocolIEs.list.array[i]
                     ->value.present ==
                 Ngap_UplinkUEAssociatedNRPPaTransportIEs__value_PR_AMF_UE_NGAP_ID) {
-          if (!amfUeNgapId.decodefromAMF_UE_NGAP_ID(
+          if (!amfUeNgapId.decode(
                   uplinkUEAssociatedNRPPaTransportIEs->protocolIEs.list
                       .array[i]
                       ->value.choice.AMF_UE_NGAP_ID)) {
@@ -206,7 +205,7 @@ bool UplinkUEAssociatedNRPPaTransportMsg::decodeFromPdu(
 }
 
 //------------------------------------------------------------------------------
-void UplinkUEAssociatedNRPPaTransportMsg::setRoutingID(
+void UplinkUEAssociatedNRPPaTransportMsg::setRoutingId(
     const OCTET_STRING_t& id) {
   routingID = id;
   Ngap_UplinkUEAssociatedNRPPaTransportIEs_t* ie =
@@ -225,13 +224,13 @@ void UplinkUEAssociatedNRPPaTransportMsg::setRoutingID(
 }
 
 //------------------------------------------------------------------------------
-void UplinkUEAssociatedNRPPaTransportMsg::getRoutingID(
+void UplinkUEAssociatedNRPPaTransportMsg::getRoutingId(
     OCTET_STRING_t& id) const {
   id = routingID;
 }
 
 //------------------------------------------------------------------------------
-OCTET_STRING_t UplinkUEAssociatedNRPPaTransportMsg::getRoutingID() const {
+OCTET_STRING_t UplinkUEAssociatedNRPPaTransportMsg::getRoutingId() const {
   return routingID;
 }
 

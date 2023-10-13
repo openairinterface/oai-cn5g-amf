@@ -19,28 +19,35 @@
  *      contact@openairinterface.org
  */
 
-#ifndef _QOSFLOWITEMWITHDATAFORWARDING_H_
-#define _QOSFLOWITEMWITHDATAFORWARDING_H_
+#ifndef _QOS_FLOW_ITEM_WITH_DATA_FORWARDING_H_
+#define _QOS_FLOW_ITEM_WITH_DATA_FORWARDING_H_
+
+#include <optional>
 
 #include "QosFlowIdentifier.hpp"
 #include "QosFlowLevelQosParameters.hpp"
+
 extern "C" {
 #include "Ngap_QosFlowSetupResponseItemHOReqAck.h"
 }
+
 namespace ngap {
+
 class QosFlowItemWithDataForWarding {
  public:
   QosFlowItemWithDataForWarding();
   virtual ~QosFlowItemWithDataForWarding();
 
-  void getQosFlowItemWithDataForWarding(
-      Ngap_QosFlowIdentifier_t& m_QosFlowIdentifier);
-  bool decodeformQosFlowItemWithDataForWarding(
-      Ngap_QosFlowSetupResponseItemHOReqAck_t* qosFlowItemWithDataForWarding);
+  void set(
+      const QosFlowIdentifier& qfi,
+      const std::optional<long>& data_forwarding_accepted);
+  void getQosFlowIdentifier(Ngap_QosFlowIdentifier_t& qfi);
+
+  bool decode(Ngap_QosFlowSetupResponseItemHOReqAck_t* qos_flow_item);
 
  private:
-  long value;
-  QosFlowIdentifier* qosFlowIdentifier;
+  QosFlowIdentifier qfi_;                         // Mandatory
+  std::optional<long> data_forwarding_accepted_;  // Optional
 };
 }  // namespace ngap
 

@@ -24,8 +24,8 @@
 #include "logger.hpp"
 
 extern "C" {
-#include "dynamic_memory_check.h"
 #include "Ngap_UE-NGAP-ID-pair.h"
+#include "dynamic_memory_check.h"
 }
 
 using namespace ngap;
@@ -57,8 +57,8 @@ void UEContextReleaseCommandMsg::setAmfUeNgapId(const unsigned long& id) {
   ie->criticality   = Ngap_Criticality_reject;
   ie->value.present = Ngap_UEContextReleaseCommand_IEs__value_PR_UE_NGAP_IDs;
   ie->value.choice.UE_NGAP_IDs.present = Ngap_UE_NGAP_IDs_PR_aMF_UE_NGAP_ID;
-  int ret                              = amfUeNgapId.encode2AMF_UE_NGAP_ID(
-      ie->value.choice.UE_NGAP_IDs.choice.aMF_UE_NGAP_ID);
+  int ret =
+      amfUeNgapId.encode(ie->value.choice.UE_NGAP_IDs.choice.aMF_UE_NGAP_ID);
   if (!ret) {
     Logger::ngap().error("Encode NGAP AMF_UE_NGAP_ID IE error");
 
@@ -82,9 +82,9 @@ bool UEContextReleaseCommandMsg::getAmfUeNgapId(unsigned long& id) {
 void UEContextReleaseCommandMsg::setUeNgapIdPair(
     const unsigned long& amfId, const uint32_t& ranId) {
   amfUeNgapId.set(amfId);
-  RAN_UE_NGAP_ID tmp = {};
+  RanUeNgapId tmp = {};
   tmp.set(ranId);
-  ranUeNgapId = std::optional<RAN_UE_NGAP_ID>(tmp);
+  ranUeNgapId = std::optional<RanUeNgapId>(tmp);
   Ngap_UEContextReleaseCommand_IEs_t* ie =
       (Ngap_UEContextReleaseCommand_IEs_t*) calloc(
           1, sizeof(Ngap_UEContextReleaseCommand_IEs_t));
@@ -94,7 +94,7 @@ void UEContextReleaseCommandMsg::setUeNgapIdPair(
   ie->value.choice.UE_NGAP_IDs.present = Ngap_UE_NGAP_IDs_PR_uE_NGAP_ID_pair;
   ie->value.choice.UE_NGAP_IDs.choice.uE_NGAP_ID_pair =
       (Ngap_UE_NGAP_ID_pair_t*) calloc(1, sizeof(Ngap_UE_NGAP_ID_pair_t));
-  int ret = amfUeNgapId.encode2AMF_UE_NGAP_ID(
+  int ret = amfUeNgapId.encode(
       ie->value.choice.UE_NGAP_IDs.choice.uE_NGAP_ID_pair->aMF_UE_NGAP_ID);
   if (!ret) {
     Logger::ngap().error("Encode NGAP AMF_UE_NGAP_ID IE error");
@@ -151,7 +151,7 @@ void UEContextReleaseCommandMsg::addCauseIE() {
 }
 
 //------------------------------------------------------------------------------
-bool UEContextReleaseCommandMsg::decodeFromPdu(Ngap_NGAP_PDU_t* ngapMsgPdu) {
+bool UEContextReleaseCommandMsg::decode(Ngap_NGAP_PDU_t* ngapMsgPdu) {
   ngapPdu = ngapMsgPdu;
 
   if (ngapPdu->present == Ngap_NGAP_PDU_PR_initiatingMessage) {
@@ -180,7 +180,7 @@ bool UEContextReleaseCommandMsg::decodeFromPdu(Ngap_NGAP_PDU_t* ngapMsgPdu) {
                 Ngap_Criticality_reject &&
             ies->protocolIEs.list.array[i]->value.present ==
                 Ngap_UEContextReleaseCommand_IEs__value_PR_UE_NGAP_IDs) {
-          if (!amfUeNgapId.decodefromAMF_UE_NGAP_ID(
+          if (!amfUeNgapId.decode(
                   ies->protocolIEs.list.array[i]
                       ->value.choice.UE_NGAP_IDs.choice.aMF_UE_NGAP_ID)) {
             Logger::ngap().error("Decoded NGAP AMF_UE_NGAP_ID IE error");
@@ -193,21 +193,20 @@ bool UEContextReleaseCommandMsg::decodeFromPdu(Ngap_NGAP_PDU_t* ngapMsgPdu) {
       } break;
 
       case Ngap_ProtocolIE_ID_id_UE_NGAP_IDs: {
-        if (!amfUeNgapId.decodefromAMF_UE_NGAP_ID(
-                ies->protocolIEs.list.array[i]
-                    ->value.choice.UE_NGAP_IDs.choice.uE_NGAP_ID_pair
-                    ->aMF_UE_NGAP_ID)) {
+        if (!amfUeNgapId.decode(ies->protocolIEs.list.array[i]
+                                    ->value.choice.UE_NGAP_IDs.choice
+                                    .uE_NGAP_ID_pair->aMF_UE_NGAP_ID)) {
           Logger::ngap().error("Decoded NGAP AMF_UE_NGAP_ID IE error");
           return false;
         }
-        RAN_UE_NGAP_ID tmp = {};
+        RanUeNgapId tmp = {};
         if (!tmp.decode(ies->protocolIEs.list.array[i]
                             ->value.choice.UE_NGAP_IDs.choice.uE_NGAP_ID_pair
                             ->rAN_UE_NGAP_ID)) {
           Logger::ngap().error("Decoded NGAP RAN_UE_NGAP_ID IE error");
           return false;
         }
-        ranUeNgapId = std::optional<RAN_UE_NGAP_ID>(tmp);
+        ranUeNgapId = std::optional<RanUeNgapId>(tmp);
 
       } break;
       case Ngap_ProtocolIE_ID_id_Cause: {

@@ -21,14 +21,11 @@
 
 #include "PriorityLevelARP.hpp"
 
-#include <iostream>
-using namespace std;
-
 namespace ngap {
 
 //------------------------------------------------------------------------------
 PriorityLevelARP::PriorityLevelARP() {
-  prioritylevelarp = 0;
+  priority_level_arp_ = 0;
 }
 
 //------------------------------------------------------------------------------
@@ -36,28 +33,26 @@ PriorityLevelARP::~PriorityLevelARP() {}
 
 //------------------------------------------------------------------------------
 void PriorityLevelARP::setPriorityLevelARP(long value) {
-  prioritylevelarp = value;
+  priority_level_arp_ = value;
 }
 
 //------------------------------------------------------------------------------
-bool PriorityLevelARP::getPriorityLevelARP(long& value) {
-  value = prioritylevelarp;
+bool PriorityLevelARP::getPriorityLevelARP(long& value) const {
+  value = priority_level_arp_;
 
   return true;
 }
 
 //------------------------------------------------------------------------------
-bool PriorityLevelARP::encode2PriorityLevelARP(
-    Ngap_PriorityLevelARP_t* priorityLevelARP) {
-  *priorityLevelARP = prioritylevelarp;
+bool PriorityLevelARP::encode(Ngap_PriorityLevelARP_t* priorityLevelARP) {
+  *priorityLevelARP = priority_level_arp_;
 
   return true;
 }
 
 //------------------------------------------------------------------------------
-bool PriorityLevelARP::decodefromPriorityLevelARP(
-    Ngap_PriorityLevelARP_t* priorityLevelARP) {
-  prioritylevelarp = *priorityLevelARP;
+bool PriorityLevelARP::decode(Ngap_PriorityLevelARP_t* priorityLevelARP) {
+  priority_level_arp_ = *priorityLevelARP;
 
   return true;
 }

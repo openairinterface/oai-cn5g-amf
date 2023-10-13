@@ -22,13 +22,12 @@
 #ifndef _PDU_SESSION_RESOURCE_RELEASE_COMMAND_H_
 #define _PDU_SESSION_RESOURCE_RELEASE_COMMAND_H_
 
-#include "PDUSessionResourceToReleaseListRelCmd.hpp"
-
-#include "RANPagingPriority.hpp"
-#include "NAS-PDU.hpp"
-#include "NgapUEMessage.hpp"
-
 #include <optional>
+
+#include "NasPdu.hpp"
+#include "NgapUEMessage.hpp"
+#include "PduSessionResourceToReleaseListRelCmd.hpp"
+#include "RanPagingPriority.hpp"
 
 namespace ngap {
 
@@ -41,7 +40,7 @@ class PduSessionResourceReleaseCommandMsg : public NgapUEMessage {
 
   void setAmfUeNgapId(const unsigned long& id) override;
   void setRanUeNgapId(const uint32_t& id) override;
-  bool decodeFromPdu(Ngap_NGAP_PDU_t* ngapMsgPdu) override;
+  bool decode(Ngap_NGAP_PDU_t* ngapMsgPdu) override;
 
   void setRanPagingPriority(const uint32_t& priority);
   bool getRanPagingPriority(uint32_t& priority);
@@ -57,9 +56,9 @@ class PduSessionResourceReleaseCommandMsg : public NgapUEMessage {
  private:
   Ngap_PDUSessionResourceReleaseCommand_t* pduSessionResourceReleaseCommandIEs;
 
-  std::optional<RANPagingPriority> ranPagingPriority;  // Optional
-  std::optional<NAS_PDU> nasPdu;                       // Optional
-  PDUSessionResourceToReleaseListRelCmd
+  std::optional<RanPagingPriority> ranPagingPriority;  // Optional
+  std::optional<NasPdu> nasPdu;                        // Optional
+  PduSessionResourceToReleaseListRelCmd
       pduSessionResourceToReleaseList;  // Mandatory
 };
 

@@ -19,8 +19,8 @@
  *      contact@openairinterface.org
  */
 
-#ifndef _PDUSESSIONAGGREGATEMAXIMUMBITRATE_H_
-#define _PDUSESSIONAGGREGATEMAXIMUMBITRATE_H_
+#ifndef _PDU_SESSION_AGGREGATE_MAXIMUM_BIT_RATE_H_
+#define _PDU_SESSION_AGGREGATE_MAXIMUM_BIT_RATE_H_
 
 extern "C" {
 #include "Ngap_PDUSessionAggregateMaximumBitRate.h"
@@ -31,21 +31,19 @@ namespace ngap {
 class PduSessionAggregateMaximumBitRate {
  public:
   PduSessionAggregateMaximumBitRate();
+  PduSessionAggregateMaximumBitRate(
+      long bit_rate_downlink, long bit_rate_uplink);
   virtual ~PduSessionAggregateMaximumBitRate();
 
-  void setPduSessionAggregateMaximumBitRate(
-      long bit_rate_downlink, long bit_rate_uplink);
-  bool getPduSessionAggregateMaximumBitRate(
-      long& bit_rate_downlink, long& bit_rate_uplink);
+  void set(long bit_rate_downlink, long bit_rate_uplink);
+  bool get(long& bit_rate_downlink, long& bit_rate_uplink) const;
 
-  bool encode2PduSessionAggregateMaximumBitRate(
-      Ngap_PDUSessionAggregateMaximumBitRate_t& pdusessionAggregateMaxBitRate);
-  bool decodefromPduSessionAggregateMaximumBitRate(
-      Ngap_PDUSessionAggregateMaximumBitRate_t& pdusessionAggregateMaxBitRate);
+  bool encode(Ngap_PDUSessionAggregateMaximumBitRate_t& bit_rate);
+  bool decode(Ngap_PDUSessionAggregateMaximumBitRate_t& bit_rate);
 
  private:
-  long aggregatemaxbitratedl;
-  long aggregatemaxbitrateul;
+  long dl_;
+  long ul_;
 };
 
 }  // namespace ngap

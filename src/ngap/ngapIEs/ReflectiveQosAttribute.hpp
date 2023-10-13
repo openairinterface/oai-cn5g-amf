@@ -19,8 +19,8 @@
  *      contact@openairinterface.org
  */
 
-#ifndef _REFLECTIVEQOSATTRIBUTE_H_
-#define _REFLECTIVEQOSATTRIBUTE_H_
+#ifndef _REFLECTIVE_QOS_ATTRIBUTE_H_
+#define _REFLECTIVE_QOS_ATTRIBUTE_H_
 
 extern "C" {
 #include "Ngap_ReflectiveQosAttribute.h"
@@ -31,16 +31,17 @@ namespace ngap {
 class ReflectiveQosAttribute {
  public:
   ReflectiveQosAttribute();
+  ReflectiveQosAttribute(e_Ngap_ReflectiveQosAttribute value);
   virtual ~ReflectiveQosAttribute();
 
-  void setReflectiveQosAttribute(e_Ngap_ReflectiveQosAttribute value);
-  bool getReflectiveQosAttribute(e_Ngap_ReflectiveQosAttribute& value);
+  void set(e_Ngap_ReflectiveQosAttribute value);
+  bool get(e_Ngap_ReflectiveQosAttribute& value);
 
-  bool encode2ReflectiveQosAttribute(Ngap_ReflectiveQosAttribute_t*);
-  bool decodefromReflectiveQosAttribute(Ngap_ReflectiveQosAttribute_t*);
+  bool encode(Ngap_ReflectiveQosAttribute_t*);
+  bool decode(Ngap_ReflectiveQosAttribute_t*);
 
  private:
-  long attribute;
+  long attribute_;
 };
 
 }  // namespace ngap

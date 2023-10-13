@@ -21,50 +21,41 @@
 
 #include "ConfidentialityProtectionIndication.hpp"
 
-#include <iostream>
-using namespace std;
-
 namespace ngap {
 
 //------------------------------------------------------------------------------
 ConfidentialityProtectionIndication::ConfidentialityProtectionIndication() {
-  indication = 0;
+  indication_ = 0;
 }
 
 //------------------------------------------------------------------------------
 ConfidentialityProtectionIndication::~ConfidentialityProtectionIndication() {}
 
 //------------------------------------------------------------------------------
-void ConfidentialityProtectionIndication::
-    setConfidentialityProtectionIndication(
-        e_Ngap_ConfidentialityProtectionIndication m_indication) {
-  indication = m_indication;
+void ConfidentialityProtectionIndication::set(
+    e_Ngap_ConfidentialityProtectionIndication indication) {
+  indication_ = indication;
 }
 
 //------------------------------------------------------------------------------
-bool ConfidentialityProtectionIndication::
-    getConfidentialityProtectionIndication(long& m_indication) {
-  m_indication = indication;
+bool ConfidentialityProtectionIndication::get(long& indication) const {
+  indication = indication_;
 
   return true;
 }
 
 //------------------------------------------------------------------------------
-bool ConfidentialityProtectionIndication::
-    encode2ConfidentialityProtectionIndication(
-        Ngap_ConfidentialityProtectionIndication_t&
-            confidentialityProtectionIndication) {
-  confidentialityProtectionIndication = indication;
+bool ConfidentialityProtectionIndication::encode(
+    Ngap_ConfidentialityProtectionIndication_t& indication) {
+  indication = indication_;
 
   return true;
 }
 
 //------------------------------------------------------------------------------
-bool ConfidentialityProtectionIndication::
-    decodefromConfidentialityProtectionIndication(
-        Ngap_ConfidentialityProtectionIndication_t
-            confidentialityProtectionIndication) {
-  indication = confidentialityProtectionIndication;
+bool ConfidentialityProtectionIndication::decode(
+    Ngap_ConfidentialityProtectionIndication_t indication) {
+  indication_ = indication;
 
   return true;
 }

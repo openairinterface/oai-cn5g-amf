@@ -56,7 +56,7 @@ void HandoverNotifyMsg::setAmfUeNgapId(const unsigned long& id) {
   ie->criticality   = Ngap_Criticality_reject;
   ie->value.present = Ngap_HandoverNotifyIEs__value_PR_AMF_UE_NGAP_ID;
 
-  int ret = amfUeNgapId.encode2AMF_UE_NGAP_ID(ie->value.choice.AMF_UE_NGAP_ID);
+  int ret = amfUeNgapId.encode(ie->value.choice.AMF_UE_NGAP_ID);
   if (!ret) {
     Logger::ngap().error("Encode AMF_UE_NGAP_ID IE error!");
     free_wrapper((void**) &ie);
@@ -92,8 +92,8 @@ void HandoverNotifyMsg::setRanUeNgapId(const uint32_t& ran_ue_ngap_id) {
 void HandoverNotifyMsg::setUserLocationInfoNR(
     const NrCgi_t& cig, const Tai_t& tai) {
   UserLocationInformationNR information_nr = {};
-  NR_CGI nR_CGI                            = {};
-  nR_CGI.setNR_CGI(cig.mcc, cig.mnc, cig.nrCellID);
+  NrCgi nR_CGI                             = {};
+  nR_CGI.set(cig.mcc, cig.mnc, cig.nrCellID);
   TAI tai_nr = {};
   tai_nr.setTAI(tai);
   information_nr.set(nR_CGI, tai_nr);
@@ -126,17 +126,17 @@ bool HandoverNotifyMsg::getUserLocationInfoNR(NrCgi_t& cig, Tai_t& tai) {
       Ngap_UserLocationInformation_PR_userLocationInformationNR)
     return false;
 
-  NR_CGI nR_CGI = {};
-  TAI nR_TAI    = {};
+  NrCgi nR_CGI = {};
+  TAI nR_TAI   = {};
   information_nr.get(nR_CGI, nR_TAI);
-  nR_CGI.getNR_CGI(cig);
+  nR_CGI.get(cig);
   nR_TAI.getTAI(tai);
 
   return true;
 }
 
 //------------------------------------------------------------------------------
-bool HandoverNotifyMsg::decodeFromPdu(Ngap_NGAP_PDU_t* ngapMsgPdu) {
+bool HandoverNotifyMsg::decode(Ngap_NGAP_PDU_t* ngapMsgPdu) {
   if (!ngapMsgPdu) return false;
   ngapPdu = ngapMsgPdu;
 
@@ -165,9 +165,8 @@ bool HandoverNotifyMsg::decodeFromPdu(Ngap_NGAP_PDU_t* ngapMsgPdu) {
                 Ngap_Criticality_reject &&
             handoverNotifyIEs->protocolIEs.list.array[i]->value.present ==
                 Ngap_HandoverNotifyIEs__value_PR_AMF_UE_NGAP_ID) {
-          if (!amfUeNgapId.decodefromAMF_UE_NGAP_ID(
-                  handoverNotifyIEs->protocolIEs.list.array[i]
-                      ->value.choice.AMF_UE_NGAP_ID)) {
+          if (!amfUeNgapId.decode(handoverNotifyIEs->protocolIEs.list.array[i]
+                                      ->value.choice.AMF_UE_NGAP_ID)) {
             Logger::ngap().error("Decoded NGAP AMF_UE_NGAP_ID IE error");
             return false;
           }

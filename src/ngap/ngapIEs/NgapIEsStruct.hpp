@@ -22,10 +22,11 @@
 #ifndef _NGAPIESSTRUCT_H_
 #define _NGAPIESSTRUCT_H_
 
-#include "bstrlib.h"
 #include <optional>
 #include <string>
 #include <vector>
+
+#include "bstrlib.h"
 
 extern "C" {
 #include <OCTET_STRING.h>

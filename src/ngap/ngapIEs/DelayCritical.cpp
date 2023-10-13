@@ -21,14 +21,11 @@
 
 #include "DelayCritical.hpp"
 
-#include <iostream>
-using namespace std;
-
 namespace ngap {
 
 //------------------------------------------------------------------------------
 DelayCritical::DelayCritical() {
-  delaycritical = 0;
+  delay_critical_ = 0;
 }
 
 //------------------------------------------------------------------------------
@@ -36,13 +33,13 @@ DelayCritical::~DelayCritical() {}
 
 //------------------------------------------------------------------------------
 void DelayCritical::setDelayCritical(e_Ngap_DelayCritical value) {
-  delaycritical = value;
+  delay_critical_ = value;
 }
 
 //------------------------------------------------------------------------------
-bool DelayCritical::getDelayCritical(e_Ngap_DelayCritical& value) {
-  if ((delaycritical >= 0) && (delaycritical <= 1))
-    value = (e_Ngap_DelayCritical) delaycritical;
+bool DelayCritical::getDelayCritical(e_Ngap_DelayCritical& value) const {
+  if ((delay_critical_ >= 0) && (delay_critical_ <= 1))
+    value = (e_Ngap_DelayCritical) delay_critical_;
   else
     false;
 
@@ -50,16 +47,15 @@ bool DelayCritical::getDelayCritical(e_Ngap_DelayCritical& value) {
 }
 
 //------------------------------------------------------------------------------
-bool DelayCritical::encode2DelayCritical(Ngap_DelayCritical_t* delayCritical) {
-  *delayCritical = delaycritical;
+bool DelayCritical::encode(Ngap_DelayCritical_t* value) {
+  *value = delay_critical_;
 
   return true;
 }
 
 //------------------------------------------------------------------------------
-bool DelayCritical::decodefromDelayCritical(
-    Ngap_DelayCritical_t* delayCritical) {
-  delaycritical = *delayCritical;
+bool DelayCritical::decode(Ngap_DelayCritical_t* value) {
+  delay_critical_ = *value;
 
   return true;
 }

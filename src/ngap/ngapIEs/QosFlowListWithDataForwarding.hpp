@@ -19,29 +19,33 @@
  *      contact@openairinterface.org
  */
 
-#ifndef _QOSFLOWLISTWITHDATAFORWRADING_H_
-#define _QOSFLOWLISTWITHDATAFORWRADING_H_
+#ifndef _QOS_FLOW_LIST_WITH_DATA_FORWARDING_H_
+#define _QOS_FLOW_LIST_WITH_DATA_FORWARDING_H_
+
+#include <vector>
 
 #include "QosFlowItemWithDataForwarding.hpp"
 #include "QosFlowLevelQosParameters.hpp"
+
 extern "C" {
 #include "Ngap_QosFlowSetupResponseListHOReqAck.h"
 }
+
+constexpr uint8_t kMaxNoQoSFlows = 64;
+
 namespace ngap {
 class QosFlowListWithDataForwarding {
  public:
   QosFlowListWithDataForwarding();
   virtual ~QosFlowListWithDataForwarding();
-  bool getQosFlowListWithDataForwarding(
-      QosFlowItemWithDataForWarding*& m_QosFlowItemWithDataForwarding,
-      int& num);
-  bool decodeFormQosFlowListWithDataForwarding(
-      Ngap_QosFlowSetupResponseListHOReqAck_t qosFlowSetupResponseList);
+
+  void set(const std::vector<QosFlowItemWithDataForWarding>& list);
+  void get(std::vector<QosFlowItemWithDataForWarding>& list) const;
+
+  bool decode(Ngap_QosFlowSetupResponseListHOReqAck_t qosFlowSetupResponseList);
 
  private:
-  // QosFlowIdentifier *qosFlowIdentifier;
-  QosFlowItemWithDataForWarding* qosFlowItemWithDataForwarding;
-  int numofQosFlowItemWithDataForwarding;
+  std::vector<QosFlowItemWithDataForWarding> list_;
 };
 }  // namespace ngap
 #endif

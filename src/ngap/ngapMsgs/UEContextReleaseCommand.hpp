@@ -22,10 +22,10 @@
 #ifndef _UE_CONTEXT_RELEASE_COMMAND_H_
 #define _UE_CONTEXT_RELEASE_COMMAND_H_
 
-#include "AMF-UE-NGAP-ID.hpp"
-#include "RAN-UE-NGAP-ID.hpp"
+#include "AmfUeNgapId.hpp"
 #include "Cause.hpp"
 #include "NgapUEMessage.hpp"
+#include "RanUeNgapId.hpp"
 
 extern "C" {
 #include "Ngap_UEContextReleaseCommand.h"
@@ -40,7 +40,7 @@ class UEContextReleaseCommandMsg : public NgapMessage {
 
   void initialize();
 
-  bool decodeFromPdu(Ngap_NGAP_PDU_t* ngapMsgPdu) override;
+  bool decode(Ngap_NGAP_PDU_t* ngapMsgPdu) override;
 
   void setAmfUeNgapId(const unsigned long& id);
   bool getAmfUeNgapId(unsigned long& id);
@@ -54,10 +54,9 @@ class UEContextReleaseCommandMsg : public NgapMessage {
 
  private:
   Ngap_UEContextReleaseCommand_t* ies;
-  AMF_UE_NGAP_ID amfUeNgapId;
-  std::optional<RAN_UE_NGAP_ID>
-      ranUeNgapId;   // CHOICE UE NGAP IDs: AMF UE NGAP ID
-  Cause causeValue;  // Mandatory
+  AmfUeNgapId amfUeNgapId;
+  std::optional<RanUeNgapId> ranUeNgapId;  // CHOICE UE NGAP IDs: AMF UE NGAP ID
+  Cause causeValue;                        // Mandatory
 };
 
 }  // namespace ngap

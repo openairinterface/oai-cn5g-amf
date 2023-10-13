@@ -22,13 +22,15 @@
 #ifndef _RESET_TYPE_H_
 #define _RESET_TYPE_H_
 
+#include <optional>
+#include <vector>
+
 #include "UEAssociatedLogicalNGConnectionItem.hpp"
 #include "UEAssociatedLogicalNGConnectionList.hpp"
 
 extern "C" {
 #include "Ngap_ResetType.h"
 }
-#include <vector>
 
 namespace ngap {
 class ResetType {
@@ -48,16 +50,15 @@ class ResetType {
   void setUE_associatedLogicalNG_connectionList(
       std::vector<UEAssociatedLogicalNGConnectionItem> list);
 
-  void getUE_associatedLogicalNG_connectionList(
+  void getUEAssociatedLogicalNGConnectionList(
       std::vector<UEAssociatedLogicalNGConnectionItem>& list);
-  void getUE_associatedLogicalNG_connectionList(
+  void getUEAssociatedLogicalNGConnectionList(
       struct Ngap_UE_associatedLogicalNG_connectionList*&);
 
  private:
   Ngap_ResetType_PR present;
-  long nG_Interface;
-  UEAssociatedLogicalNGConnectionList* partOfNG_Interface;
-  UEAssociatedLogicalNGConnectionItem* ueAssociatedLogicalNGConnectionItem;
+  std::optional<long> nG_Interface;
+  std::optional<UEAssociatedLogicalNGConnectionList> partOfNG_Interface;
   //	struct Ngap_ProtocolIE_SingleContainer	*choice_Extensions;
 };
 

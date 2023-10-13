@@ -22,9 +22,9 @@
 #ifndef _UE_RADIO_CAPABILITY_INFO_INDICATION_H_
 #define _UE_RADIO_CAPABILITY_INFO_INDICATION_H_
 
-#include "UERadioCapabilityForPaging.hpp"
 #include "NgapUEMessage.hpp"
 #include "UERadioCapability.hpp"
+#include "UERadioCapabilityForPaging.hpp"
 
 extern "C" {
 #include "Ngap_UERadioCapabilityInfoIndication.h"
@@ -41,7 +41,7 @@ class UeRadioCapabilityInfoIndicationMsg : public NgapUEMessage {
 
   void setAmfUeNgapId(const unsigned long& id) override;
   void setRanUeNgapId(const uint32_t& id) override;
-  bool decodeFromPdu(Ngap_NGAP_PDU_t* ngapMsgPdu) override;
+  bool decode(Ngap_NGAP_PDU_t* ngapMsgPdu) override;
 
   void setUERadioCapability(const OCTET_STRING_t& capability);
   void getUERadioCapability(OCTET_STRING_t& capability);

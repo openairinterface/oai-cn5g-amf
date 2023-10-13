@@ -21,14 +21,11 @@
 
 #include "PriorityLevelQos.hpp"
 
-#include <iostream>
-using namespace std;
-
 namespace ngap {
 
 //------------------------------------------------------------------------------
 PriorityLevelQos::PriorityLevelQos() {
-  prioritylevelqos = 0;
+  priority_level_ = 0;
 }
 
 //------------------------------------------------------------------------------
@@ -36,28 +33,26 @@ PriorityLevelQos::~PriorityLevelQos() {}
 
 //------------------------------------------------------------------------------
 void PriorityLevelQos::setPriorityLevelQos(long value) {
-  prioritylevelqos = value;
+  priority_level_ = value;
 }
 
 //------------------------------------------------------------------------------
-bool PriorityLevelQos::getPriorityLevelQos(long& value) {
-  value = prioritylevelqos;
+bool PriorityLevelQos::getPriorityLevelQos(long& value) const {
+  value = priority_level_;
 
   return true;
 }
 
 //------------------------------------------------------------------------------
-bool PriorityLevelQos::encode2PriorityLevelQos(
-    Ngap_PriorityLevelQos_t* priorityLevelQos) {
-  *priorityLevelQos = prioritylevelqos;
+bool PriorityLevelQos::encode(Ngap_PriorityLevelQos_t* priority_level) {
+  *priority_level = priority_level_;
 
   return true;
 }
 
 //------------------------------------------------------------------------------
-bool PriorityLevelQos::decodefromPriorityLevelQos(
-    Ngap_PriorityLevelQos_t* priorityLevelQos) {
-  prioritylevelqos = *priorityLevelQos;
+bool PriorityLevelQos::decode(Ngap_PriorityLevelQos_t* priority_level) {
+  priority_level_ = *priority_level;
 
   return true;
 }

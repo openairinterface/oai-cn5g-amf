@@ -21,45 +21,41 @@
 
 #include "IntegrityProtectionIndication.hpp"
 
-#include <iostream>
-using namespace std;
-
 namespace ngap {
 
 //------------------------------------------------------------------------------
 IntegrityProtectionIndication::IntegrityProtectionIndication() {
-  indication = 0;
+  indication_ = 0;
 }
 
 //------------------------------------------------------------------------------
 IntegrityProtectionIndication::~IntegrityProtectionIndication() {}
 
 //------------------------------------------------------------------------------
-void IntegrityProtectionIndication::setIntegrityProtectionIndication(
-    e_Ngap_IntegrityProtectionIndication m_indication) {
-  indication = m_indication;
+void IntegrityProtectionIndication::set(
+    const e_Ngap_IntegrityProtectionIndication& indication) {
+  indication_ = indication;
 }
 
 //------------------------------------------------------------------------------
-bool IntegrityProtectionIndication::getIntegrityProtectionIndication(
-    long& m_indication) {
-  m_indication = indication;
+bool IntegrityProtectionIndication::get(long& indication) const {
+  indication = indication_;
 
   return true;
 }
 
 //------------------------------------------------------------------------------
-bool IntegrityProtectionIndication::encode2IntegrityProtectionIndication(
-    Ngap_IntegrityProtectionIndication_t& integrityProtectionIndication) {
-  integrityProtectionIndication = indication;
+bool IntegrityProtectionIndication::encode(
+    Ngap_IntegrityProtectionIndication_t& value) {
+  value = indication_;
 
   return true;
 }
 
 //------------------------------------------------------------------------------
-bool IntegrityProtectionIndication::decodefromIntegrityProtectionIndication(
-    Ngap_IntegrityProtectionIndication_t integrityProtectionIndication) {
-  indication = integrityProtectionIndication;
+bool IntegrityProtectionIndication::decode(
+    const Ngap_IntegrityProtectionIndication_t& value) {
+  indication_ = value;
 
   return true;
 }

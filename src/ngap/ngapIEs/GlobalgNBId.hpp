@@ -40,7 +40,7 @@ class GlobalgNBId {
   bool decode(Ngap_GlobalGNB_ID_t*);
 
   void set(const PlmnId& plmn, const GNB_ID& gnbid);
-  void get(PlmnId& plmn, GNB_ID& gnbid);
+  void get(PlmnId& plmn, GNB_ID& gnbid) const;
 
  private:
   PlmnId plmnId;  // Mandatory

@@ -19,8 +19,8 @@
  *      contact@openairinterface.org
  */
 
-#ifndef _PACKETDELAYBUDGET_H_
-#define _PACKETDELAYBUDGET_H_
+#ifndef _PACKET_DELAY_BUDGET_H_
+#define _PACKET_DELAY_BUDGET_H_
 
 extern "C" {
 #include "Ngap_PacketDelayBudget.h"
@@ -34,13 +34,13 @@ class PacketDelayBudget {
   virtual ~PacketDelayBudget();
 
   void setPacketDelayBudget(long value);
-  bool getPacketDelayBudget(long& value);
+  bool getPacketDelayBudget(long& value) const;
 
-  bool encode2PacketDelayBudget(Ngap_PacketDelayBudget_t*);
-  bool decodefromPacketDelayBudget(Ngap_PacketDelayBudget_t*);
+  bool encode(Ngap_PacketDelayBudget_t*);
+  bool decode(Ngap_PacketDelayBudget_t*);
 
  private:
-  long packetdelaybudget;
+  long packet_delay_budget_;
 };
 
 }  // namespace ngap

@@ -20,6 +20,7 @@
  */
 
 #include "DownlinkNasTransport.hpp"
+
 #include "logger.hpp"
 
 extern "C" {
@@ -59,7 +60,7 @@ void DownLinkNasTransportMsg::setAmfUeNgapId(const unsigned long& id) {
   ie->criticality   = Ngap_Criticality_reject;
   ie->value.present = Ngap_DownlinkNASTransport_IEs__value_PR_AMF_UE_NGAP_ID;
 
-  int ret = amfUeNgapId.encode2AMF_UE_NGAP_ID(ie->value.choice.AMF_UE_NGAP_ID);
+  int ret = amfUeNgapId.encode(ie->value.choice.AMF_UE_NGAP_ID);
   if (!ret) {
     Logger::ngap().error("Encode AMF_UE_NGAP_ID IE error");
     free_wrapper((void**) &ie);
@@ -126,9 +127,9 @@ bool DownLinkNasTransportMsg::getOldAmf(std::string& name) {
 //------------------------------------------------------------------------------
 bool DownLinkNasTransportMsg::setRanPagingPriority(
     const uint32_t& pagingPriority) {
-  RANPagingPriority tmp = {};
+  RanPagingPriority tmp = {};
   if (!tmp.set(pagingPriority)) return false;
-  ranPagingPriority = std::optional<RANPagingPriority>(tmp);
+  ranPagingPriority = std::optional<RanPagingPriority>(tmp);
 
   Ngap_DownlinkNASTransport_IEs_t* ie =
       (Ngap_DownlinkNASTransport_IEs_t*) calloc(
@@ -264,7 +265,7 @@ bool DownLinkNasTransportMsg::getUEAggregateMaxBitRate(
 //------------------------------------------------------------------------------
 void DownLinkNasTransportMsg::setIndex2Rat_FrequencySelectionPriority(
     const uint32_t& value) {
-  indexToRFSP = std::make_optional<IndexToRFSP>(value);
+  indexToRFSP = std::make_optional<IndexToRfsp>(value);
 
   Ngap_DownlinkNASTransport_IEs_t* ie =
       (Ngap_DownlinkNASTransport_IEs_t*) calloc(
@@ -325,7 +326,7 @@ bool DownLinkNasTransportMsg::getAllowedNssai(
 }
 
 //------------------------------------------------------------------------------
-bool DownLinkNasTransportMsg::decodeFromPdu(Ngap_NGAP_PDU_t* ngapMsgPdu) {
+bool DownLinkNasTransportMsg::decode(Ngap_NGAP_PDU_t* ngapMsgPdu) {
   ngapPdu = ngapMsgPdu;
 
   if (ngapPdu->present == Ngap_NGAP_PDU_PR_initiatingMessage) {
@@ -353,7 +354,7 @@ bool DownLinkNasTransportMsg::decodeFromPdu(Ngap_NGAP_PDU_t* ngapMsgPdu) {
                 Ngap_Criticality_reject &&
             downLinkNasTransportIEs->protocolIEs.list.array[i]->value.present ==
                 Ngap_DownlinkNASTransport_IEs__value_PR_AMF_UE_NGAP_ID) {
-          if (!amfUeNgapId.decodefromAMF_UE_NGAP_ID(
+          if (!amfUeNgapId.decode(
                   downLinkNasTransportIEs->protocolIEs.list.array[i]
                       ->value.choice.AMF_UE_NGAP_ID)) {
             Logger::ngap().error("Decode NGAP AMF_UE_NGAP_ID IE error");
@@ -402,13 +403,13 @@ bool DownLinkNasTransportMsg::decodeFromPdu(Ngap_NGAP_PDU_t* ngapMsgPdu) {
                 Ngap_Criticality_ignore &&
             downLinkNasTransportIEs->protocolIEs.list.array[i]->value.present ==
                 Ngap_DownlinkNASTransport_IEs__value_PR_RANPagingPriority) {
-          RANPagingPriority tmp = {};
+          RanPagingPriority tmp = {};
           if (!tmp.decode(downLinkNasTransportIEs->protocolIEs.list.array[i]
                               ->value.choice.RANPagingPriority)) {
             Logger::ngap().error("Decode NGAP RANPagingPriority IE error");
             return false;
           }
-          ranPagingPriority = std::optional<RANPagingPriority>(tmp);
+          ranPagingPriority = std::optional<RanPagingPriority>(tmp);
         } else {
           Logger::ngap().error("Decode NGAP RANPagingPriority IE error");
           return false;
@@ -454,13 +455,13 @@ bool DownLinkNasTransportMsg::decodeFromPdu(Ngap_NGAP_PDU_t* ngapMsgPdu) {
                 Ngap_Criticality_ignore &&
             downLinkNasTransportIEs->protocolIEs.list.array[i]->value.present ==
                 Ngap_DownlinkNASTransport_IEs__value_PR_IndexToRFSP) {
-          IndexToRFSP tmp = {};
+          IndexToRfsp tmp = {};
           if (!tmp.decode(downLinkNasTransportIEs->protocolIEs.list.array[i]
                               ->value.choice.IndexToRFSP)) {
             Logger::ngap().error("Decode NGAP IndexToRFSP IE error");
             return false;
           }
-          indexToRFSP = std::optional<IndexToRFSP>(tmp);
+          indexToRFSP = std::optional<IndexToRfsp>(tmp);
         } else {
           Logger::ngap().error("Decode NGAP IndexToRFSP IE error");
           return false;

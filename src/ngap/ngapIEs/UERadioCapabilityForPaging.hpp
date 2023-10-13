@@ -22,10 +22,10 @@
 #ifndef _UE_RADIO_CAPABILITY_FOR_PAGING_H_
 #define _UE_RADIO_CAPABILITY_FOR_PAGING_H_
 
+#include <optional>
+
 #include "UERadioCapabilityForPagingOfEUTRA.hpp"
 #include "UERadioCapabilityForPagingOfNR.hpp"
-
-#include <optional>
 
 extern "C" {
 #include "Ngap_UERadioCapabilityForPaging.h"
@@ -41,10 +41,10 @@ class UERadioCapabilityForPaging {
   bool encode(Ngap_UERadioCapabilityForPaging_t* ueRadioCapabilityForPaging);
   bool decode(Ngap_UERadioCapabilityForPaging_t* ueRadioCapabilityForPaging);
 
-  bool setUERadioCapabilityForPagingOfNR(const OCTET_STRING_t& capability);
+  void setUERadioCapabilityForPagingOfNR(const OCTET_STRING_t& capability);
   bool getUERadioCapabilityForPagingOfNR(OCTET_STRING_t& capability);
 
-  bool setUERadioCapabilityForPagingOfEUTRA(const OCTET_STRING_t& capability);
+  void setUERadioCapabilityForPagingOfEUTRA(const OCTET_STRING_t& capability);
   bool getUERadioCapabilityForPagingOfEUTRA(OCTET_STRING_t& capability);
 
  private:

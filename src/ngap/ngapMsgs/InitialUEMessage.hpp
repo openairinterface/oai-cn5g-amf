@@ -22,16 +22,16 @@
 #ifndef _INITIAL_UE_MESSAGE_H_
 #define _INITIAL_UE_MESSAGE_H_
 
+#include <optional>
+
 #include "AllowedNssai.hpp"
 #include "FiveGSTmsi.hpp"
-#include "NAS-PDU.hpp"
+#include "NasPdu.hpp"
 #include "NgapIEsStruct.hpp"
 #include "NgapMessage.hpp"
-#include "RRCEstablishmentCause.hpp"
+#include "RrcEstablishmentCause.hpp"
 #include "UEContextRequest.hpp"
 #include "UserLocationInformation.hpp"
-
-#include <optional>
 
 namespace ngap {
 
@@ -41,7 +41,7 @@ class InitialUEMessageMsg : public NgapMessage {
   virtual ~InitialUEMessageMsg();
 
   void initialize();
-  bool decodeFromPdu(Ngap_NGAP_PDU_t* ngap_msg_pdu) override;
+  bool decode(Ngap_NGAP_PDU_t* ngap_msg_pdu) override;
 
   void setRanUENgapID(const uint32_t& value);
   bool getRanUENgapID(uint32_t& value);
@@ -75,12 +75,12 @@ class InitialUEMessageMsg : public NgapMessage {
  private:
   Ngap_InitialUEMessage_t* initialUEMessageIEs;
 
-  RAN_UE_NGAP_ID ranUeNgapId;                        // Mandatory
-  NAS_PDU nasPdu;                                    // Mandatory
+  RanUeNgapId ranUeNgapId;                           // Mandatory
+  NasPdu nasPdu;                                     // Mandatory
   UserLocationInformation userLocationInformation;   // Mandatory
-  RRCEstablishmentCause rRCEstablishmentCause;       // Mandatory
+  RrcEstablishmentCause rRCEstablishmentCause;       // Mandatory
   std::optional<FiveGSTmsi> fivegSTmsi;              // 5G-S-TMSI (Optional)
-  std::optional<AMFSetID> amfSetId;                  // Optional
+  std::optional<AmfSetId> amfSetId;                  // Optional
   std::optional<UEContextRequest> uEContextRequest;  // Optional
   std::optional<AllowedNSSAI> allowedNssai;          // Optional
   // TODO: Source to Target AMF Information Reroute (Optional)

@@ -23,9 +23,9 @@
 #define _PDU_SESSION_RESOURCE_RELEASE_RESPONSE_H_
 
 #include "CriticalityDiagnostics.hpp"
-#include "PDUSessionResourceReleasedListRelRes.hpp"
-#include "UserLocationInformation.hpp"
 #include "NgapUEMessage.hpp"
+#include "PduSessionResourceReleasedListRelRes.hpp"
+#include "UserLocationInformation.hpp"
 
 namespace ngap {
 
@@ -38,7 +38,7 @@ class PduSessionResourceReleaseResponseMsg : public NgapUEMessage {
 
   void setAmfUeNgapId(const unsigned long& id) override;
   void setRanUeNgapId(const uint32_t& id) override;
-  bool decodeFromPdu(Ngap_NGAP_PDU_t* ngapMsgPdu) override;
+  bool decode(Ngap_NGAP_PDU_t* ngapMsgPdu) override;
 
   void setPduSessionResourceReleasedList(
       const std::vector<PDUSessionResourceReleasedItem_t>& list);
@@ -52,7 +52,7 @@ class PduSessionResourceReleaseResponseMsg : public NgapUEMessage {
   Ngap_PDUSessionResourceReleaseResponse_t*
       pduSessionResourceReleaseResponseIEs;
 
-  PDUSessionResourceReleasedListRelRes
+  PduSessionResourceReleasedListRelRes
       pduSessionResourceReleasedList;                              // Mandatory
   std::optional<UserLocationInformation> userLocationInformation;  // Optional
   // TODO: CriticalityDiagnostics *criticalityDiagnostics; //Optional

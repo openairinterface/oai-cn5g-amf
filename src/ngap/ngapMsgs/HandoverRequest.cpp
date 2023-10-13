@@ -66,7 +66,7 @@ unsigned long HandoverRequest::getAmfUeNgapId() {
 }
 
 //------------------------------------------------------------------------------
-bool HandoverRequest::decodeFromPdu(Ngap_NGAP_PDU_t* ngapMsgPdu) {
+bool HandoverRequest::decode(Ngap_NGAP_PDU_t* ngapMsgPdu) {
   ngapPdu = ngapMsgPdu;
 
   if (ngapPdu->present == Ngap_NGAP_PDU_PR_initiatingMessage) {
@@ -94,9 +94,8 @@ bool HandoverRequest::decodeFromPdu(Ngap_NGAP_PDU_t* ngapMsgPdu) {
                 Ngap_Criticality_reject &&
             handoverRequestIEs->protocolIEs.list.array[i]->value.present ==
                 Ngap_HandoverRequestIEs__value_PR_AMF_UE_NGAP_ID) {
-          if (!amfUeNgapId.decodefromAMF_UE_NGAP_ID(
-                  handoverRequestIEs->protocolIEs.list.array[i]
-                      ->value.choice.AMF_UE_NGAP_ID)) {
+          if (!amfUeNgapId.decode(handoverRequestIEs->protocolIEs.list.array[i]
+                                      ->value.choice.AMF_UE_NGAP_ID)) {
             Logger::ngap().error("Decode NGAP AMF_UE_NGAP_ID IE error");
             return false;
           }
@@ -124,7 +123,7 @@ bool HandoverRequest::decodeFromPdu(Ngap_NGAP_PDU_t* ngapMsgPdu) {
         // TODO: Ngap_SecurityContext_t securityContext
         // TODO: New Security Context Indicator
         // TODO: NASC - NAS-PDU
-        // TODO: PDUSessionResourceSetupListHOReq
+        // TODO: PduSessionResourceSetupListHoReq
         // TODO: AllowedNSSAI
         // TODO: Trace Activation
         // TODO: Masked IMEISV
@@ -155,7 +154,7 @@ void HandoverRequest::setAmfUeNgapId(const unsigned long& id) {
   ie->criticality   = Ngap_Criticality_reject;
   ie->value.present = Ngap_HandoverRequestIEs__value_PR_AMF_UE_NGAP_ID;
 
-  int ret = amfUeNgapId.encode2AMF_UE_NGAP_ID(ie->value.choice.AMF_UE_NGAP_ID);
+  int ret = amfUeNgapId.encode(ie->value.choice.AMF_UE_NGAP_ID);
   if (!ret) {
     Logger::ngap().error("Encode AMF_UE_NGAP_ID IE error");
     free_wrapper((void**) &ie);
@@ -234,15 +233,15 @@ void HandoverRequest::setUESecurityCapabilities(
 
 //------------------------------------------------------------------------------
 void HandoverRequest::setGUAMI(
-    const PlmnId& plmnId, const AMFRegionID& aMFRegionID,
-    const AMFSetID& aMFSetID, const AMFPointer& aMFPointer) {
+    const PlmnId& plmnId, const AmfRegionId& aMFRegionID,
+    const AmfSetId& aMFSetID, const AmfPointer& aMFPointer) {
   Ngap_HandoverRequestIEs_t* ie =
       (Ngap_HandoverRequestIEs_t*) calloc(1, sizeof(Ngap_HandoverRequestIEs_t));
   ie->id            = Ngap_ProtocolIE_ID_id_GUAMI;
   ie->criticality   = Ngap_Criticality_reject;
   ie->value.present = Ngap_HandoverRequestIEs__value_PR_GUAMI;
   guami.setGUAMI(plmnId, aMFRegionID, aMFSetID, aMFPointer);
-  guami.encode2GUAMI(&(ie->value.choice.GUAMI));
+  guami.encode(&(ie->value.choice.GUAMI));
 
   int ret = ASN_SEQUENCE_ADD(&handoverRequestIEs->protocolIEs.list, ie);
   if (ret != 0) Logger::ngap().error("Encode GUAMI IE error");
@@ -258,7 +257,7 @@ void HandoverRequest::setGUAMI(
   ie->criticality   = Ngap_Criticality_reject;
   ie->value.present = Ngap_HandoverRequestIEs__value_PR_GUAMI;
   guami.setGUAMI(mcc, mnc, regionId, setId, pointer);
-  guami.encode2GUAMI(&(ie->value.choice.GUAMI));
+  guami.encode(&(ie->value.choice.GUAMI));
 
   int ret = ASN_SEQUENCE_ADD(&handoverRequestIEs->protocolIEs.list, ie);
 
@@ -275,7 +274,7 @@ void HandoverRequest::setGUAMI(
   ie->criticality   = Ngap_Criticality_reject;
   ie->value.present = Ngap_HandoverRequestIEs__value_PR_GUAMI;
   guami.setGUAMI(mcc, mnc, regionId, setId, pointer);
-  guami.encode2GUAMI(&(ie->value.choice.GUAMI));
+  guami.encode(&(ie->value.choice.GUAMI));
 
   int ret = ASN_SEQUENCE_ADD(&handoverRequestIEs->protocolIEs.list, ie);
 
@@ -322,11 +321,11 @@ void HandoverRequest::setSecurityContext(const long& count, bstring& nh) {
 //------------------------------------------------------------------------------
 void HandoverRequest::setPduSessionResourceSetupList(
     const std::vector<PDUSessionResourceSetupRequestItem_t>& list) {
-  std::vector<PDUSessionResourceSetupItemHOReq> resource_setup_list;
+  std::vector<PduSessionResourceSetupItemHoReq> resource_setup_list;
 
   for (int i = 0; i < list.size(); i++) {
-    PDUSessionResourceSetupItemHOReq resource_setup_item = {};
-    PDUSessionID pdu_session_id                          = {};
+    PduSessionResourceSetupItemHoReq resource_setup_item = {};
+    PduSessionId pdu_session_id                          = {};
     pdu_session_id.set(list[i].pduSessionId);
     S_NSSAI s_nssai = {};
     s_nssai.setSst(list[i].s_nssai.sst);

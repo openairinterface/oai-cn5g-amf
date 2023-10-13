@@ -25,14 +25,14 @@ extern "C" {
 #include "dynamic_memory_check.h"
 }
 
-#include <iostream>
-using namespace std;
-
 namespace ngap {
 
+//------------------------------------------------------------------------------
 UEAssociatedLogicalNGConnectionList::UEAssociatedLogicalNGConnectionList() {}
 
+//------------------------------------------------------------------------------
 UEAssociatedLogicalNGConnectionList::~UEAssociatedLogicalNGConnectionList() {}
+
 //------------------------------------------------------------------------------
 void UEAssociatedLogicalNGConnectionList::set(
     std::vector<UEAssociatedLogicalNGConnectionItem>& list) {

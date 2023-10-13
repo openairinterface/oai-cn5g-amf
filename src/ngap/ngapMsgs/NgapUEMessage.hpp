@@ -22,9 +22,9 @@
 #ifndef _NGAP_UE_MESSAGE_H_
 #define _NGAP_UE_MESSAGE_H_
 
-#include "AMF-UE-NGAP-ID.hpp"
-#include "RAN-UE-NGAP-ID.hpp"
+#include "AmfUeNgapId.hpp"
 #include "NgapMessage.hpp"
+#include "RanUeNgapId.hpp"
 
 extern "C" {
 #include "Ngap_ProtocolIE-Field.h"
@@ -45,8 +45,8 @@ class NgapUEMessage : public NgapMessage {
   uint32_t getRanUeNgapId();
 
  protected:
-  AMF_UE_NGAP_ID amfUeNgapId;
-  RAN_UE_NGAP_ID ranUeNgapId;
+  AmfUeNgapId amfUeNgapId;
+  RanUeNgapId ranUeNgapId;
 };
 
 }  // namespace ngap

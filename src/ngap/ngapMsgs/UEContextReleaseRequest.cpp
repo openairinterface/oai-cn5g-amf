@@ -55,7 +55,7 @@ void UEContextReleaseRequestMsg::setAmfUeNgapId(const unsigned long& id) {
   ie->id            = Ngap_ProtocolIE_ID_id_AMF_UE_NGAP_ID;
   ie->criticality   = Ngap_Criticality_reject;
   ie->value.present = Ngap_UEContextReleaseRequest_IEs__value_PR_AMF_UE_NGAP_ID;
-  int ret = amfUeNgapId.encode2AMF_UE_NGAP_ID(ie->value.choice.AMF_UE_NGAP_ID);
+  int ret           = amfUeNgapId.encode(ie->value.choice.AMF_UE_NGAP_ID);
   if (!ret) {
     Logger::ngap().error("Encode NGAP AMF_UE_NGAP_ID IE error");
     free_wrapper((void**) &ie);
@@ -87,10 +87,10 @@ void UEContextReleaseRequestMsg::setRanUeNgapId(
 
 //------------------------------------------------------------------------------
 void UEContextReleaseRequestMsg::setPDUSessionResourceList(
-    const PDUSessionResourceListCxtRelReq&
+    const PduSessionResourceListCxtRelReq&
         pdu_session_resource_list_cxt_rel_req) {
   pdu_session_resource_list_cxt_rel_req_ =
-      std::optional<PDUSessionResourceListCxtRelReq>(
+      std::optional<PduSessionResourceListCxtRelReq>(
           pdu_session_resource_list_cxt_rel_req);
 
   Ngap_UEContextReleaseRequest_IEs* ie =
@@ -116,7 +116,7 @@ void UEContextReleaseRequestMsg::setPDUSessionResourceList(
 
 //------------------------------------------------------------------------------
 bool UEContextReleaseRequestMsg::getPDUSessionResourceList(
-    PDUSessionResourceListCxtRelReq& pdu_session_resource_list_cxt_rel_req) {
+    PduSessionResourceListCxtRelReq& pdu_session_resource_list_cxt_rel_req) {
   if (!pdu_session_resource_list_cxt_rel_req_.has_value()) return false;
   pdu_session_resource_list_cxt_rel_req =
       pdu_session_resource_list_cxt_rel_req_.value();
@@ -155,7 +155,7 @@ void UEContextReleaseRequestMsg::addCauseIE() {
 }
 
 //------------------------------------------------------------------------------
-bool UEContextReleaseRequestMsg::decodeFromPdu(Ngap_NGAP_PDU_t* ngapMsgPdu) {
+bool UEContextReleaseRequestMsg::decode(Ngap_NGAP_PDU_t* ngapMsgPdu) {
   ngapPdu = ngapMsgPdu;
   if (ngapPdu->present == Ngap_NGAP_PDU_PR_initiatingMessage) {
     if (ngapPdu->choice.initiatingMessage &&
@@ -184,9 +184,8 @@ bool UEContextReleaseRequestMsg::decodeFromPdu(Ngap_NGAP_PDU_t* ngapMsgPdu) {
                 Ngap_Criticality_reject &&
             ies->protocolIEs.list.array[i]->value.present ==
                 Ngap_UEContextReleaseRequest_IEs__value_PR_AMF_UE_NGAP_ID) {
-          if (!amfUeNgapId.decodefromAMF_UE_NGAP_ID(
-                  ies->protocolIEs.list.array[i]
-                      ->value.choice.AMF_UE_NGAP_ID)) {
+          if (!amfUeNgapId.decode(ies->protocolIEs.list.array[i]
+                                      ->value.choice.AMF_UE_NGAP_ID)) {
             Logger::ngap().error("Decode NGAP AMF_UE_NGAP_ID IE error");
             return false;
           }
@@ -215,7 +214,7 @@ bool UEContextReleaseRequestMsg::decodeFromPdu(Ngap_NGAP_PDU_t* ngapMsgPdu) {
                 Ngap_Criticality_reject &&
             ies->protocolIEs.list.array[i]->value.present ==
                 Ngap_UEContextReleaseRequest_IEs__value_PR_PDUSessionResourceListCxtRelReq) {
-          PDUSessionResourceListCxtRelReq tmp = {};
+          PduSessionResourceListCxtRelReq tmp = {};
           if (!tmp.decode(ies->protocolIEs.list.array[i]
                               ->value.choice.PDUSessionResourceListCxtRelReq)) {
             Logger::ngap().error(
@@ -223,7 +222,7 @@ bool UEContextReleaseRequestMsg::decodeFromPdu(Ngap_NGAP_PDU_t* ngapMsgPdu) {
             return false;
           }
           pdu_session_resource_list_cxt_rel_req_ =
-              std::optional<PDUSessionResourceListCxtRelReq>(tmp);
+              std::optional<PduSessionResourceListCxtRelReq>(tmp);
         } else {
           Logger::ngap().error(
               "Decode NGAP PDUSessionResourceListCxtRelReq IE error");

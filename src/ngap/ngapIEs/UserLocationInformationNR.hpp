@@ -22,7 +22,7 @@
 #ifndef _USER_LOCATION_INFORMATION_NR_H_
 #define _USER_LOCATION_INFORMATION_NR_H_
 
-#include "NR-CGI.hpp"
+#include "NrCgi.hpp"
 #include "TAI.hpp"
 
 extern "C" {
@@ -35,15 +35,15 @@ class UserLocationInformationNR {
   UserLocationInformationNR();
   virtual ~UserLocationInformationNR();
 
-  void set(const NR_CGI&, const TAI&);
-  void get(NR_CGI&, TAI&);
+  void set(const NrCgi&, const TAI&);
+  void get(NrCgi&, TAI&);
 
   bool encode(Ngap_UserLocationInformationNR_t*);
   bool decode(Ngap_UserLocationInformationNR_t*);
 
  private:
-  NR_CGI nR_CGI;  // Mandatory
-  TAI tAI;        // Mandatory
+  NrCgi nR_CGI;  // Mandatory
+  TAI tAI;       // Mandatory
   // bool timeStampIsSet;
   // TODO: TimeStamp timeStamp; //Age of Location (Optional)
   // TODO: PSCell Information

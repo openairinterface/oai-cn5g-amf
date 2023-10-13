@@ -22,16 +22,16 @@
 #ifndef _DOWNLINK_NAS_TRANSPORT_H_
 #define _DOWNLINK_NAS_TRANSPORT_H_
 
-#include "AllowedNssai.hpp"
-#include "AMFName.hpp"
-#include "IndexToRFSP.hpp"
-#include "NAS-PDU.hpp"
-#include "RANPagingPriority.hpp"
-#include "NgapUEMessage.hpp"
-#include "MobilityRestrictionList.hpp"
-#include "UEAggregateMaxBitRate.hpp"
-
 #include <optional>
+
+#include "AmfName.hpp"
+#include "AllowedNssai.hpp"
+#include "IndexToRfsp.hpp"
+#include "MobilityRestrictionList.hpp"
+#include "NasPdu.hpp"
+#include "NgapUEMessage.hpp"
+#include "RanPagingPriority.hpp"
+#include "UEAggregateMaxBitRate.hpp"
 
 namespace ngap {
 
@@ -44,7 +44,7 @@ class DownLinkNasTransportMsg : public NgapUEMessage {
 
   void setAmfUeNgapId(const unsigned long& id) override;
   void setRanUeNgapId(const uint32_t& id) override;
-  bool decodeFromPdu(Ngap_NGAP_PDU_t* ngapMsgPdu) override;
+  bool decode(Ngap_NGAP_PDU_t* ngapMsgPdu) override;
 
   void setOldAmf(const std::string& name);
   bool getOldAmf(std::string& name);
@@ -73,10 +73,10 @@ class DownLinkNasTransportMsg : public NgapUEMessage {
   // AMF_UE_NGAP_ID (Mandatory)
   // RAN_UE_NGAP_ID (Mandatory)
   std::optional<AmfName> oldAMF;                                   // Optional
-  std::optional<RANPagingPriority> ranPagingPriority;              // Optional
-  NAS_PDU nasPdu;                                                  // Mandatory
+  std::optional<RanPagingPriority> ranPagingPriority;              // Optional
+  NasPdu nasPdu;                                                   // Mandatory
   std::optional<MobilityRestrictionList> mobilityRestrictionList;  // Optional
-  std::optional<IndexToRFSP> indexToRFSP;                          // Optional
+  std::optional<IndexToRfsp> indexToRFSP;                          // Optional
   std::optional<UEAggregateMaxBitRate> uEAggregateMaxBitRate;      // Optional
   std::optional<AllowedNSSAI> allowedNssai;                        // Optional
 };

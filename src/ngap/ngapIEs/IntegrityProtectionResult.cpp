@@ -21,45 +21,39 @@
 
 #include "IntegrityProtectionResult.hpp"
 
-#include <iostream>
-using namespace std;
-
 namespace ngap {
 
 //------------------------------------------------------------------------------
 IntegrityProtectionResult::IntegrityProtectionResult() {
-  integrityProtectionResult = -1;
+  result_ = -1;
 }
 
 //------------------------------------------------------------------------------
 IntegrityProtectionResult::~IntegrityProtectionResult() {}
 
 //------------------------------------------------------------------------------
-void IntegrityProtectionResult::setIntegrityProtectionResult(
-    e_Ngap_IntegrityProtectionResult m_integrityProtectionResult) {
-  integrityProtectionResult = m_integrityProtectionResult;
+void IntegrityProtectionResult::set(e_Ngap_IntegrityProtectionResult value) {
+  result_ = value;
 }
 
 //------------------------------------------------------------------------------
-bool IntegrityProtectionResult::getIntegrityProtectionResult(
-    long& m_integrityProtectionResult) {
-  m_integrityProtectionResult = integrityProtectionResult;
+bool IntegrityProtectionResult::get(long& value) const {
+  value = result_;
 
   return true;
 }
 
 //------------------------------------------------------------------------------
-bool IntegrityProtectionResult::encode2IntegrityProtectionResult(
-    Ngap_IntegrityProtectionResult_t& integrityProtectionResultValue) {
-  integrityProtectionResultValue = integrityProtectionResult;
+bool IntegrityProtectionResult::encode(
+    Ngap_IntegrityProtectionResult_t& value) {
+  value = result_;
 
   return true;
 }
 
 //------------------------------------------------------------------------------
-bool IntegrityProtectionResult::decodefromIntegrityProtectionResult(
-    Ngap_IntegrityProtectionResult_t integrityProtectionResultValue) {
-  integrityProtectionResult = integrityProtectionResultValue;
+bool IntegrityProtectionResult::decode(Ngap_IntegrityProtectionResult_t value) {
+  result_ = value;
 
   return true;
 }

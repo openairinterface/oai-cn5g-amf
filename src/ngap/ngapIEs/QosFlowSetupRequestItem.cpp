@@ -21,32 +21,26 @@
 
 #include "QosFlowSetupRequestItem.hpp"
 
-#include <iostream>
-using namespace std;
-
 namespace ngap {
 
 //------------------------------------------------------------------------------
-QosFlowSetupRequestItem::QosFlowSetupRequestItem() {
-  qosFlowIdentifier         = NULL;
-  qosFlowLevelQosParameters = NULL;
-}
+QosFlowSetupRequestItem::QosFlowSetupRequestItem() {}
 
 //------------------------------------------------------------------------------
 QosFlowSetupRequestItem::~QosFlowSetupRequestItem() {}
 
 //------------------------------------------------------------------------------
-void QosFlowSetupRequestItem::setQosFlowSetupRequestItem(
-    QosFlowIdentifier* m_qosFlowIdentifier,
-    QosFlowLevelQosParameters* m_qosFlowLevelQosParameters) {
+void QosFlowSetupRequestItem::set(
+    const QosFlowIdentifier& m_qosFlowIdentifier,
+    const QosFlowLevelQosParameters& m_qosFlowLevelQosParameters) {
   qosFlowIdentifier         = m_qosFlowIdentifier;
   qosFlowLevelQosParameters = m_qosFlowLevelQosParameters;
 }
 
 //------------------------------------------------------------------------------
-bool QosFlowSetupRequestItem::getQosFlowSetupRequestItem(
-    QosFlowIdentifier*& m_qosFlowIdentifier,
-    QosFlowLevelQosParameters*& m_qosFlowLevelQosParameters) {
+bool QosFlowSetupRequestItem::get(
+    QosFlowIdentifier& m_qosFlowIdentifier,
+    QosFlowLevelQosParameters& m_qosFlowLevelQosParameters) const {
   m_qosFlowIdentifier         = qosFlowIdentifier;
   m_qosFlowLevelQosParameters = qosFlowLevelQosParameters;
 
@@ -54,12 +48,11 @@ bool QosFlowSetupRequestItem::getQosFlowSetupRequestItem(
 }
 
 //------------------------------------------------------------------------------
-bool QosFlowSetupRequestItem::encode2QosFlowSetupRequestItem(
+bool QosFlowSetupRequestItem::encode(
     Ngap_QosFlowSetupRequestItem_t* qosFlowSetupRequestItem) {
-  if (!qosFlowIdentifier->encode2QosFlowIdentifier(
-          &qosFlowSetupRequestItem->qosFlowIdentifier))
+  if (!qosFlowIdentifier.encode(&qosFlowSetupRequestItem->qosFlowIdentifier))
     return false;
-  if (!qosFlowLevelQosParameters->encode2QosFlowLevelQosParameters(
+  if (!qosFlowLevelQosParameters.encode(
           &qosFlowSetupRequestItem->qosFlowLevelQosParameters))
     return false;
 
@@ -67,16 +60,11 @@ bool QosFlowSetupRequestItem::encode2QosFlowSetupRequestItem(
 }
 
 //------------------------------------------------------------------------------
-bool QosFlowSetupRequestItem::decodefromQosFlowSetupRequestItem(
+bool QosFlowSetupRequestItem::decode(
     Ngap_QosFlowSetupRequestItem_t* qosFlowSetupRequestItem) {
-  if (qosFlowIdentifier == nullptr) qosFlowIdentifier = new QosFlowIdentifier();
-  if (qosFlowLevelQosParameters == nullptr)
-    qosFlowLevelQosParameters = new QosFlowLevelQosParameters();
-
-  if (!qosFlowIdentifier->decodefromQosFlowIdentifier(
-          &qosFlowSetupRequestItem->qosFlowIdentifier))
+  if (!qosFlowIdentifier.decode(&qosFlowSetupRequestItem->qosFlowIdentifier))
     return false;
-  if (!qosFlowLevelQosParameters->decodefromQosFlowLevelQosParameters(
+  if (!qosFlowLevelQosParameters.decode(
           &qosFlowSetupRequestItem->qosFlowLevelQosParameters))
     return false;
 

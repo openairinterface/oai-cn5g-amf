@@ -22,8 +22,9 @@
 #ifndef _SUPPORTED_TA_LIST_H_
 #define _SUPPORTED_TA_LIST_H_
 
-#include "SupportedTaItem.hpp"
 #include <vector>
+
+#include "SupportedTaItem.hpp"
 
 extern "C" {
 #include "Ngap_SupportedTAList.h"

@@ -20,6 +20,7 @@
  */
 
 #include "UplinkNonUEAssociatedNRPPaTransport.hpp"
+
 #include "logger.hpp"
 
 extern "C" {
@@ -49,7 +50,7 @@ void UplinkNonUEAssociatedNRPPaTransportMsg::initialize() {
 }
 
 //------------------------------------------------------------------------------
-void UplinkNonUEAssociatedNRPPaTransportMsg::setRoutingID(
+void UplinkNonUEAssociatedNRPPaTransportMsg::setRoutingId(
     const OCTET_STRING_t& id) {
   routingID = id;
   Ngap_UplinkNonUEAssociatedNRPPaTransportIEs_t* ie =
@@ -68,7 +69,7 @@ void UplinkNonUEAssociatedNRPPaTransportMsg::setRoutingID(
 }
 
 //------------------------------------------------------------------------------
-void UplinkNonUEAssociatedNRPPaTransportMsg::getRoutingID(OCTET_STRING_t& id) {
+void UplinkNonUEAssociatedNRPPaTransportMsg::getRoutingId(OCTET_STRING_t& id) {
   id = routingID;
 }
 
@@ -98,7 +99,7 @@ void UplinkNonUEAssociatedNRPPaTransportMsg::getNRPPaPdu(OCTET_STRING_t& pdu) {
 }
 
 //------------------------------------------------------------------------------
-bool UplinkNonUEAssociatedNRPPaTransportMsg::decodeFromPdu(
+bool UplinkNonUEAssociatedNRPPaTransportMsg::decode(
     Ngap_NGAP_PDU_t* ngapMsgPdu) {
   ngapPdu = ngapMsgPdu;
 

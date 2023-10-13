@@ -20,6 +20,7 @@
  */
 
 #include "InitialContextSetupFailure.hpp"
+
 #include "logger.hpp"
 
 extern "C" {
@@ -60,7 +61,7 @@ void InitialContextSetupFailureMsg::setAmfUeNgapId(const unsigned long& id) {
   ie->value.present =
       Ngap_InitialContextSetupFailureIEs__value_PR_AMF_UE_NGAP_ID;
 
-  int ret = amfUeNgapId.encode2AMF_UE_NGAP_ID(ie->value.choice.AMF_UE_NGAP_ID);
+  int ret = amfUeNgapId.encode(ie->value.choice.AMF_UE_NGAP_ID);
   if (!ret) {
     Logger::ngap().error("Encode AMF_UE_NGAP_ID IE error");
     free_wrapper((void**) &ie);
@@ -99,14 +100,14 @@ void InitialContextSetupFailureMsg::setRanUeNgapId(
 void InitialContextSetupFailureMsg::setPduSessionResourceFailedToSetupList(
     const std::vector<PDUSessionResourceFailedToSetupItem_t>& list) {
   pduSessionResourceFailedToSetupFailureList =
-      std::make_optional<PDUSessionResourceFailedToSetupListCxtFail>();
+      std::make_optional<PduSessionResourceFailedToSetupListCxtFail>();
 
-  std::vector<PDUSessionResourceFailedToSetupItemCxtFail> cxt_fail_list;
+  std::vector<PduSessionResourceFailedToSetupItemCxtFail> cxt_fail_list;
   cxt_fail_list.reserve(list.size());
 
   for (int i = 0; i < list.size(); i++) {
-    PDUSessionResourceFailedToSetupItemCxtFail item_cxt_fail = {};
-    PDUSessionID pdu_session_id                              = {};
+    PduSessionResourceFailedToSetupItemCxtFail item_cxt_fail = {};
+    PduSessionId pdu_session_id                              = {};
     pdu_session_id.set(list[i].pduSessionId);
 
     item_cxt_fail.set(
@@ -139,7 +140,7 @@ void InitialContextSetupFailureMsg::setPduSessionResourceFailedToSetupList(
 }
 
 //------------------------------------------------------------------------------
-bool InitialContextSetupFailureMsg::decodeFromPdu(Ngap_NGAP_PDU_t* ngapMsgPdu) {
+bool InitialContextSetupFailureMsg::decode(Ngap_NGAP_PDU_t* ngapMsgPdu) {
   ngapPdu = ngapMsgPdu;
 
   if (ngapPdu->present == Ngap_NGAP_PDU_PR_unsuccessfulOutcome) {
@@ -170,7 +171,7 @@ bool InitialContextSetupFailureMsg::decodeFromPdu(Ngap_NGAP_PDU_t* ngapMsgPdu) {
             initialContextSetupFailureIEs->protocolIEs.list.array[i]
                     ->value.present ==
                 Ngap_InitialContextSetupFailureIEs__value_PR_AMF_UE_NGAP_ID) {
-          if (!amfUeNgapId.decodefromAMF_UE_NGAP_ID(
+          if (!amfUeNgapId.decode(
                   initialContextSetupFailureIEs->protocolIEs.list.array[i]
                       ->value.choice.AMF_UE_NGAP_ID)) {
             Logger::ngap().error("Decoded NGAP AMF_UE_NGAP_ID IE error");
@@ -204,7 +205,7 @@ bool InitialContextSetupFailureMsg::decodeFromPdu(Ngap_NGAP_PDU_t* ngapMsgPdu) {
             initialContextSetupFailureIEs->protocolIEs.list.array[i]
                     ->value.present ==
                 Ngap_InitialContextSetupFailureIEs__value_PR_PDUSessionResourceFailedToSetupListCxtFail) {
-          PDUSessionResourceFailedToSetupListCxtFail tmp = {};
+          PduSessionResourceFailedToSetupListCxtFail tmp = {};
           if (!tmp.decode(
                   &initialContextSetupFailureIEs->protocolIEs.list.array[i]
                        ->value.choice
@@ -215,7 +216,7 @@ bool InitialContextSetupFailureMsg::decodeFromPdu(Ngap_NGAP_PDU_t* ngapMsgPdu) {
             return false;
           }
           pduSessionResourceFailedToSetupFailureList =
-              std::optional<PDUSessionResourceFailedToSetupListCxtFail>(tmp);
+              std::optional<PduSessionResourceFailedToSetupListCxtFail>(tmp);
 
         } else {
           Logger::ngap().error(
@@ -241,16 +242,16 @@ bool InitialContextSetupFailureMsg::getPduSessionResourceFailedToSetupList(
     std::vector<PDUSessionResourceFailedToSetupItem_t>& list) {
   if (!pduSessionResourceFailedToSetupFailureList.has_value()) return false;
 
-  std::vector<PDUSessionResourceFailedToSetupItemCxtFail> cxt_fail_list;
+  std::vector<PduSessionResourceFailedToSetupItemCxtFail> cxt_fail_list;
 
   pduSessionResourceFailedToSetupFailureList.value().get(cxt_fail_list);
 
-  for (std::vector<PDUSessionResourceFailedToSetupItemCxtFail>::iterator it =
+  for (std::vector<PduSessionResourceFailedToSetupItemCxtFail>::iterator it =
            std::begin(cxt_fail_list);
        it < std::end(cxt_fail_list); ++it) {
     PDUSessionResourceFailedToSetupItem_t failedToFailure = {};
 
-    PDUSessionID pdu_session_id = {};
+    PduSessionId pdu_session_id = {};
     it->get(
         pdu_session_id,
         failedToFailure.pduSessionResourceSetupUnsuccessfulTransfer);

@@ -19,8 +19,8 @@
  *      contact@openairinterface.org
  */
 
-#ifndef _MAXIMUMDATABURSTVOLUME_H_
-#define _MAXIMUMDATABURSTVOLUME_H_
+#ifndef _MAXIMUM_DATA_BURST_VOLUME_H_
+#define _MAXIMUM_DATA_BURST_VOLUME_H_
 
 extern "C" {
 #include "Ngap_MaximumDataBurstVolume.h"
@@ -33,14 +33,14 @@ class MaximumDataBurstVolume {
   MaximumDataBurstVolume();
   virtual ~MaximumDataBurstVolume();
 
-  void setMaximumDataBurstVolume(long value);
-  bool getMaximumDataBurstVolume(long& value);
+  void set(long value);
+  void get(long& value) const;
 
-  bool encode2MaximumDataBurstVolume(Ngap_MaximumDataBurstVolume_t*);
-  bool decodefromMaximumDataBurstVolume(Ngap_MaximumDataBurstVolume_t*);
+  bool encode(Ngap_MaximumDataBurstVolume_t*);
+  bool decode(Ngap_MaximumDataBurstVolume_t*);
 
  private:
-  long maximumdataburstvolume;
+  long volume_;
 };
 
 }  // namespace ngap

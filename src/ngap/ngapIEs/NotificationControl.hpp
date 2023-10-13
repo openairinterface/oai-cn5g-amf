@@ -19,8 +19,8 @@
  *      contact@openairinterface.org
  */
 
-#ifndef _NOTIFICATIONCONTROL_H_
-#define _NOTIFICATIONCONTROL_H_
+#ifndef _NOTIFICATION_CONTROL_H_
+#define _NOTIFICATION_CONTROL_H_
 
 extern "C" {
 #include "Ngap_NotificationControl.h"
@@ -34,13 +34,13 @@ class NotificationControl {
   virtual ~NotificationControl();
 
   void setNotificationControl(e_Ngap_NotificationControl value);
-  bool getNotificationControl(e_Ngap_NotificationControl& value);
+  bool getNotificationControl(e_Ngap_NotificationControl& value) const;
 
-  bool encode2NotificationControl(Ngap_NotificationControl_t*);
-  bool decodefromNotificationControl(Ngap_NotificationControl_t*);
+  bool encode(Ngap_NotificationControl_t*);
+  bool decode(Ngap_NotificationControl_t*);
 
  private:
-  long notificationcontrol;
+  long notification_control_;
 };
 
 }  // namespace ngap

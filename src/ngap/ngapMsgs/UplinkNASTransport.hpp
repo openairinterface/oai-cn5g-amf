@@ -22,9 +22,9 @@
 #ifndef _UPLINK_NAS_TRANSPORT_H_
 #define _UPLINK_NAS_TRANSPORT_H_
 
-#include "NAS-PDU.hpp"
-#include "UserLocationInformation.hpp"
+#include "NasPdu.hpp"
 #include "NgapUEMessage.hpp"
+#include "UserLocationInformation.hpp"
 
 extern "C" {
 #include "Ngap_UplinkNASTransport.h"
@@ -41,7 +41,7 @@ class UplinkNASTransportMsg : public NgapUEMessage {
 
   void setAmfUeNgapId(const unsigned long& id) override;
   void setRanUeNgapId(const uint32_t& id) override;
-  bool decodeFromPdu(Ngap_NGAP_PDU_t* ngapMsgPdu) override;
+  bool decode(Ngap_NGAP_PDU_t* ngapMsgPdu) override;
 
   void setNasPdu(const bstring& pdu);
   bool getNasPdu(bstring& pdu);
@@ -53,7 +53,7 @@ class UplinkNASTransportMsg : public NgapUEMessage {
   Ngap_UplinkNASTransport_t* uplinkNASTransportIEs;
   // AMF_UE_NGAP_ID //Mandatory
   // RAN_UE_NGAP_ID //Mandatory
-  NAS_PDU nasPdu;                                   // Mandatory
+  NasPdu nasPdu;                                    // Mandatory
   UserLocationInformation userLocationInformation;  // Mandatory
 };
 

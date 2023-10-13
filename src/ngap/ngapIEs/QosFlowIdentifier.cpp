@@ -19,16 +19,13 @@
  *      contact@openairinterface.org
  */
 
-#include <iostream>
-
 #include "QosFlowSetupRequestItem.hpp"
-using namespace std;
 
 namespace ngap {
 
 //------------------------------------------------------------------------------
 QosFlowIdentifier::QosFlowIdentifier() {
-  identifier = 0;
+  identifier_ = 0;
 }
 
 //------------------------------------------------------------------------------
@@ -36,28 +33,25 @@ QosFlowIdentifier::~QosFlowIdentifier() {}
 
 //------------------------------------------------------------------------------
 void QosFlowIdentifier::setQosFlowIdentifier(long value) {
-  identifier = value;
+  identifier_ = value;
 }
 
 //------------------------------------------------------------------------------
-bool QosFlowIdentifier::getQosFlowIdentifier(long& value) {
-  value = identifier;
+bool QosFlowIdentifier::getQosFlowIdentifier(long& value) const {
+  value = identifier_;
+  return true;
+}
+
+//------------------------------------------------------------------------------
+bool QosFlowIdentifier::encode(Ngap_QosFlowIdentifier_t* qosFlowIdentifier) {
+  *qosFlowIdentifier = identifier_;
 
   return true;
 }
 
 //------------------------------------------------------------------------------
-bool QosFlowIdentifier::encode2QosFlowIdentifier(
-    Ngap_QosFlowIdentifier_t* qosFlowIdentifier) {
-  *qosFlowIdentifier = identifier;
-
-  return true;
-}
-
-//------------------------------------------------------------------------------
-bool QosFlowIdentifier::decodefromQosFlowIdentifier(
-    Ngap_QosFlowIdentifier_t* qosFlowIdentifier) {
-  identifier = *qosFlowIdentifier;
+bool QosFlowIdentifier::decode(Ngap_QosFlowIdentifier_t* qosFlowIdentifier) {
+  identifier_ = *qosFlowIdentifier;
 
   return true;
 }

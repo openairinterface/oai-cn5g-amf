@@ -22,10 +22,11 @@
 #ifndef _UE_CONTEXT_RELEASE_COMPLETE_H_
 #define _UE_CONTEXT_RELEASE_COMPLETE_H_
 
-#include "NgapUEMessage.hpp"
-#include "UserLocationInformation.hpp"
-#include "PDUSessionResourceListCxtRelCpl.hpp"
 #include <optional>
+
+#include "NgapUEMessage.hpp"
+#include "PduSessionResourceListCxtRelCpl.hpp"
+#include "UserLocationInformation.hpp"
 
 extern "C" {
 #include "Ngap_UEContextReleaseComplete.h"
@@ -41,7 +42,7 @@ class UEContextReleaseCompleteMsg : public NgapUEMessage {
 
   void setAmfUeNgapId(const unsigned long& id) override;
   void setRanUeNgapId(const uint32_t& id) override;
-  bool decodeFromPdu(Ngap_NGAP_PDU_t* ngapMsgPdu) override;
+  bool decode(Ngap_NGAP_PDU_t* ngapMsgPdu) override;
 
   void setUserLocationInfoNR(const NrCgi_t& cig, const Tai_t& tai);
   void getUserLocationInfoNR(NrCgi_t& cig, Tai_t& tai);
@@ -57,7 +58,7 @@ class UEContextReleaseCompleteMsg : public NgapUEMessage {
   // RAN_UE_NGAP_ID //Mandatory
   std::optional<UserLocationInformation> userLocationInformation;  // Optional
   // TODO: Information on Recommended Cells and RAN Nodes for Paging (Optional)
-  std::optional<PDUSessionResourceListCxtRelCpl>
+  std::optional<PduSessionResourceListCxtRelCpl>
       pduSessionResourceListCxtRelCpl;  // Optional
   // TODO: Criticality Diagnostics (Optional)
 };

@@ -19,8 +19,8 @@
  *      contact@openairinterface.org
  */
 
-#ifndef _IESCRITICALITYDIAGNOSTICS_H_
-#define _IESCRITICALITYDIAGNOSTICS_H_
+#ifndef _IES_CRITICALITY_DIAGNOSTICS_H_
+#define _IES_CRITICALITY_DIAGNOSTICS_H_
 
 extern "C" {
 #include "Ngap_CriticalityDiagnostics-IE-Item.h"
@@ -33,19 +33,22 @@ class IEsCriticalityDiagnostics {
   IEsCriticalityDiagnostics();
   virtual ~IEsCriticalityDiagnostics();
 
-  void encode2pdu(Ngap_CriticalityDiagnostics_IE_Item_t*);
-  void decodeFromPdu(Ngap_CriticalityDiagnostics_IE_Item_t*);
+  void encode(Ngap_CriticalityDiagnostics_IE_Item_t*);
+  void decode(Ngap_CriticalityDiagnostics_IE_Item_t*);
+
   void setIeCriticality(Ngap_Criticality_t);
+  Ngap_Criticality_t getIeCriticality() const;
+
   void setIeId(Ngap_ProtocolIE_ID_t);
+  Ngap_ProtocolIE_ID_t getIeId() const;
+
   void setTypeOfError(Ngap_TypeOfError_t);
-  Ngap_Criticality_t getIeCriticality();
-  Ngap_ProtocolIE_ID_t getIeId();
-  Ngap_TypeOfError_t getTypeOfError();
+  Ngap_TypeOfError_t getTypeOfError() const;
 
  private:
-  Ngap_Criticality_t criticality;
-  Ngap_ProtocolIE_ID_t protocolIE_ID;
-  Ngap_TypeOfError_t typeOfError;
+  Ngap_Criticality_t criticality;      // Mandatory
+  Ngap_ProtocolIE_ID_t protocolIE_ID;  // Mandatory
+  Ngap_TypeOfError_t typeOfError;      // Mandatory
 };
 }  // namespace ngap
 

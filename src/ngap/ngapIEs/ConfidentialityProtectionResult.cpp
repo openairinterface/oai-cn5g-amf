@@ -21,47 +21,41 @@
 
 #include "ConfidentialityProtectionResult.hpp"
 
-#include <iostream>
-using namespace std;
-
 namespace ngap {
 
 //------------------------------------------------------------------------------
 ConfidentialityProtectionResult::ConfidentialityProtectionResult() {
-  confidentialityProtectionResult = -1;
+  value_ = -1;
 }
 
 //------------------------------------------------------------------------------
 ConfidentialityProtectionResult::~ConfidentialityProtectionResult() {}
 
 //------------------------------------------------------------------------------
-void ConfidentialityProtectionResult::setConfidentialityProtectionResult(
-    e_Ngap_ConfidentialityProtectionResult m_confidentialityProtectionResult) {
-  confidentialityProtectionResult = m_confidentialityProtectionResult;
+void ConfidentialityProtectionResult::set(
+    e_Ngap_ConfidentialityProtectionResult value) {
+  value_ = value;
 }
 
 //------------------------------------------------------------------------------
-bool ConfidentialityProtectionResult::getConfidentialityProtectionResult(
-    long& m_confidentialityProtectionResult) {
-  m_confidentialityProtectionResult = confidentialityProtectionResult;
+bool ConfidentialityProtectionResult::get(long& value) const {
+  value = value_;
 
   return true;
 }
 
 //------------------------------------------------------------------------------
-bool ConfidentialityProtectionResult::encode2ConfidentialityProtectionResult(
-    Ngap_ConfidentialityProtectionResult_t&
-        confidentialityProtectionResultValue) {
-  confidentialityProtectionResultValue = confidentialityProtectionResult;
+bool ConfidentialityProtectionResult::encode(
+    Ngap_ConfidentialityProtectionResult_t& value) {
+  value = value_;
 
   return true;
 }
 
 //------------------------------------------------------------------------------
-bool ConfidentialityProtectionResult::decodefromConfidentialityProtectionResult(
-    Ngap_ConfidentialityProtectionResult_t
-        confidentialityProtectionResultValue) {
-  confidentialityProtectionResult = confidentialityProtectionResultValue;
+bool ConfidentialityProtectionResult::decode(
+    Ngap_ConfidentialityProtectionResult_t value) {
+  value_ = value;
 
   return true;
 }

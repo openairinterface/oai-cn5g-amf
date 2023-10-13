@@ -20,9 +20,10 @@
  */
 
 #include "NGSetupResponse.hpp"
-#include "logger.hpp"
+
 #include "amf.hpp"
 #include "conversions.hpp"
+#include "logger.hpp"
 
 extern "C" {
 #include "dynamic_memory_check.h"
@@ -72,7 +73,7 @@ void NGSetupResponseMsg::setAMFName(const std::string& name) {
 
 //------------------------------------------------------------------------------
 void NGSetupResponseMsg::setGUAMIList(std::vector<struct GuamiItem_s> list) {
-  ServedGUAMIItem servedGUAMIItem = {};
+  ServedGuamiItem servedGUAMIItem = {};
   for (int i = 0; i < list.size(); i++) {
     GUAMI guami = {};
     guami.setGUAMI(
@@ -129,10 +130,10 @@ void NGSetupResponseMsg::setRelativeAmfCapacity(long capacity) {
 //------------------------------------------------------------------------------
 void NGSetupResponseMsg::setPlmnSupportList(
     std::vector<PlmnSliceSupport_t> list) {
-  std::vector<PLMNSupportItem> plmnSupportItems;
+  std::vector<PlmnSupportItem> plmnSupportItems;
 
   for (int i = 0; i < list.size(); i++) {
-    PLMNSupportItem plmnSupportItem = {};
+    PlmnSupportItem plmnSupportItem = {};
     PlmnId plmn                     = {};
     plmn.set(list[i].mcc, list[i].mnc);
     Logger::ngap().debug(
@@ -173,7 +174,7 @@ void NGSetupResponseMsg::setPlmnSupportList(
 }
 
 //------------------------------------------------------------------------------
-bool NGSetupResponseMsg::decodeFromPdu(Ngap_NGAP_PDU_t* ngapMsgPdu) {
+bool NGSetupResponseMsg::decode(Ngap_NGAP_PDU_t* ngapMsgPdu) {
   ngapPdu = ngapMsgPdu;
 
   if (ngapPdu->present == Ngap_NGAP_PDU_PR_successfulOutcome) {
@@ -281,10 +282,10 @@ bool NGSetupResponseMsg::getAMFName(std::string& name) const {
 
 //------------------------------------------------------------------------------
 bool NGSetupResponseMsg::getGUAMIList(std::vector<struct GuamiItem_s>& list) {
-  std::vector<ServedGUAMIItem> servedGUAMIItems;
+  std::vector<ServedGuamiItem> servedGUAMIItems;
   servedGUAMIList.get(servedGUAMIItems);
 
-  for (std::vector<ServedGUAMIItem>::iterator it = std::begin(servedGUAMIItems);
+  for (std::vector<ServedGuamiItem>::iterator it = std::begin(servedGUAMIItems);
        it != std::end(servedGUAMIItems); ++it) {
     GuamiItem_t guamiItem = {};
     GUAMI guami           = {};
@@ -312,10 +313,10 @@ long NGSetupResponseMsg::getRelativeAmfCapacity() {
 //------------------------------------------------------------------------------
 bool NGSetupResponseMsg::getPlmnSupportList(
     std::vector<PlmnSliceSupport_t>& list) {
-  std::vector<PLMNSupportItem> plmnsupportItemItems;
+  std::vector<PlmnSupportItem> plmnsupportItemItems;
   plmnSupportList.get(plmnsupportItemItems);
 
-  for (std::vector<PLMNSupportItem>::iterator it =
+  for (std::vector<PlmnSupportItem>::iterator it =
            std::begin(plmnsupportItemItems);
        it < std::end(plmnsupportItemItems); ++it) {
     PlmnSliceSupport_t plmnSliceSupport = {};

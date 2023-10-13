@@ -21,14 +21,10 @@
 
 #include "AssociatedQosFlowItem.hpp"
 
-#include <iostream>
-using namespace std;
-
 namespace ngap {
 
 //------------------------------------------------------------------------------
 AssociatedQosFlowItem::AssociatedQosFlowItem() {
-  qosFlowIdentifier        = nullptr;
   qosFlowMappingIndication = -1;
 }
 
@@ -37,22 +33,23 @@ AssociatedQosFlowItem::~AssociatedQosFlowItem() {}
 
 //------------------------------------------------------------------------------
 void AssociatedQosFlowItem::setAssociatedQosFlowItem(
-    e_Ngap_AssociatedQosFlowItem__qosFlowMappingIndication
+    const e_Ngap_AssociatedQosFlowItem__qosFlowMappingIndication&
         m_qosFlowMappingIndication,
-    QosFlowIdentifier* m_qosFlowIdentifier) {
+    const QosFlowIdentifier& m_qosFlowIdentifier) {
   qosFlowMappingIndication = m_qosFlowMappingIndication;
   qosFlowIdentifier        = m_qosFlowIdentifier;
 }
 
 //------------------------------------------------------------------------------
 void AssociatedQosFlowItem::setAssociatedQosFlowItem(
-    QosFlowIdentifier* m_qosFlowIdentifier) {
+    const QosFlowIdentifier& m_qosFlowIdentifier) {
   qosFlowIdentifier = m_qosFlowIdentifier;
 }
 
 //------------------------------------------------------------------------------
 bool AssociatedQosFlowItem::getAssociatedQosFlowItem(
-    long& m_qosFlowMappingIndication, QosFlowIdentifier*& m_qosFlowIdentifier) {
+    long& m_qosFlowMappingIndication,
+    QosFlowIdentifier& m_qosFlowIdentifier) const {
   m_qosFlowMappingIndication = qosFlowMappingIndication;
   m_qosFlowIdentifier        = qosFlowIdentifier;
 
@@ -60,7 +57,7 @@ bool AssociatedQosFlowItem::getAssociatedQosFlowItem(
 }
 
 //------------------------------------------------------------------------------
-bool AssociatedQosFlowItem::encode2AssociatedQosFlowItem(
+bool AssociatedQosFlowItem::encode(
     Ngap_AssociatedQosFlowItem_t* associatedQosFlowItem) {
   if (qosFlowMappingIndication >= 0) {
     associatedQosFlowItem->qosFlowMappingIndication =
@@ -68,20 +65,16 @@ bool AssociatedQosFlowItem::encode2AssociatedQosFlowItem(
     *associatedQosFlowItem->qosFlowMappingIndication = qosFlowMappingIndication;
   }
 
-  if (!qosFlowIdentifier) return false;
-  if (!qosFlowIdentifier->encode2QosFlowIdentifier(
-          &associatedQosFlowItem->qosFlowIdentifier))
+  if (!qosFlowIdentifier.encode(&associatedQosFlowItem->qosFlowIdentifier))
     return false;
 
   return true;
 }
 
 //------------------------------------------------------------------------------
-bool AssociatedQosFlowItem::decodefromAssociatedQosFlowItem(
+bool AssociatedQosFlowItem::decode(
     Ngap_AssociatedQosFlowItem_t* associatedQosFlowItem) {
-  if (qosFlowIdentifier == nullptr) qosFlowIdentifier = new QosFlowIdentifier();
-  if (!qosFlowIdentifier->decodefromQosFlowIdentifier(
-          &associatedQosFlowItem->qosFlowIdentifier))
+  if (!qosFlowIdentifier.decode(&associatedQosFlowItem->qosFlowIdentifier))
     return false;
 
   if (associatedQosFlowItem->qosFlowMappingIndication) {

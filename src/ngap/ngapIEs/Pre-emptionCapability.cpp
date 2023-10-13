@@ -21,30 +21,25 @@
 
 #include "Pre-emptionCapability.hpp"
 
-#include <iostream>
-using namespace std;
-
 namespace ngap {
 
 //------------------------------------------------------------------------------
 Pre_emptionCapability::Pre_emptionCapability() {
-  capability = 0;
+  pre_emption_capability_ = 0;
 }
 
 //------------------------------------------------------------------------------
 Pre_emptionCapability::~Pre_emptionCapability() {}
 
 //------------------------------------------------------------------------------
-void Pre_emptionCapability::setPre_emptionCapability(
-    e_Ngap_Pre_emptionCapability value) {
-  capability = value;
+void Pre_emptionCapability::set(e_Ngap_Pre_emptionCapability value) {
+  pre_emption_capability_ = value;
 }
 
 //------------------------------------------------------------------------------
-bool Pre_emptionCapability::getPre_emptionCapability(
-    e_Ngap_Pre_emptionCapability& value) {
-  if ((capability == 0) || (capability == 1))
-    value = (e_Ngap_Pre_emptionCapability) capability;
+bool Pre_emptionCapability::get(e_Ngap_Pre_emptionCapability& value) {
+  if ((pre_emption_capability_ == 0) || (pre_emption_capability_ == 1))
+    value = (e_Ngap_Pre_emptionCapability) pre_emption_capability_;
   else
     return false;
 
@@ -52,17 +47,17 @@ bool Pre_emptionCapability::getPre_emptionCapability(
 }
 
 //------------------------------------------------------------------------------
-bool Pre_emptionCapability::encode2Pre_emptionCapability(
+bool Pre_emptionCapability::encode(
     Ngap_Pre_emptionCapability_t* pre_emptionCapability) {
-  *pre_emptionCapability = capability;
+  *pre_emptionCapability = pre_emption_capability_;
 
   return true;
 }
 
 //------------------------------------------------------------------------------
-bool Pre_emptionCapability::decodefromPre_emptionCapability(
+bool Pre_emptionCapability::decode(
     Ngap_Pre_emptionCapability_t* pre_emptionCapability) {
-  capability = *pre_emptionCapability;
+  pre_emption_capability_ = *pre_emptionCapability;
 
   return true;
 }

@@ -43,7 +43,7 @@ void TAIListForPaging::getTAIListForPaging(std::vector<TAI>& list) {
   list = taiList;
 }
 //------------------------------------------------------------------------------
-bool TAIListForPaging::encode2TAIListForPaging(Ngap_TAIListForPaging_t* pdu) {
+bool TAIListForPaging::encode(Ngap_TAIListForPaging_t* pdu) {
   for (auto& tai : taiList) {
     Ngap_TAIListForPagingItem_t* ta = (Ngap_TAIListForPagingItem_t*) calloc(
         1, sizeof(Ngap_TAIListForPagingItem_t));
@@ -54,8 +54,7 @@ bool TAIListForPaging::encode2TAIListForPaging(Ngap_TAIListForPaging_t* pdu) {
 }
 
 //------------------------------------------------------------------------------
-bool TAIListForPaging::decodefromTAIListForPaging(
-    Ngap_TAIListForPaging_t* pdu) {
+bool TAIListForPaging::decode(Ngap_TAIListForPaging_t* pdu) {
   if (pdu->list.count < 0) return false;
   for (int i = 0; i < pdu->list.count; i++) {
     TAI tai = {};

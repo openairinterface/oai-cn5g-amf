@@ -53,7 +53,7 @@ bool UERadioCapabilityForPagingOfEUTRA::set(const OCTET_STRING_t& capability) {
 }
 
 //------------------------------------------------------------------------------
-bool UERadioCapabilityForPagingOfEUTRA::get(OCTET_STRING_t& capability) {
+bool UERadioCapabilityForPagingOfEUTRA::get(OCTET_STRING_t& capability) const {
   return conv::octet_string_copy(capability, ue_radio_capability_);
 }
 
@@ -63,7 +63,7 @@ bool UERadioCapabilityForPagingOfEUTRA::set(const bstring& capability) {
 }
 
 //------------------------------------------------------------------------------
-bool UERadioCapabilityForPagingOfEUTRA::get(bstring& capability) {
+bool UERadioCapabilityForPagingOfEUTRA::get(bstring& capability) const {
   return conv::octet_string_2_bstring(ue_radio_capability_, capability);
 }
 

@@ -26,7 +26,7 @@
 #include "NGReset.hpp"
 #include "NGResetAck.hpp"
 #include "NGSetupRequest.hpp"
-#include "PDUSessionResourceSetupUnsuccessfulTransfer.hpp"
+#include "PduSessionResourceSetupUnsuccessfulTransfer.hpp"
 #include "PduSessionResourceReleaseResponse.hpp"
 #include "PduSessionResourceSetupResponse.hpp"
 #include "PduSessionResourceModifyResponse.hpp"
@@ -66,7 +66,7 @@ int ngap_amf_handle_ng_setup_request(
       assoc_id);
   output_wrapper::print_asn_msg(&asn_DEF_Ngap_NGAP_PDU, message_p);
   NGSetupRequestMsg* ng_setup_req = new NGSetupRequestMsg();
-  if (!ng_setup_req->decodeFromPdu(message_p)) {
+  if (!ng_setup_req->decode(message_p)) {
     Logger::ngap().error("Decoding NGSetupRequest message error");
     return RETURNerror;
   }
@@ -115,7 +115,7 @@ int ngap_amf_handle_initial_ue_message(
 
   output_wrapper::print_asn_msg(&asn_DEF_Ngap_NGAP_PDU, message_p);
   InitialUEMessageMsg* init_ue_msg = new InitialUEMessageMsg();
-  if (!init_ue_msg->decodeFromPdu(message_p)) {
+  if (!init_ue_msg->decode(message_p)) {
     Logger::ngap().error("Decoding InitialUEMessage error");
     return RETURNerror;
   }
@@ -144,7 +144,7 @@ int ngap_amf_handle_uplink_nas_transport(
       "Sending ITTI Uplink NAS Transport message to TASK_AMF_N2");
   output_wrapper::print_asn_msg(&asn_DEF_Ngap_NGAP_PDU, message_p);
   UplinkNASTransportMsg* uplink_nas_transport = new UplinkNASTransportMsg();
-  if (!uplink_nas_transport->decodeFromPdu(message_p)) {
+  if (!uplink_nas_transport->decode(message_p)) {
     Logger::ngap().error("Decoding UplinkNasTransport message error");
     return RETURNerror;
   }
@@ -182,7 +182,7 @@ int ngap_amf_handle_initial_context_setup_response(
 
   InitialContextSetupResponseMsg* init_cxt_setup_response =
       new InitialContextSetupResponseMsg();
-  if (!init_cxt_setup_response->decodeFromPdu(message_p)) {
+  if (!init_cxt_setup_response->decode(message_p)) {
     Logger::ngap().error("Decoding InitialContextSetupResponse message error");
     return RETURNerror;
   }
@@ -239,7 +239,7 @@ int ngap_amf_handle_ue_radio_cap_indication(
 
   UeRadioCapabilityInfoIndicationMsg* ue_radio_capability_ind =
       new UeRadioCapabilityInfoIndicationMsg();
-  if (!ue_radio_capability_ind->decodeFromPdu(message_p)) {
+  if (!ue_radio_capability_ind->decode(message_p)) {
     Logger::ngap().error(
         "Decoding UE Radio Capability Indication message error");
     return RETURNerror;
@@ -268,7 +268,7 @@ int ngap_amf_handle_ue_context_release_request(
   Logger::ngap().debug(
       "Sending ITTI UE Context Release Request to TASK_AMF_N2");
   UEContextReleaseRequestMsg* ue_ctx_rel_req = new UEContextReleaseRequestMsg();
-  if (!ue_ctx_rel_req->decodeFromPdu(message_p)) {
+  if (!ue_ctx_rel_req->decode(message_p)) {
     Logger::ngap().error("Decoding UEContextReleaseRequest message error");
     return RETURNerror;
   }
@@ -307,7 +307,7 @@ int ngap_amf_handle_ue_context_release_complete(
 
   UEContextReleaseCompleteMsg* ue_cxt_rel_complete =
       new UEContextReleaseCompleteMsg();
-  if (!ue_cxt_rel_complete->decodeFromPdu(message_p)) {
+  if (!ue_cxt_rel_complete->decode(message_p)) {
     Logger::ngap().error("Decoding UEContextReleaseComplete message error");
     return RETURNerror;
   }
@@ -346,7 +346,7 @@ int ngap_amf_handle_pdu_session_resource_release_response(
 
   PduSessionResourceReleaseResponseMsg* pdu_session_resource_release_response =
       new PduSessionResourceReleaseResponseMsg();
-  if (!pdu_session_resource_release_response->decodeFromPdu(message_p)) {
+  if (!pdu_session_resource_release_response->decode(message_p)) {
     Logger::ngap().error(
         "Decoding PduSessionResourceReleaseResponseMsg message error");
     return RETURNerror;
@@ -415,7 +415,7 @@ int ngap_amf_handle_pdu_session_resource_setup_response(
 
   PduSessionResourceSetupResponseMsg* pdu_session_resource_setup_resp =
       new PduSessionResourceSetupResponseMsg();
-  if (!pdu_session_resource_setup_resp->decodeFromPdu(message_p)) {
+  if (!pdu_session_resource_setup_resp->decode(message_p)) {
     Logger::ngap().error(
         "Decoding PduSessionResourceSetupResponseMsg message error");
     return RETURNerror;
@@ -478,7 +478,7 @@ int ngap_amf_handle_pdu_session_resource_setup_response(
     memcpy(
         buffer, list_fail[0].pduSessionResourceSetupUnsuccessfulTransfer.buf,
         list_fail[0].pduSessionResourceSetupUnsuccessfulTransfer.size);
-    UnSuccessfultransfer->decodefromIE(
+    UnSuccessfultransfer->decode(
         buffer, list_fail[0].pduSessionResourceSetupUnsuccessfulTransfer.size);
     Logger::ngap().debug(
         "UnSuccessfultransfer->getChoiceOfCause%d      "
@@ -559,7 +559,7 @@ int ngap_amf_handle_pdu_session_resource_modify_response(
   std::unique_ptr<PduSessionResourceModifyResponseMsg> response_msg =
       std::make_unique<PduSessionResourceModifyResponseMsg>();
 
-  if (!response_msg->decodeFromPdu(message_p)) {
+  if (!response_msg->decode(message_p)) {
     Logger::ngap().error(
         "Decoding PduSessionResourceModifyResponseMsg message error");
     return RETURNerror;
@@ -744,7 +744,7 @@ int handover_preparation(
 
   output_wrapper::print_asn_msg(&asn_DEF_Ngap_NGAP_PDU, message_p);
   HandoverRequiredMsg* handover_required = new HandoverRequiredMsg();
-  if (!handover_required->decodeFromPdu(message_p)) {
+  if (!handover_required->decode(message_p)) {
     Logger::ngap().error("Decoding HandoverRequired message error");
     return RETURNerror;
   }
@@ -790,7 +790,7 @@ int handover_notification(
   Logger::ngap().debug("Sending ITTI Handover Notification to TASK_AMF_N2");
   output_wrapper::print_asn_msg(&asn_DEF_Ngap_NGAP_PDU, message_p);
   HandoverNotifyMsg* handover_notify = new HandoverNotifyMsg();
-  if (!handover_notify->decodeFromPdu(message_p)) {
+  if (!handover_notify->decode(message_p)) {
     Logger::ngap().error("Decoding HandoverNotify message error");
     return RETURNerror;
   }
@@ -822,7 +822,7 @@ int handover_request(
 
   output_wrapper::print_asn_msg(&asn_DEF_Ngap_NGAP_PDU, message_p);
   HandoverRequestAck* handover_request_ack = new HandoverRequestAck();
-  if (!handover_request_ack->decodeFromPdu(message_p)) {
+  if (!handover_request_ack->decode(message_p)) {
     Logger::ngap().error("Decoding Handover Request Acknowledge message error");
     return RETURNerror;
   }
@@ -851,7 +851,7 @@ int handover_request_ack(
 
   output_wrapper::print_asn_msg(&asn_DEF_Ngap_NGAP_PDU, message_p);
   HandoverRequestAck* handover_request_ack = new HandoverRequestAck();
-  if (!handover_request_ack->decodeFromPdu(message_p)) {
+  if (!handover_request_ack->decode(message_p)) {
     Logger::ngap().error("Decoding Handover Request Acknowledge message error");
     return RETURNerror;
   }
@@ -928,7 +928,7 @@ int ng_reset(
 
   output_wrapper::print_asn_msg(&asn_DEF_Ngap_NGAP_PDU, message_p);
   NGResetMsg* ng_reset = new NGResetMsg();
-  if (!ng_reset->decodeFromPdu(message_p)) {
+  if (!ng_reset->decode(message_p)) {
     Logger::ngap().error("Decoding NGReset message error");
     return RETURNerror;
   }
@@ -1228,7 +1228,7 @@ int uplink_ran_status_transfer(
   output_wrapper::print_asn_msg(&asn_DEF_Ngap_NGAP_PDU, message_p);
   UplinkRANStatusTransfer* uplink_ran_status_transfer =
       new UplinkRANStatusTransfer();
-  if (!uplink_ran_status_transfer->decodeFromPdu(message_p)) {
+  if (!uplink_ran_status_transfer->decode(message_p)) {
     Logger::ngap().error("Decoding Uplink RAN Status Transfer message error");
     return RETURNerror;
   }
@@ -1260,7 +1260,7 @@ int uplink_ue_associated_nrppa_transport(
 
   UplinkUEAssociatedNRPPaTransportMsg nrppa_msg = {};
 
-  if (!nrppa_msg.decodeFromPdu(message_p)) {
+  if (!nrppa_msg.decode(message_p)) {
     Logger::ngap().error(
         "Decoding UplinkUEAssociatedNRPPaTransportMsg message error");
     return RETURNerror;
@@ -1273,7 +1273,7 @@ int uplink_ue_associated_nrppa_transport(
   itti_msg->amf_ue_ngap_id = nrppa_msg.getAmfUeNgapId();
   itti_msg->ran_ue_ngap_id = nrppa_msg.getRanUeNgapId();
   conv::octet_string_2_bstring(nrppa_msg.getNRPPaPdu(), itti_msg->nrppa_pdu);
-  conv::octet_string_2_bstring(nrppa_msg.getRoutingID(), itti_msg->routing_id);
+  conv::octet_string_2_bstring(nrppa_msg.getRoutingId(), itti_msg->routing_id);
 
   int ret = itti_inst->send_msg(itti_msg);
   if (0 != ret) {

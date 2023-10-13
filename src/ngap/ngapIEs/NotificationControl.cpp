@@ -21,14 +21,11 @@
 
 #include "NotificationControl.hpp"
 
-#include <iostream>
-using namespace std;
-
 namespace ngap {
 
 //------------------------------------------------------------------------------
 NotificationControl::NotificationControl() {
-  notificationcontrol = 0;
+  notification_control_ = 0;
 }
 
 //------------------------------------------------------------------------------
@@ -37,13 +34,13 @@ NotificationControl::~NotificationControl() {}
 //------------------------------------------------------------------------------
 void NotificationControl::setNotificationControl(
     e_Ngap_NotificationControl value) {
-  notificationcontrol = value;
+  notification_control_ = value;
 }
 
 //------------------------------------------------------------------------------
 bool NotificationControl::getNotificationControl(
-    e_Ngap_NotificationControl& value) {
-  if (notificationcontrol == Ngap_NotificationControl_notification_requested)
+    e_Ngap_NotificationControl& value) const {
+  if (notification_control_ == Ngap_NotificationControl_notification_requested)
     value = Ngap_NotificationControl_notification_requested;
   else
     return 0;
@@ -52,17 +49,17 @@ bool NotificationControl::getNotificationControl(
 }
 
 //------------------------------------------------------------------------------
-bool NotificationControl::encode2NotificationControl(
+bool NotificationControl::encode(
     Ngap_NotificationControl_t* notificationControl) {
-  *notificationControl = notificationcontrol;
+  *notificationControl = notification_control_;
 
   return true;
 }
 
 //------------------------------------------------------------------------------
-bool NotificationControl::decodefromNotificationControl(
+bool NotificationControl::decode(
     Ngap_NotificationControl_t* notificationControl) {
-  notificationcontrol = *notificationControl;
+  notification_control_ = *notificationControl;
 
   return true;
 }
