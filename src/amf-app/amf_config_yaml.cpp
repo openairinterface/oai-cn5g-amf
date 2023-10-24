@@ -910,7 +910,6 @@ void amf_config_yaml::to_amf_config(amf_config& cfg) {
     cfg.auth_para.mysql_user   = get_database_config().get_user();
     cfg.auth_para.mysql_pass   = get_database_config().get_pass();
     cfg.auth_para.mysql_db     = get_database_config().get_database_name();
-    cfg.auth_para.random       = get_database_config().get_random();
     // cfg.auth_para.connection_timeout =
     // get_database_config().get_connection_timeout(); cfg.database_type =
     // get_database_config().get_database_type();

@@ -104,7 +104,6 @@ database:
   type: mysql
   password: test
   database_name: oai_db
-  generate_random: true
   connection_timeout: 300 # seconds
 
 ############## NF-specific configuration
