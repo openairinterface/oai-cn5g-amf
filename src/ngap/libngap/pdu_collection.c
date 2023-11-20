@@ -1029,9 +1029,8 @@ extern struct asn_TYPE_descriptor_s asn_DEF_Ngap_TriggeringMessage;
 struct asn_TYPE_descriptor_s* asn_pdu_collection[] = {
     /* From module NGAP-PDU-Descriptions in asn.1/Information Element
        Definitions.asn1 */
-    &asn_DEF_Ngap_NGAP_PDU,
-    &asn_DEF_Ngap_InitiatingMessage, &asn_DEF_Ngap_SuccessfulOutcome,
-    &asn_DEF_Ngap_UnsuccessfulOutcome,
+    &asn_DEF_Ngap_NGAP_PDU, &asn_DEF_Ngap_InitiatingMessage,
+    &asn_DEF_Ngap_SuccessfulOutcome, &asn_DEF_Ngap_UnsuccessfulOutcome,
     /* From module NGAP-PDU-Contents in asn.1/Information Element
        Definitions.asn1 */
     &asn_DEF_Ngap_PDUSessionResourceSetupRequest,

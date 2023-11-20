@@ -44,30 +44,27 @@ asn_SET_OF_specifics_t
             struct Ngap_PDUSessionResourceFailedToModifyListModCfm, _asn_ctx),
         0, /* XER encoding is XMLDelimitedItemList */
 };
-asn_TYPE_descriptor_t asn_DEF_Ngap_PDUSessionResourceFailedToModifyListModCfm =
-    {
-        "PDUSessionResourceFailedToModifyListModCfm",
-        "PDUSessionResourceFailedToModifyListModCfm",
-        &asn_OP_SEQUENCE_OF,
-        asn_DEF_Ngap_PDUSessionResourceFailedToModifyListModCfm_tags_1,
-        sizeof(asn_DEF_Ngap_PDUSessionResourceFailedToModifyListModCfm_tags_1) /
-            sizeof(
-                asn_DEF_Ngap_PDUSessionResourceFailedToModifyListModCfm_tags_1
-                    [0]),                                               /* 1 */
-        asn_DEF_Ngap_PDUSessionResourceFailedToModifyListModCfm_tags_1, /* Same
-                                                                           as
-                                                                           above
-                                                                         */
-        sizeof(asn_DEF_Ngap_PDUSessionResourceFailedToModifyListModCfm_tags_1) /
-            sizeof(
-                asn_DEF_Ngap_PDUSessionResourceFailedToModifyListModCfm_tags_1
-                    [0]), /* 1 */
-        {&asn_OER_type_Ngap_PDUSessionResourceFailedToModifyListModCfm_constr_1,
-         &asn_PER_type_Ngap_PDUSessionResourceFailedToModifyListModCfm_constr_1,
-         SEQUENCE_OF_constraint},
-        asn_MBR_Ngap_PDUSessionResourceFailedToModifyListModCfm_1,
-        1, /* Single element */
-        &asn_SPC_Ngap_PDUSessionResourceFailedToModifyListModCfm_specs_1 /* Additional
-                                                                            specs
-                                                                          */
+asn_TYPE_descriptor_t asn_DEF_Ngap_PDUSessionResourceFailedToModifyListModCfm = {
+    "PDUSessionResourceFailedToModifyListModCfm",
+    "PDUSessionResourceFailedToModifyListModCfm",
+    &asn_OP_SEQUENCE_OF,
+    asn_DEF_Ngap_PDUSessionResourceFailedToModifyListModCfm_tags_1,
+    sizeof(asn_DEF_Ngap_PDUSessionResourceFailedToModifyListModCfm_tags_1) /
+        sizeof(asn_DEF_Ngap_PDUSessionResourceFailedToModifyListModCfm_tags_1
+                   [0]),                                            /* 1 */
+    asn_DEF_Ngap_PDUSessionResourceFailedToModifyListModCfm_tags_1, /* Same
+                                                                       as
+                                                                       above
+                                                                     */
+    sizeof(asn_DEF_Ngap_PDUSessionResourceFailedToModifyListModCfm_tags_1) /
+        sizeof(asn_DEF_Ngap_PDUSessionResourceFailedToModifyListModCfm_tags_1
+                   [0]), /* 1 */
+    {&asn_OER_type_Ngap_PDUSessionResourceFailedToModifyListModCfm_constr_1,
+     &asn_PER_type_Ngap_PDUSessionResourceFailedToModifyListModCfm_constr_1,
+     SEQUENCE_OF_constraint},
+    asn_MBR_Ngap_PDUSessionResourceFailedToModifyListModCfm_1,
+    1, /* Single element */
+    &asn_SPC_Ngap_PDUSessionResourceFailedToModifyListModCfm_specs_1 /* Additional
+                                                                        specs
+                                                                      */
 };

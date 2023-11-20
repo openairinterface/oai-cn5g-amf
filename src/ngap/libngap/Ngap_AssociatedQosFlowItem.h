@@ -47,8 +47,8 @@ typedef struct Ngap_AssociatedQosFlowItem {
 } Ngap_AssociatedQosFlowItem_t;
 
 /* Implementation */
-/* extern asn_TYPE_descriptor_t asn_DEF_Ngap_qosFlowMappingIndication_3;	//
- * (Use -fall-defs-global to expose) */
+/* extern asn_TYPE_descriptor_t asn_DEF_Ngap_qosFlowMappingIndication_3;
+ * // (Use -fall-defs-global to expose) */
 extern asn_TYPE_descriptor_t asn_DEF_Ngap_AssociatedQosFlowItem;
 extern asn_SEQUENCE_specifics_t asn_SPC_Ngap_AssociatedQosFlowItem_specs_1;
 extern asn_TYPE_member_t asn_MBR_Ngap_AssociatedQosFlowItem_1[3];
