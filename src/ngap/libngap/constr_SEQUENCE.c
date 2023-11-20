@@ -1819,7 +1819,7 @@ asn_enc_rval_t SEQUENCE_encode_aper(
 
     /* Eliminate default values */
     if (present && elm->default_value_cmp &&
-        elm->default_value_cmp(memb_ptr2) == 1)
+        elm->default_value_cmp(memb_ptr2) == 0)
       present = 0;
 
     ASN_DEBUG(
@@ -1863,7 +1863,7 @@ asn_enc_rval_t SEQUENCE_encode_aper(
     }
 
     /* Eliminate default values */
-    if (elm->default_value_cmp && elm->default_value_cmp(memb_ptr2) == 1)
+    if (elm->default_value_cmp && elm->default_value_cmp(memb_ptr2) == 0)
       continue;
 
     ASN_DEBUG("Encoding %s->%s", td->name, elm->name);

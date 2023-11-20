@@ -26,7 +26,7 @@ static const asn_INTEGER_enum_map_t asn_MAP_Ngap_CauseMisc_value2enum_1[] = {
     {1, 42, "not-enough-user-plane-processing-resources"},
     {2, 16, "hardware-failure"},
     {3, 15, "om-intervention"},
-    {4, 12, "unknown-PLMN"},
+    {4, 20, "unknown-PLMN-or-SNPN"},
     {5, 11, "unspecified"}
     /* This list is extensible */
 };
@@ -35,7 +35,7 @@ static const unsigned int asn_MAP_Ngap_CauseMisc_enum2value_1[] = {
     2, /* hardware-failure(2) */
     1, /* not-enough-user-plane-processing-resources(1) */
     3, /* om-intervention(3) */
-    4, /* unknown-PLMN(4) */
+    4, /* unknown-PLMN-or-SNPN(4) */
     5  /* unspecified(5) */
        /* This list is extensible */
 };

@@ -22,14 +22,14 @@ extern "C" {
 typedef enum Ngap_NGRAN_CGI_PR {
   Ngap_NGRAN_CGI_PR_NOTHING, /* No components present */
   Ngap_NGRAN_CGI_PR_nR_CGI,
-  Ngap_NGRAN_CGI_PR_eUTRA_CGI,
-  Ngap_NGRAN_CGI_PR_choice_Extensions
+  Ngap_NGRAN_CGI_PR_eUTRA_CGI
+  /* Extensions may appear below */
+
 } Ngap_NGRAN_CGI_PR;
 
 /* Forward declarations */
 struct Ngap_NR_CGI;
 struct Ngap_EUTRA_CGI;
-struct Ngap_ProtocolIE_SingleContainer;
 
 /* Ngap_NGRAN-CGI */
 typedef struct Ngap_NGRAN_CGI {
@@ -37,7 +37,10 @@ typedef struct Ngap_NGRAN_CGI {
   union Ngap_NGRAN_CGI_u {
     struct Ngap_NR_CGI* nR_CGI;
     struct Ngap_EUTRA_CGI* eUTRA_CGI;
-    struct Ngap_ProtocolIE_SingleContainer* choice_Extensions;
+    /*
+     * This type is extensible,
+     * possible extensions are below.
+     */
   } choice;
 
   /* Context for parsing across buffer boundaries */
@@ -47,7 +50,7 @@ typedef struct Ngap_NGRAN_CGI {
 /* Implementation */
 extern asn_TYPE_descriptor_t asn_DEF_Ngap_NGRAN_CGI;
 extern asn_CHOICE_specifics_t asn_SPC_Ngap_NGRAN_CGI_specs_1;
-extern asn_TYPE_member_t asn_MBR_Ngap_NGRAN_CGI_1[3];
+extern asn_TYPE_member_t asn_MBR_Ngap_NGRAN_CGI_1[2];
 extern asn_per_constraints_t asn_PER_type_Ngap_NGRAN_CGI_constr_1;
 
 #ifdef __cplusplus

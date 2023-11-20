@@ -48,7 +48,7 @@ asn_TYPE_member_t asn_MBR_Ngap_UnavailableGUAMIItem_1[] = {
      offsetof(struct Ngap_UnavailableGUAMIItem, iE_Extensions),
      (ASN_TAG_CLASS_CONTEXT | (3 << 2)),
      -1, /* IMPLICIT tag at current level */
-     &asn_DEF_Ngap_ProtocolExtensionContainer_175P178,
+     &asn_DEF_Ngap_ProtocolExtensionContainer_9717P276,
      0,
      {0, 0, 0},
      0,

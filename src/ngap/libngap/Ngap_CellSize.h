@@ -35,20 +35,20 @@ typedef long Ngap_CellSize_t;
 /* Implementation */
 extern asn_per_constraints_t asn_PER_type_Ngap_CellSize_constr_1;
 extern asn_TYPE_descriptor_t asn_DEF_Ngap_CellSize;
-extern const asn_INTEGER_specifics_t asn_SPC_CellSize_specs_1;
-asn_struct_free_f CellSize_free;
-asn_struct_print_f CellSize_print;
-asn_constr_check_f CellSize_constraint;
-ber_type_decoder_f CellSize_decode_ber;
-der_type_encoder_f CellSize_encode_der;
-xer_type_decoder_f CellSize_decode_xer;
-xer_type_encoder_f CellSize_encode_xer;
-oer_type_decoder_f CellSize_decode_oer;
-oer_type_encoder_f CellSize_encode_oer;
-per_type_decoder_f CellSize_decode_uper;
-per_type_encoder_f CellSize_encode_uper;
-per_type_decoder_f CellSize_decode_aper;
-per_type_encoder_f CellSize_encode_aper;
+extern const asn_INTEGER_specifics_t asn_SPC_Ngap_CellSize_specs_1;
+asn_struct_free_f Ngap_CellSize_free;
+asn_struct_print_f Ngap_CellSize_print;
+asn_constr_check_f Ngap_CellSize_constraint;
+ber_type_decoder_f Ngap_CellSize_decode_ber;
+der_type_encoder_f Ngap_CellSize_encode_der;
+xer_type_decoder_f Ngap_CellSize_decode_xer;
+xer_type_encoder_f Ngap_CellSize_encode_xer;
+oer_type_decoder_f Ngap_CellSize_decode_oer;
+oer_type_encoder_f Ngap_CellSize_encode_oer;
+per_type_decoder_f Ngap_CellSize_decode_uper;
+per_type_encoder_f Ngap_CellSize_encode_uper;
+per_type_decoder_f Ngap_CellSize_decode_aper;
+per_type_encoder_f Ngap_CellSize_encode_aper;
 
 #ifdef __cplusplus
 }

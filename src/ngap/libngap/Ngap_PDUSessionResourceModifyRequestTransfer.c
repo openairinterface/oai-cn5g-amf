@@ -16,7 +16,7 @@ static asn_TYPE_member_t
              struct Ngap_PDUSessionResourceModifyRequestTransfer, protocolIEs),
          (ASN_TAG_CLASS_CONTEXT | (0 << 2)),
          -1, /* IMPLICIT tag at current level */
-         &asn_DEF_Ngap_ProtocolIE_Container_124P0,
+         &asn_DEF_Ngap_ProtocolIE_Container_9666P96,
          0,
          {0, 0, 0},
          0,

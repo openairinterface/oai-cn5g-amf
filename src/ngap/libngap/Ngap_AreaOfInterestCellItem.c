@@ -26,7 +26,7 @@ asn_TYPE_member_t asn_MBR_Ngap_AreaOfInterestCellItem_1[] = {
      offsetof(struct Ngap_AreaOfInterestCellItem, iE_Extensions),
      (ASN_TAG_CLASS_CONTEXT | (1 << 2)),
      -1, /* IMPLICIT tag at current level */
-     &asn_DEF_Ngap_ProtocolExtensionContainer_175P7,
+     &asn_DEF_Ngap_ProtocolExtensionContainer_9717P10,
      0,
      {0, 0, 0},
      0,

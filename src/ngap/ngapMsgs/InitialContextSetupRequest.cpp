@@ -34,14 +34,14 @@ namespace ngap {
 //------------------------------------------------------------------------------
 InitialContextSetupRequestMsg::InitialContextSetupRequestMsg()
     : NgapUEMessage() {
-  initialContextSetupRequestIEs      = nullptr;
-  oldAMF                             = std::nullopt;
-  uEAggregateMaxBitRate              = std::nullopt;
-  coreNetworkAssistanceInfo          = std::nullopt;
-  pduSessionResourceSetupRequestList = std::nullopt;
-  ueRadioCapability                  = std::nullopt;
-  maskedIMEISV                       = std::nullopt;
-  nasPdu                             = std::nullopt;
+  initialContextSetupRequestIEs               = nullptr;
+  oldAMF                                      = std::nullopt;
+  uEAggregateMaxBitRate                       = std::nullopt;
+  coreNetworkAssistanceInformationForInactive = std::nullopt;
+  pduSessionResourceSetupRequestList          = std::nullopt;
+  ueRadioCapability                           = std::nullopt;
+  maskedIMEISV                                = std::nullopt;
+  nasPdu                                      = std::nullopt;
 
   setMessageType(NgapMessageType::INITIAL_CONTEXT_SETUP_REQUEST);
   initialize();
@@ -212,7 +212,7 @@ void InitialContextSetupRequestMsg::setCoreNetworkAssistanceInfo(
     const uint8_t& periodic_reg_update_timer_value,
     const bool& mico_mode_ind_value,
     const std::vector<Tai_t>& tai_list_for_rrc_inactive) {
-  CoreNetworkAssistanceInfo tmp = {};
+  CoreNetworkAssistanceInformationForInactive tmp = {};
 
   UEIdentityIndexValue ue_identity_index_value = {};
   ue_identity_index_value.set(ue_identity_index_value_value);
@@ -234,20 +234,22 @@ void InitialContextSetupRequestMsg::setCoreNetworkAssistanceInfo(
       ue_identity_index_value, paging_drx, periodic_reg_update_timer,
       mico_mode_ind_value, tai_list);
 
-  coreNetworkAssistanceInfo = std::optional<CoreNetworkAssistanceInfo>(tmp);
+  coreNetworkAssistanceInformationForInactive =
+      std::optional<CoreNetworkAssistanceInformationForInactive>(tmp);
 
   Ngap_InitialContextSetupRequestIEs_t* ie =
       (Ngap_InitialContextSetupRequestIEs_t*) calloc(
           1, sizeof(Ngap_InitialContextSetupRequestIEs_t));
-  ie->id          = Ngap_ProtocolIE_ID_id_CoreNetworkAssistanceInformation;
+  ie->id = Ngap_ProtocolIE_ID_id_CoreNetworkAssistanceInformationForInactive;
   ie->criticality = Ngap_Criticality_ignore;
   ie->value.present =
-      Ngap_InitialContextSetupRequestIEs__value_PR_CoreNetworkAssistanceInformation;
+      Ngap_InitialContextSetupRequestIEs__value_PR_CoreNetworkAssistanceInformationForInactive;
 
-  int ret = coreNetworkAssistanceInfo.value().encode(
-      &ie->value.choice.CoreNetworkAssistanceInformation);
+  int ret = coreNetworkAssistanceInformationForInactive.value().encode(
+      &ie->value.choice.CoreNetworkAssistanceInformationForInactive);
   if (!ret) {
-    Logger::ngap().error("Encode CoreNetworkAssistanceInformation IE error!");
+    Logger::ngap().error(
+        "Encode CoreNetworkAssistanceInformationForInactive IE error!");
     free_wrapper((void**) &ie);
     return;
   }
@@ -262,14 +264,14 @@ bool InitialContextSetupRequestMsg::getCoreNetworkAssistanceInfo(
     uint16_t& ue_identity_index_value_value, int& ue_specific_drx_value,
     uint8_t& periodic_reg_update_timer_value, bool& mico_mode_ind_value,
     std::vector<Tai_t>& tai_list_for_rrc_inactive) {
-  if (!coreNetworkAssistanceInfo.has_value()) return false;
+  if (!coreNetworkAssistanceInformationForInactive.has_value()) return false;
   UEIdentityIndexValue ue_identity_index_value              = {};
   std::optional<DefaultPagingDrx> paging_drx                = std::nullopt;
   PeriodicRegistrationUpdateTimer periodic_reg_update_timer = {};
 
   std::vector<TAI> tai_list;
 
-  coreNetworkAssistanceInfo.value().get(
+  coreNetworkAssistanceInformationForInactive.value().get(
       ue_identity_index_value, paging_drx, periodic_reg_update_timer,
       mico_mode_ind_value, tai_list);
   ue_identity_index_value.get(ue_identity_index_value_value);
@@ -744,23 +746,25 @@ bool InitialContextSetupRequestMsg::decode(Ngap_NGAP_PDU_t* ngapMsgPdu) {
           return false;
         }
       } break;
-      case Ngap_ProtocolIE_ID_id_CoreNetworkAssistanceInformation: {
+      case Ngap_ProtocolIE_ID_id_CoreNetworkAssistanceInformationForInactive: {
         if (initialContextSetupRequestIEs->protocolIEs.list.array[i]
                     ->criticality == Ngap_Criticality_ignore &&
             initialContextSetupRequestIEs->protocolIEs.list.array[i]
                     ->value.present ==
-                Ngap_InitialContextSetupRequestIEs__value_PR_CoreNetworkAssistanceInformation) {
-          CoreNetworkAssistanceInfo tmp = {};
+                Ngap_InitialContextSetupRequestIEs__value_PR_CoreNetworkAssistanceInformationForInactive) {
+          CoreNetworkAssistanceInformationForInactive tmp = {};
 
           if (!tmp.decode(
                   &initialContextSetupRequestIEs->protocolIEs.list.array[i]
-                       ->value.choice.CoreNetworkAssistanceInformation)) {
+                       ->value.choice
+                       .CoreNetworkAssistanceInformationForInactive)) {
             Logger::ngap().error(
-                "Decoded NGAP CoreNetworkAssistanceInformation IE error");
+                "Decoded NGAP CoreNetworkAssistanceInformationForInactive IE "
+                "error");
             return false;
           }
-          coreNetworkAssistanceInfo =
-              std::optional<CoreNetworkAssistanceInfo>(tmp);
+          coreNetworkAssistanceInformationForInactive =
+              std::optional<CoreNetworkAssistanceInformationForInactive>(tmp);
         } else {
           Logger::ngap().error(
               "Decoded NGAP CoreNetworkAssistanceInformation IE error");

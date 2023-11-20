@@ -396,7 +396,7 @@ static asn_dec_rval_t aper_open_type_get_simple(
     const asn_per_constraints_t* constraints, void** sptr, asn_per_data_t* pd) {
   asn_dec_rval_t rv;
   ssize_t chunk_bytes;
-  int repeat     = 0;
+  int repeat;
   uint8_t* buf   = 0;
   size_t bufLen  = 0;
   size_t bufSize = 0;

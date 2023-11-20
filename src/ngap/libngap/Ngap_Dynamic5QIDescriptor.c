@@ -92,7 +92,7 @@ asn_TYPE_member_t asn_MBR_Ngap_Dynamic5QIDescriptor_1[] = {
      offsetof(struct Ngap_Dynamic5QIDescriptor, iE_Extensions),
      (ASN_TAG_CLASS_CONTEXT | (7 << 2)),
      -1, /* IMPLICIT tag at current level */
-     &asn_DEF_Ngap_ProtocolExtensionContainer_175P40,
+     &asn_DEF_Ngap_ProtocolExtensionContainer_9717P59,
      0,
      {0, 0, 0},
      0,

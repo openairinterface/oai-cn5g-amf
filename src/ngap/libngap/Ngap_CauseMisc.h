@@ -24,7 +24,7 @@ typedef enum Ngap_CauseMisc {
   Ngap_CauseMisc_not_enough_user_plane_processing_resources = 1,
   Ngap_CauseMisc_hardware_failure                           = 2,
   Ngap_CauseMisc_om_intervention                            = 3,
-  Ngap_CauseMisc_unknown_PLMN                               = 4,
+  Ngap_CauseMisc_unknown_PLMN_or_SNPN                       = 4,
   Ngap_CauseMisc_unspecified                                = 5
   /*
    * Enumeration is extensible
@@ -37,20 +37,20 @@ typedef long Ngap_CauseMisc_t;
 /* Implementation */
 extern asn_per_constraints_t asn_PER_type_Ngap_CauseMisc_constr_1;
 extern asn_TYPE_descriptor_t asn_DEF_Ngap_CauseMisc;
-extern const asn_INTEGER_specifics_t asn_SPC_CauseMisc_specs_1;
-asn_struct_free_f CauseMisc_free;
-asn_struct_print_f CauseMisc_print;
-asn_constr_check_f CauseMisc_constraint;
-ber_type_decoder_f CauseMisc_decode_ber;
-der_type_encoder_f CauseMisc_encode_der;
-xer_type_decoder_f CauseMisc_decode_xer;
-xer_type_encoder_f CauseMisc_encode_xer;
-oer_type_decoder_f CauseMisc_decode_oer;
-oer_type_encoder_f CauseMisc_encode_oer;
-per_type_decoder_f CauseMisc_decode_uper;
-per_type_encoder_f CauseMisc_encode_uper;
-per_type_decoder_f CauseMisc_decode_aper;
-per_type_encoder_f CauseMisc_encode_aper;
+extern const asn_INTEGER_specifics_t asn_SPC_Ngap_CauseMisc_specs_1;
+asn_struct_free_f Ngap_CauseMisc_free;
+asn_struct_print_f Ngap_CauseMisc_print;
+asn_constr_check_f Ngap_CauseMisc_constraint;
+ber_type_decoder_f Ngap_CauseMisc_decode_ber;
+der_type_encoder_f Ngap_CauseMisc_encode_der;
+xer_type_decoder_f Ngap_CauseMisc_decode_xer;
+xer_type_encoder_f Ngap_CauseMisc_encode_xer;
+oer_type_decoder_f Ngap_CauseMisc_decode_oer;
+oer_type_encoder_f Ngap_CauseMisc_encode_oer;
+per_type_decoder_f Ngap_CauseMisc_decode_uper;
+per_type_encoder_f Ngap_CauseMisc_encode_uper;
+per_type_decoder_f Ngap_CauseMisc_decode_aper;
+per_type_encoder_f Ngap_CauseMisc_encode_aper;
 
 #ifdef __cplusplus
 }

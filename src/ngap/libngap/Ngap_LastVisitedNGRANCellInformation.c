@@ -73,7 +73,7 @@ asn_TYPE_member_t asn_MBR_Ngap_LastVisitedNGRANCellInformation_1[] = {
      offsetof(struct Ngap_LastVisitedNGRANCellInformation, iE_Extensions),
      (ASN_TAG_CLASS_CONTEXT | (5 << 2)),
      -1, /* IMPLICIT tag at current level */
-     &asn_DEF_Ngap_ProtocolExtensionContainer_175P67,
+     &asn_DEF_Ngap_ProtocolExtensionContainer_9717P111,
      0,
      {0, 0, 0},
      0,

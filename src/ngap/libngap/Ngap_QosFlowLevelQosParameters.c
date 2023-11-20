@@ -73,7 +73,7 @@ asn_TYPE_member_t asn_MBR_Ngap_QosFlowLevelQosParameters_1[] = {
      offsetof(struct Ngap_QosFlowLevelQosParameters, iE_Extensions),
      (ASN_TAG_CLASS_CONTEXT | (5 << 2)),
      -1, /* IMPLICIT tag at current level */
-     &asn_DEF_Ngap_ProtocolExtensionContainer_175P128,
+     &asn_DEF_Ngap_ProtocolExtensionContainer_9717P205,
      0,
      {0, 0, 0},
      0,

@@ -84,7 +84,7 @@ asn_TYPE_member_t asn_MBR_Ngap_PDUSessionResourceModifyItemModReq_1[] = {
      offsetof(struct Ngap_PDUSessionResourceModifyItemModReq, iE_Extensions),
      (ASN_TAG_CLASS_CONTEXT | (3 << 2)),
      -1, /* IMPLICIT tag at current level */
-     &asn_DEF_Ngap_ProtocolExtensionContainer_175P100,
+     &asn_DEF_Ngap_ProtocolExtensionContainer_9717P170,
      0,
      {0, 0, 0},
      0,

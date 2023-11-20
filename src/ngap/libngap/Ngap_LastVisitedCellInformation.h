@@ -27,13 +27,13 @@ typedef enum Ngap_LastVisitedCellInformation_PR {
   Ngap_LastVisitedCellInformation_PR_nGRANCell,
   Ngap_LastVisitedCellInformation_PR_eUTRANCell,
   Ngap_LastVisitedCellInformation_PR_uTRANCell,
-  Ngap_LastVisitedCellInformation_PR_gERANCell,
-  Ngap_LastVisitedCellInformation_PR_choice_Extensions
+  Ngap_LastVisitedCellInformation_PR_gERANCell
+  /* Extensions may appear below */
+
 } Ngap_LastVisitedCellInformation_PR;
 
 /* Forward declarations */
 struct Ngap_LastVisitedNGRANCellInformation;
-struct Ngap_ProtocolIE_SingleContainer;
 
 /* Ngap_LastVisitedCellInformation */
 typedef struct Ngap_LastVisitedCellInformation {
@@ -43,7 +43,10 @@ typedef struct Ngap_LastVisitedCellInformation {
     Ngap_LastVisitedEUTRANCellInformation_t eUTRANCell;
     Ngap_LastVisitedUTRANCellInformation_t uTRANCell;
     Ngap_LastVisitedGERANCellInformation_t gERANCell;
-    struct Ngap_ProtocolIE_SingleContainer* choice_Extensions;
+    /*
+     * This type is extensible,
+     * possible extensions are below.
+     */
   } choice;
 
   /* Context for parsing across buffer boundaries */
@@ -53,7 +56,7 @@ typedef struct Ngap_LastVisitedCellInformation {
 /* Implementation */
 extern asn_TYPE_descriptor_t asn_DEF_Ngap_LastVisitedCellInformation;
 extern asn_CHOICE_specifics_t asn_SPC_Ngap_LastVisitedCellInformation_specs_1;
-extern asn_TYPE_member_t asn_MBR_Ngap_LastVisitedCellInformation_1[5];
+extern asn_TYPE_member_t asn_MBR_Ngap_LastVisitedCellInformation_1[4];
 extern asn_per_constraints_t
     asn_PER_type_Ngap_LastVisitedCellInformation_constr_1;
 

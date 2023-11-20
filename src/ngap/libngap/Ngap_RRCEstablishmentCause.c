@@ -32,28 +32,32 @@ static const asn_INTEGER_enum_map_t
         {6, 12, "mo-VideoCall"},
         {7, 6, "mo-SMS"},
         {8, 18, "mps-PriorityAccess"},
-        {9, 18, "mcs-PriorityAccess"}
+        {9, 18, "mcs-PriorityAccess"},
+        {10, 12, "notAvailable"},
+        {11, 16, "mo-ExceptionData"}
         /* This list is extensible */
 };
 static const unsigned int asn_MAP_Ngap_RRCEstablishmentCause_enum2value_1[] = {
-    0, /* emergency(0) */
-    1, /* highPriorityAccess(1) */
-    9, /* mcs-PriorityAccess(9) */
-    4, /* mo-Data(4) */
-    7, /* mo-SMS(7) */
-    3, /* mo-Signalling(3) */
-    6, /* mo-VideoCall(6) */
-    5, /* mo-VoiceCall(5) */
-    8, /* mps-PriorityAccess(8) */
-    2  /* mt-Access(2) */
-       /* This list is extensible */
+    0,  /* emergency(0) */
+    1,  /* highPriorityAccess(1) */
+    9,  /* mcs-PriorityAccess(9) */
+    4,  /* mo-Data(4) */
+    11, /* mo-ExceptionData(11) */
+    7,  /* mo-SMS(7) */
+    3,  /* mo-Signalling(3) */
+    6,  /* mo-VideoCall(6) */
+    5,  /* mo-VoiceCall(5) */
+    8,  /* mps-PriorityAccess(8) */
+    2,  /* mt-Access(2) */
+    10  /* notAvailable(10) */
+        /* This list is extensible */
 };
 const asn_INTEGER_specifics_t asn_SPC_Ngap_RRCEstablishmentCause_specs_1 = {
     asn_MAP_Ngap_RRCEstablishmentCause_value2enum_1, /* "tag" => N; sorted by
                                                         tag */
     asn_MAP_Ngap_RRCEstablishmentCause_enum2value_1, /* N => "tag"; sorted by N
                                                       */
-    10, /* Number of elements in the maps */
+    12, /* Number of elements in the maps */
     11, /* Extensions before this member */
     1,  /* Strict enumeration */
     0,  /* Native long size */

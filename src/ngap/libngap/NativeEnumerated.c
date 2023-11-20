@@ -281,7 +281,6 @@ asn_dec_rval_t NativeEnumerated_decode_aper(
 
   *native = specs->value2enum[value].nat_value;
   ASN_DEBUG("Decoded %s = %ld", td->name, *native);
-  // printf("test0515 Decoded %s = %ld\n", td->name, *native);
 
   return rval;
 }

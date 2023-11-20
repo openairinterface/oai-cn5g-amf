@@ -26,7 +26,7 @@ asn_TYPE_member_t asn_MBR_Ngap_QosFlowModifyConfirmItem_1[] = {
      offsetof(struct Ngap_QosFlowModifyConfirmItem, iE_Extensions),
      (ASN_TAG_CLASS_CONTEXT | (1 << 2)),
      -1, /* IMPLICIT tag at current level */
-     &asn_DEF_Ngap_ProtocolExtensionContainer_175P130,
+     &asn_DEF_Ngap_ProtocolExtensionContainer_9717P207,
      0,
      {0, 0, 0},
      0,

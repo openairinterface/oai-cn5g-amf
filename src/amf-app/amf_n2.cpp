@@ -464,8 +464,8 @@ void amf_n2::handle_itti_message(
         "NG_SETUP_FAILURE with cause (Unknown PLMN)",
         gc->gnb_id);
     send_ng_setup_failure(
-        Ngap_CauseMisc_unknown_PLMN, Ngap_TimeToWait_v5s, itti_msg->assoc_id,
-        itti_msg->stream);
+        Ngap_CauseMisc_unknown_PLMN_or_SNPN, Ngap_TimeToWait_v5s,
+        itti_msg->assoc_id, itti_msg->stream);
     return;
   }
 

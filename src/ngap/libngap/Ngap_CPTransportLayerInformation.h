@@ -22,19 +22,20 @@ extern "C" {
 /* Dependencies */
 typedef enum Ngap_CPTransportLayerInformation_PR {
   Ngap_CPTransportLayerInformation_PR_NOTHING, /* No components present */
-  Ngap_CPTransportLayerInformation_PR_endpointIPAddress,
-  Ngap_CPTransportLayerInformation_PR_choice_Extensions
-} Ngap_CPTransportLayerInformation_PR;
+  Ngap_CPTransportLayerInformation_PR_endpointIPAddress
+  /* Extensions may appear below */
 
-/* Forward declarations */
-struct Ngap_ProtocolIE_SingleContainer;
+} Ngap_CPTransportLayerInformation_PR;
 
 /* Ngap_CPTransportLayerInformation */
 typedef struct Ngap_CPTransportLayerInformation {
   Ngap_CPTransportLayerInformation_PR present;
   union Ngap_CPTransportLayerInformation_u {
     Ngap_TransportLayerAddress_t endpointIPAddress;
-    struct Ngap_ProtocolIE_SingleContainer* choice_Extensions;
+    /*
+     * This type is extensible,
+     * possible extensions are below.
+     */
   } choice;
 
   /* Context for parsing across buffer boundaries */
@@ -44,7 +45,7 @@ typedef struct Ngap_CPTransportLayerInformation {
 /* Implementation */
 extern asn_TYPE_descriptor_t asn_DEF_Ngap_CPTransportLayerInformation;
 extern asn_CHOICE_specifics_t asn_SPC_Ngap_CPTransportLayerInformation_specs_1;
-extern asn_TYPE_member_t asn_MBR_Ngap_CPTransportLayerInformation_1[2];
+extern asn_TYPE_member_t asn_MBR_Ngap_CPTransportLayerInformation_1[1];
 extern asn_per_constraints_t
     asn_PER_type_Ngap_CPTransportLayerInformation_constr_1;
 

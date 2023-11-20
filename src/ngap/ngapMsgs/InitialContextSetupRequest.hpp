@@ -26,7 +26,7 @@
 
 #include "AmfName.hpp"
 #include "AllowedNssai.hpp"
-#include "CoreNetworkAssistanceInformation.hpp"
+#include "CoreNetworkAssistanceInformationForInactive.hpp"
 #include "GUAMI.hpp"
 #include "MobilityRestrictionList.hpp"
 #include "NgapUEMessage.hpp"
@@ -118,9 +118,9 @@ class InitialContextSetupRequestMsg : public NgapUEMessage {
 
   std::optional<AmfName> oldAMF;                               // Optional
   std::optional<UEAggregateMaxBitRate> uEAggregateMaxBitRate;  // Conditional
-  std::optional<CoreNetworkAssistanceInfo>
-      coreNetworkAssistanceInfo;  // Optional
-  GUAMI guami;                    // Mandatory
+  std::optional<CoreNetworkAssistanceInformationForInactive>
+      coreNetworkAssistanceInformationForInactive;  // Optional
+  GUAMI guami;                                      // Mandatory
   std::optional<PduSessionResourceSetupListCxtReq>
       pduSessionResourceSetupRequestList;         // Optional
   AllowedNSSAI allowedNssai;                      // Mandatory

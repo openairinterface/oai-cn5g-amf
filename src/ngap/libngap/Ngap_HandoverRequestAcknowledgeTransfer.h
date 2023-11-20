@@ -13,7 +13,7 @@
 
 /* Including external dependencies */
 #include "Ngap_UPTransportLayerInformation.h"
-#include "Ngap_QosFlowSetupResponseListHOReqAck.h"
+#include "Ngap_QosFlowListWithDataForwarding.h"
 #include <constr_SEQUENCE.h>
 
 #ifdef __cplusplus
@@ -23,7 +23,7 @@ extern "C" {
 /* Forward declarations */
 struct Ngap_UPTransportLayerInformation;
 struct Ngap_SecurityResult;
-struct Ngap_QosFlowList;
+struct Ngap_QosFlowListWithCause;
 struct Ngap_DataForwardingResponseDRBList;
 struct Ngap_ProtocolExtensionContainer;
 
@@ -33,8 +33,8 @@ typedef struct Ngap_HandoverRequestAcknowledgeTransfer {
   struct Ngap_UPTransportLayerInformation*
       dLForwardingUP_TNLInformation;          /* OPTIONAL */
   struct Ngap_SecurityResult* securityResult; /* OPTIONAL */
-  Ngap_QosFlowSetupResponseListHOReqAck_t qosFlowSetupResponseList;
-  struct Ngap_QosFlowList* qosFlowFailedToSetupList; /* OPTIONAL */
+  Ngap_QosFlowListWithDataForwarding_t qosFlowSetupResponseList;
+  struct Ngap_QosFlowListWithCause* qosFlowFailedToSetupList; /* OPTIONAL */
   struct Ngap_DataForwardingResponseDRBList*
       dataForwardingResponseDRBList;                     /* OPTIONAL */
   struct Ngap_ProtocolExtensionContainer* iE_Extensions; /* OPTIONAL */

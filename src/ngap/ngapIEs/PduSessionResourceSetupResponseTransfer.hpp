@@ -23,11 +23,12 @@
 #define _PDU_SESSION_RESOURCE_SETUP_RESPONSE_TRANSFER_H_
 
 #include "NgapIEsStruct.hpp"
-#include "QosFlowPerTnlInformation.hpp"
+#include "QosFlowPerTnlInformationList.hpp"
 #include "SecurityResult.hpp"
 
 extern "C" {
 #include "Ngap_PDUSessionResourceSetupResponseTransfer.h"
+#include "Ngap_QosFlowPerTNLInformationList.h"
 #include "Ngap_ProtocolIE-Field.h"
 }
 
@@ -46,12 +47,9 @@ class PduSessionResourceSetupResponseTransferIE {
       std::vector<AssociatedQosFlow_t>& list) const;
 
   void setAdditionalDLQoSFlowPerTNLInformation(
-      const GtpTunnel_t& up_transport_layer_info,
-      const std::vector<AssociatedQosFlow_t>&
-          list);  // TODO: list of QoS Flow per TNL Information Item
+      QosFlowPerTnlInformationList& additionDLQoSFlowPerTNLInformation);
   bool getAdditionalDLQoSFlowPerTNLInformation(
-      GtpTunnel_t& up_transport_layer_info,
-      std::vector<AssociatedQosFlow_t>& list) const;
+      QosFlowPerTnlInformationList& additionDLQoSFlowPerTNLInformation) const;
 
   void setSecurityResult(
       e_Ngap_IntegrityProtectionResult integrityProtectionResult,
@@ -68,9 +66,8 @@ class PduSessionResourceSetupResponseTransferIE {
       pduSessionResourceSetupResponseTransferIEs;
 
   QosFlowPerTnlInformation dlQoSFlowPerTNLInformation;  // Mandatory
-  std::optional<QosFlowPerTnlInformation>
-      additionalDLQoSFlowPerTNLInformation;  // Optional, TODO: QoS Flow per TNL
-                                             // Information List
+  std::optional<QosFlowPerTnlInformationList>
+      additionalDLQoSFlowPerTNLInformation;
   std::optional<SecurityResult> securityResult;  // Optional
   // TODO: QoS Flow Failed to Setup List
 };

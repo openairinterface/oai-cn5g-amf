@@ -28,7 +28,7 @@
 #include "QosFlowLevelQosParameters.hpp"
 
 extern "C" {
-#include "Ngap_QosFlowSetupResponseItemHOReqAck.h"
+#include "Ngap_QosFlowItemWithDataForwarding.h"
 }
 
 namespace ngap {
@@ -43,7 +43,7 @@ class QosFlowItemWithDataForWarding {
       const std::optional<long>& data_forwarding_accepted);
   void getQosFlowIdentifier(Ngap_QosFlowIdentifier_t& qfi);
 
-  bool decode(Ngap_QosFlowSetupResponseItemHOReqAck_t* qos_flow_item);
+  bool decode(Ngap_QosFlowItemWithDataForwarding_t* qos_flow_item);
 
  private:
   QosFlowIdentifier qfi_;                         // Mandatory

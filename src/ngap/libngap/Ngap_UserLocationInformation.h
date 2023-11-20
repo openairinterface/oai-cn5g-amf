@@ -22,25 +22,28 @@ extern "C" {
 typedef enum Ngap_UserLocationInformation_PR {
   Ngap_UserLocationInformation_PR_NOTHING, /* No components present */
   Ngap_UserLocationInformation_PR_userLocationInformationEUTRA,
-  Ngap_UserLocationInformation_PR_userLocationInformationNR,
   Ngap_UserLocationInformation_PR_userLocationInformationN3IWF,
-  Ngap_UserLocationInformation_PR_choice_Extensions
+  Ngap_UserLocationInformation_PR_userLocationInformationNR
+  /* Extensions may appear below */
+
 } Ngap_UserLocationInformation_PR;
 
 /* Forward declarations */
 struct Ngap_UserLocationInformationEUTRA;
-struct Ngap_UserLocationInformationNR;
 struct Ngap_UserLocationInformationN3IWF;
-struct Ngap_ProtocolIE_SingleContainer;
+struct Ngap_UserLocationInformationNR;
 
 /* Ngap_UserLocationInformation */
 typedef struct Ngap_UserLocationInformation {
   Ngap_UserLocationInformation_PR present;
   union Ngap_UserLocationInformation_u {
     struct Ngap_UserLocationInformationEUTRA* userLocationInformationEUTRA;
-    struct Ngap_UserLocationInformationNR* userLocationInformationNR;
     struct Ngap_UserLocationInformationN3IWF* userLocationInformationN3IWF;
-    struct Ngap_ProtocolIE_SingleContainer* choice_Extensions;
+    struct Ngap_UserLocationInformationNR* userLocationInformationNR;
+    /*
+     * This type is extensible,
+     * possible extensions are below.
+     */
   } choice;
 
   /* Context for parsing across buffer boundaries */
@@ -50,7 +53,7 @@ typedef struct Ngap_UserLocationInformation {
 /* Implementation */
 extern asn_TYPE_descriptor_t asn_DEF_Ngap_UserLocationInformation;
 extern asn_CHOICE_specifics_t asn_SPC_Ngap_UserLocationInformation_specs_1;
-extern asn_TYPE_member_t asn_MBR_Ngap_UserLocationInformation_1[4];
+extern asn_TYPE_member_t asn_MBR_Ngap_UserLocationInformation_1[3];
 extern asn_per_constraints_t asn_PER_type_Ngap_UserLocationInformation_constr_1;
 
 #ifdef __cplusplus

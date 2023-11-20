@@ -10,11 +10,11 @@
 
 #include "Ngap_UL-NGU-UP-TNLModifyItem.h"
 static asn_oer_constraints_t asn_OER_type_Ngap_UL_NGU_UP_TNLModifyList_constr_1
-    CC_NOTUSED = {{0, 0}, -1 /* (SIZE(0..4)) */};
+    CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..4)) */};
 asn_per_constraints_t asn_PER_type_Ngap_UL_NGU_UP_TNLModifyList_constr_1
     CC_NOTUSED = {
         {APC_UNCONSTRAINED, -1, -1, 0, 0},
-        {APC_CONSTRAINED, 3, 3, 0, 4} /* (SIZE(0..4)) */,
+        {APC_CONSTRAINED, 2, 2, 1, 4} /* (SIZE(1..4)) */,
         0,
         0 /* No PER value map */
 };

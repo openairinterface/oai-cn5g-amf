@@ -26,7 +26,7 @@ asn_TYPE_member_t asn_MBR_Ngap_TAIListForInactiveItem_1[] = {
      offsetof(struct Ngap_TAIListForInactiveItem, iE_Extensions),
      (ASN_TAG_CLASS_CONTEXT | (1 << 2)),
      -1, /* IMPLICIT tag at current level */
-     &asn_DEF_Ngap_ProtocolExtensionContainer_175P162,
+     &asn_DEF_Ngap_ProtocolExtensionContainer_9717P250,
      0,
      {0, 0, 0},
      0,

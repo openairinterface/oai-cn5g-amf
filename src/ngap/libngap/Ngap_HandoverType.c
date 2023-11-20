@@ -23,19 +23,21 @@ asn_per_constraints_t asn_PER_type_Ngap_HandoverType_constr_1 CC_NOTUSED = {
 static const asn_INTEGER_enum_map_t asn_MAP_Ngap_HandoverType_value2enum_1[] = {
     {0, 8, "intra5gs"},
     {1, 13, "fivegs-to-eps"},
-    {2, 10, "eps-to-5gs"}
+    {2, 10, "eps-to-5gs"},
+    {3, 15, "fivegs-to-utran"}
     /* This list is extensible */
 };
 static const unsigned int asn_MAP_Ngap_HandoverType_enum2value_1[] = {
     2, /* eps-to-5gs(2) */
     1, /* fivegs-to-eps(1) */
+    3, /* fivegs-to-utran(3) */
     0  /* intra5gs(0) */
        /* This list is extensible */
 };
 const asn_INTEGER_specifics_t asn_SPC_Ngap_HandoverType_specs_1 = {
     asn_MAP_Ngap_HandoverType_value2enum_1, /* "tag" => N; sorted by tag */
     asn_MAP_Ngap_HandoverType_enum2value_1, /* N => "tag"; sorted by N */
-    3,                                      /* Number of elements in the maps */
+    4,                                      /* Number of elements in the maps */
     4,                                      /* Extensions before this member */
     1,                                      /* Strict enumeration */
     0,                                      /* Native long size */

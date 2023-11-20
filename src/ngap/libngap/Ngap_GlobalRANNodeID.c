@@ -11,11 +11,10 @@
 #include "Ngap_GlobalGNB-ID.h"
 #include "Ngap_GlobalNgENB-ID.h"
 #include "Ngap_GlobalN3IWF-ID.h"
-#include "Ngap_ProtocolIE-SingleContainer.h"
 static asn_oer_constraints_t asn_OER_type_Ngap_GlobalRANNodeID_constr_1
     CC_NOTUSED = {{0, 0}, -1};
 asn_per_constraints_t asn_PER_type_Ngap_GlobalRANNodeID_constr_1 CC_NOTUSED = {
-    {APC_CONSTRAINED, 2, 2, 0, 3} /* (0..3) */,
+    {APC_CONSTRAINED | APC_EXTENSIBLE, 2, 2, 0, 2} /* (0..2,...) */,
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
@@ -54,23 +53,11 @@ asn_TYPE_member_t asn_MBR_Ngap_GlobalRANNodeID_1[] = {
      0,
      0, /* No default value */
      "globalN3IWF-ID"},
-    {ATF_POINTER,
-     0,
-     offsetof(struct Ngap_GlobalRANNodeID, choice.choice_Extensions),
-     (ASN_TAG_CLASS_CONTEXT | (3 << 2)),
-     -1, /* IMPLICIT tag at current level */
-     &asn_DEF_Ngap_ProtocolIE_SingleContainer_127P8,
-     0,
-     {0, 0, 0},
-     0,
-     0, /* No default value */
-     "choice-Extensions"},
 };
 static const asn_TYPE_tag2member_t asn_MAP_Ngap_GlobalRANNodeID_tag2el_1[] = {
     {(ASN_TAG_CLASS_CONTEXT | (0 << 2)), 0, 0, 0}, /* globalGNB-ID */
     {(ASN_TAG_CLASS_CONTEXT | (1 << 2)), 1, 0, 0}, /* globalNgENB-ID */
-    {(ASN_TAG_CLASS_CONTEXT | (2 << 2)), 2, 0, 0}, /* globalN3IWF-ID */
-    {(ASN_TAG_CLASS_CONTEXT | (3 << 2)), 3, 0, 0}  /* choice-Extensions */
+    {(ASN_TAG_CLASS_CONTEXT | (2 << 2)), 2, 0, 0}  /* globalN3IWF-ID */
 };
 asn_CHOICE_specifics_t asn_SPC_Ngap_GlobalRANNodeID_specs_1 = {
     sizeof(struct Ngap_GlobalRANNodeID),
@@ -78,10 +65,10 @@ asn_CHOICE_specifics_t asn_SPC_Ngap_GlobalRANNodeID_specs_1 = {
     offsetof(struct Ngap_GlobalRANNodeID, present),
     sizeof(((struct Ngap_GlobalRANNodeID*) 0)->present),
     asn_MAP_Ngap_GlobalRANNodeID_tag2el_1,
-    4, /* Count of tags in the map */
+    3, /* Count of tags in the map */
     0,
     0,
-    -1 /* Extensions start */
+    3 /* Extensions start */
 };
 asn_TYPE_descriptor_t asn_DEF_Ngap_GlobalRANNodeID = {
     "GlobalRANNodeID",
@@ -94,6 +81,6 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_GlobalRANNodeID = {
     {&asn_OER_type_Ngap_GlobalRANNodeID_constr_1,
      &asn_PER_type_Ngap_GlobalRANNodeID_constr_1, CHOICE_constraint},
     asn_MBR_Ngap_GlobalRANNodeID_1,
-    4,                                    /* Elements count */
+    3,                                    /* Elements count */
     &asn_SPC_Ngap_GlobalRANNodeID_specs_1 /* Additional specs */
 };

@@ -37,7 +37,7 @@ asn_TYPE_member_t asn_MBR_Ngap_UL_NGU_UP_TNLModifyItem_1[] = {
      offsetof(struct Ngap_UL_NGU_UP_TNLModifyItem, iE_Extensions),
      (ASN_TAG_CLASS_CONTEXT | (2 << 2)),
      -1, /* IMPLICIT tag at current level */
-     &asn_DEF_Ngap_ProtocolExtensionContainer_175P177,
+     &asn_DEF_Ngap_ProtocolExtensionContainer_9717P275,
      0,
      {0, 0, 0},
      0,

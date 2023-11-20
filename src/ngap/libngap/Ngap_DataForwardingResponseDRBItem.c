@@ -53,7 +53,7 @@ asn_TYPE_member_t asn_MBR_Ngap_DataForwardingResponseDRBItem_1[] = {
      offsetof(struct Ngap_DataForwardingResponseDRBItem, iE_Extensions),
      (ASN_TAG_CLASS_CONTEXT | (3 << 2)),
      -1, /* IMPLICIT tag at current level */
-     &asn_DEF_Ngap_ProtocolExtensionContainer_175P33,
+     &asn_DEF_Ngap_ProtocolExtensionContainer_9717P47,
      0,
      {0, 0, 0},
      0,

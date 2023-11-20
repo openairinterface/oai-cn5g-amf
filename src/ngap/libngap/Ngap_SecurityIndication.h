@@ -30,7 +30,7 @@ typedef struct Ngap_SecurityIndication {
   Ngap_ConfidentialityProtectionIndication_t
       confidentialityProtectionIndication;
   Ngap_MaximumIntegrityProtectedDataRate_t*
-      maximumIntegrityProtectedDataRate;                 /* OPTIONAL */
+      maximumIntegrityProtectedDataRate_UL;              /* OPTIONAL */
   struct Ngap_ProtocolExtensionContainer* iE_Extensions; /* OPTIONAL */
   /*
    * This type is extensible,

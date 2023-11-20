@@ -14,14 +14,13 @@
 #include "Ngap_CellIDCancelledNR.h"
 #include "Ngap_TAICancelledNR.h"
 #include "Ngap_EmergencyAreaIDCancelledNR.h"
-#include "Ngap_ProtocolIE-SingleContainer.h"
 static asn_oer_constraints_t
     asn_OER_type_Ngap_BroadcastCancelledAreaList_constr_1 CC_NOTUSED = {
         {0, 0},
         -1};
 asn_per_constraints_t asn_PER_type_Ngap_BroadcastCancelledAreaList_constr_1
     CC_NOTUSED = {
-        {APC_CONSTRAINED, 3, 3, 0, 6} /* (0..6) */,
+        {APC_CONSTRAINED | APC_EXTENSIBLE, 3, 3, 0, 5} /* (0..5,...) */,
         {APC_UNCONSTRAINED, -1, -1, 0, 0},
         0,
         0 /* No PER value map */
@@ -98,17 +97,6 @@ asn_TYPE_member_t asn_MBR_Ngap_BroadcastCancelledAreaList_1[] = {
      0,
      0, /* No default value */
      "emergencyAreaIDCancelledNR"},
-    {ATF_POINTER,
-     0,
-     offsetof(struct Ngap_BroadcastCancelledAreaList, choice.choice_Extensions),
-     (ASN_TAG_CLASS_CONTEXT | (6 << 2)),
-     -1, /* IMPLICIT tag at current level */
-     &asn_DEF_Ngap_ProtocolIE_SingleContainer_127P1,
-     0,
-     {0, 0, 0},
-     0,
-     0, /* No default value */
-     "choice-Extensions"},
 };
 static const asn_TYPE_tag2member_t
     asn_MAP_Ngap_BroadcastCancelledAreaList_tag2el_1[] = {
@@ -120,8 +108,7 @@ static const asn_TYPE_tag2member_t
         {(ASN_TAG_CLASS_CONTEXT | (3 << 2)), 3, 0, 0}, /* cellIDCancelledNR */
         {(ASN_TAG_CLASS_CONTEXT | (4 << 2)), 4, 0, 0}, /* tAICancelledNR */
         {(ASN_TAG_CLASS_CONTEXT | (5 << 2)), 5, 0,
-         0}, /* emergencyAreaIDCancelledNR */
-        {(ASN_TAG_CLASS_CONTEXT | (6 << 2)), 6, 0, 0} /* choice-Extensions */
+         0} /* emergencyAreaIDCancelledNR */
 };
 asn_CHOICE_specifics_t asn_SPC_Ngap_BroadcastCancelledAreaList_specs_1 = {
     sizeof(struct Ngap_BroadcastCancelledAreaList),
@@ -129,10 +116,10 @@ asn_CHOICE_specifics_t asn_SPC_Ngap_BroadcastCancelledAreaList_specs_1 = {
     offsetof(struct Ngap_BroadcastCancelledAreaList, present),
     sizeof(((struct Ngap_BroadcastCancelledAreaList*) 0)->present),
     asn_MAP_Ngap_BroadcastCancelledAreaList_tag2el_1,
-    7, /* Count of tags in the map */
+    6, /* Count of tags in the map */
     0,
     0,
-    -1 /* Extensions start */
+    6 /* Extensions start */
 };
 asn_TYPE_descriptor_t asn_DEF_Ngap_BroadcastCancelledAreaList = {
     "BroadcastCancelledAreaList",
@@ -145,6 +132,6 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_BroadcastCancelledAreaList = {
     {&asn_OER_type_Ngap_BroadcastCancelledAreaList_constr_1,
      &asn_PER_type_Ngap_BroadcastCancelledAreaList_constr_1, CHOICE_constraint},
     asn_MBR_Ngap_BroadcastCancelledAreaList_1,
-    7,                                               /* Elements count */
+    6,                                               /* Elements count */
     &asn_SPC_Ngap_BroadcastCancelledAreaList_specs_1 /* Additional specs */
 };

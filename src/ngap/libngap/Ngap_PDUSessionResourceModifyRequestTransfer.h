@@ -21,7 +21,7 @@ extern "C" {
 
 /* Ngap_PDUSessionResourceModifyRequestTransfer */
 typedef struct Ngap_PDUSessionResourceModifyRequestTransfer {
-  Ngap_ProtocolIE_Container_124P0_t protocolIEs;
+  Ngap_ProtocolIE_Container_9666P96_t protocolIEs;
   /*
    * This type is extensible,
    * possible extensions are below.

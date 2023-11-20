@@ -22,14 +22,14 @@ extern "C" {
 typedef enum Ngap_DRBStatusDL_PR {
   Ngap_DRBStatusDL_PR_NOTHING, /* No components present */
   Ngap_DRBStatusDL_PR_dRBStatusDL12,
-  Ngap_DRBStatusDL_PR_dRBStatusDL18,
-  Ngap_DRBStatusDL_PR_choice_Extensions
+  Ngap_DRBStatusDL_PR_dRBStatusDL18
+  /* Extensions may appear below */
+
 } Ngap_DRBStatusDL_PR;
 
 /* Forward declarations */
 struct Ngap_DRBStatusDL12;
 struct Ngap_DRBStatusDL18;
-struct Ngap_ProtocolIE_SingleContainer;
 
 /* Ngap_DRBStatusDL */
 typedef struct Ngap_DRBStatusDL {
@@ -37,7 +37,10 @@ typedef struct Ngap_DRBStatusDL {
   union Ngap_DRBStatusDL_u {
     struct Ngap_DRBStatusDL12* dRBStatusDL12;
     struct Ngap_DRBStatusDL18* dRBStatusDL18;
-    struct Ngap_ProtocolIE_SingleContainer* choice_Extensions;
+    /*
+     * This type is extensible,
+     * possible extensions are below.
+     */
   } choice;
 
   /* Context for parsing across buffer boundaries */
@@ -47,7 +50,7 @@ typedef struct Ngap_DRBStatusDL {
 /* Implementation */
 extern asn_TYPE_descriptor_t asn_DEF_Ngap_DRBStatusDL;
 extern asn_CHOICE_specifics_t asn_SPC_Ngap_DRBStatusDL_specs_1;
-extern asn_TYPE_member_t asn_MBR_Ngap_DRBStatusDL_1[3];
+extern asn_TYPE_member_t asn_MBR_Ngap_DRBStatusDL_1[2];
 extern asn_per_constraints_t asn_PER_type_Ngap_DRBStatusDL_constr_1;
 
 #ifdef __cplusplus

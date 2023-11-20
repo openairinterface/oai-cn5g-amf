@@ -10,8 +10,8 @@
 
 #include "Ngap_UPTransportLayerInformation.h"
 #include "Ngap_QosFlowAddOrModifyResponseList.h"
-#include "Ngap_QosFlowPerTNLInformation.h"
-#include "Ngap_QosFlowList.h"
+#include "Ngap_QosFlowPerTNLInformationList.h"
+#include "Ngap_QosFlowListWithCause.h"
 #include "Ngap_ProtocolExtensionContainer.h"
 static asn_TYPE_member_t
     asn_MBR_Ngap_PDUSessionResourceModifyResponseTransfer_1[] = {
@@ -58,15 +58,15 @@ static asn_TYPE_member_t
          3,
          offsetof(
              struct Ngap_PDUSessionResourceModifyResponseTransfer,
-             additionalQosFlowPerTNLInformation),
+             additionalDLQosFlowPerTNLInformation),
          (ASN_TAG_CLASS_CONTEXT | (3 << 2)),
          -1, /* IMPLICIT tag at current level */
-         &asn_DEF_Ngap_QosFlowPerTNLInformation,
+         &asn_DEF_Ngap_QosFlowPerTNLInformationList,
          0,
          {0, 0, 0},
          0,
          0, /* No default value */
-         "additionalQosFlowPerTNLInformation"},
+         "additionalDLQosFlowPerTNLInformation"},
         {ATF_POINTER,
          2,
          offsetof(
@@ -74,7 +74,7 @@ static asn_TYPE_member_t
              qosFlowFailedToAddOrModifyList),
          (ASN_TAG_CLASS_CONTEXT | (4 << 2)),
          -1, /* IMPLICIT tag at current level */
-         &asn_DEF_Ngap_QosFlowList,
+         &asn_DEF_Ngap_QosFlowListWithCause,
          0,
          {0, 0, 0},
          0,
@@ -87,7 +87,7 @@ static asn_TYPE_member_t
              iE_Extensions),
          (ASN_TAG_CLASS_CONTEXT | (5 << 2)),
          -1, /* IMPLICIT tag at current level */
-         &asn_DEF_Ngap_ProtocolExtensionContainer_175P96,
+         &asn_DEF_Ngap_ProtocolExtensionContainer_9717P166,
          0,
          {0, 0, 0},
          0,
@@ -108,7 +108,7 @@ static const asn_TYPE_tag2member_t
         {(ASN_TAG_CLASS_CONTEXT | (2 << 2)), 2, 0,
          0}, /* qosFlowAddOrModifyResponseList */
         {(ASN_TAG_CLASS_CONTEXT | (3 << 2)), 3, 0,
-         0}, /* additionalQosFlowPerTNLInformation */
+         0}, /* additionalDLQosFlowPerTNLInformation */
         {(ASN_TAG_CLASS_CONTEXT | (4 << 2)), 4, 0,
          0}, /* qosFlowFailedToAddOrModifyList */
         {(ASN_TAG_CLASS_CONTEXT | (5 << 2)), 5, 0, 0} /* iE-Extensions */

@@ -10,12 +10,11 @@
 
 #include "Ngap_NonDynamic5QIDescriptor.h"
 #include "Ngap_Dynamic5QIDescriptor.h"
-#include "Ngap_ProtocolIE-SingleContainer.h"
 static asn_oer_constraints_t asn_OER_type_Ngap_QosCharacteristics_constr_1
     CC_NOTUSED = {{0, 0}, -1};
 asn_per_constraints_t asn_PER_type_Ngap_QosCharacteristics_constr_1
     CC_NOTUSED = {
-        {APC_CONSTRAINED, 2, 2, 0, 2} /* (0..2) */,
+        {APC_CONSTRAINED | APC_EXTENSIBLE, 1, 1, 0, 1} /* (0..1,...) */,
         {APC_UNCONSTRAINED, -1, -1, 0, 0},
         0,
         0 /* No PER value map */
@@ -43,23 +42,11 @@ asn_TYPE_member_t asn_MBR_Ngap_QosCharacteristics_1[] = {
      0,
      0, /* No default value */
      "dynamic5QI"},
-    {ATF_POINTER,
-     0,
-     offsetof(struct Ngap_QosCharacteristics, choice.choice_Extensions),
-     (ASN_TAG_CLASS_CONTEXT | (2 << 2)),
-     -1, /* IMPLICIT tag at current level */
-     &asn_DEF_Ngap_ProtocolIE_SingleContainer_127P16,
-     0,
-     {0, 0, 0},
-     0,
-     0, /* No default value */
-     "choice-Extensions"},
 };
 static const asn_TYPE_tag2member_t asn_MAP_Ngap_QosCharacteristics_tag2el_1[] =
     {
         {(ASN_TAG_CLASS_CONTEXT | (0 << 2)), 0, 0, 0}, /* nonDynamic5QI */
-        {(ASN_TAG_CLASS_CONTEXT | (1 << 2)), 1, 0, 0}, /* dynamic5QI */
-        {(ASN_TAG_CLASS_CONTEXT | (2 << 2)), 2, 0, 0}  /* choice-Extensions */
+        {(ASN_TAG_CLASS_CONTEXT | (1 << 2)), 1, 0, 0}  /* dynamic5QI */
 };
 asn_CHOICE_specifics_t asn_SPC_Ngap_QosCharacteristics_specs_1 = {
     sizeof(struct Ngap_QosCharacteristics),
@@ -67,10 +54,10 @@ asn_CHOICE_specifics_t asn_SPC_Ngap_QosCharacteristics_specs_1 = {
     offsetof(struct Ngap_QosCharacteristics, present),
     sizeof(((struct Ngap_QosCharacteristics*) 0)->present),
     asn_MAP_Ngap_QosCharacteristics_tag2el_1,
-    3, /* Count of tags in the map */
+    2, /* Count of tags in the map */
     0,
     0,
-    -1 /* Extensions start */
+    2 /* Extensions start */
 };
 asn_TYPE_descriptor_t asn_DEF_Ngap_QosCharacteristics = {
     "QosCharacteristics",
@@ -83,6 +70,6 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_QosCharacteristics = {
     {&asn_OER_type_Ngap_QosCharacteristics_constr_1,
      &asn_PER_type_Ngap_QosCharacteristics_constr_1, CHOICE_constraint},
     asn_MBR_Ngap_QosCharacteristics_1,
-    3,                                       /* Elements count */
+    2,                                       /* Elements count */
     &asn_SPC_Ngap_QosCharacteristics_specs_1 /* Additional specs */
 };

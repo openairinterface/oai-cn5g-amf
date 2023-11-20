@@ -27,7 +27,7 @@ asn_TYPE_member_t asn_MBR_Ngap_SONInformationReply_1[] = {
      offsetof(struct Ngap_SONInformationReply, iE_Extensions),
      (ASN_TAG_CLASS_CONTEXT | (1 << 2)),
      -1, /* IMPLICIT tag at current level */
-     &asn_DEF_Ngap_ProtocolExtensionContainer_175P153,
+     &asn_DEF_Ngap_ProtocolExtensionContainer_9717P240,
      0,
      {0, 0, 0},
      0,

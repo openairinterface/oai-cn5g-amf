@@ -21,20 +21,23 @@ extern "C" {
 /* Dependencies */
 typedef enum Ngap_UEPagingIdentity_PR {
   Ngap_UEPagingIdentity_PR_NOTHING, /* No components present */
-  Ngap_UEPagingIdentity_PR_fiveG_S_TMSI,
-  Ngap_UEPagingIdentity_PR_choice_Extensions
+  Ngap_UEPagingIdentity_PR_fiveG_S_TMSI
+  /* Extensions may appear below */
+
 } Ngap_UEPagingIdentity_PR;
 
 /* Forward declarations */
 struct Ngap_FiveG_S_TMSI;
-struct Ngap_ProtocolIE_SingleContainer;
 
 /* Ngap_UEPagingIdentity */
 typedef struct Ngap_UEPagingIdentity {
   Ngap_UEPagingIdentity_PR present;
   union Ngap_UEPagingIdentity_u {
     struct Ngap_FiveG_S_TMSI* fiveG_S_TMSI;
-    struct Ngap_ProtocolIE_SingleContainer* choice_Extensions;
+    /*
+     * This type is extensible,
+     * possible extensions are below.
+     */
   } choice;
 
   /* Context for parsing across buffer boundaries */
@@ -44,7 +47,7 @@ typedef struct Ngap_UEPagingIdentity {
 /* Implementation */
 extern asn_TYPE_descriptor_t asn_DEF_Ngap_UEPagingIdentity;
 extern asn_CHOICE_specifics_t asn_SPC_Ngap_UEPagingIdentity_specs_1;
-extern asn_TYPE_member_t asn_MBR_Ngap_UEPagingIdentity_1[2];
+extern asn_TYPE_member_t asn_MBR_Ngap_UEPagingIdentity_1[1];
 extern asn_per_constraints_t asn_PER_type_Ngap_UEPagingIdentity_constr_1;
 
 #ifdef __cplusplus

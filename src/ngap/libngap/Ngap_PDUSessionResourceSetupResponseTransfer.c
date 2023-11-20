@@ -8,9 +8,9 @@
 
 #include "Ngap_PDUSessionResourceSetupResponseTransfer.h"
 
-#include "Ngap_QosFlowPerTNLInformation.h"
+#include "Ngap_QosFlowPerTNLInformationList.h"
 #include "Ngap_SecurityResult.h"
-#include "Ngap_QosFlowList.h"
+#include "Ngap_QosFlowListWithCause.h"
 #include "Ngap_ProtocolExtensionContainer.h"
 static asn_TYPE_member_t
     asn_MBR_Ngap_PDUSessionResourceSetupResponseTransfer_1[] = {
@@ -18,7 +18,7 @@ static asn_TYPE_member_t
          0,
          offsetof(
              struct Ngap_PDUSessionResourceSetupResponseTransfer,
-             qosFlowPerTNLInformation),
+             dLQosFlowPerTNLInformation),
          (ASN_TAG_CLASS_CONTEXT | (0 << 2)),
          -1, /* IMPLICIT tag at current level */
          &asn_DEF_Ngap_QosFlowPerTNLInformation,
@@ -26,20 +26,20 @@ static asn_TYPE_member_t
          {0, 0, 0},
          0,
          0, /* No default value */
-         "qosFlowPerTNLInformation"},
+         "dLQosFlowPerTNLInformation"},
         {ATF_POINTER,
          4,
          offsetof(
              struct Ngap_PDUSessionResourceSetupResponseTransfer,
-             additionalQosFlowPerTNLInformation),
+             additionalDLQosFlowPerTNLInformation),
          (ASN_TAG_CLASS_CONTEXT | (1 << 2)),
          -1, /* IMPLICIT tag at current level */
-         &asn_DEF_Ngap_QosFlowPerTNLInformation,
+         &asn_DEF_Ngap_QosFlowPerTNLInformationList,
          0,
          {0, 0, 0},
          0,
          0, /* No default value */
-         "additionalQosFlowPerTNLInformation"},
+         "additionalDLQosFlowPerTNLInformation"},
         {ATF_POINTER,
          3,
          offsetof(
@@ -60,7 +60,7 @@ static asn_TYPE_member_t
              qosFlowFailedToSetupList),
          (ASN_TAG_CLASS_CONTEXT | (3 << 2)),
          -1, /* IMPLICIT tag at current level */
-         &asn_DEF_Ngap_QosFlowList,
+         &asn_DEF_Ngap_QosFlowListWithCause,
          0,
          {0, 0, 0},
          0,
@@ -73,7 +73,7 @@ static asn_TYPE_member_t
              iE_Extensions),
          (ASN_TAG_CLASS_CONTEXT | (4 << 2)),
          -1, /* IMPLICIT tag at current level */
-         &asn_DEF_Ngap_ProtocolExtensionContainer_175P117,
+         &asn_DEF_Ngap_ProtocolExtensionContainer_9717P190,
          0,
          {0, 0, 0},
          0,
@@ -88,9 +88,9 @@ static const ber_tlv_tag_t
 static const asn_TYPE_tag2member_t
     asn_MAP_Ngap_PDUSessionResourceSetupResponseTransfer_tag2el_1[] = {
         {(ASN_TAG_CLASS_CONTEXT | (0 << 2)), 0, 0,
-         0}, /* qosFlowPerTNLInformation */
+         0}, /* dLQosFlowPerTNLInformation */
         {(ASN_TAG_CLASS_CONTEXT | (1 << 2)), 1, 0,
-         0}, /* additionalQosFlowPerTNLInformation */
+         0}, /* additionalDLQosFlowPerTNLInformation */
         {(ASN_TAG_CLASS_CONTEXT | (2 << 2)), 2, 0, 0}, /* securityResult */
         {(ASN_TAG_CLASS_CONTEXT | (3 << 2)), 3, 0,
          0}, /* qosFlowFailedToSetupList */

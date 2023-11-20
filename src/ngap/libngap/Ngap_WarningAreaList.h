@@ -24,8 +24,9 @@ typedef enum Ngap_WarningAreaList_PR {
   Ngap_WarningAreaList_PR_eUTRA_CGIListForWarning,
   Ngap_WarningAreaList_PR_nR_CGIListForWarning,
   Ngap_WarningAreaList_PR_tAIListForWarning,
-  Ngap_WarningAreaList_PR_emergencyAreaIDList,
-  Ngap_WarningAreaList_PR_choice_Extensions
+  Ngap_WarningAreaList_PR_emergencyAreaIDList
+  /* Extensions may appear below */
+
 } Ngap_WarningAreaList_PR;
 
 /* Forward declarations */
@@ -33,7 +34,6 @@ struct Ngap_EUTRA_CGIListForWarning;
 struct Ngap_NR_CGIListForWarning;
 struct Ngap_TAIListForWarning;
 struct Ngap_EmergencyAreaIDList;
-struct Ngap_ProtocolIE_SingleContainer;
 
 /* Ngap_WarningAreaList */
 typedef struct Ngap_WarningAreaList {
@@ -43,7 +43,10 @@ typedef struct Ngap_WarningAreaList {
     struct Ngap_NR_CGIListForWarning* nR_CGIListForWarning;
     struct Ngap_TAIListForWarning* tAIListForWarning;
     struct Ngap_EmergencyAreaIDList* emergencyAreaIDList;
-    struct Ngap_ProtocolIE_SingleContainer* choice_Extensions;
+    /*
+     * This type is extensible,
+     * possible extensions are below.
+     */
   } choice;
 
   /* Context for parsing across buffer boundaries */
@@ -53,7 +56,7 @@ typedef struct Ngap_WarningAreaList {
 /* Implementation */
 extern asn_TYPE_descriptor_t asn_DEF_Ngap_WarningAreaList;
 extern asn_CHOICE_specifics_t asn_SPC_Ngap_WarningAreaList_specs_1;
-extern asn_TYPE_member_t asn_MBR_Ngap_WarningAreaList_1[5];
+extern asn_TYPE_member_t asn_MBR_Ngap_WarningAreaList_1[4];
 extern asn_per_constraints_t asn_PER_type_Ngap_WarningAreaList_constr_1;
 
 #ifdef __cplusplus

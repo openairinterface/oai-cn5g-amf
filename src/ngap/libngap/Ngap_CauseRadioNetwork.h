@@ -66,10 +66,18 @@ typedef enum Ngap_CauseRadioNetwork {
   Ngap_CauseRadioNetwork_redirection                                      = 41,
   Ngap_CauseRadioNetwork_resources_not_available_for_the_slice            = 42,
   Ngap_CauseRadioNetwork_ue_max_integrity_protected_data_rate_reason      = 43,
-  Ngap_CauseRadioNetwork_release_due_to_cn_detected_mobility              = 44
+  Ngap_CauseRadioNetwork_release_due_to_cn_detected_mobility              = 44,
   /*
    * Enumeration is extensible
    */
+  Ngap_CauseRadioNetwork_n26_interface_not_available = 45,
+  Ngap_CauseRadioNetwork_release_due_to_pre_emption  = 46,
+  Ngap_CauseRadioNetwork_multiple_location_reporting_reference_ID_instances =
+      47,
+  Ngap_CauseRadioNetwork_rsn_not_available_for_the_up = 48,
+  Ngap_CauseRadioNetwork_npn_access_denied            = 49,
+  Ngap_CauseRadioNetwork_cag_only_access_denied       = 50,
+  Ngap_CauseRadioNetwork_insufficient_ue_capabilities = 51
 } e_Ngap_CauseRadioNetwork;
 
 /* Ngap_CauseRadioNetwork */
@@ -78,20 +86,20 @@ typedef long Ngap_CauseRadioNetwork_t;
 /* Implementation */
 extern asn_per_constraints_t asn_PER_type_Ngap_CauseRadioNetwork_constr_1;
 extern asn_TYPE_descriptor_t asn_DEF_Ngap_CauseRadioNetwork;
-extern const asn_INTEGER_specifics_t asn_SPC_CauseRadioNetwork_specs_1;
-asn_struct_free_f CauseRadioNetwork_free;
-asn_struct_print_f CauseRadioNetwork_print;
-asn_constr_check_f CauseRadioNetwork_constraint;
-ber_type_decoder_f CauseRadioNetwork_decode_ber;
-der_type_encoder_f CauseRadioNetwork_encode_der;
-xer_type_decoder_f CauseRadioNetwork_decode_xer;
-xer_type_encoder_f CauseRadioNetwork_encode_xer;
-oer_type_decoder_f CauseRadioNetwork_decode_oer;
-oer_type_encoder_f CauseRadioNetwork_encode_oer;
-per_type_decoder_f CauseRadioNetwork_decode_uper;
-per_type_encoder_f CauseRadioNetwork_encode_uper;
-per_type_decoder_f CauseRadioNetwork_decode_aper;
-per_type_encoder_f CauseRadioNetwork_encode_aper;
+extern const asn_INTEGER_specifics_t asn_SPC_Ngap_CauseRadioNetwork_specs_1;
+asn_struct_free_f Ngap_CauseRadioNetwork_free;
+asn_struct_print_f Ngap_CauseRadioNetwork_print;
+asn_constr_check_f Ngap_CauseRadioNetwork_constraint;
+ber_type_decoder_f Ngap_CauseRadioNetwork_decode_ber;
+der_type_encoder_f Ngap_CauseRadioNetwork_encode_der;
+xer_type_decoder_f Ngap_CauseRadioNetwork_decode_xer;
+xer_type_encoder_f Ngap_CauseRadioNetwork_encode_xer;
+oer_type_decoder_f Ngap_CauseRadioNetwork_decode_oer;
+oer_type_encoder_f Ngap_CauseRadioNetwork_encode_oer;
+per_type_decoder_f Ngap_CauseRadioNetwork_decode_uper;
+per_type_encoder_f Ngap_CauseRadioNetwork_encode_uper;
+per_type_decoder_f Ngap_CauseRadioNetwork_decode_aper;
+per_type_encoder_f Ngap_CauseRadioNetwork_encode_aper;
 
 #ifdef __cplusplus
 }

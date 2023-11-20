@@ -24,12 +24,10 @@ typedef enum Ngap_NgENB_ID_PR {
   Ngap_NgENB_ID_PR_NOTHING, /* No components present */
   Ngap_NgENB_ID_PR_macroNgENB_ID,
   Ngap_NgENB_ID_PR_shortMacroNgENB_ID,
-  Ngap_NgENB_ID_PR_longMacroNgENB_ID,
-  Ngap_NgENB_ID_PR_choice_Extensions
-} Ngap_NgENB_ID_PR;
+  Ngap_NgENB_ID_PR_longMacroNgENB_ID
+  /* Extensions may appear below */
 
-/* Forward declarations */
-struct Ngap_ProtocolIE_SingleContainer;
+} Ngap_NgENB_ID_PR;
 
 /* Ngap_NgENB-ID */
 typedef struct Ngap_NgENB_ID {
@@ -38,7 +36,10 @@ typedef struct Ngap_NgENB_ID {
     BIT_STRING_t macroNgENB_ID;
     BIT_STRING_t shortMacroNgENB_ID;
     BIT_STRING_t longMacroNgENB_ID;
-    struct Ngap_ProtocolIE_SingleContainer* choice_Extensions;
+    /*
+     * This type is extensible,
+     * possible extensions are below.
+     */
   } choice;
 
   /* Context for parsing across buffer boundaries */
@@ -48,7 +49,7 @@ typedef struct Ngap_NgENB_ID {
 /* Implementation */
 extern asn_TYPE_descriptor_t asn_DEF_Ngap_NgENB_ID;
 extern asn_CHOICE_specifics_t asn_SPC_Ngap_NgENB_ID_specs_1;
-extern asn_TYPE_member_t asn_MBR_Ngap_NgENB_ID_1[4];
+extern asn_TYPE_member_t asn_MBR_Ngap_NgENB_ID_1[3];
 extern asn_per_constraints_t asn_PER_type_Ngap_NgENB_ID_constr_1;
 
 #ifdef __cplusplus

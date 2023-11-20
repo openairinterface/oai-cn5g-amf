@@ -37,7 +37,7 @@ asn_TYPE_member_t asn_MBR_Ngap_SecurityResult_1[] = {
      offsetof(struct Ngap_SecurityResult, iE_Extensions),
      (ASN_TAG_CLASS_CONTEXT | (2 << 2)),
      -1, /* IMPLICIT tag at current level */
-     &asn_DEF_Ngap_ProtocolExtensionContainer_175P145,
+     &asn_DEF_Ngap_ProtocolExtensionContainer_9717P230,
      0,
      {0, 0, 0},
      0,

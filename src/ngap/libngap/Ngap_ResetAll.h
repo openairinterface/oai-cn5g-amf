@@ -32,20 +32,20 @@ typedef long Ngap_ResetAll_t;
 /* Implementation */
 extern asn_per_constraints_t asn_PER_type_Ngap_ResetAll_constr_1;
 extern asn_TYPE_descriptor_t asn_DEF_Ngap_ResetAll;
-extern const asn_INTEGER_specifics_t asn_SPC_ResetAll_specs_1;
-asn_struct_free_f ResetAll_free;
-asn_struct_print_f ResetAll_print;
-asn_constr_check_f ResetAll_constraint;
-ber_type_decoder_f ResetAll_decode_ber;
-der_type_encoder_f ResetAll_encode_der;
-xer_type_decoder_f ResetAll_decode_xer;
-xer_type_encoder_f ResetAll_encode_xer;
-oer_type_decoder_f ResetAll_decode_oer;
-oer_type_encoder_f ResetAll_encode_oer;
-per_type_decoder_f ResetAll_decode_uper;
-per_type_encoder_f ResetAll_encode_uper;
-per_type_decoder_f ResetAll_decode_aper;
-per_type_encoder_f ResetAll_encode_aper;
+extern const asn_INTEGER_specifics_t asn_SPC_Ngap_ResetAll_specs_1;
+asn_struct_free_f Ngap_ResetAll_free;
+asn_struct_print_f Ngap_ResetAll_print;
+asn_constr_check_f Ngap_ResetAll_constraint;
+ber_type_decoder_f Ngap_ResetAll_decode_ber;
+der_type_encoder_f Ngap_ResetAll_encode_der;
+xer_type_decoder_f Ngap_ResetAll_decode_xer;
+xer_type_encoder_f Ngap_ResetAll_encode_xer;
+oer_type_decoder_f Ngap_ResetAll_decode_oer;
+oer_type_encoder_f Ngap_ResetAll_encode_oer;
+per_type_decoder_f Ngap_ResetAll_decode_uper;
+per_type_encoder_f Ngap_ResetAll_encode_uper;
+per_type_decoder_f Ngap_ResetAll_decode_aper;
+per_type_encoder_f Ngap_ResetAll_encode_aper;
 
 #ifdef __cplusplus
 }

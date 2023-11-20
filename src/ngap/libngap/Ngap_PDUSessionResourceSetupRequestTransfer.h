@@ -21,7 +21,7 @@ extern "C" {
 
 /* Ngap_PDUSessionResourceSetupRequestTransfer */
 typedef struct Ngap_PDUSessionResourceSetupRequestTransfer {
-  Ngap_ProtocolIE_Container_124P1_t protocolIEs;
+  Ngap_ProtocolIE_Container_9666P97_t protocolIEs;
   /*
    * This type is extensible,
    * possible extensions are below.

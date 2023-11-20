@@ -44,7 +44,7 @@ static asn_TYPE_member_t
              iE_Extensions),
          (ASN_TAG_CLASS_CONTEXT | (2 << 2)),
          -1, /* IMPLICIT tag at current level */
-         &asn_DEF_Ngap_ProtocolExtensionContainer_175P118,
+         &asn_DEF_Ngap_ProtocolExtensionContainer_9717P191,
          0,
          {0, 0, 0},
          0,
@@ -77,25 +77,30 @@ static asn_SEQUENCE_specifics_t
         0, /* Root/Additions */
         3, /* First extension addition */
 };
-asn_TYPE_descriptor_t asn_DEF_Ngap_PDUSessionResourceSetupUnsuccessfulTransfer = {
-    "PDUSessionResourceSetupUnsuccessfulTransfer",
-    "PDUSessionResourceSetupUnsuccessfulTransfer",
-    &asn_OP_SEQUENCE,
-    asn_DEF_Ngap_PDUSessionResourceSetupUnsuccessfulTransfer_tags_1,
-    sizeof(asn_DEF_Ngap_PDUSessionResourceSetupUnsuccessfulTransfer_tags_1) /
-        sizeof(asn_DEF_Ngap_PDUSessionResourceSetupUnsuccessfulTransfer_tags_1
-                   [0]),                                             /* 1 */
-    asn_DEF_Ngap_PDUSessionResourceSetupUnsuccessfulTransfer_tags_1, /* Same
-                                                                        as
-                                                                        above
-                                                                      */
-    sizeof(asn_DEF_Ngap_PDUSessionResourceSetupUnsuccessfulTransfer_tags_1) /
-        sizeof(asn_DEF_Ngap_PDUSessionResourceSetupUnsuccessfulTransfer_tags_1
-                   [0]), /* 1 */
-    {0, 0, SEQUENCE_constraint},
-    asn_MBR_Ngap_PDUSessionResourceSetupUnsuccessfulTransfer_1,
-    3, /* Elements count */
-    &asn_SPC_Ngap_PDUSessionResourceSetupUnsuccessfulTransfer_specs_1 /* Additional
-                                                                         specs
-                                                                       */
+asn_TYPE_descriptor_t asn_DEF_Ngap_PDUSessionResourceSetupUnsuccessfulTransfer =
+    {
+        "PDUSessionResourceSetupUnsuccessfulTransfer",
+        "PDUSessionResourceSetupUnsuccessfulTransfer",
+        &asn_OP_SEQUENCE,
+        asn_DEF_Ngap_PDUSessionResourceSetupUnsuccessfulTransfer_tags_1,
+        sizeof(
+            asn_DEF_Ngap_PDUSessionResourceSetupUnsuccessfulTransfer_tags_1) /
+            sizeof(
+                asn_DEF_Ngap_PDUSessionResourceSetupUnsuccessfulTransfer_tags_1
+                    [0]),                                                /* 1 */
+        asn_DEF_Ngap_PDUSessionResourceSetupUnsuccessfulTransfer_tags_1, /* Same
+                                                                            as
+                                                                            above
+                                                                          */
+        sizeof(
+            asn_DEF_Ngap_PDUSessionResourceSetupUnsuccessfulTransfer_tags_1) /
+            sizeof(
+                asn_DEF_Ngap_PDUSessionResourceSetupUnsuccessfulTransfer_tags_1
+                    [0]), /* 1 */
+        {0, 0, SEQUENCE_constraint},
+        asn_MBR_Ngap_PDUSessionResourceSetupUnsuccessfulTransfer_1,
+        3, /* Elements count */
+        &asn_SPC_Ngap_PDUSessionResourceSetupUnsuccessfulTransfer_specs_1 /* Additional
+                                                                             specs
+                                                                           */
 };

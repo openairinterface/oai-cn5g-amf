@@ -26,8 +26,9 @@ typedef enum Ngap_BroadcastCompletedAreaList_PR {
   Ngap_BroadcastCompletedAreaList_PR_emergencyAreaIDBroadcastEUTRA,
   Ngap_BroadcastCompletedAreaList_PR_cellIDBroadcastNR,
   Ngap_BroadcastCompletedAreaList_PR_tAIBroadcastNR,
-  Ngap_BroadcastCompletedAreaList_PR_emergencyAreaIDBroadcastNR,
-  Ngap_BroadcastCompletedAreaList_PR_choice_Extensions
+  Ngap_BroadcastCompletedAreaList_PR_emergencyAreaIDBroadcastNR
+  /* Extensions may appear below */
+
 } Ngap_BroadcastCompletedAreaList_PR;
 
 /* Forward declarations */
@@ -37,7 +38,6 @@ struct Ngap_EmergencyAreaIDBroadcastEUTRA;
 struct Ngap_CellIDBroadcastNR;
 struct Ngap_TAIBroadcastNR;
 struct Ngap_EmergencyAreaIDBroadcastNR;
-struct Ngap_ProtocolIE_SingleContainer;
 
 /* Ngap_BroadcastCompletedAreaList */
 typedef struct Ngap_BroadcastCompletedAreaList {
@@ -49,7 +49,10 @@ typedef struct Ngap_BroadcastCompletedAreaList {
     struct Ngap_CellIDBroadcastNR* cellIDBroadcastNR;
     struct Ngap_TAIBroadcastNR* tAIBroadcastNR;
     struct Ngap_EmergencyAreaIDBroadcastNR* emergencyAreaIDBroadcastNR;
-    struct Ngap_ProtocolIE_SingleContainer* choice_Extensions;
+    /*
+     * This type is extensible,
+     * possible extensions are below.
+     */
   } choice;
 
   /* Context for parsing across buffer boundaries */
@@ -59,7 +62,7 @@ typedef struct Ngap_BroadcastCompletedAreaList {
 /* Implementation */
 extern asn_TYPE_descriptor_t asn_DEF_Ngap_BroadcastCompletedAreaList;
 extern asn_CHOICE_specifics_t asn_SPC_Ngap_BroadcastCompletedAreaList_specs_1;
-extern asn_TYPE_member_t asn_MBR_Ngap_BroadcastCompletedAreaList_1[7];
+extern asn_TYPE_member_t asn_MBR_Ngap_BroadcastCompletedAreaList_1[6];
 extern asn_per_constraints_t
     asn_PER_type_Ngap_BroadcastCompletedAreaList_constr_1;
 

@@ -30,12 +30,10 @@ typedef enum Ngap_Cause_PR {
   Ngap_Cause_PR_transport,
   Ngap_Cause_PR_nas,
   Ngap_Cause_PR_protocol,
-  Ngap_Cause_PR_misc,
-  Ngap_Cause_PR_choice_Extensions
-} Ngap_Cause_PR;
+  Ngap_Cause_PR_misc
+  /* Extensions may appear below */
 
-/* Forward declarations */
-struct Ngap_ProtocolIE_SingleContainer;
+} Ngap_Cause_PR;
 
 /* Ngap_Cause */
 typedef struct Ngap_Cause {
@@ -46,7 +44,10 @@ typedef struct Ngap_Cause {
     Ngap_CauseNas_t nas;
     Ngap_CauseProtocol_t protocol;
     Ngap_CauseMisc_t misc;
-    struct Ngap_ProtocolIE_SingleContainer* choice_Extensions;
+    /*
+     * This type is extensible,
+     * possible extensions are below.
+     */
   } choice;
 
   /* Context for parsing across buffer boundaries */
@@ -56,7 +57,7 @@ typedef struct Ngap_Cause {
 /* Implementation */
 extern asn_TYPE_descriptor_t asn_DEF_Ngap_Cause;
 extern asn_CHOICE_specifics_t asn_SPC_Ngap_Cause_specs_1;
-extern asn_TYPE_member_t asn_MBR_Ngap_Cause_1[6];
+extern asn_TYPE_member_t asn_MBR_Ngap_Cause_1[5];
 extern asn_per_constraints_t asn_PER_type_Ngap_Cause_constr_1;
 
 #ifdef __cplusplus

@@ -28,7 +28,7 @@
 #include "QosFlowLevelQosParameters.hpp"
 
 extern "C" {
-#include "Ngap_QosFlowSetupResponseListHOReqAck.h"
+#include "Ngap_QosFlowListWithDataForwarding.h"
 }
 
 constexpr uint8_t kMaxNoQoSFlows = 64;
@@ -42,7 +42,7 @@ class QosFlowListWithDataForwarding {
   void set(const std::vector<QosFlowItemWithDataForWarding>& list);
   void get(std::vector<QosFlowItemWithDataForWarding>& list) const;
 
-  bool decode(Ngap_QosFlowSetupResponseListHOReqAck_t qosFlowSetupResponseList);
+  bool decode(Ngap_QosFlowListWithDataForwarding_t qosFlowSetupResponseList);
 
  private:
   std::vector<QosFlowItemWithDataForWarding> list_;

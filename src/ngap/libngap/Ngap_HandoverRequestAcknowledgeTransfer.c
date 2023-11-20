@@ -10,7 +10,7 @@
 
 #include "Ngap_UPTransportLayerInformation.h"
 #include "Ngap_SecurityResult.h"
-#include "Ngap_QosFlowList.h"
+#include "Ngap_QosFlowListWithCause.h"
 #include "Ngap_DataForwardingResponseDRBList.h"
 #include "Ngap_ProtocolExtensionContainer.h"
 static asn_TYPE_member_t asn_MBR_Ngap_HandoverRequestAcknowledgeTransfer_1[] = {
@@ -58,7 +58,7 @@ static asn_TYPE_member_t asn_MBR_Ngap_HandoverRequestAcknowledgeTransfer_1[] = {
          qosFlowSetupResponseList),
      (ASN_TAG_CLASS_CONTEXT | (3 << 2)),
      -1, /* IMPLICIT tag at current level */
-     &asn_DEF_Ngap_QosFlowSetupResponseListHOReqAck,
+     &asn_DEF_Ngap_QosFlowListWithDataForwarding,
      0,
      {0, 0, 0},
      0,
@@ -71,7 +71,7 @@ static asn_TYPE_member_t asn_MBR_Ngap_HandoverRequestAcknowledgeTransfer_1[] = {
          qosFlowFailedToSetupList),
      (ASN_TAG_CLASS_CONTEXT | (4 << 2)),
      -1, /* IMPLICIT tag at current level */
-     &asn_DEF_Ngap_QosFlowList,
+     &asn_DEF_Ngap_QosFlowListWithCause,
      0,
      {0, 0, 0},
      0,
@@ -95,7 +95,7 @@ static asn_TYPE_member_t asn_MBR_Ngap_HandoverRequestAcknowledgeTransfer_1[] = {
      offsetof(struct Ngap_HandoverRequestAcknowledgeTransfer, iE_Extensions),
      (ASN_TAG_CLASS_CONTEXT | (6 << 2)),
      -1, /* IMPLICIT tag at current level */
-     &asn_DEF_Ngap_ProtocolExtensionContainer_175P62,
+     &asn_DEF_Ngap_ProtocolExtensionContainer_9717P97,
      0,
      {0, 0, 0},
      0,

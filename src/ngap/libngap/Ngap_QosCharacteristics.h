@@ -22,14 +22,14 @@ extern "C" {
 typedef enum Ngap_QosCharacteristics_PR {
   Ngap_QosCharacteristics_PR_NOTHING, /* No components present */
   Ngap_QosCharacteristics_PR_nonDynamic5QI,
-  Ngap_QosCharacteristics_PR_dynamic5QI,
-  Ngap_QosCharacteristics_PR_choice_Extensions
+  Ngap_QosCharacteristics_PR_dynamic5QI
+  /* Extensions may appear below */
+
 } Ngap_QosCharacteristics_PR;
 
 /* Forward declarations */
 struct Ngap_NonDynamic5QIDescriptor;
 struct Ngap_Dynamic5QIDescriptor;
-struct Ngap_ProtocolIE_SingleContainer;
 
 /* Ngap_QosCharacteristics */
 typedef struct Ngap_QosCharacteristics {
@@ -37,7 +37,10 @@ typedef struct Ngap_QosCharacteristics {
   union Ngap_QosCharacteristics_u {
     struct Ngap_NonDynamic5QIDescriptor* nonDynamic5QI;
     struct Ngap_Dynamic5QIDescriptor* dynamic5QI;
-    struct Ngap_ProtocolIE_SingleContainer* choice_Extensions;
+    /*
+     * This type is extensible,
+     * possible extensions are below.
+     */
   } choice;
 
   /* Context for parsing across buffer boundaries */
@@ -47,7 +50,7 @@ typedef struct Ngap_QosCharacteristics {
 /* Implementation */
 extern asn_TYPE_descriptor_t asn_DEF_Ngap_QosCharacteristics;
 extern asn_CHOICE_specifics_t asn_SPC_Ngap_QosCharacteristics_specs_1;
-extern asn_TYPE_member_t asn_MBR_Ngap_QosCharacteristics_1[3];
+extern asn_TYPE_member_t asn_MBR_Ngap_QosCharacteristics_1[2];
 extern asn_per_constraints_t asn_PER_type_Ngap_QosCharacteristics_constr_1;
 
 #ifdef __cplusplus

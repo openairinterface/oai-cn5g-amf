@@ -27,7 +27,7 @@ asn_TYPE_member_t asn_MBR_Ngap_AMF_TNLAssociationSetupItem_1[] = {
      offsetof(struct Ngap_AMF_TNLAssociationSetupItem, iE_Extensions),
      (ASN_TAG_CLASS_CONTEXT | (1 << 2)),
      -1, /* IMPLICIT tag at current level */
-     &asn_DEF_Ngap_ProtocolExtensionContainer_175P2,
+     &asn_DEF_Ngap_ProtocolExtensionContainer_9717P5,
      0,
      {0, 0, 0},
      0,
