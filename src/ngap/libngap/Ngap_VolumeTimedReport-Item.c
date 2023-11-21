@@ -3,7 +3,7 @@
  * From ASN.1 module "NGAP-IEs"
  * 	found in "asn.1/Information Element Definitions.asn1"
  * 	`asn1c -pdu=all -fcompound-names -fno-include-deps -findirect-choice
- * -gen-PER -D src`
+ * -no-gen-example -gen-APER -gen-UPER -no-gen-JER -no-gen-BER -D src`
  */
 
 #include "Ngap_VolumeTimedReport-Item.h"
@@ -24,7 +24,7 @@ static int memb_Ngap_startTimeStamp_constraint_1(
 
   size = st->size;
 
-  if ((size == 4)) {
+  if ((size == 4UL)) {
     /* Constraint check succeeded */
     return 0;
   } else {
@@ -50,7 +50,7 @@ static int memb_Ngap_endTimeStamp_constraint_1(
 
   size = st->size;
 
-  if ((size == 4)) {
+  if ((size == 4UL)) {
     /* Constraint check succeeded */
     return 0;
   } else {
@@ -81,7 +81,7 @@ static int memb_Ngap_usageCountUL_constraint_1(
     return -1;
   }
 
-  if ((value >= 0 && value <= 18446744073709551615)) {
+  if ((value >= 0L && value <= 18446744073709551615L)) {
     /* Constraint check succeeded */
     return 0;
   } else {
@@ -112,7 +112,7 @@ static int memb_Ngap_usageCountDL_constraint_1(
     return -1;
   }
 
-  if ((value >= 0 && value <= 18446744073709551615)) {
+  if ((value >= 0L && value <= 18446744073709551615L)) {
     /* Constraint check succeeded */
     return 0;
   } else {
@@ -123,8 +123,11 @@ static int memb_Ngap_usageCountDL_constraint_1(
   }
 }
 
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_startTimeStamp_constr_2
     CC_NOTUSED = {{0, 0}, 4 /* (SIZE(4..4)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_startTimeStamp_constr_2
     CC_NOTUSED = {
         {APC_UNCONSTRAINED, -1, -1, 0, 0},
@@ -132,8 +135,13 @@ static asn_per_constraints_t asn_PER_memb_Ngap_startTimeStamp_constr_2
         0,
         0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_endTimeStamp_constr_3
     CC_NOTUSED = {{0, 0}, 4 /* (SIZE(4..4)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_endTimeStamp_constr_3
     CC_NOTUSED = {
         {APC_UNCONSTRAINED, -1, -1, 0, 0},
@@ -141,8 +149,13 @@ static asn_per_constraints_t asn_PER_memb_Ngap_endTimeStamp_constr_3
         0,
         0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_usageCountUL_constr_4
     CC_NOTUSED = {{8, 1} /* (0..18446744073709551615) */, -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_usageCountUL_constr_4
     CC_NOTUSED = {
         {APC_CONSTRAINED, 64, -1, 0,
@@ -151,8 +164,13 @@ static asn_per_constraints_t asn_PER_memb_Ngap_usageCountUL_constr_4
         0,
         0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_usageCountDL_constr_5
     CC_NOTUSED = {{8, 1} /* (0..18446744073709551615) */, -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_usageCountDL_constr_5
     CC_NOTUSED = {
         {APC_CONSTRAINED, 64, -1, 0,
@@ -161,6 +179,8 @@ static asn_per_constraints_t asn_PER_memb_Ngap_usageCountDL_constr_5
         0,
         0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
 asn_TYPE_member_t asn_MBR_Ngap_VolumeTimedReport_Item_1[] = {
     {ATF_NOFLAGS,
      0,
@@ -169,9 +189,15 @@ asn_TYPE_member_t asn_MBR_Ngap_VolumeTimedReport_Item_1[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_OCTET_STRING,
      0,
-     {&asn_OER_memb_Ngap_startTimeStamp_constr_2,
-      &asn_PER_memb_Ngap_startTimeStamp_constr_2,
-      memb_Ngap_startTimeStamp_constraint_1},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_startTimeStamp_constr_2,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_startTimeStamp_constr_2,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_startTimeStamp_constraint_1},
      0,
      0, /* No default value */
      "startTimeStamp"},
@@ -182,9 +208,15 @@ asn_TYPE_member_t asn_MBR_Ngap_VolumeTimedReport_Item_1[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_OCTET_STRING,
      0,
-     {&asn_OER_memb_Ngap_endTimeStamp_constr_3,
-      &asn_PER_memb_Ngap_endTimeStamp_constr_3,
-      memb_Ngap_endTimeStamp_constraint_1},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_endTimeStamp_constr_3,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_endTimeStamp_constr_3,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_endTimeStamp_constraint_1},
      0,
      0, /* No default value */
      "endTimeStamp"},
@@ -195,9 +227,15 @@ asn_TYPE_member_t asn_MBR_Ngap_VolumeTimedReport_Item_1[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_INTEGER,
      0,
-     {&asn_OER_memb_Ngap_usageCountUL_constr_4,
-      &asn_PER_memb_Ngap_usageCountUL_constr_4,
-      memb_Ngap_usageCountUL_constraint_1},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_usageCountUL_constr_4,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_usageCountUL_constr_4,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_usageCountUL_constraint_1},
      0,
      0, /* No default value */
      "usageCountUL"},
@@ -208,9 +246,15 @@ asn_TYPE_member_t asn_MBR_Ngap_VolumeTimedReport_Item_1[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_INTEGER,
      0,
-     {&asn_OER_memb_Ngap_usageCountDL_constr_5,
-      &asn_PER_memb_Ngap_usageCountDL_constr_5,
-      memb_Ngap_usageCountDL_constraint_1},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_usageCountDL_constr_5,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_usageCountDL_constr_5,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_usageCountDL_constraint_1},
      0,
      0, /* No default value */
      "usageCountDL"},
@@ -221,7 +265,15 @@ asn_TYPE_member_t asn_MBR_Ngap_VolumeTimedReport_Item_1[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_ProtocolExtensionContainer_9717P285,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "iE-Extensions"},
@@ -257,7 +309,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_VolumeTimedReport_Item = {
     asn_DEF_Ngap_VolumeTimedReport_Item_tags_1, /* Same as above */
     sizeof(asn_DEF_Ngap_VolumeTimedReport_Item_tags_1) /
         sizeof(asn_DEF_Ngap_VolumeTimedReport_Item_tags_1[0]), /* 1 */
-    {0, 0, SEQUENCE_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_constraint},
     asn_MBR_Ngap_VolumeTimedReport_Item_1,
     5,                                           /* Elements count */
     &asn_SPC_Ngap_VolumeTimedReport_Item_specs_1 /* Additional specs */

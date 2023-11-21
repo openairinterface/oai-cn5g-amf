@@ -3,7 +3,7 @@
  * From ASN.1 module "NGAP-IEs"
  * 	found in "asn.1/Information Element Definitions.asn1"
  * 	`asn1c -pdu=all -fcompound-names -fno-include-deps -findirect-choice
- * -gen-PER -D src`
+ * -no-gen-example -gen-APER -gen-UPER -no-gen-JER -no-gen-BER -D src`
  */
 
 #include "Ngap_Range.h"
@@ -12,15 +12,20 @@
  * This type is implemented using NativeEnumerated,
  * so here we adjust the DEF accordingly.
  */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_type_Ngap_Range_constr_1 CC_NOTUSED = {
     {0, 0},
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t asn_PER_type_Ngap_Range_constr_1 CC_NOTUSED = {
     {APC_CONSTRAINED | APC_EXTENSIBLE, 4, 4, 0, 8} /* (0..8,...) */,
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
 static const asn_INTEGER_enum_map_t asn_MAP_Ngap_Range_value2enum_1[] = {
     {0, 3, "m50"},  {1, 3, "m80"},  {2, 4, "m180"}, {3, 4, "m200"},
     {4, 4, "m350"}, {5, 4, "m400"}, {6, 4, "m500"}, {7, 4, "m700"},
@@ -59,8 +64,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_Range = {
     asn_DEF_Ngap_Range_tags_1,                /* Same as above */
     sizeof(asn_DEF_Ngap_Range_tags_1) /
         sizeof(asn_DEF_Ngap_Range_tags_1[0]), /* 1 */
-    {&asn_OER_type_Ngap_Range_constr_1, &asn_PER_type_Ngap_Range_constr_1,
-     NativeEnumerated_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_Range_constr_1,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_Range_constr_1,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        NativeEnumerated_constraint},
     0,
     0,                          /* Defined elsewhere */
     &asn_SPC_Ngap_Range_specs_1 /* Additional specs */

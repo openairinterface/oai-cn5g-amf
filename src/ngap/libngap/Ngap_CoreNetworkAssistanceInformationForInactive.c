@@ -3,7 +3,7 @@
  * From ASN.1 module "NGAP-IEs"
  * 	found in "asn.1/Information Element Definitions.asn1"
  * 	`asn1c -pdu=all -fcompound-names -fno-include-deps -findirect-choice
- * -gen-PER -D src`
+ * -no-gen-example -gen-APER -gen-UPER -no-gen-JER -no-gen-BER -D src`
  */
 
 #include "Ngap_CoreNetworkAssistanceInformationForInactive.h"
@@ -21,7 +21,15 @@ asn_TYPE_member_t asn_MBR_Ngap_CoreNetworkAssistanceInformationForInactive_1[] =
          +1, /* EXPLICIT tag at current level */
          &asn_DEF_Ngap_UEIdentityIndexValue,
          0,
-         {0, 0, 0},
+         {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+             0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+             0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+             0},
          0,
          0, /* No default value */
          "uEIdentityIndexValue"},
@@ -34,7 +42,15 @@ asn_TYPE_member_t asn_MBR_Ngap_CoreNetworkAssistanceInformationForInactive_1[] =
          -1, /* IMPLICIT tag at current level */
          &asn_DEF_Ngap_PagingDRX,
          0,
-         {0, 0, 0},
+         {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+             0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+             0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+             0},
          0,
          0, /* No default value */
          "uESpecificDRX"},
@@ -47,7 +63,15 @@ asn_TYPE_member_t asn_MBR_Ngap_CoreNetworkAssistanceInformationForInactive_1[] =
          -1, /* IMPLICIT tag at current level */
          &asn_DEF_Ngap_PeriodicRegistrationUpdateTimer,
          0,
-         {0, 0, 0},
+         {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+             0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+             0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+             0},
          0,
          0, /* No default value */
          "periodicRegistrationUpdateTimer"},
@@ -60,7 +84,15 @@ asn_TYPE_member_t asn_MBR_Ngap_CoreNetworkAssistanceInformationForInactive_1[] =
          -1, /* IMPLICIT tag at current level */
          &asn_DEF_Ngap_MICOModeIndication,
          0,
-         {0, 0, 0},
+         {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+             0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+             0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+             0},
          0,
          0, /* No default value */
          "mICOModeIndication"},
@@ -73,7 +105,15 @@ asn_TYPE_member_t asn_MBR_Ngap_CoreNetworkAssistanceInformationForInactive_1[] =
          -1, /* IMPLICIT tag at current level */
          &asn_DEF_Ngap_TAIListForInactive,
          0,
-         {0, 0, 0},
+         {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+             0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+             0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+             0},
          0,
          0, /* No default value */
          "tAIListForInactive"},
@@ -86,7 +126,15 @@ asn_TYPE_member_t asn_MBR_Ngap_CoreNetworkAssistanceInformationForInactive_1[] =
          -1, /* IMPLICIT tag at current level */
          &asn_DEF_Ngap_ExpectedUEBehaviour,
          0,
-         {0, 0, 0},
+         {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+             0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+             0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+             0},
          0,
          0, /* No default value */
          "expectedUEBehaviour"},
@@ -99,7 +147,15 @@ asn_TYPE_member_t asn_MBR_Ngap_CoreNetworkAssistanceInformationForInactive_1[] =
          -1, /* IMPLICIT tag at current level */
          &asn_DEF_Ngap_ProtocolExtensionContainer_9717P40,
          0,
-         {0, 0, 0},
+         {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+             0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+             0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+             0},
          0,
          0, /* No default value */
          "iE-Extensions"},
@@ -136,25 +192,38 @@ asn_SEQUENCE_specifics_t
         0, /* Root/Additions */
         7, /* First extension addition */
 };
-asn_TYPE_descriptor_t asn_DEF_Ngap_CoreNetworkAssistanceInformationForInactive = {
-    "CoreNetworkAssistanceInformationForInactive",
-    "CoreNetworkAssistanceInformationForInactive",
-    &asn_OP_SEQUENCE,
-    asn_DEF_Ngap_CoreNetworkAssistanceInformationForInactive_tags_1,
-    sizeof(asn_DEF_Ngap_CoreNetworkAssistanceInformationForInactive_tags_1) /
-        sizeof(asn_DEF_Ngap_CoreNetworkAssistanceInformationForInactive_tags_1
-                   [0]),                                             /* 1 */
-    asn_DEF_Ngap_CoreNetworkAssistanceInformationForInactive_tags_1, /* Same
-                                                                        as
-                                                                        above
-                                                                      */
-    sizeof(asn_DEF_Ngap_CoreNetworkAssistanceInformationForInactive_tags_1) /
-        sizeof(asn_DEF_Ngap_CoreNetworkAssistanceInformationForInactive_tags_1
-                   [0]), /* 1 */
-    {0, 0, SEQUENCE_constraint},
-    asn_MBR_Ngap_CoreNetworkAssistanceInformationForInactive_1,
-    7, /* Elements count */
-    &asn_SPC_Ngap_CoreNetworkAssistanceInformationForInactive_specs_1 /* Additional
-                                                                         specs
-                                                                       */
+asn_TYPE_descriptor_t asn_DEF_Ngap_CoreNetworkAssistanceInformationForInactive =
+    {
+        "CoreNetworkAssistanceInformationForInactive",
+        "CoreNetworkAssistanceInformationForInactive",
+        &asn_OP_SEQUENCE,
+        asn_DEF_Ngap_CoreNetworkAssistanceInformationForInactive_tags_1,
+        sizeof(
+            asn_DEF_Ngap_CoreNetworkAssistanceInformationForInactive_tags_1) /
+            sizeof(
+                asn_DEF_Ngap_CoreNetworkAssistanceInformationForInactive_tags_1
+                    [0]),                                                /* 1 */
+        asn_DEF_Ngap_CoreNetworkAssistanceInformationForInactive_tags_1, /* Same
+                                                                            as
+                                                                            above
+                                                                          */
+        sizeof(
+            asn_DEF_Ngap_CoreNetworkAssistanceInformationForInactive_tags_1) /
+            sizeof(
+                asn_DEF_Ngap_CoreNetworkAssistanceInformationForInactive_tags_1
+                    [0]), /* 1 */
+        {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+            SEQUENCE_constraint},
+        asn_MBR_Ngap_CoreNetworkAssistanceInformationForInactive_1,
+        7, /* Elements count */
+        &asn_SPC_Ngap_CoreNetworkAssistanceInformationForInactive_specs_1 /* Additional
+                                                                             specs
+                                                                           */
 };

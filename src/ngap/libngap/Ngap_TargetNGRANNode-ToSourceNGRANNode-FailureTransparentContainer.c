@@ -3,7 +3,7 @@
  * From ASN.1 module "NGAP-IEs"
  * 	found in "asn.1/Information Element Definitions.asn1"
  * 	`asn1c -pdu=all -fcompound-names -fno-include-deps -findirect-choice
- * -gen-PER -D src`
+ * -no-gen-example -gen-APER -gen-UPER -no-gen-JER -no-gen-BER -D src`
  */
 
 #include "Ngap_TargetNGRANNode-ToSourceNGRANNode-FailureTransparentContainer.h"
@@ -22,7 +22,15 @@ static asn_TYPE_member_t
          -1, /* IMPLICIT tag at current level */
          &asn_DEF_Ngap_Cell_CAGInformation,
          0,
-         {0, 0, 0},
+         {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+             0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+             0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+             0},
          0,
          0, /* No default value */
          "cell-CAGInformation"},
@@ -36,7 +44,15 @@ static asn_TYPE_member_t
          -1, /* IMPLICIT tag at current level */
          &asn_DEF_Ngap_ProtocolExtensionContainer_9717P254,
          0,
-         {0, 0, 0},
+         {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+             0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+             0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+             0},
          0,
          0, /* No default value */
          "iE-Extensions"},
@@ -86,7 +102,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_TargetNGRANNode_ToSourceNGRANNode_FailureTran
         sizeof(
             asn_DEF_Ngap_TargetNGRANNode_ToSourceNGRANNode_FailureTransparentContainer_tags_1
                 [0]), /* 1 */
-    {0, 0, SEQUENCE_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_constraint},
     asn_MBR_Ngap_TargetNGRANNode_ToSourceNGRANNode_FailureTransparentContainer_1,
     2, /* Elements count */
     &asn_SPC_Ngap_TargetNGRANNode_ToSourceNGRANNode_FailureTransparentContainer_specs_1 /* Additional specs */

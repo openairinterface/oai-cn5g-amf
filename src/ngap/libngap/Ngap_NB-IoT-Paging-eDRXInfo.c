@@ -3,7 +3,7 @@
  * From ASN.1 module "NGAP-IEs"
  * 	found in "asn.1/Information Element Definitions.asn1"
  * 	`asn1c -pdu=all -fcompound-names -fno-include-deps -findirect-choice
- * -gen-PER -D src`
+ * -no-gen-example -gen-APER -gen-UPER -no-gen-JER -no-gen-BER -D src`
  */
 
 #include "Ngap_NB-IoT-Paging-eDRXInfo.h"
@@ -17,7 +17,15 @@ asn_TYPE_member_t asn_MBR_Ngap_NB_IoT_Paging_eDRXInfo_1[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_NB_IoT_Paging_eDRXCycle,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "nB-IoT-Paging-eDRXCycle"},
@@ -28,7 +36,15 @@ asn_TYPE_member_t asn_MBR_Ngap_NB_IoT_Paging_eDRXInfo_1[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_NB_IoT_Paging_TimeWindow,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "nB-IoT-Paging-TimeWindow"},
@@ -39,7 +55,15 @@ asn_TYPE_member_t asn_MBR_Ngap_NB_IoT_Paging_eDRXInfo_1[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_ProtocolExtensionContainer_9717P128,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "iE-Extensions"},
@@ -75,7 +99,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_NB_IoT_Paging_eDRXInfo = {
     asn_DEF_Ngap_NB_IoT_Paging_eDRXInfo_tags_1, /* Same as above */
     sizeof(asn_DEF_Ngap_NB_IoT_Paging_eDRXInfo_tags_1) /
         sizeof(asn_DEF_Ngap_NB_IoT_Paging_eDRXInfo_tags_1[0]), /* 1 */
-    {0, 0, SEQUENCE_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_constraint},
     asn_MBR_Ngap_NB_IoT_Paging_eDRXInfo_1,
     3,                                           /* Elements count */
     &asn_SPC_Ngap_NB_IoT_Paging_eDRXInfo_specs_1 /* Additional specs */

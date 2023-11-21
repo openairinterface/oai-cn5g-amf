@@ -3,7 +3,7 @@
  * From ASN.1 module "NGAP-IEs"
  * 	found in "asn.1/Information Element Definitions.asn1"
  * 	`asn1c -pdu=all -fcompound-names -fno-include-deps -findirect-choice
- * -gen-PER -D src`
+ * -no-gen-example -gen-APER -gen-UPER -no-gen-JER -no-gen-BER -D src`
  */
 
 #include "Ngap_ENB-ID.h"
@@ -28,7 +28,7 @@ static int memb_Ngap_macroENB_ID_constraint_1(
     size = 0;
   }
 
-  if ((size == 20)) {
+  if ((size == 20UL)) {
     /* Constraint check succeeded */
     return 0;
   } else {
@@ -59,7 +59,7 @@ static int memb_Ngap_homeENB_ID_constraint_1(
     size = 0;
   }
 
-  if ((size == 28)) {
+  if ((size == 28UL)) {
     /* Constraint check succeeded */
     return 0;
   } else {
@@ -90,7 +90,7 @@ static int memb_Ngap_short_macroENB_ID_constraint_1(
     size = 0;
   }
 
-  if ((size == 18)) {
+  if ((size == 18UL)) {
     /* Constraint check succeeded */
     return 0;
   } else {
@@ -121,7 +121,7 @@ static int memb_Ngap_long_macroENB_ID_constraint_1(
     size = 0;
   }
 
-  if ((size == 21)) {
+  if ((size == 21UL)) {
     /* Constraint check succeeded */
     return 0;
   } else {
@@ -132,8 +132,11 @@ static int memb_Ngap_long_macroENB_ID_constraint_1(
   }
 }
 
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_macroENB_ID_constr_2
     CC_NOTUSED = {{0, 0}, 20 /* (SIZE(20..20)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_macroENB_ID_constr_2
     CC_NOTUSED = {
         {APC_UNCONSTRAINED, -1, -1, 0, 0},
@@ -141,8 +144,13 @@ static asn_per_constraints_t asn_PER_memb_Ngap_macroENB_ID_constr_2
         0,
         0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_homeENB_ID_constr_3
     CC_NOTUSED = {{0, 0}, 28 /* (SIZE(28..28)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_homeENB_ID_constr_3
     CC_NOTUSED = {
         {APC_UNCONSTRAINED, -1, -1, 0, 0},
@@ -150,8 +158,13 @@ static asn_per_constraints_t asn_PER_memb_Ngap_homeENB_ID_constr_3
         0,
         0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_short_macroENB_ID_constr_4
     CC_NOTUSED = {{0, 0}, 18 /* (SIZE(18..18)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_short_macroENB_ID_constr_4
     CC_NOTUSED = {
         {APC_UNCONSTRAINED, -1, -1, 0, 0},
@@ -159,8 +172,13 @@ static asn_per_constraints_t asn_PER_memb_Ngap_short_macroENB_ID_constr_4
         0,
         0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_long_macroENB_ID_constr_5
     CC_NOTUSED = {{0, 0}, 21 /* (SIZE(21..21)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_long_macroENB_ID_constr_5
     CC_NOTUSED = {
         {APC_UNCONSTRAINED, -1, -1, 0, 0},
@@ -168,15 +186,22 @@ static asn_per_constraints_t asn_PER_memb_Ngap_long_macroENB_ID_constr_5
         0,
         0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_type_Ngap_ENB_ID_constr_1 CC_NOTUSED = {
     {0, 0},
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t asn_PER_type_Ngap_ENB_ID_constr_1 CC_NOTUSED = {
     {APC_CONSTRAINED | APC_EXTENSIBLE, 2, 2, 0, 3} /* (0..3,...) */,
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
 asn_TYPE_member_t asn_MBR_Ngap_ENB_ID_1[] = {
     {ATF_NOFLAGS,
      0,
@@ -185,9 +210,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ENB_ID_1[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_BIT_STRING,
      0,
-     {&asn_OER_memb_Ngap_macroENB_ID_constr_2,
-      &asn_PER_memb_Ngap_macroENB_ID_constr_2,
-      memb_Ngap_macroENB_ID_constraint_1},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_macroENB_ID_constr_2,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_macroENB_ID_constr_2,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_macroENB_ID_constraint_1},
      0,
      0, /* No default value */
      "macroENB-ID"},
@@ -198,9 +229,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ENB_ID_1[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_BIT_STRING,
      0,
-     {&asn_OER_memb_Ngap_homeENB_ID_constr_3,
-      &asn_PER_memb_Ngap_homeENB_ID_constr_3,
-      memb_Ngap_homeENB_ID_constraint_1},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_homeENB_ID_constr_3,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_homeENB_ID_constr_3,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_homeENB_ID_constraint_1},
      0,
      0, /* No default value */
      "homeENB-ID"},
@@ -211,9 +248,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ENB_ID_1[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_BIT_STRING,
      0,
-     {&asn_OER_memb_Ngap_short_macroENB_ID_constr_4,
-      &asn_PER_memb_Ngap_short_macroENB_ID_constr_4,
-      memb_Ngap_short_macroENB_ID_constraint_1},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_short_macroENB_ID_constr_4,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_short_macroENB_ID_constr_4,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_short_macroENB_ID_constraint_1},
      0,
      0, /* No default value */
      "short-macroENB-ID"},
@@ -224,9 +267,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ENB_ID_1[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_BIT_STRING,
      0,
-     {&asn_OER_memb_Ngap_long_macroENB_ID_constr_5,
-      &asn_PER_memb_Ngap_long_macroENB_ID_constr_5,
-      memb_Ngap_long_macroENB_ID_constraint_1},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_long_macroENB_ID_constr_5,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_long_macroENB_ID_constr_5,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_long_macroENB_ID_constraint_1},
      0,
      0, /* No default value */
      "long-macroENB-ID"},
@@ -256,8 +305,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ENB_ID = {
     0, /* No effective tags (count) */
     0, /* No tags (pointer) */
     0, /* No tags (count) */
-    {&asn_OER_type_Ngap_ENB_ID_constr_1, &asn_PER_type_Ngap_ENB_ID_constr_1,
-     CHOICE_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ENB_ID_constr_1,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ENB_ID_constr_1,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        CHOICE_constraint},
     asn_MBR_Ngap_ENB_ID_1,
     4,                           /* Elements count */
     &asn_SPC_Ngap_ENB_ID_specs_1 /* Additional specs */

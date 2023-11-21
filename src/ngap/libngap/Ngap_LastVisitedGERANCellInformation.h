@@ -3,7 +3,7 @@
  * From ASN.1 module "NGAP-IEs"
  * 	found in "asn.1/Information Element Definitions.asn1"
  * 	`asn1c -pdu=all -fcompound-names -fno-include-deps -findirect-choice
- * -gen-PER -D src`
+ * -no-gen-example -gen-APER -gen-UPER -no-gen-JER -no-gen-BER -D src`
  */
 
 #ifndef _Ngap_LastVisitedGERANCellInformation_H_
@@ -26,8 +26,6 @@ extern asn_TYPE_descriptor_t asn_DEF_Ngap_LastVisitedGERANCellInformation;
 asn_struct_free_f Ngap_LastVisitedGERANCellInformation_free;
 asn_struct_print_f Ngap_LastVisitedGERANCellInformation_print;
 asn_constr_check_f Ngap_LastVisitedGERANCellInformation_constraint;
-ber_type_decoder_f Ngap_LastVisitedGERANCellInformation_decode_ber;
-der_type_encoder_f Ngap_LastVisitedGERANCellInformation_encode_der;
 xer_type_decoder_f Ngap_LastVisitedGERANCellInformation_decode_xer;
 xer_type_encoder_f Ngap_LastVisitedGERANCellInformation_encode_xer;
 oer_type_decoder_f Ngap_LastVisitedGERANCellInformation_decode_oer;

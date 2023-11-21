@@ -3,7 +3,7 @@
  * From ASN.1 module "NGAP-IEs"
  * 	found in "asn.1/Information Element Definitions.asn1"
  * 	`asn1c -pdu=all -fcompound-names -fno-include-deps -findirect-choice
- * -gen-PER -D src`
+ * -no-gen-example -gen-APER -gen-UPER -no-gen-JER -no-gen-BER -D src`
  */
 
 #include "Ngap_RAN-UE-NGAP-ID.h"
@@ -26,14 +26,19 @@ int Ngap_RAN_UE_NGAP_ID_constraint(
  * This type is implemented using NativeInteger,
  * so here we adjust the DEF accordingly.
  */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_type_Ngap_RAN_UE_NGAP_ID_constr_1
     CC_NOTUSED = {{4, 1} /* (0..4294967295) */, -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t asn_PER_type_Ngap_RAN_UE_NGAP_ID_constr_1 CC_NOTUSED = {
     {APC_CONSTRAINED, 32, -1, 0, 4294967295} /* (0..4294967295) */,
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
 const asn_INTEGER_specifics_t asn_SPC_Ngap_RAN_UE_NGAP_ID_specs_1 = {
     0, 0, 0, 0, 0, 0, /* Native long size */
     1                 /* Unsigned representation */
@@ -50,9 +55,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_RAN_UE_NGAP_ID = {
     asn_DEF_Ngap_RAN_UE_NGAP_ID_tags_1,                /* Same as above */
     sizeof(asn_DEF_Ngap_RAN_UE_NGAP_ID_tags_1) /
         sizeof(asn_DEF_Ngap_RAN_UE_NGAP_ID_tags_1[0]), /* 1 */
-    {&asn_OER_type_Ngap_RAN_UE_NGAP_ID_constr_1,
-     &asn_PER_type_Ngap_RAN_UE_NGAP_ID_constr_1,
-     Ngap_RAN_UE_NGAP_ID_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_RAN_UE_NGAP_ID_constr_1,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_RAN_UE_NGAP_ID_constr_1,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        Ngap_RAN_UE_NGAP_ID_constraint},
     0,
     0,                                   /* No members */
     &asn_SPC_Ngap_RAN_UE_NGAP_ID_specs_1 /* Additional specs */

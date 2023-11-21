@@ -3,7 +3,7 @@
  * From ASN.1 module "NGAP-IEs"
  * 	found in "asn.1/Information Element Definitions.asn1"
  * 	`asn1c -pdu=all -fcompound-names -fno-include-deps -findirect-choice
- * -gen-PER -D src`
+ * -no-gen-example -gen-APER -gen-UPER -no-gen-JER -no-gen-BER -D src`
  */
 
 #ifndef _Ngap_AssociatedQosFlowItem_H_
@@ -47,8 +47,8 @@ typedef struct Ngap_AssociatedQosFlowItem {
 } Ngap_AssociatedQosFlowItem_t;
 
 /* Implementation */
-/* extern asn_TYPE_descriptor_t asn_DEF_Ngap_qosFlowMappingIndication_3;
- * // (Use -fall-defs-global to expose) */
+/* extern asn_TYPE_descriptor_t asn_DEF_Ngap_qosFlowMappingIndication_3;	//
+ * (Use -fall-defs-global to expose) */
 extern asn_TYPE_descriptor_t asn_DEF_Ngap_AssociatedQosFlowItem;
 extern asn_SEQUENCE_specifics_t asn_SPC_Ngap_AssociatedQosFlowItem_specs_1;
 extern asn_TYPE_member_t asn_MBR_Ngap_AssociatedQosFlowItem_1[3];

@@ -3,7 +3,7 @@
  * From ASN.1 module "NGAP-IEs"
  * 	found in "asn.1/Information Element Definitions.asn1"
  * 	`asn1c -pdu=all -fcompound-names -fno-include-deps -findirect-choice
- * -gen-PER -D src`
+ * -no-gen-example -gen-APER -gen-UPER -no-gen-JER -no-gen-BER -D src`
  */
 
 #include "Ngap_ImmediateMDTNr.h"
@@ -26,7 +26,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ImmediateMDTNr_1[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_MeasurementsToActivate,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "measurementsToActivate"},
@@ -37,7 +45,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ImmediateMDTNr_1[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_M1Configuration,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "m1Configuration"},
@@ -48,7 +64,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ImmediateMDTNr_1[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_M4Configuration,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "m4Configuration"},
@@ -59,7 +83,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ImmediateMDTNr_1[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_M5Configuration,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "m5Configuration"},
@@ -70,7 +102,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ImmediateMDTNr_1[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_M6Configuration,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "m6Configuration"},
@@ -81,7 +121,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ImmediateMDTNr_1[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_M7Configuration,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "m7Configuration"},
@@ -92,7 +140,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ImmediateMDTNr_1[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_BluetoothMeasurementConfiguration,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "bluetoothMeasurementConfiguration"},
@@ -103,7 +159,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ImmediateMDTNr_1[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_WLANMeasurementConfiguration,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "wLANMeasurementConfiguration"},
@@ -114,7 +178,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ImmediateMDTNr_1[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_MDT_Location_Info,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "mDT-Location-Info"},
@@ -125,7 +197,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ImmediateMDTNr_1[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_SensorMeasurementConfiguration,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "sensorMeasurementConfiguration"},
@@ -136,7 +216,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ImmediateMDTNr_1[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_ProtocolExtensionContainer_9717P102,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "iE-Extensions"},
@@ -181,7 +269,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ImmediateMDTNr = {
     asn_DEF_Ngap_ImmediateMDTNr_tags_1,                /* Same as above */
     sizeof(asn_DEF_Ngap_ImmediateMDTNr_tags_1) /
         sizeof(asn_DEF_Ngap_ImmediateMDTNr_tags_1[0]), /* 1 */
-    {0, 0, SEQUENCE_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_constraint},
     asn_MBR_Ngap_ImmediateMDTNr_1,
     11,                                  /* Elements count */
     &asn_SPC_Ngap_ImmediateMDTNr_specs_1 /* Additional specs */

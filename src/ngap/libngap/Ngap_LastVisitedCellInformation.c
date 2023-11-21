@@ -3,16 +3,19 @@
  * From ASN.1 module "NGAP-IEs"
  * 	found in "asn.1/Information Element Definitions.asn1"
  * 	`asn1c -pdu=all -fcompound-names -fno-include-deps -findirect-choice
- * -gen-PER -D src`
+ * -no-gen-example -gen-APER -gen-UPER -no-gen-JER -no-gen-BER -D src`
  */
 
 #include "Ngap_LastVisitedCellInformation.h"
 
 #include "Ngap_LastVisitedNGRANCellInformation.h"
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_LastVisitedCellInformation_constr_1 CC_NOTUSED = {
         {0, 0},
         -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t asn_PER_type_Ngap_LastVisitedCellInformation_constr_1
     CC_NOTUSED = {
         {APC_CONSTRAINED | APC_EXTENSIBLE, 2, 2, 0, 3} /* (0..3,...) */,
@@ -20,6 +23,8 @@ asn_per_constraints_t asn_PER_type_Ngap_LastVisitedCellInformation_constr_1
         0,
         0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
 asn_TYPE_member_t asn_MBR_Ngap_LastVisitedCellInformation_1[] = {
     {ATF_POINTER,
      0,
@@ -28,7 +33,15 @@ asn_TYPE_member_t asn_MBR_Ngap_LastVisitedCellInformation_1[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_LastVisitedNGRANCellInformation,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "nGRANCell"},
@@ -39,7 +52,15 @@ asn_TYPE_member_t asn_MBR_Ngap_LastVisitedCellInformation_1[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_LastVisitedEUTRANCellInformation,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "eUTRANCell"},
@@ -50,7 +71,15 @@ asn_TYPE_member_t asn_MBR_Ngap_LastVisitedCellInformation_1[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_LastVisitedUTRANCellInformation,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "uTRANCell"},
@@ -61,7 +90,15 @@ asn_TYPE_member_t asn_MBR_Ngap_LastVisitedCellInformation_1[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_LastVisitedGERANCellInformation,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "gERANCell"},
@@ -92,8 +129,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_LastVisitedCellInformation = {
     0, /* No effective tags (count) */
     0, /* No tags (pointer) */
     0, /* No tags (count) */
-    {&asn_OER_type_Ngap_LastVisitedCellInformation_constr_1,
-     &asn_PER_type_Ngap_LastVisitedCellInformation_constr_1, CHOICE_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_LastVisitedCellInformation_constr_1,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_LastVisitedCellInformation_constr_1,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        CHOICE_constraint},
     asn_MBR_Ngap_LastVisitedCellInformation_1,
     4,                                               /* Elements count */
     &asn_SPC_Ngap_LastVisitedCellInformation_specs_1 /* Additional specs */

@@ -3,7 +3,7 @@
  * From ASN.1 module "NGAP-IEs"
  * 	found in "asn.1/Information Element Definitions.asn1"
  * 	`asn1c -pdu=all -fcompound-names -fno-include-deps -findirect-choice
- * -gen-PER -D src`
+ * -no-gen-example -gen-APER -gen-UPER -no-gen-JER -no-gen-BER -D src`
  */
 
 #include "Ngap_UE-DifferentiationInfo.h"
@@ -40,7 +40,7 @@ static int memb_Ngap_periodicTime_constraint_1(
 
   value = *(const long*) sptr;
 
-  if ((value >= 1 && value <= 3600)) {
+  if ((value >= 1L && value <= 3600L)) {
     /* Constraint check succeeded */
     return 0;
   } else {
@@ -51,10 +51,13 @@ static int memb_Ngap_periodicTime_constraint_1(
   }
 }
 
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_periodicCommunicationIndicator_constr_2 CC_NOTUSED = {
         {0, 0},
         -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t
     asn_PER_type_Ngap_periodicCommunicationIndicator_constr_2 CC_NOTUSED = {
         {APC_CONSTRAINED | APC_EXTENSIBLE, 1, 1, 0, 1} /* (0..1,...) */,
@@ -62,8 +65,13 @@ static asn_per_constraints_t
         0,
         0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_type_Ngap_stationaryIndication_constr_8
     CC_NOTUSED = {{0, 0}, -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_type_Ngap_stationaryIndication_constr_8
     CC_NOTUSED = {
         {APC_CONSTRAINED | APC_EXTENSIBLE, 1, 1, 0, 1} /* (0..1,...) */,
@@ -71,8 +79,13 @@ static asn_per_constraints_t asn_PER_type_Ngap_stationaryIndication_constr_8
         0,
         0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_type_Ngap_trafficProfile_constr_12
     CC_NOTUSED = {{0, 0}, -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_type_Ngap_trafficProfile_constr_12
     CC_NOTUSED = {
         {APC_CONSTRAINED | APC_EXTENSIBLE, 2, 2, 0, 2} /* (0..2,...) */,
@@ -80,8 +93,13 @@ static asn_per_constraints_t asn_PER_type_Ngap_trafficProfile_constr_12
         0,
         0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_type_Ngap_batteryIndication_constr_17
     CC_NOTUSED = {{0, 0}, -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_type_Ngap_batteryIndication_constr_17
     CC_NOTUSED = {
         {APC_CONSTRAINED | APC_EXTENSIBLE, 2, 2, 0, 2} /* (0..2,...) */,
@@ -89,8 +107,13 @@ static asn_per_constraints_t asn_PER_type_Ngap_batteryIndication_constr_17
         0,
         0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_periodicTime_constr_6
     CC_NOTUSED = {{0, 0}, -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_periodicTime_constr_6
     CC_NOTUSED = {
         {APC_CONSTRAINED | APC_EXTENSIBLE, 12, 12, 1, 3600} /* (1..3600,...) */,
@@ -98,6 +121,8 @@ static asn_per_constraints_t asn_PER_memb_Ngap_periodicTime_constr_6
         0,
         0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
 static const asn_INTEGER_enum_map_t
     asn_MAP_Ngap_periodicCommunicationIndicator_value2enum_2[] = {
         {0, 12, "periodically"},
@@ -140,9 +165,15 @@ static /* Use -fall-defs-global to expose */
         sizeof(asn_DEF_Ngap_periodicCommunicationIndicator_tags_2) /
             sizeof(
                 asn_DEF_Ngap_periodicCommunicationIndicator_tags_2[0]), /* 2 */
-        {&asn_OER_type_Ngap_periodicCommunicationIndicator_constr_2,
-         &asn_PER_type_Ngap_periodicCommunicationIndicator_constr_2,
-         NativeEnumerated_constraint},
+        {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+            &asn_OER_type_Ngap_periodicCommunicationIndicator_constr_2,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+            &asn_PER_type_Ngap_periodicCommunicationIndicator_constr_2,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+            NativeEnumerated_constraint},
         0,
         0, /* Defined elsewhere */
         &asn_SPC_Ngap_periodicCommunicationIndicator_specs_2 /* Additional specs
@@ -184,9 +215,15 @@ static /* Use -fall-defs-global to expose */
         asn_DEF_Ngap_stationaryIndication_tags_8, /* Same as above */
         sizeof(asn_DEF_Ngap_stationaryIndication_tags_8) /
             sizeof(asn_DEF_Ngap_stationaryIndication_tags_8[0]), /* 2 */
-        {&asn_OER_type_Ngap_stationaryIndication_constr_8,
-         &asn_PER_type_Ngap_stationaryIndication_constr_8,
-         NativeEnumerated_constraint},
+        {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+            &asn_OER_type_Ngap_stationaryIndication_constr_8,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+            &asn_PER_type_Ngap_stationaryIndication_constr_8,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+            NativeEnumerated_constraint},
         0,
         0,                                         /* Defined elsewhere */
         &asn_SPC_Ngap_stationaryIndication_specs_8 /* Additional specs */
@@ -227,9 +264,15 @@ static /* Use -fall-defs-global to expose */
         asn_DEF_Ngap_trafficProfile_tags_12, /* Same as above */
         sizeof(asn_DEF_Ngap_trafficProfile_tags_12) /
             sizeof(asn_DEF_Ngap_trafficProfile_tags_12[0]), /* 2 */
-        {&asn_OER_type_Ngap_trafficProfile_constr_12,
-         &asn_PER_type_Ngap_trafficProfile_constr_12,
-         NativeEnumerated_constraint},
+        {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+            &asn_OER_type_Ngap_trafficProfile_constr_12,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+            &asn_PER_type_Ngap_trafficProfile_constr_12,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+            NativeEnumerated_constraint},
         0,
         0,                                    /* Defined elsewhere */
         &asn_SPC_Ngap_trafficProfile_specs_12 /* Additional specs */
@@ -271,9 +314,15 @@ static /* Use -fall-defs-global to expose */
         asn_DEF_Ngap_batteryIndication_tags_17, /* Same as above */
         sizeof(asn_DEF_Ngap_batteryIndication_tags_17) /
             sizeof(asn_DEF_Ngap_batteryIndication_tags_17[0]), /* 2 */
-        {&asn_OER_type_Ngap_batteryIndication_constr_17,
-         &asn_PER_type_Ngap_batteryIndication_constr_17,
-         NativeEnumerated_constraint},
+        {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+            &asn_OER_type_Ngap_batteryIndication_constr_17,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+            &asn_PER_type_Ngap_batteryIndication_constr_17,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+            NativeEnumerated_constraint},
         0,
         0,                                       /* Defined elsewhere */
         &asn_SPC_Ngap_batteryIndication_specs_17 /* Additional specs */
@@ -288,7 +337,15 @@ asn_TYPE_member_t asn_MBR_Ngap_UE_DifferentiationInfo_1[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_periodicCommunicationIndicator_2,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "periodicCommunicationIndicator"},
@@ -299,9 +356,15 @@ asn_TYPE_member_t asn_MBR_Ngap_UE_DifferentiationInfo_1[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_NativeInteger,
      0,
-     {&asn_OER_memb_Ngap_periodicTime_constr_6,
-      &asn_PER_memb_Ngap_periodicTime_constr_6,
-      memb_Ngap_periodicTime_constraint_1},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_periodicTime_constr_6,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_periodicTime_constr_6,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_periodicTime_constraint_1},
      0,
      0, /* No default value */
      "periodicTime"},
@@ -312,7 +375,15 @@ asn_TYPE_member_t asn_MBR_Ngap_UE_DifferentiationInfo_1[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_ScheduledCommunicationTime,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "scheduledCommunicationTime"},
@@ -323,7 +394,15 @@ asn_TYPE_member_t asn_MBR_Ngap_UE_DifferentiationInfo_1[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_stationaryIndication_8,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "stationaryIndication"},
@@ -334,7 +413,15 @@ asn_TYPE_member_t asn_MBR_Ngap_UE_DifferentiationInfo_1[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_trafficProfile_12,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "trafficProfile"},
@@ -345,7 +432,15 @@ asn_TYPE_member_t asn_MBR_Ngap_UE_DifferentiationInfo_1[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_batteryIndication_17,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "batteryIndication"},
@@ -356,7 +451,15 @@ asn_TYPE_member_t asn_MBR_Ngap_UE_DifferentiationInfo_1[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_ProtocolExtensionContainer_9717P269,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "iE-Extensions"},
@@ -398,7 +501,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_UE_DifferentiationInfo = {
     asn_DEF_Ngap_UE_DifferentiationInfo_tags_1, /* Same as above */
     sizeof(asn_DEF_Ngap_UE_DifferentiationInfo_tags_1) /
         sizeof(asn_DEF_Ngap_UE_DifferentiationInfo_tags_1[0]), /* 1 */
-    {0, 0, SEQUENCE_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_constraint},
     asn_MBR_Ngap_UE_DifferentiationInfo_1,
     7,                                           /* Elements count */
     &asn_SPC_Ngap_UE_DifferentiationInfo_specs_1 /* Additional specs */

@@ -3,7 +3,7 @@
  * From ASN.1 module "NGAP-IEs"
  * 	found in "asn.1/Information Element Definitions.asn1"
  * 	`asn1c -pdu=all -fcompound-names -fno-include-deps -findirect-choice
- * -gen-PER -D src`
+ * -no-gen-example -gen-APER -gen-UPER -no-gen-JER -no-gen-BER -D src`
  */
 
 #include "Ngap_SourceNGRANNode-ToTargetNGRANNode-TransparentContainer.h"
@@ -22,7 +22,15 @@ static asn_TYPE_member_t
          -1, /* IMPLICIT tag at current level */
          &asn_DEF_Ngap_RRCContainer,
          0,
-         {0, 0, 0},
+         {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+             0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+             0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+             0},
          0,
          0, /* No default value */
          "rRCContainer"},
@@ -35,7 +43,15 @@ static asn_TYPE_member_t
          -1, /* IMPLICIT tag at current level */
          &asn_DEF_Ngap_PDUSessionResourceInformationList,
          0,
-         {0, 0, 0},
+         {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+             0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+             0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+             0},
          0,
          0, /* No default value */
          "pDUSessionResourceInformationList"},
@@ -48,7 +64,15 @@ static asn_TYPE_member_t
          -1, /* IMPLICIT tag at current level */
          &asn_DEF_Ngap_E_RABInformationList,
          0,
-         {0, 0, 0},
+         {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+             0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+             0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+             0},
          0,
          0, /* No default value */
          "e-RABInformationList"},
@@ -61,7 +85,15 @@ static asn_TYPE_member_t
          +1, /* EXPLICIT tag at current level */
          &asn_DEF_Ngap_NGRAN_CGI,
          0,
-         {0, 0, 0},
+         {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+             0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+             0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+             0},
          0,
          0, /* No default value */
          "targetCell-ID"},
@@ -74,7 +106,15 @@ static asn_TYPE_member_t
          -1, /* IMPLICIT tag at current level */
          &asn_DEF_Ngap_IndexToRFSP,
          0,
-         {0, 0, 0},
+         {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+             0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+             0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+             0},
          0,
          0, /* No default value */
          "indexToRFSP"},
@@ -87,7 +127,15 @@ static asn_TYPE_member_t
          -1, /* IMPLICIT tag at current level */
          &asn_DEF_Ngap_UEHistoryInformation,
          0,
-         {0, 0, 0},
+         {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+             0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+             0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+             0},
          0,
          0, /* No default value */
          "uEHistoryInformation"},
@@ -100,7 +148,15 @@ static asn_TYPE_member_t
          -1, /* IMPLICIT tag at current level */
          &asn_DEF_Ngap_ProtocolExtensionContainer_9717P241,
          0,
-         {0, 0, 0},
+         {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+             0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+             0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+             0},
          0,
          0, /* No default value */
          "iE-Extensions"},
@@ -155,7 +211,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_SourceNGRANNode_ToTargetNGRANNode_Transparent
         sizeof(
             asn_DEF_Ngap_SourceNGRANNode_ToTargetNGRANNode_TransparentContainer_tags_1
                 [0]), /* 1 */
-    {0, 0, SEQUENCE_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_constraint},
     asn_MBR_Ngap_SourceNGRANNode_ToTargetNGRANNode_TransparentContainer_1,
     7, /* Elements count */
     &asn_SPC_Ngap_SourceNGRANNode_ToTargetNGRANNode_TransparentContainer_specs_1 /* Additional specs */

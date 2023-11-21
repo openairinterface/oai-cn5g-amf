@@ -3,7 +3,7 @@
  * From ASN.1 module "NGAP-IEs"
  * 	found in "asn.1/Information Element Definitions.asn1"
  * 	`asn1c -pdu=all -fcompound-names -fno-include-deps -findirect-choice
- * -gen-PER -D src`
+ * -no-gen-example -gen-APER -gen-UPER -no-gen-JER -no-gen-BER -D src`
  */
 
 #include "Ngap_WLANMeasurementConfiguration.h"
@@ -18,24 +18,34 @@
  * This type is implemented using NativeEnumerated,
  * so here we adjust the DEF accordingly.
  */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_type_Ngap_wlan_rssi_constr_4 CC_NOTUSED = {
     {0, 0},
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_type_Ngap_wlan_rssi_constr_4 CC_NOTUSED = {
     {APC_CONSTRAINED | APC_EXTENSIBLE, 0, 0, 0, 0} /* (0..0,...) */,
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_type_Ngap_wlan_rtt_constr_7 CC_NOTUSED = {
     {0, 0},
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_type_Ngap_wlan_rtt_constr_7 CC_NOTUSED = {
     {APC_CONSTRAINED | APC_EXTENSIBLE, 0, 0, 0, 0} /* (0..0,...) */,
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
 static const asn_INTEGER_enum_map_t asn_MAP_Ngap_wlan_rssi_value2enum_4[] = {
     {0, 4, "true"}
     /* This list is extensible */
@@ -66,8 +76,15 @@ static /* Use -fall-defs-global to expose */
         asn_DEF_Ngap_wlan_rssi_tags_4, /* Same as above */
         sizeof(asn_DEF_Ngap_wlan_rssi_tags_4) /
             sizeof(asn_DEF_Ngap_wlan_rssi_tags_4[0]), /* 2 */
-        {&asn_OER_type_Ngap_wlan_rssi_constr_4,
-         &asn_PER_type_Ngap_wlan_rssi_constr_4, NativeEnumerated_constraint},
+        {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+            &asn_OER_type_Ngap_wlan_rssi_constr_4,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+            &asn_PER_type_Ngap_wlan_rssi_constr_4,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+            NativeEnumerated_constraint},
         0,
         0,                              /* Defined elsewhere */
         &asn_SPC_Ngap_wlan_rssi_specs_4 /* Additional specs */
@@ -103,8 +120,15 @@ static /* Use -fall-defs-global to expose */
         asn_DEF_Ngap_wlan_rtt_tags_7, /* Same as above */
         sizeof(asn_DEF_Ngap_wlan_rtt_tags_7) /
             sizeof(asn_DEF_Ngap_wlan_rtt_tags_7[0]), /* 2 */
-        {&asn_OER_type_Ngap_wlan_rtt_constr_7,
-         &asn_PER_type_Ngap_wlan_rtt_constr_7, NativeEnumerated_constraint},
+        {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+            &asn_OER_type_Ngap_wlan_rtt_constr_7,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+            &asn_PER_type_Ngap_wlan_rtt_constr_7,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+            NativeEnumerated_constraint},
         0,
         0,                             /* Defined elsewhere */
         &asn_SPC_Ngap_wlan_rtt_specs_7 /* Additional specs */
@@ -118,7 +142,15 @@ asn_TYPE_member_t asn_MBR_Ngap_WLANMeasurementConfiguration_1[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_WLANMeasConfig,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "wlanMeasConfig"},
@@ -129,7 +161,15 @@ asn_TYPE_member_t asn_MBR_Ngap_WLANMeasurementConfiguration_1[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_WLANMeasConfigNameList,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "wlanMeasConfigNameList"},
@@ -140,7 +180,15 @@ asn_TYPE_member_t asn_MBR_Ngap_WLANMeasurementConfiguration_1[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_wlan_rssi_4,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "wlan-rssi"},
@@ -151,7 +199,15 @@ asn_TYPE_member_t asn_MBR_Ngap_WLANMeasurementConfiguration_1[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_wlan_rtt_7,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "wlan-rtt"},
@@ -162,7 +218,15 @@ asn_TYPE_member_t asn_MBR_Ngap_WLANMeasurementConfiguration_1[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_ProtocolExtensionContainer_9717P286,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "iE-Extensions"},
@@ -200,7 +264,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_WLANMeasurementConfiguration = {
     asn_DEF_Ngap_WLANMeasurementConfiguration_tags_1, /* Same as above */
     sizeof(asn_DEF_Ngap_WLANMeasurementConfiguration_tags_1) /
         sizeof(asn_DEF_Ngap_WLANMeasurementConfiguration_tags_1[0]), /* 1 */
-    {0, 0, SEQUENCE_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_constraint},
     asn_MBR_Ngap_WLANMeasurementConfiguration_1,
     5,                                                 /* Elements count */
     &asn_SPC_Ngap_WLANMeasurementConfiguration_specs_1 /* Additional specs */

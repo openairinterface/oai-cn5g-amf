@@ -3,7 +3,7 @@
  * From ASN.1 module "NGAP-IEs"
  * 	found in "asn.1/Information Element Definitions.asn1"
  * 	`asn1c -pdu=all -fcompound-names -fno-include-deps -findirect-choice
- * -gen-PER -D src`
+ * -no-gen-example -gen-APER -gen-UPER -no-gen-JER -no-gen-BER -D src`
  */
 
 #include "Ngap_PDUSessionUsageReport.h"
@@ -13,15 +13,20 @@
  * This type is implemented using NativeEnumerated,
  * so here we adjust the DEF accordingly.
  */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_type_Ngap_rATType_constr_2 CC_NOTUSED = {
     {0, 0},
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_type_Ngap_rATType_constr_2 CC_NOTUSED = {
     {APC_CONSTRAINED | APC_EXTENSIBLE, 1, 1, 0, 1} /* (0..1,...) */,
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
 static const asn_INTEGER_enum_map_t asn_MAP_Ngap_rATType_value2enum_2[] = {
     {0, 2, "nr"},
     {1, 5, "eutra"},
@@ -58,8 +63,15 @@ static /* Use -fall-defs-global to expose */
         asn_DEF_Ngap_rATType_tags_2, /* Same as above */
         sizeof(asn_DEF_Ngap_rATType_tags_2) /
             sizeof(asn_DEF_Ngap_rATType_tags_2[0]), /* 2 */
-        {&asn_OER_type_Ngap_rATType_constr_2,
-         &asn_PER_type_Ngap_rATType_constr_2, NativeEnumerated_constraint},
+        {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+            &asn_OER_type_Ngap_rATType_constr_2,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+            &asn_PER_type_Ngap_rATType_constr_2,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+            NativeEnumerated_constraint},
         0,
         0,                            /* Defined elsewhere */
         &asn_SPC_Ngap_rATType_specs_2 /* Additional specs */
@@ -73,7 +85,15 @@ asn_TYPE_member_t asn_MBR_Ngap_PDUSessionUsageReport_1[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_rATType_2,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "rATType"},
@@ -84,7 +104,15 @@ asn_TYPE_member_t asn_MBR_Ngap_PDUSessionUsageReport_1[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_VolumeTimedReportList,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "pDUSessionTimedReportList"},
@@ -95,7 +123,15 @@ asn_TYPE_member_t asn_MBR_Ngap_PDUSessionUsageReport_1[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_ProtocolExtensionContainer_9717P197,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "iE-Extensions"},
@@ -130,7 +166,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_PDUSessionUsageReport = {
     asn_DEF_Ngap_PDUSessionUsageReport_tags_1, /* Same as above */
     sizeof(asn_DEF_Ngap_PDUSessionUsageReport_tags_1) /
         sizeof(asn_DEF_Ngap_PDUSessionUsageReport_tags_1[0]), /* 1 */
-    {0, 0, SEQUENCE_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_constraint},
     asn_MBR_Ngap_PDUSessionUsageReport_1,
     3,                                          /* Elements count */
     &asn_SPC_Ngap_PDUSessionUsageReport_specs_1 /* Additional specs */

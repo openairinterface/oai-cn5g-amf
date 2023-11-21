@@ -3,7 +3,7 @@
  * From ASN.1 module "NGAP-Containers"
  * 	found in "asn.1/Information Element Definitions.asn1"
  * 	`asn1c -pdu=all -fcompound-names -fno-include-deps -findirect-choice
- * -gen-PER -D src`
+ * -no-gen-example -gen-APER -gen-UPER -no-gen-JER -no-gen-BER -D src`
  */
 
 #include "Ngap_ProtocolIE-Field.h"
@@ -6224,7 +6224,7 @@ static int memb_Ngap_id_constraint_1(
 
   value = *(const long*) sptr;
 
-  if ((value >= 0 && value <= 65535)) {
+  if ((value >= 0L && value <= 65535L)) {
     /* Constraint check succeeded */
     return 0;
   } else {
@@ -6351,7 +6351,7 @@ static int memb_Ngap_id_constraint_5(
 
   value = *(const long*) sptr;
 
-  if ((value >= 0 && value <= 65535)) {
+  if ((value >= 0L && value <= 65535L)) {
     /* Constraint check succeeded */
     return 0;
   } else {
@@ -6478,7 +6478,7 @@ static int memb_Ngap_id_constraint_9(
 
   value = *(const long*) sptr;
 
-  if ((value >= 0 && value <= 65535)) {
+  if ((value >= 0L && value <= 65535L)) {
     /* Constraint check succeeded */
     return 0;
   } else {
@@ -6605,7 +6605,7 @@ static int memb_Ngap_id_constraint_13(
 
   value = *(const long*) sptr;
 
-  if ((value >= 0 && value <= 65535)) {
+  if ((value >= 0L && value <= 65535L)) {
     /* Constraint check succeeded */
     return 0;
   } else {
@@ -6732,7 +6732,7 @@ static int memb_Ngap_id_constraint_17(
 
   value = *(const long*) sptr;
 
-  if ((value >= 0 && value <= 65535)) {
+  if ((value >= 0L && value <= 65535L)) {
     /* Constraint check succeeded */
     return 0;
   } else {
@@ -6859,7 +6859,7 @@ static int memb_Ngap_id_constraint_21(
 
   value = *(const long*) sptr;
 
-  if ((value >= 0 && value <= 65535)) {
+  if ((value >= 0L && value <= 65535L)) {
     /* Constraint check succeeded */
     return 0;
   } else {
@@ -6986,7 +6986,7 @@ static int memb_Ngap_id_constraint_25(
 
   value = *(const long*) sptr;
 
-  if ((value >= 0 && value <= 65535)) {
+  if ((value >= 0L && value <= 65535L)) {
     /* Constraint check succeeded */
     return 0;
   } else {
@@ -7111,7 +7111,7 @@ static int memb_Ngap_id_constraint_29(
 
   value = *(const long*) sptr;
 
-  if ((value >= 0 && value <= 65535)) {
+  if ((value >= 0L && value <= 65535L)) {
     /* Constraint check succeeded */
     return 0;
   } else {
@@ -7238,7 +7238,7 @@ static int memb_Ngap_id_constraint_33(
 
   value = *(const long*) sptr;
 
-  if ((value >= 0 && value <= 65535)) {
+  if ((value >= 0L && value <= 65535L)) {
     /* Constraint check succeeded */
     return 0;
   } else {
@@ -7365,7 +7365,7 @@ static int memb_Ngap_id_constraint_37(
 
   value = *(const long*) sptr;
 
-  if ((value >= 0 && value <= 65535)) {
+  if ((value >= 0L && value <= 65535L)) {
     /* Constraint check succeeded */
     return 0;
   } else {
@@ -7490,7 +7490,7 @@ static int memb_Ngap_id_constraint_41(
 
   value = *(const long*) sptr;
 
-  if ((value >= 0 && value <= 65535)) {
+  if ((value >= 0L && value <= 65535L)) {
     /* Constraint check succeeded */
     return 0;
   } else {
@@ -7615,7 +7615,7 @@ static int memb_Ngap_id_constraint_45(
 
   value = *(const long*) sptr;
 
-  if ((value >= 0 && value <= 65535)) {
+  if ((value >= 0L && value <= 65535L)) {
     /* Constraint check succeeded */
     return 0;
   } else {
@@ -7740,7 +7740,7 @@ static int memb_Ngap_id_constraint_49(
 
   value = *(const long*) sptr;
 
-  if ((value >= 0 && value <= 65535)) {
+  if ((value >= 0L && value <= 65535L)) {
     /* Constraint check succeeded */
     return 0;
   } else {
@@ -7865,7 +7865,7 @@ static int memb_Ngap_id_constraint_53(
 
   value = *(const long*) sptr;
 
-  if ((value >= 0 && value <= 65535)) {
+  if ((value >= 0L && value <= 65535L)) {
     /* Constraint check succeeded */
     return 0;
   } else {
@@ -7990,7 +7990,7 @@ static int memb_Ngap_id_constraint_57(
 
   value = *(const long*) sptr;
 
-  if ((value >= 0 && value <= 65535)) {
+  if ((value >= 0L && value <= 65535L)) {
     /* Constraint check succeeded */
     return 0;
   } else {
@@ -8115,7 +8115,7 @@ static int memb_Ngap_id_constraint_61(
 
   value = *(const long*) sptr;
 
-  if ((value >= 0 && value <= 65535)) {
+  if ((value >= 0L && value <= 65535L)) {
     /* Constraint check succeeded */
     return 0;
   } else {
@@ -8240,7 +8240,7 @@ static int memb_Ngap_id_constraint_65(
 
   value = *(const long*) sptr;
 
-  if ((value >= 0 && value <= 65535)) {
+  if ((value >= 0L && value <= 65535L)) {
     /* Constraint check succeeded */
     return 0;
   } else {
@@ -8365,7 +8365,7 @@ static int memb_Ngap_id_constraint_69(
 
   value = *(const long*) sptr;
 
-  if ((value >= 0 && value <= 65535)) {
+  if ((value >= 0L && value <= 65535L)) {
     /* Constraint check succeeded */
     return 0;
   } else {
@@ -8490,7 +8490,7 @@ static int memb_Ngap_id_constraint_73(
 
   value = *(const long*) sptr;
 
-  if ((value >= 0 && value <= 65535)) {
+  if ((value >= 0L && value <= 65535L)) {
     /* Constraint check succeeded */
     return 0;
   } else {
@@ -8615,7 +8615,7 @@ static int memb_Ngap_id_constraint_77(
 
   value = *(const long*) sptr;
 
-  if ((value >= 0 && value <= 65535)) {
+  if ((value >= 0L && value <= 65535L)) {
     /* Constraint check succeeded */
     return 0;
   } else {
@@ -8740,7 +8740,7 @@ static int memb_Ngap_id_constraint_81(
 
   value = *(const long*) sptr;
 
-  if ((value >= 0 && value <= 65535)) {
+  if ((value >= 0L && value <= 65535L)) {
     /* Constraint check succeeded */
     return 0;
   } else {
@@ -8865,7 +8865,7 @@ static int memb_Ngap_id_constraint_85(
 
   value = *(const long*) sptr;
 
-  if ((value >= 0 && value <= 65535)) {
+  if ((value >= 0L && value <= 65535L)) {
     /* Constraint check succeeded */
     return 0;
   } else {
@@ -8990,7 +8990,7 @@ static int memb_Ngap_id_constraint_89(
 
   value = *(const long*) sptr;
 
-  if ((value >= 0 && value <= 65535)) {
+  if ((value >= 0L && value <= 65535L)) {
     /* Constraint check succeeded */
     return 0;
   } else {
@@ -9115,7 +9115,7 @@ static int memb_Ngap_id_constraint_93(
 
   value = *(const long*) sptr;
 
-  if ((value >= 0 && value <= 65535)) {
+  if ((value >= 0L && value <= 65535L)) {
     /* Constraint check succeeded */
     return 0;
   } else {
@@ -9240,7 +9240,7 @@ static int memb_Ngap_id_constraint_97(
 
   value = *(const long*) sptr;
 
-  if ((value >= 0 && value <= 65535)) {
+  if ((value >= 0L && value <= 65535L)) {
     /* Constraint check succeeded */
     return 0;
   } else {
@@ -9365,7 +9365,7 @@ static int memb_Ngap_id_constraint_101(
 
   value = *(const long*) sptr;
 
-  if ((value >= 0 && value <= 65535)) {
+  if ((value >= 0L && value <= 65535L)) {
     /* Constraint check succeeded */
     return 0;
   } else {
@@ -9490,7 +9490,7 @@ static int memb_Ngap_id_constraint_105(
 
   value = *(const long*) sptr;
 
-  if ((value >= 0 && value <= 65535)) {
+  if ((value >= 0L && value <= 65535L)) {
     /* Constraint check succeeded */
     return 0;
   } else {
@@ -9615,7 +9615,7 @@ static int memb_Ngap_id_constraint_109(
 
   value = *(const long*) sptr;
 
-  if ((value >= 0 && value <= 65535)) {
+  if ((value >= 0L && value <= 65535L)) {
     /* Constraint check succeeded */
     return 0;
   } else {
@@ -9740,7 +9740,7 @@ static int memb_Ngap_id_constraint_113(
 
   value = *(const long*) sptr;
 
-  if ((value >= 0 && value <= 65535)) {
+  if ((value >= 0L && value <= 65535L)) {
     /* Constraint check succeeded */
     return 0;
   } else {
@@ -9864,7 +9864,7 @@ static int memb_Ngap_id_constraint_117(
 
   value = *(const long*) sptr;
 
-  if ((value >= 0 && value <= 65535)) {
+  if ((value >= 0L && value <= 65535L)) {
     /* Constraint check succeeded */
     return 0;
   } else {
@@ -9988,7 +9988,7 @@ static int memb_Ngap_id_constraint_121(
 
   value = *(const long*) sptr;
 
-  if ((value >= 0 && value <= 65535)) {
+  if ((value >= 0L && value <= 65535L)) {
     /* Constraint check succeeded */
     return 0;
   } else {
@@ -10113,7 +10113,7 @@ static int memb_Ngap_id_constraint_125(
 
   value = *(const long*) sptr;
 
-  if ((value >= 0 && value <= 65535)) {
+  if ((value >= 0L && value <= 65535L)) {
     /* Constraint check succeeded */
     return 0;
   } else {
@@ -10237,7 +10237,7 @@ static int memb_Ngap_id_constraint_129(
 
   value = *(const long*) sptr;
 
-  if ((value >= 0 && value <= 65535)) {
+  if ((value >= 0L && value <= 65535L)) {
     /* Constraint check succeeded */
     return 0;
   } else {
@@ -10362,7 +10362,7 @@ static int memb_Ngap_id_constraint_133(
 
   value = *(const long*) sptr;
 
-  if ((value >= 0 && value <= 65535)) {
+  if ((value >= 0L && value <= 65535L)) {
     /* Constraint check succeeded */
     return 0;
   } else {
@@ -10486,7 +10486,7 @@ static int memb_Ngap_id_constraint_137(
 
   value = *(const long*) sptr;
 
-  if ((value >= 0 && value <= 65535)) {
+  if ((value >= 0L && value <= 65535L)) {
     /* Constraint check succeeded */
     return 0;
   } else {
@@ -10610,7 +10610,7 @@ static int memb_Ngap_id_constraint_141(
 
   value = *(const long*) sptr;
 
-  if ((value >= 0 && value <= 65535)) {
+  if ((value >= 0L && value <= 65535L)) {
     /* Constraint check succeeded */
     return 0;
   } else {
@@ -10734,7 +10734,7 @@ static int memb_Ngap_id_constraint_145(
 
   value = *(const long*) sptr;
 
-  if ((value >= 0 && value <= 65535)) {
+  if ((value >= 0L && value <= 65535L)) {
     /* Constraint check succeeded */
     return 0;
   } else {
@@ -10859,7 +10859,7 @@ static int memb_Ngap_id_constraint_149(
 
   value = *(const long*) sptr;
 
-  if ((value >= 0 && value <= 65535)) {
+  if ((value >= 0L && value <= 65535L)) {
     /* Constraint check succeeded */
     return 0;
   } else {
@@ -10984,7 +10984,7 @@ static int memb_Ngap_id_constraint_153(
 
   value = *(const long*) sptr;
 
-  if ((value >= 0 && value <= 65535)) {
+  if ((value >= 0L && value <= 65535L)) {
     /* Constraint check succeeded */
     return 0;
   } else {
@@ -11108,7 +11108,7 @@ static int memb_Ngap_id_constraint_157(
 
   value = *(const long*) sptr;
 
-  if ((value >= 0 && value <= 65535)) {
+  if ((value >= 0L && value <= 65535L)) {
     /* Constraint check succeeded */
     return 0;
   } else {
@@ -11233,7 +11233,7 @@ static int memb_Ngap_id_constraint_161(
 
   value = *(const long*) sptr;
 
-  if ((value >= 0 && value <= 65535)) {
+  if ((value >= 0L && value <= 65535L)) {
     /* Constraint check succeeded */
     return 0;
   } else {
@@ -11357,7 +11357,7 @@ static int memb_Ngap_id_constraint_165(
 
   value = *(const long*) sptr;
 
-  if ((value >= 0 && value <= 65535)) {
+  if ((value >= 0L && value <= 65535L)) {
     /* Constraint check succeeded */
     return 0;
   } else {
@@ -11482,7 +11482,7 @@ static int memb_Ngap_id_constraint_169(
 
   value = *(const long*) sptr;
 
-  if ((value >= 0 && value <= 65535)) {
+  if ((value >= 0L && value <= 65535L)) {
     /* Constraint check succeeded */
     return 0;
   } else {
@@ -11609,7 +11609,7 @@ static int memb_Ngap_id_constraint_173(
 
   value = *(const long*) sptr;
 
-  if ((value >= 0 && value <= 65535)) {
+  if ((value >= 0L && value <= 65535L)) {
     /* Constraint check succeeded */
     return 0;
   } else {
@@ -11734,7 +11734,7 @@ static int memb_Ngap_id_constraint_177(
 
   value = *(const long*) sptr;
 
-  if ((value >= 0 && value <= 65535)) {
+  if ((value >= 0L && value <= 65535L)) {
     /* Constraint check succeeded */
     return 0;
   } else {
@@ -11859,7 +11859,7 @@ static int memb_Ngap_id_constraint_181(
 
   value = *(const long*) sptr;
 
-  if ((value >= 0 && value <= 65535)) {
+  if ((value >= 0L && value <= 65535L)) {
     /* Constraint check succeeded */
     return 0;
   } else {
@@ -11982,7 +11982,7 @@ static int memb_Ngap_id_constraint_185(
 
   value = *(const long*) sptr;
 
-  if ((value >= 0 && value <= 65535)) {
+  if ((value >= 0L && value <= 65535L)) {
     /* Constraint check succeeded */
     return 0;
   } else {
@@ -12106,7 +12106,7 @@ static int memb_Ngap_id_constraint_189(
 
   value = *(const long*) sptr;
 
-  if ((value >= 0 && value <= 65535)) {
+  if ((value >= 0L && value <= 65535L)) {
     /* Constraint check succeeded */
     return 0;
   } else {
@@ -12231,7 +12231,7 @@ static int memb_Ngap_id_constraint_193(
 
   value = *(const long*) sptr;
 
-  if ((value >= 0 && value <= 65535)) {
+  if ((value >= 0L && value <= 65535L)) {
     /* Constraint check succeeded */
     return 0;
   } else {
@@ -12355,7 +12355,7 @@ static int memb_Ngap_id_constraint_197(
 
   value = *(const long*) sptr;
 
-  if ((value >= 0 && value <= 65535)) {
+  if ((value >= 0L && value <= 65535L)) {
     /* Constraint check succeeded */
     return 0;
   } else {
@@ -12480,7 +12480,7 @@ static int memb_Ngap_id_constraint_201(
 
   value = *(const long*) sptr;
 
-  if ((value >= 0 && value <= 65535)) {
+  if ((value >= 0L && value <= 65535L)) {
     /* Constraint check succeeded */
     return 0;
   } else {
@@ -12604,7 +12604,7 @@ static int memb_Ngap_id_constraint_205(
 
   value = *(const long*) sptr;
 
-  if ((value >= 0 && value <= 65535)) {
+  if ((value >= 0L && value <= 65535L)) {
     /* Constraint check succeeded */
     return 0;
   } else {
@@ -12728,7 +12728,7 @@ static int memb_Ngap_id_constraint_209(
 
   value = *(const long*) sptr;
 
-  if ((value >= 0 && value <= 65535)) {
+  if ((value >= 0L && value <= 65535L)) {
     /* Constraint check succeeded */
     return 0;
   } else {
@@ -12852,7 +12852,7 @@ static int memb_Ngap_id_constraint_213(
 
   value = *(const long*) sptr;
 
-  if ((value >= 0 && value <= 65535)) {
+  if ((value >= 0L && value <= 65535L)) {
     /* Constraint check succeeded */
     return 0;
   } else {
@@ -12976,7 +12976,7 @@ static int memb_Ngap_id_constraint_217(
 
   value = *(const long*) sptr;
 
-  if ((value >= 0 && value <= 65535)) {
+  if ((value >= 0L && value <= 65535L)) {
     /* Constraint check succeeded */
     return 0;
   } else {
@@ -13101,7 +13101,7 @@ static int memb_Ngap_id_constraint_221(
 
   value = *(const long*) sptr;
 
-  if ((value >= 0 && value <= 65535)) {
+  if ((value >= 0L && value <= 65535L)) {
     /* Constraint check succeeded */
     return 0;
   } else {
@@ -13228,7 +13228,7 @@ static int memb_Ngap_id_constraint_225(
 
   value = *(const long*) sptr;
 
-  if ((value >= 0 && value <= 65535)) {
+  if ((value >= 0L && value <= 65535L)) {
     /* Constraint check succeeded */
     return 0;
   } else {
@@ -13353,7 +13353,7 @@ static int memb_Ngap_id_constraint_229(
 
   value = *(const long*) sptr;
 
-  if ((value >= 0 && value <= 65535)) {
+  if ((value >= 0L && value <= 65535L)) {
     /* Constraint check succeeded */
     return 0;
   } else {
@@ -13478,7 +13478,7 @@ static int memb_Ngap_id_constraint_233(
 
   value = *(const long*) sptr;
 
-  if ((value >= 0 && value <= 65535)) {
+  if ((value >= 0L && value <= 65535L)) {
     /* Constraint check succeeded */
     return 0;
   } else {
@@ -13605,7 +13605,7 @@ static int memb_Ngap_id_constraint_237(
 
   value = *(const long*) sptr;
 
-  if ((value >= 0 && value <= 65535)) {
+  if ((value >= 0L && value <= 65535L)) {
     /* Constraint check succeeded */
     return 0;
   } else {
@@ -13730,7 +13730,7 @@ static int memb_Ngap_id_constraint_241(
 
   value = *(const long*) sptr;
 
-  if ((value >= 0 && value <= 65535)) {
+  if ((value >= 0L && value <= 65535L)) {
     /* Constraint check succeeded */
     return 0;
   } else {
@@ -13854,7 +13854,7 @@ static int memb_Ngap_id_constraint_245(
 
   value = *(const long*) sptr;
 
-  if ((value >= 0 && value <= 65535)) {
+  if ((value >= 0L && value <= 65535L)) {
     /* Constraint check succeeded */
     return 0;
   } else {
@@ -13977,7 +13977,7 @@ static int memb_Ngap_id_constraint_249(
 
   value = *(const long*) sptr;
 
-  if ((value >= 0 && value <= 65535)) {
+  if ((value >= 0L && value <= 65535L)) {
     /* Constraint check succeeded */
     return 0;
   } else {
@@ -14101,7 +14101,7 @@ static int memb_Ngap_id_constraint_253(
 
   value = *(const long*) sptr;
 
-  if ((value >= 0 && value <= 65535)) {
+  if ((value >= 0L && value <= 65535L)) {
     /* Constraint check succeeded */
     return 0;
   } else {
@@ -14225,7 +14225,7 @@ static int memb_Ngap_id_constraint_257(
 
   value = *(const long*) sptr;
 
-  if ((value >= 0 && value <= 65535)) {
+  if ((value >= 0L && value <= 65535L)) {
     /* Constraint check succeeded */
     return 0;
   } else {
@@ -14348,7 +14348,7 @@ static int memb_Ngap_id_constraint_261(
 
   value = *(const long*) sptr;
 
-  if ((value >= 0 && value <= 65535)) {
+  if ((value >= 0L && value <= 65535L)) {
     /* Constraint check succeeded */
     return 0;
   } else {
@@ -14409,7 +14409,7 @@ static int memb_Ngap_id_constraint_265(
 
   value = *(const long*) sptr;
 
-  if ((value >= 0 && value <= 65535)) {
+  if ((value >= 0L && value <= 65535L)) {
     /* Constraint check succeeded */
     return 0;
   } else {
@@ -14536,7 +14536,7 @@ static int memb_Ngap_id_constraint_269(
 
   value = *(const long*) sptr;
 
-  if ((value >= 0 && value <= 65535)) {
+  if ((value >= 0L && value <= 65535L)) {
     /* Constraint check succeeded */
     return 0;
   } else {
@@ -14663,7 +14663,7 @@ static int memb_Ngap_id_constraint_273(
 
   value = *(const long*) sptr;
 
-  if ((value >= 0 && value <= 65535)) {
+  if ((value >= 0L && value <= 65535L)) {
     /* Constraint check succeeded */
     return 0;
   } else {
@@ -14788,7 +14788,7 @@ static int memb_Ngap_id_constraint_277(
 
   value = *(const long*) sptr;
 
-  if ((value >= 0 && value <= 65535)) {
+  if ((value >= 0L && value <= 65535L)) {
     /* Constraint check succeeded */
     return 0;
   } else {
@@ -14913,7 +14913,7 @@ static int memb_Ngap_id_constraint_281(
 
   value = *(const long*) sptr;
 
-  if ((value >= 0 && value <= 65535)) {
+  if ((value >= 0L && value <= 65535L)) {
     /* Constraint check succeeded */
     return 0;
   } else {
@@ -15037,7 +15037,7 @@ static int memb_Ngap_id_constraint_285(
 
   value = *(const long*) sptr;
 
-  if ((value >= 0 && value <= 65535)) {
+  if ((value >= 0L && value <= 65535L)) {
     /* Constraint check succeeded */
     return 0;
   } else {
@@ -15161,7 +15161,7 @@ static int memb_Ngap_id_constraint_289(
 
   value = *(const long*) sptr;
 
-  if ((value >= 0 && value <= 65535)) {
+  if ((value >= 0L && value <= 65535L)) {
     /* Constraint check succeeded */
     return 0;
   } else {
@@ -15286,7 +15286,7 @@ static int memb_Ngap_id_constraint_293(
 
   value = *(const long*) sptr;
 
-  if ((value >= 0 && value <= 65535)) {
+  if ((value >= 0L && value <= 65535L)) {
     /* Constraint check succeeded */
     return 0;
   } else {
@@ -15411,7 +15411,7 @@ static int memb_Ngap_id_constraint_297(
 
   value = *(const long*) sptr;
 
-  if ((value >= 0 && value <= 65535)) {
+  if ((value >= 0L && value <= 65535L)) {
     /* Constraint check succeeded */
     return 0;
   } else {
@@ -15538,7 +15538,7 @@ static int memb_Ngap_id_constraint_301(
 
   value = *(const long*) sptr;
 
-  if ((value >= 0 && value <= 65535)) {
+  if ((value >= 0L && value <= 65535L)) {
     /* Constraint check succeeded */
     return 0;
   } else {
@@ -15665,7 +15665,7 @@ static int memb_Ngap_id_constraint_305(
 
   value = *(const long*) sptr;
 
-  if ((value >= 0 && value <= 65535)) {
+  if ((value >= 0L && value <= 65535L)) {
     /* Constraint check succeeded */
     return 0;
   } else {
@@ -15792,7 +15792,7 @@ static int memb_Ngap_id_constraint_309(
 
   value = *(const long*) sptr;
 
-  if ((value >= 0 && value <= 65535)) {
+  if ((value >= 0L && value <= 65535L)) {
     /* Constraint check succeeded */
     return 0;
   } else {
@@ -15919,7 +15919,7 @@ static int memb_Ngap_id_constraint_313(
 
   value = *(const long*) sptr;
 
-  if ((value >= 0 && value <= 65535)) {
+  if ((value >= 0L && value <= 65535L)) {
     /* Constraint check succeeded */
     return 0;
   } else {
@@ -16042,7 +16042,7 @@ static int memb_Ngap_id_constraint_317(
 
   value = *(const long*) sptr;
 
-  if ((value >= 0 && value <= 65535)) {
+  if ((value >= 0L && value <= 65535L)) {
     /* Constraint check succeeded */
     return 0;
   } else {
@@ -16167,7 +16167,7 @@ static int memb_Ngap_id_constraint_321(
 
   value = *(const long*) sptr;
 
-  if ((value >= 0 && value <= 65535)) {
+  if ((value >= 0L && value <= 65535L)) {
     /* Constraint check succeeded */
     return 0;
   } else {
@@ -16291,7 +16291,7 @@ static int memb_Ngap_id_constraint_325(
 
   value = *(const long*) sptr;
 
-  if ((value >= 0 && value <= 65535)) {
+  if ((value >= 0L && value <= 65535L)) {
     /* Constraint check succeeded */
     return 0;
   } else {
@@ -16415,7 +16415,7 @@ static int memb_Ngap_id_constraint_329(
 
   value = *(const long*) sptr;
 
-  if ((value >= 0 && value <= 65535)) {
+  if ((value >= 0L && value <= 65535L)) {
     /* Constraint check succeeded */
     return 0;
   } else {
@@ -16540,7 +16540,7 @@ static int memb_Ngap_id_constraint_333(
 
   value = *(const long*) sptr;
 
-  if ((value >= 0 && value <= 65535)) {
+  if ((value >= 0L && value <= 65535L)) {
     /* Constraint check succeeded */
     return 0;
   } else {
@@ -16667,7 +16667,7 @@ static int memb_Ngap_id_constraint_337(
 
   value = *(const long*) sptr;
 
-  if ((value >= 0 && value <= 65535)) {
+  if ((value >= 0L && value <= 65535L)) {
     /* Constraint check succeeded */
     return 0;
   } else {
@@ -16791,7 +16791,7 @@ static int memb_Ngap_id_constraint_341(
 
   value = *(const long*) sptr;
 
-  if ((value >= 0 && value <= 65535)) {
+  if ((value >= 0L && value <= 65535L)) {
     /* Constraint check succeeded */
     return 0;
   } else {
@@ -16916,7 +16916,7 @@ static int memb_Ngap_id_constraint_345(
 
   value = *(const long*) sptr;
 
-  if ((value >= 0 && value <= 65535)) {
+  if ((value >= 0L && value <= 65535L)) {
     /* Constraint check succeeded */
     return 0;
   } else {
@@ -17043,7 +17043,7 @@ static int memb_Ngap_id_constraint_349(
 
   value = *(const long*) sptr;
 
-  if ((value >= 0 && value <= 65535)) {
+  if ((value >= 0L && value <= 65535L)) {
     /* Constraint check succeeded */
     return 0;
   } else {
@@ -17168,7 +17168,7 @@ static int memb_Ngap_id_constraint_353(
 
   value = *(const long*) sptr;
 
-  if ((value >= 0 && value <= 65535)) {
+  if ((value >= 0L && value <= 65535L)) {
     /* Constraint check succeeded */
     return 0;
   } else {
@@ -17295,7 +17295,7 @@ static int memb_Ngap_id_constraint_357(
 
   value = *(const long*) sptr;
 
-  if ((value >= 0 && value <= 65535)) {
+  if ((value >= 0L && value <= 65535L)) {
     /* Constraint check succeeded */
     return 0;
   } else {
@@ -17420,7 +17420,7 @@ static int memb_Ngap_id_constraint_361(
 
   value = *(const long*) sptr;
 
-  if ((value >= 0 && value <= 65535)) {
+  if ((value >= 0L && value <= 65535L)) {
     /* Constraint check succeeded */
     return 0;
   } else {
@@ -17545,7 +17545,7 @@ static int memb_Ngap_id_constraint_365(
 
   value = *(const long*) sptr;
 
-  if ((value >= 0 && value <= 65535)) {
+  if ((value >= 0L && value <= 65535L)) {
     /* Constraint check succeeded */
     return 0;
   } else {
@@ -17672,7 +17672,7 @@ static int memb_Ngap_id_constraint_369(
 
   value = *(const long*) sptr;
 
-  if ((value >= 0 && value <= 65535)) {
+  if ((value >= 0L && value <= 65535L)) {
     /* Constraint check succeeded */
     return 0;
   } else {
@@ -17799,7 +17799,7 @@ static int memb_Ngap_id_constraint_373(
 
   value = *(const long*) sptr;
 
-  if ((value >= 0 && value <= 65535)) {
+  if ((value >= 0L && value <= 65535L)) {
     /* Constraint check succeeded */
     return 0;
   } else {
@@ -17926,7 +17926,7 @@ static int memb_Ngap_id_constraint_377(
 
   value = *(const long*) sptr;
 
-  if ((value >= 0 && value <= 65535)) {
+  if ((value >= 0L && value <= 65535L)) {
     /* Constraint check succeeded */
     return 0;
   } else {
@@ -18053,7 +18053,7 @@ static int memb_Ngap_id_constraint_381(
 
   value = *(const long*) sptr;
 
-  if ((value >= 0 && value <= 65535)) {
+  if ((value >= 0L && value <= 65535L)) {
     /* Constraint check succeeded */
     return 0;
   } else {
@@ -18178,7 +18178,7 @@ static int memb_Ngap_id_constraint_385(
 
   value = *(const long*) sptr;
 
-  if ((value >= 0 && value <= 65535)) {
+  if ((value >= 0L && value <= 65535L)) {
     /* Constraint check succeeded */
     return 0;
   } else {
@@ -18305,7 +18305,7 @@ static int memb_Ngap_id_constraint_389(
 
   value = *(const long*) sptr;
 
-  if ((value >= 0 && value <= 65535)) {
+  if ((value >= 0L && value <= 65535L)) {
     /* Constraint check succeeded */
     return 0;
   } else {
@@ -18418,17 +18418,25 @@ static int memb_Ngap_value_constraint_389(
       td, sptr, ctfailcb, app_key);
 }
 
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_id_constr_2 CC_NOTUSED = {
     {2, 1} /* (0..65535) */,
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_id_constr_2 CC_NOTUSED = {
     {APC_CONSTRAINED, 16, 16, 0, 65535} /* (0..65535) */,
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_criticality_constr_3
     CC_NOTUSED = {{0, 0}, -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_3
     CC_NOTUSED = {
         {APC_CONSTRAINED, 2, 2, 0, 2} /* (0..2) */,
@@ -18436,26 +18444,41 @@ static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_3
         0,
         0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_value_constr_4 CC_NOTUSED = {
     {0, 0},
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_value_constr_4 CC_NOTUSED = {
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_id_constr_6 CC_NOTUSED = {
     {2, 1} /* (0..65535) */,
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_id_constr_6 CC_NOTUSED = {
     {APC_CONSTRAINED, 16, 16, 0, 65535} /* (0..65535) */,
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_criticality_constr_7
     CC_NOTUSED = {{0, 0}, -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_7
     CC_NOTUSED = {
         {APC_CONSTRAINED, 2, 2, 0, 2} /* (0..2) */,
@@ -18463,26 +18486,41 @@ static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_7
         0,
         0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_value_constr_8 CC_NOTUSED = {
     {0, 0},
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_value_constr_8 CC_NOTUSED = {
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_id_constr_10 CC_NOTUSED = {
     {2, 1} /* (0..65535) */,
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_id_constr_10 CC_NOTUSED = {
     {APC_CONSTRAINED, 16, 16, 0, 65535} /* (0..65535) */,
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_criticality_constr_11
     CC_NOTUSED = {{0, 0}, -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_11
     CC_NOTUSED = {
         {APC_CONSTRAINED, 2, 2, 0, 2} /* (0..2) */,
@@ -18490,26 +18528,41 @@ static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_11
         0,
         0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_value_constr_12 CC_NOTUSED = {
     {0, 0},
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_value_constr_12 CC_NOTUSED = {
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_id_constr_14 CC_NOTUSED = {
     {2, 1} /* (0..65535) */,
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_id_constr_14 CC_NOTUSED = {
     {APC_CONSTRAINED, 16, 16, 0, 65535} /* (0..65535) */,
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_criticality_constr_15
     CC_NOTUSED = {{0, 0}, -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_15
     CC_NOTUSED = {
         {APC_CONSTRAINED, 2, 2, 0, 2} /* (0..2) */,
@@ -18517,26 +18570,41 @@ static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_15
         0,
         0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_value_constr_16 CC_NOTUSED = {
     {0, 0},
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_value_constr_16 CC_NOTUSED = {
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_id_constr_18 CC_NOTUSED = {
     {2, 1} /* (0..65535) */,
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_id_constr_18 CC_NOTUSED = {
     {APC_CONSTRAINED, 16, 16, 0, 65535} /* (0..65535) */,
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_criticality_constr_19
     CC_NOTUSED = {{0, 0}, -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_19
     CC_NOTUSED = {
         {APC_CONSTRAINED, 2, 2, 0, 2} /* (0..2) */,
@@ -18544,26 +18612,41 @@ static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_19
         0,
         0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_value_constr_20 CC_NOTUSED = {
     {0, 0},
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_value_constr_20 CC_NOTUSED = {
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_id_constr_22 CC_NOTUSED = {
     {2, 1} /* (0..65535) */,
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_id_constr_22 CC_NOTUSED = {
     {APC_CONSTRAINED, 16, 16, 0, 65535} /* (0..65535) */,
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_criticality_constr_23
     CC_NOTUSED = {{0, 0}, -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_23
     CC_NOTUSED = {
         {APC_CONSTRAINED, 2, 2, 0, 2} /* (0..2) */,
@@ -18571,26 +18654,41 @@ static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_23
         0,
         0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_value_constr_24 CC_NOTUSED = {
     {0, 0},
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_value_constr_24 CC_NOTUSED = {
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_id_constr_26 CC_NOTUSED = {
     {2, 1} /* (0..65535) */,
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_id_constr_26 CC_NOTUSED = {
     {APC_CONSTRAINED, 16, 16, 0, 65535} /* (0..65535) */,
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_criticality_constr_27
     CC_NOTUSED = {{0, 0}, -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_27
     CC_NOTUSED = {
         {APC_CONSTRAINED, 2, 2, 0, 2} /* (0..2) */,
@@ -18598,26 +18696,41 @@ static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_27
         0,
         0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_value_constr_28 CC_NOTUSED = {
     {0, 0},
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_value_constr_28 CC_NOTUSED = {
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_id_constr_30 CC_NOTUSED = {
     {2, 1} /* (0..65535) */,
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_id_constr_30 CC_NOTUSED = {
     {APC_CONSTRAINED, 16, 16, 0, 65535} /* (0..65535) */,
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_criticality_constr_31
     CC_NOTUSED = {{0, 0}, -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_31
     CC_NOTUSED = {
         {APC_CONSTRAINED, 2, 2, 0, 2} /* (0..2) */,
@@ -18625,26 +18738,41 @@ static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_31
         0,
         0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_value_constr_32 CC_NOTUSED = {
     {0, 0},
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_value_constr_32 CC_NOTUSED = {
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_id_constr_34 CC_NOTUSED = {
     {2, 1} /* (0..65535) */,
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_id_constr_34 CC_NOTUSED = {
     {APC_CONSTRAINED, 16, 16, 0, 65535} /* (0..65535) */,
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_criticality_constr_35
     CC_NOTUSED = {{0, 0}, -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_35
     CC_NOTUSED = {
         {APC_CONSTRAINED, 2, 2, 0, 2} /* (0..2) */,
@@ -18652,26 +18780,41 @@ static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_35
         0,
         0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_value_constr_36 CC_NOTUSED = {
     {0, 0},
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_value_constr_36 CC_NOTUSED = {
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_id_constr_38 CC_NOTUSED = {
     {2, 1} /* (0..65535) */,
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_id_constr_38 CC_NOTUSED = {
     {APC_CONSTRAINED, 16, 16, 0, 65535} /* (0..65535) */,
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_criticality_constr_39
     CC_NOTUSED = {{0, 0}, -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_39
     CC_NOTUSED = {
         {APC_CONSTRAINED, 2, 2, 0, 2} /* (0..2) */,
@@ -18679,26 +18822,41 @@ static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_39
         0,
         0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_value_constr_40 CC_NOTUSED = {
     {0, 0},
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_value_constr_40 CC_NOTUSED = {
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_id_constr_42 CC_NOTUSED = {
     {2, 1} /* (0..65535) */,
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_id_constr_42 CC_NOTUSED = {
     {APC_CONSTRAINED, 16, 16, 0, 65535} /* (0..65535) */,
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_criticality_constr_43
     CC_NOTUSED = {{0, 0}, -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_43
     CC_NOTUSED = {
         {APC_CONSTRAINED, 2, 2, 0, 2} /* (0..2) */,
@@ -18706,26 +18864,41 @@ static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_43
         0,
         0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_value_constr_44 CC_NOTUSED = {
     {0, 0},
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_value_constr_44 CC_NOTUSED = {
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_id_constr_46 CC_NOTUSED = {
     {2, 1} /* (0..65535) */,
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_id_constr_46 CC_NOTUSED = {
     {APC_CONSTRAINED, 16, 16, 0, 65535} /* (0..65535) */,
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_criticality_constr_47
     CC_NOTUSED = {{0, 0}, -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_47
     CC_NOTUSED = {
         {APC_CONSTRAINED, 2, 2, 0, 2} /* (0..2) */,
@@ -18733,26 +18906,41 @@ static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_47
         0,
         0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_value_constr_48 CC_NOTUSED = {
     {0, 0},
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_value_constr_48 CC_NOTUSED = {
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_id_constr_50 CC_NOTUSED = {
     {2, 1} /* (0..65535) */,
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_id_constr_50 CC_NOTUSED = {
     {APC_CONSTRAINED, 16, 16, 0, 65535} /* (0..65535) */,
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_criticality_constr_51
     CC_NOTUSED = {{0, 0}, -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_51
     CC_NOTUSED = {
         {APC_CONSTRAINED, 2, 2, 0, 2} /* (0..2) */,
@@ -18760,26 +18948,41 @@ static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_51
         0,
         0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_value_constr_52 CC_NOTUSED = {
     {0, 0},
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_value_constr_52 CC_NOTUSED = {
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_id_constr_54 CC_NOTUSED = {
     {2, 1} /* (0..65535) */,
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_id_constr_54 CC_NOTUSED = {
     {APC_CONSTRAINED, 16, 16, 0, 65535} /* (0..65535) */,
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_criticality_constr_55
     CC_NOTUSED = {{0, 0}, -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_55
     CC_NOTUSED = {
         {APC_CONSTRAINED, 2, 2, 0, 2} /* (0..2) */,
@@ -18787,26 +18990,41 @@ static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_55
         0,
         0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_value_constr_56 CC_NOTUSED = {
     {0, 0},
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_value_constr_56 CC_NOTUSED = {
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_id_constr_58 CC_NOTUSED = {
     {2, 1} /* (0..65535) */,
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_id_constr_58 CC_NOTUSED = {
     {APC_CONSTRAINED, 16, 16, 0, 65535} /* (0..65535) */,
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_criticality_constr_59
     CC_NOTUSED = {{0, 0}, -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_59
     CC_NOTUSED = {
         {APC_CONSTRAINED, 2, 2, 0, 2} /* (0..2) */,
@@ -18814,26 +19032,41 @@ static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_59
         0,
         0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_value_constr_60 CC_NOTUSED = {
     {0, 0},
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_value_constr_60 CC_NOTUSED = {
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_id_constr_62 CC_NOTUSED = {
     {2, 1} /* (0..65535) */,
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_id_constr_62 CC_NOTUSED = {
     {APC_CONSTRAINED, 16, 16, 0, 65535} /* (0..65535) */,
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_criticality_constr_63
     CC_NOTUSED = {{0, 0}, -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_63
     CC_NOTUSED = {
         {APC_CONSTRAINED, 2, 2, 0, 2} /* (0..2) */,
@@ -18841,26 +19074,41 @@ static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_63
         0,
         0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_value_constr_64 CC_NOTUSED = {
     {0, 0},
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_value_constr_64 CC_NOTUSED = {
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_id_constr_66 CC_NOTUSED = {
     {2, 1} /* (0..65535) */,
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_id_constr_66 CC_NOTUSED = {
     {APC_CONSTRAINED, 16, 16, 0, 65535} /* (0..65535) */,
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_criticality_constr_67
     CC_NOTUSED = {{0, 0}, -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_67
     CC_NOTUSED = {
         {APC_CONSTRAINED, 2, 2, 0, 2} /* (0..2) */,
@@ -18868,26 +19116,41 @@ static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_67
         0,
         0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_value_constr_68 CC_NOTUSED = {
     {0, 0},
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_value_constr_68 CC_NOTUSED = {
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_id_constr_70 CC_NOTUSED = {
     {2, 1} /* (0..65535) */,
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_id_constr_70 CC_NOTUSED = {
     {APC_CONSTRAINED, 16, 16, 0, 65535} /* (0..65535) */,
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_criticality_constr_71
     CC_NOTUSED = {{0, 0}, -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_71
     CC_NOTUSED = {
         {APC_CONSTRAINED, 2, 2, 0, 2} /* (0..2) */,
@@ -18895,26 +19158,41 @@ static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_71
         0,
         0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_value_constr_72 CC_NOTUSED = {
     {0, 0},
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_value_constr_72 CC_NOTUSED = {
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_id_constr_74 CC_NOTUSED = {
     {2, 1} /* (0..65535) */,
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_id_constr_74 CC_NOTUSED = {
     {APC_CONSTRAINED, 16, 16, 0, 65535} /* (0..65535) */,
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_criticality_constr_75
     CC_NOTUSED = {{0, 0}, -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_75
     CC_NOTUSED = {
         {APC_CONSTRAINED, 2, 2, 0, 2} /* (0..2) */,
@@ -18922,26 +19200,41 @@ static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_75
         0,
         0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_value_constr_76 CC_NOTUSED = {
     {0, 0},
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_value_constr_76 CC_NOTUSED = {
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_id_constr_78 CC_NOTUSED = {
     {2, 1} /* (0..65535) */,
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_id_constr_78 CC_NOTUSED = {
     {APC_CONSTRAINED, 16, 16, 0, 65535} /* (0..65535) */,
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_criticality_constr_79
     CC_NOTUSED = {{0, 0}, -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_79
     CC_NOTUSED = {
         {APC_CONSTRAINED, 2, 2, 0, 2} /* (0..2) */,
@@ -18949,26 +19242,41 @@ static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_79
         0,
         0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_value_constr_80 CC_NOTUSED = {
     {0, 0},
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_value_constr_80 CC_NOTUSED = {
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_id_constr_82 CC_NOTUSED = {
     {2, 1} /* (0..65535) */,
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_id_constr_82 CC_NOTUSED = {
     {APC_CONSTRAINED, 16, 16, 0, 65535} /* (0..65535) */,
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_criticality_constr_83
     CC_NOTUSED = {{0, 0}, -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_83
     CC_NOTUSED = {
         {APC_CONSTRAINED, 2, 2, 0, 2} /* (0..2) */,
@@ -18976,26 +19284,41 @@ static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_83
         0,
         0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_value_constr_84 CC_NOTUSED = {
     {0, 0},
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_value_constr_84 CC_NOTUSED = {
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_id_constr_86 CC_NOTUSED = {
     {2, 1} /* (0..65535) */,
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_id_constr_86 CC_NOTUSED = {
     {APC_CONSTRAINED, 16, 16, 0, 65535} /* (0..65535) */,
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_criticality_constr_87
     CC_NOTUSED = {{0, 0}, -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_87
     CC_NOTUSED = {
         {APC_CONSTRAINED, 2, 2, 0, 2} /* (0..2) */,
@@ -19003,26 +19326,41 @@ static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_87
         0,
         0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_value_constr_88 CC_NOTUSED = {
     {0, 0},
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_value_constr_88 CC_NOTUSED = {
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_id_constr_90 CC_NOTUSED = {
     {2, 1} /* (0..65535) */,
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_id_constr_90 CC_NOTUSED = {
     {APC_CONSTRAINED, 16, 16, 0, 65535} /* (0..65535) */,
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_criticality_constr_91
     CC_NOTUSED = {{0, 0}, -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_91
     CC_NOTUSED = {
         {APC_CONSTRAINED, 2, 2, 0, 2} /* (0..2) */,
@@ -19030,26 +19368,41 @@ static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_91
         0,
         0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_value_constr_92 CC_NOTUSED = {
     {0, 0},
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_value_constr_92 CC_NOTUSED = {
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_id_constr_94 CC_NOTUSED = {
     {2, 1} /* (0..65535) */,
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_id_constr_94 CC_NOTUSED = {
     {APC_CONSTRAINED, 16, 16, 0, 65535} /* (0..65535) */,
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_criticality_constr_95
     CC_NOTUSED = {{0, 0}, -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_95
     CC_NOTUSED = {
         {APC_CONSTRAINED, 2, 2, 0, 2} /* (0..2) */,
@@ -19057,26 +19410,41 @@ static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_95
         0,
         0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_value_constr_96 CC_NOTUSED = {
     {0, 0},
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_value_constr_96 CC_NOTUSED = {
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_id_constr_98 CC_NOTUSED = {
     {2, 1} /* (0..65535) */,
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_id_constr_98 CC_NOTUSED = {
     {APC_CONSTRAINED, 16, 16, 0, 65535} /* (0..65535) */,
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_criticality_constr_99
     CC_NOTUSED = {{0, 0}, -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_99
     CC_NOTUSED = {
         {APC_CONSTRAINED, 2, 2, 0, 2} /* (0..2) */,
@@ -19084,26 +19452,41 @@ static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_99
         0,
         0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_value_constr_100 CC_NOTUSED = {
     {0, 0},
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_value_constr_100 CC_NOTUSED = {
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_id_constr_102 CC_NOTUSED = {
     {2, 1} /* (0..65535) */,
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_id_constr_102 CC_NOTUSED = {
     {APC_CONSTRAINED, 16, 16, 0, 65535} /* (0..65535) */,
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_criticality_constr_103
     CC_NOTUSED = {{0, 0}, -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_103
     CC_NOTUSED = {
         {APC_CONSTRAINED, 2, 2, 0, 2} /* (0..2) */,
@@ -19111,26 +19494,41 @@ static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_103
         0,
         0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_value_constr_104 CC_NOTUSED = {
     {0, 0},
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_value_constr_104 CC_NOTUSED = {
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_id_constr_106 CC_NOTUSED = {
     {2, 1} /* (0..65535) */,
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_id_constr_106 CC_NOTUSED = {
     {APC_CONSTRAINED, 16, 16, 0, 65535} /* (0..65535) */,
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_criticality_constr_107
     CC_NOTUSED = {{0, 0}, -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_107
     CC_NOTUSED = {
         {APC_CONSTRAINED, 2, 2, 0, 2} /* (0..2) */,
@@ -19138,26 +19536,41 @@ static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_107
         0,
         0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_value_constr_108 CC_NOTUSED = {
     {0, 0},
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_value_constr_108 CC_NOTUSED = {
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_id_constr_110 CC_NOTUSED = {
     {2, 1} /* (0..65535) */,
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_id_constr_110 CC_NOTUSED = {
     {APC_CONSTRAINED, 16, 16, 0, 65535} /* (0..65535) */,
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_criticality_constr_111
     CC_NOTUSED = {{0, 0}, -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_111
     CC_NOTUSED = {
         {APC_CONSTRAINED, 2, 2, 0, 2} /* (0..2) */,
@@ -19165,26 +19578,41 @@ static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_111
         0,
         0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_value_constr_112 CC_NOTUSED = {
     {0, 0},
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_value_constr_112 CC_NOTUSED = {
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_id_constr_114 CC_NOTUSED = {
     {2, 1} /* (0..65535) */,
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_id_constr_114 CC_NOTUSED = {
     {APC_CONSTRAINED, 16, 16, 0, 65535} /* (0..65535) */,
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_criticality_constr_115
     CC_NOTUSED = {{0, 0}, -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_115
     CC_NOTUSED = {
         {APC_CONSTRAINED, 2, 2, 0, 2} /* (0..2) */,
@@ -19192,26 +19620,41 @@ static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_115
         0,
         0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_value_constr_116 CC_NOTUSED = {
     {0, 0},
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_value_constr_116 CC_NOTUSED = {
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_id_constr_118 CC_NOTUSED = {
     {2, 1} /* (0..65535) */,
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_id_constr_118 CC_NOTUSED = {
     {APC_CONSTRAINED, 16, 16, 0, 65535} /* (0..65535) */,
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_criticality_constr_119
     CC_NOTUSED = {{0, 0}, -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_119
     CC_NOTUSED = {
         {APC_CONSTRAINED, 2, 2, 0, 2} /* (0..2) */,
@@ -19219,26 +19662,41 @@ static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_119
         0,
         0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_value_constr_120 CC_NOTUSED = {
     {0, 0},
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_value_constr_120 CC_NOTUSED = {
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_id_constr_122 CC_NOTUSED = {
     {2, 1} /* (0..65535) */,
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_id_constr_122 CC_NOTUSED = {
     {APC_CONSTRAINED, 16, 16, 0, 65535} /* (0..65535) */,
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_criticality_constr_123
     CC_NOTUSED = {{0, 0}, -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_123
     CC_NOTUSED = {
         {APC_CONSTRAINED, 2, 2, 0, 2} /* (0..2) */,
@@ -19246,26 +19704,41 @@ static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_123
         0,
         0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_value_constr_124 CC_NOTUSED = {
     {0, 0},
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_value_constr_124 CC_NOTUSED = {
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_id_constr_126 CC_NOTUSED = {
     {2, 1} /* (0..65535) */,
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_id_constr_126 CC_NOTUSED = {
     {APC_CONSTRAINED, 16, 16, 0, 65535} /* (0..65535) */,
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_criticality_constr_127
     CC_NOTUSED = {{0, 0}, -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_127
     CC_NOTUSED = {
         {APC_CONSTRAINED, 2, 2, 0, 2} /* (0..2) */,
@@ -19273,26 +19746,41 @@ static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_127
         0,
         0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_value_constr_128 CC_NOTUSED = {
     {0, 0},
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_value_constr_128 CC_NOTUSED = {
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_id_constr_130 CC_NOTUSED = {
     {2, 1} /* (0..65535) */,
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_id_constr_130 CC_NOTUSED = {
     {APC_CONSTRAINED, 16, 16, 0, 65535} /* (0..65535) */,
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_criticality_constr_131
     CC_NOTUSED = {{0, 0}, -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_131
     CC_NOTUSED = {
         {APC_CONSTRAINED, 2, 2, 0, 2} /* (0..2) */,
@@ -19300,26 +19788,41 @@ static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_131
         0,
         0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_value_constr_132 CC_NOTUSED = {
     {0, 0},
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_value_constr_132 CC_NOTUSED = {
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_id_constr_134 CC_NOTUSED = {
     {2, 1} /* (0..65535) */,
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_id_constr_134 CC_NOTUSED = {
     {APC_CONSTRAINED, 16, 16, 0, 65535} /* (0..65535) */,
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_criticality_constr_135
     CC_NOTUSED = {{0, 0}, -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_135
     CC_NOTUSED = {
         {APC_CONSTRAINED, 2, 2, 0, 2} /* (0..2) */,
@@ -19327,26 +19830,41 @@ static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_135
         0,
         0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_value_constr_136 CC_NOTUSED = {
     {0, 0},
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_value_constr_136 CC_NOTUSED = {
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_id_constr_138 CC_NOTUSED = {
     {2, 1} /* (0..65535) */,
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_id_constr_138 CC_NOTUSED = {
     {APC_CONSTRAINED, 16, 16, 0, 65535} /* (0..65535) */,
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_criticality_constr_139
     CC_NOTUSED = {{0, 0}, -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_139
     CC_NOTUSED = {
         {APC_CONSTRAINED, 2, 2, 0, 2} /* (0..2) */,
@@ -19354,26 +19872,41 @@ static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_139
         0,
         0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_value_constr_140 CC_NOTUSED = {
     {0, 0},
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_value_constr_140 CC_NOTUSED = {
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_id_constr_142 CC_NOTUSED = {
     {2, 1} /* (0..65535) */,
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_id_constr_142 CC_NOTUSED = {
     {APC_CONSTRAINED, 16, 16, 0, 65535} /* (0..65535) */,
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_criticality_constr_143
     CC_NOTUSED = {{0, 0}, -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_143
     CC_NOTUSED = {
         {APC_CONSTRAINED, 2, 2, 0, 2} /* (0..2) */,
@@ -19381,26 +19914,41 @@ static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_143
         0,
         0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_value_constr_144 CC_NOTUSED = {
     {0, 0},
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_value_constr_144 CC_NOTUSED = {
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_id_constr_146 CC_NOTUSED = {
     {2, 1} /* (0..65535) */,
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_id_constr_146 CC_NOTUSED = {
     {APC_CONSTRAINED, 16, 16, 0, 65535} /* (0..65535) */,
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_criticality_constr_147
     CC_NOTUSED = {{0, 0}, -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_147
     CC_NOTUSED = {
         {APC_CONSTRAINED, 2, 2, 0, 2} /* (0..2) */,
@@ -19408,26 +19956,41 @@ static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_147
         0,
         0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_value_constr_148 CC_NOTUSED = {
     {0, 0},
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_value_constr_148 CC_NOTUSED = {
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_id_constr_150 CC_NOTUSED = {
     {2, 1} /* (0..65535) */,
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_id_constr_150 CC_NOTUSED = {
     {APC_CONSTRAINED, 16, 16, 0, 65535} /* (0..65535) */,
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_criticality_constr_151
     CC_NOTUSED = {{0, 0}, -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_151
     CC_NOTUSED = {
         {APC_CONSTRAINED, 2, 2, 0, 2} /* (0..2) */,
@@ -19435,26 +19998,41 @@ static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_151
         0,
         0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_value_constr_152 CC_NOTUSED = {
     {0, 0},
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_value_constr_152 CC_NOTUSED = {
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_id_constr_154 CC_NOTUSED = {
     {2, 1} /* (0..65535) */,
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_id_constr_154 CC_NOTUSED = {
     {APC_CONSTRAINED, 16, 16, 0, 65535} /* (0..65535) */,
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_criticality_constr_155
     CC_NOTUSED = {{0, 0}, -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_155
     CC_NOTUSED = {
         {APC_CONSTRAINED, 2, 2, 0, 2} /* (0..2) */,
@@ -19462,26 +20040,41 @@ static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_155
         0,
         0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_value_constr_156 CC_NOTUSED = {
     {0, 0},
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_value_constr_156 CC_NOTUSED = {
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_id_constr_158 CC_NOTUSED = {
     {2, 1} /* (0..65535) */,
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_id_constr_158 CC_NOTUSED = {
     {APC_CONSTRAINED, 16, 16, 0, 65535} /* (0..65535) */,
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_criticality_constr_159
     CC_NOTUSED = {{0, 0}, -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_159
     CC_NOTUSED = {
         {APC_CONSTRAINED, 2, 2, 0, 2} /* (0..2) */,
@@ -19489,26 +20082,41 @@ static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_159
         0,
         0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_value_constr_160 CC_NOTUSED = {
     {0, 0},
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_value_constr_160 CC_NOTUSED = {
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_id_constr_162 CC_NOTUSED = {
     {2, 1} /* (0..65535) */,
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_id_constr_162 CC_NOTUSED = {
     {APC_CONSTRAINED, 16, 16, 0, 65535} /* (0..65535) */,
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_criticality_constr_163
     CC_NOTUSED = {{0, 0}, -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_163
     CC_NOTUSED = {
         {APC_CONSTRAINED, 2, 2, 0, 2} /* (0..2) */,
@@ -19516,26 +20124,41 @@ static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_163
         0,
         0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_value_constr_164 CC_NOTUSED = {
     {0, 0},
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_value_constr_164 CC_NOTUSED = {
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_id_constr_166 CC_NOTUSED = {
     {2, 1} /* (0..65535) */,
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_id_constr_166 CC_NOTUSED = {
     {APC_CONSTRAINED, 16, 16, 0, 65535} /* (0..65535) */,
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_criticality_constr_167
     CC_NOTUSED = {{0, 0}, -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_167
     CC_NOTUSED = {
         {APC_CONSTRAINED, 2, 2, 0, 2} /* (0..2) */,
@@ -19543,26 +20166,41 @@ static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_167
         0,
         0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_value_constr_168 CC_NOTUSED = {
     {0, 0},
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_value_constr_168 CC_NOTUSED = {
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_id_constr_170 CC_NOTUSED = {
     {2, 1} /* (0..65535) */,
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_id_constr_170 CC_NOTUSED = {
     {APC_CONSTRAINED, 16, 16, 0, 65535} /* (0..65535) */,
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_criticality_constr_171
     CC_NOTUSED = {{0, 0}, -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_171
     CC_NOTUSED = {
         {APC_CONSTRAINED, 2, 2, 0, 2} /* (0..2) */,
@@ -19570,26 +20208,41 @@ static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_171
         0,
         0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_value_constr_172 CC_NOTUSED = {
     {0, 0},
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_value_constr_172 CC_NOTUSED = {
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_id_constr_174 CC_NOTUSED = {
     {2, 1} /* (0..65535) */,
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_id_constr_174 CC_NOTUSED = {
     {APC_CONSTRAINED, 16, 16, 0, 65535} /* (0..65535) */,
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_criticality_constr_175
     CC_NOTUSED = {{0, 0}, -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_175
     CC_NOTUSED = {
         {APC_CONSTRAINED, 2, 2, 0, 2} /* (0..2) */,
@@ -19597,26 +20250,41 @@ static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_175
         0,
         0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_value_constr_176 CC_NOTUSED = {
     {0, 0},
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_value_constr_176 CC_NOTUSED = {
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_id_constr_178 CC_NOTUSED = {
     {2, 1} /* (0..65535) */,
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_id_constr_178 CC_NOTUSED = {
     {APC_CONSTRAINED, 16, 16, 0, 65535} /* (0..65535) */,
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_criticality_constr_179
     CC_NOTUSED = {{0, 0}, -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_179
     CC_NOTUSED = {
         {APC_CONSTRAINED, 2, 2, 0, 2} /* (0..2) */,
@@ -19624,26 +20292,41 @@ static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_179
         0,
         0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_value_constr_180 CC_NOTUSED = {
     {0, 0},
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_value_constr_180 CC_NOTUSED = {
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_id_constr_182 CC_NOTUSED = {
     {2, 1} /* (0..65535) */,
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_id_constr_182 CC_NOTUSED = {
     {APC_CONSTRAINED, 16, 16, 0, 65535} /* (0..65535) */,
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_criticality_constr_183
     CC_NOTUSED = {{0, 0}, -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_183
     CC_NOTUSED = {
         {APC_CONSTRAINED, 2, 2, 0, 2} /* (0..2) */,
@@ -19651,26 +20334,41 @@ static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_183
         0,
         0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_value_constr_184 CC_NOTUSED = {
     {0, 0},
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_value_constr_184 CC_NOTUSED = {
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_id_constr_186 CC_NOTUSED = {
     {2, 1} /* (0..65535) */,
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_id_constr_186 CC_NOTUSED = {
     {APC_CONSTRAINED, 16, 16, 0, 65535} /* (0..65535) */,
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_criticality_constr_187
     CC_NOTUSED = {{0, 0}, -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_187
     CC_NOTUSED = {
         {APC_CONSTRAINED, 2, 2, 0, 2} /* (0..2) */,
@@ -19678,26 +20376,41 @@ static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_187
         0,
         0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_value_constr_188 CC_NOTUSED = {
     {0, 0},
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_value_constr_188 CC_NOTUSED = {
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_id_constr_190 CC_NOTUSED = {
     {2, 1} /* (0..65535) */,
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_id_constr_190 CC_NOTUSED = {
     {APC_CONSTRAINED, 16, 16, 0, 65535} /* (0..65535) */,
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_criticality_constr_191
     CC_NOTUSED = {{0, 0}, -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_191
     CC_NOTUSED = {
         {APC_CONSTRAINED, 2, 2, 0, 2} /* (0..2) */,
@@ -19705,26 +20418,41 @@ static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_191
         0,
         0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_value_constr_192 CC_NOTUSED = {
     {0, 0},
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_value_constr_192 CC_NOTUSED = {
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_id_constr_194 CC_NOTUSED = {
     {2, 1} /* (0..65535) */,
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_id_constr_194 CC_NOTUSED = {
     {APC_CONSTRAINED, 16, 16, 0, 65535} /* (0..65535) */,
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_criticality_constr_195
     CC_NOTUSED = {{0, 0}, -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_195
     CC_NOTUSED = {
         {APC_CONSTRAINED, 2, 2, 0, 2} /* (0..2) */,
@@ -19732,26 +20460,41 @@ static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_195
         0,
         0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_value_constr_196 CC_NOTUSED = {
     {0, 0},
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_value_constr_196 CC_NOTUSED = {
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_id_constr_198 CC_NOTUSED = {
     {2, 1} /* (0..65535) */,
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_id_constr_198 CC_NOTUSED = {
     {APC_CONSTRAINED, 16, 16, 0, 65535} /* (0..65535) */,
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_criticality_constr_199
     CC_NOTUSED = {{0, 0}, -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_199
     CC_NOTUSED = {
         {APC_CONSTRAINED, 2, 2, 0, 2} /* (0..2) */,
@@ -19759,26 +20502,41 @@ static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_199
         0,
         0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_value_constr_200 CC_NOTUSED = {
     {0, 0},
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_value_constr_200 CC_NOTUSED = {
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_id_constr_202 CC_NOTUSED = {
     {2, 1} /* (0..65535) */,
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_id_constr_202 CC_NOTUSED = {
     {APC_CONSTRAINED, 16, 16, 0, 65535} /* (0..65535) */,
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_criticality_constr_203
     CC_NOTUSED = {{0, 0}, -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_203
     CC_NOTUSED = {
         {APC_CONSTRAINED, 2, 2, 0, 2} /* (0..2) */,
@@ -19786,26 +20544,41 @@ static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_203
         0,
         0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_value_constr_204 CC_NOTUSED = {
     {0, 0},
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_value_constr_204 CC_NOTUSED = {
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_id_constr_206 CC_NOTUSED = {
     {2, 1} /* (0..65535) */,
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_id_constr_206 CC_NOTUSED = {
     {APC_CONSTRAINED, 16, 16, 0, 65535} /* (0..65535) */,
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_criticality_constr_207
     CC_NOTUSED = {{0, 0}, -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_207
     CC_NOTUSED = {
         {APC_CONSTRAINED, 2, 2, 0, 2} /* (0..2) */,
@@ -19813,26 +20586,41 @@ static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_207
         0,
         0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_value_constr_208 CC_NOTUSED = {
     {0, 0},
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_value_constr_208 CC_NOTUSED = {
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_id_constr_210 CC_NOTUSED = {
     {2, 1} /* (0..65535) */,
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_id_constr_210 CC_NOTUSED = {
     {APC_CONSTRAINED, 16, 16, 0, 65535} /* (0..65535) */,
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_criticality_constr_211
     CC_NOTUSED = {{0, 0}, -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_211
     CC_NOTUSED = {
         {APC_CONSTRAINED, 2, 2, 0, 2} /* (0..2) */,
@@ -19840,26 +20628,41 @@ static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_211
         0,
         0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_value_constr_212 CC_NOTUSED = {
     {0, 0},
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_value_constr_212 CC_NOTUSED = {
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_id_constr_214 CC_NOTUSED = {
     {2, 1} /* (0..65535) */,
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_id_constr_214 CC_NOTUSED = {
     {APC_CONSTRAINED, 16, 16, 0, 65535} /* (0..65535) */,
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_criticality_constr_215
     CC_NOTUSED = {{0, 0}, -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_215
     CC_NOTUSED = {
         {APC_CONSTRAINED, 2, 2, 0, 2} /* (0..2) */,
@@ -19867,26 +20670,41 @@ static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_215
         0,
         0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_value_constr_216 CC_NOTUSED = {
     {0, 0},
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_value_constr_216 CC_NOTUSED = {
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_id_constr_218 CC_NOTUSED = {
     {2, 1} /* (0..65535) */,
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_id_constr_218 CC_NOTUSED = {
     {APC_CONSTRAINED, 16, 16, 0, 65535} /* (0..65535) */,
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_criticality_constr_219
     CC_NOTUSED = {{0, 0}, -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_219
     CC_NOTUSED = {
         {APC_CONSTRAINED, 2, 2, 0, 2} /* (0..2) */,
@@ -19894,26 +20712,41 @@ static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_219
         0,
         0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_value_constr_220 CC_NOTUSED = {
     {0, 0},
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_value_constr_220 CC_NOTUSED = {
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_id_constr_222 CC_NOTUSED = {
     {2, 1} /* (0..65535) */,
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_id_constr_222 CC_NOTUSED = {
     {APC_CONSTRAINED, 16, 16, 0, 65535} /* (0..65535) */,
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_criticality_constr_223
     CC_NOTUSED = {{0, 0}, -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_223
     CC_NOTUSED = {
         {APC_CONSTRAINED, 2, 2, 0, 2} /* (0..2) */,
@@ -19921,26 +20754,41 @@ static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_223
         0,
         0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_value_constr_224 CC_NOTUSED = {
     {0, 0},
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_value_constr_224 CC_NOTUSED = {
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_id_constr_226 CC_NOTUSED = {
     {2, 1} /* (0..65535) */,
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_id_constr_226 CC_NOTUSED = {
     {APC_CONSTRAINED, 16, 16, 0, 65535} /* (0..65535) */,
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_criticality_constr_227
     CC_NOTUSED = {{0, 0}, -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_227
     CC_NOTUSED = {
         {APC_CONSTRAINED, 2, 2, 0, 2} /* (0..2) */,
@@ -19948,26 +20796,41 @@ static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_227
         0,
         0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_value_constr_228 CC_NOTUSED = {
     {0, 0},
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_value_constr_228 CC_NOTUSED = {
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_id_constr_230 CC_NOTUSED = {
     {2, 1} /* (0..65535) */,
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_id_constr_230 CC_NOTUSED = {
     {APC_CONSTRAINED, 16, 16, 0, 65535} /* (0..65535) */,
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_criticality_constr_231
     CC_NOTUSED = {{0, 0}, -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_231
     CC_NOTUSED = {
         {APC_CONSTRAINED, 2, 2, 0, 2} /* (0..2) */,
@@ -19975,26 +20838,41 @@ static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_231
         0,
         0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_value_constr_232 CC_NOTUSED = {
     {0, 0},
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_value_constr_232 CC_NOTUSED = {
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_id_constr_234 CC_NOTUSED = {
     {2, 1} /* (0..65535) */,
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_id_constr_234 CC_NOTUSED = {
     {APC_CONSTRAINED, 16, 16, 0, 65535} /* (0..65535) */,
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_criticality_constr_235
     CC_NOTUSED = {{0, 0}, -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_235
     CC_NOTUSED = {
         {APC_CONSTRAINED, 2, 2, 0, 2} /* (0..2) */,
@@ -20002,26 +20880,41 @@ static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_235
         0,
         0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_value_constr_236 CC_NOTUSED = {
     {0, 0},
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_value_constr_236 CC_NOTUSED = {
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_id_constr_238 CC_NOTUSED = {
     {2, 1} /* (0..65535) */,
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_id_constr_238 CC_NOTUSED = {
     {APC_CONSTRAINED, 16, 16, 0, 65535} /* (0..65535) */,
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_criticality_constr_239
     CC_NOTUSED = {{0, 0}, -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_239
     CC_NOTUSED = {
         {APC_CONSTRAINED, 2, 2, 0, 2} /* (0..2) */,
@@ -20029,26 +20922,41 @@ static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_239
         0,
         0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_value_constr_240 CC_NOTUSED = {
     {0, 0},
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_value_constr_240 CC_NOTUSED = {
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_id_constr_242 CC_NOTUSED = {
     {2, 1} /* (0..65535) */,
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_id_constr_242 CC_NOTUSED = {
     {APC_CONSTRAINED, 16, 16, 0, 65535} /* (0..65535) */,
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_criticality_constr_243
     CC_NOTUSED = {{0, 0}, -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_243
     CC_NOTUSED = {
         {APC_CONSTRAINED, 2, 2, 0, 2} /* (0..2) */,
@@ -20056,26 +20964,41 @@ static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_243
         0,
         0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_value_constr_244 CC_NOTUSED = {
     {0, 0},
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_value_constr_244 CC_NOTUSED = {
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_id_constr_246 CC_NOTUSED = {
     {2, 1} /* (0..65535) */,
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_id_constr_246 CC_NOTUSED = {
     {APC_CONSTRAINED, 16, 16, 0, 65535} /* (0..65535) */,
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_criticality_constr_247
     CC_NOTUSED = {{0, 0}, -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_247
     CC_NOTUSED = {
         {APC_CONSTRAINED, 2, 2, 0, 2} /* (0..2) */,
@@ -20083,26 +21006,41 @@ static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_247
         0,
         0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_value_constr_248 CC_NOTUSED = {
     {0, 0},
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_value_constr_248 CC_NOTUSED = {
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_id_constr_250 CC_NOTUSED = {
     {2, 1} /* (0..65535) */,
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_id_constr_250 CC_NOTUSED = {
     {APC_CONSTRAINED, 16, 16, 0, 65535} /* (0..65535) */,
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_criticality_constr_251
     CC_NOTUSED = {{0, 0}, -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_251
     CC_NOTUSED = {
         {APC_CONSTRAINED, 2, 2, 0, 2} /* (0..2) */,
@@ -20110,26 +21048,41 @@ static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_251
         0,
         0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_value_constr_252 CC_NOTUSED = {
     {0, 0},
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_value_constr_252 CC_NOTUSED = {
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_id_constr_254 CC_NOTUSED = {
     {2, 1} /* (0..65535) */,
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_id_constr_254 CC_NOTUSED = {
     {APC_CONSTRAINED, 16, 16, 0, 65535} /* (0..65535) */,
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_criticality_constr_255
     CC_NOTUSED = {{0, 0}, -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_255
     CC_NOTUSED = {
         {APC_CONSTRAINED, 2, 2, 0, 2} /* (0..2) */,
@@ -20137,26 +21090,41 @@ static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_255
         0,
         0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_value_constr_256 CC_NOTUSED = {
     {0, 0},
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_value_constr_256 CC_NOTUSED = {
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_id_constr_258 CC_NOTUSED = {
     {2, 1} /* (0..65535) */,
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_id_constr_258 CC_NOTUSED = {
     {APC_CONSTRAINED, 16, 16, 0, 65535} /* (0..65535) */,
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_criticality_constr_259
     CC_NOTUSED = {{0, 0}, -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_259
     CC_NOTUSED = {
         {APC_CONSTRAINED, 2, 2, 0, 2} /* (0..2) */,
@@ -20164,26 +21132,41 @@ static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_259
         0,
         0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_value_constr_260 CC_NOTUSED = {
     {0, 0},
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_value_constr_260 CC_NOTUSED = {
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_id_constr_262 CC_NOTUSED = {
     {2, 1} /* (0..65535) */,
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_id_constr_262 CC_NOTUSED = {
     {APC_CONSTRAINED, 16, 16, 0, 65535} /* (0..65535) */,
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_criticality_constr_263
     CC_NOTUSED = {{0, 0}, -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_263
     CC_NOTUSED = {
         {APC_CONSTRAINED, 2, 2, 0, 2} /* (0..2) */,
@@ -20191,26 +21174,41 @@ static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_263
         0,
         0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_value_constr_264 CC_NOTUSED = {
     {0, 0},
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_value_constr_264 CC_NOTUSED = {
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_id_constr_266 CC_NOTUSED = {
     {2, 1} /* (0..65535) */,
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_id_constr_266 CC_NOTUSED = {
     {APC_CONSTRAINED, 16, 16, 0, 65535} /* (0..65535) */,
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_criticality_constr_267
     CC_NOTUSED = {{0, 0}, -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_267
     CC_NOTUSED = {
         {APC_CONSTRAINED, 2, 2, 0, 2} /* (0..2) */,
@@ -20218,26 +21216,41 @@ static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_267
         0,
         0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_value_constr_268 CC_NOTUSED = {
     {0, 0},
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_value_constr_268 CC_NOTUSED = {
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_id_constr_270 CC_NOTUSED = {
     {2, 1} /* (0..65535) */,
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_id_constr_270 CC_NOTUSED = {
     {APC_CONSTRAINED, 16, 16, 0, 65535} /* (0..65535) */,
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_criticality_constr_271
     CC_NOTUSED = {{0, 0}, -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_271
     CC_NOTUSED = {
         {APC_CONSTRAINED, 2, 2, 0, 2} /* (0..2) */,
@@ -20245,26 +21258,41 @@ static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_271
         0,
         0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_value_constr_272 CC_NOTUSED = {
     {0, 0},
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_value_constr_272 CC_NOTUSED = {
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_id_constr_274 CC_NOTUSED = {
     {2, 1} /* (0..65535) */,
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_id_constr_274 CC_NOTUSED = {
     {APC_CONSTRAINED, 16, 16, 0, 65535} /* (0..65535) */,
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_criticality_constr_275
     CC_NOTUSED = {{0, 0}, -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_275
     CC_NOTUSED = {
         {APC_CONSTRAINED, 2, 2, 0, 2} /* (0..2) */,
@@ -20272,26 +21300,41 @@ static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_275
         0,
         0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_value_constr_276 CC_NOTUSED = {
     {0, 0},
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_value_constr_276 CC_NOTUSED = {
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_id_constr_278 CC_NOTUSED = {
     {2, 1} /* (0..65535) */,
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_id_constr_278 CC_NOTUSED = {
     {APC_CONSTRAINED, 16, 16, 0, 65535} /* (0..65535) */,
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_criticality_constr_279
     CC_NOTUSED = {{0, 0}, -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_279
     CC_NOTUSED = {
         {APC_CONSTRAINED, 2, 2, 0, 2} /* (0..2) */,
@@ -20299,26 +21342,41 @@ static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_279
         0,
         0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_value_constr_280 CC_NOTUSED = {
     {0, 0},
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_value_constr_280 CC_NOTUSED = {
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_id_constr_282 CC_NOTUSED = {
     {2, 1} /* (0..65535) */,
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_id_constr_282 CC_NOTUSED = {
     {APC_CONSTRAINED, 16, 16, 0, 65535} /* (0..65535) */,
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_criticality_constr_283
     CC_NOTUSED = {{0, 0}, -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_283
     CC_NOTUSED = {
         {APC_CONSTRAINED, 2, 2, 0, 2} /* (0..2) */,
@@ -20326,26 +21384,41 @@ static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_283
         0,
         0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_value_constr_284 CC_NOTUSED = {
     {0, 0},
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_value_constr_284 CC_NOTUSED = {
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_id_constr_286 CC_NOTUSED = {
     {2, 1} /* (0..65535) */,
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_id_constr_286 CC_NOTUSED = {
     {APC_CONSTRAINED, 16, 16, 0, 65535} /* (0..65535) */,
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_criticality_constr_287
     CC_NOTUSED = {{0, 0}, -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_287
     CC_NOTUSED = {
         {APC_CONSTRAINED, 2, 2, 0, 2} /* (0..2) */,
@@ -20353,26 +21426,41 @@ static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_287
         0,
         0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_value_constr_288 CC_NOTUSED = {
     {0, 0},
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_value_constr_288 CC_NOTUSED = {
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_id_constr_290 CC_NOTUSED = {
     {2, 1} /* (0..65535) */,
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_id_constr_290 CC_NOTUSED = {
     {APC_CONSTRAINED, 16, 16, 0, 65535} /* (0..65535) */,
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_criticality_constr_291
     CC_NOTUSED = {{0, 0}, -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_291
     CC_NOTUSED = {
         {APC_CONSTRAINED, 2, 2, 0, 2} /* (0..2) */,
@@ -20380,26 +21468,41 @@ static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_291
         0,
         0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_value_constr_292 CC_NOTUSED = {
     {0, 0},
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_value_constr_292 CC_NOTUSED = {
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_id_constr_294 CC_NOTUSED = {
     {2, 1} /* (0..65535) */,
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_id_constr_294 CC_NOTUSED = {
     {APC_CONSTRAINED, 16, 16, 0, 65535} /* (0..65535) */,
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_criticality_constr_295
     CC_NOTUSED = {{0, 0}, -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_295
     CC_NOTUSED = {
         {APC_CONSTRAINED, 2, 2, 0, 2} /* (0..2) */,
@@ -20407,26 +21510,41 @@ static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_295
         0,
         0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_value_constr_296 CC_NOTUSED = {
     {0, 0},
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_value_constr_296 CC_NOTUSED = {
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_id_constr_298 CC_NOTUSED = {
     {2, 1} /* (0..65535) */,
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_id_constr_298 CC_NOTUSED = {
     {APC_CONSTRAINED, 16, 16, 0, 65535} /* (0..65535) */,
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_criticality_constr_299
     CC_NOTUSED = {{0, 0}, -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_299
     CC_NOTUSED = {
         {APC_CONSTRAINED, 2, 2, 0, 2} /* (0..2) */,
@@ -20434,26 +21552,41 @@ static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_299
         0,
         0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_value_constr_300 CC_NOTUSED = {
     {0, 0},
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_value_constr_300 CC_NOTUSED = {
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_id_constr_302 CC_NOTUSED = {
     {2, 1} /* (0..65535) */,
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_id_constr_302 CC_NOTUSED = {
     {APC_CONSTRAINED, 16, 16, 0, 65535} /* (0..65535) */,
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_criticality_constr_303
     CC_NOTUSED = {{0, 0}, -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_303
     CC_NOTUSED = {
         {APC_CONSTRAINED, 2, 2, 0, 2} /* (0..2) */,
@@ -20461,26 +21594,41 @@ static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_303
         0,
         0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_value_constr_304 CC_NOTUSED = {
     {0, 0},
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_value_constr_304 CC_NOTUSED = {
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_id_constr_306 CC_NOTUSED = {
     {2, 1} /* (0..65535) */,
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_id_constr_306 CC_NOTUSED = {
     {APC_CONSTRAINED, 16, 16, 0, 65535} /* (0..65535) */,
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_criticality_constr_307
     CC_NOTUSED = {{0, 0}, -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_307
     CC_NOTUSED = {
         {APC_CONSTRAINED, 2, 2, 0, 2} /* (0..2) */,
@@ -20488,26 +21636,41 @@ static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_307
         0,
         0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_value_constr_308 CC_NOTUSED = {
     {0, 0},
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_value_constr_308 CC_NOTUSED = {
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_id_constr_310 CC_NOTUSED = {
     {2, 1} /* (0..65535) */,
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_id_constr_310 CC_NOTUSED = {
     {APC_CONSTRAINED, 16, 16, 0, 65535} /* (0..65535) */,
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_criticality_constr_311
     CC_NOTUSED = {{0, 0}, -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_311
     CC_NOTUSED = {
         {APC_CONSTRAINED, 2, 2, 0, 2} /* (0..2) */,
@@ -20515,26 +21678,41 @@ static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_311
         0,
         0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_value_constr_312 CC_NOTUSED = {
     {0, 0},
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_value_constr_312 CC_NOTUSED = {
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_id_constr_314 CC_NOTUSED = {
     {2, 1} /* (0..65535) */,
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_id_constr_314 CC_NOTUSED = {
     {APC_CONSTRAINED, 16, 16, 0, 65535} /* (0..65535) */,
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_criticality_constr_315
     CC_NOTUSED = {{0, 0}, -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_315
     CC_NOTUSED = {
         {APC_CONSTRAINED, 2, 2, 0, 2} /* (0..2) */,
@@ -20542,26 +21720,41 @@ static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_315
         0,
         0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_value_constr_316 CC_NOTUSED = {
     {0, 0},
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_value_constr_316 CC_NOTUSED = {
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_id_constr_318 CC_NOTUSED = {
     {2, 1} /* (0..65535) */,
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_id_constr_318 CC_NOTUSED = {
     {APC_CONSTRAINED, 16, 16, 0, 65535} /* (0..65535) */,
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_criticality_constr_319
     CC_NOTUSED = {{0, 0}, -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_319
     CC_NOTUSED = {
         {APC_CONSTRAINED, 2, 2, 0, 2} /* (0..2) */,
@@ -20569,26 +21762,41 @@ static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_319
         0,
         0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_value_constr_320 CC_NOTUSED = {
     {0, 0},
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_value_constr_320 CC_NOTUSED = {
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_id_constr_322 CC_NOTUSED = {
     {2, 1} /* (0..65535) */,
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_id_constr_322 CC_NOTUSED = {
     {APC_CONSTRAINED, 16, 16, 0, 65535} /* (0..65535) */,
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_criticality_constr_323
     CC_NOTUSED = {{0, 0}, -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_323
     CC_NOTUSED = {
         {APC_CONSTRAINED, 2, 2, 0, 2} /* (0..2) */,
@@ -20596,26 +21804,41 @@ static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_323
         0,
         0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_value_constr_324 CC_NOTUSED = {
     {0, 0},
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_value_constr_324 CC_NOTUSED = {
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_id_constr_326 CC_NOTUSED = {
     {2, 1} /* (0..65535) */,
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_id_constr_326 CC_NOTUSED = {
     {APC_CONSTRAINED, 16, 16, 0, 65535} /* (0..65535) */,
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_criticality_constr_327
     CC_NOTUSED = {{0, 0}, -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_327
     CC_NOTUSED = {
         {APC_CONSTRAINED, 2, 2, 0, 2} /* (0..2) */,
@@ -20623,26 +21846,41 @@ static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_327
         0,
         0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_value_constr_328 CC_NOTUSED = {
     {0, 0},
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_value_constr_328 CC_NOTUSED = {
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_id_constr_330 CC_NOTUSED = {
     {2, 1} /* (0..65535) */,
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_id_constr_330 CC_NOTUSED = {
     {APC_CONSTRAINED, 16, 16, 0, 65535} /* (0..65535) */,
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_criticality_constr_331
     CC_NOTUSED = {{0, 0}, -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_331
     CC_NOTUSED = {
         {APC_CONSTRAINED, 2, 2, 0, 2} /* (0..2) */,
@@ -20650,26 +21888,41 @@ static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_331
         0,
         0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_value_constr_332 CC_NOTUSED = {
     {0, 0},
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_value_constr_332 CC_NOTUSED = {
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_id_constr_334 CC_NOTUSED = {
     {2, 1} /* (0..65535) */,
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_id_constr_334 CC_NOTUSED = {
     {APC_CONSTRAINED, 16, 16, 0, 65535} /* (0..65535) */,
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_criticality_constr_335
     CC_NOTUSED = {{0, 0}, -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_335
     CC_NOTUSED = {
         {APC_CONSTRAINED, 2, 2, 0, 2} /* (0..2) */,
@@ -20677,26 +21930,41 @@ static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_335
         0,
         0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_value_constr_336 CC_NOTUSED = {
     {0, 0},
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_value_constr_336 CC_NOTUSED = {
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_id_constr_338 CC_NOTUSED = {
     {2, 1} /* (0..65535) */,
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_id_constr_338 CC_NOTUSED = {
     {APC_CONSTRAINED, 16, 16, 0, 65535} /* (0..65535) */,
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_criticality_constr_339
     CC_NOTUSED = {{0, 0}, -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_339
     CC_NOTUSED = {
         {APC_CONSTRAINED, 2, 2, 0, 2} /* (0..2) */,
@@ -20704,26 +21972,41 @@ static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_339
         0,
         0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_value_constr_340 CC_NOTUSED = {
     {0, 0},
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_value_constr_340 CC_NOTUSED = {
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_id_constr_342 CC_NOTUSED = {
     {2, 1} /* (0..65535) */,
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_id_constr_342 CC_NOTUSED = {
     {APC_CONSTRAINED, 16, 16, 0, 65535} /* (0..65535) */,
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_criticality_constr_343
     CC_NOTUSED = {{0, 0}, -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_343
     CC_NOTUSED = {
         {APC_CONSTRAINED, 2, 2, 0, 2} /* (0..2) */,
@@ -20731,26 +22014,41 @@ static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_343
         0,
         0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_value_constr_344 CC_NOTUSED = {
     {0, 0},
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_value_constr_344 CC_NOTUSED = {
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_id_constr_346 CC_NOTUSED = {
     {2, 1} /* (0..65535) */,
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_id_constr_346 CC_NOTUSED = {
     {APC_CONSTRAINED, 16, 16, 0, 65535} /* (0..65535) */,
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_criticality_constr_347
     CC_NOTUSED = {{0, 0}, -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_347
     CC_NOTUSED = {
         {APC_CONSTRAINED, 2, 2, 0, 2} /* (0..2) */,
@@ -20758,26 +22056,41 @@ static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_347
         0,
         0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_value_constr_348 CC_NOTUSED = {
     {0, 0},
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_value_constr_348 CC_NOTUSED = {
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_id_constr_350 CC_NOTUSED = {
     {2, 1} /* (0..65535) */,
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_id_constr_350 CC_NOTUSED = {
     {APC_CONSTRAINED, 16, 16, 0, 65535} /* (0..65535) */,
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_criticality_constr_351
     CC_NOTUSED = {{0, 0}, -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_351
     CC_NOTUSED = {
         {APC_CONSTRAINED, 2, 2, 0, 2} /* (0..2) */,
@@ -20785,26 +22098,41 @@ static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_351
         0,
         0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_value_constr_352 CC_NOTUSED = {
     {0, 0},
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_value_constr_352 CC_NOTUSED = {
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_id_constr_354 CC_NOTUSED = {
     {2, 1} /* (0..65535) */,
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_id_constr_354 CC_NOTUSED = {
     {APC_CONSTRAINED, 16, 16, 0, 65535} /* (0..65535) */,
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_criticality_constr_355
     CC_NOTUSED = {{0, 0}, -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_355
     CC_NOTUSED = {
         {APC_CONSTRAINED, 2, 2, 0, 2} /* (0..2) */,
@@ -20812,26 +22140,41 @@ static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_355
         0,
         0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_value_constr_356 CC_NOTUSED = {
     {0, 0},
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_value_constr_356 CC_NOTUSED = {
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_id_constr_358 CC_NOTUSED = {
     {2, 1} /* (0..65535) */,
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_id_constr_358 CC_NOTUSED = {
     {APC_CONSTRAINED, 16, 16, 0, 65535} /* (0..65535) */,
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_criticality_constr_359
     CC_NOTUSED = {{0, 0}, -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_359
     CC_NOTUSED = {
         {APC_CONSTRAINED, 2, 2, 0, 2} /* (0..2) */,
@@ -20839,26 +22182,41 @@ static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_359
         0,
         0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_value_constr_360 CC_NOTUSED = {
     {0, 0},
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_value_constr_360 CC_NOTUSED = {
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_id_constr_362 CC_NOTUSED = {
     {2, 1} /* (0..65535) */,
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_id_constr_362 CC_NOTUSED = {
     {APC_CONSTRAINED, 16, 16, 0, 65535} /* (0..65535) */,
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_criticality_constr_363
     CC_NOTUSED = {{0, 0}, -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_363
     CC_NOTUSED = {
         {APC_CONSTRAINED, 2, 2, 0, 2} /* (0..2) */,
@@ -20866,26 +22224,41 @@ static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_363
         0,
         0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_value_constr_364 CC_NOTUSED = {
     {0, 0},
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_value_constr_364 CC_NOTUSED = {
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_id_constr_366 CC_NOTUSED = {
     {2, 1} /* (0..65535) */,
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_id_constr_366 CC_NOTUSED = {
     {APC_CONSTRAINED, 16, 16, 0, 65535} /* (0..65535) */,
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_criticality_constr_367
     CC_NOTUSED = {{0, 0}, -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_367
     CC_NOTUSED = {
         {APC_CONSTRAINED, 2, 2, 0, 2} /* (0..2) */,
@@ -20893,26 +22266,41 @@ static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_367
         0,
         0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_value_constr_368 CC_NOTUSED = {
     {0, 0},
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_value_constr_368 CC_NOTUSED = {
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_id_constr_370 CC_NOTUSED = {
     {2, 1} /* (0..65535) */,
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_id_constr_370 CC_NOTUSED = {
     {APC_CONSTRAINED, 16, 16, 0, 65535} /* (0..65535) */,
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_criticality_constr_371
     CC_NOTUSED = {{0, 0}, -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_371
     CC_NOTUSED = {
         {APC_CONSTRAINED, 2, 2, 0, 2} /* (0..2) */,
@@ -20920,26 +22308,41 @@ static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_371
         0,
         0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_value_constr_372 CC_NOTUSED = {
     {0, 0},
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_value_constr_372 CC_NOTUSED = {
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_id_constr_374 CC_NOTUSED = {
     {2, 1} /* (0..65535) */,
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_id_constr_374 CC_NOTUSED = {
     {APC_CONSTRAINED, 16, 16, 0, 65535} /* (0..65535) */,
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_criticality_constr_375
     CC_NOTUSED = {{0, 0}, -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_375
     CC_NOTUSED = {
         {APC_CONSTRAINED, 2, 2, 0, 2} /* (0..2) */,
@@ -20947,26 +22350,41 @@ static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_375
         0,
         0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_value_constr_376 CC_NOTUSED = {
     {0, 0},
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_value_constr_376 CC_NOTUSED = {
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_id_constr_378 CC_NOTUSED = {
     {2, 1} /* (0..65535) */,
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_id_constr_378 CC_NOTUSED = {
     {APC_CONSTRAINED, 16, 16, 0, 65535} /* (0..65535) */,
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_criticality_constr_379
     CC_NOTUSED = {{0, 0}, -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_379
     CC_NOTUSED = {
         {APC_CONSTRAINED, 2, 2, 0, 2} /* (0..2) */,
@@ -20974,26 +22392,41 @@ static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_379
         0,
         0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_value_constr_380 CC_NOTUSED = {
     {0, 0},
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_value_constr_380 CC_NOTUSED = {
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_id_constr_382 CC_NOTUSED = {
     {2, 1} /* (0..65535) */,
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_id_constr_382 CC_NOTUSED = {
     {APC_CONSTRAINED, 16, 16, 0, 65535} /* (0..65535) */,
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_criticality_constr_383
     CC_NOTUSED = {{0, 0}, -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_383
     CC_NOTUSED = {
         {APC_CONSTRAINED, 2, 2, 0, 2} /* (0..2) */,
@@ -21001,26 +22434,41 @@ static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_383
         0,
         0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_value_constr_384 CC_NOTUSED = {
     {0, 0},
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_value_constr_384 CC_NOTUSED = {
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_id_constr_386 CC_NOTUSED = {
     {2, 1} /* (0..65535) */,
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_id_constr_386 CC_NOTUSED = {
     {APC_CONSTRAINED, 16, 16, 0, 65535} /* (0..65535) */,
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_criticality_constr_387
     CC_NOTUSED = {{0, 0}, -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_387
     CC_NOTUSED = {
         {APC_CONSTRAINED, 2, 2, 0, 2} /* (0..2) */,
@@ -21028,26 +22476,41 @@ static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_387
         0,
         0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_value_constr_388 CC_NOTUSED = {
     {0, 0},
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_value_constr_388 CC_NOTUSED = {
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_id_constr_390 CC_NOTUSED = {
     {2, 1} /* (0..65535) */,
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_id_constr_390 CC_NOTUSED = {
     {APC_CONSTRAINED, 16, 16, 0, 65535} /* (0..65535) */,
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_criticality_constr_391
     CC_NOTUSED = {{0, 0}, -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_391
     CC_NOTUSED = {
         {APC_CONSTRAINED, 2, 2, 0, 2} /* (0..2) */,
@@ -21055,15 +22518,22 @@ static asn_per_constraints_t asn_PER_memb_Ngap_criticality_constr_391
         0,
         0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_memb_Ngap_value_constr_392 CC_NOTUSED = {
     {0, 0},
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_memb_Ngap_value_constr_392 CC_NOTUSED = {
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
 static asn_TYPE_member_t asn_MBR_Ngap_value_4[] = {
     {ATF_NOFLAGS,
      0,
@@ -21074,7 +22544,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_4[] = {
      0,
      &asn_DEF_Ngap_AMF_UE_NGAP_ID,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "AMF-UE-NGAP-ID"},
@@ -21087,7 +22565,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_4[] = {
      0,
      &asn_DEF_Ngap_RAN_UE_NGAP_ID,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "RAN-UE-NGAP-ID"},
@@ -21100,7 +22586,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_4[] = {
      0,
      &asn_DEF_Ngap_RANPagingPriority,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "RANPagingPriority"},
@@ -21112,7 +22606,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_4[] = {
      0,
      &asn_DEF_Ngap_NAS_PDU,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "NAS-PDU"},
@@ -21125,7 +22627,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_4[] = {
      0,
      &asn_DEF_Ngap_PDUSessionResourceSetupListSUReq,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "PDUSessionResourceSetupListSUReq"},
@@ -21138,7 +22648,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_4[] = {
      0,
      &asn_DEF_Ngap_UEAggregateMaximumBitRate,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "UEAggregateMaximumBitRate"},
@@ -21174,7 +22692,15 @@ static /* Use -fall-defs-global to expose */
         0, /* No effective tags (count) */
         0, /* No tags (pointer) */
         0, /* No tags (count) */
-        {0, 0, OPEN_TYPE_constraint},
+        {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+            OPEN_TYPE_constraint},
         asn_MBR_Ngap_value_4,
         6,                          /* Elements count */
         &asn_SPC_Ngap_value_specs_4 /* Additional specs */
@@ -21188,8 +22714,15 @@ asn_TYPE_member_t asn_MBR_Ngap_PDUSessionResourceSetupRequestIEs_1[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_ProtocolIE_ID,
      0,
-     {&asn_OER_memb_Ngap_id_constr_2, &asn_PER_memb_Ngap_id_constr_2,
-      memb_Ngap_id_constraint_1},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_id_constr_2,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_id_constr_2,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_id_constraint_1},
      0,
      0, /* No default value */
      "id"},
@@ -21200,9 +22733,15 @@ asn_TYPE_member_t asn_MBR_Ngap_PDUSessionResourceSetupRequestIEs_1[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_Criticality,
      select_PDUSessionResourceSetupRequestIEs_Ngap_criticality_type,
-     {&asn_OER_memb_Ngap_criticality_constr_3,
-      &asn_PER_memb_Ngap_criticality_constr_3,
-      memb_Ngap_criticality_constraint_1},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_criticality_constr_3,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_criticality_constr_3,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_criticality_constraint_1},
      0,
      0, /* No default value */
      "criticality"},
@@ -21213,8 +22752,15 @@ asn_TYPE_member_t asn_MBR_Ngap_PDUSessionResourceSetupRequestIEs_1[] = {
      +1, /* EXPLICIT tag at current level */
      &asn_DEF_Ngap_value_4,
      select_PDUSessionResourceSetupRequestIEs_Ngap_value_type,
-     {&asn_OER_memb_Ngap_value_constr_4, &asn_PER_memb_Ngap_value_constr_4,
-      memb_Ngap_value_constraint_1},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_value_constr_4,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_value_constr_4,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_value_constraint_1},
      0,
      0, /* No default value */
      "value"},
@@ -21251,7 +22797,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_PDUSessionResourceSetupRequestIEs = {
     sizeof(asn_DEF_Ngap_PDUSessionResourceSetupRequestIEs_tags_1) /
         sizeof(
             asn_DEF_Ngap_PDUSessionResourceSetupRequestIEs_tags_1[0]), /* 1 */
-    {0, 0, SEQUENCE_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_constraint},
     asn_MBR_Ngap_PDUSessionResourceSetupRequestIEs_1,
     3,                                                      /* Elements count */
     &asn_SPC_Ngap_PDUSessionResourceSetupRequestIEs_specs_1 /* Additional specs
@@ -21268,7 +22822,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_8[] = {
      0,
      &asn_DEF_Ngap_AMF_UE_NGAP_ID,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "AMF-UE-NGAP-ID"},
@@ -21281,7 +22843,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_8[] = {
      0,
      &asn_DEF_Ngap_RAN_UE_NGAP_ID,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "RAN-UE-NGAP-ID"},
@@ -21294,7 +22864,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_8[] = {
      0,
      &asn_DEF_Ngap_PDUSessionResourceSetupListSURes,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "PDUSessionResourceSetupListSURes"},
@@ -21307,7 +22885,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_8[] = {
      0,
      &asn_DEF_Ngap_PDUSessionResourceFailedToSetupListSURes,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "PDUSessionResourceFailedToSetupListSURes"},
@@ -21320,7 +22906,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_8[] = {
      0,
      &asn_DEF_Ngap_CriticalityDiagnostics,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "CriticalityDiagnostics"},
@@ -21356,7 +22950,15 @@ static /* Use -fall-defs-global to expose */
         0, /* No effective tags (count) */
         0, /* No tags (pointer) */
         0, /* No tags (count) */
-        {0, 0, OPEN_TYPE_constraint},
+        {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+            OPEN_TYPE_constraint},
         asn_MBR_Ngap_value_8,
         5,                          /* Elements count */
         &asn_SPC_Ngap_value_specs_8 /* Additional specs */
@@ -21370,8 +22972,15 @@ asn_TYPE_member_t asn_MBR_Ngap_PDUSessionResourceSetupResponseIEs_5[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_ProtocolIE_ID,
      0,
-     {&asn_OER_memb_Ngap_id_constr_6, &asn_PER_memb_Ngap_id_constr_6,
-      memb_Ngap_id_constraint_5},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_id_constr_6,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_id_constr_6,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_id_constraint_5},
      0,
      0, /* No default value */
      "id"},
@@ -21382,9 +22991,15 @@ asn_TYPE_member_t asn_MBR_Ngap_PDUSessionResourceSetupResponseIEs_5[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_Criticality,
      select_PDUSessionResourceSetupResponseIEs_Ngap_criticality_type,
-     {&asn_OER_memb_Ngap_criticality_constr_7,
-      &asn_PER_memb_Ngap_criticality_constr_7,
-      memb_Ngap_criticality_constraint_5},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_criticality_constr_7,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_criticality_constr_7,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_criticality_constraint_5},
      0,
      0, /* No default value */
      "criticality"},
@@ -21395,8 +23010,15 @@ asn_TYPE_member_t asn_MBR_Ngap_PDUSessionResourceSetupResponseIEs_5[] = {
      +1, /* EXPLICIT tag at current level */
      &asn_DEF_Ngap_value_8,
      select_PDUSessionResourceSetupResponseIEs_Ngap_value_type,
-     {&asn_OER_memb_Ngap_value_constr_8, &asn_PER_memb_Ngap_value_constr_8,
-      memb_Ngap_value_constraint_5},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_value_constr_8,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_value_constr_8,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_value_constraint_5},
      0,
      0, /* No default value */
      "value"},
@@ -21433,7 +23055,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_PDUSessionResourceSetupResponseIEs = {
     sizeof(asn_DEF_Ngap_PDUSessionResourceSetupResponseIEs_tags_5) /
         sizeof(
             asn_DEF_Ngap_PDUSessionResourceSetupResponseIEs_tags_5[0]), /* 1 */
-    {0, 0, SEQUENCE_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_constraint},
     asn_MBR_Ngap_PDUSessionResourceSetupResponseIEs_5,
     3, /* Elements count */
     &asn_SPC_Ngap_PDUSessionResourceSetupResponseIEs_specs_5 /* Additional specs
@@ -21450,7 +23080,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_12[] = {
      0,
      &asn_DEF_Ngap_AMF_UE_NGAP_ID,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "AMF-UE-NGAP-ID"},
@@ -21463,7 +23101,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_12[] = {
      0,
      &asn_DEF_Ngap_RAN_UE_NGAP_ID,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "RAN-UE-NGAP-ID"},
@@ -21476,7 +23122,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_12[] = {
      0,
      &asn_DEF_Ngap_RANPagingPriority,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "RANPagingPriority"},
@@ -21489,7 +23143,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_12[] = {
      0,
      &asn_DEF_Ngap_NAS_PDU,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "NAS-PDU"},
@@ -21502,7 +23164,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_12[] = {
      0,
      &asn_DEF_Ngap_PDUSessionResourceToReleaseListRelCmd,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "PDUSessionResourceToReleaseListRelCmd"},
@@ -21536,7 +23206,15 @@ static /* Use -fall-defs-global to expose */
         0, /* No effective tags (count) */
         0, /* No tags (pointer) */
         0, /* No tags (count) */
-        {0, 0, OPEN_TYPE_constraint},
+        {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+            OPEN_TYPE_constraint},
         asn_MBR_Ngap_value_12,
         5,                           /* Elements count */
         &asn_SPC_Ngap_value_specs_12 /* Additional specs */
@@ -21550,8 +23228,15 @@ asn_TYPE_member_t asn_MBR_Ngap_PDUSessionResourceReleaseCommandIEs_9[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_ProtocolIE_ID,
      0,
-     {&asn_OER_memb_Ngap_id_constr_10, &asn_PER_memb_Ngap_id_constr_10,
-      memb_Ngap_id_constraint_9},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_id_constr_10,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_id_constr_10,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_id_constraint_9},
      0,
      0, /* No default value */
      "id"},
@@ -21562,9 +23247,15 @@ asn_TYPE_member_t asn_MBR_Ngap_PDUSessionResourceReleaseCommandIEs_9[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_Criticality,
      select_PDUSessionResourceReleaseCommandIEs_Ngap_criticality_type,
-     {&asn_OER_memb_Ngap_criticality_constr_11,
-      &asn_PER_memb_Ngap_criticality_constr_11,
-      memb_Ngap_criticality_constraint_9},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_criticality_constr_11,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_criticality_constr_11,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_criticality_constraint_9},
      0,
      0, /* No default value */
      "criticality"},
@@ -21575,8 +23266,15 @@ asn_TYPE_member_t asn_MBR_Ngap_PDUSessionResourceReleaseCommandIEs_9[] = {
      +1, /* EXPLICIT tag at current level */
      &asn_DEF_Ngap_value_12,
      select_PDUSessionResourceReleaseCommandIEs_Ngap_value_type,
-     {&asn_OER_memb_Ngap_value_constr_12, &asn_PER_memb_Ngap_value_constr_12,
-      memb_Ngap_value_constraint_9},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_value_constr_12,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_value_constr_12,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_value_constraint_9},
      0,
      0, /* No default value */
      "value"},
@@ -21613,7 +23311,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_PDUSessionResourceReleaseCommandIEs = {
     sizeof(asn_DEF_Ngap_PDUSessionResourceReleaseCommandIEs_tags_9) /
         sizeof(
             asn_DEF_Ngap_PDUSessionResourceReleaseCommandIEs_tags_9[0]), /* 1 */
-    {0, 0, SEQUENCE_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_constraint},
     asn_MBR_Ngap_PDUSessionResourceReleaseCommandIEs_9,
     3, /* Elements count */
     &asn_SPC_Ngap_PDUSessionResourceReleaseCommandIEs_specs_9 /* Additional
@@ -21630,7 +23336,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_16[] = {
      0,
      &asn_DEF_Ngap_AMF_UE_NGAP_ID,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "AMF-UE-NGAP-ID"},
@@ -21643,7 +23357,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_16[] = {
      0,
      &asn_DEF_Ngap_RAN_UE_NGAP_ID,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "RAN-UE-NGAP-ID"},
@@ -21656,7 +23378,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_16[] = {
      0,
      &asn_DEF_Ngap_PDUSessionResourceReleasedListRelRes,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "PDUSessionResourceReleasedListRelRes"},
@@ -21669,7 +23399,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_16[] = {
      0,
      &asn_DEF_Ngap_UserLocationInformation,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "UserLocationInformation"},
@@ -21682,7 +23420,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_16[] = {
      0,
      &asn_DEF_Ngap_CriticalityDiagnostics,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "CriticalityDiagnostics"},
@@ -21724,7 +23470,15 @@ static /* Use -fall-defs-global to expose */
         0, /* No effective tags (count) */
         0, /* No tags (pointer) */
         0, /* No tags (count) */
-        {0, 0, OPEN_TYPE_constraint},
+        {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+            OPEN_TYPE_constraint},
         asn_MBR_Ngap_value_16,
         5,                           /* Elements count */
         &asn_SPC_Ngap_value_specs_16 /* Additional specs */
@@ -21738,8 +23492,15 @@ asn_TYPE_member_t asn_MBR_Ngap_PDUSessionResourceReleaseResponseIEs_13[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_ProtocolIE_ID,
      0,
-     {&asn_OER_memb_Ngap_id_constr_14, &asn_PER_memb_Ngap_id_constr_14,
-      memb_Ngap_id_constraint_13},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_id_constr_14,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_id_constr_14,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_id_constraint_13},
      0,
      0, /* No default value */
      "id"},
@@ -21750,9 +23511,15 @@ asn_TYPE_member_t asn_MBR_Ngap_PDUSessionResourceReleaseResponseIEs_13[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_Criticality,
      select_PDUSessionResourceReleaseResponseIEs_Ngap_criticality_type,
-     {&asn_OER_memb_Ngap_criticality_constr_15,
-      &asn_PER_memb_Ngap_criticality_constr_15,
-      memb_Ngap_criticality_constraint_13},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_criticality_constr_15,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_criticality_constr_15,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_criticality_constraint_13},
      0,
      0, /* No default value */
      "criticality"},
@@ -21763,8 +23530,15 @@ asn_TYPE_member_t asn_MBR_Ngap_PDUSessionResourceReleaseResponseIEs_13[] = {
      +1, /* EXPLICIT tag at current level */
      &asn_DEF_Ngap_value_16,
      select_PDUSessionResourceReleaseResponseIEs_Ngap_value_type,
-     {&asn_OER_memb_Ngap_value_constr_16, &asn_PER_memb_Ngap_value_constr_16,
-      memb_Ngap_value_constraint_13},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_value_constr_16,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_value_constr_16,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_value_constraint_13},
      0,
      0, /* No default value */
      "value"},
@@ -21804,7 +23578,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_PDUSessionResourceReleaseResponseIEs = {
         sizeof(
             asn_DEF_Ngap_PDUSessionResourceReleaseResponseIEs_tags_13[0]), /* 1
                                                                             */
-    {0, 0, SEQUENCE_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_constraint},
     asn_MBR_Ngap_PDUSessionResourceReleaseResponseIEs_13,
     3, /* Elements count */
     &asn_SPC_Ngap_PDUSessionResourceReleaseResponseIEs_specs_13 /* Additional
@@ -21821,7 +23603,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_20[] = {
      0,
      &asn_DEF_Ngap_AMF_UE_NGAP_ID,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "AMF-UE-NGAP-ID"},
@@ -21834,7 +23624,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_20[] = {
      0,
      &asn_DEF_Ngap_RAN_UE_NGAP_ID,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "RAN-UE-NGAP-ID"},
@@ -21847,7 +23645,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_20[] = {
      0,
      &asn_DEF_Ngap_RANPagingPriority,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "RANPagingPriority"},
@@ -21860,7 +23666,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_20[] = {
      0,
      &asn_DEF_Ngap_PDUSessionResourceModifyListModReq,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "PDUSessionResourceModifyListModReq"},
@@ -21893,7 +23707,15 @@ static /* Use -fall-defs-global to expose */
         0, /* No effective tags (count) */
         0, /* No tags (pointer) */
         0, /* No tags (count) */
-        {0, 0, OPEN_TYPE_constraint},
+        {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+            OPEN_TYPE_constraint},
         asn_MBR_Ngap_value_20,
         4,                           /* Elements count */
         &asn_SPC_Ngap_value_specs_20 /* Additional specs */
@@ -21907,8 +23729,15 @@ asn_TYPE_member_t asn_MBR_Ngap_PDUSessionResourceModifyRequestIEs_17[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_ProtocolIE_ID,
      0,
-     {&asn_OER_memb_Ngap_id_constr_18, &asn_PER_memb_Ngap_id_constr_18,
-      memb_Ngap_id_constraint_17},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_id_constr_18,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_id_constr_18,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_id_constraint_17},
      0,
      0, /* No default value */
      "id"},
@@ -21919,9 +23748,15 @@ asn_TYPE_member_t asn_MBR_Ngap_PDUSessionResourceModifyRequestIEs_17[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_Criticality,
      select_PDUSessionResourceModifyRequestIEs_Ngap_criticality_type,
-     {&asn_OER_memb_Ngap_criticality_constr_19,
-      &asn_PER_memb_Ngap_criticality_constr_19,
-      memb_Ngap_criticality_constraint_17},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_criticality_constr_19,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_criticality_constr_19,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_criticality_constraint_17},
      0,
      0, /* No default value */
      "criticality"},
@@ -21932,8 +23767,15 @@ asn_TYPE_member_t asn_MBR_Ngap_PDUSessionResourceModifyRequestIEs_17[] = {
      +1, /* EXPLICIT tag at current level */
      &asn_DEF_Ngap_value_20,
      select_PDUSessionResourceModifyRequestIEs_Ngap_value_type,
-     {&asn_OER_memb_Ngap_value_constr_20, &asn_PER_memb_Ngap_value_constr_20,
-      memb_Ngap_value_constraint_17},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_value_constr_20,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_value_constr_20,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_value_constraint_17},
      0,
      0, /* No default value */
      "value"},
@@ -21970,7 +23812,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_PDUSessionResourceModifyRequestIEs = {
     sizeof(asn_DEF_Ngap_PDUSessionResourceModifyRequestIEs_tags_17) /
         sizeof(
             asn_DEF_Ngap_PDUSessionResourceModifyRequestIEs_tags_17[0]), /* 1 */
-    {0, 0, SEQUENCE_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_constraint},
     asn_MBR_Ngap_PDUSessionResourceModifyRequestIEs_17,
     3, /* Elements count */
     &asn_SPC_Ngap_PDUSessionResourceModifyRequestIEs_specs_17 /* Additional
@@ -21987,7 +23837,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_24[] = {
      0,
      &asn_DEF_Ngap_AMF_UE_NGAP_ID,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "AMF-UE-NGAP-ID"},
@@ -22000,7 +23858,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_24[] = {
      0,
      &asn_DEF_Ngap_RAN_UE_NGAP_ID,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "RAN-UE-NGAP-ID"},
@@ -22013,7 +23879,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_24[] = {
      0,
      &asn_DEF_Ngap_PDUSessionResourceModifyListModRes,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "PDUSessionResourceModifyListModRes"},
@@ -22026,7 +23900,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_24[] = {
      0,
      &asn_DEF_Ngap_PDUSessionResourceFailedToModifyListModRes,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "PDUSessionResourceFailedToModifyListModRes"},
@@ -22039,7 +23921,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_24[] = {
      0,
      &asn_DEF_Ngap_UserLocationInformation,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "UserLocationInformation"},
@@ -22052,7 +23942,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_24[] = {
      0,
      &asn_DEF_Ngap_CriticalityDiagnostics,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "CriticalityDiagnostics"},
@@ -22097,7 +23995,15 @@ static /* Use -fall-defs-global to expose */
         0, /* No effective tags (count) */
         0, /* No tags (pointer) */
         0, /* No tags (count) */
-        {0, 0, OPEN_TYPE_constraint},
+        {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+            OPEN_TYPE_constraint},
         asn_MBR_Ngap_value_24,
         6,                           /* Elements count */
         &asn_SPC_Ngap_value_specs_24 /* Additional specs */
@@ -22111,8 +24017,15 @@ asn_TYPE_member_t asn_MBR_Ngap_PDUSessionResourceModifyResponseIEs_21[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_ProtocolIE_ID,
      0,
-     {&asn_OER_memb_Ngap_id_constr_22, &asn_PER_memb_Ngap_id_constr_22,
-      memb_Ngap_id_constraint_21},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_id_constr_22,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_id_constr_22,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_id_constraint_21},
      0,
      0, /* No default value */
      "id"},
@@ -22123,9 +24036,15 @@ asn_TYPE_member_t asn_MBR_Ngap_PDUSessionResourceModifyResponseIEs_21[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_Criticality,
      select_PDUSessionResourceModifyResponseIEs_Ngap_criticality_type,
-     {&asn_OER_memb_Ngap_criticality_constr_23,
-      &asn_PER_memb_Ngap_criticality_constr_23,
-      memb_Ngap_criticality_constraint_21},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_criticality_constr_23,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_criticality_constr_23,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_criticality_constraint_21},
      0,
      0, /* No default value */
      "criticality"},
@@ -22136,8 +24055,15 @@ asn_TYPE_member_t asn_MBR_Ngap_PDUSessionResourceModifyResponseIEs_21[] = {
      +1, /* EXPLICIT tag at current level */
      &asn_DEF_Ngap_value_24,
      select_PDUSessionResourceModifyResponseIEs_Ngap_value_type,
-     {&asn_OER_memb_Ngap_value_constr_24, &asn_PER_memb_Ngap_value_constr_24,
-      memb_Ngap_value_constraint_21},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_value_constr_24,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_value_constr_24,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_value_constraint_21},
      0,
      0, /* No default value */
      "value"},
@@ -22177,7 +24103,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_PDUSessionResourceModifyResponseIEs = {
         sizeof(
             asn_DEF_Ngap_PDUSessionResourceModifyResponseIEs_tags_21[0]), /* 1
                                                                            */
-    {0, 0, SEQUENCE_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_constraint},
     asn_MBR_Ngap_PDUSessionResourceModifyResponseIEs_21,
     3, /* Elements count */
     &asn_SPC_Ngap_PDUSessionResourceModifyResponseIEs_specs_21 /* Additional
@@ -22193,7 +24127,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_28[] = {
      0,
      &asn_DEF_Ngap_AMF_UE_NGAP_ID,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "AMF-UE-NGAP-ID"},
@@ -22205,7 +24147,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_28[] = {
      0,
      &asn_DEF_Ngap_RAN_UE_NGAP_ID,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "RAN-UE-NGAP-ID"},
@@ -22218,7 +24168,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_28[] = {
      0,
      &asn_DEF_Ngap_PDUSessionResourceNotifyList,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "PDUSessionResourceNotifyList"},
@@ -22231,7 +24189,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_28[] = {
      0,
      &asn_DEF_Ngap_PDUSessionResourceReleasedListNot,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "PDUSessionResourceReleasedListNot"},
@@ -22244,7 +24210,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_28[] = {
      0,
      &asn_DEF_Ngap_UserLocationInformation,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "UserLocationInformation"},
@@ -22283,7 +24257,15 @@ static /* Use -fall-defs-global to expose */
         0, /* No effective tags (count) */
         0, /* No tags (pointer) */
         0, /* No tags (count) */
-        {0, 0, OPEN_TYPE_constraint},
+        {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+            OPEN_TYPE_constraint},
         asn_MBR_Ngap_value_28,
         5,                           /* Elements count */
         &asn_SPC_Ngap_value_specs_28 /* Additional specs */
@@ -22297,8 +24279,15 @@ asn_TYPE_member_t asn_MBR_Ngap_PDUSessionResourceNotifyIEs_25[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_ProtocolIE_ID,
      0,
-     {&asn_OER_memb_Ngap_id_constr_26, &asn_PER_memb_Ngap_id_constr_26,
-      memb_Ngap_id_constraint_25},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_id_constr_26,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_id_constr_26,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_id_constraint_25},
      0,
      0, /* No default value */
      "id"},
@@ -22309,9 +24298,15 @@ asn_TYPE_member_t asn_MBR_Ngap_PDUSessionResourceNotifyIEs_25[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_Criticality,
      select_PDUSessionResourceNotifyIEs_Ngap_criticality_type,
-     {&asn_OER_memb_Ngap_criticality_constr_27,
-      &asn_PER_memb_Ngap_criticality_constr_27,
-      memb_Ngap_criticality_constraint_25},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_criticality_constr_27,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_criticality_constr_27,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_criticality_constraint_25},
      0,
      0, /* No default value */
      "criticality"},
@@ -22322,8 +24317,15 @@ asn_TYPE_member_t asn_MBR_Ngap_PDUSessionResourceNotifyIEs_25[] = {
      +1, /* EXPLICIT tag at current level */
      &asn_DEF_Ngap_value_28,
      select_PDUSessionResourceNotifyIEs_Ngap_value_type,
-     {&asn_OER_memb_Ngap_value_constr_28, &asn_PER_memb_Ngap_value_constr_28,
-      memb_Ngap_value_constraint_25},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_value_constr_28,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_value_constr_28,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_value_constraint_25},
      0,
      0, /* No default value */
      "value"},
@@ -22356,7 +24358,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_PDUSessionResourceNotifyIEs = {
     asn_DEF_Ngap_PDUSessionResourceNotifyIEs_tags_25, /* Same as above */
     sizeof(asn_DEF_Ngap_PDUSessionResourceNotifyIEs_tags_25) /
         sizeof(asn_DEF_Ngap_PDUSessionResourceNotifyIEs_tags_25[0]), /* 1 */
-    {0, 0, SEQUENCE_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_constraint},
     asn_MBR_Ngap_PDUSessionResourceNotifyIEs_25,
     3,                                                 /* Elements count */
     &asn_SPC_Ngap_PDUSessionResourceNotifyIEs_specs_25 /* Additional specs */
@@ -22372,7 +24382,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_32[] = {
      0,
      &asn_DEF_Ngap_AMF_UE_NGAP_ID,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "AMF-UE-NGAP-ID"},
@@ -22385,7 +24403,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_32[] = {
      0,
      &asn_DEF_Ngap_RAN_UE_NGAP_ID,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "RAN-UE-NGAP-ID"},
@@ -22398,7 +24424,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_32[] = {
      0,
      &asn_DEF_Ngap_PDUSessionResourceModifyListModInd,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "PDUSessionResourceModifyListModInd"},
@@ -22411,7 +24445,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_32[] = {
      0,
      &asn_DEF_Ngap_UserLocationInformation,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "UserLocationInformation"},
@@ -22450,7 +24492,15 @@ static /* Use -fall-defs-global to expose */
         0, /* No effective tags (count) */
         0, /* No tags (pointer) */
         0, /* No tags (count) */
-        {0, 0, OPEN_TYPE_constraint},
+        {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+            OPEN_TYPE_constraint},
         asn_MBR_Ngap_value_32,
         4,                           /* Elements count */
         &asn_SPC_Ngap_value_specs_32 /* Additional specs */
@@ -22464,8 +24514,15 @@ asn_TYPE_member_t asn_MBR_Ngap_PDUSessionResourceModifyIndicationIEs_29[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_ProtocolIE_ID,
      0,
-     {&asn_OER_memb_Ngap_id_constr_30, &asn_PER_memb_Ngap_id_constr_30,
-      memb_Ngap_id_constraint_29},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_id_constr_30,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_id_constr_30,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_id_constraint_29},
      0,
      0, /* No default value */
      "id"},
@@ -22476,9 +24533,15 @@ asn_TYPE_member_t asn_MBR_Ngap_PDUSessionResourceModifyIndicationIEs_29[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_Criticality,
      select_PDUSessionResourceModifyIndicationIEs_Ngap_criticality_type,
-     {&asn_OER_memb_Ngap_criticality_constr_31,
-      &asn_PER_memb_Ngap_criticality_constr_31,
-      memb_Ngap_criticality_constraint_29},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_criticality_constr_31,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_criticality_constr_31,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_criticality_constraint_29},
      0,
      0, /* No default value */
      "criticality"},
@@ -22489,8 +24552,15 @@ asn_TYPE_member_t asn_MBR_Ngap_PDUSessionResourceModifyIndicationIEs_29[] = {
      +1, /* EXPLICIT tag at current level */
      &asn_DEF_Ngap_value_32,
      select_PDUSessionResourceModifyIndicationIEs_Ngap_value_type,
-     {&asn_OER_memb_Ngap_value_constr_32, &asn_PER_memb_Ngap_value_constr_32,
-      memb_Ngap_value_constraint_29},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_value_constr_32,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_value_constr_32,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_value_constraint_29},
      0,
      0, /* No default value */
      "value"},
@@ -22528,7 +24598,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_PDUSessionResourceModifyIndicationIEs = {
     sizeof(asn_DEF_Ngap_PDUSessionResourceModifyIndicationIEs_tags_29) /
         sizeof(asn_DEF_Ngap_PDUSessionResourceModifyIndicationIEs_tags_29
                    [0]), /* 1 */
-    {0, 0, SEQUENCE_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_constraint},
     asn_MBR_Ngap_PDUSessionResourceModifyIndicationIEs_29,
     3, /* Elements count */
     &asn_SPC_Ngap_PDUSessionResourceModifyIndicationIEs_specs_29 /* Additional
@@ -22545,7 +24623,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_36[] = {
      0,
      &asn_DEF_Ngap_AMF_UE_NGAP_ID,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "AMF-UE-NGAP-ID"},
@@ -22558,7 +24644,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_36[] = {
      0,
      &asn_DEF_Ngap_RAN_UE_NGAP_ID,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "RAN-UE-NGAP-ID"},
@@ -22571,7 +24665,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_36[] = {
      0,
      &asn_DEF_Ngap_PDUSessionResourceModifyListModCfm,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "PDUSessionResourceModifyListModCfm"},
@@ -22584,7 +24686,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_36[] = {
      0,
      &asn_DEF_Ngap_PDUSessionResourceFailedToModifyListModCfm,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "PDUSessionResourceFailedToModifyListModCfm"},
@@ -22597,7 +24707,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_36[] = {
      0,
      &asn_DEF_Ngap_CriticalityDiagnostics,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "CriticalityDiagnostics"},
@@ -22633,7 +24751,15 @@ static /* Use -fall-defs-global to expose */
         0, /* No effective tags (count) */
         0, /* No tags (pointer) */
         0, /* No tags (count) */
-        {0, 0, OPEN_TYPE_constraint},
+        {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+            OPEN_TYPE_constraint},
         asn_MBR_Ngap_value_36,
         5,                           /* Elements count */
         &asn_SPC_Ngap_value_specs_36 /* Additional specs */
@@ -22647,8 +24773,15 @@ asn_TYPE_member_t asn_MBR_Ngap_PDUSessionResourceModifyConfirmIEs_33[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_ProtocolIE_ID,
      0,
-     {&asn_OER_memb_Ngap_id_constr_34, &asn_PER_memb_Ngap_id_constr_34,
-      memb_Ngap_id_constraint_33},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_id_constr_34,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_id_constr_34,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_id_constraint_33},
      0,
      0, /* No default value */
      "id"},
@@ -22659,9 +24792,15 @@ asn_TYPE_member_t asn_MBR_Ngap_PDUSessionResourceModifyConfirmIEs_33[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_Criticality,
      select_PDUSessionResourceModifyConfirmIEs_Ngap_criticality_type,
-     {&asn_OER_memb_Ngap_criticality_constr_35,
-      &asn_PER_memb_Ngap_criticality_constr_35,
-      memb_Ngap_criticality_constraint_33},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_criticality_constr_35,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_criticality_constr_35,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_criticality_constraint_33},
      0,
      0, /* No default value */
      "criticality"},
@@ -22672,8 +24811,15 @@ asn_TYPE_member_t asn_MBR_Ngap_PDUSessionResourceModifyConfirmIEs_33[] = {
      +1, /* EXPLICIT tag at current level */
      &asn_DEF_Ngap_value_36,
      select_PDUSessionResourceModifyConfirmIEs_Ngap_value_type,
-     {&asn_OER_memb_Ngap_value_constr_36, &asn_PER_memb_Ngap_value_constr_36,
-      memb_Ngap_value_constraint_33},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_value_constr_36,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_value_constr_36,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_value_constraint_33},
      0,
      0, /* No default value */
      "value"},
@@ -22710,7 +24856,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_PDUSessionResourceModifyConfirmIEs = {
     sizeof(asn_DEF_Ngap_PDUSessionResourceModifyConfirmIEs_tags_33) /
         sizeof(
             asn_DEF_Ngap_PDUSessionResourceModifyConfirmIEs_tags_33[0]), /* 1 */
-    {0, 0, SEQUENCE_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_constraint},
     asn_MBR_Ngap_PDUSessionResourceModifyConfirmIEs_33,
     3, /* Elements count */
     &asn_SPC_Ngap_PDUSessionResourceModifyConfirmIEs_specs_33 /* Additional
@@ -22727,7 +24881,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_40[] = {
      0,
      &asn_DEF_Ngap_AMF_UE_NGAP_ID,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "AMF-UE-NGAP-ID"},
@@ -22740,7 +24902,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_40[] = {
      0,
      &asn_DEF_Ngap_RAN_UE_NGAP_ID,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "RAN-UE-NGAP-ID"},
@@ -22751,7 +24921,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_40[] = {
      0,
      &asn_DEF_Ngap_AMFName,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "AMFName"},
@@ -22764,7 +24942,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_40[] = {
      0,
      &asn_DEF_Ngap_UEAggregateMaximumBitRate,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "UEAggregateMaximumBitRate"},
@@ -22777,7 +24963,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_40[] = {
      0,
      &asn_DEF_Ngap_CoreNetworkAssistanceInformationForInactive,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "CoreNetworkAssistanceInformationForInactive"},
@@ -22788,7 +24982,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_40[] = {
      0,
      &asn_DEF_Ngap_GUAMI,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "GUAMI"},
@@ -22801,7 +25003,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_40[] = {
      0,
      &asn_DEF_Ngap_PDUSessionResourceSetupListCxtReq,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "PDUSessionResourceSetupListCxtReq"},
@@ -22813,7 +25023,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_40[] = {
      0,
      &asn_DEF_Ngap_AllowedNSSAI,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "AllowedNSSAI"},
@@ -22826,7 +25044,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_40[] = {
      0,
      &asn_DEF_Ngap_UESecurityCapabilities,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "UESecurityCapabilities"},
@@ -22838,7 +25064,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_40[] = {
      0,
      &asn_DEF_Ngap_SecurityKey,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "SecurityKey"},
@@ -22851,7 +25085,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_40[] = {
      0,
      &asn_DEF_Ngap_TraceActivation,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "TraceActivation"},
@@ -22864,7 +25106,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_40[] = {
      0,
      &asn_DEF_Ngap_MobilityRestrictionList,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "MobilityRestrictionList"},
@@ -22877,7 +25127,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_40[] = {
      0,
      &asn_DEF_Ngap_UERadioCapability,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "UERadioCapability"},
@@ -22889,7 +25147,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_40[] = {
      0,
      &asn_DEF_Ngap_IndexToRFSP,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "IndexToRFSP"},
@@ -22901,7 +25167,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_40[] = {
      0,
      &asn_DEF_Ngap_MaskedIMEISV,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "MaskedIMEISV"},
@@ -22912,7 +25186,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_40[] = {
      0,
      &asn_DEF_Ngap_NAS_PDU,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "NAS-PDU"},
@@ -22925,7 +25207,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_40[] = {
      0,
      &asn_DEF_Ngap_EmergencyFallbackIndicator,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "EmergencyFallbackIndicator"},
@@ -22938,7 +25228,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_40[] = {
      0,
      &asn_DEF_Ngap_RRCInactiveTransitionReportRequest,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "RRCInactiveTransitionReportRequest"},
@@ -22951,7 +25249,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_40[] = {
      0,
      &asn_DEF_Ngap_UERadioCapabilityForPaging,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "UERadioCapabilityForPaging"},
@@ -22964,7 +25270,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_40[] = {
      0,
      &asn_DEF_Ngap_RedirectionVoiceFallback,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "RedirectionVoiceFallback"},
@@ -22977,7 +25291,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_40[] = {
      0,
      &asn_DEF_Ngap_LocationReportingRequestType,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "LocationReportingRequestType"},
@@ -22990,7 +25312,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_40[] = {
      0,
      &asn_DEF_Ngap_CNAssistedRANTuning,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "CNAssistedRANTuning"},
@@ -23003,7 +25333,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_40[] = {
      0,
      &asn_DEF_Ngap_SRVCCOperationPossible,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "SRVCCOperationPossible"},
@@ -23016,7 +25354,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_40[] = {
      0,
      &asn_DEF_Ngap_IAB_Authorized,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "IAB-Authorized"},
@@ -23029,7 +25375,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_40[] = {
      0,
      &asn_DEF_Ngap_Enhanced_CoverageRestriction,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "Enhanced-CoverageRestriction"},
@@ -23042,7 +25396,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_40[] = {
      0,
      &asn_DEF_Ngap_Extended_ConnectedTime,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "Extended-ConnectedTime"},
@@ -23055,7 +25417,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_40[] = {
      0,
      &asn_DEF_Ngap_UE_DifferentiationInfo,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "UE-DifferentiationInfo"},
@@ -23068,7 +25438,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_40[] = {
      0,
      &asn_DEF_Ngap_NRV2XServicesAuthorized,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "NRV2XServicesAuthorized"},
@@ -23081,7 +25459,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_40[] = {
      0,
      &asn_DEF_Ngap_LTEV2XServicesAuthorized,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "LTEV2XServicesAuthorized"},
@@ -23094,7 +25480,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_40[] = {
      0,
      &asn_DEF_Ngap_NRUESidelinkAggregateMaximumBitrate,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "NRUESidelinkAggregateMaximumBitrate"},
@@ -23107,7 +25501,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_40[] = {
      0,
      &asn_DEF_Ngap_LTEUESidelinkAggregateMaximumBitrate,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "LTEUESidelinkAggregateMaximumBitrate"},
@@ -23120,7 +25522,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_40[] = {
      0,
      &asn_DEF_Ngap_PC5QoSParameters,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "PC5QoSParameters"},
@@ -23133,7 +25543,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_40[] = {
      0,
      &asn_DEF_Ngap_CEmodeBrestricted,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "CEmodeBrestricted"},
@@ -23146,7 +25564,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_40[] = {
      0,
      &asn_DEF_Ngap_UE_UP_CIoT_Support,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "UE-UP-CIoT-Support"},
@@ -23159,7 +25585,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_40[] = {
      0,
      &asn_DEF_Ngap_RGLevelWirelineAccessCharacteristics,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "RGLevelWirelineAccessCharacteristics"},
@@ -23171,7 +25605,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_40[] = {
      0,
      &asn_DEF_Ngap_MDTPLMNList,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "MDTPLMNList"},
@@ -23184,7 +25626,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_40[] = {
      0,
      &asn_DEF_Ngap_UERadioCapabilityID,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "UERadioCapabilityID"},
@@ -23274,7 +25724,15 @@ static /* Use -fall-defs-global to expose */
         0, /* No effective tags (count) */
         0, /* No tags (pointer) */
         0, /* No tags (count) */
-        {0, 0, OPEN_TYPE_constraint},
+        {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+            OPEN_TYPE_constraint},
         asn_MBR_Ngap_value_40,
         37,                          /* Elements count */
         &asn_SPC_Ngap_value_specs_40 /* Additional specs */
@@ -23288,8 +25746,15 @@ asn_TYPE_member_t asn_MBR_Ngap_InitialContextSetupRequestIEs_37[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_ProtocolIE_ID,
      0,
-     {&asn_OER_memb_Ngap_id_constr_38, &asn_PER_memb_Ngap_id_constr_38,
-      memb_Ngap_id_constraint_37},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_id_constr_38,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_id_constr_38,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_id_constraint_37},
      0,
      0, /* No default value */
      "id"},
@@ -23300,9 +25765,15 @@ asn_TYPE_member_t asn_MBR_Ngap_InitialContextSetupRequestIEs_37[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_Criticality,
      select_InitialContextSetupRequestIEs_Ngap_criticality_type,
-     {&asn_OER_memb_Ngap_criticality_constr_39,
-      &asn_PER_memb_Ngap_criticality_constr_39,
-      memb_Ngap_criticality_constraint_37},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_criticality_constr_39,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_criticality_constr_39,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_criticality_constraint_37},
      0,
      0, /* No default value */
      "criticality"},
@@ -23313,8 +25784,15 @@ asn_TYPE_member_t asn_MBR_Ngap_InitialContextSetupRequestIEs_37[] = {
      +1, /* EXPLICIT tag at current level */
      &asn_DEF_Ngap_value_40,
      select_InitialContextSetupRequestIEs_Ngap_value_type,
-     {&asn_OER_memb_Ngap_value_constr_40, &asn_PER_memb_Ngap_value_constr_40,
-      memb_Ngap_value_constraint_37},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_value_constr_40,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_value_constr_40,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_value_constraint_37},
      0,
      0, /* No default value */
      "value"},
@@ -23348,7 +25826,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_InitialContextSetupRequestIEs = {
     asn_DEF_Ngap_InitialContextSetupRequestIEs_tags_37, /* Same as above */
     sizeof(asn_DEF_Ngap_InitialContextSetupRequestIEs_tags_37) /
         sizeof(asn_DEF_Ngap_InitialContextSetupRequestIEs_tags_37[0]), /* 1 */
-    {0, 0, SEQUENCE_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_constraint},
     asn_MBR_Ngap_InitialContextSetupRequestIEs_37,
     3,                                                   /* Elements count */
     &asn_SPC_Ngap_InitialContextSetupRequestIEs_specs_37 /* Additional specs */
@@ -23364,7 +25850,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_44[] = {
      0,
      &asn_DEF_Ngap_AMF_UE_NGAP_ID,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "AMF-UE-NGAP-ID"},
@@ -23377,7 +25871,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_44[] = {
      0,
      &asn_DEF_Ngap_RAN_UE_NGAP_ID,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "RAN-UE-NGAP-ID"},
@@ -23390,7 +25892,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_44[] = {
      0,
      &asn_DEF_Ngap_PDUSessionResourceSetupListCxtRes,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "PDUSessionResourceSetupListCxtRes"},
@@ -23403,7 +25913,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_44[] = {
      0,
      &asn_DEF_Ngap_PDUSessionResourceFailedToSetupListCxtRes,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "PDUSessionResourceFailedToSetupListCxtRes"},
@@ -23416,7 +25934,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_44[] = {
      0,
      &asn_DEF_Ngap_CriticalityDiagnostics,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "CriticalityDiagnostics"},
@@ -23451,7 +25977,15 @@ static /* Use -fall-defs-global to expose */
         0, /* No effective tags (count) */
         0, /* No tags (pointer) */
         0, /* No tags (count) */
-        {0, 0, OPEN_TYPE_constraint},
+        {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+            OPEN_TYPE_constraint},
         asn_MBR_Ngap_value_44,
         5,                           /* Elements count */
         &asn_SPC_Ngap_value_specs_44 /* Additional specs */
@@ -23465,8 +25999,15 @@ asn_TYPE_member_t asn_MBR_Ngap_InitialContextSetupResponseIEs_41[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_ProtocolIE_ID,
      0,
-     {&asn_OER_memb_Ngap_id_constr_42, &asn_PER_memb_Ngap_id_constr_42,
-      memb_Ngap_id_constraint_41},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_id_constr_42,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_id_constr_42,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_id_constraint_41},
      0,
      0, /* No default value */
      "id"},
@@ -23477,9 +26018,15 @@ asn_TYPE_member_t asn_MBR_Ngap_InitialContextSetupResponseIEs_41[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_Criticality,
      select_InitialContextSetupResponseIEs_Ngap_criticality_type,
-     {&asn_OER_memb_Ngap_criticality_constr_43,
-      &asn_PER_memb_Ngap_criticality_constr_43,
-      memb_Ngap_criticality_constraint_41},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_criticality_constr_43,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_criticality_constr_43,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_criticality_constraint_41},
      0,
      0, /* No default value */
      "criticality"},
@@ -23490,8 +26037,15 @@ asn_TYPE_member_t asn_MBR_Ngap_InitialContextSetupResponseIEs_41[] = {
      +1, /* EXPLICIT tag at current level */
      &asn_DEF_Ngap_value_44,
      select_InitialContextSetupResponseIEs_Ngap_value_type,
-     {&asn_OER_memb_Ngap_value_constr_44, &asn_PER_memb_Ngap_value_constr_44,
-      memb_Ngap_value_constraint_41},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_value_constr_44,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_value_constr_44,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_value_constraint_41},
      0,
      0, /* No default value */
      "value"},
@@ -23526,7 +26080,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_InitialContextSetupResponseIEs = {
     asn_DEF_Ngap_InitialContextSetupResponseIEs_tags_41, /* Same as above */
     sizeof(asn_DEF_Ngap_InitialContextSetupResponseIEs_tags_41) /
         sizeof(asn_DEF_Ngap_InitialContextSetupResponseIEs_tags_41[0]), /* 1 */
-    {0, 0, SEQUENCE_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_constraint},
     asn_MBR_Ngap_InitialContextSetupResponseIEs_41,
     3,                                                    /* Elements count */
     &asn_SPC_Ngap_InitialContextSetupResponseIEs_specs_41 /* Additional specs */
@@ -23542,7 +26104,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_48[] = {
      0,
      &asn_DEF_Ngap_AMF_UE_NGAP_ID,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "AMF-UE-NGAP-ID"},
@@ -23555,7 +26125,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_48[] = {
      0,
      &asn_DEF_Ngap_RAN_UE_NGAP_ID,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "RAN-UE-NGAP-ID"},
@@ -23568,7 +26146,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_48[] = {
      0,
      &asn_DEF_Ngap_PDUSessionResourceFailedToSetupListCxtFail,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "PDUSessionResourceFailedToSetupListCxtFail"},
@@ -23579,7 +26165,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_48[] = {
      0,
      &asn_DEF_Ngap_Cause,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "Cause"},
@@ -23592,7 +26186,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_48[] = {
      0,
      &asn_DEF_Ngap_CriticalityDiagnostics,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "CriticalityDiagnostics"},
@@ -23632,7 +26234,15 @@ static /* Use -fall-defs-global to expose */
         0, /* No effective tags (count) */
         0, /* No tags (pointer) */
         0, /* No tags (count) */
-        {0, 0, OPEN_TYPE_constraint},
+        {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+            OPEN_TYPE_constraint},
         asn_MBR_Ngap_value_48,
         5,                           /* Elements count */
         &asn_SPC_Ngap_value_specs_48 /* Additional specs */
@@ -23646,8 +26256,15 @@ asn_TYPE_member_t asn_MBR_Ngap_InitialContextSetupFailureIEs_45[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_ProtocolIE_ID,
      0,
-     {&asn_OER_memb_Ngap_id_constr_46, &asn_PER_memb_Ngap_id_constr_46,
-      memb_Ngap_id_constraint_45},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_id_constr_46,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_id_constr_46,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_id_constraint_45},
      0,
      0, /* No default value */
      "id"},
@@ -23658,9 +26275,15 @@ asn_TYPE_member_t asn_MBR_Ngap_InitialContextSetupFailureIEs_45[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_Criticality,
      select_InitialContextSetupFailureIEs_Ngap_criticality_type,
-     {&asn_OER_memb_Ngap_criticality_constr_47,
-      &asn_PER_memb_Ngap_criticality_constr_47,
-      memb_Ngap_criticality_constraint_45},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_criticality_constr_47,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_criticality_constr_47,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_criticality_constraint_45},
      0,
      0, /* No default value */
      "criticality"},
@@ -23671,8 +26294,15 @@ asn_TYPE_member_t asn_MBR_Ngap_InitialContextSetupFailureIEs_45[] = {
      +1, /* EXPLICIT tag at current level */
      &asn_DEF_Ngap_value_48,
      select_InitialContextSetupFailureIEs_Ngap_value_type,
-     {&asn_OER_memb_Ngap_value_constr_48, &asn_PER_memb_Ngap_value_constr_48,
-      memb_Ngap_value_constraint_45},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_value_constr_48,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_value_constr_48,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_value_constraint_45},
      0,
      0, /* No default value */
      "value"},
@@ -23706,7 +26336,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_InitialContextSetupFailureIEs = {
     asn_DEF_Ngap_InitialContextSetupFailureIEs_tags_45, /* Same as above */
     sizeof(asn_DEF_Ngap_InitialContextSetupFailureIEs_tags_45) /
         sizeof(asn_DEF_Ngap_InitialContextSetupFailureIEs_tags_45[0]), /* 1 */
-    {0, 0, SEQUENCE_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_constraint},
     asn_MBR_Ngap_InitialContextSetupFailureIEs_45,
     3,                                                   /* Elements count */
     &asn_SPC_Ngap_InitialContextSetupFailureIEs_specs_45 /* Additional specs */
@@ -23721,7 +26359,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_52[] = {
      0,
      &asn_DEF_Ngap_AMF_UE_NGAP_ID,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "AMF-UE-NGAP-ID"},
@@ -23733,7 +26379,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_52[] = {
      0,
      &asn_DEF_Ngap_RAN_UE_NGAP_ID,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "RAN-UE-NGAP-ID"},
@@ -23746,7 +26400,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_52[] = {
      0,
      &asn_DEF_Ngap_PDUSessionResourceListCxtRelReq,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "PDUSessionResourceListCxtRelReq"},
@@ -23757,7 +26419,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_52[] = {
      0,
      &asn_DEF_Ngap_Cause,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "Cause"},
@@ -23793,7 +26463,15 @@ static /* Use -fall-defs-global to expose */
         0, /* No effective tags (count) */
         0, /* No tags (pointer) */
         0, /* No tags (count) */
-        {0, 0, OPEN_TYPE_constraint},
+        {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+            OPEN_TYPE_constraint},
         asn_MBR_Ngap_value_52,
         4,                           /* Elements count */
         &asn_SPC_Ngap_value_specs_52 /* Additional specs */
@@ -23807,8 +26485,15 @@ asn_TYPE_member_t asn_MBR_Ngap_UEContextReleaseRequest_IEs_49[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_ProtocolIE_ID,
      0,
-     {&asn_OER_memb_Ngap_id_constr_50, &asn_PER_memb_Ngap_id_constr_50,
-      memb_Ngap_id_constraint_49},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_id_constr_50,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_id_constr_50,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_id_constraint_49},
      0,
      0, /* No default value */
      "id"},
@@ -23819,9 +26504,15 @@ asn_TYPE_member_t asn_MBR_Ngap_UEContextReleaseRequest_IEs_49[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_Criticality,
      select_UEContextReleaseRequest_IEs_Ngap_criticality_type,
-     {&asn_OER_memb_Ngap_criticality_constr_51,
-      &asn_PER_memb_Ngap_criticality_constr_51,
-      memb_Ngap_criticality_constraint_49},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_criticality_constr_51,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_criticality_constr_51,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_criticality_constraint_49},
      0,
      0, /* No default value */
      "criticality"},
@@ -23832,8 +26523,15 @@ asn_TYPE_member_t asn_MBR_Ngap_UEContextReleaseRequest_IEs_49[] = {
      +1, /* EXPLICIT tag at current level */
      &asn_DEF_Ngap_value_52,
      select_UEContextReleaseRequest_IEs_Ngap_value_type,
-     {&asn_OER_memb_Ngap_value_constr_52, &asn_PER_memb_Ngap_value_constr_52,
-      memb_Ngap_value_constraint_49},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_value_constr_52,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_value_constr_52,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_value_constraint_49},
      0,
      0, /* No default value */
      "value"},
@@ -23866,7 +26564,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_UEContextReleaseRequest_IEs = {
     asn_DEF_Ngap_UEContextReleaseRequest_IEs_tags_49, /* Same as above */
     sizeof(asn_DEF_Ngap_UEContextReleaseRequest_IEs_tags_49) /
         sizeof(asn_DEF_Ngap_UEContextReleaseRequest_IEs_tags_49[0]), /* 1 */
-    {0, 0, SEQUENCE_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_constraint},
     asn_MBR_Ngap_UEContextReleaseRequest_IEs_49,
     3,                                                 /* Elements count */
     &asn_SPC_Ngap_UEContextReleaseRequest_IEs_specs_49 /* Additional specs */
@@ -23881,7 +26587,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_56[] = {
      0,
      &asn_DEF_Ngap_UE_NGAP_IDs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "UE-NGAP-IDs"},
@@ -23892,7 +26606,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_56[] = {
      0,
      &asn_DEF_Ngap_Cause,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "Cause"},
@@ -23926,7 +26648,15 @@ static /* Use -fall-defs-global to expose */
         0, /* No effective tags (count) */
         0, /* No tags (pointer) */
         0, /* No tags (count) */
-        {0, 0, OPEN_TYPE_constraint},
+        {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+            OPEN_TYPE_constraint},
         asn_MBR_Ngap_value_56,
         2,                           /* Elements count */
         &asn_SPC_Ngap_value_specs_56 /* Additional specs */
@@ -23940,8 +26670,15 @@ asn_TYPE_member_t asn_MBR_Ngap_UEContextReleaseCommand_IEs_53[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_ProtocolIE_ID,
      0,
-     {&asn_OER_memb_Ngap_id_constr_54, &asn_PER_memb_Ngap_id_constr_54,
-      memb_Ngap_id_constraint_53},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_id_constr_54,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_id_constr_54,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_id_constraint_53},
      0,
      0, /* No default value */
      "id"},
@@ -23952,9 +26689,15 @@ asn_TYPE_member_t asn_MBR_Ngap_UEContextReleaseCommand_IEs_53[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_Criticality,
      select_UEContextReleaseCommand_IEs_Ngap_criticality_type,
-     {&asn_OER_memb_Ngap_criticality_constr_55,
-      &asn_PER_memb_Ngap_criticality_constr_55,
-      memb_Ngap_criticality_constraint_53},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_criticality_constr_55,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_criticality_constr_55,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_criticality_constraint_53},
      0,
      0, /* No default value */
      "criticality"},
@@ -23965,8 +26708,15 @@ asn_TYPE_member_t asn_MBR_Ngap_UEContextReleaseCommand_IEs_53[] = {
      +1, /* EXPLICIT tag at current level */
      &asn_DEF_Ngap_value_56,
      select_UEContextReleaseCommand_IEs_Ngap_value_type,
-     {&asn_OER_memb_Ngap_value_constr_56, &asn_PER_memb_Ngap_value_constr_56,
-      memb_Ngap_value_constraint_53},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_value_constr_56,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_value_constr_56,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_value_constraint_53},
      0,
      0, /* No default value */
      "value"},
@@ -23999,7 +26749,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_UEContextReleaseCommand_IEs = {
     asn_DEF_Ngap_UEContextReleaseCommand_IEs_tags_53, /* Same as above */
     sizeof(asn_DEF_Ngap_UEContextReleaseCommand_IEs_tags_53) /
         sizeof(asn_DEF_Ngap_UEContextReleaseCommand_IEs_tags_53[0]), /* 1 */
-    {0, 0, SEQUENCE_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_constraint},
     asn_MBR_Ngap_UEContextReleaseCommand_IEs_53,
     3,                                                 /* Elements count */
     &asn_SPC_Ngap_UEContextReleaseCommand_IEs_specs_53 /* Additional specs */
@@ -24015,7 +26773,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_60[] = {
      0,
      &asn_DEF_Ngap_AMF_UE_NGAP_ID,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "AMF-UE-NGAP-ID"},
@@ -24028,7 +26794,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_60[] = {
      0,
      &asn_DEF_Ngap_RAN_UE_NGAP_ID,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "RAN-UE-NGAP-ID"},
@@ -24041,7 +26815,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_60[] = {
      0,
      &asn_DEF_Ngap_UserLocationInformation,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "UserLocationInformation"},
@@ -24054,7 +26836,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_60[] = {
      0,
      &asn_DEF_Ngap_InfoOnRecommendedCellsAndRANNodesForPaging,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "InfoOnRecommendedCellsAndRANNodesForPaging"},
@@ -24067,7 +26857,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_60[] = {
      0,
      &asn_DEF_Ngap_PDUSessionResourceListCxtRelCpl,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "PDUSessionResourceListCxtRelCpl"},
@@ -24080,7 +26878,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_60[] = {
      0,
      &asn_DEF_Ngap_CriticalityDiagnostics,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "CriticalityDiagnostics"},
@@ -24093,7 +26899,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_60[] = {
      0,
      &asn_DEF_Ngap_PagingAssisDataforCEcapabUE,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "PagingAssisDataforCEcapabUE"},
@@ -24140,7 +26954,15 @@ static /* Use -fall-defs-global to expose */
         0, /* No effective tags (count) */
         0, /* No tags (pointer) */
         0, /* No tags (count) */
-        {0, 0, OPEN_TYPE_constraint},
+        {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+            OPEN_TYPE_constraint},
         asn_MBR_Ngap_value_60,
         7,                           /* Elements count */
         &asn_SPC_Ngap_value_specs_60 /* Additional specs */
@@ -24154,8 +26976,15 @@ asn_TYPE_member_t asn_MBR_Ngap_UEContextReleaseComplete_IEs_57[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_ProtocolIE_ID,
      0,
-     {&asn_OER_memb_Ngap_id_constr_58, &asn_PER_memb_Ngap_id_constr_58,
-      memb_Ngap_id_constraint_57},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_id_constr_58,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_id_constr_58,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_id_constraint_57},
      0,
      0, /* No default value */
      "id"},
@@ -24166,9 +26995,15 @@ asn_TYPE_member_t asn_MBR_Ngap_UEContextReleaseComplete_IEs_57[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_Criticality,
      select_UEContextReleaseComplete_IEs_Ngap_criticality_type,
-     {&asn_OER_memb_Ngap_criticality_constr_59,
-      &asn_PER_memb_Ngap_criticality_constr_59,
-      memb_Ngap_criticality_constraint_57},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_criticality_constr_59,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_criticality_constr_59,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_criticality_constraint_57},
      0,
      0, /* No default value */
      "criticality"},
@@ -24179,8 +27014,15 @@ asn_TYPE_member_t asn_MBR_Ngap_UEContextReleaseComplete_IEs_57[] = {
      +1, /* EXPLICIT tag at current level */
      &asn_DEF_Ngap_value_60,
      select_UEContextReleaseComplete_IEs_Ngap_value_type,
-     {&asn_OER_memb_Ngap_value_constr_60, &asn_PER_memb_Ngap_value_constr_60,
-      memb_Ngap_value_constraint_57},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_value_constr_60,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_value_constr_60,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_value_constraint_57},
      0,
      0, /* No default value */
      "value"},
@@ -24213,7 +27055,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_UEContextReleaseComplete_IEs = {
     asn_DEF_Ngap_UEContextReleaseComplete_IEs_tags_57, /* Same as above */
     sizeof(asn_DEF_Ngap_UEContextReleaseComplete_IEs_tags_57) /
         sizeof(asn_DEF_Ngap_UEContextReleaseComplete_IEs_tags_57[0]), /* 1 */
-    {0, 0, SEQUENCE_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_constraint},
     asn_MBR_Ngap_UEContextReleaseComplete_IEs_57,
     3,                                                  /* Elements count */
     &asn_SPC_Ngap_UEContextReleaseComplete_IEs_specs_57 /* Additional specs */
@@ -24228,7 +27078,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_64[] = {
      0,
      &asn_DEF_Ngap_AMF_UE_NGAP_ID,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "AMF-UE-NGAP-ID"},
@@ -24240,7 +27098,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_64[] = {
      0,
      &asn_DEF_Ngap_RAN_UE_NGAP_ID,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "RAN-UE-NGAP-ID"},
@@ -24253,7 +27119,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_64[] = {
      0,
      &asn_DEF_Ngap_RRCEstablishmentCause,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "RRCEstablishmentCause"},
@@ -24266,7 +27140,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_64[] = {
      0,
      &asn_DEF_Ngap_PDUSessionResourceResumeListRESReq,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "PDUSessionResourceResumeListRESReq"},
@@ -24279,7 +27161,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_64[] = {
      0,
      &asn_DEF_Ngap_PDUSessionResourceFailedToResumeListRESReq,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "PDUSessionResourceFailedToResumeListRESReq"},
@@ -24292,7 +27182,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_64[] = {
      0,
      &asn_DEF_Ngap_Suspend_Request_Indication,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "Suspend-Request-Indication"},
@@ -24305,7 +27203,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_64[] = {
      0,
      &asn_DEF_Ngap_InfoOnRecommendedCellsAndRANNodesForPaging,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "InfoOnRecommendedCellsAndRANNodesForPaging"},
@@ -24318,7 +27224,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_64[] = {
      0,
      &asn_DEF_Ngap_PagingAssisDataforCEcapabUE,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "PagingAssisDataforCEcapabUE"},
@@ -24363,7 +27277,15 @@ static /* Use -fall-defs-global to expose */
         0, /* No effective tags (count) */
         0, /* No tags (pointer) */
         0, /* No tags (count) */
-        {0, 0, OPEN_TYPE_constraint},
+        {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+            OPEN_TYPE_constraint},
         asn_MBR_Ngap_value_64,
         8,                           /* Elements count */
         &asn_SPC_Ngap_value_specs_64 /* Additional specs */
@@ -24377,8 +27299,15 @@ asn_TYPE_member_t asn_MBR_Ngap_UEContextResumeRequestIEs_61[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_ProtocolIE_ID,
      0,
-     {&asn_OER_memb_Ngap_id_constr_62, &asn_PER_memb_Ngap_id_constr_62,
-      memb_Ngap_id_constraint_61},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_id_constr_62,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_id_constr_62,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_id_constraint_61},
      0,
      0, /* No default value */
      "id"},
@@ -24389,9 +27318,15 @@ asn_TYPE_member_t asn_MBR_Ngap_UEContextResumeRequestIEs_61[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_Criticality,
      select_UEContextResumeRequestIEs_Ngap_criticality_type,
-     {&asn_OER_memb_Ngap_criticality_constr_63,
-      &asn_PER_memb_Ngap_criticality_constr_63,
-      memb_Ngap_criticality_constraint_61},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_criticality_constr_63,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_criticality_constr_63,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_criticality_constraint_61},
      0,
      0, /* No default value */
      "criticality"},
@@ -24402,8 +27337,15 @@ asn_TYPE_member_t asn_MBR_Ngap_UEContextResumeRequestIEs_61[] = {
      +1, /* EXPLICIT tag at current level */
      &asn_DEF_Ngap_value_64,
      select_UEContextResumeRequestIEs_Ngap_value_type,
-     {&asn_OER_memb_Ngap_value_constr_64, &asn_PER_memb_Ngap_value_constr_64,
-      memb_Ngap_value_constraint_61},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_value_constr_64,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_value_constr_64,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_value_constraint_61},
      0,
      0, /* No default value */
      "value"},
@@ -24436,7 +27378,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_UEContextResumeRequestIEs = {
     asn_DEF_Ngap_UEContextResumeRequestIEs_tags_61, /* Same as above */
     sizeof(asn_DEF_Ngap_UEContextResumeRequestIEs_tags_61) /
         sizeof(asn_DEF_Ngap_UEContextResumeRequestIEs_tags_61[0]), /* 1 */
-    {0, 0, SEQUENCE_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_constraint},
     asn_MBR_Ngap_UEContextResumeRequestIEs_61,
     3,                                               /* Elements count */
     &asn_SPC_Ngap_UEContextResumeRequestIEs_specs_61 /* Additional specs */
@@ -24451,7 +27401,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_68[] = {
      0,
      &asn_DEF_Ngap_AMF_UE_NGAP_ID,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "AMF-UE-NGAP-ID"},
@@ -24463,7 +27421,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_68[] = {
      0,
      &asn_DEF_Ngap_RAN_UE_NGAP_ID,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "RAN-UE-NGAP-ID"},
@@ -24476,7 +27442,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_68[] = {
      0,
      &asn_DEF_Ngap_PDUSessionResourceResumeListRESRes,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "PDUSessionResourceResumeListRESRes"},
@@ -24489,7 +27463,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_68[] = {
      0,
      &asn_DEF_Ngap_PDUSessionResourceFailedToResumeListRESRes,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "PDUSessionResourceFailedToResumeListRESRes"},
@@ -24501,7 +27483,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_68[] = {
      0,
      &asn_DEF_Ngap_SecurityContext,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "SecurityContext"},
@@ -24514,7 +27504,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_68[] = {
      0,
      &asn_DEF_Ngap_Suspend_Response_Indication,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "Suspend-Response-Indication"},
@@ -24527,7 +27525,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_68[] = {
      0,
      &asn_DEF_Ngap_Extended_ConnectedTime,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "Extended-ConnectedTime"},
@@ -24540,7 +27546,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_68[] = {
      0,
      &asn_DEF_Ngap_CriticalityDiagnostics,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "CriticalityDiagnostics"},
@@ -24584,7 +27598,15 @@ static /* Use -fall-defs-global to expose */
         0, /* No effective tags (count) */
         0, /* No tags (pointer) */
         0, /* No tags (count) */
-        {0, 0, OPEN_TYPE_constraint},
+        {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+            OPEN_TYPE_constraint},
         asn_MBR_Ngap_value_68,
         8,                           /* Elements count */
         &asn_SPC_Ngap_value_specs_68 /* Additional specs */
@@ -24598,8 +27620,15 @@ asn_TYPE_member_t asn_MBR_Ngap_UEContextResumeResponseIEs_65[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_ProtocolIE_ID,
      0,
-     {&asn_OER_memb_Ngap_id_constr_66, &asn_PER_memb_Ngap_id_constr_66,
-      memb_Ngap_id_constraint_65},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_id_constr_66,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_id_constr_66,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_id_constraint_65},
      0,
      0, /* No default value */
      "id"},
@@ -24610,9 +27639,15 @@ asn_TYPE_member_t asn_MBR_Ngap_UEContextResumeResponseIEs_65[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_Criticality,
      select_UEContextResumeResponseIEs_Ngap_criticality_type,
-     {&asn_OER_memb_Ngap_criticality_constr_67,
-      &asn_PER_memb_Ngap_criticality_constr_67,
-      memb_Ngap_criticality_constraint_65},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_criticality_constr_67,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_criticality_constr_67,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_criticality_constraint_65},
      0,
      0, /* No default value */
      "criticality"},
@@ -24623,8 +27658,15 @@ asn_TYPE_member_t asn_MBR_Ngap_UEContextResumeResponseIEs_65[] = {
      +1, /* EXPLICIT tag at current level */
      &asn_DEF_Ngap_value_68,
      select_UEContextResumeResponseIEs_Ngap_value_type,
-     {&asn_OER_memb_Ngap_value_constr_68, &asn_PER_memb_Ngap_value_constr_68,
-      memb_Ngap_value_constraint_65},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_value_constr_68,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_value_constr_68,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_value_constraint_65},
      0,
      0, /* No default value */
      "value"},
@@ -24657,7 +27699,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_UEContextResumeResponseIEs = {
     asn_DEF_Ngap_UEContextResumeResponseIEs_tags_65, /* Same as above */
     sizeof(asn_DEF_Ngap_UEContextResumeResponseIEs_tags_65) /
         sizeof(asn_DEF_Ngap_UEContextResumeResponseIEs_tags_65[0]), /* 1 */
-    {0, 0, SEQUENCE_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_constraint},
     asn_MBR_Ngap_UEContextResumeResponseIEs_65,
     3,                                                /* Elements count */
     &asn_SPC_Ngap_UEContextResumeResponseIEs_specs_65 /* Additional specs */
@@ -24672,7 +27722,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_72[] = {
      0,
      &asn_DEF_Ngap_AMF_UE_NGAP_ID,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "AMF-UE-NGAP-ID"},
@@ -24684,7 +27742,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_72[] = {
      0,
      &asn_DEF_Ngap_RAN_UE_NGAP_ID,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "RAN-UE-NGAP-ID"},
@@ -24695,7 +27761,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_72[] = {
      0,
      &asn_DEF_Ngap_Cause,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "Cause"},
@@ -24708,7 +27782,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_72[] = {
      0,
      &asn_DEF_Ngap_CriticalityDiagnostics,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "CriticalityDiagnostics"},
@@ -24746,7 +27828,15 @@ static /* Use -fall-defs-global to expose */
         0, /* No effective tags (count) */
         0, /* No tags (pointer) */
         0, /* No tags (count) */
-        {0, 0, OPEN_TYPE_constraint},
+        {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+            OPEN_TYPE_constraint},
         asn_MBR_Ngap_value_72,
         4,                           /* Elements count */
         &asn_SPC_Ngap_value_specs_72 /* Additional specs */
@@ -24760,8 +27850,15 @@ asn_TYPE_member_t asn_MBR_Ngap_UEContextResumeFailureIEs_69[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_ProtocolIE_ID,
      0,
-     {&asn_OER_memb_Ngap_id_constr_70, &asn_PER_memb_Ngap_id_constr_70,
-      memb_Ngap_id_constraint_69},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_id_constr_70,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_id_constr_70,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_id_constraint_69},
      0,
      0, /* No default value */
      "id"},
@@ -24772,9 +27869,15 @@ asn_TYPE_member_t asn_MBR_Ngap_UEContextResumeFailureIEs_69[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_Criticality,
      select_UEContextResumeFailureIEs_Ngap_criticality_type,
-     {&asn_OER_memb_Ngap_criticality_constr_71,
-      &asn_PER_memb_Ngap_criticality_constr_71,
-      memb_Ngap_criticality_constraint_69},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_criticality_constr_71,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_criticality_constr_71,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_criticality_constraint_69},
      0,
      0, /* No default value */
      "criticality"},
@@ -24785,8 +27888,15 @@ asn_TYPE_member_t asn_MBR_Ngap_UEContextResumeFailureIEs_69[] = {
      +1, /* EXPLICIT tag at current level */
      &asn_DEF_Ngap_value_72,
      select_UEContextResumeFailureIEs_Ngap_value_type,
-     {&asn_OER_memb_Ngap_value_constr_72, &asn_PER_memb_Ngap_value_constr_72,
-      memb_Ngap_value_constraint_69},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_value_constr_72,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_value_constr_72,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_value_constraint_69},
      0,
      0, /* No default value */
      "value"},
@@ -24819,7 +27929,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_UEContextResumeFailureIEs = {
     asn_DEF_Ngap_UEContextResumeFailureIEs_tags_69, /* Same as above */
     sizeof(asn_DEF_Ngap_UEContextResumeFailureIEs_tags_69) /
         sizeof(asn_DEF_Ngap_UEContextResumeFailureIEs_tags_69[0]), /* 1 */
-    {0, 0, SEQUENCE_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_constraint},
     asn_MBR_Ngap_UEContextResumeFailureIEs_69,
     3,                                               /* Elements count */
     &asn_SPC_Ngap_UEContextResumeFailureIEs_specs_69 /* Additional specs */
@@ -24834,7 +27952,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_76[] = {
      0,
      &asn_DEF_Ngap_AMF_UE_NGAP_ID,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "AMF-UE-NGAP-ID"},
@@ -24846,7 +27972,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_76[] = {
      0,
      &asn_DEF_Ngap_RAN_UE_NGAP_ID,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "RAN-UE-NGAP-ID"},
@@ -24859,7 +27993,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_76[] = {
      0,
      &asn_DEF_Ngap_InfoOnRecommendedCellsAndRANNodesForPaging,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "InfoOnRecommendedCellsAndRANNodesForPaging"},
@@ -24872,7 +28014,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_76[] = {
      0,
      &asn_DEF_Ngap_PagingAssisDataforCEcapabUE,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "PagingAssisDataforCEcapabUE"},
@@ -24885,7 +28035,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_76[] = {
      0,
      &asn_DEF_Ngap_PDUSessionResourceSuspendListSUSReq,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "PDUSessionResourceSuspendListSUSReq"},
@@ -24920,7 +28078,15 @@ static /* Use -fall-defs-global to expose */
         0, /* No effective tags (count) */
         0, /* No tags (pointer) */
         0, /* No tags (count) */
-        {0, 0, OPEN_TYPE_constraint},
+        {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+            OPEN_TYPE_constraint},
         asn_MBR_Ngap_value_76,
         5,                           /* Elements count */
         &asn_SPC_Ngap_value_specs_76 /* Additional specs */
@@ -24934,8 +28100,15 @@ asn_TYPE_member_t asn_MBR_Ngap_UEContextSuspendRequestIEs_73[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_ProtocolIE_ID,
      0,
-     {&asn_OER_memb_Ngap_id_constr_74, &asn_PER_memb_Ngap_id_constr_74,
-      memb_Ngap_id_constraint_73},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_id_constr_74,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_id_constr_74,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_id_constraint_73},
      0,
      0, /* No default value */
      "id"},
@@ -24946,9 +28119,15 @@ asn_TYPE_member_t asn_MBR_Ngap_UEContextSuspendRequestIEs_73[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_Criticality,
      select_UEContextSuspendRequestIEs_Ngap_criticality_type,
-     {&asn_OER_memb_Ngap_criticality_constr_75,
-      &asn_PER_memb_Ngap_criticality_constr_75,
-      memb_Ngap_criticality_constraint_73},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_criticality_constr_75,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_criticality_constr_75,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_criticality_constraint_73},
      0,
      0, /* No default value */
      "criticality"},
@@ -24959,8 +28138,15 @@ asn_TYPE_member_t asn_MBR_Ngap_UEContextSuspendRequestIEs_73[] = {
      +1, /* EXPLICIT tag at current level */
      &asn_DEF_Ngap_value_76,
      select_UEContextSuspendRequestIEs_Ngap_value_type,
-     {&asn_OER_memb_Ngap_value_constr_76, &asn_PER_memb_Ngap_value_constr_76,
-      memb_Ngap_value_constraint_73},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_value_constr_76,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_value_constr_76,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_value_constraint_73},
      0,
      0, /* No default value */
      "value"},
@@ -24993,7 +28179,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_UEContextSuspendRequestIEs = {
     asn_DEF_Ngap_UEContextSuspendRequestIEs_tags_73, /* Same as above */
     sizeof(asn_DEF_Ngap_UEContextSuspendRequestIEs_tags_73) /
         sizeof(asn_DEF_Ngap_UEContextSuspendRequestIEs_tags_73[0]), /* 1 */
-    {0, 0, SEQUENCE_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_constraint},
     asn_MBR_Ngap_UEContextSuspendRequestIEs_73,
     3,                                                /* Elements count */
     &asn_SPC_Ngap_UEContextSuspendRequestIEs_specs_73 /* Additional specs */
@@ -25008,7 +28202,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_80[] = {
      0,
      &asn_DEF_Ngap_AMF_UE_NGAP_ID,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "AMF-UE-NGAP-ID"},
@@ -25020,7 +28222,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_80[] = {
      0,
      &asn_DEF_Ngap_RAN_UE_NGAP_ID,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "RAN-UE-NGAP-ID"},
@@ -25033,7 +28243,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_80[] = {
      0,
      &asn_DEF_Ngap_SecurityContext,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "SecurityContext"},
@@ -25046,7 +28264,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_80[] = {
      0,
      &asn_DEF_Ngap_CriticalityDiagnostics,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "CriticalityDiagnostics"},
@@ -25078,7 +28304,15 @@ static /* Use -fall-defs-global to expose */
         0, /* No effective tags (count) */
         0, /* No tags (pointer) */
         0, /* No tags (count) */
-        {0, 0, OPEN_TYPE_constraint},
+        {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+            OPEN_TYPE_constraint},
         asn_MBR_Ngap_value_80,
         4,                           /* Elements count */
         &asn_SPC_Ngap_value_specs_80 /* Additional specs */
@@ -25092,8 +28326,15 @@ asn_TYPE_member_t asn_MBR_Ngap_UEContextSuspendResponseIEs_77[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_ProtocolIE_ID,
      0,
-     {&asn_OER_memb_Ngap_id_constr_78, &asn_PER_memb_Ngap_id_constr_78,
-      memb_Ngap_id_constraint_77},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_id_constr_78,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_id_constr_78,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_id_constraint_77},
      0,
      0, /* No default value */
      "id"},
@@ -25104,9 +28345,15 @@ asn_TYPE_member_t asn_MBR_Ngap_UEContextSuspendResponseIEs_77[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_Criticality,
      select_UEContextSuspendResponseIEs_Ngap_criticality_type,
-     {&asn_OER_memb_Ngap_criticality_constr_79,
-      &asn_PER_memb_Ngap_criticality_constr_79,
-      memb_Ngap_criticality_constraint_77},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_criticality_constr_79,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_criticality_constr_79,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_criticality_constraint_77},
      0,
      0, /* No default value */
      "criticality"},
@@ -25117,8 +28364,15 @@ asn_TYPE_member_t asn_MBR_Ngap_UEContextSuspendResponseIEs_77[] = {
      +1, /* EXPLICIT tag at current level */
      &asn_DEF_Ngap_value_80,
      select_UEContextSuspendResponseIEs_Ngap_value_type,
-     {&asn_OER_memb_Ngap_value_constr_80, &asn_PER_memb_Ngap_value_constr_80,
-      memb_Ngap_value_constraint_77},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_value_constr_80,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_value_constr_80,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_value_constraint_77},
      0,
      0, /* No default value */
      "value"},
@@ -25151,7 +28405,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_UEContextSuspendResponseIEs = {
     asn_DEF_Ngap_UEContextSuspendResponseIEs_tags_77, /* Same as above */
     sizeof(asn_DEF_Ngap_UEContextSuspendResponseIEs_tags_77) /
         sizeof(asn_DEF_Ngap_UEContextSuspendResponseIEs_tags_77[0]), /* 1 */
-    {0, 0, SEQUENCE_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_constraint},
     asn_MBR_Ngap_UEContextSuspendResponseIEs_77,
     3,                                                 /* Elements count */
     &asn_SPC_Ngap_UEContextSuspendResponseIEs_specs_77 /* Additional specs */
@@ -25166,7 +28428,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_84[] = {
      0,
      &asn_DEF_Ngap_AMF_UE_NGAP_ID,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "AMF-UE-NGAP-ID"},
@@ -25178,7 +28448,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_84[] = {
      0,
      &asn_DEF_Ngap_RAN_UE_NGAP_ID,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "RAN-UE-NGAP-ID"},
@@ -25189,7 +28467,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_84[] = {
      0,
      &asn_DEF_Ngap_Cause,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "Cause"},
@@ -25202,7 +28488,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_84[] = {
      0,
      &asn_DEF_Ngap_CriticalityDiagnostics,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "CriticalityDiagnostics"},
@@ -25240,7 +28534,15 @@ static /* Use -fall-defs-global to expose */
         0, /* No effective tags (count) */
         0, /* No tags (pointer) */
         0, /* No tags (count) */
-        {0, 0, OPEN_TYPE_constraint},
+        {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+            OPEN_TYPE_constraint},
         asn_MBR_Ngap_value_84,
         4,                           /* Elements count */
         &asn_SPC_Ngap_value_specs_84 /* Additional specs */
@@ -25254,8 +28556,15 @@ asn_TYPE_member_t asn_MBR_Ngap_UEContextSuspendFailureIEs_81[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_ProtocolIE_ID,
      0,
-     {&asn_OER_memb_Ngap_id_constr_82, &asn_PER_memb_Ngap_id_constr_82,
-      memb_Ngap_id_constraint_81},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_id_constr_82,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_id_constr_82,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_id_constraint_81},
      0,
      0, /* No default value */
      "id"},
@@ -25266,9 +28575,15 @@ asn_TYPE_member_t asn_MBR_Ngap_UEContextSuspendFailureIEs_81[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_Criticality,
      select_UEContextSuspendFailureIEs_Ngap_criticality_type,
-     {&asn_OER_memb_Ngap_criticality_constr_83,
-      &asn_PER_memb_Ngap_criticality_constr_83,
-      memb_Ngap_criticality_constraint_81},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_criticality_constr_83,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_criticality_constr_83,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_criticality_constraint_81},
      0,
      0, /* No default value */
      "criticality"},
@@ -25279,8 +28594,15 @@ asn_TYPE_member_t asn_MBR_Ngap_UEContextSuspendFailureIEs_81[] = {
      +1, /* EXPLICIT tag at current level */
      &asn_DEF_Ngap_value_84,
      select_UEContextSuspendFailureIEs_Ngap_value_type,
-     {&asn_OER_memb_Ngap_value_constr_84, &asn_PER_memb_Ngap_value_constr_84,
-      memb_Ngap_value_constraint_81},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_value_constr_84,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_value_constr_84,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_value_constraint_81},
      0,
      0, /* No default value */
      "value"},
@@ -25313,7 +28635,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_UEContextSuspendFailureIEs = {
     asn_DEF_Ngap_UEContextSuspendFailureIEs_tags_81, /* Same as above */
     sizeof(asn_DEF_Ngap_UEContextSuspendFailureIEs_tags_81) /
         sizeof(asn_DEF_Ngap_UEContextSuspendFailureIEs_tags_81[0]), /* 1 */
-    {0, 0, SEQUENCE_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_constraint},
     asn_MBR_Ngap_UEContextSuspendFailureIEs_81,
     3,                                                /* Elements count */
     &asn_SPC_Ngap_UEContextSuspendFailureIEs_specs_81 /* Additional specs */
@@ -25329,7 +28659,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_88[] = {
      0,
      &asn_DEF_Ngap_AMF_UE_NGAP_ID,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "AMF-UE-NGAP-ID"},
@@ -25342,7 +28680,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_88[] = {
      0,
      &asn_DEF_Ngap_RAN_UE_NGAP_ID,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "RAN-UE-NGAP-ID"},
@@ -25355,7 +28701,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_88[] = {
      0,
      &asn_DEF_Ngap_RANPagingPriority,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "RANPagingPriority"},
@@ -25368,7 +28722,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_88[] = {
      0,
      &asn_DEF_Ngap_SecurityKey,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "SecurityKey"},
@@ -25381,7 +28743,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_88[] = {
      0,
      &asn_DEF_Ngap_IndexToRFSP,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "IndexToRFSP"},
@@ -25394,7 +28764,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_88[] = {
      0,
      &asn_DEF_Ngap_UEAggregateMaximumBitRate,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "UEAggregateMaximumBitRate"},
@@ -25407,7 +28785,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_88[] = {
      0,
      &asn_DEF_Ngap_UESecurityCapabilities,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "UESecurityCapabilities"},
@@ -25420,7 +28806,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_88[] = {
      0,
      &asn_DEF_Ngap_CoreNetworkAssistanceInformationForInactive,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "CoreNetworkAssistanceInformationForInactive"},
@@ -25433,7 +28827,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_88[] = {
      0,
      &asn_DEF_Ngap_EmergencyFallbackIndicator,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "EmergencyFallbackIndicator"},
@@ -25446,7 +28848,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_88[] = {
      0,
      &asn_DEF_Ngap_AMF_UE_NGAP_ID,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "AMF-UE-NGAP-ID"},
@@ -25459,7 +28869,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_88[] = {
      0,
      &asn_DEF_Ngap_RRCInactiveTransitionReportRequest,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "RRCInactiveTransitionReportRequest"},
@@ -25470,7 +28888,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_88[] = {
      0,
      &asn_DEF_Ngap_GUAMI,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "GUAMI"},
@@ -25483,7 +28909,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_88[] = {
      0,
      &asn_DEF_Ngap_CNAssistedRANTuning,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "CNAssistedRANTuning"},
@@ -25496,7 +28930,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_88[] = {
      0,
      &asn_DEF_Ngap_SRVCCOperationPossible,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "SRVCCOperationPossible"},
@@ -25509,7 +28951,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_88[] = {
      0,
      &asn_DEF_Ngap_IAB_Authorized,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "IAB-Authorized"},
@@ -25522,7 +28972,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_88[] = {
      0,
      &asn_DEF_Ngap_NRV2XServicesAuthorized,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "NRV2XServicesAuthorized"},
@@ -25535,7 +28993,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_88[] = {
      0,
      &asn_DEF_Ngap_LTEV2XServicesAuthorized,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "LTEV2XServicesAuthorized"},
@@ -25548,7 +29014,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_88[] = {
      0,
      &asn_DEF_Ngap_NRUESidelinkAggregateMaximumBitrate,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "NRUESidelinkAggregateMaximumBitrate"},
@@ -25561,7 +29035,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_88[] = {
      0,
      &asn_DEF_Ngap_LTEUESidelinkAggregateMaximumBitrate,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "LTEUESidelinkAggregateMaximumBitrate"},
@@ -25574,7 +29056,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_88[] = {
      0,
      &asn_DEF_Ngap_PC5QoSParameters,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "PC5QoSParameters"},
@@ -25587,7 +29077,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_88[] = {
      0,
      &asn_DEF_Ngap_UERadioCapabilityID,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "UERadioCapabilityID"},
@@ -25600,7 +29098,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_88[] = {
      0,
      &asn_DEF_Ngap_RGLevelWirelineAccessCharacteristics,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "RGLevelWirelineAccessCharacteristics"},
@@ -25667,7 +29173,15 @@ static /* Use -fall-defs-global to expose */
         0, /* No effective tags (count) */
         0, /* No tags (pointer) */
         0, /* No tags (count) */
-        {0, 0, OPEN_TYPE_constraint},
+        {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+            OPEN_TYPE_constraint},
         asn_MBR_Ngap_value_88,
         22,                          /* Elements count */
         &asn_SPC_Ngap_value_specs_88 /* Additional specs */
@@ -25681,8 +29195,15 @@ asn_TYPE_member_t asn_MBR_Ngap_UEContextModificationRequestIEs_85[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_ProtocolIE_ID,
      0,
-     {&asn_OER_memb_Ngap_id_constr_86, &asn_PER_memb_Ngap_id_constr_86,
-      memb_Ngap_id_constraint_85},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_id_constr_86,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_id_constr_86,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_id_constraint_85},
      0,
      0, /* No default value */
      "id"},
@@ -25693,9 +29214,15 @@ asn_TYPE_member_t asn_MBR_Ngap_UEContextModificationRequestIEs_85[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_Criticality,
      select_UEContextModificationRequestIEs_Ngap_criticality_type,
-     {&asn_OER_memb_Ngap_criticality_constr_87,
-      &asn_PER_memb_Ngap_criticality_constr_87,
-      memb_Ngap_criticality_constraint_85},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_criticality_constr_87,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_criticality_constr_87,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_criticality_constraint_85},
      0,
      0, /* No default value */
      "criticality"},
@@ -25706,8 +29233,15 @@ asn_TYPE_member_t asn_MBR_Ngap_UEContextModificationRequestIEs_85[] = {
      +1, /* EXPLICIT tag at current level */
      &asn_DEF_Ngap_value_88,
      select_UEContextModificationRequestIEs_Ngap_value_type,
-     {&asn_OER_memb_Ngap_value_constr_88, &asn_PER_memb_Ngap_value_constr_88,
-      memb_Ngap_value_constraint_85},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_value_constr_88,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_value_constr_88,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_value_constraint_85},
      0,
      0, /* No default value */
      "value"},
@@ -25742,7 +29276,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_UEContextModificationRequestIEs = {
     asn_DEF_Ngap_UEContextModificationRequestIEs_tags_85, /* Same as above */
     sizeof(asn_DEF_Ngap_UEContextModificationRequestIEs_tags_85) /
         sizeof(asn_DEF_Ngap_UEContextModificationRequestIEs_tags_85[0]), /* 1 */
-    {0, 0, SEQUENCE_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_constraint},
     asn_MBR_Ngap_UEContextModificationRequestIEs_85,
     3,                                                     /* Elements count */
     &asn_SPC_Ngap_UEContextModificationRequestIEs_specs_85 /* Additional specs
@@ -25759,7 +29301,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_92[] = {
      0,
      &asn_DEF_Ngap_AMF_UE_NGAP_ID,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "AMF-UE-NGAP-ID"},
@@ -25772,7 +29322,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_92[] = {
      0,
      &asn_DEF_Ngap_RAN_UE_NGAP_ID,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "RAN-UE-NGAP-ID"},
@@ -25784,7 +29342,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_92[] = {
      0,
      &asn_DEF_Ngap_RRCState,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "RRCState"},
@@ -25797,7 +29363,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_92[] = {
      0,
      &asn_DEF_Ngap_UserLocationInformation,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "UserLocationInformation"},
@@ -25810,7 +29384,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_92[] = {
      0,
      &asn_DEF_Ngap_CriticalityDiagnostics,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "CriticalityDiagnostics"},
@@ -25850,7 +29432,15 @@ static /* Use -fall-defs-global to expose */
         0, /* No effective tags (count) */
         0, /* No tags (pointer) */
         0, /* No tags (count) */
-        {0, 0, OPEN_TYPE_constraint},
+        {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+            OPEN_TYPE_constraint},
         asn_MBR_Ngap_value_92,
         5,                           /* Elements count */
         &asn_SPC_Ngap_value_specs_92 /* Additional specs */
@@ -25864,8 +29454,15 @@ asn_TYPE_member_t asn_MBR_Ngap_UEContextModificationResponseIEs_89[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_ProtocolIE_ID,
      0,
-     {&asn_OER_memb_Ngap_id_constr_90, &asn_PER_memb_Ngap_id_constr_90,
-      memb_Ngap_id_constraint_89},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_id_constr_90,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_id_constr_90,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_id_constraint_89},
      0,
      0, /* No default value */
      "id"},
@@ -25876,9 +29473,15 @@ asn_TYPE_member_t asn_MBR_Ngap_UEContextModificationResponseIEs_89[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_Criticality,
      select_UEContextModificationResponseIEs_Ngap_criticality_type,
-     {&asn_OER_memb_Ngap_criticality_constr_91,
-      &asn_PER_memb_Ngap_criticality_constr_91,
-      memb_Ngap_criticality_constraint_89},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_criticality_constr_91,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_criticality_constr_91,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_criticality_constraint_89},
      0,
      0, /* No default value */
      "criticality"},
@@ -25889,8 +29492,15 @@ asn_TYPE_member_t asn_MBR_Ngap_UEContextModificationResponseIEs_89[] = {
      +1, /* EXPLICIT tag at current level */
      &asn_DEF_Ngap_value_92,
      select_UEContextModificationResponseIEs_Ngap_value_type,
-     {&asn_OER_memb_Ngap_value_constr_92, &asn_PER_memb_Ngap_value_constr_92,
-      memb_Ngap_value_constraint_89},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_value_constr_92,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_value_constr_92,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_value_constraint_89},
      0,
      0, /* No default value */
      "value"},
@@ -25927,7 +29537,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_UEContextModificationResponseIEs = {
     sizeof(asn_DEF_Ngap_UEContextModificationResponseIEs_tags_89) /
         sizeof(
             asn_DEF_Ngap_UEContextModificationResponseIEs_tags_89[0]), /* 1 */
-    {0, 0, SEQUENCE_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_constraint},
     asn_MBR_Ngap_UEContextModificationResponseIEs_89,
     3,                                                      /* Elements count */
     &asn_SPC_Ngap_UEContextModificationResponseIEs_specs_89 /* Additional specs
@@ -25944,7 +29562,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_96[] = {
      0,
      &asn_DEF_Ngap_AMF_UE_NGAP_ID,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "AMF-UE-NGAP-ID"},
@@ -25957,7 +29583,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_96[] = {
      0,
      &asn_DEF_Ngap_RAN_UE_NGAP_ID,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "RAN-UE-NGAP-ID"},
@@ -25968,7 +29602,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_96[] = {
      0,
      &asn_DEF_Ngap_Cause,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "Cause"},
@@ -25981,7 +29623,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_96[] = {
      0,
      &asn_DEF_Ngap_CriticalityDiagnostics,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "CriticalityDiagnostics"},
@@ -26019,7 +29669,15 @@ static /* Use -fall-defs-global to expose */
         0, /* No effective tags (count) */
         0, /* No tags (pointer) */
         0, /* No tags (count) */
-        {0, 0, OPEN_TYPE_constraint},
+        {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+            OPEN_TYPE_constraint},
         asn_MBR_Ngap_value_96,
         4,                           /* Elements count */
         &asn_SPC_Ngap_value_specs_96 /* Additional specs */
@@ -26033,8 +29691,15 @@ asn_TYPE_member_t asn_MBR_Ngap_UEContextModificationFailureIEs_93[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_ProtocolIE_ID,
      0,
-     {&asn_OER_memb_Ngap_id_constr_94, &asn_PER_memb_Ngap_id_constr_94,
-      memb_Ngap_id_constraint_93},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_id_constr_94,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_id_constr_94,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_id_constraint_93},
      0,
      0, /* No default value */
      "id"},
@@ -26045,9 +29710,15 @@ asn_TYPE_member_t asn_MBR_Ngap_UEContextModificationFailureIEs_93[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_Criticality,
      select_UEContextModificationFailureIEs_Ngap_criticality_type,
-     {&asn_OER_memb_Ngap_criticality_constr_95,
-      &asn_PER_memb_Ngap_criticality_constr_95,
-      memb_Ngap_criticality_constraint_93},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_criticality_constr_95,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_criticality_constr_95,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_criticality_constraint_93},
      0,
      0, /* No default value */
      "criticality"},
@@ -26058,8 +29729,15 @@ asn_TYPE_member_t asn_MBR_Ngap_UEContextModificationFailureIEs_93[] = {
      +1, /* EXPLICIT tag at current level */
      &asn_DEF_Ngap_value_96,
      select_UEContextModificationFailureIEs_Ngap_value_type,
-     {&asn_OER_memb_Ngap_value_constr_96, &asn_PER_memb_Ngap_value_constr_96,
-      memb_Ngap_value_constraint_93},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_value_constr_96,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_value_constr_96,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_value_constraint_93},
      0,
      0, /* No default value */
      "value"},
@@ -26094,7 +29772,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_UEContextModificationFailureIEs = {
     asn_DEF_Ngap_UEContextModificationFailureIEs_tags_93, /* Same as above */
     sizeof(asn_DEF_Ngap_UEContextModificationFailureIEs_tags_93) /
         sizeof(asn_DEF_Ngap_UEContextModificationFailureIEs_tags_93[0]), /* 1 */
-    {0, 0, SEQUENCE_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_constraint},
     asn_MBR_Ngap_UEContextModificationFailureIEs_93,
     3,                                                     /* Elements count */
     &asn_SPC_Ngap_UEContextModificationFailureIEs_specs_93 /* Additional specs
@@ -26111,7 +29797,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_100[] = {
      0,
      &asn_DEF_Ngap_AMF_UE_NGAP_ID,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "AMF-UE-NGAP-ID"},
@@ -26124,7 +29818,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_100[] = {
      0,
      &asn_DEF_Ngap_RAN_UE_NGAP_ID,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "RAN-UE-NGAP-ID"},
@@ -26136,7 +29838,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_100[] = {
      0,
      &asn_DEF_Ngap_RRCState,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "RRCState"},
@@ -26149,7 +29859,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_100[] = {
      0,
      &asn_DEF_Ngap_UserLocationInformation,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "UserLocationInformation"},
@@ -26185,7 +29903,15 @@ static /* Use -fall-defs-global to expose */
         0, /* No effective tags (count) */
         0, /* No tags (pointer) */
         0, /* No tags (count) */
-        {0, 0, OPEN_TYPE_constraint},
+        {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+            OPEN_TYPE_constraint},
         asn_MBR_Ngap_value_100,
         4,                            /* Elements count */
         &asn_SPC_Ngap_value_specs_100 /* Additional specs */
@@ -26199,8 +29925,15 @@ asn_TYPE_member_t asn_MBR_Ngap_RRCInactiveTransitionReportIEs_97[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_ProtocolIE_ID,
      0,
-     {&asn_OER_memb_Ngap_id_constr_98, &asn_PER_memb_Ngap_id_constr_98,
-      memb_Ngap_id_constraint_97},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_id_constr_98,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_id_constr_98,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_id_constraint_97},
      0,
      0, /* No default value */
      "id"},
@@ -26211,9 +29944,15 @@ asn_TYPE_member_t asn_MBR_Ngap_RRCInactiveTransitionReportIEs_97[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_Criticality,
      select_RRCInactiveTransitionReportIEs_Ngap_criticality_type,
-     {&asn_OER_memb_Ngap_criticality_constr_99,
-      &asn_PER_memb_Ngap_criticality_constr_99,
-      memb_Ngap_criticality_constraint_97},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_criticality_constr_99,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_criticality_constr_99,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_criticality_constraint_97},
      0,
      0, /* No default value */
      "criticality"},
@@ -26224,8 +29963,15 @@ asn_TYPE_member_t asn_MBR_Ngap_RRCInactiveTransitionReportIEs_97[] = {
      +1, /* EXPLICIT tag at current level */
      &asn_DEF_Ngap_value_100,
      select_RRCInactiveTransitionReportIEs_Ngap_value_type,
-     {&asn_OER_memb_Ngap_value_constr_100, &asn_PER_memb_Ngap_value_constr_100,
-      memb_Ngap_value_constraint_97},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_value_constr_100,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_value_constr_100,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_value_constraint_97},
      0,
      0, /* No default value */
      "value"},
@@ -26260,7 +30006,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_RRCInactiveTransitionReportIEs = {
     asn_DEF_Ngap_RRCInactiveTransitionReportIEs_tags_97, /* Same as above */
     sizeof(asn_DEF_Ngap_RRCInactiveTransitionReportIEs_tags_97) /
         sizeof(asn_DEF_Ngap_RRCInactiveTransitionReportIEs_tags_97[0]), /* 1 */
-    {0, 0, SEQUENCE_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_constraint},
     asn_MBR_Ngap_RRCInactiveTransitionReportIEs_97,
     3,                                                    /* Elements count */
     &asn_SPC_Ngap_RRCInactiveTransitionReportIEs_specs_97 /* Additional specs */
@@ -26274,7 +30028,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_104[] = {
      0,
      &asn_DEF_Ngap_FiveG_S_TMSI,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "FiveG-S-TMSI"},
@@ -26302,7 +30064,15 @@ static /* Use -fall-defs-global to expose */
         0, /* No effective tags (count) */
         0, /* No tags (pointer) */
         0, /* No tags (count) */
-        {0, 0, OPEN_TYPE_constraint},
+        {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+            OPEN_TYPE_constraint},
         asn_MBR_Ngap_value_104,
         1,                            /* Elements count */
         &asn_SPC_Ngap_value_specs_104 /* Additional specs */
@@ -26316,8 +30086,15 @@ asn_TYPE_member_t asn_MBR_Ngap_RetrieveUEInformationIEs_101[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_ProtocolIE_ID,
      0,
-     {&asn_OER_memb_Ngap_id_constr_102, &asn_PER_memb_Ngap_id_constr_102,
-      memb_Ngap_id_constraint_101},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_id_constr_102,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_id_constr_102,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_id_constraint_101},
      0,
      0, /* No default value */
      "id"},
@@ -26328,9 +30105,15 @@ asn_TYPE_member_t asn_MBR_Ngap_RetrieveUEInformationIEs_101[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_Criticality,
      select_RetrieveUEInformationIEs_Ngap_criticality_type,
-     {&asn_OER_memb_Ngap_criticality_constr_103,
-      &asn_PER_memb_Ngap_criticality_constr_103,
-      memb_Ngap_criticality_constraint_101},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_criticality_constr_103,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_criticality_constr_103,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_criticality_constraint_101},
      0,
      0, /* No default value */
      "criticality"},
@@ -26341,8 +30124,15 @@ asn_TYPE_member_t asn_MBR_Ngap_RetrieveUEInformationIEs_101[] = {
      +1, /* EXPLICIT tag at current level */
      &asn_DEF_Ngap_value_104,
      select_RetrieveUEInformationIEs_Ngap_value_type,
-     {&asn_OER_memb_Ngap_value_constr_104, &asn_PER_memb_Ngap_value_constr_104,
-      memb_Ngap_value_constraint_101},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_value_constr_104,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_value_constr_104,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_value_constraint_101},
      0,
      0, /* No default value */
      "value"},
@@ -26375,7 +30165,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_RetrieveUEInformationIEs = {
     asn_DEF_Ngap_RetrieveUEInformationIEs_tags_101, /* Same as above */
     sizeof(asn_DEF_Ngap_RetrieveUEInformationIEs_tags_101) /
         sizeof(asn_DEF_Ngap_RetrieveUEInformationIEs_tags_101[0]), /* 1 */
-    {0, 0, SEQUENCE_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_constraint},
     asn_MBR_Ngap_RetrieveUEInformationIEs_101,
     3,                                               /* Elements count */
     &asn_SPC_Ngap_RetrieveUEInformationIEs_specs_101 /* Additional specs */
@@ -26389,7 +30187,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_108[] = {
      0,
      &asn_DEF_Ngap_FiveG_S_TMSI,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "FiveG-S-TMSI"},
@@ -26401,7 +30207,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_108[] = {
      0,
      &asn_DEF_Ngap_NB_IoT_UEPriority,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "NB-IoT-UEPriority"},
@@ -26413,7 +30227,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_108[] = {
      0,
      &asn_DEF_Ngap_UERadioCapability,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "UERadioCapability"},
@@ -26424,7 +30246,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_108[] = {
      0,
      &asn_DEF_Ngap_S_NSSAI,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "S-NSSAI"},
@@ -26435,7 +30265,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_108[] = {
      0,
      &asn_DEF_Ngap_AllowedNSSAI,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "AllowedNSSAI"},
@@ -26448,7 +30286,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_108[] = {
      0,
      &asn_DEF_Ngap_UE_DifferentiationInfo,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "UE-DifferentiationInfo"},
@@ -26459,7 +30305,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_108[] = {
      0,
      &asn_DEF_Ngap_MaskedIMEISV,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "MaskedIMEISV"},
@@ -26498,7 +30352,15 @@ static /* Use -fall-defs-global to expose */
         0, /* No effective tags (count) */
         0, /* No tags (pointer) */
         0, /* No tags (count) */
-        {0, 0, OPEN_TYPE_constraint},
+        {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+            OPEN_TYPE_constraint},
         asn_MBR_Ngap_value_108,
         7,                            /* Elements count */
         &asn_SPC_Ngap_value_specs_108 /* Additional specs */
@@ -26512,8 +30374,15 @@ asn_TYPE_member_t asn_MBR_Ngap_UEInformationTransferIEs_105[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_ProtocolIE_ID,
      0,
-     {&asn_OER_memb_Ngap_id_constr_106, &asn_PER_memb_Ngap_id_constr_106,
-      memb_Ngap_id_constraint_105},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_id_constr_106,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_id_constr_106,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_id_constraint_105},
      0,
      0, /* No default value */
      "id"},
@@ -26524,9 +30393,15 @@ asn_TYPE_member_t asn_MBR_Ngap_UEInformationTransferIEs_105[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_Criticality,
      select_UEInformationTransferIEs_Ngap_criticality_type,
-     {&asn_OER_memb_Ngap_criticality_constr_107,
-      &asn_PER_memb_Ngap_criticality_constr_107,
-      memb_Ngap_criticality_constraint_105},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_criticality_constr_107,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_criticality_constr_107,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_criticality_constraint_105},
      0,
      0, /* No default value */
      "criticality"},
@@ -26537,8 +30412,15 @@ asn_TYPE_member_t asn_MBR_Ngap_UEInformationTransferIEs_105[] = {
      +1, /* EXPLICIT tag at current level */
      &asn_DEF_Ngap_value_108,
      select_UEInformationTransferIEs_Ngap_value_type,
-     {&asn_OER_memb_Ngap_value_constr_108, &asn_PER_memb_Ngap_value_constr_108,
-      memb_Ngap_value_constraint_105},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_value_constr_108,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_value_constr_108,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_value_constraint_105},
      0,
      0, /* No default value */
      "value"},
@@ -26571,7 +30453,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_UEInformationTransferIEs = {
     asn_DEF_Ngap_UEInformationTransferIEs_tags_105, /* Same as above */
     sizeof(asn_DEF_Ngap_UEInformationTransferIEs_tags_105) /
         sizeof(asn_DEF_Ngap_UEInformationTransferIEs_tags_105[0]), /* 1 */
-    {0, 0, SEQUENCE_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_constraint},
     asn_MBR_Ngap_UEInformationTransferIEs_105,
     3,                                               /* Elements count */
     &asn_SPC_Ngap_UEInformationTransferIEs_specs_105 /* Additional specs */
@@ -26587,7 +30477,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_112[] = {
      0,
      &asn_DEF_Ngap_RAN_UE_NGAP_ID,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "RAN-UE-NGAP-ID"},
@@ -26599,7 +30497,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_112[] = {
      0,
      &asn_DEF_Ngap_FiveG_S_TMSI,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "FiveG-S-TMSI"},
@@ -26611,7 +30517,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_112[] = {
      0,
      &asn_DEF_Ngap_EUTRA_CGI,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "EUTRA-CGI"},
@@ -26622,7 +30536,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_112[] = {
      0,
      &asn_DEF_Ngap_TAI,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "TAI"},
@@ -26635,7 +30557,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_112[] = {
      0,
      &asn_DEF_Ngap_UL_CP_SecurityInformation,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "UL-CP-SecurityInformation"},
@@ -26668,7 +30598,15 @@ static /* Use -fall-defs-global to expose */
         0, /* No effective tags (count) */
         0, /* No tags (pointer) */
         0, /* No tags (count) */
-        {0, 0, OPEN_TYPE_constraint},
+        {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+            OPEN_TYPE_constraint},
         asn_MBR_Ngap_value_112,
         5,                            /* Elements count */
         &asn_SPC_Ngap_value_specs_112 /* Additional specs */
@@ -26682,8 +30620,15 @@ asn_TYPE_member_t asn_MBR_Ngap_RANCPRelocationIndicationIEs_109[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_ProtocolIE_ID,
      0,
-     {&asn_OER_memb_Ngap_id_constr_110, &asn_PER_memb_Ngap_id_constr_110,
-      memb_Ngap_id_constraint_109},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_id_constr_110,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_id_constr_110,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_id_constraint_109},
      0,
      0, /* No default value */
      "id"},
@@ -26694,9 +30639,15 @@ asn_TYPE_member_t asn_MBR_Ngap_RANCPRelocationIndicationIEs_109[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_Criticality,
      select_RANCPRelocationIndicationIEs_Ngap_criticality_type,
-     {&asn_OER_memb_Ngap_criticality_constr_111,
-      &asn_PER_memb_Ngap_criticality_constr_111,
-      memb_Ngap_criticality_constraint_109},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_criticality_constr_111,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_criticality_constr_111,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_criticality_constraint_109},
      0,
      0, /* No default value */
      "criticality"},
@@ -26707,8 +30658,15 @@ asn_TYPE_member_t asn_MBR_Ngap_RANCPRelocationIndicationIEs_109[] = {
      +1, /* EXPLICIT tag at current level */
      &asn_DEF_Ngap_value_112,
      select_RANCPRelocationIndicationIEs_Ngap_value_type,
-     {&asn_OER_memb_Ngap_value_constr_112, &asn_PER_memb_Ngap_value_constr_112,
-      memb_Ngap_value_constraint_109},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_value_constr_112,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_value_constr_112,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_value_constraint_109},
      0,
      0, /* No default value */
      "value"},
@@ -26742,7 +30700,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_RANCPRelocationIndicationIEs = {
     asn_DEF_Ngap_RANCPRelocationIndicationIEs_tags_109, /* Same as above */
     sizeof(asn_DEF_Ngap_RANCPRelocationIndicationIEs_tags_109) /
         sizeof(asn_DEF_Ngap_RANCPRelocationIndicationIEs_tags_109[0]), /* 1 */
-    {0, 0, SEQUENCE_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_constraint},
     asn_MBR_Ngap_RANCPRelocationIndicationIEs_109,
     3,                                                   /* Elements count */
     &asn_SPC_Ngap_RANCPRelocationIndicationIEs_specs_109 /* Additional specs */
@@ -26756,7 +30722,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_116[] = {
      0,
      &asn_DEF_Ngap_AMF_UE_NGAP_ID,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "AMF-UE-NGAP-ID"},
@@ -26767,7 +30741,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_116[] = {
      0,
      &asn_DEF_Ngap_RAN_UE_NGAP_ID,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "RAN-UE-NGAP-ID"},
@@ -26778,7 +30760,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_116[] = {
      0,
      &asn_DEF_Ngap_HandoverType,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "HandoverType"},
@@ -26789,7 +30779,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_116[] = {
      0,
      &asn_DEF_Ngap_Cause,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "Cause"},
@@ -26800,7 +30798,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_116[] = {
      0,
      &asn_DEF_Ngap_TargetID,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "TargetID"},
@@ -26813,7 +30819,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_116[] = {
      0,
      &asn_DEF_Ngap_DirectForwardingPathAvailability,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "DirectForwardingPathAvailability"},
@@ -26826,7 +30840,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_116[] = {
      0,
      &asn_DEF_Ngap_PDUSessionResourceListHORqd,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "PDUSessionResourceListHORqd"},
@@ -26839,7 +30861,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_116[] = {
      0,
      &asn_DEF_Ngap_SourceToTarget_TransparentContainer,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "SourceToTarget-TransparentContainer"},
@@ -26886,7 +30916,15 @@ static /* Use -fall-defs-global to expose */
         0, /* No effective tags (count) */
         0, /* No tags (pointer) */
         0, /* No tags (count) */
-        {0, 0, OPEN_TYPE_constraint},
+        {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+            OPEN_TYPE_constraint},
         asn_MBR_Ngap_value_116,
         8,                            /* Elements count */
         &asn_SPC_Ngap_value_specs_116 /* Additional specs */
@@ -26900,8 +30938,15 @@ asn_TYPE_member_t asn_MBR_Ngap_HandoverRequiredIEs_113[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_ProtocolIE_ID,
      0,
-     {&asn_OER_memb_Ngap_id_constr_114, &asn_PER_memb_Ngap_id_constr_114,
-      memb_Ngap_id_constraint_113},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_id_constr_114,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_id_constr_114,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_id_constraint_113},
      0,
      0, /* No default value */
      "id"},
@@ -26912,9 +30957,15 @@ asn_TYPE_member_t asn_MBR_Ngap_HandoverRequiredIEs_113[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_Criticality,
      select_HandoverRequiredIEs_Ngap_criticality_type,
-     {&asn_OER_memb_Ngap_criticality_constr_115,
-      &asn_PER_memb_Ngap_criticality_constr_115,
-      memb_Ngap_criticality_constraint_113},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_criticality_constr_115,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_criticality_constr_115,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_criticality_constraint_113},
      0,
      0, /* No default value */
      "criticality"},
@@ -26925,8 +30976,15 @@ asn_TYPE_member_t asn_MBR_Ngap_HandoverRequiredIEs_113[] = {
      +1, /* EXPLICIT tag at current level */
      &asn_DEF_Ngap_value_116,
      select_HandoverRequiredIEs_Ngap_value_type,
-     {&asn_OER_memb_Ngap_value_constr_116, &asn_PER_memb_Ngap_value_constr_116,
-      memb_Ngap_value_constraint_113},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_value_constr_116,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_value_constr_116,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_value_constraint_113},
      0,
      0, /* No default value */
      "value"},
@@ -26959,7 +31017,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_HandoverRequiredIEs = {
     asn_DEF_Ngap_HandoverRequiredIEs_tags_113, /* Same as above */
     sizeof(asn_DEF_Ngap_HandoverRequiredIEs_tags_113) /
         sizeof(asn_DEF_Ngap_HandoverRequiredIEs_tags_113[0]), /* 1 */
-    {0, 0, SEQUENCE_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_constraint},
     asn_MBR_Ngap_HandoverRequiredIEs_113,
     3,                                          /* Elements count */
     &asn_SPC_Ngap_HandoverRequiredIEs_specs_113 /* Additional specs */
@@ -26973,7 +31039,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_120[] = {
      0,
      &asn_DEF_Ngap_AMF_UE_NGAP_ID,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "AMF-UE-NGAP-ID"},
@@ -26984,7 +31058,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_120[] = {
      0,
      &asn_DEF_Ngap_RAN_UE_NGAP_ID,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "RAN-UE-NGAP-ID"},
@@ -26995,7 +31077,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_120[] = {
      0,
      &asn_DEF_Ngap_HandoverType,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "HandoverType"},
@@ -27008,7 +31098,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_120[] = {
      0,
      &asn_DEF_Ngap_NASSecurityParametersFromNGRAN,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "NASSecurityParametersFromNGRAN"},
@@ -27021,7 +31119,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_120[] = {
      0,
      &asn_DEF_Ngap_PDUSessionResourceHandoverList,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "PDUSessionResourceHandoverList"},
@@ -27034,7 +31140,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_120[] = {
      0,
      &asn_DEF_Ngap_PDUSessionResourceToReleaseListHOCmd,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "PDUSessionResourceToReleaseListHOCmd"},
@@ -27047,7 +31161,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_120[] = {
      0,
      &asn_DEF_Ngap_TargetToSource_TransparentContainer,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "TargetToSource-TransparentContainer"},
@@ -27059,7 +31181,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_120[] = {
      0,
      &asn_DEF_Ngap_CriticalityDiagnostics,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "CriticalityDiagnostics"},
@@ -27103,7 +31233,15 @@ static /* Use -fall-defs-global to expose */
         0, /* No effective tags (count) */
         0, /* No tags (pointer) */
         0, /* No tags (count) */
-        {0, 0, OPEN_TYPE_constraint},
+        {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+            OPEN_TYPE_constraint},
         asn_MBR_Ngap_value_120,
         8,                            /* Elements count */
         &asn_SPC_Ngap_value_specs_120 /* Additional specs */
@@ -27117,8 +31255,15 @@ asn_TYPE_member_t asn_MBR_Ngap_HandoverCommandIEs_117[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_ProtocolIE_ID,
      0,
-     {&asn_OER_memb_Ngap_id_constr_118, &asn_PER_memb_Ngap_id_constr_118,
-      memb_Ngap_id_constraint_117},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_id_constr_118,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_id_constr_118,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_id_constraint_117},
      0,
      0, /* No default value */
      "id"},
@@ -27129,9 +31274,15 @@ asn_TYPE_member_t asn_MBR_Ngap_HandoverCommandIEs_117[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_Criticality,
      select_HandoverCommandIEs_Ngap_criticality_type,
-     {&asn_OER_memb_Ngap_criticality_constr_119,
-      &asn_PER_memb_Ngap_criticality_constr_119,
-      memb_Ngap_criticality_constraint_117},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_criticality_constr_119,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_criticality_constr_119,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_criticality_constraint_117},
      0,
      0, /* No default value */
      "criticality"},
@@ -27142,8 +31293,15 @@ asn_TYPE_member_t asn_MBR_Ngap_HandoverCommandIEs_117[] = {
      +1, /* EXPLICIT tag at current level */
      &asn_DEF_Ngap_value_120,
      select_HandoverCommandIEs_Ngap_value_type,
-     {&asn_OER_memb_Ngap_value_constr_120, &asn_PER_memb_Ngap_value_constr_120,
-      memb_Ngap_value_constraint_117},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_value_constr_120,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_value_constr_120,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_value_constraint_117},
      0,
      0, /* No default value */
      "value"},
@@ -27176,7 +31334,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_HandoverCommandIEs = {
     asn_DEF_Ngap_HandoverCommandIEs_tags_117,                /* Same as above */
     sizeof(asn_DEF_Ngap_HandoverCommandIEs_tags_117) /
         sizeof(asn_DEF_Ngap_HandoverCommandIEs_tags_117[0]), /* 1 */
-    {0, 0, SEQUENCE_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_constraint},
     asn_MBR_Ngap_HandoverCommandIEs_117,
     3,                                         /* Elements count */
     &asn_SPC_Ngap_HandoverCommandIEs_specs_117 /* Additional specs */
@@ -27192,7 +31358,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_124[] = {
      0,
      &asn_DEF_Ngap_AMF_UE_NGAP_ID,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "AMF-UE-NGAP-ID"},
@@ -27205,7 +31379,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_124[] = {
      0,
      &asn_DEF_Ngap_RAN_UE_NGAP_ID,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "RAN-UE-NGAP-ID"},
@@ -27216,7 +31398,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_124[] = {
      0,
      &asn_DEF_Ngap_Cause,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "Cause"},
@@ -27229,7 +31419,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_124[] = {
      0,
      &asn_DEF_Ngap_CriticalityDiagnostics,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "CriticalityDiagnostics"},
@@ -27242,7 +31440,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_124[] = {
      0,
      &asn_DEF_Ngap_TargettoSource_Failure_TransparentContainer,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "TargettoSource-Failure-TransparentContainer"},
@@ -27282,7 +31488,15 @@ static /* Use -fall-defs-global to expose */
         0, /* No effective tags (count) */
         0, /* No tags (pointer) */
         0, /* No tags (count) */
-        {0, 0, OPEN_TYPE_constraint},
+        {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+            OPEN_TYPE_constraint},
         asn_MBR_Ngap_value_124,
         5,                            /* Elements count */
         &asn_SPC_Ngap_value_specs_124 /* Additional specs */
@@ -27296,8 +31510,15 @@ asn_TYPE_member_t asn_MBR_Ngap_HandoverPreparationFailureIEs_121[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_ProtocolIE_ID,
      0,
-     {&asn_OER_memb_Ngap_id_constr_122, &asn_PER_memb_Ngap_id_constr_122,
-      memb_Ngap_id_constraint_121},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_id_constr_122,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_id_constr_122,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_id_constraint_121},
      0,
      0, /* No default value */
      "id"},
@@ -27308,9 +31529,15 @@ asn_TYPE_member_t asn_MBR_Ngap_HandoverPreparationFailureIEs_121[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_Criticality,
      select_HandoverPreparationFailureIEs_Ngap_criticality_type,
-     {&asn_OER_memb_Ngap_criticality_constr_123,
-      &asn_PER_memb_Ngap_criticality_constr_123,
-      memb_Ngap_criticality_constraint_121},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_criticality_constr_123,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_criticality_constr_123,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_criticality_constraint_121},
      0,
      0, /* No default value */
      "criticality"},
@@ -27321,8 +31548,15 @@ asn_TYPE_member_t asn_MBR_Ngap_HandoverPreparationFailureIEs_121[] = {
      +1, /* EXPLICIT tag at current level */
      &asn_DEF_Ngap_value_124,
      select_HandoverPreparationFailureIEs_Ngap_value_type,
-     {&asn_OER_memb_Ngap_value_constr_124, &asn_PER_memb_Ngap_value_constr_124,
-      memb_Ngap_value_constraint_121},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_value_constr_124,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_value_constr_124,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_value_constraint_121},
      0,
      0, /* No default value */
      "value"},
@@ -27357,7 +31591,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_HandoverPreparationFailureIEs = {
     asn_DEF_Ngap_HandoverPreparationFailureIEs_tags_121, /* Same as above */
     sizeof(asn_DEF_Ngap_HandoverPreparationFailureIEs_tags_121) /
         sizeof(asn_DEF_Ngap_HandoverPreparationFailureIEs_tags_121[0]), /* 1 */
-    {0, 0, SEQUENCE_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_constraint},
     asn_MBR_Ngap_HandoverPreparationFailureIEs_121,
     3,                                                    /* Elements count */
     &asn_SPC_Ngap_HandoverPreparationFailureIEs_specs_121 /* Additional specs */
@@ -27371,7 +31613,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_128[] = {
      0,
      &asn_DEF_Ngap_AMF_UE_NGAP_ID,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "AMF-UE-NGAP-ID"},
@@ -27382,7 +31632,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_128[] = {
      0,
      &asn_DEF_Ngap_HandoverType,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "HandoverType"},
@@ -27393,7 +31651,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_128[] = {
      0,
      &asn_DEF_Ngap_Cause,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "Cause"},
@@ -27406,7 +31672,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_128[] = {
      0,
      &asn_DEF_Ngap_UEAggregateMaximumBitRate,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "UEAggregateMaximumBitRate"},
@@ -27419,7 +31693,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_128[] = {
      0,
      &asn_DEF_Ngap_CoreNetworkAssistanceInformationForInactive,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "CoreNetworkAssistanceInformationForInactive"},
@@ -27431,7 +31713,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_128[] = {
      0,
      &asn_DEF_Ngap_UESecurityCapabilities,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "UESecurityCapabilities"},
@@ -27442,7 +31732,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_128[] = {
      0,
      &asn_DEF_Ngap_SecurityContext,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "SecurityContext"},
@@ -27454,7 +31752,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_128[] = {
      0,
      &asn_DEF_Ngap_NewSecurityContextInd,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "NewSecurityContextInd"},
@@ -27465,7 +31771,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_128[] = {
      0,
      &asn_DEF_Ngap_NAS_PDU,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "NAS-PDU"},
@@ -27478,7 +31792,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_128[] = {
      0,
      &asn_DEF_Ngap_PDUSessionResourceSetupListHOReq,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "PDUSessionResourceSetupListHOReq"},
@@ -27489,7 +31811,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_128[] = {
      0,
      &asn_DEF_Ngap_AllowedNSSAI,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "AllowedNSSAI"},
@@ -27500,7 +31830,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_128[] = {
      0,
      &asn_DEF_Ngap_TraceActivation,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "TraceActivation"},
@@ -27511,7 +31849,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_128[] = {
      0,
      &asn_DEF_Ngap_MaskedIMEISV,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "MaskedIMEISV"},
@@ -27524,7 +31870,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_128[] = {
      0,
      &asn_DEF_Ngap_SourceToTarget_TransparentContainer,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "SourceToTarget-TransparentContainer"},
@@ -27536,7 +31890,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_128[] = {
      0,
      &asn_DEF_Ngap_MobilityRestrictionList,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "MobilityRestrictionList"},
@@ -27549,7 +31911,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_128[] = {
      0,
      &asn_DEF_Ngap_LocationReportingRequestType,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "LocationReportingRequestType"},
@@ -27562,7 +31932,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_128[] = {
      0,
      &asn_DEF_Ngap_RRCInactiveTransitionReportRequest,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "RRCInactiveTransitionReportRequest"},
@@ -27573,7 +31951,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_128[] = {
      0,
      &asn_DEF_Ngap_GUAMI,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "GUAMI"},
@@ -27586,7 +31972,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_128[] = {
      0,
      &asn_DEF_Ngap_RedirectionVoiceFallback,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "RedirectionVoiceFallback"},
@@ -27598,7 +31992,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_128[] = {
      0,
      &asn_DEF_Ngap_CNAssistedRANTuning,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "CNAssistedRANTuning"},
@@ -27610,7 +32012,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_128[] = {
      0,
      &asn_DEF_Ngap_SRVCCOperationPossible,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "SRVCCOperationPossible"},
@@ -27621,7 +32031,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_128[] = {
      0,
      &asn_DEF_Ngap_IAB_Authorized,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "IAB-Authorized"},
@@ -27634,7 +32052,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_128[] = {
      0,
      &asn_DEF_Ngap_Enhanced_CoverageRestriction,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "Enhanced-CoverageRestriction"},
@@ -27646,7 +32072,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_128[] = {
      0,
      &asn_DEF_Ngap_UE_DifferentiationInfo,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "UE-DifferentiationInfo"},
@@ -27658,7 +32092,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_128[] = {
      0,
      &asn_DEF_Ngap_NRV2XServicesAuthorized,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "NRV2XServicesAuthorized"},
@@ -27671,7 +32113,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_128[] = {
      0,
      &asn_DEF_Ngap_LTEV2XServicesAuthorized,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "LTEV2XServicesAuthorized"},
@@ -27684,7 +32134,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_128[] = {
      0,
      &asn_DEF_Ngap_NRUESidelinkAggregateMaximumBitrate,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "NRUESidelinkAggregateMaximumBitrate"},
@@ -27697,7 +32155,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_128[] = {
      0,
      &asn_DEF_Ngap_LTEUESidelinkAggregateMaximumBitrate,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "LTEUESidelinkAggregateMaximumBitrate"},
@@ -27708,7 +32174,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_128[] = {
      0,
      &asn_DEF_Ngap_PC5QoSParameters,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "PC5QoSParameters"},
@@ -27719,7 +32193,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_128[] = {
      0,
      &asn_DEF_Ngap_CEmodeBrestricted,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "CEmodeBrestricted"},
@@ -27730,7 +32212,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_128[] = {
      0,
      &asn_DEF_Ngap_UE_UP_CIoT_Support,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "UE-UP-CIoT-Support"},
@@ -27741,7 +32231,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_128[] = {
      0,
      &asn_DEF_Ngap_MDTPLMNList,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "MDTPLMNList"},
@@ -27753,7 +32251,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_128[] = {
      0,
      &asn_DEF_Ngap_UERadioCapabilityID,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "UERadioCapabilityID"},
@@ -27765,7 +32271,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_128[] = {
      0,
      &asn_DEF_Ngap_Extended_ConnectedTime,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "Extended-ConnectedTime"},
@@ -27855,7 +32369,15 @@ static /* Use -fall-defs-global to expose */
         0, /* No effective tags (count) */
         0, /* No tags (pointer) */
         0, /* No tags (count) */
-        {0, 0, OPEN_TYPE_constraint},
+        {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+            OPEN_TYPE_constraint},
         asn_MBR_Ngap_value_128,
         34,                           /* Elements count */
         &asn_SPC_Ngap_value_specs_128 /* Additional specs */
@@ -27869,8 +32391,15 @@ asn_TYPE_member_t asn_MBR_Ngap_HandoverRequestIEs_125[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_ProtocolIE_ID,
      0,
-     {&asn_OER_memb_Ngap_id_constr_126, &asn_PER_memb_Ngap_id_constr_126,
-      memb_Ngap_id_constraint_125},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_id_constr_126,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_id_constr_126,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_id_constraint_125},
      0,
      0, /* No default value */
      "id"},
@@ -27881,9 +32410,15 @@ asn_TYPE_member_t asn_MBR_Ngap_HandoverRequestIEs_125[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_Criticality,
      select_HandoverRequestIEs_Ngap_criticality_type,
-     {&asn_OER_memb_Ngap_criticality_constr_127,
-      &asn_PER_memb_Ngap_criticality_constr_127,
-      memb_Ngap_criticality_constraint_125},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_criticality_constr_127,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_criticality_constr_127,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_criticality_constraint_125},
      0,
      0, /* No default value */
      "criticality"},
@@ -27894,8 +32429,15 @@ asn_TYPE_member_t asn_MBR_Ngap_HandoverRequestIEs_125[] = {
      +1, /* EXPLICIT tag at current level */
      &asn_DEF_Ngap_value_128,
      select_HandoverRequestIEs_Ngap_value_type,
-     {&asn_OER_memb_Ngap_value_constr_128, &asn_PER_memb_Ngap_value_constr_128,
-      memb_Ngap_value_constraint_125},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_value_constr_128,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_value_constr_128,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_value_constraint_125},
      0,
      0, /* No default value */
      "value"},
@@ -27928,7 +32470,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_HandoverRequestIEs = {
     asn_DEF_Ngap_HandoverRequestIEs_tags_125,                /* Same as above */
     sizeof(asn_DEF_Ngap_HandoverRequestIEs_tags_125) /
         sizeof(asn_DEF_Ngap_HandoverRequestIEs_tags_125[0]), /* 1 */
-    {0, 0, SEQUENCE_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_constraint},
     asn_MBR_Ngap_HandoverRequestIEs_125,
     3,                                         /* Elements count */
     &asn_SPC_Ngap_HandoverRequestIEs_specs_125 /* Additional specs */
@@ -27944,7 +32494,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_132[] = {
      0,
      &asn_DEF_Ngap_AMF_UE_NGAP_ID,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "AMF-UE-NGAP-ID"},
@@ -27957,7 +32515,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_132[] = {
      0,
      &asn_DEF_Ngap_RAN_UE_NGAP_ID,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "RAN-UE-NGAP-ID"},
@@ -27970,7 +32536,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_132[] = {
      0,
      &asn_DEF_Ngap_PDUSessionResourceAdmittedList,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "PDUSessionResourceAdmittedList"},
@@ -27983,7 +32557,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_132[] = {
      0,
      &asn_DEF_Ngap_PDUSessionResourceFailedToSetupListHOAck,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "PDUSessionResourceFailedToSetupListHOAck"},
@@ -27996,7 +32578,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_132[] = {
      0,
      &asn_DEF_Ngap_TargetToSource_TransparentContainer,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "TargetToSource-TransparentContainer"},
@@ -28009,7 +32599,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_132[] = {
      0,
      &asn_DEF_Ngap_CriticalityDiagnostics,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "CriticalityDiagnostics"},
@@ -28022,7 +32620,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_132[] = {
      0,
      &asn_DEF_Ngap_NPN_AccessInformation,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "NPN-AccessInformation"},
@@ -28065,7 +32671,15 @@ static /* Use -fall-defs-global to expose */
         0, /* No effective tags (count) */
         0, /* No tags (pointer) */
         0, /* No tags (count) */
-        {0, 0, OPEN_TYPE_constraint},
+        {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+            OPEN_TYPE_constraint},
         asn_MBR_Ngap_value_132,
         7,                            /* Elements count */
         &asn_SPC_Ngap_value_specs_132 /* Additional specs */
@@ -28079,8 +32693,15 @@ asn_TYPE_member_t asn_MBR_Ngap_HandoverRequestAcknowledgeIEs_129[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_ProtocolIE_ID,
      0,
-     {&asn_OER_memb_Ngap_id_constr_130, &asn_PER_memb_Ngap_id_constr_130,
-      memb_Ngap_id_constraint_129},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_id_constr_130,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_id_constr_130,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_id_constraint_129},
      0,
      0, /* No default value */
      "id"},
@@ -28091,9 +32712,15 @@ asn_TYPE_member_t asn_MBR_Ngap_HandoverRequestAcknowledgeIEs_129[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_Criticality,
      select_HandoverRequestAcknowledgeIEs_Ngap_criticality_type,
-     {&asn_OER_memb_Ngap_criticality_constr_131,
-      &asn_PER_memb_Ngap_criticality_constr_131,
-      memb_Ngap_criticality_constraint_129},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_criticality_constr_131,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_criticality_constr_131,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_criticality_constraint_129},
      0,
      0, /* No default value */
      "criticality"},
@@ -28104,8 +32731,15 @@ asn_TYPE_member_t asn_MBR_Ngap_HandoverRequestAcknowledgeIEs_129[] = {
      +1, /* EXPLICIT tag at current level */
      &asn_DEF_Ngap_value_132,
      select_HandoverRequestAcknowledgeIEs_Ngap_value_type,
-     {&asn_OER_memb_Ngap_value_constr_132, &asn_PER_memb_Ngap_value_constr_132,
-      memb_Ngap_value_constraint_129},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_value_constr_132,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_value_constr_132,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_value_constraint_129},
      0,
      0, /* No default value */
      "value"},
@@ -28140,7 +32774,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_HandoverRequestAcknowledgeIEs = {
     asn_DEF_Ngap_HandoverRequestAcknowledgeIEs_tags_129, /* Same as above */
     sizeof(asn_DEF_Ngap_HandoverRequestAcknowledgeIEs_tags_129) /
         sizeof(asn_DEF_Ngap_HandoverRequestAcknowledgeIEs_tags_129[0]), /* 1 */
-    {0, 0, SEQUENCE_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_constraint},
     asn_MBR_Ngap_HandoverRequestAcknowledgeIEs_129,
     3,                                                    /* Elements count */
     &asn_SPC_Ngap_HandoverRequestAcknowledgeIEs_specs_129 /* Additional specs */
@@ -28154,7 +32796,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_136[] = {
      0,
      &asn_DEF_Ngap_AMF_UE_NGAP_ID,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "AMF-UE-NGAP-ID"},
@@ -28165,7 +32815,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_136[] = {
      0,
      &asn_DEF_Ngap_Cause,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "Cause"},
@@ -28177,7 +32835,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_136[] = {
      0,
      &asn_DEF_Ngap_CriticalityDiagnostics,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "CriticalityDiagnostics"},
@@ -28190,7 +32856,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_136[] = {
      0,
      &asn_DEF_Ngap_TargettoSource_Failure_TransparentContainer,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "TargettoSource-Failure-TransparentContainer"},
@@ -28229,7 +32903,15 @@ static /* Use -fall-defs-global to expose */
         0, /* No effective tags (count) */
         0, /* No tags (pointer) */
         0, /* No tags (count) */
-        {0, 0, OPEN_TYPE_constraint},
+        {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+            OPEN_TYPE_constraint},
         asn_MBR_Ngap_value_136,
         4,                            /* Elements count */
         &asn_SPC_Ngap_value_specs_136 /* Additional specs */
@@ -28243,8 +32925,15 @@ asn_TYPE_member_t asn_MBR_Ngap_HandoverFailureIEs_133[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_ProtocolIE_ID,
      0,
-     {&asn_OER_memb_Ngap_id_constr_134, &asn_PER_memb_Ngap_id_constr_134,
-      memb_Ngap_id_constraint_133},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_id_constr_134,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_id_constr_134,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_id_constraint_133},
      0,
      0, /* No default value */
      "id"},
@@ -28255,9 +32944,15 @@ asn_TYPE_member_t asn_MBR_Ngap_HandoverFailureIEs_133[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_Criticality,
      select_HandoverFailureIEs_Ngap_criticality_type,
-     {&asn_OER_memb_Ngap_criticality_constr_135,
-      &asn_PER_memb_Ngap_criticality_constr_135,
-      memb_Ngap_criticality_constraint_133},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_criticality_constr_135,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_criticality_constr_135,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_criticality_constraint_133},
      0,
      0, /* No default value */
      "criticality"},
@@ -28268,8 +32963,15 @@ asn_TYPE_member_t asn_MBR_Ngap_HandoverFailureIEs_133[] = {
      +1, /* EXPLICIT tag at current level */
      &asn_DEF_Ngap_value_136,
      select_HandoverFailureIEs_Ngap_value_type,
-     {&asn_OER_memb_Ngap_value_constr_136, &asn_PER_memb_Ngap_value_constr_136,
-      memb_Ngap_value_constraint_133},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_value_constr_136,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_value_constr_136,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_value_constraint_133},
      0,
      0, /* No default value */
      "value"},
@@ -28302,7 +33004,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_HandoverFailureIEs = {
     asn_DEF_Ngap_HandoverFailureIEs_tags_133,                /* Same as above */
     sizeof(asn_DEF_Ngap_HandoverFailureIEs_tags_133) /
         sizeof(asn_DEF_Ngap_HandoverFailureIEs_tags_133[0]), /* 1 */
-    {0, 0, SEQUENCE_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_constraint},
     asn_MBR_Ngap_HandoverFailureIEs_133,
     3,                                         /* Elements count */
     &asn_SPC_Ngap_HandoverFailureIEs_specs_133 /* Additional specs */
@@ -28316,7 +33026,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_140[] = {
      0,
      &asn_DEF_Ngap_AMF_UE_NGAP_ID,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "AMF-UE-NGAP-ID"},
@@ -28327,7 +33045,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_140[] = {
      0,
      &asn_DEF_Ngap_RAN_UE_NGAP_ID,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "RAN-UE-NGAP-ID"},
@@ -28339,7 +33065,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_140[] = {
      0,
      &asn_DEF_Ngap_UserLocationInformation,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "UserLocationInformation"},
@@ -28351,7 +33085,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_140[] = {
      0,
      &asn_DEF_Ngap_NotifySourceNGRANNode,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "NotifySourceNGRANNode"},
@@ -28390,7 +33132,15 @@ static /* Use -fall-defs-global to expose */
         0, /* No effective tags (count) */
         0, /* No tags (pointer) */
         0, /* No tags (count) */
-        {0, 0, OPEN_TYPE_constraint},
+        {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+            OPEN_TYPE_constraint},
         asn_MBR_Ngap_value_140,
         4,                            /* Elements count */
         &asn_SPC_Ngap_value_specs_140 /* Additional specs */
@@ -28404,8 +33154,15 @@ asn_TYPE_member_t asn_MBR_Ngap_HandoverNotifyIEs_137[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_ProtocolIE_ID,
      0,
-     {&asn_OER_memb_Ngap_id_constr_138, &asn_PER_memb_Ngap_id_constr_138,
-      memb_Ngap_id_constraint_137},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_id_constr_138,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_id_constr_138,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_id_constraint_137},
      0,
      0, /* No default value */
      "id"},
@@ -28416,9 +33173,15 @@ asn_TYPE_member_t asn_MBR_Ngap_HandoverNotifyIEs_137[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_Criticality,
      select_HandoverNotifyIEs_Ngap_criticality_type,
-     {&asn_OER_memb_Ngap_criticality_constr_139,
-      &asn_PER_memb_Ngap_criticality_constr_139,
-      memb_Ngap_criticality_constraint_137},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_criticality_constr_139,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_criticality_constr_139,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_criticality_constraint_137},
      0,
      0, /* No default value */
      "criticality"},
@@ -28429,8 +33192,15 @@ asn_TYPE_member_t asn_MBR_Ngap_HandoverNotifyIEs_137[] = {
      +1, /* EXPLICIT tag at current level */
      &asn_DEF_Ngap_value_140,
      select_HandoverNotifyIEs_Ngap_value_type,
-     {&asn_OER_memb_Ngap_value_constr_140, &asn_PER_memb_Ngap_value_constr_140,
-      memb_Ngap_value_constraint_137},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_value_constr_140,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_value_constr_140,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_value_constraint_137},
      0,
      0, /* No default value */
      "value"},
@@ -28463,7 +33233,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_HandoverNotifyIEs = {
     asn_DEF_Ngap_HandoverNotifyIEs_tags_137,                /* Same as above */
     sizeof(asn_DEF_Ngap_HandoverNotifyIEs_tags_137) /
         sizeof(asn_DEF_Ngap_HandoverNotifyIEs_tags_137[0]), /* 1 */
-    {0, 0, SEQUENCE_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_constraint},
     asn_MBR_Ngap_HandoverNotifyIEs_137,
     3,                                        /* Elements count */
     &asn_SPC_Ngap_HandoverNotifyIEs_specs_137 /* Additional specs */
@@ -28477,7 +33255,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_144[] = {
      0,
      &asn_DEF_Ngap_RAN_UE_NGAP_ID,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "RAN-UE-NGAP-ID"},
@@ -28488,7 +33274,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_144[] = {
      0,
      &asn_DEF_Ngap_AMF_UE_NGAP_ID,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "AMF-UE-NGAP-ID"},
@@ -28501,7 +33295,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_144[] = {
      0,
      &asn_DEF_Ngap_UserLocationInformation,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "UserLocationInformation"},
@@ -28514,7 +33316,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_144[] = {
      0,
      &asn_DEF_Ngap_UESecurityCapabilities,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "UESecurityCapabilities"},
@@ -28527,7 +33337,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_144[] = {
      0,
      &asn_DEF_Ngap_PDUSessionResourceToBeSwitchedDLList,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "PDUSessionResourceToBeSwitchedDLList"},
@@ -28540,7 +33358,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_144[] = {
      0,
      &asn_DEF_Ngap_PDUSessionResourceFailedToSetupListPSReq,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "PDUSessionResourceFailedToSetupListPSReq"},
@@ -28552,7 +33378,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_144[] = {
      0,
      &asn_DEF_Ngap_RRCEstablishmentCause,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "RRCEstablishmentCause"},
@@ -28599,7 +33433,15 @@ static /* Use -fall-defs-global to expose */
         0, /* No effective tags (count) */
         0, /* No tags (pointer) */
         0, /* No tags (count) */
-        {0, 0, OPEN_TYPE_constraint},
+        {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+            OPEN_TYPE_constraint},
         asn_MBR_Ngap_value_144,
         7,                            /* Elements count */
         &asn_SPC_Ngap_value_specs_144 /* Additional specs */
@@ -28613,8 +33455,15 @@ asn_TYPE_member_t asn_MBR_Ngap_PathSwitchRequestIEs_141[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_ProtocolIE_ID,
      0,
-     {&asn_OER_memb_Ngap_id_constr_142, &asn_PER_memb_Ngap_id_constr_142,
-      memb_Ngap_id_constraint_141},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_id_constr_142,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_id_constr_142,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_id_constraint_141},
      0,
      0, /* No default value */
      "id"},
@@ -28625,9 +33474,15 @@ asn_TYPE_member_t asn_MBR_Ngap_PathSwitchRequestIEs_141[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_Criticality,
      select_PathSwitchRequestIEs_Ngap_criticality_type,
-     {&asn_OER_memb_Ngap_criticality_constr_143,
-      &asn_PER_memb_Ngap_criticality_constr_143,
-      memb_Ngap_criticality_constraint_141},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_criticality_constr_143,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_criticality_constr_143,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_criticality_constraint_141},
      0,
      0, /* No default value */
      "criticality"},
@@ -28638,8 +33493,15 @@ asn_TYPE_member_t asn_MBR_Ngap_PathSwitchRequestIEs_141[] = {
      +1, /* EXPLICIT tag at current level */
      &asn_DEF_Ngap_value_144,
      select_PathSwitchRequestIEs_Ngap_value_type,
-     {&asn_OER_memb_Ngap_value_constr_144, &asn_PER_memb_Ngap_value_constr_144,
-      memb_Ngap_value_constraint_141},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_value_constr_144,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_value_constr_144,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_value_constraint_141},
      0,
      0, /* No default value */
      "value"},
@@ -28672,7 +33534,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_PathSwitchRequestIEs = {
     asn_DEF_Ngap_PathSwitchRequestIEs_tags_141, /* Same as above */
     sizeof(asn_DEF_Ngap_PathSwitchRequestIEs_tags_141) /
         sizeof(asn_DEF_Ngap_PathSwitchRequestIEs_tags_141[0]), /* 1 */
-    {0, 0, SEQUENCE_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_constraint},
     asn_MBR_Ngap_PathSwitchRequestIEs_141,
     3,                                           /* Elements count */
     &asn_SPC_Ngap_PathSwitchRequestIEs_specs_141 /* Additional specs */
@@ -28688,7 +33558,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_148[] = {
      0,
      &asn_DEF_Ngap_AMF_UE_NGAP_ID,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "AMF-UE-NGAP-ID"},
@@ -28701,7 +33579,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_148[] = {
      0,
      &asn_DEF_Ngap_RAN_UE_NGAP_ID,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "RAN-UE-NGAP-ID"},
@@ -28714,7 +33600,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_148[] = {
      0,
      &asn_DEF_Ngap_UESecurityCapabilities,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "UESecurityCapabilities"},
@@ -28727,7 +33621,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_148[] = {
      0,
      &asn_DEF_Ngap_SecurityContext,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "SecurityContext"},
@@ -28740,7 +33642,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_148[] = {
      0,
      &asn_DEF_Ngap_NewSecurityContextInd,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "NewSecurityContextInd"},
@@ -28753,7 +33663,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_148[] = {
      0,
      &asn_DEF_Ngap_PDUSessionResourceSwitchedList,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "PDUSessionResourceSwitchedList"},
@@ -28766,7 +33684,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_148[] = {
      0,
      &asn_DEF_Ngap_PDUSessionResourceReleasedListPSAck,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "PDUSessionResourceReleasedListPSAck"},
@@ -28779,7 +33705,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_148[] = {
      0,
      &asn_DEF_Ngap_AllowedNSSAI,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "AllowedNSSAI"},
@@ -28792,7 +33726,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_148[] = {
      0,
      &asn_DEF_Ngap_CoreNetworkAssistanceInformationForInactive,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "CoreNetworkAssistanceInformationForInactive"},
@@ -28805,7 +33747,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_148[] = {
      0,
      &asn_DEF_Ngap_RRCInactiveTransitionReportRequest,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "RRCInactiveTransitionReportRequest"},
@@ -28818,7 +33768,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_148[] = {
      0,
      &asn_DEF_Ngap_CriticalityDiagnostics,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "CriticalityDiagnostics"},
@@ -28831,7 +33789,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_148[] = {
      0,
      &asn_DEF_Ngap_RedirectionVoiceFallback,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "RedirectionVoiceFallback"},
@@ -28844,7 +33810,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_148[] = {
      0,
      &asn_DEF_Ngap_CNAssistedRANTuning,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "CNAssistedRANTuning"},
@@ -28857,7 +33831,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_148[] = {
      0,
      &asn_DEF_Ngap_SRVCCOperationPossible,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "SRVCCOperationPossible"},
@@ -28870,7 +33852,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_148[] = {
      0,
      &asn_DEF_Ngap_Enhanced_CoverageRestriction,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "Enhanced-CoverageRestriction"},
@@ -28883,7 +33873,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_148[] = {
      0,
      &asn_DEF_Ngap_Extended_ConnectedTime,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "Extended-ConnectedTime"},
@@ -28896,7 +33894,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_148[] = {
      0,
      &asn_DEF_Ngap_UE_DifferentiationInfo,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "UE-DifferentiationInfo"},
@@ -28909,7 +33915,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_148[] = {
      0,
      &asn_DEF_Ngap_NRV2XServicesAuthorized,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "NRV2XServicesAuthorized"},
@@ -28922,7 +33936,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_148[] = {
      0,
      &asn_DEF_Ngap_LTEV2XServicesAuthorized,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "LTEV2XServicesAuthorized"},
@@ -28935,7 +33957,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_148[] = {
      0,
      &asn_DEF_Ngap_NRUESidelinkAggregateMaximumBitrate,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "NRUESidelinkAggregateMaximumBitrate"},
@@ -28948,7 +33978,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_148[] = {
      0,
      &asn_DEF_Ngap_LTEUESidelinkAggregateMaximumBitrate,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "LTEUESidelinkAggregateMaximumBitrate"},
@@ -28961,7 +33999,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_148[] = {
      0,
      &asn_DEF_Ngap_PC5QoSParameters,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "PC5QoSParameters"},
@@ -28974,7 +34020,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_148[] = {
      0,
      &asn_DEF_Ngap_CEmodeBrestricted,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "CEmodeBrestricted"},
@@ -28987,7 +34041,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_148[] = {
      0,
      &asn_DEF_Ngap_UE_UP_CIoT_Support,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "UE-UP-CIoT-Support"},
@@ -29000,7 +34062,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_148[] = {
      0,
      &asn_DEF_Ngap_UERadioCapabilityID,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "UERadioCapabilityID"},
@@ -29013,7 +34083,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_148[] = {
      0,
      &asn_DEF_Ngap_MDTPLMNList,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "MDTPLMNList"},
@@ -29089,7 +34167,15 @@ static /* Use -fall-defs-global to expose */
         0, /* No effective tags (count) */
         0, /* No tags (pointer) */
         0, /* No tags (count) */
-        {0, 0, OPEN_TYPE_constraint},
+        {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+            OPEN_TYPE_constraint},
         asn_MBR_Ngap_value_148,
         26,                           /* Elements count */
         &asn_SPC_Ngap_value_specs_148 /* Additional specs */
@@ -29103,8 +34189,15 @@ asn_TYPE_member_t asn_MBR_Ngap_PathSwitchRequestAcknowledgeIEs_145[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_ProtocolIE_ID,
      0,
-     {&asn_OER_memb_Ngap_id_constr_146, &asn_PER_memb_Ngap_id_constr_146,
-      memb_Ngap_id_constraint_145},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_id_constr_146,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_id_constr_146,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_id_constraint_145},
      0,
      0, /* No default value */
      "id"},
@@ -29115,9 +34208,15 @@ asn_TYPE_member_t asn_MBR_Ngap_PathSwitchRequestAcknowledgeIEs_145[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_Criticality,
      select_PathSwitchRequestAcknowledgeIEs_Ngap_criticality_type,
-     {&asn_OER_memb_Ngap_criticality_constr_147,
-      &asn_PER_memb_Ngap_criticality_constr_147,
-      memb_Ngap_criticality_constraint_145},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_criticality_constr_147,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_criticality_constr_147,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_criticality_constraint_145},
      0,
      0, /* No default value */
      "criticality"},
@@ -29128,8 +34227,15 @@ asn_TYPE_member_t asn_MBR_Ngap_PathSwitchRequestAcknowledgeIEs_145[] = {
      +1, /* EXPLICIT tag at current level */
      &asn_DEF_Ngap_value_148,
      select_PathSwitchRequestAcknowledgeIEs_Ngap_value_type,
-     {&asn_OER_memb_Ngap_value_constr_148, &asn_PER_memb_Ngap_value_constr_148,
-      memb_Ngap_value_constraint_145},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_value_constr_148,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_value_constr_148,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_value_constraint_145},
      0,
      0, /* No default value */
      "value"},
@@ -29166,7 +34272,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_PathSwitchRequestAcknowledgeIEs = {
     sizeof(asn_DEF_Ngap_PathSwitchRequestAcknowledgeIEs_tags_145) /
         sizeof(
             asn_DEF_Ngap_PathSwitchRequestAcknowledgeIEs_tags_145[0]), /* 1 */
-    {0, 0, SEQUENCE_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_constraint},
     asn_MBR_Ngap_PathSwitchRequestAcknowledgeIEs_145,
     3,                                                      /* Elements count */
     &asn_SPC_Ngap_PathSwitchRequestAcknowledgeIEs_specs_145 /* Additional specs
@@ -29182,7 +34296,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_152[] = {
      0,
      &asn_DEF_Ngap_AMF_UE_NGAP_ID,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "AMF-UE-NGAP-ID"},
@@ -29194,7 +34316,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_152[] = {
      0,
      &asn_DEF_Ngap_RAN_UE_NGAP_ID,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "RAN-UE-NGAP-ID"},
@@ -29207,7 +34337,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_152[] = {
      0,
      &asn_DEF_Ngap_PDUSessionResourceReleasedListPSFail,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "PDUSessionResourceReleasedListPSFail"},
@@ -29220,7 +34358,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_152[] = {
      0,
      &asn_DEF_Ngap_CriticalityDiagnostics,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "CriticalityDiagnostics"},
@@ -29253,7 +34399,15 @@ static /* Use -fall-defs-global to expose */
         0, /* No effective tags (count) */
         0, /* No tags (pointer) */
         0, /* No tags (count) */
-        {0, 0, OPEN_TYPE_constraint},
+        {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+            OPEN_TYPE_constraint},
         asn_MBR_Ngap_value_152,
         4,                            /* Elements count */
         &asn_SPC_Ngap_value_specs_152 /* Additional specs */
@@ -29267,8 +34421,15 @@ asn_TYPE_member_t asn_MBR_Ngap_PathSwitchRequestFailureIEs_149[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_ProtocolIE_ID,
      0,
-     {&asn_OER_memb_Ngap_id_constr_150, &asn_PER_memb_Ngap_id_constr_150,
-      memb_Ngap_id_constraint_149},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_id_constr_150,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_id_constr_150,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_id_constraint_149},
      0,
      0, /* No default value */
      "id"},
@@ -29279,9 +34440,15 @@ asn_TYPE_member_t asn_MBR_Ngap_PathSwitchRequestFailureIEs_149[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_Criticality,
      select_PathSwitchRequestFailureIEs_Ngap_criticality_type,
-     {&asn_OER_memb_Ngap_criticality_constr_151,
-      &asn_PER_memb_Ngap_criticality_constr_151,
-      memb_Ngap_criticality_constraint_149},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_criticality_constr_151,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_criticality_constr_151,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_criticality_constraint_149},
      0,
      0, /* No default value */
      "criticality"},
@@ -29292,8 +34459,15 @@ asn_TYPE_member_t asn_MBR_Ngap_PathSwitchRequestFailureIEs_149[] = {
      +1, /* EXPLICIT tag at current level */
      &asn_DEF_Ngap_value_152,
      select_PathSwitchRequestFailureIEs_Ngap_value_type,
-     {&asn_OER_memb_Ngap_value_constr_152, &asn_PER_memb_Ngap_value_constr_152,
-      memb_Ngap_value_constraint_149},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_value_constr_152,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_value_constr_152,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_value_constraint_149},
      0,
      0, /* No default value */
      "value"},
@@ -29326,7 +34500,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_PathSwitchRequestFailureIEs = {
     asn_DEF_Ngap_PathSwitchRequestFailureIEs_tags_149, /* Same as above */
     sizeof(asn_DEF_Ngap_PathSwitchRequestFailureIEs_tags_149) /
         sizeof(asn_DEF_Ngap_PathSwitchRequestFailureIEs_tags_149[0]), /* 1 */
-    {0, 0, SEQUENCE_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_constraint},
     asn_MBR_Ngap_PathSwitchRequestFailureIEs_149,
     3,                                                  /* Elements count */
     &asn_SPC_Ngap_PathSwitchRequestFailureIEs_specs_149 /* Additional specs */
@@ -29340,7 +34522,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_156[] = {
      0,
      &asn_DEF_Ngap_AMF_UE_NGAP_ID,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "AMF-UE-NGAP-ID"},
@@ -29351,7 +34541,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_156[] = {
      0,
      &asn_DEF_Ngap_RAN_UE_NGAP_ID,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "RAN-UE-NGAP-ID"},
@@ -29362,7 +34560,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_156[] = {
      0,
      &asn_DEF_Ngap_Cause,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "Cause"},
@@ -29396,7 +34602,15 @@ static /* Use -fall-defs-global to expose */
         0, /* No effective tags (count) */
         0, /* No tags (pointer) */
         0, /* No tags (count) */
-        {0, 0, OPEN_TYPE_constraint},
+        {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+            OPEN_TYPE_constraint},
         asn_MBR_Ngap_value_156,
         3,                            /* Elements count */
         &asn_SPC_Ngap_value_specs_156 /* Additional specs */
@@ -29410,8 +34624,15 @@ asn_TYPE_member_t asn_MBR_Ngap_HandoverCancelIEs_153[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_ProtocolIE_ID,
      0,
-     {&asn_OER_memb_Ngap_id_constr_154, &asn_PER_memb_Ngap_id_constr_154,
-      memb_Ngap_id_constraint_153},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_id_constr_154,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_id_constr_154,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_id_constraint_153},
      0,
      0, /* No default value */
      "id"},
@@ -29422,9 +34643,15 @@ asn_TYPE_member_t asn_MBR_Ngap_HandoverCancelIEs_153[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_Criticality,
      select_HandoverCancelIEs_Ngap_criticality_type,
-     {&asn_OER_memb_Ngap_criticality_constr_155,
-      &asn_PER_memb_Ngap_criticality_constr_155,
-      memb_Ngap_criticality_constraint_153},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_criticality_constr_155,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_criticality_constr_155,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_criticality_constraint_153},
      0,
      0, /* No default value */
      "criticality"},
@@ -29435,8 +34662,15 @@ asn_TYPE_member_t asn_MBR_Ngap_HandoverCancelIEs_153[] = {
      +1, /* EXPLICIT tag at current level */
      &asn_DEF_Ngap_value_156,
      select_HandoverCancelIEs_Ngap_value_type,
-     {&asn_OER_memb_Ngap_value_constr_156, &asn_PER_memb_Ngap_value_constr_156,
-      memb_Ngap_value_constraint_153},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_value_constr_156,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_value_constr_156,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_value_constraint_153},
      0,
      0, /* No default value */
      "value"},
@@ -29469,7 +34703,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_HandoverCancelIEs = {
     asn_DEF_Ngap_HandoverCancelIEs_tags_153,                /* Same as above */
     sizeof(asn_DEF_Ngap_HandoverCancelIEs_tags_153) /
         sizeof(asn_DEF_Ngap_HandoverCancelIEs_tags_153[0]), /* 1 */
-    {0, 0, SEQUENCE_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_constraint},
     asn_MBR_Ngap_HandoverCancelIEs_153,
     3,                                        /* Elements count */
     &asn_SPC_Ngap_HandoverCancelIEs_specs_153 /* Additional specs */
@@ -29485,7 +34727,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_160[] = {
      0,
      &asn_DEF_Ngap_AMF_UE_NGAP_ID,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "AMF-UE-NGAP-ID"},
@@ -29498,7 +34748,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_160[] = {
      0,
      &asn_DEF_Ngap_RAN_UE_NGAP_ID,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "RAN-UE-NGAP-ID"},
@@ -29511,7 +34769,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_160[] = {
      0,
      &asn_DEF_Ngap_CriticalityDiagnostics,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "CriticalityDiagnostics"},
@@ -29542,7 +34808,15 @@ static /* Use -fall-defs-global to expose */
         0, /* No effective tags (count) */
         0, /* No tags (pointer) */
         0, /* No tags (count) */
-        {0, 0, OPEN_TYPE_constraint},
+        {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+            OPEN_TYPE_constraint},
         asn_MBR_Ngap_value_160,
         3,                            /* Elements count */
         &asn_SPC_Ngap_value_specs_160 /* Additional specs */
@@ -29556,8 +34830,15 @@ asn_TYPE_member_t asn_MBR_Ngap_HandoverCancelAcknowledgeIEs_157[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_ProtocolIE_ID,
      0,
-     {&asn_OER_memb_Ngap_id_constr_158, &asn_PER_memb_Ngap_id_constr_158,
-      memb_Ngap_id_constraint_157},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_id_constr_158,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_id_constr_158,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_id_constraint_157},
      0,
      0, /* No default value */
      "id"},
@@ -29568,9 +34849,15 @@ asn_TYPE_member_t asn_MBR_Ngap_HandoverCancelAcknowledgeIEs_157[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_Criticality,
      select_HandoverCancelAcknowledgeIEs_Ngap_criticality_type,
-     {&asn_OER_memb_Ngap_criticality_constr_159,
-      &asn_PER_memb_Ngap_criticality_constr_159,
-      memb_Ngap_criticality_constraint_157},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_criticality_constr_159,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_criticality_constr_159,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_criticality_constraint_157},
      0,
      0, /* No default value */
      "criticality"},
@@ -29581,8 +34868,15 @@ asn_TYPE_member_t asn_MBR_Ngap_HandoverCancelAcknowledgeIEs_157[] = {
      +1, /* EXPLICIT tag at current level */
      &asn_DEF_Ngap_value_160,
      select_HandoverCancelAcknowledgeIEs_Ngap_value_type,
-     {&asn_OER_memb_Ngap_value_constr_160, &asn_PER_memb_Ngap_value_constr_160,
-      memb_Ngap_value_constraint_157},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_value_constr_160,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_value_constr_160,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_value_constraint_157},
      0,
      0, /* No default value */
      "value"},
@@ -29616,7 +34910,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_HandoverCancelAcknowledgeIEs = {
     asn_DEF_Ngap_HandoverCancelAcknowledgeIEs_tags_157, /* Same as above */
     sizeof(asn_DEF_Ngap_HandoverCancelAcknowledgeIEs_tags_157) /
         sizeof(asn_DEF_Ngap_HandoverCancelAcknowledgeIEs_tags_157[0]), /* 1 */
-    {0, 0, SEQUENCE_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_constraint},
     asn_MBR_Ngap_HandoverCancelAcknowledgeIEs_157,
     3,                                                   /* Elements count */
     &asn_SPC_Ngap_HandoverCancelAcknowledgeIEs_specs_157 /* Additional specs */
@@ -29630,7 +34932,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_164[] = {
      0,
      &asn_DEF_Ngap_AMF_UE_NGAP_ID,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "AMF-UE-NGAP-ID"},
@@ -29641,7 +34951,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_164[] = {
      0,
      &asn_DEF_Ngap_RAN_UE_NGAP_ID,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "RAN-UE-NGAP-ID"},
@@ -29670,7 +34988,15 @@ static /* Use -fall-defs-global to expose */
         0, /* No effective tags (count) */
         0, /* No tags (pointer) */
         0, /* No tags (count) */
-        {0, 0, OPEN_TYPE_constraint},
+        {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+            OPEN_TYPE_constraint},
         asn_MBR_Ngap_value_164,
         2,                            /* Elements count */
         &asn_SPC_Ngap_value_specs_164 /* Additional specs */
@@ -29684,8 +35010,15 @@ asn_TYPE_member_t asn_MBR_Ngap_HandoverSuccessIEs_161[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_ProtocolIE_ID,
      0,
-     {&asn_OER_memb_Ngap_id_constr_162, &asn_PER_memb_Ngap_id_constr_162,
-      memb_Ngap_id_constraint_161},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_id_constr_162,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_id_constr_162,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_id_constraint_161},
      0,
      0, /* No default value */
      "id"},
@@ -29696,9 +35029,15 @@ asn_TYPE_member_t asn_MBR_Ngap_HandoverSuccessIEs_161[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_Criticality,
      select_HandoverSuccessIEs_Ngap_criticality_type,
-     {&asn_OER_memb_Ngap_criticality_constr_163,
-      &asn_PER_memb_Ngap_criticality_constr_163,
-      memb_Ngap_criticality_constraint_161},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_criticality_constr_163,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_criticality_constr_163,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_criticality_constraint_161},
      0,
      0, /* No default value */
      "criticality"},
@@ -29709,8 +35048,15 @@ asn_TYPE_member_t asn_MBR_Ngap_HandoverSuccessIEs_161[] = {
      +1, /* EXPLICIT tag at current level */
      &asn_DEF_Ngap_value_164,
      select_HandoverSuccessIEs_Ngap_value_type,
-     {&asn_OER_memb_Ngap_value_constr_164, &asn_PER_memb_Ngap_value_constr_164,
-      memb_Ngap_value_constraint_161},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_value_constr_164,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_value_constr_164,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_value_constraint_161},
      0,
      0, /* No default value */
      "value"},
@@ -29743,7 +35089,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_HandoverSuccessIEs = {
     asn_DEF_Ngap_HandoverSuccessIEs_tags_161,                /* Same as above */
     sizeof(asn_DEF_Ngap_HandoverSuccessIEs_tags_161) /
         sizeof(asn_DEF_Ngap_HandoverSuccessIEs_tags_161[0]), /* 1 */
-    {0, 0, SEQUENCE_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_constraint},
     asn_MBR_Ngap_HandoverSuccessIEs_161,
     3,                                         /* Elements count */
     &asn_SPC_Ngap_HandoverSuccessIEs_specs_161 /* Additional specs */
@@ -29759,7 +35113,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_168[] = {
      0,
      &asn_DEF_Ngap_AMF_UE_NGAP_ID,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "AMF-UE-NGAP-ID"},
@@ -29772,7 +35134,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_168[] = {
      0,
      &asn_DEF_Ngap_RAN_UE_NGAP_ID,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "RAN-UE-NGAP-ID"},
@@ -29785,7 +35155,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_168[] = {
      0,
      &asn_DEF_Ngap_EarlyStatusTransfer_TransparentContainer,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "EarlyStatusTransfer-TransparentContainer"},
@@ -29816,7 +35194,15 @@ static /* Use -fall-defs-global to expose */
         0, /* No effective tags (count) */
         0, /* No tags (pointer) */
         0, /* No tags (count) */
-        {0, 0, OPEN_TYPE_constraint},
+        {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+            OPEN_TYPE_constraint},
         asn_MBR_Ngap_value_168,
         3,                            /* Elements count */
         &asn_SPC_Ngap_value_specs_168 /* Additional specs */
@@ -29830,8 +35216,15 @@ asn_TYPE_member_t asn_MBR_Ngap_UplinkRANEarlyStatusTransferIEs_165[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_ProtocolIE_ID,
      0,
-     {&asn_OER_memb_Ngap_id_constr_166, &asn_PER_memb_Ngap_id_constr_166,
-      memb_Ngap_id_constraint_165},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_id_constr_166,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_id_constr_166,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_id_constraint_165},
      0,
      0, /* No default value */
      "id"},
@@ -29842,9 +35235,15 @@ asn_TYPE_member_t asn_MBR_Ngap_UplinkRANEarlyStatusTransferIEs_165[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_Criticality,
      select_UplinkRANEarlyStatusTransferIEs_Ngap_criticality_type,
-     {&asn_OER_memb_Ngap_criticality_constr_167,
-      &asn_PER_memb_Ngap_criticality_constr_167,
-      memb_Ngap_criticality_constraint_165},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_criticality_constr_167,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_criticality_constr_167,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_criticality_constraint_165},
      0,
      0, /* No default value */
      "criticality"},
@@ -29855,8 +35254,15 @@ asn_TYPE_member_t asn_MBR_Ngap_UplinkRANEarlyStatusTransferIEs_165[] = {
      +1, /* EXPLICIT tag at current level */
      &asn_DEF_Ngap_value_168,
      select_UplinkRANEarlyStatusTransferIEs_Ngap_value_type,
-     {&asn_OER_memb_Ngap_value_constr_168, &asn_PER_memb_Ngap_value_constr_168,
-      memb_Ngap_value_constraint_165},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_value_constr_168,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_value_constr_168,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_value_constraint_165},
      0,
      0, /* No default value */
      "value"},
@@ -29893,7 +35299,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_UplinkRANEarlyStatusTransferIEs = {
     sizeof(asn_DEF_Ngap_UplinkRANEarlyStatusTransferIEs_tags_165) /
         sizeof(
             asn_DEF_Ngap_UplinkRANEarlyStatusTransferIEs_tags_165[0]), /* 1 */
-    {0, 0, SEQUENCE_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_constraint},
     asn_MBR_Ngap_UplinkRANEarlyStatusTransferIEs_165,
     3,                                                      /* Elements count */
     &asn_SPC_Ngap_UplinkRANEarlyStatusTransferIEs_specs_165 /* Additional specs
@@ -29910,7 +35324,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_172[] = {
      0,
      &asn_DEF_Ngap_AMF_UE_NGAP_ID,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "AMF-UE-NGAP-ID"},
@@ -29923,7 +35345,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_172[] = {
      0,
      &asn_DEF_Ngap_RAN_UE_NGAP_ID,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "RAN-UE-NGAP-ID"},
@@ -29936,7 +35366,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_172[] = {
      0,
      &asn_DEF_Ngap_EarlyStatusTransfer_TransparentContainer,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "EarlyStatusTransfer-TransparentContainer"},
@@ -29968,7 +35406,15 @@ static /* Use -fall-defs-global to expose */
         0, /* No effective tags (count) */
         0, /* No tags (pointer) */
         0, /* No tags (count) */
-        {0, 0, OPEN_TYPE_constraint},
+        {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+            OPEN_TYPE_constraint},
         asn_MBR_Ngap_value_172,
         3,                            /* Elements count */
         &asn_SPC_Ngap_value_specs_172 /* Additional specs */
@@ -29982,8 +35428,15 @@ asn_TYPE_member_t asn_MBR_Ngap_DownlinkRANEarlyStatusTransferIEs_169[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_ProtocolIE_ID,
      0,
-     {&asn_OER_memb_Ngap_id_constr_170, &asn_PER_memb_Ngap_id_constr_170,
-      memb_Ngap_id_constraint_169},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_id_constr_170,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_id_constr_170,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_id_constraint_169},
      0,
      0, /* No default value */
      "id"},
@@ -29994,9 +35447,15 @@ asn_TYPE_member_t asn_MBR_Ngap_DownlinkRANEarlyStatusTransferIEs_169[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_Criticality,
      select_DownlinkRANEarlyStatusTransferIEs_Ngap_criticality_type,
-     {&asn_OER_memb_Ngap_criticality_constr_171,
-      &asn_PER_memb_Ngap_criticality_constr_171,
-      memb_Ngap_criticality_constraint_169},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_criticality_constr_171,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_criticality_constr_171,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_criticality_constraint_169},
      0,
      0, /* No default value */
      "criticality"},
@@ -30007,8 +35466,15 @@ asn_TYPE_member_t asn_MBR_Ngap_DownlinkRANEarlyStatusTransferIEs_169[] = {
      +1, /* EXPLICIT tag at current level */
      &asn_DEF_Ngap_value_172,
      select_DownlinkRANEarlyStatusTransferIEs_Ngap_value_type,
-     {&asn_OER_memb_Ngap_value_constr_172, &asn_PER_memb_Ngap_value_constr_172,
-      memb_Ngap_value_constraint_169},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_value_constr_172,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_value_constr_172,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_value_constraint_169},
      0,
      0, /* No default value */
      "value"},
@@ -30045,7 +35511,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_DownlinkRANEarlyStatusTransferIEs = {
     sizeof(asn_DEF_Ngap_DownlinkRANEarlyStatusTransferIEs_tags_169) /
         sizeof(
             asn_DEF_Ngap_DownlinkRANEarlyStatusTransferIEs_tags_169[0]), /* 1 */
-    {0, 0, SEQUENCE_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_constraint},
     asn_MBR_Ngap_DownlinkRANEarlyStatusTransferIEs_169,
     3, /* Elements count */
     &asn_SPC_Ngap_DownlinkRANEarlyStatusTransferIEs_specs_169 /* Additional
@@ -30061,7 +35535,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_176[] = {
      0,
      &asn_DEF_Ngap_AMF_UE_NGAP_ID,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "AMF-UE-NGAP-ID"},
@@ -30073,7 +35555,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_176[] = {
      0,
      &asn_DEF_Ngap_RAN_UE_NGAP_ID,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "RAN-UE-NGAP-ID"},
@@ -30086,7 +35576,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_176[] = {
      0,
      &asn_DEF_Ngap_RANStatusTransfer_TransparentContainer,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "RANStatusTransfer-TransparentContainer"},
@@ -30117,7 +35615,15 @@ static /* Use -fall-defs-global to expose */
         0, /* No effective tags (count) */
         0, /* No tags (pointer) */
         0, /* No tags (count) */
-        {0, 0, OPEN_TYPE_constraint},
+        {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+            OPEN_TYPE_constraint},
         asn_MBR_Ngap_value_176,
         3,                            /* Elements count */
         &asn_SPC_Ngap_value_specs_176 /* Additional specs */
@@ -30131,8 +35637,15 @@ asn_TYPE_member_t asn_MBR_Ngap_UplinkRANStatusTransferIEs_173[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_ProtocolIE_ID,
      0,
-     {&asn_OER_memb_Ngap_id_constr_174, &asn_PER_memb_Ngap_id_constr_174,
-      memb_Ngap_id_constraint_173},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_id_constr_174,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_id_constr_174,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_id_constraint_173},
      0,
      0, /* No default value */
      "id"},
@@ -30143,9 +35656,15 @@ asn_TYPE_member_t asn_MBR_Ngap_UplinkRANStatusTransferIEs_173[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_Criticality,
      select_UplinkRANStatusTransferIEs_Ngap_criticality_type,
-     {&asn_OER_memb_Ngap_criticality_constr_175,
-      &asn_PER_memb_Ngap_criticality_constr_175,
-      memb_Ngap_criticality_constraint_173},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_criticality_constr_175,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_criticality_constr_175,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_criticality_constraint_173},
      0,
      0, /* No default value */
      "criticality"},
@@ -30156,8 +35675,15 @@ asn_TYPE_member_t asn_MBR_Ngap_UplinkRANStatusTransferIEs_173[] = {
      +1, /* EXPLICIT tag at current level */
      &asn_DEF_Ngap_value_176,
      select_UplinkRANStatusTransferIEs_Ngap_value_type,
-     {&asn_OER_memb_Ngap_value_constr_176, &asn_PER_memb_Ngap_value_constr_176,
-      memb_Ngap_value_constraint_173},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_value_constr_176,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_value_constr_176,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_value_constraint_173},
      0,
      0, /* No default value */
      "value"},
@@ -30190,7 +35716,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_UplinkRANStatusTransferIEs = {
     asn_DEF_Ngap_UplinkRANStatusTransferIEs_tags_173, /* Same as above */
     sizeof(asn_DEF_Ngap_UplinkRANStatusTransferIEs_tags_173) /
         sizeof(asn_DEF_Ngap_UplinkRANStatusTransferIEs_tags_173[0]), /* 1 */
-    {0, 0, SEQUENCE_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_constraint},
     asn_MBR_Ngap_UplinkRANStatusTransferIEs_173,
     3,                                                 /* Elements count */
     &asn_SPC_Ngap_UplinkRANStatusTransferIEs_specs_173 /* Additional specs */
@@ -30206,7 +35740,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_180[] = {
      0,
      &asn_DEF_Ngap_AMF_UE_NGAP_ID,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "AMF-UE-NGAP-ID"},
@@ -30219,7 +35761,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_180[] = {
      0,
      &asn_DEF_Ngap_RAN_UE_NGAP_ID,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "RAN-UE-NGAP-ID"},
@@ -30232,7 +35782,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_180[] = {
      0,
      &asn_DEF_Ngap_RANStatusTransfer_TransparentContainer,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "RANStatusTransfer-TransparentContainer"},
@@ -30263,7 +35821,15 @@ static /* Use -fall-defs-global to expose */
         0, /* No effective tags (count) */
         0, /* No tags (pointer) */
         0, /* No tags (count) */
-        {0, 0, OPEN_TYPE_constraint},
+        {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+            OPEN_TYPE_constraint},
         asn_MBR_Ngap_value_180,
         3,                            /* Elements count */
         &asn_SPC_Ngap_value_specs_180 /* Additional specs */
@@ -30277,8 +35843,15 @@ asn_TYPE_member_t asn_MBR_Ngap_DownlinkRANStatusTransferIEs_177[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_ProtocolIE_ID,
      0,
-     {&asn_OER_memb_Ngap_id_constr_178, &asn_PER_memb_Ngap_id_constr_178,
-      memb_Ngap_id_constraint_177},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_id_constr_178,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_id_constr_178,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_id_constraint_177},
      0,
      0, /* No default value */
      "id"},
@@ -30289,9 +35862,15 @@ asn_TYPE_member_t asn_MBR_Ngap_DownlinkRANStatusTransferIEs_177[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_Criticality,
      select_DownlinkRANStatusTransferIEs_Ngap_criticality_type,
-     {&asn_OER_memb_Ngap_criticality_constr_179,
-      &asn_PER_memb_Ngap_criticality_constr_179,
-      memb_Ngap_criticality_constraint_177},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_criticality_constr_179,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_criticality_constr_179,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_criticality_constraint_177},
      0,
      0, /* No default value */
      "criticality"},
@@ -30302,8 +35881,15 @@ asn_TYPE_member_t asn_MBR_Ngap_DownlinkRANStatusTransferIEs_177[] = {
      +1, /* EXPLICIT tag at current level */
      &asn_DEF_Ngap_value_180,
      select_DownlinkRANStatusTransferIEs_Ngap_value_type,
-     {&asn_OER_memb_Ngap_value_constr_180, &asn_PER_memb_Ngap_value_constr_180,
-      memb_Ngap_value_constraint_177},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_value_constr_180,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_value_constr_180,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_value_constraint_177},
      0,
      0, /* No default value */
      "value"},
@@ -30337,7 +35923,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_DownlinkRANStatusTransferIEs = {
     asn_DEF_Ngap_DownlinkRANStatusTransferIEs_tags_177, /* Same as above */
     sizeof(asn_DEF_Ngap_DownlinkRANStatusTransferIEs_tags_177) /
         sizeof(asn_DEF_Ngap_DownlinkRANStatusTransferIEs_tags_177[0]), /* 1 */
-    {0, 0, SEQUENCE_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_constraint},
     asn_MBR_Ngap_DownlinkRANStatusTransferIEs_177,
     3,                                                   /* Elements count */
     &asn_SPC_Ngap_DownlinkRANStatusTransferIEs_specs_177 /* Additional specs */
@@ -30351,7 +35945,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_184[] = {
      0,
      &asn_DEF_Ngap_UEPagingIdentity,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "UEPagingIdentity"},
@@ -30362,7 +35964,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_184[] = {
      0,
      &asn_DEF_Ngap_PagingDRX,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "PagingDRX"},
@@ -30373,7 +35983,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_184[] = {
      0,
      &asn_DEF_Ngap_TAIListForPaging,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "TAIListForPaging"},
@@ -30384,7 +36002,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_184[] = {
      0,
      &asn_DEF_Ngap_PagingPriority,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "PagingPriority"},
@@ -30395,7 +36021,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_184[] = {
      0,
      &asn_DEF_Ngap_UERadioCapabilityForPaging,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "UERadioCapabilityForPaging"},
@@ -30406,7 +36040,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_184[] = {
      0,
      &asn_DEF_Ngap_PagingOrigin,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "PagingOrigin"},
@@ -30417,7 +36059,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_184[] = {
      0,
      &asn_DEF_Ngap_AssistanceDataForPaging,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "AssistanceDataForPaging"},
@@ -30428,7 +36078,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_184[] = {
      0,
      &asn_DEF_Ngap_NB_IoT_Paging_eDRXInfo,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "NB-IoT-Paging-eDRXInfo"},
@@ -30439,7 +36097,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_184[] = {
      0,
      &asn_DEF_Ngap_NB_IoT_PagingDRX,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "NB-IoT-PagingDRX"},
@@ -30451,7 +36117,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_184[] = {
      0,
      &asn_DEF_Ngap_Enhanced_CoverageRestriction,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "Enhanced-CoverageRestriction"},
@@ -30462,7 +36136,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_184[] = {
      0,
      &asn_DEF_Ngap_WUS_Assistance_Information,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "WUS-Assistance-Information"},
@@ -30473,7 +36155,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_184[] = {
      0,
      &asn_DEF_Ngap_PagingeDRXInformation,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "PagingeDRXInformation"},
@@ -30484,7 +36174,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_184[] = {
      0,
      &asn_DEF_Ngap_CEmodeBrestricted,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "CEmodeBrestricted"},
@@ -30534,7 +36232,15 @@ static /* Use -fall-defs-global to expose */
         0, /* No effective tags (count) */
         0, /* No tags (pointer) */
         0, /* No tags (count) */
-        {0, 0, OPEN_TYPE_constraint},
+        {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+            OPEN_TYPE_constraint},
         asn_MBR_Ngap_value_184,
         13,                           /* Elements count */
         &asn_SPC_Ngap_value_specs_184 /* Additional specs */
@@ -30548,8 +36254,15 @@ asn_TYPE_member_t asn_MBR_Ngap_PagingIEs_181[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_ProtocolIE_ID,
      0,
-     {&asn_OER_memb_Ngap_id_constr_182, &asn_PER_memb_Ngap_id_constr_182,
-      memb_Ngap_id_constraint_181},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_id_constr_182,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_id_constr_182,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_id_constraint_181},
      0,
      0, /* No default value */
      "id"},
@@ -30560,9 +36273,15 @@ asn_TYPE_member_t asn_MBR_Ngap_PagingIEs_181[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_Criticality,
      select_PagingIEs_Ngap_criticality_type,
-     {&asn_OER_memb_Ngap_criticality_constr_183,
-      &asn_PER_memb_Ngap_criticality_constr_183,
-      memb_Ngap_criticality_constraint_181},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_criticality_constr_183,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_criticality_constr_183,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_criticality_constraint_181},
      0,
      0, /* No default value */
      "criticality"},
@@ -30573,8 +36292,15 @@ asn_TYPE_member_t asn_MBR_Ngap_PagingIEs_181[] = {
      +1, /* EXPLICIT tag at current level */
      &asn_DEF_Ngap_value_184,
      select_PagingIEs_Ngap_value_type,
-     {&asn_OER_memb_Ngap_value_constr_184, &asn_PER_memb_Ngap_value_constr_184,
-      memb_Ngap_value_constraint_181},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_value_constr_184,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_value_constr_184,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_value_constraint_181},
      0,
      0, /* No default value */
      "value"},
@@ -30606,7 +36332,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_PagingIEs = {
     asn_DEF_Ngap_PagingIEs_tags_181,                /* Same as above */
     sizeof(asn_DEF_Ngap_PagingIEs_tags_181) /
         sizeof(asn_DEF_Ngap_PagingIEs_tags_181[0]), /* 1 */
-    {0, 0, SEQUENCE_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_constraint},
     asn_MBR_Ngap_PagingIEs_181,
     3,                                /* Elements count */
     &asn_SPC_Ngap_PagingIEs_specs_181 /* Additional specs */
@@ -30620,7 +36354,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_188[] = {
      0,
      &asn_DEF_Ngap_RAN_UE_NGAP_ID,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "RAN-UE-NGAP-ID"},
@@ -30631,7 +36373,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_188[] = {
      0,
      &asn_DEF_Ngap_NAS_PDU,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "NAS-PDU"},
@@ -30644,7 +36394,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_188[] = {
      0,
      &asn_DEF_Ngap_UserLocationInformation,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "UserLocationInformation"},
@@ -30656,7 +36414,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_188[] = {
      0,
      &asn_DEF_Ngap_RRCEstablishmentCause,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "RRCEstablishmentCause"},
@@ -30667,7 +36433,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_188[] = {
      0,
      &asn_DEF_Ngap_FiveG_S_TMSI,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "FiveG-S-TMSI"},
@@ -30678,7 +36452,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_188[] = {
      0,
      &asn_DEF_Ngap_AMFSetID,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "AMFSetID"},
@@ -30689,7 +36471,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_188[] = {
      0,
      &asn_DEF_Ngap_UEContextRequest,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "UEContextRequest"},
@@ -30700,7 +36490,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_188[] = {
      0,
      &asn_DEF_Ngap_AllowedNSSAI,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "AllowedNSSAI"},
@@ -30713,7 +36511,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_188[] = {
      0,
      &asn_DEF_Ngap_SourceToTarget_AMFInformationReroute,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "SourceToTarget-AMFInformationReroute"},
@@ -30724,7 +36530,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_188[] = {
      0,
      &asn_DEF_Ngap_PLMNIdentity,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "PLMNIdentity"},
@@ -30736,7 +36550,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_188[] = {
      0,
      &asn_DEF_Ngap_IABNodeIndication,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "IABNodeIndication"},
@@ -30749,7 +36571,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_188[] = {
      0,
      &asn_DEF_Ngap_CEmodeBSupport_Indicator,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "CEmodeBSupport-Indicator"},
@@ -30760,7 +36590,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_188[] = {
      0,
      &asn_DEF_Ngap_LTEM_Indication,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "LTEM-Indication"},
@@ -30771,7 +36609,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_188[] = {
      0,
      &asn_DEF_Ngap_EDT_Session,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "EDT-Session"},
@@ -30784,7 +36630,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_188[] = {
      0,
      &asn_DEF_Ngap_AuthenticatedIndication,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "AuthenticatedIndication"},
@@ -30796,7 +36650,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_188[] = {
      0,
      &asn_DEF_Ngap_NPN_AccessInformation,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "NPN-AccessInformation"},
@@ -30853,7 +36715,15 @@ static /* Use -fall-defs-global to expose */
         0, /* No effective tags (count) */
         0, /* No tags (pointer) */
         0, /* No tags (count) */
-        {0, 0, OPEN_TYPE_constraint},
+        {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+            OPEN_TYPE_constraint},
         asn_MBR_Ngap_value_188,
         16,                           /* Elements count */
         &asn_SPC_Ngap_value_specs_188 /* Additional specs */
@@ -30867,8 +36737,15 @@ asn_TYPE_member_t asn_MBR_Ngap_InitialUEMessage_IEs_185[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_ProtocolIE_ID,
      0,
-     {&asn_OER_memb_Ngap_id_constr_186, &asn_PER_memb_Ngap_id_constr_186,
-      memb_Ngap_id_constraint_185},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_id_constr_186,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_id_constr_186,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_id_constraint_185},
      0,
      0, /* No default value */
      "id"},
@@ -30879,9 +36756,15 @@ asn_TYPE_member_t asn_MBR_Ngap_InitialUEMessage_IEs_185[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_Criticality,
      select_InitialUEMessage_IEs_Ngap_criticality_type,
-     {&asn_OER_memb_Ngap_criticality_constr_187,
-      &asn_PER_memb_Ngap_criticality_constr_187,
-      memb_Ngap_criticality_constraint_185},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_criticality_constr_187,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_criticality_constr_187,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_criticality_constraint_185},
      0,
      0, /* No default value */
      "criticality"},
@@ -30892,8 +36775,15 @@ asn_TYPE_member_t asn_MBR_Ngap_InitialUEMessage_IEs_185[] = {
      +1, /* EXPLICIT tag at current level */
      &asn_DEF_Ngap_value_188,
      select_InitialUEMessage_IEs_Ngap_value_type,
-     {&asn_OER_memb_Ngap_value_constr_188, &asn_PER_memb_Ngap_value_constr_188,
-      memb_Ngap_value_constraint_185},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_value_constr_188,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_value_constr_188,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_value_constraint_185},
      0,
      0, /* No default value */
      "value"},
@@ -30926,7 +36816,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_InitialUEMessage_IEs = {
     asn_DEF_Ngap_InitialUEMessage_IEs_tags_185, /* Same as above */
     sizeof(asn_DEF_Ngap_InitialUEMessage_IEs_tags_185) /
         sizeof(asn_DEF_Ngap_InitialUEMessage_IEs_tags_185[0]), /* 1 */
-    {0, 0, SEQUENCE_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_constraint},
     asn_MBR_Ngap_InitialUEMessage_IEs_185,
     3,                                           /* Elements count */
     &asn_SPC_Ngap_InitialUEMessage_IEs_specs_185 /* Additional specs */
@@ -30941,7 +36839,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_192[] = {
      0,
      &asn_DEF_Ngap_AMF_UE_NGAP_ID,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "AMF-UE-NGAP-ID"},
@@ -30953,7 +36859,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_192[] = {
      0,
      &asn_DEF_Ngap_RAN_UE_NGAP_ID,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "RAN-UE-NGAP-ID"},
@@ -30964,7 +36878,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_192[] = {
      0,
      &asn_DEF_Ngap_AMFName,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "AMFName"},
@@ -30976,7 +36898,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_192[] = {
      0,
      &asn_DEF_Ngap_RANPagingPriority,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "RANPagingPriority"},
@@ -30987,7 +36917,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_192[] = {
      0,
      &asn_DEF_Ngap_NAS_PDU,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "NAS-PDU"},
@@ -31000,7 +36938,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_192[] = {
      0,
      &asn_DEF_Ngap_MobilityRestrictionList,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "MobilityRestrictionList"},
@@ -31011,7 +36957,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_192[] = {
      0,
      &asn_DEF_Ngap_IndexToRFSP,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "IndexToRFSP"},
@@ -31024,7 +36978,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_192[] = {
      0,
      &asn_DEF_Ngap_UEAggregateMaximumBitRate,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "UEAggregateMaximumBitRate"},
@@ -31035,7 +36997,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_192[] = {
      0,
      &asn_DEF_Ngap_AllowedNSSAI,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "AllowedNSSAI"},
@@ -31048,7 +37018,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_192[] = {
      0,
      &asn_DEF_Ngap_SRVCCOperationPossible,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "SRVCCOperationPossible"},
@@ -31061,7 +37039,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_192[] = {
      0,
      &asn_DEF_Ngap_Enhanced_CoverageRestriction,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "Enhanced-CoverageRestriction"},
@@ -31074,7 +37060,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_192[] = {
      0,
      &asn_DEF_Ngap_Extended_ConnectedTime,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "Extended-ConnectedTime"},
@@ -31087,7 +37081,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_192[] = {
      0,
      &asn_DEF_Ngap_UE_DifferentiationInfo,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "UE-DifferentiationInfo"},
@@ -31099,7 +37101,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_192[] = {
      0,
      &asn_DEF_Ngap_CEmodeBrestricted,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "CEmodeBrestricted"},
@@ -31111,7 +37121,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_192[] = {
      0,
      &asn_DEF_Ngap_UERadioCapability,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "UERadioCapability"},
@@ -31124,7 +37142,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_192[] = {
      0,
      &asn_DEF_Ngap_UECapabilityInfoRequest,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "UECapabilityInfoRequest"},
@@ -31136,7 +37162,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_192[] = {
      0,
      &asn_DEF_Ngap_EndIndication,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "EndIndication"},
@@ -31149,7 +37183,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_192[] = {
      0,
      &asn_DEF_Ngap_UERadioCapabilityID,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "UERadioCapabilityID"},
@@ -31160,7 +37202,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_192[] = {
      0,
      &asn_DEF_Ngap_MaskedIMEISV,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "MaskedIMEISV"},
@@ -31217,7 +37267,15 @@ static /* Use -fall-defs-global to expose */
         0, /* No effective tags (count) */
         0, /* No tags (pointer) */
         0, /* No tags (count) */
-        {0, 0, OPEN_TYPE_constraint},
+        {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+            OPEN_TYPE_constraint},
         asn_MBR_Ngap_value_192,
         19,                           /* Elements count */
         &asn_SPC_Ngap_value_specs_192 /* Additional specs */
@@ -31231,8 +37289,15 @@ asn_TYPE_member_t asn_MBR_Ngap_DownlinkNASTransport_IEs_189[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_ProtocolIE_ID,
      0,
-     {&asn_OER_memb_Ngap_id_constr_190, &asn_PER_memb_Ngap_id_constr_190,
-      memb_Ngap_id_constraint_189},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_id_constr_190,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_id_constr_190,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_id_constraint_189},
      0,
      0, /* No default value */
      "id"},
@@ -31243,9 +37308,15 @@ asn_TYPE_member_t asn_MBR_Ngap_DownlinkNASTransport_IEs_189[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_Criticality,
      select_DownlinkNASTransport_IEs_Ngap_criticality_type,
-     {&asn_OER_memb_Ngap_criticality_constr_191,
-      &asn_PER_memb_Ngap_criticality_constr_191,
-      memb_Ngap_criticality_constraint_189},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_criticality_constr_191,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_criticality_constr_191,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_criticality_constraint_189},
      0,
      0, /* No default value */
      "criticality"},
@@ -31256,8 +37327,15 @@ asn_TYPE_member_t asn_MBR_Ngap_DownlinkNASTransport_IEs_189[] = {
      +1, /* EXPLICIT tag at current level */
      &asn_DEF_Ngap_value_192,
      select_DownlinkNASTransport_IEs_Ngap_value_type,
-     {&asn_OER_memb_Ngap_value_constr_192, &asn_PER_memb_Ngap_value_constr_192,
-      memb_Ngap_value_constraint_189},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_value_constr_192,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_value_constr_192,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_value_constraint_189},
      0,
      0, /* No default value */
      "value"},
@@ -31290,7 +37368,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_DownlinkNASTransport_IEs = {
     asn_DEF_Ngap_DownlinkNASTransport_IEs_tags_189, /* Same as above */
     sizeof(asn_DEF_Ngap_DownlinkNASTransport_IEs_tags_189) /
         sizeof(asn_DEF_Ngap_DownlinkNASTransport_IEs_tags_189[0]), /* 1 */
-    {0, 0, SEQUENCE_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_constraint},
     asn_MBR_Ngap_DownlinkNASTransport_IEs_189,
     3,                                               /* Elements count */
     &asn_SPC_Ngap_DownlinkNASTransport_IEs_specs_189 /* Additional specs */
@@ -31304,7 +37390,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_196[] = {
      0,
      &asn_DEF_Ngap_AMF_UE_NGAP_ID,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "AMF-UE-NGAP-ID"},
@@ -31315,7 +37409,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_196[] = {
      0,
      &asn_DEF_Ngap_RAN_UE_NGAP_ID,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "RAN-UE-NGAP-ID"},
@@ -31326,7 +37428,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_196[] = {
      0,
      &asn_DEF_Ngap_NAS_PDU,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "NAS-PDU"},
@@ -31339,7 +37449,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_196[] = {
      0,
      &asn_DEF_Ngap_UserLocationInformation,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "UserLocationInformation"},
@@ -31350,7 +37468,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_196[] = {
      0,
      &asn_DEF_OCTET_STRING,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "OCTET STRING"},
@@ -31361,7 +37487,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_196[] = {
      0,
      &asn_DEF_OCTET_STRING,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "OCTET STRING"},
@@ -31372,7 +37506,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_196[] = {
      0,
      &asn_DEF_OCTET_STRING,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "OCTET STRING"},
@@ -31415,7 +37557,15 @@ static /* Use -fall-defs-global to expose */
         0, /* No effective tags (count) */
         0, /* No tags (pointer) */
         0, /* No tags (count) */
-        {0, 0, OPEN_TYPE_constraint},
+        {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+            OPEN_TYPE_constraint},
         asn_MBR_Ngap_value_196,
         7,                            /* Elements count */
         &asn_SPC_Ngap_value_specs_196 /* Additional specs */
@@ -31429,8 +37579,15 @@ asn_TYPE_member_t asn_MBR_Ngap_UplinkNASTransport_IEs_193[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_ProtocolIE_ID,
      0,
-     {&asn_OER_memb_Ngap_id_constr_194, &asn_PER_memb_Ngap_id_constr_194,
-      memb_Ngap_id_constraint_193},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_id_constr_194,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_id_constr_194,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_id_constraint_193},
      0,
      0, /* No default value */
      "id"},
@@ -31441,9 +37598,15 @@ asn_TYPE_member_t asn_MBR_Ngap_UplinkNASTransport_IEs_193[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_Criticality,
      select_UplinkNASTransport_IEs_Ngap_criticality_type,
-     {&asn_OER_memb_Ngap_criticality_constr_195,
-      &asn_PER_memb_Ngap_criticality_constr_195,
-      memb_Ngap_criticality_constraint_193},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_criticality_constr_195,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_criticality_constr_195,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_criticality_constraint_193},
      0,
      0, /* No default value */
      "criticality"},
@@ -31454,8 +37617,15 @@ asn_TYPE_member_t asn_MBR_Ngap_UplinkNASTransport_IEs_193[] = {
      +1, /* EXPLICIT tag at current level */
      &asn_DEF_Ngap_value_196,
      select_UplinkNASTransport_IEs_Ngap_value_type,
-     {&asn_OER_memb_Ngap_value_constr_196, &asn_PER_memb_Ngap_value_constr_196,
-      memb_Ngap_value_constraint_193},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_value_constr_196,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_value_constr_196,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_value_constraint_193},
      0,
      0, /* No default value */
      "value"},
@@ -31488,7 +37658,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_UplinkNASTransport_IEs = {
     asn_DEF_Ngap_UplinkNASTransport_IEs_tags_193, /* Same as above */
     sizeof(asn_DEF_Ngap_UplinkNASTransport_IEs_tags_193) /
         sizeof(asn_DEF_Ngap_UplinkNASTransport_IEs_tags_193[0]), /* 1 */
-    {0, 0, SEQUENCE_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_constraint},
     asn_MBR_Ngap_UplinkNASTransport_IEs_193,
     3,                                             /* Elements count */
     &asn_SPC_Ngap_UplinkNASTransport_IEs_specs_193 /* Additional specs */
@@ -31504,7 +37682,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_200[] = {
      0,
      &asn_DEF_Ngap_AMF_UE_NGAP_ID,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "AMF-UE-NGAP-ID"},
@@ -31517,7 +37703,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_200[] = {
      0,
      &asn_DEF_Ngap_RAN_UE_NGAP_ID,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "RAN-UE-NGAP-ID"},
@@ -31528,7 +37722,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_200[] = {
      0,
      &asn_DEF_Ngap_NAS_PDU,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "NAS-PDU"},
@@ -31539,7 +37741,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_200[] = {
      0,
      &asn_DEF_Ngap_Cause,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "Cause"},
@@ -31574,7 +37784,15 @@ static /* Use -fall-defs-global to expose */
         0, /* No effective tags (count) */
         0, /* No tags (pointer) */
         0, /* No tags (count) */
-        {0, 0, OPEN_TYPE_constraint},
+        {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+            OPEN_TYPE_constraint},
         asn_MBR_Ngap_value_200,
         4,                            /* Elements count */
         &asn_SPC_Ngap_value_specs_200 /* Additional specs */
@@ -31588,8 +37806,15 @@ asn_TYPE_member_t asn_MBR_Ngap_NASNonDeliveryIndication_IEs_197[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_ProtocolIE_ID,
      0,
-     {&asn_OER_memb_Ngap_id_constr_198, &asn_PER_memb_Ngap_id_constr_198,
-      memb_Ngap_id_constraint_197},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_id_constr_198,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_id_constr_198,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_id_constraint_197},
      0,
      0, /* No default value */
      "id"},
@@ -31600,9 +37825,15 @@ asn_TYPE_member_t asn_MBR_Ngap_NASNonDeliveryIndication_IEs_197[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_Criticality,
      select_NASNonDeliveryIndication_IEs_Ngap_criticality_type,
-     {&asn_OER_memb_Ngap_criticality_constr_199,
-      &asn_PER_memb_Ngap_criticality_constr_199,
-      memb_Ngap_criticality_constraint_197},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_criticality_constr_199,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_criticality_constr_199,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_criticality_constraint_197},
      0,
      0, /* No default value */
      "criticality"},
@@ -31613,8 +37844,15 @@ asn_TYPE_member_t asn_MBR_Ngap_NASNonDeliveryIndication_IEs_197[] = {
      +1, /* EXPLICIT tag at current level */
      &asn_DEF_Ngap_value_200,
      select_NASNonDeliveryIndication_IEs_Ngap_value_type,
-     {&asn_OER_memb_Ngap_value_constr_200, &asn_PER_memb_Ngap_value_constr_200,
-      memb_Ngap_value_constraint_197},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_value_constr_200,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_value_constr_200,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_value_constraint_197},
      0,
      0, /* No default value */
      "value"},
@@ -31648,7 +37886,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_NASNonDeliveryIndication_IEs = {
     asn_DEF_Ngap_NASNonDeliveryIndication_IEs_tags_197, /* Same as above */
     sizeof(asn_DEF_Ngap_NASNonDeliveryIndication_IEs_tags_197) /
         sizeof(asn_DEF_Ngap_NASNonDeliveryIndication_IEs_tags_197[0]), /* 1 */
-    {0, 0, SEQUENCE_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_constraint},
     asn_MBR_Ngap_NASNonDeliveryIndication_IEs_197,
     3,                                                   /* Elements count */
     &asn_SPC_Ngap_NASNonDeliveryIndication_IEs_specs_197 /* Additional specs */
@@ -31662,7 +37908,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_204[] = {
      0,
      &asn_DEF_Ngap_RAN_UE_NGAP_ID,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "RAN-UE-NGAP-ID"},
@@ -31673,7 +37927,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_204[] = {
      0,
      &asn_DEF_Ngap_AMF_UE_NGAP_ID,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "AMF-UE-NGAP-ID"},
@@ -31684,7 +37946,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_204[] = {
      0,
      &asn_DEF_OCTET_STRING,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "OCTET STRING"},
@@ -31695,7 +37965,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_204[] = {
      0,
      &asn_DEF_Ngap_AMFSetID,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "AMFSetID"},
@@ -31706,7 +37984,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_204[] = {
      0,
      &asn_DEF_Ngap_AllowedNSSAI,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "AllowedNSSAI"},
@@ -31719,7 +38005,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_204[] = {
      0,
      &asn_DEF_Ngap_SourceToTarget_AMFInformationReroute,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "SourceToTarget-AMFInformationReroute"},
@@ -31757,7 +38051,15 @@ static /* Use -fall-defs-global to expose */
         0, /* No effective tags (count) */
         0, /* No tags (pointer) */
         0, /* No tags (count) */
-        {0, 0, OPEN_TYPE_constraint},
+        {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+            OPEN_TYPE_constraint},
         asn_MBR_Ngap_value_204,
         6,                            /* Elements count */
         &asn_SPC_Ngap_value_specs_204 /* Additional specs */
@@ -31771,8 +38073,15 @@ asn_TYPE_member_t asn_MBR_Ngap_RerouteNASRequest_IEs_201[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_ProtocolIE_ID,
      0,
-     {&asn_OER_memb_Ngap_id_constr_202, &asn_PER_memb_Ngap_id_constr_202,
-      memb_Ngap_id_constraint_201},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_id_constr_202,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_id_constr_202,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_id_constraint_201},
      0,
      0, /* No default value */
      "id"},
@@ -31783,9 +38092,15 @@ asn_TYPE_member_t asn_MBR_Ngap_RerouteNASRequest_IEs_201[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_Criticality,
      select_RerouteNASRequest_IEs_Ngap_criticality_type,
-     {&asn_OER_memb_Ngap_criticality_constr_203,
-      &asn_PER_memb_Ngap_criticality_constr_203,
-      memb_Ngap_criticality_constraint_201},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_criticality_constr_203,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_criticality_constr_203,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_criticality_constraint_201},
      0,
      0, /* No default value */
      "criticality"},
@@ -31796,8 +38111,15 @@ asn_TYPE_member_t asn_MBR_Ngap_RerouteNASRequest_IEs_201[] = {
      +1, /* EXPLICIT tag at current level */
      &asn_DEF_Ngap_value_204,
      select_RerouteNASRequest_IEs_Ngap_value_type,
-     {&asn_OER_memb_Ngap_value_constr_204, &asn_PER_memb_Ngap_value_constr_204,
-      memb_Ngap_value_constraint_201},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_value_constr_204,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_value_constr_204,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_value_constraint_201},
      0,
      0, /* No default value */
      "value"},
@@ -31830,7 +38152,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_RerouteNASRequest_IEs = {
     asn_DEF_Ngap_RerouteNASRequest_IEs_tags_201, /* Same as above */
     sizeof(asn_DEF_Ngap_RerouteNASRequest_IEs_tags_201) /
         sizeof(asn_DEF_Ngap_RerouteNASRequest_IEs_tags_201[0]), /* 1 */
-    {0, 0, SEQUENCE_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_constraint},
     asn_MBR_Ngap_RerouteNASRequest_IEs_201,
     3,                                            /* Elements count */
     &asn_SPC_Ngap_RerouteNASRequest_IEs_specs_201 /* Additional specs */
@@ -31844,7 +38174,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_208[] = {
      0,
      &asn_DEF_Ngap_GlobalRANNodeID,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "GlobalRANNodeID"},
@@ -31855,7 +38193,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_208[] = {
      0,
      &asn_DEF_Ngap_RANNodeName,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "RANNodeName"},
@@ -31866,7 +38212,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_208[] = {
      0,
      &asn_DEF_Ngap_SupportedTAList,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "SupportedTAList"},
@@ -31877,7 +38231,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_208[] = {
      0,
      &asn_DEF_Ngap_PagingDRX,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "PagingDRX"},
@@ -31889,7 +38251,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_208[] = {
      0,
      &asn_DEF_Ngap_UERetentionInformation,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "UERetentionInformation"},
@@ -31901,7 +38271,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_208[] = {
      0,
      &asn_DEF_Ngap_NB_IoT_DefaultPagingDRX,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "NB-IoT-DefaultPagingDRX"},
@@ -31913,7 +38291,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_208[] = {
      0,
      &asn_DEF_Ngap_Extended_RANNodeName,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "Extended-RANNodeName"},
@@ -31956,7 +38342,15 @@ static /* Use -fall-defs-global to expose */
         0, /* No effective tags (count) */
         0, /* No tags (pointer) */
         0, /* No tags (count) */
-        {0, 0, OPEN_TYPE_constraint},
+        {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+            OPEN_TYPE_constraint},
         asn_MBR_Ngap_value_208,
         7,                            /* Elements count */
         &asn_SPC_Ngap_value_specs_208 /* Additional specs */
@@ -31970,8 +38364,15 @@ asn_TYPE_member_t asn_MBR_Ngap_NGSetupRequestIEs_205[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_ProtocolIE_ID,
      0,
-     {&asn_OER_memb_Ngap_id_constr_206, &asn_PER_memb_Ngap_id_constr_206,
-      memb_Ngap_id_constraint_205},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_id_constr_206,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_id_constr_206,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_id_constraint_205},
      0,
      0, /* No default value */
      "id"},
@@ -31982,9 +38383,15 @@ asn_TYPE_member_t asn_MBR_Ngap_NGSetupRequestIEs_205[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_Criticality,
      select_NGSetupRequestIEs_Ngap_criticality_type,
-     {&asn_OER_memb_Ngap_criticality_constr_207,
-      &asn_PER_memb_Ngap_criticality_constr_207,
-      memb_Ngap_criticality_constraint_205},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_criticality_constr_207,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_criticality_constr_207,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_criticality_constraint_205},
      0,
      0, /* No default value */
      "criticality"},
@@ -31995,8 +38402,15 @@ asn_TYPE_member_t asn_MBR_Ngap_NGSetupRequestIEs_205[] = {
      +1, /* EXPLICIT tag at current level */
      &asn_DEF_Ngap_value_208,
      select_NGSetupRequestIEs_Ngap_value_type,
-     {&asn_OER_memb_Ngap_value_constr_208, &asn_PER_memb_Ngap_value_constr_208,
-      memb_Ngap_value_constraint_205},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_value_constr_208,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_value_constr_208,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_value_constraint_205},
      0,
      0, /* No default value */
      "value"},
@@ -32029,7 +38443,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_NGSetupRequestIEs = {
     asn_DEF_Ngap_NGSetupRequestIEs_tags_205,                /* Same as above */
     sizeof(asn_DEF_Ngap_NGSetupRequestIEs_tags_205) /
         sizeof(asn_DEF_Ngap_NGSetupRequestIEs_tags_205[0]), /* 1 */
-    {0, 0, SEQUENCE_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_constraint},
     asn_MBR_Ngap_NGSetupRequestIEs_205,
     3,                                        /* Elements count */
     &asn_SPC_Ngap_NGSetupRequestIEs_specs_205 /* Additional specs */
@@ -32043,7 +38465,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_212[] = {
      0,
      &asn_DEF_Ngap_AMFName,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "AMFName"},
@@ -32054,7 +38484,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_212[] = {
      0,
      &asn_DEF_Ngap_ServedGUAMIList,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "ServedGUAMIList"},
@@ -32066,7 +38504,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_212[] = {
      0,
      &asn_DEF_Ngap_RelativeAMFCapacity,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "RelativeAMFCapacity"},
@@ -32077,7 +38523,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_212[] = {
      0,
      &asn_DEF_Ngap_PLMNSupportList,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "PLMNSupportList"},
@@ -32089,7 +38543,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_212[] = {
      0,
      &asn_DEF_Ngap_CriticalityDiagnostics,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "CriticalityDiagnostics"},
@@ -32101,7 +38563,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_212[] = {
      0,
      &asn_DEF_Ngap_UERetentionInformation,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "UERetentionInformation"},
@@ -32112,7 +38582,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_212[] = {
      0,
      &asn_DEF_Ngap_IAB_Supported,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "IAB-Supported"},
@@ -32123,7 +38601,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_212[] = {
      0,
      &asn_DEF_Ngap_Extended_AMFName,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "Extended-AMFName"},
@@ -32164,7 +38650,15 @@ static /* Use -fall-defs-global to expose */
         0, /* No effective tags (count) */
         0, /* No tags (pointer) */
         0, /* No tags (count) */
-        {0, 0, OPEN_TYPE_constraint},
+        {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+            OPEN_TYPE_constraint},
         asn_MBR_Ngap_value_212,
         8,                            /* Elements count */
         &asn_SPC_Ngap_value_specs_212 /* Additional specs */
@@ -32178,8 +38672,15 @@ asn_TYPE_member_t asn_MBR_Ngap_NGSetupResponseIEs_209[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_ProtocolIE_ID,
      0,
-     {&asn_OER_memb_Ngap_id_constr_210, &asn_PER_memb_Ngap_id_constr_210,
-      memb_Ngap_id_constraint_209},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_id_constr_210,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_id_constr_210,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_id_constraint_209},
      0,
      0, /* No default value */
      "id"},
@@ -32190,9 +38691,15 @@ asn_TYPE_member_t asn_MBR_Ngap_NGSetupResponseIEs_209[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_Criticality,
      select_NGSetupResponseIEs_Ngap_criticality_type,
-     {&asn_OER_memb_Ngap_criticality_constr_211,
-      &asn_PER_memb_Ngap_criticality_constr_211,
-      memb_Ngap_criticality_constraint_209},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_criticality_constr_211,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_criticality_constr_211,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_criticality_constraint_209},
      0,
      0, /* No default value */
      "criticality"},
@@ -32203,8 +38710,15 @@ asn_TYPE_member_t asn_MBR_Ngap_NGSetupResponseIEs_209[] = {
      +1, /* EXPLICIT tag at current level */
      &asn_DEF_Ngap_value_212,
      select_NGSetupResponseIEs_Ngap_value_type,
-     {&asn_OER_memb_Ngap_value_constr_212, &asn_PER_memb_Ngap_value_constr_212,
-      memb_Ngap_value_constraint_209},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_value_constr_212,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_value_constr_212,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_value_constraint_209},
      0,
      0, /* No default value */
      "value"},
@@ -32237,7 +38751,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_NGSetupResponseIEs = {
     asn_DEF_Ngap_NGSetupResponseIEs_tags_209,                /* Same as above */
     sizeof(asn_DEF_Ngap_NGSetupResponseIEs_tags_209) /
         sizeof(asn_DEF_Ngap_NGSetupResponseIEs_tags_209[0]), /* 1 */
-    {0, 0, SEQUENCE_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_constraint},
     asn_MBR_Ngap_NGSetupResponseIEs_209,
     3,                                         /* Elements count */
     &asn_SPC_Ngap_NGSetupResponseIEs_specs_209 /* Additional specs */
@@ -32251,7 +38773,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_216[] = {
      0,
      &asn_DEF_Ngap_Cause,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "Cause"},
@@ -32262,7 +38792,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_216[] = {
      0,
      &asn_DEF_Ngap_TimeToWait,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "TimeToWait"},
@@ -32274,7 +38812,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_216[] = {
      0,
      &asn_DEF_Ngap_CriticalityDiagnostics,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "CriticalityDiagnostics"},
@@ -32311,7 +38857,15 @@ static /* Use -fall-defs-global to expose */
         0, /* No effective tags (count) */
         0, /* No tags (pointer) */
         0, /* No tags (count) */
-        {0, 0, OPEN_TYPE_constraint},
+        {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+            OPEN_TYPE_constraint},
         asn_MBR_Ngap_value_216,
         3,                            /* Elements count */
         &asn_SPC_Ngap_value_specs_216 /* Additional specs */
@@ -32325,8 +38879,15 @@ asn_TYPE_member_t asn_MBR_Ngap_NGSetupFailureIEs_213[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_ProtocolIE_ID,
      0,
-     {&asn_OER_memb_Ngap_id_constr_214, &asn_PER_memb_Ngap_id_constr_214,
-      memb_Ngap_id_constraint_213},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_id_constr_214,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_id_constr_214,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_id_constraint_213},
      0,
      0, /* No default value */
      "id"},
@@ -32337,9 +38898,15 @@ asn_TYPE_member_t asn_MBR_Ngap_NGSetupFailureIEs_213[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_Criticality,
      select_NGSetupFailureIEs_Ngap_criticality_type,
-     {&asn_OER_memb_Ngap_criticality_constr_215,
-      &asn_PER_memb_Ngap_criticality_constr_215,
-      memb_Ngap_criticality_constraint_213},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_criticality_constr_215,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_criticality_constr_215,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_criticality_constraint_213},
      0,
      0, /* No default value */
      "criticality"},
@@ -32350,8 +38917,15 @@ asn_TYPE_member_t asn_MBR_Ngap_NGSetupFailureIEs_213[] = {
      +1, /* EXPLICIT tag at current level */
      &asn_DEF_Ngap_value_216,
      select_NGSetupFailureIEs_Ngap_value_type,
-     {&asn_OER_memb_Ngap_value_constr_216, &asn_PER_memb_Ngap_value_constr_216,
-      memb_Ngap_value_constraint_213},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_value_constr_216,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_value_constr_216,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_value_constraint_213},
      0,
      0, /* No default value */
      "value"},
@@ -32384,7 +38958,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_NGSetupFailureIEs = {
     asn_DEF_Ngap_NGSetupFailureIEs_tags_213,                /* Same as above */
     sizeof(asn_DEF_Ngap_NGSetupFailureIEs_tags_213) /
         sizeof(asn_DEF_Ngap_NGSetupFailureIEs_tags_213[0]), /* 1 */
-    {0, 0, SEQUENCE_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_constraint},
     asn_MBR_Ngap_NGSetupFailureIEs_213,
     3,                                        /* Elements count */
     &asn_SPC_Ngap_NGSetupFailureIEs_specs_213 /* Additional specs */
@@ -32398,7 +38980,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_220[] = {
      0,
      &asn_DEF_Ngap_RANNodeName,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "RANNodeName"},
@@ -32410,7 +39000,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_220[] = {
      0,
      &asn_DEF_Ngap_SupportedTAList,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "SupportedTAList"},
@@ -32421,7 +39019,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_220[] = {
      0,
      &asn_DEF_Ngap_PagingDRX,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "PagingDRX"},
@@ -32433,7 +39039,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_220[] = {
      0,
      &asn_DEF_Ngap_GlobalRANNodeID,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "GlobalRANNodeID"},
@@ -32446,7 +39060,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_220[] = {
      0,
      &asn_DEF_Ngap_NGRAN_TNLAssociationToRemoveList,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "NGRAN-TNLAssociationToRemoveList"},
@@ -32459,7 +39081,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_220[] = {
      0,
      &asn_DEF_Ngap_NB_IoT_DefaultPagingDRX,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "NB-IoT-DefaultPagingDRX"},
@@ -32472,7 +39102,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_220[] = {
      0,
      &asn_DEF_Ngap_Extended_RANNodeName,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "Extended-RANNodeName"},
@@ -32515,7 +39153,15 @@ static /* Use -fall-defs-global to expose */
         0, /* No effective tags (count) */
         0, /* No tags (pointer) */
         0, /* No tags (count) */
-        {0, 0, OPEN_TYPE_constraint},
+        {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+            OPEN_TYPE_constraint},
         asn_MBR_Ngap_value_220,
         7,                            /* Elements count */
         &asn_SPC_Ngap_value_specs_220 /* Additional specs */
@@ -32529,8 +39175,15 @@ asn_TYPE_member_t asn_MBR_Ngap_RANConfigurationUpdateIEs_217[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_ProtocolIE_ID,
      0,
-     {&asn_OER_memb_Ngap_id_constr_218, &asn_PER_memb_Ngap_id_constr_218,
-      memb_Ngap_id_constraint_217},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_id_constr_218,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_id_constr_218,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_id_constraint_217},
      0,
      0, /* No default value */
      "id"},
@@ -32541,9 +39194,15 @@ asn_TYPE_member_t asn_MBR_Ngap_RANConfigurationUpdateIEs_217[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_Criticality,
      select_RANConfigurationUpdateIEs_Ngap_criticality_type,
-     {&asn_OER_memb_Ngap_criticality_constr_219,
-      &asn_PER_memb_Ngap_criticality_constr_219,
-      memb_Ngap_criticality_constraint_217},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_criticality_constr_219,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_criticality_constr_219,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_criticality_constraint_217},
      0,
      0, /* No default value */
      "criticality"},
@@ -32554,8 +39213,15 @@ asn_TYPE_member_t asn_MBR_Ngap_RANConfigurationUpdateIEs_217[] = {
      +1, /* EXPLICIT tag at current level */
      &asn_DEF_Ngap_value_220,
      select_RANConfigurationUpdateIEs_Ngap_value_type,
-     {&asn_OER_memb_Ngap_value_constr_220, &asn_PER_memb_Ngap_value_constr_220,
-      memb_Ngap_value_constraint_217},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_value_constr_220,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_value_constr_220,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_value_constraint_217},
      0,
      0, /* No default value */
      "value"},
@@ -32588,7 +39254,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_RANConfigurationUpdateIEs = {
     asn_DEF_Ngap_RANConfigurationUpdateIEs_tags_217, /* Same as above */
     sizeof(asn_DEF_Ngap_RANConfigurationUpdateIEs_tags_217) /
         sizeof(asn_DEF_Ngap_RANConfigurationUpdateIEs_tags_217[0]), /* 1 */
-    {0, 0, SEQUENCE_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_constraint},
     asn_MBR_Ngap_RANConfigurationUpdateIEs_217,
     3,                                                /* Elements count */
     &asn_SPC_Ngap_RANConfigurationUpdateIEs_specs_217 /* Additional specs */
@@ -32604,7 +39278,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_224[] = {
      0,
      &asn_DEF_Ngap_CriticalityDiagnostics,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "CriticalityDiagnostics"},
@@ -32634,7 +39316,15 @@ static /* Use -fall-defs-global to expose */
         0, /* No effective tags (count) */
         0, /* No tags (pointer) */
         0, /* No tags (count) */
-        {0, 0, OPEN_TYPE_constraint},
+        {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+            OPEN_TYPE_constraint},
         asn_MBR_Ngap_value_224,
         1,                            /* Elements count */
         &asn_SPC_Ngap_value_specs_224 /* Additional specs */
@@ -32648,8 +39338,15 @@ asn_TYPE_member_t asn_MBR_Ngap_RANConfigurationUpdateAcknowledgeIEs_221[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_ProtocolIE_ID,
      0,
-     {&asn_OER_memb_Ngap_id_constr_222, &asn_PER_memb_Ngap_id_constr_222,
-      memb_Ngap_id_constraint_221},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_id_constr_222,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_id_constr_222,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_id_constraint_221},
      0,
      0, /* No default value */
      "id"},
@@ -32660,9 +39357,15 @@ asn_TYPE_member_t asn_MBR_Ngap_RANConfigurationUpdateAcknowledgeIEs_221[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_Criticality,
      select_RANConfigurationUpdateAcknowledgeIEs_Ngap_criticality_type,
-     {&asn_OER_memb_Ngap_criticality_constr_223,
-      &asn_PER_memb_Ngap_criticality_constr_223,
-      memb_Ngap_criticality_constraint_221},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_criticality_constr_223,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_criticality_constr_223,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_criticality_constraint_221},
      0,
      0, /* No default value */
      "criticality"},
@@ -32673,8 +39376,15 @@ asn_TYPE_member_t asn_MBR_Ngap_RANConfigurationUpdateAcknowledgeIEs_221[] = {
      +1, /* EXPLICIT tag at current level */
      &asn_DEF_Ngap_value_224,
      select_RANConfigurationUpdateAcknowledgeIEs_Ngap_value_type,
-     {&asn_OER_memb_Ngap_value_constr_224, &asn_PER_memb_Ngap_value_constr_224,
-      memb_Ngap_value_constraint_221},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_value_constr_224,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_value_constr_224,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_value_constraint_221},
      0,
      0, /* No default value */
      "value"},
@@ -32712,7 +39422,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_RANConfigurationUpdateAcknowledgeIEs = {
     sizeof(asn_DEF_Ngap_RANConfigurationUpdateAcknowledgeIEs_tags_221) /
         sizeof(asn_DEF_Ngap_RANConfigurationUpdateAcknowledgeIEs_tags_221
                    [0]), /* 1 */
-    {0, 0, SEQUENCE_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_constraint},
     asn_MBR_Ngap_RANConfigurationUpdateAcknowledgeIEs_221,
     3, /* Elements count */
     &asn_SPC_Ngap_RANConfigurationUpdateAcknowledgeIEs_specs_221 /* Additional
@@ -32728,7 +39446,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_228[] = {
      0,
      &asn_DEF_Ngap_Cause,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "Cause"},
@@ -32741,7 +39467,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_228[] = {
      0,
      &asn_DEF_Ngap_TimeToWait,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "TimeToWait"},
@@ -32754,7 +39488,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_228[] = {
      0,
      &asn_DEF_Ngap_CriticalityDiagnostics,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "CriticalityDiagnostics"},
@@ -32791,7 +39533,15 @@ static /* Use -fall-defs-global to expose */
         0, /* No effective tags (count) */
         0, /* No tags (pointer) */
         0, /* No tags (count) */
-        {0, 0, OPEN_TYPE_constraint},
+        {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+            OPEN_TYPE_constraint},
         asn_MBR_Ngap_value_228,
         3,                            /* Elements count */
         &asn_SPC_Ngap_value_specs_228 /* Additional specs */
@@ -32805,8 +39555,15 @@ asn_TYPE_member_t asn_MBR_Ngap_RANConfigurationUpdateFailureIEs_225[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_ProtocolIE_ID,
      0,
-     {&asn_OER_memb_Ngap_id_constr_226, &asn_PER_memb_Ngap_id_constr_226,
-      memb_Ngap_id_constraint_225},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_id_constr_226,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_id_constr_226,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_id_constraint_225},
      0,
      0, /* No default value */
      "id"},
@@ -32817,9 +39574,15 @@ asn_TYPE_member_t asn_MBR_Ngap_RANConfigurationUpdateFailureIEs_225[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_Criticality,
      select_RANConfigurationUpdateFailureIEs_Ngap_criticality_type,
-     {&asn_OER_memb_Ngap_criticality_constr_227,
-      &asn_PER_memb_Ngap_criticality_constr_227,
-      memb_Ngap_criticality_constraint_225},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_criticality_constr_227,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_criticality_constr_227,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_criticality_constraint_225},
      0,
      0, /* No default value */
      "criticality"},
@@ -32830,8 +39593,15 @@ asn_TYPE_member_t asn_MBR_Ngap_RANConfigurationUpdateFailureIEs_225[] = {
      +1, /* EXPLICIT tag at current level */
      &asn_DEF_Ngap_value_228,
      select_RANConfigurationUpdateFailureIEs_Ngap_value_type,
-     {&asn_OER_memb_Ngap_value_constr_228, &asn_PER_memb_Ngap_value_constr_228,
-      memb_Ngap_value_constraint_225},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_value_constr_228,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_value_constr_228,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_value_constraint_225},
      0,
      0, /* No default value */
      "value"},
@@ -32868,7 +39638,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_RANConfigurationUpdateFailureIEs = {
     sizeof(asn_DEF_Ngap_RANConfigurationUpdateFailureIEs_tags_225) /
         sizeof(
             asn_DEF_Ngap_RANConfigurationUpdateFailureIEs_tags_225[0]), /* 1 */
-    {0, 0, SEQUENCE_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_constraint},
     asn_MBR_Ngap_RANConfigurationUpdateFailureIEs_225,
     3, /* Elements count */
     &asn_SPC_Ngap_RANConfigurationUpdateFailureIEs_specs_225 /* Additional specs
@@ -32883,7 +39661,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_232[] = {
      0,
      &asn_DEF_Ngap_AMFName,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "AMFName"},
@@ -32895,7 +39681,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_232[] = {
      0,
      &asn_DEF_Ngap_ServedGUAMIList,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "ServedGUAMIList"},
@@ -32908,7 +39702,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_232[] = {
      0,
      &asn_DEF_Ngap_RelativeAMFCapacity,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "RelativeAMFCapacity"},
@@ -32920,7 +39722,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_232[] = {
      0,
      &asn_DEF_Ngap_PLMNSupportList,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "PLMNSupportList"},
@@ -32933,7 +39743,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_232[] = {
      0,
      &asn_DEF_Ngap_AMF_TNLAssociationToAddList,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "AMF-TNLAssociationToAddList"},
@@ -32946,7 +39764,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_232[] = {
      0,
      &asn_DEF_Ngap_AMF_TNLAssociationToRemoveList,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "AMF-TNLAssociationToRemoveList"},
@@ -32959,7 +39785,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_232[] = {
      0,
      &asn_DEF_Ngap_AMF_TNLAssociationToUpdateList,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "AMF-TNLAssociationToUpdateList"},
@@ -32971,7 +39805,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_232[] = {
      0,
      &asn_DEF_Ngap_Extended_AMFName,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "Extended-AMFName"},
@@ -33013,7 +39855,15 @@ static /* Use -fall-defs-global to expose */
         0, /* No effective tags (count) */
         0, /* No tags (pointer) */
         0, /* No tags (count) */
-        {0, 0, OPEN_TYPE_constraint},
+        {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+            OPEN_TYPE_constraint},
         asn_MBR_Ngap_value_232,
         8,                            /* Elements count */
         &asn_SPC_Ngap_value_specs_232 /* Additional specs */
@@ -33027,8 +39877,15 @@ asn_TYPE_member_t asn_MBR_Ngap_AMFConfigurationUpdateIEs_229[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_ProtocolIE_ID,
      0,
-     {&asn_OER_memb_Ngap_id_constr_230, &asn_PER_memb_Ngap_id_constr_230,
-      memb_Ngap_id_constraint_229},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_id_constr_230,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_id_constr_230,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_id_constraint_229},
      0,
      0, /* No default value */
      "id"},
@@ -33039,9 +39896,15 @@ asn_TYPE_member_t asn_MBR_Ngap_AMFConfigurationUpdateIEs_229[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_Criticality,
      select_AMFConfigurationUpdateIEs_Ngap_criticality_type,
-     {&asn_OER_memb_Ngap_criticality_constr_231,
-      &asn_PER_memb_Ngap_criticality_constr_231,
-      memb_Ngap_criticality_constraint_229},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_criticality_constr_231,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_criticality_constr_231,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_criticality_constraint_229},
      0,
      0, /* No default value */
      "criticality"},
@@ -33052,8 +39915,15 @@ asn_TYPE_member_t asn_MBR_Ngap_AMFConfigurationUpdateIEs_229[] = {
      +1, /* EXPLICIT tag at current level */
      &asn_DEF_Ngap_value_232,
      select_AMFConfigurationUpdateIEs_Ngap_value_type,
-     {&asn_OER_memb_Ngap_value_constr_232, &asn_PER_memb_Ngap_value_constr_232,
-      memb_Ngap_value_constraint_229},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_value_constr_232,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_value_constr_232,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_value_constraint_229},
      0,
      0, /* No default value */
      "value"},
@@ -33086,7 +39956,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_AMFConfigurationUpdateIEs = {
     asn_DEF_Ngap_AMFConfigurationUpdateIEs_tags_229, /* Same as above */
     sizeof(asn_DEF_Ngap_AMFConfigurationUpdateIEs_tags_229) /
         sizeof(asn_DEF_Ngap_AMFConfigurationUpdateIEs_tags_229[0]), /* 1 */
-    {0, 0, SEQUENCE_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_constraint},
     asn_MBR_Ngap_AMFConfigurationUpdateIEs_229,
     3,                                                /* Elements count */
     &asn_SPC_Ngap_AMFConfigurationUpdateIEs_specs_229 /* Additional specs */
@@ -33102,7 +39980,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_236[] = {
      0,
      &asn_DEF_Ngap_AMF_TNLAssociationSetupList,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "AMF-TNLAssociationSetupList"},
@@ -33115,7 +40001,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_236[] = {
      0,
      &asn_DEF_Ngap_TNLAssociationList,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "TNLAssociationList"},
@@ -33128,7 +40022,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_236[] = {
      0,
      &asn_DEF_Ngap_CriticalityDiagnostics,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "CriticalityDiagnostics"},
@@ -33161,7 +40063,15 @@ static /* Use -fall-defs-global to expose */
         0, /* No effective tags (count) */
         0, /* No tags (pointer) */
         0, /* No tags (count) */
-        {0, 0, OPEN_TYPE_constraint},
+        {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+            OPEN_TYPE_constraint},
         asn_MBR_Ngap_value_236,
         3,                            /* Elements count */
         &asn_SPC_Ngap_value_specs_236 /* Additional specs */
@@ -33175,8 +40085,15 @@ asn_TYPE_member_t asn_MBR_Ngap_AMFConfigurationUpdateAcknowledgeIEs_233[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_ProtocolIE_ID,
      0,
-     {&asn_OER_memb_Ngap_id_constr_234, &asn_PER_memb_Ngap_id_constr_234,
-      memb_Ngap_id_constraint_233},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_id_constr_234,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_id_constr_234,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_id_constraint_233},
      0,
      0, /* No default value */
      "id"},
@@ -33187,9 +40104,15 @@ asn_TYPE_member_t asn_MBR_Ngap_AMFConfigurationUpdateAcknowledgeIEs_233[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_Criticality,
      select_AMFConfigurationUpdateAcknowledgeIEs_Ngap_criticality_type,
-     {&asn_OER_memb_Ngap_criticality_constr_235,
-      &asn_PER_memb_Ngap_criticality_constr_235,
-      memb_Ngap_criticality_constraint_233},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_criticality_constr_235,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_criticality_constr_235,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_criticality_constraint_233},
      0,
      0, /* No default value */
      "criticality"},
@@ -33200,8 +40123,15 @@ asn_TYPE_member_t asn_MBR_Ngap_AMFConfigurationUpdateAcknowledgeIEs_233[] = {
      +1, /* EXPLICIT tag at current level */
      &asn_DEF_Ngap_value_236,
      select_AMFConfigurationUpdateAcknowledgeIEs_Ngap_value_type,
-     {&asn_OER_memb_Ngap_value_constr_236, &asn_PER_memb_Ngap_value_constr_236,
-      memb_Ngap_value_constraint_233},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_value_constr_236,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_value_constr_236,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_value_constraint_233},
      0,
      0, /* No default value */
      "value"},
@@ -33239,7 +40169,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_AMFConfigurationUpdateAcknowledgeIEs = {
     sizeof(asn_DEF_Ngap_AMFConfigurationUpdateAcknowledgeIEs_tags_233) /
         sizeof(asn_DEF_Ngap_AMFConfigurationUpdateAcknowledgeIEs_tags_233
                    [0]), /* 1 */
-    {0, 0, SEQUENCE_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_constraint},
     asn_MBR_Ngap_AMFConfigurationUpdateAcknowledgeIEs_233,
     3, /* Elements count */
     &asn_SPC_Ngap_AMFConfigurationUpdateAcknowledgeIEs_specs_233 /* Additional
@@ -33255,7 +40193,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_240[] = {
      0,
      &asn_DEF_Ngap_Cause,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "Cause"},
@@ -33268,7 +40214,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_240[] = {
      0,
      &asn_DEF_Ngap_TimeToWait,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "TimeToWait"},
@@ -33281,7 +40235,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_240[] = {
      0,
      &asn_DEF_Ngap_CriticalityDiagnostics,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "CriticalityDiagnostics"},
@@ -33318,7 +40280,15 @@ static /* Use -fall-defs-global to expose */
         0, /* No effective tags (count) */
         0, /* No tags (pointer) */
         0, /* No tags (count) */
-        {0, 0, OPEN_TYPE_constraint},
+        {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+            OPEN_TYPE_constraint},
         asn_MBR_Ngap_value_240,
         3,                            /* Elements count */
         &asn_SPC_Ngap_value_specs_240 /* Additional specs */
@@ -33332,8 +40302,15 @@ asn_TYPE_member_t asn_MBR_Ngap_AMFConfigurationUpdateFailureIEs_237[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_ProtocolIE_ID,
      0,
-     {&asn_OER_memb_Ngap_id_constr_238, &asn_PER_memb_Ngap_id_constr_238,
-      memb_Ngap_id_constraint_237},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_id_constr_238,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_id_constr_238,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_id_constraint_237},
      0,
      0, /* No default value */
      "id"},
@@ -33344,9 +40321,15 @@ asn_TYPE_member_t asn_MBR_Ngap_AMFConfigurationUpdateFailureIEs_237[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_Criticality,
      select_AMFConfigurationUpdateFailureIEs_Ngap_criticality_type,
-     {&asn_OER_memb_Ngap_criticality_constr_239,
-      &asn_PER_memb_Ngap_criticality_constr_239,
-      memb_Ngap_criticality_constraint_237},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_criticality_constr_239,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_criticality_constr_239,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_criticality_constraint_237},
      0,
      0, /* No default value */
      "criticality"},
@@ -33357,8 +40340,15 @@ asn_TYPE_member_t asn_MBR_Ngap_AMFConfigurationUpdateFailureIEs_237[] = {
      +1, /* EXPLICIT tag at current level */
      &asn_DEF_Ngap_value_240,
      select_AMFConfigurationUpdateFailureIEs_Ngap_value_type,
-     {&asn_OER_memb_Ngap_value_constr_240, &asn_PER_memb_Ngap_value_constr_240,
-      memb_Ngap_value_constraint_237},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_value_constr_240,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_value_constr_240,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_value_constraint_237},
      0,
      0, /* No default value */
      "value"},
@@ -33395,7 +40385,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_AMFConfigurationUpdateFailureIEs = {
     sizeof(asn_DEF_Ngap_AMFConfigurationUpdateFailureIEs_tags_237) /
         sizeof(
             asn_DEF_Ngap_AMFConfigurationUpdateFailureIEs_tags_237[0]), /* 1 */
-    {0, 0, SEQUENCE_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_constraint},
     asn_MBR_Ngap_AMFConfigurationUpdateFailureIEs_237,
     3, /* Elements count */
     &asn_SPC_Ngap_AMFConfigurationUpdateFailureIEs_specs_237 /* Additional specs
@@ -33412,7 +40410,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_244[] = {
      0,
      &asn_DEF_Ngap_UnavailableGUAMIList,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "UnavailableGUAMIList"},
@@ -33440,7 +40446,15 @@ static /* Use -fall-defs-global to expose */
         0, /* No effective tags (count) */
         0, /* No tags (pointer) */
         0, /* No tags (count) */
-        {0, 0, OPEN_TYPE_constraint},
+        {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+            OPEN_TYPE_constraint},
         asn_MBR_Ngap_value_244,
         1,                            /* Elements count */
         &asn_SPC_Ngap_value_specs_244 /* Additional specs */
@@ -33454,8 +40468,15 @@ asn_TYPE_member_t asn_MBR_Ngap_AMFStatusIndicationIEs_241[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_ProtocolIE_ID,
      0,
-     {&asn_OER_memb_Ngap_id_constr_242, &asn_PER_memb_Ngap_id_constr_242,
-      memb_Ngap_id_constraint_241},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_id_constr_242,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_id_constr_242,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_id_constraint_241},
      0,
      0, /* No default value */
      "id"},
@@ -33466,9 +40487,15 @@ asn_TYPE_member_t asn_MBR_Ngap_AMFStatusIndicationIEs_241[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_Criticality,
      select_AMFStatusIndicationIEs_Ngap_criticality_type,
-     {&asn_OER_memb_Ngap_criticality_constr_243,
-      &asn_PER_memb_Ngap_criticality_constr_243,
-      memb_Ngap_criticality_constraint_241},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_criticality_constr_243,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_criticality_constr_243,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_criticality_constraint_241},
      0,
      0, /* No default value */
      "criticality"},
@@ -33479,8 +40506,15 @@ asn_TYPE_member_t asn_MBR_Ngap_AMFStatusIndicationIEs_241[] = {
      +1, /* EXPLICIT tag at current level */
      &asn_DEF_Ngap_value_244,
      select_AMFStatusIndicationIEs_Ngap_value_type,
-     {&asn_OER_memb_Ngap_value_constr_244, &asn_PER_memb_Ngap_value_constr_244,
-      memb_Ngap_value_constraint_241},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_value_constr_244,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_value_constr_244,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_value_constraint_241},
      0,
      0, /* No default value */
      "value"},
@@ -33513,7 +40547,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_AMFStatusIndicationIEs = {
     asn_DEF_Ngap_AMFStatusIndicationIEs_tags_241, /* Same as above */
     sizeof(asn_DEF_Ngap_AMFStatusIndicationIEs_tags_241) /
         sizeof(asn_DEF_Ngap_AMFStatusIndicationIEs_tags_241[0]), /* 1 */
-    {0, 0, SEQUENCE_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_constraint},
     asn_MBR_Ngap_AMFStatusIndicationIEs_241,
     3,                                             /* Elements count */
     &asn_SPC_Ngap_AMFStatusIndicationIEs_specs_241 /* Additional specs */
@@ -33527,7 +40569,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_248[] = {
      0,
      &asn_DEF_Ngap_Cause,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "Cause"},
@@ -33538,7 +40588,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_248[] = {
      0,
      &asn_DEF_Ngap_ResetType,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "ResetType"},
@@ -33572,7 +40630,15 @@ static /* Use -fall-defs-global to expose */
         0, /* No effective tags (count) */
         0, /* No tags (pointer) */
         0, /* No tags (count) */
-        {0, 0, OPEN_TYPE_constraint},
+        {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+            OPEN_TYPE_constraint},
         asn_MBR_Ngap_value_248,
         2,                            /* Elements count */
         &asn_SPC_Ngap_value_specs_248 /* Additional specs */
@@ -33586,8 +40652,15 @@ asn_TYPE_member_t asn_MBR_Ngap_NGResetIEs_245[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_ProtocolIE_ID,
      0,
-     {&asn_OER_memb_Ngap_id_constr_246, &asn_PER_memb_Ngap_id_constr_246,
-      memb_Ngap_id_constraint_245},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_id_constr_246,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_id_constr_246,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_id_constraint_245},
      0,
      0, /* No default value */
      "id"},
@@ -33598,9 +40671,15 @@ asn_TYPE_member_t asn_MBR_Ngap_NGResetIEs_245[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_Criticality,
      select_NGResetIEs_Ngap_criticality_type,
-     {&asn_OER_memb_Ngap_criticality_constr_247,
-      &asn_PER_memb_Ngap_criticality_constr_247,
-      memb_Ngap_criticality_constraint_245},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_criticality_constr_247,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_criticality_constr_247,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_criticality_constraint_245},
      0,
      0, /* No default value */
      "criticality"},
@@ -33611,8 +40690,15 @@ asn_TYPE_member_t asn_MBR_Ngap_NGResetIEs_245[] = {
      +1, /* EXPLICIT tag at current level */
      &asn_DEF_Ngap_value_248,
      select_NGResetIEs_Ngap_value_type,
-     {&asn_OER_memb_Ngap_value_constr_248, &asn_PER_memb_Ngap_value_constr_248,
-      memb_Ngap_value_constraint_245},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_value_constr_248,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_value_constr_248,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_value_constraint_245},
      0,
      0, /* No default value */
      "value"},
@@ -33644,7 +40730,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_NGResetIEs = {
     asn_DEF_Ngap_NGResetIEs_tags_245,                /* Same as above */
     sizeof(asn_DEF_Ngap_NGResetIEs_tags_245) /
         sizeof(asn_DEF_Ngap_NGResetIEs_tags_245[0]), /* 1 */
-    {0, 0, SEQUENCE_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_constraint},
     asn_MBR_Ngap_NGResetIEs_245,
     3,                                 /* Elements count */
     &asn_SPC_Ngap_NGResetIEs_specs_245 /* Additional specs */
@@ -33660,7 +40754,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_252[] = {
      0,
      &asn_DEF_Ngap_UE_associatedLogicalNG_connectionList,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "UE-associatedLogicalNG-connectionList"},
@@ -33673,7 +40775,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_252[] = {
      0,
      &asn_DEF_Ngap_CriticalityDiagnostics,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "CriticalityDiagnostics"},
@@ -33704,7 +40814,15 @@ static /* Use -fall-defs-global to expose */
         0, /* No effective tags (count) */
         0, /* No tags (pointer) */
         0, /* No tags (count) */
-        {0, 0, OPEN_TYPE_constraint},
+        {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+            OPEN_TYPE_constraint},
         asn_MBR_Ngap_value_252,
         2,                            /* Elements count */
         &asn_SPC_Ngap_value_specs_252 /* Additional specs */
@@ -33718,8 +40836,15 @@ asn_TYPE_member_t asn_MBR_Ngap_NGResetAcknowledgeIEs_249[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_ProtocolIE_ID,
      0,
-     {&asn_OER_memb_Ngap_id_constr_250, &asn_PER_memb_Ngap_id_constr_250,
-      memb_Ngap_id_constraint_249},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_id_constr_250,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_id_constr_250,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_id_constraint_249},
      0,
      0, /* No default value */
      "id"},
@@ -33730,9 +40855,15 @@ asn_TYPE_member_t asn_MBR_Ngap_NGResetAcknowledgeIEs_249[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_Criticality,
      select_NGResetAcknowledgeIEs_Ngap_criticality_type,
-     {&asn_OER_memb_Ngap_criticality_constr_251,
-      &asn_PER_memb_Ngap_criticality_constr_251,
-      memb_Ngap_criticality_constraint_249},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_criticality_constr_251,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_criticality_constr_251,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_criticality_constraint_249},
      0,
      0, /* No default value */
      "criticality"},
@@ -33743,8 +40874,15 @@ asn_TYPE_member_t asn_MBR_Ngap_NGResetAcknowledgeIEs_249[] = {
      +1, /* EXPLICIT tag at current level */
      &asn_DEF_Ngap_value_252,
      select_NGResetAcknowledgeIEs_Ngap_value_type,
-     {&asn_OER_memb_Ngap_value_constr_252, &asn_PER_memb_Ngap_value_constr_252,
-      memb_Ngap_value_constraint_249},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_value_constr_252,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_value_constr_252,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_value_constraint_249},
      0,
      0, /* No default value */
      "value"},
@@ -33777,7 +40915,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_NGResetAcknowledgeIEs = {
     asn_DEF_Ngap_NGResetAcknowledgeIEs_tags_249, /* Same as above */
     sizeof(asn_DEF_Ngap_NGResetAcknowledgeIEs_tags_249) /
         sizeof(asn_DEF_Ngap_NGResetAcknowledgeIEs_tags_249[0]), /* 1 */
-    {0, 0, SEQUENCE_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_constraint},
     asn_MBR_Ngap_NGResetAcknowledgeIEs_249,
     3,                                            /* Elements count */
     &asn_SPC_Ngap_NGResetAcknowledgeIEs_specs_249 /* Additional specs */
@@ -33791,7 +40937,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_256[] = {
      0,
      &asn_DEF_Ngap_AMF_UE_NGAP_ID,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "AMF-UE-NGAP-ID"},
@@ -33802,7 +40956,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_256[] = {
      0,
      &asn_DEF_Ngap_RAN_UE_NGAP_ID,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "RAN-UE-NGAP-ID"},
@@ -33813,7 +40975,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_256[] = {
      0,
      &asn_DEF_Ngap_Cause,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "Cause"},
@@ -33825,7 +40995,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_256[] = {
      0,
      &asn_DEF_Ngap_CriticalityDiagnostics,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "CriticalityDiagnostics"},
@@ -33836,7 +41014,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_256[] = {
      0,
      &asn_DEF_Ngap_FiveG_S_TMSI,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "FiveG-S-TMSI"},
@@ -33875,7 +41061,15 @@ static /* Use -fall-defs-global to expose */
         0, /* No effective tags (count) */
         0, /* No tags (pointer) */
         0, /* No tags (count) */
-        {0, 0, OPEN_TYPE_constraint},
+        {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+            OPEN_TYPE_constraint},
         asn_MBR_Ngap_value_256,
         5,                            /* Elements count */
         &asn_SPC_Ngap_value_specs_256 /* Additional specs */
@@ -33889,8 +41083,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ErrorIndicationIEs_253[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_ProtocolIE_ID,
      0,
-     {&asn_OER_memb_Ngap_id_constr_254, &asn_PER_memb_Ngap_id_constr_254,
-      memb_Ngap_id_constraint_253},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_id_constr_254,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_id_constr_254,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_id_constraint_253},
      0,
      0, /* No default value */
      "id"},
@@ -33901,9 +41102,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ErrorIndicationIEs_253[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_Criticality,
      select_ErrorIndicationIEs_Ngap_criticality_type,
-     {&asn_OER_memb_Ngap_criticality_constr_255,
-      &asn_PER_memb_Ngap_criticality_constr_255,
-      memb_Ngap_criticality_constraint_253},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_criticality_constr_255,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_criticality_constr_255,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_criticality_constraint_253},
      0,
      0, /* No default value */
      "criticality"},
@@ -33914,8 +41121,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ErrorIndicationIEs_253[] = {
      +1, /* EXPLICIT tag at current level */
      &asn_DEF_Ngap_value_256,
      select_ErrorIndicationIEs_Ngap_value_type,
-     {&asn_OER_memb_Ngap_value_constr_256, &asn_PER_memb_Ngap_value_constr_256,
-      memb_Ngap_value_constraint_253},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_value_constr_256,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_value_constr_256,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_value_constraint_253},
      0,
      0, /* No default value */
      "value"},
@@ -33948,7 +41162,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ErrorIndicationIEs = {
     asn_DEF_Ngap_ErrorIndicationIEs_tags_253,                /* Same as above */
     sizeof(asn_DEF_Ngap_ErrorIndicationIEs_tags_253) /
         sizeof(asn_DEF_Ngap_ErrorIndicationIEs_tags_253[0]), /* 1 */
-    {0, 0, SEQUENCE_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_constraint},
     asn_MBR_Ngap_ErrorIndicationIEs_253,
     3,                                         /* Elements count */
     &asn_SPC_Ngap_ErrorIndicationIEs_specs_253 /* Additional specs */
@@ -33962,7 +41184,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_260[] = {
      0,
      &asn_DEF_Ngap_OverloadResponse,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "OverloadResponse"},
@@ -33975,7 +41205,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_260[] = {
      0,
      &asn_DEF_Ngap_TrafficLoadReductionIndication,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "TrafficLoadReductionIndication"},
@@ -33987,7 +41225,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_260[] = {
      0,
      &asn_DEF_Ngap_OverloadStartNSSAIList,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "OverloadStartNSSAIList"},
@@ -34021,7 +41267,15 @@ static /* Use -fall-defs-global to expose */
         0, /* No effective tags (count) */
         0, /* No tags (pointer) */
         0, /* No tags (count) */
-        {0, 0, OPEN_TYPE_constraint},
+        {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+            OPEN_TYPE_constraint},
         asn_MBR_Ngap_value_260,
         3,                            /* Elements count */
         &asn_SPC_Ngap_value_specs_260 /* Additional specs */
@@ -34035,8 +41289,15 @@ asn_TYPE_member_t asn_MBR_Ngap_OverloadStartIEs_257[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_ProtocolIE_ID,
      0,
-     {&asn_OER_memb_Ngap_id_constr_258, &asn_PER_memb_Ngap_id_constr_258,
-      memb_Ngap_id_constraint_257},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_id_constr_258,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_id_constr_258,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_id_constraint_257},
      0,
      0, /* No default value */
      "id"},
@@ -34047,9 +41308,15 @@ asn_TYPE_member_t asn_MBR_Ngap_OverloadStartIEs_257[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_Criticality,
      select_OverloadStartIEs_Ngap_criticality_type,
-     {&asn_OER_memb_Ngap_criticality_constr_259,
-      &asn_PER_memb_Ngap_criticality_constr_259,
-      memb_Ngap_criticality_constraint_257},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_criticality_constr_259,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_criticality_constr_259,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_criticality_constraint_257},
      0,
      0, /* No default value */
      "criticality"},
@@ -34060,8 +41327,15 @@ asn_TYPE_member_t asn_MBR_Ngap_OverloadStartIEs_257[] = {
      +1, /* EXPLICIT tag at current level */
      &asn_DEF_Ngap_value_260,
      select_OverloadStartIEs_Ngap_value_type,
-     {&asn_OER_memb_Ngap_value_constr_260, &asn_PER_memb_Ngap_value_constr_260,
-      memb_Ngap_value_constraint_257},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_value_constr_260,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_value_constr_260,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_value_constraint_257},
      0,
      0, /* No default value */
      "value"},
@@ -34094,7 +41368,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_OverloadStartIEs = {
     asn_DEF_Ngap_OverloadStartIEs_tags_257,                /* Same as above */
     sizeof(asn_DEF_Ngap_OverloadStartIEs_tags_257) /
         sizeof(asn_DEF_Ngap_OverloadStartIEs_tags_257[0]), /* 1 */
-    {0, 0, SEQUENCE_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_constraint},
     asn_MBR_Ngap_OverloadStartIEs_257,
     3,                                       /* Elements count */
     &asn_SPC_Ngap_OverloadStartIEs_specs_257 /* Additional specs */
@@ -34120,7 +41402,15 @@ static /* Use -fall-defs-global to expose */
         0, /* No effective tags (count) */
         0, /* No tags (pointer) */
         0, /* No tags (count) */
-        {0, 0, OPEN_TYPE_constraint},
+        {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+            OPEN_TYPE_constraint},
         0,
         0,                            /* No members */
         &asn_SPC_Ngap_value_specs_264 /* Additional specs */
@@ -34134,8 +41424,15 @@ asn_TYPE_member_t asn_MBR_Ngap_OverloadStopIEs_261[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_ProtocolIE_ID,
      0,
-     {&asn_OER_memb_Ngap_id_constr_262, &asn_PER_memb_Ngap_id_constr_262,
-      memb_Ngap_id_constraint_261},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_id_constr_262,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_id_constr_262,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_id_constraint_261},
      0,
      0, /* No default value */
      "id"},
@@ -34146,9 +41443,15 @@ asn_TYPE_member_t asn_MBR_Ngap_OverloadStopIEs_261[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_Criticality,
      0,
-     {&asn_OER_memb_Ngap_criticality_constr_263,
-      &asn_PER_memb_Ngap_criticality_constr_263,
-      memb_Ngap_criticality_constraint_261},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_criticality_constr_263,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_criticality_constr_263,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_criticality_constraint_261},
      0,
      0, /* No default value */
      "criticality"},
@@ -34159,8 +41462,15 @@ asn_TYPE_member_t asn_MBR_Ngap_OverloadStopIEs_261[] = {
      +1, /* EXPLICIT tag at current level */
      &asn_DEF_Ngap_value_264,
      0,
-     {&asn_OER_memb_Ngap_value_constr_264, &asn_PER_memb_Ngap_value_constr_264,
-      memb_Ngap_value_constraint_261},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_value_constr_264,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_value_constr_264,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_value_constraint_261},
      0,
      0, /* No default value */
      "value"},
@@ -34192,7 +41502,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_OverloadStopIEs = {
     asn_DEF_Ngap_OverloadStopIEs_tags_261,                /* Same as above */
     sizeof(asn_DEF_Ngap_OverloadStopIEs_tags_261) /
         sizeof(asn_DEF_Ngap_OverloadStopIEs_tags_261[0]), /* 1 */
-    {0, 0, SEQUENCE_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_constraint},
     asn_MBR_Ngap_OverloadStopIEs_261,
     3,                                      /* Elements count */
     &asn_SPC_Ngap_OverloadStopIEs_specs_261 /* Additional specs */
@@ -34208,7 +41526,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_268[] = {
      0,
      &asn_DEF_Ngap_SONConfigurationTransfer,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "SONConfigurationTransfer"},
@@ -34221,7 +41547,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_268[] = {
      0,
      &asn_DEF_Ngap_EN_DCSONConfigurationTransfer,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "EN-DCSONConfigurationTransfer"},
@@ -34234,7 +41568,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_268[] = {
      0,
      &asn_DEF_Ngap_IntersystemSONConfigurationTransfer,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "IntersystemSONConfigurationTransfer"},
@@ -34270,7 +41612,15 @@ static /* Use -fall-defs-global to expose */
         0, /* No effective tags (count) */
         0, /* No tags (pointer) */
         0, /* No tags (count) */
-        {0, 0, OPEN_TYPE_constraint},
+        {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+            OPEN_TYPE_constraint},
         asn_MBR_Ngap_value_268,
         3,                            /* Elements count */
         &asn_SPC_Ngap_value_specs_268 /* Additional specs */
@@ -34284,8 +41634,15 @@ asn_TYPE_member_t asn_MBR_Ngap_UplinkRANConfigurationTransferIEs_265[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_ProtocolIE_ID,
      0,
-     {&asn_OER_memb_Ngap_id_constr_266, &asn_PER_memb_Ngap_id_constr_266,
-      memb_Ngap_id_constraint_265},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_id_constr_266,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_id_constr_266,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_id_constraint_265},
      0,
      0, /* No default value */
      "id"},
@@ -34296,9 +41653,15 @@ asn_TYPE_member_t asn_MBR_Ngap_UplinkRANConfigurationTransferIEs_265[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_Criticality,
      select_UplinkRANConfigurationTransferIEs_Ngap_criticality_type,
-     {&asn_OER_memb_Ngap_criticality_constr_267,
-      &asn_PER_memb_Ngap_criticality_constr_267,
-      memb_Ngap_criticality_constraint_265},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_criticality_constr_267,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_criticality_constr_267,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_criticality_constraint_265},
      0,
      0, /* No default value */
      "criticality"},
@@ -34309,8 +41672,15 @@ asn_TYPE_member_t asn_MBR_Ngap_UplinkRANConfigurationTransferIEs_265[] = {
      +1, /* EXPLICIT tag at current level */
      &asn_DEF_Ngap_value_268,
      select_UplinkRANConfigurationTransferIEs_Ngap_value_type,
-     {&asn_OER_memb_Ngap_value_constr_268, &asn_PER_memb_Ngap_value_constr_268,
-      memb_Ngap_value_constraint_265},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_value_constr_268,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_value_constr_268,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_value_constraint_265},
      0,
      0, /* No default value */
      "value"},
@@ -34347,7 +41717,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_UplinkRANConfigurationTransferIEs = {
     sizeof(asn_DEF_Ngap_UplinkRANConfigurationTransferIEs_tags_265) /
         sizeof(
             asn_DEF_Ngap_UplinkRANConfigurationTransferIEs_tags_265[0]), /* 1 */
-    {0, 0, SEQUENCE_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_constraint},
     asn_MBR_Ngap_UplinkRANConfigurationTransferIEs_265,
     3, /* Elements count */
     &asn_SPC_Ngap_UplinkRANConfigurationTransferIEs_specs_265 /* Additional
@@ -34364,7 +41742,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_272[] = {
      0,
      &asn_DEF_Ngap_SONConfigurationTransfer,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "SONConfigurationTransfer"},
@@ -34377,7 +41763,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_272[] = {
      0,
      &asn_DEF_Ngap_EN_DCSONConfigurationTransfer,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "EN-DCSONConfigurationTransfer"},
@@ -34390,7 +41784,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_272[] = {
      0,
      &asn_DEF_Ngap_IntersystemSONConfigurationTransfer,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "IntersystemSONConfigurationTransfer"},
@@ -34426,7 +41828,15 @@ static /* Use -fall-defs-global to expose */
         0, /* No effective tags (count) */
         0, /* No tags (pointer) */
         0, /* No tags (count) */
-        {0, 0, OPEN_TYPE_constraint},
+        {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+            OPEN_TYPE_constraint},
         asn_MBR_Ngap_value_272,
         3,                            /* Elements count */
         &asn_SPC_Ngap_value_specs_272 /* Additional specs */
@@ -34440,8 +41850,15 @@ asn_TYPE_member_t asn_MBR_Ngap_DownlinkRANConfigurationTransferIEs_269[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_ProtocolIE_ID,
      0,
-     {&asn_OER_memb_Ngap_id_constr_270, &asn_PER_memb_Ngap_id_constr_270,
-      memb_Ngap_id_constraint_269},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_id_constr_270,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_id_constr_270,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_id_constraint_269},
      0,
      0, /* No default value */
      "id"},
@@ -34452,9 +41869,15 @@ asn_TYPE_member_t asn_MBR_Ngap_DownlinkRANConfigurationTransferIEs_269[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_Criticality,
      select_DownlinkRANConfigurationTransferIEs_Ngap_criticality_type,
-     {&asn_OER_memb_Ngap_criticality_constr_271,
-      &asn_PER_memb_Ngap_criticality_constr_271,
-      memb_Ngap_criticality_constraint_269},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_criticality_constr_271,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_criticality_constr_271,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_criticality_constraint_269},
      0,
      0, /* No default value */
      "criticality"},
@@ -34465,8 +41888,15 @@ asn_TYPE_member_t asn_MBR_Ngap_DownlinkRANConfigurationTransferIEs_269[] = {
      +1, /* EXPLICIT tag at current level */
      &asn_DEF_Ngap_value_272,
      select_DownlinkRANConfigurationTransferIEs_Ngap_value_type,
-     {&asn_OER_memb_Ngap_value_constr_272, &asn_PER_memb_Ngap_value_constr_272,
-      memb_Ngap_value_constraint_269},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_value_constr_272,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_value_constr_272,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_value_constraint_269},
      0,
      0, /* No default value */
      "value"},
@@ -34506,7 +41936,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_DownlinkRANConfigurationTransferIEs = {
         sizeof(
             asn_DEF_Ngap_DownlinkRANConfigurationTransferIEs_tags_269[0]), /* 1
                                                                             */
-    {0, 0, SEQUENCE_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_constraint},
     asn_MBR_Ngap_DownlinkRANConfigurationTransferIEs_269,
     3, /* Elements count */
     &asn_SPC_Ngap_DownlinkRANConfigurationTransferIEs_specs_269 /* Additional
@@ -34523,7 +41961,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_276[] = {
      0,
      &asn_DEF_Ngap_MessageIdentifier,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "MessageIdentifier"},
@@ -34535,7 +41981,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_276[] = {
      0,
      &asn_DEF_Ngap_SerialNumber,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "SerialNumber"},
@@ -34548,7 +42002,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_276[] = {
      0,
      &asn_DEF_Ngap_WarningAreaList,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "WarningAreaList"},
@@ -34561,7 +42023,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_276[] = {
      0,
      &asn_DEF_Ngap_RepetitionPeriod,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "RepetitionPeriod"},
@@ -34574,7 +42044,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_276[] = {
      0,
      &asn_DEF_Ngap_NumberOfBroadcastsRequested,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "NumberOfBroadcastsRequested"},
@@ -34586,7 +42064,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_276[] = {
      0,
      &asn_DEF_Ngap_WarningType,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "WarningType"},
@@ -34599,7 +42085,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_276[] = {
      0,
      &asn_DEF_Ngap_WarningSecurityInfo,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "WarningSecurityInfo"},
@@ -34612,7 +42106,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_276[] = {
      0,
      &asn_DEF_Ngap_DataCodingScheme,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "DataCodingScheme"},
@@ -34625,7 +42127,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_276[] = {
      0,
      &asn_DEF_Ngap_WarningMessageContents,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "WarningMessageContents"},
@@ -34638,7 +42148,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_276[] = {
      0,
      &asn_DEF_Ngap_ConcurrentWarningMessageInd,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "ConcurrentWarningMessageInd"},
@@ -34651,7 +42169,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_276[] = {
      0,
      &asn_DEF_Ngap_WarningAreaCoordinates,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "WarningAreaCoordinates"},
@@ -34700,7 +42226,15 @@ static /* Use -fall-defs-global to expose */
         0, /* No effective tags (count) */
         0, /* No tags (pointer) */
         0, /* No tags (count) */
-        {0, 0, OPEN_TYPE_constraint},
+        {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+            OPEN_TYPE_constraint},
         asn_MBR_Ngap_value_276,
         11,                           /* Elements count */
         &asn_SPC_Ngap_value_specs_276 /* Additional specs */
@@ -34714,8 +42248,15 @@ asn_TYPE_member_t asn_MBR_Ngap_WriteReplaceWarningRequestIEs_273[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_ProtocolIE_ID,
      0,
-     {&asn_OER_memb_Ngap_id_constr_274, &asn_PER_memb_Ngap_id_constr_274,
-      memb_Ngap_id_constraint_273},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_id_constr_274,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_id_constr_274,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_id_constraint_273},
      0,
      0, /* No default value */
      "id"},
@@ -34726,9 +42267,15 @@ asn_TYPE_member_t asn_MBR_Ngap_WriteReplaceWarningRequestIEs_273[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_Criticality,
      select_WriteReplaceWarningRequestIEs_Ngap_criticality_type,
-     {&asn_OER_memb_Ngap_criticality_constr_275,
-      &asn_PER_memb_Ngap_criticality_constr_275,
-      memb_Ngap_criticality_constraint_273},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_criticality_constr_275,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_criticality_constr_275,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_criticality_constraint_273},
      0,
      0, /* No default value */
      "criticality"},
@@ -34739,8 +42286,15 @@ asn_TYPE_member_t asn_MBR_Ngap_WriteReplaceWarningRequestIEs_273[] = {
      +1, /* EXPLICIT tag at current level */
      &asn_DEF_Ngap_value_276,
      select_WriteReplaceWarningRequestIEs_Ngap_value_type,
-     {&asn_OER_memb_Ngap_value_constr_276, &asn_PER_memb_Ngap_value_constr_276,
-      memb_Ngap_value_constraint_273},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_value_constr_276,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_value_constr_276,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_value_constraint_273},
      0,
      0, /* No default value */
      "value"},
@@ -34775,7 +42329,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_WriteReplaceWarningRequestIEs = {
     asn_DEF_Ngap_WriteReplaceWarningRequestIEs_tags_273, /* Same as above */
     sizeof(asn_DEF_Ngap_WriteReplaceWarningRequestIEs_tags_273) /
         sizeof(asn_DEF_Ngap_WriteReplaceWarningRequestIEs_tags_273[0]), /* 1 */
-    {0, 0, SEQUENCE_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_constraint},
     asn_MBR_Ngap_WriteReplaceWarningRequestIEs_273,
     3,                                                    /* Elements count */
     &asn_SPC_Ngap_WriteReplaceWarningRequestIEs_specs_273 /* Additional specs */
@@ -34791,7 +42353,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_280[] = {
      0,
      &asn_DEF_Ngap_MessageIdentifier,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "MessageIdentifier"},
@@ -34804,7 +42374,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_280[] = {
      0,
      &asn_DEF_Ngap_SerialNumber,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "SerialNumber"},
@@ -34817,7 +42395,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_280[] = {
      0,
      &asn_DEF_Ngap_BroadcastCompletedAreaList,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "BroadcastCompletedAreaList"},
@@ -34830,7 +42416,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_280[] = {
      0,
      &asn_DEF_Ngap_CriticalityDiagnostics,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "CriticalityDiagnostics"},
@@ -34871,7 +42465,15 @@ static /* Use -fall-defs-global to expose */
         0, /* No effective tags (count) */
         0, /* No tags (pointer) */
         0, /* No tags (count) */
-        {0, 0, OPEN_TYPE_constraint},
+        {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+            OPEN_TYPE_constraint},
         asn_MBR_Ngap_value_280,
         4,                            /* Elements count */
         &asn_SPC_Ngap_value_specs_280 /* Additional specs */
@@ -34885,8 +42487,15 @@ asn_TYPE_member_t asn_MBR_Ngap_WriteReplaceWarningResponseIEs_277[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_ProtocolIE_ID,
      0,
-     {&asn_OER_memb_Ngap_id_constr_278, &asn_PER_memb_Ngap_id_constr_278,
-      memb_Ngap_id_constraint_277},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_id_constr_278,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_id_constr_278,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_id_constraint_277},
      0,
      0, /* No default value */
      "id"},
@@ -34897,9 +42506,15 @@ asn_TYPE_member_t asn_MBR_Ngap_WriteReplaceWarningResponseIEs_277[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_Criticality,
      select_WriteReplaceWarningResponseIEs_Ngap_criticality_type,
-     {&asn_OER_memb_Ngap_criticality_constr_279,
-      &asn_PER_memb_Ngap_criticality_constr_279,
-      memb_Ngap_criticality_constraint_277},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_criticality_constr_279,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_criticality_constr_279,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_criticality_constraint_277},
      0,
      0, /* No default value */
      "criticality"},
@@ -34910,8 +42525,15 @@ asn_TYPE_member_t asn_MBR_Ngap_WriteReplaceWarningResponseIEs_277[] = {
      +1, /* EXPLICIT tag at current level */
      &asn_DEF_Ngap_value_280,
      select_WriteReplaceWarningResponseIEs_Ngap_value_type,
-     {&asn_OER_memb_Ngap_value_constr_280, &asn_PER_memb_Ngap_value_constr_280,
-      memb_Ngap_value_constraint_277},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_value_constr_280,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_value_constr_280,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_value_constraint_277},
      0,
      0, /* No default value */
      "value"},
@@ -34946,7 +42568,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_WriteReplaceWarningResponseIEs = {
     asn_DEF_Ngap_WriteReplaceWarningResponseIEs_tags_277, /* Same as above */
     sizeof(asn_DEF_Ngap_WriteReplaceWarningResponseIEs_tags_277) /
         sizeof(asn_DEF_Ngap_WriteReplaceWarningResponseIEs_tags_277[0]), /* 1 */
-    {0, 0, SEQUENCE_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_constraint},
     asn_MBR_Ngap_WriteReplaceWarningResponseIEs_277,
     3,                                                     /* Elements count */
     &asn_SPC_Ngap_WriteReplaceWarningResponseIEs_specs_277 /* Additional specs
@@ -34961,7 +42591,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_284[] = {
      0,
      &asn_DEF_Ngap_MessageIdentifier,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "MessageIdentifier"},
@@ -34972,7 +42610,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_284[] = {
      0,
      &asn_DEF_Ngap_SerialNumber,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "SerialNumber"},
@@ -34983,7 +42629,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_284[] = {
      0,
      &asn_DEF_Ngap_WarningAreaList,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "WarningAreaList"},
@@ -34996,7 +42650,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_284[] = {
      0,
      &asn_DEF_Ngap_CancelAllWarningMessages,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "CancelAllWarningMessages"},
@@ -35033,7 +42695,15 @@ static /* Use -fall-defs-global to expose */
         0, /* No effective tags (count) */
         0, /* No tags (pointer) */
         0, /* No tags (count) */
-        {0, 0, OPEN_TYPE_constraint},
+        {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+            OPEN_TYPE_constraint},
         asn_MBR_Ngap_value_284,
         4,                            /* Elements count */
         &asn_SPC_Ngap_value_specs_284 /* Additional specs */
@@ -35047,8 +42717,15 @@ asn_TYPE_member_t asn_MBR_Ngap_PWSCancelRequestIEs_281[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_ProtocolIE_ID,
      0,
-     {&asn_OER_memb_Ngap_id_constr_282, &asn_PER_memb_Ngap_id_constr_282,
-      memb_Ngap_id_constraint_281},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_id_constr_282,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_id_constr_282,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_id_constraint_281},
      0,
      0, /* No default value */
      "id"},
@@ -35059,9 +42736,15 @@ asn_TYPE_member_t asn_MBR_Ngap_PWSCancelRequestIEs_281[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_Criticality,
      select_PWSCancelRequestIEs_Ngap_criticality_type,
-     {&asn_OER_memb_Ngap_criticality_constr_283,
-      &asn_PER_memb_Ngap_criticality_constr_283,
-      memb_Ngap_criticality_constraint_281},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_criticality_constr_283,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_criticality_constr_283,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_criticality_constraint_281},
      0,
      0, /* No default value */
      "criticality"},
@@ -35072,8 +42755,15 @@ asn_TYPE_member_t asn_MBR_Ngap_PWSCancelRequestIEs_281[] = {
      +1, /* EXPLICIT tag at current level */
      &asn_DEF_Ngap_value_284,
      select_PWSCancelRequestIEs_Ngap_value_type,
-     {&asn_OER_memb_Ngap_value_constr_284, &asn_PER_memb_Ngap_value_constr_284,
-      memb_Ngap_value_constraint_281},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_value_constr_284,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_value_constr_284,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_value_constraint_281},
      0,
      0, /* No default value */
      "value"},
@@ -35106,7 +42796,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_PWSCancelRequestIEs = {
     asn_DEF_Ngap_PWSCancelRequestIEs_tags_281, /* Same as above */
     sizeof(asn_DEF_Ngap_PWSCancelRequestIEs_tags_281) /
         sizeof(asn_DEF_Ngap_PWSCancelRequestIEs_tags_281[0]), /* 1 */
-    {0, 0, SEQUENCE_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_constraint},
     asn_MBR_Ngap_PWSCancelRequestIEs_281,
     3,                                          /* Elements count */
     &asn_SPC_Ngap_PWSCancelRequestIEs_specs_281 /* Additional specs */
@@ -35121,7 +42819,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_288[] = {
      0,
      &asn_DEF_Ngap_MessageIdentifier,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "MessageIdentifier"},
@@ -35132,7 +42838,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_288[] = {
      0,
      &asn_DEF_Ngap_SerialNumber,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "SerialNumber"},
@@ -35145,7 +42859,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_288[] = {
      0,
      &asn_DEF_Ngap_BroadcastCancelledAreaList,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "BroadcastCancelledAreaList"},
@@ -35158,7 +42880,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_288[] = {
      0,
      &asn_DEF_Ngap_CriticalityDiagnostics,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "CriticalityDiagnostics"},
@@ -35199,7 +42929,15 @@ static /* Use -fall-defs-global to expose */
         0, /* No effective tags (count) */
         0, /* No tags (pointer) */
         0, /* No tags (count) */
-        {0, 0, OPEN_TYPE_constraint},
+        {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+            OPEN_TYPE_constraint},
         asn_MBR_Ngap_value_288,
         4,                            /* Elements count */
         &asn_SPC_Ngap_value_specs_288 /* Additional specs */
@@ -35213,8 +42951,15 @@ asn_TYPE_member_t asn_MBR_Ngap_PWSCancelResponseIEs_285[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_ProtocolIE_ID,
      0,
-     {&asn_OER_memb_Ngap_id_constr_286, &asn_PER_memb_Ngap_id_constr_286,
-      memb_Ngap_id_constraint_285},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_id_constr_286,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_id_constr_286,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_id_constraint_285},
      0,
      0, /* No default value */
      "id"},
@@ -35225,9 +42970,15 @@ asn_TYPE_member_t asn_MBR_Ngap_PWSCancelResponseIEs_285[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_Criticality,
      select_PWSCancelResponseIEs_Ngap_criticality_type,
-     {&asn_OER_memb_Ngap_criticality_constr_287,
-      &asn_PER_memb_Ngap_criticality_constr_287,
-      memb_Ngap_criticality_constraint_285},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_criticality_constr_287,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_criticality_constr_287,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_criticality_constraint_285},
      0,
      0, /* No default value */
      "criticality"},
@@ -35238,8 +42989,15 @@ asn_TYPE_member_t asn_MBR_Ngap_PWSCancelResponseIEs_285[] = {
      +1, /* EXPLICIT tag at current level */
      &asn_DEF_Ngap_value_288,
      select_PWSCancelResponseIEs_Ngap_value_type,
-     {&asn_OER_memb_Ngap_value_constr_288, &asn_PER_memb_Ngap_value_constr_288,
-      memb_Ngap_value_constraint_285},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_value_constr_288,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_value_constr_288,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_value_constraint_285},
      0,
      0, /* No default value */
      "value"},
@@ -35272,7 +43030,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_PWSCancelResponseIEs = {
     asn_DEF_Ngap_PWSCancelResponseIEs_tags_285, /* Same as above */
     sizeof(asn_DEF_Ngap_PWSCancelResponseIEs_tags_285) /
         sizeof(asn_DEF_Ngap_PWSCancelResponseIEs_tags_285[0]), /* 1 */
-    {0, 0, SEQUENCE_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_constraint},
     asn_MBR_Ngap_PWSCancelResponseIEs_285,
     3,                                           /* Elements count */
     &asn_SPC_Ngap_PWSCancelResponseIEs_specs_285 /* Additional specs */
@@ -35288,7 +43054,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_292[] = {
      0,
      &asn_DEF_Ngap_CellIDListForRestart,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "CellIDListForRestart"},
@@ -35300,7 +43074,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_292[] = {
      0,
      &asn_DEF_Ngap_GlobalRANNodeID,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "GlobalRANNodeID"},
@@ -35312,7 +43094,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_292[] = {
      0,
      &asn_DEF_Ngap_TAIListForRestart,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "TAIListForRestart"},
@@ -35325,7 +43115,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_292[] = {
      0,
      &asn_DEF_Ngap_EmergencyAreaIDListForRestart,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "EmergencyAreaIDListForRestart"},
@@ -35362,7 +43160,15 @@ static /* Use -fall-defs-global to expose */
         0, /* No effective tags (count) */
         0, /* No tags (pointer) */
         0, /* No tags (count) */
-        {0, 0, OPEN_TYPE_constraint},
+        {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+            OPEN_TYPE_constraint},
         asn_MBR_Ngap_value_292,
         4,                            /* Elements count */
         &asn_SPC_Ngap_value_specs_292 /* Additional specs */
@@ -35376,8 +43182,15 @@ asn_TYPE_member_t asn_MBR_Ngap_PWSRestartIndicationIEs_289[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_ProtocolIE_ID,
      0,
-     {&asn_OER_memb_Ngap_id_constr_290, &asn_PER_memb_Ngap_id_constr_290,
-      memb_Ngap_id_constraint_289},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_id_constr_290,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_id_constr_290,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_id_constraint_289},
      0,
      0, /* No default value */
      "id"},
@@ -35388,9 +43201,15 @@ asn_TYPE_member_t asn_MBR_Ngap_PWSRestartIndicationIEs_289[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_Criticality,
      select_PWSRestartIndicationIEs_Ngap_criticality_type,
-     {&asn_OER_memb_Ngap_criticality_constr_291,
-      &asn_PER_memb_Ngap_criticality_constr_291,
-      memb_Ngap_criticality_constraint_289},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_criticality_constr_291,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_criticality_constr_291,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_criticality_constraint_289},
      0,
      0, /* No default value */
      "criticality"},
@@ -35401,8 +43220,15 @@ asn_TYPE_member_t asn_MBR_Ngap_PWSRestartIndicationIEs_289[] = {
      +1, /* EXPLICIT tag at current level */
      &asn_DEF_Ngap_value_292,
      select_PWSRestartIndicationIEs_Ngap_value_type,
-     {&asn_OER_memb_Ngap_value_constr_292, &asn_PER_memb_Ngap_value_constr_292,
-      memb_Ngap_value_constraint_289},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_value_constr_292,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_value_constr_292,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_value_constraint_289},
      0,
      0, /* No default value */
      "value"},
@@ -35435,7 +43261,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_PWSRestartIndicationIEs = {
     asn_DEF_Ngap_PWSRestartIndicationIEs_tags_289, /* Same as above */
     sizeof(asn_DEF_Ngap_PWSRestartIndicationIEs_tags_289) /
         sizeof(asn_DEF_Ngap_PWSRestartIndicationIEs_tags_289[0]), /* 1 */
-    {0, 0, SEQUENCE_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_constraint},
     asn_MBR_Ngap_PWSRestartIndicationIEs_289,
     3,                                              /* Elements count */
     &asn_SPC_Ngap_PWSRestartIndicationIEs_specs_289 /* Additional specs */
@@ -35451,7 +43285,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_296[] = {
      0,
      &asn_DEF_Ngap_PWSFailedCellIDList,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "PWSFailedCellIDList"},
@@ -35463,7 +43305,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_296[] = {
      0,
      &asn_DEF_Ngap_GlobalRANNodeID,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "GlobalRANNodeID"},
@@ -35495,7 +43345,15 @@ static /* Use -fall-defs-global to expose */
         0, /* No effective tags (count) */
         0, /* No tags (pointer) */
         0, /* No tags (count) */
-        {0, 0, OPEN_TYPE_constraint},
+        {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+            OPEN_TYPE_constraint},
         asn_MBR_Ngap_value_296,
         2,                            /* Elements count */
         &asn_SPC_Ngap_value_specs_296 /* Additional specs */
@@ -35509,8 +43367,15 @@ asn_TYPE_member_t asn_MBR_Ngap_PWSFailureIndicationIEs_293[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_ProtocolIE_ID,
      0,
-     {&asn_OER_memb_Ngap_id_constr_294, &asn_PER_memb_Ngap_id_constr_294,
-      memb_Ngap_id_constraint_293},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_id_constr_294,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_id_constr_294,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_id_constraint_293},
      0,
      0, /* No default value */
      "id"},
@@ -35521,9 +43386,15 @@ asn_TYPE_member_t asn_MBR_Ngap_PWSFailureIndicationIEs_293[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_Criticality,
      select_PWSFailureIndicationIEs_Ngap_criticality_type,
-     {&asn_OER_memb_Ngap_criticality_constr_295,
-      &asn_PER_memb_Ngap_criticality_constr_295,
-      memb_Ngap_criticality_constraint_293},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_criticality_constr_295,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_criticality_constr_295,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_criticality_constraint_293},
      0,
      0, /* No default value */
      "criticality"},
@@ -35534,8 +43405,15 @@ asn_TYPE_member_t asn_MBR_Ngap_PWSFailureIndicationIEs_293[] = {
      +1, /* EXPLICIT tag at current level */
      &asn_DEF_Ngap_value_296,
      select_PWSFailureIndicationIEs_Ngap_value_type,
-     {&asn_OER_memb_Ngap_value_constr_296, &asn_PER_memb_Ngap_value_constr_296,
-      memb_Ngap_value_constraint_293},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_value_constr_296,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_value_constr_296,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_value_constraint_293},
      0,
      0, /* No default value */
      "value"},
@@ -35568,7 +43446,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_PWSFailureIndicationIEs = {
     asn_DEF_Ngap_PWSFailureIndicationIEs_tags_293, /* Same as above */
     sizeof(asn_DEF_Ngap_PWSFailureIndicationIEs_tags_293) /
         sizeof(asn_DEF_Ngap_PWSFailureIndicationIEs_tags_293[0]), /* 1 */
-    {0, 0, SEQUENCE_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_constraint},
     asn_MBR_Ngap_PWSFailureIndicationIEs_293,
     3,                                              /* Elements count */
     &asn_SPC_Ngap_PWSFailureIndicationIEs_specs_293 /* Additional specs */
@@ -35584,7 +43470,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_300[] = {
      0,
      &asn_DEF_Ngap_AMF_UE_NGAP_ID,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "AMF-UE-NGAP-ID"},
@@ -35597,7 +43491,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_300[] = {
      0,
      &asn_DEF_Ngap_RAN_UE_NGAP_ID,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "RAN-UE-NGAP-ID"},
@@ -35610,7 +43512,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_300[] = {
      0,
      &asn_DEF_Ngap_RoutingID,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "RoutingID"},
@@ -35623,7 +43533,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_300[] = {
      0,
      &asn_DEF_Ngap_NRPPa_PDU,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "NRPPa-PDU"},
@@ -35656,7 +43574,15 @@ static /* Use -fall-defs-global to expose */
         0, /* No effective tags (count) */
         0, /* No tags (pointer) */
         0, /* No tags (count) */
-        {0, 0, OPEN_TYPE_constraint},
+        {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+            OPEN_TYPE_constraint},
         asn_MBR_Ngap_value_300,
         4,                            /* Elements count */
         &asn_SPC_Ngap_value_specs_300 /* Additional specs */
@@ -35670,8 +43596,15 @@ asn_TYPE_member_t asn_MBR_Ngap_DownlinkUEAssociatedNRPPaTransportIEs_297[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_ProtocolIE_ID,
      0,
-     {&asn_OER_memb_Ngap_id_constr_298, &asn_PER_memb_Ngap_id_constr_298,
-      memb_Ngap_id_constraint_297},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_id_constr_298,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_id_constr_298,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_id_constraint_297},
      0,
      0, /* No default value */
      "id"},
@@ -35682,9 +43615,15 @@ asn_TYPE_member_t asn_MBR_Ngap_DownlinkUEAssociatedNRPPaTransportIEs_297[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_Criticality,
      select_DownlinkUEAssociatedNRPPaTransportIEs_Ngap_criticality_type,
-     {&asn_OER_memb_Ngap_criticality_constr_299,
-      &asn_PER_memb_Ngap_criticality_constr_299,
-      memb_Ngap_criticality_constraint_297},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_criticality_constr_299,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_criticality_constr_299,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_criticality_constraint_297},
      0,
      0, /* No default value */
      "criticality"},
@@ -35695,8 +43634,15 @@ asn_TYPE_member_t asn_MBR_Ngap_DownlinkUEAssociatedNRPPaTransportIEs_297[] = {
      +1, /* EXPLICIT tag at current level */
      &asn_DEF_Ngap_value_300,
      select_DownlinkUEAssociatedNRPPaTransportIEs_Ngap_value_type,
-     {&asn_OER_memb_Ngap_value_constr_300, &asn_PER_memb_Ngap_value_constr_300,
-      memb_Ngap_value_constraint_297},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_value_constr_300,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_value_constr_300,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_value_constraint_297},
      0,
      0, /* No default value */
      "value"},
@@ -35734,7 +43680,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_DownlinkUEAssociatedNRPPaTransportIEs = {
     sizeof(asn_DEF_Ngap_DownlinkUEAssociatedNRPPaTransportIEs_tags_297) /
         sizeof(asn_DEF_Ngap_DownlinkUEAssociatedNRPPaTransportIEs_tags_297
                    [0]), /* 1 */
-    {0, 0, SEQUENCE_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_constraint},
     asn_MBR_Ngap_DownlinkUEAssociatedNRPPaTransportIEs_297,
     3, /* Elements count */
     &asn_SPC_Ngap_DownlinkUEAssociatedNRPPaTransportIEs_specs_297 /* Additional
@@ -35751,7 +43705,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_304[] = {
      0,
      &asn_DEF_Ngap_AMF_UE_NGAP_ID,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "AMF-UE-NGAP-ID"},
@@ -35764,7 +43726,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_304[] = {
      0,
      &asn_DEF_Ngap_RAN_UE_NGAP_ID,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "RAN-UE-NGAP-ID"},
@@ -35777,7 +43747,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_304[] = {
      0,
      &asn_DEF_Ngap_RoutingID,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "RoutingID"},
@@ -35790,7 +43768,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_304[] = {
      0,
      &asn_DEF_Ngap_NRPPa_PDU,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "NRPPa-PDU"},
@@ -35822,7 +43808,15 @@ static /* Use -fall-defs-global to expose */
         0, /* No effective tags (count) */
         0, /* No tags (pointer) */
         0, /* No tags (count) */
-        {0, 0, OPEN_TYPE_constraint},
+        {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+            OPEN_TYPE_constraint},
         asn_MBR_Ngap_value_304,
         4,                            /* Elements count */
         &asn_SPC_Ngap_value_specs_304 /* Additional specs */
@@ -35836,8 +43830,15 @@ asn_TYPE_member_t asn_MBR_Ngap_UplinkUEAssociatedNRPPaTransportIEs_301[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_ProtocolIE_ID,
      0,
-     {&asn_OER_memb_Ngap_id_constr_302, &asn_PER_memb_Ngap_id_constr_302,
-      memb_Ngap_id_constraint_301},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_id_constr_302,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_id_constr_302,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_id_constraint_301},
      0,
      0, /* No default value */
      "id"},
@@ -35848,9 +43849,15 @@ asn_TYPE_member_t asn_MBR_Ngap_UplinkUEAssociatedNRPPaTransportIEs_301[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_Criticality,
      select_UplinkUEAssociatedNRPPaTransportIEs_Ngap_criticality_type,
-     {&asn_OER_memb_Ngap_criticality_constr_303,
-      &asn_PER_memb_Ngap_criticality_constr_303,
-      memb_Ngap_criticality_constraint_301},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_criticality_constr_303,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_criticality_constr_303,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_criticality_constraint_301},
      0,
      0, /* No default value */
      "criticality"},
@@ -35861,8 +43868,15 @@ asn_TYPE_member_t asn_MBR_Ngap_UplinkUEAssociatedNRPPaTransportIEs_301[] = {
      +1, /* EXPLICIT tag at current level */
      &asn_DEF_Ngap_value_304,
      select_UplinkUEAssociatedNRPPaTransportIEs_Ngap_value_type,
-     {&asn_OER_memb_Ngap_value_constr_304, &asn_PER_memb_Ngap_value_constr_304,
-      memb_Ngap_value_constraint_301},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_value_constr_304,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_value_constr_304,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_value_constraint_301},
      0,
      0, /* No default value */
      "value"},
@@ -35902,7 +43916,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_UplinkUEAssociatedNRPPaTransportIEs = {
         sizeof(
             asn_DEF_Ngap_UplinkUEAssociatedNRPPaTransportIEs_tags_301[0]), /* 1
                                                                             */
-    {0, 0, SEQUENCE_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_constraint},
     asn_MBR_Ngap_UplinkUEAssociatedNRPPaTransportIEs_301,
     3, /* Elements count */
     &asn_SPC_Ngap_UplinkUEAssociatedNRPPaTransportIEs_specs_301 /* Additional
@@ -35919,7 +43941,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_308[] = {
      0,
      &asn_DEF_Ngap_RoutingID,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "RoutingID"},
@@ -35932,7 +43962,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_308[] = {
      0,
      &asn_DEF_Ngap_NRPPa_PDU,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "NRPPa-PDU"},
@@ -35964,7 +44002,15 @@ static /* Use -fall-defs-global to expose */
         0, /* No effective tags (count) */
         0, /* No tags (pointer) */
         0, /* No tags (count) */
-        {0, 0, OPEN_TYPE_constraint},
+        {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+            OPEN_TYPE_constraint},
         asn_MBR_Ngap_value_308,
         2,                            /* Elements count */
         &asn_SPC_Ngap_value_specs_308 /* Additional specs */
@@ -35979,8 +44025,15 @@ asn_TYPE_member_t asn_MBR_Ngap_DownlinkNonUEAssociatedNRPPaTransportIEs_305[] =
          -1, /* IMPLICIT tag at current level */
          &asn_DEF_Ngap_ProtocolIE_ID,
          0,
-         {&asn_OER_memb_Ngap_id_constr_306, &asn_PER_memb_Ngap_id_constr_306,
-          memb_Ngap_id_constraint_305},
+         {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+             &asn_OER_memb_Ngap_id_constr_306,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+             &asn_PER_memb_Ngap_id_constr_306,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+             memb_Ngap_id_constraint_305},
          0,
          0, /* No default value */
          "id"},
@@ -35992,9 +44045,15 @@ asn_TYPE_member_t asn_MBR_Ngap_DownlinkNonUEAssociatedNRPPaTransportIEs_305[] =
          -1, /* IMPLICIT tag at current level */
          &asn_DEF_Ngap_Criticality,
          select_DownlinkNonUEAssociatedNRPPaTransportIEs_Ngap_criticality_type,
-         {&asn_OER_memb_Ngap_criticality_constr_307,
-          &asn_PER_memb_Ngap_criticality_constr_307,
-          memb_Ngap_criticality_constraint_305},
+         {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+             &asn_OER_memb_Ngap_criticality_constr_307,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+             &asn_PER_memb_Ngap_criticality_constr_307,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+             memb_Ngap_criticality_constraint_305},
          0,
          0, /* No default value */
          "criticality"},
@@ -36005,8 +44064,15 @@ asn_TYPE_member_t asn_MBR_Ngap_DownlinkNonUEAssociatedNRPPaTransportIEs_305[] =
          +1, /* EXPLICIT tag at current level */
          &asn_DEF_Ngap_value_308,
          select_DownlinkNonUEAssociatedNRPPaTransportIEs_Ngap_value_type,
-         {&asn_OER_memb_Ngap_value_constr_308,
-          &asn_PER_memb_Ngap_value_constr_308, memb_Ngap_value_constraint_305},
+         {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+             &asn_OER_memb_Ngap_value_constr_308,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+             &asn_PER_memb_Ngap_value_constr_308,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+             memb_Ngap_value_constraint_305},
          0,
          0, /* No default value */
          "value"},
@@ -36045,7 +44111,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_DownlinkNonUEAssociatedNRPPaTransportIEs = {
     sizeof(asn_DEF_Ngap_DownlinkNonUEAssociatedNRPPaTransportIEs_tags_305) /
         sizeof(asn_DEF_Ngap_DownlinkNonUEAssociatedNRPPaTransportIEs_tags_305
                    [0]), /* 1 */
-    {0, 0, SEQUENCE_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_constraint},
     asn_MBR_Ngap_DownlinkNonUEAssociatedNRPPaTransportIEs_305,
     3, /* Elements count */
     &asn_SPC_Ngap_DownlinkNonUEAssociatedNRPPaTransportIEs_specs_305 /* Additional
@@ -36062,7 +44136,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_312[] = {
      0,
      &asn_DEF_Ngap_RoutingID,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "RoutingID"},
@@ -36075,7 +44157,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_312[] = {
      0,
      &asn_DEF_Ngap_NRPPa_PDU,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "NRPPa-PDU"},
@@ -36107,7 +44197,15 @@ static /* Use -fall-defs-global to expose */
         0, /* No effective tags (count) */
         0, /* No tags (pointer) */
         0, /* No tags (count) */
-        {0, 0, OPEN_TYPE_constraint},
+        {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+            OPEN_TYPE_constraint},
         asn_MBR_Ngap_value_312,
         2,                            /* Elements count */
         &asn_SPC_Ngap_value_specs_312 /* Additional specs */
@@ -36121,8 +44219,15 @@ asn_TYPE_member_t asn_MBR_Ngap_UplinkNonUEAssociatedNRPPaTransportIEs_309[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_ProtocolIE_ID,
      0,
-     {&asn_OER_memb_Ngap_id_constr_310, &asn_PER_memb_Ngap_id_constr_310,
-      memb_Ngap_id_constraint_309},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_id_constr_310,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_id_constr_310,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_id_constraint_309},
      0,
      0, /* No default value */
      "id"},
@@ -36133,9 +44238,15 @@ asn_TYPE_member_t asn_MBR_Ngap_UplinkNonUEAssociatedNRPPaTransportIEs_309[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_Criticality,
      select_UplinkNonUEAssociatedNRPPaTransportIEs_Ngap_criticality_type,
-     {&asn_OER_memb_Ngap_criticality_constr_311,
-      &asn_PER_memb_Ngap_criticality_constr_311,
-      memb_Ngap_criticality_constraint_309},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_criticality_constr_311,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_criticality_constr_311,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_criticality_constraint_309},
      0,
      0, /* No default value */
      "criticality"},
@@ -36146,8 +44257,15 @@ asn_TYPE_member_t asn_MBR_Ngap_UplinkNonUEAssociatedNRPPaTransportIEs_309[] = {
      +1, /* EXPLICIT tag at current level */
      &asn_DEF_Ngap_value_312,
      select_UplinkNonUEAssociatedNRPPaTransportIEs_Ngap_value_type,
-     {&asn_OER_memb_Ngap_value_constr_312, &asn_PER_memb_Ngap_value_constr_312,
-      memb_Ngap_value_constraint_309},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_value_constr_312,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_value_constr_312,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_value_constraint_309},
      0,
      0, /* No default value */
      "value"},
@@ -36185,7 +44303,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_UplinkNonUEAssociatedNRPPaTransportIEs = {
     sizeof(asn_DEF_Ngap_UplinkNonUEAssociatedNRPPaTransportIEs_tags_309) /
         sizeof(asn_DEF_Ngap_UplinkNonUEAssociatedNRPPaTransportIEs_tags_309
                    [0]), /* 1 */
-    {0, 0, SEQUENCE_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_constraint},
     asn_MBR_Ngap_UplinkNonUEAssociatedNRPPaTransportIEs_309,
     3, /* Elements count */
     &asn_SPC_Ngap_UplinkNonUEAssociatedNRPPaTransportIEs_specs_309 /* Additional
@@ -36200,7 +44326,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_316[] = {
      0,
      &asn_DEF_Ngap_AMF_UE_NGAP_ID,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "AMF-UE-NGAP-ID"},
@@ -36211,7 +44345,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_316[] = {
      0,
      &asn_DEF_Ngap_RAN_UE_NGAP_ID,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "RAN-UE-NGAP-ID"},
@@ -36222,7 +44364,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_316[] = {
      0,
      &asn_DEF_Ngap_TraceActivation,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "TraceActivation"},
@@ -36252,7 +44402,15 @@ static /* Use -fall-defs-global to expose */
         0, /* No effective tags (count) */
         0, /* No tags (pointer) */
         0, /* No tags (count) */
-        {0, 0, OPEN_TYPE_constraint},
+        {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+            OPEN_TYPE_constraint},
         asn_MBR_Ngap_value_316,
         3,                            /* Elements count */
         &asn_SPC_Ngap_value_specs_316 /* Additional specs */
@@ -36266,8 +44424,15 @@ asn_TYPE_member_t asn_MBR_Ngap_TraceStartIEs_313[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_ProtocolIE_ID,
      0,
-     {&asn_OER_memb_Ngap_id_constr_314, &asn_PER_memb_Ngap_id_constr_314,
-      memb_Ngap_id_constraint_313},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_id_constr_314,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_id_constr_314,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_id_constraint_313},
      0,
      0, /* No default value */
      "id"},
@@ -36278,9 +44443,15 @@ asn_TYPE_member_t asn_MBR_Ngap_TraceStartIEs_313[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_Criticality,
      select_TraceStartIEs_Ngap_criticality_type,
-     {&asn_OER_memb_Ngap_criticality_constr_315,
-      &asn_PER_memb_Ngap_criticality_constr_315,
-      memb_Ngap_criticality_constraint_313},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_criticality_constr_315,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_criticality_constr_315,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_criticality_constraint_313},
      0,
      0, /* No default value */
      "criticality"},
@@ -36291,8 +44462,15 @@ asn_TYPE_member_t asn_MBR_Ngap_TraceStartIEs_313[] = {
      +1, /* EXPLICIT tag at current level */
      &asn_DEF_Ngap_value_316,
      select_TraceStartIEs_Ngap_value_type,
-     {&asn_OER_memb_Ngap_value_constr_316, &asn_PER_memb_Ngap_value_constr_316,
-      memb_Ngap_value_constraint_313},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_value_constr_316,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_value_constr_316,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_value_constraint_313},
      0,
      0, /* No default value */
      "value"},
@@ -36324,7 +44502,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_TraceStartIEs = {
     asn_DEF_Ngap_TraceStartIEs_tags_313,                /* Same as above */
     sizeof(asn_DEF_Ngap_TraceStartIEs_tags_313) /
         sizeof(asn_DEF_Ngap_TraceStartIEs_tags_313[0]), /* 1 */
-    {0, 0, SEQUENCE_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_constraint},
     asn_MBR_Ngap_TraceStartIEs_313,
     3,                                    /* Elements count */
     &asn_SPC_Ngap_TraceStartIEs_specs_313 /* Additional specs */
@@ -36339,7 +44525,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_320[] = {
      0,
      &asn_DEF_Ngap_AMF_UE_NGAP_ID,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "AMF-UE-NGAP-ID"},
@@ -36351,7 +44545,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_320[] = {
      0,
      &asn_DEF_Ngap_RAN_UE_NGAP_ID,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "RAN-UE-NGAP-ID"},
@@ -36363,7 +44565,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_320[] = {
      0,
      &asn_DEF_Ngap_NGRANTraceID,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "NGRANTraceID"},
@@ -36374,7 +44584,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_320[] = {
      0,
      &asn_DEF_Ngap_Cause,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "Cause"},
@@ -36409,7 +44627,15 @@ static /* Use -fall-defs-global to expose */
         0, /* No effective tags (count) */
         0, /* No tags (pointer) */
         0, /* No tags (count) */
-        {0, 0, OPEN_TYPE_constraint},
+        {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+            OPEN_TYPE_constraint},
         asn_MBR_Ngap_value_320,
         4,                            /* Elements count */
         &asn_SPC_Ngap_value_specs_320 /* Additional specs */
@@ -36423,8 +44649,15 @@ asn_TYPE_member_t asn_MBR_Ngap_TraceFailureIndicationIEs_317[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_ProtocolIE_ID,
      0,
-     {&asn_OER_memb_Ngap_id_constr_318, &asn_PER_memb_Ngap_id_constr_318,
-      memb_Ngap_id_constraint_317},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_id_constr_318,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_id_constr_318,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_id_constraint_317},
      0,
      0, /* No default value */
      "id"},
@@ -36435,9 +44668,15 @@ asn_TYPE_member_t asn_MBR_Ngap_TraceFailureIndicationIEs_317[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_Criticality,
      select_TraceFailureIndicationIEs_Ngap_criticality_type,
-     {&asn_OER_memb_Ngap_criticality_constr_319,
-      &asn_PER_memb_Ngap_criticality_constr_319,
-      memb_Ngap_criticality_constraint_317},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_criticality_constr_319,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_criticality_constr_319,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_criticality_constraint_317},
      0,
      0, /* No default value */
      "criticality"},
@@ -36448,8 +44687,15 @@ asn_TYPE_member_t asn_MBR_Ngap_TraceFailureIndicationIEs_317[] = {
      +1, /* EXPLICIT tag at current level */
      &asn_DEF_Ngap_value_320,
      select_TraceFailureIndicationIEs_Ngap_value_type,
-     {&asn_OER_memb_Ngap_value_constr_320, &asn_PER_memb_Ngap_value_constr_320,
-      memb_Ngap_value_constraint_317},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_value_constr_320,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_value_constr_320,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_value_constraint_317},
      0,
      0, /* No default value */
      "value"},
@@ -36482,7 +44728,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_TraceFailureIndicationIEs = {
     asn_DEF_Ngap_TraceFailureIndicationIEs_tags_317, /* Same as above */
     sizeof(asn_DEF_Ngap_TraceFailureIndicationIEs_tags_317) /
         sizeof(asn_DEF_Ngap_TraceFailureIndicationIEs_tags_317[0]), /* 1 */
-    {0, 0, SEQUENCE_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_constraint},
     asn_MBR_Ngap_TraceFailureIndicationIEs_317,
     3,                                                /* Elements count */
     &asn_SPC_Ngap_TraceFailureIndicationIEs_specs_317 /* Additional specs */
@@ -36496,7 +44750,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_324[] = {
      0,
      &asn_DEF_Ngap_AMF_UE_NGAP_ID,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "AMF-UE-NGAP-ID"},
@@ -36507,7 +44769,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_324[] = {
      0,
      &asn_DEF_Ngap_RAN_UE_NGAP_ID,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "RAN-UE-NGAP-ID"},
@@ -36518,7 +44788,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_324[] = {
      0,
      &asn_DEF_Ngap_NGRANTraceID,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "NGRANTraceID"},
@@ -36548,7 +44826,15 @@ static /* Use -fall-defs-global to expose */
         0, /* No effective tags (count) */
         0, /* No tags (pointer) */
         0, /* No tags (count) */
-        {0, 0, OPEN_TYPE_constraint},
+        {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+            OPEN_TYPE_constraint},
         asn_MBR_Ngap_value_324,
         3,                            /* Elements count */
         &asn_SPC_Ngap_value_specs_324 /* Additional specs */
@@ -36562,8 +44848,15 @@ asn_TYPE_member_t asn_MBR_Ngap_DeactivateTraceIEs_321[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_ProtocolIE_ID,
      0,
-     {&asn_OER_memb_Ngap_id_constr_322, &asn_PER_memb_Ngap_id_constr_322,
-      memb_Ngap_id_constraint_321},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_id_constr_322,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_id_constr_322,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_id_constraint_321},
      0,
      0, /* No default value */
      "id"},
@@ -36574,9 +44867,15 @@ asn_TYPE_member_t asn_MBR_Ngap_DeactivateTraceIEs_321[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_Criticality,
      select_DeactivateTraceIEs_Ngap_criticality_type,
-     {&asn_OER_memb_Ngap_criticality_constr_323,
-      &asn_PER_memb_Ngap_criticality_constr_323,
-      memb_Ngap_criticality_constraint_321},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_criticality_constr_323,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_criticality_constr_323,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_criticality_constraint_321},
      0,
      0, /* No default value */
      "criticality"},
@@ -36587,8 +44886,15 @@ asn_TYPE_member_t asn_MBR_Ngap_DeactivateTraceIEs_321[] = {
      +1, /* EXPLICIT tag at current level */
      &asn_DEF_Ngap_value_324,
      select_DeactivateTraceIEs_Ngap_value_type,
-     {&asn_OER_memb_Ngap_value_constr_324, &asn_PER_memb_Ngap_value_constr_324,
-      memb_Ngap_value_constraint_321},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_value_constr_324,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_value_constr_324,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_value_constraint_321},
      0,
      0, /* No default value */
      "value"},
@@ -36621,7 +44927,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_DeactivateTraceIEs = {
     asn_DEF_Ngap_DeactivateTraceIEs_tags_321,                /* Same as above */
     sizeof(asn_DEF_Ngap_DeactivateTraceIEs_tags_321) /
         sizeof(asn_DEF_Ngap_DeactivateTraceIEs_tags_321[0]), /* 1 */
-    {0, 0, SEQUENCE_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_constraint},
     asn_MBR_Ngap_DeactivateTraceIEs_321,
     3,                                         /* Elements count */
     &asn_SPC_Ngap_DeactivateTraceIEs_specs_321 /* Additional specs */
@@ -36635,7 +44949,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_328[] = {
      0,
      &asn_DEF_Ngap_AMF_UE_NGAP_ID,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "AMF-UE-NGAP-ID"},
@@ -36646,7 +44968,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_328[] = {
      0,
      &asn_DEF_Ngap_RAN_UE_NGAP_ID,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "RAN-UE-NGAP-ID"},
@@ -36657,7 +44987,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_328[] = {
      0,
      &asn_DEF_Ngap_NGRANTraceID,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "NGRANTraceID"},
@@ -36668,7 +45006,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_328[] = {
      0,
      &asn_DEF_Ngap_NGRAN_CGI,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "NGRAN-CGI"},
@@ -36680,7 +45026,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_328[] = {
      0,
      &asn_DEF_Ngap_TransportLayerAddress,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "TransportLayerAddress"},
@@ -36691,7 +45045,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_328[] = {
      0,
      &asn_DEF_Ngap_PrivacyIndicator,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "PrivacyIndicator"},
@@ -36702,7 +45064,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_328[] = {
      0,
      &asn_DEF_Ngap_URI_address,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "URI-address"},
@@ -36741,7 +45111,15 @@ static /* Use -fall-defs-global to expose */
         0, /* No effective tags (count) */
         0, /* No tags (pointer) */
         0, /* No tags (count) */
-        {0, 0, OPEN_TYPE_constraint},
+        {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+            OPEN_TYPE_constraint},
         asn_MBR_Ngap_value_328,
         7,                            /* Elements count */
         &asn_SPC_Ngap_value_specs_328 /* Additional specs */
@@ -36755,8 +45133,15 @@ asn_TYPE_member_t asn_MBR_Ngap_CellTrafficTraceIEs_325[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_ProtocolIE_ID,
      0,
-     {&asn_OER_memb_Ngap_id_constr_326, &asn_PER_memb_Ngap_id_constr_326,
-      memb_Ngap_id_constraint_325},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_id_constr_326,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_id_constr_326,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_id_constraint_325},
      0,
      0, /* No default value */
      "id"},
@@ -36767,9 +45152,15 @@ asn_TYPE_member_t asn_MBR_Ngap_CellTrafficTraceIEs_325[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_Criticality,
      select_CellTrafficTraceIEs_Ngap_criticality_type,
-     {&asn_OER_memb_Ngap_criticality_constr_327,
-      &asn_PER_memb_Ngap_criticality_constr_327,
-      memb_Ngap_criticality_constraint_325},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_criticality_constr_327,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_criticality_constr_327,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_criticality_constraint_325},
      0,
      0, /* No default value */
      "criticality"},
@@ -36780,8 +45171,15 @@ asn_TYPE_member_t asn_MBR_Ngap_CellTrafficTraceIEs_325[] = {
      +1, /* EXPLICIT tag at current level */
      &asn_DEF_Ngap_value_328,
      select_CellTrafficTraceIEs_Ngap_value_type,
-     {&asn_OER_memb_Ngap_value_constr_328, &asn_PER_memb_Ngap_value_constr_328,
-      memb_Ngap_value_constraint_325},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_value_constr_328,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_value_constr_328,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_value_constraint_325},
      0,
      0, /* No default value */
      "value"},
@@ -36814,7 +45212,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_CellTrafficTraceIEs = {
     asn_DEF_Ngap_CellTrafficTraceIEs_tags_325, /* Same as above */
     sizeof(asn_DEF_Ngap_CellTrafficTraceIEs_tags_325) /
         sizeof(asn_DEF_Ngap_CellTrafficTraceIEs_tags_325[0]), /* 1 */
-    {0, 0, SEQUENCE_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_constraint},
     asn_MBR_Ngap_CellTrafficTraceIEs_325,
     3,                                          /* Elements count */
     &asn_SPC_Ngap_CellTrafficTraceIEs_specs_325 /* Additional specs */
@@ -36829,7 +45235,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_332[] = {
      0,
      &asn_DEF_Ngap_AMF_UE_NGAP_ID,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "AMF-UE-NGAP-ID"},
@@ -36841,7 +45255,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_332[] = {
      0,
      &asn_DEF_Ngap_RAN_UE_NGAP_ID,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "RAN-UE-NGAP-ID"},
@@ -36854,7 +45276,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_332[] = {
      0,
      &asn_DEF_Ngap_LocationReportingRequestType,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "LocationReportingRequestType"},
@@ -36885,7 +45315,15 @@ static /* Use -fall-defs-global to expose */
         0, /* No effective tags (count) */
         0, /* No tags (pointer) */
         0, /* No tags (count) */
-        {0, 0, OPEN_TYPE_constraint},
+        {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+            OPEN_TYPE_constraint},
         asn_MBR_Ngap_value_332,
         3,                            /* Elements count */
         &asn_SPC_Ngap_value_specs_332 /* Additional specs */
@@ -36899,8 +45337,15 @@ asn_TYPE_member_t asn_MBR_Ngap_LocationReportingControlIEs_329[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_ProtocolIE_ID,
      0,
-     {&asn_OER_memb_Ngap_id_constr_330, &asn_PER_memb_Ngap_id_constr_330,
-      memb_Ngap_id_constraint_329},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_id_constr_330,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_id_constr_330,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_id_constraint_329},
      0,
      0, /* No default value */
      "id"},
@@ -36911,9 +45356,15 @@ asn_TYPE_member_t asn_MBR_Ngap_LocationReportingControlIEs_329[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_Criticality,
      select_LocationReportingControlIEs_Ngap_criticality_type,
-     {&asn_OER_memb_Ngap_criticality_constr_331,
-      &asn_PER_memb_Ngap_criticality_constr_331,
-      memb_Ngap_criticality_constraint_329},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_criticality_constr_331,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_criticality_constr_331,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_criticality_constraint_329},
      0,
      0, /* No default value */
      "criticality"},
@@ -36924,8 +45375,15 @@ asn_TYPE_member_t asn_MBR_Ngap_LocationReportingControlIEs_329[] = {
      +1, /* EXPLICIT tag at current level */
      &asn_DEF_Ngap_value_332,
      select_LocationReportingControlIEs_Ngap_value_type,
-     {&asn_OER_memb_Ngap_value_constr_332, &asn_PER_memb_Ngap_value_constr_332,
-      memb_Ngap_value_constraint_329},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_value_constr_332,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_value_constr_332,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_value_constraint_329},
      0,
      0, /* No default value */
      "value"},
@@ -36958,7 +45416,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_LocationReportingControlIEs = {
     asn_DEF_Ngap_LocationReportingControlIEs_tags_329, /* Same as above */
     sizeof(asn_DEF_Ngap_LocationReportingControlIEs_tags_329) /
         sizeof(asn_DEF_Ngap_LocationReportingControlIEs_tags_329[0]), /* 1 */
-    {0, 0, SEQUENCE_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_constraint},
     asn_MBR_Ngap_LocationReportingControlIEs_329,
     3,                                                  /* Elements count */
     &asn_SPC_Ngap_LocationReportingControlIEs_specs_329 /* Additional specs */
@@ -36974,7 +45440,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_336[] = {
      0,
      &asn_DEF_Ngap_AMF_UE_NGAP_ID,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "AMF-UE-NGAP-ID"},
@@ -36987,7 +45461,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_336[] = {
      0,
      &asn_DEF_Ngap_RAN_UE_NGAP_ID,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "RAN-UE-NGAP-ID"},
@@ -37000,7 +45482,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_336[] = {
      0,
      &asn_DEF_Ngap_Cause,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "Cause"},
@@ -37036,7 +45526,15 @@ static /* Use -fall-defs-global to expose */
         0, /* No effective tags (count) */
         0, /* No tags (pointer) */
         0, /* No tags (count) */
-        {0, 0, OPEN_TYPE_constraint},
+        {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+            OPEN_TYPE_constraint},
         asn_MBR_Ngap_value_336,
         3,                            /* Elements count */
         &asn_SPC_Ngap_value_specs_336 /* Additional specs */
@@ -37050,8 +45548,15 @@ asn_TYPE_member_t asn_MBR_Ngap_LocationReportingFailureIndicationIEs_333[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_ProtocolIE_ID,
      0,
-     {&asn_OER_memb_Ngap_id_constr_334, &asn_PER_memb_Ngap_id_constr_334,
-      memb_Ngap_id_constraint_333},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_id_constr_334,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_id_constr_334,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_id_constraint_333},
      0,
      0, /* No default value */
      "id"},
@@ -37062,9 +45567,15 @@ asn_TYPE_member_t asn_MBR_Ngap_LocationReportingFailureIndicationIEs_333[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_Criticality,
      select_LocationReportingFailureIndicationIEs_Ngap_criticality_type,
-     {&asn_OER_memb_Ngap_criticality_constr_335,
-      &asn_PER_memb_Ngap_criticality_constr_335,
-      memb_Ngap_criticality_constraint_333},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_criticality_constr_335,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_criticality_constr_335,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_criticality_constraint_333},
      0,
      0, /* No default value */
      "criticality"},
@@ -37075,8 +45586,15 @@ asn_TYPE_member_t asn_MBR_Ngap_LocationReportingFailureIndicationIEs_333[] = {
      +1, /* EXPLICIT tag at current level */
      &asn_DEF_Ngap_value_336,
      select_LocationReportingFailureIndicationIEs_Ngap_value_type,
-     {&asn_OER_memb_Ngap_value_constr_336, &asn_PER_memb_Ngap_value_constr_336,
-      memb_Ngap_value_constraint_333},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_value_constr_336,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_value_constr_336,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_value_constraint_333},
      0,
      0, /* No default value */
      "value"},
@@ -37114,7 +45632,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_LocationReportingFailureIndicationIEs = {
     sizeof(asn_DEF_Ngap_LocationReportingFailureIndicationIEs_tags_333) /
         sizeof(asn_DEF_Ngap_LocationReportingFailureIndicationIEs_tags_333
                    [0]), /* 1 */
-    {0, 0, SEQUENCE_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_constraint},
     asn_MBR_Ngap_LocationReportingFailureIndicationIEs_333,
     3, /* Elements count */
     &asn_SPC_Ngap_LocationReportingFailureIndicationIEs_specs_333 /* Additional
@@ -37129,7 +45655,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_340[] = {
      0,
      &asn_DEF_Ngap_AMF_UE_NGAP_ID,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "AMF-UE-NGAP-ID"},
@@ -37140,7 +45674,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_340[] = {
      0,
      &asn_DEF_Ngap_RAN_UE_NGAP_ID,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "RAN-UE-NGAP-ID"},
@@ -37152,7 +45694,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_340[] = {
      0,
      &asn_DEF_Ngap_UserLocationInformation,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "UserLocationInformation"},
@@ -37165,7 +45715,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_340[] = {
      0,
      &asn_DEF_Ngap_UEPresenceInAreaOfInterestList,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "UEPresenceInAreaOfInterestList"},
@@ -37178,7 +45736,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_340[] = {
      0,
      &asn_DEF_Ngap_LocationReportingRequestType,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "LocationReportingRequestType"},
@@ -37219,7 +45785,15 @@ static /* Use -fall-defs-global to expose */
         0, /* No effective tags (count) */
         0, /* No tags (pointer) */
         0, /* No tags (count) */
-        {0, 0, OPEN_TYPE_constraint},
+        {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+            OPEN_TYPE_constraint},
         asn_MBR_Ngap_value_340,
         5,                            /* Elements count */
         &asn_SPC_Ngap_value_specs_340 /* Additional specs */
@@ -37233,8 +45807,15 @@ asn_TYPE_member_t asn_MBR_Ngap_LocationReportIEs_337[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_ProtocolIE_ID,
      0,
-     {&asn_OER_memb_Ngap_id_constr_338, &asn_PER_memb_Ngap_id_constr_338,
-      memb_Ngap_id_constraint_337},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_id_constr_338,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_id_constr_338,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_id_constraint_337},
      0,
      0, /* No default value */
      "id"},
@@ -37245,9 +45826,15 @@ asn_TYPE_member_t asn_MBR_Ngap_LocationReportIEs_337[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_Criticality,
      select_LocationReportIEs_Ngap_criticality_type,
-     {&asn_OER_memb_Ngap_criticality_constr_339,
-      &asn_PER_memb_Ngap_criticality_constr_339,
-      memb_Ngap_criticality_constraint_337},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_criticality_constr_339,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_criticality_constr_339,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_criticality_constraint_337},
      0,
      0, /* No default value */
      "criticality"},
@@ -37258,8 +45845,15 @@ asn_TYPE_member_t asn_MBR_Ngap_LocationReportIEs_337[] = {
      +1, /* EXPLICIT tag at current level */
      &asn_DEF_Ngap_value_340,
      select_LocationReportIEs_Ngap_value_type,
-     {&asn_OER_memb_Ngap_value_constr_340, &asn_PER_memb_Ngap_value_constr_340,
-      memb_Ngap_value_constraint_337},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_value_constr_340,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_value_constr_340,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_value_constraint_337},
      0,
      0, /* No default value */
      "value"},
@@ -37292,7 +45886,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_LocationReportIEs = {
     asn_DEF_Ngap_LocationReportIEs_tags_337,                /* Same as above */
     sizeof(asn_DEF_Ngap_LocationReportIEs_tags_337) /
         sizeof(asn_DEF_Ngap_LocationReportIEs_tags_337[0]), /* 1 */
-    {0, 0, SEQUENCE_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_constraint},
     asn_MBR_Ngap_LocationReportIEs_337,
     3,                                        /* Elements count */
     &asn_SPC_Ngap_LocationReportIEs_specs_337 /* Additional specs */
@@ -37308,7 +45910,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_344[] = {
      0,
      &asn_DEF_Ngap_AMF_UE_NGAP_ID,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "AMF-UE-NGAP-ID"},
@@ -37321,7 +45931,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_344[] = {
      0,
      &asn_DEF_Ngap_RAN_UE_NGAP_ID,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "RAN-UE-NGAP-ID"},
@@ -37350,7 +45968,15 @@ static /* Use -fall-defs-global to expose */
         0, /* No effective tags (count) */
         0, /* No tags (pointer) */
         0, /* No tags (count) */
-        {0, 0, OPEN_TYPE_constraint},
+        {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+            OPEN_TYPE_constraint},
         asn_MBR_Ngap_value_344,
         2,                            /* Elements count */
         &asn_SPC_Ngap_value_specs_344 /* Additional specs */
@@ -37364,8 +45990,15 @@ asn_TYPE_member_t asn_MBR_Ngap_UETNLABindingReleaseRequestIEs_341[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_ProtocolIE_ID,
      0,
-     {&asn_OER_memb_Ngap_id_constr_342, &asn_PER_memb_Ngap_id_constr_342,
-      memb_Ngap_id_constraint_341},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_id_constr_342,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_id_constr_342,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_id_constraint_341},
      0,
      0, /* No default value */
      "id"},
@@ -37376,9 +46009,15 @@ asn_TYPE_member_t asn_MBR_Ngap_UETNLABindingReleaseRequestIEs_341[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_Criticality,
      select_UETNLABindingReleaseRequestIEs_Ngap_criticality_type,
-     {&asn_OER_memb_Ngap_criticality_constr_343,
-      &asn_PER_memb_Ngap_criticality_constr_343,
-      memb_Ngap_criticality_constraint_341},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_criticality_constr_343,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_criticality_constr_343,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_criticality_constraint_341},
      0,
      0, /* No default value */
      "criticality"},
@@ -37389,8 +46028,15 @@ asn_TYPE_member_t asn_MBR_Ngap_UETNLABindingReleaseRequestIEs_341[] = {
      +1, /* EXPLICIT tag at current level */
      &asn_DEF_Ngap_value_344,
      select_UETNLABindingReleaseRequestIEs_Ngap_value_type,
-     {&asn_OER_memb_Ngap_value_constr_344, &asn_PER_memb_Ngap_value_constr_344,
-      memb_Ngap_value_constraint_341},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_value_constr_344,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_value_constr_344,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_value_constraint_341},
      0,
      0, /* No default value */
      "value"},
@@ -37425,7 +46071,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_UETNLABindingReleaseRequestIEs = {
     asn_DEF_Ngap_UETNLABindingReleaseRequestIEs_tags_341, /* Same as above */
     sizeof(asn_DEF_Ngap_UETNLABindingReleaseRequestIEs_tags_341) /
         sizeof(asn_DEF_Ngap_UETNLABindingReleaseRequestIEs_tags_341[0]), /* 1 */
-    {0, 0, SEQUENCE_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_constraint},
     asn_MBR_Ngap_UETNLABindingReleaseRequestIEs_341,
     3,                                                     /* Elements count */
     &asn_SPC_Ngap_UETNLABindingReleaseRequestIEs_specs_341 /* Additional specs
@@ -37442,7 +46096,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_348[] = {
      0,
      &asn_DEF_Ngap_AMF_UE_NGAP_ID,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "AMF-UE-NGAP-ID"},
@@ -37455,7 +46117,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_348[] = {
      0,
      &asn_DEF_Ngap_RAN_UE_NGAP_ID,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "RAN-UE-NGAP-ID"},
@@ -37468,7 +46138,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_348[] = {
      0,
      &asn_DEF_Ngap_UERadioCapability,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "UERadioCapability"},
@@ -37481,7 +46159,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_348[] = {
      0,
      &asn_DEF_Ngap_UERadioCapabilityForPaging,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "UERadioCapabilityForPaging"},
@@ -37494,7 +46180,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_348[] = {
      0,
      &asn_DEF_Ngap_UERadioCapability,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "UERadioCapability"},
@@ -37530,7 +46224,15 @@ static /* Use -fall-defs-global to expose */
         0, /* No effective tags (count) */
         0, /* No tags (pointer) */
         0, /* No tags (count) */
-        {0, 0, OPEN_TYPE_constraint},
+        {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+            OPEN_TYPE_constraint},
         asn_MBR_Ngap_value_348,
         5,                            /* Elements count */
         &asn_SPC_Ngap_value_specs_348 /* Additional specs */
@@ -37544,8 +46246,15 @@ asn_TYPE_member_t asn_MBR_Ngap_UERadioCapabilityInfoIndicationIEs_345[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_ProtocolIE_ID,
      0,
-     {&asn_OER_memb_Ngap_id_constr_346, &asn_PER_memb_Ngap_id_constr_346,
-      memb_Ngap_id_constraint_345},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_id_constr_346,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_id_constr_346,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_id_constraint_345},
      0,
      0, /* No default value */
      "id"},
@@ -37556,9 +46265,15 @@ asn_TYPE_member_t asn_MBR_Ngap_UERadioCapabilityInfoIndicationIEs_345[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_Criticality,
      select_UERadioCapabilityInfoIndicationIEs_Ngap_criticality_type,
-     {&asn_OER_memb_Ngap_criticality_constr_347,
-      &asn_PER_memb_Ngap_criticality_constr_347,
-      memb_Ngap_criticality_constraint_345},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_criticality_constr_347,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_criticality_constr_347,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_criticality_constraint_345},
      0,
      0, /* No default value */
      "criticality"},
@@ -37569,8 +46284,15 @@ asn_TYPE_member_t asn_MBR_Ngap_UERadioCapabilityInfoIndicationIEs_345[] = {
      +1, /* EXPLICIT tag at current level */
      &asn_DEF_Ngap_value_348,
      select_UERadioCapabilityInfoIndicationIEs_Ngap_value_type,
-     {&asn_OER_memb_Ngap_value_constr_348, &asn_PER_memb_Ngap_value_constr_348,
-      memb_Ngap_value_constraint_345},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_value_constr_348,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_value_constr_348,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_value_constraint_345},
      0,
      0, /* No default value */
      "value"},
@@ -37610,7 +46332,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_UERadioCapabilityInfoIndicationIEs = {
         sizeof(
             asn_DEF_Ngap_UERadioCapabilityInfoIndicationIEs_tags_345[0]), /* 1
                                                                            */
-    {0, 0, SEQUENCE_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_constraint},
     asn_MBR_Ngap_UERadioCapabilityInfoIndicationIEs_345,
     3, /* Elements count */
     &asn_SPC_Ngap_UERadioCapabilityInfoIndicationIEs_specs_345 /* Additional
@@ -37627,7 +46357,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_352[] = {
      0,
      &asn_DEF_Ngap_AMF_UE_NGAP_ID,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "AMF-UE-NGAP-ID"},
@@ -37640,7 +46378,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_352[] = {
      0,
      &asn_DEF_Ngap_RAN_UE_NGAP_ID,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "RAN-UE-NGAP-ID"},
@@ -37653,7 +46399,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_352[] = {
      0,
      &asn_DEF_Ngap_UERadioCapability,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "UERadioCapability"},
@@ -37666,7 +46420,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_352[] = {
      0,
      &asn_DEF_Ngap_UERadioCapabilityID,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "UERadioCapabilityID"},
@@ -37697,7 +46459,15 @@ static /* Use -fall-defs-global to expose */
         0, /* No effective tags (count) */
         0, /* No tags (pointer) */
         0, /* No tags (count) */
-        {0, 0, OPEN_TYPE_constraint},
+        {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+            OPEN_TYPE_constraint},
         asn_MBR_Ngap_value_352,
         4,                            /* Elements count */
         &asn_SPC_Ngap_value_specs_352 /* Additional specs */
@@ -37711,8 +46481,15 @@ asn_TYPE_member_t asn_MBR_Ngap_UERadioCapabilityCheckRequestIEs_349[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_ProtocolIE_ID,
      0,
-     {&asn_OER_memb_Ngap_id_constr_350, &asn_PER_memb_Ngap_id_constr_350,
-      memb_Ngap_id_constraint_349},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_id_constr_350,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_id_constr_350,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_id_constraint_349},
      0,
      0, /* No default value */
      "id"},
@@ -37723,9 +46500,15 @@ asn_TYPE_member_t asn_MBR_Ngap_UERadioCapabilityCheckRequestIEs_349[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_Criticality,
      select_UERadioCapabilityCheckRequestIEs_Ngap_criticality_type,
-     {&asn_OER_memb_Ngap_criticality_constr_351,
-      &asn_PER_memb_Ngap_criticality_constr_351,
-      memb_Ngap_criticality_constraint_349},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_criticality_constr_351,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_criticality_constr_351,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_criticality_constraint_349},
      0,
      0, /* No default value */
      "criticality"},
@@ -37736,8 +46519,15 @@ asn_TYPE_member_t asn_MBR_Ngap_UERadioCapabilityCheckRequestIEs_349[] = {
      +1, /* EXPLICIT tag at current level */
      &asn_DEF_Ngap_value_352,
      select_UERadioCapabilityCheckRequestIEs_Ngap_value_type,
-     {&asn_OER_memb_Ngap_value_constr_352, &asn_PER_memb_Ngap_value_constr_352,
-      memb_Ngap_value_constraint_349},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_value_constr_352,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_value_constr_352,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_value_constraint_349},
      0,
      0, /* No default value */
      "value"},
@@ -37774,7 +46564,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_UERadioCapabilityCheckRequestIEs = {
     sizeof(asn_DEF_Ngap_UERadioCapabilityCheckRequestIEs_tags_349) /
         sizeof(
             asn_DEF_Ngap_UERadioCapabilityCheckRequestIEs_tags_349[0]), /* 1 */
-    {0, 0, SEQUENCE_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_constraint},
     asn_MBR_Ngap_UERadioCapabilityCheckRequestIEs_349,
     3, /* Elements count */
     &asn_SPC_Ngap_UERadioCapabilityCheckRequestIEs_specs_349 /* Additional specs
@@ -37791,7 +46589,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_356[] = {
      0,
      &asn_DEF_Ngap_AMF_UE_NGAP_ID,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "AMF-UE-NGAP-ID"},
@@ -37804,7 +46610,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_356[] = {
      0,
      &asn_DEF_Ngap_RAN_UE_NGAP_ID,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "RAN-UE-NGAP-ID"},
@@ -37817,7 +46631,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_356[] = {
      0,
      &asn_DEF_Ngap_IMSVoiceSupportIndicator,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "IMSVoiceSupportIndicator"},
@@ -37830,7 +46652,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_356[] = {
      0,
      &asn_DEF_Ngap_CriticalityDiagnostics,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "CriticalityDiagnostics"},
@@ -37864,7 +46694,15 @@ static /* Use -fall-defs-global to expose */
         0, /* No effective tags (count) */
         0, /* No tags (pointer) */
         0, /* No tags (count) */
-        {0, 0, OPEN_TYPE_constraint},
+        {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+            OPEN_TYPE_constraint},
         asn_MBR_Ngap_value_356,
         4,                            /* Elements count */
         &asn_SPC_Ngap_value_specs_356 /* Additional specs */
@@ -37878,8 +46716,15 @@ asn_TYPE_member_t asn_MBR_Ngap_UERadioCapabilityCheckResponseIEs_353[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_ProtocolIE_ID,
      0,
-     {&asn_OER_memb_Ngap_id_constr_354, &asn_PER_memb_Ngap_id_constr_354,
-      memb_Ngap_id_constraint_353},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_id_constr_354,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_id_constr_354,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_id_constraint_353},
      0,
      0, /* No default value */
      "id"},
@@ -37890,9 +46735,15 @@ asn_TYPE_member_t asn_MBR_Ngap_UERadioCapabilityCheckResponseIEs_353[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_Criticality,
      select_UERadioCapabilityCheckResponseIEs_Ngap_criticality_type,
-     {&asn_OER_memb_Ngap_criticality_constr_355,
-      &asn_PER_memb_Ngap_criticality_constr_355,
-      memb_Ngap_criticality_constraint_353},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_criticality_constr_355,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_criticality_constr_355,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_criticality_constraint_353},
      0,
      0, /* No default value */
      "criticality"},
@@ -37903,8 +46754,15 @@ asn_TYPE_member_t asn_MBR_Ngap_UERadioCapabilityCheckResponseIEs_353[] = {
      +1, /* EXPLICIT tag at current level */
      &asn_DEF_Ngap_value_356,
      select_UERadioCapabilityCheckResponseIEs_Ngap_value_type,
-     {&asn_OER_memb_Ngap_value_constr_356, &asn_PER_memb_Ngap_value_constr_356,
-      memb_Ngap_value_constraint_353},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_value_constr_356,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_value_constr_356,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_value_constraint_353},
      0,
      0, /* No default value */
      "value"},
@@ -37941,7 +46799,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_UERadioCapabilityCheckResponseIEs = {
     sizeof(asn_DEF_Ngap_UERadioCapabilityCheckResponseIEs_tags_353) /
         sizeof(
             asn_DEF_Ngap_UERadioCapabilityCheckResponseIEs_tags_353[0]), /* 1 */
-    {0, 0, SEQUENCE_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_constraint},
     asn_MBR_Ngap_UERadioCapabilityCheckResponseIEs_353,
     3, /* Elements count */
     &asn_SPC_Ngap_UERadioCapabilityCheckResponseIEs_specs_353 /* Additional
@@ -37958,7 +46824,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_360[] = {
      0,
      &asn_DEF_Ngap_AMF_UE_NGAP_ID,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "AMF-UE-NGAP-ID"},
@@ -37971,7 +46845,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_360[] = {
      0,
      &asn_DEF_Ngap_RAN_UE_NGAP_ID,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "RAN-UE-NGAP-ID"},
@@ -37984,7 +46866,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_360[] = {
      0,
      &asn_DEF_Ngap_PDUSessionResourceSecondaryRATUsageList,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "PDUSessionResourceSecondaryRATUsageList"},
@@ -37997,7 +46887,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_360[] = {
      0,
      &asn_DEF_Ngap_HandoverFlag,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "HandoverFlag"},
@@ -38010,7 +46908,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_360[] = {
      0,
      &asn_DEF_Ngap_UserLocationInformation,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "UserLocationInformation"},
@@ -38050,7 +46956,15 @@ static /* Use -fall-defs-global to expose */
         0, /* No effective tags (count) */
         0, /* No tags (pointer) */
         0, /* No tags (count) */
-        {0, 0, OPEN_TYPE_constraint},
+        {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+            OPEN_TYPE_constraint},
         asn_MBR_Ngap_value_360,
         5,                            /* Elements count */
         &asn_SPC_Ngap_value_specs_360 /* Additional specs */
@@ -38064,8 +46978,15 @@ asn_TYPE_member_t asn_MBR_Ngap_SecondaryRATDataUsageReportIEs_357[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_ProtocolIE_ID,
      0,
-     {&asn_OER_memb_Ngap_id_constr_358, &asn_PER_memb_Ngap_id_constr_358,
-      memb_Ngap_id_constraint_357},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_id_constr_358,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_id_constr_358,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_id_constraint_357},
      0,
      0, /* No default value */
      "id"},
@@ -38076,9 +46997,15 @@ asn_TYPE_member_t asn_MBR_Ngap_SecondaryRATDataUsageReportIEs_357[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_Criticality,
      select_SecondaryRATDataUsageReportIEs_Ngap_criticality_type,
-     {&asn_OER_memb_Ngap_criticality_constr_359,
-      &asn_PER_memb_Ngap_criticality_constr_359,
-      memb_Ngap_criticality_constraint_357},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_criticality_constr_359,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_criticality_constr_359,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_criticality_constraint_357},
      0,
      0, /* No default value */
      "criticality"},
@@ -38089,8 +47016,15 @@ asn_TYPE_member_t asn_MBR_Ngap_SecondaryRATDataUsageReportIEs_357[] = {
      +1, /* EXPLICIT tag at current level */
      &asn_DEF_Ngap_value_360,
      select_SecondaryRATDataUsageReportIEs_Ngap_value_type,
-     {&asn_OER_memb_Ngap_value_constr_360, &asn_PER_memb_Ngap_value_constr_360,
-      memb_Ngap_value_constraint_357},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_value_constr_360,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_value_constr_360,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_value_constraint_357},
      0,
      0, /* No default value */
      "value"},
@@ -38125,7 +47059,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_SecondaryRATDataUsageReportIEs = {
     asn_DEF_Ngap_SecondaryRATDataUsageReportIEs_tags_357, /* Same as above */
     sizeof(asn_DEF_Ngap_SecondaryRATDataUsageReportIEs_tags_357) /
         sizeof(asn_DEF_Ngap_SecondaryRATDataUsageReportIEs_tags_357[0]), /* 1 */
-    {0, 0, SEQUENCE_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_constraint},
     asn_MBR_Ngap_SecondaryRATDataUsageReportIEs_357,
     3,                                                     /* Elements count */
     &asn_SPC_Ngap_SecondaryRATDataUsageReportIEs_specs_357 /* Additional specs
@@ -38142,7 +47084,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_364[] = {
      0,
      &asn_DEF_Ngap_RIMInformationTransfer,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "RIMInformationTransfer"},
@@ -38171,7 +47121,15 @@ static /* Use -fall-defs-global to expose */
         0, /* No effective tags (count) */
         0, /* No tags (pointer) */
         0, /* No tags (count) */
-        {0, 0, OPEN_TYPE_constraint},
+        {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+            OPEN_TYPE_constraint},
         asn_MBR_Ngap_value_364,
         1,                            /* Elements count */
         &asn_SPC_Ngap_value_specs_364 /* Additional specs */
@@ -38185,8 +47143,15 @@ asn_TYPE_member_t asn_MBR_Ngap_UplinkRIMInformationTransferIEs_361[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_ProtocolIE_ID,
      0,
-     {&asn_OER_memb_Ngap_id_constr_362, &asn_PER_memb_Ngap_id_constr_362,
-      memb_Ngap_id_constraint_361},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_id_constr_362,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_id_constr_362,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_id_constraint_361},
      0,
      0, /* No default value */
      "id"},
@@ -38197,9 +47162,15 @@ asn_TYPE_member_t asn_MBR_Ngap_UplinkRIMInformationTransferIEs_361[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_Criticality,
      select_UplinkRIMInformationTransferIEs_Ngap_criticality_type,
-     {&asn_OER_memb_Ngap_criticality_constr_363,
-      &asn_PER_memb_Ngap_criticality_constr_363,
-      memb_Ngap_criticality_constraint_361},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_criticality_constr_363,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_criticality_constr_363,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_criticality_constraint_361},
      0,
      0, /* No default value */
      "criticality"},
@@ -38210,8 +47181,15 @@ asn_TYPE_member_t asn_MBR_Ngap_UplinkRIMInformationTransferIEs_361[] = {
      +1, /* EXPLICIT tag at current level */
      &asn_DEF_Ngap_value_364,
      select_UplinkRIMInformationTransferIEs_Ngap_value_type,
-     {&asn_OER_memb_Ngap_value_constr_364, &asn_PER_memb_Ngap_value_constr_364,
-      memb_Ngap_value_constraint_361},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_value_constr_364,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_value_constr_364,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_value_constraint_361},
      0,
      0, /* No default value */
      "value"},
@@ -38248,7 +47226,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_UplinkRIMInformationTransferIEs = {
     sizeof(asn_DEF_Ngap_UplinkRIMInformationTransferIEs_tags_361) /
         sizeof(
             asn_DEF_Ngap_UplinkRIMInformationTransferIEs_tags_361[0]), /* 1 */
-    {0, 0, SEQUENCE_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_constraint},
     asn_MBR_Ngap_UplinkRIMInformationTransferIEs_361,
     3,                                                      /* Elements count */
     &asn_SPC_Ngap_UplinkRIMInformationTransferIEs_specs_361 /* Additional specs
@@ -38265,7 +47251,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_368[] = {
      0,
      &asn_DEF_Ngap_RIMInformationTransfer,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "RIMInformationTransfer"},
@@ -38295,7 +47289,15 @@ static /* Use -fall-defs-global to expose */
         0, /* No effective tags (count) */
         0, /* No tags (pointer) */
         0, /* No tags (count) */
-        {0, 0, OPEN_TYPE_constraint},
+        {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+            OPEN_TYPE_constraint},
         asn_MBR_Ngap_value_368,
         1,                            /* Elements count */
         &asn_SPC_Ngap_value_specs_368 /* Additional specs */
@@ -38309,8 +47311,15 @@ asn_TYPE_member_t asn_MBR_Ngap_DownlinkRIMInformationTransferIEs_365[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_ProtocolIE_ID,
      0,
-     {&asn_OER_memb_Ngap_id_constr_366, &asn_PER_memb_Ngap_id_constr_366,
-      memb_Ngap_id_constraint_365},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_id_constr_366,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_id_constr_366,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_id_constraint_365},
      0,
      0, /* No default value */
      "id"},
@@ -38321,9 +47330,15 @@ asn_TYPE_member_t asn_MBR_Ngap_DownlinkRIMInformationTransferIEs_365[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_Criticality,
      select_DownlinkRIMInformationTransferIEs_Ngap_criticality_type,
-     {&asn_OER_memb_Ngap_criticality_constr_367,
-      &asn_PER_memb_Ngap_criticality_constr_367,
-      memb_Ngap_criticality_constraint_365},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_criticality_constr_367,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_criticality_constr_367,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_criticality_constraint_365},
      0,
      0, /* No default value */
      "criticality"},
@@ -38334,8 +47349,15 @@ asn_TYPE_member_t asn_MBR_Ngap_DownlinkRIMInformationTransferIEs_365[] = {
      +1, /* EXPLICIT tag at current level */
      &asn_DEF_Ngap_value_368,
      select_DownlinkRIMInformationTransferIEs_Ngap_value_type,
-     {&asn_OER_memb_Ngap_value_constr_368, &asn_PER_memb_Ngap_value_constr_368,
-      memb_Ngap_value_constraint_365},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_value_constr_368,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_value_constr_368,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_value_constraint_365},
      0,
      0, /* No default value */
      "value"},
@@ -38372,7 +47394,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_DownlinkRIMInformationTransferIEs = {
     sizeof(asn_DEF_Ngap_DownlinkRIMInformationTransferIEs_tags_365) /
         sizeof(
             asn_DEF_Ngap_DownlinkRIMInformationTransferIEs_tags_365[0]), /* 1 */
-    {0, 0, SEQUENCE_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_constraint},
     asn_MBR_Ngap_DownlinkRIMInformationTransferIEs_365,
     3, /* Elements count */
     &asn_SPC_Ngap_DownlinkRIMInformationTransferIEs_specs_365 /* Additional
@@ -38389,7 +47419,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_372[] = {
      0,
      &asn_DEF_Ngap_AMF_UE_NGAP_ID,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "AMF-UE-NGAP-ID"},
@@ -38402,7 +47440,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_372[] = {
      0,
      &asn_DEF_Ngap_RAN_UE_NGAP_ID,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "RAN-UE-NGAP-ID"},
@@ -38415,7 +47461,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_372[] = {
      0,
      &asn_DEF_Ngap_UERadioCapability,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "UERadioCapability"},
@@ -38428,7 +47482,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_372[] = {
      0,
      &asn_DEF_Ngap_EndIndication,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "EndIndication"},
@@ -38441,7 +47503,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_372[] = {
      0,
      &asn_DEF_Ngap_S_NSSAI,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "S-NSSAI"},
@@ -38454,7 +47524,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_372[] = {
      0,
      &asn_DEF_Ngap_AllowedNSSAI,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "AllowedNSSAI"},
@@ -38467,7 +47545,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_372[] = {
      0,
      &asn_DEF_Ngap_UE_DifferentiationInfo,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "UE-DifferentiationInfo"},
@@ -38480,7 +47566,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_372[] = {
      0,
      &asn_DEF_Ngap_DL_CP_SecurityInformation,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "DL-CP-SecurityInformation"},
@@ -38493,7 +47587,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_372[] = {
      0,
      &asn_DEF_Ngap_NB_IoT_UEPriority,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "NB-IoT-UEPriority"},
@@ -38506,7 +47608,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_372[] = {
      0,
      &asn_DEF_Ngap_Enhanced_CoverageRestriction,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "Enhanced-CoverageRestriction"},
@@ -38519,7 +47629,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_372[] = {
      0,
      &asn_DEF_Ngap_CEmodeBrestricted,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "CEmodeBrestricted"},
@@ -38532,7 +47650,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_372[] = {
      0,
      &asn_DEF_Ngap_UERadioCapabilityID,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "UERadioCapabilityID"},
@@ -38545,7 +47671,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_372[] = {
      0,
      &asn_DEF_Ngap_MaskedIMEISV,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "MaskedIMEISV"},
@@ -38593,7 +47727,15 @@ static /* Use -fall-defs-global to expose */
         0, /* No effective tags (count) */
         0, /* No tags (pointer) */
         0, /* No tags (count) */
-        {0, 0, OPEN_TYPE_constraint},
+        {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+            OPEN_TYPE_constraint},
         asn_MBR_Ngap_value_372,
         13,                           /* Elements count */
         &asn_SPC_Ngap_value_specs_372 /* Additional specs */
@@ -38607,8 +47749,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ConnectionEstablishmentIndicationIEs_369[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_ProtocolIE_ID,
      0,
-     {&asn_OER_memb_Ngap_id_constr_370, &asn_PER_memb_Ngap_id_constr_370,
-      memb_Ngap_id_constraint_369},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_id_constr_370,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_id_constr_370,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_id_constraint_369},
      0,
      0, /* No default value */
      "id"},
@@ -38619,9 +47768,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ConnectionEstablishmentIndicationIEs_369[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_Criticality,
      select_ConnectionEstablishmentIndicationIEs_Ngap_criticality_type,
-     {&asn_OER_memb_Ngap_criticality_constr_371,
-      &asn_PER_memb_Ngap_criticality_constr_371,
-      memb_Ngap_criticality_constraint_369},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_criticality_constr_371,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_criticality_constr_371,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_criticality_constraint_369},
      0,
      0, /* No default value */
      "criticality"},
@@ -38632,8 +47787,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ConnectionEstablishmentIndicationIEs_369[] = {
      +1, /* EXPLICIT tag at current level */
      &asn_DEF_Ngap_value_372,
      select_ConnectionEstablishmentIndicationIEs_Ngap_value_type,
-     {&asn_OER_memb_Ngap_value_constr_372, &asn_PER_memb_Ngap_value_constr_372,
-      memb_Ngap_value_constraint_369},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_value_constr_372,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_value_constr_372,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_value_constraint_369},
      0,
      0, /* No default value */
      "value"},
@@ -38671,7 +47833,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ConnectionEstablishmentIndicationIEs = {
     sizeof(asn_DEF_Ngap_ConnectionEstablishmentIndicationIEs_tags_369) /
         sizeof(asn_DEF_Ngap_ConnectionEstablishmentIndicationIEs_tags_369
                    [0]), /* 1 */
-    {0, 0, SEQUENCE_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_constraint},
     asn_MBR_Ngap_ConnectionEstablishmentIndicationIEs_369,
     3, /* Elements count */
     &asn_SPC_Ngap_ConnectionEstablishmentIndicationIEs_specs_369 /* Additional
@@ -38688,7 +47858,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_376[] = {
      0,
      &asn_DEF_Ngap_UERadioCapabilityID,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "UERadioCapabilityID"},
@@ -38717,7 +47895,15 @@ static /* Use -fall-defs-global to expose */
         0, /* No effective tags (count) */
         0, /* No tags (pointer) */
         0, /* No tags (count) */
-        {0, 0, OPEN_TYPE_constraint},
+        {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+            OPEN_TYPE_constraint},
         asn_MBR_Ngap_value_376,
         1,                            /* Elements count */
         &asn_SPC_Ngap_value_specs_376 /* Additional specs */
@@ -38731,8 +47917,15 @@ asn_TYPE_member_t asn_MBR_Ngap_UERadioCapabilityIDMappingRequestIEs_373[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_ProtocolIE_ID,
      0,
-     {&asn_OER_memb_Ngap_id_constr_374, &asn_PER_memb_Ngap_id_constr_374,
-      memb_Ngap_id_constraint_373},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_id_constr_374,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_id_constr_374,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_id_constraint_373},
      0,
      0, /* No default value */
      "id"},
@@ -38743,9 +47936,15 @@ asn_TYPE_member_t asn_MBR_Ngap_UERadioCapabilityIDMappingRequestIEs_373[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_Criticality,
      select_UERadioCapabilityIDMappingRequestIEs_Ngap_criticality_type,
-     {&asn_OER_memb_Ngap_criticality_constr_375,
-      &asn_PER_memb_Ngap_criticality_constr_375,
-      memb_Ngap_criticality_constraint_373},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_criticality_constr_375,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_criticality_constr_375,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_criticality_constraint_373},
      0,
      0, /* No default value */
      "criticality"},
@@ -38756,8 +47955,15 @@ asn_TYPE_member_t asn_MBR_Ngap_UERadioCapabilityIDMappingRequestIEs_373[] = {
      +1, /* EXPLICIT tag at current level */
      &asn_DEF_Ngap_value_376,
      select_UERadioCapabilityIDMappingRequestIEs_Ngap_value_type,
-     {&asn_OER_memb_Ngap_value_constr_376, &asn_PER_memb_Ngap_value_constr_376,
-      memb_Ngap_value_constraint_373},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_value_constr_376,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_value_constr_376,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_value_constraint_373},
      0,
      0, /* No default value */
      "value"},
@@ -38795,7 +48001,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_UERadioCapabilityIDMappingRequestIEs = {
     sizeof(asn_DEF_Ngap_UERadioCapabilityIDMappingRequestIEs_tags_373) /
         sizeof(asn_DEF_Ngap_UERadioCapabilityIDMappingRequestIEs_tags_373
                    [0]), /* 1 */
-    {0, 0, SEQUENCE_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_constraint},
     asn_MBR_Ngap_UERadioCapabilityIDMappingRequestIEs_373,
     3, /* Elements count */
     &asn_SPC_Ngap_UERadioCapabilityIDMappingRequestIEs_specs_373 /* Additional
@@ -38812,7 +48026,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_380[] = {
      0,
      &asn_DEF_Ngap_UERadioCapabilityID,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "UERadioCapabilityID"},
@@ -38825,7 +48047,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_380[] = {
      0,
      &asn_DEF_Ngap_UERadioCapability,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "UERadioCapability"},
@@ -38838,7 +48068,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_380[] = {
      0,
      &asn_DEF_Ngap_CriticalityDiagnostics,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "CriticalityDiagnostics"},
@@ -38871,7 +48109,15 @@ static /* Use -fall-defs-global to expose */
         0, /* No effective tags (count) */
         0, /* No tags (pointer) */
         0, /* No tags (count) */
-        {0, 0, OPEN_TYPE_constraint},
+        {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+            OPEN_TYPE_constraint},
         asn_MBR_Ngap_value_380,
         3,                            /* Elements count */
         &asn_SPC_Ngap_value_specs_380 /* Additional specs */
@@ -38885,8 +48131,15 @@ asn_TYPE_member_t asn_MBR_Ngap_UERadioCapabilityIDMappingResponseIEs_377[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_ProtocolIE_ID,
      0,
-     {&asn_OER_memb_Ngap_id_constr_378, &asn_PER_memb_Ngap_id_constr_378,
-      memb_Ngap_id_constraint_377},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_id_constr_378,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_id_constr_378,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_id_constraint_377},
      0,
      0, /* No default value */
      "id"},
@@ -38897,9 +48150,15 @@ asn_TYPE_member_t asn_MBR_Ngap_UERadioCapabilityIDMappingResponseIEs_377[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_Criticality,
      select_UERadioCapabilityIDMappingResponseIEs_Ngap_criticality_type,
-     {&asn_OER_memb_Ngap_criticality_constr_379,
-      &asn_PER_memb_Ngap_criticality_constr_379,
-      memb_Ngap_criticality_constraint_377},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_criticality_constr_379,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_criticality_constr_379,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_criticality_constraint_377},
      0,
      0, /* No default value */
      "criticality"},
@@ -38910,8 +48169,15 @@ asn_TYPE_member_t asn_MBR_Ngap_UERadioCapabilityIDMappingResponseIEs_377[] = {
      +1, /* EXPLICIT tag at current level */
      &asn_DEF_Ngap_value_380,
      select_UERadioCapabilityIDMappingResponseIEs_Ngap_value_type,
-     {&asn_OER_memb_Ngap_value_constr_380, &asn_PER_memb_Ngap_value_constr_380,
-      memb_Ngap_value_constraint_377},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_value_constr_380,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_value_constr_380,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_value_constraint_377},
      0,
      0, /* No default value */
      "value"},
@@ -38949,7 +48215,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_UERadioCapabilityIDMappingResponseIEs = {
     sizeof(asn_DEF_Ngap_UERadioCapabilityIDMappingResponseIEs_tags_377) /
         sizeof(asn_DEF_Ngap_UERadioCapabilityIDMappingResponseIEs_tags_377
                    [0]), /* 1 */
-    {0, 0, SEQUENCE_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_constraint},
     asn_MBR_Ngap_UERadioCapabilityIDMappingResponseIEs_377,
     3, /* Elements count */
     &asn_SPC_Ngap_UERadioCapabilityIDMappingResponseIEs_specs_377 /* Additional
@@ -38966,7 +48240,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_384[] = {
      0,
      &asn_DEF_Ngap_AMF_UE_NGAP_ID,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "AMF-UE-NGAP-ID"},
@@ -38979,7 +48261,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_384[] = {
      0,
      &asn_DEF_Ngap_RAN_UE_NGAP_ID,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "RAN-UE-NGAP-ID"},
@@ -38990,7 +48280,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_384[] = {
      0,
      &asn_DEF_Ngap_S_NSSAI,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "S-NSSAI"},
@@ -39002,7 +48300,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_384[] = {
      0,
      &asn_DEF_Ngap_AllowedNSSAI,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "AllowedNSSAI"},
@@ -39033,7 +48339,15 @@ static /* Use -fall-defs-global to expose */
         0, /* No effective tags (count) */
         0, /* No tags (pointer) */
         0, /* No tags (count) */
-        {0, 0, OPEN_TYPE_constraint},
+        {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+            OPEN_TYPE_constraint},
         asn_MBR_Ngap_value_384,
         4,                            /* Elements count */
         &asn_SPC_Ngap_value_specs_384 /* Additional specs */
@@ -39047,8 +48361,15 @@ asn_TYPE_member_t asn_MBR_Ngap_AMFCPRelocationIndicationIEs_381[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_ProtocolIE_ID,
      0,
-     {&asn_OER_memb_Ngap_id_constr_382, &asn_PER_memb_Ngap_id_constr_382,
-      memb_Ngap_id_constraint_381},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_id_constr_382,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_id_constr_382,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_id_constraint_381},
      0,
      0, /* No default value */
      "id"},
@@ -39059,9 +48380,15 @@ asn_TYPE_member_t asn_MBR_Ngap_AMFCPRelocationIndicationIEs_381[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_Criticality,
      select_AMFCPRelocationIndicationIEs_Ngap_criticality_type,
-     {&asn_OER_memb_Ngap_criticality_constr_383,
-      &asn_PER_memb_Ngap_criticality_constr_383,
-      memb_Ngap_criticality_constraint_381},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_criticality_constr_383,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_criticality_constr_383,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_criticality_constraint_381},
      0,
      0, /* No default value */
      "criticality"},
@@ -39072,8 +48399,15 @@ asn_TYPE_member_t asn_MBR_Ngap_AMFCPRelocationIndicationIEs_381[] = {
      +1, /* EXPLICIT tag at current level */
      &asn_DEF_Ngap_value_384,
      select_AMFCPRelocationIndicationIEs_Ngap_value_type,
-     {&asn_OER_memb_Ngap_value_constr_384, &asn_PER_memb_Ngap_value_constr_384,
-      memb_Ngap_value_constraint_381},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_value_constr_384,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_value_constr_384,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_value_constraint_381},
      0,
      0, /* No default value */
      "value"},
@@ -39107,7 +48441,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_AMFCPRelocationIndicationIEs = {
     asn_DEF_Ngap_AMFCPRelocationIndicationIEs_tags_381, /* Same as above */
     sizeof(asn_DEF_Ngap_AMFCPRelocationIndicationIEs_tags_381) /
         sizeof(asn_DEF_Ngap_AMFCPRelocationIndicationIEs_tags_381[0]), /* 1 */
-    {0, 0, SEQUENCE_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_constraint},
     asn_MBR_Ngap_AMFCPRelocationIndicationIEs_381,
     3,                                                   /* Elements count */
     &asn_SPC_Ngap_AMFCPRelocationIndicationIEs_specs_381 /* Additional specs */
@@ -39123,7 +48465,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_388[] = {
      0,
      &asn_DEF_Ngap_PDUSessionAggregateMaximumBitRate,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "PDUSessionAggregateMaximumBitRate"},
@@ -39136,7 +48486,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_388[] = {
      0,
      &asn_DEF_Ngap_UL_NGU_UP_TNLModifyList,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "UL-NGU-UP-TNLModifyList"},
@@ -39149,7 +48507,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_388[] = {
      0,
      &asn_DEF_Ngap_NetworkInstance,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "NetworkInstance"},
@@ -39162,7 +48528,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_388[] = {
      0,
      &asn_DEF_Ngap_QosFlowAddOrModifyRequestList,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "QosFlowAddOrModifyRequestList"},
@@ -39175,7 +48549,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_388[] = {
      0,
      &asn_DEF_Ngap_QosFlowListWithCause,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "QosFlowListWithCause"},
@@ -39188,7 +48570,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_388[] = {
      0,
      &asn_DEF_Ngap_UPTransportLayerInformationList,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "UPTransportLayerInformationList"},
@@ -39201,7 +48591,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_388[] = {
      0,
      &asn_DEF_Ngap_CommonNetworkInstance,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "CommonNetworkInstance"},
@@ -39214,7 +48612,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_388[] = {
      0,
      &asn_DEF_Ngap_UPTransportLayerInformationList,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "UPTransportLayerInformationList"},
@@ -39227,7 +48633,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_388[] = {
      0,
      &asn_DEF_Ngap_CommonNetworkInstance,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "CommonNetworkInstance"},
@@ -39240,7 +48654,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_388[] = {
      0,
      &asn_DEF_Ngap_UPTransportLayerInformation,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "UPTransportLayerInformation"},
@@ -39253,7 +48675,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_388[] = {
      0,
      &asn_DEF_Ngap_SecurityIndication,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "SecurityIndication"},
@@ -39306,7 +48736,15 @@ static /* Use -fall-defs-global to expose */
         0, /* No effective tags (count) */
         0, /* No tags (pointer) */
         0, /* No tags (count) */
-        {0, 0, OPEN_TYPE_constraint},
+        {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+            OPEN_TYPE_constraint},
         asn_MBR_Ngap_value_388,
         11,                           /* Elements count */
         &asn_SPC_Ngap_value_specs_388 /* Additional specs */
@@ -39321,8 +48759,15 @@ asn_TYPE_member_t
          -1, /* IMPLICIT tag at current level */
          &asn_DEF_Ngap_ProtocolIE_ID,
          0,
-         {&asn_OER_memb_Ngap_id_constr_386, &asn_PER_memb_Ngap_id_constr_386,
-          memb_Ngap_id_constraint_385},
+         {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+             &asn_OER_memb_Ngap_id_constr_386,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+             &asn_PER_memb_Ngap_id_constr_386,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+             memb_Ngap_id_constraint_385},
          0,
          0, /* No default value */
          "id"},
@@ -39335,9 +48780,15 @@ asn_TYPE_member_t
          -1, /* IMPLICIT tag at current level */
          &asn_DEF_Ngap_Criticality,
          select_PDUSessionResourceModifyRequestTransferIEs_Ngap_criticality_type,
-         {&asn_OER_memb_Ngap_criticality_constr_387,
-          &asn_PER_memb_Ngap_criticality_constr_387,
-          memb_Ngap_criticality_constraint_385},
+         {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+             &asn_OER_memb_Ngap_criticality_constr_387,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+             &asn_PER_memb_Ngap_criticality_constr_387,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+             memb_Ngap_criticality_constraint_385},
          0,
          0, /* No default value */
          "criticality"},
@@ -39349,8 +48800,15 @@ asn_TYPE_member_t
          +1, /* EXPLICIT tag at current level */
          &asn_DEF_Ngap_value_388,
          select_PDUSessionResourceModifyRequestTransferIEs_Ngap_value_type,
-         {&asn_OER_memb_Ngap_value_constr_388,
-          &asn_PER_memb_Ngap_value_constr_388, memb_Ngap_value_constraint_385},
+         {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+             &asn_OER_memb_Ngap_value_constr_388,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+             &asn_PER_memb_Ngap_value_constr_388,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+             memb_Ngap_value_constraint_385},
          0,
          0, /* No default value */
          "value"},
@@ -39376,27 +48834,40 @@ asn_SEQUENCE_specifics_t
         0,  /* Optional elements (not needed) */
         -1, /* First extension addition */
 };
-asn_TYPE_descriptor_t asn_DEF_Ngap_PDUSessionResourceModifyRequestTransferIEs = {
-    "PDUSessionResourceModifyRequestTransferIEs",
-    "PDUSessionResourceModifyRequestTransferIEs",
-    &asn_OP_SEQUENCE,
-    asn_DEF_Ngap_PDUSessionResourceModifyRequestTransferIEs_tags_385,
-    sizeof(asn_DEF_Ngap_PDUSessionResourceModifyRequestTransferIEs_tags_385) /
-        sizeof(asn_DEF_Ngap_PDUSessionResourceModifyRequestTransferIEs_tags_385
-                   [0]),                                              /* 1 */
-    asn_DEF_Ngap_PDUSessionResourceModifyRequestTransferIEs_tags_385, /* Same
-                                                                         as
-                                                                         above
-                                                                       */
-    sizeof(asn_DEF_Ngap_PDUSessionResourceModifyRequestTransferIEs_tags_385) /
-        sizeof(asn_DEF_Ngap_PDUSessionResourceModifyRequestTransferIEs_tags_385
-                   [0]), /* 1 */
-    {0, 0, SEQUENCE_constraint},
-    asn_MBR_Ngap_PDUSessionResourceModifyRequestTransferIEs_385,
-    3, /* Elements count */
-    &asn_SPC_Ngap_PDUSessionResourceModifyRequestTransferIEs_specs_385 /* Additional
-                                                                          specs
-                                                                        */
+asn_TYPE_descriptor_t asn_DEF_Ngap_PDUSessionResourceModifyRequestTransferIEs =
+    {
+        "PDUSessionResourceModifyRequestTransferIEs",
+        "PDUSessionResourceModifyRequestTransferIEs",
+        &asn_OP_SEQUENCE,
+        asn_DEF_Ngap_PDUSessionResourceModifyRequestTransferIEs_tags_385,
+        sizeof(
+            asn_DEF_Ngap_PDUSessionResourceModifyRequestTransferIEs_tags_385) /
+            sizeof(
+                asn_DEF_Ngap_PDUSessionResourceModifyRequestTransferIEs_tags_385
+                    [0]), /* 1 */
+        asn_DEF_Ngap_PDUSessionResourceModifyRequestTransferIEs_tags_385, /* Same
+                                                                             as
+                                                                             above
+                                                                           */
+        sizeof(
+            asn_DEF_Ngap_PDUSessionResourceModifyRequestTransferIEs_tags_385) /
+            sizeof(
+                asn_DEF_Ngap_PDUSessionResourceModifyRequestTransferIEs_tags_385
+                    [0]), /* 1 */
+        {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+            SEQUENCE_constraint},
+        asn_MBR_Ngap_PDUSessionResourceModifyRequestTransferIEs_385,
+        3, /* Elements count */
+        &asn_SPC_Ngap_PDUSessionResourceModifyRequestTransferIEs_specs_385 /* Additional
+                                                                              specs
+                                                                            */
 };
 
 static asn_TYPE_member_t asn_MBR_Ngap_value_392[] = {
@@ -39409,7 +48880,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_392[] = {
      0,
      &asn_DEF_Ngap_PDUSessionAggregateMaximumBitRate,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "PDUSessionAggregateMaximumBitRate"},
@@ -39422,7 +48901,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_392[] = {
      0,
      &asn_DEF_Ngap_UPTransportLayerInformation,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "UPTransportLayerInformation"},
@@ -39435,7 +48922,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_392[] = {
      0,
      &asn_DEF_Ngap_UPTransportLayerInformationList,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "UPTransportLayerInformationList"},
@@ -39448,7 +48943,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_392[] = {
      0,
      &asn_DEF_Ngap_DataForwardingNotPossible,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "DataForwardingNotPossible"},
@@ -39461,7 +48964,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_392[] = {
      0,
      &asn_DEF_Ngap_PDUSessionType,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "PDUSessionType"},
@@ -39474,7 +48985,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_392[] = {
      0,
      &asn_DEF_Ngap_SecurityIndication,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "SecurityIndication"},
@@ -39487,7 +49006,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_392[] = {
      0,
      &asn_DEF_Ngap_NetworkInstance,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "NetworkInstance"},
@@ -39500,7 +49027,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_392[] = {
      0,
      &asn_DEF_Ngap_QosFlowSetupRequestList,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "QosFlowSetupRequestList"},
@@ -39513,7 +49048,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_392[] = {
      0,
      &asn_DEF_Ngap_CommonNetworkInstance,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "CommonNetworkInstance"},
@@ -39526,7 +49069,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_392[] = {
      0,
      &asn_DEF_Ngap_DirectForwardingPathAvailability,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "DirectForwardingPathAvailability"},
@@ -39539,7 +49090,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_392[] = {
      0,
      &asn_DEF_Ngap_UPTransportLayerInformation,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "UPTransportLayerInformation"},
@@ -39552,7 +49111,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_392[] = {
      0,
      &asn_DEF_Ngap_UPTransportLayerInformationList,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "UPTransportLayerInformationList"},
@@ -39565,7 +49132,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_392[] = {
      0,
      &asn_DEF_Ngap_CommonNetworkInstance,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "CommonNetworkInstance"},
@@ -39578,7 +49153,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_value_392[] = {
      0,
      &asn_DEF_Ngap_RedundantPDUSessionInformation,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "RedundantPDUSessionInformation"},
@@ -39634,7 +49217,15 @@ static /* Use -fall-defs-global to expose */
         0, /* No effective tags (count) */
         0, /* No tags (pointer) */
         0, /* No tags (count) */
-        {0, 0, OPEN_TYPE_constraint},
+        {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+            0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+            OPEN_TYPE_constraint},
         asn_MBR_Ngap_value_392,
         14,                           /* Elements count */
         &asn_SPC_Ngap_value_specs_392 /* Additional specs */
@@ -39649,8 +49240,15 @@ asn_TYPE_member_t asn_MBR_Ngap_PDUSessionResourceSetupRequestTransferIEs_389[] =
          -1, /* IMPLICIT tag at current level */
          &asn_DEF_Ngap_ProtocolIE_ID,
          0,
-         {&asn_OER_memb_Ngap_id_constr_390, &asn_PER_memb_Ngap_id_constr_390,
-          memb_Ngap_id_constraint_389},
+         {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+             &asn_OER_memb_Ngap_id_constr_390,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+             &asn_PER_memb_Ngap_id_constr_390,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+             memb_Ngap_id_constraint_389},
          0,
          0, /* No default value */
          "id"},
@@ -39663,9 +49261,15 @@ asn_TYPE_member_t asn_MBR_Ngap_PDUSessionResourceSetupRequestTransferIEs_389[] =
          -1, /* IMPLICIT tag at current level */
          &asn_DEF_Ngap_Criticality,
          select_PDUSessionResourceSetupRequestTransferIEs_Ngap_criticality_type,
-         {&asn_OER_memb_Ngap_criticality_constr_391,
-          &asn_PER_memb_Ngap_criticality_constr_391,
-          memb_Ngap_criticality_constraint_389},
+         {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+             &asn_OER_memb_Ngap_criticality_constr_391,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+             &asn_PER_memb_Ngap_criticality_constr_391,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+             memb_Ngap_criticality_constraint_389},
          0,
          0, /* No default value */
          "criticality"},
@@ -39676,8 +49280,15 @@ asn_TYPE_member_t asn_MBR_Ngap_PDUSessionResourceSetupRequestTransferIEs_389[] =
          +1, /* EXPLICIT tag at current level */
          &asn_DEF_Ngap_value_392,
          select_PDUSessionResourceSetupRequestTransferIEs_Ngap_value_type,
-         {&asn_OER_memb_Ngap_value_constr_392,
-          &asn_PER_memb_Ngap_value_constr_392, memb_Ngap_value_constraint_389},
+         {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+             &asn_OER_memb_Ngap_value_constr_392,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+             &asn_PER_memb_Ngap_value_constr_392,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+             memb_Ngap_value_constraint_389},
          0,
          0, /* No default value */
          "value"},
@@ -39716,7 +49327,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_PDUSessionResourceSetupRequestTransferIEs = {
     sizeof(asn_DEF_Ngap_PDUSessionResourceSetupRequestTransferIEs_tags_389) /
         sizeof(asn_DEF_Ngap_PDUSessionResourceSetupRequestTransferIEs_tags_389
                    [0]), /* 1 */
-    {0, 0, SEQUENCE_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_constraint},
     asn_MBR_Ngap_PDUSessionResourceSetupRequestTransferIEs_389,
     3, /* Elements count */
     &asn_SPC_Ngap_PDUSessionResourceSetupRequestTransferIEs_specs_389 /* Additional

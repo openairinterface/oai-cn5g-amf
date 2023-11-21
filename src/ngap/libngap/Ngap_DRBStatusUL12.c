@@ -3,7 +3,7 @@
  * From ASN.1 module "NGAP-IEs"
  * 	found in "asn.1/Information Element Definitions.asn1"
  * 	`asn1c -pdu=all -fcompound-names -fno-include-deps -findirect-choice
- * -gen-PER -D src`
+ * -no-gen-example -gen-APER -gen-UPER -no-gen-JER -no-gen-BER -D src`
  */
 
 #include "Ngap_DRBStatusUL12.h"
@@ -29,7 +29,7 @@ static int memb_Ngap_receiveStatusOfUL_PDCP_SDUs_constraint_1(
     size = 0;
   }
 
-  if ((size >= 1 && size <= 2048)) {
+  if ((size >= 1UL && size <= 2048UL)) {
     /* Constraint check succeeded */
     return 0;
   } else {
@@ -40,10 +40,13 @@ static int memb_Ngap_receiveStatusOfUL_PDCP_SDUs_constraint_1(
   }
 }
 
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_memb_Ngap_receiveStatusOfUL_PDCP_SDUs_constr_3 CC_NOTUSED = {
         {0, 0},
         -1 /* (SIZE(1..2048)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t
     asn_PER_memb_Ngap_receiveStatusOfUL_PDCP_SDUs_constr_3 CC_NOTUSED = {
         {APC_UNCONSTRAINED, -1, -1, 0, 0},
@@ -51,6 +54,8 @@ static asn_per_constraints_t
         0,
         0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
 asn_TYPE_member_t asn_MBR_Ngap_DRBStatusUL12_1[] = {
     {ATF_NOFLAGS,
      0,
@@ -59,7 +64,15 @@ asn_TYPE_member_t asn_MBR_Ngap_DRBStatusUL12_1[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_COUNTValueForPDCP_SN12,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "uL-COUNTValue"},
@@ -70,9 +83,15 @@ asn_TYPE_member_t asn_MBR_Ngap_DRBStatusUL12_1[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_BIT_STRING,
      0,
-     {&asn_OER_memb_Ngap_receiveStatusOfUL_PDCP_SDUs_constr_3,
-      &asn_PER_memb_Ngap_receiveStatusOfUL_PDCP_SDUs_constr_3,
-      memb_Ngap_receiveStatusOfUL_PDCP_SDUs_constraint_1},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_receiveStatusOfUL_PDCP_SDUs_constr_3,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_receiveStatusOfUL_PDCP_SDUs_constr_3,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_receiveStatusOfUL_PDCP_SDUs_constraint_1},
      0,
      0, /* No default value */
      "receiveStatusOfUL-PDCP-SDUs"},
@@ -83,7 +102,15 @@ asn_TYPE_member_t asn_MBR_Ngap_DRBStatusUL12_1[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_ProtocolExtensionContainer_9717P56,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "iE-Extension"},
@@ -117,7 +144,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_DRBStatusUL12 = {
     asn_DEF_Ngap_DRBStatusUL12_tags_1,                /* Same as above */
     sizeof(asn_DEF_Ngap_DRBStatusUL12_tags_1) /
         sizeof(asn_DEF_Ngap_DRBStatusUL12_tags_1[0]), /* 1 */
-    {0, 0, SEQUENCE_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_constraint},
     asn_MBR_Ngap_DRBStatusUL12_1,
     3,                                  /* Elements count */
     &asn_SPC_Ngap_DRBStatusUL12_specs_1 /* Additional specs */

@@ -3,7 +3,7 @@
  * From ASN.1 module "NGAP-IEs"
  * 	found in "asn.1/Information Element Definitions.asn1"
  * 	`asn1c -pdu=all -fcompound-names -fno-include-deps -findirect-choice
- * -gen-PER -D src`
+ * -no-gen-example -gen-APER -gen-UPER -no-gen-JER -no-gen-BER -D src`
  */
 
 #include "Ngap_LastVisitedNGRANCellInformation.h"
@@ -18,7 +18,15 @@ asn_TYPE_member_t asn_MBR_Ngap_LastVisitedNGRANCellInformation_1[] = {
      +1, /* EXPLICIT tag at current level */
      &asn_DEF_Ngap_NGRAN_CGI,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "globalCellID"},
@@ -29,7 +37,15 @@ asn_TYPE_member_t asn_MBR_Ngap_LastVisitedNGRANCellInformation_1[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_CellType,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "cellType"},
@@ -40,7 +56,15 @@ asn_TYPE_member_t asn_MBR_Ngap_LastVisitedNGRANCellInformation_1[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_TimeUEStayedInCell,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "timeUEStayedInCell"},
@@ -53,7 +77,15 @@ asn_TYPE_member_t asn_MBR_Ngap_LastVisitedNGRANCellInformation_1[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_TimeUEStayedInCellEnhancedGranularity,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "timeUEStayedInCellEnhancedGranularity"},
@@ -64,7 +96,15 @@ asn_TYPE_member_t asn_MBR_Ngap_LastVisitedNGRANCellInformation_1[] = {
      +1, /* EXPLICIT tag at current level */
      &asn_DEF_Ngap_Cause,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "hOCauseValue"},
@@ -75,7 +115,15 @@ asn_TYPE_member_t asn_MBR_Ngap_LastVisitedNGRANCellInformation_1[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_ProtocolExtensionContainer_9717P111,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "iE-Extensions"},
@@ -117,7 +165,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_LastVisitedNGRANCellInformation = {
     asn_DEF_Ngap_LastVisitedNGRANCellInformation_tags_1, /* Same as above */
     sizeof(asn_DEF_Ngap_LastVisitedNGRANCellInformation_tags_1) /
         sizeof(asn_DEF_Ngap_LastVisitedNGRANCellInformation_tags_1[0]), /* 1 */
-    {0, 0, SEQUENCE_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_constraint},
     asn_MBR_Ngap_LastVisitedNGRANCellInformation_1,
     6,                                                    /* Elements count */
     &asn_SPC_Ngap_LastVisitedNGRANCellInformation_specs_1 /* Additional specs */

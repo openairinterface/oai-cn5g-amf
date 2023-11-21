@@ -3,7 +3,7 @@
  * From ASN.1 module "NGAP-IEs"
  * 	found in "asn.1/Information Element Definitions.asn1"
  * 	`asn1c -pdu=all -fcompound-names -fno-include-deps -findirect-choice
- * -gen-PER -D src`
+ * -no-gen-example -gen-APER -gen-UPER -no-gen-JER -no-gen-BER -D src`
  */
 
 #include "Ngap_EventTrigger.h"
@@ -13,8 +13,11 @@
  * This type is implemented using NativeEnumerated,
  * so here we adjust the DEF accordingly.
  */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_type_Ngap_outOfCoverage_constr_2
     CC_NOTUSED = {{0, 0}, -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t asn_PER_type_Ngap_outOfCoverage_constr_2
     CC_NOTUSED = {
         {APC_CONSTRAINED | APC_EXTENSIBLE, 0, 0, 0, 0} /* (0..0,...) */,
@@ -22,14 +25,21 @@ static asn_per_constraints_t asn_PER_type_Ngap_outOfCoverage_constr_2
         0,
         0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_type_Ngap_EventTrigger_constr_1
     CC_NOTUSED = {{0, 0}, -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t asn_PER_type_Ngap_EventTrigger_constr_1 CC_NOTUSED = {
     {APC_CONSTRAINED | APC_EXTENSIBLE, 1, 1, 0, 1} /* (0..1,...) */,
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
 static const asn_INTEGER_enum_map_t asn_MAP_Ngap_outOfCoverage_value2enum_2[] =
     {
         {0, 4, "true"}
@@ -61,9 +71,15 @@ static /* Use -fall-defs-global to expose */
         asn_DEF_Ngap_outOfCoverage_tags_2, /* Same as above */
         sizeof(asn_DEF_Ngap_outOfCoverage_tags_2) /
             sizeof(asn_DEF_Ngap_outOfCoverage_tags_2[0]), /* 2 */
-        {&asn_OER_type_Ngap_outOfCoverage_constr_2,
-         &asn_PER_type_Ngap_outOfCoverage_constr_2,
-         NativeEnumerated_constraint},
+        {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+            &asn_OER_type_Ngap_outOfCoverage_constr_2,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+            &asn_PER_type_Ngap_outOfCoverage_constr_2,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+            NativeEnumerated_constraint},
         0,
         0,                                  /* Defined elsewhere */
         &asn_SPC_Ngap_outOfCoverage_specs_2 /* Additional specs */
@@ -77,7 +93,15 @@ asn_TYPE_member_t asn_MBR_Ngap_EventTrigger_1[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_outOfCoverage_2,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "outOfCoverage"},
@@ -88,7 +112,15 @@ asn_TYPE_member_t asn_MBR_Ngap_EventTrigger_1[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_EventL1LoggedMDTConfig,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "eventL1LoggedMDTConfig"},
@@ -116,8 +148,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_EventTrigger = {
     0, /* No effective tags (count) */
     0, /* No tags (pointer) */
     0, /* No tags (count) */
-    {&asn_OER_type_Ngap_EventTrigger_constr_1,
-     &asn_PER_type_Ngap_EventTrigger_constr_1, CHOICE_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_EventTrigger_constr_1,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_EventTrigger_constr_1,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        CHOICE_constraint},
     asn_MBR_Ngap_EventTrigger_1,
     2,                                 /* Elements count */
     &asn_SPC_Ngap_EventTrigger_specs_1 /* Additional specs */

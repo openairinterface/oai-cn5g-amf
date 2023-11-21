@@ -3,7 +3,7 @@
  * From ASN.1 module "NGAP-IEs"
  * 	found in "asn.1/Information Element Definitions.asn1"
  * 	`asn1c -pdu=all -fcompound-names -fno-include-deps -findirect-choice
- * -gen-PER -D src`
+ * -no-gen-example -gen-APER -gen-UPER -no-gen-JER -no-gen-BER -D src`
  */
 
 #include "Ngap_RANNodeNameVisibleString.h"
@@ -16,7 +16,7 @@ static int check_permitted_alphabet_1(const void* sptr) {
 
   for (; ch < end; ch++) {
     uint8_t cv = *ch;
-    if (!(cv >= 32 && cv <= 126)) return -1;
+    if (!(cv >= 32UL && cv <= 126UL)) return -1;
   }
   return 0;
 }
@@ -36,7 +36,7 @@ int Ngap_RANNodeNameVisibleString_constraint(
 
   size = st->size;
 
-  if ((size >= 1 && size <= 150) && !check_permitted_alphabet_1(st)) {
+  if ((size >= 1UL && size <= 150UL) && !check_permitted_alphabet_1(st)) {
     /* Constraint check succeeded */
     return 0;
   } else {
@@ -51,8 +51,11 @@ int Ngap_RANNodeNameVisibleString_constraint(
  * This type is implemented using VisibleString,
  * so here we adjust the DEF accordingly.
  */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_type_Ngap_RANNodeNameVisibleString_constr_1
     CC_NOTUSED = {{0, 0}, -1 /* (SIZE(0..MAX)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t asn_PER_type_Ngap_RANNodeNameVisibleString_constr_1
     CC_NOTUSED = {
         {APC_CONSTRAINED, 7, 7, 32, 126} /* (32..126) */,
@@ -61,6 +64,8 @@ asn_per_constraints_t asn_PER_type_Ngap_RANNodeNameVisibleString_constr_1
         0,
         0 /* No PER character map necessary */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
 static const ber_tlv_tag_t asn_DEF_Ngap_RANNodeNameVisibleString_tags_1[] = {
     (ASN_TAG_CLASS_UNIVERSAL | (26 << 2))};
 asn_TYPE_descriptor_t asn_DEF_Ngap_RANNodeNameVisibleString = {
@@ -73,9 +78,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_RANNodeNameVisibleString = {
     asn_DEF_Ngap_RANNodeNameVisibleString_tags_1, /* Same as above */
     sizeof(asn_DEF_Ngap_RANNodeNameVisibleString_tags_1) /
         sizeof(asn_DEF_Ngap_RANNodeNameVisibleString_tags_1[0]), /* 1 */
-    {&asn_OER_type_Ngap_RANNodeNameVisibleString_constr_1,
-     &asn_PER_type_Ngap_RANNodeNameVisibleString_constr_1,
-     Ngap_RANNodeNameVisibleString_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_RANNodeNameVisibleString_constr_1,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_RANNodeNameVisibleString_constr_1,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        Ngap_RANNodeNameVisibleString_constraint},
     0,
     0, /* No members */
     0  /* No specifics */

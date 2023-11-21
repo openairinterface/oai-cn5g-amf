@@ -3,7 +3,7 @@
  * From ASN.1 module "NGAP-IEs"
  * 	found in "asn.1/Information Element Definitions.asn1"
  * 	`asn1c -pdu=all -fcompound-names -fno-include-deps -findirect-choice
- * -gen-PER -D src`
+ * -no-gen-example -gen-APER -gen-UPER -no-gen-JER -no-gen-BER -D src`
  */
 
 #include "Ngap_PDUSessionResourceSetupItemCxtReq.h"
@@ -30,9 +30,12 @@ static int memb_Ngap_pDUSessionResourceSetupRequestTransfer_constraint_1(
       td, sptr, ctfailcb, app_key);
 }
 
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_memb_Ngap_pDUSessionResourceSetupRequestTransfer_constr_5
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(0..MAX)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static asn_per_constraints_t
     asn_PER_memb_Ngap_pDUSessionResourceSetupRequestTransfer_constr_5
         CC_NOTUSED = {
@@ -41,6 +44,8 @@ static asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
 asn_TYPE_member_t asn_MBR_Ngap_PDUSessionResourceSetupItemCxtReq_1[] = {
     {ATF_NOFLAGS,
      0,
@@ -49,7 +54,15 @@ asn_TYPE_member_t asn_MBR_Ngap_PDUSessionResourceSetupItemCxtReq_1[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_PDUSessionID,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "pDUSessionID"},
@@ -60,7 +73,15 @@ asn_TYPE_member_t asn_MBR_Ngap_PDUSessionResourceSetupItemCxtReq_1[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_NAS_PDU,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "nAS-PDU"},
@@ -71,7 +92,15 @@ asn_TYPE_member_t asn_MBR_Ngap_PDUSessionResourceSetupItemCxtReq_1[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_S_NSSAI,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "s-NSSAI"},
@@ -84,9 +113,15 @@ asn_TYPE_member_t asn_MBR_Ngap_PDUSessionResourceSetupItemCxtReq_1[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_OCTET_STRING,
      0,
-     {&asn_OER_memb_Ngap_pDUSessionResourceSetupRequestTransfer_constr_5,
-      &asn_PER_memb_Ngap_pDUSessionResourceSetupRequestTransfer_constr_5,
-      memb_Ngap_pDUSessionResourceSetupRequestTransfer_constraint_1},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         &asn_OER_memb_Ngap_pDUSessionResourceSetupRequestTransfer_constr_5,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         &asn_PER_memb_Ngap_pDUSessionResourceSetupRequestTransfer_constr_5,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         memb_Ngap_pDUSessionResourceSetupRequestTransfer_constraint_1},
      0,
      0, /* No default value */
      "pDUSessionResourceSetupRequestTransfer"},
@@ -97,7 +132,15 @@ asn_TYPE_member_t asn_MBR_Ngap_PDUSessionResourceSetupItemCxtReq_1[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_ProtocolExtensionContainer_9717P185,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "iE-Extensions"},
@@ -140,7 +183,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_PDUSessionResourceSetupItemCxtReq = {
     sizeof(asn_DEF_Ngap_PDUSessionResourceSetupItemCxtReq_tags_1) /
         sizeof(
             asn_DEF_Ngap_PDUSessionResourceSetupItemCxtReq_tags_1[0]), /* 1 */
-    {0, 0, SEQUENCE_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_constraint},
     asn_MBR_Ngap_PDUSessionResourceSetupItemCxtReq_1,
     5,                                                      /* Elements count */
     &asn_SPC_Ngap_PDUSessionResourceSetupItemCxtReq_specs_1 /* Additional specs

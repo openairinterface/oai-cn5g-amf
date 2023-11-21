@@ -3,19 +3,24 @@
  * From ASN.1 module "NGAP-IEs"
  * 	found in "asn.1/Information Element Definitions.asn1"
  * 	`asn1c -pdu=all -fcompound-names -fno-include-deps -findirect-choice
- * -gen-PER -D src`
+ * -no-gen-example -gen-APER -gen-UPER -no-gen-JER -no-gen-BER -D src`
  */
 
 #include "Ngap_M1ThresholdType.h"
 
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_type_Ngap_M1ThresholdType_constr_1
     CC_NOTUSED = {{0, 0}, -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t asn_PER_type_Ngap_M1ThresholdType_constr_1 CC_NOTUSED = {
     {APC_CONSTRAINED | APC_EXTENSIBLE, 2, 2, 0, 2} /* (0..2,...) */,
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
 asn_TYPE_member_t asn_MBR_Ngap_M1ThresholdType_1[] = {
     {ATF_NOFLAGS,
      0,
@@ -24,7 +29,15 @@ asn_TYPE_member_t asn_MBR_Ngap_M1ThresholdType_1[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_Threshold_RSRP,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "threshold-RSRP"},
@@ -35,7 +48,15 @@ asn_TYPE_member_t asn_MBR_Ngap_M1ThresholdType_1[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_Threshold_RSRQ,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "threshold-RSRQ"},
@@ -46,7 +67,15 @@ asn_TYPE_member_t asn_MBR_Ngap_M1ThresholdType_1[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_Threshold_SINR,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "threshold-SINR"},
@@ -75,8 +104,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_M1ThresholdType = {
     0, /* No effective tags (count) */
     0, /* No tags (pointer) */
     0, /* No tags (count) */
-    {&asn_OER_type_Ngap_M1ThresholdType_constr_1,
-     &asn_PER_type_Ngap_M1ThresholdType_constr_1, CHOICE_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_M1ThresholdType_constr_1,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_M1ThresholdType_constr_1,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        CHOICE_constraint},
     asn_MBR_Ngap_M1ThresholdType_1,
     3,                                    /* Elements count */
     &asn_SPC_Ngap_M1ThresholdType_specs_1 /* Additional specs */

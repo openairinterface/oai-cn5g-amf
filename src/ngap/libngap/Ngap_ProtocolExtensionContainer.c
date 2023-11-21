@@ -3,16 +3,19 @@
  * From ASN.1 module "NGAP-Containers"
  * 	found in "asn.1/Information Element Definitions.asn1"
  * 	`asn1c -pdu=all -fcompound-names -fno-include-deps -findirect-choice
- * -gen-PER -D src`
+ * -no-gen-example -gen-APER -gen-UPER -no-gen-JER -no-gen-BER -D src`
  */
 
 #include "Ngap_ProtocolExtensionContainer.h"
 
 #include "Ngap_ProtocolExtensionField.h"
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P0_constr_1 CC_NOTUSED = {
         {0, 0},
         -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P0_constr_1 CC_NOTUSED = {
         {APC_UNCONSTRAINED, -1, -1, 0, 0},
@@ -20,10 +23,15 @@ asn_per_constraints_t
         0,
         0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P1_constr_3 CC_NOTUSED = {
         {0, 0},
         -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P1_constr_3 CC_NOTUSED = {
         {APC_UNCONSTRAINED, -1, -1, 0, 0},
@@ -31,10 +39,15 @@ asn_per_constraints_t
         0,
         0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P2_constr_5 CC_NOTUSED = {
         {0, 0},
         -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P2_constr_5 CC_NOTUSED = {
         {APC_UNCONSTRAINED, -1, -1, 0, 0},
@@ -42,10 +55,15 @@ asn_per_constraints_t
         0,
         0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P3_constr_7 CC_NOTUSED = {
         {0, 0},
         -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P3_constr_7 CC_NOTUSED = {
         {APC_UNCONSTRAINED, -1, -1, 0, 0},
@@ -53,10 +71,15 @@ asn_per_constraints_t
         0,
         0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P4_constr_9 CC_NOTUSED = {
         {0, 0},
         -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P4_constr_9 CC_NOTUSED = {
         {APC_UNCONSTRAINED, -1, -1, 0, 0},
@@ -64,10 +87,15 @@ asn_per_constraints_t
         0,
         0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P5_constr_11 CC_NOTUSED = {
         {0, 0},
         -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P5_constr_11 CC_NOTUSED = {
         {APC_UNCONSTRAINED, -1, -1, 0, 0},
@@ -75,10 +103,15 @@ asn_per_constraints_t
         0,
         0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P6_constr_13 CC_NOTUSED = {
         {0, 0},
         -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P6_constr_13 CC_NOTUSED = {
         {APC_UNCONSTRAINED, -1, -1, 0, 0},
@@ -86,10 +119,15 @@ asn_per_constraints_t
         0,
         0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P7_constr_15 CC_NOTUSED = {
         {0, 0},
         -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P7_constr_15 CC_NOTUSED = {
         {APC_UNCONSTRAINED, -1, -1, 0, 0},
@@ -97,10 +135,15 @@ asn_per_constraints_t
         0,
         0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P8_constr_17 CC_NOTUSED = {
         {0, 0},
         -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P8_constr_17 CC_NOTUSED = {
         {APC_UNCONSTRAINED, -1, -1, 0, 0},
@@ -108,10 +151,15 @@ asn_per_constraints_t
         0,
         0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P9_constr_19 CC_NOTUSED = {
         {0, 0},
         -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P9_constr_19 CC_NOTUSED = {
         {APC_UNCONSTRAINED, -1, -1, 0, 0},
@@ -119,9 +167,14 @@ asn_per_constraints_t
         0,
         0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P10_constr_21
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P10_constr_21
         CC_NOTUSED = {
@@ -130,9 +183,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P11_constr_23
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P11_constr_23
         CC_NOTUSED = {
@@ -141,9 +199,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P12_constr_25
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P12_constr_25
         CC_NOTUSED = {
@@ -152,9 +215,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P13_constr_27
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P13_constr_27
         CC_NOTUSED = {
@@ -163,9 +231,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P14_constr_29
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P14_constr_29
         CC_NOTUSED = {
@@ -174,9 +247,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P15_constr_31
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P15_constr_31
         CC_NOTUSED = {
@@ -185,9 +263,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P16_constr_33
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P16_constr_33
         CC_NOTUSED = {
@@ -196,9 +279,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P17_constr_35
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P17_constr_35
         CC_NOTUSED = {
@@ -207,9 +295,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P18_constr_37
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P18_constr_37
         CC_NOTUSED = {
@@ -218,9 +311,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P19_constr_39
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P19_constr_39
         CC_NOTUSED = {
@@ -229,9 +327,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P20_constr_41
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P20_constr_41
         CC_NOTUSED = {
@@ -240,9 +343,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P21_constr_43
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P21_constr_43
         CC_NOTUSED = {
@@ -251,9 +359,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P22_constr_45
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P22_constr_45
         CC_NOTUSED = {
@@ -262,9 +375,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P23_constr_47
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P23_constr_47
         CC_NOTUSED = {
@@ -273,9 +391,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P24_constr_49
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P24_constr_49
         CC_NOTUSED = {
@@ -284,9 +407,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P25_constr_51
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P25_constr_51
         CC_NOTUSED = {
@@ -295,9 +423,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P26_constr_53
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P26_constr_53
         CC_NOTUSED = {
@@ -306,9 +439,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P27_constr_55
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P27_constr_55
         CC_NOTUSED = {
@@ -317,9 +455,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P28_constr_57
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P28_constr_57
         CC_NOTUSED = {
@@ -328,9 +471,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P29_constr_59
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P29_constr_59
         CC_NOTUSED = {
@@ -339,9 +487,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P30_constr_61
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P30_constr_61
         CC_NOTUSED = {
@@ -350,9 +503,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P31_constr_63
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P31_constr_63
         CC_NOTUSED = {
@@ -361,9 +519,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P32_constr_65
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P32_constr_65
         CC_NOTUSED = {
@@ -372,9 +535,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P33_constr_67
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P33_constr_67
         CC_NOTUSED = {
@@ -383,9 +551,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P34_constr_69
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P34_constr_69
         CC_NOTUSED = {
@@ -394,9 +567,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P35_constr_71
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P35_constr_71
         CC_NOTUSED = {
@@ -405,9 +583,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P36_constr_73
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P36_constr_73
         CC_NOTUSED = {
@@ -416,9 +599,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P37_constr_75
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P37_constr_75
         CC_NOTUSED = {
@@ -427,9 +615,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P38_constr_77
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P38_constr_77
         CC_NOTUSED = {
@@ -438,9 +631,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P39_constr_79
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P39_constr_79
         CC_NOTUSED = {
@@ -449,9 +647,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P40_constr_81
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P40_constr_81
         CC_NOTUSED = {
@@ -460,9 +663,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P41_constr_83
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P41_constr_83
         CC_NOTUSED = {
@@ -471,9 +679,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P42_constr_85
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P42_constr_85
         CC_NOTUSED = {
@@ -482,9 +695,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P43_constr_87
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P43_constr_87
         CC_NOTUSED = {
@@ -493,9 +711,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P44_constr_89
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P44_constr_89
         CC_NOTUSED = {
@@ -504,9 +727,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P45_constr_91
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P45_constr_91
         CC_NOTUSED = {
@@ -515,9 +743,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P46_constr_93
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P46_constr_93
         CC_NOTUSED = {
@@ -526,9 +759,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P47_constr_95
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P47_constr_95
         CC_NOTUSED = {
@@ -537,9 +775,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P48_constr_97
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P48_constr_97
         CC_NOTUSED = {
@@ -548,9 +791,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P49_constr_99
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P49_constr_99
         CC_NOTUSED = {
@@ -559,9 +807,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P50_constr_101
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P50_constr_101
         CC_NOTUSED = {
@@ -570,9 +823,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P51_constr_103
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P51_constr_103
         CC_NOTUSED = {
@@ -581,9 +839,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P52_constr_105
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P52_constr_105
         CC_NOTUSED = {
@@ -592,9 +855,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P53_constr_107
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P53_constr_107
         CC_NOTUSED = {
@@ -603,9 +871,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P54_constr_109
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P54_constr_109
         CC_NOTUSED = {
@@ -614,9 +887,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P55_constr_111
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P55_constr_111
         CC_NOTUSED = {
@@ -625,9 +903,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P56_constr_113
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P56_constr_113
         CC_NOTUSED = {
@@ -636,9 +919,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P57_constr_115
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P57_constr_115
         CC_NOTUSED = {
@@ -647,9 +935,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P58_constr_117
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P58_constr_117
         CC_NOTUSED = {
@@ -658,9 +951,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P59_constr_119
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P59_constr_119
         CC_NOTUSED = {
@@ -669,9 +967,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P60_constr_121
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P60_constr_121
         CC_NOTUSED = {
@@ -680,9 +983,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P61_constr_123
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P61_constr_123
         CC_NOTUSED = {
@@ -691,9 +999,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P62_constr_125
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P62_constr_125
         CC_NOTUSED = {
@@ -702,9 +1015,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P63_constr_127
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P63_constr_127
         CC_NOTUSED = {
@@ -713,9 +1031,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P64_constr_129
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P64_constr_129
         CC_NOTUSED = {
@@ -724,9 +1047,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P65_constr_131
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P65_constr_131
         CC_NOTUSED = {
@@ -735,9 +1063,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P66_constr_133
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P66_constr_133
         CC_NOTUSED = {
@@ -746,9 +1079,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P67_constr_135
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P67_constr_135
         CC_NOTUSED = {
@@ -757,9 +1095,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P68_constr_137
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P68_constr_137
         CC_NOTUSED = {
@@ -768,9 +1111,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P69_constr_139
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P69_constr_139
         CC_NOTUSED = {
@@ -779,9 +1127,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P70_constr_141
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P70_constr_141
         CC_NOTUSED = {
@@ -790,9 +1143,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P71_constr_143
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P71_constr_143
         CC_NOTUSED = {
@@ -801,9 +1159,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P72_constr_145
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P72_constr_145
         CC_NOTUSED = {
@@ -812,9 +1175,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P73_constr_147
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P73_constr_147
         CC_NOTUSED = {
@@ -823,9 +1191,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P74_constr_149
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P74_constr_149
         CC_NOTUSED = {
@@ -834,9 +1207,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P75_constr_151
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P75_constr_151
         CC_NOTUSED = {
@@ -845,9 +1223,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P76_constr_153
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P76_constr_153
         CC_NOTUSED = {
@@ -856,9 +1239,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P77_constr_155
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P77_constr_155
         CC_NOTUSED = {
@@ -867,9 +1255,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P78_constr_157
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P78_constr_157
         CC_NOTUSED = {
@@ -878,9 +1271,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P79_constr_159
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P79_constr_159
         CC_NOTUSED = {
@@ -889,9 +1287,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P80_constr_161
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P80_constr_161
         CC_NOTUSED = {
@@ -900,9 +1303,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P81_constr_163
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P81_constr_163
         CC_NOTUSED = {
@@ -911,9 +1319,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P82_constr_165
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P82_constr_165
         CC_NOTUSED = {
@@ -922,9 +1335,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P83_constr_167
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P83_constr_167
         CC_NOTUSED = {
@@ -933,9 +1351,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P84_constr_169
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P84_constr_169
         CC_NOTUSED = {
@@ -944,9 +1367,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P85_constr_171
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P85_constr_171
         CC_NOTUSED = {
@@ -955,9 +1383,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P86_constr_173
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P86_constr_173
         CC_NOTUSED = {
@@ -966,9 +1399,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P87_constr_175
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P87_constr_175
         CC_NOTUSED = {
@@ -977,9 +1415,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P88_constr_177
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P88_constr_177
         CC_NOTUSED = {
@@ -988,9 +1431,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P89_constr_179
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P89_constr_179
         CC_NOTUSED = {
@@ -999,9 +1447,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P90_constr_181
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P90_constr_181
         CC_NOTUSED = {
@@ -1010,9 +1463,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P91_constr_183
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P91_constr_183
         CC_NOTUSED = {
@@ -1021,9 +1479,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P92_constr_185
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P92_constr_185
         CC_NOTUSED = {
@@ -1032,9 +1495,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P93_constr_187
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P93_constr_187
         CC_NOTUSED = {
@@ -1043,9 +1511,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P94_constr_189
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P94_constr_189
         CC_NOTUSED = {
@@ -1054,9 +1527,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P95_constr_191
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P95_constr_191
         CC_NOTUSED = {
@@ -1065,9 +1543,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P96_constr_193
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P96_constr_193
         CC_NOTUSED = {
@@ -1076,9 +1559,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P97_constr_195
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P97_constr_195
         CC_NOTUSED = {
@@ -1087,9 +1575,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P98_constr_197
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P98_constr_197
         CC_NOTUSED = {
@@ -1098,9 +1591,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P99_constr_199
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P99_constr_199
         CC_NOTUSED = {
@@ -1109,9 +1607,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P100_constr_201
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P100_constr_201
         CC_NOTUSED = {
@@ -1120,9 +1623,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P101_constr_203
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P101_constr_203
         CC_NOTUSED = {
@@ -1131,9 +1639,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P102_constr_205
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P102_constr_205
         CC_NOTUSED = {
@@ -1142,9 +1655,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P103_constr_207
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P103_constr_207
         CC_NOTUSED = {
@@ -1153,9 +1671,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P104_constr_209
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P104_constr_209
         CC_NOTUSED = {
@@ -1164,9 +1687,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P105_constr_211
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P105_constr_211
         CC_NOTUSED = {
@@ -1175,9 +1703,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P106_constr_213
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P106_constr_213
         CC_NOTUSED = {
@@ -1186,9 +1719,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P107_constr_215
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P107_constr_215
         CC_NOTUSED = {
@@ -1197,9 +1735,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P108_constr_217
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P108_constr_217
         CC_NOTUSED = {
@@ -1208,9 +1751,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P109_constr_219
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P109_constr_219
         CC_NOTUSED = {
@@ -1219,9 +1767,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P110_constr_221
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P110_constr_221
         CC_NOTUSED = {
@@ -1230,9 +1783,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P111_constr_223
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P111_constr_223
         CC_NOTUSED = {
@@ -1241,9 +1799,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P112_constr_225
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P112_constr_225
         CC_NOTUSED = {
@@ -1252,9 +1815,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P113_constr_227
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P113_constr_227
         CC_NOTUSED = {
@@ -1263,9 +1831,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P114_constr_229
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P114_constr_229
         CC_NOTUSED = {
@@ -1274,9 +1847,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P115_constr_231
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P115_constr_231
         CC_NOTUSED = {
@@ -1285,9 +1863,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P116_constr_233
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P116_constr_233
         CC_NOTUSED = {
@@ -1296,9 +1879,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P117_constr_235
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P117_constr_235
         CC_NOTUSED = {
@@ -1307,9 +1895,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P118_constr_237
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P118_constr_237
         CC_NOTUSED = {
@@ -1318,9 +1911,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P119_constr_239
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P119_constr_239
         CC_NOTUSED = {
@@ -1329,9 +1927,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P120_constr_241
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P120_constr_241
         CC_NOTUSED = {
@@ -1340,9 +1943,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P121_constr_243
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P121_constr_243
         CC_NOTUSED = {
@@ -1351,9 +1959,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P122_constr_245
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P122_constr_245
         CC_NOTUSED = {
@@ -1362,9 +1975,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P123_constr_247
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P123_constr_247
         CC_NOTUSED = {
@@ -1373,9 +1991,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P124_constr_249
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P124_constr_249
         CC_NOTUSED = {
@@ -1384,9 +2007,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P125_constr_251
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P125_constr_251
         CC_NOTUSED = {
@@ -1395,9 +2023,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P126_constr_253
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P126_constr_253
         CC_NOTUSED = {
@@ -1406,9 +2039,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P127_constr_255
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P127_constr_255
         CC_NOTUSED = {
@@ -1417,9 +2055,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P128_constr_257
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P128_constr_257
         CC_NOTUSED = {
@@ -1428,9 +2071,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P129_constr_259
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P129_constr_259
         CC_NOTUSED = {
@@ -1439,9 +2087,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P130_constr_261
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P130_constr_261
         CC_NOTUSED = {
@@ -1450,9 +2103,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P131_constr_263
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P131_constr_263
         CC_NOTUSED = {
@@ -1461,9 +2119,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P132_constr_265
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P132_constr_265
         CC_NOTUSED = {
@@ -1472,9 +2135,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P133_constr_267
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P133_constr_267
         CC_NOTUSED = {
@@ -1483,9 +2151,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P134_constr_269
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P134_constr_269
         CC_NOTUSED = {
@@ -1494,9 +2167,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P135_constr_271
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P135_constr_271
         CC_NOTUSED = {
@@ -1505,9 +2183,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P136_constr_273
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P136_constr_273
         CC_NOTUSED = {
@@ -1516,9 +2199,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P137_constr_275
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P137_constr_275
         CC_NOTUSED = {
@@ -1527,9 +2215,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P138_constr_277
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P138_constr_277
         CC_NOTUSED = {
@@ -1538,9 +2231,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P139_constr_279
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P139_constr_279
         CC_NOTUSED = {
@@ -1549,9 +2247,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P140_constr_281
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P140_constr_281
         CC_NOTUSED = {
@@ -1560,9 +2263,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P141_constr_283
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P141_constr_283
         CC_NOTUSED = {
@@ -1571,9 +2279,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P142_constr_285
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P142_constr_285
         CC_NOTUSED = {
@@ -1582,9 +2295,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P143_constr_287
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P143_constr_287
         CC_NOTUSED = {
@@ -1593,9 +2311,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P144_constr_289
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P144_constr_289
         CC_NOTUSED = {
@@ -1604,9 +2327,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P145_constr_291
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P145_constr_291
         CC_NOTUSED = {
@@ -1615,9 +2343,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P146_constr_293
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P146_constr_293
         CC_NOTUSED = {
@@ -1626,9 +2359,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P147_constr_295
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P147_constr_295
         CC_NOTUSED = {
@@ -1637,9 +2375,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P148_constr_297
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P148_constr_297
         CC_NOTUSED = {
@@ -1648,9 +2391,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P149_constr_299
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P149_constr_299
         CC_NOTUSED = {
@@ -1659,9 +2407,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P150_constr_301
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P150_constr_301
         CC_NOTUSED = {
@@ -1670,9 +2423,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P151_constr_303
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P151_constr_303
         CC_NOTUSED = {
@@ -1681,9 +2439,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P152_constr_305
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P152_constr_305
         CC_NOTUSED = {
@@ -1692,9 +2455,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P153_constr_307
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P153_constr_307
         CC_NOTUSED = {
@@ -1703,9 +2471,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P154_constr_309
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P154_constr_309
         CC_NOTUSED = {
@@ -1714,9 +2487,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P155_constr_311
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P155_constr_311
         CC_NOTUSED = {
@@ -1725,9 +2503,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P156_constr_313
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P156_constr_313
         CC_NOTUSED = {
@@ -1736,9 +2519,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P157_constr_315
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P157_constr_315
         CC_NOTUSED = {
@@ -1747,9 +2535,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P158_constr_317
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P158_constr_317
         CC_NOTUSED = {
@@ -1758,9 +2551,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P159_constr_319
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P159_constr_319
         CC_NOTUSED = {
@@ -1769,9 +2567,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P160_constr_321
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P160_constr_321
         CC_NOTUSED = {
@@ -1780,9 +2583,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P161_constr_323
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P161_constr_323
         CC_NOTUSED = {
@@ -1791,9 +2599,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P162_constr_325
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P162_constr_325
         CC_NOTUSED = {
@@ -1802,9 +2615,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P163_constr_327
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P163_constr_327
         CC_NOTUSED = {
@@ -1813,9 +2631,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P164_constr_329
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P164_constr_329
         CC_NOTUSED = {
@@ -1824,9 +2647,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P165_constr_331
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P165_constr_331
         CC_NOTUSED = {
@@ -1835,9 +2663,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P166_constr_333
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P166_constr_333
         CC_NOTUSED = {
@@ -1846,9 +2679,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P167_constr_335
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P167_constr_335
         CC_NOTUSED = {
@@ -1857,9 +2695,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P168_constr_337
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P168_constr_337
         CC_NOTUSED = {
@@ -1868,9 +2711,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P169_constr_339
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P169_constr_339
         CC_NOTUSED = {
@@ -1879,9 +2727,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P170_constr_341
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P170_constr_341
         CC_NOTUSED = {
@@ -1890,9 +2743,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P171_constr_343
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P171_constr_343
         CC_NOTUSED = {
@@ -1901,9 +2759,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P172_constr_345
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P172_constr_345
         CC_NOTUSED = {
@@ -1912,9 +2775,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P173_constr_347
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P173_constr_347
         CC_NOTUSED = {
@@ -1923,9 +2791,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P174_constr_349
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P174_constr_349
         CC_NOTUSED = {
@@ -1934,9 +2807,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P175_constr_351
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P175_constr_351
         CC_NOTUSED = {
@@ -1945,9 +2823,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P176_constr_353
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P176_constr_353
         CC_NOTUSED = {
@@ -1956,9 +2839,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P177_constr_355
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P177_constr_355
         CC_NOTUSED = {
@@ -1967,9 +2855,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P178_constr_357
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P178_constr_357
         CC_NOTUSED = {
@@ -1978,9 +2871,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P179_constr_359
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P179_constr_359
         CC_NOTUSED = {
@@ -1989,9 +2887,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P180_constr_361
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P180_constr_361
         CC_NOTUSED = {
@@ -2000,9 +2903,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P181_constr_363
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P181_constr_363
         CC_NOTUSED = {
@@ -2011,9 +2919,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P182_constr_365
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P182_constr_365
         CC_NOTUSED = {
@@ -2022,9 +2935,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P183_constr_367
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P183_constr_367
         CC_NOTUSED = {
@@ -2033,9 +2951,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P184_constr_369
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P184_constr_369
         CC_NOTUSED = {
@@ -2044,9 +2967,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P185_constr_371
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P185_constr_371
         CC_NOTUSED = {
@@ -2055,9 +2983,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P186_constr_373
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P186_constr_373
         CC_NOTUSED = {
@@ -2066,9 +2999,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P187_constr_375
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P187_constr_375
         CC_NOTUSED = {
@@ -2077,9 +3015,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P188_constr_377
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P188_constr_377
         CC_NOTUSED = {
@@ -2088,9 +3031,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P189_constr_379
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P189_constr_379
         CC_NOTUSED = {
@@ -2099,9 +3047,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P190_constr_381
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P190_constr_381
         CC_NOTUSED = {
@@ -2110,9 +3063,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P191_constr_383
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P191_constr_383
         CC_NOTUSED = {
@@ -2121,9 +3079,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P192_constr_385
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P192_constr_385
         CC_NOTUSED = {
@@ -2132,9 +3095,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P193_constr_387
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P193_constr_387
         CC_NOTUSED = {
@@ -2143,9 +3111,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P194_constr_389
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P194_constr_389
         CC_NOTUSED = {
@@ -2154,9 +3127,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P195_constr_391
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P195_constr_391
         CC_NOTUSED = {
@@ -2165,9 +3143,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P196_constr_393
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P196_constr_393
         CC_NOTUSED = {
@@ -2176,9 +3159,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P197_constr_395
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P197_constr_395
         CC_NOTUSED = {
@@ -2187,9 +3175,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P198_constr_397
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P198_constr_397
         CC_NOTUSED = {
@@ -2198,9 +3191,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P199_constr_399
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P199_constr_399
         CC_NOTUSED = {
@@ -2209,9 +3207,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P200_constr_401
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P200_constr_401
         CC_NOTUSED = {
@@ -2220,9 +3223,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P201_constr_403
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P201_constr_403
         CC_NOTUSED = {
@@ -2231,9 +3239,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P202_constr_405
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P202_constr_405
         CC_NOTUSED = {
@@ -2242,9 +3255,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P203_constr_407
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P203_constr_407
         CC_NOTUSED = {
@@ -2253,9 +3271,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P204_constr_409
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P204_constr_409
         CC_NOTUSED = {
@@ -2264,9 +3287,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P205_constr_411
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P205_constr_411
         CC_NOTUSED = {
@@ -2275,9 +3303,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P206_constr_413
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P206_constr_413
         CC_NOTUSED = {
@@ -2286,9 +3319,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P207_constr_415
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P207_constr_415
         CC_NOTUSED = {
@@ -2297,9 +3335,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P208_constr_417
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P208_constr_417
         CC_NOTUSED = {
@@ -2308,9 +3351,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P209_constr_419
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P209_constr_419
         CC_NOTUSED = {
@@ -2319,9 +3367,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P210_constr_421
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P210_constr_421
         CC_NOTUSED = {
@@ -2330,9 +3383,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P211_constr_423
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P211_constr_423
         CC_NOTUSED = {
@@ -2341,9 +3399,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P212_constr_425
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P212_constr_425
         CC_NOTUSED = {
@@ -2352,9 +3415,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P213_constr_427
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P213_constr_427
         CC_NOTUSED = {
@@ -2363,9 +3431,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P214_constr_429
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P214_constr_429
         CC_NOTUSED = {
@@ -2374,9 +3447,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P215_constr_431
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P215_constr_431
         CC_NOTUSED = {
@@ -2385,9 +3463,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P216_constr_433
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P216_constr_433
         CC_NOTUSED = {
@@ -2396,9 +3479,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P217_constr_435
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P217_constr_435
         CC_NOTUSED = {
@@ -2407,9 +3495,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P218_constr_437
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P218_constr_437
         CC_NOTUSED = {
@@ -2418,9 +3511,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P219_constr_439
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P219_constr_439
         CC_NOTUSED = {
@@ -2429,9 +3527,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P220_constr_441
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P220_constr_441
         CC_NOTUSED = {
@@ -2440,9 +3543,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P221_constr_443
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P221_constr_443
         CC_NOTUSED = {
@@ -2451,9 +3559,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P222_constr_445
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P222_constr_445
         CC_NOTUSED = {
@@ -2462,9 +3575,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P223_constr_447
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P223_constr_447
         CC_NOTUSED = {
@@ -2473,9 +3591,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P224_constr_449
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P224_constr_449
         CC_NOTUSED = {
@@ -2484,9 +3607,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P225_constr_451
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P225_constr_451
         CC_NOTUSED = {
@@ -2495,9 +3623,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P226_constr_453
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P226_constr_453
         CC_NOTUSED = {
@@ -2506,9 +3639,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P227_constr_455
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P227_constr_455
         CC_NOTUSED = {
@@ -2517,9 +3655,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P228_constr_457
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P228_constr_457
         CC_NOTUSED = {
@@ -2528,9 +3671,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P229_constr_459
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P229_constr_459
         CC_NOTUSED = {
@@ -2539,9 +3687,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P230_constr_461
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P230_constr_461
         CC_NOTUSED = {
@@ -2550,9 +3703,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P231_constr_463
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P231_constr_463
         CC_NOTUSED = {
@@ -2561,9 +3719,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P232_constr_465
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P232_constr_465
         CC_NOTUSED = {
@@ -2572,9 +3735,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P233_constr_467
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P233_constr_467
         CC_NOTUSED = {
@@ -2583,9 +3751,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P234_constr_469
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P234_constr_469
         CC_NOTUSED = {
@@ -2594,9 +3767,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P235_constr_471
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P235_constr_471
         CC_NOTUSED = {
@@ -2605,9 +3783,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P236_constr_473
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P236_constr_473
         CC_NOTUSED = {
@@ -2616,9 +3799,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P237_constr_475
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P237_constr_475
         CC_NOTUSED = {
@@ -2627,9 +3815,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P238_constr_477
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P238_constr_477
         CC_NOTUSED = {
@@ -2638,9 +3831,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P239_constr_479
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P239_constr_479
         CC_NOTUSED = {
@@ -2649,9 +3847,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P240_constr_481
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P240_constr_481
         CC_NOTUSED = {
@@ -2660,9 +3863,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P241_constr_483
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P241_constr_483
         CC_NOTUSED = {
@@ -2671,9 +3879,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P242_constr_485
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P242_constr_485
         CC_NOTUSED = {
@@ -2682,9 +3895,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P243_constr_487
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P243_constr_487
         CC_NOTUSED = {
@@ -2693,9 +3911,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P244_constr_489
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P244_constr_489
         CC_NOTUSED = {
@@ -2704,9 +3927,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P245_constr_491
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P245_constr_491
         CC_NOTUSED = {
@@ -2715,9 +3943,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P246_constr_493
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P246_constr_493
         CC_NOTUSED = {
@@ -2726,9 +3959,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P247_constr_495
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P247_constr_495
         CC_NOTUSED = {
@@ -2737,9 +3975,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P248_constr_497
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P248_constr_497
         CC_NOTUSED = {
@@ -2748,9 +3991,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P249_constr_499
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P249_constr_499
         CC_NOTUSED = {
@@ -2759,9 +4007,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P250_constr_501
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P250_constr_501
         CC_NOTUSED = {
@@ -2770,9 +4023,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P251_constr_503
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P251_constr_503
         CC_NOTUSED = {
@@ -2781,9 +4039,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P252_constr_505
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P252_constr_505
         CC_NOTUSED = {
@@ -2792,9 +4055,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P253_constr_507
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P253_constr_507
         CC_NOTUSED = {
@@ -2803,9 +4071,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P254_constr_509
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P254_constr_509
         CC_NOTUSED = {
@@ -2814,9 +4087,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P255_constr_511
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P255_constr_511
         CC_NOTUSED = {
@@ -2825,9 +4103,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P256_constr_513
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P256_constr_513
         CC_NOTUSED = {
@@ -2836,9 +4119,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P257_constr_515
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P257_constr_515
         CC_NOTUSED = {
@@ -2847,9 +4135,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P258_constr_517
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P258_constr_517
         CC_NOTUSED = {
@@ -2858,9 +4151,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P259_constr_519
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P259_constr_519
         CC_NOTUSED = {
@@ -2869,9 +4167,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P260_constr_521
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P260_constr_521
         CC_NOTUSED = {
@@ -2880,9 +4183,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P261_constr_523
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P261_constr_523
         CC_NOTUSED = {
@@ -2891,9 +4199,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P262_constr_525
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P262_constr_525
         CC_NOTUSED = {
@@ -2902,9 +4215,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P263_constr_527
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P263_constr_527
         CC_NOTUSED = {
@@ -2913,9 +4231,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P264_constr_529
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P264_constr_529
         CC_NOTUSED = {
@@ -2924,9 +4247,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P265_constr_531
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P265_constr_531
         CC_NOTUSED = {
@@ -2935,9 +4263,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P266_constr_533
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P266_constr_533
         CC_NOTUSED = {
@@ -2946,9 +4279,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P267_constr_535
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P267_constr_535
         CC_NOTUSED = {
@@ -2957,9 +4295,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P268_constr_537
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P268_constr_537
         CC_NOTUSED = {
@@ -2968,9 +4311,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P269_constr_539
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P269_constr_539
         CC_NOTUSED = {
@@ -2979,9 +4327,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P270_constr_541
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P270_constr_541
         CC_NOTUSED = {
@@ -2990,9 +4343,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P271_constr_543
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P271_constr_543
         CC_NOTUSED = {
@@ -3001,9 +4359,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P272_constr_545
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P272_constr_545
         CC_NOTUSED = {
@@ -3012,9 +4375,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P273_constr_547
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P273_constr_547
         CC_NOTUSED = {
@@ -3023,9 +4391,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P274_constr_549
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P274_constr_549
         CC_NOTUSED = {
@@ -3034,9 +4407,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P275_constr_551
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P275_constr_551
         CC_NOTUSED = {
@@ -3045,9 +4423,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P276_constr_553
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P276_constr_553
         CC_NOTUSED = {
@@ -3056,9 +4439,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P277_constr_555
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P277_constr_555
         CC_NOTUSED = {
@@ -3067,9 +4455,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P278_constr_557
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P278_constr_557
         CC_NOTUSED = {
@@ -3078,9 +4471,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P279_constr_559
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P279_constr_559
         CC_NOTUSED = {
@@ -3089,9 +4487,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P280_constr_561
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P280_constr_561
         CC_NOTUSED = {
@@ -3100,9 +4503,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P281_constr_563
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P281_constr_563
         CC_NOTUSED = {
@@ -3111,9 +4519,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P282_constr_565
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P282_constr_565
         CC_NOTUSED = {
@@ -3122,9 +4535,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P283_constr_567
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P283_constr_567
         CC_NOTUSED = {
@@ -3133,9 +4551,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P284_constr_569
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P284_constr_569
         CC_NOTUSED = {
@@ -3144,9 +4567,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P285_constr_571
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P285_constr_571
         CC_NOTUSED = {
@@ -3155,9 +4583,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P286_constr_573
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P286_constr_573
         CC_NOTUSED = {
@@ -3166,9 +4599,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P287_constr_575
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P287_constr_575
         CC_NOTUSED = {
@@ -3177,9 +4615,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P288_constr_577
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P288_constr_577
         CC_NOTUSED = {
@@ -3188,9 +4631,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P289_constr_579
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P289_constr_579
         CC_NOTUSED = {
@@ -3199,9 +4647,14 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_ProtocolExtensionContainer_9717P290_constr_581
         CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t
     asn_PER_type_Ngap_ProtocolExtensionContainer_9717P290_constr_581
         CC_NOTUSED = {
@@ -3210,6 +4663,8 @@ asn_per_constraints_t
             0,
             0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
 asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P0_1[] = {
     {ATF_POINTER,
      0,
@@ -3218,7 +4673,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P0_1[] = {
      0,
      &asn_DEF_Ngap_AdditionalDLUPTNLInformationForHOItem_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -3244,9 +4707,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P0 = {
     sizeof(asn_DEF_Ngap_ProtocolExtensionContainer_9717P0_tags_1) /
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P0_tags_1[0]), /* 1 */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P0_constr_1,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P0_constr_1,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P0_constr_1,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P0_constr_1,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P0_1,
     1,                                                      /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P0_specs_1 /* Additional specs
@@ -3261,7 +4730,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P1_3[] = {
      0,
      &asn_DEF_Ngap_AllocationAndRetentionPriority_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -3287,9 +4764,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P1 = {
     sizeof(asn_DEF_Ngap_ProtocolExtensionContainer_9717P1_tags_3) /
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P1_tags_3[0]), /* 1 */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P1_constr_3,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P1_constr_3,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P1_constr_3,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P1_constr_3,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P1_3,
     1,                                                      /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P1_specs_3 /* Additional specs
@@ -3304,7 +4787,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P2_5[] = {
      0,
      &asn_DEF_Ngap_AllowedNSSAI_Item_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -3330,9 +4821,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P2 = {
     sizeof(asn_DEF_Ngap_ProtocolExtensionContainer_9717P2_tags_5) /
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P2_tags_5[0]), /* 1 */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P2_constr_5,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P2_constr_5,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P2_constr_5,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P2_constr_5,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P2_5,
     1,                                                      /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P2_specs_5 /* Additional specs
@@ -3347,7 +4844,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P3_7[] = {
      0,
      &asn_DEF_Ngap_Allowed_PNI_NPN_Item_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -3373,9 +4878,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P3 = {
     sizeof(asn_DEF_Ngap_ProtocolExtensionContainer_9717P3_tags_7) /
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P3_tags_7[0]), /* 1 */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P3_constr_7,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P3_constr_7,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P3_constr_7,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P3_constr_7,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P3_7,
     1,                                                      /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P3_specs_7 /* Additional specs
@@ -3390,7 +4901,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P4_9[] = {
      0,
      &asn_DEF_Ngap_AlternativeQoSParaSetItem_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -3416,9 +4935,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P4 = {
     sizeof(asn_DEF_Ngap_ProtocolExtensionContainer_9717P4_tags_9) /
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P4_tags_9[0]), /* 1 */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P4_constr_9,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P4_constr_9,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P4_constr_9,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P4_constr_9,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P4_9,
     1,                                                      /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P4_specs_9 /* Additional specs
@@ -3433,7 +4958,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P5_11[] = {
      0,
      &asn_DEF_Ngap_AMF_TNLAssociationSetupItem_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -3459,9 +4992,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P5 = {
     sizeof(asn_DEF_Ngap_ProtocolExtensionContainer_9717P5_tags_11) /
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P5_tags_11[0]), /* 1 */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P5_constr_11,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P5_constr_11,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P5_constr_11,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P5_constr_11,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P5_11,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P5_specs_11 /* Additional specs
@@ -3476,7 +5015,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P6_13[] = {
      0,
      &asn_DEF_Ngap_AMF_TNLAssociationToAddItem_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -3502,9 +5049,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P6 = {
     sizeof(asn_DEF_Ngap_ProtocolExtensionContainer_9717P6_tags_13) /
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P6_tags_13[0]), /* 1 */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P6_constr_13,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P6_constr_13,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P6_constr_13,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P6_constr_13,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P6_13,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P6_specs_13 /* Additional specs
@@ -3519,7 +5072,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P7_15[] = {
      0,
      &asn_DEF_Ngap_AMF_TNLAssociationToRemoveItem_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -3545,9 +5106,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P7 = {
     sizeof(asn_DEF_Ngap_ProtocolExtensionContainer_9717P7_tags_15) /
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P7_tags_15[0]), /* 1 */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P7_constr_15,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P7_constr_15,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P7_constr_15,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P7_constr_15,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P7_15,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P7_specs_15 /* Additional specs
@@ -3562,7 +5129,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P8_17[] = {
      0,
      &asn_DEF_Ngap_AMF_TNLAssociationToUpdateItem_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -3588,9 +5163,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P8 = {
     sizeof(asn_DEF_Ngap_ProtocolExtensionContainer_9717P8_tags_17) /
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P8_tags_17[0]), /* 1 */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P8_constr_17,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P8_constr_17,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P8_constr_17,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P8_constr_17,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P8_17,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P8_specs_17 /* Additional specs
@@ -3605,7 +5186,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P9_19[] = {
      0,
      &asn_DEF_Ngap_AreaOfInterest_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -3631,9 +5220,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P9 = {
     sizeof(asn_DEF_Ngap_ProtocolExtensionContainer_9717P9_tags_19) /
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P9_tags_19[0]), /* 1 */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P9_constr_19,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P9_constr_19,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P9_constr_19,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P9_constr_19,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P9_19,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P9_specs_19 /* Additional specs
@@ -3648,7 +5243,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P10_21[] = {
      0,
      &asn_DEF_Ngap_AreaOfInterestCellItem_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -3674,9 +5277,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P10 = {
     sizeof(asn_DEF_Ngap_ProtocolExtensionContainer_9717P10_tags_21) /
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P10_tags_21[0]), /* 1 */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P10_constr_21,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P10_constr_21,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P10_constr_21,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P10_constr_21,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P10_21,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P10_specs_21 /* Additional
@@ -3691,7 +5300,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P11_23[] = {
      0,
      &asn_DEF_Ngap_AreaOfInterestItem_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -3717,9 +5334,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P11 = {
     sizeof(asn_DEF_Ngap_ProtocolExtensionContainer_9717P11_tags_23) /
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P11_tags_23[0]), /* 1 */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P11_constr_23,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P11_constr_23,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P11_constr_23,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P11_constr_23,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P11_23,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P11_specs_23 /* Additional
@@ -3734,7 +5357,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P12_25[] = {
      0,
      &asn_DEF_Ngap_AreaOfInterestRANNodeItem_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -3760,9 +5391,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P12 = {
     sizeof(asn_DEF_Ngap_ProtocolExtensionContainer_9717P12_tags_25) /
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P12_tags_25[0]), /* 1 */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P12_constr_25,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P12_constr_25,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P12_constr_25,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P12_constr_25,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P12_25,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P12_specs_25 /* Additional
@@ -3777,7 +5414,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P13_27[] = {
      0,
      &asn_DEF_Ngap_AreaOfInterestTAIItem_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -3803,9 +5448,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P13 = {
     sizeof(asn_DEF_Ngap_ProtocolExtensionContainer_9717P13_tags_27) /
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P13_tags_27[0]), /* 1 */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P13_constr_27,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P13_constr_27,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P13_constr_27,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P13_constr_27,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P13_27,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P13_specs_27 /* Additional
@@ -3820,7 +5471,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P14_29[] = {
      0,
      &asn_DEF_Ngap_AssistanceDataForPaging_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -3846,9 +5505,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P14 = {
     sizeof(asn_DEF_Ngap_ProtocolExtensionContainer_9717P14_tags_29) /
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P14_tags_29[0]), /* 1 */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P14_constr_29,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P14_constr_29,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P14_constr_29,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P14_constr_29,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P14_29,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P14_specs_29 /* Additional
@@ -3863,7 +5528,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P15_31[] = {
      0,
      &asn_DEF_Ngap_AssistanceDataForRecommendedCells_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -3889,9 +5562,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P15 = {
     sizeof(asn_DEF_Ngap_ProtocolExtensionContainer_9717P15_tags_31) /
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P15_tags_31[0]), /* 1 */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P15_constr_31,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P15_constr_31,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P15_constr_31,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P15_constr_31,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P15_31,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P15_specs_31 /* Additional
@@ -3906,7 +5585,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P16_33[] = {
      0,
      &asn_DEF_Ngap_AssociatedQosFlowItem_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -3932,9 +5619,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P16 = {
     sizeof(asn_DEF_Ngap_ProtocolExtensionContainer_9717P16_tags_33) /
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P16_tags_33[0]), /* 1 */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P16_constr_33,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P16_constr_33,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P16_constr_33,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P16_constr_33,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P16_33,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P16_specs_33 /* Additional
@@ -3949,7 +5642,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P17_35[] = {
      0,
      &asn_DEF_Ngap_AreaScopeOfNeighCellsItem_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -3975,9 +5676,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P17 = {
     sizeof(asn_DEF_Ngap_ProtocolExtensionContainer_9717P17_tags_35) /
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P17_tags_35[0]), /* 1 */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P17_constr_35,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P17_constr_35,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P17_constr_35,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P17_constr_35,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P17_35,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P17_specs_35 /* Additional
@@ -3992,7 +5699,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P18_37[] = {
      0,
      &asn_DEF_Ngap_BroadcastPLMNItem_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -4018,9 +5733,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P18 = {
     sizeof(asn_DEF_Ngap_ProtocolExtensionContainer_9717P18_tags_37) /
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P18_tags_37[0]), /* 1 */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P18_constr_37,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P18_constr_37,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P18_constr_37,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P18_constr_37,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P18_37,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P18_specs_37 /* Additional
@@ -4035,7 +5756,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P19_39[] = {
      0,
      &asn_DEF_Ngap_BluetoothMeasurementConfiguration_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -4061,9 +5790,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P19 = {
     sizeof(asn_DEF_Ngap_ProtocolExtensionContainer_9717P19_tags_39) /
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P19_tags_39[0]), /* 1 */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P19_constr_39,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P19_constr_39,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P19_constr_39,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P19_constr_39,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P19_39,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P19_specs_39 /* Additional
@@ -4078,7 +5813,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P20_41[] = {
      0,
      &asn_DEF_Ngap_BluetoothMeasConfigNameItem_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -4104,9 +5847,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P20 = {
     sizeof(asn_DEF_Ngap_ProtocolExtensionContainer_9717P20_tags_41) /
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P20_tags_41[0]), /* 1 */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P20_constr_41,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P20_constr_41,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P20_constr_41,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P20_constr_41,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P20_41,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P20_specs_41 /* Additional
@@ -4121,7 +5870,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P21_43[] = {
      0,
      &asn_DEF_Ngap_CancelledCellsInEAI_EUTRA_Item_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -4147,9 +5904,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P21 = {
     sizeof(asn_DEF_Ngap_ProtocolExtensionContainer_9717P21_tags_43) /
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P21_tags_43[0]), /* 1 */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P21_constr_43,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P21_constr_43,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P21_constr_43,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P21_constr_43,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P21_43,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P21_specs_43 /* Additional
@@ -4164,7 +5927,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P22_45[] = {
      0,
      &asn_DEF_Ngap_CancelledCellsInEAI_NR_Item_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -4190,9 +5961,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P22 = {
     sizeof(asn_DEF_Ngap_ProtocolExtensionContainer_9717P22_tags_45) /
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P22_tags_45[0]), /* 1 */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P22_constr_45,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P22_constr_45,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P22_constr_45,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P22_constr_45,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P22_45,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P22_specs_45 /* Additional
@@ -4207,7 +5984,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P23_47[] = {
      0,
      &asn_DEF_Ngap_CancelledCellsInTAI_EUTRA_Item_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -4233,9 +6018,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P23 = {
     sizeof(asn_DEF_Ngap_ProtocolExtensionContainer_9717P23_tags_47) /
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P23_tags_47[0]), /* 1 */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P23_constr_47,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P23_constr_47,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P23_constr_47,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P23_constr_47,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P23_47,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P23_specs_47 /* Additional
@@ -4250,7 +6041,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P24_49[] = {
      0,
      &asn_DEF_Ngap_CancelledCellsInTAI_NR_Item_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -4276,9 +6075,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P24 = {
     sizeof(asn_DEF_Ngap_ProtocolExtensionContainer_9717P24_tags_49) /
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P24_tags_49[0]), /* 1 */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P24_constr_49,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P24_constr_49,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P24_constr_49,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P24_constr_49,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P24_49,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P24_specs_49 /* Additional
@@ -4293,7 +6098,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P25_51[] = {
      0,
      &asn_DEF_Ngap_CandidateCellItem_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -4319,9 +6132,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P25 = {
     sizeof(asn_DEF_Ngap_ProtocolExtensionContainer_9717P25_tags_51) /
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P25_tags_51[0]), /* 1 */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P25_constr_51,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P25_constr_51,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P25_constr_51,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P25_constr_51,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P25_51,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P25_specs_51 /* Additional
@@ -4336,7 +6155,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P26_53[] = {
      0,
      &asn_DEF_Ngap_CandidateCellID_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -4362,9 +6189,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P26 = {
     sizeof(asn_DEF_Ngap_ProtocolExtensionContainer_9717P26_tags_53) /
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P26_tags_53[0]), /* 1 */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P26_constr_53,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P26_constr_53,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P26_constr_53,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P26_constr_53,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P26_53,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P26_specs_53 /* Additional
@@ -4379,7 +6212,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P27_55[] = {
      0,
      &asn_DEF_Ngap_CandidatePCI_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -4405,9 +6246,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P27 = {
     sizeof(asn_DEF_Ngap_ProtocolExtensionContainer_9717P27_tags_55) /
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P27_tags_55[0]), /* 1 */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P27_constr_55,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P27_constr_55,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P27_constr_55,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P27_constr_55,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P27_55,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P27_specs_55 /* Additional
@@ -4422,7 +6269,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P28_57[] = {
      0,
      &asn_DEF_Ngap_Cell_CAGInformation_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -4448,9 +6303,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P28 = {
     sizeof(asn_DEF_Ngap_ProtocolExtensionContainer_9717P28_tags_57) /
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P28_tags_57[0]), /* 1 */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P28_constr_57,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P28_constr_57,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P28_constr_57,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P28_constr_57,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P28_57,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P28_specs_57 /* Additional
@@ -4465,7 +6326,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P29_59[] = {
      0,
      &asn_DEF_Ngap_CellIDBroadcastEUTRA_Item_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -4491,9 +6360,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P29 = {
     sizeof(asn_DEF_Ngap_ProtocolExtensionContainer_9717P29_tags_59) /
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P29_tags_59[0]), /* 1 */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P29_constr_59,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P29_constr_59,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P29_constr_59,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P29_constr_59,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P29_59,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P29_specs_59 /* Additional
@@ -4508,7 +6383,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P30_61[] = {
      0,
      &asn_DEF_Ngap_CellIDBroadcastNR_Item_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -4534,9 +6417,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P30 = {
     sizeof(asn_DEF_Ngap_ProtocolExtensionContainer_9717P30_tags_61) /
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P30_tags_61[0]), /* 1 */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P30_constr_61,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P30_constr_61,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P30_constr_61,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P30_constr_61,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P30_61,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P30_specs_61 /* Additional
@@ -4551,7 +6440,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P31_63[] = {
      0,
      &asn_DEF_Ngap_CellIDCancelledEUTRA_Item_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -4577,9 +6474,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P31 = {
     sizeof(asn_DEF_Ngap_ProtocolExtensionContainer_9717P31_tags_63) /
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P31_tags_63[0]), /* 1 */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P31_constr_63,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P31_constr_63,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P31_constr_63,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P31_constr_63,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P31_63,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P31_specs_63 /* Additional
@@ -4594,7 +6497,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P32_65[] = {
      0,
      &asn_DEF_Ngap_CellIDCancelledNR_Item_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -4620,9 +6531,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P32 = {
     sizeof(asn_DEF_Ngap_ProtocolExtensionContainer_9717P32_tags_65) /
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P32_tags_65[0]), /* 1 */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P32_constr_65,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P32_constr_65,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P32_constr_65,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P32_constr_65,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P32_65,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P32_specs_65 /* Additional
@@ -4637,7 +6554,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P33_67[] = {
      0,
      &asn_DEF_Ngap_CellType_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -4663,9 +6588,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P33 = {
     sizeof(asn_DEF_Ngap_ProtocolExtensionContainer_9717P33_tags_67) /
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P33_tags_67[0]), /* 1 */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P33_constr_67,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P33_constr_67,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P33_constr_67,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P33_constr_67,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P33_67,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P33_specs_67 /* Additional
@@ -4680,7 +6611,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P34_69[] = {
      0,
      &asn_DEF_Ngap_CNAssistedRANTuning_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -4706,9 +6645,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P34 = {
     sizeof(asn_DEF_Ngap_ProtocolExtensionContainer_9717P34_tags_69) /
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P34_tags_69[0]), /* 1 */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P34_constr_69,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P34_constr_69,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P34_constr_69,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P34_constr_69,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P34_69,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P34_specs_69 /* Additional
@@ -4723,7 +6668,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P35_71[] = {
      0,
      &asn_DEF_Ngap_CNTypeRestrictionsForEquivalentItem_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -4749,9 +6702,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P35 = {
     sizeof(asn_DEF_Ngap_ProtocolExtensionContainer_9717P35_tags_71) /
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P35_tags_71[0]), /* 1 */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P35_constr_71,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P35_constr_71,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P35_constr_71,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P35_constr_71,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P35_71,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P35_specs_71 /* Additional
@@ -4766,7 +6725,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P36_73[] = {
      0,
      &asn_DEF_Ngap_CompletedCellsInEAI_EUTRA_Item_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -4792,9 +6759,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P36 = {
     sizeof(asn_DEF_Ngap_ProtocolExtensionContainer_9717P36_tags_73) /
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P36_tags_73[0]), /* 1 */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P36_constr_73,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P36_constr_73,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P36_constr_73,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P36_constr_73,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P36_73,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P36_specs_73 /* Additional
@@ -4809,7 +6782,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P37_75[] = {
      0,
      &asn_DEF_Ngap_CompletedCellsInEAI_NR_Item_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -4835,9 +6816,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P37 = {
     sizeof(asn_DEF_Ngap_ProtocolExtensionContainer_9717P37_tags_75) /
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P37_tags_75[0]), /* 1 */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P37_constr_75,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P37_constr_75,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P37_constr_75,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P37_constr_75,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P37_75,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P37_specs_75 /* Additional
@@ -4852,7 +6839,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P38_77[] = {
      0,
      &asn_DEF_Ngap_CompletedCellsInTAI_EUTRA_Item_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -4878,9 +6873,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P38 = {
     sizeof(asn_DEF_Ngap_ProtocolExtensionContainer_9717P38_tags_77) /
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P38_tags_77[0]), /* 1 */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P38_constr_77,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P38_constr_77,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P38_constr_77,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P38_constr_77,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P38_77,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P38_specs_77 /* Additional
@@ -4895,7 +6896,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P39_79[] = {
      0,
      &asn_DEF_Ngap_CompletedCellsInTAI_NR_Item_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -4921,9 +6930,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P39 = {
     sizeof(asn_DEF_Ngap_ProtocolExtensionContainer_9717P39_tags_79) /
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P39_tags_79[0]), /* 1 */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P39_constr_79,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P39_constr_79,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P39_constr_79,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P39_constr_79,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P39_79,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P39_specs_79 /* Additional
@@ -4938,7 +6953,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P40_81[] = {
      0,
      &asn_DEF_Ngap_CoreNetworkAssistanceInformationForInactive_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -4964,9 +6987,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P40 = {
     sizeof(asn_DEF_Ngap_ProtocolExtensionContainer_9717P40_tags_81) /
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P40_tags_81[0]), /* 1 */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P40_constr_81,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P40_constr_81,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P40_constr_81,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P40_constr_81,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P40_81,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P40_specs_81 /* Additional
@@ -4981,7 +7010,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P41_83[] = {
      0,
      &asn_DEF_Ngap_COUNTValueForPDCP_SN12_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -5007,9 +7044,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P41 = {
     sizeof(asn_DEF_Ngap_ProtocolExtensionContainer_9717P41_tags_83) /
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P41_tags_83[0]), /* 1 */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P41_constr_83,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P41_constr_83,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P41_constr_83,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P41_constr_83,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P41_83,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P41_specs_83 /* Additional
@@ -5024,7 +7067,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P42_85[] = {
      0,
      &asn_DEF_Ngap_COUNTValueForPDCP_SN18_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -5050,9 +7101,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P42 = {
     sizeof(asn_DEF_Ngap_ProtocolExtensionContainer_9717P42_tags_85) /
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P42_tags_85[0]), /* 1 */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P42_constr_85,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P42_constr_85,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P42_constr_85,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P42_constr_85,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P42_85,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P42_specs_85 /* Additional
@@ -5067,7 +7124,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P43_87[] = {
      0,
      &asn_DEF_Ngap_CriticalityDiagnostics_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -5093,9 +7158,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P43 = {
     sizeof(asn_DEF_Ngap_ProtocolExtensionContainer_9717P43_tags_87) /
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P43_tags_87[0]), /* 1 */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P43_constr_87,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P43_constr_87,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P43_constr_87,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P43_constr_87,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P43_87,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P43_specs_87 /* Additional
@@ -5110,7 +7181,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P44_89[] = {
      0,
      &asn_DEF_Ngap_CriticalityDiagnostics_IE_Item_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -5136,9 +7215,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P44 = {
     sizeof(asn_DEF_Ngap_ProtocolExtensionContainer_9717P44_tags_89) /
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P44_tags_89[0]), /* 1 */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P44_constr_89,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P44_constr_89,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P44_constr_89,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P44_constr_89,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P44_89,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P44_specs_89 /* Additional
@@ -5153,7 +7238,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P45_91[] = {
      0,
      &asn_DEF_Ngap_CellBasedMDT_NR_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -5179,9 +7272,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P45 = {
     sizeof(asn_DEF_Ngap_ProtocolExtensionContainer_9717P45_tags_91) /
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P45_tags_91[0]), /* 1 */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P45_constr_91,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P45_constr_91,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P45_constr_91,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P45_constr_91,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P45_91,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P45_specs_91 /* Additional
@@ -5196,7 +7295,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P46_93[] = {
      0,
      &asn_DEF_Ngap_CellBasedMDT_EUTRA_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -5222,9 +7329,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P46 = {
     sizeof(asn_DEF_Ngap_ProtocolExtensionContainer_9717P46_tags_93) /
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P46_tags_93[0]), /* 1 */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P46_constr_93,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P46_constr_93,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P46_constr_93,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P46_constr_93,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P46_93,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P46_specs_93 /* Additional
@@ -5239,7 +7352,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P47_95[] = {
      0,
      &asn_DEF_Ngap_DataForwardingResponseDRBItem_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -5265,9 +7386,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P47 = {
     sizeof(asn_DEF_Ngap_ProtocolExtensionContainer_9717P47_tags_95) /
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P47_tags_95[0]), /* 1 */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P47_constr_95,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P47_constr_95,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P47_constr_95,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P47_constr_95,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P47_95,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P47_specs_95 /* Additional
@@ -5282,7 +7409,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P48_97[] = {
      0,
      &asn_DEF_Ngap_DAPSRequestInfo_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -5308,9 +7443,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P48 = {
     sizeof(asn_DEF_Ngap_ProtocolExtensionContainer_9717P48_tags_97) /
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P48_tags_97[0]), /* 1 */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P48_constr_97,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P48_constr_97,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P48_constr_97,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P48_constr_97,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P48_97,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P48_specs_97 /* Additional
@@ -5325,7 +7466,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P49_99[] = {
      0,
      &asn_DEF_Ngap_DAPSResponseInfoItem_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -5351,9 +7500,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P49 = {
     sizeof(asn_DEF_Ngap_ProtocolExtensionContainer_9717P49_tags_99) /
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P49_tags_99[0]), /* 1 */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P49_constr_99,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P49_constr_99,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P49_constr_99,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P49_constr_99,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P49_99,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P49_specs_99 /* Additional
@@ -5368,7 +7523,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P50_101[] = {
      0,
      &asn_DEF_Ngap_DAPSResponseInfo_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -5397,9 +7560,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P50 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P50_tags_101[0]), /* 1
                                                                            */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P50_constr_101,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P50_constr_101,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P50_constr_101,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P50_constr_101,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P50_101,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P50_specs_101 /* Additional
@@ -5414,7 +7583,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P51_103[] = {
      0,
      &asn_DEF_Ngap_DataForwardingResponseERABListItem_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -5443,9 +7620,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P51 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P51_tags_103[0]), /* 1
                                                                            */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P51_constr_103,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P51_constr_103,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P51_constr_103,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P51_constr_103,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P51_103,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P51_specs_103 /* Additional
@@ -5460,7 +7643,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P52_105[] = {
      0,
      &asn_DEF_Ngap_DL_CP_SecurityInformation_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -5489,9 +7680,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P52 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P52_tags_105[0]), /* 1
                                                                            */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P52_constr_105,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P52_constr_105,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P52_constr_105,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P52_constr_105,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P52_105,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P52_specs_105 /* Additional
@@ -5506,7 +7703,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P53_107[] = {
      0,
      &asn_DEF_Ngap_DRBsSubjectToStatusTransferItem_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -5535,9 +7740,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P53 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P53_tags_107[0]), /* 1
                                                                            */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P53_constr_107,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P53_constr_107,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P53_constr_107,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P53_constr_107,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P53_107,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P53_specs_107 /* Additional
@@ -5552,7 +7763,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P54_109[] = {
      0,
      &asn_DEF_Ngap_DRBStatusDL12_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -5581,9 +7800,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P54 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P54_tags_109[0]), /* 1
                                                                            */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P54_constr_109,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P54_constr_109,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P54_constr_109,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P54_constr_109,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P54_109,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P54_specs_109 /* Additional
@@ -5598,7 +7823,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P55_111[] = {
      0,
      &asn_DEF_Ngap_DRBStatusDL18_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -5627,9 +7860,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P55 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P55_tags_111[0]), /* 1
                                                                            */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P55_constr_111,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P55_constr_111,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P55_constr_111,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P55_constr_111,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P55_111,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P55_specs_111 /* Additional
@@ -5644,7 +7883,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P56_113[] = {
      0,
      &asn_DEF_Ngap_DRBStatusUL12_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -5673,9 +7920,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P56 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P56_tags_113[0]), /* 1
                                                                            */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P56_constr_113,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P56_constr_113,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P56_constr_113,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P56_constr_113,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P56_113,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P56_specs_113 /* Additional
@@ -5690,7 +7943,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P57_115[] = {
      0,
      &asn_DEF_Ngap_DRBStatusUL18_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -5719,9 +7980,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P57 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P57_tags_115[0]), /* 1
                                                                            */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P57_constr_115,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P57_constr_115,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P57_constr_115,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P57_constr_115,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P57_115,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P57_specs_115 /* Additional
@@ -5736,7 +8003,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P58_117[] = {
      0,
      &asn_DEF_Ngap_DRBsToQosFlowsMappingItem_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -5765,9 +8040,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P58 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P58_tags_117[0]), /* 1
                                                                            */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P58_constr_117,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P58_constr_117,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P58_constr_117,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P58_constr_117,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P58_117,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P58_specs_117 /* Additional
@@ -5782,7 +8063,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P59_119[] = {
      0,
      &asn_DEF_Ngap_Dynamic5QIDescriptor_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -5811,9 +8100,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P59 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P59_tags_119[0]), /* 1
                                                                            */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P59_constr_119,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P59_constr_119,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P59_constr_119,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P59_constr_119,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P59_119,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P59_specs_119 /* Additional
@@ -5828,7 +8123,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P60_121[] = {
      0,
      &asn_DEF_Ngap_EarlyStatusTransfer_TransparentContainer_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -5857,9 +8160,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P60 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P60_tags_121[0]), /* 1
                                                                            */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P60_constr_121,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P60_constr_121,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P60_constr_121,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P60_constr_121,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P60_121,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P60_specs_121 /* Additional
@@ -5874,7 +8183,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P61_123[] = {
      0,
      &asn_DEF_Ngap_FirstDLCount_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -5903,9 +8220,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P61 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P61_tags_123[0]), /* 1
                                                                            */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P61_constr_123,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P61_constr_123,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P61_constr_123,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P61_constr_123,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P61_123,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P61_specs_123 /* Additional
@@ -5920,7 +8243,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P62_125[] = {
      0,
      &asn_DEF_Ngap_DRBsSubjectToEarlyStatusTransfer_Item_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -5949,9 +8280,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P62 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P62_tags_125[0]), /* 1
                                                                            */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P62_constr_125,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P62_constr_125,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P62_constr_125,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P62_constr_125,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P62_125,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P62_specs_125 /* Additional
@@ -5966,7 +8303,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P63_127[] = {
      0,
      &asn_DEF_Ngap_EmergencyAreaIDBroadcastEUTRA_Item_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -5995,9 +8340,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P63 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P63_tags_127[0]), /* 1
                                                                            */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P63_constr_127,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P63_constr_127,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P63_constr_127,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P63_constr_127,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P63_127,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P63_specs_127 /* Additional
@@ -6012,7 +8363,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P64_129[] = {
      0,
      &asn_DEF_Ngap_EmergencyAreaIDBroadcastNR_Item_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -6041,9 +8400,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P64 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P64_tags_129[0]), /* 1
                                                                            */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P64_constr_129,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P64_constr_129,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P64_constr_129,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P64_constr_129,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P64_129,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P64_specs_129 /* Additional
@@ -6058,7 +8423,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P65_131[] = {
      0,
      &asn_DEF_Ngap_EmergencyAreaIDCancelledEUTRA_Item_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -6087,9 +8460,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P65 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P65_tags_131[0]), /* 1
                                                                            */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P65_constr_131,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P65_constr_131,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P65_constr_131,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P65_constr_131,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P65_131,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P65_specs_131 /* Additional
@@ -6104,7 +8483,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P66_133[] = {
      0,
      &asn_DEF_Ngap_EmergencyAreaIDCancelledNR_Item_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -6133,9 +8520,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P66 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P66_tags_133[0]), /* 1
                                                                            */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P66_constr_133,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P66_constr_133,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P66_constr_133,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P66_constr_133,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P66_133,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P66_specs_133 /* Additional
@@ -6150,7 +8543,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P67_135[] = {
      0,
      &asn_DEF_Ngap_EmergencyFallbackIndicator_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -6179,9 +8580,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P67 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P67_tags_135[0]), /* 1
                                                                            */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P67_constr_135,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P67_constr_135,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P67_constr_135,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P67_constr_135,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P67_135,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P67_specs_135 /* Additional
@@ -6196,7 +8603,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P68_137[] = {
      0,
      &asn_DEF_Ngap_EndpointIPAddressAndPort_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -6225,9 +8640,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P68 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P68_tags_137[0]), /* 1
                                                                            */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P68_constr_137,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P68_constr_137,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P68_constr_137,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P68_constr_137,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P68_137,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P68_specs_137 /* Additional
@@ -6242,7 +8663,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P69_139[] = {
      0,
      &asn_DEF_Ngap_EPS_TAI_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -6271,9 +8700,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P69 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P69_tags_139[0]), /* 1
                                                                            */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P69_constr_139,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P69_constr_139,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P69_constr_139,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P69_constr_139,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P69_139,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P69_specs_139 /* Additional
@@ -6288,7 +8723,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P70_141[] = {
      0,
      &asn_DEF_Ngap_E_RABInformationItem_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -6317,9 +8760,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P70 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P70_tags_141[0]), /* 1
                                                                            */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P70_constr_141,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P70_constr_141,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P70_constr_141,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P70_constr_141,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P70_141,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P70_specs_141 /* Additional
@@ -6334,7 +8783,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P71_143[] = {
      0,
      &asn_DEF_Ngap_EUTRA_CGI_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -6363,9 +8820,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P71 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P71_tags_143[0]), /* 1
                                                                            */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P71_constr_143,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P71_constr_143,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P71_constr_143,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P71_constr_143,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P71_143,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P71_specs_143 /* Additional
@@ -6380,7 +8843,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P72_145[] = {
      0,
      &asn_DEF_Ngap_ExpectedUEActivityBehaviour_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -6409,9 +8880,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P72 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P72_tags_145[0]), /* 1
                                                                            */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P72_constr_145,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P72_constr_145,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P72_constr_145,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P72_constr_145,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P72_145,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P72_specs_145 /* Additional
@@ -6426,7 +8903,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P73_147[] = {
      0,
      &asn_DEF_Ngap_ExpectedUEBehaviour_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -6455,9 +8940,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P73 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P73_tags_147[0]), /* 1
                                                                            */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P73_constr_147,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P73_constr_147,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P73_constr_147,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P73_constr_147,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P73_147,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P73_specs_147 /* Additional
@@ -6472,7 +8963,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P74_149[] = {
      0,
      &asn_DEF_Ngap_ExpectedUEMovingTrajectoryItem_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -6501,9 +9000,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P74 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P74_tags_149[0]), /* 1
                                                                            */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P74_constr_149,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P74_constr_149,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P74_constr_149,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P74_constr_149,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P74_149,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P74_specs_149 /* Additional
@@ -6518,7 +9023,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P75_151[] = {
      0,
      &asn_DEF_Ngap_Extended_AMFName_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -6547,9 +9060,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P75 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P75_tags_151[0]), /* 1
                                                                            */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P75_constr_151,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P75_constr_151,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P75_constr_151,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P75_constr_151,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P75_151,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P75_specs_151 /* Additional
@@ -6564,7 +9083,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P76_153[] = {
      0,
      &asn_DEF_Ngap_Extended_RANNodeName_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -6593,9 +9120,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P76 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P76_tags_153[0]), /* 1
                                                                            */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P76_constr_153,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P76_constr_153,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P76_constr_153,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P76_constr_153,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P76_153,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P76_specs_153 /* Additional
@@ -6610,7 +9143,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P77_155[] = {
      0,
      &asn_DEF_Ngap_ExtendedRATRestrictionInformation_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -6639,9 +9180,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P77 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P77_tags_155[0]), /* 1
                                                                            */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P77_constr_155,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P77_constr_155,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P77_constr_155,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P77_constr_155,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P77_155,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P77_specs_155 /* Additional
@@ -6656,7 +9203,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P78_157[] = {
      0,
      &asn_DEF_Ngap_EventL1LoggedMDTConfig_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -6685,9 +9240,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P78 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P78_tags_157[0]), /* 1
                                                                            */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P78_constr_157,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P78_constr_157,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P78_constr_157,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P78_constr_157,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P78_157,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P78_specs_157 /* Additional
@@ -6702,7 +9263,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P79_159[] = {
      0,
      &asn_DEF_Ngap_FailureIndication_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -6731,9 +9300,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P79 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P79_tags_159[0]), /* 1
                                                                            */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P79_constr_159,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P79_constr_159,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P79_constr_159,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P79_constr_159,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P79_159,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P79_specs_159 /* Additional
@@ -6748,7 +9323,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P80_161[] = {
      0,
      &asn_DEF_Ngap_FiveG_S_TMSI_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -6777,9 +9360,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P80 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P80_tags_161[0]), /* 1
                                                                            */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P80_constr_161,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P80_constr_161,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P80_constr_161,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P80_constr_161,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P80_161,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P80_specs_161 /* Additional
@@ -6794,7 +9383,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P81_163[] = {
      0,
      &asn_DEF_Ngap_ForbiddenAreaInformation_Item_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -6823,9 +9420,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P81 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P81_tags_163[0]), /* 1
                                                                            */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P81_constr_163,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P81_constr_163,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P81_constr_163,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P81_constr_163,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P81_163,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P81_specs_163 /* Additional
@@ -6840,7 +9443,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P82_165[] = {
      0,
      &asn_DEF_Ngap_FromEUTRANtoNGRAN_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -6869,9 +9480,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P82 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P82_tags_165[0]), /* 1
                                                                            */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P82_constr_165,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P82_constr_165,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P82_constr_165,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P82_constr_165,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P82_165,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P82_specs_165 /* Additional
@@ -6886,7 +9503,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P83_167[] = {
      0,
      &asn_DEF_Ngap_FromNGRANtoEUTRAN_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -6915,9 +9540,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P83 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P83_tags_167[0]), /* 1
                                                                            */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P83_constr_167,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P83_constr_167,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P83_constr_167,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P83_constr_167,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P83_167,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P83_specs_167 /* Additional
@@ -6932,7 +9563,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P84_169[] = {
      0,
      &asn_DEF_Ngap_GBR_QosInformation_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -6961,9 +9600,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P84 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P84_tags_169[0]), /* 1
                                                                            */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P84_constr_169,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P84_constr_169,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P84_constr_169,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P84_constr_169,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P84_169,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P84_specs_169 /* Additional
@@ -6978,7 +9623,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P85_171[] = {
      0,
      &asn_DEF_Ngap_GlobalENB_ID_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -7007,9 +9660,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P85 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P85_tags_171[0]), /* 1
                                                                            */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P85_constr_171,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P85_constr_171,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P85_constr_171,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P85_constr_171,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P85_171,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P85_specs_171 /* Additional
@@ -7024,7 +9683,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P86_173[] = {
      0,
      &asn_DEF_Ngap_GlobalGNB_ID_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -7053,9 +9720,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P86 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P86_tags_173[0]), /* 1
                                                                            */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P86_constr_173,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P86_constr_173,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P86_constr_173,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P86_constr_173,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P86_173,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P86_specs_173 /* Additional
@@ -7070,7 +9743,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P87_175[] = {
      0,
      &asn_DEF_Ngap_GlobalN3IWF_ID_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -7099,9 +9780,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P87 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P87_tags_175[0]), /* 1
                                                                            */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P87_constr_175,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P87_constr_175,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P87_constr_175,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P87_constr_175,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P87_175,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P87_specs_175 /* Additional
@@ -7116,7 +9803,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P88_177[] = {
      0,
      &asn_DEF_Ngap_GlobalLine_ID_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -7145,9 +9840,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P88 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P88_tags_177[0]), /* 1
                                                                            */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P88_constr_177,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P88_constr_177,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P88_constr_177,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P88_constr_177,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P88_177,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P88_specs_177 /* Additional
@@ -7162,7 +9863,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P89_179[] = {
      0,
      &asn_DEF_Ngap_GlobalNgENB_ID_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -7191,9 +9900,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P89 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P89_tags_179[0]), /* 1
                                                                            */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P89_constr_179,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P89_constr_179,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P89_constr_179,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P89_constr_179,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P89_179,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P89_specs_179 /* Additional
@@ -7208,7 +9923,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P90_181[] = {
      0,
      &asn_DEF_Ngap_GlobalTNGF_ID_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -7237,9 +9960,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P90 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P90_tags_181[0]), /* 1
                                                                            */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P90_constr_181,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P90_constr_181,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P90_constr_181,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P90_constr_181,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P90_181,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P90_specs_181 /* Additional
@@ -7254,7 +9983,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P91_183[] = {
      0,
      &asn_DEF_Ngap_GlobalTWIF_ID_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -7283,9 +10020,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P91 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P91_tags_183[0]), /* 1
                                                                            */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P91_constr_183,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P91_constr_183,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P91_constr_183,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P91_constr_183,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P91_183,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P91_specs_183 /* Additional
@@ -7300,7 +10043,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P92_185[] = {
      0,
      &asn_DEF_Ngap_GlobalW_AGF_ID_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -7329,9 +10080,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P92 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P92_tags_185[0]), /* 1
                                                                            */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P92_constr_185,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P92_constr_185,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P92_constr_185,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P92_constr_185,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P92_185,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P92_specs_185 /* Additional
@@ -7346,7 +10103,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P93_187[] = {
      0,
      &asn_DEF_Ngap_GTPTunnel_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -7375,9 +10140,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P93 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P93_tags_187[0]), /* 1
                                                                            */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P93_constr_187,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P93_constr_187,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P93_constr_187,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P93_constr_187,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P93_187,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P93_specs_187 /* Additional
@@ -7392,7 +10163,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P94_189[] = {
      0,
      &asn_DEF_Ngap_GUAMI_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -7421,9 +10200,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P94 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P94_tags_189[0]), /* 1
                                                                            */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P94_constr_189,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P94_constr_189,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P94_constr_189,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P94_constr_189,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P94_189,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P94_specs_189 /* Additional
@@ -7438,7 +10223,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P95_191[] = {
      0,
      &asn_DEF_Ngap_HandoverCommandTransfer_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -7467,9 +10260,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P95 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P95_tags_191[0]), /* 1
                                                                            */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P95_constr_191,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P95_constr_191,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P95_constr_191,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P95_constr_191,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P95_191,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P95_specs_191 /* Additional
@@ -7484,7 +10283,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P96_193[] = {
      0,
      &asn_DEF_Ngap_HandoverPreparationUnsuccessfulTransfer_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -7513,9 +10320,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P96 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P96_tags_193[0]), /* 1
                                                                            */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P96_constr_193,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P96_constr_193,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P96_constr_193,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P96_constr_193,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P96_193,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P96_specs_193 /* Additional
@@ -7530,7 +10343,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P97_195[] = {
      0,
      &asn_DEF_Ngap_HandoverRequestAcknowledgeTransfer_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -7559,9 +10380,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P97 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P97_tags_195[0]), /* 1
                                                                            */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P97_constr_195,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P97_constr_195,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P97_constr_195,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P97_constr_195,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P97_195,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P97_specs_195 /* Additional
@@ -7576,7 +10403,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P98_197[] = {
      0,
      &asn_DEF_Ngap_HandoverRequiredTransfer_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -7605,9 +10440,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P98 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P98_tags_197[0]), /* 1
                                                                            */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P98_constr_197,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P98_constr_197,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P98_constr_197,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P98_constr_197,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P98_197,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P98_specs_197 /* Additional
@@ -7622,7 +10463,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P99_199[] = {
      0,
      &asn_DEF_Ngap_HandoverResourceAllocationUnsuccessfulTransfer_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -7651,9 +10500,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P99 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P99_tags_199[0]), /* 1
                                                                            */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P99_constr_199,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P99_constr_199,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P99_constr_199,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P99_constr_199,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P99_199,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P99_specs_199 /* Additional
@@ -7668,7 +10523,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P100_201[] = {
      0,
      &asn_DEF_Ngap_HOReport_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -7697,9 +10560,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P100 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P100_tags_201[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P100_constr_201,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P100_constr_201,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P100_constr_201,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P100_constr_201,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P100_201,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P100_specs_201 /* Additional
@@ -7714,7 +10583,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P101_203[] = {
      0,
      &asn_DEF_Ngap_InfoOnRecommendedCellsAndRANNodesForPaging_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -7743,9 +10620,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P101 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P101_tags_203[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P101_constr_203,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P101_constr_203,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P101_constr_203,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P101_constr_203,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P101_203,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P101_specs_203 /* Additional
@@ -7760,7 +10643,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P102_205[] = {
      0,
      &asn_DEF_Ngap_ImmediateMDTNr_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -7789,9 +10680,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P102 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P102_tags_205[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P102_constr_205,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P102_constr_205,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P102_constr_205,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P102_constr_205,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P102_205,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P102_specs_205 /* Additional
@@ -7806,7 +10703,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P103_207[] = {
      0,
      &asn_DEF_Ngap_InterSystemFailureIndication_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -7835,9 +10740,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P103 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P103_tags_207[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P103_constr_207,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P103_constr_207,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P103_constr_207,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P103_constr_207,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P103_207,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P103_specs_207 /* Additional
@@ -7852,7 +10763,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P104_209[] = {
      0,
      &asn_DEF_Ngap_IntersystemSONConfigurationTransfer_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -7881,9 +10800,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P104 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P104_tags_209[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P104_constr_209,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P104_constr_209,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P104_constr_209,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P104_constr_209,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P104_209,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P104_specs_209 /* Additional
@@ -7898,7 +10823,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P105_211[] = {
      0,
      &asn_DEF_Ngap_IntersystemSONeNBID_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -7927,9 +10860,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P105 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P105_tags_211[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P105_constr_211,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P105_constr_211,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P105_constr_211,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P105_constr_211,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P105_211,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P105_specs_211 /* Additional
@@ -7944,7 +10883,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P106_213[] = {
      0,
      &asn_DEF_Ngap_IntersystemSONNGRANnodeID_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -7973,9 +10920,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P106 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P106_tags_213[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P106_constr_213,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P106_constr_213,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P106_constr_213,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P106_constr_213,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P106_213,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P106_specs_213 /* Additional
@@ -7990,7 +10943,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P107_215[] = {
      0,
      &asn_DEF_Ngap_InterSystemHOReport_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -8019,9 +10980,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P107 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P107_tags_215[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P107_constr_215,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P107_constr_215,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P107_constr_215,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P107_constr_215,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P107_215,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P107_specs_215 /* Additional
@@ -8036,7 +11003,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P108_217[] = {
      0,
      &asn_DEF_Ngap_IntersystemUnnecessaryHO_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -8065,9 +11040,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P108 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P108_tags_217[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P108_constr_217,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P108_constr_217,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P108_constr_217,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P108_constr_217,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P108_217,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P108_specs_217 /* Additional
@@ -8082,7 +11063,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P109_219[] = {
      0,
      &asn_DEF_Ngap_LAI_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -8111,9 +11100,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P109 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P109_tags_219[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P109_constr_219,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P109_constr_219,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P109_constr_219,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P109_constr_219,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P109_219,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P109_specs_219 /* Additional
@@ -8128,7 +11123,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P110_221[] = {
      0,
      &asn_DEF_Ngap_LastVisitedCellItem_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -8157,9 +11160,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P110 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P110_tags_221[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P110_constr_221,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P110_constr_221,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P110_constr_221,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P110_constr_221,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P110_221,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P110_specs_221 /* Additional
@@ -8174,7 +11183,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P111_223[] = {
      0,
      &asn_DEF_Ngap_LastVisitedNGRANCellInformation_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -8203,9 +11220,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P111 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P111_tags_223[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P111_constr_223,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P111_constr_223,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P111_constr_223,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P111_constr_223,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P111_223,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P111_specs_223 /* Additional
@@ -8220,7 +11243,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P112_225[] = {
      0,
      &asn_DEF_Ngap_LocationReportingRequestType_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -8249,9 +11280,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P112 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P112_tags_225[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P112_constr_225,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P112_constr_225,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P112_constr_225,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P112_constr_225,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P112_225,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P112_specs_225 /* Additional
@@ -8266,7 +11303,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P113_227[] = {
      0,
      &asn_DEF_Ngap_LoggedMDTNr_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -8295,9 +11340,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P113 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P113_tags_227[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P113_constr_227,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P113_constr_227,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P113_constr_227,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P113_constr_227,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P113_227,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P113_specs_227 /* Additional
@@ -8312,7 +11363,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P114_229[] = {
      0,
      &asn_DEF_Ngap_LTEV2XServicesAuthorized_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -8341,9 +11400,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P114 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P114_tags_229[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P114_constr_229,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P114_constr_229,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P114_constr_229,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P114_constr_229,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P114_229,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P114_specs_229 /* Additional
@@ -8358,7 +11423,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P115_231[] = {
      0,
      &asn_DEF_Ngap_LTEUE_Sidelink_Aggregate_MaximumBitrates_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -8387,9 +11460,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P115 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P115_tags_231[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P115_constr_231,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P115_constr_231,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P115_constr_231,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P115_constr_231,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P115_231,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P115_specs_231 /* Additional
@@ -8404,7 +11483,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P116_233[] = {
      0,
      &asn_DEF_Ngap_MobilityRestrictionList_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -8433,9 +11520,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P116 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P116_tags_233[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P116_constr_233,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P116_constr_233,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P116_constr_233,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P116_constr_233,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P116_233,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P116_specs_233 /* Additional
@@ -8450,7 +11543,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P117_235[] = {
      0,
      &asn_DEF_Ngap_MDT_Configuration_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -8479,9 +11580,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P117 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P117_tags_235[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P117_constr_235,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P117_constr_235,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P117_constr_235,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P117_constr_235,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P117_235,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P117_specs_235 /* Additional
@@ -8496,7 +11603,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P118_237[] = {
      0,
      &asn_DEF_Ngap_MDT_Configuration_NR_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -8525,9 +11640,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P118 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P118_tags_237[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P118_constr_237,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P118_constr_237,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P118_constr_237,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P118_constr_237,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P118_237,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P118_specs_237 /* Additional
@@ -8542,7 +11663,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P119_239[] = {
      0,
      &asn_DEF_Ngap_MDT_Configuration_EUTRA_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -8571,9 +11700,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P119 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P119_tags_239[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P119_constr_239,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P119_constr_239,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P119_constr_239,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P119_constr_239,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P119_239,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P119_specs_239 /* Additional
@@ -8588,7 +11723,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P120_241[] = {
      0,
      &asn_DEF_Ngap_M1Configuration_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -8617,9 +11760,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P120 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P120_tags_241[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P120_constr_241,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P120_constr_241,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P120_constr_241,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P120_constr_241,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P120_241,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P120_specs_241 /* Additional
@@ -8634,7 +11783,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P121_243[] = {
      0,
      &asn_DEF_Ngap_M1ThresholdEventA2_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -8663,9 +11820,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P121 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P121_tags_243[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P121_constr_243,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P121_constr_243,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P121_constr_243,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P121_constr_243,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P121_243,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P121_specs_243 /* Additional
@@ -8680,7 +11843,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P122_245[] = {
      0,
      &asn_DEF_Ngap_M1PeriodicReporting_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -8709,9 +11880,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P122 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P122_tags_245[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P122_constr_245,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P122_constr_245,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P122_constr_245,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P122_constr_245,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P122_245,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P122_specs_245 /* Additional
@@ -8726,7 +11903,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P123_247[] = {
      0,
      &asn_DEF_Ngap_M4Configuration_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -8755,9 +11940,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P123 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P123_tags_247[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P123_constr_247,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P123_constr_247,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P123_constr_247,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P123_constr_247,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P123_247,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P123_specs_247 /* Additional
@@ -8772,7 +11963,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P124_249[] = {
      0,
      &asn_DEF_Ngap_M5Configuration_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -8801,9 +12000,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P124 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P124_tags_249[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P124_constr_249,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P124_constr_249,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P124_constr_249,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P124_constr_249,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P124_249,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P124_specs_249 /* Additional
@@ -8818,7 +12023,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P125_251[] = {
      0,
      &asn_DEF_Ngap_M6Configuration_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -8847,9 +12060,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P125 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P125_tags_251[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P125_constr_251,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P125_constr_251,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P125_constr_251,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P125_constr_251,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P125_251,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P125_specs_251 /* Additional
@@ -8864,7 +12083,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P126_253[] = {
      0,
      &asn_DEF_Ngap_M7Configuration_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -8893,9 +12120,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P126 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P126_tags_253[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P126_constr_253,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P126_constr_253,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P126_constr_253,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P126_constr_253,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P126_253,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P126_specs_253 /* Additional
@@ -8910,7 +12143,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P127_255[] = {
      0,
      &asn_DEF_Ngap_MDT_Location_Info_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -8939,9 +12180,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P127 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P127_tags_255[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P127_constr_255,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P127_constr_255,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P127_constr_255,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P127_constr_255,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P127_255,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P127_specs_255 /* Additional
@@ -8956,7 +12203,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P128_257[] = {
      0,
      &asn_DEF_Ngap_NB_IoT_Paging_eDRXInfo_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -8985,9 +12240,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P128 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P128_tags_257[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P128_constr_257,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P128_constr_257,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P128_constr_257,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P128_constr_257,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P128_257,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P128_specs_257 /* Additional
@@ -9002,7 +12263,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P129_259[] = {
      0,
      &asn_DEF_Ngap_NGRAN_TNLAssociationToRemoveItem_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -9031,9 +12300,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P129 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P129_tags_259[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P129_constr_259,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P129_constr_259,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P129_constr_259,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P129_constr_259,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P129_259,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P129_specs_259 /* Additional
@@ -9048,7 +12323,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P130_261[] = {
      0,
      &asn_DEF_Ngap_NonDynamic5QIDescriptor_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -9077,9 +12360,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P130 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P130_tags_261[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P130_constr_261,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P130_constr_261,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P130_constr_261,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P130_constr_261,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P130_261,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P130_specs_261 /* Additional
@@ -9094,7 +12383,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P131_263[] = {
      0,
      &asn_DEF_Ngap_NR_CGI_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -9123,9 +12420,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P131 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P131_tags_263[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P131_constr_263,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P131_constr_263,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P131_constr_263,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P131_constr_263,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P131_263,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P131_specs_263 /* Additional
@@ -9140,7 +12443,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P132_265[] = {
      0,
      &asn_DEF_Ngap_NRFrequencyBandItem_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -9169,9 +12480,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P132 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P132_tags_265[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P132_constr_265,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P132_constr_265,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P132_constr_265,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P132_constr_265,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P132_265,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P132_specs_265 /* Additional
@@ -9186,7 +12503,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P133_267[] = {
      0,
      &asn_DEF_Ngap_NRFrequencyInfo_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -9215,9 +12540,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P133 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P133_tags_267[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P133_constr_267,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P133_constr_267,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P133_constr_267,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P133_constr_267,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P133_267,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P133_specs_267 /* Additional
@@ -9232,7 +12563,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P134_269[] = {
      0,
      &asn_DEF_Ngap_NRV2XServicesAuthorized_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -9261,9 +12600,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P134 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P134_tags_269[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P134_constr_269,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P134_constr_269,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P134_constr_269,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P134_constr_269,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P134_269,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P134_specs_269 /* Additional
@@ -9278,7 +12623,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P135_271[] = {
      0,
      &asn_DEF_Ngap_NRUESidelinkAggregateMaximumBitrate_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -9307,9 +12660,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P135 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P135_tags_271[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P135_constr_271,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P135_constr_271,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P135_constr_271,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P135_constr_271,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P135_271,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P135_specs_271 /* Additional
@@ -9324,7 +12683,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P136_273[] = {
      0,
      &asn_DEF_Ngap_OverloadStartNSSAIItem_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -9353,9 +12720,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P136 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P136_tags_273[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P136_constr_273,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P136_constr_273,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P136_constr_273,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P136_constr_273,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P136_273,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P136_specs_273 /* Additional
@@ -9370,7 +12743,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P137_275[] = {
      0,
      &asn_DEF_Ngap_PacketErrorRate_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -9399,9 +12780,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P137 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P137_tags_275[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P137_constr_275,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P137_constr_275,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P137_constr_275,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P137_constr_275,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P137_275,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P137_specs_275 /* Additional
@@ -9416,7 +12803,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P138_277[] = {
      0,
      &asn_DEF_Ngap_PagingAssisDataforCEcapabUE_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -9445,9 +12840,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P138 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P138_tags_277[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P138_constr_277,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P138_constr_277,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P138_constr_277,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P138_constr_277,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P138_277,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P138_specs_277 /* Additional
@@ -9462,7 +12863,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P139_279[] = {
      0,
      &asn_DEF_Ngap_PagingAttemptInformation_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -9491,9 +12900,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P139 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P139_tags_279[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P139_constr_279,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P139_constr_279,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P139_constr_279,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P139_constr_279,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P139_279,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P139_specs_279 /* Additional
@@ -9508,7 +12923,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P140_281[] = {
      0,
      &asn_DEF_Ngap_PagingeDRXInformation_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -9537,9 +12960,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P140 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P140_tags_281[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P140_constr_281,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P140_constr_281,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P140_constr_281,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P140_constr_281,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P140_281,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P140_specs_281 /* Additional
@@ -9554,7 +12983,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P141_283[] = {
      0,
      &asn_DEF_Ngap_PathSwitchRequestAcknowledgeTransfer_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -9583,9 +13020,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P141 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P141_tags_283[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P141_constr_283,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P141_constr_283,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P141_constr_283,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P141_constr_283,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P141_283,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P141_specs_283 /* Additional
@@ -9600,7 +13043,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P142_285[] = {
      0,
      &asn_DEF_Ngap_PathSwitchRequestSetupFailedTransfer_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -9629,9 +13080,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P142 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P142_tags_285[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P142_constr_285,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P142_constr_285,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P142_constr_285,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P142_constr_285,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P142_285,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P142_specs_285 /* Additional
@@ -9646,7 +13103,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P143_287[] = {
      0,
      &asn_DEF_Ngap_PathSwitchRequestTransfer_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -9675,9 +13140,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P143 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P143_tags_287[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P143_constr_287,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P143_constr_287,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P143_constr_287,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P143_constr_287,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P143_287,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P143_specs_287 /* Additional
@@ -9692,7 +13163,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P144_289[] = {
      0,
      &asn_DEF_Ngap_PathSwitchRequestUnsuccessfulTransfer_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -9721,9 +13200,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P144 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P144_tags_289[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P144_constr_289,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P144_constr_289,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P144_constr_289,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P144_constr_289,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P144_289,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P144_specs_289 /* Additional
@@ -9738,7 +13223,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P145_291[] = {
      0,
      &asn_DEF_Ngap_PC5QoSParameters_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -9767,9 +13260,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P145 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P145_tags_291[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P145_constr_291,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P145_constr_291,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P145_constr_291,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P145_constr_291,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P145_291,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P145_specs_291 /* Additional
@@ -9784,7 +13283,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P146_293[] = {
      0,
      &asn_DEF_Ngap_PC5QoSFlowItem_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -9813,9 +13320,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P146 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P146_tags_293[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P146_constr_293,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P146_constr_293,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P146_constr_293,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P146_constr_293,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P146_293,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P146_specs_293 /* Additional
@@ -9830,7 +13343,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P147_295[] = {
      0,
      &asn_DEF_Ngap_PC5FlowBitRates_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -9859,9 +13380,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P147 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P147_tags_295[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P147_constr_295,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P147_constr_295,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P147_constr_295,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P147_constr_295,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P147_295,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P147_specs_295 /* Additional
@@ -9876,7 +13403,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P148_297[] = {
      0,
      &asn_DEF_Ngap_PDUSessionAggregateMaximumBitRate_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -9905,9 +13440,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P148 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P148_tags_297[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P148_constr_297,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P148_constr_297,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P148_constr_297,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P148_constr_297,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P148_297,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P148_specs_297 /* Additional
@@ -9922,7 +13463,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P149_299[] = {
      0,
      &asn_DEF_Ngap_PDUSessionResourceAdmittedItem_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -9951,9 +13500,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P149 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P149_tags_299[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P149_constr_299,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P149_constr_299,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P149_constr_299,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P149_constr_299,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P149_299,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P149_specs_299 /* Additional
@@ -9968,7 +13523,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P150_301[] = {
      0,
      &asn_DEF_Ngap_PDUSessionResourceFailedToModifyItemModCfm_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -9997,9 +13560,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P150 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P150_tags_301[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P150_constr_301,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P150_constr_301,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P150_constr_301,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P150_constr_301,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P150_301,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P150_specs_301 /* Additional
@@ -10014,7 +13583,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P151_303[] = {
      0,
      &asn_DEF_Ngap_PDUSessionResourceFailedToModifyItemModRes_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -10043,9 +13620,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P151 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P151_tags_303[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P151_constr_303,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P151_constr_303,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P151_constr_303,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P151_constr_303,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P151_303,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P151_specs_303 /* Additional
@@ -10060,7 +13643,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P152_305[] = {
      0,
      &asn_DEF_Ngap_PDUSessionResourceFailedToResumeItemRESReq_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -10089,9 +13680,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P152 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P152_tags_305[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P152_constr_305,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P152_constr_305,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P152_constr_305,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P152_constr_305,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P152_305,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P152_specs_305 /* Additional
@@ -10106,7 +13703,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P153_307[] = {
      0,
      &asn_DEF_Ngap_PDUSessionResourceFailedToResumeItemRESRes_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -10135,9 +13740,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P153 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P153_tags_307[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P153_constr_307,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P153_constr_307,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P153_constr_307,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P153_constr_307,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P153_307,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P153_specs_307 /* Additional
@@ -10152,7 +13763,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P154_309[] = {
      0,
      &asn_DEF_Ngap_PDUSessionResourceFailedToSetupItemCxtFail_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -10181,9 +13800,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P154 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P154_tags_309[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P154_constr_309,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P154_constr_309,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P154_constr_309,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P154_constr_309,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P154_309,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P154_specs_309 /* Additional
@@ -10198,7 +13823,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P155_311[] = {
      0,
      &asn_DEF_Ngap_PDUSessionResourceFailedToSetupItemCxtRes_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -10227,9 +13860,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P155 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P155_tags_311[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P155_constr_311,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P155_constr_311,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P155_constr_311,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P155_constr_311,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P155_311,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P155_specs_311 /* Additional
@@ -10244,7 +13883,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P156_313[] = {
      0,
      &asn_DEF_Ngap_PDUSessionResourceFailedToSetupItemHOAck_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -10273,9 +13920,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P156 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P156_tags_313[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P156_constr_313,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P156_constr_313,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P156_constr_313,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P156_constr_313,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P156_313,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P156_specs_313 /* Additional
@@ -10290,7 +13943,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P157_315[] = {
      0,
      &asn_DEF_Ngap_PDUSessionResourceFailedToSetupItemPSReq_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -10319,9 +13980,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P157 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P157_tags_315[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P157_constr_315,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P157_constr_315,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P157_constr_315,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P157_constr_315,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P157_315,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P157_specs_315 /* Additional
@@ -10336,7 +14003,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P158_317[] = {
      0,
      &asn_DEF_Ngap_PDUSessionResourceFailedToSetupItemSURes_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -10365,9 +14040,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P158 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P158_tags_317[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P158_constr_317,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P158_constr_317,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P158_constr_317,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P158_constr_317,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P158_317,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P158_specs_317 /* Additional
@@ -10382,7 +14063,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P159_319[] = {
      0,
      &asn_DEF_Ngap_PDUSessionResourceHandoverItem_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -10411,9 +14100,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P159 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P159_tags_319[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P159_constr_319,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P159_constr_319,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P159_constr_319,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P159_constr_319,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P159_319,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P159_specs_319 /* Additional
@@ -10428,7 +14123,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P160_321[] = {
      0,
      &asn_DEF_Ngap_PDUSessionResourceInformationItem_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -10457,9 +14160,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P160 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P160_tags_321[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P160_constr_321,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P160_constr_321,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P160_constr_321,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P160_constr_321,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P160_321,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P160_specs_321 /* Additional
@@ -10474,7 +14183,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P161_323[] = {
      0,
      &asn_DEF_Ngap_PDUSessionResourceItemCxtRelCpl_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -10503,9 +14220,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P161 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P161_tags_323[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P161_constr_323,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P161_constr_323,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P161_constr_323,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P161_constr_323,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P161_323,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P161_specs_323 /* Additional
@@ -10520,7 +14243,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P162_325[] = {
      0,
      &asn_DEF_Ngap_PDUSessionResourceItemCxtRelReq_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -10549,9 +14280,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P162 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P162_tags_325[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P162_constr_325,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P162_constr_325,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P162_constr_325,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P162_constr_325,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P162_325,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P162_specs_325 /* Additional
@@ -10566,7 +14303,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P163_327[] = {
      0,
      &asn_DEF_Ngap_PDUSessionResourceItemHORqd_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -10595,9 +14340,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P163 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P163_tags_327[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P163_constr_327,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P163_constr_327,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P163_constr_327,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P163_constr_327,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P163_327,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P163_specs_327 /* Additional
@@ -10612,7 +14363,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P164_329[] = {
      0,
      &asn_DEF_Ngap_PDUSessionResourceModifyConfirmTransfer_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -10641,9 +14400,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P164 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P164_tags_329[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P164_constr_329,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P164_constr_329,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P164_constr_329,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P164_constr_329,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P164_329,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P164_specs_329 /* Additional
@@ -10658,7 +14423,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P165_331[] = {
      0,
      &asn_DEF_Ngap_PDUSessionResourceModifyIndicationUnsuccessfulTransfer_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -10687,9 +14460,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P165 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P165_tags_331[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P165_constr_331,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P165_constr_331,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P165_constr_331,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P165_constr_331,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P165_331,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P165_specs_331 /* Additional
@@ -10704,7 +14483,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P166_333[] = {
      0,
      &asn_DEF_Ngap_PDUSessionResourceModifyResponseTransfer_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -10733,9 +14520,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P166 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P166_tags_333[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P166_constr_333,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P166_constr_333,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P166_constr_333,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P166_constr_333,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P166_333,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P166_specs_333 /* Additional
@@ -10750,7 +14543,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P167_335[] = {
      0,
      &asn_DEF_Ngap_PDUSessionResourceModifyIndicationTransfer_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -10779,9 +14580,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P167 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P167_tags_335[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P167_constr_335,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P167_constr_335,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P167_constr_335,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P167_constr_335,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P167_335,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P167_specs_335 /* Additional
@@ -10796,7 +14603,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P168_337[] = {
      0,
      &asn_DEF_Ngap_PDUSessionResourceModifyItemModCfm_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -10825,9 +14640,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P168 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P168_tags_337[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P168_constr_337,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P168_constr_337,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P168_constr_337,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P168_constr_337,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P168_337,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P168_specs_337 /* Additional
@@ -10842,7 +14663,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P169_339[] = {
      0,
      &asn_DEF_Ngap_PDUSessionResourceModifyItemModInd_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -10871,9 +14700,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P169 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P169_tags_339[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P169_constr_339,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P169_constr_339,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P169_constr_339,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P169_constr_339,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P169_339,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P169_specs_339 /* Additional
@@ -10888,7 +14723,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P170_341[] = {
      0,
      &asn_DEF_Ngap_PDUSessionResourceModifyItemModReq_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -10917,9 +14760,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P170 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P170_tags_341[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P170_constr_341,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P170_constr_341,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P170_constr_341,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P170_constr_341,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P170_341,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P170_specs_341 /* Additional
@@ -10934,7 +14783,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P171_343[] = {
      0,
      &asn_DEF_Ngap_PDUSessionResourceModifyItemModRes_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -10963,9 +14820,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P171 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P171_tags_343[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P171_constr_343,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P171_constr_343,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P171_constr_343,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P171_constr_343,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P171_343,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P171_specs_343 /* Additional
@@ -10980,7 +14843,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P172_345[] = {
      0,
      &asn_DEF_Ngap_PDUSessionResourceModifyUnsuccessfulTransfer_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -11009,9 +14880,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P172 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P172_tags_345[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P172_constr_345,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P172_constr_345,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P172_constr_345,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P172_constr_345,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P172_345,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P172_specs_345 /* Additional
@@ -11026,7 +14903,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P173_347[] = {
      0,
      &asn_DEF_Ngap_PDUSessionResourceNotifyItem_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -11055,9 +14940,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P173 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P173_tags_347[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P173_constr_347,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P173_constr_347,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P173_constr_347,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P173_constr_347,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P173_347,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P173_specs_347 /* Additional
@@ -11072,7 +14963,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P174_349[] = {
      0,
      &asn_DEF_Ngap_PDUSessionResourceNotifyReleasedTransfer_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -11101,9 +15000,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P174 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P174_tags_349[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P174_constr_349,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P174_constr_349,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P174_constr_349,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P174_constr_349,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P174_349,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P174_specs_349 /* Additional
@@ -11118,7 +15023,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P175_351[] = {
      0,
      &asn_DEF_Ngap_PDUSessionResourceNotifyTransfer_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -11147,9 +15060,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P175 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P175_tags_351[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P175_constr_351,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P175_constr_351,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P175_constr_351,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P175_constr_351,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P175_351,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P175_specs_351 /* Additional
@@ -11164,7 +15083,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P176_353[] = {
      0,
      &asn_DEF_Ngap_PDUSessionResourceReleaseCommandTransfer_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -11193,9 +15120,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P176 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P176_tags_353[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P176_constr_353,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P176_constr_353,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P176_constr_353,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P176_constr_353,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P176_353,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P176_specs_353 /* Additional
@@ -11210,7 +15143,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P177_355[] = {
      0,
      &asn_DEF_Ngap_PDUSessionResourceReleasedItemNot_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -11239,9 +15180,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P177 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P177_tags_355[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P177_constr_355,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P177_constr_355,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P177_constr_355,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P177_constr_355,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P177_355,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P177_specs_355 /* Additional
@@ -11256,7 +15203,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P178_357[] = {
      0,
      &asn_DEF_Ngap_PDUSessionResourceReleasedItemPSAck_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -11285,9 +15240,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P178 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P178_tags_357[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P178_constr_357,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P178_constr_357,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P178_constr_357,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P178_constr_357,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P178_357,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P178_specs_357 /* Additional
@@ -11302,7 +15263,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P179_359[] = {
      0,
      &asn_DEF_Ngap_PDUSessionResourceReleasedItemPSFail_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -11331,9 +15300,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P179 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P179_tags_359[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P179_constr_359,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P179_constr_359,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P179_constr_359,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P179_constr_359,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P179_359,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P179_specs_359 /* Additional
@@ -11348,7 +15323,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P180_361[] = {
      0,
      &asn_DEF_Ngap_PDUSessionResourceReleasedItemRelRes_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -11377,9 +15360,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P180 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P180_tags_361[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P180_constr_361,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P180_constr_361,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P180_constr_361,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P180_constr_361,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P180_361,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P180_specs_361 /* Additional
@@ -11394,7 +15383,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P181_363[] = {
      0,
      &asn_DEF_Ngap_PDUSessionResourceReleaseResponseTransfer_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -11423,9 +15420,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P181 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P181_tags_363[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P181_constr_363,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P181_constr_363,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P181_constr_363,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P181_constr_363,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P181_363,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P181_specs_363 /* Additional
@@ -11440,7 +15443,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P182_365[] = {
      0,
      &asn_DEF_Ngap_PDUSessionResourceResumeItemRESReq_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -11469,9 +15480,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P182 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P182_tags_365[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P182_constr_365,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P182_constr_365,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P182_constr_365,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P182_constr_365,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P182_365,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P182_specs_365 /* Additional
@@ -11486,7 +15503,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P183_367[] = {
      0,
      &asn_DEF_Ngap_PDUSessionResourceResumeItemRESRes_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -11515,9 +15540,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P183 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P183_tags_367[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P183_constr_367,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P183_constr_367,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P183_constr_367,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P183_constr_367,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P183_367,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P183_specs_367 /* Additional
@@ -11532,7 +15563,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P184_369[] = {
      0,
      &asn_DEF_Ngap_PDUSessionResourceSecondaryRATUsageItem_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -11561,9 +15600,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P184 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P184_tags_369[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P184_constr_369,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P184_constr_369,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P184_constr_369,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P184_constr_369,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P184_369,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P184_specs_369 /* Additional
@@ -11578,7 +15623,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P185_371[] = {
      0,
      &asn_DEF_Ngap_PDUSessionResourceSetupItemCxtReq_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -11607,9 +15660,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P185 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P185_tags_371[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P185_constr_371,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P185_constr_371,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P185_constr_371,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P185_constr_371,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P185_371,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P185_specs_371 /* Additional
@@ -11624,7 +15683,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P186_373[] = {
      0,
      &asn_DEF_Ngap_PDUSessionResourceSetupItemCxtRes_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -11653,9 +15720,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P186 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P186_tags_373[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P186_constr_373,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P186_constr_373,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P186_constr_373,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P186_constr_373,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P186_373,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P186_specs_373 /* Additional
@@ -11670,7 +15743,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P187_375[] = {
      0,
      &asn_DEF_Ngap_PDUSessionResourceSetupItemHOReq_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -11699,9 +15780,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P187 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P187_tags_375[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P187_constr_375,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P187_constr_375,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P187_constr_375,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P187_constr_375,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P187_375,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P187_specs_375 /* Additional
@@ -11716,7 +15803,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P188_377[] = {
      0,
      &asn_DEF_Ngap_PDUSessionResourceSetupItemSUReq_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -11745,9 +15840,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P188 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P188_tags_377[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P188_constr_377,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P188_constr_377,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P188_constr_377,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P188_constr_377,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P188_377,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P188_specs_377 /* Additional
@@ -11762,7 +15863,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P189_379[] = {
      0,
      &asn_DEF_Ngap_PDUSessionResourceSetupItemSURes_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -11791,9 +15900,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P189 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P189_tags_379[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P189_constr_379,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P189_constr_379,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P189_constr_379,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P189_constr_379,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P189_379,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P189_specs_379 /* Additional
@@ -11808,7 +15923,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P190_381[] = {
      0,
      &asn_DEF_Ngap_PDUSessionResourceSetupResponseTransfer_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -11837,9 +15960,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P190 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P190_tags_381[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P190_constr_381,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P190_constr_381,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P190_constr_381,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P190_constr_381,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P190_381,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P190_specs_381 /* Additional
@@ -11854,7 +15983,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P191_383[] = {
      0,
      &asn_DEF_Ngap_PDUSessionResourceSetupUnsuccessfulTransfer_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -11883,9 +16020,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P191 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P191_tags_383[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P191_constr_383,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P191_constr_383,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P191_constr_383,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P191_constr_383,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P191_383,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P191_specs_383 /* Additional
@@ -11900,7 +16043,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P192_385[] = {
      0,
      &asn_DEF_Ngap_PDUSessionResourceSuspendItemSUSReq_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -11929,9 +16080,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P192 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P192_tags_385[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P192_constr_385,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P192_constr_385,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P192_constr_385,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P192_constr_385,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P192_385,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P192_specs_385 /* Additional
@@ -11946,7 +16103,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P193_387[] = {
      0,
      &asn_DEF_Ngap_PDUSessionResourceSwitchedItem_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -11975,9 +16140,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P193 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P193_tags_387[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P193_constr_387,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P193_constr_387,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P193_constr_387,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P193_constr_387,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P193_387,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P193_specs_387 /* Additional
@@ -11992,7 +16163,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P194_389[] = {
      0,
      &asn_DEF_Ngap_PDUSessionResourceToBeSwitchedDLItem_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -12021,9 +16200,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P194 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P194_tags_389[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P194_constr_389,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P194_constr_389,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P194_constr_389,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P194_constr_389,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P194_389,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P194_specs_389 /* Additional
@@ -12038,7 +16223,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P195_391[] = {
      0,
      &asn_DEF_Ngap_PDUSessionResourceToReleaseItemHOCmd_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -12067,9 +16260,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P195 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P195_tags_391[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P195_constr_391,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P195_constr_391,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P195_constr_391,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P195_constr_391,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P195_391,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P195_specs_391 /* Additional
@@ -12084,7 +16283,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P196_393[] = {
      0,
      &asn_DEF_Ngap_PDUSessionResourceToReleaseItemRelCmd_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -12113,9 +16320,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P196 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P196_tags_393[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P196_constr_393,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P196_constr_393,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P196_constr_393,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P196_constr_393,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P196_393,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P196_specs_393 /* Additional
@@ -12130,7 +16343,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P197_395[] = {
      0,
      &asn_DEF_Ngap_PDUSessionUsageReport_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -12159,9 +16380,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P197 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P197_tags_395[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P197_constr_395,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P197_constr_395,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P197_constr_395,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P197_constr_395,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P197_395,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P197_specs_395 /* Additional
@@ -12176,7 +16403,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P198_397[] = {
      0,
      &asn_DEF_Ngap_PLMNSupportItem_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -12205,9 +16440,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P198 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P198_tags_397[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P198_constr_397,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P198_constr_397,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P198_constr_397,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P198_constr_397,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P198_397,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P198_specs_397 /* Additional
@@ -12222,7 +16463,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P199_399[] = {
      0,
      &asn_DEF_Ngap_PNI_NPN_MobilityInformation_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -12251,9 +16500,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P199 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P199_tags_399[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P199_constr_399,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P199_constr_399,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P199_constr_399,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P199_constr_399,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P199_399,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P199_specs_399 /* Additional
@@ -12268,7 +16523,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P200_401[] = {
      0,
      &asn_DEF_Ngap_QosFlowAcceptedItem_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -12297,9 +16560,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P200 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P200_tags_401[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P200_constr_401,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P200_constr_401,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P200_constr_401,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P200_constr_401,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P200_401,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P200_specs_401 /* Additional
@@ -12314,7 +16583,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P201_403[] = {
      0,
      &asn_DEF_Ngap_QosFlowAddOrModifyRequestItem_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -12343,9 +16620,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P201 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P201_tags_403[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P201_constr_403,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P201_constr_403,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P201_constr_403,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P201_constr_403,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P201_403,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P201_specs_403 /* Additional
@@ -12360,7 +16643,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P202_405[] = {
      0,
      &asn_DEF_Ngap_QosFlowAddOrModifyResponseItem_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -12389,9 +16680,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P202 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P202_tags_405[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P202_constr_405,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P202_constr_405,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P202_constr_405,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P202_constr_405,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P202_405,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P202_specs_405 /* Additional
@@ -12406,7 +16703,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P203_407[] = {
      0,
      &asn_DEF_Ngap_QosFlowFeedbackItem_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -12435,9 +16740,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P203 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P203_tags_407[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P203_constr_407,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P203_constr_407,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P203_constr_407,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P203_constr_407,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P203_407,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P203_specs_407 /* Additional
@@ -12452,7 +16763,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P204_409[] = {
      0,
      &asn_DEF_Ngap_QosFlowInformationItem_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -12481,9 +16800,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P204 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P204_tags_409[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P204_constr_409,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P204_constr_409,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P204_constr_409,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P204_constr_409,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P204_409,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P204_specs_409 /* Additional
@@ -12498,7 +16823,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P205_411[] = {
      0,
      &asn_DEF_Ngap_QosFlowLevelQosParameters_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -12527,9 +16860,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P205 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P205_tags_411[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P205_constr_411,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P205_constr_411,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P205_constr_411,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P205_constr_411,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P205_411,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P205_specs_411 /* Additional
@@ -12544,7 +16883,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P206_413[] = {
      0,
      &asn_DEF_Ngap_QosFlowWithCauseItem_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -12573,9 +16920,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P206 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P206_tags_413[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P206_constr_413,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P206_constr_413,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P206_constr_413,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P206_constr_413,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P206_413,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P206_specs_413 /* Additional
@@ -12590,7 +16943,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P207_415[] = {
      0,
      &asn_DEF_Ngap_QosFlowModifyConfirmItem_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -12619,9 +16980,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P207 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P207_tags_415[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P207_constr_415,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P207_constr_415,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P207_constr_415,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P207_constr_415,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P207_415,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P207_specs_415 /* Additional
@@ -12636,7 +17003,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P208_417[] = {
      0,
      &asn_DEF_Ngap_QosFlowNotifyItem_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -12665,9 +17040,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P208 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P208_tags_417[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P208_constr_417,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P208_constr_417,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P208_constr_417,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P208_constr_417,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P208_417,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P208_specs_417 /* Additional
@@ -12682,7 +17063,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P209_419[] = {
      0,
      &asn_DEF_Ngap_QosFlowParametersItem_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -12711,9 +17100,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P209 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P209_tags_419[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P209_constr_419,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P209_constr_419,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P209_constr_419,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P209_constr_419,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P209_419,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P209_specs_419 /* Additional
@@ -12728,7 +17123,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P210_421[] = {
      0,
      &asn_DEF_Ngap_QosFlowPerTNLInformation_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -12757,9 +17160,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P210 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P210_tags_421[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P210_constr_421,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P210_constr_421,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P210_constr_421,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P210_constr_421,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P210_421,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P210_specs_421 /* Additional
@@ -12774,7 +17183,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P211_423[] = {
      0,
      &asn_DEF_Ngap_QosFlowPerTNLInformationItem_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -12803,9 +17220,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P211 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P211_tags_423[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P211_constr_423,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P211_constr_423,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P211_constr_423,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P211_constr_423,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P211_423,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P211_specs_423 /* Additional
@@ -12820,7 +17243,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P212_425[] = {
      0,
      &asn_DEF_Ngap_QosFlowSetupRequestItem_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -12849,9 +17280,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P212 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P212_tags_425[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P212_constr_425,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P212_constr_425,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P212_constr_425,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P212_constr_425,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P212_425,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P212_specs_425 /* Additional
@@ -12866,7 +17303,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P213_427[] = {
      0,
      &asn_DEF_Ngap_QosFlowItemWithDataForwarding_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -12895,9 +17340,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P213 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P213_tags_427[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P213_constr_427,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P213_constr_427,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P213_constr_427,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P213_constr_427,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P213_427,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P213_specs_427 /* Additional
@@ -12912,7 +17363,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P214_429[] = {
      0,
      &asn_DEF_Ngap_QosFlowToBeForwardedItem_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -12941,9 +17400,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P214 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P214_tags_429[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P214_constr_429,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P214_constr_429,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P214_constr_429,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P214_constr_429,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P214_429,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P214_specs_429 /* Additional
@@ -12958,7 +17423,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P215_431[] = {
      0,
      &asn_DEF_Ngap_QoSFlowsUsageReport_Item_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -12987,9 +17460,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P215 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P215_tags_431[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P215_constr_431,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P215_constr_431,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P215_constr_431,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P215_constr_431,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P215_431,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P215_specs_431 /* Additional
@@ -13004,7 +17483,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P216_433[] = {
      0,
      &asn_DEF_Ngap_RANStatusTransfer_TransparentContainer_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -13033,9 +17520,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P216 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P216_tags_433[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P216_constr_433,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P216_constr_433,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P216_constr_433,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P216_constr_433,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P216_433,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P216_specs_433 /* Additional
@@ -13050,7 +17543,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P217_435[] = {
      0,
      &asn_DEF_Ngap_RATRestrictions_Item_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -13079,9 +17580,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P217 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P217_tags_435[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P217_constr_435,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P217_constr_435,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P217_constr_435,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P217_constr_435,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P217_435,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P217_specs_435 /* Additional
@@ -13096,7 +17603,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P218_437[] = {
      0,
      &asn_DEF_Ngap_RecommendedCellsForPaging_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -13125,9 +17640,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P218 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P218_tags_437[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P218_constr_437,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P218_constr_437,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P218_constr_437,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P218_constr_437,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P218_437,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P218_specs_437 /* Additional
@@ -13142,7 +17663,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P219_439[] = {
      0,
      &asn_DEF_Ngap_RecommendedCellItem_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -13171,9 +17700,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P219 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P219_tags_439[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P219_constr_439,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P219_constr_439,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P219_constr_439,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P219_constr_439,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P219_439,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P219_specs_439 /* Additional
@@ -13188,7 +17723,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P220_441[] = {
      0,
      &asn_DEF_Ngap_RecommendedRANNodesForPaging_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -13217,9 +17760,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P220 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P220_tags_441[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P220_constr_441,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P220_constr_441,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P220_constr_441,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P220_constr_441,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P220_441,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P220_specs_441 /* Additional
@@ -13234,7 +17783,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P221_443[] = {
      0,
      &asn_DEF_Ngap_RecommendedRANNodeItem_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -13263,9 +17820,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P221 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P221_tags_443[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P221_constr_443,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P221_constr_443,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P221_constr_443,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P221_constr_443,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P221_443,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P221_specs_443 /* Additional
@@ -13280,7 +17843,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P222_445[] = {
      0,
      &asn_DEF_Ngap_RedundantPDUSessionInformation_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -13309,9 +17880,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P222 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P222_tags_445[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P222_constr_445,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P222_constr_445,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P222_constr_445,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P222_constr_445,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P222_445,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P222_specs_445 /* Additional
@@ -13326,7 +17903,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P223_447[] = {
      0,
      &asn_DEF_Ngap_RIMInformationTransfer_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -13355,9 +17940,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P223 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P223_tags_447[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P223_constr_447,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P223_constr_447,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P223_constr_447,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P223_constr_447,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P223_447,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P223_specs_447 /* Additional
@@ -13372,7 +17963,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P224_449[] = {
      0,
      &asn_DEF_Ngap_RIMInformation_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -13401,9 +18000,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P224 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P224_tags_449[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P224_constr_449,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P224_constr_449,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P224_constr_449,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P224_constr_449,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P224_449,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P224_specs_449 /* Additional
@@ -13418,7 +18023,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P225_451[] = {
      0,
      &asn_DEF_Ngap_ScheduledCommunicationTime_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -13447,9 +18060,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P225 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P225_tags_451[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P225_constr_451,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P225_constr_451,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P225_constr_451,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P225_constr_451,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P225_451,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P225_specs_451 /* Additional
@@ -13464,7 +18083,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P226_453[] = {
      0,
      &asn_DEF_Ngap_SecondaryRATUsageInformation_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -13493,9 +18120,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P226 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P226_tags_453[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P226_constr_453,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P226_constr_453,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P226_constr_453,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P226_constr_453,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P226_453,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P226_specs_453 /* Additional
@@ -13510,7 +18143,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P227_455[] = {
      0,
      &asn_DEF_Ngap_SecondaryRATDataUsageReportTransfer_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -13539,9 +18180,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P227 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P227_tags_455[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P227_constr_455,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P227_constr_455,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P227_constr_455,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P227_constr_455,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P227_455,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P227_specs_455 /* Additional
@@ -13556,7 +18203,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P228_457[] = {
      0,
      &asn_DEF_Ngap_SecurityContext_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -13585,9 +18240,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P228 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P228_tags_457[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P228_constr_457,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P228_constr_457,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P228_constr_457,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P228_constr_457,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P228_457,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P228_specs_457 /* Additional
@@ -13602,7 +18263,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P229_459[] = {
      0,
      &asn_DEF_Ngap_SecurityIndication_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -13631,9 +18300,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P229 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P229_tags_459[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P229_constr_459,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P229_constr_459,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P229_constr_459,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P229_constr_459,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P229_459,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P229_specs_459 /* Additional
@@ -13648,7 +18323,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P230_461[] = {
      0,
      &asn_DEF_Ngap_SecurityResult_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -13677,9 +18360,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P230 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P230_tags_461[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P230_constr_461,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P230_constr_461,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P230_constr_461,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P230_constr_461,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P230_461,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P230_specs_461 /* Additional
@@ -13694,7 +18383,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P231_463[] = {
      0,
      &asn_DEF_Ngap_SensorMeasurementConfiguration_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -13723,9 +18420,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P231 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P231_tags_463[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P231_constr_463,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P231_constr_463,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P231_constr_463,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P231_constr_463,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P231_463,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P231_specs_463 /* Additional
@@ -13740,7 +18443,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P232_465[] = {
      0,
      &asn_DEF_Ngap_SensorMeasConfigNameItem_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -13769,9 +18480,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P232 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P232_tags_465[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P232_constr_465,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P232_constr_465,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P232_constr_465,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P232_constr_465,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P232_465,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P232_specs_465 /* Additional
@@ -13786,7 +18503,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P233_467[] = {
      0,
      &asn_DEF_Ngap_ServedGUAMIItem_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -13815,9 +18540,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P233 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P233_tags_467[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P233_constr_467,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P233_constr_467,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P233_constr_467,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P233_constr_467,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P233_467,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P233_specs_467 /* Additional
@@ -13832,7 +18563,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P234_469[] = {
      0,
      &asn_DEF_Ngap_ServiceAreaInformation_Item_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -13861,9 +18600,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P234 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P234_tags_469[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P234_constr_469,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P234_constr_469,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P234_constr_469,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P234_constr_469,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P234_469,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P234_specs_469 /* Additional
@@ -13878,7 +18623,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P235_471[] = {
      0,
      &asn_DEF_Ngap_SliceOverloadItem_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -13907,9 +18660,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P235 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P235_tags_471[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P235_constr_471,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P235_constr_471,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P235_constr_471,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P235_constr_471,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P235_471,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P235_specs_471 /* Additional
@@ -13924,7 +18683,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P236_473[] = {
      0,
      &asn_DEF_Ngap_SliceSupportItem_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -13953,9 +18720,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P236 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P236_tags_473[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P236_constr_473,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P236_constr_473,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P236_constr_473,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P236_constr_473,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P236_473,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P236_specs_473 /* Additional
@@ -13970,7 +18743,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P237_475[] = {
      0,
      &asn_DEF_Ngap_SNPN_MobilityInformation_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -13999,9 +18780,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P237 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P237_tags_475[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P237_constr_475,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P237_constr_475,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P237_constr_475,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P237_constr_475,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P237_475,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P237_specs_475 /* Additional
@@ -14016,7 +18803,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P238_477[] = {
      0,
      &asn_DEF_Ngap_S_NSSAI_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -14045,9 +18840,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P238 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P238_tags_477[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P238_constr_477,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P238_constr_477,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P238_constr_477,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P238_constr_477,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P238_477,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P238_specs_477 /* Additional
@@ -14062,7 +18863,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P239_479[] = {
      0,
      &asn_DEF_Ngap_SONConfigurationTransfer_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -14091,9 +18900,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P239 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P239_tags_479[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P239_constr_479,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P239_constr_479,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P239_constr_479,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P239_constr_479,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P239_479,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P239_specs_479 /* Additional
@@ -14108,7 +18923,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P240_481[] = {
      0,
      &asn_DEF_Ngap_SONInformationReply_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -14137,9 +18960,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P240 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P240_tags_481[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P240_constr_481,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P240_constr_481,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P240_constr_481,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P240_constr_481,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P240_481,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P240_specs_481 /* Additional
@@ -14154,7 +18983,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P241_483[] = {
      0,
      &asn_DEF_Ngap_SourceNGRANNode_ToTargetNGRANNode_TransparentContainer_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -14183,9 +19020,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P241 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P241_tags_483[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P241_constr_483,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P241_constr_483,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P241_constr_483,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P241_constr_483,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P241_483,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P241_specs_483 /* Additional
@@ -14200,7 +19043,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P242_485[] = {
      0,
      &asn_DEF_Ngap_SourceRANNodeID_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -14229,9 +19080,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P242 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P242_tags_485[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P242_constr_485,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P242_constr_485,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P242_constr_485,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P242_constr_485,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P242_485,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P242_specs_485 /* Additional
@@ -14246,7 +19103,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P243_487[] = {
      0,
      &asn_DEF_Ngap_SourceToTarget_AMFInformationReroute_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -14275,9 +19140,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P243 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P243_tags_487[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P243_constr_487,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P243_constr_487,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P243_constr_487,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P243_constr_487,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P243_487,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P243_specs_487 /* Additional
@@ -14292,7 +19163,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P244_489[] = {
      0,
      &asn_DEF_Ngap_SupportedTAItem_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -14321,9 +19200,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P244 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P244_tags_489[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P244_constr_489,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P244_constr_489,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P244_constr_489,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P244_constr_489,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P244_489,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P244_specs_489 /* Additional
@@ -14338,7 +19223,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P245_491[] = {
      0,
      &asn_DEF_Ngap_TAI_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -14367,9 +19260,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P245 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P245_tags_491[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P245_constr_491,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P245_constr_491,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P245_constr_491,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P245_constr_491,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P245_491,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P245_specs_491 /* Additional
@@ -14384,7 +19283,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P246_493[] = {
      0,
      &asn_DEF_Ngap_TAIBroadcastEUTRA_Item_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -14413,9 +19320,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P246 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P246_tags_493[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P246_constr_493,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P246_constr_493,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P246_constr_493,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P246_constr_493,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P246_493,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P246_specs_493 /* Additional
@@ -14430,7 +19343,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P247_495[] = {
      0,
      &asn_DEF_Ngap_TAIBroadcastNR_Item_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -14459,9 +19380,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P247 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P247_tags_495[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P247_constr_495,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P247_constr_495,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P247_constr_495,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P247_constr_495,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P247_495,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P247_specs_495 /* Additional
@@ -14476,7 +19403,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P248_497[] = {
      0,
      &asn_DEF_Ngap_TAICancelledEUTRA_Item_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -14505,9 +19440,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P248 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P248_tags_497[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P248_constr_497,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P248_constr_497,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P248_constr_497,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P248_constr_497,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P248_497,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P248_specs_497 /* Additional
@@ -14522,7 +19463,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P249_499[] = {
      0,
      &asn_DEF_Ngap_TAICancelledNR_Item_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -14551,9 +19500,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P249 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P249_tags_499[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P249_constr_499,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P249_constr_499,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P249_constr_499,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P249_constr_499,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P249_499,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P249_specs_499 /* Additional
@@ -14568,7 +19523,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P250_501[] = {
      0,
      &asn_DEF_Ngap_TAIListForInactiveItem_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -14597,9 +19560,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P250 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P250_tags_501[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P250_constr_501,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P250_constr_501,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P250_constr_501,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P250_constr_501,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P250_501,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P250_specs_501 /* Additional
@@ -14614,7 +19583,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P251_503[] = {
      0,
      &asn_DEF_Ngap_TAIListForPagingItem_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -14643,9 +19620,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P251 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P251_tags_503[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P251_constr_503,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P251_constr_503,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P251_constr_503,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P251_constr_503,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P251_503,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P251_specs_503 /* Additional
@@ -14660,7 +19643,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P252_505[] = {
      0,
      &asn_DEF_Ngap_TargeteNB_ID_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -14689,9 +19680,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P252 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P252_tags_505[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P252_constr_505,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P252_constr_505,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P252_constr_505,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P252_constr_505,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P252_505,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P252_specs_505 /* Additional
@@ -14706,7 +19703,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P253_507[] = {
      0,
      &asn_DEF_Ngap_TargetNGRANNode_ToSourceNGRANNode_TransparentContainer_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -14735,9 +19740,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P253 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P253_tags_507[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P253_constr_507,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P253_constr_507,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P253_constr_507,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P253_constr_507,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P253_507,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P253_specs_507 /* Additional
@@ -14752,7 +19763,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P254_509[] = {
      0,
      &asn_DEF_Ngap_TargetNGRANNode_ToSourceNGRANNode_FailureTransparentContainer_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -14781,9 +19800,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P254 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P254_tags_509[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P254_constr_509,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P254_constr_509,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P254_constr_509,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P254_constr_509,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P254_509,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P254_specs_509 /* Additional
@@ -14798,7 +19823,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P255_511[] = {
      0,
      &asn_DEF_Ngap_TargetRANNodeID_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -14827,9 +19860,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P255 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P255_tags_511[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P255_constr_511,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P255_constr_511,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P255_constr_511,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P255_constr_511,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P255_511,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P255_specs_511 /* Additional
@@ -14844,7 +19883,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P256_513[] = {
      0,
      &asn_DEF_Ngap_TargetRNC_ID_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -14873,9 +19920,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P256 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P256_tags_513[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P256_constr_513,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P256_constr_513,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P256_constr_513,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P256_constr_513,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P256_513,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P256_specs_513 /* Additional
@@ -14890,7 +19943,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P257_515[] = {
      0,
      &asn_DEF_Ngap_TNLAssociationItem_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -14919,9 +19980,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P257 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P257_tags_515[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P257_constr_515,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P257_constr_515,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P257_constr_515,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P257_constr_515,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P257_515,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P257_specs_515 /* Additional
@@ -14936,7 +20003,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P258_517[] = {
      0,
      &asn_DEF_Ngap_TooearlyIntersystemHO_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -14965,9 +20040,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P258 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P258_tags_517[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P258_constr_517,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P258_constr_517,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P258_constr_517,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P258_constr_517,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P258_517,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P258_specs_517 /* Additional
@@ -14982,7 +20063,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P259_519[] = {
      0,
      &asn_DEF_Ngap_TraceActivation_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -15011,9 +20100,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P259 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P259_tags_519[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P259_constr_519,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P259_constr_519,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P259_constr_519,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P259_constr_519,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P259_519,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P259_specs_519 /* Additional
@@ -15028,7 +20123,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P260_521[] = {
      0,
      &asn_DEF_Ngap_TAIBasedMDT_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -15057,9 +20160,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P260 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P260_tags_521[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P260_constr_521,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P260_constr_521,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P260_constr_521,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P260_constr_521,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P260_521,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P260_specs_521 /* Additional
@@ -15074,7 +20183,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P261_523[] = {
      0,
      &asn_DEF_Ngap_TABasedMDT_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -15103,9 +20220,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P261 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P261_tags_523[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P261_constr_523,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P261_constr_523,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P261_constr_523,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P261_constr_523,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P261_523,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P261_specs_523 /* Additional
@@ -15120,7 +20243,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P262_525[] = {
      0,
      &asn_DEF_Ngap_TSCAssistanceInformation_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -15149,9 +20280,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P262 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P262_tags_525[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P262_constr_525,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P262_constr_525,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P262_constr_525,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P262_constr_525,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P262_525,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P262_specs_525 /* Additional
@@ -15166,7 +20303,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P263_527[] = {
      0,
      &asn_DEF_Ngap_TSCTrafficCharacteristics_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -15195,9 +20340,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P263 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P263_tags_527[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P263_constr_527,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P263_constr_527,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P263_constr_527,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P263_constr_527,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P263_527,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P263_specs_527 /* Additional
@@ -15212,7 +20363,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P264_529[] = {
      0,
      &asn_DEF_Ngap_UEAggregateMaximumBitRate_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -15241,9 +20400,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P264 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P264_tags_529[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P264_constr_529,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P264_constr_529,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P264_constr_529,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P264_constr_529,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P264_529,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P264_specs_529 /* Additional
@@ -15258,7 +20423,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P265_531[] = {
      0,
      &asn_DEF_Ngap_UE_associatedLogicalNG_connectionItem_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -15287,9 +20460,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P265 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P265_tags_531[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P265_constr_531,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P265_constr_531,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P265_constr_531,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P265_constr_531,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P265_531,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P265_specs_531 /* Additional
@@ -15304,7 +20483,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P266_533[] = {
      0,
      &asn_DEF_Ngap_UEContextResumeRequestTransfer_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -15333,9 +20520,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P266 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P266_tags_533[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P266_constr_533,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P266_constr_533,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P266_constr_533,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P266_constr_533,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P266_533,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P266_specs_533 /* Additional
@@ -15350,7 +20543,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P267_535[] = {
      0,
      &asn_DEF_Ngap_UEContextResumeResponseTransfer_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -15379,9 +20580,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P267 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P267_tags_535[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P267_constr_535,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P267_constr_535,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P267_constr_535,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P267_constr_535,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P267_535,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P267_specs_535 /* Additional
@@ -15396,7 +20603,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P268_537[] = {
      0,
      &asn_DEF_Ngap_UEContextSuspendRequestTransfer_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -15425,9 +20640,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P268 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P268_tags_537[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P268_constr_537,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P268_constr_537,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P268_constr_537,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P268_constr_537,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P268_537,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P268_specs_537 /* Additional
@@ -15442,7 +20663,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P269_539[] = {
      0,
      &asn_DEF_Ngap_UE_DifferentiationInfo_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -15471,9 +20700,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P269 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P269_tags_539[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P269_constr_539,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P269_constr_539,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P269_constr_539,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P269_constr_539,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P269_539,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P269_specs_539 /* Additional
@@ -15488,7 +20723,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P270_541[] = {
      0,
      &asn_DEF_Ngap_UE_NGAP_ID_pair_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -15517,9 +20760,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P270 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P270_tags_541[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P270_constr_541,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P270_constr_541,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P270_constr_541,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P270_constr_541,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P270_541,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P270_specs_541 /* Additional
@@ -15534,7 +20783,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P271_543[] = {
      0,
      &asn_DEF_Ngap_UEPresenceInAreaOfInterestItem_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -15563,9 +20820,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P271 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P271_tags_543[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P271_constr_543,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P271_constr_543,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P271_constr_543,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P271_constr_543,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P271_543,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P271_specs_543 /* Additional
@@ -15580,7 +20843,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P272_545[] = {
      0,
      &asn_DEF_Ngap_UERadioCapabilityForPaging_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -15609,9 +20880,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P272 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P272_tags_545[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P272_constr_545,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P272_constr_545,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P272_constr_545,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P272_constr_545,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P272_545,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P272_specs_545 /* Additional
@@ -15626,7 +20903,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P273_547[] = {
      0,
      &asn_DEF_Ngap_UESecurityCapabilities_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -15655,9 +20940,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P273 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P273_tags_547[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P273_constr_547,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P273_constr_547,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P273_constr_547,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P273_constr_547,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P273_547,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P273_specs_547 /* Additional
@@ -15672,7 +20963,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P274_549[] = {
      0,
      &asn_DEF_Ngap_UL_CP_SecurityInformation_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -15701,9 +21000,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P274 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P274_tags_549[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P274_constr_549,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P274_constr_549,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P274_constr_549,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P274_constr_549,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P274_549,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P274_specs_549 /* Additional
@@ -15718,7 +21023,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P275_551[] = {
      0,
      &asn_DEF_Ngap_UL_NGU_UP_TNLModifyItem_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -15747,9 +21060,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P275 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P275_tags_551[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P275_constr_551,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P275_constr_551,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P275_constr_551,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P275_constr_551,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P275_551,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P275_specs_551 /* Additional
@@ -15764,7 +21083,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P276_553[] = {
      0,
      &asn_DEF_Ngap_UnavailableGUAMIItem_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -15793,9 +21120,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P276 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P276_tags_553[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P276_constr_553,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P276_constr_553,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P276_constr_553,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P276_constr_553,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P276_553,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P276_specs_553 /* Additional
@@ -15810,7 +21143,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P277_555[] = {
      0,
      &asn_DEF_Ngap_UPTransportLayerInformationItem_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -15839,9 +21180,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P277 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P277_tags_555[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P277_constr_555,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P277_constr_555,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P277_constr_555,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P277_constr_555,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P277_555,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P277_specs_555 /* Additional
@@ -15856,7 +21203,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P278_557[] = {
      0,
      &asn_DEF_Ngap_UPTransportLayerInformationPairItem_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -15885,9 +21240,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P278 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P278_tags_557[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P278_constr_557,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P278_constr_557,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P278_constr_557,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P278_constr_557,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P278_557,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P278_specs_557 /* Additional
@@ -15902,7 +21263,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P279_559[] = {
      0,
      &asn_DEF_Ngap_UserLocationInformationEUTRA_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -15931,9 +21300,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P279 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P279_tags_559[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P279_constr_559,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P279_constr_559,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P279_constr_559,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P279_constr_559,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P279_559,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P279_specs_559 /* Additional
@@ -15948,7 +21323,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P280_561[] = {
      0,
      &asn_DEF_Ngap_UserLocationInformationN3IWF_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -15977,9 +21360,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P280 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P280_tags_561[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P280_constr_561,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P280_constr_561,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P280_constr_561,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P280_constr_561,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P280_561,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P280_specs_561 /* Additional
@@ -15994,7 +21383,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P281_563[] = {
      0,
      &asn_DEF_Ngap_UserLocationInformationTNGF_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -16023,9 +21420,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P281 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P281_tags_563[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P281_constr_563,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P281_constr_563,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P281_constr_563,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P281_constr_563,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P281_563,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P281_specs_563 /* Additional
@@ -16040,7 +21443,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P282_565[] = {
      0,
      &asn_DEF_Ngap_UserLocationInformationTWIF_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -16069,9 +21480,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P282 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P282_tags_565[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P282_constr_565,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P282_constr_565,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P282_constr_565,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P282_constr_565,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P282_565,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P282_specs_565 /* Additional
@@ -16086,7 +21503,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P283_567[] = {
      0,
      &asn_DEF_Ngap_UserLocationInformationNR_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -16115,9 +21540,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P283 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P283_tags_567[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P283_constr_567,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P283_constr_567,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P283_constr_567,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P283_constr_567,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P283_567,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P283_specs_567 /* Additional
@@ -16132,7 +21563,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P284_569[] = {
      0,
      &asn_DEF_Ngap_UserPlaneSecurityInformation_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -16161,9 +21600,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P284 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P284_tags_569[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P284_constr_569,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P284_constr_569,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P284_constr_569,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P284_constr_569,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P284_569,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P284_specs_569 /* Additional
@@ -16178,7 +21623,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P285_571[] = {
      0,
      &asn_DEF_Ngap_VolumeTimedReport_Item_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -16207,9 +21660,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P285 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P285_tags_571[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P285_constr_571,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P285_constr_571,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P285_constr_571,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P285_constr_571,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P285_571,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P285_specs_571 /* Additional
@@ -16224,7 +21683,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P286_573[] = {
      0,
      &asn_DEF_Ngap_WLANMeasurementConfiguration_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -16253,9 +21720,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P286 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P286_tags_573[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P286_constr_573,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P286_constr_573,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P286_constr_573,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P286_constr_573,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P286_573,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P286_specs_573 /* Additional
@@ -16270,7 +21743,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P287_575[] = {
      0,
      &asn_DEF_Ngap_WLANMeasConfigNameItem_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -16299,9 +21780,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P287 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P287_tags_575[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P287_constr_575,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P287_constr_575,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P287_constr_575,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P287_constr_575,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P287_575,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P287_specs_575 /* Additional
@@ -16316,7 +21803,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P288_577[] = {
      0,
      &asn_DEF_Ngap_WUS_Assistance_Information_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -16345,9 +21840,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P288 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P288_tags_577[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P288_constr_577,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P288_constr_577,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P288_constr_577,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P288_constr_577,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P288_577,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P288_specs_577 /* Additional
@@ -16362,7 +21863,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P289_579[] = {
      0,
      &asn_DEF_Ngap_XnExtTLA_Item_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -16391,9 +21900,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P289 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P289_tags_579[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P289_constr_579,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P289_constr_579,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P289_constr_579,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P289_constr_579,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P289_579,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P289_specs_579 /* Additional
@@ -16408,7 +21923,15 @@ asn_TYPE_member_t asn_MBR_Ngap_ProtocolExtensionContainer_9717P290_581[] = {
      0,
      &asn_DEF_Ngap_XnTNLConfigurationInfo_ExtIEs,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -16437,9 +21960,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_ProtocolExtensionContainer_9717P290 = {
         sizeof(
             asn_DEF_Ngap_ProtocolExtensionContainer_9717P290_tags_581[0]), /* 1
                                                                             */
-    {&asn_OER_type_Ngap_ProtocolExtensionContainer_9717P290_constr_581,
-     &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P290_constr_581,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_ProtocolExtensionContainer_9717P290_constr_581,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_ProtocolExtensionContainer_9717P290_constr_581,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_ProtocolExtensionContainer_9717P290_581,
     1, /* Single element */
     &asn_SPC_Ngap_ProtocolExtensionContainer_9717P290_specs_581 /* Additional
