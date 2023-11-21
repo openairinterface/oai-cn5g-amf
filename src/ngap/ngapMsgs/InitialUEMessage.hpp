@@ -84,6 +84,13 @@ class InitialUEMessageMsg : public NgapMessage {
   std::optional<UEContextRequest> uEContextRequest;  // Optional
   std::optional<AllowedNSSAI> allowedNssai;          // Optional
   // TODO: Source to Target AMF Information Reroute (Optional)
+  // TODO: Selected PLMN Identity (Optional, Rel 16.14.0)
+  // TODO: IAB Node Indication (Optional, Rel 16.14.0)
+  // TODO: CE-mode-B Support Indicator (Optional, Rel 16.14.0)
+  // TODO: LTE-M Indication (Optional, Rel 16.14.0)
+  // TODO: EDT Session (Optional, Rel 16.14.0)
+  // TODO: Authenticated Indication (Optional, Rel 16.14.0)
+  // TODO: NPN Access Information (Optional, Rel 16.14.0)
 };
 
 }  // namespace ngap

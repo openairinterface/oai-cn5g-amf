@@ -66,6 +66,8 @@ class NGSetupRequestMsg : public NgapMessage {
   SupportedTAList supportedTAList;         // Mandatory
   DefaultPagingDrx defaultPagingDrx;       // Mandatory
   // TODO: UE Retention Information (Optional)
+  // TODO: NB-IoT Default Paging DRX  (Optional, Rel 16.14.0)
+  // TODO: Extended RAN Node Name (Optional, Rel 16.14.0)
 };
 
 }  // namespace ngap

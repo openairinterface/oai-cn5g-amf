@@ -64,8 +64,10 @@ class NGSetupResponseMsg : public NgapMessage {
   ServedGuamiList servedGUAMIList;          // Mandatory
   RelativeAmfCapacity relativeAmfCapacity;  // Mandatory
   PlmnSupportList plmnSupportList;          // Mandatory
-  // CriticalityDiagnostics //Optional, TODO
-  // UE Retention Information //Optional, TODO
+  // TODO: CriticalityDiagnostics //Optional
+  // TODO: UE Retention Information //Optional
+  // TODO:IAB Supported (Optional, Rel 16.14.0)
+  // TODO:Extended AMF Name (Optional, Rel 16.14.0)
 };
 
 }  // namespace ngap

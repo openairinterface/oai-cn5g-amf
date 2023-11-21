@@ -56,12 +56,18 @@ class PagingMsg : public NgapMessage {
   Ngap_Paging_t* pagingIEs;
 
   UEPagingIdentity uePagingIdentity;  // Mandatory
-  TAIListForPaging taIListForPaging;  // Mandatory
   // TODO: Paging DRX (Optional)
+  TAIListForPaging taIListForPaging;  // Mandatory
   // TODO: Paging Priority (Optional)
-  // TODO:  UE Radio Capability for Paging (Optional)
-  // TODO:  Paging Origin (Optional)
-  // TODO:  Assistance Data for Paging (Optional)
+  // TODO: UE Radio Capability for Paging (Optional)
+  // TODO: Paging Origin (Optional)
+  // TODO: Assistance Data for Paging (Optional)
+  // TODO: NB-IoT Paging eDRX Information (Optional, Rel 16.14.0)
+  // TODO: NB-IoT Paging DRX (Optional, Rel 16.14.0)
+  // TODO: Enhanced Coverage Restriction (Optional, Rel 16.14.0)
+  // TODO: WUS Assistance Information (Optional, Rel 16.14.0)
+  // TODO: Paging eDRX Information (Optional, Rel 16.14.0)
+  // TODO: CE-mode-B Restricted (Optional, Rel 16.14.0)
 };
 
 }  // namespace ngap

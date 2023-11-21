@@ -55,6 +55,9 @@ class UplinkNASTransportMsg : public NgapUEMessage {
   // RAN_UE_NGAP_ID //Mandatory
   NasPdu nasPdu;                                    // Mandatory
   UserLocationInformation userLocationInformation;  // Mandatory
+  // TODO: W-AGF Identity Information (Optional, Rel 16.14.0)
+  // TODO: TNGF Identity Information (Optional, Rel 16.14.0)
+  // TODO: TWIF Identity Information (Optional, Rel 16.14.0)
 };
 
 }  // namespace ngap

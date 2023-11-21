@@ -60,6 +60,7 @@ class UeRadioCapabilityInfoIndicationMsg : public NgapUEMessage {
   UERadioCapability ueRadioCapability;  // Mandatory
   std::optional<UERadioCapabilityForPaging>
       ueRadioCapabilityForPaging;  // Optional
+  // TODO: UE Radio Capability – E-UTRA Format (Optional, Rel 16.14.0)
 };
 
 }  // namespace ngap

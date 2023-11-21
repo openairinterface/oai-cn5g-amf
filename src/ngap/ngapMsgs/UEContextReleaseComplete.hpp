@@ -61,6 +61,7 @@ class UEContextReleaseCompleteMsg : public NgapUEMessage {
   std::optional<PduSessionResourceListCxtRelCpl>
       pduSessionResourceListCxtRelCpl;  // Optional
   // TODO: Criticality Diagnostics (Optional)
+  // TODO: Paging Assistance Data for CE Capable UE (Optional, Rel 16.14.0)
 };
 
 }  // namespace ngap
