@@ -36,8 +36,8 @@ class PriorityLevelARP {
   void setPriorityLevelARP(long value);
   bool getPriorityLevelARP(long& value) const;
 
-  bool encode(Ngap_PriorityLevelARP_t*);
-  bool decode(Ngap_PriorityLevelARP_t*);
+  bool encode(Ngap_PriorityLevelARP_t&) const;
+  bool decode(const Ngap_PriorityLevelARP_t&);
 
  private:
   long priority_level_arp_;

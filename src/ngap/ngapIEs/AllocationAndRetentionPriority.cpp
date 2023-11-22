@@ -31,36 +31,36 @@ AllocationAndRetentionPriority::~AllocationAndRetentionPriority() {}
 
 //------------------------------------------------------------------------------
 void AllocationAndRetentionPriority::set(
-    const PriorityLevelARP& m_priorityLevelARP,
-    const Pre_emptionCapability& m_pre_emptionCapability,
-    const Pre_emptionVulnerability& m_pre_emptionVulnerability) {
-  priorityLevelARP         = m_priorityLevelARP;
-  pre_emptionCapability    = m_pre_emptionCapability;
-  pre_emptionVulnerability = m_pre_emptionVulnerability;
+    const PriorityLevelARP& priorityLevelARP,
+    const Pre_emptionCapability& pre_emptionCapability,
+    const Pre_emptionVulnerability& pre_emptionVulnerability) {
+  priorityLevelARP_         = priorityLevelARP;
+  pre_emptionCapability_    = pre_emptionCapability;
+  pre_emptionVulnerability_ = pre_emptionVulnerability;
 }
 
 //------------------------------------------------------------------------------
 bool AllocationAndRetentionPriority::get(
-    PriorityLevelARP& m_priorityLevelARP,
-    Pre_emptionCapability& m_pre_emptionCapability,
-    Pre_emptionVulnerability& m_pre_emptionVulnerability) const {
-  m_priorityLevelARP         = priorityLevelARP;
-  m_pre_emptionCapability    = pre_emptionCapability;
-  m_pre_emptionVulnerability = pre_emptionVulnerability;
+    PriorityLevelARP& priorityLevelARP,
+    Pre_emptionCapability& pre_emptionCapability,
+    Pre_emptionVulnerability& pre_emptionVulnerability) const {
+  priorityLevelARP         = priorityLevelARP_;
+  pre_emptionCapability    = pre_emptionCapability_;
+  pre_emptionVulnerability = pre_emptionVulnerability_;
   return true;
 }
 
 //------------------------------------------------------------------------------
 bool AllocationAndRetentionPriority::encode(
-    Ngap_AllocationAndRetentionPriority_t* allocationAndRetentionPriority) {
-  if (!priorityLevelARP.encode(
-          &allocationAndRetentionPriority->priorityLevelARP))
+    Ngap_AllocationAndRetentionPriority_t& allocationAndRetentionPriority) {
+  if (!priorityLevelARP_.encode(
+          allocationAndRetentionPriority.priorityLevelARP))
     return false;
-  if (!pre_emptionCapability.encode(
-          &allocationAndRetentionPriority->pre_emptionCapability))
+  if (!pre_emptionCapability_.encode(
+          allocationAndRetentionPriority.pre_emptionCapability))
     return false;
-  if (!pre_emptionVulnerability.encode(
-          &allocationAndRetentionPriority->pre_emptionVulnerability))
+  if (!pre_emptionVulnerability_.encode(
+          allocationAndRetentionPriority.pre_emptionVulnerability))
     return false;
 
   return true;
@@ -68,15 +68,15 @@ bool AllocationAndRetentionPriority::encode(
 
 //------------------------------------------------------------------------------
 bool AllocationAndRetentionPriority::decode(
-    Ngap_AllocationAndRetentionPriority_t* allocationAndRetentionPriority) {
-  if (!priorityLevelARP.decode(
-          &allocationAndRetentionPriority->priorityLevelARP))
+    Ngap_AllocationAndRetentionPriority_t& allocationAndRetentionPriority) {
+  if (!priorityLevelARP_.decode(
+          allocationAndRetentionPriority.priorityLevelARP))
     return false;
-  if (!pre_emptionCapability.decode(
-          &allocationAndRetentionPriority->pre_emptionCapability))
+  if (!pre_emptionCapability_.decode(
+          allocationAndRetentionPriority.pre_emptionCapability))
     return false;
-  if (!pre_emptionVulnerability.decode(
-          &allocationAndRetentionPriority->pre_emptionVulnerability))
+  if (!pre_emptionVulnerability_.decode(
+          allocationAndRetentionPriority.pre_emptionVulnerability))
     return false;
 
   return true;

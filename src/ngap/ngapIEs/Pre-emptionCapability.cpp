@@ -48,16 +48,16 @@ bool Pre_emptionCapability::get(e_Ngap_Pre_emptionCapability& value) {
 
 //------------------------------------------------------------------------------
 bool Pre_emptionCapability::encode(
-    Ngap_Pre_emptionCapability_t* pre_emptionCapability) {
-  *pre_emptionCapability = pre_emption_capability_;
+    Ngap_Pre_emptionCapability_t& pre_emptionCapability) const {
+  pre_emptionCapability = pre_emption_capability_;
 
   return true;
 }
 
 //------------------------------------------------------------------------------
 bool Pre_emptionCapability::decode(
-    Ngap_Pre_emptionCapability_t* pre_emptionCapability) {
-  pre_emption_capability_ = *pre_emptionCapability;
+    const Ngap_Pre_emptionCapability_t& pre_emptionCapability) {
+  pre_emption_capability_ = pre_emptionCapability;
 
   return true;
 }

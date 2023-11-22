@@ -55,16 +55,16 @@ bool AdditionalQosFlowInformation::get(
 
 //------------------------------------------------------------------------------
 bool AdditionalQosFlowInformation::encode(
-    Ngap_AdditionalQosFlowInformation_t* value) {
-  *value = qos_flow_info_;
+    Ngap_AdditionalQosFlowInformation_t& value) const {
+  value = qos_flow_info_;
 
   return true;
 }
 
 //------------------------------------------------------------------------------
 bool AdditionalQosFlowInformation::decode(
-    Ngap_AdditionalQosFlowInformation_t* value) {
-  qos_flow_info_ = *value;
+    const Ngap_AdditionalQosFlowInformation_t& value) {
+  qos_flow_info_ = value;
 
   return true;
 }

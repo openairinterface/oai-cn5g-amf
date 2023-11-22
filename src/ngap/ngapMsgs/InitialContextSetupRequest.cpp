@@ -116,7 +116,7 @@ void InitialContextSetupRequestMsg::setOldAmf(const std::string& name) {
   ie->criticality   = Ngap_Criticality_reject;
   ie->value.present = Ngap_InitialContextSetupRequestIEs__value_PR_AMFName;
 
-  int ret = oldAMF.value().encode(&ie->value.choice.AMFName);
+  int ret = oldAMF.value().encode(ie->value.choice.AMFName);
   if (!ret) {
     Logger::ngap().error("Encode oldAmfName IE error!");
     free_wrapper((void**) &ie);
@@ -435,7 +435,7 @@ void InitialContextSetupRequestMsg::setAllowedNssai(
   ie->criticality   = Ngap_Criticality_reject;
   ie->value.present = Ngap_InitialContextSetupRequestIEs__value_PR_AllowedNSSAI;
 
-  int ret = allowedNssai.encode(&ie->value.choice.AllowedNSSAI);
+  int ret = allowedNssai.encode(ie->value.choice.AllowedNSSAI);
   if (!ret) {
     Logger::ngap().error("Encode AllowedNSSAI IE error!");
     free_wrapper((void**) &ie);
@@ -714,8 +714,8 @@ bool InitialContextSetupRequestMsg::decode(Ngap_NGAP_PDU_t* ngapMsgPdu) {
                 Ngap_InitialContextSetupRequestIEs__value_PR_AMFName) {
           AmfName tmp = {};
           if (!tmp.decode(
-                  &initialContextSetupRequestIEs->protocolIEs.list.array[i]
-                       ->value.choice.AMFName)) {
+                  initialContextSetupRequestIEs->protocolIEs.list.array[i]
+                      ->value.choice.AMFName)) {
             Logger::ngap().error("Decoded NGAP OldAMFName IE error");
             return false;
           }
@@ -818,8 +818,8 @@ bool InitialContextSetupRequestMsg::decode(Ngap_NGAP_PDU_t* ngapMsgPdu) {
                     ->value.present ==
                 Ngap_InitialContextSetupRequestIEs__value_PR_AllowedNSSAI) {
           if (!allowedNssai.decode(
-                  &initialContextSetupRequestIEs->protocolIEs.list.array[i]
-                       ->value.choice.AllowedNSSAI)) {
+                  initialContextSetupRequestIEs->protocolIEs.list.array[i]
+                      ->value.choice.AllowedNSSAI)) {
             Logger::ngap().error("Decoded NGAP AllowedNSSAI IE error");
             return false;
           }
