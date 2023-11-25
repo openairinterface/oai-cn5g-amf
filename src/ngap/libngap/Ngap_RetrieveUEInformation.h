@@ -3,7 +3,7 @@
  * From ASN.1 module "NGAP-PDU-Contents"
  * 	found in "asn.1/Information Element Definitions.asn1"
  * 	`asn1c -pdu=all -fcompound-names -fno-include-deps -findirect-choice
- * -no-gen-example -gen-APER -gen-UPER -no-gen-JER -no-gen-BER -D src`
+ * -no-gen-example -gen-APER -gen-UPER -no-gen-JER -gen-BER -D src`
  */
 
 #ifndef _Ngap_RetrieveUEInformation_H_
@@ -21,7 +21,7 @@ extern "C" {
 
 /* Ngap_RetrieveUEInformation */
 typedef struct Ngap_RetrieveUEInformation {
-  Ngap_ProtocolIE_Container_9666P25_t protocolIEs;
+  Ngap_ProtocolIE_Container_9615P25_t protocolIEs;
   /*
    * This type is extensible,
    * possible extensions are below.

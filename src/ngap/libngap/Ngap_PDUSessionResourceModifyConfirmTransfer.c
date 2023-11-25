@@ -3,7 +3,7 @@
  * From ASN.1 module "NGAP-IEs"
  * 	found in "asn.1/Information Element Definitions.asn1"
  * 	`asn1c -pdu=all -fcompound-names -fno-include-deps -findirect-choice
- * -no-gen-example -gen-APER -gen-UPER -no-gen-JER -no-gen-BER -D src`
+ * -no-gen-example -gen-APER -gen-UPER -no-gen-JER -gen-BER -D src`
  */
 
 #include "Ngap_PDUSessionResourceModifyConfirmTransfer.h"
@@ -104,7 +104,7 @@ static asn_TYPE_member_t
              iE_Extensions),
          (ASN_TAG_CLASS_CONTEXT | (4 << 2)),
          -1, /* IMPLICIT tag at current level */
-         &asn_DEF_Ngap_ProtocolExtensionContainer_9717P164,
+         &asn_DEF_Ngap_ProtocolExtensionContainer_9666P164,
          0,
          {
 #if !defined(ASN_DISABLE_OER_SUPPORT)

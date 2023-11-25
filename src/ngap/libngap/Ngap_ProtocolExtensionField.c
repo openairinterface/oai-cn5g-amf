@@ -3,7 +3,7 @@
  * From ASN.1 module "NGAP-Containers"
  * 	found in "asn.1/Information Element Definitions.asn1"
  * 	`asn1c -pdu=all -fcompound-names -fno-include-deps -findirect-choice
- * -no-gen-example -gen-APER -gen-UPER -no-gen-JER -no-gen-BER -D src`
+ * -no-gen-example -gen-APER -gen-UPER -no-gen-JER -gen-BER -D src`
  */
 
 #include "Ngap_ProtocolExtensionField.h"
@@ -35141,7 +35141,8 @@ static asn_TYPE_member_t asn_MBR_Ngap_extensionValue_4[] = {
      "UPTransportLayerInformation"},
 };
 static const asn_TYPE_tag2member_t asn_MAP_Ngap_extensionValue_tag2el_4[] = {
-    {(ASN_TAG_CLASS_CONTEXT | (0 << 2)), 0, 0, 0} /* gTPTunnel */
+    {(ASN_TAG_CLASS_CONTEXT | (0 << 2)), 0, 0, 0}, /* gTPTunnel */
+    {(ASN_TAG_CLASS_CONTEXT | (1 << 2)), 0, 0, 0}  /* choice-Extensions */
 };
 static asn_CHOICE_specifics_t asn_SPC_Ngap_extensionValue_specs_4 = {
     sizeof(struct
@@ -35159,7 +35160,7 @@ static asn_CHOICE_specifics_t asn_SPC_Ngap_extensionValue_specs_4 = {
           Ngap_AdditionalDLUPTNLInformationForHOItem_ExtIEs__extensionValue*) 0)
             ->present),
     asn_MAP_Ngap_extensionValue_tag2el_4,
-    1, /* Count of tags in the map */
+    2, /* Count of tags in the map */
     0,
     0,
     -1 /* Extensions start */
@@ -35270,35 +35271,40 @@ asn_SEQUENCE_specifics_t
         0,  /* Optional elements (not needed) */
         -1, /* First extension addition */
 };
-asn_TYPE_descriptor_t asn_DEF_Ngap_AdditionalDLUPTNLInformationForHOItem_ExtIEs = {
-    "AdditionalDLUPTNLInformationForHOItem-ExtIEs",
-    "AdditionalDLUPTNLInformationForHOItem-ExtIEs",
-    &asn_OP_SEQUENCE,
-    asn_DEF_Ngap_AdditionalDLUPTNLInformationForHOItem_ExtIEs_tags_1,
-    sizeof(asn_DEF_Ngap_AdditionalDLUPTNLInformationForHOItem_ExtIEs_tags_1) /
-        sizeof(asn_DEF_Ngap_AdditionalDLUPTNLInformationForHOItem_ExtIEs_tags_1
-                   [0]),                                              /* 1 */
-    asn_DEF_Ngap_AdditionalDLUPTNLInformationForHOItem_ExtIEs_tags_1, /* Same
-                                                                         as
-                                                                         above
-                                                                       */
-    sizeof(asn_DEF_Ngap_AdditionalDLUPTNLInformationForHOItem_ExtIEs_tags_1) /
-        sizeof(asn_DEF_Ngap_AdditionalDLUPTNLInformationForHOItem_ExtIEs_tags_1
-                   [0]), /* 1 */
-    {
+asn_TYPE_descriptor_t
+    asn_DEF_Ngap_AdditionalDLUPTNLInformationForHOItem_ExtIEs = {
+        "AdditionalDLUPTNLInformationForHOItem-ExtIEs",
+        "AdditionalDLUPTNLInformationForHOItem-ExtIEs",
+        &asn_OP_SEQUENCE,
+        asn_DEF_Ngap_AdditionalDLUPTNLInformationForHOItem_ExtIEs_tags_1,
+        sizeof(
+            asn_DEF_Ngap_AdditionalDLUPTNLInformationForHOItem_ExtIEs_tags_1) /
+            sizeof(
+                asn_DEF_Ngap_AdditionalDLUPTNLInformationForHOItem_ExtIEs_tags_1
+                    [0]), /* 1 */
+        asn_DEF_Ngap_AdditionalDLUPTNLInformationForHOItem_ExtIEs_tags_1, /* Same
+                                                                             as
+                                                                             above
+                                                                           */
+        sizeof(
+            asn_DEF_Ngap_AdditionalDLUPTNLInformationForHOItem_ExtIEs_tags_1) /
+            sizeof(
+                asn_DEF_Ngap_AdditionalDLUPTNLInformationForHOItem_ExtIEs_tags_1
+                    [0]), /* 1 */
+        {
 #if !defined(ASN_DISABLE_OER_SUPPORT)
-        0,
+            0,
 #endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
 #if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
-        0,
+            0,
 #endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
           !defined(ASN_DISABLE_APER_SUPPORT) */
-        SEQUENCE_constraint},
-    asn_MBR_Ngap_AdditionalDLUPTNLInformationForHOItem_ExtIEs_1,
-    3, /* Elements count */
-    &asn_SPC_Ngap_AdditionalDLUPTNLInformationForHOItem_ExtIEs_specs_1 /* Additional
-                                                                          specs
-                                                                        */
+            SEQUENCE_constraint},
+        asn_MBR_Ngap_AdditionalDLUPTNLInformationForHOItem_ExtIEs_1,
+        3, /* Elements count */
+        &asn_SPC_Ngap_AdditionalDLUPTNLInformationForHOItem_ExtIEs_specs_1 /* Additional
+                                                                              specs
+                                                                            */
 };
 
 static asn_CHOICE_specifics_t asn_SPC_Ngap_extensionValue_specs_8 = {
@@ -36180,7 +36186,8 @@ static asn_TYPE_member_t asn_MBR_Ngap_extensionValue_32[] = {
      "CPTransportLayerInformation"},
 };
 static const asn_TYPE_tag2member_t asn_MAP_Ngap_extensionValue_tag2el_32[] = {
-    {(ASN_TAG_CLASS_CONTEXT | (0 << 2)), 0, 0, 0} /* endpointIPAddress */
+    {(ASN_TAG_CLASS_CONTEXT | (0 << 2)), 0, 0, 0}, /* endpointIPAddress */
+    {(ASN_TAG_CLASS_CONTEXT | (1 << 2)), 0, 0, 0}  /* choice-Extensions */
 };
 static asn_CHOICE_specifics_t asn_SPC_Ngap_extensionValue_specs_32 = {
     sizeof(struct Ngap_AMF_TNLAssociationToRemoveItem_ExtIEs__extensionValue),
@@ -36194,7 +36201,7 @@ static asn_CHOICE_specifics_t asn_SPC_Ngap_extensionValue_specs_32 = {
         ((struct Ngap_AMF_TNLAssociationToRemoveItem_ExtIEs__extensionValue*) 0)
             ->present),
     asn_MAP_Ngap_extensionValue_tag2el_32,
-    1, /* Count of tags in the map */
+    2, /* Count of tags in the map */
     0,
     0,
     -1 /* Extensions start */
@@ -37217,7 +37224,9 @@ static const unsigned asn_MAP_Ngap_extensionValue_from_canonical_60[] = {1, 0};
 static const asn_TYPE_tag2member_t asn_MAP_Ngap_extensionValue_tag2el_60[] = {
     {(ASN_TAG_CLASS_UNIVERSAL | (16 << 2)), 1, 0,
      0}, /* PagingAssisDataforCEcapabUE */
-    {(ASN_TAG_CLASS_CONTEXT | (0 << 2)), 0, 0, 0} /* pNI-NPN-PagingAssistance */
+    {(ASN_TAG_CLASS_CONTEXT | (0 << 2)), 0, 0,
+     0},                                          /* pNI-NPN-PagingAssistance */
+    {(ASN_TAG_CLASS_CONTEXT | (1 << 2)), 0, 0, 0} /* choice-Extensions */
 };
 static asn_CHOICE_specifics_t asn_SPC_Ngap_extensionValue_specs_60 = {
     sizeof(struct Ngap_AssistanceDataForPaging_ExtIEs__extensionValue),
@@ -37228,7 +37237,7 @@ static asn_CHOICE_specifics_t asn_SPC_Ngap_extensionValue_specs_60 = {
     sizeof(((struct Ngap_AssistanceDataForPaging_ExtIEs__extensionValue*) 0)
                ->present),
     asn_MAP_Ngap_extensionValue_tag2el_60,
-    2, /* Count of tags in the map */
+    3, /* Count of tags in the map */
     asn_MAP_Ngap_extensionValue_to_canonical_60,
     asn_MAP_Ngap_extensionValue_from_canonical_60,
     -1 /* Extensions start */
@@ -37865,8 +37874,9 @@ static const unsigned asn_MAP_Ngap_extensionValue_to_canonical_76[]   = {1, 0};
 static const unsigned asn_MAP_Ngap_extensionValue_from_canonical_76[] = {1, 0};
 static const asn_TYPE_tag2member_t asn_MAP_Ngap_extensionValue_tag2el_76[] = {
     {(ASN_TAG_CLASS_UNIVERSAL | (16 << 2)), 1, 0,
-     0},                                          /* ExtendedSliceSupportList */
-    {(ASN_TAG_CLASS_CONTEXT | (0 << 2)), 0, 0, 0} /* sNPN */
+     0}, /* ExtendedSliceSupportList */
+    {(ASN_TAG_CLASS_CONTEXT | (0 << 2)), 0, 0, 0}, /* sNPN */
+    {(ASN_TAG_CLASS_CONTEXT | (1 << 2)), 0, 0, 0}  /* choice-Extensions */
 };
 static asn_CHOICE_specifics_t asn_SPC_Ngap_extensionValue_specs_76 = {
     sizeof(struct Ngap_BroadcastPLMNItem_ExtIEs__extensionValue),
@@ -37875,7 +37885,7 @@ static asn_CHOICE_specifics_t asn_SPC_Ngap_extensionValue_specs_76 = {
     sizeof(
         ((struct Ngap_BroadcastPLMNItem_ExtIEs__extensionValue*) 0)->present),
     asn_MAP_Ngap_extensionValue_tag2el_76,
-    2, /* Count of tags in the map */
+    3, /* Count of tags in the map */
     asn_MAP_Ngap_extensionValue_to_canonical_76,
     asn_MAP_Ngap_extensionValue_from_canonical_76,
     -1 /* Extensions start */
@@ -40391,35 +40401,40 @@ asn_SEQUENCE_specifics_t
         0,  /* Optional elements (not needed) */
         -1, /* First extension addition */
 };
-asn_TYPE_descriptor_t asn_DEF_Ngap_CNTypeRestrictionsForEquivalentItem_ExtIEs = {
-    "CNTypeRestrictionsForEquivalentItem-ExtIEs",
-    "CNTypeRestrictionsForEquivalentItem-ExtIEs",
-    &asn_OP_SEQUENCE,
-    asn_DEF_Ngap_CNTypeRestrictionsForEquivalentItem_ExtIEs_tags_141,
-    sizeof(asn_DEF_Ngap_CNTypeRestrictionsForEquivalentItem_ExtIEs_tags_141) /
-        sizeof(asn_DEF_Ngap_CNTypeRestrictionsForEquivalentItem_ExtIEs_tags_141
-                   [0]),                                              /* 1 */
-    asn_DEF_Ngap_CNTypeRestrictionsForEquivalentItem_ExtIEs_tags_141, /* Same
-                                                                         as
-                                                                         above
-                                                                       */
-    sizeof(asn_DEF_Ngap_CNTypeRestrictionsForEquivalentItem_ExtIEs_tags_141) /
-        sizeof(asn_DEF_Ngap_CNTypeRestrictionsForEquivalentItem_ExtIEs_tags_141
-                   [0]), /* 1 */
+asn_TYPE_descriptor_t asn_DEF_Ngap_CNTypeRestrictionsForEquivalentItem_ExtIEs =
     {
+        "CNTypeRestrictionsForEquivalentItem-ExtIEs",
+        "CNTypeRestrictionsForEquivalentItem-ExtIEs",
+        &asn_OP_SEQUENCE,
+        asn_DEF_Ngap_CNTypeRestrictionsForEquivalentItem_ExtIEs_tags_141,
+        sizeof(
+            asn_DEF_Ngap_CNTypeRestrictionsForEquivalentItem_ExtIEs_tags_141) /
+            sizeof(
+                asn_DEF_Ngap_CNTypeRestrictionsForEquivalentItem_ExtIEs_tags_141
+                    [0]), /* 1 */
+        asn_DEF_Ngap_CNTypeRestrictionsForEquivalentItem_ExtIEs_tags_141, /* Same
+                                                                             as
+                                                                             above
+                                                                           */
+        sizeof(
+            asn_DEF_Ngap_CNTypeRestrictionsForEquivalentItem_ExtIEs_tags_141) /
+            sizeof(
+                asn_DEF_Ngap_CNTypeRestrictionsForEquivalentItem_ExtIEs_tags_141
+                    [0]), /* 1 */
+        {
 #if !defined(ASN_DISABLE_OER_SUPPORT)
-        0,
+            0,
 #endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
 #if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
-        0,
+            0,
 #endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
           !defined(ASN_DISABLE_APER_SUPPORT) */
-        SEQUENCE_constraint},
-    asn_MBR_Ngap_CNTypeRestrictionsForEquivalentItem_ExtIEs_141,
-    3, /* Elements count */
-    &asn_SPC_Ngap_CNTypeRestrictionsForEquivalentItem_ExtIEs_specs_141 /* Additional
-                                                                          specs
-                                                                        */
+            SEQUENCE_constraint},
+        asn_MBR_Ngap_CNTypeRestrictionsForEquivalentItem_ExtIEs_141,
+        3, /* Elements count */
+        &asn_SPC_Ngap_CNTypeRestrictionsForEquivalentItem_ExtIEs_specs_141 /* Additional
+                                                                              specs
+                                                                            */
 };
 
 static asn_CHOICE_specifics_t asn_SPC_Ngap_extensionValue_specs_148 = {
@@ -49214,8 +49229,9 @@ static const asn_TYPE_tag2member_t asn_MAP_Ngap_extensionValue_tag2el_384[] = {
     {(ASN_TAG_CLASS_UNIVERSAL | (16 << 2)), 3, -2,
      1}, /* DataForwardingResponseERABList */
     {(ASN_TAG_CLASS_UNIVERSAL | (16 << 2)), 4, -3,
-     0},                                          /* QosFlowListWithCause */
-    {(ASN_TAG_CLASS_CONTEXT | (0 << 2)), 1, 0, 0} /* gTPTunnel */
+     0},                                           /* QosFlowListWithCause */
+    {(ASN_TAG_CLASS_CONTEXT | (0 << 2)), 1, 0, 0}, /* gTPTunnel */
+    {(ASN_TAG_CLASS_CONTEXT | (1 << 2)), 1, 0, 0}  /* choice-Extensions */
 };
 static asn_CHOICE_specifics_t asn_SPC_Ngap_extensionValue_specs_384 = {
     sizeof(struct Ngap_HandoverCommandTransfer_ExtIEs__extensionValue),
@@ -49226,7 +49242,7 @@ static asn_CHOICE_specifics_t asn_SPC_Ngap_extensionValue_specs_384 = {
     sizeof(((struct Ngap_HandoverCommandTransfer_ExtIEs__extensionValue*) 0)
                ->present),
     asn_MAP_Ngap_extensionValue_tag2el_384,
-    5, /* Count of tags in the map */
+    6, /* Count of tags in the map */
     asn_MAP_Ngap_extensionValue_to_canonical_384,
     asn_MAP_Ngap_extensionValue_from_canonical_384,
     -1 /* Extensions start */
@@ -49689,8 +49705,11 @@ static const asn_TYPE_tag2member_t asn_MAP_Ngap_extensionValue_tag2el_392[] = {
     {(ASN_TAG_CLASS_CONTEXT | (0 << 2)), 1, 0, 2},  /* gTPTunnel */
     {(ASN_TAG_CLASS_CONTEXT | (0 << 2)), 4, -1, 1}, /* gTPTunnel */
     {(ASN_TAG_CLASS_CONTEXT | (0 << 2)), 6, -2, 0}, /* globalGNB-ID */
-    {(ASN_TAG_CLASS_CONTEXT | (1 << 2)), 6, 0, 0},  /* globalNgENB-ID */
-    {(ASN_TAG_CLASS_CONTEXT | (2 << 2)), 6, 0, 0}   /* globalN3IWF-ID */
+    {(ASN_TAG_CLASS_CONTEXT | (1 << 2)), 1, 0, 2},  /* choice-Extensions */
+    {(ASN_TAG_CLASS_CONTEXT | (1 << 2)), 4, -1, 1}, /* choice-Extensions */
+    {(ASN_TAG_CLASS_CONTEXT | (1 << 2)), 6, -2, 0}, /* globalNgENB-ID */
+    {(ASN_TAG_CLASS_CONTEXT | (2 << 2)), 6, 0, 0},  /* globalN3IWF-ID */
+    {(ASN_TAG_CLASS_CONTEXT | (3 << 2)), 6, 0, 0}   /* choice-Extensions */
 };
 static asn_CHOICE_specifics_t asn_SPC_Ngap_extensionValue_specs_392 = {
     sizeof(
@@ -49705,7 +49724,7 @@ static asn_CHOICE_specifics_t asn_SPC_Ngap_extensionValue_specs_392 = {
              Ngap_HandoverRequestAcknowledgeTransfer_ExtIEs__extensionValue*) 0)
                ->present),
     asn_MAP_Ngap_extensionValue_tag2el_392,
-    9, /* Count of tags in the map */
+    12, /* Count of tags in the map */
     asn_MAP_Ngap_extensionValue_to_canonical_392,
     asn_MAP_Ngap_extensionValue_from_canonical_392,
     -1 /* Extensions start */
@@ -50887,35 +50906,40 @@ asn_SEQUENCE_specifics_t
         0,  /* Optional elements (not needed) */
         -1, /* First extension addition */
 };
-asn_TYPE_descriptor_t asn_DEF_Ngap_IntersystemSONConfigurationTransfer_ExtIEs = {
-    "IntersystemSONConfigurationTransfer-ExtIEs",
-    "IntersystemSONConfigurationTransfer-ExtIEs",
-    &asn_OP_SEQUENCE,
-    asn_DEF_Ngap_IntersystemSONConfigurationTransfer_ExtIEs_tags_417,
-    sizeof(asn_DEF_Ngap_IntersystemSONConfigurationTransfer_ExtIEs_tags_417) /
-        sizeof(asn_DEF_Ngap_IntersystemSONConfigurationTransfer_ExtIEs_tags_417
-                   [0]),                                              /* 1 */
-    asn_DEF_Ngap_IntersystemSONConfigurationTransfer_ExtIEs_tags_417, /* Same
-                                                                         as
-                                                                         above
-                                                                       */
-    sizeof(asn_DEF_Ngap_IntersystemSONConfigurationTransfer_ExtIEs_tags_417) /
-        sizeof(asn_DEF_Ngap_IntersystemSONConfigurationTransfer_ExtIEs_tags_417
-                   [0]), /* 1 */
+asn_TYPE_descriptor_t asn_DEF_Ngap_IntersystemSONConfigurationTransfer_ExtIEs =
     {
+        "IntersystemSONConfigurationTransfer-ExtIEs",
+        "IntersystemSONConfigurationTransfer-ExtIEs",
+        &asn_OP_SEQUENCE,
+        asn_DEF_Ngap_IntersystemSONConfigurationTransfer_ExtIEs_tags_417,
+        sizeof(
+            asn_DEF_Ngap_IntersystemSONConfigurationTransfer_ExtIEs_tags_417) /
+            sizeof(
+                asn_DEF_Ngap_IntersystemSONConfigurationTransfer_ExtIEs_tags_417
+                    [0]), /* 1 */
+        asn_DEF_Ngap_IntersystemSONConfigurationTransfer_ExtIEs_tags_417, /* Same
+                                                                             as
+                                                                             above
+                                                                           */
+        sizeof(
+            asn_DEF_Ngap_IntersystemSONConfigurationTransfer_ExtIEs_tags_417) /
+            sizeof(
+                asn_DEF_Ngap_IntersystemSONConfigurationTransfer_ExtIEs_tags_417
+                    [0]), /* 1 */
+        {
 #if !defined(ASN_DISABLE_OER_SUPPORT)
-        0,
+            0,
 #endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
 #if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
-        0,
+            0,
 #endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
           !defined(ASN_DISABLE_APER_SUPPORT) */
-        SEQUENCE_constraint},
-    asn_MBR_Ngap_IntersystemSONConfigurationTransfer_ExtIEs_417,
-    3, /* Elements count */
-    &asn_SPC_Ngap_IntersystemSONConfigurationTransfer_ExtIEs_specs_417 /* Additional
-                                                                          specs
-                                                                        */
+            SEQUENCE_constraint},
+        asn_MBR_Ngap_IntersystemSONConfigurationTransfer_ExtIEs_417,
+        3, /* Elements count */
+        &asn_SPC_Ngap_IntersystemSONConfigurationTransfer_ExtIEs_specs_417 /* Additional
+                                                                              specs
+                                                                            */
 };
 
 static asn_CHOICE_specifics_t asn_SPC_Ngap_extensionValue_specs_424 = {
@@ -52610,7 +52634,8 @@ static const asn_TYPE_tag2member_t asn_MAP_Ngap_extensionValue_tag2el_468[] = {
     {(ASN_TAG_CLASS_CONTEXT | (0 << 2)), 3, 0,
      0}, /* sNPN-MobilityInformation */
     {(ASN_TAG_CLASS_CONTEXT | (1 << 2)), 3, 0,
-     0} /* pNI-NPN-MobilityInformation */
+     0}, /* pNI-NPN-MobilityInformation */
+    {(ASN_TAG_CLASS_CONTEXT | (2 << 2)), 3, 0, 0} /* choice-Extensions */
 };
 static asn_CHOICE_specifics_t asn_SPC_Ngap_extensionValue_specs_468 = {
     sizeof(struct Ngap_MobilityRestrictionList_ExtIEs__extensionValue),
@@ -52621,7 +52646,7 @@ static asn_CHOICE_specifics_t asn_SPC_Ngap_extensionValue_specs_468 = {
     sizeof(((struct Ngap_MobilityRestrictionList_ExtIEs__extensionValue*) 0)
                ->present),
     asn_MAP_Ngap_extensionValue_tag2el_468,
-    5, /* Count of tags in the map */
+    6, /* Count of tags in the map */
     0,
     0,
     -1 /* Extensions start */
@@ -55428,35 +55453,40 @@ asn_SEQUENCE_specifics_t
         0,  /* Optional elements (not needed) */
         -1, /* First extension addition */
 };
-asn_TYPE_descriptor_t asn_DEF_Ngap_NRUESidelinkAggregateMaximumBitrate_ExtIEs = {
-    "NRUESidelinkAggregateMaximumBitrate-ExtIEs",
-    "NRUESidelinkAggregateMaximumBitrate-ExtIEs",
-    &asn_OP_SEQUENCE,
-    asn_DEF_Ngap_NRUESidelinkAggregateMaximumBitrate_ExtIEs_tags_541,
-    sizeof(asn_DEF_Ngap_NRUESidelinkAggregateMaximumBitrate_ExtIEs_tags_541) /
-        sizeof(asn_DEF_Ngap_NRUESidelinkAggregateMaximumBitrate_ExtIEs_tags_541
-                   [0]),                                              /* 1 */
-    asn_DEF_Ngap_NRUESidelinkAggregateMaximumBitrate_ExtIEs_tags_541, /* Same
-                                                                         as
-                                                                         above
-                                                                       */
-    sizeof(asn_DEF_Ngap_NRUESidelinkAggregateMaximumBitrate_ExtIEs_tags_541) /
-        sizeof(asn_DEF_Ngap_NRUESidelinkAggregateMaximumBitrate_ExtIEs_tags_541
-                   [0]), /* 1 */
+asn_TYPE_descriptor_t asn_DEF_Ngap_NRUESidelinkAggregateMaximumBitrate_ExtIEs =
     {
+        "NRUESidelinkAggregateMaximumBitrate-ExtIEs",
+        "NRUESidelinkAggregateMaximumBitrate-ExtIEs",
+        &asn_OP_SEQUENCE,
+        asn_DEF_Ngap_NRUESidelinkAggregateMaximumBitrate_ExtIEs_tags_541,
+        sizeof(
+            asn_DEF_Ngap_NRUESidelinkAggregateMaximumBitrate_ExtIEs_tags_541) /
+            sizeof(
+                asn_DEF_Ngap_NRUESidelinkAggregateMaximumBitrate_ExtIEs_tags_541
+                    [0]), /* 1 */
+        asn_DEF_Ngap_NRUESidelinkAggregateMaximumBitrate_ExtIEs_tags_541, /* Same
+                                                                             as
+                                                                             above
+                                                                           */
+        sizeof(
+            asn_DEF_Ngap_NRUESidelinkAggregateMaximumBitrate_ExtIEs_tags_541) /
+            sizeof(
+                asn_DEF_Ngap_NRUESidelinkAggregateMaximumBitrate_ExtIEs_tags_541
+                    [0]), /* 1 */
+        {
 #if !defined(ASN_DISABLE_OER_SUPPORT)
-        0,
+            0,
 #endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
 #if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
-        0,
+            0,
 #endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
           !defined(ASN_DISABLE_APER_SUPPORT) */
-        SEQUENCE_constraint},
-    asn_MBR_Ngap_NRUESidelinkAggregateMaximumBitrate_ExtIEs_541,
-    3, /* Elements count */
-    &asn_SPC_Ngap_NRUESidelinkAggregateMaximumBitrate_ExtIEs_specs_541 /* Additional
-                                                                          specs
-                                                                        */
+            SEQUENCE_constraint},
+        asn_MBR_Ngap_NRUESidelinkAggregateMaximumBitrate_ExtIEs_541,
+        3, /* Elements count */
+        &asn_SPC_Ngap_NRUESidelinkAggregateMaximumBitrate_ExtIEs_specs_541 /* Additional
+                                                                              specs
+                                                                            */
 };
 
 static asn_CHOICE_specifics_t asn_SPC_Ngap_extensionValue_specs_548 = {
@@ -56263,8 +56293,9 @@ static const asn_TYPE_tag2member_t asn_MAP_Ngap_extensionValue_tag2el_568[] = {
     {(ASN_TAG_CLASS_UNIVERSAL | (16 << 2)), 2, -1,
      1}, /* UPTransportLayerInformationPairList */
     {(ASN_TAG_CLASS_UNIVERSAL | (16 << 2)), 3, -2,
-     0},                                          /* QosFlowParametersList */
-    {(ASN_TAG_CLASS_CONTEXT | (0 << 2)), 1, 0, 0} /* gTPTunnel */
+     0},                                           /* QosFlowParametersList */
+    {(ASN_TAG_CLASS_CONTEXT | (0 << 2)), 1, 0, 0}, /* gTPTunnel */
+    {(ASN_TAG_CLASS_CONTEXT | (1 << 2)), 1, 0, 0}  /* choice-Extensions */
 };
 static asn_CHOICE_specifics_t asn_SPC_Ngap_extensionValue_specs_568 = {
     sizeof(struct
@@ -56280,7 +56311,7 @@ static asn_CHOICE_specifics_t asn_SPC_Ngap_extensionValue_specs_568 = {
           Ngap_PathSwitchRequestAcknowledgeTransfer_ExtIEs__extensionValue*) 0)
             ->present),
     asn_MAP_Ngap_extensionValue_tag2el_568,
-    4, /* Count of tags in the map */
+    5, /* Count of tags in the map */
     asn_MAP_Ngap_extensionValue_to_canonical_568,
     asn_MAP_Ngap_extensionValue_from_canonical_568,
     -1 /* Extensions start */
@@ -56723,8 +56754,10 @@ static const asn_TYPE_tag2member_t asn_MAP_Ngap_extensionValue_tag2el_576[] = {
      0}, /* RedundantPDUSessionInformation */
     {(ASN_TAG_CLASS_CONTEXT | (0 << 2)), 1, 0, 1},  /* gTPTunnel */
     {(ASN_TAG_CLASS_CONTEXT | (0 << 2)), 5, -1, 0}, /* globalGNB-ID */
-    {(ASN_TAG_CLASS_CONTEXT | (1 << 2)), 5, 0, 0},  /* globalNgENB-ID */
-    {(ASN_TAG_CLASS_CONTEXT | (2 << 2)), 5, 0, 0}   /* globalN3IWF-ID */
+    {(ASN_TAG_CLASS_CONTEXT | (1 << 2)), 1, 0, 1},  /* choice-Extensions */
+    {(ASN_TAG_CLASS_CONTEXT | (1 << 2)), 5, -1, 0}, /* globalNgENB-ID */
+    {(ASN_TAG_CLASS_CONTEXT | (2 << 2)), 5, 0, 0},  /* globalN3IWF-ID */
+    {(ASN_TAG_CLASS_CONTEXT | (3 << 2)), 5, 0, 0}   /* choice-Extensions */
 };
 static asn_CHOICE_specifics_t asn_SPC_Ngap_extensionValue_specs_576 = {
     sizeof(struct Ngap_PathSwitchRequestTransfer_ExtIEs__extensionValue),
@@ -56735,7 +56768,7 @@ static asn_CHOICE_specifics_t asn_SPC_Ngap_extensionValue_specs_576 = {
     sizeof(((struct Ngap_PathSwitchRequestTransfer_ExtIEs__extensionValue*) 0)
                ->present),
     asn_MAP_Ngap_extensionValue_tag2el_576,
-    8, /* Count of tags in the map */
+    10, /* Count of tags in the map */
     asn_MAP_Ngap_extensionValue_to_canonical_576,
     asn_MAP_Ngap_extensionValue_from_canonical_576,
     -1 /* Extensions start */
@@ -60042,7 +60075,8 @@ static const unsigned asn_MAP_Ngap_extensionValue_from_canonical_660[] = {1, 0};
 static const asn_TYPE_tag2member_t asn_MAP_Ngap_extensionValue_tag2el_660[] = {
     {(ASN_TAG_CLASS_UNIVERSAL | (16 << 2)), 1, 0,
      0}, /* UPTransportLayerInformationPairList */
-    {(ASN_TAG_CLASS_CONTEXT | (0 << 2)), 0, 0, 0} /* gTPTunnel */
+    {(ASN_TAG_CLASS_CONTEXT | (0 << 2)), 0, 0, 0}, /* gTPTunnel */
+    {(ASN_TAG_CLASS_CONTEXT | (1 << 2)), 0, 0, 0}  /* choice-Extensions */
 };
 static asn_CHOICE_specifics_t asn_SPC_Ngap_extensionValue_specs_660 = {
     sizeof(struct
@@ -60060,7 +60094,7 @@ static asn_CHOICE_specifics_t asn_SPC_Ngap_extensionValue_specs_660 = {
           Ngap_PDUSessionResourceModifyConfirmTransfer_ExtIEs__extensionValue*) 0)
             ->present),
     asn_MAP_Ngap_extensionValue_tag2el_660,
-    2, /* Count of tags in the map */
+    3, /* Count of tags in the map */
     asn_MAP_Ngap_extensionValue_to_canonical_660,
     asn_MAP_Ngap_extensionValue_from_canonical_660,
     -1 /* Extensions start */
@@ -60527,8 +60561,10 @@ static const asn_TYPE_tag2member_t asn_MAP_Ngap_extensionValue_tag2el_668[] = {
      1}, /* UPTransportLayerInformationPairList */
     {(ASN_TAG_CLASS_UNIVERSAL | (16 << 2)), 5, -3,
      0}, /* SecondaryRATUsageInformation */
-    {(ASN_TAG_CLASS_CONTEXT | (0 << 2)), 1, 0, 1}, /* gTPTunnel */
-    {(ASN_TAG_CLASS_CONTEXT | (0 << 2)), 2, -1, 0} /* gTPTunnel */
+    {(ASN_TAG_CLASS_CONTEXT | (0 << 2)), 1, 0, 1},  /* gTPTunnel */
+    {(ASN_TAG_CLASS_CONTEXT | (0 << 2)), 2, -1, 0}, /* gTPTunnel */
+    {(ASN_TAG_CLASS_CONTEXT | (1 << 2)), 1, 0, 1},  /* choice-Extensions */
+    {(ASN_TAG_CLASS_CONTEXT | (1 << 2)), 2, -1, 0}  /* choice-Extensions */
 };
 static asn_CHOICE_specifics_t asn_SPC_Ngap_extensionValue_specs_668 = {
     sizeof(
@@ -60547,7 +60583,7 @@ static asn_CHOICE_specifics_t asn_SPC_Ngap_extensionValue_specs_668 = {
           Ngap_PDUSessionResourceModifyResponseTransfer_ExtIEs__extensionValue*) 0)
             ->present),
     asn_MAP_Ngap_extensionValue_tag2el_668,
-    6, /* Count of tags in the map */
+    8, /* Count of tags in the map */
     asn_MAP_Ngap_extensionValue_to_canonical_668,
     asn_MAP_Ngap_extensionValue_from_canonical_668,
     -1 /* Extensions start */
@@ -60819,7 +60855,8 @@ static const asn_TYPE_tag2member_t asn_MAP_Ngap_extensionValue_tag2el_672[] = {
      0}, /* QosFlowPerTNLInformationList */
     {(ASN_TAG_CLASS_CONTEXT | (0 << 2)), 4, 0, 0}, /* globalGNB-ID */
     {(ASN_TAG_CLASS_CONTEXT | (1 << 2)), 4, 0, 0}, /* globalNgENB-ID */
-    {(ASN_TAG_CLASS_CONTEXT | (2 << 2)), 4, 0, 0}  /* globalN3IWF-ID */
+    {(ASN_TAG_CLASS_CONTEXT | (2 << 2)), 4, 0, 0}, /* globalN3IWF-ID */
+    {(ASN_TAG_CLASS_CONTEXT | (3 << 2)), 4, 0, 0}  /* choice-Extensions */
 };
 static asn_CHOICE_specifics_t asn_SPC_Ngap_extensionValue_specs_672 = {
     sizeof(
@@ -60838,7 +60875,7 @@ static asn_CHOICE_specifics_t asn_SPC_Ngap_extensionValue_specs_672 = {
           Ngap_PDUSessionResourceModifyIndicationTransfer_ExtIEs__extensionValue*) 0)
             ->present),
     asn_MAP_Ngap_extensionValue_tag2el_672,
-    7, /* Count of tags in the map */
+    8, /* Count of tags in the map */
     0,
     0,
     -1 /* Extensions start */
@@ -62802,35 +62839,40 @@ asn_SEQUENCE_specifics_t
         0,  /* Optional elements (not needed) */
         -1, /* First extension addition */
 };
-asn_TYPE_descriptor_t asn_DEF_Ngap_PDUSessionResourceReleasedItemPSAck_ExtIEs = {
-    "PDUSessionResourceReleasedItemPSAck-ExtIEs",
-    "PDUSessionResourceReleasedItemPSAck-ExtIEs",
-    &asn_OP_SEQUENCE,
-    asn_DEF_Ngap_PDUSessionResourceReleasedItemPSAck_ExtIEs_tags_713,
-    sizeof(asn_DEF_Ngap_PDUSessionResourceReleasedItemPSAck_ExtIEs_tags_713) /
-        sizeof(asn_DEF_Ngap_PDUSessionResourceReleasedItemPSAck_ExtIEs_tags_713
-                   [0]),                                              /* 1 */
-    asn_DEF_Ngap_PDUSessionResourceReleasedItemPSAck_ExtIEs_tags_713, /* Same
-                                                                         as
-                                                                         above
-                                                                       */
-    sizeof(asn_DEF_Ngap_PDUSessionResourceReleasedItemPSAck_ExtIEs_tags_713) /
-        sizeof(asn_DEF_Ngap_PDUSessionResourceReleasedItemPSAck_ExtIEs_tags_713
-                   [0]), /* 1 */
+asn_TYPE_descriptor_t asn_DEF_Ngap_PDUSessionResourceReleasedItemPSAck_ExtIEs =
     {
+        "PDUSessionResourceReleasedItemPSAck-ExtIEs",
+        "PDUSessionResourceReleasedItemPSAck-ExtIEs",
+        &asn_OP_SEQUENCE,
+        asn_DEF_Ngap_PDUSessionResourceReleasedItemPSAck_ExtIEs_tags_713,
+        sizeof(
+            asn_DEF_Ngap_PDUSessionResourceReleasedItemPSAck_ExtIEs_tags_713) /
+            sizeof(
+                asn_DEF_Ngap_PDUSessionResourceReleasedItemPSAck_ExtIEs_tags_713
+                    [0]), /* 1 */
+        asn_DEF_Ngap_PDUSessionResourceReleasedItemPSAck_ExtIEs_tags_713, /* Same
+                                                                             as
+                                                                             above
+                                                                           */
+        sizeof(
+            asn_DEF_Ngap_PDUSessionResourceReleasedItemPSAck_ExtIEs_tags_713) /
+            sizeof(
+                asn_DEF_Ngap_PDUSessionResourceReleasedItemPSAck_ExtIEs_tags_713
+                    [0]), /* 1 */
+        {
 #if !defined(ASN_DISABLE_OER_SUPPORT)
-        0,
+            0,
 #endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
 #if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
-        0,
+            0,
 #endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
           !defined(ASN_DISABLE_APER_SUPPORT) */
-        SEQUENCE_constraint},
-    asn_MBR_Ngap_PDUSessionResourceReleasedItemPSAck_ExtIEs_713,
-    3, /* Elements count */
-    &asn_SPC_Ngap_PDUSessionResourceReleasedItemPSAck_ExtIEs_specs_713 /* Additional
-                                                                          specs
-                                                                        */
+            SEQUENCE_constraint},
+        asn_MBR_Ngap_PDUSessionResourceReleasedItemPSAck_ExtIEs_713,
+        3, /* Elements count */
+        &asn_SPC_Ngap_PDUSessionResourceReleasedItemPSAck_ExtIEs_specs_713 /* Additional
+                                                                              specs
+                                                                            */
 };
 
 static asn_CHOICE_specifics_t asn_SPC_Ngap_extensionValue_specs_720 = {
@@ -64745,7 +64787,8 @@ static const asn_TYPE_tag2member_t asn_MAP_Ngap_extensionValue_tag2el_764[] = {
      0}, /* RedundantPDUSessionInformation */
     {(ASN_TAG_CLASS_CONTEXT | (0 << 2)), 3, 0, 0}, /* globalGNB-ID */
     {(ASN_TAG_CLASS_CONTEXT | (1 << 2)), 3, 0, 0}, /* globalNgENB-ID */
-    {(ASN_TAG_CLASS_CONTEXT | (2 << 2)), 3, 0, 0}  /* globalN3IWF-ID */
+    {(ASN_TAG_CLASS_CONTEXT | (2 << 2)), 3, 0, 0}, /* globalN3IWF-ID */
+    {(ASN_TAG_CLASS_CONTEXT | (3 << 2)), 3, 0, 0}  /* choice-Extensions */
 };
 static asn_CHOICE_specifics_t asn_SPC_Ngap_extensionValue_specs_764 = {
     sizeof(struct
@@ -64763,7 +64806,7 @@ static asn_CHOICE_specifics_t asn_SPC_Ngap_extensionValue_specs_764 = {
           Ngap_PDUSessionResourceSetupResponseTransfer_ExtIEs__extensionValue*) 0)
             ->present),
     asn_MAP_Ngap_extensionValue_tag2el_764,
-    6, /* Count of tags in the map */
+    7, /* Count of tags in the map */
     0,
     0,
     -1 /* Extensions start */
@@ -65204,35 +65247,40 @@ asn_SEQUENCE_specifics_t
         0,  /* Optional elements (not needed) */
         -1, /* First extension addition */
 };
-asn_TYPE_descriptor_t asn_DEF_Ngap_PDUSessionResourceSuspendItemSUSReq_ExtIEs = {
-    "PDUSessionResourceSuspendItemSUSReq-ExtIEs",
-    "PDUSessionResourceSuspendItemSUSReq-ExtIEs",
-    &asn_OP_SEQUENCE,
-    asn_DEF_Ngap_PDUSessionResourceSuspendItemSUSReq_ExtIEs_tags_769,
-    sizeof(asn_DEF_Ngap_PDUSessionResourceSuspendItemSUSReq_ExtIEs_tags_769) /
-        sizeof(asn_DEF_Ngap_PDUSessionResourceSuspendItemSUSReq_ExtIEs_tags_769
-                   [0]),                                              /* 1 */
-    asn_DEF_Ngap_PDUSessionResourceSuspendItemSUSReq_ExtIEs_tags_769, /* Same
-                                                                         as
-                                                                         above
-                                                                       */
-    sizeof(asn_DEF_Ngap_PDUSessionResourceSuspendItemSUSReq_ExtIEs_tags_769) /
-        sizeof(asn_DEF_Ngap_PDUSessionResourceSuspendItemSUSReq_ExtIEs_tags_769
-                   [0]), /* 1 */
+asn_TYPE_descriptor_t asn_DEF_Ngap_PDUSessionResourceSuspendItemSUSReq_ExtIEs =
     {
+        "PDUSessionResourceSuspendItemSUSReq-ExtIEs",
+        "PDUSessionResourceSuspendItemSUSReq-ExtIEs",
+        &asn_OP_SEQUENCE,
+        asn_DEF_Ngap_PDUSessionResourceSuspendItemSUSReq_ExtIEs_tags_769,
+        sizeof(
+            asn_DEF_Ngap_PDUSessionResourceSuspendItemSUSReq_ExtIEs_tags_769) /
+            sizeof(
+                asn_DEF_Ngap_PDUSessionResourceSuspendItemSUSReq_ExtIEs_tags_769
+                    [0]), /* 1 */
+        asn_DEF_Ngap_PDUSessionResourceSuspendItemSUSReq_ExtIEs_tags_769, /* Same
+                                                                             as
+                                                                             above
+                                                                           */
+        sizeof(
+            asn_DEF_Ngap_PDUSessionResourceSuspendItemSUSReq_ExtIEs_tags_769) /
+            sizeof(
+                asn_DEF_Ngap_PDUSessionResourceSuspendItemSUSReq_ExtIEs_tags_769
+                    [0]), /* 1 */
+        {
 #if !defined(ASN_DISABLE_OER_SUPPORT)
-        0,
+            0,
 #endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
 #if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
-        0,
+            0,
 #endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
           !defined(ASN_DISABLE_APER_SUPPORT) */
-        SEQUENCE_constraint},
-    asn_MBR_Ngap_PDUSessionResourceSuspendItemSUSReq_ExtIEs_769,
-    3, /* Elements count */
-    &asn_SPC_Ngap_PDUSessionResourceSuspendItemSUSReq_ExtIEs_specs_769 /* Additional
-                                                                          specs
-                                                                        */
+            SEQUENCE_constraint},
+        asn_MBR_Ngap_PDUSessionResourceSuspendItemSUSReq_ExtIEs_769,
+        3, /* Elements count */
+        &asn_SPC_Ngap_PDUSessionResourceSuspendItemSUSReq_ExtIEs_specs_769 /* Additional
+                                                                              specs
+                                                                            */
 };
 
 static asn_TYPE_member_t asn_MBR_Ngap_extensionValue_776[] = {
@@ -66074,8 +66122,9 @@ static const unsigned asn_MAP_Ngap_extensionValue_to_canonical_796[]   = {1, 0};
 static const unsigned asn_MAP_Ngap_extensionValue_from_canonical_796[] = {1, 0};
 static const asn_TYPE_tag2member_t asn_MAP_Ngap_extensionValue_tag2el_796[] = {
     {(ASN_TAG_CLASS_UNIVERSAL | (16 << 2)), 1, 0,
-     0},                                          /* ExtendedSliceSupportList */
-    {(ASN_TAG_CLASS_CONTEXT | (0 << 2)), 0, 0, 0} /* sNPN */
+     0}, /* ExtendedSliceSupportList */
+    {(ASN_TAG_CLASS_CONTEXT | (0 << 2)), 0, 0, 0}, /* sNPN */
+    {(ASN_TAG_CLASS_CONTEXT | (1 << 2)), 0, 0, 0}  /* choice-Extensions */
 };
 static asn_CHOICE_specifics_t asn_SPC_Ngap_extensionValue_specs_796 = {
     sizeof(struct Ngap_PLMNSupportItem_ExtIEs__extensionValue),
@@ -66083,7 +66132,7 @@ static asn_CHOICE_specifics_t asn_SPC_Ngap_extensionValue_specs_796 = {
     offsetof(struct Ngap_PLMNSupportItem_ExtIEs__extensionValue, present),
     sizeof(((struct Ngap_PLMNSupportItem_ExtIEs__extensionValue*) 0)->present),
     asn_MAP_Ngap_extensionValue_tag2el_796,
-    2, /* Count of tags in the map */
+    3, /* Count of tags in the map */
     asn_MAP_Ngap_extensionValue_to_canonical_796,
     asn_MAP_Ngap_extensionValue_from_canonical_796,
     -1 /* Extensions start */
@@ -70779,35 +70828,40 @@ asn_SEQUENCE_specifics_t
         0,  /* Optional elements (not needed) */
         -1, /* First extension addition */
 };
-asn_TYPE_descriptor_t asn_DEF_Ngap_SecondaryRATDataUsageReportTransfer_ExtIEs = {
-    "SecondaryRATDataUsageReportTransfer-ExtIEs",
-    "SecondaryRATDataUsageReportTransfer-ExtIEs",
-    &asn_OP_SEQUENCE,
-    asn_DEF_Ngap_SecondaryRATDataUsageReportTransfer_ExtIEs_tags_909,
-    sizeof(asn_DEF_Ngap_SecondaryRATDataUsageReportTransfer_ExtIEs_tags_909) /
-        sizeof(asn_DEF_Ngap_SecondaryRATDataUsageReportTransfer_ExtIEs_tags_909
-                   [0]),                                              /* 1 */
-    asn_DEF_Ngap_SecondaryRATDataUsageReportTransfer_ExtIEs_tags_909, /* Same
-                                                                         as
-                                                                         above
-                                                                       */
-    sizeof(asn_DEF_Ngap_SecondaryRATDataUsageReportTransfer_ExtIEs_tags_909) /
-        sizeof(asn_DEF_Ngap_SecondaryRATDataUsageReportTransfer_ExtIEs_tags_909
-                   [0]), /* 1 */
+asn_TYPE_descriptor_t asn_DEF_Ngap_SecondaryRATDataUsageReportTransfer_ExtIEs =
     {
+        "SecondaryRATDataUsageReportTransfer-ExtIEs",
+        "SecondaryRATDataUsageReportTransfer-ExtIEs",
+        &asn_OP_SEQUENCE,
+        asn_DEF_Ngap_SecondaryRATDataUsageReportTransfer_ExtIEs_tags_909,
+        sizeof(
+            asn_DEF_Ngap_SecondaryRATDataUsageReportTransfer_ExtIEs_tags_909) /
+            sizeof(
+                asn_DEF_Ngap_SecondaryRATDataUsageReportTransfer_ExtIEs_tags_909
+                    [0]), /* 1 */
+        asn_DEF_Ngap_SecondaryRATDataUsageReportTransfer_ExtIEs_tags_909, /* Same
+                                                                             as
+                                                                             above
+                                                                           */
+        sizeof(
+            asn_DEF_Ngap_SecondaryRATDataUsageReportTransfer_ExtIEs_tags_909) /
+            sizeof(
+                asn_DEF_Ngap_SecondaryRATDataUsageReportTransfer_ExtIEs_tags_909
+                    [0]), /* 1 */
+        {
 #if !defined(ASN_DISABLE_OER_SUPPORT)
-        0,
+            0,
 #endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
 #if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
-        0,
+            0,
 #endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
           !defined(ASN_DISABLE_APER_SUPPORT) */
-        SEQUENCE_constraint},
-    asn_MBR_Ngap_SecondaryRATDataUsageReportTransfer_ExtIEs_909,
-    3, /* Elements count */
-    &asn_SPC_Ngap_SecondaryRATDataUsageReportTransfer_ExtIEs_specs_909 /* Additional
-                                                                          specs
-                                                                        */
+            SEQUENCE_constraint},
+        asn_MBR_Ngap_SecondaryRATDataUsageReportTransfer_ExtIEs_909,
+        3, /* Elements count */
+        &asn_SPC_Ngap_SecondaryRATDataUsageReportTransfer_ExtIEs_specs_909 /* Additional
+                                                                              specs
+                                                                            */
 };
 
 static asn_CHOICE_specifics_t asn_SPC_Ngap_extensionValue_specs_916 = {
@@ -72740,7 +72794,9 @@ static asn_TYPE_member_t asn_MBR_Ngap_extensionValue_968[] = {
 static const asn_TYPE_tag2member_t asn_MAP_Ngap_extensionValue_tag2el_968[] = {
     {(ASN_TAG_CLASS_UNIVERSAL | (2 << 2)), 0, 0, 0}, /* SgNB-UE-X2AP-ID */
     {(ASN_TAG_CLASS_CONTEXT | (0 << 2)), 1, 0, 1},   /* nR */
-    {(ASN_TAG_CLASS_CONTEXT | (0 << 2)), 2, -1, 0}   /* sourceengNB-ID */
+    {(ASN_TAG_CLASS_CONTEXT | (0 << 2)), 2, -1, 0},  /* sourceengNB-ID */
+    {(ASN_TAG_CLASS_CONTEXT | (1 << 2)), 1, 0, 1},   /* choice-Extensions */
+    {(ASN_TAG_CLASS_CONTEXT | (1 << 2)), 2, -1, 0}   /* choice-Extensions */
 };
 static asn_CHOICE_specifics_t asn_SPC_Ngap_extensionValue_specs_968 = {
     sizeof(
@@ -72759,7 +72815,7 @@ static asn_CHOICE_specifics_t asn_SPC_Ngap_extensionValue_specs_968 = {
           Ngap_SourceNGRANNode_ToTargetNGRANNode_TransparentContainer_ExtIEs__extensionValue*) 0)
             ->present),
     asn_MAP_Ngap_extensionValue_tag2el_968,
-    3, /* Count of tags in the map */
+    5, /* Count of tags in the map */
     0,
     0,
     -1 /* Extensions start */
@@ -77844,8 +77900,10 @@ static asn_TYPE_member_t asn_MBR_Ngap_extensionValue_1104[] = {
      "UPTransportLayerInformation"},
 };
 static const asn_TYPE_tag2member_t asn_MAP_Ngap_extensionValue_tag2el_1104[] = {
-    {(ASN_TAG_CLASS_CONTEXT | (0 << 2)), 0, 0, 1}, /* gTPTunnel */
-    {(ASN_TAG_CLASS_CONTEXT | (0 << 2)), 1, -1, 0} /* gTPTunnel */
+    {(ASN_TAG_CLASS_CONTEXT | (0 << 2)), 0, 0, 1},  /* gTPTunnel */
+    {(ASN_TAG_CLASS_CONTEXT | (0 << 2)), 1, -1, 0}, /* gTPTunnel */
+    {(ASN_TAG_CLASS_CONTEXT | (1 << 2)), 0, 0, 1},  /* choice-Extensions */
+    {(ASN_TAG_CLASS_CONTEXT | (1 << 2)), 1, -1, 0}  /* choice-Extensions */
 };
 static asn_CHOICE_specifics_t asn_SPC_Ngap_extensionValue_specs_1104 = {
     sizeof(struct Ngap_UL_NGU_UP_TNLModifyItem_ExtIEs__extensionValue),
@@ -77856,7 +77914,7 @@ static asn_CHOICE_specifics_t asn_SPC_Ngap_extensionValue_specs_1104 = {
     sizeof(((struct Ngap_UL_NGU_UP_TNLModifyItem_ExtIEs__extensionValue*) 0)
                ->present),
     asn_MAP_Ngap_extensionValue_tag2el_1104,
-    2, /* Count of tags in the map */
+    4, /* Count of tags in the map */
     0,
     0,
     -1 /* Extensions start */
@@ -78484,7 +78542,8 @@ static asn_TYPE_member_t asn_MBR_Ngap_extensionValue_1120[] = {
 };
 static const asn_TYPE_tag2member_t asn_MAP_Ngap_extensionValue_tag2el_1120[] = {
     {(ASN_TAG_CLASS_CONTEXT | (0 << 2)), 0, 0, 0}, /* nR-CGI */
-    {(ASN_TAG_CLASS_CONTEXT | (1 << 2)), 0, 0, 0}  /* eUTRA-CGI */
+    {(ASN_TAG_CLASS_CONTEXT | (1 << 2)), 0, 0, 0}, /* eUTRA-CGI */
+    {(ASN_TAG_CLASS_CONTEXT | (2 << 2)), 0, 0, 0}  /* choice-Extensions */
 };
 static asn_CHOICE_specifics_t asn_SPC_Ngap_extensionValue_specs_1120 = {
     sizeof(struct Ngap_UserLocationInformationEUTRA_ExtIEs__extensionValue),
@@ -78498,7 +78557,7 @@ static asn_CHOICE_specifics_t asn_SPC_Ngap_extensionValue_specs_1120 = {
         ((struct Ngap_UserLocationInformationEUTRA_ExtIEs__extensionValue*) 0)
             ->present),
     asn_MAP_Ngap_extensionValue_tag2el_1120,
-    2, /* Count of tags in the map */
+    3, /* Count of tags in the map */
     0,
     0,
     -1 /* Extensions start */
@@ -79126,7 +79185,8 @@ static const unsigned asn_MAP_Ngap_extensionValue_from_canonical_1136[] = {
 static const asn_TYPE_tag2member_t asn_MAP_Ngap_extensionValue_tag2el_1136[] = {
     {(ASN_TAG_CLASS_UNIVERSAL | (3 << 2)), 1, 0, 0}, /* NID */
     {(ASN_TAG_CLASS_CONTEXT | (0 << 2)), 0, 0, 0},   /* nR-CGI */
-    {(ASN_TAG_CLASS_CONTEXT | (1 << 2)), 0, 0, 0}    /* eUTRA-CGI */
+    {(ASN_TAG_CLASS_CONTEXT | (1 << 2)), 0, 0, 0},   /* eUTRA-CGI */
+    {(ASN_TAG_CLASS_CONTEXT | (2 << 2)), 0, 0, 0}    /* choice-Extensions */
 };
 static asn_CHOICE_specifics_t asn_SPC_Ngap_extensionValue_specs_1136 = {
     sizeof(struct Ngap_UserLocationInformationNR_ExtIEs__extensionValue),
@@ -79137,7 +79197,7 @@ static asn_CHOICE_specifics_t asn_SPC_Ngap_extensionValue_specs_1136 = {
     sizeof(((struct Ngap_UserLocationInformationNR_ExtIEs__extensionValue*) 0)
                ->present),
     asn_MAP_Ngap_extensionValue_tag2el_1136,
-    3, /* Count of tags in the map */
+    4, /* Count of tags in the map */
     asn_MAP_Ngap_extensionValue_to_canonical_1136,
     asn_MAP_Ngap_extensionValue_from_canonical_1136,
     -1 /* Extensions start */

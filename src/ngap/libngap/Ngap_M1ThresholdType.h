@@ -3,7 +3,7 @@
  * From ASN.1 module "NGAP-IEs"
  * 	found in "asn.1/Information Element Definitions.asn1"
  * 	`asn1c -pdu=all -fcompound-names -fno-include-deps -findirect-choice
- * -no-gen-example -gen-APER -gen-UPER -no-gen-JER -no-gen-BER -D src`
+ * -no-gen-example -gen-APER -gen-UPER -no-gen-JER -gen-BER -D src`
  */
 
 #ifndef _Ngap_M1ThresholdType_H_
@@ -26,10 +26,12 @@ typedef enum Ngap_M1ThresholdType_PR {
   Ngap_M1ThresholdType_PR_NOTHING, /* No components present */
   Ngap_M1ThresholdType_PR_threshold_RSRP,
   Ngap_M1ThresholdType_PR_threshold_RSRQ,
-  Ngap_M1ThresholdType_PR_threshold_SINR
-  /* Extensions may appear below */
-
+  Ngap_M1ThresholdType_PR_threshold_SINR,
+  Ngap_M1ThresholdType_PR_choice_Extensions
 } Ngap_M1ThresholdType_PR;
+
+/* Forward declarations */
+struct Ngap_ProtocolIE_SingleContainer;
 
 /* Ngap_M1ThresholdType */
 typedef struct Ngap_M1ThresholdType {
@@ -38,10 +40,7 @@ typedef struct Ngap_M1ThresholdType {
     Ngap_Threshold_RSRP_t threshold_RSRP;
     Ngap_Threshold_RSRQ_t threshold_RSRQ;
     Ngap_Threshold_SINR_t threshold_SINR;
-    /*
-     * This type is extensible,
-     * possible extensions are below.
-     */
+    struct Ngap_ProtocolIE_SingleContainer* choice_Extensions;
   } choice;
 
   /* Context for parsing across buffer boundaries */
@@ -51,7 +50,7 @@ typedef struct Ngap_M1ThresholdType {
 /* Implementation */
 extern asn_TYPE_descriptor_t asn_DEF_Ngap_M1ThresholdType;
 extern asn_CHOICE_specifics_t asn_SPC_Ngap_M1ThresholdType_specs_1;
-extern asn_TYPE_member_t asn_MBR_Ngap_M1ThresholdType_1[3];
+extern asn_TYPE_member_t asn_MBR_Ngap_M1ThresholdType_1[4];
 extern asn_per_constraints_t asn_PER_type_Ngap_M1ThresholdType_constr_1;
 
 #ifdef __cplusplus

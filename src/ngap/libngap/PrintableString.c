@@ -41,6 +41,7 @@ static const ber_tlv_tag_t asn_DEF_PrintableString_tags[] = {
     (ASN_TAG_CLASS_UNIVERSAL | (19 << 2)), /* [UNIVERSAL 19] IMPLICIT ...*/
     (ASN_TAG_CLASS_UNIVERSAL | (4 << 2))   /* ... OCTET STRING */
 };
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 static int asn_DEF_PrintableString_v2c(unsigned int value) {
   return _PrintableString_alphabet[value > 255 ? 0 : value] - 1;
 }
@@ -53,34 +54,62 @@ static asn_per_constraints_t asn_DEF_PrintableString_per_constraints = {
     {APC_SEMI_CONSTRAINED, -1, -1, 0, 0}, /* Size */
     asn_DEF_PrintableString_v2c,
     asn_DEF_PrintableString_c2v};
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
 asn_TYPE_operation_t asn_OP_PrintableString = {
     OCTET_STRING_free,
+#if !defined(ASN_DISABLE_PRINT_SUPPORT)
     OCTET_STRING_print_utf8, /* ASCII subset */
+#else
+    0,
+#endif /* !defined(ASN_DISABLE_PRINT_SUPPORT) */
     OCTET_STRING_compare,
+#if !defined(ASN_DISABLE_BER_SUPPORT)
     OCTET_STRING_decode_ber, /* Implemented in terms of OCTET STRING */
     OCTET_STRING_encode_der,
+#else
+    0,
+    0,
+#endif /* !defined(ASN_DISABLE_BER_SUPPORT) */
+#if !defined(ASN_DISABLE_XER_SUPPORT)
     OCTET_STRING_decode_xer_utf8,
     OCTET_STRING_encode_xer_utf8,
-#ifdef ASN_DISABLE_OER_SUPPORT
-    0,
-    0,
 #else
+    0,
+    0,
+#endif /* !defined(ASN_DISABLE_XER_SUPPORT) */
+#if !defined(ASN_DISABLE_JER_SUPPORT)
+    OCTET_STRING_encode_jer_utf8,
+#else
+    0,
+#endif /* !defined(ASN_DISABLE_JER_SUPPORT) */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
     OCTET_STRING_decode_oer,
     OCTET_STRING_encode_oer,
-#endif /* ASN_DISABLE_OER_SUPPORT */
-#ifdef ASN_DISABLE_PER_SUPPORT
-    0,
-    0,
-    0,
-    0,
 #else
+    0,
+    0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT)
     OCTET_STRING_decode_uper,
     OCTET_STRING_encode_uper,
+#else
+    0,
+    0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) */
+#if !defined(ASN_DISABLE_APER_SUPPORT)
     OCTET_STRING_decode_aper,
     OCTET_STRING_encode_aper,
-#endif /* ASN_DISABLE_PER_SUPPORT */
+#else
+    0,
+    0,
+#endif /* !defined(ASN_DISABLE_APER_SUPPORT) */
+#if !defined(ASN_DISABLE_RFILL_SUPPORT)
     OCTET_STRING_random_fill,
-    0 /* Use generic outmost tag fetcher */
+#else
+    0,
+#endif /* !defined(ASN_DISABLE_RFILL_SUPPORT) */
+    0  /* Use generic outmost tag fetcher */
 };
 asn_TYPE_descriptor_t asn_DEF_PrintableString = {
     "PrintableString",
@@ -93,7 +122,15 @@ asn_TYPE_descriptor_t asn_DEF_PrintableString = {
     asn_DEF_PrintableString_tags,
     sizeof(asn_DEF_PrintableString_tags) /
         sizeof(asn_DEF_PrintableString_tags[0]),
-    {0, &asn_DEF_PrintableString_per_constraints, PrintableString_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_DEF_PrintableString_per_constraints,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        PrintableString_constraint},
     0,
     0, /* No members */
     0  /* No specifics */

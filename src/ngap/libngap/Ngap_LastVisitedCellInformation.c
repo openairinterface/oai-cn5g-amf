@@ -3,12 +3,13 @@
  * From ASN.1 module "NGAP-IEs"
  * 	found in "asn.1/Information Element Definitions.asn1"
  * 	`asn1c -pdu=all -fcompound-names -fno-include-deps -findirect-choice
- * -no-gen-example -gen-APER -gen-UPER -no-gen-JER -no-gen-BER -D src`
+ * -no-gen-example -gen-APER -gen-UPER -no-gen-JER -gen-BER -D src`
  */
 
 #include "Ngap_LastVisitedCellInformation.h"
 
 #include "Ngap_LastVisitedNGRANCellInformation.h"
+#include "Ngap_ProtocolIE-SingleContainer.h"
 #if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_LastVisitedCellInformation_constr_1 CC_NOTUSED = {
@@ -18,7 +19,7 @@ static asn_oer_constraints_t
 #if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t asn_PER_type_Ngap_LastVisitedCellInformation_constr_1
     CC_NOTUSED = {
-        {APC_CONSTRAINED | APC_EXTENSIBLE, 2, 2, 0, 3} /* (0..3,...) */,
+        {APC_CONSTRAINED, 3, 3, 0, 4} /* (0..4) */,
         {APC_UNCONSTRAINED, -1, -1, 0, 0},
         0,
         0 /* No PER value map */
@@ -102,13 +103,33 @@ asn_TYPE_member_t asn_MBR_Ngap_LastVisitedCellInformation_1[] = {
      0,
      0, /* No default value */
      "gERANCell"},
+    {ATF_POINTER,
+     0,
+     offsetof(struct Ngap_LastVisitedCellInformation, choice.choice_Extensions),
+     (ASN_TAG_CLASS_CONTEXT | (4 << 2)),
+     -1, /* IMPLICIT tag at current level */
+     &asn_DEF_Ngap_ProtocolIE_SingleContainer_9618P21,
+     0,
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
+     0,
+     0, /* No default value */
+     "choice-Extensions"},
 };
 static const asn_TYPE_tag2member_t
     asn_MAP_Ngap_LastVisitedCellInformation_tag2el_1[] = {
         {(ASN_TAG_CLASS_CONTEXT | (0 << 2)), 0, 0, 0}, /* nGRANCell */
         {(ASN_TAG_CLASS_CONTEXT | (1 << 2)), 1, 0, 0}, /* eUTRANCell */
         {(ASN_TAG_CLASS_CONTEXT | (2 << 2)), 2, 0, 0}, /* uTRANCell */
-        {(ASN_TAG_CLASS_CONTEXT | (3 << 2)), 3, 0, 0}  /* gERANCell */
+        {(ASN_TAG_CLASS_CONTEXT | (3 << 2)), 3, 0, 0}, /* gERANCell */
+        {(ASN_TAG_CLASS_CONTEXT | (4 << 2)), 4, 0, 0}  /* choice-Extensions */
 };
 asn_CHOICE_specifics_t asn_SPC_Ngap_LastVisitedCellInformation_specs_1 = {
     sizeof(struct Ngap_LastVisitedCellInformation),
@@ -116,10 +137,10 @@ asn_CHOICE_specifics_t asn_SPC_Ngap_LastVisitedCellInformation_specs_1 = {
     offsetof(struct Ngap_LastVisitedCellInformation, present),
     sizeof(((struct Ngap_LastVisitedCellInformation*) 0)->present),
     asn_MAP_Ngap_LastVisitedCellInformation_tag2el_1,
-    4, /* Count of tags in the map */
+    5, /* Count of tags in the map */
     0,
     0,
-    4 /* Extensions start */
+    -1 /* Extensions start */
 };
 asn_TYPE_descriptor_t asn_DEF_Ngap_LastVisitedCellInformation = {
     "LastVisitedCellInformation",
@@ -139,6 +160,6 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_LastVisitedCellInformation = {
           !defined(ASN_DISABLE_APER_SUPPORT) */
         CHOICE_constraint},
     asn_MBR_Ngap_LastVisitedCellInformation_1,
-    4,                                               /* Elements count */
+    5,                                               /* Elements count */
     &asn_SPC_Ngap_LastVisitedCellInformation_specs_1 /* Additional specs */
 };

@@ -3,11 +3,12 @@
  * From ASN.1 module "NGAP-IEs"
  * 	found in "asn.1/Information Element Definitions.asn1"
  * 	`asn1c -pdu=all -fcompound-names -fno-include-deps -findirect-choice
- * -no-gen-example -gen-APER -gen-UPER -no-gen-JER -no-gen-BER -D src`
+ * -no-gen-example -gen-APER -gen-UPER -no-gen-JER -gen-BER -D src`
  */
 
 #include "Ngap_NgENB-ID.h"
 
+#include "Ngap_ProtocolIE-SingleContainer.h"
 static int memb_Ngap_macroNgENB_ID_constraint_1(
     const asn_TYPE_descriptor_t* td, const void* sptr,
     asn_app_constraint_failed_f* ctfailcb, void* app_key) {
@@ -150,7 +151,7 @@ static asn_oer_constraints_t asn_OER_type_Ngap_NgENB_ID_constr_1 CC_NOTUSED = {
 #endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
 #if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t asn_PER_type_Ngap_NgENB_ID_constr_1 CC_NOTUSED = {
-    {APC_CONSTRAINED | APC_EXTENSIBLE, 2, 2, 0, 2} /* (0..2,...) */,
+    {APC_CONSTRAINED, 2, 2, 0, 3} /* (0..3) */,
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
@@ -215,11 +216,31 @@ asn_TYPE_member_t asn_MBR_Ngap_NgENB_ID_1[] = {
      0,
      0, /* No default value */
      "longMacroNgENB-ID"},
+    {ATF_POINTER,
+     0,
+     offsetof(struct Ngap_NgENB_ID, choice.choice_Extensions),
+     (ASN_TAG_CLASS_CONTEXT | (3 << 2)),
+     -1, /* IMPLICIT tag at current level */
+     &asn_DEF_Ngap_ProtocolIE_SingleContainer_9618P26,
+     0,
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
+     0,
+     0, /* No default value */
+     "choice-Extensions"},
 };
 static const asn_TYPE_tag2member_t asn_MAP_Ngap_NgENB_ID_tag2el_1[] = {
     {(ASN_TAG_CLASS_CONTEXT | (0 << 2)), 0, 0, 0}, /* macroNgENB-ID */
     {(ASN_TAG_CLASS_CONTEXT | (1 << 2)), 1, 0, 0}, /* shortMacroNgENB-ID */
-    {(ASN_TAG_CLASS_CONTEXT | (2 << 2)), 2, 0, 0}  /* longMacroNgENB-ID */
+    {(ASN_TAG_CLASS_CONTEXT | (2 << 2)), 2, 0, 0}, /* longMacroNgENB-ID */
+    {(ASN_TAG_CLASS_CONTEXT | (3 << 2)), 3, 0, 0}  /* choice-Extensions */
 };
 asn_CHOICE_specifics_t asn_SPC_Ngap_NgENB_ID_specs_1 = {
     sizeof(struct Ngap_NgENB_ID),
@@ -227,10 +248,10 @@ asn_CHOICE_specifics_t asn_SPC_Ngap_NgENB_ID_specs_1 = {
     offsetof(struct Ngap_NgENB_ID, present),
     sizeof(((struct Ngap_NgENB_ID*) 0)->present),
     asn_MAP_Ngap_NgENB_ID_tag2el_1,
-    3, /* Count of tags in the map */
+    4, /* Count of tags in the map */
     0,
     0,
-    3 /* Extensions start */
+    -1 /* Extensions start */
 };
 asn_TYPE_descriptor_t asn_DEF_Ngap_NgENB_ID = {
     "NgENB-ID",
@@ -250,6 +271,6 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_NgENB_ID = {
           !defined(ASN_DISABLE_APER_SUPPORT) */
         CHOICE_constraint},
     asn_MBR_Ngap_NgENB_ID_1,
-    3,                             /* Elements count */
+    4,                             /* Elements count */
     &asn_SPC_Ngap_NgENB_ID_specs_1 /* Additional specs */
 };

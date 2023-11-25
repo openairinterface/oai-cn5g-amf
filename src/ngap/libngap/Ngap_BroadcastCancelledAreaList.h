@@ -3,7 +3,7 @@
  * From ASN.1 module "NGAP-IEs"
  * 	found in "asn.1/Information Element Definitions.asn1"
  * 	`asn1c -pdu=all -fcompound-names -fno-include-deps -findirect-choice
- * -no-gen-example -gen-APER -gen-UPER -no-gen-JER -no-gen-BER -D src`
+ * -no-gen-example -gen-APER -gen-UPER -no-gen-JER -gen-BER -D src`
  */
 
 #ifndef _Ngap_BroadcastCancelledAreaList_H_
@@ -26,9 +26,8 @@ typedef enum Ngap_BroadcastCancelledAreaList_PR {
   Ngap_BroadcastCancelledAreaList_PR_emergencyAreaIDCancelledEUTRA,
   Ngap_BroadcastCancelledAreaList_PR_cellIDCancelledNR,
   Ngap_BroadcastCancelledAreaList_PR_tAICancelledNR,
-  Ngap_BroadcastCancelledAreaList_PR_emergencyAreaIDCancelledNR
-  /* Extensions may appear below */
-
+  Ngap_BroadcastCancelledAreaList_PR_emergencyAreaIDCancelledNR,
+  Ngap_BroadcastCancelledAreaList_PR_choice_Extensions
 } Ngap_BroadcastCancelledAreaList_PR;
 
 /* Forward declarations */
@@ -38,6 +37,7 @@ struct Ngap_EmergencyAreaIDCancelledEUTRA;
 struct Ngap_CellIDCancelledNR;
 struct Ngap_TAICancelledNR;
 struct Ngap_EmergencyAreaIDCancelledNR;
+struct Ngap_ProtocolIE_SingleContainer;
 
 /* Ngap_BroadcastCancelledAreaList */
 typedef struct Ngap_BroadcastCancelledAreaList {
@@ -49,10 +49,7 @@ typedef struct Ngap_BroadcastCancelledAreaList {
     struct Ngap_CellIDCancelledNR* cellIDCancelledNR;
     struct Ngap_TAICancelledNR* tAICancelledNR;
     struct Ngap_EmergencyAreaIDCancelledNR* emergencyAreaIDCancelledNR;
-    /*
-     * This type is extensible,
-     * possible extensions are below.
-     */
+    struct Ngap_ProtocolIE_SingleContainer* choice_Extensions;
   } choice;
 
   /* Context for parsing across buffer boundaries */
@@ -62,7 +59,7 @@ typedef struct Ngap_BroadcastCancelledAreaList {
 /* Implementation */
 extern asn_TYPE_descriptor_t asn_DEF_Ngap_BroadcastCancelledAreaList;
 extern asn_CHOICE_specifics_t asn_SPC_Ngap_BroadcastCancelledAreaList_specs_1;
-extern asn_TYPE_member_t asn_MBR_Ngap_BroadcastCancelledAreaList_1[6];
+extern asn_TYPE_member_t asn_MBR_Ngap_BroadcastCancelledAreaList_1[7];
 extern asn_per_constraints_t
     asn_PER_type_Ngap_BroadcastCancelledAreaList_constr_1;
 

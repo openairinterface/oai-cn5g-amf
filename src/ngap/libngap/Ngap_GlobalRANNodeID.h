@@ -3,7 +3,7 @@
  * From ASN.1 module "NGAP-IEs"
  * 	found in "asn.1/Information Element Definitions.asn1"
  * 	`asn1c -pdu=all -fcompound-names -fno-include-deps -findirect-choice
- * -no-gen-example -gen-APER -gen-UPER -no-gen-JER -no-gen-BER -D src`
+ * -no-gen-example -gen-APER -gen-UPER -no-gen-JER -gen-BER -D src`
  */
 
 #ifndef _Ngap_GlobalRANNodeID_H_
@@ -23,15 +23,15 @@ typedef enum Ngap_GlobalRANNodeID_PR {
   Ngap_GlobalRANNodeID_PR_NOTHING, /* No components present */
   Ngap_GlobalRANNodeID_PR_globalGNB_ID,
   Ngap_GlobalRANNodeID_PR_globalNgENB_ID,
-  Ngap_GlobalRANNodeID_PR_globalN3IWF_ID
-  /* Extensions may appear below */
-
+  Ngap_GlobalRANNodeID_PR_globalN3IWF_ID,
+  Ngap_GlobalRANNodeID_PR_choice_Extensions
 } Ngap_GlobalRANNodeID_PR;
 
 /* Forward declarations */
 struct Ngap_GlobalGNB_ID;
 struct Ngap_GlobalNgENB_ID;
 struct Ngap_GlobalN3IWF_ID;
+struct Ngap_ProtocolIE_SingleContainer;
 
 /* Ngap_GlobalRANNodeID */
 typedef struct Ngap_GlobalRANNodeID {
@@ -40,10 +40,7 @@ typedef struct Ngap_GlobalRANNodeID {
     struct Ngap_GlobalGNB_ID* globalGNB_ID;
     struct Ngap_GlobalNgENB_ID* globalNgENB_ID;
     struct Ngap_GlobalN3IWF_ID* globalN3IWF_ID;
-    /*
-     * This type is extensible,
-     * possible extensions are below.
-     */
+    struct Ngap_ProtocolIE_SingleContainer* choice_Extensions;
   } choice;
 
   /* Context for parsing across buffer boundaries */
@@ -53,7 +50,7 @@ typedef struct Ngap_GlobalRANNodeID {
 /* Implementation */
 extern asn_TYPE_descriptor_t asn_DEF_Ngap_GlobalRANNodeID;
 extern asn_CHOICE_specifics_t asn_SPC_Ngap_GlobalRANNodeID_specs_1;
-extern asn_TYPE_member_t asn_MBR_Ngap_GlobalRANNodeID_1[3];
+extern asn_TYPE_member_t asn_MBR_Ngap_GlobalRANNodeID_1[4];
 extern asn_per_constraints_t asn_PER_type_Ngap_GlobalRANNodeID_constr_1;
 
 #ifdef __cplusplus

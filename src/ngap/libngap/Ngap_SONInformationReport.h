@@ -3,7 +3,7 @@
  * From ASN.1 module "NGAP-IEs"
  * 	found in "asn.1/Information Element Definitions.asn1"
  * 	`asn1c -pdu=all -fcompound-names -fno-include-deps -findirect-choice
- * -no-gen-example -gen-APER -gen-UPER -no-gen-JER -no-gen-BER -D src`
+ * -no-gen-example -gen-APER -gen-UPER -no-gen-JER -gen-BER -D src`
  */
 
 #ifndef _Ngap_SONInformationReport_H_
@@ -22,14 +22,14 @@ extern "C" {
 typedef enum Ngap_SONInformationReport_PR {
   Ngap_SONInformationReport_PR_NOTHING, /* No components present */
   Ngap_SONInformationReport_PR_failureIndicationInformation,
-  Ngap_SONInformationReport_PR_hOReportInformation
-  /* Extensions may appear below */
-
+  Ngap_SONInformationReport_PR_hOReportInformation,
+  Ngap_SONInformationReport_PR_choice_Extensions
 } Ngap_SONInformationReport_PR;
 
 /* Forward declarations */
 struct Ngap_FailureIndication;
 struct Ngap_HOReport;
+struct Ngap_ProtocolIE_SingleContainer;
 
 /* Ngap_SONInformationReport */
 typedef struct Ngap_SONInformationReport {
@@ -37,10 +37,7 @@ typedef struct Ngap_SONInformationReport {
   union Ngap_SONInformationReport_u {
     struct Ngap_FailureIndication* failureIndicationInformation;
     struct Ngap_HOReport* hOReportInformation;
-    /*
-     * This type is extensible,
-     * possible extensions are below.
-     */
+    struct Ngap_ProtocolIE_SingleContainer* choice_Extensions;
   } choice;
 
   /* Context for parsing across buffer boundaries */
@@ -50,7 +47,7 @@ typedef struct Ngap_SONInformationReport {
 /* Implementation */
 extern asn_TYPE_descriptor_t asn_DEF_Ngap_SONInformationReport;
 extern asn_CHOICE_specifics_t asn_SPC_Ngap_SONInformationReport_specs_1;
-extern asn_TYPE_member_t asn_MBR_Ngap_SONInformationReport_1[2];
+extern asn_TYPE_member_t asn_MBR_Ngap_SONInformationReport_1[3];
 extern asn_per_constraints_t asn_PER_type_Ngap_SONInformationReport_constr_1;
 
 #ifdef __cplusplus

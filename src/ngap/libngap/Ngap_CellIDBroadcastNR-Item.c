@@ -3,7 +3,7 @@
  * From ASN.1 module "NGAP-IEs"
  * 	found in "asn.1/Information Element Definitions.asn1"
  * 	`asn1c -pdu=all -fcompound-names -fno-include-deps -findirect-choice
- * -no-gen-example -gen-APER -gen-UPER -no-gen-JER -no-gen-BER -D src`
+ * -no-gen-example -gen-APER -gen-UPER -no-gen-JER -gen-BER -D src`
  */
 
 #include "Ngap_CellIDBroadcastNR-Item.h"
@@ -34,7 +34,7 @@ asn_TYPE_member_t asn_MBR_Ngap_CellIDBroadcastNR_Item_1[] = {
      offsetof(struct Ngap_CellIDBroadcastNR_Item, iE_Extensions),
      (ASN_TAG_CLASS_CONTEXT | (1 << 2)),
      -1, /* IMPLICIT tag at current level */
-     &asn_DEF_Ngap_ProtocolExtensionContainer_9717P30,
+     &asn_DEF_Ngap_ProtocolExtensionContainer_9666P30,
      0,
      {
 #if !defined(ASN_DISABLE_OER_SUPPORT)

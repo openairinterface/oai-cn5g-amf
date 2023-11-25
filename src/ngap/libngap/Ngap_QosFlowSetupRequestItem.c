@@ -3,7 +3,7 @@
  * From ASN.1 module "NGAP-IEs"
  * 	found in "asn.1/Information Element Definitions.asn1"
  * 	`asn1c -pdu=all -fcompound-names -fno-include-deps -findirect-choice
- * -no-gen-example -gen-APER -gen-UPER -no-gen-JER -no-gen-BER -D src`
+ * -no-gen-example -gen-APER -gen-UPER -no-gen-JER -gen-BER -D src`
  */
 
 #include "Ngap_QosFlowSetupRequestItem.h"
@@ -72,7 +72,7 @@ asn_TYPE_member_t asn_MBR_Ngap_QosFlowSetupRequestItem_1[] = {
      offsetof(struct Ngap_QosFlowSetupRequestItem, iE_Extensions),
      (ASN_TAG_CLASS_CONTEXT | (3 << 2)),
      -1, /* IMPLICIT tag at current level */
-     &asn_DEF_Ngap_ProtocolExtensionContainer_9717P212,
+     &asn_DEF_Ngap_ProtocolExtensionContainer_9666P212,
      0,
      {
 #if !defined(ASN_DISABLE_OER_SUPPORT)

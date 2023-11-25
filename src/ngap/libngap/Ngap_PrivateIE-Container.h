@@ -3,7 +3,7 @@
  * From ASN.1 module "NGAP-Containers"
  * 	found in "asn.1/Information Element Definitions.asn1"
  * 	`asn1c -pdu=all -fcompound-names -fno-include-deps -findirect-choice
- * -no-gen-example -gen-APER -gen-UPER -no-gen-JER -no-gen-BER -D src`
+ * -no-gen-example -gen-APER -gen-UPER -no-gen-JER -gen-BER -D src`
  */
 
 #ifndef _Ngap_PrivateIE_Container_H_
@@ -23,19 +23,19 @@ extern "C" {
 struct Ngap_PrivateMessageIEs;
 
 /* Ngap_PrivateIE-Container */
-typedef struct Ngap_PrivateIE_Container_9733P0 {
+typedef struct Ngap_PrivateIE_Container_9682P0 {
   A_SEQUENCE_OF(struct Ngap_PrivateMessageIEs) list;
 
   /* Context for parsing across buffer boundaries */
   asn_struct_ctx_t _asn_ctx;
-} Ngap_PrivateIE_Container_9733P0_t;
+} Ngap_PrivateIE_Container_9682P0_t;
 
 /* Implementation */
-extern asn_TYPE_descriptor_t asn_DEF_Ngap_PrivateIE_Container_9733P0;
-extern asn_SET_OF_specifics_t asn_SPC_Ngap_PrivateIE_Container_9733P0_specs_1;
-extern asn_TYPE_member_t asn_MBR_Ngap_PrivateIE_Container_9733P0_1[1];
+extern asn_TYPE_descriptor_t asn_DEF_Ngap_PrivateIE_Container_9682P0;
+extern asn_SET_OF_specifics_t asn_SPC_Ngap_PrivateIE_Container_9682P0_specs_1;
+extern asn_TYPE_member_t asn_MBR_Ngap_PrivateIE_Container_9682P0_1[1];
 extern asn_per_constraints_t
-    asn_PER_type_Ngap_PrivateIE_Container_9733P0_constr_1;
+    asn_PER_type_Ngap_PrivateIE_Container_9682P0_constr_1;
 
 #ifdef __cplusplus
 }

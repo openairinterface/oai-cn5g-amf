@@ -3,7 +3,7 @@
  * From ASN.1 module "NGAP-IEs"
  * 	found in "asn.1/Information Element Definitions.asn1"
  * 	`asn1c -pdu=all -fcompound-names -fno-include-deps -findirect-choice
- * -no-gen-example -gen-APER -gen-UPER -no-gen-JER -no-gen-BER -D src`
+ * -no-gen-example -gen-APER -gen-UPER -no-gen-JER -gen-BER -D src`
  */
 
 #ifndef _Ngap_Cause_H_
@@ -30,10 +30,12 @@ typedef enum Ngap_Cause_PR {
   Ngap_Cause_PR_transport,
   Ngap_Cause_PR_nas,
   Ngap_Cause_PR_protocol,
-  Ngap_Cause_PR_misc
-  /* Extensions may appear below */
-
+  Ngap_Cause_PR_misc,
+  Ngap_Cause_PR_choice_Extensions
 } Ngap_Cause_PR;
+
+/* Forward declarations */
+struct Ngap_ProtocolIE_SingleContainer;
 
 /* Ngap_Cause */
 typedef struct Ngap_Cause {
@@ -44,10 +46,7 @@ typedef struct Ngap_Cause {
     Ngap_CauseNas_t nas;
     Ngap_CauseProtocol_t protocol;
     Ngap_CauseMisc_t misc;
-    /*
-     * This type is extensible,
-     * possible extensions are below.
-     */
+    struct Ngap_ProtocolIE_SingleContainer* choice_Extensions;
   } choice;
 
   /* Context for parsing across buffer boundaries */
@@ -57,7 +56,7 @@ typedef struct Ngap_Cause {
 /* Implementation */
 extern asn_TYPE_descriptor_t asn_DEF_Ngap_Cause;
 extern asn_CHOICE_specifics_t asn_SPC_Ngap_Cause_specs_1;
-extern asn_TYPE_member_t asn_MBR_Ngap_Cause_1[5];
+extern asn_TYPE_member_t asn_MBR_Ngap_Cause_1[6];
 extern asn_per_constraints_t asn_PER_type_Ngap_Cause_constr_1;
 
 #ifdef __cplusplus

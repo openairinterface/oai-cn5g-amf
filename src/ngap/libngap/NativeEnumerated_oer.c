@@ -3,11 +3,8 @@
  * All rights reserved.
  * Redistribution and modifications are permitted subject to BSD license.
  */
-#ifndef ASN_DISABLE_OER_SUPPORT
-
 #include <asn_internal.h>
 #include <NativeEnumerated.h>
-#include <errno.h>
 
 static long asn__nativeenumerated_convert(
     const uint8_t* b, const uint8_t* end) {
@@ -100,7 +97,7 @@ asn_dec_rval_t NativeEnumerated_decode_oer(
 asn_enc_rval_t NativeEnumerated_encode_oer(
     const asn_TYPE_descriptor_t* td, const asn_oer_constraints_t* constraints,
     const void* sptr, asn_app_consume_bytes_f* cb, void* app_key) {
-  asn_enc_rval_t er;
+  asn_enc_rval_t er = {0, 0, 0};
   long native;
 
   (void) constraints;
@@ -142,5 +139,3 @@ asn_enc_rval_t NativeEnumerated_encode_oer(
     ASN__ENCODED_OK(er);
   }
 }
-
-#endif /* ASN_DISABLE_OER_SUPPORT */

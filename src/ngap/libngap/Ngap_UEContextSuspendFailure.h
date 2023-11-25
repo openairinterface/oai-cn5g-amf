@@ -3,7 +3,7 @@
  * From ASN.1 module "NGAP-PDU-Contents"
  * 	found in "asn.1/Information Element Definitions.asn1"
  * 	`asn1c -pdu=all -fcompound-names -fno-include-deps -findirect-choice
- * -no-gen-example -gen-APER -gen-UPER -no-gen-JER -no-gen-BER -D src`
+ * -no-gen-example -gen-APER -gen-UPER -no-gen-JER -gen-BER -D src`
  */
 
 #ifndef _Ngap_UEContextSuspendFailure_H_
@@ -21,7 +21,7 @@ extern "C" {
 
 /* Ngap_UEContextSuspendFailure */
 typedef struct Ngap_UEContextSuspendFailure {
-  Ngap_ProtocolIE_Container_9666P20_t protocolIEs;
+  Ngap_ProtocolIE_Container_9615P20_t protocolIEs;
   /*
    * This type is extensible,
    * possible extensions are below.

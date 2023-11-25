@@ -3,7 +3,7 @@
  * From ASN.1 module "NGAP-PDU-Contents"
  * 	found in "asn.1/Information Element Definitions.asn1"
  * 	`asn1c -pdu=all -fcompound-names -fno-include-deps -findirect-choice
- * -no-gen-example -gen-APER -gen-UPER -no-gen-JER -no-gen-BER -D src`
+ * -no-gen-example -gen-APER -gen-UPER -no-gen-JER -gen-BER -D src`
  */
 
 #ifndef _Ngap_PrivateMessage_H_
@@ -21,7 +21,7 @@ extern "C" {
 
 /* Ngap_PrivateMessage */
 typedef struct Ngap_PrivateMessage {
-  Ngap_PrivateIE_Container_9733P0_t privateIEs;
+  Ngap_PrivateIE_Container_9682P0_t privateIEs;
   /*
    * This type is extensible,
    * possible extensions are below.

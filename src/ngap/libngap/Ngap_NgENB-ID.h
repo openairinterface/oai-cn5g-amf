@@ -3,7 +3,7 @@
  * From ASN.1 module "NGAP-IEs"
  * 	found in "asn.1/Information Element Definitions.asn1"
  * 	`asn1c -pdu=all -fcompound-names -fno-include-deps -findirect-choice
- * -no-gen-example -gen-APER -gen-UPER -no-gen-JER -no-gen-BER -D src`
+ * -no-gen-example -gen-APER -gen-UPER -no-gen-JER -gen-BER -D src`
  */
 
 #ifndef _Ngap_NgENB_ID_H_
@@ -24,10 +24,12 @@ typedef enum Ngap_NgENB_ID_PR {
   Ngap_NgENB_ID_PR_NOTHING, /* No components present */
   Ngap_NgENB_ID_PR_macroNgENB_ID,
   Ngap_NgENB_ID_PR_shortMacroNgENB_ID,
-  Ngap_NgENB_ID_PR_longMacroNgENB_ID
-  /* Extensions may appear below */
-
+  Ngap_NgENB_ID_PR_longMacroNgENB_ID,
+  Ngap_NgENB_ID_PR_choice_Extensions
 } Ngap_NgENB_ID_PR;
+
+/* Forward declarations */
+struct Ngap_ProtocolIE_SingleContainer;
 
 /* Ngap_NgENB-ID */
 typedef struct Ngap_NgENB_ID {
@@ -36,10 +38,7 @@ typedef struct Ngap_NgENB_ID {
     BIT_STRING_t macroNgENB_ID;
     BIT_STRING_t shortMacroNgENB_ID;
     BIT_STRING_t longMacroNgENB_ID;
-    /*
-     * This type is extensible,
-     * possible extensions are below.
-     */
+    struct Ngap_ProtocolIE_SingleContainer* choice_Extensions;
   } choice;
 
   /* Context for parsing across buffer boundaries */
@@ -49,7 +48,7 @@ typedef struct Ngap_NgENB_ID {
 /* Implementation */
 extern asn_TYPE_descriptor_t asn_DEF_Ngap_NgENB_ID;
 extern asn_CHOICE_specifics_t asn_SPC_Ngap_NgENB_ID_specs_1;
-extern asn_TYPE_member_t asn_MBR_Ngap_NgENB_ID_1[3];
+extern asn_TYPE_member_t asn_MBR_Ngap_NgENB_ID_1[4];
 extern asn_per_constraints_t asn_PER_type_Ngap_NgENB_ID_constr_1;
 
 #ifdef __cplusplus

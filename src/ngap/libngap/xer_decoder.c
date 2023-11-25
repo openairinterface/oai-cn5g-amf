@@ -310,7 +310,7 @@ asn_dec_rval_t xer_decode_general(
 
 size_t xer_whitespace_span(const void* chunk_buf, size_t chunk_size) {
   const char* p    = (const char*) chunk_buf;
-  const char* pend = p + chunk_size;
+  const char* pend = (p == NULL) ? NULL : p + chunk_size;
 
   for (; p < pend; p++) {
     switch (*p) {

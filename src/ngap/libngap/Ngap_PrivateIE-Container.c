@@ -3,7 +3,7 @@
  * From ASN.1 module "NGAP-Containers"
  * 	found in "asn.1/Information Element Definitions.asn1"
  * 	`asn1c -pdu=all -fcompound-names -fno-include-deps -findirect-choice
- * -no-gen-example -gen-APER -gen-UPER -no-gen-JER -no-gen-BER -D src`
+ * -no-gen-example -gen-APER -gen-UPER -no-gen-JER -gen-BER -D src`
  */
 
 #include "Ngap_PrivateIE-Container.h"
@@ -11,12 +11,12 @@
 #include "Ngap_PrivateIE-Field.h"
 #if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
-    asn_OER_type_Ngap_PrivateIE_Container_9733P0_constr_1 CC_NOTUSED = {
+    asn_OER_type_Ngap_PrivateIE_Container_9682P0_constr_1 CC_NOTUSED = {
         {0, 0},
         -1 /* (SIZE(1..65535)) */};
 #endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
 #if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
-asn_per_constraints_t asn_PER_type_Ngap_PrivateIE_Container_9733P0_constr_1
+asn_per_constraints_t asn_PER_type_Ngap_PrivateIE_Container_9682P0_constr_1
     CC_NOTUSED = {
         {APC_UNCONSTRAINED, -1, -1, 0, 0},
         {APC_CONSTRAINED, 16, 16, 1, 65535} /* (SIZE(1..65535)) */,
@@ -25,7 +25,7 @@ asn_per_constraints_t asn_PER_type_Ngap_PrivateIE_Container_9733P0_constr_1
 };
 #endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
           !defined(ASN_DISABLE_APER_SUPPORT) */
-asn_TYPE_member_t asn_MBR_Ngap_PrivateIE_Container_9733P0_1[] = {
+asn_TYPE_member_t asn_MBR_Ngap_PrivateIE_Container_9682P0_1[] = {
     {ATF_POINTER,
      0,
      0,
@@ -46,33 +46,33 @@ asn_TYPE_member_t asn_MBR_Ngap_PrivateIE_Container_9733P0_1[] = {
      0, /* No default value */
      ""},
 };
-static const ber_tlv_tag_t asn_DEF_Ngap_PrivateIE_Container_9733P0_tags_1[] = {
+static const ber_tlv_tag_t asn_DEF_Ngap_PrivateIE_Container_9682P0_tags_1[] = {
     (ASN_TAG_CLASS_UNIVERSAL | (16 << 2))};
-asn_SET_OF_specifics_t asn_SPC_Ngap_PrivateIE_Container_9733P0_specs_1 = {
-    sizeof(struct Ngap_PrivateIE_Container_9733P0),
-    offsetof(struct Ngap_PrivateIE_Container_9733P0, _asn_ctx),
+asn_SET_OF_specifics_t asn_SPC_Ngap_PrivateIE_Container_9682P0_specs_1 = {
+    sizeof(struct Ngap_PrivateIE_Container_9682P0),
+    offsetof(struct Ngap_PrivateIE_Container_9682P0, _asn_ctx),
     0, /* XER encoding is XMLDelimitedItemList */
 };
-asn_TYPE_descriptor_t asn_DEF_Ngap_PrivateIE_Container_9733P0 = {
+asn_TYPE_descriptor_t asn_DEF_Ngap_PrivateIE_Container_9682P0 = {
     "PrivateIE-Container",
     "PrivateIE-Container",
     &asn_OP_SEQUENCE_OF,
-    asn_DEF_Ngap_PrivateIE_Container_9733P0_tags_1,
-    sizeof(asn_DEF_Ngap_PrivateIE_Container_9733P0_tags_1) /
-        sizeof(asn_DEF_Ngap_PrivateIE_Container_9733P0_tags_1[0]), /* 1 */
-    asn_DEF_Ngap_PrivateIE_Container_9733P0_tags_1, /* Same as above */
-    sizeof(asn_DEF_Ngap_PrivateIE_Container_9733P0_tags_1) /
-        sizeof(asn_DEF_Ngap_PrivateIE_Container_9733P0_tags_1[0]), /* 1 */
+    asn_DEF_Ngap_PrivateIE_Container_9682P0_tags_1,
+    sizeof(asn_DEF_Ngap_PrivateIE_Container_9682P0_tags_1) /
+        sizeof(asn_DEF_Ngap_PrivateIE_Container_9682P0_tags_1[0]), /* 1 */
+    asn_DEF_Ngap_PrivateIE_Container_9682P0_tags_1, /* Same as above */
+    sizeof(asn_DEF_Ngap_PrivateIE_Container_9682P0_tags_1) /
+        sizeof(asn_DEF_Ngap_PrivateIE_Container_9682P0_tags_1[0]), /* 1 */
     {
 #if !defined(ASN_DISABLE_OER_SUPPORT)
-        &asn_OER_type_Ngap_PrivateIE_Container_9733P0_constr_1,
+        &asn_OER_type_Ngap_PrivateIE_Container_9682P0_constr_1,
 #endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
 #if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
-        &asn_PER_type_Ngap_PrivateIE_Container_9733P0_constr_1,
+        &asn_PER_type_Ngap_PrivateIE_Container_9682P0_constr_1,
 #endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
           !defined(ASN_DISABLE_APER_SUPPORT) */
         SEQUENCE_OF_constraint},
-    asn_MBR_Ngap_PrivateIE_Container_9733P0_1,
+    asn_MBR_Ngap_PrivateIE_Container_9682P0_1,
     1,                                               /* Single element */
-    &asn_SPC_Ngap_PrivateIE_Container_9733P0_specs_1 /* Additional specs */
+    &asn_SPC_Ngap_PrivateIE_Container_9682P0_specs_1 /* Additional specs */
 };

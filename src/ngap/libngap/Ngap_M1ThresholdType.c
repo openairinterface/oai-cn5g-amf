@@ -3,18 +3,19 @@
  * From ASN.1 module "NGAP-IEs"
  * 	found in "asn.1/Information Element Definitions.asn1"
  * 	`asn1c -pdu=all -fcompound-names -fno-include-deps -findirect-choice
- * -no-gen-example -gen-APER -gen-UPER -no-gen-JER -no-gen-BER -D src`
+ * -no-gen-example -gen-APER -gen-UPER -no-gen-JER -gen-BER -D src`
  */
 
 #include "Ngap_M1ThresholdType.h"
 
+#include "Ngap_ProtocolIE-SingleContainer.h"
 #if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_type_Ngap_M1ThresholdType_constr_1
     CC_NOTUSED = {{0, 0}, -1};
 #endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
 #if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t asn_PER_type_Ngap_M1ThresholdType_constr_1 CC_NOTUSED = {
-    {APC_CONSTRAINED | APC_EXTENSIBLE, 2, 2, 0, 2} /* (0..2,...) */,
+    {APC_CONSTRAINED, 2, 2, 0, 3} /* (0..3) */,
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
@@ -79,11 +80,31 @@ asn_TYPE_member_t asn_MBR_Ngap_M1ThresholdType_1[] = {
      0,
      0, /* No default value */
      "threshold-SINR"},
+    {ATF_POINTER,
+     0,
+     offsetof(struct Ngap_M1ThresholdType, choice.choice_Extensions),
+     (ASN_TAG_CLASS_CONTEXT | (3 << 2)),
+     -1, /* IMPLICIT tag at current level */
+     &asn_DEF_Ngap_ProtocolIE_SingleContainer_9618P24,
+     0,
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
+     0,
+     0, /* No default value */
+     "choice-Extensions"},
 };
 static const asn_TYPE_tag2member_t asn_MAP_Ngap_M1ThresholdType_tag2el_1[] = {
     {(ASN_TAG_CLASS_CONTEXT | (0 << 2)), 0, 0, 0}, /* threshold-RSRP */
     {(ASN_TAG_CLASS_CONTEXT | (1 << 2)), 1, 0, 0}, /* threshold-RSRQ */
-    {(ASN_TAG_CLASS_CONTEXT | (2 << 2)), 2, 0, 0}  /* threshold-SINR */
+    {(ASN_TAG_CLASS_CONTEXT | (2 << 2)), 2, 0, 0}, /* threshold-SINR */
+    {(ASN_TAG_CLASS_CONTEXT | (3 << 2)), 3, 0, 0}  /* choice-Extensions */
 };
 asn_CHOICE_specifics_t asn_SPC_Ngap_M1ThresholdType_specs_1 = {
     sizeof(struct Ngap_M1ThresholdType),
@@ -91,10 +112,10 @@ asn_CHOICE_specifics_t asn_SPC_Ngap_M1ThresholdType_specs_1 = {
     offsetof(struct Ngap_M1ThresholdType, present),
     sizeof(((struct Ngap_M1ThresholdType*) 0)->present),
     asn_MAP_Ngap_M1ThresholdType_tag2el_1,
-    3, /* Count of tags in the map */
+    4, /* Count of tags in the map */
     0,
     0,
-    3 /* Extensions start */
+    -1 /* Extensions start */
 };
 asn_TYPE_descriptor_t asn_DEF_Ngap_M1ThresholdType = {
     "M1ThresholdType",
@@ -114,6 +135,6 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_M1ThresholdType = {
           !defined(ASN_DISABLE_APER_SUPPORT) */
         CHOICE_constraint},
     asn_MBR_Ngap_M1ThresholdType_1,
-    3,                                    /* Elements count */
+    4,                                    /* Elements count */
     &asn_SPC_Ngap_M1ThresholdType_specs_1 /* Additional specs */
 };

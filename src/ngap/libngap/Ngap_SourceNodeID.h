@@ -3,7 +3,7 @@
  * From ASN.1 module "NGAP-IEs"
  * 	found in "asn.1/Information Element Definitions.asn1"
  * 	`asn1c -pdu=all -fcompound-names -fno-include-deps -findirect-choice
- * -no-gen-example -gen-APER -gen-UPER -no-gen-JER -no-gen-BER -D src`
+ * -no-gen-example -gen-APER -gen-UPER -no-gen-JER -gen-BER -D src`
  */
 
 #ifndef _Ngap_SourceNodeID_H_
@@ -21,23 +21,20 @@ extern "C" {
 /* Dependencies */
 typedef enum Ngap_SourceNodeID_PR {
   Ngap_SourceNodeID_PR_NOTHING, /* No components present */
-  Ngap_SourceNodeID_PR_sourceengNB_ID
-  /* Extensions may appear below */
-
+  Ngap_SourceNodeID_PR_sourceengNB_ID,
+  Ngap_SourceNodeID_PR_choice_Extensions
 } Ngap_SourceNodeID_PR;
 
 /* Forward declarations */
 struct Ngap_GlobalGNB_ID;
+struct Ngap_ProtocolIE_SingleContainer;
 
 /* Ngap_SourceNodeID */
 typedef struct Ngap_SourceNodeID {
   Ngap_SourceNodeID_PR present;
   union Ngap_SourceNodeID_u {
     struct Ngap_GlobalGNB_ID* sourceengNB_ID;
-    /*
-     * This type is extensible,
-     * possible extensions are below.
-     */
+    struct Ngap_ProtocolIE_SingleContainer* choice_Extensions;
   } choice;
 
   /* Context for parsing across buffer boundaries */
@@ -47,7 +44,7 @@ typedef struct Ngap_SourceNodeID {
 /* Implementation */
 extern asn_TYPE_descriptor_t asn_DEF_Ngap_SourceNodeID;
 extern asn_CHOICE_specifics_t asn_SPC_Ngap_SourceNodeID_specs_1;
-extern asn_TYPE_member_t asn_MBR_Ngap_SourceNodeID_1[1];
+extern asn_TYPE_member_t asn_MBR_Ngap_SourceNodeID_1[2];
 extern asn_per_constraints_t asn_PER_type_Ngap_SourceNodeID_constr_1;
 
 #ifdef __cplusplus

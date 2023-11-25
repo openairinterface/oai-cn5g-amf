@@ -3,7 +3,7 @@
  * From ASN.1 module "NGAP-IEs"
  * 	found in "asn.1/Information Element Definitions.asn1"
  * 	`asn1c -pdu=all -fcompound-names -fno-include-deps -findirect-choice
- * -no-gen-example -gen-APER -gen-UPER -no-gen-JER -no-gen-BER -D src`
+ * -no-gen-example -gen-APER -gen-UPER -no-gen-JER -gen-BER -D src`
  */
 
 #ifndef _Ngap_DRBStatusDL_H_
@@ -22,14 +22,14 @@ extern "C" {
 typedef enum Ngap_DRBStatusDL_PR {
   Ngap_DRBStatusDL_PR_NOTHING, /* No components present */
   Ngap_DRBStatusDL_PR_dRBStatusDL12,
-  Ngap_DRBStatusDL_PR_dRBStatusDL18
-  /* Extensions may appear below */
-
+  Ngap_DRBStatusDL_PR_dRBStatusDL18,
+  Ngap_DRBStatusDL_PR_choice_Extensions
 } Ngap_DRBStatusDL_PR;
 
 /* Forward declarations */
 struct Ngap_DRBStatusDL12;
 struct Ngap_DRBStatusDL18;
+struct Ngap_ProtocolIE_SingleContainer;
 
 /* Ngap_DRBStatusDL */
 typedef struct Ngap_DRBStatusDL {
@@ -37,10 +37,7 @@ typedef struct Ngap_DRBStatusDL {
   union Ngap_DRBStatusDL_u {
     struct Ngap_DRBStatusDL12* dRBStatusDL12;
     struct Ngap_DRBStatusDL18* dRBStatusDL18;
-    /*
-     * This type is extensible,
-     * possible extensions are below.
-     */
+    struct Ngap_ProtocolIE_SingleContainer* choice_Extensions;
   } choice;
 
   /* Context for parsing across buffer boundaries */
@@ -50,7 +47,7 @@ typedef struct Ngap_DRBStatusDL {
 /* Implementation */
 extern asn_TYPE_descriptor_t asn_DEF_Ngap_DRBStatusDL;
 extern asn_CHOICE_specifics_t asn_SPC_Ngap_DRBStatusDL_specs_1;
-extern asn_TYPE_member_t asn_MBR_Ngap_DRBStatusDL_1[2];
+extern asn_TYPE_member_t asn_MBR_Ngap_DRBStatusDL_1[3];
 extern asn_per_constraints_t asn_PER_type_Ngap_DRBStatusDL_constr_1;
 
 #ifdef __cplusplus

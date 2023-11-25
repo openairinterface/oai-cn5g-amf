@@ -195,10 +195,6 @@ bool InitialUEMessageMsg::decode(Ngap_NGAP_PDU_t* ngapMsgPdu) {
   ngapPdu = ngapMsgPdu;
 
   if (ngapPdu->present == Ngap_NGAP_PDU_PR_initiatingMessage) {
-    Logger::ngap().error(
-        "Check InitialUEMessage message error %d",
-        ngapPdu->choice.initiatingMessage->value.present);
-
     if (ngapPdu->choice.initiatingMessage &&
         ngapPdu->choice.initiatingMessage->procedureCode ==
             Ngap_ProcedureCode_id_InitialUEMessage &&

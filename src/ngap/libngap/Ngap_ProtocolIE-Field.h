@@ -3,7 +3,7 @@
  * From ASN.1 module "NGAP-Containers"
  * 	found in "asn.1/Information Element Definitions.asn1"
  * 	`asn1c -pdu=all -fcompound-names -fno-include-deps -findirect-choice
- * -no-gen-example -gen-APER -gen-UPER -no-gen-JER -no-gen-BER -D src`
+ * -no-gen-example -gen-APER -gen-UPER -no-gen-JER -gen-BER -D src`
  */
 
 #ifndef _Ngap_ProtocolIE_Field_H_
@@ -16,16 +16,26 @@
 #include "Ngap_Criticality.h"
 #include <ANY.h>
 #include <asn_ioc.h>
-#include "Ngap_AMF-UE-NGAP-ID.h"
+#include <OPEN_TYPE.h>
+#include <constr_CHOICE.h>
+#include <constr_SEQUENCE.h>
+#include "Ngap_EndpointIPAddressAndPort.h"
 #include "Ngap_Presence.h"
+#include "Ngap_GlobalTNGF-ID.h"
+#include "Ngap_GlobalTWIF-ID.h"
+#include "Ngap_GlobalW-AGF-ID.h"
+#include "Ngap_SONInformationReport.h"
+#include "Ngap_TargetRNC-ID.h"
+#include "Ngap_UserLocationInformationTNGF.h"
+#include "Ngap_UserLocationInformationTWIF.h"
+#include "Ngap_UserLocationInformationW-AGF.h"
+#include "Ngap_GlobalCable-ID.h"
+#include "Ngap_AMF-UE-NGAP-ID.h"
 #include "Ngap_RAN-UE-NGAP-ID.h"
 #include "Ngap_RANPagingPriority.h"
 #include "Ngap_NAS-PDU.h"
 #include "Ngap_PDUSessionResourceSetupListSUReq.h"
 #include "Ngap_UEAggregateMaximumBitRate.h"
-#include <OPEN_TYPE.h>
-#include <constr_CHOICE.h>
-#include <constr_SEQUENCE.h>
 #include "Ngap_PDUSessionResourceSetupListSURes.h"
 #include "Ngap_PDUSessionResourceFailedToSetupListSURes.h"
 #include "Ngap_CriticalityDiagnostics.h"
@@ -220,6 +230,238 @@ extern "C" {
 #endif
 
 /* Dependencies */
+typedef enum Ngap_AMFPagingTarget_ExtIEs__value_PR {
+  Ngap_AMFPagingTarget_ExtIEs__value_PR_NOTHING /* No components present */
+
+} Ngap_AMFPagingTarget_ExtIEs__value_PR;
+typedef enum Ngap_AreaScopeOfMDT_NR_ExtIEs__value_PR {
+  Ngap_AreaScopeOfMDT_NR_ExtIEs__value_PR_NOTHING /* No components present */
+
+} Ngap_AreaScopeOfMDT_NR_ExtIEs__value_PR;
+typedef enum Ngap_AreaScopeOfMDT_EUTRA_ExtIEs__value_PR {
+  Ngap_AreaScopeOfMDT_EUTRA_ExtIEs__value_PR_NOTHING /* No components present */
+
+} Ngap_AreaScopeOfMDT_EUTRA_ExtIEs__value_PR;
+typedef enum Ngap_BroadcastCancelledAreaList_ExtIEs__value_PR {
+  Ngap_BroadcastCancelledAreaList_ExtIEs__value_PR_NOTHING /* No components
+                                                              present */
+
+} Ngap_BroadcastCancelledAreaList_ExtIEs__value_PR;
+typedef enum Ngap_BroadcastCompletedAreaList_ExtIEs__value_PR {
+  Ngap_BroadcastCompletedAreaList_ExtIEs__value_PR_NOTHING /* No components
+                                                              present */
+
+} Ngap_BroadcastCompletedAreaList_ExtIEs__value_PR;
+typedef enum Ngap_CandidateCell_ExtIEs__value_PR {
+  Ngap_CandidateCell_ExtIEs__value_PR_NOTHING /* No components present */
+
+} Ngap_CandidateCell_ExtIEs__value_PR;
+typedef enum Ngap_Cause_ExtIEs__value_PR {
+  Ngap_Cause_ExtIEs__value_PR_NOTHING /* No components present */
+
+} Ngap_Cause_ExtIEs__value_PR;
+typedef enum Ngap_CellIDListForRestart_ExtIEs__value_PR {
+  Ngap_CellIDListForRestart_ExtIEs__value_PR_NOTHING /* No components present */
+
+} Ngap_CellIDListForRestart_ExtIEs__value_PR;
+typedef enum Ngap_CPTransportLayerInformation_ExtIEs__value_PR {
+  Ngap_CPTransportLayerInformation_ExtIEs__value_PR_NOTHING, /* No components
+                                                                present */
+  Ngap_CPTransportLayerInformation_ExtIEs__value_PR_EndpointIPAddressAndPort
+} Ngap_CPTransportLayerInformation_ExtIEs__value_PR;
+typedef enum Ngap_DRBStatusDL_ExtIEs__value_PR {
+  Ngap_DRBStatusDL_ExtIEs__value_PR_NOTHING /* No components present */
+
+} Ngap_DRBStatusDL_ExtIEs__value_PR;
+typedef enum Ngap_DRBStatusUL_ExtIEs__value_PR {
+  Ngap_DRBStatusUL_ExtIEs__value_PR_NOTHING /* No components present */
+
+} Ngap_DRBStatusUL_ExtIEs__value_PR;
+typedef enum Ngap_ProcedureStageChoice_ExtIEs__value_PR {
+  Ngap_ProcedureStageChoice_ExtIEs__value_PR_NOTHING /* No components present */
+
+} Ngap_ProcedureStageChoice_ExtIEs__value_PR;
+typedef enum Ngap_ENB_ID_ExtIEs__value_PR {
+  Ngap_ENB_ID_ExtIEs__value_PR_NOTHING /* No components present */
+
+} Ngap_ENB_ID_ExtIEs__value_PR;
+typedef enum Ngap_EventTrigger_ExtIEs__value_PR {
+  Ngap_EventTrigger_ExtIEs__value_PR_NOTHING /* No components present */
+
+} Ngap_EventTrigger_ExtIEs__value_PR;
+typedef enum Ngap_MeasurementThresholdL1LoggedMDT_ExtIEs__value_PR {
+  Ngap_MeasurementThresholdL1LoggedMDT_ExtIEs__value_PR_NOTHING /* No components
+                                                                   present */
+
+} Ngap_MeasurementThresholdL1LoggedMDT_ExtIEs__value_PR;
+typedef enum Ngap_GlobalRANNodeID_ExtIEs__value_PR {
+  Ngap_GlobalRANNodeID_ExtIEs__value_PR_NOTHING, /* No components present */
+  Ngap_GlobalRANNodeID_ExtIEs__value_PR_GlobalTNGF_ID,
+  Ngap_GlobalRANNodeID_ExtIEs__value_PR_GlobalTWIF_ID,
+  Ngap_GlobalRANNodeID_ExtIEs__value_PR_GlobalW_AGF_ID
+} Ngap_GlobalRANNodeID_ExtIEs__value_PR;
+typedef enum Ngap_GNB_ID_ExtIEs__value_PR {
+  Ngap_GNB_ID_ExtIEs__value_PR_NOTHING /* No components present */
+
+} Ngap_GNB_ID_ExtIEs__value_PR;
+typedef enum Ngap_IntersystemSONTransferType_ExtIEs__value_PR {
+  Ngap_IntersystemSONTransferType_ExtIEs__value_PR_NOTHING /* No components
+                                                              present */
+
+} Ngap_IntersystemSONTransferType_ExtIEs__value_PR;
+typedef enum Ngap_IntersystemSONInformation_ExtIEs__value_PR {
+  Ngap_IntersystemSONInformation_ExtIEs__value_PR_NOTHING /* No components
+                                                             present */
+
+} Ngap_IntersystemSONInformation_ExtIEs__value_PR;
+typedef enum Ngap_IntersystemSONInformationReport_ExtIEs__value_PR {
+  Ngap_IntersystemSONInformationReport_ExtIEs__value_PR_NOTHING /* No components
+                                                                   present */
+
+} Ngap_IntersystemSONInformationReport_ExtIEs__value_PR;
+typedef enum Ngap_InterSystemHandoverReportType_ExtIEs__value_PR {
+  Ngap_InterSystemHandoverReportType_ExtIEs__value_PR_NOTHING /* No components
+                                                                 present */
+
+} Ngap_InterSystemHandoverReportType_ExtIEs__value_PR;
+typedef enum Ngap_LastVisitedCellInformation_ExtIEs__value_PR {
+  Ngap_LastVisitedCellInformation_ExtIEs__value_PR_NOTHING /* No components
+                                                              present */
+
+} Ngap_LastVisitedCellInformation_ExtIEs__value_PR;
+typedef enum Ngap_LoggedMDTTrigger_ExtIEs__value_PR {
+  Ngap_LoggedMDTTrigger_ExtIEs__value_PR_NOTHING /* No components present */
+
+} Ngap_LoggedMDTTrigger_ExtIEs__value_PR;
+typedef enum Ngap_MDTModeNr_ExtIEs__value_PR {
+  Ngap_MDTModeNr_ExtIEs__value_PR_NOTHING /* No components present */
+
+} Ngap_MDTModeNr_ExtIEs__value_PR;
+typedef enum Ngap_M1ThresholdType_ExtIEs__value_PR {
+  Ngap_M1ThresholdType_ExtIEs__value_PR_NOTHING /* No components present */
+
+} Ngap_M1ThresholdType_ExtIEs__value_PR;
+typedef enum Ngap_N3IWF_ID_ExtIEs__value_PR {
+  Ngap_N3IWF_ID_ExtIEs__value_PR_NOTHING /* No components present */
+
+} Ngap_N3IWF_ID_ExtIEs__value_PR;
+typedef enum Ngap_NgENB_ID_ExtIEs__value_PR {
+  Ngap_NgENB_ID_ExtIEs__value_PR_NOTHING /* No components present */
+
+} Ngap_NgENB_ID_ExtIEs__value_PR;
+typedef enum Ngap_NGRAN_CGI_ExtIEs__value_PR {
+  Ngap_NGRAN_CGI_ExtIEs__value_PR_NOTHING /* No components present */
+
+} Ngap_NGRAN_CGI_ExtIEs__value_PR;
+typedef enum Ngap_NPN_AccessInformation_ExtIEs__value_PR {
+  Ngap_NPN_AccessInformation_ExtIEs__value_PR_NOTHING /* No components present
+                                                       */
+
+} Ngap_NPN_AccessInformation_ExtIEs__value_PR;
+typedef enum Ngap_NPN_MobilityInformation_ExtIEs__value_PR {
+  Ngap_NPN_MobilityInformation_ExtIEs__value_PR_NOTHING /* No components present
+                                                         */
+
+} Ngap_NPN_MobilityInformation_ExtIEs__value_PR;
+typedef enum Ngap_NPN_PagingAssistanceInformation_ExtIEs__value_PR {
+  Ngap_NPN_PagingAssistanceInformation_ExtIEs__value_PR_NOTHING /* No components
+                                                                   present */
+
+} Ngap_NPN_PagingAssistanceInformation_ExtIEs__value_PR;
+typedef enum Ngap_NPN_Support_ExtIEs__value_PR {
+  Ngap_NPN_Support_ExtIEs__value_PR_NOTHING /* No components present */
+
+} Ngap_NPN_Support_ExtIEs__value_PR;
+typedef enum Ngap_OverloadResponse_ExtIEs__value_PR {
+  Ngap_OverloadResponse_ExtIEs__value_PR_NOTHING /* No components present */
+
+} Ngap_OverloadResponse_ExtIEs__value_PR;
+typedef enum Ngap_PWSFailedCellIDList_ExtIEs__value_PR {
+  Ngap_PWSFailedCellIDList_ExtIEs__value_PR_NOTHING /* No components present */
+
+} Ngap_PWSFailedCellIDList_ExtIEs__value_PR;
+typedef enum Ngap_QosCharacteristics_ExtIEs__value_PR {
+  Ngap_QosCharacteristics_ExtIEs__value_PR_NOTHING /* No components present */
+
+} Ngap_QosCharacteristics_ExtIEs__value_PR;
+typedef enum Ngap_ResetType_ExtIEs__value_PR {
+  Ngap_ResetType_ExtIEs__value_PR_NOTHING /* No components present */
+
+} Ngap_ResetType_ExtIEs__value_PR;
+typedef enum Ngap_SensorNameConfig_ExtIEs__value_PR {
+  Ngap_SensorNameConfig_ExtIEs__value_PR_NOTHING /* No components present */
+
+} Ngap_SensorNameConfig_ExtIEs__value_PR;
+typedef enum Ngap_SONInformation_ExtIEs__value_PR {
+  Ngap_SONInformation_ExtIEs__value_PR_NOTHING, /* No components present */
+  Ngap_SONInformation_ExtIEs__value_PR_SONInformationReport
+} Ngap_SONInformation_ExtIEs__value_PR;
+typedef enum Ngap_SONInformationReport_ExtIEs__value_PR {
+  Ngap_SONInformationReport_ExtIEs__value_PR_NOTHING /* No components present */
+
+} Ngap_SONInformationReport_ExtIEs__value_PR;
+typedef enum Ngap_SourceNodeID_ExtIEs__value_PR {
+  Ngap_SourceNodeID_ExtIEs__value_PR_NOTHING /* No components present */
+
+} Ngap_SourceNodeID_ExtIEs__value_PR;
+typedef enum Ngap_TargetID_ExtIEs__value_PR {
+  Ngap_TargetID_ExtIEs__value_PR_NOTHING, /* No components present */
+  Ngap_TargetID_ExtIEs__value_PR_TargetRNC_ID
+} Ngap_TargetID_ExtIEs__value_PR;
+typedef enum Ngap_TNGF_ID_ExtIEs__value_PR {
+  Ngap_TNGF_ID_ExtIEs__value_PR_NOTHING /* No components present */
+
+} Ngap_TNGF_ID_ExtIEs__value_PR;
+typedef enum Ngap_TWIF_ID_ExtIEs__value_PR {
+  Ngap_TWIF_ID_ExtIEs__value_PR_NOTHING /* No components present */
+
+} Ngap_TWIF_ID_ExtIEs__value_PR;
+typedef enum Ngap_UEHistoryInformationFromTheUE_ExtIEs__value_PR {
+  Ngap_UEHistoryInformationFromTheUE_ExtIEs__value_PR_NOTHING /* No components
+                                                                 present */
+
+} Ngap_UEHistoryInformationFromTheUE_ExtIEs__value_PR;
+typedef enum Ngap_UEIdentityIndexValue_ExtIEs__value_PR {
+  Ngap_UEIdentityIndexValue_ExtIEs__value_PR_NOTHING /* No components present */
+
+} Ngap_UEIdentityIndexValue_ExtIEs__value_PR;
+typedef enum Ngap_UE_NGAP_IDs_ExtIEs__value_PR {
+  Ngap_UE_NGAP_IDs_ExtIEs__value_PR_NOTHING /* No components present */
+
+} Ngap_UE_NGAP_IDs_ExtIEs__value_PR;
+typedef enum Ngap_UEPagingIdentity_ExtIEs__value_PR {
+  Ngap_UEPagingIdentity_ExtIEs__value_PR_NOTHING /* No components present */
+
+} Ngap_UEPagingIdentity_ExtIEs__value_PR;
+typedef enum Ngap_UERLFReportContainer_ExtIEs__value_PR {
+  Ngap_UERLFReportContainer_ExtIEs__value_PR_NOTHING /* No components present */
+
+} Ngap_UERLFReportContainer_ExtIEs__value_PR;
+typedef enum Ngap_UPTransportLayerInformation_ExtIEs__value_PR {
+  Ngap_UPTransportLayerInformation_ExtIEs__value_PR_NOTHING /* No components
+                                                               present */
+
+} Ngap_UPTransportLayerInformation_ExtIEs__value_PR;
+typedef enum Ngap_UserLocationInformation_ExtIEs__value_PR {
+  Ngap_UserLocationInformation_ExtIEs__value_PR_NOTHING, /* No components
+                                                            present */
+  Ngap_UserLocationInformation_ExtIEs__value_PR_UserLocationInformationTNGF,
+  Ngap_UserLocationInformation_ExtIEs__value_PR_UserLocationInformationTWIF,
+  Ngap_UserLocationInformation_ExtIEs__value_PR_UserLocationInformationW_AGF
+} Ngap_UserLocationInformation_ExtIEs__value_PR;
+typedef enum Ngap_UserLocationInformationW_AGF_ExtIEs__value_PR {
+  Ngap_UserLocationInformationW_AGF_ExtIEs__value_PR_NOTHING, /* No components
+                                                                 present */
+  Ngap_UserLocationInformationW_AGF_ExtIEs__value_PR_GlobalCable_ID
+} Ngap_UserLocationInformationW_AGF_ExtIEs__value_PR;
+typedef enum Ngap_W_AGF_ID_ExtIEs__value_PR {
+  Ngap_W_AGF_ID_ExtIEs__value_PR_NOTHING /* No components present */
+
+} Ngap_W_AGF_ID_ExtIEs__value_PR;
+typedef enum Ngap_WarningAreaList_ExtIEs__value_PR {
+  Ngap_WarningAreaList_ExtIEs__value_PR_NOTHING /* No components present */
+
+} Ngap_WarningAreaList_ExtIEs__value_PR;
 typedef enum Ngap_PDUSessionResourceSetupRequestIEs__value_PR {
   Ngap_PDUSessionResourceSetupRequestIEs__value_PR_NOTHING, /* No components
                                                                present */
@@ -1157,6 +1399,811 @@ typedef enum Ngap_PDUSessionResourceSetupRequestTransferIEs__value_PR {
 } Ngap_PDUSessionResourceSetupRequestTransferIEs__value_PR;
 
 /* Ngap_ProtocolIE-Field */
+typedef struct Ngap_AMFPagingTarget_ExtIEs {
+  Ngap_ProtocolIE_ID_t id;
+  Ngap_Criticality_t criticality;
+  struct Ngap_AMFPagingTarget_ExtIEs__value {
+    Ngap_AMFPagingTarget_ExtIEs__value_PR present;
+    union Ngap_AMFPagingTarget_ExtIEs__Ngap_value_u {
+    } choice;
+
+    /* Context for parsing across buffer boundaries */
+    asn_struct_ctx_t _asn_ctx;
+  } value;
+
+  /* Context for parsing across buffer boundaries */
+  asn_struct_ctx_t _asn_ctx;
+} Ngap_AMFPagingTarget_ExtIEs_t;
+typedef struct Ngap_AreaScopeOfMDT_NR_ExtIEs {
+  Ngap_ProtocolIE_ID_t id;
+  Ngap_Criticality_t criticality;
+  struct Ngap_AreaScopeOfMDT_NR_ExtIEs__value {
+    Ngap_AreaScopeOfMDT_NR_ExtIEs__value_PR present;
+    union Ngap_AreaScopeOfMDT_NR_ExtIEs__Ngap_value_u {
+    } choice;
+
+    /* Context for parsing across buffer boundaries */
+    asn_struct_ctx_t _asn_ctx;
+  } value;
+
+  /* Context for parsing across buffer boundaries */
+  asn_struct_ctx_t _asn_ctx;
+} Ngap_AreaScopeOfMDT_NR_ExtIEs_t;
+typedef struct Ngap_AreaScopeOfMDT_EUTRA_ExtIEs {
+  Ngap_ProtocolIE_ID_t id;
+  Ngap_Criticality_t criticality;
+  struct Ngap_AreaScopeOfMDT_EUTRA_ExtIEs__value {
+    Ngap_AreaScopeOfMDT_EUTRA_ExtIEs__value_PR present;
+    union Ngap_AreaScopeOfMDT_EUTRA_ExtIEs__Ngap_value_u {
+    } choice;
+
+    /* Context for parsing across buffer boundaries */
+    asn_struct_ctx_t _asn_ctx;
+  } value;
+
+  /* Context for parsing across buffer boundaries */
+  asn_struct_ctx_t _asn_ctx;
+} Ngap_AreaScopeOfMDT_EUTRA_ExtIEs_t;
+typedef struct Ngap_BroadcastCancelledAreaList_ExtIEs {
+  Ngap_ProtocolIE_ID_t id;
+  Ngap_Criticality_t criticality;
+  struct Ngap_BroadcastCancelledAreaList_ExtIEs__value {
+    Ngap_BroadcastCancelledAreaList_ExtIEs__value_PR present;
+    union Ngap_BroadcastCancelledAreaList_ExtIEs__Ngap_value_u {
+    } choice;
+
+    /* Context for parsing across buffer boundaries */
+    asn_struct_ctx_t _asn_ctx;
+  } value;
+
+  /* Context for parsing across buffer boundaries */
+  asn_struct_ctx_t _asn_ctx;
+} Ngap_BroadcastCancelledAreaList_ExtIEs_t;
+typedef struct Ngap_BroadcastCompletedAreaList_ExtIEs {
+  Ngap_ProtocolIE_ID_t id;
+  Ngap_Criticality_t criticality;
+  struct Ngap_BroadcastCompletedAreaList_ExtIEs__value {
+    Ngap_BroadcastCompletedAreaList_ExtIEs__value_PR present;
+    union Ngap_BroadcastCompletedAreaList_ExtIEs__Ngap_value_u {
+    } choice;
+
+    /* Context for parsing across buffer boundaries */
+    asn_struct_ctx_t _asn_ctx;
+  } value;
+
+  /* Context for parsing across buffer boundaries */
+  asn_struct_ctx_t _asn_ctx;
+} Ngap_BroadcastCompletedAreaList_ExtIEs_t;
+typedef struct Ngap_CandidateCell_ExtIEs {
+  Ngap_ProtocolIE_ID_t id;
+  Ngap_Criticality_t criticality;
+  struct Ngap_CandidateCell_ExtIEs__value {
+    Ngap_CandidateCell_ExtIEs__value_PR present;
+    union Ngap_CandidateCell_ExtIEs__Ngap_value_u {
+    } choice;
+
+    /* Context for parsing across buffer boundaries */
+    asn_struct_ctx_t _asn_ctx;
+  } value;
+
+  /* Context for parsing across buffer boundaries */
+  asn_struct_ctx_t _asn_ctx;
+} Ngap_CandidateCell_ExtIEs_t;
+typedef struct Ngap_Cause_ExtIEs {
+  Ngap_ProtocolIE_ID_t id;
+  Ngap_Criticality_t criticality;
+  struct Ngap_Cause_ExtIEs__value {
+    Ngap_Cause_ExtIEs__value_PR present;
+    union Ngap_Cause_ExtIEs__Ngap_value_u {
+    } choice;
+
+    /* Context for parsing across buffer boundaries */
+    asn_struct_ctx_t _asn_ctx;
+  } value;
+
+  /* Context for parsing across buffer boundaries */
+  asn_struct_ctx_t _asn_ctx;
+} Ngap_Cause_ExtIEs_t;
+typedef struct Ngap_CellIDListForRestart_ExtIEs {
+  Ngap_ProtocolIE_ID_t id;
+  Ngap_Criticality_t criticality;
+  struct Ngap_CellIDListForRestart_ExtIEs__value {
+    Ngap_CellIDListForRestart_ExtIEs__value_PR present;
+    union Ngap_CellIDListForRestart_ExtIEs__Ngap_value_u {
+    } choice;
+
+    /* Context for parsing across buffer boundaries */
+    asn_struct_ctx_t _asn_ctx;
+  } value;
+
+  /* Context for parsing across buffer boundaries */
+  asn_struct_ctx_t _asn_ctx;
+} Ngap_CellIDListForRestart_ExtIEs_t;
+typedef struct Ngap_CPTransportLayerInformation_ExtIEs {
+  Ngap_ProtocolIE_ID_t id;
+  Ngap_Criticality_t criticality;
+  struct Ngap_CPTransportLayerInformation_ExtIEs__value {
+    Ngap_CPTransportLayerInformation_ExtIEs__value_PR present;
+    union Ngap_CPTransportLayerInformation_ExtIEs__Ngap_value_u {
+      Ngap_EndpointIPAddressAndPort_t EndpointIPAddressAndPort;
+    } choice;
+
+    /* Context for parsing across buffer boundaries */
+    asn_struct_ctx_t _asn_ctx;
+  } value;
+
+  /* Context for parsing across buffer boundaries */
+  asn_struct_ctx_t _asn_ctx;
+} Ngap_CPTransportLayerInformation_ExtIEs_t;
+typedef struct Ngap_DRBStatusDL_ExtIEs {
+  Ngap_ProtocolIE_ID_t id;
+  Ngap_Criticality_t criticality;
+  struct Ngap_DRBStatusDL_ExtIEs__value {
+    Ngap_DRBStatusDL_ExtIEs__value_PR present;
+    union Ngap_DRBStatusDL_ExtIEs__Ngap_value_u {
+    } choice;
+
+    /* Context for parsing across buffer boundaries */
+    asn_struct_ctx_t _asn_ctx;
+  } value;
+
+  /* Context for parsing across buffer boundaries */
+  asn_struct_ctx_t _asn_ctx;
+} Ngap_DRBStatusDL_ExtIEs_t;
+typedef struct Ngap_DRBStatusUL_ExtIEs {
+  Ngap_ProtocolIE_ID_t id;
+  Ngap_Criticality_t criticality;
+  struct Ngap_DRBStatusUL_ExtIEs__value {
+    Ngap_DRBStatusUL_ExtIEs__value_PR present;
+    union Ngap_DRBStatusUL_ExtIEs__Ngap_value_u {
+    } choice;
+
+    /* Context for parsing across buffer boundaries */
+    asn_struct_ctx_t _asn_ctx;
+  } value;
+
+  /* Context for parsing across buffer boundaries */
+  asn_struct_ctx_t _asn_ctx;
+} Ngap_DRBStatusUL_ExtIEs_t;
+typedef struct Ngap_ProcedureStageChoice_ExtIEs {
+  Ngap_ProtocolIE_ID_t id;
+  Ngap_Criticality_t criticality;
+  struct Ngap_ProcedureStageChoice_ExtIEs__value {
+    Ngap_ProcedureStageChoice_ExtIEs__value_PR present;
+    union Ngap_ProcedureStageChoice_ExtIEs__Ngap_value_u {
+    } choice;
+
+    /* Context for parsing across buffer boundaries */
+    asn_struct_ctx_t _asn_ctx;
+  } value;
+
+  /* Context for parsing across buffer boundaries */
+  asn_struct_ctx_t _asn_ctx;
+} Ngap_ProcedureStageChoice_ExtIEs_t;
+typedef struct Ngap_ENB_ID_ExtIEs {
+  Ngap_ProtocolIE_ID_t id;
+  Ngap_Criticality_t criticality;
+  struct Ngap_ENB_ID_ExtIEs__value {
+    Ngap_ENB_ID_ExtIEs__value_PR present;
+    union Ngap_ENB_ID_ExtIEs__Ngap_value_u {
+    } choice;
+
+    /* Context for parsing across buffer boundaries */
+    asn_struct_ctx_t _asn_ctx;
+  } value;
+
+  /* Context for parsing across buffer boundaries */
+  asn_struct_ctx_t _asn_ctx;
+} Ngap_ENB_ID_ExtIEs_t;
+typedef struct Ngap_EventTrigger_ExtIEs {
+  Ngap_ProtocolIE_ID_t id;
+  Ngap_Criticality_t criticality;
+  struct Ngap_EventTrigger_ExtIEs__value {
+    Ngap_EventTrigger_ExtIEs__value_PR present;
+    union Ngap_EventTrigger_ExtIEs__Ngap_value_u {
+    } choice;
+
+    /* Context for parsing across buffer boundaries */
+    asn_struct_ctx_t _asn_ctx;
+  } value;
+
+  /* Context for parsing across buffer boundaries */
+  asn_struct_ctx_t _asn_ctx;
+} Ngap_EventTrigger_ExtIEs_t;
+typedef struct Ngap_MeasurementThresholdL1LoggedMDT_ExtIEs {
+  Ngap_ProtocolIE_ID_t id;
+  Ngap_Criticality_t criticality;
+  struct Ngap_MeasurementThresholdL1LoggedMDT_ExtIEs__value {
+    Ngap_MeasurementThresholdL1LoggedMDT_ExtIEs__value_PR present;
+    union Ngap_MeasurementThresholdL1LoggedMDT_ExtIEs__Ngap_value_u {
+    } choice;
+
+    /* Context for parsing across buffer boundaries */
+    asn_struct_ctx_t _asn_ctx;
+  } value;
+
+  /* Context for parsing across buffer boundaries */
+  asn_struct_ctx_t _asn_ctx;
+} Ngap_MeasurementThresholdL1LoggedMDT_ExtIEs_t;
+typedef struct Ngap_GlobalRANNodeID_ExtIEs {
+  Ngap_ProtocolIE_ID_t id;
+  Ngap_Criticality_t criticality;
+  struct Ngap_GlobalRANNodeID_ExtIEs__value {
+    Ngap_GlobalRANNodeID_ExtIEs__value_PR present;
+    union Ngap_GlobalRANNodeID_ExtIEs__Ngap_value_u {
+      Ngap_GlobalTNGF_ID_t GlobalTNGF_ID;
+      Ngap_GlobalTWIF_ID_t GlobalTWIF_ID;
+      Ngap_GlobalW_AGF_ID_t GlobalW_AGF_ID;
+    } choice;
+
+    /* Context for parsing across buffer boundaries */
+    asn_struct_ctx_t _asn_ctx;
+  } value;
+
+  /* Context for parsing across buffer boundaries */
+  asn_struct_ctx_t _asn_ctx;
+} Ngap_GlobalRANNodeID_ExtIEs_t;
+typedef struct Ngap_GNB_ID_ExtIEs {
+  Ngap_ProtocolIE_ID_t id;
+  Ngap_Criticality_t criticality;
+  struct Ngap_GNB_ID_ExtIEs__value {
+    Ngap_GNB_ID_ExtIEs__value_PR present;
+    union Ngap_GNB_ID_ExtIEs__Ngap_value_u {
+    } choice;
+
+    /* Context for parsing across buffer boundaries */
+    asn_struct_ctx_t _asn_ctx;
+  } value;
+
+  /* Context for parsing across buffer boundaries */
+  asn_struct_ctx_t _asn_ctx;
+} Ngap_GNB_ID_ExtIEs_t;
+typedef struct Ngap_IntersystemSONTransferType_ExtIEs {
+  Ngap_ProtocolIE_ID_t id;
+  Ngap_Criticality_t criticality;
+  struct Ngap_IntersystemSONTransferType_ExtIEs__value {
+    Ngap_IntersystemSONTransferType_ExtIEs__value_PR present;
+    union Ngap_IntersystemSONTransferType_ExtIEs__Ngap_value_u {
+    } choice;
+
+    /* Context for parsing across buffer boundaries */
+    asn_struct_ctx_t _asn_ctx;
+  } value;
+
+  /* Context for parsing across buffer boundaries */
+  asn_struct_ctx_t _asn_ctx;
+} Ngap_IntersystemSONTransferType_ExtIEs_t;
+typedef struct Ngap_IntersystemSONInformation_ExtIEs {
+  Ngap_ProtocolIE_ID_t id;
+  Ngap_Criticality_t criticality;
+  struct Ngap_IntersystemSONInformation_ExtIEs__value {
+    Ngap_IntersystemSONInformation_ExtIEs__value_PR present;
+    union Ngap_IntersystemSONInformation_ExtIEs__Ngap_value_u {
+    } choice;
+
+    /* Context for parsing across buffer boundaries */
+    asn_struct_ctx_t _asn_ctx;
+  } value;
+
+  /* Context for parsing across buffer boundaries */
+  asn_struct_ctx_t _asn_ctx;
+} Ngap_IntersystemSONInformation_ExtIEs_t;
+typedef struct Ngap_IntersystemSONInformationReport_ExtIEs {
+  Ngap_ProtocolIE_ID_t id;
+  Ngap_Criticality_t criticality;
+  struct Ngap_IntersystemSONInformationReport_ExtIEs__value {
+    Ngap_IntersystemSONInformationReport_ExtIEs__value_PR present;
+    union Ngap_IntersystemSONInformationReport_ExtIEs__Ngap_value_u {
+    } choice;
+
+    /* Context for parsing across buffer boundaries */
+    asn_struct_ctx_t _asn_ctx;
+  } value;
+
+  /* Context for parsing across buffer boundaries */
+  asn_struct_ctx_t _asn_ctx;
+} Ngap_IntersystemSONInformationReport_ExtIEs_t;
+typedef struct Ngap_InterSystemHandoverReportType_ExtIEs {
+  Ngap_ProtocolIE_ID_t id;
+  Ngap_Criticality_t criticality;
+  struct Ngap_InterSystemHandoverReportType_ExtIEs__value {
+    Ngap_InterSystemHandoverReportType_ExtIEs__value_PR present;
+    union Ngap_InterSystemHandoverReportType_ExtIEs__Ngap_value_u {
+    } choice;
+
+    /* Context for parsing across buffer boundaries */
+    asn_struct_ctx_t _asn_ctx;
+  } value;
+
+  /* Context for parsing across buffer boundaries */
+  asn_struct_ctx_t _asn_ctx;
+} Ngap_InterSystemHandoverReportType_ExtIEs_t;
+typedef struct Ngap_LastVisitedCellInformation_ExtIEs {
+  Ngap_ProtocolIE_ID_t id;
+  Ngap_Criticality_t criticality;
+  struct Ngap_LastVisitedCellInformation_ExtIEs__value {
+    Ngap_LastVisitedCellInformation_ExtIEs__value_PR present;
+    union Ngap_LastVisitedCellInformation_ExtIEs__Ngap_value_u {
+    } choice;
+
+    /* Context for parsing across buffer boundaries */
+    asn_struct_ctx_t _asn_ctx;
+  } value;
+
+  /* Context for parsing across buffer boundaries */
+  asn_struct_ctx_t _asn_ctx;
+} Ngap_LastVisitedCellInformation_ExtIEs_t;
+typedef struct Ngap_LoggedMDTTrigger_ExtIEs {
+  Ngap_ProtocolIE_ID_t id;
+  Ngap_Criticality_t criticality;
+  struct Ngap_LoggedMDTTrigger_ExtIEs__value {
+    Ngap_LoggedMDTTrigger_ExtIEs__value_PR present;
+    union Ngap_LoggedMDTTrigger_ExtIEs__Ngap_value_u {
+    } choice;
+
+    /* Context for parsing across buffer boundaries */
+    asn_struct_ctx_t _asn_ctx;
+  } value;
+
+  /* Context for parsing across buffer boundaries */
+  asn_struct_ctx_t _asn_ctx;
+} Ngap_LoggedMDTTrigger_ExtIEs_t;
+typedef struct Ngap_MDTModeNr_ExtIEs {
+  Ngap_ProtocolIE_ID_t id;
+  Ngap_Criticality_t criticality;
+  struct Ngap_MDTModeNr_ExtIEs__value {
+    Ngap_MDTModeNr_ExtIEs__value_PR present;
+    union Ngap_MDTModeNr_ExtIEs__Ngap_value_u {
+    } choice;
+
+    /* Context for parsing across buffer boundaries */
+    asn_struct_ctx_t _asn_ctx;
+  } value;
+
+  /* Context for parsing across buffer boundaries */
+  asn_struct_ctx_t _asn_ctx;
+} Ngap_MDTModeNr_ExtIEs_t;
+typedef struct Ngap_M1ThresholdType_ExtIEs {
+  Ngap_ProtocolIE_ID_t id;
+  Ngap_Criticality_t criticality;
+  struct Ngap_M1ThresholdType_ExtIEs__value {
+    Ngap_M1ThresholdType_ExtIEs__value_PR present;
+    union Ngap_M1ThresholdType_ExtIEs__Ngap_value_u {
+    } choice;
+
+    /* Context for parsing across buffer boundaries */
+    asn_struct_ctx_t _asn_ctx;
+  } value;
+
+  /* Context for parsing across buffer boundaries */
+  asn_struct_ctx_t _asn_ctx;
+} Ngap_M1ThresholdType_ExtIEs_t;
+typedef struct Ngap_N3IWF_ID_ExtIEs {
+  Ngap_ProtocolIE_ID_t id;
+  Ngap_Criticality_t criticality;
+  struct Ngap_N3IWF_ID_ExtIEs__value {
+    Ngap_N3IWF_ID_ExtIEs__value_PR present;
+    union Ngap_N3IWF_ID_ExtIEs__Ngap_value_u {
+    } choice;
+
+    /* Context for parsing across buffer boundaries */
+    asn_struct_ctx_t _asn_ctx;
+  } value;
+
+  /* Context for parsing across buffer boundaries */
+  asn_struct_ctx_t _asn_ctx;
+} Ngap_N3IWF_ID_ExtIEs_t;
+typedef struct Ngap_NgENB_ID_ExtIEs {
+  Ngap_ProtocolIE_ID_t id;
+  Ngap_Criticality_t criticality;
+  struct Ngap_NgENB_ID_ExtIEs__value {
+    Ngap_NgENB_ID_ExtIEs__value_PR present;
+    union Ngap_NgENB_ID_ExtIEs__Ngap_value_u {
+    } choice;
+
+    /* Context for parsing across buffer boundaries */
+    asn_struct_ctx_t _asn_ctx;
+  } value;
+
+  /* Context for parsing across buffer boundaries */
+  asn_struct_ctx_t _asn_ctx;
+} Ngap_NgENB_ID_ExtIEs_t;
+typedef struct Ngap_NGRAN_CGI_ExtIEs {
+  Ngap_ProtocolIE_ID_t id;
+  Ngap_Criticality_t criticality;
+  struct Ngap_NGRAN_CGI_ExtIEs__value {
+    Ngap_NGRAN_CGI_ExtIEs__value_PR present;
+    union Ngap_NGRAN_CGI_ExtIEs__Ngap_value_u {
+    } choice;
+
+    /* Context for parsing across buffer boundaries */
+    asn_struct_ctx_t _asn_ctx;
+  } value;
+
+  /* Context for parsing across buffer boundaries */
+  asn_struct_ctx_t _asn_ctx;
+} Ngap_NGRAN_CGI_ExtIEs_t;
+typedef struct Ngap_NPN_AccessInformation_ExtIEs {
+  Ngap_ProtocolIE_ID_t id;
+  Ngap_Criticality_t criticality;
+  struct Ngap_NPN_AccessInformation_ExtIEs__value {
+    Ngap_NPN_AccessInformation_ExtIEs__value_PR present;
+    union Ngap_NPN_AccessInformation_ExtIEs__Ngap_value_u {
+    } choice;
+
+    /* Context for parsing across buffer boundaries */
+    asn_struct_ctx_t _asn_ctx;
+  } value;
+
+  /* Context for parsing across buffer boundaries */
+  asn_struct_ctx_t _asn_ctx;
+} Ngap_NPN_AccessInformation_ExtIEs_t;
+typedef struct Ngap_NPN_MobilityInformation_ExtIEs {
+  Ngap_ProtocolIE_ID_t id;
+  Ngap_Criticality_t criticality;
+  struct Ngap_NPN_MobilityInformation_ExtIEs__value {
+    Ngap_NPN_MobilityInformation_ExtIEs__value_PR present;
+    union Ngap_NPN_MobilityInformation_ExtIEs__Ngap_value_u {
+    } choice;
+
+    /* Context for parsing across buffer boundaries */
+    asn_struct_ctx_t _asn_ctx;
+  } value;
+
+  /* Context for parsing across buffer boundaries */
+  asn_struct_ctx_t _asn_ctx;
+} Ngap_NPN_MobilityInformation_ExtIEs_t;
+typedef struct Ngap_NPN_PagingAssistanceInformation_ExtIEs {
+  Ngap_ProtocolIE_ID_t id;
+  Ngap_Criticality_t criticality;
+  struct Ngap_NPN_PagingAssistanceInformation_ExtIEs__value {
+    Ngap_NPN_PagingAssistanceInformation_ExtIEs__value_PR present;
+    union Ngap_NPN_PagingAssistanceInformation_ExtIEs__Ngap_value_u {
+    } choice;
+
+    /* Context for parsing across buffer boundaries */
+    asn_struct_ctx_t _asn_ctx;
+  } value;
+
+  /* Context for parsing across buffer boundaries */
+  asn_struct_ctx_t _asn_ctx;
+} Ngap_NPN_PagingAssistanceInformation_ExtIEs_t;
+typedef struct Ngap_NPN_Support_ExtIEs {
+  Ngap_ProtocolIE_ID_t id;
+  Ngap_Criticality_t criticality;
+  struct Ngap_NPN_Support_ExtIEs__value {
+    Ngap_NPN_Support_ExtIEs__value_PR present;
+    union Ngap_NPN_Support_ExtIEs__Ngap_value_u {
+    } choice;
+
+    /* Context for parsing across buffer boundaries */
+    asn_struct_ctx_t _asn_ctx;
+  } value;
+
+  /* Context for parsing across buffer boundaries */
+  asn_struct_ctx_t _asn_ctx;
+} Ngap_NPN_Support_ExtIEs_t;
+typedef struct Ngap_OverloadResponse_ExtIEs {
+  Ngap_ProtocolIE_ID_t id;
+  Ngap_Criticality_t criticality;
+  struct Ngap_OverloadResponse_ExtIEs__value {
+    Ngap_OverloadResponse_ExtIEs__value_PR present;
+    union Ngap_OverloadResponse_ExtIEs__Ngap_value_u {
+    } choice;
+
+    /* Context for parsing across buffer boundaries */
+    asn_struct_ctx_t _asn_ctx;
+  } value;
+
+  /* Context for parsing across buffer boundaries */
+  asn_struct_ctx_t _asn_ctx;
+} Ngap_OverloadResponse_ExtIEs_t;
+typedef struct Ngap_PWSFailedCellIDList_ExtIEs {
+  Ngap_ProtocolIE_ID_t id;
+  Ngap_Criticality_t criticality;
+  struct Ngap_PWSFailedCellIDList_ExtIEs__value {
+    Ngap_PWSFailedCellIDList_ExtIEs__value_PR present;
+    union Ngap_PWSFailedCellIDList_ExtIEs__Ngap_value_u {
+    } choice;
+
+    /* Context for parsing across buffer boundaries */
+    asn_struct_ctx_t _asn_ctx;
+  } value;
+
+  /* Context for parsing across buffer boundaries */
+  asn_struct_ctx_t _asn_ctx;
+} Ngap_PWSFailedCellIDList_ExtIEs_t;
+typedef struct Ngap_QosCharacteristics_ExtIEs {
+  Ngap_ProtocolIE_ID_t id;
+  Ngap_Criticality_t criticality;
+  struct Ngap_QosCharacteristics_ExtIEs__value {
+    Ngap_QosCharacteristics_ExtIEs__value_PR present;
+    union Ngap_QosCharacteristics_ExtIEs__Ngap_value_u {
+    } choice;
+
+    /* Context for parsing across buffer boundaries */
+    asn_struct_ctx_t _asn_ctx;
+  } value;
+
+  /* Context for parsing across buffer boundaries */
+  asn_struct_ctx_t _asn_ctx;
+} Ngap_QosCharacteristics_ExtIEs_t;
+typedef struct Ngap_ResetType_ExtIEs {
+  Ngap_ProtocolIE_ID_t id;
+  Ngap_Criticality_t criticality;
+  struct Ngap_ResetType_ExtIEs__value {
+    Ngap_ResetType_ExtIEs__value_PR present;
+    union Ngap_ResetType_ExtIEs__Ngap_value_u {
+    } choice;
+
+    /* Context for parsing across buffer boundaries */
+    asn_struct_ctx_t _asn_ctx;
+  } value;
+
+  /* Context for parsing across buffer boundaries */
+  asn_struct_ctx_t _asn_ctx;
+} Ngap_ResetType_ExtIEs_t;
+typedef struct Ngap_SensorNameConfig_ExtIEs {
+  Ngap_ProtocolIE_ID_t id;
+  Ngap_Criticality_t criticality;
+  struct Ngap_SensorNameConfig_ExtIEs__value {
+    Ngap_SensorNameConfig_ExtIEs__value_PR present;
+    union Ngap_SensorNameConfig_ExtIEs__Ngap_value_u {
+    } choice;
+
+    /* Context for parsing across buffer boundaries */
+    asn_struct_ctx_t _asn_ctx;
+  } value;
+
+  /* Context for parsing across buffer boundaries */
+  asn_struct_ctx_t _asn_ctx;
+} Ngap_SensorNameConfig_ExtIEs_t;
+typedef struct Ngap_SONInformation_ExtIEs {
+  Ngap_ProtocolIE_ID_t id;
+  Ngap_Criticality_t criticality;
+  struct Ngap_SONInformation_ExtIEs__value {
+    Ngap_SONInformation_ExtIEs__value_PR present;
+    union Ngap_SONInformation_ExtIEs__Ngap_value_u {
+      Ngap_SONInformationReport_t SONInformationReport;
+    } choice;
+
+    /* Context for parsing across buffer boundaries */
+    asn_struct_ctx_t _asn_ctx;
+  } value;
+
+  /* Context for parsing across buffer boundaries */
+  asn_struct_ctx_t _asn_ctx;
+} Ngap_SONInformation_ExtIEs_t;
+typedef struct Ngap_SONInformationReport_ExtIEs {
+  Ngap_ProtocolIE_ID_t id;
+  Ngap_Criticality_t criticality;
+  struct Ngap_SONInformationReport_ExtIEs__value {
+    Ngap_SONInformationReport_ExtIEs__value_PR present;
+    union Ngap_SONInformationReport_ExtIEs__Ngap_value_u {
+    } choice;
+
+    /* Context for parsing across buffer boundaries */
+    asn_struct_ctx_t _asn_ctx;
+  } value;
+
+  /* Context for parsing across buffer boundaries */
+  asn_struct_ctx_t _asn_ctx;
+} Ngap_SONInformationReport_ExtIEs_t;
+typedef struct Ngap_SourceNodeID_ExtIEs {
+  Ngap_ProtocolIE_ID_t id;
+  Ngap_Criticality_t criticality;
+  struct Ngap_SourceNodeID_ExtIEs__value {
+    Ngap_SourceNodeID_ExtIEs__value_PR present;
+    union Ngap_SourceNodeID_ExtIEs__Ngap_value_u {
+    } choice;
+
+    /* Context for parsing across buffer boundaries */
+    asn_struct_ctx_t _asn_ctx;
+  } value;
+
+  /* Context for parsing across buffer boundaries */
+  asn_struct_ctx_t _asn_ctx;
+} Ngap_SourceNodeID_ExtIEs_t;
+typedef struct Ngap_TargetID_ExtIEs {
+  Ngap_ProtocolIE_ID_t id;
+  Ngap_Criticality_t criticality;
+  struct Ngap_TargetID_ExtIEs__value {
+    Ngap_TargetID_ExtIEs__value_PR present;
+    union Ngap_TargetID_ExtIEs__Ngap_value_u {
+      Ngap_TargetRNC_ID_t TargetRNC_ID;
+    } choice;
+
+    /* Context for parsing across buffer boundaries */
+    asn_struct_ctx_t _asn_ctx;
+  } value;
+
+  /* Context for parsing across buffer boundaries */
+  asn_struct_ctx_t _asn_ctx;
+} Ngap_TargetID_ExtIEs_t;
+typedef struct Ngap_TNGF_ID_ExtIEs {
+  Ngap_ProtocolIE_ID_t id;
+  Ngap_Criticality_t criticality;
+  struct Ngap_TNGF_ID_ExtIEs__value {
+    Ngap_TNGF_ID_ExtIEs__value_PR present;
+    union Ngap_TNGF_ID_ExtIEs__Ngap_value_u {
+    } choice;
+
+    /* Context for parsing across buffer boundaries */
+    asn_struct_ctx_t _asn_ctx;
+  } value;
+
+  /* Context for parsing across buffer boundaries */
+  asn_struct_ctx_t _asn_ctx;
+} Ngap_TNGF_ID_ExtIEs_t;
+typedef struct Ngap_TWIF_ID_ExtIEs {
+  Ngap_ProtocolIE_ID_t id;
+  Ngap_Criticality_t criticality;
+  struct Ngap_TWIF_ID_ExtIEs__value {
+    Ngap_TWIF_ID_ExtIEs__value_PR present;
+    union Ngap_TWIF_ID_ExtIEs__Ngap_value_u {
+    } choice;
+
+    /* Context for parsing across buffer boundaries */
+    asn_struct_ctx_t _asn_ctx;
+  } value;
+
+  /* Context for parsing across buffer boundaries */
+  asn_struct_ctx_t _asn_ctx;
+} Ngap_TWIF_ID_ExtIEs_t;
+typedef struct Ngap_UEHistoryInformationFromTheUE_ExtIEs {
+  Ngap_ProtocolIE_ID_t id;
+  Ngap_Criticality_t criticality;
+  struct Ngap_UEHistoryInformationFromTheUE_ExtIEs__value {
+    Ngap_UEHistoryInformationFromTheUE_ExtIEs__value_PR present;
+    union Ngap_UEHistoryInformationFromTheUE_ExtIEs__Ngap_value_u {
+    } choice;
+
+    /* Context for parsing across buffer boundaries */
+    asn_struct_ctx_t _asn_ctx;
+  } value;
+
+  /* Context for parsing across buffer boundaries */
+  asn_struct_ctx_t _asn_ctx;
+} Ngap_UEHistoryInformationFromTheUE_ExtIEs_t;
+typedef struct Ngap_UEIdentityIndexValue_ExtIEs {
+  Ngap_ProtocolIE_ID_t id;
+  Ngap_Criticality_t criticality;
+  struct Ngap_UEIdentityIndexValue_ExtIEs__value {
+    Ngap_UEIdentityIndexValue_ExtIEs__value_PR present;
+    union Ngap_UEIdentityIndexValue_ExtIEs__Ngap_value_u {
+    } choice;
+
+    /* Context for parsing across buffer boundaries */
+    asn_struct_ctx_t _asn_ctx;
+  } value;
+
+  /* Context for parsing across buffer boundaries */
+  asn_struct_ctx_t _asn_ctx;
+} Ngap_UEIdentityIndexValue_ExtIEs_t;
+typedef struct Ngap_UE_NGAP_IDs_ExtIEs {
+  Ngap_ProtocolIE_ID_t id;
+  Ngap_Criticality_t criticality;
+  struct Ngap_UE_NGAP_IDs_ExtIEs__value {
+    Ngap_UE_NGAP_IDs_ExtIEs__value_PR present;
+    union Ngap_UE_NGAP_IDs_ExtIEs__Ngap_value_u {
+    } choice;
+
+    /* Context for parsing across buffer boundaries */
+    asn_struct_ctx_t _asn_ctx;
+  } value;
+
+  /* Context for parsing across buffer boundaries */
+  asn_struct_ctx_t _asn_ctx;
+} Ngap_UE_NGAP_IDs_ExtIEs_t;
+typedef struct Ngap_UEPagingIdentity_ExtIEs {
+  Ngap_ProtocolIE_ID_t id;
+  Ngap_Criticality_t criticality;
+  struct Ngap_UEPagingIdentity_ExtIEs__value {
+    Ngap_UEPagingIdentity_ExtIEs__value_PR present;
+    union Ngap_UEPagingIdentity_ExtIEs__Ngap_value_u {
+    } choice;
+
+    /* Context for parsing across buffer boundaries */
+    asn_struct_ctx_t _asn_ctx;
+  } value;
+
+  /* Context for parsing across buffer boundaries */
+  asn_struct_ctx_t _asn_ctx;
+} Ngap_UEPagingIdentity_ExtIEs_t;
+typedef struct Ngap_UERLFReportContainer_ExtIEs {
+  Ngap_ProtocolIE_ID_t id;
+  Ngap_Criticality_t criticality;
+  struct Ngap_UERLFReportContainer_ExtIEs__value {
+    Ngap_UERLFReportContainer_ExtIEs__value_PR present;
+    union Ngap_UERLFReportContainer_ExtIEs__Ngap_value_u {
+    } choice;
+
+    /* Context for parsing across buffer boundaries */
+    asn_struct_ctx_t _asn_ctx;
+  } value;
+
+  /* Context for parsing across buffer boundaries */
+  asn_struct_ctx_t _asn_ctx;
+} Ngap_UERLFReportContainer_ExtIEs_t;
+typedef struct Ngap_UPTransportLayerInformation_ExtIEs {
+  Ngap_ProtocolIE_ID_t id;
+  Ngap_Criticality_t criticality;
+  struct Ngap_UPTransportLayerInformation_ExtIEs__value {
+    Ngap_UPTransportLayerInformation_ExtIEs__value_PR present;
+    union Ngap_UPTransportLayerInformation_ExtIEs__Ngap_value_u {
+    } choice;
+
+    /* Context for parsing across buffer boundaries */
+    asn_struct_ctx_t _asn_ctx;
+  } value;
+
+  /* Context for parsing across buffer boundaries */
+  asn_struct_ctx_t _asn_ctx;
+} Ngap_UPTransportLayerInformation_ExtIEs_t;
+typedef struct Ngap_UserLocationInformation_ExtIEs {
+  Ngap_ProtocolIE_ID_t id;
+  Ngap_Criticality_t criticality;
+  struct Ngap_UserLocationInformation_ExtIEs__value {
+    Ngap_UserLocationInformation_ExtIEs__value_PR present;
+    union Ngap_UserLocationInformation_ExtIEs__Ngap_value_u {
+      Ngap_UserLocationInformationTNGF_t UserLocationInformationTNGF;
+      Ngap_UserLocationInformationTWIF_t UserLocationInformationTWIF;
+      Ngap_UserLocationInformationW_AGF_t UserLocationInformationW_AGF;
+    } choice;
+
+    /* Context for parsing across buffer boundaries */
+    asn_struct_ctx_t _asn_ctx;
+  } value;
+
+  /* Context for parsing across buffer boundaries */
+  asn_struct_ctx_t _asn_ctx;
+} Ngap_UserLocationInformation_ExtIEs_t;
+typedef struct Ngap_UserLocationInformationW_AGF_ExtIEs {
+  Ngap_ProtocolIE_ID_t id;
+  Ngap_Criticality_t criticality;
+  struct Ngap_UserLocationInformationW_AGF_ExtIEs__value {
+    Ngap_UserLocationInformationW_AGF_ExtIEs__value_PR present;
+    union Ngap_UserLocationInformationW_AGF_ExtIEs__Ngap_value_u {
+      Ngap_GlobalCable_ID_t GlobalCable_ID;
+    } choice;
+
+    /* Context for parsing across buffer boundaries */
+    asn_struct_ctx_t _asn_ctx;
+  } value;
+
+  /* Context for parsing across buffer boundaries */
+  asn_struct_ctx_t _asn_ctx;
+} Ngap_UserLocationInformationW_AGF_ExtIEs_t;
+typedef struct Ngap_W_AGF_ID_ExtIEs {
+  Ngap_ProtocolIE_ID_t id;
+  Ngap_Criticality_t criticality;
+  struct Ngap_W_AGF_ID_ExtIEs__value {
+    Ngap_W_AGF_ID_ExtIEs__value_PR present;
+    union Ngap_W_AGF_ID_ExtIEs__Ngap_value_u {
+    } choice;
+
+    /* Context for parsing across buffer boundaries */
+    asn_struct_ctx_t _asn_ctx;
+  } value;
+
+  /* Context for parsing across buffer boundaries */
+  asn_struct_ctx_t _asn_ctx;
+} Ngap_W_AGF_ID_ExtIEs_t;
+typedef struct Ngap_WarningAreaList_ExtIEs {
+  Ngap_ProtocolIE_ID_t id;
+  Ngap_Criticality_t criticality;
+  struct Ngap_WarningAreaList_ExtIEs__value {
+    Ngap_WarningAreaList_ExtIEs__value_PR present;
+    union Ngap_WarningAreaList_ExtIEs__Ngap_value_u {
+    } choice;
+
+    /* Context for parsing across buffer boundaries */
+    asn_struct_ctx_t _asn_ctx;
+  } value;
+
+  /* Context for parsing across buffer boundaries */
+  asn_struct_ctx_t _asn_ctx;
+} Ngap_WarningAreaList_ExtIEs_t;
 typedef struct Ngap_PDUSessionResourceSetupRequestIEs {
   Ngap_ProtocolIE_ID_t id;
   Ngap_Criticality_t criticality;
@@ -3270,383 +4317,579 @@ typedef struct Ngap_PDUSessionResourceSetupRequestTransferIEs {
 } Ngap_PDUSessionResourceSetupRequestTransferIEs_t;
 
 /* Implementation */
+extern asn_TYPE_descriptor_t asn_DEF_Ngap_AMFPagingTarget_ExtIEs;
+extern asn_SEQUENCE_specifics_t asn_SPC_Ngap_AMFPagingTarget_ExtIEs_specs_1;
+extern asn_TYPE_member_t asn_MBR_Ngap_AMFPagingTarget_ExtIEs_1[3];
+extern asn_TYPE_descriptor_t asn_DEF_Ngap_AreaScopeOfMDT_NR_ExtIEs;
+extern asn_SEQUENCE_specifics_t asn_SPC_Ngap_AreaScopeOfMDT_NR_ExtIEs_specs_5;
+extern asn_TYPE_member_t asn_MBR_Ngap_AreaScopeOfMDT_NR_ExtIEs_5[3];
+extern asn_TYPE_descriptor_t asn_DEF_Ngap_AreaScopeOfMDT_EUTRA_ExtIEs;
+extern asn_SEQUENCE_specifics_t
+    asn_SPC_Ngap_AreaScopeOfMDT_EUTRA_ExtIEs_specs_9;
+extern asn_TYPE_member_t asn_MBR_Ngap_AreaScopeOfMDT_EUTRA_ExtIEs_9[3];
+extern asn_TYPE_descriptor_t asn_DEF_Ngap_BroadcastCancelledAreaList_ExtIEs;
+extern asn_SEQUENCE_specifics_t
+    asn_SPC_Ngap_BroadcastCancelledAreaList_ExtIEs_specs_13;
+extern asn_TYPE_member_t asn_MBR_Ngap_BroadcastCancelledAreaList_ExtIEs_13[3];
+extern asn_TYPE_descriptor_t asn_DEF_Ngap_BroadcastCompletedAreaList_ExtIEs;
+extern asn_SEQUENCE_specifics_t
+    asn_SPC_Ngap_BroadcastCompletedAreaList_ExtIEs_specs_17;
+extern asn_TYPE_member_t asn_MBR_Ngap_BroadcastCompletedAreaList_ExtIEs_17[3];
+extern asn_TYPE_descriptor_t asn_DEF_Ngap_CandidateCell_ExtIEs;
+extern asn_SEQUENCE_specifics_t asn_SPC_Ngap_CandidateCell_ExtIEs_specs_21;
+extern asn_TYPE_member_t asn_MBR_Ngap_CandidateCell_ExtIEs_21[3];
+extern asn_TYPE_descriptor_t asn_DEF_Ngap_Cause_ExtIEs;
+extern asn_SEQUENCE_specifics_t asn_SPC_Ngap_Cause_ExtIEs_specs_25;
+extern asn_TYPE_member_t asn_MBR_Ngap_Cause_ExtIEs_25[3];
+extern asn_TYPE_descriptor_t asn_DEF_Ngap_CellIDListForRestart_ExtIEs;
+extern asn_SEQUENCE_specifics_t
+    asn_SPC_Ngap_CellIDListForRestart_ExtIEs_specs_29;
+extern asn_TYPE_member_t asn_MBR_Ngap_CellIDListForRestart_ExtIEs_29[3];
+extern asn_TYPE_descriptor_t asn_DEF_Ngap_CPTransportLayerInformation_ExtIEs;
+extern asn_SEQUENCE_specifics_t
+    asn_SPC_Ngap_CPTransportLayerInformation_ExtIEs_specs_33;
+extern asn_TYPE_member_t asn_MBR_Ngap_CPTransportLayerInformation_ExtIEs_33[3];
+extern asn_TYPE_descriptor_t asn_DEF_Ngap_DRBStatusDL_ExtIEs;
+extern asn_SEQUENCE_specifics_t asn_SPC_Ngap_DRBStatusDL_ExtIEs_specs_37;
+extern asn_TYPE_member_t asn_MBR_Ngap_DRBStatusDL_ExtIEs_37[3];
+extern asn_TYPE_descriptor_t asn_DEF_Ngap_DRBStatusUL_ExtIEs;
+extern asn_SEQUENCE_specifics_t asn_SPC_Ngap_DRBStatusUL_ExtIEs_specs_41;
+extern asn_TYPE_member_t asn_MBR_Ngap_DRBStatusUL_ExtIEs_41[3];
+extern asn_TYPE_descriptor_t asn_DEF_Ngap_ProcedureStageChoice_ExtIEs;
+extern asn_SEQUENCE_specifics_t
+    asn_SPC_Ngap_ProcedureStageChoice_ExtIEs_specs_45;
+extern asn_TYPE_member_t asn_MBR_Ngap_ProcedureStageChoice_ExtIEs_45[3];
+extern asn_TYPE_descriptor_t asn_DEF_Ngap_ENB_ID_ExtIEs;
+extern asn_SEQUENCE_specifics_t asn_SPC_Ngap_ENB_ID_ExtIEs_specs_49;
+extern asn_TYPE_member_t asn_MBR_Ngap_ENB_ID_ExtIEs_49[3];
+extern asn_TYPE_descriptor_t asn_DEF_Ngap_EventTrigger_ExtIEs;
+extern asn_SEQUENCE_specifics_t asn_SPC_Ngap_EventTrigger_ExtIEs_specs_53;
+extern asn_TYPE_member_t asn_MBR_Ngap_EventTrigger_ExtIEs_53[3];
+extern asn_TYPE_descriptor_t
+    asn_DEF_Ngap_MeasurementThresholdL1LoggedMDT_ExtIEs;
+extern asn_SEQUENCE_specifics_t
+    asn_SPC_Ngap_MeasurementThresholdL1LoggedMDT_ExtIEs_specs_57;
+extern asn_TYPE_member_t
+    asn_MBR_Ngap_MeasurementThresholdL1LoggedMDT_ExtIEs_57[3];
+extern asn_TYPE_descriptor_t asn_DEF_Ngap_GlobalRANNodeID_ExtIEs;
+extern asn_SEQUENCE_specifics_t asn_SPC_Ngap_GlobalRANNodeID_ExtIEs_specs_61;
+extern asn_TYPE_member_t asn_MBR_Ngap_GlobalRANNodeID_ExtIEs_61[3];
+extern asn_TYPE_descriptor_t asn_DEF_Ngap_GNB_ID_ExtIEs;
+extern asn_SEQUENCE_specifics_t asn_SPC_Ngap_GNB_ID_ExtIEs_specs_65;
+extern asn_TYPE_member_t asn_MBR_Ngap_GNB_ID_ExtIEs_65[3];
+extern asn_TYPE_descriptor_t asn_DEF_Ngap_IntersystemSONTransferType_ExtIEs;
+extern asn_SEQUENCE_specifics_t
+    asn_SPC_Ngap_IntersystemSONTransferType_ExtIEs_specs_69;
+extern asn_TYPE_member_t asn_MBR_Ngap_IntersystemSONTransferType_ExtIEs_69[3];
+extern asn_TYPE_descriptor_t asn_DEF_Ngap_IntersystemSONInformation_ExtIEs;
+extern asn_SEQUENCE_specifics_t
+    asn_SPC_Ngap_IntersystemSONInformation_ExtIEs_specs_73;
+extern asn_TYPE_member_t asn_MBR_Ngap_IntersystemSONInformation_ExtIEs_73[3];
+extern asn_TYPE_descriptor_t
+    asn_DEF_Ngap_IntersystemSONInformationReport_ExtIEs;
+extern asn_SEQUENCE_specifics_t
+    asn_SPC_Ngap_IntersystemSONInformationReport_ExtIEs_specs_77;
+extern asn_TYPE_member_t
+    asn_MBR_Ngap_IntersystemSONInformationReport_ExtIEs_77[3];
+extern asn_TYPE_descriptor_t asn_DEF_Ngap_InterSystemHandoverReportType_ExtIEs;
+extern asn_SEQUENCE_specifics_t
+    asn_SPC_Ngap_InterSystemHandoverReportType_ExtIEs_specs_81;
+extern asn_TYPE_member_t
+    asn_MBR_Ngap_InterSystemHandoverReportType_ExtIEs_81[3];
+extern asn_TYPE_descriptor_t asn_DEF_Ngap_LastVisitedCellInformation_ExtIEs;
+extern asn_SEQUENCE_specifics_t
+    asn_SPC_Ngap_LastVisitedCellInformation_ExtIEs_specs_85;
+extern asn_TYPE_member_t asn_MBR_Ngap_LastVisitedCellInformation_ExtIEs_85[3];
+extern asn_TYPE_descriptor_t asn_DEF_Ngap_LoggedMDTTrigger_ExtIEs;
+extern asn_SEQUENCE_specifics_t asn_SPC_Ngap_LoggedMDTTrigger_ExtIEs_specs_89;
+extern asn_TYPE_member_t asn_MBR_Ngap_LoggedMDTTrigger_ExtIEs_89[3];
+extern asn_TYPE_descriptor_t asn_DEF_Ngap_MDTModeNr_ExtIEs;
+extern asn_SEQUENCE_specifics_t asn_SPC_Ngap_MDTModeNr_ExtIEs_specs_93;
+extern asn_TYPE_member_t asn_MBR_Ngap_MDTModeNr_ExtIEs_93[3];
+extern asn_TYPE_descriptor_t asn_DEF_Ngap_M1ThresholdType_ExtIEs;
+extern asn_SEQUENCE_specifics_t asn_SPC_Ngap_M1ThresholdType_ExtIEs_specs_97;
+extern asn_TYPE_member_t asn_MBR_Ngap_M1ThresholdType_ExtIEs_97[3];
+extern asn_TYPE_descriptor_t asn_DEF_Ngap_N3IWF_ID_ExtIEs;
+extern asn_SEQUENCE_specifics_t asn_SPC_Ngap_N3IWF_ID_ExtIEs_specs_101;
+extern asn_TYPE_member_t asn_MBR_Ngap_N3IWF_ID_ExtIEs_101[3];
+extern asn_TYPE_descriptor_t asn_DEF_Ngap_NgENB_ID_ExtIEs;
+extern asn_SEQUENCE_specifics_t asn_SPC_Ngap_NgENB_ID_ExtIEs_specs_105;
+extern asn_TYPE_member_t asn_MBR_Ngap_NgENB_ID_ExtIEs_105[3];
+extern asn_TYPE_descriptor_t asn_DEF_Ngap_NGRAN_CGI_ExtIEs;
+extern asn_SEQUENCE_specifics_t asn_SPC_Ngap_NGRAN_CGI_ExtIEs_specs_109;
+extern asn_TYPE_member_t asn_MBR_Ngap_NGRAN_CGI_ExtIEs_109[3];
+extern asn_TYPE_descriptor_t asn_DEF_Ngap_NPN_AccessInformation_ExtIEs;
+extern asn_SEQUENCE_specifics_t
+    asn_SPC_Ngap_NPN_AccessInformation_ExtIEs_specs_113;
+extern asn_TYPE_member_t asn_MBR_Ngap_NPN_AccessInformation_ExtIEs_113[3];
+extern asn_TYPE_descriptor_t asn_DEF_Ngap_NPN_MobilityInformation_ExtIEs;
+extern asn_SEQUENCE_specifics_t
+    asn_SPC_Ngap_NPN_MobilityInformation_ExtIEs_specs_117;
+extern asn_TYPE_member_t asn_MBR_Ngap_NPN_MobilityInformation_ExtIEs_117[3];
+extern asn_TYPE_descriptor_t
+    asn_DEF_Ngap_NPN_PagingAssistanceInformation_ExtIEs;
+extern asn_SEQUENCE_specifics_t
+    asn_SPC_Ngap_NPN_PagingAssistanceInformation_ExtIEs_specs_121;
+extern asn_TYPE_member_t
+    asn_MBR_Ngap_NPN_PagingAssistanceInformation_ExtIEs_121[3];
+extern asn_TYPE_descriptor_t asn_DEF_Ngap_NPN_Support_ExtIEs;
+extern asn_SEQUENCE_specifics_t asn_SPC_Ngap_NPN_Support_ExtIEs_specs_125;
+extern asn_TYPE_member_t asn_MBR_Ngap_NPN_Support_ExtIEs_125[3];
+extern asn_TYPE_descriptor_t asn_DEF_Ngap_OverloadResponse_ExtIEs;
+extern asn_SEQUENCE_specifics_t asn_SPC_Ngap_OverloadResponse_ExtIEs_specs_129;
+extern asn_TYPE_member_t asn_MBR_Ngap_OverloadResponse_ExtIEs_129[3];
+extern asn_TYPE_descriptor_t asn_DEF_Ngap_PWSFailedCellIDList_ExtIEs;
+extern asn_SEQUENCE_specifics_t
+    asn_SPC_Ngap_PWSFailedCellIDList_ExtIEs_specs_133;
+extern asn_TYPE_member_t asn_MBR_Ngap_PWSFailedCellIDList_ExtIEs_133[3];
+extern asn_TYPE_descriptor_t asn_DEF_Ngap_QosCharacteristics_ExtIEs;
+extern asn_SEQUENCE_specifics_t
+    asn_SPC_Ngap_QosCharacteristics_ExtIEs_specs_137;
+extern asn_TYPE_member_t asn_MBR_Ngap_QosCharacteristics_ExtIEs_137[3];
+extern asn_TYPE_descriptor_t asn_DEF_Ngap_ResetType_ExtIEs;
+extern asn_SEQUENCE_specifics_t asn_SPC_Ngap_ResetType_ExtIEs_specs_141;
+extern asn_TYPE_member_t asn_MBR_Ngap_ResetType_ExtIEs_141[3];
+extern asn_TYPE_descriptor_t asn_DEF_Ngap_SensorNameConfig_ExtIEs;
+extern asn_SEQUENCE_specifics_t asn_SPC_Ngap_SensorNameConfig_ExtIEs_specs_145;
+extern asn_TYPE_member_t asn_MBR_Ngap_SensorNameConfig_ExtIEs_145[3];
+extern asn_TYPE_descriptor_t asn_DEF_Ngap_SONInformation_ExtIEs;
+extern asn_SEQUENCE_specifics_t asn_SPC_Ngap_SONInformation_ExtIEs_specs_149;
+extern asn_TYPE_member_t asn_MBR_Ngap_SONInformation_ExtIEs_149[3];
+extern asn_TYPE_descriptor_t asn_DEF_Ngap_SONInformationReport_ExtIEs;
+extern asn_SEQUENCE_specifics_t
+    asn_SPC_Ngap_SONInformationReport_ExtIEs_specs_153;
+extern asn_TYPE_member_t asn_MBR_Ngap_SONInformationReport_ExtIEs_153[3];
+extern asn_TYPE_descriptor_t asn_DEF_Ngap_SourceNodeID_ExtIEs;
+extern asn_SEQUENCE_specifics_t asn_SPC_Ngap_SourceNodeID_ExtIEs_specs_157;
+extern asn_TYPE_member_t asn_MBR_Ngap_SourceNodeID_ExtIEs_157[3];
+extern asn_TYPE_descriptor_t asn_DEF_Ngap_TargetID_ExtIEs;
+extern asn_SEQUENCE_specifics_t asn_SPC_Ngap_TargetID_ExtIEs_specs_161;
+extern asn_TYPE_member_t asn_MBR_Ngap_TargetID_ExtIEs_161[3];
+extern asn_TYPE_descriptor_t asn_DEF_Ngap_TNGF_ID_ExtIEs;
+extern asn_SEQUENCE_specifics_t asn_SPC_Ngap_TNGF_ID_ExtIEs_specs_165;
+extern asn_TYPE_member_t asn_MBR_Ngap_TNGF_ID_ExtIEs_165[3];
+extern asn_TYPE_descriptor_t asn_DEF_Ngap_TWIF_ID_ExtIEs;
+extern asn_SEQUENCE_specifics_t asn_SPC_Ngap_TWIF_ID_ExtIEs_specs_169;
+extern asn_TYPE_member_t asn_MBR_Ngap_TWIF_ID_ExtIEs_169[3];
+extern asn_TYPE_descriptor_t asn_DEF_Ngap_UEHistoryInformationFromTheUE_ExtIEs;
+extern asn_SEQUENCE_specifics_t
+    asn_SPC_Ngap_UEHistoryInformationFromTheUE_ExtIEs_specs_173;
+extern asn_TYPE_member_t
+    asn_MBR_Ngap_UEHistoryInformationFromTheUE_ExtIEs_173[3];
+extern asn_TYPE_descriptor_t asn_DEF_Ngap_UEIdentityIndexValue_ExtIEs;
+extern asn_SEQUENCE_specifics_t
+    asn_SPC_Ngap_UEIdentityIndexValue_ExtIEs_specs_177;
+extern asn_TYPE_member_t asn_MBR_Ngap_UEIdentityIndexValue_ExtIEs_177[3];
+extern asn_TYPE_descriptor_t asn_DEF_Ngap_UE_NGAP_IDs_ExtIEs;
+extern asn_SEQUENCE_specifics_t asn_SPC_Ngap_UE_NGAP_IDs_ExtIEs_specs_181;
+extern asn_TYPE_member_t asn_MBR_Ngap_UE_NGAP_IDs_ExtIEs_181[3];
+extern asn_TYPE_descriptor_t asn_DEF_Ngap_UEPagingIdentity_ExtIEs;
+extern asn_SEQUENCE_specifics_t asn_SPC_Ngap_UEPagingIdentity_ExtIEs_specs_185;
+extern asn_TYPE_member_t asn_MBR_Ngap_UEPagingIdentity_ExtIEs_185[3];
+extern asn_TYPE_descriptor_t asn_DEF_Ngap_UERLFReportContainer_ExtIEs;
+extern asn_SEQUENCE_specifics_t
+    asn_SPC_Ngap_UERLFReportContainer_ExtIEs_specs_189;
+extern asn_TYPE_member_t asn_MBR_Ngap_UERLFReportContainer_ExtIEs_189[3];
+extern asn_TYPE_descriptor_t asn_DEF_Ngap_UPTransportLayerInformation_ExtIEs;
+extern asn_SEQUENCE_specifics_t
+    asn_SPC_Ngap_UPTransportLayerInformation_ExtIEs_specs_193;
+extern asn_TYPE_member_t asn_MBR_Ngap_UPTransportLayerInformation_ExtIEs_193[3];
+extern asn_TYPE_descriptor_t asn_DEF_Ngap_UserLocationInformation_ExtIEs;
+extern asn_SEQUENCE_specifics_t
+    asn_SPC_Ngap_UserLocationInformation_ExtIEs_specs_197;
+extern asn_TYPE_member_t asn_MBR_Ngap_UserLocationInformation_ExtIEs_197[3];
+extern asn_TYPE_descriptor_t asn_DEF_Ngap_UserLocationInformationW_AGF_ExtIEs;
+extern asn_SEQUENCE_specifics_t
+    asn_SPC_Ngap_UserLocationInformationW_AGF_ExtIEs_specs_201;
+extern asn_TYPE_member_t
+    asn_MBR_Ngap_UserLocationInformationW_AGF_ExtIEs_201[3];
+extern asn_TYPE_descriptor_t asn_DEF_Ngap_W_AGF_ID_ExtIEs;
+extern asn_SEQUENCE_specifics_t asn_SPC_Ngap_W_AGF_ID_ExtIEs_specs_205;
+extern asn_TYPE_member_t asn_MBR_Ngap_W_AGF_ID_ExtIEs_205[3];
+extern asn_TYPE_descriptor_t asn_DEF_Ngap_WarningAreaList_ExtIEs;
+extern asn_SEQUENCE_specifics_t asn_SPC_Ngap_WarningAreaList_ExtIEs_specs_209;
+extern asn_TYPE_member_t asn_MBR_Ngap_WarningAreaList_ExtIEs_209[3];
 extern asn_TYPE_descriptor_t asn_DEF_Ngap_PDUSessionResourceSetupRequestIEs;
 extern asn_SEQUENCE_specifics_t
-    asn_SPC_Ngap_PDUSessionResourceSetupRequestIEs_specs_1;
-extern asn_TYPE_member_t asn_MBR_Ngap_PDUSessionResourceSetupRequestIEs_1[3];
+    asn_SPC_Ngap_PDUSessionResourceSetupRequestIEs_specs_213;
+extern asn_TYPE_member_t asn_MBR_Ngap_PDUSessionResourceSetupRequestIEs_213[3];
 extern asn_TYPE_descriptor_t asn_DEF_Ngap_PDUSessionResourceSetupResponseIEs;
 extern asn_SEQUENCE_specifics_t
-    asn_SPC_Ngap_PDUSessionResourceSetupResponseIEs_specs_5;
-extern asn_TYPE_member_t asn_MBR_Ngap_PDUSessionResourceSetupResponseIEs_5[3];
+    asn_SPC_Ngap_PDUSessionResourceSetupResponseIEs_specs_217;
+extern asn_TYPE_member_t asn_MBR_Ngap_PDUSessionResourceSetupResponseIEs_217[3];
 extern asn_TYPE_descriptor_t asn_DEF_Ngap_PDUSessionResourceReleaseCommandIEs;
 extern asn_SEQUENCE_specifics_t
-    asn_SPC_Ngap_PDUSessionResourceReleaseCommandIEs_specs_9;
-extern asn_TYPE_member_t asn_MBR_Ngap_PDUSessionResourceReleaseCommandIEs_9[3];
+    asn_SPC_Ngap_PDUSessionResourceReleaseCommandIEs_specs_221;
+extern asn_TYPE_member_t
+    asn_MBR_Ngap_PDUSessionResourceReleaseCommandIEs_221[3];
 extern asn_TYPE_descriptor_t asn_DEF_Ngap_PDUSessionResourceReleaseResponseIEs;
 extern asn_SEQUENCE_specifics_t
-    asn_SPC_Ngap_PDUSessionResourceReleaseResponseIEs_specs_13;
+    asn_SPC_Ngap_PDUSessionResourceReleaseResponseIEs_specs_225;
 extern asn_TYPE_member_t
-    asn_MBR_Ngap_PDUSessionResourceReleaseResponseIEs_13[3];
+    asn_MBR_Ngap_PDUSessionResourceReleaseResponseIEs_225[3];
 extern asn_TYPE_descriptor_t asn_DEF_Ngap_PDUSessionResourceModifyRequestIEs;
 extern asn_SEQUENCE_specifics_t
-    asn_SPC_Ngap_PDUSessionResourceModifyRequestIEs_specs_17;
-extern asn_TYPE_member_t asn_MBR_Ngap_PDUSessionResourceModifyRequestIEs_17[3];
+    asn_SPC_Ngap_PDUSessionResourceModifyRequestIEs_specs_229;
+extern asn_TYPE_member_t asn_MBR_Ngap_PDUSessionResourceModifyRequestIEs_229[3];
 extern asn_TYPE_descriptor_t asn_DEF_Ngap_PDUSessionResourceModifyResponseIEs;
 extern asn_SEQUENCE_specifics_t
-    asn_SPC_Ngap_PDUSessionResourceModifyResponseIEs_specs_21;
-extern asn_TYPE_member_t asn_MBR_Ngap_PDUSessionResourceModifyResponseIEs_21[3];
+    asn_SPC_Ngap_PDUSessionResourceModifyResponseIEs_specs_233;
+extern asn_TYPE_member_t
+    asn_MBR_Ngap_PDUSessionResourceModifyResponseIEs_233[3];
 extern asn_TYPE_descriptor_t asn_DEF_Ngap_PDUSessionResourceNotifyIEs;
 extern asn_SEQUENCE_specifics_t
-    asn_SPC_Ngap_PDUSessionResourceNotifyIEs_specs_25;
-extern asn_TYPE_member_t asn_MBR_Ngap_PDUSessionResourceNotifyIEs_25[3];
+    asn_SPC_Ngap_PDUSessionResourceNotifyIEs_specs_237;
+extern asn_TYPE_member_t asn_MBR_Ngap_PDUSessionResourceNotifyIEs_237[3];
 extern asn_TYPE_descriptor_t asn_DEF_Ngap_PDUSessionResourceModifyIndicationIEs;
 extern asn_SEQUENCE_specifics_t
-    asn_SPC_Ngap_PDUSessionResourceModifyIndicationIEs_specs_29;
+    asn_SPC_Ngap_PDUSessionResourceModifyIndicationIEs_specs_241;
 extern asn_TYPE_member_t
-    asn_MBR_Ngap_PDUSessionResourceModifyIndicationIEs_29[3];
+    asn_MBR_Ngap_PDUSessionResourceModifyIndicationIEs_241[3];
 extern asn_TYPE_descriptor_t asn_DEF_Ngap_PDUSessionResourceModifyConfirmIEs;
 extern asn_SEQUENCE_specifics_t
-    asn_SPC_Ngap_PDUSessionResourceModifyConfirmIEs_specs_33;
-extern asn_TYPE_member_t asn_MBR_Ngap_PDUSessionResourceModifyConfirmIEs_33[3];
+    asn_SPC_Ngap_PDUSessionResourceModifyConfirmIEs_specs_245;
+extern asn_TYPE_member_t asn_MBR_Ngap_PDUSessionResourceModifyConfirmIEs_245[3];
 extern asn_TYPE_descriptor_t asn_DEF_Ngap_InitialContextSetupRequestIEs;
 extern asn_SEQUENCE_specifics_t
-    asn_SPC_Ngap_InitialContextSetupRequestIEs_specs_37;
-extern asn_TYPE_member_t asn_MBR_Ngap_InitialContextSetupRequestIEs_37[3];
+    asn_SPC_Ngap_InitialContextSetupRequestIEs_specs_249;
+extern asn_TYPE_member_t asn_MBR_Ngap_InitialContextSetupRequestIEs_249[3];
 extern asn_TYPE_descriptor_t asn_DEF_Ngap_InitialContextSetupResponseIEs;
 extern asn_SEQUENCE_specifics_t
-    asn_SPC_Ngap_InitialContextSetupResponseIEs_specs_41;
-extern asn_TYPE_member_t asn_MBR_Ngap_InitialContextSetupResponseIEs_41[3];
+    asn_SPC_Ngap_InitialContextSetupResponseIEs_specs_253;
+extern asn_TYPE_member_t asn_MBR_Ngap_InitialContextSetupResponseIEs_253[3];
 extern asn_TYPE_descriptor_t asn_DEF_Ngap_InitialContextSetupFailureIEs;
 extern asn_SEQUENCE_specifics_t
-    asn_SPC_Ngap_InitialContextSetupFailureIEs_specs_45;
-extern asn_TYPE_member_t asn_MBR_Ngap_InitialContextSetupFailureIEs_45[3];
+    asn_SPC_Ngap_InitialContextSetupFailureIEs_specs_257;
+extern asn_TYPE_member_t asn_MBR_Ngap_InitialContextSetupFailureIEs_257[3];
 extern asn_TYPE_descriptor_t asn_DEF_Ngap_UEContextReleaseRequest_IEs;
 extern asn_SEQUENCE_specifics_t
-    asn_SPC_Ngap_UEContextReleaseRequest_IEs_specs_49;
-extern asn_TYPE_member_t asn_MBR_Ngap_UEContextReleaseRequest_IEs_49[3];
+    asn_SPC_Ngap_UEContextReleaseRequest_IEs_specs_261;
+extern asn_TYPE_member_t asn_MBR_Ngap_UEContextReleaseRequest_IEs_261[3];
 extern asn_TYPE_descriptor_t asn_DEF_Ngap_UEContextReleaseCommand_IEs;
 extern asn_SEQUENCE_specifics_t
-    asn_SPC_Ngap_UEContextReleaseCommand_IEs_specs_53;
-extern asn_TYPE_member_t asn_MBR_Ngap_UEContextReleaseCommand_IEs_53[3];
+    asn_SPC_Ngap_UEContextReleaseCommand_IEs_specs_265;
+extern asn_TYPE_member_t asn_MBR_Ngap_UEContextReleaseCommand_IEs_265[3];
 extern asn_TYPE_descriptor_t asn_DEF_Ngap_UEContextReleaseComplete_IEs;
 extern asn_SEQUENCE_specifics_t
-    asn_SPC_Ngap_UEContextReleaseComplete_IEs_specs_57;
-extern asn_TYPE_member_t asn_MBR_Ngap_UEContextReleaseComplete_IEs_57[3];
+    asn_SPC_Ngap_UEContextReleaseComplete_IEs_specs_269;
+extern asn_TYPE_member_t asn_MBR_Ngap_UEContextReleaseComplete_IEs_269[3];
 extern asn_TYPE_descriptor_t asn_DEF_Ngap_UEContextResumeRequestIEs;
-extern asn_SEQUENCE_specifics_t asn_SPC_Ngap_UEContextResumeRequestIEs_specs_61;
-extern asn_TYPE_member_t asn_MBR_Ngap_UEContextResumeRequestIEs_61[3];
+extern asn_SEQUENCE_specifics_t
+    asn_SPC_Ngap_UEContextResumeRequestIEs_specs_273;
+extern asn_TYPE_member_t asn_MBR_Ngap_UEContextResumeRequestIEs_273[3];
 extern asn_TYPE_descriptor_t asn_DEF_Ngap_UEContextResumeResponseIEs;
 extern asn_SEQUENCE_specifics_t
-    asn_SPC_Ngap_UEContextResumeResponseIEs_specs_65;
-extern asn_TYPE_member_t asn_MBR_Ngap_UEContextResumeResponseIEs_65[3];
+    asn_SPC_Ngap_UEContextResumeResponseIEs_specs_277;
+extern asn_TYPE_member_t asn_MBR_Ngap_UEContextResumeResponseIEs_277[3];
 extern asn_TYPE_descriptor_t asn_DEF_Ngap_UEContextResumeFailureIEs;
-extern asn_SEQUENCE_specifics_t asn_SPC_Ngap_UEContextResumeFailureIEs_specs_69;
-extern asn_TYPE_member_t asn_MBR_Ngap_UEContextResumeFailureIEs_69[3];
+extern asn_SEQUENCE_specifics_t
+    asn_SPC_Ngap_UEContextResumeFailureIEs_specs_281;
+extern asn_TYPE_member_t asn_MBR_Ngap_UEContextResumeFailureIEs_281[3];
 extern asn_TYPE_descriptor_t asn_DEF_Ngap_UEContextSuspendRequestIEs;
 extern asn_SEQUENCE_specifics_t
-    asn_SPC_Ngap_UEContextSuspendRequestIEs_specs_73;
-extern asn_TYPE_member_t asn_MBR_Ngap_UEContextSuspendRequestIEs_73[3];
+    asn_SPC_Ngap_UEContextSuspendRequestIEs_specs_285;
+extern asn_TYPE_member_t asn_MBR_Ngap_UEContextSuspendRequestIEs_285[3];
 extern asn_TYPE_descriptor_t asn_DEF_Ngap_UEContextSuspendResponseIEs;
 extern asn_SEQUENCE_specifics_t
-    asn_SPC_Ngap_UEContextSuspendResponseIEs_specs_77;
-extern asn_TYPE_member_t asn_MBR_Ngap_UEContextSuspendResponseIEs_77[3];
+    asn_SPC_Ngap_UEContextSuspendResponseIEs_specs_289;
+extern asn_TYPE_member_t asn_MBR_Ngap_UEContextSuspendResponseIEs_289[3];
 extern asn_TYPE_descriptor_t asn_DEF_Ngap_UEContextSuspendFailureIEs;
 extern asn_SEQUENCE_specifics_t
-    asn_SPC_Ngap_UEContextSuspendFailureIEs_specs_81;
-extern asn_TYPE_member_t asn_MBR_Ngap_UEContextSuspendFailureIEs_81[3];
+    asn_SPC_Ngap_UEContextSuspendFailureIEs_specs_293;
+extern asn_TYPE_member_t asn_MBR_Ngap_UEContextSuspendFailureIEs_293[3];
 extern asn_TYPE_descriptor_t asn_DEF_Ngap_UEContextModificationRequestIEs;
 extern asn_SEQUENCE_specifics_t
-    asn_SPC_Ngap_UEContextModificationRequestIEs_specs_85;
-extern asn_TYPE_member_t asn_MBR_Ngap_UEContextModificationRequestIEs_85[3];
+    asn_SPC_Ngap_UEContextModificationRequestIEs_specs_297;
+extern asn_TYPE_member_t asn_MBR_Ngap_UEContextModificationRequestIEs_297[3];
 extern asn_TYPE_descriptor_t asn_DEF_Ngap_UEContextModificationResponseIEs;
 extern asn_SEQUENCE_specifics_t
-    asn_SPC_Ngap_UEContextModificationResponseIEs_specs_89;
-extern asn_TYPE_member_t asn_MBR_Ngap_UEContextModificationResponseIEs_89[3];
+    asn_SPC_Ngap_UEContextModificationResponseIEs_specs_301;
+extern asn_TYPE_member_t asn_MBR_Ngap_UEContextModificationResponseIEs_301[3];
 extern asn_TYPE_descriptor_t asn_DEF_Ngap_UEContextModificationFailureIEs;
 extern asn_SEQUENCE_specifics_t
-    asn_SPC_Ngap_UEContextModificationFailureIEs_specs_93;
-extern asn_TYPE_member_t asn_MBR_Ngap_UEContextModificationFailureIEs_93[3];
+    asn_SPC_Ngap_UEContextModificationFailureIEs_specs_305;
+extern asn_TYPE_member_t asn_MBR_Ngap_UEContextModificationFailureIEs_305[3];
 extern asn_TYPE_descriptor_t asn_DEF_Ngap_RRCInactiveTransitionReportIEs;
 extern asn_SEQUENCE_specifics_t
-    asn_SPC_Ngap_RRCInactiveTransitionReportIEs_specs_97;
-extern asn_TYPE_member_t asn_MBR_Ngap_RRCInactiveTransitionReportIEs_97[3];
+    asn_SPC_Ngap_RRCInactiveTransitionReportIEs_specs_309;
+extern asn_TYPE_member_t asn_MBR_Ngap_RRCInactiveTransitionReportIEs_309[3];
 extern asn_TYPE_descriptor_t asn_DEF_Ngap_RetrieveUEInformationIEs;
-extern asn_SEQUENCE_specifics_t asn_SPC_Ngap_RetrieveUEInformationIEs_specs_101;
-extern asn_TYPE_member_t asn_MBR_Ngap_RetrieveUEInformationIEs_101[3];
+extern asn_SEQUENCE_specifics_t asn_SPC_Ngap_RetrieveUEInformationIEs_specs_313;
+extern asn_TYPE_member_t asn_MBR_Ngap_RetrieveUEInformationIEs_313[3];
 extern asn_TYPE_descriptor_t asn_DEF_Ngap_UEInformationTransferIEs;
-extern asn_SEQUENCE_specifics_t asn_SPC_Ngap_UEInformationTransferIEs_specs_105;
-extern asn_TYPE_member_t asn_MBR_Ngap_UEInformationTransferIEs_105[3];
+extern asn_SEQUENCE_specifics_t asn_SPC_Ngap_UEInformationTransferIEs_specs_317;
+extern asn_TYPE_member_t asn_MBR_Ngap_UEInformationTransferIEs_317[3];
 extern asn_TYPE_descriptor_t asn_DEF_Ngap_RANCPRelocationIndicationIEs;
 extern asn_SEQUENCE_specifics_t
-    asn_SPC_Ngap_RANCPRelocationIndicationIEs_specs_109;
-extern asn_TYPE_member_t asn_MBR_Ngap_RANCPRelocationIndicationIEs_109[3];
+    asn_SPC_Ngap_RANCPRelocationIndicationIEs_specs_321;
+extern asn_TYPE_member_t asn_MBR_Ngap_RANCPRelocationIndicationIEs_321[3];
 extern asn_TYPE_descriptor_t asn_DEF_Ngap_HandoverRequiredIEs;
-extern asn_SEQUENCE_specifics_t asn_SPC_Ngap_HandoverRequiredIEs_specs_113;
-extern asn_TYPE_member_t asn_MBR_Ngap_HandoverRequiredIEs_113[3];
+extern asn_SEQUENCE_specifics_t asn_SPC_Ngap_HandoverRequiredIEs_specs_325;
+extern asn_TYPE_member_t asn_MBR_Ngap_HandoverRequiredIEs_325[3];
 extern asn_TYPE_descriptor_t asn_DEF_Ngap_HandoverCommandIEs;
-extern asn_SEQUENCE_specifics_t asn_SPC_Ngap_HandoverCommandIEs_specs_117;
-extern asn_TYPE_member_t asn_MBR_Ngap_HandoverCommandIEs_117[3];
+extern asn_SEQUENCE_specifics_t asn_SPC_Ngap_HandoverCommandIEs_specs_329;
+extern asn_TYPE_member_t asn_MBR_Ngap_HandoverCommandIEs_329[3];
 extern asn_TYPE_descriptor_t asn_DEF_Ngap_HandoverPreparationFailureIEs;
 extern asn_SEQUENCE_specifics_t
-    asn_SPC_Ngap_HandoverPreparationFailureIEs_specs_121;
-extern asn_TYPE_member_t asn_MBR_Ngap_HandoverPreparationFailureIEs_121[3];
+    asn_SPC_Ngap_HandoverPreparationFailureIEs_specs_333;
+extern asn_TYPE_member_t asn_MBR_Ngap_HandoverPreparationFailureIEs_333[3];
 extern asn_TYPE_descriptor_t asn_DEF_Ngap_HandoverRequestIEs;
-extern asn_SEQUENCE_specifics_t asn_SPC_Ngap_HandoverRequestIEs_specs_125;
-extern asn_TYPE_member_t asn_MBR_Ngap_HandoverRequestIEs_125[3];
+extern asn_SEQUENCE_specifics_t asn_SPC_Ngap_HandoverRequestIEs_specs_337;
+extern asn_TYPE_member_t asn_MBR_Ngap_HandoverRequestIEs_337[3];
 extern asn_TYPE_descriptor_t asn_DEF_Ngap_HandoverRequestAcknowledgeIEs;
 extern asn_SEQUENCE_specifics_t
-    asn_SPC_Ngap_HandoverRequestAcknowledgeIEs_specs_129;
-extern asn_TYPE_member_t asn_MBR_Ngap_HandoverRequestAcknowledgeIEs_129[3];
+    asn_SPC_Ngap_HandoverRequestAcknowledgeIEs_specs_341;
+extern asn_TYPE_member_t asn_MBR_Ngap_HandoverRequestAcknowledgeIEs_341[3];
 extern asn_TYPE_descriptor_t asn_DEF_Ngap_HandoverFailureIEs;
-extern asn_SEQUENCE_specifics_t asn_SPC_Ngap_HandoverFailureIEs_specs_133;
-extern asn_TYPE_member_t asn_MBR_Ngap_HandoverFailureIEs_133[3];
+extern asn_SEQUENCE_specifics_t asn_SPC_Ngap_HandoverFailureIEs_specs_345;
+extern asn_TYPE_member_t asn_MBR_Ngap_HandoverFailureIEs_345[3];
 extern asn_TYPE_descriptor_t asn_DEF_Ngap_HandoverNotifyIEs;
-extern asn_SEQUENCE_specifics_t asn_SPC_Ngap_HandoverNotifyIEs_specs_137;
-extern asn_TYPE_member_t asn_MBR_Ngap_HandoverNotifyIEs_137[3];
+extern asn_SEQUENCE_specifics_t asn_SPC_Ngap_HandoverNotifyIEs_specs_349;
+extern asn_TYPE_member_t asn_MBR_Ngap_HandoverNotifyIEs_349[3];
 extern asn_TYPE_descriptor_t asn_DEF_Ngap_PathSwitchRequestIEs;
-extern asn_SEQUENCE_specifics_t asn_SPC_Ngap_PathSwitchRequestIEs_specs_141;
-extern asn_TYPE_member_t asn_MBR_Ngap_PathSwitchRequestIEs_141[3];
+extern asn_SEQUENCE_specifics_t asn_SPC_Ngap_PathSwitchRequestIEs_specs_353;
+extern asn_TYPE_member_t asn_MBR_Ngap_PathSwitchRequestIEs_353[3];
 extern asn_TYPE_descriptor_t asn_DEF_Ngap_PathSwitchRequestAcknowledgeIEs;
 extern asn_SEQUENCE_specifics_t
-    asn_SPC_Ngap_PathSwitchRequestAcknowledgeIEs_specs_145;
-extern asn_TYPE_member_t asn_MBR_Ngap_PathSwitchRequestAcknowledgeIEs_145[3];
+    asn_SPC_Ngap_PathSwitchRequestAcknowledgeIEs_specs_357;
+extern asn_TYPE_member_t asn_MBR_Ngap_PathSwitchRequestAcknowledgeIEs_357[3];
 extern asn_TYPE_descriptor_t asn_DEF_Ngap_PathSwitchRequestFailureIEs;
 extern asn_SEQUENCE_specifics_t
-    asn_SPC_Ngap_PathSwitchRequestFailureIEs_specs_149;
-extern asn_TYPE_member_t asn_MBR_Ngap_PathSwitchRequestFailureIEs_149[3];
+    asn_SPC_Ngap_PathSwitchRequestFailureIEs_specs_361;
+extern asn_TYPE_member_t asn_MBR_Ngap_PathSwitchRequestFailureIEs_361[3];
 extern asn_TYPE_descriptor_t asn_DEF_Ngap_HandoverCancelIEs;
-extern asn_SEQUENCE_specifics_t asn_SPC_Ngap_HandoverCancelIEs_specs_153;
-extern asn_TYPE_member_t asn_MBR_Ngap_HandoverCancelIEs_153[3];
+extern asn_SEQUENCE_specifics_t asn_SPC_Ngap_HandoverCancelIEs_specs_365;
+extern asn_TYPE_member_t asn_MBR_Ngap_HandoverCancelIEs_365[3];
 extern asn_TYPE_descriptor_t asn_DEF_Ngap_HandoverCancelAcknowledgeIEs;
 extern asn_SEQUENCE_specifics_t
-    asn_SPC_Ngap_HandoverCancelAcknowledgeIEs_specs_157;
-extern asn_TYPE_member_t asn_MBR_Ngap_HandoverCancelAcknowledgeIEs_157[3];
+    asn_SPC_Ngap_HandoverCancelAcknowledgeIEs_specs_369;
+extern asn_TYPE_member_t asn_MBR_Ngap_HandoverCancelAcknowledgeIEs_369[3];
 extern asn_TYPE_descriptor_t asn_DEF_Ngap_HandoverSuccessIEs;
-extern asn_SEQUENCE_specifics_t asn_SPC_Ngap_HandoverSuccessIEs_specs_161;
-extern asn_TYPE_member_t asn_MBR_Ngap_HandoverSuccessIEs_161[3];
+extern asn_SEQUENCE_specifics_t asn_SPC_Ngap_HandoverSuccessIEs_specs_373;
+extern asn_TYPE_member_t asn_MBR_Ngap_HandoverSuccessIEs_373[3];
 extern asn_TYPE_descriptor_t asn_DEF_Ngap_UplinkRANEarlyStatusTransferIEs;
 extern asn_SEQUENCE_specifics_t
-    asn_SPC_Ngap_UplinkRANEarlyStatusTransferIEs_specs_165;
-extern asn_TYPE_member_t asn_MBR_Ngap_UplinkRANEarlyStatusTransferIEs_165[3];
+    asn_SPC_Ngap_UplinkRANEarlyStatusTransferIEs_specs_377;
+extern asn_TYPE_member_t asn_MBR_Ngap_UplinkRANEarlyStatusTransferIEs_377[3];
 extern asn_TYPE_descriptor_t asn_DEF_Ngap_DownlinkRANEarlyStatusTransferIEs;
 extern asn_SEQUENCE_specifics_t
-    asn_SPC_Ngap_DownlinkRANEarlyStatusTransferIEs_specs_169;
-extern asn_TYPE_member_t asn_MBR_Ngap_DownlinkRANEarlyStatusTransferIEs_169[3];
+    asn_SPC_Ngap_DownlinkRANEarlyStatusTransferIEs_specs_381;
+extern asn_TYPE_member_t asn_MBR_Ngap_DownlinkRANEarlyStatusTransferIEs_381[3];
 extern asn_TYPE_descriptor_t asn_DEF_Ngap_UplinkRANStatusTransferIEs;
 extern asn_SEQUENCE_specifics_t
-    asn_SPC_Ngap_UplinkRANStatusTransferIEs_specs_173;
-extern asn_TYPE_member_t asn_MBR_Ngap_UplinkRANStatusTransferIEs_173[3];
+    asn_SPC_Ngap_UplinkRANStatusTransferIEs_specs_385;
+extern asn_TYPE_member_t asn_MBR_Ngap_UplinkRANStatusTransferIEs_385[3];
 extern asn_TYPE_descriptor_t asn_DEF_Ngap_DownlinkRANStatusTransferIEs;
 extern asn_SEQUENCE_specifics_t
-    asn_SPC_Ngap_DownlinkRANStatusTransferIEs_specs_177;
-extern asn_TYPE_member_t asn_MBR_Ngap_DownlinkRANStatusTransferIEs_177[3];
+    asn_SPC_Ngap_DownlinkRANStatusTransferIEs_specs_389;
+extern asn_TYPE_member_t asn_MBR_Ngap_DownlinkRANStatusTransferIEs_389[3];
 extern asn_TYPE_descriptor_t asn_DEF_Ngap_PagingIEs;
-extern asn_SEQUENCE_specifics_t asn_SPC_Ngap_PagingIEs_specs_181;
-extern asn_TYPE_member_t asn_MBR_Ngap_PagingIEs_181[3];
+extern asn_SEQUENCE_specifics_t asn_SPC_Ngap_PagingIEs_specs_393;
+extern asn_TYPE_member_t asn_MBR_Ngap_PagingIEs_393[3];
 extern asn_TYPE_descriptor_t asn_DEF_Ngap_InitialUEMessage_IEs;
-extern asn_SEQUENCE_specifics_t asn_SPC_Ngap_InitialUEMessage_IEs_specs_185;
-extern asn_TYPE_member_t asn_MBR_Ngap_InitialUEMessage_IEs_185[3];
+extern asn_SEQUENCE_specifics_t asn_SPC_Ngap_InitialUEMessage_IEs_specs_397;
+extern asn_TYPE_member_t asn_MBR_Ngap_InitialUEMessage_IEs_397[3];
 extern asn_TYPE_descriptor_t asn_DEF_Ngap_DownlinkNASTransport_IEs;
-extern asn_SEQUENCE_specifics_t asn_SPC_Ngap_DownlinkNASTransport_IEs_specs_189;
-extern asn_TYPE_member_t asn_MBR_Ngap_DownlinkNASTransport_IEs_189[3];
+extern asn_SEQUENCE_specifics_t asn_SPC_Ngap_DownlinkNASTransport_IEs_specs_401;
+extern asn_TYPE_member_t asn_MBR_Ngap_DownlinkNASTransport_IEs_401[3];
 extern asn_TYPE_descriptor_t asn_DEF_Ngap_UplinkNASTransport_IEs;
-extern asn_SEQUENCE_specifics_t asn_SPC_Ngap_UplinkNASTransport_IEs_specs_193;
-extern asn_TYPE_member_t asn_MBR_Ngap_UplinkNASTransport_IEs_193[3];
+extern asn_SEQUENCE_specifics_t asn_SPC_Ngap_UplinkNASTransport_IEs_specs_405;
+extern asn_TYPE_member_t asn_MBR_Ngap_UplinkNASTransport_IEs_405[3];
 extern asn_TYPE_descriptor_t asn_DEF_Ngap_NASNonDeliveryIndication_IEs;
 extern asn_SEQUENCE_specifics_t
-    asn_SPC_Ngap_NASNonDeliveryIndication_IEs_specs_197;
-extern asn_TYPE_member_t asn_MBR_Ngap_NASNonDeliveryIndication_IEs_197[3];
+    asn_SPC_Ngap_NASNonDeliveryIndication_IEs_specs_409;
+extern asn_TYPE_member_t asn_MBR_Ngap_NASNonDeliveryIndication_IEs_409[3];
 extern asn_TYPE_descriptor_t asn_DEF_Ngap_RerouteNASRequest_IEs;
-extern asn_SEQUENCE_specifics_t asn_SPC_Ngap_RerouteNASRequest_IEs_specs_201;
-extern asn_TYPE_member_t asn_MBR_Ngap_RerouteNASRequest_IEs_201[3];
+extern asn_SEQUENCE_specifics_t asn_SPC_Ngap_RerouteNASRequest_IEs_specs_413;
+extern asn_TYPE_member_t asn_MBR_Ngap_RerouteNASRequest_IEs_413[3];
 extern asn_TYPE_descriptor_t asn_DEF_Ngap_NGSetupRequestIEs;
-extern asn_SEQUENCE_specifics_t asn_SPC_Ngap_NGSetupRequestIEs_specs_205;
-extern asn_TYPE_member_t asn_MBR_Ngap_NGSetupRequestIEs_205[3];
+extern asn_SEQUENCE_specifics_t asn_SPC_Ngap_NGSetupRequestIEs_specs_417;
+extern asn_TYPE_member_t asn_MBR_Ngap_NGSetupRequestIEs_417[3];
 extern asn_TYPE_descriptor_t asn_DEF_Ngap_NGSetupResponseIEs;
-extern asn_SEQUENCE_specifics_t asn_SPC_Ngap_NGSetupResponseIEs_specs_209;
-extern asn_TYPE_member_t asn_MBR_Ngap_NGSetupResponseIEs_209[3];
+extern asn_SEQUENCE_specifics_t asn_SPC_Ngap_NGSetupResponseIEs_specs_421;
+extern asn_TYPE_member_t asn_MBR_Ngap_NGSetupResponseIEs_421[3];
 extern asn_TYPE_descriptor_t asn_DEF_Ngap_NGSetupFailureIEs;
-extern asn_SEQUENCE_specifics_t asn_SPC_Ngap_NGSetupFailureIEs_specs_213;
-extern asn_TYPE_member_t asn_MBR_Ngap_NGSetupFailureIEs_213[3];
+extern asn_SEQUENCE_specifics_t asn_SPC_Ngap_NGSetupFailureIEs_specs_425;
+extern asn_TYPE_member_t asn_MBR_Ngap_NGSetupFailureIEs_425[3];
 extern asn_TYPE_descriptor_t asn_DEF_Ngap_RANConfigurationUpdateIEs;
 extern asn_SEQUENCE_specifics_t
-    asn_SPC_Ngap_RANConfigurationUpdateIEs_specs_217;
-extern asn_TYPE_member_t asn_MBR_Ngap_RANConfigurationUpdateIEs_217[3];
+    asn_SPC_Ngap_RANConfigurationUpdateIEs_specs_429;
+extern asn_TYPE_member_t asn_MBR_Ngap_RANConfigurationUpdateIEs_429[3];
 extern asn_TYPE_descriptor_t asn_DEF_Ngap_RANConfigurationUpdateAcknowledgeIEs;
 extern asn_SEQUENCE_specifics_t
-    asn_SPC_Ngap_RANConfigurationUpdateAcknowledgeIEs_specs_221;
+    asn_SPC_Ngap_RANConfigurationUpdateAcknowledgeIEs_specs_433;
 extern asn_TYPE_member_t
-    asn_MBR_Ngap_RANConfigurationUpdateAcknowledgeIEs_221[3];
+    asn_MBR_Ngap_RANConfigurationUpdateAcknowledgeIEs_433[3];
 extern asn_TYPE_descriptor_t asn_DEF_Ngap_RANConfigurationUpdateFailureIEs;
 extern asn_SEQUENCE_specifics_t
-    asn_SPC_Ngap_RANConfigurationUpdateFailureIEs_specs_225;
-extern asn_TYPE_member_t asn_MBR_Ngap_RANConfigurationUpdateFailureIEs_225[3];
+    asn_SPC_Ngap_RANConfigurationUpdateFailureIEs_specs_437;
+extern asn_TYPE_member_t asn_MBR_Ngap_RANConfigurationUpdateFailureIEs_437[3];
 extern asn_TYPE_descriptor_t asn_DEF_Ngap_AMFConfigurationUpdateIEs;
 extern asn_SEQUENCE_specifics_t
-    asn_SPC_Ngap_AMFConfigurationUpdateIEs_specs_229;
-extern asn_TYPE_member_t asn_MBR_Ngap_AMFConfigurationUpdateIEs_229[3];
+    asn_SPC_Ngap_AMFConfigurationUpdateIEs_specs_441;
+extern asn_TYPE_member_t asn_MBR_Ngap_AMFConfigurationUpdateIEs_441[3];
 extern asn_TYPE_descriptor_t asn_DEF_Ngap_AMFConfigurationUpdateAcknowledgeIEs;
 extern asn_SEQUENCE_specifics_t
-    asn_SPC_Ngap_AMFConfigurationUpdateAcknowledgeIEs_specs_233;
+    asn_SPC_Ngap_AMFConfigurationUpdateAcknowledgeIEs_specs_445;
 extern asn_TYPE_member_t
-    asn_MBR_Ngap_AMFConfigurationUpdateAcknowledgeIEs_233[3];
+    asn_MBR_Ngap_AMFConfigurationUpdateAcknowledgeIEs_445[3];
 extern asn_TYPE_descriptor_t asn_DEF_Ngap_AMFConfigurationUpdateFailureIEs;
 extern asn_SEQUENCE_specifics_t
-    asn_SPC_Ngap_AMFConfigurationUpdateFailureIEs_specs_237;
-extern asn_TYPE_member_t asn_MBR_Ngap_AMFConfigurationUpdateFailureIEs_237[3];
+    asn_SPC_Ngap_AMFConfigurationUpdateFailureIEs_specs_449;
+extern asn_TYPE_member_t asn_MBR_Ngap_AMFConfigurationUpdateFailureIEs_449[3];
 extern asn_TYPE_descriptor_t asn_DEF_Ngap_AMFStatusIndicationIEs;
-extern asn_SEQUENCE_specifics_t asn_SPC_Ngap_AMFStatusIndicationIEs_specs_241;
-extern asn_TYPE_member_t asn_MBR_Ngap_AMFStatusIndicationIEs_241[3];
+extern asn_SEQUENCE_specifics_t asn_SPC_Ngap_AMFStatusIndicationIEs_specs_453;
+extern asn_TYPE_member_t asn_MBR_Ngap_AMFStatusIndicationIEs_453[3];
 extern asn_TYPE_descriptor_t asn_DEF_Ngap_NGResetIEs;
-extern asn_SEQUENCE_specifics_t asn_SPC_Ngap_NGResetIEs_specs_245;
-extern asn_TYPE_member_t asn_MBR_Ngap_NGResetIEs_245[3];
+extern asn_SEQUENCE_specifics_t asn_SPC_Ngap_NGResetIEs_specs_457;
+extern asn_TYPE_member_t asn_MBR_Ngap_NGResetIEs_457[3];
 extern asn_TYPE_descriptor_t asn_DEF_Ngap_NGResetAcknowledgeIEs;
-extern asn_SEQUENCE_specifics_t asn_SPC_Ngap_NGResetAcknowledgeIEs_specs_249;
-extern asn_TYPE_member_t asn_MBR_Ngap_NGResetAcknowledgeIEs_249[3];
+extern asn_SEQUENCE_specifics_t asn_SPC_Ngap_NGResetAcknowledgeIEs_specs_461;
+extern asn_TYPE_member_t asn_MBR_Ngap_NGResetAcknowledgeIEs_461[3];
 extern asn_TYPE_descriptor_t asn_DEF_Ngap_ErrorIndicationIEs;
-extern asn_SEQUENCE_specifics_t asn_SPC_Ngap_ErrorIndicationIEs_specs_253;
-extern asn_TYPE_member_t asn_MBR_Ngap_ErrorIndicationIEs_253[3];
+extern asn_SEQUENCE_specifics_t asn_SPC_Ngap_ErrorIndicationIEs_specs_465;
+extern asn_TYPE_member_t asn_MBR_Ngap_ErrorIndicationIEs_465[3];
 extern asn_TYPE_descriptor_t asn_DEF_Ngap_OverloadStartIEs;
-extern asn_SEQUENCE_specifics_t asn_SPC_Ngap_OverloadStartIEs_specs_257;
-extern asn_TYPE_member_t asn_MBR_Ngap_OverloadStartIEs_257[3];
+extern asn_SEQUENCE_specifics_t asn_SPC_Ngap_OverloadStartIEs_specs_469;
+extern asn_TYPE_member_t asn_MBR_Ngap_OverloadStartIEs_469[3];
 extern asn_TYPE_descriptor_t asn_DEF_Ngap_OverloadStopIEs;
-extern asn_SEQUENCE_specifics_t asn_SPC_Ngap_OverloadStopIEs_specs_261;
-extern asn_TYPE_member_t asn_MBR_Ngap_OverloadStopIEs_261[3];
+extern asn_SEQUENCE_specifics_t asn_SPC_Ngap_OverloadStopIEs_specs_473;
+extern asn_TYPE_member_t asn_MBR_Ngap_OverloadStopIEs_473[3];
 extern asn_TYPE_descriptor_t asn_DEF_Ngap_UplinkRANConfigurationTransferIEs;
 extern asn_SEQUENCE_specifics_t
-    asn_SPC_Ngap_UplinkRANConfigurationTransferIEs_specs_265;
-extern asn_TYPE_member_t asn_MBR_Ngap_UplinkRANConfigurationTransferIEs_265[3];
+    asn_SPC_Ngap_UplinkRANConfigurationTransferIEs_specs_477;
+extern asn_TYPE_member_t asn_MBR_Ngap_UplinkRANConfigurationTransferIEs_477[3];
 extern asn_TYPE_descriptor_t asn_DEF_Ngap_DownlinkRANConfigurationTransferIEs;
 extern asn_SEQUENCE_specifics_t
-    asn_SPC_Ngap_DownlinkRANConfigurationTransferIEs_specs_269;
+    asn_SPC_Ngap_DownlinkRANConfigurationTransferIEs_specs_481;
 extern asn_TYPE_member_t
-    asn_MBR_Ngap_DownlinkRANConfigurationTransferIEs_269[3];
+    asn_MBR_Ngap_DownlinkRANConfigurationTransferIEs_481[3];
 extern asn_TYPE_descriptor_t asn_DEF_Ngap_WriteReplaceWarningRequestIEs;
 extern asn_SEQUENCE_specifics_t
-    asn_SPC_Ngap_WriteReplaceWarningRequestIEs_specs_273;
-extern asn_TYPE_member_t asn_MBR_Ngap_WriteReplaceWarningRequestIEs_273[3];
+    asn_SPC_Ngap_WriteReplaceWarningRequestIEs_specs_485;
+extern asn_TYPE_member_t asn_MBR_Ngap_WriteReplaceWarningRequestIEs_485[3];
 extern asn_TYPE_descriptor_t asn_DEF_Ngap_WriteReplaceWarningResponseIEs;
 extern asn_SEQUENCE_specifics_t
-    asn_SPC_Ngap_WriteReplaceWarningResponseIEs_specs_277;
-extern asn_TYPE_member_t asn_MBR_Ngap_WriteReplaceWarningResponseIEs_277[3];
+    asn_SPC_Ngap_WriteReplaceWarningResponseIEs_specs_489;
+extern asn_TYPE_member_t asn_MBR_Ngap_WriteReplaceWarningResponseIEs_489[3];
 extern asn_TYPE_descriptor_t asn_DEF_Ngap_PWSCancelRequestIEs;
-extern asn_SEQUENCE_specifics_t asn_SPC_Ngap_PWSCancelRequestIEs_specs_281;
-extern asn_TYPE_member_t asn_MBR_Ngap_PWSCancelRequestIEs_281[3];
+extern asn_SEQUENCE_specifics_t asn_SPC_Ngap_PWSCancelRequestIEs_specs_493;
+extern asn_TYPE_member_t asn_MBR_Ngap_PWSCancelRequestIEs_493[3];
 extern asn_TYPE_descriptor_t asn_DEF_Ngap_PWSCancelResponseIEs;
-extern asn_SEQUENCE_specifics_t asn_SPC_Ngap_PWSCancelResponseIEs_specs_285;
-extern asn_TYPE_member_t asn_MBR_Ngap_PWSCancelResponseIEs_285[3];
+extern asn_SEQUENCE_specifics_t asn_SPC_Ngap_PWSCancelResponseIEs_specs_497;
+extern asn_TYPE_member_t asn_MBR_Ngap_PWSCancelResponseIEs_497[3];
 extern asn_TYPE_descriptor_t asn_DEF_Ngap_PWSRestartIndicationIEs;
-extern asn_SEQUENCE_specifics_t asn_SPC_Ngap_PWSRestartIndicationIEs_specs_289;
-extern asn_TYPE_member_t asn_MBR_Ngap_PWSRestartIndicationIEs_289[3];
+extern asn_SEQUENCE_specifics_t asn_SPC_Ngap_PWSRestartIndicationIEs_specs_501;
+extern asn_TYPE_member_t asn_MBR_Ngap_PWSRestartIndicationIEs_501[3];
 extern asn_TYPE_descriptor_t asn_DEF_Ngap_PWSFailureIndicationIEs;
-extern asn_SEQUENCE_specifics_t asn_SPC_Ngap_PWSFailureIndicationIEs_specs_293;
-extern asn_TYPE_member_t asn_MBR_Ngap_PWSFailureIndicationIEs_293[3];
+extern asn_SEQUENCE_specifics_t asn_SPC_Ngap_PWSFailureIndicationIEs_specs_505;
+extern asn_TYPE_member_t asn_MBR_Ngap_PWSFailureIndicationIEs_505[3];
 extern asn_TYPE_descriptor_t asn_DEF_Ngap_DownlinkUEAssociatedNRPPaTransportIEs;
 extern asn_SEQUENCE_specifics_t
-    asn_SPC_Ngap_DownlinkUEAssociatedNRPPaTransportIEs_specs_297;
+    asn_SPC_Ngap_DownlinkUEAssociatedNRPPaTransportIEs_specs_509;
 extern asn_TYPE_member_t
-    asn_MBR_Ngap_DownlinkUEAssociatedNRPPaTransportIEs_297[3];
+    asn_MBR_Ngap_DownlinkUEAssociatedNRPPaTransportIEs_509[3];
 extern asn_TYPE_descriptor_t asn_DEF_Ngap_UplinkUEAssociatedNRPPaTransportIEs;
 extern asn_SEQUENCE_specifics_t
-    asn_SPC_Ngap_UplinkUEAssociatedNRPPaTransportIEs_specs_301;
+    asn_SPC_Ngap_UplinkUEAssociatedNRPPaTransportIEs_specs_513;
 extern asn_TYPE_member_t
-    asn_MBR_Ngap_UplinkUEAssociatedNRPPaTransportIEs_301[3];
+    asn_MBR_Ngap_UplinkUEAssociatedNRPPaTransportIEs_513[3];
 extern asn_TYPE_descriptor_t
     asn_DEF_Ngap_DownlinkNonUEAssociatedNRPPaTransportIEs;
 extern asn_SEQUENCE_specifics_t
-    asn_SPC_Ngap_DownlinkNonUEAssociatedNRPPaTransportIEs_specs_305;
+    asn_SPC_Ngap_DownlinkNonUEAssociatedNRPPaTransportIEs_specs_517;
 extern asn_TYPE_member_t
-    asn_MBR_Ngap_DownlinkNonUEAssociatedNRPPaTransportIEs_305[3];
+    asn_MBR_Ngap_DownlinkNonUEAssociatedNRPPaTransportIEs_517[3];
 extern asn_TYPE_descriptor_t
     asn_DEF_Ngap_UplinkNonUEAssociatedNRPPaTransportIEs;
 extern asn_SEQUENCE_specifics_t
-    asn_SPC_Ngap_UplinkNonUEAssociatedNRPPaTransportIEs_specs_309;
+    asn_SPC_Ngap_UplinkNonUEAssociatedNRPPaTransportIEs_specs_521;
 extern asn_TYPE_member_t
-    asn_MBR_Ngap_UplinkNonUEAssociatedNRPPaTransportIEs_309[3];
+    asn_MBR_Ngap_UplinkNonUEAssociatedNRPPaTransportIEs_521[3];
 extern asn_TYPE_descriptor_t asn_DEF_Ngap_TraceStartIEs;
-extern asn_SEQUENCE_specifics_t asn_SPC_Ngap_TraceStartIEs_specs_313;
-extern asn_TYPE_member_t asn_MBR_Ngap_TraceStartIEs_313[3];
+extern asn_SEQUENCE_specifics_t asn_SPC_Ngap_TraceStartIEs_specs_525;
+extern asn_TYPE_member_t asn_MBR_Ngap_TraceStartIEs_525[3];
 extern asn_TYPE_descriptor_t asn_DEF_Ngap_TraceFailureIndicationIEs;
 extern asn_SEQUENCE_specifics_t
-    asn_SPC_Ngap_TraceFailureIndicationIEs_specs_317;
-extern asn_TYPE_member_t asn_MBR_Ngap_TraceFailureIndicationIEs_317[3];
+    asn_SPC_Ngap_TraceFailureIndicationIEs_specs_529;
+extern asn_TYPE_member_t asn_MBR_Ngap_TraceFailureIndicationIEs_529[3];
 extern asn_TYPE_descriptor_t asn_DEF_Ngap_DeactivateTraceIEs;
-extern asn_SEQUENCE_specifics_t asn_SPC_Ngap_DeactivateTraceIEs_specs_321;
-extern asn_TYPE_member_t asn_MBR_Ngap_DeactivateTraceIEs_321[3];
+extern asn_SEQUENCE_specifics_t asn_SPC_Ngap_DeactivateTraceIEs_specs_533;
+extern asn_TYPE_member_t asn_MBR_Ngap_DeactivateTraceIEs_533[3];
 extern asn_TYPE_descriptor_t asn_DEF_Ngap_CellTrafficTraceIEs;
-extern asn_SEQUENCE_specifics_t asn_SPC_Ngap_CellTrafficTraceIEs_specs_325;
-extern asn_TYPE_member_t asn_MBR_Ngap_CellTrafficTraceIEs_325[3];
+extern asn_SEQUENCE_specifics_t asn_SPC_Ngap_CellTrafficTraceIEs_specs_537;
+extern asn_TYPE_member_t asn_MBR_Ngap_CellTrafficTraceIEs_537[3];
 extern asn_TYPE_descriptor_t asn_DEF_Ngap_LocationReportingControlIEs;
 extern asn_SEQUENCE_specifics_t
-    asn_SPC_Ngap_LocationReportingControlIEs_specs_329;
-extern asn_TYPE_member_t asn_MBR_Ngap_LocationReportingControlIEs_329[3];
+    asn_SPC_Ngap_LocationReportingControlIEs_specs_541;
+extern asn_TYPE_member_t asn_MBR_Ngap_LocationReportingControlIEs_541[3];
 extern asn_TYPE_descriptor_t asn_DEF_Ngap_LocationReportingFailureIndicationIEs;
 extern asn_SEQUENCE_specifics_t
-    asn_SPC_Ngap_LocationReportingFailureIndicationIEs_specs_333;
+    asn_SPC_Ngap_LocationReportingFailureIndicationIEs_specs_545;
 extern asn_TYPE_member_t
-    asn_MBR_Ngap_LocationReportingFailureIndicationIEs_333[3];
+    asn_MBR_Ngap_LocationReportingFailureIndicationIEs_545[3];
 extern asn_TYPE_descriptor_t asn_DEF_Ngap_LocationReportIEs;
-extern asn_SEQUENCE_specifics_t asn_SPC_Ngap_LocationReportIEs_specs_337;
-extern asn_TYPE_member_t asn_MBR_Ngap_LocationReportIEs_337[3];
+extern asn_SEQUENCE_specifics_t asn_SPC_Ngap_LocationReportIEs_specs_549;
+extern asn_TYPE_member_t asn_MBR_Ngap_LocationReportIEs_549[3];
 extern asn_TYPE_descriptor_t asn_DEF_Ngap_UETNLABindingReleaseRequestIEs;
 extern asn_SEQUENCE_specifics_t
-    asn_SPC_Ngap_UETNLABindingReleaseRequestIEs_specs_341;
-extern asn_TYPE_member_t asn_MBR_Ngap_UETNLABindingReleaseRequestIEs_341[3];
+    asn_SPC_Ngap_UETNLABindingReleaseRequestIEs_specs_553;
+extern asn_TYPE_member_t asn_MBR_Ngap_UETNLABindingReleaseRequestIEs_553[3];
 extern asn_TYPE_descriptor_t asn_DEF_Ngap_UERadioCapabilityInfoIndicationIEs;
 extern asn_SEQUENCE_specifics_t
-    asn_SPC_Ngap_UERadioCapabilityInfoIndicationIEs_specs_345;
-extern asn_TYPE_member_t asn_MBR_Ngap_UERadioCapabilityInfoIndicationIEs_345[3];
+    asn_SPC_Ngap_UERadioCapabilityInfoIndicationIEs_specs_557;
+extern asn_TYPE_member_t asn_MBR_Ngap_UERadioCapabilityInfoIndicationIEs_557[3];
 extern asn_TYPE_descriptor_t asn_DEF_Ngap_UERadioCapabilityCheckRequestIEs;
 extern asn_SEQUENCE_specifics_t
-    asn_SPC_Ngap_UERadioCapabilityCheckRequestIEs_specs_349;
-extern asn_TYPE_member_t asn_MBR_Ngap_UERadioCapabilityCheckRequestIEs_349[3];
+    asn_SPC_Ngap_UERadioCapabilityCheckRequestIEs_specs_561;
+extern asn_TYPE_member_t asn_MBR_Ngap_UERadioCapabilityCheckRequestIEs_561[3];
 extern asn_TYPE_descriptor_t asn_DEF_Ngap_UERadioCapabilityCheckResponseIEs;
 extern asn_SEQUENCE_specifics_t
-    asn_SPC_Ngap_UERadioCapabilityCheckResponseIEs_specs_353;
-extern asn_TYPE_member_t asn_MBR_Ngap_UERadioCapabilityCheckResponseIEs_353[3];
+    asn_SPC_Ngap_UERadioCapabilityCheckResponseIEs_specs_565;
+extern asn_TYPE_member_t asn_MBR_Ngap_UERadioCapabilityCheckResponseIEs_565[3];
 extern asn_TYPE_descriptor_t asn_DEF_Ngap_SecondaryRATDataUsageReportIEs;
 extern asn_SEQUENCE_specifics_t
-    asn_SPC_Ngap_SecondaryRATDataUsageReportIEs_specs_357;
-extern asn_TYPE_member_t asn_MBR_Ngap_SecondaryRATDataUsageReportIEs_357[3];
+    asn_SPC_Ngap_SecondaryRATDataUsageReportIEs_specs_569;
+extern asn_TYPE_member_t asn_MBR_Ngap_SecondaryRATDataUsageReportIEs_569[3];
 extern asn_TYPE_descriptor_t asn_DEF_Ngap_UplinkRIMInformationTransferIEs;
 extern asn_SEQUENCE_specifics_t
-    asn_SPC_Ngap_UplinkRIMInformationTransferIEs_specs_361;
-extern asn_TYPE_member_t asn_MBR_Ngap_UplinkRIMInformationTransferIEs_361[3];
+    asn_SPC_Ngap_UplinkRIMInformationTransferIEs_specs_573;
+extern asn_TYPE_member_t asn_MBR_Ngap_UplinkRIMInformationTransferIEs_573[3];
 extern asn_TYPE_descriptor_t asn_DEF_Ngap_DownlinkRIMInformationTransferIEs;
 extern asn_SEQUENCE_specifics_t
-    asn_SPC_Ngap_DownlinkRIMInformationTransferIEs_specs_365;
-extern asn_TYPE_member_t asn_MBR_Ngap_DownlinkRIMInformationTransferIEs_365[3];
+    asn_SPC_Ngap_DownlinkRIMInformationTransferIEs_specs_577;
+extern asn_TYPE_member_t asn_MBR_Ngap_DownlinkRIMInformationTransferIEs_577[3];
 extern asn_TYPE_descriptor_t asn_DEF_Ngap_ConnectionEstablishmentIndicationIEs;
 extern asn_SEQUENCE_specifics_t
-    asn_SPC_Ngap_ConnectionEstablishmentIndicationIEs_specs_369;
+    asn_SPC_Ngap_ConnectionEstablishmentIndicationIEs_specs_581;
 extern asn_TYPE_member_t
-    asn_MBR_Ngap_ConnectionEstablishmentIndicationIEs_369[3];
+    asn_MBR_Ngap_ConnectionEstablishmentIndicationIEs_581[3];
 extern asn_TYPE_descriptor_t asn_DEF_Ngap_UERadioCapabilityIDMappingRequestIEs;
 extern asn_SEQUENCE_specifics_t
-    asn_SPC_Ngap_UERadioCapabilityIDMappingRequestIEs_specs_373;
+    asn_SPC_Ngap_UERadioCapabilityIDMappingRequestIEs_specs_585;
 extern asn_TYPE_member_t
-    asn_MBR_Ngap_UERadioCapabilityIDMappingRequestIEs_373[3];
+    asn_MBR_Ngap_UERadioCapabilityIDMappingRequestIEs_585[3];
 extern asn_TYPE_descriptor_t asn_DEF_Ngap_UERadioCapabilityIDMappingResponseIEs;
 extern asn_SEQUENCE_specifics_t
-    asn_SPC_Ngap_UERadioCapabilityIDMappingResponseIEs_specs_377;
+    asn_SPC_Ngap_UERadioCapabilityIDMappingResponseIEs_specs_589;
 extern asn_TYPE_member_t
-    asn_MBR_Ngap_UERadioCapabilityIDMappingResponseIEs_377[3];
+    asn_MBR_Ngap_UERadioCapabilityIDMappingResponseIEs_589[3];
 extern asn_TYPE_descriptor_t asn_DEF_Ngap_AMFCPRelocationIndicationIEs;
 extern asn_SEQUENCE_specifics_t
-    asn_SPC_Ngap_AMFCPRelocationIndicationIEs_specs_381;
-extern asn_TYPE_member_t asn_MBR_Ngap_AMFCPRelocationIndicationIEs_381[3];
+    asn_SPC_Ngap_AMFCPRelocationIndicationIEs_specs_593;
+extern asn_TYPE_member_t asn_MBR_Ngap_AMFCPRelocationIndicationIEs_593[3];
 extern asn_TYPE_descriptor_t
     asn_DEF_Ngap_PDUSessionResourceModifyRequestTransferIEs;
 extern asn_SEQUENCE_specifics_t
-    asn_SPC_Ngap_PDUSessionResourceModifyRequestTransferIEs_specs_385;
+    asn_SPC_Ngap_PDUSessionResourceModifyRequestTransferIEs_specs_597;
 extern asn_TYPE_member_t
-    asn_MBR_Ngap_PDUSessionResourceModifyRequestTransferIEs_385[3];
+    asn_MBR_Ngap_PDUSessionResourceModifyRequestTransferIEs_597[3];
 extern asn_TYPE_descriptor_t
     asn_DEF_Ngap_PDUSessionResourceSetupRequestTransferIEs;
 extern asn_SEQUENCE_specifics_t
-    asn_SPC_Ngap_PDUSessionResourceSetupRequestTransferIEs_specs_389;
+    asn_SPC_Ngap_PDUSessionResourceSetupRequestTransferIEs_specs_601;
 extern asn_TYPE_member_t
-    asn_MBR_Ngap_PDUSessionResourceSetupRequestTransferIEs_389[3];
+    asn_MBR_Ngap_PDUSessionResourceSetupRequestTransferIEs_601[3];
 
 #ifdef __cplusplus
 }

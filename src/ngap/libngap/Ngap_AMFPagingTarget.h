@@ -3,7 +3,7 @@
  * From ASN.1 module "NGAP-IEs"
  * 	found in "asn.1/Information Element Definitions.asn1"
  * 	`asn1c -pdu=all -fcompound-names -fno-include-deps -findirect-choice
- * -no-gen-example -gen-APER -gen-UPER -no-gen-JER -no-gen-BER -D src`
+ * -no-gen-example -gen-APER -gen-UPER -no-gen-JER -gen-BER -D src`
  */
 
 #ifndef _Ngap_AMFPagingTarget_H_
@@ -22,14 +22,14 @@ extern "C" {
 typedef enum Ngap_AMFPagingTarget_PR {
   Ngap_AMFPagingTarget_PR_NOTHING, /* No components present */
   Ngap_AMFPagingTarget_PR_globalRANNodeID,
-  Ngap_AMFPagingTarget_PR_tAI
-  /* Extensions may appear below */
-
+  Ngap_AMFPagingTarget_PR_tAI,
+  Ngap_AMFPagingTarget_PR_choice_Extensions
 } Ngap_AMFPagingTarget_PR;
 
 /* Forward declarations */
 struct Ngap_GlobalRANNodeID;
 struct Ngap_TAI;
+struct Ngap_ProtocolIE_SingleContainer;
 
 /* Ngap_AMFPagingTarget */
 typedef struct Ngap_AMFPagingTarget {
@@ -37,10 +37,7 @@ typedef struct Ngap_AMFPagingTarget {
   union Ngap_AMFPagingTarget_u {
     struct Ngap_GlobalRANNodeID* globalRANNodeID;
     struct Ngap_TAI* tAI;
-    /*
-     * This type is extensible,
-     * possible extensions are below.
-     */
+    struct Ngap_ProtocolIE_SingleContainer* choice_Extensions;
   } choice;
 
   /* Context for parsing across buffer boundaries */
@@ -50,7 +47,7 @@ typedef struct Ngap_AMFPagingTarget {
 /* Implementation */
 extern asn_TYPE_descriptor_t asn_DEF_Ngap_AMFPagingTarget;
 extern asn_CHOICE_specifics_t asn_SPC_Ngap_AMFPagingTarget_specs_1;
-extern asn_TYPE_member_t asn_MBR_Ngap_AMFPagingTarget_1[2];
+extern asn_TYPE_member_t asn_MBR_Ngap_AMFPagingTarget_1[3];
 extern asn_per_constraints_t asn_PER_type_Ngap_AMFPagingTarget_constr_1;
 
 #ifdef __cplusplus

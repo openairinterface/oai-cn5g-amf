@@ -3,7 +3,7 @@
  * From ASN.1 module "NGAP-IEs"
  * 	found in "asn.1/Information Element Definitions.asn1"
  * 	`asn1c -pdu=all -fcompound-names -fno-include-deps -findirect-choice
- * -no-gen-example -gen-APER -gen-UPER -no-gen-JER -no-gen-BER -D src`
+ * -no-gen-example -gen-APER -gen-UPER -no-gen-JER -gen-BER -D src`
  */
 
 #ifndef _Ngap_IntersystemSONInformation_H_
@@ -21,13 +21,13 @@ extern "C" {
 /* Dependencies */
 typedef enum Ngap_IntersystemSONInformation_PR {
   Ngap_IntersystemSONInformation_PR_NOTHING, /* No components present */
-  Ngap_IntersystemSONInformation_PR_intersystemSONInformationReport
-  /* Extensions may appear below */
-
+  Ngap_IntersystemSONInformation_PR_intersystemSONInformationReport,
+  Ngap_IntersystemSONInformation_PR_choice_Extensions
 } Ngap_IntersystemSONInformation_PR;
 
 /* Forward declarations */
 struct Ngap_IntersystemSONInformationReport;
+struct Ngap_ProtocolIE_SingleContainer;
 
 /* Ngap_IntersystemSONInformation */
 typedef struct Ngap_IntersystemSONInformation {
@@ -35,10 +35,7 @@ typedef struct Ngap_IntersystemSONInformation {
   union Ngap_IntersystemSONInformation_u {
     struct Ngap_IntersystemSONInformationReport*
         intersystemSONInformationReport;
-    /*
-     * This type is extensible,
-     * possible extensions are below.
-     */
+    struct Ngap_ProtocolIE_SingleContainer* choice_Extensions;
   } choice;
 
   /* Context for parsing across buffer boundaries */
@@ -48,7 +45,7 @@ typedef struct Ngap_IntersystemSONInformation {
 /* Implementation */
 extern asn_TYPE_descriptor_t asn_DEF_Ngap_IntersystemSONInformation;
 extern asn_CHOICE_specifics_t asn_SPC_Ngap_IntersystemSONInformation_specs_1;
-extern asn_TYPE_member_t asn_MBR_Ngap_IntersystemSONInformation_1[1];
+extern asn_TYPE_member_t asn_MBR_Ngap_IntersystemSONInformation_1[2];
 extern asn_per_constraints_t
     asn_PER_type_Ngap_IntersystemSONInformation_constr_1;
 

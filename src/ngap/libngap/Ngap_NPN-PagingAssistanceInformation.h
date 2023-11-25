@@ -3,7 +3,7 @@
  * From ASN.1 module "NGAP-IEs"
  * 	found in "asn.1/Information Element Definitions.asn1"
  * 	`asn1c -pdu=all -fcompound-names -fno-include-deps -findirect-choice
- * -no-gen-example -gen-APER -gen-UPER -no-gen-JER -no-gen-BER -D src`
+ * -no-gen-example -gen-APER -gen-UPER -no-gen-JER -gen-BER -D src`
  */
 
 #ifndef _Ngap_NPN_PagingAssistanceInformation_H_
@@ -21,23 +21,20 @@ extern "C" {
 /* Dependencies */
 typedef enum Ngap_NPN_PagingAssistanceInformation_PR {
   Ngap_NPN_PagingAssistanceInformation_PR_NOTHING, /* No components present */
-  Ngap_NPN_PagingAssistanceInformation_PR_pNI_NPN_PagingAssistance
-  /* Extensions may appear below */
-
+  Ngap_NPN_PagingAssistanceInformation_PR_pNI_NPN_PagingAssistance,
+  Ngap_NPN_PagingAssistanceInformation_PR_choice_Extensions
 } Ngap_NPN_PagingAssistanceInformation_PR;
 
 /* Forward declarations */
 struct Ngap_Allowed_PNI_NPN_List;
+struct Ngap_ProtocolIE_SingleContainer;
 
 /* Ngap_NPN-PagingAssistanceInformation */
 typedef struct Ngap_NPN_PagingAssistanceInformation {
   Ngap_NPN_PagingAssistanceInformation_PR present;
   union Ngap_NPN_PagingAssistanceInformation_u {
     struct Ngap_Allowed_PNI_NPN_List* pNI_NPN_PagingAssistance;
-    /*
-     * This type is extensible,
-     * possible extensions are below.
-     */
+    struct Ngap_ProtocolIE_SingleContainer* choice_Extensions;
   } choice;
 
   /* Context for parsing across buffer boundaries */
@@ -48,7 +45,7 @@ typedef struct Ngap_NPN_PagingAssistanceInformation {
 extern asn_TYPE_descriptor_t asn_DEF_Ngap_NPN_PagingAssistanceInformation;
 extern asn_CHOICE_specifics_t
     asn_SPC_Ngap_NPN_PagingAssistanceInformation_specs_1;
-extern asn_TYPE_member_t asn_MBR_Ngap_NPN_PagingAssistanceInformation_1[1];
+extern asn_TYPE_member_t asn_MBR_Ngap_NPN_PagingAssistanceInformation_1[2];
 extern asn_per_constraints_t
     asn_PER_type_Ngap_NPN_PagingAssistanceInformation_constr_1;
 

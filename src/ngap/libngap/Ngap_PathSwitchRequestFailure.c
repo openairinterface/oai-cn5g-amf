@@ -3,7 +3,7 @@
  * From ASN.1 module "NGAP-PDU-Contents"
  * 	found in "asn.1/Information Element Definitions.asn1"
  * 	`asn1c -pdu=all -fcompound-names -fno-include-deps -findirect-choice
- * -no-gen-example -gen-APER -gen-UPER -no-gen-JER -no-gen-BER -D src`
+ * -no-gen-example -gen-APER -gen-UPER -no-gen-JER -gen-BER -D src`
  */
 
 #include "Ngap_PathSwitchRequestFailure.h"
@@ -14,7 +14,7 @@ asn_TYPE_member_t asn_MBR_Ngap_PathSwitchRequestFailure_1[] = {
      offsetof(struct Ngap_PathSwitchRequestFailure, protocolIEs),
      (ASN_TAG_CLASS_CONTEXT | (0 << 2)),
      -1, /* IMPLICIT tag at current level */
-     &asn_DEF_Ngap_ProtocolIE_Container_9666P37,
+     &asn_DEF_Ngap_ProtocolIE_Container_9615P37,
      0,
      {
 #if !defined(ASN_DISABLE_OER_SUPPORT)

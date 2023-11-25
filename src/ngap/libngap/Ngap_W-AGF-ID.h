@@ -3,7 +3,7 @@
  * From ASN.1 module "NGAP-IEs"
  * 	found in "asn.1/Information Element Definitions.asn1"
  * 	`asn1c -pdu=all -fcompound-names -fno-include-deps -findirect-choice
- * -no-gen-example -gen-APER -gen-UPER -no-gen-JER -no-gen-BER -D src`
+ * -no-gen-example -gen-APER -gen-UPER -no-gen-JER -gen-BER -D src`
  */
 
 #ifndef _Ngap_W_AGF_ID_H_
@@ -22,20 +22,19 @@ extern "C" {
 /* Dependencies */
 typedef enum Ngap_W_AGF_ID_PR {
   Ngap_W_AGF_ID_PR_NOTHING, /* No components present */
-  Ngap_W_AGF_ID_PR_w_AGF_ID
-  /* Extensions may appear below */
-
+  Ngap_W_AGF_ID_PR_w_AGF_ID,
+  Ngap_W_AGF_ID_PR_choice_Extensions
 } Ngap_W_AGF_ID_PR;
+
+/* Forward declarations */
+struct Ngap_ProtocolIE_SingleContainer;
 
 /* Ngap_W-AGF-ID */
 typedef struct Ngap_W_AGF_ID {
   Ngap_W_AGF_ID_PR present;
   union Ngap_W_AGF_ID_u {
     BIT_STRING_t w_AGF_ID;
-    /*
-     * This type is extensible,
-     * possible extensions are below.
-     */
+    struct Ngap_ProtocolIE_SingleContainer* choice_Extensions;
   } choice;
 
   /* Context for parsing across buffer boundaries */
@@ -45,7 +44,7 @@ typedef struct Ngap_W_AGF_ID {
 /* Implementation */
 extern asn_TYPE_descriptor_t asn_DEF_Ngap_W_AGF_ID;
 extern asn_CHOICE_specifics_t asn_SPC_Ngap_W_AGF_ID_specs_1;
-extern asn_TYPE_member_t asn_MBR_Ngap_W_AGF_ID_1[1];
+extern asn_TYPE_member_t asn_MBR_Ngap_W_AGF_ID_1[2];
 extern asn_per_constraints_t asn_PER_type_Ngap_W_AGF_ID_constr_1;
 
 #ifdef __cplusplus

@@ -128,7 +128,7 @@ asn_enc_rval_t asn_encode(
     const asn_TYPE_descriptor_t* td, const void* sptr,
     asn_app_consume_bytes_f* callback, void* callback_key) {
   struct callback_failure_catch_key cb_key;
-  asn_enc_rval_t er;
+  asn_enc_rval_t er = {0, 0, 0};
 
   if (!callback) {
     errno = EINVAL;
@@ -155,7 +155,7 @@ asn_enc_rval_t asn_encode_to_buffer(
     const asn_TYPE_descriptor_t* td, const void* sptr, void* buffer,
     size_t buffer_size) {
   struct overrun_encoder_key buf_key;
-  asn_enc_rval_t er;
+  asn_enc_rval_t er = {0, 0, 0};
 
   if (buffer_size > 0 && !buffer) {
     errno = EINVAL;
@@ -219,8 +219,10 @@ static asn_enc_rval_t asn_encode_internal(
     const asn_codec_ctx_t* opt_codec_ctx, enum asn_transfer_syntax syntax,
     const asn_TYPE_descriptor_t* td, const void* sptr,
     asn_app_consume_bytes_f* callback, void* callback_key) {
-  asn_enc_rval_t er;
+  asn_enc_rval_t er = {0, 0, 0};
+#if !defined(ASN_DISABLE_XER_SUPPORT)
   enum xer_encoder_flags_e xer_flags = XER_F_CANONICAL;
+#endif /* !defined(ASN_DISABLE_XER_SUPPORT) */
 
   (void) opt_codec_ctx; /* Parameters are not checked on encode yet. */
 
@@ -258,6 +260,7 @@ static asn_enc_rval_t asn_encode_internal(
       errno = ENOENT; /* Randomization doesn't make sense on output. */
       ASN__ENCODE_FAILED;
 
+#if !defined(ASN_DISABLE_BER_SUPPORT)
     case ATS_BER:
       /* BER is a superset of DER. */
       /* Fall through. */
@@ -279,14 +282,16 @@ static asn_enc_rval_t asn_encode_internal(
     case ATS_CER:
       errno = ENOENT; /* Transfer syntax is not defined for any type. */
       ASN__ENCODE_FAILED;
-
-#ifdef ASN_DISABLE_OER_SUPPORT
-    case ATS_BASIC_OER:
-    case ATS_CANONICAL_OER:
-      errno = ENOENT; /* PER is not defined. */
+#else
+    case ATS_BER:
+    case ATS_DER:
+    case ATS_CER:
+      errno = ENOENT; /* BER is not defined. */
       ASN__ENCODE_FAILED;
-      break;
-#else  /* ASN_DISABLE_OER_SUPPORT */
+
+#endif /* !defined(ASN_DISABLE_BER_SUPPORT) */
+
+#if !defined(ASN_DISABLE_OER_SUPPORT)
     case ATS_BASIC_OER:
       /* CANONICAL-OER is a superset of BASIC-OER. */
       /* Fall through. */
@@ -305,17 +310,15 @@ static asn_enc_rval_t asn_encode_internal(
         ASN__ENCODE_FAILED;
       }
       break;
-#endif /* ASN_DISABLE_OER_SUPPORT */
-
-#ifdef ASN_DISABLE_PER_SUPPORT
-    case ATS_UNALIGNED_BASIC_PER:
-    case ATS_UNALIGNED_CANONICAL_PER:
-    case ATS_ALIGNED_BASIC_PER:
-    case ATS_ALIGNED_CANONICAL_PER:
-      errno = ENOENT; /* PER is not defined. */
+#else
+    case ATS_BASIC_OER:
+    case ATS_CANONICAL_OER:
+      errno = ENOENT; /* OER is not defined. */
       ASN__ENCODE_FAILED;
       break;
-#else  /* ASN_DISABLE_PER_SUPPORT */
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+
+#if !defined(ASN_DISABLE_UPER_SUPPORT)
     case ATS_UNALIGNED_BASIC_PER:
       /* CANONICAL-UPER is a superset of BASIC-UPER. */
       /* Fall through. */
@@ -346,6 +349,14 @@ static asn_enc_rval_t asn_encode_internal(
         ASN__ENCODE_FAILED;
       }
       break;
+#else
+    case ATS_UNALIGNED_BASIC_PER:
+    case ATS_UNALIGNED_CANONICAL_PER:
+      errno = ENOENT; /* UPER is not defined. */
+      ASN__ENCODE_FAILED;
+      break;
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) */
+#if !defined(ASN_DISABLE_APER_SUPPORT)
     case ATS_ALIGNED_BASIC_PER:
       /* CANONICAL-APER is a superset of BASIC-APER. */
       /* Fall through. */
@@ -376,8 +387,15 @@ static asn_enc_rval_t asn_encode_internal(
         ASN__ENCODE_FAILED;
       }
       break;
-#endif /* ASN_DISABLE_PER_SUPPORT */
+#else
+    case ATS_ALIGNED_BASIC_PER:
+    case ATS_ALIGNED_CANONICAL_PER:
+      errno = ENOENT; /* APER is not defined. */
+      ASN__ENCODE_FAILED;
+      break;
+#endif /* !defined(ASN_DISABLE_APER_SUPPORT) */
 
+#if !defined(ASN_DISABLE_XER_SUPPORT)
     case ATS_BASIC_XER:
       /* CANONICAL-XER is a superset of BASIC-XER. */
       xer_flags &= ~XER_F_CANONICAL;
@@ -398,7 +416,31 @@ static asn_enc_rval_t asn_encode_internal(
         ASN__ENCODE_FAILED;
       }
       break;
+#else
+    case ATS_BASIC_XER:
+    case ATS_CANONICAL_XER:
+      errno = ENOENT; /* XER is not defined. */
+      ASN__ENCODE_FAILED;
+      break;
+#endif /* !defined(ASN_DISABLE_XER_SUPPORT) */
 
+#if !defined(ASN_DISABLE_JER_SUPPORT)
+    case ATS_JER:
+      if (td->op->jer_encoder) {
+        er = jer_encode(td, sptr, callback, callback_key);
+        if (er.encoded == -1) {
+          if (er.failed_type && er.failed_type->op->jer_encoder) {
+            errno = EBADF; /* Structure has incorrect form. */
+          } else {
+            errno = ENOENT; /* JER is not defined for this type. */
+          }
+        }
+      } else {
+        errno = ENOENT; /* Transfer syntax is not defined for this type. */
+        ASN__ENCODE_FAILED;
+      }
+      break;
+#endif /* !defined(ASN_DISABLE_JER_SUPPORT) */
     default:
       errno = ENOENT;
       ASN__ENCODE_FAILED;
@@ -423,6 +465,7 @@ asn_dec_rval_t asn_decode(
       ASN__DECODE_FAILED;
 
     case ATS_RANDOM:
+#if !defined(ASN_DISABLE_RFILL_SUPPORT)
       if (!td->op->random_fill) {
         ASN__DECODE_FAILED;
       } else {
@@ -434,40 +477,54 @@ asn_dec_rval_t asn_decode(
         }
       }
       break;
+#else
+      errno = ENOENT;
+      ASN__DECODE_FAILED;
+#endif /* !defined(ASN_DISABLE_RFILL_SUPPORT) */
 
     case ATS_DER:
     case ATS_BER:
+#if !defined(ASN_DISABLE_BER_SUPPORT)
       return ber_decode(opt_codec_ctx, td, sptr, buffer, size);
+#else
+      errno = ENOENT;
+      ASN__DECODE_FAILED;
+#endif /* !defined(ASN_DISABLE_BER_SUPPORT) */
 
     case ATS_BASIC_OER:
     case ATS_CANONICAL_OER:
-#ifdef ASN_DISABLE_OER_SUPPORT
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+      return oer_decode(opt_codec_ctx, td, sptr, buffer, size);
+#else
       errno = ENOENT;
       ASN__DECODE_FAILED;
-#else
-      return oer_decode(opt_codec_ctx, td, sptr, buffer, size);
-#endif
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
 
     case ATS_UNALIGNED_BASIC_PER:
     case ATS_UNALIGNED_CANONICAL_PER:
-#ifdef ASN_DISABLE_PER_SUPPORT
+#if !defined(ASN_DISABLE_UPER_SUPPORT)
+      return uper_decode_complete(opt_codec_ctx, td, sptr, buffer, size);
+#else
       errno = ENOENT;
       ASN__DECODE_FAILED;
-#else
-      return uper_decode_complete(opt_codec_ctx, td, sptr, buffer, size);
-#endif
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) */
 
     case ATS_ALIGNED_BASIC_PER:
     case ATS_ALIGNED_CANONICAL_PER:
-#ifdef ASN_DISABLE_PER_SUPPORT
+#if !defined(ASN_DISABLE_APER_SUPPORT)
+      return aper_decode_complete(opt_codec_ctx, td, sptr, buffer, size);
+#else
       errno = ENOENT;
       ASN__DECODE_FAILED;
-#else
-      return aper_decode_complete(opt_codec_ctx, td, sptr, buffer, size);
-#endif
+#endif /* !defined(ASN_DISABLE_APER_SUPPORT) */
 
     case ATS_BASIC_XER:
     case ATS_CANONICAL_XER:
+#if !defined(ASN_DISABLE_XER_SUPPORT)
       return xer_decode(opt_codec_ctx, td, sptr, buffer, size);
+#else
+      errno = ENOENT;
+      ASN__DECODE_FAILED;
+#endif /* !defined(ASN_DISABLE_XER_SUPPORT) */
   }
 }

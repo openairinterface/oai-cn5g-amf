@@ -3,7 +3,7 @@
  * From ASN.1 module "NGAP-IEs"
  * 	found in "asn.1/Information Element Definitions.asn1"
  * 	`asn1c -pdu=all -fcompound-names -fno-include-deps -findirect-choice
- * -no-gen-example -gen-APER -gen-UPER -no-gen-JER -no-gen-BER -D src`
+ * -no-gen-example -gen-APER -gen-UPER -no-gen-JER -gen-BER -D src`
  */
 
 #ifndef _Ngap_InterSystemHandoverReportType_H_
@@ -22,14 +22,14 @@ extern "C" {
 typedef enum Ngap_InterSystemHandoverReportType_PR {
   Ngap_InterSystemHandoverReportType_PR_NOTHING, /* No components present */
   Ngap_InterSystemHandoverReportType_PR_tooearlyIntersystemHO,
-  Ngap_InterSystemHandoverReportType_PR_intersystemUnnecessaryHO
-  /* Extensions may appear below */
-
+  Ngap_InterSystemHandoverReportType_PR_intersystemUnnecessaryHO,
+  Ngap_InterSystemHandoverReportType_PR_choice_Extensions
 } Ngap_InterSystemHandoverReportType_PR;
 
 /* Forward declarations */
 struct Ngap_TooearlyIntersystemHO;
 struct Ngap_IntersystemUnnecessaryHO;
+struct Ngap_ProtocolIE_SingleContainer;
 
 /* Ngap_InterSystemHandoverReportType */
 typedef struct Ngap_InterSystemHandoverReportType {
@@ -37,10 +37,7 @@ typedef struct Ngap_InterSystemHandoverReportType {
   union Ngap_InterSystemHandoverReportType_u {
     struct Ngap_TooearlyIntersystemHO* tooearlyIntersystemHO;
     struct Ngap_IntersystemUnnecessaryHO* intersystemUnnecessaryHO;
-    /*
-     * This type is extensible,
-     * possible extensions are below.
-     */
+    struct Ngap_ProtocolIE_SingleContainer* choice_Extensions;
   } choice;
 
   /* Context for parsing across buffer boundaries */
@@ -51,7 +48,7 @@ typedef struct Ngap_InterSystemHandoverReportType {
 extern asn_TYPE_descriptor_t asn_DEF_Ngap_InterSystemHandoverReportType;
 extern asn_CHOICE_specifics_t
     asn_SPC_Ngap_InterSystemHandoverReportType_specs_1;
-extern asn_TYPE_member_t asn_MBR_Ngap_InterSystemHandoverReportType_1[2];
+extern asn_TYPE_member_t asn_MBR_Ngap_InterSystemHandoverReportType_1[3];
 extern asn_per_constraints_t
     asn_PER_type_Ngap_InterSystemHandoverReportType_constr_1;
 

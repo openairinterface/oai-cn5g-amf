@@ -3,18 +3,19 @@
  * From ASN.1 module "NGAP-IEs"
  * 	found in "asn.1/Information Element Definitions.asn1"
  * 	`asn1c -pdu=all -fcompound-names -fno-include-deps -findirect-choice
- * -no-gen-example -gen-APER -gen-UPER -no-gen-JER -no-gen-BER -D src`
+ * -no-gen-example -gen-APER -gen-UPER -no-gen-JER -gen-BER -D src`
  */
 
 #include "Ngap_NPN-Support.h"
 
+#include "Ngap_ProtocolIE-SingleContainer.h"
 #if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_type_Ngap_NPN_Support_constr_1
     CC_NOTUSED = {{0, 0}, -1};
 #endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
 #if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t asn_PER_type_Ngap_NPN_Support_constr_1 CC_NOTUSED = {
-    {APC_CONSTRAINED | APC_EXTENSIBLE, 0, 0, 0, 0} /* (0..0,...) */,
+    {APC_CONSTRAINED, 1, 1, 0, 1} /* (0..1) */,
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
@@ -41,9 +42,29 @@ asn_TYPE_member_t asn_MBR_Ngap_NPN_Support_1[] = {
      0,
      0, /* No default value */
      "sNPN"},
+    {ATF_POINTER,
+     0,
+     offsetof(struct Ngap_NPN_Support, choice.choice_Extensions),
+     (ASN_TAG_CLASS_CONTEXT | (1 << 2)),
+     -1, /* IMPLICIT tag at current level */
+     &asn_DEF_Ngap_ProtocolIE_SingleContainer_9618P31,
+     0,
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
+     0,
+     0, /* No default value */
+     "choice-Extensions"},
 };
 static const asn_TYPE_tag2member_t asn_MAP_Ngap_NPN_Support_tag2el_1[] = {
-    {(ASN_TAG_CLASS_CONTEXT | (0 << 2)), 0, 0, 0} /* sNPN */
+    {(ASN_TAG_CLASS_CONTEXT | (0 << 2)), 0, 0, 0}, /* sNPN */
+    {(ASN_TAG_CLASS_CONTEXT | (1 << 2)), 1, 0, 0}  /* choice-Extensions */
 };
 asn_CHOICE_specifics_t asn_SPC_Ngap_NPN_Support_specs_1 = {
     sizeof(struct Ngap_NPN_Support),
@@ -51,10 +72,10 @@ asn_CHOICE_specifics_t asn_SPC_Ngap_NPN_Support_specs_1 = {
     offsetof(struct Ngap_NPN_Support, present),
     sizeof(((struct Ngap_NPN_Support*) 0)->present),
     asn_MAP_Ngap_NPN_Support_tag2el_1,
-    1, /* Count of tags in the map */
+    2, /* Count of tags in the map */
     0,
     0,
-    1 /* Extensions start */
+    -1 /* Extensions start */
 };
 asn_TYPE_descriptor_t asn_DEF_Ngap_NPN_Support = {
     "NPN-Support",
@@ -74,6 +95,6 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_NPN_Support = {
           !defined(ASN_DISABLE_APER_SUPPORT) */
         CHOICE_constraint},
     asn_MBR_Ngap_NPN_Support_1,
-    1,                                /* Elements count */
+    2,                                /* Elements count */
     &asn_SPC_Ngap_NPN_Support_specs_1 /* Additional specs */
 };

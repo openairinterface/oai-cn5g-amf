@@ -3,7 +3,7 @@
  * From ASN.1 module "NGAP-IEs"
  * 	found in "asn.1/Information Element Definitions.asn1"
  * 	`asn1c -pdu=all -fcompound-names -fno-include-deps -findirect-choice
- * -no-gen-example -gen-APER -gen-UPER -no-gen-JER -no-gen-BER -D src`
+ * -no-gen-example -gen-APER -gen-UPER -no-gen-JER -gen-BER -D src`
  */
 
 #ifndef _Ngap_UE_NGAP_IDs_H_
@@ -23,13 +23,13 @@ extern "C" {
 typedef enum Ngap_UE_NGAP_IDs_PR {
   Ngap_UE_NGAP_IDs_PR_NOTHING, /* No components present */
   Ngap_UE_NGAP_IDs_PR_uE_NGAP_ID_pair,
-  Ngap_UE_NGAP_IDs_PR_aMF_UE_NGAP_ID
-  /* Extensions may appear below */
-
+  Ngap_UE_NGAP_IDs_PR_aMF_UE_NGAP_ID,
+  Ngap_UE_NGAP_IDs_PR_choice_Extensions
 } Ngap_UE_NGAP_IDs_PR;
 
 /* Forward declarations */
 struct Ngap_UE_NGAP_ID_pair;
+struct Ngap_ProtocolIE_SingleContainer;
 
 /* Ngap_UE-NGAP-IDs */
 typedef struct Ngap_UE_NGAP_IDs {
@@ -37,10 +37,7 @@ typedef struct Ngap_UE_NGAP_IDs {
   union Ngap_UE_NGAP_IDs_u {
     struct Ngap_UE_NGAP_ID_pair* uE_NGAP_ID_pair;
     Ngap_AMF_UE_NGAP_ID_t aMF_UE_NGAP_ID;
-    /*
-     * This type is extensible,
-     * possible extensions are below.
-     */
+    struct Ngap_ProtocolIE_SingleContainer* choice_Extensions;
   } choice;
 
   /* Context for parsing across buffer boundaries */
@@ -50,7 +47,7 @@ typedef struct Ngap_UE_NGAP_IDs {
 /* Implementation */
 extern asn_TYPE_descriptor_t asn_DEF_Ngap_UE_NGAP_IDs;
 extern asn_CHOICE_specifics_t asn_SPC_Ngap_UE_NGAP_IDs_specs_1;
-extern asn_TYPE_member_t asn_MBR_Ngap_UE_NGAP_IDs_1[2];
+extern asn_TYPE_member_t asn_MBR_Ngap_UE_NGAP_IDs_1[3];
 extern asn_per_constraints_t asn_PER_type_Ngap_UE_NGAP_IDs_constr_1;
 
 #ifdef __cplusplus

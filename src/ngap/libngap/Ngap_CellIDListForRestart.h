@@ -3,7 +3,7 @@
  * From ASN.1 module "NGAP-IEs"
  * 	found in "asn.1/Information Element Definitions.asn1"
  * 	`asn1c -pdu=all -fcompound-names -fno-include-deps -findirect-choice
- * -no-gen-example -gen-APER -gen-UPER -no-gen-JER -no-gen-BER -D src`
+ * -no-gen-example -gen-APER -gen-UPER -no-gen-JER -gen-BER -D src`
  */
 
 #ifndef _Ngap_CellIDListForRestart_H_
@@ -22,14 +22,14 @@ extern "C" {
 typedef enum Ngap_CellIDListForRestart_PR {
   Ngap_CellIDListForRestart_PR_NOTHING, /* No components present */
   Ngap_CellIDListForRestart_PR_eUTRA_CGIListforRestart,
-  Ngap_CellIDListForRestart_PR_nR_CGIListforRestart
-  /* Extensions may appear below */
-
+  Ngap_CellIDListForRestart_PR_nR_CGIListforRestart,
+  Ngap_CellIDListForRestart_PR_choice_Extensions
 } Ngap_CellIDListForRestart_PR;
 
 /* Forward declarations */
 struct Ngap_EUTRA_CGIList;
 struct Ngap_NR_CGIList;
+struct Ngap_ProtocolIE_SingleContainer;
 
 /* Ngap_CellIDListForRestart */
 typedef struct Ngap_CellIDListForRestart {
@@ -37,10 +37,7 @@ typedef struct Ngap_CellIDListForRestart {
   union Ngap_CellIDListForRestart_u {
     struct Ngap_EUTRA_CGIList* eUTRA_CGIListforRestart;
     struct Ngap_NR_CGIList* nR_CGIListforRestart;
-    /*
-     * This type is extensible,
-     * possible extensions are below.
-     */
+    struct Ngap_ProtocolIE_SingleContainer* choice_Extensions;
   } choice;
 
   /* Context for parsing across buffer boundaries */
@@ -50,7 +47,7 @@ typedef struct Ngap_CellIDListForRestart {
 /* Implementation */
 extern asn_TYPE_descriptor_t asn_DEF_Ngap_CellIDListForRestart;
 extern asn_CHOICE_specifics_t asn_SPC_Ngap_CellIDListForRestart_specs_1;
-extern asn_TYPE_member_t asn_MBR_Ngap_CellIDListForRestart_1[2];
+extern asn_TYPE_member_t asn_MBR_Ngap_CellIDListForRestart_1[3];
 extern asn_per_constraints_t asn_PER_type_Ngap_CellIDListForRestart_constr_1;
 
 #ifdef __cplusplus
