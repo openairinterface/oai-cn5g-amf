@@ -62361,40 +62361,35 @@ asn_SEQUENCE_specifics_t
         0,  /* Optional elements (not needed) */
         -1, /* First extension addition */
 };
-asn_TYPE_descriptor_t asn_DEF_Ngap_PDUSessionResourceModifyRequestTransferIEs =
+asn_TYPE_descriptor_t asn_DEF_Ngap_PDUSessionResourceModifyRequestTransferIEs = {
+    "PDUSessionResourceModifyRequestTransferIEs",
+    "PDUSessionResourceModifyRequestTransferIEs",
+    &asn_OP_SEQUENCE,
+    asn_DEF_Ngap_PDUSessionResourceModifyRequestTransferIEs_tags_597,
+    sizeof(asn_DEF_Ngap_PDUSessionResourceModifyRequestTransferIEs_tags_597) /
+        sizeof(asn_DEF_Ngap_PDUSessionResourceModifyRequestTransferIEs_tags_597
+                   [0]),                                              /* 1 */
+    asn_DEF_Ngap_PDUSessionResourceModifyRequestTransferIEs_tags_597, /* Same
+                                                                         as
+                                                                         above
+                                                                       */
+    sizeof(asn_DEF_Ngap_PDUSessionResourceModifyRequestTransferIEs_tags_597) /
+        sizeof(asn_DEF_Ngap_PDUSessionResourceModifyRequestTransferIEs_tags_597
+                   [0]), /* 1 */
     {
-        "PDUSessionResourceModifyRequestTransferIEs",
-        "PDUSessionResourceModifyRequestTransferIEs",
-        &asn_OP_SEQUENCE,
-        asn_DEF_Ngap_PDUSessionResourceModifyRequestTransferIEs_tags_597,
-        sizeof(
-            asn_DEF_Ngap_PDUSessionResourceModifyRequestTransferIEs_tags_597) /
-            sizeof(
-                asn_DEF_Ngap_PDUSessionResourceModifyRequestTransferIEs_tags_597
-                    [0]), /* 1 */
-        asn_DEF_Ngap_PDUSessionResourceModifyRequestTransferIEs_tags_597, /* Same
-                                                                             as
-                                                                             above
-                                                                           */
-        sizeof(
-            asn_DEF_Ngap_PDUSessionResourceModifyRequestTransferIEs_tags_597) /
-            sizeof(
-                asn_DEF_Ngap_PDUSessionResourceModifyRequestTransferIEs_tags_597
-                    [0]), /* 1 */
-        {
 #if !defined(ASN_DISABLE_OER_SUPPORT)
-            0,
+        0,
 #endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
 #if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
-            0,
+        0,
 #endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
           !defined(ASN_DISABLE_APER_SUPPORT) */
-            SEQUENCE_constraint},
-        asn_MBR_Ngap_PDUSessionResourceModifyRequestTransferIEs_597,
-        3, /* Elements count */
-        &asn_SPC_Ngap_PDUSessionResourceModifyRequestTransferIEs_specs_597 /* Additional
-                                                                              specs
-                                                                            */
+        SEQUENCE_constraint},
+    asn_MBR_Ngap_PDUSessionResourceModifyRequestTransferIEs_597,
+    3, /* Elements count */
+    &asn_SPC_Ngap_PDUSessionResourceModifyRequestTransferIEs_specs_597 /* Additional
+                                                                          specs
+                                                                        */
 };
 
 static asn_TYPE_member_t asn_MBR_Ngap_value_604[] = {
