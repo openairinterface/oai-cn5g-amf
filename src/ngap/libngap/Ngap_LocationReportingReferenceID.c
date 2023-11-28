@@ -3,7 +3,7 @@
  * From ASN.1 module "NGAP-IEs"
  * 	found in "asn.1/Information Element Definitions.asn1"
  * 	`asn1c -pdu=all -fcompound-names -fno-include-deps -findirect-choice
- * -gen-PER -D src`
+ * -no-gen-example -gen-APER -gen-UPER -no-gen-JER -gen-BER -D src`
  */
 
 #include "Ngap_LocationReportingReferenceID.h"
@@ -22,7 +22,7 @@ int Ngap_LocationReportingReferenceID_constraint(
 
   value = *(const long*) sptr;
 
-  if ((value >= 1 && value <= 64)) {
+  if ((value >= 1L && value <= 64L)) {
     /* Constraint check succeeded */
     return 0;
   } else {
@@ -37,10 +37,13 @@ int Ngap_LocationReportingReferenceID_constraint(
  * This type is implemented using NativeInteger,
  * so here we adjust the DEF accordingly.
  */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t
     asn_OER_type_Ngap_LocationReportingReferenceID_constr_1 CC_NOTUSED = {
         {0, 0},
         -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t asn_PER_type_Ngap_LocationReportingReferenceID_constr_1
     CC_NOTUSED = {
         {APC_CONSTRAINED | APC_EXTENSIBLE, 6, 6, 1, 64} /* (1..64,...) */,
@@ -48,6 +51,8 @@ asn_per_constraints_t asn_PER_type_Ngap_LocationReportingReferenceID_constr_1
         0,
         0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
 static const ber_tlv_tag_t asn_DEF_Ngap_LocationReportingReferenceID_tags_1[] =
     {(ASN_TAG_CLASS_UNIVERSAL | (2 << 2))};
 asn_TYPE_descriptor_t asn_DEF_Ngap_LocationReportingReferenceID = {
@@ -60,9 +65,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_LocationReportingReferenceID = {
     asn_DEF_Ngap_LocationReportingReferenceID_tags_1, /* Same as above */
     sizeof(asn_DEF_Ngap_LocationReportingReferenceID_tags_1) /
         sizeof(asn_DEF_Ngap_LocationReportingReferenceID_tags_1[0]), /* 1 */
-    {&asn_OER_type_Ngap_LocationReportingReferenceID_constr_1,
-     &asn_PER_type_Ngap_LocationReportingReferenceID_constr_1,
-     Ngap_LocationReportingReferenceID_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_LocationReportingReferenceID_constr_1,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_LocationReportingReferenceID_constr_1,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        Ngap_LocationReportingReferenceID_constraint},
     0,
     0, /* No members */
     0  /* No specifics */

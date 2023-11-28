@@ -3,11 +3,8 @@
  * All rights reserved.
  * Redistribution and modifications are permitted subject to BSD license.
  */
-#ifndef ASN_DISABLE_OER_SUPPORT
-
 #include <asn_internal.h>
 #include <INTEGER.h>
-#include <errno.h>
 
 asn_dec_rval_t INTEGER_decode_oer(
     const asn_codec_ctx_t* opt_codec_ctx, const asn_TYPE_descriptor_t* td,
@@ -101,8 +98,8 @@ asn_dec_rval_t INTEGER_decode_oer(
 asn_enc_rval_t INTEGER_encode_oer(
     const asn_TYPE_descriptor_t* td, const asn_oer_constraints_t* constraints,
     const void* sptr, asn_app_consume_bytes_f* cb, void* app_key) {
-  const INTEGER_t* st = sptr;
-  asn_enc_rval_t er;
+  const INTEGER_t* st                   = sptr;
+  asn_enc_rval_t er                     = {0, 0, 0};
   struct asn_oer_constraint_number_s ct = {0, 0};
   const uint8_t* buf;
   const uint8_t* end;
@@ -173,5 +170,3 @@ asn_enc_rval_t INTEGER_encode_oer(
 
   ASN__ENCODED_OK(er);
 }
-
-#endif /* ASN_DISABLE_OER_SUPPORT */

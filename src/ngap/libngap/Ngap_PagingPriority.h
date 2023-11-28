@@ -3,7 +3,7 @@
  * From ASN.1 module "NGAP-IEs"
  * 	found in "asn.1/Information Element Definitions.asn1"
  * 	`asn1c -pdu=all -fcompound-names -fno-include-deps -findirect-choice
- * -gen-PER -D src`
+ * -no-gen-example -gen-APER -gen-UPER -no-gen-JER -gen-BER -D src`
  */
 
 #ifndef _Ngap_PagingPriority_H_
@@ -39,20 +39,20 @@ typedef long Ngap_PagingPriority_t;
 /* Implementation */
 extern asn_per_constraints_t asn_PER_type_Ngap_PagingPriority_constr_1;
 extern asn_TYPE_descriptor_t asn_DEF_Ngap_PagingPriority;
-extern const asn_INTEGER_specifics_t asn_SPC_PagingPriority_specs_1;
-asn_struct_free_f PagingPriority_free;
-asn_struct_print_f PagingPriority_print;
-asn_constr_check_f PagingPriority_constraint;
-ber_type_decoder_f PagingPriority_decode_ber;
-der_type_encoder_f PagingPriority_encode_der;
-xer_type_decoder_f PagingPriority_decode_xer;
-xer_type_encoder_f PagingPriority_encode_xer;
-oer_type_decoder_f PagingPriority_decode_oer;
-oer_type_encoder_f PagingPriority_encode_oer;
-per_type_decoder_f PagingPriority_decode_uper;
-per_type_encoder_f PagingPriority_encode_uper;
-per_type_decoder_f PagingPriority_decode_aper;
-per_type_encoder_f PagingPriority_encode_aper;
+extern const asn_INTEGER_specifics_t asn_SPC_Ngap_PagingPriority_specs_1;
+asn_struct_free_f Ngap_PagingPriority_free;
+asn_struct_print_f Ngap_PagingPriority_print;
+asn_constr_check_f Ngap_PagingPriority_constraint;
+ber_type_decoder_f Ngap_PagingPriority_decode_ber;
+der_type_encoder_f Ngap_PagingPriority_encode_der;
+xer_type_decoder_f Ngap_PagingPriority_decode_xer;
+xer_type_encoder_f Ngap_PagingPriority_encode_xer;
+oer_type_decoder_f Ngap_PagingPriority_decode_oer;
+oer_type_encoder_f Ngap_PagingPriority_encode_oer;
+per_type_decoder_f Ngap_PagingPriority_decode_uper;
+per_type_encoder_f Ngap_PagingPriority_encode_uper;
+per_type_decoder_f Ngap_PagingPriority_decode_aper;
+per_type_encoder_f Ngap_PagingPriority_encode_aper;
 
 #ifdef __cplusplus
 }

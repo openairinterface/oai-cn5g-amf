@@ -70,7 +70,7 @@ bool QosFlowLevelQosParameters::encode(
           &qosFlowLevelQosParameters->qosCharacteristics))
     return false;
   if (!allocationAndRetentionPriority.encode(
-          &qosFlowLevelQosParameters->allocationAndRetentionPriority))
+          qosFlowLevelQosParameters->allocationAndRetentionPriority))
     return false;
 
   if (gBR_QosInformation.has_value()) {
@@ -99,7 +99,7 @@ bool QosFlowLevelQosParameters::encode(
             1, sizeof(Ngap_AdditionalQosFlowInformation_t));
     if (!qosFlowLevelQosParameters->additionalQosFlowInformation) return false;
     if (!additionalQosFlowInformation.value().encode(
-            qosFlowLevelQosParameters->additionalQosFlowInformation))
+            *qosFlowLevelQosParameters->additionalQosFlowInformation))
       return false;
   }
 
@@ -113,7 +113,7 @@ bool QosFlowLevelQosParameters::decode(
           &qosFlowLevelQosParameters->qosCharacteristics))
     return false;
   if (!allocationAndRetentionPriority.decode(
-          &qosFlowLevelQosParameters->allocationAndRetentionPriority))
+          qosFlowLevelQosParameters->allocationAndRetentionPriority))
     return false;
 
   if (qosFlowLevelQosParameters->gBR_QosInformation) {
@@ -130,7 +130,7 @@ bool QosFlowLevelQosParameters::decode(
   }
   if (qosFlowLevelQosParameters->additionalQosFlowInformation) {
     AdditionalQosFlowInformation tmp = {};
-    if (!tmp.decode(qosFlowLevelQosParameters->additionalQosFlowInformation))
+    if (!tmp.decode(*qosFlowLevelQosParameters->additionalQosFlowInformation))
       return false;
     additionalQosFlowInformation =
         std::make_optional<AdditionalQosFlowInformation>(tmp);

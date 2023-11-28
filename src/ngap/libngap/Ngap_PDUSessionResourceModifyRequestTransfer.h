@@ -3,7 +3,7 @@
  * From ASN.1 module "NGAP-IEs"
  * 	found in "asn.1/Information Element Definitions.asn1"
  * 	`asn1c -pdu=all -fcompound-names -fno-include-deps -findirect-choice
- * -gen-PER -D src`
+ * -no-gen-example -gen-APER -gen-UPER -no-gen-JER -gen-BER -D src`
  */
 
 #ifndef _Ngap_PDUSessionResourceModifyRequestTransfer_H_
@@ -21,7 +21,7 @@ extern "C" {
 
 /* Ngap_PDUSessionResourceModifyRequestTransfer */
 typedef struct Ngap_PDUSessionResourceModifyRequestTransfer {
-  Ngap_ProtocolIE_Container_124P0_t protocolIEs;
+  Ngap_ProtocolIE_Container_9615P96_t protocolIEs;
   /*
    * This type is extensible,
    * possible extensions are below.

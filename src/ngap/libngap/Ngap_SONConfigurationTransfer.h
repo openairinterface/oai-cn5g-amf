@@ -3,7 +3,7 @@
  * From ASN.1 module "NGAP-IEs"
  * 	found in "asn.1/Information Element Definitions.asn1"
  * 	`asn1c -pdu=all -fcompound-names -fno-include-deps -findirect-choice
- * -gen-PER -D src`
+ * -no-gen-example -gen-APER -gen-UPER -no-gen-JER -gen-BER -D src`
  */
 
 #ifndef _Ngap_SONConfigurationTransfer_H_
@@ -15,7 +15,6 @@
 #include "Ngap_TargetRANNodeID.h"
 #include "Ngap_SourceRANNodeID.h"
 #include "Ngap_SONInformation.h"
-#include "Ngap_XnTNLConfigurationInfo.h"
 #include <constr_SEQUENCE.h>
 
 #ifdef __cplusplus
@@ -23,6 +22,7 @@ extern "C" {
 #endif
 
 /* Forward declarations */
+struct Ngap_XnTNLConfigurationInfo;
 struct Ngap_ProtocolExtensionContainer;
 
 /* Ngap_SONConfigurationTransfer */
@@ -30,8 +30,8 @@ typedef struct Ngap_SONConfigurationTransfer {
   Ngap_TargetRANNodeID_t targetRANNodeID;
   Ngap_SourceRANNodeID_t sourceRANNodeID;
   Ngap_SONInformation_t sONInformation;
-  Ngap_XnTNLConfigurationInfo_t xnTNLConfigurationInfo;
-  struct Ngap_ProtocolExtensionContainer* iE_Extensions; /* OPTIONAL */
+  struct Ngap_XnTNLConfigurationInfo* xnTNLConfigurationInfo; /* OPTIONAL */
+  struct Ngap_ProtocolExtensionContainer* iE_Extensions;      /* OPTIONAL */
   /*
    * This type is extensible,
    * possible extensions are below.

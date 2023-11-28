@@ -26,7 +26,7 @@
 
 #include "AmfName.hpp"
 #include "AllowedNssai.hpp"
-#include "CoreNetworkAssistanceInformation.hpp"
+#include "CoreNetworkAssistanceInformationForInactive.hpp"
 #include "GUAMI.hpp"
 #include "MobilityRestrictionList.hpp"
 #include "NgapUEMessage.hpp"
@@ -118,9 +118,9 @@ class InitialContextSetupRequestMsg : public NgapUEMessage {
 
   std::optional<AmfName> oldAMF;                               // Optional
   std::optional<UEAggregateMaxBitRate> uEAggregateMaxBitRate;  // Conditional
-  std::optional<CoreNetworkAssistanceInfo>
-      coreNetworkAssistanceInfo;  // Optional
-  GUAMI guami;                    // Mandatory
+  std::optional<CoreNetworkAssistanceInformationForInactive>
+      coreNetworkAssistanceInformationForInactive;  // Optional
+  GUAMI guami;                                      // Mandatory
   std::optional<PduSessionResourceSetupListCxtReq>
       pduSessionResourceSetupRequestList;         // Optional
   AllowedNSSAI allowedNssai;                      // Mandatory
@@ -138,6 +138,21 @@ class InitialContextSetupRequestMsg : public NgapUEMessage {
   // TODO: Redirection for Voice EPS Fallback
   // TODO: Location Reporting Request Type
   // TODO: CN Assisted RAN Parameters Tuning
+  // TODO: SRVCC Operation Possible (Optional, Rel 16.14.0)
+  // TODO: IAB Authorized (Optional, Rel 16.14.0)
+  // TODO: Enhanced Coverage Restriction (Optional, Rel 16.14.0)
+  // TODO: Extended Connected Time (Optional, Rel 16.14.0)
+  // TODO: UE Differentiation Information (Optional, Rel 16.14.0)
+  // TODO: NR V2X Services Authorized (Optional, Rel 16.14.0)
+  // TODO: LTE V2X Services Authorized (Optional, Rel 16.14.0)
+  // TODO: NR UE Sidelink Aggregate Maximum Bit Rate (Optional, Rel 16.14.0)
+  // TODO: LTE UE Sidelink Aggregate Maximum Bit Rate (Optional, Rel 16.14.0)
+  // TODO: PC5 QoS Parameters (Optional, Rel 16.14.0)
+  // TODO: CE-mode-B Restricted (Optional, Rel 16.14.0)
+  // TODO: UE User Plane CIoT Support Indicator (Optional, Rel 16.14.0)
+  // TODO: RG Level Wireline Access Characteristics (Optional, Rel 16.14.0)
+  // TODO: Management Based MDT PLMN List (Optional, Rel 16.14.0)
+  // TODO: UE Radio Capability ID (Optional, Rel 16.14.0)
 };
 
 }  // namespace ngap

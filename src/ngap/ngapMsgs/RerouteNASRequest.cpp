@@ -132,7 +132,7 @@ void RerouteNASRequest::setAllowedNssai(const std::vector<S_Nssai>& list) {
   ie->criticality   = Ngap_Criticality_reject;
   ie->value.present = Ngap_RerouteNASRequest_IEs__value_PR_AllowedNSSAI;
 
-  int ret = allowedNssai.value().encode(&ie->value.choice.AllowedNSSAI);
+  int ret = allowedNssai.value().encode(ie->value.choice.AllowedNSSAI);
   if (!ret) {
     Logger::ngap().error("Encode AllowedNSSAI IE error!");
     free_wrapper((void**) &ie);
@@ -300,8 +300,8 @@ bool RerouteNASRequest::decode(Ngap_NGAP_PDU_t* ngapMsgPdu) {
                 Ngap_RerouteNASRequest_IEs__value_PR_AllowedNSSAI) {
           AllowedNSSAI tmp = {};
           if (!allowedNssai->decode(
-                  &rerouteNASRequestIEs->protocolIEs.list.array[i]
-                       ->value.choice.AllowedNSSAI)) {
+                  rerouteNASRequestIEs->protocolIEs.list.array[i]
+                      ->value.choice.AllowedNSSAI)) {
             Logger::ngap().error("Decoded NGAP AllowedNSSAI IE error");
             return false;
           }

@@ -3,7 +3,7 @@
  * From ASN.1 module "NGAP-IEs"
  * 	found in "asn.1/Information Element Definitions.asn1"
  * 	`asn1c -pdu=all -fcompound-names -fno-include-deps -findirect-choice
- * -gen-PER -D src`
+ * -no-gen-example -gen-APER -gen-UPER -no-gen-JER -gen-BER -D src`
  */
 
 #ifndef _Ngap_RRCEstablishmentCause_H_
@@ -29,10 +29,12 @@ typedef enum Ngap_RRCEstablishmentCause {
   Ngap_RRCEstablishmentCause_mo_VideoCall       = 6,
   Ngap_RRCEstablishmentCause_mo_SMS             = 7,
   Ngap_RRCEstablishmentCause_mps_PriorityAccess = 8,
-  Ngap_RRCEstablishmentCause_mcs_PriorityAccess = 9
+  Ngap_RRCEstablishmentCause_mcs_PriorityAccess = 9,
   /*
    * Enumeration is extensible
    */
+  Ngap_RRCEstablishmentCause_notAvailable     = 10,
+  Ngap_RRCEstablishmentCause_mo_ExceptionData = 11
 } e_Ngap_RRCEstablishmentCause;
 
 /* Ngap_RRCEstablishmentCause */
@@ -41,20 +43,20 @@ typedef long Ngap_RRCEstablishmentCause_t;
 /* Implementation */
 extern asn_per_constraints_t asn_PER_type_Ngap_RRCEstablishmentCause_constr_1;
 extern asn_TYPE_descriptor_t asn_DEF_Ngap_RRCEstablishmentCause;
-extern const asn_INTEGER_specifics_t asn_SPC_RRCEstablishmentCause_specs_1;
-asn_struct_free_f RRCEstablishmentCause_free;
-asn_struct_print_f RRCEstablishmentCause_print;
-asn_constr_check_f RRCEstablishmentCause_constraint;
-ber_type_decoder_f RRCEstablishmentCause_decode_ber;
-der_type_encoder_f RRCEstablishmentCause_encode_der;
-xer_type_decoder_f RRCEstablishmentCause_decode_xer;
-xer_type_encoder_f RRCEstablishmentCause_encode_xer;
-oer_type_decoder_f RRCEstablishmentCause_decode_oer;
-oer_type_encoder_f RRCEstablishmentCause_encode_oer;
-per_type_decoder_f RRCEstablishmentCause_decode_uper;
-per_type_encoder_f RRCEstablishmentCause_encode_uper;
-per_type_decoder_f RRCEstablishmentCause_decode_aper;
-per_type_encoder_f RRCEstablishmentCause_encode_aper;
+extern const asn_INTEGER_specifics_t asn_SPC_Ngap_RRCEstablishmentCause_specs_1;
+asn_struct_free_f Ngap_RRCEstablishmentCause_free;
+asn_struct_print_f Ngap_RRCEstablishmentCause_print;
+asn_constr_check_f Ngap_RRCEstablishmentCause_constraint;
+ber_type_decoder_f Ngap_RRCEstablishmentCause_decode_ber;
+der_type_encoder_f Ngap_RRCEstablishmentCause_encode_der;
+xer_type_decoder_f Ngap_RRCEstablishmentCause_decode_xer;
+xer_type_encoder_f Ngap_RRCEstablishmentCause_encode_xer;
+oer_type_decoder_f Ngap_RRCEstablishmentCause_decode_oer;
+oer_type_encoder_f Ngap_RRCEstablishmentCause_encode_oer;
+per_type_decoder_f Ngap_RRCEstablishmentCause_decode_uper;
+per_type_encoder_f Ngap_RRCEstablishmentCause_encode_uper;
+per_type_decoder_f Ngap_RRCEstablishmentCause_decode_aper;
+per_type_encoder_f Ngap_RRCEstablishmentCause_encode_aper;
 
 #ifdef __cplusplus
 }

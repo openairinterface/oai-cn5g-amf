@@ -105,23 +105,36 @@ class HandoverRequest : public NgapMessage {
   Ngap_HandoverType_t handoverType;                 // Mandatory
   Cause cause;                                      // Mandatory
   UEAggregateMaxBitRate ueAggregateMaximumBitRate;  // Mandatory
-  // Core Network Assistance Information for RRC INACTIVE (TODO://Optional)
+  // TODO: Core Network Assistance Information for RRC INACTIVE (Optional)
   UESecurityCapabilities ueSecurityCapabilities;  // Mandatory
-  Ngap_SecurityContext_t securityContext;         // TODO: Mandatory
-  // New Security Context Indicator (TODO: Optional)
-  // NASC - NAS-PDU (TODO: Optional)
+  Ngap_SecurityContext_t securityContext;         // Mandatory
+  // TODO: New Security Context Indicator (Optional)
+  // TODO: NASC - NAS-PDU (Optional)
   PduSessionResourceSetupListHoReq pDUSessionResourceSetupList;  // Mandatory
-  Ngap_AllowedNSSAI_t allowedNSSAI;  // TODO: Mandatory
-  // Trace Activation (TODO: Optional)
-  // Masked IMEISV  (TODO: Optional)
+  Ngap_AllowedNSSAI_t allowedNSSAI;                              // Mandatory
+  // TODO: Trace Activation (Optional)
+  // TODO: Masked IMEISV  (Optional)
   Ngap_SourceToTarget_TransparentContainer_t
-      SourceToTarget_TransparentContainer;  // TODO: Mandatory
+      SourceToTarget_TransparentContainer;  // Mandatory
   std::optional<MobilityRestrictionList> mobilityRestrictionList;
-  // Location Reporting Request Type (TODO: Optional)
-  // RRC Inactive Transition Report Request (TODO: Optional)
+  // TODO: Location Reporting Request Type (Optional)
+  // TODO: RRC Inactive Transition Report Request (Optional)
   GUAMI guami;  // Mandatory
-  // Redirection for Voice EPS Fallback // Optional
-  // CN Assisted RAN Parameters Tuning (TODO: Optional)
+  // TODO: Redirection for Voice EPS Fallback (Optional)
+  // TODO: CN Assisted RAN Parameters Tuning (Optional)
+  // TODO: SRVCC Operation Possible (Optional, Rel 16.14.0)
+  // TODO: IAB Authorized (Optional, Rel 16.14.0)
+  // TODO: Enhanced Coverage Restriction (Optional, Rel 16.14.0)
+  // TODO: UE Differentiation Information (Optional, Rel 16.14.0)
+  // TODO: NR V2X Services Authorized (Optional, Rel 16.14.0)
+  // TODO: LTE V2X Services Authorized (Optional, Rel 16.14.0)
+  // TODO: NR UE Sidelink Aggregate Maximum Bit Rate (Optional, Rel 16.14.0)
+  // TODO: LTE UE Sidelink Aggregate Maximum Bit Rate (Optional, Rel 16.14.0)
+  // TODO: PC5 QoS Parameters (Optional, Rel 16.14.0)
+  // TODO: CE-mode-B Restricted (Optional, Rel 16.14.0)
+  // TODO: UE User Plane CIoT Support Indicator (Optional, Rel 16.14.0)
+  // TODO: Management Based MDT PLMN List (Optional, Rel 16.14.0)
+  // TODO: UE Radio Capability ID (Optional, Rel 16.14.0)
 };
 
 }  // namespace ngap

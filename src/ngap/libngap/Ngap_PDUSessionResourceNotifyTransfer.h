@@ -3,7 +3,7 @@
  * From ASN.1 module "NGAP-IEs"
  * 	found in "asn.1/Information Element Definitions.asn1"
  * 	`asn1c -pdu=all -fcompound-names -fno-include-deps -findirect-choice
- * -gen-PER -D src`
+ * -no-gen-example -gen-APER -gen-UPER -no-gen-JER -gen-BER -D src`
  */
 
 #ifndef _Ngap_PDUSessionResourceNotifyTransfer_H_
@@ -20,13 +20,13 @@ extern "C" {
 
 /* Forward declarations */
 struct Ngap_QosFlowNotifyList;
-struct Ngap_QosFlowList;
+struct Ngap_QosFlowListWithCause;
 struct Ngap_ProtocolExtensionContainer;
 
 /* Ngap_PDUSessionResourceNotifyTransfer */
 typedef struct Ngap_PDUSessionResourceNotifyTransfer {
   struct Ngap_QosFlowNotifyList* qosFlowNotifyList;      /* OPTIONAL */
-  struct Ngap_QosFlowList* qosFlowReleasedList;          /* OPTIONAL */
+  struct Ngap_QosFlowListWithCause* qosFlowReleasedList; /* OPTIONAL */
   struct Ngap_ProtocolExtensionContainer* iE_Extensions; /* OPTIONAL */
   /*
    * This type is extensible,

@@ -61,7 +61,7 @@ void NGSetupResponseMsg::setAMFName(const std::string& name) {
   ie->criticality   = Ngap_Criticality_reject;
   ie->value.present = Ngap_NGSetupResponseIEs__value_PR_AMFName;
 
-  if (!amfName.encode(&ie->value.choice.AMFName)) {
+  if (!amfName.encode(ie->value.choice.AMFName)) {
     Logger::ngap().error("Encode NGAP AMFName IE error");
     free_wrapper((void**) &ie);
     return;
@@ -203,8 +203,8 @@ bool NGSetupResponseMsg::decode(Ngap_NGAP_PDU_t* ngapMsgPdu) {
                 Ngap_Criticality_reject &&
             ngSetupResponsIEs->protocolIEs.list.array[i]->value.present ==
                 Ngap_NGSetupResponseIEs__value_PR_AMFName) {
-          if (!amfName.decode(&ngSetupResponsIEs->protocolIEs.list.array[i]
-                                   ->value.choice.AMFName)) {
+          if (!amfName.decode(ngSetupResponsIEs->protocolIEs.list.array[i]
+                                  ->value.choice.AMFName)) {
             Logger::ngap().error("Decoded NGAP AMFName error");
             return false;
           }

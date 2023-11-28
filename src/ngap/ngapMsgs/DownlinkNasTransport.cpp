@@ -106,7 +106,7 @@ void DownLinkNasTransportMsg::setOldAmf(const std::string& name) {
   ie->criticality   = Ngap_Criticality_reject;
   ie->value.present = Ngap_DownlinkNASTransport_IEs__value_PR_AMFName;
 
-  int ret = oldAMF.value().encode(&ie->value.choice.AMFName);
+  int ret = oldAMF.value().encode(ie->value.choice.AMFName);
   if (!ret) {
     Logger::ngap().error("Encode oldAmfName IE error");
     free_wrapper((void**) &ie);
@@ -306,7 +306,7 @@ void DownLinkNasTransportMsg::setAllowedNssai(
   ie->criticality   = Ngap_Criticality_reject;
   ie->value.present = Ngap_DownlinkNASTransport_IEs__value_PR_AllowedNSSAI;
 
-  int ret = allowedNssai.value().encode(&ie->value.choice.AllowedNSSAI);
+  int ret = allowedNssai.value().encode(ie->value.choice.AllowedNSSAI);
   if (!ret) {
     Logger::ngap().error("Encode AllowedNSSAI IE error");
     free_wrapper((void**) &ie);
@@ -387,8 +387,8 @@ bool DownLinkNasTransportMsg::decode(Ngap_NGAP_PDU_t* ngapMsgPdu) {
             downLinkNasTransportIEs->protocolIEs.list.array[i]->value.present ==
                 Ngap_DownlinkNASTransport_IEs__value_PR_AMFName) {
           AmfName tmp = {};
-          if (!tmp.decode(&downLinkNasTransportIEs->protocolIEs.list.array[i]
-                               ->value.choice.AMFName)) {
+          if (!tmp.decode(downLinkNasTransportIEs->protocolIEs.list.array[i]
+                              ->value.choice.AMFName)) {
             Logger::ngap().error("Decode NGAP OldAMFName IE error");
             return false;
           }
@@ -494,8 +494,8 @@ bool DownLinkNasTransportMsg::decode(Ngap_NGAP_PDU_t* ngapMsgPdu) {
             downLinkNasTransportIEs->protocolIEs.list.array[i]->value.present ==
                 Ngap_DownlinkNASTransport_IEs__value_PR_AllowedNSSAI) {
           AllowedNSSAI tmp = {};
-          if (!tmp.decode(&downLinkNasTransportIEs->protocolIEs.list.array[i]
-                               ->value.choice.AllowedNSSAI)) {
+          if (!tmp.decode(downLinkNasTransportIEs->protocolIEs.list.array[i]
+                              ->value.choice.AllowedNSSAI)) {
             Logger::ngap().error("Decode NGAP AllowedNSSAI IE error");
             return false;
           }

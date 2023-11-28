@@ -98,8 +98,7 @@ bool SecurityIndication::encode(Ngap_SecurityIndication_t* securityIndication) {
       return false;
     }
 
-    // TODO: check maximumIntegrityProtectedDataRateUL
-    securityIndication->maximumIntegrityProtectedDataRate = maxIPDataRate;
+    securityIndication->maximumIntegrityProtectedDataRate_UL = maxIPDataRate;
     // free_wrapper((void**) &maxIPDataRate);
   }
   // TODO: check maximumIntegrityProtectedDataRateDL
@@ -117,10 +116,10 @@ bool SecurityIndication::decode(Ngap_SecurityIndication_t* securityIndication) {
     return false;
 
   // TODO: verify maximumIntegrityProtectedDataRate
-  if (securityIndication->maximumIntegrityProtectedDataRate) {
+  if (securityIndication->maximumIntegrityProtectedDataRate_UL) {
     MaximumIntegrityProtectedDataRate tmp = {};
 
-    if (!tmp.decode(*securityIndication->maximumIntegrityProtectedDataRate))
+    if (!tmp.decode(*securityIndication->maximumIntegrityProtectedDataRate_UL))
       return false;
     maximumIntegrityProtectedDataRateUL =
         std::make_optional<MaximumIntegrityProtectedDataRate>(tmp);

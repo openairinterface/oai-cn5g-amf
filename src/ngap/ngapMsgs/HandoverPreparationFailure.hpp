@@ -52,6 +52,8 @@ class HandoverPreparationFailure : public NgapUEMessage {
   // RAN_UE_NGAP_ID (Mandatory)
   Cause cause;                                            // Mandatory
   Ngap_CriticalityDiagnostics_t* criticalityDiagnostics;  // Optional
+  // TODO: Target to Source Failure Transparent Container (Optional,
+  // Rel 16.14.0)
 };
 
 }  // namespace ngap

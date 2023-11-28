@@ -31,7 +31,7 @@ QosFlowListWithDataForwarding::~QosFlowListWithDataForwarding() {}
 
 //------------------------------------------------------------------------------
 bool QosFlowListWithDataForwarding::decode(
-    Ngap_QosFlowSetupResponseListHOReqAck_t qosFlowSetupResponseList) {
+    Ngap_QosFlowListWithDataForwarding qosFlowSetupResponseList) {
   for (int i = 0; i < qosFlowSetupResponseList.list.count; i++) {
     QosFlowItemWithDataForWarding item = {};
     if (!item.decode(qosFlowSetupResponseList.list.array[i])) return false;

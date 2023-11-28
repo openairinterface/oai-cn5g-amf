@@ -73,7 +73,7 @@ void PduSessionResourceSetupResponseTransferIE::set(
       up_transport_layer_information, associated_qos_flow_list);
 
   int ret = dlQoSFlowPerTNLInformation.encode(
-      &pduSessionResourceSetupResponseTransferIEs->qosFlowPerTNLInformation);
+      &pduSessionResourceSetupResponseTransferIEs->dLQosFlowPerTNLInformation);
   if (!ret) {
     Logger::ngap().error("Encode DLQoSFlowPerTNLInformation IE error");
     return;
@@ -83,52 +83,54 @@ void PduSessionResourceSetupResponseTransferIE::set(
 //------------------------------------------------------------------------------
 void PduSessionResourceSetupResponseTransferIE::
     setAdditionalDLQoSFlowPerTNLInformation(
-        const GtpTunnel_t& up_transport_layer_info,
-        const std::vector<AssociatedQosFlow_t>& list) {
-  UpTransportLayerInformation up_transport_layer_information = {};
+        QosFlowPerTnlInformationList& additionDLQoSFlowPerTNLInformation) {
+  /*  UpTransportLayerInformation up_transport_layer_information = {};
 
-  TransportLayerAddress transport_layer_address = {};
-  GtpTeid gtp_teid                              = {};
-  transport_layer_address.setTransportLayerAddress(
-      up_transport_layer_info.ip_address);
-  gtp_teid.setGtpTeid(up_transport_layer_info.gtp_teid);
-  up_transport_layer_information.setUpTransportLayerInformation(
-      transport_layer_address, gtp_teid);
+    TransportLayerAddress transport_layer_address = {};
+    GtpTeid gtp_teid                              = {};
+    transport_layer_address.setTransportLayerAddress(
+        up_transport_layer_info.ip_address);
+    gtp_teid.setGtpTeid(up_transport_layer_info.gtp_teid);
+    up_transport_layer_information.setUpTransportLayerInformation(
+        transport_layer_address, gtp_teid);
 
-  AssociatedQosFlowList associated_qos_flow_list = {};
-  std::vector<AssociatedQosFlowItem> vector_associated_qos_flow_item;
-  for (int i = 0; i < list.size(); i++) {
-    AssociatedQosFlowItem item            = {};
-    QosFlowIdentifier qos_flow_identifier = {};
-    qos_flow_identifier.setQosFlowIdentifier(list[i].qosFlowIdentifier);
-    if (list[i].qosFlowMappingIndication) {
-      item.setAssociatedQosFlowItem(
-          *list[i].qosFlowMappingIndication, qos_flow_identifier);
-    } else {
-      item.setAssociatedQosFlowItem(qos_flow_identifier);
+    AssociatedQosFlowList associated_qos_flow_list = {};
+    std::vector<AssociatedQosFlowItem> vector_associated_qos_flow_item;
+    for (int i = 0; i < list.size(); i++) {
+      AssociatedQosFlowItem item            = {};
+      QosFlowIdentifier qos_flow_identifier = {};
+      qos_flow_identifier.setQosFlowIdentifier(list[i].qosFlowIdentifier);
+      if (list[i].qosFlowMappingIndication) {
+        item.setAssociatedQosFlowItem(
+            *list[i].qosFlowMappingIndication, qos_flow_identifier);
+      } else {
+        item.setAssociatedQosFlowItem(qos_flow_identifier);
+      }
+      vector_associated_qos_flow_item.push_back(item);
     }
-    vector_associated_qos_flow_item.push_back(item);
-  }
-  associated_qos_flow_list.setAssociatedQosFlowList(
-      vector_associated_qos_flow_item);
+    associated_qos_flow_list.setAssociatedQosFlowList(
+        vector_associated_qos_flow_item);
 
-  QosFlowPerTnlInformation additional_qos_flow = {};
-  additional_qos_flow.setQoSFlowPerTNLInformation(
-      up_transport_layer_information, associated_qos_flow_list);
-  additionalDLQoSFlowPerTNLInformation =
-      std::make_optional<QosFlowPerTnlInformation>(additional_qos_flow);
+    QosFlowPerTnlInformation additional_qos_flow = {};
+    additional_qos_flow.setQoSFlowPerTNLInformation(
+        up_transport_layer_information, associated_qos_flow_list);
+    additionalDLQoSFlowPerTNLInformation =
+        std::make_optional<QosFlowPerTnlInformationList>(additional_qos_flow);
 
-  Ngap_QosFlowPerTNLInformation_t* ie =
-      (Ngap_QosFlowPerTNLInformation_t*) calloc(
-          1, sizeof(Ngap_QosFlowPerTNLInformation_t));
-  int ret = additionalDLQoSFlowPerTNLInformation.value().encode(ie);
-  if (!ret) {
-    Logger::ngap().error(
-        "Encode AdditionalDLQoSFlowPerTNLInformation IE error");
-    return;
-  }
-  pduSessionResourceSetupResponseTransferIEs
-      ->additionalQosFlowPerTNLInformation = ie;
+    Ngap_QosFlowPerTNLInformationList_t* ie =
+                (Ngap_QosFlowPerTNLInformationList_t*) calloc(1,
+    sizeof(Ngap_QosFlowPerTNLInformationList_t));
+
+    int ret = additionalDLQoSFlowPerTNLInformation.value().encode(ie);
+    if (!ret) {
+      Logger::ngap().error(
+          "Encode AdditionalDLQoSFlowPerTNLInformation IE error");
+      return;
+    }
+    pduSessionResourceSetupResponseTransferIEs
+        ->additionalDLQosFlowPerTNLInformation = ie;
+        */
+  // TODO
 }
 
 //------------------------------------------------------------------------------
@@ -192,22 +194,23 @@ bool PduSessionResourceSetupResponseTransferIE::decode(
 
   if (!dlQoSFlowPerTNLInformation.decode(
           &pduSessionResourceSetupResponseTransferIEs
-               ->qosFlowPerTNLInformation)) {
+               ->dLQosFlowPerTNLInformation)) {
     Logger::ngap().error("Decode NGAP DLQoSFlowPerTNLInformation IE error");
     return false;
   }
 
   if (pduSessionResourceSetupResponseTransferIEs
-          ->additionalQosFlowPerTNLInformation) {
-    QosFlowPerTnlInformation additional_qos_flow = {};
-    if (!additional_qos_flow.decode(pduSessionResourceSetupResponseTransferIEs
-                                        ->additionalQosFlowPerTNLInformation)) {
+          ->additionalDLQosFlowPerTNLInformation) {
+    QosFlowPerTnlInformationList additional_qos_flow = {};
+    if (!additional_qos_flow.decode(
+            pduSessionResourceSetupResponseTransferIEs
+                ->additionalDLQosFlowPerTNLInformation)) {
       Logger::ngap().error(
           "Decode NGAP AdditionalDLQoSFlowPerTNLInformation IE error");
       return false;
     }
     additionalDLQoSFlowPerTNLInformation =
-        std::make_optional<QosFlowPerTnlInformation>(additional_qos_flow);
+        std::make_optional<QosFlowPerTnlInformationList>(additional_qos_flow);
   }
   if (pduSessionResourceSetupResponseTransferIEs->securityResult) {
     SecurityResult security_result = {};
@@ -270,50 +273,8 @@ bool PduSessionResourceSetupResponseTransferIE::get(
 //------------------------------------------------------------------------------
 bool PduSessionResourceSetupResponseTransferIE::
     getAdditionalDLQoSFlowPerTNLInformation(
-        GtpTunnel_t& up_transport_layer_info,
-        std::vector<AssociatedQosFlow_t>& list) const {
-  if (!additionalDLQoSFlowPerTNLInformation.has_value()) return false;
-
-  UpTransportLayerInformation up_transport_layer_information = {};
-  AssociatedQosFlowList associated_qos_flow_list             = {};
-  additionalDLQoSFlowPerTNLInformation.value().getQoSFlowPerTNLInformation(
-      up_transport_layer_information, associated_qos_flow_list);
-  TransportLayerAddress transport_layer_address = {};
-  GtpTeid gtp_teid                              = {};
-  up_transport_layer_information.getUpTransportLayerInformation(
-      transport_layer_address, gtp_teid);
-  transport_layer_address.getTransportLayerAddress(
-      up_transport_layer_info.ip_address);
-  gtp_teid.getGtpTeid(up_transport_layer_info.gtp_teid);
-
-  std::vector<AssociatedQosFlowItem> vector_associated_qos_flow_item;
-  associated_qos_flow_list.getAssociatedQosFlowList(
-      vector_associated_qos_flow_item);
-
-  for (int i = 0; i < vector_associated_qos_flow_item.size(); i++) {
-    AssociatedQosFlow_t AssociatedQosFlow_str;
-    long m_qosFlowMappingIndication;
-    QosFlowIdentifier qos_flow_identifier = {};
-    vector_associated_qos_flow_item[i].getAssociatedQosFlowItem(
-        m_qosFlowMappingIndication, qos_flow_identifier);
-    qos_flow_identifier.getQosFlowIdentifier(
-        AssociatedQosFlow_str.qosFlowIdentifier);
-    if (m_qosFlowMappingIndication < 0) {
-      AssociatedQosFlow_str.qosFlowMappingIndication = NULL;
-    } else {
-      AssociatedQosFlow_str.qosFlowMappingIndication =
-          (e_Ngap_AssociatedQosFlowItem__qosFlowMappingIndication*) calloc(
-              1,
-              sizeof(e_Ngap_AssociatedQosFlowItem__qosFlowMappingIndication));
-
-      *AssociatedQosFlow_str.qosFlowMappingIndication =
-          (e_Ngap_AssociatedQosFlowItem__qosFlowMappingIndication)
-              m_qosFlowMappingIndication;
-    }
-
-    list.push_back(AssociatedQosFlow_str);
-  }
-
+        QosFlowPerTnlInformationList& additionDLQoSFlowPerTNLInformation)
+        const {
   return true;
 }
 

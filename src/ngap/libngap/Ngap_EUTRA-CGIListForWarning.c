@@ -3,14 +3,17 @@
  * From ASN.1 module "NGAP-IEs"
  * 	found in "asn.1/Information Element Definitions.asn1"
  * 	`asn1c -pdu=all -fcompound-names -fno-include-deps -findirect-choice
- * -gen-PER -D src`
+ * -no-gen-example -gen-APER -gen-UPER -no-gen-JER -gen-BER -D src`
  */
 
 #include "Ngap_EUTRA-CGIListForWarning.h"
 
 #include "Ngap_EUTRA-CGI.h"
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_type_Ngap_EUTRA_CGIListForWarning_constr_1
     CC_NOTUSED = {{0, 0}, -1 /* (SIZE(1..65535)) */};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t asn_PER_type_Ngap_EUTRA_CGIListForWarning_constr_1
     CC_NOTUSED = {
         {APC_UNCONSTRAINED, -1, -1, 0, 0},
@@ -18,6 +21,8 @@ asn_per_constraints_t asn_PER_type_Ngap_EUTRA_CGIListForWarning_constr_1
         0,
         0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
 asn_TYPE_member_t asn_MBR_Ngap_EUTRA_CGIListForWarning_1[] = {
     {ATF_POINTER,
      0,
@@ -26,7 +31,15 @@ asn_TYPE_member_t asn_MBR_Ngap_EUTRA_CGIListForWarning_1[] = {
      0,
      &asn_DEF_Ngap_EUTRA_CGI,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      ""},
@@ -48,9 +61,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_EUTRA_CGIListForWarning = {
     asn_DEF_Ngap_EUTRA_CGIListForWarning_tags_1, /* Same as above */
     sizeof(asn_DEF_Ngap_EUTRA_CGIListForWarning_tags_1) /
         sizeof(asn_DEF_Ngap_EUTRA_CGIListForWarning_tags_1[0]), /* 1 */
-    {&asn_OER_type_Ngap_EUTRA_CGIListForWarning_constr_1,
-     &asn_PER_type_Ngap_EUTRA_CGIListForWarning_constr_1,
-     SEQUENCE_OF_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_EUTRA_CGIListForWarning_constr_1,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_EUTRA_CGIListForWarning_constr_1,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_OF_constraint},
     asn_MBR_Ngap_EUTRA_CGIListForWarning_1,
     1,                                            /* Single element */
     &asn_SPC_Ngap_EUTRA_CGIListForWarning_specs_1 /* Additional specs */

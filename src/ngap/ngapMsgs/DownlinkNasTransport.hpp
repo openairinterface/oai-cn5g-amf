@@ -79,6 +79,16 @@ class DownLinkNasTransportMsg : public NgapUEMessage {
   std::optional<IndexToRfsp> indexToRFSP;                          // Optional
   std::optional<UEAggregateMaxBitRate> uEAggregateMaxBitRate;      // Optional
   std::optional<AllowedNSSAI> allowedNssai;                        // Optional
+  // TODO: SRVCC Operation Possible (Optional, Rel 16.14.0)
+  // TODO: Enhanced Coverage Restriction (Optional, Rel 16.14.0)
+  // TODO: Extended Connected Time (Optional, Rel 16.14.0)
+  // TODO: UE Differentiation Information (Optional, Rel 16.14.0)
+  // TODO: CE-mode-B Restricted (Optional, Rel 16.14.0)
+  // TODO: UE Radio Capability (Optional, Rel 16.14.0)
+  // TODO: UE Capability Info Request (Optional, Rel 16.14.0)
+  // TODO: End Indication (Optional, Rel 16.14.0)
+  // TODO: UE Radio Capability ID (Optional, Rel 16.14.0)
+  // TODO: Masked IMEISV (Optional, Rel 16.14.0)
 };
 
 }  // namespace ngap

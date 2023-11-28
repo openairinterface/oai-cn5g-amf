@@ -194,7 +194,7 @@ bool NGSetupFailureMsg::decode(Ngap_NGAP_PDU_t* ngapMsgPdu) {
         ngapPdu->choice.unsuccessfulOutcome->value.present ==
             Ngap_UnsuccessfulOutcome__value_PR_NGSetupFailure) {
       ngSetupFailureIEs =
-          &ngapPdu->choice.initiatingMessage->value.choice.NGSetupFailure;
+          &ngapPdu->choice.unsuccessfulOutcome->value.choice.NGSetupFailure;
     } else {
       Logger::ngap().error("Check NGSetupFailure message error!");
       return false;

@@ -3,7 +3,7 @@
  * From ASN.1 module "NGAP-IEs"
  * 	found in "asn.1/Information Element Definitions.asn1"
  * 	`asn1c -pdu=all -fcompound-names -fno-include-deps -findirect-choice
- * -gen-PER -D src`
+ * -no-gen-example -gen-APER -gen-UPER -no-gen-JER -gen-BER -D src`
  */
 
 #ifndef _Ngap_PDUSessionResourceModifyResponseTransfer_H_
@@ -21,8 +21,8 @@ extern "C" {
 /* Forward declarations */
 struct Ngap_UPTransportLayerInformation;
 struct Ngap_QosFlowAddOrModifyResponseList;
-struct Ngap_QosFlowPerTNLInformation;
-struct Ngap_QosFlowList;
+struct Ngap_QosFlowPerTNLInformationList;
+struct Ngap_QosFlowListWithCause;
 struct Ngap_ProtocolExtensionContainer;
 
 /* Ngap_PDUSessionResourceModifyResponseTransfer */
@@ -33,10 +33,11 @@ typedef struct Ngap_PDUSessionResourceModifyResponseTransfer {
       uL_NGU_UP_TNLInformation; /* OPTIONAL */
   struct Ngap_QosFlowAddOrModifyResponseList*
       qosFlowAddOrModifyResponseList; /* OPTIONAL */
-  struct Ngap_QosFlowPerTNLInformation*
-      additionalQosFlowPerTNLInformation;                  /* OPTIONAL */
-  struct Ngap_QosFlowList* qosFlowFailedToAddOrModifyList; /* OPTIONAL */
-  struct Ngap_ProtocolExtensionContainer* iE_Extensions;   /* OPTIONAL */
+  struct Ngap_QosFlowPerTNLInformationList*
+      additionalDLQosFlowPerTNLInformation; /* OPTIONAL */
+  struct Ngap_QosFlowListWithCause*
+      qosFlowFailedToAddOrModifyList;                    /* OPTIONAL */
+  struct Ngap_ProtocolExtensionContainer* iE_Extensions; /* OPTIONAL */
   /*
    * This type is extensible,
    * possible extensions are below.

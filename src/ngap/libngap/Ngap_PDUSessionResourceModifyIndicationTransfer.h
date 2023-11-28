@@ -3,7 +3,7 @@
  * From ASN.1 module "NGAP-IEs"
  * 	found in "asn.1/Information Element Definitions.asn1"
  * 	`asn1c -pdu=all -fcompound-names -fno-include-deps -findirect-choice
- * -gen-PER -D src`
+ * -no-gen-example -gen-APER -gen-UPER -no-gen-JER -gen-BER -D src`
  */
 
 #ifndef _Ngap_PDUSessionResourceModifyIndicationTransfer_H_
@@ -12,6 +12,7 @@
 #include <asn_application.h>
 
 /* Including external dependencies */
+#include "Ngap_QosFlowPerTNLInformation.h"
 #include <constr_SEQUENCE.h>
 
 #ifdef __cplusplus
@@ -19,12 +20,14 @@ extern "C" {
 #endif
 
 /* Forward declarations */
-struct Ngap_UP_TNLInformation;
+struct Ngap_QosFlowPerTNLInformationList;
 struct Ngap_ProtocolExtensionContainer;
 
 /* Ngap_PDUSessionResourceModifyIndicationTransfer */
 typedef struct Ngap_PDUSessionResourceModifyIndicationTransfer {
-  struct Ngap_UP_TNLInformation* dL_UP_TNLInformation;   /* OPTIONAL */
+  Ngap_QosFlowPerTNLInformation_t dLQosFlowPerTNLInformation;
+  struct Ngap_QosFlowPerTNLInformationList*
+      additionalDLQosFlowPerTNLInformation;              /* OPTIONAL */
   struct Ngap_ProtocolExtensionContainer* iE_Extensions; /* OPTIONAL */
   /*
    * This type is extensible,

@@ -44,15 +44,15 @@ void AmfName::getValue(std::string& amf_name) const {
 }
 
 //------------------------------------------------------------------------------
-bool AmfName::encode(Ngap_AMFName_t* amf_name_ie) {
-  conv::string_2_octet_string(amf_name_, *amf_name_ie);
+bool AmfName::encode(Ngap_AMFName_t& amf_name_ie) const {
+  conv::string_2_octet_string(amf_name_, amf_name_ie);
   return true;
 }
 
 //------------------------------------------------------------------------------
-bool AmfName::decode(const Ngap_AMFName_t* amf_name_ie) {
-  if (!amf_name_ie->buf) return false;
-  conv::octet_string_2_string(*amf_name_ie, amf_name_);
+bool AmfName::decode(const Ngap_AMFName_t& amf_name_ie) {
+  if (!amf_name_ie.buf) return false;
+  conv::octet_string_2_string(amf_name_ie, amf_name_);
   return true;
 }
 

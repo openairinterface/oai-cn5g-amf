@@ -3,7 +3,7 @@
  * From ASN.1 module "NGAP-IEs"
  * 	found in "asn.1/Information Element Definitions.asn1"
  * 	`asn1c -pdu=all -fcompound-names -fno-include-deps -findirect-choice
- * -gen-PER -D src`
+ * -no-gen-example -gen-APER -gen-UPER -no-gen-JER -gen-BER -D src`
  */
 
 #ifndef _Ngap_DL_NGU_TNLInformationReused_H_
@@ -34,20 +34,20 @@ extern asn_per_constraints_t
     asn_PER_type_Ngap_DL_NGU_TNLInformationReused_constr_1;
 extern asn_TYPE_descriptor_t asn_DEF_Ngap_DL_NGU_TNLInformationReused;
 extern const asn_INTEGER_specifics_t
-    asn_SPC_DL_NGU_TNLInformationReused_specs_1;
-asn_struct_free_f DL_NGU_TNLInformationReused_free;
-asn_struct_print_f DL_NGU_TNLInformationReused_print;
-asn_constr_check_f DL_NGU_TNLInformationReused_constraint;
-ber_type_decoder_f DL_NGU_TNLInformationReused_decode_ber;
-der_type_encoder_f DL_NGU_TNLInformationReused_encode_der;
-xer_type_decoder_f DL_NGU_TNLInformationReused_decode_xer;
-xer_type_encoder_f DL_NGU_TNLInformationReused_encode_xer;
-oer_type_decoder_f DL_NGU_TNLInformationReused_decode_oer;
-oer_type_encoder_f DL_NGU_TNLInformationReused_encode_oer;
-per_type_decoder_f DL_NGU_TNLInformationReused_decode_uper;
-per_type_encoder_f DL_NGU_TNLInformationReused_encode_uper;
-per_type_decoder_f DL_NGU_TNLInformationReused_decode_aper;
-per_type_encoder_f DL_NGU_TNLInformationReused_encode_aper;
+    asn_SPC_Ngap_DL_NGU_TNLInformationReused_specs_1;
+asn_struct_free_f Ngap_DL_NGU_TNLInformationReused_free;
+asn_struct_print_f Ngap_DL_NGU_TNLInformationReused_print;
+asn_constr_check_f Ngap_DL_NGU_TNLInformationReused_constraint;
+ber_type_decoder_f Ngap_DL_NGU_TNLInformationReused_decode_ber;
+der_type_encoder_f Ngap_DL_NGU_TNLInformationReused_encode_der;
+xer_type_decoder_f Ngap_DL_NGU_TNLInformationReused_decode_xer;
+xer_type_encoder_f Ngap_DL_NGU_TNLInformationReused_encode_xer;
+oer_type_decoder_f Ngap_DL_NGU_TNLInformationReused_decode_oer;
+oer_type_encoder_f Ngap_DL_NGU_TNLInformationReused_encode_oer;
+per_type_decoder_f Ngap_DL_NGU_TNLInformationReused_decode_uper;
+per_type_encoder_f Ngap_DL_NGU_TNLInformationReused_encode_uper;
+per_type_decoder_f Ngap_DL_NGU_TNLInformationReused_decode_aper;
+per_type_encoder_f Ngap_DL_NGU_TNLInformationReused_encode_aper;
 
 #ifdef __cplusplus
 }

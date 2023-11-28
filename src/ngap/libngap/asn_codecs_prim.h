@@ -17,9 +17,13 @@ typedef struct ASN__PRIMITIVE_TYPE_s {
 } ASN__PRIMITIVE_TYPE_t; /* Do not use this type directly! */
 
 asn_struct_free_f ASN__PRIMITIVE_TYPE_free;
+
+#if !defined(ASN_DISABLE_BER_SUPPORT)
 ber_type_decoder_f ber_decode_primitive;
 der_type_encoder_f der_encode_primitive;
+#endif /* !defined(ASN_DISABLE_BER_SUPPORT) */
 
+#if !defined(ASN_DISABLE_XER_SUPPORT)
 /*
  * A callback specification for the xer_decode_primitive() function below.
  */
@@ -43,6 +47,7 @@ asn_dec_rval_t xer_decode_primitive(
     const asn_TYPE_descriptor_t* type_descriptor, void** struct_ptr,
     size_t struct_size, const char* opt_mname, const void* buf_ptr, size_t size,
     xer_primitive_body_decoder_f* prim_body_decoder);
+#endif /* !defined(ASN_DISABLE_XER_SUPPORT) */
 
 #ifdef __cplusplus
 }

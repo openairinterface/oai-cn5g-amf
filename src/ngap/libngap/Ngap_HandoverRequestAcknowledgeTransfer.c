@@ -3,14 +3,14 @@
  * From ASN.1 module "NGAP-IEs"
  * 	found in "asn.1/Information Element Definitions.asn1"
  * 	`asn1c -pdu=all -fcompound-names -fno-include-deps -findirect-choice
- * -gen-PER -D src`
+ * -no-gen-example -gen-APER -gen-UPER -no-gen-JER -gen-BER -D src`
  */
 
 #include "Ngap_HandoverRequestAcknowledgeTransfer.h"
 
 #include "Ngap_UPTransportLayerInformation.h"
 #include "Ngap_SecurityResult.h"
-#include "Ngap_QosFlowList.h"
+#include "Ngap_QosFlowListWithCause.h"
 #include "Ngap_DataForwardingResponseDRBList.h"
 #include "Ngap_ProtocolExtensionContainer.h"
 static asn_TYPE_member_t asn_MBR_Ngap_HandoverRequestAcknowledgeTransfer_1[] = {
@@ -23,7 +23,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_HandoverRequestAcknowledgeTransfer_1[] = {
      +1, /* EXPLICIT tag at current level */
      &asn_DEF_Ngap_UPTransportLayerInformation,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "dL-NGU-UP-TNLInformation"},
@@ -36,7 +44,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_HandoverRequestAcknowledgeTransfer_1[] = {
      +1, /* EXPLICIT tag at current level */
      &asn_DEF_Ngap_UPTransportLayerInformation,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "dLForwardingUP-TNLInformation"},
@@ -47,7 +63,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_HandoverRequestAcknowledgeTransfer_1[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_SecurityResult,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "securityResult"},
@@ -58,9 +82,17 @@ static asn_TYPE_member_t asn_MBR_Ngap_HandoverRequestAcknowledgeTransfer_1[] = {
          qosFlowSetupResponseList),
      (ASN_TAG_CLASS_CONTEXT | (3 << 2)),
      -1, /* IMPLICIT tag at current level */
-     &asn_DEF_Ngap_QosFlowSetupResponseListHOReqAck,
+     &asn_DEF_Ngap_QosFlowListWithDataForwarding,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "qosFlowSetupResponseList"},
@@ -71,9 +103,17 @@ static asn_TYPE_member_t asn_MBR_Ngap_HandoverRequestAcknowledgeTransfer_1[] = {
          qosFlowFailedToSetupList),
      (ASN_TAG_CLASS_CONTEXT | (4 << 2)),
      -1, /* IMPLICIT tag at current level */
-     &asn_DEF_Ngap_QosFlowList,
+     &asn_DEF_Ngap_QosFlowListWithCause,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "qosFlowFailedToSetupList"},
@@ -86,7 +126,15 @@ static asn_TYPE_member_t asn_MBR_Ngap_HandoverRequestAcknowledgeTransfer_1[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_DataForwardingResponseDRBList,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "dataForwardingResponseDRBList"},
@@ -95,9 +143,17 @@ static asn_TYPE_member_t asn_MBR_Ngap_HandoverRequestAcknowledgeTransfer_1[] = {
      offsetof(struct Ngap_HandoverRequestAcknowledgeTransfer, iE_Extensions),
      (ASN_TAG_CLASS_CONTEXT | (6 << 2)),
      -1, /* IMPLICIT tag at current level */
-     &asn_DEF_Ngap_ProtocolExtensionContainer_175P62,
+     &asn_DEF_Ngap_ProtocolExtensionContainer_9666P97,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "iE-Extensions"},
@@ -146,7 +202,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_HandoverRequestAcknowledgeTransfer = {
     sizeof(asn_DEF_Ngap_HandoverRequestAcknowledgeTransfer_tags_1) /
         sizeof(
             asn_DEF_Ngap_HandoverRequestAcknowledgeTransfer_tags_1[0]), /* 1 */
-    {0, 0, SEQUENCE_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_constraint},
     asn_MBR_Ngap_HandoverRequestAcknowledgeTransfer_1,
     7, /* Elements count */
     &asn_SPC_Ngap_HandoverRequestAcknowledgeTransfer_specs_1 /* Additional specs

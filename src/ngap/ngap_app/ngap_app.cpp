@@ -56,14 +56,22 @@ void ngap_app::handle_receive(
 
   Ngap_NGAP_PDU_t* ngap_msg_pdu =
       (Ngap_NGAP_PDU_t*) calloc(1, sizeof(Ngap_NGAP_PDU_t));
-  asn_dec_rval_t rc = asn_decode(
-      NULL, ATS_ALIGNED_CANONICAL_PER, &asn_DEF_Ngap_NGAP_PDU,
-      (void**) &ngap_msg_pdu, bdata(payload), blength(payload));
+  asn_dec_rval_t dec_ret;
+
+  dec_ret = aper_decode(
+      NULL, &asn_DEF_Ngap_NGAP_PDU, (void**) &ngap_msg_pdu, bdata(payload),
+      blength(payload), 0, 0);
+
+  // asn_dec_rval_t rc = asn_decode(
+  //    NULL, ATS_ALIGNED_CANONICAL_PER, &asn_DEF_Ngap_NGAP_PDU,
+  //    (void**) &ngap_msg_pdu, bdata(payload), blength(payload));
   Logger::ngap().debug(
       "Decoded NGAP message, procedure code %d, present %d",
       ngap_msg_pdu->choice.initiatingMessage->procedureCode,
       ngap_msg_pdu->present);
   output_wrapper::print_asn_msg(&asn_DEF_Ngap_NGAP_PDU, ngap_msg_pdu);
+
+  asn_fprint(stderr, &asn_DEF_Ngap_NGAP_PDU, &ngap_msg_pdu);
 
   if ((ngap_msg_pdu->choice.initiatingMessage->procedureCode >
        (NGAP_PROCEDURE_CODE_MAX_VALUE - 1)) or

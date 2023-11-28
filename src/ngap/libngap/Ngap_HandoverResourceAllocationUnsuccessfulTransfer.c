@@ -3,7 +3,7 @@
  * From ASN.1 module "NGAP-IEs"
  * 	found in "asn.1/Information Element Definitions.asn1"
  * 	`asn1c -pdu=all -fcompound-names -fno-include-deps -findirect-choice
- * -gen-PER -D src`
+ * -no-gen-example -gen-APER -gen-UPER -no-gen-JER -gen-BER -D src`
  */
 
 #include "Ngap_HandoverResourceAllocationUnsuccessfulTransfer.h"
@@ -20,7 +20,15 @@ static asn_TYPE_member_t
          +1, /* EXPLICIT tag at current level */
          &asn_DEF_Ngap_Cause,
          0,
-         {0, 0, 0},
+         {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+             0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+             0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+             0},
          0,
          0, /* No default value */
          "cause"},
@@ -33,7 +41,15 @@ static asn_TYPE_member_t
          -1, /* IMPLICIT tag at current level */
          &asn_DEF_Ngap_CriticalityDiagnostics,
          0,
-         {0, 0, 0},
+         {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+             0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+             0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+             0},
          0,
          0, /* No default value */
          "criticalityDiagnostics"},
@@ -44,9 +60,17 @@ static asn_TYPE_member_t
              iE_Extensions),
          (ASN_TAG_CLASS_CONTEXT | (2 << 2)),
          -1, /* IMPLICIT tag at current level */
-         &asn_DEF_Ngap_ProtocolExtensionContainer_175P64,
+         &asn_DEF_Ngap_ProtocolExtensionContainer_9666P99,
          0,
-         {0, 0, 0},
+         {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+             0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+             0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+             0},
          0,
          0, /* No default value */
          "iE-Extensions"},
@@ -96,7 +120,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_HandoverResourceAllocationUnsuccessfulTransfe
         sizeof(
             asn_DEF_Ngap_HandoverResourceAllocationUnsuccessfulTransfer_tags_1
                 [0]), /* 1 */
-    {0, 0, SEQUENCE_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_constraint},
     asn_MBR_Ngap_HandoverResourceAllocationUnsuccessfulTransfer_1,
     3, /* Elements count */
     &asn_SPC_Ngap_HandoverResourceAllocationUnsuccessfulTransfer_specs_1 /* Additional

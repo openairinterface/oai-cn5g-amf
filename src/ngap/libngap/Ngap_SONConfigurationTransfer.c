@@ -3,11 +3,12 @@
  * From ASN.1 module "NGAP-IEs"
  * 	found in "asn.1/Information Element Definitions.asn1"
  * 	`asn1c -pdu=all -fcompound-names -fno-include-deps -findirect-choice
- * -gen-PER -D src`
+ * -no-gen-example -gen-APER -gen-UPER -no-gen-JER -gen-BER -D src`
  */
 
 #include "Ngap_SONConfigurationTransfer.h"
 
+#include "Ngap_XnTNLConfigurationInfo.h"
 #include "Ngap_ProtocolExtensionContainer.h"
 asn_TYPE_member_t asn_MBR_Ngap_SONConfigurationTransfer_1[] = {
     {ATF_NOFLAGS,
@@ -17,7 +18,15 @@ asn_TYPE_member_t asn_MBR_Ngap_SONConfigurationTransfer_1[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_TargetRANNodeID,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "targetRANNodeID"},
@@ -28,7 +37,15 @@ asn_TYPE_member_t asn_MBR_Ngap_SONConfigurationTransfer_1[] = {
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_SourceRANNodeID,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "sourceRANNodeID"},
@@ -39,18 +56,34 @@ asn_TYPE_member_t asn_MBR_Ngap_SONConfigurationTransfer_1[] = {
      +1, /* EXPLICIT tag at current level */
      &asn_DEF_Ngap_SONInformation,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "sONInformation"},
-    {ATF_NOFLAGS,
-     0,
+    {ATF_POINTER,
+     2,
      offsetof(struct Ngap_SONConfigurationTransfer, xnTNLConfigurationInfo),
      (ASN_TAG_CLASS_CONTEXT | (3 << 2)),
      -1, /* IMPLICIT tag at current level */
      &asn_DEF_Ngap_XnTNLConfigurationInfo,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "xnTNLConfigurationInfo"},
@@ -59,14 +92,22 @@ asn_TYPE_member_t asn_MBR_Ngap_SONConfigurationTransfer_1[] = {
      offsetof(struct Ngap_SONConfigurationTransfer, iE_Extensions),
      (ASN_TAG_CLASS_CONTEXT | (4 << 2)),
      -1, /* IMPLICIT tag at current level */
-     &asn_DEF_Ngap_ProtocolExtensionContainer_175P152,
+     &asn_DEF_Ngap_ProtocolExtensionContainer_9666P239,
      0,
-     {0, 0, 0},
+     {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+         0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+         0},
      0,
      0, /* No default value */
      "iE-Extensions"},
 };
-static const int asn_MAP_Ngap_SONConfigurationTransfer_oms_1[]            = {4};
+static const int asn_MAP_Ngap_SONConfigurationTransfer_oms_1[] = {3, 4};
 static const ber_tlv_tag_t asn_DEF_Ngap_SONConfigurationTransfer_tags_1[] = {
     (ASN_TAG_CLASS_UNIVERSAL | (16 << 2))};
 static const asn_TYPE_tag2member_t
@@ -84,7 +125,7 @@ asn_SEQUENCE_specifics_t asn_SPC_Ngap_SONConfigurationTransfer_specs_1 = {
     asn_MAP_Ngap_SONConfigurationTransfer_tag2el_1,
     5,                                           /* Count of tags in the map */
     asn_MAP_Ngap_SONConfigurationTransfer_oms_1, /* Optional members */
-    1,
+    2,
     0, /* Root/Additions */
     5, /* First extension addition */
 };
@@ -98,7 +139,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_SONConfigurationTransfer = {
     asn_DEF_Ngap_SONConfigurationTransfer_tags_1, /* Same as above */
     sizeof(asn_DEF_Ngap_SONConfigurationTransfer_tags_1) /
         sizeof(asn_DEF_Ngap_SONConfigurationTransfer_tags_1[0]), /* 1 */
-    {0, 0, SEQUENCE_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_constraint},
     asn_MBR_Ngap_SONConfigurationTransfer_1,
     5,                                             /* Elements count */
     &asn_SPC_Ngap_SONConfigurationTransfer_specs_1 /* Additional specs */

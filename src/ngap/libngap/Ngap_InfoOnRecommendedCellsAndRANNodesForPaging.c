@@ -3,7 +3,7 @@
  * From ASN.1 module "NGAP-IEs"
  * 	found in "asn.1/Information Element Definitions.asn1"
  * 	`asn1c -pdu=all -fcompound-names -fno-include-deps -findirect-choice
- * -gen-PER -D src`
+ * -no-gen-example -gen-APER -gen-UPER -no-gen-JER -gen-BER -D src`
  */
 
 #include "Ngap_InfoOnRecommendedCellsAndRANNodesForPaging.h"
@@ -20,7 +20,15 @@ asn_TYPE_member_t asn_MBR_Ngap_InfoOnRecommendedCellsAndRANNodesForPaging_1[] =
          -1, /* IMPLICIT tag at current level */
          &asn_DEF_Ngap_RecommendedCellsForPaging,
          0,
-         {0, 0, 0},
+         {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+             0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+             0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+             0},
          0,
          0, /* No default value */
          "recommendedCellsForPaging"},
@@ -33,7 +41,15 @@ asn_TYPE_member_t asn_MBR_Ngap_InfoOnRecommendedCellsAndRANNodesForPaging_1[] =
          -1, /* IMPLICIT tag at current level */
          &asn_DEF_Ngap_RecommendedRANNodesForPaging,
          0,
-         {0, 0, 0},
+         {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+             0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+             0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+             0},
          0,
          0, /* No default value */
          "recommendRANNodesForPaging"},
@@ -44,9 +60,17 @@ asn_TYPE_member_t asn_MBR_Ngap_InfoOnRecommendedCellsAndRANNodesForPaging_1[] =
              iE_Extensions),
          (ASN_TAG_CLASS_CONTEXT | (2 << 2)),
          -1, /* IMPLICIT tag at current level */
-         &asn_DEF_Ngap_ProtocolExtensionContainer_175P65,
+         &asn_DEF_Ngap_ProtocolExtensionContainer_9666P101,
          0,
-         {0, 0, 0},
+         {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+             0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+             0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+             0},
          0,
          0, /* No default value */
          "iE-Extensions"},
@@ -93,7 +117,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_InfoOnRecommendedCellsAndRANNodesForPaging = 
     sizeof(asn_DEF_Ngap_InfoOnRecommendedCellsAndRANNodesForPaging_tags_1) /
         sizeof(asn_DEF_Ngap_InfoOnRecommendedCellsAndRANNodesForPaging_tags_1
                    [0]), /* 1 */
-    {0, 0, SEQUENCE_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_constraint},
     asn_MBR_Ngap_InfoOnRecommendedCellsAndRANNodesForPaging_1,
     3, /* Elements count */
     &asn_SPC_Ngap_InfoOnRecommendedCellsAndRANNodesForPaging_specs_1 /* Additional

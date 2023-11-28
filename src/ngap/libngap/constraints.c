@@ -32,7 +32,7 @@ struct errbufDesc {
   size_t errlen;
 };
 
-static void _asn_i_ctfailcb(
+static void CC_PRINTFLIKE(4, 5) _asn_i_ctfailcb(
     void* key, const asn_TYPE_descriptor_t* td, const void* sptr,
     const char* fmt, ...) {
   struct errbufDesc* arg = key;
@@ -74,7 +74,7 @@ int asn_check_constraints(
     const asn_TYPE_descriptor_t* type_descriptor, const void* struct_ptr,
     char* errbuf, size_t* errlen) {
   struct errbufDesc arg;
-  int ret = 0;
+  int ret;
 
   arg.failed_type       = 0;
   arg.failed_struct_ptr = 0;

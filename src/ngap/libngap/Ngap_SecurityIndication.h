@@ -3,7 +3,7 @@
  * From ASN.1 module "NGAP-IEs"
  * 	found in "asn.1/Information Element Definitions.asn1"
  * 	`asn1c -pdu=all -fcompound-names -fno-include-deps -findirect-choice
- * -gen-PER -D src`
+ * -no-gen-example -gen-APER -gen-UPER -no-gen-JER -gen-BER -D src`
  */
 
 #ifndef _Ngap_SecurityIndication_H_
@@ -30,7 +30,7 @@ typedef struct Ngap_SecurityIndication {
   Ngap_ConfidentialityProtectionIndication_t
       confidentialityProtectionIndication;
   Ngap_MaximumIntegrityProtectedDataRate_t*
-      maximumIntegrityProtectedDataRate;                 /* OPTIONAL */
+      maximumIntegrityProtectedDataRate_UL;              /* OPTIONAL */
   struct Ngap_ProtocolExtensionContainer* iE_Extensions; /* OPTIONAL */
   /*
    * This type is extensible,

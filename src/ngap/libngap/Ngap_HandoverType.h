@@ -3,7 +3,7 @@
  * From ASN.1 module "NGAP-IEs"
  * 	found in "asn.1/Information Element Definitions.asn1"
  * 	`asn1c -pdu=all -fcompound-names -fno-include-deps -findirect-choice
- * -gen-PER -D src`
+ * -no-gen-example -gen-APER -gen-UPER -no-gen-JER -gen-BER -D src`
  */
 
 #ifndef _Ngap_HandoverType_H_
@@ -22,10 +22,11 @@ extern "C" {
 typedef enum Ngap_HandoverType {
   Ngap_HandoverType_intra5gs      = 0,
   Ngap_HandoverType_fivegs_to_eps = 1,
-  Ngap_HandoverType_eps_to_5gs    = 2
+  Ngap_HandoverType_eps_to_5gs    = 2,
   /*
    * Enumeration is extensible
    */
+  Ngap_HandoverType_fivegs_to_utran = 3
 } e_Ngap_HandoverType;
 
 /* Ngap_HandoverType */
@@ -34,20 +35,20 @@ typedef long Ngap_HandoverType_t;
 /* Implementation */
 extern asn_per_constraints_t asn_PER_type_Ngap_HandoverType_constr_1;
 extern asn_TYPE_descriptor_t asn_DEF_Ngap_HandoverType;
-extern const asn_INTEGER_specifics_t asn_SPC_HandoverType_specs_1;
-asn_struct_free_f HandoverType_free;
-asn_struct_print_f HandoverType_print;
-asn_constr_check_f HandoverType_constraint;
-ber_type_decoder_f HandoverType_decode_ber;
-der_type_encoder_f HandoverType_encode_der;
-xer_type_decoder_f HandoverType_decode_xer;
-xer_type_encoder_f HandoverType_encode_xer;
-oer_type_decoder_f HandoverType_decode_oer;
-oer_type_encoder_f HandoverType_encode_oer;
-per_type_decoder_f HandoverType_decode_uper;
-per_type_encoder_f HandoverType_encode_uper;
-per_type_decoder_f HandoverType_decode_aper;
-per_type_encoder_f HandoverType_encode_aper;
+extern const asn_INTEGER_specifics_t asn_SPC_Ngap_HandoverType_specs_1;
+asn_struct_free_f Ngap_HandoverType_free;
+asn_struct_print_f Ngap_HandoverType_print;
+asn_constr_check_f Ngap_HandoverType_constraint;
+ber_type_decoder_f Ngap_HandoverType_decode_ber;
+der_type_encoder_f Ngap_HandoverType_encode_der;
+xer_type_decoder_f Ngap_HandoverType_decode_xer;
+xer_type_encoder_f Ngap_HandoverType_encode_xer;
+oer_type_decoder_f Ngap_HandoverType_decode_oer;
+oer_type_encoder_f Ngap_HandoverType_encode_oer;
+per_type_decoder_f Ngap_HandoverType_decode_uper;
+per_type_encoder_f Ngap_HandoverType_encode_uper;
+per_type_decoder_f Ngap_HandoverType_decode_aper;
+per_type_encoder_f Ngap_HandoverType_encode_aper;
 
 #ifdef __cplusplus
 }

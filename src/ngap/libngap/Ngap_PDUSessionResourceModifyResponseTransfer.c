@@ -3,15 +3,15 @@
  * From ASN.1 module "NGAP-IEs"
  * 	found in "asn.1/Information Element Definitions.asn1"
  * 	`asn1c -pdu=all -fcompound-names -fno-include-deps -findirect-choice
- * -gen-PER -D src`
+ * -no-gen-example -gen-APER -gen-UPER -no-gen-JER -gen-BER -D src`
  */
 
 #include "Ngap_PDUSessionResourceModifyResponseTransfer.h"
 
 #include "Ngap_UPTransportLayerInformation.h"
 #include "Ngap_QosFlowAddOrModifyResponseList.h"
-#include "Ngap_QosFlowPerTNLInformation.h"
-#include "Ngap_QosFlowList.h"
+#include "Ngap_QosFlowPerTNLInformationList.h"
+#include "Ngap_QosFlowListWithCause.h"
 #include "Ngap_ProtocolExtensionContainer.h"
 static asn_TYPE_member_t
     asn_MBR_Ngap_PDUSessionResourceModifyResponseTransfer_1[] = {
@@ -24,7 +24,15 @@ static asn_TYPE_member_t
          +1, /* EXPLICIT tag at current level */
          &asn_DEF_Ngap_UPTransportLayerInformation,
          0,
-         {0, 0, 0},
+         {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+             0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+             0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+             0},
          0,
          0, /* No default value */
          "dL-NGU-UP-TNLInformation"},
@@ -37,7 +45,15 @@ static asn_TYPE_member_t
          +1, /* EXPLICIT tag at current level */
          &asn_DEF_Ngap_UPTransportLayerInformation,
          0,
-         {0, 0, 0},
+         {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+             0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+             0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+             0},
          0,
          0, /* No default value */
          "uL-NGU-UP-TNLInformation"},
@@ -50,7 +66,15 @@ static asn_TYPE_member_t
          -1, /* IMPLICIT tag at current level */
          &asn_DEF_Ngap_QosFlowAddOrModifyResponseList,
          0,
-         {0, 0, 0},
+         {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+             0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+             0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+             0},
          0,
          0, /* No default value */
          "qosFlowAddOrModifyResponseList"},
@@ -58,15 +82,23 @@ static asn_TYPE_member_t
          3,
          offsetof(
              struct Ngap_PDUSessionResourceModifyResponseTransfer,
-             additionalQosFlowPerTNLInformation),
+             additionalDLQosFlowPerTNLInformation),
          (ASN_TAG_CLASS_CONTEXT | (3 << 2)),
          -1, /* IMPLICIT tag at current level */
-         &asn_DEF_Ngap_QosFlowPerTNLInformation,
+         &asn_DEF_Ngap_QosFlowPerTNLInformationList,
          0,
-         {0, 0, 0},
+         {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+             0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+             0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+             0},
          0,
          0, /* No default value */
-         "additionalQosFlowPerTNLInformation"},
+         "additionalDLQosFlowPerTNLInformation"},
         {ATF_POINTER,
          2,
          offsetof(
@@ -74,9 +106,17 @@ static asn_TYPE_member_t
              qosFlowFailedToAddOrModifyList),
          (ASN_TAG_CLASS_CONTEXT | (4 << 2)),
          -1, /* IMPLICIT tag at current level */
-         &asn_DEF_Ngap_QosFlowList,
+         &asn_DEF_Ngap_QosFlowListWithCause,
          0,
-         {0, 0, 0},
+         {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+             0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+             0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+             0},
          0,
          0, /* No default value */
          "qosFlowFailedToAddOrModifyList"},
@@ -87,9 +127,17 @@ static asn_TYPE_member_t
              iE_Extensions),
          (ASN_TAG_CLASS_CONTEXT | (5 << 2)),
          -1, /* IMPLICIT tag at current level */
-         &asn_DEF_Ngap_ProtocolExtensionContainer_175P96,
+         &asn_DEF_Ngap_ProtocolExtensionContainer_9666P166,
          0,
-         {0, 0, 0},
+         {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+             0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+             0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+             0},
          0,
          0, /* No default value */
          "iE-Extensions"},
@@ -108,7 +156,7 @@ static const asn_TYPE_tag2member_t
         {(ASN_TAG_CLASS_CONTEXT | (2 << 2)), 2, 0,
          0}, /* qosFlowAddOrModifyResponseList */
         {(ASN_TAG_CLASS_CONTEXT | (3 << 2)), 3, 0,
-         0}, /* additionalQosFlowPerTNLInformation */
+         0}, /* additionalDLQosFlowPerTNLInformation */
         {(ASN_TAG_CLASS_CONTEXT | (4 << 2)), 4, 0,
          0}, /* qosFlowFailedToAddOrModifyList */
         {(ASN_TAG_CLASS_CONTEXT | (5 << 2)), 5, 0, 0} /* iE-Extensions */
@@ -140,7 +188,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_PDUSessionResourceModifyResponseTransfer = {
     sizeof(asn_DEF_Ngap_PDUSessionResourceModifyResponseTransfer_tags_1) /
         sizeof(asn_DEF_Ngap_PDUSessionResourceModifyResponseTransfer_tags_1
                    [0]), /* 1 */
-    {0, 0, SEQUENCE_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_constraint},
     asn_MBR_Ngap_PDUSessionResourceModifyResponseTransfer_1,
     6, /* Elements count */
     &asn_SPC_Ngap_PDUSessionResourceModifyResponseTransfer_specs_1 /* Additional

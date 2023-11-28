@@ -3,7 +3,7 @@
  * From ASN.1 module "NGAP-IEs"
  * 	found in "asn.1/Information Element Definitions.asn1"
  * 	`asn1c -pdu=all -fcompound-names -fno-include-deps -findirect-choice
- * -gen-PER -D src`
+ * -no-gen-example -gen-APER -gen-UPER -no-gen-JER -gen-BER -D src`
  */
 
 #ifndef _Ngap_GlobalRANNodeID_H_
@@ -17,8 +17,6 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-
-#include "Ngap_GlobalGNB-ID.h"
 
 /* Dependencies */
 typedef enum Ngap_GlobalRANNodeID_PR {

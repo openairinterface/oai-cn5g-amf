@@ -3,7 +3,7 @@
  * From ASN.1 module "NGAP-IEs"
  * 	found in "asn.1/Information Element Definitions.asn1"
  * 	`asn1c -pdu=all -fcompound-names -fno-include-deps -findirect-choice
- * -gen-PER -D src`
+ * -no-gen-example -gen-APER -gen-UPER -no-gen-JER -gen-BER -D src`
  */
 
 #include "Ngap_RRCEstablishmentCause.h"
@@ -12,8 +12,11 @@
  * This type is implemented using NativeEnumerated,
  * so here we adjust the DEF accordingly.
  */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_type_Ngap_RRCEstablishmentCause_constr_1
     CC_NOTUSED = {{0, 0}, -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t asn_PER_type_Ngap_RRCEstablishmentCause_constr_1
     CC_NOTUSED = {
         {APC_CONSTRAINED | APC_EXTENSIBLE, 4, 4, 0, 9} /* (0..9,...) */,
@@ -21,6 +24,8 @@ asn_per_constraints_t asn_PER_type_Ngap_RRCEstablishmentCause_constr_1
         0,
         0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
 static const asn_INTEGER_enum_map_t
     asn_MAP_Ngap_RRCEstablishmentCause_value2enum_1[] = {
         {0, 9, "emergency"},
@@ -32,28 +37,32 @@ static const asn_INTEGER_enum_map_t
         {6, 12, "mo-VideoCall"},
         {7, 6, "mo-SMS"},
         {8, 18, "mps-PriorityAccess"},
-        {9, 18, "mcs-PriorityAccess"}
+        {9, 18, "mcs-PriorityAccess"},
+        {10, 12, "notAvailable"},
+        {11, 16, "mo-ExceptionData"}
         /* This list is extensible */
 };
 static const unsigned int asn_MAP_Ngap_RRCEstablishmentCause_enum2value_1[] = {
-    0, /* emergency(0) */
-    1, /* highPriorityAccess(1) */
-    9, /* mcs-PriorityAccess(9) */
-    4, /* mo-Data(4) */
-    7, /* mo-SMS(7) */
-    3, /* mo-Signalling(3) */
-    6, /* mo-VideoCall(6) */
-    5, /* mo-VoiceCall(5) */
-    8, /* mps-PriorityAccess(8) */
-    2  /* mt-Access(2) */
-       /* This list is extensible */
+    0,  /* emergency(0) */
+    1,  /* highPriorityAccess(1) */
+    9,  /* mcs-PriorityAccess(9) */
+    4,  /* mo-Data(4) */
+    11, /* mo-ExceptionData(11) */
+    7,  /* mo-SMS(7) */
+    3,  /* mo-Signalling(3) */
+    6,  /* mo-VideoCall(6) */
+    5,  /* mo-VoiceCall(5) */
+    8,  /* mps-PriorityAccess(8) */
+    2,  /* mt-Access(2) */
+    10  /* notAvailable(10) */
+        /* This list is extensible */
 };
 const asn_INTEGER_specifics_t asn_SPC_Ngap_RRCEstablishmentCause_specs_1 = {
     asn_MAP_Ngap_RRCEstablishmentCause_value2enum_1, /* "tag" => N; sorted by
                                                         tag */
     asn_MAP_Ngap_RRCEstablishmentCause_enum2value_1, /* N => "tag"; sorted by N
                                                       */
-    10, /* Number of elements in the maps */
+    12, /* Number of elements in the maps */
     11, /* Extensions before this member */
     1,  /* Strict enumeration */
     0,  /* Native long size */
@@ -70,9 +79,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_RRCEstablishmentCause = {
     asn_DEF_Ngap_RRCEstablishmentCause_tags_1, /* Same as above */
     sizeof(asn_DEF_Ngap_RRCEstablishmentCause_tags_1) /
         sizeof(asn_DEF_Ngap_RRCEstablishmentCause_tags_1[0]), /* 1 */
-    {&asn_OER_type_Ngap_RRCEstablishmentCause_constr_1,
-     &asn_PER_type_Ngap_RRCEstablishmentCause_constr_1,
-     NativeEnumerated_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_RRCEstablishmentCause_constr_1,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_RRCEstablishmentCause_constr_1,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        NativeEnumerated_constraint},
     0,
     0,                                          /* Defined elsewhere */
     &asn_SPC_Ngap_RRCEstablishmentCause_specs_1 /* Additional specs */

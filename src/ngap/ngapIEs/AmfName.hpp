@@ -36,8 +36,8 @@ class AmfName {
   AmfName();
   virtual ~AmfName();
 
-  bool encode(Ngap_AMFName_t*);
-  bool decode(const Ngap_AMFName_t*);
+  bool encode(Ngap_AMFName_t&) const;
+  bool decode(const Ngap_AMFName_t&);
 
   bool setValue(const std::string& amf_name);
   void getValue(std::string& amf_name) const;

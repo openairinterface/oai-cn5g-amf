@@ -49,6 +49,7 @@ class HandoverNotifyMsg : public NgapUEMessage {
   // AMF_UE_NGAP_ID (Mandatory)
   // RAN_UE_NGAP_ID (Mandatory)
   UserLocationInformation userLocationInformation;  // Mandatory
+  // TODO: Notify Source NG-RAN Node (Optional, Rel 16.14.0)
 };
 
 }  // namespace ngap

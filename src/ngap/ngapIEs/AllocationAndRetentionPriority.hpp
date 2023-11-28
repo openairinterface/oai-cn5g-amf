@@ -38,21 +38,21 @@ class AllocationAndRetentionPriority {
   virtual ~AllocationAndRetentionPriority();
 
   void set(
-      const PriorityLevelARP& m_priorityLevelARP,
-      const Pre_emptionCapability& m_pre_emptionCapability,
-      const Pre_emptionVulnerability& m_pre_emptionVulnerability);
+      const PriorityLevelARP& priorityLevelARP,
+      const Pre_emptionCapability& pre_emptionCapability,
+      const Pre_emptionVulnerability& pre_emptionVulnerability);
   bool get(
-      PriorityLevelARP& m_priorityLevelARP,
-      Pre_emptionCapability& m_pre_emptionCapability,
-      Pre_emptionVulnerability& m_pre_emptionVulnerability) const;
+      PriorityLevelARP& priorityLevelARP,
+      Pre_emptionCapability& pre_emptionCapability,
+      Pre_emptionVulnerability& pre_emptionVulnerability) const;
 
-  bool encode(Ngap_AllocationAndRetentionPriority_t*);
-  bool decode(Ngap_AllocationAndRetentionPriority_t*);
+  bool encode(Ngap_AllocationAndRetentionPriority_t&);
+  bool decode(Ngap_AllocationAndRetentionPriority_t&);
 
  private:
-  PriorityLevelARP priorityLevelARP;                  // Mandatory
-  Pre_emptionCapability pre_emptionCapability;        // Mandatory
-  Pre_emptionVulnerability pre_emptionVulnerability;  // Mandatory
+  PriorityLevelARP priorityLevelARP_;                  // Mandatory
+  Pre_emptionCapability pre_emptionCapability_;        // Mandatory
+  Pre_emptionVulnerability pre_emptionVulnerability_;  // Mandatory
 };
 }  // namespace ngap
 

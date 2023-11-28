@@ -3,14 +3,14 @@
  * From ASN.1 module "NGAP-IEs"
  * 	found in "asn.1/Information Element Definitions.asn1"
  * 	`asn1c -pdu=all -fcompound-names -fno-include-deps -findirect-choice
- * -gen-PER -D src`
+ * -no-gen-example -gen-APER -gen-UPER -no-gen-JER -gen-BER -D src`
  */
 
 #include "Ngap_PDUSessionResourceSetupResponseTransfer.h"
 
-#include "Ngap_QosFlowPerTNLInformation.h"
+#include "Ngap_QosFlowPerTNLInformationList.h"
 #include "Ngap_SecurityResult.h"
-#include "Ngap_QosFlowList.h"
+#include "Ngap_QosFlowListWithCause.h"
 #include "Ngap_ProtocolExtensionContainer.h"
 static asn_TYPE_member_t
     asn_MBR_Ngap_PDUSessionResourceSetupResponseTransfer_1[] = {
@@ -18,28 +18,44 @@ static asn_TYPE_member_t
          0,
          offsetof(
              struct Ngap_PDUSessionResourceSetupResponseTransfer,
-             qosFlowPerTNLInformation),
+             dLQosFlowPerTNLInformation),
          (ASN_TAG_CLASS_CONTEXT | (0 << 2)),
          -1, /* IMPLICIT tag at current level */
          &asn_DEF_Ngap_QosFlowPerTNLInformation,
          0,
-         {0, 0, 0},
+         {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+             0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+             0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+             0},
          0,
          0, /* No default value */
-         "qosFlowPerTNLInformation"},
+         "dLQosFlowPerTNLInformation"},
         {ATF_POINTER,
          4,
          offsetof(
              struct Ngap_PDUSessionResourceSetupResponseTransfer,
-             additionalQosFlowPerTNLInformation),
+             additionalDLQosFlowPerTNLInformation),
          (ASN_TAG_CLASS_CONTEXT | (1 << 2)),
          -1, /* IMPLICIT tag at current level */
-         &asn_DEF_Ngap_QosFlowPerTNLInformation,
+         &asn_DEF_Ngap_QosFlowPerTNLInformationList,
          0,
-         {0, 0, 0},
+         {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+             0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+             0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+             0},
          0,
          0, /* No default value */
-         "additionalQosFlowPerTNLInformation"},
+         "additionalDLQosFlowPerTNLInformation"},
         {ATF_POINTER,
          3,
          offsetof(
@@ -49,7 +65,15 @@ static asn_TYPE_member_t
          -1, /* IMPLICIT tag at current level */
          &asn_DEF_Ngap_SecurityResult,
          0,
-         {0, 0, 0},
+         {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+             0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+             0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+             0},
          0,
          0, /* No default value */
          "securityResult"},
@@ -60,9 +84,17 @@ static asn_TYPE_member_t
              qosFlowFailedToSetupList),
          (ASN_TAG_CLASS_CONTEXT | (3 << 2)),
          -1, /* IMPLICIT tag at current level */
-         &asn_DEF_Ngap_QosFlowList,
+         &asn_DEF_Ngap_QosFlowListWithCause,
          0,
-         {0, 0, 0},
+         {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+             0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+             0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+             0},
          0,
          0, /* No default value */
          "qosFlowFailedToSetupList"},
@@ -73,9 +105,17 @@ static asn_TYPE_member_t
              iE_Extensions),
          (ASN_TAG_CLASS_CONTEXT | (4 << 2)),
          -1, /* IMPLICIT tag at current level */
-         &asn_DEF_Ngap_ProtocolExtensionContainer_175P117,
+         &asn_DEF_Ngap_ProtocolExtensionContainer_9666P190,
          0,
-         {0, 0, 0},
+         {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+             0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+             0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+             0},
          0,
          0, /* No default value */
          "iE-Extensions"},
@@ -88,9 +128,9 @@ static const ber_tlv_tag_t
 static const asn_TYPE_tag2member_t
     asn_MAP_Ngap_PDUSessionResourceSetupResponseTransfer_tag2el_1[] = {
         {(ASN_TAG_CLASS_CONTEXT | (0 << 2)), 0, 0,
-         0}, /* qosFlowPerTNLInformation */
+         0}, /* dLQosFlowPerTNLInformation */
         {(ASN_TAG_CLASS_CONTEXT | (1 << 2)), 1, 0,
-         0}, /* additionalQosFlowPerTNLInformation */
+         0}, /* additionalDLQosFlowPerTNLInformation */
         {(ASN_TAG_CLASS_CONTEXT | (2 << 2)), 2, 0, 0}, /* securityResult */
         {(ASN_TAG_CLASS_CONTEXT | (3 << 2)), 3, 0,
          0}, /* qosFlowFailedToSetupList */
@@ -122,7 +162,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_PDUSessionResourceSetupResponseTransfer = {
     sizeof(asn_DEF_Ngap_PDUSessionResourceSetupResponseTransfer_tags_1) /
         sizeof(asn_DEF_Ngap_PDUSessionResourceSetupResponseTransfer_tags_1
                    [0]), /* 1 */
-    {0, 0, SEQUENCE_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        0,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        SEQUENCE_constraint},
     asn_MBR_Ngap_PDUSessionResourceSetupResponseTransfer_1,
     5, /* Elements count */
     &asn_SPC_Ngap_PDUSessionResourceSetupResponseTransfer_specs_1 /* Additional

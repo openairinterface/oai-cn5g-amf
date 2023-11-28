@@ -3,7 +3,7 @@
  * From ASN.1 module "NGAP-IEs"
  * 	found in "asn.1/Information Element Definitions.asn1"
  * 	`asn1c -pdu=all -fcompound-names -fno-include-deps -findirect-choice
- * -gen-PER -D src`
+ * -no-gen-example -gen-APER -gen-UPER -no-gen-JER -gen-BER -D src`
  */
 
 #include "Ngap_CauseMisc.h"
@@ -12,21 +12,26 @@
  * This type is implemented using NativeEnumerated,
  * so here we adjust the DEF accordingly.
  */
+#if !defined(ASN_DISABLE_OER_SUPPORT)
 static asn_oer_constraints_t asn_OER_type_Ngap_CauseMisc_constr_1 CC_NOTUSED = {
     {0, 0},
     -1};
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t asn_PER_type_Ngap_CauseMisc_constr_1 CC_NOTUSED = {
     {APC_CONSTRAINED | APC_EXTENSIBLE, 3, 3, 0, 5} /* (0..5,...) */,
     {APC_UNCONSTRAINED, -1, -1, 0, 0},
     0,
     0 /* No PER value map */
 };
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
 static const asn_INTEGER_enum_map_t asn_MAP_Ngap_CauseMisc_value2enum_1[] = {
     {0, 27, "control-processing-overload"},
     {1, 42, "not-enough-user-plane-processing-resources"},
     {2, 16, "hardware-failure"},
     {3, 15, "om-intervention"},
-    {4, 12, "unknown-PLMN"},
+    {4, 20, "unknown-PLMN-or-SNPN"},
     {5, 11, "unspecified"}
     /* This list is extensible */
 };
@@ -35,7 +40,7 @@ static const unsigned int asn_MAP_Ngap_CauseMisc_enum2value_1[] = {
     2, /* hardware-failure(2) */
     1, /* not-enough-user-plane-processing-resources(1) */
     3, /* om-intervention(3) */
-    4, /* unknown-PLMN(4) */
+    4, /* unknown-PLMN-or-SNPN(4) */
     5  /* unspecified(5) */
        /* This list is extensible */
 };
@@ -59,8 +64,15 @@ asn_TYPE_descriptor_t asn_DEF_Ngap_CauseMisc = {
     asn_DEF_Ngap_CauseMisc_tags_1,                /* Same as above */
     sizeof(asn_DEF_Ngap_CauseMisc_tags_1) /
         sizeof(asn_DEF_Ngap_CauseMisc_tags_1[0]), /* 1 */
-    {&asn_OER_type_Ngap_CauseMisc_constr_1,
-     &asn_PER_type_Ngap_CauseMisc_constr_1, NativeEnumerated_constraint},
+    {
+#if !defined(ASN_DISABLE_OER_SUPPORT)
+        &asn_OER_type_Ngap_CauseMisc_constr_1,
+#endif /* !defined(ASN_DISABLE_OER_SUPPORT) */
+#if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
+        &asn_PER_type_Ngap_CauseMisc_constr_1,
+#endif /* !defined(ASN_DISABLE_UPER_SUPPORT) ||                                \
+          !defined(ASN_DISABLE_APER_SUPPORT) */
+        NativeEnumerated_constraint},
     0,
     0,                              /* Defined elsewhere */
     &asn_SPC_Ngap_CauseMisc_specs_1 /* Additional specs */
