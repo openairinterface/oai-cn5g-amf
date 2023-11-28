@@ -487,7 +487,7 @@ class itti_sbi_n1n2_message_unsubscribe : public itti_sbi_msg {
  public:
   itti_sbi_n1n2_message_unsubscribe(
       const task_id_t orig, const task_id_t dest, uint32_t pid)
-      : itti_sbi_msg(SBI_N1N2_MESSAGE_SUBSCRIBE, orig, dest),
+      : itti_sbi_msg(SBI_N1N2_MESSAGE_UNSUBSCRIBE, orig, dest),
         ue_cxt_id(),
         subscription_id(),
         promise_id(pid) {}
