@@ -278,6 +278,30 @@ void NgapMessage::setMessageType(NgapMessageType messageType) {
     case NgapMessageType::UE_RADIO_CAPABILITY_CHECK_RESPONSE: {
       // TODO:
     } break;
+    case NgapMessageType::UE_CONTEXT_SUSPEND_REQUEST: {
+      // TODO:
+    } break;
+    case NgapMessageType::UE_CONTEXT_SUSPEND_RESPONSE: {
+      // TODO:
+    } break;
+    case NgapMessageType::UE_CONTEXT_SUSPEND_FAILURE: {
+      // TODO:
+    } break;
+    case NgapMessageType::UE_CONTEXT_RESUME_REQUEST: {
+      // TODO:
+    } break;
+    case NgapMessageType::UE_CONTEXT_RESUME_RESPONSE: {
+      // TODO:
+    } break;
+    case NgapMessageType::UE_CONTEXT_RESUME_FAILURE: {
+      // TODO:
+    } break;
+    case NgapMessageType::UE_RADIO_CAPABILITY_ID_MAPPING_REQUEST: {
+      // TODO:
+    } break;
+    case NgapMessageType::UE_RADIO_CAPABILITY_ID_MAPPING_RESPONSE: {
+      // TODO:
+    } break;
     case NgapMessageType::DOWNLINK_RAN_CONFIGURATION_TRANSFER: {
       // TODO:
     } break;
@@ -452,6 +476,30 @@ void NgapMessage::setMessageType(NgapMessageType messageType) {
       // TODO:
     } break;
     case NgapMessageType::DOWNLINK_RIM_INFORMATION_TRANSFER: {
+      // TODO:
+    } break;
+    case NgapMessageType::RETRIEVE_UE_INFORMATION: {
+      // TODO:
+    } break;
+    case NgapMessageType::UE_INFORMATION_TRANSFER: {
+      // TODO:
+    } break;
+    case NgapMessageType::RAN_CP_RELOCATION_INDICATION: {
+      // TODO:
+    } break;
+    case NgapMessageType::CONNECTION_ESTABLISHMENT_INDICATION: {
+      // TODO:
+    } break;
+    case NgapMessageType::AMF_CP_RELOCATION_INDICATION: {
+      // TODO:
+    } break;
+    case NgapMessageType::HANDOVER_SUCCESS: {
+      // TODO:
+    } break;
+    case NgapMessageType::UPLINK_RAN_EARLY_STATUS_TRANSFER: {
+      // TODO:
+    } break;
+    case NgapMessageType::DOWNLINK_RAN_EARLY_STATUS_TRANSFER: {
       // TODO:
     } break;
     default: {
