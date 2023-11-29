@@ -45,22 +45,6 @@ class Buffer {
   T* mbuf;
 };
 
-std::string util::string_format(const char* format, ...) {
-  va_list args;
-
-  va_start(args, format);
-  size_t size = vsnprintf(NULL, 0, format, args) + 1;  // Extra space for '\0'
-  va_end(args);
-
-  Buffer<char> buf(size);
-
-  va_start(args, format);
-  vsnprintf(buf.get(), size, format, args);
-  va_end(args);
-
-  return std::string(buf.get(), size - 1);  // We don't want the '\0' inside
-}
-
 // Licence : https://creativecommons.org/licenses/by-sa/4.0/legalcode
 // https://stackoverflow.com/questions/216823/whats-the-best-way-to-trim-stdstring#217605
 
@@ -87,55 +71,3 @@ std::string& util::rtrim(std::string& s) {
 std::string& util::trim(std::string& s) {
   return util::ltrim(util::rtrim(s));
 }
-
-bool util::string_to_dotted(const std::string& str, std::string& dotted) {
-  uint8_t offset = 0;
-  uint8_t* last_size;
-  uint8_t word_length = 0;
-
-  uint8_t value[str.length() + 1];
-  dotted    = {};
-  last_size = &value[0];
-
-  while (str[offset]) {
-    // We replace the . by the length of the word
-    if (str[offset] == '.') {
-      *last_size  = word_length;
-      word_length = 0;
-      last_size   = &value[offset + 1];
-    } else {
-      word_length++;
-      value[offset + 1] = str[offset];
-    }
-
-    offset++;
-  }
-
-  *last_size = word_length;
-  dotted.assign((const char*) value, str.length() + 1);
-  return true;
-};
-
-bool util::dotted_to_string(const std::string& dot, std::string& no_dot) {
-  // uint8_t should be enough, but uint16 if length > 255.
-  uint16_t offset = 0;
-  bool result     = true;
-  no_dot          = {};
-
-  while (offset < dot.length()) {
-    if (dot[offset] < 64) {
-      if ((offset + dot[offset]) <= dot.length()) {
-        if (offset) {
-          no_dot.push_back('.');
-        }
-        no_dot.append(&dot[offset + 1], dot[offset]);
-      }
-      offset = offset + 1 + dot[offset];
-    } else {
-      // should not happen, consume bytes
-      no_dot.push_back(dot[offset++]);
-      result = false;
-    }
-  }
-  return result;
-};

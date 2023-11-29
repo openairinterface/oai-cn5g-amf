@@ -53,8 +53,6 @@ typedef struct smf_info_s {
 
 typedef struct dnn_upf_info_item_s {
   std::string dnn;
-  // std::vector<std::string> dnai_list
-  // std::vector<std::string> pdu_session_types
 } dnn_upf_info_item_t;
 
 typedef struct snssai_upf_info_item_s {
@@ -95,7 +93,6 @@ typedef struct network_slice_cond_s {
 
 typedef struct nf_group_cond_s {
   std::string nf_type;
-
   std::string nf_group_id;
 } nf_group_cond_t;
 

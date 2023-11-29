@@ -22,9 +22,6 @@
 #ifndef FILE_3GPP_29_503_SEEN
 #define FILE_3GPP_29_503_SEEN
 
-#include <stdint.h>
-
-#include <string>
 #include <vector>
 
 #include "3gpp_23.003.h"

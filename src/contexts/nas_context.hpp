@@ -26,7 +26,6 @@
 #include "authentication_algorithms_with_5gaka.hpp"
 #include "itti.hpp"
 #include "nas_security_context.hpp"
-#include "security_def.hpp"
 #include "Struct.hpp"
 
 typedef enum {

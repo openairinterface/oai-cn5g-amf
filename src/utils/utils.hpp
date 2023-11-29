@@ -24,7 +24,7 @@
 
 #include <boost/thread.hpp>
 #include <boost/thread/future.hpp>
-#include <iostream>
+//#include <iostream>
 #include <sstream>
 #include <string>
 
