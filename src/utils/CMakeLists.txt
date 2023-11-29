@@ -44,5 +44,7 @@ add_library (AMF_UTILS STATIC
  ${CMAKE_CURRENT_SOURCE_DIR}/3gpp_conversions.cpp
  ${CMAKE_CURRENT_SOURCE_DIR}/utils.cpp
  ${CMAKE_CURRENT_SOURCE_DIR}/bstr/bstrlib.c 
+  ${CMAKE_CURRENT_SOURCE_DIR}/conversions.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/output_wrapper.cpp
  )
 

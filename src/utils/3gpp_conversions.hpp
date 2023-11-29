@@ -27,7 +27,6 @@
 #include "amf_msg.hpp"
 
 using namespace amf_application;
-// using namespace oai::amf::model;
 namespace xgpp_conv {
 
 /*

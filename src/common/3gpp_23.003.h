@@ -47,7 +47,6 @@ typedef struct s_nssai  // section 28.4, TS23.003
       return false;
     }
   }
-
 } snssai_t;
 
 typedef struct plmn_s {
