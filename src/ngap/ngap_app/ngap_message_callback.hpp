@@ -424,10 +424,7 @@ int ngap_amf_handle_pdu_session_resource_setup_response(
   std::vector<PDUSessionResourceSetupResponseItem_t> list;
   if (!pdu_session_resource_setup_resp->getPduSessionResourceSetupResponseList(
           list)) {
-    Logger::ngap().error(
-        "Decoding PduSessionResourceSetupResponseMsg "
-        "getPduSessionResourceSetupResponseList IE error");
-    // return RETURNerror;
+    Logger::ngap().debug("No PduSessionResourceSetupResponseList available");
   } else {
     // TODO: for multiple PDU Sessions
     itti_nsmf_pdusession_update_sm_context* itti_msg =
@@ -464,42 +461,25 @@ int ngap_amf_handle_pdu_session_resource_setup_response(
     return RETURNok;
   }
 
-  // TTN: Should be removed
   std::vector<PDUSessionResourceFailedToSetupItem_t> list_fail;
   if (!pdu_session_resource_setup_resp->getPduSessionResourceFailedToSetupList(
           list_fail)) {
-    Logger::ngap().error(
-        "decoding PduSessionResourceSetupResponseMsg "
-        "getPduSessionResourceFailedToSetupList IE  error");
+    Logger::ngap().debug("No PduSessionResourceFailedToSetupList available");
   } else {
-    PduSessionResourceSetupUnSuccessfulTransferIE* UnSuccessfultransfer =
-        new PduSessionResourceSetupUnSuccessfulTransferIE();
+    PduSessionResourceSetupUnSuccessfulTransferIE
+        resource_setup_unsuccessful_transfer_ie = {};
     uint8_t buffer[BUFFER_SIZE_512];
     memcpy(
         buffer, list_fail[0].pduSessionResourceSetupUnsuccessfulTransfer.buf,
         list_fail[0].pduSessionResourceSetupUnsuccessfulTransfer.size);
-    UnSuccessfultransfer->decode(
+    resource_setup_unsuccessful_transfer_ie.decode(
         buffer, list_fail[0].pduSessionResourceSetupUnsuccessfulTransfer.size);
-    Logger::ngap().debug(
-        "UnSuccessfultransfer->getChoiceOfCause%d      "
-        "UnSuccessfultransfer->getCause%d",
-        UnSuccessfultransfer->getChoiceOfCause(),
-        UnSuccessfultransfer->getCause());
-    if ((UnSuccessfultransfer->getChoiceOfCause() ==
+
+    if ((resource_setup_unsuccessful_transfer_ie.getChoiceOfCause() ==
          Ngap_Cause_PR_radioNetwork) &&
-        (UnSuccessfultransfer->getCause() ==
+        (resource_setup_unsuccessful_transfer_ie.getCause() ==
          Ngap_CauseRadioNetwork_multiple_PDU_session_ID_instances)) {
       // TODO:
-      /*Logger::ngap().debug("Sending itti pdu session resource release command
-       to TASK_AMF_N2"); itti_pdu_session_resource_release_command * itti_msg =
-       new itti_pdu_session_resource_release_command(TASK_NGAP, TASK_AMF_N2);
-       itti_msg->amf_ue_ngap_id = pduresp->getAmfUeNgapId();
-       itti_msg->ran_ue_ngap_id = pduresp->getRanUeNgapId();
-       std::shared_ptr<itti_pdu_session_resource_release_command> i =
-       std::shared_ptr<itti_pdu_session_resource_release_command>(itti_msg); int
-       ret = itti_inst->send_msg(i); if (0 != ret) { Logger::ngap().error("Could
-       not send ITTI message %s to task TASK_AMF_N2", i->get_msg_name());
-       }*/
       long amf_ue_ngap_id = pdu_session_resource_setup_resp->getAmfUeNgapId();
 
       std::shared_ptr<nas_context> nct = {};
@@ -519,23 +499,8 @@ int ngap_amf_handle_pdu_session_resource_setup_response(
         }
       }
       psc->is_n2sm_avaliable = false;
-      Logger::ngap().debug(
-          "Receive pdu session resource setup response fail (multi pdu session "
-          "id),set pdu session context is_n2sm_avaliable = false");
       // TODO:
-      /*Logger::ngap().debug("Sending itti ue context release command to
-       TASK_AMF_N2"); itti_ue_context_release_command * itti_msg = new
-       itti_ue_context_release_command(TASK_AMF_N1, TASK_AMF_N2);
-       itti_msg->amf_ue_ngap_id = pduresp->getAmfUeNgapId();
-       itti_msg->ran_ue_ngap_id = pduresp->getRanUeNgapId();
-       itti_msg->cause.setChoiceOfCause(Ngap_Cause_PR_radioNetwork);
-       itti_msg->cause.setValue(28);
-       std::shared_ptr<itti_ue_context_release_command> i =
-       std::shared_ptr<itti_ue_context_release_command>(itti_msg); int ret =
-       itti_inst->send_msg(i); if (0 != ret) { Logger::ngap().error("Could not
-       send ITTI message %s to task TASK_AMF_N2", i->get_msg_name());
-       }*/
-      return 0;
+      return RETURNok;
     }
   }
   return RETURNok;
