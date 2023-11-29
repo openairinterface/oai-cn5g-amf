@@ -79,7 +79,6 @@ void itti_mw::timer_manager_task(
           }
           itti_inst->current_timer = null_timer;
           itti_inst->m_timers.unlock();
-          // cout << "cv.wait released by other triggered timer end" << endl;
         }
       } else {
         // signal time-out
@@ -110,7 +109,6 @@ itti_mw::itti_mw()
 
 //------------------------------------------------------------------------------
 itti_mw::~itti_mw() {
-  std::cout << "~itti()" << std::endl;
   timer_thread.detach();
   // wake up thread timer if necessary
   std::unique_lock<std::mutex> l2(m_timeout);
@@ -121,7 +119,6 @@ itti_mw::~itti_mw() {
       delete itti_task_ctxts[t];
     }
   }
-  std::cout << "~itti() Done!" << std::endl;
 }
 
 //------------------------------------------------------------------------------
@@ -339,7 +336,6 @@ timer_id_t itti_mw::timer_setup(
 int itti_mw::timer_remove(timer_id_t timer_id) {
   std::lock_guard<std::mutex> lk(m_timers);
   if (current_timer.id == timer_id) {
-    // cout << "timer_remove() current_timer.id == timer_id" << endl;
     current_timer = null_timer;
     c_timers.notify_one();
     // wake up thread timer if necessary

@@ -22,9 +22,6 @@
 #ifndef _AMF_N2_H_
 #define _AMF_N2_H_
 
-#include "DownlinkRANStatusTransfer.hpp"
-#include "HandoverCommandMsg.hpp"
-#include "HandoverRequest.hpp"
 #include "amf.hpp"
 #include "itti_msg_n2.hpp"
 #include "ngap_app.hpp"
