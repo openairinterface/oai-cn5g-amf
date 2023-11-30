@@ -23,7 +23,6 @@
 #define FILE_3GPP_23_003_SEEN
 
 #include <stdint.h>
-
 #include <string>
 
 const uint32_t SD_NO_VALUE               = 0xFFFFFF;
@@ -48,7 +47,6 @@ typedef struct s_nssai  // section 28.4, TS23.003
       return false;
     }
   }
-
 } snssai_t;
 
 typedef struct plmn_s {
@@ -71,70 +69,6 @@ typedef struct tai_s {
   plmn_t plmn; /*!< \brief  <MCC> + <MNC>        */
   tac_t tac;   /*!< \brief  Tracking Area Code   */
 } tai_t;
-
-typedef struct eci_s {
-  uint32_t gnb_id : 20;
-  uint32_t cell_id : 8;
-  uint32_t empty : 4;
-} ci_t;
-
-typedef struct cgi_s {
-  plmn_t plmn;
-  ci_t cell_identity;  // 28 bits
-} cgi_t;
-
-typedef struct nr_tai_s /*5G ADD it*/
-{
-  plmn_t plmn;
-  uint32_t tac : 24;
-} nr_tai_t;
-
-typedef struct nr_cell_identity_s /*5G ADD it */
-{
-  uint32_t gnb_id;
-  uint8_t cell_id : 4;
-} nr_cell_identity_t;
-
-typedef struct nr_cgi_s /*5G ADD it */
-{
-  plmn_t plmn;
-  nr_cell_identity_t cell_identity;
-} nr_cgi_t;
-
-typedef struct fiveG_s_tmsi_s /*5G ADD it */
-{
-  uint16_t amf_set_id : 10;
-  uint8_t amf_pointer : 6;
-  uint32_t fiveG_s_tmsi;  // 32
-} fiveG_s_tmsi_t;
-
-typedef struct fiveG_s_gua_s /*5G ADD it */
-{
-  plmn_t plmn;
-  uint8_t region_id;
-  uint16_t amf_set_id : 10;
-  uint8_t amf_pointer : 6;
-
-} fiveG_s_gua_t;
-
-typedef struct amf_set_id_s /*5G ADD it*/
-{
-  uint16_t amf_set_id : 10;
-} amf_set_id_t;
-
-/*
-typedef struct allowed_nssai
-{
-  uint8_t sST;
-  uint32_t sD : 24;
-} allowed_nssai;
-
-typedef struct allowed_nssai_s
-{
-  allowed_nssai* s_nssai;
-  uint32_t count;
-} allowed_nssai_t;
-*/
 
 typedef struct guami_5g_s {
   plmn_t plmn;

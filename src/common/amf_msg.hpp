@@ -72,7 +72,7 @@ class event_exposure_msg {
   void set_any_ue(bool value) { m_any_ue = value; }
 
  private:
-  std::string m_sub_id;  // m_SubId;
+  std::string m_sub_id;
   bool m_sub_id_is_set;
 
   std::vector<amf_event_t> m_event_list;  // eventList, Mandatory
@@ -124,17 +124,15 @@ class event_notification {
   }
 
  private:
-  std::string m_notify_correlation_id;  // notifyCorrelationId
+  std::string m_notify_correlation_id;
   bool m_notify_correlation_is_set;
 
-  std::string m_notify_uri;  // notifyUri
+  std::string m_notify_uri;
   bool m_notify_uri_is_set;
 
-  std::string
-      m_subs_change_notify_correlation_id;  // SubsChangeNotifyCorrelationId;
+  std::string m_subs_change_notify_correlation_id;
   bool m_subs_change_notify_correlation_id_is_set;
-  std::vector<oai::amf::model::AmfEventReport>
-      m_event_report_list;  // Report List
+  std::vector<oai::amf::model::AmfEventReport> m_event_report_list;
   bool m_report_list_is_set;
 };
 
@@ -148,12 +146,6 @@ class data_notification_msg {
   }
   void set_nf_instance_uri(const std::string& uri) { nf_instance_uri = uri; }
   void get_nf_instance_uri(std::string& uri) const { uri = nf_instance_uri; }
-  // void set_profile(const std::shared_ptr<amf_application::nf_profile>& p){
-
-  //  }
-  // void get_profile(std::shared_ptr<amf_application::nf_profile>& p) const {
-
-  //}
 
  private:
   std::string notification_event_type;

@@ -43,7 +43,7 @@ class ngap_app : public sctp_application {
    * @param void
    * @return PP ID in Uint32_t:
    */
-  uint32_t getPpid();
+  uint32_t get_ppid();
 
   /*
    * Handle SCTP payload (decode it and send ITTI msg to N2)

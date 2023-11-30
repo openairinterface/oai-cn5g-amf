@@ -705,8 +705,7 @@ void amf_app::handle_itti_message(itti_sbi_n1_message_notification& itti_msg) {
 //------------------------------------------------------------------------------
 void amf_app::handle_itti_message(itti_sbi_n1n2_message_subscribe& itti_msg) {
   Logger::amf_app().info(
-      "Handle an N1N2MessageSubscribe from a NF (HTTP version "
-      "%d)",
+      "Handle an N1N2MessageSubscribe from a NF (HTTP version %d)",
       itti_msg.http_version);
 
   // Generate a subscription ID Id and store the corresponding information in a

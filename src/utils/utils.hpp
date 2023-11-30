@@ -24,12 +24,11 @@
 
 #include <boost/thread.hpp>
 #include <boost/thread/future.hpp>
-#include <iostream>
 #include <sstream>
 #include <string>
 
-constexpr uint8_t kMccMncLength             = 3;
-constexpr uint32_t FUTURE_STATUS_TIMEOUT_MS = 1000;
+constexpr uint8_t kMccMncLength           = 3;
+constexpr uint32_t KFutureStatusTimeoutMs = 1000;
 
 class utils {
  public:
@@ -54,7 +53,7 @@ class utils {
       boost::shared_future<T>& f, std::optional<T>& result) {
     boost::future_status status;
     // wait for timeout or ready
-    status = f.wait_for(boost::chrono::milliseconds(FUTURE_STATUS_TIMEOUT_MS));
+    status = f.wait_for(boost::chrono::milliseconds(KFutureStatusTimeoutMs));
     if (status == boost::future_status::ready) {
       assert(f.is_ready());
       assert(f.has_value());

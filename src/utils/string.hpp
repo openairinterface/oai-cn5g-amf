@@ -26,14 +26,10 @@
 
 namespace util {
 
-std::string string_format(const char* format, ...);
-
 std::string& ltrim(std::string& s);
 // trim from end
 std::string& rtrim(std::string& s);
 // trim from both ends
 std::string& trim(std::string& s);
-bool string_to_dotted(const std::string& str, std::string& dotted);
-bool dotted_to_string(const std::string& dot, std::string& no_dot);
 }  // namespace util
 #endif

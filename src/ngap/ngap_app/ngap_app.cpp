@@ -132,7 +132,7 @@ void ngap_app::handle_sctp_shutdown(sctp_assoc_id_t assoc_id) {
 }
 
 //------------------------------------------------------------------------------
-uint32_t ngap_app::getPpid() {
+uint32_t ngap_app::get_ppid() {
   return ppid_;
 }
 

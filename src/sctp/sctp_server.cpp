@@ -22,6 +22,7 @@
 #include "sctp_server.hpp"
 
 #include "logger.hpp"
+
 extern "C" {
 #include <arpa/inet.h>
 #include <errno.h>
@@ -150,7 +151,7 @@ void* sctp_server::sctp_receiver_thread(void* arg) {
             if (clientsock > fdmax) fdmax = clientsock;
           }
         } else {
-          int ret = ptr->sctp_read_from_socket(i, ptr->app_->getPpid());
+          int ret = ptr->sctp_read_from_socket(i, ptr->app_->get_ppid());
           if (ret == SCTP_RC_DISCONNECT) {
             FD_CLR(i, &master);
             if (i == fdmax) {
@@ -227,7 +228,7 @@ int sctp_server::sctp_read_from_socket(int sd, uint32_t ppid) {
     }
 
     Logger::sctp().info(
-        "[Assoc_id %d, Socket %d] Received a msg (length %d) from port %d, "
+        "[Assoc_id %d, Socket %d] Received a message (length %d) from port %d, "
         "on stream %d, PPID %d",
         sinfo.sinfo_assoc_id, sd, n, ntohs(addr.sin6_port), sinfo.sinfo_stream,
         ntohl(sinfo.sinfo_ppid));
@@ -262,7 +263,7 @@ int sctp_server::handle_assoc_change(
     case SCTP_COMM_UP: {
       if (add_new_association(sd, ppid, sctp_assoc_changed) == NULL) {
         Logger::sctp().error(
-            "Add new association with ppid (%d) socket (%d) error", ppid, sd);
+            "Add new association with PPID (%d) socket (%d) error", ppid, sd);
         rc = SCTP_RC_ERROR;
       }
       break;
@@ -306,7 +307,7 @@ sctp_association_t* sctp_server::add_new_association(
   new_association->assoc_id =
       (sctp_assoc_id_t) sctp_assoc_changed->sac_assoc_id;
   Logger::sctp().debug(
-      "Add new association with id (%d)",
+      "Add new association with Id (%d)",
       (sctp_assoc_id_t) sctp_assoc_changed->sac_assoc_id);
 
   sctp_ctx.push_back(new_association);
@@ -352,7 +353,7 @@ int sctp_server::sctp_get_peeraddresses(
   }
 
   Logger::sctp().info("----------------------");
-  Logger::sctp().info("Peer addresses:");
+  Logger::sctp().info("Peer addresses: ");
 
   for (int j = 0; j < nb; j++) {
     if (temp_addr_p[j].sa_family == AF_INET) {
@@ -370,7 +371,7 @@ int sctp_server::sctp_get_peeraddresses(
       if (inet_ntop(
               AF_INET6, &addr->sin6_addr.s6_addr, address, sizeof(address)) !=
           NULL) {
-        Logger::sctp().info("    - Addr: %s", address);
+        Logger::sctp().info("    - IPv6 Addr: %s", address);
       }
     }
   }
@@ -399,7 +400,7 @@ int sctp_server::sctp_get_localaddresses(
 
   if (temp_addr_p) {
     Logger::sctp().info("----------------------");
-    Logger::sctp().info("Local addresses:");
+    Logger::sctp().info("Local addresses: ");
     for (int j = 0; j < nb; j++) {
       if (temp_addr_p[j].sa_family == AF_INET) {
         char address[16]         = {0};
@@ -416,7 +417,7 @@ int sctp_server::sctp_get_localaddresses(
         if (inet_ntop(
                 AF_INET6, &addr->sin6_addr.s6_addr, address, sizeof(address)) !=
             NULL) {
-          Logger::sctp().info("    - Addr: %s", address);
+          Logger::sctp().info("    - Ipv6 Addr: %s", address);
         }
       } else {
         Logger::sctp().error(
@@ -441,7 +442,8 @@ int sctp_server::sctp_send_msg(
   sctp_association_t* assoc_desc = NULL;
   if ((assoc_desc = sctp_is_assoc_in_list(sctp_assoc_id)) == NULL) {
     Logger::sctp().error(
-        "This assoc id (%d) has not been fount in list", sctp_assoc_id);
+        "This association Id (%d) has not been found in the association list",
+        sctp_assoc_id);
     return RETURNerror;
   }
   if (assoc_desc->sd == -1) {
@@ -451,7 +453,7 @@ int sctp_server::sctp_send_msg(
   }
   Logger::sctp().debug(
       "[Socket %d, Assoc ID %d] Sending buffer %p of %d bytes on stream %d "
-      "with ppid %d",
+      "with PPID %d",
       assoc_desc->sd, sctp_assoc_id, bdata(*payload), blength(*payload), stream,
       assoc_desc->ppid);
 
@@ -461,7 +463,7 @@ int sctp_server::sctp_send_msg(
           (size_t) blength(*payload), NULL, 0, htonl(assoc_desc->ppid), 0,
           stream, 100, 0) < 0) {
     Logger::sctp().error(
-        "[Socket %d] Send stream %u, ppid %u, len %u failed (%s, %d)",
+        "[Socket %d] Send stream %u, PPID %u, len %u failed (%s, %d)",
         assoc_desc->sd, stream, htonl(assoc_desc->ppid), blength(*payload),
         strerror(errno), errno);
     //*payload = NULL;

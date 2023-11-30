@@ -11,6 +11,7 @@ src/amf-app
 src/itti
  - Lionel GAUTHIER, Eurecom
  - Tien Thinh NGUYEN, Eurecom
+
 src/common
  - Sebastien ROUX, Eurecom  
  - Lionel Gauthier, Eurecom
@@ -24,13 +25,22 @@ src/common
 
 SCTP
  - Keliang DU, Bupt
+- Tien Thinh NGUYEN, Eurecom
 
 NGAP 
  - Keliang DU, Bupt
  - Tien Thinh NGUYEN, Eurecom
+
 SBI
  - Keliang DU, Bupt
  - Tien Thinh NGUYEN, Eurecom
+
+NAS 
+- Philippe MOREL, Eurecom
+- Sebastien ROUX, Eurecom
+- Lionel GAUTHIER, Eurecom
+- Keliang DU, BUPT
+- Tien Thinh NGUYEN, Eurecom
   
- NAS/UTILS: To be updated
+UTILS: To be updated
  

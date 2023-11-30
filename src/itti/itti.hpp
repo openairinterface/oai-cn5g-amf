@@ -26,7 +26,6 @@
 #include <condition_variable>
 #include <stdint.h>
 
-#include <iostream>
 #include <memory>
 #include <mutex>
 #include <queue>

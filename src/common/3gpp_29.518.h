@@ -73,7 +73,6 @@ typedef struct amf_event_s {
   // areaList:
   // locationFilterList:
   // refId:
-
 } amf_event_t;
 
 enum n1_n2_message_transfer_cause_e {

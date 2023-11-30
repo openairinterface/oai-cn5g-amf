@@ -72,7 +72,6 @@ typedef struct auth_conf_s {
     this->mysql_db     = json_data["mysql_db"].get<std::string>();
     this->random       = json_data["random"].get<bool>();
   }
-
 } auth_conf_t;
 
 typedef struct interface_cfg_s {
@@ -223,7 +222,6 @@ typedef struct plmn_support_item_s {
       slice_list.push_back(sl);
     }
   }
-
 } plmn_item_t;
 
 typedef struct {
@@ -254,7 +252,6 @@ typedef struct {
       prefered_ciphering_algorithm.push_back(get_5g_ea(cipher_alg));
     }
   }
-
 } nas_conf_t;
 
 typedef struct nf_addr_s {
@@ -275,8 +272,44 @@ typedef struct nf_addr_s {
     this->uri_root    = json_data["uri_root"].get<std::string>();
     this->api_version = json_data["api_version"].get<std::string>();
   }
-
 } nf_addr_t;
+
+typedef struct support_features_s {
+  bool enable_nf_registration;
+  bool enable_smf_selection;
+  bool enable_external_ausf;
+  bool enable_external_udm;
+  bool enable_nssf;
+  bool enable_external_nrf;
+  bool enable_lmf;
+  bool use_fqdn_dns;
+  bool use_http2;
+  nlohmann::json to_json() const {
+    nlohmann::json json_data            = {};
+    json_data["enable_nf_registration"] = this->enable_nf_registration;
+    json_data["enable_smf_selection"]   = this->enable_smf_selection;
+    json_data["enable_external_ausf"]   = this->enable_external_ausf;
+    json_data["enable_external_udm"]    = this->enable_external_udm;
+    json_data["enable_nssf"]            = this->enable_nssf;
+    json_data["enable_lmf"]             = this->enable_lmf;
+    json_data["use_fqdn_dns"]           = this->use_fqdn_dns;
+    json_data["use_http2"]              = this->use_http2;
+    return json_data;
+  }
+
+  void from_json(nlohmann::json& json_data) {
+    this->enable_nf_registration =
+        json_data["enable_nf_registration"].get<bool>();
+    this->enable_smf_selection = json_data["enable_smf_selection"].get<bool>();
+    this->enable_external_ausf = json_data["enable_external_ausf"].get<bool>();
+    this->enable_external_udm  = json_data["enable_external_udm"].get<bool>();
+    this->enable_nssf          = json_data["enable_nssf"].get<bool>();
+    this->use_fqdn_dns         = json_data["use_fqdn_dns"].get<bool>();
+    this->use_http2            = json_data["use_http2"].get<bool>();
+    this->enable_lmf           = json_data["enable_lmf"].get<bool>();
+  }
+
+} support_features_t;
 
 class amf_config {
  public:
@@ -392,46 +425,7 @@ class amf_config {
   bool is_emergency_support;
   auth_conf_t auth_para;
   nas_conf_t nas_cfg;
-
-  struct {
-    bool enable_nf_registration;
-    bool enable_smf_selection;
-    bool enable_external_ausf;
-    bool enable_external_udm;
-    bool enable_nssf;
-    bool enable_external_nrf;
-    bool enable_lmf;
-    bool use_fqdn_dns;
-    bool use_http2;
-    nlohmann::json to_json() const {
-      nlohmann::json json_data            = {};
-      json_data["enable_nf_registration"] = this->enable_nf_registration;
-      json_data["enable_smf_selection"]   = this->enable_smf_selection;
-      json_data["enable_external_ausf"]   = this->enable_external_ausf;
-      json_data["enable_external_udm"]    = this->enable_external_udm;
-      json_data["enable_nssf"]            = this->enable_nssf;
-      json_data["enable_lmf"]             = this->enable_lmf;
-      json_data["use_fqdn_dns"]           = this->use_fqdn_dns;
-      json_data["use_http2"]              = this->use_http2;
-      return json_data;
-    }
-
-    void from_json(nlohmann::json& json_data) {
-      this->enable_nf_registration =
-          json_data["enable_nf_registration"].get<bool>();
-      this->enable_smf_selection =
-          json_data["enable_smf_selection"].get<bool>();
-      this->enable_external_ausf =
-          json_data["enable_external_ausf"].get<bool>();
-      this->enable_external_udm = json_data["enable_external_udm"].get<bool>();
-      this->enable_nssf         = json_data["enable_nssf"].get<bool>();
-      this->use_fqdn_dns        = json_data["use_fqdn_dns"].get<bool>();
-      this->use_http2           = json_data["use_http2"].get<bool>();
-      this->enable_lmf          = json_data["enable_lmf"].get<bool>();
-    }
-
-  } support_features;
-
+  support_features_t support_features;
   nf_addr_t smf_addr;
   nf_addr_t nrf_addr;
   nf_addr_t ausf_addr;

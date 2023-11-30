@@ -306,7 +306,6 @@ else(STATIC_LINKING)
     SET(BUILD_SHARED_LIBS ON)
 endif(STATIC_LINKING)
 
-ADD_SUBDIRECTORY(${SRC_TOP_DIR}/common ${CMAKE_CURRENT_BINARY_DIR}/common)
 ADD_SUBDIRECTORY(${SRC_TOP_DIR}/contexts ${CMAKE_CURRENT_BINARY_DIR}/contexts)
 ADD_SUBDIRECTORY(${SRC_TOP_DIR}/sbi ${CMAKE_CURRENT_BINARY_DIR}/sbi)
 ADD_SUBDIRECTORY(${SRC_TOP_DIR}/sctp ${CMAKE_CURRENT_BINARY_DIR}/sctp)
@@ -367,4 +366,4 @@ IF(STATIC_LINKING)
 ENDIF(STATIC_LINKING)
 
 target_link_libraries(amf ${ASAN}
-      -Wl,--start-group 3GPP_COMMON_TYPES AMF_APP CONTEXTS AMF_SCTP AMF_NGAP AMF_NAS AMF_SECU_5GAKA AMF_SECU_NAS AMF_UTILS AMF_SBI_SERVER config++ sctp fmt spdlog -Wl,--end-group pthread ${NETTLE_LIBRARIES} ${MySQL_LIBRARY} ${CRYPTO_LIBRARIES} ${OPENSSL_LIBRARIES} nghttp2_asio boost_system boost_thread boost_chrono ssl crypt gmp pistache curl yaml-cpp)
+      -Wl,--start-group AMF_APP CONTEXTS AMF_SCTP AMF_NGAP AMF_NAS AMF_SECU_5GAKA AMF_SECU_NAS AMF_UTILS AMF_SBI_SERVER config++ sctp fmt spdlog -Wl,--end-group pthread ${NETTLE_LIBRARIES} ${MySQL_LIBRARY} ${CRYPTO_LIBRARIES} ${OPENSSL_LIBRARIES} nghttp2_asio boost_system boost_thread boost_chrono ssl crypt gmp pistache curl yaml-cpp)
