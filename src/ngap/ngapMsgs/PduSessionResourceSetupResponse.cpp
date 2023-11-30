@@ -324,11 +324,10 @@ bool PduSessionResourceSetupResponseMsg::decode(Ngap_NGAP_PDU_t* ngapMsgPdu) {
                     ->value.present ==
                 Ngap_PDUSessionResourceSetupResponseIEs__value_PR_PDUSessionResourceFailedToSetupListSURes) {
           PduSessionResourceFailedToSetupListSURes tmp = {};
-          if (!pduSessionResourceFailedToSetupResponseList->decode(
-                  &pduSessionResourceSetupResponseIEs->protocolIEs.list
-                       .array[i]
-                       ->value.choice
-                       .PDUSessionResourceFailedToSetupListSURes)) {
+          if (!tmp.decode(&pduSessionResourceSetupResponseIEs->protocolIEs.list
+                               .array[i]
+                               ->value.choice
+                               .PDUSessionResourceFailedToSetupListSURes)) {
             Logger::ngap().error(
                 "Decoded NGAP PDUSessionResourceFailedToSetupListSURes IE "
                 "error!");
