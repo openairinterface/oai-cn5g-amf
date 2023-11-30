@@ -72,8 +72,7 @@ void amf_http2_server::start() {
             if (split_result.size() < 6) {
               Logger::amf_server().warn("Requested URL is not implemented");
               res.write_head(static_cast<uint32_t>(
-                  http_response_codes_e::
-                      HTTP_RESPONSE_CODE_NOT_IMPLEMENTED));  // TODO
+                  http_response_codes_e::HTTP_RESPONSE_CODE_NOT_IMPLEMENTED));
               res.end();
               return;
             }
@@ -88,7 +87,6 @@ void amf_http2_server::start() {
               // simple parser
               mime_parser sp = {};
               if (!sp.parse(msg)) {
-                // send reply!!!
                 res.write_head(static_cast<uint32_t>(
                     http_response_codes_e::HTTP_RESPONSE_CODE_BAD_REQUEST));
                 res.end();

@@ -66,7 +66,6 @@ class amf_app {
       std::pair<evsub_id_t, amf_event_type_t>,
       std::shared_ptr<amf_subscription>>
       amf_event_subscriptions;
-
   mutable std::shared_mutex m_amf_event_subscriptions;
 
   util::uint_generator<uint32_t> tmsi_generator;
@@ -96,7 +95,6 @@ class amf_app {
       std::pair<std::string, uint32_t>,
       std::shared_ptr<oai::amf::model::UeN1N2InfoSubscriptionCreateData>>
       n1n2_message_subscribe;
-
   mutable std::shared_mutex m_n1n2_message_subscribe;
 
  public:

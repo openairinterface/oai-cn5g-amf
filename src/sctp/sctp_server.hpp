@@ -31,7 +31,6 @@
 extern "C" {
 #include <netinet/in.h>
 #include <netinet/sctp.h>
-
 #include "bstrlib.h"
 }
 
@@ -48,16 +47,14 @@ typedef uint32_t sctp_assoc_id_t;
 typedef struct sctp_association_s {
   struct sctp_association_s* next_assoc;  // Next association in the list
   struct sctp_association_s*
-      previous_assoc;  // Previous association in the list
-  int sd;              // Socket descriptor
-  uint32_t ppid;       // Payload protocol Identifier
-  uint16_t instreams;  // Number of input streams negociated for this connection
-  uint16_t
-      outstreams;  // Number of output strams negotiated for this connection
-  sctp_assoc_id_t assoc_id;  // SCTP association id for the connection
-  uint32_t messages_recv;    // Number of messages received on this connection
-  uint32_t messages_sent;    // Number of messages sent on this connection
-
+      previous_assoc;               // Previous association in the list
+  int sd;                           // Socket descriptor
+  uint32_t ppid;                    // Payload protocol Identifier
+  uint16_t instreams;               // Number of input streams negotiated
+  uint16_t outstreams;              // Number of output streams negotiated
+  sctp_assoc_id_t assoc_id;         // SCTP association ID
+  uint32_t messages_recv;           // Number of messages received
+  uint32_t messages_sent;           // Number of messages sent
   struct sockaddr* peer_addresses;  // A list of peer addresses
   int nb_peer_addresses;
 } sctp_association_t;
@@ -81,13 +78,14 @@ class sctp_application {
       sctp_assoc_id_t assoc_id, sctp_stream_id_t instreams,
       sctp_stream_id_t outstreams)                            = 0;
   virtual void handle_sctp_shutdown(sctp_assoc_id_t assoc_id) = 0;
-  virtual uint32_t getPpid()                                  = 0;
+  virtual uint32_t get_ppid()                                 = 0;
 };
 
 class sctp_server {
  public:
   sctp_server(const char* address, const uint16_t port_num);
   virtual ~sctp_server();
+
   int create_socket(const char* address, const uint16_t port_num);
   void start_receive(sctp_application* app);
   int sctp_send_msg(
