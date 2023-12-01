@@ -15,15 +15,15 @@
   - NAS cleanup ies
   - Updated NGAP library to 38.413 V16.14.0
   - Code cleanup (removed usused code)
-  - Location Report Notification for N2 Handover
-  - lmf_detemine_location & downlink_ue_assoc_nrrpa
+  - Location Report Notification for N2 Handover 
+  - LMF Determine Location & DownlinkUeAssociatedNrppaTranport support
 * Fixes
   - Fixed: Add NSSAI info in AMF profile to send to NRF
-  - fix(http1/2): only spawning one HTTP server
-  - Fixed: HTTP2 support for Configuration/Location API
+  - Fixed: Http1/2 - only spawning one HTTP server
+  - Fixed: HTTP2 support for Configuration/Location-related APIs
   - Fixed: Display NRCellID in hex to associate between UE and gNB
   - Fixed: Use AMF ID as string to register to NRF
-  - Added missing HTTP2 APIs for N1 Message Notify, N1N2MessageSubscribe,...
+  - Added missing HTTP2 APIs for N1 Message Notify, N1N2MessageSubscribe/Unsubscribe, Status Notification
   - Free allocated memory in Destructor of NGAP msg instead of using Delete operator
   - Added retry mechanism for NF Registration/Update
   - Removed unnecessary config parameter: generate_random (database)
