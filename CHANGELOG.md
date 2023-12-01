@@ -30,7 +30,7 @@
   - Fixed N1/N2 message unsubscribe API
   - Fixed issue when decoding PduSessionResourceSetupResponse
 * Tech debt
-  - Moved common models to the shared common submodule
+  - Updated common models to 3GPP TS 29.571 Release 16.13.0 and moved them to the shared common submodule
   - Switching to clang-format-12
   - Published image on Docker-Hub is using now Ubuntu-22 as base image
     * Ubuntu-18 is no longer supported
