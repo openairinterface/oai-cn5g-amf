@@ -37,7 +37,7 @@ class QosFlowIdentifier {
   bool getQosFlowIdentifier(long& value) const;
 
   bool encode(Ngap_QosFlowIdentifier_t&) const;
-  bool decode(const Ngap_QosFlowIdentifier_t&);
+  bool decode(Ngap_QosFlowIdentifier_t);
 
  private:
   long identifier_;

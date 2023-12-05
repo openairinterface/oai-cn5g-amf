@@ -51,8 +51,7 @@ bool QosFlowIdentifier::encode(
 }
 
 //------------------------------------------------------------------------------
-bool QosFlowIdentifier::decode(
-    const Ngap_QosFlowIdentifier_t& qosFlowIdentifier) {
+bool QosFlowIdentifier::decode(Ngap_QosFlowIdentifier_t qosFlowIdentifier) {
   identifier_ = qosFlowIdentifier;
 
   return true;
