@@ -43,7 +43,7 @@ class UERadioCapabilityForPagingOfEUTRA {
 
   bool encode(Ngap_UERadioCapabilityForPagingOfEUTRA_t&
                   ueRadioCapabilityForPagingOfEUTRA);
-  bool decode(Ngap_UERadioCapabilityForPagingOfEUTRA_t&
+  bool decode(const Ngap_UERadioCapabilityForPagingOfEUTRA_t&
                   ueRadioCapabilityForPagingOfEUTRA);
 
  private:

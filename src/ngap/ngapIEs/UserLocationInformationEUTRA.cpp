@@ -60,7 +60,7 @@ bool UserLocationInformationEUTRA::encode(
 
 //------------------------------------------------------------------------------
 bool UserLocationInformationEUTRA::decode(
-    Ngap_UserLocationInformationEUTRA_t& user_location_info_eutra) {
+    const Ngap_UserLocationInformationEUTRA_t& user_location_info_eutra) {
   if (!eUTRA_CGI.decode(user_location_info_eutra.eUTRA_CGI)) {
     Logger::ngap().warn("Decode eUTRA_CGI IE error");
     return false;

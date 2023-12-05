@@ -45,8 +45,8 @@ class PduSessionResourceHandoverRequiredTransfer {
   bool getDirectForwardingPathAvailability(
       long& directForwardingPathAvailability) const;
 
-  int encode(uint8_t* buf, int buf_size);
-  bool decode(uint8_t* buf, int buf_size);
+  int encode(uint8_t* buf, int buf_size);   // TODO: remove naked pointer
+  bool decode(uint8_t* buf, int buf_size);  // TODO: remove naked pointer
 
  private:
   Ngap_HandoverRequiredTransfer_t* handoverrquiredTransferIEs;

@@ -44,7 +44,7 @@ class PduSessionResourceAdmittedItem {
       OCTET_STRING_t& m_handoverRequestAckTransfer);
 
   bool encode(Ngap_PDUSessionResourceAdmittedItem_t& pduItem);
-  bool decode(Ngap_PDUSessionResourceAdmittedItem_t& pduItem);
+  bool decode(const Ngap_PDUSessionResourceAdmittedItem_t& pduItem);
 
  private:
   PduSessionId pDUSessionID;                  // Mandatory

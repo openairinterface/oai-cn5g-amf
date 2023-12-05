@@ -124,7 +124,7 @@ bool Dynamic5QIDescriptor::encode(
 
 //------------------------------------------------------------------------------
 bool Dynamic5QIDescriptor::decode(
-    Ngap_Dynamic5QIDescriptor_t& dynamic5QIDescriptor) {
+    const Ngap_Dynamic5QIDescriptor_t& dynamic5QIDescriptor) {
   if (!priorityLevelQos.decode(dynamic5QIDescriptor.priorityLevelQos))
     return false;
   if (!packetDelayBudget.decode(dynamic5QIDescriptor.packetDelayBudget))

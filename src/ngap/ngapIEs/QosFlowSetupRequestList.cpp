@@ -60,7 +60,7 @@ bool QosFlowSetupRequestList::encode(
 
 //------------------------------------------------------------------------------
 bool QosFlowSetupRequestList::decode(
-    Ngap_QosFlowSetupRequestList_t& qosFlowSetupRequestList) {
+    const Ngap_QosFlowSetupRequestList_t& qosFlowSetupRequestList) {
   for (int i = 0; i < qosFlowSetupRequestList.list.count; i++) {
     QosFlowSetupRequestItem item = {};
     if (!item.decode(*qosFlowSetupRequestList.list.array[i])) return false;

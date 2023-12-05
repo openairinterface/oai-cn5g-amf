@@ -58,7 +58,7 @@ class GbrQoSFlowInformation {
       std::optional<PacketLossRate>& m_maximumPacketLossRateUL) const;
 
   bool encode(Ngap_GBR_QosInformation_t&);
-  bool decode(Ngap_GBR_QosInformation_t&);
+  bool decode(const Ngap_GBR_QosInformation_t&);
 
  private:
   long maximumFlowBitRateDL;                               // Mandatory

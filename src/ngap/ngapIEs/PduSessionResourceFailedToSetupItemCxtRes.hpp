@@ -42,7 +42,8 @@ class PduSessionResourceFailedToSetupItemCxtRes {
       PduSessionId& m_pDUSessionID, OCTET_STRING_t& m_pDUSessionResource) const;
 
   bool encode(Ngap_PDUSessionResourceFailedToSetupItemCxtRes_t& pduSessionCxt);
-  bool decode(Ngap_PDUSessionResourceFailedToSetupItemCxtRes_t& pduSessionCxt);
+  bool decode(
+      const Ngap_PDUSessionResourceFailedToSetupItemCxtRes_t& pduSessionCxt);
 
  private:
   PduSessionId pdu_session_id_;  // Mandatory

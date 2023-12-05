@@ -42,7 +42,7 @@ class PduSessionResourceSetupListSURes {
 
   bool encode(Ngap_PDUSessionResourceSetupListSURes_t&
                   pdu_session_resource_setup_list_su_res);
-  bool decode(Ngap_PDUSessionResourceSetupListSURes_t&
+  bool decode(const Ngap_PDUSessionResourceSetupListSURes_t&
                   pdu_session_resource_setup_list_su_res);
 
  private:

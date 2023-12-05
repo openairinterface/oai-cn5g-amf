@@ -45,7 +45,7 @@ class SupportedTaItem {
   void getBroadcastPlmnList(std::vector<BroadcastPlmnItem>& list);
 
   bool encode(Ngap_SupportedTAItem_t& ta);
-  bool decode(Ngap_SupportedTAItem_t& ta);
+  bool decode(const Ngap_SupportedTAItem_t& ta);
 
  private:
   TAC tac;                                           // Mandatory

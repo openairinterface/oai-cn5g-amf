@@ -41,7 +41,8 @@ class UserLocationInformationEUTRA {
   // bool getTimeStampPresence();
 
   bool encode(Ngap_UserLocationInformationEUTRA_t& userLocationInformation);
-  bool decode(Ngap_UserLocationInformationEUTRA_t& userLocationInformation);
+  bool decode(
+      const Ngap_UserLocationInformationEUTRA_t& userLocationInformation);
 
  private:
   EUtraCgi eUTRA_CGI;  // Mandatory

@@ -45,7 +45,7 @@ class ServedGuamiItem {
   bool getBackupAMFName(AmfName&) const;
 
   bool encode(Ngap_ServedGUAMIItem&);
-  bool decode(Ngap_ServedGUAMIItem&);
+  bool decode(const Ngap_ServedGUAMIItem&);
 
  private:
   GUAMI guamiGroup;                      // Mandatory

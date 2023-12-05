@@ -57,7 +57,7 @@ bool UERadioCapabilityForPaging::encode(
 
 //------------------------------------------------------------------------------
 bool UERadioCapabilityForPaging::decode(
-    Ngap_UERadioCapabilityForPaging_t& ueRadioCapabilityForPaging) {
+    const Ngap_UERadioCapabilityForPaging_t& ueRadioCapabilityForPaging) {
   if (ueRadioCapabilityForPaging.uERadioCapabilityForPagingOfNR) {
     UERadioCapabilityForPagingOfNR tmp = {};
     if (!tmp.decode(*ueRadioCapabilityForPaging.uERadioCapabilityForPagingOfNR))

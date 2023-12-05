@@ -61,7 +61,7 @@ bool ServedGuamiItem::encode(Ngap_ServedGUAMIItem& servedGUAMIItem) {
 }
 
 //------------------------------------------------------------------------------
-bool ServedGuamiItem::decode(Ngap_ServedGUAMIItem& pdu) {
+bool ServedGuamiItem::decode(const Ngap_ServedGUAMIItem& pdu) {
   if (!guamiGroup.decode(pdu.gUAMI)) return false;
   if (pdu.backupAMFName) {
     AmfName amf_name = {};

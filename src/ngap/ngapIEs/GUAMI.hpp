@@ -61,7 +61,7 @@ class GUAMI {
       std::string& setId, std::string& pointer);
 
   bool encode(Ngap_GUAMI_t& guami);
-  bool decode(Ngap_GUAMI_t& pdu);
+  bool decode(const Ngap_GUAMI_t& pdu);
 
  private:
   PlmnId plmnId;            // Mandatory

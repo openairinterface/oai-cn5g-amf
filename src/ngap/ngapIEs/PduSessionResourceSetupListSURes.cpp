@@ -61,7 +61,7 @@ bool PduSessionResourceSetupListSURes::encode(
 
 //------------------------------------------------------------------------------
 bool PduSessionResourceSetupListSURes::decode(
-    Ngap_PDUSessionResourceSetupListSURes_t&
+    const Ngap_PDUSessionResourceSetupListSURes_t&
         pdu_session_resource_setup_list_su_res) {
   for (int i = 0; i < pdu_session_resource_setup_list_su_res.list.count; i++) {
     PduSessionResourceSetupItemSURes item = {};

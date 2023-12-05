@@ -39,7 +39,7 @@ class TransportLayerAddress {
   bool getTransportLayerAddress(std::string& m_ipaddress);
 
   bool encode(Ngap_TransportLayerAddress_t& transportLayerAddress);
-  bool decode(Ngap_TransportLayerAddress_t& transportLayerAddress);
+  bool decode(const Ngap_TransportLayerAddress_t& transportLayerAddress);
 
  private:
   std::string ip_address_;

@@ -37,7 +37,7 @@ class PacketLossRate {
   bool getPacketLossRate(long& value) const;
 
   bool encode(Ngap_PacketLossRate_t&) const;
-  bool decode(Ngap_PacketLossRate_t&);
+  bool decode(const Ngap_PacketLossRate_t&);
 
  private:
   long packet_loss_rate_;

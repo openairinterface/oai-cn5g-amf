@@ -60,7 +60,8 @@ bool PduSessionResourceFailedToSetupListSURes::encode(
 
 //------------------------------------------------------------------------------
 bool PduSessionResourceFailedToSetupListSURes::decode(
-    Ngap_PDUSessionResourceFailedToSetupListSURes_t& pdu_session_resource_res) {
+    const Ngap_PDUSessionResourceFailedToSetupListSURes_t&
+        pdu_session_resource_res) {
   for (int i = 0; i < pdu_session_resource_res.list.count; i++) {
     PduSessionResourceFailedToSetupItemSURes item = {};
     if (!item.decode(*pdu_session_resource_res.list.array[i])) return false;

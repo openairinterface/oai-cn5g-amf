@@ -58,7 +58,7 @@ bool PduSessionResourceItemHoRqd::encode(
 
 //------------------------------------------------------------------------------
 bool PduSessionResourceItemHoRqd::decode(
-    Ngap_PDUSessionResourceItemHORqd_t& pdUSessionResourceItemHORqd) {
+    const Ngap_PDUSessionResourceItemHORqd_t& pdUSessionResourceItemHORqd) {
   if (!pDUSessionID.decode(pdUSessionResourceItemHORqd.pDUSessionID))
     return false;
   handoverRequiredTransfer =

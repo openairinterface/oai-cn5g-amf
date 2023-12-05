@@ -37,7 +37,7 @@ class RoutingId {
   void getRoutingId(OCTET_STRING_t& id);
 
   void encode(Ngap_RoutingID_t&);
-  void decode(Ngap_RoutingID_t&);
+  void decode(const Ngap_RoutingID_t&);
 
  private:
   OCTET_STRING_t routing_id_;  // Mandatory

@@ -63,7 +63,7 @@ bool TAI::encode(Ngap_TAI_t& tai) {
 }
 
 //------------------------------------------------------------------------------
-bool TAI::decode(Ngap_TAI_t& tai) {
+bool TAI::decode(const Ngap_TAI_t& tai) {
   if (!plmn_id_.decode(tai.pLMNIdentity)) return false;
   if (!tac_.decode(tai.tAC)) return false;
 

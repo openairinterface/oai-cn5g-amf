@@ -41,7 +41,7 @@ class QosFlowPerTnlInformationItem {
   bool encode(
       Ngap_QosFlowPerTNLInformationItem_t& qosFlowPerTNLInformationItem);
   bool decode(
-      Ngap_QosFlowPerTNLInformationItem_t& qosFlowPerTNLInformationItem);
+      const Ngap_QosFlowPerTNLInformationItem_t& qosFlowPerTNLInformationItem);
 
  private:
   QosFlowPerTnlInformation qosFlowPerTNLInformation;  // Mandatory

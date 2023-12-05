@@ -36,7 +36,7 @@ class NasPdu {
   virtual ~NasPdu();
 
   bool encode(Ngap_NAS_PDU_t&);
-  bool decode(Ngap_NAS_PDU_t&);
+  bool decode(const Ngap_NAS_PDU_t&);
 
   // bool get(uint8_t*& buffer, size_t& size) const;
   void set(uint8_t* buffer, size_t size);

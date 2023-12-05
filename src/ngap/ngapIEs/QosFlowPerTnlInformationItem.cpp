@@ -52,7 +52,7 @@ bool QosFlowPerTnlInformationItem::encode(
 
 //------------------------------------------------------------------------------
 bool QosFlowPerTnlInformationItem::decode(
-    Ngap_QosFlowPerTNLInformationItem_t& qosFlowPerTNLInformationItem) {
+    const Ngap_QosFlowPerTNLInformationItem_t& qosFlowPerTNLInformationItem) {
   if (!qosFlowPerTNLInformation.decode(
           qosFlowPerTNLInformationItem.qosFlowPerTNLInformation))
     return false;

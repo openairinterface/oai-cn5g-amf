@@ -107,7 +107,7 @@ bool QosFlowLevelQosParameters::encode(
 
 //------------------------------------------------------------------------------
 bool QosFlowLevelQosParameters::decode(
-    Ngap_QosFlowLevelQosParameters_t& qosFlowLevelQosParameters) {
+    const Ngap_QosFlowLevelQosParameters_t& qosFlowLevelQosParameters) {
   if (!qosCharacteristics.decode(qosFlowLevelQosParameters.qosCharacteristics))
     return false;
   if (!allocationAndRetentionPriority.decode(

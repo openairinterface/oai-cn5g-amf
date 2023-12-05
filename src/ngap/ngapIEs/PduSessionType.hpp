@@ -37,7 +37,7 @@ class PduSessionType {
   bool get(long& pdu_session_type) const;
 
   bool encode(Ngap_PDUSessionType_t&);
-  bool decode(Ngap_PDUSessionType_t);
+  bool decode(const Ngap_PDUSessionType_t);
 
  private:
   long pdu_session_type_;

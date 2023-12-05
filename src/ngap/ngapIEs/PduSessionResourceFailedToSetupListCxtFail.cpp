@@ -66,7 +66,7 @@ bool PduSessionResourceFailedToSetupListCxtFail::encode(
 
 //------------------------------------------------------------------------------
 bool PduSessionResourceFailedToSetupListCxtFail::decode(
-    Ngap_PDUSessionResourceFailedToSetupListCxtFail_t&
+    const Ngap_PDUSessionResourceFailedToSetupListCxtFail_t&
         pduSessionResourceFailedToSetupListCxtFail) {
   itemList.reserve(pduSessionResourceFailedToSetupListCxtFail.list.count);
 

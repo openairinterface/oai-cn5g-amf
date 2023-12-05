@@ -44,7 +44,7 @@ class QosFlowSetupRequestItem {
       QosFlowLevelQosParameters& m_qosFlowLevelQosParameters) const;
 
   bool encode(Ngap_QosFlowSetupRequestItem_t&);
-  bool decode(Ngap_QosFlowSetupRequestItem_t&);
+  bool decode(const Ngap_QosFlowSetupRequestItem_t&);
 
  private:
   QosFlowIdentifier qosFlowIdentifier;                  // Mandatory

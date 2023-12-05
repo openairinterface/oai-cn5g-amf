@@ -60,7 +60,7 @@ bool PlmnSupportItem::encode(Ngap_PLMNSupportItem_t& plmn_support_item) {
 }
 
 //------------------------------------------------------------------------------
-bool PlmnSupportItem::decode(Ngap_PLMNSupportItem_t& plmn_support_item) {
+bool PlmnSupportItem::decode(const Ngap_PLMNSupportItem_t& plmn_support_item) {
   if (!plmn_id_.decode(plmn_support_item.pLMNIdentity)) return false;
 
   for (int i = 0; i < plmn_support_item.sliceSupportList.list.count; i++) {

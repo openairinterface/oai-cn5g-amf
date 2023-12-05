@@ -53,7 +53,7 @@ bool PduSessionResourceReleaseItemCmd::encode(
 
 //------------------------------------------------------------------------------
 bool PduSessionResourceReleaseItemCmd::decode(
-    Ngap_PDUSessionResourceToReleaseItemRelCmd_t&
+    const Ngap_PDUSessionResourceToReleaseItemRelCmd_t&
         pduSessionResourceReleaseCommandTransfer) {
   if (!pdu_session_id_.decode(
           pduSessionResourceReleaseCommandTransfer.pDUSessionID))

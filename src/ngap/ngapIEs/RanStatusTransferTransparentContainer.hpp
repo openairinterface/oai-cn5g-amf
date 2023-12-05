@@ -40,7 +40,7 @@ class RanStatusTransferTransparentContainer {
 
   bool encode(Ngap_RANStatusTransfer_TransparentContainer_t&
                   ranstatustransfer_transparentcontainer);
-  bool decode(Ngap_RANStatusTransfer_TransparentContainer_t&
+  bool decode(const Ngap_RANStatusTransfer_TransparentContainer_t&
                   ranstatustransfer_transparentcontainer);
 
  private:

@@ -45,8 +45,8 @@ class PduSessionResourceSetupUnSuccessfulTransferIE {
   long getChoiceOfCause() const;
   long getCause() const;
 
-  int encode(uint8_t* buf, int buf_size);
-  bool decode(uint8_t* buf, int buf_size);
+  int encode(uint8_t* buf, int buf_size);   // TODO: remove naked pointer
+  bool decode(uint8_t* buf, int buf_size);  // TODO: remove naked pointer
 
  private:
   Ngap_PDUSessionResourceSetupUnsuccessfulTransfer_t*

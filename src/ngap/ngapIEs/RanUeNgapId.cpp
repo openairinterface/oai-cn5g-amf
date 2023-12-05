@@ -51,7 +51,7 @@ bool RanUeNgapId::encode(Ngap_RAN_UE_NGAP_ID_t& ran_ue_ngap_id) {
 }
 
 //------------------------------------------------------------------------------
-bool RanUeNgapId::decode(Ngap_RAN_UE_NGAP_ID_t& ran_ue_ngap_id) {
+bool RanUeNgapId::decode(const Ngap_RAN_UE_NGAP_ID_t& ran_ue_ngap_id) {
   id_ = ran_ue_ngap_id;
   return true;
 }

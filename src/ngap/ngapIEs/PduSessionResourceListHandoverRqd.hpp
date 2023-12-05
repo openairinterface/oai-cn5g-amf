@@ -41,7 +41,7 @@ class PduSessionResourceListHandoverRqd {
   void get(std::vector<PduSessionResourceItem>& list) const;
 
   bool encode(Ngap_PDUSessionResourceListHORqd_t& list);
-  bool decode(Ngap_PDUSessionResourceListHORqd_t& list);
+  bool decode(const Ngap_PDUSessionResourceListHORqd_t& list);
 
  private:
   std::vector<PduSessionResourceItem> item_list_;

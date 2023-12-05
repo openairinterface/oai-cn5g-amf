@@ -100,7 +100,7 @@ bool NonDynamic5QIDescriptor::encode(
 
 //------------------------------------------------------------------------------
 bool NonDynamic5QIDescriptor::decode(
-    Ngap_NonDynamic5QIDescriptor_t& nonDynamic5QIDescriptor) {
+    const Ngap_NonDynamic5QIDescriptor_t& nonDynamic5QIDescriptor) {
   if (!fiveQI.decode(nonDynamic5QIDescriptor.fiveQI)) return false;
   if (nonDynamic5QIDescriptor.priorityLevelQos) {
     PriorityLevelQos tmp = {};

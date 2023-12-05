@@ -105,7 +105,7 @@ bool GlobalRanNodeId::encode(Ngap_GlobalRANNodeID_t& globalRANNodeID) {
 }
 
 //------------------------------------------------------------------------------
-bool GlobalRanNodeId::decode(Ngap_GlobalRANNodeID_t& globalRANNodeID) {
+bool GlobalRanNodeId::decode(const Ngap_GlobalRANNodeID_t& globalRANNodeID) {
   id_present_ = globalRANNodeID.present;
 
   switch (id_present_) {

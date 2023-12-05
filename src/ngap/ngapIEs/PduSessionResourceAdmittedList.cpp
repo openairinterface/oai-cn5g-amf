@@ -58,7 +58,7 @@ bool PduSessionResourceAdmittedList::encode(
 
 //------------------------------------------------------------------------------
 bool PduSessionResourceAdmittedList::decode(
-    Ngap_PDUSessionResourceAdmittedList_t& list) {
+    const Ngap_PDUSessionResourceAdmittedList_t& list) {
   for (int i = 0; i < list.list.count; i++) {
     PduSessionResourceItem item = {};
     if (!item.decode(*list.list.array[i])) return false;

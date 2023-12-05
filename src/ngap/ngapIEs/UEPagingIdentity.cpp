@@ -59,7 +59,7 @@ bool UEPagingIdentity::encode(Ngap_UEPagingIdentity_t& pdu) {
 }
 
 //------------------------------------------------------------------------------
-bool UEPagingIdentity::decode(Ngap_UEPagingIdentity_t& pdu) {
+bool UEPagingIdentity::decode(const Ngap_UEPagingIdentity_t& pdu) {
   if (pdu.present != Ngap_UEPagingIdentity_PR_fiveG_S_TMSI) return false;
   if (!fiveGSTmsi.decode(*pdu.choice.fiveG_S_TMSI)) return false;
 

@@ -41,7 +41,7 @@ class PduSessionResourceFailedToSetupListHoAck {
   void get(std::vector<PduSessionResourceItem>& list) const;
 
   bool encode(Ngap_PDUSessionResourceFailedToSetupListHOAck_t& list);
-  bool decode(Ngap_PDUSessionResourceFailedToSetupListHOAck_t& List);
+  bool decode(const Ngap_PDUSessionResourceFailedToSetupListHOAck_t& List);
 
  private:
   std::vector<PduSessionResourceItem> item_list_;

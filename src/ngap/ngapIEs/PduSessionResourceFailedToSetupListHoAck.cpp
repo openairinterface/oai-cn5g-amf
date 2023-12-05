@@ -60,7 +60,7 @@ bool PduSessionResourceFailedToSetupListHoAck::encode(
 
 //------------------------------------------------------------------------------
 bool PduSessionResourceFailedToSetupListHoAck::decode(
-    Ngap_PDUSessionResourceFailedToSetupListHOAck_t& list) {
+    const Ngap_PDUSessionResourceFailedToSetupListHOAck_t& list) {
   for (int i = 0; i < list.list.count; i++) {
     PduSessionResourceItem item = {};
     if (!item.decode(*list.list.array[i])) return false;

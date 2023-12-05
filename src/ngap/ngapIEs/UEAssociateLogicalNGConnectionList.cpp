@@ -68,7 +68,7 @@ bool UEAssociatedLogicalNGConnectionList::encode(
 
 //------------------------------------------------------------------------------
 bool UEAssociatedLogicalNGConnectionList::decode(
-    Ngap_UE_associatedLogicalNG_connectionList_t& list) {
+    const Ngap_UE_associatedLogicalNG_connectionList_t& list) {
   list_.clear();
   for (int i = 0; i < list.list.count; i++) {
     UEAssociatedLogicalNGConnectionItem item = {};

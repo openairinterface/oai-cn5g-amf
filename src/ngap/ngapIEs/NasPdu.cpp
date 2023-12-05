@@ -37,7 +37,7 @@ bool NasPdu::encode(Ngap_NAS_PDU_t& nas_pdu) {
 }
 
 //------------------------------------------------------------------------------
-bool NasPdu::decode(Ngap_NAS_PDU_t& nas_pdu) {
+bool NasPdu::decode(const Ngap_NAS_PDU_t& nas_pdu) {
   if (!nas_pdu.buf) return false;
   return conv::octet_string_2_bstring(nas_pdu, pdu_bstring);
 }

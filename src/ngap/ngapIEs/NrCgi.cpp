@@ -66,7 +66,7 @@ bool NrCgi::encode(Ngap_NR_CGI_t& nr_cgi) {
 }
 
 //------------------------------------------------------------------------------
-bool NrCgi::decode(Ngap_NR_CGI_t& nr_cgi) {
+bool NrCgi::decode(const Ngap_NR_CGI_t& nr_cgi) {
   if (!plmnId.decode(nr_cgi.pLMNIdentity)) return false;
   if (!nRCellIdentity.decode(nr_cgi.nRCellIdentity)) return false;
   return true;

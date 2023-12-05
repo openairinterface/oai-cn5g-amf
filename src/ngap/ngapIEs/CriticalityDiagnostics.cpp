@@ -122,7 +122,7 @@ int CriticalityDiagnostics::encode(Ngap_NGSetupFailure_t& ngSetupFailure) {
 }
 
 //------------------------------------------------------------------------------
-bool CriticalityDiagnostics::decode(Ngap_CriticalityDiagnostics_t& pdu) {
+bool CriticalityDiagnostics::decode(const Ngap_CriticalityDiagnostics_t& pdu) {
   if (pdu.procedureCode) {
     procedureCodeIsSet = true;
     procedureCode      = *pdu.procedureCode;

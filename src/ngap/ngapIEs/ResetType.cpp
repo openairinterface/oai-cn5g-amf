@@ -70,7 +70,7 @@ bool ResetType::encode(Ngap_ResetType_t& type) {
 }
 
 //------------------------------------------------------------------------------
-bool ResetType::decode(Ngap_ResetType_t& type) {
+bool ResetType::decode(const Ngap_ResetType_t& type) {
   present = type.present;
   if (type.present == Ngap_ResetType_PR_nG_Interface) {
     nG_Interface = std::make_optional<long>((long) type.choice.nG_Interface);

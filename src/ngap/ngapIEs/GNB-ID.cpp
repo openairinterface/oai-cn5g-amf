@@ -96,7 +96,7 @@ bool GNB_ID::encode(Ngap_GNB_ID_t& gnbid) {
 }
 
 //------------------------------------------------------------------------------
-bool GNB_ID::decode(Ngap_GNB_ID_t& gnbid) {
+bool GNB_ID::decode(const Ngap_GNB_ID_t& gnbid) {
   if (gnbid.present != Ngap_GNB_ID_PR_gNB_ID) return false;
   if (!gnbid.choice.gNB_ID.buf) return false;
 

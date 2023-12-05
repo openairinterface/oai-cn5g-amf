@@ -104,7 +104,7 @@ bool UserLocationInformation::encode(
 
 //------------------------------------------------------------------------------
 bool UserLocationInformation::decode(
-    Ngap_UserLocationInformation_t& user_location_information) {
+    const Ngap_UserLocationInformation_t& user_location_information) {
   present_ = user_location_information.present;
   switch (present_) {
     case Ngap_UserLocationInformation_PR_userLocationInformationEUTRA: {

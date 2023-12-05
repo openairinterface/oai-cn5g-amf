@@ -115,7 +115,7 @@ bool CoreNetworkAssistanceInformationForInactive::encode(
 
 //------------------------------------------------------------------------------
 bool CoreNetworkAssistanceInformationForInactive::decode(
-    Ngap_CoreNetworkAssistanceInformationForInactive_t&
+    const Ngap_CoreNetworkAssistanceInformationForInactive_t&
         coreNetworkAssistanceInformation) {
   if (!ueIdentityIndexValue.decode(
           coreNetworkAssistanceInformation.uEIdentityIndexValue))

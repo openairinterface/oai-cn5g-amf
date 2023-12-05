@@ -117,7 +117,7 @@ bool UEAssociatedLogicalNGConnectionItem::encode(
 
 //------------------------------------------------------------------------------
 bool UEAssociatedLogicalNGConnectionItem::decode(
-    Ngap_UE_associatedLogicalNG_connectionItem_t& item) {
+    const Ngap_UE_associatedLogicalNG_connectionItem_t& item) {
   if (item.aMF_UE_NGAP_ID) {
     AmfUeNgapId tmp = {};
     if (!tmp.decode(*item.aMF_UE_NGAP_ID)) {

@@ -107,7 +107,8 @@ bool SecurityIndication::encode(Ngap_SecurityIndication_t& securityIndication) {
 }
 
 //------------------------------------------------------------------------------
-bool SecurityIndication::decode(Ngap_SecurityIndication_t& securityIndication) {
+bool SecurityIndication::decode(
+    const Ngap_SecurityIndication_t& securityIndication) {
   if (!integrityProtectionIndication.decode(
           securityIndication.integrityProtectionIndication))
     return false;

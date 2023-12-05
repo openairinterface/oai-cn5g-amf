@@ -54,7 +54,7 @@ bool TAIListForPaging::encode(Ngap_TAIListForPaging_t& pdu) {
 }
 
 //------------------------------------------------------------------------------
-bool TAIListForPaging::decode(Ngap_TAIListForPaging_t& pdu) {
+bool TAIListForPaging::decode(const Ngap_TAIListForPaging_t& pdu) {
   if (pdu.list.count < 0) return false;
   for (int i = 0; i < pdu.list.count; i++) {
     TAI tai = {};

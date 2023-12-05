@@ -48,7 +48,7 @@ void QosFlowItemWithDataForWarding::getQosFlowIdentifier(
 
 //------------------------------------------------------------------------------
 bool QosFlowItemWithDataForWarding::decode(
-    Ngap_QosFlowItemWithDataForwarding_t& qos_flow_item) {
+    const Ngap_QosFlowItemWithDataForwarding_t& qos_flow_item) {
   if (!qfi_.decode(qos_flow_item.qosFlowIdentifier)) {
     return false;
   }

@@ -61,7 +61,7 @@ bool QosFlowPerTnlInformationList::encode(
 
 //------------------------------------------------------------------------------
 bool QosFlowPerTnlInformationList::decode(
-    Ngap_QosFlowPerTNLInformationList_t& qosFlowPerTnlInformationList) {
+    const Ngap_QosFlowPerTNLInformationList_t& qosFlowPerTnlInformationList) {
   for (int i = 0; i < qosFlowPerTnlInformationList.list.count; i++) {
     QosFlowPerTnlInformationItem item = {};
     if (!item.decode(*qosFlowPerTnlInformationList.list.array[i])) return false;

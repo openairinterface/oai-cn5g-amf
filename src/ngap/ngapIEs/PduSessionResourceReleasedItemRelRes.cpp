@@ -64,7 +64,7 @@ bool PduSessionResourceReleasedItemRelRes::encode(
 
 //------------------------------------------------------------------------------
 bool PduSessionResourceReleasedItemRelRes::decode(
-    Ngap_PDUSessionResourceReleasedItemRelRes_t&
+    const Ngap_PDUSessionResourceReleasedItemRelRes_t&
         pdu_session_resource_released_item_rel_res) {
   pdu_session_id_.set(pdu_session_resource_released_item_rel_res.pDUSessionID);
   pdu_session_resource_release_response_transfer_ =

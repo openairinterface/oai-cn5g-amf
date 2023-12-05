@@ -70,7 +70,7 @@ bool AssociatedQosFlowList::encode(
 
 //------------------------------------------------------------------------------
 bool AssociatedQosFlowList::decode(
-    Ngap_AssociatedQosFlowList_t& associatedQosFlowList) {
+    const Ngap_AssociatedQosFlowList_t& associatedQosFlowList) {
   uint8_t actual_size = (associatedQosFlowList.list.count > kMaxNoOfQoSFlows) ?
                             kMaxNoOfQoSFlows :
                             associatedQosFlowList.list.count;

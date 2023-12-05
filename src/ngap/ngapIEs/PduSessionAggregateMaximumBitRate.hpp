@@ -39,7 +39,7 @@ class PduSessionAggregateMaximumBitRate {
   bool get(long& bit_rate_downlink, long& bit_rate_uplink) const;
 
   bool encode(Ngap_PDUSessionAggregateMaximumBitRate_t& bit_rate);
-  bool decode(Ngap_PDUSessionAggregateMaximumBitRate_t& bit_rate);
+  bool decode(const Ngap_PDUSessionAggregateMaximumBitRate_t& bit_rate);
 
  private:
   long dl_;

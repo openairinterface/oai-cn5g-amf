@@ -49,7 +49,7 @@ bool UserLocationInformationNR::encode(
 
 //------------------------------------------------------------------------------
 bool UserLocationInformationNR::decode(
-    Ngap_UserLocationInformationNR_t& user_location_info_nr) {
+    const Ngap_UserLocationInformationNR_t& user_location_info_nr) {
   if (!nR_CGI.decode(user_location_info_nr.nR_CGI)) {
     return false;
   }

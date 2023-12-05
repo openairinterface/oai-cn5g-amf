@@ -39,7 +39,7 @@ class UserLocationInformationNR {
   void get(NrCgi&, TAI&);
 
   bool encode(Ngap_UserLocationInformationNR_t&);
-  bool decode(Ngap_UserLocationInformationNR_t&);
+  bool decode(const Ngap_UserLocationInformationNR_t&);
 
  private:
   NrCgi nR_CGI;  // Mandatory

@@ -39,7 +39,7 @@ class PduSessionResourceHandoverRequestAckTransfer {
   PduSessionResourceHandoverRequestAckTransfer();
   virtual ~PduSessionResourceHandoverRequestAckTransfer();
 
-  bool decodefromHandoverRequestAckTransfer(uint8_t* buf, int buf_size);
+  bool decode(uint8_t* buf, int buf_size);  // TODO: remove naked pointer
 
   bool getUpTransportLayerInformation2(GtpTunnel_t*& upTnlInfo);
   bool getqosFlowSetupResponseList(

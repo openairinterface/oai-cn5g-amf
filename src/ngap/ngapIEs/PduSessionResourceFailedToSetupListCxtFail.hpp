@@ -42,7 +42,7 @@ class PduSessionResourceFailedToSetupListCxtFail {
 
   bool encode(Ngap_PDUSessionResourceFailedToSetupListCxtFail_t&
                   pduSessionResourceFailedToSetupListCxtFail);
-  bool decode(Ngap_PDUSessionResourceFailedToSetupListCxtFail_t&
+  bool decode(const Ngap_PDUSessionResourceFailedToSetupListCxtFail_t&
                   pduSessionResourceFailedToSetupListCxtFail);
 
  private:

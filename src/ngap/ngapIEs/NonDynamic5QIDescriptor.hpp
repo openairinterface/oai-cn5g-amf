@@ -56,7 +56,7 @@ class NonDynamic5QIDescriptor {
       std::optional<MaximumDataBurstVolume>& m_maximumDataBurstVolume) const;
 
   bool encode(Ngap_NonDynamic5QIDescriptor_t&);
-  bool decode(Ngap_NonDynamic5QIDescriptor_t&);
+  bool decode(const Ngap_NonDynamic5QIDescriptor_t&);
 
  private:
   FiveQI fiveQI;                                                 // Mandatory

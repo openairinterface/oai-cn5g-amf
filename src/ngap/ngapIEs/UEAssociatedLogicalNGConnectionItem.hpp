@@ -47,7 +47,7 @@ class UEAssociatedLogicalNGConnectionItem {
   void set(UEAssociatedLogicalNGConnectionItem& item);
 
   bool encode(Ngap_UE_associatedLogicalNG_connectionItem_t& item);
-  bool decode(Ngap_UE_associatedLogicalNG_connectionItem_t& item);
+  bool decode(const Ngap_UE_associatedLogicalNG_connectionItem_t& item);
 
  private:
   std::optional<AmfUeNgapId> amf_ue_ngap_id_;  // Optional

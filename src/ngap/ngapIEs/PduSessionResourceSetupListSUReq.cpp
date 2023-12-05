@@ -61,7 +61,7 @@ bool PduSessionResourceSetupListSUReq::encode(
 
 //------------------------------------------------------------------------------
 bool PduSessionResourceSetupListSUReq::decode(
-    Ngap_PDUSessionResourceSetupListSUReq_t&
+    const Ngap_PDUSessionResourceSetupListSUReq_t&
         pdu_session_resource_setup_list_su_req) {
   for (int i = 0; i < pdu_session_resource_setup_list_su_req.list.count; i++) {
     PduSessionResourceSetupItemSUReq item = {};

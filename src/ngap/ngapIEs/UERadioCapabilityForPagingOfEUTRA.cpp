@@ -41,7 +41,7 @@ bool UERadioCapabilityForPagingOfEUTRA::encode(
 
 //------------------------------------------------------------------------------
 bool UERadioCapabilityForPagingOfEUTRA::decode(
-    Ngap_UERadioCapabilityForPagingOfEUTRA_t&
+    const Ngap_UERadioCapabilityForPagingOfEUTRA_t&
         ueRadioCapabilityForPagingOfEUTRA) {
   return conv::octet_string_copy(
       ue_radio_capability_, ueRadioCapabilityForPagingOfEUTRA);

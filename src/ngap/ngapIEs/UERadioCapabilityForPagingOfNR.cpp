@@ -40,7 +40,8 @@ bool UERadioCapabilityForPagingOfNR::encode(
 
 //------------------------------------------------------------------------------
 bool UERadioCapabilityForPagingOfNR::decode(
-    Ngap_UERadioCapabilityForPagingOfNR_t& ueRadioCapabilityForPagingOfNR) {
+    const Ngap_UERadioCapabilityForPagingOfNR_t&
+        ueRadioCapabilityForPagingOfNR) {
   return conv::octet_string_copy(
       ue_radio_capability_, ueRadioCapabilityForPagingOfNR);
 }

@@ -60,7 +60,7 @@ bool SecurityResult::encode(Ngap_SecurityResult_t& securityResult) {
 }
 
 //------------------------------------------------------------------------------
-bool SecurityResult::decode(Ngap_SecurityResult_t& securityResult) {
+bool SecurityResult::decode(const Ngap_SecurityResult_t& securityResult) {
   if (!integrityProtectionResult.decode(
           securityResult.integrityProtectionResult))
     return false;

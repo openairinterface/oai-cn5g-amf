@@ -44,7 +44,7 @@ class AmfPointer {
   void get(uint8_t&) const;
 
   bool encode(Ngap_AMFPointer_t&) const;
-  bool decode(const Ngap_AMFPointer_t&);
+  bool decode(Ngap_AMFPointer_t);
 
  private:
   uint8_t pointer_;

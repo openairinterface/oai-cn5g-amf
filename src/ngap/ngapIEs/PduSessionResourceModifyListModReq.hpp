@@ -42,7 +42,7 @@ class PduSessionResourceModifyListModReq {
 
   bool encode(Ngap_PDUSessionResourceModifyListModReq_t&
                   pdu_session_resource_modify_list_mod_req);
-  bool decode(Ngap_PDUSessionResourceModifyListModReq_t&
+  bool decode(const Ngap_PDUSessionResourceModifyListModReq_t&
                   pdu_session_resource_modify_list_mod_req);
 
  private:

@@ -42,7 +42,7 @@ class PlmnSupportItem {
   void get(PlmnId& plmn_id, std::vector<S_NSSAI>& snssais);
 
   bool encode(Ngap_PLMNSupportItem_t&);
-  bool decode(Ngap_PLMNSupportItem_t&);
+  bool decode(const Ngap_PLMNSupportItem_t&);
 
  private:
   PlmnId plmn_id_;                           // Mandatory

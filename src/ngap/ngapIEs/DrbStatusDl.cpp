@@ -78,7 +78,7 @@ bool DrbStatusDl::encode(Ngap_DRBStatusDL_t& dL) {
 }
 
 //------------------------------------------------------------------------------
-bool DrbStatusDl::decode(Ngap_DRBStatusDL_t& dL) {
+bool DrbStatusDl::decode(const Ngap_DRBStatusDL_t& dL) {
   if (dL.present == Ngap_DRBStatusDL_PR_dRBStatusDL18) {
     DrbStatusDl18 dl18 = {};
     if (!dl18.decode(*dL.choice.dRBStatusDL18)) {

@@ -49,7 +49,7 @@ class UpTransportLayerInformation {
   void get(std::optional<GtpTunnel>& gtpTunnel) const;
 
   bool encode(Ngap_UPTransportLayerInformation_t& upTransportLayerInfo);
-  bool decode(Ngap_UPTransportLayerInformation_t& upTransportLayerInfo);
+  bool decode(const Ngap_UPTransportLayerInformation_t& upTransportLayerInfo);
 
  private:
   TransportLayerAddress transportLayerAddress;  // TODO: should be removed

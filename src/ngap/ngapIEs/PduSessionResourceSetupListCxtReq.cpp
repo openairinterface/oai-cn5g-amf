@@ -60,7 +60,7 @@ bool PduSessionResourceSetupListCxtReq::encode(
 
 //------------------------------------------------------------------------------
 bool PduSessionResourceSetupListCxtReq::decode(
-    Ngap_PDUSessionResourceSetupListCxtReq_t&
+    const Ngap_PDUSessionResourceSetupListCxtReq_t&
         pduSessionResourceSetupListCxtReq) {
   pduSessionResourceSetupItemCxtReqList.reserve(
       pduSessionResourceSetupListCxtReq.list.count);

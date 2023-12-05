@@ -41,10 +41,10 @@ class DrbSubjectToStatusTransferList {
   void getdRBSubjectItem(
       std::vector<DrbSubjectToStatusTransferItem>& list) const;
 
-  bool decode(
-      Ngap_DRBsSubjectToStatusTransferList_t& dRBsSubjectToStatusTransferList);
   bool encode(
       Ngap_DRBsSubjectToStatusTransferList_t& dRBsSubjectToStatusTransferList);
+  bool decode(const Ngap_DRBsSubjectToStatusTransferList_t&
+                  dRBsSubjectToStatusTransferList);
 
  private:
   std::vector<DrbSubjectToStatusTransferItem> itemList;

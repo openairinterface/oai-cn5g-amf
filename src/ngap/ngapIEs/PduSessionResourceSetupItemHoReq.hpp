@@ -46,7 +46,7 @@ class PduSessionResourceSetupItemHoReq : public PduSessionResourceItem {
 
   bool encode(Ngap_PDUSessionResourceSetupItemHOReq_t&
                   pduSessionResourceSetupItemHOReq);
-  bool decode(Ngap_PDUSessionResourceSetupItemHOReq_t&
+  bool decode(const Ngap_PDUSessionResourceSetupItemHOReq_t&
                   pduSessionResourceSetupItemHOReq);
 
  private:

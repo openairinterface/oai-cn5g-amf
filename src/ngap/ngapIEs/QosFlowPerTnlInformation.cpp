@@ -61,7 +61,7 @@ bool QosFlowPerTnlInformation::encode(
 
 //------------------------------------------------------------------------------
 bool QosFlowPerTnlInformation::decode(
-    Ngap_QosFlowPerTNLInformation_t& qosFlowPerTNLInformation) {
+    const Ngap_QosFlowPerTNLInformation_t& qosFlowPerTNLInformation) {
   if (!uPTransportLayerInformation.decode(
           qosFlowPerTNLInformation.uPTransportLayerInformation))
     return false;

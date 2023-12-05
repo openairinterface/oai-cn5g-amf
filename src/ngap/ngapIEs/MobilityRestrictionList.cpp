@@ -48,7 +48,7 @@ bool MobilityRestrictionList::encode(
 
 //------------------------------------------------------------------------------
 bool MobilityRestrictionList::decode(
-    Ngap_MobilityRestrictionList_t& mobility_restriction_list) {
+    const Ngap_MobilityRestrictionList_t& mobility_restriction_list) {
   if (!servingPLMN.decode(mobility_restriction_list.servingPLMN)) {
     return false;
   }

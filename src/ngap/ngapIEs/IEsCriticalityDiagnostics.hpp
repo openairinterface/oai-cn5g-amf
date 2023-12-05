@@ -34,7 +34,7 @@ class IEsCriticalityDiagnostics {
   virtual ~IEsCriticalityDiagnostics();
 
   void encode(Ngap_CriticalityDiagnostics_IE_Item_t&);
-  void decode(Ngap_CriticalityDiagnostics_IE_Item_t&);
+  void decode(const Ngap_CriticalityDiagnostics_IE_Item_t&);
 
   void setIeCriticality(Ngap_Criticality_t);
   Ngap_Criticality_t getIeCriticality() const;

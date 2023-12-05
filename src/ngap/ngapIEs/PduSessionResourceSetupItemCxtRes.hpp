@@ -44,7 +44,7 @@ class PduSessionResourceSetupItemCxtRes {
 
   bool encode(Ngap_PDUSessionResourceSetupItemCxtRes_t&
                   pdu_session_resource_setup_item_cxt_res);
-  bool decode(Ngap_PDUSessionResourceSetupItemCxtRes_t&
+  bool decode(const Ngap_PDUSessionResourceSetupItemCxtRes_t&
                   pdu_session_resource_setup_item_cxt_res);
 
  private:

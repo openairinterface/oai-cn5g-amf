@@ -40,7 +40,7 @@ class TimeToWait {
   long getValue();
 
   bool encode(Ngap_TimeToWait_t&);
-  bool decode(Ngap_TimeToWait_t&);
+  bool decode(const Ngap_TimeToWait_t&);
 
  private:
   long time_;

@@ -36,7 +36,7 @@ class NgENB_ID {
   virtual ~NgENB_ID();
 
   bool encode(Ngap_NgENB_ID_t&);
-  bool decode(Ngap_NgENB_ID_t&);
+  bool decode(const Ngap_NgENB_ID_t&);
 
   void get(uint32_t& id, Ngap_NgENB_ID_PR& present) const;
   void set(const uint32_t& id, const Ngap_NgENB_ID_PR& present);

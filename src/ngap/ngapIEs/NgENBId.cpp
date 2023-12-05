@@ -101,7 +101,7 @@ bool NgENB_ID::encode(Ngap_NgENB_ID_t& ng_enb_id) {
 }
 
 //------------------------------------------------------------------------------
-bool NgENB_ID::decode(Ngap_NgENB_ID_t& ng_enb_id) {
+bool NgENB_ID::decode(const Ngap_NgENB_ID_t& ng_enb_id) {
   present_ = ng_enb_id.present;
   switch (present_) {
     case Ngap_NgENB_ID_PR_macroNgENB_ID: {

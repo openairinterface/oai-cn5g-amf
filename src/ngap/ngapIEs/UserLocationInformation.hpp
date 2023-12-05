@@ -48,7 +48,8 @@ class UserLocationInformation {
   // void getInformation(UserLocationInformationN3IWF&);
 
   bool encode(Ngap_UserLocationInformation_t& user_location_information);
-  bool decode(Ngap_UserLocationInformation_t& user_location_information);
+  bool decode(const Ngap_UserLocationInformation_t& user_location_information);
+
   Ngap_UserLocationInformation_PR getChoiceOfUserLocationInformation();
 
  private:

@@ -48,7 +48,7 @@ class GlobalRanNodeId {
   Ngap_GlobalRANNodeID_PR getChoiceOfRanNodeId() const;
 
   bool encode(Ngap_GlobalRANNodeID_t&);
-  bool decode(Ngap_GlobalRANNodeID_t&);
+  bool decode(const Ngap_GlobalRANNodeID_t&);
 
  private:
   std::optional<GlobalgNBId> global_gnb_id_;

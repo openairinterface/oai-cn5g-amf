@@ -51,7 +51,7 @@ bool PacketLossRate::encode(Ngap_PacketLossRate_t& packetLossRate) const {
 }
 
 //------------------------------------------------------------------------------
-bool PacketLossRate::decode(Ngap_PacketLossRate_t& packetLossRate) {
+bool PacketLossRate::decode(const Ngap_PacketLossRate_t& packetLossRate) {
   packet_loss_rate_ = packetLossRate;
 
   return true;

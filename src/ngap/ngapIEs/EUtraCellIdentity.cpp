@@ -58,7 +58,8 @@ bool EUtraCellIdentity::encode(Ngap_EUTRACellIdentity_t& eUTRA_cell_identity) {
 }
 
 //------------------------------------------------------------------------------
-bool EUtraCellIdentity::decode(Ngap_EUTRACellIdentity_t& eUTRA_cell_identity) {
+bool EUtraCellIdentity::decode(
+    const Ngap_EUTRACellIdentity_t& eUTRA_cell_identity) {
   if (!eUTRA_cell_identity.buf) return false;
 
   id_ = eUTRA_cell_identity.buf[0] << 24;

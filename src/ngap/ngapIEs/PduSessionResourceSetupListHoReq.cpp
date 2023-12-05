@@ -57,7 +57,7 @@ bool PduSessionResourceSetupListHoReq::encode(
 
 //------------------------------------------------------------------------------
 bool PduSessionResourceSetupListHoReq::decode(
-    Ngap_PDUSessionResourceSetupListHOReq_t& resource_list) {
+    const Ngap_PDUSessionResourceSetupListHOReq_t& resource_list) {
   for (int i = 0; i < resource_list.list.count; i++) {
     PduSessionResourceSetupItemHoReq item = {};
     if (!item.decode(*resource_list.list.array[i])) return false;

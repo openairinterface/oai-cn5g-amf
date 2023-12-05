@@ -55,7 +55,7 @@ bool NetworkInstance::encode(Ngap_NetworkInstance_t& value) {
 }
 
 //------------------------------------------------------------------------------
-bool NetworkInstance::decode(Ngap_NetworkInstance_t value) {
+bool NetworkInstance::decode(const Ngap_NetworkInstance_t value) {
   network_instance_ = value;
 
   return true;

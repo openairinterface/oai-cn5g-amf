@@ -38,7 +38,7 @@ class PlmnSupportList {
   virtual ~PlmnSupportList();
 
   bool encode(Ngap_PLMNSupportList_t&);
-  bool decode(Ngap_PLMNSupportList_t&);
+  bool decode(const Ngap_PLMNSupportList_t&);
 
   void set(const std::vector<PlmnSupportItem>& items);
   void get(std::vector<PlmnSupportItem>& items);

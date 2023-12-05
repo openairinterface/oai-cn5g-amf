@@ -42,7 +42,7 @@ class PduSessionResourceSetupListHoReq {
 
   bool encode(Ngap_PDUSessionResourceSetupListHOReq_t&
                   pduSessionResourceSetupListHOReq);
-  bool decode(Ngap_PDUSessionResourceSetupListHOReq_t&
+  bool decode(const Ngap_PDUSessionResourceSetupListHOReq_t&
                   pduSessionResourceSetupListHOReq);
 
  private:

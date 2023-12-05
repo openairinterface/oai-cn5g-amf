@@ -50,7 +50,8 @@ bool RanPagingPriority::encode(Ngap_RANPagingPriority_t& ran_paging_priority) {
 }
 
 //------------------------------------------------------------------------------
-bool RanPagingPriority::decode(Ngap_RANPagingPriority_t& ran_paging_priority) {
+bool RanPagingPriority::decode(
+    const Ngap_RANPagingPriority_t& ran_paging_priority) {
   if (ran_paging_priority > kRANPagingPriorityMaxValue) return false;
   ran_paging_priority_ = ran_paging_priority;
   return true;

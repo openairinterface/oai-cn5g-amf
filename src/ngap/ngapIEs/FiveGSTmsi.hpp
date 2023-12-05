@@ -47,7 +47,7 @@ class FiveGSTmsi {
       const std::string& tmsi);
 
   bool encode(Ngap_FiveG_S_TMSI_t& pdu);
-  bool decode(Ngap_FiveG_S_TMSI_t& pdu);
+  bool decode(const Ngap_FiveG_S_TMSI_t& pdu);
 
  private:
   std::string _5g_s_tmsi_;

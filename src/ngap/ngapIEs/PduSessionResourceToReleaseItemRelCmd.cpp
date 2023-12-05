@@ -66,7 +66,7 @@ bool PduSessionResourceToReleaseItemRelCmd::encode(
 
 //------------------------------------------------------------------------------
 bool PduSessionResourceToReleaseItemRelCmd::decode(
-    Ngap_PDUSessionResourceToReleaseItemRelCmd_t&
+    const Ngap_PDUSessionResourceToReleaseItemRelCmd_t&
         pdu_session_resource_to_release_item_rel_cmd) {
   pdu_session_resource_release_command_transfer_ =
       pdu_session_resource_to_release_item_rel_cmd

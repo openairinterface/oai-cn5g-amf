@@ -39,7 +39,7 @@ class DrbStatusUl12 {
   void set(const CountValueForPdcpSn12& count_value);
 
   bool encode(Ngap_DRBStatusUL12_t& ul12);
-  bool decode(Ngap_DRBStatusUL12_t& ul12);
+  bool decode(const Ngap_DRBStatusUL12_t& ul12);
 
  private:
   CountValueForPdcpSn12 pdcp_value;  // Mandatory

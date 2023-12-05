@@ -62,7 +62,7 @@ bool PduSessionResourceToReleaseListRelCmd::encode(
 
 //------------------------------------------------------------------------------
 bool PduSessionResourceToReleaseListRelCmd::decode(
-    Ngap_PDUSessionResourceToReleaseListRelCmd_t&
+    const Ngap_PDUSessionResourceToReleaseListRelCmd_t&
         pdu_session_resource_to_released_list_rel_cmd) {
   for (int i = 0; i < pdu_session_resource_to_released_list_rel_cmd.list.count;
        i++) {

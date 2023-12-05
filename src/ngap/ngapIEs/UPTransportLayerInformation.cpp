@@ -84,7 +84,7 @@ bool UpTransportLayerInformation::encode(
 
 //------------------------------------------------------------------------------
 bool UpTransportLayerInformation::decode(
-    Ngap_UPTransportLayerInformation_t& upTransportLayerInfo) {
+    const Ngap_UPTransportLayerInformation_t& upTransportLayerInfo) {
   if (upTransportLayerInfo.present !=
       Ngap_UPTransportLayerInformation_PR_gTPTunnel)
     return false;

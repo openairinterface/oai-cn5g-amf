@@ -66,7 +66,7 @@ bool AmfRegionId::encode(Ngap_AMFRegionID_t& id) const {
 }
 
 //------------------------------------------------------------------------------
-bool AmfRegionId::decode(const Ngap_AMFRegionID_t& id) {
+bool AmfRegionId::decode(Ngap_AMFRegionID_t id) {
   if (!id.buf) return false;
   region_id_ = *id.buf;
 

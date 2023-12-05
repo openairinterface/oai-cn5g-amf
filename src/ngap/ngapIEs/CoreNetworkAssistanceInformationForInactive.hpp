@@ -55,7 +55,7 @@ class CoreNetworkAssistanceInformationForInactive {
 
   bool encode(Ngap_CoreNetworkAssistanceInformationForInactive_t&
                   core_network_assistance_information);
-  bool decode(Ngap_CoreNetworkAssistanceInformationForInactive_t&
+  bool decode(const Ngap_CoreNetworkAssistanceInformationForInactive_t&
                   core_network_assistance_information);
 
  private:

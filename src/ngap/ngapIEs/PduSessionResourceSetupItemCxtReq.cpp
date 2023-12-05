@@ -88,7 +88,7 @@ bool PduSessionResourceSetupItemCxtReq::encode(
 
 //------------------------------------------------------------------------------
 bool PduSessionResourceSetupItemCxtReq::decode(
-    Ngap_PDUSessionResourceSetupItemCxtReq_t&
+    const Ngap_PDUSessionResourceSetupItemCxtReq_t&
         pduSessionResourceSetupItemCxtReq) {
   if (!pdu_session_id_.decode(pduSessionResourceSetupItemCxtReq.pDUSessionID))
     return false;

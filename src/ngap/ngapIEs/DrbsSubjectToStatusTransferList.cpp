@@ -71,7 +71,8 @@ bool DrbSubjectToStatusTransferList::encode(
 
 //------------------------------------------------------------------------------
 bool DrbSubjectToStatusTransferList::decode(
-    Ngap_DRBsSubjectToStatusTransferList_t& dRBsSubjectToStatusTransferList) {
+    const Ngap_DRBsSubjectToStatusTransferList_t&
+        dRBsSubjectToStatusTransferList) {
   for (int i = 0; i < dRBsSubjectToStatusTransferList.list.count; i++) {
     DrbSubjectToStatusTransferItem item = {};
     if (!item.decode(*dRBsSubjectToStatusTransferList.list.array[i])) {

@@ -60,7 +60,7 @@ bool RanStatusTransferTransparentContainer::encode(
 
 //------------------------------------------------------------------------------
 bool RanStatusTransferTransparentContainer::decode(
-    Ngap_RANStatusTransfer_TransparentContainer_t&
+    const Ngap_RANStatusTransfer_TransparentContainer_t&
         ranstatustransfer_transparentcontainer) {
   if (!drb_sub_list.decode(ranstatustransfer_transparentcontainer
                                .dRBsSubjectToStatusTransferList)) {

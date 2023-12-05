@@ -37,7 +37,7 @@ class EUtraCellIdentity {
   virtual ~EUtraCellIdentity();
 
   bool encode(Ngap_EUTRACellIdentity_t& eUTRACellIdentity);
-  bool decode(Ngap_EUTRACellIdentity_t& eUTRACellIdentity);
+  bool decode(const Ngap_EUTRACellIdentity_t& eUTRACellIdentity);
 
   uint32_t get() const;
   bool set(const uint32_t& m_eutracellidentity);

@@ -61,7 +61,7 @@ bool PduSessionResourceSetupItemHoReq::encode(
 
 //------------------------------------------------------------------------------
 bool PduSessionResourceSetupItemHoReq::decode(
-    Ngap_PDUSessionResourceSetupItemHOReq_t& resource_setup_item) {
+    const Ngap_PDUSessionResourceSetupItemHOReq_t& resource_setup_item) {
   if (!PduSessionResourceItem::decode(
           resource_setup_item.pDUSessionID,
           resource_setup_item.handoverRequestTransfer))

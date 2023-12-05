@@ -55,7 +55,7 @@ bool PduSessionResourceAdmittedItem::encode(
 
 //------------------------------------------------------------------------------
 bool PduSessionResourceAdmittedItem::decode(
-    Ngap_PDUSessionResourceAdmittedItem_t& pduItem) {
+    const Ngap_PDUSessionResourceAdmittedItem_t& pduItem) {
   if (!pDUSessionID.decode(pduItem.pDUSessionID)) return false;
   handoverRequestAckTransfer = pduItem.handoverRequestAcknowledgeTransfer;
 

@@ -43,7 +43,7 @@ class UEPagingIdentity {
       std::string& set_id, std::string& pointer, std::string& tmsi);
 
   bool encode(Ngap_UEPagingIdentity_t& pdu);
-  bool decode(Ngap_UEPagingIdentity_t& pdu);
+  bool decode(const Ngap_UEPagingIdentity_t& pdu);
 
  private:
   FiveGSTmsi fiveGSTmsi;

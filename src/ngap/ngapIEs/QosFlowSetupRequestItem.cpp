@@ -61,7 +61,7 @@ bool QosFlowSetupRequestItem::encode(
 
 //------------------------------------------------------------------------------
 bool QosFlowSetupRequestItem::decode(
-    Ngap_QosFlowSetupRequestItem_t& qosFlowSetupRequestItem) {
+    const Ngap_QosFlowSetupRequestItem_t& qosFlowSetupRequestItem) {
   if (!qosFlowIdentifier.decode(qosFlowSetupRequestItem.qosFlowIdentifier))
     return false;
   if (!qosFlowLevelQosParameters.decode(

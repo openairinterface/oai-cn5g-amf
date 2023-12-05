@@ -97,7 +97,8 @@ bool QosCharacteristics::encode(Ngap_QosCharacteristics_t& qosCharacteristics) {
 }
 
 //------------------------------------------------------------------------------
-bool QosCharacteristics::decode(Ngap_QosCharacteristics_t& qosCharacteristics) {
+bool QosCharacteristics::decode(
+    const Ngap_QosCharacteristics_t& qosCharacteristics) {
   if (qosCharacteristics.present == Ngap_QosCharacteristics_PR_nonDynamic5QI) {
     NonDynamic5QIDescriptor tmp = {};
     if (!tmp.decode(*qosCharacteristics.choice.nonDynamic5QI)) return false;

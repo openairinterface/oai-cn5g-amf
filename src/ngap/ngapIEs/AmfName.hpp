@@ -29,6 +29,7 @@ extern "C" {
 }
 
 constexpr uint8_t AMF_NAME_SIZE_MAX = 150;
+
 namespace ngap {
 
 class AmfName {

@@ -63,7 +63,7 @@ bool PduSessionResourceSetupListCxtRes::encode(
 
 //------------------------------------------------------------------------------
 bool PduSessionResourceSetupListCxtRes::decode(
-    Ngap_PDUSessionResourceSetupListCxtRes_t&
+    const Ngap_PDUSessionResourceSetupListCxtRes_t&
         pduSessionResourceSetupListCxtRes) {
   item_list_.reserve(pduSessionResourceSetupListCxtRes.list.count);
   for (int i = 0; i < pduSessionResourceSetupListCxtRes.list.count; i++) {

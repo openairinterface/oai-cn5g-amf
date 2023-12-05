@@ -56,7 +56,7 @@ class QosFlowLevelQosParameters {
           m_additionalQosFlowInformation) const;
 
   bool encode(Ngap_QosFlowLevelQosParameters_t&);
-  bool decode(Ngap_QosFlowLevelQosParameters_t&);
+  bool decode(const Ngap_QosFlowLevelQosParameters_t&);
 
  private:
   QosCharacteristics qosCharacteristics;                          // Mandatory

@@ -43,7 +43,7 @@ class ResetType {
   void getResetType(struct Ngap_UE_associatedLogicalNG_connectionList*&);
 
   bool encode(Ngap_ResetType_t& type);
-  bool decode(Ngap_ResetType_t& type);
+  bool decode(const Ngap_ResetType_t& type);
 
   void getResetType(long&);
   uint8_t getResetType();

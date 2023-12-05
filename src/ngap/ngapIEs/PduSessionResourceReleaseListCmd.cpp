@@ -64,7 +64,7 @@ bool PduSessionResourceReleaseListCmd::encode(
 
 //------------------------------------------------------------------------------
 bool PduSessionResourceReleaseListCmd::decode(
-    Ngap_PDUSessionResourceToReleaseListRelCmd_t&
+    const Ngap_PDUSessionResourceToReleaseListRelCmd_t&
         pduSessionResourceReleaseListCmd) {
   for (int i = 0; i < pduSessionResourceReleaseListCmd.list.count; i++) {
     PduSessionResourceReleaseItemCmd item = {};

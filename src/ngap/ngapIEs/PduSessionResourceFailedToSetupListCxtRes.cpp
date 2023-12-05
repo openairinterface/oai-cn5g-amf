@@ -67,7 +67,7 @@ bool PduSessionResourceFailedToSetupListCxtRes::encode(
 
 //------------------------------------------------------------------------------
 bool PduSessionResourceFailedToSetupListCxtRes::decode(
-    Ngap_PDUSessionResourceFailedToSetupListCxtRes_t&
+    const Ngap_PDUSessionResourceFailedToSetupListCxtRes_t&
         pduSessionResourceFailedToSetupListCxtRes) {
   item_list_.reserve(pduSessionResourceFailedToSetupListCxtRes.list.count);
   for (int i = 0; i < pduSessionResourceFailedToSetupListCxtRes.list.count;

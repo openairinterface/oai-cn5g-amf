@@ -42,8 +42,8 @@ class DrbSubjectToStatusTransferItem {
       const Ngap_DRB_ID_t& dRB_ID, const DrbStatusUl& dRB_UL,
       const DrbStatusDl& dRB_DL);
 
-  bool decode(Ngap_DRBsSubjectToStatusTransferItem_t& dRB_item);
   bool encode(Ngap_DRBsSubjectToStatusTransferItem_t& dRB_item);
+  bool decode(const Ngap_DRBsSubjectToStatusTransferItem_t& dRB_item);
 
  private:
   Ngap_DRB_ID_t drbID;  // Mandatory

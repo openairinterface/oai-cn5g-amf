@@ -80,7 +80,7 @@ bool DrbStatusUl::encodedRBStatusUL(Ngap_DRBStatusUL_t& uL) {
 }
 
 //------------------------------------------------------------------------------
-bool DrbStatusUl::decodedRBStatusUL(Ngap_DRBStatusUL_t& uL) {
+bool DrbStatusUl::decodedRBStatusUL(const Ngap_DRBStatusUL_t& uL) {
   if (uL.present == Ngap_DRBStatusUL_PR_dRBStatusUL18) {
     DrbStatusUl18 item = {};
     if (!item.decode(*uL.choice.dRBStatusUL18)) {

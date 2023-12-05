@@ -75,7 +75,7 @@ bool SupportedTaItem::encode(Ngap_SupportedTAItem_t& ta) {
 }
 
 //------------------------------------------------------------------------------
-bool SupportedTaItem::decode(Ngap_SupportedTAItem_t& pdu) {
+bool SupportedTaItem::decode(const Ngap_SupportedTAItem_t& pdu) {
   if (!tac.decode(pdu.tAC)) return false;
   for (int i = 0; i < pdu.broadcastPLMNList.list.count; i++) {
     BroadcastPlmnItem item = {};

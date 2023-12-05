@@ -56,7 +56,7 @@ void IEsCriticalityDiagnostics::encode(
 
 //------------------------------------------------------------------------------
 void IEsCriticalityDiagnostics::decode(
-    Ngap_CriticalityDiagnostics_IE_Item_t& pdu) {
+    const Ngap_CriticalityDiagnostics_IE_Item_t& pdu) {
   criticality   = pdu.iECriticality;
   protocolIE_ID = pdu.iE_ID;
   typeOfError   = pdu.typeOfError;

@@ -52,7 +52,7 @@ bool S_NSSAI::encodeSD(Ngap_SD_t& m_sd) {
 }
 
 //------------------------------------------------------------------------------
-bool S_NSSAI::decodeSD(Ngap_SD_t& m_sd) {
+bool S_NSSAI::decodeSD(const Ngap_SD_t& m_sd) {
   if (!m_sd.buf) return false;
 
   uint32_t value = SD_NO_VALUE;
@@ -143,7 +143,7 @@ bool S_NSSAI::encode(Ngap_S_NSSAI_t& s_NSSAI) {
 }
 
 //------------------------------------------------------------------------------
-bool S_NSSAI::decode(Ngap_S_NSSAI_t& s_NSSAI) {
+bool S_NSSAI::decode(const Ngap_S_NSSAI_t& s_NSSAI) {
   if (!conv::octet_string_2_int8(s_NSSAI.sST, sst_)) return false;
   if (s_NSSAI.sD) {
     if (!decodeSD(*s_NSSAI.sD)) return false;

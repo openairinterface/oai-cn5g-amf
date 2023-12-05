@@ -37,7 +37,7 @@ class GlobalNgENBId {
   virtual ~GlobalNgENBId();
 
   bool encode(Ngap_GlobalNgENB_ID_t&);
-  bool decode(Ngap_GlobalNgENB_ID_t&);
+  bool decode(const Ngap_GlobalNgENB_ID_t&);
 
   void set(const PlmnId& plmn, const NgENB_ID& ng_enb_id);
   void get(PlmnId& plmn, NgENB_ID& ng_enb_id) const;

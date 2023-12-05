@@ -44,7 +44,7 @@ bool PlmnSupportList::encode(Ngap_PLMNSupportList_t& plmn_support_list) {
 }
 
 //------------------------------------------------------------------------------
-bool PlmnSupportList::decode(Ngap_PLMNSupportList_t& plmn_support_list) {
+bool PlmnSupportList::decode(const Ngap_PLMNSupportList_t& plmn_support_list) {
   list_.clear();
   for (int i = 0; i < plmn_support_list.list.count; i++) {
     PlmnSupportItem item = {};

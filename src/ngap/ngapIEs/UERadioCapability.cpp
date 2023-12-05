@@ -47,7 +47,8 @@ bool UERadioCapability::encode(Ngap_UERadioCapability_t& ueRadioCapability) {
 }
 
 //------------------------------------------------------------------------------
-bool UERadioCapability::decode(Ngap_UERadioCapability_t& ueRadioCapability) {
+bool UERadioCapability::decode(
+    const Ngap_UERadioCapability_t& ueRadioCapability) {
   if (!ueRadioCapability.buf) return false;
   return conv::octet_string_2_bstring(ueRadioCapability, ue_radio_capability_);
 }

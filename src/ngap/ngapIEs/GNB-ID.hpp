@@ -40,7 +40,7 @@ class GNB_ID {
   virtual ~GNB_ID();
 
   bool encode(Ngap_GNB_ID_t&);
-  bool decode(Ngap_GNB_ID_t&);
+  bool decode(const Ngap_GNB_ID_t&);
 
   void setValue(const gNBId_t& gnb_id);
   bool get(gNBId_t& gnb_id) const;

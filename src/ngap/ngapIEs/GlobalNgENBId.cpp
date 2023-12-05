@@ -49,7 +49,7 @@ bool GlobalNgENBId::encode(Ngap_GlobalNgENB_ID_t& global_ng_enb_id) {
 }
 
 //------------------------------------------------------------------------------
-bool GlobalNgENBId::decode(Ngap_GlobalNgENB_ID_t& global_ng_enb_id) {
+bool GlobalNgENBId::decode(const Ngap_GlobalNgENB_ID_t& global_ng_enb_id) {
   if (!plmn_id_.decode(global_ng_enb_id.pLMNIdentity)) return false;
   if (!ng_enb_id_.decode(global_ng_enb_id.ngENB_ID)) return false;
   return true;

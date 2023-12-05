@@ -43,8 +43,8 @@ class UERadioCapabilityForPagingOfNR {
 
   bool encode(
       Ngap_UERadioCapabilityForPagingOfNR_t& ueRadioCapabilityForPagingOfNR);
-  bool decode(
-      Ngap_UERadioCapabilityForPagingOfNR_t& ueRadioCapabilityForPagingOfNR);
+  bool decode(const Ngap_UERadioCapabilityForPagingOfNR_t&
+                  ueRadioCapabilityForPagingOfNR);
 
  private:
   OCTET_STRING_t ue_radio_capability_;

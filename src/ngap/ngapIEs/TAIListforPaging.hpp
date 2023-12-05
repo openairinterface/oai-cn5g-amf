@@ -39,7 +39,7 @@ class TAIListForPaging {
   void getTAIListForPaging(std::vector<TAI>& list);
 
   bool encode(Ngap_TAIListForPaging_t& pdu);
-  bool decode(Ngap_TAIListForPaging_t& pdu);
+  bool decode(const Ngap_TAIListForPaging_t& pdu);
 
  private:
   std::vector<TAI> taiList;

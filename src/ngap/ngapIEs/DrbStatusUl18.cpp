@@ -48,7 +48,7 @@ bool DrbStatusUl18::encode(Ngap_DRBStatusUL18_t& UL18) {
 }
 
 //------------------------------------------------------------------------------
-bool DrbStatusUl18::decode(Ngap_DRBStatusUL18_t& UL18) {
+bool DrbStatusUl18::decode(const Ngap_DRBStatusUL18_t& UL18) {
   if (!pdcp_value.decode(UL18.uL_COUNTValue)) {
     return false;
   }

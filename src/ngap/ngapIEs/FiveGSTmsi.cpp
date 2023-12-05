@@ -69,7 +69,7 @@ bool FiveGSTmsi::encode(Ngap_FiveG_S_TMSI_t& pdu) {
 }
 
 //------------------------------------------------------------------------------
-bool FiveGSTmsi::decode(Ngap_FiveG_S_TMSI_t& pdu) {
+bool FiveGSTmsi::decode(const Ngap_FiveG_S_TMSI_t& pdu) {
   amf_set_id_.decode(pdu.aMFSetID);
   amf_pointer_.decode(pdu.aMFPointer);
 

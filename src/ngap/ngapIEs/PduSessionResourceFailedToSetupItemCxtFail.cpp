@@ -58,7 +58,7 @@ bool PduSessionResourceFailedToSetupItemCxtFail::encode(
 
 //------------------------------------------------------------------------------
 bool PduSessionResourceFailedToSetupItemCxtFail::decode(
-    Ngap_PDUSessionResourceFailedToSetupItemCxtFail_t& pdu_session_cxt) {
+    const Ngap_PDUSessionResourceFailedToSetupItemCxtFail_t& pdu_session_cxt) {
   if (!pdu_session_id_.decode(pdu_session_cxt.pDUSessionID)) return false;
   pdu_session_resource_setup_unsuccessful_transfer_ =
       pdu_session_cxt.pDUSessionResourceSetupUnsuccessfulTransfer;

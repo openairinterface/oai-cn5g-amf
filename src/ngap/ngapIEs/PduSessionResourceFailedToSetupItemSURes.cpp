@@ -63,7 +63,7 @@ bool PduSessionResourceFailedToSetupItemSURes::encode(
 
 //------------------------------------------------------------------------------
 bool PduSessionResourceFailedToSetupItemSURes::decode(
-    Ngap_PDUSessionResourceFailedToSetupItemSURes_t&
+    const Ngap_PDUSessionResourceFailedToSetupItemSURes_t&
         pdu_session_resource_item) {
   if (!pdu_session_id_.decode(pdu_session_resource_item.pDUSessionID))
     return false;

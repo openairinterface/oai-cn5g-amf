@@ -53,7 +53,7 @@ bool GlobalgNBId::encode(Ngap_GlobalGNB_ID_t& globalgnbid) {
 }
 
 //------------------------------------------------------------------------------
-bool GlobalgNBId::decode(Ngap_GlobalGNB_ID_t& globalgnbid) {
+bool GlobalgNBId::decode(const Ngap_GlobalGNB_ID_t& globalgnbid) {
   if (!plmnId.decode(globalgnbid.pLMNIdentity)) return false;
   if (!gNB_ID.decode(globalgnbid.gNB_ID)) return false;
 

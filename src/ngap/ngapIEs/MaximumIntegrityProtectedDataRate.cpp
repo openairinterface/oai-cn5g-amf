@@ -59,7 +59,7 @@ bool MaximumIntegrityProtectedDataRate::encode(
 
 //------------------------------------------------------------------------------
 bool MaximumIntegrityProtectedDataRate::decode(
-    Ngap_MaximumIntegrityProtectedDataRate_t value) {
+    const Ngap_MaximumIntegrityProtectedDataRate_t value) {
   value_ = value;
 
   return true;

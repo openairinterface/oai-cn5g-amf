@@ -43,7 +43,7 @@ class AssociatedQosFlowList {
       std::vector<AssociatedQosFlowItem>& item_list) const;
 
   bool encode(Ngap_AssociatedQosFlowList_t& associatedQosFlowList);
-  bool decode(Ngap_AssociatedQosFlowList_t& associatedQosFlowList);
+  bool decode(const Ngap_AssociatedQosFlowList_t& associatedQosFlowList);
 
  private:
   std::vector<AssociatedQosFlowItem> list_;

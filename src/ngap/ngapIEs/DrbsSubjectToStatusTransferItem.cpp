@@ -50,7 +50,7 @@ void DrbSubjectToStatusTransferItem::getdRBSubjectItem(
 
 //------------------------------------------------------------------------------
 bool DrbSubjectToStatusTransferItem::decode(
-    Ngap_DRBsSubjectToStatusTransferItem_t& dRB_item) {
+    const Ngap_DRBsSubjectToStatusTransferItem_t& dRB_item) {
   if (dRB_item.dRB_ID) {
     drbID = dRB_item.dRB_ID;
   }

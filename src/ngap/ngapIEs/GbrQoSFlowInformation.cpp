@@ -163,7 +163,7 @@ bool GbrQoSFlowInformation::encode(
 
 //------------------------------------------------------------------------------
 bool GbrQoSFlowInformation::decode(
-    Ngap_GBR_QosInformation_t& gBR_QosInformation) {
+    const Ngap_GBR_QosInformation_t& gBR_QosInformation) {
   if (!gBR_QosInformation.maximumFlowBitRateDL.buf) return false;
   if (!gBR_QosInformation.maximumFlowBitRateUL.buf) return false;
   if (!gBR_QosInformation.guaranteedFlowBitRateDL.buf) return false;

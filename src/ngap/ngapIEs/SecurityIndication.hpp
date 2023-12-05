@@ -66,7 +66,7 @@ class SecurityIndication {
           m_maximumIntegrityProtectedDataRateDL) const;
 
   bool encode(Ngap_SecurityIndication_t& securityIndication);
-  bool decode(Ngap_SecurityIndication_t& securityIndication);
+  bool decode(const Ngap_SecurityIndication_t& securityIndication);
 
  private:
   IntegrityProtectionIndication integrityProtectionIndication;  // Mandatory

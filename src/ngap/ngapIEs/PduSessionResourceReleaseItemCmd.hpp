@@ -47,7 +47,7 @@ class PduSessionResourceReleaseItemCmd {
 
   bool encode(Ngap_PDUSessionResourceToReleaseItemRelCmd_t&
                   pdu_session_resource_release_item);
-  bool decode(Ngap_PDUSessionResourceToReleaseItemRelCmd_t&
+  bool decode(const Ngap_PDUSessionResourceToReleaseItemRelCmd_t&
                   pdu_session_resource_release_item);
 
  private:
