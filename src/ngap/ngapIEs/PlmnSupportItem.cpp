@@ -47,26 +47,26 @@ void PlmnSupportItem::get(PlmnId& plmn_id, std::vector<S_NSSAI>& snssais) {
 }
 
 //------------------------------------------------------------------------------
-bool PlmnSupportItem::encode(Ngap_PLMNSupportItem_t* plmn_support_item) {
-  if (!plmn_id_.encode(plmn_support_item->pLMNIdentity)) return false;
+bool PlmnSupportItem::encode(Ngap_PLMNSupportItem_t& plmn_support_item) {
+  if (!plmn_id_.encode(plmn_support_item.pLMNIdentity)) return false;
   for (std::vector<S_NSSAI>::iterator it = std::begin(slice_support_list_);
        it < std::end(slice_support_list_); ++it) {
     Ngap_SliceSupportItem_t* slice =
         (Ngap_SliceSupportItem_t*) calloc(1, sizeof(Ngap_SliceSupportItem_t));
-    if (!it->encode(&slice->s_NSSAI)) return false;
-    ASN_SEQUENCE_ADD(&plmn_support_item->sliceSupportList.list, slice);
+    if (!it->encode(slice->s_NSSAI)) return false;
+    ASN_SEQUENCE_ADD(&plmn_support_item.sliceSupportList.list, slice);
   }
   return true;
 }
 
 //------------------------------------------------------------------------------
-bool PlmnSupportItem::decode(Ngap_PLMNSupportItem_t* plmn_support_item) {
-  if (!plmn_id_.decode(plmn_support_item->pLMNIdentity)) return false;
+bool PlmnSupportItem::decode(Ngap_PLMNSupportItem_t& plmn_support_item) {
+  if (!plmn_id_.decode(plmn_support_item.pLMNIdentity)) return false;
 
-  for (int i = 0; i < plmn_support_item->sliceSupportList.list.count; i++) {
+  for (int i = 0; i < plmn_support_item.sliceSupportList.list.count; i++) {
     S_NSSAI snssai = {};
     if (!snssai.decode(
-            &plmn_support_item->sliceSupportList.list.array[i]->s_NSSAI))
+            plmn_support_item.sliceSupportList.list.array[i]->s_NSSAI))
       return false;
     slice_support_list_.push_back(snssai);
   }

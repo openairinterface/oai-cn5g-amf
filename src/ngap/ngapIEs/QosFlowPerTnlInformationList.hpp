@@ -41,9 +41,9 @@ class QosFlowPerTnlInformationList {
   void get(std::vector<QosFlowPerTnlInformationItem>& list) const;
 
   bool encode(
-      Ngap_QosFlowPerTNLInformationList_t* qosFlowPerTnlInformationList);
+      Ngap_QosFlowPerTNLInformationList_t& qosFlowPerTnlInformationList);
   bool decode(
-      Ngap_QosFlowPerTNLInformationList_t* qosFlowPerTnlInformationList);
+      Ngap_QosFlowPerTNLInformationList_t& qosFlowPerTnlInformationList);
 
  private:
   std::vector<QosFlowPerTnlInformationItem> list_;

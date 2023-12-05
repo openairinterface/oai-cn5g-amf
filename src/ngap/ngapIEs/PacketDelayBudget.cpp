@@ -44,15 +44,15 @@ bool PacketDelayBudget::getPacketDelayBudget(long& value) const {
 }
 
 //------------------------------------------------------------------------------
-bool PacketDelayBudget::encode(Ngap_PacketDelayBudget_t* value) {
-  *value = packet_delay_budget_;
+bool PacketDelayBudget::encode(Ngap_PacketDelayBudget_t& value) const {
+  value = packet_delay_budget_;
 
   return true;
 }
 
 //------------------------------------------------------------------------------
-bool PacketDelayBudget::decode(Ngap_PacketDelayBudget_t* value) {
-  packet_delay_budget_ = *value;
+bool PacketDelayBudget::decode(const Ngap_PacketDelayBudget_t& value) {
+  packet_delay_budget_ = value;
 
   return true;
 }

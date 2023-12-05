@@ -52,7 +52,8 @@ bool AllocationAndRetentionPriority::get(
 
 //------------------------------------------------------------------------------
 bool AllocationAndRetentionPriority::encode(
-    Ngap_AllocationAndRetentionPriority_t& allocationAndRetentionPriority) {
+    Ngap_AllocationAndRetentionPriority_t& allocationAndRetentionPriority)
+    const {
   if (!priorityLevelARP_.encode(
           allocationAndRetentionPriority.priorityLevelARP))
     return false;
@@ -68,7 +69,8 @@ bool AllocationAndRetentionPriority::encode(
 
 //------------------------------------------------------------------------------
 bool AllocationAndRetentionPriority::decode(
-    Ngap_AllocationAndRetentionPriority_t& allocationAndRetentionPriority) {
+    const Ngap_AllocationAndRetentionPriority_t&
+        allocationAndRetentionPriority) {
   if (!priorityLevelARP_.decode(
           allocationAndRetentionPriority.priorityLevelARP))
     return false;

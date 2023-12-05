@@ -39,13 +39,15 @@ class AssociatedQosFlowItem {
       const e_Ngap_AssociatedQosFlowItem__qosFlowMappingIndication&
           m_qosFlowMappingIndication,
       const QosFlowIdentifier& m_qosFlowIdentifier);
-  void setAssociatedQosFlowItem(const QosFlowIdentifier& m_qosFlowIdentifier);
   bool getAssociatedQosFlowItem(
       long& m_qosFlowMappingIndication,
       QosFlowIdentifier& m_qosFlowIdentifier) const;
 
-  bool encode(Ngap_AssociatedQosFlowItem_t* associatedQosFlowItem);
-  bool decode(Ngap_AssociatedQosFlowItem_t* associatedQosFlowItem);
+  void setAssociatedQosFlowItem(const QosFlowIdentifier& m_qosFlowIdentifier);
+  // TODO: Get
+
+  bool encode(Ngap_AssociatedQosFlowItem_t& associatedQosFlowItem);
+  bool decode(Ngap_AssociatedQosFlowItem_t& associatedQosFlowItem);
 
  private:
   QosFlowIdentifier qosFlowIdentifier;  // Mandatory

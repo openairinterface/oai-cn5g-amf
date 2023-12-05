@@ -41,10 +41,12 @@ class GNB_ID {
 
   bool encode(Ngap_GNB_ID_t&);
   bool decode(Ngap_GNB_ID_t&);
+
   void setValue(const gNBId_t& gnb_id);
+  bool get(gNBId_t& gnb_id) const;
+
   bool setValue(const uint32_t& id, const uint8_t& bit_length);
   // long getValue() const;
-  bool get(gNBId_t& gnb_id) const;
   bool get(uint32_t& id) const;
 
  private:

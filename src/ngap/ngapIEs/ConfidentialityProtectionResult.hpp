@@ -36,8 +36,8 @@ class ConfidentialityProtectionResult {
   void set(e_Ngap_ConfidentialityProtectionResult value);
   bool get(long& value) const;
 
-  bool encode(Ngap_ConfidentialityProtectionResult_t&);
-  bool decode(Ngap_ConfidentialityProtectionResult_t);
+  bool encode(Ngap_ConfidentialityProtectionResult_t&) const;
+  bool decode(const Ngap_ConfidentialityProtectionResult_t);
 
  private:
   long value_;

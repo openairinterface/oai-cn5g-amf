@@ -40,7 +40,7 @@ void DataForwardingNotPossible::get(long& value) const {
 }
 //------------------------------------------------------------------------------
 bool DataForwardingNotPossible::encode(
-    Ngap_DataForwardingNotPossible_t& value) {
+    Ngap_DataForwardingNotPossible_t& value) const {
   // TODO:
   value = Ngap_DataForwardingNotPossible_data_forwarding_not_possible;
 
@@ -49,7 +49,7 @@ bool DataForwardingNotPossible::encode(
 
 //------------------------------------------------------------------------------
 bool DataForwardingNotPossible::decode(
-    Ngap_DataForwardingNotPossible_t& value) {
+    const Ngap_DataForwardingNotPossible_t& value) {
   // TODO:
   if (value != Ngap_DataForwardingNotPossible_data_forwarding_not_possible)
     return false;

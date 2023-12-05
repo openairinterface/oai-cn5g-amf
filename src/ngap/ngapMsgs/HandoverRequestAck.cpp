@@ -147,7 +147,7 @@ void HandoverRequestAck::setPDUSessionResourceAdmittedList(
       Ngap_HandoverRequestAcknowledgeIEs__value_PR_PDUSessionResourceAdmittedList;
 
   pduSessionResourceAdmittedList.encode(
-      &ie->value.choice.PDUSessionResourceAdmittedList);
+      ie->value.choice.PDUSessionResourceAdmittedList);
 
   int ret = ASN_SEQUENCE_ADD(&handoverRequestAckIEs->protocolIEs.list, ie);
   if (ret != 0)
@@ -170,7 +170,7 @@ void HandoverRequestAck::setPDUSessionResourceFailedToSetupListHOAck(
       Ngap_HandoverRequestAcknowledgeIEs__value_PR_PDUSessionResourceFailedToSetupListHOAck;
 
   PDUSessionResourceFailedToSetupList.value().encode(
-      &ie->value.choice.PDUSessionResourceFailedToSetupListHOAck);
+      ie->value.choice.PDUSessionResourceFailedToSetupListHOAck);
 
   int ret = ASN_SEQUENCE_ADD(&handoverRequestAckIEs->protocolIEs.list, ie);
   if (ret != 0)
@@ -196,7 +196,7 @@ void HandoverRequestAck::setPDUSessionResourceFailedToSetupListHOAck(
       Ngap_HandoverRequestAcknowledgeIEs__value_PR_PDUSessionResourceFailedToSetupListHOAck;
 
   PDUSessionResourceFailedToSetupList.value().encode(
-      &ie->value.choice.PDUSessionResourceFailedToSetupListHOAck);
+      ie->value.choice.PDUSessionResourceFailedToSetupListHOAck);
 
   int ret = ASN_SEQUENCE_ADD(&handoverRequestAckIEs->protocolIEs.list, ie);
   if (ret != 0)
@@ -275,8 +275,8 @@ bool HandoverRequestAck::decode(Ngap_NGAP_PDU_t* ngapMsgPdu) {
             handoverRequestAckIEs->protocolIEs.list.array[i]->value.present ==
                 Ngap_HandoverRequestAcknowledgeIEs__value_PR_PDUSessionResourceAdmittedList) {
           if (!pduSessionResourceAdmittedList.decode(
-                  &handoverRequestAckIEs->protocolIEs.list.array[i]
-                       ->value.choice.PDUSessionResourceAdmittedList)) {
+                  handoverRequestAckIEs->protocolIEs.list.array[i]
+                      ->value.choice.PDUSessionResourceAdmittedList)) {
             Logger::ngap().error(
                 "Decoded NGAP PDUSessionResourceAdmittedList IE error");
             return false;
@@ -294,9 +294,9 @@ bool HandoverRequestAck::decode(Ngap_NGAP_PDU_t* ngapMsgPdu) {
             handoverRequestAckIEs->protocolIEs.list.array[i]->value.present ==
                 Ngap_HandoverRequestAcknowledgeIEs__value_PR_PDUSessionResourceFailedToSetupListHOAck) {
           PduSessionResourceFailedToSetupListHoAck tmp = {};
-          if (!tmp.decode(&handoverRequestAckIEs->protocolIEs.list.array[i]
-                               ->value.choice
-                               .PDUSessionResourceFailedToSetupListHOAck)) {
+          if (!tmp.decode(handoverRequestAckIEs->protocolIEs.list.array[i]
+                              ->value.choice
+                              .PDUSessionResourceFailedToSetupListHOAck)) {
             Logger::ngap().error(
                 "Decoded NGAP PDUSessionResourceFailedToSetupListHOAck IE "
                 "error");

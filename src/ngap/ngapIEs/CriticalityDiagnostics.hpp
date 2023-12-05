@@ -42,8 +42,8 @@ class CriticalityDiagnostics {
   CriticalityDiagnostics();
   virtual ~CriticalityDiagnostics();
 
-  int encode(Ngap_NGSetupFailure_t*);
-  bool decode(Ngap_CriticalityDiagnostics_t*);
+  int encode(Ngap_NGSetupFailure_t&);
+  bool decode(Ngap_CriticalityDiagnostics_t&);
 
   void setProcedureCodeValue(Ngap_ProcedureCode_t);
   bool getProcedureCodeValue(Ngap_ProcedureCode_t&) const;

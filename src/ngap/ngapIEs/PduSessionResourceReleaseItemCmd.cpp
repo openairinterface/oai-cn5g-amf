@@ -38,30 +38,29 @@ void PduSessionResourceReleaseItemCmd::setPDUSessionResourceReleaseItemCmd(
 }
 
 //------------------------------------------------------------------------------
-bool PduSessionResourceReleaseItemCmd::encode2PDUSessionResourceReleaseItemCmd(
-    Ngap_PDUSessionResourceToReleaseItemRelCmd_t*
+bool PduSessionResourceReleaseItemCmd::encode(
+    Ngap_PDUSessionResourceToReleaseItemRelCmd_t&
         pduSessionResourceReleaseCommandTransfer) {
   if (!pdu_session_id_.encode(
-          pduSessionResourceReleaseCommandTransfer->pDUSessionID))
+          pduSessionResourceReleaseCommandTransfer.pDUSessionID))
     return false;
   pduSessionResourceReleaseCommandTransfer
-      ->pDUSessionResourceReleaseCommandTransfer =
+      .pDUSessionResourceReleaseCommandTransfer =
       pdu_session_resource_release_command_transfer_;
 
   return true;
 }
 
 //------------------------------------------------------------------------------
-bool PduSessionResourceReleaseItemCmd::
-    decodefromPDUSessionResourceReleaseItemCmd(
-        Ngap_PDUSessionResourceToReleaseItemRelCmd_t*
-            pduSessionResourceReleaseCommandTransfer) {
+bool PduSessionResourceReleaseItemCmd::decode(
+    Ngap_PDUSessionResourceToReleaseItemRelCmd_t&
+        pduSessionResourceReleaseCommandTransfer) {
   if (!pdu_session_id_.decode(
-          pduSessionResourceReleaseCommandTransfer->pDUSessionID))
+          pduSessionResourceReleaseCommandTransfer.pDUSessionID))
     return false;
   pdu_session_resource_release_command_transfer_ =
       pduSessionResourceReleaseCommandTransfer
-          ->pDUSessionResourceReleaseCommandTransfer;
+          .pDUSessionResourceReleaseCommandTransfer;
 
   return true;
 }

@@ -49,30 +49,30 @@ void DrbSubjectToStatusTransferItem::getdRBSubjectItem(
 }
 
 //------------------------------------------------------------------------------
-bool DrbSubjectToStatusTransferItem::decodefromdRBSubjectItem(
-    Ngap_DRBsSubjectToStatusTransferItem_t* dRB_item) {
-  if (dRB_item->dRB_ID) {
-    drbID = dRB_item->dRB_ID;
+bool DrbSubjectToStatusTransferItem::decode(
+    Ngap_DRBsSubjectToStatusTransferItem_t& dRB_item) {
+  if (dRB_item.dRB_ID) {
+    drbID = dRB_item.dRB_ID;
   }
-  if (!drbUL.decodedRBStatusUL(&dRB_item->dRBStatusUL)) {
+  if (!drbUL.decodedRBStatusUL(dRB_item.dRBStatusUL)) {
     return false;
   }
-  if (!drbDL.decode(&dRB_item->dRBStatusDL)) {
+  if (!drbDL.decode(dRB_item.dRBStatusDL)) {
     return false;
   }
   return true;
 }
 
 //------------------------------------------------------------------------------
-bool DrbSubjectToStatusTransferItem::encodedRBSubjectItem(
-    Ngap_DRBsSubjectToStatusTransferItem_t* dRB_item) {
-  dRB_item->dRB_ID = drbID;
+bool DrbSubjectToStatusTransferItem::encode(
+    Ngap_DRBsSubjectToStatusTransferItem_t& dRB_item) {
+  dRB_item.dRB_ID = drbID;
 
-  if (!drbUL.encodedRBStatusUL(&dRB_item->dRBStatusUL)) {
+  if (!drbUL.encodedRBStatusUL(dRB_item.dRBStatusUL)) {
     return false;
   }
 
-  if (!drbDL.encode(&dRB_item->dRBStatusDL)) {
+  if (!drbDL.encode(dRB_item.dRBStatusDL)) {
     return false;
   }
 

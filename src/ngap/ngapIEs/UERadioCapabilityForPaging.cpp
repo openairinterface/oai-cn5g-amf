@@ -34,21 +34,21 @@ UERadioCapabilityForPaging::~UERadioCapabilityForPaging() {}
 
 //------------------------------------------------------------------------------
 bool UERadioCapabilityForPaging::encode(
-    Ngap_UERadioCapabilityForPaging_t* ueRadioCapabilityForPaging) {
+    Ngap_UERadioCapabilityForPaging_t& ueRadioCapabilityForPaging) {
   if (ueRadioCapabilityForPagingOfNR.has_value()) {
-    ueRadioCapabilityForPaging->uERadioCapabilityForPagingOfNR =
+    ueRadioCapabilityForPaging.uERadioCapabilityForPagingOfNR =
         (Ngap_UERadioCapabilityForPagingOfNR_t*) calloc(
             1, sizeof(Ngap_UERadioCapabilityForPagingOfNR_t));
     if (!ueRadioCapabilityForPagingOfNR.value().encode(
-            ueRadioCapabilityForPaging->uERadioCapabilityForPagingOfNR))
+            *ueRadioCapabilityForPaging.uERadioCapabilityForPagingOfNR))
       return false;
   }
   if (ueRadioCapabilityForPagingOfEUTRA.has_value()) {
-    ueRadioCapabilityForPaging->uERadioCapabilityForPagingOfEUTRA =
+    ueRadioCapabilityForPaging.uERadioCapabilityForPagingOfEUTRA =
         (Ngap_UERadioCapabilityForPagingOfEUTRA_t*) calloc(
             1, sizeof(Ngap_UERadioCapabilityForPagingOfEUTRA_t));
     if (!ueRadioCapabilityForPagingOfEUTRA.value().encode(
-            ueRadioCapabilityForPaging->uERadioCapabilityForPagingOfEUTRA))
+            *ueRadioCapabilityForPaging.uERadioCapabilityForPagingOfEUTRA))
       return false;
   }
 
@@ -57,18 +57,18 @@ bool UERadioCapabilityForPaging::encode(
 
 //------------------------------------------------------------------------------
 bool UERadioCapabilityForPaging::decode(
-    Ngap_UERadioCapabilityForPaging_t* ueRadioCapabilityForPaging) {
-  if (ueRadioCapabilityForPaging->uERadioCapabilityForPagingOfNR) {
+    Ngap_UERadioCapabilityForPaging_t& ueRadioCapabilityForPaging) {
+  if (ueRadioCapabilityForPaging.uERadioCapabilityForPagingOfNR) {
     UERadioCapabilityForPagingOfNR tmp = {};
-    if (!tmp.decode(ueRadioCapabilityForPaging->uERadioCapabilityForPagingOfNR))
+    if (!tmp.decode(*ueRadioCapabilityForPaging.uERadioCapabilityForPagingOfNR))
       return false;
     ueRadioCapabilityForPagingOfNR =
         std::optional<UERadioCapabilityForPagingOfNR>(tmp);
   }
-  if (ueRadioCapabilityForPaging->uERadioCapabilityForPagingOfEUTRA) {
+  if (ueRadioCapabilityForPaging.uERadioCapabilityForPagingOfEUTRA) {
     UERadioCapabilityForPagingOfEUTRA tmp = {};
     if (!tmp.decode(
-            ueRadioCapabilityForPaging->uERadioCapabilityForPagingOfEUTRA))
+            *ueRadioCapabilityForPaging.uERadioCapabilityForPagingOfEUTRA))
       return false;
     ueRadioCapabilityForPagingOfEUTRA =
         std::optional<UERadioCapabilityForPagingOfEUTRA>(tmp);

@@ -44,15 +44,15 @@ bool FiveQI::getFiveQI(long& value) const {
 }
 
 //------------------------------------------------------------------------------
-bool FiveQI::encode(Ngap_FiveQI_t* value) {
-  *value = fiveqi_;
+bool FiveQI::encode(Ngap_FiveQI_t& value) const {
+  value = fiveqi_;
 
   return true;
 }
 
 //------------------------------------------------------------------------------
-bool FiveQI::decode(Ngap_FiveQI_t* value) {
-  fiveqi_ = *value;
+bool FiveQI::decode(const Ngap_FiveQI_t& value) {
+  fiveqi_ = value;
 
   return true;
 }

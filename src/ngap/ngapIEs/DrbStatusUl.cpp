@@ -57,20 +57,20 @@ void DrbStatusUl::getdRBStatusUL(std::optional<DrbStatusUl12>& ul12) const {
 }
 
 //------------------------------------------------------------------------------
-bool DrbStatusUl::encodedRBStatusUL(Ngap_DRBStatusUL_t* uL) {
+bool DrbStatusUl::encodedRBStatusUL(Ngap_DRBStatusUL_t& uL) {
   if (ul18_.has_value()) {
-    uL->present = Ngap_DRBStatusUL_PR_dRBStatusUL18;
-    uL->choice.dRBStatusUL18 =
+    uL.present = Ngap_DRBStatusUL_PR_dRBStatusUL18;
+    uL.choice.dRBStatusUL18 =
         (Ngap_DRBStatusUL18_t*) calloc(1, sizeof(Ngap_DRBStatusUL18_t));
-    if (!ul18_.value().encode(uL->choice.dRBStatusUL18)) {
+    if (!ul18_.value().encode(*uL.choice.dRBStatusUL18)) {
       Logger::ngap().error("Encode DRBStatusUL18 IE error");
       return false;
     }
   } else if (ul12_.has_value()) {
-    uL->present = Ngap_DRBStatusUL_PR_dRBStatusUL12;
-    uL->choice.dRBStatusUL12 =
+    uL.present = Ngap_DRBStatusUL_PR_dRBStatusUL12;
+    uL.choice.dRBStatusUL12 =
         (Ngap_DRBStatusUL12_t*) calloc(1, sizeof(Ngap_DRBStatusUL12_t));
-    if (!ul12_.value().encode(uL->choice.dRBStatusUL12)) {
+    if (!ul12_.value().encode(*uL.choice.dRBStatusUL12)) {
       Logger::ngap().error("Encode DRBStatusUL18 IE error");
       return false;
     }
@@ -80,17 +80,17 @@ bool DrbStatusUl::encodedRBStatusUL(Ngap_DRBStatusUL_t* uL) {
 }
 
 //------------------------------------------------------------------------------
-bool DrbStatusUl::decodedRBStatusUL(Ngap_DRBStatusUL_t* uL) {
-  if (uL->present == Ngap_DRBStatusUL_PR_dRBStatusUL18) {
+bool DrbStatusUl::decodedRBStatusUL(Ngap_DRBStatusUL_t& uL) {
+  if (uL.present == Ngap_DRBStatusUL_PR_dRBStatusUL18) {
     DrbStatusUl18 item = {};
-    if (!item.decode(uL->choice.dRBStatusUL18)) {
+    if (!item.decode(*uL.choice.dRBStatusUL18)) {
       Logger::ngap().error("Decode DRBStatusUL18 IE error");
       return false;
     }
     ul18_ = std::make_optional<DrbStatusUl18>(item);
-  } else if (uL->present == Ngap_DRBStatusUL_PR_dRBStatusUL12) {
+  } else if (uL.present == Ngap_DRBStatusUL_PR_dRBStatusUL12) {
     DrbStatusUl12 item = {};
-    if (!item.decode(uL->choice.dRBStatusUL12)) {
+    if (!item.decode(*uL.choice.dRBStatusUL12)) {
       Logger::ngap().error("Decode DRBStatusUL12 IE error");
       return false;
     }

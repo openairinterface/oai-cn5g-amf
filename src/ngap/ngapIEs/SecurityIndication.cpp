@@ -81,12 +81,12 @@ void SecurityIndication::getSecurityIndication(
 }
 
 //------------------------------------------------------------------------------
-bool SecurityIndication::encode(Ngap_SecurityIndication_t* securityIndication) {
+bool SecurityIndication::encode(Ngap_SecurityIndication_t& securityIndication) {
   if (!integrityProtectionIndication.encode(
-          securityIndication->integrityProtectionIndication))
+          securityIndication.integrityProtectionIndication))
     return false;
   if (!confidentialityProtectionIndication.encode(
-          securityIndication->confidentialityProtectionIndication))
+          securityIndication.confidentialityProtectionIndication))
     return false;
   if (maximumIntegrityProtectedDataRateUL.has_value()) {
     Ngap_MaximumIntegrityProtectedDataRate_t* maxIPDataRate =
@@ -98,7 +98,7 @@ bool SecurityIndication::encode(Ngap_SecurityIndication_t* securityIndication) {
       return false;
     }
 
-    securityIndication->maximumIntegrityProtectedDataRate_UL = maxIPDataRate;
+    securityIndication.maximumIntegrityProtectedDataRate_UL = maxIPDataRate;
     // free_wrapper((void**) &maxIPDataRate);
   }
   // TODO: check maximumIntegrityProtectedDataRateDL
@@ -107,19 +107,19 @@ bool SecurityIndication::encode(Ngap_SecurityIndication_t* securityIndication) {
 }
 
 //------------------------------------------------------------------------------
-bool SecurityIndication::decode(Ngap_SecurityIndication_t* securityIndication) {
+bool SecurityIndication::decode(Ngap_SecurityIndication_t& securityIndication) {
   if (!integrityProtectionIndication.decode(
-          securityIndication->integrityProtectionIndication))
+          securityIndication.integrityProtectionIndication))
     return false;
   if (!confidentialityProtectionIndication.decode(
-          securityIndication->confidentialityProtectionIndication))
+          securityIndication.confidentialityProtectionIndication))
     return false;
 
   // TODO: verify maximumIntegrityProtectedDataRate
-  if (securityIndication->maximumIntegrityProtectedDataRate_UL) {
+  if (securityIndication.maximumIntegrityProtectedDataRate_UL) {
     MaximumIntegrityProtectedDataRate tmp = {};
 
-    if (!tmp.decode(*securityIndication->maximumIntegrityProtectedDataRate_UL))
+    if (!tmp.decode(*securityIndication.maximumIntegrityProtectedDataRate_UL))
       return false;
     maximumIntegrityProtectedDataRateUL =
         std::make_optional<MaximumIntegrityProtectedDataRate>(tmp);

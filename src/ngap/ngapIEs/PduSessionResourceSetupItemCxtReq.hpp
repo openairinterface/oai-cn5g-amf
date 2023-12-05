@@ -48,9 +48,9 @@ class PduSessionResourceSetupItemCxtReq {
       S_NSSAI& m_s_NSSAI,
       OCTET_STRING_t& pdu_session_resource_setup_request_transfer) const;
 
-  bool encode(Ngap_PDUSessionResourceSetupItemCxtReq_t*
+  bool encode(Ngap_PDUSessionResourceSetupItemCxtReq_t&
                   pdu_session_resource_setup_item_cxt_req);
-  bool decode(Ngap_PDUSessionResourceSetupItemCxtReq_t*
+  bool decode(Ngap_PDUSessionResourceSetupItemCxtReq_t&
                   pdu_session_resource_setup_item_cxt_req);
 
  private:

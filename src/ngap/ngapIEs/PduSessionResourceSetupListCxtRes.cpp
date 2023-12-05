@@ -43,7 +43,7 @@ void PduSessionResourceSetupListCxtRes::get(
 
 //------------------------------------------------------------------------------
 bool PduSessionResourceSetupListCxtRes::encode(
-    Ngap_PDUSessionResourceSetupListCxtRes_t*
+    Ngap_PDUSessionResourceSetupListCxtRes_t&
         pduSessionResourceSetupListCxtRes) {
   for (std::vector<PduSessionResourceSetupItemCxtRes>::iterator it =
            std::begin(item_list_);
@@ -52,8 +52,8 @@ bool PduSessionResourceSetupListCxtRes::encode(
         (Ngap_PDUSessionResourceSetupItemCxtRes_t*) calloc(
             1, sizeof(Ngap_PDUSessionResourceSetupItemCxtRes_t));
     if (!response) return false;
-    if (!it->encode(response)) return false;
-    if (ASN_SEQUENCE_ADD(&pduSessionResourceSetupListCxtRes->list, response) !=
+    if (!it->encode(*response)) return false;
+    if (ASN_SEQUENCE_ADD(&pduSessionResourceSetupListCxtRes.list, response) !=
         0)
       return false;
   }
@@ -63,12 +63,12 @@ bool PduSessionResourceSetupListCxtRes::encode(
 
 //------------------------------------------------------------------------------
 bool PduSessionResourceSetupListCxtRes::decode(
-    Ngap_PDUSessionResourceSetupListCxtRes_t*
+    Ngap_PDUSessionResourceSetupListCxtRes_t&
         pduSessionResourceSetupListCxtRes) {
-  item_list_.reserve(pduSessionResourceSetupListCxtRes->list.count);
-  for (int i = 0; i < pduSessionResourceSetupListCxtRes->list.count; i++) {
+  item_list_.reserve(pduSessionResourceSetupListCxtRes.list.count);
+  for (int i = 0; i < pduSessionResourceSetupListCxtRes.list.count; i++) {
     PduSessionResourceSetupItemCxtRes item = {};
-    if (!item.decode(pduSessionResourceSetupListCxtRes->list.array[i]))
+    if (!item.decode(*pduSessionResourceSetupListCxtRes.list.array[i]))
       return false;
     item_list_.push_back(item);
   }

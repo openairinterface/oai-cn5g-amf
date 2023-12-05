@@ -42,9 +42,9 @@ class PduSessionResourceSetupItemCxtRes {
       PduSessionId& pdu_session_id,
       OCTET_STRING_t& pdu_session_resource_setup_response_transfer) const;
 
-  bool encode(Ngap_PDUSessionResourceSetupItemCxtRes_t*
+  bool encode(Ngap_PDUSessionResourceSetupItemCxtRes_t&
                   pdu_session_resource_setup_item_cxt_res);
-  bool decode(Ngap_PDUSessionResourceSetupItemCxtRes_t*
+  bool decode(Ngap_PDUSessionResourceSetupItemCxtRes_t&
                   pdu_session_resource_setup_item_cxt_res);
 
  private:

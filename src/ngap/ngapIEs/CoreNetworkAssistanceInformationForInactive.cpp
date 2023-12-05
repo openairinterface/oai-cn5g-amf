@@ -70,14 +70,14 @@ void CoreNetworkAssistanceInformationForInactive::get(
 
 //------------------------------------------------------------------------------
 bool CoreNetworkAssistanceInformationForInactive::encode(
-    Ngap_CoreNetworkAssistanceInformationForInactive_t*
+    Ngap_CoreNetworkAssistanceInformationForInactive_t&
         coreNetworkAssistanceInformation) {
   if (!ueIdentityIndexValue.encode(
-          coreNetworkAssistanceInformation->uEIdentityIndexValue))
+          coreNetworkAssistanceInformation.uEIdentityIndexValue))
     return false;
 
   if (!periodicRegUpdateTimer.encode(
-          coreNetworkAssistanceInformation->periodicRegistrationUpdateTimer))
+          coreNetworkAssistanceInformation.periodicRegistrationUpdateTimer))
     return false;
 
   for (std::vector<TAI>::iterator it = std::begin(taiList);
@@ -86,9 +86,9 @@ bool CoreNetworkAssistanceInformationForInactive::encode(
         (Ngap_TAIListForInactiveItem_t*) calloc(
             1, sizeof(Ngap_TAIListForInactiveItem_t));
     if (!taiListForInactiveItem) return false;
-    if (!it->encode(&taiListForInactiveItem->tAI)) return false;
+    if (!it->encode(taiListForInactiveItem->tAI)) return false;
     if (ASN_SEQUENCE_ADD(
-            &coreNetworkAssistanceInformation->tAIListForInactive.list,
+            &coreNetworkAssistanceInformation.tAIListForInactive.list,
             taiListForInactiveItem) != 0)
       return false;
   }
@@ -98,7 +98,7 @@ bool CoreNetworkAssistanceInformationForInactive::encode(
         (Ngap_PagingDRX_t*) calloc(1, sizeof(Ngap_PagingDRX_t));
     if (!paging_drx) return false;
     if (!pagingDRX.value().encode(*paging_drx)) return false;
-    coreNetworkAssistanceInformation->uESpecificDRX = paging_drx;
+    coreNetworkAssistanceInformation.uESpecificDRX = paging_drx;
   }
 
   if (micoModeInd.has_value()) {
@@ -106,8 +106,8 @@ bool CoreNetworkAssistanceInformationForInactive::encode(
         (Ngap_MICOModeIndication_t*) calloc(
             1, sizeof(Ngap_MICOModeIndication_t));
     if (!micomodeindication) return false;
-    if (!micoModeInd.value().encode(micomodeindication)) return false;
-    coreNetworkAssistanceInformation->mICOModeIndication = micomodeindication;
+    if (!micoModeInd.value().encode(*micomodeindication)) return false;
+    coreNetworkAssistanceInformation.mICOModeIndication = micomodeindication;
   }
 
   return true;
@@ -115,37 +115,37 @@ bool CoreNetworkAssistanceInformationForInactive::encode(
 
 //------------------------------------------------------------------------------
 bool CoreNetworkAssistanceInformationForInactive::decode(
-    Ngap_CoreNetworkAssistanceInformationForInactive_t*
+    Ngap_CoreNetworkAssistanceInformationForInactive_t&
         coreNetworkAssistanceInformation) {
   if (!ueIdentityIndexValue.decode(
-          coreNetworkAssistanceInformation->uEIdentityIndexValue))
+          coreNetworkAssistanceInformation.uEIdentityIndexValue))
     return false;
 
   if (!periodicRegUpdateTimer.decode(
-          coreNetworkAssistanceInformation->periodicRegistrationUpdateTimer))
+          coreNetworkAssistanceInformation.periodicRegistrationUpdateTimer))
     return false;
 
   for (int i = 0;
-       i < coreNetworkAssistanceInformation->tAIListForInactive.list.count;
+       i < coreNetworkAssistanceInformation.tAIListForInactive.list.count;
        i++) {
     TAI tai_item = {};
     if (!tai_item.decode(
-            &coreNetworkAssistanceInformation->tAIListForInactive.list.array[i]
-                 ->tAI))
+            coreNetworkAssistanceInformation.tAIListForInactive.list.array[i]
+                ->tAI))
       return false;
     taiList.push_back(tai_item);
   }
 
-  if (coreNetworkAssistanceInformation->uESpecificDRX) {
+  if (coreNetworkAssistanceInformation.uESpecificDRX) {
     DefaultPagingDrx tmp = {};
-    if (!tmp.decode(*(coreNetworkAssistanceInformation->uESpecificDRX)))
+    if (!tmp.decode(*(coreNetworkAssistanceInformation.uESpecificDRX)))
       return false;
     pagingDRX = std::optional<DefaultPagingDrx>(tmp);
   }
 
-  if (coreNetworkAssistanceInformation->mICOModeIndication) {
+  if (coreNetworkAssistanceInformation.mICOModeIndication) {
     MicoModeIndication tmp = {};
-    if (!tmp.decode(coreNetworkAssistanceInformation->mICOModeIndication))
+    if (!tmp.decode(*coreNetworkAssistanceInformation.mICOModeIndication))
       return false;
     micoModeInd = std::optional<MicoModeIndication>(tmp);
   }

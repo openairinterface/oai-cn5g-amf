@@ -79,7 +79,7 @@ void NGResetAckMsg::addUE_associatedLogicalNG_connectionList() {
       Ngap_NGResetAcknowledgeIEs__value_PR_UE_associatedLogicalNG_connectionList;
 
   if (!ueAssociatedLogicalNGConnectionList.value().encode(
-          &ie->value.choice.UE_associatedLogicalNG_connectionList)) {
+          ie->value.choice.UE_associatedLogicalNG_connectionList)) {
     Logger::ngap().error(
         "Encode NGAP UE_associatedLogicalNG_connectionList IE error");
     free_wrapper((void**) &ie);
@@ -114,9 +114,9 @@ bool NGResetAckMsg::decode(Ngap_NGAP_PDU_t* ngapMsgPdu) {
                 ngResetAckIEs->protocolIEs.list.array[i]->value.present ==
                     Ngap_NGResetAcknowledgeIEs__value_PR_UE_associatedLogicalNG_connectionList) {
               UEAssociatedLogicalNGConnectionList tmp = {};
-              if (!tmp.decode(&ngResetAckIEs->protocolIEs.list.array[i]
-                                   ->value.choice
-                                   .UE_associatedLogicalNG_connectionList)) {
+              if (!tmp.decode(ngResetAckIEs->protocolIEs.list.array[i]
+                                  ->value.choice
+                                  .UE_associatedLogicalNG_connectionList)) {
                 Logger::ngap().error(
                     "Decoded NGAP UE_associatedLogicalNG_connectionList IE "
                     "error");

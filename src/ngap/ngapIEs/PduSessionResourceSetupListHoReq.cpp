@@ -43,24 +43,24 @@ void PduSessionResourceSetupListHoReq::get(
 
 //------------------------------------------------------------------------------
 bool PduSessionResourceSetupListHoReq::encode(
-    Ngap_PDUSessionResourceSetupListHOReq_t* resource_list) {
+    Ngap_PDUSessionResourceSetupListHOReq_t& resource_list) {
   for (auto item : list_) {
     Ngap_PDUSessionResourceSetupItemHOReq_t* request =
         (Ngap_PDUSessionResourceSetupItemHOReq_t*) calloc(
             1, sizeof(Ngap_PDUSessionResourceSetupItemHOReq_t));
     if (!request) return false;
-    if (!item.encode(request)) return false;
-    if (ASN_SEQUENCE_ADD(&resource_list->list, request) != 0) return false;
+    if (!item.encode(*request)) return false;
+    if (ASN_SEQUENCE_ADD(&resource_list.list, request) != 0) return false;
   }
   return true;
 }
 
 //------------------------------------------------------------------------------
 bool PduSessionResourceSetupListHoReq::decode(
-    Ngap_PDUSessionResourceSetupListHOReq_t* resource_list) {
-  for (int i = 0; i < resource_list->list.count; i++) {
+    Ngap_PDUSessionResourceSetupListHOReq_t& resource_list) {
+  for (int i = 0; i < resource_list.list.count; i++) {
     PduSessionResourceSetupItemHoReq item = {};
-    if (!item.decode(resource_list->list.array[i])) return false;
+    if (!item.decode(*resource_list.list.array[i])) return false;
     list_.push_back(item);
   }
   return true;

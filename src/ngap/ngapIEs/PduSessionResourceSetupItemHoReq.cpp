@@ -48,26 +48,26 @@ void PduSessionResourceSetupItemHoReq::get(
 
 //------------------------------------------------------------------------------
 bool PduSessionResourceSetupItemHoReq::encode(
-    Ngap_PDUSessionResourceSetupItemHOReq_t* resource_setup_item) {
+    Ngap_PDUSessionResourceSetupItemHOReq_t& resource_setup_item) {
   if (!PduSessionResourceItem::encode(
-          resource_setup_item->pDUSessionID,
-          resource_setup_item->handoverRequestTransfer))
+          resource_setup_item.pDUSessionID,
+          resource_setup_item.handoverRequestTransfer))
     return false;
 
-  if (!s_NSSAI.encode(&resource_setup_item->s_NSSAI)) return false;
+  if (!s_NSSAI.encode(resource_setup_item.s_NSSAI)) return false;
 
   return true;
 }
 
 //------------------------------------------------------------------------------
 bool PduSessionResourceSetupItemHoReq::decode(
-    Ngap_PDUSessionResourceSetupItemHOReq_t* resource_setup_item) {
+    Ngap_PDUSessionResourceSetupItemHOReq_t& resource_setup_item) {
   if (!PduSessionResourceItem::decode(
-          resource_setup_item->pDUSessionID,
-          resource_setup_item->handoverRequestTransfer))
+          resource_setup_item.pDUSessionID,
+          resource_setup_item.handoverRequestTransfer))
     return false;
 
-  if (!s_NSSAI.decode(&resource_setup_item->s_NSSAI)) return false;
+  if (!s_NSSAI.decode(resource_setup_item.s_NSSAI)) return false;
 
   return true;
 }

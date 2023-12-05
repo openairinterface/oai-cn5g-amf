@@ -134,7 +134,7 @@ void UplinkNASTransportMsg::setUserLocationInfoNR(
       Ngap_UplinkNASTransport_IEs__value_PR_UserLocationInformation;
 
   int ret =
-      userLocationInformation.encode(&ie->value.choice.UserLocationInformation);
+      userLocationInformation.encode(ie->value.choice.UserLocationInformation);
   if (!ret) {
     Logger::ngap().error("Encode NGAP UserLocationInformation IE error");
     free_wrapper((void**) &ie);
@@ -241,8 +241,8 @@ bool UplinkNASTransportMsg::decode(Ngap_NGAP_PDU_t* ngapMsgPdu) {
             uplinkNASTransportIEs->protocolIEs.list.array[i]->value.present ==
                 Ngap_UplinkNASTransport_IEs__value_PR_UserLocationInformation) {
           if (!userLocationInformation.decode(
-                  &uplinkNASTransportIEs->protocolIEs.list.array[i]
-                       ->value.choice.UserLocationInformation)) {
+                  uplinkNASTransportIEs->protocolIEs.list.array[i]
+                      ->value.choice.UserLocationInformation)) {
             Logger::ngap().error(
                 "Decoded NGAP UserLocationInformation IE error");
             return false;

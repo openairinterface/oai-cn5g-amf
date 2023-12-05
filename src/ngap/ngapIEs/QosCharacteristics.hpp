@@ -50,8 +50,8 @@ class QosCharacteristics {
   void getQosCharacteristics(
       std::optional<Dynamic5QIDescriptor>& m_dynamic5QIDescriptor) const;
 
-  bool encode(Ngap_QosCharacteristics_t*);
-  bool decode(Ngap_QosCharacteristics_t*);
+  bool encode(Ngap_QosCharacteristics_t&);
+  bool decode(Ngap_QosCharacteristics_t&);
 
  private:
   std::optional<NonDynamic5QIDescriptor> nonDynamic5QIDescriptor;

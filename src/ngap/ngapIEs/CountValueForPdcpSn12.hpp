@@ -35,8 +35,8 @@ class CountValueForPdcpSn12 {
   void setValue(long pDCP, long hfn_PDCP);
   void getValue(long& pDCP, long& hFN_PDCP) const;
 
-  bool encode(Ngap_COUNTValueForPDCP_SN12_t* value);
-  bool decode(Ngap_COUNTValueForPDCP_SN12_t& value);
+  bool encode(Ngap_COUNTValueForPDCP_SN12_t& value) const;
+  bool decode(const Ngap_COUNTValueForPDCP_SN12_t& value);
 
  private:
   long pdcp;      // Mandatory (12 bits)

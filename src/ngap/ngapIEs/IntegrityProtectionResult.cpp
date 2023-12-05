@@ -45,14 +45,15 @@ bool IntegrityProtectionResult::get(long& value) const {
 
 //------------------------------------------------------------------------------
 bool IntegrityProtectionResult::encode(
-    Ngap_IntegrityProtectionResult_t& value) {
+    Ngap_IntegrityProtectionResult_t& value) const {
   value = result_;
 
   return true;
 }
 
 //------------------------------------------------------------------------------
-bool IntegrityProtectionResult::decode(Ngap_IntegrityProtectionResult_t value) {
+bool IntegrityProtectionResult::decode(
+    const Ngap_IntegrityProtectionResult_t& value) {
   result_ = value;
 
   return true;

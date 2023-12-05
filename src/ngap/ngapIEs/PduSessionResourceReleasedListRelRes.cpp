@@ -50,7 +50,7 @@ bool PduSessionResourceReleasedListRelRes::encode(
         (Ngap_PDUSessionResourceReleasedItemRelRes_t*) calloc(
             1, sizeof(Ngap_PDUSessionResourceReleasedItemRelRes_t));
     if (!rel) return false;
-    if (!item.encode(rel)) return false;
+    if (!item.encode(*rel)) return false;
     if (ASN_SEQUENCE_ADD(
             &pdu_session_resource_released_list_rel_res.list, rel) != 0)
       return false;
@@ -65,7 +65,7 @@ bool PduSessionResourceReleasedListRelRes::decode(
   for (int i = 0; i < pdu_session_resource_released_list_rel_res.list.count;
        i++) {
     PduSessionResourceReleasedItemRelRes item = {};
-    if (!item.decode(pdu_session_resource_released_list_rel_res.list.array[i]))
+    if (!item.decode(*pdu_session_resource_released_list_rel_res.list.array[i]))
       return false;
     item_list_.push_back(item);
   }

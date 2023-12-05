@@ -47,15 +47,15 @@ void PduSessionResourceReleaseListCmd::getPDUSessionResourceReleaseListCmd(
 
 //------------------------------------------------------------------------------
 bool PduSessionResourceReleaseListCmd::encode(
-    Ngap_PDUSessionResourceToReleaseListRelCmd_t*
+    Ngap_PDUSessionResourceToReleaseListRelCmd_t&
         pduSessionResourceReleaseListCmd) {
   for (int i = 0; i < list_.size(); i++) {
     Ngap_PDUSessionResourceToReleaseItemRelCmd_t* item =
         (Ngap_PDUSessionResourceToReleaseItemRelCmd_t*) calloc(
             1, sizeof(Ngap_PDUSessionResourceToReleaseItemRelCmd_t));
     if (!item) return false;
-    if (!list_[i].encode2PDUSessionResourceReleaseItemCmd(item)) return false;
-    if (ASN_SEQUENCE_ADD(&pduSessionResourceReleaseListCmd->list, item) != 0)
+    if (!list_[i].encode(*item)) return false;
+    if (ASN_SEQUENCE_ADD(&pduSessionResourceReleaseListCmd.list, item) != 0)
       return false;
   }
 
@@ -64,12 +64,11 @@ bool PduSessionResourceReleaseListCmd::encode(
 
 //------------------------------------------------------------------------------
 bool PduSessionResourceReleaseListCmd::decode(
-    Ngap_PDUSessionResourceToReleaseListRelCmd_t*
+    Ngap_PDUSessionResourceToReleaseListRelCmd_t&
         pduSessionResourceReleaseListCmd) {
-  for (int i = 0; i < pduSessionResourceReleaseListCmd->list.count; i++) {
+  for (int i = 0; i < pduSessionResourceReleaseListCmd.list.count; i++) {
     PduSessionResourceReleaseItemCmd item = {};
-    if (!item.decodefromPDUSessionResourceReleaseItemCmd(
-            pduSessionResourceReleaseListCmd->list.array[i]))
+    if (!item.decode(*pduSessionResourceReleaseListCmd.list.array[i]))
       return false;
     list_.push_back(item);
   }

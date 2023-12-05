@@ -506,7 +506,7 @@ void NgapMessage::setMessageType(NgapMessageType messageType) {
     } break;
   }
 
-  messageTypeIE.encode(ngapPdu);
+  messageTypeIE.encode(*ngapPdu);
 }
 
 //------------------------------------------------------------------------------

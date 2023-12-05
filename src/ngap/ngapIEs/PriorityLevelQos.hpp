@@ -36,8 +36,8 @@ class PriorityLevelQos {
   void setPriorityLevelQos(long value);
   bool getPriorityLevelQos(long& value) const;
 
-  bool encode(Ngap_PriorityLevelQos_t*);
-  bool decode(Ngap_PriorityLevelQos_t*);
+  bool encode(Ngap_PriorityLevelQos_t&) const;
+  bool decode(const Ngap_PriorityLevelQos_t&);
 
  private:
   long priority_level_;

@@ -55,17 +55,17 @@ void TAI::setTAI(const Tai_t& tai) {
   tac_.set(tai.tac);
 }
 //------------------------------------------------------------------------------
-bool TAI::encode(Ngap_TAI_t* tai) {
-  if (!plmn_id_.encode(tai->pLMNIdentity)) return false;
-  if (!tac_.encode(tai->tAC)) return false;
+bool TAI::encode(Ngap_TAI_t& tai) {
+  if (!plmn_id_.encode(tai.pLMNIdentity)) return false;
+  if (!tac_.encode(tai.tAC)) return false;
 
   return true;
 }
 
 //------------------------------------------------------------------------------
-bool TAI::decode(Ngap_TAI_t* tai) {
-  if (!plmn_id_.decode(tai->pLMNIdentity)) return false;
-  if (!tac_.decode(tai->tAC)) return false;
+bool TAI::decode(Ngap_TAI_t& tai) {
+  if (!plmn_id_.decode(tai.pLMNIdentity)) return false;
+  if (!tac_.decode(tai.tAC)) return false;
 
   return true;
 }

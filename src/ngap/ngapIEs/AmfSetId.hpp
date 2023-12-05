@@ -37,6 +37,7 @@ class AmfSetId {
 
   bool set(const std::string&);
   bool set(const uint16_t&);
+
   void get(std::string&) const;
   void get(uint16_t&) const;
 

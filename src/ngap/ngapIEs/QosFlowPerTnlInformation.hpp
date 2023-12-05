@@ -43,8 +43,8 @@ class QosFlowPerTnlInformation {
       UpTransportLayerInformation& m_uPTransportLayerInformation,
       AssociatedQosFlowList& m_associatedQosFlowList) const;
 
-  bool encode(Ngap_QosFlowPerTNLInformation_t* qosFlowPerTNLInformation);
-  bool decode(Ngap_QosFlowPerTNLInformation_t* qosFlowPerTNLInformation);
+  bool encode(Ngap_QosFlowPerTNLInformation_t& qosFlowPerTNLInformation);
+  bool decode(Ngap_QosFlowPerTNLInformation_t& qosFlowPerTNLInformation);
 
  private:
   UpTransportLayerInformation uPTransportLayerInformation;  // Mandatory

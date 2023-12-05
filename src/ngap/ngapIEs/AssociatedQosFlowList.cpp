@@ -55,7 +55,7 @@ bool AssociatedQosFlowList::encode(
     Ngap_AssociatedQosFlowItem_t* ie = (Ngap_AssociatedQosFlowItem_t*) calloc(
         1, sizeof(Ngap_AssociatedQosFlowItem_t));
     if (!ie) return false;
-    if (!list_[i].encode(ie)) {
+    if (!list_[i].encode(*ie)) {
       free_wrapper((void**) &ie);
       return false;
     }
@@ -76,7 +76,7 @@ bool AssociatedQosFlowList::decode(
                             associatedQosFlowList.list.count;
   for (int i = 0; i < actual_size; i++) {
     AssociatedQosFlowItem item = {};
-    if (!item.decode(associatedQosFlowList.list.array[i])) return false;
+    if (!item.decode(*associatedQosFlowList.list.array[i])) return false;
     list_.push_back(item);
   }
   return true;

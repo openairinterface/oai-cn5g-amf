@@ -246,7 +246,7 @@ void InitialContextSetupRequestMsg::setCoreNetworkAssistanceInfo(
       Ngap_InitialContextSetupRequestIEs__value_PR_CoreNetworkAssistanceInformationForInactive;
 
   int ret = coreNetworkAssistanceInformationForInactive.value().encode(
-      &ie->value.choice.CoreNetworkAssistanceInformationForInactive);
+      ie->value.choice.CoreNetworkAssistanceInformationForInactive);
   if (!ret) {
     Logger::ngap().error(
         "Encode CoreNetworkAssistanceInformationForInactive IE error!");
@@ -304,7 +304,7 @@ void InitialContextSetupRequestMsg::setGuami(const Guami_t& value) {
   ie->criticality   = Ngap_Criticality_reject;
   ie->value.present = Ngap_InitialContextSetupRequestIEs__value_PR_GUAMI;
 
-  int ret = guami.encode(&ie->value.choice.GUAMI);
+  int ret = guami.encode(ie->value.choice.GUAMI);
   if (!ret) {
     Logger::ngap().error("Encode GUAMI IE error!");
     free_wrapper((void**) &ie);
@@ -366,7 +366,7 @@ void InitialContextSetupRequestMsg::setPduSessionResourceSetupRequestList(
       Ngap_InitialContextSetupRequestIEs__value_PR_PDUSessionResourceSetupListCxtReq;
 
   int ret = pduSessionResourceSetupRequestList.value().encode(
-      &ie->value.choice.PDUSessionResourceSetupListCxtReq);
+      ie->value.choice.PDUSessionResourceSetupListCxtReq);
   if (!ret) {
     Logger::ngap().error("Encode PDUSessionResourceSetupListCxtReq IE error!");
     free_wrapper((void**) &ie);
@@ -551,7 +551,7 @@ void InitialContextSetupRequestMsg::setMobilityRestrictionList(
       Ngap_InitialContextSetupRequestIEs__value_PR_MobilityRestrictionList;
 
   int ret = mobilityRestrictionList.value().encode(
-      &ie->value.choice.MobilityRestrictionList);
+      ie->value.choice.MobilityRestrictionList);
   if (!ret) {
     Logger::ngap().error("Encode MobilityRestrictionList IE error!");
     free_wrapper((void**) &ie);
@@ -755,9 +755,9 @@ bool InitialContextSetupRequestMsg::decode(Ngap_NGAP_PDU_t* ngapMsgPdu) {
           CoreNetworkAssistanceInformationForInactive tmp = {};
 
           if (!tmp.decode(
-                  &initialContextSetupRequestIEs->protocolIEs.list.array[i]
-                       ->value.choice
-                       .CoreNetworkAssistanceInformationForInactive)) {
+                  initialContextSetupRequestIEs->protocolIEs.list.array[i]
+                      ->value.choice
+                      .CoreNetworkAssistanceInformationForInactive)) {
             Logger::ngap().error(
                 "Decoded NGAP CoreNetworkAssistanceInformationForInactive IE "
                 "error");
@@ -778,8 +778,8 @@ bool InitialContextSetupRequestMsg::decode(Ngap_NGAP_PDU_t* ngapMsgPdu) {
                     ->value.present ==
                 Ngap_InitialContextSetupRequestIEs__value_PR_GUAMI) {
           if (!guami.decode(
-                  &initialContextSetupRequestIEs->protocolIEs.list.array[i]
-                       ->value.choice.GUAMI)) {
+                  initialContextSetupRequestIEs->protocolIEs.list.array[i]
+                      ->value.choice.GUAMI)) {
             Logger::ngap().error("Decoded NGAP GUAMI IE error");
 
             return false;
@@ -797,8 +797,8 @@ bool InitialContextSetupRequestMsg::decode(Ngap_NGAP_PDU_t* ngapMsgPdu) {
                 Ngap_InitialContextSetupRequestIEs__value_PR_PDUSessionResourceSetupListCxtReq) {
           PduSessionResourceSetupListCxtReq tmp = {};
           if (!tmp.decode(
-                  &initialContextSetupRequestIEs->protocolIEs.list.array[i]
-                       ->value.choice.PDUSessionResourceSetupListCxtReq)) {
+                  initialContextSetupRequestIEs->protocolIEs.list.array[i]
+                      ->value.choice.PDUSessionResourceSetupListCxtReq)) {
             Logger::ngap().error(
                 "Decoded NGAP PDUSessionResourceSetupListCxtReq IE error");
             return false;

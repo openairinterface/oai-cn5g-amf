@@ -52,15 +52,17 @@ bool ReflectiveQosAttribute::get(e_Ngap_ReflectiveQosAttribute& value) {
 }
 
 //------------------------------------------------------------------------------
-bool ReflectiveQosAttribute::encode(Ngap_ReflectiveQosAttribute_t* value) {
-  *value = attribute_;
+bool ReflectiveQosAttribute::encode(
+    Ngap_ReflectiveQosAttribute_t& value) const {
+  value = attribute_;
 
   return true;
 }
 
 //------------------------------------------------------------------------------
-bool ReflectiveQosAttribute::decode(Ngap_ReflectiveQosAttribute_t* value) {
-  attribute_ = *value;
+bool ReflectiveQosAttribute::decode(
+    const Ngap_ReflectiveQosAttribute_t& value) {
+  attribute_ = value;
 
   return true;
 }

@@ -36,8 +36,8 @@ class DelayCritical {
   void setDelayCritical(e_Ngap_DelayCritical value);
   bool getDelayCritical(e_Ngap_DelayCritical& value) const;
 
-  bool encode(Ngap_DelayCritical_t*);
-  bool decode(Ngap_DelayCritical_t*);
+  bool encode(Ngap_DelayCritical_t&) const;
+  bool decode(const Ngap_DelayCritical_t&);
 
  private:
   long delay_critical_;

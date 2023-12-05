@@ -43,9 +43,9 @@ class UEAssociatedLogicalNGConnectionList {
 
   void addItem(UEAssociatedLogicalNGConnectionItem& item);
 
-  bool encode(Ngap_UE_associatedLogicalNG_connectionList_t*
+  bool encode(Ngap_UE_associatedLogicalNG_connectionList_t&
                   ue_associatedLogicalNG_connectionList);
-  bool decode(Ngap_UE_associatedLogicalNG_connectionList_t*
+  bool decode(Ngap_UE_associatedLogicalNG_connectionList_t&
                   ue_associatedLogicalNG_connectionList);
 
  private:

@@ -47,13 +47,13 @@ void QosFlowPerTnlInformation::getQoSFlowPerTNLInformation(
 
 //------------------------------------------------------------------------------
 bool QosFlowPerTnlInformation::encode(
-    Ngap_QosFlowPerTNLInformation_t* qosFlowPerTNLInformation) {
+    Ngap_QosFlowPerTNLInformation_t& qosFlowPerTNLInformation) {
   if (!uPTransportLayerInformation.encode(
-          qosFlowPerTNLInformation->uPTransportLayerInformation))
+          qosFlowPerTNLInformation.uPTransportLayerInformation))
     return false;
 
   if (!associatedQosFlowList.encode(
-          qosFlowPerTNLInformation->associatedQosFlowList))
+          qosFlowPerTNLInformation.associatedQosFlowList))
     return false;
 
   return true;
@@ -61,12 +61,12 @@ bool QosFlowPerTnlInformation::encode(
 
 //------------------------------------------------------------------------------
 bool QosFlowPerTnlInformation::decode(
-    Ngap_QosFlowPerTNLInformation_t* qosFlowPerTNLInformation) {
+    Ngap_QosFlowPerTNLInformation_t& qosFlowPerTNLInformation) {
   if (!uPTransportLayerInformation.decode(
-          qosFlowPerTNLInformation->uPTransportLayerInformation))
+          qosFlowPerTNLInformation.uPTransportLayerInformation))
     return false;
   if (!associatedQosFlowList.decode(
-          qosFlowPerTNLInformation->associatedQosFlowList))
+          qosFlowPerTNLInformation.associatedQosFlowList))
     return false;
 
   return true;

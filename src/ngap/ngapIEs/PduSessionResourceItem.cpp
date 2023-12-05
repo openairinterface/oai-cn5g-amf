@@ -63,80 +63,80 @@ bool PduSessionResourceItem::decode(
 
 //------------------------------------------------------------------------------
 bool PduSessionResourceItem::encode(
-    Ngap_PDUSessionResourceSetupItemCxtRes_t* item) const {
+    Ngap_PDUSessionResourceSetupItemCxtRes_t& item) const {
   return encode(
-      item->pDUSessionID, item->pDUSessionResourceSetupResponseTransfer);
+      item.pDUSessionID, item.pDUSessionResourceSetupResponseTransfer);
 }
 
 //------------------------------------------------------------------------------
 bool PduSessionResourceItem::decode(
-    const Ngap_PDUSessionResourceSetupItemCxtRes_t* const item) {
+    const Ngap_PDUSessionResourceSetupItemCxtRes_t& item) {
   return decode(
-      item->pDUSessionID, item->pDUSessionResourceSetupResponseTransfer);
+      item.pDUSessionID, item.pDUSessionResourceSetupResponseTransfer);
 }
 
 //------------------------------------------------------------------------------
 bool PduSessionResourceItem::encode(
-    Ngap_PDUSessionResourceItemHORqd_t* item) const {
-  return encode(item->pDUSessionID, item->handoverRequiredTransfer);
+    Ngap_PDUSessionResourceItemHORqd_t& item) const {
+  return encode(item.pDUSessionID, item.handoverRequiredTransfer);
 }
 
 //------------------------------------------------------------------------------
 bool PduSessionResourceItem::decode(
-    const Ngap_PDUSessionResourceItemHORqd_t* const item) {
-  return decode(item->pDUSessionID, item->handoverRequiredTransfer);
+    const Ngap_PDUSessionResourceItemHORqd_t& item) {
+  return decode(item.pDUSessionID, item.handoverRequiredTransfer);
 }
 
 //------------------------------------------------------------------------------
 bool PduSessionResourceItem::encode(
-    Ngap_PDUSessionResourceHandoverItem_t* item) const {
-  return encode(item->pDUSessionID, item->handoverCommandTransfer);
+    Ngap_PDUSessionResourceHandoverItem_t& item) const {
+  return encode(item.pDUSessionID, item.handoverCommandTransfer);
 }
 
 //------------------------------------------------------------------------------
 bool PduSessionResourceItem::decode(
-    const Ngap_PDUSessionResourceHandoverItem_t* const item) {
-  return decode(item->pDUSessionID, item->handoverCommandTransfer);
+    const Ngap_PDUSessionResourceHandoverItem_t& item) {
+  return decode(item.pDUSessionID, item.handoverCommandTransfer);
 }
 
 //------------------------------------------------------------------------------
 bool PduSessionResourceItem::encode(
-    Ngap_PDUSessionResourceToReleaseItemHOCmd_t* item) const {
+    Ngap_PDUSessionResourceToReleaseItemHOCmd_t& item) const {
   return encode(
-      item->pDUSessionID, item->handoverPreparationUnsuccessfulTransfer);
+      item.pDUSessionID, item.handoverPreparationUnsuccessfulTransfer);
 }
 
 //------------------------------------------------------------------------------
 bool PduSessionResourceItem::decode(
-    const Ngap_PDUSessionResourceToReleaseItemHOCmd_t* const item) {
+    const Ngap_PDUSessionResourceToReleaseItemHOCmd_t& item) {
   return decode(
-      item->pDUSessionID, item->handoverPreparationUnsuccessfulTransfer);
+      item.pDUSessionID, item.handoverPreparationUnsuccessfulTransfer);
 }
 
 //------------------------------------------------------------------------------
 bool PduSessionResourceItem::encode(
-    Ngap_PDUSessionResourceAdmittedItem_t* item) const {
-  return encode(item->pDUSessionID, item->handoverRequestAcknowledgeTransfer);
+    Ngap_PDUSessionResourceAdmittedItem_t& item) const {
+  return encode(item.pDUSessionID, item.handoverRequestAcknowledgeTransfer);
 }
 
 //------------------------------------------------------------------------------
 bool PduSessionResourceItem::decode(
-    const Ngap_PDUSessionResourceAdmittedItem_t* const item) {
-  return decode(item->pDUSessionID, item->handoverRequestAcknowledgeTransfer);
+    const Ngap_PDUSessionResourceAdmittedItem_t& item) {
+  return decode(item.pDUSessionID, item.handoverRequestAcknowledgeTransfer);
 }
 
 //------------------------------------------------------------------------------
 bool PduSessionResourceItem::encode(
-    Ngap_PDUSessionResourceFailedToSetupItemHOAck_t* item) const {
+    Ngap_PDUSessionResourceFailedToSetupItemHOAck_t& item) const {
   return encode(
-      item->pDUSessionID, item->handoverResourceAllocationUnsuccessfulTransfer);
+      item.pDUSessionID, item.handoverResourceAllocationUnsuccessfulTransfer);
 }
 
 //------------------------------------------------------------------------------
 bool PduSessionResourceItem::decode(
-    const Ngap_PDUSessionResourceFailedToSetupItemHOAck_t* const item) {
+    const Ngap_PDUSessionResourceFailedToSetupItemHOAck_t& item) {
   return decode(
-      item->pDUSessionID, item->handoverResourceAllocationUnsuccessfulTransfer);
+      item.pDUSessionID, item.handoverResourceAllocationUnsuccessfulTransfer);
 }
 
 }  // namespace ngap

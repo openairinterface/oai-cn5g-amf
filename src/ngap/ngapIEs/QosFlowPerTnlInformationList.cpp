@@ -46,14 +46,14 @@ void QosFlowPerTnlInformationList::get(
 
 //------------------------------------------------------------------------------
 bool QosFlowPerTnlInformationList::encode(
-    Ngap_QosFlowPerTNLInformationList_t* qosFlowPerTnlInformationList) {
+    Ngap_QosFlowPerTNLInformationList_t& qosFlowPerTnlInformationList) {
   for (int i = 0; i < list_.size(); i++) {
     Ngap_QosFlowPerTNLInformationItem_t* item =
         (Ngap_QosFlowPerTNLInformationItem_t*) calloc(
             1, sizeof(Ngap_QosFlowPerTNLInformationItem_t));
     if (!item) return false;
-    if (!list_[i].encode(item)) return false;
-    if (ASN_SEQUENCE_ADD(&qosFlowPerTnlInformationList->list, item) != 0)
+    if (!list_[i].encode(*item)) return false;
+    if (ASN_SEQUENCE_ADD(&qosFlowPerTnlInformationList.list, item) != 0)
       return false;
   }
   return true;
@@ -61,10 +61,10 @@ bool QosFlowPerTnlInformationList::encode(
 
 //------------------------------------------------------------------------------
 bool QosFlowPerTnlInformationList::decode(
-    Ngap_QosFlowPerTNLInformationList_t* qosFlowPerTnlInformationList) {
-  for (int i = 0; i < qosFlowPerTnlInformationList->list.count; i++) {
+    Ngap_QosFlowPerTNLInformationList_t& qosFlowPerTnlInformationList) {
+  for (int i = 0; i < qosFlowPerTnlInformationList.list.count; i++) {
     QosFlowPerTnlInformationItem item = {};
-    if (!item.decode(qosFlowPerTnlInformationList->list.array[i])) return false;
+    if (!item.decode(*qosFlowPerTnlInformationList.list.array[i])) return false;
     list_.push_back(item);
   }
   return true;

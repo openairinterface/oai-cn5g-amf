@@ -112,7 +112,7 @@ void InitialUEMessageMsg::setUserLocationInfoNR(
       Ngap_InitialUEMessage_IEs__value_PR_UserLocationInformation;
 
   int ret =
-      userLocationInformation.encode(&ie->value.choice.UserLocationInformation);
+      userLocationInformation.encode(ie->value.choice.UserLocationInformation);
   if (!ret) {
     Logger::ngap().error("Encode UserLocationInformation IE error");
     free_wrapper((void**) &ie);
@@ -254,8 +254,8 @@ bool InitialUEMessageMsg::decode(Ngap_NGAP_PDU_t* ngapMsgPdu) {
             initialUEMessageIEs->protocolIEs.list.array[i]->value.present ==
                 Ngap_InitialUEMessage_IEs__value_PR_UserLocationInformation) {
           if (!userLocationInformation.decode(
-                  &initialUEMessageIEs->protocolIEs.list.array[i]
-                       ->value.choice.UserLocationInformation)) {
+                  initialUEMessageIEs->protocolIEs.list.array[i]
+                      ->value.choice.UserLocationInformation)) {
             Logger::ngap().error(
                 "Decoded NGAP UserLocationInformation IE error");
             return false;

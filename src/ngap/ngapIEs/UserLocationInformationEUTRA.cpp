@@ -46,12 +46,12 @@ void UserLocationInformationEUTRA::get(EUtraCgi& m_eUTRA_CGI, TAI& m_tAI) {
 
 //------------------------------------------------------------------------------
 bool UserLocationInformationEUTRA::encode(
-    Ngap_UserLocationInformationEUTRA_t* user_location_info_eutra) {
-  if (!eUTRA_CGI.encode(user_location_info_eutra->eUTRA_CGI)) {
+    Ngap_UserLocationInformationEUTRA_t& user_location_info_eutra) {
+  if (!eUTRA_CGI.encode(user_location_info_eutra.eUTRA_CGI)) {
     Logger::ngap().warn("Encode eUTRA_CGI IE error");
     return false;
   }
-  if (!tAI.encode(&user_location_info_eutra->tAI)) {
+  if (!tAI.encode(user_location_info_eutra.tAI)) {
     Logger::ngap().warn("Encode TAI IE error");
     return false;
   }
@@ -60,13 +60,13 @@ bool UserLocationInformationEUTRA::encode(
 
 //------------------------------------------------------------------------------
 bool UserLocationInformationEUTRA::decode(
-    Ngap_UserLocationInformationEUTRA_t* user_location_info_eutra) {
-  if (!eUTRA_CGI.decode(user_location_info_eutra->eUTRA_CGI)) {
+    Ngap_UserLocationInformationEUTRA_t& user_location_info_eutra) {
+  if (!eUTRA_CGI.decode(user_location_info_eutra.eUTRA_CGI)) {
     Logger::ngap().warn("Decode eUTRA_CGI IE error");
     return false;
   }
 
-  if (!tAI.decode(&user_location_info_eutra->tAI)) {
+  if (!tAI.decode(user_location_info_eutra.tAI)) {
     Logger::ngap().warn("Decode TAI IE error");
     return false;
   }

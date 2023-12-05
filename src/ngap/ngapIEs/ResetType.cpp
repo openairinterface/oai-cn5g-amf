@@ -64,20 +64,20 @@ void ResetType::getResetType(
 }
 
 //------------------------------------------------------------------------------
-bool ResetType::encode(Ngap_ResetType_t* type) {
+bool ResetType::encode(Ngap_ResetType_t& type) {
   // TODO:
   return true;
 }
 
 //------------------------------------------------------------------------------
-bool ResetType::decode(Ngap_ResetType_t* type) {
-  present = type->present;
-  if (type->present == Ngap_ResetType_PR_nG_Interface) {
-    nG_Interface = std::make_optional<long>((long) type->choice.nG_Interface);
+bool ResetType::decode(Ngap_ResetType_t& type) {
+  present = type.present;
+  if (type.present == Ngap_ResetType_PR_nG_Interface) {
+    nG_Interface = std::make_optional<long>((long) type.choice.nG_Interface);
     return true;
-  } else if (type->present == Ngap_ResetType_PR_partOfNG_Interface) {
+  } else if (type.present == Ngap_ResetType_PR_partOfNG_Interface) {
     UEAssociatedLogicalNGConnectionList list_tmp = {};
-    list_tmp.decode(type->choice.partOfNG_Interface);
+    list_tmp.decode(*type.choice.partOfNG_Interface);
     partOfNG_Interface =
         std::make_optional<UEAssociatedLogicalNGConnectionList>(list_tmp);
   } else {

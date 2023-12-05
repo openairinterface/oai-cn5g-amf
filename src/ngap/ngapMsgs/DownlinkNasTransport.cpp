@@ -204,7 +204,7 @@ void DownLinkNasTransportMsg::setMobilityRestrictionList(
       Ngap_DownlinkNASTransport_IEs__value_PR_MobilityRestrictionList;
 
   int ret = mobilityRestrictionList.value().encode(
-      &ie->value.choice.MobilityRestrictionList);
+      ie->value.choice.MobilityRestrictionList);
   if (!ret) {
     Logger::ngap().error("Encode MobilityRestrictionList IE error");
     free_wrapper((void**) &ie);
@@ -437,8 +437,8 @@ bool DownLinkNasTransportMsg::decode(Ngap_NGAP_PDU_t* ngapMsgPdu) {
             downLinkNasTransportIEs->protocolIEs.list.array[i]->value.present ==
                 Ngap_DownlinkNASTransport_IEs__value_PR_MobilityRestrictionList) {
           MobilityRestrictionList tmp = {};
-          if (!tmp.decode(&downLinkNasTransportIEs->protocolIEs.list.array[i]
-                               ->value.choice.MobilityRestrictionList)) {
+          if (!tmp.decode(downLinkNasTransportIEs->protocolIEs.list.array[i]
+                              ->value.choice.MobilityRestrictionList)) {
             Logger::ngap().error(
                 "Decode NGAP MobilityRestrictionList IE error");
             return false;

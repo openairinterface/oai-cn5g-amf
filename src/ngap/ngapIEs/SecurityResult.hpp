@@ -43,8 +43,8 @@ class SecurityResult {
       IntegrityProtectionResult& m_integrityProtectionResult,
       ConfidentialityProtectionResult& m_confidentialityProtectionResult) const;
 
-  bool encode(Ngap_SecurityResult_t*);
-  bool decode(Ngap_SecurityResult_t*);
+  bool encode(Ngap_SecurityResult_t&);
+  bool decode(Ngap_SecurityResult_t&);
 
  private:
   IntegrityProtectionResult integrityProtectionResult;              // Mandatory

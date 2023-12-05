@@ -33,18 +33,18 @@ UERadioCapabilityForPagingOfEUTRA::~UERadioCapabilityForPagingOfEUTRA() {}
 
 //------------------------------------------------------------------------------
 bool UERadioCapabilityForPagingOfEUTRA::encode(
-    Ngap_UERadioCapabilityForPagingOfEUTRA_t*
+    Ngap_UERadioCapabilityForPagingOfEUTRA_t&
         ueRadioCapabilityForPagingOfEUTRA) {
   return conv::octet_string_copy(
-      *ueRadioCapabilityForPagingOfEUTRA, ue_radio_capability_);
+      ueRadioCapabilityForPagingOfEUTRA, ue_radio_capability_);
 }
 
 //------------------------------------------------------------------------------
 bool UERadioCapabilityForPagingOfEUTRA::decode(
-    Ngap_UERadioCapabilityForPagingOfEUTRA_t*
+    Ngap_UERadioCapabilityForPagingOfEUTRA_t&
         ueRadioCapabilityForPagingOfEUTRA) {
   return conv::octet_string_copy(
-      ue_radio_capability_, *ueRadioCapabilityForPagingOfEUTRA);
+      ue_radio_capability_, ueRadioCapabilityForPagingOfEUTRA);
 }
 
 //------------------------------------------------------------------------------

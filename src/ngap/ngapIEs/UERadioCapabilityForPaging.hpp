@@ -38,8 +38,8 @@ class UERadioCapabilityForPaging {
   UERadioCapabilityForPaging();
   virtual ~UERadioCapabilityForPaging();
 
-  bool encode(Ngap_UERadioCapabilityForPaging_t* ueRadioCapabilityForPaging);
-  bool decode(Ngap_UERadioCapabilityForPaging_t* ueRadioCapabilityForPaging);
+  bool encode(Ngap_UERadioCapabilityForPaging_t& ueRadioCapabilityForPaging);
+  bool decode(Ngap_UERadioCapabilityForPaging_t& ueRadioCapabilityForPaging);
 
   void setUERadioCapabilityForPagingOfNR(const OCTET_STRING_t& capability);
   bool getUERadioCapabilityForPagingOfNR(OCTET_STRING_t& capability);

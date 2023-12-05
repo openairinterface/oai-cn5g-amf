@@ -48,9 +48,9 @@ void PduSessionResourceFailedToSetupItemCxtFail::get(
 
 //------------------------------------------------------------------------------
 bool PduSessionResourceFailedToSetupItemCxtFail::encode(
-    Ngap_PDUSessionResourceFailedToSetupItemCxtFail_t* pdu_session_cxt) {
-  if (!pdu_session_id_.encode(pdu_session_cxt->pDUSessionID)) return false;
-  pdu_session_cxt->pDUSessionResourceSetupUnsuccessfulTransfer =
+    Ngap_PDUSessionResourceFailedToSetupItemCxtFail_t& pdu_session_cxt) {
+  if (!pdu_session_id_.encode(pdu_session_cxt.pDUSessionID)) return false;
+  pdu_session_cxt.pDUSessionResourceSetupUnsuccessfulTransfer =
       pdu_session_resource_setup_unsuccessful_transfer_;
 
   return true;
@@ -58,10 +58,10 @@ bool PduSessionResourceFailedToSetupItemCxtFail::encode(
 
 //------------------------------------------------------------------------------
 bool PduSessionResourceFailedToSetupItemCxtFail::decode(
-    Ngap_PDUSessionResourceFailedToSetupItemCxtFail_t* pdu_session_cxt) {
-  if (!pdu_session_id_.decode(pdu_session_cxt->pDUSessionID)) return false;
+    Ngap_PDUSessionResourceFailedToSetupItemCxtFail_t& pdu_session_cxt) {
+  if (!pdu_session_id_.decode(pdu_session_cxt.pDUSessionID)) return false;
   pdu_session_resource_setup_unsuccessful_transfer_ =
-      pdu_session_cxt->pDUSessionResourceSetupUnsuccessfulTransfer;
+      pdu_session_cxt.pDUSessionResourceSetupUnsuccessfulTransfer;
 
   return true;
 }

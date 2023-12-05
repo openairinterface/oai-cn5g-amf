@@ -43,14 +43,14 @@ void PduSessionResourceAdmittedList::get(
 
 //------------------------------------------------------------------------------
 bool PduSessionResourceAdmittedList::encode(
-    Ngap_PDUSessionResourceAdmittedList_t* list) {
+    Ngap_PDUSessionResourceAdmittedList_t& list) {
   for (auto& item : item_list_) {
     Ngap_PDUSessionResourceAdmittedItem_t* response =
         (Ngap_PDUSessionResourceAdmittedItem_t*) calloc(
             1, sizeof(Ngap_PDUSessionResourceAdmittedItem_t));
     if (!response) return false;
-    if (!item.encode(response)) return false;
-    if (ASN_SEQUENCE_ADD(&list->list, response) != 0) return false;
+    if (!item.encode(*response)) return false;
+    if (ASN_SEQUENCE_ADD(&list.list, response) != 0) return false;
   }
 
   return true;
@@ -58,10 +58,10 @@ bool PduSessionResourceAdmittedList::encode(
 
 //------------------------------------------------------------------------------
 bool PduSessionResourceAdmittedList::decode(
-    Ngap_PDUSessionResourceAdmittedList_t* list) {
-  for (int i = 0; i < list->list.count; i++) {
+    Ngap_PDUSessionResourceAdmittedList_t& list) {
+  for (int i = 0; i < list.list.count; i++) {
     PduSessionResourceItem item = {};
-    if (!item.decode(list->list.array[i])) return false;
+    if (!item.decode(*list.list.array[i])) return false;
     item_list_.push_back(item);
   }
 

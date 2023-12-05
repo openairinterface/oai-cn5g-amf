@@ -45,14 +45,14 @@ void QosFlowSetupRequestList::get(
 
 //------------------------------------------------------------------------------
 bool QosFlowSetupRequestList::encode(
-    Ngap_QosFlowSetupRequestList_t* qosFlowSetupRequestList) {
+    Ngap_QosFlowSetupRequestList_t& qosFlowSetupRequestList) {
   for (int i = 0; i < list_.size(); i++) {
     Ngap_QosFlowSetupRequestItem_t* item =
         (Ngap_QosFlowSetupRequestItem_t*) calloc(
             1, sizeof(Ngap_QosFlowSetupRequestItem_t));
     if (!item) return false;
-    if (!list_[i].encode(item)) return false;
-    if (ASN_SEQUENCE_ADD(&qosFlowSetupRequestList->list, item) != 0)
+    if (!list_[i].encode(*item)) return false;
+    if (ASN_SEQUENCE_ADD(&qosFlowSetupRequestList.list, item) != 0)
       return false;
   }
   return true;
@@ -60,10 +60,10 @@ bool QosFlowSetupRequestList::encode(
 
 //------------------------------------------------------------------------------
 bool QosFlowSetupRequestList::decode(
-    Ngap_QosFlowSetupRequestList_t* qosFlowSetupRequestList) {
-  for (int i = 0; i < qosFlowSetupRequestList->list.count; i++) {
+    Ngap_QosFlowSetupRequestList_t& qosFlowSetupRequestList) {
+  for (int i = 0; i < qosFlowSetupRequestList.list.count; i++) {
     QosFlowSetupRequestItem item = {};
-    if (!item.decode(qosFlowSetupRequestList->list.array[i])) return false;
+    if (!item.decode(*qosFlowSetupRequestList.list.array[i])) return false;
     list_.push_back(item);
   }
   return true;

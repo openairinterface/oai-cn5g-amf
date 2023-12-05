@@ -42,15 +42,17 @@ void MaximumDataBurstVolume::get(long& value) const {
 }
 
 //------------------------------------------------------------------------------
-bool MaximumDataBurstVolume::encode(Ngap_MaximumDataBurstVolume_t* value) {
-  *value = volume_;
+bool MaximumDataBurstVolume::encode(
+    Ngap_MaximumDataBurstVolume_t& value) const {
+  value = volume_;
 
   return true;
 }
 
 //------------------------------------------------------------------------------
-bool MaximumDataBurstVolume::decode(Ngap_MaximumDataBurstVolume_t* value) {
-  volume_ = *value;
+bool MaximumDataBurstVolume::decode(
+    const Ngap_MaximumDataBurstVolume_t& value) {
+  volume_ = value;
 
   return true;
 }

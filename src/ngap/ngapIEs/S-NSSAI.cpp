@@ -38,30 +38,30 @@ S_NSSAI::S_NSSAI() {
 S_NSSAI::~S_NSSAI() {}
 
 //------------------------------------------------------------------------------
-bool S_NSSAI::encodeSD(Ngap_SD_t* m_sd) {
+bool S_NSSAI::encodeSD(Ngap_SD_t& m_sd) {
   if (!sd_.has_value()) {
     return false;
   }
-  m_sd->size = 3;
-  m_sd->buf  = (uint8_t*) calloc(3, sizeof(uint8_t));
-  if (!m_sd->buf) return false;
-  m_sd->buf[0] = (sd_.value() & 0x00ff0000) >> 16;
-  m_sd->buf[1] = (sd_.value() & 0x0000ff00) >> 8;
-  m_sd->buf[2] = (sd_.value() & 0x000000ff) >> 0;
+  m_sd.size = 3;
+  m_sd.buf  = (uint8_t*) calloc(3, sizeof(uint8_t));
+  if (!m_sd.buf) return false;
+  m_sd.buf[0] = (sd_.value() & 0x00ff0000) >> 16;
+  m_sd.buf[1] = (sd_.value() & 0x0000ff00) >> 8;
+  m_sd.buf[2] = (sd_.value() & 0x000000ff) >> 0;
   return true;
 }
 
 //------------------------------------------------------------------------------
-bool S_NSSAI::decodeSD(Ngap_SD_t* m_sd) {
-  if (!m_sd->buf) return false;
+bool S_NSSAI::decodeSD(Ngap_SD_t& m_sd) {
+  if (!m_sd.buf) return false;
 
   uint32_t value = SD_NO_VALUE;
-  if (m_sd->size == 3) {
-    value = ((m_sd->buf[0] << 16) + (m_sd->buf[1] << 8) + m_sd->buf[2]);
+  if (m_sd.size == 3) {
+    value = ((m_sd.buf[0] << 16) + (m_sd.buf[1] << 8) + m_sd.buf[2]);
     sd_   = std::optional<uint32_t>(value);
     return true;
-  } else if (m_sd->size == 4) {
-    value = ((m_sd->buf[1] << 16) + (m_sd->buf[2] << 8) + m_sd->buf[3]);
+  } else if (m_sd.size == 4) {
+    value = ((m_sd.buf[1] << 16) + (m_sd.buf[2] << 8) + m_sd.buf[3]);
     sd_   = std::optional<uint32_t>(value);
     return true;
   }
@@ -130,12 +130,12 @@ std::string S_NSSAI::getSd() const {
 }
 
 //------------------------------------------------------------------------------
-bool S_NSSAI::encode(Ngap_S_NSSAI_t* s_NSSAI) {
-  conv::int8_2_octet_string(sst_, s_NSSAI->sST);
+bool S_NSSAI::encode(Ngap_S_NSSAI_t& s_NSSAI) {
+  conv::int8_2_octet_string(sst_, s_NSSAI.sST);
   if (sd_.has_value() && (sd_.value() != SD_NO_VALUE)) {
-    s_NSSAI->sD = (Ngap_SD_t*) calloc(1, sizeof(Ngap_SD_t));
-    if (!s_NSSAI->sD) return false;
-    if (!encodeSD(s_NSSAI->sD)) {
+    s_NSSAI.sD = (Ngap_SD_t*) calloc(1, sizeof(Ngap_SD_t));
+    if (!s_NSSAI.sD) return false;
+    if (!encodeSD(*s_NSSAI.sD)) {
       return false;
     }
   }
@@ -143,10 +143,10 @@ bool S_NSSAI::encode(Ngap_S_NSSAI_t* s_NSSAI) {
 }
 
 //------------------------------------------------------------------------------
-bool S_NSSAI::decode(Ngap_S_NSSAI_t* s_NSSAI) {
-  if (!conv::octet_string_2_int8(s_NSSAI->sST, sst_)) return false;
-  if (s_NSSAI->sD) {
-    if (!decodeSD(s_NSSAI->sD)) return false;
+bool S_NSSAI::decode(Ngap_S_NSSAI_t& s_NSSAI) {
+  if (!conv::octet_string_2_int8(s_NSSAI.sST, sst_)) return false;
+  if (s_NSSAI.sD) {
+    if (!decodeSD(*s_NSSAI.sD)) return false;
   }
   return true;
 }

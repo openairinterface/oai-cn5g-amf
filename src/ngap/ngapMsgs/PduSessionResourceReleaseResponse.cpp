@@ -185,7 +185,7 @@ void PduSessionResourceReleaseResponseMsg::setUserLocationInfoNR(
       Ngap_PDUSessionResourceReleaseResponseIEs__value_PR_UserLocationInformation;
 
   int ret = userLocationInformation.value().encode(
-      &ie->value.choice.UserLocationInformation);
+      ie->value.choice.UserLocationInformation);
   if (!ret) {
     Logger::nas_mm().warn("Encode UserLocationInformation IE error");
     free_wrapper((void**) &ie);

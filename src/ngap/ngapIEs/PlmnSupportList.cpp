@@ -36,7 +36,7 @@ bool PlmnSupportList::encode(Ngap_PLMNSupportList_t& plmn_support_list) {
     Ngap_PLMNSupportItem_t* supportItem =
         (Ngap_PLMNSupportItem_t*) calloc(1, sizeof(Ngap_PLMNSupportItem_t));
     if (!supportItem) return false;
-    if (!it->encode(supportItem)) return false;
+    if (!it->encode(*supportItem)) return false;
     if (ASN_SEQUENCE_ADD(&plmn_support_list.list, supportItem) != 0)
       return false;
   }
@@ -48,7 +48,7 @@ bool PlmnSupportList::decode(Ngap_PLMNSupportList_t& plmn_support_list) {
   list_.clear();
   for (int i = 0; i < plmn_support_list.list.count; i++) {
     PlmnSupportItem item = {};
-    if (!item.decode(plmn_support_list.list.array[i])) return false;
+    if (!item.decode(*plmn_support_list.list.array[i])) return false;
     list_.push_back(item);
   }
 

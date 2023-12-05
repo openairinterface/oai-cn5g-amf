@@ -33,16 +33,16 @@ UERadioCapabilityForPagingOfNR::~UERadioCapabilityForPagingOfNR() {}
 
 //------------------------------------------------------------------------------
 bool UERadioCapabilityForPagingOfNR::encode(
-    Ngap_UERadioCapabilityForPagingOfNR_t* ueRadioCapabilityForPagingOfNR) {
+    Ngap_UERadioCapabilityForPagingOfNR_t& ueRadioCapabilityForPagingOfNR) {
   return conv::octet_string_copy(
-      *ueRadioCapabilityForPagingOfNR, ue_radio_capability_);
+      ueRadioCapabilityForPagingOfNR, ue_radio_capability_);
 }
 
 //------------------------------------------------------------------------------
 bool UERadioCapabilityForPagingOfNR::decode(
-    Ngap_UERadioCapabilityForPagingOfNR_t* ueRadioCapabilityForPagingOfNR) {
+    Ngap_UERadioCapabilityForPagingOfNR_t& ueRadioCapabilityForPagingOfNR) {
   return conv::octet_string_copy(
-      ue_radio_capability_, *ueRadioCapabilityForPagingOfNR);
+      ue_radio_capability_, ueRadioCapabilityForPagingOfNR);
 }
 
 //------------------------------------------------------------------------------

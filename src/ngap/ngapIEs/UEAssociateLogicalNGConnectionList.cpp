@@ -54,25 +54,25 @@ void UEAssociatedLogicalNGConnectionList::addItem(
 
 //------------------------------------------------------------------------------
 bool UEAssociatedLogicalNGConnectionList::encode(
-    Ngap_UE_associatedLogicalNG_connectionList_t* list) {
+    Ngap_UE_associatedLogicalNG_connectionList_t& list) {
   for (auto l : list_) {
     Ngap_UE_associatedLogicalNG_connectionItem_t* item =
         (Ngap_UE_associatedLogicalNG_connectionItem_t*) calloc(
             1, sizeof(Ngap_UE_associatedLogicalNG_connectionItem_t));
     if (!item) return false;
     if (!l.encode(*item)) return false;
-    if (ASN_SEQUENCE_ADD(&list->list, item) != 0) return false;
+    if (ASN_SEQUENCE_ADD(&list.list, item) != 0) return false;
   }
   return true;
 }
 
 //------------------------------------------------------------------------------
 bool UEAssociatedLogicalNGConnectionList::decode(
-    Ngap_UE_associatedLogicalNG_connectionList_t* list) {
+    Ngap_UE_associatedLogicalNG_connectionList_t& list) {
   list_.clear();
-  for (int i = 0; i < list->list.count; i++) {
+  for (int i = 0; i < list.list.count; i++) {
     UEAssociatedLogicalNGConnectionItem item = {};
-    if (!item.decode(list->list.array[i])) return false;
+    if (!item.decode(*list.list.array[i])) return false;
     list_.push_back(item);
   }
   return true;

@@ -37,8 +37,8 @@ void QosFlowToBeForwardedItem::setQosFlowIdentifier(
 
 //------------------------------------------------------------------------------
 bool QosFlowToBeForwardedItem::encode(
-    Ngap_QosFlowToBeForwardedItem_t* qos_flow_item) {
-  if (!qfi_.encode(&qos_flow_item->qosFlowIdentifier)) {
+    Ngap_QosFlowToBeForwardedItem_t& qos_flow_item) {
+  if (!qfi_.encode(qos_flow_item.qosFlowIdentifier)) {
     return false;
   }
   return true;

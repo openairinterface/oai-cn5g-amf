@@ -43,14 +43,14 @@ void PduSessionResourceListHandoverRqd::get(
 
 //------------------------------------------------------------------------------
 bool PduSessionResourceListHandoverRqd::encode(
-    Ngap_PDUSessionResourceListHORqd_t* list) {
+    Ngap_PDUSessionResourceListHORqd_t& list) {
   for (auto& item : item_list_) {
     Ngap_PDUSessionResourceItemHORqd_t* itemHORqd =
         (Ngap_PDUSessionResourceItemHORqd_t*) calloc(
             1, sizeof(Ngap_PDUSessionResourceItemHORqd_t));
     if (!itemHORqd) return false;
-    if (!item.encode(itemHORqd)) return false;
-    if (ASN_SEQUENCE_ADD(&list->list, itemHORqd) != 0) return false;
+    if (!item.encode(*itemHORqd)) return false;
+    if (ASN_SEQUENCE_ADD(&list.list, itemHORqd) != 0) return false;
   }
 
   return true;
@@ -58,10 +58,10 @@ bool PduSessionResourceListHandoverRqd::encode(
 
 //------------------------------------------------------------------------------
 bool PduSessionResourceListHandoverRqd::decode(
-    Ngap_PDUSessionResourceListHORqd_t* list) {
-  for (int i = 0; i < list->list.count; i++) {
+    Ngap_PDUSessionResourceListHORqd_t& list) {
+  for (int i = 0; i < list.list.count; i++) {
     PduSessionResourceItem item = {};
-    if (!item.decode(list->list.array[i])) return false;
+    if (!item.decode(*list.list.array[i])) return false;
     item_list_.push_back(item);
   }
 

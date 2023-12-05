@@ -38,9 +38,9 @@ class PduSessionResourceItemCxtRelCpl {
   void set(const PduSessionId& pdu_session_id);
   void get(PduSessionId& pdu_session_id) const;
 
-  bool encode(Ngap_PDUSessionResourceItemCxtRelCpl_t*
+  bool encode(Ngap_PDUSessionResourceItemCxtRelCpl_t&
                   pdu_session_resource_item_cxt_rel_cpl);
-  bool decode(const Ngap_PDUSessionResourceItemCxtRelCpl_t* const
+  bool decode(const Ngap_PDUSessionResourceItemCxtRelCpl_t&
                   pdu_session_resource_item_cxt_rel_cpl);
 
  private:

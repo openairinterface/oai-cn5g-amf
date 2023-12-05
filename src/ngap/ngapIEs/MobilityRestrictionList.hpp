@@ -38,8 +38,8 @@ class MobilityRestrictionList {
   void setPLMN(const PlmnId& plmn);
   void getPLMN(PlmnId& plmn) const;
 
-  bool encode(Ngap_MobilityRestrictionList_t* mobility_restriction_list);
-  bool decode(Ngap_MobilityRestrictionList_t* mobility_restriction_list);
+  bool encode(Ngap_MobilityRestrictionList_t& mobility_restriction_list);
+  bool decode(Ngap_MobilityRestrictionList_t& mobility_restriction_list);
 
  private:
   PlmnId servingPLMN;  // Mandatory

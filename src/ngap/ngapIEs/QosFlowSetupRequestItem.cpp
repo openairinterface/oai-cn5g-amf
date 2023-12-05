@@ -49,11 +49,11 @@ bool QosFlowSetupRequestItem::get(
 
 //------------------------------------------------------------------------------
 bool QosFlowSetupRequestItem::encode(
-    Ngap_QosFlowSetupRequestItem_t* qosFlowSetupRequestItem) {
-  if (!qosFlowIdentifier.encode(&qosFlowSetupRequestItem->qosFlowIdentifier))
+    Ngap_QosFlowSetupRequestItem_t& qosFlowSetupRequestItem) {
+  if (!qosFlowIdentifier.encode(qosFlowSetupRequestItem.qosFlowIdentifier))
     return false;
   if (!qosFlowLevelQosParameters.encode(
-          &qosFlowSetupRequestItem->qosFlowLevelQosParameters))
+          qosFlowSetupRequestItem.qosFlowLevelQosParameters))
     return false;
 
   return true;
@@ -61,11 +61,11 @@ bool QosFlowSetupRequestItem::encode(
 
 //------------------------------------------------------------------------------
 bool QosFlowSetupRequestItem::decode(
-    Ngap_QosFlowSetupRequestItem_t* qosFlowSetupRequestItem) {
-  if (!qosFlowIdentifier.decode(&qosFlowSetupRequestItem->qosFlowIdentifier))
+    Ngap_QosFlowSetupRequestItem_t& qosFlowSetupRequestItem) {
+  if (!qosFlowIdentifier.decode(qosFlowSetupRequestItem.qosFlowIdentifier))
     return false;
   if (!qosFlowLevelQosParameters.decode(
-          &qosFlowSetupRequestItem->qosFlowLevelQosParameters))
+          qosFlowSetupRequestItem.qosFlowLevelQosParameters))
     return false;
 
   return true;

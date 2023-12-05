@@ -47,7 +47,7 @@ void DrbSubjectToStatusTransferList::getdRBSubjectItem(
 }
 
 //------------------------------------------------------------------------------
-bool DrbSubjectToStatusTransferList::encodefromdRBSubjectlist(
+bool DrbSubjectToStatusTransferList::encode(
     Ngap_DRBsSubjectToStatusTransferList_t& dRBsSubjectToStatusTransferList) {
   for (auto& item : itemList) {
     Ngap_DRBsSubjectToStatusTransferItem_t* ie =
@@ -55,7 +55,7 @@ bool DrbSubjectToStatusTransferList::encodefromdRBSubjectlist(
             1, sizeof(Ngap_DRBsSubjectToStatusTransferItem_t));
     if (!ie) return false;
 
-    if (!item.encodedRBSubjectItem(ie)) {
+    if (!item.encode(*ie)) {
       Logger::ngap().error("Encode DrbSubjectToStatusTransferList IE error!");
       free_wrapper((void**) &ie);
       return false;
@@ -70,12 +70,11 @@ bool DrbSubjectToStatusTransferList::encodefromdRBSubjectlist(
 }
 
 //------------------------------------------------------------------------------
-bool DrbSubjectToStatusTransferList::decodefromdRBSubjectlist(
+bool DrbSubjectToStatusTransferList::decode(
     Ngap_DRBsSubjectToStatusTransferList_t& dRBsSubjectToStatusTransferList) {
   for (int i = 0; i < dRBsSubjectToStatusTransferList.list.count; i++) {
     DrbSubjectToStatusTransferItem item = {};
-    if (!item.decodefromdRBSubjectItem(
-            dRBsSubjectToStatusTransferList.list.array[i])) {
+    if (!item.decode(*dRBsSubjectToStatusTransferList.list.array[i])) {
       Logger::ngap().error("Decode DrbSubjectToStatusTransferList IE error!");
       return false;
     }

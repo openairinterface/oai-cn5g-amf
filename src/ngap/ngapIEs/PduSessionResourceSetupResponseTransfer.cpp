@@ -73,7 +73,7 @@ void PduSessionResourceSetupResponseTransferIE::set(
       up_transport_layer_information, associated_qos_flow_list);
 
   int ret = dlQoSFlowPerTNLInformation.encode(
-      &pduSessionResourceSetupResponseTransferIEs->dLQosFlowPerTNLInformation);
+      pduSessionResourceSetupResponseTransferIEs->dLQosFlowPerTNLInformation);
   if (!ret) {
     Logger::ngap().error("Encode DLQoSFlowPerTNLInformation IE error");
     return;
@@ -150,7 +150,7 @@ void PduSessionResourceSetupResponseTransferIE::setSecurityResult(
 
   Ngap_SecurityResult_t* ie =
       (Ngap_SecurityResult_t*) calloc(1, sizeof(Ngap_SecurityResult_t));
-  int ret = securityResult.value().encode(ie);
+  int ret = securityResult.value().encode(*ie);
   if (!ret) {
     Logger::ngap().error("Encode SecurityResult IE error");
     return;
@@ -193,8 +193,8 @@ bool PduSessionResourceSetupResponseTransferIE::decode(
   // pduSessionResourceSetupResponseTransferIEs);
 
   if (!dlQoSFlowPerTNLInformation.decode(
-          &pduSessionResourceSetupResponseTransferIEs
-               ->dLQosFlowPerTNLInformation)) {
+          pduSessionResourceSetupResponseTransferIEs
+              ->dLQosFlowPerTNLInformation)) {
     Logger::ngap().error("Decode NGAP DLQoSFlowPerTNLInformation IE error");
     return false;
   }
@@ -203,8 +203,8 @@ bool PduSessionResourceSetupResponseTransferIE::decode(
           ->additionalDLQosFlowPerTNLInformation) {
     QosFlowPerTnlInformationList additional_qos_flow = {};
     if (!additional_qos_flow.decode(
-            pduSessionResourceSetupResponseTransferIEs
-                ->additionalDLQosFlowPerTNLInformation)) {
+            *pduSessionResourceSetupResponseTransferIEs
+                 ->additionalDLQosFlowPerTNLInformation)) {
       Logger::ngap().error(
           "Decode NGAP AdditionalDLQoSFlowPerTNLInformation IE error");
       return false;
@@ -215,7 +215,7 @@ bool PduSessionResourceSetupResponseTransferIE::decode(
   if (pduSessionResourceSetupResponseTransferIEs->securityResult) {
     SecurityResult security_result = {};
     if (!security_result.decode(
-            pduSessionResourceSetupResponseTransferIEs->securityResult)) {
+            *pduSessionResourceSetupResponseTransferIEs->securityResult)) {
       Logger::ngap().error("Decode NGAP SecurityResult IE error");
       return false;
     }

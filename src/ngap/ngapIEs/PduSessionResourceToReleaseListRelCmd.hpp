@@ -41,9 +41,9 @@ class PduSessionResourceToReleaseListRelCmd {
   void set(const std::vector<PduSessionResourceToReleaseItemRelCmd>& list);
   void get(std::vector<PduSessionResourceToReleaseItemRelCmd>& list);
 
-  bool encode(Ngap_PDUSessionResourceToReleaseListRelCmd_t*
+  bool encode(Ngap_PDUSessionResourceToReleaseListRelCmd_t&
                   pduSessionResourceToReleaseListRelCmd);
-  bool decode(Ngap_PDUSessionResourceToReleaseListRelCmd_t*
+  bool decode(Ngap_PDUSessionResourceToReleaseListRelCmd_t&
                   pduSessionResourceToReleaseListRelCmd);
 
  private:

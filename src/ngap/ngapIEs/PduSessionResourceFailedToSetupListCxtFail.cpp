@@ -45,7 +45,7 @@ void PduSessionResourceFailedToSetupListCxtFail::get(
 
 //------------------------------------------------------------------------------
 bool PduSessionResourceFailedToSetupListCxtFail::encode(
-    Ngap_PDUSessionResourceFailedToSetupListCxtFail_t*
+    Ngap_PDUSessionResourceFailedToSetupListCxtFail_t&
         pduSessionResourceFailedToSetupListCxtFail) {
   for (std::vector<PduSessionResourceFailedToSetupItemCxtFail>::iterator it =
            std::begin(itemList);
@@ -54,9 +54,9 @@ bool PduSessionResourceFailedToSetupListCxtFail::encode(
         (Ngap_PDUSessionResourceFailedToSetupItemCxtFail_t*) calloc(
             1, sizeof(Ngap_PDUSessionResourceFailedToSetupItemCxtFail_t));
     if (!failedToFailure) return false;
-    if (!it->encode(failedToFailure)) return false;
+    if (!it->encode(*failedToFailure)) return false;
     if (ASN_SEQUENCE_ADD(
-            &pduSessionResourceFailedToSetupListCxtFail->list,
+            &pduSessionResourceFailedToSetupListCxtFail.list,
             failedToFailure) != 0)
       return false;
   }
@@ -66,15 +66,15 @@ bool PduSessionResourceFailedToSetupListCxtFail::encode(
 
 //------------------------------------------------------------------------------
 bool PduSessionResourceFailedToSetupListCxtFail::decode(
-    Ngap_PDUSessionResourceFailedToSetupListCxtFail_t*
+    Ngap_PDUSessionResourceFailedToSetupListCxtFail_t&
         pduSessionResourceFailedToSetupListCxtFail) {
-  itemList.reserve(pduSessionResourceFailedToSetupListCxtFail->list.count);
+  itemList.reserve(pduSessionResourceFailedToSetupListCxtFail.list.count);
 
-  for (int i = 0; i < pduSessionResourceFailedToSetupListCxtFail->list.count;
+  for (int i = 0; i < pduSessionResourceFailedToSetupListCxtFail.list.count;
        i++) {
     PduSessionResourceFailedToSetupItemCxtFail itemCxtFail = {};
     if (!itemCxtFail.decode(
-            pduSessionResourceFailedToSetupListCxtFail->list.array[i]))
+            *pduSessionResourceFailedToSetupListCxtFail.list.array[i]))
       return false;
     itemList.push_back(itemCxtFail);
   }

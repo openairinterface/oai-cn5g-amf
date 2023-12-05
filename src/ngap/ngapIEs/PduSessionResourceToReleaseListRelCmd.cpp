@@ -45,16 +45,16 @@ void PduSessionResourceToReleaseListRelCmd::get(
 
 //------------------------------------------------------------------------------
 bool PduSessionResourceToReleaseListRelCmd::encode(
-    Ngap_PDUSessionResourceToReleaseListRelCmd_t*
+    Ngap_PDUSessionResourceToReleaseListRelCmd_t&
         pdu_session_resource_to_released_list_rel_cmd) {
   for (auto& item : item_list_) {
     Ngap_PDUSessionResourceToReleaseItemRelCmd_t* rel =
         (Ngap_PDUSessionResourceToReleaseItemRelCmd_t*) calloc(
             1, sizeof(Ngap_PDUSessionResourceToReleaseItemRelCmd_t));
     if (!rel) return false;
-    if (!item.encode(rel)) return false;
+    if (!item.encode(*rel)) return false;
     if (ASN_SEQUENCE_ADD(
-            &pdu_session_resource_to_released_list_rel_cmd->list, rel) != 0)
+            &pdu_session_resource_to_released_list_rel_cmd.list, rel) != 0)
       return false;
   }
   return true;
@@ -62,13 +62,13 @@ bool PduSessionResourceToReleaseListRelCmd::encode(
 
 //------------------------------------------------------------------------------
 bool PduSessionResourceToReleaseListRelCmd::decode(
-    Ngap_PDUSessionResourceToReleaseListRelCmd_t*
+    Ngap_PDUSessionResourceToReleaseListRelCmd_t&
         pdu_session_resource_to_released_list_rel_cmd) {
-  for (int i = 0; i < pdu_session_resource_to_released_list_rel_cmd->list.count;
+  for (int i = 0; i < pdu_session_resource_to_released_list_rel_cmd.list.count;
        i++) {
     PduSessionResourceToReleaseItemRelCmd item = {};
     if (!item.decode(
-            pdu_session_resource_to_released_list_rel_cmd->list.array[i]))
+            *pdu_session_resource_to_released_list_rel_cmd.list.array[i]))
       return false;
     item_list_.push_back(item);
   }
