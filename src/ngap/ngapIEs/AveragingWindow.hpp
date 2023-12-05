@@ -37,7 +37,7 @@ class AveragingWindow {
   bool getAveragingWindow(long& value) const;
 
   bool encode(Ngap_AveragingWindow_t&) const;
-  bool decode(const Ngap_AveragingWindow_t&);
+  bool decode(Ngap_AveragingWindow_t);
 
  private:
   long averaging_window_;  // Madatory

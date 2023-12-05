@@ -48,8 +48,7 @@ bool DataForwardingNotPossible::encode(
 }
 
 //------------------------------------------------------------------------------
-bool DataForwardingNotPossible::decode(
-    const Ngap_DataForwardingNotPossible_t& value) {
+bool DataForwardingNotPossible::decode(Ngap_DataForwardingNotPossible_t value) {
   // TODO:
   if (value != Ngap_DataForwardingNotPossible_data_forwarding_not_possible)
     return false;

@@ -44,7 +44,7 @@ class BroadcastPlmnItem {
       PlmnId& m_plmn, std::vector<S_NSSAI>& sliceList) const;
 
   bool encode(Ngap_BroadcastPLMNItem_t&);
-  bool decode(Ngap_BroadcastPLMNItem_t&);
+  bool decode(const Ngap_BroadcastPLMNItem_t&);
 
  private:
   PlmnId plmn;                              // Mandatory

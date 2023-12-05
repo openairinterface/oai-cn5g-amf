@@ -38,7 +38,7 @@ class NetworkInstance {
   bool get(long& m_networkinstance) const;
 
   bool encode(Ngap_NetworkInstance_t&);
-  bool decode(const Ngap_NetworkInstance_t);
+  bool decode(Ngap_NetworkInstance_t);
 
  private:
   long network_instance_;

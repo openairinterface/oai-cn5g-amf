@@ -39,15 +39,15 @@ class GNB_ID {
   GNB_ID();
   virtual ~GNB_ID();
 
-  bool encode(Ngap_GNB_ID_t&);
-  bool decode(const Ngap_GNB_ID_t&);
-
   void setValue(const gNBId_t& gnb_id);
   bool get(gNBId_t& gnb_id) const;
 
   bool setValue(const uint32_t& id, const uint8_t& bit_length);
   // long getValue() const;
   bool get(uint32_t& id) const;
+
+  bool encode(Ngap_GNB_ID_t&);
+  bool decode(const Ngap_GNB_ID_t&);
 
  private:
   std::optional<gNBId_t> gnb_id_;  // 22bits to 32bits

@@ -51,7 +51,7 @@ bool PduSessionType::encode(Ngap_PDUSessionType_t& type) {
 }
 
 //------------------------------------------------------------------------------
-bool PduSessionType::decode(const Ngap_PDUSessionType_t type) {
+bool PduSessionType::decode(Ngap_PDUSessionType_t type) {
   pdu_session_type_ = type;
 
   return true;

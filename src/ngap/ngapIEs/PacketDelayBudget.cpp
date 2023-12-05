@@ -51,7 +51,7 @@ bool PacketDelayBudget::encode(Ngap_PacketDelayBudget_t& value) const {
 }
 
 //------------------------------------------------------------------------------
-bool PacketDelayBudget::decode(const Ngap_PacketDelayBudget_t& value) {
+bool PacketDelayBudget::decode(Ngap_PacketDelayBudget_t value) {
   packet_delay_budget_ = value;
 
   return true;

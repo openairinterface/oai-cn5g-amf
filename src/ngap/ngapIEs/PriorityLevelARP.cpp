@@ -51,7 +51,7 @@ bool PriorityLevelARP::encode(Ngap_PriorityLevelARP_t& priorityLevelARP) const {
 }
 
 //------------------------------------------------------------------------------
-bool PriorityLevelARP::decode(const Ngap_PriorityLevelARP_t& priorityLevelARP) {
+bool PriorityLevelARP::decode(Ngap_PriorityLevelARP_t priorityLevelARP) {
   priority_level_arp_ = priorityLevelARP;
 
   return true;

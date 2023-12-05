@@ -52,8 +52,7 @@ bool IntegrityProtectionResult::encode(
 }
 
 //------------------------------------------------------------------------------
-bool IntegrityProtectionResult::decode(
-    const Ngap_IntegrityProtectionResult_t& value) {
+bool IntegrityProtectionResult::decode(Ngap_IntegrityProtectionResult_t value) {
   result_ = value;
 
   return true;

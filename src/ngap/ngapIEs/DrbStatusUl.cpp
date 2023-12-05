@@ -57,7 +57,7 @@ void DrbStatusUl::getdRBStatusUL(std::optional<DrbStatusUl12>& ul12) const {
 }
 
 //------------------------------------------------------------------------------
-bool DrbStatusUl::encodedRBStatusUL(Ngap_DRBStatusUL_t& uL) {
+bool DrbStatusUl::encode(Ngap_DRBStatusUL_t& uL) {
   if (ul18_.has_value()) {
     uL.present = Ngap_DRBStatusUL_PR_dRBStatusUL18;
     uL.choice.dRBStatusUL18 =
@@ -80,7 +80,7 @@ bool DrbStatusUl::encodedRBStatusUL(Ngap_DRBStatusUL_t& uL) {
 }
 
 //------------------------------------------------------------------------------
-bool DrbStatusUl::decodedRBStatusUL(const Ngap_DRBStatusUL_t& uL) {
+bool DrbStatusUl::decode(const Ngap_DRBStatusUL_t& uL) {
   if (uL.present == Ngap_DRBStatusUL_PR_dRBStatusUL18) {
     DrbStatusUl18 item = {};
     if (!item.decode(*uL.choice.dRBStatusUL18)) {

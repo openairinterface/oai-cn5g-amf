@@ -33,18 +33,18 @@ extern "C" {
 
 namespace ngap {
 
-class GrbQosInformation {
+class GbrQosInformation {
  public:
-  GrbQosInformation();
-  virtual ~GrbQosInformation();
+  GbrQosInformation();
+  virtual ~GbrQosInformation();
 
-  void setGBR_QosInformation(
+  void set(
       long m_maximumFlowBitRateDL, long m_maximumFlowBitRateUL,
       long m_guaranteedFlowBitRateDL, long m_guaranteedFlowBitRateUL,
       const std::optional<NotificationControl>& m_notificationControl,
       const std::optional<PacketLossRate>& m_maximumPacketLossRateDL,
       const std::optional<PacketLossRate>& m_maximumPacketLossRateUL);
-  bool getGBR_QosInformation(
+  bool get(
       long& m_maximumFlowBitRateDL, long& m_maximumFlowBitRateUL,
       long& m_guaranteedFlowBitRateDL, long& m_guaranteedFlowBitRateUL,
       std::optional<NotificationControl>& m_notificationControl,

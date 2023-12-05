@@ -60,8 +60,7 @@ bool ReflectiveQosAttribute::encode(
 }
 
 //------------------------------------------------------------------------------
-bool ReflectiveQosAttribute::decode(
-    const Ngap_ReflectiveQosAttribute_t& value) {
+bool ReflectiveQosAttribute::decode(Ngap_ReflectiveQosAttribute_t value) {
   attribute_ = value;
 
   return true;

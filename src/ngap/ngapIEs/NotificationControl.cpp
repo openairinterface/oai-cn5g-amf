@@ -58,7 +58,7 @@ bool NotificationControl::encode(
 
 //------------------------------------------------------------------------------
 bool NotificationControl::decode(
-    const Ngap_NotificationControl_t& notificationControl) {
+    Ngap_NotificationControl_t notificationControl) {
   notification_control_ = notificationControl;
 
   return true;

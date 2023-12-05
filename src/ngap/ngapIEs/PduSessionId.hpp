@@ -37,7 +37,7 @@ class PduSessionId {
   void get(uint8_t& id) const;
 
   bool encode(Ngap_PDUSessionID_t& pdu_session_id) const;
-  bool decode(const Ngap_PDUSessionID_t& pdu_session_id);
+  bool decode(Ngap_PDUSessionID_t pdu_session_id);
 
  private:
   uint8_t id_;

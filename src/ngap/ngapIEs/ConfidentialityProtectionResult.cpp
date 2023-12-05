@@ -54,7 +54,7 @@ bool ConfidentialityProtectionResult::encode(
 
 //------------------------------------------------------------------------------
 bool ConfidentialityProtectionResult::decode(
-    const Ngap_ConfidentialityProtectionResult_t& value) {
+    Ngap_ConfidentialityProtectionResult_t value) {
   value_ = value;
 
   return true;

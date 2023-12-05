@@ -54,7 +54,7 @@ bool IntegrityProtectionIndication::encode(
 
 //------------------------------------------------------------------------------
 bool IntegrityProtectionIndication::decode(
-    const Ngap_IntegrityProtectionIndication_t& value) {
+    Ngap_IntegrityProtectionIndication_t value) {
   indication_ = value;
 
   return true;

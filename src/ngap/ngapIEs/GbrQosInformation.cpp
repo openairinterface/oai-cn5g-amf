@@ -19,12 +19,12 @@
  *      contact@openairinterface.org
  */
 
-#include "GrbQosInformation.hpp"
+#include "GbrQosInformation.hpp"
 
 namespace ngap {
 
 //------------------------------------------------------------------------------
-GrbQosInformation::GrbQosInformation() {
+GbrQosInformation::GbrQosInformation() {
   maximumFlowBitRateDL    = 0;
   maximumFlowBitRateUL    = 0;
   guaranteedFlowBitRateDL = 0;
@@ -35,10 +35,10 @@ GrbQosInformation::GrbQosInformation() {
 }
 
 //------------------------------------------------------------------------------
-GrbQosInformation::~GrbQosInformation() {}
+GbrQosInformation::~GbrQosInformation() {}
 
 //------------------------------------------------------------------------------
-void GrbQosInformation::setGBR_QosInformation(
+void GbrQosInformation::set(
     long m_maximumFlowBitRateDL, long m_maximumFlowBitRateUL,
     long m_guaranteedFlowBitRateDL, long m_guaranteedFlowBitRateUL,
     const std::optional<NotificationControl>& m_notificationControl,
@@ -55,7 +55,7 @@ void GrbQosInformation::setGBR_QosInformation(
 }
 
 //------------------------------------------------------------------------------
-bool GrbQosInformation::getGBR_QosInformation(
+bool GbrQosInformation::get(
     long& m_maximumFlowBitRateDL, long& m_maximumFlowBitRateUL,
     long& m_guaranteedFlowBitRateDL, long& m_guaranteedFlowBitRateUL,
     std::optional<NotificationControl>& m_notificationControl,
@@ -74,7 +74,7 @@ bool GrbQosInformation::getGBR_QosInformation(
 }
 
 //------------------------------------------------------------------------------
-bool GrbQosInformation::encode(Ngap_GBR_QosInformation_t& gBR_QosInformation) {
+bool GbrQosInformation::encode(Ngap_GBR_QosInformation_t& gBR_QosInformation) {
   gBR_QosInformation.maximumFlowBitRateDL.size = 6;
   gBR_QosInformation.maximumFlowBitRateDL.buf =
       (uint8_t*) calloc(1, gBR_QosInformation.maximumFlowBitRateDL.size);
@@ -145,7 +145,7 @@ bool GrbQosInformation::encode(Ngap_GBR_QosInformation_t& gBR_QosInformation) {
 }
 
 //------------------------------------------------------------------------------
-bool GrbQosInformation::decode(
+bool GbrQosInformation::decode(
     const Ngap_GBR_QosInformation_t& gBR_QosInformation) {
   if (!gBR_QosInformation.maximumFlowBitRateDL.buf) return false;
   if (!gBR_QosInformation.maximumFlowBitRateUL.buf) return false;

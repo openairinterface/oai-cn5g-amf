@@ -41,7 +41,7 @@ class PduSessionResourceHandoverCommandTransfer {
   void setQosFlowToBeForwardedList(
       std::vector<QosFlowToBeForwardedItem_t> list);
 
-  int encode(uint8_t* buf, int buf_size);  // TODO: use reference
+  int encode(uint8_t* buf, int buf_size);  // TODO: remove naked pointer
 
  private:
   Ngap_HandoverCommandTransfer_t* handovercommandtransferIE;

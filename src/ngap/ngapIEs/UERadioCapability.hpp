@@ -37,14 +37,14 @@ class UERadioCapability {
   // UERadioCapability(const bstring& capability);
   virtual ~UERadioCapability();
 
-  bool encode(Ngap_UERadioCapability_t& ueRadioCapability);
-  bool decode(const Ngap_UERadioCapability_t& ueRadioCapability);
-
   bool set(const OCTET_STRING_t& capability);
   bool get(OCTET_STRING_t& capability);
 
   bool set(const bstring& capability);
   bool get(bstring& capability);
+
+  bool encode(Ngap_UERadioCapability_t& ueRadioCapability);
+  bool decode(const Ngap_UERadioCapability_t& ueRadioCapability);
 
  private:
   bstring ue_radio_capability_;

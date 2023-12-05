@@ -57,7 +57,7 @@ bool GtpTeid::encode(Ngap_GTP_TEID_t& gtpTeid) {
 }
 
 //------------------------------------------------------------------------------
-bool GtpTeid::decode(const Ngap_GTP_TEID_t& gtpTeid) {
+bool GtpTeid::decode(Ngap_GTP_TEID_t gtpTeid) {
   if (!gtpTeid.buf) return false;
 
   gtp_teid = 0;

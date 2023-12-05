@@ -37,7 +37,7 @@ class DataForwardingNotPossible {
   void get(long& value) const;
 
   bool encode(Ngap_DataForwardingNotPossible_t& value) const;
-  bool decode(const Ngap_DataForwardingNotPossible_t& value);
+  bool decode(Ngap_DataForwardingNotPossible_t value);
 
  private:
   long value_;

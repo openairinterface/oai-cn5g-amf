@@ -58,7 +58,7 @@ bool AmfUeNgapId::encode(Ngap_AMF_UE_NGAP_ID_t& amf_ue_ngap_id) const {
 }
 
 //------------------------------------------------------------------------------
-bool AmfUeNgapId::decode(const Ngap_AMF_UE_NGAP_ID_t& amf_ue_ngap_id) {
+bool AmfUeNgapId::decode(Ngap_AMF_UE_NGAP_ID_t amf_ue_ngap_id) {
   if (!amf_ue_ngap_id.buf) return false;
 
   id_ = 0;

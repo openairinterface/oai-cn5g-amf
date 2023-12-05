@@ -40,7 +40,7 @@ class AmfUeNgapId {
   uint64_t get() const;
 
   bool encode(Ngap_AMF_UE_NGAP_ID_t&) const;
-  bool decode(const Ngap_AMF_UE_NGAP_ID_t&);
+  bool decode(Ngap_AMF_UE_NGAP_ID_t);
 
  private:
   uint64_t id_;

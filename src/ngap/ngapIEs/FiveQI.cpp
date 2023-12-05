@@ -51,7 +51,7 @@ bool FiveQI::encode(Ngap_FiveQI_t& value) const {
 }
 
 //------------------------------------------------------------------------------
-bool FiveQI::decode(const Ngap_FiveQI_t& value) {
+bool FiveQI::decode(Ngap_FiveQI_t value) {
   fiveqi_ = value;
 
   return true;

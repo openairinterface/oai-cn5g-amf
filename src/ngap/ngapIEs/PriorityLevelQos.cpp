@@ -51,7 +51,7 @@ bool PriorityLevelQos::encode(Ngap_PriorityLevelQos_t& priority_level) const {
 }
 
 //------------------------------------------------------------------------------
-bool PriorityLevelQos::decode(const Ngap_PriorityLevelQos_t& priority_level) {
+bool PriorityLevelQos::decode(Ngap_PriorityLevelQos_t priority_level) {
   priority_level_ = priority_level;
 
   return true;

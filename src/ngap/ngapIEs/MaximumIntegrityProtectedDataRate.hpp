@@ -39,7 +39,7 @@ class MaximumIntegrityProtectedDataRate {
   bool get(long& value) const;
 
   bool encode(Ngap_MaximumIntegrityProtectedDataRate_t&);
-  bool decode(const Ngap_MaximumIntegrityProtectedDataRate_t);
+  bool decode(Ngap_MaximumIntegrityProtectedDataRate_t);
 
  private:
   long value_;

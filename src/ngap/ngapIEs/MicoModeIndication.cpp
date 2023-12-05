@@ -51,7 +51,7 @@ bool MicoModeIndication::encode(
 
 //------------------------------------------------------------------------------
 bool MicoModeIndication::decode(
-    const Ngap_MICOModeIndication_t& mico_mode_indication) {
+    Ngap_MICOModeIndication_t mico_mode_indication) {
   if (!mico_mode_indication) return false;
   mico_mode_indication_ = mico_mode_indication;
 

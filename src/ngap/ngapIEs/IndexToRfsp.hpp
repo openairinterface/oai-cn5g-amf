@@ -38,7 +38,7 @@ class IndexToRfsp {
   uint32_t get() const;
 
   bool encode(Ngap_IndexToRFSP_t&);
-  bool decode(const Ngap_IndexToRFSP_t&);
+  bool decode(Ngap_IndexToRFSP_t);
 
  private:
   uint32_t index_;

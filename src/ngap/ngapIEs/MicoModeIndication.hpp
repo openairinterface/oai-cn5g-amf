@@ -37,7 +37,7 @@ class MicoModeIndication {
   void get(long& mico_mode_indication) const;
 
   bool encode(Ngap_MICOModeIndication_t& micoModeIndication) const;
-  bool decode(const Ngap_MICOModeIndication_t& micoModeIndication);
+  bool decode(Ngap_MICOModeIndication_t micoModeIndication);
 
  private:
   long mico_mode_indication_;

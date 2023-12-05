@@ -37,7 +37,7 @@ class PacketDelayBudget {
   bool getPacketDelayBudget(long& value) const;
 
   bool encode(Ngap_PacketDelayBudget_t&) const;
-  bool decode(const Ngap_PacketDelayBudget_t&);
+  bool decode(Ngap_PacketDelayBudget_t);
 
  private:
   long packet_delay_budget_;

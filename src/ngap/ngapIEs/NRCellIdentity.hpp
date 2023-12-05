@@ -33,11 +33,11 @@ class NRCellIdentity {
   NRCellIdentity();
   virtual ~NRCellIdentity();
 
-  bool encode(Ngap_NRCellIdentity_t& nRCellIdentity);
-  bool decode(const Ngap_NRCellIdentity_t& nRCellIdentity);
-
   unsigned long getNRCellIdentity() const;
   void setNRCellIdentity(unsigned long m_nrcellidentity);
+
+  bool encode(Ngap_NRCellIdentity_t& nRCellIdentity);
+  bool decode(Ngap_NRCellIdentity_t nRCellIdentity);
 
  private:
   unsigned long

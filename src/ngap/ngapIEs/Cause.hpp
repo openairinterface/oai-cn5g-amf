@@ -33,9 +33,6 @@ class Cause {
   Cause();
   virtual ~Cause();
 
-  bool encode(Ngap_Cause_t& cause) const;
-  bool decode(const Ngap_Cause_t& cause);
-
   void setChoiceOfCause(const Ngap_Cause_PR& cause_present);
   Ngap_Cause_PR getChoiceOfCause() const;
 
@@ -43,6 +40,9 @@ class Cause {
   long getValue() const;
 
   void set(const long& value, const Ngap_Cause_PR& cause_present);
+
+  bool encode(Ngap_Cause_t& cause) const;
+  bool decode(const Ngap_Cause_t& cause);
 
  private:
   long cause_value_;

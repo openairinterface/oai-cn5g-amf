@@ -36,11 +36,11 @@ class GlobalNgENBId {
   GlobalNgENBId();
   virtual ~GlobalNgENBId();
 
-  bool encode(Ngap_GlobalNgENB_ID_t&);
-  bool decode(const Ngap_GlobalNgENB_ID_t&);
-
   void set(const PlmnId& plmn, const NgENB_ID& ng_enb_id);
   void get(PlmnId& plmn, NgENB_ID& ng_enb_id) const;
+
+  bool encode(Ngap_GlobalNgENB_ID_t&);
+  bool decode(const Ngap_GlobalNgENB_ID_t&);
 
  private:
   PlmnId plmn_id_;      // Mandatory

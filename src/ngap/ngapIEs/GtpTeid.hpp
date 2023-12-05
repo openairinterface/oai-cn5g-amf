@@ -37,7 +37,7 @@ class GtpTeid {
   bool getGtpTeid(uint32_t& m_gtp_teid) const;
 
   bool encode(Ngap_GTP_TEID_t& gtpTeid);
-  bool decode(const Ngap_GTP_TEID_t& gtpTeid);
+  bool decode(Ngap_GTP_TEID_t gtpTeid);
 
  private:
   uint32_t gtp_teid;

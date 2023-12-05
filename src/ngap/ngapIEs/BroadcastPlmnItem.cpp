@@ -68,7 +68,7 @@ bool BroadcastPlmnItem::encode(Ngap_BroadcastPLMNItem_t& plmnItem) {
 }
 
 //------------------------------------------------------------------------------
-bool BroadcastPlmnItem::decode(Ngap_BroadcastPLMNItem_t& pdu) {
+bool BroadcastPlmnItem::decode(const Ngap_BroadcastPLMNItem_t& pdu) {
   if (!plmn.decode(pdu.pLMNIdentity)) return false;
   for (int i = 0; i < pdu.tAISliceSupportList.list.count; i++) {
     S_NSSAI snssai = {};

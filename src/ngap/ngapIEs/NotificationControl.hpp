@@ -37,7 +37,7 @@ class NotificationControl {
   bool getNotificationControl(e_Ngap_NotificationControl& value) const;
 
   bool encode(Ngap_NotificationControl_t&) const;
-  bool decode(const Ngap_NotificationControl_t&);
+  bool decode(Ngap_NotificationControl_t);
 
  private:
   long notification_control_;

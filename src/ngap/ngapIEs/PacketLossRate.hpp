@@ -19,8 +19,8 @@
  *      contact@openairinterface.org
  */
 
-#ifndef _PACKETLOSSRATE_H_
-#define _PACKETLOSSRATE_H_
+#ifndef _PACKET_LOSS_RATE_H_
+#define _PACKET_LOSS_RATE_H_
 
 extern "C" {
 #include "Ngap_PacketLossRate.h"

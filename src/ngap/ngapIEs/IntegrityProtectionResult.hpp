@@ -37,7 +37,7 @@ class IntegrityProtectionResult {
   bool get(long& value) const;
 
   bool encode(Ngap_IntegrityProtectionResult_t&) const;
-  bool decode(const Ngap_IntegrityProtectionResult_t&);
+  bool decode(Ngap_IntegrityProtectionResult_t);
 
  private:
   long result_;

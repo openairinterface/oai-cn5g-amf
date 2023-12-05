@@ -54,7 +54,7 @@ bool DelayCritical::encode(Ngap_DelayCritical_t& value) const {
 }
 
 //------------------------------------------------------------------------------
-bool DelayCritical::decode(const Ngap_DelayCritical_t& value) {
+bool DelayCritical::decode(Ngap_DelayCritical_t value) {
   delay_critical_ = value;
 
   return true;

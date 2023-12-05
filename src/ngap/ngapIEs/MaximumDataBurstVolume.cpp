@@ -50,8 +50,7 @@ bool MaximumDataBurstVolume::encode(
 }
 
 //------------------------------------------------------------------------------
-bool MaximumDataBurstVolume::decode(
-    const Ngap_MaximumDataBurstVolume_t& value) {
+bool MaximumDataBurstVolume::decode(Ngap_MaximumDataBurstVolume_t value) {
   volume_ = value;
 
   return true;

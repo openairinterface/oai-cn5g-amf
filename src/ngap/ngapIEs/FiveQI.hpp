@@ -37,7 +37,7 @@ class FiveQI {
   bool getFiveQI(long& value) const;
 
   bool encode(Ngap_FiveQI_t&) const;
-  bool decode(const Ngap_FiveQI_t&);
+  bool decode(Ngap_FiveQI_t);
 
  private:
   long fiveqi_;

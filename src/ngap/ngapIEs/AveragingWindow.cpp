@@ -51,7 +51,7 @@ bool AveragingWindow::encode(Ngap_AveragingWindow_t& value) const {
 }
 
 //------------------------------------------------------------------------------
-bool AveragingWindow::decode(const Ngap_AveragingWindow_t& value) {
+bool AveragingWindow::decode(Ngap_AveragingWindow_t value) {
   averaging_window_ = value;
 
   return true;
