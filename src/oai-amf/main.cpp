@@ -62,12 +62,22 @@ std::unique_ptr<amf_config_yaml> amf_cfg_yaml;
 void amf_signal_handler(int s) {
   std::cout << "Caught signal " << s << std::endl;
   Logger::system().startup("exiting");
+
+  if (amf_app_inst) {
+    amf_app_inst->stop();
+  }
   if (itti_inst) {
     itti_inst->send_terminate_msg(TASK_AMF_APP);
     itti_inst->wait_tasks_end();
   }
+  if (amf_app_inst) {
+    delete amf_app_inst;
+    amf_app_inst = nullptr;
+    std::cout << "AMF APP memory done." << std::endl;
+  }
   std::cout << "Freeing Allocated memory..." << std::endl;
   if (amf_app_inst) {
+    amf_app_inst->stop();
     delete amf_app_inst;
     amf_app_inst = nullptr;
     std::cout << "AMF APP memory done." << std::endl;
@@ -76,19 +86,21 @@ void amf_signal_handler(int s) {
     http1_server->shutdown();
     delete http1_server;
     http1_server = nullptr;
+    std::cout << "HTTP/1 Server memory done." << std::endl;
   }
   if (http2_server) {
     http2_server->stop();
     delete http2_server;
     http2_server = nullptr;
+    std::cout << "HTTP/2 Server memory done." << std::endl;
   }
-  std::cout << "AMF API Server memory done." << std::endl;
 
   if (itti_inst) {
     delete itti_inst;
     itti_inst = nullptr;
     std::cout << "ITTI memory done." << std::endl;
   }
+
   std::cout << "Freeing Allocated memory done" << std::endl;
   exit(s);
 }

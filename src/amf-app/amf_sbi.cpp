@@ -130,6 +130,13 @@ void amf_sbi_task(void*) {
         amf_sbi_inst->handle_itti_message(ref(*m));
       } break;
 
+      case SBI_DEREGISTER_NF_INSTANCE_REQUEST: {
+        Logger::amf_sbi().info(
+            "Receive Deregister NF Instance Request, handling ...");
+        itti_sbi_deregister_nf_instance_request* m =
+            dynamic_cast<itti_sbi_deregister_nf_instance_request*>(msg);
+        amf_sbi_inst->handle_itti_message(ref(*m));
+      } break;
       case SBI_NOTIFY_SUBSCRIBED_EVENT: {
         Logger::amf_sbi().info(
             "Receive Notify Subscribed Event Request, handling ...");
@@ -912,6 +919,43 @@ void amf_sbi::handle_itti_message(
   itti_msg_response->amf_instance_id    = itti_msg.amf_instance_id;
   Logger::amf_sbi().debug("Registered AMF profile (from NRF)");
 
+  int ret = itti_inst->send_msg(itti_msg_response);
+  if (RETURNok != ret) {
+    Logger::amf_sbi().error(
+        "Could not send ITTI message %s to task TASK_AMF_APP",
+        itti_msg_response->get_msg_name());
+  }
+}
+
+//------------------------------------------------------------------------------
+void amf_sbi::handle_itti_message(
+    itti_sbi_deregister_nf_instance_request& itti_msg) {
+  Logger::amf_sbi().debug(
+      "Send NF Deregistration to NRF (HTTP version %d)", itti_msg.http_version);
+
+  std::string url =
+      amf_cfg.get_nrf_nf_registration_uri(itti_msg.amf_instance_id);
+
+  Logger::amf_sbi().debug(
+      "Send NF Deregistration to NRF, NRF URL %s", url.c_str());
+
+  uint8_t http_version = 1;
+  if (amf_cfg.support_features.use_http2) http_version = 2;
+
+  nlohmann::json response_data = {};
+  uint32_t response_code       = 0;
+  curl_http_client(
+      url, "DELETE", "", response_data, response_code, http_version);
+
+  // Send response to APP to process
+  std::shared_ptr<itti_sbi_deregister_nf_instance_response> itti_msg_response =
+      std::make_shared<itti_sbi_deregister_nf_instance_response>(
+          TASK_AMF_SBI, TASK_AMF_APP);
+  itti_msg_response->amf_instance_id    = itti_msg.amf_instance_id;
+  itti_msg_response->http_response_code = response_code;
+  itti_msg_response->http_version       = itti_msg.http_version;
+
+  // TODO: Response code 307/308
   int ret = itti_inst->send_msg(itti_msg_response);
   if (RETURNok != ret) {
     Logger::amf_sbi().error(
@@ -1710,9 +1754,11 @@ void amf_sbi::curl_http_client(
       curl_easy_setopt(curl, CURLOPT_HTTPPOST, 1);
     else if (method.compare("PATCH") == 0)
       curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "PATCH");
-    else if (method.compare("PUT") == 0) {
+    else if (method.compare("PUT") == 0)
       curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "PUT");
-    } else  // GET
+    else if (method.compare("DELETE") == 0)
+      curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "DELETE");
+    else  // GET
       curl_easy_setopt(curl, CURLOPT_HTTPGET, 1);
 
     curl_easy_setopt(curl, CURLOPT_TIMEOUT_MS, CURL_TIMEOUT_MS);

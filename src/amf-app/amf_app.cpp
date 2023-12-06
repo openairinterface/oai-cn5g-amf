@@ -185,6 +185,13 @@ void amf_app_task(void*) {
         amf_app_inst->handle_itti_message(ref(*m));
       } break;
 
+      case SBI_DEREGISTER_NF_INSTANCE_RESPONSE: {
+        Logger::amf_app().debug("Received SBI_DEREGISTER_NF_INSTANCE_RESPONSE");
+        itti_sbi_deregister_nf_instance_response* m =
+            dynamic_cast<itti_sbi_deregister_nf_instance_response*>(msg);
+        amf_app_inst->handle_itti_message(ref(*m));
+      } break;
+
       case TIME_OUT: {
         if (itti_msg_timeout* to = dynamic_cast<itti_msg_timeout*>(msg)) {
           switch (to->arg1_user) {
@@ -221,6 +228,13 @@ void amf_app_task(void*) {
         Logger::amf_app().info("No handler for msg type %d", msg->msg_type);
     }
   } while (true);
+}
+
+//------------------------------------------------------------------------------
+void amf_app::stop() {
+  if (amf_app_inst) {
+    amf_app_inst->deregister_to_nrf();
+  }
 }
 
 //------------------------------------------------------------------------------
@@ -745,8 +759,7 @@ void amf_app::handle_itti_message(itti_sbi_n1n2_message_subscribe& itti_msg) {
 //------------------------------------------------------------------------------
 void amf_app::handle_itti_message(itti_sbi_n1n2_message_unsubscribe& itti_msg) {
   Logger::amf_app().info(
-      "Handle an N1N2MessageUnSubscribe from a NF (HTTP version "
-      "%d)",
+      "Handle an N1N2MessageUnSubscribe from a NF (HTTP version %d)",
       itti_msg.http_version);
 
   // Process the request and trigger the response from AMF API Server
@@ -887,17 +900,31 @@ void amf_app::handle_itti_message(itti_sbi_register_nf_instance_response& r) {
         r.profile.get_nf_heartBeat_timer(), 0, TASK_AMF_APP,
         TASK_AMF_APP_TIMEOUT_NRF_HEARTBEAT,
         0);  // TODO arg2_user
-
-    /*  //Set timer to send NF Deregistration (for testing purpose)
-      itti_inst->timer_setup(50, 0,
-                                 TASK_AMF_APP,
-      TASK_AMF_APP_TIMEOUT_NRF_DEREGISTRATION, 0);  // TODO arg2_user
-    */
   } else {
     // Set timer to try again with NF Registration
     itti_inst->timer_setup(
         20, 0, TASK_AMF_APP, TASK_AMF_APP_TIMEOUT_NRF_REGISTRATION,
         0);  // TODO arg2_user
+  }
+}
+
+//------------------------------------------------------------------------------
+void amf_app::handle_itti_message(itti_sbi_deregister_nf_instance_response& r) {
+  Logger::amf_app().debug("Handle NF Deregistration response");
+
+  auto response_code = static_cast<http_response_codes_e>(r.http_response_code);
+  if (response_code ==
+      http_response_codes_e::HTTP_RESPONSE_CODE_204_NO_CONTENT) {
+    // Stop heartbeat
+    itti_inst->timer_remove(timer_nrf_heartbeat);
+  } else if (
+      (response_code ==
+       http_response_codes_e::HTTP_RESPONSE_CODE_TEMPORARY_REDIRECT) or
+      (response_code ==
+       http_response_codes_e::HTTP_RESPONSE_CODE_PERMANENT_REDIRECT)) {
+    // TODO: send new request to new NRF
+  } else {
+    // Deregistration failed, just ignore for the moment
   }
 }
 
@@ -1308,14 +1335,10 @@ std::string amf_app::get_nf_instance() const {
 
 //---------------------------------------------------------------------------------------------
 void amf_app::register_to_nrf() {
-  // send request to SBI to send NF registration to NRF
-  trigger_nf_registration_request();
-}
-
-//------------------------------------------------------------------------------
-void amf_app::trigger_nf_registration_request() {
+  // Send request to SBI to send NF registration to NRF
   Logger::amf_app().debug(
-      "Send ITTI msg to SBI task to trigger the registration request to NRF");
+      "Send ITTI msg to SBI task to trigger the registration request towards "
+      "NRF");
 
   std::shared_ptr<itti_sbi_register_nf_instance_request> itti_msg =
       std::make_shared<itti_sbi_register_nf_instance_request>(
@@ -1331,12 +1354,12 @@ void amf_app::trigger_nf_registration_request() {
 }
 
 //------------------------------------------------------------------------------
-void amf_app::trigger_nf_deregistration() const {
+void amf_app::deregister_to_nrf() const {
   Logger::amf_app().debug(
       "Send ITTI msg to SBI task to trigger the deregistration request to NRF");
 
-  std::shared_ptr<itti_sbi_deregister_nf_instance> itti_msg =
-      std::make_shared<itti_sbi_deregister_nf_instance>(
+  std::shared_ptr<itti_sbi_deregister_nf_instance_request> itti_msg =
+      std::make_shared<itti_sbi_deregister_nf_instance_request>(
           TASK_AMF_APP, TASK_AMF_SBI);
   itti_msg->amf_instance_id = amf_instance_id;
   int ret                   = itti_inst->send_msg(itti_msg);
