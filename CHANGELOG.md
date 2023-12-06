@@ -7,14 +7,8 @@
     * Yaml validation default value
   - Service request handling
   - Update API Server name/structure
-  - N2 cleanup (for gNB context)
-  - Used new instead of malloc/calloc for N2
-  - Refactor ITTI between SBI and other tasks
   - N2 info notify
-  - NGAP IEs refactor
-  - NAS cleanup ies
   - Updated NGAP library to 38.413 V16.14.0
-  - Code cleanup (removed usused code)
   - Location Report Notification for N2 Handover 
   - LMF Determine Location & DownlinkUeAssociatedNrppaTranport support
 * Fixes
@@ -34,6 +28,9 @@
   - Switching to clang-format-12
   - Published image on Docker-Hub is using now Ubuntu-22 as base image
     * Ubuntu-18 is no longer supported
+* Miscellaneous
+  - Code refactoring: ITTI between SBI and other tasks, NGAP IEs
+  - Code cleanup: NAS IEs, N2, removed usused code, Used new instead of malloc/calloc for N2
 
 ## v1.5.1 -- May 2023 ##
 
