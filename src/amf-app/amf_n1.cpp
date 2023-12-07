@@ -623,7 +623,7 @@ void amf_n1::nas_signalling_establishment_request_handle(
           nc, ran_ue_ngap_id, amf_ue_ngap_id, plain_msg, ulCount);
     } break;
 
-    case UE_INIT_DEREGISTER: {
+    case DEREGISTRATION_REQUEST_UE_ORIGINATING: {
       Logger::amf_n1().debug(
           "Received InitialUeMessage De-registration Request message, "
           "handling...");
@@ -666,7 +666,7 @@ void amf_n1::uplink_nas_msg_handle(
       Logger::amf_n1().debug("Received UL NAS Transport message, handling...");
       ul_nas_transport_handle(ran_ue_ngap_id, amf_ue_ngap_id, plain_msg, plmn);
     } break;
-    case UE_INIT_DEREGISTER: {
+    case DEREGISTRATION_REQUEST_UE_ORIGINATING: {
       Logger::amf_n1().debug(
           "Received De-registration Request message, handling...");
       ue_initiate_de_registration_handle(

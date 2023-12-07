@@ -77,8 +77,9 @@ bool DeregistrationRequest::GetNgKsi(uint8_t& ng_ksi) const {
 
 //------------------------------------------------------------------------------
 void DeregistrationRequest::SetSuciSupiFormatImsi(
-    const string& mcc, const string& mnc, const string& routing_ind,
-    uint8_t protection_sch_id, const string& msin) {
+    const std::string& mcc, const std::string& mnc,
+    const std::string& routing_ind, uint8_t protection_sch_id,
+    const std::string& msin) {
   if (protection_sch_id != NULL_SCHEME) {
     Logger::nas_mm().error(
         "Encoding SUCI and SUPI format for IMSI error, please choose correct "
@@ -119,8 +120,9 @@ std::string DeregistrationRequest::Get5gGuti() const {
 
 //------------------------------------------------------------------------------
 void DeregistrationRequest::SetSuciSupiFormatImsi(
-    const string& mcc, const string& mnc, const string& routing_ind,
-    uint8_t protection_sch_id, uint8_t hnpki, const string& msin) {
+    const std::string& mcc, const std::string& mnc,
+    const std::string& routing_ind, uint8_t protection_sch_id, uint8_t hnpki,
+    const std::string& msin) {
   // TODO:
 }
 

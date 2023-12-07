@@ -28,7 +28,6 @@
 
 #include "NasIeHeader.hpp"
 
-using namespace std;
 namespace nas {
 
 class RegistrationRequest : public NasMmPlainHeader {

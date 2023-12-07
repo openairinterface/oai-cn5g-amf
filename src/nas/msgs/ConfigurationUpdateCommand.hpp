@@ -48,15 +48,17 @@ class ConfigurationUpdateCommand : public NasMmPlainHeader {
 
  public:
   // Optional
-  // TODO: Configuration update indication
+  // Configuration update indication
+  std::optional<ConfigurationUpdateIndication>
+      ie_configuration_update_indication;
   // TODO: 5G-GUTI
   // TODO: TAI list
   // TODO: Allowed NSSAI
   // TODO: Service area list
   // Full name for network
-  std::optional<NetworkName> full_name_for_network;
+  std::optional<NetworkName> ie_full_name_for_network;
   // Short name for network
-  std::optional<NetworkName> short_name_for_network;
+  std::optional<NetworkName> ie_short_name_for_network;
   // TODO: Local time zone
   // TODO: Universal time and local time zone
   // TODO: Network daylight saving time

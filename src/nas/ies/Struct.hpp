@@ -36,8 +36,6 @@ extern "C" {
 #include "bstrlib.h"
 }
 
-using namespace std;
-
 namespace nas {
 
 typedef struct SNSSAI_s {
@@ -100,8 +98,8 @@ typedef struct IMEISV_s {
 } IMEISV_t;
 
 typedef struct {
-  string mcc;
-  string mnc;
+  std::string mcc;
+  std::string mnc;
 } nas_plmn_t;
 
 typedef struct {

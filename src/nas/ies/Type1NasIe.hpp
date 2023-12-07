@@ -49,7 +49,7 @@ class Type1NasIe : public NasIe {
       const uint8_t* const buf, const int& len, bool is_iei = true) override;
   int Decode(
       const uint8_t* const buf, const int& len, const bool& high_pos,
-      bool is_iei = false);
+      bool is_iei);
 
  protected:
   virtual void SetValue() = 0;

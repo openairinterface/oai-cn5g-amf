@@ -24,7 +24,6 @@
 #include "logger.hpp"
 
 using namespace nas;
-using namespace std;
 
 //------------------------------------------------------------------------------
 S1UeSecurityCapability::S1UeSecurityCapability() : Type4NasIe() {

@@ -26,8 +26,9 @@ using namespace nas;
 //------------------------------------------------------------------------------
 ConfigurationUpdateCommand::ConfigurationUpdateCommand()
     : NasMmPlainHeader(EPD_5GS_MM_MSG, CONFIGURATION_UPDATE_COMMAND) {
-  full_name_for_network  = nullopt;
-  short_name_for_network = nullopt;
+  ie_configuration_update_indication = std::nullopt;
+  ie_full_name_for_network           = std::nullopt;
+  ie_short_name_for_network          = std::nullopt;
 }
 
 //------------------------------------------------------------------------------
@@ -41,7 +42,7 @@ void ConfigurationUpdateCommand::SetHeader(uint8_t security_header_type) {
 //------------------------------------------------------------------------------
 void ConfigurationUpdateCommand::SetFullNameForNetwork(
     const NetworkName& name) {
-  full_name_for_network = std::optional<NetworkName>(name);
+  ie_full_name_for_network = std::optional<NetworkName>(name);
 }
 
 //------------------------------------------------------------------------------
@@ -54,13 +55,14 @@ void ConfigurationUpdateCommand::SetFullNameForNetwork(
   full_name_for_network_tmp.setNumberOfSpareBits(
       0x07);  // TODO: remove hardcoded value
   full_name_for_network_tmp.setTextString(text_string);
-  full_name_for_network = std::optional<NetworkName>(full_name_for_network_tmp);
+  ie_full_name_for_network =
+      std::optional<NetworkName>(full_name_for_network_tmp);
 }
 
 //------------------------------------------------------------------------------
 void ConfigurationUpdateCommand::GetFullNameForNetwork(
     std::optional<NetworkName>& name) const {
-  name = full_name_for_network;
+  name = ie_full_name_for_network;
 }
 
 //------------------------------------------------------------------------------
@@ -73,14 +75,14 @@ void ConfigurationUpdateCommand::SetShortNameForNetwork(
   short_name_for_network_tmp.setNumberOfSpareBits(
       0x07);  // TODO: remove hardcoded value
   short_name_for_network_tmp.setTextString(text_string);
-  short_name_for_network =
+  ie_short_name_for_network =
       std::optional<NetworkName>(short_name_for_network_tmp);
 }
 
 //------------------------------------------------------------------------------
 void ConfigurationUpdateCommand::SetShortNameForNetwork(
     const NetworkName& name) {
-  short_name_for_network = std::optional<NetworkName>(name);
+  ie_short_name_for_network = std::optional<NetworkName>(name);
 }
 
 //------------------------------------------------------------------------------
@@ -102,11 +104,11 @@ int ConfigurationUpdateCommand::Encode(uint8_t* buf, int len) {
   }
   encoded_size += encoded_ie_size;
 
-  if (!full_name_for_network.has_value()) {
+  if (!ie_full_name_for_network.has_value()) {
     Logger::nas_mm().debug(
         "IE %s is not available", NetworkName::GetIeName().c_str());
   } else {
-    encoded_ie_size = full_name_for_network.value().Encode(
+    encoded_ie_size = ie_full_name_for_network.value().Encode(
         buf + encoded_size, len - encoded_size);
     if (encoded_ie_size != KEncodeDecodeError) {
       encoded_size += encoded_ie_size;
@@ -117,11 +119,11 @@ int ConfigurationUpdateCommand::Encode(uint8_t* buf, int len) {
     }
   }
 
-  if (!short_name_for_network.has_value()) {
+  if (!ie_short_name_for_network.has_value()) {
     Logger::nas_mm().debug(
         "IE %s is not available", NetworkName::GetIeName().c_str());
   } else {
-    encoded_ie_size = short_name_for_network.value().Encode(
+    encoded_ie_size = ie_short_name_for_network.value().Encode(
         buf + encoded_size, len - encoded_size);
     if (encoded_ie_size != KEncodeDecodeError) {
       encoded_size += encoded_ie_size;
@@ -169,7 +171,7 @@ int ConfigurationUpdateCommand::Decode(uint8_t* buf, int len) {
           return KEncodeDecodeError;
         }
         decoded_size += decoded_result;
-        full_name_for_network =
+        ie_full_name_for_network =
             std::optional<NetworkName>(full_name_for_network_tmp);
         DECODE_U8_VALUE(buf + decoded_size, octet);
         Logger::nas_mm().debug("Next IEI (0x%x)", octet);
@@ -186,7 +188,7 @@ int ConfigurationUpdateCommand::Decode(uint8_t* buf, int len) {
           return KEncodeDecodeError;
         }
         decoded_size += decoded_result;
-        short_name_for_network =
+        ie_short_name_for_network =
             std::optional<NetworkName>(short_name_for_network_tmp);
         DECODE_U8_VALUE(buf + decoded_size, octet);
         Logger::nas_mm().debug("Next IEI (0x%x)", octet);

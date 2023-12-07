@@ -24,7 +24,6 @@
 
 #include "NasIeHeader.hpp"
 
-using namespace std;
 namespace nas {
 
 class DeregistrationRequestUeTerminated : public NasMmPlainHeader {
