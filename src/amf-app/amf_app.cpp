@@ -1243,9 +1243,10 @@ void amf_app::generate_amf_profile() {
   nf_instance_profile.set_nf_instance_name(amf_cfg.amf_name);
   nf_instance_profile.set_nf_type("AMF");
   nf_instance_profile.set_nf_status("REGISTERED");
-  nf_instance_profile.set_nf_heartBeat_timer(50);
-  nf_instance_profile.set_nf_priority(1);
-  nf_instance_profile.set_nf_capacity(100);
+  nf_instance_profile.set_nf_heartBeat_timer(
+      50);                                   // TODO: remove hardcoded value
+  nf_instance_profile.set_nf_priority(1);    // TODO: remove hardcoded value
+  nf_instance_profile.set_nf_capacity(100);  // TODO: remove hardcoded value
   nf_instance_profile.delete_nf_ipv4_addresses();
   nf_instance_profile.add_nf_ipv4_addresses(amf_cfg.sbi.addr4);
 

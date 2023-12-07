@@ -59,6 +59,7 @@ class RegistrationReject : public NasMmPlainHeader {
   std::optional<GprsTimer2> ie_t3502_value;        // Optional
   std::optional<EapMessage> ie_eap_message;        // Optional
   std::optional<RejectedNssai> ie_rejected_nssai;  // Release 16.4.1
+  // TODO: CAG information list (Release 16.14.0)
 };
 
 }  // namespace nas

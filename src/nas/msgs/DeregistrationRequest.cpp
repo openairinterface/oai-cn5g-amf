@@ -26,13 +26,9 @@
 using namespace nas;
 
 //------------------------------------------------------------------------------
-DeregistrationRequest::DeregistrationRequest(bool is_ue_originating)
+DeregistrationRequest::DeregistrationRequest()
     : NasMmPlainHeader(EPD_5GS_MM_MSG) {
-  if (is_ue_originating) {
-    NasMmPlainHeader::SetMessageType(DEREGISTRATION_REQUEST_UE_ORIGINATING);
-  } else {
-    NasMmPlainHeader::SetMessageType(DEREGISTRATION_REQUEST_UE_TERMINATED);
-  }
+  NasMmPlainHeader::SetMessageType(DEREGISTRATION_REQUEST_UE_ORIGINATING);
 }
 
 //------------------------------------------------------------------------------

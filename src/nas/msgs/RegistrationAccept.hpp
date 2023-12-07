@@ -196,6 +196,7 @@ class RegistrationAccept : public NasMmPlainHeader {
   // TODO: CAG information list (Release 16.4.1)
   // TODO: Truncated 5G-S-TMSI configuration (Release 16.4.1)
   // TODO: Negotiated WUS assistance information (Release 16.4.1)
+  // TODO: Negotiated NB-N1 mode DRX parameters (Release 16.14.0)
 };
 
 }  // namespace nas

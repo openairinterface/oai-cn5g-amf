@@ -83,3 +83,4 @@
 #include "_5gsTrackingAreaIdList.hpp"
 #include "_5gsTrackingAreaIdentity.hpp"
 #include "_5gsUpdateType.hpp"
+#include "ControlPlaneServiceType.hpp"

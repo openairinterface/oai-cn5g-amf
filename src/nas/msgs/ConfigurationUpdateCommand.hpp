@@ -73,6 +73,7 @@ class ConfigurationUpdateCommand : public NasMmPlainHeader {
   // TODO: UE radio capability ID deletion indication (Rel 16.4.1)
   // TODO: 5GS registration result (Rel 16.4.1)
   // TODO: Truncated 5G-S-TMSI configuration (Rel 16.4.1)
+  // TODO: Additional configuration indication (Rel 16.14.0)
 };
 
 }  // namespace nas
