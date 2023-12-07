@@ -110,6 +110,13 @@ typedef struct {
   std::vector<uint32_t> tac_list;
 } p_tai_t;
 
+typedef struct {
+  uint8_t allowed_type;
+  uint8_t type;
+  std::vector<nas_plmn_t> plmn_list;
+  std::vector<uint32_t> tac_list;
+} service_area_list_ie_t;
+
 // 5G-GUTI
 typedef struct _5G_GUTI_s {
   std::string mcc;

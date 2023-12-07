@@ -105,6 +105,7 @@ constexpr uint8_t kIei5gsNetworkFeatureSupport    = 0x21;
 
 constexpr uint8_t kIeiAllowedPduSessionStatus         = 0x25;
 constexpr uint8_t kIeiPduSessionReactivationResult    = 0x26;
+constexpr uint8_t kIeiServiceAreaList                 = 0x27;
 constexpr uint8_t kIeiUeStatus                        = 0x2b;
 constexpr uint8_t kIeiAuthenticationResponseParameter = 0x2D;
 
