@@ -96,7 +96,8 @@ class RegistrationAccept : public NasMmPlainHeader {
   void SetNetworkSlicingIndication(bool dcni, bool nssci);
   // TODO: Get
 
-  // TODO: Service Area List
+  void SetServiceAreaList(const std::vector<service_area_list_ie_t>& list);
+  // TODO: Get
 
   void SetT3512Value(uint8_t unit, uint8_t value);
   // TODO: Get
@@ -168,8 +169,8 @@ class RegistrationAccept : public NasMmPlainHeader {
   // Optional
   std::optional<MicoIndication> ie_mico_indication;  // Optional
   std::optional<NetworkSlicingIndication>
-      ie_network_slicing_indication;  // Optional
-  // TODO: Service Area List
+      ie_network_slicing_indication;                                 // Optional
+  std::optional<ServiceAreaList> ie_service_area_list;               // Optional
   std::optional<GprsTimer3> ie_t3512_value;                          // Optional
   std::optional<GprsTimer2> ie_non_3gpp_deregistration_timer_value;  // Optional
   std::optional<GprsTimer2> ie_t3502_value;                          // Optional

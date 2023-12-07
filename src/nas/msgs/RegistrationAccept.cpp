@@ -38,6 +38,7 @@ RegistrationAccept::RegistrationAccept()
   ie_ladn_information                            = std::nullopt;
   ie_mico_indication                             = std::nullopt;
   ie_network_slicing_indication                  = std::nullopt;
+  ie_service_area_list                           = std::nullopt;
   ie_t3512_value                                 = std::nullopt;
   ie_non_3gpp_deregistration_timer_value         = std::nullopt;
   ie_t3502_value                                 = std::nullopt;
@@ -188,6 +189,12 @@ void RegistrationAccept::SetLadnInformation(
 void RegistrationAccept::SetNetworkSlicingIndication(bool dcni, bool nssci) {
   ie_network_slicing_indication = std::make_optional<NetworkSlicingIndication>(
       kIeiNetworkSlicingIndication, dcni, nssci);
+}
+
+//------------------------------------------------------------------------------
+void RegistrationAccept::SetServiceAreaList(
+    const std::vector<service_area_list_ie_t>& list) {
+  ie_service_area_list = std::make_optional<ServiceAreaList>(list);
 }
 
 //------------------------------------------------------------------------------
@@ -500,6 +507,21 @@ int RegistrationAccept::Encode(uint8_t* buf, int len) {
     } else {
       Logger::nas_mm().error(
           "Encoding %s error", NetworkSlicingIndication::GetIeName().c_str());
+      return KEncodeDecodeError;
+    }
+  }
+
+  if (!ie_service_area_list.has_value()) {
+    Logger::nas_mm().debug(
+        "IE %s is not available", ServiceAreaList::GetIeName().c_str());
+  } else {
+    int size = ie_service_area_list.value().Encode(
+        buf + encoded_size, len - encoded_size);
+    if (size != KEncodeDecodeError) {
+      encoded_size += size;
+    } else {
+      Logger::nas_mm().error(
+          "Encoding %s error", ServiceAreaList::GetIeName().c_str());
       return KEncodeDecodeError;
     }
   }
@@ -1003,7 +1025,22 @@ int RegistrationAccept::Decode(uint8_t* buf, int len) {
         DECODE_U8_VALUE(buf + decoded_size, octet);
         Logger::nas_mm().debug("Next IEI 0x%x", octet);
       } break;
-
+      case kIeiServiceAreaList: {
+        Logger::nas_mm().debug("Decoding IEI 0x%x", kIeiServiceAreaList);
+        ServiceAreaList ie_service_area_list_tmp = {};
+        if ((decoded_result = ie_service_area_list_tmp.Decode(
+                 buf + decoded_size, len - decoded_size, true)) ==
+            KEncodeDecodeError) {
+          Logger::nas_mm().error(
+              "Decoding %s error", ServiceAreaList::GetIeName().c_str());
+          return KEncodeDecodeError;
+        }
+        decoded_size += decoded_result;
+        ie_service_area_list =
+            std::optional<ServiceAreaList>(ie_service_area_list_tmp);
+        DECODE_U8_VALUE(buf + decoded_size, octet);
+        Logger::nas_mm().debug("Next IEI 0x%x", octet);
+      } break;
       case kIeiGprsTimer3T3512: {
         Logger::nas_mm().debug("Decoding IEI 0x%x", kIeiGprsTimer3T3512);
         GprsTimer3 ie_t3512_value_tmp(kIeiGprsTimer3T3512);
