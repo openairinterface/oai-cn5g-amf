@@ -27,6 +27,7 @@
 #include "AuthenticationParameterAutn.hpp"
 #include "AuthenticationParameterRand.hpp"
 #include "AuthenticationResponseParameter.hpp"
+#include "ConfigurationUpdateIndication.hpp"
 #include "ControlPlaneServiceType.hpp"
 #include "Dnn.hpp"
 #include "EapMessage.hpp"
@@ -85,4 +86,3 @@
 #include "_5gsTrackingAreaIdList.hpp"
 #include "_5gsTrackingAreaIdentity.hpp"
 #include "_5gsUpdateType.hpp"
-#include "ConfigurationUpdateIndication.hpp"

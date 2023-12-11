@@ -20,7 +20,8 @@
  */
 
 #include "SecurityModeComplete.hpp"
-#include "nas_helper.hpp"
+
+#include "NasHelper.hpp"
 
 using namespace nas;
 
@@ -106,20 +107,20 @@ int SecurityModeComplete::Encode(uint8_t* buf, int len) {
   encoded_size += encoded_ie_size;
 
   // IMEISV
-  if ((encoded_ie_size = nas_helper::encode(
+  if ((encoded_ie_size = NasHelper::encode(
            ie_imeisv, buf, len, encoded_size)) == KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
 
   // NAS Message Container
-  if ((encoded_ie_size = nas_helper::encode(
+  if ((encoded_ie_size = NasHelper::encode(
            ie_nas_message_container, buf, len, encoded_size)) ==
       KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
 
   // non-IMEISV PEI
-  if ((encoded_ie_size = nas_helper::encode(
+  if ((encoded_ie_size = NasHelper::encode(
            ie_non_imeisvpei, buf, len, encoded_size)) == KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
@@ -153,14 +154,14 @@ int SecurityModeComplete::Decode(uint8_t* buf, int len) {
     switch (octet) {
       case kIei5gsMobileIdentityImeiSv: {
         if ((decoded_ie_size =
-                 nas_helper::decode(ie_imeisv, buf, len, decoded_size, true)) ==
+                 NasHelper::decode(ie_imeisv, buf, len, decoded_size, true)) ==
             KEncodeDecodeError) {
           return KEncodeDecodeError;
         }
       } break;
 
       case kIeiNasMessageContainer: {
-        if ((decoded_ie_size = nas_helper::decode(
+        if ((decoded_ie_size = NasHelper::decode(
                  ie_nas_message_container, buf, len, decoded_size, true)) ==
             KEncodeDecodeError) {
           return KEncodeDecodeError;
@@ -168,7 +169,7 @@ int SecurityModeComplete::Decode(uint8_t* buf, int len) {
       } break;
 
       case kIei5gsMobileIdentityNonImeiSvPei: {
-        if ((decoded_ie_size = nas_helper::decode(
+        if ((decoded_ie_size = NasHelper::decode(
                  ie_non_imeisvpei, buf, len, decoded_size, true)) ==
             KEncodeDecodeError) {
           return KEncodeDecodeError;

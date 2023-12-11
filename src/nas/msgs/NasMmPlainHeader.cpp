@@ -19,11 +19,12 @@
  *      contact@openairinterface.org
  */
 
+#include "NasMmPlainHeader.hpp"
+
 #include "3gpp_24.501.hpp"
+#include "NasHelper.hpp"
 #include "common_defs.h"
 #include "logger.hpp"
-#include "nas_helper.hpp"
-#include "NasMmPlainHeader.hpp"
 
 using namespace nas;
 
@@ -102,17 +103,17 @@ int NasMmPlainHeader::Encode(uint8_t* buf, int len) {
   int encoded_size    = 0;
   int encoded_ie_size = 0;
 
-  if ((encoded_ie_size = nas_helper::encode(epd_, buf, len, encoded_size)) ==
+  if ((encoded_ie_size = NasHelper::encode(epd_, buf, len, encoded_size)) ==
       KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
 
-  if ((encoded_ie_size = nas_helper::encode(
+  if ((encoded_ie_size = NasHelper::encode(
            secu_header_type_, buf, len, encoded_size)) == KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
 
-  if ((encoded_ie_size = nas_helper::encode(
+  if ((encoded_ie_size = NasHelper::encode(
            msg_type_, buf, len, encoded_size)) == KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
@@ -135,18 +136,18 @@ int NasMmPlainHeader::Decode(uint8_t* buf, int len) {
     return KEncodeDecodeError;
   }
 
-  if ((decoded_ie_size = nas_helper::decode(
+  if ((decoded_ie_size = NasHelper::decode(
            epd_, buf, len, decoded_size, true)) == KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
 
-  if ((decoded_ie_size = nas_helper::decode(
+  if ((decoded_ie_size = NasHelper::decode(
            secu_header_type_, buf, len, decoded_size, true)) ==
       KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
 
-  if ((decoded_ie_size = nas_helper::decode(
+  if ((decoded_ie_size = NasHelper::decode(
            msg_type_, buf, len, decoded_size, true)) == KEncodeDecodeError) {
     return KEncodeDecodeError;
   }

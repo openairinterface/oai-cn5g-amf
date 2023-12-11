@@ -20,7 +20,8 @@
  */
 
 #include "ServiceRequest.hpp"
-#include "nas_helper.hpp"
+
+#include "NasHelper.hpp"
 
 using namespace nas;
 
@@ -170,12 +171,12 @@ int ServiceRequest::Encode(uint8_t* buf, int len) {
   encoded_size += encoded_ie_size;
 
   // ngKSI and Service Type
-  encoded_ie_size = nas_helper::encode(ie_ng_ksi, buf, len, encoded_size);
+  encoded_ie_size = NasHelper::encode(ie_ng_ksi, buf, len, encoded_size);
   if ((encoded_ie_size == KEncodeDecodeError) or
       (encoded_ie_size != 0)) {  // 1/2 octet
     return KEncodeDecodeError;
   }
-  if ((encoded_ie_size = nas_helper::encode(
+  if ((encoded_ie_size = NasHelper::encode(
            ie_service_type, buf, len, encoded_size)) == KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
@@ -183,34 +184,34 @@ int ServiceRequest::Encode(uint8_t* buf, int len) {
     encoded_size++;  // 1/2 octet for ngKSI, 1/2 for Service Type
 
   // 5G-S-TMSI
-  if ((encoded_ie_size = nas_helper::encode(
+  if ((encoded_ie_size = NasHelper::encode(
            ie_5g_s_tmsi, buf, len, encoded_size)) == KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
 
   // Uplink data status
   if ((encoded_ie_size =
-           nas_helper::encode(ie_uplink_data_status, buf, len, encoded_size)) ==
+           NasHelper::encode(ie_uplink_data_status, buf, len, encoded_size)) ==
       KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
 
   // PDU session status
   if ((encoded_ie_size =
-           nas_helper::encode(ie_pdu_session_status, buf, len, encoded_size)) ==
+           NasHelper::encode(ie_pdu_session_status, buf, len, encoded_size)) ==
       KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
 
   // Allowed PDU session status
-  if ((encoded_ie_size = nas_helper::encode(
+  if ((encoded_ie_size = NasHelper::encode(
            ie_allowed_pdu_session_status, buf, len, encoded_size)) ==
       KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
 
   // NAS message container
-  if ((encoded_ie_size = nas_helper::encode(
+  if ((encoded_ie_size = NasHelper::encode(
            ie_nas_message_container, buf, len, encoded_size)) ==
       KEncodeDecodeError) {
     return KEncodeDecodeError;
@@ -237,11 +238,11 @@ int ServiceRequest::Decode(uint8_t* buf, int len) {
 
   // ngKSI + Service type
   decoded_ie_size =
-      nas_helper::decode(ie_ng_ksi, buf, len, decoded_size, false, false);
+      NasHelper::decode(ie_ng_ksi, buf, len, decoded_size, false, false);
   if ((decoded_ie_size == KEncodeDecodeError) or (decoded_ie_size != 0)) {
     return KEncodeDecodeError;
   }
-  if ((decoded_ie_size = nas_helper::decode(
+  if ((decoded_ie_size = NasHelper::decode(
            ie_service_type, buf, len, decoded_size, true, false)) ==
       KEncodeDecodeError) {
     return KEncodeDecodeError;
@@ -251,7 +252,7 @@ int ServiceRequest::Decode(uint8_t* buf, int len) {
 
   // 5G-S-TMSI
   if ((decoded_ie_size =
-           nas_helper::decode(ie_5g_s_tmsi, buf, len, decoded_size, false)) ==
+           NasHelper::decode(ie_5g_s_tmsi, buf, len, decoded_size, false)) ==
       KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
@@ -265,7 +266,7 @@ int ServiceRequest::Decode(uint8_t* buf, int len) {
     switch (octet) {
       case kIeiUplinkDataStatus: {
         Logger::nas_mm().debug("Decoding IEI 0x%x", kIeiUplinkDataStatus);
-        if ((decoded_ie_size = nas_helper::decode(
+        if ((decoded_ie_size = NasHelper::decode(
                  ie_uplink_data_status, buf, len, decoded_size, true)) ==
             KEncodeDecodeError) {
           return KEncodeDecodeError;
@@ -276,7 +277,7 @@ int ServiceRequest::Decode(uint8_t* buf, int len) {
 
       case kIeiPduSessionStatus: {
         Logger::nas_mm().debug("Decoding IEI 0x%x", kIeiPduSessionStatus);
-        if ((decoded_ie_size = nas_helper::decode(
+        if ((decoded_ie_size = NasHelper::decode(
                  ie_pdu_session_status, buf, len, decoded_size, true)) ==
             KEncodeDecodeError) {
           return KEncodeDecodeError;
@@ -288,7 +289,7 @@ int ServiceRequest::Decode(uint8_t* buf, int len) {
       case kIeiAllowedPduSessionStatus: {
         Logger::nas_mm().debug(
             "Decoding IEI 0x%x", kIeiAllowedPduSessionStatus);
-        if ((decoded_ie_size = nas_helper::decode(
+        if ((decoded_ie_size = NasHelper::decode(
                  ie_allowed_pdu_session_status, buf, len, decoded_size,
                  true)) == KEncodeDecodeError) {
           return KEncodeDecodeError;
@@ -299,7 +300,7 @@ int ServiceRequest::Decode(uint8_t* buf, int len) {
 
       case kIeiNasMessageContainer: {
         Logger::nas_mm().debug("Decoding IEI 0x%x", kIeiNasMessageContainer);
-        if ((decoded_ie_size = nas_helper::decode(
+        if ((decoded_ie_size = NasHelper::decode(
                  ie_nas_message_container, buf, len, decoded_size, true)) ==
             KEncodeDecodeError) {
           return KEncodeDecodeError;

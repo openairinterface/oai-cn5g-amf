@@ -21,8 +21,8 @@
 
 #include "DeregistrationRequestUeTerminated.hpp"
 
+#include "NasHelper.hpp"
 #include "conversions.hpp"
-#include "nas_helper.hpp"
 
 using namespace nas;
 
@@ -106,7 +106,7 @@ int DeregistrationRequestUeTerminated::Encode(uint8_t* buf, int len) {
 
   // De-registration Type and Spare half octet
   encoded_ie_size =
-      nas_helper::encode(ie_deregistration_type, buf, len, encoded_size);
+      NasHelper::encode(ie_deregistration_type, buf, len, encoded_size);
   // only 1/2 octet
   if ((encoded_ie_size == KEncodeDecodeError) or (encoded_ie_size != 0)) {
     return KEncodeDecodeError;
@@ -116,19 +116,19 @@ int DeregistrationRequestUeTerminated::Encode(uint8_t* buf, int len) {
                      // octet
 
   // 5GMM Cause
-  if ((encoded_ie_size = nas_helper::encode(
+  if ((encoded_ie_size = NasHelper::encode(
            ie_5gmm_cause, buf, len, encoded_size)) == KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
 
   // T3346 value
-  if ((encoded_ie_size = nas_helper::encode(
+  if ((encoded_ie_size = NasHelper::encode(
            ie_t3346_value, buf, len, encoded_size)) == KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
 
   // Rejected NSSAI
-  if ((encoded_ie_size = nas_helper::encode(
+  if ((encoded_ie_size = NasHelper::encode(
            ie_rejected_nssai, buf, len, encoded_size)) == KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
@@ -156,7 +156,7 @@ int DeregistrationRequestUeTerminated::Decode(uint8_t* buf, int len) {
   decoded_size += decoded_ie_size;
 
   // De-registration Type +  Spare half octet
-  if ((decoded_ie_size = nas_helper::decode(
+  if ((decoded_ie_size = NasHelper::decode(
            ie_deregistration_type, buf, len, decoded_size, false)) ==
       KEncodeDecodeError) {
     return KEncodeDecodeError;
@@ -173,7 +173,7 @@ int DeregistrationRequestUeTerminated::Decode(uint8_t* buf, int len) {
     switch (octet) {
       case kIei5gmmCause: {
         Logger::nas_mm().debug("Decoding IEI 0x%x", kIei5gmmCause);
-        if ((decoded_ie_size = nas_helper::decode(
+        if ((decoded_ie_size = NasHelper::decode(
                  ie_5gmm_cause, buf, len, decoded_size, true)) ==
             KEncodeDecodeError) {
           return KEncodeDecodeError;
@@ -184,7 +184,7 @@ int DeregistrationRequestUeTerminated::Decode(uint8_t* buf, int len) {
 
       case kIeiGprsTimer2T3346: {
         Logger::nas_mm().debug("Decoding IEI 0x%x", kIeiGprsTimer2T3346);
-        if ((decoded_ie_size = nas_helper::decode(
+        if ((decoded_ie_size = NasHelper::decode(
                  ie_t3346_value, kIeiGprsTimer2T3346, buf, len, decoded_size,
                  true)) == KEncodeDecodeError) {
           return KEncodeDecodeError;
@@ -195,7 +195,7 @@ int DeregistrationRequestUeTerminated::Decode(uint8_t* buf, int len) {
 
       case kIeiRejectedNssaiDr: {
         Logger::nas_mm().debug("Decoding IEI 0x%x", kIeiRejectedNssaiDr);
-        if ((decoded_ie_size = nas_helper::decode(
+        if ((decoded_ie_size = NasHelper::decode(
                  ie_rejected_nssai, kIeiRejectedNssaiDr, buf, len, decoded_size,
                  true)) == KEncodeDecodeError) {
           return KEncodeDecodeError;

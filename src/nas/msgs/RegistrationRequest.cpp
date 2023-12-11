@@ -21,8 +21,8 @@
 
 #include "RegistrationRequest.hpp"
 
+#include "NasHelper.hpp"
 #include "conversions.hpp"
-#include "nas_helper.hpp"
 #include "utils.hpp"
 
 using namespace nas;
@@ -557,14 +557,14 @@ int RegistrationRequest::Encode(uint8_t* buf, int len) {
   encoded_size += encoded_ie_size;
 
   // 5GS Registration Type
-  if ((encoded_ie_size = nas_helper::encode(
+  if ((encoded_ie_size = NasHelper::encode(
            ie_5gs_registration_type, buf, len, encoded_size)) ==
       KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
 
   //  ngKSI
-  if ((encoded_ie_size = nas_helper::encode(
+  if ((encoded_ie_size = NasHelper::encode(
            ie_ng_ksi, buf, len, encoded_size)) == KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
@@ -573,14 +573,14 @@ int RegistrationRequest::Encode(uint8_t* buf, int len) {
     encoded_size++;  // 1/2 for 5GS registration type and 1/2 for ngKSI
 
   // 5GS Mobile Identity
-  if ((encoded_ie_size = nas_helper::encode(
-           ie_5gs_mobile_identity, buf, len, encoded_size)) ==
+  if ((encoded_ie_size =
+           NasHelper::encode(ie_5gs_mobile_identity, buf, len, encoded_size)) ==
       KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
 
   // Non-current native NAS key set identifier
-  if ((encoded_ie_size = nas_helper::encode(
+  if ((encoded_ie_size = NasHelper::encode(
            ie_non_current_native_nas_ksi, buf, len, encoded_size)) ==
       KEncodeDecodeError) {
     return KEncodeDecodeError;
@@ -588,33 +588,33 @@ int RegistrationRequest::Encode(uint8_t* buf, int len) {
 
   // 5GMM capability
   if ((encoded_ie_size =
-           nas_helper::encode(ie_5g_mm_capability, buf, len, encoded_size)) ==
+           NasHelper::encode(ie_5g_mm_capability, buf, len, encoded_size)) ==
       KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
 
   // UE security capability
-  if ((encoded_ie_size = nas_helper::encode(
+  if ((encoded_ie_size = NasHelper::encode(
            ie_ue_security_capability, buf, len, encoded_size)) ==
       KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
 
   // Requested NSSAI
-  if ((encoded_ie_size = nas_helper::encode(
+  if ((encoded_ie_size = NasHelper::encode(
            ie_requested_nssai, buf, len, encoded_size)) == KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
 
   // Last visited registered TAI
-  if ((encoded_ie_size = nas_helper::encode(
+  if ((encoded_ie_size = NasHelper::encode(
            ie_last_visited_registered_tai, buf, len, encoded_size)) ==
       KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
 
   // S1 UE network capability
-  if ((encoded_ie_size = nas_helper::encode(
+  if ((encoded_ie_size = NasHelper::encode(
            ie_s1_ue_network_capability, buf, len, encoded_size)) ==
       KEncodeDecodeError) {
     return KEncodeDecodeError;
@@ -622,38 +622,38 @@ int RegistrationRequest::Encode(uint8_t* buf, int len) {
 
   // Uplink Data Status
   if ((encoded_ie_size =
-           nas_helper::encode(ie_uplink_data_status, buf, len, encoded_size)) ==
+           NasHelper::encode(ie_uplink_data_status, buf, len, encoded_size)) ==
       KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
 
   // PDU Session Status
   if ((encoded_ie_size =
-           nas_helper::encode(ie_pdu_session_status, buf, len, encoded_size)) ==
+           NasHelper::encode(ie_pdu_session_status, buf, len, encoded_size)) ==
       KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
 
   // Mico Indication
-  if ((encoded_ie_size = nas_helper::encode(
+  if ((encoded_ie_size = NasHelper::encode(
            ie_mico_indication, buf, len, encoded_size)) == KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
 
   // UE status
-  if ((encoded_ie_size = nas_helper::encode(
+  if ((encoded_ie_size = NasHelper::encode(
            ie_ue_status, buf, len, encoded_size)) == KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
 
   // Additional GUTI
-  if ((encoded_ie_size = nas_helper::encode(
+  if ((encoded_ie_size = NasHelper::encode(
            ie_additional_guti, buf, len, encoded_size)) == KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
 
   // Allowed PDU Session Status
-  if ((encoded_ie_size = nas_helper::encode(
+  if ((encoded_ie_size = NasHelper::encode(
            ie_allowed_pdu_session_status, buf, len, encoded_size)) ==
       KEncodeDecodeError) {
     return KEncodeDecodeError;
@@ -661,33 +661,33 @@ int RegistrationRequest::Encode(uint8_t* buf, int len) {
 
   // UEs Usage Setting
   if ((encoded_ie_size =
-           nas_helper::encode(ie_ues_usage_setting, buf, len, encoded_size)) ==
+           NasHelper::encode(ie_ues_usage_setting, buf, len, encoded_size)) ==
       KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
 
   // 5GS DRX Parameters
   if ((encoded_ie_size =
-           nas_helper::encode(ie_5gs_drx_parameters, buf, len, encoded_size)) ==
+           NasHelper::encode(ie_5gs_drx_parameters, buf, len, encoded_size)) ==
       KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
 
   // EPS NAS Message Container
-  if ((encoded_ie_size = nas_helper::encode(
+  if ((encoded_ie_size = NasHelper::encode(
            ie_eps_nas_message_container, buf, len, encoded_size)) ==
       KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
 
   // LADN Indication
-  if ((encoded_ie_size = nas_helper::encode(
+  if ((encoded_ie_size = NasHelper::encode(
            ie_ladn_indication, buf, len, encoded_size)) == KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
 
   // Payload Container Type
-  if ((encoded_ie_size = nas_helper::encode(
+  if ((encoded_ie_size = NasHelper::encode(
            ie_payload_container_type, buf, len, encoded_size)) ==
       KEncodeDecodeError) {
     return KEncodeDecodeError;
@@ -711,27 +711,27 @@ int RegistrationRequest::Encode(uint8_t* buf, int len) {
   }
 
   // Network Slicing Indication
-  if ((encoded_ie_size = nas_helper::encode(
+  if ((encoded_ie_size = NasHelper::encode(
            ie_network_slicing_indication, buf, len, encoded_size)) ==
       KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
 
   // 5GS Update Type
-  if ((encoded_ie_size = nas_helper::encode(
+  if ((encoded_ie_size = NasHelper::encode(
            ie_5gs_update_type, buf, len, encoded_size)) == KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
 
   // NAS Message Container
-  if ((encoded_ie_size = nas_helper::encode(
+  if ((encoded_ie_size = NasHelper::encode(
            ie_nas_message_container, buf, len, encoded_size)) ==
       KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
 
   // EPS Bearer Context Status
-  if ((encoded_ie_size = nas_helper::encode(
+  if ((encoded_ie_size = NasHelper::encode(
            ie_eps_bearer_context_status, buf, len, encoded_size)) ==
       KEncodeDecodeError) {
     return KEncodeDecodeError;
@@ -757,12 +757,12 @@ int RegistrationRequest::Decode(uint8_t* buf, int len) {
   decoded_size += decoded_ie_size;
 
   // Registration Type and Ng KSI
-  if ((decoded_ie_size = nas_helper::decode(
+  if ((decoded_ie_size = NasHelper::decode(
            ie_5gs_registration_type, buf, len, decoded_size, false)) ==
       KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
-  if ((decoded_ie_size = nas_helper::decode(
+  if ((decoded_ie_size = NasHelper::decode(
            ie_ng_ksi, buf, len, decoded_size, true,
            false)) ==  // high, 1/2 octet
       KEncodeDecodeError) {
@@ -772,7 +772,7 @@ int RegistrationRequest::Decode(uint8_t* buf, int len) {
     decoded_size++;  // 1/2 octet for ie_5gs_registration_type, 1/2 octet for
                      // ie_ng_ksi
 
-  if ((decoded_ie_size = nas_helper::decode(
+  if ((decoded_ie_size = NasHelper::decode(
            ie_5gs_mobile_identity, buf, len, decoded_size, false)) ==
       KEncodeDecodeError) {
     return KEncodeDecodeError;
@@ -788,7 +788,7 @@ int RegistrationRequest::Decode(uint8_t* buf, int len) {
     switch ((octet & 0xf0) >> 4) {
       case kIeiNasKeySetIdentifier: {
         Logger::nas_mm().debug("Decoding IEI 0x%x", kIeiNasKeySetIdentifier);
-        if ((decoded_ie_size = nas_helper::decode(
+        if ((decoded_ie_size = NasHelper::decode(
                  ie_non_current_native_nas_ksi, buf, len, decoded_size, false,
                  true)) == KEncodeDecodeError) {
           return KEncodeDecodeError;
@@ -799,7 +799,7 @@ int RegistrationRequest::Decode(uint8_t* buf, int len) {
 
       case kIeiMicoIndication: {
         Logger::nas_mm().debug("Decoding IEI 0x%x", kIeiMicoIndication);
-        if ((decoded_ie_size = nas_helper::decode(
+        if ((decoded_ie_size = NasHelper::decode(
                  ie_mico_indication, buf, len, decoded_size, true)) ==
             KEncodeDecodeError) {
           return KEncodeDecodeError;
@@ -810,7 +810,7 @@ int RegistrationRequest::Decode(uint8_t* buf, int len) {
 
       case kIeiPayloadContainerType: {
         Logger::nas_mm().debug("Decoding IEI 0x%x", kIeiPayloadContainerType);
-        if ((decoded_ie_size = nas_helper::decode(
+        if ((decoded_ie_size = NasHelper::decode(
                  ie_payload_container_type, buf, len, decoded_size, true)) ==
             KEncodeDecodeError) {
           return KEncodeDecodeError;
@@ -822,7 +822,7 @@ int RegistrationRequest::Decode(uint8_t* buf, int len) {
       case kIeiNetworkSlicingIndication: {
         Logger::nas_mm().debug(
             "Decoding IEI 0x%x", kIeiNetworkSlicingIndication);
-        if ((decoded_ie_size = nas_helper::decode(
+        if ((decoded_ie_size = NasHelper::decode(
                  ie_network_slicing_indication, buf, len, decoded_size,
                  true)) == KEncodeDecodeError) {
           return KEncodeDecodeError;
@@ -839,7 +839,7 @@ int RegistrationRequest::Decode(uint8_t* buf, int len) {
     switch (octet) {
       case kIei5gmmCapability: {
         Logger::nas_mm().debug("Decoding IEI 0x%x", kIei5gmmCapability);
-        if ((decoded_ie_size = nas_helper::decode(
+        if ((decoded_ie_size = NasHelper::decode(
                  ie_5g_mm_capability, buf, len, decoded_size, true)) ==
             KEncodeDecodeError) {
           return KEncodeDecodeError;
@@ -850,7 +850,7 @@ int RegistrationRequest::Decode(uint8_t* buf, int len) {
 
       case kIeiUeSecurityCapability: {
         Logger::nas_mm().debug("Decoding IEI 0x%x", kIeiUeSecurityCapability);
-        if ((decoded_ie_size = nas_helper::decode(
+        if ((decoded_ie_size = NasHelper::decode(
                  ie_ue_security_capability, buf, len, decoded_size, true)) ==
             KEncodeDecodeError) {
           return KEncodeDecodeError;
@@ -861,7 +861,7 @@ int RegistrationRequest::Decode(uint8_t* buf, int len) {
 
       case kIeiNSSAIRequested: {
         Logger::nas_mm().debug("Decoding IEI %d", kIeiNSSAIRequested);
-        if ((decoded_ie_size = nas_helper::decode(
+        if ((decoded_ie_size = NasHelper::decode(
                  ie_requested_nssai, buf, len, decoded_size, true)) ==
             KEncodeDecodeError) {
           return KEncodeDecodeError;
@@ -873,7 +873,7 @@ int RegistrationRequest::Decode(uint8_t* buf, int len) {
       case kIei5gsTrackingAreaIdentity: {
         Logger::nas_mm().debug(
             "Decoding IEI 0x%x", kIei5gsTrackingAreaIdentity);
-        if ((decoded_ie_size = nas_helper::decode(
+        if ((decoded_ie_size = NasHelper::decode(
                  ie_last_visited_registered_tai, buf, len, decoded_size,
                  true)) == KEncodeDecodeError) {
           return KEncodeDecodeError;
@@ -884,7 +884,7 @@ int RegistrationRequest::Decode(uint8_t* buf, int len) {
 
       case kIeiUeNetworkCapability: {
         Logger::nas_mm().debug("Decoding IEI 0x%x", kIeiUeNetworkCapability);
-        if ((decoded_ie_size = nas_helper::decode(
+        if ((decoded_ie_size = NasHelper::decode(
                  ie_s1_ue_network_capability, buf, len, decoded_size, true)) ==
             KEncodeDecodeError) {
           return KEncodeDecodeError;
@@ -895,7 +895,7 @@ int RegistrationRequest::Decode(uint8_t* buf, int len) {
 
       case kIeiUplinkDataStatus: {
         Logger::nas_mm().debug("Decoding IEI 0x%x", kIeiUplinkDataStatus);
-        if ((decoded_ie_size = nas_helper::decode(
+        if ((decoded_ie_size = NasHelper::decode(
                  ie_uplink_data_status, buf, len, decoded_size, true)) ==
             KEncodeDecodeError) {
           return KEncodeDecodeError;
@@ -906,7 +906,7 @@ int RegistrationRequest::Decode(uint8_t* buf, int len) {
 
       case kIeiPduSessionStatus: {
         Logger::nas_mm().debug("Decoding IEI 0x%x", kIeiPduSessionStatus);
-        if ((decoded_ie_size = nas_helper::decode(
+        if ((decoded_ie_size = NasHelper::decode(
                  ie_pdu_session_status, buf, len, decoded_size, true)) ==
             KEncodeDecodeError) {
           return KEncodeDecodeError;
@@ -917,7 +917,7 @@ int RegistrationRequest::Decode(uint8_t* buf, int len) {
 
       case kIeiUeStatus: {
         Logger::nas_mm().debug("Decoding IEI 0x%x", kIeiUeStatus);
-        if ((decoded_ie_size = nas_helper::decode(
+        if ((decoded_ie_size = NasHelper::decode(
                  ie_ue_status, buf, len, decoded_size, true)) ==
             KEncodeDecodeError) {
           return KEncodeDecodeError;
@@ -928,7 +928,7 @@ int RegistrationRequest::Decode(uint8_t* buf, int len) {
 
       case kIei5gGuti: {
         Logger::nas_mm().debug("Decoding IEI 0x%x", kIei5gGuti);
-        if ((decoded_ie_size = nas_helper::decode(
+        if ((decoded_ie_size = NasHelper::decode(
                  ie_additional_guti, buf, len, decoded_size, true)) ==
             KEncodeDecodeError) {
           return KEncodeDecodeError;
@@ -940,7 +940,7 @@ int RegistrationRequest::Decode(uint8_t* buf, int len) {
       case kIeiAllowedPduSessionStatus: {
         Logger::nas_mm().debug(
             "Decoding IEI 0x%x", kIeiAllowedPduSessionStatus);
-        if ((decoded_ie_size = nas_helper::decode(
+        if ((decoded_ie_size = NasHelper::decode(
                  ie_allowed_pdu_session_status, buf, len, decoded_size,
                  true)) == KEncodeDecodeError) {
           return KEncodeDecodeError;
@@ -951,7 +951,7 @@ int RegistrationRequest::Decode(uint8_t* buf, int len) {
 
       case kIeiUeUsageSetting: {
         Logger::nas_mm().debug("Decoding IEI 0x%x", kIeiUeUsageSetting);
-        if ((decoded_ie_size = nas_helper::decode(
+        if ((decoded_ie_size = NasHelper::decode(
                  ie_ues_usage_setting, buf, len, decoded_size, true)) ==
             KEncodeDecodeError) {
           return KEncodeDecodeError;
@@ -962,7 +962,7 @@ int RegistrationRequest::Decode(uint8_t* buf, int len) {
 
       case kIei5gsDrxParameters: {
         Logger::nas_mm().debug("Decoding IEI 0x%x", kIei5gsDrxParameters);
-        if ((decoded_ie_size = nas_helper::decode(
+        if ((decoded_ie_size = NasHelper::decode(
                  ie_5gs_drx_parameters, buf, len, decoded_size, true)) ==
             KEncodeDecodeError) {
           return KEncodeDecodeError;
@@ -973,7 +973,7 @@ int RegistrationRequest::Decode(uint8_t* buf, int len) {
 
       case kIeiEpsNasMessageContainer: {
         Logger::nas_mm().debug("Decoding IEI 0x%x", kIeiEpsNasMessageContainer);
-        if ((decoded_ie_size = nas_helper::decode(
+        if ((decoded_ie_size = NasHelper::decode(
                  ie_eps_nas_message_container, buf, len, decoded_size, true)) ==
             KEncodeDecodeError) {
           return KEncodeDecodeError;
@@ -984,7 +984,7 @@ int RegistrationRequest::Decode(uint8_t* buf, int len) {
 
       case kIeiLadnIndication: {
         Logger::nas_mm().debug("Decoding IEI 0x%x", kIeiLadnIndication);
-        if ((decoded_ie_size = nas_helper::decode(
+        if ((decoded_ie_size = NasHelper::decode(
                  ie_ladn_indication, buf, len, decoded_size, true)) ==
             KEncodeDecodeError) {
           return KEncodeDecodeError;
@@ -1011,7 +1011,7 @@ int RegistrationRequest::Decode(uint8_t* buf, int len) {
 
       case 0x53: {
         Logger::nas_mm().debug("Decoding IEI 0x%x", kIei5gsUpdateType);
-        if ((decoded_ie_size = nas_helper::decode(
+        if ((decoded_ie_size = NasHelper::decode(
                  ie_5gs_update_type, buf, len, decoded_size, true)) ==
             KEncodeDecodeError) {
           return KEncodeDecodeError;
@@ -1022,7 +1022,7 @@ int RegistrationRequest::Decode(uint8_t* buf, int len) {
 
       case kIeiNasMessageContainer: {
         Logger::nas_mm().debug("Decoding IEI 0x%x", kIeiNasMessageContainer);
-        if ((decoded_ie_size = nas_helper::decode(
+        if ((decoded_ie_size = NasHelper::decode(
                  ie_nas_message_container, buf, len, decoded_size, true)) ==
             KEncodeDecodeError) {
           return KEncodeDecodeError;
@@ -1033,7 +1033,7 @@ int RegistrationRequest::Decode(uint8_t* buf, int len) {
 
       case kIeiEpsBearerContextStatus: {
         Logger::nas_mm().debug("Decoding IEI 0x%x", kIeiEpsBearerContextStatus);
-        if ((decoded_ie_size = nas_helper::decode(
+        if ((decoded_ie_size = NasHelper::decode(
                  ie_eps_bearer_context_status, buf, len, decoded_size, true)) ==
             KEncodeDecodeError) {
           return KEncodeDecodeError;

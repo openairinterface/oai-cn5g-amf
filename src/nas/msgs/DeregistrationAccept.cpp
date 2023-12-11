@@ -20,7 +20,8 @@
  */
 
 #include "DeregistrationAccept.hpp"
-#include "nas_helper.hpp"
+
+#include "NasHelper.hpp"
 
 using namespace nas;
 

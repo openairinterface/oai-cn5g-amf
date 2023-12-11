@@ -20,7 +20,8 @@
  */
 
 #include "IdentityRequest.hpp"
-#include "nas_helper.hpp"
+
+#include "NasHelper.hpp"
 
 using namespace nas;
 
@@ -56,7 +57,7 @@ int IdentityRequest::Encode(uint8_t* buf, int len) {
   encoded_size += encoded_ie_size;
 
   if ((encoded_ie_size =
-           nas_helper::encode(ie_5gs_identity_type, buf, len, encoded_size)) ==
+           NasHelper::encode(ie_5gs_identity_type, buf, len, encoded_size)) ==
       KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
@@ -84,7 +85,7 @@ int IdentityRequest::Decode(uint8_t* buf, int len) {
   }
   decoded_size += decoded_ie_size;
 
-  if ((decoded_ie_size = nas_helper::decode(
+  if ((decoded_ie_size = NasHelper::decode(
            ie_5gs_identity_type, buf, len, decoded_size, false)) ==
       KEncodeDecodeError) {
     return KEncodeDecodeError;

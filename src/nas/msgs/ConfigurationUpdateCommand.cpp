@@ -20,7 +20,8 @@
  */
 
 #include "ConfigurationUpdateCommand.hpp"
-#include "nas_helper.hpp"
+
+#include "NasHelper.hpp"
 
 using namespace nas;
 
@@ -132,24 +133,24 @@ int ConfigurationUpdateCommand::Encode(uint8_t* buf, int len) {
   }
   encoded_size += encoded_ie_size;
 
-  if ((encoded_ie_size = nas_helper::encode(
+  if ((encoded_ie_size = NasHelper::encode(
            ie_configuration_update_indication, buf, len, encoded_size)) ==
       KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
 
-  if ((encoded_ie_size = nas_helper::encode(
+  if ((encoded_ie_size = NasHelper::encode(
            ie_5g_guti, buf, len, encoded_size)) == KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
 
-  if ((encoded_ie_size = nas_helper::encode(
+  if ((encoded_ie_size = NasHelper::encode(
            ie_full_name_for_network, buf, len, encoded_size)) ==
       KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
 
-  if ((encoded_ie_size = nas_helper::encode(
+  if ((encoded_ie_size = NasHelper::encode(
            ie_short_name_for_network, buf, len, encoded_size)) ==
       KEncodeDecodeError) {
     return KEncodeDecodeError;
@@ -185,7 +186,7 @@ int ConfigurationUpdateCommand::Decode(uint8_t* buf, int len) {
       case kIeiConfigurationUpdateIndication: {
         Logger::nas_mm().debug(
             "Decoding IEI 0x%x", kIeiConfigurationUpdateIndication);
-        if ((decoded_ie_size = nas_helper::decode(
+        if ((decoded_ie_size = NasHelper::decode(
                  ie_configuration_update_indication, buf, len, decoded_size,
                  true)) == KEncodeDecodeError) {
           return KEncodeDecodeError;
@@ -202,7 +203,7 @@ int ConfigurationUpdateCommand::Decode(uint8_t* buf, int len) {
     switch (octet) {
       case kIeiFullNameForNetwork: {
         Logger::nas_mm().debug("Decoding IEI 0x43: Full Name for Network");
-        if ((decoded_ie_size = nas_helper::decode(
+        if ((decoded_ie_size = NasHelper::decode(
                  ie_full_name_for_network, buf, len, decoded_size, true)) ==
             KEncodeDecodeError) {
           return KEncodeDecodeError;
@@ -213,7 +214,7 @@ int ConfigurationUpdateCommand::Decode(uint8_t* buf, int len) {
 
       case kIeiShortNameForNetwork: {
         Logger::nas_mm().debug("Decoding IEI 0x45: Short Name for Network");
-        if ((decoded_ie_size = nas_helper::decode(
+        if ((decoded_ie_size = NasHelper::decode(
                  ie_short_name_for_network, buf, len, decoded_size, true)) ==
             KEncodeDecodeError) {
           return KEncodeDecodeError;

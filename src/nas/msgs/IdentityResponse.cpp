@@ -20,7 +20,8 @@
  */
 
 #include "IdentityResponse.hpp"
-#include "nas_helper.hpp"
+
+#include "NasHelper.hpp"
 
 using namespace nas;
 
@@ -95,7 +96,7 @@ int IdentityResponse::Encode(uint8_t* buf, int len) {
   encoded_size += encoded_ie_size;
 
   // Mobile Identity
-  if ((encoded_ie_size = nas_helper::encode(
+  if ((encoded_ie_size = NasHelper::encode(
            ie_mobile_identity, buf, len, encoded_size)) == KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
@@ -121,7 +122,7 @@ int IdentityResponse::Decode(uint8_t* buf, int len) {
   decoded_size += decoded_ie_size;
 
   // Mobile Identity
-  if ((decoded_ie_size = nas_helper::decode(
+  if ((decoded_ie_size = NasHelper::decode(
            ie_mobile_identity, buf, len, decoded_size, false)) ==
       KEncodeDecodeError) {
     return KEncodeDecodeError;

@@ -25,7 +25,7 @@
 
 namespace nas {
 
-class nas_helper {
+class NasHelper {
  public:
   template<typename T>
   static int encode(

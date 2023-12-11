@@ -20,7 +20,8 @@
  */
 
 #include "RegistrationReject.hpp"
-#include "nas_helper.hpp"
+
+#include "NasHelper.hpp"
 
 using namespace nas;
 
@@ -83,31 +84,31 @@ int RegistrationReject::Encode(uint8_t* buf, int len) {
   encoded_size += encoded_ie_size;
 
   // 5GMM Cause
-  if ((encoded_ie_size = nas_helper::encode(
+  if ((encoded_ie_size = NasHelper::encode(
            ie_5gmm_cause, buf, len, encoded_size)) == KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
 
   // Timer 3346
-  if ((encoded_ie_size = nas_helper::encode(
+  if ((encoded_ie_size = NasHelper::encode(
            ie_t3346_value, buf, len, encoded_size)) == KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
 
   // Timer T3502
-  if ((encoded_ie_size = nas_helper::encode(
+  if ((encoded_ie_size = NasHelper::encode(
            ie_t3502_value, buf, len, encoded_size)) == KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
 
   // EAP Message
-  if ((encoded_ie_size = nas_helper::encode(
+  if ((encoded_ie_size = NasHelper::encode(
            ie_eap_message, buf, len, encoded_size)) == KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
 
   // Rejected NSSAI
-  if ((encoded_ie_size = nas_helper::encode(
+  if ((encoded_ie_size = NasHelper::encode(
            ie_rejected_nssai, buf, len, encoded_size)) == KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
@@ -133,7 +134,7 @@ int RegistrationReject::Decode(uint8_t* buf, int len) {
 
   // 5GMM Cause
   if ((decoded_ie_size =
-           nas_helper::decode(ie_5gmm_cause, buf, len, decoded_size, false)) ==
+           NasHelper::decode(ie_5gmm_cause, buf, len, decoded_size, false)) ==
       KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
@@ -147,7 +148,7 @@ int RegistrationReject::Decode(uint8_t* buf, int len) {
     switch (octet) {
       case kT3346Value: {
         Logger::nas_mm().debug("Decoding IEI 0x%x", kT3346Value);
-        if ((decoded_ie_size = nas_helper::decode(
+        if ((decoded_ie_size = NasHelper::decode(
                  ie_t3346_value, kT3346Value, buf, len, decoded_size, true)) ==
             KEncodeDecodeError) {
           return KEncodeDecodeError;
@@ -158,7 +159,7 @@ int RegistrationReject::Decode(uint8_t* buf, int len) {
 
       case kT3502Value: {
         Logger::nas_mm().debug("Decoding IEI 0x%x", kT3502Value);
-        if ((decoded_ie_size = nas_helper::decode(
+        if ((decoded_ie_size = NasHelper::decode(
                  ie_t3502_value, kT3502Value, buf, len, decoded_size, true)) ==
             KEncodeDecodeError) {
           return KEncodeDecodeError;
@@ -169,7 +170,7 @@ int RegistrationReject::Decode(uint8_t* buf, int len) {
 
       case kIeiEapMessage: {
         Logger::nas_mm().debug("Decoding IEI 0x%x", kIeiEapMessage);
-        if ((decoded_ie_size = nas_helper::decode(
+        if ((decoded_ie_size = NasHelper::decode(
                  ie_eap_message, buf, len, decoded_size, true)) ==
             KEncodeDecodeError) {
           return KEncodeDecodeError;
@@ -180,7 +181,7 @@ int RegistrationReject::Decode(uint8_t* buf, int len) {
 
       case kIeiRejectedNssaiRr: {
         Logger::nas_mm().debug("Decoding IEI 0x%x", kIeiRejectedNssaiRr);
-        if ((decoded_ie_size = nas_helper::decode(
+        if ((decoded_ie_size = NasHelper::decode(
                  ie_rejected_nssai, kIeiRejectedNssaiRr, buf, len, decoded_size,
                  true)) == KEncodeDecodeError) {
           return KEncodeDecodeError;

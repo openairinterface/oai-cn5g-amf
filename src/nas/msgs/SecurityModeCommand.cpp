@@ -21,7 +21,7 @@
 
 #include "SecurityModeCommand.hpp"
 
-#include "nas_helper.hpp"
+#include "NasHelper.hpp"
 
 using namespace nas;
 
@@ -133,14 +133,14 @@ int SecurityModeCommand::Encode(uint8_t* buf, int len) {
   encoded_size += encoded_ie_size;
 
   // NAS security algorithms
-  if ((encoded_ie_size = nas_helper::encode(
+  if ((encoded_ie_size = NasHelper::encode(
            ie_selected_nas_security_algorithms, buf, len, encoded_size)) ==
       KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
 
   // NgKSI
-  if ((encoded_ie_size = nas_helper::encode(
+  if ((encoded_ie_size = NasHelper::encode(
            ie_ng_ksi, buf, len, encoded_size)) == KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
@@ -148,46 +148,46 @@ int SecurityModeCommand::Encode(uint8_t* buf, int len) {
     encoded_size++;  // 1/2 octet for ngKSI, 1/2 for Spare half octet
 
   // UE security capability
-  if ((encoded_ie_size = nas_helper::encode(
+  if ((encoded_ie_size = NasHelper::encode(
            ie_ue_security_capability, buf, len, encoded_size)) ==
       KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
 
   // IMEISV Request
-  if ((encoded_ie_size = nas_helper::encode(
+  if ((encoded_ie_size = NasHelper::encode(
            ie_imeisv_request, buf, len, encoded_size)) == KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
 
   // EPS NAS Security Algorithms
-  if ((encoded_ie_size = nas_helper::encode(
+  if ((encoded_ie_size = NasHelper::encode(
            ie_eps_nas_security_algorithms, buf, len, encoded_size)) ==
       KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
 
   // Additional 5G security information
-  if ((encoded_ie_size = nas_helper::encode(
+  if ((encoded_ie_size = NasHelper::encode(
            ie_additional_5g_security_information, buf, len, encoded_size)) ==
       KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
 
   // EAP message
-  if ((encoded_ie_size = nas_helper::encode(
+  if ((encoded_ie_size = NasHelper::encode(
            ie_eap_message, buf, len, encoded_size)) == KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
 
   // ABBA
-  if ((encoded_ie_size = nas_helper::encode(ie_abba, buf, len, encoded_size)) ==
+  if ((encoded_ie_size = NasHelper::encode(ie_abba, buf, len, encoded_size)) ==
       KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
 
   // Replayed S1 UE Security Capability
-  if ((encoded_ie_size = nas_helper::encode(
+  if ((encoded_ie_size = NasHelper::encode(
            ie_s1_ue_security_capability, buf, len, encoded_size)) ==
       KEncodeDecodeError) {
     return KEncodeDecodeError;
@@ -213,14 +213,14 @@ int SecurityModeCommand::Decode(uint8_t* buf, int len) {
   decoded_size += decoded_ie_size;
 
   // NAS security algorithms
-  if ((decoded_ie_size = nas_helper::decode(
+  if ((decoded_ie_size = NasHelper::decode(
            ie_selected_nas_security_algorithms, buf, len, decoded_size,
            false)) == KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
 
   // NAS key set identifier
-  if ((decoded_ie_size = nas_helper::decode(
+  if ((decoded_ie_size = NasHelper::decode(
            ie_ng_ksi, buf, len, decoded_size, false, false)) ==
       KEncodeDecodeError) {
     return KEncodeDecodeError;
@@ -229,7 +229,7 @@ int SecurityModeCommand::Decode(uint8_t* buf, int len) {
     decoded_size++;  // 1/2 octet for ngKSI, 1/2 for Spare half octet
 
   // UE security capability
-  if ((decoded_ie_size = nas_helper::decode(
+  if ((decoded_ie_size = NasHelper::decode(
            ie_ue_security_capability, buf, len, decoded_size, false)) ==
       KEncodeDecodeError) {
     return KEncodeDecodeError;
@@ -247,7 +247,7 @@ int SecurityModeCommand::Decode(uint8_t* buf, int len) {
     switch ((octet & 0xf0) >> 4) {
       case kIeiImeisvRequest: {
         Logger::nas_mm().debug("Decoding IEI 0x%x", kIeiImeisvRequest);
-        if ((decoded_ie_size = nas_helper::decode(
+        if ((decoded_ie_size = NasHelper::decode(
                  ie_imeisv_request, buf, len, decoded_size, true)) ==
             KEncodeDecodeError) {
           return KEncodeDecodeError;
@@ -264,7 +264,7 @@ int SecurityModeCommand::Decode(uint8_t* buf, int len) {
       case kIeiEpsNasSecurityAlgorithms: {
         Logger::nas_mm().debug(
             "decoding IEI 0x%x", kIeiEpsNasSecurityAlgorithms);
-        if ((decoded_ie_size = nas_helper::decode(
+        if ((decoded_ie_size = NasHelper::decode(
                  ie_eps_nas_security_algorithms, buf, len, decoded_size,
                  true)) == KEncodeDecodeError) {
           return KEncodeDecodeError;
@@ -276,7 +276,7 @@ int SecurityModeCommand::Decode(uint8_t* buf, int len) {
       case kIeiAdditional5gSecurityInformation: {
         Logger::nas_mm().debug(
             "decoding IEI 0x%x", kIeiAdditional5gSecurityInformation);
-        if ((decoded_ie_size = nas_helper::decode(
+        if ((decoded_ie_size = NasHelper::decode(
                  ie_additional_5g_security_information, buf, len, decoded_size,
                  true)) == KEncodeDecodeError) {
           return KEncodeDecodeError;
@@ -287,7 +287,7 @@ int SecurityModeCommand::Decode(uint8_t* buf, int len) {
 
       case kIeiEapMessage: {
         Logger::nas_mm().debug("Decoding IEI 0x%x", kIeiEapMessage);
-        if ((decoded_ie_size = nas_helper::decode(
+        if ((decoded_ie_size = NasHelper::decode(
                  ie_eap_message, buf, len, decoded_size, true)) ==
             KEncodeDecodeError) {
           return KEncodeDecodeError;
@@ -299,7 +299,7 @@ int SecurityModeCommand::Decode(uint8_t* buf, int len) {
       case kIeiAbba: {
         Logger::nas_mm().debug("Decoding IEI 0x%x", kIeiAbba);
         if ((decoded_ie_size =
-                 nas_helper::decode(ie_abba, buf, len, decoded_size, true)) ==
+                 NasHelper::decode(ie_abba, buf, len, decoded_size, true)) ==
             KEncodeDecodeError) {
           return KEncodeDecodeError;
         }
@@ -309,7 +309,7 @@ int SecurityModeCommand::Decode(uint8_t* buf, int len) {
 
       case kIeiS1UeSecurityCapability: {
         Logger::nas_mm().debug("Decoding IEI 0x%x", kIeiS1UeSecurityCapability);
-        if ((decoded_ie_size = nas_helper::decode(
+        if ((decoded_ie_size = NasHelper::decode(
                  ie_s1_ue_security_capability, buf, len, decoded_size, true)) ==
             KEncodeDecodeError) {
           return KEncodeDecodeError;

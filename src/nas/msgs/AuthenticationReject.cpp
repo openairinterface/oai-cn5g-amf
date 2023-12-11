@@ -20,7 +20,8 @@
  */
 
 #include "AuthenticationReject.hpp"
-#include "nas_helper.hpp"
+
+#include "NasHelper.hpp"
 
 using namespace nas;
 
@@ -57,7 +58,7 @@ int AuthenticationReject::Encode(uint8_t* buf, int len) {
   }
   encoded_size += encoded_ie_size;
 
-  if ((encoded_ie_size = nas_helper::encode(
+  if ((encoded_ie_size = NasHelper::encode(
            ie_eap_message, buf, len, encoded_size)) == KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
@@ -88,7 +89,7 @@ int AuthenticationReject::Decode(uint8_t* buf, int len) {
     Logger::nas_mm().debug("Decoding IEI (0x%x)", octet);
     switch (octet) {
       case kIeiEapMessage: {
-        if ((decoded_ie_size = nas_helper::decode(
+        if ((decoded_ie_size = NasHelper::decode(
                  ie_eap_message, buf, len, decoded_size, true)) ==
             KEncodeDecodeError) {
           return KEncodeDecodeError;

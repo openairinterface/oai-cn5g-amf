@@ -20,7 +20,8 @@
  */
 
 #include "RegistrationComplete.hpp"
-#include "nas_helper.hpp"
+
+#include "NasHelper.hpp"
 
 using namespace nas;
 
@@ -61,7 +62,7 @@ int RegistrationComplete::Encode(uint8_t* buf, int len) {
   }
   encoded_size += encoded_ie_size;
 
-  if ((encoded_ie_size = nas_helper::encode(
+  if ((encoded_ie_size = NasHelper::encode(
            ie_sor_transparent_container, buf, len, encoded_size)) ==
       KEncodeDecodeError) {
     return KEncodeDecodeError;
@@ -98,7 +99,7 @@ int RegistrationComplete::Decode(uint8_t* buf, int len) {
       case kIeiSorTransparentContainer: {
         Logger::nas_mm().debug(
             "Decoding IEI 0x%x", kIeiSorTransparentContainer);
-        if ((decoded_ie_size = nas_helper::decode(
+        if ((decoded_ie_size = NasHelper::decode(
                  ie_sor_transparent_container, buf, len, decoded_size, true)) ==
             KEncodeDecodeError) {
           return KEncodeDecodeError;

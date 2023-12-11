@@ -20,7 +20,8 @@
  */
 
 #include "AuthenticationResult.hpp"
-#include "nas_helper.hpp"
+
+#include "NasHelper.hpp"
 
 using namespace nas;
 
@@ -70,7 +71,7 @@ int AuthenticationResult::Encode(uint8_t* buf, int len) {
   encoded_size += encoded_ie_size;
 
   // ngKSI
-  if ((encoded_ie_size = nas_helper::encode(
+  if ((encoded_ie_size = NasHelper::encode(
            ie_ng_ksi, buf, len, encoded_size)) == KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
@@ -79,13 +80,13 @@ int AuthenticationResult::Encode(uint8_t* buf, int len) {
     encoded_size++;  // 1/2 octet + 1/2 octet from ie_ng_ksi
 
   // EAP message
-  if ((encoded_ie_size = nas_helper::encode(
+  if ((encoded_ie_size = NasHelper::encode(
            ie_eap_message, buf, len, encoded_size)) == KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
 
   // ABBA
-  if ((encoded_ie_size = nas_helper::encode(ie_abba, buf, len, encoded_size)) ==
+  if ((encoded_ie_size = NasHelper::encode(ie_abba, buf, len, encoded_size)) ==
       KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
@@ -109,7 +110,7 @@ int AuthenticationResult::Decode(uint8_t* buf, int len) {
   decoded_size += decoded_ie_size;
 
   // NAS key set identifier
-  if ((decoded_ie_size = nas_helper::decode(
+  if ((decoded_ie_size = NasHelper::decode(
            ie_ng_ksi, buf, len, decoded_size, false, false)) ==
       KEncodeDecodeError) {
     return KEncodeDecodeError;
@@ -119,7 +120,7 @@ int AuthenticationResult::Decode(uint8_t* buf, int len) {
 
   // EAP message
   if ((decoded_ie_size =
-           nas_helper::decode(ie_eap_message, buf, len, decoded_size, false)) ==
+           NasHelper::decode(ie_eap_message, buf, len, decoded_size, false)) ==
       KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
@@ -135,7 +136,7 @@ int AuthenticationResult::Decode(uint8_t* buf, int len) {
     switch (octet) {
       case kIeiAbba: {
         if ((decoded_ie_size =
-                 nas_helper::decode(ie_abba, buf, len, decoded_size, true)) ==
+                 NasHelper::decode(ie_abba, buf, len, decoded_size, true)) ==
             KEncodeDecodeError) {
           return KEncodeDecodeError;
         }

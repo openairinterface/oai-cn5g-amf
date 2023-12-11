@@ -20,7 +20,8 @@
  */
 
 #include "AuthenticationFailure.hpp"
-#include "nas_helper.hpp"
+
+#include "NasHelper.hpp"
 
 using namespace nas;
 
@@ -98,12 +99,12 @@ int AuthenticationFailure::Encode(uint8_t* buf, int len) {
   }
   encoded_size += encoded_ie_size;
 
-  if ((encoded_ie_size = nas_helper::encode(
+  if ((encoded_ie_size = NasHelper::encode(
            ie_5gmm_cause, buf, len, encoded_size)) == KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
 
-  if ((encoded_ie_size = nas_helper::encode(
+  if ((encoded_ie_size = NasHelper::encode(
            ie_authentication_failure_parameter, buf, len, encoded_size)) ==
       KEncodeDecodeError) {
     return KEncodeDecodeError;
@@ -131,7 +132,7 @@ int AuthenticationFailure::Decode(uint8_t* buf, int len) {
 
   // 5GMM Cause
   if ((decoded_ie_size =
-           nas_helper::decode(ie_5gmm_cause, buf, len, decoded_size, false)) ==
+           NasHelper::decode(ie_5gmm_cause, buf, len, decoded_size, false)) ==
       KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
@@ -145,7 +146,7 @@ int AuthenticationFailure::Decode(uint8_t* buf, int len) {
     Logger::nas_mm().debug("Decoding IEI 0x%x", octet);
     switch (octet) {
       case kIeiAuthenticationFailureParameter: {
-        if ((decoded_ie_size = nas_helper::decode(
+        if ((decoded_ie_size = NasHelper::decode(
                  ie_authentication_failure_parameter, buf, len, decoded_size,
                  true)) == KEncodeDecodeError) {
           return KEncodeDecodeError;

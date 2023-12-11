@@ -20,7 +20,8 @@
  */
 
 #include "SecurityModeReject.hpp"
-#include "nas_helper.hpp"
+
+#include "NasHelper.hpp"
 
 using namespace nas;
 
@@ -56,7 +57,7 @@ int SecurityModeReject::Encode(uint8_t* buf, int len) {
   encoded_size += encoded_ie_size;
 
   // 5GMM Cause
-  if ((encoded_ie_size = nas_helper::encode(
+  if ((encoded_ie_size = NasHelper::encode(
            ie_5gmm_cause, buf, len, encoded_size)) == KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
@@ -82,7 +83,7 @@ int SecurityModeReject::Decode(uint8_t* buf, int len) {
 
   // 5GMM Cause
   if ((decoded_ie_size =
-           nas_helper::decode(ie_5gmm_cause, buf, len, decoded_size, false)) ==
+           NasHelper::decode(ie_5gmm_cause, buf, len, decoded_size, false)) ==
       KEncodeDecodeError) {
     return KEncodeDecodeError;
   }

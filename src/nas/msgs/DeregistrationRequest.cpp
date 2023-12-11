@@ -20,8 +20,8 @@
  */
 
 #include "DeregistrationRequest.hpp"
-#include "nas_helper.hpp"
 
+#include "NasHelper.hpp"
 #include "conversions.hpp"
 
 using namespace nas;
@@ -152,20 +152,20 @@ int DeregistrationRequest::Encode(uint8_t* buf, int len) {
   encoded_size += encoded_ie_size;
 
   // De-registration Type and ngKSI
-  encoded_ie_size = nas_helper::encode(ie_ng_ksi, buf, len, encoded_size);
+  encoded_ie_size = NasHelper::encode(ie_ng_ksi, buf, len, encoded_size);
   // only 1/2 octet
   if ((encoded_ie_size == KEncodeDecodeError) or (encoded_ie_size != 0)) {
     return KEncodeDecodeError;
   }
 
-  if ((encoded_ie_size = nas_helper::encode(
+  if ((encoded_ie_size = NasHelper::encode(
            ie_ng_ksi, buf, len, encoded_size)) == KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
   encoded_size++;  // 1/2 octet for Deregistration Type, 1/2 for ngKSI
 
   // 5GS mobile identity
-  if ((encoded_ie_size = nas_helper::encode(
+  if ((encoded_ie_size = NasHelper::encode(
            ie_5gs_mobility_id, buf, len, encoded_size)) == KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
@@ -191,19 +191,19 @@ int DeregistrationRequest::Decode(uint8_t* buf, int len) {
   decoded_size += decoded_ie_size;
 
   // De-registration Type + ngKSI
-  if ((decoded_ie_size = nas_helper::decode(
+  if ((decoded_ie_size = NasHelper::decode(
            ie_deregistrationtype, buf, len, decoded_size, false)) ==
       KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
-  if ((decoded_ie_size = nas_helper::decode(
+  if ((decoded_ie_size = NasHelper::decode(
            ie_ng_ksi, buf, len, decoded_size, true, false)) ==  // 4 higher bits
       KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
   decoded_size++;  // 1/2 octet for De-registration Type, 1/2 ngKSI
 
-  if ((decoded_ie_size = nas_helper::decode(
+  if ((decoded_ie_size = NasHelper::decode(
            ie_5gs_mobility_id, buf, len, decoded_size, false)) ==
       KEncodeDecodeError) {
     return KEncodeDecodeError;

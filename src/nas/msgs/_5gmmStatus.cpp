@@ -20,7 +20,8 @@
  */
 
 #include "_5gmmStatus.hpp"
-#include "nas_helper.hpp"
+
+#include "NasHelper.hpp"
 
 using namespace nas;
 
@@ -59,7 +60,7 @@ int _5gmmStatus::Encode(uint8_t* buf, int len) {
   }
   encoded_size += encoded_ie_size;
 
-  if ((encoded_ie_size = nas_helper::encode(
+  if ((encoded_ie_size = NasHelper::encode(
            ie_5gmm_cause, buf, len, encoded_size)) == KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
@@ -84,7 +85,7 @@ int _5gmmStatus::Decode(uint8_t* buf, int len) {
   decoded_size += decoded_ie_size;
 
   if ((decoded_ie_size =
-           nas_helper::decode(ie_5gmm_cause, buf, len, decoded_size, false)) ==
+           NasHelper::decode(ie_5gmm_cause, buf, len, decoded_size, false)) ==
       KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
