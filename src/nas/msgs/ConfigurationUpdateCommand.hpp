@@ -35,6 +35,17 @@ class ConfigurationUpdateCommand : public NasMmPlainHeader {
   void GetSecurityHeaderType(uint8_t security_header_type);
   bool VerifyHeader();
 
+  void SetConfigurationUpdateIndication(
+      const ConfigurationUpdateIndication& configuration_update_indication);
+  void GetConfigurationUpdateIndication(
+      std::optional<ConfigurationUpdateIndication>&
+          configuration_update_indication);
+
+  void Set5gGuti(
+      const std::string& mcc, const std::string& mnc, uint8_t amf_region_id,
+      uint16_t amf_set_id, uint8_t amf_pointer, uint32_t tmsi);
+  // TODO: Get
+
   void SetFullNameForNetwork(const NetworkName& name);
   void SetFullNameForNetwork(const std::string& text_string);
   void GetFullNameForNetwork(std::optional<NetworkName>& name) const;
@@ -50,8 +61,8 @@ class ConfigurationUpdateCommand : public NasMmPlainHeader {
   // Optional
   // Configuration update indication
   std::optional<ConfigurationUpdateIndication>
-      ie_configuration_update_indication;
-  // TODO: 5G-GUTI
+      ie_configuration_update_indication;        // Optional
+  std::optional<_5gsMobileIdentity> ie_5g_guti;  // Optional
   // TODO: TAI list
   // TODO: Allowed NSSAI
   // TODO: Service area list

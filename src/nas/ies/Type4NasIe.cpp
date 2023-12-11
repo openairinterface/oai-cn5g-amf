@@ -42,6 +42,10 @@ void Type4NasIe::SetIei(const uint8_t& iei) {
 }
 
 //------------------------------------------------------------------------------
+void Type4NasIe::GetIei(std::optional<uint8_t>& iei) const {
+  iei = iei_;
+}
+//------------------------------------------------------------------------------
 void Type4NasIe::SetLengthIndicator(const uint8_t& li) {
   li_ = li;
 }

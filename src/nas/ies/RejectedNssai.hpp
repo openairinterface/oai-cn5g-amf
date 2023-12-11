@@ -34,6 +34,7 @@ namespace nas {
 
 class RejectedNssai : public Type4NasIe {
  public:
+  RejectedNssai();
   RejectedNssai(uint8_t iei);
   ~RejectedNssai();
 

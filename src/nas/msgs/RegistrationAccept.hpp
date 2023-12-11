@@ -87,8 +87,8 @@ class RegistrationAccept : public NasMmPlainHeader {
       uint8_t session_id, uint8_t value);
   // TODO: Get
 
-  // TODO: LADN information
   void SetLadnInformation(const LadnInformation& ladn_information);
+  // TODO: Get
 
   void SetMicoIndication(bool sprti, bool raai);
   // TODO: Get

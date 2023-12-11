@@ -20,6 +20,7 @@
  */
 
 #include "ControlPlaneServiceRequest.hpp"
+#include "nas_helper.hpp"
 
 using namespace nas;
 
@@ -133,22 +134,17 @@ int ControlPlaneServiceRequest::Encode(uint8_t* buf, int len) {
   encoded_size += encoded_ie_size;
 
   // Control Plane Service Type and ngKSI
-  int size = ie_control_plane_service_type.Encode(
-      buf + encoded_size, len - encoded_size);
-  if ((size == KEncodeDecodeError) or (size != 0)) {  // 1/2 octet
-    Logger::nas_mm().debug(
-        "Encoding %s error", ControlPlaneServiceType::GetIeName().c_str());
+  encoded_ie_size =
+      nas_helper::encode(ie_control_plane_service_type, buf, len, encoded_size);
+  if ((encoded_ie_size == KEncodeDecodeError) or
+      (encoded_ie_size != 0)) {  // 1/2 octet
     return KEncodeDecodeError;
   }
-
-  size = ie_ng_ksi.Encode(buf + encoded_size, len - encoded_size);
-  if (size != KEncodeDecodeError) {
-    encoded_size++;  // 1/2 for Control Plane Service Type, 1/2 octet for ngKSI
-  } else {
-    Logger::nas_mm().debug(
-        "Encoding %s error", NasKeySetIdentifier::GetIeName().c_str());
+  if ((encoded_ie_size = nas_helper::encode(
+           ie_ng_ksi, buf, len, encoded_size)) == KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
+  encoded_size++;  // 1/2 for Control Plane Service Type, 1/2 octet for ngKSI
 
   // TODO: CIoT small data container (Optional)
   // TODO: Payload container type (Optional)
@@ -156,53 +152,26 @@ int ControlPlaneServiceRequest::Encode(uint8_t* buf, int len) {
   // TODO: PDU session ID (Optional)
 
   // PDU session status
-  if (!ie_pdu_session_status.has_value()) {
-    Logger::nas_mm().debug(
-        "IE %s is not available", PduSessionStatus::GetIeName().c_str());
-  } else {
-    size = ie_pdu_session_status.value().Encode(
-        buf + encoded_size, len - encoded_size);
-    if (size != KEncodeDecodeError) {
-      encoded_size += size;
-    } else {
-      Logger::nas_mm().debug(
-          "Encoding %s error", PduSessionStatus::GetIeName().c_str());
-      return KEncodeDecodeError;
-    }
+  if ((encoded_ie_size =
+           nas_helper::encode(ie_pdu_session_status, buf, len, encoded_size)) ==
+      KEncodeDecodeError) {
+    return KEncodeDecodeError;
   }
 
   // TODO: Release assistance indication (Optional)
 
   // Uplink data status
-  if (!ie_uplink_data_status.has_value()) {
-    Logger::nas_mm().debug(
-        "IE %s is not available", UplinkDataStatus::GetIeName().c_str());
-  } else {
-    size = ie_uplink_data_status.value().Encode(
-        buf + encoded_size, len - encoded_size);
-    if (size != KEncodeDecodeError) {
-      encoded_size += size;
-    } else {
-      Logger::nas_mm().debug(
-          "Encoding %s error", UplinkDataStatus::GetIeName().c_str());
-      return KEncodeDecodeError;
-    }
+  if ((encoded_ie_size =
+           nas_helper::encode(ie_uplink_data_status, buf, len, encoded_size)) ==
+      KEncodeDecodeError) {
+    return KEncodeDecodeError;
   }
 
   // NAS message container
-  if (!ie_nas_message_container.has_value()) {
-    Logger::nas_mm().debug(
-        "IE %s is not available", NasMessageContainer::GetIeName().c_str());
-  } else {
-    size = ie_nas_message_container.value().Encode(
-        buf + encoded_size, len - encoded_size);
-    if (size != KEncodeDecodeError) {
-      encoded_size += size;
-    } else {
-      Logger::nas_mm().debug(
-          "Encoding %s error", NasMessageContainer::GetIeName().c_str());
-      return KEncodeDecodeError;
-    }
+  if ((encoded_ie_size = nas_helper::encode(
+           ie_nas_message_container, buf, len, encoded_size)) ==
+      KEncodeDecodeError) {
+    return KEncodeDecodeError;
   }
 
   // TODO: Additional information (Optional)
@@ -216,25 +185,36 @@ int ControlPlaneServiceRequest::Encode(uint8_t* buf, int len) {
 int ControlPlaneServiceRequest::Decode(uint8_t* buf, int len) {
   Logger::nas_mm().debug("Decoding ControlPlaneServiceRequest message");
 
-  int decoded_size   = 0;
-  int decoded_result = 0;
+  int decoded_size    = 0;
+  int decoded_ie_size = 0;
 
   // Header
-  decoded_result = NasMmPlainHeader::Decode(buf, len);
-  if (decoded_result == KEncodeDecodeError) {
+  decoded_ie_size = NasMmPlainHeader::Decode(buf, len);
+  if (decoded_ie_size == KEncodeDecodeError) {
     Logger::nas_mm().error("Decoding NAS Header error");
     return KEncodeDecodeError;
   }
-  decoded_size += decoded_result;
+  decoded_size += decoded_ie_size;
 
   // Control Plane service type + ngKSI
-  decoded_result = ie_control_plane_service_type.Decode(
-      buf + decoded_size, len - decoded_size, false, false);
-  if (decoded_result == KEncodeDecodeError) return KEncodeDecodeError;
+  if ((decoded_ie_size = nas_helper::decode(
+           ie_control_plane_service_type, buf, len, decoded_size, false,
+           false)) == KEncodeDecodeError) {
+    return KEncodeDecodeError;
+  }
+  if ((decoded_ie_size = nas_helper::decode(
+           ie_ng_ksi, buf, len, decoded_size, true, false)) ==
+      KEncodeDecodeError) {
+    return KEncodeDecodeError;
+  }
 
-  decoded_result =
+  decoded_ie_size = ie_control_plane_service_type.Decode(
+      buf + decoded_size, len - decoded_size, false, false);
+  if (decoded_ie_size == KEncodeDecodeError) return KEncodeDecodeError;
+
+  decoded_ie_size =
       ie_ng_ksi.Decode(buf + decoded_size, len - decoded_size, true, false);
-  if (decoded_result == KEncodeDecodeError) return KEncodeDecodeError;
+  if (decoded_ie_size == KEncodeDecodeError) return KEncodeDecodeError;
   decoded_size++;  // 1/2 for Control Plane Service Type, 1/2 octet for ngKSI
 
   // Decode other IEs
@@ -242,22 +222,18 @@ int ControlPlaneServiceRequest::Decode(uint8_t* buf, int len) {
   DECODE_U8_VALUE(buf + decoded_size, octet);
   Logger::nas_mm().debug("First optional IE (0x%x)", octet);
   while ((octet != 0x0)) {
-    Logger::nas_mm().debug("IEI 0x%x", octet);
+    Logger::nas_mm().debug("Decoding IEI 0x%x", octet);
     switch (octet) {
       // TODO: CIoT small data container (Optional)
       // TODO: Payload container type (Optional)
       // TODO: Payload container (Optional)
       // TODO: PDU session ID (Optional)
       case kIeiPduSessionStatus: {
-        Logger::nas_mm().debug("Decoding IEI 0x%x", kIeiPduSessionStatus);
-        PduSessionStatus ie_pdu_session_status_tmp = {};
-        if ((decoded_result = ie_pdu_session_status_tmp.Decode(
-                 buf + decoded_size, len - decoded_size, true)) ==
-            KEncodeDecodeError)
+        if ((decoded_ie_size = nas_helper::decode(
+                 ie_pdu_session_status, buf, len, decoded_size, true)) ==
+            KEncodeDecodeError) {
           return KEncodeDecodeError;
-        decoded_size += decoded_result;
-        ie_pdu_session_status =
-            std::optional<PduSessionStatus>(ie_pdu_session_status_tmp);
+        }
         DECODE_U8_VALUE(buf + decoded_size, octet);
         Logger::nas_mm().debug("Next IEI (0x%x)", octet);
       } break;
@@ -265,29 +241,21 @@ int ControlPlaneServiceRequest::Decode(uint8_t* buf, int len) {
         // TODO: Release assistance indication (Optional)
 
       case kIeiUplinkDataStatus: {
-        Logger::nas_mm().debug("Decoding IEI 0x%x", kIeiUplinkDataStatus);
-        UplinkDataStatus ie_uplink_data_status_tmp = {};
-        if ((decoded_result = ie_uplink_data_status_tmp.Decode(
-                 buf + decoded_size, len - decoded_size, true)) ==
-            KEncodeDecodeError)
+        if ((decoded_ie_size = nas_helper::decode(
+                 ie_uplink_data_status, buf, len, decoded_size, true)) ==
+            KEncodeDecodeError) {
           return KEncodeDecodeError;
-        decoded_size += decoded_result;
-        ie_uplink_data_status =
-            std::optional<UplinkDataStatus>(ie_uplink_data_status_tmp);
+        }
         DECODE_U8_VALUE(buf + decoded_size, octet);
         Logger::nas_mm().debug("Next IEI (0x%x)", octet);
       } break;
 
       case kIeiNasMessageContainer: {
-        Logger::nas_mm().debug("Decoding IEI 0x%x", kIeiNasMessageContainer);
-        NasMessageContainer ie_nas_message_container_tmp = {};
-        if ((decoded_result = ie_nas_message_container_tmp.Decode(
-                 buf + decoded_size, len - decoded_size, true)) ==
-            KEncodeDecodeError)
+        if ((decoded_ie_size = nas_helper::decode(
+                 ie_nas_message_container, buf, len, decoded_size, true)) ==
+            KEncodeDecodeError) {
           return KEncodeDecodeError;
-        decoded_size += decoded_result;
-        ie_nas_message_container =
-            std::optional<NasMessageContainer>(ie_nas_message_container_tmp);
+        }
         DECODE_U8_VALUE(buf + decoded_size, octet);
         Logger::nas_mm().debug("Next IEI (0x%x)", octet);
       } break;

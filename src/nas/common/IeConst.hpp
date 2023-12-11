@@ -88,11 +88,13 @@ constexpr uint8_t kIeiPayloadContainerType     = 0x08;  // Should be verified
 constexpr uint8_t kIeiRequestType              = 0x08;  // 8-(4 higher bits)
 constexpr uint8_t kIeiNetworkSlicingIndication = 0x09;  // 9-(4 higher bits)
 
-constexpr uint8_t kIeiNssaiInclusionMode          = 0x0A;  // A-(4 higher bits)
-constexpr uint8_t kIeiMaPduSessionInformation     = 0x0A;  // A-(4 higher bits)
-constexpr uint8_t kIeiMicoIndication              = 0x0B;  // B-(4 higher bits)
-constexpr uint8_t kIeiNasKeySetIdentifier         = 0x0C;  // C-(4 higher bits)
-constexpr uint8_t kIeiNon3gppNwProvidedPolicies   = 0x0D;  // D-(4 higher bits)
+constexpr uint8_t kIeiNssaiInclusionMode        = 0x0A;  // A-(4 higher bits)
+constexpr uint8_t kIeiMaPduSessionInformation   = 0x0A;  // A-(4 higher bits)
+constexpr uint8_t kIeiMicoIndication            = 0x0B;  // B-(4 higher bits)
+constexpr uint8_t kIeiNasKeySetIdentifier       = 0x0C;  // C-(4 higher bits)
+constexpr uint8_t kIeiNon3gppNwProvidedPolicies = 0x0D;  // D-(4 higher bits)
+constexpr uint8_t kIeiConfigurationUpdateIndication =
+    0x0D;                                                  // D-(4 higher bits)
 constexpr uint8_t kIeiImeisvRequest               = 0x0E;  // E-(4 higher bits)
 constexpr uint8_t kIeiReleaseAssistanceIndication = 0x0F;  // F-(4 higher bits)
 
