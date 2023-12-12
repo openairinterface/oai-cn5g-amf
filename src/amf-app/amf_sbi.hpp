@@ -132,6 +132,13 @@ class amf_sbi {
   void handle_itti_message(itti_sbi_update_nf_instance_request& itti_msg);
 
   /*
+   * Handle ITTI message to deregister to NRF
+   * @param [itti_sbi_deregister_nf_instance_request&]: ITTI message
+   * @return void
+   */
+  void handle_itti_message(itti_sbi_deregister_nf_instance_request& itti_msg);
+
+  /*
    * Handle ITTI message to trigger Determine Location Request procedure towards
    * LMF
    * @param [itti_sbi_determine_location_request&]: ITTI message

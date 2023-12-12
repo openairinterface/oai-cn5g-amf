@@ -34,6 +34,7 @@
 #include "N2InformationNotification.h"
 #include "SmContextStatusNotification.h"
 #include "PatchItem.h"
+#include "3gpp_29.500.h"
 
 extern "C" {
 #include "dynamic_memory_check.h"
@@ -264,18 +265,35 @@ class itti_sbi_update_nf_instance_response : public itti_sbi_msg {
   const char* get_msg_name() { return "SBI_UPDATE_NF_INSTANCE_RESPONSE"; };
 
   std::string amf_instance_id;
-  uint16_t http_response_code;
+  uint32_t http_response_code;
 };
 
 //-----------------------------------------------------------------------------
-class itti_sbi_deregister_nf_instance : public itti_sbi_msg {
+class itti_sbi_deregister_nf_instance_request : public itti_sbi_msg {
  public:
-  itti_sbi_deregister_nf_instance(const task_id_t orig, const task_id_t dest)
-      : itti_sbi_msg(SBI_DEREGISTER_NF_INSTANCE, orig, dest) {}
-  virtual ~itti_sbi_deregister_nf_instance(){};
-  const char* get_msg_name() { return "SBI_DEREGISTER_NF_INSTANCE"; };
+  itti_sbi_deregister_nf_instance_request(
+      const task_id_t orig, const task_id_t dest)
+      : itti_sbi_msg(SBI_DEREGISTER_NF_INSTANCE_REQUEST, orig, dest) {}
+  virtual ~itti_sbi_deregister_nf_instance_request(){};
+  const char* get_msg_name() { return "SBI_DEREGISTER_NF_INSTANCE_REQUEST"; };
 
   std::string amf_instance_id;
+};
+
+//-----------------------------------------------------------------------------
+class itti_sbi_deregister_nf_instance_response : public itti_sbi_msg {
+ public:
+  itti_sbi_deregister_nf_instance_response(
+      const task_id_t orig, const task_id_t dest)
+      : itti_sbi_msg(SBI_DEREGISTER_NF_INSTANCE_RESPONSE, orig, dest),
+        http_response_code() {}
+  virtual ~itti_sbi_deregister_nf_instance_response(){};
+  const char* get_msg_name() { return "SBI_DEREGISTER_NF_INSTANCE_RESPONSE"; };
+
+  std::string amf_instance_id;
+  uint32_t http_response_code;
+  // TODO: Redirect response;
+  // TODO: Header location
 };
 
 //-----------------------------------------------------------------------------

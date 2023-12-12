@@ -100,7 +100,13 @@ class amf_app {
  public:
   explicit amf_app(const amf_config& amf_cfg);
   amf_app(amf_app const&) = delete;
+  virtual ~amf_app(){};
   void operator=(amf_app const&) = delete;
+
+  /**
+   * Stop all the ongoing processes and send NF deregistration towards NRF
+   */
+  void stop();
 
   /*
    * Generate AMF UE NGAP ID
@@ -185,6 +191,13 @@ class amf_app {
    * @return void
    */
   void handle_itti_message(itti_sbi_update_nf_instance_response& r);
+
+  /*
+   * Handle ITTI message (Deregister NF Instance Response)
+   * @param [itti_sbi_deregister_nf_instance_response&]: ITTI message
+   * @return void
+   */
+  void handle_itti_message(itti_sbi_deregister_nf_instance_response& r);
 
   /*
    * Get the current AMF's configuration
@@ -473,18 +486,11 @@ class amf_app {
   void generate_amf_profile();
 
   /*
-   * Send request to SBI task to trigger NF instance registration to NRF
-   * @param [void]
-   * @return void
-   */
-  void trigger_nf_registration_request();
-
-  /*
    * Send request to SBI task to trigger NF instance deregistration to NRF
    * @param [void]
    * @return void
    */
-  void trigger_nf_deregistration() const;
+  void deregister_to_nrf() const;
 
   /*
    * Handle Heartbeat timeout
