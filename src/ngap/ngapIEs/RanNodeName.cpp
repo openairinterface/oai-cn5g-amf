@@ -52,7 +52,7 @@ bool RanNodeName::encode(Ngap_RANNodeName_t& ran_node_name) {
 }
 
 //------------------------------------------------------------------------------
-bool RanNodeName::decode(Ngap_RANNodeName_t& ran_node_name) {
+bool RanNodeName::decode(const Ngap_RANNodeName_t& ran_node_name) {
   if (!ran_node_name.buf) return false;
   conv::octet_string_2_string(ran_node_name, ran_node_name_);
   return true;

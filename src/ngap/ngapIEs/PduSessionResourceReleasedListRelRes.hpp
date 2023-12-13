@@ -39,12 +39,10 @@ class PduSessionResourceReleasedListRelRes {
   virtual ~PduSessionResourceReleasedListRelRes();
 
   void set(const std::vector<PduSessionResourceReleasedItemRelRes>& list);
-
   void get(std::vector<PduSessionResourceReleasedItemRelRes>& list);
 
   bool encode(Ngap_PDUSessionResourceReleasedListRelRes_t&
                   pdu_session_resource_released_list_rel_res);
-
   bool decode(const Ngap_PDUSessionResourceReleasedListRelRes_t&
                   pdu_session_resource_released_list_rel_res);
 

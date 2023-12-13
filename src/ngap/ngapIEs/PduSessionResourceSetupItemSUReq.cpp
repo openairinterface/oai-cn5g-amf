@@ -61,10 +61,10 @@ void PduSessionResourceSetupItemSUReq::get(
 
 //------------------------------------------------------------------------------
 bool PduSessionResourceSetupItemSUReq::encode(
-    Ngap_PDUSessionResourceSetupItemSUReq_t*
+    Ngap_PDUSessionResourceSetupItemSUReq_t&
         pdu_session_resource_setup_item_su_req) {
   if (!pdu_session_id_.encode(
-          pdu_session_resource_setup_item_su_req->pDUSessionID))
+          pdu_session_resource_setup_item_su_req.pDUSessionID))
     return false;
   if (nas_pdu_.has_value()) {
     Ngap_NAS_PDU_t* naspdu =
@@ -74,12 +74,12 @@ bool PduSessionResourceSetupItemSUReq::encode(
       free_wrapper((void**) &naspdu);
       return false;
     }
-    pdu_session_resource_setup_item_su_req->pDUSessionNAS_PDU = naspdu;
+    pdu_session_resource_setup_item_su_req.pDUSessionNAS_PDU = naspdu;
   }
-  if (!s_nssai_.encode(&pdu_session_resource_setup_item_su_req->s_NSSAI))
+  if (!s_nssai_.encode(pdu_session_resource_setup_item_su_req.s_NSSAI))
     return false;
   pdu_session_resource_setup_item_su_req
-      ->pDUSessionResourceSetupRequestTransfer =
+      .pDUSessionResourceSetupRequestTransfer =
       pdu_session_resource_setup_request_transfer_;
 
   return true;
@@ -87,24 +87,24 @@ bool PduSessionResourceSetupItemSUReq::encode(
 
 //------------------------------------------------------------------------------
 bool PduSessionResourceSetupItemSUReq::decode(
-    Ngap_PDUSessionResourceSetupItemSUReq_t*
+    const Ngap_PDUSessionResourceSetupItemSUReq_t&
         pdu_session_resource_setup_item_su_req) {
   if (!pdu_session_id_.decode(
-          pdu_session_resource_setup_item_su_req->pDUSessionID))
+          pdu_session_resource_setup_item_su_req.pDUSessionID))
     return false;
-  if (!s_nssai_.decode(&pdu_session_resource_setup_item_su_req->s_NSSAI))
+  if (!s_nssai_.decode(pdu_session_resource_setup_item_su_req.s_NSSAI))
     return false;
 
-  if (pdu_session_resource_setup_item_su_req->pDUSessionNAS_PDU) {
+  if (pdu_session_resource_setup_item_su_req.pDUSessionNAS_PDU) {
     NasPdu tmp = {};
-    if (!tmp.decode(*pdu_session_resource_setup_item_su_req->pDUSessionNAS_PDU))
+    if (!tmp.decode(*pdu_session_resource_setup_item_su_req.pDUSessionNAS_PDU))
       return false;
     nas_pdu_ = std::optional<NasPdu>(tmp);
   }
 
   pdu_session_resource_setup_request_transfer_ =
       pdu_session_resource_setup_item_su_req
-          ->pDUSessionResourceSetupRequestTransfer;
+          .pDUSessionResourceSetupRequestTransfer;
 
   return true;
 }

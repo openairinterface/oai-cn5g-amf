@@ -37,11 +37,11 @@ class SupportedTAList {
   SupportedTAList();
   virtual ~SupportedTAList();
 
-  bool encode(Ngap_SupportedTAList_t& ngSetupRequest);
-  bool decode(const Ngap_SupportedTAList_t& pdu);
-
   void setSupportedTaItems(const std::vector<SupportedTaItem>& items);
   void getSupportedTaItems(std::vector<SupportedTaItem>& items);
+
+  bool encode(Ngap_SupportedTAList_t& ngSetupRequest);
+  bool decode(const Ngap_SupportedTAList_t& pdu);
 
  private:
   std::vector<SupportedTaItem> supportedTAItems;

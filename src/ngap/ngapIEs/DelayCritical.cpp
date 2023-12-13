@@ -47,15 +47,15 @@ bool DelayCritical::getDelayCritical(e_Ngap_DelayCritical& value) const {
 }
 
 //------------------------------------------------------------------------------
-bool DelayCritical::encode(Ngap_DelayCritical_t* value) {
-  *value = delay_critical_;
+bool DelayCritical::encode(Ngap_DelayCritical_t& value) const {
+  value = delay_critical_;
 
   return true;
 }
 
 //------------------------------------------------------------------------------
-bool DelayCritical::decode(Ngap_DelayCritical_t* value) {
-  delay_critical_ = *value;
+bool DelayCritical::decode(Ngap_DelayCritical_t value) {
+  delay_critical_ = value;
 
   return true;
 }

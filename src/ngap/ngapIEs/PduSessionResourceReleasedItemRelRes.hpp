@@ -43,9 +43,9 @@ class PduSessionResourceReleasedItemRelRes {
       PduSessionId& pdu_session_id,
       OCTET_STRING_t& pdu_session_resource_release_response_transfer);
 
-  bool encode(Ngap_PDUSessionResourceReleasedItemRelRes_t*
+  bool encode(Ngap_PDUSessionResourceReleasedItemRelRes_t&
                   pdu_session_resource_released_item_rel_res);
-  bool decode(Ngap_PDUSessionResourceReleasedItemRelRes_t*
+  bool decode(const Ngap_PDUSessionResourceReleasedItemRelRes_t&
                   pdu_session_resource_released_item_rel_res);
 
  private:

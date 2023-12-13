@@ -40,7 +40,7 @@ class EUtraCgi {
   void get(PlmnId&, EUtraCellIdentity&) const;
 
   bool encode(Ngap_EUTRA_CGI_t&);
-  bool decode(Ngap_EUTRA_CGI_t&);
+  bool decode(const Ngap_EUTRA_CGI_t&);
 
  private:
   PlmnId plmn_id_;                         // Mandatory

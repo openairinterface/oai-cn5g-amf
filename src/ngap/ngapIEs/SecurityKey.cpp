@@ -45,7 +45,7 @@ bool SecurityKey::encode(Ngap_SecurityKey_t& security_key) {
 }
 
 //------------------------------------------------------------------------------
-bool SecurityKey::decode(Ngap_SecurityKey_t& security_key) {
+bool SecurityKey::decode(const Ngap_SecurityKey_t& security_key) {
   buffer_ = security_key.buf;
   return true;
 }

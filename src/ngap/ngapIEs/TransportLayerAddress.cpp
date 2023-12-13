@@ -85,7 +85,7 @@ bool TransportLayerAddress::encode(
 
 //------------------------------------------------------------------------------
 bool TransportLayerAddress::decode(
-    Ngap_TransportLayerAddress_t& transportLayerAddress) {
+    const Ngap_TransportLayerAddress_t& transportLayerAddress) {
   if (!transportLayerAddress.buf) return false;
 
   ip_address_ = std::to_string(transportLayerAddress.buf[0]);

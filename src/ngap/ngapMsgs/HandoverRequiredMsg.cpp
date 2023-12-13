@@ -109,9 +109,9 @@ bool HandoverRequiredMsg::getTargetID(GlobalgNBId& gnbId, TAI& tai) {
   if (targetID.present == Ngap_TargetID_PR_targetRANNodeID) {
     if (targetID.choice.targetRANNodeID->globalRANNodeID.present ==
         Ngap_GlobalRANNodeID_PR_globalGNB_ID) {
-      gnbId.decode(
-          targetID.choice.targetRANNodeID->globalRANNodeID.choice.globalGNB_ID);
-      tai.decode(&targetID.choice.targetRANNodeID->selectedTAI);
+      gnbId.decode(*targetID.choice.targetRANNodeID->globalRANNodeID.choice
+                        .globalGNB_ID);
+      tai.decode(targetID.choice.targetRANNodeID->selectedTAI);
       return true;
     }
   }
@@ -254,8 +254,8 @@ bool HandoverRequiredMsg::decode(Ngap_NGAP_PDU_t* ngapMsgPdu) {
             handoverRequiredIEs->protocolIEs.list.array[i]->value.present ==
                 Ngap_HandoverRequiredIEs__value_PR_PDUSessionResourceListHORqd) {
           if (!pDUSessionResourceList.decode(
-                  &handoverRequiredIEs->protocolIEs.list.array[i]
-                       ->value.choice.PDUSessionResourceListHORqd)) {
+                  handoverRequiredIEs->protocolIEs.list.array[i]
+                      ->value.choice.PDUSessionResourceListHORqd)) {
             Logger::ngap().error(
                 "Decoded NGAP PDUSessionResourceSetupListCxtRes IE error");
             return false;

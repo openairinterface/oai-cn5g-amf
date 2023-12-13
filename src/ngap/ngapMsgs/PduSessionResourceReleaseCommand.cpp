@@ -195,7 +195,7 @@ void PduSessionResourceReleaseCommandMsg::setPduSessionResourceToReleaseList(
       Ngap_PDUSessionResourceReleaseCommandIEs__value_PR_PDUSessionResourceToReleaseListRelCmd;
 
   int ret = pduSessionResourceToReleaseList.encode(
-      &ie->value.choice.PDUSessionResourceToReleaseListRelCmd);
+      ie->value.choice.PDUSessionResourceToReleaseListRelCmd);
   if (!ret) {
     Logger::nas_mm().warn(
         "Encode PDUSessionResourceToReleaseListRelCmd IE error");
@@ -342,9 +342,9 @@ bool PduSessionResourceReleaseCommandMsg::decode(Ngap_NGAP_PDU_t* ngapMsgPdu) {
                     ->value.present ==
                 Ngap_PDUSessionResourceReleaseCommandIEs__value_PR_PDUSessionResourceToReleaseListRelCmd) {
           if (!pduSessionResourceToReleaseList.decode(
-                  &pduSessionResourceReleaseCommandIEs->protocolIEs.list
-                       .array[i]
-                       ->value.choice.PDUSessionResourceToReleaseListRelCmd)) {
+                  pduSessionResourceReleaseCommandIEs->protocolIEs.list
+                      .array[i]
+                      ->value.choice.PDUSessionResourceToReleaseListRelCmd)) {
             Logger::nas_mm().warn(
                 "Decoded NGAP PDUSessionResourceToReleaseListRelCmd IE error");
             return false;

@@ -37,7 +37,7 @@ class Pre_emptionCapability {
   bool get(e_Ngap_Pre_emptionCapability& value);
 
   bool encode(Ngap_Pre_emptionCapability_t&) const;
-  bool decode(const Ngap_Pre_emptionCapability_t&);
+  bool decode(Ngap_Pre_emptionCapability_t);
 
  private:
   long pre_emption_capability_;

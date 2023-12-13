@@ -40,9 +40,9 @@ class PduSessionResourceFailedToSetupListCxtFail {
   void set(const std::vector<PduSessionResourceFailedToSetupItemCxtFail>& list);
   void get(std::vector<PduSessionResourceFailedToSetupItemCxtFail>& list) const;
 
-  bool encode(Ngap_PDUSessionResourceFailedToSetupListCxtFail_t*
+  bool encode(Ngap_PDUSessionResourceFailedToSetupListCxtFail_t&
                   pduSessionResourceFailedToSetupListCxtFail);
-  bool decode(Ngap_PDUSessionResourceFailedToSetupListCxtFail_t*
+  bool decode(const Ngap_PDUSessionResourceFailedToSetupListCxtFail_t&
                   pduSessionResourceFailedToSetupListCxtFail);
 
  private:

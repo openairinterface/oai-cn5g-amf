@@ -40,9 +40,6 @@ class MessageType {
       Ngap_ProcedureCode_t m_procedureCode, Ngap_NGAP_PDU_PR m_typeOfMessage);
   virtual ~MessageType();
 
-  int encode(Ngap_NGAP_PDU_t*&);
-  // void decode(Ngap_NGAP_PDU_t*);
-
   void setProcedureCode(Ngap_ProcedureCode_t m_procedureCode);
   Ngap_ProcedureCode_t getProcedureCode();
 
@@ -55,6 +52,9 @@ class MessageType {
   void setValuePresent(Ngap_InitiatingMessage__value_PR m_valuePresent);
   void setValuePresent(Ngap_SuccessfulOutcome__value_PR m_valuePresent);
   void setValuePresent(Ngap_UnsuccessfulOutcome__value_PR m_valuePresent);
+
+  int encode(Ngap_NGAP_PDU_t&) const;
+  // TODO: void decode(const Ngap_NGAP_PDU_t&);
 
  private:
   Ngap_ProcedureCode_t procedureCode;  // Ngap_ProcedureCode.h

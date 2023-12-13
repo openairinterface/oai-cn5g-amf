@@ -47,11 +47,10 @@ void RanStatusTransferTransparentContainer::setDRBSubjectList(
 
 //------------------------------------------------------------------------------
 bool RanStatusTransferTransparentContainer::encode(
-    Ngap_RANStatusTransfer_TransparentContainer_t*
+    Ngap_RANStatusTransfer_TransparentContainer_t&
         ranstatustransfer_transparentcontainer) {
-  if (!drb_sub_list.encodefromdRBSubjectlist(
-          ranstatustransfer_transparentcontainer
-              ->dRBsSubjectToStatusTransferList)) {
+  if (!drb_sub_list.encode(ranstatustransfer_transparentcontainer
+                               .dRBsSubjectToStatusTransferList)) {
     Logger::ngap().error(
         "Encode RANStatusTransferTransparentContainer IE error!");
     return false;
@@ -61,11 +60,10 @@ bool RanStatusTransferTransparentContainer::encode(
 
 //------------------------------------------------------------------------------
 bool RanStatusTransferTransparentContainer::decode(
-    Ngap_RANStatusTransfer_TransparentContainer_t&
+    const Ngap_RANStatusTransfer_TransparentContainer_t&
         ranstatustransfer_transparentcontainer) {
-  if (!drb_sub_list.decodefromdRBSubjectlist(
-          ranstatustransfer_transparentcontainer
-              .dRBsSubjectToStatusTransferList)) {
+  if (!drb_sub_list.decode(ranstatustransfer_transparentcontainer
+                               .dRBsSubjectToStatusTransferList)) {
     Logger::ngap().error(
         "Decode RANStatusTransferTransparentContainer IE error!");
     return false;

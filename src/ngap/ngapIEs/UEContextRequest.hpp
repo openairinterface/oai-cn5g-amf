@@ -38,7 +38,7 @@ class UEContextRequest {
   int get() const;
 
   bool encode(Ngap_UEContextRequest_t& ue_context_request) const;
-  bool decode(const Ngap_UEContextRequest_t& ue_context_request);
+  bool decode(Ngap_UEContextRequest_t ue_context_request);
 
  private:
   int ue_context_request_;

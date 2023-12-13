@@ -37,13 +37,13 @@ class ServedGuamiList {
   ServedGuamiList();
   virtual ~ServedGuamiList();
 
-  bool encode(Ngap_ServedGUAMIList_t&);
-  bool decode(const Ngap_ServedGUAMIList_t&);
-
   void set(const std::vector<ServedGuamiItem>& list);
   void get(std::vector<ServedGuamiItem>& list) const;
 
   void addItem(const ServedGuamiItem& item);
+
+  bool encode(Ngap_ServedGUAMIList_t&);
+  bool decode(const Ngap_ServedGUAMIList_t&);
 
  private:
   std::vector<ServedGuamiItem> itemList;

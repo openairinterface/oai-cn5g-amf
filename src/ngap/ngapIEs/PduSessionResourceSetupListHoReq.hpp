@@ -40,9 +40,9 @@ class PduSessionResourceSetupListHoReq {
   void set(const std::vector<PduSessionResourceSetupItemHoReq>& list);
   void get(std::vector<PduSessionResourceSetupItemHoReq>& list) const;
 
-  bool encode(Ngap_PDUSessionResourceSetupListHOReq_t*
+  bool encode(Ngap_PDUSessionResourceSetupListHOReq_t&
                   pduSessionResourceSetupListHOReq);
-  bool decode(Ngap_PDUSessionResourceSetupListHOReq_t*
+  bool decode(const Ngap_PDUSessionResourceSetupListHOReq_t&
                   pduSessionResourceSetupListHOReq);
 
  private:

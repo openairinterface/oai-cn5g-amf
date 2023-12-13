@@ -54,7 +54,7 @@ void AmfRegionId::getAMFRegionID(uint8_t& id) const {
 }
 
 //------------------------------------------------------------------------------
-bool AmfRegionId::encode(Ngap_AMFRegionID_t& id) {
+bool AmfRegionId::encode(Ngap_AMFRegionID_t& id) const {
   id.size         = 1;
   uint8_t* buffer = (uint8_t*) calloc(1, sizeof(uint8_t));
   if (!buffer) return false;
@@ -66,7 +66,7 @@ bool AmfRegionId::encode(Ngap_AMFRegionID_t& id) {
 }
 
 //------------------------------------------------------------------------------
-bool AmfRegionId::decode(Ngap_AMFRegionID_t& id) {
+bool AmfRegionId::decode(Ngap_AMFRegionID_t id) {
   if (!id.buf) return false;
   region_id_ = *id.buf;
 

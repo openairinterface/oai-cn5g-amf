@@ -37,7 +37,7 @@ class TAC {
   void set(const uint32_t& tac);
 
   bool encode(Ngap_TAC_t&);
-  bool decode(Ngap_TAC_t& m_tac);
+  bool decode(const Ngap_TAC_t& m_tac);
 
  private:
   uint32_t tac_ : 24;

@@ -48,7 +48,7 @@ bool TimeToWait::encode(Ngap_TimeToWait_t& time) {
 }
 
 //------------------------------------------------------------------------------
-bool TimeToWait::decode(Ngap_TimeToWait_t& time) {
+bool TimeToWait::decode(const Ngap_TimeToWait_t& time) {
   time_ = time;
   return true;
 }

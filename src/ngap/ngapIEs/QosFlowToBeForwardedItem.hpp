@@ -37,7 +37,7 @@ class QosFlowToBeForwardedItem {
   void setQosFlowIdentifier(const QosFlowIdentifier& qfi);
   // TODO: Get
 
-  bool encode(Ngap_QosFlowToBeForwardedItem_t* qos_flow_item);
+  bool encode(Ngap_QosFlowToBeForwardedItem_t& qos_flow_item);
   // TODO: decode
 
  private:

@@ -33,12 +33,12 @@ class SecurityKey {
   SecurityKey();
   virtual ~SecurityKey();
 
-  bool encode(Ngap_SecurityKey_t&);
-  bool decode(Ngap_SecurityKey_t&);
-
   void setSecurityKey(uint8_t* buffer, const size_t& size = 256);
   bool getSecurityKey(uint8_t*& buffer, size_t& size);
   bool getSecurityKey(uint8_t*& buffer);
+
+  bool encode(Ngap_SecurityKey_t&);
+  bool decode(const Ngap_SecurityKey_t&);
 
  private:
   uint8_t* buffer_;

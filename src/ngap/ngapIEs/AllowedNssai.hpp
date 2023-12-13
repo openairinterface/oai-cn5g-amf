@@ -43,7 +43,7 @@ class AllowedNSSAI {
   void get(std::vector<S_NSSAI>& list) const;
 
   bool encode(Ngap_AllowedNSSAI_t& allowedNssaiList);
-  bool decode(Ngap_AllowedNSSAI_t& allowedNssaiList);
+  bool decode(const Ngap_AllowedNSSAI_t& allowedNssaiList);
 
  private:
   std::vector<S_NSSAI> list_;

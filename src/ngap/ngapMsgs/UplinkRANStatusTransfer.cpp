@@ -104,7 +104,7 @@ void UplinkRANStatusTransfer::setRANStatusTransfer_TransparentContainer(
       Ngap_UplinkRANStatusTransferIEs__value_PR_RANStatusTransfer_TransparentContainer;
 
   int ret = ranStatusTransfer_TransparentContainer.encode(
-      &ie->value.choice.RANStatusTransfer_TransparentContainer);
+      ie->value.choice.RANStatusTransfer_TransparentContainer);
   if (!ret) {
     Logger::ngap().error(
         "Encode RANStatusTransfer_TransparentContainer IE error!");

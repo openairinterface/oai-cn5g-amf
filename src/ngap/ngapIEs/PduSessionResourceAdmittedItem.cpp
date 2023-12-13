@@ -46,18 +46,18 @@ void PduSessionResourceAdmittedItem::get(
 
 //------------------------------------------------------------------------------
 bool PduSessionResourceAdmittedItem::encode(
-    Ngap_PDUSessionResourceAdmittedItem_t* pduItem) {
-  if (!pDUSessionID.encode(pduItem->pDUSessionID)) return false;
-  pduItem->handoverRequestAcknowledgeTransfer = handoverRequestAckTransfer;
+    Ngap_PDUSessionResourceAdmittedItem_t& pduItem) {
+  if (!pDUSessionID.encode(pduItem.pDUSessionID)) return false;
+  pduItem.handoverRequestAcknowledgeTransfer = handoverRequestAckTransfer;
 
   return true;
 }
 
 //------------------------------------------------------------------------------
 bool PduSessionResourceAdmittedItem::decode(
-    Ngap_PDUSessionResourceAdmittedItem_t* pduItem) {
-  if (!pDUSessionID.decode(pduItem->pDUSessionID)) return false;
-  handoverRequestAckTransfer = pduItem->handoverRequestAcknowledgeTransfer;
+    const Ngap_PDUSessionResourceAdmittedItem_t& pduItem) {
+  if (!pDUSessionID.decode(pduItem.pDUSessionID)) return false;
+  handoverRequestAckTransfer = pduItem.handoverRequestAcknowledgeTransfer;
 
   return true;
 }

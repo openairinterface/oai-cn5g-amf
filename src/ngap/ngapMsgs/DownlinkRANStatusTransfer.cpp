@@ -127,7 +127,7 @@ void DownlinkRANStatusTransfer::setRANStatusTransfer_TransparentContainer(
   ie->value.present =
       Ngap_DownlinkRANStatusTransferIEs__value_PR_RANStatusTransfer_TransparentContainer;
   bool ret = ranStatusTransfer_TransparentContainer.encode(
-      &ie->value.choice.RANStatusTransfer_TransparentContainer);
+      ie->value.choice.RANStatusTransfer_TransparentContainer);
   if (!ret) {
     Logger::ngap().error(
         "Encode RANStatusTransfer_TransparentContainer IE error");

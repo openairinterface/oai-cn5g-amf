@@ -46,8 +46,8 @@ class DrbStatusDl {
   void setDRBStatusDL12(const DrbStatusDl12& dL12);
   void getDRBStatusDL12(std::optional<DrbStatusDl12>& dL12) const;
 
-  bool encode(Ngap_DRBStatusDL_t* dL);
-  bool decode(Ngap_DRBStatusDL_t* dL);
+  bool encode(Ngap_DRBStatusDL_t& dL);
+  bool decode(const Ngap_DRBStatusDL_t& dL);
 
  private:
   std::optional<DrbStatusDl18> dl18_;

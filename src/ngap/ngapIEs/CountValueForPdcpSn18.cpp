@@ -42,14 +42,16 @@ void CountValueForPdcpSn18::getvalue(long& pDCP, long& hFN_PDCP) const {
 }
 
 //------------------------------------------------------------------------------
-bool CountValueForPdcpSn18::encode(Ngap_COUNTValueForPDCP_SN18_t* countvalue) {
-  countvalue->pDCP_SN18     = pdcp;
-  countvalue->hFN_PDCP_SN18 = hfn_pdcp;
+bool CountValueForPdcpSn18::encode(
+    Ngap_COUNTValueForPDCP_SN18_t& countvalue) const {
+  countvalue.pDCP_SN18     = pdcp;
+  countvalue.hFN_PDCP_SN18 = hfn_pdcp;
   return true;
 }
 
 //------------------------------------------------------------------------------
-bool CountValueForPdcpSn18::decode(Ngap_COUNTValueForPDCP_SN18_t& countValue) {
+bool CountValueForPdcpSn18::decode(
+    const Ngap_COUNTValueForPDCP_SN18_t& countValue) {
   pdcp     = countValue.pDCP_SN18;
   hfn_pdcp = countValue.hFN_PDCP_SN18;
   return true;

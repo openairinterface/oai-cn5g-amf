@@ -62,21 +62,21 @@ bool GUAMI::setGUAMI(
 }
 
 //------------------------------------------------------------------------------
-bool GUAMI::encode(Ngap_GUAMI_t* guami) {
-  if (!plmnId.encode(guami->pLMNIdentity)) return false;
-  if (!aMFRegionID.encode(guami->aMFRegionID)) return false;
-  if (!aMFSetID.encode(guami->aMFSetID)) return false;
-  if (!aMFPointer.encode(guami->aMFPointer)) return false;
+bool GUAMI::encode(Ngap_GUAMI_t& guami) {
+  if (!plmnId.encode(guami.pLMNIdentity)) return false;
+  if (!aMFRegionID.encode(guami.aMFRegionID)) return false;
+  if (!aMFSetID.encode(guami.aMFSetID)) return false;
+  if (!aMFPointer.encode(guami.aMFPointer)) return false;
 
   return true;
 }
 
 //------------------------------------------------------------------------------
-bool GUAMI::decode(Ngap_GUAMI_t* pdu) {
-  if (!plmnId.decode(pdu->pLMNIdentity)) return false;
-  if (!aMFRegionID.decode(pdu->aMFRegionID)) return false;
-  if (!aMFSetID.decode(pdu->aMFSetID)) return false;
-  if (!aMFPointer.decode(pdu->aMFPointer)) return false;
+bool GUAMI::decode(const Ngap_GUAMI_t& pdu) {
+  if (!plmnId.decode(pdu.pLMNIdentity)) return false;
+  if (!aMFRegionID.decode(pdu.aMFRegionID)) return false;
+  if (!aMFSetID.decode(pdu.aMFSetID)) return false;
+  if (!aMFPointer.decode(pdu.aMFPointer)) return false;
 
   return true;
 }

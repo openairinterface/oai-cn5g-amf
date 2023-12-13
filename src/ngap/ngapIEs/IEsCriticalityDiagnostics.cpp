@@ -48,18 +48,18 @@ void IEsCriticalityDiagnostics::setTypeOfError(
 
 //------------------------------------------------------------------------------
 void IEsCriticalityDiagnostics::encode(
-    Ngap_CriticalityDiagnostics_IE_Item_t* IE_Item) {
-  IE_Item->iECriticality = criticality;
-  IE_Item->iE_ID         = protocolIE_ID;
-  IE_Item->typeOfError   = typeOfError;
+    Ngap_CriticalityDiagnostics_IE_Item_t& IE_Item) {
+  IE_Item.iECriticality = criticality;
+  IE_Item.iE_ID         = protocolIE_ID;
+  IE_Item.typeOfError   = typeOfError;
 }
 
 //------------------------------------------------------------------------------
 void IEsCriticalityDiagnostics::decode(
-    Ngap_CriticalityDiagnostics_IE_Item_t* pdu) {
-  criticality   = pdu->iECriticality;
-  protocolIE_ID = pdu->iE_ID;
-  typeOfError   = pdu->typeOfError;
+    const Ngap_CriticalityDiagnostics_IE_Item_t& pdu) {
+  criticality   = pdu.iECriticality;
+  protocolIE_ID = pdu.iE_ID;
+  typeOfError   = pdu.typeOfError;
 }
 
 //------------------------------------------------------------------------------

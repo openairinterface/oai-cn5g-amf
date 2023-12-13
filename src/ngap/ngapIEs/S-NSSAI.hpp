@@ -51,11 +51,11 @@ class S_NSSAI {
   void setSd(const uint32_t& sd);
   bool getSd(uint32_t& sd) const;
 
-  bool encodeSD(Ngap_SD_t*);
-  bool decodeSD(Ngap_SD_t*);
+  bool encodeSD(Ngap_SD_t&);
+  bool decodeSD(const Ngap_SD_t&);
 
-  bool encode(Ngap_S_NSSAI_t*);
-  bool decode(Ngap_S_NSSAI_t*);
+  bool encode(Ngap_S_NSSAI_t&);
+  bool decode(const Ngap_S_NSSAI_t&);
 
  private:
   uint8_t sst_;  // mandatory  OCTET_STRING(SIZE(1))

@@ -48,24 +48,24 @@ bool SecurityResult::getSecurityResult(
 }
 
 //------------------------------------------------------------------------------
-bool SecurityResult::encode(Ngap_SecurityResult_t* securityResult) {
+bool SecurityResult::encode(Ngap_SecurityResult_t& securityResult) {
   if (!integrityProtectionResult.encode(
-          securityResult->integrityProtectionResult))
+          securityResult.integrityProtectionResult))
     return false;
   if (!confidentialityProtectionResult.encode(
-          securityResult->confidentialityProtectionResult))
+          securityResult.confidentialityProtectionResult))
     return false;
 
   return true;
 }
 
 //------------------------------------------------------------------------------
-bool SecurityResult::decode(Ngap_SecurityResult_t* securityResult) {
+bool SecurityResult::decode(const Ngap_SecurityResult_t& securityResult) {
   if (!integrityProtectionResult.decode(
-          securityResult->integrityProtectionResult))
+          securityResult.integrityProtectionResult))
     return false;
   if (!confidentialityProtectionResult.decode(
-          securityResult->confidentialityProtectionResult))
+          securityResult.confidentialityProtectionResult))
     return false;
 
   return true;

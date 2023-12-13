@@ -84,7 +84,7 @@ bool PduSessionAggregateMaximumBitRate::encode(
 
 //------------------------------------------------------------------------------
 bool PduSessionAggregateMaximumBitRate::decode(
-    Ngap_PDUSessionAggregateMaximumBitRate_t& bit_rate) {
+    const Ngap_PDUSessionAggregateMaximumBitRate_t& bit_rate) {
   if (!bit_rate.pDUSessionAggregateMaximumBitRateDL.buf) return false;
   if (!bit_rate.pDUSessionAggregateMaximumBitRateUL.buf) return false;
 

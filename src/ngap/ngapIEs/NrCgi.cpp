@@ -58,17 +58,17 @@ void NrCgi::get(struct NrCgi_s& cig) const {
 }
 
 //------------------------------------------------------------------------------
-bool NrCgi::encode(Ngap_NR_CGI_t* nr_cgi) {
-  if (!plmnId.encode(nr_cgi->pLMNIdentity)) return false;
-  if (!nRCellIdentity.encode(nr_cgi->nRCellIdentity)) return false;
+bool NrCgi::encode(Ngap_NR_CGI_t& nr_cgi) {
+  if (!plmnId.encode(nr_cgi.pLMNIdentity)) return false;
+  if (!nRCellIdentity.encode(nr_cgi.nRCellIdentity)) return false;
 
   return true;
 }
 
 //------------------------------------------------------------------------------
-bool NrCgi::decode(Ngap_NR_CGI_t* nr_cgi) {
-  if (!plmnId.decode(nr_cgi->pLMNIdentity)) return false;
-  if (!nRCellIdentity.decode(nr_cgi->nRCellIdentity)) return false;
+bool NrCgi::decode(const Ngap_NR_CGI_t& nr_cgi) {
+  if (!plmnId.decode(nr_cgi.pLMNIdentity)) return false;
+  if (!nRCellIdentity.decode(nr_cgi.nRCellIdentity)) return false;
   return true;
 }
 

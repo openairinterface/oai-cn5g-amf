@@ -42,18 +42,18 @@ void MicoModeIndication::get(long& mico_mode_indication) const {
 
 //------------------------------------------------------------------------------
 bool MicoModeIndication::encode(
-    Ngap_MICOModeIndication_t* mico_mode_indication) {
+    Ngap_MICOModeIndication_t& mico_mode_indication) const {
   if (!mico_mode_indication) return false;
-  *mico_mode_indication = mico_mode_indication_;
+  mico_mode_indication = mico_mode_indication_;
 
   return true;
 }
 
 //------------------------------------------------------------------------------
 bool MicoModeIndication::decode(
-    Ngap_MICOModeIndication_t* mico_mode_indication) {
+    Ngap_MICOModeIndication_t mico_mode_indication) {
   if (!mico_mode_indication) return false;
-  mico_mode_indication_ = *mico_mode_indication;
+  mico_mode_indication_ = mico_mode_indication;
 
   return true;
 }

@@ -116,30 +116,20 @@ bool UEAssociatedLogicalNGConnectionItem::encode(
 }
 
 //------------------------------------------------------------------------------
-bool UEAssociatedLogicalNGConnectionItem::encode(
-    Ngap_UE_associatedLogicalNG_connectionItem_t* item) {
-  item->aMF_UE_NGAP_ID = new Ngap_AMF_UE_NGAP_ID_t();
-  amf_ue_ngap_id_.value().encode(*item->aMF_UE_NGAP_ID);
-  item->rAN_UE_NGAP_ID = new Ngap_RAN_UE_NGAP_ID_t();
-  ran_ue_ngap_id_.value().encode(*item->rAN_UE_NGAP_ID);
-  return true;
-}
-
-//------------------------------------------------------------------------------
 bool UEAssociatedLogicalNGConnectionItem::decode(
-    Ngap_UE_associatedLogicalNG_connectionItem_t* item) {
-  if (item->aMF_UE_NGAP_ID) {
+    const Ngap_UE_associatedLogicalNG_connectionItem_t& item) {
+  if (item.aMF_UE_NGAP_ID) {
     AmfUeNgapId tmp = {};
-    if (!tmp.decode(*item->aMF_UE_NGAP_ID)) {
+    if (!tmp.decode(*item.aMF_UE_NGAP_ID)) {
       Logger::ngap().error("Decoded NGAP AmfUeNgapId IE error");
       return false;
     }
     amf_ue_ngap_id_ = std::optional<AmfUeNgapId>(tmp);
   }
 
-  if (item->rAN_UE_NGAP_ID) {
+  if (item.rAN_UE_NGAP_ID) {
     RanUeNgapId tmp = {};
-    if (!tmp.decode(*item->rAN_UE_NGAP_ID)) {
+    if (!tmp.decode(*item.rAN_UE_NGAP_ID)) {
       Logger::ngap().error("Decoded NGAP RAN_UE_NGAP_ID IE error");
       return false;
     }

@@ -112,7 +112,7 @@ void UEContextReleaseCompleteMsg::setUserLocationInfoNR(
       Ngap_UEContextReleaseComplete_IEs__value_PR_UserLocationInformation;
 
   int ret = m_userLocationInformation.encode(
-      &ie->value.choice.UserLocationInformation);
+      ie->value.choice.UserLocationInformation);
   if (!ret) {
     Logger::ngap().error("Encode NGAP UserLocationInformation IE error");
     free_wrapper((void**) &ie);
@@ -287,8 +287,8 @@ bool UEContextReleaseCompleteMsg::decode(Ngap_NGAP_PDU_t* ngapMsgPdu) {
           UserLocationInformation m_userLocationInformation = {};
 
           if (!m_userLocationInformation.decode(
-                  &ies->protocolIEs.list.array[i]
-                       ->value.choice.UserLocationInformation)) {
+                  ies->protocolIEs.list.array[i]
+                      ->value.choice.UserLocationInformation)) {
             Logger::ngap().error(
                 "Decode NGAP UserLocationInformation IE error");
             return false;

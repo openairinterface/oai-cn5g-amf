@@ -74,7 +74,7 @@ bool PduSessionResourceModifyItemModReq::encode(
 
 //------------------------------------------------------------------------------
 bool PduSessionResourceModifyItemModReq::decode(
-    Ngap_PDUSessionResourceModifyItemModReq_t&
+    const Ngap_PDUSessionResourceModifyItemModReq_t&
         pduSessionResourceModifyItemModReq) {
   if (!pdu_session_id_.decode(pduSessionResourceModifyItemModReq.pDUSessionID))
     return false;

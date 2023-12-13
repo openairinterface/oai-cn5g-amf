@@ -51,7 +51,7 @@ bool PduSessionResourceToReleaseListHandoverCmd::encode(
         (Ngap_PDUSessionResourceToReleaseItemHOCmd_t*) calloc(
             1, sizeof(Ngap_PDUSessionResourceToReleaseItemHOCmd_t));
     if (!rel) return false;
-    if (!item.encode(rel)) return false;
+    if (!item.encode(*rel)) return false;
     if (ASN_SEQUENCE_ADD(&list.list, rel) != 0) return false;
   }
   return true;
@@ -62,7 +62,7 @@ bool PduSessionResourceToReleaseListHandoverCmd::decode(
     const Ngap_PDUSessionResourceToReleaseListHOCmd_t& list) {
   for (int i = 0; i < list.list.count; i++) {
     PduSessionResourceItem item = {};
-    if (!item.decode(list.list.array[i])) return false;
+    if (!item.decode(*list.list.array[i])) return false;
     item_list_.push_back(item);
   }
   return true;

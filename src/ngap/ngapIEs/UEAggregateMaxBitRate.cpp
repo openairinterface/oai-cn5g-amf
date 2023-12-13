@@ -73,7 +73,8 @@ bool UEAggregateMaxBitRate::encode(Ngap_UEAggregateMaximumBitRate_t& bit_rate) {
 }
 
 //------------------------------------------------------------------------------
-bool UEAggregateMaxBitRate::decode(Ngap_UEAggregateMaximumBitRate_t& bit_rate) {
+bool UEAggregateMaxBitRate::decode(
+    const Ngap_UEAggregateMaximumBitRate_t& bit_rate) {
   if (!bit_rate.uEAggregateMaximumBitRateDL.buf) return false;
   if (!bit_rate.uEAggregateMaximumBitRateUL.buf) return false;
 

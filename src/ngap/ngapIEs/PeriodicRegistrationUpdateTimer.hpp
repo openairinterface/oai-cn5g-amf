@@ -38,7 +38,7 @@ class PeriodicRegistrationUpdateTimer {
 
   bool encode(Ngap_PeriodicRegistrationUpdateTimer_t&
                   periodic_registration_update_timer) const;
-  bool decode(const Ngap_PeriodicRegistrationUpdateTimer_t&
+  bool decode(Ngap_PeriodicRegistrationUpdateTimer_t
                   periodic_registration_update_timer);
 
  private:

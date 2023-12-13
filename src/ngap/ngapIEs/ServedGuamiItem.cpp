@@ -48,24 +48,24 @@ bool ServedGuamiItem::getBackupAMFName(AmfName& amf_name) const {
   return true;
 }
 //------------------------------------------------------------------------------
-bool ServedGuamiItem::encode(Ngap_ServedGUAMIItem* servedGUAMIItem) {
-  if (!guamiGroup.encode(&(servedGUAMIItem->gUAMI))) return false;
+bool ServedGuamiItem::encode(Ngap_ServedGUAMIItem& servedGUAMIItem) {
+  if (!guamiGroup.encode(servedGUAMIItem.gUAMI)) return false;
   if (backupAMFName.has_value()) {
-    servedGUAMIItem->backupAMFName =
+    servedGUAMIItem.backupAMFName =
         (Ngap_AMFName_t*) calloc(1, sizeof(Ngap_AMFName_t));
-    if (!servedGUAMIItem->backupAMFName) return false;
-    if (!backupAMFName.value().encode(*servedGUAMIItem->backupAMFName))
+    if (!servedGUAMIItem.backupAMFName) return false;
+    if (!backupAMFName.value().encode(*servedGUAMIItem.backupAMFName))
       return false;
   }
   return true;
 }
 
 //------------------------------------------------------------------------------
-bool ServedGuamiItem::decode(Ngap_ServedGUAMIItem* pdu) {
-  if (!guamiGroup.decode(&pdu->gUAMI)) return false;
-  if (pdu->backupAMFName) {
+bool ServedGuamiItem::decode(const Ngap_ServedGUAMIItem& pdu) {
+  if (!guamiGroup.decode(pdu.gUAMI)) return false;
+  if (pdu.backupAMFName) {
     AmfName amf_name = {};
-    if (!amf_name.decode(*pdu->backupAMFName)) return false;
+    if (!amf_name.decode(*pdu.backupAMFName)) return false;
     backupAMFName = std::optional<AmfName>(amf_name);
   }
   return true;

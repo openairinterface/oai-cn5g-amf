@@ -36,11 +36,11 @@ class EUtraCellIdentity {
   EUtraCellIdentity();
   virtual ~EUtraCellIdentity();
 
-  bool encode(Ngap_EUTRACellIdentity_t& eUTRACellIdentity);
-  bool decode(Ngap_EUTRACellIdentity_t& eUTRACellIdentity);
-
   uint32_t get() const;
   bool set(const uint32_t& m_eutracellidentity);
+
+  bool encode(Ngap_EUTRACellIdentity_t& eUTRACellIdentity);
+  bool decode(const Ngap_EUTRACellIdentity_t& eUTRACellIdentity);
 
  private:
   uint32_t id_;

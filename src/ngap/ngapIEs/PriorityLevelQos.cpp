@@ -44,15 +44,15 @@ bool PriorityLevelQos::getPriorityLevelQos(long& value) const {
 }
 
 //------------------------------------------------------------------------------
-bool PriorityLevelQos::encode(Ngap_PriorityLevelQos_t* priority_level) {
-  *priority_level = priority_level_;
+bool PriorityLevelQos::encode(Ngap_PriorityLevelQos_t& priority_level) const {
+  priority_level = priority_level_;
 
   return true;
 }
 
 //------------------------------------------------------------------------------
-bool PriorityLevelQos::decode(Ngap_PriorityLevelQos_t* priority_level) {
-  priority_level_ = *priority_level;
+bool PriorityLevelQos::decode(Ngap_PriorityLevelQos_t priority_level) {
+  priority_level_ = priority_level;
 
   return true;
 }

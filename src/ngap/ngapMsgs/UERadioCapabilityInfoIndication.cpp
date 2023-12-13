@@ -158,7 +158,7 @@ void UeRadioCapabilityInfoIndicationMsg::setUERadioCapabilityForPaging(
       Ngap_UERadioCapabilityInfoIndicationIEs__value_PR_UERadioCapabilityForPaging;
 
   int ret = ueRadioCapabilityForPaging.value().encode(
-      &ie->value.choice.UERadioCapabilityForPaging);
+      ie->value.choice.UERadioCapabilityForPaging);
   if (!ret) {
     Logger::ngap().error("Encode NGAP UERadioCapabilityForPaging IE error");
     free_wrapper((void**) &ie);
@@ -265,9 +265,9 @@ bool UeRadioCapabilityInfoIndicationMsg::decode(Ngap_NGAP_PDU_t* ngapMsgPdu) {
                     ->value.present ==
                 Ngap_UERadioCapabilityInfoIndicationIEs__value_PR_UERadioCapabilityForPaging) {
           UERadioCapabilityForPaging tmp = {};
-          if (!tmp.decode(&ueRadioCapabilityInfoIndicationIEs->protocolIEs.list
-                               .array[i]
-                               ->value.choice.UERadioCapabilityForPaging)) {
+          if (!tmp.decode(
+                  ueRadioCapabilityInfoIndicationIEs->protocolIEs.list.array[i]
+                      ->value.choice.UERadioCapabilityForPaging)) {
             Logger::ngap().error(
                 "Decoded NGAP UERadioCapabilityForPaging IE error");
             return false;

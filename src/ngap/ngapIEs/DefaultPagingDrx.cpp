@@ -42,7 +42,7 @@ e_Ngap_PagingDRX DefaultPagingDrx::getValue() const {
 }
 
 //------------------------------------------------------------------------------
-bool DefaultPagingDrx::encode(Ngap_PagingDRX_t& paging_drx) {
+bool DefaultPagingDrx::encode(Ngap_PagingDRX_t& paging_drx) const {
   paging_drx = paging_drx_;
   return true;
 }

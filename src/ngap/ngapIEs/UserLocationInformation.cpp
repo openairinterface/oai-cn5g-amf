@@ -76,23 +76,23 @@ void UserLocationInformation::setInformation(
 
 //------------------------------------------------------------------------------
 bool UserLocationInformation::encode(
-    Ngap_UserLocationInformation_t* user_location_information) {
-  user_location_information->present = present_;
+    Ngap_UserLocationInformation_t& user_location_information) {
+  user_location_information.present = present_;
   switch (present_) {
     case Ngap_UserLocationInformation_PR_userLocationInformationEUTRA: {
       Ngap_UserLocationInformationEUTRA* ie_eutra =
           (Ngap_UserLocationInformationEUTRA*) calloc(
               1, sizeof(Ngap_UserLocationInformationEUTRA));
-      user_location_information_eutra_.value().encode(ie_eutra);
-      user_location_information->choice.userLocationInformationEUTRA = ie_eutra;
+      user_location_information_eutra_.value().encode(*ie_eutra);
+      user_location_information.choice.userLocationInformationEUTRA = ie_eutra;
       break;
     }
     case Ngap_UserLocationInformation_PR_userLocationInformationNR: {
       Ngap_UserLocationInformationNR* ie_nr =
           (Ngap_UserLocationInformationNR*) calloc(
               1, sizeof(Ngap_UserLocationInformationNR));
-      user_location_information_nr_.value().encode(ie_nr);
-      user_location_information->choice.userLocationInformationNR = ie_nr;
+      user_location_information_nr_.value().encode(*ie_nr);
+      user_location_information.choice.userLocationInformationNR = ie_nr;
       break;
     }
     default:
@@ -104,13 +104,13 @@ bool UserLocationInformation::encode(
 
 //------------------------------------------------------------------------------
 bool UserLocationInformation::decode(
-    Ngap_UserLocationInformation_t* user_location_information) {
-  present_ = user_location_information->present;
+    const Ngap_UserLocationInformation_t& user_location_information) {
+  present_ = user_location_information.present;
   switch (present_) {
     case Ngap_UserLocationInformation_PR_userLocationInformationEUTRA: {
       UserLocationInformationEUTRA user_location_information_eutra = {};
       user_location_information_eutra.decode(
-          user_location_information->choice.userLocationInformationEUTRA);
+          *user_location_information.choice.userLocationInformationEUTRA);
       user_location_information_eutra_ =
           std::optional<UserLocationInformationEUTRA>(
               user_location_information_eutra);
@@ -119,7 +119,7 @@ bool UserLocationInformation::decode(
     case Ngap_UserLocationInformation_PR_userLocationInformationNR: {
       UserLocationInformationNR user_location_information_nr = {};
       user_location_information_nr.decode(
-          user_location_information->choice.userLocationInformationNR);
+          *user_location_information.choice.userLocationInformationNR);
       user_location_information_nr_ = std::optional<UserLocationInformationNR>(
           user_location_information_nr);
       break;

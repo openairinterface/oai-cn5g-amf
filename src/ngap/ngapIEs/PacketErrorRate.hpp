@@ -36,8 +36,8 @@ class PacketErrorRate {
   void setPacketErrorRate(long scalar, long exponent);
   bool getPacketErrorRate(long& scalar, long& exponent) const;
 
-  bool encode(Ngap_PacketErrorRate_t*);
-  bool decode(Ngap_PacketErrorRate_t*);
+  bool encode(Ngap_PacketErrorRate_t&) const;
+  bool decode(const Ngap_PacketErrorRate_t&);
 
  private:
   long scalar_;

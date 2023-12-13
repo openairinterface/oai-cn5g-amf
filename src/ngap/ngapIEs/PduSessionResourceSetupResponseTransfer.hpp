@@ -58,8 +58,8 @@ class PduSessionResourceSetupResponseTransferIE {
       long& integrityProtectionResult,
       long& confidentialityProtectionResult) const;
 
-  int encode(uint8_t* buf, int buf_size);
-  bool decode(uint8_t* buf, int buf_size);
+  int encode(uint8_t* buf, int buf_size);   // TODO: remove naked pointer
+  bool decode(uint8_t* buf, int buf_size);  // TODO: remove naked pointer
 
  private:
   Ngap_PDUSessionResourceSetupResponseTransfer_t*

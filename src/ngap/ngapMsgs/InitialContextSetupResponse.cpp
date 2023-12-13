@@ -124,7 +124,7 @@ void InitialContextSetupResponseMsg::setPduSessionResourceSetupResponseList(
       Ngap_InitialContextSetupResponseIEs__value_PR_PDUSessionResourceSetupListCxtRes;
 
   int ret = pduSessionResourceSetupResponseList.value().encode(
-      &ie->value.choice.PDUSessionResourceSetupListCxtRes);
+      ie->value.choice.PDUSessionResourceSetupListCxtRes);
   if (!ret) {
     Logger::ngap().error("Encode PDUSessionResourceSetupListCxtRes IE error");
     free_wrapper((void**) &ie);
@@ -166,7 +166,7 @@ void InitialContextSetupResponseMsg::setPduSessionResourceFailedToSetupList(
       Ngap_InitialContextSetupResponseIEs__value_PR_PDUSessionResourceFailedToSetupListCxtRes;
 
   int ret = pduSessionResourceFailedToSetupResponseList.value().encode(
-      &ie->value.choice.PDUSessionResourceFailedToSetupListCxtRes);
+      ie->value.choice.PDUSessionResourceFailedToSetupListCxtRes);
   if (!ret) {
     Logger::ngap().error(
         "Encode PDUSessionResourceFailedToSetupListCxtRes IE error");
@@ -250,8 +250,8 @@ bool InitialContextSetupResponseMsg::decode(Ngap_NGAP_PDU_t* ngapMsgPdu) {
                 Ngap_InitialContextSetupResponseIEs__value_PR_PDUSessionResourceSetupListCxtRes) {
           PduSessionResourceSetupListCxtRes tmp = {};
           if (!tmp.decode(
-                  &initialContextSetupResponseIEs->protocolIEs.list.array[i]
-                       ->value.choice.PDUSessionResourceSetupListCxtRes)) {
+                  initialContextSetupResponseIEs->protocolIEs.list.array[i]
+                      ->value.choice.PDUSessionResourceSetupListCxtRes)) {
             Logger::ngap().error(
                 "Decoded NGAP PDUSessionResourceSetupListCxtRes IE error");
 
@@ -274,9 +274,9 @@ bool InitialContextSetupResponseMsg::decode(Ngap_NGAP_PDU_t* ngapMsgPdu) {
                 Ngap_InitialContextSetupResponseIEs__value_PR_PDUSessionResourceFailedToSetupListCxtRes) {
           PduSessionResourceFailedToSetupListCxtRes tmp = {};
           if (!tmp.decode(
-                  &initialContextSetupResponseIEs->protocolIEs.list.array[i]
-                       ->value.choice
-                       .PDUSessionResourceFailedToSetupListCxtRes)) {
+                  initialContextSetupResponseIEs->protocolIEs.list.array[i]
+                      ->value.choice
+                      .PDUSessionResourceFailedToSetupListCxtRes)) {
             Logger::ngap().error(
                 "Decoded NGAP PDUSessionResourceFailedToSetupListCxtRes IE "
                 "error");

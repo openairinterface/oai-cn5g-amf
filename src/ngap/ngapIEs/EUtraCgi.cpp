@@ -52,7 +52,7 @@ bool EUtraCgi::encode(Ngap_EUTRA_CGI_t& eutra_cgi) {
 }
 
 //------------------------------------------------------------------------------
-bool EUtraCgi::decode(Ngap_EUTRA_CGI_t& eutra_cgi) {
+bool EUtraCgi::decode(const Ngap_EUTRA_CGI_t& eutra_cgi) {
   if (!plmn_id_.decode(eutra_cgi.pLMNIdentity)) return false;
   if (!eUTRA_cell_identity_.decode(eutra_cgi.eUTRACellIdentity)) return false;
   return true;

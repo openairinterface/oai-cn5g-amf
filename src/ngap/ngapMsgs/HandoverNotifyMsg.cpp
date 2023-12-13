@@ -106,7 +106,7 @@ void HandoverNotifyMsg::setUserLocationInfoNR(
   ie->value.present = Ngap_HandoverNotifyIEs__value_PR_UserLocationInformation;
 
   int ret =
-      userLocationInformation.encode(&ie->value.choice.UserLocationInformation);
+      userLocationInformation.encode(ie->value.choice.UserLocationInformation);
   if (!ret) {
     Logger::ngap().error("Encode UserLocationInformation IE error");
     free_wrapper((void**) &ie);
@@ -200,8 +200,8 @@ bool HandoverNotifyMsg::decode(Ngap_NGAP_PDU_t* ngapMsgPdu) {
         if (handoverNotifyIEs->protocolIEs.list.array[i]->value.present ==
             Ngap_HandoverNotifyIEs__value_PR_UserLocationInformation) {
           if (!userLocationInformation.decode(
-                  &handoverNotifyIEs->protocolIEs.list.array[i]
-                       ->value.choice.UserLocationInformation)) {
+                  handoverNotifyIEs->protocolIEs.list.array[i]
+                      ->value.choice.UserLocationInformation)) {
             Logger::ngap().error(
                 "Decoded NGAP UserLocationInformation IE error");
             return false;

@@ -42,8 +42,9 @@ class PduSessionResourceItemHoRqd {
       PduSessionId& m_pDUSessionID,
       OCTET_STRING_t& m_handoverRequiredTransfer) const;
 
-  bool encode(Ngap_PDUSessionResourceItemHORqd_t* pdUSessionResourceItemHORqd);
-  bool decode(Ngap_PDUSessionResourceItemHORqd_t* pdUSessionResourceItemHORqd);
+  bool encode(Ngap_PDUSessionResourceItemHORqd_t& pdUSessionResourceItemHORqd);
+  bool decode(
+      const Ngap_PDUSessionResourceItemHORqd_t& pdUSessionResourceItemHORqd);
 
  private:
   PduSessionId pDUSessionID;                // Mandatory

@@ -74,7 +74,7 @@ bool AmfSetId::encode(Ngap_AMFSetID_t& amf_set_id) const {
 }
 
 //------------------------------------------------------------------------------
-bool AmfSetId::decode(const Ngap_AMFSetID_t& amf_set_id) {
+bool AmfSetId::decode(Ngap_AMFSetID_t amf_set_id) {
   if (!amf_set_id.buf) return false;
   output_wrapper::print_buffer(
       "ngap", "AMFSetID", amf_set_id.buf, amf_set_id.size);

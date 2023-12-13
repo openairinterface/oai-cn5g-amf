@@ -46,7 +46,7 @@ bool ConfidentialityProtectionIndication::get(long& indication) const {
 
 //------------------------------------------------------------------------------
 bool ConfidentialityProtectionIndication::encode(
-    Ngap_ConfidentialityProtectionIndication_t& indication) {
+    Ngap_ConfidentialityProtectionIndication_t& indication) const {
   indication = indication_;
 
   return true;
@@ -54,7 +54,7 @@ bool ConfidentialityProtectionIndication::encode(
 
 //------------------------------------------------------------------------------
 bool ConfidentialityProtectionIndication::decode(
-    Ngap_ConfidentialityProtectionIndication_t indication) {
+    const Ngap_ConfidentialityProtectionIndication_t& indication) {
   indication_ = indication;
 
   return true;

@@ -43,22 +43,22 @@ void TAIListForPaging::getTAIListForPaging(std::vector<TAI>& list) {
   list = taiList;
 }
 //------------------------------------------------------------------------------
-bool TAIListForPaging::encode(Ngap_TAIListForPaging_t* pdu) {
+bool TAIListForPaging::encode(Ngap_TAIListForPaging_t& pdu) {
   for (auto& tai : taiList) {
     Ngap_TAIListForPagingItem_t* ta = (Ngap_TAIListForPagingItem_t*) calloc(
         1, sizeof(Ngap_TAIListForPagingItem_t));
-    if (!tai.encode(&ta->tAI)) return false;
-    if (ASN_SEQUENCE_ADD(&pdu->list, ta) != 0) return false;
+    if (!tai.encode(ta->tAI)) return false;
+    if (ASN_SEQUENCE_ADD(&pdu.list, ta) != 0) return false;
   }
   return true;
 }
 
 //------------------------------------------------------------------------------
-bool TAIListForPaging::decode(Ngap_TAIListForPaging_t* pdu) {
-  if (pdu->list.count < 0) return false;
-  for (int i = 0; i < pdu->list.count; i++) {
+bool TAIListForPaging::decode(const Ngap_TAIListForPaging_t& pdu) {
+  if (pdu.list.count < 0) return false;
+  for (int i = 0; i < pdu.list.count; i++) {
     TAI tai = {};
-    if (!tai.decode(&pdu->list.array[i]->tAI)) return false;
+    if (!tai.decode(pdu.list.array[i]->tAI)) return false;
     taiList.push_back(tai);
   }
 

@@ -42,14 +42,14 @@ void CountValueForPdcpSn12::getValue(long& pDCP, long& hFN_PDCP) const {
 }
 
 //------------------------------------------------------------------------------
-bool CountValueForPdcpSn12::encode(Ngap_COUNTValueForPDCP_SN12_t* value) {
-  value->pDCP_SN12     = pdcp;
-  value->hFN_PDCP_SN12 = hfn_pdcp;
+bool CountValueForPdcpSn12::encode(Ngap_COUNTValueForPDCP_SN12_t& value) const {
+  value.pDCP_SN12     = pdcp;
+  value.hFN_PDCP_SN12 = hfn_pdcp;
   return true;
 }
 
 //------------------------------------------------------------------------------
-bool CountValueForPdcpSn12::decode(Ngap_COUNTValueForPDCP_SN12_t& value) {
+bool CountValueForPdcpSn12::decode(const Ngap_COUNTValueForPDCP_SN12_t& value) {
   pdcp     = value.pDCP_SN12;
   hfn_pdcp = value.hFN_PDCP_SN12;
   return true;

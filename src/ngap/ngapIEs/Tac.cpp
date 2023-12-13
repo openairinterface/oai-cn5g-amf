@@ -55,7 +55,7 @@ bool TAC::encode(Ngap_TAC_t& tac) {
 }
 
 //------------------------------------------------------------------------------
-bool TAC::decode(Ngap_TAC_t& tac) {
+bool TAC::decode(const Ngap_TAC_t& tac) {
   if (!tac.buf) return false;
   tac_ = 0;
   for (int i = 0; i < tac.size; i++) {

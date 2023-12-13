@@ -64,7 +64,7 @@ bool GtpTunnel::encode(Ngap_GTPTunnel& gtp_tunnel) {
 }
 
 //------------------------------------------------------------------------------
-bool GtpTunnel::decode(Ngap_GTPTunnel& gtp_tunnel) {
+bool GtpTunnel::decode(const Ngap_GTPTunnel& gtp_tunnel) {
   if (!transportLayerAddress.decode(gtp_tunnel.transportLayerAddress))
     return false;
   if (!gtpTeid.decode(gtp_tunnel.gTP_TEID)) return false;

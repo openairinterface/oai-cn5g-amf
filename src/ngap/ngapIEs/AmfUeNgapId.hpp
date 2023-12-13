@@ -39,8 +39,8 @@ class AmfUeNgapId {
   bool set(const uint64_t&);
   uint64_t get() const;
 
-  bool encode(Ngap_AMF_UE_NGAP_ID_t&);
-  bool decode(Ngap_AMF_UE_NGAP_ID_t&);
+  bool encode(Ngap_AMF_UE_NGAP_ID_t&) const;
+  bool decode(Ngap_AMF_UE_NGAP_ID_t);
 
  private:
   uint64_t id_;

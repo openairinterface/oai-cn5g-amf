@@ -129,7 +129,7 @@ void PduSessionResourceSetupResponseMsg::setPduSessionResourceSetupResponseList(
       Ngap_PDUSessionResourceSetupResponseIEs__value_PR_PDUSessionResourceSetupListSURes;
 
   int ret = pduSessionResourceSetupResponseList.value().encode(
-      &ie->value.choice.PDUSessionResourceSetupListSURes);
+      ie->value.choice.PDUSessionResourceSetupListSURes);
   if (!ret) {
     Logger::ngap().error(
         "Encode NGAP PDUSessionResourceSetupListSURes IE error");
@@ -194,7 +194,7 @@ void PduSessionResourceSetupResponseMsg::setPduSessionResourceFailedToSetupList(
       Ngap_PDUSessionResourceSetupResponseIEs__value_PR_PDUSessionResourceFailedToSetupListSURes;
 
   int ret = pduSessionResourceFailedToSetupResponseList->encode(
-      &ie->value.choice.PDUSessionResourceFailedToSetupListSURes);
+      ie->value.choice.PDUSessionResourceFailedToSetupListSURes);
   if (!ret) {
     Logger::ngap().error(
         "Encode NGAP PDUSessionResourceFailedToSetupListSURes IE error");
@@ -302,9 +302,8 @@ bool PduSessionResourceSetupResponseMsg::decode(Ngap_NGAP_PDU_t* ngapMsgPdu) {
                 Ngap_PDUSessionResourceSetupResponseIEs__value_PR_PDUSessionResourceSetupListSURes) {
           PduSessionResourceSetupListSURes tmp = {};
           if (!tmp.decode(
-                  &pduSessionResourceSetupResponseIEs->protocolIEs.list
-                       .array[i]
-                       ->value.choice.PDUSessionResourceSetupListSURes)) {
+                  pduSessionResourceSetupResponseIEs->protocolIEs.list.array[i]
+                      ->value.choice.PDUSessionResourceSetupListSURes)) {
             Logger::ngap().error(
                 "Decoded NGAP PDUSessionResourceSetupListSURes IE error!");
             return false;
@@ -324,10 +323,10 @@ bool PduSessionResourceSetupResponseMsg::decode(Ngap_NGAP_PDU_t* ngapMsgPdu) {
                     ->value.present ==
                 Ngap_PDUSessionResourceSetupResponseIEs__value_PR_PDUSessionResourceFailedToSetupListSURes) {
           PduSessionResourceFailedToSetupListSURes tmp = {};
-          if (!tmp.decode(&pduSessionResourceSetupResponseIEs->protocolIEs.list
-                               .array[i]
-                               ->value.choice
-                               .PDUSessionResourceFailedToSetupListSURes)) {
+          if (!tmp.decode(
+                  pduSessionResourceSetupResponseIEs->protocolIEs.list.array[i]
+                      ->value.choice
+                      .PDUSessionResourceFailedToSetupListSURes)) {
             Logger::ngap().error(
                 "Decoded NGAP PDUSessionResourceFailedToSetupListSURes IE "
                 "error!");

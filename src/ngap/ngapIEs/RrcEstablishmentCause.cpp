@@ -48,7 +48,7 @@ bool RrcEstablishmentCause::encode(Ngap_RRCEstablishmentCause_t& cause) const {
 }
 
 //------------------------------------------------------------------------------
-bool RrcEstablishmentCause::decode(const Ngap_RRCEstablishmentCause_t& cause) {
+bool RrcEstablishmentCause::decode(Ngap_RRCEstablishmentCause_t cause) {
   cause_ = cause;
 
   return true;

@@ -52,7 +52,7 @@ bool NRCellIdentity::encode(Ngap_NRCellIdentity_t& nRCellIdentity) {
 }
 
 //------------------------------------------------------------------------------
-bool NRCellIdentity::decode(Ngap_NRCellIdentity_t& nRCellIdentity) {
+bool NRCellIdentity::decode(Ngap_NRCellIdentity_t nRCellIdentity) {
   if (!nRCellIdentity.buf) return false;
 
   nr_cell_identity_ = nRCellIdentity.buf[0];

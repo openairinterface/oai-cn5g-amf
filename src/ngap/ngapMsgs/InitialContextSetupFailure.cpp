@@ -126,7 +126,7 @@ void InitialContextSetupFailureMsg::setPduSessionResourceFailedToSetupList(
       Ngap_InitialContextSetupFailureIEs__value_PR_PDUSessionResourceFailedToSetupListCxtFail;
 
   int ret = pduSessionResourceFailedToSetupFailureList.value().encode(
-      &ie->value.choice.PDUSessionResourceFailedToSetupListCxtFail);
+      ie->value.choice.PDUSessionResourceFailedToSetupListCxtFail);
   if (!ret) {
     Logger::ngap().error(
         "Encode PDUSessionResourceFailedToSetupListCxtFail IE error");
@@ -207,9 +207,9 @@ bool InitialContextSetupFailureMsg::decode(Ngap_NGAP_PDU_t* ngapMsgPdu) {
                 Ngap_InitialContextSetupFailureIEs__value_PR_PDUSessionResourceFailedToSetupListCxtFail) {
           PduSessionResourceFailedToSetupListCxtFail tmp = {};
           if (!tmp.decode(
-                  &initialContextSetupFailureIEs->protocolIEs.list.array[i]
-                       ->value.choice
-                       .PDUSessionResourceFailedToSetupListCxtFail)) {
+                  initialContextSetupFailureIEs->protocolIEs.list.array[i]
+                      ->value.choice
+                      .PDUSessionResourceFailedToSetupListCxtFail)) {
             Logger::ngap().error(
                 "Decoded NGAP PDUSessionResourceFailedToSetupListCxtFail IE "
                 "error");

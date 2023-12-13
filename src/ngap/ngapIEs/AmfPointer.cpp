@@ -59,7 +59,7 @@ void AmfPointer::get(uint8_t& pointer) const {
 }
 
 //------------------------------------------------------------------------------
-bool AmfPointer::encode(Ngap_AMFPointer_t& amf_pointer) {
+bool AmfPointer::encode(Ngap_AMFPointer_t& amf_pointer) const {
   amf_pointer.size = 1;
   uint8_t* buffer  = (uint8_t*) calloc(1, sizeof(uint8_t));
   if (!buffer) return false;
@@ -71,7 +71,7 @@ bool AmfPointer::encode(Ngap_AMFPointer_t& amf_pointer) {
 }
 
 //------------------------------------------------------------------------------
-bool AmfPointer::decode(Ngap_AMFPointer_t& amf_pointer) {
+bool AmfPointer::decode(Ngap_AMFPointer_t amf_pointer) {
   if (!amf_pointer.buf) return false;
   pointer_ = (amf_pointer.buf[0] & 0xfc) >> 2;  // 1111 1100
 

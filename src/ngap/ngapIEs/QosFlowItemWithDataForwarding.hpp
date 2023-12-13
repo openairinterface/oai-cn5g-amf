@@ -43,7 +43,8 @@ class QosFlowItemWithDataForWarding {
       const std::optional<long>& data_forwarding_accepted);
   void getQosFlowIdentifier(Ngap_QosFlowIdentifier_t& qfi);
 
-  bool decode(Ngap_QosFlowItemWithDataForwarding_t* qos_flow_item);
+  bool decode(const Ngap_QosFlowItemWithDataForwarding_t& qos_flow_item);
+  // TODO: encode
 
  private:
   QosFlowIdentifier qfi_;                         // Mandatory

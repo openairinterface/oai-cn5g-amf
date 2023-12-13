@@ -75,7 +75,7 @@ void NGResetMsg::setResetType(const ResetType& r) {
   ie->criticality   = Ngap_Criticality_reject;
   ie->value.present = Ngap_NGResetIEs__value_PR_ResetType;
 
-  if (!resetType.encode(&ie->value.choice.ResetType)) {
+  if (!resetType.encode(ie->value.choice.ResetType)) {
     Logger::ngap().error("Encode NGAP ResetType IE error");
     free_wrapper((void**) &ie);
     return;
@@ -137,8 +137,8 @@ bool NGResetMsg::decode(Ngap_NGAP_PDU_t* ngapMsgPdu) {
                     Ngap_Criticality_reject &&
                 ngResetIEs->protocolIEs.list.array[i]->value.present ==
                     Ngap_NGResetIEs__value_PR_ResetType) {
-              if (!resetType.decode(&ngResetIEs->protocolIEs.list.array[i]
-                                         ->value.choice.ResetType)) {
+              if (!resetType.decode(ngResetIEs->protocolIEs.list.array[i]
+                                        ->value.choice.ResetType)) {
                 Logger::ngap().error("Decoded NGAP ResetType IE error");
                 return false;
               }

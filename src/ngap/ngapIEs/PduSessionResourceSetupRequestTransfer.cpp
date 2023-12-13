@@ -195,7 +195,7 @@ void PduSessionResourceSetupRequestTransferIE::setSecurityIndication(
       Ngap_PDUSessionResourceSetupRequestTransferIEs__value_PR_SecurityIndication;
 
   int ret =
-      securityIndication.value().encode(&ie->value.choice.SecurityIndication);
+      securityIndication.value().encode(ie->value.choice.SecurityIndication);
   if (!ret) {
     Logger::ngap().error("Encode SecurityIndication IE error");
     free_wrapper((void**) &ie);
@@ -232,7 +232,7 @@ void PduSessionResourceSetupRequestTransferIE::setSecurityIndication(
       Ngap_PDUSessionResourceSetupRequestTransferIEs__value_PR_SecurityIndication;
 
   int ret =
-      securityIndication.value().encode(&ie->value.choice.SecurityIndication);
+      securityIndication.value().encode(ie->value.choice.SecurityIndication);
   if (!ret) {
     Logger::ngap().error("Encode SecurityIndication IE error");
     free_wrapper((void**) &ie);
@@ -437,7 +437,7 @@ void PduSessionResourceSetupRequestTransferIE::setQosFlowSetupRequestList(
       Ngap_PDUSessionResourceSetupRequestTransferIEs__value_PR_QosFlowSetupRequestList;
 
   int ret =
-      qosFlowSetupRequestList.encode(&ie->value.choice.QosFlowSetupRequestList);
+      qosFlowSetupRequestList.encode(ie->value.choice.QosFlowSetupRequestList);
   if (!ret) {
     Logger::ngap().error("Encode QosFlowSetupRequestList IE error");
     free_wrapper((void**) &ie);
@@ -597,9 +597,9 @@ bool PduSessionResourceSetupRequestTransferIE::decode(
                 Ngap_PDUSessionResourceSetupRequestTransferIEs__value_PR_SecurityIndication) {
           SecurityIndication security_indication = {};
           if (!security_indication.decode(
-                  &pduSessionResourceSetupRequestTransferIEs->protocolIEs.list
-                       .array[i]
-                       ->value.choice.SecurityIndication)) {
+                  pduSessionResourceSetupRequestTransferIEs->protocolIEs.list
+                      .array[i]
+                      ->value.choice.SecurityIndication)) {
             Logger::ngap().error("Decode NGAP SecurityIndication IE error");
 
             return false;
@@ -643,9 +643,9 @@ bool PduSessionResourceSetupRequestTransferIE::decode(
                     ->value.present ==
                 Ngap_PDUSessionResourceSetupRequestTransferIEs__value_PR_QosFlowSetupRequestList) {
           if (!qosFlowSetupRequestList.decode(
-                  &pduSessionResourceSetupRequestTransferIEs->protocolIEs.list
-                       .array[i]
-                       ->value.choice.QosFlowSetupRequestList)) {
+                  pduSessionResourceSetupRequestTransferIEs->protocolIEs.list
+                      .array[i]
+                      ->value.choice.QosFlowSetupRequestList)) {
             Logger::ngap().error(
                 "Decode NGAP QosFlowSetupRequestList IE error");
             return false;

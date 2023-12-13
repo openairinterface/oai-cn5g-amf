@@ -25,41 +25,44 @@
 #include "NotificationControl.hpp"
 #include "PacketLossRate.hpp"
 
+#include <optional>
+
 extern "C" {
 #include "Ngap_GBR-QosInformation.h"
 }
 
 namespace ngap {
 
-class GrbQosInformation {
+class GbrQosInformation {
  public:
-  GrbQosInformation();
-  virtual ~GrbQosInformation();
+  GbrQosInformation();
+  virtual ~GbrQosInformation();
 
-  void setGBR_QosInformation(
+  void set(
       long m_maximumFlowBitRateDL, long m_maximumFlowBitRateUL,
       long m_guaranteedFlowBitRateDL, long m_guaranteedFlowBitRateUL,
-      NotificationControl* m_notificationControl,
-      PacketLossRate* m_maximumPacketLossRateDL,
-      PacketLossRate* m_maximumPacketLossRateUL);
-  bool getGBR_QosInformation(
+      const std::optional<NotificationControl>& m_notificationControl,
+      const std::optional<PacketLossRate>& m_maximumPacketLossRateDL,
+      const std::optional<PacketLossRate>& m_maximumPacketLossRateUL);
+  bool get(
       long& m_maximumFlowBitRateDL, long& m_maximumFlowBitRateUL,
       long& m_guaranteedFlowBitRateDL, long& m_guaranteedFlowBitRateUL,
-      NotificationControl*& m_notificationControl,
-      PacketLossRate*& m_maximumPacketLossRateDL,
-      PacketLossRate*& m_maximumPacketLossRateUL);
+      std::optional<NotificationControl>& m_notificationControl,
+      std::optional<PacketLossRate>& m_maximumPacketLossRateDL,
+      std::optional<PacketLossRate>& m_maximumPacketLossRateUL);
 
-  bool encode2GBR_QosInformation(Ngap_GBR_QosInformation_t*);
-  bool decodefromGBR_QosInformation(Ngap_GBR_QosInformation_t*);
+  bool encode(Ngap_GBR_QosInformation_t&);
+  bool decode(const Ngap_GBR_QosInformation_t&);
 
  private:
   long maximumFlowBitRateDL;
   long maximumFlowBitRateUL;
   long guaranteedFlowBitRateDL;
   long guaranteedFlowBitRateUL;
-  NotificationControl* notificationControl; /* OPTIONAL */
-  PacketLossRate* maximumPacketLossRateDL;  /* OPTIONAL */
-  PacketLossRate* maximumPacketLossRateUL;  /* OPTIONAL */
+  std::optional<NotificationControl> notificationControl;  // Optional
+  std::optional<PacketLossRate> maximumPacketLossRateDL;   // Optional
+  std::optional<PacketLossRate> maximumPacketLossRateUL;   // Optional
+  // TODO: Alternative QoS Parameters Set List (Optional, Rel 16.14.0)
 };
 }  // namespace ngap
 

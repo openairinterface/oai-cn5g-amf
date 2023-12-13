@@ -36,8 +36,8 @@ class MaximumDataBurstVolume {
   void set(long value);
   void get(long& value) const;
 
-  bool encode(Ngap_MaximumDataBurstVolume_t*);
-  bool decode(Ngap_MaximumDataBurstVolume_t*);
+  bool encode(Ngap_MaximumDataBurstVolume_t&) const;
+  bool decode(Ngap_MaximumDataBurstVolume_t);
 
  private:
   long volume_;
