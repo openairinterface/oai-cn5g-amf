@@ -34,7 +34,7 @@ extern "C" {
 #include "bstrlib.h"
 }
 
-#define SCTP_RECV_BUFFER_SIZE 2048
+#define SCTP_RECV_BUFFER_SIZE 4096
 #define SCTP_RC_ERROR -1
 #define SCTP_RC_NORMAL_READ 0
 #define SCTP_RC_DISCONNECT 1
@@ -93,7 +93,7 @@ class sctp_server {
 
  private:
   static void* sctp_receiver_thread(void* arg);
-  int getSocket();
+  int get_socket();
   int sctp_read_from_socket(int sd, uint32_t m_ppid);
   int handle_assoc_change(
       int sd, uint32_t ppid, struct sctp_assoc_change* assoc_change);
@@ -101,19 +101,19 @@ class sctp_server {
   int sctp_handle_reset(const sctp_assoc_id_t assoc_id);
   sctp_association_t* add_new_association(
       int sd, uint32_t ppid, struct sctp_assoc_change* sctp_assoc_changed);
-  int sctp_get_localaddresses(
+  int sctp_get_local_addresses(
       int sock, struct sockaddr** local_addr, int* nb_local_addresses);
-  int sctp_get_peeraddresses(
+  int sctp_get_peer_addresses(
       int sock, struct sockaddr** remote_addr, int* nb_remote_addresses);
   sctp_association_t* sctp_is_assoc_in_list(sctp_assoc_id_t assoc_id);
 
   int socket_;
   sctp_application* app_;
   pthread_t thread_;
-  sctp_descriptor_t sctp_desc;
-  struct sockaddr_in serverAddr_;
+  sctp_descriptor_t sctp_desc_;
+  struct sockaddr_in server_addr_;
   struct sctp_event_subscribe events_;
-  std::vector<sctp_association_t*> sctp_ctx;
+  std::vector<sctp_association_t*> sctp_ctx_;
 };
 
 }  // namespace sctp
