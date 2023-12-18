@@ -3426,7 +3426,7 @@ void amf_n1::ue_initiate_de_registration_handle(
       // Send Nsmf_PDUSession_ReleaseSMContext to SMF to release all existing
       // PDU sessions
 
-      std::map<uint32_t, boost::shared_future<uint32_t>> smf_responses;
+      std::map<uint32_t, boost::shared_future<nlohmann::json>> smf_responses;
       for (auto session : sessions_ctx) {
         std::shared_ptr<itti_nsmf_pdusession_release_sm_context> itti_msg =
             std::make_shared<itti_nsmf_pdusession_release_sm_context>(
@@ -3436,9 +3436,9 @@ void amf_n1::ue_initiate_de_registration_handle(
         uint32_t promise_id = amf_app_inst->generate_promise_id();
         Logger::amf_n1().debug("Promise ID generated %d", promise_id);
 
-        boost::shared_ptr<boost::promise<uint32_t>> p =
-            boost::make_shared<boost::promise<uint32_t>>();
-        boost::shared_future<uint32_t> f = p->get_future();
+        boost::shared_ptr<boost::promise<nlohmann::json>> p =
+            boost::make_shared<boost::promise<nlohmann::json>>();
+        boost::shared_future<nlohmann::json> f = p->get_future();
 
         // Store the future to be processed later
         smf_responses.emplace(promise_id, f);
@@ -3459,21 +3459,29 @@ void amf_n1::ue_initiate_de_registration_handle(
 
       // Wait for the response available and process accordingly
       while (!smf_responses.empty()) {
-        std::optional<uint32_t> response_code = std::nullopt;
-        utils::wait_for_result(smf_responses.begin()->second, response_code);
+        // Wait for the result available and process accordingly
+        std::optional<nlohmann::json> result = std::nullopt;
+        utils::wait_for_result(smf_responses.begin()->second, result);
 
-        if (response_code.has_value()) {
-          // Remove PDU session
-          // TODO for multiple sessions
-          if ((response_code.value() == 200) or
-              (response_code.value() == 204)) {
-            for (auto session : sessions_ctx) {
-              uc->remove_pdu_sessions_context(session->pdu_session_id);
+        if (result.has_value()) {
+          Logger::amf_server().debug(
+              "Got result for promise ID %d", smf_responses.begin()->first);
+
+          uint32_t http_response_code = 0;
+          if (result.value().find("httpResponseCode") != result.value().end()) {
+            http_response_code = result.value()["httpResponseCode"].get<int>();
+            // Remove PDU session
+            // TODO for multiple sessions
+            if ((http_response_code == 200) or (http_response_code == 204)) {
+              for (auto session : sessions_ctx) {
+                uc->remove_pdu_sessions_context(session->pdu_session_id);
+              }
             }
+          } else {
+            // TODO:
           }
-        } else {
-          // TODO:
         }
+
         smf_responses.erase(smf_responses.begin());
       }
 

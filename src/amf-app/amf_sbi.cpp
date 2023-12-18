@@ -576,9 +576,13 @@ void amf_sbi::handle_itti_message(
   curl_http_client(
       remote_uri, "POST", msg_body, response_json, response_code, http_version);
 
+  nlohmann::json response_data      = {};
+  response_data["httpResponseCode"] = response_code;
+  response_data["json_data"]        = response_json;
+
   // Notify to the result
   if (itti_msg.promise_id > 0) {
-    amf_app_inst->trigger_process_response(itti_msg.promise_id, response_code);
+    amf_app_inst->trigger_process_response(itti_msg.promise_id, response_data);
     return;
   }
 }
@@ -1451,7 +1455,8 @@ bool amf_sbi::curl_http_client(
 
       curl_result = true;
 
-      std::string promise_result = {};
+      // std::string promise_result = {};
+      nlohmann::json process_response_data = {};
 
       bool is_ho_procedure              = false;
       bool is_up_deactivation_procedure = false;
@@ -1464,9 +1469,10 @@ bool amf_sbi::curl_http_client(
         response_data.at("hoState").get_to(ho_state);
         if (ho_state.compare("COMPLETED") == 0) {
           if (response_data.find("pduSessionId") != response_data.end())
-            response_data.at("pduSessionId").get_to(promise_result);
+            process_response_data["pduSessionId"] =
+                response_data.at("pduSessionId");
         } else if (n2sm.has_value()) {
-          promise_result = n2sm.value();
+          process_response_data["n2sm"] = n2sm.value();
         }
       }
 
@@ -1476,13 +1482,15 @@ bool amf_sbi::curl_http_client(
         response_data.at("upCnxState").get_to(up_cnx_state);
         if (up_cnx_state.compare("DEACTIVATED") == 0) {
           is_up_deactivation_procedure = true;
-          promise_result               = std::to_string(httpCode);
+          // promise_result               = std::to_string(httpCode);
+          process_response_data["httpResponseCode"] = httpCode;
         }
 
         // Service Request
         if (up_cnx_state.compare("ACTIVATING") == 0) {
           is_service_request = true;
-          promise_result     = std::to_string(httpCode);
+          // promise_result     = std::to_string(httpCode);
+          process_response_data["httpResponseCode"] = httpCode;
           // Update Pdu Session Context
           if (n2sm.has_value()) {
             conv::msg_str_2_msg_hex(n2sm.value(), n2sm_hex);
@@ -1499,7 +1507,8 @@ bool amf_sbi::curl_http_client(
       if ((promise_id > 0) and
           (is_ho_procedure or is_up_deactivation_procedure or
            is_service_request)) {
-        amf_app_inst->trigger_process_response(promise_id, promise_result);
+        amf_app_inst->trigger_process_response(
+            promise_id, process_response_data);
         curl_slist_free_all(headers);
         curl_easy_cleanup(curl);
         curl_global_cleanup();
