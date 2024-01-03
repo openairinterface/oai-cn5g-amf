@@ -60,14 +60,10 @@ void amf_app_task(void*);
 
 //------------------------------------------------------------------------------
 amf_app::amf_app(const amf_config& amf_cfg)
-    : m_amf_ue_ngap_id2ue_ctx(),
-      m_ue_ctx_key(),
-      m_supi2ue_ctx(),
-      m_curl_handle_responses_n2_sm() {
-  amf_ue_ngap_id2ue_ctx       = {};
-  ue_ctx_key                  = {};
-  supi2ue_ctx                 = {};
-  curl_handle_responses_n2_sm = {};
+    : m_amf_ue_ngap_id2ue_ctx(), m_ue_ctx_key(), m_supi2ue_ctx() {
+  amf_ue_ngap_id2ue_ctx = {};
+  ue_ctx_key            = {};
+  supi2ue_ctx           = {};
   Logger::amf_app().startup("Creating AMF application functionality layer");
   if (itti_inst->create_task(TASK_AMF_APP, amf_app_task, nullptr)) {
     Logger::amf_app().error("Cannot create task TASK_AMF_APP");
