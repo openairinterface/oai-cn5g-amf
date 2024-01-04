@@ -50,11 +50,11 @@ sctp_application::~sctp_application() {}
 sctp_server::sctp_server(const char* address, const uint16_t port_num) {
   Logger::sctp().debug("Creating socket!");
   create_socket(address, port_num);
-  app_        = nullptr;
-  sctp_desc   = {};
-  serverAddr_ = {};
-  events_     = {};
-  sctp_ctx    = {};
+  app_         = nullptr;
+  sctp_desc_   = {};
+  server_addr_ = {};
+  events_      = {};
+  sctp_ctx_    = {};
 }
 
 //------------------------------------------------------------------------------
@@ -75,12 +75,12 @@ int sctp_server::create_socket(const char* address, const uint16_t port_num) {
     return RETURNerror;
   }
   Logger::sctp().info("Created socket (%d)", socket_);
-  bzero(&serverAddr_, sizeof(serverAddr_));
-  serverAddr_.sin_family      = res->ai_family;
-  serverAddr_.sin_addr.s_addr = htonl(INADDR_ANY);
-  serverAddr_.sin_port        = htons(port_num);
-  inet_pton(AF_INET, address, &serverAddr_.sin_addr);
-  if (bind(socket_, (struct sockaddr*) &serverAddr_, sizeof(serverAddr_)) !=
+  bzero(&server_addr_, sizeof(server_addr_));
+  server_addr_.sin_family      = res->ai_family;
+  server_addr_.sin_addr.s_addr = htonl(INADDR_ANY);
+  server_addr_.sin_port        = htons(port_num);
+  inet_pton(AF_INET, address, &server_addr_.sin_addr);
+  if (bind(socket_, (struct sockaddr*) &server_addr_, sizeof(server_addr_)) !=
       0) {
     Logger::sctp().error("Socket bind: %s:%d", strerror(errno), errno);
     return RETURNerror;
@@ -127,23 +127,23 @@ void* sctp_server::sctp_receiver_thread(void* arg) {
   if (arg == NULL) pthread_exit(NULL);
   FD_ZERO(&master);
   FD_ZERO(&read_fds);
-  FD_SET(ptr->getSocket(), &master);
-  fdmax = ptr->getSocket();
+  FD_SET(ptr->get_socket(), &master);
+  fdmax = ptr->get_socket();
 
   while (true) {
     memcpy(&read_fds, &master, sizeof(master));
     if (select(fdmax + 1, &read_fds, NULL, NULL, NULL) == -1) {
       Logger::sctp().error(
-          "[socket(%d)] Select() error: %s:%d", ptr->getSocket(),
+          "[socket(%d)] Select() error: %s:%d", ptr->get_socket(),
           strerror(errno), errno);
       pthread_exit(NULL);
     }
     for (int i = 0; i <= fdmax; i++) {
       if (FD_ISSET(i, &read_fds)) {
-        if (i == ptr->getSocket()) {
-          if ((clientsock = accept(ptr->getSocket(), NULL, NULL)) < 0) {
+        if (i == ptr->get_socket()) {
+          if ((clientsock = accept(ptr->get_socket(), NULL, NULL)) < 0) {
             Logger::sctp().error(
-                "[socket(%d)] Accept() error: %s:%d", ptr->getSocket(),
+                "[socket(%d)] Accept() error: %s:%d", ptr->get_socket(),
                 strerror(errno), errno);
             pthread_exit(NULL);
           } else {
@@ -166,7 +166,7 @@ void* sctp_server::sctp_receiver_thread(void* arg) {
 }
 
 //------------------------------------------------------------------------------
-int sctp_server::getSocket() {
+int sctp_server::get_socket() {
   return socket_;
 }
 
@@ -310,10 +310,10 @@ sctp_association_t* sctp_server::add_new_association(
       "Add new association with Id (%d)",
       (sctp_assoc_id_t) sctp_assoc_changed->sac_assoc_id);
 
-  sctp_ctx.push_back(new_association);
+  sctp_ctx_.push_back(new_association);
 
-  sctp_get_localaddresses(sd, NULL, NULL);
-  sctp_get_peeraddresses(
+  sctp_get_local_addresses(sd, NULL, NULL);
+  sctp_get_peer_addresses(
       sd, &new_association->peer_addresses,
       &new_association->nb_peer_addresses);
   app_->handle_sctp_new_association(
@@ -332,9 +332,9 @@ sctp_association_t* sctp_server::sctp_is_assoc_in_list(
     return NULL;
   }
 
-  for (int i = 0; i < sctp_ctx.size(); i++) {
-    if (sctp_ctx[i]->assoc_id == assoc_id) {
-      return sctp_ctx[i];
+  for (int i = 0; i < sctp_ctx_.size(); i++) {
+    if (sctp_ctx_[i]->assoc_id == assoc_id) {
+      return sctp_ctx_[i];
     }
   }
 
@@ -342,7 +342,7 @@ sctp_association_t* sctp_server::sctp_is_assoc_in_list(
 }
 
 //------------------------------------------------------------------------------
-int sctp_server::sctp_get_peeraddresses(
+int sctp_server::sctp_get_peer_addresses(
     int sock, struct sockaddr** remote_addr, int* nb_remote_addresses) {
   int nb;
   struct sockaddr* temp_addr_p = NULL;
@@ -389,7 +389,7 @@ int sctp_server::sctp_get_peeraddresses(
 }
 
 //------------------------------------------------------------------------------
-int sctp_server::sctp_get_localaddresses(
+int sctp_server::sctp_get_local_addresses(
     int sock, struct sockaddr** local_addr, int* nb_local_addresses) {
   int nb                       = 0;
   struct sockaddr* temp_addr_p = NULL;
@@ -448,7 +448,7 @@ int sctp_server::sctp_send_msg(
   }
   if (assoc_desc->sd == -1) {
     Logger::sctp().error(
-        "The socket is invalid may be closed (assoc id %d)", sctp_assoc_id);
+        "The socket is invalid (may be closed, assoc id %d)", sctp_assoc_id);
     return RETURNerror;
   }
   Logger::sctp().debug(

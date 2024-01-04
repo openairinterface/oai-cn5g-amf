@@ -142,10 +142,10 @@ class ngap_app : public sctp_application {
  protected:
   sctp_server sctp_s_38412;
   uint32_t ppid_;
-  std::map<sctp_assoc_id_t, std::shared_ptr<gnb_context>> assoc2gnbContext;
-  mutable std::shared_mutex m_assoc2gnbContext;
-  std::map<long, std::shared_ptr<gnb_context>> gnbid2gnbContext;
-  mutable std::shared_mutex m_gnbid2gnbContext;
+  std::map<sctp_assoc_id_t, std::shared_ptr<gnb_context>> assoc2gnb_context;
+  mutable std::shared_mutex m_assoc2gnb_context;
+  std::map<long, std::shared_ptr<gnb_context>> gnbid2gnb_context;
+  mutable std::shared_mutex m_gnbid2gnb_context;
 };
 
 }  // namespace ngap
