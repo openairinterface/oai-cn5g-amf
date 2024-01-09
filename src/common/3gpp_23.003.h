@@ -25,6 +25,8 @@
 #include <stdint.h>
 #include <string>
 
+#include <nlohmann/json.hpp>
+
 const uint32_t SD_NO_VALUE               = 0xFFFFFF;
 const uint8_t SST_MAX_STANDARDIZED_VALUE = 127;
 
@@ -70,9 +72,35 @@ typedef struct tai_s {
   tac_t tac;   /*!< \brief  Tracking Area Code   */
 } tai_t;
 
-typedef struct guami_5g_s {
+typedef struct guami_s {
   plmn_t plmn;
-  uint32_t amf_id;
-} guami_5g_t;
+  std::string amf_id;
+} guami_t;
+
+typedef struct guami_full_format_s {
+  std::string mcc;
+  std::string mnc;
+  uint8_t region_id;
+  uint16_t amf_set_id;
+  uint8_t amf_pointer;
+
+  nlohmann::json to_json() const {
+    nlohmann::json json_data = {};
+    json_data["mcc"]         = this->mcc;
+    json_data["mnc"]         = this->mnc;
+    json_data["region_id"]   = this->region_id;
+    json_data["amf_set_id"]  = this->amf_set_id;
+    json_data["amf_pointer"] = this->amf_pointer;
+    return json_data;
+  }
+
+  void from_json(nlohmann::json& json_data) {
+    this->mcc         = json_data["mcc"].get<std::string>();
+    this->mnc         = json_data["mnc"].get<std::string>();
+    this->region_id   = json_data["region_id"].get<int>();
+    this->amf_set_id  = json_data["amf_set_id"].get<int>();
+    this->amf_pointer = json_data["amf_pointer"].get<int>();
+  }
+} guami_full_format_t;
 
 #endif

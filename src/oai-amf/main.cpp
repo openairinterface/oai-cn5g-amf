@@ -33,7 +33,6 @@
 #include "amf_http2_server.hpp"
 #include "amf_app.hpp"
 #include "amf_config.hpp"
-#include "amf_cfg_libconfig.hpp"
 #include "amf_config_yaml.hpp"
 #include "amf_statistics.hpp"
 #include "itti.hpp"
@@ -120,26 +119,17 @@ int main(int argc, char** argv) {
   std::signal(SIGINT, amf_signal_handler);
 
   std::string conf_file_name = Options::getlibconfigConfig();
-  std::string file_ext       = ".conf";
-  if (conf_file_name.find(file_ext) != std::string::npos) {
-    Logger::system().debug("Parsing the configuration file, file type CONF.");
-    amf_cfg_libconfig::load(conf_file_name, amf_cfg);
-    Logger::set_level(amf_cfg.log_level);
-    amf_cfg.display();
-  } else {
-    // By default, considering the config file as yaml
-    Logger::system().debug("Parsing the configuration file, file type YAML.");
-    amf_cfg_yaml = std::make_unique<amf_config_yaml>(
-        conf_file_name, Options::getlogStdout(), Options::getlogRotFilelog());
-    if (!amf_cfg_yaml->init()) {
-      Logger::system().error("Reading the configuration failed. Exiting.");
-      return 1;
-    }
-    amf_cfg_yaml->pre_process();
-    amf_cfg_yaml->display();
-    // Convert from YAML to internal structure
-    amf_cfg_yaml->to_amf_config(amf_cfg);
+  Logger::system().debug("Parsing the configuration file, file type YAML.");
+  amf_cfg_yaml = std::make_unique<amf_config_yaml>(
+      conf_file_name, Options::getlogStdout(), Options::getlogRotFilelog());
+  if (!amf_cfg_yaml->init()) {
+    Logger::system().error("Reading the configuration failed. Exiting.");
+    return 1;
   }
+  amf_cfg_yaml->pre_process();
+  amf_cfg_yaml->display();
+  // Convert from YAML to internal structure
+  amf_cfg_yaml->to_amf_config(amf_cfg);
 
   itti_inst = new itti_mw();
   itti_inst->start(amf_cfg.itti.itti_timer_sched_params);

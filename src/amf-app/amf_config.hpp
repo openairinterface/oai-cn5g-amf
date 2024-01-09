@@ -27,7 +27,6 @@
 #include <sys/socket.h>
 
 #include <boost/algorithm/string.hpp>
-#include <libconfig.h++>
 #include <nlohmann/json.hpp>
 #include <string>
 #include <vector>
@@ -40,11 +39,8 @@
 #include "string.hpp"
 #include "thread_sched.hpp"
 
-// TODO: common for both YAML/Libconfig
 constexpr auto AMF_CONFIG_OPTION_YES_STR = "Yes";
 constexpr auto AMF_CONFIG_OPTION_NO_STR  = "No";
-
-using namespace libconfig;
 
 namespace oai::config {
 
@@ -131,32 +127,6 @@ typedef struct itti_cfg_s {
   util::thread_sched_params pgw_app_sched_params;
   util::thread_sched_params async_cmd_sched_params;
 } itti_cfg_t;
-
-typedef struct guami_s {
-  std::string mcc;
-  std::string mnc;
-  uint8_t region_id;
-  uint16_t amf_set_id;
-  uint8_t amf_pointer;
-
-  nlohmann::json to_json() const {
-    nlohmann::json json_data = {};
-    json_data["mcc"]         = this->mcc;
-    json_data["mnc"]         = this->mnc;
-    json_data["region_id"]   = this->region_id;
-    json_data["amf_set_id"]  = this->amf_set_id;
-    json_data["amf_pointer"] = this->amf_pointer;
-    return json_data;
-  }
-
-  void from_json(nlohmann::json& json_data) {
-    this->mcc         = json_data["mcc"].get<std::string>();
-    this->mnc         = json_data["mnc"].get<std::string>();
-    this->region_id   = json_data["region_id"].get<int>();
-    this->amf_set_id  = json_data["amf_set_id"].get<int>();
-    this->amf_pointer = json_data["amf_pointer"].get<int>();
-  }
-} guami_t;
 
 typedef struct slice_s {
   uint8_t sst;
@@ -418,8 +388,8 @@ class amf_config {
 
   unsigned int statistics_interval;
   std::string amf_name;
-  guami_t guami;
-  std::vector<guami_t> guami_list;
+  guami_full_format_t guami;
+  std::vector<guami_full_format_t> guami_list;
   unsigned int relative_amf_capacity;
   std::vector<plmn_item_t> plmn_list;
   bool is_emergency_support;

@@ -24,6 +24,7 @@
 
 #include <optional>
 
+#include "3gpp_23.003.h"
 #include "AmfName.hpp"
 #include "AllowedNssai.hpp"
 #include "CoreNetworkAssistanceInformationForInactive.hpp"
@@ -76,8 +77,8 @@ class InitialContextSetupRequestMsg : public NgapUEMessage {
       uint8_t& periodic_reg_update_timer_value, bool& mico_mode_ind_value,
       std::vector<Tai_t>& tai_list_for_rrc_inactive);
 
-  void setGuami(const Guami_t& value);
-  bool getGuami(Guami_t& value);
+  void setGuami(const guami_full_format_t& value);
+  bool getGuami(guami_full_format_t& value);
 
   void setPduSessionResourceSetupRequestList(
       const std::vector<PDUSessionResourceSetupRequestItem_t>& list);

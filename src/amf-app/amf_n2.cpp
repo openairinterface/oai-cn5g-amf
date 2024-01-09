@@ -941,12 +941,12 @@ void amf_n2::handle_itti_message(
       std::make_unique<InitialContextSetupRequestMsg>();
   msg->setAmfUeNgapId(itti_msg->amf_ue_ngap_id);
   msg->setRanUeNgapId(itti_msg->ran_ue_ngap_id);
-  Guami_t guami     = {};
-  guami.mcc         = amf_cfg.guami.mcc;
-  guami.mnc         = amf_cfg.guami.mnc;
-  guami.region_id   = amf_cfg.guami.region_id;
-  guami.amf_set_id  = amf_cfg.guami.amf_set_id;
-  guami.amf_pointer = amf_cfg.guami.amf_pointer;
+  guami_full_format_t guami = {};
+  guami.mcc                 = amf_cfg.guami.mcc;
+  guami.mnc                 = amf_cfg.guami.mnc;
+  guami.region_id           = amf_cfg.guami.region_id;
+  guami.amf_set_id          = amf_cfg.guami.amf_set_id;
+  guami.amf_pointer         = amf_cfg.guami.amf_pointer;
   msg->setGuami(guami);
   // Get the list allowed NSSAI from the common PLMN between gNB and AMF
   std::vector<S_Nssai> list;

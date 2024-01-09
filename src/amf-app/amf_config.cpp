@@ -23,6 +23,7 @@
 
 #include "3gpp_29.502.h"
 #include "amf_app.hpp"
+#include "common_defs.h"
 #include "logger.hpp"
 
 extern "C" {
@@ -30,11 +31,8 @@ extern "C" {
 #include <stdbool.h>
 #include <string.h>
 #include <sys/types.h>
-
-#include "common_defs.h"
 }
 
-using namespace libconfig;
 using namespace amf_application;
 
 namespace oai::config {
@@ -418,7 +416,7 @@ bool amf_config::from_json(nlohmann::json& json_data) {
     if (json_data.find("guami_list") != json_data.end()) {
       guami_list.clear();
       for (auto s : json_data["guami_list"]) {
-        guami_t g = {};
+        guami_full_format_t g = {};
         g.from_json(s);
         guami_list.push_back(g);
       }

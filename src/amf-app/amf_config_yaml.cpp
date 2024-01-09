@@ -870,9 +870,9 @@ void amf_config_yaml::to_amf_config(amf_config& cfg) {
   // cfg.support_features.use_fqdn_dns = true;
 
   for (const auto& i : amf_local->get_guami_list()) {
-    guami_t guami_item     = {};
-    guami_item.mcc         = i.get_mcc();
-    guami_item.mnc         = i.get_mnc();
+    guami_full_format_t guami_item = {};
+    guami_item.mcc                 = i.get_mcc();
+    guami_item.mnc                 = i.get_mnc();
     guami_item.amf_set_id  = conv::string_hex_to_int(i.get_amf_set_id());
     guami_item.region_id   = conv::string_hex_to_int(i.get_amf_region_id());
     guami_item.amf_pointer = conv::string_hex_to_int(i.get_amf_pointer());

@@ -22,7 +22,6 @@
 add_library (AMF_APP STATIC
   amf_app.cpp
   amf_config.cpp
-  amf_cfg_libconfig.cpp
   amf_config_yaml.cpp
   amf_n1.cpp
   amf_n2.cpp

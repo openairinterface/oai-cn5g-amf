@@ -592,6 +592,7 @@ std::string conv::tmsi_to_guti(
   int_to_string_hex(amf_id, amf_id_str);
   return {mcc + mnc + amf_id_str + tmsi};
 }
+
 //------------------------------------------------------------------------------
 std::string conv::imsi_to_supi(const std::string& imsi) {
   std::string supi_type = DEFAULT_SUPI_TYPE;
@@ -648,6 +649,19 @@ void conv::get_amf_id(
   amf_id = 0x00ffffff & ((amf_region_id << 16) | ((amf_set_id & 0x03ff) << 6) |
                          (amf_pointer & 0x3f));
 }
+
+//------------------------------------------------------------------------------
+void conv::get_amf_id(
+    uint8_t amf_region_id, uint16_t amf_set_id, uint8_t amf_pointer,
+    std::string& amf_id) {
+  // AMF Region ID: 8bits
+  // AMF Set ID: 10 bits
+  // AMF Pointer: 6 bits
+  uint32_t amf_id_int = 0;
+  get_amf_id(amf_region_id, amf_set_id, amf_pointer, amf_id_int);
+  int_to_string_hex(amf_id_int, amf_id);
+}
+
 //------------------------------------------------------------------------------
 void conv::get_amf_id(
     const std::string& amf_region_id, const std::string& amf_set_id,
@@ -659,4 +673,15 @@ void conv::get_amf_id(
   get_amf_id(
       string_hex_to_int(amf_region_id), string_hex_to_int(amf_set_id),
       string_hex_to_int(amf_pointer), amf_id);
+}
+
+//------------------------------------------------------------------------------
+void conv::get_amf_id(
+    const std::string& amf_region_id, const std::string& amf_set_id,
+    const std::string& amf_pointer, std::string& amf_id) {
+  uint32_t amf_id_int = 0;
+  get_amf_id(
+      string_hex_to_int(amf_region_id), string_hex_to_int(amf_set_id),
+      string_hex_to_int(amf_pointer), amf_id_int);
+  int_to_string_hex(amf_id_int, amf_id);
 }

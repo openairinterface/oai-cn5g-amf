@@ -292,7 +292,7 @@ bool InitialContextSetupRequestMsg::getCoreNetworkAssistanceInfo(
 }
 
 //------------------------------------------------------------------------------
-void InitialContextSetupRequestMsg::setGuami(const Guami_t& value) {
+void InitialContextSetupRequestMsg::setGuami(const guami_full_format_t& value) {
   guami.setGUAMI(
       value.mcc, value.mnc, value.region_id, value.amf_set_id,
       value.amf_pointer);
@@ -316,7 +316,7 @@ void InitialContextSetupRequestMsg::setGuami(const Guami_t& value) {
 }
 
 //------------------------------------------------------------------------------
-bool InitialContextSetupRequestMsg::getGuami(Guami_t& value) {
+bool InitialContextSetupRequestMsg::getGuami(guami_full_format_t& value) {
   guami.getGUAMI(
       value.mcc, value.mnc, value.region_id, value.amf_set_id,
       value.amf_pointer);

@@ -122,7 +122,13 @@ class conv {
       uint8_t amf_region_id, uint16_t amf_set_id, uint8_t amf_pointer,
       uint32_t& amf_id);
   static void get_amf_id(
+      uint8_t amf_region_id, uint16_t amf_set_id, uint8_t amf_pointer,
+      std::string& amf_id);
+  static void get_amf_id(
       const std::string& amf_region_id, const std::string& amf_set_id,
       const std::string& amf_pointer, uint32_t& amf_id);
+  static void get_amf_id(
+      const std::string& amf_region_id, const std::string& amf_set_id,
+      const std::string& amf_pointer, std::string& amf_id);
 };
 #endif /* FILE_CONVERSIONS_HPP_SEEN */
