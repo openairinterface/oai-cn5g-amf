@@ -21,7 +21,7 @@
 
 #include "DeregistrationRequest.hpp"
 
-#include "conversions.hpp"
+#include "amf_conversions.hpp"
 
 using namespace nas;
 
@@ -81,8 +81,9 @@ bool DeregistrationRequest::GetNgKsi(uint8_t& ng_ksi) const {
 
 //------------------------------------------------------------------------------
 void DeregistrationRequest::SetSuciSupiFormatImsi(
-    const string& mcc, const string& mnc, const string& routing_ind,
-    uint8_t protection_sch_id, const string& msin) {
+    const std::string& mcc, const std::string& mnc,
+    const std::string& routing_ind, uint8_t protection_sch_id,
+    const std::string& msin) {
   if (protection_sch_id != NULL_SCHEME) {
     Logger::nas_mm().error(
         "Encoding SUCI and SUPI format for IMSI error, please choose correct "
@@ -116,15 +117,16 @@ std::string DeregistrationRequest::Get5gGuti() const {
                          std::to_string(guti.value().amf_region_id) +
                          std::to_string(guti.value().amf_set_id) +
                          std::to_string(guti.value().amf_pointer) +
-                         conv::tmsi_to_string(guti.value()._5g_tmsi);
+                         amf_conv::tmsi_to_string(guti.value()._5g_tmsi);
   Logger::nas_mm().debug("5G GUTI %s", guti_str.c_str());
   return guti_str;
 }
 
 //------------------------------------------------------------------------------
 void DeregistrationRequest::SetSuciSupiFormatImsi(
-    const string& mcc, const string& mnc, const string& routing_ind,
-    uint8_t protection_sch_id, uint8_t hnpki, const string& msin) {
+    const std::string& mcc, const std::string& mnc,
+    const std::string& routing_ind, uint8_t protection_sch_id, uint8_t hnpki,
+    const std::string& msin) {
   // TODO:
 }
 

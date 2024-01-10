@@ -38,14 +38,16 @@ void IndividualSubscriptionDocumentApiEventExposure::setupRoutes() {
 
   Routes::Delete(
       *router,
-      base + amf_cfg.sbi_api_version + "/subscriptions/:subscriptionId",
+      base + amf_cfg.sbi.api_version.value_or(DEFAULT_SBI_API_VERSION) +
+          "/subscriptions/:subscriptionId",
       Routes::bind(
           &IndividualSubscriptionDocumentApiEventExposure::
               delete_subscription_handler,
           this));
   Routes::Patch(
       *router,
-      base + amf_cfg.sbi_api_version + "/subscriptions/:subscriptionId",
+      base + amf_cfg.sbi.api_version.value_or(DEFAULT_SBI_API_VERSION) +
+          "/subscriptions/:subscriptionId",
       Routes::bind(
           &IndividualSubscriptionDocumentApiEventExposure::
               modify_subscription_handler,

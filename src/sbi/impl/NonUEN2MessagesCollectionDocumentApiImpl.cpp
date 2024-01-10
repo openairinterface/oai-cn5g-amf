@@ -13,7 +13,7 @@
 
 #include "NonUEN2MessagesCollectionDocumentApiImpl.h"
 #include "itti.hpp"
-#include "conversions.hpp"
+#include "amf_conversions.hpp"
 
 extern itti_mw* itti_inst;
 
@@ -73,8 +73,8 @@ void NonUEN2MessagesCollectionDocumentApiImpl::non_ue_n2_message_transfer(
 
   bstring nrppa_pdu  = nullptr;
   bstring routing_id = nullptr;
-  conv::msg_str_2_msg_hex(parts[n2_content_id].body, nrppa_pdu);
-  conv::string_2_bstring(
+  amf_conv::msg_str_2_msg_hex(parts[n2_content_id].body, nrppa_pdu);
+  amf_conv::string_2_bstring(
       n2InformationTransferReqData.getN2Information().getNrppaInfo().getNfId(),
       routing_id);
   auto itti_msg = std::make_shared<itti_non_ue_n2_message_transfer_request>(
@@ -91,7 +91,7 @@ void NonUEN2MessagesCollectionDocumentApiImpl::non_ue_n2_message_transfer(
         "Could not send ITTI message %s to task TASK_AMF_N2",
         itti_msg->get_msg_name());
   }
-  bdestroy_wrapper(&nrppa_pdu);
+  utils::bdestroy_wrapper(&nrppa_pdu);
 }
 
 }  // namespace api

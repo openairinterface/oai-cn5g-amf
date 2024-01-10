@@ -21,7 +21,7 @@
 
 #include "RanNodeName.hpp"
 
-#include "conversions.hpp"
+#include "amf_conversions.hpp"
 
 namespace ngap {
 
@@ -47,14 +47,14 @@ void RanNodeName::getValue(std::string& value) const {
 
 //------------------------------------------------------------------------------
 bool RanNodeName::encode(Ngap_RANNodeName_t& ran_node_name) {
-  conv::string_2_octet_string(ran_node_name_, ran_node_name);
+  amf_conv::string_2_octet_string(ran_node_name_, ran_node_name);
   return true;
 }
 
 //------------------------------------------------------------------------------
 bool RanNodeName::decode(const Ngap_RANNodeName_t& ran_node_name) {
   if (!ran_node_name.buf) return false;
-  conv::octet_string_2_string(ran_node_name, ran_node_name_);
+  amf_conv::octet_string_2_string(ran_node_name, ran_node_name_);
   return true;
 }
 

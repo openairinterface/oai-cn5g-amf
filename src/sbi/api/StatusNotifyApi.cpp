@@ -47,7 +47,7 @@ void StatusNotifyApi::setupRoutes() {
 
   Routes::Post(
       *router,
-      base + amf_cfg.sbi_api_version +
+      base + amf_cfg.sbi.api_version.value_or(DEFAULT_SBI_API_VERSION) +
           "/pdu-session-release/callback/:ueContextId/:pduSessionId",
       Routes::bind(&StatusNotifyApi::notify_pdu_session_status_handler, this));
 

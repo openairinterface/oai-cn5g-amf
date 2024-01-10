@@ -22,10 +22,7 @@
 #include "DownlinkRANStatusTransfer.hpp"
 
 #include "logger.hpp"
-
-extern "C" {
-#include "dynamic_memory_check.h"
-}
+#include "utils.hpp"
 
 namespace ngap {
 
@@ -61,7 +58,7 @@ void DownlinkRANStatusTransfer::setAmfUeNgapId(const unsigned long& id) {
   int ret = amfUeNgapId.encode(ie->value.choice.AMF_UE_NGAP_ID);
   if (!ret) {
     Logger::ngap().error("Encode AMF_UE_NGAP_ID IE error");
-    free_wrapper((void**) &ie);
+    utils::free_wrapper((void**) &ie);
     return;
   }
 
@@ -84,7 +81,7 @@ void DownlinkRANStatusTransfer::setRanUeNgapId(const uint32_t& id) {
   int ret = ranUeNgapId.encode(ie->value.choice.RAN_UE_NGAP_ID);
   if (!ret) {
     Logger::ngap().error("Encode RAN_UE_NGAP_ID IE error");
-    free_wrapper((void**) &ie);
+    utils::free_wrapper((void**) &ie);
     return;
   }
 
@@ -131,7 +128,7 @@ void DownlinkRANStatusTransfer::setRANStatusTransfer_TransparentContainer(
   if (!ret) {
     Logger::ngap().error(
         "Encode RANStatusTransfer_TransparentContainer IE error");
-    free_wrapper((void**) &ie);
+    utils::free_wrapper((void**) &ie);
   }
   if (ASN_SEQUENCE_ADD(&downlinkranstatustransferIEs->protocolIEs.list, ie) !=
       0) {

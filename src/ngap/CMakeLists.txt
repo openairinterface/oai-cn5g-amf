@@ -19,7 +19,6 @@
 #      contact@openairinterface.org
 ################################################################################
 file(GLOB AMF_NGAP_src_files
-  libngap/*.c
   ngapMsgs/*.cpp
   ngapIEs/*.cpp
 )
@@ -40,3 +39,5 @@ target_include_directories(AMF_NGAP PUBLIC ${SRC_TOP_DIR}/utils)
 target_include_directories(AMF_NGAP PUBLIC ${SRC_TOP_DIR}/utils/bstr)
 target_include_directories(AMF_NGAP PUBLIC ${SRC_TOP_DIR}/sbi/model)
 target_include_directories(AMF_NGAP PUBLIC ${SRC_TOP_DIR}/${MOUNTED_COMMON}/logger)
+target_include_directories(AMF_NGAP PUBLIC ${SRC_TOP_DIR}/${MOUNTED_COMMON}/common)
+target_include_directories(AMF_NGAP PUBLIC ${SRC_TOP_DIR}/${MOUNTED_COMMON}/utils)

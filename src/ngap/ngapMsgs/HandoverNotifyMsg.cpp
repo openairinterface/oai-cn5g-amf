@@ -21,12 +21,8 @@
 #include "HandoverNotifyMsg.hpp"
 
 #include "logger.hpp"
+#include "utils.hpp"
 
-extern "C" {
-#include "dynamic_memory_check.h"
-}
-
-using namespace std;
 namespace ngap {
 
 //------------------------------------------------------------------------------
@@ -59,7 +55,7 @@ void HandoverNotifyMsg::setAmfUeNgapId(const unsigned long& id) {
   int ret = amfUeNgapId.encode(ie->value.choice.AMF_UE_NGAP_ID);
   if (!ret) {
     Logger::ngap().error("Encode AMF_UE_NGAP_ID IE error!");
-    free_wrapper((void**) &ie);
+    utils::free_wrapper((void**) &ie);
     return;
   }
 
@@ -80,7 +76,7 @@ void HandoverNotifyMsg::setRanUeNgapId(const uint32_t& ran_ue_ngap_id) {
   int ret = ranUeNgapId.encode(ie->value.choice.RAN_UE_NGAP_ID);
   if (!ret) {
     Logger::ngap().error("Encode RAN_UE_NGAP_ID IE error!");
-    free_wrapper((void**) &ie);
+    utils::free_wrapper((void**) &ie);
     return;
   }
 
@@ -109,7 +105,7 @@ void HandoverNotifyMsg::setUserLocationInfoNR(
       userLocationInformation.encode(ie->value.choice.UserLocationInformation);
   if (!ret) {
     Logger::ngap().error("Encode UserLocationInformation IE error");
-    free_wrapper((void**) &ie);
+    utils::free_wrapper((void**) &ie);
     return;
   }
 

@@ -21,9 +21,7 @@
 
 #include "PduSessionResourceSetupItemSUReq.hpp"
 
-extern "C" {
-#include "dynamic_memory_check.h"
-}
+#include "utils.hpp"
 
 namespace ngap {
 
@@ -71,7 +69,7 @@ bool PduSessionResourceSetupItemSUReq::encode(
         (Ngap_NAS_PDU_t*) calloc(1, sizeof(Ngap_NAS_PDU_t));
     if (!naspdu) return false;
     if (!nas_pdu_.value().encode(*naspdu)) {
-      free_wrapper((void**) &naspdu);
+      utils::free_wrapper((void**) &naspdu);
       return false;
     }
     pdu_session_resource_setup_item_su_req.pDUSessionNAS_PDU = naspdu;

@@ -19,7 +19,7 @@
  *      contact@openairinterface.org
  */
 
-#include "conversions.hpp"
+#include "amf_conversions.hpp"
 
 #include <arpa/inet.h>
 #include <ctype.h>
@@ -39,82 +39,8 @@
 constexpr uint8_t kUint32Length =
     8;  // 4 bytes  -8 characters representation in hex
 
-static const char hex_to_ascii_table[16] = {
-    '0', '1', '2', '3', '4', '5', '6', '7',
-    '8', '9', 'a', 'b', 'c', 'd', 'e', 'f',
-};
-
-static const signed char ascii_to_hex_table[0x100] = {
-    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 0,  1,  2,  3,  4,  5,  6,  7,  8,
-    9,  -1, -1, -1, -1, -1, -1, -1, 10, 11, 12, 13, 14, 15, -1, -1, -1, -1, -1,
-    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-    -1, -1, 10, 11, 12, 13, 14, 15, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-    -1, -1, -1, -1, -1, -1, -1, -1, -1};
-
 //------------------------------------------------------------------------------
-int conv::ascii_to_hex(uint8_t* dst, const char* h) {
-  const unsigned char* hex = (const unsigned char*) h;
-  unsigned i               = 0;
-
-  for (;;) {
-    int high, low;
-
-    while (*hex && isspace(*hex)) hex++;
-
-    if (!*hex) return 1;
-
-    high = ascii_to_hex_table[*hex++];
-
-    if (high < 0) return 0;
-
-    while (*hex && isspace(*hex)) hex++;
-
-    if (!*hex) return 0;
-
-    low = ascii_to_hex_table[*hex++];
-
-    if (low < 0) return 0;
-
-    dst[i++] = (high << 4) | low;
-  }
-}
-
-//------------------------------------------------------------------------------
-std::string conv::mccToString(
-    const uint8_t digit1, const uint8_t digit2, const uint8_t digit3) {
-  std::string s  = {};
-  uint16_t mcc16 = digit1 * 100 + digit2 * 10 + digit3;
-  // s.append(std::to_string(digit1)).append(std::to_string(digit2)).append(std::to_string(digit3));
-  s.append(std::to_string(mcc16));
-  return s;
-}
-
-//------------------------------------------------------------------------------
-std::string conv::mncToString(
-    const uint8_t digit1, const uint8_t digit2, const uint8_t digit3) {
-  std::string s  = {};
-  uint16_t mcc16 = 0;
-
-  if (digit3 == 0x0F) {
-    mcc16 = digit1 * 10 + digit2;
-  } else {
-    mcc16 = digit1 * 100 + digit2 * 10 + digit3;
-  }
-  s.append(std::to_string(mcc16));
-  return s;
-}
-
-//------------------------------------------------------------------------------
-std::string conv::tmsi_to_string(const uint32_t tmsi) {
+std::string amf_conv::tmsi_to_string(const uint32_t tmsi) {
   std::string s        = {};
   std::string tmsi_str = uint32_to_hex_string(tmsi);
   uint8_t length       = kUint32Length - tmsi_str.size();
@@ -126,55 +52,11 @@ std::string conv::tmsi_to_string(const uint32_t tmsi) {
 }
 
 //------------------------------------------------------------------------------
-struct in_addr conv::fromString(const std::string addr4) {
-  unsigned char buf[sizeof(struct in6_addr)] = {};
-  int s              = inet_pton(AF_INET, addr4.c_str(), buf);
-  struct in_addr* ia = (struct in_addr*) buf;
-  return *ia;
-}
-
-//------------------------------------------------------------------------------
-struct in6_addr conv::fromStringV6(const std::string& addr6) {
-  unsigned char buf[sizeof(struct in6_addr)] = {};
-  struct in6_addr ipv6_addr {};
-  if (inet_pton(AF_INET6, addr6.c_str(), buf) == 1) {
-    memcpy(&ipv6_addr, buf, sizeof(struct in6_addr));
-  }
-  return ipv6_addr;
-}
-
-//------------------------------------------------------------------------------
-std::string conv::toString(const struct in_addr& inaddr) {
-  std::string s              = {};
-  char str[INET6_ADDRSTRLEN] = {};
-  if (inet_ntop(AF_INET, (const void*) &inaddr, str, INET6_ADDRSTRLEN) ==
-      NULL) {
-    s.append("Error in_addr");
-  } else {
-    s.append(str);
-  }
-  return s;
-}
-
-//------------------------------------------------------------------------------
-std::string conv::toString(const struct in6_addr& in6addr) {
-  std::string s              = {};
-  char str[INET6_ADDRSTRLEN] = {};
-  if (inet_ntop(AF_INET6, (const void*) &in6addr, str, INET6_ADDRSTRLEN) ==
-      nullptr) {
-    s.append("Error in6_addr");
-  } else {
-    s.append(str);
-  }
-  return s;
-}
-
-//------------------------------------------------------------------------------
-void conv::convert_string_2_hex(
+void amf_conv::convert_string_2_hex(
     std::string& input_str, std::string& output_str) {
   unsigned char* data = (unsigned char*) malloc(input_str.length() + 1);
   if (!data) {
-    free_wrapper((void**) &data);
+    utils::free_wrapper((void**) &data);
     return;
   }
   memset(data, 0, input_str.length() + 1);
@@ -184,8 +66,8 @@ void conv::convert_string_2_hex(
 
   char* datahex = (char*) malloc(input_str.length() * 2 + 1);
   if (!datahex) {
-    free_wrapper((void**) &datahex);
-    free_wrapper((void**) &data);
+    utils::free_wrapper((void**) &datahex);
+    utils::free_wrapper((void**) &data);
     return;
   }
   memset(datahex, 0, input_str.length() * 2 + 1);
@@ -194,19 +76,19 @@ void conv::convert_string_2_hex(
     sprintf(datahex + i * 2, "%02x", data[i]);
 
   output_str = reinterpret_cast<char*>(datahex);
-  free_wrapper((void**) &datahex);
-  free_wrapper((void**) &data);
+  utils::free_wrapper((void**) &datahex);
+  utils::free_wrapper((void**) &data);
 }
 
 //------------------------------------------------------------------------------
-unsigned char* conv::format_string_as_hex(std::string str) {
+unsigned char* amf_conv::format_string_as_hex(std::string str) {
   unsigned int str_len     = str.length();
   unsigned char* datavalue = (unsigned char*) malloc(str_len / 2 + 1);
   if (!datavalue) return nullptr;
 
   unsigned char* data = (unsigned char*) malloc(str_len + 1);
   if (!data) {
-    free_wrapper((void**) &data);
+    utils::free_wrapper((void**) &data);
     return nullptr;
   }
   memset(data, 0, str_len + 1);
@@ -237,32 +119,32 @@ unsigned char* conv::format_string_as_hex(std::string str) {
   }
   if (Logger::should_log(spdlog::level::debug)) printf("\n");
 
-  free_wrapper((void**) &data);
+  utils::free_wrapper((void**) &data);
   return datavalue;
 }
 
 //------------------------------------------------------------------------------
-char* conv::bstring2charString(bstring b) {
+char* amf_conv::bstring2charString(bstring b) {
   if (!b) return nullptr;
   char* buf = (char*) calloc(1, blength(b) + 1);
   if (!buf) return nullptr;
   uint8_t* value = (uint8_t*) bdata(b);
   for (int i = 0; i < blength(b); i++) buf[i] = (char) value[i];
   buf[blength(b)] = '\0';
-  // free_wrapper((void**) &value);
+  // utils::free_wrapper((void**) &value);
   value = nullptr;
   return buf;
 }
 
 //------------------------------------------------------------------------------
-void conv::msg_str_2_msg_hex(std::string msg, bstring& b) {
+void amf_conv::msg_str_2_msg_hex(std::string msg, bstring& b) {
   std::string msg_hex_str = {};
   convert_string_2_hex(msg, msg_hex_str);
   Logger::amf_app().debug("Msg hex %s", msg_hex_str.c_str());
   unsigned int msg_len = msg_hex_str.length();
   char* data           = (char*) malloc(msg_len + 1);
   if (!data) {
-    free_wrapper((void**) &data);
+    utils::free_wrapper((void**) &data);
     return;
   }
 
@@ -271,18 +153,18 @@ void conv::msg_str_2_msg_hex(std::string msg, bstring& b) {
 
   uint8_t* msg_hex = (uint8_t*) malloc(msg_len / 2 + 1);
   if (!msg_hex) {
-    free_wrapper((void**) &msg_hex);
+    utils::free_wrapper((void**) &msg_hex);
     return;
   }
 
   conv::ascii_to_hex(msg_hex, (const char*) data);
   b = blk2bstr(msg_hex, (msg_len / 2));
-  free_wrapper((void**) &data);
-  free_wrapper((void**) &msg_hex);
+  utils::free_wrapper((void**) &data);
+  utils::free_wrapper((void**) &msg_hex);
 }
 
 //------------------------------------------------------------------------------
-bool conv::octet_string_2_bstring(
+bool amf_conv::octet_string_2_bstring(
     const OCTET_STRING_t& octet_str, bstring& b_str) {
   if (!octet_str.buf or (octet_str.size == 0)) return false;
   b_str = blk2bstr(octet_str.buf, octet_str.size);
@@ -290,7 +172,7 @@ bool conv::octet_string_2_bstring(
 }
 
 //------------------------------------------------------------------------------
-bool conv::bstring_2_octet_string(
+bool amf_conv::bstring_2_octet_string(
     const bstring& b_str, OCTET_STRING_t& octet_str) {
   if (!b_str) return false;
   OCTET_STRING_fromBuf(&octet_str, (char*) bdata(b_str), blength(b_str));
@@ -298,7 +180,7 @@ bool conv::bstring_2_octet_string(
 }
 
 //------------------------------------------------------------------------------
-bool conv::octet_string_2_bit_string(
+bool amf_conv::octet_string_2_bit_string(
     const OCTET_STRING_t& octet_str, BIT_STRING_t& bit_str,
     const uint8_t& bits_unused) {
   if (!check_octet_string(octet_str)) return false;
@@ -314,7 +196,8 @@ bool conv::octet_string_2_bit_string(
 }
 
 //------------------------------------------------------------------------------
-bool conv::bstring_2_bit_string(const bstring& b_str, BIT_STRING_t& bit_str) {
+bool amf_conv::bstring_2_bit_string(
+    const bstring& b_str, BIT_STRING_t& bit_str) {
   int size = blength(b_str);
   if (!b_str or size <= 0) return false;
   if (!bdata(b_str)) return false;
@@ -332,7 +215,7 @@ bool conv::bstring_2_bit_string(const bstring& b_str, BIT_STRING_t& bit_str) {
 }
 
 //------------------------------------------------------------------------------
-bool conv::sd_string_to_int(const std::string& sd_str, uint32_t& sd) {
+bool amf_conv::sd_string_to_int(const std::string& sd_str, uint32_t& sd) {
   sd = SD_NO_VALUE;
   if (sd_str.empty()) return false;
   uint8_t base = 10;
@@ -354,7 +237,7 @@ bool conv::sd_string_to_int(const std::string& sd_str, uint32_t& sd) {
 }
 
 //------------------------------------------------------------------------------
-bool conv::sd_string_hex_to_int(const std::string& sd_str, uint32_t& sd) {
+bool amf_conv::sd_string_hex_to_int(const std::string& sd_str, uint32_t& sd) {
   sd = SD_NO_VALUE;
   if (sd_str.empty()) return false;
   uint8_t base = 16;
@@ -371,105 +254,15 @@ bool conv::sd_string_hex_to_int(const std::string& sd_str, uint32_t& sd) {
 }
 
 //------------------------------------------------------------------------------
-void conv::sd_int_to_string_hex(uint32_t sd, std::string& sd_str) {
+void amf_conv::sd_int_to_string_hex(uint32_t sd, std::string& sd_str) {
   std::stringstream stream_str;
   stream_str << std::hex << sd;
   std::string sd_tmp(stream_str.str());
   sd_str = sd_tmp;
 }
-//------------------------------------------------------------------------------
-bool conv::string_to_int(
-    const std::string& str, uint32_t& value, const uint8_t& base) {
-  if (str.empty()) return false;
-  if ((base != 10) or (base != 16)) {
-    Logger::amf_app().warn("Only support Dec or Hex string value");
-    return false;
-  }
-  if (base == 16) {
-    if (str.size() <= 2) return false;
-    if (!boost::iequals(str.substr(0, 2), "0x")) return false;
-  }
-  try {
-    value = std::stoul(str, nullptr, base);
-  } catch (const std::exception& e) {
-    Logger::amf_app().error(
-        "Error when converting from string to int, error: %s", e.what());
-    return false;
-  }
-  return true;
-}
 
 //------------------------------------------------------------------------------
-bool conv::string_to_int8(const std::string& str, uint8_t& value) {
-  if (str.empty()) return false;
-  try {
-    value = (uint8_t) std::stoi(str);
-  } catch (const std::exception& e) {
-    Logger::amf_app().error(
-        "Error when converting from string to int, error: %s", e.what());
-    return false;
-  }
-  return true;
-}
-
-//------------------------------------------------------------------------------
-bool conv::string_to_int32(const std::string& str, uint32_t& value) {
-  if (str.empty()) return false;
-  try {
-    value = (uint32_t) std::stoi(str);
-  } catch (const std::exception& e) {
-    Logger::amf_app().error(
-        "Error when converting from string to int, error: %s", e.what());
-    return false;
-  }
-  return true;
-}
-
-//------------------------------------------------------------------------------
-void conv::int_to_string_hex(
-    uint32_t value, std::string& value_str, uint8_t length) {
-  std::stringstream stream_str;
-  if (length > 0) {
-    stream_str << std::setfill('0') << std::setw(length) << std::hex << value;
-  } else {
-    stream_str << std::hex << value;
-  }
-
-  std::string value_tmp(stream_str.str());
-  value_str = value_tmp;
-}
-
-//------------------------------------------------------------------------------
-bool conv::string_hex_to_int(const std::string& value_str, uint32_t& value) {
-  if (value_str.empty()) return false;
-  uint8_t base = 16;
-  try {
-    value = std::stoul(value_str, nullptr, base);
-  } catch (const std::exception& e) {
-    Logger::amf_app().error(
-        "Error when converting from string to int, error: %s", e.what());
-    return false;
-  }
-  return true;
-}
-
-//------------------------------------------------------------------------------
-uint32_t conv::string_hex_to_int(const std::string& value_str) {
-  uint32_t value = {};
-  if (value_str.empty()) return value;
-  uint8_t base = 16;
-  try {
-    value = std::stoul(value_str, nullptr, base);
-  } catch (const std::exception& e) {
-    Logger::amf_app().error(
-        "Error when converting from string to int, error: %s", e.what());
-    value = {};
-  }
-  return value;
-}
-
-//------------------------------------------------------------------------------
-void conv::bstring_2_string(const bstring& b_str, std::string& str) {
+void amf_conv::bstring_2_string(const bstring& b_str, std::string& str) {
   if (!b_str) return;
   auto b = bstrcpy(b_str);
   // std::string str_tmp((char*) bdata(b) , blength(b));
@@ -477,12 +270,12 @@ void conv::bstring_2_string(const bstring& b_str, std::string& str) {
 }
 
 //------------------------------------------------------------------------------
-void conv::string_2_bstring(const std::string& str, bstring& b_str) {
+void amf_conv::string_2_bstring(const std::string& str, bstring& b_str) {
   b_str = blk2bstr(str.c_str(), str.length());
 }
 
 //------------------------------------------------------------------------------
-void conv::octet_string_2_string(
+void amf_conv::octet_string_2_string(
     const OCTET_STRING_t& octet_str, std::string& str) {
   if (!octet_str.buf or (octet_str.size == 0)) return;
   // std::string str_tmp((char *) octet_str.buf , octet_str.size);
@@ -490,7 +283,7 @@ void conv::octet_string_2_string(
 }
 
 //------------------------------------------------------------------------------
-void conv::string_2_octet_string(
+void amf_conv::string_2_octet_string(
     const std::string& str, OCTET_STRING_t& o_str) {
   o_str.buf = (uint8_t*) calloc(1, str.length() + 1);
   if (!o_str.buf) return;
@@ -502,7 +295,8 @@ void conv::string_2_octet_string(
 }
 
 //------------------------------------------------------------------------------
-bool conv::int8_2_octet_string(const uint8_t& value, OCTET_STRING_t& o_str) {
+bool amf_conv::int8_2_octet_string(
+    const uint8_t& value, OCTET_STRING_t& o_str) {
   o_str.buf = (uint8_t*) calloc(1, sizeof(uint8_t));
   if (!o_str.buf) return false;
   o_str.size   = 1;
@@ -511,14 +305,15 @@ bool conv::int8_2_octet_string(const uint8_t& value, OCTET_STRING_t& o_str) {
 }
 
 //------------------------------------------------------------------------------
-bool conv::octet_string_2_int8(const OCTET_STRING_t& o_str, uint8_t& value) {
+bool amf_conv::octet_string_2_int8(
+    const OCTET_STRING_t& o_str, uint8_t& value) {
   if (o_str.size != 1) return false;
   value = o_str.buf[0];
   return true;
 }
 
 //------------------------------------------------------------------------------
-bool conv::octet_string_copy(
+bool amf_conv::octet_string_copy(
     OCTET_STRING_t& destination, const OCTET_STRING_t& source) {
   if (!source.buf) return false;
   OCTET_STRING_fromBuf(&destination, (char*) source.buf, source.size);
@@ -526,29 +321,30 @@ bool conv::octet_string_copy(
 }
 
 //------------------------------------------------------------------------------
-void conv::to_lower(std::string& str) {
+void amf_conv::to_lower(std::string& str) {
   boost::algorithm::to_lower(str);
 }
 
 //------------------------------------------------------------------------------
-void conv::to_lower(bstring& b_str) {
+void amf_conv::to_lower(bstring& b_str) {
   btolower(b_str);
 }
+
 //------------------------------------------------------------------------------
-bool conv::check_bstring(const bstring& b_str) {
+bool amf_conv::check_bstring(const bstring& b_str) {
   if (b_str == nullptr || b_str->slen < 0 || b_str->data == nullptr)
     return false;
   return true;
 }
 
 //------------------------------------------------------------------------------
-bool conv::check_octet_string(const OCTET_STRING_t& octet_str) {
+bool amf_conv::check_octet_string(const OCTET_STRING_t& octet_str) {
   if (!octet_str.buf or (octet_str.size == 0)) return false;
   return true;
 }
 
 //------------------------------------------------------------------------------
-std::string conv::get_ue_context_key(
+std::string amf_conv::get_ue_context_key(
     const uint32_t ran_ue_ngap_id, long amf_ue_ngap_id) {
   return (
       "app_ue_ranid_" + std::to_string(ran_ue_ngap_id) + ":amfid_" +
@@ -556,7 +352,7 @@ std::string conv::get_ue_context_key(
 }
 
 //------------------------------------------------------------------------------
-std::string conv::get_serving_network_name(
+std::string amf_conv::get_serving_network_name(
     const std::string& mnc, const std::string& mcc) {
   std::string snn = {};
   if (mnc.length() == 2)  // TODO: remove hardcoded value
@@ -567,14 +363,14 @@ std::string conv::get_serving_network_name(
 }
 
 //------------------------------------------------------------------------------
-std::string conv::uint32_to_hex_string(uint32_t value) {
+std::string amf_conv::uint32_to_hex_string(uint32_t value) {
   char hex_str[kUint32Length + 1];
   sprintf(hex_str, "%X", value);
   return std::string(hex_str);
 }
 
 //------------------------------------------------------------------------------
-std::string conv::tmsi_to_guti(
+std::string amf_conv::tmsi_to_guti(
     const std::string& mcc, const std::string& mnc, uint8_t region_id,
     const std::string& _5g_s_tmsi) {
   std::string region_id_str = {};
@@ -583,7 +379,7 @@ std::string conv::tmsi_to_guti(
 }
 
 //------------------------------------------------------------------------------
-std::string conv::tmsi_to_guti(
+std::string amf_conv::tmsi_to_guti(
     const std::string& mcc, const std::string& mnc, uint8_t region_id,
     uint16_t amf_set_id, uint8_t amf_pointer, const std::string& tmsi) {
   uint32_t amf_id        = {};
@@ -594,20 +390,20 @@ std::string conv::tmsi_to_guti(
 }
 
 //------------------------------------------------------------------------------
-std::string conv::imsi_to_supi(const std::string& imsi) {
+std::string amf_conv::imsi_to_supi(const std::string& imsi) {
   std::string supi_type = DEFAULT_SUPI_TYPE;
   if (!supi_type.empty()) return {supi_type + "-" + imsi};
   return imsi;
 }
 
 //------------------------------------------------------------------------------
-std::string conv::get_imsi(
+std::string amf_conv::get_imsi(
     const std::string& mcc, const std::string& mnc, const std::string& msin) {
   return {mcc + mnc + msin};
 }
 
 //------------------------------------------------------------------------------
-bool conv::string_2_masked_imeisv(
+bool amf_conv::string_2_masked_imeisv(
     const std::string& imeisv_str, BIT_STRING_t& imeisv) {
   int len = imeisv_str.length();
   if (len != 16) return false;  // Must contain 16 digits
@@ -640,7 +436,7 @@ bool conv::string_2_masked_imeisv(
 }
 
 //------------------------------------------------------------------------------
-void conv::get_amf_id(
+void amf_conv::get_amf_id(
     uint8_t amf_region_id, uint16_t amf_set_id, uint8_t amf_pointer,
     uint32_t& amf_id) {
   // AMF Region ID: 8bits
@@ -651,7 +447,7 @@ void conv::get_amf_id(
 }
 
 //------------------------------------------------------------------------------
-void conv::get_amf_id(
+void amf_conv::get_amf_id(
     uint8_t amf_region_id, uint16_t amf_set_id, uint8_t amf_pointer,
     std::string& amf_id) {
   // AMF Region ID: 8bits
@@ -663,7 +459,7 @@ void conv::get_amf_id(
 }
 
 //------------------------------------------------------------------------------
-void conv::get_amf_id(
+void amf_conv::get_amf_id(
     const std::string& amf_region_id, const std::string& amf_set_id,
     const std::string& amf_pointer, uint32_t& amf_id) {
   uint8_t amf_region_id_int = {};
@@ -676,7 +472,7 @@ void conv::get_amf_id(
 }
 
 //------------------------------------------------------------------------------
-void conv::get_amf_id(
+void amf_conv::get_amf_id(
     const std::string& amf_region_id, const std::string& amf_set_id,
     const std::string& amf_pointer, std::string& amf_id) {
   uint32_t amf_id_int = 0;

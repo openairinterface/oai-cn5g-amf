@@ -39,7 +39,7 @@ void N1N2MessageCollectionDocumentApi::setupRoutes() {
 
   Routes::Post(
       *router,
-      base + amf_cfg.sbi_api_version +
+      base + amf_cfg.sbi.api_version.value_or(DEFAULT_SBI_API_VERSION) +
           "/ue-contexts/:ueContextId/n1-n2-messages",
       Routes::bind(
           &N1N2MessageCollectionDocumentApi::n1_n2_message_transfer_handler,

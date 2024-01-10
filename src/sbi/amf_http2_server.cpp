@@ -31,7 +31,7 @@
 #include "3gpp_conversions.hpp"
 #include "amf.hpp"
 #include "amf_config.hpp"
-#include "conversions.hpp"
+#include "amf_conversions.hpp"
 #include "logger.hpp"
 #include "output_wrapper.hpp"
 #include "utils.hpp"
@@ -57,7 +57,9 @@ void amf_http2_server::start() {
   // N1N2MessageUnSubscribe (URI:
   // /ue-contexts/{ueContextId}/n1-n2-messages/subscriptions/{subscriptionId})
   server.handle(
-      NAMF_COMMUNICATION_BASE + amf_cfg.sbi_api_version + "/ue-contexts/",
+      NAMF_COMMUNICATION_BASE +
+          amf_cfg.sbi.api_version.value_or(DEFAULT_SBI_API_VERSION) +
+          "/ue-contexts/",
       [&](const request& request, const response& res) {
         request.on_data([&](const uint8_t* data, std::size_t len) {
           if (len > 0) {
@@ -155,7 +157,8 @@ void amf_http2_server::start() {
 
   // Event Exposure
   server.handle(
-      NAMF_EVENT_EXPOSURE_BASE + amf_cfg.sbi_api_version +
+      NAMF_EVENT_EXPOSURE_BASE +
+          amf_cfg.sbi.api_version.value_or(DEFAULT_SBI_API_VERSION) +
           NAMF_EVENT_EXPOSURE_SUBSCRIPTION,
       [&](const request& request, const response& response) {
         request.on_data([&](const uint8_t* data, std::size_t len) {
@@ -241,7 +244,8 @@ void amf_http2_server::start() {
 
   // AMF configuration-related APIs
   server.handle(
-      NAMF_CUSTOMIZED_API_BASE + amf_cfg.sbi_api_version +
+      NAMF_CUSTOMIZED_API_BASE +
+          amf_cfg.sbi.api_version.value_or(DEFAULT_SBI_API_VERSION) +
           NAMF_CUSTOMIZED_API_CONFIGURATION_URL,
       [&](const request& request, const response& response) {
         request.on_data([&](const uint8_t* data, std::size_t len) {
@@ -267,7 +271,8 @@ void amf_http2_server::start() {
 
   // NonUEN2MessageTransfer
   server.handle(
-      NAMF_COMMUNICATION_BASE + amf_cfg.sbi_api_version +
+      NAMF_COMMUNICATION_BASE +
+          amf_cfg.sbi.api_version.value_or(DEFAULT_SBI_API_VERSION) +
           NAMF_COMMUNICATION_NON_UE_N2_MESSAGE_TRANSFER_URL,
       [&](const request& request, const response& res) {
         request.on_data([&](const uint8_t* data, std::size_t len) {
@@ -364,8 +369,8 @@ void amf_http2_server::start() {
 
             bstring nrppa_pdu  = nullptr;
             bstring routing_id = nullptr;
-            conv::msg_str_2_msg_hex(parts[n2_content_id].body, nrppa_pdu);
-            conv::string_2_bstring(
+            amf_conv::msg_str_2_msg_hex(parts[n2_content_id].body, nrppa_pdu);
+            amf_conv::string_2_bstring(
                 n2InformationTransferReqData.getN2Information()
                     .getNrppaInfo()
                     .getNfId(),
@@ -387,7 +392,7 @@ void amf_http2_server::start() {
                   "Could not send ITTI message %s to task TASK_AMF_N2",
                   itti_msg->get_msg_name());
             }
-            bdestroy_wrapper(&nrppa_pdu);
+            utils::bdestroy_wrapper(&nrppa_pdu);
           }
         });
       });
@@ -395,7 +400,8 @@ void amf_http2_server::start() {
   // NF Status Notify (URL:
   // /namf-status-notify/pdu-session-release/callback/:ueContextId/:pduSessionId)
   server.handle(
-      NAMF_STATUS_NOTIFY_API_BASE + amf_cfg.sbi_api_version +
+      NAMF_STATUS_NOTIFY_API_BASE +
+          amf_cfg.sbi.api_version.value_or(DEFAULT_SBI_API_VERSION) +
           NAMF_STATUS_NOTIFY_API_URL,
       [&](const request& request, const response& response) {
         request.on_data([&](const uint8_t* data, std::size_t len) {
@@ -485,7 +491,8 @@ void amf_http2_server::createEventSubscriptionHandler(
     std::string location =
         std::string(inet_ntoa(*((struct in_addr*) &amf_cfg.sbi.addr4))) + ":" +
         std::to_string(amf_cfg.sbi.port) + NAMF_EVENT_EXPOSURE_BASE +
-        amf_cfg.sbi_api_version + "/namf-evts/" + std::to_string(sub_id);
+        amf_cfg.sbi.api_version.value_or(DEFAULT_SBI_API_VERSION) +
+        "/namf-evts/" + std::to_string(sub_id);
 
     json_data["subscriptionId"] = location;
     h.insert(std::make_pair<std::string, header_value>(
@@ -591,7 +598,7 @@ void amf_http2_server::n1_n2_message_transfer_handler(
           return;
         }
 
-        conv::msg_str_2_msg_hex(parts[n2_content_id].body, n2sm);
+        amf_conv::msg_str_2_msg_hex(parts[n2_content_id].body, n2sm);
         // Store N2 SM in PDU Session Context
         psc->n2sm              = bstrcpy(n2sm);
         psc->is_n2sm_avaliable = true;
@@ -638,8 +645,8 @@ void amf_http2_server::n1_n2_message_transfer_handler(
         itti_msg->n2sm_info_type = ngap_type;
 
         // NRPPA PDU
-        conv::msg_str_2_msg_hex(parts[n2_content_id].body, nrppa_pdu);
-        conv::string_2_bstring(
+        amf_conv::msg_str_2_msg_hex(parts[n2_content_id].body, nrppa_pdu);
+        amf_conv::string_2_bstring(
             n1N2MessageTransferReqData.getN2InfoContainer()
                 .getNrppaInfo()
                 .getNfId(),
@@ -695,7 +702,7 @@ void amf_http2_server::n1_n2_message_transfer_handler(
           return;
         }
 
-        conv::msg_str_2_msg_hex(
+        amf_conv::msg_str_2_msg_hex(
             parts[n1_content_id].body.substr(
                 0, parts[n1_content_id].body.length()),
             n1sm);
@@ -775,10 +782,10 @@ void amf_http2_server::n1_n2_message_transfer_handler(
         itti_msg->get_msg_name());
   }
 
-  bdestroy_wrapper(&n1sm);
-  bdestroy_wrapper(&n2sm);
-  bdestroy_wrapper(&nrppa_pdu);
-  bdestroy_wrapper(&routing_id);
+  utils::bdestroy_wrapper(&n1sm);
+  utils::bdestroy_wrapper(&n2sm);
+  utils::bdestroy_wrapper(&nrppa_pdu);
+  utils::bdestroy_wrapper(&routing_id);
 }
 
 //------------------------------------------------------------------------------

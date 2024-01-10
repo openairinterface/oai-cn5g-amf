@@ -19,8 +19,8 @@
  *      contact@openairinterface.org
  */
 
-#ifndef FILE_CONVERSIONS_HPP_SEEN
-#define FILE_CONVERSIONS_HPP_SEEN
+#ifndef FILE_AMF_CONVERSIONS_HPP_SEEN
+#define FILE_AMF_CONVERSIONS_HPP_SEEN
 
 #include <netinet/in.h>
 #include <stdint.h>
@@ -29,35 +29,16 @@
 #include <string>
 
 #include "bstrlib.h"
+#include "conversions.hpp"
+#include "utils.hpp"
 
 extern "C" {
 #include "OCTET_STRING.h"
 #include "BIT_STRING.h"
-#include "dynamic_memory_check.h"
 }
 
-/* Used to format an uint32_t containing an ipv4 address */
-#define IN_ADDR_FMT "%u.%u.%u.%u"
-#define PRI_IN_ADDR(aDDRESS)                                                   \
-  (uint8_t)((aDDRESS.s_addr) & 0x000000ff),                                    \
-      (uint8_t) (((aDDRESS.s_addr) & 0x0000ff00) >> 8),                        \
-      (uint8_t) (((aDDRESS.s_addr) & 0x00ff0000) >> 16),                       \
-      (uint8_t) (((aDDRESS.s_addr) & 0xff000000) >> 24)
-
-#define IPV4_ADDR_DISPLAY_8(aDDRESS)                                           \
-  (aDDRESS)[0], (aDDRESS)[1], (aDDRESS)[2], (aDDRESS)[3]
-
-class conv {
+class amf_conv : public conv {
  public:
-  static int ascii_to_hex(uint8_t* dst, const char* h);
-  static struct in_addr fromString(const std::string addr4);
-  static struct in6_addr fromStringV6(const std::string& addr6);
-  static std::string toString(const struct in_addr& inaddr);
-  static std::string toString(const struct in6_addr& in6addr);
-  static std::string mccToString(
-      const uint8_t digit1, const uint8_t digit2, const uint8_t digit3);
-  static std::string mncToString(
-      const uint8_t digit1, const uint8_t digit2, const uint8_t digit3);
   static std::string tmsi_to_string(const uint32_t tmsi);
 
   static void msg_str_2_msg_hex(std::string msg, bstring& b);
@@ -76,14 +57,7 @@ class conv {
   static bool sd_string_to_int(const std::string& sd_str, uint32_t& sd);
   static bool sd_string_hex_to_int(const std::string& sd_str, uint32_t& sd);
   static void sd_int_to_string_hex(uint32_t sd, std::string& sd_str);
-  static bool string_to_int(
-      const std::string& str, uint32_t& value, const uint8_t& base);
-  static bool string_to_int8(const std::string& str, uint8_t& value);
-  static bool string_to_int32(const std::string& str, uint32_t& value);
-  static bool string_hex_to_int(const std::string& value_str, uint32_t& value);
-  static uint32_t string_hex_to_int(const std::string& value_str);
-  static void int_to_string_hex(
-      uint32_t value, std::string& value_str, uint8_t length = 0);
+
   static void bstring_2_string(const bstring& b_str, std::string& str);
   static void string_2_bstring(const std::string& str, bstring& b_str);
   static void octet_string_2_string(

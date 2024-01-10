@@ -21,7 +21,7 @@
 
 #include "FiveGSTmsi.hpp"
 
-#include "conversions.hpp"
+#include "amf_conversions.hpp"
 
 using namespace ngap;
 
@@ -78,8 +78,8 @@ bool FiveGSTmsi::decode(const Ngap_FiveG_S_TMSI_t& pdu) {
   std::string setId, pointer;
   amf_set_id_.get(setId);
   amf_pointer_.get(pointer);
-  _5g_s_tmsi_ = setId + pointer + conv::tmsi_to_string(tmsi);
-  tmsi_value_ = conv::tmsi_to_string(tmsi);
+  _5g_s_tmsi_ = setId + pointer + amf_conv::tmsi_to_string(tmsi);
+  tmsi_value_ = amf_conv::tmsi_to_string(tmsi);
 
   return true;
 }

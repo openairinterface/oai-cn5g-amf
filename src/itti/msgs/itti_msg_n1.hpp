@@ -24,6 +24,7 @@
 
 #include "bstrlib.h"
 #include "itti_msg.hpp"
+#include "utils.hpp"
 
 class itti_msg_n1 : public itti_msg {
  public:
@@ -65,7 +66,7 @@ class itti_uplink_nas_data_ind : public itti_msg_n1 {
     is_guti_valid = i.is_guti_valid;
     guti          = i.guti;
   }
-  virtual ~itti_uplink_nas_data_ind() { bdestroy_wrapper(&nas_msg); }
+  virtual ~itti_uplink_nas_data_ind() { utils::bdestroy_wrapper(&nas_msg); }
 
  public:
   bstring nas_msg;
@@ -95,8 +96,8 @@ class itti_downlink_nas_transfer : public itti_msg_n1 {
     n2sm_info_type = i.n2sm_info_type;
   }
   virtual ~itti_downlink_nas_transfer() {
-    bdestroy_wrapper(&dl_nas);
-    bdestroy_wrapper(&n2sm);
+    utils::bdestroy_wrapper(&dl_nas);
+    utils::bdestroy_wrapper(&n2sm);
   }
 
  public:

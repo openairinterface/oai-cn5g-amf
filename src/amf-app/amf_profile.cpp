@@ -29,7 +29,6 @@
 #include "logger.hpp"
 #include "string.hpp"
 
-using namespace std;
 using namespace amf_application;
 
 //------------------------------------------------------------------------------
