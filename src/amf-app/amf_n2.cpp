@@ -1539,7 +1539,7 @@ void amf_n2::handle_itti_message(
   }
 */
   // Send PDUSessionUpdateSMContextRequest to SMF for each PDU session
-  std::map<uint32_t, boost::shared_future<std::string>> curl_responses;
+  std::map<uint32_t, boost::shared_future<nlohmann::json>> curl_responses;
 
   for (auto pdu_session : pdu_sessions_to_be_released) {
     Logger::amf_n2().debug(
@@ -1548,11 +1548,12 @@ void amf_n2::handle_itti_message(
     uint32_t promise_id = amf_app_inst->generate_promise_id();
     Logger::amf_n2().debug("Promise ID generated %d", promise_id);
 
-    boost::shared_ptr<boost::promise<std::string>> p =
-        boost::make_shared<boost::promise<std::string>>();
-    boost::shared_future<std::string> f = p->get_future();
-    amf_app_inst->add_promise(promise_id, p);
+    boost::shared_ptr<boost::promise<nlohmann::json>> p =
+        boost::make_shared<boost::promise<nlohmann::json>>();
+    boost::shared_future<nlohmann::json> f = p->get_future();
 
+    // Store the future to be processed later
+    amf_app_inst->add_promise(promise_id, p);
     curl_responses.emplace(pdu_session.pduSessionId, f);
 
     Logger::amf_n2().debug(
@@ -1584,24 +1585,31 @@ void amf_n2::handle_itti_message(
   // Wait for the response available and process accordingly
   bool result = true;
   while (!curl_responses.empty()) {
-    std::optional<std::string> response_code_str = std::nullopt;
-    utils::wait_for_result(curl_responses.begin()->second, response_code_str);
+    // Wait for the result available and process accordingly
+    std::optional<nlohmann::json> result_json = std::nullopt;
+    utils::wait_for_result(curl_responses.begin()->second, result_json);
 
-    if (response_code_str.has_value()) {
-      Logger::ngap().debug(
-          "Got result for PDU Session ID %d", curl_responses.begin()->first);
-      result                = result && true;
-      uint8_t response_code = 0;
-      if (conv::string_to_int8(response_code_str.value(), response_code)) {
-        if ((response_code == 200) or (response_code == 204)) {
+    if (result_json.has_value()) {
+      Logger::amf_server().debug(
+          "Got result for promise ID %d", curl_responses.begin()->first);
+      uint32_t http_response_code = 0;
+      if (result_json.value().find("httpResponseCode") !=
+          result_json.value().end()) {
+        result             = result && true;
+        http_response_code = result_json.value()["httpResponseCode"].get<int>();
+        if ((http_response_code == 200) or (http_response_code == 204)) {
           // uc->remove_pdu_sessions_context(curl_responses.begin()->first);
           uc->set_up_cnx_state(
               curl_responses.begin()->first,
               up_cnx_state_e::UPCNX_STATE_DEACTIVATED);
         }
+      } else {
+        result = false;
+        Logger::ngap().warn("Couldn't get the HTTP response code");
       }
     } else {
       result = false;
+      Logger::ngap().warn("Couldn't get the HTTP response code");
     }
 
     curl_responses.erase(curl_responses.begin());
@@ -1812,7 +1820,7 @@ bool amf_n2::handle_itti_message(
   std::vector<PduSessionResourceItem> item_ho_required_list;
   pDUSessionResourceListHORqd.get(item_ho_required_list);
 
-  std::map<uint8_t, boost::shared_future<std::string>> curl_responses;
+  std::map<uint8_t, boost::shared_future<nlohmann::json>> curl_responses;
 
   // Send PDUSessionUpdateSMContextRequest to SMF for all PDU sessions included
   // in HO Required message
@@ -1830,13 +1838,14 @@ bool amf_n2::handle_itti_message(
       // Generate a promise and associate this promise to the curl handle
       uint32_t promise_id = amf_app_inst->generate_promise_id();
       Logger::amf_n2().debug("Promise ID generated %d", promise_id);
-      boost::shared_ptr<boost::promise<std::string>> p =
-          boost::make_shared<boost::promise<std::string>>();
-      boost::shared_future<std::string> f = p->get_future();
-      amf_app_inst->add_promise(promise_id, p);
+
+      boost::shared_ptr<boost::promise<nlohmann::json>> p =
+          boost::make_shared<boost::promise<nlohmann::json>>();
+      boost::shared_future<nlohmann::json> f = p->get_future();
 
       // Store the future to be processed later
       curl_responses.emplace(psc->pdu_session_id, f);
+      amf_app_inst->add_promise(promise_id, p);
 
       Logger::amf_n2().debug(
           "Sending ITTI to trigger PDUSessionUpdateSMContextRequest to SMF to "
@@ -1871,13 +1880,14 @@ bool amf_n2::handle_itti_message(
   // Wait for the response available and process accordingly
   bool result = true;
   while (!curl_responses.empty()) {
-    std::optional<std::string> n2_sm = std::nullopt;
-    utils::wait_for_result(curl_responses.begin()->second, n2_sm);
+    std::optional<nlohmann::json> result_json = std::nullopt;
+    utils::wait_for_result(curl_responses.begin()->second, result_json);
 
-    if (n2_sm.has_value()) {
+    if (result_json.value().find("n2sm") != result_json.value().end()) {
+      std::string n2_sm = {};
+      n2_sm             = result_json.value()["n2sm"].get<std::string>();
       Logger::ngap().debug(
           "Got result for PDU Session ID %d", curl_responses.begin()->first);
-
       result = result && true;
 
       std::shared_ptr<pdu_session_context> psc = {};
@@ -1888,16 +1898,15 @@ bool amf_n2::handle_itti_message(
         item.s_nssai.sst = std::to_string(psc->snssai.sST);
         item.s_nssai.sd  = psc->snssai.sD;
         // item.pduSessionNAS_PDU = nullptr;
-        unsigned int data_len = n2_sm.value().length();
+        unsigned int data_len = n2_sm.length();
         item.pduSessionResourceSetupRequestTransfer.buf =
             (unsigned char*) malloc(data_len + 1);
         memcpy(
             (void*) item.pduSessionResourceSetupRequestTransfer.buf,
-            (void*) n2_sm.value().c_str(), data_len);
+            (void*) n2_sm.c_str(), data_len);
         item.pduSessionResourceSetupRequestTransfer.size = data_len;
         list.push_back(item);
       }
-
     } else {
       result = false;
     }
@@ -1978,18 +1987,19 @@ void amf_n2::handle_itti_message(
 
   // Send PDUSessionUpdateSMContextRequest to SMF for all associated PDU
   // sessions
-  std::map<uint8_t, boost::shared_future<std::string>> curl_responses;
+  std::map<uint8_t, boost::shared_future<nlohmann::json>> curl_responses;
 
   for (auto pdu_session_resource : list) {
     // Generate a promise and associate this promise to the curl handle
     uint32_t promise_id = amf_app_inst->generate_promise_id();
     Logger::amf_n2().debug("Promise ID generated %d", promise_id);
 
-    boost::shared_ptr<boost::promise<std::string>> p =
-        boost::make_shared<boost::promise<std::string>>();
-    boost::shared_future<std::string> f = p->get_future();
-    amf_app_inst->add_promise(promise_id, p);
+    boost::shared_ptr<boost::promise<nlohmann::json>> p =
+        boost::make_shared<boost::promise<nlohmann::json>>();
+    boost::shared_future<nlohmann::json> f = p->get_future();
 
+    // Store the future to be processed later
+    amf_app_inst->add_promise(promise_id, p);
     curl_responses.emplace(pdu_session_resource.pduSessionId, f);
 
     Logger::amf_n2().debug(
@@ -2033,22 +2043,23 @@ void amf_n2::handle_itti_message(
   // T-UPF to the source gNB
   bool result = true;
   while (!curl_responses.empty()) {
-    std::optional<std::string> n2_sm = std::nullopt;
-    utils::wait_for_result(curl_responses.begin()->second, n2_sm);
+    std::optional<nlohmann::json> result_json = std::nullopt;
+    utils::wait_for_result(curl_responses.begin()->second, result_json);
 
-    if (n2_sm.has_value()) {
+    if (result_json.value().find("n2sm") != result_json.value().end()) {
+      std::string n2_sm = {};
+      n2_sm             = result_json.value()["n2sm"].get<std::string>();
       Logger::ngap().debug(
           "Got result for PDU Session ID %d", curl_responses.begin()->first);
 
       result                                 = result && true;
       uint8_t pdu_session_id_value           = curl_responses.begin()->first;
-      unsigned int data_len                  = n2_sm.value().length();
+      unsigned int data_len                  = n2_sm.length();
       PduSessionId pdu_session_id            = {};
       OCTET_STRING_t handoverCommandTransfer = {};
       pdu_session_id.set(pdu_session_id_value);
       OCTET_STRING_fromBuf(
-          &handoverCommandTransfer, n2_sm.value().c_str(),
-          n2_sm.value().length());
+          &handoverCommandTransfer, n2_sm.c_str(), n2_sm.length());
       handoverItem.set(pdu_session_id, handoverCommandTransfer);
       handoverItemList.push_back(handoverItem);
       handoverList.set(handoverItemList);
@@ -2061,6 +2072,7 @@ void amf_n2::handle_itti_message(
     } else {
       result = false;
     }
+
     curl_responses.erase(curl_responses.begin());
   }
 
@@ -2146,7 +2158,7 @@ void amf_n2::handle_itti_message(
   }
 
   // Send PDUSessionUpdateSMContextRequest to SMF for accepted PDU sessions
-  std::map<uint8_t, boost::shared_future<std::string>> curl_responses;
+  std::map<uint8_t, boost::shared_future<nlohmann::json>> curl_responses;
 
   for (auto pdu_session : sessions_ctx) {
     if (pdu_session->is_ho_accepted) {
@@ -2154,11 +2166,12 @@ void amf_n2::handle_itti_message(
       uint32_t promise_id = amf_app_inst->generate_promise_id();
       Logger::amf_n2().debug("Promise ID generated %d", promise_id);
 
-      boost::shared_ptr<boost::promise<std::string>> p =
-          boost::make_shared<boost::promise<std::string>>();
-      boost::shared_future<std::string> f = p->get_future();
-      amf_app_inst->add_promise(promise_id, p);
+      boost::shared_ptr<boost::promise<nlohmann::json>> p =
+          boost::make_shared<boost::promise<nlohmann::json>>();
+      boost::shared_future<nlohmann::json> f = p->get_future();
 
+      // Store the future to be processed later
+      amf_app_inst->add_promise(promise_id, p);
       curl_responses.emplace(pdu_session->pdu_session_id, f);
 
       Logger::amf_n2().debug(
@@ -2193,11 +2206,21 @@ void amf_n2::handle_itti_message(
   // Wait for the response available and process accordingly
   bool result = true;
   while (!curl_responses.empty()) {
-    std::optional<std::string> pdu_session_id_str = std::nullopt;
-    utils::wait_for_result(curl_responses.begin()->second, pdu_session_id_str);
+    // Wait for the result available and process accordingly
+    std::optional<nlohmann::json> result_json = std::nullopt;
+    utils::wait_for_result(curl_responses.begin()->second, result_json);
 
-    if (pdu_session_id_str.has_value()) {
-      result = result && true;
+    if (result_json.has_value()) {
+      Logger::amf_server().debug(
+          "Got result for promise ID %d", curl_responses.begin()->first);
+      uint32_t pdu_session_id = 0;
+      if (result_json.value().find("pduSessionId") !=
+          result_json.value().end()) {
+        result         = result && true;
+        pdu_session_id = result_json.value()["pduSessionId"].get<int>();
+      } else {
+        result = false;
+      }
     } else {
       result = false;
     }
