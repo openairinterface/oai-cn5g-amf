@@ -143,64 +143,6 @@ typedef struct auth_conf_s {
   }
 } auth_conf_t;
 
-typedef struct interface_cfg_s {
-  std::string if_name;
-  struct in_addr addr4;
-  struct in_addr network4;
-  struct in6_addr addr6;
-  unsigned int mtu;
-  unsigned int port;
-  std::optional<std::string> api_version;
-
-  nlohmann::json to_json() const {
-    nlohmann::json json_data = {};
-    json_data["if_name"]     = this->if_name;
-    json_data["addr4"]       = inet_ntoa(this->addr4);
-    json_data["network4"]    = inet_ntoa(this->network4);
-    char str_addr6[INET6_ADDRSTRLEN];
-    inet_ntop(AF_INET6, &this->addr6, str_addr6, sizeof(str_addr6));
-    json_data["addr6"] = str_addr6;
-    json_data["mtu"]   = this->mtu;
-    json_data["port"]  = this->port;
-    if (api_version.has_value())
-      json_data["api_version"] = this->api_version.value();
-    return json_data;
-  }
-
-  void from_json(nlohmann::json& json_data) {
-    this->if_name         = json_data["if_name"].get<std::string>();
-    std::string addr4_str = {};
-    addr4_str             = json_data["addr4"].get<std::string>();
-
-    if (boost::iequals(addr4_str, "read")) {
-      if (get_inet_addr_infos_from_iface(
-              this->if_name, this->addr4, this->network4, this->mtu)) {
-        Logger::amf_app().error(
-            "Could not read %s network interface configuration", this->if_name);
-        return;
-      }
-    } else {
-      IPV4_STR_ADDR_TO_INADDR(
-          util::trim(addr4_str).c_str(), this->addr4,
-          "BAD IPv4 ADDRESS FORMAT FOR INTERFACE !");
-
-      std::string network4_str = json_data["network4"].get<std::string>();
-      IPV4_STR_ADDR_TO_INADDR(
-          util::trim(network4_str).c_str(), this->network4,
-          "BAD IPv4 ADDRESS FORMAT FOR INTERFACE !");
-      // TODO: addr6
-      this->mtu  = json_data["mtu"].get<int>();
-      this->port = json_data["port"].get<int>();
-
-      if (json_data.find("api_version") != json_data.end()) {
-        this->api_version = std::make_optional<std::string>(
-            json_data["api_version"].get<std::string>());
-      }
-    }
-  }
-
-} interface_cfg_t;
-
 typedef struct itti_cfg_s {
   util::thread_sched_params itti_timer_sched_params;
   util::thread_sched_params sx_sched_params;
@@ -304,25 +246,5 @@ typedef struct {
     }
   }
 } nas_conf_t;
-
-typedef struct nf_addr_s {
-  struct in_addr ipv4_addr;
-  unsigned int port;
-  std::string api_version;
-  std::string fqdn;
-  std::string uri_root;
-
-  nlohmann::json to_json() const {
-    nlohmann::json json_data = {};
-    json_data["uri_root"]    = this->uri_root;
-    json_data["api_version"] = this->api_version;
-    return json_data;
-  }
-
-  void from_json(nlohmann::json& json_data) {
-    this->uri_root    = json_data["uri_root"].get<std::string>();
-    this->api_version = json_data["api_version"].get<std::string>();
-  }
-} nf_addr_t;
 
 #endif

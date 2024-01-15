@@ -36,6 +36,7 @@
 #include "common_defs.h"
 #include "if.hpp"
 #include "pdu_session_context.hpp"
+#include "sbi_helper.hpp"
 #include "string.hpp"
 #include "thread_sched.hpp"
 
