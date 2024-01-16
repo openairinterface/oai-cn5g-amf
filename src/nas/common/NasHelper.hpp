@@ -28,7 +28,7 @@ namespace nas {
 class NasHelper {
  public:
   template<typename T>
-  static int encode(
+  static int Encode(
       std::optional<T>& ie, uint8_t*& buf, int& len,
       int& encoded_size) noexcept {
     if (!ie.has_value()) {
@@ -48,7 +48,7 @@ class NasHelper {
   }
 
   template<typename T>
-  static int encode(
+  static int Encode(
       T& ie, uint8_t*& buf, int& len, int& encoded_size) noexcept {
     int encoded_ie_size = ie.Encode(buf + encoded_size, len - encoded_size);
     if (encoded_ie_size != KEncodeDecodeError) {
@@ -61,7 +61,7 @@ class NasHelper {
   }
 
   template<typename T>
-  static int decode(
+  static int Decode(
       std::optional<T>& ie, uint8_t*& buf, int& len, int& decoded_size,
       bool iei) noexcept {
     T ie_tmp = {};
@@ -77,7 +77,7 @@ class NasHelper {
   }
 
   template<typename T>
-  static int decode(
+  static int Decode(
       std::optional<T>& ie, uint8_t iei_value, uint8_t*& buf, int& len,
       int& decoded_size, bool iei) noexcept {
     T ie_tmp(iei_value);
@@ -93,7 +93,7 @@ class NasHelper {
   }
 
   template<typename T>
-  static int decode(
+  static int Decode(
       std::optional<T>& ie, uint8_t*& buf, int& len, int& decoded_size,
       const bool& high_pos, bool iei) noexcept {
     T ie_tmp = {};
@@ -109,7 +109,7 @@ class NasHelper {
   }
 
   template<typename T>
-  static int decode(
+  static int Decode(
       T& ie, uint8_t*& buf, int& len, int& decoded_size, bool iei) noexcept {
     int decoded_result = ie.Decode(buf + decoded_size, len - decoded_size, iei);
     if (decoded_result == KEncodeDecodeError) {
@@ -121,7 +121,7 @@ class NasHelper {
   }
 
   template<typename T>
-  static int decode(
+  static int Decode(
       T& ie, uint8_t*& buf, int& len, int& decoded_size, const bool& high_pos,
       bool iei) noexcept {
     int decoded_result =

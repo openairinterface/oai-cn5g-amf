@@ -103,17 +103,17 @@ int NasMmPlainHeader::Encode(uint8_t* buf, int len) {
   int encoded_size    = 0;
   int encoded_ie_size = 0;
 
-  if ((encoded_ie_size = NasHelper::encode(epd_, buf, len, encoded_size)) ==
+  if ((encoded_ie_size = NasHelper::Encode(epd_, buf, len, encoded_size)) ==
       KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
 
-  if ((encoded_ie_size = NasHelper::encode(
+  if ((encoded_ie_size = NasHelper::Encode(
            secu_header_type_, buf, len, encoded_size)) == KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
 
-  if ((encoded_ie_size = NasHelper::encode(
+  if ((encoded_ie_size = NasHelper::Encode(
            msg_type_, buf, len, encoded_size)) == KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
@@ -136,18 +136,18 @@ int NasMmPlainHeader::Decode(uint8_t* buf, int len) {
     return KEncodeDecodeError;
   }
 
-  if ((decoded_ie_size = NasHelper::decode(
+  if ((decoded_ie_size = NasHelper::Decode(
            epd_, buf, len, decoded_size, true)) == KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
 
-  if ((decoded_ie_size = NasHelper::decode(
+  if ((decoded_ie_size = NasHelper::Decode(
            secu_header_type_, buf, len, decoded_size, true)) ==
       KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
 
-  if ((decoded_ie_size = NasHelper::decode(
+  if ((decoded_ie_size = NasHelper::Decode(
            msg_type_, buf, len, decoded_size, true)) == KEncodeDecodeError) {
     return KEncodeDecodeError;
   }

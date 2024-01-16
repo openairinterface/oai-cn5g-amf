@@ -183,7 +183,7 @@ int UlNasTransport::Encode(uint8_t* buf, int len) {
   encoded_size += encoded_ie_size;
 
   // Payload Container Type
-  if ((encoded_ie_size = NasHelper::encode(
+  if ((encoded_ie_size = NasHelper::Encode(
            ie_payload_container_type, buf, len, encoded_size)) ==
       KEncodeDecodeError) {
     return KEncodeDecodeError;
@@ -206,52 +206,52 @@ int UlNasTransport::Encode(uint8_t* buf, int len) {
   }
 
   // PDU session ID
-  if ((encoded_ie_size = NasHelper::encode(
+  if ((encoded_ie_size = NasHelper::Encode(
            ie_pdu_session_id, buf, len, encoded_size)) == KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
 
   // Old PDU session ID
   if ((encoded_ie_size =
-           NasHelper::encode(ie_old_pdu_session_id, buf, len, encoded_size)) ==
+           NasHelper::Encode(ie_old_pdu_session_id, buf, len, encoded_size)) ==
       KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
 
   // Request type
-  if ((encoded_ie_size = NasHelper::encode(
+  if ((encoded_ie_size = NasHelper::Encode(
            ie_request_type, buf, len, encoded_size)) == KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
 
   // S-NSSAI
-  if ((encoded_ie_size = NasHelper::encode(
+  if ((encoded_ie_size = NasHelper::Encode(
            ie_s_nssai, buf, len, encoded_size)) == KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
 
   // DNN
-  if ((encoded_ie_size = NasHelper::encode(ie_dnn, buf, len, encoded_size)) ==
+  if ((encoded_ie_size = NasHelper::Encode(ie_dnn, buf, len, encoded_size)) ==
       KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
 
   // Additional information
-  if ((encoded_ie_size = NasHelper::encode(
+  if ((encoded_ie_size = NasHelper::Encode(
            ie_additional_information, buf, len, encoded_size)) ==
       KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
 
   // MA PDU session information
-  if ((encoded_ie_size = NasHelper::encode(
+  if ((encoded_ie_size = NasHelper::Encode(
            ie_ma_pdu_session_information, buf, len, encoded_size)) ==
       KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
 
   // Release assistance indication
-  if ((encoded_ie_size = NasHelper::encode(
+  if ((encoded_ie_size = NasHelper::Encode(
            ie_release_assistance_indication, buf, len, encoded_size)) ==
       KEncodeDecodeError) {
     return KEncodeDecodeError;
@@ -277,7 +277,7 @@ int UlNasTransport::Decode(uint8_t* buf, int len) {
   decoded_size += decoded_ie_size;
 
   // Payload Container Type
-  if ((decoded_ie_size = NasHelper::decode(
+  if ((decoded_ie_size = NasHelper::Decode(
            ie_payload_container_type, buf, len, decoded_size, false)) ==
       KEncodeDecodeError) {
     return KEncodeDecodeError;
@@ -309,7 +309,7 @@ int UlNasTransport::Decode(uint8_t* buf, int len) {
     switch ((octet & 0xf0) >> 4) {
       case kIeiRequestType: {
         Logger::nas_mm().debug("Decoding IEI 0x%x", kIeiRequestType);
-        if ((decoded_ie_size = NasHelper::decode(
+        if ((decoded_ie_size = NasHelper::Decode(
                  ie_request_type, buf, len, decoded_size, true)) ==
             KEncodeDecodeError) {
           return KEncodeDecodeError;
@@ -321,7 +321,7 @@ int UlNasTransport::Decode(uint8_t* buf, int len) {
       case kIeiMaPduSessionInformation: {
         Logger::nas_mm().debug(
             "Decoding IEI 0x%x", kIeiMaPduSessionInformation);
-        if ((decoded_ie_size = NasHelper::decode(
+        if ((decoded_ie_size = NasHelper::Decode(
                  ie_ma_pdu_session_information, buf, len, decoded_size,
                  true)) == KEncodeDecodeError) {
           return KEncodeDecodeError;
@@ -333,7 +333,7 @@ int UlNasTransport::Decode(uint8_t* buf, int len) {
       case kIeiReleaseAssistanceIndication: {
         Logger::nas_mm().debug(
             "Decoding IEI 0x%x", kIeiReleaseAssistanceIndication);
-        if ((decoded_ie_size = NasHelper::decode(
+        if ((decoded_ie_size = NasHelper::Decode(
                  ie_release_assistance_indication, buf, len, decoded_size,
                  true)) == KEncodeDecodeError) {
           return KEncodeDecodeError;
@@ -350,7 +350,7 @@ int UlNasTransport::Decode(uint8_t* buf, int len) {
     switch (octet) {
       case kIeiPduSessionId: {
         Logger::nas_mm().debug("Decoding IEI 0x%x", kIeiPduSessionId);
-        if ((decoded_ie_size = NasHelper::decode(
+        if ((decoded_ie_size = NasHelper::Decode(
                  ie_pdu_session_id, buf, len, decoded_size, true)) ==
             KEncodeDecodeError) {
           return KEncodeDecodeError;
@@ -361,7 +361,7 @@ int UlNasTransport::Decode(uint8_t* buf, int len) {
 
       case kIeiOldPduSessionId: {
         Logger::nas_mm().debug("Decoding IEI 0x%x", kIeiOldPduSessionId);
-        if ((decoded_ie_size = NasHelper::decode(
+        if ((decoded_ie_size = NasHelper::Decode(
                  ie_old_pdu_session_id, buf, len, decoded_size, true)) ==
             KEncodeDecodeError) {
           return KEncodeDecodeError;
@@ -372,7 +372,7 @@ int UlNasTransport::Decode(uint8_t* buf, int len) {
 
       case kIeiSNssai: {
         Logger::nas_mm().debug("Decoding IEI (0x22)");
-        if ((decoded_ie_size = NasHelper::decode(
+        if ((decoded_ie_size = NasHelper::Decode(
                  ie_s_nssai, kIeiSNssai, buf, len, decoded_size,
                  kIeIsOptional)) == KEncodeDecodeError) {
           return KEncodeDecodeError;
@@ -383,7 +383,7 @@ int UlNasTransport::Decode(uint8_t* buf, int len) {
 
       case kIeiDnn: {
         Logger::nas_mm().debug("Decoding IEI (0x25)");
-        if ((decoded_ie_size = NasHelper::decode(
+        if ((decoded_ie_size = NasHelper::Decode(
                  ie_dnn, buf, len, decoded_size, true)) == KEncodeDecodeError) {
           return KEncodeDecodeError;
         }
@@ -393,7 +393,7 @@ int UlNasTransport::Decode(uint8_t* buf, int len) {
 
       case kIeiAdditionalInformation: {
         Logger::nas_mm().debug("Decoding IEI 0x%x", kIeiAdditionalInformation);
-        if ((decoded_ie_size = NasHelper::decode(
+        if ((decoded_ie_size = NasHelper::Decode(
                  ie_additional_information, buf, len, decoded_size, true)) ==
             KEncodeDecodeError) {
           return KEncodeDecodeError;

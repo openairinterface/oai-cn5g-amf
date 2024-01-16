@@ -71,7 +71,7 @@ int AuthenticationResult::Encode(uint8_t* buf, int len) {
   encoded_size += encoded_ie_size;
 
   // ngKSI
-  if ((encoded_ie_size = NasHelper::encode(
+  if ((encoded_ie_size = NasHelper::Encode(
            ie_ng_ksi, buf, len, encoded_size)) == KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
@@ -80,13 +80,13 @@ int AuthenticationResult::Encode(uint8_t* buf, int len) {
     encoded_size++;  // 1/2 octet + 1/2 octet from ie_ng_ksi
 
   // EAP message
-  if ((encoded_ie_size = NasHelper::encode(
+  if ((encoded_ie_size = NasHelper::Encode(
            ie_eap_message, buf, len, encoded_size)) == KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
 
   // ABBA
-  if ((encoded_ie_size = NasHelper::encode(ie_abba, buf, len, encoded_size)) ==
+  if ((encoded_ie_size = NasHelper::Encode(ie_abba, buf, len, encoded_size)) ==
       KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
@@ -110,7 +110,7 @@ int AuthenticationResult::Decode(uint8_t* buf, int len) {
   decoded_size += decoded_ie_size;
 
   // NAS key set identifier
-  if ((decoded_ie_size = NasHelper::decode(
+  if ((decoded_ie_size = NasHelper::Decode(
            ie_ng_ksi, buf, len, decoded_size, false, false)) ==
       KEncodeDecodeError) {
     return KEncodeDecodeError;
@@ -120,7 +120,7 @@ int AuthenticationResult::Decode(uint8_t* buf, int len) {
 
   // EAP message
   if ((decoded_ie_size =
-           NasHelper::decode(ie_eap_message, buf, len, decoded_size, false)) ==
+           NasHelper::Decode(ie_eap_message, buf, len, decoded_size, false)) ==
       KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
@@ -136,7 +136,7 @@ int AuthenticationResult::Decode(uint8_t* buf, int len) {
     switch (octet) {
       case kIeiAbba: {
         if ((decoded_ie_size =
-                 NasHelper::decode(ie_abba, buf, len, decoded_size, true)) ==
+                 NasHelper::Decode(ie_abba, buf, len, decoded_size, true)) ==
             KEncodeDecodeError) {
           return KEncodeDecodeError;
         }

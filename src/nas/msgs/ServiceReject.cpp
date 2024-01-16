@@ -87,32 +87,32 @@ int ServiceReject::Encode(uint8_t* buf, int len) {
   encoded_size += encoded_ie_size;
 
   // 5GMM cause
-  if ((encoded_ie_size = NasHelper::encode(
+  if ((encoded_ie_size = NasHelper::Encode(
            ie_5gmm_cause, buf, len, encoded_size)) == KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
 
   // PDU session status
   if ((encoded_ie_size =
-           NasHelper::encode(ie_pdu_session_status, buf, len, encoded_size)) ==
+           NasHelper::Encode(ie_pdu_session_status, buf, len, encoded_size)) ==
       KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
 
   // T3346 value
-  if ((encoded_ie_size = NasHelper::encode(
+  if ((encoded_ie_size = NasHelper::Encode(
            ie_t3346_value, buf, len, encoded_size)) == KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
 
   // EAP message
-  if ((encoded_ie_size = NasHelper::encode(
+  if ((encoded_ie_size = NasHelper::Encode(
            ie_eap_message, buf, len, encoded_size)) == KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
 
   // T3448 value
-  if ((encoded_ie_size = NasHelper::encode(
+  if ((encoded_ie_size = NasHelper::Encode(
            ie_t3448_value, buf, len, encoded_size)) == KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
@@ -138,7 +138,7 @@ int ServiceReject::Decode(uint8_t* buf, int len) {
 
   // 5GMM Cause
   if ((decoded_ie_size =
-           NasHelper::decode(ie_5gmm_cause, buf, len, decoded_size, false)) ==
+           NasHelper::Decode(ie_5gmm_cause, buf, len, decoded_size, false)) ==
       KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
@@ -155,7 +155,7 @@ int ServiceReject::Decode(uint8_t* buf, int len) {
     switch (octet) {
       case kIeiPduSessionStatus: {
         Logger::nas_mm().debug("Decoding IEI 0x%x", kIeiPduSessionStatus);
-        if ((decoded_ie_size = NasHelper::decode(
+        if ((decoded_ie_size = NasHelper::Decode(
                  ie_pdu_session_status, buf, len, decoded_size, true)) ==
             KEncodeDecodeError) {
           return KEncodeDecodeError;
@@ -166,7 +166,7 @@ int ServiceReject::Decode(uint8_t* buf, int len) {
 
       case kT3346Value: {
         Logger::nas_mm().debug("Decoding IEI 0x5F: T3346 Value");
-        if ((decoded_ie_size = NasHelper::decode(
+        if ((decoded_ie_size = NasHelper::Decode(
                  ie_t3346_value, kT3346Value, buf, len, decoded_size, true)) ==
             KEncodeDecodeError) {
           return KEncodeDecodeError;
@@ -177,7 +177,7 @@ int ServiceReject::Decode(uint8_t* buf, int len) {
 
       case kIeiEapMessage: {
         Logger::nas_mm().debug("Decoding IEI (0x78)");
-        if ((decoded_ie_size = NasHelper::decode(
+        if ((decoded_ie_size = NasHelper::Decode(
                  ie_eap_message, buf, len, decoded_size, true)) ==
             KEncodeDecodeError) {
           return KEncodeDecodeError;
@@ -188,7 +188,7 @@ int ServiceReject::Decode(uint8_t* buf, int len) {
 
       case kIeiGprsTimer3T3448: {
         Logger::nas_mm().debug("Decoding IEI 0x%x", kIeiGprsTimer3T3448);
-        if ((decoded_ie_size = NasHelper::decode(
+        if ((decoded_ie_size = NasHelper::Decode(
                  ie_t3448_value, kIeiGprsTimer3T3448, buf, len, decoded_size,
                  true)) == KEncodeDecodeError) {
           return KEncodeDecodeError;

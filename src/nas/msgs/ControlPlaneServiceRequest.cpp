@@ -136,12 +136,12 @@ int ControlPlaneServiceRequest::Encode(uint8_t* buf, int len) {
 
   // Control Plane Service Type and ngKSI
   encoded_ie_size =
-      NasHelper::encode(ie_control_plane_service_type, buf, len, encoded_size);
+      NasHelper::Encode(ie_control_plane_service_type, buf, len, encoded_size);
   if ((encoded_ie_size == KEncodeDecodeError) or
       (encoded_ie_size != 0)) {  // 1/2 octet
     return KEncodeDecodeError;
   }
-  if ((encoded_ie_size = NasHelper::encode(
+  if ((encoded_ie_size = NasHelper::Encode(
            ie_ng_ksi, buf, len, encoded_size)) == KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
@@ -154,7 +154,7 @@ int ControlPlaneServiceRequest::Encode(uint8_t* buf, int len) {
 
   // PDU session status
   if ((encoded_ie_size =
-           NasHelper::encode(ie_pdu_session_status, buf, len, encoded_size)) ==
+           NasHelper::Encode(ie_pdu_session_status, buf, len, encoded_size)) ==
       KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
@@ -163,13 +163,13 @@ int ControlPlaneServiceRequest::Encode(uint8_t* buf, int len) {
 
   // Uplink data status
   if ((encoded_ie_size =
-           NasHelper::encode(ie_uplink_data_status, buf, len, encoded_size)) ==
+           NasHelper::Encode(ie_uplink_data_status, buf, len, encoded_size)) ==
       KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
 
   // NAS message container
-  if ((encoded_ie_size = NasHelper::encode(
+  if ((encoded_ie_size = NasHelper::Encode(
            ie_nas_message_container, buf, len, encoded_size)) ==
       KEncodeDecodeError) {
     return KEncodeDecodeError;
@@ -198,13 +198,13 @@ int ControlPlaneServiceRequest::Decode(uint8_t* buf, int len) {
   decoded_size += decoded_ie_size;
 
   // Control Plane service type + ngKSI
-  if ((decoded_ie_size = NasHelper::decode(
+  if ((decoded_ie_size = NasHelper::Decode(
            ie_control_plane_service_type, buf, len, decoded_size, false,
            false)) == KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
   if ((decoded_ie_size =
-           NasHelper::decode(ie_ng_ksi, buf, len, decoded_size, true, false)) ==
+           NasHelper::Decode(ie_ng_ksi, buf, len, decoded_size, true, false)) ==
       KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
@@ -230,7 +230,7 @@ int ControlPlaneServiceRequest::Decode(uint8_t* buf, int len) {
       // TODO: Payload container (Optional)
       // TODO: PDU session ID (Optional)
       case kIeiPduSessionStatus: {
-        if ((decoded_ie_size = NasHelper::decode(
+        if ((decoded_ie_size = NasHelper::Decode(
                  ie_pdu_session_status, buf, len, decoded_size, true)) ==
             KEncodeDecodeError) {
           return KEncodeDecodeError;
@@ -242,7 +242,7 @@ int ControlPlaneServiceRequest::Decode(uint8_t* buf, int len) {
         // TODO: Release assistance indication (Optional)
 
       case kIeiUplinkDataStatus: {
-        if ((decoded_ie_size = NasHelper::decode(
+        if ((decoded_ie_size = NasHelper::Decode(
                  ie_uplink_data_status, buf, len, decoded_size, true)) ==
             KEncodeDecodeError) {
           return KEncodeDecodeError;
@@ -252,7 +252,7 @@ int ControlPlaneServiceRequest::Decode(uint8_t* buf, int len) {
       } break;
 
       case kIeiNasMessageContainer: {
-        if ((decoded_ie_size = NasHelper::decode(
+        if ((decoded_ie_size = NasHelper::Decode(
                  ie_nas_message_container, buf, len, decoded_size, true)) ==
             KEncodeDecodeError) {
           return KEncodeDecodeError;

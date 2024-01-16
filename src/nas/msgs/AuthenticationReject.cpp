@@ -58,7 +58,7 @@ int AuthenticationReject::Encode(uint8_t* buf, int len) {
   }
   encoded_size += encoded_ie_size;
 
-  if ((encoded_ie_size = NasHelper::encode(
+  if ((encoded_ie_size = NasHelper::Encode(
            ie_eap_message, buf, len, encoded_size)) == KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
@@ -89,7 +89,7 @@ int AuthenticationReject::Decode(uint8_t* buf, int len) {
     Logger::nas_mm().debug("Decoding IEI (0x%x)", octet);
     switch (octet) {
       case kIeiEapMessage: {
-        if ((decoded_ie_size = NasHelper::decode(
+        if ((decoded_ie_size = NasHelper::Decode(
                  ie_eap_message, buf, len, decoded_size, true)) ==
             KEncodeDecodeError) {
           return KEncodeDecodeError;
