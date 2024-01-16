@@ -261,6 +261,25 @@ bool NGSetupResponseMsg::decode(Ngap_NGAP_PDU_t* ngapMsgPdu) {
           return false;
         }
       } break;
+      case Ngap_ProtocolIE_ID_id_UERetentionInformation: {
+        if (ngSetupResponsIEs->protocolIEs.list.array[i]->criticality ==
+                Ngap_Criticality_ignore &&
+            ngSetupResponsIEs->protocolIEs.list.array[i]->value.present ==
+                Ngap_NGSetupResponseIEs__value_PR_UERetentionInformation) {
+          UERetentionInformation tmp = {};
+          if (!tmp.decode(ngSetupResponsIEs->protocolIEs.list.array[i]
+                              ->value.choice.UERetentionInformation)) {
+            Logger::ngap().error(
+                "Decoded NGAP UERetentionInformation IE error");
+            return false;
+          }
+          ueRetentionInformation =
+              std::make_optional<UERetentionInformation>(tmp);
+        } else {
+          Logger::ngap().error("Decoded NGAP UERetentionInformation IE error");
+          return false;
+        }
+      } break;
       case Ngap_ProtocolIE_ID_id_CriticalityDiagnostics: {
         Logger::ngap().debug("Decoded NGAP CriticalityDiagnostics");
       } break;
@@ -338,6 +357,35 @@ bool NGSetupResponseMsg::getPlmnSupportList(
   }
 
   return true;
+}
+
+//------------------------------------------------------------------------------
+void NGSetupResponseMsg::setUERetentionInformation(
+    const UERetentionInformation& value) {
+  ueRetentionInformation = std::make_optional<UERetentionInformation>(value);
+
+  Ngap_NGSetupResponseIEs_t* ie =
+      (Ngap_NGSetupResponseIEs_t*) calloc(1, sizeof(Ngap_NGSetupResponseIEs_t));
+  ie->id            = Ngap_ProtocolIE_ID_id_UERetentionInformation;
+  ie->criticality   = Ngap_Criticality_ignore;
+  ie->value.present = Ngap_NGSetupResponseIEs__value_PR_UERetentionInformation;
+
+  if (!ueRetentionInformation.value().encode(
+          ie->value.choice.UERetentionInformation)) {
+    Logger::ngap().error("Encode NGAP UERetentionInformation IE error");
+    free_wrapper((void**) &ie);
+    return;
+  }
+
+  int ret = ASN_SEQUENCE_ADD(&ngSetupResponsIEs->protocolIEs.list, ie);
+  if (ret != 0)
+    Logger::ngap().error("Encode NGAP UERetentionInformation IE error");
+}
+
+//------------------------------------------------------------------------------
+void NGSetupResponseMsg::getUERetentionInformation(
+    std::optional<UERetentionInformation>& value) const {
+  value = ueRetentionInformation;
 }
 
 }  // namespace ngap

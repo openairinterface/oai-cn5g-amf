@@ -265,6 +265,26 @@ bool NGSetupRequestMsg::decode(Ngap_NGAP_PDU_t* ngapMsgPdu) {
               return false;
             }
           } break;
+          case Ngap_ProtocolIE_ID_id_UERetentionInformation: {
+            if (ngSetupRequestIEs->protocolIEs.list.array[i]->criticality ==
+                    Ngap_Criticality_ignore &&
+                ngSetupRequestIEs->protocolIEs.list.array[i]->value.present ==
+                    Ngap_NGSetupRequestIEs__value_PR_UERetentionInformation) {
+              UERetentionInformation tmp = {};
+              if (!tmp.decode(ngSetupRequestIEs->protocolIEs.list.array[i]
+                                  ->value.choice.UERetentionInformation)) {
+                Logger::ngap().error(
+                    "Decoded NGAP UERetentionInformation IE error");
+                return false;
+              }
+              ueRetentionInformation =
+                  std::make_optional<UERetentionInformation>(tmp);
+            } else {
+              Logger::ngap().error(
+                  "Decoded NGAP UERetentionInformation IE error");
+              return false;
+            }
+          } break;
           default: {
             Logger::ngap().error("Decoded NGAP message PDU error");
             return false;
@@ -366,4 +386,17 @@ bool NGSetupRequestMsg::getSupportedTAList(
 e_Ngap_PagingDRX NGSetupRequestMsg::getDefaultPagingDRX() {
   return defaultPagingDrx.getValue();
 }
+
+//------------------------------------------------------------------------------
+void NGSetupRequestMsg::setUERetentionInformation(
+    const UERetentionInformation& value) {
+  ueRetentionInformation = std::make_optional<UERetentionInformation>(value);
+}
+
+//------------------------------------------------------------------------------
+void NGSetupRequestMsg::getUERetentionInformation(
+    std::optional<UERetentionInformation>& value) const {
+  value = ueRetentionInformation;
+}
+
 }  // namespace ngap
