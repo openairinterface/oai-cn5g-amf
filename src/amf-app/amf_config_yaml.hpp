@@ -19,8 +19,6 @@
  *      contact@openairinterface.org
  */
 
-#pragma once
-
 #ifndef _AMF_CONFIG_YAML_H_
 #define _AMF_CONFIG_YAML_H_
 
