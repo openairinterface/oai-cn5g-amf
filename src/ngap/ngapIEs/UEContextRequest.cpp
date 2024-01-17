@@ -53,8 +53,7 @@ bool UEContextRequest::encode(
 }
 
 //------------------------------------------------------------------------------
-bool UEContextRequest::decode(
-    const Ngap_UEContextRequest_t& ue_context_request) {
+bool UEContextRequest::decode(Ngap_UEContextRequest_t ue_context_request) {
   ue_context_request_ = ue_context_request;
   return true;
 }

@@ -42,11 +42,15 @@ void AMFConfigurationApi::setupRoutes() {
   using namespace Pistache::Rest;
 
   Routes::Get(
-      *router, base + amf_cfg.sbi_api_version + "/configuration/",
+      *router,
+      base + amf_cfg.sbi.api_version.value_or(DEFAULT_SBI_API_VERSION) +
+          "/configuration/",
       Routes::bind(&AMFConfigurationApi::read_configuration_handler, this));
 
   Routes::Put(
-      *router, base + amf_cfg.sbi_api_version + "/configuration/",
+      *router,
+      base + amf_cfg.sbi.api_version.value_or(DEFAULT_SBI_API_VERSION) +
+          "/configuration/",
       Routes::bind(&AMFConfigurationApi::update_configuration_handler, this));
 
   // Default handler, called when a route is not found

@@ -40,7 +40,7 @@ class RanNodeName {
   void getValue(std::string& value) const;
 
   bool encode(Ngap_RANNodeName_t&);
-  bool decode(Ngap_RANNodeName_t&);
+  bool decode(const Ngap_RANNodeName_t&);
 
  private:
   std::string ran_node_name_;

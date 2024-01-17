@@ -23,6 +23,7 @@
 
 #include "3gpp_29.502.h"
 #include "amf_app.hpp"
+#include "common_defs.h"
 #include "logger.hpp"
 
 extern "C" {
@@ -30,41 +31,37 @@ extern "C" {
 #include <stdbool.h>
 #include <string.h>
 #include <sys/types.h>
-
-#include "common_defs.h"
 }
 
-using namespace libconfig;
 using namespace amf_application;
 
 namespace oai::config {
 
 //------------------------------------------------------------------------------
 amf_config::amf_config() {
-  smf_addr.ipv4_addr.s_addr               = INADDR_ANY;
-  smf_addr.port                           = DEFAULT_HTTP1_PORT;
-  smf_addr.api_version                    = DEFAULT_SBI_API_VERSION;
-  nrf_addr.ipv4_addr.s_addr               = INADDR_ANY;
-  nrf_addr.port                           = DEFAULT_HTTP1_PORT;
-  nrf_addr.api_version                    = DEFAULT_SBI_API_VERSION;
-  ausf_addr.ipv4_addr.s_addr              = INADDR_ANY;
-  ausf_addr.port                          = DEFAULT_HTTP1_PORT;
-  ausf_addr.api_version                   = DEFAULT_SBI_API_VERSION;
-  udm_addr.ipv4_addr.s_addr               = INADDR_ANY;
-  udm_addr.port                           = DEFAULT_HTTP1_PORT;
-  udm_addr.api_version                    = DEFAULT_SBI_API_VERSION;
-  lmf_addr.ipv4_addr.s_addr               = INADDR_ANY;
-  lmf_addr.port                           = DEFAULT_HTTP1_PORT;
-  lmf_addr.api_version                    = DEFAULT_SBI_API_VERSION;
-  nssf_addr.ipv4_addr.s_addr              = INADDR_ANY;
-  nssf_addr.port                          = DEFAULT_HTTP1_PORT;
-  nssf_addr.api_version                   = DEFAULT_SBI_API_VERSION;
-  instance                                = 0;
-  log_level                               = spdlog::level::debug;
-  n2                                      = {};
-  sbi                                     = {};
-  sbi_api_version                         = DEFAULT_SBI_API_VERSION;
-  sbi_http2_port                          = DEFAULT_HTTP2_PORT;
+  smf_addr.ipv4_addr.s_addr  = INADDR_ANY;
+  smf_addr.port              = DEFAULT_HTTP1_PORT;
+  smf_addr.api_version       = DEFAULT_SBI_API_VERSION;
+  nrf_addr.ipv4_addr.s_addr  = INADDR_ANY;
+  nrf_addr.port              = DEFAULT_HTTP1_PORT;
+  nrf_addr.api_version       = DEFAULT_SBI_API_VERSION;
+  ausf_addr.ipv4_addr.s_addr = INADDR_ANY;
+  ausf_addr.port             = DEFAULT_HTTP1_PORT;
+  ausf_addr.api_version      = DEFAULT_SBI_API_VERSION;
+  udm_addr.ipv4_addr.s_addr  = INADDR_ANY;
+  udm_addr.port              = DEFAULT_HTTP1_PORT;
+  udm_addr.api_version       = DEFAULT_SBI_API_VERSION;
+  lmf_addr.ipv4_addr.s_addr  = INADDR_ANY;
+  lmf_addr.port              = DEFAULT_HTTP1_PORT;
+  lmf_addr.api_version       = DEFAULT_SBI_API_VERSION;
+  nssf_addr.ipv4_addr.s_addr = INADDR_ANY;
+  nssf_addr.port             = DEFAULT_HTTP1_PORT;
+  nssf_addr.api_version      = DEFAULT_SBI_API_VERSION;
+  instance                   = 0;
+  log_level                  = spdlog::level::debug;
+  n2                         = {};
+  sbi                        = {};
+  sbi.api_version = std::make_optional<std::string>(DEFAULT_SBI_API_VERSION);
   statistics_interval                     = 0;
   guami                                   = {};
   guami_list                              = {};
@@ -158,9 +155,9 @@ void amf_config::display() {
   Logger::config().info(
       "    IP Addr ...............: %s", inet_ntoa(sbi.addr4));
   Logger::config().info("    Port ..................: %d", sbi.port);
-  Logger::config().info("    HTTP2 port ............: %d", sbi_http2_port);
-  Logger::config().info(
-      "    API version............: %s", sbi_api_version.c_str());
+  if (sbi.api_version.has_value())
+    Logger::config().info(
+        "    API version............: %s", sbi.api_version.value().c_str());
 
   if (!support_features.enable_smf_selection) {
     Logger::config().info("- SMF:");
@@ -268,14 +265,11 @@ void amf_config::display() {
 std::string amf_config::get_amf_n1n2_message_subscribe_uri(
     const std::string& ue_cxt_id) {
   unsigned int sbi_port = DEFAULT_HTTP1_PORT;
-  if (support_features.use_http2) {
-    sbi_port = sbi_http2_port;
-  } else {
-    sbi_port = sbi.port;
-  }
+  sbi_port              = sbi.port;
   return std::string(inet_ntoa(*((struct in_addr*) &sbi.addr4))) + ":" +
-         std::to_string(sbi_port) + NAMF_COMMUNICATION_BASE + sbi_api_version +
-         "/ue-contexts/" + ue_cxt_id + "/n1-n2-messages/subscriptions";
+         std::to_string(sbi_port) + NAMF_COMMUNICATION_BASE +
+         sbi.api_version.value() + "/ue-contexts/" + ue_cxt_id +
+         "/n1-n2-messages/subscriptions";
 }
 
 //------------------------------------------------------------------------------
@@ -418,7 +412,7 @@ bool amf_config::from_json(nlohmann::json& json_data) {
     if (json_data.find("guami_list") != json_data.end()) {
       guami_list.clear();
       for (auto s : json_data["guami_list"]) {
-        guami_t g = {};
+        guami_full_format_t g = {};
         g.from_json(s);
         guami_list.push_back(g);
       }
@@ -450,10 +444,6 @@ bool amf_config::from_json(nlohmann::json& json_data) {
     }
     if (json_data.find("sbi") != json_data.end()) {
       sbi.from_json(json_data["sbi"]);
-    }
-
-    if (json_data.find("sbi_http2_port") != json_data.end()) {
-      sbi_http2_port = json_data["sbi_http2_port"].get<int>();
     }
 
     if (json_data.find("support_features_options") != json_data.end()) {

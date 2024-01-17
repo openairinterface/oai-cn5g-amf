@@ -60,8 +60,8 @@ class Dynamic5QIDescriptor {
       std::optional<AveragingWindow>& m_averagingWindow,
       std::optional<MaximumDataBurstVolume>& m_maximumDataBurstVolume) const;
 
-  bool encode(Ngap_Dynamic5QIDescriptor_t*);
-  bool decode(Ngap_Dynamic5QIDescriptor_t*);
+  bool encode(Ngap_Dynamic5QIDescriptor_t&);
+  bool decode(const Ngap_Dynamic5QIDescriptor_t&);
 
  private:
   PriorityLevelQos priorityLevelQos;    // Mandatory

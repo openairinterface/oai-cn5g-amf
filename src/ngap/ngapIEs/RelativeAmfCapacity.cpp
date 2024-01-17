@@ -49,8 +49,7 @@ bool RelativeAmfCapacity::encode(
 }
 
 //------------------------------------------------------------------------------
-bool RelativeAmfCapacity::decode(
-    const Ngap_RelativeAMFCapacity_t& amf_capacity_ie) {
+bool RelativeAmfCapacity::decode(Ngap_RelativeAMFCapacity_t amf_capacity_ie) {
   amf_capacity_ = (uint8_t) amf_capacity_ie;
   return true;
 }

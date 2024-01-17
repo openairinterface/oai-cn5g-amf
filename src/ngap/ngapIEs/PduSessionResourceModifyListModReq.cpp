@@ -56,7 +56,7 @@ bool PduSessionResourceModifyListModReq::encode(
 
 //------------------------------------------------------------------------------
 bool PduSessionResourceModifyListModReq::decode(
-    Ngap_PDUSessionResourceModifyListModReq_t&
+    const Ngap_PDUSessionResourceModifyListModReq_t&
         pdu_session_resource_modify_list_mod_req) {
   uint32_t numberofPDUSessions =
       pdu_session_resource_modify_list_mod_req.list.count;

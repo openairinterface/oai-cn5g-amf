@@ -41,8 +41,8 @@ class AmfRegionId {
   void setAMFRegionID(const uint8_t&);
   void getAMFRegionID(uint8_t&) const;
 
-  bool encode(Ngap_AMFRegionID_t&);
-  bool decode(Ngap_AMFRegionID_t&);
+  bool encode(Ngap_AMFRegionID_t&) const;
+  bool decode(Ngap_AMFRegionID_t);
 
  private:
   uint8_t region_id_;

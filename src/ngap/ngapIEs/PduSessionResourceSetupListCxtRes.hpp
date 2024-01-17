@@ -40,9 +40,9 @@ class PduSessionResourceSetupListCxtRes {
   void set(const std::vector<PduSessionResourceSetupItemCxtRes>& list);
   void get(std::vector<PduSessionResourceSetupItemCxtRes>& list) const;
 
-  bool encode(Ngap_PDUSessionResourceSetupListCxtRes_t*
+  bool encode(Ngap_PDUSessionResourceSetupListCxtRes_t&
                   pduSessionResourceSetupListCxtRes);
-  bool decode(Ngap_PDUSessionResourceSetupListCxtRes_t*
+  bool decode(const Ngap_PDUSessionResourceSetupListCxtRes_t&
                   pduSessionResourceSetupListCxtRes);
 
  private:

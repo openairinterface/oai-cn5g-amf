@@ -21,12 +21,8 @@
 #include "HandoverNotifyMsg.hpp"
 
 #include "logger.hpp"
+#include "utils.hpp"
 
-extern "C" {
-#include "dynamic_memory_check.h"
-}
-
-using namespace std;
 namespace ngap {
 
 //------------------------------------------------------------------------------
@@ -59,7 +55,7 @@ void HandoverNotifyMsg::setAmfUeNgapId(const unsigned long& id) {
   int ret = amfUeNgapId.encode(ie->value.choice.AMF_UE_NGAP_ID);
   if (!ret) {
     Logger::ngap().error("Encode AMF_UE_NGAP_ID IE error!");
-    free_wrapper((void**) &ie);
+    utils::free_wrapper((void**) &ie);
     return;
   }
 
@@ -80,7 +76,7 @@ void HandoverNotifyMsg::setRanUeNgapId(const uint32_t& ran_ue_ngap_id) {
   int ret = ranUeNgapId.encode(ie->value.choice.RAN_UE_NGAP_ID);
   if (!ret) {
     Logger::ngap().error("Encode RAN_UE_NGAP_ID IE error!");
-    free_wrapper((void**) &ie);
+    utils::free_wrapper((void**) &ie);
     return;
   }
 
@@ -106,10 +102,10 @@ void HandoverNotifyMsg::setUserLocationInfoNR(
   ie->value.present = Ngap_HandoverNotifyIEs__value_PR_UserLocationInformation;
 
   int ret =
-      userLocationInformation.encode(&ie->value.choice.UserLocationInformation);
+      userLocationInformation.encode(ie->value.choice.UserLocationInformation);
   if (!ret) {
     Logger::ngap().error("Encode UserLocationInformation IE error");
-    free_wrapper((void**) &ie);
+    utils::free_wrapper((void**) &ie);
     return;
   }
 
@@ -200,8 +196,8 @@ bool HandoverNotifyMsg::decode(Ngap_NGAP_PDU_t* ngapMsgPdu) {
         if (handoverNotifyIEs->protocolIEs.list.array[i]->value.present ==
             Ngap_HandoverNotifyIEs__value_PR_UserLocationInformation) {
           if (!userLocationInformation.decode(
-                  &handoverNotifyIEs->protocolIEs.list.array[i]
-                       ->value.choice.UserLocationInformation)) {
+                  handoverNotifyIEs->protocolIEs.list.array[i]
+                      ->value.choice.UserLocationInformation)) {
             Logger::ngap().error(
                 "Decoded NGAP UserLocationInformation IE error");
             return false;

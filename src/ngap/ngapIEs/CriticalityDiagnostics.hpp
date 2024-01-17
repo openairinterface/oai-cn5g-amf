@@ -42,9 +42,6 @@ class CriticalityDiagnostics {
   CriticalityDiagnostics();
   virtual ~CriticalityDiagnostics();
 
-  int encode(Ngap_NGSetupFailure_t*);
-  bool decode(Ngap_CriticalityDiagnostics_t*);
-
   void setProcedureCodeValue(Ngap_ProcedureCode_t);
   bool getProcedureCodeValue(Ngap_ProcedureCode_t&) const;
 
@@ -59,6 +56,9 @@ class CriticalityDiagnostics {
           m_iEsCriticalityDiagnostics);
   void getIEsCriticalityDiagnosticsList(std::vector<IEsCriticalityDiagnostics>&
                                             m_iEsCriticalityDiagnostics) const;
+
+  int encode(Ngap_NGSetupFailure_t&);
+  bool decode(const Ngap_CriticalityDiagnostics_t&);
 
  private:
   Ngap_ProcedureCode_t procedureCode;          // TODO: Optional

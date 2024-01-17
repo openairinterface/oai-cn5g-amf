@@ -44,7 +44,7 @@ uint64_t AmfUeNgapId::get() const {
 }
 
 //------------------------------------------------------------------------------
-bool AmfUeNgapId::encode(Ngap_AMF_UE_NGAP_ID_t& amf_ue_ngap_id) {
+bool AmfUeNgapId::encode(Ngap_AMF_UE_NGAP_ID_t& amf_ue_ngap_id) const {
   amf_ue_ngap_id.size = 5;
   amf_ue_ngap_id.buf  = (uint8_t*) calloc(1, amf_ue_ngap_id.size);
   if (!amf_ue_ngap_id.buf) return false;
@@ -58,7 +58,7 @@ bool AmfUeNgapId::encode(Ngap_AMF_UE_NGAP_ID_t& amf_ue_ngap_id) {
 }
 
 //------------------------------------------------------------------------------
-bool AmfUeNgapId::decode(Ngap_AMF_UE_NGAP_ID_t& amf_ue_ngap_id) {
+bool AmfUeNgapId::decode(Ngap_AMF_UE_NGAP_ID_t amf_ue_ngap_id) {
   if (!amf_ue_ngap_id.buf) return false;
 
   id_ = 0;

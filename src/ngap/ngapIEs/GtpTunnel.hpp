@@ -43,7 +43,7 @@ class GtpTunnel {
       TransportLayerAddress& m_transportLayerAddress, GtpTeid& m_gtpTeid) const;
 
   bool encode(Ngap_GTPTunnel& upTransportLayerInfo);
-  bool decode(Ngap_GTPTunnel& upTransportLayerInfo);
+  bool decode(const Ngap_GTPTunnel& upTransportLayerInfo);
 
  private:
   TransportLayerAddress transportLayerAddress;

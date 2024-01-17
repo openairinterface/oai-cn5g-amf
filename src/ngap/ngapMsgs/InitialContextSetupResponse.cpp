@@ -22,10 +22,7 @@
 #include "InitialContextSetupResponse.hpp"
 
 #include "logger.hpp"
-
-extern "C" {
-#include "dynamic_memory_check.h"
-}
+#include "utils.hpp"
 
 namespace ngap {
 
@@ -64,7 +61,7 @@ void InitialContextSetupResponseMsg::setAmfUeNgapId(const unsigned long& id) {
   int ret = amfUeNgapId.encode(ie->value.choice.AMF_UE_NGAP_ID);
   if (!ret) {
     Logger::ngap().error("Encode AMF_UE_NGAP_ID IE error");
-    free_wrapper((void**) &ie);
+    utils::free_wrapper((void**) &ie);
     return;
   }
 
@@ -88,7 +85,7 @@ void InitialContextSetupResponseMsg::setRanUeNgapId(
   int ret = ranUeNgapId.encode(ie->value.choice.RAN_UE_NGAP_ID);
   if (!ret) {
     Logger::ngap().error("Encode RAN_UE_NGAP_ID IE error");
-    free_wrapper((void**) &ie);
+    utils::free_wrapper((void**) &ie);
     return;
   }
 
@@ -124,10 +121,10 @@ void InitialContextSetupResponseMsg::setPduSessionResourceSetupResponseList(
       Ngap_InitialContextSetupResponseIEs__value_PR_PDUSessionResourceSetupListCxtRes;
 
   int ret = pduSessionResourceSetupResponseList.value().encode(
-      &ie->value.choice.PDUSessionResourceSetupListCxtRes);
+      ie->value.choice.PDUSessionResourceSetupListCxtRes);
   if (!ret) {
     Logger::ngap().error("Encode PDUSessionResourceSetupListCxtRes IE error");
-    free_wrapper((void**) &ie);
+    utils::free_wrapper((void**) &ie);
     return;
   }
 
@@ -166,11 +163,11 @@ void InitialContextSetupResponseMsg::setPduSessionResourceFailedToSetupList(
       Ngap_InitialContextSetupResponseIEs__value_PR_PDUSessionResourceFailedToSetupListCxtRes;
 
   int ret = pduSessionResourceFailedToSetupResponseList.value().encode(
-      &ie->value.choice.PDUSessionResourceFailedToSetupListCxtRes);
+      ie->value.choice.PDUSessionResourceFailedToSetupListCxtRes);
   if (!ret) {
     Logger::ngap().error(
         "Encode PDUSessionResourceFailedToSetupListCxtRes IE error");
-    free_wrapper((void**) &ie);
+    utils::free_wrapper((void**) &ie);
     return;
   }
 
@@ -250,8 +247,8 @@ bool InitialContextSetupResponseMsg::decode(Ngap_NGAP_PDU_t* ngapMsgPdu) {
                 Ngap_InitialContextSetupResponseIEs__value_PR_PDUSessionResourceSetupListCxtRes) {
           PduSessionResourceSetupListCxtRes tmp = {};
           if (!tmp.decode(
-                  &initialContextSetupResponseIEs->protocolIEs.list.array[i]
-                       ->value.choice.PDUSessionResourceSetupListCxtRes)) {
+                  initialContextSetupResponseIEs->protocolIEs.list.array[i]
+                      ->value.choice.PDUSessionResourceSetupListCxtRes)) {
             Logger::ngap().error(
                 "Decoded NGAP PDUSessionResourceSetupListCxtRes IE error");
 
@@ -274,9 +271,9 @@ bool InitialContextSetupResponseMsg::decode(Ngap_NGAP_PDU_t* ngapMsgPdu) {
                 Ngap_InitialContextSetupResponseIEs__value_PR_PDUSessionResourceFailedToSetupListCxtRes) {
           PduSessionResourceFailedToSetupListCxtRes tmp = {};
           if (!tmp.decode(
-                  &initialContextSetupResponseIEs->protocolIEs.list.array[i]
-                       ->value.choice
-                       .PDUSessionResourceFailedToSetupListCxtRes)) {
+                  initialContextSetupResponseIEs->protocolIEs.list.array[i]
+                      ->value.choice
+                      .PDUSessionResourceFailedToSetupListCxtRes)) {
             Logger::ngap().error(
                 "Decoded NGAP PDUSessionResourceFailedToSetupListCxtRes IE "
                 "error");

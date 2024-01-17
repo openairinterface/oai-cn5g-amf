@@ -21,7 +21,7 @@
 
 #include "AssociatedQosFlowList.hpp"
 
-#include "dynamic_memory_check.h"
+#include "utils.hpp"
 
 namespace ngap {
 
@@ -55,28 +55,28 @@ bool AssociatedQosFlowList::encode(
     Ngap_AssociatedQosFlowItem_t* ie = (Ngap_AssociatedQosFlowItem_t*) calloc(
         1, sizeof(Ngap_AssociatedQosFlowItem_t));
     if (!ie) return false;
-    if (!list_[i].encode(ie)) {
-      free_wrapper((void**) &ie);
+    if (!list_[i].encode(*ie)) {
+      utils::free_wrapper((void**) &ie);
       return false;
     }
     if (ASN_SEQUENCE_ADD(&associatedQosFlowList.list, ie) != 0) {
-      free_wrapper((void**) &ie);
+      utils::free_wrapper((void**) &ie);
       return false;
     }
-    free_wrapper((void**) &ie);
+    utils::free_wrapper((void**) &ie);
   }
   return true;
 }
 
 //------------------------------------------------------------------------------
 bool AssociatedQosFlowList::decode(
-    Ngap_AssociatedQosFlowList_t& associatedQosFlowList) {
+    const Ngap_AssociatedQosFlowList_t& associatedQosFlowList) {
   uint8_t actual_size = (associatedQosFlowList.list.count > kMaxNoOfQoSFlows) ?
                             kMaxNoOfQoSFlows :
                             associatedQosFlowList.list.count;
   for (int i = 0; i < actual_size; i++) {
     AssociatedQosFlowItem item = {};
-    if (!item.decode(associatedQosFlowList.list.array[i])) return false;
+    if (!item.decode(*associatedQosFlowList.list.array[i])) return false;
     list_.push_back(item);
   }
   return true;

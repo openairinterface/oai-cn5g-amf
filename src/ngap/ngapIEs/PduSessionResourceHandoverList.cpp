@@ -50,7 +50,7 @@ bool PduSessionResourceHandoverList::encode(
             1, sizeof(Ngap_PDUSessionResourceHandoverItem_t));
 
     if (!handoverItem) return false;
-    if (!item.encode(handoverItem)) return false;
+    if (!item.encode(*handoverItem)) return false;
     if (ASN_SEQUENCE_ADD(&list.list, handoverItem) != 0) return false;
   }
 
@@ -63,7 +63,7 @@ bool PduSessionResourceHandoverList::decode(
   for (int i = 0; i < list.list.count; i++) {
     PduSessionResourceItem item = {};
 
-    if (!item.decode(list.list.array[i])) return false;
+    if (!item.decode(*list.list.array[i])) return false;
     item_list_.push_back(item);
   }
   return true;

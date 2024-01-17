@@ -41,19 +41,19 @@ void PduSessionResourceItemCxtRelCpl::get(PduSessionId& pdu_session_id) const {
 
 //------------------------------------------------------------------------------
 bool PduSessionResourceItemCxtRelCpl::encode(
-    Ngap_PDUSessionResourceItemCxtRelCpl_t*
+    Ngap_PDUSessionResourceItemCxtRelCpl_t&
         pdu_session_resource_item_cxt_rel_cpl) {
   if (!pdu_session_id_.encode(
-          pdu_session_resource_item_cxt_rel_cpl->pDUSessionID))
+          pdu_session_resource_item_cxt_rel_cpl.pDUSessionID))
     return false;
   return true;
 }
 
 //------------------------------------------------------------------------------
 bool PduSessionResourceItemCxtRelCpl::decode(
-    const Ngap_PDUSessionResourceItemCxtRelCpl_t* const
+    const Ngap_PDUSessionResourceItemCxtRelCpl_t&
         pdu_session_resource_item_cxt_rel_cpl) {
-  pdu_session_id_.set(pdu_session_resource_item_cxt_rel_cpl->pDUSessionID);
+  pdu_session_id_.set(pdu_session_resource_item_cxt_rel_cpl.pDUSessionID);
   return true;
 }
 

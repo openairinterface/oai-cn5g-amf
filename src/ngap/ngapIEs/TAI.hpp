@@ -47,8 +47,8 @@ class TAI {
   void setTAI(const Tai_t& tai);
   void getTAI(Tai_t& tai);
 
-  bool encode(Ngap_TAI_t*);
-  bool decode(Ngap_TAI_t*);
+  bool encode(Ngap_TAI_t&);
+  bool decode(const Ngap_TAI_t&);
 
  private:
   PlmnId plmn_id_;  // Mandatory

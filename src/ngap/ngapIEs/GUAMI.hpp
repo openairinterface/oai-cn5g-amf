@@ -60,8 +60,8 @@ class GUAMI {
       std::string& mcc, std::string& mnc, std::string& regionId,
       std::string& setId, std::string& pointer);
 
-  bool encode(Ngap_GUAMI_t* guami);
-  bool decode(Ngap_GUAMI_t* pdu);
+  bool encode(Ngap_GUAMI_t& guami);
+  bool decode(const Ngap_GUAMI_t& pdu);
 
  private:
   PlmnId plmnId;            // Mandatory

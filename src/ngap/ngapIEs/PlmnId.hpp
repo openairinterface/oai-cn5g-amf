@@ -42,7 +42,7 @@ class PlmnId {
   void getMnc(std::string& mnc) const;
 
   bool encode(Ngap_PLMNIdentity_t&);
-  bool decode(Ngap_PLMNIdentity_t&);
+  bool decode(const Ngap_PLMNIdentity_t&);
 
  private:
   uint8_t mcc_digit2;

@@ -67,7 +67,8 @@ void SubscriptionsCollectionDocumentApiImplEventExposure::create_subscription(
   if (sub_id != -1) {
     std::string location =
         std::string(inet_ntoa(*((struct in_addr*) &amf_cfg.sbi.addr4))) + ":" +
-        std::to_string(amf_cfg.sbi.port) + base + amf_cfg.sbi_api_version +
+        std::to_string(amf_cfg.sbi.port) + base +
+        amf_cfg.sbi.api_version.value_or(DEFAULT_SBI_API_VERSION) +
         "/namf-evts/" + std::to_string(sub_id);
 
     json_data["subscriptionId"] = location;

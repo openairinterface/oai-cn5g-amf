@@ -19,17 +19,30 @@
  *      contact@openairinterface.org
  */
 
-#ifndef FILE_STRING_HPP_FILE_SEEN
-#define FILE_STRING_HPP_FILE_SEEN
+#ifndef _TIMER_APPROACH_FOR_GUAMI_REMOVAL_H_
+#define _TIMER_APPROACH_FOR_GUAMI_REMOVAL_H_
 
-#include <string>
+extern "C" {
+#include "Ngap_TimerApproachForGUAMIRemoval.h"
+}
 
-namespace util {
+namespace ngap {
 
-std::string& ltrim(std::string& s);
-// trim from end
-std::string& rtrim(std::string& s);
-// trim from both ends
-std::string& trim(std::string& s);
-}  // namespace util
+class TimerApproachForGuamiRemoval {
+ public:
+  TimerApproachForGuamiRemoval();
+  virtual ~TimerApproachForGuamiRemoval();
+
+  void set(e_Ngap_TimerApproachForGUAMIRemoval value);
+  bool get(long& value) const;
+
+  bool encode(Ngap_TimerApproachForGUAMIRemoval_t&) const;
+  bool decode(Ngap_TimerApproachForGUAMIRemoval_t);
+
+ private:
+  long value_;
+};
+
+}  // namespace ngap
+
 #endif

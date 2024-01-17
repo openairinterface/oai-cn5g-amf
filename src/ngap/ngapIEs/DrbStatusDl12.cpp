@@ -40,8 +40,8 @@ void DrbStatusDl12::set(const CountValueForPdcpSn12& value) {
 }
 
 //------------------------------------------------------------------------------
-bool DrbStatusDl12::encode(Ngap_DRBStatusDL12_t* DL18) {
-  if (!dl_count_value_.encode(&DL18->dL_COUNTValue)) {
+bool DrbStatusDl12::encode(Ngap_DRBStatusDL12_t& dl12) const {
+  if (!dl_count_value_.encode(dl12.dL_COUNTValue)) {
     Logger::ngap().error("Encode DrbStatusDl12 IE error");
     return false;
   }
@@ -49,8 +49,8 @@ bool DrbStatusDl12::encode(Ngap_DRBStatusDL12_t* DL18) {
 }
 
 //------------------------------------------------------------------------------
-bool DrbStatusDl12::decode(Ngap_DRBStatusDL12_t* DL18) {
-  if (!dl_count_value_.decode(DL18->dL_COUNTValue)) {
+bool DrbStatusDl12::decode(const Ngap_DRBStatusDL12_t& dl12) {
+  if (!dl_count_value_.decode(dl12.dL_COUNTValue)) {
     Logger::ngap().error("Decode DrbStatusDl12 IE error");
     return false;
   }

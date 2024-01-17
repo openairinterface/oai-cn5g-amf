@@ -48,7 +48,7 @@ bool PduSessionId::encode(Ngap_PDUSessionID_t& pdu_session_id) const {
 }
 
 //------------------------------------------------------------------------------
-bool PduSessionId::decode(const Ngap_PDUSessionID_t& pdu_session_id) {
+bool PduSessionId::decode(Ngap_PDUSessionID_t pdu_session_id) {
   id_ = pdu_session_id;
   return true;
 }

@@ -44,9 +44,9 @@ class PduSessionResourceSetupItemHoReq : public PduSessionResourceItem {
       PduSessionId& pdu_session_id, S_NSSAI& s_nssai,
       OCTET_STRING_t& handover_request_transfer) const;
 
-  bool encode(Ngap_PDUSessionResourceSetupItemHOReq_t*
+  bool encode(Ngap_PDUSessionResourceSetupItemHOReq_t&
                   pduSessionResourceSetupItemHOReq);
-  bool decode(Ngap_PDUSessionResourceSetupItemHOReq_t*
+  bool decode(const Ngap_PDUSessionResourceSetupItemHOReq_t&
                   pduSessionResourceSetupItemHOReq);
 
  private:

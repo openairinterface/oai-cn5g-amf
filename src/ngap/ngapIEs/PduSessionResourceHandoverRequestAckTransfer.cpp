@@ -38,8 +38,8 @@ PduSessionResourceHandoverRequestAckTransfer::
     ~PduSessionResourceHandoverRequestAckTransfer() {}
 
 //------------------------------------------------------------------------------
-bool PduSessionResourceHandoverRequestAckTransfer::
-    decodefromHandoverRequestAckTransfer(uint8_t* buf, int buf_size) {
+bool PduSessionResourceHandoverRequestAckTransfer::decode(
+    uint8_t* buf, int buf_size) {
   asn_dec_rval_t rc = asn_decode(
       NULL, ATS_ALIGNED_CANONICAL_PER,
       &asn_DEF_Ngap_HandoverRequestAcknowledgeTransfer,

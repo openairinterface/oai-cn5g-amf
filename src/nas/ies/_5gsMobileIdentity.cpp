@@ -22,7 +22,7 @@
 #include "_5gsMobileIdentity.hpp"
 
 #include "3gpp_24.501.hpp"
-#include "conversions.hpp"
+#include "amf_conversions.hpp"
 #include "logger.hpp"
 #include "utils.hpp"
 
@@ -573,7 +573,7 @@ int _5gsMobileIdentity::Decode5gSTmsi(uint8_t* buf, int len) {
   // 5G TMSI
   uint32_t tmsi = 0;
   DECODE_U32(buf + decoded_size, tmsi, decoded_size);
-  _5g_s_tmsi_tmp._5g_tmsi = conv::tmsi_to_string(tmsi);
+  _5g_s_tmsi_tmp._5g_tmsi = amf_conv::tmsi_to_string(tmsi);
   _5g_s_tmsi_             = std::optional<_5G_S_TMSI_t>(_5g_s_tmsi_tmp);
 
   Logger::nas_mm().debug(

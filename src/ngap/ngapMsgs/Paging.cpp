@@ -22,10 +22,7 @@
 #include "Paging.hpp"
 
 #include "logger.hpp"
-
-extern "C" {
-#include "dynamic_memory_check.h"
-}
+#include "utils.hpp"
 
 namespace ngap {
 
@@ -88,8 +85,8 @@ bool PagingMsg::decode(Ngap_NGAP_PDU_t* ngapMsgPdu) {
                 Ngap_Criticality_ignore &&
             pagingIEs->protocolIEs.list.array[i]->value.present ==
                 Ngap_PagingIEs__value_PR_TAIListForPaging) {
-          if (!taIListForPaging.decode(&pagingIEs->protocolIEs.list.array[i]
-                                            ->value.choice.TAIListForPaging)) {
+          if (!taIListForPaging.decode(pagingIEs->protocolIEs.list.array[i]
+                                           ->value.choice.TAIListForPaging)) {
             Logger::ngap().error("Decoded NGAP TAIListForPaging IE error");
             return false;
           }
@@ -121,7 +118,7 @@ void PagingMsg::setUEPagingIdentity(
   ie->criticality   = Ngap_Criticality_ignore;
   ie->value.present = Ngap_PagingIEs__value_PR_UEPagingIdentity;
 
-  int ret = uePagingIdentity.encode(&ie->value.choice.UEPagingIdentity);
+  int ret = uePagingIdentity.encode(ie->value.choice.UEPagingIdentity);
   if (!ret) {
     Logger::ngap().error("Encode NGAP UEPagingIdentity IE error");
     return;
@@ -168,7 +165,7 @@ void PagingMsg::setTAIListForPaging(const std::vector<Tai_t>& list) {
   ie->criticality   = Ngap_Criticality_ignore;
   ie->value.present = Ngap_PagingIEs__value_PR_TAIListForPaging;
 
-  int ret = taIListForPaging.encode(&ie->value.choice.TAIListForPaging);
+  int ret = taIListForPaging.encode(ie->value.choice.TAIListForPaging);
   if (!ret) {
     Logger::ngap().error("Encode NGAP TAIListForPaging IE error");
     return;

@@ -47,7 +47,7 @@ bool QosFlowToBeForwardedList::encode(
         (Ngap_QosFlowToBeForwardedItem_t*) calloc(
             1, sizeof(Ngap_QosFlowToBeForwardedItem_t));
     if (!response) return false;
-    if (!list_[i].encode(response)) {
+    if (!list_[i].encode(*response)) {
       Logger::ngap().debug("Encode QosFlowTowardedItem error");
       return false;
     }

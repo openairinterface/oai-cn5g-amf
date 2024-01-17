@@ -19,8 +19,8 @@
  *      contact@openairinterface.org
  */
 
-#ifndef _PACKETLOSSRATE_H_
-#define _PACKETLOSSRATE_H_
+#ifndef _PACKET_LOSS_RATE_H_
+#define _PACKET_LOSS_RATE_H_
 
 extern "C" {
 #include "Ngap_PacketLossRate.h"
@@ -36,8 +36,8 @@ class PacketLossRate {
   void setPacketLossRate(long value);
   bool getPacketLossRate(long& value) const;
 
-  bool encode(Ngap_PacketLossRate_t*);
-  bool decode(Ngap_PacketLossRate_t*);
+  bool encode(Ngap_PacketLossRate_t&) const;
+  bool decode(const Ngap_PacketLossRate_t&);
 
  private:
   long packet_loss_rate_;

@@ -29,8 +29,8 @@
 #include <map>
 #include <shared_mutex>
 
-#include "3gpp_29.503.h"
 #include "3gpp_24.501.hpp"
+#include "3gpp_29.503.h"
 #include "AuthorizedNetworkSliceInfo.h"
 #include "Nssai.h"
 #include "RegistrationAccept.hpp"

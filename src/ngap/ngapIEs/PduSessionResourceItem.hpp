@@ -54,9 +54,9 @@ class PduSessionResourceItem {
 
   // PDU SESSION RESOURCE SETUP RESPONSE
   // For PDU Session Resource Setup Response Item
-  bool encode(Ngap_PDUSessionResourceSetupItemCxtRes_t*
+  bool encode(Ngap_PDUSessionResourceSetupItemCxtRes_t&
                   pdu_session_resource_setup_item_cxt_res) const;
-  bool decode(const Ngap_PDUSessionResourceSetupItemCxtRes_t*
+  bool decode(const Ngap_PDUSessionResourceSetupItemCxtRes_t&
                   pdu_session_resource_setup_item_cxt_res);
   // TODO: For PDU Session Resource Failed to Setup Item
 
@@ -102,28 +102,27 @@ class PduSessionResourceItem {
 
   // HANDOVER REQUIRED
   // PDU Session Resource Item
-  bool encode(Ngap_PDUSessionResourceItemHORqd_t* item) const;
-  bool decode(const Ngap_PDUSessionResourceItemHORqd_t* const item);
+  bool encode(Ngap_PDUSessionResourceItemHORqd_t& item) const;
+  bool decode(const Ngap_PDUSessionResourceItemHORqd_t& item);
 
   // HANDOVER COMMAND
   // PDU Session Resource Handover Item
-  bool encode(Ngap_PDUSessionResourceHandoverItem_t* item) const;
-  bool decode(const Ngap_PDUSessionResourceHandoverItem_t* const item);
+  bool encode(Ngap_PDUSessionResourceHandoverItem_t& item) const;
+  bool decode(const Ngap_PDUSessionResourceHandoverItem_t& item);
   // PDU Session Resource to Release Item
-  bool encode(Ngap_PDUSessionResourceToReleaseItemHOCmd_t* item) const;
-  bool decode(const Ngap_PDUSessionResourceToReleaseItemHOCmd_t* const item);
+  bool encode(Ngap_PDUSessionResourceToReleaseItemHOCmd_t& item) const;
+  bool decode(const Ngap_PDUSessionResourceToReleaseItemHOCmd_t& item);
 
   // HANDOVER REQUEST
   // PDU Session Resource Setup Item (in child class)
 
   // HANDOVER REQUEST ACKNOWLEDGE
   // TODO: PDU Session Resource Admitted Item
-  bool encode(Ngap_PDUSessionResourceAdmittedItem_t* item) const;
-  bool decode(const Ngap_PDUSessionResourceAdmittedItem_t* const item);
+  bool encode(Ngap_PDUSessionResourceAdmittedItem_t& item) const;
+  bool decode(const Ngap_PDUSessionResourceAdmittedItem_t& item);
   // TODO: PDU Session Resource Failed to Setup Item
-  bool encode(Ngap_PDUSessionResourceFailedToSetupItemHOAck_t* item) const;
-  bool decode(
-      const Ngap_PDUSessionResourceFailedToSetupItemHOAck_t* const item);
+  bool encode(Ngap_PDUSessionResourceFailedToSetupItemHOAck_t& item) const;
+  bool decode(const Ngap_PDUSessionResourceFailedToSetupItemHOAck_t& item);
 
   // PATH SWITCH REQUEST
   // TODO: PDU Session Resource to be Switched in Downlink Item

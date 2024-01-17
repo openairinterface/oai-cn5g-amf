@@ -53,14 +53,14 @@ bool AllowedNSSAI::encode(Ngap_AllowedNSSAI_t& list) {
     Ngap_AllowedNSSAI_Item_t* item =
         (Ngap_AllowedNSSAI_Item_t*) calloc(1, sizeof(Ngap_AllowedNSSAI_Item_t));
     if (!item) return false;
-    if (!it->encode(&item->s_NSSAI)) return false;
+    if (!it->encode(item->s_NSSAI)) return false;
     if (ASN_SEQUENCE_ADD(&list.list, item) != 0) return false;
   }
   return true;
 }
 
 //------------------------------------------------------------------------------
-bool AllowedNSSAI::decode(Ngap_AllowedNSSAI_t& list) {
+bool AllowedNSSAI::decode(const Ngap_AllowedNSSAI_t& list) {
   list_.clear();
   // Get maximum 8 items
   uint8_t number_items = (list.list.count > kAllowedSNSSAIMaxItems) ?
@@ -68,7 +68,7 @@ bool AllowedNSSAI::decode(Ngap_AllowedNSSAI_t& list) {
                              list.list.count;
   for (int i = 0; i < number_items; i++) {
     S_NSSAI snssai = {};
-    if (!snssai.decode(&list.list.array[i]->s_NSSAI)) return false;
+    if (!snssai.decode(list.list.array[i]->s_NSSAI)) return false;
     list_.push_back(snssai);
   }
   return true;

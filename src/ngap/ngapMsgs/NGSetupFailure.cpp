@@ -22,10 +22,7 @@
 #include "NGSetupFailure.hpp"
 
 #include "logger.hpp"
-
-extern "C" {
-#include "dynamic_memory_check.h"
-}
+#include "utils.hpp"
 
 namespace ngap {
 
@@ -57,7 +54,7 @@ void NGSetupFailureMsg::addCauseIE() {
 
   if (!cause.encode(ie->value.choice.Cause)) {
     Logger::ngap().error("Encode NGAP Cause IE error");
-    free_wrapper((void**) &ie);
+    utils::free_wrapper((void**) &ie);
     return;
   }
 
@@ -77,7 +74,7 @@ void NGSetupFailureMsg::addTimeToWaitIE() {
 
   if (!timeToWait.value().encode(ie->value.choice.TimeToWait)) {
     Logger::ngap().error("Encode NGAP Cause IE error");
-    free_wrapper((void**) &ie);
+    utils::free_wrapper((void**) &ie);
     return;
   }
 

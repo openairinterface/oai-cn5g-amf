@@ -49,13 +49,13 @@ void PduSessionResourceSetupItemSURes::get(
 
 //------------------------------------------------------------------------------
 bool PduSessionResourceSetupItemSURes::encode(
-    Ngap_PDUSessionResourceSetupItemSURes_t*
+    Ngap_PDUSessionResourceSetupItemSURes_t&
         pdu_session_resource_setup_item_su_res) {
   if (!pdu_session_id_.encode(
-          pdu_session_resource_setup_item_su_res->pDUSessionID))
+          pdu_session_resource_setup_item_su_res.pDUSessionID))
     return false;
   pdu_session_resource_setup_item_su_res
-      ->pDUSessionResourceSetupResponseTransfer =
+      .pDUSessionResourceSetupResponseTransfer =
       pdu_session_resource_setup_response_transfer_;
 
   return true;
@@ -63,14 +63,14 @@ bool PduSessionResourceSetupItemSURes::encode(
 
 //------------------------------------------------------------------------------
 bool PduSessionResourceSetupItemSURes::decode(
-    Ngap_PDUSessionResourceSetupItemSURes_t*
+    const Ngap_PDUSessionResourceSetupItemSURes_t&
         pdu_session_resource_setup_item_su_res) {
   if (!pdu_session_id_.decode(
-          pdu_session_resource_setup_item_su_res->pDUSessionID))
+          pdu_session_resource_setup_item_su_res.pDUSessionID))
     return false;
   pdu_session_resource_setup_response_transfer_ =
       pdu_session_resource_setup_item_su_res
-          ->pDUSessionResourceSetupResponseTransfer;
+          .pDUSessionResourceSetupResponseTransfer;
 
   return true;
 }

@@ -39,7 +39,8 @@ void NonUEN2MessagesSubscriptionsCollectionDocumentApi::setupRoutes() {
 
   Routes::Post(
       *router,
-      base + amf_cfg.sbi_api_version + "/non-ue-n2-messages/subscriptions",
+      base + amf_cfg.sbi.api_version.value_or(DEFAULT_SBI_API_VERSION) +
+          "/non-ue-n2-messages/subscriptions",
       Routes::bind(
           &NonUEN2MessagesSubscriptionsCollectionDocumentApi::
               non_ue_n2_info_subscribe_handler,

@@ -22,10 +22,7 @@
 #include "InitialUEMessage.hpp"
 
 #include "logger.hpp"
-
-extern "C" {
-#include "dynamic_memory_check.h"
-}
+#include "utils.hpp"
 
 namespace ngap {
 
@@ -63,7 +60,7 @@ void InitialUEMessageMsg::setRanUENgapID(const uint32_t& value) {
   int ret = ranUeNgapId.encode(ie->value.choice.RAN_UE_NGAP_ID);
   if (!ret) {
     Logger::ngap().error("Encode RAN_UE_NGAP_ID IE error");
-    free_wrapper((void**) &ie);
+    utils::free_wrapper((void**) &ie);
     return;
   }
 
@@ -84,7 +81,7 @@ void InitialUEMessageMsg::setNasPdu(const bstring& pdu) {
   int ret = nasPdu.encode(ie->value.choice.NAS_PDU);
   if (!ret) {
     Logger::ngap().error("Encode NAS PDU IE error");
-    free_wrapper((void**) &ie);
+    utils::free_wrapper((void**) &ie);
     return;
   }
 
@@ -112,10 +109,10 @@ void InitialUEMessageMsg::setUserLocationInfoNR(
       Ngap_InitialUEMessage_IEs__value_PR_UserLocationInformation;
 
   int ret =
-      userLocationInformation.encode(&ie->value.choice.UserLocationInformation);
+      userLocationInformation.encode(ie->value.choice.UserLocationInformation);
   if (!ret) {
     Logger::ngap().error("Encode UserLocationInformation IE error");
-    free_wrapper((void**) &ie);
+    utils::free_wrapper((void**) &ie);
     return;
   }
 
@@ -138,7 +135,7 @@ void InitialUEMessageMsg::setRRCEstablishmentCause(
       rRCEstablishmentCause.encode(ie->value.choice.RRCEstablishmentCause);
   if (!ret) {
     Logger::ngap().error("Encode RRCEstablishmentCause IE error");
-    free_wrapper((void**) &ie);
+    utils::free_wrapper((void**) &ie);
     return;
   }
 
@@ -160,7 +157,7 @@ void InitialUEMessageMsg::setUeContextRequest(
   int ret = uEContextRequest.value().encode(ie->value.choice.UEContextRequest);
   if (!ret) {
     Logger::ngap().error("Encode UEContextRequest IE error");
-    free_wrapper((void**) &ie);
+    utils::free_wrapper((void**) &ie);
     return;
   }
 
@@ -254,8 +251,8 @@ bool InitialUEMessageMsg::decode(Ngap_NGAP_PDU_t* ngapMsgPdu) {
             initialUEMessageIEs->protocolIEs.list.array[i]->value.present ==
                 Ngap_InitialUEMessage_IEs__value_PR_UserLocationInformation) {
           if (!userLocationInformation.decode(
-                  &initialUEMessageIEs->protocolIEs.list.array[i]
-                       ->value.choice.UserLocationInformation)) {
+                  initialUEMessageIEs->protocolIEs.list.array[i]
+                      ->value.choice.UserLocationInformation)) {
             Logger::ngap().error(
                 "Decoded NGAP UserLocationInformation IE error");
             return false;

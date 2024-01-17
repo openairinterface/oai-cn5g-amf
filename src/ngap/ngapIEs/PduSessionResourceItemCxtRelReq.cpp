@@ -41,19 +41,19 @@ void PduSessionResourceItemCxtRelReq::get(PduSessionId& pdu_session_id) const {
 
 //------------------------------------------------------------------------------
 bool PduSessionResourceItemCxtRelReq::encode(
-    Ngap_PDUSessionResourceItemCxtRelReq_t*
-        pdu_session_resource_item_cxt_rel_req) {
+    Ngap_PDUSessionResourceItemCxtRelReq_t&
+        pdu_session_resource_item_cxt_rel_req) const {
   if (!pdu_session_id_.encode(
-          pdu_session_resource_item_cxt_rel_req->pDUSessionID))
+          pdu_session_resource_item_cxt_rel_req.pDUSessionID))
     return false;
   return true;
 }
 
 //------------------------------------------------------------------------------
 bool PduSessionResourceItemCxtRelReq::decode(
-    Ngap_PDUSessionResourceItemCxtRelReq_t*
+    const Ngap_PDUSessionResourceItemCxtRelReq_t&
         pdu_session_resource_item_cxt_rel_req) {
-  pdu_session_id_.set(pdu_session_resource_item_cxt_rel_req->pDUSessionID);
+  pdu_session_id_.set(pdu_session_resource_item_cxt_rel_req.pDUSessionID);
   return true;
 }
 

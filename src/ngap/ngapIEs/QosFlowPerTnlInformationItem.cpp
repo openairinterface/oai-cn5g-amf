@@ -43,18 +43,18 @@ void QosFlowPerTnlInformationItem::get(
 
 //------------------------------------------------------------------------------
 bool QosFlowPerTnlInformationItem::encode(
-    Ngap_QosFlowPerTNLInformationItem_t* qosFlowPerTNLInformationItem) {
+    Ngap_QosFlowPerTNLInformationItem_t& qosFlowPerTNLInformationItem) {
   if (!qosFlowPerTNLInformation.encode(
-          &qosFlowPerTNLInformationItem->qosFlowPerTNLInformation))
+          qosFlowPerTNLInformationItem.qosFlowPerTNLInformation))
     return false;
   return true;
 }
 
 //------------------------------------------------------------------------------
 bool QosFlowPerTnlInformationItem::decode(
-    Ngap_QosFlowPerTNLInformationItem_t* qosFlowPerTNLInformationItem) {
+    const Ngap_QosFlowPerTNLInformationItem_t& qosFlowPerTNLInformationItem) {
   if (!qosFlowPerTNLInformation.decode(
-          &qosFlowPerTNLInformationItem->qosFlowPerTNLInformation))
+          qosFlowPerTNLInformationItem.qosFlowPerTNLInformation))
     return false;
 
   return true;

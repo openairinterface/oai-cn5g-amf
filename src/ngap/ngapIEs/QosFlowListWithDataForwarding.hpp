@@ -42,7 +42,8 @@ class QosFlowListWithDataForwarding {
   void set(const std::vector<QosFlowItemWithDataForWarding>& list);
   void get(std::vector<QosFlowItemWithDataForWarding>& list) const;
 
-  bool decode(Ngap_QosFlowListWithDataForwarding_t qosFlowSetupResponseList);
+  bool decode(
+      const Ngap_QosFlowListWithDataForwarding_t& qosFlowSetupResponseList);
 
  private:
   std::vector<QosFlowItemWithDataForWarding> list_;

@@ -37,7 +37,9 @@ void NonUEN2MessagesCollectionDocumentApi::setupRoutes() {
   using namespace Pistache::Rest;
 
   Routes::Post(
-      *router, base + amf_cfg.sbi_api_version + "/non-ue-n2-messages/transfer",
+      *router,
+      base + amf_cfg.sbi.api_version.value_or(DEFAULT_SBI_API_VERSION) +
+          "/non-ue-n2-messages/transfer",
       Routes::bind(
           &NonUEN2MessagesCollectionDocumentApi::
               non_ue_n2_message_transfer_handler,

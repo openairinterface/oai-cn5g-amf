@@ -37,7 +37,7 @@ class RrcEstablishmentCause {
   int get() const;
 
   bool encode(Ngap_RRCEstablishmentCause_t&) const;
-  bool decode(const Ngap_RRCEstablishmentCause_t&);
+  bool decode(Ngap_RRCEstablishmentCause_t);
 
  private:
   int cause_;

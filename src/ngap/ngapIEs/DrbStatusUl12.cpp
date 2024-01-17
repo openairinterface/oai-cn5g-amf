@@ -40,16 +40,16 @@ void DrbStatusUl12::set(const CountValueForPdcpSn12& count_value) {
 }
 
 //------------------------------------------------------------------------------
-bool DrbStatusUl12::encode(Ngap_DRBStatusUL12_t* ul12) {
-  if (!pdcp_value.encode(&ul12->uL_COUNTValue)) {
+bool DrbStatusUl12::encode(Ngap_DRBStatusUL12_t& ul12) {
+  if (!pdcp_value.encode(ul12.uL_COUNTValue)) {
     return false;
   }
   return true;
 }
 
 //------------------------------------------------------------------------------
-bool DrbStatusUl12::decode(Ngap_DRBStatusUL12_t* ul12) {
-  if (!pdcp_value.decode(ul12->uL_COUNTValue)) {
+bool DrbStatusUl12::decode(const Ngap_DRBStatusUL12_t& ul12) {
+  if (!pdcp_value.decode(ul12.uL_COUNTValue)) {
     return false;
   }
   return true;

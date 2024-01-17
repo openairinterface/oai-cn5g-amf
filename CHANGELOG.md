@@ -1,5 +1,37 @@
 # RELEASE NOTES: #
 
+## v2.0.0 -- December 2023 ##
+
+* Features
+  - Support YAML configuration file
+    * Yaml validation default value
+  - Service request handling
+  - Update API Server name/structure
+  - N2 info notify
+  - Updated NGAP library to 38.413 V16.14.0
+  - Location Report Notification for N2 Handover 
+  - LMF Determine Location & DownlinkUeAssociatedNrppaTranport support
+* Fixes
+  - Fixed: Add NSSAI info in AMF profile to send to NRF
+  - Fixed: Http1/2 - only spawning one HTTP server
+  - Fixed: HTTP2 support for Configuration/Location-related APIs
+  - Fixed: Display NRCellID in hex to associate between UE and gNB
+  - Fixed: Use AMF ID as string to register to NRF
+  - Added missing HTTP2 APIs for N1 Message Notify, N1N2MessageSubscribe/Unsubscribe, Status Notification
+  - Free allocated memory in Destructor of NGAP msg instead of using Delete operator
+  - Added retry mechanism for NF Registration/Update
+  - Removed unnecessary config parameter: generate_random (database)
+  - Fixed N1/N2 message unsubscribe API
+  - Fixed issue when decoding PduSessionResourceSetupResponse
+* Tech debt
+  - Updated common models to 3GPP TS 29.571 Release 16.13.0 and moved them to the shared common submodule
+  - Switching to clang-format-12
+  - Published image on Docker-Hub is using now Ubuntu-22 as base image
+    * Ubuntu-18 is no longer supported
+* Miscellaneous
+  - Code refactoring: ITTI between SBI and other tasks, NGAP IEs
+  - Code cleanup: NAS IEs, N2, removed usused code, Used new instead of malloc/calloc for N2
+
 ## v1.5.1 -- May 2023 ##
 
 * Fix Service Request handling (Service Type: Signalling)

@@ -47,8 +47,8 @@ class NrCgi {
   void set(const struct NrCgi_s& cig);
   void get(struct NrCgi_s& cig) const;
 
-  bool encode(Ngap_NR_CGI_t*);
-  bool decode(Ngap_NR_CGI_t*);
+  bool encode(Ngap_NR_CGI_t&);
+  bool decode(const Ngap_NR_CGI_t&);
 
  private:
   PlmnId plmnId;                  // Mandatory

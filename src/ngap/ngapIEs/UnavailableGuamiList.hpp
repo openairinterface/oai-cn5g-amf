@@ -4,8 +4,8 @@
  * this work for additional information regarding copyright ownership.
  * The OpenAirInterface Software Alliance licenses this file to You under
  * the OAI Public License, Version 1.1  (the "License"); you may not use this
- *file except in compliance with the License. You may obtain a copy of the
- *License at
+ * file except in compliance with the License. You may obtain a copy of the
+ * License at
  *
  *      http://www.openairinterface.org/?page_id=698
  *
@@ -19,12 +19,38 @@
  *      contact@openairinterface.org
  */
 
-#ifndef FILE_DYNAMIC_MEMORY_CHECK_SEEN
-#define FILE_DYNAMIC_MEMORY_CHECK_SEEN
+#ifndef _UNAVAILABLE_GUAMI_LIST_H_
+#define _UNAVAILABLE_GUAMI_LIST_H_
 
-#include "bstrlib.h"
+#include <vector>
 
-void free_wrapper(void** ptr) __attribute__((hot));
-void bdestroy_wrapper(bstring* b);
+#include "UnavailableGuamiItem.hpp"
 
-#endif /* FILE_DYNAMIC_MEMORY_CHECK_SEEN */
+extern "C" {
+#include "Ngap_UnavailableGUAMIList.h"
+}
+
+constexpr uint16_t kMaxNoOfServedGuami = 256;
+
+namespace ngap {
+
+class UnavailableGuamiList {
+ public:
+  UnavailableGuamiList();
+  virtual ~UnavailableGuamiList();
+
+  void set(const std::vector<UnavailableGuamiItem>& list);
+  void get(std::vector<UnavailableGuamiItem>& list) const;
+
+  void addItem(const UnavailableGuamiItem& item);
+
+  bool encode(Ngap_UnavailableGUAMIList_t&);
+  bool decode(const Ngap_UnavailableGUAMIList_t&);
+
+ private:
+  std::vector<UnavailableGuamiItem> list_;
+};
+
+}  // namespace ngap
+
+#endif

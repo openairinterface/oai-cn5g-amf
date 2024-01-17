@@ -44,7 +44,7 @@ void RoutingId::encode(Ngap_RoutingID_t& id) {
 }
 
 //------------------------------------------------------------------------------
-void RoutingId::decode(Ngap_RoutingID_t& id) {
+void RoutingId::decode(const Ngap_RoutingID_t& id) {
   routing_id_ = id;
 }
 }  // namespace ngap

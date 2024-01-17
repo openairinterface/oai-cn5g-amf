@@ -39,11 +39,11 @@ class PduSessionResourceHandoverRequestAckTransfer {
   PduSessionResourceHandoverRequestAckTransfer();
   virtual ~PduSessionResourceHandoverRequestAckTransfer();
 
-  bool decodefromHandoverRequestAckTransfer(uint8_t* buf, int buf_size);
-
   bool getUpTransportLayerInformation2(GtpTunnel_t*& upTnlInfo);
   bool getqosFlowSetupResponseList(
       std::vector<QosFlowLItemWithDataForwarding_t>& list);
+
+  bool decode(uint8_t* buf, int buf_size);  // TODO: remove naked pointer
 
  private:
   Ngap_HandoverRequestAcknowledgeTransfer_t*

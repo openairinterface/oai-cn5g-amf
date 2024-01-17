@@ -38,7 +38,7 @@ class RanUeNgapId {
   uint32_t get() const;
 
   bool encode(Ngap_RAN_UE_NGAP_ID_t&);
-  bool decode(Ngap_RAN_UE_NGAP_ID_t&);
+  bool decode(Ngap_RAN_UE_NGAP_ID_t);
 
  private:
   uint32_t id_;

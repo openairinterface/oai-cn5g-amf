@@ -22,10 +22,7 @@
 #include "InitialContextSetupFailure.hpp"
 
 #include "logger.hpp"
-
-extern "C" {
-#include "dynamic_memory_check.h"
-}
+#include "utils.hpp"
 
 namespace ngap {
 
@@ -64,7 +61,7 @@ void InitialContextSetupFailureMsg::setAmfUeNgapId(const unsigned long& id) {
   int ret = amfUeNgapId.encode(ie->value.choice.AMF_UE_NGAP_ID);
   if (!ret) {
     Logger::ngap().error("Encode AMF_UE_NGAP_ID IE error");
-    free_wrapper((void**) &ie);
+    utils::free_wrapper((void**) &ie);
     return;
   }
 
@@ -88,7 +85,7 @@ void InitialContextSetupFailureMsg::setRanUeNgapId(
   int ret = ranUeNgapId.encode(ie->value.choice.RAN_UE_NGAP_ID);
   if (!ret) {
     Logger::ngap().error("Encode RAN_UE_NGAP_ID IE error");
-    free_wrapper((void**) &ie);
+    utils::free_wrapper((void**) &ie);
     return;
   }
 
@@ -126,7 +123,7 @@ void InitialContextSetupFailureMsg::setPduSessionResourceFailedToSetupList(
       Ngap_InitialContextSetupFailureIEs__value_PR_PDUSessionResourceFailedToSetupListCxtFail;
 
   int ret = pduSessionResourceFailedToSetupFailureList.value().encode(
-      &ie->value.choice.PDUSessionResourceFailedToSetupListCxtFail);
+      ie->value.choice.PDUSessionResourceFailedToSetupListCxtFail);
   if (!ret) {
     Logger::ngap().error(
         "Encode PDUSessionResourceFailedToSetupListCxtFail IE error");
@@ -207,9 +204,9 @@ bool InitialContextSetupFailureMsg::decode(Ngap_NGAP_PDU_t* ngapMsgPdu) {
                 Ngap_InitialContextSetupFailureIEs__value_PR_PDUSessionResourceFailedToSetupListCxtFail) {
           PduSessionResourceFailedToSetupListCxtFail tmp = {};
           if (!tmp.decode(
-                  &initialContextSetupFailureIEs->protocolIEs.list.array[i]
-                       ->value.choice
-                       .PDUSessionResourceFailedToSetupListCxtFail)) {
+                  initialContextSetupFailureIEs->protocolIEs.list.array[i]
+                      ->value.choice
+                      .PDUSessionResourceFailedToSetupListCxtFail)) {
             Logger::ngap().error(
                 "Decoded NGAP PDUSessionResourceFailedToSetupListCxtFail IE "
                 "error");

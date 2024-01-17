@@ -46,8 +46,8 @@ class AllocationAndRetentionPriority {
       Pre_emptionCapability& pre_emptionCapability,
       Pre_emptionVulnerability& pre_emptionVulnerability) const;
 
-  bool encode(Ngap_AllocationAndRetentionPriority_t&);
-  bool decode(Ngap_AllocationAndRetentionPriority_t&);
+  bool encode(Ngap_AllocationAndRetentionPriority_t&) const;
+  bool decode(const Ngap_AllocationAndRetentionPriority_t&);
 
  private:
   PriorityLevelARP priorityLevelARP_;                  // Mandatory

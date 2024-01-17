@@ -18,56 +18,48 @@
  * For more information about the OpenAirInterface (OAI) Software Alliance:
  *      contact@openairinterface.org
  */
-#include "string.hpp"
 
-#include <stdarg.h>
+#ifndef _UNAVAILABLE_GUAMI_ITEM_H
+#define _UNAVAILABLE_GUAMI_ITEM_H
 
-#include <algorithm>
-#include <cctype>
-#include <functional>
-#include <locale>
+#include <optional>
 
-template<class T>
-class Buffer {
+#include "AmfName.hpp"
+#include "GUAMI.hpp"
+#include "TimerApproachForGuamiRemoval.hpp"
+
+extern "C" {
+#include "Ngap_UnavailableGUAMIItem.h"
+}
+
+namespace ngap {
+
+class UnavailableGuamiItem {
  public:
-  explicit Buffer(size_t size) {
-    msize = size;
-    mbuf  = new T[msize];
-  }
-  ~Buffer() {
-    if (mbuf) delete[] mbuf;
-  }
-  T* get() { return mbuf; }
+  UnavailableGuamiItem();
+  virtual ~UnavailableGuamiItem();
+
+  void setGuami(const GUAMI& guami);
+  void getGuami(GUAMI& guami) const;
+
+  void setTimerApproachForGuamiRemoval(
+      const TimerApproachForGuamiRemoval& timer);
+  void getTimerApproachForGuamiRemoval(
+      std::optional<TimerApproachForGuamiRemoval>& timer) const;
+
+  void setBackupAmfName(const AmfName& name);
+  void getBackupAmfName(std::optional<AmfName>& name) const;
+
+  bool encode(Ngap_UnavailableGUAMIItem& item);
+  bool decode(const Ngap_UnavailableGUAMIItem& item);
 
  private:
-  Buffer();
-  size_t msize;
-  T* mbuf;
+  GUAMI guami_;
+  std::optional<TimerApproachForGuamiRemoval>
+      timer_approach_for_guami_removal_;    // Optional
+  std::optional<AmfName> backup_amf_name_;  // Optional
 };
 
-// Licence : https://creativecommons.org/licenses/by-sa/4.0/legalcode
-// https://stackoverflow.com/questions/216823/whats-the-best-way-to-trim-stdstring#217605
+}  // namespace ngap
 
-// trim from start
-std::string& util::ltrim(std::string& s) {
-  s.erase(
-      s.begin(),
-      std::find_if(
-          s.begin(), s.end(), std::not1(std::ptr_fun<int, int>(std::isspace))));
-  return s;
-}
-
-// trim from end
-std::string& util::rtrim(std::string& s) {
-  s.erase(
-      std::find_if(
-          s.rbegin(), s.rend(), std::not1(std::ptr_fun<int, int>(std::isspace)))
-          .base(),
-      s.end());
-  return s;
-}
-
-// trim from both ends
-std::string& util::trim(std::string& s) {
-  return util::ltrim(util::rtrim(s));
-}
+#endif

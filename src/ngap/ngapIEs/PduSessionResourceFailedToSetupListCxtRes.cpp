@@ -45,7 +45,7 @@ void PduSessionResourceFailedToSetupListCxtRes::get(
 
 //------------------------------------------------------------------------------
 bool PduSessionResourceFailedToSetupListCxtRes::encode(
-    Ngap_PDUSessionResourceFailedToSetupListCxtRes_t*
+    Ngap_PDUSessionResourceFailedToSetupListCxtRes_t&
         pduSessionResourceFailedToSetupListCxtRes) {
   for (std::vector<PduSessionResourceFailedToSetupItemCxtRes>::iterator it =
            std::begin(item_list_);
@@ -55,9 +55,9 @@ bool PduSessionResourceFailedToSetupListCxtRes::encode(
             1, sizeof(Ngap_PDUSessionResourceFailedToSetupItemCxtRes_t));
     if (!failedToResponse) return false;
 
-    if (!it->encode(failedToResponse)) return false;
+    if (!it->encode(*failedToResponse)) return false;
     if (ASN_SEQUENCE_ADD(
-            &pduSessionResourceFailedToSetupListCxtRes->list,
+            &pduSessionResourceFailedToSetupListCxtRes.list,
             failedToResponse) != 0)
       return false;
   }
@@ -67,13 +67,13 @@ bool PduSessionResourceFailedToSetupListCxtRes::encode(
 
 //------------------------------------------------------------------------------
 bool PduSessionResourceFailedToSetupListCxtRes::decode(
-    Ngap_PDUSessionResourceFailedToSetupListCxtRes_t*
+    const Ngap_PDUSessionResourceFailedToSetupListCxtRes_t&
         pduSessionResourceFailedToSetupListCxtRes) {
-  item_list_.reserve(pduSessionResourceFailedToSetupListCxtRes->list.count);
-  for (int i = 0; i < pduSessionResourceFailedToSetupListCxtRes->list.count;
+  item_list_.reserve(pduSessionResourceFailedToSetupListCxtRes.list.count);
+  for (int i = 0; i < pduSessionResourceFailedToSetupListCxtRes.list.count;
        i++) {
     PduSessionResourceFailedToSetupItemCxtRes item = {};
-    if (!item.decode(pduSessionResourceFailedToSetupListCxtRes->list.array[i]))
+    if (!item.decode(*pduSessionResourceFailedToSetupListCxtRes.list.array[i]))
       return false;
     item_list_.push_back(item);
   }

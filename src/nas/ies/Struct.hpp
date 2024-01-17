@@ -28,7 +28,7 @@
 #include <vector>
 
 #include "3gpp_23.003.h"
-#include "spdlog/fmt/fmt.h"
+#include <fmt/format.h>
 
 extern "C" {
 #include "TLVDecoder.h"

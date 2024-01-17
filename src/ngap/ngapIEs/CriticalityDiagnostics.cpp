@@ -70,7 +70,7 @@ void CriticalityDiagnostics::setIEsCriticalityDiagnosticsList(
 }
 
 //------------------------------------------------------------------------------
-int CriticalityDiagnostics::encode(Ngap_NGSetupFailure_t* ngSetupFailure) {
+int CriticalityDiagnostics::encode(Ngap_NGSetupFailure_t& ngSetupFailure) {
   Ngap_NGSetupFailureIEs_t* ie =
       (Ngap_NGSetupFailureIEs_t*) calloc(1, sizeof(Ngap_NGSetupFailureIEs_t));
   ie->id            = Ngap_ProtocolIE_ID_id_CriticalityDiagnostics;
@@ -106,7 +106,7 @@ int CriticalityDiagnostics::encode(Ngap_NGSetupFailure_t* ngSetupFailure) {
       Ngap_CriticalityDiagnostics_IE_Item_t* ieItem =
           (Ngap_CriticalityDiagnostics_IE_Item_t*) calloc(
               1, sizeof(Ngap_CriticalityDiagnostics_IE_Item_t));
-      iEsCriticalityDiagnostics[i].encode(ieItem);
+      iEsCriticalityDiagnostics[i].encode(*ieItem);
       ASN_SEQUENCE_ADD(&ieList->list, ieItem);
     }
     ie->value.choice.CriticalityDiagnostics.iEsCriticalityDiagnostics = ieList;
@@ -116,31 +116,31 @@ int CriticalityDiagnostics::encode(Ngap_NGSetupFailure_t* ngSetupFailure) {
     free(ie);
     return 1;
   }
-  int ret = ASN_SEQUENCE_ADD(&ngSetupFailure->protocolIEs.list, ie);
+  int ret = ASN_SEQUENCE_ADD(&ngSetupFailure.protocolIEs.list, ie);
   if (ret != 0) Logger::ngap().error("Encode CriticalityDiagnostics IE error");
   return ret;
 }
 
 //------------------------------------------------------------------------------
-bool CriticalityDiagnostics::decode(Ngap_CriticalityDiagnostics_t* pdu) {
-  if (pdu->procedureCode) {
+bool CriticalityDiagnostics::decode(const Ngap_CriticalityDiagnostics_t& pdu) {
+  if (pdu.procedureCode) {
     procedureCodeIsSet = true;
-    procedureCode      = *pdu->procedureCode;
+    procedureCode      = *pdu.procedureCode;
   }
-  if (pdu->triggeringMessage) {
+  if (pdu.triggeringMessage) {
     triggeringMessageIsSet = true;
-    triggeringMessage      = *pdu->triggeringMessage;
+    triggeringMessage      = *pdu.triggeringMessage;
   }
-  if (pdu->procedureCriticality) {
+  if (pdu.procedureCriticality) {
     procedureCriticalityIsSet = true;
-    procedureCriticality      = *pdu->procedureCriticality;
+    procedureCriticality      = *pdu.procedureCriticality;
   }
-  if (pdu->iEsCriticalityDiagnostics) {
+  if (pdu.iEsCriticalityDiagnostics) {
     numberOfIEsCriticalityDiagnostics =
-        pdu->iEsCriticalityDiagnostics->list.count;
+        pdu.iEsCriticalityDiagnostics->list.count;
     for (int i = 0; i < numberOfIEsCriticalityDiagnostics; i++) {
       IEsCriticalityDiagnostics item = {};
-      item.decode(pdu->iEsCriticalityDiagnostics->list.array[i]);
+      item.decode(*pdu.iEsCriticalityDiagnostics->list.array[i]);
       iEsCriticalityDiagnostics.push_back(item);
     }
   }

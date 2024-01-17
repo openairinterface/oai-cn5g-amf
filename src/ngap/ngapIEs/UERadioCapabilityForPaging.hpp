@@ -38,14 +38,15 @@ class UERadioCapabilityForPaging {
   UERadioCapabilityForPaging();
   virtual ~UERadioCapabilityForPaging();
 
-  bool encode(Ngap_UERadioCapabilityForPaging_t* ueRadioCapabilityForPaging);
-  bool decode(Ngap_UERadioCapabilityForPaging_t* ueRadioCapabilityForPaging);
-
   void setUERadioCapabilityForPagingOfNR(const OCTET_STRING_t& capability);
   bool getUERadioCapabilityForPagingOfNR(OCTET_STRING_t& capability);
 
   void setUERadioCapabilityForPagingOfEUTRA(const OCTET_STRING_t& capability);
   bool getUERadioCapabilityForPagingOfEUTRA(OCTET_STRING_t& capability);
+
+  bool encode(Ngap_UERadioCapabilityForPaging_t& ueRadioCapabilityForPaging);
+  bool decode(
+      const Ngap_UERadioCapabilityForPaging_t& ueRadioCapabilityForPaging);
 
  private:
   std::optional<UERadioCapabilityForPagingOfNR>

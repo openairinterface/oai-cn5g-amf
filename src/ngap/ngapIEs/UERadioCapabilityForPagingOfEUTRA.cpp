@@ -21,7 +21,7 @@
 
 #include "UERadioCapabilityForPagingOfEUTRA.hpp"
 
-#include "conversions.hpp"
+#include "amf_conversions.hpp"
 
 namespace ngap {
 
@@ -33,38 +33,38 @@ UERadioCapabilityForPagingOfEUTRA::~UERadioCapabilityForPagingOfEUTRA() {}
 
 //------------------------------------------------------------------------------
 bool UERadioCapabilityForPagingOfEUTRA::encode(
-    Ngap_UERadioCapabilityForPagingOfEUTRA_t*
+    Ngap_UERadioCapabilityForPagingOfEUTRA_t&
         ueRadioCapabilityForPagingOfEUTRA) {
-  return conv::octet_string_copy(
-      *ueRadioCapabilityForPagingOfEUTRA, ue_radio_capability_);
+  return amf_conv::octet_string_copy(
+      ueRadioCapabilityForPagingOfEUTRA, ue_radio_capability_);
 }
 
 //------------------------------------------------------------------------------
 bool UERadioCapabilityForPagingOfEUTRA::decode(
-    Ngap_UERadioCapabilityForPagingOfEUTRA_t*
+    const Ngap_UERadioCapabilityForPagingOfEUTRA_t&
         ueRadioCapabilityForPagingOfEUTRA) {
-  return conv::octet_string_copy(
-      ue_radio_capability_, *ueRadioCapabilityForPagingOfEUTRA);
+  return amf_conv::octet_string_copy(
+      ue_radio_capability_, ueRadioCapabilityForPagingOfEUTRA);
 }
 
 //------------------------------------------------------------------------------
 bool UERadioCapabilityForPagingOfEUTRA::set(const OCTET_STRING_t& capability) {
-  return conv::octet_string_copy(ue_radio_capability_, capability);
+  return amf_conv::octet_string_copy(ue_radio_capability_, capability);
 }
 
 //------------------------------------------------------------------------------
 bool UERadioCapabilityForPagingOfEUTRA::get(OCTET_STRING_t& capability) const {
-  return conv::octet_string_copy(capability, ue_radio_capability_);
+  return amf_conv::octet_string_copy(capability, ue_radio_capability_);
 }
 
 //------------------------------------------------------------------------------
 bool UERadioCapabilityForPagingOfEUTRA::set(const bstring& capability) {
-  return conv::bstring_2_octet_string(capability, ue_radio_capability_);
+  return amf_conv::bstring_2_octet_string(capability, ue_radio_capability_);
 }
 
 //------------------------------------------------------------------------------
 bool UERadioCapabilityForPagingOfEUTRA::get(bstring& capability) const {
-  return conv::octet_string_2_bstring(ue_radio_capability_, capability);
+  return amf_conv::octet_string_2_bstring(ue_radio_capability_, capability);
 }
 
 }  // namespace ngap

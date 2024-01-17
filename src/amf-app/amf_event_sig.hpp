@@ -25,8 +25,8 @@
 #include <boost/signals2.hpp>
 #include <string>
 
-#include "UserLocation.h"
 #include "CommunicationFailure.h"
+#include "UserLocation.h"
 
 namespace bs2 = boost::signals2;
 

@@ -22,7 +22,7 @@
 #include "RegistrationRequest.hpp"
 
 #include "NasHelper.hpp"
-#include "conversions.hpp"
+#include "amf_conversions.hpp"
 #include "utils.hpp"
 
 using namespace nas;
@@ -126,7 +126,7 @@ std::string RegistrationRequest::Get5gGuti() const {
                          std::to_string(guti.value().amf_region_id) +
                          std::to_string(guti.value().amf_set_id) +
                          std::to_string(guti.value().amf_pointer) +
-                         conv::tmsi_to_string(guti.value()._5g_tmsi);
+                         amf_conv::tmsi_to_string(guti.value()._5g_tmsi);
   Logger::nas_mm().debug("5G GUTI %s", guti_str.c_str());
   return guti_str;
 }

@@ -22,10 +22,7 @@
 #include "NGSetupRequest.hpp"
 
 #include "logger.hpp"
-
-extern "C" {
-#include "dynamic_memory_check.h"
-}
+#include "utils.hpp"
 
 namespace ngap {
 
@@ -70,9 +67,9 @@ void NGSetupRequestMsg::setGlobalRanNodeID(
   ie->criticality   = Ngap_Criticality_reject;
   ie->value.present = Ngap_NGSetupRequestIEs__value_PR_GlobalRANNodeID;
 
-  if (!globalRanNodeIdIE.encode(&ie->value.choice.GlobalRANNodeID)) {
+  if (!globalRanNodeIdIE.encode(ie->value.choice.GlobalRANNodeID)) {
     Logger::ngap().error("Encode NGAP GlobalRANNodeID IE error");
-    free_wrapper((void**) &ie);
+    utils::free_wrapper((void**) &ie);
     return;
   }
 
@@ -97,7 +94,7 @@ void NGSetupRequestMsg::setRanNodeName(const std::string& value) {
 
   if (!ranNodeName.value().encode(ie->value.choice.RANNodeName)) {
     Logger::ngap().error("Encode NGAP RANNodeName IE error");
-    free_wrapper((void**) &ie);
+    utils::free_wrapper((void**) &ie);
     return;
   }
 
@@ -154,7 +151,7 @@ void NGSetupRequestMsg::setSupportedTAList(
 
   if (!supportedTAListIE.encode(ie->value.choice.SupportedTAList)) {
     Logger::ngap().error("Encode SupportedTAList IE error");
-    free_wrapper((void**) &ie);
+    utils::free_wrapper((void**) &ie);
     return;
   }
 
@@ -175,13 +172,13 @@ void NGSetupRequestMsg::setDefaultPagingDRX(const e_Ngap_PagingDRX& value) {
 
   if (!defaultPagingDRXIE.encode(ie->value.choice.PagingDRX)) {
     Logger::ngap().error("Encode DefaultPagingDRX IE error");
-    free_wrapper((void**) &ie);
+    utils::free_wrapper((void**) &ie);
     return;
   }
 
   int ret = ASN_SEQUENCE_ADD(&ngSetupRequestIEs->protocolIEs.list, ie);
   if (ret != 0) Logger::ngap().error("Encode DefaultPagingDRX IE error");
-  // free_wrapper((void**) &ie);
+  // utils::free_wrapper((void**) &ie);
 }
 
 //------------------------------------------------------------------------------
@@ -206,8 +203,8 @@ bool NGSetupRequestMsg::decode(Ngap_NGAP_PDU_t* ngapMsgPdu) {
                 ngSetupRequestIEs->protocolIEs.list.array[i]->value.present ==
                     Ngap_NGSetupRequestIEs__value_PR_GlobalRANNodeID) {
               if (!globalRanNodeId.decode(
-                      &ngSetupRequestIEs->protocolIEs.list.array[i]
-                           ->value.choice.GlobalRANNodeID)) {
+                      ngSetupRequestIEs->protocolIEs.list.array[i]
+                          ->value.choice.GlobalRANNodeID)) {
                 Logger::ngap().error("Decoded NGAP GlobalRanNodeId IE error");
                 return false;
               }

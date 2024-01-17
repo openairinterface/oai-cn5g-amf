@@ -28,7 +28,7 @@
 | ------ | ------------- | ------------------ | --------------------------------------------------------------------------|
 | 1      | N1            | :heavy_check_mark: | Communicate with UE via NAS message                                       |
 | 2      | N2            | :heavy_check_mark: | Communicate with gNB via NGAP message                                     |
-| 3      | N8            | :x:                | Interface to/from UDM (e.g., retrieve UE subscription data)               |
+| 3      | N8            | :heavy_check_mark: | Interface to/from UDM (e.g., retrieve UE subscription data)               |
 | 4      | N11           | :heavy_check_mark: | Interface to/from SMF (e.g., N1N2MessageTransfer, PDU Session Services)   |
 | 5      | N14           | :x:                | Interface between AMFs                                                    |
 | 6      | N15           | :x:                | Interface between AMF and PCF                                             |
@@ -45,20 +45,20 @@ Based on document **3GPP TS 23.501 V16.0.0 §6.2.1**.
 | 4      | Registration management                                             | :heavy_check_mark: |                                             |
 | 5      | Connection management                                               | :heavy_check_mark: |                                             |
 | 6      | Reachability management                                             | :x:                |                                             |
-| 7      | Mobility Management                                                 | :heavy_check_mark: | (Experimental) Support N2 Handover          |
+| 7      | Mobility Management                                                 | :heavy_check_mark: | Support N2 Handover                         |
 | 8      | Lawful intercept (for AMF events and interface to LI System)        | :x:                |                                             |
 | 9      | Provide transport for SM messages between UE and SMF                | :heavy_check_mark: |                                             |
 | 10     | Transparent proxy for routing SM messages                           | :x:                |                                             |
 | 11     | Access Authentication                                               | :heavy_check_mark: |                                             |
 | 12     | Access Authorization                                                | :heavy_check_mark: |                                             |
-| 13     | Provide transport for SMS messages between UE and SMSF             | :x:                |                                             |
+| 13     | Provide transport for SMS messages between UE and SMSF              | :x:                |                                             |
 | 14     | Security Anchor Functionality (SEAF)                                | :heavy_check_mark: |                                             |
 | 15     | Location Services management for regulatory services                | :x:                |                                             |
 | 16     | Provide transport for Location Services messages between            |                    |                                             |
-|        | UE and LMF as well as between RAN and LMF                          | :heavy_check_mark: |                                             |
-| 17     | EPS Bearer ID allocation for interworking with EPS                 | :x:                |                                             |
+|        | UE and LMF as well as between RAN and LMF                           | :heavy_check_mark: |                                             |
+| 17     | EPS Bearer ID allocation for interworking with EPS                  | :x:                |                                             |
 | 18     | UE mobility event notification                                      | :heavy_check_mark: |                                             |
-| 19     | Support for Control Plane CIoT 5GS Optimisation                    | :x:                |                                             |
+| 19     | Support for Control Plane CIoT 5GS Optimisation                     | :x:                |                                             |
 | 20     | Provisioning of external parameters                                 | :x:                |                                             |
 | 21     | Support non-3GPP access networks                                    | :x:                |                                             |
 

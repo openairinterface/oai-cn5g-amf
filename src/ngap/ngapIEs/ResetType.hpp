@@ -41,8 +41,6 @@ class ResetType {
   void setResetType(long);
   void setResetType(std::vector<UEAssociatedLogicalNGConnectionItem> list);
   void getResetType(struct Ngap_UE_associatedLogicalNG_connectionList*&);
-  bool encode(Ngap_ResetType_t* type);
-  bool decode(Ngap_ResetType_t* type);
 
   void getResetType(long&);
   uint8_t getResetType();
@@ -54,6 +52,9 @@ class ResetType {
       std::vector<UEAssociatedLogicalNGConnectionItem>& list);
   void getUEAssociatedLogicalNGConnectionList(
       struct Ngap_UE_associatedLogicalNG_connectionList*&);
+
+  bool encode(Ngap_ResetType_t& type);
+  bool decode(const Ngap_ResetType_t& type);
 
  private:
   Ngap_ResetType_PR present;

@@ -35,7 +35,7 @@ bool SupportedTAList::encode(Ngap_SupportedTAList_t& supportedTAList) {
        it < std::end(supportedTAItems); ++it) {
     Ngap_SupportedTAItem_t* ta =
         (Ngap_SupportedTAItem_t*) calloc(1, sizeof(Ngap_SupportedTAItem_t));
-    if (!it->encode(ta)) return false;
+    if (!it->encode(*ta)) return false;
     if (ASN_SEQUENCE_ADD(&supportedTAList.list, ta) != 0) return false;
   }
   return true;
@@ -45,7 +45,7 @@ bool SupportedTAList::encode(Ngap_SupportedTAList_t& supportedTAList) {
 bool SupportedTAList::decode(const Ngap_SupportedTAList_t& pdu) {
   for (int i = 0; i < pdu.list.count; i++) {
     SupportedTaItem item = {};
-    if (!item.decode(pdu.list.array[i])) return false;
+    if (!item.decode(*pdu.list.array[i])) return false;
     supportedTAItems.push_back(item);
   }
 

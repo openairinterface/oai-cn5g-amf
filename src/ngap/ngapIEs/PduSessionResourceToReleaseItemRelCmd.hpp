@@ -42,9 +42,9 @@ class PduSessionResourceToReleaseItemRelCmd {
       PduSessionId& pdu_session_id,
       OCTET_STRING_t& pdu_session_resource_release_command_transfer);
 
-  bool encode(Ngap_PDUSessionResourceToReleaseItemRelCmd_t*
+  bool encode(Ngap_PDUSessionResourceToReleaseItemRelCmd_t&
                   pdu_session_resource_to_release_item_rel_cmd);
-  bool decode(Ngap_PDUSessionResourceToReleaseItemRelCmd_t*
+  bool decode(const Ngap_PDUSessionResourceToReleaseItemRelCmd_t&
                   pdu_session_resource_to_release_item_rel_cmd);
 
  private:

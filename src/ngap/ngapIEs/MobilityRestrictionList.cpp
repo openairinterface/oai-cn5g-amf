@@ -39,8 +39,8 @@ void MobilityRestrictionList::getPLMN(PlmnId& plmn) const {
 
 //------------------------------------------------------------------------------
 bool MobilityRestrictionList::encode(
-    Ngap_MobilityRestrictionList_t* mobility_restriction_list) {
-  if (!servingPLMN.encode(mobility_restriction_list->servingPLMN)) {
+    Ngap_MobilityRestrictionList_t& mobility_restriction_list) {
+  if (!servingPLMN.encode(mobility_restriction_list.servingPLMN)) {
     return false;
   }
   return true;
@@ -48,8 +48,8 @@ bool MobilityRestrictionList::encode(
 
 //------------------------------------------------------------------------------
 bool MobilityRestrictionList::decode(
-    Ngap_MobilityRestrictionList_t* mobility_restriction_list) {
-  if (!servingPLMN.decode(mobility_restriction_list->servingPLMN)) {
+    const Ngap_MobilityRestrictionList_t& mobility_restriction_list) {
+  if (!servingPLMN.decode(mobility_restriction_list.servingPLMN)) {
     return false;
   }
   return true;

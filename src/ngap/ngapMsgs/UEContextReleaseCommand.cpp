@@ -22,10 +22,10 @@
 #include "UEContextReleaseCommand.hpp"
 
 #include "logger.hpp"
+#include "utils.hpp"
 
 extern "C" {
 #include "Ngap_UE-NGAP-ID-pair.h"
-#include "dynamic_memory_check.h"
 }
 
 using namespace ngap;
@@ -62,7 +62,7 @@ void UEContextReleaseCommandMsg::setAmfUeNgapId(const unsigned long& id) {
   if (!ret) {
     Logger::ngap().error("Encode NGAP AMF_UE_NGAP_ID IE error");
 
-    free_wrapper((void**) &ie);
+    utils::free_wrapper((void**) &ie);
     return;
   }
   ret = ASN_SEQUENCE_ADD(&ies->protocolIEs.list, ie);
@@ -98,14 +98,14 @@ void UEContextReleaseCommandMsg::setUeNgapIdPair(
       ie->value.choice.UE_NGAP_IDs.choice.uE_NGAP_ID_pair->aMF_UE_NGAP_ID);
   if (!ret) {
     Logger::ngap().error("Encode NGAP AMF_UE_NGAP_ID IE error");
-    free_wrapper((void**) &ie);
+    utils::free_wrapper((void**) &ie);
     return;
   }
   ret = ranUeNgapId.value().encode(
       ie->value.choice.UE_NGAP_IDs.choice.uE_NGAP_ID_pair->rAN_UE_NGAP_ID);
   if (!ret) {
     Logger::ngap().error("Encode NGAP RAN_UE_NGAP_ID IE error");
-    free_wrapper((void**) &ie);
+    utils::free_wrapper((void**) &ie);
     return;
   }
   ret = ASN_SEQUENCE_ADD(&ies->protocolIEs.list, ie);

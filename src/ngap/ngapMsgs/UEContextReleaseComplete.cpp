@@ -22,10 +22,8 @@
 #include "UEContextReleaseComplete.hpp"
 
 #include "logger.hpp"
+#include "utils.hpp"
 
-extern "C" {
-#include "dynamic_memory_check.h"
-}
 using namespace ngap;
 
 //------------------------------------------------------------------------------
@@ -60,7 +58,7 @@ void UEContextReleaseCompleteMsg::setAmfUeNgapId(const unsigned long& id) {
   int ret = amfUeNgapId.encode(ie->value.choice.AMF_UE_NGAP_ID);
   if (!ret) {
     Logger::ngap().error("Encode NGAP AMF_UE_NGAP_ID IE error");
-    free_wrapper((void**) &ie);
+    utils::free_wrapper((void**) &ie);
     return;
   }
   ret = ASN_SEQUENCE_ADD(&ies->protocolIEs.list, ie);
@@ -81,7 +79,7 @@ void UEContextReleaseCompleteMsg::setRanUeNgapId(
   int ret = ranUeNgapId.encode(ie->value.choice.RAN_UE_NGAP_ID);
   if (!ret) {
     Logger::ngap().error("Encode NGAP RAN_UE_NGAP_ID IE error");
-    free_wrapper((void**) &ie);
+    utils::free_wrapper((void**) &ie);
     return;
   }
   ret = ASN_SEQUENCE_ADD(&ies->protocolIEs.list, ie);
@@ -112,10 +110,10 @@ void UEContextReleaseCompleteMsg::setUserLocationInfoNR(
       Ngap_UEContextReleaseComplete_IEs__value_PR_UserLocationInformation;
 
   int ret = m_userLocationInformation.encode(
-      &ie->value.choice.UserLocationInformation);
+      ie->value.choice.UserLocationInformation);
   if (!ret) {
     Logger::ngap().error("Encode NGAP UserLocationInformation IE error");
-    free_wrapper((void**) &ie);
+    utils::free_wrapper((void**) &ie);
     return;
   }
 
@@ -187,7 +185,7 @@ void UEContextReleaseCompleteMsg::setPduSessionResourceCxtRelCplList(
   if (!ret) {
     Logger::ngap().error(
         "Encode NGAP PDUSessionResourceReleasedListRelRes IE error");
-    free_wrapper((void**) &ie);
+    utils::free_wrapper((void**) &ie);
     return;
   }
 
@@ -287,8 +285,8 @@ bool UEContextReleaseCompleteMsg::decode(Ngap_NGAP_PDU_t* ngapMsgPdu) {
           UserLocationInformation m_userLocationInformation = {};
 
           if (!m_userLocationInformation.decode(
-                  &ies->protocolIEs.list.array[i]
-                       ->value.choice.UserLocationInformation)) {
+                  ies->protocolIEs.list.array[i]
+                      ->value.choice.UserLocationInformation)) {
             Logger::ngap().error(
                 "Decode NGAP UserLocationInformation IE error");
             return false;

@@ -47,17 +47,17 @@ bool PacketErrorRate::getPacketErrorRate(long& scalar, long& exponent) const {
 }
 
 //------------------------------------------------------------------------------
-bool PacketErrorRate::encode(Ngap_PacketErrorRate_t* packet_error_rate) {
-  packet_error_rate->pERScalar   = scalar_;
-  packet_error_rate->pERExponent = exponent_;
+bool PacketErrorRate::encode(Ngap_PacketErrorRate_t& packet_error_rate) const {
+  packet_error_rate.pERScalar   = scalar_;
+  packet_error_rate.pERExponent = exponent_;
 
   return true;
 }
 
 //------------------------------------------------------------------------------
-bool PacketErrorRate::decode(Ngap_PacketErrorRate_t* packet_error_rate) {
-  scalar_   = packet_error_rate->pERScalar;
-  exponent_ = packet_error_rate->pERExponent;
+bool PacketErrorRate::decode(const Ngap_PacketErrorRate_t& packet_error_rate) {
+  scalar_   = packet_error_rate.pERScalar;
+  exponent_ = packet_error_rate.pERExponent;
 
   return true;
 }

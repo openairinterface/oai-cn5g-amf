@@ -40,8 +40,8 @@ class PduSessionResourceAdmittedList {
   void set(const std::vector<PduSessionResourceItem>& list);
   void get(std::vector<PduSessionResourceItem>& list);
 
-  bool encode(Ngap_PDUSessionResourceAdmittedList_t* list);
-  bool decode(Ngap_PDUSessionResourceAdmittedList_t* List);
+  bool encode(Ngap_PDUSessionResourceAdmittedList_t& list);
+  bool decode(const Ngap_PDUSessionResourceAdmittedList_t& List);
 
  private:
   std::vector<PduSessionResourceItem> item_list_;

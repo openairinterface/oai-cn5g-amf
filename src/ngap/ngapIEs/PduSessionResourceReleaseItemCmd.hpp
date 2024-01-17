@@ -45,12 +45,10 @@ class PduSessionResourceReleaseItemCmd {
       PduSessionId& pdu_session_id,
       OCTET_STRING_t& pdu_session_resource_release) const;
 
-  bool encode2PDUSessionResourceReleaseItemCmd(
-      Ngap_PDUSessionResourceToReleaseItemRelCmd_t*
-          pdu_session_resource_release_item);
-  bool decodefromPDUSessionResourceReleaseItemCmd(
-      Ngap_PDUSessionResourceToReleaseItemRelCmd_t*
-          pdu_session_resource_release_item);
+  bool encode(Ngap_PDUSessionResourceToReleaseItemRelCmd_t&
+                  pdu_session_resource_release_item);
+  bool decode(const Ngap_PDUSessionResourceToReleaseItemRelCmd_t&
+                  pdu_session_resource_release_item);
 
  private:
   PduSessionId pdu_session_id_;                                   // Mandatory

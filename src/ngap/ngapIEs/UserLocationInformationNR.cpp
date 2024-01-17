@@ -37,11 +37,11 @@ void UserLocationInformationNR::set(const NrCgi& m_nR_CGI, const TAI& m_tAI) {
 
 //------------------------------------------------------------------------------
 bool UserLocationInformationNR::encode(
-    Ngap_UserLocationInformationNR_t* user_location_info_nr) {
-  if (!nR_CGI.encode(&user_location_info_nr->nR_CGI)) {
+    Ngap_UserLocationInformationNR_t& user_location_info_nr) {
+  if (!nR_CGI.encode(user_location_info_nr.nR_CGI)) {
     return false;
   }
-  if (!tAI.encode(&user_location_info_nr->tAI)) {
+  if (!tAI.encode(user_location_info_nr.tAI)) {
     return false;
   }
   return true;
@@ -49,12 +49,12 @@ bool UserLocationInformationNR::encode(
 
 //------------------------------------------------------------------------------
 bool UserLocationInformationNR::decode(
-    Ngap_UserLocationInformationNR_t* user_location_info_nr) {
-  if (!nR_CGI.decode(&user_location_info_nr->nR_CGI)) {
+    const Ngap_UserLocationInformationNR_t& user_location_info_nr) {
+  if (!nR_CGI.decode(user_location_info_nr.nR_CGI)) {
     return false;
   }
 
-  if (!tAI.decode(&user_location_info_nr->tAI)) {
+  if (!tAI.decode(user_location_info_nr.tAI)) {
     return false;
   }
   return true;

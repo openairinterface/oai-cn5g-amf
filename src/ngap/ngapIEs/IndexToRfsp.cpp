@@ -49,7 +49,7 @@ bool IndexToRfsp::encode(Ngap_IndexToRFSP_t& index) {
 }
 
 //------------------------------------------------------------------------------
-bool IndexToRfsp::decode(Ngap_IndexToRFSP_t& index) {
+bool IndexToRfsp::decode(Ngap_IndexToRFSP_t index) {
   index_ = index;
   return true;
 }

@@ -52,8 +52,7 @@ bool PeriodicRegistrationUpdateTimer::encode(
 
 //------------------------------------------------------------------------------
 bool PeriodicRegistrationUpdateTimer::decode(
-    const Ngap_PeriodicRegistrationUpdateTimer_t&
-        periodic_registration_update_timer) {
+    Ngap_PeriodicRegistrationUpdateTimer_t periodic_registration_update_timer) {
   if (!periodic_registration_update_timer.buf) return false;
   update_timer_ = periodic_registration_update_timer.buf[0];
 

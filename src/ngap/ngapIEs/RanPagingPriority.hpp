@@ -41,7 +41,7 @@ class RanPagingPriority {
   uint32_t get() const;
 
   bool encode(Ngap_RANPagingPriority_t&);
-  bool decode(Ngap_RANPagingPriority_t&);
+  bool decode(Ngap_RANPagingPriority_t);
 
  private:
   uint32_t ran_paging_priority_;

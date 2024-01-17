@@ -56,7 +56,7 @@ bool Pre_emptionCapability::encode(
 
 //------------------------------------------------------------------------------
 bool Pre_emptionCapability::decode(
-    const Ngap_Pre_emptionCapability_t& pre_emptionCapability) {
+    Ngap_Pre_emptionCapability_t pre_emptionCapability) {
   pre_emption_capability_ = pre_emptionCapability;
 
   return true;

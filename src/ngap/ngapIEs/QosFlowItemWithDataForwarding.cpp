@@ -48,13 +48,13 @@ void QosFlowItemWithDataForWarding::getQosFlowIdentifier(
 
 //------------------------------------------------------------------------------
 bool QosFlowItemWithDataForWarding::decode(
-    Ngap_QosFlowItemWithDataForwarding_t* qos_flow_item) {
-  if (!qfi_.decode(&(qos_flow_item->qosFlowIdentifier))) {
+    const Ngap_QosFlowItemWithDataForwarding_t& qos_flow_item) {
+  if (!qfi_.decode(qos_flow_item.qosFlowIdentifier)) {
     return false;
   }
-  if (qos_flow_item->dataForwardingAccepted)
+  if (qos_flow_item.dataForwardingAccepted)
     data_forwarding_accepted_ =
-        std::make_optional<long>(*qos_flow_item->dataForwardingAccepted);
+        std::make_optional<long>(*qos_flow_item.dataForwardingAccepted);
   return true;
 }
 }  // namespace ngap

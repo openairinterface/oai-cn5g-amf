@@ -45,17 +45,17 @@ void GlobalgNBId::get(PlmnId& plmn, GNB_ID& gnbid) const {
 }
 
 //------------------------------------------------------------------------------
-bool GlobalgNBId::encode(Ngap_GlobalGNB_ID_t* globalgnbid) {
-  if (!plmnId.encode(globalgnbid->pLMNIdentity)) return false;
-  if (!gNB_ID.encode(globalgnbid->gNB_ID)) return false;
+bool GlobalgNBId::encode(Ngap_GlobalGNB_ID_t& globalgnbid) {
+  if (!plmnId.encode(globalgnbid.pLMNIdentity)) return false;
+  if (!gNB_ID.encode(globalgnbid.gNB_ID)) return false;
 
   return true;
 }
 
 //------------------------------------------------------------------------------
-bool GlobalgNBId::decode(Ngap_GlobalGNB_ID_t* globalgnbid) {
-  if (!plmnId.decode(globalgnbid->pLMNIdentity)) return false;
-  if (!gNB_ID.decode(globalgnbid->gNB_ID)) return false;
+bool GlobalgNBId::decode(const Ngap_GlobalGNB_ID_t& globalgnbid) {
+  if (!plmnId.decode(globalgnbid.pLMNIdentity)) return false;
+  if (!gNB_ID.decode(globalgnbid.gNB_ID)) return false;
 
   return true;
 }

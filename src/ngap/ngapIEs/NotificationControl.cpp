@@ -50,16 +50,16 @@ bool NotificationControl::getNotificationControl(
 
 //------------------------------------------------------------------------------
 bool NotificationControl::encode(
-    Ngap_NotificationControl_t* notificationControl) {
-  *notificationControl = notification_control_;
+    Ngap_NotificationControl_t& notificationControl) const {
+  notificationControl = notification_control_;
 
   return true;
 }
 
 //------------------------------------------------------------------------------
 bool NotificationControl::decode(
-    Ngap_NotificationControl_t* notificationControl) {
-  notification_control_ = *notificationControl;
+    Ngap_NotificationControl_t notificationControl) {
+  notification_control_ = notificationControl;
 
   return true;
 }

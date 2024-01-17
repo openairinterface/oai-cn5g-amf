@@ -33,11 +33,11 @@ class RelativeAmfCapacity {
   RelativeAmfCapacity();
   virtual ~RelativeAmfCapacity();
 
-  bool encode(Ngap_RelativeAMFCapacity_t&) const;
-  bool decode(const Ngap_RelativeAMFCapacity_t&);
-
   void setValue(uint8_t amf_capacity);
   uint8_t getValue() const;
+
+  bool encode(Ngap_RelativeAMFCapacity_t&) const;
+  bool decode(Ngap_RelativeAMFCapacity_t);
 
  private:
   uint8_t amf_capacity_;

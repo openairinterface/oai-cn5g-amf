@@ -98,32 +98,32 @@ Ngap_Criticality MessageType::getCriticality() {
 }
 
 //------------------------------------------------------------------------------
-int MessageType::encode(Ngap_NGAP_PDU_t*& pdu) {
-  pdu->present = typeOfMessage;
+int MessageType::encode(Ngap_NGAP_PDU_t& pdu) const {
+  pdu.present = typeOfMessage;
   switch (typeOfMessage) {
     case Ngap_NGAP_PDU_PR_initiatingMessage: {
-      pdu->choice.initiatingMessage = (Ngap_InitiatingMessage_t*) calloc(
+      pdu.choice.initiatingMessage = (Ngap_InitiatingMessage_t*) calloc(
           1, sizeof(Ngap_InitiatingMessage_t));
-      pdu->choice.initiatingMessage->procedureCode = procedureCode;
-      pdu->choice.initiatingMessage->criticality   = criticality;
-      pdu->choice.initiatingMessage->value.present = initiatingMsgValuePresent;
+      pdu.choice.initiatingMessage->procedureCode = procedureCode;
+      pdu.choice.initiatingMessage->criticality   = criticality;
+      pdu.choice.initiatingMessage->value.present = initiatingMsgValuePresent;
       break;
     }
     case Ngap_NGAP_PDU_PR_successfulOutcome: {
-      pdu->choice.successfulOutcome = (Ngap_SuccessfulOutcome_t*) calloc(
+      pdu.choice.successfulOutcome = (Ngap_SuccessfulOutcome_t*) calloc(
           1, sizeof(Ngap_SuccessfulOutcome_t));
-      pdu->choice.successfulOutcome->procedureCode = procedureCode;
-      pdu->choice.successfulOutcome->criticality   = criticality;
-      pdu->choice.successfulOutcome->value.present =
+      pdu.choice.successfulOutcome->procedureCode = procedureCode;
+      pdu.choice.successfulOutcome->criticality   = criticality;
+      pdu.choice.successfulOutcome->value.present =
           successfulOutcomeValuePresent;
       break;
     }
     case Ngap_NGAP_PDU_PR_unsuccessfulOutcome: {
-      pdu->choice.unsuccessfulOutcome = (Ngap_UnsuccessfulOutcome_t*) calloc(
+      pdu.choice.unsuccessfulOutcome = (Ngap_UnsuccessfulOutcome_t*) calloc(
           1, sizeof(Ngap_UnsuccessfulOutcome_t));
-      pdu->choice.unsuccessfulOutcome->procedureCode = procedureCode;
-      pdu->choice.unsuccessfulOutcome->criticality   = criticality;
-      pdu->choice.unsuccessfulOutcome->value.present =
+      pdu.choice.unsuccessfulOutcome->procedureCode = procedureCode;
+      pdu.choice.unsuccessfulOutcome->criticality   = criticality;
+      pdu.choice.unsuccessfulOutcome->value.present =
           unsuccessfulOutcomeValuePresent;
       break;
     }

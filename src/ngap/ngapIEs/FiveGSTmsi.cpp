@@ -21,7 +21,7 @@
 
 #include "FiveGSTmsi.hpp"
 
-#include "conversions.hpp"
+#include "amf_conversions.hpp"
 
 using namespace ngap;
 
@@ -55,21 +55,21 @@ bool FiveGSTmsi::set(
 }
 
 //------------------------------------------------------------------------------
-bool FiveGSTmsi::encode(Ngap_FiveG_S_TMSI_t* pdu) {
-  amf_set_id_.encode(pdu->aMFSetID);
-  amf_pointer_.encode(pdu->aMFPointer);
+bool FiveGSTmsi::encode(Ngap_FiveG_S_TMSI_t& pdu) {
+  amf_set_id_.encode(pdu.aMFSetID);
+  amf_pointer_.encode(pdu.aMFPointer);
 
-  uint32_t tmsi        = (uint32_t) std::stol(_5g_s_tmsi_);
-  uint8_t* buf         = (uint8_t*) malloc(sizeof(uint32_t));
-  *(uint32_t*) buf     = htonl(tmsi);
-  pdu->fiveG_TMSI.buf  = buf;
-  pdu->fiveG_TMSI.size = sizeof(uint32_t);
+  uint32_t tmsi       = (uint32_t) std::stol(_5g_s_tmsi_);
+  uint8_t* buf        = (uint8_t*) malloc(sizeof(uint32_t));
+  *(uint32_t*) buf    = htonl(tmsi);
+  pdu.fiveG_TMSI.buf  = buf;
+  pdu.fiveG_TMSI.size = sizeof(uint32_t);
 
   return true;
 }
 
 //------------------------------------------------------------------------------
-bool FiveGSTmsi::decode(Ngap_FiveG_S_TMSI_t pdu) {
+bool FiveGSTmsi::decode(const Ngap_FiveG_S_TMSI_t& pdu) {
   amf_set_id_.decode(pdu.aMFSetID);
   amf_pointer_.decode(pdu.aMFPointer);
 
@@ -78,8 +78,8 @@ bool FiveGSTmsi::decode(Ngap_FiveG_S_TMSI_t pdu) {
   std::string setId, pointer;
   amf_set_id_.get(setId);
   amf_pointer_.get(pointer);
-  _5g_s_tmsi_ = setId + pointer + conv::tmsi_to_string(tmsi);
-  tmsi_value_ = conv::tmsi_to_string(tmsi);
+  _5g_s_tmsi_ = setId + pointer + amf_conv::tmsi_to_string(tmsi);
+  tmsi_value_ = amf_conv::tmsi_to_string(tmsi);
 
   return true;
 }

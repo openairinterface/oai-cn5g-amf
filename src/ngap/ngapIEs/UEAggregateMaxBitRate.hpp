@@ -37,7 +37,7 @@ class UEAggregateMaxBitRate {
   bool get(uint64_t& dl, uint64_t& ul) const;
 
   bool encode(Ngap_UEAggregateMaximumBitRate_t& bit_rate);
-  bool decode(Ngap_UEAggregateMaximumBitRate_t& bit_rate);
+  bool decode(const Ngap_UEAggregateMaximumBitRate_t& bit_rate);
 
  private:
   uint64_t dl_;

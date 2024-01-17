@@ -106,7 +106,7 @@ bool PlmnId::encode(Ngap_PLMNIdentity_t& plmn) {
 }
 
 //------------------------------------------------------------------------------
-bool PlmnId::decode(Ngap_PLMNIdentity_t& plmn) {
+bool PlmnId::decode(const Ngap_PLMNIdentity_t& plmn) {
   if (!plmn.buf) return false;
   if (plmn.size < 3) return false;
 

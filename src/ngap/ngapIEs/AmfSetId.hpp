@@ -37,11 +37,12 @@ class AmfSetId {
 
   bool set(const std::string&);
   bool set(const uint16_t&);
+
   void get(std::string&) const;
   void get(uint16_t&) const;
 
   bool encode(Ngap_AMFSetID_t&) const;
-  bool decode(const Ngap_AMFSetID_t&);
+  bool decode(Ngap_AMFSetID_t);
 
  private:
   uint16_t id_;

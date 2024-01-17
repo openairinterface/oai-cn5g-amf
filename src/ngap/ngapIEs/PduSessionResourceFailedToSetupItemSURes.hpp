@@ -40,9 +40,9 @@ class PduSessionResourceFailedToSetupItemSURes {
       const OCTET_STRING_t& pdu_session_resource);
   void get(PduSessionId& pdu_session_id, OCTET_STRING_t& pdu_session_resource);
 
-  bool encode(Ngap_PDUSessionResourceFailedToSetupItemSURes_t*
+  bool encode(Ngap_PDUSessionResourceFailedToSetupItemSURes_t&
                   pdu_session_resource_item);
-  bool decode(Ngap_PDUSessionResourceFailedToSetupItemSURes_t*
+  bool decode(const Ngap_PDUSessionResourceFailedToSetupItemSURes_t&
                   pdu_session_resource_item);
 
  private:

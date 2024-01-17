@@ -33,7 +33,6 @@
 #include "amf_http2_server.hpp"
 #include "amf_app.hpp"
 #include "amf_config.hpp"
-#include "amf_cfg_libconfig.hpp"
 #include "amf_config_yaml.hpp"
 #include "amf_statistics.hpp"
 #include "itti.hpp"
@@ -62,33 +61,44 @@ std::unique_ptr<amf_config_yaml> amf_cfg_yaml;
 void amf_signal_handler(int s) {
   std::cout << "Caught signal " << s << std::endl;
   Logger::system().startup("exiting");
+
+  if (amf_app_inst) {
+    amf_app_inst->stop();
+  }
+
   if (itti_inst) {
     itti_inst->send_terminate_msg(TASK_AMF_APP);
     itti_inst->wait_tasks_end();
   }
+
   std::cout << "Freeing Allocated memory..." << std::endl;
+
   if (amf_app_inst) {
     delete amf_app_inst;
     amf_app_inst = nullptr;
     std::cout << "AMF APP memory done." << std::endl;
   }
+
   if (http1_server) {
     http1_server->shutdown();
     delete http1_server;
     http1_server = nullptr;
+    std::cout << "HTTP/1 Server memory done." << std::endl;
   }
+
   if (http2_server) {
     http2_server->stop();
     delete http2_server;
     http2_server = nullptr;
+    std::cout << "HTTP/2 Server memory done." << std::endl;
   }
-  std::cout << "AMF API Server memory done." << std::endl;
 
   if (itti_inst) {
     delete itti_inst;
     itti_inst = nullptr;
     std::cout << "ITTI memory done." << std::endl;
   }
+
   std::cout << "Freeing Allocated memory done" << std::endl;
   exit(s);
 }
@@ -109,26 +119,17 @@ int main(int argc, char** argv) {
   std::signal(SIGINT, amf_signal_handler);
 
   std::string conf_file_name = Options::getlibconfigConfig();
-  std::string file_ext       = ".conf";
-  if (conf_file_name.find(file_ext) != std::string::npos) {
-    Logger::system().debug("Parsing the configuration file, file type CONF.");
-    amf_cfg_libconfig::load(conf_file_name, amf_cfg);
-    Logger::set_level(amf_cfg.log_level);
-    amf_cfg.display();
-  } else {
-    // By default, considering the config file as yaml
-    Logger::system().debug("Parsing the configuration file, file type YAML.");
-    amf_cfg_yaml = std::make_unique<amf_config_yaml>(
-        conf_file_name, Options::getlogStdout(), Options::getlogRotFilelog());
-    if (!amf_cfg_yaml->init()) {
-      Logger::system().error("Reading the configuration failed. Exiting.");
-      return 1;
-    }
-    amf_cfg_yaml->pre_process();
-    amf_cfg_yaml->display();
-    // Convert from YAML to internal structure
-    amf_cfg_yaml->to_amf_config(amf_cfg);
+  Logger::system().debug("Parsing the configuration file, file type YAML.");
+  amf_cfg_yaml = std::make_unique<amf_config_yaml>(
+      conf_file_name, Options::getlogStdout(), Options::getlogRotFilelog());
+  if (!amf_cfg_yaml->init()) {
+    Logger::system().error("Reading the configuration failed. Exiting.");
+    return 1;
   }
+  amf_cfg_yaml->pre_process();
+  amf_cfg_yaml->display();
+  // Convert from YAML to internal structure
+  amf_cfg_yaml->to_amf_config(amf_cfg);
 
   itti_inst = new itti_mw();
   itti_inst->start(amf_cfg.itti.itti_timer_sched_params);
@@ -148,8 +149,7 @@ int main(int argc, char** argv) {
   } else {
     // AMF HTTP2 server
     http2_server = new amf_http2_server(
-        conv::toString(amf_cfg.sbi.addr4), amf_cfg.sbi_http2_port,
-        amf_app_inst);
+        conv::toString(amf_cfg.sbi.addr4), amf_cfg.sbi.port, amf_app_inst);
     std::thread amf_http2_manager(&amf_http2_server::start, http2_server);
     amf_http2_manager.join();
   }

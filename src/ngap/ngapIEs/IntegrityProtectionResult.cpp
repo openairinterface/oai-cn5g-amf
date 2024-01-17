@@ -45,7 +45,7 @@ bool IntegrityProtectionResult::get(long& value) const {
 
 //------------------------------------------------------------------------------
 bool IntegrityProtectionResult::encode(
-    Ngap_IntegrityProtectionResult_t& value) {
+    Ngap_IntegrityProtectionResult_t& value) const {
   value = result_;
 
   return true;

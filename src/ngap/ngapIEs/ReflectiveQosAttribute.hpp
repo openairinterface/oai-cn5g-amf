@@ -37,8 +37,8 @@ class ReflectiveQosAttribute {
   void set(e_Ngap_ReflectiveQosAttribute value);
   bool get(e_Ngap_ReflectiveQosAttribute& value);
 
-  bool encode(Ngap_ReflectiveQosAttribute_t*);
-  bool decode(Ngap_ReflectiveQosAttribute_t*);
+  bool encode(Ngap_ReflectiveQosAttribute_t&) const;
+  bool decode(Ngap_ReflectiveQosAttribute_t);
 
  private:
   long attribute_;

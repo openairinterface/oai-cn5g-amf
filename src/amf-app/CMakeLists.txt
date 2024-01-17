@@ -22,7 +22,6 @@
 add_library (AMF_APP STATIC
   amf_app.cpp
   amf_config.cpp
-  amf_cfg_libconfig.cpp
   amf_config_yaml.cpp
   amf_n1.cpp
   amf_n2.cpp
@@ -61,5 +60,8 @@ target_include_directories(AMF_APP PUBLIC ${SRC_TOP_DIR}/utils)
 target_include_directories(AMF_APP PUBLIC ${SRC_TOP_DIR}/utils/bstr)
 target_include_directories(AMF_APP PUBLIC ${SRC_TOP_DIR}/${MOUNTED_COMMON}/logger)
 target_include_directories(AMF_APP PUBLIC ${SRC_TOP_DIR}/${MOUNTED_COMMON}/config)
+target_include_directories(AMF_APP PUBLIC ${SRC_TOP_DIR}/${MOUNTED_COMMON}/utils)
+target_include_directories(AMF_APP PUBLIC ${SRC_TOP_DIR}/${MOUNTED_COMMON}/common)
 
 include(${BUILD_TOP_DIR}/amf/used_models.cmake)
+include(${SRC_TOP_DIR}/${MOUNTED_COMMON}/utils/utils.cmake)
