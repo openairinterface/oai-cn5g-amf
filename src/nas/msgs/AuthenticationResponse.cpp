@@ -21,6 +21,8 @@
 
 #include "AuthenticationResponse.hpp"
 
+#include "NasHelper.hpp"
+
 using namespace nas;
 
 //------------------------------------------------------------------------------
@@ -86,36 +88,15 @@ int AuthenticationResponse::Encode(uint8_t* buf, int len) {
   }
   encoded_size += encoded_ie_size;
 
-  if (!ie_authentication_response_parameter.has_value()) {
-    Logger::nas_mm().debug(
-        "IE %s is not available",
-        AuthenticationResponseParameter::GetIeName().c_str());
-  } else {
-    int size = ie_authentication_response_parameter.value().Encode(
-        buf + encoded_size, len - encoded_size);
-    if (size != KEncodeDecodeError) {
-      encoded_size += size;
-    } else {
-      Logger::nas_mm().error(
-          "Encoding %s error",
-          AuthenticationResponseParameter::GetIeName().c_str());
-      return KEncodeDecodeError;
-    }
+  if ((encoded_ie_size = NasHelper::Encode(
+           ie_authentication_response_parameter, buf, len, encoded_size)) ==
+      KEncodeDecodeError) {
+    return KEncodeDecodeError;
   }
 
-  if (!ie_eap_message.has_value()) {
-    Logger::nas_mm().debug(
-        "IE %s is not available", EapMessage::GetIeName().c_str());
-  } else {
-    int size =
-        ie_eap_message.value().Encode(buf + encoded_size, len - encoded_size);
-    if (size != KEncodeDecodeError) {
-      encoded_size += size;
-    } else {
-      Logger::nas_mm().error(
-          "Encoding %s error", EapMessage::GetIeName().c_str());
-      return KEncodeDecodeError;
-    }
+  if ((encoded_ie_size = NasHelper::Encode(
+           ie_eap_message, buf, len, encoded_size)) == KEncodeDecodeError) {
+    return KEncodeDecodeError;
   }
 
   Logger::nas_mm().debug(
@@ -126,48 +107,39 @@ int AuthenticationResponse::Encode(uint8_t* buf, int len) {
 //------------------------------------------------------------------------------
 int AuthenticationResponse::Decode(uint8_t* buf, int len) {
   Logger::nas_mm().debug("Decoding AuthenticationResponse message");
-  int decoded_size   = 0;
-  int decoded_result = 0;
+  int decoded_size    = 0;
+  int decoded_ie_size = 0;
   // Header
-  decoded_result = NasMmPlainHeader::Decode(buf, len);
-  if (decoded_result == KEncodeDecodeError) {
+  decoded_ie_size = NasMmPlainHeader::Decode(buf, len);
+  if (decoded_ie_size == KEncodeDecodeError) {
     Logger::nas_mm().error("Decoding NAS Header error");
     return KEncodeDecodeError;
   }
-  decoded_size += decoded_result;
+  decoded_size += decoded_ie_size;
 
   // Decode other IEs
   uint8_t octet = 0x00;
   DECODE_U8_VALUE(buf + decoded_size, octet);
   Logger::nas_mm().debug("First option IEI (0x%x)", octet);
   while ((octet != 0x0)) {
+    Logger::nas_mm().debug("Decoding IEI 0x%x", octet);
     switch (octet) {
       case kIeiAuthenticationResponseParameter: {
-        Logger::nas_mm().debug(
-            "Decoding IEI 0x%x", kIeiAuthenticationResponseParameter);
-        AuthenticationResponseParameter
-            ie_authentication_response_parameter_tmp = {};
-        if ((decoded_result = ie_authentication_response_parameter_tmp.Decode(
-                 buf + decoded_size, len - decoded_size, true)) ==
-            KEncodeDecodeError)
+        if ((decoded_ie_size = NasHelper::Decode(
+                 ie_authentication_response_parameter, buf, len, decoded_size,
+                 true)) == KEncodeDecodeError) {
           return KEncodeDecodeError;
-        decoded_size += decoded_result;
-        ie_authentication_response_parameter =
-            std::optional<AuthenticationResponseParameter>(
-                ie_authentication_response_parameter_tmp);
+        }
         DECODE_U8_VALUE(buf + decoded_size, octet);
         Logger::nas_mm().debug("Next IEI (0x%x)", octet);
       } break;
 
       case kIeiEapMessage: {
-        Logger::nas_mm().debug("Decoding IEI 0x%x", kIeiEapMessage);
-        EapMessage ie_eap_message_tmp = {};
-        if ((decoded_result = ie_eap_message_tmp.Decode(
-                 buf + decoded_size, len - decoded_size, true)) ==
-            KEncodeDecodeError)
+        if ((decoded_ie_size = NasHelper::Decode(
+                 ie_eap_message, buf, len, decoded_size, true)) ==
+            KEncodeDecodeError) {
           return KEncodeDecodeError;
-        decoded_size += decoded_result;
-        ie_eap_message = std::optional<EapMessage>(ie_eap_message_tmp);
+        }
         DECODE_U8_VALUE(buf + decoded_size, octet);
         Logger::nas_mm().debug("Next IEI (0x%x)", octet);
       } break;

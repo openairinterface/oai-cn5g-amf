@@ -51,6 +51,15 @@ _5gsTrackingAreaIdList::_5gsTrackingAreaIdList(bool iei)
 _5gsTrackingAreaIdList::_5gsTrackingAreaIdList(
     const std::vector<p_tai_t>& tai_list)
     : Type4NasIe(kIei5gsTrackingAreaIdentityList) {
+  // only store the first 16 TAIs
+  uint8_t size =
+      (tai_list.size() > k5gsTrackingAreaIdListMaximumSupportedTAIs) ?
+          k5gsTrackingAreaIdListMaximumSupportedTAIs :
+          tai_list.size();
+  for (int i = 0; i < size; i++) {
+    m_tai_list.push_back(tai_list[i]);
+  }
+
   m_tai_list = tai_list;
   // Don't know Length Indicator for now
 }
@@ -113,8 +122,9 @@ int _5gsTrackingAreaIdList::encode_00_type(
     p_tai_t item, uint8_t* buf, int len) {
   int encoded_size = 0;
   // Type of list/Number of elements
-  uint8_t octet = 0x00 | ((item.tac_list.size() - 1) &
-                          0x1f);  // see Table 9.11.3.9.1@3GPP TS 24.501 V16.1.0
+  uint8_t octet = 0x00 | (item.type & 0x60) |
+                  ((item.tac_list.size() - 1) &
+                   0x1f);  // see Table 9.11.3.9.2@3GPP TS 24.501 V16.1.0
   ENCODE_U8(buf + encoded_size, octet, encoded_size);
 
   // Encode PLMN

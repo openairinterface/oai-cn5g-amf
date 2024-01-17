@@ -19,29 +19,28 @@
  *      contact@openairinterface.org
  */
 
-#ifndef _IDENTITY_REQUEST_H_
-#define _IDENTITY_REQUEST_H_
+#ifndef __5GMM_STATUS_H_
+#define __5GMM_STATUS_H_
 
 #include "NasIeHeader.hpp"
 
 namespace nas {
 
-class IdentityRequest : public NasMmPlainHeader {
+class _5gmmStatus : public NasMmPlainHeader {
  public:
-  IdentityRequest();
-  ~IdentityRequest();
+  _5gmmStatus();
+  ~_5gmmStatus();
 
   int Encode(uint8_t* buf, int len);
   int Decode(uint8_t* buf, int len);
 
   void SetHeader(uint8_t security_header_type);
 
-  void Set5gsIdentityType(uint8_t value);
-  // TODO: Get
+  void Set5gmmCause(uint8_t value);
+  uint8_t Get5gmmCause() const;
 
  public:
-  _5gsIdentityType ie_5gs_identity_type;  // Mandatory
-  // Spare half octet (Mandatory)
+  _5gmmCause ie_5gmm_cause;  // Mandatory
 };
 
 }  // namespace nas

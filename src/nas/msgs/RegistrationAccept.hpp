@@ -87,8 +87,8 @@ class RegistrationAccept : public NasMmPlainHeader {
       uint8_t session_id, uint8_t value);
   // TODO: Get
 
-  // TODO: LADN information
   void SetLadnInformation(const LadnInformation& ladn_information);
+  // TODO: Get
 
   void SetMicoIndication(bool sprti, bool raai);
   // TODO: Get
@@ -96,7 +96,8 @@ class RegistrationAccept : public NasMmPlainHeader {
   void SetNetworkSlicingIndication(bool dcni, bool nssci);
   // TODO: Get
 
-  // TODO: Service Area List
+  void SetServiceAreaList(const std::vector<service_area_list_ie_t>& list);
+  // TODO: Get
 
   void SetT3512Value(uint8_t unit, uint8_t value);
   // TODO: Get
@@ -168,8 +169,8 @@ class RegistrationAccept : public NasMmPlainHeader {
   // Optional
   std::optional<MicoIndication> ie_mico_indication;  // Optional
   std::optional<NetworkSlicingIndication>
-      ie_network_slicing_indication;  // Optional
-  // TODO: Service Area List
+      ie_network_slicing_indication;                                 // Optional
+  std::optional<ServiceAreaList> ie_service_area_list;               // Optional
   std::optional<GprsTimer3> ie_t3512_value;                          // Optional
   std::optional<GprsTimer2> ie_non_3gpp_deregistration_timer_value;  // Optional
   std::optional<GprsTimer2> ie_t3502_value;                          // Optional
@@ -196,6 +197,7 @@ class RegistrationAccept : public NasMmPlainHeader {
   // TODO: CAG information list (Release 16.4.1)
   // TODO: Truncated 5G-S-TMSI configuration (Release 16.4.1)
   // TODO: Negotiated WUS assistance information (Release 16.4.1)
+  // TODO: Negotiated NB-N1 mode DRX parameters (Release 16.14.0)
 };
 
 }  // namespace nas

@@ -28,7 +28,7 @@ namespace nas {
 
 class DeregistrationRequest : public NasMmPlainHeader {
  public:
-  DeregistrationRequest(bool is_ue_originating);
+  DeregistrationRequest();
   ~DeregistrationRequest();
 
   int Encode(uint8_t* buf, int len);

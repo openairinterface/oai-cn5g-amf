@@ -58,6 +58,7 @@ class ServiceReject : public NasMmPlainHeader {
   std::optional<GprsTimer2> ie_t3346_value;               // Optional
   std::optional<EapMessage> ie_eap_message;               // Optional
   std::optional<GprsTimer3> ie_t3448_value;               // Optional
+  // TODO: CAG information list (Rel 16.14.0, Optional)
 };
 
 }  // namespace nas

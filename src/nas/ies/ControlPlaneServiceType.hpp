@@ -19,29 +19,33 @@
  *      contact@openairinterface.org
  */
 
-#ifndef _IDENTITY_REQUEST_H_
-#define _IDENTITY_REQUEST_H_
+#ifndef _CONTROL_PLANE_SERVICE_TYPE_H_
+#define _CONTROL_PLANE_SERVICE_TYPE_H_
 
-#include "NasIeHeader.hpp"
+#include "Type1NasIe.hpp"
+
+constexpr auto kControlPlaneServiceTypeIeName = "Control Plane Service Type";
 
 namespace nas {
 
-class IdentityRequest : public NasMmPlainHeader {
+class ControlPlaneServiceType : public Type1NasIe {
  public:
-  IdentityRequest();
-  ~IdentityRequest();
+  ControlPlaneServiceType();
+  ControlPlaneServiceType(uint8_t value);
+  ~ControlPlaneServiceType();
 
-  int Encode(uint8_t* buf, int len);
-  int Decode(uint8_t* buf, int len);
+  static std::string GetIeName() { return kControlPlaneServiceTypeIeName; }
 
-  void SetHeader(uint8_t security_header_type);
+  // int Encode(uint8_t* buf, int len);
+  // int Decode(uint8_t* nuf, int len, bool is_iei, bool is_high);
 
-  void Set5gsIdentityType(uint8_t value);
-  // TODO: Get
+  void SetValue(uint8_t value);
+  void GetValue(uint8_t& value) const;
 
- public:
-  _5gsIdentityType ie_5gs_identity_type;  // Mandatory
-  // Spare half octet (Mandatory)
+ private:
+  void SetValue() override;
+  void GetValue() override;
+  uint8_t service_type_value_;
 };
 
 }  // namespace nas

@@ -44,7 +44,7 @@ class NasMmPlainHeader {
   void GetMessageName(std::string& name) const;
 
   int Encode(uint8_t* buf, int len);
-  int Decode(const uint8_t* const buf, int len);
+  int Decode(uint8_t* buf, int len);
 
   void SetEpd(uint8_t epd);
   uint8_t GetEpd() const;

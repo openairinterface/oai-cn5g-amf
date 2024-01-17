@@ -21,6 +21,8 @@
 
 #include "SecurityModeReject.hpp"
 
+#include "NasHelper.hpp"
+
 using namespace nas;
 
 //------------------------------------------------------------------------------
@@ -55,13 +57,8 @@ int SecurityModeReject::Encode(uint8_t* buf, int len) {
   encoded_size += encoded_ie_size;
 
   // 5GMM Cause
-  encoded_ie_size =
-      ie_5gmm_cause.Encode(buf + encoded_size, len - encoded_size);
-  if (encoded_ie_size != KEncodeDecodeError) {
-    encoded_size += encoded_ie_size;
-  } else {
-    Logger::nas_mm().error(
-        "Encoding %s error", _5gmmCause::GetIeName().c_str());
+  if ((encoded_ie_size = NasHelper::Encode(
+           ie_5gmm_cause, buf, len, encoded_size)) == KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
 
@@ -73,25 +70,21 @@ int SecurityModeReject::Encode(uint8_t* buf, int len) {
 //------------------------------------------------------------------------------
 int SecurityModeReject::Decode(uint8_t* buf, int len) {
   Logger::nas_mm().debug("Decoding SecurityModeReject message");
-  int decoded_size   = 0;
-  int decoded_result = 0;
+  int decoded_size    = 0;
+  int decoded_ie_size = 0;
 
   // Header
-  decoded_result = NasMmPlainHeader::Decode(buf, len);
-  if (decoded_result == KEncodeDecodeError) {
+  decoded_ie_size = NasMmPlainHeader::Decode(buf, len);
+  if (decoded_ie_size == KEncodeDecodeError) {
     Logger::nas_mm().error("Decoding NAS Header error");
     return KEncodeDecodeError;
   }
-  decoded_size += decoded_result;
+  decoded_size += decoded_ie_size;
 
   // 5GMM Cause
-  decoded_result =
-      ie_5gmm_cause.Decode(buf + decoded_size, len - decoded_size, false);
-  if (decoded_result != KEncodeDecodeError) {
-    decoded_size += decoded_result;
-  } else {
-    Logger::nas_mm().error(
-        "Decoding %s error", _5gmmCause::GetIeName().c_str());
+  if ((decoded_ie_size =
+           NasHelper::Decode(ie_5gmm_cause, buf, len, decoded_size, false)) ==
+      KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
 

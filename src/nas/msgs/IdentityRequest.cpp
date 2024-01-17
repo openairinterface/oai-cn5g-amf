@@ -21,6 +21,8 @@
 
 #include "IdentityRequest.hpp"
 
+#include "NasHelper.hpp"
+
 using namespace nas;
 
 //------------------------------------------------------------------------------
@@ -54,17 +56,13 @@ int IdentityRequest::Encode(uint8_t* buf, int len) {
   }
   encoded_size += encoded_ie_size;
 
-  int size =
-      ie_5gs_identity_type.Encode(buf + encoded_size, len - encoded_size);
-  if (size != KEncodeDecodeError) {
-    encoded_size += size;
-  } else {
-    Logger::nas_mm().error(
-        "Encoding %s error", _5gsIdentityType::GetIeName().c_str());
+  if ((encoded_ie_size =
+           NasHelper::Encode(ie_5gs_identity_type, buf, len, encoded_size)) ==
+      KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
 
-  if (size == 0)
+  if (encoded_ie_size == 0)
     encoded_size++;  // 1/2 for 5GS Identity Type and 1/2 for spare mode
 
   Logger::nas_mm().debug(
@@ -76,28 +74,25 @@ int IdentityRequest::Encode(uint8_t* buf, int len) {
 int IdentityRequest::Decode(uint8_t* buf, int len) {
   Logger::nas_mm().debug("Decoding IdentityRequest message");
 
-  int decoded_size   = 0;
-  int decoded_result = 0;
+  int decoded_size    = 0;
+  int decoded_ie_size = 0;
 
   // Header
-  decoded_result = NasMmPlainHeader::Decode(buf, len);
-  if (decoded_result == KEncodeDecodeError) {
+  decoded_ie_size = NasMmPlainHeader::Decode(buf, len);
+  if (decoded_ie_size == KEncodeDecodeError) {
     Logger::nas_mm().error("Decoding NAS Header error");
     return KEncodeDecodeError;
   }
-  decoded_size += decoded_result;
+  decoded_size += decoded_ie_size;
 
-  decoded_result = ie_5gs_identity_type.Decode(
-      buf + decoded_size, len - decoded_size, false);
-  if (decoded_result == KEncodeDecodeError) {
-    Logger::nas_mm().error(
-        "Decoding %s error", _5gsIdentityType::GetIeName().c_str());
+  if ((decoded_ie_size = NasHelper::Decode(
+           ie_5gs_identity_type, buf, len, decoded_size, false)) ==
+      KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
-  if (decoded_result == 0) {
-    decoded_result = 1;  // including 1/2 octet for Spare
+  if (decoded_ie_size == 0) {
+    decoded_size++;  // including 1/2 octet for Spare
   }
-  decoded_size += decoded_result;
 
   Logger::nas_mm().debug(
       "Decoded IdentityRequest message len (%d)", decoded_size);

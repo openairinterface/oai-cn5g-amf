@@ -141,7 +141,7 @@ int NetworkName::Encode(uint8_t* buf, int len) {
 }
 
 //------------------------------------------------------------------------------
-int NetworkName::decodefrombuffer(uint8_t* buf, int len, bool is_option) {
+int NetworkName::Decode(uint8_t* buf, int len, bool is_option) {
   // TODO
   return -1;
 }

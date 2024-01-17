@@ -19,29 +19,41 @@
  *      contact@openairinterface.org
  */
 
-#ifndef _IDENTITY_REQUEST_H_
-#define _IDENTITY_REQUEST_H_
+#ifndef _CONFIGURATION_UPDATE_INDICATION_H_
+#define _CONFIGURATION_UPDATE_INDICATION_H_
 
-#include "NasIeHeader.hpp"
+#include "Type1NasIe.hpp"
+
+constexpr auto kConfigurationUpdateIndicationIeName =
+    "Configuration Update Indication";
 
 namespace nas {
 
-class IdentityRequest : public NasMmPlainHeader {
+class ConfigurationUpdateIndication : public Type1NasIe {
  public:
-  IdentityRequest();
-  ~IdentityRequest();
+  ConfigurationUpdateIndication();
+  ConfigurationUpdateIndication(bool red, bool ack);
+  ~ConfigurationUpdateIndication();
+
+  static std::string GetIeName() {
+    return kConfigurationUpdateIndicationIeName;
+  }
+
+  void SetRed(bool value);
+  void GetRed(bool& value) const;
+
+  void SetAck(bool value);
+  void GetAck(bool& value) const;
 
   int Encode(uint8_t* buf, int len);
-  int Decode(uint8_t* buf, int len);
+  int Decode(uint8_t* buf, int len, bool is_iei);
 
-  void SetHeader(uint8_t security_header_type);
+ private:
+  bool red_;
+  bool ack_;
 
-  void Set5gsIdentityType(uint8_t value);
-  // TODO: Get
-
- public:
-  _5gsIdentityType ie_5gs_identity_type;  // Mandatory
-  // Spare half octet (Mandatory)
+  void SetValue() override;
+  void GetValue() override;
 };
 
 }  // namespace nas

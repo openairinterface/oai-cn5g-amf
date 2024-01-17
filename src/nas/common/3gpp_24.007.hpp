@@ -32,10 +32,9 @@ constexpr uint8_t kType1IeSize = 1;
 #define EPD_5GS_SM_MSG 0b00101110
 
 // Extended Protocol Discriminator (EPD)
-enum class EPDEnum {
-  EPD_RESERVED                     = 0b00001110,
-  _5GS_SESSION_MANAGEMENT_MESSAGE  = 0b00101110,
-  _5GS_MOBILITY_MANAGEMENT_MESSAGE = 0b01111110
+enum class EpdValues {
+  k5gsSessionManagementMessages  = 0b00101110,
+  k5gsMobilityManagementMessages = 0b01111110
 };
 
 #endif

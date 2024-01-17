@@ -19,29 +19,40 @@
  *      contact@openairinterface.org
  */
 
-#ifndef _IDENTITY_REQUEST_H_
-#define _IDENTITY_REQUEST_H_
+#ifndef _SERVICE_AREA_LIST_H_
+#define _SERVICE_AREA_LIST_H_
 
-#include "NasIeHeader.hpp"
+#include <vector>
+
+#include "Type4NasIe.hpp"
+#include "Struct.hpp"
+
+constexpr uint8_t kServiceAreaListMinimumLength        = 6;
+constexpr uint8_t kServiceAreaListMaximumLength        = 114;
+constexpr uint8_t kServiceAreaListMaximumSupportedTAIs = 16;
+constexpr auto kServiceAreaListIeName                  = "Service Area List";
 
 namespace nas {
 
-class IdentityRequest : public NasMmPlainHeader {
+class ServiceAreaList : public Type4NasIe {
  public:
-  IdentityRequest();
-  ~IdentityRequest();
+  ServiceAreaList();
+  ServiceAreaList(bool iei);
+  ServiceAreaList(const std::vector<service_area_list_ie_t>& list);
 
   int Encode(uint8_t* buf, int len);
-  int Decode(uint8_t* buf, int len);
+  // TODO: int Decode(uint8_t* buf, int len);
 
-  void SetHeader(uint8_t security_header_type);
+  static std::string GetIeName() { return kServiceAreaListIeName; }
 
-  void Set5gsIdentityType(uint8_t value);
-  // TODO: Get
+ private:
+  std::vector<service_area_list_ie_t> ie_list_;
 
- public:
-  _5gsIdentityType ie_5gs_identity_type;  // Mandatory
-  // Spare half octet (Mandatory)
+ private:
+  int encode_00_type(service_area_list_ie_t item, uint8_t* buf, int len);
+  int encode_01_type(service_area_list_ie_t item, uint8_t* buf, int len);
+  int encode_10_type(service_area_list_ie_t item, uint8_t* buf, int len);
+  int encode_11_type(service_area_list_ie_t item, uint8_t* buf, int len);
 };
 
 }  // namespace nas
