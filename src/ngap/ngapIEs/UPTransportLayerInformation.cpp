@@ -21,9 +21,10 @@
 
 #include "UPTransportLayerInformation.hpp"
 
+#include "utils.hpp"
+
 extern "C" {
 #include "Ngap_GTPTunnel.h"
-#include "dynamic_memory_check.h"
 }
 
 namespace ngap {
@@ -70,12 +71,12 @@ bool UpTransportLayerInformation::encode(
       (Ngap_GTPTunnel_t*) calloc(1, sizeof(Ngap_GTPTunnel_t));
   if (!gtptunnel) return false;
   if (!transportLayerAddress.encode(gtptunnel->transportLayerAddress)) {
-    free_wrapper((void**) &gtptunnel);
+    utils::free_wrapper((void**) &gtptunnel);
     return false;
   }
 
   if (!gtpTeid.encode(gtptunnel->gTP_TEID)) {
-    free_wrapper((void**) &gtptunnel);
+    utils::free_wrapper((void**) &gtptunnel);
     return false;
   }
   upTransportLayerInfo.choice.gTPTunnel = gtptunnel;

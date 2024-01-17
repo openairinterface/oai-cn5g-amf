@@ -17,7 +17,7 @@
 #include "amf_app.hpp"
 #include "amf_sbi.hpp"
 #include "pdu_session_context.hpp"
-#include "conversions.hpp"
+#include "amf_conversions.hpp"
 #include "output_wrapper.hpp"
 
 using namespace amf_application;
@@ -120,7 +120,7 @@ void N1N2MessageCollectionDocumentApiImpl::n1_n2_message_transfer(
           return;
         }
 
-        conv::msg_str_2_msg_hex(parts[n2_content_id].body, n2sm);
+        amf_conv::msg_str_2_msg_hex(parts[n2_content_id].body, n2sm);
         // Store N2 SM in PDU Session Context
         psc->n2sm              = bstrcpy(n2sm);
         psc->is_n2sm_avaliable = true;
@@ -165,8 +165,8 @@ void N1N2MessageCollectionDocumentApiImpl::n1_n2_message_transfer(
         itti_msg->n2sm_info_type = ngap_type;
 
         // NRPPA PDU
-        conv::msg_str_2_msg_hex(parts[n2_content_id].body, nrppa_pdu);
-        conv::string_2_bstring(
+        amf_conv::msg_str_2_msg_hex(parts[n2_content_id].body, nrppa_pdu);
+        amf_conv::string_2_bstring(
             n1N2MessageTransferReqData.getN2InfoContainer()
                 .getNrppaInfo()
                 .getNfId(),
@@ -225,7 +225,7 @@ void N1N2MessageCollectionDocumentApiImpl::n1_n2_message_transfer(
           return;
         }
 
-        conv::msg_str_2_msg_hex(
+        amf_conv::msg_str_2_msg_hex(
             parts[n1_content_id].body.substr(
                 0, parts[n1_content_id].body.length()),
             n1sm);
@@ -299,10 +299,10 @@ void N1N2MessageCollectionDocumentApiImpl::n1_n2_message_transfer(
         itti_msg->get_msg_name());
   }
 
-  bdestroy_wrapper(&n1sm);
-  bdestroy_wrapper(&n2sm);
-  bdestroy_wrapper(&nrppa_pdu);
-  bdestroy_wrapper(&routing_id);
+  utils::bdestroy_wrapper(&n1sm);
+  utils::bdestroy_wrapper(&n2sm);
+  utils::bdestroy_wrapper(&nrppa_pdu);
+  utils::bdestroy_wrapper(&routing_id);
 }
 
 void N1N2MessageCollectionDocumentApiImpl::send_response(

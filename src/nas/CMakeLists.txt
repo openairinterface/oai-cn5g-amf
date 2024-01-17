@@ -41,3 +41,5 @@ target_include_directories(AMF_NAS PUBLIC ${SRC_TOP_DIR}/secu_algorithms/nas_enc
 target_include_directories(AMF_NAS PUBLIC ${SRC_TOP_DIR}/utils)
 target_include_directories(AMF_NAS PUBLIC ${SRC_TOP_DIR}/utils/bstr)
 target_include_directories(AMF_NAS PUBLIC ${SRC_TOP_DIR}/${MOUNTED_COMMON}/logger)
+target_include_directories(AMF_NAS PUBLIC ${SRC_TOP_DIR}/${MOUNTED_COMMON}/common)
+target_include_directories(AMF_NAS PUBLIC ${SRC_TOP_DIR}/${MOUNTED_COMMON}/utils)

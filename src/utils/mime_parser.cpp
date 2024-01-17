@@ -26,10 +26,7 @@
 #include "logger.hpp"
 #include "amf.hpp"
 #include <boost/algorithm/string.hpp>
-
-extern "C" {
-#include "dynamic_memory_check.h"
-}
+#include "utils.hpp"
 
 bool mime_parser::parse(const std::string& str) {
   std::string CRLF = "\r\n";
@@ -156,7 +153,7 @@ unsigned char* mime_parser::format_string_as_hex(const std::string& str) {
       "amf_app", "Data (formatted):", data_hex, str_len / 2);
 
   // free memory
-  free_wrapper((void**) &data);
+  utils::free_wrapper((void**) &data);
   return data_hex;
 }
 

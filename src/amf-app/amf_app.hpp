@@ -28,6 +28,8 @@
 #include <shared_mutex>
 #include <string>
 
+#include "N1MessageClass_anyOf.h"
+#include "N2InformationClass_anyOf.h"
 #include "ProblemDetails.h"
 #include "UeN1N2InfoSubscriptionCreateData.h"
 #include "amf_config.hpp"
@@ -39,8 +41,6 @@
 #include "itti_msg_sbi.hpp"
 #include "ue_context.hpp"
 #include "uint_generator.hpp"
-#include "N1MessageClass_anyOf.h"
-#include "N2InformationClass_anyOf.h"
 
 using namespace oai::config;
 
@@ -250,7 +250,7 @@ class amf_app {
    * @param [const std::string&] supi: UE SUPI
    * @return true if UE context exist and not null, otherwise false
    */
-  bool is_supi_2_ue_context(const string& supi) const;
+  bool is_supi_2_ue_context(const std::string& supi) const;
 
   /*
    * Get UE context associated with a SUPI
@@ -268,7 +268,7 @@ class amf_app {
    * @return void
    */
   void set_supi_2_ue_context(
-      const string& supi, const std::shared_ptr<ue_context>& uc);
+      const std::string& supi, const std::shared_ptr<ue_context>& uc);
 
   /*
    * Find a PDU Session Context associated with a SUPI and a PDU Session ID
@@ -279,7 +279,7 @@ class amf_app {
    * @return true if found, otherwise false
    */
   bool find_pdu_session_context(
-      const string& supi, const std::uint8_t pdu_session_id,
+      const std::string& supi, const std::uint8_t pdu_session_id,
       std::shared_ptr<pdu_session_context>& psc);
 
   /*
@@ -290,7 +290,7 @@ class amf_app {
    * @return true if found, otherwise false
    */
   bool get_pdu_sessions_context(
-      const string& supi,
+      const std::string& supi,
       std::vector<std::shared_ptr<pdu_session_context>>& sessions_ctx);
 
   /*
@@ -302,7 +302,7 @@ class amf_app {
    * @return true if success, otherwise false
    */
   bool update_pdu_sessions_context(
-      const string& supi, const uint8_t& pdu_session_id,
+      const std::string& supi, const uint8_t& pdu_session_id,
       const oai::amf::model::SmContextStatusNotification& statusNotification);
 
   /*

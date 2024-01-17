@@ -37,7 +37,7 @@ void N1N2IndividualSubscriptionDocumentApi::setupRoutes() {
 
   Routes::Delete(
       *router,
-      base + amf_cfg.sbi_api_version +
+      base + amf_cfg.sbi.api_version.value_or(DEFAULT_SBI_API_VERSION) +
           "/ue-contexts/:ueContextId/n1-n2-messages/subscriptions/"
           ":subscriptionId",
       Routes::bind(

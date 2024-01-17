@@ -32,6 +32,7 @@
 #include "PduSessionResourceModifyResponse.hpp"
 #include "amf_app.hpp"
 #include "amf_n1.hpp"
+#include "amf_conversions.hpp"
 #include "itti_msg_sbi.hpp"
 #include "itti_msg_n2.hpp"
 #include "logger.hpp"
@@ -436,7 +437,7 @@ int ngap_amf_handle_pdu_session_resource_setup_response(
           "No UE NAS context with amf_ue_ngap_id (0x%x)", amf_ue_ngap_id);
       return RETURNerror;
     }
-    itti_msg->supi           = conv::imsi_to_supi(nct->imsi);
+    itti_msg->supi           = amf_conv::imsi_to_supi(nct->imsi);
     itti_msg->pdu_session_id = list[0].pduSessionId;
     itti_msg->n2sm           = blk2bstr(
         list[0].pduSessionResourceSetupResponseTransfer.buf,
@@ -489,7 +490,7 @@ int ngap_amf_handle_pdu_session_resource_setup_response(
         return RETURNerror;
       }
 
-      string supi                              = conv::imsi_to_supi(nct->imsi);
+      std::string supi = amf_conv::imsi_to_supi(nct->imsi);
       std::shared_ptr<pdu_session_context> psc = {};
       if (amf_app_inst->find_pdu_session_context(
               supi, list_fail[0].pduSessionId, psc)) {
@@ -1237,8 +1238,10 @@ int uplink_ue_associated_nrppa_transport(
   itti_msg->stream         = stream;
   itti_msg->amf_ue_ngap_id = nrppa_msg.getAmfUeNgapId();
   itti_msg->ran_ue_ngap_id = nrppa_msg.getRanUeNgapId();
-  conv::octet_string_2_bstring(nrppa_msg.getNRPPaPdu(), itti_msg->nrppa_pdu);
-  conv::octet_string_2_bstring(nrppa_msg.getRoutingId(), itti_msg->routing_id);
+  amf_conv::octet_string_2_bstring(
+      nrppa_msg.getNRPPaPdu(), itti_msg->nrppa_pdu);
+  amf_conv::octet_string_2_bstring(
+      nrppa_msg.getRoutingId(), itti_msg->routing_id);
 
   int ret = itti_inst->send_msg(itti_msg);
   if (0 != ret) {

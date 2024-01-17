@@ -35,6 +35,8 @@ include_directories(${SRC_TOP_DIR}/secu_algorithms/nas_enc_int)
 include_directories(${SRC_TOP_DIR}/utils)
 include_directories(${SRC_TOP_DIR}/utils/bstr)
 include_directories(${SRC_TOP_DIR}/${MOUNTED_COMMON}/logger)
+include_directories(${SRC_TOP_DIR}/${MOUNTED_COMMON}/common)
+include_directories(${SRC_TOP_DIR}/${MOUNTED_COMMON}/utils)
 
 add_library (CONTEXTS STATIC
   ${CMAKE_CURRENT_SOURCE_DIR}/nas_context.cpp

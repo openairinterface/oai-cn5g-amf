@@ -41,7 +41,7 @@ void N1MessageNotifyApi::setupRoutes() {
 
   Routes::Post(
       *router,
-      base + amf_cfg.sbi_api_version +
+      base + amf_cfg.sbi.api_version.value_or(DEFAULT_SBI_API_VERSION) +
           "/ue-contexts/:ueContextId/n1-message-notify",
       Routes::bind(&N1MessageNotifyApi::n1_message_notify_handler, this));
 

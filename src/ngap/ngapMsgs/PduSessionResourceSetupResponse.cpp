@@ -22,10 +22,7 @@
 #include "PduSessionResourceSetupResponse.hpp"
 
 #include "logger.hpp"
-
-extern "C" {
-#include "dynamic_memory_check.h"
-}
+#include "utils.hpp"
 
 namespace ngap {
 
@@ -66,7 +63,7 @@ void PduSessionResourceSetupResponseMsg::setAmfUeNgapId(
   int ret = amfUeNgapId.encode(ie->value.choice.AMF_UE_NGAP_ID);
   if (!ret) {
     Logger::ngap().error("Encode NGAP AMF_UE_NGAP_ID IE error");
-    free_wrapper((void**) &ie);
+    utils::free_wrapper((void**) &ie);
     return;
   }
 
@@ -91,7 +88,7 @@ void PduSessionResourceSetupResponseMsg::setRanUeNgapId(
   int ret = ranUeNgapId.encode(ie->value.choice.RAN_UE_NGAP_ID);
   if (!ret) {
     Logger::ngap().error("Encode NGAP RAN_UE_NGAP_ID IE error");
-    free_wrapper((void**) &ie);
+    utils::free_wrapper((void**) &ie);
     return;
   }
 

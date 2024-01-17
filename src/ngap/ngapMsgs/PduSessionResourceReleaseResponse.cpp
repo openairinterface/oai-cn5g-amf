@@ -22,12 +22,7 @@
 #include "PduSessionResourceReleaseResponse.hpp"
 
 #include "logger.hpp"
-
-extern "C" {
-#include "dynamic_memory_check.h"
-}
-
-using namespace std;
+#include "utils.hpp"
 
 namespace ngap {
 
@@ -68,7 +63,7 @@ void PduSessionResourceReleaseResponseMsg::setAmfUeNgapId(
   int ret = amfUeNgapId.encode(ie->value.choice.AMF_UE_NGAP_ID);
   if (!ret) {
     Logger::nas_mm().warn("Encode AMF_UE_NGAP_ID IE error");
-    free_wrapper((void**) &ie);
+    utils::free_wrapper((void**) &ie);
     return;
   }
 
@@ -93,7 +88,7 @@ void PduSessionResourceReleaseResponseMsg::setRanUeNgapId(
   int ret = ranUeNgapId.encode(ie->value.choice.RAN_UE_NGAP_ID);
   if (!ret) {
     Logger::nas_mm().warn("Encode RAN_UE_NGAP_ID IE error");
-    free_wrapper((void**) &ie);
+    utils::free_wrapper((void**) &ie);
     return;
   }
 
@@ -132,7 +127,7 @@ void PduSessionResourceReleaseResponseMsg::setPduSessionResourceReleasedList(
   if (!ret) {
     Logger::nas_mm().warn(
         "Encode PDUSessionResourceReleasedListRelRes IE error");
-    free_wrapper((void**) &ie);
+    utils::free_wrapper((void**) &ie);
     return;
   }
 
@@ -188,7 +183,7 @@ void PduSessionResourceReleaseResponseMsg::setUserLocationInfoNR(
       ie->value.choice.UserLocationInformation);
   if (!ret) {
     Logger::nas_mm().warn("Encode UserLocationInformation IE error");
-    free_wrapper((void**) &ie);
+    utils::free_wrapper((void**) &ie);
     return;
   }
 
@@ -196,7 +191,7 @@ void PduSessionResourceReleaseResponseMsg::setUserLocationInfoNR(
       &pduSessionResourceReleaseResponseIEs->protocolIEs.list, ie);
   if (ret != 0)
     Logger::nas_mm().warn("Encode UserLocationInformation IE error");
-  // free_wrapper((void**) &ie);
+  // utils::free_wrapper((void**) &ie);
 }
 
 //------------------------------------------------------------------------------

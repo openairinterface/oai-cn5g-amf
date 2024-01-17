@@ -30,21 +30,21 @@ include_directories(${SRC_TOP_DIR}/itti)
 include_directories(${SRC_TOP_DIR}/itti/msgs)
 include_directories(${SRC_TOP_DIR}/sbi/model)
 include_directories(${SRC_TOP_DIR}/${MOUNTED_COMMON}/logger)
+include_directories(${SRC_TOP_DIR}/${MOUNTED_COMMON}/common)
+include_directories(${SRC_TOP_DIR}/${MOUNTED_COMMON}/utils)
 
 include(${BUILD_TOP_DIR}/amf/used_models.cmake)
+include_directories(${SRC_TOP_DIR}/${MOUNTED_COMMON}/common.cmake)
 
 add_library (AMF_UTILS STATIC
  ${CMAKE_CURRENT_SOURCE_DIR}/backtrace.c
- ${CMAKE_CURRENT_SOURCE_DIR}/dynamic_memory_check.c
- ${CMAKE_CURRENT_SOURCE_DIR}/if.cpp
- ${CMAKE_CURRENT_SOURCE_DIR}/string.cpp
  ${CMAKE_CURRENT_SOURCE_DIR}/thread_sched.cpp
  ${CMAKE_CURRENT_SOURCE_DIR}/mime_parser.cpp
  ${CMAKE_CURRENT_SOURCE_DIR}/fqdn.cpp
  ${CMAKE_CURRENT_SOURCE_DIR}/3gpp_conversions.cpp
  ${CMAKE_CURRENT_SOURCE_DIR}/utils.cpp
  ${CMAKE_CURRENT_SOURCE_DIR}/bstr/bstrlib.c 
-  ${CMAKE_CURRENT_SOURCE_DIR}/conversions.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/amf_conversions.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/output_wrapper.cpp
  )
 

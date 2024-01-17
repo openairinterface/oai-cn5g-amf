@@ -22,10 +22,7 @@
 #include "PduSessionResourceReleaseCommand.hpp"
 
 #include "logger.hpp"
-
-extern "C" {
-#include "dynamic_memory_check.h"
-}
+#include "utils.hpp"
 
 namespace ngap {
 
@@ -67,7 +64,7 @@ void PduSessionResourceReleaseCommandMsg::setAmfUeNgapId(
   int ret = amfUeNgapId.encode(ie->value.choice.AMF_UE_NGAP_ID);
   if (!ret) {
     Logger::nas_mm().warn("Encode AMF_UE_NGAP_ID IE error");
-    free_wrapper((void**) &ie);
+    utils::free_wrapper((void**) &ie);
     return;
   }
 
@@ -92,7 +89,7 @@ void PduSessionResourceReleaseCommandMsg::setRanUeNgapId(
   int ret = ranUeNgapId.encode(ie->value.choice.RAN_UE_NGAP_ID);
   if (!ret) {
     Logger::nas_mm().warn("Encode RAN_UE_NGAP_ID IE error");
-    free_wrapper((void**) &ie);
+    utils::free_wrapper((void**) &ie);
     return;
   }
 
@@ -120,7 +117,7 @@ void PduSessionResourceReleaseCommandMsg::setRanPagingPriority(
       ranPagingPriority.value().encode(ie->value.choice.RANPagingPriority);
   if (!ret) {
     Logger::nas_mm().warn("Encode RANPagingPriority IE error");
-    free_wrapper((void**) &ie);
+    utils::free_wrapper((void**) &ie);
     return;
   }
 
@@ -154,7 +151,7 @@ void PduSessionResourceReleaseCommandMsg::setNasPdu(const bstring& pdu) {
   int ret = nasPdu.value().encode(ie->value.choice.NAS_PDU);
   if (!ret) {
     Logger::nas_mm().warn("encode NAS_PDU IE error");
-    free_wrapper((void**) &ie);
+    utils::free_wrapper((void**) &ie);
     return;
   }
 

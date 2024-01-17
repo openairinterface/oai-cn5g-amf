@@ -21,7 +21,7 @@
 
 #include "NasPdu.hpp"
 
-#include "conversions.hpp"
+#include "amf_conversions.hpp"
 
 namespace ngap {
 
@@ -33,13 +33,13 @@ NasPdu::~NasPdu() {}
 
 //------------------------------------------------------------------------------
 bool NasPdu::encode(Ngap_NAS_PDU_t& nas_pdu) {
-  return conv::bstring_2_octet_string(pdu_bstring, nas_pdu);
+  return amf_conv::bstring_2_octet_string(pdu_bstring, nas_pdu);
 }
 
 //------------------------------------------------------------------------------
 bool NasPdu::decode(const Ngap_NAS_PDU_t& nas_pdu) {
   if (!nas_pdu.buf) return false;
-  return conv::octet_string_2_bstring(nas_pdu, pdu_bstring);
+  return amf_conv::octet_string_2_bstring(nas_pdu, pdu_bstring);
 }
 /*
 
@@ -61,13 +61,13 @@ void NasPdu::set(uint8_t* buffer, size_t size) {
 
 //------------------------------------------------------------------------------
 bool NasPdu::get(OCTET_STRING_t& pdu) const {
-  conv::bstring_2_octet_string(pdu_bstring, pdu);
+  amf_conv::bstring_2_octet_string(pdu_bstring, pdu);
   return true;
 }
 
 //------------------------------------------------------------------------------
 bool NasPdu::set(const OCTET_STRING_t& pdu) {
-  conv::octet_string_2_bstring(pdu, pdu_bstring);
+  amf_conv::octet_string_2_bstring(pdu, pdu_bstring);
   return true;
 }
 

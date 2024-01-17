@@ -35,10 +35,7 @@
 #include "SmContextStatusNotification.h"
 #include "PatchItem.h"
 #include "3gpp_29.500.h"
-
-extern "C" {
-#include "dynamic_memory_check.h"
-}
+#include "utils.hpp"
 
 using namespace amf_application;
 
@@ -88,8 +85,8 @@ class itti_nsmf_pdusession_create_sm_context : public itti_msg_n11 {
     plmn        = {};
   }
   virtual ~itti_nsmf_pdusession_create_sm_context() {
-    bdestroy_wrapper(&dnn);
-    bdestroy_wrapper(&sm_msg);
+    utils::bdestroy_wrapper(&dnn);
+    utils::bdestroy_wrapper(&sm_msg);
   }
 
  public:
@@ -116,7 +113,7 @@ class itti_pdu_session_resource_setup_response : public itti_msg_n11 {
     n2sm           = i.n2sm;
   }
   virtual ~itti_pdu_session_resource_setup_response() {
-    bdestroy_wrapper(&n2sm);
+    utils::bdestroy_wrapper(&n2sm);
   }
 
  public:
@@ -156,7 +153,9 @@ class itti_nsmf_pdusession_update_sm_context : public itti_msg_n11 {
     ho_state       = i.ho_state;
     up_cnx_state   = i.up_cnx_state;
   }
-  virtual ~itti_nsmf_pdusession_update_sm_context() { bdestroy_wrapper(&n2sm); }
+  virtual ~itti_nsmf_pdusession_update_sm_context() {
+    utils::bdestroy_wrapper(&n2sm);
+  }
 
  public:
   std::string supi;
@@ -356,7 +355,7 @@ class itti_sbi_n1_message_notify : public itti_sbi_msg {
     registration_request = nullptr;
   }
   virtual ~itti_sbi_n1_message_notify() {
-    bdestroy_wrapper(&registration_request);
+    utils::bdestroy_wrapper(&registration_request);
   };
 
   const char* get_msg_name() { return "SBI_N1_MESSAGE_NOTIFY"; };
@@ -377,8 +376,8 @@ class itti_sbi_n2_info_notify : public itti_sbi_msg {
     n2_info              = std::nullopt;
   }
   virtual ~itti_sbi_n2_info_notify() {
-    if (n1_message.has_value()) bdestroy_wrapper(&n1_message.value());
-    if (n2_info.has_value()) bdestroy_wrapper(&n2_info.value());
+    if (n1_message.has_value()) utils::bdestroy_wrapper(&n1_message.value());
+    if (n2_info.has_value()) utils::bdestroy_wrapper(&n2_info.value());
   };
 
   const char* get_msg_name() { return "SBI_N2_INFO_NOTIFY"; };

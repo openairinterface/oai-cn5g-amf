@@ -21,7 +21,7 @@
 
 #include "PduSessionResourceFailedToSetupItemSURes.hpp"
 
-#include "conversions.hpp"
+#include "amf_conversions.hpp"
 
 namespace ngap {
 
@@ -54,7 +54,7 @@ bool PduSessionResourceFailedToSetupItemSURes::encode(
         pdu_session_resource_item) {
   if (!pdu_session_id_.encode(pdu_session_resource_item.pDUSessionID))
     return false;
-  conv::octet_string_copy(
+  amf_conv::octet_string_copy(
       pdu_session_resource_item.pDUSessionResourceSetupUnsuccessfulTransfer,
       pdu_session_resource_setup_unsuccessful_transfer_);
 
@@ -67,7 +67,7 @@ bool PduSessionResourceFailedToSetupItemSURes::decode(
         pdu_session_resource_item) {
   if (!pdu_session_id_.decode(pdu_session_resource_item.pDUSessionID))
     return false;
-  conv::octet_string_copy(
+  amf_conv::octet_string_copy(
       pdu_session_resource_setup_unsuccessful_transfer_,
       pdu_session_resource_item.pDUSessionResourceSetupUnsuccessfulTransfer);
   return true;

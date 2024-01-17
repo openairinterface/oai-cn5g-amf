@@ -26,8 +26,8 @@ using namespace nas;
 //------------------------------------------------------------------------------
 ConfigurationUpdateCommand::ConfigurationUpdateCommand()
     : NasMmPlainHeader(EPD_5GS_MM_MSG, CONFIGURATION_UPDATE_COMMAND) {
-  full_name_for_network  = nullopt;
-  short_name_for_network = nullopt;
+  full_name_for_network  = std::nullopt;
+  short_name_for_network = std::nullopt;
 }
 
 //------------------------------------------------------------------------------

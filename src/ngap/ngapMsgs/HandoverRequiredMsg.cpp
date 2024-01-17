@@ -21,12 +21,9 @@
 
 #include "HandoverRequiredMsg.hpp"
 
-#include "conversions.hpp"
+#include "amf_conversions.hpp"
 #include "logger.hpp"
-
-extern "C" {
-#include "dynamic_memory_check.h"
-}
+#include "utils.hpp"
 
 namespace ngap {
 
@@ -61,7 +58,7 @@ void HandoverRequiredMsg::setAmfUeNgapId(const unsigned long& id) {
   int ret = amfUeNgapId.encode(ie->value.choice.AMF_UE_NGAP_ID);
   if (!ret) {
     Logger::ngap().error("Encode AMF_UE_NGAP_ID IE error!");
-    free_wrapper((void**) &ie);
+    utils::free_wrapper((void**) &ie);
     return;
   }
 
@@ -82,7 +79,7 @@ void HandoverRequiredMsg::setRanUeNgapId(const uint32_t& ran_ue_ngap_id) {
   int ret = ranUeNgapId.encode(ie->value.choice.RAN_UE_NGAP_ID);
   if (!ret) {
     Logger::ngap().error("Encode RAN_UE_NGAP_ID IE error!");
-    free_wrapper((void**) &ie);
+    utils::free_wrapper((void**) &ie);
     return;
   }
 
@@ -271,7 +268,7 @@ bool HandoverRequiredMsg::decode(Ngap_NGAP_PDU_t* ngapMsgPdu) {
                 Ngap_Criticality_reject &&
             handoverRequiredIEs->protocolIEs.list.array[i]->value.present ==
                 Ngap_HandoverRequiredIEs__value_PR_SourceToTarget_TransparentContainer) {
-          conv::octet_string_copy(
+          amf_conv::octet_string_copy(
               sourceToTarget_TransparentContainer,
               handoverRequiredIEs->protocolIEs.list.array[i]
                   ->value.choice.SourceToTarget_TransparentContainer);
