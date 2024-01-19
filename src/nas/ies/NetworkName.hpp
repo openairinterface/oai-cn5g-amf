@@ -53,7 +53,7 @@ class NetworkName {
   void setTextString(const bstring& str);
 
   int Encode(uint8_t* buf, int len);
-  int decodefrombuffer(uint8_t* buf, int len, bool is_option = true);
+  int Decode(uint8_t* buf, int len, bool is_option = true);
 
  private:
   uint8_t iei_;

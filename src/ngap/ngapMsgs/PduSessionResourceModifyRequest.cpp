@@ -21,12 +21,9 @@
 
 #include "PduSessionResourceModifyRequest.hpp"
 
-#include "conversions.hpp"
+#include "amf_conversions.hpp"
 #include "logger.hpp"
-
-extern "C" {
-#include "dynamic_memory_check.h"
-}
+#include "utils.hpp"
 
 namespace ngap {
 
@@ -65,7 +62,7 @@ void PduSessionResourceModifyRequestMsg::setAmfUeNgapId(
   int ret = amfUeNgapId.encode(ie->value.choice.AMF_UE_NGAP_ID);
   if (!ret) {
     Logger::ngap().error("Encode NGAP AMF_UE_NGAP_ID IE error");
-    free_wrapper((void**) &ie);
+    utils::free_wrapper((void**) &ie);
     return;
   }
 
@@ -90,7 +87,7 @@ void PduSessionResourceModifyRequestMsg::setRanUeNgapId(
   int ret = ranUeNgapId.encode(ie->value.choice.RAN_UE_NGAP_ID);
   if (!ret) {
     Logger::ngap().error("Encode NGAP RAN_UE_NGAP_ID IE error");
-    free_wrapper((void**) &ie);
+    utils::free_wrapper((void**) &ie);
     return;
   }
 
@@ -117,7 +114,7 @@ void PduSessionResourceModifyRequestMsg::setRanPagingPriority(
   int ret = ranPagingPriority->encode(ie->value.choice.RANPagingPriority);
   if (!ret) {
     Logger::ngap().error("Encode NGAP RANPagingPriority IE error");
-    free_wrapper((void**) &ie);
+    utils::free_wrapper((void**) &ie);
     return;
   }
 
@@ -142,7 +139,7 @@ void PduSessionResourceModifyRequestMsg::setPduSessionResourceModifyRequestList(
     PduSessionId pDUSessionID = {};
     pDUSessionID.set(list[i].pduSessionId);
     NasPdu nAS_PDU = {};
-    if (conv::check_bstring(list[i].nas_pdu)) {
+    if (amf_conv::check_bstring(list[i].nas_pdu)) {
       nAS_PDU.set(list[i].nas_pdu);
     }
     std::optional<S_NSSAI> s_NSSAI = std::nullopt;
@@ -176,7 +173,7 @@ void PduSessionResourceModifyRequestMsg::setPduSessionResourceModifyRequestList(
   if (!ret) {
     Logger::ngap().error(
         "Encode NGAP PDUSessionResourceModifyListModReq IE error");
-    free_wrapper((void**) &ie);
+    utils::free_wrapper((void**) &ie);
     return;
   }
 

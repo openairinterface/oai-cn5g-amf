@@ -18,56 +18,31 @@
  * For more information about the OpenAirInterface (OAI) Software Alliance:
  *      contact@openairinterface.org
  */
-#include "string.hpp"
 
-#include <stdarg.h>
+#ifndef __5GMM_STATUS_H_
+#define __5GMM_STATUS_H_
 
-#include <algorithm>
-#include <cctype>
-#include <functional>
-#include <locale>
+#include "NasIeHeader.hpp"
 
-template<class T>
-class Buffer {
+namespace nas {
+
+class _5gmmStatus : public NasMmPlainHeader {
  public:
-  explicit Buffer(size_t size) {
-    msize = size;
-    mbuf  = new T[msize];
-  }
-  ~Buffer() {
-    if (mbuf) delete[] mbuf;
-  }
-  T* get() { return mbuf; }
+  _5gmmStatus();
+  ~_5gmmStatus();
 
- private:
-  Buffer();
-  size_t msize;
-  T* mbuf;
+  int Encode(uint8_t* buf, int len);
+  int Decode(uint8_t* buf, int len);
+
+  void SetHeader(uint8_t security_header_type);
+
+  void Set5gmmCause(uint8_t value);
+  uint8_t Get5gmmCause() const;
+
+ public:
+  _5gmmCause ie_5gmm_cause;  // Mandatory
 };
 
-// Licence : https://creativecommons.org/licenses/by-sa/4.0/legalcode
-// https://stackoverflow.com/questions/216823/whats-the-best-way-to-trim-stdstring#217605
+}  // namespace nas
 
-// trim from start
-std::string& util::ltrim(std::string& s) {
-  s.erase(
-      s.begin(),
-      std::find_if(
-          s.begin(), s.end(), std::not1(std::ptr_fun<int, int>(std::isspace))));
-  return s;
-}
-
-// trim from end
-std::string& util::rtrim(std::string& s) {
-  s.erase(
-      std::find_if(
-          s.rbegin(), s.rend(), std::not1(std::ptr_fun<int, int>(std::isspace)))
-          .base(),
-      s.end());
-  return s;
-}
-
-// trim from both ends
-std::string& util::trim(std::string& s) {
-  return util::ltrim(util::rtrim(s));
-}
+#endif

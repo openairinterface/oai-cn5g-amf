@@ -21,12 +21,9 @@
 
 #include "UERadioCapabilityInfoIndication.hpp"
 
-#include "conversions.hpp"
+#include "amf_conversions.hpp"
 #include "logger.hpp"
-
-extern "C" {
-#include "dynamic_memory_check.h"
-}
+#include "utils.hpp"
 
 namespace ngap {
 
@@ -66,7 +63,7 @@ void UeRadioCapabilityInfoIndicationMsg::setAmfUeNgapId(
   int ret = amfUeNgapId.encode(ie->value.choice.AMF_UE_NGAP_ID);
   if (!ret) {
     Logger::ngap().error("Encode NGAP AMF_UE_NGAP_ID IE error");
-    free_wrapper((void**) &ie);
+    utils::free_wrapper((void**) &ie);
     return;
   }
 
@@ -91,7 +88,7 @@ void UeRadioCapabilityInfoIndicationMsg::setRanUeNgapId(
   int ret = ranUeNgapId.encode(ie->value.choice.RAN_UE_NGAP_ID);
   if (!ret) {
     Logger::ngap().error("Encode NGAP RAN_UE_NGAP_ID IE error");
-    free_wrapper((void**) &ie);
+    utils::free_wrapper((void**) &ie);
     return;
   }
 
@@ -115,7 +112,7 @@ void UeRadioCapabilityInfoIndicationMsg::setUERadioCapability(
 
   if (!ueRadioCapability.encode(ie->value.choice.UERadioCapability)) {
     Logger::ngap().error("Encode NGAP UERadioCapability IE error");
-    free_wrapper((void**) &ie);
+    utils::free_wrapper((void**) &ie);
     return;
   }
 
@@ -134,16 +131,17 @@ void UeRadioCapabilityInfoIndicationMsg::getUERadioCapability(
 void UeRadioCapabilityInfoIndicationMsg::setUERadioCapabilityForPaging(
     const OCTET_STRING_t& ue_radio_capability_for_paging_of_nr,
     const OCTET_STRING_t& ue_radio_capability_for_paging_of_eutra) {
-  if (!(conv::check_octet_string(ue_radio_capability_for_paging_of_nr) or
-        conv::check_octet_string(ue_radio_capability_for_paging_of_eutra))) {
+  if (!(amf_conv::check_octet_string(ue_radio_capability_for_paging_of_nr) or
+        amf_conv::check_octet_string(
+            ue_radio_capability_for_paging_of_eutra))) {
     return;
   }
   UERadioCapabilityForPaging tmp = {};
 
-  if (conv::check_octet_string(ue_radio_capability_for_paging_of_nr)) {
+  if (amf_conv::check_octet_string(ue_radio_capability_for_paging_of_nr)) {
     tmp.setUERadioCapabilityForPagingOfNR(ue_radio_capability_for_paging_of_nr);
   }
-  if (conv::check_octet_string(ue_radio_capability_for_paging_of_eutra)) {
+  if (amf_conv::check_octet_string(ue_radio_capability_for_paging_of_eutra)) {
     tmp.setUERadioCapabilityForPagingOfEUTRA(
         ue_radio_capability_for_paging_of_eutra);
   }
@@ -161,7 +159,7 @@ void UeRadioCapabilityInfoIndicationMsg::setUERadioCapabilityForPaging(
       ie->value.choice.UERadioCapabilityForPaging);
   if (!ret) {
     Logger::ngap().error("Encode NGAP UERadioCapabilityForPaging IE error");
-    free_wrapper((void**) &ie);
+    utils::free_wrapper((void**) &ie);
     return;
   }
 

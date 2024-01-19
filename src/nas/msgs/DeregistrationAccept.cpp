@@ -21,6 +21,8 @@
 
 #include "DeregistrationAccept.hpp"
 
+#include "NasHelper.hpp"
+
 using namespace nas;
 
 //------------------------------------------------------------------------------

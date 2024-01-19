@@ -21,13 +21,10 @@
 
 #include "HandoverRequest.hpp"
 
-#include "conversions.hpp"
+#include "amf_conversions.hpp"
 #include "logger.hpp"
 #include "output_wrapper.hpp"
-
-extern "C" {
-#include "dynamic_memory_check.h"
-}
+#include "utils.hpp"
 
 namespace ngap {
 
@@ -157,7 +154,7 @@ void HandoverRequest::setAmfUeNgapId(const unsigned long& id) {
   int ret = amfUeNgapId.encode(ie->value.choice.AMF_UE_NGAP_ID);
   if (!ret) {
     Logger::ngap().error("Encode AMF_UE_NGAP_ID IE error");
-    free_wrapper((void**) &ie);
+    utils::free_wrapper((void**) &ie);
     return;
   }
 
@@ -305,7 +302,7 @@ void HandoverRequest::setAllowedNSSAI(std::vector<S_NSSAI>& list) {
 
 //------------------------------------------------------------------------------
 void HandoverRequest::setSecurityContext(const long& count, bstring& nh) {
-  conv::bstring_2_bit_string(nh, securityContext.nextHopNH);
+  amf_conv::bstring_2_bit_string(nh, securityContext.nextHopNH);
   securityContext.nextHopChainingCount = count;
 
   Ngap_HandoverRequestIEs_t* ie =
@@ -349,7 +346,7 @@ void HandoverRequest::setPduSessionResourceSetupList(
       ie->value.choice.PDUSessionResourceSetupListHOReq);
   if (!ret) {
     Logger::ngap().error("Encode PDUSessionResourceSetupListSUReq IE error");
-    free_wrapper((void**) &ie);
+    utils::free_wrapper((void**) &ie);
     return;
   }
 
@@ -361,7 +358,8 @@ void HandoverRequest::setPduSessionResourceSetupList(
 //------------------------------------------------------------------------------
 void HandoverRequest::setSourceToTarget_TransparentContainer(
     const OCTET_STRING_t& sourceTotarget) {
-  conv::octet_string_copy(SourceToTarget_TransparentContainer, sourceTotarget);
+  amf_conv::octet_string_copy(
+      SourceToTarget_TransparentContainer, sourceTotarget);
   Ngap_HandoverRequestIEs_t* ie =
       (Ngap_HandoverRequestIEs_t*) calloc(1, sizeof(Ngap_HandoverRequestIEs_t));
   ie->id          = Ngap_ProtocolIE_ID_id_SourceToTarget_TransparentContainer;
@@ -369,7 +367,7 @@ void HandoverRequest::setSourceToTarget_TransparentContainer(
   ie->value.present =
       Ngap_HandoverRequestIEs__value_PR_SourceToTarget_TransparentContainer;
 
-  conv::octet_string_copy(
+  amf_conv::octet_string_copy(
       ie->value.choice.SourceToTarget_TransparentContainer, sourceTotarget);
   int ret = ASN_SEQUENCE_ADD(&handoverRequestIEs->protocolIEs.list, ie);
   if (ret != 0)

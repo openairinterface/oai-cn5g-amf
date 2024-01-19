@@ -22,10 +22,8 @@
 #include "UEContextReleaseRequest.hpp"
 
 #include "logger.hpp"
+#include "utils.hpp"
 
-extern "C" {
-#include "dynamic_memory_check.h"
-}
 using namespace ngap;
 
 //------------------------------------------------------------------------------
@@ -58,7 +56,7 @@ void UEContextReleaseRequestMsg::setAmfUeNgapId(const unsigned long& id) {
   int ret           = amfUeNgapId.encode(ie->value.choice.AMF_UE_NGAP_ID);
   if (!ret) {
     Logger::ngap().error("Encode NGAP AMF_UE_NGAP_ID IE error");
-    free_wrapper((void**) &ie);
+    utils::free_wrapper((void**) &ie);
     return;
   }
   ret = ASN_SEQUENCE_ADD(&ies->protocolIEs.list, ie);
@@ -78,7 +76,7 @@ void UEContextReleaseRequestMsg::setRanUeNgapId(
   int ret           = ranUeNgapId.encode(ie->value.choice.RAN_UE_NGAP_ID);
   if (!ret) {
     Logger::ngap().error("Encode NGAP RAN_UE_NGAP_ID IE error");
-    free_wrapper((void**) &ie);
+    utils::free_wrapper((void**) &ie);
     return;
   }
   ret = ASN_SEQUENCE_ADD(&ies->protocolIEs.list, ie);
@@ -105,7 +103,7 @@ void UEContextReleaseRequestMsg::setPDUSessionResourceList(
   if (!ret) {
     Logger::ngap().error(
         "Encode NGAP PDUSessionResourceListCxtRelReq IE error");
-    free_wrapper((void**) &ie);
+    utils::free_wrapper((void**) &ie);
     return;
   }
   ret = ASN_SEQUENCE_ADD(&ies->protocolIEs.list, ie);

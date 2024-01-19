@@ -34,6 +34,7 @@
 #include "UeN1N2InfoSubscriptionCreatedData.h"
 #include "amf_config.hpp"
 #include "amf_config_yaml.hpp"
+#include "amf_conversions.hpp"
 #include "amf_n1.hpp"
 #include "amf_n2.hpp"
 #include "amf_sbi.hpp"
@@ -108,84 +109,84 @@ void amf_app_task(void*) {
         Logger::amf_app().debug("Received NAS_SIG_ESTAB_REQ");
         itti_nas_signalling_establishment_request* m =
             dynamic_cast<itti_nas_signalling_establishment_request*>(msg);
-        amf_app_inst->handle_itti_message(ref(*m));
+        amf_app_inst->handle_itti_message(std::ref(*m));
       } break;
 
       case N1N2_MESSAGE_TRANSFER_REQ: {
         Logger::amf_app().debug("Received N1N2_MESSAGE_TRANSFER_REQ");
         itti_n1n2_message_transfer_request* m =
             dynamic_cast<itti_n1n2_message_transfer_request*>(msg);
-        amf_app_inst->handle_itti_message(ref(*m));
+        amf_app_inst->handle_itti_message(std::ref(*m));
       } break;
 
       case NON_UE_N2_MESSAGE_TRANSFER_REQ: {
         Logger::amf_app().debug("Received NON_UE_N2_MESSAGE_TRANSFER_REQ");
         itti_non_ue_n2_message_transfer_request* m =
             dynamic_cast<itti_non_ue_n2_message_transfer_request*>(msg);
-        amf_app_inst->handle_itti_message(ref(*m));
+        amf_app_inst->handle_itti_message(std::ref(*m));
       } break;
 
       case SBI_N1_MESSAGE_NOTIFICATION: {
         Logger::amf_app().debug("Received SBI_N1_MESSAGE_NOTIFICATION");
         itti_sbi_n1_message_notification* m =
             dynamic_cast<itti_sbi_n1_message_notification*>(msg);
-        amf_app_inst->handle_itti_message(ref(*m));
+        amf_app_inst->handle_itti_message(std::ref(*m));
       } break;
 
       case SBI_N1N2_MESSAGE_SUBSCRIBE: {
         Logger::amf_app().debug("Received SBI_N1N2_MESSAGE_SUBSCRIBE");
         itti_sbi_n1n2_message_subscribe* m =
             dynamic_cast<itti_sbi_n1n2_message_subscribe*>(msg);
-        amf_app_inst->handle_itti_message(ref(*m));
+        amf_app_inst->handle_itti_message(std::ref(*m));
       } break;
 
       case SBI_N1N2_MESSAGE_UNSUBSCRIBE: {
         Logger::amf_app().debug("Received SBI_N1N2_MESSAGE_UNSUBSCRIBE");
         itti_sbi_n1n2_message_unsubscribe* m =
             dynamic_cast<itti_sbi_n1n2_message_unsubscribe*>(msg);
-        amf_app_inst->handle_itti_message(ref(*m));
+        amf_app_inst->handle_itti_message(std::ref(*m));
       } break;
 
       case SBI_PDU_SESSION_RELEASE_NOTIF: {
         Logger::amf_app().debug("Received SBI_PDU_SESSION_RELEASE_NOTIF");
         itti_sbi_pdu_session_release_notif* m =
             dynamic_cast<itti_sbi_pdu_session_release_notif*>(msg);
-        amf_app_inst->handle_itti_message(ref(*m));
+        amf_app_inst->handle_itti_message(std::ref(*m));
       } break;
 
       case SBI_AMF_CONFIGURATION: {
         Logger::amf_app().debug("Received SBI_AMF_CONFIGURATION");
         itti_sbi_amf_configuration* m =
             dynamic_cast<itti_sbi_amf_configuration*>(msg);
-        amf_app_inst->handle_itti_message(ref(*m));
+        amf_app_inst->handle_itti_message(std::ref(*m));
       } break;
 
       case SBI_UPDATE_AMF_CONFIGURATION: {
         Logger::amf_app().debug("Received SBI_UPDATE_AMF_CONFIGURATION");
         itti_sbi_update_amf_configuration* m =
             dynamic_cast<itti_sbi_update_amf_configuration*>(msg);
-        amf_app_inst->handle_itti_message(ref(*m));
+        amf_app_inst->handle_itti_message(std::ref(*m));
       } break;
 
       case SBI_REGISTER_NF_INSTANCE_RESPONSE: {
         Logger::amf_app().debug("Received SBI_REGISTER_NF_INSTANCE_RESPONSE");
         itti_sbi_register_nf_instance_response* m =
             dynamic_cast<itti_sbi_register_nf_instance_response*>(msg);
-        amf_app_inst->handle_itti_message(ref(*m));
+        amf_app_inst->handle_itti_message(std::ref(*m));
       } break;
 
       case SBI_UPDATE_NF_INSTANCE_RESPONSE: {
         Logger::amf_app().debug("Received SBI_UPDATE_NF_INSTANCE_RESPONSE");
         itti_sbi_update_nf_instance_response* m =
             dynamic_cast<itti_sbi_update_nf_instance_response*>(msg);
-        amf_app_inst->handle_itti_message(ref(*m));
+        amf_app_inst->handle_itti_message(std::ref(*m));
       } break;
 
       case SBI_DEREGISTER_NF_INSTANCE_RESPONSE: {
         Logger::amf_app().debug("Received SBI_DEREGISTER_NF_INSTANCE_RESPONSE");
         itti_sbi_deregister_nf_instance_response* m =
             dynamic_cast<itti_sbi_deregister_nf_instance_response*>(msg);
-        amf_app_inst->handle_itti_message(ref(*m));
+        amf_app_inst->handle_itti_message(std::ref(*m));
       } break;
 
       case TIME_OUT: {
@@ -241,7 +242,8 @@ long amf_app::generate_amf_ue_ngap_id() {
 }
 
 //------------------------------------------------------------------------------
-bool amf_app::is_ran_amf_id_2_ue_context(const string& ue_context_key) const {
+bool amf_app::is_ran_amf_id_2_ue_context(
+    const std::string& ue_context_key) const {
   std::shared_lock lock(m_ue_ctx_key);
   if (ue_ctx_key.count(ue_context_key) > 0) {
     if (ue_ctx_key.at(ue_context_key) != nullptr) {
@@ -265,13 +267,13 @@ bool amf_app::ran_amf_id_2_ue_context(
 
 //------------------------------------------------------------------------------
 void amf_app::set_ran_amf_id_2_ue_context(
-    const string& ue_context_key, const std::shared_ptr<ue_context>& uc) {
+    const std::string& ue_context_key, const std::shared_ptr<ue_context>& uc) {
   std::unique_lock lock(m_ue_ctx_key);
   ue_ctx_key[ue_context_key] = uc;
 }
 
 //------------------------------------------------------------------------------
-bool amf_app::is_supi_2_ue_context(const string& supi) const {
+bool amf_app::is_supi_2_ue_context(const std::string& supi) const {
   std::shared_lock lock(m_supi2ue_ctx);
   if (supi2ue_ctx.count(supi) > 0) {
     if (supi2ue_ctx.at(supi) != nullptr) {
@@ -295,14 +297,14 @@ bool amf_app::supi_2_ue_context(
 
 //------------------------------------------------------------------------------
 void amf_app::set_supi_2_ue_context(
-    const string& supi, const std::shared_ptr<ue_context>& uc) {
+    const std::string& supi, const std::shared_ptr<ue_context>& uc) {
   std::unique_lock lock(m_supi2ue_ctx);
   supi2ue_ctx[supi] = uc;
 }
 
 //------------------------------------------------------------------------------
 bool amf_app::find_pdu_session_context(
-    const string& supi, const std::uint8_t pdu_session_id,
+    const std::string& supi, const std::uint8_t pdu_session_id,
     std::shared_ptr<pdu_session_context>& psc) {
   std::shared_ptr<ue_context> uc = {};
   if (!supi_2_ue_context(supi, uc)) return false;
@@ -312,7 +314,7 @@ bool amf_app::find_pdu_session_context(
 
 //------------------------------------------------------------------------------
 bool amf_app::get_pdu_sessions_context(
-    const string& supi,
+    const std::string& supi,
     std::vector<std::shared_ptr<pdu_session_context>>& sessions_ctx) {
   std::shared_ptr<ue_context> uc = {};
   if (!supi_2_ue_context(supi, uc)) return false;
@@ -322,7 +324,7 @@ bool amf_app::get_pdu_sessions_context(
 
 //------------------------------------------------------------------------------
 bool amf_app::update_pdu_sessions_context(
-    const string& supi, const uint8_t& pdu_session_id,
+    const std::string& supi, const uint8_t& pdu_session_id,
     const oai::amf::model::SmContextStatusNotification& statusNotification) {
   std::shared_ptr<ue_context> uc = {};
   if (!supi_2_ue_context(supi, uc)) return false;
@@ -459,7 +461,7 @@ void amf_app::handle_itti_message(
 
   // Get UE context, if the context doesn't exist, create a new one
   std::string ue_context_key =
-      conv::get_ue_context_key(itti_msg.ran_ue_ngap_id, amf_ue_ngap_id);
+      amf_conv::get_ue_context_key(itti_msg.ran_ue_ngap_id, amf_ue_ngap_id);
   if (!ran_amf_id_2_ue_context(ue_context_key, uc)) {
     Logger::amf_app().debug(
         "No existing UE Context, Create a new one with ran_amf_id %s",
@@ -500,7 +502,7 @@ void amf_app::handle_itti_message(
   std::string guti   = {};
   bool is_guti_valid = false;
   if (itti_msg.is_5g_s_tmsi_present) {
-    guti = conv::tmsi_to_guti(
+    guti = amf_conv::tmsi_to_guti(
         itti_msg.tai.mcc, itti_msg.tai.mnc, amf_cfg.guami.region_id,
         itti_msg._5g_s_tmsi);
     is_guti_valid = true;
@@ -541,7 +543,7 @@ void amf_app::handle_itti_message(itti_sbi_n1_message_notification& itti_msg) {
   // in N1 Message Notify is actually is RegistrationRequest from UE to the
   // initial AMF)
   bstring n1sm = nullptr;
-  conv::msg_str_2_msg_hex(itti_msg.n1sm, n1sm);
+  amf_conv::msg_str_2_msg_hex(itti_msg.n1sm, n1sm);
 
   // get RegistrationContextContainer including gNB info
   // UE context information, N1 message from UE, AN address
@@ -630,8 +632,8 @@ void amf_app::handle_itti_message(itti_sbi_n1_message_notification& itti_msg) {
     }
   }
 
-  string ue_context_key =
-      conv::get_ue_context_key(ran_ue_ngap_id, amf_ue_ngap_id);
+  std::string ue_context_key =
+      amf_conv::get_ue_context_key(ran_ue_ngap_id, amf_ue_ngap_id);
   if (!ran_amf_id_2_ue_context(ue_context_key, uc)) {
     Logger::amf_app().debug(
         "No existing UE Context associated with UE Context Key %s",
@@ -708,7 +710,7 @@ void amf_app::handle_itti_message(itti_sbi_n1_message_notification& itti_msg) {
         itti_n1_msg->get_msg_name());
   }
 
-  bdestroy_wrapper(&n1sm);
+  utils::bdestroy_wrapper(&n1sm);
   return;
 }
 
@@ -1060,9 +1062,9 @@ uint32_t amf_app::generate_tmsi() {
 
 //------------------------------------------------------------------------------
 bool amf_app::generate_5g_guti(
-    const uint32_t ranid, const long amfid, string& mcc, string& mnc,
+    const uint32_t ranid, const long amfid, std::string& mcc, std::string& mnc,
     uint32_t& tmsi) {
-  string ue_context_key          = conv::get_ue_context_key(ranid, amfid);
+  std::string ue_context_key     = amf_conv::get_ue_context_key(ranid, amfid);
   std::shared_ptr<ue_context> uc = {};
 
   if (!ran_amf_id_2_ue_context(ue_context_key, uc)) {
@@ -1266,9 +1268,10 @@ void amf_app::generate_amf_profile() {
   nf_instance_profile.set_nf_instance_name(amf_cfg.amf_name);
   nf_instance_profile.set_nf_type("AMF");
   nf_instance_profile.set_nf_status("REGISTERED");
-  nf_instance_profile.set_nf_heartBeat_timer(50);
-  nf_instance_profile.set_nf_priority(1);
-  nf_instance_profile.set_nf_capacity(100);
+  nf_instance_profile.set_nf_heartBeat_timer(
+      50);                                   // TODO: remove hardcoded value
+  nf_instance_profile.set_nf_priority(1);    // TODO: remove hardcoded value
+  nf_instance_profile.set_nf_capacity(100);  // TODO: remove hardcoded value
   nf_instance_profile.delete_nf_ipv4_addresses();
   nf_instance_profile.add_nf_ipv4_addresses(amf_cfg.sbi.addr4);
 
@@ -1277,8 +1280,10 @@ void amf_app::generate_amf_profile() {
   nf_service.service_instance_id = "namf_communication";
   nf_service.service_name        = "namf_communication";
   nf_service_version_t version   = {};
-  version.api_version_in_uri     = amf_cfg.sbi_api_version;
-  version.api_full_version       = "1.0.0";  // TODO: to be updated
+  if (amf_cfg.sbi.api_version.has_value())
+    version.api_version_in_uri =
+        amf_cfg.sbi.api_version.value_or(DEFAULT_SBI_API_VERSION);
+  version.api_full_version = "1.0.0";  // TODO: to be updated
   nf_service.versions.push_back(version);
   nf_service.scheme            = "http";
   nf_service.nf_service_status = "REGISTERED";
@@ -1300,8 +1305,9 @@ void amf_app::generate_amf_profile() {
   conv::int_to_string_hex(
       amf_cfg.guami.amf_set_id, info.amf_set_id, AMF_SET_ID_LENGTH);
   for (auto g : amf_cfg.guami_list) {
-    guami_5g_t guami = {};
-    conv::get_amf_id(g.region_id, g.amf_set_id, g.amf_pointer, guami.amf_id);
+    guami_t guami = {};
+    amf_conv::get_amf_id(
+        g.region_id, g.amf_set_id, g.amf_pointer, guami.amf_id);
     guami.plmn.mcc = g.mcc;
     guami.plmn.mnc = g.mnc;
     info.guami_list.push_back(guami);
@@ -1314,7 +1320,7 @@ void amf_app::generate_amf_profile() {
     for (auto s : p.slice_list) {
       snssai_t nssai = {};
       nssai.sST      = s.sst;
-      conv::sd_int_to_string_hex(s.sd, nssai.sD);
+      amf_conv::sd_int_to_string_hex(s.sd, nssai.sD);
       amf_snssai.push_back(nssai);
     }
   }

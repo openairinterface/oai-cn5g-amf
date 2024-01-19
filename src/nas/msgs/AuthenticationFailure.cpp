@@ -21,6 +21,8 @@
 
 #include "AuthenticationFailure.hpp"
 
+#include "NasHelper.hpp"
+
 using namespace nas;
 
 //------------------------------------------------------------------------------
@@ -97,30 +99,15 @@ int AuthenticationFailure::Encode(uint8_t* buf, int len) {
   }
   encoded_size += encoded_ie_size;
 
-  int size = ie_5gmm_cause.Encode(buf + encoded_size, len - encoded_size);
-  if (size != KEncodeDecodeError) {
-    encoded_size += size;
-  } else {
-    Logger::nas_mm().error(
-        "Encoding %s error", _5gmmCause::GetIeName().c_str());
+  if ((encoded_ie_size = NasHelper::Encode(
+           ie_5gmm_cause, buf, len, encoded_size)) == KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
 
-  if (!ie_authentication_failure_parameter.has_value()) {
-    Logger::nas_mm().debug(
-        "IE %s is not available",
-        AuthenticationFailureParameter::GetIeName().c_str());
-  } else {
-    size = ie_authentication_failure_parameter.value().Encode(
-        buf + encoded_size, len - encoded_size);
-    if (size != KEncodeDecodeError) {
-      encoded_size += size;
-    } else {
-      Logger::nas_mm().error(
-          "Encoding %s error",
-          AuthenticationFailureParameter::GetIeName().c_str());
-      return KEncodeDecodeError;
-    }
+  if ((encoded_ie_size = NasHelper::Encode(
+           ie_authentication_failure_parameter, buf, len, encoded_size)) ==
+      KEncodeDecodeError) {
+    return KEncodeDecodeError;
   }
 
   Logger::nas_mm().debug(
@@ -132,26 +119,23 @@ int AuthenticationFailure::Encode(uint8_t* buf, int len) {
 int AuthenticationFailure::Decode(uint8_t* buf, int len) {
   Logger::nas_mm().debug("Decoding AuthenticationFailure message");
 
-  int decoded_size   = 0;
-  int decoded_result = 0;
+  int decoded_size    = 0;
+  int decoded_ie_size = 0;
 
   // Header
-  decoded_result = NasMmPlainHeader::Decode(buf, len);
-  if (decoded_result == KEncodeDecodeError) {
+  decoded_ie_size = NasMmPlainHeader::Decode(buf, len);
+  if (decoded_ie_size == KEncodeDecodeError) {
     Logger::nas_mm().error("Decoding NAS Header error");
     return KEncodeDecodeError;
   }
-  decoded_size += decoded_result;
+  decoded_size += decoded_ie_size;
 
   // 5GMM Cause
-  if ((decoded_result = ie_5gmm_cause.Decode(
-           buf + decoded_size, len - decoded_size, false)) ==
+  if ((decoded_ie_size =
+           NasHelper::Decode(ie_5gmm_cause, buf, len, decoded_size, false)) ==
       KEncodeDecodeError) {
-    Logger::nas_mm().error(
-        "Decoding %s error", _5gmmCause::GetIeName().c_str());
     return KEncodeDecodeError;
   }
-  decoded_size += decoded_result;
 
   Logger::nas_mm().debug("Decoded_size (%d)", decoded_size);
 
@@ -159,21 +143,14 @@ int AuthenticationFailure::Decode(uint8_t* buf, int len) {
   uint8_t octet = 0x00;
   DECODE_U8_VALUE(buf + decoded_size, octet);
   while ((octet != 0x0)) {
-    Logger::nas_mm().debug("IEI 0x%x", octet);
+    Logger::nas_mm().debug("Decoding IEI 0x%x", octet);
     switch (octet) {
       case kIeiAuthenticationFailureParameter: {
-        Logger::nas_mm().debug(
-            "Decoding IEI 0x%x", kIeiAuthenticationFailureParameter);
-        AuthenticationFailureParameter ie_authentication_failure_parameter_tmp =
-            {};
-        if ((decoded_result = ie_authentication_failure_parameter_tmp.Decode(
-                 buf + decoded_size, len - decoded_size, true)) ==
-            KEncodeDecodeError)
+        if ((decoded_ie_size = NasHelper::Decode(
+                 ie_authentication_failure_parameter, buf, len, decoded_size,
+                 true)) == KEncodeDecodeError) {
           return KEncodeDecodeError;
-        decoded_size += decoded_result;
-        ie_authentication_failure_parameter =
-            std::optional<AuthenticationFailureParameter>(
-                ie_authentication_failure_parameter_tmp);
+        }
         DECODE_U8_VALUE(buf + decoded_size, octet);
         Logger::nas_mm().debug("Next IEI (0x%x)", octet);
       } break;

@@ -22,12 +22,9 @@
 #include "NGSetupResponse.hpp"
 
 #include "amf.hpp"
-#include "conversions.hpp"
+#include "amf_conversions.hpp"
 #include "logger.hpp"
-
-extern "C" {
-#include "dynamic_memory_check.h"
-}
+#include "utils.hpp"
 
 namespace ngap {
 
@@ -63,7 +60,7 @@ void NGSetupResponseMsg::setAMFName(const std::string& name) {
 
   if (!amfName.encode(ie->value.choice.AMFName)) {
     Logger::ngap().error("Encode NGAP AMFName IE error");
-    free_wrapper((void**) &ie);
+    utils::free_wrapper((void**) &ie);
     return;
   }
 
@@ -98,7 +95,7 @@ void NGSetupResponseMsg::setGUAMIList(std::vector<struct GuamiItem_s> list) {
 
   if (!servedGUAMIList.encode(ie->value.choice.ServedGUAMIList)) {
     Logger::ngap().error("Encode NGAP ServedGUAMIList IE error");
-    free_wrapper((void**) &ie);
+    utils::free_wrapper((void**) &ie);
     return;
   }
 
@@ -118,7 +115,7 @@ void NGSetupResponseMsg::setRelativeAmfCapacity(long capacity) {
 
   if (!relativeAmfCapacity.encode(ie->value.choice.RelativeAMFCapacity)) {
     Logger::ngap().error("Encode NGAP RelativeAMFCapacity IE error");
-    free_wrapper((void**) &ie);
+    utils::free_wrapper((void**) &ie);
     return;
   }
 
@@ -146,7 +143,7 @@ void NGSetupResponseMsg::setPlmnSupportList(
 
       uint32_t sd = SD_NO_VALUE;
       if (!list[i].slice_list[j].sd.empty()) {
-        conv::sd_string_to_int(list[i].slice_list[j].sd, sd);
+        amf_conv::sd_string_to_int(list[i].slice_list[j].sd, sd);
       }
       snssai.setSd(sd);
       snssais.push_back(snssai);
@@ -165,7 +162,7 @@ void NGSetupResponseMsg::setPlmnSupportList(
 
   if (!plmnSupportList.encode(ie->value.choice.PLMNSupportList)) {
     Logger::ngap().error("Encode NGAP PLMNSupportList IE error");
-    free_wrapper((void**) &ie);
+    utils::free_wrapper((void**) &ie);
     return;
   }
 

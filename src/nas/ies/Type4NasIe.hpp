@@ -36,6 +36,8 @@ class Type4NasIe : public NasIe {
   bool ValidateHeader(const int& len) const;
 
   void SetIei(const uint8_t& iei);
+  void GetIei(std::optional<uint8_t>& iei) const;
+
   void SetLengthIndicator(const uint8_t& li);
   void GetLengthIndicator(uint8_t& li) const;
   uint8_t GetLengthIndicator() const;

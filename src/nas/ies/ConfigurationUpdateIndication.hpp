@@ -4,8 +4,8 @@
  * this work for additional information regarding copyright ownership.
  * The OpenAirInterface Software Alliance licenses this file to You under
  * the OAI Public License, Version 1.1  (the "License"); you may not use this
- *file except in compliance with the License. You may obtain a copy of the
- *License at
+ * file except in compliance with the License. You may obtain a copy of the
+ * License at
  *
  *      http://www.openairinterface.org/?page_id=698
  *
@@ -19,12 +19,43 @@
  *      contact@openairinterface.org
  */
 
-#ifndef FILE_DYNAMIC_MEMORY_CHECK_SEEN
-#define FILE_DYNAMIC_MEMORY_CHECK_SEEN
+#ifndef _CONFIGURATION_UPDATE_INDICATION_H_
+#define _CONFIGURATION_UPDATE_INDICATION_H_
 
-#include "bstrlib.h"
+#include "Type1NasIe.hpp"
 
-void free_wrapper(void** ptr) __attribute__((hot));
-void bdestroy_wrapper(bstring* b);
+constexpr auto kConfigurationUpdateIndicationIeName =
+    "Configuration Update Indication";
 
-#endif /* FILE_DYNAMIC_MEMORY_CHECK_SEEN */
+namespace nas {
+
+class ConfigurationUpdateIndication : public Type1NasIe {
+ public:
+  ConfigurationUpdateIndication();
+  ConfigurationUpdateIndication(bool red, bool ack);
+  ~ConfigurationUpdateIndication();
+
+  static std::string GetIeName() {
+    return kConfigurationUpdateIndicationIeName;
+  }
+
+  void SetRed(bool value);
+  void GetRed(bool& value) const;
+
+  void SetAck(bool value);
+  void GetAck(bool& value) const;
+
+  int Encode(uint8_t* buf, int len);
+  int Decode(uint8_t* buf, int len, bool is_iei);
+
+ private:
+  bool red_;
+  bool ack_;
+
+  void SetValue() override;
+  void GetValue() override;
+};
+
+}  // namespace nas
+
+#endif

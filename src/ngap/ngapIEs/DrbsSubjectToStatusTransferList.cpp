@@ -22,10 +22,7 @@
 #include "DrbsSubjectToStatusTransferList.hpp"
 
 #include "logger.hpp"
-
-extern "C" {
-#include "dynamic_memory_check.h"
-}
+#include "utils.hpp"
 
 namespace ngap {
 //------------------------------------------------------------------------------
@@ -57,7 +54,7 @@ bool DrbSubjectToStatusTransferList::encode(
 
     if (!item.encode(*ie)) {
       Logger::ngap().error("Encode DrbSubjectToStatusTransferList IE error!");
-      free_wrapper((void**) &ie);
+      utils::free_wrapper((void**) &ie);
       return false;
     }
     if (ASN_SEQUENCE_ADD(&dRBsSubjectToStatusTransferList.list, ie) != 0) {

@@ -21,12 +21,9 @@
 
 #include "DownlinkNonUEAssociatedNRPPaTransport.hpp"
 
-#include "conversions.hpp"
+#include "amf_conversions.hpp"
 #include "logger.hpp"
-
-extern "C" {
-#include "dynamic_memory_check.h"
-}
+#include "utils.hpp"
 
 namespace ngap {
 
@@ -86,7 +83,7 @@ bool DownlinkNonUEAssociatedNRPPaTransportMsg::decode(
             downlinkNonUEAssociatedNRPPaTransportIEs->protocolIEs.list.array[i]
                     ->value.present ==
                 Ngap_DownlinkNonUEAssociatedNRPPaTransportIEs__value_PR_RoutingID) {
-          conv::octet_string_2_bstring(
+          amf_conv::octet_string_2_bstring(
               downlinkNonUEAssociatedNRPPaTransportIEs->protocolIEs.list
                   .array[i]
                   ->value.choice.RoutingID,
@@ -103,7 +100,7 @@ bool DownlinkNonUEAssociatedNRPPaTransportMsg::decode(
             downlinkNonUEAssociatedNRPPaTransportIEs->protocolIEs.list.array[i]
                     ->value.present ==
                 Ngap_DownlinkNonUEAssociatedNRPPaTransportIEs__value_PR_NRPPa_PDU) {
-          conv::octet_string_2_bstring(
+          amf_conv::octet_string_2_bstring(
               downlinkNonUEAssociatedNRPPaTransportIEs->protocolIEs.list
                   .array[i]
                   ->value.choice.NRPPa_PDU,
@@ -136,7 +133,7 @@ void DownlinkNonUEAssociatedNRPPaTransportMsg::setRoutingId(
   ie->value.present =
       Ngap_DownlinkNonUEAssociatedNRPPaTransportIEs__value_PR_RoutingID;
 
-  conv::bstring_2_octet_string(routingID, ie->value.choice.RoutingID);
+  amf_conv::bstring_2_octet_string(routingID, ie->value.choice.RoutingID);
 
   int ret = ASN_SEQUENCE_ADD(
       &downlinkNonUEAssociatedNRPPaTransportIEs->protocolIEs.list, ie);
@@ -159,7 +156,7 @@ void DownlinkNonUEAssociatedNRPPaTransportMsg::setNRPPaPdu(const bstring& pdu) {
   ie->value.present =
       Ngap_DownlinkNonUEAssociatedNRPPaTransportIEs__value_PR_NRPPa_PDU;
 
-  conv::bstring_2_octet_string(nRPPaPDU, ie->value.choice.NRPPa_PDU);
+  amf_conv::bstring_2_octet_string(nRPPaPDU, ie->value.choice.NRPPa_PDU);
 
   int ret = ASN_SEQUENCE_ADD(
       &downlinkNonUEAssociatedNRPPaTransportIEs->protocolIEs.list, ie);

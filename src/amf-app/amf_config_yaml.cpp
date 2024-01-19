@@ -21,7 +21,7 @@
 
 #include "amf_config_yaml.hpp"
 
-#include "conversions.hpp"
+#include "amf_conversions.hpp"
 #include "logger.hpp"
 
 namespace oai::config {
@@ -870,9 +870,9 @@ void amf_config_yaml::to_amf_config(amf_config& cfg) {
   // cfg.support_features.use_fqdn_dns = true;
 
   for (const auto& i : amf_local->get_guami_list()) {
-    guami_t guami_item     = {};
-    guami_item.mcc         = i.get_mcc();
-    guami_item.mnc         = i.get_mnc();
+    guami_full_format_t guami_item = {};
+    guami_item.mcc                 = i.get_mcc();
+    guami_item.mnc                 = i.get_mnc();
     guami_item.amf_set_id  = conv::string_hex_to_int(i.get_amf_set_id());
     guami_item.region_id   = conv::string_hex_to_int(i.get_amf_region_id());
     guami_item.amf_pointer = conv::string_hex_to_int(i.get_amf_pointer());
@@ -890,7 +890,7 @@ void amf_config_yaml::to_amf_config(amf_config& cfg) {
       slice.sst      = s.get_sst();
       std::string sd = {};
       if (s.get_sd(sd)) {
-        if (conv::sd_string_hex_to_int(sd, slice.sd)) {
+        if (amf_conv::sd_string_hex_to_int(sd, slice.sd)) {
           // TODO:
         }
       } else {
@@ -915,11 +915,11 @@ void amf_config_yaml::to_amf_config(amf_config& cfg) {
     // get_database_config().get_database_type();
   }
 
-  cfg.sbi_api_version = local().get_sbi().get_api_version();
-  cfg.sbi_http2_port  = local().get_sbi().get_port();
-  cfg.sbi.port        = local().get_sbi().get_port();
-  cfg.sbi.addr4       = local().get_sbi().get_addr4();
-  cfg.sbi.if_name     = local().get_sbi().get_if_name();
+  cfg.sbi.api_version =
+      std::make_optional<std::string>(local().get_sbi().get_api_version());
+  cfg.sbi.port    = local().get_sbi().get_port();
+  cfg.sbi.addr4   = local().get_sbi().get_addr4();
+  cfg.sbi.if_name = local().get_sbi().get_if_name();
 
   cfg.n2.if_name = amf_local->get_n2().get_if_name();
   cfg.n2.addr4   = amf_local->get_n2().get_addr4();

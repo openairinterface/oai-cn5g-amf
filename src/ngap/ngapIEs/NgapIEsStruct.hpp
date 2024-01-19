@@ -100,14 +100,6 @@ typedef struct Tai_s {
   uint32_t tac : 24;
 } Tai_t;
 
-typedef struct Guami_s {
-  std::string mcc;
-  std::string mnc;
-  uint8_t region_id;
-  uint8_t amf_set_id;
-  uint8_t amf_pointer;
-} Guami_t;
-
 typedef struct {
   uint8_t pduSessionId;
   bstring nas_pdu;

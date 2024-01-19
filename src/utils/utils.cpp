@@ -25,6 +25,13 @@
 #include "common_defs.h"
 #include "logger.hpp"
 
+#include <stdlib.h>
+
+extern "C" {
+#include "assertions.h"
+#include "backtrace.h"
+}
+
 //------------------------------------------------------------------------------
 int utils::encodeMccMnc2Buffer(
     const std::string& mcc_str, const std::string& mnc_str, uint8_t* buf,
@@ -102,4 +109,22 @@ int utils::decodeMccMncFromBuffer(
 
   Logger::nas_mm().debug("MCC %s, MNC %s", mcc_str.c_str(), mnc_str.c_str());
   return decoded_size;
+}
+
+//------------------------------------------------------------------------------
+void utils::free_wrapper(void** ptr) {
+  // for debug only
+  AssertFatal(ptr, "Trying to free NULL ptr");
+  if (ptr) {
+    free(*ptr);
+    *ptr = NULL;
+  }
+}
+
+//------------------------------------------------------------------------------
+void utils::bdestroy_wrapper(bstring* b) {
+  if ((b) && (*b)) {
+    bdestroy(*b);
+    *b = NULL;
+  }
 }

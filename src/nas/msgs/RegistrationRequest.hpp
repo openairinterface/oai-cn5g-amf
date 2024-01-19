@@ -28,7 +28,6 @@
 
 #include "NasIeHeader.hpp"
 
-using namespace std;
 namespace nas {
 
 class RegistrationRequest : public NasMmPlainHeader {
@@ -189,6 +188,7 @@ class RegistrationRequest : public NasMmPlainHeader {
   // TODO: Additional information requested (Rel 16.4.1)
   // TODO: Requested WUS assistance information (Rel 16.4.1)
   // TODO: N5GC indication (Rel 16.4.1)
+  // TODO: Requested NB-N1 mode DRX parameters (Rel 16.14.0)
 };
 
 }  // namespace nas

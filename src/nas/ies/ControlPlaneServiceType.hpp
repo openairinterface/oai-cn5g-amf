@@ -19,17 +19,35 @@
  *      contact@openairinterface.org
  */
 
-#ifndef FILE_STRING_HPP_FILE_SEEN
-#define FILE_STRING_HPP_FILE_SEEN
+#ifndef _CONTROL_PLANE_SERVICE_TYPE_H_
+#define _CONTROL_PLANE_SERVICE_TYPE_H_
 
-#include <string>
+#include "Type1NasIe.hpp"
 
-namespace util {
+constexpr auto kControlPlaneServiceTypeIeName = "Control Plane Service Type";
 
-std::string& ltrim(std::string& s);
-// trim from end
-std::string& rtrim(std::string& s);
-// trim from both ends
-std::string& trim(std::string& s);
-}  // namespace util
+namespace nas {
+
+class ControlPlaneServiceType : public Type1NasIe {
+ public:
+  ControlPlaneServiceType();
+  ControlPlaneServiceType(uint8_t value);
+  ~ControlPlaneServiceType();
+
+  static std::string GetIeName() { return kControlPlaneServiceTypeIeName; }
+
+  // int Encode(uint8_t* buf, int len);
+  // int Decode(uint8_t* nuf, int len, bool is_iei, bool is_high);
+
+  void SetValue(uint8_t value);
+  void GetValue(uint8_t& value) const;
+
+ private:
+  void SetValue() override;
+  void GetValue() override;
+  uint8_t service_type_value_;
+};
+
+}  // namespace nas
+
 #endif

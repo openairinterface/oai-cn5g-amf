@@ -21,9 +21,10 @@
 
 #include "GtpTunnel.hpp"
 
+#include "utils.hpp"
+
 extern "C" {
 #include "Ngap_GTPTunnel.h"
-#include "dynamic_memory_check.h"
 }
 
 namespace ngap {

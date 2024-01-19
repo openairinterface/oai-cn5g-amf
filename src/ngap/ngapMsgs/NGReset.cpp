@@ -22,10 +22,7 @@
 #include "NGReset.hpp"
 
 #include "logger.hpp"
-
-extern "C" {
-#include "dynamic_memory_check.h"
-}
+#include "utils.hpp"
 
 namespace ngap {
 
@@ -57,7 +54,7 @@ void NGResetMsg::setCause(const Cause& c) {
 
   if (!cause.encode(ie->value.choice.Cause)) {
     Logger::ngap().error("Encode NGAP Cause IE error");
-    free_wrapper((void**) &ie);
+    utils::free_wrapper((void**) &ie);
     return;
   }
 
@@ -77,7 +74,7 @@ void NGResetMsg::setResetType(const ResetType& r) {
 
   if (!resetType.encode(ie->value.choice.ResetType)) {
     Logger::ngap().error("Encode NGAP ResetType IE error");
-    free_wrapper((void**) &ie);
+    utils::free_wrapper((void**) &ie);
     return;
   }
 

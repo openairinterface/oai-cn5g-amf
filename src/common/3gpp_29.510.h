@@ -34,7 +34,7 @@ static const std::vector<std::string> nf_status_e2str = {
 typedef struct amf_info_s {
   std::string amf_set_id;
   std::string amf_region_id;
-  std::vector<guami_5g_t> guami_list;
+  std::vector<guami_t> guami_list;
 } amf_info_t;
 
 typedef struct dnn_smf_info_item_s {
@@ -103,7 +103,7 @@ typedef struct subscription_condition_s {
     std::string nf_type;
     std::string service_name;
     amf_cond_t amf_info;
-    std::vector<guami_5g_t> guami_list;
+    std::vector<guami_t> guami_list;
     network_slice_cond_t network_slice;
     nf_group_cond_t nf_group;
   };

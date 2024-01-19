@@ -24,10 +24,7 @@
 #include <vector>
 
 #include "logger.hpp"
-
-extern "C" {
-#include "dynamic_memory_check.h"
-}
+#include "utils.hpp"
 
 namespace ngap {
 
@@ -41,7 +38,8 @@ NGResetAckMsg::NGResetAckMsg() {
 }
 //------------------------------------------------------------------------------
 NGResetAckMsg::~NGResetAckMsg() {
-  if (CriticalityDiagnostics) free_wrapper((void**) &CriticalityDiagnostics);
+  if (CriticalityDiagnostics)
+    utils::free_wrapper((void**) &CriticalityDiagnostics);
 }
 
 //------------------------------------------------------------------------------
@@ -82,7 +80,7 @@ void NGResetAckMsg::addUE_associatedLogicalNG_connectionList() {
           ie->value.choice.UE_associatedLogicalNG_connectionList)) {
     Logger::ngap().error(
         "Encode NGAP UE_associatedLogicalNG_connectionList IE error");
-    free_wrapper((void**) &ie);
+    utils::free_wrapper((void**) &ie);
     return;
   }
 

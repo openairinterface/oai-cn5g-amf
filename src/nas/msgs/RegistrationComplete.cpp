@@ -21,6 +21,8 @@
 
 #include "RegistrationComplete.hpp"
 
+#include "NasHelper.hpp"
+
 using namespace nas;
 
 //------------------------------------------------------------------------------
@@ -60,19 +62,10 @@ int RegistrationComplete::Encode(uint8_t* buf, int len) {
   }
   encoded_size += encoded_ie_size;
 
-  if (!ie_sor_transparent_container.has_value()) {
-    Logger::nas_mm().debug(
-        "IE %s is not available", SorTransparentContainer::GetIeName().c_str());
-  } else {
-    encoded_ie_size = ie_sor_transparent_container.value().Encode(
-        buf + encoded_size, len - encoded_size);
-    if (encoded_ie_size != KEncodeDecodeError) {
-      encoded_size += encoded_ie_size;
-    } else {
-      Logger::nas_mm().error(
-          "Encoding %s error", SorTransparentContainer::GetIeName().c_str());
-      return KEncodeDecodeError;
-    }
+  if ((encoded_ie_size = NasHelper::Encode(
+           ie_sor_transparent_container, buf, len, encoded_size)) ==
+      KEncodeDecodeError) {
+    return KEncodeDecodeError;
   }
 
   Logger::nas_mm().debug(
@@ -84,16 +77,16 @@ int RegistrationComplete::Encode(uint8_t* buf, int len) {
 int RegistrationComplete::Decode(uint8_t* buf, int len) {
   Logger::nas_mm().debug("Decoding RegistrationComplete message");
 
-  int decoded_size   = 0;
-  int decoded_result = 0;
+  int decoded_size    = 0;
+  int decoded_ie_size = 0;
 
   // Header
-  decoded_result = NasMmPlainHeader::Decode(buf, len);
-  if (decoded_result == KEncodeDecodeError) {
+  decoded_ie_size = NasMmPlainHeader::Decode(buf, len);
+  if (decoded_ie_size == KEncodeDecodeError) {
     Logger::nas_mm().error("Decoding NAS Header error");
     return KEncodeDecodeError;
   }
-  decoded_size += decoded_result;
+  decoded_size += decoded_ie_size;
 
   Logger::nas_mm().debug("Decoded_size (%d)", decoded_size);
 
@@ -106,14 +99,11 @@ int RegistrationComplete::Decode(uint8_t* buf, int len) {
       case kIeiSorTransparentContainer: {
         Logger::nas_mm().debug(
             "Decoding IEI 0x%x", kIeiSorTransparentContainer);
-        SorTransparentContainer ie_sor_transparent_container_tmp = {};
-        if ((decoded_result = ie_sor_transparent_container_tmp.Decode(
-                 buf + decoded_size, len - decoded_size, true)) ==
-            KEncodeDecodeError)
+        if ((decoded_ie_size = NasHelper::Decode(
+                 ie_sor_transparent_container, buf, len, decoded_size, true)) ==
+            KEncodeDecodeError) {
           return KEncodeDecodeError;
-        decoded_size += decoded_result;
-        ie_sor_transparent_container = std::optional<SorTransparentContainer>(
-            ie_sor_transparent_container_tmp);
+        }
         DECODE_U8_VALUE(buf + decoded_size, octet);
         Logger::nas_mm().debug("Next IEI (0x%x)", octet);
       } break;

@@ -35,6 +35,17 @@ class ConfigurationUpdateCommand : public NasMmPlainHeader {
   void GetSecurityHeaderType(uint8_t security_header_type);
   bool VerifyHeader();
 
+  void SetConfigurationUpdateIndication(
+      const ConfigurationUpdateIndication& configuration_update_indication);
+  void GetConfigurationUpdateIndication(
+      std::optional<ConfigurationUpdateIndication>&
+          configuration_update_indication);
+
+  void Set5gGuti(
+      const std::string& mcc, const std::string& mnc, uint8_t amf_region_id,
+      uint16_t amf_set_id, uint8_t amf_pointer, uint32_t tmsi);
+  // TODO: Get
+
   void SetFullNameForNetwork(const NetworkName& name);
   void SetFullNameForNetwork(const std::string& text_string);
   void GetFullNameForNetwork(std::optional<NetworkName>& name) const;
@@ -48,15 +59,17 @@ class ConfigurationUpdateCommand : public NasMmPlainHeader {
 
  public:
   // Optional
-  // TODO: Configuration update indication
-  // TODO: 5G-GUTI
+  // Configuration update indication
+  std::optional<ConfigurationUpdateIndication>
+      ie_configuration_update_indication;        // Optional
+  std::optional<_5gsMobileIdentity> ie_5g_guti;  // Optional
   // TODO: TAI list
   // TODO: Allowed NSSAI
   // TODO: Service area list
   // Full name for network
-  std::optional<NetworkName> full_name_for_network;
+  std::optional<NetworkName> ie_full_name_for_network;
   // Short name for network
-  std::optional<NetworkName> short_name_for_network;
+  std::optional<NetworkName> ie_short_name_for_network;
   // TODO: Local time zone
   // TODO: Universal time and local time zone
   // TODO: Network daylight saving time
@@ -73,6 +86,7 @@ class ConfigurationUpdateCommand : public NasMmPlainHeader {
   // TODO: UE radio capability ID deletion indication (Rel 16.4.1)
   // TODO: 5GS registration result (Rel 16.4.1)
   // TODO: Truncated 5G-S-TMSI configuration (Rel 16.4.1)
+  // TODO: Additional configuration indication (Rel 16.14.0)
 };
 
 }  // namespace nas

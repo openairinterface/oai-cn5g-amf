@@ -35,6 +35,8 @@
 #include "UplinkRANStatusTransfer.hpp"
 #include "itti_msg.hpp"
 #include "sctp_server.hpp"
+#include "utils.hpp"
+
 using namespace ngap;
 using namespace sctp;
 
@@ -140,7 +142,7 @@ class itti_dl_nas_transport : public itti_msg_n2 {
     amf_ue_ngap_id = i.amf_ue_ngap_id;
     nas            = bstrcpy(i.nas);
   }
-  virtual ~itti_dl_nas_transport() { bdestroy_wrapper(&nas); }
+  virtual ~itti_dl_nas_transport() { utils::bdestroy_wrapper(&nas); }
 
  public:
   uint32_t ran_ue_ngap_id;
@@ -177,9 +179,9 @@ class itti_initial_context_setup_request : public itti_msg_n2 {
     is_n2sm_avaliable = i.is_n2sm_avaliable;
   }
   virtual ~itti_initial_context_setup_request() {
-    bdestroy_wrapper(&kgnb);
-    bdestroy_wrapper(&nas);
-    bdestroy_wrapper(&n2sm);
+    utils::bdestroy_wrapper(&kgnb);
+    utils::bdestroy_wrapper(&nas);
+    utils::bdestroy_wrapper(&n2sm);
   }
 
   uint32_t ran_ue_ngap_id;
@@ -214,8 +216,8 @@ class itti_pdu_session_resource_setup_request : public itti_msg_n2 {
     pdu_session_id = i.pdu_session_id;
   }
   virtual ~itti_pdu_session_resource_setup_request() {
-    bdestroy_wrapper(&nas);
-    bdestroy_wrapper(&n2sm);
+    utils::bdestroy_wrapper(&nas);
+    utils::bdestroy_wrapper(&n2sm);
   }
 
   bstring nas;
@@ -248,8 +250,8 @@ class itti_pdu_session_resource_modify_request : public itti_msg_n2 {
     s_NSSAI        = i.s_NSSAI;
   }
   virtual ~itti_pdu_session_resource_modify_request() {
-    bdestroy_wrapper(&nas);
-    bdestroy_wrapper(&n2sm);
+    utils::bdestroy_wrapper(&nas);
+    utils::bdestroy_wrapper(&n2sm);
   }
 
   bstring nas;
@@ -281,8 +283,8 @@ class itti_pdu_session_resource_release_command : public itti_msg_n2 {
     pdu_session_id = i.pdu_session_id;
   }
   virtual ~itti_pdu_session_resource_release_command() {
-    bdestroy_wrapper(&nas);
-    bdestroy_wrapper(&n2sm);
+    utils::bdestroy_wrapper(&nas);
+    utils::bdestroy_wrapper(&n2sm);
   }
 
   bstring nas;
@@ -478,8 +480,8 @@ class itti_downlink_ue_associated_nrppa_transport : public itti_msg_n2 {
     amf_ue_ngap_id = i.amf_ue_ngap_id;
   }
   virtual ~itti_downlink_ue_associated_nrppa_transport() {
-    bdestroy_wrapper(&nrppa_pdu);
-    bdestroy_wrapper(&routing_id);
+    utils::bdestroy_wrapper(&nrppa_pdu);
+    utils::bdestroy_wrapper(&routing_id);
   };
   uint32_t ran_ue_ngap_id;
   long amf_ue_ngap_id;
@@ -506,8 +508,8 @@ class itti_uplink_ue_associated_nrppa_transport : public itti_msg_n2 {
     amf_ue_ngap_id = i.amf_ue_ngap_id;
   }
   virtual ~itti_uplink_ue_associated_nrppa_transport() {
-    bdestroy_wrapper(&nrppa_pdu);
-    bdestroy_wrapper(&routing_id);
+    utils::bdestroy_wrapper(&nrppa_pdu);
+    utils::bdestroy_wrapper(&routing_id);
   }
 
   uint32_t ran_ue_ngap_id;
@@ -532,8 +534,8 @@ class itti_downlink_non_ue_associated_nrppa_transport : public itti_msg_n2 {
     routing_id = bstrcpy(i.routing_id);
   }
   virtual ~itti_downlink_non_ue_associated_nrppa_transport() {
-    bdestroy_wrapper(&nrppa_pdu);
-    bdestroy_wrapper(&routing_id);
+    utils::bdestroy_wrapper(&nrppa_pdu);
+    utils::bdestroy_wrapper(&routing_id);
   };
   bstring nrppa_pdu;
   bstring routing_id;
@@ -555,8 +557,8 @@ class itti_uplink_non_ue_associated_nrppa_transport : public itti_msg_n2 {
     routing_id = bstrcpy(i.routing_id);
   }
   virtual ~itti_uplink_non_ue_associated_nrppa_transport() {
-    bdestroy_wrapper(&nrppa_pdu);
-    bdestroy_wrapper(&routing_id);
+    utils::bdestroy_wrapper(&nrppa_pdu);
+    utils::bdestroy_wrapper(&routing_id);
   }
 
   bstring nrppa_pdu;

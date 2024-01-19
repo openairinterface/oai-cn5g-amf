@@ -37,7 +37,7 @@ LadnInformation::LadnInformation() : Type6NasIe(kIeiLadnInformation) {
 LadnInformation::~LadnInformation() {}
 
 //------------------------------------------------------------------------------
-void LadnInformation::Set(const vector<Ladn>& value) {
+void LadnInformation::Set(const std::vector<Ladn>& value) {
   ladn_list.assign(value.begin(), value.end());
 }
 

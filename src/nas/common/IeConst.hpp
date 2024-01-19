@@ -88,11 +88,13 @@ constexpr uint8_t kIeiPayloadContainerType     = 0x08;  // Should be verified
 constexpr uint8_t kIeiRequestType              = 0x08;  // 8-(4 higher bits)
 constexpr uint8_t kIeiNetworkSlicingIndication = 0x09;  // 9-(4 higher bits)
 
-constexpr uint8_t kIeiNssaiInclusionMode          = 0x0A;  // A-(4 higher bits)
-constexpr uint8_t kIeiMaPduSessionInformation     = 0x0A;  // A-(4 higher bits)
-constexpr uint8_t kIeiMicoIndication              = 0x0B;  // B-(4 higher bits)
-constexpr uint8_t kIeiNasKeySetIdentifier         = 0x0C;  // C-(4 higher bits)
-constexpr uint8_t kIeiNon3gppNwProvidedPolicies   = 0x0D;  // D-(4 higher bits)
+constexpr uint8_t kIeiNssaiInclusionMode        = 0x0A;  // A-(4 higher bits)
+constexpr uint8_t kIeiMaPduSessionInformation   = 0x0A;  // A-(4 higher bits)
+constexpr uint8_t kIeiMicoIndication            = 0x0B;  // B-(4 higher bits)
+constexpr uint8_t kIeiNasKeySetIdentifier       = 0x0C;  // C-(4 higher bits)
+constexpr uint8_t kIeiNon3gppNwProvidedPolicies = 0x0D;  // D-(4 higher bits)
+constexpr uint8_t kIeiConfigurationUpdateIndication =
+    0x0D;                                                  // D-(4 higher bits)
 constexpr uint8_t kIeiImeisvRequest               = 0x0E;  // E-(4 higher bits)
 constexpr uint8_t kIeiReleaseAssistanceIndication = 0x0F;  // F-(4 higher bits)
 
@@ -105,6 +107,7 @@ constexpr uint8_t kIei5gsNetworkFeatureSupport    = 0x21;
 
 constexpr uint8_t kIeiAllowedPduSessionStatus         = 0x25;
 constexpr uint8_t kIeiPduSessionReactivationResult    = 0x26;
+constexpr uint8_t kIeiServiceAreaList                 = 0x27;
 constexpr uint8_t kIeiUeStatus                        = 0x2b;
 constexpr uint8_t kIeiAuthenticationResponseParameter = 0x2D;
 
@@ -138,7 +141,7 @@ constexpr uint8_t kIeiGprsTimer3BackOffTimer = 0x37;
 
 constexpr uint8_t kIeiGprsTimer2Non3gppDeregistration = 0x5D;
 constexpr uint8_t kIeiGprsTimer2T3502                 = 0x16;
-constexpr uint8_t kIeiGprsTimer2T3546                 = 0x5F;
+constexpr uint8_t kIeiGprsTimer2T3346                 = 0x5F;
 
 constexpr uint8_t kIeiEpsNasMessageContainer                 = 0x70;
 constexpr uint8_t kIeiNasMessageContainer                    = 0x71;

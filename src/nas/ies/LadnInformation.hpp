@@ -40,7 +40,7 @@ class LadnInformation : Type6NasIe {
 
   static std::string GetIeName() { return kLadnInformationIeName; }
 
-  void Set(const vector<Ladn>& value);
+  void Set(const std::vector<Ladn>& value);
   void Add(const Ladn& value);
 
   int Encode(uint8_t* buf, int len);

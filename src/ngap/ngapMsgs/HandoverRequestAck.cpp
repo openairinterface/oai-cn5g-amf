@@ -21,12 +21,9 @@
 
 #include "HandoverRequestAck.hpp"
 
-#include "conversions.hpp"
+#include "amf_conversions.hpp"
 #include "logger.hpp"
-
-extern "C" {
-#include "dynamic_memory_check.h"
-}
+#include "utils.hpp"
 
 namespace ngap {
 
@@ -63,7 +60,7 @@ void HandoverRequestAck::setAmfUeNgapId(const unsigned long& id) {
   int ret = amfUeNgapId.encode(ie->value.choice.AMF_UE_NGAP_ID);
   if (!ret) {
     Logger::ngap().error("Encode NGAP AMF_UE_NGAP_ID IE error");
-    free_wrapper((void**) &ie);
+    utils::free_wrapper((void**) &ie);
     return;
   }
 
@@ -86,7 +83,7 @@ void HandoverRequestAck::setRanUeNgapId(const uint32_t& ran_ue_ngap_id) {
   int ret = ranUeNgapId.encode(ie->value.choice.RAN_UE_NGAP_ID);
   if (!ret) {
     Logger::ngap().error("Encode NGAP RAN_UE_NGAP_ID IE error");
-    free_wrapper((void**) &ie);
+    utils::free_wrapper((void**) &ie);
     return;
   }
 
@@ -108,7 +105,7 @@ void HandoverRequestAck::setTargetToSource_TransparentContainer(
   ie->criticality = Ngap_Criticality_reject;
   ie->value.present =
       Ngap_HandoverRequestAcknowledgeIEs__value_PR_TargetToSource_TransparentContainer;
-  conv::octet_string_copy(
+  amf_conv::octet_string_copy(
       ie->value.choice.TargetToSource_TransparentContainer, targetTosource);
   int ret = ASN_SEQUENCE_ADD(&handoverRequestAckIEs->protocolIEs.list, ie);
   if (ret != 0)
@@ -315,7 +312,7 @@ bool HandoverRequestAck::decode(Ngap_NGAP_PDU_t* ngapMsgPdu) {
                 Ngap_Criticality_reject &&
             handoverRequestAckIEs->protocolIEs.list.array[i]->value.present ==
                 Ngap_HandoverRequestAcknowledgeIEs__value_PR_TargetToSource_TransparentContainer) {
-          conv::octet_string_copy(
+          amf_conv::octet_string_copy(
               TargetToSource_TransparentContainer,
               handoverRequestAckIEs->protocolIEs.list.array[i]
                   ->value.choice.TargetToSource_TransparentContainer);
