@@ -370,7 +370,7 @@ void NGSetupResponseMsg::setUERetentionInformation(
   if (!ueRetentionInformation.value().encode(
           ie->value.choice.UERetentionInformation)) {
     Logger::ngap().error("Encode NGAP UERetentionInformation IE error");
-    free_wrapper((void**) &ie);
+    utils::free_wrapper((void**) &ie);
     return;
   }
 
