@@ -19,49 +19,34 @@
  *      contact@openairinterface.org
  */
 
-#ifndef _GNB_CONTEXT_H_
-#define _GNB_CONTEXT_H_
-
-#include <vector>
-
-#include "3gpp_23.003.h"
-#include "UERetentionInformation.hpp"
-#include "NgapIEsStruct.hpp"
-#include "sctp_server.hpp"
+#ifndef _UE_RETENTION_INFORMATION_H_
+#define _UE_RETENTION_INFORMATION_H_
 
 extern "C" {
-#include "Ngap_PagingDRX.h"
-#include "bstrlib.h"
+#include "Ngap_UERetentionInformation.h"
 }
 
-using namespace sctp;
-using namespace ngap;
+namespace ngap {
 
-typedef enum {
-  NGAP_INIT,
-  NGAP_RESETING,
-  NGAP_READY,
-  NGAP_SHUTDOWN
-} ng_gnb_state_t;
-
-static const std::vector<std::string> ng_gnb_state_str = {
-    "NGAP_INIT", "NGAP_RESETTING", "NGAP_READY", "NGAP_SHUTDOWN"};
-
-class gnb_context {
+class UERetentionInformation {
  public:
-  std::string gnb_name;
-  uint32_t gnb_id;  // Global RAN Node ID
+  UERetentionInformation();
+  virtual ~UERetentionInformation();
 
-  ng_gnb_state_t ng_state;
-  plmn_t plmn;
-  e_Ngap_PagingDRX default_paging_drx;  // v32, v64, v128, v256
-  std::vector<SupportedTaItem_t> supported_ta_list;
-  std::optional<UERetentionInformation> ue_retention_info;
+  void set(const long value);
+  void get(long& value) const;
 
-  sctp_assoc_id_t sctp_assoc_id;
-  sctp_stream_id_t next_sctp_stream;
-  sctp_stream_id_t instreams;
-  sctp_stream_id_t outstreams;
+  void set(const e_Ngap_UERetentionInformation& value);
+  void get(e_Ngap_UERetentionInformation& value) const;
+  e_Ngap_UERetentionInformation get() const;
+
+  bool encode(Ngap_UERetentionInformation_t& value) const;
+  bool decode(Ngap_UERetentionInformation_t value);
+
+ private:
+  long value_;
 };
+
+}  // namespace ngap
 
 #endif

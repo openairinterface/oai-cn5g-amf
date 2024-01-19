@@ -452,6 +452,10 @@ void amf_n2::handle_itti_message(
         Ngap_TimeToWait_v5s, itti_msg->assoc_id, itti_msg->stream);
     return;
   }
+  // Store UE Retention Information if available
+  std::optional<UERetentionInformation> ue_retention_info = std::nullopt;
+  itti_msg->ngSetupReq->getUERetentionInformation(ue_retention_info);
+  gc->ue_retention_info = ue_retention_info;
 
   // Verify PLMN Identity and TAC with configuration and store supportedTAList
   // in gNB context
@@ -470,6 +474,28 @@ void amf_n2::handle_itti_message(
 
   set_gnb_id_2_gnb_context(gnb_id, gc);
 
+  // Re-initialises the NGAP UE-related contexts (except if AMF agree on
+  // retaining the UE contexts)
+  bool ue_retention_option = false;
+  if (gc->ue_retention_info.has_value()) {
+    e_Ngap_UERetentionInformation ue_retention_info_e =
+        gc->ue_retention_info.value().get();
+    if (ue_retention_info_e == Ngap_UERetentionInformation_ues_retained) {
+      ue_retention_option = true;
+    }
+  }
+  if (!ue_retention_option) {
+    // Release all the resources related to this association
+    std::vector<std::shared_ptr<ue_ngap_context>> ue_contexts;
+    get_ue_ngap_contexts(itti_msg->assoc_id, ue_contexts);
+
+    for (auto ue_context : ue_contexts) {
+      remove_ue_context_with_amf_ue_ngap_id(ue_context->amf_ue_ngap_id);
+      remove_ue_context_with_ran_ue_ngap_id(
+          ue_context->ran_ue_ngap_id, gc->gnb_id);
+    }
+  }
+
   // Send NG SETUP RESPONSE message
   Logger::amf_n2().debug("Encoding NG_SETUP_RESPONSE ...");
   auto buffer = new (std::nothrow) uint8_t[BUFFER_SIZE_1024]();
@@ -477,6 +503,7 @@ void amf_n2::handle_itti_message(
     Logger::amf_n2().error("Error when allocating buffer!");
     return;
   }
+
   NGSetupResponseMsg ngSetupResp = {};
   ngSetupResp.setAMFName(amf_cfg.amf_name);
   std::vector<GuamiItem_t> guami_list;
@@ -507,6 +534,9 @@ void amf_n2::handle_itti_message(
   }
 
   ngSetupResp.setPlmnSupportList(plmn_list);
+  if (ue_retention_info.has_value() and ue_retention_option)
+    ngSetupResp.setUERetentionInformation(ue_retention_info.value());
+
   int encoded = ngSetupResp.Encode(buffer, BUFFER_SIZE_1024);
 
   if (encoded < 1) {

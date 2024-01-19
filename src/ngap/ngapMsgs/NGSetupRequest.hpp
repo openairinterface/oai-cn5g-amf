@@ -31,6 +31,7 @@
 #include "NgapMessage.hpp"
 #include "RanNodeName.hpp"
 #include "SupportedTAList.hpp"
+#include "UERetentionInformation.hpp"
 
 namespace ngap {
 
@@ -56,16 +57,20 @@ class NGSetupRequestMsg : public NgapMessage {
   void setDefaultPagingDRX(const e_Ngap_PagingDRX& value);
   e_Ngap_PagingDRX getDefaultPagingDRX();
 
+  void setUERetentionInformation(const UERetentionInformation& value);
+  void getUERetentionInformation(
+      std::optional<UERetentionInformation>& value) const;
+
   bool decode(Ngap_NGAP_PDU_t* ngapMsgPdu) override;
 
  private:
   Ngap_NGSetupRequest_t* ngSetupRequestIEs;
 
-  GlobalRanNodeId globalRanNodeId;         // Mandatory
-  std::optional<RanNodeName> ranNodeName;  // Optional
-  SupportedTAList supportedTAList;         // Mandatory
-  DefaultPagingDrx defaultPagingDrx;       // Mandatory
-  // TODO: UE Retention Information (Optional)
+  GlobalRanNodeId globalRanNodeId;                               // Mandatory
+  std::optional<RanNodeName> ranNodeName;                        // Optional
+  SupportedTAList supportedTAList;                               // Mandatory
+  DefaultPagingDrx defaultPagingDrx;                             // Mandatory
+  std::optional<UERetentionInformation> ueRetentionInformation;  // Optional
   // TODO: NB-IoT Default Paging DRX  (Optional, Rel 16.14.0)
   // TODO: Extended RAN Node Name (Optional, Rel 16.14.0)
 };
