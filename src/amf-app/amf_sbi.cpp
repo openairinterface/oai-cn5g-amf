@@ -1023,6 +1023,7 @@ void amf_sbi::handle_post_sm_context_response_error(
       new itti_n1n2_message_transfer_request(TASK_AMF_SBI, TASK_AMF_APP);
   itti_msg->n1sm           = bstrcpy(n1sm);
   itti_msg->is_n2sm_set    = false;
+  itti_msg->is_n1sm_set    = true;
   itti_msg->supi           = supi;
   itti_msg->pdu_session_id = pdu_session_id;
   itti_msg->is_ppi_set     = false;

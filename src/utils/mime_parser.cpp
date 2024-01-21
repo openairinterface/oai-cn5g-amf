@@ -59,7 +59,8 @@ bool mime_parser::parse(const std::string& str) {
     Logger::amf_app().debug("Content Type: %s", p.content_type.c_str());
 
     // if (p.content_type.compare("application/json") == 0) {
-    if (boost::iequals(p.content_type, "application/json")) {
+    if (boost::iequals(p.content_type, "application/json") or
+        boost::iequals(p.content_type, "application/problem+json")) {
       p.content_id = JSON_CONTENT_ID_MIME;
       crlf_pos =
           str.find(CRLF + CRLF, content_type_pos);  // beginning of content
