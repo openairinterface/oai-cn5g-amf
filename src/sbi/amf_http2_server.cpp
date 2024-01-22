@@ -129,7 +129,7 @@ void amf_http2_server::start() {
             } else if (split_result.size() == 7) {
               std::string procedure = split_result[split_result.size() - 1];
               Logger::amf_server().info("Procedure %s", procedure.c_str());
-              if (procedure.compare("subscription") == 0) {
+              if (procedure.compare("subscriptions") == 0) {
                 // TODO:
 
                 UeN1N2InfoSubscriptionCreateData
