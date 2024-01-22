@@ -118,7 +118,7 @@ int main(int argc, char** argv) {
   std::signal(SIGTERM, amf_signal_handler);
   std::signal(SIGINT, amf_signal_handler);
 
-  std::string conf_file_name = Options::getlibconfigConfig();
+  std::string conf_file_name = Options::getYamlConfig();
   Logger::system().debug("Parsing the configuration file, file type YAML.");
   amf_cfg_yaml = std::make_unique<amf_config_yaml>(
       conf_file_name, Options::getlogStdout(), Options::getlogRotFilelog());

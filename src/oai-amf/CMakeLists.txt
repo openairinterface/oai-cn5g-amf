@@ -253,9 +253,6 @@ add_boolean_option( LOG_OAI                         False    "Thread safe loggin
 # or cmake provide a generic interface to pkg-config that widely used
 ###################################
 
-pkg_search_module(CONFIG REQUIRED libconfig++)
-include_directories(${CONFIG_INCLUDE_DIRS})
-
 set(THREADS_PREFER_PTHREAD_FLAG ON)
 
 pkg_search_module(CRYPTO libcrypto REQUIRED)
@@ -371,4 +368,4 @@ IF(STATIC_LINKING)
 ENDIF(STATIC_LINKING)
 
 target_link_libraries(amf ${ASAN}
-      -Wl,--start-group AMF_APP CONTEXTS AMF_SCTP AMF_NGAP_C AMF_NGAP AMF_NAS AMF_SECU_5GAKA AMF_SECU_NAS AMF_UTILS AMF_SBI_SERVER config++ sctp fmt spdlog -Wl,--end-group pthread ${NETTLE_LIBRARIES} ${MySQL_LIBRARY} ${CRYPTO_LIBRARIES} ${OPENSSL_LIBRARIES} nghttp2_asio boost_system boost_thread boost_chrono ssl crypt gmp pistache curl yaml-cpp)
+      -Wl,--start-group AMF_APP CONTEXTS AMF_SCTP AMF_NGAP_C AMF_NGAP AMF_NAS AMF_SECU_5GAKA AMF_SECU_NAS AMF_UTILS AMF_SBI_SERVER sctp fmt spdlog -Wl,--end-group pthread ${NETTLE_LIBRARIES} ${MySQL_LIBRARY} ${CRYPTO_LIBRARIES} ${OPENSSL_LIBRARIES} nghttp2_asio boost_system boost_thread boost_chrono ssl crypt gmp pistache curl yaml-cpp)
