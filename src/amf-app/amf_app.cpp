@@ -1147,9 +1147,10 @@ evsub_id_t amf_app::handle_event_exposure_subscription(
         std::optional<nlohmann::json> location_data = std::nullopt;
         utils::wait_for_result(f, location_data);
         if (location_data.has_value()) {
+          nlohmann::json location_data_json = location_data.value();
           Logger::amf_app().info(
               "Determine Location Response (SUPI: %s) : \n%s", kvp.first,
-              location_data.value().dump(2).c_str());
+              location_data_json.dump(2).c_str());
         } else {
           Logger::amf_app().error(
               "Determine Location failed (SUPI: %s)...\n", kvp.first);
@@ -1475,12 +1476,14 @@ void amf_app::trigger_pdu_session_release(
       utils::wait_for_result(smf_responses.begin()->second, result);
 
       if (result.has_value()) {
+        nlohmann::json result_json = result.value();
         Logger::amf_server().debug(
-            "Got result for promise ID %d", smf_responses.begin()->first);
+            "Got result for promise ID %d, json content %s",
+            smf_responses.begin()->first, result_json.dump());
 
         uint32_t http_response_code = 0;
-        if (result.value().find("httpResponseCode") != result.value().end()) {
-          http_response_code = result.value()["httpResponseCode"].get<int>();
+        if (result_json.find("httpResponseCode") != result_json.end()) {
+          http_response_code = result_json["httpResponseCode"].get<int>();
           // Remove PDU session
           // TODO for multiple sessions
           if ((http_response_code == 200) or (http_response_code == 204)) {
@@ -1560,16 +1563,17 @@ void amf_app::trigger_pdu_session_up_deactivation(
       utils::wait_for_result(curl_responses.begin()->second, result);
 
       if (result.has_value()) {
+        nlohmann::json result_json = result.value();
         Logger::amf_server().debug(
-            "Got result for promise ID %d", curl_responses.begin()->first);
+            "Got result from a promise with PDU Session Id %d, json content %s",
+            curl_responses.begin()->first, result_json.dump());
 
         uint32_t http_response_code = 0;
-        if (result.value().find("httpResponseCode") != result.value().end()) {
+        if (result_json.find("httpResponseCode") != result_json.end()) {
           result             = result && true;
-          http_response_code = result.value()["httpResponseCode"].get<int>();
+          http_response_code = result_json["httpResponseCode"].get<int>();
 
           if ((http_response_code == 200) or (http_response_code == 204)) {
-            // uc->remove_pdu_sessions_context(curl_responses.begin()->first);
             uc->set_up_cnx_state(
                 curl_responses.begin()->first,
                 up_cnx_state_e::UPCNX_STATE_DEACTIVATED);
@@ -1651,12 +1655,14 @@ void amf_app::trigger_pdu_session_up_activation(
       utils::wait_for_result(curl_responses.begin()->second, result);
 
       if (result.has_value()) {
+        nlohmann::json result_json = result.value();
         Logger::amf_server().debug(
-            "Got result for promise ID %d", curl_responses.begin()->first);
+            "Got result from a promise for PDU session Id %d, json content %s",
+            curl_responses.begin()->first, result_json.dump());
 
         uint32_t http_response_code = 0;
-        if (result.value().find("httpResponseCode") != result.value().end()) {
-          http_response_code = result.value()["httpResponseCode"].get<int>();
+        if (result_json.find("httpResponseCode") != result_json.end()) {
+          http_response_code = result_json["httpResponseCode"].get<int>();
           result             = result && true;
           if ((http_response_code == 200) or (http_response_code == 204)) {
             uc->set_up_cnx_state(
@@ -1737,12 +1743,14 @@ void amf_app::trigger_pdu_session_up_activation(
       utils::wait_for_result(curl_responses.begin()->second, result);
 
       if (result.has_value()) {
+        nlohmann::json result_json = result.value();
         Logger::amf_server().debug(
-            "Got result for promise ID %d", curl_responses.begin()->first);
+            "Got result from a promise for PDU session Id %d, json content %s",
+            curl_responses.begin()->first, result_json.dump());
 
         uint32_t http_response_code = 0;
-        if (result.value().find("httpResponseCode") != result.value().end()) {
-          http_response_code = result.value()["httpResponseCode"].get<int>();
+        if (result_json.find("httpResponseCode") != result_json.end()) {
+          http_response_code = result_json["httpResponseCode"].get<int>();
           result             = result && true;
           if ((http_response_code == 200) or (http_response_code == 204)) {
             uc->set_up_cnx_state(

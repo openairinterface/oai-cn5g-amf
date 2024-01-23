@@ -311,6 +311,7 @@ std::string amf_config::get_lmf_determine_location_uri() {
          lmf_addr.api_version + NLMF_DETERMINE_LOCATION;
 }
 
+//------------------------------------------------------------------------------
 bool amf_config::get_smf_pdu_session_context_uri(
     const std::shared_ptr<pdu_session_context>& psc, std::string& smf_uri) {
   if (!psc) return false;
@@ -320,6 +321,10 @@ bool amf_config::get_smf_pdu_session_context_uri(
     return false;
   }
 
+  if (psc->smf_info.context_location.size() == 0) return false;
+
+  Logger::amf_sbi().debug(
+      "smf_info, context location %s", psc->smf_info.context_location);
   std::size_t found = psc->smf_info.context_location.find("/");
   if (found != 0)
     smf_uri = psc->smf_info.context_location;

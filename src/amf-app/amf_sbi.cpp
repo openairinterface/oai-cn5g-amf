@@ -1023,6 +1023,7 @@ void amf_sbi::handle_post_sm_context_response_error(
       new itti_n1n2_message_transfer_request(TASK_AMF_SBI, TASK_AMF_APP);
   itti_msg->n1sm           = bstrcpy(n1sm);
   itti_msg->is_n2sm_set    = false;
+  itti_msg->is_n1sm_set    = true;
   itti_msg->supi           = supi;
   itti_msg->pdu_session_id = pdu_session_id;
   itti_msg->is_ppi_set     = false;
@@ -1448,9 +1449,7 @@ bool amf_sbi::curl_http_client(
         return curl_result;
       }
 
-      curl_result = true;
-
-      // std::string promise_result = {};
+      curl_result                          = true;
       nlohmann::json process_response_data = {};
 
       bool is_ho_procedure              = false;
@@ -1473,18 +1472,17 @@ bool amf_sbi::curl_http_client(
 
       // UP deactivation
       if (response_data.find("upCnxState") != response_data.end()) {
+        Logger::amf_sbi().debug("UP Deactivation");
         std::string up_cnx_state = {};
         response_data.at("upCnxState").get_to(up_cnx_state);
         if (up_cnx_state.compare("DEACTIVATED") == 0) {
-          is_up_deactivation_procedure = true;
-          // promise_result               = std::to_string(httpCode);
+          is_up_deactivation_procedure              = true;
           process_response_data["httpResponseCode"] = httpCode;
         }
 
         // Service Request
         if (up_cnx_state.compare("ACTIVATING") == 0) {
-          is_service_request = true;
-          // promise_result     = std::to_string(httpCode);
+          is_service_request                        = true;
           process_response_data["httpResponseCode"] = httpCode;
           // Update Pdu Session Context
           if (n2sm.has_value()) {
