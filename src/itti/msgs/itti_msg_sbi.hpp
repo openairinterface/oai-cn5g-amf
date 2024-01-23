@@ -24,6 +24,7 @@
 
 #include <optional>
 #include "N1MessageNotification.h"
+#include "NonUeN2InfoSubscriptionCreateData.h"
 #include "SliceInfoForRegistration.h"
 #include "UeN1N2InfoSubscriptionCreateData.h"
 #include "amf.hpp"
@@ -525,6 +526,29 @@ class itti_sbi_n1n2_message_unsubscribe : public itti_sbi_msg {
 
   std::string ue_cxt_id;
   std::string subscription_id;
+  uint32_t promise_id;
+};
+
+//-----------------------------------------------------------------------------
+class itti_sbi_non_ue_n2_info_subscribe : public itti_sbi_msg {
+ public:
+  itti_sbi_non_ue_n2_info_subscribe(
+      const task_id_t orig, const task_id_t dest, uint32_t pid)
+      : itti_sbi_msg(SBI_NON_UE_N2_INFO_SUBSCRIBE, orig, dest),
+        subscription_data(),
+        promise_id(pid) {}
+  itti_sbi_non_ue_n2_info_subscribe(const itti_sbi_non_ue_n2_info_subscribe& i)
+      : itti_sbi_msg(i), subscription_data(i.subscription_data), promise_id() {}
+  itti_sbi_non_ue_n2_info_subscribe(
+      const itti_sbi_non_ue_n2_info_subscribe& i, const task_id_t orig,
+      const task_id_t dest)
+      : itti_sbi_msg(i, orig, dest),
+        subscription_data(i.subscription_data),
+        promise_id(i.promise_id) {}
+  virtual ~itti_sbi_non_ue_n2_info_subscribe(){};
+  const char* get_msg_name() { return "NON UE N2 INFO SUBSCRIBE"; };
+
+  oai::amf::model::NonUeN2InfoSubscriptionCreateData subscription_data;
   uint32_t promise_id;
 };
 

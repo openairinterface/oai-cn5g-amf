@@ -1091,11 +1091,77 @@ void amf_http2_server::non_ue_n2_info_subscribe_handler(
 
   header_map h;
 
-  response.write_head(
-      static_cast<uint32_t>(
-          http_response_codes_e::HTTP_RESPONSE_CODE_NOT_IMPLEMENTED),
-      h);
-  response.end();
+  // Generate a promise and associate this promise to the ITTI message
+  uint32_t promise_id = m_amf_app->generate_promise_id();
+  Logger::amf_n1().debug("Promise ID generated %d", promise_id);
+
+  boost::shared_ptr<boost::promise<nlohmann::json>> p =
+      boost::make_shared<boost::promise<nlohmann::json>>();
+  boost::shared_future<nlohmann::json> f = p->get_future();
+  m_amf_app->add_promise(promise_id, p);
+
+  // Handle the NonUeN2InfoSubscribe in amf_app
+  std::shared_ptr<itti_sbi_non_ue_n2_info_subscribe> itti_msg =
+      std::make_shared<itti_sbi_non_ue_n2_info_subscribe>(
+          TASK_AMF_SBI, TASK_AMF_APP, promise_id);
+
+  itti_msg->subscription_data = subscriptionCreateData;
+  itti_msg->http_version      = 2;
+  itti_msg->promise_id        = promise_id;
+
+  int ret = itti_inst->send_msg(itti_msg);
+  if (0 != ret) {
+    Logger::amf_server().error(
+        "Could not send ITTI message %s to task TASK_AMF_APP",
+        itti_msg->get_msg_name());
+  }
+
+  // Wait for the result available and process accordingly
+  std::optional<nlohmann::json> result = std::nullopt;
+  utils::wait_for_result(f, result);
+
+  if (result.has_value()) {
+    Logger::amf_server().debug("Got result for promise ID %d", promise_id);
+
+    // process data
+    std::string location        = {};
+    uint32_t http_response_code = 0;
+    if (result.value().find("location") != result.value().end()) {
+      location = result.value()["location"].get<std::string>();
+    }
+
+    if (result.value().find("httpResponseCode") != result.value().end()) {
+      http_response_code = result.value()["httpResponseCode"].get<int>();
+    }
+
+    // NonUeN2InfoSubscriptionCreatedData
+    nlohmann::json json_data = {};
+    if (result.value().find("createdData") != result.value().end()) {
+      json_data = result.value()["createdData"];
+    }
+
+    if (static_cast<http_response_codes_e>(http_response_code) ==
+        http_response_codes_e::HTTP_RESPONSE_CODE_201_CREATED) {
+      h.insert(std::make_pair<std::string, header_value>(
+          "Location", {location, false}));
+      h.insert(std::make_pair<std::string, header_value>(
+          "Content-Type", {"application/json", false}));
+
+      response.write_head(
+          static_cast<uint32_t>(
+              http_response_codes_e::HTTP_RESPONSE_CODE_201_CREATED),
+          h);
+      response.end(json_data.dump().c_str());
+
+    } else {
+      response.write_head(http_response_code);
+      response.end();
+    }
+  } else {
+    response.write_head(static_cast<uint32_t>(
+        http_response_codes_e::HTTP_RESPONSE_CODE_REQUEST_TIMEOUT));
+    response.end();
+  }
 }
 //------------------------------------------------------------------------------
 void amf_http2_server::non_ue_n2_info_unsubscribe_handler(

@@ -273,6 +273,17 @@ std::string amf_config::get_amf_n1n2_message_subscribe_uri(
 }
 
 //------------------------------------------------------------------------------
+std::string amf_config::get_non_ue_n2_info_subscribe_uri(
+    const std::string& subscription_id) {
+  unsigned int sbi_port = DEFAULT_HTTP1_PORT;
+  sbi_port              = sbi.port;
+  return std::string(inet_ntoa(*((struct in_addr*) &sbi.addr4))) + ":" +
+         std::to_string(sbi_port) + NAMF_COMMUNICATION_BASE +
+         sbi.api_version.value() + "/non-ue-n2-messages/subscriptions" + "/" +
+         subscription_id;
+}
+
+//------------------------------------------------------------------------------
 std::string amf_config::get_nrf_nf_discovery_service_uri() {
   return nrf_addr.uri_root + "/nnrf-disc/" + nrf_addr.api_version +
          "/nf-instances";

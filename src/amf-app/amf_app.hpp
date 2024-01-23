@@ -89,6 +89,12 @@ class amf_app {
       n1n2_message_subscribe;
   mutable std::shared_mutex m_n1n2_message_subscribe;
 
+  std::map<
+      n1n2sub_id_t,
+      std::shared_ptr<oai::amf::model::NonUeN2InfoSubscriptionCreateData>>
+      non_ue_n2_info_subscribe;
+  mutable std::shared_mutex m_non_ue_n2_info_subscribe;
+
  public:
   explicit amf_app(const amf_config& amf_cfg);
   amf_app(amf_app const&) = delete;
@@ -148,6 +154,13 @@ class amf_app {
    * @return void
    */
   void handle_itti_message(itti_sbi_n1n2_message_unsubscribe& itti_msg);
+
+  /*
+   * Handle ITTI message (SBI NON UE N2 Info Subscribe)
+   * @param [itti_sbi_non_ue_n2_info_subscribe&]: ITTI message
+   * @return void
+   */
+  void handle_itti_message(itti_sbi_non_ue_n2_info_subscribe& itti_msg);
 
   /*
    * Handle ITTI message (SBI PDU Session Release Notification)
@@ -375,6 +388,11 @@ class amf_app {
           n1n2sub_id_t,
           std::shared_ptr<oai::amf::model::UeN1N2InfoSubscriptionCreateData>>&
           subscriptions);
+
+  void add_non_ue_n2_info_subscription(
+      const n1n2sub_id_t& sub_id,
+      std::shared_ptr<oai::amf::model::NonUeN2InfoSubscriptionCreateData>&
+          subscription_data);
 
   /*
    * Trigger NF instance registration to NRF
