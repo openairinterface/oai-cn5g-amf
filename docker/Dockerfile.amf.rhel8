@@ -113,8 +113,7 @@ RUN rm -f /etc/rhsm-host && \
       boost \
       libevent \
       findutils \
-      mysql-libs \
-      libconfig && \
+      mysql-libs && \
     microdnf clean all -y && \
     rm -rf /var/cache/yum /var/cache/dnf && \
     # Remove entitlements and Subscription Manager configs

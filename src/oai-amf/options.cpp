@@ -24,7 +24,7 @@
 
 int Options::options;
 
-std::string Options::m_libconfigcfg;
+std::string Options::m_yamlcfg;
 bool Options::m_log_rot_file_log;
 bool Options::m_log_stdout;
 
@@ -33,7 +33,7 @@ void Options::help() {
   std::cout << std::endl
             << "Usage:  AMF  [OPTIONS]..." << std::endl
             << "  -h, --help                   Print help and exit" << std::endl
-            << "  -c, --libconfigcfg filename  Read the application "
+            << "  -c, --yamlcfg filename       Read the application "
                "configuration from this file."
             << std::endl
             << "  -o, --stdoutlog              Send the application logs to "
@@ -55,7 +55,7 @@ bool Options::parse(int argc, char** argv) {
 
 //------------------------------------------------------------------------------
 bool Options::validateOptions() {
-  return ((options & libconfigcfg));
+  return ((options & yamlcfg));
 }
 
 //------------------------------------------------------------------------------
@@ -66,7 +66,7 @@ bool Options::parseInputOptions(int argc, char** argv) {
 
   struct option long_options[] = {
       {"help", no_argument, NULL, 'h'},
-      {"libconfigcfg", required_argument, NULL, 'f'},
+      {"yamlcfg", required_argument, NULL, 'f'},
       {"stdoutlog", no_argument, NULL, 'o'},
       {"rotatelog", no_argument, NULL, 'r'},
       {NULL, 0, NULL, 0}};
@@ -83,8 +83,8 @@ bool Options::parseInputOptions(int argc, char** argv) {
         break;
       }
       case 'c': {
-        m_libconfigcfg = optarg;
-        options |= libconfigcfg;
+        m_yamlcfg = optarg;
+        options |= yamlcfg;
         break;
       }
       case 'o': {
@@ -101,7 +101,7 @@ bool Options::parseInputOptions(int argc, char** argv) {
       case '?': {
         switch (optopt) {
           case 'c': {
-            std::cout << "Option -l (libconfig config) requires an argument"
+            std::cout << "Option -l (yaml config) requires an argument"
                       << std::endl;
             break;
           }
