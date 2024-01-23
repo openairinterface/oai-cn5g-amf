@@ -1,5 +1,21 @@
 # RELEASE NOTES: #
 
+## v2.0.1 -- January 2024 ##
+
+* Features
+  - NGAP AMF status indication
+  - Add UE Retention Information support
+  - Update NAS with Rel 16.14.0 IEs
+    *  Refactoring code for Encode/Decode functions
+    *  Cleanup NAS lib
+* Fixes
+  - Fix typo for N1N2MessageSubscribe
+  - Fix issue when receiving PDU session reject from SMF
+* Tech debt
+  - Reformating of the SCTP code
+  - Refactor promise handling
+  - Removing dependencies to libconfig++ (Only YAML file can be read as configuration)
+
 ## v2.0.0 -- December 2023 ##
 
 * Features
