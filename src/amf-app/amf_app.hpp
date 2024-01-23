@@ -163,6 +163,13 @@ class amf_app {
   void handle_itti_message(itti_sbi_non_ue_n2_info_subscribe& itti_msg);
 
   /*
+   * Handle ITTI message (SBI NON UE N2 Info Unsubscribe)
+   * @param [itti_sbi_non_ue_n2_info_unsubscribe&]: ITTI message
+   * @return void
+   */
+  void handle_itti_message(itti_sbi_non_ue_n2_info_unsubscribe& itti_msg);
+
+  /*
    * Handle ITTI message (SBI PDU Session Release Notification)
    * @param [itti_sbi_pdu_session_release_notif&]: ITTI message
    * @return void
@@ -393,6 +400,8 @@ class amf_app {
       const n1n2sub_id_t& sub_id,
       std::shared_ptr<oai::amf::model::NonUeN2InfoSubscriptionCreateData>&
           subscription_data);
+
+  bool remove_non_ue_n2_info_subscription(const std::string& sub_id);
 
   /*
    * Trigger NF instance registration to NRF

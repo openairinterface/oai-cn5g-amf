@@ -553,6 +553,30 @@ class itti_sbi_non_ue_n2_info_subscribe : public itti_sbi_msg {
 };
 
 //-----------------------------------------------------------------------------
+class itti_sbi_non_ue_n2_info_unsubscribe : public itti_sbi_msg {
+ public:
+  itti_sbi_non_ue_n2_info_unsubscribe(
+      const task_id_t orig, const task_id_t dest, uint32_t pid)
+      : itti_sbi_msg(SBI_NON_UE_N2_INFO_UNSUBSCRIBE, orig, dest),
+        subscription_id(),
+        promise_id(pid) {}
+  itti_sbi_non_ue_n2_info_unsubscribe(
+      const itti_sbi_non_ue_n2_info_unsubscribe& i)
+      : itti_sbi_msg(i), subscription_id(i.subscription_id), promise_id() {}
+  itti_sbi_non_ue_n2_info_unsubscribe(
+      const itti_sbi_non_ue_n2_info_unsubscribe& i, const task_id_t orig,
+      const task_id_t dest)
+      : itti_sbi_msg(i, orig, dest),
+        subscription_id(i.subscription_id),
+        promise_id(i.promise_id) {}
+  virtual ~itti_sbi_non_ue_n2_info_unsubscribe(){};
+  const char* get_msg_name() { return "NON UE N2 INFO UNSUBSCRIBE"; };
+
+  std::string subscription_id;
+  uint32_t promise_id;
+};
+
+//-----------------------------------------------------------------------------
 class itti_sbi_amf_configuration : public itti_sbi_msg {
  public:
   itti_sbi_amf_configuration(

@@ -155,6 +155,13 @@ void amf_app_task(void*) {
         amf_app_inst->handle_itti_message(std::ref(*m));
       } break;
 
+      case SBI_NON_UE_N2_INFO_UNSUBSCRIBE: {
+        Logger::amf_app().debug("Received SBI_NON_UE_N2_INFO_UNSUBSCRIBE");
+        itti_sbi_non_ue_n2_info_unsubscribe* m =
+            dynamic_cast<itti_sbi_non_ue_n2_info_unsubscribe*>(msg);
+        amf_app_inst->handle_itti_message(std::ref(*m));
+      } break;
+
       case SBI_PDU_SESSION_RELEASE_NOTIF: {
         Logger::amf_app().debug("Received SBI_PDU_SESSION_RELEASE_NOTIF");
         itti_sbi_pdu_session_release_notif* m =
@@ -831,6 +838,32 @@ void amf_app::handle_itti_message(itti_sbi_non_ue_n2_info_subscribe& itti_msg) {
 
 //------------------------------------------------------------------------------
 void amf_app::handle_itti_message(
+    itti_sbi_non_ue_n2_info_unsubscribe& itti_msg) {
+  Logger::amf_app().info(
+      "Handle an NonUEN2InfoUnsubscribe from a NF (HTTP version %d)",
+      itti_msg.http_version);
+
+  // Process the request and trigger the response from AMF API Server
+  nlohmann::json response_data = {};
+  if (remove_non_ue_n2_info_subscription(itti_msg.subscription_id)) {
+    response_data["httpResponseCode"] = static_cast<uint32_t>(
+        http_response_codes_e::HTTP_RESPONSE_CODE_204_NO_CONTENT);
+  } else {
+    response_data["httpResponseCode"] = static_cast<uint32_t>(
+        http_response_codes_e::HTTP_RESPONSE_CODE_BAD_REQUEST);
+    oai::model::common::ProblemDetails problem_details = {};
+    // TODO set problem_details
+    to_json(response_data["ProblemDetails"], problem_details);
+  }
+
+  // Notify to the result
+  if (itti_msg.promise_id > 0) {
+    trigger_process_response(itti_msg.promise_id, response_data);
+    return;
+  }
+}
+//------------------------------------------------------------------------------
+void amf_app::handle_itti_message(
     itti_sbi_pdu_session_release_notif& itti_msg) {
   Logger::amf_app().info(
       "Handle an PDU Session Release notification from SMF (HTTP version "
@@ -1112,6 +1145,31 @@ void amf_app::add_non_ue_n2_info_subscription(
       "Add an Non UE N2 Info Subscribe (Sub ID %d)", sub_id);
   std::unique_lock lock(m_non_ue_n2_info_subscribe);
   non_ue_n2_info_subscribe.emplace(std::make_pair(sub_id, subscription_data));
+}
+
+//---------------------------------------------------------------------------------------------
+bool amf_app::remove_non_ue_n2_info_subscription(const std::string& sub_id) {
+  Logger::amf_app().debug(
+      "Remove an Non UE N2 Info Unsubscribe (Sub ID %s)", sub_id.c_str());
+
+  // Verify Subscription ID
+  n1n2sub_id_t n2sub_id = {};
+  try {
+    n2sub_id = std::stoi(sub_id);
+  } catch (const std::exception& err) {
+    Logger::amf_app().warn(
+        "Received a Unsubscribe Request, couldn't find the corresponding "
+        "subscription");
+    return false;
+  }
+
+  // Remove from the list
+  std::unique_lock lock(m_non_ue_n2_info_subscribe);
+  if (non_ue_n2_info_subscribe.erase(n2sub_id) == 1)
+    return true;
+  else
+    return false;
+  return true;
 }
 
 //------------------------------------------------------------------------------
