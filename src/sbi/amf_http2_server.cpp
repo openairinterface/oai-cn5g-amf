@@ -397,6 +397,63 @@ void amf_http2_server::start() {
         });
       });
 
+  // NonUeN2InfoSubscribe: /non-ue-n2-messages/subscriptions
+  // NonUeN2InfoUnSubscribe:
+  // /non-ue-n2-messages/subscriptions/{n2NotifySubscriptionId}:
+  server.handle(
+      NAMF_COMMUNICATION_BASE +
+          amf_cfg.sbi.api_version.value_or(DEFAULT_SBI_API_VERSION) +
+          NAMF_COMMUNICATION_NON_UE_N2_MESSAGES_INFO_SUBSCRIBE,
+      [&](const request& request, const response& res) {
+        request.on_data([&](const uint8_t* data, std::size_t len) {
+          if (len > 0) {
+            std::string msg((char*) data, len);
+            try {
+              std::vector<std::string> split_result;
+              boost::split(
+                  split_result, request.uri().path, boost::is_any_of("/"));
+
+              if (split_result.size() < 5) {
+                Logger::amf_server().warn("Requested URL is not implemented");
+                res.write_head(static_cast<uint32_t>(
+                    http_response_codes_e::HTTP_RESPONSE_CODE_BAD_REQUEST));
+                res.end();
+                return;
+              }
+
+              // NonUeN2InfoSubscribe
+              if (request.method().compare("POST") == 0 && len > 0 &&
+                  (split_result.size() == 5)) {
+                NonUeN2InfoSubscriptionCreateData createData = {};
+                nlohmann::json::parse(msg.c_str()).get_to(createData);
+                this->non_ue_n2_info_subscribe_handler(createData, res);
+              } else if (
+                  request.method().compare("DELETE") == 0 &&
+                  (split_result.size() == 6)) {  // NonUeN2InfoUnSubscribe
+                std::string subscription_id =
+                    split_result[split_result.size() - 1];
+                Logger::amf_server().info(
+                    "n2NotifySubscriptionId %s", subscription_id.c_str());
+                this->non_ue_n2_info_unsubscribe_handler(subscription_id, res);
+              } else {
+                Logger::amf_server().warn(
+                    "Invalid request (error: Invalid Request Method)!");
+                res.write_head(static_cast<uint32_t>(
+                    http_response_codes_e::HTTP_RESPONSE_CODE_BAD_REQUEST));
+                res.end();
+                return;
+              }
+            } catch (std::exception& e) {
+              Logger::amf_server().warn(
+                  "Invalid request (error: %s)!", e.what());
+              res.write_head(static_cast<uint32_t>(
+                  http_response_codes_e::HTTP_RESPONSE_CODE_BAD_REQUEST));
+              res.end();
+              return;
+            }
+          }
+        });
+      });
   // NF Status Notify (URL:
   // /namf-status-notify/pdu-session-release/callback/:ueContextId/:pduSessionId)
   server.handle(
@@ -1025,6 +1082,36 @@ void amf_http2_server::n1_n2_message_unsubscribe_handler(
   }
 }
 
+//------------------------------------------------------------------------------
+void amf_http2_server::non_ue_n2_info_subscribe_handler(
+    const NonUeN2InfoSubscriptionCreateData& subscriptionCreateData,
+    const response& response) {
+  // TODO:
+  Logger::amf_server().debug("Receive NonUeN2InfoSubscribe, handling...");
+
+  header_map h;
+
+  response.write_head(
+      static_cast<uint32_t>(
+          http_response_codes_e::HTTP_RESPONSE_CODE_NOT_IMPLEMENTED),
+      h);
+  response.end();
+}
+//------------------------------------------------------------------------------
+void amf_http2_server::non_ue_n2_info_unsubscribe_handler(
+    const std::string& subscriptionId, const response& response) {
+  // TODO:
+  Logger::amf_server().debug("Receive NonUeN2InfoUnSubscribe, handling...");
+  Logger::amf_server().debug("Subscription ID %s", subscriptionId.c_str());
+
+  header_map h;
+
+  response.write_head(
+      static_cast<uint32_t>(
+          http_response_codes_e::HTTP_RESPONSE_CODE_NOT_IMPLEMENTED),
+      h);
+  response.end();
+}
 //------------------------------------------------------------------------------
 void amf_http2_server::status_notify_handler(
     const std::string& ueContextId, uint8_t pduSessionId,

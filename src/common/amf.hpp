@@ -80,6 +80,8 @@ constexpr uint64_t SECONDS_SINCE_FIRST_EPOCH = 2208988800;
 #define NAMF_COMMUNICATION_NON_UE_N2_MESSAGE_TRANSFER_URL                      \
   "/non-ue-n2-messages/transfer"
 #define NAMF_COMMUNICATION_N1_MESSAGE_NOTIFY_URL "n1-message-notify"
+#define NAMF_COMMUNICATION_NON_UE_N2_MESSAGES_INFO_SUBSCRIBE                   \
+  "/non-ue-n2-messages/subscriptions"
 
 #define NAMF_EVENT_EXPOSURE_BASE "/namf-evts/"
 #define NAMF_EVENT_EXPOSURE_SUBSCRIPTION "/subscriptions"

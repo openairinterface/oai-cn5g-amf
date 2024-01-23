@@ -29,6 +29,7 @@
 #include "N1N2MessageTransferReqData.h"
 #include "N1N2MessageTransferRspData.h"
 #include "N2InformationTransferReqData.h"
+#include "NonUeN2InfoSubscriptionCreateData.h"
 #include "amf.hpp"
 #include "amf_app.hpp"
 #include "mime_parser.hpp"
@@ -70,6 +71,13 @@ class amf_http2_server {
   void n1_n2_message_unsubscribe_handler(
       const std::string& ueContextId, const std::string& subscriptionId,
       const response& response);
+
+  void non_ue_n2_info_subscribe_handler(
+      const NonUeN2InfoSubscriptionCreateData& subscriptionCreateData,
+      const response& response);
+
+  void non_ue_n2_info_unsubscribe_handler(
+      const std::string& subscriptionId, const response& response);
 
   void status_notify_handler(
       const std::string& ueContextId, uint8_t pduSessionId,
