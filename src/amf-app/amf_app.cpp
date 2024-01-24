@@ -430,7 +430,7 @@ void amf_app::handle_itti_message(
     itti_non_ue_n2_message_transfer_request& itti_msg) {
   if (itti_msg.is_nrppa_pdu_set) {
     Logger::amf_app().info(
-        "Handle ITTI Non Ue N2 Message Transfer Request for NRPPa PDU");
+        "Handle ITTI Non UE N2 Message Transfer Request for NRPPa PDU");
     std::shared_ptr<itti_downlink_non_ue_associated_nrppa_transport> dl_msg =
         std::make_shared<itti_downlink_non_ue_associated_nrppa_transport>(
             TASK_AMF_APP, TASK_AMF_N2);
@@ -444,7 +444,8 @@ void amf_app::handle_itti_message(
     }
   } else {
     Logger::amf_app().info(
-        "Handle ITTI Non UE N2 Message Transfer Request : Unsupported");
+        "Handle ITTI Non UE N2 Message Transfer Request: No NRPPa PDU "
+        "available!");
   }
 }
 

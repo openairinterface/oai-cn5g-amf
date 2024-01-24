@@ -332,14 +332,17 @@ void amf_n1::handle_itti_message(itti_downlink_nas_transfer& itti_msg) {
         std::shared_ptr<itti_initial_context_setup_request> csr =
             std::make_shared<itti_initial_context_setup_request>(
                 TASK_AMF_N1, TASK_AMF_N2);
-        csr->ran_ue_ngap_id = ran_ue_ngap_id;
-        csr->amf_ue_ngap_id = amf_ue_ngap_id;
-        csr->kgnb           = blk2bstr(kgnb, AUTH_VECTOR_LENGTH_OCTETS);
-        csr->nas            = protected_nas;
-        csr->pdu_session_id = itti_msg.pdu_session_id;
-        csr->is_pdu_exist   = true;
-        csr->n2sm           = bstrcpy(itti_msg.n2sm);
-        csr->is_sr          = false;  // TODO: for Service Request procedure
+        csr->ran_ue_ngap_id     = ran_ue_ngap_id;
+        csr->amf_ue_ngap_id     = amf_ue_ngap_id;
+        csr->kgnb               = blk2bstr(kgnb, AUTH_VECTOR_LENGTH_OCTETS);
+        csr->nas                = protected_nas;
+        pdu_session_info_t item = {};
+        item.is_pdu_exist       = true;
+        item.n2sm               = bstrcpy(itti_msg.n2sm);
+        item.is_n2sm_avaliable  = true;
+        csr->pdu_sessions.insert(std::pair<uint8_t, pdu_session_info_t>(
+            itti_msg.pdu_session_id, item));
+        csr->is_sr = false;  // TODO: for Service Request procedure
 
         int ret = itti_inst->send_msg(csr);
         if (0 != ret) {
@@ -1284,7 +1287,6 @@ void amf_n1::service_request_handle(
     itti_msg->nas            = bstrcpy(protected_nas);
     itti_msg->kgnb           = blk2bstr(kgnb, 32);
     itti_msg->is_sr          = true;  // Service Request indicator
-    itti_msg->is_pdu_exist   = false;
 
     int ret = itti_inst->send_msg(itti_msg);
     if (0 != ret) {
@@ -1352,16 +1354,21 @@ void amf_n1::service_request_handle(
     itti_msg->nas            = bstrcpy(protected_nas);
     itti_msg->kgnb           = blk2bstr(kgnb, AUTH_VECTOR_LENGTH_OCTETS);
     itti_msg->is_sr          = true;  // Service Request indicator
-    itti_msg->pdu_session_id = pdu_session_id;
-    itti_msg->is_pdu_exist   = true;
+
+    pdu_session_info_t item = {};
+    item.is_pdu_exist       = true;
+
     if (psc and psc->is_n2sm_avaliable) {
-      itti_msg->n2sm              = bstrcpy(psc->n2sm);
-      itti_msg->is_n2sm_avaliable = true;
+      item.n2sm              = bstrcpy(psc->n2sm);
+      item.is_n2sm_avaliable = true;
     } else {
-      itti_msg->is_n2sm_avaliable = false;
-      itti_msg->is_pdu_exist      = false;
+      item.is_n2sm_avaliable = false;
+      item.is_pdu_exist      = false;
       Logger::amf_n1().debug("Cannot get PDU session information");
     }
+
+    itti_msg->pdu_sessions.insert(
+        std::pair<uint8_t, pdu_session_info_t>(pdu_session_id, item));
 
     int ret = itti_inst->send_msg(itti_msg);
     if (0 != ret) {
@@ -3080,7 +3087,6 @@ void amf_n1::security_mode_complete_handle(
     itti_msg->amf_ue_ngap_id = amf_ue_ngap_id;
     itti_msg->kgnb           = blk2bstr(kgnb, AUTH_VECTOR_LENGTH_OCTETS);
     itti_msg->nas            = protected_nas;
-    itti_msg->is_pdu_exist   = false;  // no pdu context
     itti_msg->is_sr          = false;  // TODO: for Service Request procedure
 
     int ret = itti_inst->send_msg(itti_msg);

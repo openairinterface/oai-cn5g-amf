@@ -40,6 +40,11 @@
 using namespace ngap;
 using namespace sctp;
 
+typedef struct pdu_session_info_s {
+  bstring n2sm;
+  bool is_n2sm_avaliable;
+} pdu_session_info_t;
+
 class itti_msg_n2 : public itti_msg {
  public:
   itti_msg_n2(
@@ -155,33 +160,36 @@ class itti_initial_context_setup_request : public itti_msg_n2 {
   itti_initial_context_setup_request(
       const task_id_t origin, const task_id_t destination)
       : itti_msg_n2(INITIAL_CONTEXT_SETUP_REQUEST, origin, destination) {
-    ran_ue_ngap_id    = {};
-    amf_ue_ngap_id    = {};
-    kgnb              = nullptr;
-    nas               = nullptr;
-    is_sr             = false;
-    n2sm              = nullptr;
-    pdu_session_id    = 0;
-    is_pdu_exist      = false;
-    is_n2sm_avaliable = false;
+    ran_ue_ngap_id = {};
+    amf_ue_ngap_id = {};
+    kgnb           = nullptr;
+    nas            = nullptr;
+    is_sr          = false;
   }
   itti_initial_context_setup_request(
       const itti_initial_context_setup_request& i)
       : itti_msg_n2(i) {
-    ran_ue_ngap_id    = i.ran_ue_ngap_id;
-    amf_ue_ngap_id    = i.amf_ue_ngap_id;
-    kgnb              = bstrcpy(i.kgnb);
-    nas               = bstrcpy(i.nas);
-    is_sr             = i.is_sr;
-    n2sm              = bstrcpy(i.n2sm);
-    pdu_session_id    = i.pdu_session_id;
-    is_pdu_exist      = i.is_pdu_exist;
-    is_n2sm_avaliable = i.is_n2sm_avaliable;
+    ran_ue_ngap_id = i.ran_ue_ngap_id;
+    amf_ue_ngap_id = i.amf_ue_ngap_id;
+    kgnb           = bstrcpy(i.kgnb);
+    nas            = bstrcpy(i.nas);
+    is_sr          = i.is_sr;
+    for (const auto& p : i.pdu_sessions) {
+      pdu_session_info_t item = {};
+      item.n2sm               = bstrcpy(p.second.n2sm);
+      item.is_n2sm_avaliable  = p.second.is_n2sm_avaliable;
+      uint8_t pdu_session_id  = p.first;
+      pdu_sessions.insert(
+          std::pair<uint8_t, pdu_session_info_t>(pdu_session_id, item));
+    }
   }
   virtual ~itti_initial_context_setup_request() {
     utils::bdestroy_wrapper(&kgnb);
     utils::bdestroy_wrapper(&nas);
-    utils::bdestroy_wrapper(&n2sm);
+    for (auto& p : pdu_sessions) {
+      pdu_session_info_t item = {};
+      utils::bdestroy_wrapper(&p.second.n2sm);
+    }
   }
 
   uint32_t ran_ue_ngap_id;
@@ -189,10 +197,7 @@ class itti_initial_context_setup_request : public itti_msg_n2 {
   bstring kgnb;
   bstring nas;
   bool is_sr;
-  bstring n2sm;
-  uint8_t pdu_session_id;
-  bool is_pdu_exist;  // true is no pdu context
-  bool is_n2sm_avaliable;
+  std::map<uint8_t, pdu_session_info_t> pdu_sessions;
 };
 
 class itti_pdu_session_resource_setup_request : public itti_msg_n2 {
