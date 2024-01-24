@@ -983,6 +983,8 @@ class amf_n1 {
       const uint8_t cause_value, const uint32_t ran_ue_ngap_id,
       const long amf_ue_ngap_id);
 
+  uint8_t get_nas_message_type(uint8_t* buf, uint32_t len);
+
   // for Event Handling
   amf_event event_sub;
   bs2::connection ee_ue_location_report_connection;

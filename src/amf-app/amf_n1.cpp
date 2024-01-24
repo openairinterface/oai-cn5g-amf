@@ -337,7 +337,6 @@ void amf_n1::handle_itti_message(itti_downlink_nas_transfer& itti_msg) {
         csr->kgnb               = blk2bstr(kgnb, AUTH_VECTOR_LENGTH_OCTETS);
         csr->nas                = protected_nas;
         pdu_session_info_t item = {};
-        item.is_pdu_exist       = true;
         item.n2sm               = bstrcpy(itti_msg.n2sm);
         item.is_n2sm_avaliable  = true;
         csr->pdu_sessions.insert(std::pair<uint8_t, pdu_session_info_t>(
@@ -593,9 +592,8 @@ void amf_n1::nas_signalling_establishment_request_handle(
     set_amf_ue_ngap_id_2_nas_context(amf_ue_ngap_id, nc);
   }
 
-  // TODO: rewrite this
-  uint8_t* buf         = (uint8_t*) bdata(plain_msg);
-  uint8_t message_type = *(buf + 2);
+  uint8_t message_type =
+      get_nas_message_type((uint8_t*) bdata(plain_msg), blength(plain_msg));
   Logger::amf_n1().debug("NAS message type 0x%x", message_type);
 
   switch (message_type) {
@@ -639,9 +637,9 @@ void amf_n1::nas_signalling_establishment_request_handle(
 void amf_n1::uplink_nas_msg_handle(
     const uint32_t ran_ue_ngap_id, const long amf_ue_ngap_id, bstring plain_msg,
     const plmn_t& plmn) {
-  // TODO: avoid this
-  uint8_t* buf         = (uint8_t*) bdata(plain_msg);
-  uint8_t message_type = *(buf + 2);
+  uint8_t message_type =
+      get_nas_message_type((uint8_t*) bdata(plain_msg), blength(plain_msg));
+
   switch (message_type) {
     case AUTHENTICATION_RESPONSE: {
       Logger::amf_n1().debug(
@@ -916,7 +914,8 @@ void amf_n1::service_request_handle(
         return;
       }
 
-      uint8_t message_type = *((uint8_t*) bdata(plain_msg) + 2);
+      uint8_t message_type =
+          get_nas_message_type((uint8_t*) bdata(plain_msg), blength(plain_msg));
       Logger::amf_n1().debug("NAS message type 0x%x", message_type);
 
       switch (message_type) {
@@ -1044,7 +1043,6 @@ void amf_n1::service_request_handle(
       std::string guti = amf_conv::tmsi_to_guti(
           uc->tai.mcc, uc->tai.mnc, amf_cfg.guami.region_id, amf_set_id,
           amf_pointer, tmsi);
-      // nc->guti               = std::make_optional<std::string>(guti);
       Logger::amf_app().debug(
           "GUTI %s, 5G-TMSI %s", guti.c_str(), tmsi.c_str());
 
@@ -1108,7 +1106,6 @@ void amf_n1::service_request_handle(
     // TODO: Try to get
     Logger::amf_n1().debug(
         "Cannot find NAS/UE context, send Service Reject to UE");
-
     send_service_reject(nc, _5GMM_CAUSE_UE_IDENTITY_CANNOT_BE_DERIVED);
     return;
   }
@@ -1210,7 +1207,8 @@ void amf_n1::service_request_handle(
         return;
       }
 
-      uint8_t message_type = *((uint8_t*) bdata(plain_msg) + 2);
+      uint8_t message_type =
+          get_nas_message_type((uint8_t*) bdata(plain_msg), blength(plain_msg));
       Logger::amf_n1().debug("NAS message type 0x%x", message_type);
 
       switch (message_type) {
@@ -1306,22 +1304,37 @@ void amf_n1::service_request_handle(
   } else {
     std::shared_ptr<pdu_session_context> psc = {};
 
-    uint8_t pdu_session_id = pdu_session_to_be_activated.at(0);
-    if (!amf_app_inst->find_pdu_session_context(supi, pdu_session_id, psc)) {
-      Logger::amf_n1().debug(
-          "Cannot get pdu_session_context with SUPI (%s)", supi.c_str());
-      // Set PDU session Status to 0x00
-      // service_accept->SetPduSessionStatus(0x00);
-    } else {
-      service_accept->SetPduSessionStatus(pdu_session_status);
-      service_accept->SetPduSessionReactivationResult(0x0000);
-    }
+    std::shared_ptr<itti_initial_context_setup_request> itti_msg =
+        std::make_shared<itti_initial_context_setup_request>(
+            TASK_AMF_N1, TASK_AMF_N2);
 
-    if (psc and
-        (psc->up_cnx_state == up_cnx_state_e::UPCNX_STATE_DEACTIVATED)) {
-      // TODO: modify itti_initial_context_setup_request for supporting multiple
-      // PDU sessions
-      amf_app_inst->trigger_pdu_session_up_activation(uc);
+    service_accept->SetPduSessionStatus(pdu_session_status);
+    service_accept->SetPduSessionReactivationResult(0x0000);  // To be verified
+
+    for (auto& pdu_session_id : pdu_session_to_be_activated) {
+      if (!amf_app_inst->find_pdu_session_context(supi, pdu_session_id, psc)) {
+        Logger::amf_n1().debug(
+            "Cannot get pdu_session_context with SUPI (%s)", supi.c_str());
+        // Set PDU session Status to 0x00
+        // service_accept->SetPduSessionStatus(0x00);
+      }
+
+      if (psc and
+          (psc->up_cnx_state == up_cnx_state_e::UPCNX_STATE_DEACTIVATED)) {
+        amf_app_inst->trigger_pdu_session_up_activation(pdu_session_id, uc);
+      }
+
+      pdu_session_info_t item = {};
+      if (psc and psc->is_n2sm_avaliable) {
+        item.n2sm              = bstrcpy(psc->n2sm);
+        item.is_n2sm_avaliable = true;
+      } else {
+        item.is_n2sm_avaliable = false;
+        Logger::amf_n1().debug("Cannot get PDU session information");
+      }
+
+      itti_msg->pdu_sessions.insert(
+          std::pair<uint8_t, pdu_session_info_t>(pdu_session_id, item));
     }
 
     uint8_t buffer[BUFFER_SIZE_1024];
@@ -1346,29 +1359,11 @@ void amf_n1::service_request_handle(
     Authentication_5gaka::derive_kgnb(
         ulcount, 0x01, kamf, kgnb);  // TODO: remove hardcoded value
 
-    std::shared_ptr<itti_initial_context_setup_request> itti_msg =
-        std::make_shared<itti_initial_context_setup_request>(
-            TASK_AMF_N1, TASK_AMF_N2);
     itti_msg->ran_ue_ngap_id = ran_ue_ngap_id;
     itti_msg->amf_ue_ngap_id = amf_ue_ngap_id;
     itti_msg->nas            = bstrcpy(protected_nas);
     itti_msg->kgnb           = blk2bstr(kgnb, AUTH_VECTOR_LENGTH_OCTETS);
     itti_msg->is_sr          = true;  // Service Request indicator
-
-    pdu_session_info_t item = {};
-    item.is_pdu_exist       = true;
-
-    if (psc and psc->is_n2sm_avaliable) {
-      item.n2sm              = bstrcpy(psc->n2sm);
-      item.is_n2sm_avaliable = true;
-    } else {
-      item.is_n2sm_avaliable = false;
-      item.is_pdu_exist      = false;
-      Logger::amf_n1().debug("Cannot get PDU session information");
-    }
-
-    itti_msg->pdu_sessions.insert(
-        std::pair<uint8_t, pdu_session_info_t>(pdu_session_id, item));
 
     int ret = itti_inst->send_msg(itti_msg);
     if (0 != ret) {
@@ -2024,7 +2019,6 @@ void amf_n1::run_registration_procedure(std::shared_ptr<nas_context>& nc) {
         ngksi_t ngksi = 0;
         if (nc->security_ctx.has_value() &&
             nc->ngksi != NAS_KEY_SET_IDENTIFIER_NOT_AVAILABLE) {
-          // ngksi = (nc->ngksi + 1) % (NGKSI_MAX_VALUE + 1);
           ngksi = (nc->amf_ue_ngap_id + 1);  // % (NGKSI_MAX_VALUE + 1);
         }
         nc->ngksi = ngksi;
@@ -2041,7 +2035,6 @@ void amf_n1::run_registration_procedure(std::shared_ptr<nas_context>& nc) {
       ngksi_t ngksi = 0;
       if (nc->security_ctx.has_value() &&
           nc->ngksi != NAS_KEY_SET_IDENTIFIER_NOT_AVAILABLE) {
-        // ngksi = (nc->ngksi + 1) % (NGKSI_MAX_VALUE + 1);
         ngksi = (nc->amf_ue_ngap_id + 1);  // % (NGKSI_MAX_VALUE + 1);
         Logger::amf_n1().debug("New ngKSI (%d)", ngksi);
         // TODO: How to handle?
@@ -2876,8 +2869,9 @@ void amf_n1::security_mode_complete_handle(
         "amf_n1", "NAS Message Container", (uint8_t*) bdata(nas_msg_container),
         blength(nas_msg_container));
 
-    uint8_t* buf_nas     = (uint8_t*) bdata(nas_msg_container);
-    uint8_t message_type = *(buf_nas + 2);
+    uint8_t message_type = get_nas_message_type(
+        (uint8_t*) bdata(nas_msg_container), blength(nas_msg_container));
+
     Logger::amf_n1().debug(
         "NAS Message Container, Message Type 0x%x", message_type);
     if (message_type == REGISTRATION_REQUEST) {
@@ -5499,4 +5493,10 @@ bool amf_n1::get_amf_set_id(
   }
 
   return true;
+}
+
+//------------------------------------------------------------------------------
+uint8_t amf_n1::get_nas_message_type(uint8_t* buf, uint32_t len) {
+  if (len < 2) return 0;
+  return *(buf + 2);
 }
