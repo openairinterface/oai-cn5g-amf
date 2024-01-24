@@ -41,9 +41,11 @@ class UplinkNonUEAssociatedNRPPaTransportMsg : public NgapMessage {
 
   void setRoutingId(const OCTET_STRING_t& pdu);
   void getRoutingId(OCTET_STRING_t& pdu);
+  OCTET_STRING_t getRoutingId();
 
   void setNRPPaPdu(const OCTET_STRING_t& pdu);
   void getNRPPaPdu(OCTET_STRING_t& pdu);
+  OCTET_STRING_t getNRPPaPdu();
 
  private:
   Ngap_UplinkNonUEAssociatedNRPPaTransport_t*

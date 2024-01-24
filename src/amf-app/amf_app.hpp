@@ -403,6 +403,14 @@ class amf_app {
 
   bool remove_non_ue_n2_info_subscription(const std::string& sub_id);
 
+  void find_non_ue_n2_info_subscriptions(
+      const std::string& nf_id,
+      const oai::amf::model::N2InformationClass_anyOf::
+          eN2InformationClass_anyOf& n2_info_class,
+      std::map<
+          n1n2sub_id_t,
+          std::shared_ptr<oai::amf::model::NonUeN2InfoSubscriptionCreateData>>&
+          subscriptions);
   /*
    * Trigger NF instance registration to NRF
    * @param [void]

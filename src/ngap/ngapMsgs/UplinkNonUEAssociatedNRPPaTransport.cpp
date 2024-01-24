@@ -71,6 +71,11 @@ void UplinkNonUEAssociatedNRPPaTransportMsg::getRoutingId(OCTET_STRING_t& id) {
 }
 
 //------------------------------------------------------------------------------
+OCTET_STRING_t UplinkNonUEAssociatedNRPPaTransportMsg::getRoutingId() {
+  return routingID;
+}
+
+//------------------------------------------------------------------------------
 void UplinkNonUEAssociatedNRPPaTransportMsg::setNRPPaPdu(
     const OCTET_STRING_t& pdu) {
   nRPPaPDU = pdu;
@@ -93,6 +98,11 @@ void UplinkNonUEAssociatedNRPPaTransportMsg::setNRPPaPdu(
 //------------------------------------------------------------------------------
 void UplinkNonUEAssociatedNRPPaTransportMsg::getNRPPaPdu(OCTET_STRING_t& pdu) {
   pdu = nRPPaPDU;
+}
+
+//------------------------------------------------------------------------------
+OCTET_STRING_t UplinkNonUEAssociatedNRPPaTransportMsg::getNRPPaPdu() {
+  return nRPPaPDU;
 }
 
 //------------------------------------------------------------------------------

@@ -1172,6 +1172,32 @@ bool amf_app::remove_non_ue_n2_info_subscription(const std::string& sub_id) {
   return true;
 }
 
+//---------------------------------------------------------------------------------------------
+void amf_app::find_non_ue_n2_info_subscriptions(
+    const std::string& nf_id,
+    const oai::amf::model::N2InformationClass_anyOf::eN2InformationClass_anyOf&
+        n2_info_class,
+    std::map<
+        n1n2sub_id_t,
+        std::shared_ptr<oai::amf::model::NonUeN2InfoSubscriptionCreateData>>&
+        subscriptions) {
+  Logger::amf_app().debug("Find an Non UE N2 Info Subscription");
+
+  std::shared_lock lock(m_non_ue_n2_info_subscribe);
+  for (auto subscription : non_ue_n2_info_subscribe) {
+    if ((subscription.second->getN2InformationClass().getEnumValue() ==
+         n2_info_class) and
+        (subscription.second->getNfId() == nf_id)) {
+      subscriptions.insert(
+          std::pair<
+              n1n2sub_id_t,
+              std::shared_ptr<
+                  oai::amf::model::NonUeN2InfoSubscriptionCreateData>>(
+              subscription.first, subscription.second));
+    }
+  }
+}
+
 //------------------------------------------------------------------------------
 uint32_t amf_app::generate_tmsi() {
   return tmsi_generator.get_uid();

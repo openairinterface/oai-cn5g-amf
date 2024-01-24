@@ -279,6 +279,15 @@ void amf_n2_task(void* args_p) {
         amf_n2_inst->handle_itti_message(msg_ptr);
       } break;
 
+      case UPLINK_NON_UE_ASSOCIATED_NRPPA_TRANSPORT: {
+        Logger::amf_n2().info(
+            "Received Uplink Non UE Associated NRPPA Transport message, "
+            "handling");
+        auto msg_ptr = std::dynamic_pointer_cast<
+            itti_uplink_non_ue_associated_nrppa_transport>(shared_msg);
+        amf_n2_inst->handle_itti_message(msg_ptr);
+      } break;
+
       case TERMINATE: {
         auto msg_ptr =
             std::dynamic_pointer_cast<itti_msg_terminate>(shared_msg);
@@ -2571,27 +2580,64 @@ void amf_n2::handle_itti_message(
 
     for (auto sub : subscriptions) {
       oai::amf::model::N2InformationNotification n2_info_notification = {};
-      n2_info_notification.setN2NotifySubscriptionId(std::to_string(sub.first));
-      oai::amf::model::N2InfoContainer n2_info_container = {};
-      // N2 Information Class
-      oai::amf::model::N2InformationClass n2_information_class = {};
-      n2_information_class.setEnumValue(n2_info_class.value());
-      n2_info_container.setN2InformationClass(n2_information_class);
-      // NRPPA Info
-      oai::amf::model::NrppaInformation nrppa_information    = {};
-      oai::amf::model::N2InfoContent n2_info_content         = {};
-      oai::amf::model::NgapIeType ngap_ie_type               = {};
-      oai::model::common::RefToBinaryData ref_to_binary_data = {};
-      ngap_ie_type.setEnumValue(
-          oai::amf::model::NgapIeType_anyOf::eNgapIeType_anyOf::NRPPA_PDU);
-      ref_to_binary_data.setContentId(N2_NRPPa_CONTENT_ID);
-      n2_info_content.setNgapIeType(ngap_ie_type);
-      // n2_info_content.setNgapMessageType(value)
-      n2_info_content.setNgapData(ref_to_binary_data);
-      nrppa_information.setNrppaPdu(n2_info_content);
-      n2_info_container.setNrppaInfo(nrppa_information);
+      fill_n2_information_notification(
+          std::to_string(sub.first),
+          oai::amf::model::NgapIeType_anyOf::eNgapIeType_anyOf::NRPPA_PDU,
+          n2_info_notification);
 
-      n2_info_notification.setN2InfoContainer(n2_info_container);
+      itti_msg_notification->n2_info_notification = n2_info_notification;
+      itti_msg_notification->n2_info =
+          std::make_optional<bstring>(bstrcpy(itti_msg->nrppa_pdu));
+      itti_msg_notification->nf_uri =
+          sub.second.get()->getN2NotifyCallbackUri();
+    }
+
+    int ret = itti_inst->send_msg(itti_msg_notification);
+    if (0 != ret) {
+      Logger::amf_n2().error(
+          "Could not send ITTI message %s to task TASK_AMF_SBI",
+          itti_msg_notification->get_msg_name());
+    }
+  }
+}
+
+//------------------------------------------------------------------------------
+void amf_n2::handle_itti_message(
+    std::shared_ptr<itti_uplink_non_ue_associated_nrppa_transport>& itti_msg) {
+  Logger::amf_n2().debug("Handle Uplink Non UE Associated NRPPa Transport ...");
+
+  // Find subscribed LMF based on Routing ID
+  std::string lmf_id = {};
+  amf_conv::bstring_2_string(itti_msg->routing_id, lmf_id);
+
+  auto n2_info_class = oai::amf::model::N2InformationClass_anyOf::
+      eN2InformationClass_anyOf::NRPPA;
+
+  std::map<
+      n1n2sub_id_t,
+      std::shared_ptr<oai::amf::model::NonUeN2InfoSubscriptionCreateData>>
+      subscriptions;
+
+  amf_app_inst->find_non_ue_n2_info_subscriptions(
+      lmf_id, n2_info_class, subscriptions);
+
+  // Create message to send to subscribed NFs
+  if (subscriptions.size() > 0) {
+    // Send request to SBI to trigger the notification to the subscribed NFs (N2
+    // Info Notify)
+    Logger::amf_n2().debug(
+        "Send ITTI msg to AMF SBI to trigger the notification");
+
+    std::shared_ptr<itti_sbi_n2_info_notify> itti_msg_notification =
+        std::make_shared<itti_sbi_n2_info_notify>(TASK_AMF_N2, TASK_AMF_SBI);
+
+    for (auto sub : subscriptions) {
+      oai::amf::model::N2InformationNotification n2_info_notification = {};
+      fill_n2_information_notification(
+          std::to_string(sub.first),
+          oai::amf::model::NgapIeType_anyOf::eNgapIeType_anyOf::NRPPA_PDU,
+          n2_info_notification);
+
       itti_msg_notification->n2_info_notification = n2_info_notification;
       itti_msg_notification->n2_info =
           std::make_optional<bstring>(bstrcpy(itti_msg->nrppa_pdu));
@@ -2971,4 +3017,42 @@ bool amf_n2::get_common_NSSAI(
   }
 
   return found;
+}
+
+//------------------------------------------------------------------------------
+void amf_n2::fill_n2_information_notification(
+    const std::string& subscription_id,
+    const oai::amf::model::NgapIeType_anyOf::eNgapIeType_anyOf& ngap_ie_type_e,
+    oai::amf::model::N2InformationNotification& n2_info_notification) {
+  n2_info_notification.setN2NotifySubscriptionId(subscription_id);
+  oai::amf::model::N2InfoContainer n2_info_container = {};
+
+  // N2 Information Class (only for NRPPA for now)
+  oai::amf::model::N2InformationClass n2_information_class = {};
+  n2_information_class.setEnumValue(oai::amf::model::N2InformationClass_anyOf::
+                                        eN2InformationClass_anyOf::NRPPA);
+  n2_info_container.setN2InformationClass(n2_information_class);
+
+  oai::amf::model::N2InfoContent n2_info_content         = {};
+  oai::amf::model::NgapIeType ngap_ie_type               = {};
+  oai::model::common::RefToBinaryData ref_to_binary_data = {};
+  ngap_ie_type.setEnumValue(ngap_ie_type_e);
+  // TODO: for another types
+  if (ngap_ie_type_e ==
+      oai::amf::model::NgapIeType_anyOf::eNgapIeType_anyOf::NRPPA_PDU) {
+    ref_to_binary_data.setContentId(N2_NRPPa_CONTENT_ID);
+  }
+  n2_info_content.setNgapIeType(ngap_ie_type);
+  // n2_info_content.setNgapMessageType(value)
+  n2_info_content.setNgapData(ref_to_binary_data);
+
+  if (ngap_ie_type_e ==
+      oai::amf::model::NgapIeType_anyOf::eNgapIeType_anyOf::NRPPA_PDU) {
+    // NRPPA Info
+    oai::amf::model::NrppaInformation nrppa_information = {};
+    nrppa_information.setNrppaPdu(n2_info_content);
+    n2_info_container.setNrppaInfo(nrppa_information);
+  }
+
+  n2_info_notification.setN2InfoContainer(n2_info_container);
 }
