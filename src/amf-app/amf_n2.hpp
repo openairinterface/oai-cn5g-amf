@@ -231,6 +231,12 @@ class amf_n2 : public ngap::ngap_app {
   void handle_itti_message(
       std::shared_ptr<itti_uplink_ue_associated_nrppa_transport>& itti_msg);
 
+  /*
+   * Handle ITTI message (itti_uplink_non_ue_associated_nrppa_transport)
+   * @param [std::shared_ptr<itti_uplink_non_ue_associated_nrppa_transport>&]:
+   * ITTI message
+   * @return void
+   */
   void handle_itti_message(
       std::shared_ptr<itti_uplink_non_ue_associated_nrppa_transport>& itti_msg);
 
@@ -399,6 +405,15 @@ class amf_n2 : public ngap::ngap_app {
       const sctp_assoc_id_t& gnb_assoc_id,
       std::vector<std::shared_ptr<ue_ngap_context>>& ue_contexts);
 
+  /*
+   * Fill the content of N2InformationNotification with the corresponding info
+   * @param [const std::string&] subscription_id: Subscription ID
+   * @param [const oai::amf::model::NgapIeType_anyOf::eNgapIeType_anyOf&]
+   * ngap_ie_type: Type of NGAP Ie
+   * @param [oai::amf::model::N2InformationNotification&] n2_info_notification:
+   * N2InformationNotification
+   * @return void
+   */
   void fill_n2_information_notification(
       const std::string& subscription_id,
       const oai::amf::model::NgapIeType_anyOf::eNgapIeType_anyOf& ngap_ie_type,
