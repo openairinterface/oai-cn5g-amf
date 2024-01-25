@@ -851,23 +851,18 @@ void amf_config_yaml::to_amf_config(amf_config& cfg) {
     cfg.support_features.enable_smf_selection   = false;
     cfg.support_features.enable_external_ausf   = false;  // TODO: to be removed
     cfg.support_features.enable_external_udm    = false;  // TODO: to be removed
-    cfg.support_features.enable_external_nrf    = false;
     cfg.support_features.enable_nssf            = false;  // TODO: to be removed
-    cfg.support_features.use_fqdn_dns           = false;  // TODO: to be removed
   } else {  // parse the other options
     cfg.support_features.enable_nf_registration = register_nrf();
     cfg.support_features.enable_smf_selection =
         amf_local->get_support_features().get_option_enable_smf_selection();
     cfg.support_features.enable_external_ausf = true;  // To be removed
     cfg.support_features.enable_external_udm  = true;  // To be removed
-    cfg.support_features.enable_external_nrf  = true;
     cfg.support_features.enable_nssf =
         amf_local->get_support_features().get_option_enable_nssf();
   }
 
   if (get_http_version() == 2) cfg.support_features.use_http2 = true;
-  // TODO:
-  // cfg.support_features.use_fqdn_dns = true;
 
   for (const auto& i : amf_local->get_guami_list()) {
     guami_full_format_t guami_item = {};
@@ -890,9 +885,7 @@ void amf_config_yaml::to_amf_config(amf_config& cfg) {
       slice.sst      = s.get_sst();
       std::string sd = {};
       if (s.get_sd(sd)) {
-        if (amf_conv::sd_string_hex_to_int(sd, slice.sd)) {
-          // TODO:
-        }
+        amf_conv::sd_string_hex_to_int(sd, slice.sd);
       } else {
         slice.sd = SD_NO_VALUE;
       }

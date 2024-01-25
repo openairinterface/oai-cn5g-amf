@@ -75,9 +75,7 @@ amf_config::amf_config() {
   support_features.enable_external_udm    = false;
   support_features.enable_nssf            = false;
   support_features.enable_lmf             = false;
-  support_features.use_fqdn_dns           = false;
   support_features.use_http2              = false;
-  support_features.enable_external_nrf    = true;
   is_emergency_support                    = false;
   // TODO:
 }
@@ -167,7 +165,7 @@ void amf_config::display() {
         "    API version ...........: %s", smf_addr.api_version.c_str());
   }
 
-  if (support_features.enable_external_nrf) {
+  if (support_features.enable_nf_registration) {
     Logger::config().info("- NRF:");
     Logger::config().info(
         "    URI root ...............: %s", nrf_addr.uri_root);
@@ -237,11 +235,6 @@ void amf_config::display() {
       "    Use HTTP2 .............: %s", support_features.use_http2 ?
                                              AMF_CONFIG_OPTION_YES_STR :
                                              AMF_CONFIG_OPTION_NO_STR);
-
-  Logger::config().info(
-      "    Use FQDN .............: %s", support_features.use_fqdn_dns ?
-                                            AMF_CONFIG_OPTION_YES_STR :
-                                            AMF_CONFIG_OPTION_NO_STR);
   Logger::config().info(
       "- Log Level ...............: %s",
       spdlog::level::to_string_view(log_level));
@@ -383,7 +376,7 @@ void amf_config::to_json(nlohmann::json& json_data) const {
 
   json_data["smf"] = smf_addr.to_json();
 
-  if (support_features.enable_external_nrf) {
+  if (support_features.enable_nf_registration) {
     json_data["nrf"] = nrf_addr.to_json();
   }
 
@@ -470,7 +463,7 @@ bool amf_config::from_json(nlohmann::json& json_data) {
       smf_addr.from_json(json_data["smf"]);
     }
 
-    if (support_features.enable_external_nrf) {
+    if (support_features.enable_nf_registration) {
       if (json_data.find("nrf") != json_data.end()) {
         nrf_addr.from_json(json_data["nrf"]);
       }

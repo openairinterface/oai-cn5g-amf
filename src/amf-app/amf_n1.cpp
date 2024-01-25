@@ -233,10 +233,9 @@ void amf_n1::handle_itti_message(itti_downlink_nas_transfer& itti_msg) {
   if (itti_msg.is_n2sm_set) {
     // PDU Session Resource Release Command
     if (itti_msg.n2sm_info_type.compare("PDU_RES_REL_CMD") == 0) {
-      std::shared_ptr<itti_pdu_session_resource_release_command>
-          release_command =
-              std::make_shared<itti_pdu_session_resource_release_command>(
-                  TASK_AMF_N1, TASK_AMF_N2);
+      auto release_command =
+          std::make_shared<itti_pdu_session_resource_release_command>(
+              TASK_AMF_N1, TASK_AMF_N2);
       release_command->nas            = protected_nas;
       release_command->n2sm           = bstrcpy(itti_msg.n2sm);
       release_command->amf_ue_ngap_id = amf_ue_ngap_id;
@@ -251,10 +250,9 @@ void amf_n1::handle_itti_message(itti_downlink_nas_transfer& itti_msg) {
       }
       // PDU Session Resource Modify Request
     } else if (itti_msg.n2sm_info_type.compare("PDU_RES_MOD_REQ") == 0) {
-      std::shared_ptr<itti_pdu_session_resource_modify_request>
-          itti_modify_request_msg =
-              std::make_shared<itti_pdu_session_resource_modify_request>(
-                  TASK_AMF_N1, TASK_AMF_N2);
+      auto itti_modify_request_msg =
+          std::make_shared<itti_pdu_session_resource_modify_request>(
+              TASK_AMF_N1, TASK_AMF_N2);
       itti_modify_request_msg->nas            = protected_nas;
       itti_modify_request_msg->n2sm           = bstrcpy(itti_msg.n2sm);
       itti_modify_request_msg->amf_ue_ngap_id = amf_ue_ngap_id;
@@ -299,9 +297,8 @@ void amf_n1::handle_itti_message(itti_downlink_nas_transfer& itti_msg) {
 
       if (uc->is_ue_context_request) {
         // PDU SESSION RESOURCE SETUP_REQUEST
-        std::shared_ptr<itti_pdu_session_resource_setup_request> psrsr =
-            std::make_shared<itti_pdu_session_resource_setup_request>(
-                TASK_AMF_N1, TASK_AMF_N2);
+        auto psrsr = std::make_shared<itti_pdu_session_resource_setup_request>(
+            TASK_AMF_N1, TASK_AMF_N2);
         psrsr->nas            = protected_nas;
         psrsr->n2sm           = bstrcpy(itti_msg.n2sm);
         psrsr->amf_ue_ngap_id = amf_ue_ngap_id;
@@ -329,9 +326,8 @@ void amf_n1::handle_itti_message(itti_downlink_nas_transfer& itti_msg) {
         output_wrapper::print_buffer(
             "amf_n1", "Kamf", kamf, AUTH_VECTOR_LENGTH_OCTETS);
 
-        std::shared_ptr<itti_initial_context_setup_request> csr =
-            std::make_shared<itti_initial_context_setup_request>(
-                TASK_AMF_N1, TASK_AMF_N2);
+        auto csr = std::make_shared<itti_initial_context_setup_request>(
+            TASK_AMF_N1, TASK_AMF_N2);
         csr->ran_ue_ngap_id     = ran_ue_ngap_id;
         csr->amf_ue_ngap_id     = amf_ue_ngap_id;
         csr->kgnb               = blk2bstr(kgnb, AUTH_VECTOR_LENGTH_OCTETS);
@@ -352,7 +348,7 @@ void amf_n1::handle_itti_message(itti_downlink_nas_transfer& itti_msg) {
       }
     }
   } else {
-    std::shared_ptr<itti_dl_nas_transport> dnt =
+    auto dnt =
         std::make_shared<itti_dl_nas_transport>(TASK_AMF_N1, TASK_AMF_N2);
     dnt->nas            = protected_nas;
     dnt->amf_ue_ngap_id = amf_ue_ngap_id;
@@ -994,9 +990,8 @@ void amf_n1::service_request_handle(
         NAS_MESSAGE_DOWNLINK, buffer, encoded_size, protected_nas);
 
     // PDU SESSION RESOURCE SETUP_REQUEST
-    std::shared_ptr<itti_pdu_session_resource_setup_request> psrsr =
-        std::make_shared<itti_pdu_session_resource_setup_request>(
-            TASK_AMF_N1, TASK_AMF_N2);
+    auto psrsr = std::make_shared<itti_pdu_session_resource_setup_request>(
+        TASK_AMF_N1, TASK_AMF_N2);
     psrsr->nas            = bstrcpy(protected_nas);
     psrsr->amf_ue_ngap_id = amf_ue_ngap_id;
     psrsr->ran_ue_ngap_id = ran_ue_ngap_id;
@@ -1141,9 +1136,8 @@ void amf_n1::service_request_handle(
             "No UE NGAP context with ran_ue_ngap_id (" GNB_UE_NGAP_ID_FMT ")",
             nc->old_ran_ue_ngap_id);
       } else {
-        std::shared_ptr<itti_ue_context_release_command> itti_msg =
-            std::make_shared<itti_ue_context_release_command>(
-                TASK_AMF_N1, TASK_AMF_N2);
+        auto itti_msg = std::make_shared<itti_ue_context_release_command>(
+            TASK_AMF_N1, TASK_AMF_N2);
         itti_msg->amf_ue_ngap_id = nc->old_amf_ue_ngap_id;
         itti_msg->ran_ue_ngap_id = nc->old_ran_ue_ngap_id;
         itti_msg->cause.setChoiceOfCause(Ngap_Cause_PR_radioNetwork);
@@ -1277,9 +1271,8 @@ void amf_n1::service_request_handle(
     output_wrapper::print_buffer(
         "amf_n1", "Kamf", kamf, AUTH_VECTOR_LENGTH_OCTETS);
 
-    std::shared_ptr<itti_initial_context_setup_request> itti_msg =
-        std::make_shared<itti_initial_context_setup_request>(
-            TASK_AMF_N1, TASK_AMF_N2);
+    auto itti_msg = std::make_shared<itti_initial_context_setup_request>(
+        TASK_AMF_N1, TASK_AMF_N2);
     itti_msg->ran_ue_ngap_id = ran_ue_ngap_id;
     itti_msg->amf_ue_ngap_id = amf_ue_ngap_id;
     itti_msg->nas            = bstrcpy(protected_nas);
@@ -1304,9 +1297,8 @@ void amf_n1::service_request_handle(
   } else {
     std::shared_ptr<pdu_session_context> psc = {};
 
-    std::shared_ptr<itti_initial_context_setup_request> itti_msg =
-        std::make_shared<itti_initial_context_setup_request>(
-            TASK_AMF_N1, TASK_AMF_N2);
+    auto itti_msg = std::make_shared<itti_initial_context_setup_request>(
+        TASK_AMF_N1, TASK_AMF_N2);
 
     service_accept->SetPduSessionStatus(pdu_session_status);
     service_accept->SetPduSessionReactivationResult(0x0000);  // To be verified
@@ -1399,9 +1391,8 @@ void amf_n1::send_service_reject(
     return;
   }
 
-  std::shared_ptr<itti_dl_nas_transport> dnt =
-      std::make_shared<itti_dl_nas_transport>(TASK_AMF_N1, TASK_AMF_N2);
-  dnt->nas            = blk2bstr(buffer, encoded_size);
+  auto dnt = std::make_shared<itti_dl_nas_transport>(TASK_AMF_N1, TASK_AMF_N2);
+  dnt->nas = blk2bstr(buffer, encoded_size);
   dnt->amf_ue_ngap_id = nc->amf_ue_ngap_id;
   dnt->ran_ue_ngap_id = nc->ran_ue_ngap_id;
 
@@ -1425,8 +1416,7 @@ void amf_n1::registration_request_handle(
     std::shared_ptr<nas_context>& nc, const uint32_t ran_ue_ngap_id,
     const long amf_ue_ngap_id, const std::string& snn, bstring reg) {
   // Decode Registration Request message
-  std::unique_ptr<RegistrationRequest> registration_request =
-      std::make_unique<RegistrationRequest>();
+  auto registration_request = std::make_unique<RegistrationRequest>();
 
   registration_request->Decode((uint8_t*) bdata(reg), blength(reg));
 
@@ -1711,7 +1701,7 @@ void amf_n1::registration_request_handle(
       registration_request->GetNasMessageContainer(nas_msg);
 
   if (is_messagecontainer) {
-    std::unique_ptr<RegistrationRequest> registration_request_msg_container =
+    auto registration_request_msg_container =
         std::make_unique<RegistrationRequest>();
     registration_request_msg_container->Decode(
         (uint8_t*) bdata(nas_msg), blength(nas_msg));
@@ -1948,8 +1938,7 @@ bool amf_n1::remove_supi_2_nas_context(const std::string& imsi) {
 void amf_n1::itti_send_dl_nas_buffer_to_task_n2(
     bstring& nas_msg, const uint32_t ran_ue_ngap_id,
     const long amf_ue_ngap_id) {
-  std::shared_ptr<itti_dl_nas_transport> msg =
-      std::make_shared<itti_dl_nas_transport>(TASK_AMF_N1, TASK_AMF_N2);
+  auto msg = std::make_shared<itti_dl_nas_transport>(TASK_AMF_N1, TASK_AMF_N2);
   msg->ran_ue_ngap_id = ran_ue_ngap_id;
   msg->amf_ue_ngap_id = amf_ue_ngap_id;
   msg->nas            = nas_msg;
@@ -1967,8 +1956,7 @@ void amf_n1::send_registration_reject_msg(
     uint8_t cause_value, const uint32_t ran_ue_ngap_id,
     const long amf_ue_ngap_id) {
   Logger::amf_n1().debug("Create Registration Reject and send to UE");
-  std::unique_ptr<RegistrationReject> registration_reject =
-      std::make_unique<RegistrationReject>();
+  auto registration_reject = std::make_unique<RegistrationReject>();
   registration_reject->SetHeader(PLAIN_5GS_MSG);
   registration_reject->Set5gmmCause(cause_value);
   uint8_t buffer[BUFFER_SIZE_1024] = {0};
@@ -2047,14 +2035,13 @@ void amf_n1::run_registration_procedure(std::shared_ptr<nas_context>& nc) {
   } else if (nc->is_5g_guti_present) {
     Logger::amf_n1().debug("Start to run UE Identification Request procedure");
     nc->is_auth_vectors_present = false;
-    std::unique_ptr<IdentityRequest> identity_request =
-        std::make_unique<IdentityRequest>();
+    auto identity_request       = std::make_unique<IdentityRequest>();
     identity_request->SetHeader(PLAIN_5GS_MSG);
     identity_request->Set5gsIdentityType(SUCI);
     uint8_t buffer[BUFFER_SIZE_256];
     int encoded_size = identity_request->Encode(buffer, BUFFER_SIZE_256);
 
-    std::shared_ptr<itti_dl_nas_transport> dnt =
+    auto dnt =
         std::make_shared<itti_dl_nas_transport>(TASK_AMF_N1, TASK_AMF_N2);
     dnt->nas            = blk2bstr(buffer, encoded_size);
     dnt->amf_ue_ngap_id = nc->amf_ue_ngap_id;
@@ -2495,8 +2482,7 @@ bool amf_n1::start_authentication_procedure(
   }
 
   nc->is_common_procedure_for_authentication_running = true;
-  std::unique_ptr<AuthenticationRequest> auth_request =
-      std::make_unique<AuthenticationRequest>();
+  auto auth_request = std::make_unique<AuthenticationRequest>();
   auth_request->SetHeader(PLAIN_5GS_MSG);
   auth_request->SetNgKsi(NAS_KEY_SET_IDENTIFIER_NATIVE, ngksi);
   uint8_t abba[2];
@@ -2772,8 +2758,7 @@ bool amf_n1::start_security_mode_control_procedure(
     nc->is_current_security_available = true;
   }
 
-  std::unique_ptr<SecurityModeCommand> smc =
-      std::make_unique<SecurityModeCommand>();
+  auto smc = std::make_unique<SecurityModeCommand>();
   smc->SetHeader(PLAIN_5GS_MSG);
   smc->SetNasSecurityAlgorithms(amf_nea, amf_nia);
   Logger::amf_n1().debug("Encoded ngKSI 0x%x", nc->ngksi);
@@ -2877,8 +2862,7 @@ void amf_n1::security_mode_complete_handle(
     if (message_type == REGISTRATION_REQUEST) {
       Logger::amf_n1().debug("Registration Request in NAS Message Container");
       // Decode registration request message
-      std::unique_ptr<RegistrationRequest> registration_request =
-          std::make_unique<RegistrationRequest>();
+      auto registration_request = std::make_unique<RegistrationRequest>();
       registration_request->Decode(
           (uint8_t*) bdata(nas_msg_container), blength(nas_msg_container));
       // utils::bdestroy_wrapper(&nas_msg_container);  // free buffer
@@ -3045,7 +3029,7 @@ void amf_n1::security_mode_complete_handle(
     // IE: UEAggregateMaximumBitRate
     // AllowedNSSAI
 
-    std::shared_ptr<itti_dl_nas_transport> dnt =
+    auto dnt =
         std::make_shared<itti_dl_nas_transport>(TASK_AMF_N1, TASK_AMF_N2);
     dnt->nas            = protected_nas;
     dnt->amf_ue_ngap_id = amf_ue_ngap_id;
@@ -3074,9 +3058,8 @@ void amf_n1::security_mode_complete_handle(
     output_wrapper::print_buffer(
         "amf_n1", "Kamf", kamf, AUTH_VECTOR_LENGTH_OCTETS);
 
-    std::shared_ptr<itti_initial_context_setup_request> itti_msg =
-        std::make_shared<itti_initial_context_setup_request>(
-            TASK_AMF_N1, TASK_AMF_N2);
+    auto itti_msg = std::make_shared<itti_initial_context_setup_request>(
+        TASK_AMF_N1, TASK_AMF_N2);
     itti_msg->ran_ue_ngap_id = ran_ue_ngap_id;
     itti_msg->amf_ue_ngap_id = amf_ue_ngap_id;
     itti_msg->kgnb           = blk2bstr(kgnb, AUTH_VECTOR_LENGTH_OCTETS);
@@ -3427,7 +3410,7 @@ void amf_n1::ue_initiate_de_registration_handle(
 
       std::map<uint32_t, boost::shared_future<nlohmann::json>> smf_responses;
       for (auto session : sessions_ctx) {
-        std::shared_ptr<itti_nsmf_pdusession_release_sm_context> itti_msg =
+        auto itti_msg =
             std::make_shared<itti_nsmf_pdusession_release_sm_context>(
                 TASK_AMF_N1, TASK_AMF_SBI);
 
@@ -3588,9 +3571,8 @@ void amf_n1::ue_initiate_de_registration_handle(
   Logger::amf_n1().debug(
       "Sending ITTI UE Context Release Command to TASK_AMF_N2");
 
-  std::shared_ptr<itti_ue_context_release_command> itti_msg =
-      std::make_shared<itti_ue_context_release_command>(
-          TASK_AMF_N1, TASK_AMF_N2);
+  auto itti_msg = std::make_shared<itti_ue_context_release_command>(
+      TASK_AMF_N1, TASK_AMF_N2);
   itti_msg->amf_ue_ngap_id = amf_ue_ngap_id;
   itti_msg->ran_ue_ngap_id = ran_ue_ngap_id;
   itti_msg->cause.setChoiceOfCause(Ngap_Cause_PR_nas);
@@ -3728,7 +3710,7 @@ void amf_n1::ul_nas_transport_handle(
         // Get payload container
         ul_nas->GetPayloadContainer(sm_msg);
 
-        std::shared_ptr<itti_nsmf_pdusession_create_sm_context> itti_msg =
+        auto itti_msg =
             std::make_shared<itti_nsmf_pdusession_create_sm_context>(
                 TASK_AMF_N1, TASK_AMF_SBI);
         itti_msg->ran_ue_ngap_id = ran_ue_ngap_id;
@@ -3761,7 +3743,7 @@ void amf_n1::ul_nas_transport_handle(
         // Get payload container
         ul_nas->GetPayloadContainer(sm_msg);
 
-        std::shared_ptr<itti_nsmf_pdusession_update_sm_context> itti_msg =
+        auto itti_msg =
             std::make_shared<itti_nsmf_pdusession_update_sm_context>(
                 TASK_AMF_N1, TASK_AMF_SBI);
 
@@ -3862,7 +3844,7 @@ void amf_n1::run_mobility_registration_update_procedure(
   output_wrapper::print_buffer(
       "amf_n1", "Kamf", kamf, AUTH_VECTOR_LENGTH_OCTETS);
 
-  std::shared_ptr<itti_dl_nas_transport> itti_msg =
+  auto itti_msg =
       std::make_shared<itti_dl_nas_transport>(TASK_AMF_N1, TASK_AMF_N2);
   itti_msg->ran_ue_ngap_id = nc->ran_ue_ngap_id;
   itti_msg->amf_ue_ngap_id = nc->amf_ue_ngap_id;
@@ -3922,7 +3904,7 @@ void amf_n1::run_periodic_registration_update_procedure(
       nc->security_ctx.value(), false, INTEGRITY_PROTECTED_AND_CIPHERED,
       NAS_MESSAGE_DOWNLINK, buffer, encoded_size, protected_nas);
 
-  std::shared_ptr<itti_dl_nas_transport> itti_msg =
+  auto itti_msg =
       std::make_shared<itti_dl_nas_transport>(TASK_AMF_N1, TASK_AMF_N2);
   itti_msg->ran_ue_ngap_id = nc->ran_ue_ngap_id;
   itti_msg->amf_ue_ngap_id = nc->amf_ue_ngap_id;
@@ -4050,9 +4032,8 @@ void amf_n1::handle_ue_location_change(
     Logger::amf_n1().debug(
         "Send ITTI msg to AMF SBI to trigger the event notification");
 
-    std::shared_ptr<itti_sbi_notify_subscribed_event> itti_msg =
-        std::make_shared<itti_sbi_notify_subscribed_event>(
-            TASK_AMF_N1, TASK_AMF_SBI);
+    auto itti_msg = std::make_shared<itti_sbi_notify_subscribed_event>(
+        TASK_AMF_N1, TASK_AMF_SBI);
 
     itti_msg->http_version = 1;
 
@@ -4110,9 +4091,8 @@ void amf_n1::handle_ue_reachability_status_change(
     Logger::amf_n1().debug(
         "Send ITTI msg to AMF SBI to trigger the event notification");
 
-    std::shared_ptr<itti_sbi_notify_subscribed_event> itti_msg =
-        std::make_shared<itti_sbi_notify_subscribed_event>(
-            TASK_AMF_N1, TASK_AMF_SBI);
+    auto itti_msg = std::make_shared<itti_sbi_notify_subscribed_event>(
+        TASK_AMF_N1, TASK_AMF_SBI);
 
     itti_msg->http_version = 1;
 
@@ -4176,9 +4156,8 @@ void amf_n1::handle_ue_registration_state_change(
     Logger::amf_n1().debug(
         "Send ITTI msg to AMF SBI to trigger the event notification");
 
-    std::shared_ptr<itti_sbi_notify_subscribed_event> itti_msg =
-        std::make_shared<itti_sbi_notify_subscribed_event>(
-            TASK_AMF_N1, TASK_AMF_SBI);
+    auto itti_msg = std::make_shared<itti_sbi_notify_subscribed_event>(
+        TASK_AMF_N1, TASK_AMF_SBI);
 
     itti_msg->http_version = 1;
 
@@ -4255,9 +4234,8 @@ void amf_n1::handle_ue_connectivity_state_change(
     Logger::amf_n1().debug(
         "Send ITTI msg to AMF SBI to trigger the event notification");
 
-    std::shared_ptr<itti_sbi_notify_subscribed_event> itti_msg =
-        std::make_shared<itti_sbi_notify_subscribed_event>(
-            TASK_AMF_N1, TASK_AMF_SBI);
+    auto itti_msg = std::make_shared<itti_sbi_notify_subscribed_event>(
+        TASK_AMF_N1, TASK_AMF_SBI);
 
     itti_msg->http_version = 1;
 
@@ -4330,9 +4308,8 @@ void amf_n1::handle_ue_communication_failure_change(
     Logger::amf_n1().debug(
         "Send ITTI msg to AMF SBI to trigger the event notification");
 
-    std::shared_ptr<itti_sbi_notify_subscribed_event> itti_msg =
-        std::make_shared<itti_sbi_notify_subscribed_event>(
-            TASK_AMF_N1, TASK_AMF_SBI);
+    auto itti_msg = std::make_shared<itti_sbi_notify_subscribed_event>(
+        TASK_AMF_N1, TASK_AMF_SBI);
 
     itti_msg->http_version = 1;
 
@@ -4391,9 +4368,8 @@ void amf_n1::handle_ue_loss_of_connectivity_change(
     Logger::amf_n1().debug(
         "Send ITTI msg to AMF SBI to trigger the event notification");
 
-    std::shared_ptr<itti_sbi_notify_subscribed_event> itti_msg =
-        std::make_shared<itti_sbi_notify_subscribed_event>(
-            TASK_AMF_N1, TASK_AMF_SBI);
+    auto itti_msg = std::make_shared<itti_sbi_notify_subscribed_event>(
+        TASK_AMF_N1, TASK_AMF_SBI);
 
     itti_msg->http_version = 1;
 
@@ -4678,9 +4654,8 @@ void amf_n1::implicit_deregistration_timer_timeout(
   if (!uc->get_pdu_sessions_context(pdu_sessions)) return;
 
   for (auto p : pdu_sessions) {
-    std::shared_ptr<itti_nsmf_pdusession_release_sm_context> itti_msg =
-        std::make_shared<itti_nsmf_pdusession_release_sm_context>(
-            TASK_AMF_N1, TASK_AMF_SBI);
+    auto itti_msg = std::make_shared<itti_nsmf_pdusession_release_sm_context>(
+        TASK_AMF_N1, TASK_AMF_SBI);
     itti_msg->supi           = uc->supi;
     itti_msg->pdu_session_id = p->pdu_session_id;
 
@@ -4697,9 +4672,8 @@ void amf_n1::implicit_deregistration_timer_timeout(
   Logger::amf_n1().debug(
       "Sending ITTI UE Context Release Command to TASK_AMF_N2");
 
-  std::shared_ptr<itti_ue_context_release_command> itti_msg_cxt_release =
-      std::make_shared<itti_ue_context_release_command>(
-          TASK_AMF_N1, TASK_AMF_N2);
+  auto itti_msg_cxt_release = std::make_shared<itti_ue_context_release_command>(
+      TASK_AMF_N1, TASK_AMF_N2);
   itti_msg_cxt_release->amf_ue_ngap_id = nc->amf_ue_ngap_id;
   itti_msg_cxt_release->ran_ue_ngap_id = nc->ran_ue_ngap_id;
   itti_msg_cxt_release->cause.setChoiceOfCause(Ngap_Cause_PR_nas);
@@ -5034,7 +5008,7 @@ bool amf_n1::get_slice_selection_subscription_data(
       return false;
     }
 
-    std::shared_ptr<itti_sbi_slice_selection_subscription_data> itti_msg =
+    auto itti_msg =
         std::make_shared<itti_sbi_slice_selection_subscription_data>(
             TASK_AMF_N1, TASK_AMF_SBI);
 

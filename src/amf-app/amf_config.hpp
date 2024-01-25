@@ -51,9 +51,7 @@ typedef struct support_features_s {
   bool enable_external_ausf;
   bool enable_external_udm;
   bool enable_nssf;
-  bool enable_external_nrf;
   bool enable_lmf;
-  bool use_fqdn_dns;
   bool use_http2;
   nlohmann::json to_json() const {
     nlohmann::json json_data            = {};
@@ -63,7 +61,6 @@ typedef struct support_features_s {
     json_data["enable_external_udm"]    = this->enable_external_udm;
     json_data["enable_nssf"]            = this->enable_nssf;
     json_data["enable_lmf"]             = this->enable_lmf;
-    json_data["use_fqdn_dns"]           = this->use_fqdn_dns;
     json_data["use_http2"]              = this->use_http2;
     return json_data;
   }
@@ -75,7 +72,6 @@ typedef struct support_features_s {
     this->enable_external_ausf = json_data["enable_external_ausf"].get<bool>();
     this->enable_external_udm  = json_data["enable_external_udm"].get<bool>();
     this->enable_nssf          = json_data["enable_nssf"].get<bool>();
-    this->use_fqdn_dns         = json_data["use_fqdn_dns"].get<bool>();
     this->use_http2            = json_data["use_http2"].get<bool>();
     this->enable_lmf           = json_data["enable_lmf"].get<bool>();
   }
