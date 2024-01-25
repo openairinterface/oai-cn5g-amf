@@ -983,6 +983,14 @@ class amf_n1 {
       const uint8_t cause_value, const uint32_t ran_ue_ngap_id,
       const long amf_ue_ngap_id);
 
+  /*
+   * Get NAS's message type from message buffer
+   * @param [uint8_t*] buf: pointer to the NAS buffer
+   * @param [uint32_t] len: Length of the NAS buffer
+   * @return NAS's message type
+   */
+  uint8_t get_nas_message_type(uint8_t* buf, uint32_t len);
+
   // for Event Handling
   amf_event event_sub;
   bs2::connection ee_ue_location_report_connection;

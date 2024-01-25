@@ -1025,6 +1025,7 @@ void amf_n2::handle_itti_message(
         "No existed nas_context with amf_ue_ngap_id(" AMF_UE_NGAP_ID_FMT ")",
         itti_msg->amf_ue_ngap_id);
     // TODO:
+    return;
   } else {
     if (nc->imeisv.has_value()) {
       Logger::nas_mm().debug(
@@ -1038,7 +1039,7 @@ void amf_n2::handle_itti_message(
 
   msg->setNasPdu(itti_msg->nas);
 
-  if (itti_msg->is_sr or itti_msg->is_pdu_exist) {
+  if (itti_msg->is_sr or !itti_msg->pdu_sessions.empty()) {
     // Set UE Radio Capability if available
     if (unc->ue_radio_cap_ind) {
       // TODO: Disable this for the moment
@@ -1051,52 +1052,45 @@ void amf_n2::handle_itti_message(
       Logger::amf_n2().debug(
           "Encoding parameters for Initial Context Setup Request");
 
-    if (itti_msg->is_pdu_exist) {
-      // TODO: with multiple PDU Sessions
+    if (!itti_msg->pdu_sessions.empty()) {
       std::vector<PDUSessionResourceSetupRequestItem_t> list;
-      PDUSessionResourceSetupRequestItem_t item = {};
-      item.pduSessionId                         = itti_msg->pdu_session_id;
+      for (auto& p : itti_msg->pdu_sessions) {
+        PDUSessionResourceSetupRequestItem_t item = {};
+        item.pduSessionId                         = p.first;
 
-      // Get NSSAI from PDU Session Context
-      std::shared_ptr<nas_context> nc = {};
-      if (!amf_n1_inst->amf_ue_id_2_nas_context(itti_msg->amf_ue_ngap_id, nc)) {
-        Logger::amf_n2().warn(
-            "No existed nas_context with amf_ue_ngap_id(" AMF_UE_NGAP_ID_FMT
-            ")",
-            itti_msg->amf_ue_ngap_id);
-        // TODO:
-      }
-      std::string supi = amf_conv::imsi_to_supi(nc->imsi);
-      Logger::amf_n2().debug("SUPI (%s)", supi.c_str());
+        // Get NSSAI from PDU Session Context
+        std::string supi = amf_conv::imsi_to_supi(nc->imsi);
+        Logger::amf_n2().debug("SUPI (%s)", supi.c_str());
 
-      // Get S_NSSAI from PDU Session Context
-      std::shared_ptr<pdu_session_context> psc = {};
+        // Get S_NSSAI from PDU Session Context
+        std::shared_ptr<pdu_session_context> psc = {};
 
-      if (!amf_app_inst->find_pdu_session_context(
-              supi, itti_msg->pdu_session_id, psc)) {
-        Logger::amf_n2().warn(
-            "Cannot get pdu_session_context with SUPI (%s)", supi.c_str());
-        item.s_nssai.sst = "01";  // TODO: remove the default value
-        item.s_nssai.sd  = std::to_string(SD_NO_VALUE);
-      } else {
-        item.s_nssai.sst = std::to_string(psc->snssai.sST);
-        item.s_nssai.sd  = psc->snssai.sD;
-      }
-
-      Logger::amf_n2().debug(
-          "S_NSSAI (SST, SD) %s, %s", item.s_nssai.sst.c_str(),
-          item.s_nssai.sd.c_str());
-
-      // item.pduSessionNAS_PDU = NULL;
-      if (itti_msg->is_n2sm_avaliable) {
-        if (blength(itti_msg->n2sm) != 0) {
-          amf_conv::bstring_2_octet_string(
-              itti_msg->n2sm, item.pduSessionResourceSetupRequestTransfer);
+        if (!amf_app_inst->find_pdu_session_context(supi, p.first, psc)) {
+          Logger::amf_n2().warn(
+              "Cannot get pdu_session_context with SUPI (%s)", supi.c_str());
+          item.s_nssai.sst = "01";  // TODO: remove the default value
+          item.s_nssai.sd  = std::to_string(SD_NO_VALUE);
         } else {
-          Logger::amf_n2().error("n2sm empty!");
+          item.s_nssai.sst = std::to_string(psc->snssai.sST);
+          item.s_nssai.sd  = psc->snssai.sD;
         }
+
+        Logger::amf_n2().debug(
+            "S_NSSAI (SST, SD) %s, %s", item.s_nssai.sst.c_str(),
+            item.s_nssai.sd.c_str());
+
+        // item.pduSessionNAS_PDU = NULL;
+        if (p.second.is_n2sm_avaliable) {
+          if (blength(p.second.n2sm) != 0) {
+            amf_conv::bstring_2_octet_string(
+                p.second.n2sm, item.pduSessionResourceSetupRequestTransfer);
+          } else {
+            Logger::amf_n2().error("n2sm empty!");
+          }
+        }
+        list.push_back(item);
       }
-      list.push_back(item);
+
       msg->setPduSessionResourceSetupRequestList(list);
 
       // UEAggregateMaximumBitRate
