@@ -27,6 +27,8 @@
 #include "ngap_app.hpp"
 #include "ue_ngap_context.hpp"
 #include "Struct.hpp"
+#include "NgapIeType_anyOf.h"
+#include "N2InformationNotification.h"
 
 namespace amf_application {
 
@@ -230,6 +232,15 @@ class amf_n2 : public ngap::ngap_app {
       std::shared_ptr<itti_uplink_ue_associated_nrppa_transport>& itti_msg);
 
   /*
+   * Handle ITTI message (itti_uplink_non_ue_associated_nrppa_transport)
+   * @param [std::shared_ptr<itti_uplink_non_ue_associated_nrppa_transport>&]:
+   * ITTI message
+   * @return void
+   */
+  void handle_itti_message(
+      std::shared_ptr<itti_uplink_non_ue_associated_nrppa_transport>& itti_msg);
+
+  /*
    * Send Handover Preparaton Failure message
    * @param [const unsigned long] amf_ue_ngap_id: AMF UE NGAP ID
    * @param [const uint32_t] ran_ue_ngap_id: RAN UE NGAP ID
@@ -393,6 +404,20 @@ class amf_n2 : public ngap::ngap_app {
   void get_ue_ngap_contexts(
       const sctp_assoc_id_t& gnb_assoc_id,
       std::vector<std::shared_ptr<ue_ngap_context>>& ue_contexts);
+
+  /*
+   * Fill the content of N2InformationNotification with the corresponding info
+   * @param [const std::string&] subscription_id: Subscription ID
+   * @param [const oai::amf::model::NgapIeType_anyOf::eNgapIeType_anyOf&]
+   * ngap_ie_type: Type of NGAP Ie
+   * @param [oai::amf::model::N2InformationNotification&] n2_info_notification:
+   * N2InformationNotification
+   * @return void
+   */
+  void fill_n2_information_notification(
+      const std::string& subscription_id,
+      const oai::amf::model::NgapIeType_anyOf::eNgapIeType_anyOf& ngap_ie_type,
+      oai::amf::model::N2InformationNotification& n2_info_notification);
 
  private:
   // <RAN UE NGAP ID, gNB ID> <-> UE Context

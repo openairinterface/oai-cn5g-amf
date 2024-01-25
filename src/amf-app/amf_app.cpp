@@ -30,6 +30,7 @@
 #include "3gpp_29.500.h"
 #include "DlNasTransport.hpp"
 #include "GlobalRanNodeId.h"
+#include "NonUeN2InfoSubscriptionCreatedData.h"
 #include "RegistrationContextContainer.h"
 #include "UeN1N2InfoSubscriptionCreatedData.h"
 #include "amf_config.hpp"
@@ -144,6 +145,20 @@ void amf_app_task(void*) {
         Logger::amf_app().debug("Received SBI_N1N2_MESSAGE_UNSUBSCRIBE");
         itti_sbi_n1n2_message_unsubscribe* m =
             dynamic_cast<itti_sbi_n1n2_message_unsubscribe*>(msg);
+        amf_app_inst->handle_itti_message(std::ref(*m));
+      } break;
+
+      case SBI_NON_UE_N2_INFO_SUBSCRIBE: {
+        Logger::amf_app().debug("Received SBI_NON_UE_N2_INFO_SUBSCRIBE");
+        itti_sbi_non_ue_n2_info_subscribe* m =
+            dynamic_cast<itti_sbi_non_ue_n2_info_subscribe*>(msg);
+        amf_app_inst->handle_itti_message(std::ref(*m));
+      } break;
+
+      case SBI_NON_UE_N2_INFO_UNSUBSCRIBE: {
+        Logger::amf_app().debug("Received SBI_NON_UE_N2_INFO_UNSUBSCRIBE");
+        itti_sbi_non_ue_n2_info_unsubscribe* m =
+            dynamic_cast<itti_sbi_non_ue_n2_info_unsubscribe*>(msg);
         amf_app_inst->handle_itti_message(std::ref(*m));
       } break;
 
@@ -782,6 +797,71 @@ void amf_app::handle_itti_message(itti_sbi_n1n2_message_unsubscribe& itti_msg) {
 }
 
 //------------------------------------------------------------------------------
+void amf_app::handle_itti_message(itti_sbi_non_ue_n2_info_subscribe& itti_msg) {
+  Logger::amf_app().info(
+      "Handle an NonUEN2InfoSubscribe from a NF (HTTP version %d)",
+      itti_msg.http_version);
+
+  // Generate a subscription ID Id and store the corresponding information in a
+  // map (subscription id, info)
+  n1n2sub_id_t n2sub_id = generate_n1n2_message_subscription_id();
+  auto subscription_data =
+      std::make_shared<oai::amf::model::NonUeN2InfoSubscriptionCreateData>(
+          itti_msg.subscription_data);
+
+  add_non_ue_n2_info_subscription(n2sub_id, subscription_data);
+
+  std::string location = amf_cfg.get_non_ue_n2_info_subscribe_uri(
+      std::to_string((uint32_t) n2sub_id));
+
+  // Trigger the response from AMF API Server
+  oai::amf::model::NonUeN2InfoSubscriptionCreatedData created_data = {};
+
+  created_data.setN2NotifySubscriptionId(std::to_string((uint32_t) n2sub_id));
+
+  nlohmann::json created_data_json = {};
+  to_json(created_data_json, created_data);
+
+  nlohmann::json response_data      = {};
+  response_data["createdData"]      = created_data;
+  response_data["httpResponseCode"] = static_cast<uint32_t>(
+      http_response_codes_e::HTTP_RESPONSE_CODE_201_CREATED);
+  response_data["location"] = location;
+
+  // Notify to the result
+  if (itti_msg.promise_id > 0) {
+    trigger_process_response(itti_msg.promise_id, response_data);
+    return;
+  }
+}
+
+//------------------------------------------------------------------------------
+void amf_app::handle_itti_message(
+    itti_sbi_non_ue_n2_info_unsubscribe& itti_msg) {
+  Logger::amf_app().info(
+      "Handle an NonUEN2InfoUnsubscribe from a NF (HTTP version %d)",
+      itti_msg.http_version);
+
+  // Process the request and trigger the response from AMF API Server
+  nlohmann::json response_data = {};
+  if (remove_non_ue_n2_info_subscription(itti_msg.subscription_id)) {
+    response_data["httpResponseCode"] = static_cast<uint32_t>(
+        http_response_codes_e::HTTP_RESPONSE_CODE_204_NO_CONTENT);
+  } else {
+    response_data["httpResponseCode"] = static_cast<uint32_t>(
+        http_response_codes_e::HTTP_RESPONSE_CODE_BAD_REQUEST);
+    oai::model::common::ProblemDetails problem_details = {};
+    // TODO set problem_details
+    to_json(response_data["ProblemDetails"], problem_details);
+  }
+
+  // Notify to the result
+  if (itti_msg.promise_id > 0) {
+    trigger_process_response(itti_msg.promise_id, response_data);
+    return;
+  }
+}
+//------------------------------------------------------------------------------
 void amf_app::handle_itti_message(
     itti_sbi_pdu_session_release_notif& itti_msg) {
   Logger::amf_app().info(
@@ -1051,6 +1131,69 @@ void amf_app::find_n1n2_info_subscriptions(
                   subscription.first.second, subscription.second));
         }
       }
+    }
+  }
+}
+
+//---------------------------------------------------------------------------------------------
+void amf_app::add_non_ue_n2_info_subscription(
+    const n1n2sub_id_t& sub_id,
+    std::shared_ptr<oai::amf::model::NonUeN2InfoSubscriptionCreateData>&
+        subscription_data) {
+  Logger::amf_app().debug(
+      "Add an Non UE N2 Info Subscribe (Sub ID %d)", sub_id);
+  std::unique_lock lock(m_non_ue_n2_info_subscribe);
+  non_ue_n2_info_subscribe.emplace(std::make_pair(sub_id, subscription_data));
+}
+
+//---------------------------------------------------------------------------------------------
+bool amf_app::remove_non_ue_n2_info_subscription(const std::string& sub_id) {
+  Logger::amf_app().debug(
+      "Remove an Non UE N2 Info Unsubscribe (Sub ID %s)", sub_id.c_str());
+
+  // Verify Subscription ID
+  n1n2sub_id_t n2sub_id = {};
+  try {
+    n2sub_id = std::stoi(sub_id);
+  } catch (const std::exception& err) {
+    Logger::amf_app().warn(
+        "Received a Unsubscribe Request, could not find the corresponding "
+        "subscription");
+    return false;
+  }
+
+  // Remove from the list
+  std::unique_lock lock(m_non_ue_n2_info_subscribe);
+  if (non_ue_n2_info_subscribe.erase(n2sub_id) == 1)
+    return true;
+  else
+    return false;
+
+  return false;
+}
+
+//---------------------------------------------------------------------------------------------
+void amf_app::find_non_ue_n2_info_subscriptions(
+    const std::string& nf_id,
+    const oai::amf::model::N2InformationClass_anyOf::eN2InformationClass_anyOf&
+        n2_info_class,
+    std::map<
+        n1n2sub_id_t,
+        std::shared_ptr<oai::amf::model::NonUeN2InfoSubscriptionCreateData>>&
+        subscriptions) {
+  Logger::amf_app().debug("Find an Non UE N2 Info Subscription");
+
+  std::shared_lock lock(m_non_ue_n2_info_subscribe);
+  for (const auto& subscription : non_ue_n2_info_subscribe) {
+    if ((subscription.second->getN2InformationClass().getEnumValue() ==
+         n2_info_class) and
+        (subscription.second->getNfId() == nf_id)) {
+      subscriptions.insert(
+          std::pair<
+              n1n2sub_id_t,
+              std::shared_ptr<
+                  oai::amf::model::NonUeN2InfoSubscriptionCreateData>>(
+              subscription.first, subscription.second));
     }
   }
 }

@@ -94,6 +94,9 @@ class amf_config {
    */
   std::string get_amf_n1n2_message_subscribe_uri(const std::string& ue_cxt_id);
 
+  std::string get_non_ue_n2_info_subscribe_uri(
+      const std::string& subscription_id);
+
   /*
    * Get the URI of NRF NF Discovery Service
    * @param void

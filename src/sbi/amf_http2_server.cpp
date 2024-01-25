@@ -171,8 +171,7 @@ void amf_http2_server::start() {
               if (split_result.size() != 4) {
                 Logger::amf_server().warn("Requested URL is not implemented");
                 response.write_head(static_cast<uint32_t>(
-                    http_response_codes_e::
-                        HTTP_RESPONSE_CODE_NOT_IMPLEMENTED));  // TODO
+                    http_response_codes_e::HTTP_RESPONSE_CODE_NOT_IMPLEMENTED));
                 response.end();
                 return;
               }
@@ -185,8 +184,7 @@ void amf_http2_server::start() {
               if (split_result.size() != 5) {
                 Logger::amf_server().warn("Requested URL is not implemented");
                 response.write_head(static_cast<uint32_t>(
-                    http_response_codes_e::
-                        HTTP_RESPONSE_CODE_NOT_IMPLEMENTED));  // TODO
+                    http_response_codes_e::HTTP_RESPONSE_CODE_NOT_IMPLEMENTED));
                 response.end();
                 return;
               }
@@ -212,16 +210,14 @@ void amf_http2_server::start() {
               if (split_result.size() != 5) {
                 Logger::amf_server().warn("Requested URL is not implemented");
                 response.write_head(static_cast<uint32_t>(
-                    http_response_codes_e::
-                        HTTP_RESPONSE_CODE_NOT_IMPLEMENTED));  // TODO
+                    http_response_codes_e::HTTP_RESPONSE_CODE_NOT_IMPLEMENTED));
                 response.end();
                 return;
               }
               Logger::amf_server().warn(
                   "Modify EvenExposureSubscription Not Implemented");
               response.write_head(static_cast<uint32_t>(
-                  http_response_codes_e::
-                      HTTP_RESPONSE_CODE_NOT_IMPLEMENTED));  // TODO
+                  http_response_codes_e::HTTP_RESPONSE_CODE_NOT_IMPLEMENTED));
               response.end();
               return;
             } else {
@@ -269,7 +265,7 @@ void amf_http2_server::start() {
         });
       });
 
-  // NonUEN2MessageTransfer
+  // NonUEN2MessageTransfer: /non-ue-n2-messages/transfer
   server.handle(
       NAMF_COMMUNICATION_BASE +
           amf_cfg.sbi.api_version.value_or(DEFAULT_SBI_API_VERSION) +
@@ -397,6 +393,64 @@ void amf_http2_server::start() {
         });
       });
 
+  // NonUeN2InfoSubscribe: /non-ue-n2-messages/subscriptions
+  // NonUeN2InfoUnSubscribe:
+  // /non-ue-n2-messages/subscriptions/{n2NotifySubscriptionId}:
+  server.handle(
+      NAMF_COMMUNICATION_BASE +
+          amf_cfg.sbi.api_version.value_or(DEFAULT_SBI_API_VERSION) +
+          NAMF_COMMUNICATION_NON_UE_N2_MESSAGES_INFO_SUBSCRIBE,
+      [&](const request& request, const response& res) {
+        request.on_data([&](const uint8_t* data, std::size_t len) {
+          if (len > 0) {
+            std::string msg((char*) data, len);
+            try {
+              std::vector<std::string> split_result;
+              boost::split(
+                  split_result, request.uri().path, boost::is_any_of("/"));
+
+              if (split_result.size() < 5) {
+                Logger::amf_server().warn("Requested URL is not implemented");
+                res.write_head(static_cast<uint32_t>(
+                    http_response_codes_e::HTTP_RESPONSE_CODE_NOT_IMPLEMENTED));
+                res.end();
+                return;
+              }
+
+              // NonUeN2InfoSubscribe
+              if (request.method().compare("POST") == 0 && len > 0 &&
+                  (split_result.size() == 5)) {
+                NonUeN2InfoSubscriptionCreateData createData = {};
+                nlohmann::json::parse(msg.c_str()).get_to(createData);
+                this->non_ue_n2_info_subscribe_handler(createData, res);
+              } else if (
+                  request.method().compare("DELETE") == 0 &&
+                  (split_result.size() == 6)) {  // NonUeN2InfoUnSubscribe
+                std::string subscription_id =
+                    split_result[split_result.size() - 1];
+                Logger::amf_server().info(
+                    "n2NotifySubscriptionId %s", subscription_id.c_str());
+                this->non_ue_n2_info_unsubscribe_handler(subscription_id, res);
+              } else {
+                Logger::amf_server().warn(
+                    "Invalid request (error: Invalid Request Method)!");
+                res.write_head(static_cast<uint32_t>(
+                    http_response_codes_e::HTTP_RESPONSE_CODE_BAD_REQUEST));
+                res.end();
+                return;
+              }
+            } catch (std::exception& e) {
+              Logger::amf_server().warn(
+                  "Invalid request (error: %s)!", e.what());
+              res.write_head(static_cast<uint32_t>(
+                  http_response_codes_e::HTTP_RESPONSE_CODE_BAD_REQUEST));
+              res.end();
+              return;
+            }
+          }
+        });
+      });
+
   // NF Status Notify (URL:
   // /namf-status-notify/pdu-session-release/callback/:ueContextId/:pduSessionId)
   server.handle(
@@ -414,7 +468,7 @@ void amf_http2_server::start() {
               if (split_result.size() != 7) {
                 Logger::amf_server().warn("Requested URL is not implemented");
                 response.write_head(static_cast<uint32_t>(
-                    http_response_codes_e::HTTP_RESPONSE_CODE_BAD_REQUEST));
+                    http_response_codes_e::HTTP_RESPONSE_CODE_NOT_IMPLEMENTED));
                 response.end();
                 return;
               }
@@ -975,6 +1029,159 @@ void amf_http2_server::n1_n2_message_unsubscribe_handler(
           TASK_AMF_SBI, TASK_AMF_APP, promise_id);
 
   itti_msg->ue_cxt_id       = ueContextId;
+  itti_msg->subscription_id = subscriptionId;
+  itti_msg->http_version    = 2;
+  itti_msg->promise_id      = promise_id;
+
+  int ret = itti_inst->send_msg(itti_msg);
+  if (0 != ret) {
+    Logger::amf_server().error(
+        "Could not send ITTI message %s to task TASK_AMF_APP",
+        itti_msg->get_msg_name());
+  }
+
+  // Wait for the result available and process accordingly
+  std::optional<nlohmann::json> result = std::nullopt;
+  utils::wait_for_result(f, result);
+
+  if (result.has_value()) {
+    Logger::amf_server().debug("Got result for promise ID %d", promise_id);
+
+    // process data
+    uint32_t http_response_code = 0;
+    nlohmann::json json_data    = {};
+
+    if (result.value().find("httpResponseCode") != result.value().end()) {
+      http_response_code = result.value()["httpResponseCode"].get<int>();
+    }
+
+    if (static_cast<http_response_codes_e>(http_response_code) ==
+        http_response_codes_e::HTTP_RESPONSE_CODE_204_NO_CONTENT) {
+      response.write_head(http_response_code);
+      response.end();
+
+    } else {
+      // Problem details
+      if (result.value().find("ProblemDetails") != result.value().end()) {
+        json_data = result.value()["ProblemDetails"];
+      }
+
+      h.emplace("content-type", header_value{"application/problem+json"});
+      response.write_head(http_response_code);
+      response.end(json_data.dump().c_str());
+    }
+  } else {
+    response.write_head(
+        static_cast<uint32_t>(
+            http_response_codes_e::HTTP_RESPONSE_CODE_GATEWAY_TIMEOUT),
+        h);
+    response.end();
+  }
+}
+
+//------------------------------------------------------------------------------
+void amf_http2_server::non_ue_n2_info_subscribe_handler(
+    const NonUeN2InfoSubscriptionCreateData& subscriptionCreateData,
+    const response& response) {
+  Logger::amf_server().debug("Receive NonUeN2InfoSubscribe, handling...");
+
+  header_map h;
+
+  // Generate a promise and associate this promise to the ITTI message
+  uint32_t promise_id = m_amf_app->generate_promise_id();
+  Logger::amf_n1().debug("Promise ID generated %d", promise_id);
+
+  boost::shared_ptr<boost::promise<nlohmann::json>> p =
+      boost::make_shared<boost::promise<nlohmann::json>>();
+  boost::shared_future<nlohmann::json> f = p->get_future();
+  m_amf_app->add_promise(promise_id, p);
+
+  // Handle the NonUeN2InfoSubscribe in amf_app
+  std::shared_ptr<itti_sbi_non_ue_n2_info_subscribe> itti_msg =
+      std::make_shared<itti_sbi_non_ue_n2_info_subscribe>(
+          TASK_AMF_SBI, TASK_AMF_APP, promise_id);
+
+  itti_msg->subscription_data = subscriptionCreateData;
+  itti_msg->http_version      = 2;
+  itti_msg->promise_id        = promise_id;
+
+  int ret = itti_inst->send_msg(itti_msg);
+  if (0 != ret) {
+    Logger::amf_server().error(
+        "Could not send ITTI message %s to task TASK_AMF_APP",
+        itti_msg->get_msg_name());
+  }
+
+  // Wait for the result available and process accordingly
+  std::optional<nlohmann::json> result = std::nullopt;
+  utils::wait_for_result(f, result);
+
+  if (result.has_value()) {
+    Logger::amf_server().debug("Got result for promise ID %d", promise_id);
+
+    // process data
+    std::string location        = {};
+    uint32_t http_response_code = 0;
+    if (result.value().find("location") != result.value().end()) {
+      location = result.value()["location"].get<std::string>();
+    }
+
+    if (result.value().find("httpResponseCode") != result.value().end()) {
+      http_response_code = result.value()["httpResponseCode"].get<int>();
+    }
+
+    // NonUeN2InfoSubscriptionCreatedData
+    nlohmann::json json_data = {};
+    if (result.value().find("createdData") != result.value().end()) {
+      json_data = result.value()["createdData"];
+    }
+
+    if (static_cast<http_response_codes_e>(http_response_code) ==
+        http_response_codes_e::HTTP_RESPONSE_CODE_201_CREATED) {
+      h.insert(std::make_pair<std::string, header_value>(
+          "Location", {location, false}));
+      h.insert(std::make_pair<std::string, header_value>(
+          "Content-Type", {"application/json", false}));
+
+      response.write_head(
+          static_cast<uint32_t>(
+              http_response_codes_e::HTTP_RESPONSE_CODE_201_CREATED),
+          h);
+      response.end(json_data.dump().c_str());
+
+    } else {
+      response.write_head(http_response_code);
+      response.end();
+    }
+  } else {
+    response.write_head(static_cast<uint32_t>(
+        http_response_codes_e::HTTP_RESPONSE_CODE_REQUEST_TIMEOUT));
+    response.end();
+  }
+}
+
+//------------------------------------------------------------------------------
+void amf_http2_server::non_ue_n2_info_unsubscribe_handler(
+    const std::string& subscriptionId, const response& response) {
+  Logger::amf_server().debug("Receive NonUeN2InfoUnSubscribe, handling...");
+  Logger::amf_server().debug("Subscription ID %s", subscriptionId.c_str());
+
+  header_map h;
+
+  // Generate a promise and associate this promise to the ITTI message
+  uint32_t promise_id = m_amf_app->generate_promise_id();
+  Logger::amf_n1().debug("Promise ID generated %d", promise_id);
+
+  boost::shared_ptr<boost::promise<nlohmann::json>> p =
+      boost::make_shared<boost::promise<nlohmann::json>>();
+  boost::shared_future<nlohmann::json> f = p->get_future();
+  m_amf_app->add_promise(promise_id, p);
+
+  // Handle the NonUEN2InfoUnsubscribe in amf_app
+  std::shared_ptr<itti_sbi_non_ue_n2_info_unsubscribe> itti_msg =
+      std::make_shared<itti_sbi_non_ue_n2_info_unsubscribe>(
+          TASK_AMF_SBI, TASK_AMF_APP, promise_id);
+
   itti_msg->subscription_id = subscriptionId;
   itti_msg->http_version    = 2;
   itti_msg->promise_id      = promise_id;

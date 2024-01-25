@@ -89,6 +89,12 @@ class amf_app {
       n1n2_message_subscribe;
   mutable std::shared_mutex m_n1n2_message_subscribe;
 
+  std::map<
+      n1n2sub_id_t,
+      std::shared_ptr<oai::amf::model::NonUeN2InfoSubscriptionCreateData>>
+      non_ue_n2_info_subscribe;
+  mutable std::shared_mutex m_non_ue_n2_info_subscribe;
+
  public:
   explicit amf_app(const amf_config& amf_cfg);
   amf_app(amf_app const&) = delete;
@@ -148,6 +154,20 @@ class amf_app {
    * @return void
    */
   void handle_itti_message(itti_sbi_n1n2_message_unsubscribe& itti_msg);
+
+  /*
+   * Handle ITTI message (SBI NON UE N2 Info Subscribe)
+   * @param [itti_sbi_non_ue_n2_info_subscribe&]: ITTI message
+   * @return void
+   */
+  void handle_itti_message(itti_sbi_non_ue_n2_info_subscribe& itti_msg);
+
+  /*
+   * Handle ITTI message (SBI NON UE N2 Info Unsubscribe)
+   * @param [itti_sbi_non_ue_n2_info_unsubscribe&]: ITTI message
+   * @return void
+   */
+  void handle_itti_message(itti_sbi_non_ue_n2_info_unsubscribe& itti_msg);
 
   /*
    * Handle ITTI message (SBI PDU Session Release Notification)
@@ -363,6 +383,20 @@ class amf_app {
   bool remove_n1n2_message_subscription(
       const std::string& ue_ctx_id, const std::string& sub_id);
 
+  /*
+   * Find the subscriptions matched with certain conditions
+   * @param [const std::string&] ue_ctx_id: UE Context ID
+   * @param
+   * [std::optional<oai::amf::model::N1MessageClass_anyOf::eN1MessageClass_anyOf>&]
+   * n1_message_class: Type of N1 Message
+   * @param
+   * [std::optional<oai::amf::model::N2InformationClass_anyOf::eN2InformationClass_anyOf>&]
+   * n2_info_class: Type of N2 Message
+   * @param [std::map<n1n2sub_id_t,
+   * std::shared_ptr<oai::amf::model::UeN1N2InfoSubscriptionCreateData>>&]
+   * subscriptions: list of subscriptions matched
+   * @return void
+   */
   void find_n1n2_info_subscriptions(
       const std::string& ue_ctx_id,
       std::optional<
@@ -374,6 +408,47 @@ class amf_app {
       std::map<
           n1n2sub_id_t,
           std::shared_ptr<oai::amf::model::UeN1N2InfoSubscriptionCreateData>>&
+          subscriptions);
+
+  /*
+   * Add an NonUEN2InfoSubscribe subscription to the list
+   * @param [const n1n2sub_id_t&] sub_id: Subscription ID
+   * @param
+   * [std::shared_ptr<oai::amf::model::NonUeN2InfoSubscriptionCreateData>]
+   * subscription_data: a shared pointer stored information of the subscription
+   * @return void
+   */
+  void add_non_ue_n2_info_subscription(
+      const n1n2sub_id_t& sub_id,
+      std::shared_ptr<oai::amf::model::NonUeN2InfoSubscriptionCreateData>&
+          subscription_data);
+
+  /*
+   * Remove an NonUEN2InfoSubscribe subscription from the list
+   * @param [const std::string&] sub_id: Subscription ID
+   * @return true if the subscription is deleted successfully, otherwise return
+   * false
+   */
+  bool remove_non_ue_n2_info_subscription(const std::string& sub_id);
+
+  /*
+   * Find the subscriptions matched with certain conditions
+   * @param [const std::string&] nf_id: NF Id
+   * @param
+   * [std::optional<oai::amf::model::N2InformationClass_anyOf::eN2InformationClass_anyOf>&]
+   * n2_info_class: Type of N2 Message
+   * @param [std::map<n1n2sub_id_t,
+   * std::shared_ptr<oai::amf::model::NonUeN2InfoSubscriptionCreateData>>&]
+   * subscriptions: list of subscriptions matched
+   * @return void
+   */
+  void find_non_ue_n2_info_subscriptions(
+      const std::string& nf_id,
+      const oai::amf::model::N2InformationClass_anyOf::
+          eN2InformationClass_anyOf& n2_info_class,
+      std::map<
+          n1n2sub_id_t,
+          std::shared_ptr<oai::amf::model::NonUeN2InfoSubscriptionCreateData>>&
           subscriptions);
 
   /*
