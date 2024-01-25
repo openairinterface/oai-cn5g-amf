@@ -1597,9 +1597,10 @@ void amf_app::trigger_pdu_session_up_deactivation(
 }
 
 //------------------------------------------------------------------------------
-void amf_app::trigger_pdu_session_up_activation(
+bool amf_app::trigger_pdu_session_up_activation(
     const std::shared_ptr<ue_context>& uc) const {
   Logger::amf_app().debug("Trigger PDU Session UP Activation towards SMF");
+  bool activation_result = false;
 
   std::vector<std::shared_ptr<pdu_session_context>> sessions_ctx;
   if (uc->get_pdu_sessions_context(sessions_ctx)) {
@@ -1628,28 +1629,24 @@ void amf_app::trigger_pdu_session_up_activation(
               TASK_NGAP, TASK_AMF_SBI);
 
       itti_n11_msg->pdu_session_id = session->pdu_session_id;
-
-      // TODO:
-      itti_n11_msg->is_n2sm_set = false;
-
+      itti_n11_msg->is_n2sm_set    = false;
       itti_n11_msg->amf_ue_ngap_id = uc->amf_ue_ngap_id;
       itti_n11_msg->ran_ue_ngap_id = uc->ran_ue_ngap_id;
       itti_n11_msg->supi           = uc->supi;
       itti_n11_msg->pdu_session_id = session->pdu_session_id;
-
-      itti_n11_msg->promise_id   = promise_id;
-      itti_n11_msg->up_cnx_state = "ACTIVATING";
+      itti_n11_msg->promise_id     = promise_id;
+      itti_n11_msg->up_cnx_state   = "ACTIVATING";
 
       int ret = itti_inst->send_msg(itti_n11_msg);
       if (0 != ret) {
         Logger::ngap().error(
             "Could not send ITTI message %s to task TASK_AMF_SBI",
             itti_n11_msg->get_msg_name());
+        return false;
       }
     }
 
     // Wait for the response available and process accordingly
-    bool result = true;
     while (!curl_responses.empty()) {
       // Wait for the result available and process accordingly
       std::optional<nlohmann::json> result = std::nullopt;
@@ -1664,17 +1661,22 @@ void amf_app::trigger_pdu_session_up_activation(
         uint32_t http_response_code = 0;
         if (result_json.find("httpResponseCode") != result_json.end()) {
           http_response_code = result_json["httpResponseCode"].get<int>();
-          result             = result && true;
           if ((http_response_code == 200) or (http_response_code == 204)) {
             uc->set_up_cnx_state(
                 curl_responses.begin()->first,
                 up_cnx_state_e::UPCNX_STATE_ACTIVATED);
+            activation_result = activation_result && true;
+          } else {
+            Logger::amf_app().warn(
+                "Failed to activate the UP for this PDU session (PDU Session "
+                "Id %d)!",
+                curl_responses.begin()->first);
+            activation_result = false;
           }
-        } else {
-          result = true;  // TODO: To be verified
         }
       } else {
-        result = true;  // TODO: To be verified
+        Logger::amf_app().warn("Could not get response from SMF");
+        activation_result = false;
       }
 
       curl_responses.erase(curl_responses.begin());
@@ -1682,10 +1684,11 @@ void amf_app::trigger_pdu_session_up_activation(
   } else {
     Logger::amf_app().debug("No PDU session available");
   }
+  return activation_result;
 }
 
 //------------------------------------------------------------------------------
-void amf_app::trigger_pdu_session_up_activation(
+bool amf_app::trigger_pdu_session_up_activation(
     uint8_t pdu_session_id, const std::shared_ptr<ue_context>& uc) const {
   Logger::amf_app().debug("Trigger PDU Session UP Activation towards SMF");
 
@@ -1725,6 +1728,7 @@ void amf_app::trigger_pdu_session_up_activation(
       Logger::ngap().error(
           "Could not send ITTI message %s to task TASK_AMF_SBI",
           itti_n11_msg->get_msg_name());
+      return false;
     }
 
     // Wait for the result available and process accordingly
@@ -1744,11 +1748,19 @@ void amf_app::trigger_pdu_session_up_activation(
         if ((http_response_code == 200) or (http_response_code == 204)) {
           uc->set_up_cnx_state(
               pdu_session_id, up_cnx_state_e::UPCNX_STATE_ACTIVATED);
+          return true;
+        } else {
+          Logger::amf_app().warn(
+              "Failed to activate the UP for this PDU session!");
         }
       }
+    } else {
+      Logger::amf_app().warn("Could not get response from SMF");
     }
 
   } else {
     Logger::amf_app().warn("Could not find PDU session info");
   }
+
+  return false;
 }
