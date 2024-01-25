@@ -5497,6 +5497,6 @@ bool amf_n1::get_amf_set_id(
 
 //------------------------------------------------------------------------------
 uint8_t amf_n1::get_nas_message_type(uint8_t* buf, uint32_t len) {
-  if (len < 2) return 0;
-  return *(buf + 2);
+  if (len < 3) return 0;
+  return *(buf + 2);  // message type, 3rd octet
 }
