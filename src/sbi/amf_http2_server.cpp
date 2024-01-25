@@ -171,8 +171,7 @@ void amf_http2_server::start() {
               if (split_result.size() != 4) {
                 Logger::amf_server().warn("Requested URL is not implemented");
                 response.write_head(static_cast<uint32_t>(
-                    http_response_codes_e::
-                        HTTP_RESPONSE_CODE_NOT_IMPLEMENTED));  // TODO
+                    http_response_codes_e::HTTP_RESPONSE_CODE_NOT_IMPLEMENTED));
                 response.end();
                 return;
               }
@@ -185,8 +184,7 @@ void amf_http2_server::start() {
               if (split_result.size() != 5) {
                 Logger::amf_server().warn("Requested URL is not implemented");
                 response.write_head(static_cast<uint32_t>(
-                    http_response_codes_e::
-                        HTTP_RESPONSE_CODE_NOT_IMPLEMENTED));  // TODO
+                    http_response_codes_e::HTTP_RESPONSE_CODE_NOT_IMPLEMENTED));
                 response.end();
                 return;
               }
@@ -212,16 +210,14 @@ void amf_http2_server::start() {
               if (split_result.size() != 5) {
                 Logger::amf_server().warn("Requested URL is not implemented");
                 response.write_head(static_cast<uint32_t>(
-                    http_response_codes_e::
-                        HTTP_RESPONSE_CODE_NOT_IMPLEMENTED));  // TODO
+                    http_response_codes_e::HTTP_RESPONSE_CODE_NOT_IMPLEMENTED));
                 response.end();
                 return;
               }
               Logger::amf_server().warn(
                   "Modify EvenExposureSubscription Not Implemented");
               response.write_head(static_cast<uint32_t>(
-                  http_response_codes_e::
-                      HTTP_RESPONSE_CODE_NOT_IMPLEMENTED));  // TODO
+                  http_response_codes_e::HTTP_RESPONSE_CODE_NOT_IMPLEMENTED));
               response.end();
               return;
             } else {
@@ -416,7 +412,7 @@ void amf_http2_server::start() {
               if (split_result.size() < 5) {
                 Logger::amf_server().warn("Requested URL is not implemented");
                 res.write_head(static_cast<uint32_t>(
-                    http_response_codes_e::HTTP_RESPONSE_CODE_BAD_REQUEST));
+                    http_response_codes_e::HTTP_RESPONSE_CODE_NOT_IMPLEMENTED));
                 res.end();
                 return;
               }
@@ -472,7 +468,7 @@ void amf_http2_server::start() {
               if (split_result.size() != 7) {
                 Logger::amf_server().warn("Requested URL is not implemented");
                 response.write_head(static_cast<uint32_t>(
-                    http_response_codes_e::HTTP_RESPONSE_CODE_BAD_REQUEST));
+                    http_response_codes_e::HTTP_RESPONSE_CODE_NOT_IMPLEMENTED));
                 response.end();
                 return;
               }

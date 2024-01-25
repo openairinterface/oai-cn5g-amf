@@ -805,10 +805,9 @@ void amf_app::handle_itti_message(itti_sbi_non_ue_n2_info_subscribe& itti_msg) {
   // Generate a subscription ID Id and store the corresponding information in a
   // map (subscription id, info)
   n1n2sub_id_t n2sub_id = generate_n1n2_message_subscription_id();
-  std::shared_ptr<oai::amf::model::NonUeN2InfoSubscriptionCreateData>
-      subscription_data =
-          std::make_shared<oai::amf::model::NonUeN2InfoSubscriptionCreateData>(
-              itti_msg.subscription_data);
+  auto subscription_data =
+      std::make_shared<oai::amf::model::NonUeN2InfoSubscriptionCreateData>(
+          itti_msg.subscription_data);
 
   add_non_ue_n2_info_subscription(n2sub_id, subscription_data);
 
@@ -1158,7 +1157,7 @@ bool amf_app::remove_non_ue_n2_info_subscription(const std::string& sub_id) {
     n2sub_id = std::stoi(sub_id);
   } catch (const std::exception& err) {
     Logger::amf_app().warn(
-        "Received a Unsubscribe Request, couldn't find the corresponding "
+        "Received a Unsubscribe Request, could not find the corresponding "
         "subscription");
     return false;
   }
@@ -1169,7 +1168,8 @@ bool amf_app::remove_non_ue_n2_info_subscription(const std::string& sub_id) {
     return true;
   else
     return false;
-  return true;
+
+  return false;
 }
 
 //---------------------------------------------------------------------------------------------
@@ -1184,7 +1184,7 @@ void amf_app::find_non_ue_n2_info_subscriptions(
   Logger::amf_app().debug("Find an Non UE N2 Info Subscription");
 
   std::shared_lock lock(m_non_ue_n2_info_subscribe);
-  for (auto subscription : non_ue_n2_info_subscribe) {
+  for (const auto& subscription : non_ue_n2_info_subscribe) {
     if ((subscription.second->getN2InformationClass().getEnumValue() ==
          n2_info_class) and
         (subscription.second->getNfId() == nf_id)) {
