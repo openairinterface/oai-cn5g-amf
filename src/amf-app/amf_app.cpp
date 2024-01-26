@@ -1256,7 +1256,6 @@ evsub_id_t amf_app::handle_event_exposure_subscription(
 
     // Determine Location
     if (amf_cfg.support_features.enable_lmf) {
-      uint8_t http_version = amf_cfg.support_features.use_http2 ? 2 : 1;
       for (const auto& kvp : supi2ue_ctx) {
         nlohmann::json input_data = {};
         input_data["supi"]        = kvp.first;

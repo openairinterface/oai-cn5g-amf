@@ -583,7 +583,8 @@ void amf_n1::nas_signalling_establishment_request_handle(
       Logger::amf_n1().debug(
           "Signal the UE Reachability Status Event notification for SUPI %s",
           supi.c_str());
-      event_sub.ue_reachability_status(supi, CM_CONNECTED, 1);
+      uint8_t http_version = amf_cfg.support_features.use_http2 ? 2 : 1;
+      event_sub.ue_reachability_status(supi, CM_CONNECTED, http_version);
     }
   } else {
     Logger::amf_n1().debug(
@@ -1481,7 +1482,8 @@ void amf_n1::registration_request_handle(
               "Signal the UE Reachability Status Event notification for SUPI "
               "%s",
               supi.c_str());
-          event_sub.ue_reachability_status(supi, CM_CONNECTED, 1);
+          uint8_t http_version = amf_cfg.support_features.use_http2 ? 2 : 1;
+          event_sub.ue_reachability_status(supi, CM_CONNECTED, http_version);
         }
 
         std::string supi = amf_conv::imsi_to_supi(nc->imsi);
@@ -1583,7 +1585,8 @@ void amf_n1::registration_request_handle(
               "Signal the UE Reachability Status Event notification for SUPI "
               "%s",
               supi.c_str());
-          event_sub.ue_reachability_status(supi, CM_CONNECTED, 1);
+          uint8_t http_version = amf_cfg.support_features.use_http2 ? 2 : 1;
+          event_sub.ue_reachability_status(supi, CM_CONNECTED, http_version);
         }
       }
     } break;
@@ -1998,7 +2001,8 @@ void amf_n1::send_registration_reject_msg(
       "%s",
       supi.c_str());
   comm_failure.setNasReleaseCode(std::to_string(cause_value));
-  event_sub.ue_communication_failure(supi, comm_failure, 1);
+  uint8_t http_version = amf_cfg.support_features.use_http2 ? 2 : 1;
+  event_sub.ue_communication_failure(supi, comm_failure, http_version);
 }
 
 //------------------------------------------------------------------------------
@@ -2133,8 +2137,8 @@ bool amf_n1::get_authentication_vectors_from_ausf(
     utils::free_wrapper((void**) &auts_s);
     //    utils::free_wrapper((void**) &rand_s);
   }
-  uint8_t http_version = 1;
-  if (amf_cfg.support_features.use_http2) http_version = 2;
+
+  uint8_t http_version = amf_cfg.support_features.use_http2 ? 2 : 1;
 
   // TODO: use ITTI to send message between N1 and SBI
   if (amf_sbi_inst->send_ue_authentication_request(
@@ -2213,9 +2217,8 @@ bool amf_n1::_5g_aka_confirmation_from_ausf(
   msgBody = confirmationdata_j.dump();
 
   // TODO: Should be updated
-  uint8_t http_version   = 1;
   uint32_t response_code = 0;
-  if (amf_cfg.support_features.use_http2) http_version = 2;
+  uint8_t http_version   = amf_cfg.support_features.use_http2 ? 2 : 1;
 
   amf_sbi_inst->curl_http_client(
       remoteUri, "PUT", msgBody, response, response_code, http_version);
@@ -3002,7 +3005,8 @@ void amf_n1::security_mode_complete_handle(
       Logger::amf_n1().debug(
           "Signal the UE Location Report Event notification for SUPI %s",
           supi.c_str());
-      event_sub.ue_location_report(supi, user_location, 1);
+      uint8_t http_version = amf_cfg.support_features.use_http2 ? 2 : 1;
+      event_sub.ue_location_report(supi, user_location, http_version);
     }
   }
 
@@ -3011,14 +3015,15 @@ void amf_n1::security_mode_complete_handle(
   Logger::amf_n1().debug(
       "Signal the UE Registration State Event notification for SUPI %s",
       supi.c_str());
+  uint8_t http_version = amf_cfg.support_features.use_http2 ? 2 : 1;
   event_sub.ue_registration_state(
-      supi, _5GMM_REGISTERED, 1, ran_ue_ngap_id, amf_ue_ngap_id);
+      supi, _5GMM_REGISTERED, http_version, ran_ue_ngap_id, amf_ue_ngap_id);
 
   // Trigger UE Connectivity Status Notify
   Logger::amf_n1().debug(
       "Signal the UE Connectivity Status Event notification for SUPI %s",
       supi.c_str());
-  event_sub.ue_connectivity_state(supi, CM_CONNECTED, 1);
+  event_sub.ue_connectivity_state(supi, CM_CONNECTED, http_version);
 
   set_guti_2_nas_context(guti, nc);
   nc->is_common_procedure_for_security_mode_control_running = false;
@@ -3529,15 +3534,16 @@ void amf_n1::ue_initiate_de_registration_handle(
   Logger::amf_n1().debug(
       "Signal the UE Registration State Event notification for SUPI %s",
       supi.c_str());
+  uint8_t http_version = amf_cfg.support_features.use_http2 ? 2 : 1;
   event_sub.ue_registration_state(
-      supi, _5GMM_DEREGISTERED, 1, ran_ue_ngap_id, amf_ue_ngap_id);
+      supi, _5GMM_DEREGISTERED, http_version, ran_ue_ngap_id, amf_ue_ngap_id);
 
   // Trigger UE Loss of Connectivity Status Notify
   Logger::amf_n1().debug(
       "Signal the UE Loss of Connectivity Event notification for SUPI %s",
       supi.c_str());
   event_sub.ue_loss_of_connectivity(
-      supi, DEREGISTERED, 1, ran_ue_ngap_id, amf_ue_ngap_id);
+      supi, DEREGISTERED, http_version, ran_ue_ngap_id, amf_ue_ngap_id);
 
   // TODO: put once this scenario is implemented
   // Trigger UE Loss of Connectivity Status Notify
@@ -3608,7 +3614,7 @@ void amf_n1::ue_initiate_de_registration_handle(
   Logger::amf_n1().debug(
       "Signal the UE Connectivity Status Event notification for SUPI %s",
       supi.c_str());
-  event_sub.ue_connectivity_state(supi, CM_IDLE, 1);
+  event_sub.ue_connectivity_state(supi, CM_IDLE, http_version);
 }
 
 //------------------------------------------------------------------------------
@@ -4054,7 +4060,7 @@ void amf_n1::handle_ue_location_change(
         std::make_shared<itti_sbi_notify_subscribed_event>(
             TASK_AMF_N1, TASK_AMF_SBI);
 
-    itti_msg->http_version = 1;
+    itti_msg->http_version = http_version;
 
     for (auto i : subscriptions) {
       // Avoid repeated notifications
@@ -4114,7 +4120,7 @@ void amf_n1::handle_ue_reachability_status_change(
         std::make_shared<itti_sbi_notify_subscribed_event>(
             TASK_AMF_N1, TASK_AMF_SBI);
 
-    itti_msg->http_version = 1;
+    itti_msg->http_version = http_version;
 
     for (auto i : subscriptions) {
       // Avoid repeated notifications
@@ -4180,7 +4186,7 @@ void amf_n1::handle_ue_registration_state_change(
         std::make_shared<itti_sbi_notify_subscribed_event>(
             TASK_AMF_N1, TASK_AMF_SBI);
 
-    itti_msg->http_version = 1;
+    itti_msg->http_version = http_version;
 
     for (auto i : subscriptions) {
       // Avoid repeated notifications
@@ -4259,7 +4265,7 @@ void amf_n1::handle_ue_connectivity_state_change(
         std::make_shared<itti_sbi_notify_subscribed_event>(
             TASK_AMF_N1, TASK_AMF_SBI);
 
-    itti_msg->http_version = 1;
+    itti_msg->http_version = http_version;
 
     for (auto i : subscriptions) {
       // Avoid repeated notifications
@@ -4334,7 +4340,7 @@ void amf_n1::handle_ue_communication_failure_change(
         std::make_shared<itti_sbi_notify_subscribed_event>(
             TASK_AMF_N1, TASK_AMF_SBI);
 
-    itti_msg->http_version = 1;
+    itti_msg->http_version = http_version;
 
     for (auto i : subscriptions) {
       // Avoid repeated notifications
@@ -4395,7 +4401,7 @@ void amf_n1::handle_ue_loss_of_connectivity_change(
         std::make_shared<itti_sbi_notify_subscribed_event>(
             TASK_AMF_N1, TASK_AMF_SBI);
 
-    itti_msg->http_version = 1;
+    itti_msg->http_version = http_version;
 
     for (auto i : subscriptions) {
       event_notification ev_notif = {};
@@ -4637,8 +4643,10 @@ void amf_n1::mobile_reachable_timer_timeout(
   Logger::amf_n1().debug(
       "Signal the UE Loss of Connectivity Event notification for SUPI %s",
       supi.c_str());
+  uint8_t http_version = amf_cfg.support_features.use_http2 ? 2 : 1;
   event_sub.ue_loss_of_connectivity(
-      supi, MAX_DETECTION_TIME_EXPIRED, 1, nc->ran_ue_ngap_id, amf_ue_ngap_id);
+      supi, MAX_DETECTION_TIME_EXPIRED, http_version, nc->ran_ue_ngap_id,
+      amf_ue_ngap_id);
 
   // TODO: Start the implicit de-registration timer
   timer_id_t tid = itti_inst->timer_setup(
@@ -4717,7 +4725,8 @@ void amf_n1::implicit_deregistration_timer_timeout(
   Logger::amf_n1().debug(
       "Signal the UE Connectivity Status Event notification for SUPI %s",
       supi.c_str());
-  event_sub.ue_connectivity_state(supi, CM_IDLE, 1);
+  uint8_t http_version = amf_cfg.support_features.use_http2 ? 2 : 1;
+  event_sub.ue_connectivity_state(supi, CM_IDLE, http_version);
 }
 
 //------------------------------------------------------------------------------
@@ -5047,7 +5056,7 @@ bool amf_n1::get_slice_selection_subscription_data(
     boost::shared_future<nlohmann::json> f = p->get_future();
     amf_app_inst->add_promise(promise_id, p);
 
-    itti_msg->http_version = 1;
+    itti_msg->http_version = amf_cfg.support_features.use_http2 ? 2 : 1;
     itti_msg->supi         = nc->imsi;  // TODO: use SUPI in UDR, uc->supi;
     itti_msg->plmn.mcc     = uc->cgi.mcc;
     itti_msg->plmn.mnc     = uc->cgi.mnc;
@@ -5226,7 +5235,7 @@ bool amf_n1::get_network_slice_selection(
     boost::shared_future<nlohmann::json> f = p->get_future();
     amf_app_inst->add_promise(promise_id, p);
 
-    itti_msg->http_version   = 1;
+    itti_msg->http_version   = amf_cfg.support_features.use_http2 ? 2 : 1;
     itti_msg->nf_instance_id = nf_instance_id;
     itti_msg->slice_info     = slice_info;
     itti_msg->promise_id     = promise_id;
@@ -5341,8 +5350,8 @@ bool amf_n1::get_target_amf(
     boost::shared_future<nlohmann::json> f = p->get_future();
     amf_app_inst->add_promise(promise_id, p);
 
-    itti_msg->http_version          = 1;
-    itti_msg->target_amf_set        = target_amf_set;
+    itti_msg->http_version   = amf_cfg.support_features.use_http2 ? 2 : 1;
+    itti_msg->target_amf_set = target_amf_set;
     itti_msg->target_amf_set_is_set = true;
     itti_msg->promise_id            = promise_id;
     itti_msg->target_nf_type        = "AMF";
@@ -5422,7 +5431,7 @@ void amf_n1::send_n1_message_notity(
   std::shared_ptr<itti_sbi_n1_message_notify> itti_msg =
       std::make_shared<itti_sbi_n1_message_notify>(TASK_AMF_N1, TASK_AMF_SBI);
 
-  itti_msg->http_version = 1;
+  itti_msg->http_version = amf_cfg.support_features.use_http2 ? 2 : 1;
   if (nc->registration_request_is_set) {
     itti_msg->registration_request = nc->registration_request;
   }
