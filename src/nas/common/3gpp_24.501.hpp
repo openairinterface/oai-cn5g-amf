@@ -193,18 +193,14 @@ enum class _5gsMobileIdentityEnum : uint8_t {
 #define MULTIPLE_PAYLOADS 0x0f
 
 enum class RequestTypeValue : uint8_t {
-  INITIAL_REQUEST                = 0b001,
-  EXISTING_PDU_SESSION           = 0b010,
-  INITIAL_EMERGENCY_REQUEST      = 0b011,
-  EXISTING_EMERGENCY_PDU_SESSION = 0b100,
-  MODIFICATION_REQUEST           = 0b101,
-  MA_PDU_REQUEST                 = 0b110,
-  RESERVED                       = 0b111
+  KInitialRequest              = 0b001,
+  KExistingPduSession          = 0b010,
+  KInitialEmergencyRequest     = 0b011,
+  KExistingEmergencyPduSession = 0b100,
+  KModificationRequest         = 0b101,
+  KMaPduRequest                = 0b110,
+  KReserved                    = 0b111
 };
-
-RequestTypeValue get_request_type(uint8_t type) {
-  return static_cast<RequestTypeValue>(type & 0x07);
-}
 
 #define PDU_SESSION_INITIAL_REQUEST 0b001
 #define EXISTING_PDU_SESSION 0b010

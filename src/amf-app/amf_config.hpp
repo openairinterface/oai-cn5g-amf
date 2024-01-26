@@ -68,14 +68,35 @@ typedef struct support_features_s {
   }
 
   void from_json(nlohmann::json& json_data) {
-    this->enable_nf_registration =
-        json_data["enable_nf_registration"].get<bool>();
-    this->enable_smf_selection = json_data["enable_smf_selection"].get<bool>();
-    this->enable_external_ausf = json_data["enable_external_ausf"].get<bool>();
-    this->enable_external_udm  = json_data["enable_external_udm"].get<bool>();
-    this->enable_nssf          = json_data["enable_nssf"].get<bool>();
-    this->use_http2            = json_data["use_http2"].get<bool>();
-    this->enable_lmf           = json_data["enable_lmf"].get<bool>();
+    try {
+      if (json_data.find("enable_nf_registration") != json_data.end()) {
+        this->enable_nf_registration =
+            json_data["enable_nf_registration"].get<bool>();
+      }
+      if (json_data.find("enable_smf_selection") != json_data.end()) {
+        this->enable_smf_selection =
+            json_data["enable_smf_selection"].get<bool>();
+      }
+      if (json_data.find("enable_external_ausf") != json_data.end()) {
+        this->enable_external_ausf =
+            json_data["enable_external_ausf"].get<bool>();
+      }
+      if (json_data.find("enable_external_udm") != json_data.end()) {
+        this->enable_external_udm =
+            json_data["enable_external_udm"].get<bool>();
+      }
+      if (json_data.find("enable_nssf") != json_data.end()) {
+        this->enable_nssf = json_data["enable_nssf"].get<bool>();
+      }
+      if (json_data.find("use_http2") != json_data.end()) {
+        this->use_http2 = json_data["use_http2"].get<bool>();
+      }
+      if (json_data.find("enable_lmf") != json_data.end()) {
+        this->enable_lmf = json_data["enable_lmf"].get<bool>();
+      }
+    } catch (std::exception& e) {
+      Logger::amf_app().error("%s", e.what());
+    }
   }
 
 } support_features_t;

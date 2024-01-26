@@ -402,39 +402,46 @@ void amf_profile::to_json(nlohmann::json& data) const {
 
 //------------------------------------------------------------------------------
 void amf_profile::from_json(const nlohmann::json& data) {
-  nf_profile::from_json(data);
+  try {
+    nf_profile::from_json(data);
+    // TODO: custom_info;
 
-  // TODO: custom_info;
-
-  // AMF info
-  if (data.find("amfInfo") != data.end()) {
-    nlohmann::json info    = data["amfInfo"];
-    amf_info.amf_set_id    = info["amfSetId"].get<std::string>();
-    amf_info.amf_region_id = info["amfRegionId"].get<std::string>();
-
-    nlohmann::json guami_list = data["amfInfo"]["guamiList"];
-
-    for (auto it : guami_list) {
-      guami_t guami = {};
-
-      if (it.find("amfId") != it.end()) {
-        guami.amf_id = it["amfId"].get<std::string>();
+    // AMF info
+    if (data.find("amfInfo") != data.end()) {
+      nlohmann::json info = data["amfInfo"];
+      if (info.find("amfSetId") != data.end()) {
+        amf_info.amf_set_id = info["amfSetId"].get<std::string>();
       }
-      if (it.find("plmnId") != it.end()) {
-        nlohmann::json plmn = it["plmnId"];
+      if (info.find("amfRegionId") != data.end()) {
+        amf_info.amf_region_id = info["amfRegionId"].get<std::string>();
+      }
 
-        if (plmn.find("mnc") != plmn.end()) {
-          guami.plmn.mnc = plmn["mnc"].get<std::string>();
-        }
+      if (info.find("guamiList") != data.end()) {
+        nlohmann::json guami_list = info["guamiList"];
+        for (auto it : guami_list) {
+          guami_t guami = {};
 
-        if (plmn.find("mcc") != plmn.end()) {
-          guami.plmn.mcc = plmn["mcc"].get<std::string>();
+          if (it.find("amfId") != it.end()) {
+            guami.amf_id = it["amfId"].get<std::string>();
+          }
+          if (it.find("plmnId") != it.end()) {
+            nlohmann::json plmn = it["plmnId"];
+
+            if (plmn.find("mnc") != plmn.end()) {
+              guami.plmn.mnc = plmn["mnc"].get<std::string>();
+            }
+
+            if (plmn.find("mcc") != plmn.end()) {
+              guami.plmn.mcc = plmn["mcc"].get<std::string>();
+            }
+          }
+          amf_info.guami_list.push_back(guami);
         }
       }
-      amf_info.guami_list.push_back(guami);
     }
+  } catch (std::exception& e) {
+    Logger::amf_app().error("%s", e.what());
   }
-
   display();
 }
 
