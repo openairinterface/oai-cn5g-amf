@@ -1821,8 +1821,7 @@ bool amf_sbi::get_nrf_uri(
     Logger::amf_sbi().debug(
         "Send NS Selection to NSSF to discover the appropriate NRF");
 
-    bool result          = false;
-    uint8_t http_version = amf_cfg.support_features.use_http2 ? 2 : 1;
+    bool result = false;
 
     // Get NSI information from NSSF
     nlohmann::json slice_info  = {};
@@ -1848,6 +1847,8 @@ bool amf_sbi::get_nrf_uri(
 
     nlohmann::json response_data = {};
     uint32_t response_code       = 0;
+    uint8_t http_version         = amf_cfg.support_features.use_http2 ? 2 : 1;
+
     curl_http_client(
         nssf_url, "GET", "", response_data, response_code, http_version);
 
