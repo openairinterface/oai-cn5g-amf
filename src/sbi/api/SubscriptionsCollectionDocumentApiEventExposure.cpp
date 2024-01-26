@@ -12,6 +12,7 @@
  */
 
 #include "SubscriptionsCollectionDocumentApiEventExposure.h"
+
 #include "Helpers.h"
 #include "amf_config.hpp"
 
@@ -35,9 +36,7 @@ void SubscriptionsCollectionDocumentApiEventExposure::setupRoutes() {
   using namespace Pistache::Rest;
 
   Routes::Post(
-      *router,
-      base + amf_cfg.sbi.api_version.value_or(DEFAULT_SBI_API_VERSION) +
-          "/subscriptions",
+      *router, base + amf_sbi_helper::AmfEvtsPathSubscriptions,
       Routes::bind(
           &SubscriptionsCollectionDocumentApiEventExposure::
               create_subscription_handler,

@@ -28,12 +28,13 @@
 #ifndef StatusNotifyApi_H_
 #define StatusNotifyApi_H_
 
+#include <SmContextStatusNotification.h>
 #include <pistache/http.h>
-#include <pistache/router.h>
 #include <pistache/http_headers.h>
 #include <pistache/optional.h>
+#include <pistache/router.h>
 
-#include <SmContextStatusNotification.h>
+#include "amf_sbi_helper.hpp"
 
 namespace oai::amf::api {
 
@@ -45,7 +46,7 @@ class StatusNotifyApi {
   virtual ~StatusNotifyApi() {}
   void init();
 
-  const std::string base = "/namf-status-notify/";
+  const std::string base = amf_sbi_helper::AmfStatusNotifyServiceBase;
 
  private:
   void setupRoutes();

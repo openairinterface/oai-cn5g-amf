@@ -12,6 +12,7 @@
  */
 
 #include "SubscriptionsCollectionDocumentApi.h"
+
 #include "Helpers.h"
 #include "amf_config.hpp"
 
@@ -37,9 +38,7 @@ void SubscriptionsCollectionDocumentApi::setupRoutes() {
   using namespace Pistache::Rest;
 
   Routes::Post(
-      *router,
-      base + amf_cfg.sbi.api_version.value_or(DEFAULT_SBI_API_VERSION) +
-          "/subscriptions",
+      *router, base + amf_sbi_helper::AmfCommPathSubscriptions,
       Routes::bind(
           &SubscriptionsCollectionDocumentApi::
               a_mf_status_change_subscribe_handler,

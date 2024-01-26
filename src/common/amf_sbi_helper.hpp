@@ -19,47 +19,40 @@
  *      contact@openairinterface.org
  */
 
-#ifndef AMFConfigurationApi_H_
-#define AMFConfigurationApi_H_
-
-#include <pistache/http.h>
-#include <pistache/http_headers.h>
-#include <pistache/optional.h>
-#include <pistache/router.h>
+#ifndef _AMF_SBI_HELPER_HPP
+#define _AMF_SBI_HELPER_HPP
 
 #include <nlohmann/json.hpp>
 
-#include "amf_sbi_helper.hpp"
+#include "amf_config.hpp"
+#include "sbi_helper.hpp"
+
+using namespace oai::config;
+using namespace oai::common::sbi;
+
+extern amf_config amf_cfg;
 
 namespace oai::amf::api {
 
-class AMFConfigurationApi {
+class amf_sbi_helper : public sbi_helper {
  public:
-  AMFConfigurationApi(std::shared_ptr<Pistache::Rest::Router>);
-  virtual ~AMFConfigurationApi() {}
-  void init();
+  static inline const std::string AmfCommunicationServiceBase =
+      sbi_helper::AmfCommBase +
+      amf_cfg.sbi.api_version.value_or(kDefaultSbiApiVersion);
+  static inline const std::string AmfEventExposureServiceBase =
+      sbi_helper::AmfEvtsBase +
+      amf_cfg.sbi.api_version.value_or(kDefaultSbiApiVersion);
 
-  const std::string base = amf_sbi_helper::AmfConfigurationServiceBase;
+  static inline const std::string AmfStatusNotifyServiceBase =
+      sbi_helper::AmfStatusNotifBase +
+      amf_cfg.sbi.api_version.value_or(kDefaultSbiApiVersion);
 
- private:
-  void setupRoutes();
+  static inline const std::string AmfConfigurationServiceBase =
+      sbi_helper::AmfConfBase +
+      amf_cfg.sbi.api_version.value_or(kDefaultSbiApiVersion);
 
-  void read_configuration_handler(
-      const Pistache::Rest::Request& request,
-      Pistache::Http::ResponseWriter response);
-  void update_configuration_handler(
-      const Pistache::Rest::Request& request,
-      Pistache::Http::ResponseWriter response);
-  void configuration_api_default_handler(
-      const Pistache::Rest::Request& request,
-      Pistache::Http::ResponseWriter response);
-
-  std::shared_ptr<Pistache::Rest::Router> router;
-
-  virtual void read_configuration(Pistache::Http::ResponseWriter& response) = 0;
-  virtual void update_configuration(
-      nlohmann::json& configuration_info,
-      Pistache::Http::ResponseWriter& response) = 0;
+  static void set_problem_details(
+      nlohmann::json& json_data, const std::string& detail);
 };
 
 }  // namespace oai::amf::api

@@ -20,15 +20,15 @@
 #define NonUEN2MessagesCollectionDocumentApi_H_
 
 #include <pistache/http.h>
-#include <pistache/router.h>
 #include <pistache/http_headers.h>
 #include <pistache/optional.h>
+#include <pistache/router.h>
 
 #include "N2InformationTransferError.h"
 #include "N2InformationTransferReqData.h"
 #include "N2InformationTransferRspData.h"
 #include "ProblemDetails.h"
-
+#include "amf_sbi_helper.hpp"
 #include "mime_parser.hpp"
 
 namespace oai {
@@ -43,7 +43,7 @@ class NonUEN2MessagesCollectionDocumentApi {
   virtual ~NonUEN2MessagesCollectionDocumentApi() {}
   void init();
 
-  const std::string base = "/namf-comm/";
+  const std::string base = amf_sbi_helper::AmfCommunicationServiceBase;
 
  private:
   void setupRoutes();

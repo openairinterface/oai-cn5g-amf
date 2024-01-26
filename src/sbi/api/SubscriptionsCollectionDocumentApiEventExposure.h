@@ -20,15 +20,14 @@
 #define SubscriptionsCollectionDocumentApi_EventExposure_H_
 
 #include <pistache/http.h>
-#include <pistache/router.h>
 #include <pistache/http_headers.h>
 #include <pistache/optional.h>
-
-#include <utility>
+#include <pistache/router.h>
 
 #include "AmfCreateEventSubscription.h"
 #include "AmfCreatedEventSubscription.h"
 #include "ProblemDetails.h"
+#include "amf_sbi_helper.hpp"
 
 namespace oai::amf::api {
 
@@ -39,7 +38,7 @@ class SubscriptionsCollectionDocumentApiEventExposure {
   virtual ~SubscriptionsCollectionDocumentApiEventExposure() = default;
   void init();
 
-  const std::string base = "/namf-evts/";
+  const std::string base = amf_sbi_helper::AmfEventExposureServiceBase;
 
  private:
   void setupRoutes();

@@ -12,9 +12,10 @@
  */
 
 #include "N1N2MessageCollectionDocumentApi.h"
+
 #include "Helpers.h"
-#include "logger.hpp"
 #include "amf_config.hpp"
+#include "logger.hpp"
 
 extern oai::config::amf_config amf_cfg;
 
@@ -38,9 +39,7 @@ void N1N2MessageCollectionDocumentApi::setupRoutes() {
   using namespace Pistache::Rest;
 
   Routes::Post(
-      *router,
-      base + amf_cfg.sbi.api_version.value_or(DEFAULT_SBI_API_VERSION) +
-          "/ue-contexts/:ueContextId/n1-n2-messages",
+      *router, base + amf_sbi_helper::AmfCommPathUeContextContextIdN1N2Message,
       Routes::bind(
           &N1N2MessageCollectionDocumentApi::n1_n2_message_transfer_handler,
           this));

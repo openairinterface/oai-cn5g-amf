@@ -20,16 +20,15 @@
 #define N1N2MessageCollectionDocumentApi_H_
 
 #include <pistache/http.h>
-#include <pistache/router.h>
 #include <pistache/http_headers.h>
 #include <pistache/optional.h>
+#include <pistache/router.h>
 
 #include "N1N2MessageTransferError.h"
 #include "N1N2MessageTransferReqData.h"
 #include "N1N2MessageTransferRspData.h"
 #include "ProblemDetails.h"
-#include <string>
-
+#include "amf_sbi_helper.hpp"
 #include "mime_parser.hpp"
 
 namespace oai {
@@ -44,7 +43,7 @@ class N1N2MessageCollectionDocumentApi {
   virtual ~N1N2MessageCollectionDocumentApi() {}
   void init();
 
-  const std::string base = "/namf-comm/";
+  const std::string base = amf_sbi_helper::AmfCommunicationServiceBase;
 
  private:
   void setupRoutes();

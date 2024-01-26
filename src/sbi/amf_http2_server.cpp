@@ -32,6 +32,7 @@
 #include "amf.hpp"
 #include "amf_config.hpp"
 #include "amf_conversions.hpp"
+#include "amf_sbi_helper.hpp"
 #include "logger.hpp"
 #include "output_wrapper.hpp"
 #include "utils.hpp"
@@ -40,6 +41,8 @@ using namespace nghttp2::asio_http2;
 using namespace nghttp2::asio_http2::server;
 using namespace oai::amf::model;
 using namespace oai::model::common;
+using namespace oai::common::sbi;
+using namespace oai::amf::api;
 
 extern oai::config::amf_config amf_cfg;
 extern itti_mw* itti_inst;
@@ -57,9 +60,8 @@ void amf_http2_server::start() {
   // N1N2MessageUnSubscribe (URI:
   // /ue-contexts/{ueContextId}/n1-n2-messages/subscriptions/{subscriptionId})
   server.handle(
-      NAMF_COMMUNICATION_BASE +
-          amf_cfg.sbi.api_version.value_or(DEFAULT_SBI_API_VERSION) +
-          "/ue-contexts/",
+      amf_sbi_helper::AmfCommunicationServiceBase +
+          amf_sbi_helper::AmfCommPathUeContext,
       [&](const request& request, const response& res) {
         request.on_data([&](const uint8_t* data, std::size_t len) {
           if (len > 0) {
@@ -157,9 +159,8 @@ void amf_http2_server::start() {
 
   // Event Exposure
   server.handle(
-      NAMF_EVENT_EXPOSURE_BASE +
-          amf_cfg.sbi.api_version.value_or(DEFAULT_SBI_API_VERSION) +
-          NAMF_EVENT_EXPOSURE_SUBSCRIPTION,
+      amf_sbi_helper::AmfEventExposureServiceBase +
+          amf_sbi_helper::AmfEvtsPathSubscriptions,
       [&](const request& request, const response& response) {
         request.on_data([&](const uint8_t* data, std::size_t len) {
           std::string msg((char*) data, len);
@@ -240,9 +241,8 @@ void amf_http2_server::start() {
 
   // AMF configuration-related APIs
   server.handle(
-      NAMF_CUSTOMIZED_API_BASE +
-          amf_cfg.sbi.api_version.value_or(DEFAULT_SBI_API_VERSION) +
-          NAMF_CUSTOMIZED_API_CONFIGURATION_URL,
+      amf_sbi_helper::AmfConfigurationServiceBase +
+          NAMF_CUSTOMIZED_API_CONFIGURATION_URL,  // TODO:
       [&](const request& request, const response& response) {
         request.on_data([&](const uint8_t* data, std::size_t len) {
           try {
@@ -267,9 +267,8 @@ void amf_http2_server::start() {
 
   // NonUEN2MessageTransfer: /non-ue-n2-messages/transfer
   server.handle(
-      NAMF_COMMUNICATION_BASE +
-          amf_cfg.sbi.api_version.value_or(DEFAULT_SBI_API_VERSION) +
-          NAMF_COMMUNICATION_NON_UE_N2_MESSAGE_TRANSFER_URL,
+      amf_sbi_helper::AmfCommunicationServiceBase +
+          amf_sbi_helper::AmfCommPathNonUeN1N2MessageTransfer,
       [&](const request& request, const response& res) {
         request.on_data([&](const uint8_t* data, std::size_t len) {
           if (len > 0) {
@@ -397,9 +396,8 @@ void amf_http2_server::start() {
   // NonUeN2InfoUnSubscribe:
   // /non-ue-n2-messages/subscriptions/{n2NotifySubscriptionId}:
   server.handle(
-      NAMF_COMMUNICATION_BASE +
-          amf_cfg.sbi.api_version.value_or(DEFAULT_SBI_API_VERSION) +
-          NAMF_COMMUNICATION_NON_UE_N2_MESSAGES_INFO_SUBSCRIBE,
+      amf_sbi_helper::AmfCommunicationServiceBase +
+          amf_sbi_helper::AmfCommPathNonUeN1N2MessageSubscriptions,
       [&](const request& request, const response& res) {
         request.on_data([&](const uint8_t* data, std::size_t len) {
           if (len > 0) {
@@ -454,9 +452,8 @@ void amf_http2_server::start() {
   // NF Status Notify (URL:
   // /namf-status-notify/pdu-session-release/callback/:ueContextId/:pduSessionId)
   server.handle(
-      NAMF_STATUS_NOTIFY_API_BASE +
-          amf_cfg.sbi.api_version.value_or(DEFAULT_SBI_API_VERSION) +
-          NAMF_STATUS_NOTIFY_API_URL,
+      amf_sbi_helper::AmfStatusNotifyServiceBase +
+          amf_sbi_helper::AmfStatusNotifPathPduSessionRelease,
       [&](const request& request, const response& response) {
         request.on_data([&](const uint8_t* data, std::size_t len) {
           std::string msg((char*) data, len);
