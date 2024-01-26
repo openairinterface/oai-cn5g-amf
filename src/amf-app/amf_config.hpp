@@ -43,6 +43,8 @@
 constexpr auto AMF_CONFIG_OPTION_YES_STR = "Yes";
 constexpr auto AMF_CONFIG_OPTION_NO_STR  = "No";
 
+using namespace oai::common::sbi;
+
 namespace oai::config {
 
 typedef struct support_features_s {

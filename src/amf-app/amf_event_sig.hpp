@@ -71,7 +71,6 @@ typedef bs2::signal_type<
     bs2::keywords::mutex_type<bs2::dummy_mutex>>::type
     ue_loss_of_connectivity_sig_t;
 
-// TODO: Communication-Failure-Report
 // Signal for Communication Failure Report
 // SUPI, Communication Failure codes, HTTP version
 typedef bs2::signal_type<

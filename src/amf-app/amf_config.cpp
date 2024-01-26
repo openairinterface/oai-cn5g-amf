@@ -77,7 +77,6 @@ amf_config::amf_config() {
   support_features.enable_lmf             = false;
   support_features.use_http2              = false;
   is_emergency_support                    = false;
-  // TODO:
 }
 
 //------------------------------------------------------------------------------
