@@ -56,6 +56,7 @@
 #include "amf_conversions.hpp"
 #include "amf_n2.hpp"
 #include "amf_sbi.hpp"
+#include "amf_sbi_helper.hpp"
 #include "itti.hpp"
 #include "itti_msg_n2.hpp"
 #include "itti_msg_sbi.hpp"
@@ -73,6 +74,7 @@ using namespace oai::config;
 using namespace boost::placeholders;
 using namespace oai::model::common;
 using namespace oai::amf::model;
+using namespace oai::amf::api;
 
 extern itti_mw* itti_inst;
 extern amf_n1* amf_n1_inst;
@@ -5305,7 +5307,8 @@ bool amf_n1::get_target_amf(
           .enable_smf_selection) {  // TODO: define new option for external NRF
     // use NRF's URI from conf file if not available
     if (nrf_amf_set.empty()) {
-      nrf_amf_set = amf_cfg.get_nrf_nf_discovery_service_uri();
+      amf_sbi_helper::get_nrf_disc_search_nf_instances_uri(
+          amf_cfg.nrf_addr, nrf_amf_set);
       Logger::amf_n1().debug(
           "NRF AMF Set from the configuration file %s", nrf_amf_set.c_str());
     }

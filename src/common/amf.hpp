@@ -19,8 +19,8 @@
  *      contact@openairinterface.org
  */
 
-#ifndef __AMF_HPP
-#define __AMF_HPP
+#ifndef FILE_AMF_HPP_SEEN
+#define FILE_AMF_HPP_SEEN
 
 #include "3gpp_23.003.h"
 #include "inttypes.h"
@@ -73,9 +73,6 @@ constexpr uint64_t SECONDS_SINCE_FIRST_EPOCH = 2208988800;
 
 #define UE_AGGREGATE_MAXIMUM_BIT_RATE_DL 1000000000
 #define UE_AGGREGATE_MAXIMUM_BIT_RATE_UL 1000000000
-
-#define NAMF_COMMUNICATION_N1N2_MESSAGE_TRANSFER_URL "n1-n2-messages"
-#define NAMF_COMMUNICATION_N1_MESSAGE_NOTIFY_URL "n1-message-notify"
 
 #define NAMF_EVENT_EXPOSURE_BASE "/namf-evts/"
 

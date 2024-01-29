@@ -111,24 +111,11 @@ class amf_config {
    * @param [const std::string&] ue_cxt_id: UE Context Id
    * @return URI in string format
    */
-  std::string get_amf_n1n2_message_subscribe_uri(const std::string& ue_cxt_id);
+  std::string get_amf_n1n2_message_subscribe_uri(
+      const std::string& ue_cxt_id, const std::string& subscription_id);
 
   std::string get_non_ue_n2_info_subscribe_uri(
       const std::string& subscription_id);
-
-  /*
-   * Get the URI of NRF NF Discovery Service
-   * @param void
-   * @return URI in string format
-   */
-  std::string get_nrf_nf_discovery_service_uri();
-
-  /*
-   * Get the URI of NRF NF Registration Service
-   * @param [const std::string&] nf_instance_id: NF instance ID
-   * @return URI in string format
-   */
-  std::string get_nrf_nf_registration_uri(const std::string& nf_instance_id);
 
   /*
    * Get the URI of UDM Slice Selection Subscription Data Retrieval Service

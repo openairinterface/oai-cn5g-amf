@@ -119,12 +119,12 @@ void amf_http2_server::start() {
 
               std::string procedure = split_result[split_result.size() - 1];
               Logger::amf_server().info("Procedure %s", procedure.c_str());
-              if (procedure.compare(
-                      NAMF_COMMUNICATION_N1N2_MESSAGE_TRANSFER_URL) == 0) {
+              if (procedure.compare(amf_sbi_helper::AmfCommPathN1N2Messages) ==
+                  0) {
                 this->n1_n2_message_transfer_handler(ue_context_id, parts, res);
               }
-              if (procedure.compare(NAMF_COMMUNICATION_N1_MESSAGE_NOTIFY_URL) ==
-                  0) {
+              if (procedure.compare(
+                      amf_sbi_helper::AmfCommPathN1MessageNotify) == 0) {
                 this->n1_message_notify_handler(ue_context_id, parts, res);
               }
             } else if (split_result.size() == 7) {

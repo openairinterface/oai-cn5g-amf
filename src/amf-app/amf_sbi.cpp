@@ -33,6 +33,7 @@
 #include "amf_app.hpp"
 #include "amf_config.hpp"
 #include "amf_n1.hpp"
+#include "amf_sbi_helper.hpp"
 #include "output_wrapper.hpp"
 #include "amf_conversions.hpp"
 #include "fqdn.hpp"
@@ -46,6 +47,7 @@
 
 using namespace oai::config;
 using namespace amf_application;
+using namespace oai::amf::api;
 extern itti_mw* itti_inst;
 extern amf_config amf_cfg;
 extern amf_sbi* amf_sbi_inst;
@@ -832,8 +834,9 @@ void amf_sbi::handle_itti_message(
   nlohmann::json json_data = {};
   itti_msg.profile.to_json(json_data);
 
-  std::string url = amf_cfg.get_nrf_nf_registration_uri(
-      itti_msg.profile.get_nf_instance_id());
+  std::string url = {};
+  amf_sbi_helper::get_nrf_nf_instance_uri(
+      amf_cfg.nrf_addr, itti_msg.profile.get_nf_instance_id(), url);
 
   Logger::amf_sbi().debug(
       "Send NF Instance Registration to NRF, NRF URL %s", url.c_str());
@@ -892,8 +895,9 @@ void amf_sbi::handle_itti_message(
   std::string body = json_data.dump();
   Logger::amf_sbi().debug("Send NF Update to NRF, Msg body %s", body.c_str());
 
-  std::string url =
-      amf_cfg.get_nrf_nf_registration_uri(itti_msg.amf_instance_id);
+  std::string url = {};
+  amf_sbi_helper::get_nrf_nf_instance_uri(
+      amf_cfg.nrf_addr, itti_msg.amf_instance_id, url);
 
   Logger::amf_sbi().debug("Send NF Update to NRF, NRF URL %s", url.c_str());
 
@@ -930,8 +934,9 @@ void amf_sbi::handle_itti_message(
   Logger::amf_sbi().debug(
       "Send NF Deregistration to NRF (HTTP version %d)", itti_msg.http_version);
 
-  std::string url =
-      amf_cfg.get_nrf_nf_registration_uri(itti_msg.amf_instance_id);
+  std::string url = {};
+  amf_sbi_helper::get_nrf_nf_instance_uri(
+      amf_cfg.nrf_addr, itti_msg.amf_instance_id, url);
 
   Logger::amf_sbi().debug(
       "Send NF Deregistration to NRF, NRF URL %s", url.c_str());
@@ -1053,7 +1058,7 @@ bool amf_sbi::discover_smf(
   if (!nrf_uri.empty()) {
     url = nrf_uri;
   } else {
-    url = amf_cfg.get_nrf_nf_discovery_service_uri();
+    amf_sbi_helper::get_nrf_disc_search_nf_instances_uri(amf_cfg.nrf_addr, url);
   }
 
   // TODO: remove hardcoded values
@@ -1814,7 +1819,8 @@ bool amf_sbi::get_nrf_uri(
     std::string& nrf_uri) {
   if (!amf_cfg.support_features.enable_nssf) {
     // Get NRF info from configuration file if available
-    nrf_uri = amf_cfg.get_nrf_nf_discovery_service_uri();
+    amf_sbi_helper::get_nrf_disc_search_nf_instances_uri(
+        amf_cfg.nrf_addr, nrf_uri);
     return true;
   } else {  // Get NRF info from NSSF
             // TODO: check if external NSSF feature is supported

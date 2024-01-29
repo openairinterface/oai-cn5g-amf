@@ -56,6 +56,10 @@ class amf_sbi_helper : public sbi_helper {
       sbi_helper::AmflocBase +
       amf_cfg.sbi.api_version.value_or(kDefaultSbiApiVersion);
 
+  static inline const std::string AmfCommPathN1MessageNotify =
+      "n1-message-notify";
+  static inline const std::string AmfCommPathN1N2Messages = "n1-n2-messages";
+
   static void set_problem_details(
       nlohmann::json& json_data, const std::string& detail);
 };
