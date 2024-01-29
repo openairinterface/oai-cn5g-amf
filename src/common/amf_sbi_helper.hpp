@@ -39,6 +39,7 @@ class amf_sbi_helper : public sbi_helper {
   static inline const std::string AmfCommunicationServiceBase =
       sbi_helper::AmfCommBase +
       amf_cfg.sbi.api_version.value_or(kDefaultSbiApiVersion);
+
   static inline const std::string AmfEventExposureServiceBase =
       sbi_helper::AmfEvtsBase +
       amf_cfg.sbi.api_version.value_or(kDefaultSbiApiVersion);
@@ -49,6 +50,10 @@ class amf_sbi_helper : public sbi_helper {
 
   static inline const std::string AmfConfigurationServiceBase =
       sbi_helper::AmfConfBase +
+      amf_cfg.sbi.api_version.value_or(kDefaultSbiApiVersion);
+
+  static inline const std::string AmfLocationServiceBase =
+      sbi_helper::AmflocBase +
       amf_cfg.sbi.api_version.value_or(kDefaultSbiApiVersion);
 
   static void set_problem_details(

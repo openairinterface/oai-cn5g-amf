@@ -23,6 +23,7 @@
 
 #include "3gpp_29.502.h"
 #include "amf_app.hpp"
+#include "amf_sbi_helper.hpp"
 #include "common_defs.h"
 #include "logger.hpp"
 
@@ -34,6 +35,7 @@ extern "C" {
 }
 
 using namespace amf_application;
+using namespace oai::amf::api;
 
 namespace oai::config {
 
@@ -259,9 +261,9 @@ std::string amf_config::get_amf_n1n2_message_subscribe_uri(
   unsigned int sbi_port = DEFAULT_HTTP1_PORT;
   sbi_port              = sbi.port;
   return std::string(inet_ntoa(*((struct in_addr*) &sbi.addr4))) + ":" +
-         std::to_string(sbi_port) + NAMF_COMMUNICATION_BASE +
-         sbi.api_version.value() + "/ue-contexts/" + ue_cxt_id +
-         "/n1-n2-messages/subscriptions";
+         std::to_string(sbi_port) +
+         amf_sbi_helper::AmfCommunicationServiceBase + "/ue-contexts/" +
+         ue_cxt_id + "/n1-n2-messages/subscriptions";
 }
 
 //------------------------------------------------------------------------------
@@ -270,9 +272,9 @@ std::string amf_config::get_non_ue_n2_info_subscribe_uri(
   unsigned int sbi_port = DEFAULT_HTTP1_PORT;
   sbi_port              = sbi.port;
   return std::string(inet_ntoa(*((struct in_addr*) &sbi.addr4))) + ":" +
-         std::to_string(sbi_port) + NAMF_COMMUNICATION_BASE +
-         sbi.api_version.value() + "/non-ue-n2-messages/subscriptions" + "/" +
-         subscription_id;
+         std::to_string(sbi_port) +
+         amf_sbi_helper::AmfCommunicationServiceBase +
+         "/non-ue-n2-messages/subscriptions" + "/" + subscription_id;
 }
 
 //------------------------------------------------------------------------------
@@ -310,8 +312,9 @@ std::string amf_config::get_ausf_ue_authentications_uri() {
 //------------------------------------------------------------------------------
 std::string amf_config::get_lmf_determine_location_uri() {
   return std::string(inet_ntoa(*((struct in_addr*) &lmf_addr.ipv4_addr))) +
-         ":" + std::to_string(lmf_addr.port) + NLMF_BASE +
-         lmf_addr.api_version + NLMF_DETERMINE_LOCATION;
+         ":" + std::to_string(lmf_addr.port) +
+         amf_sbi_helper::AmfLocationServiceBase +
+         amf_sbi_helper::AmflocPathDetermineLocation;
 }
 
 //------------------------------------------------------------------------------

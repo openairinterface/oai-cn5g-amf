@@ -26,7 +26,7 @@
 #include <boost/chrono/duration.hpp>
 #include <boost/chrono/system_clocks.hpp>
 
-#include "3gpp_24.501.h"
+#include "3gpp_24.501.hpp"
 #include "DefaultPagingDrx.hpp"
 #include "DownlinkNasTransport.hpp"
 #include "DownlinkNonUEAssociatedNRPPaTransport.hpp"

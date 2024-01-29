@@ -31,7 +31,7 @@
 #include <string>
 #include <vector>
 
-#include "3gpp_24.501.h"
+#include "3gpp_24.501.hpp"
 #include "amf.hpp"
 #include "common_defs.h"
 #include "if.hpp"

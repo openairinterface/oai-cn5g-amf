@@ -25,7 +25,6 @@
 #include <boost/thread.hpp>
 #include <boost/thread/future.hpp>
 #include <nlohmann/json.hpp>
-#include <string>
 
 #include "3gpp_29.500.h"
 #include "3gpp_conversions.hpp"
@@ -242,7 +241,7 @@ void amf_http2_server::start() {
   // AMF configuration-related APIs
   server.handle(
       amf_sbi_helper::AmfConfigurationServiceBase +
-          NAMF_CUSTOMIZED_API_CONFIGURATION_URL,  // TODO:
+          amf_sbi_helper::AmfConfPathConfiguration,
       [&](const request& request, const response& response) {
         request.on_data([&](const uint8_t* data, std::size_t len) {
           try {
@@ -538,6 +537,7 @@ void amf_http2_server::createEventSubscriptionHandler(
   to_json(
       json_data["subscription"], amfCreateEventSubscription.getSubscription());
 
+  // TODO: To be fixed
   if (sub_id != -1) {
     std::string location =
         std::string(inet_ntoa(*((struct in_addr*) &amf_cfg.sbi.addr4))) + ":" +

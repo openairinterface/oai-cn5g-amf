@@ -25,7 +25,7 @@
 
 #include <bitset>
 
-#include "3gpp_24.501.h"
+#include "3gpp_24.501.hpp"
 #include "AmfEventReport.h"
 #include "AmfEventType.h"
 #include "AuthenticationFailure.hpp"

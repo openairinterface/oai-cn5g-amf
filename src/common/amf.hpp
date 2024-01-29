@@ -37,9 +37,8 @@
 #include <vector>
 #include <optional>
 
-#include "amf.hpp"
 #include "common_defs.h"
-#include "3gpp_24.501.h"
+#include "3gpp_24.501.hpp"
 #include "if.hpp"
 #include "string.hpp"
 #include "thread_sched.hpp"
@@ -75,25 +74,10 @@ constexpr uint64_t SECONDS_SINCE_FIRST_EPOCH = 2208988800;
 #define UE_AGGREGATE_MAXIMUM_BIT_RATE_DL 1000000000
 #define UE_AGGREGATE_MAXIMUM_BIT_RATE_UL 1000000000
 
-#define NAMF_COMMUNICATION_BASE "/namf-comm/"
 #define NAMF_COMMUNICATION_N1N2_MESSAGE_TRANSFER_URL "n1-n2-messages"
-#define NAMF_COMMUNICATION_NON_UE_N2_MESSAGE_TRANSFER_URL                      \
-  "/non-ue-n2-messages/transfer"
 #define NAMF_COMMUNICATION_N1_MESSAGE_NOTIFY_URL "n1-message-notify"
-#define NAMF_COMMUNICATION_NON_UE_N2_MESSAGES_INFO_SUBSCRIBE                   \
-  "/non-ue-n2-messages/subscriptions"
 
 #define NAMF_EVENT_EXPOSURE_BASE "/namf-evts/"
-#define NAMF_EVENT_EXPOSURE_SUBSCRIPTION "/subscriptions"
-
-#define NLMF_BASE "/nlmf-loc/"
-#define NLMF_DETERMINE_LOCATION "/determine-location"
-
-#define NAMF_CUSTOMIZED_API_BASE "/namf-oai/"
-#define NAMF_CUSTOMIZED_API_CONFIGURATION_URL "/configuration"
-
-#define NAMF_STATUS_NOTIFY_API_BASE "/namf-status-notify/"
-#define NAMF_STATUS_NOTIFY_API_URL "/pdu-session-release/callback/"
 
 #define NAS_MESSAGE_DOWNLINK 1
 #define NAS_MESSAGE_UPLINK 0
