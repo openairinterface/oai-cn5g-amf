@@ -29,8 +29,6 @@
 
 extern "C" {
 #include <arpa/inet.h>
-//#include <stdbool.h>
-//#include <string.h>
 #include <sys/types.h>
 }
 

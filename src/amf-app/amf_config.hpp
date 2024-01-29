@@ -26,10 +26,10 @@
 #include <netinet/in.h>
 #include <sys/socket.h>
 
-#include <boost/algorithm/string.hpp>
+//#include <boost/algorithm/string.hpp>
 #include <nlohmann/json.hpp>
 #include <string>
-#include <vector>
+//#include <vector>
 
 #include "3gpp_24.501.hpp"
 #include "amf.hpp"
@@ -37,7 +37,7 @@
 #include "if.hpp"
 #include "pdu_session_context.hpp"
 #include "sbi_helper.hpp"
-#include "string.hpp"
+//#include "string.hpp"
 #include "thread_sched.hpp"
 
 constexpr auto AMF_CONFIG_OPTION_YES_STR = "Yes";
@@ -114,6 +114,11 @@ class amf_config {
   std::string get_amf_n1n2_message_subscribe_uri(
       const std::string& ue_cxt_id, const std::string& subscription_id);
 
+  /*
+   * Get the URI of AMF NonUEN2InfoSubscribe
+   * @param [const std::string&] subscription_id: Subscription Id
+   * @return URI in string format
+   */
   std::string get_non_ue_n2_info_subscribe_uri(
       const std::string& subscription_id);
 

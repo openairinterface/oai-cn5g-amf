@@ -36,7 +36,6 @@
 #include "amf_sbi_helper.hpp"
 #include "output_wrapper.hpp"
 #include "amf_conversions.hpp"
-#include "fqdn.hpp"
 #include "itti.hpp"
 #include "itti_msg_amf_app.hpp"
 #include "itti_msg_n2.hpp"
