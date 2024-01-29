@@ -19,8 +19,8 @@
  *      contact@openairinterface.org
  */
 
-#ifndef FILE_3GPP_29_502_SMF_SEEN
-#define FILE_3GPP_29_502_SMF_SEEN
+#ifndef FILE_3GPP_29_502_SEEN
+#define FILE_3GPP_29_502_SEEN
 
 #include <vector>
 #include <string>
@@ -151,8 +151,7 @@ static const std::vector<std::string> up_cnx_state_e2str = {
     "UPCNX_STATE_UNKNOWN", "UPCNX_STATE_ACTIVATED", "UPCNX_STATE_DEACTIVATED",
     "UPCNX_STATE_ACTIVATING"};
 
-#define NSMF_PDU_SESSION_CREATE "/sm-contexts"
-#define NSMF_PDU_SESSION_MODIFY "/modify"
-#define NSMF_PDU_SESSION_RELEASE "/release"
+#define NSMF_PDU_SESSION_MODIFY "/modify"    // TODO: to be removed
+#define NSMF_PDU_SESSION_RELEASE "/release"  // TODO: to be removed
 
 #endif

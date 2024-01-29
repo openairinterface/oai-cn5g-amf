@@ -342,8 +342,8 @@ bool amf_config::get_smf_pdu_session_context_uri(
 //------------------------------------------------------------------------------
 std::string amf_config::get_smf_pdu_session_base_uri(
     const std::string& smf_uri_root, const std::string& smf_api_version) {
-  return smf_uri_root + "/nsmf-pdusession/" + smf_api_version +
-         NSMF_PDU_SESSION_CREATE;
+  return smf_uri_root + amf_sbi_helper::SmfPduSessionBase + smf_api_version +
+         amf_sbi_helper::SmfPduSessionPathSmContexts;
 }
 
 //------------------------------------------------------------------------------
