@@ -862,7 +862,7 @@ void amf_config_yaml::to_amf_config(amf_config& cfg) {
         amf_local->get_support_features().get_option_enable_nssf();
   }
 
-  if (get_http_version() == 2) cfg.support_features.use_http2 = true;
+  cfg.support_features.http_version = get_http_version();
 
   for (const auto& i : amf_local->get_guami_list()) {
     guami_full_format_t guami_item = {};

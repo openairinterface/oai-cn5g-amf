@@ -26,10 +26,8 @@
 #include <netinet/in.h>
 #include <sys/socket.h>
 
-//#include <boost/algorithm/string.hpp>
 #include <nlohmann/json.hpp>
 #include <string>
-//#include <vector>
 
 #include "3gpp_24.501.hpp"
 #include "amf.hpp"
@@ -37,7 +35,6 @@
 #include "if.hpp"
 #include "pdu_session_context.hpp"
 #include "sbi_helper.hpp"
-//#include "string.hpp"
 #include "thread_sched.hpp"
 
 constexpr auto AMF_CONFIG_OPTION_YES_STR = "Yes";
@@ -54,7 +51,7 @@ typedef struct support_features_s {
   bool enable_external_udm;
   bool enable_nssf;
   bool enable_lmf;
-  bool use_http2;
+  uint8_t http_version;
   nlohmann::json to_json() const {
     nlohmann::json json_data            = {};
     json_data["enable_nf_registration"] = this->enable_nf_registration;
@@ -63,7 +60,7 @@ typedef struct support_features_s {
     json_data["enable_external_udm"]    = this->enable_external_udm;
     json_data["enable_nssf"]            = this->enable_nssf;
     json_data["enable_lmf"]             = this->enable_lmf;
-    json_data["use_http2"]              = this->use_http2;
+    json_data["http_version"]           = this->http_version;
     return json_data;
   }
 
@@ -88,8 +85,8 @@ typedef struct support_features_s {
       if (json_data.find("enable_nssf") != json_data.end()) {
         this->enable_nssf = json_data["enable_nssf"].get<bool>();
       }
-      if (json_data.find("use_http2") != json_data.end()) {
-        this->use_http2 = json_data["use_http2"].get<bool>();
+      if (json_data.find("http_version") != json_data.end()) {
+        this->http_version = json_data["http_version"].get<int>();
       }
       if (json_data.find("enable_lmf") != json_data.end()) {
         this->enable_lmf = json_data["enable_lmf"].get<bool>();

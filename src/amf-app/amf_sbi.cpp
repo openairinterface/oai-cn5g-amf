@@ -305,11 +305,9 @@ void amf_sbi::handle_itti_message(
 
   std::string json_part = pdu_session_update_request.dump();
 
-  uint8_t http_version = amf_cfg.support_features.use_http2 ? 2 : 1;
-
   bool curl_result = curl_http_client(
       remote_uri, json_part, n1sm_msg, n2sm_msg, supi, itti_msg.pdu_session_id,
-      http_version, itti_msg.promise_id);
+      amf_cfg.support_features.http_version, itti_msg.promise_id);
 
   if (curl_result and
       (itti_msg.n2sm_info_type.compare("PDU_RES_SETUP_RSP") == 0)) {
@@ -468,11 +466,9 @@ void amf_sbi::send_pdu_session_update_sm_context_request(
   octet_stream_2_hex_stream(
       (uint8_t*) bdata(sm_msg), blength(sm_msg), n1sm_msg);
 
-  uint8_t http_version = amf_cfg.support_features.use_http2 ? 2 : 1;
-
   curl_http_client(
       remote_uri, json_part, n1sm_msg, "", supi, psc->pdu_session_id,
-      http_version);
+      amf_cfg.support_features.http_version);
 }
 
 //------------------------------------------------------------------------------
@@ -527,11 +523,9 @@ void amf_sbi::handle_pdu_session_initial_request(
   octet_stream_2_hex_stream(
       (uint8_t*) bdata(sm_msg), blength(sm_msg), n1sm_msg);
 
-  uint8_t http_version = amf_cfg.support_features.use_http2 ? 2 : 1;
-
   curl_http_client(
       remote_uri, json_part, n1sm_msg, "", supi, psc->pdu_session_id,
-      http_version);
+      amf_cfg.support_features.http_version);
 }
 
 //------------------------------------------------------------------------------
@@ -561,12 +555,12 @@ void amf_sbi::handle_itti_message(
   // TODO: N2SmInfo
   std::string msg_body = pdu_session_release_request.dump();
 
-  uint8_t http_version         = amf_cfg.support_features.use_http2 ? 2 : 1;
   nlohmann::json response_json = {};
   uint32_t response_code       = 0;
 
   curl_http_client(
-      remote_uri, "POST", msg_body, response_json, response_code, http_version);
+      remote_uri, "POST", msg_body, response_json, response_code,
+      amf_cfg.support_features.http_version);
 
   nlohmann::json response_data      = {};
   response_data["httpResponseCode"] = response_code;
@@ -639,10 +633,10 @@ void amf_sbi::handle_itti_message(itti_sbi_notify_subscribed_event& itti_msg) {
 
     std::string url        = i.get_notify_uri();
     uint32_t response_code = 0;
-    uint8_t http_version   = amf_cfg.support_features.use_http2 ? 2 : 1;
 
     curl_http_client(
-        url, "POST", body, response_json, response_code, http_version);
+        url, "POST", body, response_json, response_code,
+        amf_cfg.support_features.http_version);
     // TODO: process the response
   }
   return;
@@ -671,11 +665,12 @@ void amf_sbi::handle_itti_message(
       "Send Slice Selection Subscription Data Retrieval to UDM, URL %s",
       url.c_str());
 
-  uint8_t http_version         = amf_cfg.support_features.use_http2 ? 2 : 1;
   nlohmann::json response_data = {};
   uint32_t response_code       = 0;
 
-  curl_http_client(url, "GET", "", response_data, response_code, http_version);
+  curl_http_client(
+      url, "GET", "", response_data, response_code,
+      amf_cfg.support_features.http_version);
 
   // Notify to the result
   if (itti_msg.promise_id > 0) {
@@ -720,11 +715,12 @@ void amf_sbi::handle_itti_message(
       "Send Slice Selection Information Retrieval to NSSF, URL %s",
       url.c_str());
 
-  uint8_t http_version         = amf_cfg.support_features.use_http2 ? 2 : 1;
   nlohmann::json response_data = {};
   uint32_t response_code       = 0;
 
-  curl_http_client(url, "GET", "", response_data, response_code, http_version);
+  curl_http_client(
+      url, "GET", "", response_data, response_code,
+      amf_cfg.support_features.http_version);
 
   // Notify to the result
   if (itti_msg.promise_id > 0) {
@@ -756,13 +752,12 @@ void amf_sbi::handle_itti_message(itti_sbi_n1_message_notify& itti_msg) {
       (uint8_t*) bdata(itti_msg.registration_request),
       blength(itti_msg.registration_request), n1sm_msg);
 
-  uint8_t http_version   = amf_cfg.support_features.use_http2 ? 2 : 1;
   uint32_t response_code = 0;
   std::string n2sm_msg   = {};
 
   curl_http_client(
-      url, json_part, n1sm_msg, n2sm_msg, http_version, response_code,
-      http_version);
+      url, json_part, n1sm_msg, n2sm_msg, amf_cfg.support_features.http_version,
+      response_code);
 
   // TODO: handle response
   return;
@@ -785,11 +780,10 @@ void amf_sbi::handle_itti_message(itti_sbi_n2_info_notify& itti_msg) {
 
   uint32_t response_code = 0;
   std::string n1sm_msg   = {};
-  uint8_t http_version   = amf_cfg.support_features.use_http2 ? 2 : 1;
 
   curl_http_client(
-      itti_msg.nf_uri, json_part, n1sm_msg, n2_info_msg, http_version,
-      response_code);
+      itti_msg.nf_uri, json_part, n1sm_msg, n2_info_msg,
+      amf_cfg.support_features.http_version, response_code);
 
   if (response_code == 204) {
     Logger::amf_sbi().debug("Sent notification successfully!");
@@ -813,9 +807,10 @@ void amf_sbi::handle_itti_message(itti_sbi_nf_instance_discovery& itti_msg) {
 
   nlohmann::json response_data = {};
   uint32_t response_code       = 0;
-  uint8_t http_version         = amf_cfg.support_features.use_http2 ? 2 : 1;
 
-  curl_http_client(url, "GET", "", response_data, response_code, http_version);
+  curl_http_client(
+      url, "GET", "", response_data, response_code,
+      amf_cfg.support_features.http_version);
 
   // Notify to the result
   if (itti_msg.promise_id > 0) {
@@ -844,12 +839,12 @@ void amf_sbi::handle_itti_message(
   Logger::amf_sbi().debug(
       "Send NF Instance Registration to NRF, msg body: \n %s", body.c_str());
 
-  uint8_t http_version         = amf_cfg.support_features.use_http2 ? 2 : 1;
   nlohmann::json response_data = {};
   uint32_t response_code       = 0;
 
   curl_http_client(
-      url, "PUT", body, response_data, response_code, http_version);
+      url, "PUT", body, response_data, response_code,
+      amf_cfg.support_features.http_version);
 
   // Send response to APP to process
   std::shared_ptr<itti_sbi_register_nf_instance_response> itti_msg_response =
@@ -900,12 +895,12 @@ void amf_sbi::handle_itti_message(
 
   Logger::amf_sbi().debug("Send NF Update to NRF, NRF URL %s", url.c_str());
 
-  uint8_t http_version         = amf_cfg.support_features.use_http2 ? 2 : 1;
   nlohmann::json response_data = {};
   uint32_t response_code       = 0;
 
   curl_http_client(
-      url, "PATCH", body, response_data, response_code, http_version);
+      url, "PATCH", body, response_data, response_code,
+      amf_cfg.support_features.http_version);
 
   Logger::amf_sbi().debug(
       "NF Update, response from NRF, json data: \n %s",
@@ -940,12 +935,12 @@ void amf_sbi::handle_itti_message(
   Logger::amf_sbi().debug(
       "Send NF Deregistration to NRF, NRF URL %s", url.c_str());
 
-  uint8_t http_version         = amf_cfg.support_features.use_http2 ? 2 : 1;
   nlohmann::json response_data = {};
   uint32_t response_code       = 0;
 
   curl_http_client(
-      url, "DELETE", "", response_data, response_code, http_version);
+      url, "DELETE", "", response_data, response_code,
+      amf_cfg.support_features.http_version);
 
   // Send response to APP to process
   std::shared_ptr<itti_sbi_deregister_nf_instance_response> itti_msg_response =
@@ -981,10 +976,10 @@ void amf_sbi::handle_itti_message(
 
   uint32_t response_code       = 0;
   nlohmann::json response_data = {};
-  uint8_t http_version         = amf_cfg.support_features.use_http2 ? 2 : 1;
 
   curl_http_client(
-      url, "POST", body, response_data, response_code, http_version);
+      url, "POST", body, response_data, response_code,
+      amf_cfg.support_features.http_version);
 
   Logger::amf_sbi().debug(
       "Determine Location, response from LMF, HTTP Code: %d", response_code);
@@ -1063,11 +1058,12 @@ bool amf_sbi::discover_smf(
   // TODO: remove hardcoded values
   url += "?target-nf-type=SMF&requester-nf-type=AMF";
 
-  uint8_t http_version         = amf_cfg.support_features.use_http2 ? 2 : 1;
   nlohmann::json response_data = {};
   uint32_t response_code       = 0;
 
-  curl_http_client(url, "GET", "", response_data, response_code, http_version);
+  curl_http_client(
+      url, "GET", "", response_data, response_code,
+      amf_cfg.support_features.http_version);
 
   Logger::amf_sbi().debug(
       "NFDiscovery, response from NRF, json data: \n %s",
@@ -1852,10 +1848,10 @@ bool amf_sbi::get_nrf_uri(
 
     nlohmann::json response_data = {};
     uint32_t response_code       = 0;
-    uint8_t http_version         = amf_cfg.support_features.use_http2 ? 2 : 1;
 
     curl_http_client(
-        nssf_url, "GET", "", response_data, response_code, http_version);
+        nssf_url, "GET", "", response_data, response_code,
+        amf_cfg.support_features.http_version);
 
     Logger::amf_sbi().debug(
         "NS Selection, response from NSSF, json data: \n %s",

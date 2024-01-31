@@ -75,7 +75,7 @@ amf_config::amf_config() {
   support_features.enable_external_udm    = false;
   support_features.enable_nssf            = false;
   support_features.enable_lmf             = false;
-  support_features.use_http2              = false;
+  support_features.http_version           = 2;  // HTTP/2 by default
   is_emergency_support                    = false;
 }
 
@@ -231,9 +231,7 @@ void amf_config::display() {
       support_features.enable_lmf ? "Yes" : "No");
 
   Logger::config().info(
-      "    Use HTTP2 .............: %s", support_features.use_http2 ?
-                                             AMF_CONFIG_OPTION_YES_STR :
-                                             AMF_CONFIG_OPTION_NO_STR);
+      "    HTTP version...........: %d", support_features.http_version);
   Logger::config().info(
       "- Log Level ...............: %s",
       spdlog::level::to_string_view(log_level));

@@ -537,7 +537,7 @@ void amf_http2_server::createEventSubscriptionHandler(
   to_json(
       json_data["subscription"], amfCreateEventSubscription.getSubscription());
 
-  // TODO: To be fixed
+  // TODO: To be fixed with correct location
   if (sub_id != -1) {
     std::string location =
         std::string(inet_ntoa(*((struct in_addr*) &amf_cfg.sbi.addr4))) + ":" +

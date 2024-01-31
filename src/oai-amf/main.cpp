@@ -137,7 +137,7 @@ int main(int argc, char** argv) {
   amf_app_inst = new amf_app(amf_cfg);
 
   Logger::amf_app().debug("Initiating AMF server endpoints");
-  if (!amf_cfg.support_features.use_http2) {
+  if (amf_cfg.support_features.http_version == 1) {
     // AMF HTTP1 server
     Pistache::Address addr(
         std::string(inet_ntoa(*((struct in_addr*) &amf_cfg.sbi.addr4))),

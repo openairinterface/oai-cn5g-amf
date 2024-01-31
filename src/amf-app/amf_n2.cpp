@@ -1421,7 +1421,7 @@ void amf_n2::handle_itti_message(
         std::make_shared<itti_sbi_notify_subscribed_event>(
             TASK_AMF_N2, TASK_AMF_SBI);
 
-    itti_msg_ev->http_version = amf_cfg.support_features.use_http2 ? 2 : 1;
+    itti_msg_ev->http_version = amf_cfg.support_features.http_version;
 
     for (auto i : subscriptions) {
       // Avoid repeated notifications
@@ -2323,8 +2323,8 @@ void amf_n2::handle_itti_message(
   nr_location.setGlobalGnbId(ranid);
 
   user_location.setNrLocation(nr_location);
-  uint8_t http_version = amf_cfg.support_features.use_http2 ? 2 : 1;
-  amf_n1_inst->event_sub.ue_location_report(supi, user_location, http_version);
+  amf_n1_inst->event_sub.ue_location_report(
+      supi, user_location, amf_cfg.support_features.http_version);
 }
 
 //------------------------------------------------------------------------------
@@ -2790,9 +2790,9 @@ void amf_n2::remove_ue_context_with_ran_ue_ngap_id(
     Logger::amf_n1().debug(
         "Signal the UE Loss of Connectivity Event notification for SUPI %s",
         supi.c_str());
-    uint8_t http_version = amf_cfg.support_features.use_http2 ? 2 : 1;
     amf_n1_inst->event_sub.ue_loss_of_connectivity(
-        supi, DEREGISTERED, http_version, ran_ue_ngap_id, unc->amf_ue_ngap_id);
+        supi, DEREGISTERED, amf_cfg.support_features.http_version,
+        ran_ue_ngap_id, unc->amf_ue_ngap_id);
 
     amf_n1_inst->remove_supi_2_nas_context(supi);
     // TODO:  remove_guti_2_nas_context(guti);
@@ -2875,9 +2875,9 @@ void amf_n2::remove_ue_context_with_amf_ue_ngap_id(const long& amf_ue_ngap_id) {
     Logger::amf_n1().debug(
         "Signal the UE Loss of Connectivity Event notification for SUPI %s",
         supi.c_str());
-    uint8_t http_version = amf_cfg.support_features.use_http2 ? 2 : 1;
     amf_n1_inst->event_sub.ue_loss_of_connectivity(
-        supi, DEREGISTERED, http_version, nc->ran_ue_ngap_id, amf_ue_ngap_id);
+        supi, DEREGISTERED, amf_cfg.support_features.http_version,
+        nc->ran_ue_ngap_id, amf_ue_ngap_id);
 
     amf_n1_inst->remove_supi_2_nas_context(supi);
     // TODO:  remove_guti_2_nas_context(guti);
