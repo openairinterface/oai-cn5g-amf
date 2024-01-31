@@ -3,11 +3,11 @@
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The OpenAirInterface Software Alliance licenses this file to You under
- * the Apache License, Version 2.0  (the "License"); you may not use this file
- * except in compliance with the License.
- * You may obtain a copy of the License at
+ * the OAI Public License, Version 1.1  (the "License"); you may not use this
+ * file except in compliance with the License. You may obtain a copy of the
+ * License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.openairinterface.org/?page_id=698
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -19,13 +19,22 @@
  *      contact@openairinterface.org
  */
 
-#ifndef FILE_IF_HPP_SEEN
-#define FILE_IF_HPP_SEEN
+#include "amf_sbi_helper.hpp"
 
-#include <string>
+#include <boost/algorithm/string.hpp>
+#include <regex>
+#include <vector>
 
-int get_inet_addr_infos_from_iface(
-    const std::string& if_name, struct in_addr& inet_addr,
-    struct in_addr& inet_netmask, unsigned int& mtu);
+#include "ProblemDetails.h"
+#include "logger.hpp"
 
-#endif /* FILE_IF_HPP_SEEN */
+namespace oai::amf::api {
+//------------------------------------------------------------------------------
+void amf_sbi_helper::set_problem_details(
+    nlohmann::json& json_data, const std::string& detail) {
+  Logger::amf_app().error("%s", detail);
+  oai::model::common::ProblemDetails problem_details;
+  problem_details.setDetail(detail);
+  to_json(json_data, problem_details);
+}
+}  // namespace oai::amf::api

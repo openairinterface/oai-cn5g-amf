@@ -12,10 +12,10 @@
  */
 
 #include "N1MessageNotifyApi.h"
+
 #include "Helpers.h"
-#include "mime_parser.hpp"
-#include "logger.hpp"
 #include "amf_config.hpp"
+#include "logger.hpp"
 #include "mime_parser.hpp"
 
 extern oai::config::amf_config amf_cfg;
@@ -41,8 +41,7 @@ void N1MessageNotifyApi::setupRoutes() {
 
   Routes::Post(
       *router,
-      base + amf_cfg.sbi.api_version.value_or(DEFAULT_SBI_API_VERSION) +
-          "/ue-contexts/:ueContextId/n1-message-notify",
+      base + amf_sbi_helper::AmfCommPathUeContextContextIdN1MessageNotify,
       Routes::bind(&N1MessageNotifyApi::n1_message_notify_handler, this));
 
   // Default handler, called when a route is not found

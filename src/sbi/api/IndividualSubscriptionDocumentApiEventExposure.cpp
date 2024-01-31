@@ -12,6 +12,7 @@
  */
 
 #include "IndividualSubscriptionDocumentApiEventExposure.h"
+
 #include "Helpers.h"
 #include "amf_config.hpp"
 
@@ -37,17 +38,13 @@ void IndividualSubscriptionDocumentApiEventExposure::setupRoutes() {
   using namespace Pistache::Rest;
 
   Routes::Delete(
-      *router,
-      base + amf_cfg.sbi.api_version.value_or(DEFAULT_SBI_API_VERSION) +
-          "/subscriptions/:subscriptionId",
+      *router, base + amf_sbi_helper::AmfEvtsPathSubscriptionsSubscriptionId,
       Routes::bind(
           &IndividualSubscriptionDocumentApiEventExposure::
               delete_subscription_handler,
           this));
   Routes::Patch(
-      *router,
-      base + amf_cfg.sbi.api_version.value_or(DEFAULT_SBI_API_VERSION) +
-          "/subscriptions/:subscriptionId",
+      *router, base + amf_sbi_helper::AmfEvtsPathSubscriptionsSubscriptionId,
       Routes::bind(
           &IndividualSubscriptionDocumentApiEventExposure::
               modify_subscription_handler,

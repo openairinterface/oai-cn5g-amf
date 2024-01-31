@@ -12,6 +12,7 @@
  */
 
 #include "N1N2IndividualSubscriptionDocumentApi.h"
+
 #include "Helpers.h"
 #include "amf_config.hpp"
 
@@ -37,9 +38,9 @@ void N1N2IndividualSubscriptionDocumentApi::setupRoutes() {
 
   Routes::Delete(
       *router,
-      base + amf_cfg.sbi.api_version.value_or(DEFAULT_SBI_API_VERSION) +
-          "/ue-contexts/:ueContextId/n1-n2-messages/subscriptions/"
-          ":subscriptionId",
+      base +
+          amf_sbi_helper::
+              AmfCommPathUeContextContextIdN1N2MessageSubscriptionsSubscriptionId,
       Routes::bind(
           &N1N2IndividualSubscriptionDocumentApi::
               n1_n2_message_un_subscribe_handler,

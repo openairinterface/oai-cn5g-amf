@@ -26,22 +26,21 @@
 #include <netinet/in.h>
 #include <sys/socket.h>
 
-#include <boost/algorithm/string.hpp>
 #include <nlohmann/json.hpp>
 #include <string>
-#include <vector>
 
-#include "3gpp_24.501.h"
+#include "3gpp_24.501.hpp"
 #include "amf.hpp"
 #include "common_defs.h"
 #include "if.hpp"
 #include "pdu_session_context.hpp"
 #include "sbi_helper.hpp"
-#include "string.hpp"
 #include "thread_sched.hpp"
 
 constexpr auto AMF_CONFIG_OPTION_YES_STR = "Yes";
 constexpr auto AMF_CONFIG_OPTION_NO_STR  = "No";
+
+using namespace oai::common::sbi;
 
 namespace oai::config {
 
@@ -51,10 +50,8 @@ typedef struct support_features_s {
   bool enable_external_ausf;
   bool enable_external_udm;
   bool enable_nssf;
-  bool enable_external_nrf;
   bool enable_lmf;
-  bool use_fqdn_dns;
-  bool use_http2;
+  uint8_t http_version;
   nlohmann::json to_json() const {
     nlohmann::json json_data            = {};
     json_data["enable_nf_registration"] = this->enable_nf_registration;
@@ -63,21 +60,40 @@ typedef struct support_features_s {
     json_data["enable_external_udm"]    = this->enable_external_udm;
     json_data["enable_nssf"]            = this->enable_nssf;
     json_data["enable_lmf"]             = this->enable_lmf;
-    json_data["use_fqdn_dns"]           = this->use_fqdn_dns;
-    json_data["use_http2"]              = this->use_http2;
+    json_data["http_version"]           = this->http_version;
     return json_data;
   }
 
   void from_json(nlohmann::json& json_data) {
-    this->enable_nf_registration =
-        json_data["enable_nf_registration"].get<bool>();
-    this->enable_smf_selection = json_data["enable_smf_selection"].get<bool>();
-    this->enable_external_ausf = json_data["enable_external_ausf"].get<bool>();
-    this->enable_external_udm  = json_data["enable_external_udm"].get<bool>();
-    this->enable_nssf          = json_data["enable_nssf"].get<bool>();
-    this->use_fqdn_dns         = json_data["use_fqdn_dns"].get<bool>();
-    this->use_http2            = json_data["use_http2"].get<bool>();
-    this->enable_lmf           = json_data["enable_lmf"].get<bool>();
+    try {
+      if (json_data.find("enable_nf_registration") != json_data.end()) {
+        this->enable_nf_registration =
+            json_data["enable_nf_registration"].get<bool>();
+      }
+      if (json_data.find("enable_smf_selection") != json_data.end()) {
+        this->enable_smf_selection =
+            json_data["enable_smf_selection"].get<bool>();
+      }
+      if (json_data.find("enable_external_ausf") != json_data.end()) {
+        this->enable_external_ausf =
+            json_data["enable_external_ausf"].get<bool>();
+      }
+      if (json_data.find("enable_external_udm") != json_data.end()) {
+        this->enable_external_udm =
+            json_data["enable_external_udm"].get<bool>();
+      }
+      if (json_data.find("enable_nssf") != json_data.end()) {
+        this->enable_nssf = json_data["enable_nssf"].get<bool>();
+      }
+      if (json_data.find("http_version") != json_data.end()) {
+        this->http_version = json_data["http_version"].get<int>();
+      }
+      if (json_data.find("enable_lmf") != json_data.end()) {
+        this->enable_lmf = json_data["enable_lmf"].get<bool>();
+      }
+    } catch (std::exception& e) {
+      Logger::amf_app().error("%s", e.what());
+    }
   }
 
 } support_features_t;
@@ -92,24 +108,16 @@ class amf_config {
    * @param [const std::string&] ue_cxt_id: UE Context Id
    * @return URI in string format
    */
-  std::string get_amf_n1n2_message_subscribe_uri(const std::string& ue_cxt_id);
+  std::string get_amf_n1n2_message_subscribe_uri(
+      const std::string& ue_cxt_id, const std::string& subscription_id);
 
+  /*
+   * Get the URI of AMF NonUEN2InfoSubscribe
+   * @param [const std::string&] subscription_id: Subscription Id
+   * @return URI in string format
+   */
   std::string get_non_ue_n2_info_subscribe_uri(
       const std::string& subscription_id);
-
-  /*
-   * Get the URI of NRF NF Discovery Service
-   * @param void
-   * @return URI in string format
-   */
-  std::string get_nrf_nf_discovery_service_uri();
-
-  /*
-   * Get the URI of NRF NF Registration Service
-   * @param [const std::string&] nf_instance_id: NF instance ID
-   * @return URI in string format
-   */
-  std::string get_nrf_nf_registration_uri(const std::string& nf_instance_id);
 
   /*
    * Get the URI of UDM Slice Selection Subscription Data Retrieval Service

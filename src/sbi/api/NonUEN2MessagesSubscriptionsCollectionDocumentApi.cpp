@@ -12,6 +12,7 @@
  */
 
 #include "NonUEN2MessagesSubscriptionsCollectionDocumentApi.h"
+
 #include "Helpers.h"
 #include "amf_config.hpp"
 
@@ -38,9 +39,7 @@ void NonUEN2MessagesSubscriptionsCollectionDocumentApi::setupRoutes() {
   using namespace Pistache::Rest;
 
   Routes::Post(
-      *router,
-      base + amf_cfg.sbi.api_version.value_or(DEFAULT_SBI_API_VERSION) +
-          "/non-ue-n2-messages/subscriptions",
+      *router, base + amf_sbi_helper::AmfCommPathNonUeN1N2MessageSubscriptions,
       Routes::bind(
           &NonUEN2MessagesSubscriptionsCollectionDocumentApi::
               non_ue_n2_info_subscribe_handler,

@@ -23,17 +23,17 @@
 
 #include "3gpp_29.502.h"
 #include "amf_app.hpp"
+#include "amf_sbi_helper.hpp"
 #include "common_defs.h"
 #include "logger.hpp"
 
 extern "C" {
 #include <arpa/inet.h>
-#include <stdbool.h>
-#include <string.h>
 #include <sys/types.h>
 }
 
 using namespace amf_application;
+using namespace oai::amf::api;
 
 namespace oai::config {
 
@@ -75,11 +75,8 @@ amf_config::amf_config() {
   support_features.enable_external_udm    = false;
   support_features.enable_nssf            = false;
   support_features.enable_lmf             = false;
-  support_features.use_fqdn_dns           = false;
-  support_features.use_http2              = false;
-  support_features.enable_external_nrf    = true;
+  support_features.http_version           = 2;  // HTTP/2 by default
   is_emergency_support                    = false;
-  // TODO:
 }
 
 //------------------------------------------------------------------------------
@@ -167,7 +164,7 @@ void amf_config::display() {
         "    API version ...........: %s", smf_addr.api_version.c_str());
   }
 
-  if (support_features.enable_external_nrf) {
+  if (support_features.enable_nf_registration) {
     Logger::config().info("- NRF:");
     Logger::config().info(
         "    URI root ...............: %s", nrf_addr.uri_root);
@@ -234,14 +231,7 @@ void amf_config::display() {
       support_features.enable_lmf ? "Yes" : "No");
 
   Logger::config().info(
-      "    Use HTTP2 .............: %s", support_features.use_http2 ?
-                                             AMF_CONFIG_OPTION_YES_STR :
-                                             AMF_CONFIG_OPTION_NO_STR);
-
-  Logger::config().info(
-      "    Use FQDN .............: %s", support_features.use_fqdn_dns ?
-                                            AMF_CONFIG_OPTION_YES_STR :
-                                            AMF_CONFIG_OPTION_NO_STR);
+      "    HTTP version...........: %d", support_features.http_version);
   Logger::config().info(
       "- Log Level ...............: %s",
       spdlog::level::to_string_view(log_level));
@@ -259,96 +249,6 @@ void amf_config::display() {
   }
   Logger::config().info(
       "    Ordered Ciphering Algorithm: %s", supported_ciphering_alg);
-}
-
-//------------------------------------------------------------------------------
-std::string amf_config::get_amf_n1n2_message_subscribe_uri(
-    const std::string& ue_cxt_id) {
-  unsigned int sbi_port = DEFAULT_HTTP1_PORT;
-  sbi_port              = sbi.port;
-  return std::string(inet_ntoa(*((struct in_addr*) &sbi.addr4))) + ":" +
-         std::to_string(sbi_port) + NAMF_COMMUNICATION_BASE +
-         sbi.api_version.value() + "/ue-contexts/" + ue_cxt_id +
-         "/n1-n2-messages/subscriptions";
-}
-
-//------------------------------------------------------------------------------
-std::string amf_config::get_non_ue_n2_info_subscribe_uri(
-    const std::string& subscription_id) {
-  unsigned int sbi_port = DEFAULT_HTTP1_PORT;
-  sbi_port              = sbi.port;
-  return std::string(inet_ntoa(*((struct in_addr*) &sbi.addr4))) + ":" +
-         std::to_string(sbi_port) + NAMF_COMMUNICATION_BASE +
-         sbi.api_version.value() + "/non-ue-n2-messages/subscriptions" + "/" +
-         subscription_id;
-}
-
-//------------------------------------------------------------------------------
-std::string amf_config::get_nrf_nf_discovery_service_uri() {
-  return nrf_addr.uri_root + "/nnrf-disc/" + nrf_addr.api_version +
-         "/nf-instances";
-}
-
-//------------------------------------------------------------------------------
-std::string amf_config::get_nrf_nf_registration_uri(
-    const std::string& nf_instance_id) {
-  return nrf_addr.uri_root + "/nnrf-nfm/" + nrf_addr.api_version +
-         "/nf-instances/" + nf_instance_id;
-}
-
-//------------------------------------------------------------------------------
-std::string amf_config::get_udm_slice_selection_subscription_data_retrieval_uri(
-    const std::string& supi) {
-  return udm_addr.uri_root + "/nudm-sdm/" + udm_addr.api_version + "/" + supi +
-         "/nssai";
-}
-
-//------------------------------------------------------------------------------
-std::string amf_config::get_nssf_network_slice_selection_information_uri() {
-  return nssf_addr.uri_root + "/nnssf-nsselection/" + nssf_addr.api_version +
-         "/network-slice-information";
-}
-
-//------------------------------------------------------------------------------
-std::string amf_config::get_ausf_ue_authentications_uri() {
-  return ausf_addr.uri_root + "/nausf-auth/" + ausf_addr.api_version +
-         "/ue-authentications";
-}
-
-//------------------------------------------------------------------------------
-std::string amf_config::get_lmf_determine_location_uri() {
-  return std::string(inet_ntoa(*((struct in_addr*) &lmf_addr.ipv4_addr))) +
-         ":" + std::to_string(lmf_addr.port) + NLMF_BASE +
-         lmf_addr.api_version + NLMF_DETERMINE_LOCATION;
-}
-
-//------------------------------------------------------------------------------
-bool amf_config::get_smf_pdu_session_context_uri(
-    const std::shared_ptr<pdu_session_context>& psc, std::string& smf_uri) {
-  if (!psc) return false;
-
-  if (!psc->smf_info.info_available) {
-    Logger::amf_sbi().error("No SMF is available for this PDU session");
-    return false;
-  }
-
-  if (psc->smf_info.context_location.size() == 0) return false;
-
-  Logger::amf_sbi().debug(
-      "smf_info, context location %s", psc->smf_info.context_location);
-  std::size_t found = psc->smf_info.context_location.find("/");
-  if (found != 0)
-    smf_uri = psc->smf_info.context_location;
-  else
-    smf_uri = psc->smf_info.uri_root + psc->smf_info.context_location;
-  return true;
-}
-
-//------------------------------------------------------------------------------
-std::string amf_config::get_smf_pdu_session_base_uri(
-    const std::string& smf_uri_root, const std::string& smf_api_version) {
-  return smf_uri_root + "/nsmf-pdusession/" + smf_api_version +
-         NSMF_PDU_SESSION_CREATE;
 }
 
 //------------------------------------------------------------------------------
@@ -383,7 +283,7 @@ void amf_config::to_json(nlohmann::json& json_data) const {
 
   json_data["smf"] = smf_addr.to_json();
 
-  if (support_features.enable_external_nrf) {
+  if (support_features.enable_nf_registration) {
     json_data["nrf"] = nrf_addr.to_json();
   }
 
@@ -470,7 +370,7 @@ bool amf_config::from_json(nlohmann::json& json_data) {
       smf_addr.from_json(json_data["smf"]);
     }
 
-    if (support_features.enable_external_nrf) {
+    if (support_features.enable_nf_registration) {
       if (json_data.find("nrf") != json_data.end()) {
         nrf_addr.from_json(json_data["nrf"]);
       }
@@ -511,4 +411,87 @@ bool amf_config::from_json(nlohmann::json& json_data) {
 
   return true;
 }
+
+//------------------------------------------------------------------------------
+std::string amf_config::get_amf_n1n2_message_subscribe_uri(
+    const std::string& ue_cxt_id, const std::string& subscription_id) {
+  std::string fmr_format_str = {};
+  amf_sbi_helper::get_fmt_format_form(
+      amf_sbi_helper::
+          AmfCommPathUeContextContextIdN1N2MessageSubscriptionsSubscriptionId,
+      fmr_format_str);
+  return sbi.get_ipv4_root() + amf_sbi_helper::AmfCommunicationServiceBase +
+         fmt::format(fmr_format_str, ue_cxt_id, subscription_id);
+}
+
+//------------------------------------------------------------------------------
+std::string amf_config::get_non_ue_n2_info_subscribe_uri(
+    const std::string& subscription_id) {
+  std::string fmr_format_str = {};
+  amf_sbi_helper::get_fmt_format_form(
+      amf_sbi_helper::
+          AmfCommPathNonUeN1N2MessageSubscriptionsn2NotifySubscriptionId,
+      fmr_format_str);
+  return sbi.get_ipv4_root() + amf_sbi_helper::AmfCommunicationServiceBase +
+         fmt::format(fmr_format_str, subscription_id);
+}
+
+//------------------------------------------------------------------------------
+std::string amf_config::get_udm_slice_selection_subscription_data_retrieval_uri(
+    const std::string& supi) {
+  std::string fmr_format_str = {};
+  amf_sbi_helper::get_fmt_format_form(
+      amf_sbi_helper::UdmSdmPathSupiNssai, fmr_format_str);
+  return udm_addr.uri_root + amf_sbi_helper::UdmSdmBase + udm_addr.api_version +
+         fmt::format(fmr_format_str, supi);
+}
+
+//------------------------------------------------------------------------------
+std::string amf_config::get_nssf_network_slice_selection_information_uri() {
+  return nssf_addr.uri_root + amf_sbi_helper::NssfNsSelectionBase +
+         nssf_addr.api_version +
+         amf_sbi_helper::NssfNsSelectionPathNetworSliceInformation;
+}
+
+//------------------------------------------------------------------------------
+std::string amf_config::get_ausf_ue_authentications_uri() {
+  return ausf_addr.uri_root + amf_sbi_helper::AusfAuthBase +
+         ausf_addr.api_version + amf_sbi_helper::AusfAuthPathUeAuthentications;
+}
+
+//------------------------------------------------------------------------------
+std::string amf_config::get_lmf_determine_location_uri() {
+  return lmf_addr.uri_root + amf_sbi_helper::AmfLocationServiceBase +
+         amf_sbi_helper::AmflocPathDetermineLocation;
+}
+
+//------------------------------------------------------------------------------
+std::string amf_config::get_smf_pdu_session_base_uri(
+    const std::string& smf_uri_root, const std::string& smf_api_version) {
+  return smf_uri_root + amf_sbi_helper::SmfPduSessionBase + smf_api_version +
+         amf_sbi_helper::SmfPduSessionPathSmContexts;
+}
+
+//------------------------------------------------------------------------------
+bool amf_config::get_smf_pdu_session_context_uri(
+    const std::shared_ptr<pdu_session_context>& psc, std::string& smf_uri) {
+  if (!psc) return false;
+
+  if (!psc->smf_info.info_available) {
+    Logger::amf_sbi().error("No SMF is available for this PDU session");
+    return false;
+  }
+
+  if (psc->smf_info.context_location.size() == 0) return false;
+
+  Logger::amf_sbi().debug(
+      "smf_info, context location %s", psc->smf_info.context_location);
+  std::size_t found = psc->smf_info.context_location.find("/");
+  if (found != 0)
+    smf_uri = psc->smf_info.context_location;
+  else
+    smf_uri = psc->smf_info.uri_root + psc->smf_info.context_location;
+  return true;
+}
+
 }  // namespace oai::config

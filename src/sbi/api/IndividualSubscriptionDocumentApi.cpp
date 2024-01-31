@@ -12,6 +12,7 @@
  */
 
 #include "IndividualSubscriptionDocumentApi.h"
+
 #include "Helpers.h"
 #include "amf_config.hpp"
 
@@ -37,17 +38,13 @@ void IndividualSubscriptionDocumentApi::setupRoutes() {
   using namespace Pistache::Rest;
 
   Routes::Put(
-      *router,
-      base + amf_cfg.sbi.api_version.value_or(DEFAULT_SBI_API_VERSION) +
-          "/subscriptions/:subscriptionId",
+      *router, base + amf_sbi_helper::AmfCommPathSubscriptionsSubscriptionId,
       Routes::bind(
           &IndividualSubscriptionDocumentApi::
               a_mf_status_change_subscribe_modfy_handler,
           this));
   Routes::Delete(
-      *router,
-      base + amf_cfg.sbi.api_version.value_or(DEFAULT_SBI_API_VERSION) +
-          "/subscriptions/:subscriptionId",
+      *router, base + amf_sbi_helper::AmfCommPathSubscriptionsSubscriptionId,
       Routes::bind(
           &IndividualSubscriptionDocumentApi::
               a_mf_status_change_un_subscribe_handler,

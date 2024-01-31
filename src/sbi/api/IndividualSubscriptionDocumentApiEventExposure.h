@@ -20,18 +20,14 @@
 #define IndividualSubscriptionDocumentApiEventExposure_H_
 
 #include <pistache/http.h>
-#include <pistache/router.h>
 #include <pistache/http_headers.h>
 #include <pistache/optional.h>
+#include <pistache/router.h>
 
-#include <utility>
-
-#include "AmfUpdatedEventSubscription.h"
-//#include "OneOfarrayAmfUpdateEventOptionItem.h"
-#include "ProblemDetails.h"
-//#include "SubscriptionData.h"
 #include "AmfUpdateEventOptionItem.h"
-#include <string>
+#include "AmfUpdatedEventSubscription.h"
+#include "ProblemDetails.h"
+#include "amf_sbi_helper.hpp"
 
 namespace oai {
 namespace amf {
@@ -46,7 +42,7 @@ class IndividualSubscriptionDocumentApiEventExposure {
   virtual ~IndividualSubscriptionDocumentApiEventExposure() = default;
   void init();
 
-  const std::string base = "/namf-evts/";
+  const std::string base = amf_sbi_helper::AmfEventExposureServiceBase;
 
  private:
   void setupRoutes();

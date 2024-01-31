@@ -12,6 +12,7 @@
  */
 
 #include "IndividualUeContextDocumentApi.h"
+
 #include "Helpers.h"
 #include "amf_config.hpp"
 
@@ -37,34 +38,25 @@ void IndividualUeContextDocumentApi::setupRoutes() {
   using namespace Pistache::Rest;
 
   Routes::Put(
-      *router,
-      base + amf_cfg.sbi.api_version.value_or(DEFAULT_SBI_API_VERSION) +
-          "/ue-contexts/:ueContextId",
+      *router, base + amf_sbi_helper::AmfCommPathUeContextContextId,
       Routes::bind(
           &IndividualUeContextDocumentApi::create_ue_context_handler, this));
   Routes::Post(
-      *router,
-      base + amf_cfg.sbi.api_version.value_or(DEFAULT_SBI_API_VERSION) +
-          "/ue-contexts/:ueContextId/assign-ebi",
+      *router, base + amf_sbi_helper::AmfCommPathUeContextContextIdAssignEbi,
       Routes::bind(
           &IndividualUeContextDocumentApi::e_bi_assignment_handler, this));
   Routes::Post(
       *router,
-      base + amf_cfg.sbi.api_version.value_or(DEFAULT_SBI_API_VERSION) +
-          "/ue-contexts/:ueContextId/transfer-update",
+      base + amf_sbi_helper::AmfCommPathUeContextContextIdTransferUpdate,
       Routes::bind(
           &IndividualUeContextDocumentApi::registration_status_update_handler,
           this));
   Routes::Post(
-      *router,
-      base + amf_cfg.sbi.api_version.value_or(DEFAULT_SBI_API_VERSION) +
-          "/ue-contexts/:ueContextId/release",
+      *router, base + amf_sbi_helper::AmfCommPathUeContextContextIdRelease,
       Routes::bind(
           &IndividualUeContextDocumentApi::release_ue_context_handler, this));
   Routes::Post(
-      *router,
-      base + amf_cfg.sbi.api_version.value_or(DEFAULT_SBI_API_VERSION) +
-          "/ue-contexts/:ueContextId/transfer",
+      *router, base + amf_sbi_helper::AmfCommPathUeContextContextIdTransfer,
       Routes::bind(
           &IndividualUeContextDocumentApi::u_e_context_transfer_handler, this));
 

@@ -20,14 +20,14 @@
 #define NonUEN2MessageNotificationIndividualSubscriptionDocumentApi_H_
 
 #include <pistache/http.h>
-#include <pistache/router.h>
 #include <pistache/http_headers.h>
 #include <pistache/optional.h>
+#include <pistache/router.h>
 
 #include <nlohmann/json.hpp>
 
 #include "ProblemDetails.h"
-#include <string>
+#include "amf_sbi_helper.hpp"
 
 namespace oai {
 namespace amf {
@@ -40,7 +40,7 @@ class NonUEN2MessageNotificationIndividualSubscriptionDocumentApi {
   virtual ~NonUEN2MessageNotificationIndividualSubscriptionDocumentApi() {}
   void init();
 
-  const std::string base = "/namf-comm/";
+  const std::string base = amf_sbi_helper::AmfCommunicationServiceBase;
 
  private:
   void setupRoutes();

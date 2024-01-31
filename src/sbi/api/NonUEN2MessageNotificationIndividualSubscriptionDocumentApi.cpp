@@ -12,6 +12,7 @@
  */
 
 #include "NonUEN2MessageNotificationIndividualSubscriptionDocumentApi.h"
+
 #include "Helpers.h"
 #include "amf_config.hpp"
 
@@ -39,8 +40,8 @@ void NonUEN2MessageNotificationIndividualSubscriptionDocumentApi::
 
   Routes::Delete(
       *router,
-      base + amf_cfg.sbi.api_version.value_or(DEFAULT_SBI_API_VERSION) +
-          "/non-ue-n2-messages/subscriptions/:n2NotifySubscriptionId",
+      base + amf_sbi_helper::
+                 AmfCommPathNonUeN1N2MessageSubscriptionsn2NotifySubscriptionId,
       Routes::bind(
           &NonUEN2MessageNotificationIndividualSubscriptionDocumentApi::
               non_ue_n2_info_un_subscribe_handler,

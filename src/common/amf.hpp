@@ -19,8 +19,8 @@
  *      contact@openairinterface.org
  */
 
-#ifndef __AMF_HPP
-#define __AMF_HPP
+#ifndef FILE_AMF_HPP_SEEN
+#define FILE_AMF_HPP_SEEN
 
 #include "3gpp_23.003.h"
 #include "inttypes.h"
@@ -37,9 +37,8 @@
 #include <vector>
 #include <optional>
 
-#include "amf.hpp"
 #include "common_defs.h"
-#include "3gpp_24.501.h"
+#include "3gpp_24.501.hpp"
 #include "if.hpp"
 #include "string.hpp"
 #include "thread_sched.hpp"
@@ -75,25 +74,7 @@ constexpr uint64_t SECONDS_SINCE_FIRST_EPOCH = 2208988800;
 #define UE_AGGREGATE_MAXIMUM_BIT_RATE_DL 1000000000
 #define UE_AGGREGATE_MAXIMUM_BIT_RATE_UL 1000000000
 
-#define NAMF_COMMUNICATION_BASE "/namf-comm/"
-#define NAMF_COMMUNICATION_N1N2_MESSAGE_TRANSFER_URL "n1-n2-messages"
-#define NAMF_COMMUNICATION_NON_UE_N2_MESSAGE_TRANSFER_URL                      \
-  "/non-ue-n2-messages/transfer"
-#define NAMF_COMMUNICATION_N1_MESSAGE_NOTIFY_URL "n1-message-notify"
-#define NAMF_COMMUNICATION_NON_UE_N2_MESSAGES_INFO_SUBSCRIBE                   \
-  "/non-ue-n2-messages/subscriptions"
-
 #define NAMF_EVENT_EXPOSURE_BASE "/namf-evts/"
-#define NAMF_EVENT_EXPOSURE_SUBSCRIPTION "/subscriptions"
-
-#define NLMF_BASE "/nlmf-loc/"
-#define NLMF_DETERMINE_LOCATION "/determine-location"
-
-#define NAMF_CUSTOMIZED_API_BASE "/namf-oai/"
-#define NAMF_CUSTOMIZED_API_CONFIGURATION_URL "/configuration"
-
-#define NAMF_STATUS_NOTIFY_API_BASE "/namf-status-notify/"
-#define NAMF_STATUS_NOTIFY_API_URL "/pdu-session-release/callback/"
 
 #define NAS_MESSAGE_DOWNLINK 1
 #define NAS_MESSAGE_UPLINK 0
@@ -137,11 +118,25 @@ typedef struct auth_conf_s {
   }
 
   void from_json(nlohmann::json& json_data) {
-    this->mysql_server = json_data["mysql_server"].get<std::string>();
-    this->mysql_user   = json_data["mysql_user"].get<std::string>();
-    this->mysql_pass   = json_data["mysql_pass"].get<std::string>();
-    this->mysql_db     = json_data["mysql_db"].get<std::string>();
-    this->random       = json_data["random"].get<bool>();
+    try {
+      if (json_data.find("mysql_server") != json_data.end()) {
+        this->mysql_server = json_data["mysql_server"].get<std::string>();
+      }
+      if (json_data.find("mysql_user") != json_data.end()) {
+        this->mysql_user = json_data["mysql_user"].get<std::string>();
+      }
+      if (json_data.find("mysql_pass") != json_data.end()) {
+        this->mysql_pass = json_data["mysql_pass"].get<std::string>();
+      }
+      if (json_data.find("mysql_db") != json_data.end()) {
+        this->mysql_db = json_data["mysql_db"].get<std::string>();
+      }
+      if (json_data.find("random") != json_data.end()) {
+        this->random = json_data["random"].get<bool>();
+      }
+    } catch (std::exception& e) {
+      Logger::amf_app().error("%s", e.what());
+    }
   }
 } auth_conf_t;
 
@@ -181,9 +176,15 @@ typedef struct slice_s {
   }
 
   void from_json(nlohmann::json& json_data) {
-    this->sst = json_data["sst"].get<int>();
-    if (json_data.find("sd") != json_data.end()) {
-      this->sd = json_data["sd"].get<int>();
+    try {
+      if (json_data.find("sst") != json_data.end()) {
+        this->sst = json_data["sst"].get<int>();
+      }
+      if (json_data.find("sd") != json_data.end()) {
+        this->sd = json_data["sd"].get<int>();
+      }
+    } catch (std::exception& e) {
+      Logger::amf_app().error("%s", e.what());
     }
   }
 } slice_t;
@@ -207,14 +208,26 @@ typedef struct plmn_support_item_s {
   }
 
   void from_json(nlohmann::json& json_data) {
-    this->mcc = json_data["mcc"].get<std::string>();
-    this->mnc = json_data["mnc"].get<std::string>();
-    this->tac = json_data["tac"].get<int>();
+    try {
+      if (json_data.find("mcc") != json_data.end()) {
+        this->mcc = json_data["mcc"].get<std::string>();
+      }
+      if (json_data.find("mnc") != json_data.end()) {
+        this->mnc = json_data["mnc"].get<std::string>();
+      }
+      if (json_data.find("tac") != json_data.end()) {
+        this->tac = json_data["tac"].get<int>();
+      }
 
-    for (auto s : json_data["slice_list"]) {
-      slice_t sl = {};
-      sl.from_json(s);
-      slice_list.push_back(sl);
+      if (json_data.find("slice_list") != json_data.end()) {
+        for (auto s : json_data["slice_list"]) {
+          slice_t sl = {};
+          sl.from_json(s);
+          slice_list.push_back(sl);
+        }
+      }
+    } catch (std::exception& e) {
+      Logger::amf_app().error("%s", e.what());
     }
   }
 } plmn_item_t;
@@ -237,14 +250,22 @@ typedef struct {
   }
 
   void from_json(nlohmann::json& json_data) {
-    for (auto s : json_data["prefered_integrity_algorithm"]) {
-      std::string integ_alg = s.get<std::string>();
-      prefered_integrity_algorithm.push_back(get_5g_ia(integ_alg));
-    }
+    try {
+      if (json_data.find("prefered_integrity_algorithm") != json_data.end()) {
+        for (auto s : json_data["prefered_integrity_algorithm"]) {
+          std::string integ_alg = s.get<std::string>();
+          prefered_integrity_algorithm.push_back(get_5g_ia(integ_alg));
+        }
+      }
 
-    for (auto s : json_data["prefered_ciphering_algorithm"]) {
-      std::string cipher_alg = s.get<std::string>();
-      prefered_ciphering_algorithm.push_back(get_5g_ea(cipher_alg));
+      if (json_data.find("prefered_ciphering_algorithm") != json_data.end()) {
+        for (auto s : json_data["prefered_ciphering_algorithm"]) {
+          std::string cipher_alg = s.get<std::string>();
+          prefered_ciphering_algorithm.push_back(get_5g_ea(cipher_alg));
+        }
+      }
+    } catch (std::exception& e) {
+      Logger::amf_app().error("%s", e.what());
     }
   }
 } nas_conf_t;

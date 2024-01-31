@@ -12,6 +12,7 @@
  */
 
 #include "N1N2SubscriptionsCollectionForIndividualUEContextsDocumentApi.h"
+
 #include "Helpers.h"
 #include "amf_config.hpp"
 
@@ -40,8 +41,8 @@ void N1N2SubscriptionsCollectionForIndividualUEContextsDocumentApi::
 
   Routes::Post(
       *router,
-      base + amf_cfg.sbi.api_version.value_or(DEFAULT_SBI_API_VERSION) +
-          "/ue-contexts/:ueContextId/n1-n2-messages/subscriptions",
+      base +
+          amf_sbi_helper::AmfCommPathUeContextContextIdN1N2MessageSubscriptions,
       Routes::bind(
           &N1N2SubscriptionsCollectionForIndividualUEContextsDocumentApi::
               n1_n2_message_subscribe_handler,

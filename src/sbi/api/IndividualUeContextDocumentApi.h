@@ -20,9 +20,9 @@
 #define IndividualUeContextDocumentApi_H_
 
 #include <pistache/http.h>
-#include <pistache/router.h>
 #include <pistache/http_headers.h>
 #include <pistache/optional.h>
+#include <pistache/router.h>
 
 #include "AssignEbiData.h"
 #include "AssignEbiError.h"
@@ -36,7 +36,7 @@
 #include "UeContextTransferRspData.h"
 #include "UeRegStatusUpdateReqData.h"
 #include "UeRegStatusUpdateRspData.h"
-#include <string>
+#include "amf_sbi_helper.hpp"
 
 namespace oai {
 namespace amf {
@@ -50,7 +50,7 @@ class IndividualUeContextDocumentApi {
   virtual ~IndividualUeContextDocumentApi() {}
   void init();
 
-  const std::string base = "/namf-comm/";
+  const std::string base = amf_sbi_helper::AmfCommunicationServiceBase;
 
  private:
   void setupRoutes();

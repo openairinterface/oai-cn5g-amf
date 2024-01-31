@@ -22,8 +22,8 @@
 #include "StatusNotifyApi.h"
 
 #include "Helpers.h"
-#include "amf_config.hpp"
 #include "SmContextStatusNotification.h"
+#include "amf_config.hpp"
 
 extern oai::config::amf_config amf_cfg;
 
@@ -47,8 +47,7 @@ void StatusNotifyApi::setupRoutes() {
 
   Routes::Post(
       *router,
-      base + amf_cfg.sbi.api_version.value_or(DEFAULT_SBI_API_VERSION) +
-          "/pdu-session-release/callback/:ueContextId/:pduSessionId",
+      base + amf_sbi_helper::AmfStatusNotifPathPduSessionReleasePduSessionId,
       Routes::bind(&StatusNotifyApi::notify_pdu_session_status_handler, this));
 
   // Default handler, called when a route is not found

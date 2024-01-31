@@ -20,13 +20,13 @@
 #define N1MessageNotifyApi_H_
 
 #include <pistache/http.h>
-#include <pistache/router.h>
 #include <pistache/http_headers.h>
 #include <pistache/optional.h>
+#include <pistache/router.h>
 
 #include "N1MessageNotification.h"
 #include "ProblemDetails.h"
-#include <string>
+#include "amf_sbi_helper.hpp"
 
 namespace oai {
 namespace amf {
@@ -40,7 +40,7 @@ class N1MessageNotifyApi {
   virtual ~N1MessageNotifyApi() {}
   void init();
 
-  const std::string base = "/namf-comm/";
+  const std::string base = amf_sbi_helper::AmfCommunicationServiceBase;
 
  private:
   void setupRoutes();

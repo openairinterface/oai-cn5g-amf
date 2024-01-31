@@ -25,13 +25,13 @@
 #include <boost/thread.hpp>
 #include <boost/thread/future.hpp>
 #include <nlohmann/json.hpp>
-#include <string>
 
 #include "3gpp_29.500.h"
 #include "3gpp_conversions.hpp"
 #include "amf.hpp"
 #include "amf_config.hpp"
 #include "amf_conversions.hpp"
+#include "amf_sbi_helper.hpp"
 #include "logger.hpp"
 #include "output_wrapper.hpp"
 #include "utils.hpp"
@@ -40,6 +40,8 @@ using namespace nghttp2::asio_http2;
 using namespace nghttp2::asio_http2::server;
 using namespace oai::amf::model;
 using namespace oai::model::common;
+using namespace oai::common::sbi;
+using namespace oai::amf::api;
 
 extern oai::config::amf_config amf_cfg;
 extern itti_mw* itti_inst;
@@ -57,9 +59,8 @@ void amf_http2_server::start() {
   // N1N2MessageUnSubscribe (URI:
   // /ue-contexts/{ueContextId}/n1-n2-messages/subscriptions/{subscriptionId})
   server.handle(
-      NAMF_COMMUNICATION_BASE +
-          amf_cfg.sbi.api_version.value_or(DEFAULT_SBI_API_VERSION) +
-          "/ue-contexts/",
+      amf_sbi_helper::AmfCommunicationServiceBase +
+          amf_sbi_helper::AmfCommPathUeContext,
       [&](const request& request, const response& res) {
         request.on_data([&](const uint8_t* data, std::size_t len) {
           if (len > 0) {
@@ -118,12 +119,12 @@ void amf_http2_server::start() {
 
               std::string procedure = split_result[split_result.size() - 1];
               Logger::amf_server().info("Procedure %s", procedure.c_str());
-              if (procedure.compare(
-                      NAMF_COMMUNICATION_N1N2_MESSAGE_TRANSFER_URL) == 0) {
+              if (procedure.compare(amf_sbi_helper::AmfCommPathN1N2Messages) ==
+                  0) {
                 this->n1_n2_message_transfer_handler(ue_context_id, parts, res);
               }
-              if (procedure.compare(NAMF_COMMUNICATION_N1_MESSAGE_NOTIFY_URL) ==
-                  0) {
+              if (procedure.compare(
+                      amf_sbi_helper::AmfCommPathN1MessageNotify) == 0) {
                 this->n1_message_notify_handler(ue_context_id, parts, res);
               }
             } else if (split_result.size() == 7) {
@@ -157,9 +158,8 @@ void amf_http2_server::start() {
 
   // Event Exposure
   server.handle(
-      NAMF_EVENT_EXPOSURE_BASE +
-          amf_cfg.sbi.api_version.value_or(DEFAULT_SBI_API_VERSION) +
-          NAMF_EVENT_EXPOSURE_SUBSCRIPTION,
+      amf_sbi_helper::AmfEventExposureServiceBase +
+          amf_sbi_helper::AmfEvtsPathSubscriptions,
       [&](const request& request, const response& response) {
         request.on_data([&](const uint8_t* data, std::size_t len) {
           std::string msg((char*) data, len);
@@ -240,9 +240,8 @@ void amf_http2_server::start() {
 
   // AMF configuration-related APIs
   server.handle(
-      NAMF_CUSTOMIZED_API_BASE +
-          amf_cfg.sbi.api_version.value_or(DEFAULT_SBI_API_VERSION) +
-          NAMF_CUSTOMIZED_API_CONFIGURATION_URL,
+      amf_sbi_helper::AmfConfigurationServiceBase +
+          amf_sbi_helper::AmfConfPathConfiguration,
       [&](const request& request, const response& response) {
         request.on_data([&](const uint8_t* data, std::size_t len) {
           try {
@@ -267,9 +266,8 @@ void amf_http2_server::start() {
 
   // NonUEN2MessageTransfer: /non-ue-n2-messages/transfer
   server.handle(
-      NAMF_COMMUNICATION_BASE +
-          amf_cfg.sbi.api_version.value_or(DEFAULT_SBI_API_VERSION) +
-          NAMF_COMMUNICATION_NON_UE_N2_MESSAGE_TRANSFER_URL,
+      amf_sbi_helper::AmfCommunicationServiceBase +
+          amf_sbi_helper::AmfCommPathNonUeN1N2MessageTransfer,
       [&](const request& request, const response& res) {
         request.on_data([&](const uint8_t* data, std::size_t len) {
           if (len > 0) {
@@ -397,9 +395,8 @@ void amf_http2_server::start() {
   // NonUeN2InfoUnSubscribe:
   // /non-ue-n2-messages/subscriptions/{n2NotifySubscriptionId}:
   server.handle(
-      NAMF_COMMUNICATION_BASE +
-          amf_cfg.sbi.api_version.value_or(DEFAULT_SBI_API_VERSION) +
-          NAMF_COMMUNICATION_NON_UE_N2_MESSAGES_INFO_SUBSCRIBE,
+      amf_sbi_helper::AmfCommunicationServiceBase +
+          amf_sbi_helper::AmfCommPathNonUeN1N2MessageSubscriptions,
       [&](const request& request, const response& res) {
         request.on_data([&](const uint8_t* data, std::size_t len) {
           if (len > 0) {
@@ -454,9 +451,8 @@ void amf_http2_server::start() {
   // NF Status Notify (URL:
   // /namf-status-notify/pdu-session-release/callback/:ueContextId/:pduSessionId)
   server.handle(
-      NAMF_STATUS_NOTIFY_API_BASE +
-          amf_cfg.sbi.api_version.value_or(DEFAULT_SBI_API_VERSION) +
-          NAMF_STATUS_NOTIFY_API_URL,
+      amf_sbi_helper::AmfStatusNotifyServiceBase +
+          amf_sbi_helper::AmfStatusNotifPathPduSessionRelease,
       [&](const request& request, const response& response) {
         request.on_data([&](const uint8_t* data, std::size_t len) {
           std::string msg((char*) data, len);
@@ -541,6 +537,7 @@ void amf_http2_server::createEventSubscriptionHandler(
   to_json(
       json_data["subscription"], amfCreateEventSubscription.getSubscription());
 
+  // TODO: To be fixed with correct location
   if (sub_id != -1) {
     std::string location =
         std::string(inet_ntoa(*((struct in_addr*) &amf_cfg.sbi.addr4))) + ":" +

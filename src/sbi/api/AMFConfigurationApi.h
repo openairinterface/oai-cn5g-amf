@@ -29,6 +29,8 @@
 
 #include <nlohmann/json.hpp>
 
+#include "amf_sbi_helper.hpp"
+
 namespace oai::amf::api {
 
 class AMFConfigurationApi {
@@ -37,7 +39,7 @@ class AMFConfigurationApi {
   virtual ~AMFConfigurationApi() {}
   void init();
 
-  const std::string base = "/namf-oai/";
+  const std::string base = amf_sbi_helper::AmfConfigurationServiceBase;
 
  private:
   void setupRoutes();
