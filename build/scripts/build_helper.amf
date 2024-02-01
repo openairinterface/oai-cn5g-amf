@@ -140,7 +140,6 @@ check_install_amf_deps(){
       check \
       nettle-devel \
       libcurl-devel \
-      python2 \
       pkgconfig \
       ninja-build \
       libasan"
