@@ -326,12 +326,8 @@ void amf_n2::handle_itti_message(std::shared_ptr<itti_paging>& itti_msg) {
       itti_msg->ran_ue_ngap_id, itti_msg->amf_ue_ngap_id);
 
   if (!ran_ue_id_2_ue_ngap_context(
-          itti_msg->ran_ue_ngap_id, ue_context_key, unc)) {
-    Logger::amf_n2().error(
-        "No UE NGAP context with ran_ue_ngap_id (" GNB_UE_NGAP_ID_FMT ")",
-        itti_msg->ran_ue_ngap_id);
+          itti_msg->ran_ue_ngap_id, ue_context_key, unc))
     return;
-  }
 
   if (unc->amf_ue_ngap_id != itti_msg->amf_ue_ngap_id) {
     Logger::amf_n2().error(
@@ -850,14 +846,7 @@ void amf_n2::handle_itti_message(
   }
 
   std::shared_ptr<ue_ngap_context> unc = {};
-  if (!ran_ue_id_2_ue_ngap_context(ran_ue_ngap_id, gc->gnb_id, unc)) {
-    Logger::amf_n2().error(
-        "UE with ran_ue_ngap_id (" GNB_UE_NGAP_ID_FMT
-        ") is not attached to gnb with assoc_id "
-        "(%d)",
-        ran_ue_ngap_id, ul_nas_transport->assoc_id);
-    return;
-  }
+  if (!ran_ue_id_2_ue_ngap_context(ran_ue_ngap_id, gc->gnb_id, unc)) return;
 
   if (unc->amf_ue_ngap_id != amf_ue_ngap_id) {
     Logger::amf_n2().error(
@@ -917,13 +906,9 @@ void amf_n2::handle_itti_message(
   std::string ue_context_key           = amf_conv::get_ue_context_key(
       dl_nas_transport->ran_ue_ngap_id, dl_nas_transport->amf_ue_ngap_id);
 
-  if (!amf_n2_inst->ran_ue_id_2_ue_ngap_context(
-          dl_nas_transport->ran_ue_ngap_id, ue_context_key, unc)) {
-    Logger::amf_n2().error(
-        "No UE NGAP context with ran_ue_ngap_id (" GNB_UE_NGAP_ID_FMT ")",
-        dl_nas_transport->ran_ue_ngap_id);
+  if (!ran_ue_id_2_ue_ngap_context(
+          dl_nas_transport->ran_ue_ngap_id, ue_context_key, unc))
     return;
-  }
 
   std::shared_ptr<gnb_context> gc = {};
   if (!assoc_id_2_gnb_context(unc->gnb_assoc_id, gc)) {
@@ -958,13 +943,9 @@ void amf_n2::handle_itti_message(
   std::string ue_context_key           = amf_conv::get_ue_context_key(
       itti_msg->ran_ue_ngap_id, itti_msg->amf_ue_ngap_id);
 
-  if (!amf_n2_inst->ran_ue_id_2_ue_ngap_context(
-          itti_msg->ran_ue_ngap_id, ue_context_key, unc)) {
-    Logger::amf_n2().error(
-        "No UE NGAP context with ran_ue_ngap_id (" GNB_UE_NGAP_ID_FMT ")",
-        itti_msg->ran_ue_ngap_id);
+  if (!ran_ue_id_2_ue_ngap_context(
+          itti_msg->ran_ue_ngap_id, ue_context_key, unc))
     return;
-  }
 
   unc->ncc                        = 1;
   std::shared_ptr<gnb_context> gc = {};
@@ -1115,13 +1096,9 @@ void amf_n2::handle_itti_message(
   std::string ue_context_key           = amf_conv::get_ue_context_key(
       itti_msg->ran_ue_ngap_id, itti_msg->amf_ue_ngap_id);
 
-  if (!amf_n2_inst->ran_ue_id_2_ue_ngap_context(
-          itti_msg->ran_ue_ngap_id, ue_context_key, unc)) {
-    Logger::amf_n2().error(
-        "No UE NGAP context with ran_ue_ngap_id (" GNB_UE_NGAP_ID_FMT ")",
-        itti_msg->ran_ue_ngap_id);
+  if (!ran_ue_id_2_ue_ngap_context(
+          itti_msg->ran_ue_ngap_id, ue_context_key, unc))
     return;
-  }
 
   std::shared_ptr<gnb_context> gc = {};
   if (!assoc_id_2_gnb_context(unc->gnb_assoc_id, gc)) {
@@ -1202,13 +1179,9 @@ void amf_n2::handle_itti_message(
   std::string ue_context_key           = amf_conv::get_ue_context_key(
       itti_msg->ran_ue_ngap_id, itti_msg->amf_ue_ngap_id);
 
-  if (!amf_n2_inst->ran_ue_id_2_ue_ngap_context(
-          itti_msg->ran_ue_ngap_id, ue_context_key, unc)) {
-    Logger::amf_n2().error(
-        "No UE NGAP context with ran_ue_ngap_id (" GNB_UE_NGAP_ID_FMT ")",
-        itti_msg->ran_ue_ngap_id);
+  if (!ran_ue_id_2_ue_ngap_context(
+          itti_msg->ran_ue_ngap_id, ue_context_key, unc))
     return;
-  }
 
   std::shared_ptr<gnb_context> gc = {};
   if (!assoc_id_2_gnb_context(unc->gnb_assoc_id, gc)) {
@@ -1268,13 +1241,9 @@ void amf_n2::handle_itti_message(
   std::string ue_context_key           = amf_conv::get_ue_context_key(
       itti_msg->ran_ue_ngap_id, itti_msg->amf_ue_ngap_id);
 
-  if (!amf_n2_inst->ran_ue_id_2_ue_ngap_context(
-          itti_msg->ran_ue_ngap_id, ue_context_key, unc)) {
-    Logger::amf_n2().error(
-        "No UE NGAP context with ran_ue_ngap_id (" GNB_UE_NGAP_ID_FMT ")",
-        itti_msg->ran_ue_ngap_id);
+  if (!ran_ue_id_2_ue_ngap_context(
+          itti_msg->ran_ue_ngap_id, ue_context_key, unc))
     return;
-  }
 
   std::shared_ptr<gnb_context> gc = {};
   if (!assoc_id_2_gnb_context(unc->gnb_assoc_id, gc)) {
@@ -1351,13 +1320,9 @@ void amf_n2::handle_itti_message(
   std::string ue_context_key           = amf_conv::get_ue_context_key(
       itti_msg->ran_ue_ngap_id, itti_msg->amf_ue_ngap_id);
 
-  if (!amf_n2_inst->ran_ue_id_2_ue_ngap_context(
-          itti_msg->ran_ue_ngap_id, ue_context_key, unc)) {
-    Logger::amf_n2().error(
-        "No UE NGAP context with ran_ue_ngap_id (" GNB_UE_NGAP_ID_FMT ")",
-        itti_msg->ran_ue_ngap_id);
+  if (!ran_ue_id_2_ue_ngap_context(
+          itti_msg->ran_ue_ngap_id, ue_context_key, unc))
     return;
-  }
 
   std::shared_ptr<gnb_context> gc = {};
   if (!assoc_id_2_gnb_context(unc->gnb_assoc_id, gc)) {
@@ -1480,11 +1445,7 @@ void amf_n2::handle_itti_message(
   }
 
   std::shared_ptr<ue_ngap_context> unc = {};
-  if (!amf_ue_id_2_ue_ngap_context(amf_ue_ngap_id, unc)) {
-    Logger::amf_app().error(
-        "No UE NGAP context for amf_ngap_id %s, exit", amf_ue_ngap_id);
-    return;
-  }
+  if (!amf_ue_id_2_ue_ngap_context(amf_ue_ngap_id, unc)) return;
 
   std::shared_ptr<gnb_context> gc = {};
   if (!assoc_id_2_gnb_context(itti_msg->assoc_id, gc)) {
@@ -1667,13 +1628,7 @@ void amf_n2::handle_itti_message(
 
   // Store UE Radio Capability in UE NGAP Context
   std::shared_ptr<ue_ngap_context> unc = {};
-  if (!ran_ue_id_2_ue_ngap_context(ran_ue_ngap_id, gc->gnb_id, unc)) {
-    Logger::amf_n2().error(
-        "No UE NGAP context with ran_ue_ngap_id (" GNB_UE_NGAP_ID_FMT
-        ") gNB ID (" GNB_ID_FMT ")",
-        ran_ue_ngap_id, gc->gnb_id);
-    return;
-  }
+  if (!ran_ue_id_2_ue_ngap_context(ran_ue_ngap_id, gc->gnb_id, unc)) return;
 
   unc->ue_radio_cap_ind = blk2bstr(ue_radio_cap.buf, ue_radio_cap.size);
 }
@@ -1697,12 +1652,8 @@ bool amf_n2::handle_itti_message(
       gc->gnb_name.c_str(), gc->gnb_id);
 
   std::shared_ptr<ue_ngap_context> unc = {};
-  if (!ran_ue_id_2_ue_ngap_context(ran_ue_ngap_id, gc->gnb_id, unc)) {
-    Logger::amf_n2().error(
-        "No UE NGAP context with ran_ue_ngap_id (" GNB_UE_NGAP_ID_FMT ")",
-        ran_ue_ngap_id);
+  if (!ran_ue_id_2_ue_ngap_context(ran_ue_ngap_id, gc->gnb_id, unc))
     return false;
-  }
 
   if (unc->amf_ue_ngap_id != amf_ue_ngap_id) {
     Logger::amf_n2().error(
@@ -1979,12 +1930,7 @@ void amf_n2::handle_itti_message(
       gc->gnb_name.c_str(), gc->gnb_id);
 
   std::shared_ptr<ue_ngap_context> unc = {};
-  if (!amf_ue_id_2_ue_ngap_context(amf_ue_ngap_id, unc)) {
-    Logger::amf_n2().error(
-        "No UE NGAP context with amf_ue_ngap_id (" AMF_UE_NGAP_ID_FMT ")",
-        amf_ue_ngap_id);
-    return;
-  }
+  if (!amf_ue_id_2_ue_ngap_context(amf_ue_ngap_id, unc)) return;
 
   unc->target_ran_ue_ngap_id = ran_ue_ngap_id;  // store target RAN ID
 
@@ -2127,12 +2073,7 @@ void amf_n2::handle_itti_message(
       gc->gnb_name.c_str(), gc->gnb_id);
 
   std::shared_ptr<ue_ngap_context> unc = {};
-  if (!amf_ue_id_2_ue_ngap_context(amf_ue_ngap_id, unc)) {
-    Logger::amf_n2().error(
-        "No UE NGAP context with amf_ue_ngap_id (" AMF_UE_NGAP_ID_FMT ")",
-        amf_ue_ngap_id);
-    return;
-  }
+  if (!amf_ue_id_2_ue_ngap_context(amf_ue_ngap_id, unc)) return;
 
   NrCgi_t NR_CGI = {};
   Tai_t TAI      = {};
@@ -2322,12 +2263,7 @@ void amf_n2::handle_itti_message(
   }
 
   std::shared_ptr<ue_ngap_context> unc = {};
-  if (!amf_ue_id_2_ue_ngap_context(amf_ue_ngap_id, unc)) {
-    Logger::amf_n2().error(
-        "No UE NGAP context with amf_ue_ngap_id (" AMF_UE_NGAP_ID_FMT ")",
-        amf_ue_ngap_id);
-    return;
-  }
+  if (!amf_ue_id_2_ue_ngap_context(amf_ue_ngap_id, unc)) return;
 
   RanStatusTransferTransparentContainer ran_status_transfer = {};
   itti_msg->uplinkRanTransfer->getRANStatusTransfer_TransparentContainer(
@@ -2384,12 +2320,8 @@ void amf_n2::handle_itti_message(std::shared_ptr<itti_rereoute_nas>& itti_msg) {
       itti_msg->ran_ue_ngap_id, itti_msg->amf_ue_ngap_id);
 
   if (!ran_ue_id_2_ue_ngap_context(
-          itti_msg->ran_ue_ngap_id, ue_context_key, unc)) {
-    Logger::amf_n2().error(
-        "No UE NGAP context with ran_ue_ngap_id " GNB_UE_NGAP_ID_FMT,
-        itti_msg->ran_ue_ngap_id);
+          itti_msg->ran_ue_ngap_id, ue_context_key, unc))
     return;
-  }
 
   if (unc->amf_ue_ngap_id != itti_msg->amf_ue_ngap_id) {
     Logger::amf_n2().error(
@@ -2429,13 +2361,9 @@ void amf_n2::handle_itti_message(
   std::string ue_context_key           = amf_conv::get_ue_context_key(
       itti_msg->ran_ue_ngap_id, itti_msg->amf_ue_ngap_id);
 
-  if (!amf_n2_inst->ran_ue_id_2_ue_ngap_context(
-          itti_msg->ran_ue_ngap_id, ue_context_key, unc)) {
-    Logger::amf_n2().error(
-        "No UE NGAP context with ran_ue_ngap_id (" GNB_UE_NGAP_ID_FMT ")",
-        itti_msg->ran_ue_ngap_id);
+  if (!ran_ue_id_2_ue_ngap_context(
+          itti_msg->ran_ue_ngap_id, ue_context_key, unc))
     return;
-  }
 
   std::shared_ptr<gnb_context> gc = {};
   if (!assoc_id_2_gnb_context(unc->gnb_assoc_id, gc)) {
@@ -2501,13 +2429,9 @@ void amf_n2::handle_itti_message(
   std::string ue_context_key           = amf_conv::get_ue_context_key(
       itti_msg->ran_ue_ngap_id, itti_msg->amf_ue_ngap_id);
 
-  if (!amf_n2_inst->ran_ue_id_2_ue_ngap_context(
-          itti_msg->ran_ue_ngap_id, ue_context_key, unc)) {
-    Logger::amf_n2().error(
-        "No UE NGAP context with ran_ue_ngap_id (" GNB_UE_NGAP_ID_FMT ")",
-        itti_msg->ran_ue_ngap_id);
+  if (!ran_ue_id_2_ue_ngap_context(
+          itti_msg->ran_ue_ngap_id, ue_context_key, unc))
     return;
-  }
 
   std::shared_ptr<gnb_context> gc = {};
   if (!assoc_id_2_gnb_context(unc->gnb_assoc_id, gc)) {
@@ -2675,19 +2599,6 @@ void amf_n2::send_ng_setup_failure(
 }
 
 //------------------------------------------------------------------------------
-bool amf_n2::is_ran_ue_id_2_ue_ngap_context(
-    uint32_t ran_ue_ngap_id, uint32_t gnb_id) const {
-  std::shared_lock lock(m_ranid2uecontext);
-  std::pair<uint32_t, uint32_t> ue_id = std::make_pair(ran_ue_ngap_id, gnb_id);
-  if (ranid2uecontext.count(ue_id) > 0) {
-    if (ranid2uecontext.at(ue_id) != nullptr) {
-      return true;
-    }
-  }
-  return false;
-}
-
-//------------------------------------------------------------------------------
 bool amf_n2::ran_ue_id_2_ue_ngap_context(
     uint32_t ran_ue_ngap_id, uint32_t gnb_id,
     std::shared_ptr<ue_ngap_context>& unc) const {
@@ -2699,6 +2610,10 @@ bool amf_n2::ran_ue_id_2_ue_ngap_context(
       return true;
     }
   }
+  Logger::amf_n2().warn(
+      "No UE NGAP context with ran_ue_ngap_id " GNB_UE_NGAP_ID_FMT
+      ", gnb_id " GNB_ID_FMT "",
+      ran_ue_ngap_id, gnb_id);
   return false;
 }
 
@@ -2722,6 +2637,10 @@ bool amf_n2::ran_ue_id_2_ue_ngap_context(
       return true;
     }
   }
+  Logger::amf_n2().warn(
+      "No UE NGAP context with ran_ue_ngap_id " GNB_UE_NGAP_ID_FMT
+      ", ue_context_key %s",
+      ran_ue_ngap_id, ue_context_key.c_str());
   return false;
 }
 
@@ -2750,12 +2669,7 @@ void amf_n2::remove_ue_context_with_ran_ue_ngap_id(
   // Remove NAS context if still available
   std::shared_ptr<ue_ngap_context> unc = {};
 
-  if (!ran_ue_id_2_ue_ngap_context(ran_ue_ngap_id, gnb_id, unc)) {
-    Logger::amf_n2().error(
-        "No UE NGAP context with ran_ue_ngap_id (" GNB_UE_NGAP_ID_FMT ")",
-        ran_ue_ngap_id);
-    return;
-  }
+  if (!ran_ue_id_2_ue_ngap_context(ran_ue_ngap_id, gnb_id, unc)) return;
 
   // Remove all NAS context if still exist
   std::shared_ptr<nas_context> nc = {};
@@ -2801,17 +2715,6 @@ void amf_n2::get_ue_ngap_contexts(
 }
 
 //------------------------------------------------------------------------------
-bool amf_n2::is_amf_ue_id_2_ue_ngap_context(const long& amf_ue_ngap_id) const {
-  std::shared_lock lock(m_amfueid2uecontext);
-  if (amfueid2uecontext.count(amf_ue_ngap_id) > 0) {
-    if (amfueid2uecontext.at(amf_ue_ngap_id) != nullptr) {
-      return true;
-    }
-  }
-  return false;
-}
-
-//------------------------------------------------------------------------------
 bool amf_n2::amf_ue_id_2_ue_ngap_context(
     const long& amf_ue_ngap_id, std::shared_ptr<ue_ngap_context>& unc) const {
   std::shared_lock lock(m_amfueid2uecontext);
@@ -2821,6 +2724,9 @@ bool amf_n2::amf_ue_id_2_ue_ngap_context(
       return true;
     }
   }
+  Logger::amf_n2().error(
+      "No UE NGAP context with amf_ue_ngap_id " AMF_UE_NGAP_ID_FMT "",
+      amf_ue_ngap_id);
   return false;
 }
 
@@ -2951,12 +2857,7 @@ bool amf_n2::get_common_NSSAI(
   // Get UE NGAP Context
   std::shared_ptr<ue_ngap_context> unc = {};
 
-  if (!ran_ue_id_2_ue_ngap_context(ran_ue_ngap_id, gnb_id, unc)) {
-    Logger::amf_n2().error(
-        "No UE NGAP context with ran_ue_ngap_id (" GNB_UE_NGAP_ID_FMT ")",
-        ran_ue_ngap_id);
-    return false;
-  }
+  if (!ran_ue_id_2_ue_ngap_context(ran_ue_ngap_id, gnb_id, unc)) return false;
 
   // Get gNB Context
   std::shared_ptr<gnb_context> gc = {};

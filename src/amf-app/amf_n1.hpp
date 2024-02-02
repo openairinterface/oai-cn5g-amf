@@ -108,13 +108,6 @@ class amf_n1 {
       SecurityHeaderType_t& type, const uint8_t* buffer, const uint32_t length);
 
   /*
-   * Verify if a UE NAS context associated with a GUTI exists
-   * @param [const std::string&] guti: UE GUTI
-   * @return true if the UE NAS context exists, otherwise false
-   */
-  bool is_guti_2_nas_context(const std::string& guti) const;
-
-  /*
    * Get UE NAS context associated with a GUTI if the context exists and is not
    * null
    * @param [const std::string&] guti: UE GUTI
@@ -139,13 +132,6 @@ class amf_n1 {
    * @return true if successful, otherwise return false
    */
   bool remove_guti_2_nas_context(const std::string& guti);
-
-  /*
-   * Verify if a UE NAS context associated with an AMF UE NGAP ID exists
-   * @param [const long& ] amf_ue_ngap_id: AMF UE NGAP ID
-   * @return true if UE NAS context exists, otherwise false
-   */
-  bool is_amf_ue_id_2_nas_context(const long& amf_ue_ngap_id) const;
 
   /*
    * Verify if a UE NAS context associated with an AMF UE NGAP ID exists and is

@@ -1158,16 +1158,7 @@ void amf_n1::service_request_handle(
     uc->copy_pdu_sessions(old_uc);
     amf_app_inst->set_supi_2_ue_context(supi, uc);
   }
-  /*
-    //Update AMF UE NGAP ID
-    std::shared_ptr<ue_ngap_context> unc = {};
-    if (!amf_n2_inst->is_ran_ue_id_2_ue_ngap_context(ran_ue_ngap_id)) {
-      Logger::amf_n1().error(
-          "Could not find UE NGAP Context with ran_ue_ngap_id ("
-    GNB_UE_NGAP_ID_FMT ")", ran_ue_ngap_id); } else { unc->amf_ue_ngap_id
-    = amf_ue_ngap_id;
-    }
-  */
+
   // Associate SUPI with UC
   amf_app_inst->set_supi_2_ue_context(supi, uc);
 
@@ -1590,12 +1581,8 @@ void amf_n1::registration_request_handle(
 
       std::shared_ptr<ue_ngap_context> unc = {};
       if (!amf_n2_inst->ran_ue_id_2_ue_ngap_context(
-              ran_ue_ngap_id, uc->gnb_id, unc)) {
-        Logger::amf_n1().error(
-            "No UE NGAP context with ran_ue_ngap_id (" GNB_UE_NGAP_ID_FMT ")",
-            ran_ue_ngap_id);
+              ran_ue_ngap_id, uc->gnb_id, unc))
         return;
-      }
 
       if (unc) unc.reset();
       return;
@@ -1747,20 +1734,6 @@ void amf_n1::registration_request_handle(
 }
 
 //------------------------------------------------------------------------------
-bool amf_n1::is_amf_ue_id_2_nas_context(const long& amf_ue_ngap_id) const {
-  std::shared_lock lock(m_amfueid2nas_context);
-  if (amfueid2nas_context.count(amf_ue_ngap_id) > 0) {
-    if (amfueid2nas_context.at(amf_ue_ngap_id) != nullptr) {
-      return true;
-    }
-  }
-  Logger::amf_n1().warn(
-      "No NAS context with amf_ue_ngap_id " AMF_UE_NGAP_ID_FMT "",
-      amf_ue_ngap_id);
-  return false;
-}
-
-//------------------------------------------------------------------------------
 bool amf_n1::amf_ue_id_2_nas_context(
     const long& amf_ue_ngap_id, std::shared_ptr<nas_context>& nc) const {
   std::shared_lock lock(m_amfueid2nas_context);
@@ -1849,17 +1822,6 @@ bool amf_n1::remove_supi_2_ran_id(const std::string& supi) {
   } else {
     return false;
   }
-}
-
-//------------------------------------------------------------------------------
-bool amf_n1::is_guti_2_nas_context(const std::string& guti) const {
-  std::shared_lock lock(m_guti2nas_context);
-  if (guti2nas_context.count(guti) > 0) {
-    if (guti2nas_context.at(guti) != nullptr) {
-      return true;
-    }
-  }
-  return false;
 }
 
 //------------------------------------------------------------------------------
@@ -5030,13 +4992,8 @@ bool amf_n1::get_slice_selection_subscription_data_from_conf_file(
   // Get UE NGAP Context
   std::shared_ptr<ue_ngap_context> unc = {};
   if (!amf_n2_inst->ran_ue_id_2_ue_ngap_context(
-          nc->ran_ue_ngap_id, uc->gnb_id, unc)) {
-    Logger::amf_n1().error(
-        "No existed UE NGAP context associated with "
-        "ran_ue_ngap_id " GNB_UE_NGAP_ID_FMT,
-        nc->ran_ue_ngap_id);
+          nc->ran_ue_ngap_id, uc->gnb_id, unc))
     return false;
-  }
 
   // Get gNB Context
   std::shared_ptr<gnb_context> gc = {};
