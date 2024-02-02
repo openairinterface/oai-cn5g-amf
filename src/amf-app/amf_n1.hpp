@@ -820,6 +820,15 @@ class amf_n1 {
       uint8_t http_version);
 
   /*
+   * Trigger the UE Location Report notification to the subscribed NFs
+   * @param [uint32_t] ran_ue_ngap_id: RAN UE NGAP ID
+   * @param [long] amf_ue_ngap_id: AMF UE NGAP ID
+   * @return void
+   */
+  void trigger_ue_location_report(
+      const uint32_t ran_ue_ngap_id, const long amf_ue_ngap_id);
+
+  /*
    * Handle UE-initiated Deregistration Request message
    * @param [const uint32_t] ran_ue_ngap_id: RAN UE NGAP ID
    * @param [const long] amf_ue_ngap_id: AMF UE NGAP ID

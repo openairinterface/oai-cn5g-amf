@@ -50,7 +50,7 @@ bool ue_context::find_pdu_session_context(
     }
   }
 
-  Logger::amf_app().warm(
+  Logger::amf_app().warn(
       "No PDU Session Context with PDU Session ID %d", session_id);
   return false;
 }

@@ -2866,59 +2866,7 @@ void amf_n1::security_mode_complete_handle(
   stacs.display();
 
   // Trigger UE location Status Notify
-  // Find UE context
-
-  std::shared_ptr<ue_ngap_context> unc = {};
-  if (!amf_n2_inst->ran_ue_id_2_ue_ngap_context(
-          ran_ue_ngap_id, uc->gnb_id, unc)) {
-    Logger::amf_n1().warn(
-        "No UE NGAP context with ran_ue_ngap_id (" GNB_UE_NGAP_ID_FMT ")",
-        ran_ue_ngap_id);
-  } else {
-    std::shared_ptr<gnb_context> gc = {};
-    if (!amf_n2_inst->assoc_id_2_gnb_context(unc->gnb_assoc_id, gc)) {
-      Logger::amf_n1().error(
-          "No existed gNB context with assoc_id (%d)", unc->gnb_assoc_id);
-    } else {
-      // TODO: get_user_location(uc);
-      UserLocation user_location = {};
-      NrLocation nr_location     = {};
-
-      Tai tai                   = {};
-      nlohmann::json tai_json   = {};
-      tai_json["plmnId"]["mcc"] = uc->cgi.mcc;
-      tai_json["plmnId"]["mnc"] = uc->cgi.mnc;
-      tai_json["tac"]           = std::to_string(uc->tai.tac);
-
-      nlohmann::json global_ran_node_id_json        = {};
-      global_ran_node_id_json["plmnId"]["mcc"]      = uc->cgi.mcc;
-      global_ran_node_id_json["plmnId"]["mnc"]      = uc->cgi.mnc;
-      global_ran_node_id_json["gNbId"]["bitLength"] = 32;
-      global_ran_node_id_json["gNbId"]["gNBValue"] = std::to_string(gc->gnb_id);
-      oai::model::common::GlobalRanNodeId global_ran_node_id = {};
-
-      try {
-        from_json(tai_json, tai);
-        from_json(global_ran_node_id_json, global_ran_node_id);
-      } catch (std::exception& e) {
-        Logger::amf_n1().error("Exception with Json: %s", e.what());
-        return;
-      }
-
-      // uc->cgi.nrCellID;
-      nr_location.setTai(tai);
-      nr_location.setGlobalGnbId(global_ran_node_id);
-      user_location.setNrLocation(nr_location);
-
-      // Trigger UE Location Report
-      std::string supi = uc->supi;
-      Logger::amf_n1().debug(
-          "Signal the UE Location Report Event notification for SUPI %s",
-          supi.c_str());
-      event_sub.ue_location_report(
-          supi, user_location, amf_cfg.support_features.http_version);
-    }
-  }
+  trigger_ue_location_report(ran_ue_ngap_id, amf_ue_ngap_id);
 
   // Trigger UE Registration Status Notify
   std::string supi = amf_conv::imsi_to_supi(nc->imsi);
@@ -4317,6 +4265,63 @@ void amf_n1::handle_ue_loss_of_connectivity_change(
       Logger::amf_n1().error(
           "Could not send ITTI message %s to task TASK_AMF_SBI",
           itti_msg->get_msg_name());
+    }
+  }
+}
+
+//------------------------------------------------------------------------------
+void amf_n1::trigger_ue_location_report(
+    const uint32_t ran_ue_ngap_id, const long amf_ue_ngap_id) {
+  // Find UE context
+  std::shared_ptr<ue_context> uc = {};
+  if (!find_ue_context(ran_ue_ngap_id, amf_ue_ngap_id, uc)) return;
+
+  std::shared_ptr<ue_ngap_context> unc = {};
+  if (amf_n2_inst->ran_ue_id_2_ue_ngap_context(
+          ran_ue_ngap_id, uc->gnb_id, unc)) {
+    std::shared_ptr<gnb_context> gc = {};
+    if (!amf_n2_inst->assoc_id_2_gnb_context(unc->gnb_assoc_id, gc)) {
+      Logger::amf_n1().error(
+          "No existed gNB context with assoc_id (%d)", unc->gnb_assoc_id);
+      return;
+    } else {
+      // TODO: get_user_location(uc);
+      UserLocation user_location = {};
+      NrLocation nr_location     = {};
+
+      Tai tai                   = {};
+      nlohmann::json tai_json   = {};
+      tai_json["plmnId"]["mcc"] = uc->cgi.mcc;
+      tai_json["plmnId"]["mnc"] = uc->cgi.mnc;
+      tai_json["tac"]           = std::to_string(uc->tai.tac);
+
+      nlohmann::json global_ran_node_id_json        = {};
+      global_ran_node_id_json["plmnId"]["mcc"]      = uc->cgi.mcc;
+      global_ran_node_id_json["plmnId"]["mnc"]      = uc->cgi.mnc;
+      global_ran_node_id_json["gNbId"]["bitLength"] = 32;
+      global_ran_node_id_json["gNbId"]["gNBValue"] = std::to_string(gc->gnb_id);
+      oai::model::common::GlobalRanNodeId global_ran_node_id = {};
+
+      try {
+        from_json(tai_json, tai);
+        from_json(global_ran_node_id_json, global_ran_node_id);
+      } catch (std::exception& e) {
+        Logger::amf_n1().error("Exception with Json: %s", e.what());
+        return;
+      }
+
+      // uc->cgi.nrCellID;
+      nr_location.setTai(tai);
+      nr_location.setGlobalGnbId(global_ran_node_id);
+      user_location.setNrLocation(nr_location);
+
+      // Trigger UE Location Report
+      std::string supi = uc->supi;
+      Logger::amf_n1().debug(
+          "Signal the UE Location Report Event notification for SUPI %s",
+          supi.c_str());
+      event_sub.ue_location_report(
+          supi, user_location, amf_cfg.support_features.http_version);
     }
   }
 }

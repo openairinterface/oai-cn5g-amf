@@ -1023,7 +1023,7 @@ bool amf_sbi::discover_smf(
       "Send NFDiscovery to NRF to discover the available SMFs");
   bool result          = false;
   std::string smf_addr = {};
-  int smf_port         = DEFAULT_HTTP1_PORT;
+  int smf_port         = DEFAULT_HTTP2_PORT;
 
   nlohmann::json json_data = {};
   std::string url          = {};

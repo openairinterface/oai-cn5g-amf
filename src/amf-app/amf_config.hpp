@@ -51,6 +51,7 @@ typedef struct support_features_s {
   bool enable_external_udm;
   bool enable_nssf;
   bool enable_lmf;
+  bool enable_udsf;
   uint8_t http_version;
   nlohmann::json to_json() const {
     nlohmann::json json_data            = {};
@@ -60,6 +61,7 @@ typedef struct support_features_s {
     json_data["enable_external_udm"]    = this->enable_external_udm;
     json_data["enable_nssf"]            = this->enable_nssf;
     json_data["enable_lmf"]             = this->enable_lmf;
+    json_data["enable_udsf"]            = this->enable_udsf;
     json_data["http_version"]           = this->http_version;
     return json_data;
   }
@@ -90,6 +92,9 @@ typedef struct support_features_s {
       }
       if (json_data.find("enable_lmf") != json_data.end()) {
         this->enable_lmf = json_data["enable_lmf"].get<bool>();
+      }
+      if (json_data.find("enable_udsf") != json_data.end()) {
+        this->enable_lmf = json_data["enable_udsf"].get<bool>();
       }
     } catch (std::exception& e) {
       Logger::amf_app().error("%s", e.what());
@@ -212,6 +217,7 @@ class amf_config {
   nf_addr_t udm_addr;
   nf_addr_t nssf_addr;
   nf_addr_t lmf_addr;
+  nf_addr_t udsf_addr;
 };
 
 }  // namespace oai::config
