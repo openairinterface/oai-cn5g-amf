@@ -409,14 +409,14 @@ void amf_profile::from_json(const nlohmann::json& data) {
     // AMF info
     if (data.find("amfInfo") != data.end()) {
       nlohmann::json info = data["amfInfo"];
-      if (info.find("amfSetId") != data.end()) {
+      if (info.find("amfSetId") != info.end()) {
         amf_info.amf_set_id = info["amfSetId"].get<std::string>();
       }
-      if (info.find("amfRegionId") != data.end()) {
+      if (info.find("amfRegionId") != info.end()) {
         amf_info.amf_region_id = info["amfRegionId"].get<std::string>();
       }
 
-      if (info.find("guamiList") != data.end()) {
+      if (info.find("guamiList") != info.end()) {
         nlohmann::json guami_list = info["guamiList"];
         for (auto it : guami_list) {
           guami_t guami = {};
