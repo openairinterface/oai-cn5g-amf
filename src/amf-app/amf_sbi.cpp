@@ -320,12 +320,7 @@ void amf_sbi::handle_itti_message(itti_nsmf_pdusession_create_sm_context& smf) {
   Logger::amf_sbi().debug("Handle ITTI SMF_PDU_SESSION_CREATE_SM_CTX");
 
   std::shared_ptr<nas_context> nc = {};
-  if (!amf_n1_inst->amf_ue_id_2_nas_context(smf.amf_ue_ngap_id, nc)) {
-    Logger::amf_sbi().error(
-        "No UE NAS context with amf_ue_ngap_id (" AMF_UE_NGAP_ID_FMT ")",
-        smf.amf_ue_ngap_id);
-    return;
-  }
+  if (!amf_n1_inst->amf_ue_id_2_nas_context(smf.amf_ue_ngap_id, nc)) return;
 
   std::string supi = amf_conv::imsi_to_supi(nc->imsi);
   std::string ue_context_key =

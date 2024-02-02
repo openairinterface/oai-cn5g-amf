@@ -1021,9 +1021,6 @@ void amf_n2::handle_itti_message(
   // IMEISV
   std::shared_ptr<nas_context> nc = {};
   if (!amf_n1_inst->amf_ue_id_2_nas_context(itti_msg->amf_ue_ngap_id, nc)) {
-    Logger::amf_n2().warn(
-        "No existed nas_context with amf_ue_ngap_id(" AMF_UE_NGAP_ID_FMT ")",
-        itti_msg->amf_ue_ngap_id);
     // TODO:
     return;
   } else {
@@ -1146,9 +1143,6 @@ void amf_n2::handle_itti_message(
   // Get NSSAI from PDU Session Context
   std::shared_ptr<nas_context> nc = {};
   if (!amf_n1_inst->amf_ue_id_2_nas_context(itti_msg->amf_ue_ngap_id, nc)) {
-    Logger::amf_n2().warn(
-        "No existed nas_context with amf_ue_ngap_id(" AMF_UE_NGAP_ID_FMT ")",
-        itti_msg->amf_ue_ngap_id);
     // TODO:
   }
   std::string supi = amf_conv::imsi_to_supi(nc->imsi);
@@ -1809,12 +1803,7 @@ bool amf_n2::handle_itti_message(
 
   // Security context
   std::shared_ptr<nas_context> nc = {};
-  if (!amf_n1_inst->amf_ue_id_2_nas_context(amf_ue_ngap_id, nc)) {
-    Logger::amf_n2().error(
-        "No UE NAS context with amf_ue_ngap_id (" AMF_UE_NGAP_ID_FMT ")",
-        amf_ue_ngap_id);
-    return false;
-  }
+  if (!amf_n1_inst->amf_ue_id_2_nas_context(amf_ue_ngap_id, nc)) return false;
 
   if (!nc->security_ctx.has_value()) {
     Logger::amf_n2().error("No Security Context found");
@@ -2010,12 +1999,7 @@ void amf_n2::handle_itti_message(
       itti_msg->handoverRequestAck->getTargetToSource_TransparentContainer();
 
   std::shared_ptr<nas_context> nc = {};
-  if (!amf_n1_inst->amf_ue_id_2_nas_context(amf_ue_ngap_id, nc)) {
-    Logger::amf_n2().error(
-        "No UE NAS context with amf_ue_ngap_id (" AMF_UE_NGAP_ID_FMT ")",
-        amf_ue_ngap_id);
-    return;
-  }
+  if (!amf_n1_inst->amf_ue_id_2_nas_context(amf_ue_ngap_id, nc)) return;
 
   std::string supi = amf_conv::imsi_to_supi(nc->imsi);
 
@@ -2158,12 +2142,7 @@ void amf_n2::handle_itti_message(
   }
 
   std::shared_ptr<nas_context> nc = {};
-  if (!amf_n1_inst->amf_ue_id_2_nas_context(amf_ue_ngap_id, nc)) {
-    Logger::amf_n2().error(
-        "No UE NAS context with amf_ue_ngap_id (" AMF_UE_NGAP_ID_FMT ")",
-        amf_ue_ngap_id);
-    return;
-  }
+  if (!amf_n1_inst->amf_ue_id_2_nas_context(amf_ue_ngap_id, nc)) return;
 
   // Get UE context, if the context doesn't exist, create a new one
   std::shared_ptr<ue_context> uc = {};

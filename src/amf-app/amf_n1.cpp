@@ -214,12 +214,7 @@ void amf_n1::handle_itti_message(itti_downlink_nas_transfer& itti_msg) {
   long amf_ue_ngap_id             = itti_msg.amf_ue_ngap_id;
   uint32_t ran_ue_ngap_id         = itti_msg.ran_ue_ngap_id;
   std::shared_ptr<nas_context> nc = {};
-  if (!amf_ue_id_2_nas_context(amf_ue_ngap_id, nc)) {
-    Logger::amf_n1().warn(
-        "No existed nas_context with amf_ue_ngap_id (" AMF_UE_NGAP_ID_FMT ")",
-        amf_ue_ngap_id);
-    return;
-  }
+  if (!amf_ue_id_2_nas_context(amf_ue_ngap_id, nc)) return;
 
   if (!nc->security_ctx.has_value()) {
     Logger::amf_n1().error("No Security Context found");
@@ -263,13 +258,7 @@ void amf_n1::handle_itti_message(itti_downlink_nas_transfer& itti_msg) {
 
       // Get NSSAI
       std::shared_ptr<nas_context> nc = {};
-      if (!amf_ue_id_2_nas_context(amf_ue_ngap_id, nc)) {
-        Logger::amf_n1().warn(
-            "No existed NAS context for UE with amf_ue_ngap_id "
-            "(" AMF_UE_NGAP_ID_FMT ")",
-            amf_ue_ngap_id);
-        return;
-      }
+      if (!amf_ue_id_2_nas_context(amf_ue_ngap_id, nc)) return;
 
       std::shared_ptr<pdu_session_context> psc = {};
       if (!amf_app_inst->find_pdu_session_context(
@@ -1766,7 +1755,7 @@ bool amf_n1::is_amf_ue_id_2_nas_context(const long& amf_ue_ngap_id) const {
     }
   }
   Logger::amf_n1().warn(
-      "No NAS context with amf_ue_ngap_id(" AMF_UE_NGAP_ID_FMT ")",
+      "No NAS context with amf_ue_ngap_id " AMF_UE_NGAP_ID_FMT "",
       amf_ue_ngap_id);
   return false;
 }
@@ -1782,7 +1771,7 @@ bool amf_n1::amf_ue_id_2_nas_context(
     }
   }
   Logger::amf_n1().warn(
-      "No NAS context with amf_ue_ngap_id(" AMF_UE_NGAP_ID_FMT ")",
+      "No NAS context with amf_ue_ngap_id " AMF_UE_NGAP_ID_FMT "",
       amf_ue_ngap_id);
   return false;
 }
@@ -2542,9 +2531,6 @@ void amf_n1::authentication_response_handle(
   std::shared_ptr<nas_context> nc = {};
 
   if (!amf_ue_id_2_nas_context(amf_ue_ngap_id, nc)) {
-    Logger::amf_n1().error(
-        "No existed NAS context for UE with amf_ue_ngap_id " AMF_UE_NGAP_ID_FMT,
-        amf_ue_ngap_id);
     send_registration_reject_msg(
         _5GMM_CAUSE_ILLEGAL_UE, ran_ue_ngap_id,
         amf_ue_ngap_id);  // cause?
@@ -2637,10 +2623,6 @@ void amf_n1::authentication_failure_handle(
     bstring plain_msg) {
   std::shared_ptr<nas_context> nc = {};
   if (!amf_ue_id_2_nas_context(amf_ue_ngap_id, nc)) {
-    Logger::amf_n1().error(
-        "No existed NAS context for UE with amf_ue_ngap_id (" AMF_UE_NGAP_ID_FMT
-        ")",
-        amf_ue_ngap_id);
     send_registration_reject_msg(
         _5GMM_CAUSE_ILLEGAL_UE, ran_ue_ngap_id,
         amf_ue_ngap_id);  // cause?
@@ -2820,12 +2802,7 @@ void amf_n1::security_mode_complete_handle(
   if (!find_ue_context(ran_ue_ngap_id, amf_ue_ngap_id, uc)) return;
 
   std::shared_ptr<nas_context> nc = {};
-  if (!amf_ue_id_2_nas_context(amf_ue_ngap_id, nc)) {
-    Logger::amf_n1().warn(
-        "No existed nas_context with amf_ue_ngap_id (" AMF_UE_NGAP_ID_FMT ")",
-        amf_ue_ngap_id);
-    return;
-  }
+  if (!amf_ue_id_2_nas_context(amf_ue_ngap_id, nc)) return;
 
   // Decode Security Mode Complete
   auto security_mode_complete = std::make_unique<SecurityModeComplete>();
@@ -3092,12 +3069,7 @@ void amf_n1::registration_complete_handle(
   if (!find_ue_context(ran_ue_ngap_id, amf_ue_ngap_id, uc)) return;
 
   std::shared_ptr<nas_context> nc = {};
-  if (!amf_ue_id_2_nas_context(amf_ue_ngap_id, nc)) {
-    Logger::amf_n1().warn(
-        "No existed nas_context with amf_ue_ngap_id (" AMF_UE_NGAP_ID_FMT ")",
-        amf_ue_ngap_id);
-    return;
-  }
+  if (!amf_ue_id_2_nas_context(amf_ue_ngap_id, nc)) return;
 
   if (!nc->security_ctx.has_value()) {
     Logger::amf_n1().error("No Security Context found");
@@ -3364,12 +3336,7 @@ void amf_n1::ue_initiate_de_registration_handle(
   Logger::amf_n1().debug("Handling UE-initiated De-registration Request");
 
   std::shared_ptr<nas_context> nc = {};
-  if (!amf_ue_id_2_nas_context(amf_ue_ngap_id, nc)) {
-    Logger::amf_n1().warn(
-        "No existed nas_context with amf_ue_ngap_id (" AMF_UE_NGAP_ID_FMT ")",
-        amf_ue_ngap_id);
-    return;
-  }
+  if (!amf_ue_id_2_nas_context(amf_ue_ngap_id, nc)) return;
 
   // Decode NAS message
   auto dereg_request =
@@ -3621,11 +3588,7 @@ void amf_n1::ul_nas_transport_handle(
           "Requested/Configured NSSAI!");
 
       std::shared_ptr<nas_context> nc = {};
-      if (!amf_n1_inst->amf_ue_id_2_nas_context(amf_ue_ngap_id, nc)) {
-        Logger::amf_n1().warn(
-            "No existed nas_context with amf_ue_ngap_id(0x%x)", amf_ue_ngap_id);
-        return;
-      }
+      if (!amf_ue_id_2_nas_context(amf_ue_ngap_id, nc)) return;
 
       // TODO: Only use the first one for now if there's multiple requested
       // NSSAI since we don't know which slice associated with this PDU session
@@ -4584,12 +4547,8 @@ bool amf_n1::find_ue_context(
 void amf_n1::mobile_reachable_timer_timeout(
     timer_id_t& timer_id, const uint64_t amf_ue_ngap_id) {
   std::shared_ptr<nas_context> nc = {};
-  if (!amf_n1_inst->amf_ue_id_2_nas_context(amf_ue_ngap_id, nc)) {
-    Logger::amf_n1().warn(
-        "No existed nas_context with amf_ue_ngap_id (" AMF_UE_NGAP_ID_FMT ")",
-        amf_ue_ngap_id);
-    return;
-  }
+  if (!amf_ue_id_2_nas_context(amf_ue_ngap_id, nc)) return;
+
   set_mobile_reachable_timer_timeout(nc, true);
 
   // Trigger UE Loss of Connectivity Status Notify
@@ -4615,12 +4574,8 @@ void amf_n1::mobile_reachable_timer_timeout(
 void amf_n1::implicit_deregistration_timer_timeout(
     timer_id_t timer_id, uint64_t amf_ue_ngap_id) {
   std::shared_ptr<nas_context> nc = {};
-  if (amf_n1_inst->amf_ue_id_2_nas_context(amf_ue_ngap_id, nc)) {
-    Logger::amf_n1().warn(
-        "No existed nas_context with amf_ue_ngap_id (" AMF_UE_NGAP_ID_FMT ")",
-        amf_ue_ngap_id);
-    return;
-  }
+  if (!amf_ue_id_2_nas_context(amf_ue_ngap_id, nc)) return;
+
   // Implicitly de-register UE
   // TODO (4.2.2.3.3 Network-initiated Deregistration @3GPP TS 23.502V16.0.0):
   // If the UE is in CM-CONNECTED state, the AMF may explicitly deregister the
