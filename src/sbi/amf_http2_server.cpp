@@ -642,8 +642,6 @@ void amf_http2_server::n1_n2_message_transfer_handler(
         if (!amf_app_inst->find_pdu_session_context(
                 supi, (uint8_t) n1N2MessageTransferReqData.getPduSessionId(),
                 psc)) {
-          Logger::amf_server().error(
-              "Cannot get PDU Session Context with SUPI (%s)", supi.c_str());
           response.write_head(code);
           response.end(response_json.dump().c_str());
           return;
@@ -733,8 +731,6 @@ void amf_http2_server::n1_n2_message_transfer_handler(
         if (!amf_app_inst->find_pdu_session_context(
                 supi, (uint8_t) n1N2MessageTransferReqData.getPduSessionId(),
                 psc)) {
-          Logger::amf_server().error(
-              "Cannot get PDU Session Context with SUPI (%s)", supi.c_str());
           response.write_head(code);
           response.end(response_json.dump().c_str());
           return;

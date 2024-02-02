@@ -262,11 +262,8 @@ void amf_n1::handle_itti_message(itti_downlink_nas_transfer& itti_msg) {
 
       std::shared_ptr<pdu_session_context> psc = {};
       if (!amf_app_inst->find_pdu_session_context(
-              nc->imsi, itti_msg.pdu_session_id, psc)) {
-        Logger::amf_n1().error(
-            "Cannot get pdu_session_context with IMSI (%s)", nc->imsi.c_str());
+              nc->imsi, itti_msg.pdu_session_id, psc))
         return;
-      }
 
       itti_modify_request_msg->s_NSSAI.setSd(psc->snssai.sD);
       itti_modify_request_msg->s_NSSAI.setSst(psc->snssai.sST);
@@ -946,8 +943,6 @@ void amf_n1::service_request_handle(
 
     uint8_t pdu_session_id = pdu_session_to_be_activated.at(0);
     if (!amf_app_inst->find_pdu_session_context(supi, pdu_session_id, psc)) {
-      Logger::amf_n1().error(
-          "Cannot get pdu_session_context with SUPI (%s)", supi.c_str());
       // TODO:
       // Set PDU session Status to 0x00
       // service_accept->SetPduSessionStatus(0x00);
@@ -1279,8 +1274,7 @@ void amf_n1::service_request_handle(
 
     for (auto& pdu_session_id : pdu_session_to_be_activated) {
       if (!amf_app_inst->find_pdu_session_context(supi, pdu_session_id, psc)) {
-        Logger::amf_n1().debug(
-            "Cannot get pdu_session_context with SUPI (%s)", supi.c_str());
+        // TODO:
         // Set PDU session Status to 0x00
         // service_accept->SetPduSessionStatus(0x00);
       }
@@ -4482,10 +4476,7 @@ bool amf_n1::find_ue_context(
   std::string ue_context_key =
       amf_conv::get_ue_context_key(nc->ran_ue_ngap_id, nc->amf_ue_ngap_id);
 
-  if (!amf_app_inst->ran_amf_id_2_ue_context(ue_context_key, uc)) {
-    Logger::amf_n1().error("No UE context with key %s", ue_context_key.c_str());
-    return false;
-  }
+  if (!amf_app_inst->ran_amf_id_2_ue_context(ue_context_key, uc)) return false;
 
   return true;
 }
@@ -4497,10 +4488,7 @@ bool amf_n1::find_ue_context(
   std::string ue_context_key =
       amf_conv::get_ue_context_key(ran_ue_ngap_id, amf_ue_ngap_id);
 
-  if (!amf_app_inst->ran_amf_id_2_ue_context(ue_context_key, uc)) {
-    Logger::amf_n1().error("No UE context with key %s", ue_context_key.c_str());
-    return false;
-  }
+  if (!amf_app_inst->ran_amf_id_2_ue_context(ue_context_key, uc)) return false;
 
   return true;
 }

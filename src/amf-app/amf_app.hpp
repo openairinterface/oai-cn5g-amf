@@ -240,13 +240,6 @@ class amf_app {
   uint32_t get_number_registered_ues() const;
 
   /*
-   * Verify if a UE context associated with an UE Context Key exist and not null
-   * @param [const std::string&] ue_context_key: UE Context Key
-   * @return true if UE context exist and not null, otherwise false
-   */
-  bool is_ran_amf_id_2_ue_context(const std::string& ue_context_key) const;
-
-  /*
    * Get UE context associated with an UE Context Key and verify if this pointer
    * is nullptr
    * @param [const std::string&] ue_context_key: UE Context Key
@@ -264,13 +257,6 @@ class amf_app {
    */
   void set_ran_amf_id_2_ue_context(
       const std::string& ue_context_key, const std::shared_ptr<ue_context>& uc);
-
-  /*
-   * Verify whether a UE context associated with a SUPI exist and not null
-   * @param [const std::string&] supi: UE SUPI
-   * @return true if UE context exist and not null, otherwise false
-   */
-  bool is_supi_2_ue_context(const std::string& supi) const;
 
   /*
    * Get UE context associated with a SUPI

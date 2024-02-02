@@ -236,11 +236,7 @@ void amf_sbi::handle_itti_message(
   std::string ue_context_key = amf_conv::get_ue_context_key(
       itti_msg.ran_ue_ngap_id, itti_msg.amf_ue_ngap_id);
   std::shared_ptr<ue_context> uc = {};
-  if (!amf_app_inst->ran_amf_id_2_ue_context(ue_context_key, uc)) {
-    Logger::amf_sbi().error(
-        "No UE context for %s exit", ue_context_key.c_str());
-    return;
-  }
+  if (!amf_app_inst->ran_amf_id_2_ue_context(ue_context_key, uc)) return;
 
   std::string supi = uc->supi;
 
@@ -250,12 +246,7 @@ void amf_sbi::handle_itti_message(
       supi.c_str(), itti_msg.pdu_session_id);
 
   std::shared_ptr<pdu_session_context> psc = {};
-  if (!uc->find_pdu_session_context(itti_msg.pdu_session_id, psc)) {
-    Logger::amf_sbi().error(
-        "Could not find pdu_session_context with SUPI %s, Failed",
-        supi.c_str());
-    return;
-  }
+  if (!uc->find_pdu_session_context(itti_msg.pdu_session_id, psc)) return;
 
   std::string remote_uri = {};
   if (!amf_cfg.get_smf_pdu_session_context_uri(psc, remote_uri)) {
@@ -329,11 +320,7 @@ void amf_sbi::handle_itti_message(itti_nsmf_pdusession_create_sm_context& smf) {
   Logger::amf_sbi().info(
       "Find ue_context in amf_app using UE Context Key: %s",
       ue_context_key.c_str());
-  if (!amf_app_inst->ran_amf_id_2_ue_context(ue_context_key, uc)) {
-    Logger::amf_sbi().error(
-        "No UE context for %s exit", ue_context_key.c_str());
-    return;
-  }
+  if (!amf_app_inst->ran_amf_id_2_ue_context(ue_context_key, uc)) return;
 
   // Create PDU Session Context if not available
   std::shared_ptr<pdu_session_context> psc = {};
@@ -528,11 +515,8 @@ void amf_sbi::handle_itti_message(
     itti_nsmf_pdusession_release_sm_context& itti_msg) {
   std::shared_ptr<pdu_session_context> psc = {};
   if (!amf_app_inst->find_pdu_session_context(
-          itti_msg.supi, itti_msg.pdu_session_id, psc)) {
-    Logger::amf_sbi().warn(
-        "PDU Session context for SUPI %s doesn't exit!", itti_msg.supi.c_str());
+          itti_msg.supi, itti_msg.pdu_session_id, psc))
     return;
-  }
 
   std::string remote_uri = {};
   if (!amf_cfg.get_smf_pdu_session_context_uri(psc, remote_uri)) {
@@ -1211,11 +1195,8 @@ bool amf_sbi::curl_http_client(
   std::shared_ptr<pdu_session_context> psc = {};
   bool is_multipart                        = true;
 
-  if (!amf_app_inst->find_pdu_session_context(supi, pdu_session_id, psc)) {
-    Logger::amf_sbi().warn(
-        "PDU Session context for SUPI %s doesn't exit!", supi.c_str());
-    return curl_result;
-  }
+  if (!amf_app_inst->find_pdu_session_context(supi, pdu_session_id, psc))
+    return false;
 
   if ((n1sm_msg.size() > 0) and (n2sm_msg.size() > 0)) {
     // prepare the body content for Curl

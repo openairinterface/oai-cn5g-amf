@@ -665,8 +665,6 @@ void amf_n2::handle_itti_message(std::shared_ptr<itti_ng_shutdown>& itti_msg) {
     std::shared_ptr<ue_context> uc = {};
 
     if (!amf_app_inst->ran_amf_id_2_ue_context(ue_context_key, uc)) {
-      Logger::amf_app().error(
-          "No UE context for ran_amf_id %s, exit", ue_context_key.c_str());
       continue;
     }
     amf_app_inst->trigger_pdu_session_up_deactivation(uc);
@@ -1044,8 +1042,6 @@ void amf_n2::handle_itti_message(
         std::shared_ptr<pdu_session_context> psc = {};
 
         if (!amf_app_inst->find_pdu_session_context(supi, p.first, psc)) {
-          Logger::amf_n2().warn(
-              "Cannot get pdu_session_context with SUPI (%s)", supi.c_str());
           item.s_nssai.sst = "01";  // TODO: remove the default value
           item.s_nssai.sd  = std::to_string(SD_NO_VALUE);
         } else {
@@ -1130,8 +1126,6 @@ void amf_n2::handle_itti_message(
   std::shared_ptr<pdu_session_context> psc = {};
   if (!amf_app_inst->find_pdu_session_context(
           supi, itti_msg->pdu_session_id, psc)) {
-    Logger::amf_n2().warn(
-        "Cannot get pdu_session_context with SUPI (%s)", supi.c_str());
     item.s_nssai.sst = "01";  // TODO: get from N1N2msgTranferMsg
     item.s_nssai.sd =
         std::to_string(SD_NO_VALUE);  // TODO: get from N1N2msgTranferMsg
@@ -1438,11 +1432,7 @@ void amf_n2::handle_itti_message(
       amf_conv::get_ue_context_key(ran_ue_ngap_id, amf_ue_ngap_id);
   std::shared_ptr<ue_context> uc = {};
 
-  if (!amf_app_inst->ran_amf_id_2_ue_context(ue_context_key, uc)) {
-    Logger::amf_app().error(
-        "No UE context for ran_amf_id %s, exit", ue_context_key.c_str());
-    return;
-  }
+  if (!amf_app_inst->ran_amf_id_2_ue_context(ue_context_key, uc)) return;
 
   std::shared_ptr<ue_ngap_context> unc = {};
   if (!amf_ue_id_2_ue_ngap_context(amf_ue_ngap_id, unc)) return;
@@ -2442,11 +2432,7 @@ void amf_n2::handle_itti_message(
 
   // Find subscribed LMFs
   std::shared_ptr<ue_context> uc = {};
-  if (!amf_app_inst->ran_amf_id_2_ue_context(ue_context_key, uc)) {
-    Logger::amf_n2().error(
-        "No existing UE context with Key (%s)", ue_context_key.c_str());
-    return;
-  }
+  if (!amf_app_inst->ran_amf_id_2_ue_context(ue_context_key, uc)) return;
 
   std::optional<oai::amf::model::N1MessageClass_anyOf::eN1MessageClass_anyOf>
       n1_message_class = std::nullopt;
@@ -2623,11 +2609,7 @@ bool amf_n2::ran_ue_id_2_ue_ngap_context(
     std::shared_ptr<ue_ngap_context>& unc) const {
   // Get UE Context
   std::shared_ptr<ue_context> uc = {};
-  if (!amf_app_inst->ran_amf_id_2_ue_context(ue_context_key, uc)) {
-    Logger::amf_app().error(
-        "No UE context for ran_amf_id %s, exit", ue_context_key.c_str());
-    return false;
-  }
+  if (!amf_app_inst->ran_amf_id_2_ue_context(ue_context_key, uc)) return false;
 
   auto ue_id = std::make_pair(ran_ue_ngap_id, uc->gnb_id);
   std::shared_lock lock(m_ranid2uecontext);
@@ -2773,11 +2755,7 @@ void amf_n2::remove_ue_context_with_amf_ue_ngap_id(const long& amf_ue_ngap_id) {
         amf_conv::get_ue_context_key(nc->ran_ue_ngap_id, amf_ue_ngap_id);
     std::shared_ptr<ue_context> uc = {};
 
-    if (!amf_app_inst->ran_amf_id_2_ue_context(ue_context_key, uc)) {
-      Logger::amf_app().error(
-          "No UE context for ran_amf_id %s, exit", ue_context_key.c_str());
-      return;
-    }
+    if (!amf_app_inst->ran_amf_id_2_ue_context(ue_context_key, uc)) return;
     remove_ran_ue_ngap_id_2_ngap_context(nc->ran_ue_ngap_id, uc->gnb_id);
 
   } else {
