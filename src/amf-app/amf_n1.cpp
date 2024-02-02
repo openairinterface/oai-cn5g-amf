@@ -292,10 +292,7 @@ void amf_n1::handle_itti_message(itti_downlink_nas_transfer& itti_msg) {
     } else {
       std::shared_ptr<ue_context> uc = {};
 
-      if (!find_ue_context(ran_ue_ngap_id, amf_ue_ngap_id, uc)) {
-        Logger::amf_n1().warn("Cannot find the UE context");
-        return;
-      }
+      if (!find_ue_context(ran_ue_ngap_id, amf_ue_ngap_id, uc)) return;
 
       if (uc->is_ue_context_request) {
         // PDU SESSION RESOURCE SETUP_REQUEST
@@ -843,10 +840,7 @@ void amf_n1::service_request_handle(
     const long amf_ue_ngap_id, bstring nas) {
   std::shared_ptr<ue_context> uc = {};
 
-  if (!find_ue_context(ran_ue_ngap_id, amf_ue_ngap_id, uc)) {
-    Logger::amf_n1().warn("Cannot find the UE context");
-    return;
-  }
+  if (!find_ue_context(ran_ue_ngap_id, amf_ue_ngap_id, uc)) return;
 
   // Decode Service Request to get 5G-TMSI
   std::unique_ptr<ServiceRequest> service_request =
@@ -1020,10 +1014,7 @@ void amf_n1::service_request_handle(
     const long amf_ue_ngap_id, bstring nas, uint8_t ulCount) {
   std::shared_ptr<ue_context> uc = {};
 
-  if (!find_ue_context(ran_ue_ngap_id, amf_ue_ngap_id, uc)) {
-    Logger::amf_n1().warn("Cannot find the UE context");
-    return;
-  }
+  if (!find_ue_context(ran_ue_ngap_id, amf_ue_ngap_id, uc)) return;
 
   // Decode Service Request to get 5G-TMSI
   std::unique_ptr<ServiceRequest> service_request =
@@ -1430,10 +1421,7 @@ void amf_n1::registration_request_handle(
   // Find UE context
   std::shared_ptr<ue_context> uc = {};
 
-  if (!find_ue_context(ran_ue_ngap_id, amf_ue_ngap_id, uc)) {
-    Logger::amf_n1().warn("Cannot find the UE context");
-    return;
-  }
+  if (!find_ue_context(ran_ue_ngap_id, amf_ue_ngap_id, uc)) return;
 
   // Check 5gs Mobility Identity (Mandatory IE)
   std::string guti         = {};
@@ -1777,6 +1765,9 @@ bool amf_n1::is_amf_ue_id_2_nas_context(const long& amf_ue_ngap_id) const {
       return true;
     }
   }
+  Logger::amf_n1().warn(
+      "No NAS context with amf_ue_ngap_id(" AMF_UE_NGAP_ID_FMT ")",
+      amf_ue_ngap_id);
   return false;
 }
 
@@ -1790,6 +1781,9 @@ bool amf_n1::amf_ue_id_2_nas_context(
       return true;
     }
   }
+  Logger::amf_n1().warn(
+      "No NAS context with amf_ue_ngap_id(" AMF_UE_NGAP_ID_FMT ")",
+      amf_ue_ngap_id);
   return false;
 }
 
@@ -2823,10 +2817,7 @@ void amf_n1::security_mode_complete_handle(
   Logger::amf_n1().debug("Handling Security Mode Complete ...");
 
   std::shared_ptr<ue_context> uc = {};
-  if (!find_ue_context(ran_ue_ngap_id, amf_ue_ngap_id, uc)) {
-    Logger::amf_n1().warn("Cannot find the UE context");
-    return;
-  }
+  if (!find_ue_context(ran_ue_ngap_id, amf_ue_ngap_id, uc)) return;
 
   std::shared_ptr<nas_context> nc = {};
   if (!amf_ue_id_2_nas_context(amf_ue_ngap_id, nc)) {
@@ -2835,6 +2826,7 @@ void amf_n1::security_mode_complete_handle(
         amf_ue_ngap_id);
     return;
   }
+
   // Decode Security Mode Complete
   auto security_mode_complete = std::make_unique<SecurityModeComplete>();
   security_mode_complete->Decode((uint8_t*) bdata(nas_msg), blength(nas_msg));
@@ -3097,10 +3089,7 @@ void amf_n1::registration_complete_handle(
   Logger::amf_n1().debug("Received Registration Complete message, processing");
 
   std::shared_ptr<ue_context> uc = {};
-  if (!find_ue_context(ran_ue_ngap_id, amf_ue_ngap_id, uc)) {
-    Logger::amf_n1().warn("Cannot find the UE context");
-    return;
-  }
+  if (!find_ue_context(ran_ue_ngap_id, amf_ue_ngap_id, uc)) return;
 
   std::shared_ptr<nas_context> nc = {};
   if (!amf_ue_id_2_nas_context(amf_ue_ngap_id, nc)) {
@@ -3405,10 +3394,8 @@ void amf_n1::ue_initiate_de_registration_handle(
   // Get list of PDU sessions
   std::vector<std::shared_ptr<pdu_session_context>> sessions_ctx;
   std::shared_ptr<ue_context> uc = {};
-  if (!find_ue_context(nc, uc)) {
-    Logger::amf_n1().warn("Cannot find the UE context");
-    return;
-  }
+
+  if (!find_ue_context(nc, uc)) return;
 
   if (uc != nullptr) {
     if (uc->get_pdu_sessions_context(sessions_ctx)) {
@@ -3663,10 +3650,9 @@ void amf_n1::ul_nas_transport_handle(
           std::vector<struct SNSSAI_s> common_nssais;
           // Find UE Context
           std::shared_ptr<ue_context> uc = {};
-          if (!find_ue_context(nc->ran_ue_ngap_id, nc->amf_ue_ngap_id, uc)) {
-            Logger::amf_n1().warn("Cannot find the UE context");
+          if (!find_ue_context(nc->ran_ue_ngap_id, nc->amf_ue_ngap_id, uc))
             return;
-          }
+
           amf_n2_inst->get_common_NSSAI(
               nc->ran_ue_ngap_id, uc->gnb_id, common_nssais);
 
@@ -3793,10 +3779,7 @@ void amf_n1::run_mobility_registration_update_procedure(
     std::shared_ptr<nas_context>& nc, uint16_t uplink_data_status,
     uint16_t pdu_session_status) {
   std::shared_ptr<ue_context> uc = {};
-  if (!find_ue_context(nc, uc)) {
-    Logger::amf_n1().warn("Cannot find the UE context");
-    return;
-  }
+  if (!find_ue_context(nc, uc)) return;
 
   if (!nc->security_ctx.has_value()) {
     Logger::amf_n1().warn("No Security Context found");
@@ -3878,10 +3861,7 @@ void amf_n1::run_periodic_registration_update_procedure(
 
   // Get UE context
   std::shared_ptr<ue_context> uc = {};
-  if (!find_ue_context(nc, uc)) {
-    Logger::amf_n1().warn("Cannot find the UE context");
-    return;
-  }
+  if (!find_ue_context(nc, uc)) return;
 
   reg_accept->Set5gGuti(
       amf_cfg.guami.mcc, amf_cfg.guami.mnc, amf_cfg.guami.region_id,
@@ -3944,10 +3924,7 @@ void amf_n1::run_periodic_registration_update_procedure(
 
   // Get UE context
   std::shared_ptr<ue_context> uc = {};
-  if (!find_ue_context(nc, uc)) {
-    Logger::amf_n1().warn("Cannot find the UE context");
-    return;
-  }
+  if (!find_ue_context(nc, uc)) return;
 
   reg_accept->Set5gGuti(
       amf_cfg.guami.mcc, amf_cfg.guami.mnc, amf_cfg.guami.region_id,
@@ -4469,10 +4446,7 @@ void amf_n1::initialize_registration_accept(
 
   // Find UE Context
   std::shared_ptr<ue_context> uc = {};
-  if (!find_ue_context(nc->ran_ue_ngap_id, nc->amf_ue_ngap_id, uc)) {
-    Logger::amf_n1().warn("Cannot find the UE context");
-    return;
-  }
+  if (!find_ue_context(nc->ran_ue_ngap_id, nc->amf_ue_ngap_id, uc)) return;
 
   // TAI List
   std::vector<p_tai_t> tai_list;
@@ -4656,10 +4630,7 @@ void amf_n1::implicit_deregistration_timer_timeout(
   // Send PDU Session Release SM Context Request to SMF for each PDU Session
   std::shared_ptr<ue_context> uc = {};
 
-  if (!find_ue_context(nc->ran_ue_ngap_id, nc->amf_ue_ngap_id, uc)) {
-    Logger::amf_n1().warn("Cannot find the UE context");
-    return;
-  }
+  if (!find_ue_context(nc->ran_ue_ngap_id, nc->amf_ue_ngap_id, uc)) return;
 
   std::vector<std::shared_ptr<pdu_session_context>> pdu_sessions;
   if (!uc->get_pdu_sessions_context(pdu_sessions)) return;
@@ -4846,10 +4817,8 @@ bool amf_n1::reroute_registration_request(
 //------------------------------------------------------------------------------
 bool amf_n1::check_requested_nssai(const std::shared_ptr<nas_context>& nc) {
   std::shared_ptr<ue_context> uc = {};
-  if (!find_ue_context(nc->ran_ue_ngap_id, nc->amf_ue_ngap_id, uc)) {
-    Logger::amf_n1().warn("Cannot find the UE context");
+  if (!find_ue_context(nc->ran_ue_ngap_id, nc->amf_ue_ngap_id, uc))
     return false;
-  }
 
   // If there no requested NSSAIs
   if (nc->requested_nssai.size() == 0) {
@@ -4897,10 +4866,8 @@ bool amf_n1::check_subscribed_nssai(
   // Check if the AMF can serve all the requested/subscribed S-NSSAIs
 
   std::shared_ptr<ue_context> uc = {};
-  if (!find_ue_context(nc->ran_ue_ngap_id, nc->amf_ue_ngap_id, uc)) {
-    Logger::amf_n1().warn("Cannot find the UE context");
+  if (!find_ue_context(nc->ran_ue_ngap_id, nc->amf_ue_ngap_id, uc))
     return false;
-  }
 
   bool result = false;
 
@@ -5015,10 +4982,8 @@ bool amf_n1::get_slice_selection_subscription_data(
         "Get the Slice Selection Subscription Data from UDM");
 
     std::shared_ptr<ue_context> uc = {};
-    if (!find_ue_context(nc->ran_ue_ngap_id, nc->amf_ue_ngap_id, uc)) {
-      Logger::amf_n1().warn("Cannot find the UE context");
+    if (!find_ue_context(nc->ran_ue_ngap_id, nc->amf_ue_ngap_id, uc))
       return false;
-    }
 
     auto itti_msg =
         std::make_shared<itti_sbi_slice_selection_subscription_data>(
@@ -5104,10 +5069,8 @@ bool amf_n1::get_slice_selection_subscription_data_from_conf_file(
 
   // Get UE context
   std::shared_ptr<ue_context> uc = {};
-  if (!find_ue_context(nc->ran_ue_ngap_id, nc->amf_ue_ngap_id, uc)) {
-    Logger::amf_n1().warn("Cannot find the UE context");
+  if (!find_ue_context(nc->ran_ue_ngap_id, nc->amf_ue_ngap_id, uc))
     return false;
-  }
 
   // Get UE NGAP Context
   std::shared_ptr<ue_ngap_context> unc = {};
@@ -5192,10 +5155,8 @@ bool amf_n1::get_network_slice_selection(
       "Get the Network Slice Selection Information from NSSF");
 
   std::shared_ptr<ue_context> uc = {};
-  if (!find_ue_context(nc->ran_ue_ngap_id, nc->amf_ue_ngap_id, uc)) {
-    Logger::amf_n1().warn("Cannot find the UE context");
+  if (!find_ue_context(nc->ran_ue_ngap_id, nc->amf_ue_ngap_id, uc))
     return false;
-  }
 
   if (amf_cfg.support_features.enable_nssf) {
     // Get Authorized Network Slice Info from an  external NSSF
