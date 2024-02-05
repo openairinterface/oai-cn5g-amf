@@ -638,6 +638,28 @@ class amf_app {
    * @return NF instance in string format
    */
   std::string get_nf_instance() const;
+
+  /*
+   * Store UE Context info in UDSF if available
+   * @return void
+   */
+  void store_ue_context(
+      const uint32_t ran_ue_ngap_id, const long amf_ue_ngap_id);
+  bool store_ue_context_in_udsf(oai::amf::model::UeContext& ue_cxt);
+  /*
+   * Get UE context info in UDSF if available
+   * @return void
+   */
+  bool prepare_ue_context(
+      const uint32_t ran_ue_ngap_id, const long amf_ue_ngap_id,
+      oai::amf::model::UeContext& ue_cxt);
+
+  void retrieve_ue_context();
+  bool retrieve_ue_context_from_old_amf(oai::amf::model::UeContext& ue_cxt);
+  bool retrieve_ue_context_from_udsf(oai::amf::model::UeContext& ue_cxt);
+
+  void sync_ue_context(const oai::amf::model::UeContext& ue_cxt);
+  void update_ue_context();
 };
 
 }  // namespace amf_application
