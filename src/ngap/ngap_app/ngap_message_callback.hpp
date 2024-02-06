@@ -200,25 +200,28 @@ int ngap_amf_handle_initial_context_setup_response(
 
   Logger::ngap().debug(
       "Sending ITTI Initial Context Setup Response to TASK_AMF_SBI");
-  auto itti_msg = std::make_shared<itti_nsmf_pdusession_update_sm_context>(
-      TASK_NGAP, TASK_AMF_SBI);
-  // TODO: with multiple PDU sessions
-  itti_msg->pdu_session_id = list[0].pduSessionId;
-  itti_msg->n2sm           = blk2bstr(
-      list[0].pduSessionResourceSetupResponseTransfer.buf,
-      list[0].pduSessionResourceSetupResponseTransfer.size);
-  itti_msg->is_n2sm_set    = true;
-  itti_msg->n2sm_info_type = "PDU_RES_SETUP_RSP";
-  itti_msg->amf_ue_ngap_id = init_cxt_setup_response->getAmfUeNgapId();
-  itti_msg->ran_ue_ngap_id = init_cxt_setup_response->getRanUeNgapId();
 
-  int ret = itti_inst->send_msg(itti_msg);
-  if (0 != ret) {
-    Logger::ngap().error(
-        "Could not send ITTI message %s to task TASK_AMF_SBI",
-        itti_msg->get_msg_name());
-    return RETURNerror;
+  for (int i = 0; i < list.size(); i++) {
+    auto itti_msg = std::make_shared<itti_nsmf_pdusession_update_sm_context>(
+        TASK_NGAP, TASK_AMF_SBI);
+    itti_msg->pdu_session_id = list[i].pduSessionId;
+    itti_msg->n2sm           = blk2bstr(
+        list[i].pduSessionResourceSetupResponseTransfer.buf,
+        list[i].pduSessionResourceSetupResponseTransfer.size);
+    itti_msg->is_n2sm_set    = true;
+    itti_msg->n2sm_info_type = "PDU_RES_SETUP_RSP";
+    itti_msg->amf_ue_ngap_id = init_cxt_setup_response->getAmfUeNgapId();
+    itti_msg->ran_ue_ngap_id = init_cxt_setup_response->getRanUeNgapId();
+
+    int ret = itti_inst->send_msg(itti_msg);
+    if (0 != ret) {
+      Logger::ngap().error(
+          "Could not send ITTI message %s to task TASK_AMF_SBI",
+          itti_msg->get_msg_name());
+      return RETURNerror;
+    }
   }
+
   return RETURNok;
 }
 
@@ -428,9 +431,6 @@ int ngap_amf_handle_pdu_session_resource_setup_response(
           list)) {
     Logger::ngap().debug("No PduSessionResourceSetupResponseList available");
   } else {
-    // TODO: for multiple PDU Sessions
-    itti_nsmf_pdusession_update_sm_context* itti_msg =
-        new itti_nsmf_pdusession_update_sm_context(TASK_NGAP, TASK_AMF_SBI);
     long amf_ue_ngap_id = pdu_session_resource_setup_resp->getAmfUeNgapId();
     std::shared_ptr<nas_context> nct = {};
     if (!amf_n1_inst->amf_ue_id_2_nas_context(amf_ue_ngap_id, nct)) {
@@ -438,29 +438,32 @@ int ngap_amf_handle_pdu_session_resource_setup_response(
           "No UE NAS context with amf_ue_ngap_id (0x%x)", amf_ue_ngap_id);
       return RETURNerror;
     }
-    itti_msg->supi           = amf_conv::imsi_to_supi(nct->imsi);
-    itti_msg->pdu_session_id = list[0].pduSessionId;
-    itti_msg->n2sm           = blk2bstr(
-        list[0].pduSessionResourceSetupResponseTransfer.buf,
-        list[0].pduSessionResourceSetupResponseTransfer.size);
-    itti_msg->is_n2sm_set    = true;
-    itti_msg->n2sm_info_type = "PDU_RES_SETUP_RSP";
-    itti_msg->amf_ue_ngap_id =
-        pdu_session_resource_setup_resp->getAmfUeNgapId();
-    itti_msg->ran_ue_ngap_id =
-        pdu_session_resource_setup_resp->getRanUeNgapId();
 
-    std::shared_ptr<itti_nsmf_pdusession_update_sm_context> i =
-        std::shared_ptr<itti_nsmf_pdusession_update_sm_context>(itti_msg);
+    for (int i = 0; i < list.size(); i++) {
+      auto itti_msg = std::make_shared<itti_nsmf_pdusession_update_sm_context>(
+          TASK_NGAP, TASK_AMF_SBI);
 
-    int ret = itti_inst->send_msg(i);
-    if (0 != ret) {
-      Logger::ngap().error(
-          "Could not send ITTI message %s to task TASK_AMF_SBI",
-          i->get_msg_name());
-      return RETURNerror;
+      itti_msg->supi           = amf_conv::imsi_to_supi(nct->imsi);
+      itti_msg->pdu_session_id = list[i].pduSessionId;
+      itti_msg->n2sm           = blk2bstr(
+          list[i].pduSessionResourceSetupResponseTransfer.buf,
+          list[i].pduSessionResourceSetupResponseTransfer.size);
+      itti_msg->is_n2sm_set    = true;
+      itti_msg->n2sm_info_type = "PDU_RES_SETUP_RSP";
+      itti_msg->amf_ue_ngap_id =
+          pdu_session_resource_setup_resp->getAmfUeNgapId();
+      itti_msg->ran_ue_ngap_id =
+          pdu_session_resource_setup_resp->getRanUeNgapId();
+
+      int ret = itti_inst->send_msg(itti_msg);
+      if (0 != ret) {
+        Logger::ngap().error(
+            "Could not send ITTI message %s to task TASK_AMF_SBI",
+            itti_msg->get_msg_name());
+        return RETURNerror;
+      }
+      return RETURNok;
     }
-    return RETURNok;
   }
 
   std::vector<PDUSessionResourceFailedToSetupItem_t> list_fail;
@@ -468,6 +471,7 @@ int ngap_amf_handle_pdu_session_resource_setup_response(
           list_fail)) {
     Logger::ngap().debug("No PduSessionResourceFailedToSetupList available");
   } else {
+    // TODO: multiple PDU sessions setup failed
     PduSessionResourceSetupUnSuccessfulTransferIE
         resource_setup_unsuccessful_transfer_ie = {};
     uint8_t buffer[BUFFER_SIZE_512];
