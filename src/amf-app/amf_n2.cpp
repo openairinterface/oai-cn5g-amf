@@ -1562,20 +1562,19 @@ void amf_n2::handle_itti_message(
   }
 
   // Wait for the response available and process accordingly
-  bool result = true;
+
   while (!curl_responses.empty()) {
     // Wait for the result available and process accordingly
-    std::optional<nlohmann::json> result_json = std::nullopt;
-    utils::wait_for_result(curl_responses.begin()->second, result_json);
+    std::optional<nlohmann::json> result = std::nullopt;
+    utils::wait_for_result(curl_responses.begin()->second, result);
 
-    if (result_json.has_value()) {
+    if (result.has_value()) {
+      nlohmann::json result_json = result.value();
       Logger::amf_server().debug(
           "Got result for promise ID %d", curl_responses.begin()->first);
       uint32_t http_response_code = 0;
-      if (result_json.value().find("httpResponseCode") !=
-          result_json.value().end()) {
-        result             = result && true;
-        http_response_code = result_json.value()["httpResponseCode"].get<int>();
+      if (result_json.find("httpResponseCode") != result_json.end()) {
+        http_response_code = result_json["httpResponseCode"].get<int>();
         if ((http_response_code == 200) or (http_response_code == 204)) {
           // uc->remove_pdu_sessions_context(curl_responses.begin()->first);
           uc->set_up_cnx_state(
@@ -1583,11 +1582,9 @@ void amf_n2::handle_itti_message(
               up_cnx_state_e::UPCNX_STATE_DEACTIVATED);
         }
       } else {
-        result = false;
         Logger::ngap().warn("Couldn't get the HTTP response code");
       }
     } else {
-      result = false;
       Logger::ngap().warn("Couldn't get the HTTP response code");
     }
 
@@ -1844,32 +1841,37 @@ bool amf_n2::handle_itti_message(
   // Wait for the response available and process accordingly
   bool result = true;
   while (!curl_responses.empty()) {
-    std::optional<nlohmann::json> result_json = std::nullopt;
-    utils::wait_for_result(curl_responses.begin()->second, result_json);
+    std::optional<nlohmann::json> result_json_opt = std::nullopt;
+    utils::wait_for_result(curl_responses.begin()->second, result_json_opt);
+    if (result_json_opt.has_value()) {
+      nlohmann::json result_json = result_json_opt.value();
 
-    if (result_json.value().find("n2sm") != result_json.value().end()) {
-      std::string n2_sm = {};
-      n2_sm             = result_json.value()["n2sm"].get<std::string>();
-      Logger::ngap().debug(
-          "Got result for PDU Session ID %d", curl_responses.begin()->first);
-      result = result && true;
+      if (result_json.find("n2sm") != result_json.end()) {
+        std::string n2_sm = {};
+        n2_sm             = result_json["n2sm"].get<std::string>();
+        Logger::ngap().debug(
+            "Got result for PDU Session ID %d", curl_responses.begin()->first);
+        result = result && true;
 
-      std::shared_ptr<pdu_session_context> psc = {};
-      if (amf_app_inst->find_pdu_session_context(
-              supi, curl_responses.begin()->first, psc)) {
-        PDUSessionResourceSetupRequestItem_t item = {};
-        item.pduSessionId                         = psc->pdu_session_id;
-        item.s_nssai.sst = std::to_string(psc->snssai.sST);
-        item.s_nssai.sd  = psc->snssai.sD;
-        // item.pduSessionNAS_PDU = nullptr;
-        unsigned int data_len = n2_sm.length();
-        item.pduSessionResourceSetupRequestTransfer.buf =
-            (unsigned char*) malloc(data_len + 1);
-        memcpy(
-            (void*) item.pduSessionResourceSetupRequestTransfer.buf,
-            (void*) n2_sm.c_str(), data_len);
-        item.pduSessionResourceSetupRequestTransfer.size = data_len;
-        list.push_back(item);
+        std::shared_ptr<pdu_session_context> psc = {};
+        if (amf_app_inst->find_pdu_session_context(
+                supi, curl_responses.begin()->first, psc)) {
+          PDUSessionResourceSetupRequestItem_t item = {};
+          item.pduSessionId                         = psc->pdu_session_id;
+          item.s_nssai.sst = std::to_string(psc->snssai.sST);
+          item.s_nssai.sd  = psc->snssai.sD;
+          // item.pduSessionNAS_PDU = nullptr;
+          unsigned int data_len = n2_sm.length();
+          item.pduSessionResourceSetupRequestTransfer.buf =
+              (unsigned char*) malloc(data_len + 1);
+          memcpy(
+              (void*) item.pduSessionResourceSetupRequestTransfer.buf,
+              (void*) n2_sm.c_str(), data_len);
+          item.pduSessionResourceSetupRequestTransfer.size = data_len;
+          list.push_back(item);
+        }
+      } else {
+        result = false;
       }
     } else {
       result = false;
@@ -1997,34 +1999,36 @@ void amf_n2::handle_itti_message(
   // T-UPF to the source gNB
   bool result = true;
   while (!curl_responses.empty()) {
-    std::optional<nlohmann::json> result_json = std::nullopt;
-    utils::wait_for_result(curl_responses.begin()->second, result_json);
+    std::optional<nlohmann::json> result_json_opt = std::nullopt;
+    utils::wait_for_result(curl_responses.begin()->second, result_json_opt);
+    if (result_json_opt.has_value()) {
+      nlohmann::json result_json = result_json_opt.value();
+      if (result_json.find("n2sm") != result_json.end()) {
+        std::string n2_sm = {};
+        n2_sm             = result_json["n2sm"].get<std::string>();
+        Logger::ngap().debug(
+            "Got result for PDU Session ID %d", curl_responses.begin()->first);
 
-    if (result_json.value().find("n2sm") != result_json.value().end()) {
-      std::string n2_sm = {};
-      n2_sm             = result_json.value()["n2sm"].get<std::string>();
-      Logger::ngap().debug(
-          "Got result for PDU Session ID %d", curl_responses.begin()->first);
+        result                                 = result && true;
+        uint8_t pdu_session_id_value           = curl_responses.begin()->first;
+        unsigned int data_len                  = n2_sm.length();
+        PduSessionId pdu_session_id            = {};
+        OCTET_STRING_t handoverCommandTransfer = {};
+        pdu_session_id.set(pdu_session_id_value);
+        OCTET_STRING_fromBuf(
+            &handoverCommandTransfer, n2_sm.c_str(), n2_sm.length());
+        handoverItem.set(pdu_session_id, handoverCommandTransfer);
+        handoverItemList.push_back(handoverItem);
+        handoverList.set(handoverItemList);
 
-      result                                 = result && true;
-      uint8_t pdu_session_id_value           = curl_responses.begin()->first;
-      unsigned int data_len                  = n2_sm.length();
-      PduSessionId pdu_session_id            = {};
-      OCTET_STRING_t handoverCommandTransfer = {};
-      pdu_session_id.set(pdu_session_id_value);
-      OCTET_STRING_fromBuf(
-          &handoverCommandTransfer, n2_sm.c_str(), n2_sm.length());
-      handoverItem.set(pdu_session_id, handoverCommandTransfer);
-      handoverItemList.push_back(handoverItem);
-      handoverList.set(handoverItemList);
-
-      std::shared_ptr<pdu_session_context> psc = {};
-      if (amf_app_inst->find_pdu_session_context(
-              supi, pdu_session_id_value, psc)) {
-        psc->is_ho_accepted = true;
+        std::shared_ptr<pdu_session_context> psc = {};
+        if (amf_app_inst->find_pdu_session_context(
+                supi, pdu_session_id_value, psc)) {
+          psc->is_ho_accepted = true;
+        }
+      } else {
+        result = false;
       }
-    } else {
-      result = false;
     }
 
     curl_responses.erase(curl_responses.begin());
@@ -2151,17 +2155,17 @@ void amf_n2::handle_itti_message(
   bool result = true;
   while (!curl_responses.empty()) {
     // Wait for the result available and process accordingly
-    std::optional<nlohmann::json> result_json = std::nullopt;
-    utils::wait_for_result(curl_responses.begin()->second, result_json);
+    std::optional<nlohmann::json> result_json_opt = std::nullopt;
+    utils::wait_for_result(curl_responses.begin()->second, result_json_opt);
 
-    if (result_json.has_value()) {
+    if (result_json_opt.has_value()) {
+      nlohmann::json result_json = result_json_opt.value();
       Logger::amf_server().debug(
           "Got result for promise ID %d", curl_responses.begin()->first);
       uint32_t pdu_session_id = 0;
-      if (result_json.value().find("pduSessionId") !=
-          result_json.value().end()) {
+      if (result_json.find("pduSessionId") != result_json.end()) {
         result         = result && true;
-        pdu_session_id = result_json.value()["pduSessionId"].get<int>();
+        pdu_session_id = result_json["pduSessionId"].get<int>();
       } else {
         result = false;
       }

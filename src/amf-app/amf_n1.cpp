@@ -3316,10 +3316,10 @@ void amf_n1::ue_initiate_de_registration_handle(
         if (result.has_value()) {
           Logger::amf_server().debug(
               "Got result for promise ID %d", smf_responses.begin()->first);
-
+          nlohmann::json result_json  = result.value();
           uint32_t http_response_code = 0;
-          if (result.value().find("httpResponseCode") != result.value().end()) {
-            http_response_code = result.value()["httpResponseCode"].get<int>();
+          if (result_json.find("httpResponseCode") != result_json.end()) {
+            http_response_code = result_json["httpResponseCode"].get<int>();
             // Remove PDU session
             // TODO for multiple sessions
             if ((http_response_code == 200) or (http_response_code == 204)) {
@@ -4925,13 +4925,13 @@ bool amf_n1::get_slice_selection_subscription_data(
     }
 
     // Wait for the response available and process accordingly
-    std::optional<nlohmann::json> nssai_json = std::nullopt;
-    utils::wait_for_result(f, nssai_json);
-    if (nssai_json.has_value()) {
-      Logger::amf_n1().debug(
-          "Got NSSAI from UDM: %s", nssai_json.value().dump().c_str());
+    std::optional<nlohmann::json> result = std::nullopt;
+    utils::wait_for_result(f, result);
+    if (result.has_value()) {
+      nlohmann::json nssai_json = result.value();
+      Logger::amf_n1().debug("Got NSSAI from UDM: %s", nssai_json.dump());
       try {
-        from_json(nssai_json.value(), nssai);
+        from_json(nssai_json, nssai);
       } catch (std::exception& e) {
         return false;
       }
@@ -5099,14 +5099,15 @@ bool amf_n1::get_network_slice_selection(
     }
 
     // Wait for the response available and process accordingly
-    std::optional<nlohmann::json> network_slice_info = std::nullopt;
-    utils::wait_for_result(f, network_slice_info);
-    if (network_slice_info.has_value()) {
+    std::optional<nlohmann::json> result = std::nullopt;
+    utils::wait_for_result(f, result);
+    if (result.has_value()) {
+      nlohmann::json network_slice_info = result.value();
       Logger::amf_n1().debug(
           "Got Authorized Network Slice Info from NSSF: %s",
-          network_slice_info.value().dump().c_str());
+          network_slice_info.dump());
       try {
-        from_json(network_slice_info.value(), authorized_network_slice_info);
+        from_json(network_slice_info, authorized_network_slice_info);
       } catch (std::exception& e) {
         Logger::amf_n1().warn(
             "Could not parse Authorized Network Slice Info from Json");
@@ -5212,14 +5213,14 @@ bool amf_n1::get_target_amf(
     }
 
     // Wait for the response available and process accordingly
-    std::optional<nlohmann::json> amf_candidate_list = std::nullopt;
-    utils::wait_for_result(f, amf_candidate_list);
-    if (amf_candidate_list.has_value()) {
+    std::optional<nlohmann::json> result = std::nullopt;
+    utils::wait_for_result(f, result);
+    if (result.has_value()) {
+      nlohmann::json amf_candidate_list = result.value();
       Logger::amf_n1().debug(
-          "Got List of AMF candidates from NRF: %s",
-          amf_candidate_list.value().dump().c_str());
+          "Got List of AMF candidates from NRF: %s", amf_candidate_list.dump());
       // TODO: Select an AMF from the candidate list
-      if (!select_target_amf(nc, target_amf, amf_candidate_list.value())) {
+      if (!select_target_amf(nc, target_amf, amf_candidate_list)) {
         Logger::amf_n1().debug(
             "Could not select an appropriate AMF from the AMF candidates");
         return false;
