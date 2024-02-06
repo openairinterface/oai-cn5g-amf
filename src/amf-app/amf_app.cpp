@@ -232,7 +232,7 @@ void amf_app_task(void*) {
       case TERMINATE: {
         if (itti_msg_terminate* terminate =
                 dynamic_cast<itti_msg_terminate*>(msg)) {
-          Logger::amf_n2().info("Received terminate message");
+          Logger::amf_app().info("Received terminate message");
           return;
         }
       } break;
@@ -326,11 +326,8 @@ bool amf_app::update_pdu_sessions_context(
     const oai::amf::model::SmContextStatusNotification& statusNotification) {
   std::shared_ptr<ue_context> uc = {};
   if (!supi_2_ue_context(supi, uc)) return false;
-  // TODO: process SmContextStatusNotification
-  oai::amf::model::StatusInfo statusInfo = statusNotification.getStatusInfo();
-  oai::amf::model::ResourceStatus resourceStatus =
-      statusInfo.getResourceStatus();
-  std::string pdu_session_status = resourceStatus.getValue();
+  std::string pdu_session_status =
+      statusNotification.getStatusInfo().getResourceStatus().getValue();
   if (boost::iequals(pdu_session_status, "released")) {
     if (uc->remove_pdu_sessions_context(pdu_session_id)) return true;
   }
@@ -353,8 +350,7 @@ void amf_app::handle_itti_message(
   if (itti_msg.is_ppi_set) {  // Paging procedure
     Logger::amf_app().info(
         "Handle ITTI N1N2 Message Transfer Request for Paging");
-    std::shared_ptr<itti_paging> paging_msg =
-        std::make_shared<itti_paging>(TASK_AMF_APP, TASK_AMF_N2);
+    auto paging_msg = std::make_shared<itti_paging>(TASK_AMF_APP, TASK_AMF_N2);
     amf_n1_inst->supi_2_amf_id(itti_msg.supi, paging_msg->amf_ue_ngap_id);
     amf_n1_inst->supi_2_ran_id(itti_msg.supi, paging_msg->ran_ue_ngap_id);
 
@@ -367,9 +363,8 @@ void amf_app::handle_itti_message(
   } else if (itti_msg.is_nrppa_pdu_set) {
     Logger::amf_app().info(
         "Handle ITTI N1N2 Message Transfer Request for NRPPa PDU");
-    std::shared_ptr<itti_downlink_ue_associated_nrppa_transport> dl_msg =
-        std::make_shared<itti_downlink_ue_associated_nrppa_transport>(
-            TASK_AMF_APP, TASK_AMF_N2);
+    auto dl_msg = std::make_shared<itti_downlink_ue_associated_nrppa_transport>(
+        TASK_AMF_APP, TASK_AMF_N2);
     dl_msg->nrppa_pdu  = bstrcpy(itti_msg.nrppa_pdu);
     dl_msg->routing_id = bstrcpy(itti_msg.routing_id);
     amf_n1_inst->supi_2_amf_id(itti_msg.supi, dl_msg->amf_ue_ngap_id);
@@ -382,7 +377,7 @@ void amf_app::handle_itti_message(
     }
   } else if (itti_msg.is_n1sm_set or itti_msg.is_n2sm_set) {
     Logger::amf_app().info("Handle ITTI N1N2 Message Transfer Request");
-    std::shared_ptr<itti_downlink_nas_transfer> dl_msg =
+    auto dl_msg =
         std::make_shared<itti_downlink_nas_transfer>(TASK_AMF_APP, TASK_AMF_N1);
 
     if (itti_msg.is_n1sm_set) {
@@ -429,7 +424,7 @@ void amf_app::handle_itti_message(
   if (itti_msg.is_nrppa_pdu_set) {
     Logger::amf_app().info(
         "Handle ITTI Non UE N2 Message Transfer Request for NRPPa PDU");
-    std::shared_ptr<itti_downlink_non_ue_associated_nrppa_transport> dl_msg =
+    auto dl_msg =
         std::make_shared<itti_downlink_non_ue_associated_nrppa_transport>(
             TASK_AMF_APP, TASK_AMF_N2);
     dl_msg->nrppa_pdu  = bstrcpy(itti_msg.nrppa_pdu);
@@ -509,7 +504,7 @@ void amf_app::handle_itti_message(
   }
 
   // Send NAS PDU to task_amf_n1 for further processing
-  std::shared_ptr<itti_uplink_nas_data_ind> itti_n1_msg =
+  auto itti_n1_msg =
       std::make_shared<itti_uplink_nas_data_ind>(TASK_AMF_APP, TASK_AMF_N1);
 
   itti_n1_msg->amf_ue_ngap_id              = amf_ue_ngap_id;
@@ -680,7 +675,7 @@ void amf_app::handle_itti_message(itti_sbi_n1_message_notification& itti_msg) {
 
   // Step 5. Trigger the procedure following RegistrationRequest
 
-  std::shared_ptr<itti_uplink_nas_data_ind> itti_n1_msg =
+  auto itti_n1_msg =
       std::make_shared<itti_uplink_nas_data_ind>(TASK_AMF_APP, TASK_AMF_N1);
 
   itti_n1_msg->amf_ue_ngap_id              = amf_ue_ngap_id;
@@ -711,10 +706,9 @@ void amf_app::handle_itti_message(itti_sbi_n1n2_message_subscribe& itti_msg) {
   // Generate a subscription ID Id and store the corresponding information in a
   // map (subscription id, info)
   n1n2sub_id_t n1n2sub_id = generate_n1n2_message_subscription_id();
-  std::shared_ptr<oai::amf::model::UeN1N2InfoSubscriptionCreateData>
-      subscription_data =
-          std::make_shared<oai::amf::model::UeN1N2InfoSubscriptionCreateData>(
-              itti_msg.subscription_data);
+  auto subscription_data =
+      std::make_shared<oai::amf::model::UeN1N2InfoSubscriptionCreateData>(
+          itti_msg.subscription_data);
   add_n1n2_message_subscription(
       itti_msg.ue_cxt_id, n1n2sub_id, subscription_data);
 
@@ -965,8 +959,7 @@ void amf_app::handle_itti_message(itti_sbi_deregister_nf_instance_response& r) {
   auto response_code = static_cast<http_response_codes_e>(r.http_response_code);
   if (response_code ==
       http_response_codes_e::HTTP_RESPONSE_CODE_204_NO_CONTENT) {
-    // Stop heartbeat
-    itti_inst->timer_remove(timer_nrf_heartbeat);
+    itti_inst->timer_remove(timer_nrf_heartbeat);  // Stop heartbeat
   } else if (
       (response_code ==
        http_response_codes_e::HTTP_RESPONSE_CODE_TEMPORARY_REDIRECT) or
@@ -984,8 +977,7 @@ void amf_app::handle_itti_message(itti_sbi_update_nf_instance_response& r) {
   if (r.http_response_code !=
       static_cast<uint16_t>(
           http_response_codes_e::HTTP_RESPONSE_CODE_204_NO_CONTENT)) {
-    // trigger again registration procedure
-    register_to_nrf();
+    register_to_nrf();  // trigger again registration procedure
   } else {
     Logger::amf_app().debug(
         "Set a timer to the next Heart-beat (%d)",
@@ -1208,9 +1200,8 @@ evsub_id_t amf_app::handle_event_exposure_subscription(
 
   // store subscription
   for (auto i : event_subscriptions) {
-    std::shared_ptr<amf_subscription> ss = std::make_shared<amf_subscription>();
-    ss->sub_id                           = evsub_id;
-    // TODO:
+    auto ss    = std::make_shared<amf_subscription>();
+    ss->sub_id = evsub_id;
     if (msg->event_exposure.is_supi_is_set()) {
       ss->supi        = msg->event_exposure.get_supi();
       ss->supi_is_set = true;
@@ -1231,20 +1222,16 @@ evsub_id_t amf_app::handle_event_exposure_subscription(
         uint32_t promise_id = generate_promise_id();
         Logger::amf_app().debug("Promise ID generated %d", promise_id);
 
-        std::shared_ptr<itti_sbi_determine_location_request> itti_msg =
-            std::make_shared<itti_sbi_determine_location_request>(
-                TASK_AMF_APP, TASK_AMF_SBI, promise_id);
+        auto itti_msg = std::make_shared<itti_sbi_determine_location_request>(
+            TASK_AMF_APP, TASK_AMF_SBI, promise_id);
 
-        boost::shared_ptr<boost::promise<nlohmann::json>> p =
-            boost::make_shared<boost::promise<nlohmann::json>>();
+        auto p = boost::make_shared<boost::promise<nlohmann::json>>();
         boost::shared_future<nlohmann::json> f = p->get_future();
-
         add_promise(promise_id, p);
 
         itti_msg->input_data   = input_data;
         itti_msg->http_version = msg->http_version;
-
-        itti_msg->promise_id = promise_id;
+        itti_msg->promise_id   = promise_id;
 
         int ret = itti_inst->send_msg(itti_msg);
         if (0 != ret) {
@@ -1453,9 +1440,8 @@ void amf_app::register_to_nrf() {
       "Send ITTI msg to SBI task to trigger the registration request towards "
       "NRF");
 
-  std::shared_ptr<itti_sbi_register_nf_instance_request> itti_msg =
-      std::make_shared<itti_sbi_register_nf_instance_request>(
-          TASK_AMF_APP, TASK_AMF_SBI);
+  auto itti_msg = std::make_shared<itti_sbi_register_nf_instance_request>(
+      TASK_AMF_APP, TASK_AMF_SBI);
   itti_msg->profile = nf_instance_profile;
 
   int ret = itti_inst->send_msg(itti_msg);
@@ -1471,9 +1457,8 @@ void amf_app::deregister_to_nrf() const {
   Logger::amf_app().debug(
       "Send ITTI msg to SBI task to trigger the deregistration request to NRF");
 
-  std::shared_ptr<itti_sbi_deregister_nf_instance_request> itti_msg =
-      std::make_shared<itti_sbi_deregister_nf_instance_request>(
-          TASK_AMF_APP, TASK_AMF_SBI);
+  auto itti_msg = std::make_shared<itti_sbi_deregister_nf_instance_request>(
+      TASK_AMF_APP, TASK_AMF_SBI);
   itti_msg->amf_instance_id = amf_instance_id;
   int ret                   = itti_inst->send_msg(itti_msg);
   if (RETURNok != ret) {
@@ -1488,9 +1473,8 @@ void amf_app::timer_nrf_heartbeat_timeout(
     timer_id_t timer_id, uint64_t arg2_user) {
   Logger::amf_app().debug("Send ITTI msg to SBI task to trigger NRF Heartbeat");
 
-  std::shared_ptr<itti_sbi_update_nf_instance_request> itti_msg =
-      std::make_shared<itti_sbi_update_nf_instance_request>(
-          TASK_AMF_APP, TASK_AMF_SBI);
+  auto itti_msg = std::make_shared<itti_sbi_update_nf_instance_request>(
+      TASK_AMF_APP, TASK_AMF_SBI);
 
   oai::model::common::PatchItem patch_item = {};
   oai::model::common::PatchOperation op;
@@ -1546,20 +1530,17 @@ void amf_app::trigger_pdu_session_release(
   std::vector<std::shared_ptr<pdu_session_context>> sessions_ctx;
 
   if (uc->get_pdu_sessions_context(sessions_ctx)) {
-    // Send Nsmf_PDUSession_ReleaseSMContext to SMF to release all existing
-    // PDU sessions
+    // Send request to SMF to release all existing PDU sessions
     std::map<uint32_t, boost::shared_future<nlohmann::json>> smf_responses;
     for (auto session : sessions_ctx) {
-      std::shared_ptr<itti_nsmf_pdusession_release_sm_context> itti_msg =
-          std::make_shared<itti_nsmf_pdusession_release_sm_context>(
-              TASK_AMF_N2, TASK_AMF_SBI);
+      auto itti_msg = std::make_shared<itti_nsmf_pdusession_release_sm_context>(
+          TASK_AMF_N2, TASK_AMF_SBI);
 
       // Generate a promise and associate this promise to the ITTI message
       uint32_t promise_id = amf_app_inst->generate_promise_id();
       Logger::amf_app().debug("Promise ID generated %d", promise_id);
 
-      boost::shared_ptr<boost::promise<nlohmann::json>> p =
-          boost::make_shared<boost::promise<nlohmann::json>>();
+      auto p = boost::make_shared<boost::promise<nlohmann::json>>();
       boost::shared_future<nlohmann::json> f = p->get_future();
 
       // Store the future to be processed later
@@ -1579,21 +1560,20 @@ void amf_app::trigger_pdu_session_release(
       }
     }
 
-    // Wait for the response available and process accordingly
     while (!smf_responses.empty()) {
       // Wait for the result available and process accordingly
-      std::optional<nlohmann::json> result = std::nullopt;
-      utils::wait_for_result(smf_responses.begin()->second, result);
+      std::optional<nlohmann::json> result_opt = std::nullopt;
+      utils::wait_for_result(smf_responses.begin()->second, result_opt);
 
-      if (result.has_value()) {
-        nlohmann::json result_json = result.value();
+      if (result_opt.has_value()) {
+        nlohmann::json result = result_opt.value();
         Logger::amf_server().debug(
             "Got result for promise ID %d, json content %s",
-            smf_responses.begin()->first, result_json.dump());
+            smf_responses.begin()->first, result.dump());
 
         uint32_t http_response_code = 0;
-        if (result_json.find("httpResponseCode") != result_json.end()) {
-          http_response_code = result_json["httpResponseCode"].get<int>();
+        if (result.find("httpResponseCode") != result.end()) {
+          http_response_code = result["httpResponseCode"].get<int>();
           // Remove PDU session
           // TODO for multiple sessions
           if ((http_response_code == 200) or (http_response_code == 204)) {
@@ -1623,39 +1603,34 @@ void amf_app::trigger_pdu_session_up_deactivation(
     // Send PDUSessionUpdateSMContextRequest to SMF for each PDU session
     std::map<uint32_t, boost::shared_future<nlohmann::json>> curl_responses;
     for (auto session : sessions_ctx) {
-      Logger::amf_n2().debug("PDU Session ID %d", session->pdu_session_id);
+      Logger::amf_app().debug("PDU Session ID %d", session->pdu_session_id);
       // Generate a promise and associate this promise to the curl handle
       uint32_t promise_id = amf_app_inst->generate_promise_id();
-      Logger::amf_n2().debug("Promise ID generated %d", promise_id);
+      Logger::amf_app().debug("Promise ID generated %d", promise_id);
 
-      boost::shared_ptr<boost::promise<nlohmann::json>> p =
-          boost::make_shared<boost::promise<nlohmann::json>>();
+      auto p = boost::make_shared<boost::promise<nlohmann::json>>();
       boost::shared_future<nlohmann::json> f = p->get_future();
 
       // Store the future to be processed later
       curl_responses.emplace(session->pdu_session_id, f);
       amf_app_inst->add_promise(promise_id, p);
 
-      Logger::amf_n2().debug(
+      Logger::amf_app().debug(
           "Sending ITTI to trigger PDUSessionUpdateSMContextRequest to SMF to "
           "task TASK_AMF_SBI");
 
-      std::shared_ptr<itti_nsmf_pdusession_update_sm_context> itti_n11_msg =
+      auto itti_n11_msg =
           std::make_shared<itti_nsmf_pdusession_update_sm_context>(
               TASK_NGAP, TASK_AMF_SBI);
 
       itti_n11_msg->pdu_session_id = session->pdu_session_id;
-
-      // TODO:
-      itti_n11_msg->is_n2sm_set = false;
-
+      itti_n11_msg->is_n2sm_set    = false;
       itti_n11_msg->amf_ue_ngap_id = uc->amf_ue_ngap_id;
       itti_n11_msg->ran_ue_ngap_id = uc->ran_ue_ngap_id;
       itti_n11_msg->supi           = uc->supi;
       itti_n11_msg->pdu_session_id = session->pdu_session_id;
-
-      itti_n11_msg->promise_id   = promise_id;
-      itti_n11_msg->up_cnx_state = "DEACTIVATED";
+      itti_n11_msg->promise_id     = promise_id;
+      itti_n11_msg->up_cnx_state   = "DEACTIVATED";
 
       int ret = itti_inst->send_msg(itti_n11_msg);
       if (0 != ret) {
@@ -1665,23 +1640,22 @@ void amf_app::trigger_pdu_session_up_deactivation(
       }
     }
 
-    // Wait for the response available and process accordingly
     bool result = true;
     while (!curl_responses.empty()) {
       // Wait for the result available and process accordingly
-      std::optional<nlohmann::json> result = std::nullopt;
-      utils::wait_for_result(curl_responses.begin()->second, result);
+      std::optional<nlohmann::json> result_opt = std::nullopt;
+      utils::wait_for_result(curl_responses.begin()->second, result_opt);
 
-      if (result.has_value()) {
-        nlohmann::json result_json = result.value();
+      if (result_opt.has_value()) {
+        nlohmann::json result = result_opt.value();
         Logger::amf_server().debug(
             "Got result from a promise with PDU Session Id %d, json content %s",
-            curl_responses.begin()->first, result_json.dump());
+            curl_responses.begin()->first, result.dump());
 
         uint32_t http_response_code = 0;
-        if (result_json.find("httpResponseCode") != result_json.end()) {
+        if (result.find("httpResponseCode") != result.end()) {
           result             = result && true;
-          http_response_code = result_json["httpResponseCode"].get<int>();
+          http_response_code = result["httpResponseCode"].get<int>();
 
           if ((http_response_code == 200) or (http_response_code == 204)) {
             uc->set_up_cnx_state(
@@ -1691,11 +1665,11 @@ void amf_app::trigger_pdu_session_up_deactivation(
 
         } else {
           result = false;
-          Logger::ngap().warn("Couldn't get the HTTP response code");
+          Logger::ngap().warn("Could not get the HTTP response code");
         }
       } else {
         result = false;
-        Logger::ngap().warn("Couldn't get the HTTP response code");
+        Logger::ngap().warn("Could not get the HTTP response code");
       }
 
       curl_responses.erase(curl_responses.begin());
@@ -1716,24 +1690,23 @@ bool amf_app::trigger_pdu_session_up_activation(
     // Send PDUSessionUpdateSMContextRequest to SMF for each PDU session
     std::map<uint32_t, boost::shared_future<nlohmann::json>> curl_responses;
     for (auto session : sessions_ctx) {
-      Logger::amf_n2().debug("PDU Session ID %d", session->pdu_session_id);
+      Logger::amf_app().debug("PDU Session ID %d", session->pdu_session_id);
       // Generate a promise and associate this promise to the curl handle
       uint32_t promise_id = amf_app_inst->generate_promise_id();
-      Logger::amf_n2().debug("Promise ID generated %d", promise_id);
+      Logger::amf_app().debug("Promise ID generated %d", promise_id);
 
-      boost::shared_ptr<boost::promise<nlohmann::json>> p =
-          boost::make_shared<boost::promise<nlohmann::json>>();
+      auto p = boost::make_shared<boost::promise<nlohmann::json>>();
       boost::shared_future<nlohmann::json> f = p->get_future();
 
       // Store the future to be processed later
       curl_responses.emplace(session->pdu_session_id, f);
       amf_app_inst->add_promise(promise_id, p);
 
-      Logger::amf_n2().debug(
+      Logger::amf_app().debug(
           "Sending ITTI to trigger PDUSessionUpdateSMContextRequest to SMF to "
           "task TASK_AMF_SBI");
 
-      std::shared_ptr<itti_nsmf_pdusession_update_sm_context> itti_n11_msg =
+      auto itti_n11_msg =
           std::make_shared<itti_nsmf_pdusession_update_sm_context>(
               TASK_NGAP, TASK_AMF_SBI);
 
@@ -1755,21 +1728,20 @@ bool amf_app::trigger_pdu_session_up_activation(
       }
     }
 
-    // Wait for the response available and process accordingly
     while (!curl_responses.empty()) {
       // Wait for the result available and process accordingly
-      std::optional<nlohmann::json> result = std::nullopt;
-      utils::wait_for_result(curl_responses.begin()->second, result);
+      std::optional<nlohmann::json> result_opt = std::nullopt;
+      utils::wait_for_result(curl_responses.begin()->second, result_opt);
 
-      if (result.has_value()) {
-        nlohmann::json result_json = result.value();
+      if (result_opt.has_value()) {
+        nlohmann::json result = result_opt.value();
         Logger::amf_server().debug(
             "Got result from a promise for PDU session Id %d, json content %s",
-            curl_responses.begin()->first, result_json.dump());
+            curl_responses.begin()->first, result.dump());
 
         uint32_t http_response_code = 0;
-        if (result_json.find("httpResponseCode") != result_json.end()) {
-          http_response_code = result_json["httpResponseCode"].get<int>();
+        if (result.find("httpResponseCode") != result.end()) {
+          http_response_code = result["httpResponseCode"].get<int>();
           if ((http_response_code == 200) or (http_response_code == 204)) {
             uc->set_up_cnx_state(
                 curl_responses.begin()->first,
@@ -1804,22 +1776,21 @@ bool amf_app::trigger_pdu_session_up_activation(
   std::shared_ptr<pdu_session_context> psc = {};
   if (uc->find_pdu_session_context(pdu_session_id, psc)) {
     // Send PDUSessionUpdateSMContextRequest to SMF
-    Logger::amf_n2().debug("PDU Session ID %d", pdu_session_id);
+    Logger::amf_app().debug("PDU Session ID %d", pdu_session_id);
     // Generate a promise and associate this promise to the curl handle
     uint32_t promise_id = amf_app_inst->generate_promise_id();
-    Logger::amf_n2().debug("Promise ID generated %d", promise_id);
+    Logger::amf_app().debug("Promise ID generated %d", promise_id);
 
-    boost::shared_ptr<boost::promise<nlohmann::json>> p =
-        boost::make_shared<boost::promise<nlohmann::json>>();
+    auto p = boost::make_shared<boost::promise<nlohmann::json>>();
     boost::shared_future<nlohmann::json> f = p->get_future();
 
     amf_app_inst->add_promise(promise_id, p);
 
-    Logger::amf_n2().debug(
+    Logger::amf_app().debug(
         "Sending ITTI to trigger PDUSessionUpdateSMContextRequest to SMF to "
         "task TASK_AMF_SBI");
 
-    std::shared_ptr<itti_nsmf_pdusession_update_sm_context> itti_n11_msg =
+    auto itti_n11_msg =
         std::make_shared<itti_nsmf_pdusession_update_sm_context>(
             TASK_NGAP, TASK_AMF_SBI);
 
@@ -1841,19 +1812,19 @@ bool amf_app::trigger_pdu_session_up_activation(
     }
 
     // Wait for the result available and process accordingly
-    std::optional<nlohmann::json> result = std::nullopt;
-    utils::wait_for_result(f, result);
+    std::optional<nlohmann::json> result_opt = std::nullopt;
+    utils::wait_for_result(f, result_opt);
 
-    if (result.has_value()) {
-      nlohmann::json result_json = result.value();
+    if (result_opt.has_value()) {
+      nlohmann::json result = result_opt.value();
       Logger::amf_server().debug(
           "Got result from a promise (promise Id %ld) for PDU session Id %d, "
           "JSON content %s",
-          promise_id, pdu_session_id, result_json.dump());
+          promise_id, pdu_session_id, result.dump());
 
       uint32_t http_response_code = 0;
-      if (result_json.find("httpResponseCode") != result_json.end()) {
-        http_response_code = result_json["httpResponseCode"].get<int>();
+      if (result.find("httpResponseCode") != result.end()) {
+        http_response_code = result["httpResponseCode"].get<int>();
         if ((http_response_code == 200) or (http_response_code == 204)) {
           uc->set_up_cnx_state(
               pdu_session_id, up_cnx_state_e::UPCNX_STATE_ACTIVATED);
@@ -1941,26 +1912,25 @@ bool amf_app::store_ue_context_in_udsf(
   uint32_t promise_id = amf_app_inst->generate_promise_id();
   Logger::amf_app().debug("Promise ID generated %d", promise_id);
 
-  boost::shared_ptr<boost::promise<nlohmann::json>> p =
-      boost::make_shared<boost::promise<nlohmann::json>>();
+  auto p = boost::make_shared<boost::promise<nlohmann::json>>();
   boost::shared_future<nlohmann::json> f = p->get_future();
 
   amf_app_inst->add_promise(promise_id, p);
 
-  Logger::amf_n2().debug(
+  Logger::amf_app().debug(
       "Sending ITTI to trigger Store UE Context Request to UDSF to "
       "task TASK_AMF_SBI");
 
-  std::shared_ptr<itti_sbi_store_ue_context_request> itti_n11_msg =
-      std::make_shared<itti_sbi_store_ue_context_request>(
-          TASK_NGAP, TASK_AMF_SBI, promise_id);
+  auto itti_n11_msg = std::make_shared<itti_sbi_store_ue_context_request>(
+      TASK_NGAP, TASK_AMF_SBI, promise_id);
 
   // Use ue_context_key as Record Id
   itti_n11_msg->record_id =
       amf_conv::get_ue_context_key(ran_ue_ngap_id, amf_ue_ngap_id);
   itti_n11_msg->ue_context   = ue_cxt_json;
   itti_n11_msg->http_version = amf_cfg.support_features.http_version;
-  int ret                    = itti_inst->send_msg(itti_n11_msg);
+
+  int ret = itti_inst->send_msg(itti_n11_msg);
   if (0 != ret) {
     Logger::ngap().error(
         "Could not send ITTI message %s to task TASK_AMF_SBI",
@@ -1969,19 +1939,18 @@ bool amf_app::store_ue_context_in_udsf(
   }
 
   // Wait for the result available and process accordingly
-  std::optional<nlohmann::json> result = std::nullopt;
-  utils::wait_for_result(f, result);
+  std::optional<nlohmann::json> result_opt = std::nullopt;
+  utils::wait_for_result(f, result_opt);
 
-  if (result.has_value()) {
-    nlohmann::json result_json = result.value();
+  if (result_opt.has_value()) {
+    nlohmann::json result = result_opt.value();
     Logger::amf_server().debug(
         "Got result from a promise (promise Id %ld), "
         "JSON content %s",
-        promise_id, result_json.dump());
-
+        promise_id, result.dump());
     uint32_t http_response_code = 0;
-    if (result_json.find("httpResponseCode") != result_json.end()) {
-      http_response_code = result_json["httpResponseCode"].get<int>();
+    if (result.find("httpResponseCode") != result.end()) {
+      http_response_code = result["httpResponseCode"].get<int>();
       if ((http_response_code == 200) or (http_response_code == 204)) {
         // TODO:
         is_context_stored = true;
@@ -2023,23 +1992,21 @@ bool amf_app::retrieve_ue_context_from_udsf(
   uint32_t promise_id = amf_app_inst->generate_promise_id();
   Logger::amf_app().debug("Promise ID generated %d", promise_id);
 
-  boost::shared_ptr<boost::promise<nlohmann::json>> p =
-      boost::make_shared<boost::promise<nlohmann::json>>();
+  auto p = boost::make_shared<boost::promise<nlohmann::json>>();
   boost::shared_future<nlohmann::json> f = p->get_future();
-
   amf_app_inst->add_promise(promise_id, p);
 
-  Logger::amf_n2().debug(
+  Logger::amf_app().debug(
       "Sending ITTI to trigger Store UE Context Request to UDSF to "
       "task TASK_AMF_SBI");
 
-  std::shared_ptr<itti_sbi_retrieve_ue_context_request> itti_n11_msg =
-      std::make_shared<itti_sbi_retrieve_ue_context_request>(
-          TASK_NGAP, TASK_AMF_SBI, promise_id);
+  auto itti_n11_msg = std::make_shared<itti_sbi_retrieve_ue_context_request>(
+      TASK_NGAP, TASK_AMF_SBI, promise_id);
 
   itti_n11_msg->supi         = supi;
   itti_n11_msg->http_version = amf_cfg.support_features.http_version;
-  int ret                    = itti_inst->send_msg(itti_n11_msg);
+
+  int ret = itti_inst->send_msg(itti_n11_msg);
   if (0 != ret) {
     Logger::ngap().error(
         "Could not send ITTI message %s to task TASK_AMF_SBI",
@@ -2048,19 +2015,17 @@ bool amf_app::retrieve_ue_context_from_udsf(
   }
 
   // Wait for the result available and process accordingly
-  std::optional<nlohmann::json> result = std::nullopt;
-  utils::wait_for_result(f, result);
-
-  if (result.has_value()) {
-    nlohmann::json result_json = result.value();
+  std::optional<nlohmann::json> result_opt = std::nullopt;
+  utils::wait_for_result(f, result_opt);
+  if (result_opt.has_value()) {
+    nlohmann::json result = result_opt.value();
     Logger::amf_server().debug(
         "Got result from a promise (promise Id %ld), "
         "JSON content %s",
-        promise_id, result_json.dump());
-
+        promise_id, result.dump());
     uint32_t http_response_code = 0;
-    if (result_json.find("httpResponseCode") != result_json.end()) {
-      http_response_code = result_json["httpResponseCode"].get<int>();
+    if (result.find("httpResponseCode") != result.end()) {
+      http_response_code = result["httpResponseCode"].get<int>();
       if ((http_response_code == 200) or (http_response_code == 204)) {
         // TODO:
         is_context_retrieved = true;
