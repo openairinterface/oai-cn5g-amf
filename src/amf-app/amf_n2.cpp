@@ -863,7 +863,7 @@ void amf_n2::handle_itti_message(
     }
     */
 
-  std::shared_ptr<itti_uplink_nas_data_ind> itti_msg =
+  auto itti_msg =
       std::make_shared<itti_uplink_nas_data_ind>(TASK_AMF_N2, TASK_AMF_N1);
 
   itti_msg->is_nas_signalling_estab_req = false;
@@ -918,8 +918,7 @@ void amf_n2::handle_itti_message(
   unc->amf_ue_ngap_id = dl_nas_transport->amf_ue_ngap_id;
   set_amf_ue_ngap_id_2_ue_ngap_context(unc->amf_ue_ngap_id, unc);
   unc->ng_ue_state = NGAP_UE_CONNECTED;
-  std::unique_ptr<DownLinkNasTransportMsg> ngap_msg =
-      std::make_unique<DownLinkNasTransportMsg>();
+  auto ngap_msg    = std::make_unique<DownLinkNasTransportMsg>();
   ngap_msg->setAmfUeNgapId(dl_nas_transport->amf_ue_ngap_id);
   ngap_msg->setRanUeNgapId(dl_nas_transport->ran_ue_ngap_id);
   ngap_msg->setNasPdu(dl_nas_transport->nas);
@@ -953,8 +952,7 @@ void amf_n2::handle_itti_message(
     return;
   }
 
-  std::unique_ptr<InitialContextSetupRequestMsg> msg =
-      std::make_unique<InitialContextSetupRequestMsg>();
+  auto msg = std::make_unique<InitialContextSetupRequestMsg>();
   msg->setAmfUeNgapId(itti_msg->amf_ue_ngap_id);
   msg->setRanUeNgapId(itti_msg->ran_ue_ngap_id);
   guami_full_format_t guami = {};
@@ -1103,8 +1101,7 @@ void amf_n2::handle_itti_message(
     return;
   }
 
-  std::unique_ptr<PduSessionResourceSetupRequestMsg> psrsr =
-      std::make_unique<PduSessionResourceSetupRequestMsg>();
+  auto psrsr = std::make_unique<PduSessionResourceSetupRequestMsg>();
   psrsr->setAmfUeNgapId(itti_msg->amf_ue_ngap_id);
   psrsr->setRanUeNgapId(itti_msg->ran_ue_ngap_id);
 
@@ -1184,7 +1181,7 @@ void amf_n2::handle_itti_message(
     return;
   }
 
-  std::unique_ptr<PduSessionResourceModifyRequestMsg> modify_request_msg =
+  auto modify_request_msg =
       std::make_unique<PduSessionResourceModifyRequestMsg>();
 
   modify_request_msg->setAmfUeNgapId(itti_msg->amf_ue_ngap_id);
@@ -1246,7 +1243,7 @@ void amf_n2::handle_itti_message(
     return;
   }
 
-  std::unique_ptr<PduSessionResourceReleaseCommandMsg> release_cmd_msg =
+  auto release_cmd_msg =
       std::make_unique<PduSessionResourceReleaseCommandMsg>();
 
   release_cmd_msg->setAmfUeNgapId(itti_msg->amf_ue_ngap_id);
@@ -1291,8 +1288,7 @@ void amf_n2::handle_itti_message(
   e_Ngap_CauseRadioNetwork cause = {};
   itti_msg->ueCtxRel->getCauseRadioNetwork(cause);
 
-  std::unique_ptr<UEContextReleaseCommandMsg> ueCtxRelCmd =
-      std::make_unique<UEContextReleaseCommandMsg>();
+  auto ueCtxRelCmd = std::make_unique<UEContextReleaseCommandMsg>();
   ueCtxRelCmd->setUeNgapIdPair(amf_ue_ngap_id, ran_ue_ngap_id);
   ueCtxRelCmd->setCauseRadioNetwork(cause);
 
@@ -1325,8 +1321,7 @@ void amf_n2::handle_itti_message(
     return;
   }
 
-  std::unique_ptr<UEContextReleaseCommandMsg> ueCtxRelCmd =
-      std::make_unique<UEContextReleaseCommandMsg>();
+  auto ueCtxRelCmd = std::make_unique<UEContextReleaseCommandMsg>();
   ueCtxRelCmd->setUeNgapIdPair(
       itti_msg->amf_ue_ngap_id, itti_msg->ran_ue_ngap_id);
 
@@ -1370,9 +1365,8 @@ void amf_n2::handle_itti_message(
     Logger::amf_n1().debug(
         "Send ITTI msg to AMF SBI to trigger the event notification");
 
-    std::shared_ptr<itti_sbi_notify_subscribed_event> itti_msg_ev =
-        std::make_shared<itti_sbi_notify_subscribed_event>(
-            TASK_AMF_N2, TASK_AMF_SBI);
+    auto itti_msg_ev = std::make_shared<itti_sbi_notify_subscribed_event>(
+        TASK_AMF_N2, TASK_AMF_SBI);
 
     itti_msg_ev->http_version = amf_cfg.support_features.http_version;
 
@@ -1539,7 +1533,7 @@ void amf_n2::handle_itti_message(
         "Sending ITTI to trigger PDUSessionUpdateSMContextRequest to SMF to "
         "task TASK_AMF_SBI");
 
-    std::shared_ptr<itti_nsmf_pdusession_update_sm_context> itti_n11_msg =
+    auto itti_n11_msg =
         std::make_shared<itti_nsmf_pdusession_update_sm_context>(
             TASK_NGAP, TASK_AMF_SBI);
 
@@ -1703,8 +1697,7 @@ bool amf_n2::handle_itti_message(
   // TODO: T-AMF selection, for now use the same AMF
 
   // Create HandoverRequest message to be sent to target gNB
-  std::unique_ptr<HandoverRequest> handover_request =
-      std::make_unique<HandoverRequest>();
+  auto handover_request = std::make_unique<HandoverRequest>();
   handover_request->setAmfUeNgapId(amf_ue_ngap_id);
   handover_request->setHandoverType(0);
   handover_request->setCause(
@@ -1811,9 +1804,8 @@ bool amf_n2::handle_itti_message(
       Logger::amf_n2().debug(
           "Sending ITTI to trigger PDUSessionUpdateSMContextRequest to SMF to "
           "task TASK_AMF_SBI");
-      std::shared_ptr<itti_nsmf_pdusession_update_sm_context> itti_msg =
-          std::make_shared<itti_nsmf_pdusession_update_sm_context>(
-              TASK_NGAP, TASK_AMF_SBI);
+      auto itti_msg = std::make_shared<itti_nsmf_pdusession_update_sm_context>(
+          TASK_NGAP, TASK_AMF_SBI);
 
       itti_msg->pdu_session_id = pdu_session_id_value;
       itti_msg->n2sm           = blk2bstr(
@@ -1950,8 +1942,7 @@ void amf_n2::handle_itti_message(
     uint32_t promise_id = amf_app_inst->generate_promise_id();
     Logger::amf_n2().debug("Promise ID generated %d", promise_id);
 
-    boost::shared_ptr<boost::promise<nlohmann::json>> p =
-        boost::make_shared<boost::promise<nlohmann::json>>();
+    auto p = boost::make_shared<boost::promise<nlohmann::json>>();
     boost::shared_future<nlohmann::json> f = p->get_future();
 
     // Store the future to be processed later
@@ -1961,9 +1952,8 @@ void amf_n2::handle_itti_message(
     Logger::amf_n2().debug(
         "Sending ITTI to trigger PDUSessionUpdateSMContextRequest to SMF to "
         "task TASK_AMF_SBI");
-    std::shared_ptr<itti_nsmf_pdusession_update_sm_context> itti_msg =
-        std::make_shared<itti_nsmf_pdusession_update_sm_context>(
-            TASK_NGAP, TASK_AMF_SBI);
+    auto itti_msg = std::make_shared<itti_nsmf_pdusession_update_sm_context>(
+        TASK_NGAP, TASK_AMF_SBI);
 
     itti_msg->pdu_session_id = pdu_session_resource.pduSessionId;
     itti_msg->n2sm           = blk2bstr(
@@ -1985,8 +1975,7 @@ void amf_n2::handle_itti_message(
   }
 
   // Send HandoverCommandMsg to Source gNB
-  std::unique_ptr<HandoverCommandMsg> handovercommand =
-      std::make_unique<HandoverCommandMsg>();
+  auto handovercommand = std::make_unique<HandoverCommandMsg>();
   handovercommand->setAmfUeNgapId(amf_ue_ngap_id);
   handovercommand->setRanUeNgapId(unc->ran_ue_ngap_id);
   handovercommand->setHandoverType(Ngap_HandoverType_intra5gs);
@@ -2114,8 +2103,7 @@ void amf_n2::handle_itti_message(
       uint32_t promise_id = amf_app_inst->generate_promise_id();
       Logger::amf_n2().debug("Promise ID generated %d", promise_id);
 
-      boost::shared_ptr<boost::promise<nlohmann::json>> p =
-          boost::make_shared<boost::promise<nlohmann::json>>();
+      auto p = boost::make_shared<boost::promise<nlohmann::json>>();
       boost::shared_future<nlohmann::json> f = p->get_future();
 
       // Store the future to be processed later
@@ -2126,7 +2114,7 @@ void amf_n2::handle_itti_message(
           "Sending ITTI to trigger PDUSessionUpdateSMContextRequest to SMF to "
           "task TASK_AMF_SBI");
 
-      std::shared_ptr<itti_nsmf_pdusession_update_sm_context> itti_n11_msg =
+      auto itti_n11_msg =
           std::make_shared<itti_nsmf_pdusession_update_sm_context>(
               TASK_NGAP, TASK_AMF_SBI);
 
@@ -2178,8 +2166,7 @@ void amf_n2::handle_itti_message(
 
   // Send UE Release Command to Source gNB
   Logger::ngap().info("Send UE Release Command to source gNB");
-  std::unique_ptr<UEContextReleaseCommandMsg> ueContextReleaseCommand =
-      std::make_unique<UEContextReleaseCommandMsg>();
+  auto ueContextReleaseCommand = std::make_unique<UEContextReleaseCommandMsg>();
   ueContextReleaseCommand->setUeNgapIdPair(amf_ue_ngap_id, unc->ran_ue_ngap_id);
   ueContextReleaseCommand->setCauseRadioNetwork(
       Ngap_CauseRadioNetwork_successful_handover);
@@ -2291,8 +2278,7 @@ void amf_n2::handle_itti_message(
   long amf_drb_id = {0};
   amf_drb_id      = drb_id;
 
-  std::unique_ptr<DownlinkRANStatusTransfer> dl_ran_status_transfer =
-      std::make_unique<DownlinkRANStatusTransfer>();
+  auto dl_ran_status_transfer = std::make_unique<DownlinkRANStatusTransfer>();
   dl_ran_status_transfer->setAmfUeNgapId(amf_ue_ngap_id);
   dl_ran_status_transfer->setRanUeNgapId(unc->target_ran_ue_ngap_id);
   dl_ran_status_transfer->setRANStatusTransfer_TransparentContainer(
@@ -2389,13 +2375,6 @@ void amf_n2::handle_itti_message(
   Logger::amf_n2().debug(
       "Handle Downlink Non UE Associated NRPPa Transport ...");
 
-  // std::shared_ptr<gnb_context> gc = {};
-  // if (!assoc_id_2_gnb_context(unc->gnb_assoc_id, gc)) {
-  //   Logger::amf_n2().error(
-  //       "No existing gNG context with assoc_id (%d)", unc->gnb_assoc_id);
-  //   return;
-  // }
-
   DownlinkNonUEAssociatedNRPPaTransportMsg dnuant = {};
   dnuant.setNRPPaPdu(itti_msg->nrppa_pdu);
   dnuant.setRoutingId(itti_msg->routing_id);
@@ -2457,13 +2436,12 @@ void amf_n2::handle_itti_message(
   // Create message to send to subscribed NFs
   if (subscriptions.size() > 0) {
     // TODO:
-
     // Send request to SBI to trigger the notification to the subscribed NFs (N2
     // Info Notify)
     Logger::amf_n2().debug(
         "Send ITTI msg to AMF SBI to trigger the notification");
 
-    std::shared_ptr<itti_sbi_n2_info_notify> itti_msg_notification =
+    auto itti_msg_notification =
         std::make_shared<itti_sbi_n2_info_notify>(TASK_AMF_N2, TASK_AMF_SBI);
 
     for (auto sub : subscriptions) {
@@ -2516,7 +2494,7 @@ void amf_n2::handle_itti_message(
     Logger::amf_n2().debug(
         "Send ITTI msg to AMF SBI to trigger the notification");
 
-    std::shared_ptr<itti_sbi_n2_info_notify> itti_msg_notification =
+    auto itti_msg_notification =
         std::make_shared<itti_sbi_n2_info_notify>(TASK_AMF_N2, TASK_AMF_SBI);
 
     for (auto sub : subscriptions) {
@@ -2547,7 +2525,7 @@ void amf_n2::send_handover_preparation_failure(
     const unsigned long amf_ue_ngap_id, const uint32_t ran_ue_ngap_id,
     const sctp_assoc_id_t& gnb_assoc_id) {
   // Create HandoverPreparationFailure message to be sent to target gNB
-  std::unique_ptr<HandoverPreparationFailure> ho_preparation_failure_msg =
+  auto ho_preparation_failure_msg =
       std::make_unique<HandoverPreparationFailure>();
   ho_preparation_failure_msg->setAmfUeNgapId(amf_ue_ngap_id);
   ho_preparation_failure_msg->setRanUeNgapId(amf_ue_ngap_id);

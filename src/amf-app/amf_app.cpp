@@ -1900,7 +1900,7 @@ bool amf_app::prepare_ue_context(
 //------------------------------------------------------------------------------
 bool amf_app::store_ue_context_in_udsf(
     const uint32_t ran_ue_ngap_id, const long amf_ue_ngap_id,
-    oai::amf::model::UeContext& ue_cxt) {
+    const oai::amf::model::UeContext& ue_cxt) {
   Logger::amf_app().debug("Store UE context into UDSF");
   bool is_context_stored     = false;
   nlohmann::json ue_cxt_json = {};

@@ -806,6 +806,7 @@ class amf_n1 {
   void handle_ue_loss_of_connectivity_change(
       std::string supi, uint8_t status, uint8_t http_version,
       uint32_t ran_ue_ngap_id, long amf_ue_ngap_id);
+
   /*
    * Handle the UE Communication Failure event to trigger the notification to
    * the subscribed NFs
@@ -918,10 +919,25 @@ class amf_n1 {
       std::shared_ptr<nas_context> nc, const uint32_t ran_ue_ngap_id,
       const long amf_ue_ngap_id, bstring nas);
 
+  /*
+   * Handle Service Request message
+   * @param [std::shared_ptr<nas_context>&] nc: Pointer to the NAS context
+   * @param [const uint32_t] ran_ue_ngap_id: RAN UE NGAP ID
+   * @param [const long] amf_ue_ngap_id: AMF UE NGAP ID
+   * @param [bstring] nas: NAS Service Request message
+   * @param [uint8_t] ulCount: Uplink NAS count
+   * @return void
+   */
   void service_request_handle(
       std::shared_ptr<nas_context> nc, const uint32_t ran_ue_ngap_id,
       const long amf_ue_ngap_id, bstring nas, uint8_t ulCount);
 
+  /*
+   * Send Service Reject to the UE
+   * @param [std::shared_ptr<nas_context>&] nc: Pointer to the NAS context
+   * @param [uint8_t] cause: Cause
+   * @return void
+   */
   void send_service_reject(std::shared_ptr<nas_context>& nc, uint8_t cause);
 
   /*

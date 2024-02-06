@@ -44,8 +44,6 @@
 
 using namespace oai::config;
 
-static uint32_t amf_app_ue_ngap_id_generator = 1;
-
 namespace amf_application {
 
 #define TASK_AMF_APP_PERIODIC_STATISTICS (0)
@@ -57,8 +55,9 @@ namespace amf_application {
 
 class amf_app {
  private:
-  amf_profile nf_instance_profile;  // AMF profile
-  std::string amf_instance_id;      // AMF instance id
+  inline static uint32_t amf_app_ue_ngap_id_generator = 1;
+  amf_profile nf_instance_profile;
+  std::string amf_instance_id;
   timer_id_t timer_nrf_heartbeat;
 
   util::uint_generator<uint32_t> evsub_id_generator;
@@ -641,29 +640,69 @@ class amf_app {
 
   /*
    * Store UE Context info in UDSF if available
+   * @param [const uint32_t] ran_ue_ngap_id: RAN UE NGAP ID
+   * @param [const unsigned long] amf_ue_ngap_id: AMF UE NGAP ID
    * @return void
    */
   void store_ue_context(
       const uint32_t ran_ue_ngap_id, const long amf_ue_ngap_id);
+
+  /*
+   * Send request to store UE Context info into UDSF
+   * @param [const uint32_t] ran_ue_ngap_id: RAN UE NGAP ID
+   * @param [const unsigned long] amf_ue_ngap_id: AMF UE NGAP ID
+   * @param [const oai::amf::model::UeContext&]ue_cxt: UE Context
+   * @return void
+   */
   bool store_ue_context_in_udsf(
       const uint32_t ran_ue_ngap_id, const long amf_ue_ngap_id,
-      oai::amf::model::UeContext& ue_cxt);
+      const oai::amf::model::UeContext& ue_cxt);
+
   /*
-   * Get UE context info in UDSF if available
+   * Prepare the UE context which then to be stored in UDSF
+   * @param [const uint32_t] ran_ue_ngap_id: RAN UE NGAP ID
+   * @param [const unsigned long] amf_ue_ngap_id: AMF UE NGAP ID
+   * @param [oai::amf::model::UeContext&]ue_cxt: UE Context
    * @return void
    */
   bool prepare_ue_context(
       const uint32_t ran_ue_ngap_id, const long amf_ue_ngap_id,
       oai::amf::model::UeContext& ue_cxt);
 
+  /*
+   * Retrieve the UE context from either UDSF or the old AMF
+   * @param [const std::string&] supi: UE SUPI
+   * @return void
+   */
   void retrieve_ue_context(const std::string& supi);
+
+  /*
+   * Retrieve the UE context from the old AMF
+   * @param [const std::string&] supi: UE SUPI
+   * @param [oai::amf::model::UeContext&]ue_cxt: UE Context
+   * @return true if success otherwise return false
+   */
   bool retrieve_ue_context_from_old_amf(
       const std::string& supi, oai::amf::model::UeContext& ue_cxt);
+
+  /*
+   * Retrieve the UE context from UDSF
+   * @param [const std::string&] supi: UE SUPI
+   * @param [oai::amf::model::UeContext&]ue_cxt: UE Context
+   * @return true if success otherwise return false
+   */
   bool retrieve_ue_context_from_udsf(
       const std::string& supi, oai::amf::model::UeContext& ue_cxt);
 
+  /*
+   * Sync the retrieved UE context with the internal structure
+   * @param [const std::string&] supi: UE SUPI
+   * @param [const oai::amf::model::UeContext&]ue_cxt: UE Context
+   * @return void
+   */
   void sync_ue_context(
       const std::string& supi, const oai::amf::model::UeContext& ue_cxt);
+
   void update_ue_context();
 };
 
