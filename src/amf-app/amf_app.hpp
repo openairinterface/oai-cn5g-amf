@@ -645,7 +645,9 @@ class amf_app {
    */
   void store_ue_context(
       const uint32_t ran_ue_ngap_id, const long amf_ue_ngap_id);
-  bool store_ue_context_in_udsf(oai::amf::model::UeContext& ue_cxt);
+  bool store_ue_context_in_udsf(
+      const uint32_t ran_ue_ngap_id, const long amf_ue_ngap_id,
+      oai::amf::model::UeContext& ue_cxt);
   /*
    * Get UE context info in UDSF if available
    * @return void
@@ -654,11 +656,14 @@ class amf_app {
       const uint32_t ran_ue_ngap_id, const long amf_ue_ngap_id,
       oai::amf::model::UeContext& ue_cxt);
 
-  void retrieve_ue_context();
-  bool retrieve_ue_context_from_old_amf(oai::amf::model::UeContext& ue_cxt);
-  bool retrieve_ue_context_from_udsf(oai::amf::model::UeContext& ue_cxt);
+  void retrieve_ue_context(const std::string& supi);
+  bool retrieve_ue_context_from_old_amf(
+      const std::string& supi, oai::amf::model::UeContext& ue_cxt);
+  bool retrieve_ue_context_from_udsf(
+      const std::string& supi, oai::amf::model::UeContext& ue_cxt);
 
-  void sync_ue_context(const oai::amf::model::UeContext& ue_cxt);
+  void sync_ue_context(
+      const std::string& supi, const oai::amf::model::UeContext& ue_cxt);
   void update_ue_context();
 };
 

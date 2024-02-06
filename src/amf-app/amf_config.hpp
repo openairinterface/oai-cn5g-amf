@@ -174,6 +174,21 @@ class amf_config {
       const std::string& smf_uri_root, const std::string& smf_api_version);
 
   /*
+   * Get the URI of UDSF Service URI for all Records
+   * representation
+   * @return URI in string format
+   */
+  std::string get_udsf_records_uri();
+
+  /*
+   * Get the URI of UDSF Service URI for a record
+   * representation
+   * @param [const std::string&] record_id: Record ID
+   * @return URI in string format
+   */
+  std::string get_udsf_record_id_uri(const std::string& record_id);
+
+  /*
    * Display the AMF configuration parameters
    * @param void
    * @return void

@@ -1884,7 +1884,7 @@ void amf_app::store_ue_context(
   // Fill UE Context class info from UE's context
   if (prepare_ue_context(ran_ue_ngap_id, amf_ue_ngap_id, ue_cxt)) {
     // Store UE Context in the UDSF
-    store_ue_context_in_udsf(ue_cxt);
+    store_ue_context_in_udsf(ran_ue_ngap_id, amf_ue_ngap_id, ue_cxt);
   }
 }
 
@@ -1898,7 +1898,7 @@ bool amf_app::prepare_ue_context(
   std::shared_ptr<ue_context> uc = {};
   if (!ran_amf_id_2_ue_context(ue_context_key, uc)) return false;
 
-  // TODO:
+  // Fill UE context info
   ue_cxt.setSupi(uc->supi);
   // TODO: drxParameter
   // TODO: subUeAmbr
@@ -1916,7 +1916,6 @@ bool amf_app::prepare_ue_context(
   // TODO: nasUplinkCount
   // TODO: ueSecurityCapability
   // TODO: allowedNssai
-
   std::vector<oai::amf::model::MmContext>& mm_context_list =
       ue_cxt.getMmContextList();
   mm_context_list.push_back(mm_context);
@@ -1924,6 +1923,15 @@ bool amf_app::prepare_ue_context(
   // TODO: sessionContextList
   // TODO: UE-AMBR in serving network
 
+  return true;
+}
+
+//------------------------------------------------------------------------------
+bool amf_app::store_ue_context_in_udsf(
+    const uint32_t ran_ue_ngap_id, const long amf_ue_ngap_id,
+    oai::amf::model::UeContext& ue_cxt) {
+  Logger::amf_app().debug("Store UE context into UDSF");
+  bool is_context_stored     = false;
   nlohmann::json ue_cxt_json = {};
   to_json(ue_cxt_json, ue_cxt);
   Logger::amf_app().debug("UE context %s", ue_cxt_json.dump());
@@ -1947,8 +1955,12 @@ bool amf_app::prepare_ue_context(
       std::make_shared<itti_sbi_store_ue_context_request>(
           TASK_NGAP, TASK_AMF_SBI, promise_id);
 
-  itti_n11_msg->ue_context = ue_cxt_json;
-  int ret                  = itti_inst->send_msg(itti_n11_msg);
+  // Use ue_context_key as Record Id
+  itti_n11_msg->record_id =
+      amf_conv::get_ue_context_key(ran_ue_ngap_id, amf_ue_ngap_id);
+  itti_n11_msg->ue_context   = ue_cxt_json;
+  itti_n11_msg->http_version = amf_cfg.support_features.http_version;
+  int ret                    = itti_inst->send_msg(itti_n11_msg);
   if (0 != ret) {
     Logger::ngap().error(
         "Could not send ITTI message %s to task TASK_AMF_SBI",
@@ -1972,7 +1984,7 @@ bool amf_app::prepare_ue_context(
       http_response_code = result_json["httpResponseCode"].get<int>();
       if ((http_response_code == 200) or (http_response_code == 204)) {
         // TODO:
-        //   return true;
+        is_context_stored = true;
       } else {
         Logger::amf_app().warn("Failed to store UE context into UDSF!");
       }
@@ -1981,43 +1993,102 @@ bool amf_app::prepare_ue_context(
     Logger::amf_app().warn("Could not get response from UDSF");
   }
 
-  return true;
+  return is_context_stored;
 }
 
 //------------------------------------------------------------------------------
-bool amf_app::store_ue_context_in_udsf(oai::amf::model::UeContext& ue_cxt) {
-  return false;
-}
-
-//------------------------------------------------------------------------------
-void amf_app::retrieve_ue_context() {
+void amf_app::retrieve_ue_context(const std::string& supi) {
+  Logger::amf_app().debug("Retrieve UE context from UDSF or old AMF");
   oai::amf::model::UeContext ue_cxt = {};
 
   bool is_ue_context_available = false;
   // Get UE Context from UDSF
   if (amf_cfg.support_features.enable_udsf) {
-    is_ue_context_available = retrieve_ue_context_from_udsf(ue_cxt);
+    is_ue_context_available = retrieve_ue_context_from_udsf(supi, ue_cxt);
   } else {
-    is_ue_context_available = retrieve_ue_context_from_old_amf(ue_cxt);
+    is_ue_context_available = retrieve_ue_context_from_old_amf(supi, ue_cxt);
   }
   // Store UE Context locally
-  if (is_ue_context_available) sync_ue_context(ue_cxt);
+  if (is_ue_context_available) sync_ue_context(supi, ue_cxt);
 }
 
 //------------------------------------------------------------------------------
 bool amf_app::retrieve_ue_context_from_udsf(
-    oai::amf::model::UeContext& ue_cxt) {
-  return false;
+    const std::string& supi, oai::amf::model::UeContext& ue_cxt) {
+  Logger::amf_app().debug("Retrieve UE context from UDSF");
+  bool is_context_retrieved = false;
+
+  // Send Retrieve UE Context Request to UDSF
+  // Generate a promise and associate this promise to the curl handle
+  uint32_t promise_id = amf_app_inst->generate_promise_id();
+  Logger::amf_app().debug("Promise ID generated %d", promise_id);
+
+  boost::shared_ptr<boost::promise<nlohmann::json>> p =
+      boost::make_shared<boost::promise<nlohmann::json>>();
+  boost::shared_future<nlohmann::json> f = p->get_future();
+
+  amf_app_inst->add_promise(promise_id, p);
+
+  Logger::amf_n2().debug(
+      "Sending ITTI to trigger Store UE Context Request to UDSF to "
+      "task TASK_AMF_SBI");
+
+  std::shared_ptr<itti_sbi_retrieve_ue_context_request> itti_n11_msg =
+      std::make_shared<itti_sbi_retrieve_ue_context_request>(
+          TASK_NGAP, TASK_AMF_SBI, promise_id);
+
+  itti_n11_msg->supi         = supi;
+  itti_n11_msg->http_version = amf_cfg.support_features.http_version;
+  int ret                    = itti_inst->send_msg(itti_n11_msg);
+  if (0 != ret) {
+    Logger::ngap().error(
+        "Could not send ITTI message %s to task TASK_AMF_SBI",
+        itti_n11_msg->get_msg_name());
+    return false;
+  }
+
+  // Wait for the result available and process accordingly
+  std::optional<nlohmann::json> result = std::nullopt;
+  utils::wait_for_result(f, result);
+
+  if (result.has_value()) {
+    nlohmann::json result_json = result.value();
+    Logger::amf_server().debug(
+        "Got result from a promise (promise Id %ld), "
+        "JSON content %s",
+        promise_id, result_json.dump());
+
+    uint32_t http_response_code = 0;
+    if (result_json.find("httpResponseCode") != result_json.end()) {
+      http_response_code = result_json["httpResponseCode"].get<int>();
+      if ((http_response_code == 200) or (http_response_code == 204)) {
+        // TODO:
+        is_context_retrieved = true;
+      } else {
+        Logger::amf_app().warn("Failed to store UE context into UDSF!");
+      }
+    }
+  } else {
+    Logger::amf_app().warn("Could not get response from UDSF");
+  }
+
+  return is_context_retrieved;
 }
 
 //------------------------------------------------------------------------------
 bool amf_app::retrieve_ue_context_from_old_amf(
-    oai::amf::model::UeContext& ue_cxt) {
+    const std::string& supi, oai::amf::model::UeContext& ue_cxt) {
+  // TODO:
   return false;
 }
 
 //------------------------------------------------------------------------------
-void amf_app::sync_ue_context(const oai::amf::model::UeContext& ue_cxt) {}
+void amf_app::sync_ue_context(
+    const std::string& supi, const oai::amf::model::UeContext& ue_cxt) {
+  // TODO:
+}
 
 //------------------------------------------------------------------------------
-void amf_app::update_ue_context() {}
+void amf_app::update_ue_context() {
+  // TODO:
+}

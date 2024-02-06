@@ -517,4 +517,25 @@ bool amf_config::get_smf_pdu_session_context_uri(
   return true;
 }
 
+//------------------------------------------------------------------------------
+std::string amf_config::get_udsf_records_uri() {
+  std::string fmr_format_str = {};
+  amf_sbi_helper::get_fmt_format_form(
+      amf_sbi_helper::UdsfDrRecordCRUDApiList, fmr_format_str);
+  return udsf_addr.uri_root + amf_sbi_helper::UdsfDrBase +
+         udsf_addr.api_version +
+         fmt::format(fmr_format_str, DEFAULT_REALM_ID, DEFAULT_STORAGE_ID);
+}
+
+//------------------------------------------------------------------------------
+std::string amf_config::get_udsf_record_id_uri(const std::string& record_id) {
+  std::string fmr_format_str = {};
+  amf_sbi_helper::get_fmt_format_form(
+      amf_sbi_helper::UdsfDrRecordCRUDApi, fmr_format_str);
+  return udsf_addr.uri_root + amf_sbi_helper::UdsfDrBase +
+         udsf_addr.api_version +
+         fmt::format(
+             fmr_format_str, DEFAULT_REALM_ID, DEFAULT_STORAGE_ID, record_id);
+}
+
 }  // namespace oai::config
