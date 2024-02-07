@@ -21,20 +21,26 @@
 #---------------------------------------------------------------------
 #
 # Dockerfile for the Open-Air-Interface AMF service
-#   Valid for Rocky Linux 8.7+
+#   Valid for UBI 9.x | RHEL 9.x
 #
 #---------------------------------------------------------------------
 
 #---------------------------------------------------------------------
 # BUILDER IMAGE
 #---------------------------------------------------------------------
-FROM docker.io/rockylinux:8 AS oai-amf-builder
+FROM registry.access.redhat.com/ubi9/ubi:latest AS oai-amf-builder
 
 ENV IS_DOCKERFILE=1
 
-RUN dnf install 'dnf-command(config-manager)' -y && \
-    dnf config-manager --set-enabled powertools && \
-    dnf install epel-release -y && crb enable && \
+# Copy the entitlements
+COPY ./etc-pki-entitlement /etc/pki/entitlement
+
+# Copy the subscription manager configurations
+COPY ./rhsm-conf /etc/rhsm
+COPY ./rhsm-ca /etc/rhsm/ca
+
+RUN rm -f /etc/rhsm-host && \
+    subscription-manager repos --enable codeready-builder-for-rhel-9-x86_64-rpms && \
     dnf update -y && \
     # here just to display the current version
     cat /etc/os-release && \
@@ -70,18 +76,29 @@ WORKDIR /openair-amf/build/scripts
 RUN ldconfig && \
     ./build_amf --clean --Verbose --build-type Release --jobs && \
     ldd /openair-amf/build/amf/build/amf && \
-    mv /openair-amf/build/amf/build/amf /openair-amf/build/amf/build/oai_amf
+    mv /openair-amf/build/amf/build/amf /openair-amf/build/amf/build/oai_amf && \
+    # Remove entitlements and Subscription Manager configs
+    rm -rf /etc/pki/entitlement && \
+    rm -rf /etc/rhsm
 
 FROM mikefarah/yq:latest as yq-source
 
 #---------------------------------------------------------------------
 # TARGET IMAGE
 #---------------------------------------------------------------------
-FROM docker.io/rockylinux:8-minimal as oai-amf
+FROM registry.access.redhat.com/ubi9/ubi-minimal:latest as oai-amf
 ENV TZ=Europe/Paris
 # We install some debug tools for the moment in addition of mandatory libraries
 
-RUN microdnf update -y && \
+# Copy the entitlements
+COPY ./etc-pki-entitlement /etc/pki/entitlement
+# Copy the subscription manager configurations
+COPY ./rhsm-conf /etc/rhsm
+COPY ./rhsm-ca /etc/rhsm/ca
+
+
+RUN rm -f /etc/rhsm-host && \
+    microdnf update -y && \
     microdnf install -y \
 # Debug Tools that are not mandatory
       tzdata \
@@ -95,10 +112,12 @@ RUN microdnf update -y && \
       libicu \
       boost \
       libevent \
-      findutils \
-      mysql-libs && \
+      findutils && \
     microdnf clean all -y && \
-    rm -rf /var/cache/yum /var/cache/dnf
+    rm -rf /var/cache/yum /var/cache/dnf && \
+    # Remove entitlements and Subscription Manager configs
+    rm -rf /etc/pki/entitlement && \
+    rm -rf /etc/rhsm
 
 # Copying executable and generated libraries
 WORKDIR /openair-amf/bin
@@ -115,6 +134,7 @@ COPY --from=oai-amf-builder \
     /usr/local/lib64/libspdlog.so \
     /usr/local/lib64/libfmt.so \
     /usr/local/lib64/libyaml-cpp.so.0.* \
+    /usr/lib64/mysql/libmysqlclient.so.21 \
     /usr/lib64/
 
 RUN ldconfig && \

@@ -203,7 +203,7 @@ pipeline {
                   sh "oc delete -f openshift/build-config.yaml || true"
                   sh "sed -i -e 's@oai-amf:latest@oai-amf:${amf_tag}@g' openshift/build-config.yaml"
                   sh "oc create -f openshift/build-config.yaml"
-                  sh "oc start-build amf-build-cfg  --from-file=./"
+                  sh 'oc start-build amf-build-cfg  --from-dir=./ --exclude=""'
                   // need python to wait for pod amf-build-cfg-1-build to be Completed or Error
                   // it fails if it detects error or timeout at 20 minutes
                   sh "./ci-scripts/common/python/check_build_pod_status.py --pod-name amf-build-cfg-1-build --log-file archives/amf_rhel_image_build.log"
