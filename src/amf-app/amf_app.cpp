@@ -1566,7 +1566,7 @@ void amf_app::trigger_pdu_session_release(
 
       if (result_opt.has_value()) {
         nlohmann::json result = result_opt.value();
-        Logger::amf_server().debug(
+        Logger::amf_app().debug(
             "Got result for promise ID %d, json content %s",
             smf_responses.begin()->first, result.dump());
 
@@ -1633,7 +1633,7 @@ void amf_app::trigger_pdu_session_up_deactivation(
 
       int ret = itti_inst->send_msg(itti_n11_msg);
       if (0 != ret) {
-        Logger::ngap().error(
+        Logger::amf_app().error(
             "Could not send ITTI message %s to task TASK_AMF_SBI",
             itti_n11_msg->get_msg_name());
       }
@@ -1647,7 +1647,7 @@ void amf_app::trigger_pdu_session_up_deactivation(
 
       if (result_opt.has_value()) {
         nlohmann::json result = result_opt.value();
-        Logger::amf_server().debug(
+        Logger::amf_app().debug(
             "Got result from a promise with PDU Session Id %d, json content %s",
             curl_responses.begin()->first, result.dump());
 
@@ -1664,11 +1664,11 @@ void amf_app::trigger_pdu_session_up_deactivation(
 
         } else {
           result = false;
-          Logger::ngap().warn("Could not get the HTTP response code");
+          Logger::amf_app().warn("Could not get the HTTP response code");
         }
       } else {
         result = false;
-        Logger::ngap().warn("Could not get the HTTP response code");
+        Logger::amf_app().warn("Could not get the HTTP response code");
       }
 
       curl_responses.erase(curl_responses.begin());
@@ -1720,7 +1720,7 @@ bool amf_app::trigger_pdu_session_up_activation(
 
       int ret = itti_inst->send_msg(itti_n11_msg);
       if (0 != ret) {
-        Logger::ngap().error(
+        Logger::amf_app().error(
             "Could not send ITTI message %s to task TASK_AMF_SBI",
             itti_n11_msg->get_msg_name());
         return false;
@@ -1734,7 +1734,7 @@ bool amf_app::trigger_pdu_session_up_activation(
 
       if (result_opt.has_value()) {
         nlohmann::json result = result_opt.value();
-        Logger::amf_server().debug(
+        Logger::amf_app().debug(
             "Got result from a promise for PDU session Id %d, json content %s",
             curl_responses.begin()->first, result.dump());
 
@@ -1804,7 +1804,7 @@ bool amf_app::trigger_pdu_session_up_activation(
 
     int ret = itti_inst->send_msg(itti_n11_msg);
     if (0 != ret) {
-      Logger::ngap().error(
+      Logger::amf_app().error(
           "Could not send ITTI message %s to task TASK_AMF_SBI",
           itti_n11_msg->get_msg_name());
       return false;
@@ -1816,7 +1816,7 @@ bool amf_app::trigger_pdu_session_up_activation(
 
     if (result_opt.has_value()) {
       nlohmann::json result = result_opt.value();
-      Logger::amf_server().debug(
+      Logger::amf_app().debug(
           "Got result from a promise (promise Id %ld) for PDU session Id %d, "
           "JSON content %s",
           promise_id, pdu_session_id, result.dump());
@@ -1913,7 +1913,6 @@ bool amf_app::store_ue_context_in_udsf(
 
   auto p = boost::make_shared<boost::promise<nlohmann::json>>();
   boost::shared_future<nlohmann::json> f = p->get_future();
-
   amf_app_inst->add_promise(promise_id, p);
 
   Logger::amf_app().debug(
@@ -1931,7 +1930,7 @@ bool amf_app::store_ue_context_in_udsf(
 
   int ret = itti_inst->send_msg(itti_n11_msg);
   if (0 != ret) {
-    Logger::ngap().error(
+    Logger::amf_app().error(
         "Could not send ITTI message %s to task TASK_AMF_SBI",
         itti_n11_msg->get_msg_name());
     return false;
@@ -1943,7 +1942,7 @@ bool amf_app::store_ue_context_in_udsf(
 
   if (result_opt.has_value()) {
     nlohmann::json result = result_opt.value();
-    Logger::amf_server().debug(
+    Logger::amf_app().debug(
         "Got result from a promise (promise Id %ld), "
         "JSON content %s",
         promise_id, result.dump());
@@ -1951,7 +1950,6 @@ bool amf_app::store_ue_context_in_udsf(
     if (result.find("httpResponseCode") != result.end()) {
       http_response_code = result["httpResponseCode"].get<int>();
       if ((http_response_code == 200) or (http_response_code == 204)) {
-        // TODO:
         is_context_stored = true;
       } else {
         Logger::amf_app().warn("Failed to store UE context into UDSF!");
@@ -2007,7 +2005,7 @@ bool amf_app::retrieve_ue_context_from_udsf(
 
   int ret = itti_inst->send_msg(itti_n11_msg);
   if (0 != ret) {
-    Logger::ngap().error(
+    Logger::amf_app().error(
         "Could not send ITTI message %s to task TASK_AMF_SBI",
         itti_n11_msg->get_msg_name());
     return false;
@@ -2018,7 +2016,7 @@ bool amf_app::retrieve_ue_context_from_udsf(
   utils::wait_for_result(f, result_opt);
   if (result_opt.has_value()) {
     nlohmann::json result = result_opt.value();
-    Logger::amf_server().debug(
+    Logger::amf_app().debug(
         "Got result from a promise (promise Id %ld), "
         "JSON content %s",
         promise_id, result.dump());

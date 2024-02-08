@@ -361,7 +361,7 @@ void amf_sbi::handle_itti_message(itti_nsmf_pdusession_create_sm_context& smf) {
       psc->snssai.sD.c_str());
 
   // parse binary dnn and store
-  std::string dnn = "default";  // If DNN doesn't available, use "default"
+  std::string dnn = DEFAULT_DNN;  // If DNN doesn't available, use "default"
   if ((smf.dnn != nullptr) && (blength(smf.dnn) > 0)) {
     char* tmp = amf_conv::bstring2charString(smf.dnn);
     dnn       = tmp;
@@ -553,7 +553,7 @@ void amf_sbi::handle_itti_message(
 
   nlohmann::json response_data      = {};
   response_data["httpResponseCode"] = response_code;
-  response_data["json_data"]        = response_json;
+  response_data["jsonData"]         = response_json;
 
   // Notify to the result
   if (itti_msg.promise_id > 0) {
@@ -577,7 +577,7 @@ void amf_sbi::handle_itti_message(itti_sbi_notify_subscribed_event& itti_msg) {
     i.get_reports(event_reports);
     for (auto r : event_reports) {
       report["type"]            = r.getType().get_value();
-      report["state"]["active"] = true;  // as boolean
+      report["state"]["active"] = true;
       if (r.supiIsSet()) {
         report["supi"] = r.getSupi();
       }
@@ -998,50 +998,31 @@ void amf_sbi::handle_itti_message(itti_sbi_store_ue_context_request& itti_msg) {
       itti_msg.http_version);
 
   std::string uri = amf_cfg.get_udsf_record_id_uri(itti_msg.record_id);
-
   Logger::amf_sbi().debug(
       "Send Store UE Context Request message to UDSF, UDSF URI %s",
       uri.c_str());
 
-  std::string body = itti_msg.ue_context;
-
-  nlohmann::json response_data = {};
+  std::string body             = itti_msg.ue_context;
+  nlohmann::json response_json = {};
   uint32_t response_code       = 0;
 
   curl_http_client(
-      uri, "PUT", body, response_data, response_code, itti_msg.http_version);
+      uri, "PUT", body, response_json, response_code, itti_msg.http_version);
 
   // Notify to the result
   if (itti_msg.promise_id > 0) {
+    nlohmann::json response_data      = {};
+    response_data["httpResponseCode"] = response_code;
+    response_data["jsonData"]         = response_json;
     amf_app_inst->trigger_process_response(itti_msg.promise_id, response_data);
     return;
   }
-
-  // Send response to APP to process
-  /*	  std::shared_ptr<itti_sbi_deregister_nf_instance_response>
-     itti_msg_response =
-                std::make_shared<itti_sbi_deregister_nf_instance_response>(
-                    TASK_AMF_SBI, TASK_AMF_APP);
-            itti_msg_response->amf_instance_id    = itti_msg.amf_instance_id;
-            itti_msg_response->http_response_code = response_code;
-            itti_msg_response->http_version       = itti_msg.http_version;
-
-            // TODO: Response code 307/308
-            int ret = itti_inst->send_msg(itti_msg_response);
-            if (RETURNok != ret) {
-              Logger::amf_sbi().error(
-                  "Could not send ITTI message %s to task TASK_AMF_APP",
-                  itti_msg_response->get_msg_name());
-            }
-  */
 }
 
 //------------------------------------------------------------------------------
 bool amf_sbi::smf_selection_from_configuration(
     std::string& smf_uri_root, std::string& smf_api_version) {
-  smf_uri_root = amf_cfg.smf_addr.uri_root;
-  // smf_uri_root.append(inet_ntoa(amf_cfg.smf_addr.ipv4_addr)).append(":").append(std::to_string(
-  // amf_cfg.smf_addr.port));
+  smf_uri_root    = amf_cfg.smf_addr.uri_root;
   smf_api_version = amf_cfg.smf_addr.api_version;
   return true;
 }
