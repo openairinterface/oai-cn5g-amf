@@ -934,6 +934,7 @@ void amf_app::handle_itti_message(itti_sbi_register_nf_instance_response& r) {
   if (r.http_response_code ==
       static_cast<uint32_t>(
           http_response_codes_e::HTTP_RESPONSE_CODE_201_CREATED)) {
+    Logger::amf_app().debug("AMF has successfully registered to NRF.");
     nf_instance_profile = r.profile;
     // Set heartbeat timer
     Logger::amf_app().debug(
@@ -944,6 +945,9 @@ void amf_app::handle_itti_message(itti_sbi_register_nf_instance_response& r) {
         TASK_AMF_APP_TIMEOUT_NRF_HEARTBEAT,
         0);  // TODO arg2_user
   } else {
+    Logger::amf_app().warn(
+        "NF Instance Registration, got issue when registering to NRF, try "
+        "again ...");
     // Set timer to try again with NF Registration
     itti_inst->timer_setup(
         20, 0, TASK_AMF_APP, TASK_AMF_APP_TIMEOUT_NRF_REGISTRATION,
@@ -958,6 +962,7 @@ void amf_app::handle_itti_message(itti_sbi_deregister_nf_instance_response& r) {
   auto response_code = static_cast<http_response_codes_e>(r.http_response_code);
   if (response_code ==
       http_response_codes_e::HTTP_RESPONSE_CODE_204_NO_CONTENT) {
+    Logger::amf_app().debug("AMF has successfully deregistered to NRF.");
     itti_inst->timer_remove(timer_nrf_heartbeat);  // Stop heartbeat
   } else if (
       (response_code ==
@@ -967,6 +972,7 @@ void amf_app::handle_itti_message(itti_sbi_deregister_nf_instance_response& r) {
     // TODO: send new request to new NRF
   } else {
     // Deregistration failed, just ignore for the moment
+    Logger::amf_app().debug("AMF has failed to deregister to NRF.");
   }
 }
 

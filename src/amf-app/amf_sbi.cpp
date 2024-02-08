@@ -852,9 +852,6 @@ void amf_sbi::handle_itti_message(
 
     Logger::amf_sbi().debug("Registered AMF profile (from NRF)");
     itti_msg_response->profile.from_json(response_data);
-  } else {
-    Logger::amf_app().warn(
-        "NF Instance Registration, got issue when registering to NRF");
   }
 
   int ret = itti_inst->send_msg(itti_msg_response);
