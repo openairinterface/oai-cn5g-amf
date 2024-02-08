@@ -21,10 +21,8 @@
 
 #include "amf_n2.hpp"
 
-#include <boost/chrono.hpp>
 #include <boost/chrono/chrono.hpp>
 #include <boost/chrono/duration.hpp>
-#include <boost/chrono/system_clocks.hpp>
 
 #include "3gpp_24.501.hpp"
 #include "DefaultPagingDrx.hpp"
@@ -1362,7 +1360,7 @@ void amf_n2::handle_itti_message(
 
   if (subscriptions.size() > 0) {
     // Send request to SBI to trigger the notification to the subscribed event
-    Logger::amf_n1().debug(
+    Logger::amf_n2().debug(
         "Send ITTI msg to AMF SBI to trigger the event notification");
 
     auto itti_msg_ev = std::make_shared<itti_sbi_notify_subscribed_event>(
@@ -1744,7 +1742,7 @@ bool amf_n2::handle_itti_message(
   uint8_t kamf[AUTH_VECTOR_LENGTH_OCTETS];
   uint8_t kgnb[AUTH_VECTOR_LENGTH_OCTETS];
   if (!nc->get_kamf(nc->security_ctx.value().vector_pointer, kamf)) {
-    Logger::amf_n1().warn("No Kamf found");
+    Logger::amf_n2().warn("No Kamf found");
     return false;
   }
   uint32_t ulcount = nc->security_ctx.value().ul_count.seq_num |
@@ -2644,7 +2642,7 @@ void amf_n2::remove_ue_context_with_ran_ue_ngap_id(
     stacs.update_5gmm_state(nc->imsi, "5GMM-DEREGISTERED");
 
     // Trigger UE Loss of Connectivity Status Notify
-    Logger::amf_n1().debug(
+    Logger::amf_n2().debug(
         "Signal the UE Loss of Connectivity Event notification for SUPI %s",
         supi.c_str());
     amf_n1_inst->event_sub.ue_loss_of_connectivity(
@@ -2721,7 +2719,7 @@ void amf_n2::remove_ue_context_with_amf_ue_ngap_id(const long& amf_ue_ngap_id) {
     stacs.update_5gmm_state(nc->imsi, "5GMM-DEREGISTERED");
 
     // Trigger UE Loss of Connectivity Status Notify
-    Logger::amf_n1().debug(
+    Logger::amf_n2().debug(
         "Signal the UE Loss of Connectivity Event notification for SUPI %s",
         supi.c_str());
     amf_n1_inst->event_sub.ue_loss_of_connectivity(
@@ -2822,7 +2820,7 @@ bool amf_n2::get_common_NSSAI(
   // Get gNB Context
   std::shared_ptr<gnb_context> gc = {};
   if (!amf_n2_inst->assoc_id_2_gnb_context(unc->gnb_assoc_id, gc)) {
-    Logger::amf_n1().error(
+    Logger::amf_n2().error(
         "No gNB context with assoc_id (%d)", unc->gnb_assoc_id);
     return false;
   }

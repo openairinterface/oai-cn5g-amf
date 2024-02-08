@@ -27,11 +27,6 @@
 #include "common_defs.h"
 #include "logger.hpp"
 
-extern "C" {
-#include <arpa/inet.h>
-#include <sys/types.h>
-}
-
 using namespace amf_application;
 using namespace oai::amf::api;
 

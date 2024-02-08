@@ -22,10 +22,6 @@
 #ifndef _AMF_N1_H_
 #define _AMF_N1_H_
 
-#include <mysql/mysql.h>
-#include <stdlib.h>
-#include <string.h>
-
 #include <map>
 #include <shared_mutex>
 

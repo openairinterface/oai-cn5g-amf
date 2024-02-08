@@ -24,10 +24,8 @@
 
 #include <arpa/inet.h>
 #include <netinet/in.h>
-#include <sys/socket.h>
 
 #include <nlohmann/json.hpp>
-#include <string>
 
 #include "3gpp_24.501.hpp"
 #include "amf.hpp"

@@ -26,7 +26,6 @@
 #include <boost/thread/future.hpp>
 #include <map>
 #include <shared_mutex>
-#include <string>
 
 #include "N1MessageClass_anyOf.h"
 #include "N2InformationClass_anyOf.h"

@@ -21,8 +21,6 @@
 
 #include "amf_n1.hpp"
 
-#include <curl/curl.h>
-
 #include <bitset>
 
 #include "3gpp_24.501.hpp"
@@ -277,7 +275,6 @@ void amf_n1::handle_itti_message(itti_downlink_nas_transfer& itti_msg) {
 
     } else {
       std::shared_ptr<ue_context> uc = {};
-
       if (!find_ue_context(ran_ue_ngap_id, amf_ue_ngap_id, uc)) return;
 
       if (uc->is_ue_context_request) {
@@ -829,8 +826,7 @@ void amf_n1::service_request_handle(
   if (!find_ue_context(ran_ue_ngap_id, amf_ue_ngap_id, uc)) return;
 
   // Decode Service Request to get 5G-TMSI
-  std::unique_ptr<ServiceRequest> service_request =
-      std::make_unique<ServiceRequest>();
+  auto service_request = std::make_unique<ServiceRequest>();
   int decoded_size =
       service_request->Decode((uint8_t*) bdata(nas), blength(nas));
   // utils::bdestroy_wrapper(&nas);
@@ -868,8 +864,7 @@ void amf_n1::service_request_handle(
   }
 
   // Prepare Service Accept
-  std::unique_ptr<ServiceAccept> service_accept =
-      std::make_unique<ServiceAccept>();
+  auto service_accept = std::make_unique<ServiceAccept>();
   service_accept->SetHeader(PLAIN_5GS_MSG);
   std::string supi = amf_conv::imsi_to_supi(nc->imsi);
 
@@ -1061,12 +1056,12 @@ void amf_n1::service_request_handle(
                 "Configured S-NSSAI %s", snssai.ToString().c_str());
           }
         }
-        Logger::amf_n2().debug(
+        Logger::amf_n1().debug(
             "Current ran_ue_ngap_id (" GNB_UE_NGAP_ID_FMT
             "), old amf_ue_ngap_id (" AMF_UE_NGAP_ID_FMT ")",
             nc->ran_ue_ngap_id, nc->amf_ue_ngap_id);
 
-        Logger::amf_n2().debug(
+        Logger::amf_n1().debug(
             "Old ran_ue_ngap_id (" GNB_UE_NGAP_ID_FMT
             "), old amf_ue_ngap_id (" AMF_UE_NGAP_ID_FMT ")",
             nc->old_ran_ue_ngap_id, nc->old_amf_ue_ngap_id);
@@ -1132,8 +1127,7 @@ void amf_n1::service_request_handle(
     }
   }
 
-  std::unique_ptr<ServiceAccept> service_accept =
-      std::make_unique<ServiceAccept>();
+  auto service_accept = std::make_unique<ServiceAccept>();
   service_accept->SetHeader(PLAIN_5GS_MSG);
   std::string supi = "imsi-" + nc->imsi;
   uc->supi         = supi;
@@ -1388,7 +1382,6 @@ void amf_n1::registration_request_handle(
 
   registration_request->Decode((uint8_t*) bdata(reg), blength(reg));
 
-  // TODO: Use set function
   nc->registration_request = blk2bstr((uint8_t*) bdata(reg), blength(reg));
   nc->registration_request_is_set = true;
 
@@ -1415,7 +1408,6 @@ void amf_n1::registration_request_handle(
           set_amf_ue_ngap_id_2_nas_context(amf_ue_ngap_id, nc);
           nc->ctx_avaliability_ind = false;
           // Change UE connection status CM-IDLE -> CM-CONNECTED
-          // TODO: Use set function with mutex
           nc->nas_status      = CM_CONNECTED;
           nc->amf_ue_ngap_id  = amf_ue_ngap_id;
           nc->ran_ue_ngap_id  = ran_ue_ngap_id;
@@ -1524,9 +1516,6 @@ void amf_n1::registration_request_handle(
         nc->is_5g_guti_present         = true;
         nc->to_be_register_by_new_suci = true;
         nc->ngksi = 100 & 0xf;  // TODO: remove hardcoded value
-        // std::string supi = amf_conv::imsi_to_supi(nc->imsi);
-        // set_supi_2_amf_id(supi, amf_ue_ngap_id);
-        // set_supi_2_ran_id(supi, ran_ue_ngap_id);
 
         // Stop Mobile Reachable Timer/Implicit Deregistration Timer
         itti_inst->timer_remove(nc->mobile_reachable_timer);
@@ -1598,7 +1587,6 @@ void amf_n1::registration_request_handle(
   if (uc != nullptr) {
     std::string supi = amf_conv::imsi_to_supi(nc->imsi);
     uc->supi         = supi;
-    // associate SUPI with UC
     amf_app_inst->set_supi_2_ue_context(supi, uc);
     Logger::amf_n1().debug("Update UC context, SUPI %s", supi.c_str());
   }
@@ -1626,8 +1614,7 @@ void amf_n1::registration_request_handle(
   }
   nc->ngksi = ngksi;
 
-  // Get non-current native NAS key set identity (Optional IE), used for
-  // inter-system change from S1 to N1 Get 5GMM Capability IE (optional), not
+  // Get 5GMM Capability IE (optional), not
   // included for periodic registration updating procedure
   uint8_t _5g_mm_cap = 0;
   if (!registration_request->Get5gmmCapability(_5g_mm_cap)) {
@@ -1653,8 +1640,8 @@ void amf_n1::registration_request_handle(
 
   nc->ctx_avaliability_ind = true;
 
-  // Get Last visited registered TAI(OPtional IE), if provided
-  // Get S1 Ue network capability(OPtional IE), if ue supports S1 mode
+  // Get Last visited registered TAI(Optional IE), if provided
+  // Get S1 Ue network capability(Optional IE), if ue supports S1 mode
   // Get uplink data status(Optional IE), if UE has uplink user data to be sent
   // Get pdu session status(OPtional IE), associated and active pdu sessions
   // available in UE
@@ -2063,7 +2050,6 @@ bool amf_n1::get_authentication_vectors_from_ausf(
     resynchronizationInfo.setRand(authenticationinfo_rand);
     authenticationinfo.setResynchronizationInfo(resynchronizationInfo);
     utils::free_wrapper((void**) &auts_s);
-    //    utils::free_wrapper((void**) &rand_s);
   }
 
   // TODO: use ITTI to send message between N1 and SBI
@@ -2630,7 +2616,7 @@ void amf_n1::authentication_failure_handle(
       nc->ngksi = ngksi;
 
       if (!nc->security_ctx.has_value()) {
-        Logger::amf_n2().error("No Security Context found");
+        Logger::amf_n1().error("No Security Context found");
         // TODO:
         return;
       }

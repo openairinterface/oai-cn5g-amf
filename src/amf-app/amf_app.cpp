@@ -23,8 +23,7 @@
 
 #include <boost/uuid/random_generator.hpp>
 #include <boost/uuid/uuid_io.hpp>
-#include <cstdlib>
-#include <iostream>
+
 #include <stdexcept>
 
 #include "3gpp_29.500.h"
@@ -468,7 +467,7 @@ void amf_app::handle_itti_message(
   std::shared_ptr<ue_ngap_context> unc = {};
   if (!amf_n2_inst->ran_ue_id_2_ue_ngap_context(
           itti_msg.ran_ue_ngap_id, itti_msg.gnb_id, unc)) {
-    Logger::amf_n1().error(
+    Logger::amf_app().error(
         "Could not find UE NGAP Context with ran_ue_ngap_id "
         "(" GNB_UE_NGAP_ID_FMT
         "), gNB ID "
@@ -1235,7 +1234,7 @@ evsub_id_t amf_app::handle_event_exposure_subscription(
 
         int ret = itti_inst->send_msg(itti_msg);
         if (0 != ret) {
-          Logger::amf_n1().error(
+          Logger::amf_app().error(
               "Could not send ITTI message %s to task TASK_AMF_SBI",
               itti_msg->get_msg_name());
         }
