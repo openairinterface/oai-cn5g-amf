@@ -27,11 +27,6 @@
 #include "common_defs.h"
 #include "logger.hpp"
 
-extern "C" {
-#include <arpa/inet.h>
-#include <sys/types.h>
-}
-
 using namespace amf_application;
 using namespace oai::amf::api;
 
@@ -40,22 +35,22 @@ namespace oai::config {
 //------------------------------------------------------------------------------
 amf_config::amf_config() {
   smf_addr.ipv4_addr.s_addr  = INADDR_ANY;
-  smf_addr.port              = DEFAULT_HTTP1_PORT;
+  smf_addr.port              = DEFAULT_HTTP2_PORT;
   smf_addr.api_version       = DEFAULT_SBI_API_VERSION;
   nrf_addr.ipv4_addr.s_addr  = INADDR_ANY;
-  nrf_addr.port              = DEFAULT_HTTP1_PORT;
+  nrf_addr.port              = DEFAULT_HTTP2_PORT;
   nrf_addr.api_version       = DEFAULT_SBI_API_VERSION;
   ausf_addr.ipv4_addr.s_addr = INADDR_ANY;
-  ausf_addr.port             = DEFAULT_HTTP1_PORT;
+  ausf_addr.port             = DEFAULT_HTTP2_PORT;
   ausf_addr.api_version      = DEFAULT_SBI_API_VERSION;
   udm_addr.ipv4_addr.s_addr  = INADDR_ANY;
-  udm_addr.port              = DEFAULT_HTTP1_PORT;
+  udm_addr.port              = DEFAULT_HTTP2_PORT;
   udm_addr.api_version       = DEFAULT_SBI_API_VERSION;
   lmf_addr.ipv4_addr.s_addr  = INADDR_ANY;
-  lmf_addr.port              = DEFAULT_HTTP1_PORT;
+  lmf_addr.port              = DEFAULT_HTTP2_PORT;
   lmf_addr.api_version       = DEFAULT_SBI_API_VERSION;
   nssf_addr.ipv4_addr.s_addr = INADDR_ANY;
-  nssf_addr.port             = DEFAULT_HTTP1_PORT;
+  nssf_addr.port             = DEFAULT_HTTP2_PORT;
   nssf_addr.api_version      = DEFAULT_SBI_API_VERSION;
   instance                   = 0;
   log_level                  = spdlog::level::debug;

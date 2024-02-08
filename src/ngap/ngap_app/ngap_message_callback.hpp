@@ -489,11 +489,8 @@ int ngap_amf_handle_pdu_session_resource_setup_response(
       long amf_ue_ngap_id = pdu_session_resource_setup_resp->getAmfUeNgapId();
 
       std::shared_ptr<nas_context> nct = {};
-      if (!amf_n1_inst->amf_ue_id_2_nas_context(amf_ue_ngap_id, nct)) {
-        Logger::ngap().error(
-            "No UE NAS context with amf_ue_ngap_id (0x%x)", amf_ue_ngap_id);
+      if (!amf_n1_inst->amf_ue_id_2_nas_context(amf_ue_ngap_id, nct))
         return RETURNerror;
-      }
 
       std::string supi = amf_conv::imsi_to_supi(nct->imsi);
       std::shared_ptr<pdu_session_context> psc = {};

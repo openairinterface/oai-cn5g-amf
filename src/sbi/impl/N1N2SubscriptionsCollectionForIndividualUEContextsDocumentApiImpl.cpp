@@ -67,27 +67,27 @@ void N1N2SubscriptionsCollectionForIndividualUEContextsDocumentApiImpl::
   }
 
   // Wait for the result available and process accordingly
-  std::optional<nlohmann::json> result = std::nullopt;
-  utils::wait_for_result(f, result);
+  std::optional<nlohmann::json> result_opt = std::nullopt;
+  utils::wait_for_result(f, result_opt);
 
-  if (result.has_value()) {
+  if (result_opt.has_value()) {
     Logger::amf_server().debug("Got result for promise ID %d", promise_id);
-
+    nlohmann::json result = result_opt.value();
     // process data
     std::string location        = {};
     uint32_t http_response_code = 0;
-    if (result.value().find("location") != result.value().end()) {
-      location = result.value()["location"].get<std::string>();
+    if (result.find("location") != result.end()) {
+      location = result["location"].get<std::string>();
     }
 
-    if (result.value().find("httpResponseCode") != result.value().end()) {
-      http_response_code = result.value()["httpResponseCode"].get<int>();
+    if (result.find("httpResponseCode") != result.end()) {
+      http_response_code = result["httpResponseCode"].get<int>();
     }
 
     // UeN1N2InfoSubscriptionCreatedData
     nlohmann::json json_data = {};
-    if (result.value().find("createdData") != result.value().end()) {
-      json_data = result.value()["createdData"];
+    if (result.find("createdData") != result.end()) {
+      json_data = result["createdData"];
     }
 
     if (static_cast<http_response_codes_e>(http_response_code) ==

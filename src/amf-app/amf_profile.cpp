@@ -21,8 +21,8 @@
 
 #include "amf_profile.hpp"
 
-#include <boost/algorithm/string/classification.hpp>
-#include <boost/algorithm/string/split.hpp>
+//#include <boost/algorithm/string/classification.hpp>
+//#include <boost/algorithm/string/split.hpp>
 
 #include "amf_config_yaml.hpp"
 #include "conversions.hpp"
@@ -338,11 +338,11 @@ void amf_profile::display() const {
   // AMF info
   Logger::amf_app().debug("\tAMF Info");
   Logger::amf_app().debug(
-      "\t\tAMF Set ID: %d, AMF Region ID: %d", amf_info.amf_set_id,
+      "\t\tAMF Set ID: %s, AMF Region ID: %s", amf_info.amf_set_id,
       amf_info.amf_region_id);
 
   for (auto g : amf_info.guami_list) {
-    Logger::amf_app().debug("\t\tAMF GUAMI List, AMF_ID: 0x%x", g.amf_id);
+    Logger::amf_app().debug("\t\tAMF GUAMI List, AMF_ID: %s", g.amf_id);
     Logger::amf_app().debug(
         "\t\tAMF GUAMI List, PLMN (MCC: %s, MNC: %s)", g.plmn.mcc.c_str(),
         g.plmn.mnc.c_str());

@@ -22,10 +22,6 @@
 #ifndef _AMF_N1_H_
 #define _AMF_N1_H_
 
-#include <mysql/mysql.h>
-#include <stdlib.h>
-#include <string.h>
-
 #include <map>
 #include <shared_mutex>
 
@@ -108,13 +104,6 @@ class amf_n1 {
       SecurityHeaderType_t& type, const uint8_t* buffer, const uint32_t length);
 
   /*
-   * Verify if a UE NAS context associated with a GUTI exists
-   * @param [const std::string&] guti: UE GUTI
-   * @return true if the UE NAS context exists, otherwise false
-   */
-  bool is_guti_2_nas_context(const std::string& guti) const;
-
-  /*
    * Get UE NAS context associated with a GUTI if the context exists and is not
    * null
    * @param [const std::string&] guti: UE GUTI
@@ -139,13 +128,6 @@ class amf_n1 {
    * @return true if successful, otherwise return false
    */
   bool remove_guti_2_nas_context(const std::string& guti);
-
-  /*
-   * Verify if a UE NAS context associated with an AMF UE NGAP ID exists
-   * @param [const long& ] amf_ue_ngap_id: AMF UE NGAP ID
-   * @return true if UE NAS context exists, otherwise false
-   */
-  bool is_amf_ue_id_2_nas_context(const long& amf_ue_ngap_id) const;
 
   /*
    * Verify if a UE NAS context associated with an AMF UE NGAP ID exists and is
@@ -820,6 +802,7 @@ class amf_n1 {
   void handle_ue_loss_of_connectivity_change(
       std::string supi, uint8_t status, uint8_t http_version,
       uint32_t ran_ue_ngap_id, long amf_ue_ngap_id);
+
   /*
    * Handle the UE Communication Failure event to trigger the notification to
    * the subscribed NFs
@@ -832,6 +815,15 @@ class amf_n1 {
   void handle_ue_communication_failure_change(
       std::string supi, oai::amf::model::CommunicationFailure,
       uint8_t http_version);
+
+  /*
+   * Trigger the UE Location Report notification to the subscribed NFs
+   * @param [uint32_t] ran_ue_ngap_id: RAN UE NGAP ID
+   * @param [long] amf_ue_ngap_id: AMF UE NGAP ID
+   * @return void
+   */
+  void trigger_ue_location_report(
+      const uint32_t ran_ue_ngap_id, const long amf_ue_ngap_id);
 
   /*
    * Handle UE-initiated Deregistration Request message
@@ -923,10 +915,25 @@ class amf_n1 {
       std::shared_ptr<nas_context> nc, const uint32_t ran_ue_ngap_id,
       const long amf_ue_ngap_id, bstring nas);
 
+  /*
+   * Handle Service Request message
+   * @param [std::shared_ptr<nas_context>&] nc: Pointer to the NAS context
+   * @param [const uint32_t] ran_ue_ngap_id: RAN UE NGAP ID
+   * @param [const long] amf_ue_ngap_id: AMF UE NGAP ID
+   * @param [bstring] nas: NAS Service Request message
+   * @param [uint8_t] ulCount: Uplink NAS count
+   * @return void
+   */
   void service_request_handle(
       std::shared_ptr<nas_context> nc, const uint32_t ran_ue_ngap_id,
       const long amf_ue_ngap_id, bstring nas, uint8_t ulCount);
 
+  /*
+   * Send Service Reject to the UE
+   * @param [std::shared_ptr<nas_context>&] nc: Pointer to the NAS context
+   * @param [uint8_t] cause: Cause
+   * @return void
+   */
   void send_service_reject(std::shared_ptr<nas_context>& nc, uint8_t cause);
 
   /*
