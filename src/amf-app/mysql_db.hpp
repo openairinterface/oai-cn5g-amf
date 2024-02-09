@@ -25,8 +25,6 @@
 #include <mysql/mysql.h>
 #include <pthread.h>
 
-#include <string>
-
 #define KEY_LENGTH (16)
 #define SQN_LENGTH (6)
 #define RAND_LENGTH (16)

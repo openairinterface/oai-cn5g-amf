@@ -23,7 +23,6 @@
 #define FILE_SMF_EVENT_SIG_HPP_SEEN
 
 #include <boost/signals2.hpp>
-//#include <string>
 
 #include "CommunicationFailure.h"
 #include "UserLocation.h"

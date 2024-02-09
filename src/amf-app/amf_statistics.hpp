@@ -22,7 +22,6 @@
 #ifndef _STATISTICS_H_
 #define _STATISTICS_H_
 
-#include <string>
 #include <vector>
 
 #include "amf.hpp"

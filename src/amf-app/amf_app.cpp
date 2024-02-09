@@ -24,8 +24,6 @@
 #include <boost/uuid/random_generator.hpp>
 #include <boost/uuid/uuid_io.hpp>
 
-//#include <stdexcept>
-
 #include "3gpp_29.500.h"
 #include "DlNasTransport.hpp"
 #include "GlobalRanNodeId.h"
