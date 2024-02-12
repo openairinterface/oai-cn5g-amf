@@ -1643,7 +1643,7 @@ void amf_app::trigger_pdu_session_up_deactivation(
       }
     }
 
-    bool result = true;
+    bool is_up_activated = true;
     while (!curl_responses.empty()) {
       // Wait for the result available and process accordingly
       std::optional<nlohmann::json> result_opt = std::nullopt;
@@ -1657,7 +1657,7 @@ void amf_app::trigger_pdu_session_up_deactivation(
 
         uint32_t http_response_code = 0;
         if (result.find("httpResponseCode") != result.end()) {
-          result             = result && true;
+          is_up_activated    = is_up_activated && true;
           http_response_code = result["httpResponseCode"].get<int>();
 
           if ((http_response_code == 200) or (http_response_code == 204)) {
@@ -1667,11 +1667,11 @@ void amf_app::trigger_pdu_session_up_deactivation(
           }
 
         } else {
-          result = false;
+          is_up_activated = false;
           Logger::amf_app().warn("Could not get the HTTP response code");
         }
       } else {
-        result = false;
+        is_up_activated = false;
         Logger::amf_app().warn("Could not get the HTTP response code");
       }
 
