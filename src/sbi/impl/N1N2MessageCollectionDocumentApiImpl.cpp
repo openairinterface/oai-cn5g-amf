@@ -114,8 +114,6 @@ void N1N2MessageCollectionDocumentApiImpl::n1_n2_message_transfer(
         if (!amf_app_inst->find_pdu_session_context(
                 supi, (uint8_t) n1N2MessageTransferReqData.getPduSessionId(),
                 psc)) {
-          Logger::amf_server().error(
-              "Cannot get PDU Session Context with SUPI (%s)", supi.c_str());
           send_response(code, response_json, response);
           return;
         }
@@ -207,8 +205,6 @@ void N1N2MessageCollectionDocumentApiImpl::n1_n2_message_transfer(
         if (!amf_app_inst->find_pdu_session_context(
                 supi, (uint8_t) n1N2MessageTransferReqData.getPduSessionId(),
                 psc)) {
-          Logger::amf_server().error(
-              "Cannot get PDU Session Context with SUPI (%s)", supi.c_str());
           send_response(code, response_json, response);
           return;
         }

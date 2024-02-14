@@ -62,15 +62,16 @@ void N1N2IndividualSubscriptionDocumentApiImpl::n1_n2_message_un_subscribe(
   }
 
   // Wait for the result available and process accordingly
-  std::optional<nlohmann::json> result = std::nullopt;
-  utils::wait_for_result(f, result);
+  std::optional<nlohmann::json> result_opt = std::nullopt;
+  utils::wait_for_result(f, result_opt);
 
-  if (result.has_value()) {
+  if (result_opt.has_value()) {
     Logger::amf_server().debug("Got result for promise ID %d", promise_id);
+    nlohmann::json result = result_opt.value();
     // process data
     uint32_t http_response_code = 0;
-    if (result.value().find("httpResponseCode") != result.value().end()) {
-      http_response_code = result.value()["httpResponseCode"].get<int>();
+    if (result.find("httpResponseCode") != result.end()) {
+      http_response_code = result["httpResponseCode"].get<int>();
     }
 
     if (static_cast<http_response_codes_e>(http_response_code) ==
@@ -79,8 +80,8 @@ void N1N2IndividualSubscriptionDocumentApiImpl::n1_n2_message_un_subscribe(
     } else {
       // Problem//details
       nlohmann::json json_data = {};
-      if (result.value().find("ProblemDetails") != result.value().end()) {
-        json_data = result.value()["ProblemDetails"];
+      if (result.find("ProblemDetails") != result.end()) {
+        json_data = result["ProblemDetails"];
       }
 
       response.headers().add<Pistache::Http::Header::ContentType>(

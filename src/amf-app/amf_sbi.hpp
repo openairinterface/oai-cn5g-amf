@@ -22,13 +22,6 @@
 #ifndef _AMF_SBI_H_
 #define _AMF_SBI_H_
 
-#include <boost/algorithm/string.hpp>
-#include <boost/algorithm/string/classification.hpp>
-#include <boost/algorithm/string/split.hpp>
-#include <map>
-#include <shared_mutex>
-#include <string>
-
 #include "AuthenticationInfo.h"
 #include "UEAuthenticationCtx.h"
 #include "itti_msg_sbi.hpp"

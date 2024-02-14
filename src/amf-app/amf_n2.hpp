@@ -312,14 +312,6 @@ class amf_n2 : public ngap::ngap_app {
   bool ran_ue_id_2_ue_ngap_context(
       uint32_t ran_ue_ngap_id, const std::string& ue_context_key,
       std::shared_ptr<ue_ngap_context>& unc) const;
-  /*
-   * Verify whether a UE NGAP context associated with a RAN UE NGAP ID exists
-   * @param [uint32_t] ran_ue_ngap_id: RAN UE NGAP ID
-   * @param [uint32_t] gnb_id: gNB ID
-   * @return true if the context exists and is not null, otherwise return false
-   */
-  bool is_ran_ue_id_2_ue_ngap_context(
-      uint32_t ran_ue_ngap_id, uint32_t gnb_id) const;
 
   /*
    * Store UE NGAP context associated with a RAN UE NGAP ID
@@ -350,14 +342,6 @@ class amf_n2 : public ngap::ngap_app {
    */
   void remove_ue_context_with_ran_ue_ngap_id(
       uint32_t ran_ue_ngap_id, uint32_t gnb_id);
-
-  /*
-   * Verify whether a UE NGAP context associated with a AMF UE NGAP ID exists
-   * and is not null
-   * @param [const long&] amf_ue_ngap_id: AMF UE NGAP ID
-   * @return true if the context exists and is not null, otherwise return false
-   */
-  bool is_amf_ue_id_2_ue_ngap_context(const long& amf_ue_ngap_id) const;
 
   /*
    * Get UE NGAP context associated with a AMF UE NGAP ID if the context exists

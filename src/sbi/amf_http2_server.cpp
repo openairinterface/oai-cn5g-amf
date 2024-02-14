@@ -642,8 +642,6 @@ void amf_http2_server::n1_n2_message_transfer_handler(
         if (!amf_app_inst->find_pdu_session_context(
                 supi, (uint8_t) n1N2MessageTransferReqData.getPduSessionId(),
                 psc)) {
-          Logger::amf_server().error(
-              "Cannot get PDU Session Context with SUPI (%s)", supi.c_str());
           response.write_head(code);
           response.end(response_json.dump().c_str());
           return;
@@ -733,8 +731,6 @@ void amf_http2_server::n1_n2_message_transfer_handler(
         if (!amf_app_inst->find_pdu_session_context(
                 supi, (uint8_t) n1N2MessageTransferReqData.getPduSessionId(),
                 psc)) {
-          Logger::amf_server().error(
-              "Cannot get PDU Session Context with SUPI (%s)", supi.c_str());
           response.write_head(code);
           response.end(response_json.dump().c_str());
           return;
@@ -953,27 +949,27 @@ void amf_http2_server::n1_n2_message_subscribe_handler(
   }
 
   // Wait for the result available and process accordingly
-  std::optional<nlohmann::json> result = std::nullopt;
-  utils::wait_for_result(f, result);
+  std::optional<nlohmann::json> result_opt = std::nullopt;
+  utils::wait_for_result(f, result_opt);
 
-  if (result.has_value()) {
+  if (result_opt.has_value()) {
     Logger::amf_server().debug("Got result for promise ID %d", promise_id);
-
+    nlohmann::json result = result_opt.value();
     // process data
     std::string location        = {};
     uint32_t http_response_code = 0;
-    if (result.value().find("location") != result.value().end()) {
-      location = result.value()["location"].get<std::string>();
+    if (result.find("location") != result.end()) {
+      location = result["location"].get<std::string>();
     }
 
-    if (result.value().find("httpResponseCode") != result.value().end()) {
-      http_response_code = result.value()["httpResponseCode"].get<int>();
+    if (result.find("httpResponseCode") != result.end()) {
+      http_response_code = result["httpResponseCode"].get<int>();
     }
 
     // UeN1N2InfoSubscriptionCreatedData
     nlohmann::json json_data = {};
-    if (result.value().find("createdData") != result.value().end()) {
-      json_data = result.value()["createdData"];
+    if (result.find("createdData") != result.end()) {
+      json_data = result["createdData"];
     }
 
     if (static_cast<http_response_codes_e>(http_response_code) ==
@@ -1038,18 +1034,18 @@ void amf_http2_server::n1_n2_message_unsubscribe_handler(
   }
 
   // Wait for the result available and process accordingly
-  std::optional<nlohmann::json> result = std::nullopt;
-  utils::wait_for_result(f, result);
+  std::optional<nlohmann::json> result_opt = std::nullopt;
+  utils::wait_for_result(f, result_opt);
 
-  if (result.has_value()) {
+  if (result_opt.has_value()) {
     Logger::amf_server().debug("Got result for promise ID %d", promise_id);
-
+    nlohmann::json result = result_opt.value();
     // process data
     uint32_t http_response_code = 0;
     nlohmann::json json_data    = {};
 
-    if (result.value().find("httpResponseCode") != result.value().end()) {
-      http_response_code = result.value()["httpResponseCode"].get<int>();
+    if (result.find("httpResponseCode") != result.end()) {
+      http_response_code = result["httpResponseCode"].get<int>();
     }
 
     if (static_cast<http_response_codes_e>(http_response_code) ==
@@ -1059,8 +1055,8 @@ void amf_http2_server::n1_n2_message_unsubscribe_handler(
 
     } else {
       // Problem details
-      if (result.value().find("ProblemDetails") != result.value().end()) {
-        json_data = result.value()["ProblemDetails"];
+      if (result.find("ProblemDetails") != result.end()) {
+        json_data = result["ProblemDetails"];
       }
 
       h.emplace("content-type", header_value{"application/problem+json"});
@@ -1110,27 +1106,27 @@ void amf_http2_server::non_ue_n2_info_subscribe_handler(
   }
 
   // Wait for the result available and process accordingly
-  std::optional<nlohmann::json> result = std::nullopt;
-  utils::wait_for_result(f, result);
+  std::optional<nlohmann::json> result_opt = std::nullopt;
+  utils::wait_for_result(f, result_opt);
 
-  if (result.has_value()) {
+  if (result_opt.has_value()) {
     Logger::amf_server().debug("Got result for promise ID %d", promise_id);
-
+    nlohmann::json result = result_opt.value();
     // process data
     std::string location        = {};
     uint32_t http_response_code = 0;
-    if (result.value().find("location") != result.value().end()) {
-      location = result.value()["location"].get<std::string>();
+    if (result.find("location") != result.end()) {
+      location = result["location"].get<std::string>();
     }
 
-    if (result.value().find("httpResponseCode") != result.value().end()) {
-      http_response_code = result.value()["httpResponseCode"].get<int>();
+    if (result.find("httpResponseCode") != result.end()) {
+      http_response_code = result["httpResponseCode"].get<int>();
     }
 
     // NonUeN2InfoSubscriptionCreatedData
     nlohmann::json json_data = {};
-    if (result.value().find("createdData") != result.value().end()) {
-      json_data = result.value()["createdData"];
+    if (result.find("createdData") != result.end()) {
+      json_data = result["createdData"];
     }
 
     if (static_cast<http_response_codes_e>(http_response_code) ==
@@ -1191,18 +1187,18 @@ void amf_http2_server::non_ue_n2_info_unsubscribe_handler(
   }
 
   // Wait for the result available and process accordingly
-  std::optional<nlohmann::json> result = std::nullopt;
-  utils::wait_for_result(f, result);
+  std::optional<nlohmann::json> result_opt = std::nullopt;
+  utils::wait_for_result(f, result_opt);
 
-  if (result.has_value()) {
+  if (result_opt.has_value()) {
     Logger::amf_server().debug("Got result for promise ID %d", promise_id);
-
+    nlohmann::json result = result_opt.value();
     // process data
     uint32_t http_response_code = 0;
     nlohmann::json json_data    = {};
 
-    if (result.value().find("httpResponseCode") != result.value().end()) {
-      http_response_code = result.value()["httpResponseCode"].get<int>();
+    if (result.find("httpResponseCode") != result.end()) {
+      http_response_code = result["httpResponseCode"].get<int>();
     }
 
     if (static_cast<http_response_codes_e>(http_response_code) ==
@@ -1212,8 +1208,8 @@ void amf_http2_server::non_ue_n2_info_unsubscribe_handler(
 
     } else {
       // Problem details
-      if (result.value().find("ProblemDetails") != result.value().end()) {
-        json_data = result.value()["ProblemDetails"];
+      if (result.find("ProblemDetails") != result.end()) {
+        json_data = result["ProblemDetails"];
       }
 
       h.emplace("content-type", header_value{"application/problem+json"});
@@ -1265,24 +1261,24 @@ void amf_http2_server::status_notify_handler(
   }
 
   // Wait for the response available and process accordingly
-  std::optional<nlohmann::json> result = std::nullopt;
-  utils::wait_for_result(f, result);
+  std::optional<nlohmann::json> result_opt = std::nullopt;
+  utils::wait_for_result(f, result_opt);
 
-  if (result.has_value()) {
+  if (result_opt.has_value()) {
     Logger::amf_server().debug("Got result for promise ID %d", promise_id);
-
+    nlohmann::json result = result_opt.value();
     // process data
     uint32_t http_response_code = 0;
     nlohmann::json json_data    = {};
 
-    if (result.value().find("httpResponseCode") != result.value().end()) {
-      http_response_code = result.value()["httpResponseCode"].get<int>();
+    if (result.find("httpResponseCode") != result.end()) {
+      http_response_code = result["httpResponseCode"].get<int>();
     }
 
     if (static_cast<http_response_codes_e>(http_response_code) ==
         http_response_codes_e::HTTP_RESPONSE_CODE_200_OK) {
-      if (result.value().find("content") != result.value().end()) {
-        json_data = result.value()["content"];
+      if (result.find("content") != result.end()) {
+        json_data = result["content"];
       }
 
       h.emplace("content-type", header_value{"application/json"});
@@ -1291,8 +1287,8 @@ void amf_http2_server::status_notify_handler(
 
     } else {
       // Problem details
-      if (result.value().find("ProblemDetails") != result.value().end()) {
-        json_data = result.value()["ProblemDetails"];
+      if (result.find("ProblemDetails") != result.end()) {
+        json_data = result["ProblemDetails"];
       }
 
       h.emplace("content-type", header_value{"application/problem+json"});
@@ -1336,24 +1332,24 @@ void amf_http2_server::get_configuration_handler(const response& response) {
   }
 
   // Wait for the response available and process accordingly
-  std::optional<nlohmann::json> result = std::nullopt;
-  utils::wait_for_result(f, result);
+  std::optional<nlohmann::json> result_opt = std::nullopt;
+  utils::wait_for_result(f, result_opt);
 
-  if (result.has_value()) {
+  if (result_opt.has_value()) {
     Logger::amf_server().debug("Got result for promise ID %d", promise_id);
-
+    nlohmann::json result = result_opt.value();
     // process data
     uint32_t http_response_code = 0;
     nlohmann::json json_data    = {};
 
-    if (result.value().find("httpResponseCode") != result.value().end()) {
-      http_response_code = result.value()["httpResponseCode"].get<int>();
+    if (result.find("httpResponseCode") != result.end()) {
+      http_response_code = result["httpResponseCode"].get<int>();
     }
 
     if (static_cast<http_response_codes_e>(http_response_code) ==
         http_response_codes_e::HTTP_RESPONSE_CODE_200_OK) {
-      if (result.value().find("content") != result.value().end()) {
-        json_data = result.value()["content"];
+      if (result.find("content") != result.end()) {
+        json_data = result["content"];
       }
 
       h.emplace("content-type", header_value{"application/json"});
@@ -1362,8 +1358,8 @@ void amf_http2_server::get_configuration_handler(const response& response) {
 
     } else {
       // Problem details
-      if (result.value().find("ProblemDetails") != result.value().end()) {
-        json_data = result.value()["ProblemDetails"];
+      if (result.find("ProblemDetails") != result.end()) {
+        json_data = result["ProblemDetails"];
       }
 
       h.emplace("content-type", header_value{"application/problem+json"});
@@ -1410,31 +1406,33 @@ void amf_http2_server::update_configuration_handler(
   }
 
   // Wait for the response available and process accordingly
-  std::optional<nlohmann::json> result = std::nullopt;
-  utils::wait_for_result(f, result);
+  std::optional<nlohmann::json> result_opt = std::nullopt;
+  utils::wait_for_result(f, result_opt);
 
-  if (result.has_value()) {
+  if (result_opt.has_value()) {
     Logger::amf_server().debug("Got result for promise ID %d", promise_id);
+    nlohmann::json result = result_opt.value();
+
     // process data
     uint32_t http_response_code = {0};
     nlohmann::json json_data    = {};
 
-    if (result.value().find("httpResponseCode") != result.value().end()) {
-      http_response_code = result.value()["httpResponseCode"].get<int>();
+    if (result.find("httpResponseCode") != result.end()) {
+      http_response_code = result["httpResponseCode"].get<int>();
     }
 
     if (static_cast<http_response_codes_e>(http_response_code) ==
         http_response_codes_e::HTTP_RESPONSE_CODE_200_OK) {
-      if (result.value().find("content") != result.value().end()) {
-        json_data = result.value()["content"];
+      if (result.find("content") != result.end()) {
+        json_data = result["content"];
       }
       h.emplace("content-type", header_value{"application/json"});
       response.write_head(http_response_code);
       response.end(json_data.dump().c_str());
     } else {
       // Problem details
-      if (result.value().find("ProblemDetails") != result.value().end()) {
-        json_data = result.value()["ProblemDetails"];
+      if (result.find("ProblemDetails") != result.end()) {
+        json_data = result["ProblemDetails"];
       }
 
       h.emplace("content-type", header_value{"application/problem+json"});

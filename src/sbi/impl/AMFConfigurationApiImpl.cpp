@@ -64,31 +64,32 @@ void AMFConfigurationApiImpl::read_configuration(
   }
 
   // Wait for the response available and process accordingly
-  std::optional<nlohmann::json> result = std::nullopt;
-  utils::wait_for_result(f, result);
+  std::optional<nlohmann::json> result_opt = std::nullopt;
+  utils::wait_for_result(f, result_opt);
 
-  if (result.has_value()) {
+  if (result_opt.has_value()) {
     Logger::amf_server().debug("Got result for promise ID %d", promise_id);
+    nlohmann::json result = result_opt.value();
     // process data
     uint32_t http_response_code = 0;
     nlohmann::json json_data    = {};
 
-    if (result.value().find("httpResponseCode") != result.value().end()) {
-      http_response_code = result.value()["httpResponseCode"].get<int>();
+    if (result.find("httpResponseCode") != result.end()) {
+      http_response_code = result["httpResponseCode"].get<int>();
     }
 
     if (static_cast<http_response_codes_e>(http_response_code) ==
         http_response_codes_e::HTTP_RESPONSE_CODE_200_OK) {
-      if (result.value().find("content") != result.value().end()) {
-        json_data = result.value()["content"];
+      if (result.find("content") != result.end()) {
+        json_data = result["content"];
       }
       response.headers().add<Pistache::Http::Header::ContentType>(
           Pistache::Http::Mime::MediaType("application/json"));
       response.send(Pistache::Http::Code::Ok, json_data.dump().c_str());
     } else {
       // Problem details
-      if (result.value().find("ProblemDetails") != result.value().end()) {
-        json_data = result.value()["ProblemDetails"];
+      if (result.find("ProblemDetails") != result.end()) {
+        json_data = result["ProblemDetails"];
       }
 
       response.headers().add<Pistache::Http::Header::ContentType>(
@@ -133,30 +134,31 @@ void AMFConfigurationApiImpl::update_configuration(
   }
 
   // Wait for the response available and process accordingly
-  std::optional<nlohmann::json> result = std::nullopt;
-  utils::wait_for_result(f, result);
-  if (result.has_value()) {
+  std::optional<nlohmann::json> result_opt = std::nullopt;
+  utils::wait_for_result(f, result_opt);
+  if (result_opt.has_value()) {
     Logger::amf_server().debug("Got result for promise ID %d", promise_id);
+    nlohmann::json result = result_opt.value();
     // process data
     uint32_t http_response_code = 0;
     nlohmann::json json_data    = {};
 
-    if (result.value().find("httpResponseCode") != result.value().end()) {
-      http_response_code = result.value()["httpResponseCode"].get<int>();
+    if (result.find("httpResponseCode") != result.end()) {
+      http_response_code = result["httpResponseCode"].get<int>();
     }
 
     if (static_cast<http_response_codes_e>(http_response_code) ==
         http_response_codes_e::HTTP_RESPONSE_CODE_200_OK) {
-      if (result.value().find("content") != result.value().end()) {
-        json_data = result.value()["content"];
+      if (result.find("content") != result.end()) {
+        json_data = result["content"];
       }
       response.headers().add<Pistache::Http::Header::ContentType>(
           Pistache::Http::Mime::MediaType("application/json"));
       response.send(Pistache::Http::Code::Ok, json_data.dump().c_str());
     } else {
       // Problem details
-      if (result.value().find("ProblemDetails") != result.value().end()) {
-        json_data = result.value()["ProblemDetails"];
+      if (result.find("ProblemDetails") != result.end()) {
+        json_data = result["ProblemDetails"];
       }
 
       response.headers().add<Pistache::Http::Header::ContentType>(

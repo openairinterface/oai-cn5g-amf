@@ -135,6 +135,7 @@ void amf_sbi_task(void*) {
             dynamic_cast<itti_sbi_deregister_nf_instance_request*>(msg);
         amf_sbi_inst->handle_itti_message(std::ref(*m));
       } break;
+
       case SBI_NOTIFY_SUBSCRIBED_EVENT: {
         Logger::amf_sbi().info(
             "Receive Notify Subscribed Event Request, handling ...");
@@ -236,11 +237,7 @@ void amf_sbi::handle_itti_message(
   std::string ue_context_key = amf_conv::get_ue_context_key(
       itti_msg.ran_ue_ngap_id, itti_msg.amf_ue_ngap_id);
   std::shared_ptr<ue_context> uc = {};
-  if (!amf_app_inst->ran_amf_id_2_ue_context(ue_context_key, uc)) {
-    Logger::amf_sbi().error(
-        "No UE context for %s exit", ue_context_key.c_str());
-    return;
-  }
+  if (!amf_app_inst->ran_amf_id_2_ue_context(ue_context_key, uc)) return;
 
   std::string supi = uc->supi;
 
@@ -250,12 +247,7 @@ void amf_sbi::handle_itti_message(
       supi.c_str(), itti_msg.pdu_session_id);
 
   std::shared_ptr<pdu_session_context> psc = {};
-  if (!uc->find_pdu_session_context(itti_msg.pdu_session_id, psc)) {
-    Logger::amf_sbi().error(
-        "Could not find pdu_session_context with SUPI %s, Failed",
-        supi.c_str());
-    return;
-  }
+  if (!uc->find_pdu_session_context(itti_msg.pdu_session_id, psc)) return;
 
   std::string remote_uri = {};
   if (!amf_cfg.get_smf_pdu_session_context_uri(psc, remote_uri)) {
@@ -320,12 +312,7 @@ void amf_sbi::handle_itti_message(itti_nsmf_pdusession_create_sm_context& smf) {
   Logger::amf_sbi().debug("Handle ITTI SMF_PDU_SESSION_CREATE_SM_CTX");
 
   std::shared_ptr<nas_context> nc = {};
-  if (!amf_n1_inst->amf_ue_id_2_nas_context(smf.amf_ue_ngap_id, nc)) {
-    Logger::amf_sbi().error(
-        "No UE NAS context with amf_ue_ngap_id (" AMF_UE_NGAP_ID_FMT ")",
-        smf.amf_ue_ngap_id);
-    return;
-  }
+  if (!amf_n1_inst->amf_ue_id_2_nas_context(smf.amf_ue_ngap_id, nc)) return;
 
   std::string supi = amf_conv::imsi_to_supi(nc->imsi);
   std::string ue_context_key =
@@ -334,11 +321,7 @@ void amf_sbi::handle_itti_message(itti_nsmf_pdusession_create_sm_context& smf) {
   Logger::amf_sbi().info(
       "Find ue_context in amf_app using UE Context Key: %s",
       ue_context_key.c_str());
-  if (!amf_app_inst->ran_amf_id_2_ue_context(ue_context_key, uc)) {
-    Logger::amf_sbi().error(
-        "No UE context for %s exit", ue_context_key.c_str());
-    return;
-  }
+  if (!amf_app_inst->ran_amf_id_2_ue_context(ue_context_key, uc)) return;
 
   // Create PDU Session Context if not available
   std::shared_ptr<pdu_session_context> psc = {};
@@ -369,7 +352,7 @@ void amf_sbi::handle_itti_message(itti_nsmf_pdusession_create_sm_context& smf) {
       psc->snssai.sD.c_str());
 
   // parse binary dnn and store
-  std::string dnn = "default";  // If DNN doesn't available, use "default"
+  std::string dnn = DEFAULT_DNN;  // If DNN doesn't available, use "default"
   if ((smf.dnn != nullptr) && (blength(smf.dnn) > 0)) {
     char* tmp = amf_conv::bstring2charString(smf.dnn);
     dnn       = tmp;
@@ -533,11 +516,8 @@ void amf_sbi::handle_itti_message(
     itti_nsmf_pdusession_release_sm_context& itti_msg) {
   std::shared_ptr<pdu_session_context> psc = {};
   if (!amf_app_inst->find_pdu_session_context(
-          itti_msg.supi, itti_msg.pdu_session_id, psc)) {
-    Logger::amf_sbi().warn(
-        "PDU Session context for SUPI %s doesn't exit!", itti_msg.supi.c_str());
+          itti_msg.supi, itti_msg.pdu_session_id, psc))
     return;
-  }
 
   std::string remote_uri = {};
   if (!amf_cfg.get_smf_pdu_session_context_uri(psc, remote_uri)) {
@@ -564,7 +544,7 @@ void amf_sbi::handle_itti_message(
 
   nlohmann::json response_data      = {};
   response_data["httpResponseCode"] = response_code;
-  response_data["json_data"]        = response_json;
+  response_data["jsonData"]         = response_json;
 
   // Notify to the result
   if (itti_msg.promise_id > 0) {
@@ -588,7 +568,7 @@ void amf_sbi::handle_itti_message(itti_sbi_notify_subscribed_event& itti_msg) {
     i.get_reports(event_reports);
     for (auto r : event_reports) {
       report["type"]            = r.getType().get_value();
-      report["state"]["active"] = true;  // as boolean
+      report["state"]["active"] = true;
       if (r.supiIsSet()) {
         report["supi"] = r.getSupi();
       }
@@ -863,9 +843,6 @@ void amf_sbi::handle_itti_message(
 
     Logger::amf_sbi().debug("Registered AMF profile (from NRF)");
     itti_msg_response->profile.from_json(response_data);
-  } else {
-    Logger::amf_app().warn(
-        "NF Instance Registration, got issue when registering to NRF");
   }
 
   int ret = itti_inst->send_msg(itti_msg_response);
@@ -1004,9 +981,7 @@ void amf_sbi::handle_itti_message(
 //------------------------------------------------------------------------------
 bool amf_sbi::smf_selection_from_configuration(
     std::string& smf_uri_root, std::string& smf_api_version) {
-  smf_uri_root = amf_cfg.smf_addr.uri_root;
-  // smf_uri_root.append(inet_ntoa(amf_cfg.smf_addr.ipv4_addr)).append(":").append(std::to_string(
-  // amf_cfg.smf_addr.port));
+  smf_uri_root    = amf_cfg.smf_addr.uri_root;
   smf_api_version = amf_cfg.smf_addr.api_version;
   return true;
 }
@@ -1044,7 +1019,7 @@ bool amf_sbi::discover_smf(
       "Send NFDiscovery to NRF to discover the available SMFs");
   bool result          = false;
   std::string smf_addr = {};
-  int smf_port         = DEFAULT_HTTP1_PORT;
+  int smf_port         = DEFAULT_HTTP2_PORT;
 
   nlohmann::json json_data = {};
   std::string url          = {};
@@ -1216,11 +1191,8 @@ bool amf_sbi::curl_http_client(
   std::shared_ptr<pdu_session_context> psc = {};
   bool is_multipart                        = true;
 
-  if (!amf_app_inst->find_pdu_session_context(supi, pdu_session_id, psc)) {
-    Logger::amf_sbi().warn(
-        "PDU Session context for SUPI %s doesn't exit!", supi.c_str());
-    return curl_result;
-  }
+  if (!amf_app_inst->find_pdu_session_context(supi, pdu_session_id, psc))
+    return false;
 
   if ((n1sm_msg.size() > 0) and (n2sm_msg.size() > 0)) {
     // prepare the body content for Curl
