@@ -44,6 +44,9 @@ void amf_support_features::from_yaml(const YAML::Node& node) {
     m_enable_smf_selection.from_yaml(
         node[AMF_CONFIG_SUPPORT_FEATURES_ENABLE_SMF_SELECTION]);
   }
+  if (node[AMF_CONFIG_SUPPORT_FEATURES_ENABLE_UDSF]) {
+    m_enable_udsf.from_yaml(node[AMF_CONFIG_SUPPORT_FEATURES_ENABLE_UDSF]);
+  }
 }
 
 //------------------------------------------------------------------------------
@@ -67,6 +70,14 @@ std::string amf_support_features::to_string(const std::string& indent) const {
       AMF_CONFIG_SUPPORT_FEATURES_ENABLE_NSSF_LABEL, inner_width,
       enable_nssf_string));
 
+  std::string enable_udsf_string = m_enable_udsf.get_value() ?
+                                       AMF_CONFIG_OPTION_YES_STR :
+                                       AMF_CONFIG_OPTION_NO_STR;
+  out.append(indent).append(fmt::format(
+      BASE_FORMATTER, INNER_LIST_ELEM,
+      AMF_CONFIG_SUPPORT_FEATURES_ENABLE_UDSF_LABEL, inner_width,
+      enable_udsf_string));
+
   std::string enable_smf_selection_string = m_enable_smf_selection.get_value() ?
                                                 AMF_CONFIG_OPTION_YES_STR :
                                                 AMF_CONFIG_OPTION_NO_STR;
@@ -85,6 +96,11 @@ bool amf_support_features::get_option_enable_simple_scenario() const {
 //------------------------------------------------------------------------------
 bool amf_support_features::get_option_enable_nssf() const {
   return m_enable_nssf.get_value();
+}
+
+//------------------------------------------------------------------------------
+bool amf_support_features::get_option_enable_udsf() const {
+  return m_enable_udsf.get_value();
 }
 
 //------------------------------------------------------------------------------
@@ -768,7 +784,8 @@ amf_config_yaml::amf_config_yaml(
   m_used_sbi_values = {
       oai::config::AMF_CONFIG_NAME, oai::config::AUSF_CONFIG_NAME,
       oai::config::SMF_CONFIG_NAME, oai::config::UDM_CONFIG_NAME,
-      oai::config::NRF_CONFIG_NAME, oai::config::NSSF_CONFIG_NAME};
+      oai::config::NRF_CONFIG_NAME, oai::config::NSSF_CONFIG_NAME,
+      oai::config::UDSF_CONFIG_NAME};
   m_used_config_values = {
       oai::config::LOG_LEVEL_CONFIG_NAME, oai::config::REGISTER_NF_CONFIG_NAME,
       oai::config::NF_CONFIG_HTTP_NAME,   oai::config::NF_LIST_CONFIG_NAME,
@@ -802,6 +819,10 @@ amf_config_yaml::amf_config_yaml(
       "NSSF", "oai-nssf", sbi_interface("SBI", "oai-nssf", 80, "v1", ""));
   add_nf("nssf", m_nssf);
 
+  auto m_udsf = std::make_shared<nf>(
+      "UDSF", "oai-udsf", sbi_interface("SBI", "oai-udsf", 80, "v1", ""));
+  add_nf("udsf", m_udsf);
+
   update_used_nfs();
 }
 
@@ -822,6 +843,9 @@ void amf_config_yaml::pre_process() {
     nrf->set_config();
     if (amf_local->get_support_features().get_option_enable_nssf()) {
       get_nf(NSSF_CONFIG_NAME)->set_config();
+    }
+    if (amf_local->get_support_features().get_option_enable_udsf()) {
+      get_nf(UDSF_CONFIG_NAME)->set_config();
     }
   } else {
     std::shared_ptr<nf> ausf = get_nf(AUSF_CONFIG_NAME);
@@ -852,6 +876,7 @@ void amf_config_yaml::to_amf_config(amf_config& cfg) {
     cfg.support_features.enable_external_ausf   = false;  // TODO: to be removed
     cfg.support_features.enable_external_udm    = false;  // TODO: to be removed
     cfg.support_features.enable_nssf            = false;  // TODO: to be removed
+    cfg.support_features.enable_udsf            = false;  // TODO: to be removed
   } else {  // parse the other options
     cfg.support_features.enable_nf_registration = register_nrf();
     cfg.support_features.enable_smf_selection =
@@ -860,6 +885,8 @@ void amf_config_yaml::to_amf_config(amf_config& cfg) {
     cfg.support_features.enable_external_udm  = true;  // To be removed
     cfg.support_features.enable_nssf =
         amf_local->get_support_features().get_option_enable_nssf();
+    cfg.support_features.enable_udsf =
+        amf_local->get_support_features().get_option_enable_udsf();
   }
 
   cfg.support_features.http_version = get_http_version();
@@ -946,6 +973,12 @@ void amf_config_yaml::to_amf_config(amf_config& cfg) {
     cfg.nssf_addr.api_version =
         get_nf(NSSF_CONFIG_NAME)->get_sbi().get_api_version();
     cfg.nssf_addr.uri_root = get_nf(NSSF_CONFIG_NAME)->get_sbi().get_url();
+  }
+
+  if (get_nf(oai::config::UDSF_CONFIG_NAME)) {
+    cfg.udsf_addr.api_version =
+        get_nf(oai::config::UDSF_CONFIG_NAME)->get_sbi().get_api_version();
+    cfg.udsf_addr.uri_root = get_nf(oai::config::UDSF_CONFIG_NAME)->get_url();
   }
 
   // NAS conf

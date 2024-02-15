@@ -93,12 +93,17 @@ typedef enum {
 } SecurityHeaderType_t;
 
 constexpr uint32_t DEFAULT_HTTP1_PORT  = 80;
+constexpr uint32_t DEFAULT_HTTP2_PORT  = 8080;
 constexpr auto DEFAULT_SBI_API_VERSION = "v1";
 constexpr auto DEFAULT_SUPI_TYPE =
     "imsi";  // Set to "imsi" when supporting both IMSI and NAI as SUPI
 
 constexpr auto DEFAULT_SST = 1;
 constexpr auto DEFAULT_DNN = "default";
+
+// For UDSF
+constexpr auto DEFAULT_REALM_ID   = "oai";
+constexpr auto DEFAULT_STORAGE_ID = "amf";
 
 typedef struct auth_conf_s {
   std::string mysql_server;

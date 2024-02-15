@@ -3080,6 +3080,9 @@ void amf_n1::security_mode_complete_handle(
           itti_msg->get_msg_name());
     }
   }
+
+  // Store UE-related context into UDSF (if available)
+  amf_app_inst->store_ue_context(ran_ue_ngap_id, amf_ue_ngap_id);
 }
 
 //------------------------------------------------------------------------------
