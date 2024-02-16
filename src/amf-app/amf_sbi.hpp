@@ -90,6 +90,15 @@ class amf_sbi {
       itti_sbi_network_slice_selection_information& itti_msg);
 
   /*
+   * Handle ITTI message to get the Network Slice Selection Discovery from
+   * NSSF
+   * @param [itti_sbi_network_slice_selection_discovery&]: ITTI message
+   * @return void
+   */
+  void handle_itti_message(
+      itti_sbi_network_slice_selection_discovery& itti_msg);
+
+  /*
    * Handle ITTI message to reroute N1 message to the targer AMF
    * @param [itti_sbi_n1_message_notify&]: ITTI message
    * @return void
@@ -230,6 +239,11 @@ class amf_sbi {
   bool get_nrf_uri(
       const snssai_t& snssai, const plmn_t& plmn, const std::string& dnn,
       std::string& nrf_uri);
+
+  void get_network_slice_information(
+      const snssai_t& snssai, const plmn_t& plmn,
+      const std::optional<std::string>& dnn, nlohmann::json& response_data,
+      uint32_t& response_code);
 
   /*
    * CURL client to send request to the HTTP server

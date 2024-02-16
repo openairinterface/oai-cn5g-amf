@@ -36,6 +36,7 @@
 #include "amf_n1.hpp"
 #include "amf_n2.hpp"
 #include "amf_sbi.hpp"
+#include "amf_sbi_helper.hpp"
 #include "amf_statistics.hpp"
 #include "output_wrapper.hpp"
 #include "itti.hpp"
@@ -46,6 +47,7 @@ using namespace ngap;
 using namespace nas;
 using namespace amf_application;
 using namespace oai::config;
+using namespace oai::amf::api;
 
 extern amf_app* amf_app_inst;
 extern itti_mw* itti_inst;
@@ -1443,16 +1445,117 @@ void amf_app::register_to_nrf() {
       "Send ITTI msg to SBI task to trigger the registration request towards "
       "NRF");
 
-  auto itti_msg = std::make_shared<itti_sbi_register_nf_instance_request>(
-      TASK_AMF_APP, TASK_AMF_SBI);
-  itti_msg->profile = nf_instance_profile;
+  std::vector<std::string> nrfs;
+  get_nrfs(nrfs);
 
-  int ret = itti_inst->send_msg(itti_msg);
-  if (RETURNok != ret) {
-    Logger::amf_app().error(
-        "Could not send ITTI message %s to task TASK_AMF_SBI",
-        itti_msg->get_msg_name());
+  for (const auto& nrf_instance : nrfs) {
+    auto itti_msg = std::make_shared<itti_sbi_register_nf_instance_request>(
+        TASK_AMF_APP, TASK_AMF_SBI);
+    itti_msg->profile = nf_instance_profile;
+    itti_msg->nrf_uri = nrf_instance;
+
+    int ret = itti_inst->send_msg(itti_msg);
+    if (RETURNok != ret) {
+      Logger::amf_app().error(
+          "Could not send ITTI message %s to task TASK_AMF_SBI",
+          itti_msg->get_msg_name());
+    }
   }
+}
+
+//------------------------------------------------------------------------------
+void amf_app::get_nrfs(std::vector<std::string>& nrfs) {
+  if (amf_cfg.support_features.enable_nssf) {
+    // Get all related NRFs from NSSF
+    std::map<uint32_t, boost::shared_future<nlohmann::json>> nssf_responses;
+
+    // Send request to SBI to get appropriate Network Slice Informations from
+    // NSSF
+    for (const auto& plmn : amf_cfg.plmn_list) {
+      for (auto s : plmn.slice_list) {
+        std::shared_ptr<itti_sbi_network_slice_selection_discovery> itti_msg =
+            std::make_shared<itti_sbi_network_slice_selection_discovery>(
+                TASK_AMF_N1, TASK_AMF_SBI);
+
+        // Generate a promise and associate this promise to the ITTI message
+        uint32_t promise_id = amf_app_inst->generate_promise_id();
+        Logger::amf_n1().debug("Promise ID generated %d", promise_id);
+
+        boost::shared_ptr<boost::promise<nlohmann::json>> p =
+            boost::make_shared<boost::promise<nlohmann::json>>();
+        boost::shared_future<nlohmann::json> f = p->get_future();
+
+        // Store the future to be processed later
+        nssf_responses.emplace(promise_id, f);
+        amf_app_inst->add_promise(promise_id, p);
+
+        itti_msg->http_version   = amf_cfg.support_features.http_version;
+        itti_msg->nf_instance_id = amf_instance_id;
+        itti_msg->plmn.mcc       = plmn.mcc;
+        itti_msg->plmn.mnc       = plmn.mnc;
+        itti_msg->snssai.sST     = s.sst;
+        itti_msg->snssai.sD      = std::to_string(s.sd);
+        itti_msg->promise_id     = promise_id;
+        int ret                  = itti_inst->send_msg(itti_msg);
+        if (0 != ret) {
+          Logger::amf_n1().error(
+              "Could not send ITTI message %s to task TASK_AMF_SBI",
+              itti_msg->get_msg_name());
+        }
+      }
+    }
+
+    // Process the response
+    while (!nssf_responses.empty()) {
+      // Wait for the result available and process accordingly
+      std::optional<nlohmann::json> result_opt = std::nullopt;
+      utils::wait_for_result(nssf_responses.begin()->second, result_opt);
+
+      if (result_opt.has_value()) {
+        nlohmann::json result = result_opt.value();
+        Logger::amf_app().debug(
+            "Got result for promise ID %ld, json content %s",
+            nssf_responses.begin()->first, result.dump());
+
+        uint32_t http_response_code = 0;
+        if (result.find("httpResponseCode") != result.end()) {
+          http_response_code = result["httpResponseCode"].get<int>();
+          if (http_response_code != 200) break;
+        } else {
+          break;
+        }
+
+        if (result.find("jsonData") != result.end()) {
+          nlohmann::json authorized_network_slice_info = result["jsonData"];
+          NsiInformation nsi_information               = {};
+          if (authorized_network_slice_info.find("nsiInformation") !=
+              authorized_network_slice_info.end()) {
+            try {
+              from_json(
+                  authorized_network_slice_info["nsiInformation"],
+                  nsi_information);
+              nrfs.push_back(nsi_information.getNrfNfMgtUri());
+            } catch (std::exception& e) {
+              Logger::amf_app().warn(
+                  "Could not parse NSI Information from Json");
+              break;
+            }
+          }
+        }
+      } else {
+        break;
+      }
+    }
+    nssf_responses.erase(nssf_responses.begin());
+  } else {
+    // Get all NRFs from configuration files
+    // For now we only have 1 NRF from conf file
+    std::string nrf_uri = {};
+    amf_sbi_helper::get_nrf_nf_instance_uri(
+        amf_cfg.nrf_addr, amf_instance_id, nrf_uri);
+    nrfs.push_back(nrf_uri);
+  }
+  return;
 }
 
 //------------------------------------------------------------------------------

@@ -29,6 +29,7 @@
 
 #include "N1MessageClass_anyOf.h"
 #include "N2InformationClass_anyOf.h"
+#include "NsiInformation.h"
 #include "ProblemDetails.h"
 #include "UeN1N2InfoSubscriptionCreateData.h"
 #include "amf_config.hpp"
@@ -42,6 +43,7 @@
 #include "uint_generator.hpp"
 
 using namespace oai::config;
+using namespace oai::amf::model;
 
 namespace amf_application {
 
@@ -441,6 +443,8 @@ class amf_app {
    * @return void
    */
   void register_to_nrf();
+
+  void get_nrfs(std::vector<std::string>& nrfs);
 
   /*
    * Handle Event Exposure Msg from NF

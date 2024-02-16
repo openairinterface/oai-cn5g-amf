@@ -5082,18 +5082,23 @@ bool amf_n1::get_network_slice_selection(
     }
 
     // Wait for the response available and process accordingly
-    std::optional<nlohmann::json> result = std::nullopt;
-    utils::wait_for_result(f, result);
-    if (result.has_value()) {
-      nlohmann::json network_slice_info = result.value();
-      Logger::amf_n1().debug(
-          "Got Authorized Network Slice Info from NSSF: %s",
-          network_slice_info.dump());
-      try {
-        from_json(network_slice_info, authorized_network_slice_info);
-      } catch (std::exception& e) {
-        Logger::amf_n1().warn(
-            "Could not parse Authorized Network Slice Info from Json");
+    std::optional<nlohmann::json> result_opt = std::nullopt;
+    utils::wait_for_result(f, result_opt);
+    if (result_opt.has_value()) {
+      nlohmann::json result = result_opt.value();
+      Logger::amf_n1().debug("Got result for promise ID %ld", promise_id);
+      if (result.find("jsonData") != result.end()) {
+        Logger::amf_n1().debug(
+            "Got Authorized Network Slice Info from NSSF: %s",
+            result["jsonData"].dump());
+        try {
+          from_json(result["jsonData"], authorized_network_slice_info);
+        } catch (std::exception& e) {
+          Logger::amf_n1().warn(
+              "Could not parse Authorized Network Slice Info from Json");
+          return false;
+        }
+      } else {
         return false;
       }
 
