@@ -735,11 +735,11 @@ void amf_sbi::handle_itti_message(
 
   // For now, using the existing API to get list of NRFs
   get_network_slice_information(
-      itti_msg.snssai, itti_msg.plmn, std::nullopt, response_json,
-      response_code);
+      itti_msg.snssai, itti_msg.plmn, std::nullopt, itti_msg.nf_instance_id,
+      response_json, response_code);
   nlohmann::json response_data      = {};
   response_data["httpResponseCode"] = response_code;
-  response_data["jsonData"]         = response_json;
+  if (!response_json.is_null()) response_data["jsonData"] = response_json;
 
   // Notify to the result
   if (itti_msg.promise_id > 0) {
@@ -1836,7 +1836,8 @@ bool amf_sbi::get_nrf_uri(
 
     auto dnn_opt = std::make_optional<std::string>(dnn);
     get_network_slice_information(
-        snssai, plmn, dnn_opt, response_data, response_code);
+        snssai, plmn, dnn_opt, amf_app_inst->get_nf_instance(), response_data,
+        response_code);
 
     if (static_cast<http_response_codes_e>(response_code) !=
         http_response_codes_e::HTTP_RESPONSE_CODE_200_OK) {
@@ -1877,8 +1878,8 @@ bool amf_sbi::get_nrf_uri(
 //------------------------------------------------------------------------------
 void amf_sbi::get_network_slice_information(
     const snssai_t& snssai, const plmn_t& plmn,
-    const std::optional<std::string>& dnn, nlohmann::json& response_data,
-    uint32_t& response_code) {
+    const std::optional<std::string>& dnn, const std::string& amf_instance_id,
+    nlohmann::json& response_data, uint32_t& response_code) {
   // Get NSI information from NSSF
   nlohmann::json slice_info  = {};
   nlohmann::json snssai_info = {};
@@ -1892,8 +1893,10 @@ void amf_sbi::get_network_slice_information(
       amf_cfg.get_nssf_network_slice_selection_information_uri();
 
   std::string parameters = {};
-  parameters = "?nf-type=AMF&nf-id=" + amf_app_inst->get_nf_instance() +
-               "&slice-info-request-for-pdu-session=" + slice_info.dump();
+  parameters.append("?nf-type=AMF&nf-id=")
+      .append(amf_instance_id)
+      .append("&slice-info-request-for-pdu-session=")
+      .append(slice_info.dump());
   nssf_url += parameters;
 
   Logger::amf_sbi().debug(

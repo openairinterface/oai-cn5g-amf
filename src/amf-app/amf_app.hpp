@@ -101,6 +101,7 @@ class amf_app {
   virtual ~amf_app(){};
   void operator=(amf_app const&) = delete;
 
+  void start();
   /**
    * Stop all the ongoing processes and send NF deregistration towards NRF
    */

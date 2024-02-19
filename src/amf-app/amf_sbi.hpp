@@ -242,8 +242,8 @@ class amf_sbi {
 
   void get_network_slice_information(
       const snssai_t& snssai, const plmn_t& plmn,
-      const std::optional<std::string>& dnn, nlohmann::json& response_data,
-      uint32_t& response_code);
+      const std::optional<std::string>& dnn, const std::string& amf_instance_id,
+      nlohmann::json& response_data, uint32_t& response_code);
 
   /*
    * CURL client to send request to the HTTP server
