@@ -941,9 +941,12 @@ void amf_app::handle_itti_message(itti_sbi_update_amf_configuration& itti_msg) {
 void amf_app::handle_itti_message(itti_sbi_register_nf_instance_response& r) {
   Logger::amf_app().debug("Handle NF Instance Registration response");
 
-  if (r.http_response_code ==
-      static_cast<uint32_t>(
-          http_response_codes_e::HTTP_RESPONSE_CODE_201_CREATED)) {
+  if ((r.http_response_code ==
+       static_cast<uint32_t>(
+           http_response_codes_e::HTTP_RESPONSE_CODE_200_OK)) or
+      (r.http_response_code ==
+       static_cast<uint32_t>(
+           http_response_codes_e::HTTP_RESPONSE_CODE_201_CREATED))) {
     Logger::amf_app().debug("AMF has successfully registered to NRF.");
     nf_instance_profile = r.profile;
     // Set heartbeat timer
@@ -988,9 +991,12 @@ void amf_app::handle_itti_message(itti_sbi_deregister_nf_instance_response& r) {
 void amf_app::handle_itti_message(itti_sbi_update_nf_instance_response& r) {
   Logger::amf_app().debug("Handle NF Update response");
   if (r.http_response_code !=
-      static_cast<uint16_t>(
-          http_response_codes_e::HTTP_RESPONSE_CODE_204_NO_CONTENT)) {
-    register_to_nrf();  // trigger again registration procedure
+          static_cast<uint16_t>(
+              http_response_codes_e::HTTP_RESPONSE_CODE_204_NO_CONTENT) and
+      (r.http_response_code !=
+       static_cast<uint16_t>(
+           http_response_codes_e::HTTP_RESPONSE_CODE_200_OK))) {
+    register_to_nrf(r.nrf_uri);  // trigger again registration procedure
   } else {
     Logger::amf_app().debug(
         "Set a timer to the next Heart-beat (%d)",
@@ -1450,9 +1456,10 @@ void amf_app::register_to_nrf() {
   // Send request to SBI to send NF registration to NRF
   Logger::amf_app().debug(
       "Send ITTI msg to SBI task to trigger the registration request towards "
-      "NRF");
+      "all appropriate NRFs");
 
-  std::vector<std::string> nrfs;
+  // Get all appropriate NRFs
+  std::set<std::string> nrfs;
   get_nrfs(nrfs);
 
   for (const auto& nrf_instance : nrfs) {
@@ -1471,7 +1478,7 @@ void amf_app::register_to_nrf() {
 }
 
 //---------------------------------------------------------------------------------------------
-void amf_app::register_to_nrf(std::string nrf_uri) {
+void amf_app::register_to_nrf(const std::string& nrf_uri) const {
   // Send request to SBI to send NF registration to NRF
   Logger::amf_app().debug(
       "Send ITTI msg to SBI task to trigger the registration request towards "
@@ -1491,13 +1498,12 @@ void amf_app::register_to_nrf(std::string nrf_uri) {
 }
 
 //------------------------------------------------------------------------------
-void amf_app::get_nrfs(std::vector<std::string>& nrfs) {
+void amf_app::get_nrfs(std::set<std::string>& nrfs) {
   if (amf_cfg.support_features.enable_nssf) {
     // Get all related NRFs from NSSF
     std::map<uint32_t, boost::shared_future<nlohmann::json>> nssf_responses;
 
-    // Send request to SBI to get appropriate Network Slice Informations from
-    // NSSF
+    // Send requests to get appropriate Network Slice Informations from NSSF
     for (const auto& plmn : amf_cfg.plmn_list) {
       for (auto s : plmn.slice_list) {
         std::shared_ptr<itti_sbi_network_slice_selection_discovery> itti_msg =
@@ -1540,15 +1546,13 @@ void amf_app::get_nrfs(std::vector<std::string>& nrfs) {
       if (result_opt.has_value()) {
         nlohmann::json result = result_opt.value();
         Logger::amf_app().debug(
-            "Got result for promise ID %ld, json content %s",
+            "Got result for promise ID %ld, JSON content %s",
             nssf_responses.begin()->first, result.dump());
 
         uint32_t http_response_code = 0;
         if (result.find("httpResponseCode") != result.end()) {
           http_response_code = result["httpResponseCode"].get<int>();
-          if (http_response_code != 200) break;
-        } else {
-          break;
+          // if (http_response_code != 200) continue;
         }
 
         if (result.find("jsonData") != result.end()) {
@@ -1560,26 +1564,24 @@ void amf_app::get_nrfs(std::vector<std::string>& nrfs) {
               from_json(
                   authorized_network_slice_info["nsiInformation"],
                   nsi_information);
-              nrfs.push_back(nsi_information.getNrfNfMgtUri());
+              nrfs.insert(nsi_information.getNrfNfMgtUri());
             } catch (std::exception& e) {
               Logger::amf_app().warn(
                   "Could not parse NSI Information from Json");
-              break;
             }
           }
         }
-      } else {
-        break;
       }
+      nssf_responses.erase(nssf_responses.begin());
     }
-    nssf_responses.erase(nssf_responses.begin());
+
   } else {
     // Get all NRFs from configuration files
     // For now we only have 1 NRF from conf file
     std::string nrf_uri = {};
     amf_sbi_helper::get_nrf_nf_instance_uri(
         amf_cfg.nrf_addr, amf_instance_id, nrf_uri);
-    nrfs.push_back(nrf_uri);
+    nrfs.insert(nrf_uri);
   }
   return;
 }
@@ -1602,7 +1604,7 @@ void amf_app::deregister_to_nrf() const {
 
 //---------------------------------------------------------------------------------------------
 void amf_app::timer_nrf_heartbeat_timeout(
-    timer_id_t timer_id, std::string arg2_user) {
+    timer_id_t timer_id, std::string nrf_uri) {
   Logger::amf_app().debug("Send ITTI msg to SBI task to trigger NRF Heartbeat");
 
   auto itti_msg = std::make_shared<itti_sbi_update_nf_instance_request>(
@@ -1617,6 +1619,7 @@ void amf_app::timer_nrf_heartbeat_timeout(
   patch_item.setValue("REGISTERED");
   itti_msg->patch_items.push_back(patch_item);
   itti_msg->amf_instance_id = amf_instance_id;
+  itti_msg->nrf_uri         = nrf_uri;
 
   int ret = itti_inst->send_msg(itti_msg);
   if (RETURNok != ret) {

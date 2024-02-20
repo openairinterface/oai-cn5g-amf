@@ -839,18 +839,14 @@ void amf_sbi::handle_itti_message(itti_sbi_nf_instance_discovery& itti_msg) {
 //------------------------------------------------------------------------------
 void amf_sbi::handle_itti_message(
     itti_sbi_register_nf_instance_request& itti_msg) {
-  Logger::amf_sbi().debug(
-      "Send NF Instance Registration to NRF (HTTP version %d)",
-      itti_msg.http_version);
+  Logger::amf_sbi().debug("Send NF Instance Registration to NRF");
   nlohmann::json json_data = {};
   itti_msg.profile.to_json(json_data);
 
-  std::string nrf_uri = {};
-  amf_sbi_helper::get_nrf_nf_instance_uri(
-      amf_cfg.nrf_addr, itti_msg.profile.get_nf_instance_id(), nrf_uri);
-
   Logger::amf_sbi().debug(
-      "Send NF Instance Registration to NRF, NRF URL %s", nrf_uri.c_str());
+      "Send NF Instance Registration to NRF, NRF URI (RegisterNFInstance API) "
+      "%s",
+      itti_msg.nrf_uri.c_str());
 
   std::string body = json_data.dump();
   Logger::amf_sbi().debug(
@@ -860,7 +856,7 @@ void amf_sbi::handle_itti_message(
   uint32_t response_code       = 0;
 
   curl_http_client(
-      nrf_uri, "PUT", body, response_data, response_code,
+      itti_msg.nrf_uri, "PUT", body, response_data, response_code,
       amf_cfg.support_features.http_version);
 
   // Send response to APP to process
@@ -869,14 +865,17 @@ void amf_sbi::handle_itti_message(
           TASK_AMF_SBI, TASK_AMF_APP);
   itti_msg_response->http_response_code = response_code;
   itti_msg_response->http_version       = itti_msg.http_version;
-  itti_msg_response->nrf_uri            = nrf_uri;
+  itti_msg_response->nrf_uri            = itti_msg.nrf_uri;
 
-  if (response_code ==
-      static_cast<uint32_t>(
-          http_response_codes_e::HTTP_RESPONSE_CODE_201_CREATED)) {
+  if ((response_code ==
+       static_cast<uint32_t>(
+           http_response_codes_e::HTTP_RESPONSE_CODE_201_CREATED)) or
+      (response_code ==
+       static_cast<uint32_t>(
+           http_response_codes_e::HTTP_RESPONSE_CODE_200_OK))) {
     Logger::amf_sbi().debug("NFRegistration, got successful response from NRF");
     Logger::amf_sbi().debug(
-        "NF Instance Registration, response from NRF, json data: \n %s",
+        "NF Instance Registration, response from NRF, JSON data: \n %s",
         response_data.dump().c_str());
 
     Logger::amf_sbi().debug("Registered AMF profile (from NRF)");
@@ -904,21 +903,18 @@ void amf_sbi::handle_itti_message(
   std::string body = json_data.dump();
   Logger::amf_sbi().debug("Send NF Update to NRF, Msg body %s", body.c_str());
 
-  std::string nrf_uri = {};
-  amf_sbi_helper::get_nrf_nf_instance_uri(
-      amf_cfg.nrf_addr, itti_msg.amf_instance_id, nrf_uri);
-
-  Logger::amf_sbi().debug("Send NF Update to NRF, NRF URL %s", nrf_uri.c_str());
+  Logger::amf_sbi().debug(
+      "Send NF Update to NRF, NRF URI %s", itti_msg.nrf_uri.c_str());
 
   nlohmann::json response_data = {};
   uint32_t response_code       = 0;
 
   curl_http_client(
-      nrf_uri, "PATCH", body, response_data, response_code,
+      itti_msg.nrf_uri, "PATCH", body, response_data, response_code,
       amf_cfg.support_features.http_version);
 
   Logger::amf_sbi().debug(
-      "NF Update, response from NRF, json data: \n %s",
+      "NF Update, response from NRF, JSON data: \n %s",
       response_data.dump().c_str());
 
   // Send response to APP to process
@@ -927,7 +923,7 @@ void amf_sbi::handle_itti_message(
           TASK_AMF_SBI, TASK_AMF_APP);
   itti_msg_response->http_response_code = response_code;
   itti_msg_response->amf_instance_id    = itti_msg.amf_instance_id;
-  itti_msg_response->nrf_uri            = nrf_uri;
+  itti_msg_response->nrf_uri            = itti_msg.nrf_uri;
   Logger::amf_sbi().debug("Registered AMF profile (from NRF)");
 
   int ret = itti_inst->send_msg(itti_msg_response);

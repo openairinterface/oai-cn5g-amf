@@ -264,6 +264,7 @@ class itti_sbi_update_nf_instance_request : public itti_sbi_msg {
 
   std::vector<oai::model::common::PatchItem> patch_items;
   std::string amf_instance_id;
+  std::string nrf_uri;
 };
 
 //-----------------------------------------------------------------------------

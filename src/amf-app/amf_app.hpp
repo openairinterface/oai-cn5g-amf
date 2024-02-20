@@ -445,9 +445,19 @@ class amf_app {
    */
   void register_to_nrf();
 
-  void register_to_nrf(std::string nrf_uri);
+  /*
+   * Trigger NF instance registration to a NRF
+   * @param [const std::string&] nrf_uri: NRF's URI
+   * @return void
+   */
+  void register_to_nrf(const std::string& nrf_uri) const;
 
-  void get_nrfs(std::vector<std::string>& nrfs);
+  /*
+   * Get a list of suitable NRFs from a NSSF
+   * @param [std::set<std::string>&] nrfs: store the list of NRF's URI
+   * @return void
+   */
+  void get_nrfs(std::set<std::string>& nrfs);
 
   /*
    * Handle Event Exposure Msg from NF
