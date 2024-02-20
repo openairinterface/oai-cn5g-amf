@@ -23,7 +23,7 @@
 #define SRC_ITTI_ITTI_MSG_HPP_INCLUDED_
 
 #include <stdint.h>
-
+#include <string>
 #include <utility>
 
 typedef enum {
@@ -151,7 +151,7 @@ class itti_msg_timeout : public itti_msg {
  public:
   itti_msg_timeout(
       const task_id_t origin, const task_id_t destination, uint32_t timer_id,
-      uint64_t arg1_user, uint64_t arg2_user)
+      uint64_t arg1_user, std::string arg2_user)
       : itti_msg(TIME_OUT, origin, destination),
         timer_id(timer_id),
         arg1_user(arg1_user),
@@ -165,7 +165,7 @@ class itti_msg_timeout : public itti_msg {
   static const char* get_msg_name() { return "TIME_OUT"; };
   uint32_t timer_id;
   uint64_t arg1_user;
-  uint64_t arg2_user;
+  std::string arg2_user;
 };
 
 class itti_msg_ping : public itti_msg {

@@ -445,6 +445,8 @@ class amf_app {
    */
   void register_to_nrf();
 
+  void register_to_nrf(std::string nrf_uri);
+
   void get_nrfs(std::vector<std::string>& nrfs);
 
   /*
@@ -554,7 +556,7 @@ class amf_app {
    * @param [uint64_t] arg2_user
    * @return void
    */
-  void timer_nrf_heartbeat_timeout(timer_id_t timer_id, uint64_t arg2_user);
+  void timer_nrf_heartbeat_timeout(timer_id_t timer_id, std::string arg2_user);
 
   /*
    * Handle NF registration timeout
@@ -562,7 +564,8 @@ class amf_app {
    * @param [uint64_t] arg2_user
    * @return void
    */
-  void timer_nrf_registration_timeout(timer_id_t timer_id, uint64_t arg2_user);
+  void timer_nrf_registration_timeout(
+      timer_id_t timer_id, std::string arg2_user);
 
   /*
    * Store the promise

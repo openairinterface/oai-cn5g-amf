@@ -4486,7 +4486,16 @@ bool amf_n1::find_ue_context(
 
 //------------------------------------------------------------------------------
 void amf_n1::mobile_reachable_timer_timeout(
-    timer_id_t& timer_id, const uint64_t amf_ue_ngap_id) {
+    timer_id_t& timer_id, const std::string amf_ue_ngap_id_str) {
+  long amf_ue_ngap_id = {};
+  try {
+    amf_ue_ngap_id = std::stol(amf_ue_ngap_id_str);
+  } catch (const std::exception& err) {
+    Logger::amf_n1().warn(
+        "Can not covert AMF UE NGAP ID in string format to long!");
+    return;
+  }
+
   std::shared_ptr<nas_context> nc = {};
   if (!amf_ue_id_2_nas_context(amf_ue_ngap_id, nc)) return;
 
@@ -4504,7 +4513,8 @@ void amf_n1::mobile_reachable_timer_timeout(
   // TODO: Start the implicit de-registration timer
   timer_id_t tid = itti_inst->timer_setup(
       IMPLICIT_DEREGISTRATION_TIMER_MIN * 60, 0, TASK_AMF_N1,
-      TASK_AMF_IMPLICIT_DEREGISTRATION_TIMER_EXPIRE, amf_ue_ngap_id);
+      TASK_AMF_IMPLICIT_DEREGISTRATION_TIMER_EXPIRE,
+      std::to_string(amf_ue_ngap_id));
   Logger::amf_n1().startup(
       "Started Implicit De-Registration Timer (tid %d)", tid);
 
@@ -4513,7 +4523,16 @@ void amf_n1::mobile_reachable_timer_timeout(
 
 //------------------------------------------------------------------------------
 void amf_n1::implicit_deregistration_timer_timeout(
-    timer_id_t timer_id, uint64_t amf_ue_ngap_id) {
+    timer_id_t timer_id, std::string amf_ue_ngap_id_str) {
+  long amf_ue_ngap_id = {};
+  try {
+    amf_ue_ngap_id = std::stol(amf_ue_ngap_id_str);
+  } catch (const std::exception& err) {
+    Logger::amf_n1().warn(
+        "Can not covert AMF UE NGAP ID in string format to long!");
+    return;
+  }
+
   std::shared_ptr<nas_context> nc = {};
   if (!amf_ue_id_2_nas_context(amf_ue_ngap_id, nc)) return;
 

@@ -845,12 +845,12 @@ void amf_sbi::handle_itti_message(
   nlohmann::json json_data = {};
   itti_msg.profile.to_json(json_data);
 
-  std::string url = {};
+  std::string nrf_uri = {};
   amf_sbi_helper::get_nrf_nf_instance_uri(
-      amf_cfg.nrf_addr, itti_msg.profile.get_nf_instance_id(), url);
+      amf_cfg.nrf_addr, itti_msg.profile.get_nf_instance_id(), nrf_uri);
 
   Logger::amf_sbi().debug(
-      "Send NF Instance Registration to NRF, NRF URL %s", url.c_str());
+      "Send NF Instance Registration to NRF, NRF URL %s", nrf_uri.c_str());
 
   std::string body = json_data.dump();
   Logger::amf_sbi().debug(
@@ -860,7 +860,7 @@ void amf_sbi::handle_itti_message(
   uint32_t response_code       = 0;
 
   curl_http_client(
-      url, "PUT", body, response_data, response_code,
+      nrf_uri, "PUT", body, response_data, response_code,
       amf_cfg.support_features.http_version);
 
   // Send response to APP to process
@@ -869,6 +869,7 @@ void amf_sbi::handle_itti_message(
           TASK_AMF_SBI, TASK_AMF_APP);
   itti_msg_response->http_response_code = response_code;
   itti_msg_response->http_version       = itti_msg.http_version;
+  itti_msg_response->nrf_uri            = nrf_uri;
 
   if (response_code ==
       static_cast<uint32_t>(
@@ -903,17 +904,17 @@ void amf_sbi::handle_itti_message(
   std::string body = json_data.dump();
   Logger::amf_sbi().debug("Send NF Update to NRF, Msg body %s", body.c_str());
 
-  std::string url = {};
+  std::string nrf_uri = {};
   amf_sbi_helper::get_nrf_nf_instance_uri(
-      amf_cfg.nrf_addr, itti_msg.amf_instance_id, url);
+      amf_cfg.nrf_addr, itti_msg.amf_instance_id, nrf_uri);
 
-  Logger::amf_sbi().debug("Send NF Update to NRF, NRF URL %s", url.c_str());
+  Logger::amf_sbi().debug("Send NF Update to NRF, NRF URL %s", nrf_uri.c_str());
 
   nlohmann::json response_data = {};
   uint32_t response_code       = 0;
 
   curl_http_client(
-      url, "PATCH", body, response_data, response_code,
+      nrf_uri, "PATCH", body, response_data, response_code,
       amf_cfg.support_features.http_version);
 
   Logger::amf_sbi().debug(
@@ -926,6 +927,7 @@ void amf_sbi::handle_itti_message(
           TASK_AMF_SBI, TASK_AMF_APP);
   itti_msg_response->http_response_code = response_code;
   itti_msg_response->amf_instance_id    = itti_msg.amf_instance_id;
+  itti_msg_response->nrf_uri            = nrf_uri;
   Logger::amf_sbi().debug("Registered AMF profile (from NRF)");
 
   int ret = itti_inst->send_msg(itti_msg_response);
@@ -1900,9 +1902,7 @@ void amf_sbi::get_network_slice_information(
   nssf_url += parameters;
 
   Logger::amf_sbi().debug(
-      "Send Network Slice Information Retrieval during PDU session "
-      "establishment procedure, URL %s",
-      nssf_url.c_str());
+      "Send Network Slice Information Retrieval, URI %s", nssf_url.c_str());
 
   curl_http_client(
       nssf_url, "GET", "", response_data, response_code,

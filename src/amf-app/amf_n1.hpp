@@ -509,7 +509,7 @@ class amf_n1 {
    * @return void
    */
   void mobile_reachable_timer_timeout(
-      timer_id_t& timer_id, const uint64_t amf_ue_ngap_id);
+      timer_id_t& timer_id, std::string amf_ue_ngap_id_str);
 
   /*
    * Set the status of timer timeout in the UE NAS context
@@ -564,7 +564,7 @@ class amf_n1 {
    * @return void
    */
   void implicit_deregistration_timer_timeout(
-      timer_id_t timer_id, uint64_t amf_ue_ngap_id);
+      timer_id_t timer_id, std::string amf_ue_ngap_id_str);
 
   // NETWORK SLICING RELATED FUNCTIONS
 

@@ -94,7 +94,7 @@ amf_app::amf_app(const amf_config& amf_cfg)
 
   timer_id_t tid = itti_inst->timer_setup(
       amf_cfg.statistics_interval, 0, TASK_AMF_APP,
-      TASK_AMF_APP_PERIODIC_STATISTICS, 0);
+      TASK_AMF_APP_PERIODIC_STATISTICS);
   Logger::amf_app().startup("Started timer (%d)", tid);
 }
 
@@ -211,7 +211,7 @@ void amf_app_task(void*) {
             case TASK_AMF_APP_PERIODIC_STATISTICS:
               tid = itti_inst->timer_setup(
                   amf_cfg.statistics_interval, 0, TASK_AMF_APP,
-                  TASK_AMF_APP_PERIODIC_STATISTICS, 0);
+                  TASK_AMF_APP_PERIODIC_STATISTICS);
               stacs.display();
               break;
             case TASK_AMF_APP_TIMEOUT_NRF_HEARTBEAT:
@@ -952,16 +952,14 @@ void amf_app::handle_itti_message(itti_sbi_register_nf_instance_response& r) {
         r.profile.get_nf_heartBeat_timer());
     timer_nrf_heartbeat = itti_inst->timer_setup(
         r.profile.get_nf_heartBeat_timer(), 0, TASK_AMF_APP,
-        TASK_AMF_APP_TIMEOUT_NRF_HEARTBEAT,
-        0);  // TODO arg2_user
+        TASK_AMF_APP_TIMEOUT_NRF_HEARTBEAT, r.nrf_uri);
   } else {
     Logger::amf_app().warn(
         "NF Instance Registration, got issue when registering to NRF, try "
         "again ...");
     // Set timer to try again with NF Registration
     itti_inst->timer_setup(
-        20, 0, TASK_AMF_APP, TASK_AMF_APP_TIMEOUT_NRF_REGISTRATION,
-        0);  // TODO arg2_user
+        20, 0, TASK_AMF_APP, TASK_AMF_APP_TIMEOUT_NRF_REGISTRATION, r.nrf_uri);
   }
 }
 
@@ -999,8 +997,7 @@ void amf_app::handle_itti_message(itti_sbi_update_nf_instance_response& r) {
         nf_instance_profile.get_nf_heartBeat_timer());
     timer_nrf_heartbeat = itti_inst->timer_setup(
         nf_instance_profile.get_nf_heartBeat_timer(), 0, TASK_AMF_APP,
-        TASK_AMF_APP_TIMEOUT_NRF_HEARTBEAT,
-        0);  // TODO arg2_user
+        TASK_AMF_APP_TIMEOUT_NRF_HEARTBEAT, r.nrf_uri);
   }
 }
 
@@ -1473,6 +1470,26 @@ void amf_app::register_to_nrf() {
   }
 }
 
+//---------------------------------------------------------------------------------------------
+void amf_app::register_to_nrf(std::string nrf_uri) {
+  // Send request to SBI to send NF registration to NRF
+  Logger::amf_app().debug(
+      "Send ITTI msg to SBI task to trigger the registration request towards "
+      "NRF");
+
+  auto itti_msg = std::make_shared<itti_sbi_register_nf_instance_request>(
+      TASK_AMF_APP, TASK_AMF_SBI);
+  itti_msg->profile = nf_instance_profile;
+  itti_msg->nrf_uri = nrf_uri;
+
+  int ret = itti_inst->send_msg(itti_msg);
+  if (RETURNok != ret) {
+    Logger::amf_app().error(
+        "Could not send ITTI message %s to task TASK_AMF_SBI",
+        itti_msg->get_msg_name());
+  }
+}
+
 //------------------------------------------------------------------------------
 void amf_app::get_nrfs(std::vector<std::string>& nrfs) {
   if (amf_cfg.support_features.enable_nssf) {
@@ -1585,7 +1602,7 @@ void amf_app::deregister_to_nrf() const {
 
 //---------------------------------------------------------------------------------------------
 void amf_app::timer_nrf_heartbeat_timeout(
-    timer_id_t timer_id, uint64_t arg2_user) {
+    timer_id_t timer_id, std::string arg2_user) {
   Logger::amf_app().debug("Send ITTI msg to SBI task to trigger NRF Heartbeat");
 
   auto itti_msg = std::make_shared<itti_sbi_update_nf_instance_request>(
@@ -1611,8 +1628,8 @@ void amf_app::timer_nrf_heartbeat_timeout(
 
 //---------------------------------------------------------------------------------------------
 void amf_app::timer_nrf_registration_timeout(
-    timer_id_t timer_id, uint64_t arg2_user) {
-  register_to_nrf();
+    timer_id_t timer_id, std::string nrf_uri) {
+  register_to_nrf(nrf_uri);
 }
 
 //---------------------------------------------------------------------------------------------

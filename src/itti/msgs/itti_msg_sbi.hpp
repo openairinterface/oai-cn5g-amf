@@ -250,6 +250,7 @@ class itti_sbi_register_nf_instance_response : public itti_sbi_msg {
 
   amf_application::amf_profile profile;
   uint8_t http_response_code;
+  std::string nrf_uri;
 };
 
 //-----------------------------------------------------------------------------
@@ -276,6 +277,7 @@ class itti_sbi_update_nf_instance_response : public itti_sbi_msg {
 
   std::string amf_instance_id;
   uint32_t http_response_code;
+  std::string nrf_uri;
 };
 
 //-----------------------------------------------------------------------------
