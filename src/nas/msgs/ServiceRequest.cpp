@@ -93,6 +93,13 @@ bool ServiceRequest::GetUplinkDataStatus(uint16_t& value) const {
 }
 
 //------------------------------------------------------------------------------
+std::optional<uint16_t> ServiceRequest::GetUplinkDataStatus() const {
+  if (ie_uplink_data_status.has_value()) {
+    return std::optional<uint16_t>(ie_uplink_data_status.value().GetValue());
+  }
+  return std::nullopt;
+}
+//------------------------------------------------------------------------------
 void ServiceRequest::SetPduSessionStatus(uint16_t value) {
   ie_pdu_session_status = std::make_optional<PduSessionStatus>(value);
 }

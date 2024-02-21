@@ -1151,11 +1151,18 @@ void amf_n1::service_request_handle(
   // Associate SUPI with UC
   amf_app_inst->set_supi_2_ue_context(supi, uc);
 
+  // Uplink Data Status
+  std::optional<uint16_t> uplink_data_status_opt =
+      service_request->GetUplinkDataStatus();
+
   // Get PDU session status from Service Request
-  uint16_t pdu_session_status = 0;
-  if (!service_request->GetPduSessionStatus(pdu_session_status) or
-      (pdu_session_status == 0)) {
-    // Get PDU Session Status from NAS Message Container if available
+  std::optional<uint16_t> pdu_session_status_opt =
+      service_request->GetPduSessionStatus();
+
+  if (!uplink_data_status_opt.has_value() or
+      !pdu_session_status_opt.has_value()) {
+    // Get Uplink Data Status/PDU Session Status from NAS Message Container if
+    // available
     bstring plain_msg = nullptr;
     if (service_request->GetNasMessageContainer(plain_msg)) {
       if (blength(plain_msg) < NAS_MESSAGE_MIN_LENGTH) {
@@ -1183,18 +1190,17 @@ void amf_n1::service_request_handle(
               (uint8_t*) bdata(plain_msg), blength(plain_msg));
           utils::bdestroy_wrapper(&plain_msg);
 
-          if (!service_request_nas->GetPduSessionStatus(pdu_session_status)) {
-            Logger::nas_mm().debug("IE PDU Session Status is not present");
+          if (!uplink_data_status_opt.has_value()) {
+            uplink_data_status_opt = service_request_nas->GetUplinkDataStatus();
+            if (!uplink_data_status_opt.has_value())
+              Logger::nas_mm().debug("IE Uplink Data Status is not present");
           }
-          /*
-                    // Trigger UE Connectivity Status Notify
-                    Logger::amf_n1().debug(
-                        "Signal the UE Connectivity Status Event notification
-             for SUPI "
-                        "%s",
-                        supi.c_str());
-                    event_sub.ue_connectivity_state(supi, CM_CONNECTED, 1);
-                    */
+
+          if (!pdu_session_status_opt.has_value()) {
+            pdu_session_status_opt = service_request_nas->GetPduSessionStatus();
+            if (!pdu_session_status_opt.has_value())
+              Logger::nas_mm().debug("IE PDU Session Status is not present");
+          }
 
         } break;
 
@@ -1205,14 +1211,37 @@ void amf_n1::service_request_handle(
     }
   }
 
+  uint16_t pdu_session_status = 0x0000;
+  if (pdu_session_status_opt.has_value())
+    pdu_session_status = pdu_session_status_opt.value();
+
+  uint16_t uplink_data_status = 0;
+  if (uplink_data_status_opt.has_value())
+    uplink_data_status = uplink_data_status_opt.value();
+
   std::vector<uint8_t> pdu_session_to_be_activated = {};
-  get_pdu_session_to_be_activated(
-      pdu_session_status, pdu_session_to_be_activated);
+  if (uplink_data_status_opt.has_value())
+    get_pdu_session_to_be_activated(
+        uplink_data_status, pdu_session_to_be_activated);
+  else if (pdu_session_status_opt.has_value())
+    get_pdu_session_to_be_activated(
+        pdu_session_status, pdu_session_to_be_activated);
+
+  // Set default value for PDU Session Reactivation Result
+  uint16_t pdu_session_reactivation_result = 0x0000;
+  if (uplink_data_status_opt.has_value())
+    service_accept->SetPduSessionReactivationResult(
+        pdu_session_reactivation_result);
+
+  // Set default value for PDU Session Status
+  if (pdu_session_status_opt.has_value())
+    service_accept->SetPduSessionStatus(pdu_session_status);
+
+  // TODO: PDU session to be released
 
   // No PDU Sessions To Be Activated
   if (pdu_session_to_be_activated.size() == 0) {
     Logger::amf_n1().debug("There is no PDU session to be activated");
-    // service_accept->SetPduSessionStatus(0x0000);
     uint8_t buffer[BUFFER_SIZE_1024];
     int encoded_size      = service_accept->Encode(buffer, BUFFER_SIZE_1024);
     bstring protected_nas = nullptr;
@@ -1261,11 +1290,6 @@ void amf_n1::service_request_handle(
     auto itti_msg = std::make_shared<itti_initial_context_setup_request>(
         TASK_AMF_N1, TASK_AMF_N2);
 
-    service_accept->SetPduSessionStatus(pdu_session_status);
-    uint16_t pdu_session_reactivation_result = 0x0000;
-    service_accept->SetPduSessionReactivationResult(
-        pdu_session_reactivation_result);
-
     for (auto& pdu_session_id : pdu_session_to_be_activated) {
       std::shared_ptr<pdu_session_context> psc = {};
       if (!amf_app_inst->find_pdu_session_context(supi, pdu_session_id, psc)) {
@@ -1284,12 +1308,16 @@ void amf_n1::service_request_handle(
         item.is_n2sm_avaliable = true;
       } else {
         item.is_n2sm_avaliable = false;
-        set_pdu_session_status_inactive(pdu_session_id, pdu_session_status);
-        service_accept->SetPduSessionStatus(pdu_session_status);
-        set_pdu_session_reactivation_result(
-            pdu_session_id, pdu_session_reactivation_result);
-        service_accept->SetPduSessionReactivationResult(
-            pdu_session_reactivation_result);
+        if (uplink_data_status_opt.has_value()) {
+          set_pdu_session_reactivation_result(
+              pdu_session_id, pdu_session_reactivation_result);
+          service_accept->SetPduSessionReactivationResult(
+              pdu_session_reactivation_result);
+        }
+        if (pdu_session_status_opt.has_value()) {
+          set_pdu_session_status_inactive(pdu_session_id, pdu_session_status);
+          service_accept->SetPduSessionStatus(pdu_session_status);
+        }
         Logger::amf_n1().debug("Cannot get PDU session information");
       }
 
@@ -1313,7 +1341,7 @@ void amf_n1::service_request_handle(
     uint32_t ulcount = nc->security_ctx.value().ul_count.seq_num |
                        (nc->security_ctx.value().ul_count.overflow << 8);
     Logger::amf_n1().debug(
-        "uplink count(%d)", nc->security_ctx.value().ul_count.seq_num);
+        "uplink count (%d)", nc->security_ctx.value().ul_count.seq_num);
     output_wrapper::print_buffer(
         "amf_n1", "Kamf", kamf, AUTH_VECTOR_LENGTH_OCTETS);
     Authentication_5gaka::derive_kgnb(
@@ -4320,15 +4348,14 @@ void amf_n1::trigger_ue_location_report(
 
 //------------------------------------------------------------------------------
 void amf_n1::get_pdu_session_to_be_activated(
-    const uint16_t pdu_session_status,
-    std::vector<uint8_t>& pdu_session_to_be_activated) {
-  std::bitset<16> pdu_session_status_bits(pdu_session_status);
+    const uint16_t status, std::vector<uint8_t>& pdu_session_to_be_activated) {
+  std::bitset<16> status_bits(status);
 
-  for (int i = 0; i < 15; i++) {
-    if (pdu_session_status_bits.test(i)) {
+  for (int i = 0; i <= 15; i++) {
+    if (status_bits.test(i)) {
       if (i <= 7)
         pdu_session_to_be_activated.push_back(8 + i);
-      else if (i >= 8)
+      else if (i > 8)
         pdu_session_to_be_activated.push_back(i - 8);
     }
   }
@@ -5351,12 +5378,12 @@ uint8_t amf_n1::get_nas_message_type(uint8_t* buf, uint32_t len) {
 void amf_n1::set_pdu_session_status_inactive(
     uint8_t pdu_session_id, uint16_t& pdu_session_status) {
   std::bitset<16> pdu_session_status_bits(pdu_session_status);
-  if (pdu_session_status_bits.test(pdu_session_id)) {
-    if ((pdu_session_id > 0) and (pdu_session_id <= 7))
-      pdu_session_status_bits.reset(pdu_session_id + 8);
-    else if ((pdu_session_id > 7) and (pdu_session_id <= 15))
-      pdu_session_status_bits.reset(pdu_session_id - 8);
-  }
+
+  if ((pdu_session_id > 0) and (pdu_session_id <= 7))
+    pdu_session_status_bits.reset(pdu_session_id + 8);
+  else if ((pdu_session_id > 7) and (pdu_session_id <= 15))
+    pdu_session_status_bits.reset(pdu_session_id - 8);
+
   pdu_session_status = pdu_session_status_bits.to_ulong();
 }
 
@@ -5365,12 +5392,12 @@ void amf_n1::set_pdu_session_reactivation_result(
     uint8_t pdu_session_id, uint16_t& pdu_session_reactivation_result) {
   std::bitset<16> pdu_session_reactivation_result_bits(
       pdu_session_reactivation_result);
-  if (pdu_session_reactivation_result_bits.test(pdu_session_id)) {
-    if ((pdu_session_id > 0) and (pdu_session_id <= 7))
-      pdu_session_reactivation_result_bits.set(pdu_session_id + 8);
-    else if ((pdu_session_id > 7) and (pdu_session_id <= 15))
-      pdu_session_reactivation_result_bits.set(pdu_session_id - 8);
-  }
+
+  if ((pdu_session_id > 0) and (pdu_session_id <= 7))
+    pdu_session_reactivation_result_bits.set(pdu_session_id + 8);
+  else if ((pdu_session_id > 7) and (pdu_session_id <= 15))
+    pdu_session_reactivation_result_bits.set(pdu_session_id - 8);
+
   pdu_session_reactivation_result =
       pdu_session_reactivation_result_bits.to_ulong();
 }

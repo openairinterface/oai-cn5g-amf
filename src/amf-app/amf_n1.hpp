@@ -460,14 +460,13 @@ class amf_n1 {
 
   /*
    * Get the list of PDU session to be activated from PDU session status
-   * @param [uint16_t] pdu_session_status: PDU Session Status
+   * @param [uint16_t] status: PDU Session Status/Uplink Data Status
    * @param [std::vector<uint8_t>&] pdu_session_to_be_activated: list of PDU
    * session to be activated
    * @return void
    */
   void get_pdu_session_to_be_activated(
-      const uint16_t pdu_session_status,
-      std::vector<uint8_t>& pdu_session_to_be_activated);
+      const uint16_t status, std::vector<uint8_t>& pdu_session_to_be_activated);
 
   /*
    * Initialize Registration Accept with the parameters from NAS context
