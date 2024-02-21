@@ -291,6 +291,7 @@ class itti_sbi_deregister_nf_instance_request : public itti_sbi_msg {
   const char* get_msg_name() { return "SBI_DEREGISTER_NF_INSTANCE_REQUEST"; };
 
   std::string amf_instance_id;
+  std::string nrf_uri;
 };
 
 //-----------------------------------------------------------------------------
@@ -305,6 +306,7 @@ class itti_sbi_deregister_nf_instance_response : public itti_sbi_msg {
 
   std::string amf_instance_id;
   uint32_t http_response_code;
+  std::string nrf_uri;
   // TODO: Redirect response;
   // TODO: Header location
 };

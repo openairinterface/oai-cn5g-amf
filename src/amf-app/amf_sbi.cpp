@@ -846,7 +846,7 @@ void amf_sbi::handle_itti_message(
   Logger::amf_sbi().debug(
       "Send NF Instance Registration to NRF, NRF URI (RegisterNFInstance API) "
       "%s",
-      itti_msg.nrf_uri.c_str());
+      itti_msg.nrf_uri);
 
   std::string body = json_data.dump();
   Logger::amf_sbi().debug(
@@ -924,7 +924,6 @@ void amf_sbi::handle_itti_message(
   itti_msg_response->http_response_code = response_code;
   itti_msg_response->amf_instance_id    = itti_msg.amf_instance_id;
   itti_msg_response->nrf_uri            = itti_msg.nrf_uri;
-  Logger::amf_sbi().debug("Registered AMF profile (from NRF)");
 
   int ret = itti_inst->send_msg(itti_msg_response);
   if (RETURNok != ret) {
@@ -940,18 +939,14 @@ void amf_sbi::handle_itti_message(
   Logger::amf_sbi().debug(
       "Send NF Deregistration to NRF (HTTP version %d)", itti_msg.http_version);
 
-  std::string url = {};
-  amf_sbi_helper::get_nrf_nf_instance_uri(
-      amf_cfg.nrf_addr, itti_msg.amf_instance_id, url);
-
   Logger::amf_sbi().debug(
-      "Send NF Deregistration to NRF, NRF URL %s", url.c_str());
+      "Send NF Deregistration to NRF, NRF URL %s", itti_msg.nrf_uri.c_str());
 
   nlohmann::json response_data = {};
   uint32_t response_code       = 0;
 
   curl_http_client(
-      url, "DELETE", "", response_data, response_code,
+      itti_msg.nrf_uri, "DELETE", "", response_data, response_code,
       amf_cfg.support_features.http_version);
 
   // Send response to APP to process
@@ -961,6 +956,7 @@ void amf_sbi::handle_itti_message(
   itti_msg_response->amf_instance_id    = itti_msg.amf_instance_id;
   itti_msg_response->http_response_code = response_code;
   itti_msg_response->http_version       = itti_msg.http_version;
+  itti_msg_response->nrf_uri            = itti_msg.nrf_uri;
 
   // TODO: Response code 307/308
   int ret = itti_inst->send_msg(itti_msg_response);
@@ -984,28 +980,25 @@ void amf_sbi::handle_itti_message(
 
   std::string body = itti_msg.input_data.dump();
   Logger::amf_sbi().debug(
-      "Send Determine Location Request to AUSF, msg body: \n %s", body.c_str());
+      "Send Determine Location Request to LMF, msg body: \n %s", body.c_str());
 
   uint32_t response_code       = 0;
-  nlohmann::json response_data = {};
+  nlohmann::json response_json = {};
 
   curl_http_client(
-      url, "POST", body, response_data, response_code,
+      url, "POST", body, response_json, response_code,
       amf_cfg.support_features.http_version);
 
   Logger::amf_sbi().debug(
       "Determine Location, response from LMF, HTTP Code: %d", response_code);
 
-  if ((response_code == 200) or
-      (response_code == 201)) {  // TODO: remove hardcoded value
-    Logger::amf_sbi().debug(
-        "Determine Location, response from LMF\n, %s ",
-        response_data.dump().c_str());
+  Logger::amf_sbi().debug(
+      "Determine Location, response from LMF\n, %s ",
+      response_json.dump().c_str());
 
-  } else {
-    Logger::amf_sbi().warn(
-        "Determine Location, could not get response from LMF");
-  }
+  nlohmann::json response_data      = {};
+  response_data["httpResponseCode"] = response_code;
+  response_data["jsonData"]         = response_json;
 
   // Notify to the result
   if (itti_msg.promise_id > 0) {

@@ -26,6 +26,7 @@
 #include <boost/thread/future.hpp>
 #include <map>
 #include <shared_mutex>
+#include <unordered_set>
 
 #include "N1MessageClass_anyOf.h"
 #include "N2InformationClass_anyOf.h"
@@ -59,7 +60,8 @@ class amf_app {
   inline static uint32_t amf_app_ue_ngap_id_generator = 1;
   amf_profile nf_instance_profile;
   std::string amf_instance_id;
-  timer_id_t timer_nrf_heartbeat;
+  // timer_id_t timer_nrf_heartbeat;
+  std::map<std::string, timer_id_t> timer_nrfs_heartbeat;
 
   util::uint_generator<uint32_t> evsub_id_generator;
   std::map<
@@ -94,6 +96,8 @@ class amf_app {
       std::shared_ptr<oai::amf::model::NonUeN2InfoSubscriptionCreateData>>
       non_ue_n2_info_subscribe;
   mutable std::shared_mutex m_non_ue_n2_info_subscribe;
+
+  std::unordered_set<std::string> registered_nrfs;
 
  public:
   explicit amf_app(const amf_config& amf_cfg);
@@ -454,10 +458,10 @@ class amf_app {
 
   /*
    * Get a list of suitable NRFs from a NSSF
-   * @param [std::set<std::string>&] nrfs: store the list of NRF's URI
+   * @param [std::unordered_set<std::string>&] nrfs: store the list of NRF's URI
    * @return void
    */
-  void get_nrfs(std::set<std::string>& nrfs);
+  void get_nrfs(std::unordered_set<std::string>& nrfs);
 
   /*
    * Handle Event Exposure Msg from NF
@@ -485,6 +489,13 @@ class amf_app {
   bool handle_nf_status_notification(
       std::shared_ptr<itti_sbi_notification_data>& msg,
       oai::model::common::ProblemDetails& problem_details, uint32_t& http_code);
+
+  /*
+   * Handle a request to determine location from LMF
+   * @param void
+   * return void
+   */
+  void handle_determine_location_request();
 
   /*
    * Generate a random UUID for AMF instance

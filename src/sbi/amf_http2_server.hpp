@@ -51,7 +51,7 @@ class amf_http2_server {
   void start();
   void init(size_t thr) {}
 
-  void createEventSubscriptionHandler(
+  void create_event_subscription_handler(
       const AmfCreateEventSubscription& amfCreateEventSubscription,
       const response& response);
 
