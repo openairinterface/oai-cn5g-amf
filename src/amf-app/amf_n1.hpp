@@ -998,6 +998,12 @@ class amf_n1 {
    */
   uint8_t get_nas_message_type(uint8_t* buf, uint32_t len);
 
+  void set_pdu_session_status_inactive(
+      uint8_t pdu_session_id, uint16_t& pdu_session_status);
+
+  void set_pdu_session_reactivation_result(
+      uint8_t pdu_session_id, uint16_t& pdu_session_reactivation_result);
+
   // for Event Handling
   amf_event event_sub;
   bs2::connection ee_ue_location_report_connection;

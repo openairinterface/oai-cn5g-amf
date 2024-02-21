@@ -1054,14 +1054,14 @@ void amf_n2::handle_itti_message(
           if (blength(p.second.n2sm) != 0) {
             amf_conv::bstring_2_octet_string(
                 p.second.n2sm, item.pduSessionResourceSetupRequestTransfer);
+            list.push_back(item);
           } else {
             Logger::amf_n2().error("n2sm empty!");
           }
         }
-        list.push_back(item);
       }
 
-      msg->setPduSessionResourceSetupRequestList(list);
+      if (list.size() > 0) msg->setPduSessionResourceSetupRequestList(list);
 
       // UEAggregateMaximumBitRate
       msg->setUEAggregateMaxBitRate(

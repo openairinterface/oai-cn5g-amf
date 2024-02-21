@@ -1258,19 +1258,19 @@ void amf_n1::service_request_handle(
     return;
 
   } else {
-    std::shared_ptr<pdu_session_context> psc = {};
-
     auto itti_msg = std::make_shared<itti_initial_context_setup_request>(
         TASK_AMF_N1, TASK_AMF_N2);
 
     service_accept->SetPduSessionStatus(pdu_session_status);
-    service_accept->SetPduSessionReactivationResult(0x0000);  // To be verified
+    uint16_t pdu_session_reactivation_result = 0x0000;
+    service_accept->SetPduSessionReactivationResult(
+        pdu_session_reactivation_result);
 
     for (auto& pdu_session_id : pdu_session_to_be_activated) {
+      std::shared_ptr<pdu_session_context> psc = {};
       if (!amf_app_inst->find_pdu_session_context(supi, pdu_session_id, psc)) {
-        // TODO:
-        // Set PDU session Status to 0x00
-        // service_accept->SetPduSessionStatus(0x00);
+        Logger::amf_n1().warn(
+            "No PDU Session Context with PDU Session ID %d", pdu_session_id);
       }
 
       if (psc and
@@ -1284,6 +1284,12 @@ void amf_n1::service_request_handle(
         item.is_n2sm_avaliable = true;
       } else {
         item.is_n2sm_avaliable = false;
+        set_pdu_session_status_inactive(pdu_session_id, pdu_session_status);
+        service_accept->SetPduSessionStatus(pdu_session_status);
+        set_pdu_session_reactivation_result(
+            pdu_session_id, pdu_session_reactivation_result);
+        service_accept->SetPduSessionReactivationResult(
+            pdu_session_reactivation_result);
         Logger::amf_n1().debug("Cannot get PDU session information");
       }
 
@@ -4322,7 +4328,7 @@ void amf_n1::get_pdu_session_to_be_activated(
     if (pdu_session_status_bits.test(i)) {
       if (i <= 7)
         pdu_session_to_be_activated.push_back(8 + i);
-      else if (i > 8)
+      else if (i >= 8)
         pdu_session_to_be_activated.push_back(i - 8);
     }
   }
@@ -5339,4 +5345,32 @@ bool amf_n1::get_amf_set_id(
 uint8_t amf_n1::get_nas_message_type(uint8_t* buf, uint32_t len) {
   if (len < 3) return 0;
   return *(buf + 2);  // message type, 3rd octet
+}
+
+//------------------------------------------------------------------------------
+void amf_n1::set_pdu_session_status_inactive(
+    uint8_t pdu_session_id, uint16_t& pdu_session_status) {
+  std::bitset<16> pdu_session_status_bits(pdu_session_status);
+  if (pdu_session_status_bits.test(pdu_session_id)) {
+    if ((pdu_session_id > 0) and (pdu_session_id <= 7))
+      pdu_session_status_bits.reset(pdu_session_id + 8);
+    else if ((pdu_session_id > 7) and (pdu_session_id <= 15))
+      pdu_session_status_bits.reset(pdu_session_id - 8);
+  }
+  pdu_session_status = pdu_session_status_bits.to_ulong();
+}
+
+//------------------------------------------------------------------------------
+void amf_n1::set_pdu_session_reactivation_result(
+    uint8_t pdu_session_id, uint16_t& pdu_session_reactivation_result) {
+  std::bitset<16> pdu_session_reactivation_result_bits(
+      pdu_session_reactivation_result);
+  if (pdu_session_reactivation_result_bits.test(pdu_session_id)) {
+    if ((pdu_session_id > 0) and (pdu_session_id <= 7))
+      pdu_session_reactivation_result_bits.set(pdu_session_id + 8);
+    else if ((pdu_session_id > 7) and (pdu_session_id <= 15))
+      pdu_session_reactivation_result_bits.set(pdu_session_id - 8);
+  }
+  pdu_session_reactivation_result =
+      pdu_session_reactivation_result_bits.to_ulong();
 }
