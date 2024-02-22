@@ -950,6 +950,10 @@ void amf_n2::handle_itti_message(
     return;
   }
 
+  std::shared_ptr<nas_context> nc = {};
+  if (!amf_n1_inst->amf_ue_id_2_nas_context(itti_msg->amf_ue_ngap_id, nc))
+    return;
+
   auto msg = std::make_unique<InitialContextSetupRequestMsg>();
   msg->setAmfUeNgapId(itti_msg->amf_ue_ngap_id);
   msg->setRanUeNgapId(itti_msg->ran_ue_ngap_id);
@@ -962,15 +966,6 @@ void amf_n2::handle_itti_message(
   msg->setGuami(guami);
   // Get the list allowed NSSAI from the common PLMN between gNB and AMF
   std::vector<S_Nssai> list;
-  /*  for (auto p : amf_cfg.plmn_list) {
-      for (auto s : p.slice_list) {
-        S_Nssai item;
-        item.sst = s.sST;
-        item.sd  = s.sD;
-        list.push_back(item);
-      }
-    }
-  */
   for (auto s : gc->supported_ta_list) {
     for (auto p : s.b_plmn_list) {
       for (auto s : p.slice_list) {
@@ -983,30 +978,31 @@ void amf_n2::handle_itti_message(
   }
   msg->setAllowedNssai(list);
 
-  // TODO: get from ue_security_capability@NAS Context
+  // Set UE Security Capability from NAS context
+  uint8_t eea_value = 0x0000;
+  nc->ue_security_capability.GetEea(eea_value);
+  uint8_t eia_value = 0x0000;
+  nc->ue_security_capability.GetEia(eia_value);
   msg->setUESecurityCapability(
-      0xe000, 0xe000, 0x0000,
-      0x0000);  // TODO: remove hardcoded value
+      nc->ue_security_capability.GetEa(), nc->ue_security_capability.GetIa(),
+      eea_value, eia_value);
+
+  // Security Key
   msg->setSecurityKey((uint8_t*) bdata(itti_msg->kgnb));
 
+  // Mobility Restriction List
   ngap::PlmnId plmn_id = {};
   plmn_id.set(amf_cfg.guami.mcc, amf_cfg.guami.mnc);
   msg->setMobilityRestrictionList(plmn_id);
 
   // IMEISV
-  std::shared_ptr<nas_context> nc = {};
-  if (!amf_n1_inst->amf_ue_id_2_nas_context(itti_msg->amf_ue_ngap_id, nc)) {
-    // TODO:
-    return;
+  if (nc->imeisv.has_value()) {
+    Logger::nas_mm().debug(
+        "Set IMEISV InitialContextSetupRequestMsg: %s",
+        nc->imeisv.value().identity.c_str());
+    msg->setMaskedIMEISV(nc->imeisv.value().identity);
   } else {
-    if (nc->imeisv.has_value()) {
-      Logger::nas_mm().debug(
-          "Set IMEISV InitialContextSetupRequestMsg: %s",
-          nc->imeisv.value().identity.c_str());
-      msg->setMaskedIMEISV(nc->imeisv.value().identity);
-    } else {
-      Logger::nas_mm().debug("No IMEISV info available");
-    }
+    Logger::nas_mm().debug("No IMEISV info available");
   }
 
   msg->setNasPdu(itti_msg->nas);
@@ -1032,13 +1028,13 @@ void amf_n2::handle_itti_message(
 
         // Get NSSAI from PDU Session Context
         std::string supi = amf_conv::imsi_to_supi(nc->imsi);
-        Logger::amf_n2().debug("SUPI (%s)", supi.c_str());
+        Logger::amf_n2().debug("SUPI %s", supi.c_str());
 
         // Get S_NSSAI from PDU Session Context
         std::shared_ptr<pdu_session_context> psc = {};
 
         if (!amf_app_inst->find_pdu_session_context(supi, p.first, psc)) {
-          item.s_nssai.sst = "01";  // TODO: remove the default value
+          item.s_nssai.sst = std::to_string(DEFAULT_SST);
           item.s_nssai.sd  = std::to_string(SD_NO_VALUE);
         } else {
           item.s_nssai.sst = std::to_string(psc->snssai.sST);
@@ -1049,7 +1045,7 @@ void amf_n2::handle_itti_message(
             "S_NSSAI (SST, SD) %s, %s", item.s_nssai.sst.c_str(),
             item.s_nssai.sd.c_str());
 
-        // item.pduSessionNAS_PDU = NULL;
+        // TODO: NAS PDU
         if (p.second.is_n2sm_avaliable) {
           if (blength(p.second.n2sm) != 0) {
             amf_conv::bstring_2_octet_string(

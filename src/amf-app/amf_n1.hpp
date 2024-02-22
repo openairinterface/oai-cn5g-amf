@@ -238,22 +238,27 @@ class amf_n1 {
   /*
    * Perform Mobility Registration procedure
    * @param [std::shared_ptr<nas_context>&] nc: Pointer to the UE NAS Context
-   * @param [uint16_t] uplink_data_status: UL Data Status
-   * @param [uint16_t] pdu_session_status: PDU Session Status
+   * @param [const std::optional<uint16_t>&] uplink_data_status_opt: UL Data
+   * Status
+   * @param [const std::optional<uint16_t>&] pdu_session_status_opt: PDU Session
+   * Status
    * @return void
    */
   void run_mobility_registration_update_procedure(
-      std::shared_ptr<nas_context>& nc, uint16_t uplink_data_status,
-      uint16_t pdu_session_status);
+      std::shared_ptr<nas_context>& nc,
+      const std::optional<uint16_t>& uplink_data_status_opt,
+      const std::optional<uint16_t>& pdu_session_status_opt);
 
   /*
    * Perform Periodic Registration Update procedure
    * @param [std::shared_ptr<nas_context>&] nc: Pointer to the UE NAS Context
-   * @param [uint16_t] pdu_session_status: PDU Session Status
+   * @param [const std::optional<uint16_t>&] pdu_session_status_opt: PDU Session
+   * Status
    * @return void
    */
   void run_periodic_registration_update_procedure(
-      std::shared_ptr<nas_context>& nc, uint16_t pdu_session_status);
+      std::shared_ptr<nas_context>& nc,
+      const std::optional<uint16_t>& pdu_session_status_opt);
 
   /*
    * Perform Periodic Registration Update procedure

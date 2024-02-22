@@ -316,17 +316,33 @@ bool RegistrationRequest::GetUplinkDataStatus(uint16_t& value) const {
 }
 
 //------------------------------------------------------------------------------
+std::optional<uint16_t> RegistrationRequest::GetUplinkDataStatus() const {
+  if (ie_uplink_data_status.has_value()) {
+    return std::optional<uint16_t>(ie_uplink_data_status.value().GetValue());
+  }
+  return std::nullopt;
+}
+//------------------------------------------------------------------------------
 void RegistrationRequest::SetPduSessionStatus(uint16_t value) {
   ie_pdu_session_status = std::make_optional<PduSessionStatus>(value);
 }
 
 //------------------------------------------------------------------------------
-uint16_t RegistrationRequest::GetPduSessionStatus() const {
+bool RegistrationRequest::GetPduSessionStatus(uint16_t& value) const {
   if (ie_pdu_session_status.has_value()) {
-    return ie_pdu_session_status.value().GetValue();
+    value = ie_pdu_session_status.value().GetValue();
+    return true;
   } else {
-    return 0;
+    return false;
   }
+}
+
+//------------------------------------------------------------------------------
+std::optional<uint16_t> RegistrationRequest::GetPduSessionStatus() const {
+  if (ie_pdu_session_status.has_value()) {
+    return std::optional<uint16_t>(ie_pdu_session_status.value().GetValue());
+  }
+  return std::nullopt;
 }
 
 //------------------------------------------------------------------------------
