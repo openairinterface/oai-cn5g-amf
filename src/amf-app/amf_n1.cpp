@@ -1318,18 +1318,23 @@ void amf_n1::service_request_handle(
         if (uplink_data_status_opt.has_value()) {
           set_pdu_session_reactivation_result(
               pdu_session_id, pdu_session_reactivation_result);
-          service_accept->SetPduSessionReactivationResult(
-              pdu_session_reactivation_result);
         }
         if (pdu_session_status_opt.has_value()) {
           set_pdu_session_status_inactive(pdu_session_id, pdu_session_status);
-          service_accept->SetPduSessionStatus(pdu_session_status);
         }
         Logger::amf_n1().debug("Cannot get PDU session information");
       }
 
       itti_msg->pdu_sessions.insert(
           std::pair<uint8_t, pdu_session_info_t>(pdu_session_id, item));
+    }
+
+    if (uplink_data_status_opt.has_value()) {
+      service_accept->SetPduSessionReactivationResult(
+          pdu_session_reactivation_result);
+    }
+    if (pdu_session_status_opt.has_value()) {
+      service_accept->SetPduSessionStatus(pdu_session_status);
     }
 
     uint8_t buffer[BUFFER_SIZE_1024];
@@ -2807,6 +2812,9 @@ void amf_n1::security_mode_complete_handle(
     nc->imeisv = std::make_optional<nas::IMEI_IMEISV_t>(imeisv);
   }
 
+  std::optional<uint16_t> uplink_data_status_opt = std::nullopt;
+  std::optional<uint16_t> pdu_session_status_opt = std::nullopt;
+
   // Process NAS Container
   bstring nas_msg_container = nullptr;
   if (security_mode_complete->GetNasMessageContainer(nas_msg_container)) {
@@ -2835,6 +2843,11 @@ void amf_n1::security_mode_complete_handle(
       } else {
         Logger::amf_n1().debug("No Optional IE RequestedNssai available");
       }
+
+      // Get Uplink Data Status
+      uplink_data_status_opt = registration_request->GetUplinkDataStatus();
+      // Get PDU session status
+      pdu_session_status_opt = registration_request->GetPduSessionStatus();
     }
   }
 
@@ -2852,6 +2865,24 @@ void amf_n1::security_mode_complete_handle(
     send_registration_reject_msg(cause_value, ran_ue_ngap_id, amf_ue_ngap_id);
     return;
   }
+
+  // Process Uplink Data Status / PDU Session status
+  uint16_t uplink_data_status = 0x0000;
+  if (uplink_data_status_opt.has_value())
+    uplink_data_status = uplink_data_status_opt.value();
+  uint16_t pdu_session_status = 0x0000;
+  if (pdu_session_status_opt.has_value())
+    pdu_session_status = pdu_session_status_opt.value();
+
+  std::vector<uint8_t> pdu_session_to_be_activated = {};
+  if (uplink_data_status_opt.has_value())
+    get_pdu_session_to_be_activated(
+        uplink_data_status, pdu_session_to_be_activated);
+  else if (pdu_session_status_opt.has_value())
+    get_pdu_session_to_be_activated(
+        pdu_session_status, pdu_session_to_be_activated);
+
+  uint16_t pdu_session_reactivation_result = 0x0000;
 
   // Otherwise encoding REGISTRATION ACCEPT
   auto registration_accept = std::make_unique<RegistrationAccept>();
@@ -2878,42 +2909,6 @@ void amf_n1::security_mode_complete_handle(
       amf_conv::tmsi_to_string(tmsi).c_str());
 
   // registration_accept->SetT3512Value(0x5, T3512_TIMER_VALUE_MIN);
-  uint8_t buffer[BUFFER_SIZE_1024] = {0};
-  int encoded_size = registration_accept->Encode(buffer, BUFFER_SIZE_1024);
-  output_wrapper::print_buffer(
-      "amf_n1", "Registration-Accept message buffer", buffer, encoded_size);
-  if (!encoded_size) {
-    Logger::nas_mm().error("Encode Registration-Accept message error");
-    return;
-  }
-
-  Logger::amf_n1().info(
-      "UE (IMSI %s, GUTI %s, current RAN ID %d, current AMF ID %d) has been "
-      "registered to the network",
-      nc->imsi.c_str(), guti.c_str(), ran_ue_ngap_id, amf_ue_ngap_id);
-
-  stacs.update_5gmm_state(nc->imsi, "5GMM-REGISTERED");
-  set_5gmm_state(nc, _5GMM_REGISTERED);
-  stacs.display();
-
-  // Trigger UE location Status Notify
-  trigger_ue_location_report(ran_ue_ngap_id, amf_ue_ngap_id);
-
-  // Trigger UE Registration Status Notify
-  std::string supi = amf_conv::imsi_to_supi(nc->imsi);
-  Logger::amf_n1().debug(
-      "Signal the UE Registration State Event notification for SUPI %s",
-      supi.c_str());
-  event_sub.ue_registration_state(
-      supi, _5GMM_REGISTERED, amf_cfg.support_features.http_version,
-      ran_ue_ngap_id, amf_ue_ngap_id);
-
-  // Trigger UE Connectivity Status Notify
-  Logger::amf_n1().debug(
-      "Signal the UE Connectivity Status Event notification for SUPI %s",
-      supi.c_str());
-  event_sub.ue_connectivity_state(
-      supi, CM_CONNECTED, amf_cfg.support_features.http_version);
 
   set_guti_2_nas_context(guti, nc);
   nc->is_common_procedure_for_security_mode_control_running = false;
@@ -2923,7 +2918,59 @@ void amf_n1::security_mode_complete_handle(
     return;
   }
 
-  bstring protected_nas = nullptr;
+  std::map<uint8_t, pdu_session_info_t> pdu_sessions;
+
+  for (auto& pdu_session_id : pdu_session_to_be_activated) {
+    std::shared_ptr<pdu_session_context> psc = {};
+    if (!amf_app_inst->find_pdu_session_context(
+            uc->supi, pdu_session_id, psc)) {
+      Logger::amf_n1().warn(
+          "No PDU Session Context with PDU Session ID %d", pdu_session_id);
+    }
+
+    if (psc and
+        (psc->up_cnx_state == up_cnx_state_e::UPCNX_STATE_DEACTIVATED)) {
+      amf_app_inst->trigger_pdu_session_up_activation(pdu_session_id, uc);
+    }
+
+    pdu_session_info_t item = {};
+    if (psc and psc->is_n2sm_avaliable) {
+      item.n2sm              = bstrcpy(psc->n2sm);
+      item.is_n2sm_avaliable = true;
+    } else {
+      item.is_n2sm_avaliable = false;
+      if (uplink_data_status_opt.has_value()) {
+        set_pdu_session_reactivation_result(
+            pdu_session_id, pdu_session_reactivation_result);
+      }
+      if (pdu_session_status_opt.has_value()) {
+        set_pdu_session_status_inactive(pdu_session_id, pdu_session_status);
+      }
+      Logger::amf_n1().debug("Cannot get PDU session information");
+    }
+
+    pdu_sessions.insert(
+        std::pair<uint8_t, pdu_session_info_t>(pdu_session_id, item));
+  }
+
+  if (uplink_data_status_opt.has_value()) {
+    registration_accept->SetPduSessionReactivationResult(
+        pdu_session_reactivation_result);
+  }
+  if (pdu_session_status_opt.has_value()) {
+    registration_accept->SetPduSessionStatus(pdu_session_status);
+  }
+
+  uint8_t buffer[BUFFER_SIZE_1024] = {0};
+  bstring protected_nas            = nullptr;
+
+  int encoded_size = registration_accept->Encode(buffer, BUFFER_SIZE_1024);
+  output_wrapper::print_buffer(
+      "amf_n1", "Registration-Accept message buffer", buffer, encoded_size);
+  if (!encoded_size) {
+    Logger::nas_mm().error("Encode Registration-Accept message error");
+    return;
+  }
   encode_nas_message_protected(
       nc->security_ctx.value(), false, INTEGRITY_PROTECTED_AND_CIPHERED,
       NAS_MESSAGE_DOWNLINK, buffer, encoded_size, protected_nas);
@@ -2972,8 +3019,18 @@ void amf_n1::security_mode_complete_handle(
     itti_msg->ran_ue_ngap_id = ran_ue_ngap_id;
     itti_msg->amf_ue_ngap_id = amf_ue_ngap_id;
     itti_msg->kgnb           = blk2bstr(kgnb, AUTH_VECTOR_LENGTH_OCTETS);
-    itti_msg->nas            = protected_nas;
     itti_msg->is_sr          = false;  // TODO: for Service Request procedure
+    itti_msg->nas            = protected_nas;
+
+    for (auto const& pdu_session : pdu_sessions) {
+      pdu_session_info_t item = {};
+      if (pdu_session.second.is_n2sm_avaliable) {
+        item.n2sm = bstrcpy(pdu_session.second.n2sm);
+      }
+      item.is_n2sm_avaliable = pdu_session.second.is_n2sm_avaliable;
+      itti_msg->pdu_sessions.insert(
+          std::pair<uint8_t, pdu_session_info_t>(pdu_session.first, item));
+    }
 
     int ret = itti_inst->send_msg(itti_msg);
     if (0 != ret) {
@@ -2982,6 +3039,34 @@ void amf_n1::security_mode_complete_handle(
           itti_msg->get_msg_name());
     }
   }
+
+  Logger::amf_n1().info(
+      "UE (IMSI %s, GUTI %s, current RAN ID %d, current AMF ID %d) has been "
+      "registered to the network",
+      nc->imsi.c_str(), guti.c_str(), ran_ue_ngap_id, amf_ue_ngap_id);
+
+  stacs.update_5gmm_state(nc->imsi, "5GMM-REGISTERED");
+  set_5gmm_state(nc, _5GMM_REGISTERED);
+  stacs.display();
+
+  // Trigger UE location Status Notify
+  trigger_ue_location_report(ran_ue_ngap_id, amf_ue_ngap_id);
+
+  // Trigger UE Registration Status Notify
+  std::string supi = amf_conv::imsi_to_supi(nc->imsi);
+  Logger::amf_n1().debug(
+      "Signal the UE Registration State Event notification for SUPI %s",
+      supi.c_str());
+  event_sub.ue_registration_state(
+      supi, _5GMM_REGISTERED, amf_cfg.support_features.http_version,
+      ran_ue_ngap_id, amf_ue_ngap_id);
+
+  // Trigger UE Connectivity Status Notify
+  Logger::amf_n1().debug(
+      "Signal the UE Connectivity Status Event notification for SUPI %s",
+      supi.c_str());
+  event_sub.ue_connectivity_state(
+      supi, CM_CONNECTED, amf_cfg.support_features.http_version);
 }
 
 //------------------------------------------------------------------------------
@@ -3729,7 +3814,8 @@ void amf_n1::run_mobility_registration_update_procedure(
     // TODO:
     for (auto& pdu_session_id : pdu_session_to_be_activated) {
       std::shared_ptr<pdu_session_context> psc = {};
-      if (!amf_app_inst->find_pdu_session_context(supi, pdu_session_id, psc)) {
+      if (!amf_app_inst->find_pdu_session_context(
+              uc->supi, pdu_session_id, psc)) {
         Logger::amf_n1().warn(
             "No PDU Session Context with PDU Session ID %d", pdu_session_id);
       }
