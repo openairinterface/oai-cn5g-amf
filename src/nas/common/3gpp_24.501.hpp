@@ -242,8 +242,8 @@ constexpr int KEncodeDecodeOK    = 0;
   (T3512_TIMER_VALUE_MIN + 4)  // T3512 + 4, not for emergency services
 #define IMPLICIT_DEREGISTRATION_TIMER_MIN (T3512_TIMER_VALUE_MIN + 4)
 
-constexpr int KAccessType3gppAccess    = 0b01;
-constexpr int KAccessTypeNon3gppAccess = 0b10;
+constexpr uint8_t KAccessType3gppAccess    = 0x01;
+constexpr uint8_t KAccessTypeNon3gppAccess = 0x02;
 
 enum class _5g_ia_e {
   _5G_IA0 = 0,

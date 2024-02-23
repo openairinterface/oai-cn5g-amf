@@ -1329,10 +1329,12 @@ void amf_n1::service_request_handle(
           std::pair<uint8_t, pdu_session_info_t>(pdu_session_id, item));
     }
 
+    // Set PDU Session Reactivation Result
     if (uplink_data_status_opt.has_value()) {
       service_accept->SetPduSessionReactivationResult(
           pdu_session_reactivation_result);
     }
+    // Set PDU Session Status
     if (pdu_session_status_opt.has_value()) {
       service_accept->SetPduSessionStatus(pdu_session_status);
     }
@@ -2841,13 +2843,18 @@ void amf_n1::security_mode_complete_handle(
           Logger::amf_n1().debug("Requested NSSAI: %s", s.ToString().c_str());
         }
       } else {
-        Logger::amf_n1().debug("No Optional IE RequestedNssai available");
+        Logger::amf_n1().debug("Optional IE RequestedNssai is not present");
       }
 
       // Get Uplink Data Status
       uplink_data_status_opt = registration_request->GetUplinkDataStatus();
+      if (!uplink_data_status_opt.has_value())
+        Logger::amf_n1().debug("Optional IE UplinkDataStatus is not present");
+
       // Get PDU session status
       pdu_session_status_opt = registration_request->GetPduSessionStatus();
+      if (!pdu_session_status_opt.has_value())
+        Logger::amf_n1().debug("Optional IE PDUSessionStatus is not present");
     }
   }
 
@@ -2867,13 +2874,15 @@ void amf_n1::security_mode_complete_handle(
   }
 
   // Process Uplink Data Status / PDU Session status
-  uint16_t uplink_data_status = 0x0000;
+  uint16_t uplink_data_status              = 0x0000;
+  uint16_t pdu_session_status              = 0x0000;
+  uint16_t pdu_session_reactivation_result = 0x0000;
   if (uplink_data_status_opt.has_value())
     uplink_data_status = uplink_data_status_opt.value();
-  uint16_t pdu_session_status = 0x0000;
   if (pdu_session_status_opt.has_value())
     pdu_session_status = pdu_session_status_opt.value();
 
+  // Get the list of PDU sessions to be activated
   std::vector<uint8_t> pdu_session_to_be_activated = {};
   if (uplink_data_status_opt.has_value())
     get_pdu_session_to_be_activated(
@@ -2882,9 +2891,7 @@ void amf_n1::security_mode_complete_handle(
     get_pdu_session_to_be_activated(
         pdu_session_status, pdu_session_to_be_activated);
 
-  uint16_t pdu_session_reactivation_result = 0x0000;
-
-  // Otherwise encoding REGISTRATION ACCEPT
+  // Prepare Registration Accept
   auto registration_accept = std::make_unique<RegistrationAccept>();
   initialize_registration_accept(registration_accept, nc);
 
@@ -2918,8 +2925,8 @@ void amf_n1::security_mode_complete_handle(
     return;
   }
 
+  // Activate UP for these PDU sessions
   std::map<uint8_t, pdu_session_info_t> pdu_sessions;
-
   for (auto& pdu_session_id : pdu_session_to_be_activated) {
     std::shared_ptr<pdu_session_context> psc = {};
     if (!amf_app_inst->find_pdu_session_context(
@@ -2953,6 +2960,7 @@ void amf_n1::security_mode_complete_handle(
         std::pair<uint8_t, pdu_session_info_t>(pdu_session_id, item));
   }
 
+  // Set corresponding IE in Registration Accept
   if (uplink_data_status_opt.has_value()) {
     registration_accept->SetPduSessionReactivationResult(
         pdu_session_reactivation_result);
@@ -2961,9 +2969,9 @@ void amf_n1::security_mode_complete_handle(
     registration_accept->SetPduSessionStatus(pdu_session_status);
   }
 
+  // Encode Registration Accept
   uint8_t buffer[BUFFER_SIZE_1024] = {0};
   bstring protected_nas            = nullptr;
-
   int encoded_size = registration_accept->Encode(buffer, BUFFER_SIZE_1024);
   output_wrapper::print_buffer(
       "amf_n1", "Registration-Accept message buffer", buffer, encoded_size);
