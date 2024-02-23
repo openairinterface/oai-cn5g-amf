@@ -162,6 +162,15 @@ void amf_sbi_task(void*) {
         amf_sbi_inst->handle_itti_message(std::ref(*m));
       } break;
 
+      case SBI_NETWORK_SLICE_SELECTION_DISCOVERY: {
+        Logger::amf_sbi().info(
+            "Receive Network Slice Selection Discovery, "
+            "handling ...");
+        itti_sbi_network_slice_selection_discovery* m =
+            dynamic_cast<itti_sbi_network_slice_selection_discovery*>(msg);
+        amf_sbi_inst->handle_itti_message(std::ref(*m));
+      } break;
+
       case SBI_N1_MESSAGE_NOTIFY: {
         Logger::amf_sbi().info(
             "Receive N1 Message Notify message, "
@@ -695,12 +704,16 @@ void amf_sbi::handle_itti_message(
       "Send Slice Selection Information Retrieval to NSSF, URL %s",
       url.c_str());
 
-  nlohmann::json response_data = {};
+  nlohmann::json response_json = {};
   uint32_t response_code       = 0;
 
   curl_http_client(
-      url, "GET", "", response_data, response_code,
+      url, "GET", "", response_json, response_code,
       amf_cfg.support_features.http_version);
+
+  nlohmann::json response_data      = {};
+  response_data["httpResponseCode"] = response_code;
+  response_data["jsonData"]         = response_json;
 
   // Notify to the result
   if (itti_msg.promise_id > 0) {
@@ -709,6 +722,30 @@ void amf_sbi::handle_itti_message(
   }
 
   return;
+}
+
+//------------------------------------------------------------------------------
+void amf_sbi::handle_itti_message(
+    itti_sbi_network_slice_selection_discovery& itti_msg) {
+  // Get NRF info from NSSF
+  Logger::amf_sbi().debug(
+      "Send Network Slice Selection Discovery Request to NSSF");
+  nlohmann::json response_json = {};
+  uint32_t response_code       = 0;
+
+  // For now, using the existing API to get list of NRFs
+  get_network_slice_information(
+      itti_msg.snssai, itti_msg.plmn, std::nullopt, itti_msg.nf_instance_id,
+      response_json, response_code);
+  nlohmann::json response_data      = {};
+  response_data["httpResponseCode"] = response_code;
+  if (!response_json.is_null()) response_data["jsonData"] = response_json;
+
+  // Notify to the result
+  if (itti_msg.promise_id > 0) {
+    amf_app_inst->trigger_process_response(itti_msg.promise_id, response_data);
+    return;
+  }
 }
 
 //------------------------------------------------------------------------------
@@ -802,18 +839,14 @@ void amf_sbi::handle_itti_message(itti_sbi_nf_instance_discovery& itti_msg) {
 //------------------------------------------------------------------------------
 void amf_sbi::handle_itti_message(
     itti_sbi_register_nf_instance_request& itti_msg) {
-  Logger::amf_sbi().debug(
-      "Send NF Instance Registration to NRF (HTTP version %d)",
-      itti_msg.http_version);
+  Logger::amf_sbi().debug("Send NF Instance Registration to NRF");
   nlohmann::json json_data = {};
   itti_msg.profile.to_json(json_data);
 
-  std::string url = {};
-  amf_sbi_helper::get_nrf_nf_instance_uri(
-      amf_cfg.nrf_addr, itti_msg.profile.get_nf_instance_id(), url);
-
   Logger::amf_sbi().debug(
-      "Send NF Instance Registration to NRF, NRF URL %s", url.c_str());
+      "Send NF Instance Registration to NRF, NRF URI (RegisterNFInstance API) "
+      "%s",
+      itti_msg.nrf_uri);
 
   std::string body = json_data.dump();
   Logger::amf_sbi().debug(
@@ -823,7 +856,7 @@ void amf_sbi::handle_itti_message(
   uint32_t response_code       = 0;
 
   curl_http_client(
-      url, "PUT", body, response_data, response_code,
+      itti_msg.nrf_uri, "PUT", body, response_data, response_code,
       amf_cfg.support_features.http_version);
 
   // Send response to APP to process
@@ -832,13 +865,17 @@ void amf_sbi::handle_itti_message(
           TASK_AMF_SBI, TASK_AMF_APP);
   itti_msg_response->http_response_code = response_code;
   itti_msg_response->http_version       = itti_msg.http_version;
+  itti_msg_response->nrf_uri            = itti_msg.nrf_uri;
 
-  if (response_code ==
-      static_cast<uint32_t>(
-          http_response_codes_e::HTTP_RESPONSE_CODE_201_CREATED)) {
+  if ((response_code ==
+       static_cast<uint32_t>(
+           http_response_codes_e::HTTP_RESPONSE_CODE_201_CREATED)) or
+      (response_code ==
+       static_cast<uint32_t>(
+           http_response_codes_e::HTTP_RESPONSE_CODE_200_OK))) {
     Logger::amf_sbi().debug("NFRegistration, got successful response from NRF");
     Logger::amf_sbi().debug(
-        "NF Instance Registration, response from NRF, json data: \n %s",
+        "NF Instance Registration, response from NRF, JSON data: \n %s",
         response_data.dump().c_str());
 
     Logger::amf_sbi().debug("Registered AMF profile (from NRF)");
@@ -866,21 +903,18 @@ void amf_sbi::handle_itti_message(
   std::string body = json_data.dump();
   Logger::amf_sbi().debug("Send NF Update to NRF, Msg body %s", body.c_str());
 
-  std::string url = {};
-  amf_sbi_helper::get_nrf_nf_instance_uri(
-      amf_cfg.nrf_addr, itti_msg.amf_instance_id, url);
-
-  Logger::amf_sbi().debug("Send NF Update to NRF, NRF URL %s", url.c_str());
+  Logger::amf_sbi().debug(
+      "Send NF Update to NRF, NRF URI %s", itti_msg.nrf_uri.c_str());
 
   nlohmann::json response_data = {};
   uint32_t response_code       = 0;
 
   curl_http_client(
-      url, "PATCH", body, response_data, response_code,
+      itti_msg.nrf_uri, "PATCH", body, response_data, response_code,
       amf_cfg.support_features.http_version);
 
   Logger::amf_sbi().debug(
-      "NF Update, response from NRF, json data: \n %s",
+      "NF Update, response from NRF, JSON data: \n %s",
       response_data.dump().c_str());
 
   // Send response to APP to process
@@ -889,7 +923,7 @@ void amf_sbi::handle_itti_message(
           TASK_AMF_SBI, TASK_AMF_APP);
   itti_msg_response->http_response_code = response_code;
   itti_msg_response->amf_instance_id    = itti_msg.amf_instance_id;
-  Logger::amf_sbi().debug("Registered AMF profile (from NRF)");
+  itti_msg_response->nrf_uri            = itti_msg.nrf_uri;
 
   int ret = itti_inst->send_msg(itti_msg_response);
   if (RETURNok != ret) {
@@ -905,18 +939,14 @@ void amf_sbi::handle_itti_message(
   Logger::amf_sbi().debug(
       "Send NF Deregistration to NRF (HTTP version %d)", itti_msg.http_version);
 
-  std::string url = {};
-  amf_sbi_helper::get_nrf_nf_instance_uri(
-      amf_cfg.nrf_addr, itti_msg.amf_instance_id, url);
-
   Logger::amf_sbi().debug(
-      "Send NF Deregistration to NRF, NRF URL %s", url.c_str());
+      "Send NF Deregistration to NRF, NRF URL %s", itti_msg.nrf_uri.c_str());
 
   nlohmann::json response_data = {};
   uint32_t response_code       = 0;
 
   curl_http_client(
-      url, "DELETE", "", response_data, response_code,
+      itti_msg.nrf_uri, "DELETE", "", response_data, response_code,
       amf_cfg.support_features.http_version);
 
   // Send response to APP to process
@@ -926,6 +956,7 @@ void amf_sbi::handle_itti_message(
   itti_msg_response->amf_instance_id    = itti_msg.amf_instance_id;
   itti_msg_response->http_response_code = response_code;
   itti_msg_response->http_version       = itti_msg.http_version;
+  itti_msg_response->nrf_uri            = itti_msg.nrf_uri;
 
   // TODO: Response code 307/308
   int ret = itti_inst->send_msg(itti_msg_response);
@@ -949,28 +980,25 @@ void amf_sbi::handle_itti_message(
 
   std::string body = itti_msg.input_data.dump();
   Logger::amf_sbi().debug(
-      "Send Determine Location Request to AUSF, msg body: \n %s", body.c_str());
+      "Send Determine Location Request to LMF, msg body: \n %s", body.c_str());
 
   uint32_t response_code       = 0;
-  nlohmann::json response_data = {};
+  nlohmann::json response_json = {};
 
   curl_http_client(
-      url, "POST", body, response_data, response_code,
+      url, "POST", body, response_json, response_code,
       amf_cfg.support_features.http_version);
 
   Logger::amf_sbi().debug(
       "Determine Location, response from LMF, HTTP Code: %d", response_code);
 
-  if ((response_code == 200) or
-      (response_code == 201)) {  // TODO: remove hardcoded value
-    Logger::amf_sbi().debug(
-        "Determine Location, response from LMF\n, %s ",
-        response_data.dump().c_str());
+  Logger::amf_sbi().debug(
+      "Determine Location, response from LMF\n, %s ",
+      response_json.dump().c_str());
 
-  } else {
-    Logger::amf_sbi().warn(
-        "Determine Location, could not get response from LMF");
-  }
+  nlohmann::json response_data      = {};
+  response_data["httpResponseCode"] = response_code;
+  response_data["jsonData"]         = response_json;
 
   // Notify to the result
   if (itti_msg.promise_id > 0) {
@@ -1790,44 +1818,17 @@ bool amf_sbi::get_nrf_uri(
         amf_cfg.nrf_addr, nrf_uri);
     return true;
   } else {  // Get NRF info from NSSF
-            // TODO: check if external NSSF feature is supported
     Logger::amf_sbi().debug(
         "Send NS Selection to NSSF to discover the appropriate NRF");
-
     bool result = false;
-
-    // Get NSI information from NSSF
-    nlohmann::json slice_info  = {};
-    nlohmann::json snssai_info = {};
-    snssai_info["sst"]         = snssai.sST;
-    if (!snssai.sD.empty()) snssai_info["sd"] = snssai.sD;
-    slice_info["sNssai"]            = snssai_info;
-    slice_info["roamingIndication"] = "NON_ROAMING";
-    // ToDo Add TAI
-
-    std::string nssf_url =
-        amf_cfg.get_nssf_network_slice_selection_information_uri();
-
-    std::string parameters = {};
-    parameters = "?nf-type=AMF&nf-id=" + amf_app_inst->get_nf_instance() +
-                 "&slice-info-request-for-pdu-session=" + slice_info.dump();
-    nssf_url += parameters;
-
-    Logger::amf_sbi().debug(
-        "Send Network Slice Information Retrieval during PDU session "
-        "establishment procedure, URL %s",
-        nssf_url.c_str());
 
     nlohmann::json response_data = {};
     uint32_t response_code       = 0;
 
-    curl_http_client(
-        nssf_url, "GET", "", response_data, response_code,
-        amf_cfg.support_features.http_version);
-
-    Logger::amf_sbi().debug(
-        "NS Selection, response from NSSF, json data: \n %s",
-        response_data.dump().c_str());
+    auto dnn_opt = std::make_optional<std::string>(dnn);
+    get_network_slice_information(
+        snssai, plmn, dnn_opt, amf_app_inst->get_nf_instance(), response_data,
+        response_code);
 
     if (static_cast<http_response_codes_e>(response_code) !=
         http_response_codes_e::HTTP_RESPONSE_CODE_200_OK) {
@@ -1849,9 +1850,6 @@ bool amf_sbi::get_nrf_uri(
             nrf_uri = split_result[2] + "/nnrf-disc/" + split_result[4] +
                       "/nf-instances";
           }
-
-          Logger::amf_sbi().debug(
-              "NSI Information is successfully retrieved from NSSF");
           Logger::amf_sbi().debug(
               "NS Selection, NRF's URI: %s", nrf_uri.c_str());
           result = true;
@@ -1866,4 +1864,40 @@ bool amf_sbi::get_nrf_uri(
     return result;
   }
   return true;
+}
+
+//------------------------------------------------------------------------------
+void amf_sbi::get_network_slice_information(
+    const snssai_t& snssai, const plmn_t& plmn,
+    const std::optional<std::string>& dnn, const std::string& amf_instance_id,
+    nlohmann::json& response_data, uint32_t& response_code) {
+  // Get NSI information from NSSF
+  nlohmann::json slice_info  = {};
+  nlohmann::json snssai_info = {};
+  snssai_info["sst"]         = snssai.sST;
+  if (!snssai.sD.empty()) snssai_info["sd"] = snssai.sD;
+  slice_info["sNssai"]            = snssai_info;
+  slice_info["roamingIndication"] = "NON_ROAMING";
+  // ToDo Add TAI
+
+  std::string nssf_url =
+      amf_cfg.get_nssf_network_slice_selection_information_uri();
+
+  std::string parameters = {};
+  parameters.append("?nf-type=AMF&nf-id=")
+      .append(amf_instance_id)
+      .append("&slice-info-request-for-pdu-session=")
+      .append(slice_info.dump());
+  nssf_url += parameters;
+
+  Logger::amf_sbi().debug(
+      "Send Network Slice Information Retrieval, URI %s", nssf_url.c_str());
+
+  curl_http_client(
+      nssf_url, "GET", "", response_data, response_code,
+      amf_cfg.support_features.http_version);
+
+  Logger::amf_sbi().debug(
+      "NS Selection, response from NSSF, json data: \n %s",
+      response_data.dump().c_str());
 }

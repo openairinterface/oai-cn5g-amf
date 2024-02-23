@@ -178,7 +178,7 @@ void amf_http2_server::start() {
               AmfCreateEventSubscription amfCreateEventSubscription;
               nlohmann::json::parse(msg.c_str())
                   .get_to(amfCreateEventSubscription);
-              this->createEventSubscriptionHandler(
+              this->create_event_subscription_handler(
                   amfCreateEventSubscription, response);
             } else if (request.method().compare("DELETE") == 0) {
               if (split_result.size() != 5) {
@@ -515,7 +515,7 @@ void amf_http2_server::start() {
 }
 
 //------------------------------------------------------------------------------
-void amf_http2_server::createEventSubscriptionHandler(
+void amf_http2_server::create_event_subscription_handler(
     const AmfCreateEventSubscription& amfCreateEventSubscription,
     const response& response) {
   Logger::amf_server().info("Received AmfCreateEventSubscription Request");

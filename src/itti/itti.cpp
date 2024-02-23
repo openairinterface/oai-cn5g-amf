@@ -35,7 +35,7 @@
 extern itti_mw* itti_inst;
 
 static itti_timer null_timer(
-    ITTI_INVALID_TIMER_ID, TASK_NONE, 0xFFFFFFFF, 0xFFFFFFFF, 0, 0);
+    ITTI_INVALID_TIMER_ID, TASK_NONE, 0xFFFFFFFF, 0xFFFFFFFF, 0, "test");
 
 //------------------------------------------------------------------------------
 void itti_mw::timer_manager_task(
@@ -313,7 +313,7 @@ void itti_mw::wait_tasks_end(void) {
 //------------------------------------------------------------------------------
 timer_id_t itti_mw::timer_setup(
     uint32_t interval_sec, uint32_t interval_us, task_id_t task_id,
-    uint64_t arg1_user, uint64_t arg2_user) {
+    uint64_t arg1_user, std::string arg2_user) {
   // Not sending to task timer
   if ((TASK_FIRST < task_id) && (TASK_MAX > task_id)) {
     itti_timer t(

@@ -26,9 +26,11 @@
 #include <boost/thread/future.hpp>
 #include <map>
 #include <shared_mutex>
+#include <unordered_set>
 
 #include "N1MessageClass_anyOf.h"
 #include "N2InformationClass_anyOf.h"
+#include "NsiInformation.h"
 #include "ProblemDetails.h"
 #include "UeN1N2InfoSubscriptionCreateData.h"
 #include "amf_config.hpp"
@@ -42,6 +44,7 @@
 #include "uint_generator.hpp"
 
 using namespace oai::config;
+using namespace oai::amf::model;
 
 namespace amf_application {
 
@@ -57,7 +60,8 @@ class amf_app {
   inline static uint32_t amf_app_ue_ngap_id_generator = 1;
   amf_profile nf_instance_profile;
   std::string amf_instance_id;
-  timer_id_t timer_nrf_heartbeat;
+  // timer_id_t timer_nrf_heartbeat;
+  std::map<std::string, timer_id_t> timer_nrfs_heartbeat;
 
   util::uint_generator<uint32_t> evsub_id_generator;
   std::map<
@@ -93,12 +97,15 @@ class amf_app {
       non_ue_n2_info_subscribe;
   mutable std::shared_mutex m_non_ue_n2_info_subscribe;
 
+  std::unordered_set<std::string> registered_nrfs;
+
  public:
   explicit amf_app(const amf_config& amf_cfg);
   amf_app(amf_app const&) = delete;
   virtual ~amf_app(){};
   void operator=(amf_app const&) = delete;
 
+  void start();
   /**
    * Stop all the ongoing processes and send NF deregistration towards NRF
    */
@@ -443,6 +450,20 @@ class amf_app {
   void register_to_nrf();
 
   /*
+   * Trigger NF instance registration to a NRF
+   * @param [const std::string&] nrf_uri: NRF's URI
+   * @return void
+   */
+  void register_to_nrf(const std::string& nrf_uri) const;
+
+  /*
+   * Get a list of suitable NRFs from a NSSF
+   * @param [std::unordered_set<std::string>&] nrfs: store the list of NRF's URI
+   * @return void
+   */
+  void get_nrfs(std::unordered_set<std::string>& nrfs);
+
+  /*
    * Handle Event Exposure Msg from NF
    * @param [std::shared_ptr<itti_sbi_event_exposure_request>&] Request message
    * @return [evsub_id_t] ID of the created subscription
@@ -468,6 +489,13 @@ class amf_app {
   bool handle_nf_status_notification(
       std::shared_ptr<itti_sbi_notification_data>& msg,
       oai::model::common::ProblemDetails& problem_details, uint32_t& http_code);
+
+  /*
+   * Handle a request to determine location from LMF
+   * @param void
+   * return void
+   */
+  void handle_determine_location_request();
 
   /*
    * Generate a random UUID for AMF instance
@@ -549,7 +577,7 @@ class amf_app {
    * @param [uint64_t] arg2_user
    * @return void
    */
-  void timer_nrf_heartbeat_timeout(timer_id_t timer_id, uint64_t arg2_user);
+  void timer_nrf_heartbeat_timeout(timer_id_t timer_id, std::string arg2_user);
 
   /*
    * Handle NF registration timeout
@@ -557,7 +585,8 @@ class amf_app {
    * @param [uint64_t] arg2_user
    * @return void
    */
-  void timer_nrf_registration_timeout(timer_id_t timer_id, uint64_t arg2_user);
+  void timer_nrf_registration_timeout(
+      timer_id_t timer_id, std::string arg2_user);
 
   /*
    * Store the promise

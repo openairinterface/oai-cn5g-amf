@@ -36,6 +36,7 @@
 #include "amf_n1.hpp"
 #include "amf_n2.hpp"
 #include "amf_sbi.hpp"
+#include "amf_sbi_helper.hpp"
 #include "amf_statistics.hpp"
 #include "output_wrapper.hpp"
 #include "itti.hpp"
@@ -46,6 +47,7 @@ using namespace ngap;
 using namespace nas;
 using namespace amf_application;
 using namespace oai::config;
+using namespace oai::amf::api;
 
 extern amf_app* amf_app_inst;
 extern itti_mw* itti_inst;
@@ -59,10 +61,16 @@ void amf_app_task(void*);
 
 //------------------------------------------------------------------------------
 amf_app::amf_app(const amf_config& amf_cfg)
-    : m_amf_ue_ngap_id2ue_ctx(), m_ue_ctx_key(), m_supi2ue_ctx() {
-  amf_ue_ngap_id2ue_ctx = {};
-  ue_ctx_key            = {};
-  supi2ue_ctx           = {};
+    : m_amf_ue_ngap_id2ue_ctx(),
+      m_ue_ctx_key(),
+      m_supi2ue_ctx(),
+      m_curl_handle_responses_sbi() {
+  amf_ue_ngap_id2ue_ctx     = {};
+  ue_ctx_key                = {};
+  supi2ue_ctx               = {};
+  curl_handle_responses_sbi = {};
+  registered_nrfs           = {};
+
   Logger::amf_app().startup("Creating AMF application functionality layer");
   if (itti_inst->create_task(TASK_AMF_APP, amf_app_task, nullptr)) {
     Logger::amf_app().error("Cannot create task TASK_AMF_APP");
@@ -85,12 +93,9 @@ amf_app::amf_app(const amf_config& amf_cfg)
   // Generate an AMF profile
   generate_amf_profile();
 
-  // Register to NRF if needed
-  if (amf_cfg.support_features.enable_nf_registration) register_to_nrf();
-
   timer_id_t tid = itti_inst->timer_setup(
       amf_cfg.statistics_interval, 0, TASK_AMF_APP,
-      TASK_AMF_APP_PERIODIC_STATISTICS, 0);
+      TASK_AMF_APP_PERIODIC_STATISTICS);
   Logger::amf_app().startup("Started timer (%d)", tid);
 }
 
@@ -207,7 +212,7 @@ void amf_app_task(void*) {
             case TASK_AMF_APP_PERIODIC_STATISTICS:
               tid = itti_inst->timer_setup(
                   amf_cfg.statistics_interval, 0, TASK_AMF_APP,
-                  TASK_AMF_APP_PERIODIC_STATISTICS, 0);
+                  TASK_AMF_APP_PERIODIC_STATISTICS);
               stacs.display();
               break;
             case TASK_AMF_APP_TIMEOUT_NRF_HEARTBEAT:
@@ -237,6 +242,14 @@ void amf_app_task(void*) {
         Logger::amf_app().info("No handler for msg type %d", msg->msg_type);
     }
   } while (true);
+}
+
+//------------------------------------------------------------------------------
+void amf_app::start() {
+  if (amf_app_inst) {
+    // Register to NRF if needed
+    if (amf_cfg.support_features.enable_nf_registration) register_to_nrf();
+  }
 }
 
 //------------------------------------------------------------------------------
@@ -929,27 +942,30 @@ void amf_app::handle_itti_message(itti_sbi_update_amf_configuration& itti_msg) {
 void amf_app::handle_itti_message(itti_sbi_register_nf_instance_response& r) {
   Logger::amf_app().debug("Handle NF Instance Registration response");
 
-  if (r.http_response_code ==
-      static_cast<uint32_t>(
-          http_response_codes_e::HTTP_RESPONSE_CODE_201_CREATED)) {
+  if ((r.http_response_code ==
+       static_cast<uint32_t>(
+           http_response_codes_e::HTTP_RESPONSE_CODE_200_OK)) or
+      (r.http_response_code ==
+       static_cast<uint32_t>(
+           http_response_codes_e::HTTP_RESPONSE_CODE_201_CREATED))) {
     Logger::amf_app().debug("AMF has successfully registered to NRF.");
     nf_instance_profile = r.profile;
     // Set heartbeat timer
     Logger::amf_app().debug(
         "Set value of NRF Heartbeat timer to %d",
         r.profile.get_nf_heartBeat_timer());
-    timer_nrf_heartbeat = itti_inst->timer_setup(
+    timer_id_t timer_nrf_heartbeat = itti_inst->timer_setup(
         r.profile.get_nf_heartBeat_timer(), 0, TASK_AMF_APP,
-        TASK_AMF_APP_TIMEOUT_NRF_HEARTBEAT,
-        0);  // TODO arg2_user
+        TASK_AMF_APP_TIMEOUT_NRF_HEARTBEAT, r.nrf_uri);
+    timer_nrfs_heartbeat.emplace(
+        std::make_pair(r.nrf_uri, timer_nrf_heartbeat));
   } else {
     Logger::amf_app().warn(
         "NF Instance Registration, got issue when registering to NRF, try "
         "again ...");
     // Set timer to try again with NF Registration
     itti_inst->timer_setup(
-        20, 0, TASK_AMF_APP, TASK_AMF_APP_TIMEOUT_NRF_REGISTRATION,
-        0);  // TODO arg2_user
+        20, 0, TASK_AMF_APP, TASK_AMF_APP_TIMEOUT_NRF_REGISTRATION, r.nrf_uri);
   }
 }
 
@@ -961,7 +977,11 @@ void amf_app::handle_itti_message(itti_sbi_deregister_nf_instance_response& r) {
   if (response_code ==
       http_response_codes_e::HTTP_RESPONSE_CODE_204_NO_CONTENT) {
     Logger::amf_app().debug("AMF has successfully deregistered to NRF.");
-    itti_inst->timer_remove(timer_nrf_heartbeat);  // Stop heartbeat
+    // Stop Heartbeat with this NRF
+    if (timer_nrfs_heartbeat.count(r.nrf_uri) > 0) {
+      itti_inst->timer_remove(timer_nrfs_heartbeat.at(r.nrf_uri));
+    }
+
   } else if (
       (response_code ==
        http_response_codes_e::HTTP_RESPONSE_CODE_TEMPORARY_REDIRECT) or
@@ -978,17 +998,25 @@ void amf_app::handle_itti_message(itti_sbi_deregister_nf_instance_response& r) {
 void amf_app::handle_itti_message(itti_sbi_update_nf_instance_response& r) {
   Logger::amf_app().debug("Handle NF Update response");
   if (r.http_response_code !=
-      static_cast<uint16_t>(
-          http_response_codes_e::HTTP_RESPONSE_CODE_204_NO_CONTENT)) {
-    register_to_nrf();  // trigger again registration procedure
+          static_cast<uint16_t>(
+              http_response_codes_e::HTTP_RESPONSE_CODE_204_NO_CONTENT) and
+      (r.http_response_code !=
+       static_cast<uint16_t>(
+           http_response_codes_e::HTTP_RESPONSE_CODE_200_OK))) {
+    register_to_nrf(r.nrf_uri);  // trigger again registration procedure
   } else {
     Logger::amf_app().debug(
         "Set a timer to the next Heart-beat (%d)",
         nf_instance_profile.get_nf_heartBeat_timer());
-    timer_nrf_heartbeat = itti_inst->timer_setup(
+
+    timer_id_t timer_nrf_heartbeat = itti_inst->timer_setup(
         nf_instance_profile.get_nf_heartBeat_timer(), 0, TASK_AMF_APP,
-        TASK_AMF_APP_TIMEOUT_NRF_HEARTBEAT,
-        0);  // TODO arg2_user
+        TASK_AMF_APP_TIMEOUT_NRF_HEARTBEAT, r.nrf_uri);
+    timer_nrfs_heartbeat.emplace(
+        std::make_pair(r.nrf_uri, timer_nrf_heartbeat));
+
+    // Store the registered NRF
+    registered_nrfs.insert(r.nrf_uri);
   }
 }
 
@@ -1215,49 +1243,11 @@ evsub_id_t amf_app::handle_event_exposure_subscription(
     ss->ev_type               = i.type;
     add_event_subscription(evsub_id, i.type, ss);
 
-    // Determine Location
-    if (amf_cfg.support_features.enable_lmf) {
-      for (const auto& kvp : supi2ue_ctx) {
-        nlohmann::json input_data = {};
-        input_data["supi"]        = kvp.first;
-
-        // Generate a promise and associate this promise to the ITTI message
-        uint32_t promise_id = generate_promise_id();
-        Logger::amf_app().debug("Promise ID generated %d", promise_id);
-
-        auto itti_msg = std::make_shared<itti_sbi_determine_location_request>(
-            TASK_AMF_APP, TASK_AMF_SBI, promise_id);
-
-        auto p = boost::make_shared<boost::promise<nlohmann::json>>();
-        boost::shared_future<nlohmann::json> f = p->get_future();
-        add_promise(promise_id, p);
-
-        itti_msg->input_data   = input_data;
-        itti_msg->http_version = msg->http_version;
-        itti_msg->promise_id   = promise_id;
-
-        int ret = itti_inst->send_msg(itti_msg);
-        if (0 != ret) {
-          Logger::amf_app().error(
-              "Could not send ITTI message %s to task TASK_AMF_SBI",
-              itti_msg->get_msg_name());
-        }
-
-        // Wait for the response available and process accordingly
-        std::optional<nlohmann::json> location_data = std::nullopt;
-        utils::wait_for_result(f, location_data);
-        if (location_data.has_value()) {
-          nlohmann::json location_data_json = location_data.value();
-          Logger::amf_app().info(
-              "Determine Location Response (SUPI: %s) : \n%s", kvp.first,
-              location_data_json.dump(2).c_str());
-        } else {
-          Logger::amf_app().error(
-              "Determine Location failed (SUPI: %s)...\n", kvp.first);
-        }
-      }
+    if (i.type == LOCATION_REPORT) {
+      // Determine Location
+      if (amf_cfg.support_features.enable_lmf)
+        handle_determine_location_request();
     }
-
     ss->display();
   }
   return evsub_id;
@@ -1292,6 +1282,58 @@ bool amf_app::handle_nf_status_notification(
   return true;
 }
 
+//------------------------------------------------------------------------------
+void amf_app::handle_determine_location_request() {
+  for (const auto& kvp : supi2ue_ctx) {
+    nlohmann::json input_data = {};
+    input_data["supi"]        = kvp.first;
+
+    // Generate a promise and associate this promise to the ITTI message
+    uint32_t promise_id = generate_promise_id();
+    Logger::amf_app().debug("Promise ID generated %d", promise_id);
+
+    auto itti_msg = std::make_shared<itti_sbi_determine_location_request>(
+        TASK_AMF_APP, TASK_AMF_SBI, promise_id);
+
+    auto p = boost::make_shared<boost::promise<nlohmann::json>>();
+    boost::shared_future<nlohmann::json> f = p->get_future();
+    add_promise(promise_id, p);
+
+    itti_msg->input_data   = input_data;
+    itti_msg->http_version = amf_cfg.support_features.http_version;
+    itti_msg->promise_id   = promise_id;
+
+    int ret = itti_inst->send_msg(itti_msg);
+    if (0 != ret) {
+      Logger::amf_app().error(
+          "Could not send ITTI message %s to task TASK_AMF_SBI",
+          itti_msg->get_msg_name());
+    }
+
+    // Wait for the response available and process accordingly
+    std::optional<nlohmann::json> location_data = std::nullopt;
+    utils::wait_for_result(f, location_data);
+    if (location_data.has_value()) {
+      nlohmann::json location_data_json = location_data.value();
+
+      uint32_t http_response_code = 0;
+      if (location_data_json.find("httpResponseCode") !=
+          location_data_json.end()) {
+        http_response_code = location_data_json["httpResponseCode"].get<int>();
+        // TODO:
+      }
+      if (location_data_json.find("jsonData") != location_data_json.end()) {
+        ;
+        Logger::amf_app().info(
+            "Determine Location Response (SUPI: %s) : \n%s", kvp.first,
+            location_data_json["jsonData"].dump(2).c_str());
+      }
+    } else {
+      Logger::amf_app().error(
+          "Determine Location failed (SUPI: %s)...\n", kvp.first);
+    }
+  }
+}
 //------------------------------------------------------------------------------
 void amf_app::generate_uuid() {
   amf_instance_id = to_string(boost::uuids::random_generator()());
@@ -1441,11 +1483,38 @@ void amf_app::register_to_nrf() {
   // Send request to SBI to send NF registration to NRF
   Logger::amf_app().debug(
       "Send ITTI msg to SBI task to trigger the registration request towards "
+      "all appropriate NRFs");
+
+  // Get all appropriate NRFs
+  std::unordered_set<std::string> nrfs;
+  get_nrfs(nrfs);
+
+  for (const auto& nrf_instance : nrfs) {
+    auto itti_msg = std::make_shared<itti_sbi_register_nf_instance_request>(
+        TASK_AMF_APP, TASK_AMF_SBI);
+    itti_msg->profile = nf_instance_profile;
+    itti_msg->nrf_uri = nrf_instance;
+
+    int ret = itti_inst->send_msg(itti_msg);
+    if (RETURNok != ret) {
+      Logger::amf_app().error(
+          "Could not send ITTI message %s to task TASK_AMF_SBI",
+          itti_msg->get_msg_name());
+    }
+  }
+}
+
+//---------------------------------------------------------------------------------------------
+void amf_app::register_to_nrf(const std::string& nrf_uri) const {
+  // Send request to SBI to send NF registration to NRF
+  Logger::amf_app().debug(
+      "Send ITTI msg to SBI task to trigger the registration request towards "
       "NRF");
 
   auto itti_msg = std::make_shared<itti_sbi_register_nf_instance_request>(
       TASK_AMF_APP, TASK_AMF_SBI);
   itti_msg->profile = nf_instance_profile;
+  itti_msg->nrf_uri = nrf_uri;
 
   int ret = itti_inst->send_msg(itti_msg);
   if (RETURNok != ret) {
@@ -1456,24 +1525,116 @@ void amf_app::register_to_nrf() {
 }
 
 //------------------------------------------------------------------------------
+void amf_app::get_nrfs(std::unordered_set<std::string>& nrfs) {
+  if (amf_cfg.support_features.enable_nssf) {
+    // Get all related NRFs from NSSF
+    std::map<uint32_t, boost::shared_future<nlohmann::json>> nssf_responses;
+
+    // Send requests to get appropriate Network Slice Informations from NSSF
+    for (const auto& plmn : amf_cfg.plmn_list) {
+      for (auto s : plmn.slice_list) {
+        std::shared_ptr<itti_sbi_network_slice_selection_discovery> itti_msg =
+            std::make_shared<itti_sbi_network_slice_selection_discovery>(
+                TASK_AMF_N1, TASK_AMF_SBI);
+
+        // Generate a promise and associate this promise to the ITTI message
+        uint32_t promise_id = amf_app_inst->generate_promise_id();
+        Logger::amf_app().debug("Promise ID generated %d", promise_id);
+
+        auto p = boost::make_shared<boost::promise<nlohmann::json>>();
+        boost::shared_future<nlohmann::json> f = p->get_future();
+
+        // Store the future to be processed later
+        nssf_responses.emplace(promise_id, f);
+        add_promise(promise_id, p);
+
+        itti_msg->http_version   = amf_cfg.support_features.http_version;
+        itti_msg->nf_instance_id = amf_instance_id;
+        itti_msg->plmn.mcc       = plmn.mcc;
+        itti_msg->plmn.mnc       = plmn.mnc;
+        itti_msg->snssai.sST     = s.sst;
+        itti_msg->snssai.sD      = std::to_string(s.sd);
+        itti_msg->promise_id     = promise_id;
+        int ret                  = itti_inst->send_msg(itti_msg);
+        if (0 != ret) {
+          Logger::amf_n1().error(
+              "Could not send ITTI message %s to task TASK_AMF_SBI",
+              itti_msg->get_msg_name());
+        }
+      }
+    }
+
+    // Process the response
+    while (!nssf_responses.empty()) {
+      // Wait for the result available and process accordingly
+      std::optional<nlohmann::json> result_opt = std::nullopt;
+      utils::wait_for_result(nssf_responses.begin()->second, result_opt);
+
+      if (result_opt.has_value()) {
+        nlohmann::json result = result_opt.value();
+        Logger::amf_app().debug(
+            "Got result for promise ID %ld, JSON content %s",
+            nssf_responses.begin()->first, result.dump());
+
+        uint32_t http_response_code = 0;
+        if (result.find("httpResponseCode") != result.end()) {
+          http_response_code = result["httpResponseCode"].get<int>();
+          // if (http_response_code != 200) continue;
+        }
+
+        if (result.find("jsonData") != result.end()) {
+          nlohmann::json authorized_network_slice_info = result["jsonData"];
+          NsiInformation nsi_information               = {};
+          if (authorized_network_slice_info.find("nsiInformation") !=
+              authorized_network_slice_info.end()) {
+            try {
+              from_json(
+                  authorized_network_slice_info["nsiInformation"],
+                  nsi_information);
+              nrfs.insert(nsi_information.getNrfNfMgtUri());
+            } catch (std::exception& e) {
+              Logger::amf_app().warn(
+                  "Could not parse NSI Information from Json");
+            }
+          }
+        }
+      }
+      nssf_responses.erase(nssf_responses.begin());
+    }
+
+  } else {
+    // Get all NRFs from configuration files
+    // For now we only have 1 NRF from conf file
+    std::string nrf_uri = {};
+    amf_sbi_helper::get_nrf_nf_instance_uri(
+        amf_cfg.nrf_addr, amf_instance_id, nrf_uri);
+    nrfs.insert(nrf_uri);
+  }
+  return;
+}
+
+//------------------------------------------------------------------------------
 void amf_app::deregister_to_nrf() const {
   Logger::amf_app().debug(
       "Send ITTI msg to SBI task to trigger the deregistration request to NRF");
 
-  auto itti_msg = std::make_shared<itti_sbi_deregister_nf_instance_request>(
-      TASK_AMF_APP, TASK_AMF_SBI);
-  itti_msg->amf_instance_id = amf_instance_id;
-  int ret                   = itti_inst->send_msg(itti_msg);
-  if (RETURNok != ret) {
-    Logger::amf_app().error(
-        "Could not send ITTI message %s to task TASK_AMF_SBI",
-        itti_msg->get_msg_name());
+  for (const auto& nrf_instance_uri : registered_nrfs) {
+    auto itti_msg = std::make_shared<itti_sbi_deregister_nf_instance_request>(
+        TASK_AMF_APP, TASK_AMF_SBI);
+    itti_msg->amf_instance_id = amf_instance_id;
+    itti_msg->nrf_uri         = nrf_instance_uri;
+    int ret                   = itti_inst->send_msg(itti_msg);
+    if (RETURNok != ret) {
+      Logger::amf_app().error(
+          "Could not send ITTI message %s to task TASK_AMF_SBI",
+          itti_msg->get_msg_name());
+    }
   }
 }
 
 //---------------------------------------------------------------------------------------------
 void amf_app::timer_nrf_heartbeat_timeout(
-    timer_id_t timer_id, uint64_t arg2_user) {
+    timer_id_t timer_id, std::string nrf_uri) {
   Logger::amf_app().debug("Send ITTI msg to SBI task to trigger NRF Heartbeat");
 
   auto itti_msg = std::make_shared<itti_sbi_update_nf_instance_request>(
@@ -1488,6 +1649,7 @@ void amf_app::timer_nrf_heartbeat_timeout(
   patch_item.setValue("REGISTERED");
   itti_msg->patch_items.push_back(patch_item);
   itti_msg->amf_instance_id = amf_instance_id;
+  itti_msg->nrf_uri         = nrf_uri;
 
   int ret = itti_inst->send_msg(itti_msg);
   if (RETURNok != ret) {
@@ -1499,8 +1661,8 @@ void amf_app::timer_nrf_heartbeat_timeout(
 
 //---------------------------------------------------------------------------------------------
 void amf_app::timer_nrf_registration_timeout(
-    timer_id_t timer_id, uint64_t arg2_user) {
-  register_to_nrf();
+    timer_id_t timer_id, std::string nrf_uri) {
+  register_to_nrf(nrf_uri);
 }
 
 //---------------------------------------------------------------------------------------------
@@ -1540,7 +1702,7 @@ void amf_app::trigger_pdu_session_release(
           TASK_AMF_N2, TASK_AMF_SBI);
 
       // Generate a promise and associate this promise to the ITTI message
-      uint32_t promise_id = amf_app_inst->generate_promise_id();
+      uint32_t promise_id = generate_promise_id();
       Logger::amf_app().debug("Promise ID generated %d", promise_id);
 
       auto p = boost::make_shared<boost::promise<nlohmann::json>>();
@@ -1608,7 +1770,7 @@ void amf_app::trigger_pdu_session_up_deactivation(
     for (auto session : sessions_ctx) {
       Logger::amf_app().debug("PDU Session ID %d", session->pdu_session_id);
       // Generate a promise and associate this promise to the curl handle
-      uint32_t promise_id = amf_app_inst->generate_promise_id();
+      uint32_t promise_id = generate_promise_id();
       Logger::amf_app().debug("Promise ID generated %d", promise_id);
 
       auto p = boost::make_shared<boost::promise<nlohmann::json>>();
@@ -1695,7 +1857,7 @@ bool amf_app::trigger_pdu_session_up_activation(
     for (auto session : sessions_ctx) {
       Logger::amf_app().debug("PDU Session ID %d", session->pdu_session_id);
       // Generate a promise and associate this promise to the curl handle
-      uint32_t promise_id = amf_app_inst->generate_promise_id();
+      uint32_t promise_id = generate_promise_id();
       Logger::amf_app().debug("Promise ID generated %d", promise_id);
 
       auto p = boost::make_shared<boost::promise<nlohmann::json>>();
@@ -1781,7 +1943,7 @@ bool amf_app::trigger_pdu_session_up_activation(
     // Send PDUSessionUpdateSMContextRequest to SMF
     Logger::amf_app().debug("PDU Session ID %d", pdu_session_id);
     // Generate a promise and associate this promise to the curl handle
-    uint32_t promise_id = amf_app_inst->generate_promise_id();
+    uint32_t promise_id = generate_promise_id();
     Logger::amf_app().debug("Promise ID generated %d", promise_id);
 
     auto p = boost::make_shared<boost::promise<nlohmann::json>>();

@@ -50,7 +50,7 @@ class itti_timer {
  public:
   itti_timer(
       const timer_id_t id, const task_id_t task_id, const uint32_t interval_sec,
-      const uint32_t interval_us, uint64_t arg1_user, uint64_t arg2_user)
+      const uint32_t interval_us, uint64_t arg1_user, std::string arg2_user)
       : id(id), task_id(task_id), arg1_user(arg1_user), arg2_user(arg2_user) {
     time_out = std::chrono::system_clock::now() +
                std::chrono::seconds(interval_sec) +
@@ -59,7 +59,7 @@ class itti_timer {
   itti_timer(
       const timer_id_t id, const task_id_t task_id,
       const std::chrono::system_clock::time_point time_out, uint64_t arg1_user,
-      uint64_t arg2_user)
+      std::string arg2_user)
       : id(id),
         task_id(task_id),
         time_out(time_out),
@@ -80,7 +80,7 @@ class itti_timer {
   task_id_t task_id;
   std::chrono::system_clock::time_point time_out;
   uint64_t arg1_user;
-  uint64_t arg2_user;
+  std::string arg2_user;
 };
 
 //------------------------------------------------------------------------------
@@ -226,7 +226,7 @@ class itti_mw {
    **/
   timer_id_t timer_setup(
       uint32_t interval_sec, uint32_t interval_us, task_id_t task_id,
-      uint64_t arg1_user = 0, uint64_t arg2_user = 0);
+      uint64_t arg1_user = 0, std::string arg2_user = "");
 
   /** \brief Remove the timer from list
    *  \param timer_id unique timer id

@@ -4486,7 +4486,16 @@ bool amf_n1::find_ue_context(
 
 //------------------------------------------------------------------------------
 void amf_n1::mobile_reachable_timer_timeout(
-    timer_id_t& timer_id, const uint64_t amf_ue_ngap_id) {
+    timer_id_t& timer_id, const std::string amf_ue_ngap_id_str) {
+  long amf_ue_ngap_id = {};
+  try {
+    amf_ue_ngap_id = std::stol(amf_ue_ngap_id_str);
+  } catch (const std::exception& err) {
+    Logger::amf_n1().warn(
+        "Can not covert AMF UE NGAP ID in string format to long!");
+    return;
+  }
+
   std::shared_ptr<nas_context> nc = {};
   if (!amf_ue_id_2_nas_context(amf_ue_ngap_id, nc)) return;
 
@@ -4504,7 +4513,8 @@ void amf_n1::mobile_reachable_timer_timeout(
   // TODO: Start the implicit de-registration timer
   timer_id_t tid = itti_inst->timer_setup(
       IMPLICIT_DEREGISTRATION_TIMER_MIN * 60, 0, TASK_AMF_N1,
-      TASK_AMF_IMPLICIT_DEREGISTRATION_TIMER_EXPIRE, amf_ue_ngap_id);
+      TASK_AMF_IMPLICIT_DEREGISTRATION_TIMER_EXPIRE,
+      std::to_string(amf_ue_ngap_id));
   Logger::amf_n1().startup(
       "Started Implicit De-Registration Timer (tid %d)", tid);
 
@@ -4513,7 +4523,16 @@ void amf_n1::mobile_reachable_timer_timeout(
 
 //------------------------------------------------------------------------------
 void amf_n1::implicit_deregistration_timer_timeout(
-    timer_id_t timer_id, uint64_t amf_ue_ngap_id) {
+    timer_id_t timer_id, std::string amf_ue_ngap_id_str) {
+  long amf_ue_ngap_id = {};
+  try {
+    amf_ue_ngap_id = std::stol(amf_ue_ngap_id_str);
+  } catch (const std::exception& err) {
+    Logger::amf_n1().warn(
+        "Can not covert AMF UE NGAP ID in string format to long!");
+    return;
+  }
+
   std::shared_ptr<nas_context> nc = {};
   if (!amf_ue_id_2_nas_context(amf_ue_ngap_id, nc)) return;
 
@@ -5082,18 +5101,23 @@ bool amf_n1::get_network_slice_selection(
     }
 
     // Wait for the response available and process accordingly
-    std::optional<nlohmann::json> result = std::nullopt;
-    utils::wait_for_result(f, result);
-    if (result.has_value()) {
-      nlohmann::json network_slice_info = result.value();
-      Logger::amf_n1().debug(
-          "Got Authorized Network Slice Info from NSSF: %s",
-          network_slice_info.dump());
-      try {
-        from_json(network_slice_info, authorized_network_slice_info);
-      } catch (std::exception& e) {
-        Logger::amf_n1().warn(
-            "Could not parse Authorized Network Slice Info from Json");
+    std::optional<nlohmann::json> result_opt = std::nullopt;
+    utils::wait_for_result(f, result_opt);
+    if (result_opt.has_value()) {
+      nlohmann::json result = result_opt.value();
+      Logger::amf_n1().debug("Got result for promise ID %ld", promise_id);
+      if (result.find("jsonData") != result.end()) {
+        Logger::amf_n1().debug(
+            "Got Authorized Network Slice Info from NSSF: %s",
+            result["jsonData"].dump());
+        try {
+          from_json(result["jsonData"], authorized_network_slice_info);
+        } catch (std::exception& e) {
+          Logger::amf_n1().warn(
+              "Could not parse Authorized Network Slice Info from Json");
+          return false;
+        }
+      } else {
         return false;
       }
 

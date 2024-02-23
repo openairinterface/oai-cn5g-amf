@@ -222,11 +222,21 @@ class itti_sbi_register_nf_instance_request : public itti_sbi_msg {
  public:
   itti_sbi_register_nf_instance_request(
       const task_id_t orig, const task_id_t dest)
-      : itti_sbi_msg(SBI_REGISTER_NF_INSTANCE_REQUEST, orig, dest) {}
+      : itti_sbi_msg(SBI_REGISTER_NF_INSTANCE_REQUEST, orig, dest),
+        profile(),
+        nrf_uri() {}
+  itti_sbi_register_nf_instance_request(
+      const itti_sbi_register_nf_instance_request& i)
+      : itti_sbi_msg(i), profile(i.profile), nrf_uri(i.nrf_uri) {}
+  itti_sbi_register_nf_instance_request(
+      const itti_sbi_register_nf_instance_request& i, const task_id_t orig,
+      const task_id_t dest)
+      : itti_sbi_msg(i, orig, dest), profile(i.profile), nrf_uri(i.nrf_uri) {}
   virtual ~itti_sbi_register_nf_instance_request() {}
   const char* get_msg_name() { return "SBI_REGISTER_NF_INSTANCE_REQUEST"; };
 
   amf_application::amf_profile profile;
+  std::string nrf_uri;
 };
 
 //-----------------------------------------------------------------------------
@@ -240,6 +250,7 @@ class itti_sbi_register_nf_instance_response : public itti_sbi_msg {
 
   amf_application::amf_profile profile;
   uint8_t http_response_code;
+  std::string nrf_uri;
 };
 
 //-----------------------------------------------------------------------------
@@ -253,6 +264,7 @@ class itti_sbi_update_nf_instance_request : public itti_sbi_msg {
 
   std::vector<oai::model::common::PatchItem> patch_items;
   std::string amf_instance_id;
+  std::string nrf_uri;
 };
 
 //-----------------------------------------------------------------------------
@@ -266,6 +278,7 @@ class itti_sbi_update_nf_instance_response : public itti_sbi_msg {
 
   std::string amf_instance_id;
   uint32_t http_response_code;
+  std::string nrf_uri;
 };
 
 //-----------------------------------------------------------------------------
@@ -278,6 +291,7 @@ class itti_sbi_deregister_nf_instance_request : public itti_sbi_msg {
   const char* get_msg_name() { return "SBI_DEREGISTER_NF_INSTANCE_REQUEST"; };
 
   std::string amf_instance_id;
+  std::string nrf_uri;
 };
 
 //-----------------------------------------------------------------------------
@@ -292,6 +306,7 @@ class itti_sbi_deregister_nf_instance_response : public itti_sbi_msg {
 
   std::string amf_instance_id;
   uint32_t http_response_code;
+  std::string nrf_uri;
   // TODO: Redirect response;
   // TODO: Header location
 };
@@ -326,6 +341,23 @@ class itti_sbi_network_slice_selection_information : public itti_sbi_msg {
   std::string nf_instance_id;
   oai::amf::model::SliceInfoForRegistration slice_info;
   tai_t tai;
+  uint32_t promise_id;
+};
+
+//-----------------------------------------------------------------------------
+class itti_sbi_network_slice_selection_discovery : public itti_sbi_msg {
+ public:
+  itti_sbi_network_slice_selection_discovery(
+      const task_id_t orig, const task_id_t dest)
+      : itti_sbi_msg(SBI_NETWORK_SLICE_SELECTION_DISCOVERY, orig, dest) {}
+  virtual ~itti_sbi_network_slice_selection_discovery(){};
+  const char* get_msg_name() {
+    return "SBI_NETWORK_SLICE_SELECTION_DISCOVERY";
+  };
+
+  std::string nf_instance_id;
+  snssai_t snssai;
+  plmn_t plmn;
   uint32_t promise_id;
 };
 
