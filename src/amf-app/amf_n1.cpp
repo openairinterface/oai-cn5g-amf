@@ -306,8 +306,7 @@ void amf_n1::handle_itti_message(itti_downlink_nas_transfer& itti_msg) {
         }
         uint32_t ulcount = nc->security_ctx.value().ul_count.seq_num |
                            (nc->security_ctx.value().ul_count.overflow << 8);
-        Authentication_5gaka::derive_kgnb(
-            ulcount, KAccessType3gppAccess, kamf, kgnb);
+        Authentication_5gaka::derive_kgnb(ulcount, 0x01, kamf, kgnb);
         output_wrapper::print_buffer(
             "amf_n1", "Kamf", kamf, AUTH_VECTOR_LENGTH_OCTETS);
 
@@ -1265,7 +1264,7 @@ void amf_n1::service_request_handle(
     uint32_t ulcount = nc->security_ctx.value().ul_count.seq_num |
                        (nc->security_ctx.value().ul_count.overflow << 8);
     Authentication_5gaka::derive_kgnb(
-        ulcount, KAccessType3gppAccess, kamf,
+        ulcount, 0x01, kamf,
         kgnb);  // TODO: remove hardcoded value
     output_wrapper::print_buffer(
         "amf_n1", "Kamf", kamf, AUTH_VECTOR_LENGTH_OCTETS);
@@ -1358,8 +1357,7 @@ void amf_n1::service_request_handle(
         "uplink count (%d)", nc->security_ctx.value().ul_count.seq_num);
     output_wrapper::print_buffer(
         "amf_n1", "Kamf", kamf, AUTH_VECTOR_LENGTH_OCTETS);
-    Authentication_5gaka::derive_kgnb(
-        ulcount, KAccessType3gppAccess, kamf, kgnb);
+    Authentication_5gaka::derive_kgnb(ulcount, 0x01, kamf, kgnb);
 
     itti_msg->ran_ue_ngap_id = ran_ue_ngap_id;
     itti_msg->amf_ue_ngap_id = amf_ue_ngap_id;
@@ -3017,8 +3015,7 @@ void amf_n1::security_mode_complete_handle(
     }
     uint32_t ulcount = nc->security_ctx.value().ul_count.seq_num |
                        (nc->security_ctx.value().ul_count.overflow << 8);
-    Authentication_5gaka::derive_kgnb(
-        ulcount, KAccessType3gppAccess, kamf, kgnb);
+    Authentication_5gaka::derive_kgnb(ulcount, 0x01, kamf, kgnb);
     output_wrapper::print_buffer(
         "amf_n1", "Kamf", kamf, AUTH_VECTOR_LENGTH_OCTETS);
 
@@ -3840,7 +3837,7 @@ void amf_n1::run_mobility_registration_update_procedure(
   }
   uint32_t ulcount = nc->security_ctx.value().ul_count.seq_num |
                      (nc->security_ctx.value().ul_count.overflow << 8);
-  Authentication_5gaka::derive_kgnb(ulcount, KAccessType3gppAccess, kamf, kgnb);
+  Authentication_5gaka::derive_kgnb(ulcount, 0x01, kamf, kgnb);
   output_wrapper::print_buffer(
       "amf_n1", "Kamf", kamf, AUTH_VECTOR_LENGTH_OCTETS);
 
