@@ -979,17 +979,14 @@ void amf_n2::handle_itti_message(
   msg->setAllowedNssai(list);
 
   // Set UE Security Capability from NAS context
-  /*
   uint8_t eea_value = 0x0000;
   nc->ue_security_capability.GetEea(eea_value);
   uint8_t eia_value = 0x0000;
   nc->ue_security_capability.GetEia(eia_value);
   msg->setUESecurityCapability(
-      nc->ue_security_capability.GetEa(), nc->ue_security_capability.GetIa(),
-      eea_value, eia_value);
-*/
-  msg->setUESecurityCapability(
-      0xe000, 0xe000, 0x0000, 0x0000);  // TODO: for testing purpose
+      (nc->ue_security_capability.GetEa() << 9),
+      (nc->ue_security_capability.GetIa() << 9), (eea_value << 9),
+      (eia_value << 9));
 
   // Security Key
   msg->setSecurityKey((uint8_t*) bdata(itti_msg->kgnb));
