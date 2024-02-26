@@ -4442,11 +4442,11 @@ void amf_n1::initialize_registration_accept(
     if (!found) {
       // Add to list of Rejected NSSAIs
       RejectedSNssai rejected_snssai = {};
-      rejected_snssai.setSST(rn.sst);
+      rejected_snssai.SetSST(rn.sst);
       if (rn.sd != SD_NO_VALUE) {
-        rejected_snssai.setSd(rn.sd);
+        rejected_snssai.SetSd(rn.sd);
       }
-      rejected_snssai.setCause(1);  // TODO: Hardcoded, S-NSSAI not available in
+      rejected_snssai.SetCause(1);  // TODO: Hardcoded, S-NSSAI not available in
                                     // the current registration area
       rejected_nssais.push_back(rejected_snssai);
       Logger::amf_n1().debug(

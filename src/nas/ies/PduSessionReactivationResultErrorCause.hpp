@@ -41,17 +41,17 @@ class PduSessionReactivationResultErrorCause : public Type6NasIe {
     return kPduSessionReactivationResultErrorCauseIeName;
   }
 
-  void setValue(uint8_t session_id, uint8_t cause);
-  std::pair<uint8_t, uint8_t> getValue() const;
+  void SetValue(uint8_t session_id, uint8_t cause);
+  std::pair<uint8_t, uint8_t> GetValue() const;
 
-  void setValue(const std::vector<std::pair<uint8_t, uint8_t>>& value);
-  void getValue(std::vector<std::pair<uint8_t, uint8_t>>& value) const;
+  void SetValue(const std::vector<std::pair<uint8_t, uint8_t>>& value);
+  void GetValue(std::vector<std::pair<uint8_t, uint8_t>>& value) const;
 
   int Encode(uint8_t* buf, int len);
   int Decode(uint8_t* buf, int len, bool is_option);
 
  private:
-  std::vector<std::pair<uint8_t, uint8_t>> pdu_session_id_cause_value_pair;
+  std::vector<std::pair<uint8_t, uint8_t>> pdu_session_id_cause_value_pair_;
 };
 
 }  // namespace nas

@@ -49,34 +49,34 @@ RejectedSNssai::~RejectedSNssai() {
 }
 
 //------------------------------------------------------------------------------
-uint8_t RejectedSNssai::getLength() {
+uint8_t RejectedSNssai::GetLength() {
   return (length_ + 1);  // 1 for length + cause
 }
 
 //------------------------------------------------------------------------------
-void RejectedSNssai::setSST(const uint8_t& sst) {
+void RejectedSNssai::SetSST(const uint8_t& sst) {
   sst_ = sst;
   // length_ = 1;
 }
 
 //------------------------------------------------------------------------------
-void RejectedSNssai::getSST(uint8_t& sst) {
+void RejectedSNssai::GetSST(uint8_t& sst) {
   sst = sst_;
 }
 
 //------------------------------------------------------------------------------
-uint8_t RejectedSNssai::getSST() {
+uint8_t RejectedSNssai::GetSST() {
   return sst_;
 }
 
 //------------------------------------------------------------------------------
-void RejectedSNssai::setSd(const uint32_t& sd) {
+void RejectedSNssai::SetSd(const uint32_t& sd) {
   sd_.emplace(sd);
   length_ = 4;
 }
 
 //------------------------------------------------------------------------------
-bool RejectedSNssai::getSd(uint32_t& sd) {
+bool RejectedSNssai::GetSd(uint32_t& sd) {
   if (sd_.has_value()) {
     sd = sd_.value();
     return true;
@@ -86,23 +86,23 @@ bool RejectedSNssai::getSd(uint32_t& sd) {
 
 //------------------------------------------------------------------------------
 
-void RejectedSNssai::getSd(std::optional<uint32_t>& sd) {
+void RejectedSNssai::GetSd(std::optional<uint32_t>& sd) {
   sd = sd_;
 }
 
 //------------------------------------------------------------------------------
-void RejectedSNssai::setCause(const uint8_t& cause) {
+void RejectedSNssai::SetCause(const uint8_t& cause) {
   cause_ = cause;
 }
 
 //------------------------------------------------------------------------------
-uint8_t RejectedSNssai::getCause() {
+uint8_t RejectedSNssai::GetCause() {
   return cause_;
 }
 
 //------------------------------------------------------------------------------
 
-void RejectedSNssai::getCause(uint8_t& cause) {
+void RejectedSNssai::GetCause(uint8_t& cause) {
   cause = cause_;
 }
 

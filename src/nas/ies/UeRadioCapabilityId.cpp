@@ -45,12 +45,12 @@ UeRadioCapabilityId::UeRadioCapabilityId(bstring value)
 UeRadioCapabilityId::~UeRadioCapabilityId() {}
 
 //------------------------------------------------------------------------------
-void UeRadioCapabilityId::setValue(bstring value) {
+void UeRadioCapabilityId::SetValue(bstring value) {
   value_ = bstrcpy(value);
 }
 
 //------------------------------------------------------------------------------
-void UeRadioCapabilityId::getValue(bstring& value) const {
+void UeRadioCapabilityId::GetValue(bstring& value) const {
   value = bstrcpy(value_);
 }
 

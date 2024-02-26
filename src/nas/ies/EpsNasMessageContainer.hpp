@@ -37,13 +37,13 @@ class EpsNasMessageContainer : Type6NasIe {
   static std::string GetIeName() { return kEpsNasMessageContainerIeName; }
 
   // TODO: SetValue(const bstring& value)
-  void getValue(bstring& value) const;
+  void GetValue(bstring& value) const;
 
   int Encode(uint8_t* buf, int len);
   int Decode(uint8_t* buf, int len, bool is_iei);
 
  private:
-  bstring _value;
+  bstring value_;
 };
 
 }  // namespace nas

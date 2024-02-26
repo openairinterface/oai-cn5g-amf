@@ -79,12 +79,12 @@ void ConfigurationUpdateCommand::SetFullNameForNetwork(
 void ConfigurationUpdateCommand::SetFullNameForNetwork(
     const std::string& text_string) {
   NetworkName full_name_for_network_tmp;
-  full_name_for_network_tmp.setIEI(kIeiFullNameForNetwork);
-  full_name_for_network_tmp.setCodingScheme(0);
-  full_name_for_network_tmp.setAddCI(0);
-  full_name_for_network_tmp.setNumberOfSpareBits(
+  full_name_for_network_tmp.SetIei(kIeiFullNameForNetwork);
+  full_name_for_network_tmp.SetCodingScheme(0);
+  full_name_for_network_tmp.SetAddCI(0);
+  full_name_for_network_tmp.SetNumberOfSpareBits(
       0x07);  // TODO: remove hardcoded value
-  full_name_for_network_tmp.setTextString(text_string);
+  full_name_for_network_tmp.SetTextString(text_string);
   ie_full_name_for_network =
       std::optional<NetworkName>(full_name_for_network_tmp);
 }
@@ -99,12 +99,12 @@ void ConfigurationUpdateCommand::GetFullNameForNetwork(
 void ConfigurationUpdateCommand::SetShortNameForNetwork(
     const std::string& text_string) {
   NetworkName short_name_for_network_tmp;
-  short_name_for_network_tmp.setIEI(kIeiShortNameForNetwork);  // TODO
-  short_name_for_network_tmp.setCodingScheme(0);
-  short_name_for_network_tmp.setAddCI(0);
-  short_name_for_network_tmp.setNumberOfSpareBits(
+  short_name_for_network_tmp.SetIei(kIeiShortNameForNetwork);  // TODO
+  short_name_for_network_tmp.SetCodingScheme(0);
+  short_name_for_network_tmp.SetAddCI(0);
+  short_name_for_network_tmp.SetNumberOfSpareBits(
       0x07);  // TODO: remove hardcoded value
-  short_name_for_network_tmp.setTextString(text_string);
+  short_name_for_network_tmp.SetTextString(text_string);
   ie_short_name_for_network =
       std::optional<NetworkName>(short_name_for_network_tmp);
 }

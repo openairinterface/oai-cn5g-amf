@@ -129,7 +129,7 @@ void UlNasTransport::SetSNssai(const SNSSAI_s& snssai) {
 //------------------------------------------------------------------------------
 bool UlNasTransport::GetSNssai(SNSSAI_s& snssai) const {
   if (ie_s_nssai.has_value()) {
-    ie_s_nssai.value().getValue(snssai);
+    ie_s_nssai.value().GetValue(snssai);
     return true;
   } else {
     return false;

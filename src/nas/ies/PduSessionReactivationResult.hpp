@@ -38,14 +38,14 @@ class PduSessionReactivationResult : public Type4NasIe {
 
   static std::string GetIeName() { return kPduSessionReactivationResultIeName; }
 
-  void setValue(uint16_t value);
-  uint16_t getValue() const;
+  void SetValue(uint16_t value);
+  uint16_t GetValue() const;
 
   int Encode(uint8_t* buf, int len);
   int Decode(uint8_t* buf, int len, bool is_iei);
 
  private:
-  uint16_t _value;
+  uint16_t value_;
   // Spare
 };
 

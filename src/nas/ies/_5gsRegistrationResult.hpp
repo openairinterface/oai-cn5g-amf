@@ -44,11 +44,11 @@ class _5gsRegistrationResult : public Type4NasIe {
   int Encode(uint8_t* buf, int len);
   int Decode(uint8_t* buf, int len, bool is_iei);
 
-  void setValue(uint8_t value);
-  uint8_t getValue() const;
+  void SetValue(uint8_t value);
+  uint8_t GetValue() const;
 
-  void set(uint8_t iei, bool emergency, bool nssaa, bool sms, uint8_t value);
-  void set(bool emergency, bool nssaa, bool sms, uint8_t value);
+  void Set(uint8_t iei, bool emergency, bool nssaa, bool sms, uint8_t value);
+  void Set(bool emergency, bool nssaa, bool sms, uint8_t value);
 
  private:
   bool emergency_registered_;

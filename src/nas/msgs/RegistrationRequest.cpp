@@ -64,14 +64,14 @@ void RegistrationRequest::SetHeader(uint8_t security_header_type) {
 
 //------------------------------------------------------------------------------
 void RegistrationRequest::Set5gsRegistrationType(bool is_for, uint8_t type) {
-  ie_5gs_registration_type.set(is_for, type);
+  ie_5gs_registration_type.Set(is_for, type);
 }
 
 //------------------------------------------------------------------------------
 bool RegistrationRequest::Get5gsRegistrationType(
     bool& is_for, uint8_t& reg_type) {
-  is_for   = ie_5gs_registration_type.isFollowOnReq();
-  reg_type = ie_5gs_registration_type.getRegType();
+  is_for   = ie_5gs_registration_type.IsFollowOnReq();
+  reg_type = ie_5gs_registration_type.GetRegType();
   return true;
 }
 
@@ -415,7 +415,7 @@ void RegistrationRequest::SetEpsNasMessageContainer(const bstring& value) {
 //------------------------------------------------------------------------------
 bool RegistrationRequest::GetEpsNasMessageContainer(bstring& epsNas) const {
   if (ie_eps_nas_message_container) {
-    ie_eps_nas_message_container->getValue(epsNas);
+    ie_eps_nas_message_container->GetValue(epsNas);
     return true;
   } else {
     return false;

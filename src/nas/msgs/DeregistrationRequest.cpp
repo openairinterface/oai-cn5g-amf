@@ -42,13 +42,13 @@ void DeregistrationRequest::SetHeader(uint8_t security_header_type) {
 
 //------------------------------------------------------------------------------
 void DeregistrationRequest::SetDeregistrationType(uint8_t dereg_type) {
-  ie_deregistrationtype.set(dereg_type);
+  ie_deregistrationtype.Set(dereg_type);
 }
 
 //------------------------------------------------------------------------------
 void DeregistrationRequest::SetDeregistrationType(
     const _5gs_deregistration_type_t& type) {
-  ie_deregistrationtype.set(type);
+  ie_deregistrationtype.Set(type);
 }
 
 //------------------------------------------------------------------------------
@@ -60,13 +60,13 @@ void DeregistrationRequest::SetNgKsi(uint8_t tsc, uint8_t key_set_id) {
 
 //------------------------------------------------------------------------------
 void DeregistrationRequest::GetDeregistrationType(uint8_t& dereg_type) const {
-  ie_deregistrationtype.get(dereg_type);
+  ie_deregistrationtype.Get(dereg_type);
 }
 
 //------------------------------------------------------------------------------
 void DeregistrationRequest::GetDeregistrationType(
     _5gs_deregistration_type_t& type) const {
-  ie_deregistrationtype.get(type);
+  ie_deregistrationtype.Get(type);
 }
 
 //------------------------------------------------------------------------------

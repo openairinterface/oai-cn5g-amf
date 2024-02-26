@@ -46,7 +46,7 @@ class Dnn : public Type4NasIe {
   void GetValue(bstring& dnn) const;
 
  private:
-  bstring _dnn;
+  bstring dnn_;
 };
 
 }  // namespace nas

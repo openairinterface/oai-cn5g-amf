@@ -29,31 +29,31 @@
 using namespace nas;
 
 //------------------------------------------------------------------------------
-Ladn::Ladn() : dnn(false), ta_list(false) {}
+Ladn::Ladn() : dnn_(false), ta_list_(false) {}
 
 //------------------------------------------------------------------------------
 Ladn::~Ladn() {}
 
 //------------------------------------------------------------------------------
 void Ladn::Set(const Dnn& value) {
-  dnn = value;
+  dnn_ = value;
 }
 
 //------------------------------------------------------------------------------
 void Ladn::Set(const _5gsTrackingAreaIdList& value) {
-  ta_list = value;
+  ta_list_ = value;
 }
 
 //------------------------------------------------------------------------------
 uint32_t Ladn::GetLength() const {
-  return (dnn.GetIeLength() + ta_list.GetIeLength());
+  return (dnn_.GetIeLength() + ta_list_.GetIeLength());
 }
 //------------------------------------------------------------------------------
 int Ladn::Encode(uint8_t* buf, int len) {
   Logger::nas_mm().debug("Encoding LADN");
 
-  int ie_len = dnn.GetIeLength();
-  ie_len += ta_list.GetIeLength();
+  int ie_len = dnn_.GetIeLength();
+  ie_len += ta_list_.GetIeLength();
 
   if (len < ie_len) {  // Length of the content + IEI/Len
     Logger::nas_mm().error(
@@ -65,11 +65,11 @@ int Ladn::Encode(uint8_t* buf, int len) {
   int encoded_size    = 0;
   int encoded_ie_size = 0;
 
-  encoded_ie_size = dnn.Encode(buf + encoded_size, len);
+  encoded_ie_size = dnn_.Encode(buf + encoded_size, len);
   if (encoded_ie_size == KEncodeDecodeError) return KEncodeDecodeError;
   encoded_size += encoded_ie_size;
 
-  encoded_ie_size = ta_list.Encode(buf + encoded_size, len);
+  encoded_ie_size = ta_list_.Encode(buf + encoded_size, len);
   if (encoded_ie_size == KEncodeDecodeError) return KEncodeDecodeError;
   encoded_size += encoded_ie_size;
 

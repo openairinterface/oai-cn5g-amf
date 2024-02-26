@@ -28,18 +28,18 @@ using namespace nas;
 
 //------------------------------------------------------------------------------
 AuthenticationParameterRand::AuthenticationParameterRand()
-    : Type3NasIe(), _value() {}
+    : Type3NasIe(), value_() {}
 
 //------------------------------------------------------------------------------
 AuthenticationParameterRand::AuthenticationParameterRand(uint8_t iei)
-    : Type3NasIe(iei), _value() {}
+    : Type3NasIe(iei), value_() {}
 
 //------------------------------------------------------------------------------
 AuthenticationParameterRand::AuthenticationParameterRand(
     uint8_t iei, uint8_t value[kAuthenticationParameterRandValueLength])
     : Type3NasIe(iei) {
   for (int i = 0; i < kAuthenticationParameterRandValueLength; i++) {
-    this->_value[i] = value[i];
+    this->value_[i] = value[i];
   }
 }
 
@@ -48,8 +48,8 @@ AuthenticationParameterRand::~AuthenticationParameterRand() {}
 
 /*
 //------------------------------------------------------------------------------
-uint8_t* AuthenticationParameterRand::getValue() {
-  return _value;
+uint8_t* AuthenticationParameterRand::GetValue() {
+  return value_;
 }
 */
 
@@ -69,7 +69,7 @@ int AuthenticationParameterRand::Encode(uint8_t* buf, int len) {
   encoded_size += Type3NasIe::Encode(buf + encoded_size, len);
 
   for (int i = 0; i < kAuthenticationParameterRandValueLength; i++) {
-    ENCODE_U8(buf + encoded_size, _value[i], encoded_size);
+    ENCODE_U8(buf + encoded_size, value_[i], encoded_size);
   }
 
   Logger::nas_mm().debug(
@@ -94,12 +94,12 @@ int AuthenticationParameterRand::Decode(uint8_t* buf, int len, bool is_iei) {
   decoded_size += Type3NasIe::Decode(buf + decoded_size, len, is_iei);
 
   for (int i = 0; i < kAuthenticationParameterRandValueLength; i++) {
-    DECODE_U8(buf + decoded_size, _value[i], decoded_size);
+    DECODE_U8(buf + decoded_size, value_[i], decoded_size);
   }
 
   for (int j = 0; j < kAuthenticationParameterRandValueLength; j++) {
     Logger::nas_mm().debug(
-        "Decoded AuthenticationParameterRand value (0x%2x)", _value[j]);
+        "Decoded AuthenticationParameterRand value (0x%2x)", value_[j]);
   }
 
   Logger::nas_mm().debug(

@@ -30,7 +30,7 @@ using namespace nas;
 
 //------------------------------------------------------------------------------
 _5gsTrackingAreaIdList::_5gsTrackingAreaIdList()
-    : Type4NasIe(kIei5gsTrackingAreaIdentityList), m_tai_list() {
+    : Type4NasIe(kIei5gsTrackingAreaIdentityList), tai_list_() {
   SetLengthIndicator(
       k5gsTrackingAreaIdListMinimumLength -
       2);  // Minimim length - 2 bytes for header
@@ -38,7 +38,7 @@ _5gsTrackingAreaIdList::_5gsTrackingAreaIdList()
 
 //------------------------------------------------------------------------------
 _5gsTrackingAreaIdList::_5gsTrackingAreaIdList(bool iei)
-    : Type4NasIe(), m_tai_list() {
+    : Type4NasIe(), tai_list_() {
   if (iei) {
     SetIei(kIei5gsTrackingAreaIdentityList);
   }
@@ -57,10 +57,10 @@ _5gsTrackingAreaIdList::_5gsTrackingAreaIdList(
           k5gsTrackingAreaIdListMaximumSupportedTAIs :
           tai_list.size();
   for (int i = 0; i < size; i++) {
-    m_tai_list.push_back(tai_list[i]);
+    tai_list_.push_back(tai_list[i]);
   }
 
-  m_tai_list = tai_list;
+  tai_list_ = tai_list;
   // Don't know Length Indicator for now
 }
 
@@ -82,25 +82,25 @@ int _5gsTrackingAreaIdList::Encode(uint8_t* buf, int len) {
   if (encoded_header_size == KEncodeDecodeError) return KEncodeDecodeError;
   encoded_size += encoded_header_size;
 
-  for (int i = 0; i < m_tai_list.size(); i++) {
+  for (int i = 0; i < tai_list_.size(); i++) {
     int item_len = 0;
-    switch (m_tai_list[i].type) {
+    switch (tai_list_[i].type) {
       case 0x00: {
-        int encode_00_type_size = encode_00_type(
-            m_tai_list[i], buf + encoded_size, len - encoded_size);
+        int encode_00_type_size =
+            EncodeType00(tai_list_[i], buf + encoded_size, len - encoded_size);
         if (encode_00_type_size == KEncodeDecodeError) break;
         item_len += encode_00_type_size;
       } break;
       case 0x01: {
-        int encode_01_type_size = encode_01_type(
-            m_tai_list[i], buf + encoded_size, len - encoded_size);
+        int encode_01_type_size =
+            EncodeType01(tai_list_[i], buf + encoded_size, len - encoded_size);
 
         if (encode_01_type_size == KEncodeDecodeError) break;
         item_len += encode_01_type_size;
       } break;
       case 0x10: {
-        int encode_10_type_size = encode_10_type(
-            m_tai_list[i], buf + encoded_size, len - encoded_size);
+        int encode_10_type_size =
+            EncodeType10(tai_list_[i], buf + encoded_size, len - encoded_size);
         if (encode_10_type_size == KEncodeDecodeError) break;
         item_len += encode_10_type_size;
       } break;
@@ -118,8 +118,7 @@ int _5gsTrackingAreaIdList::Encode(uint8_t* buf, int len) {
 }
 
 //------------------------------------------------------------------------------
-int _5gsTrackingAreaIdList::encode_00_type(
-    p_tai_t item, uint8_t* buf, int len) {
+int _5gsTrackingAreaIdList::EncodeType00(p_tai_t item, uint8_t* buf, int len) {
   int encoded_size = 0;
   // Type of list/Number of elements
   uint8_t octet = 0x00 | (item.type & 0x60) |
@@ -140,15 +139,13 @@ int _5gsTrackingAreaIdList::encode_00_type(
 }
 
 //------------------------------------------------------------------------------
-int _5gsTrackingAreaIdList::encode_01_type(
-    p_tai_t item, uint8_t* buf, int len) {
+int _5gsTrackingAreaIdList::EncodeType01(p_tai_t item, uint8_t* buf, int len) {
   // TODO:
   return KEncodeDecodeError;
 }
 
 //------------------------------------------------------------------------------
-int _5gsTrackingAreaIdList::encode_10_type(
-    p_tai_t item, uint8_t* buf, int len) {
+int _5gsTrackingAreaIdList::EncodeType10(p_tai_t item, uint8_t* buf, int len) {
   // TODO:
   return KEncodeDecodeError;
 }

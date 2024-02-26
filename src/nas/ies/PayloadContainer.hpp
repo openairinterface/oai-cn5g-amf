@@ -54,8 +54,8 @@ class PayloadContainer : Type6NasIe {
   bool GetValue(std::vector<PayloadContainerEntry>& content) const;
 
  private:
-  std::optional<bstring> content;
-  std::optional<std::vector<PayloadContainerEntry>> CONTENT;
+  std::optional<bstring> content_;
+  std::optional<std::vector<PayloadContainerEntry>> contents_;
 };
 
 }  // namespace nas

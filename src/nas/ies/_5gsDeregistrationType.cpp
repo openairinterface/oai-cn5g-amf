@@ -39,8 +39,8 @@ _5gsDeregistrationType::_5gsDeregistrationType(uint8_t iei)
 
 //------------------------------------------------------------------------------
 _5gsDeregistrationType::_5gsDeregistrationType(uint8_t iei, uint8_t value) {
-  u1.b = (iei << 4) | (value && 0x0f);
-  SetValue(value && 0x0f);
+  u1.b = (iei << 4) | (value & 0x0f);
+  Type1NasIeFormatTv::SetValue(value & 0x0f);
 }
 //------------------------------------------------------------------------------
 _5gsDeregistrationType::_5gsDeregistrationType(
@@ -53,27 +53,27 @@ _5gsDeregistrationType::_5gsDeregistrationType(
   if (type.iei != 0) {
     SetIei(type.iei);
   }
-  SetValue(u1.b && 0x0f);
+  Type1NasIeFormatTv::SetValue(u1.b & 0x0f);
 }
 
 //------------------------------------------------------------------------------
 _5gsDeregistrationType::~_5gsDeregistrationType() {}
 
 //------------------------------------------------------------------------------
-void _5gsDeregistrationType::setValue() {
-  Type1NasIeFormatTv::SetValue(u1.b && 0x0f);
+void _5gsDeregistrationType::SetValue() {
+  Type1NasIeFormatTv::SetValue(u1.b & 0x0f);
 }
 
 //------------------------------------------------------------------------------
-void _5gsDeregistrationType::getValue() {
-  u1.b = Type1NasIeFormatTv::GetValue() && 0x0f;
+void _5gsDeregistrationType::GetValue() {
+  u1.b = Type1NasIeFormatTv::GetValue() & 0x0f;
   if (iei_.has_value()) {
-    u1.b |= iei_.value() && 0xf0;
+    u1.b |= iei_.value() & 0xf0;
   }
 }
 
 //------------------------------------------------------------------------------
-void _5gsDeregistrationType::set(_5gs_deregistration_type_t type) {
+void _5gsDeregistrationType::Set(_5gs_deregistration_type_t type) {
   u1.b                           = 0;
   u1.bf.switch_off               = type.switch_off;
   u1.bf.re_registration_required = type.re_registration_required;
@@ -82,11 +82,11 @@ void _5gsDeregistrationType::set(_5gs_deregistration_type_t type) {
   if (type.iei != 0) {
     SetIei(type.iei);
   }
-  SetValue(u1.b && 0x0f);
+  Type1NasIeFormatTv::SetValue(u1.b & 0x0f);
 }
 
 //------------------------------------------------------------------------------
-void _5gsDeregistrationType::get(_5gs_deregistration_type_t& type) const {
+void _5gsDeregistrationType::Get(_5gs_deregistration_type_t& type) const {
   type.switch_off               = u1.bf.switch_off;
   type.re_registration_required = u1.bf.re_registration_required;
   type.access_type              = u1.bf.access_type;
@@ -94,12 +94,12 @@ void _5gsDeregistrationType::get(_5gs_deregistration_type_t& type) const {
 }
 
 //------------------------------------------------------------------------------
-void _5gsDeregistrationType::set(uint8_t type) {
+void _5gsDeregistrationType::Set(uint8_t type) {
   u1.b = type;
 }
 
 //------------------------------------------------------------------------------
-void _5gsDeregistrationType::get(uint8_t& type) const {
+void _5gsDeregistrationType::Get(uint8_t& type) const {
   type = u1.b;
 }
 

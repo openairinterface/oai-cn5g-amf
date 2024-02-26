@@ -37,7 +37,7 @@ void RejectedNssai::SetRejectedSNssais(
   uint8_t length   = 0;
   rejected_nssais_ = nssais;
   for (auto n : nssais) {
-    length += n.getLength();
+    length += n.GetLength();
   }
 
   SetLengthIndicator(length);

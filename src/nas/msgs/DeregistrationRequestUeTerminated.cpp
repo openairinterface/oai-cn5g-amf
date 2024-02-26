@@ -44,13 +44,13 @@ void DeregistrationRequestUeTerminated::SetHeader(
 //------------------------------------------------------------------------------
 void DeregistrationRequestUeTerminated::SetDeregistrationType(
     uint8_t dereg_type) {
-  ie_deregistration_type.set(dereg_type);
+  ie_deregistration_type.Set(dereg_type);
 }
 
 //------------------------------------------------------------------------------
 void DeregistrationRequestUeTerminated::SetDeregistrationType(
     const _5gs_deregistration_type_t& type) {
-  ie_deregistration_type.set(type);
+  ie_deregistration_type.Set(type);
 }
 
 //------------------------------------------------------------------------------

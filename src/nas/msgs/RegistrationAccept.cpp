@@ -70,7 +70,7 @@ void RegistrationAccept::SetHeader(uint8_t security_header_type) {
 //------------------------------------------------------------------------------
 void RegistrationAccept::Set5gsRegistrationResult(
     bool emergency, bool nssaa, bool sms, uint8_t value) {
-  ie_5gs_registration_result.set(emergency, nssaa, sms, value);
+  ie_5gs_registration_result.Set(emergency, nssaa, sms, value);
 }
 
 //------------------------------------------------------------------------------

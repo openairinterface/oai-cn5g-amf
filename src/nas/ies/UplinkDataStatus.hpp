@@ -45,7 +45,7 @@ class UplinkDataStatus : public Type4NasIe {
   int Decode(uint8_t* buf, int len, bool is_iei);
 
  private:
-  uint16_t _value;
+  uint16_t value_;
   // TODO: spare
 };
 

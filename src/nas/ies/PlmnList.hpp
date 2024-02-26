@@ -46,7 +46,7 @@ class PlmnList : public Type4NasIe {
   void GetPLMNList(std::vector<nas_plmn_t>& list) const;
 
  private:
-  std::vector<nas_plmn_t> plmn_list;
+  std::vector<nas_plmn_t> plmn_list_;
 };
 }  // namespace nas
 

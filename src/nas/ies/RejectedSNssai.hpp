@@ -34,19 +34,19 @@ class RejectedSNssai {
   RejectedSNssai(const uint8_t& cause, const uint8_t& sst, const uint32_t& sd);
   ~RejectedSNssai();
 
-  uint8_t getLength();
+  uint8_t GetLength();
 
-  void setSST(const uint8_t& sst);
-  uint8_t getSST();
-  void getSST(uint8_t& sst);
+  void SetSST(const uint8_t& sst);
+  uint8_t GetSST();
+  void GetSST(uint8_t& sst);
 
-  void setSd(const uint32_t& sd);
-  bool getSd(uint32_t& sd);
-  void getSd(std::optional<uint32_t>& sd);
+  void SetSd(const uint32_t& sd);
+  bool GetSd(uint32_t& sd);
+  void GetSd(std::optional<uint32_t>& sd);
 
-  void setCause(const uint8_t& cause);
-  uint8_t getCause();
-  void getCause(uint8_t& cause);
+  void SetCause(const uint8_t& cause);
+  uint8_t GetCause();
+  void GetCause(uint8_t& cause);
 
   int Encode(uint8_t* buf, int len);
   int Decode(uint8_t* buf, int len);

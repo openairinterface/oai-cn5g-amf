@@ -46,7 +46,7 @@ class AuthenticationParameterAutn : public Type4NasIe {
   int Decode(uint8_t* buf, int len, bool is_option);
 
  private:
-  uint8_t _value[kAuthenticationParameterAutnValueLength];
+  uint8_t value_[kAuthenticationParameterAutnValueLength];
 };
 
 }  // namespace nas

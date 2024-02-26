@@ -38,13 +38,13 @@ LadnInformation::~LadnInformation() {}
 
 //------------------------------------------------------------------------------
 void LadnInformation::Set(const std::vector<Ladn>& value) {
-  ladn_list.assign(value.begin(), value.end());
+  ladn_list_.assign(value.begin(), value.end());
 }
 
 //------------------------------------------------------------------------------
 void LadnInformation::Add(const Ladn& value) {
   // TODO: Check maximum items  - 8
-  ladn_list.push_back(value);
+  ladn_list_.push_back(value);
   int ie_len = GetIeLength();
   ie_len += value.GetLength();
 }

@@ -38,19 +38,19 @@ class _5gsRegistrationType : public Type1NasIeFormatTv {
 
   static std::string GetIeName() { return k5gsRegistrationTypeName; }
 
-  void setValue();
-  void getValue();
+  void SetValue();
+  void GetValue();
 
-  bool validateValue(const bool& follow_on_req, const uint8_t& type);
+  bool ValidateValue(const bool& follow_on_req, const uint8_t& type);
 
-  void set(const bool& follow_on_req, const uint8_t& type, const uint8_t& iei);
-  void set(const bool& follow_on_req, const uint8_t& type);
+  void Set(const bool& follow_on_req, const uint8_t& type, const uint8_t& iei);
+  void Set(const bool& follow_on_req, const uint8_t& type);
 
-  void setFollowOnReq(bool is);
-  bool isFollowOnReq();
+  void SetFollowOnReq(bool is);
+  bool IsFollowOnReq();
 
-  void setRegType(uint8_t type);
-  uint8_t getRegType();
+  void SetRegType(uint8_t type);
+  uint8_t GetRegType();
 
  private:
   bool follow_on_req_;

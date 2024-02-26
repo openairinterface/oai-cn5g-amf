@@ -30,21 +30,21 @@ using namespace nas;
 
 //------------------------------------------------------------------------------
 EpsNasMessageContainer::EpsNasMessageContainer()
-    : Type6NasIe(kIeiEpsNasMessageContainer), _value() {}
+    : Type6NasIe(kIeiEpsNasMessageContainer), value_() {}
 
 //------------------------------------------------------------------------------
 EpsNasMessageContainer::EpsNasMessageContainer(bstring value)
     : Type6NasIe(kIeiEpsNasMessageContainer) {
-  _value = bstrcpy(value);
-  SetLengthIndicator(blength(_value));
+  value_ = bstrcpy(value);
+  SetLengthIndicator(blength(value_));
 }
 
 //------------------------------------------------------------------------------
 EpsNasMessageContainer::~EpsNasMessageContainer() {}
 
 //------------------------------------------------------------------------------
-void EpsNasMessageContainer::getValue(bstring& value) const {
-  value = bstrcpy(_value);
+void EpsNasMessageContainer::GetValue(bstring& value) const {
+  value = bstrcpy(value_);
 }
 
 //------------------------------------------------------------------------------
@@ -69,7 +69,7 @@ int EpsNasMessageContainer::Encode(uint8_t* buf, int len) {
   if (encoded_header_size == KEncodeDecodeError) return KEncodeDecodeError;
   encoded_size += encoded_header_size;
 
-  int size = encode_bstring(_value, (buf + encoded_size), len - encoded_size);
+  int size = encode_bstring(value_, (buf + encoded_size), len - encoded_size);
   encoded_size += size;
 
   // Encode length
@@ -94,13 +94,13 @@ int EpsNasMessageContainer::Decode(uint8_t* buf, int len, bool is_iei) {
   ie_len = GetLengthIndicator();
 
   int result =
-      decode_bstring(&_value, ie_len, (buf + decoded_size), len - decoded_size);
+      decode_bstring(&value_, ie_len, (buf + decoded_size), len - decoded_size);
   decoded_size += ie_len;
   if (result == ie_len) {
     for (int i = 0; i < ie_len; i++) {
       Logger::nas_mm().debug(
           "Decoded EpsNasMessageContainer value 0x%x",
-          (uint8_t) _value->data[i]);
+          (uint8_t) value_->data[i]);
     }
   }
 

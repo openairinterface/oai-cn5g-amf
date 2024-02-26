@@ -44,7 +44,7 @@ class SorTransparentContainer : Type6NasIe {
   int Encode(uint8_t* buf, int len);
   int Decode(uint8_t* buf, int len, bool is_iei);
 
-  void getValue(uint8_t (&value)[kSorTransparentContainerIeMacLength]) const;
+  void GetValue(uint8_t (&value)[kSorTransparentContainerIeMacLength]) const;
 
  private:
   uint8_t header_;

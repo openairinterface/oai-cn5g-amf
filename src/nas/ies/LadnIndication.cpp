@@ -30,14 +30,14 @@ using namespace nas;
 
 //------------------------------------------------------------------------------
 LadnIndication::LadnIndication() : Type6NasIe(kIeiLadnIndication) {
-  LADN = {};
+  ladn_ = {};
 }
 
 //------------------------------------------------------------------------------
 LadnIndication::LadnIndication(const std::vector<bstring>& ladn)
     : Type6NasIe(kIeiLadnIndication) {
   int length = 0;
-  LADN.assign(ladn.begin(), ladn.end());
+  ladn_.assign(ladn.begin(), ladn.end());
   for (int i = 0; i < ladn.size(); i++) {
     length = length + blength(ladn.at(i));
   }
@@ -49,7 +49,7 @@ LadnIndication::~LadnIndication() {}
 
 //------------------------------------------------------------------------------
 void LadnIndication::GetValue(std::vector<bstring>& ladn) const {
-  ladn.assign(LADN.begin(), LADN.end());
+  ladn.assign(ladn_.begin(), ladn_.end());
 }
 
 //------------------------------------------------------------------------------
@@ -74,10 +74,10 @@ int LadnIndication::Encode(uint8_t* buf, int len) {
   if (encoded_header_size == KEncodeDecodeError) return KEncodeDecodeError;
   encoded_size += encoded_header_size;
 
-  for (int i = 0; i < LADN.size(); i++) {
-    ENCODE_U8(buf + encoded_size, blength(LADN.at(i)), encoded_size);
+  for (int i = 0; i < ladn_.size(); i++) {
+    ENCODE_U8(buf + encoded_size, blength(ladn_.at(i)), encoded_size);
     encoded_size +=
-        encode_bstring(LADN.at(i), (buf + encoded_size), len - encoded_size);
+        encode_bstring(ladn_.at(i), (buf + encoded_size), len - encoded_size);
   }
 
   // Encode length
@@ -109,13 +109,14 @@ int LadnIndication::Decode(uint8_t* buf, int len, bool is_iei) {
     decode_bstring(&dnn, dnn_len, (buf + decoded_size), len - decoded_size);
     decoded_size += dnn_len;
     ie_len -= dnn_len;
-    LADN.insert(LADN.end(), dnn);
+    ladn_.insert(ladn_.end(), dnn);
   }
 
-  for (int i = 0; i < LADN.size(); i++) {
-    for (int j = 0; j < blength(LADN.at(i)); j++) {
+  for (int i = 0; i < ladn_.size(); i++) {
+    for (int j = 0; j < blength(ladn_.at(i)); j++) {
       Logger::nas_mm().debug(
-          "Decoded LadnIndication value (0x%x)", (uint8_t) LADN.at(i)->data[j]);
+          "Decoded LadnIndication value (0x%x)",
+          (uint8_t) ladn_.at(i)->data[j]);
     }
   }
 

@@ -45,10 +45,10 @@ class AuthenticationParameterRand : public Type3NasIe {
   int Encode(uint8_t* buf, int len);
   int Decode(uint8_t* buf, int len, bool is_option);
 
-  // uint8_t* getValue();
+  // uint8_t* GetValue();
 
  private:
-  uint8_t _value[kAuthenticationParameterRandValueLength];
+  uint8_t value_[kAuthenticationParameterRandValueLength];
 };
 
 }  // namespace nas

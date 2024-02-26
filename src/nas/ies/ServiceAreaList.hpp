@@ -49,10 +49,10 @@ class ServiceAreaList : public Type4NasIe {
   std::vector<service_area_list_ie_t> ie_list_;
 
  private:
-  int encode_00_type(service_area_list_ie_t item, uint8_t* buf, int len);
-  int encode_01_type(service_area_list_ie_t item, uint8_t* buf, int len);
-  int encode_10_type(service_area_list_ie_t item, uint8_t* buf, int len);
-  int encode_11_type(service_area_list_ie_t item, uint8_t* buf, int len);
+  int EncodeType00(service_area_list_ie_t item, uint8_t* buf, int len);
+  int EncodeType01(service_area_list_ie_t item, uint8_t* buf, int len);
+  int EncodeType10(service_area_list_ie_t item, uint8_t* buf, int len);
+  int EncodeType11(service_area_list_ie_t item, uint8_t* buf, int len);
 };
 
 }  // namespace nas

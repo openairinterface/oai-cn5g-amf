@@ -41,8 +41,8 @@ class Ladn {
   int Decode(uint8_t* buf, int len);
 
  private:
-  Dnn dnn;
-  _5gsTrackingAreaIdList ta_list;
+  Dnn dnn_;
+  _5gsTrackingAreaIdList ta_list_;
 };
 
 }  // namespace nas

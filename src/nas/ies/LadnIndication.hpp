@@ -45,7 +45,7 @@ class LadnIndication : Type6NasIe {
   int Decode(uint8_t* buf, int len, bool is_option);
 
  private:
-  std::vector<bstring> LADN;
+  std::vector<bstring> ladn_;
 };
 
 }  // namespace nas
