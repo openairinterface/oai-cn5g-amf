@@ -27,7 +27,7 @@ using namespace nas;
 
 //------------------------------------------------------------------------------
 SecurityModeCommand::SecurityModeCommand()
-    : NasMmPlainHeader(EPD_5GS_MM_MSG, SECURITY_MODE_COMMAND) {
+    : NasMmPlainHeader(k5gsMobilityManagementMessages, kSecurityModeCommand) {
   ie_imeisv_request                     = std::nullopt;
   ie_eps_nas_security_algorithms        = std::nullopt;
   ie_additional_5g_security_information = std::nullopt;

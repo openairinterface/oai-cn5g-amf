@@ -27,14 +27,7 @@
 constexpr uint8_t kType1IeSize = 1;
 
 // Extended Protocol Discriminator (EPD)
-// TODO: replaced by emum
-#define EPD_5GS_MM_MSG 0b01111110
-#define EPD_5GS_SM_MSG 0b00101110
-
-// Extended Protocol Discriminator (EPD)
-enum class EpdValues {
-  k5gsSessionManagementMessages  = 0b00101110,
-  k5gsMobilityManagementMessages = 0b01111110
-};
+constexpr uint8_t k5gsSessionManagementMessages  = 0b00101110;
+constexpr uint8_t k5gsMobilityManagementMessages = 0b01111110;
 
 #endif

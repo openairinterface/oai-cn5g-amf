@@ -27,7 +27,7 @@ using namespace nas;
 
 //------------------------------------------------------------------------------
 SecurityModeReject::SecurityModeReject()
-    : NasMmPlainHeader(EPD_5GS_MM_MSG, SECURITY_MODE_REJECT) {}
+    : NasMmPlainHeader(k5gsMobilityManagementMessages, kSecurityModeReject) {}
 
 //------------------------------------------------------------------------------
 SecurityModeReject::~SecurityModeReject() {}

@@ -23,224 +23,175 @@
 #define _3GPP_TS_24501_H_
 
 #include <string>
-#include <vector>
 
 #include "3gpp_24.007.hpp"
 
 // Security Header Type
-#define PLAIN_5GS_MSG 0b0000
-#define INTEGRITY_PROTECTED 0b0001
-#define INTEGRITY_PROTECTED_AND_CIPHERED 0b0010
-#define INTEGRITY_PROTECTED_WITH_NEW_SECU_CTX                                  \
-  0b0011  // only for SECURITY MODE COMMAND
-#define INTEGRITY_PROTECTED_AND_CIPHERED_WITH_NEW_SECU_CTX                     \
-  0b0100  // only for SECURITY MODE COMPLETE
+constexpr uint8_t kPlain5gsMessage                                     = 0b0000;
+constexpr uint8_t kIntegrityProtected                                  = 0b0001;
+constexpr uint8_t kIntegrityProtectedAndCiphered                       = 0b0010;
+constexpr uint8_t kIntegrityProtectedWithNewSecurityContext            = 0b0011;
+constexpr uint8_t kIntegrityProtectedAndCipheredWithNewSecurityContext = 0b0100;
 
 // Message Types for 5GS Mobility Management
-#define _5GS_MOBILITY_MANAGEMENT_MESSAGE_TYPE_UNKNOWN 0b10000000
+constexpr uint8_t k5gsMobilityManagementMessageTypeUnknownknown = 0b10000000;
 
-#define REGISTRATION_REQUEST 0b01000001
-#define REGISTRATION_ACCEPT 0b01000010
-#define REGISTRATION_COMPLETE 0b01000011
-#define REGISTRATION_REJECT 0b01000100
-#define DEREGISTRATION_REQUEST_UE_ORIGINATING 0b01000101
-#define DEREGISTRATION_ACCEPT_UE_ORIGINATING 0b01000110
-#define DEREGISTRATION_REQUEST_UE_TERMINATED 0b01000111
-#define DEREGISTRATION_ACCEPT_UE_TERMINATED 0b01001000
+constexpr uint8_t kRegistrationRequest                = 0b01000001;
+constexpr uint8_t kRegistrationAccept                 = 0b01000010;
+constexpr uint8_t kRegistrationComplete               = 0b01000011;
+constexpr uint8_t kRegistrationReject                 = 0b01000100;
+constexpr uint8_t kDeregistrationRequestUeOriginating = 0b01000101;
+constexpr uint8_t kDeregistrationAcceptUeOriginating  = 0b01000110;
+constexpr uint8_t kDeregistrationRequestUeTerminated  = 0b01000111;
+constexpr uint8_t kDeregistrationAcceptUeTerminated   = 0b01001000;
 
-#define SERVICE_REQUEST 0b01001100
-#define SERVICE_REJECT 0b01001101
-#define SERVICE_ACCEPT 0b01001110
-#define CONTROL_PLANE_SERVICE_REQUEST 0b01001111
+constexpr uint8_t kServiceRequest             = 0b01001100;
+constexpr uint8_t kServiceReject              = 0b01001101;
+constexpr uint8_t kServiceAccept              = 0b01001110;
+constexpr uint8_t kControlPlaneServiceRequest = 0b01001111;
 
-#define NETWORK_SLICE_SPECIFIC_AUTHENTICATION_COMMAND 0b01010000
-#define NETWORK_SLICE_SPECIFIC_AUTHENTICATION_COMPLETE 0b01010001
-#define NETWORK_SLICE_SPECIFIC_AUTHENTICATION_RESULT 0b01010010
-#define CONFIGURATION_UPDATE_COMMAND 0b01010100
-#define CONFIGURATION_UPDATE_COMPLETE 0b01010101
-#define AUTHENTICATION_REQUEST 0b01010110
-#define AUTHENTICATION_RESPONSE 0b01010111
-#define AUTHENTICATION_REJECT 0b01011000
-#define AUTHENTICATION_FAILURE 0b01011001
-#define AUTHENTICATION_RESULT 0b01011010
-#define IDENTITY_REQUEST 0b01011011
-#define IDENTITY_RESPONSE 0b01011100
-#define SECURITY_MODE_COMMAND 0b01011101
-#define SECURITY_MODE_COMPLETE 0b01011110
-#define SECURITY_MODE_REJECT 0b01011111
+constexpr uint8_t kNetworkSliceSpecificAuthenticationCommand  = 0b01010000;
+constexpr uint8_t kNetworkSliceSpecificAuthenticationComplete = 0b01010001;
+constexpr uint8_t kNetworkSliceSpecificAuthenticationResult   = 0b01010010;
+constexpr uint8_t kConfigurationUpdateCommand                 = 0b01010100;
+constexpr uint8_t kConfigurationUpdateComplete                = 0b01010101;
+constexpr uint8_t kAuthenticationRequest                      = 0b01010110;
+constexpr uint8_t kAuthenticationResponse                     = 0b01010111;
+constexpr uint8_t kAuthenticationReject                       = 0b01011000;
+constexpr uint8_t kAuthenticationFailure                      = 0b01011001;
+constexpr uint8_t kAuthenticationResult                       = 0b01011010;
+constexpr uint8_t kIdentityRequest                            = 0b01011011;
+constexpr uint8_t kIdentityResponse                           = 0b01011100;
+constexpr uint8_t kSecurityModeCommand                        = 0b01011101;
+constexpr uint8_t kSecurityModeComplete                       = 0b01011110;
+constexpr uint8_t kSecurityModeReject                         = 0b01011111;
 
-#define _5GMM_STATUS 0b01100100
-#define MESSAGE_TYPE_NOTIFICATION 0b01100101
-#define MESSAGE_TYPE_NOTIFICATION_RESPONSE 0b01100110
-#define UL_NAS_TRANSPORT 0b01100111
-#define DL_NAS_TRANSPORT 0b01101000
+constexpr uint8_t k5gmmStatus                      = 0b01100100;
+constexpr uint8_t kMessageTypeNotification         = 0b01100101;
+constexpr uint8_t kMessageTypeNotificationResponse = 0b01100110;
+constexpr uint8_t kUlNasTransport                  = 0b01100111;
+constexpr uint8_t kDlNasTransport                  = 0b01101000;
 
 // Message Types for 5GS Session Management
-#define _5GS_SESSION_MANAGEMENT_MESSAGE_TYPE_UNKNOWN 0b11000000
+constexpr uint8_t k5gsSessionManagementMessageTypeUnknown = 0b11000000;
 
-#define PDU_SESSION_ESTABLISHMENT_REQUEST 0b11000001
-#define PDU_SESSION_ESTABLISHMENT_ACCEPT 0b11000010
-#define PDU_SESSION_ESTABLISHMENT_REJECT 0b11000011
+constexpr uint8_t kPduSessionEstablishmentRequest   = 0b11000001;
+constexpr uint8_t kPduSessionEstablishmentAccept    = 0b11000010;
+constexpr uint8_t kPduSessionEstablishmentReject    = 0b11000011;
+constexpr uint8_t kPduSessionAuthenticationCommand  = 0b11000101;
+constexpr uint8_t kPduSessionAuthenticationComplete = 0b11000110;
+constexpr uint8_t kPduSessionAuthenticationResult   = 0b11000111;
 
-#define PDU_SESSION_AUTHENTICATION_COMMAND 0b11000101
-#define PDU_SESSION_AUTHENTICATION_COMPLETE 0b11000110
-#define PDU_SESSION_AUTHENTICATION_RESULT 0b11000111
+constexpr uint8_t kPduSessionModificationRequest       = 0b11001001;
+constexpr uint8_t kPduSessionModificationReject        = 0b11001010;
+constexpr uint8_t kPduSessionModificationCommand       = 0b11001011;
+constexpr uint8_t kPduSessionModificationComplete      = 0b11001100;
+constexpr uint8_t kPduSessionModificationCommandReject = 0b11001101;
 
-#define PDU_SESSION_MODIFICATION_REQUEST 0b11001001
-#define PDU_SESSION_MODIFICATION_REJECT 0b11001010
-#define PDU_SESSION_MODIFICATION_COMMAND 0b11001011
-#define PDU_SESSION_MODIFICATION_COMPLETE 0b11001100
-#define PDU_SESSION_MODIFICATION_COMMAND_REJECT 0b11001101
+constexpr uint8_t kPduSessionReleaseRequest  = 0b11010001;
+constexpr uint8_t kPduSessionReleaseReject   = 0b11010010;
+constexpr uint8_t kPduSessionReleaseCommand  = 0b11010011;
+constexpr uint8_t kPduSessionReleaseComplete = 0b11010100;
 
-#define PDU_SESSION_RELEASE_REQUEST 0b11010001
-#define PDU_SESSION_RELEASE_REJECT 0b11010010
-#define PDU_SESSION_RELEASE_COMMAND 0b11010011
-#define PDU_SESSION_RELEASE_COMPLETE 0b11010100
-
-#define _5GSM_STATUS 0b11010110
+constexpr uint8_t k5gsmStatus = 0b11010110;
 
 // Registration Type
-#define NO_FOLLOW_ON_REQ_PENDING false
-#define FOLLOW_ON_REQ_PENDING true
+constexpr bool kNoFollowOnReqPending = false;
+constexpr bool kFollowOnReqPending   = true;
 
-enum class RegistrationTypeEnum {
-  INITIAL_REGISTRATION           = 0b001,
-  MOBILITY_REGISTRATION_UPDATING = 0b010,
-  PERIODIC_REGISTRATION_UPDATING = 0b011,
-  EMERGENCY_REGISTRATION         = 0b100,
-  RESERVED                       = 0b111
-};
-
-#define INITIAL_REGISTRATION 0b001
-#define MOBILITY_REGISTRATION_UPDATING 0b010
-#define PERIODIC_REGISTRATION_UPDATING 0b011
-#define EMERGENCY_REGISTRATION 0b100
+constexpr uint8_t kInitialRegistration          = 0b001;
+constexpr uint8_t kMobilityRegistrationUpdating = 0b010;
+constexpr uint8_t kPeriodicRegistrationUpdating = 0b011;
+constexpr uint8_t kEmergencyRegistration        = 0b100;
 
 // NAS Key Set Identifier
-#define NAS_KEY_SET_IDENTIFIER_NATIVE 0b0
-#define NAS_KEY_SET_IDENTIFIER_MAPPED 0b1
-#define NAS_KEY_SET_IDENTIFIER_NOT_AVAILABLE 0b111
+constexpr uint8_t kNasKeySetIdentifierNative       = 0b0;
+constexpr uint8_t kNasKeySetIdentifierMapped       = 0b1;
+constexpr uint8_t kNasKeySetIdentifierNotAvailable = 0b111;
 
-// 5GS Mobilile Identity
-enum class _5gsMobileIdentityEnum : uint8_t {
-  NO_IDENTITY = 0b000,
-  SUCI        = 0b001,
-  _5G_GUTI    = 0b010,
-  IMEI        = 0b011,
-  _5G_S_TMSI  = 0b100,
-  IMEISV      = 0b101,
-  MAC_ADDRESS = 0b110,
-  MAX_VALUE   = MAC_ADDRESS
-};
+// 5GS Mobile Identity
+constexpr uint8_t kNoIdentity                = 0b000;
+constexpr uint8_t kSuci                      = 0b001;
+constexpr uint8_t k5gGuti                    = 0b010;
+constexpr uint8_t kImei                      = 0b011;
+constexpr uint8_t k5gSTmsi                   = 0b100;
+constexpr uint8_t kImeisv                    = 0b101;
+constexpr uint8_t kMacAddress                = 0b110;
+constexpr uint8_t k5gsMobileIdentityMaxValue = kMacAddress;
 
-// Type of Identity
-#define NO_IDENTITY 0b000
-#define SUCI 0b001
-#define _5G_GUTI 0b010
-#define IMEI 0b011
-#define _5G_S_TMSI 0b100
-#define IMEISV 0b101
-#define MAC_ADDRESS 0b110
-
-#define EVEN_IENTITY 0
-#define ODD_IDENTITY 1
+constexpr uint8_t kEvenIdentity = 0;
+constexpr uint8_t kOddIdentity  = 1;
 
 // SUPI format
-#define SUPI_FORMAT_IMSI 0b000
-#define SUPI_FORMAT_NETWORK_SPECIFIC_IDENTIFIER 0b001
-// Scheme
-#define NULL_SCHEME 0b0000
-#define ECIES_SCHEME_PROFILE_A 0b0001
-#define ECIES_SCHEME_PROFILE_B 0b0010
+constexpr uint8_t kSupiFormatImsi                      = 0b000;
+constexpr uint8_t kSupiFormatNetworkSpecificIdentifier = 0b001;
 
-#define HOME_NETWORK_PKI_0_WHEN_PSI_0 0b00000000
-#define HOME_NETWORK_PKI_RESERVED 0b11111111
+// Scheme
+constexpr uint8_t kNullScheme          = 0b0000;
+constexpr uint8_t kEciesSchemeProfileA = 0b0001;
+constexpr uint8_t kEciesSchemeProfileB = 0b0010;
+
+constexpr uint8_t kHomeNetworkPki0WhenPsi0 = 0b00000000;
+constexpr uint8_t kHomeNetworkPkiReserved  = 0b11111111;
 
 // Security algorithms
-#define IA0_5G 0b000
-#define IA1_128_5G 0b001
-#define IA2_128_5G 0b010
+constexpr uint8_t kIa0_5g     = 0b000;
+constexpr uint8_t kIa1_128_5g = 0b001;
+constexpr uint8_t kIa2_128_5g = 0b010;
 
-#define EA0_5G 0b000
-#define EA1_128_5G 0b001
-#define EA2_128_5G 0b010
+constexpr uint8_t kEa0_5g     = 0b000;
+constexpr uint8_t kEa1_128_5g = 0b001;
+constexpr uint8_t kEa2_128_5g = 0b010;
 
 // 5G MM CAUSE value for 5g mobility management (Annex A)
-#define _5GMM_CAUSE_ILLEGAL_UE 3
-#define _5GMM_CAUSE_SYNCH_FAILURE 0b00010101  // 21
-#define _5GMM_CAUSE_IMPLICITLY_DE_REGISTERED 10
-#define _5GMM_CAUSE_UE_IDENTITY_CANNOT_BE_DERIVED 9
-#define _5GMM_CAUSE_NGKSI_ALREADY_IN_USE 0b01000111  // 71
+constexpr uint8_t k5gmmCauseIllegalUe                 = 3;
+constexpr uint8_t k5gmmCauseSynchFailure              = 0b00010101;  // 21
+constexpr uint8_t k5gmmCauseImplicitlyDeRegistered    = 10;
+constexpr uint8_t k5gmmCauseUeIdentityCannotBeDerived = 9;
+constexpr uint8_t k5gmmCauseNgksiAlreadyInUse         = 0b01000111;  // 71
+
 // A.5 Causes related to invalid messages
 //------------------------------------------------------------------------------
-#define _5GMM_CAUSE_SEMANTICALLY_INCORRECT 95
-#define _5GMM_CAUSE_INVALID_MANDATORY_INFO 96
-#define _5GMM_CAUSE_MESSAGE_TYPE_NOT_IMPLEMENTED 97
-#define _5GMM_CAUSE_MESSAGE_TYPE_NOT_COMPATIBLE 98
-#define _5GMM_CAUSE_IE_NOT_IMPLEMENTED 99
-#define _5GMM_CAUSE_CONDITIONAL_IE_ERROR 100
-#define _5GMM_CAUSE_MESSAGE_NOT_COMPATIBLE 101
-#define _5GMM_CAUSE_PROTOCOL_ERROR 111
+constexpr uint8_t k5gmmCauseSemanticallyIncorrect     = 95;
+constexpr uint8_t k5gmmCauseInvalidMandatoryInfo      = 96;
+constexpr uint8_t k5gmmCauseMessageTypeNotImplemented = 97;
+constexpr uint8_t k5gmmCauseMessageTypeNotCompatible  = 98;
+constexpr uint8_t k5gmmCauseIeNotImplemented          = 99;
+constexpr uint8_t k5gmmCauseConditionalIeError        = 100;
+constexpr uint8_t k5gmmCauseMessageNotCompatible      = 101;
+constexpr uint8_t k5gmmCauseProtocolError             = 111;
 
 // UL NAS TRANSPORT payload container type
-// TODO: define enum class
-#define N1_SM_INFORMATION 0x01
-#define SMS_CONTAINER 0x02
-#define LTE_POSITIONING_PROTOCOL 0x03
-#define SOR_TRANSPARENT_CONTAINER 0x04
-#define UE_POLICY_CONTAINER 0x05
-#define UE_PARAMETERS_UPDATE 0x06
-#define MULTIPLE_PAYLOADS 0x0f
+constexpr uint8_t kN1SmInformation         = 0x01;
+constexpr uint8_t kSmsContainer            = 0x02;
+constexpr uint8_t kLtePositioningProtocol  = 0x03;
+constexpr uint8_t kSorTransparentContainer = 0x04;
+constexpr uint8_t kUePolicyContainer       = 0x05;
+constexpr uint8_t kUeParametersUpdate      = 0x06;
+constexpr uint8_t kMultiplePayloads        = 0x0f;
 
-enum class RequestTypeValue : uint8_t {
-  KInitialRequest              = 0b001,
-  KExistingPduSession          = 0b010,
-  KInitialEmergencyRequest     = 0b011,
-  KExistingEmergencyPduSession = 0b100,
-  KModificationRequest         = 0b101,
-  KMaPduRequest                = 0b110,
-  KReserved                    = 0b111
-};
+constexpr uint8_t kPduSessionInitialRequest          = 0b001;
+constexpr uint8_t kExistingPduSession                = 0b010;
+constexpr uint8_t kPduSessionInitialEmergencyRequest = 0b011;
+constexpr uint8_t kExistingEmergencyPduSession       = 0b100;
+constexpr uint8_t kPduSessionTypeModificationRequest = 0b101;
+constexpr uint8_t kMaPduRequest                      = 0b110;
 
-#define PDU_SESSION_INITIAL_REQUEST 0b001
-#define EXISTING_PDU_SESSION 0b010
-#define PDU_SESSION_INITIAL_EMERGENCY_REQUEST 0b011
-#define EXISTING_EMERGENCY_PDU_SESSION 0b100
-#define PDU_SESSION_TYPE_MODIFICATION_REQUEST 0b101
-#define MA_PDU_REQUEST 0b110
+constexpr uint8_t kDeregistrationTypeMask = 0b00001000;
 
-#define PDU_SESSION_MESSAGE_TYPE_UNKNOWN 0b11000000
-#define PDU_SESSION_ESTABLISHMENT_REQUEST 0b11000001
-#define PDU_SESSION_ESTABLISHMENT_ACCEPT 0b11000010
-#define PDU_SESSION_ESTABLISHMENT_REJECT 0b11000011
-#define PDU_SESSION_AUTHENTICATION_COMMAND 0b11000101
-#define PDU_SESSION_AUTHENTICATION_COMPLETE 0b11000110
-#define PDU_SESSION_AUTHENTICATION_RESULT 0b11000111
-#define PDU_SESSION_MODIFICATION_REQUEST 0b11001001
-#define PDU_SESSION_MODIFICATION_REJECT 0b11001010
-#define PDU_SESSION_MODIFICATION_COMMAND 0b11001011
-#define PDU_SESSION_MODIFICATION_COMPLETE 0b11001100
-#define PDU_SESSION_MODIFICATION_COMMAND_REJECT 0b11001101
-#define PDU_SESSION_RELEASE_REQUEST 0b11010001
-#define PDU_SESSION_RELEASE_REJECT 0b11010010
-#define PDU_SESSION_RELEASE_COMMAND 0b11010011
-#define PDU_SESSION_RELEASE_COMPLETE 0b11010100
-
-#define DEREGISTRATION_TYPE_MASK 0b00001000
-
-#define NAS_MESSAGE_MIN_LENGTH 3
+constexpr uint8_t kNasMessageMinLength = 3;
 
 constexpr int KEncodeDecodeError = -1;
 constexpr int KEncodeDecodeOK    = 0;
 
-#define T3502_TIMER_DEFAULT_VALUE_MIN 12  // 12 minutes
+constexpr int kT3502TimerDefaultValueMin = 12;  // 12 minutes
 
 // Table 10.3.1 @3GPP TS 24.501 V16.1.0 (2019-06)
-#define T3512_TIMER_VALUE_SEC 3240  // 54 minutes
-#define T3512_TIMER_VALUE_MIN 54    // 54 minutes
-#define MOBILE_REACHABLE_TIMER_NO_EMERGENCY_SERVICES_MIN                       \
-  (T3512_TIMER_VALUE_MIN + 4)  // T3512 + 4, not for emergency services
-#define IMPLICIT_DEREGISTRATION_TIMER_MIN (T3512_TIMER_VALUE_MIN + 4)
+constexpr int kT3512TimerValueSec = 3240;  // 54 minutes
+constexpr int kT3512TimerValueMin = 54;    // 54 minutes
+constexpr int kMobileReachableTimerNoEmergencyServicesMin =
+    (kT3512TimerValueMin + 4);  // T3512 + 4, not for emergency services
+constexpr int kImplicitDeregistrationTimerMin = (kT3512TimerValueMin + 4);
 
 enum class _5g_ia_e {
   _5G_IA0 = 0,

@@ -28,8 +28,8 @@ using namespace nas;
 
 //------------------------------------------------------------------------------
 DeregistrationRequestUeTerminated::DeregistrationRequestUeTerminated()
-    : NasMmPlainHeader(EPD_5GS_MM_MSG) {
-  NasMmPlainHeader::SetMessageType(DEREGISTRATION_REQUEST_UE_TERMINATED);
+    : NasMmPlainHeader(k5gsMobilityManagementMessages) {
+  NasMmPlainHeader::SetMessageType(kDeregistrationRequestUeTerminated);
 }
 
 //------------------------------------------------------------------------------

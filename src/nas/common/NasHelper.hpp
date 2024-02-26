@@ -133,10 +133,6 @@ class NasHelper {
     decoded_size += decoded_result;
     return KEncodeDecodeOK;
   }
-
-  static RequestTypeValue get_request_type(uint8_t type) {
-    return static_cast<RequestTypeValue>(type & 0x07);
-  }
 };
 
 }  // namespace nas

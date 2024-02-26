@@ -27,7 +27,7 @@ using namespace nas;
 
 //------------------------------------------------------------------------------
 AuthenticationRequest::AuthenticationRequest()
-    : NasMmPlainHeader(EPD_5GS_MM_MSG, AUTHENTICATION_REQUEST) {
+    : NasMmPlainHeader(k5gsMobilityManagementMessages, kAuthenticationRequest) {
   ie_authentication_parameter_rand = std::nullopt;
   ie_authentication_parameter_autn = std::nullopt;
   ie_eap_message                   = std::nullopt;

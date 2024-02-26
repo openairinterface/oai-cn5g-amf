@@ -27,7 +27,7 @@ using namespace nas;
 
 //------------------------------------------------------------------------------
 RegistrationComplete::RegistrationComplete()
-    : NasMmPlainHeader(EPD_5GS_MM_MSG, REGISTRATION_COMPLETE) {
+    : NasMmPlainHeader(k5gsMobilityManagementMessages, kRegistrationComplete) {
   ie_sor_transparent_container = std::nullopt;
 }
 

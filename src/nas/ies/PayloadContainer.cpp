@@ -207,7 +207,7 @@ int PayloadContainer::Decode(uint8_t* buf, int len, bool is_iei, uint8_t type) {
   decoded_size += decoded_header_size;
   ie_len = GetLengthIndicator();
 
-  if (type != MULTIPLE_PAYLOADS) {  // not multiple payloads
+  if (type != kMultiplePayloads) {  // not multiple payloads
     uint8_t octet       = 0;
     bstring content_tmp = {};
     content_tmp         = blk2bstr(buf + decoded_size, ie_len);

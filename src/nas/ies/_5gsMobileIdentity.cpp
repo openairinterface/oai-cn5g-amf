@@ -55,17 +55,17 @@ void _5gsMobileIdentity::ClearIe() {
 int _5gsMobileIdentity::Encode(uint8_t* buf, int len) {
   Logger::nas_mm().debug("Encoding %s", GetIeName().c_str());
   switch (type_of_identity_) {
-    case SUCI: {
+    case kSuci: {
       return EncodeSuci(buf, len);
     } break;
-    case _5G_GUTI: {
+    case k5gGuti: {
       return Encode5gGuti(buf, len);
     } break;
     // TODO: IMEI
-    case IMEISV: {
+    case kImeisv: {
       return EncodeImeisv(buf, len);
     } break;
-    case _5G_S_TMSI: {
+    case k5gSTmsi: {
       return Encode5gSTmsi(buf, len);
     } break;
     default: {
@@ -98,23 +98,23 @@ int _5gsMobileIdentity::Decode(uint8_t* buf, int len, bool is_iei) {
       decoded_size_tmp);  // Decode but don't increase decoded_size
 
   switch (octet & 0x07) {
-    case SUCI: {
-      type_of_identity_ = SUCI;
+    case kSuci: {
+      type_of_identity_ = kSuci;
       decoded_size +=
           DecodeSuci(buf + decoded_size, len - decoded_size, ie_len);
       Logger::nas_mm().debug("Decoded SUCI (%d octets)", decoded_size);
     } break;
-    case _5G_GUTI: {
-      type_of_identity_ = _5G_GUTI;
+    case k5gGuti: {
+      type_of_identity_ = k5gGuti;
       decoded_size += Decode5gGuti(buf + decoded_size, len - decoded_size);
     } break;
-    case _5G_S_TMSI: {
-      type_of_identity_ = _5G_S_TMSI;
+    case k5gSTmsi: {
+      type_of_identity_ = k5gSTmsi;
       decoded_size += Decode5gSTmsi(buf + decoded_size, len - decoded_size);
     } break;
     // TODO: IMEI
-    case IMEISV: {
-      type_of_identity_ = IMEISV;
+    case kImeisv: {
+      type_of_identity_ = kImeisv;
       decoded_size += DecodeImeisv(buf + decoded_size, ie_len);
     } break;
     // TODO: MAC Address
@@ -143,7 +143,7 @@ int _5gsMobileIdentity::Encode5gGuti(uint8_t* buf, int len) {
 
   // Type of Identity
   ENCODE_U8(
-      buf + encoded_size, 0xf0 | _5G_GUTI,
+      buf + encoded_size, 0xf0 | k5gGuti,
       encoded_size);  // Type of Identity
   // MCC/MNC
   encoded_size += utils::encodeMccMnc2Buffer(
@@ -217,7 +217,7 @@ void _5gsMobileIdentity::Set5gGuti(
   ClearIe();
 
   // Set value for 5G GUTI
-  type_of_identity_ = _5G_GUTI;
+  type_of_identity_ = k5gGuti;
   _5G_GUTI_t tmp    = {};
   tmp.mcc           = mcc;
   tmp.mnc           = mnc;
@@ -250,7 +250,7 @@ int _5gsMobileIdentity::EncodeSuci(uint8_t* buf, int len) {
 
   // SUPI format + Type of Identity
   ENCODE_U8(
-      buf + encoded_size, (0x70 & (SUPI_FORMAT_IMSI << 4)) | (0x07 & SUCI),
+      buf + encoded_size, (0x70 & (kSupiFormatImsi << 4)) | (0x07 & kSuci),
       encoded_size);
 
   // MCC/MNC
@@ -312,9 +312,9 @@ int _5gsMobileIdentity::DecodeSuci(uint8_t* buf, int len, int ie_len) {
   DECODE_U8(buf + decoded_size, octet, decoded_size);
 
   switch ((octet & 0x70) >> 4) {
-    case SUPI_FORMAT_IMSI: {
+    case kSupiFormatImsi: {
       SUCI_imsi_t supi_format_imsi_tmp = {};
-      supi_format_imsi_tmp.supi_format = SUPI_FORMAT_IMSI;
+      supi_format_imsi_tmp.supi_format = kSupiFormatImsi;
 
       decoded_size += utils::decodeMccMncFromBuffer(
           supi_format_imsi_tmp.mcc, supi_format_imsi_tmp.mnc,
@@ -403,7 +403,7 @@ int _5gsMobileIdentity::DecodeSuci(uint8_t* buf, int len, int ie_len) {
           decoded_size);
       return decoded_size;
     } break;
-    case SUPI_FORMAT_NETWORK_SPECIFIC_IDENTIFIER: {
+    case kSupiFormatNetworkSpecificIdentifier: {
       Logger::nas_mm().warn(
           "SUCI/SUPI format with Network Specific Identifier is not supported");
       // TODO:
@@ -427,14 +427,14 @@ void _5gsMobileIdentity::SetSuciWithSupiImsi(
   SUCI_imsi_t supi_format_imsi_tmp = {};
 
   iei_                             = 0;
-  type_of_identity_                = SUCI;
-  supi_format_imsi_tmp.supi_format = SUPI_FORMAT_IMSI;
+  type_of_identity_                = kSuci;
+  supi_format_imsi_tmp.supi_format = kSupiFormatImsi;
   supi_format_imsi_tmp.mcc         = mcc;
   supi_format_imsi_tmp.mnc         = mnc;
   supi_format_imsi_tmp.routing_indicator =
       std::optional<std::string>(routing_ind);
   supi_format_imsi_tmp.protection_scheme_id = protection_sch_id;
-  supi_format_imsi_tmp.home_network_pki     = HOME_NETWORK_PKI_0_WHEN_PSI_0;
+  supi_format_imsi_tmp.home_network_pki     = kHomeNetworkPki0WhenPsi0;
   supi_format_imsi_tmp.msin                 = msin;
   SetLengthIndicator(10 + ceil(msin.length() / 2));
 
@@ -452,7 +452,7 @@ void _5gsMobileIdentity::SetSuciWithSupiImsi(
   // Set value for SUCI/SUPI format IMSI
   SUCI_imsi_t supi_format_imsi_tmp = {};
 
-  supi_format_imsi_tmp.supi_format = SUPI_FORMAT_IMSI;
+  supi_format_imsi_tmp.supi_format = kSupiFormatImsi;
   supi_format_imsi_tmp.mcc         = mcc;
   supi_format_imsi_tmp.mnc         = mnc;
   supi_format_imsi_ = std::optional<SUCI_imsi_t>(supi_format_imsi_tmp);
@@ -531,7 +531,7 @@ int _5gsMobileIdentity::Encode5gSTmsi(uint8_t* buf, int len) {
   encoded_size += encoded_header_size;
 
   // Type of identity
-  ENCODE_U8(buf + encoded_size, 0xf0 | _5G_S_TMSI, encoded_size);
+  ENCODE_U8(buf + encoded_size, 0xf0 | k5gSTmsi, encoded_size);
 
   // AMF Set ID and AMF Pointer
   ENCODE_U8(
@@ -590,7 +590,7 @@ void _5gsMobileIdentity::Set5gSTmsi(
 
   // Set value for 5GS TMSI
   _5G_S_TMSI_t _5g_s_tmsi_tmp = {};
-  type_of_identity_           = _5G_S_TMSI;
+  type_of_identity_           = k5gSTmsi;
   _5g_s_tmsi_tmp.amf_set_id   = amf_set_id;
   _5g_s_tmsi_tmp.amf_pointer  = amf_pointer;
   _5g_s_tmsi_tmp._5g_tmsi     = tmsi;
@@ -631,7 +631,7 @@ int _5gsMobileIdentity::EncodeImeisv(uint8_t* buf, int len) {
   int i = 0;
   while (i < imeisv_.value().identity.length()) {
     if (i == 0) {
-      digit_low = 0x07 & IMEISV;  // TODO: odd/even indic
+      digit_low = 0x07 & kImeisv;  // TODO: odd/even indic
       conv::string_to_int8(imeisv_.value().identity.substr(i, 1), digit_high);
     } else if (i < imeisv_.value().identity.length() - 1) {
       conv::string_to_int8(imeisv_.value().identity.substr(i, 1), digit_low);
@@ -660,7 +660,7 @@ int _5gsMobileIdentity::DecodeImeisv(uint8_t* buf, int len) {
   Logger::nas_mm().debug("Decoding 5GSMobilityIdentity IMEISV");
   int decoded_size             = 0;
   IMEI_IMEISV_t imeisv_tmp     = {};
-  imeisv_tmp.type_of_identity_ = IMEISV;
+  imeisv_tmp.type_of_identity_ = kImeisv;
   imeisv_tmp.identity          = {};
 
   uint8_t digit_low  = 0;

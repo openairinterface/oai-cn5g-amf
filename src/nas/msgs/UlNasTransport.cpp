@@ -27,7 +27,7 @@ using namespace nas;
 
 //------------------------------------------------------------------------------
 UlNasTransport::UlNasTransport()
-    : NasMmPlainHeader(EPD_5GS_MM_MSG, UL_NAS_TRANSPORT) {
+    : NasMmPlainHeader(k5gsMobilityManagementMessages, kUlNasTransport) {
   ie_pdu_session_id                = std::nullopt;
   ie_old_pdu_session_id            = std::nullopt;
   ie_request_type                  = std::nullopt;

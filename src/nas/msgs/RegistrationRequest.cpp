@@ -29,7 +29,7 @@ using namespace nas;
 
 //------------------------------------------------------------------------------
 RegistrationRequest::RegistrationRequest()
-    : NasMmPlainHeader(EPD_5GS_MM_MSG, REGISTRATION_REQUEST) {
+    : NasMmPlainHeader(k5gsMobilityManagementMessages, kRegistrationRequest) {
   ie_non_current_native_nas_ksi  = std::nullopt;
   ie_5g_mm_capability            = std::nullopt;
   ie_ue_security_capability      = std::nullopt;
@@ -94,7 +94,7 @@ void RegistrationRequest::SetSuciSupiFormatImsi(
     const std::string& mcc, const std::string& mnc,
     const std::string& routing_ind, uint8_t protection_sch_id,
     const std::string& msin) {
-  if (protection_sch_id != NULL_SCHEME) {
+  if (protection_sch_id != kNullScheme) {
     Logger::nas_mm().error(
         "encoding suci and supi format for imsi error, please choose right "
         "interface");
@@ -999,7 +999,7 @@ int RegistrationRequest::Decode(uint8_t* buf, int len) {
         // TODO: verified type of Payload container
         if ((decoded_ie_size = ie_payload_container_tmp.Decode(
                  buf + decoded_size, len - decoded_size, true,
-                 N1_SM_INFORMATION)) == KEncodeDecodeError) {
+                 kN1SmInformation)) == KEncodeDecodeError) {
           return KEncodeDecodeError;
         }
         decoded_size += decoded_ie_size;

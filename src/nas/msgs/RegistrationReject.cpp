@@ -27,7 +27,7 @@ using namespace nas;
 
 //------------------------------------------------------------------------------
 RegistrationReject::RegistrationReject()
-    : NasMmPlainHeader(EPD_5GS_MM_MSG, REGISTRATION_REJECT) {
+    : NasMmPlainHeader(k5gsMobilityManagementMessages, kRegistrationReject) {
   Logger::nas_mm().debug("Initiating RegistrationReject");
   ie_t3346_value    = std::nullopt;
   ie_t3502_value    = std::nullopt;

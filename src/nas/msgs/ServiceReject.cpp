@@ -27,7 +27,7 @@ using namespace nas;
 
 //------------------------------------------------------------------------------
 ServiceReject::ServiceReject()
-    : NasMmPlainHeader(EPD_5GS_MM_MSG, SERVICE_REJECT) {
+    : NasMmPlainHeader(k5gsMobilityManagementMessages, kServiceReject) {
   ie_pdu_session_status = std::nullopt;
   ie_t3346_value        = std::nullopt;
   ie_eap_message        = std::nullopt;

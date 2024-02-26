@@ -28,8 +28,8 @@ using namespace nas;
 
 //------------------------------------------------------------------------------
 DeregistrationRequest::DeregistrationRequest()
-    : NasMmPlainHeader(EPD_5GS_MM_MSG) {
-  NasMmPlainHeader::SetMessageType(DEREGISTRATION_REQUEST_UE_ORIGINATING);
+    : NasMmPlainHeader(k5gsMobilityManagementMessages) {
+  NasMmPlainHeader::SetMessageType(kDeregistrationRequestUeOriginating);
 }
 
 //------------------------------------------------------------------------------
@@ -81,7 +81,7 @@ void DeregistrationRequest::SetSuciSupiFormatImsi(
     const std::string& mcc, const std::string& mnc,
     const std::string& routing_ind, uint8_t protection_sch_id,
     const std::string& msin) {
-  if (protection_sch_id != NULL_SCHEME) {
+  if (protection_sch_id != kNullScheme) {
     Logger::nas_mm().error(
         "Encoding SUCI and SUPI format for IMSI error, please choose correct "
         "protection scheme");

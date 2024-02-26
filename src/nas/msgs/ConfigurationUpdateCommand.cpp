@@ -27,7 +27,8 @@ using namespace nas;
 
 //------------------------------------------------------------------------------
 ConfigurationUpdateCommand::ConfigurationUpdateCommand()
-    : NasMmPlainHeader(EPD_5GS_MM_MSG, CONFIGURATION_UPDATE_COMMAND) {
+    : NasMmPlainHeader(
+          k5gsMobilityManagementMessages, kConfigurationUpdateCommand) {
   ie_configuration_update_indication = std::nullopt;
   ie_5g_guti                         = std::nullopt;
   ie_full_name_for_network           = std::nullopt;

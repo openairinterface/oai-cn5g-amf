@@ -27,7 +27,7 @@ using namespace nas;
 
 //------------------------------------------------------------------------------
 IdentityRequest::IdentityRequest()
-    : NasMmPlainHeader(EPD_5GS_MM_MSG, IDENTITY_REQUEST) {}
+    : NasMmPlainHeader(k5gsMobilityManagementMessages, kIdentityRequest) {}
 
 //------------------------------------------------------------------------------
 IdentityRequest::~IdentityRequest() {}

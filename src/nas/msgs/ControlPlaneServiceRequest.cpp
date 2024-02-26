@@ -27,7 +27,7 @@ using namespace nas;
 
 //------------------------------------------------------------------------------
 ControlPlaneServiceRequest::ControlPlaneServiceRequest()
-    : NasMmPlainHeader(EPD_5GS_MM_MSG, SERVICE_REQUEST) {
+    : NasMmPlainHeader(k5gsMobilityManagementMessages, kServiceRequest) {
   ie_pdu_session_status    = std::nullopt;
   ie_uplink_data_status    = std::nullopt;
   ie_nas_message_container = std::nullopt;

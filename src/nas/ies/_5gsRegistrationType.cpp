@@ -67,8 +67,7 @@ void _5gsRegistrationType::getValue() {
 //------------------------------------------------------------------------------
 bool _5gsRegistrationType::validateValue(
     const bool& follow_on_req, const uint8_t& type) {
-  if (type > static_cast<uint8_t>(_5gsMobileIdentityEnum::MAX_VALUE))
-    return false;
+  if (type > k5gsMobileIdentityMaxValue) return false;
   return true;
 }
 

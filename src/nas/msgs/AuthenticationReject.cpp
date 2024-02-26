@@ -27,7 +27,7 @@ using namespace nas;
 
 //------------------------------------------------------------------------------
 AuthenticationReject::AuthenticationReject()
-    : NasMmPlainHeader(EPD_5GS_MM_MSG, AUTHENTICATION_REJECT) {
+    : NasMmPlainHeader(k5gsMobilityManagementMessages, kAuthenticationReject) {
   ie_eap_message = std::nullopt;
 }
 

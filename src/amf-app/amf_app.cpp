@@ -38,9 +38,9 @@
 #include "amf_sbi.hpp"
 #include "amf_sbi_helper.hpp"
 #include "amf_statistics.hpp"
-#include "output_wrapper.hpp"
 #include "itti.hpp"
 #include "ngap_app.hpp"
+#include "output_wrapper.hpp"
 #include "utils.hpp"
 
 using namespace ngap;
@@ -393,8 +393,8 @@ void amf_app::handle_itti_message(
     if (itti_msg.is_n1sm_set) {
       // Encode DL NAS TRANSPORT message(NAS message)
       auto dl = std::make_unique<DlNasTransport>();
-      dl->SetHeader(PLAIN_5GS_MSG);
-      dl->SetPayloadContainerType(N1_SM_INFORMATION);
+      dl->SetHeader(kPlain5gsMessage);
+      dl->SetPayloadContainerType(kN1SmInformation);
       dl->SetPayloadContainer(
           (uint8_t*) bdata(bstrcpy(itti_msg.n1sm)), blength(itti_msg.n1sm));
       dl->SetPduSessionId(itti_msg.pdu_session_id);

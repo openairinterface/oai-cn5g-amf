@@ -26,7 +26,8 @@
 using namespace nas;
 
 //------------------------------------------------------------------------------
-_5gmmStatus::_5gmmStatus() : NasMmPlainHeader(EPD_5GS_MM_MSG, _5GMM_STATUS) {}
+_5gmmStatus::_5gmmStatus()
+    : NasMmPlainHeader(k5gsMobilityManagementMessages, k5gmmStatus) {}
 
 //------------------------------------------------------------------------------
 _5gmmStatus::~_5gmmStatus() {}

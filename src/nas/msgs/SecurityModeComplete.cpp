@@ -27,7 +27,7 @@ using namespace nas;
 
 //------------------------------------------------------------------------------
 SecurityModeComplete::SecurityModeComplete()
-    : NasMmPlainHeader(EPD_5GS_MM_MSG, SECURITY_MODE_COMPLETE) {
+    : NasMmPlainHeader(k5gsMobilityManagementMessages, kSecurityModeComplete) {
   ie_imeisv                = std::nullopt;
   ie_nas_message_container = std::nullopt;
   ie_non_imeisvpei         = std::nullopt;

@@ -27,7 +27,7 @@ using namespace nas;
 
 //------------------------------------------------------------------------------
 RegistrationAccept::RegistrationAccept()
-    : NasMmPlainHeader(EPD_5GS_MM_MSG, REGISTRATION_ACCEPT) {
+    : NasMmPlainHeader(k5gsMobilityManagementMessages, kRegistrationAccept) {
   ie_5g_guti                                     = std::nullopt;
   ie_equivalent_plmns                            = std::nullopt;
   ie_allowed_nssai                               = std::nullopt;
@@ -78,7 +78,7 @@ void RegistrationAccept::SetSuciSupiFormatImsi(
     const std::string& mcc, const std::string& mnc,
     const std::string& routing_ind, uint8_t protection_sch_id,
     const std::string& msin) {
-  if (protection_sch_id != NULL_SCHEME) {
+  if (protection_sch_id != kNullScheme) {
     Logger::nas_mm().error(
         "Encoding SUCI and SUPI format for IMSI error, please choose right "
         "scheme");

@@ -27,7 +27,7 @@ using namespace nas;
 
 //------------------------------------------------------------------------------
 ServiceRequest::ServiceRequest()
-    : NasMmPlainHeader(EPD_5GS_MM_MSG, SERVICE_REQUEST) {
+    : NasMmPlainHeader(k5gsMobilityManagementMessages, kServiceRequest) {
   ie_uplink_data_status         = std::nullopt;
   ie_pdu_session_status         = std::nullopt;
   ie_allowed_pdu_session_status = std::nullopt;

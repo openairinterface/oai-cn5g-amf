@@ -27,7 +27,7 @@ using namespace nas;
 
 //------------------------------------------------------------------------------
 AuthenticationResult::AuthenticationResult()
-    : NasMmPlainHeader(EPD_5GS_MM_MSG, AUTHENTICATION_RESULT) {
+    : NasMmPlainHeader(k5gsMobilityManagementMessages, kAuthenticationResult) {
   ie_abba = std::nullopt;
 }
 

@@ -27,7 +27,7 @@ using namespace nas;
 
 //------------------------------------------------------------------------------
 IdentityResponse::IdentityResponse()
-    : NasMmPlainHeader(EPD_5GS_MM_MSG, IDENTITY_RESPONSE) {}
+    : NasMmPlainHeader(k5gsMobilityManagementMessages, kIdentityResponse) {}
 
 //------------------------------------------------------------------------------
 IdentityResponse::~IdentityResponse() {}
@@ -47,7 +47,7 @@ void IdentityResponse::SetSuciSupiFormatImsi(
     const std::string& mcc, const std::string& mnc,
     const std::string& routing_ind, uint8_t protection_sch_id,
     const std::string& msin) {
-  if (protection_sch_id != NULL_SCHEME) {
+  if (protection_sch_id != kNullScheme) {
     Logger::nas_mm().error(
         "Encoding suci and supi format for imsi error, please choose right "
         "interface");

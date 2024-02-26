@@ -28,7 +28,7 @@ using namespace nas;
 
 //------------------------------------------------------------------------------
 DlNasTransport::DlNasTransport()
-    : NasMmPlainHeader(EPD_5GS_MM_MSG, DL_NAS_TRANSPORT) {
+    : NasMmPlainHeader(k5gsMobilityManagementMessages, kDlNasTransport) {
   ie_pdu_session_identity_2 = std::nullopt;
   ie_additional_information = std::nullopt;
   ie_5gmm_cause             = std::nullopt;
@@ -186,7 +186,7 @@ int DlNasTransport::Decode(uint8_t* buf, int len) {
   // Payload container
   decoded_ie_size = ie_payload_container.Decode(
       buf + decoded_size, len - decoded_size, false,
-      N1_SM_INFORMATION);  // TODO: verified Type of Payload Container
+      kN1SmInformation);  // TODO: verified Type of Payload Container
   if (decoded_ie_size == KEncodeDecodeError) {
     Logger::nas_mm().error(
         "Decoding %s error", PayloadContainer::GetIeName().c_str());

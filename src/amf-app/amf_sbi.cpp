@@ -25,22 +25,22 @@
 
 #include <nlohmann/json.hpp>
 
+#include "3gpp_24.501.hpp"
 #include "3gpp_29.500.h"
 #include "3gpp_29.502.h"
-#include "3gpp_24.501.hpp"
 #include "AmfEventReport.h"
 #include "amf.hpp"
 #include "amf_app.hpp"
 #include "amf_config.hpp"
+#include "amf_conversions.hpp"
 #include "amf_n1.hpp"
 #include "amf_sbi_helper.hpp"
-#include "output_wrapper.hpp"
-#include "amf_conversions.hpp"
 #include "itti.hpp"
 #include "itti_msg_amf_app.hpp"
 #include "itti_msg_n2.hpp"
 #include "mime_parser.hpp"
 #include "nas_context.hpp"
+#include "output_wrapper.hpp"
 #include "ue_context.hpp"
 #include "utils.hpp"
 
@@ -407,7 +407,7 @@ void amf_sbi::handle_itti_message(itti_nsmf_pdusession_create_sm_context& smf) {
   }
 
   switch (smf.req_type & 0x07) {
-    case PDU_SESSION_INITIAL_REQUEST: {
+    case kPduSessionInitialRequest: {
       // get pti
       uint8_t* sm_msg = (uint8_t*) bdata(smf.sm_msg);
       uint8_t pti     = sm_msg[2];
@@ -417,10 +417,10 @@ void amf_sbi::handle_itti_message(itti_nsmf_pdusession_create_sm_context& smf) {
       handle_pdu_session_initial_request(
           supi, psc, smf_uri_root, smf_api_version, smf.sm_msg, dnn);
     } break;
-    case EXISTING_PDU_SESSION: {
+    case kExistingPduSession: {
       // TODO:
     } break;
-    case PDU_SESSION_TYPE_MODIFICATION_REQUEST: {
+    case kPduSessionTypeModificationRequest: {
       // TODO:
     } break;
     default: {

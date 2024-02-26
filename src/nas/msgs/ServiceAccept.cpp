@@ -27,7 +27,7 @@ using namespace nas;
 
 //------------------------------------------------------------------------------
 ServiceAccept::ServiceAccept()
-    : NasMmPlainHeader(EPD_5GS_MM_MSG, SERVICE_ACCEPT) {
+    : NasMmPlainHeader(k5gsMobilityManagementMessages, kServiceAccept) {
   ie_pdu_session_status                          = std::nullopt;
   ie_pdu_session_reactivation_result             = std::nullopt;
   ie_pdu_session_reactivation_result_error_cause = std::nullopt;

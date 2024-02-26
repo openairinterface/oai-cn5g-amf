@@ -27,7 +27,7 @@ using namespace nas;
 
 //------------------------------------------------------------------------------
 AuthenticationFailure::AuthenticationFailure()
-    : NasMmPlainHeader(EPD_5GS_MM_MSG, AUTHENTICATION_FAILURE) {
+    : NasMmPlainHeader(k5gsMobilityManagementMessages, kAuthenticationFailure) {
   ie_authentication_failure_parameter = std::nullopt;
 }
 
