@@ -41,7 +41,6 @@ add_library (AMF_UTILS STATIC
  ${CMAKE_CURRENT_SOURCE_DIR}/thread_sched.cpp
  ${CMAKE_CURRENT_SOURCE_DIR}/mime_parser.cpp
  ${CMAKE_CURRENT_SOURCE_DIR}/3gpp_conversions.cpp
- ${CMAKE_CURRENT_SOURCE_DIR}/utils.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/amf_conversions.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/output_wrapper.cpp
  )
