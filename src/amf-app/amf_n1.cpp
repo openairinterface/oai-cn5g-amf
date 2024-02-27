@@ -1059,9 +1059,12 @@ void amf_n1::service_request_handle(
                 "Configured S-NSSAI %s", snssai.ToString().c_str());
           }
         }
+        // Get UE Security Capability from old context
+        nc->ue_security_capability = old_nc->ue_security_capability;
+
         Logger::amf_n1().debug(
             "Current ran_ue_ngap_id (" GNB_UE_NGAP_ID_FMT
-            "), old amf_ue_ngap_id (" AMF_UE_NGAP_ID_FMT ")",
+            "), current amf_ue_ngap_id (" AMF_UE_NGAP_ID_FMT ")",
             nc->ran_ue_ngap_id, nc->amf_ue_ngap_id);
 
         Logger::amf_n1().debug(
