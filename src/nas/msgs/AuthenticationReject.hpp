@@ -39,7 +39,7 @@ class AuthenticationReject : public NasMmPlainHeader {
   void SetEapMessage(const bstring& eap);
   // TODO: Get
 
- public:
+ private:
   std::optional<EapMessage> ie_eap_message_;
 };
 

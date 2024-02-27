@@ -57,7 +57,7 @@ class ConfigurationUpdateCommand : public NasMmPlainHeader {
   int Encode(uint8_t* buf, int len);
   int Decode(uint8_t* buf, int len);
 
- public:
+ private:
   // Optional
   // Configuration update indication
   std::optional<ConfigurationUpdateIndication>

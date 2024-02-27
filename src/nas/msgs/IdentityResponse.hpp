@@ -37,6 +37,7 @@ class IdentityResponse : public NasMmPlainHeader {
   void SetHeader(uint8_t security_header_type);
 
   void Get5gsMobileIdentity(_5gsMobileIdentity& mobile_identity) const;
+  _5gsMobileIdentity Get5gsMobileIdentity() const;
 
   void SetSuciSupiFormatImsi(
       const std::string& mcc, const std::string& mnc,
@@ -51,7 +52,7 @@ class IdentityResponse : public NasMmPlainHeader {
   void SetImeiImeisv();
   void Set5gSTmsi();
 
- public:
+ private:
   _5gsMobileIdentity ie_mobile_identity_;  // Mandatory
 };
 

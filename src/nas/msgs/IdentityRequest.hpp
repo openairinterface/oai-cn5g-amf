@@ -39,7 +39,7 @@ class IdentityRequest : public NasMmPlainHeader {
   void Set5gsIdentityType(uint8_t value);
   // TODO: Get
 
- public:
+ private:
   _5gsIdentityType ie_5gs_identity_type_;  // Mandatory
   // Spare half octet (Mandatory)
 };

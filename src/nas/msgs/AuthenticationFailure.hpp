@@ -47,7 +47,7 @@ class AuthenticationFailure : public NasMmPlainHeader {
   void SetAuthenticationFailureParameter(const bstring& value);
   bool GetAuthenticationFailureParameter(bstring& value) const;
 
- public:
+ private:
   _5gmmCause ie_5gmm_cause_;  // Mandatory
   std::optional<AuthenticationFailureParameter>
       ie_authentication_failure_parameter_;  // Optional

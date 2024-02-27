@@ -53,7 +53,7 @@ class DlNasTransport : public NasMmPlainHeader {
   void SetBackOffTimerValue(uint8_t unit, uint8_t value);
   // TODO: Get
 
- public:
+ private:
   PayloadContainerType ie_payload_container_type_;                  // Mandatory
   PayloadContainer ie_payload_container_;                           // Mandatory
   std::optional<PduSessionIdentity2> ie_pdu_session_identity_2_;    // Optional

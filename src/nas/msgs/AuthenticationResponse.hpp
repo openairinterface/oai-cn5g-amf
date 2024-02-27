@@ -42,7 +42,7 @@ class AuthenticationResponse : public NasMmPlainHeader {
   void SetEapMessage(const bstring& eap);
   bool GetEapMessage(bstring& eap) const;
 
- public:
+ private:
   std::optional<AuthenticationResponseParameter>
       ie_authentication_response_parameter_;  // Optional
   std::optional<EapMessage> ie_eap_message_;  // Optional

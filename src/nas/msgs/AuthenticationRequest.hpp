@@ -53,7 +53,7 @@ class AuthenticationRequest : public NasMmPlainHeader {
       uint8_t value[kAuthenticationParameterAutnValueLength]);
   // TODO: Get
 
- public:
+ private:
   NasKeySetIdentifier ie_ng_ksi_;  // Mandatory
   // Spare half octet (will be processed together with NgKSI)
   Abba ie_abba_;  // Mandatory

@@ -67,7 +67,7 @@ class UlNasTransport : public NasMmPlainHeader {
   void SetReleaseAssistanceIndication(uint8_t value);
   // TODO: Get
 
- public:
+ private:
   PayloadContainerType ie_payload_container_type_;  // Mandatory
   PayloadContainer ie_payload_container_;           // Mandatory
 

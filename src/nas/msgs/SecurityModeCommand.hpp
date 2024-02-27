@@ -68,7 +68,7 @@ class SecurityModeCommand : public NasMmPlainHeader {
   void SetS1UeSecurityCapability(uint8_t eea, uint8_t eia);
   // TODO: Get
 
- public:
+ private:
   NasSecurityAlgorithms ie_selected_nas_security_algorithms_;  // Mandatory
   NasKeySetIdentifier ie_ng_ksi_;  // Mandatory (1/2 octet)
   // Spare half octet

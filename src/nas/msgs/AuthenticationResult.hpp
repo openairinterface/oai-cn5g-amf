@@ -45,7 +45,7 @@ class AuthenticationResult : public NasMmPlainHeader {
   void SetAbba(uint8_t length, uint8_t* value);
   // TODO: Get
 
- public:
+ private:
   NasKeySetIdentifier ie_ng_ksi_;  // Mandatory (1/2 lower octet)
   EapMessage ie_eap_message_;      // Mandatory
   std::optional<Abba> ie_abba_;    // Optional

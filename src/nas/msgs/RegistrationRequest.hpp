@@ -147,7 +147,7 @@ class RegistrationRequest : public NasMmPlainHeader {
   void SetEpsBearerContextsStatus(uint16_t value);
   bool GetEpsBearerContextStatus(uint16_t& value) const;
 
- public:
+ private:
   _5gsRegistrationType ie_5gs_registration_type_;  // Mandatory
   NasKeySetIdentifier ie_ng_ksi_;                  // Mandatory
   _5gsMobileIdentity ie_5gs_mobile_identity_;      // Mandatory

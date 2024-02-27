@@ -53,7 +53,7 @@ class RegistrationReject : public NasMmPlainHeader {
   void SetRejectedNssai(const std::vector<RejectedSNssai>& nssai);
   // TODO: Get
 
- public:
+ private:
   _5gmmCause ie_5gmm_cause_;                        // Mandatory
   std::optional<GprsTimer2> ie_t3346_value_;        // Optional
   std::optional<GprsTimer2> ie_t3502_value_;        // Optional

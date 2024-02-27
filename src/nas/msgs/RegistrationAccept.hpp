@@ -149,7 +149,7 @@ class RegistrationAccept : public NasMmPlainHeader {
   void SetPendingNssai(const std::vector<struct SNSSAI_s>& nssai);
   // TODO: Get
 
- public:
+ private:
   _5gsRegistrationResult ie_5gs_registration_result_;  // Mandatory
 
   std::optional<_5gsMobileIdentity> ie_5g_guti_;       // Optional

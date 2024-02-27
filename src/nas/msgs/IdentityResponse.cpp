@@ -42,6 +42,12 @@ void IdentityResponse::Get5gsMobileIdentity(
     _5gsMobileIdentity& mobile_identity) const {
   mobile_identity = ie_mobile_identity_;
 }
+
+//------------------------------------------------------------------------------
+_5gsMobileIdentity IdentityResponse::Get5gsMobileIdentity() const {
+  return ie_mobile_identity_;
+}
+
 //------------------------------------------------------------------------------
 void IdentityResponse::SetSuciSupiFormatImsi(
     const std::string& mcc, const std::string& mnc,
