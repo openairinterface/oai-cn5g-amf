@@ -31,22 +31,22 @@ namespace nas {
 class RejectedSNssai {
  public:
   RejectedSNssai();
-  RejectedSNssai(const uint8_t& cause, const uint8_t& sst, const uint32_t& sd);
+  RejectedSNssai(uint8_t cause, uint8_t sst, uint32_t sd);
   ~RejectedSNssai();
 
-  uint8_t GetLength();
+  uint8_t GetLength() const;
 
-  void SetSST(const uint8_t& sst);
-  uint8_t GetSST();
-  void GetSST(uint8_t& sst);
+  void SetSST(uint8_t sst);
+  uint8_t GetSST() const;
+  void GetSST(uint8_t& sst) const;
 
-  void SetSd(const uint32_t& sd);
-  bool GetSd(uint32_t& sd);
-  void GetSd(std::optional<uint32_t>& sd);
+  void SetSd(uint32_t sd);
+  bool GetSd(uint32_t& sd) const;
+  void GetSd(std::optional<uint32_t>& sd) const;
 
-  void SetCause(const uint8_t& cause);
-  uint8_t GetCause();
-  void GetCause(uint8_t& cause);
+  void SetCause(uint8_t cause);
+  uint8_t GetCause() const;
+  void GetCause(uint8_t& cause) const;
 
   int Encode(uint8_t* buf, int len);
   int Decode(uint8_t* buf, int len);

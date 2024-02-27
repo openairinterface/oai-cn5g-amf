@@ -31,7 +31,7 @@ Dnn::Dnn() : Type4NasIe(kIeiDnn), dnn_() {
 }
 
 //------------------------------------------------------------------------------
-Dnn::Dnn(bstring dnn) : Type4NasIe(kIeiDnn) {
+Dnn::Dnn(const bstring& dnn) : Type4NasIe(kIeiDnn) {
   dnn_ = bstrcpy(dnn);
   SetLengthIndicator(blength(dnn));
 }

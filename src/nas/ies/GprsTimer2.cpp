@@ -29,7 +29,7 @@ GprsTimer2::GprsTimer2(uint8_t iei) : Type4NasIe(iei), value_() {
 }
 
 //------------------------------------------------------------------------------
-GprsTimer2::GprsTimer2(const uint8_t iei, uint8_t value) : Type4NasIe(iei) {
+GprsTimer2::GprsTimer2(uint8_t iei, uint8_t value) : Type4NasIe(iei) {
   value_ = value;
   SetLengthIndicator(1);
 }

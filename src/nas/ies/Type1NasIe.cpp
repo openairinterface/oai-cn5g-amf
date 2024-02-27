@@ -32,27 +32,27 @@ Type1NasIe::Type1NasIe() : NasIe(), high_pos_(false), value_(0) {
 }
 
 //------------------------------------------------------------------------------
-Type1NasIe::Type1NasIe(const bool& high_pos, const uint8_t& value) {
+Type1NasIe::Type1NasIe(bool high_pos, uint8_t value) {
   iei_      = std::nullopt;
   high_pos_ = high_pos;
   value_    = value & 0x0f;
 }
 
 //------------------------------------------------------------------------------
-Type1NasIe::Type1NasIe(const bool& high_pos) : value_() {
+Type1NasIe::Type1NasIe(bool high_pos) : value_() {
   iei_      = std::nullopt;
   high_pos_ = high_pos;
 }
 
 //------------------------------------------------------------------------------
-Type1NasIe::Type1NasIe(const uint8_t& iei, const uint8_t& value) : NasIe() {
+Type1NasIe::Type1NasIe(uint8_t iei, uint8_t value) : NasIe() {
   iei_      = std::optional<uint8_t>(iei & 0x0f);
   high_pos_ = false;
   value_    = value & 0x0f;
 }
 
 //------------------------------------------------------------------------------
-Type1NasIe::Type1NasIe(const uint8_t& iei) : NasIe(), value_() {
+Type1NasIe::Type1NasIe(uint8_t iei) : NasIe(), value_() {
   iei_      = std::optional<uint8_t>(iei & 0x0f);
   high_pos_ = false;
 }
@@ -69,13 +69,13 @@ void Type1NasIe::SetIei(const uint8_t& iei) {
 */
 
 //------------------------------------------------------------------------------
-void Type1NasIe::Set(const bool& high_pos, const uint8_t& value) {
+void Type1NasIe::Set(bool high_pos, uint8_t value) {
   high_pos_ = high_pos;
   value_    = value & 0x0f;
 }
 
 //------------------------------------------------------------------------------
-void Type1NasIe::Set(const bool& high_pos) {
+void Type1NasIe::Set(bool high_pos) {
   high_pos_ = high_pos;
 }
 
@@ -91,7 +91,7 @@ bool Type1NasIe::Validate(const int& len) const {
 }
 
 //------------------------------------------------------------------------------
-void Type1NasIe::SetValue(const uint8_t& value) {
+void Type1NasIe::SetValue(uint8_t value) {
   value_ = value & 0x0f;  // 4 lower bits
 }
 

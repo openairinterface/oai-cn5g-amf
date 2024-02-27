@@ -45,7 +45,7 @@ class ServiceReject : public NasMmPlainHeader {
   void SetT3346Value(uint8_t value);
   // TODO: Get
 
-  void SetEapMessage(bstring eap);
+  void SetEapMessage(const bstring& eap);
   // TODO: Get
 
   void SetT3448Value(uint8_t unit, uint8_t value);

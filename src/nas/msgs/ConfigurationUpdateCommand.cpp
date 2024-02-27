@@ -203,7 +203,7 @@ int ConfigurationUpdateCommand::Decode(uint8_t* buf, int len) {
 
     switch (octet) {
       case kIeiFullNameForNetwork: {
-        Logger::nas_mm().debug("Decoding IEI 0x43: Full Name for Network");
+        Logger::nas_mm().debug("Decoding IEI 0x%x", kIeiFullNameForNetwork);
         if ((decoded_ie_size = NasHelper::Decode(
                  ie_full_name_for_network_, buf, len, decoded_size, true)) ==
             KEncodeDecodeError) {
@@ -214,7 +214,7 @@ int ConfigurationUpdateCommand::Decode(uint8_t* buf, int len) {
       } break;
 
       case kIeiShortNameForNetwork: {
-        Logger::nas_mm().debug("Decoding IEI 0x45: Short Name for Network");
+        Logger::nas_mm().debug("Decoding IEI 0x%x", kIeiShortNameForNetwork);
         if ((decoded_ie_size = NasHelper::Decode(
                  ie_short_name_for_network_, buf, len, decoded_size, true)) ==
             KEncodeDecodeError) {

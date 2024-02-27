@@ -33,7 +33,7 @@ namespace nas {
 class Dnn : public Type4NasIe {
  public:
   Dnn();
-  Dnn(bstring dnn);
+  Dnn(const bstring& dnn);
   Dnn(bool iei);
   ~Dnn();
 

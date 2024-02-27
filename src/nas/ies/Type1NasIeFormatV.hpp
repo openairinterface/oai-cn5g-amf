@@ -30,14 +30,14 @@ namespace nas {
 class Type1NasIeFormatV : public NasIe {
  public:
   Type1NasIeFormatV();
-  Type1NasIeFormatV(const bool& high_pos);
-  Type1NasIeFormatV(const bool& high_pos, const uint8_t& value);
+  Type1NasIeFormatV(bool high_pos);
+  Type1NasIeFormatV(bool high_pos, uint8_t value);
   virtual ~Type1NasIeFormatV();
 
   bool Validate(const int& len) const override;
 
-  void Set(const bool& high_pos, const uint8_t& value);
-  void Set(const uint8_t& value);
+  void Set(bool high_pos, uint8_t value);
+  void Set(uint8_t value);
 
   int Encode(uint8_t* buf, const int& len) override;
   int Decode(

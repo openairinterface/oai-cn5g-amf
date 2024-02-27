@@ -38,7 +38,7 @@ class PayloadContainer : Type6NasIe {
   PayloadContainer(uint8_t iei, const bstring& b);
   PayloadContainer(const std::vector<PayloadContainerEntry>& content);
   PayloadContainer(
-      const uint8_t iei, const std::vector<PayloadContainerEntry>& content);
+      uint8_t iei, const std::vector<PayloadContainerEntry>& content);
   ~PayloadContainer();
 
   static std::string GetIeName() { return kPayloadContainerIeName; }

@@ -583,8 +583,7 @@ int _5gsMobileIdentity::Decode5gSTmsi(uint8_t* buf, int len) {
 
 //------------------------------------------------------------------------------
 void _5gsMobileIdentity::Set5gSTmsi(
-    const uint16_t amf_set_id, const uint8_t amf_pointer,
-    const std::string& tmsi) {
+    uint16_t amf_set_id, uint8_t amf_pointer, const std::string& tmsi) {
   // Clear all identity types first
   ClearIe();
 

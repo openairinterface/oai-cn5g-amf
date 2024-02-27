@@ -44,7 +44,9 @@ class _5gsMobileIdentity : public Type6NasIe {
 
   // Common
   void ClearIe();
+
   uint8_t GetTypeOfIdentity() const { return type_of_identity_; };
+
   int Encode(uint8_t* buf, int len);
   int Decode(uint8_t* buf, int len, bool is_iei);
 
@@ -79,8 +81,7 @@ class _5gsMobileIdentity : public Type6NasIe {
   int Decode5gSTmsi(uint8_t* buf, int len);
 
   void Set5gSTmsi(
-      const uint16_t amf_set_id, const uint8_t amf_pointer,
-      const std::string& tmsi);
+      uint16_t amf_set_id, uint8_t amf_pointer, const std::string& tmsi);
   bool Get5gSTmsi(
       uint16_t& amf_set_id, uint8_t& amf_pointer, std::string& tmsi) const;
 

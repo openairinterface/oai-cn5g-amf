@@ -35,7 +35,7 @@ UplinkDataStatus::UplinkDataStatus() : Type4NasIe(kIeiUplinkDataStatus) {
 }
 
 //------------------------------------------------------------------------------
-UplinkDataStatus::UplinkDataStatus(const uint16_t& value)
+UplinkDataStatus::UplinkDataStatus(uint16_t value)
     : Type4NasIe(kIeiUplinkDataStatus) {
   value_ = value;
   SetLengthIndicator(2);

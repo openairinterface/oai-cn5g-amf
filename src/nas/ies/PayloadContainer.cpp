@@ -74,7 +74,7 @@ PayloadContainer::PayloadContainer(
 
 //------------------------------------------------------------------------------
 PayloadContainer::PayloadContainer(
-    const uint8_t iei, const std::vector<PayloadContainerEntry>& contents)
+    uint8_t iei, const std::vector<PayloadContainerEntry>& contents)
     : Type6NasIe(iei) {
   content_ = std::nullopt;
 

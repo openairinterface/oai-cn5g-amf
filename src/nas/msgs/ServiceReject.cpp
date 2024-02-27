@@ -63,7 +63,7 @@ void ServiceReject::SetT3346Value(uint8_t value) {
 }
 
 //------------------------------------------------------------------------------
-void ServiceReject::SetEapMessage(bstring eap) {
+void ServiceReject::SetEapMessage(const bstring& eap) {
   ie_eap_message_ = std::make_optional<EapMessage>(kIeiEapMessage, eap);
 }
 

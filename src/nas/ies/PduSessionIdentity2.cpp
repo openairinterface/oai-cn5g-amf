@@ -31,7 +31,7 @@ PduSessionIdentity2::PduSessionIdentity2(uint8_t iei) : Type3NasIe(iei) {
 }
 
 //------------------------------------------------------------------------------
-PduSessionIdentity2::PduSessionIdentity2(const uint8_t iei, uint8_t value)
+PduSessionIdentity2::PduSessionIdentity2(uint8_t iei, uint8_t value)
     : Type3NasIe(iei) {
   value_ = value;
 }

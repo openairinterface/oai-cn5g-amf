@@ -34,7 +34,7 @@ constexpr uint8_t kIntegrityProtectedWithNewSecurityContext            = 0b0011;
 constexpr uint8_t kIntegrityProtectedAndCipheredWithNewSecurityContext = 0b0100;
 
 // Message Types for 5GS Mobility Management
-constexpr uint8_t k5gsMobilityManagementMessageTypeUnknownknown = 0b10000000;
+constexpr uint8_t k5gsMobilityManagementMessageTypeUnknown = 0b10000000;
 
 constexpr uint8_t kRegistrationRequest                = 0b01000001;
 constexpr uint8_t kRegistrationAccept                 = 0b01000010;

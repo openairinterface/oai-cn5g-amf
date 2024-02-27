@@ -44,7 +44,8 @@ void RejectedNssai::SetRejectedSNssais(
 }
 
 //------------------------------------------------------------------------------
-void RejectedNssai::GetRejectedSNssais(std::vector<RejectedSNssai>& nssais) {
+void RejectedNssai::GetRejectedSNssais(
+    std::vector<RejectedSNssai>& nssais) const {
   nssais = rejected_nssais_;
 }
 //------------------------------------------------------------------------------

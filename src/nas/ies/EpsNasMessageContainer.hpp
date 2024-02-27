@@ -31,7 +31,7 @@ namespace nas {
 class EpsNasMessageContainer : Type6NasIe {
  public:
   EpsNasMessageContainer();
-  EpsNasMessageContainer(bstring value);
+  EpsNasMessageContainer(const bstring& value);
   ~EpsNasMessageContainer();
 
   static std::string GetIeName() { return kEpsNasMessageContainerIeName; }

@@ -32,7 +32,7 @@ Type3NasIe::Type3NasIe() : NasIe() {
 }
 
 //------------------------------------------------------------------------------
-Type3NasIe::Type3NasIe(const uint8_t& iei) : NasIe() {
+Type3NasIe::Type3NasIe(uint8_t iei) : NasIe() {
   iei_ = std::optional<uint8_t>(iei);
 }
 
@@ -40,7 +40,7 @@ Type3NasIe::Type3NasIe(const uint8_t& iei) : NasIe() {
 Type3NasIe::~Type3NasIe() {}
 
 //------------------------------------------------------------------------------
-void Type3NasIe::SetIei(const uint8_t& iei) {
+void Type3NasIe::SetIei(uint8_t iei) {
   iei_ = std::optional<uint8_t>(iei);
 }
 

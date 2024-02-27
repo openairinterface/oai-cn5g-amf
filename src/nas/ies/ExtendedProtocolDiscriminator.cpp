@@ -28,7 +28,7 @@
 using namespace nas;
 
 //------------------------------------------------------------------------------
-ExtendedProtocolDiscriminator::ExtendedProtocolDiscriminator(const uint8_t& epd)
+ExtendedProtocolDiscriminator::ExtendedProtocolDiscriminator(uint8_t epd)
     : NasIe(), epd_(epd) {}
 
 //------------------------------------------------------------------------------
@@ -46,7 +46,7 @@ bool ExtendedProtocolDiscriminator::Validate(const int& len) const {
 }
 
 //------------------------------------------------------------------------------
-void ExtendedProtocolDiscriminator::Set(const uint8_t& epd) {
+void ExtendedProtocolDiscriminator::Set(uint8_t epd) {
   epd_ = epd;
 }
 

@@ -137,7 +137,7 @@ void RegistrationAccept::SetAllowedNssai(
 void RegistrationAccept::SetRejectedNssai(
     const std::vector<RejectedSNssai>& nssai) {
   if (nssai.size() > 0) {
-    ie_rejected_nssai_ = std::make_optional<RejectedNssai>(0x11);
+    ie_rejected_nssai_ = std::make_optional<RejectedNssai>(kIeiRejectedNssaiRa);
     ie_rejected_nssai_.value().SetRejectedSNssais(nssai);
   }
 }

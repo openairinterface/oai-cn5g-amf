@@ -45,8 +45,7 @@ UeNetworkCapability::UeNetworkCapability(uint8_t iei) : Type4NasIe(iei) {
 UeNetworkCapability::~UeNetworkCapability() {}
 
 //------------------------------------------------------------------------------
-UeNetworkCapability::UeNetworkCapability(
-    const uint8_t iei, uint8_t eea, uint8_t eia)
+UeNetworkCapability::UeNetworkCapability(uint8_t iei, uint8_t eea, uint8_t eia)
     : Type4NasIe(iei) {
   eea_ = eea;
   eia_ = eia;

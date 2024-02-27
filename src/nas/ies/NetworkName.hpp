@@ -36,20 +36,20 @@ namespace nas {
 class NetworkName {
  public:
   NetworkName();
-  NetworkName(const uint8_t& iei);
+  NetworkName(uint8_t iei);
   ~NetworkName();
 
   static std::string GetIeName() { return kNetworkNameIeName; }
 
-  void SetIei(const uint8_t& iei);
+  void SetIei(uint8_t iei);
 
-  void SetCodingScheme(const uint8_t& value);
+  void SetCodingScheme(uint8_t value);
   // TODO: getCodingScheme
 
-  void SetAddCI(const uint8_t& value);
+  void SetAddCI(uint8_t value);
   // TODO: getAddCI
 
-  void SetNumberOfSpareBits(const uint8_t& value);
+  void SetNumberOfSpareBits(uint8_t value);
   // TODO: getNumberOfSpareBits
 
   void SetTextString(const std::string& str);

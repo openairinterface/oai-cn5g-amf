@@ -29,15 +29,15 @@ namespace nas {
 class Type6NasIe : public NasIe {
  public:
   Type6NasIe();
-  Type6NasIe(const uint8_t& iei);
+  Type6NasIe(uint8_t iei);
   virtual ~Type6NasIe();
 
   bool Validate(const int& len) const override;
   bool ValidateHeader(const int& len) const;
 
-  void SetIei(const uint8_t& iei);
+  void SetIei(uint8_t iei);
 
-  void SetLengthIndicator(const uint16_t& li);
+  void SetLengthIndicator(uint16_t li);
   void GetLengthIndicator(uint16_t& li) const;
   uint16_t GetLengthIndicator() const;
 

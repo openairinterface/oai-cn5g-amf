@@ -39,12 +39,15 @@ class _5gsUpdateType : public Type4NasIe {
   static std::string GetIeName() { return k5gsUpdateTypeIeName; }
 
   void SetEpsPnbCiot(uint8_t value);
-  void Set5gsPnbCiot(uint8_t value);
-  void SetNgRan(uint8_t value);
-  void SetSms(uint8_t value);
   uint8_t GetEpsPnbCiot() const;
+
+  void Set5gsPnbCiot(uint8_t value);
   uint8_t Get5gsPnbCiot() const;
+
+  void SetNgRan(uint8_t value);
   bool GetNgRan() const;
+
+  void SetSms(uint8_t value);
   bool GetSms() const;
 
   int Encode(uint8_t* buf, int len);

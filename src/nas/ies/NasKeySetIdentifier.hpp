@@ -31,24 +31,22 @@ namespace nas {
 class NasKeySetIdentifier : public Type1NasIe {
  public:
   NasKeySetIdentifier();
-  NasKeySetIdentifier(
-      const uint8_t& iei, const bool& tsc, const uint8_t& key_id);
-  NasKeySetIdentifier(
-      const bool& tsc,
-      const uint8_t& key_id);  // Default: low position
+  NasKeySetIdentifier(uint8_t iei, bool tsc, uint8_t key_id);
+  NasKeySetIdentifier(bool tsc,
+                      uint8_t key_id);  // Default: low position
   ~NasKeySetIdentifier();
 
   static std::string GetIeName() { return kNasKeySetIdentifierName; }
 
-  void Set(const bool& high_pos);
-  // void Set(const bool& tsc, const uint8_t& key_id);
-  // void Set(const bool& tsc, const uint8_t& key_id, const uint8_t& iei);
+  void Set(bool high_pos);
+  // void Set(bool tsc, uint8_t key_id);
+  // void Set(bool tsc, uint8_t key_id, uint8_t iei);
   void Get(bool& tsc, uint8_t& key_id);
 
-  void SetTypeOfSecurityContext(const bool& type);
+  void SetTypeOfSecurityContext(bool type);
   bool GetTypeOfSecurityContext() const;
 
-  void SetNasKeyIdentifier(const uint8_t& id);
+  void SetNasKeyIdentifier(uint8_t id);
   uint8_t GetNasKeyIdentifier() const;
 
  private:

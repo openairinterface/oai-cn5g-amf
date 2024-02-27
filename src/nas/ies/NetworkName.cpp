@@ -44,7 +44,7 @@ NetworkName::NetworkName() {
   text_string_          = nullptr;
 }
 //------------------------------------------------------------------------------
-NetworkName::NetworkName(const uint8_t& iei) {
+NetworkName::NetworkName(uint8_t iei) {
   iei_                  = iei;
   length_               = kNetworkNameMinimumLength;
   coding_scheme_        = 0;
@@ -59,21 +59,21 @@ NetworkName::~NetworkName() {
 }
 
 //------------------------------------------------------------------------------
-void NetworkName::SetIei(const uint8_t& iei) {
+void NetworkName::SetIei(uint8_t iei) {
   iei_ = iei;
 }
 //------------------------------------------------------------------------------
-void NetworkName::NetworkName::SetCodingScheme(const uint8_t& value) {
+void NetworkName::NetworkName::SetCodingScheme(uint8_t value) {
   coding_scheme_ = value & 0x07;
 }
 
 //------------------------------------------------------------------------------
-void NetworkName::SetAddCI(const uint8_t& value) {
+void NetworkName::SetAddCI(uint8_t value) {
   add_ci_ = value & 0x01;
 }
 
 //------------------------------------------------------------------------------
-void NetworkName::SetNumberOfSpareBits(const uint8_t& value) {
+void NetworkName::SetNumberOfSpareBits(uint8_t value) {
   number_of_spare_bits_ = value & 0x07;
 }
 

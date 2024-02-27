@@ -32,7 +32,7 @@ Type2NasIeFormatT::Type2NasIeFormatT() : NasIe() {
 }
 
 //------------------------------------------------------------------------------
-Type2NasIeFormatT::Type2NasIeFormatT(const uint8_t& iei) : NasIe() {
+Type2NasIeFormatT::Type2NasIeFormatT(uint8_t iei) : NasIe() {
   iei_ = iei;
 }
 

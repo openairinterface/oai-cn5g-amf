@@ -29,7 +29,7 @@ Type4NasIe::Type4NasIe() : NasIe() {
 }
 
 //------------------------------------------------------------------------------
-Type4NasIe::Type4NasIe(const uint8_t& iei) : NasIe() {
+Type4NasIe::Type4NasIe(uint8_t iei) : NasIe() {
   iei_ = std::optional<uint8_t>(iei);
 }
 
@@ -37,7 +37,7 @@ Type4NasIe::Type4NasIe(const uint8_t& iei) : NasIe() {
 Type4NasIe::~Type4NasIe() {}
 
 //------------------------------------------------------------------------------
-void Type4NasIe::SetIei(const uint8_t& iei) {
+void Type4NasIe::SetIei(uint8_t iei) {
   iei_ = std::optional<uint8_t>(iei);
 }
 
@@ -46,7 +46,7 @@ void Type4NasIe::GetIei(std::optional<uint8_t>& iei) const {
   iei = iei_;
 }
 //------------------------------------------------------------------------------
-void Type4NasIe::SetLengthIndicator(const uint8_t& li) {
+void Type4NasIe::SetLengthIndicator(uint8_t li) {
   li_ = li;
 }
 

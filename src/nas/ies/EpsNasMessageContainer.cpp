@@ -33,7 +33,7 @@ EpsNasMessageContainer::EpsNasMessageContainer()
     : Type6NasIe(kIeiEpsNasMessageContainer), value_() {}
 
 //------------------------------------------------------------------------------
-EpsNasMessageContainer::EpsNasMessageContainer(bstring value)
+EpsNasMessageContainer::EpsNasMessageContainer(const bstring& value)
     : Type6NasIe(kIeiEpsNasMessageContainer) {
   value_ = bstrcpy(value);
   SetLengthIndicator(blength(value_));

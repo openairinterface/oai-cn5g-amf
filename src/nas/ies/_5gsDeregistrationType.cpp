@@ -73,7 +73,7 @@ void _5gsDeregistrationType::GetValue() {
 }
 
 //------------------------------------------------------------------------------
-void _5gsDeregistrationType::Set(_5gs_deregistration_type_t type) {
+void _5gsDeregistrationType::Set(const _5gs_deregistration_type_t& type) {
   u1.b                           = 0;
   u1.bf.switch_off               = type.switch_off;
   u1.bf.re_registration_required = type.re_registration_required;

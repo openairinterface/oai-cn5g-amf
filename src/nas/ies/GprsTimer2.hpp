@@ -32,7 +32,7 @@ namespace nas {
 class GprsTimer2 : public Type4NasIe {
  public:
   GprsTimer2(uint8_t iei);
-  GprsTimer2(const uint8_t iei, uint8_t value);
+  GprsTimer2(uint8_t iei, uint8_t value);
   ~GprsTimer2();
 
   static std::string GetIeName() { return kGprsTimer2IeName; }

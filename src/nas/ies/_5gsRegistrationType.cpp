@@ -31,8 +31,7 @@ _5gsRegistrationType::_5gsRegistrationType()
     : Type1NasIeFormatTv(), follow_on_req_(false), reg_type_(0) {}
 
 //------------------------------------------------------------------------------
-_5gsRegistrationType::_5gsRegistrationType(
-    const bool& follow_on_req, const uint8_t& type)
+_5gsRegistrationType::_5gsRegistrationType(bool follow_on_req, uint8_t type)
     : Type1NasIeFormatTv(), follow_on_req_(follow_on_req) {
   if (ValidateValue(follow_on_req, type)) reg_type_ = type;
   SetValue();
@@ -40,7 +39,7 @@ _5gsRegistrationType::_5gsRegistrationType(
 
 //------------------------------------------------------------------------------
 _5gsRegistrationType::_5gsRegistrationType(
-    const uint8_t& iei, const bool& follow_on_req, const uint8_t& type)
+    uint8_t iei, bool follow_on_req, uint8_t type)
     : Type1NasIeFormatTv(iei) {
   follow_on_req_ = follow_on_req;
   if (ValidateValue(follow_on_req, type)) reg_type_ = type;
@@ -65,15 +64,13 @@ void _5gsRegistrationType::GetValue() {
 }
 
 //------------------------------------------------------------------------------
-bool _5gsRegistrationType::ValidateValue(
-    const bool& follow_on_req, const uint8_t& type) {
+bool _5gsRegistrationType::ValidateValue(bool follow_on_req, uint8_t type) {
   if (type > k5gsMobileIdentityMaxValue) return false;
   return true;
 }
 
 //------------------------------------------------------------------------------
-void _5gsRegistrationType::Set(
-    const bool& follow_on_req, const uint8_t& type, const uint8_t& iei) {
+void _5gsRegistrationType::Set(bool follow_on_req, uint8_t type, uint8_t iei) {
   follow_on_req_ = follow_on_req;
   if (ValidateValue(follow_on_req, type)) reg_type_ = type;
   SetValue();
@@ -81,7 +78,7 @@ void _5gsRegistrationType::Set(
 }
 
 //------------------------------------------------------------------------------
-void _5gsRegistrationType::Set(const bool& follow_on_req, const uint8_t& type) {
+void _5gsRegistrationType::Set(bool follow_on_req, uint8_t type) {
   follow_on_req_ = follow_on_req;
   if (ValidateValue(follow_on_req, type)) reg_type_ = type;
   SetValue();

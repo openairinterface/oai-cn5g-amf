@@ -35,7 +35,7 @@ NasMessageContainer::NasMessageContainer()
 }
 
 //------------------------------------------------------------------------------
-NasMessageContainer::NasMessageContainer(bstring value)
+NasMessageContainer::NasMessageContainer(const bstring& value)
     : Type6NasIe(kIeiNasMessageContainer) {
   value_ = bstrcpy(value);
   SetLengthIndicator(blength(value));

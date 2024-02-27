@@ -50,7 +50,7 @@ _5gsTrackingAreaIdentity::_5gsTrackingAreaIdentity(
 _5gsTrackingAreaIdentity::~_5gsTrackingAreaIdentity() {}
 
 //------------------------------------------------------------------------------
-void _5gsTrackingAreaIdentity::SetTac(const uint32_t& value) {
+void _5gsTrackingAreaIdentity::SetTac(uint32_t value) {
   tac_ = value & 0x0fff;
 }
 

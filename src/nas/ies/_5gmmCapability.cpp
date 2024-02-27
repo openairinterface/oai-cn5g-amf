@@ -29,7 +29,7 @@
 using namespace nas;
 
 //------------------------------------------------------------------------------
-_5gmmCapability::_5gmmCapability(const uint8_t iei, uint8_t octet3)
+_5gmmCapability::_5gmmCapability(uint8_t iei, uint8_t octet3)
     : Type4NasIe(kIei5gmmCapability) {
   octet3_ = octet3;
   octet4_ = std::nullopt;
@@ -48,7 +48,7 @@ _5gmmCapability::_5gmmCapability() : Type4NasIe(kIei5gmmCapability) {
 _5gmmCapability::~_5gmmCapability() {}
 
 //------------------------------------------------------------------------------
-void _5gmmCapability::SetOctet3(const uint8_t iei, uint8_t octet3) {
+void _5gmmCapability::SetOctet3(uint8_t iei, uint8_t octet3) {
   SetIei(iei);
   SetLengthIndicator(1);
   octet3_ = octet3;
