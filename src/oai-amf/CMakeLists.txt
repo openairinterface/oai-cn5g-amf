@@ -325,7 +325,6 @@ include_directories(${SRC_TOP_DIR}/itti/msgs)
 include_directories(${SRC_TOP_DIR}/common)
 include_directories(${SRC_TOP_DIR}/common/unicode)
 include_directories(${SRC_TOP_DIR}/utils)
-include_directories(${SRC_TOP_DIR}/utils/bstr)
 include_directories(${SRC_TOP_DIR}/contexts)
 include_directories(${SRC_TOP_DIR}/nas/ies)
 include_directories(${SRC_TOP_DIR}/nas/common)
@@ -346,6 +345,7 @@ include_directories(${SRC_TOP_DIR}/${MOUNTED_COMMON}/logger)
 include_directories(${SRC_TOP_DIR}/${MOUNTED_COMMON}/config)
 include_directories(${SRC_TOP_DIR}/${MOUNTED_COMMON}/common)
 include_directories(${SRC_TOP_DIR}/${MOUNTED_COMMON}/utils)
+include_directories(${SRC_TOP_DIR}/${MOUNTED_COMMON}/utils/bstr)
 
 add_executable(amf
   ${SRC_TOP_DIR}/oai-amf/main.cpp

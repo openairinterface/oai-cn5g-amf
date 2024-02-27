@@ -24,7 +24,7 @@
 #include <vector>
 
 #include "3gpp_24.501.hpp"
-#include "amf.hpp"
+//#include "amf.hpp"
 #include "logger.hpp"
 
 using namespace nas;
