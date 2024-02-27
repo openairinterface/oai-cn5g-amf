@@ -44,6 +44,7 @@ class NetworkSlicingIndication : Type1NasIeFormatTv {
 
   void SetValue();
   void GetValue();
+
   void SetDcni(bool value);
   bool GetDcni() const;
 

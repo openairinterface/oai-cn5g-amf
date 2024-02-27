@@ -68,9 +68,9 @@ class DeregistrationRequest : public NasMmPlainHeader {
   // TODO: Get
 
  public:
-  _5gsDeregistrationType ie_deregistrationtype;  // Mandatory
-  NasKeySetIdentifier ie_ng_ksi;                 // Mandatory
-  _5gsMobileIdentity ie_5gs_mobility_id;         // Mandatory
+  _5gsDeregistrationType ie_deregistration_type_;  // Mandatory
+  NasKeySetIdentifier ie_ng_ksi_;                  // Mandatory
+  _5gsMobileIdentity ie_5gs_mobility_id_;          // Mandatory
 };
 
 }  // namespace nas

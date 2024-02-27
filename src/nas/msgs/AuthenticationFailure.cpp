@@ -28,7 +28,7 @@ using namespace nas;
 //------------------------------------------------------------------------------
 AuthenticationFailure::AuthenticationFailure()
     : NasMmPlainHeader(k5gsMobilityManagementMessages, kAuthenticationFailure) {
-  ie_authentication_failure_parameter = std::nullopt;
+  ie_authentication_failure_parameter_ = std::nullopt;
 }
 
 //------------------------------------------------------------------------------
@@ -41,25 +41,25 @@ void AuthenticationFailure::SetHeader(uint8_t security_header_type) {
 
 //------------------------------------------------------------------------------
 void AuthenticationFailure::Set5gmmCause(uint8_t value) {
-  ie_5gmm_cause.SetValue(value);
+  ie_5gmm_cause_.SetValue(value);
 }
 
 //------------------------------------------------------------------------------
 uint8_t AuthenticationFailure::Get5gmmCause() const {
-  return ie_5gmm_cause.GetValue();
+  return ie_5gmm_cause_.GetValue();
 }
 
 /*
 //------------------------------------------------------------------------------
 void AuthenticationFailure::SetAuthenticationFailureParameter(
     const uint8_t (&value)[kAuthenticationFailureParameterContentLength]) {
-  ie_authentication_failure_parameter =
+  ie_authentication_failure_parameter_ =
       std::make_optional<AuthenticationFailureParameter>(value);
 }
 bool AuthenticationFailure::GetAuthenticationFailureParameter(uint8_t
 (&value)[kAuthenticationFailureParameterContentLength]) const{ if
-(ie_authentication_failure_parameter.has_value()) {
-    ie_authentication_failure_parameter.value().GetValue(value);
+(ie_authentication_failure_parameter_.has_value()) {
+    ie_authentication_failure_parameter_.value().GetValue(value);
     return true;
   } else {
     return false;
@@ -70,15 +70,15 @@ bool AuthenticationFailure::GetAuthenticationFailureParameter(uint8_t
 //------------------------------------------------------------------------------
 void AuthenticationFailure::SetAuthenticationFailureParameter(
     const bstring& value) {
-  ie_authentication_failure_parameter =
+  ie_authentication_failure_parameter_ =
       std::make_optional<AuthenticationFailureParameter>(value);
 }
 
 //------------------------------------------------------------------------------
 bool AuthenticationFailure::GetAuthenticationFailureParameter(
     bstring& value) const {
-  if (ie_authentication_failure_parameter.has_value()) {
-    ie_authentication_failure_parameter.value().GetValue(value);
+  if (ie_authentication_failure_parameter_.has_value()) {
+    ie_authentication_failure_parameter_.value().GetValue(value);
     return true;
   } else {
     return false;
@@ -100,12 +100,12 @@ int AuthenticationFailure::Encode(uint8_t* buf, int len) {
   encoded_size += encoded_ie_size;
 
   if ((encoded_ie_size = NasHelper::Encode(
-           ie_5gmm_cause, buf, len, encoded_size)) == KEncodeDecodeError) {
+           ie_5gmm_cause_, buf, len, encoded_size)) == KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
 
   if ((encoded_ie_size = NasHelper::Encode(
-           ie_authentication_failure_parameter, buf, len, encoded_size)) ==
+           ie_authentication_failure_parameter_, buf, len, encoded_size)) ==
       KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
@@ -132,7 +132,7 @@ int AuthenticationFailure::Decode(uint8_t* buf, int len) {
 
   // 5GMM Cause
   if ((decoded_ie_size =
-           NasHelper::Decode(ie_5gmm_cause, buf, len, decoded_size, false)) ==
+           NasHelper::Decode(ie_5gmm_cause_, buf, len, decoded_size, false)) ==
       KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
@@ -147,7 +147,7 @@ int AuthenticationFailure::Decode(uint8_t* buf, int len) {
     switch (octet) {
       case kIeiAuthenticationFailureParameter: {
         if ((decoded_ie_size = NasHelper::Decode(
-                 ie_authentication_failure_parameter, buf, len, decoded_size,
+                 ie_authentication_failure_parameter_, buf, len, decoded_size,
                  true)) == KEncodeDecodeError) {
           return KEncodeDecodeError;
         }

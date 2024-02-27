@@ -44,49 +44,49 @@ void DeregistrationRequestUeTerminated::SetHeader(
 //------------------------------------------------------------------------------
 void DeregistrationRequestUeTerminated::SetDeregistrationType(
     uint8_t dereg_type) {
-  ie_deregistration_type.Set(dereg_type);
+  ie_deregistration_type_.Set(dereg_type);
 }
 
 //------------------------------------------------------------------------------
 void DeregistrationRequestUeTerminated::SetDeregistrationType(
     const _5gs_deregistration_type_t& type) {
-  ie_deregistration_type.Set(type);
+  ie_deregistration_type_.Set(type);
 }
 
 //------------------------------------------------------------------------------
 void DeregistrationRequestUeTerminated::Set5gmmCause(uint8_t value) {
-  ie_5gmm_cause = std::make_optional<_5gmmCause>(kIei5gmmCause, value);
+  ie_5gmm_cause_ = std::make_optional<_5gmmCause>(kIei5gmmCause, value);
 }
 
 //------------------------------------------------------------------------------
 std::optional<_5gmmCause> DeregistrationRequestUeTerminated::Get5gmmCause()
     const {
-  return ie_5gmm_cause;
+  return ie_5gmm_cause_;
 }
 
 //------------------------------------------------------------------------------
 void DeregistrationRequestUeTerminated::SetT3346Value(uint8_t value) {
-  ie_t3346_value = std::make_optional<GprsTimer2>(kT3346Value, value);
+  ie_t3346_value_ = std::make_optional<GprsTimer2>(kT3346Value, value);
 }
 
 //------------------------------------------------------------------------------
 std::optional<GprsTimer2> DeregistrationRequestUeTerminated::GetT3346Value()
     const {
-  return ie_t3346_value;
+  return ie_t3346_value_;
 }
 
 //------------------------------------------------------------------------------
 void DeregistrationRequestUeTerminated::SetRejectedNssai(
     const std::vector<RejectedSNssai>& nssai) {
   if (nssai.size() > 0) {
-    ie_rejected_nssai = std::make_optional<RejectedNssai>(kIeiRejectedNssaiDr);
-    ie_rejected_nssai.value().SetRejectedSNssais(nssai);
+    ie_rejected_nssai_ = std::make_optional<RejectedNssai>(kIeiRejectedNssaiDr);
+    ie_rejected_nssai_.value().SetRejectedSNssais(nssai);
   }
 }
 
 std::optional<RejectedNssai>
 DeregistrationRequestUeTerminated::GetRejectedNssai() const {
-  return ie_rejected_nssai;
+  return ie_rejected_nssai_;
 }
 
 //------------------------------------------------------------------------------
@@ -106,7 +106,7 @@ int DeregistrationRequestUeTerminated::Encode(uint8_t* buf, int len) {
 
   // De-registration Type and Spare half octet
   encoded_ie_size =
-      NasHelper::Encode(ie_deregistration_type, buf, len, encoded_size);
+      NasHelper::Encode(ie_deregistration_type_, buf, len, encoded_size);
   // only 1/2 octet
   if ((encoded_ie_size == KEncodeDecodeError) or (encoded_ie_size != 0)) {
     return KEncodeDecodeError;
@@ -117,19 +117,19 @@ int DeregistrationRequestUeTerminated::Encode(uint8_t* buf, int len) {
 
   // 5GMM Cause
   if ((encoded_ie_size = NasHelper::Encode(
-           ie_5gmm_cause, buf, len, encoded_size)) == KEncodeDecodeError) {
+           ie_5gmm_cause_, buf, len, encoded_size)) == KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
 
   // T3346 value
   if ((encoded_ie_size = NasHelper::Encode(
-           ie_t3346_value, buf, len, encoded_size)) == KEncodeDecodeError) {
+           ie_t3346_value_, buf, len, encoded_size)) == KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
 
   // Rejected NSSAI
   if ((encoded_ie_size = NasHelper::Encode(
-           ie_rejected_nssai, buf, len, encoded_size)) == KEncodeDecodeError) {
+           ie_rejected_nssai_, buf, len, encoded_size)) == KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
   // TODO: CagInformationList
@@ -157,7 +157,7 @@ int DeregistrationRequestUeTerminated::Decode(uint8_t* buf, int len) {
 
   // De-registration Type +  Spare half octet
   if ((decoded_ie_size = NasHelper::Decode(
-           ie_deregistration_type, buf, len, decoded_size, false)) ==
+           ie_deregistration_type_, buf, len, decoded_size, false)) ==
       KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
@@ -174,7 +174,7 @@ int DeregistrationRequestUeTerminated::Decode(uint8_t* buf, int len) {
       case kIei5gmmCause: {
         Logger::nas_mm().debug("Decoding IEI 0x%x", kIei5gmmCause);
         if ((decoded_ie_size = NasHelper::Decode(
-                 ie_5gmm_cause, buf, len, decoded_size, true)) ==
+                 ie_5gmm_cause_, buf, len, decoded_size, true)) ==
             KEncodeDecodeError) {
           return KEncodeDecodeError;
         }
@@ -185,7 +185,7 @@ int DeregistrationRequestUeTerminated::Decode(uint8_t* buf, int len) {
       case kIeiGprsTimer2T3346: {
         Logger::nas_mm().debug("Decoding IEI 0x%x", kIeiGprsTimer2T3346);
         if ((decoded_ie_size = NasHelper::Decode(
-                 ie_t3346_value, kIeiGprsTimer2T3346, buf, len, decoded_size,
+                 ie_t3346_value_, kIeiGprsTimer2T3346, buf, len, decoded_size,
                  true)) == KEncodeDecodeError) {
           return KEncodeDecodeError;
         }
@@ -196,8 +196,8 @@ int DeregistrationRequestUeTerminated::Decode(uint8_t* buf, int len) {
       case kIeiRejectedNssaiDr: {
         Logger::nas_mm().debug("Decoding IEI 0x%x", kIeiRejectedNssaiDr);
         if ((decoded_ie_size = NasHelper::Decode(
-                 ie_rejected_nssai, kIeiRejectedNssaiDr, buf, len, decoded_size,
-                 true)) == KEncodeDecodeError) {
+                 ie_rejected_nssai_, kIeiRejectedNssaiDr, buf, len,
+                 decoded_size, true)) == KEncodeDecodeError) {
           return KEncodeDecodeError;
         }
         DECODE_U8_VALUE(buf + decoded_size, octet);

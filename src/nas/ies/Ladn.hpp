@@ -35,6 +35,7 @@ class Ladn {
 
   void Set(const Dnn& value);
   void Set(const _5gsTrackingAreaIdList& value);
+
   uint32_t GetLength() const;
 
   int Encode(uint8_t* buf, int len);

@@ -43,7 +43,7 @@ class RegistrationComplete : public NasMmPlainHeader {
 
  public:
   std::optional<SorTransparentContainer>
-      ie_sor_transparent_container;  // Optional
+      ie_sor_transparent_container_;  // Optional
 };
 
 }  // namespace nas

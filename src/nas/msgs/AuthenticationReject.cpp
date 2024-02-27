@@ -28,7 +28,7 @@ using namespace nas;
 //------------------------------------------------------------------------------
 AuthenticationReject::AuthenticationReject()
     : NasMmPlainHeader(k5gsMobilityManagementMessages, kAuthenticationReject) {
-  ie_eap_message = std::nullopt;
+  ie_eap_message_ = std::nullopt;
 }
 
 //------------------------------------------------------------------------------
@@ -41,7 +41,7 @@ void AuthenticationReject::SetHeader(uint8_t security_header_type) {
 
 //------------------------------------------------------------------------------
 void AuthenticationReject::SetEapMessage(const bstring& eap) {
-  ie_eap_message = std::make_optional<EapMessage>(kIeiEapMessage, eap);
+  ie_eap_message_ = std::make_optional<EapMessage>(kIeiEapMessage, eap);
 }
 
 //------------------------------------------------------------------------------
@@ -59,7 +59,7 @@ int AuthenticationReject::Encode(uint8_t* buf, int len) {
   encoded_size += encoded_ie_size;
 
   if ((encoded_ie_size = NasHelper::Encode(
-           ie_eap_message, buf, len, encoded_size)) == KEncodeDecodeError) {
+           ie_eap_message_, buf, len, encoded_size)) == KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
 
@@ -90,7 +90,7 @@ int AuthenticationReject::Decode(uint8_t* buf, int len) {
     switch (octet) {
       case kIeiEapMessage: {
         if ((decoded_ie_size = NasHelper::Decode(
-                 ie_eap_message, buf, len, decoded_size, true)) ==
+                 ie_eap_message_, buf, len, decoded_size, true)) ==
             KEncodeDecodeError) {
           return KEncodeDecodeError;
         }

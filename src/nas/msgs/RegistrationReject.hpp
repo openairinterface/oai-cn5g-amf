@@ -54,11 +54,11 @@ class RegistrationReject : public NasMmPlainHeader {
   // TODO: Get
 
  public:
-  _5gmmCause ie_5gmm_cause;                        // Mandatory
-  std::optional<GprsTimer2> ie_t3346_value;        // Optional
-  std::optional<GprsTimer2> ie_t3502_value;        // Optional
-  std::optional<EapMessage> ie_eap_message;        // Optional
-  std::optional<RejectedNssai> ie_rejected_nssai;  // Release 16.4.1
+  _5gmmCause ie_5gmm_cause_;                        // Mandatory
+  std::optional<GprsTimer2> ie_t3346_value_;        // Optional
+  std::optional<GprsTimer2> ie_t3502_value_;        // Optional
+  std::optional<EapMessage> ie_eap_message_;        // Optional
+  std::optional<RejectedNssai> ie_rejected_nssai_;  // Release 16.4.1
   // TODO: CAG information list (Release 16.14.0)
 };
 

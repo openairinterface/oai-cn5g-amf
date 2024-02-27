@@ -68,19 +68,19 @@ class UlNasTransport : public NasMmPlainHeader {
   // TODO: Get
 
  public:
-  PayloadContainerType ie_payload_container_type;  // Mandatory
-  PayloadContainer ie_payload_container;           // Mandatory
+  PayloadContainerType ie_payload_container_type_;  // Mandatory
+  PayloadContainer ie_payload_container_;           // Mandatory
 
-  std::optional<PduSessionIdentity2> ie_pdu_session_id;            // Optional
-  std::optional<PduSessionIdentity2> ie_old_pdu_session_id;        // Optional
-  std::optional<RequestType> ie_request_type;                      // Optional
-  std::optional<SNssai> ie_s_nssai;                                // Optional
-  std::optional<Dnn> ie_dnn;                                       // Optional
-  std::optional<AdditionalInformation> ie_additional_information;  // Optional
+  std::optional<PduSessionIdentity2> ie_pdu_session_id_;            // Optional
+  std::optional<PduSessionIdentity2> ie_old_pdu_session_id_;        // Optional
+  std::optional<RequestType> ie_request_type_;                      // Optional
+  std::optional<SNssai> ie_s_nssai_;                                // Optional
+  std::optional<Dnn> ie_dnn_;                                       // Optional
+  std::optional<AdditionalInformation> ie_additional_information_;  // Optional
   std::optional<MaPduSessionInformation>
-      ie_ma_pdu_session_information;  // Optional
+      ie_ma_pdu_session_information_;  // Optional
   std::optional<ReleaseAssistanceIndication>
-      ie_release_assistance_indication;  // Optional
+      ie_release_assistance_indication_;  // Optional
 };
 
 }  // namespace nas

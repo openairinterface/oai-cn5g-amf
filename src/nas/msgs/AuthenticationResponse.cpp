@@ -29,8 +29,8 @@ using namespace nas;
 AuthenticationResponse::AuthenticationResponse()
     : NasMmPlainHeader(
           k5gsMobilityManagementMessages, kAuthenticationResponse) {
-  ie_authentication_response_parameter = std::nullopt;
-  ie_eap_message                       = std::nullopt;
+  ie_authentication_response_parameter_ = std::nullopt;
+  ie_eap_message_                       = std::nullopt;
 }
 
 //------------------------------------------------------------------------------
@@ -44,15 +44,15 @@ void AuthenticationResponse::SetHeader(uint8_t security_header_type) {
 //------------------------------------------------------------------------------
 void AuthenticationResponse::SetAuthenticationResponseParameter(
     const bstring& para) {
-  ie_authentication_response_parameter =
+  ie_authentication_response_parameter_ =
       std::make_optional<AuthenticationResponseParameter>(para);
 }
 
 //------------------------------------------------------------------------------
 bool AuthenticationResponse::GetAuthenticationResponseParameter(
     bstring& para) const {
-  if (ie_authentication_response_parameter.has_value()) {
-    ie_authentication_response_parameter.value().GetValue(para);
+  if (ie_authentication_response_parameter_.has_value()) {
+    ie_authentication_response_parameter_.value().GetValue(para);
     return true;
   } else {
     return false;
@@ -61,13 +61,13 @@ bool AuthenticationResponse::GetAuthenticationResponseParameter(
 
 //------------------------------------------------------------------------------
 void AuthenticationResponse::SetEapMessage(const bstring& eap) {
-  ie_eap_message = std::make_optional<EapMessage>(kIeiEapMessage, eap);
+  ie_eap_message_ = std::make_optional<EapMessage>(kIeiEapMessage, eap);
 }
 
 //------------------------------------------------------------------------------
 bool AuthenticationResponse::GetEapMessage(bstring& eap) const {
-  if (ie_eap_message.has_value()) {
-    ie_eap_message.value().GetValue(eap);
+  if (ie_eap_message_.has_value()) {
+    ie_eap_message_.value().GetValue(eap);
     return true;
   } else {
     return false;
@@ -90,13 +90,13 @@ int AuthenticationResponse::Encode(uint8_t* buf, int len) {
   encoded_size += encoded_ie_size;
 
   if ((encoded_ie_size = NasHelper::Encode(
-           ie_authentication_response_parameter, buf, len, encoded_size)) ==
+           ie_authentication_response_parameter_, buf, len, encoded_size)) ==
       KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
 
   if ((encoded_ie_size = NasHelper::Encode(
-           ie_eap_message, buf, len, encoded_size)) == KEncodeDecodeError) {
+           ie_eap_message_, buf, len, encoded_size)) == KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
 
@@ -127,7 +127,7 @@ int AuthenticationResponse::Decode(uint8_t* buf, int len) {
     switch (octet) {
       case kIeiAuthenticationResponseParameter: {
         if ((decoded_ie_size = NasHelper::Decode(
-                 ie_authentication_response_parameter, buf, len, decoded_size,
+                 ie_authentication_response_parameter_, buf, len, decoded_size,
                  true)) == KEncodeDecodeError) {
           return KEncodeDecodeError;
         }
@@ -137,7 +137,7 @@ int AuthenticationResponse::Decode(uint8_t* buf, int len) {
 
       case kIeiEapMessage: {
         if ((decoded_ie_size = NasHelper::Decode(
-                 ie_eap_message, buf, len, decoded_size, true)) ==
+                 ie_eap_message_, buf, len, decoded_size, true)) ==
             KEncodeDecodeError) {
           return KEncodeDecodeError;
         }

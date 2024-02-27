@@ -22,8 +22,8 @@
 #ifndef _5GS_MOBILE_IDENTITY_H_
 #define _5GS_MOBILE_IDENTITY_H_
 
-#include "Type6NasIe.hpp"
 #include "Struct.hpp"
+#include "Type6NasIe.hpp"
 
 constexpr uint8_t k5gsMobileIdentityIe5gGutiLength  = 11;
 constexpr uint8_t k5gsMobileIdentityIe5gSTmsiLength = 7;

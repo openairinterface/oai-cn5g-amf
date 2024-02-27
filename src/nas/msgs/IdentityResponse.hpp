@@ -52,7 +52,7 @@ class IdentityResponse : public NasMmPlainHeader {
   void Set5gSTmsi();
 
  public:
-  _5gsMobileIdentity ie_mobile_identity;  // Mandatory
+  _5gsMobileIdentity ie_mobile_identity_;  // Mandatory
 };
 
 }  // namespace nas

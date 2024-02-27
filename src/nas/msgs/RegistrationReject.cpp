@@ -29,10 +29,10 @@ using namespace nas;
 RegistrationReject::RegistrationReject()
     : NasMmPlainHeader(k5gsMobilityManagementMessages, kRegistrationReject) {
   Logger::nas_mm().debug("Initiating RegistrationReject");
-  ie_t3346_value    = std::nullopt;
-  ie_t3502_value    = std::nullopt;
-  ie_eap_message    = std::nullopt;
-  ie_rejected_nssai = std::nullopt;
+  ie_t3346_value_    = std::nullopt;
+  ie_t3502_value_    = std::nullopt;
+  ie_eap_message_    = std::nullopt;
+  ie_rejected_nssai_ = std::nullopt;
 }
 
 //------------------------------------------------------------------------------
@@ -45,29 +45,29 @@ void RegistrationReject::SetHeader(uint8_t security_header_type) {
 
 //------------------------------------------------------------------------------
 void RegistrationReject::Set5gmmCause(uint8_t value) {
-  ie_5gmm_cause.SetValue(value);
+  ie_5gmm_cause_.SetValue(value);
 }
 
 //------------------------------------------------------------------------------
 void RegistrationReject::SetT3346(uint8_t value) {
-  ie_t3346_value = std::make_optional<GprsTimer2>(kT3346Value, value);
+  ie_t3346_value_ = std::make_optional<GprsTimer2>(kT3346Value, value);
 }
 
 //------------------------------------------------------------------------------
 void RegistrationReject::SetT3502(uint8_t value) {
-  ie_t3502_value = std::make_optional<GprsTimer2>(kT3502Value, value);
+  ie_t3502_value_ = std::make_optional<GprsTimer2>(kT3502Value, value);
 }
 
 //------------------------------------------------------------------------------
 void RegistrationReject::SetEapMessage(const bstring& eap) {
-  ie_eap_message = std::make_optional<EapMessage>(kIeiEapMessage, eap);
+  ie_eap_message_ = std::make_optional<EapMessage>(kIeiEapMessage, eap);
 }
 
 //------------------------------------------------------------------------------
 void RegistrationReject::SetRejectedNssai(
     const std::vector<RejectedSNssai>& nssai) {
-  ie_rejected_nssai = std::make_optional<RejectedNssai>(kIeiRejectedNssaiRr);
-  ie_rejected_nssai.value().SetRejectedSNssais(nssai);
+  ie_rejected_nssai_ = std::make_optional<RejectedNssai>(kIeiRejectedNssaiRr);
+  ie_rejected_nssai_.value().SetRejectedSNssais(nssai);
 }
 
 //------------------------------------------------------------------------------
@@ -85,31 +85,31 @@ int RegistrationReject::Encode(uint8_t* buf, int len) {
 
   // 5GMM Cause
   if ((encoded_ie_size = NasHelper::Encode(
-           ie_5gmm_cause, buf, len, encoded_size)) == KEncodeDecodeError) {
+           ie_5gmm_cause_, buf, len, encoded_size)) == KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
 
   // Timer 3346
   if ((encoded_ie_size = NasHelper::Encode(
-           ie_t3346_value, buf, len, encoded_size)) == KEncodeDecodeError) {
+           ie_t3346_value_, buf, len, encoded_size)) == KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
 
   // Timer T3502
   if ((encoded_ie_size = NasHelper::Encode(
-           ie_t3502_value, buf, len, encoded_size)) == KEncodeDecodeError) {
+           ie_t3502_value_, buf, len, encoded_size)) == KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
 
   // EAP Message
   if ((encoded_ie_size = NasHelper::Encode(
-           ie_eap_message, buf, len, encoded_size)) == KEncodeDecodeError) {
+           ie_eap_message_, buf, len, encoded_size)) == KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
 
   // Rejected NSSAI
   if ((encoded_ie_size = NasHelper::Encode(
-           ie_rejected_nssai, buf, len, encoded_size)) == KEncodeDecodeError) {
+           ie_rejected_nssai_, buf, len, encoded_size)) == KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
 
@@ -134,7 +134,7 @@ int RegistrationReject::Decode(uint8_t* buf, int len) {
 
   // 5GMM Cause
   if ((decoded_ie_size =
-           NasHelper::Decode(ie_5gmm_cause, buf, len, decoded_size, false)) ==
+           NasHelper::Decode(ie_5gmm_cause_, buf, len, decoded_size, false)) ==
       KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
@@ -149,7 +149,7 @@ int RegistrationReject::Decode(uint8_t* buf, int len) {
       case kT3346Value: {
         Logger::nas_mm().debug("Decoding IEI 0x%x", kT3346Value);
         if ((decoded_ie_size = NasHelper::Decode(
-                 ie_t3346_value, kT3346Value, buf, len, decoded_size, true)) ==
+                 ie_t3346_value_, kT3346Value, buf, len, decoded_size, true)) ==
             KEncodeDecodeError) {
           return KEncodeDecodeError;
         }
@@ -160,7 +160,7 @@ int RegistrationReject::Decode(uint8_t* buf, int len) {
       case kT3502Value: {
         Logger::nas_mm().debug("Decoding IEI 0x%x", kT3502Value);
         if ((decoded_ie_size = NasHelper::Decode(
-                 ie_t3502_value, kT3502Value, buf, len, decoded_size, true)) ==
+                 ie_t3502_value_, kT3502Value, buf, len, decoded_size, true)) ==
             KEncodeDecodeError) {
           return KEncodeDecodeError;
         }
@@ -171,7 +171,7 @@ int RegistrationReject::Decode(uint8_t* buf, int len) {
       case kIeiEapMessage: {
         Logger::nas_mm().debug("Decoding IEI 0x%x", kIeiEapMessage);
         if ((decoded_ie_size = NasHelper::Decode(
-                 ie_eap_message, buf, len, decoded_size, true)) ==
+                 ie_eap_message_, buf, len, decoded_size, true)) ==
             KEncodeDecodeError) {
           return KEncodeDecodeError;
         }
@@ -182,8 +182,8 @@ int RegistrationReject::Decode(uint8_t* buf, int len) {
       case kIeiRejectedNssaiRr: {
         Logger::nas_mm().debug("Decoding IEI 0x%x", kIeiRejectedNssaiRr);
         if ((decoded_ie_size = NasHelper::Decode(
-                 ie_rejected_nssai, kIeiRejectedNssaiRr, buf, len, decoded_size,
-                 true)) == KEncodeDecodeError) {
+                 ie_rejected_nssai_, kIeiRejectedNssaiRr, buf, len,
+                 decoded_size, true)) == KEncodeDecodeError) {
           return KEncodeDecodeError;
         }
         DECODE_U8_VALUE(buf + decoded_size, octet);

@@ -28,9 +28,9 @@ using namespace nas;
 //------------------------------------------------------------------------------
 ControlPlaneServiceRequest::ControlPlaneServiceRequest()
     : NasMmPlainHeader(k5gsMobilityManagementMessages, kServiceRequest) {
-  ie_pdu_session_status    = std::nullopt;
-  ie_uplink_data_status    = std::nullopt;
-  ie_nas_message_container = std::nullopt;
+  ie_pdu_session_status_    = std::nullopt;
+  ie_uplink_data_status_    = std::nullopt;
+  ie_nas_message_container_ = std::nullopt;
 }
 
 //------------------------------------------------------------------------------
@@ -43,37 +43,37 @@ void ControlPlaneServiceRequest::SetHeader(uint8_t security_header_type) {
 
 //------------------------------------------------------------------------------
 void ControlPlaneServiceRequest::SetControlPlaneServiceType(uint8_t value) {
-  ie_control_plane_service_type.Set(false, value);  // 4 lower bit
+  ie_control_plane_service_type_.Set(false, value);  // 4 lower bit
 }
 
 //------------------------------------------------------------------------------
 void ControlPlaneServiceRequest::GetControlPlaneServiceType(
     uint8_t& value) const {
-  ie_control_plane_service_type.GetValue(value);
+  ie_control_plane_service_type_.GetValue(value);
 }
 
 //------------------------------------------------------------------------------
 void ControlPlaneServiceRequest::SetNgKsi(uint8_t tsc, uint8_t key_set_id) {
-  ie_ng_ksi.Set(true);  // 4 higher bits
-  ie_ng_ksi.SetNasKeyIdentifier(key_set_id);
-  ie_ng_ksi.SetTypeOfSecurityContext(tsc);
+  ie_ng_ksi_.Set(true);  // 4 higher bits
+  ie_ng_ksi_.SetNasKeyIdentifier(key_set_id);
+  ie_ng_ksi_.SetTypeOfSecurityContext(tsc);
 }
 
 //------------------------------------------------------------------------------
 void ControlPlaneServiceRequest::GetNgKsi(uint8_t& ng_ksi) const {
-  ng_ksi =
-      (ie_ng_ksi.GetTypeOfSecurityContext()) | ie_ng_ksi.GetNasKeyIdentifier();
+  ng_ksi = (ie_ng_ksi_.GetTypeOfSecurityContext()) |
+           ie_ng_ksi_.GetNasKeyIdentifier();
 }
 
 //------------------------------------------------------------------------------
 void ControlPlaneServiceRequest::SetPduSessionStatus(uint16_t value) {
-  ie_pdu_session_status = std::make_optional<PduSessionStatus>(value);
+  ie_pdu_session_status_ = std::make_optional<PduSessionStatus>(value);
 }
 
 //------------------------------------------------------------------------------
 bool ControlPlaneServiceRequest::GetPduSessionStatus(uint16_t& value) const {
-  if (ie_pdu_session_status.has_value()) {
-    value = ie_pdu_session_status.value().GetValue();
+  if (ie_pdu_session_status_.has_value()) {
+    value = ie_pdu_session_status_.value().GetValue();
     return true;
   } else {
     return false;
@@ -83,21 +83,21 @@ bool ControlPlaneServiceRequest::GetPduSessionStatus(uint16_t& value) const {
 //------------------------------------------------------------------------------
 std::optional<uint16_t> ControlPlaneServiceRequest::GetPduSessionStatus()
     const {
-  if (ie_pdu_session_status.has_value()) {
-    return std::optional<uint16_t>(ie_pdu_session_status.value().GetValue());
+  if (ie_pdu_session_status_.has_value()) {
+    return std::optional<uint16_t>(ie_pdu_session_status_.value().GetValue());
   }
   return std::nullopt;
 }
 
 //------------------------------------------------------------------------------
 void ControlPlaneServiceRequest::SetUplinkDataStatus(uint16_t value) {
-  ie_uplink_data_status = std::make_optional<UplinkDataStatus>(value);
+  ie_uplink_data_status_ = std::make_optional<UplinkDataStatus>(value);
 }
 
 //------------------------------------------------------------------------------
 bool ControlPlaneServiceRequest::GetUplinkDataStatus(uint16_t& value) const {
-  if (ie_uplink_data_status.has_value()) {
-    value = ie_uplink_data_status.value().GetValue();
+  if (ie_uplink_data_status_.has_value()) {
+    value = ie_uplink_data_status_.value().GetValue();
     return true;
   } else {
     return false;
@@ -106,13 +106,13 @@ bool ControlPlaneServiceRequest::GetUplinkDataStatus(uint16_t& value) const {
 
 //------------------------------------------------------------------------------
 void ControlPlaneServiceRequest::SetNasMessageContainer(const bstring& value) {
-  ie_nas_message_container = std::make_optional<NasMessageContainer>(value);
+  ie_nas_message_container_ = std::make_optional<NasMessageContainer>(value);
 }
 
 //------------------------------------------------------------------------------
 bool ControlPlaneServiceRequest::GetNasMessageContainer(bstring& nas) const {
-  if (ie_nas_message_container.has_value()) {
-    ie_nas_message_container.value().GetValue(nas);
+  if (ie_nas_message_container_.has_value()) {
+    ie_nas_message_container_.value().GetValue(nas);
     return true;
   } else {
     return false;
@@ -136,13 +136,13 @@ int ControlPlaneServiceRequest::Encode(uint8_t* buf, int len) {
 
   // Control Plane Service Type and ngKSI
   encoded_ie_size =
-      NasHelper::Encode(ie_control_plane_service_type, buf, len, encoded_size);
+      NasHelper::Encode(ie_control_plane_service_type_, buf, len, encoded_size);
   if ((encoded_ie_size == KEncodeDecodeError) or
       (encoded_ie_size != 0)) {  // 1/2 octet
     return KEncodeDecodeError;
   }
   if ((encoded_ie_size = NasHelper::Encode(
-           ie_ng_ksi, buf, len, encoded_size)) == KEncodeDecodeError) {
+           ie_ng_ksi_, buf, len, encoded_size)) == KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
   encoded_size++;  // 1/2 for Control Plane Service Type, 1/2 octet for ngKSI
@@ -154,7 +154,7 @@ int ControlPlaneServiceRequest::Encode(uint8_t* buf, int len) {
 
   // PDU session status
   if ((encoded_ie_size =
-           NasHelper::Encode(ie_pdu_session_status, buf, len, encoded_size)) ==
+           NasHelper::Encode(ie_pdu_session_status_, buf, len, encoded_size)) ==
       KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
@@ -163,14 +163,14 @@ int ControlPlaneServiceRequest::Encode(uint8_t* buf, int len) {
 
   // Uplink data status
   if ((encoded_ie_size =
-           NasHelper::Encode(ie_uplink_data_status, buf, len, encoded_size)) ==
+           NasHelper::Encode(ie_uplink_data_status_, buf, len, encoded_size)) ==
       KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
 
   // NAS message container
   if ((encoded_ie_size = NasHelper::Encode(
-           ie_nas_message_container, buf, len, encoded_size)) ==
+           ie_nas_message_container_, buf, len, encoded_size)) ==
       KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
@@ -199,22 +199,22 @@ int ControlPlaneServiceRequest::Decode(uint8_t* buf, int len) {
 
   // Control Plane service type + ngKSI
   if ((decoded_ie_size = NasHelper::Decode(
-           ie_control_plane_service_type, buf, len, decoded_size, false,
+           ie_control_plane_service_type_, buf, len, decoded_size, false,
            false)) == KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
-  if ((decoded_ie_size =
-           NasHelper::Decode(ie_ng_ksi, buf, len, decoded_size, true, false)) ==
+  if ((decoded_ie_size = NasHelper::Decode(
+           ie_ng_ksi_, buf, len, decoded_size, true, false)) ==
       KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
 
-  decoded_ie_size = ie_control_plane_service_type.Decode(
+  decoded_ie_size = ie_control_plane_service_type_.Decode(
       buf + decoded_size, len - decoded_size, false, false);
   if (decoded_ie_size == KEncodeDecodeError) return KEncodeDecodeError;
 
   decoded_ie_size =
-      ie_ng_ksi.Decode(buf + decoded_size, len - decoded_size, true, false);
+      ie_ng_ksi_.Decode(buf + decoded_size, len - decoded_size, true, false);
   if (decoded_ie_size == KEncodeDecodeError) return KEncodeDecodeError;
   decoded_size++;  // 1/2 for Control Plane Service Type, 1/2 octet for ngKSI
 
@@ -231,7 +231,7 @@ int ControlPlaneServiceRequest::Decode(uint8_t* buf, int len) {
       // TODO: PDU session ID (Optional)
       case kIeiPduSessionStatus: {
         if ((decoded_ie_size = NasHelper::Decode(
-                 ie_pdu_session_status, buf, len, decoded_size, true)) ==
+                 ie_pdu_session_status_, buf, len, decoded_size, true)) ==
             KEncodeDecodeError) {
           return KEncodeDecodeError;
         }
@@ -243,7 +243,7 @@ int ControlPlaneServiceRequest::Decode(uint8_t* buf, int len) {
 
       case kIeiUplinkDataStatus: {
         if ((decoded_ie_size = NasHelper::Decode(
-                 ie_uplink_data_status, buf, len, decoded_size, true)) ==
+                 ie_uplink_data_status_, buf, len, decoded_size, true)) ==
             KEncodeDecodeError) {
           return KEncodeDecodeError;
         }
@@ -253,7 +253,7 @@ int ControlPlaneServiceRequest::Decode(uint8_t* buf, int len) {
 
       case kIeiNasMessageContainer: {
         if ((decoded_ie_size = NasHelper::Decode(
-                 ie_nas_message_container, buf, len, decoded_size, true)) ==
+                 ie_nas_message_container_, buf, len, decoded_size, true)) ==
             KEncodeDecodeError) {
           return KEncodeDecodeError;
         }

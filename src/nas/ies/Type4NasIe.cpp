@@ -120,7 +120,6 @@ int Type4NasIe::Encode(uint8_t* buf, const int& len, int& len_pos) {
   }
   len_pos = encoded_size;
   encoded_size++;  // IE len will be encoded later
-  //  ENCODE_U8(buf + encoded_size, li_, encoded_size);
   return encoded_size;
 }
 

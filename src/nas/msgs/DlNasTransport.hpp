@@ -54,12 +54,12 @@ class DlNasTransport : public NasMmPlainHeader {
   // TODO: Get
 
  public:
-  PayloadContainerType ie_payload_container_type;                  // Mandatory
-  PayloadContainer ie_payload_container;                           // Mandatory
-  std::optional<PduSessionIdentity2> ie_pdu_session_identity_2;    // Optional
-  std::optional<AdditionalInformation> ie_additional_information;  // Optional
-  std::optional<_5gmmCause> ie_5gmm_cause;                         // Optional
-  std::optional<GprsTimer3> ie_back_off_timer_value;               // Optional
+  PayloadContainerType ie_payload_container_type_;                  // Mandatory
+  PayloadContainer ie_payload_container_;                           // Mandatory
+  std::optional<PduSessionIdentity2> ie_pdu_session_identity_2_;    // Optional
+  std::optional<AdditionalInformation> ie_additional_information_;  // Optional
+  std::optional<_5gmmCause> ie_5gmm_cause_;                         // Optional
+  std::optional<GprsTimer3> ie_back_off_timer_value_;               // Optional
 };
 
 }  // namespace nas

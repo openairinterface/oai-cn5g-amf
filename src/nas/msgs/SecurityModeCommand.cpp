@@ -28,12 +28,12 @@ using namespace nas;
 //------------------------------------------------------------------------------
 SecurityModeCommand::SecurityModeCommand()
     : NasMmPlainHeader(k5gsMobilityManagementMessages, kSecurityModeCommand) {
-  ie_imeisv_request                     = std::nullopt;
-  ie_eps_nas_security_algorithms        = std::nullopt;
-  ie_additional_5g_security_information = std::nullopt;
-  ie_eap_message                        = std::nullopt;
-  ie_abba                               = std::nullopt;
-  ie_s1_ue_security_capability          = std::nullopt;
+  ie_imeisv_request_                     = std::nullopt;
+  ie_eps_nas_security_algorithms_        = std::nullopt;
+  ie_additional_5g_security_information_ = std::nullopt;
+  ie_eap_message_                        = std::nullopt;
+  ie_abba_                               = std::nullopt;
+  ie_s1_ue_security_capability_          = std::nullopt;
 }
 
 //------------------------------------------------------------------------------
@@ -47,24 +47,24 @@ void SecurityModeCommand::SetHeader(uint8_t security_header_type) {
 //------------------------------------------------------------------------------
 void SecurityModeCommand::SetNasSecurityAlgorithms(
     uint8_t ciphering, uint8_t integrity) {
-  ie_selected_nas_security_algorithms.Set(ciphering, integrity);
+  ie_selected_nas_security_algorithms_.Set(ciphering, integrity);
 }
 
 //------------------------------------------------------------------------------
 void SecurityModeCommand::SetNgKsi(uint8_t tsc, uint8_t key_set_id) {
-  ie_ng_ksi.SetTypeOfSecurityContext(tsc);
-  ie_ng_ksi.SetNasKeyIdentifier(key_set_id);
+  ie_ng_ksi_.SetTypeOfSecurityContext(tsc);
+  ie_ng_ksi_.SetNasKeyIdentifier(key_set_id);
 }
 
 //------------------------------------------------------------------------------
 void SecurityModeCommand::SetUeSecurityCapability(uint8_t ea, uint8_t ia) {
-  ie_ue_security_capability.Set(ea, ia);
+  ie_ue_security_capability_.Set(ea, ia);
 }
 
 //------------------------------------------------------------------------------
 void SecurityModeCommand::SetUeSecurityCapability(
     uint8_t ea, uint8_t ia, uint8_t eea, uint8_t eia) {
-  ie_ue_security_capability.Set(ea, ia, eea, eia);
+  ie_ue_security_capability_.Set(ea, ia, eea, eia);
 }
 
 //------------------------------------------------------------------------------
@@ -74,47 +74,47 @@ void SecurityModeCommand::SetUeSecurityCapability(
   uint8_t eia = 0;
   if (ue_security_capability.GetEea(eea) &&
       ue_security_capability.GetEia(eia)) {
-    ie_ue_security_capability.Set(
+    ie_ue_security_capability_.Set(
         ue_security_capability.GetEa(), ue_security_capability.GetIa(), eea,
         eia);
   } else {
-    ie_ue_security_capability.Set(
+    ie_ue_security_capability_.Set(
         ue_security_capability.GetEa(), ue_security_capability.GetIa());
   }
 }
 
 //------------------------------------------------------------------------------
 void SecurityModeCommand::SetImeisvRequest(uint8_t value) {
-  ie_imeisv_request = std::make_optional<ImeisvRequest>(value);
+  ie_imeisv_request_ = std::make_optional<ImeisvRequest>(value);
 }
 
 //------------------------------------------------------------------------------
 void SecurityModeCommand::SetEpsNasSecurityAlgorithms(
     uint8_t ciphering, uint8_t integrity) {
-  ie_eps_nas_security_algorithms =
+  ie_eps_nas_security_algorithms_ =
       std::make_optional<EpsNasSecurityAlgorithms>(ciphering, integrity);
 }
 
 //------------------------------------------------------------------------------
 void SecurityModeCommand::SetAdditional5gSecurityInformation(
     bool rinmr, bool hdp) {
-  ie_additional_5g_security_information =
+  ie_additional_5g_security_information_ =
       std::make_optional<Additional5gSecurityInformation>(rinmr, hdp);
 }
 
 //------------------------------------------------------------------------------
 void SecurityModeCommand::SetEapMessage(bstring eap) {
-  ie_eap_message = std::make_optional<EapMessage>(kIeiEapMessage, eap);
+  ie_eap_message_ = std::make_optional<EapMessage>(kIeiEapMessage, eap);
 }
 
 //------------------------------------------------------------------------------
 void SecurityModeCommand::SetAbba(uint8_t length, uint8_t* value) {
-  ie_abba = std::make_optional<Abba>(kIeiAbba, length, value);
+  ie_abba_ = std::make_optional<Abba>(kIeiAbba, length, value);
 }
 
 //------------------------------------------------------------------------------
 void SecurityModeCommand::SetS1UeSecurityCapability(uint8_t eea, uint8_t eia) {
-  ie_s1_ue_security_capability = std::make_optional<S1UeSecurityCapability>(
+  ie_s1_ue_security_capability_ = std::make_optional<S1UeSecurityCapability>(
       kIeiS1UeSecurityCapability, eea, eia);
 }
 
@@ -134,14 +134,14 @@ int SecurityModeCommand::Encode(uint8_t* buf, int len) {
 
   // NAS security algorithms
   if ((encoded_ie_size = NasHelper::Encode(
-           ie_selected_nas_security_algorithms, buf, len, encoded_size)) ==
+           ie_selected_nas_security_algorithms_, buf, len, encoded_size)) ==
       KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
 
   // NgKSI
   if ((encoded_ie_size = NasHelper::Encode(
-           ie_ng_ksi, buf, len, encoded_size)) == KEncodeDecodeError) {
+           ie_ng_ksi_, buf, len, encoded_size)) == KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
   if (encoded_ie_size == 0)
@@ -149,46 +149,46 @@ int SecurityModeCommand::Encode(uint8_t* buf, int len) {
 
   // UE security capability
   if ((encoded_ie_size = NasHelper::Encode(
-           ie_ue_security_capability, buf, len, encoded_size)) ==
+           ie_ue_security_capability_, buf, len, encoded_size)) ==
       KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
 
   // IMEISV Request
   if ((encoded_ie_size = NasHelper::Encode(
-           ie_imeisv_request, buf, len, encoded_size)) == KEncodeDecodeError) {
+           ie_imeisv_request_, buf, len, encoded_size)) == KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
 
   // EPS NAS Security Algorithms
   if ((encoded_ie_size = NasHelper::Encode(
-           ie_eps_nas_security_algorithms, buf, len, encoded_size)) ==
+           ie_eps_nas_security_algorithms_, buf, len, encoded_size)) ==
       KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
 
   // Additional 5G security information
   if ((encoded_ie_size = NasHelper::Encode(
-           ie_additional_5g_security_information, buf, len, encoded_size)) ==
+           ie_additional_5g_security_information_, buf, len, encoded_size)) ==
       KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
 
   // EAP message
   if ((encoded_ie_size = NasHelper::Encode(
-           ie_eap_message, buf, len, encoded_size)) == KEncodeDecodeError) {
+           ie_eap_message_, buf, len, encoded_size)) == KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
 
   // ABBA
-  if ((encoded_ie_size = NasHelper::Encode(ie_abba, buf, len, encoded_size)) ==
+  if ((encoded_ie_size = NasHelper::Encode(ie_abba_, buf, len, encoded_size)) ==
       KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
 
   // Replayed S1 UE Security Capability
   if ((encoded_ie_size = NasHelper::Encode(
-           ie_s1_ue_security_capability, buf, len, encoded_size)) ==
+           ie_s1_ue_security_capability_, buf, len, encoded_size)) ==
       KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
@@ -214,14 +214,14 @@ int SecurityModeCommand::Decode(uint8_t* buf, int len) {
 
   // NAS security algorithms
   if ((decoded_ie_size = NasHelper::Decode(
-           ie_selected_nas_security_algorithms, buf, len, decoded_size,
+           ie_selected_nas_security_algorithms_, buf, len, decoded_size,
            false)) == KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
 
   // NAS key set identifier
   if ((decoded_ie_size = NasHelper::Decode(
-           ie_ng_ksi, buf, len, decoded_size, false, false)) ==
+           ie_ng_ksi_, buf, len, decoded_size, false, false)) ==
       KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
@@ -230,7 +230,7 @@ int SecurityModeCommand::Decode(uint8_t* buf, int len) {
 
   // UE security capability
   if ((decoded_ie_size = NasHelper::Decode(
-           ie_ue_security_capability, buf, len, decoded_size, false)) ==
+           ie_ue_security_capability_, buf, len, decoded_size, false)) ==
       KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
@@ -248,7 +248,7 @@ int SecurityModeCommand::Decode(uint8_t* buf, int len) {
       case kIeiImeisvRequest: {
         Logger::nas_mm().debug("Decoding IEI 0x%x", kIeiImeisvRequest);
         if ((decoded_ie_size = NasHelper::Decode(
-                 ie_imeisv_request, buf, len, decoded_size, true)) ==
+                 ie_imeisv_request_, buf, len, decoded_size, true)) ==
             KEncodeDecodeError) {
           return KEncodeDecodeError;
         }
@@ -265,7 +265,7 @@ int SecurityModeCommand::Decode(uint8_t* buf, int len) {
         Logger::nas_mm().debug(
             "decoding IEI 0x%x", kIeiEpsNasSecurityAlgorithms);
         if ((decoded_ie_size = NasHelper::Decode(
-                 ie_eps_nas_security_algorithms, buf, len, decoded_size,
+                 ie_eps_nas_security_algorithms_, buf, len, decoded_size,
                  true)) == KEncodeDecodeError) {
           return KEncodeDecodeError;
         }
@@ -277,7 +277,7 @@ int SecurityModeCommand::Decode(uint8_t* buf, int len) {
         Logger::nas_mm().debug(
             "decoding IEI 0x%x", kIeiAdditional5gSecurityInformation);
         if ((decoded_ie_size = NasHelper::Decode(
-                 ie_additional_5g_security_information, buf, len, decoded_size,
+                 ie_additional_5g_security_information_, buf, len, decoded_size,
                  true)) == KEncodeDecodeError) {
           return KEncodeDecodeError;
         }
@@ -288,7 +288,7 @@ int SecurityModeCommand::Decode(uint8_t* buf, int len) {
       case kIeiEapMessage: {
         Logger::nas_mm().debug("Decoding IEI 0x%x", kIeiEapMessage);
         if ((decoded_ie_size = NasHelper::Decode(
-                 ie_eap_message, buf, len, decoded_size, true)) ==
+                 ie_eap_message_, buf, len, decoded_size, true)) ==
             KEncodeDecodeError) {
           return KEncodeDecodeError;
         }
@@ -299,7 +299,7 @@ int SecurityModeCommand::Decode(uint8_t* buf, int len) {
       case kIeiAbba: {
         Logger::nas_mm().debug("Decoding IEI 0x%x", kIeiAbba);
         if ((decoded_ie_size =
-                 NasHelper::Decode(ie_abba, buf, len, decoded_size, true)) ==
+                 NasHelper::Decode(ie_abba_, buf, len, decoded_size, true)) ==
             KEncodeDecodeError) {
           return KEncodeDecodeError;
         }
@@ -310,8 +310,8 @@ int SecurityModeCommand::Decode(uint8_t* buf, int len) {
       case kIeiS1UeSecurityCapability: {
         Logger::nas_mm().debug("Decoding IEI 0x%x", kIeiS1UeSecurityCapability);
         if ((decoded_ie_size = NasHelper::Decode(
-                 ie_s1_ue_security_capability, buf, len, decoded_size, true)) ==
-            KEncodeDecodeError) {
+                 ie_s1_ue_security_capability_, buf, len, decoded_size,
+                 true)) == KEncodeDecodeError) {
           return KEncodeDecodeError;
         }
         DECODE_U8_VALUE(buf + decoded_size, octet);

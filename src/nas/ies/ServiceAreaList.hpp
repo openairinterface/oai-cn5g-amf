@@ -24,8 +24,8 @@
 
 #include <vector>
 
-#include "Type4NasIe.hpp"
 #include "Struct.hpp"
+#include "Type4NasIe.hpp"
 
 constexpr uint8_t kServiceAreaListMinimumLength        = 6;
 constexpr uint8_t kServiceAreaListMaximumLength        = 114;

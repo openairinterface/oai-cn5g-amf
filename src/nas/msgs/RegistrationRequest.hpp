@@ -148,39 +148,40 @@ class RegistrationRequest : public NasMmPlainHeader {
   bool GetEpsBearerContextStatus(uint16_t& value) const;
 
  public:
-  _5gsRegistrationType ie_5gs_registration_type;  // Mandatory
-  NasKeySetIdentifier ie_ng_ksi;                  // Mandatory
-  _5gsMobileIdentity ie_5gs_mobile_identity;      // Mandatory
+  _5gsRegistrationType ie_5gs_registration_type_;  // Mandatory
+  NasKeySetIdentifier ie_ng_ksi_;                  // Mandatory
+  _5gsMobileIdentity ie_5gs_mobile_identity_;      // Mandatory
 
-  std::optional<NasKeySetIdentifier> ie_non_current_native_nas_ksi;  // Optional
-  std::optional<_5gmmCapability> ie_5g_mm_capability;                // Optional
-  std::optional<UeSecurityCapability> ie_ue_security_capability;     // Optional
-  std::optional<Nssai> ie_requested_nssai;                           // Optional
+  std::optional<NasKeySetIdentifier>
+      ie_non_current_native_nas_ksi_;                              // Optional
+  std::optional<_5gmmCapability> ie_5g_mm_capability_;             // Optional
+  std::optional<UeSecurityCapability> ie_ue_security_capability_;  // Optional
+  std::optional<Nssai> ie_requested_nssai_;                        // Optional
   std::optional<_5gsTrackingAreaIdentity>
-      ie_last_visited_registered_tai;                              // Optional
-  std::optional<UeNetworkCapability> ie_s1_ue_network_capability;  // Optional
-  std::optional<UplinkDataStatus> ie_uplink_data_status;           // Optional
-  std::optional<PduSessionStatus> ie_pdu_session_status;           // Optional
-  std::optional<MicoIndication> ie_mico_indication;                // Optional
-  std::optional<UeStatus> ie_ue_status;                            // Optional
-  std::optional<_5gsMobileIdentity> ie_additional_guti;            // Optional
+      ie_last_visited_registered_tai_;                              // Optional
+  std::optional<UeNetworkCapability> ie_s1_ue_network_capability_;  // Optional
+  std::optional<UplinkDataStatus> ie_uplink_data_status_;           // Optional
+  std::optional<PduSessionStatus> ie_pdu_session_status_;           // Optional
+  std::optional<MicoIndication> ie_mico_indication_;                // Optional
+  std::optional<UeStatus> ie_ue_status_;                            // Optional
+  std::optional<_5gsMobileIdentity> ie_additional_guti_;            // Optional
   std::optional<AllowedPduSessionStatus>
-      ie_allowed_pdu_session_status;                       // Optional
-  std::optional<UeUsageSetting> ie_ues_usage_setting;      // Optional
-  std::optional<_5gsDrxParameters> ie_5gs_drx_parameters;  // Optional
+      ie_allowed_pdu_session_status_;                       // Optional
+  std::optional<UeUsageSetting> ie_ues_usage_setting_;      // Optional
+  std::optional<_5gsDrxParameters> ie_5gs_drx_parameters_;  // Optional
   std::optional<EpsNasMessageContainer>
-      ie_eps_nas_message_container;                               // Optional
-  std::optional<LadnIndication> ie_ladn_indication;               // Optional
-  std::optional<PayloadContainerType> ie_payload_container_type;  // Optional
-  std::optional<PayloadContainer> ie_payload_container;           // Optional
+      ie_eps_nas_message_container_;                               // Optional
+  std::optional<LadnIndication> ie_ladn_indication_;               // Optional
+  std::optional<PayloadContainerType> ie_payload_container_type_;  // Optional
+  std::optional<PayloadContainer> ie_payload_container_;           // Optional
   std::optional<NetworkSlicingIndication>
-      ie_network_slicing_indication;                 // Optional
-  std::optional<_5gsUpdateType> ie_5gs_update_type;  // Optional
+      ie_network_slicing_indication_;                 // Optional
+  std::optional<_5gsUpdateType> ie_5gs_update_type_;  // Optional
   // TODO: Mobile station classmark 2
   // TODO: Supported codecs
-  std::optional<NasMessageContainer> ie_nas_message_container;  // Optional
+  std::optional<NasMessageContainer> ie_nas_message_container_;  // Optional
   std::optional<EpsBearerContextStatus>
-      ie_eps_bearer_context_status;  // Optional
+      ie_eps_bearer_context_status_;  // Optional
   // TODO: Requested extended DRX parameters
   // TODO: T3324 value
   // TODO: UE radio capability ID (Rel 16.4.1)

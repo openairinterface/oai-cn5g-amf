@@ -44,8 +44,8 @@ class AuthenticationResponse : public NasMmPlainHeader {
 
  public:
   std::optional<AuthenticationResponseParameter>
-      ie_authentication_response_parameter;  // Optional
-  std::optional<EapMessage> ie_eap_message;  // Optional
+      ie_authentication_response_parameter_;  // Optional
+  std::optional<EapMessage> ie_eap_message_;  // Optional
 };
 
 }  // namespace nas

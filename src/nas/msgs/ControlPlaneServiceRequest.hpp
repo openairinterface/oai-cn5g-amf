@@ -63,17 +63,17 @@ class ControlPlaneServiceRequest : public NasMmPlainHeader {
   // TODO: Additional information (Optional)
 
  private:
-  ControlPlaneServiceType ie_control_plane_service_type;  // Mandatory
-  NasKeySetIdentifier ie_ng_ksi;                          // Mandatory
+  ControlPlaneServiceType ie_control_plane_service_type_;  // Mandatory
+  NasKeySetIdentifier ie_ng_ksi_;                          // Mandatory
 
   // TODO: CIoT small data container (Optional)
   // TODO: Payload container type (Optional)
   // TODO: Payload container (Optional)
   // TODO: PDU session ID (Optional)
-  std::optional<PduSessionStatus> ie_pdu_session_status;  // Optional
+  std::optional<PduSessionStatus> ie_pdu_session_status_;  // Optional
   // TODO: Release assistance indication (Optional)
-  std::optional<UplinkDataStatus> ie_uplink_data_status;        // Optional
-  std::optional<NasMessageContainer> ie_nas_message_container;  // Optional
+  std::optional<UplinkDataStatus> ie_uplink_data_status_;        // Optional
+  std::optional<NasMessageContainer> ie_nas_message_container_;  // Optional
   // TODO: Additional information (Optional)
 };
 

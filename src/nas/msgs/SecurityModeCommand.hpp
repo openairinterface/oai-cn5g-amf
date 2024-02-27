@@ -69,20 +69,20 @@ class SecurityModeCommand : public NasMmPlainHeader {
   // TODO: Get
 
  public:
-  NasSecurityAlgorithms ie_selected_nas_security_algorithms;  // Mandatory
-  NasKeySetIdentifier ie_ng_ksi;  // Mandatory (1/2 octet)
+  NasSecurityAlgorithms ie_selected_nas_security_algorithms_;  // Mandatory
+  NasKeySetIdentifier ie_ng_ksi_;  // Mandatory (1/2 octet)
   // Spare half octet
-  UeSecurityCapability ie_ue_security_capability;  // Mandatory
+  UeSecurityCapability ie_ue_security_capability_;  // Mandatory
 
-  std::optional<ImeisvRequest> ie_imeisv_request;  // Optional
+  std::optional<ImeisvRequest> ie_imeisv_request_;  // Optional
   std::optional<EpsNasSecurityAlgorithms>
-      ie_eps_nas_security_algorithms;  // Optional
+      ie_eps_nas_security_algorithms_;  // Optional
   std::optional<Additional5gSecurityInformation>
-      ie_additional_5g_security_information;  // Optional
-  std::optional<EapMessage> ie_eap_message;   // Optional
-  std::optional<Abba> ie_abba;                // Optional
+      ie_additional_5g_security_information_;  // Optional
+  std::optional<EapMessage> ie_eap_message_;   // Optional
+  std::optional<Abba> ie_abba_;                // Optional
   std::optional<S1UeSecurityCapability>
-      ie_s1_ue_security_capability;  // Optional
+      ie_s1_ue_security_capability_;  // Optional
 };
 
 }  // namespace nas

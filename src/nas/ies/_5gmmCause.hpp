@@ -86,6 +86,7 @@ class _5gmmCause : public Type3NasIe {
   int Decode(uint8_t* buf, int len, bool is_iei);
 
   void Set(uint8_t _iei, uint8_t value);
+
   void SetValue(uint8_t value);
   uint8_t GetValue() const;
 

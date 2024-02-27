@@ -54,15 +54,15 @@ class AuthenticationRequest : public NasMmPlainHeader {
   // TODO: Get
 
  public:
-  NasKeySetIdentifier ie_ng_ksi;  // Mandatory
+  NasKeySetIdentifier ie_ng_ksi_;  // Mandatory
   // Spare half octet (will be processed together with NgKSI)
-  Abba ie_abba;  // Mandatory
+  Abba ie_abba_;  // Mandatory
 
   std::optional<AuthenticationParameterRand>
-      ie_authentication_parameter_rand;  // Optional
+      ie_authentication_parameter_rand_;  // Optional
   std::optional<AuthenticationParameterAutn>
-      ie_authentication_parameter_autn;      // Optional
-  std::optional<EapMessage> ie_eap_message;  // Optional
+      ie_authentication_parameter_autn_;      // Optional
+  std::optional<EapMessage> ie_eap_message_;  // Optional
 };
 
 }  // namespace nas

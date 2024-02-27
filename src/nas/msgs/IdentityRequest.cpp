@@ -39,7 +39,7 @@ void IdentityRequest::SetHeader(uint8_t security_header_type) {
 
 //------------------------------------------------------------------------------
 void IdentityRequest::Set5gsIdentityType(uint8_t value) {
-  ie_5gs_identity_type.SetValue(value);
+  ie_5gs_identity_type_.SetValue(value);
 }
 
 //------------------------------------------------------------------------------
@@ -57,7 +57,7 @@ int IdentityRequest::Encode(uint8_t* buf, int len) {
   encoded_size += encoded_ie_size;
 
   if ((encoded_ie_size =
-           NasHelper::Encode(ie_5gs_identity_type, buf, len, encoded_size)) ==
+           NasHelper::Encode(ie_5gs_identity_type_, buf, len, encoded_size)) ==
       KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
@@ -86,7 +86,7 @@ int IdentityRequest::Decode(uint8_t* buf, int len) {
   decoded_size += decoded_ie_size;
 
   if ((decoded_ie_size = NasHelper::Decode(
-           ie_5gs_identity_type, buf, len, decoded_size, false)) ==
+           ie_5gs_identity_type_, buf, len, decoded_size, false)) ==
       KEncodeDecodeError) {
     return KEncodeDecodeError;
   }

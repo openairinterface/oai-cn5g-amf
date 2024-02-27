@@ -38,9 +38,6 @@ class Non3gppNwProvidedPolicies : public Type1NasIeFormatTv {
 
   static std::string GetIeName() { return kNon3gppNwProvidedPoliciesIeName; }
 
-  // int Encode(uint8_t* buf, int len);
-  // int Decode(uint8_t* buf, int len, bool is_iei);
-
   void SetValue(uint8_t value);
   uint8_t GetValue() const;
 

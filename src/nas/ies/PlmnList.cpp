@@ -56,7 +56,7 @@ void PlmnList::Set(uint8_t iei, const std::vector<nas_plmn_t>& list) {
 }
 
 //------------------------------------------------------------------------------
-void PlmnList::GetPLMNList(std::vector<nas_plmn_t>& list) const {
+void PlmnList::Get(std::vector<nas_plmn_t>& list) const {
   list = plmn_list_;
 }
 

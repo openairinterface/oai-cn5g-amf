@@ -42,10 +42,13 @@ class NetworkName {
   static std::string GetIeName() { return kNetworkNameIeName; }
 
   void SetIei(const uint8_t& iei);
+
   void SetCodingScheme(const uint8_t& value);
   // TODO: getCodingScheme
+
   void SetAddCI(const uint8_t& value);
   // TODO: getAddCI
+
   void SetNumberOfSpareBits(const uint8_t& value);
   // TODO: getNumberOfSpareBits
 

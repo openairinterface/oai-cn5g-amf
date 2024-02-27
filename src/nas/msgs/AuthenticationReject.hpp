@@ -40,7 +40,7 @@ class AuthenticationReject : public NasMmPlainHeader {
   // TODO: Get
 
  public:
-  std::optional<EapMessage> ie_eap_message;
+  std::optional<EapMessage> ie_eap_message_;
 };
 
 }  // namespace nas
