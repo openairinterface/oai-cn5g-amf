@@ -44,14 +44,16 @@ void SecurityModeReject::Set5gmmCause(uint8_t value) {
 
 //------------------------------------------------------------------------------
 int SecurityModeReject::Encode(uint8_t* buf, int len) {
-  Logger::nas_mm().debug("Encoding SecurityModeReject message");
+  oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+      .debug("Encoding SecurityModeReject message");
 
   int encoded_size    = 0;
   int encoded_ie_size = 0;
   // Header
   if ((encoded_ie_size = NasMmPlainHeader::Encode(buf, len)) ==
       KEncodeDecodeError) {
-    Logger::nas_mm().error("Encoding NAS Header error");
+    oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+        .error("Encoding NAS Header error");
     return KEncodeDecodeError;
   }
   encoded_size += encoded_ie_size;
@@ -62,21 +64,23 @@ int SecurityModeReject::Encode(uint8_t* buf, int len) {
     return KEncodeDecodeError;
   }
 
-  Logger::nas_mm().debug(
-      "Encoded SecurityModeReject message len(%d)", encoded_size);
+  oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+      .debug("Encoded SecurityModeReject message len(%d)", encoded_size);
   return encoded_size;
 }
 
 //------------------------------------------------------------------------------
 int SecurityModeReject::Decode(uint8_t* buf, int len) {
-  Logger::nas_mm().debug("Decoding SecurityModeReject message");
+  oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+      .debug("Decoding SecurityModeReject message");
   int decoded_size    = 0;
   int decoded_ie_size = 0;
 
   // Header
   decoded_ie_size = NasMmPlainHeader::Decode(buf, len);
   if (decoded_ie_size == KEncodeDecodeError) {
-    Logger::nas_mm().error("Decoding NAS Header error");
+    oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+        .error("Decoding NAS Header error");
     return KEncodeDecodeError;
   }
   decoded_size += decoded_ie_size;
@@ -88,7 +92,7 @@ int SecurityModeReject::Decode(uint8_t* buf, int len) {
     return KEncodeDecodeError;
   }
 
-  Logger::nas_mm().debug(
-      "Decoded SecurityModeReject message len(%d)", decoded_size);
+  oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+      .debug("Decoded SecurityModeReject message len(%d)", decoded_size);
   return decoded_size;
 }

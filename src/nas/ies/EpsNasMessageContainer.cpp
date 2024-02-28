@@ -24,7 +24,7 @@
 #include "3gpp_24.501.hpp"
 #include "IeConst.hpp"
 #include "common_defs.h"
-#include "logger.hpp"
+#include "logger_base.hpp"
 
 using namespace nas;
 
@@ -49,14 +49,16 @@ void EpsNasMessageContainer::GetValue(bstring& value) const {
 
 //------------------------------------------------------------------------------
 int EpsNasMessageContainer::Encode(uint8_t* buf, int len) {
-  Logger::nas_mm().debug("Encoding %s", GetIeName().c_str());
+  oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+      .debug("Encoding %s", GetIeName().c_str());
 
   int ie_len = GetIeLength();
 
   if (len < ie_len) {  // Length of the content + IEI/Len
-    Logger::nas_mm().error(
-        "Size of the buffer is not enough to store this IE (IE len %d)",
-        ie_len);
+    oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+        .error(
+            "Size of the buffer is not enough to store this IE (IE len %d)",
+            ie_len);
     return KEncodeDecodeError;
   }
 
@@ -76,14 +78,15 @@ int EpsNasMessageContainer::Encode(uint8_t* buf, int len) {
   int encoded_len_ie = 0;
   ENCODE_U16(buf + len_pos, encoded_size - GetHeaderLength(), encoded_len_ie);
 
-  Logger::nas_mm().debug(
-      "Encoded %s, len (%d)", GetIeName().c_str(), encoded_size);
+  oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+      .debug("Encoded %s, len (%d)", GetIeName().c_str(), encoded_size);
   return encoded_size;
 }
 
 //------------------------------------------------------------------------------
 int EpsNasMessageContainer::Decode(uint8_t* buf, int len, bool is_iei) {
-  Logger::nas_mm().debug("Decoding EpsNasMessageContainer");
+  oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+      .debug("Decoding EpsNasMessageContainer");
   int decoded_size = 0;
 
   // IEI and Length
@@ -98,13 +101,14 @@ int EpsNasMessageContainer::Decode(uint8_t* buf, int len, bool is_iei) {
   decoded_size += ie_len;
   if (result == ie_len) {
     for (int i = 0; i < ie_len; i++) {
-      Logger::nas_mm().debug(
-          "Decoded EpsNasMessageContainer value 0x%x",
-          (uint8_t) value_->data[i]);
+      oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+          .debug(
+              "Decoded EpsNasMessageContainer value 0x%x",
+              (uint8_t) value_->data[i]);
     }
   }
 
-  Logger::nas_mm().debug(
-      "Decoded EpsNasMessageContainer (len %d)", decoded_size);
+  oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+      .debug("Decoded EpsNasMessageContainer (len %d)", decoded_size);
   return decoded_size;
 }

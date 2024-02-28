@@ -91,7 +91,8 @@ DeregistrationRequestUeTerminated::GetRejectedNssai() const {
 
 //------------------------------------------------------------------------------
 int DeregistrationRequestUeTerminated::Encode(uint8_t* buf, int len) {
-  Logger::nas_mm().debug("Encoding DeregistrationRequestUeTerminated message");
+  oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+      .debug("Encoding DeregistrationRequestUeTerminated message");
 
   int encoded_size    = 0;
   int encoded_ie_size = 0;
@@ -99,7 +100,8 @@ int DeregistrationRequestUeTerminated::Encode(uint8_t* buf, int len) {
   // Header
   if ((encoded_ie_size = NasMmPlainHeader::Encode(buf, len)) ==
       KEncodeDecodeError) {
-    Logger::nas_mm().error("Encoding NAS Header error");
+    oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+        .error("Encoding NAS Header error");
     return KEncodeDecodeError;
   }
   encoded_size += encoded_ie_size;
@@ -134,15 +136,17 @@ int DeregistrationRequestUeTerminated::Encode(uint8_t* buf, int len) {
   }
   // TODO: CagInformationList
 
-  Logger::nas_mm().debug(
-      "Encoded DeregistrationRequestUeTerminated message len (%d)",
-      encoded_size);
+  oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+      .debug(
+          "Encoded DeregistrationRequestUeTerminated message len (%d)",
+          encoded_size);
   return encoded_size;
 }
 
 //------------------------------------------------------------------------------
 int DeregistrationRequestUeTerminated::Decode(uint8_t* buf, int len) {
-  Logger::nas_mm().debug("Decoding DeregistrationRequestUeTerminated message");
+  oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+      .debug("Decoding DeregistrationRequestUeTerminated message");
 
   int decoded_size    = 0;
   int decoded_ie_size = 0;
@@ -150,7 +154,8 @@ int DeregistrationRequestUeTerminated::Decode(uint8_t* buf, int len) {
   // Header
   decoded_ie_size = NasMmPlainHeader::Decode(buf, len);
   if (decoded_ie_size == KEncodeDecodeError) {
-    Logger::nas_mm().error("Decoding NAS Header error");
+    oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+        .error("Decoding NAS Header error");
     return KEncodeDecodeError;
   }
   decoded_size += decoded_ie_size;
@@ -168,54 +173,63 @@ int DeregistrationRequestUeTerminated::Decode(uint8_t* buf, int len) {
   // Decode other IEs
   uint8_t octet = 0x00;
   DECODE_U8_VALUE(buf + decoded_size, octet);
-  Logger::nas_mm().debug("First option IEI (0x%x)", octet);
+  oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+      .debug("First option IEI (0x%x)", octet);
   while ((octet != 0x0)) {
     switch (octet) {
       case kIei5gmmCause: {
-        Logger::nas_mm().debug("Decoding IEI 0x%x", kIei5gmmCause);
+        oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+            .debug("Decoding IEI 0x%x", kIei5gmmCause);
         if ((decoded_ie_size = NasHelper::Decode(
                  ie_5gmm_cause_, buf, len, decoded_size, true)) ==
             KEncodeDecodeError) {
           return KEncodeDecodeError;
         }
         DECODE_U8_VALUE(buf + decoded_size, octet);
-        Logger::nas_mm().debug("Next IEI (0x%x)", octet);
+        oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+            .debug("Next IEI (0x%x)", octet);
       } break;
 
       case kIeiGprsTimer2T3346: {
-        Logger::nas_mm().debug("Decoding IEI 0x%x", kIeiGprsTimer2T3346);
+        oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+            .debug("Decoding IEI 0x%x", kIeiGprsTimer2T3346);
         if ((decoded_ie_size = NasHelper::Decode(
                  ie_t3346_value_, kIeiGprsTimer2T3346, buf, len, decoded_size,
                  true)) == KEncodeDecodeError) {
           return KEncodeDecodeError;
         }
         DECODE_U8_VALUE(buf + decoded_size, octet);
-        Logger::nas_mm().debug("Next IEI (0x%x)", octet);
+        oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+            .debug("Next IEI (0x%x)", octet);
       } break;
 
       case kIeiRejectedNssaiDr: {
-        Logger::nas_mm().debug("Decoding IEI 0x%x", kIeiRejectedNssaiDr);
+        oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+            .debug("Decoding IEI 0x%x", kIeiRejectedNssaiDr);
         if ((decoded_ie_size = NasHelper::Decode(
                  ie_rejected_nssai_, kIeiRejectedNssaiDr, buf, len,
                  decoded_size, true)) == KEncodeDecodeError) {
           return KEncodeDecodeError;
         }
         DECODE_U8_VALUE(buf + decoded_size, octet);
-        Logger::nas_mm().debug("Next IEI (0x%x)", octet);
+        oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+            .debug("Next IEI (0x%x)", octet);
       } break;
 
         // TODO: CagInformationList ie_cag_information_list ; //Optional
 
       default: {
-        Logger::nas_mm().warn("Unknown IEI 0x%x, stop decoding...", octet);
+        oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+            .warn("Unknown IEI 0x%x, stop decoding...", octet);
         // Stop decoding
         octet = 0x00;
       } break;
     }
   }
 
-  Logger::nas_mm().debug(
-      "Decoded DeregistrationRequestUeTerminated message (len %d)",
-      decoded_size);
+  oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+      .debug(
+          "Decoded DeregistrationRequestUeTerminated message (len %d)",
+          decoded_size);
   return decoded_size;
 }

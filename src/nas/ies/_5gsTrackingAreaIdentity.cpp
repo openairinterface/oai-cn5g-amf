@@ -24,7 +24,7 @@
 #include "3gpp_24.501.hpp"
 #include "IeConst.hpp"
 #include "common_defs.h"
-#include "logger.hpp"
+#include "logger_base.hpp"
 #include "utils.hpp"
 
 using namespace nas;
@@ -85,12 +85,15 @@ void _5gsTrackingAreaIdentity::GetMnc(std::string& mnc) const {
 
 //------------------------------------------------------------------------------
 int _5gsTrackingAreaIdentity::Encode(uint8_t* buf, int len) {
-  Logger::nas_mm().debug("Encoding %s", GetIeName().c_str());
+  oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+      .debug("Encoding %s", GetIeName().c_str());
 
   if (len < k5gsTrackingAreaIdentityLength) {
-    Logger::nas_mm().error(
-        "Buffer length is less than the minimum length of this IE (%d octet)",
-        k5gsTrackingAreaIdentityLength);
+    oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+        .error(
+            "Buffer length is less than the minimum length of this IE (%d "
+            "octet)",
+            k5gsTrackingAreaIdentityLength);
     return KEncodeDecodeError;
   }
   int encoded_size = 0;
@@ -103,19 +106,22 @@ int _5gsTrackingAreaIdentity::Encode(uint8_t* buf, int len) {
   // TAC
   ENCODE_U24(buf + encoded_size, tac_, encoded_size);
 
-  Logger::nas_mm().debug(
-      "Encoded %s, len (%d)", GetIeName().c_str(), encoded_size);
+  oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+      .debug("Encoded %s, len (%d)", GetIeName().c_str(), encoded_size);
   return encoded_size;
 }
 
 //------------------------------------------------------------------------------
 int _5gsTrackingAreaIdentity::Decode(uint8_t* buf, int len, bool is_iei) {
-  Logger::nas_mm().debug("Decoding %s", GetIeName().c_str());
+  oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+      .debug("Decoding %s", GetIeName().c_str());
 
   if (len < k5gsTrackingAreaIdentityLength) {
-    Logger::nas_mm().error(
-        "Buffer length is less than the minimum length of this IE (%d octet)",
-        k5gsTrackingAreaIdentityLength);
+    oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+        .error(
+            "Buffer length is less than the minimum length of this IE (%d "
+            "octet)",
+            k5gsTrackingAreaIdentityLength);
     return KEncodeDecodeError;
   }
 
@@ -129,8 +135,9 @@ int _5gsTrackingAreaIdentity::Decode(uint8_t* buf, int len, bool is_iei) {
 
   DECODE_U24(buf + decoded_size, tac_, decoded_size);
 
-  Logger::nas_mm().debug("Decoded TAC 0x%x", tac_);
-  Logger::nas_mm().debug(
-      "Decoded %s, len (%d)", GetIeName().c_str(), decoded_size);
+  oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+      .debug("Decoded TAC 0x%x", tac_);
+  oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+      .debug("Decoded %s, len (%d)", GetIeName().c_str(), decoded_size);
   return decoded_size;
 }

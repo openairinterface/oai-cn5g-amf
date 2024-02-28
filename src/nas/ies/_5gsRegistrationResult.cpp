@@ -23,7 +23,7 @@
 
 #include "3gpp_24.501.hpp"
 #include "common_defs.h"
-#include "logger.hpp"
+#include "logger_base.hpp"
 
 using namespace nas;
 
@@ -101,12 +101,15 @@ void _5gsRegistrationResult::Set(
 
 //------------------------------------------------------------------------------
 int _5gsRegistrationResult::Encode(uint8_t* buf, int len) {
-  Logger::nas_mm().debug("Encoding %s", GetIeName().c_str());
+  oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+      .debug("Encoding %s", GetIeName().c_str());
 
   if (len < k5gsRegistrationResultLength) {
-    Logger::nas_mm().error(
-        "Buffer length is less than the minimum length of this IE (%d octet)",
-        k5gsRegistrationResultLength);
+    oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+        .error(
+            "Buffer length is less than the minimum length of this IE (%d "
+            "octet)",
+            k5gsRegistrationResultLength);
     return KEncodeDecodeError;
   }
 
@@ -122,19 +125,22 @@ int _5gsRegistrationResult::Encode(uint8_t* buf, int len) {
           (sms_allowed_ << 3) | (value_ & 0x07);
   ENCODE_U8(buf + encoded_size, octet, encoded_size);
 
-  Logger::nas_mm().debug(
-      "Encoded %s, len (%d)", GetIeName().c_str(), encoded_size);
+  oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+      .debug("Encoded %s, len (%d)", GetIeName().c_str(), encoded_size);
   return encoded_size;
 }
 
 //------------------------------------------------------------------------------
 int _5gsRegistrationResult::Decode(uint8_t* buf, int len, bool is_iei) {
-  Logger::nas_mm().debug("Decoding %s", GetIeName().c_str());
+  oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+      .debug("Decoding %s", GetIeName().c_str());
 
   if (len < k5gsRegistrationResultLength) {
-    Logger::nas_mm().error(
-        "Buffer length is less than the minimum length of this IE (%d octet)",
-        k5gsRegistrationResultLength);
+    oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+        .error(
+            "Buffer length is less than the minimum length of this IE (%d "
+            "octet)",
+            k5gsRegistrationResultLength);
     return KEncodeDecodeError;
   }
 
@@ -153,14 +159,16 @@ int _5gsRegistrationResult::Decode(uint8_t* buf, int len, bool is_iei) {
   sms_allowed_          = (octet & 0x08) >> 3;
   value_                = octet & 0x07;
 
-  Logger::nas_mm().debug(
-      "Decoded _5gsRegistrationResult, Emergency Registered 0x%x, NSSAA "
-      "Performed 0x%x, SMS Allowed 0x%x, "
-      "Value 0x%x",
-      emergency_registered_, nssaa_performed_, sms_allowed_, value_);
+  oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+      .debug(
+          "Decoded _5gsRegistrationResult, Emergency Registered 0x%x, NSSAA "
+          "Performed 0x%x, SMS Allowed 0x%x, "
+          "Value 0x%x",
+          emergency_registered_, nssaa_performed_, sms_allowed_, value_);
 
-  Logger::nas_mm().debug(
-      "Decoded %s, DRX value 0x%x, len %d", GetIeName().c_str(), value_,
-      decoded_size);
+  oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+      .debug(
+          "Decoded %s, DRX value 0x%x, len %d", GetIeName().c_str(), value_,
+          decoded_size);
   return decoded_size;
 }

@@ -23,7 +23,7 @@
 
 #include "3gpp_24.501.hpp"
 #include "common_defs.h"
-#include "logger.hpp"
+#include "logger_base.hpp"
 
 using namespace nas;
 

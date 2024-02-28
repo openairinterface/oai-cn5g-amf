@@ -24,7 +24,7 @@
 #include "3gpp_24.501.hpp"
 #include "NasHelper.hpp"
 #include "common_defs.h"
-#include "logger.hpp"
+#include "logger_base.hpp"
 
 using namespace nas;
 
@@ -93,10 +93,11 @@ void NasMmPlainHeader::GetMessageName(std::string& name) const {
 
 //------------------------------------------------------------------------------
 int NasMmPlainHeader::Encode(uint8_t* buf, int len) {
-  Logger::nas_mm().debug("Encoding NasMmPlainHeader");
+  oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+      .debug("Encoding NasMmPlainHeader");
   if (len < kNasMmPlainHeaderLength) {
-    Logger::nas_mm().error(
-        "Buffer length is less than %d octets", kNasMmPlainHeaderLength);
+    oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+        .error("Buffer length is less than %d octets", kNasMmPlainHeaderLength);
     return KEncodeDecodeError;
   }
 
@@ -118,21 +119,22 @@ int NasMmPlainHeader::Encode(uint8_t* buf, int len) {
     return KEncodeDecodeError;
   }
 
-  Logger::nas_mm().debug(
-      "Encoded NasMmPlainHeader (len %d octets)", encoded_size);
+  oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+      .debug("Encoded NasMmPlainHeader (len %d octets)", encoded_size);
   return encoded_size;
 }
 
 //------------------------------------------------------------------------------
 int NasMmPlainHeader::Decode(uint8_t* buf, int len) {
-  Logger::nas_mm().debug("Decoding NasMmPlainHeader");
+  oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+      .debug("Decoding NasMmPlainHeader");
 
   int decoded_size    = 0;
   int decoded_ie_size = 0;
 
   if (len < kNasMmPlainHeaderLength) {
-    Logger::nas_mm().error(
-        "Buffer length is less than %d octets", kNasMmPlainHeaderLength);
+    oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+        .error("Buffer length is less than %d octets", kNasMmPlainHeaderLength);
     return KEncodeDecodeError;
   }
 
@@ -152,7 +154,7 @@ int NasMmPlainHeader::Decode(uint8_t* buf, int len) {
     return KEncodeDecodeError;
   }
 
-  Logger::nas_mm().debug(
-      "Decoded NasMmPlainHeader len (%d octets)", decoded_size);
+  oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+      .debug("Decoded NasMmPlainHeader len (%d octets)", decoded_size);
   return decoded_size;
 }

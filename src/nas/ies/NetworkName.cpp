@@ -23,7 +23,7 @@
 
 #include "common_defs.h"
 #include "conversions.hpp"
-#include "logger.hpp"
+#include "logger_base.hpp"
 #include "string.hpp"
 #include "utils.hpp"
 
@@ -113,10 +113,12 @@ void NetworkName::SetTextString(const bstring& str) {
 
 //------------------------------------------------------------------------------
 int NetworkName::Encode(uint8_t* buf, int len) {
-  Logger::nas_mm().debug("Encoding NetworkName");
+  oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+      .debug("Encoding NetworkName");
 
   if (len < kNetworkNameMinimumLength) {
-    Logger::nas_mm().error("len is less than %d", length_);
+    oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+        .error("len is less than %d", length_);
     return -1;
   }
 
@@ -136,7 +138,8 @@ int NetworkName::Encode(uint8_t* buf, int len) {
       encode_bstring(text_string_, (buf + encoded_size), len - encoded_size);
   encoded_size += size;
 
-  Logger::nas_mm().debug("Encoded NetworkName (len %d)", encoded_size);
+  oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+      .debug("Encoded NetworkName (len %d)", encoded_size);
   return encoded_size;
 }
 

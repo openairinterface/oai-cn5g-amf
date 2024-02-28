@@ -23,7 +23,7 @@
 
 #include "3gpp_24.501.hpp"
 #include "common_defs.h"
-#include "logger.hpp"
+#include "logger_base.hpp"
 using namespace nas;
 
 //------------------------------------------------------------------------------
@@ -53,11 +53,13 @@ AuthenticationParameterAutn::~AuthenticationParameterAutn() {}
 
 //------------------------------------------------------------------------------
 int AuthenticationParameterAutn::Encode(uint8_t* buf, int len) {
-  Logger::nas_mm().debug("Encoding %s", GetIeName().c_str());
+  oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+      .debug("Encoding %s", GetIeName().c_str());
   int ie_len = GetIeLength();
 
   if (len < ie_len) {
-    Logger::nas_mm().error("Len is less than %d", ie_len);
+    oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+        .error("Len is less than %d", ie_len);
     return KEncodeDecodeError;
   }
 
@@ -74,8 +76,8 @@ int AuthenticationParameterAutn::Encode(uint8_t* buf, int len) {
     ENCODE_U8(buf + encoded_size, value_[i], encoded_size);
   }
 
-  Logger::nas_mm().debug(
-      "Encoded AuthenticationParameterAutn len (%d)", encoded_size);
+  oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+      .debug("Encoded AuthenticationParameterAutn len (%d)", encoded_size);
   return encoded_size;
 }
 
@@ -83,7 +85,8 @@ int AuthenticationParameterAutn::Encode(uint8_t* buf, int len) {
 int AuthenticationParameterAutn::Decode(uint8_t* buf, int len, bool is_iei) {
   uint8_t decoded_size = 0;
   uint8_t octet        = 0;
-  Logger::nas_mm().debug("Decoding %s", GetIeName().c_str());
+  oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+      .debug("Decoding %s", GetIeName().c_str());
 
   // IEI and Length
   int decoded_header_size = Type4NasIe::Decode(buf + decoded_size, len, is_iei);
@@ -97,10 +100,10 @@ int AuthenticationParameterAutn::Decode(uint8_t* buf, int len, bool is_iei) {
     DECODE_U8(buf + decoded_size, value_[i], decoded_size);
   }
   for (int j = 0; j < kAuthenticationParameterAutnValueLength; j++) {
-    Logger::nas_mm().debug(
-        "Decoded AuthenticationParameterAutn value (0x%2x)", value_[j]);
+    oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+        .debug("Decoded AuthenticationParameterAutn value (0x%2x)", value_[j]);
   }
-  Logger::nas_mm().debug(
-      "Decoded %s, len (%d)", GetIeName().c_str(), decoded_size);
+  oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+      .debug("Decoded %s, len (%d)", GetIeName().c_str(), decoded_size);
   return decoded_size;
 }

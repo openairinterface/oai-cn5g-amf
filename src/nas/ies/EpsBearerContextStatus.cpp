@@ -24,7 +24,7 @@
 #include "3gpp_24.501.hpp"
 #include "IeConst.hpp"
 #include "common_defs.h"
-#include "logger.hpp"
+#include "logger_base.hpp"
 
 using namespace nas;
 
@@ -56,11 +56,13 @@ uint16_t EpsBearerContextStatus::GetValue() const {
 
 //------------------------------------------------------------------------------
 int EpsBearerContextStatus::Encode(uint8_t* buf, int len) {
-  Logger::nas_mm().debug("Encoding %s", GetIeName().c_str());
+  oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+      .debug("Encoding %s", GetIeName().c_str());
   int ie_len = GetIeLength();
 
   if (len < ie_len) {
-    Logger::nas_mm().error("Len is less than %d", ie_len);
+    oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+        .error("Len is less than %d", ie_len);
     return KEncodeDecodeError;
   }
 
@@ -73,23 +75,26 @@ int EpsBearerContextStatus::Encode(uint8_t* buf, int len) {
   // Value
   ENCODE_U16(buf + encoded_size, value_, encoded_size);
 
-  Logger::nas_mm().debug(
-      "Encoded %s, len (%d)", GetIeName().c_str(), encoded_size);
+  oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+      .debug("Encoded %s, len (%d)", GetIeName().c_str(), encoded_size);
   return encoded_size;
 }
 
 //------------------------------------------------------------------------------
 int EpsBearerContextStatus::Decode(uint8_t* buf, int len, bool is_iei) {
   if (len < kEpsBearerContextStatusLength) {
-    Logger::nas_mm().error(
-        "Buffer length is less than the minimum length of this IE (%d octet)",
-        kEpsBearerContextStatusLength);
+    oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+        .error(
+            "Buffer length is less than the minimum length of this IE (%d "
+            "octet)",
+            kEpsBearerContextStatusLength);
     return KEncodeDecodeError;
   }
 
   uint8_t decoded_size = 0;
   uint8_t octet        = 0;
-  Logger::nas_mm().debug("Decoding %s", GetIeName().c_str());
+  oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+      .debug("Decoding %s", GetIeName().c_str());
 
   // IEI and Length
   int decoded_header_size = Type4NasIe::Decode(buf + decoded_size, len, is_iei);
@@ -99,8 +104,9 @@ int EpsBearerContextStatus::Decode(uint8_t* buf, int len, bool is_iei) {
   // Value
   DECODE_U16(buf + decoded_size, value_, decoded_size);  // for IE
 
-  Logger::nas_mm().debug("EPS_Bearer_Context_Status, value 0x%0x", value_);
-  Logger::nas_mm().debug(
-      "Decoded %s, len (%d)", GetIeName().c_str(), decoded_size);
+  oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+      .debug("EPS_Bearer_Context_Status, value 0x%0x", value_);
+  oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+      .debug("Decoded %s, len (%d)", GetIeName().c_str(), decoded_size);
   return decoded_size;
 }

@@ -23,7 +23,7 @@
 
 #include "3gpp_24.501.hpp"
 #include "common_defs.h"
-#include "logger.hpp"
+#include "logger_base.hpp"
 using namespace nas;
 
 //------------------------------------------------------------------------------
@@ -62,12 +62,15 @@ void _5gmmCause::Set(uint8_t iei, uint8_t value) {
 
 //------------------------------------------------------------------------------
 int _5gmmCause::Encode(uint8_t* buf, int len) {
-  Logger::nas_mm().debug("Encoding %s", GetIeName().c_str());
+  oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+      .debug("Encoding %s", GetIeName().c_str());
 
   if (len < k5gmmCauseMaximumLength) {
-    Logger::nas_mm().error(
-        "Buffer length is less than the minimum length of this IE (%d octet)",
-        k5gmmCauseMaximumLength);
+    oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+        .error(
+            "Buffer length is less than the minimum length of this IE (%d "
+            "octet)",
+            k5gmmCauseMaximumLength);
     return KEncodeDecodeError;
   }
   int encoded_size = 0;
@@ -77,19 +80,22 @@ int _5gmmCause::Encode(uint8_t* buf, int len) {
   // Value
   ENCODE_U8(buf + encoded_size, value_, encoded_size);
 
-  Logger::nas_mm().debug(
-      "Encoded %s, len (%d)", GetIeName().c_str(), encoded_size);
+  oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+      .debug("Encoded %s, len (%d)", GetIeName().c_str(), encoded_size);
   return encoded_size;
 }
 
 //------------------------------------------------------------------------------
 int _5gmmCause::Decode(uint8_t* buf, int len, bool is_iei) {
-  Logger::nas_mm().debug("Decoding %s", GetIeName().c_str());
+  oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+      .debug("Decoding %s", GetIeName().c_str());
 
   if (len < k5gmmCauseMinimumLength) {
-    Logger::nas_mm().error(
-        "Buffer length is less than the minimum length of this IE (%d octet)",
-        k5gmmCauseMinimumLength);
+    oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+        .error(
+            "Buffer length is less than the minimum length of this IE (%d "
+            "octet)",
+            k5gmmCauseMinimumLength);
     return KEncodeDecodeError;
   }
 
@@ -99,8 +105,9 @@ int _5gmmCause::Decode(uint8_t* buf, int len, bool is_iei) {
 
   DECODE_U8(buf + decoded_size, value_, decoded_size);
 
-  Logger::nas_mm().debug("Decoded value 0x%x", value_);
-  Logger::nas_mm().debug(
-      "Decoded %s, len (%d)", GetIeName().c_str(), decoded_size);
+  oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+      .debug("Decoded value 0x%x", value_);
+  oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+      .debug("Decoded %s, len (%d)", GetIeName().c_str(), decoded_size);
   return decoded_size;
 }

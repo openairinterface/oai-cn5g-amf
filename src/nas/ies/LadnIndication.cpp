@@ -24,7 +24,7 @@
 #include "3gpp_24.501.hpp"
 #include "IeConst.hpp"
 #include "common_defs.h"
-#include "logger.hpp"
+#include "logger_base.hpp"
 
 using namespace nas;
 
@@ -54,14 +54,16 @@ void LadnIndication::GetValue(std::vector<bstring>& ladn) const {
 
 //------------------------------------------------------------------------------
 int LadnIndication::Encode(uint8_t* buf, int len) {
-  Logger::nas_mm().debug("Encoding %s", GetIeName().c_str());
+  oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+      .debug("Encoding %s", GetIeName().c_str());
 
   int ie_len = GetIeLength();
 
   if (len < ie_len) {  // Length of the content + IEI/Len
-    Logger::nas_mm().error(
-        "Size of the buffer is not enough to store this IE (IE len %d)",
-        ie_len);
+    oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+        .error(
+            "Size of the buffer is not enough to store this IE (IE len %d)",
+            ie_len);
     return KEncodeDecodeError;
   }
 
@@ -84,14 +86,15 @@ int LadnIndication::Encode(uint8_t* buf, int len) {
   int encoded_len_ie = 0;
   ENCODE_U16(buf + len_pos, encoded_size - GetHeaderLength(), encoded_len_ie);
 
-  Logger::nas_mm().debug(
-      "Encoded %s, len (%d)", GetIeName().c_str(), encoded_size);
+  oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+      .debug("Encoded %s, len (%d)", GetIeName().c_str(), encoded_size);
   return encoded_size;
 }
 
 //------------------------------------------------------------------------------
 int LadnIndication::Decode(uint8_t* buf, int len, bool is_iei) {
-  Logger::nas_mm().debug("Decoding %s", GetIeName().c_str());
+  oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+      .debug("Decoding %s", GetIeName().c_str());
   int decoded_size = 0;
 
   // IEI and Length
@@ -114,13 +117,13 @@ int LadnIndication::Decode(uint8_t* buf, int len, bool is_iei) {
 
   for (int i = 0; i < ladn_.size(); i++) {
     for (int j = 0; j < blength(ladn_.at(i)); j++) {
-      Logger::nas_mm().debug(
-          "Decoded LadnIndication value (0x%x)",
-          (uint8_t) ladn_.at(i)->data[j]);
+      oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+          .debug(
+              "Decoded LadnIndication value (0x%x)",
+              (uint8_t) ladn_.at(i)->data[j]);
     }
   }
-
-  Logger::nas_mm().debug(
-      "Decoded %s (len %d)", GetIeName().c_str(), decoded_size);
+  oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+      .debug("Decoded %s (len %d)", GetIeName().c_str(), decoded_size);
   return decoded_size;
 }

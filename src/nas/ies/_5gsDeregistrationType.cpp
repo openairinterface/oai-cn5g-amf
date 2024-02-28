@@ -22,7 +22,7 @@
 #include "_5gsDeregistrationType.hpp"
 
 #include "3gpp_24.501.hpp"
-#include "logger.hpp"
+#include "logger_base.hpp"
 
 using namespace nas;
 
@@ -106,9 +106,9 @@ void _5gsDeregistrationType::Get(uint8_t& type) const {
 /*
 //------------------------------------------------------------------------------
 int _5gsDeregistrationType::Encode(uint8_t* buf, int len) {
-  Logger::nas_mm().error("Encoding 5GSDeregistrationType IE");
-  if (len < 1) {
-    Logger::nas_mm().error(
+  oai::logger::logger_registry::get_logger(LOGGER_COMMON).error("Encoding
+5GSDeregistrationType IE"); if (len < 1) {
+    oai::logger::logger_registry::get_logger(LOGGER_COMMON).error(
         "Encoding 5GSDeregistrationType error (len is less than one)");
     return -1;
   }
@@ -118,10 +118,10 @@ int _5gsDeregistrationType::Encode(uint8_t* buf, int len) {
 
 //------------------------------------------------------------------------------
 int _5gsDeregistrationType::Decode(uint8_t* buf, int len) {
-  Logger::nas_mm().debug("Decoding 5GSDeregistrationType");
-  u1.b = *buf;
+  oai::logger::logger_registry::get_logger(LOGGER_COMMON).debug("Decoding
+5GSDeregistrationType"); u1.b = *buf;
 
-  Logger::nas_mm().debug("Decoded 5GSDeRegistrationType");
-  return 0;
+  oai::logger::logger_registry::get_logger(LOGGER_COMMON).debug("Decoded
+5GSDeRegistrationType"); return 0;
 }
 */

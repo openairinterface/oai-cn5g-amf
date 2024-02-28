@@ -22,7 +22,7 @@
 #include "_5gsRegistrationType.hpp"
 
 #include "3gpp_24.501.hpp"
-#include "logger.hpp"
+#include "logger_base.hpp"
 
 using namespace nas;
 

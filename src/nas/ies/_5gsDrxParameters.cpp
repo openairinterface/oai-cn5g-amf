@@ -24,7 +24,7 @@
 #include "3gpp_24.501.hpp"
 #include "IeConst.hpp"
 #include "common_defs.h"
-#include "logger.hpp"
+#include "logger_base.hpp"
 
 using namespace nas;
 
@@ -54,12 +54,15 @@ uint8_t _5gsDrxParameters::GetValue() const {
 
 //------------------------------------------------------------------------------
 int _5gsDrxParameters::Encode(uint8_t* buf, int len) {
-  Logger::nas_mm().debug("Encoding %s", GetIeName().c_str());
+  oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+      .debug("Encoding %s", GetIeName().c_str());
 
   if (len < k5gsDrxParametersLength) {
-    Logger::nas_mm().error(
-        "Buffer length is less than the minimum length of this IE (%d octet)",
-        k5gsDrxParametersLength);
+    oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+        .error(
+            "Buffer length is less than the minimum length of this IE (%d "
+            "octet)",
+            k5gsDrxParametersLength);
     return KEncodeDecodeError;
   }
 
@@ -71,19 +74,22 @@ int _5gsDrxParameters::Encode(uint8_t* buf, int len) {
 
   ENCODE_U8(buf + encoded_size, value_, encoded_size);
 
-  Logger::nas_mm().debug(
-      "Encoded %s, len (%d)", GetIeName().c_str(), encoded_size);
+  oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+      .debug("Encoded %s, len (%d)", GetIeName().c_str(), encoded_size);
   return encoded_size;
 }
 
 //------------------------------------------------------------------------------
 int _5gsDrxParameters::Decode(uint8_t* buf, int len, bool is_iei) {
-  Logger::nas_mm().debug("Decoding %s", GetIeName().c_str());
+  oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+      .debug("Decoding %s", GetIeName().c_str());
 
   if (len < k5gsDrxParametersLength) {
-    Logger::nas_mm().error(
-        "Buffer length is less than the minimum length of this IE (%d octet)",
-        k5gsDrxParametersLength);
+    oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+        .error(
+            "Buffer length is less than the minimum length of this IE (%d "
+            "octet)",
+            k5gsDrxParametersLength);
     return KEncodeDecodeError;
   }
 
@@ -98,8 +104,9 @@ int _5gsDrxParameters::Decode(uint8_t* buf, int len, bool is_iei) {
   DECODE_U8(buf + decoded_size, octet, decoded_size);
   value_ = octet & 0x0f;
 
-  Logger::nas_mm().debug(
-      "Decoded %s, DRX value 0x%x, len %d", GetIeName().c_str(), value_,
-      decoded_size);
+  oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+      .debug(
+          "Decoded %s, DRX value 0x%x, len %d", GetIeName().c_str(), value_,
+          decoded_size);
   return decoded_size;
 }

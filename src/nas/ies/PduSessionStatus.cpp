@@ -24,7 +24,7 @@
 #include "3gpp_24.501.hpp"
 #include "IeConst.hpp"
 #include "common_defs.h"
-#include "logger.hpp"
+#include "logger_base.hpp"
 
 using namespace nas;
 
@@ -56,7 +56,8 @@ uint16_t PduSessionStatus::GetValue() const {
 
 //------------------------------------------------------------------------------
 int PduSessionStatus::Encode(uint8_t* buf, int len) {
-  Logger::nas_mm().debug("Encoding %s", GetIeName().c_str());
+  oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+      .debug("Encoding %s", GetIeName().c_str());
 
   int encoded_size = 0;
   // IEI and Length
@@ -67,14 +68,15 @@ int PduSessionStatus::Encode(uint8_t* buf, int len) {
   // Value
   ENCODE_U16(buf + encoded_size, value_, encoded_size);
 
-  Logger::nas_mm().debug(
-      "Encoded %s, len (%d)", GetIeName().c_str(), encoded_size);
+  oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+      .debug("Encoded %s, len (%d)", GetIeName().c_str(), encoded_size);
   return encoded_size;
 }
 
 //------------------------------------------------------------------------------
 int PduSessionStatus::Decode(uint8_t* buf, int len, bool is_iei) {
-  Logger::nas_mm().debug("Decoding %s", GetIeName().c_str());
+  oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+      .debug("Decoding %s", GetIeName().c_str());
 
   int decoded_size = 0;
 
@@ -85,8 +87,9 @@ int PduSessionStatus::Decode(uint8_t* buf, int len, bool is_iei) {
 
   DECODE_U16(buf + decoded_size, value_, decoded_size);
 
-  Logger::nas_mm().debug(
-      "Decoded %s, value 0x%x len %d", GetIeName().c_str(), value_,
-      decoded_size);
+  oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+      .debug(
+          "Decoded %s, value 0x%x len %d", GetIeName().c_str(), value_,
+          decoded_size);
   return decoded_size;
 }

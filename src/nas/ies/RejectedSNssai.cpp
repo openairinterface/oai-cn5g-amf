@@ -23,7 +23,7 @@
 
 #include "3gpp_24.501.hpp"
 #include "common_defs.h"
-#include "logger.hpp"
+#include "logger_base.hpp"
 using namespace nas;
 
 //------------------------------------------------------------------------------
@@ -107,9 +107,11 @@ void RejectedSNssai::GetCause(uint8_t& cause) const {
 
 //------------------------------------------------------------------------------
 int RejectedSNssai::Encode(uint8_t* buf, int len) {
-  Logger::nas_mm().debug("Encoding RejectedSNssai");
+  oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+      .debug("Encoding RejectedSNssai");
   if (len < length_ + 1) {
-    Logger::nas_mm().error("len is less than %d", length_);
+    oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+        .error("len is less than %d", length_);
     return KEncodeDecodeError;
   }
 
@@ -127,21 +129,24 @@ int RejectedSNssai::Encode(uint8_t* buf, int len) {
 
   // SST
   ENCODE_U8(buf + encoded_size, sst_, encoded_size);
-  Logger::nas_mm().debug("SST %d", sst_);
+  oai::logger::logger_registry::get_logger(LOGGER_COMMON).debug("SST %d", sst_);
 
   // SD
   if (sd_.has_value()) {
     ENCODE_U24(buf + encoded_size, sd_.value(), encoded_size);
-    Logger::nas_mm().debug("SD 0x%x", sd_.value());
+    oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+        .debug("SD 0x%x", sd_.value());
   }
 
-  Logger::nas_mm().debug("Encoded RejectedSNssai (len %d)", encoded_size);
+  oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+      .debug("Encoded RejectedSNssai (len %d)", encoded_size);
   return encoded_size;
 }
 
 //------------------------------------------------------------------------------
 int RejectedSNssai::Decode(uint8_t* buf, int len) {
-  Logger::nas_mm().debug("Decoding RejectedSNssai");
+  oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+      .debug("Decoding RejectedSNssai");
   int decoded_size = 0;
   uint8_t octet    = 0;
 
@@ -153,21 +158,24 @@ int RejectedSNssai::Decode(uint8_t* buf, int len) {
   // SST
   DECODE_U8(buf + decoded_size, sst_, decoded_size);
   if (length_ == 1) {
-    Logger::nas_mm().debug(
-        "Decoded RejectedSNssai length 0x%x,cause 0x%x, SST 0x%x", length_,
-        cause_, sst_);
+    oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+        .debug(
+            "Decoded RejectedSNssai length 0x%x,cause 0x%x, SST 0x%x", length_,
+            cause_, sst_);
   } else if (length_ == 4) {
     // SD
     uint32_t sd = 0;
     DECODE_U24(buf + decoded_size, sd, decoded_size);
     sd_ = std::optional<uint32_t>(sd);
-    Logger::nas_mm().debug(
-        "Decoded RejectedSNssai length 0x%x, cause 0x%x, SST 0x%x, SD 0x%x",
-        length_, cause_, sst_, sd);
+    oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+        .debug(
+            "Decoded RejectedSNssai length 0x%x, cause 0x%x, SST 0x%x, SD 0x%x",
+            length_, cause_, sst_, sd);
   } else {
     return KEncodeDecodeError;  // invalid value
   }
 
-  Logger::nas_mm().debug("Decoded RejectedSNssai (len %d)", decoded_size);
+  oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+      .debug("Decoded RejectedSNssai (len %d)", decoded_size);
   return decoded_size;
 }

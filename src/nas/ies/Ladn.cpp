@@ -24,7 +24,7 @@
 #include "3gpp_24.501.hpp"
 #include "IeConst.hpp"
 #include "common_defs.h"
-#include "logger.hpp"
+#include "logger_base.hpp"
 
 using namespace nas;
 
@@ -50,15 +50,17 @@ uint32_t Ladn::GetLength() const {
 }
 //------------------------------------------------------------------------------
 int Ladn::Encode(uint8_t* buf, int len) {
-  Logger::nas_mm().debug("Encoding LADN");
+  oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+      .debug("Encoding LADN");
 
   int ie_len = dnn_.GetIeLength();
   ie_len += ta_list_.GetIeLength();
 
   if (len < ie_len) {  // Length of the content + IEI/Len
-    Logger::nas_mm().error(
-        "Size of the buffer is not enough to store this IE (IE len %d)",
-        ie_len);
+    oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+        .error(
+            "Size of the buffer is not enough to store this IE (IE len %d)",
+            ie_len);
     return KEncodeDecodeError;
   }
 
@@ -73,16 +75,19 @@ int Ladn::Encode(uint8_t* buf, int len) {
   if (encoded_ie_size == KEncodeDecodeError) return KEncodeDecodeError;
   encoded_size += encoded_ie_size;
 
-  Logger::nas_mm().debug("Encoded LADN, len (%d)", encoded_size);
+  oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+      .debug("Encoded LADN, len (%d)", encoded_size);
   return encoded_size;
 }
 
 //------------------------------------------------------------------------------
 int Ladn::Decode(uint8_t* buf, int len) {
-  Logger::nas_mm().debug("Decoding LADN");
+  oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+      .debug("Decoding LADN");
   int decoded_size = 0;
   // TODO:
 
-  Logger::nas_mm().debug("Decoded LADN (len %d)", decoded_size);
+  oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+      .debug("Decoded LADN (len %d)", decoded_size);
   return decoded_size;
 }

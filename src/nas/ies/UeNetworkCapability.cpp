@@ -23,7 +23,7 @@
 
 #include "3gpp_24.501.hpp"
 #include "common_defs.h"
-#include "logger.hpp"
+#include "logger_base.hpp"
 
 using namespace nas;
 
@@ -50,8 +50,9 @@ UeNetworkCapability::UeNetworkCapability(uint8_t iei, uint8_t eea, uint8_t eia)
   eea_ = eea;
   eia_ = eia;
   SetLengthIndicator(2);
-  Logger::nas_mm().debug(
-      "Initialized %s EEA 0x%x, EIA 0x%x", GetIeName().c_str(), eea_, eia_);
+  oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+      .debug(
+          "Initialized %s EEA 0x%x, EIA 0x%x", GetIeName().c_str(), eea_, eia_);
 }
 
 //------------------------------------------------------------------------------
@@ -76,13 +77,15 @@ uint8_t UeNetworkCapability::GetEia() const {
 
 //------------------------------------------------------------------------------
 int UeNetworkCapability::Encode(uint8_t* buf, int len) {
-  Logger::nas_mm().debug("Encoding %s", GetIeName().c_str());
+  oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+      .debug("Encoding %s", GetIeName().c_str());
   int ie_len = GetIeLength();
 
   if (len < ie_len) {  // Length of the content + IEI/Len
-    Logger::nas_mm().error(
-        "Size of the buffer is not enough to store this IE (IE len %d)",
-        ie_len);
+    oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+        .error(
+            "Size of the buffer is not enough to store this IE (IE len %d)",
+            ie_len);
     return KEncodeDecodeError;
   }
 
@@ -105,19 +108,22 @@ int UeNetworkCapability::Encode(uint8_t* buf, int len) {
     ENCODE_U8(buf + encoded_size, spare, encoded_size);
   }
 
-  Logger::nas_mm().debug(
-      "Encoded %s, len (%d)", GetIeName().c_str(), encoded_size);
+  oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+      .debug("Encoded %s, len (%d)", GetIeName().c_str(), encoded_size);
   return encoded_size;
 }
 
 //------------------------------------------------------------------------------
 int UeNetworkCapability::Decode(uint8_t* buf, int len, bool is_iei) {
-  Logger::nas_mm().debug("Decoding %s", GetIeName().c_str());
+  oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+      .debug("Decoding %s", GetIeName().c_str());
 
   if (len < kUeNetworkCapabilityMinimumLength) {
-    Logger::nas_mm().error(
-        "Buffer length is less than the minimum length of this IE (%d octet)",
-        kUeNetworkCapabilityMinimumLength);
+    oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+        .error(
+            "Buffer length is less than the minimum length of this IE (%d "
+            "octet)",
+            kUeNetworkCapabilityMinimumLength);
     return KEncodeDecodeError;
   }
 
@@ -140,8 +146,9 @@ int UeNetworkCapability::Decode(uint8_t* buf, int len, bool is_iei) {
     ENCODE_U8(buf + decoded_size, spare, decoded_size);
   }
 
-  Logger::nas_mm().debug(
-      "Decoded %s, len (%d)", GetIeName().c_str(), decoded_size);
-  Logger::nas_mm().debug("EEA 0x%x, EIA 0x%x", eea_, eia_);
+  oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+      .debug("Decoded %s, len (%d)", GetIeName().c_str(), decoded_size);
+  oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+      .debug("EEA 0x%x, EIA 0x%x", eea_, eia_);
   return decoded_size;
 }

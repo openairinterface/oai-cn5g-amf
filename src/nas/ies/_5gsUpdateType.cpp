@@ -24,7 +24,7 @@
 #include "3gpp_24.501.hpp"
 #include "IeConst.hpp"
 #include "common_defs.h"
-#include "logger.hpp"
+#include "logger_base.hpp"
 
 using namespace nas;
 
@@ -93,13 +93,15 @@ bool _5gsUpdateType::GetSms() const {
 
 //------------------------------------------------------------------------------
 int _5gsUpdateType::Encode(uint8_t* buf, int len) {
-  Logger::nas_mm().debug("Encoding %s", GetIeName().c_str());
+  oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+      .debug("Encoding %s", GetIeName().c_str());
   int ie_len = GetIeLength();
 
   if (len < ie_len) {  // Length of the content + IEI/Len
-    Logger::nas_mm().error(
-        "Size of the buffer is not enough to store this IE (IE len %d)",
-        ie_len);
+    oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+        .error(
+            "Size of the buffer is not enough to store this IE (IE len %d)",
+            ie_len);
     return KEncodeDecodeError;
   }
 
@@ -113,23 +115,26 @@ int _5gsUpdateType::Encode(uint8_t* buf, int len) {
   octet = (eps_pnb_ciot_ << 4) | (_5gs_pnb_ciot_ << 2) | (ng_ran_ << 1) | sms_;
   ENCODE_U8(buf + encoded_size, octet, encoded_size);
 
-  Logger::nas_mm().debug(
-      "Encoded %s, len (%d)", GetIeName().c_str(), encoded_size);
+  oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+      .debug("Encoded %s, len (%d)", GetIeName().c_str(), encoded_size);
   return encoded_size;
 }
 
 //------------------------------------------------------------------------------
 int _5gsUpdateType::Decode(uint8_t* buf, int len, bool is_iei) {
   if (len < k5gsUpdateTypeLength) {
-    Logger::nas_mm().error(
-        "Buffer length is less than the minimum length of this IE (%d octet)",
-        k5gsUpdateTypeLength);
+    oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+        .error(
+            "Buffer length is less than the minimum length of this IE (%d "
+            "octet)",
+            k5gsUpdateTypeLength);
     return KEncodeDecodeError;
   }
 
   uint8_t decoded_size = 0;
   uint8_t octet        = 0;
-  Logger::nas_mm().debug("Decoding %s", GetIeName().c_str());
+  oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+      .debug("Decoding %s", GetIeName().c_str());
 
   // IEI and Length
   int decoded_header_size = Type4NasIe::Decode(buf + decoded_size, len, is_iei);
@@ -144,11 +149,12 @@ int _5gsUpdateType::Decode(uint8_t* buf, int len, bool is_iei) {
   ng_ran_        = (octet & 0x02) >> 1;
   sms_           = (octet & 0x01);
 
-  Logger::nas_mm().debug(
-      "EPS_PNB_CIoT 0x%x, _5GS_PNB_CIoT 0x%x, NG RAN 0x%x, SMS 0x%x",
-      eps_pnb_ciot_, _5gs_pnb_ciot_, ng_ran_, sms_);
+  oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+      .debug(
+          "EPS_PNB_CIoT 0x%x, _5GS_PNB_CIoT 0x%x, NG RAN 0x%x, SMS 0x%x",
+          eps_pnb_ciot_, _5gs_pnb_ciot_, ng_ran_, sms_);
 
-  Logger::nas_mm().debug(
-      "Decoded %s, len (%d)", GetIeName().c_str(), decoded_size);
+  oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+      .debug("Decoded %s, len (%d)", GetIeName().c_str(), decoded_size);
   return decoded_size;
 }

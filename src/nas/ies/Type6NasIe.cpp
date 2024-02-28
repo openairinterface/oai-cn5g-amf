@@ -23,7 +23,7 @@
 
 #include "3gpp_24.501.hpp"
 #include "common_defs.h"
-#include "logger.hpp"
+#include "logger_base.hpp"
 
 using namespace nas;
 //------------------------------------------------------------------------------
@@ -75,9 +75,11 @@ uint8_t Type6NasIe::GetHeaderLength() const {
 bool Type6NasIe::Validate(const int& len) const {
   uint16_t ie_len = GetIeLength();
   if (len < ie_len) {
-    Logger::nas_mm().error(
-        "Buffer length is less than the minimum length of this IE (%d octet)",
-        ie_len);
+    oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+        .error(
+            "Buffer length is less than the minimum length of this IE (%d "
+            "octet)",
+            ie_len);
     return false;
   }
   return true;
@@ -87,10 +89,12 @@ bool Type6NasIe::Validate(const int& len) const {
 bool Type6NasIe::ValidateHeader(const int& len) const {
   int header_len = GetHeaderLength();  // Length of IEI/Len
   if (len < header_len) {
-    Logger::nas_mm().error(
-        "Buffer length is less than the length of the header (IEI/Length) of "
-        "this IE (%d octet(s))",
-        header_len);
+    oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+        .error(
+            "Buffer length is less than the length of the header (IEI/Length) "
+            "of "
+            "this IE (%d octet(s))",
+            header_len);
     return false;
   }
   return true;

@@ -24,7 +24,7 @@
 #include "3gpp_24.501.hpp"
 #include "IeConst.hpp"
 #include "common_defs.h"
-#include "logger.hpp"
+#include "logger_base.hpp"
 
 using namespace nas;
 
@@ -56,12 +56,15 @@ bool UeUsageSetting::GetValue() const {
 
 //------------------------------------------------------------------------------
 int UeUsageSetting::Encode(uint8_t* buf, int len) {
-  Logger::nas_mm().debug("Encoding %s", GetIeName().c_str());
+  oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+      .debug("Encoding %s", GetIeName().c_str());
 
   if (len < kUeUsageSettingLength) {
-    Logger::nas_mm().error(
-        "Buffer length is less than the minimum length of this IE (%d octet)",
-        kUeUsageSettingLength);
+    oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+        .error(
+            "Buffer length is less than the minimum length of this IE (%d "
+            "octet)",
+            kUeUsageSettingLength);
     return KEncodeDecodeError;
   }
 
@@ -73,19 +76,22 @@ int UeUsageSetting::Encode(uint8_t* buf, int len) {
 
   ENCODE_U8(buf + encoded_size, 0x01 & ues_usage_setting_, encoded_size);
 
-  Logger::nas_mm().debug(
-      "Encoded %s, len (%d)", GetIeName().c_str(), encoded_size);
+  oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+      .debug("Encoded %s, len (%d)", GetIeName().c_str(), encoded_size);
   return encoded_size;
 }
 
 //------------------------------------------------------------------------------
 int UeUsageSetting::Decode(uint8_t* buf, int len, bool is_iei) {
-  Logger::nas_mm().debug("Decoding %s", GetIeName().c_str());
+  oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+      .debug("Decoding %s", GetIeName().c_str());
 
   if (len < kUeUsageSettingLength) {
-    Logger::nas_mm().error(
-        "Buffer length is less than the minimum length of this IE (%d octet)",
-        kUeUsageSettingLength);
+    oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+        .error(
+            "Buffer length is less than the minimum length of this IE (%d "
+            "octet)",
+            kUeUsageSettingLength);
     return KEncodeDecodeError;
   }
 
@@ -101,8 +107,9 @@ int UeUsageSetting::Decode(uint8_t* buf, int len, bool is_iei) {
 
   ues_usage_setting_ = octet & 0x01;
 
-  Logger::nas_mm().debug(
-      "Decoded %s, UE's Usage Setting 0x%x, len %d", GetIeName().c_str(),
-      ues_usage_setting_, decoded_size);
+  oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+      .debug(
+          "Decoded %s, UE's Usage Setting 0x%x, len %d", GetIeName().c_str(),
+          ues_usage_setting_, decoded_size);
   return decoded_size;
 }

@@ -21,7 +21,7 @@
 
 #include "NasSecurityAlgorithms.hpp"
 
-#include "logger.hpp"
+#include "logger_base.hpp"
 
 using namespace nas;
 
@@ -84,12 +84,15 @@ void NasSecurityAlgorithms::Get(
 
 //------------------------------------------------------------------------------
 int NasSecurityAlgorithms::Encode(uint8_t* buf, int len) {
-  Logger::nas_mm().debug("Encoding %s", GetIeName().c_str());
+  oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+      .debug("Encoding %s", GetIeName().c_str());
 
   if (len < kNasSecurityAlgorithmsLength) {
-    Logger::nas_mm().error(
-        "Buffer length is less than the minimum length of this IE (%d octet)",
-        kNasSecurityAlgorithmsLength);
+    oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+        .error(
+            "Buffer length is less than the minimum length of this IE (%d "
+            "octet)",
+            kNasSecurityAlgorithmsLength);
     return KEncodeDecodeError;
   }
   int encoded_size = 0;
@@ -103,19 +106,22 @@ int NasSecurityAlgorithms::Encode(uint8_t* buf, int len) {
 
   ENCODE_U8(buf + encoded_size, octet, encoded_size);
 
-  Logger::nas_mm().debug(
-      "Encoded %s, len (%d)", GetIeName().c_str(), encoded_size);
+  oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+      .debug("Encoded %s, len (%d)", GetIeName().c_str(), encoded_size);
   return encoded_size;
 }
 
 //------------------------------------------------------------------------------
 int NasSecurityAlgorithms::Decode(uint8_t* buf, int len, bool is_iei) {
-  Logger::nas_mm().debug("Decoding %s", GetIeName().c_str());
+  oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+      .debug("Decoding %s", GetIeName().c_str());
 
   if (len < kNasSecurityAlgorithmsLength) {
-    Logger::nas_mm().error(
-        "Buffer length is less than the minimum length of this IE (%d octet)",
-        kNasSecurityAlgorithmsLength);
+    oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+        .error(
+            "Buffer length is less than the minimum length of this IE (%d "
+            "octet)",
+            kNasSecurityAlgorithmsLength);
     return KEncodeDecodeError;
   }
 
@@ -130,7 +136,7 @@ int NasSecurityAlgorithms::Decode(uint8_t* buf, int len, bool is_iei) {
   type_of_ciphering_algorithm_            = (octet & 0xf0) >> 4;
   type_of_integrity_protection_algorithm_ = octet & 0x0f;
 
-  Logger::nas_mm().debug(
-      "Decoded %s, len (%d)", GetIeName().c_str(), decoded_size);
+  oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+      .debug("Decoded %s, len (%d)", GetIeName().c_str(), decoded_size);
   return decoded_size;
 }

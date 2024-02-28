@@ -21,7 +21,7 @@
 
 #include "Non3gppNwProvidedPolicies.hpp"
 
-#include "logger.hpp"
+#include "logger_base.hpp"
 
 using namespace nas;
 

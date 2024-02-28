@@ -84,7 +84,8 @@ void DlNasTransport::SetBackOffTimerValue(uint8_t unit, uint8_t value) {
 
 //------------------------------------------------------------------------------
 int DlNasTransport::Encode(uint8_t* buf, int len) {
-  Logger::nas_mm().debug("Encoding DlNasTransport message");
+  oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+      .debug("Encoding DlNasTransport message");
 
   int encoded_size    = 0;
   int encoded_ie_size = 0;
@@ -92,7 +93,8 @@ int DlNasTransport::Encode(uint8_t* buf, int len) {
   // Header
   if ((encoded_ie_size = NasMmPlainHeader::Encode(buf, len)) ==
       KEncodeDecodeError) {
-    Logger::nas_mm().error("Encoding NAS Header error");
+    oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+        .error("Encoding NAS Header error");
     return KEncodeDecodeError;
   }
   encoded_size += encoded_ie_size;
@@ -115,8 +117,8 @@ int DlNasTransport::Encode(uint8_t* buf, int len) {
   if (encoded_ie_size != KEncodeDecodeError) {
     encoded_size += encoded_ie_size;
   } else {
-    Logger::nas_mm().error(
-        "Encoding %s error", PayloadContainer::GetIeName().c_str());
+    oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+        .error("Encoding %s error", PayloadContainer::GetIeName().c_str());
     return KEncodeDecodeError;
   }
   /*
@@ -154,14 +156,15 @@ int DlNasTransport::Encode(uint8_t* buf, int len) {
     return KEncodeDecodeError;
   }
 
-  Logger::nas_mm().debug(
-      "Encoded DlNasTransport message len (%d)", encoded_size);
+  oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+      .debug("Encoded DlNasTransport message len (%d)", encoded_size);
   return encoded_size;
 }
 
 //------------------------------------------------------------------------------
 int DlNasTransport::Decode(uint8_t* buf, int len) {
-  Logger::nas_mm().debug("Decoding DlNasTransport message");
+  oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+      .debug("Decoding DlNasTransport message");
 
   int decoded_size    = 0;
   int decoded_ie_size = 0;
@@ -169,7 +172,8 @@ int DlNasTransport::Decode(uint8_t* buf, int len) {
   // Header
   decoded_ie_size = NasMmPlainHeader::Decode(buf, len);
   if (decoded_ie_size == KEncodeDecodeError) {
-    Logger::nas_mm().error("Decoding NAS Header error");
+    oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+        .error("Decoding NAS Header error");
     return KEncodeDecodeError;
   }
   decoded_size += decoded_ie_size;
@@ -188,20 +192,23 @@ int DlNasTransport::Decode(uint8_t* buf, int len) {
       buf + decoded_size, len - decoded_size, false,
       kN1SmInformation);  // TODO: verified Type of Payload Container
   if (decoded_ie_size == KEncodeDecodeError) {
-    Logger::nas_mm().error(
-        "Decoding %s error", PayloadContainer::GetIeName().c_str());
+    oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+        .error("Decoding %s error", PayloadContainer::GetIeName().c_str());
     return KEncodeDecodeError;
   }
   decoded_size += decoded_ie_size;
 
-  Logger::nas_mm().debug("Decoded_size (%d)", decoded_size);
+  oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+      .debug("Decoded_size (%d)", decoded_size);
 
   // Decode other IEs
   uint8_t octet = 0x00;
   DECODE_U8_VALUE(buf + decoded_size, octet);
-  Logger::nas_mm().debug("First option IEI (0x%x)", octet);
+  oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+      .debug("First option IEI (0x%x)", octet);
   while ((octet != 0x0)) {
-    Logger::nas_mm().debug("Decoding IEI 0x%x", octet);
+    oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+        .debug("Decoding IEI 0x%x", octet);
     switch (octet) {
       case kIeiPduSessionId: {
         if ((decoded_ie_size = NasHelper::Decode(
@@ -210,7 +217,8 @@ int DlNasTransport::Decode(uint8_t* buf, int len) {
           return KEncodeDecodeError;
         }
         DECODE_U8_VALUE(buf + decoded_size, octet);
-        Logger::nas_mm().debug("Next IEI (0x%x)", octet);
+        oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+            .debug("Next IEI (0x%x)", octet);
       } break;
 
       case kIeiAdditionalInformation: {
@@ -220,7 +228,8 @@ int DlNasTransport::Decode(uint8_t* buf, int len) {
           return KEncodeDecodeError;
         }
         DECODE_U8_VALUE(buf + decoded_size, octet);
-        Logger::nas_mm().debug("Next IEI (0x%x)", octet);
+        oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+            .debug("Next IEI (0x%x)", octet);
       } break;
 
       case kIei5gmmCause: {
@@ -230,7 +239,8 @@ int DlNasTransport::Decode(uint8_t* buf, int len) {
           return KEncodeDecodeError;
         }
         DECODE_U8_VALUE(buf + decoded_size, octet);
-        Logger::nas_mm().debug("Next IEI (0x%x)", octet);
+        oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+            .debug("Next IEI (0x%x)", octet);
       } break;
 
       case kIeiGprsTimer3BackOffTimer: {
@@ -240,18 +250,20 @@ int DlNasTransport::Decode(uint8_t* buf, int len) {
           return KEncodeDecodeError;
         }
         DECODE_U8_VALUE(buf + decoded_size, octet);
-        Logger::nas_mm().debug("Next IEI (0x%x)", octet);
+        oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+            .debug("Next IEI (0x%x)", octet);
       } break;
 
       default: {
-        Logger::nas_mm().warn("Unknown IEI 0x%x, stop decoding...", octet);
+        oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+            .warn("Unknown IEI 0x%x, stop decoding...", octet);
         // Stop decoding
         octet = 0x00;
       } break;
     }
   }
 
-  Logger::nas_mm().debug(
-      "Decoded DlNasTransport message len (%d)", decoded_size);
+  oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+      .debug("Decoded DlNasTransport message len (%d)", decoded_size);
   return decoded_size;
 }

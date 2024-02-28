@@ -23,7 +23,7 @@
 
 #include "3gpp_24.501.hpp"
 #include "common_defs.h"
-#include "logger.hpp"
+#include "logger_base.hpp"
 
 using namespace nas;
 
@@ -46,9 +46,11 @@ Type1NasIeFormatV::~Type1NasIeFormatV() {}
 //------------------------------------------------------------------------------
 bool Type1NasIeFormatV::Validate(const int& len) const {
   if (len < kType1NasIeFormatVLength) {
-    Logger::nas_mm().error(
-        "Buffer length is less than the minimum length of this IE (%d octet)",
-        kType1NasIeFormatVLength);
+    oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+        .error(
+            "Buffer length is less than the minimum length of this IE (%d "
+            "octet)",
+            kType1NasIeFormatVLength);
     return false;
   }
   return true;
@@ -66,7 +68,8 @@ void Type1NasIeFormatV::Set(uint8_t value) {
 }
 //------------------------------------------------------------------------------
 int Type1NasIeFormatV::Encode(uint8_t* buf, const int& len) {
-  // Logger::nas_mm().debug("Encoding %s", GetIeName().c_str());
+  // oai::logger::logger_registry::get_logger(LOGGER_COMMON).debug("Encoding
+  // %s", GetIeName().c_str());
   if (!Validate(len)) return KEncodeDecodeError;
 
   int encoded_size = 0;
@@ -85,7 +88,7 @@ int Type1NasIeFormatV::Encode(uint8_t* buf, const int& len) {
 
   ENCODE_U8(buf + encoded_size, octet, encoded_size);
 
-  // Logger::nas_mm().debug(
+  // oai::logger::logger_registry::get_logger(LOGGER_COMMON).debug(
   //    "Encoded %s (len %d)", GetIeName().c_str(), encoded_size);
   return 0;  // 1/2 octet
 }
@@ -93,7 +96,8 @@ int Type1NasIeFormatV::Encode(uint8_t* buf, const int& len) {
 //------------------------------------------------------------------------------
 int Type1NasIeFormatV::Decode(
     const uint8_t* const buf, const int& len, bool high_pos) {
-  // Logger::nas_mm().debug("Decoding %s", GetIeName().c_str());
+  // oai::logger::logger_registry::get_logger(LOGGER_COMMON).debug("Decoding
+  // %s", GetIeName().c_str());
 
   if (!Validate(len)) return KEncodeDecodeError;
   high_pos_        = high_pos;
@@ -106,7 +110,7 @@ int Type1NasIeFormatV::Decode(
   } else {
     value_ = (octet & 0x0f);
   }
-  // Logger::nas_mm().debug(
+  // oai::logger::logger_registry::get_logger(LOGGER_COMMON).debug(
   //     "Decoded %s (len %d)", GetIeName().c_str(), decoded_size);
   return 0;  // 1/2 octet
 }

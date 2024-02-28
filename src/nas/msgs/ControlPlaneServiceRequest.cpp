@@ -121,7 +121,8 @@ bool ControlPlaneServiceRequest::GetNasMessageContainer(bstring& nas) const {
 
 //------------------------------------------------------------------------------
 int ControlPlaneServiceRequest::Encode(uint8_t* buf, int len) {
-  Logger::nas_mm().debug("Encoding ControlPlaneServiceRequest message...");
+  oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+      .debug("Encoding ControlPlaneServiceRequest message...");
 
   int encoded_size    = 0;
   int encoded_ie_size = 0;
@@ -129,7 +130,8 @@ int ControlPlaneServiceRequest::Encode(uint8_t* buf, int len) {
   // Header
   if ((encoded_ie_size = NasMmPlainHeader::Encode(buf, len)) ==
       KEncodeDecodeError) {
-    Logger::nas_mm().error("Encoding NAS Header error");
+    oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+        .error("Encoding NAS Header error");
     return KEncodeDecodeError;
   }
   encoded_size += encoded_ie_size;
@@ -177,14 +179,15 @@ int ControlPlaneServiceRequest::Encode(uint8_t* buf, int len) {
 
   // TODO: Additional information (Optional)
 
-  Logger::nas_mm().debug(
-      "Encoded ControlPlaneServiceRequest message (%d)", encoded_size);
+  oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+      .debug("Encoded ControlPlaneServiceRequest message (%d)", encoded_size);
   return encoded_size;
 }
 
 //------------------------------------------------------------------------------
 int ControlPlaneServiceRequest::Decode(uint8_t* buf, int len) {
-  Logger::nas_mm().debug("Decoding ControlPlaneServiceRequest message");
+  oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+      .debug("Decoding ControlPlaneServiceRequest message");
 
   int decoded_size    = 0;
   int decoded_ie_size = 0;
@@ -192,7 +195,8 @@ int ControlPlaneServiceRequest::Decode(uint8_t* buf, int len) {
   // Header
   decoded_ie_size = NasMmPlainHeader::Decode(buf, len);
   if (decoded_ie_size == KEncodeDecodeError) {
-    Logger::nas_mm().error("Decoding NAS Header error");
+    oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+        .error("Decoding NAS Header error");
     return KEncodeDecodeError;
   }
   decoded_size += decoded_ie_size;
@@ -221,9 +225,11 @@ int ControlPlaneServiceRequest::Decode(uint8_t* buf, int len) {
   // Decode other IEs
   uint8_t octet = 0x00;
   DECODE_U8_VALUE(buf + decoded_size, octet);
-  Logger::nas_mm().debug("First optional IE (0x%x)", octet);
+  oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+      .debug("First optional IE (0x%x)", octet);
   while ((octet != 0x0)) {
-    Logger::nas_mm().debug("Decoding IEI 0x%x", octet);
+    oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+        .debug("Decoding IEI 0x%x", octet);
     switch (octet) {
       // TODO: CIoT small data container (Optional)
       // TODO: Payload container type (Optional)
@@ -236,7 +242,8 @@ int ControlPlaneServiceRequest::Decode(uint8_t* buf, int len) {
           return KEncodeDecodeError;
         }
         DECODE_U8_VALUE(buf + decoded_size, octet);
-        Logger::nas_mm().debug("Next IEI (0x%x)", octet);
+        oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+            .debug("Next IEI (0x%x)", octet);
       } break;
 
         // TODO: Release assistance indication (Optional)
@@ -248,7 +255,8 @@ int ControlPlaneServiceRequest::Decode(uint8_t* buf, int len) {
           return KEncodeDecodeError;
         }
         DECODE_U8_VALUE(buf + decoded_size, octet);
-        Logger::nas_mm().debug("Next IEI (0x%x)", octet);
+        oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+            .debug("Next IEI (0x%x)", octet);
       } break;
 
       case kIeiNasMessageContainer: {
@@ -258,20 +266,23 @@ int ControlPlaneServiceRequest::Decode(uint8_t* buf, int len) {
           return KEncodeDecodeError;
         }
         DECODE_U8_VALUE(buf + decoded_size, octet);
-        Logger::nas_mm().debug("Next IEI (0x%x)", octet);
+        oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+            .debug("Next IEI (0x%x)", octet);
       } break;
 
         // TODO: Additional information (Optional)
 
       default: {
-        Logger::nas_mm().warn("Unknown IEI 0x%x, stop decoding...", octet);
+        oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+            .warn("Unknown IEI 0x%x, stop decoding...", octet);
         // Stop decoding
         octet = 0x00;
       }
     }
   }
 
-  Logger::nas_mm().debug(
-      "Decoded ControlPlaneServiceRequest message len (%d)", decoded_size);
+  oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+      .debug(
+          "Decoded ControlPlaneServiceRequest message len (%d)", decoded_size);
   return decoded_size;
 }

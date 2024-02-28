@@ -23,7 +23,7 @@
 
 #include "3gpp_24.501.hpp"
 #include "common_defs.h"
-#include "logger.hpp"
+#include "logger_base.hpp"
 #include "utils.hpp"
 
 using namespace nas;
@@ -62,12 +62,14 @@ void PlmnList::Get(std::vector<nas_plmn_t>& list) const {
 
 //------------------------------------------------------------------------------
 int PlmnList::Encode(uint8_t* buf, int len) {
-  Logger::nas_mm().debug("Encoding %s", GetIeName().c_str());
+  oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+      .debug("Encoding %s", GetIeName().c_str());
 
   int ie_len = GetIeLength();
 
   if (len < ie_len) {
-    Logger::nas_mm().error("Len is less than %d", ie_len);
+    oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+        .error("Len is less than %d", ie_len);
     return KEncodeDecodeError;
   }
 
@@ -81,19 +83,22 @@ int PlmnList::Encode(uint8_t* buf, int len) {
     encoded_size += utils::encodeMccMnc2Buffer(
         it.mcc, it.mnc, buf + encoded_size, len - encoded_size);
 
-  Logger::nas_mm().debug(
-      "Encoded %s, len (%d)", GetIeName().c_str(), encoded_size);
+  oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+      .debug("Encoded %s, len (%d)", GetIeName().c_str(), encoded_size);
   return encoded_size;
 }
 
 //------------------------------------------------------------------------------
 int PlmnList::Decode(uint8_t* buf, int len, bool is_iei) {
-  Logger::nas_mm().debug("Decoding %s", GetIeName().c_str());
+  oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+      .debug("Decoding %s", GetIeName().c_str());
 
   if (len < kPlmnListMinimumLength) {
-    Logger::nas_mm().error(
-        "Buffer length is less than the minimum length of this IE (%d octet)",
-        kPlmnListMinimumLength);
+    oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+        .error(
+            "Buffer length is less than the minimum length of this IE (%d "
+            "octet)",
+            kPlmnListMinimumLength);
     return KEncodeDecodeError;
   }
 
@@ -116,7 +121,7 @@ int PlmnList::Decode(uint8_t* buf, int len, bool is_iei) {
       break;
     }
   }
-  Logger::nas_mm().debug(
-      "Decoded %s, len (%d)", GetIeName().c_str(), decoded_size);
+  oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+      .debug("Decoded %s, len (%d)", GetIeName().c_str(), decoded_size);
   return decoded_size;
 }

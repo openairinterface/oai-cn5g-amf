@@ -21,7 +21,7 @@
 
 #include "SNssai.hpp"
 
-#include "logger.hpp"
+#include "logger_base.hpp"
 
 using namespace nas;
 
@@ -171,11 +171,13 @@ std::string SNssai::ToString() {
 
 //------------------------------------------------------------------------------
 int SNssai::Encode(uint8_t* buf, int len) {
-  Logger::nas_mm().debug("Encoding %s", GetIeName().c_str());
+  oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+      .debug("Encoding %s", GetIeName().c_str());
   int ie_len = GetIeLength();
 
   if (len < ie_len) {
-    Logger::nas_mm().error("Len is less than %d", ie_len);
+    oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+        .error("Len is less than %d", ie_len);
     return KEncodeDecodeError;
   }
 
@@ -200,23 +202,26 @@ int SNssai::Encode(uint8_t* buf, int len) {
   if (mapped_hplmn_sd_.has_value())
     ENCODE_U24(buf + encoded_size, mapped_hplmn_sd_.value(), encoded_size);
 
-  Logger::nas_mm().debug(
-      "Encoded %s, len (%d)", GetIeName().c_str(), encoded_size);
+  oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+      .debug("Encoded %s, len (%d)", GetIeName().c_str(), encoded_size);
   return encoded_size;
 }
 
 //------------------------------------------------------------------------------
 int SNssai::Decode(uint8_t* buf, int len, const bool is_iei) {
   if (len < kSNssaiMinimumLength) {
-    Logger::nas_mm().error(
-        "Buffer length is less than the minimum length of this IE (%d octet)",
-        kSNssaiMinimumLength);
+    oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+        .error(
+            "Buffer length is less than the minimum length of this IE (%d "
+            "octet)",
+            kSNssaiMinimumLength);
     return KEncodeDecodeError;
   }
 
   uint8_t decoded_size = 0;
   uint8_t octet        = 0;
-  Logger::nas_mm().debug("Decoding %s", GetIeName().c_str());
+  oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+      .debug("Decoding %s", GetIeName().c_str());
 
   // IEI and Length
   int decoded_header_size = Type4NasIe::Decode(buf + decoded_size, len, is_iei);
@@ -274,8 +279,9 @@ int SNssai::Decode(uint8_t* buf, int len, const bool is_iei) {
     } break;
   }
 
-  Logger::nas_mm().debug("Decoded S-NSSAI %s", ToString().c_str());
-  Logger::nas_mm().debug(
-      "Decoded %s, len (%d)", GetIeName().c_str(), decoded_size);
+  oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+      .debug("Decoded S-NSSAI %s", ToString().c_str());
+  oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+      .debug("Decoded %s, len (%d)", GetIeName().c_str(), decoded_size);
   return decoded_size;
 }

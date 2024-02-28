@@ -23,7 +23,7 @@
 
 #include "3gpp_24.501.hpp"
 #include "common_defs.h"
-#include "logger.hpp"
+#include "logger_base.hpp"
 
 using namespace nas;
 //------------------------------------------------------------------------------
@@ -47,9 +47,11 @@ void Type3NasIe::SetIei(uint8_t iei) {
 //------------------------------------------------------------------------------
 bool Type3NasIe::Validate(const int& len) const {
   if (iei_.has_value() and (len < kType3NasIeFormatTvLength)) {
-    Logger::nas_mm().error(
-        "Buffer length is less than the minimum length of this IE (%d octet)",
-        kType3NasIeFormatTvLength);
+    oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+        .error(
+            "Buffer length is less than the minimum length of this IE (%d "
+            "octet)",
+            kType3NasIeFormatTvLength);
     return false;
   }
   return true;

@@ -70,11 +70,13 @@ void AuthenticationFailureParameter::GetValue(bstring& value) const {
 
 //------------------------------------------------------------------------------
 int AuthenticationFailureParameter::Encode(uint8_t* buf, int len) {
-  Logger::nas_mm().debug("Encoding %s", GetIeName().c_str());
+  oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+      .debug("Encoding %s", GetIeName().c_str());
   int ie_len = GetIeLength();
 
   if (len < ie_len) {
-    Logger::nas_mm().error("Len is less than %d", ie_len);
+    oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+        .error("Len is less than %d", ie_len);
     return KEncodeDecodeError;
   }
 
@@ -92,8 +94,8 @@ int AuthenticationFailureParameter::Encode(uint8_t* buf, int len) {
   int size = encode_bstring(value_, (buf + encoded_size), len - encoded_size);
   encoded_size += size;
 
-  Logger::nas_mm().debug(
-      "Encoded %s, len (%d)", GetIeName().c_str(), encoded_size);
+  oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+      .debug("Encoded %s, len (%d)", GetIeName().c_str(), encoded_size);
   return encoded_size;
 }
 
@@ -101,7 +103,8 @@ int AuthenticationFailureParameter::Encode(uint8_t* buf, int len) {
 int AuthenticationFailureParameter::Decode(uint8_t* buf, int len, bool is_iei) {
   uint8_t decoded_size = 0;
   uint8_t octet        = 0;
-  Logger::nas_mm().debug("Decoding %s", GetIeName().c_str());
+  oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+      .debug("Decoding %s", GetIeName().c_str());
 
   // IEI and Length
   int decoded_header_size = Type4NasIe::Decode(buf + decoded_size, len, is_iei);
@@ -117,10 +120,11 @@ int AuthenticationFailureParameter::Decode(uint8_t* buf, int len, bool is_iei) {
   decoded_size += ie_len;
 
   for (int i = 0; i < ie_len; i++) {
-    Logger::nas_mm().debug("Decoded value 0x%x", (uint8_t) value_->data[i]);
+    oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+        .debug("Decoded value 0x%x", (uint8_t) value_->data[i]);
   }
 
-  Logger::nas_mm().debug(
-      "Decoded %s, len (%d)", GetIeName().c_str(), decoded_size);
+  oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+      .debug("Decoded %s, len (%d)", GetIeName().c_str(), decoded_size);
   return decoded_size;
 }

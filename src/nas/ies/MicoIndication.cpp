@@ -24,7 +24,7 @@
 #include "3gpp_24.501.hpp"
 #include "IeConst.hpp"
 #include "common_defs.h"
-#include "logger.hpp"
+#include "logger_base.hpp"
 
 using namespace nas;
 
@@ -72,14 +72,16 @@ bool MicoIndication::GetRaai() const {
 
 //------------------------------------------------------------------------------
 int MicoIndication::Encode(uint8_t* buf, int len) {
-  Logger::nas_mm().debug("Encoding %s", GetIeName().c_str());
+  oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+      .debug("Encoding %s", GetIeName().c_str());
 
   int ie_len = GetIeLength();
 
   if (len < ie_len) {  // Length of the content + IEI/Len
-    Logger::nas_mm().error(
-        "Size of the buffer is not enough to store this IE (IE len %d)",
-        ie_len);
+    oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+        .error(
+            "Size of the buffer is not enough to store this IE (IE len %d)",
+            ie_len);
     return KEncodeDecodeError;
   }
 
@@ -89,19 +91,22 @@ int MicoIndication::Encode(uint8_t* buf, int len) {
   octet = (kIeiMicoIndication << 4) | (sprti_ << 1) | raai_;
   ENCODE_U8(buf + encoded_size, octet, encoded_size);
 
-  Logger::nas_mm().debug(
-      "Encoded %s, len (%d)", GetIeName().c_str(), encoded_size);
+  oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+      .debug("Encoded %s, len (%d)", GetIeName().c_str(), encoded_size);
 
   return encoded_size;
 }
 
 //------------------------------------------------------------------------------
 int MicoIndication::Decode(uint8_t* buf, int len, bool is_iei) {
-  Logger::nas_mm().debug("Decoding %s", GetIeName().c_str());
+  oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+      .debug("Decoding %s", GetIeName().c_str());
   if (len < kMicoIndicationIELength) {
-    Logger::nas_mm().error(
-        "Buffer length is less than the minimum length of this IE (%d octet)",
-        kMicoIndicationIELength);
+    oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+        .error(
+            "Buffer length is less than the minimum length of this IE (%d "
+            "octet)",
+            kMicoIndicationIELength);
     return KEncodeDecodeError;
   }
 
@@ -114,9 +119,10 @@ int MicoIndication::Decode(uint8_t* buf, int len, bool is_iei) {
   sprti_ = octet & 0x02;
   raai_  = octet & 0x01;
 
-  Logger::nas_mm().debug(
-      "Decoded %s, len (%d)", GetIeName().c_str(), decoded_size);
+  oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+      .debug("Decoded %s, len (%d)", GetIeName().c_str(), decoded_size);
 
-  Logger::nas_mm().debug("SPRTI 0x%x, RAAI 0x%x", sprti_, raai_);
+  oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+      .debug("SPRTI 0x%x, RAAI 0x%x", sprti_, raai_);
   return decoded_size;
 }

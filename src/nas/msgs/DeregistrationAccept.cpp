@@ -46,7 +46,8 @@ void DeregistrationAccept::SetHeader(uint8_t security_header_type) {
 
 //------------------------------------------------------------------------------
 int DeregistrationAccept::Encode(uint8_t* buf, int len) {
-  Logger::nas_mm().debug("Encoding De-registration Accept message");
+  oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+      .debug("Encoding De-registration Accept message");
 
   int encoded_size    = 0;
   int encoded_ie_size = 0;
@@ -54,13 +55,14 @@ int DeregistrationAccept::Encode(uint8_t* buf, int len) {
   // Header
   if ((encoded_ie_size = NasMmPlainHeader::Encode(buf, len)) ==
       KEncodeDecodeError) {
-    Logger::nas_mm().error("Encoding NAS Header error");
+    oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+        .error("Encoding NAS Header error");
     return KEncodeDecodeError;
   }
   encoded_size += encoded_ie_size;
 
-  Logger::nas_mm().debug(
-      "Encoded De-registration Accept message len (%d)", encoded_size);
+  oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+      .debug("Encoded De-registration Accept message len (%d)", encoded_size);
   return encoded_size;
 }
 
@@ -72,12 +74,13 @@ int DeregistrationAccept::Decode(uint8_t* buf, int len) {
   // Header
   decoded_result = NasMmPlainHeader::Decode(buf, len);
   if (decoded_result == KEncodeDecodeError) {
-    Logger::nas_mm().error("Decoding NAS Header error");
+    oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+        .error("Decoding NAS Header error");
     return KEncodeDecodeError;
   }
   decoded_size += decoded_result;
 
-  Logger::nas_mm().debug(
-      "Decoded De-registrationReject message len (%d)", decoded_size);
+  oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+      .debug("Decoded De-registrationReject message len (%d)", decoded_size);
   return decoded_size;
 }

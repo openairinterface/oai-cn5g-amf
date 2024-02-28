@@ -57,11 +57,13 @@ uint8_t GprsTimer3::GetValue() const {
 
 //------------------------------------------------------------------------------
 int GprsTimer3::Encode(uint8_t* buf, int len) {
-  Logger::nas_mm().debug("Encoding %s", GetIeName().c_str());
+  oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+      .debug("Encoding %s", GetIeName().c_str());
   int ie_len = GetIeLength();
 
   if (len < ie_len) {
-    Logger::nas_mm().error("Len is less than %d", ie_len);
+    oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+        .error("Len is less than %d", ie_len);
     return KEncodeDecodeError;
   }
 
@@ -75,23 +77,26 @@ int GprsTimer3::Encode(uint8_t* buf, int len) {
   uint8_t octet = (unit_ << 5) | (value_ & 0x1f);
   ENCODE_U8(buf + encoded_size, octet, encoded_size);
 
-  Logger::nas_mm().debug(
-      "Encoded %s, len (%d)", GetIeName().c_str(), encoded_size);
+  oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+      .debug("Encoded %s, len (%d)", GetIeName().c_str(), encoded_size);
   return encoded_size;
 }
 
 //------------------------------------------------------------------------------
 int GprsTimer3::Decode(uint8_t* buf, int len, bool is_iei) {
   if (len < kGprsTimer3Length) {
-    Logger::nas_mm().error(
-        "Buffer length is less than the minimum length of this IE (%d octet)",
-        kGprsTimer3Length);
+    oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+        .error(
+            "Buffer length is less than the minimum length of this IE (%d "
+            "octet)",
+            kGprsTimer3Length);
     return KEncodeDecodeError;
   }
 
   uint8_t decoded_size = 0;
   uint8_t octet        = 0;
-  Logger::nas_mm().debug("Decoding %s", GetIeName().c_str());
+  oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+      .debug("Decoding %s", GetIeName().c_str());
 
   // IEI and Length
   int decoded_header_size = Type4NasIe::Decode(buf + decoded_size, len, is_iei);
@@ -102,9 +107,11 @@ int GprsTimer3::Decode(uint8_t* buf, int len, bool is_iei) {
   unit_  = (octet & 0xe0) >> 5;
   value_ = octet & 0x1f;
 
-  Logger::nas_mm().debug(
-      "Decoded %s, Unit 0x%x, Value 0x%x", GetIeName().c_str(), unit_, value_);
-  Logger::nas_mm().debug(
-      "Decoded %s, len (%d)", GetIeName().c_str(), decoded_size);
+  oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+      .debug(
+          "Decoded %s, Unit 0x%x, Value 0x%x", GetIeName().c_str(), unit_,
+          value_);
+  oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+      .debug("Decoded %s, len (%d)", GetIeName().c_str(), decoded_size);
   return decoded_size;
 }

@@ -23,7 +23,7 @@
 
 #include "3gpp_24.501.hpp"
 #include "common_defs.h"
-#include "logger.hpp"
+#include "logger_base.hpp"
 
 using namespace nas;
 
@@ -89,27 +89,30 @@ bool NetworkSlicingIndication::GetNssci() const {
 
 //------------------------------------------------------------------------------
 int NetworkSlicingIndication::Encode(uint8_t* buf, int len) {
-  Logger::nas_mm().debug("Encoding %s", GetIeName().c_str());
+  oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+      .debug("Encoding %s", GetIeName().c_str());
 
   int encoded_size = 0;
   SetValue();  // Update Value in Type1NasIeFormatTv
   encoded_size = Type1NasIeFormatTv::Encode(buf, len);
 
-  Logger::nas_mm().debug(
-      "Encoded %s, len (%d)", GetIeName().c_str(), encoded_size);
+  oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+      .debug("Encoded %s, len (%d)", GetIeName().c_str(), encoded_size);
   return encoded_size;
 }
 
 //------------------------------------------------------------------------------
 int NetworkSlicingIndication::Decode(uint8_t* buf, int len, bool is_iei) {
-  Logger::nas_mm().debug("Decoding %s", GetIeName().c_str());
+  oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+      .debug("Decoding %s", GetIeName().c_str());
   int decoded_size = 0;
   decoded_size     = Type1NasIeFormatTv::Decode(buf, len, is_iei);
   // Get DCNI/NSSCI from value
   GetValue();
 
-  Logger::nas_mm().debug("DCNI 0x%x, NSSCI 0x%x", dcni_, nssci_);
-  Logger::nas_mm().debug(
-      "Decoded %s, len (%d)", GetIeName().c_str(), decoded_size);
+  oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+      .debug("DCNI 0x%x, NSSCI 0x%x", dcni_, nssci_);
+  oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+      .debug("Decoded %s, len (%d)", GetIeName().c_str(), decoded_size);
   return decoded_size;
 }

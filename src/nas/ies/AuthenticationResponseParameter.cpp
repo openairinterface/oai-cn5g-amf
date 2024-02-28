@@ -21,7 +21,7 @@
 
 #include "AuthenticationResponseParameter.hpp"
 
-#include "logger.hpp"
+#include "logger_base.hpp"
 using namespace nas;
 
 //------------------------------------------------------------------------------
@@ -53,11 +53,13 @@ void AuthenticationResponseParameter::GetValue(bstring& para) const {
 
 //------------------------------------------------------------------------------
 int AuthenticationResponseParameter::Encode(uint8_t* buf, int len) {
-  Logger::nas_mm().debug("Encoding %s", GetIeName().c_str());
+  oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+      .debug("Encoding %s", GetIeName().c_str());
   int ie_len = GetIeLength();
 
   if (len < ie_len) {
-    Logger::nas_mm().error("Len is less than %d", ie_len);
+    oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+        .error("Len is less than %d", ie_len);
     return KEncodeDecodeError;
   }
 
@@ -72,8 +74,8 @@ int AuthenticationResponseParameter::Encode(uint8_t* buf, int len) {
       res_or_res_star_, (buf + encoded_size), len - encoded_size);
   encoded_size += size;
 
-  Logger::nas_mm().debug(
-      "Encoded %s, len (%d)", GetIeName().c_str(), encoded_size);
+  oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+      .debug("Encoded %s, len (%d)", GetIeName().c_str(), encoded_size);
   return encoded_size;
 }
 
@@ -81,15 +83,18 @@ int AuthenticationResponseParameter::Encode(uint8_t* buf, int len) {
 int AuthenticationResponseParameter::Decode(
     uint8_t* buf, int len, bool is_iei) {
   if (len < kAuthenticationResponseParameterMinimumLength) {
-    Logger::nas_mm().error(
-        "Buffer length is less than the minimum length of this IE (%d octet)",
-        kAuthenticationResponseParameterMinimumLength);
+    oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+        .error(
+            "Buffer length is less than the minimum length of this IE (%d "
+            "octet)",
+            kAuthenticationResponseParameterMinimumLength);
     return KEncodeDecodeError;
   }
 
   uint8_t decoded_size = 0;
   uint8_t octet        = 0;
-  Logger::nas_mm().debug("Decoding %s", GetIeName().c_str());
+  oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+      .debug("Decoding %s", GetIeName().c_str());
 
   // IEI and Length
   int decoded_header_size = Type4NasIe::Decode(buf + decoded_size, len, is_iei);
@@ -103,11 +108,11 @@ int AuthenticationResponseParameter::Decode(
   decoded_size += ie_len;
 
   for (int i = 0; i < ie_len; i++) {
-    Logger::nas_mm().debug(
-        "Decoded value 0x%x", (uint8_t) res_or_res_star_->data[i]);
+    oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+        .debug("Decoded value 0x%x", (uint8_t) res_or_res_star_->data[i]);
   }
 
-  Logger::nas_mm().debug(
-      "Decoded %s, len (%d)", GetIeName().c_str(), decoded_size);
+  oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+      .debug("Decoded %s, len (%d)", GetIeName().c_str(), decoded_size);
   return decoded_size;
 }

@@ -121,7 +121,8 @@ void ConfigurationUpdateCommand::GetShortNameForNetwork(
 
 //------------------------------------------------------------------------------
 int ConfigurationUpdateCommand::Encode(uint8_t* buf, int len) {
-  Logger::nas_mm().debug("Encoding ConfigurationUpdateCommand message");
+  oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+      .debug("Encoding ConfigurationUpdateCommand message");
 
   int encoded_size    = 0;
   int encoded_ie_size = 0;
@@ -129,7 +130,8 @@ int ConfigurationUpdateCommand::Encode(uint8_t* buf, int len) {
   // Header
   if ((encoded_ie_size = NasMmPlainHeader::Encode(buf, len)) ==
       KEncodeDecodeError) {
-    Logger::nas_mm().error("Encoding NAS Header error");
+    oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+        .error("Encoding NAS Header error");
     return KEncodeDecodeError;
   }
   encoded_size += encoded_ie_size;
@@ -157,14 +159,16 @@ int ConfigurationUpdateCommand::Encode(uint8_t* buf, int len) {
     return KEncodeDecodeError;
   }
 
-  Logger::nas_mm().debug(
-      "Encoded ConfigurationUpdateCommand message (len %d)", encoded_size);
+  oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+      .debug(
+          "Encoded ConfigurationUpdateCommand message (len %d)", encoded_size);
   return encoded_size;
 }
 
 //------------------------------------------------------------------------------
 int ConfigurationUpdateCommand::Decode(uint8_t* buf, int len) {
-  Logger::nas_mm().debug("Decoding ConfigurationUpdateCommand message");
+  oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+      .debug("Decoding ConfigurationUpdateCommand message");
 
   int decoded_size    = 0;
   int decoded_ie_size = 0;
@@ -172,7 +176,8 @@ int ConfigurationUpdateCommand::Decode(uint8_t* buf, int len) {
   // Header
   decoded_ie_size = NasMmPlainHeader::Decode(buf, len);
   if (decoded_ie_size == KEncodeDecodeError) {
-    Logger::nas_mm().error("Decoding NAS Header error");
+    oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+        .error("Decoding NAS Header error");
     return KEncodeDecodeError;
   }
   decoded_size += decoded_ie_size;
@@ -180,20 +185,22 @@ int ConfigurationUpdateCommand::Decode(uint8_t* buf, int len) {
   // Decode other IEs
   uint8_t octet = 0x00;
   DECODE_U8_VALUE(buf + decoded_size, octet);
-  Logger::nas_mm().debug("First option IEI (0x%x)", octet);
+  oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+      .debug("First option IEI (0x%x)", octet);
   bool flag = false;
   while ((octet != 0x0)) {
     switch ((octet & 0xf0) >> 4) {
       case kIeiConfigurationUpdateIndication: {
-        Logger::nas_mm().debug(
-            "Decoding IEI 0x%x", kIeiConfigurationUpdateIndication);
+        oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+            .debug("Decoding IEI 0x%x", kIeiConfigurationUpdateIndication);
         if ((decoded_ie_size = NasHelper::Decode(
                  ie_configuration_update_indication_, buf, len, decoded_size,
                  true)) == KEncodeDecodeError) {
           return KEncodeDecodeError;
         }
         DECODE_U8_VALUE(buf + decoded_size, octet);
-        Logger::nas_mm().debug("Next IEI (0x%x)", octet);
+        oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+            .debug("Next IEI (0x%x)", octet);
       } break;
 
       default: {
@@ -203,31 +210,36 @@ int ConfigurationUpdateCommand::Decode(uint8_t* buf, int len) {
 
     switch (octet) {
       case kIeiFullNameForNetwork: {
-        Logger::nas_mm().debug("Decoding IEI 0x%x", kIeiFullNameForNetwork);
+        oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+            .debug("Decoding IEI 0x%x", kIeiFullNameForNetwork);
         if ((decoded_ie_size = NasHelper::Decode(
                  ie_full_name_for_network_, buf, len, decoded_size, true)) ==
             KEncodeDecodeError) {
           return KEncodeDecodeError;
         }
         DECODE_U8_VALUE(buf + decoded_size, octet);
-        Logger::nas_mm().debug("Next IEI (0x%x)", octet);
+        oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+            .debug("Next IEI (0x%x)", octet);
       } break;
 
       case kIeiShortNameForNetwork: {
-        Logger::nas_mm().debug("Decoding IEI 0x%x", kIeiShortNameForNetwork);
+        oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+            .debug("Decoding IEI 0x%x", kIeiShortNameForNetwork);
         if ((decoded_ie_size = NasHelper::Decode(
                  ie_short_name_for_network_, buf, len, decoded_size, true)) ==
             KEncodeDecodeError) {
           return KEncodeDecodeError;
         }
         DECODE_U8_VALUE(buf + decoded_size, octet);
-        Logger::nas_mm().debug("Next IEI (0x%x)", octet);
+        oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+            .debug("Next IEI (0x%x)", octet);
       } break;
 
       default: {
         // TODO:
         if (flag) {
-          Logger::nas_mm().warn("Unknown IEI 0x%x, stop decoding...", octet);
+          oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+              .warn("Unknown IEI 0x%x, stop decoding...", octet);
           // Stop decoding
           octet = 0x00;
         }
@@ -235,7 +247,8 @@ int ConfigurationUpdateCommand::Decode(uint8_t* buf, int len) {
     }
   }
 
-  Logger::nas_mm().debug(
-      "Decoded ConfigurationUpdateCommand message (len %d)", decoded_size);
+  oai::logger::logger_registry::get_logger(LOGGER_COMMON)
+      .debug(
+          "Decoded ConfigurationUpdateCommand message (len %d)", decoded_size);
   return decoded_size;
 }
