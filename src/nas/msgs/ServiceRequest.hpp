@@ -50,6 +50,7 @@ class ServiceRequest : public NasMmPlainHeader {
 
   void SetUplinkDataStatus(uint16_t value);
   bool GetUplinkDataStatus(uint16_t& value) const;
+  std::optional<uint16_t> GetUplinkDataStatus() const;
 
   void SetPduSessionStatus(uint16_t value);
   bool GetPduSessionStatus(uint16_t& value) const;

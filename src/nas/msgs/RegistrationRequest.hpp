@@ -95,13 +95,15 @@ class RegistrationRequest : public NasMmPlainHeader {
 
   void SetUplinkDataStatus(uint16_t value);
   bool GetUplinkDataStatus(uint16_t& value) const;
+  std::optional<uint16_t> GetUplinkDataStatus() const;
 
   void SetLastVisitedRegisteredTai(
       const std::string& mcc, const std::string& mnc, uint32_t tac);
   // TODO: Getter
 
   void SetPduSessionStatus(uint16_t value);
-  uint16_t GetPduSessionStatus() const;
+  bool GetPduSessionStatus(uint16_t& value) const;
+  std::optional<uint16_t> GetPduSessionStatus() const;
 
   void SetMicoIndication(bool sprti, bool raai);
   bool GetMicoIndication(uint8_t& sprti, uint8_t& raai) const;

@@ -193,6 +193,9 @@ constexpr int kMobileReachableTimerNoEmergencyServicesMin =
     (kT3512TimerValueMin + 4);  // T3512 + 4, not for emergency services
 constexpr int kImplicitDeregistrationTimerMin = (kT3512TimerValueMin + 4);
 
+constexpr uint8_t KAccessType3gppAccess    = 0x01;
+constexpr uint8_t KAccessTypeNon3gppAccess = 0x02;
+
 enum class _5g_ia_e {
   _5G_IA0 = 0,
   _5G_IA1 = 1,

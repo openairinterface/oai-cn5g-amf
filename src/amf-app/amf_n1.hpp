@@ -238,22 +238,27 @@ class amf_n1 {
   /*
    * Perform Mobility Registration procedure
    * @param [std::shared_ptr<nas_context>&] nc: Pointer to the UE NAS Context
-   * @param [uint16_t] uplink_data_status: UL Data Status
-   * @param [uint16_t] pdu_session_status: PDU Session Status
+   * @param [const std::optional<uint16_t>&] uplink_data_status_opt: UL Data
+   * Status
+   * @param [const std::optional<uint16_t>&] pdu_session_status_opt: PDU Session
+   * Status
    * @return void
    */
   void run_mobility_registration_update_procedure(
-      std::shared_ptr<nas_context>& nc, uint16_t uplink_data_status,
-      uint16_t pdu_session_status);
+      std::shared_ptr<nas_context>& nc,
+      const std::optional<uint16_t>& uplink_data_status_opt,
+      const std::optional<uint16_t>& pdu_session_status_opt);
 
   /*
    * Perform Periodic Registration Update procedure
    * @param [std::shared_ptr<nas_context>&] nc: Pointer to the UE NAS Context
-   * @param [uint16_t] pdu_session_status: PDU Session Status
+   * @param [const std::optional<uint16_t>&] pdu_session_status_opt: PDU Session
+   * Status
    * @return void
    */
   void run_periodic_registration_update_procedure(
-      std::shared_ptr<nas_context>& nc, uint16_t pdu_session_status);
+      std::shared_ptr<nas_context>& nc,
+      const std::optional<uint16_t>& pdu_session_status_opt);
 
   /*
    * Perform Periodic Registration Update procedure
@@ -460,14 +465,13 @@ class amf_n1 {
 
   /*
    * Get the list of PDU session to be activated from PDU session status
-   * @param [uint16_t] pdu_session_status: PDU Session Status
+   * @param [uint16_t] status: PDU Session Status/Uplink Data Status
    * @param [std::vector<uint8_t>&] pdu_session_to_be_activated: list of PDU
    * session to be activated
    * @return void
    */
   void get_pdu_session_to_be_activated(
-      const uint16_t pdu_session_status,
-      std::vector<uint8_t>& pdu_session_to_be_activated);
+      const uint16_t status, std::vector<uint8_t>& pdu_session_to_be_activated);
 
   /*
    * Initialize Registration Accept with the parameters from NAS context
@@ -997,6 +1001,12 @@ class amf_n1 {
    * @return NAS's message type
    */
   uint8_t get_nas_message_type(uint8_t* buf, uint32_t len);
+
+  void set_pdu_session_status_inactive(
+      uint8_t pdu_session_id, uint16_t& pdu_session_status);
+
+  void set_pdu_session_reactivation_result(
+      uint8_t pdu_session_id, uint16_t& pdu_session_reactivation_result);
 
   // for Event Handling
   amf_event event_sub;
