@@ -53,13 +53,13 @@ class ServiceAccept : public NasMmPlainHeader {
   // TODO: Get
 
  private:
-  std::optional<PduSessionStatus> ie_pdu_session_status;  // Optional
+  std::optional<PduSessionStatus> ie_pdu_session_status_;  // Optional
   std::optional<PduSessionReactivationResult>
-      ie_pdu_session_reactivation_result;  // Optional
+      ie_pdu_session_reactivation_result_;  // Optional
   std::optional<PduSessionReactivationResultErrorCause>
-      ie_pdu_session_reactivation_result_error_cause;  // Optional
-  std::optional<EapMessage> ie_eap_message;            // Optional
-  std::optional<GprsTimer3> ie_t3448_value;            // Optional
+      ie_pdu_session_reactivation_result_error_cause_;  // Optional
+  std::optional<EapMessage> ie_eap_message_;            // Optional
+  std::optional<GprsTimer3> ie_t3448_value_;            // Optional
 };
 
 }  // namespace nas

@@ -40,8 +40,8 @@ class GprsTimer3 : public Type4NasIe {
   int Encode(uint8_t* buf, int len);
   int Decode(uint8_t* buf, int len, bool is_option);
 
-  void setValue(uint8_t unit, uint8_t value);
-  uint8_t getValue() const;
+  void SetValue(uint8_t unit, uint8_t value);
+  uint8_t GetValue() const;
   uint8_t getUnit() const;
 
  private:

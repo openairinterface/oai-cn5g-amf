@@ -30,12 +30,12 @@ namespace nas {
 class Type3NasIe : public NasIe {
  public:
   Type3NasIe();
-  Type3NasIe(const uint8_t& iei);
+  Type3NasIe(uint8_t iei);
   virtual ~Type3NasIe();
 
   bool Validate(const int& len) const override;
 
-  void SetIei(const uint8_t& iei);
+  void SetIei(uint8_t iei);
 
   int Encode(uint8_t* buf, const int& len) override;
   int Decode(

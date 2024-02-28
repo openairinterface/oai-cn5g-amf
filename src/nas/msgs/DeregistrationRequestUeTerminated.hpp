@@ -53,11 +53,11 @@ class DeregistrationRequestUeTerminated : public NasMmPlainHeader {
 
   // TODO:CagInformationList
 
- public:
-  _5gsDeregistrationType ie_deregistration_type;   // Mandatory
-  std::optional<_5gmmCause> ie_5gmm_cause;         // Optional
-  std::optional<GprsTimer2> ie_t3346_value;        // Optional
-  std::optional<RejectedNssai> ie_rejected_nssai;  // Optional
+ private:
+  _5gsDeregistrationType ie_deregistration_type_;   // Mandatory
+  std::optional<_5gmmCause> ie_5gmm_cause_;         // Optional
+  std::optional<GprsTimer2> ie_t3346_value_;        // Optional
+  std::optional<RejectedNssai> ie_rejected_nssai_;  // Optional
   // TODO: CagInformationList ie_cag_information_list ; //Optional
 };
 

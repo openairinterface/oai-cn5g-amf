@@ -31,14 +31,14 @@ using namespace nas;
 //------------------------------------------------------------------------------
 AllowedPduSessionStatus::AllowedPduSessionStatus()
     : Type4NasIe(kIeiAllowedPduSessionStatus) {
-  _value = 0;
+  value_ = 0;
   SetLengthIndicator(2);
 }
 
 //------------------------------------------------------------------------------
 AllowedPduSessionStatus::AllowedPduSessionStatus(uint16_t value)
     : Type4NasIe(kIeiAllowedPduSessionStatus) {
-  _value = value;
+  value_ = value;
   SetLengthIndicator(2);
 }
 
@@ -47,12 +47,12 @@ AllowedPduSessionStatus::~AllowedPduSessionStatus() {}
 
 //------------------------------------------------------------------------------
 void AllowedPduSessionStatus::SetValue(uint16_t value) {
-  _value = value;
+  value_ = value;
 }
 
 //------------------------------------------------------------------------------
 uint16_t AllowedPduSessionStatus::GetValue() const {
-  return _value;
+  return value_;
 }
 
 //------------------------------------------------------------------------------
@@ -71,7 +71,7 @@ int AllowedPduSessionStatus::Encode(uint8_t* buf, int len) {
   if (encoded_header_size == KEncodeDecodeError) return KEncodeDecodeError;
   encoded_size += encoded_header_size;
 
-  ENCODE_U16(buf + encoded_size, _value, encoded_size);
+  ENCODE_U16(buf + encoded_size, value_, encoded_size);
 
   // TODO: Encode spare for the rest
   uint8_t spare = 0;
@@ -104,7 +104,7 @@ int AllowedPduSessionStatus::Decode(uint8_t* buf, int len, bool is_iei) {
   if (decoded_header_size == KEncodeDecodeError) return KEncodeDecodeError;
   decoded_size += decoded_header_size;
 
-  DECODE_U16(buf + decoded_size, _value, decoded_size);
+  DECODE_U16(buf + decoded_size, value_, decoded_size);
 
   // TODO: decode the rest as spare for now
   uint8_t spare = 0;
@@ -114,7 +114,7 @@ int AllowedPduSessionStatus::Decode(uint8_t* buf, int len, bool is_iei) {
   }
 
   Logger::nas_mm().debug(
-      "Decoded %s (value 0x%4x)", GetIeName().c_str(), _value);
+      "Decoded %s (value 0x%4x)", GetIeName().c_str(), value_);
   Logger::nas_mm().debug(
       "Decoded %s, len (%d)", GetIeName().c_str(), decoded_size);
   return decoded_size;

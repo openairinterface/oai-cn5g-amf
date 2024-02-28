@@ -87,26 +87,26 @@ int ServiceAreaList::Encode(uint8_t* buf, int len) {
     switch (ie_list_[i].type) {
       case 0x00: {
         int encode_00_type_size =
-            encode_00_type(ie_list_[i], buf + encoded_size, len - encoded_size);
+            EncodeType00(ie_list_[i], buf + encoded_size, len - encoded_size);
         if (encode_00_type_size == KEncodeDecodeError) break;
         item_len += encode_00_type_size;
       } break;
       case 0x01: {
         int encode_01_type_size =
-            encode_01_type(ie_list_[i], buf + encoded_size, len - encoded_size);
+            EncodeType01(ie_list_[i], buf + encoded_size, len - encoded_size);
 
         if (encode_01_type_size == KEncodeDecodeError) break;
         item_len += encode_01_type_size;
       } break;
       case 0x10: {
         int encode_10_type_size =
-            encode_10_type(ie_list_[i], buf + encoded_size, len - encoded_size);
+            EncodeType10(ie_list_[i], buf + encoded_size, len - encoded_size);
         if (encode_10_type_size == KEncodeDecodeError) break;
         item_len += encode_10_type_size;
       } break;
       case 0x11: {
         int encode_11_type_size =
-            encode_11_type(ie_list_[i], buf + encoded_size, len - encoded_size);
+            EncodeType11(ie_list_[i], buf + encoded_size, len - encoded_size);
         if (encode_11_type_size == KEncodeDecodeError) break;
         item_len += encode_11_type_size;
       } break;
@@ -124,7 +124,7 @@ int ServiceAreaList::Encode(uint8_t* buf, int len) {
 }
 
 //------------------------------------------------------------------------------
-int ServiceAreaList::encode_00_type(
+int ServiceAreaList::EncodeType00(
     service_area_list_ie_t item, uint8_t* buf, int len) {
   int encoded_size = 0;
   // Allowed type/Type of list/Number of elements
@@ -146,7 +146,7 @@ int ServiceAreaList::encode_00_type(
 }
 
 //------------------------------------------------------------------------------
-int ServiceAreaList::encode_01_type(
+int ServiceAreaList::EncodeType01(
     service_area_list_ie_t item, uint8_t* buf, int len) {
   int encoded_size = 0;
   // Allowed type/Type of list/Number of elements
@@ -167,7 +167,7 @@ int ServiceAreaList::encode_01_type(
 }
 
 //------------------------------------------------------------------------------
-int ServiceAreaList::encode_10_type(
+int ServiceAreaList::EncodeType10(
     service_area_list_ie_t item, uint8_t* buf, int len) {
   int encoded_size = 0;
   // Allowed type/Type of list/Number of elements
@@ -193,7 +193,7 @@ int ServiceAreaList::encode_10_type(
 }
 
 //------------------------------------------------------------------------------
-int ServiceAreaList::encode_11_type(
+int ServiceAreaList::EncodeType11(
     service_area_list_ie_t item, uint8_t* buf, int len) {
   int encoded_size = 0;
   // Allowed type/Type of list/Number of elements

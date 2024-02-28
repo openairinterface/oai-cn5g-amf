@@ -36,55 +36,55 @@ using namespace nas;
 
 //------------------------------------------------------------------------------
 NetworkName::NetworkName() {
-  iei_                 = 0;
-  length               = kNetworkNameMinimumLength;
-  coding_scheme        = 0;
-  add_CI               = false;
-  number_of_spare_bits = 0;
-  text_string          = nullptr;
+  iei_                  = 0;
+  length_               = kNetworkNameMinimumLength;
+  coding_scheme_        = 0;
+  add_ci_               = false;
+  number_of_spare_bits_ = 0;
+  text_string_          = nullptr;
 }
 //------------------------------------------------------------------------------
-NetworkName::NetworkName(const uint8_t& iei) {
-  iei_                 = iei;
-  length               = kNetworkNameMinimumLength;
-  coding_scheme        = 0;
-  add_CI               = false;
-  number_of_spare_bits = 0;
-  text_string          = nullptr;
+NetworkName::NetworkName(uint8_t iei) {
+  iei_                  = iei;
+  length_               = kNetworkNameMinimumLength;
+  coding_scheme_        = 0;
+  add_ci_               = false;
+  number_of_spare_bits_ = 0;
+  text_string_          = nullptr;
 }
 
 //------------------------------------------------------------------------------
 NetworkName::~NetworkName() {
-  text_string = nullptr;
+  text_string_ = nullptr;
 }
 
 //------------------------------------------------------------------------------
-void NetworkName::setIEI(const uint8_t& iei) {
+void NetworkName::SetIei(uint8_t iei) {
   iei_ = iei;
 }
 //------------------------------------------------------------------------------
-void NetworkName::NetworkName::setCodingScheme(const uint8_t& value) {
-  coding_scheme = value & 0x07;
+void NetworkName::NetworkName::SetCodingScheme(uint8_t value) {
+  coding_scheme_ = value & 0x07;
 }
 
 //------------------------------------------------------------------------------
-void NetworkName::setAddCI(const uint8_t& value) {
-  add_CI = value & 0x01;
+void NetworkName::SetAddCI(uint8_t value) {
+  add_ci_ = value & 0x01;
 }
 
 //------------------------------------------------------------------------------
-void NetworkName::setNumberOfSpareBits(const uint8_t& value) {
-  number_of_spare_bits = value & 0x07;
+void NetworkName::SetNumberOfSpareBits(uint8_t value) {
+  number_of_spare_bits_ = value & 0x07;
 }
 
 //------------------------------------------------------------------------------
-void NetworkName::setTextString(const std::string& str) {
+void NetworkName::SetTextString(const std::string& str) {
   // TODO: Temporary for now
   // SMS Packing using "Seven characters in seven octets" (3GPP TS 23.038 )
   // str = "Testing";
   // std::string packed_str;
   // util::sms_packing(str, packed_str);
-  // amf_conv::string_2_bstring(packed_str, text_string);
+  // amf_conv::string_2_bstring(packed_str, text_string_);
 
   uint8_t* packed_str = (uint8_t*) calloc(7, sizeof(uint8_t));
   if (!packed_str) {
@@ -100,15 +100,15 @@ void NetworkName::setTextString(const std::string& str) {
   packed_str[5] = 0x9f;
   packed_str[6] = 0x01;
 
-  text_string = blk2bstr(packed_str, 7);
+  text_string_ = blk2bstr(packed_str, 7);
   utils::free_wrapper((void**) &packed_str);
-  length = 1 + blength(text_string);
+  length_ = 1 + blength(text_string_);
 }
 
 //------------------------------------------------------------------------------
-void NetworkName::setTextString(const bstring& str) {
-  text_string = bstrcpy(str);
-  length      = 1 + blength(text_string);
+void NetworkName::SetTextString(const bstring& str) {
+  text_string_ = bstrcpy(str);
+  length_      = 1 + blength(text_string_);
 }
 
 //------------------------------------------------------------------------------
@@ -116,7 +116,7 @@ int NetworkName::Encode(uint8_t* buf, int len) {
   Logger::nas_mm().debug("Encoding NetworkName");
 
   if (len < kNetworkNameMinimumLength) {
-    Logger::nas_mm().error("len is less than %d", length);
+    Logger::nas_mm().error("len is less than %d", length_);
     return -1;
   }
 
@@ -124,16 +124,16 @@ int NetworkName::Encode(uint8_t* buf, int len) {
   if (iei_) {
     ENCODE_U8(buf + encoded_size, iei_, encoded_size);  // IEI
   }
-  ENCODE_U8(buf + encoded_size, length, encoded_size);  // length
+  ENCODE_U8(buf + encoded_size, length_, encoded_size);  // length
 
   // Octet 3
   uint8_t octet = 0;
   // TODO: Extension (0x00 for now)
-  octet = 0x00 | (coding_scheme << 4) | (add_CI << 3) | number_of_spare_bits;
+  octet = 0x00 | (coding_scheme_ << 4) | (add_ci_ << 3) | number_of_spare_bits_;
   ENCODE_U8(buf + encoded_size, octet, encoded_size);
   // Text String
   int size =
-      encode_bstring(text_string, (buf + encoded_size), len - encoded_size);
+      encode_bstring(text_string_, (buf + encoded_size), len - encoded_size);
   encoded_size += size;
 
   Logger::nas_mm().debug("Encoded NetworkName (len %d)", encoded_size);

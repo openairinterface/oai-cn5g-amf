@@ -33,7 +33,7 @@ namespace nas {
 class NasMessageContainer : Type6NasIe {
  public:
   NasMessageContainer();
-  NasMessageContainer(bstring value);
+  NasMessageContainer(const bstring& value);
   ~NasMessageContainer();
 
   static std::string GetIeName() { return kNasMessageContainerIeName; }

@@ -39,15 +39,15 @@ class _5gsNetworkFeatureSupport : public Type4NasIe {
 
   static std::string GetIeName() { return k5gsNetworkFeatureSupportIeName; }
 
-  void setValue(uint8_t value, uint8_t value2);
-  // uint8_t getValue() const;
+  void SetValue(uint8_t value, uint8_t value2);
+  // uint8_t GetValue() const;
 
   int Encode(uint8_t* buf, int len);
   int Decode(uint8_t* buf, int len, bool is_option);
 
  private:
-  uint8_t _value;
-  uint8_t _value2;
+  uint8_t value_;
+  uint8_t value2_;
   // Spare
 };
 

@@ -39,8 +39,8 @@ class _5gmmStatus : public NasMmPlainHeader {
   void Set5gmmCause(uint8_t value);
   uint8_t Get5gmmCause() const;
 
- public:
-  _5gmmCause ie_5gmm_cause;  // Mandatory
+ private:
+  _5gmmCause ie_5gmm_cause_;  // Mandatory
 };
 
 }  // namespace nas

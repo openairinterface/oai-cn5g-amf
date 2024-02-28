@@ -33,7 +33,7 @@ Type6NasIe::Type6NasIe() : NasIe() {
 }
 
 //------------------------------------------------------------------------------
-Type6NasIe::Type6NasIe(const uint8_t& iei) : NasIe() {
+Type6NasIe::Type6NasIe(uint8_t iei) : NasIe() {
   iei_ = std::optional<uint8_t>(iei);
   li_  = 0;
 }
@@ -42,12 +42,12 @@ Type6NasIe::Type6NasIe(const uint8_t& iei) : NasIe() {
 Type6NasIe::~Type6NasIe() {}
 
 //------------------------------------------------------------------------------
-void Type6NasIe::SetIei(const uint8_t& iei) {
+void Type6NasIe::SetIei(uint8_t iei) {
   iei_ = std::optional<uint8_t>(iei);
 }
 
 //------------------------------------------------------------------------------
-void Type6NasIe::SetLengthIndicator(const uint16_t& li) {
+void Type6NasIe::SetLengthIndicator(uint16_t li) {
   li_ = li;
 }
 

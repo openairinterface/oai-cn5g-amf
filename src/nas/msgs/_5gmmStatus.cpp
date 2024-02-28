@@ -26,7 +26,8 @@
 using namespace nas;
 
 //------------------------------------------------------------------------------
-_5gmmStatus::_5gmmStatus() : NasMmPlainHeader(EPD_5GS_MM_MSG, _5GMM_STATUS) {}
+_5gmmStatus::_5gmmStatus()
+    : NasMmPlainHeader(k5gsMobilityManagementMessages, k5gmmStatus) {}
 
 //------------------------------------------------------------------------------
 _5gmmStatus::~_5gmmStatus() {}
@@ -38,12 +39,12 @@ void _5gmmStatus::SetHeader(uint8_t security_header_type) {
 
 //------------------------------------------------------------------------------
 void _5gmmStatus::Set5gmmCause(uint8_t value) {
-  ie_5gmm_cause.SetValue(value);
+  ie_5gmm_cause_.SetValue(value);
 }
 
 //------------------------------------------------------------------------------
 uint8_t _5gmmStatus::Get5gmmCause() const {
-  return ie_5gmm_cause.GetValue();
+  return ie_5gmm_cause_.GetValue();
 }
 
 //------------------------------------------------------------------------------
@@ -61,7 +62,7 @@ int _5gmmStatus::Encode(uint8_t* buf, int len) {
   encoded_size += encoded_ie_size;
 
   if ((encoded_ie_size = NasHelper::Encode(
-           ie_5gmm_cause, buf, len, encoded_size)) == KEncodeDecodeError) {
+           ie_5gmm_cause_, buf, len, encoded_size)) == KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
 
@@ -85,7 +86,7 @@ int _5gmmStatus::Decode(uint8_t* buf, int len) {
   decoded_size += decoded_ie_size;
 
   if ((decoded_ie_size =
-           NasHelper::Decode(ie_5gmm_cause, buf, len, decoded_size, false)) ==
+           NasHelper::Decode(ie_5gmm_cause_, buf, len, decoded_size, false)) ==
       KEncodeDecodeError) {
     return KEncodeDecodeError;
   }

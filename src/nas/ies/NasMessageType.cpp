@@ -28,7 +28,7 @@
 using namespace nas;
 
 //------------------------------------------------------------------------------
-NasMessageType::NasMessageType(const uint8_t& message_type)
+NasMessageType::NasMessageType(uint8_t message_type)
     : NasIe(), message_type_(message_type) {}
 
 //------------------------------------------------------------------------------
@@ -46,7 +46,7 @@ bool NasMessageType::Validate(const int& len) const {
 }
 
 //------------------------------------------------------------------------------
-void NasMessageType::Set(const uint8_t& message_type) {
+void NasMessageType::Set(uint8_t message_type) {
   message_type_ = message_type;
 }
 

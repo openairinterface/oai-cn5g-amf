@@ -45,8 +45,7 @@ bool SecurityHeaderType::Validate(const int& len) const {
 }
 
 //------------------------------------------------------------------------------
-void SecurityHeaderType::Set(
-    const uint8_t& secu_header_type, const uint8_t& spare) {
+void SecurityHeaderType::Set(uint8_t secu_header_type, uint8_t spare) {
   secu_header_type_ = 0x0f & secu_header_type;
   spare_            = spare & 0xf0;
 }

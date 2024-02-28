@@ -29,19 +29,21 @@ namespace nas {
 class Type4NasIe : public NasIe {
  public:
   Type4NasIe();
-  Type4NasIe(const uint8_t& iei);
+  Type4NasIe(uint8_t iei);
   virtual ~Type4NasIe();
 
   bool Validate(const int& len) const override;
   bool ValidateHeader(const int& len) const;
 
-  void SetIei(const uint8_t& iei);
+  void SetIei(uint8_t iei);
   void GetIei(std::optional<uint8_t>& iei) const;
 
-  void SetLengthIndicator(const uint8_t& li);
+  void SetLengthIndicator(uint8_t li);
   void GetLengthIndicator(uint8_t& li) const;
   uint8_t GetLengthIndicator() const;
+
   uint8_t GetIeLength() const;
+
   uint8_t GetHeaderLength() const;
 
   int Encode(uint8_t* buf, const int& len) override;

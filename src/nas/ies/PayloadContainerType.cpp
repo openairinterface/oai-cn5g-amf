@@ -37,7 +37,7 @@ PayloadContainerType::PayloadContainerType(uint8_t value)
 }
 
 //------------------------------------------------------------------------------
-PayloadContainerType::PayloadContainerType(const uint8_t iei, uint8_t value)
+PayloadContainerType::PayloadContainerType(uint8_t iei, uint8_t value)
     : Type1NasIeFormatTv(iei) {
   SetValue(value & 0x0f);
 }

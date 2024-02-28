@@ -36,7 +36,7 @@ class DeregistrationAccept : public NasMmPlainHeader {
 
   void SetHeader(uint8_t security_header_type);
 
- public:
+ private:
 };
 
 }  // namespace nas

@@ -22,8 +22,8 @@
 #ifndef _PLMN_LIST_H_
 #define _PLMN_LIST_H_
 
-#include "Type4NasIe.hpp"
 #include "Struct.hpp"
+#include "Type4NasIe.hpp"
 
 constexpr uint8_t kPlmnListMinimumLength = 5;
 constexpr uint8_t kPlmnListMaximumLength = 47;
@@ -43,10 +43,10 @@ class PlmnList : public Type4NasIe {
   int Decode(uint8_t* buf, int len, bool is_option);
 
   void Set(uint8_t iei, const std::vector<nas_plmn_t>& list);
-  void GetPLMNList(std::vector<nas_plmn_t>& list) const;
+  void Get(std::vector<nas_plmn_t>& list) const;
 
  private:
-  std::vector<nas_plmn_t> plmn_list;
+  std::vector<nas_plmn_t> plmn_list_;
 };
 }  // namespace nas
 

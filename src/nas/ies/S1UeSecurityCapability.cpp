@@ -47,7 +47,7 @@ S1UeSecurityCapability::S1UeSecurityCapability(uint8_t iei) : Type4NasIe(iei) {
 
 //------------------------------------------------------------------------------
 S1UeSecurityCapability::S1UeSecurityCapability(
-    const uint8_t iei, uint8_t eea, uint8_t eia) {
+    uint8_t iei, uint8_t eea, uint8_t eia) {
   eea_ = eea;
   eia_ = eia;
   SetLengthIndicator(2);
@@ -55,7 +55,7 @@ S1UeSecurityCapability::S1UeSecurityCapability(
 
 //------------------------------------------------------------------------------
 S1UeSecurityCapability::S1UeSecurityCapability(
-    const uint8_t iei, uint8_t eea, uint8_t eia, uint8_t uea, uint8_t uia) {
+    uint8_t iei, uint8_t eea, uint8_t eia, uint8_t uea, uint8_t uia) {
   eea_ = eea;
   eia_ = eia;
   uea_ = std::optional<uint8_t>(uea);

@@ -44,7 +44,7 @@ class _5gsDrxParameters : public Type4NasIe {
   static std::string GetIeName() { return k5gsDrxParametersIeName; }
 
  private:
-  uint8_t _value;
+  uint8_t value_;
 };
 }  // namespace nas
 

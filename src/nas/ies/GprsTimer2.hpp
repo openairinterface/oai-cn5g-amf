@@ -32,7 +32,7 @@ namespace nas {
 class GprsTimer2 : public Type4NasIe {
  public:
   GprsTimer2(uint8_t iei);
-  GprsTimer2(const uint8_t iei, uint8_t value);
+  GprsTimer2(uint8_t iei, uint8_t value);
   ~GprsTimer2();
 
   static std::string GetIeName() { return kGprsTimer2IeName; }
@@ -40,8 +40,8 @@ class GprsTimer2 : public Type4NasIe {
   int Encode(uint8_t* buf, int len);
   int Decode(uint8_t* buf, int len, bool is_iei);
 
-  void setValue(uint8_t value);
-  uint8_t getValue() const;
+  void SetValue(uint8_t value);
+  uint8_t GetValue() const;
 
  private:
   uint8_t value_;

@@ -28,8 +28,8 @@ using namespace nas;
 
 //------------------------------------------------------------------------------
 DeregistrationRequest::DeregistrationRequest()
-    : NasMmPlainHeader(EPD_5GS_MM_MSG) {
-  NasMmPlainHeader::SetMessageType(DEREGISTRATION_REQUEST_UE_ORIGINATING);
+    : NasMmPlainHeader(k5gsMobilityManagementMessages) {
+  NasMmPlainHeader::SetMessageType(kDeregistrationRequestUeOriginating);
 }
 
 //------------------------------------------------------------------------------
@@ -42,37 +42,37 @@ void DeregistrationRequest::SetHeader(uint8_t security_header_type) {
 
 //------------------------------------------------------------------------------
 void DeregistrationRequest::SetDeregistrationType(uint8_t dereg_type) {
-  ie_deregistrationtype.set(dereg_type);
+  ie_deregistration_type_.Set(dereg_type);
 }
 
 //------------------------------------------------------------------------------
 void DeregistrationRequest::SetDeregistrationType(
     const _5gs_deregistration_type_t& type) {
-  ie_deregistrationtype.set(type);
+  ie_deregistration_type_.Set(type);
 }
 
 //------------------------------------------------------------------------------
 void DeregistrationRequest::SetNgKsi(uint8_t tsc, uint8_t key_set_id) {
-  ie_ng_ksi.Set(true);  // high position
-  ie_ng_ksi.SetTypeOfSecurityContext(tsc);
-  ie_ng_ksi.SetNasKeyIdentifier(key_set_id);
+  ie_ng_ksi_.Set(true);  // high position
+  ie_ng_ksi_.SetTypeOfSecurityContext(tsc);
+  ie_ng_ksi_.SetNasKeyIdentifier(key_set_id);
 }
 
 //------------------------------------------------------------------------------
 void DeregistrationRequest::GetDeregistrationType(uint8_t& dereg_type) const {
-  ie_deregistrationtype.get(dereg_type);
+  ie_deregistration_type_.Get(dereg_type);
 }
 
 //------------------------------------------------------------------------------
 void DeregistrationRequest::GetDeregistrationType(
     _5gs_deregistration_type_t& type) const {
-  ie_deregistrationtype.get(type);
+  ie_deregistration_type_.Get(type);
 }
 
 //------------------------------------------------------------------------------
 bool DeregistrationRequest::GetNgKsi(uint8_t& ng_ksi) const {
-  ng_ksi =
-      (ie_ng_ksi.GetTypeOfSecurityContext()) | ie_ng_ksi.GetNasKeyIdentifier();
+  ng_ksi = (ie_ng_ksi_.GetTypeOfSecurityContext()) |
+           ie_ng_ksi_.GetNasKeyIdentifier();
   return true;
 }
 
@@ -81,33 +81,33 @@ void DeregistrationRequest::SetSuciSupiFormatImsi(
     const std::string& mcc, const std::string& mnc,
     const std::string& routing_ind, uint8_t protection_sch_id,
     const std::string& msin) {
-  if (protection_sch_id != NULL_SCHEME) {
+  if (protection_sch_id != kNullScheme) {
     Logger::nas_mm().error(
         "Encoding SUCI and SUPI format for IMSI error, please choose correct "
         "protection scheme");
     return;
   } else {
-    ie_5gs_mobility_id.SetSuciWithSupiImsi(
+    ie_5gs_mobility_id_.SetSuciWithSupiImsi(
         mcc, mnc, routing_ind, protection_sch_id, msin);
   }
 }
 
 //------------------------------------------------------------------------------
 void DeregistrationRequest::GetMobilityIdentityType(uint8_t& type) const {
-  type = ie_5gs_mobility_id.GetTypeOfIdentity();
+  type = ie_5gs_mobility_id_.GetTypeOfIdentity();
 }
 
 //------------------------------------------------------------------------------
 bool DeregistrationRequest::GetSuciSupiFormatImsi(
     nas::SUCI_imsi_t& imsi) const {
-  ie_5gs_mobility_id.GetSuciWithSupiImsi(imsi);
+  ie_5gs_mobility_id_.GetSuciWithSupiImsi(imsi);
   return true;
 }
 
 //------------------------------------------------------------------------------
 std::string DeregistrationRequest::Get5gGuti() const {
   std::optional<nas::_5G_GUTI_t> guti = std::nullopt;
-  ie_5gs_mobility_id.Get5gGuti(guti);
+  ie_5gs_mobility_id_.Get5gGuti(guti);
   if (!guti.has_value()) return {};
 
   std::string guti_str = guti.value().mcc + guti.value().mnc +
@@ -152,21 +152,22 @@ int DeregistrationRequest::Encode(uint8_t* buf, int len) {
   encoded_size += encoded_ie_size;
 
   // De-registration Type and ngKSI
-  encoded_ie_size = NasHelper::Encode(ie_ng_ksi, buf, len, encoded_size);
+  encoded_ie_size = NasHelper::Encode(ie_ng_ksi_, buf, len, encoded_size);
   // only 1/2 octet
   if ((encoded_ie_size == KEncodeDecodeError) or (encoded_ie_size != 0)) {
     return KEncodeDecodeError;
   }
 
   if ((encoded_ie_size = NasHelper::Encode(
-           ie_ng_ksi, buf, len, encoded_size)) == KEncodeDecodeError) {
+           ie_ng_ksi_, buf, len, encoded_size)) == KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
   encoded_size++;  // 1/2 octet for Deregistration Type, 1/2 for ngKSI
 
   // 5GS mobile identity
-  if ((encoded_ie_size = NasHelper::Encode(
-           ie_5gs_mobility_id, buf, len, encoded_size)) == KEncodeDecodeError) {
+  if ((encoded_ie_size =
+           NasHelper::Encode(ie_5gs_mobility_id_, buf, len, encoded_size)) ==
+      KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
 
@@ -192,19 +193,20 @@ int DeregistrationRequest::Decode(uint8_t* buf, int len) {
 
   // De-registration Type + ngKSI
   if ((decoded_ie_size = NasHelper::Decode(
-           ie_deregistrationtype, buf, len, decoded_size, false)) ==
+           ie_deregistration_type_, buf, len, decoded_size, false)) ==
       KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
   if ((decoded_ie_size = NasHelper::Decode(
-           ie_ng_ksi, buf, len, decoded_size, true, false)) ==  // 4 higher bits
+           ie_ng_ksi_, buf, len, decoded_size, true,
+           false)) ==  // 4 higher bits
       KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
   decoded_size++;  // 1/2 octet for De-registration Type, 1/2 ngKSI
 
   if ((decoded_ie_size = NasHelper::Decode(
-           ie_5gs_mobility_id, buf, len, decoded_size, false)) ==
+           ie_5gs_mobility_id_, buf, len, decoded_size, false)) ==
       KEncodeDecodeError) {
     return KEncodeDecodeError;
   }

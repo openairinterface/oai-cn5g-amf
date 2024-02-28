@@ -28,11 +28,11 @@ using namespace nas;
 //------------------------------------------------------------------------------
 DeregistrationAccept::DeregistrationAccept(bool is_ue_originating)
     : NasMmPlainHeader() {
-  NasMmPlainHeader::SetEpd(EPD_5GS_MM_MSG);
+  NasMmPlainHeader::SetEpd(k5gsMobilityManagementMessages);
   if (is_ue_originating) {
-    NasMmPlainHeader::SetMessageType(DEREGISTRATION_ACCEPT_UE_ORIGINATING);
+    NasMmPlainHeader::SetMessageType(kDeregistrationAcceptUeOriginating);
   } else {
-    NasMmPlainHeader::SetMessageType(DEREGISTRATION_ACCEPT_UE_TERMINATED);
+    NasMmPlainHeader::SetMessageType(kDeregistrationAcceptUeTerminated);
   }
 }
 

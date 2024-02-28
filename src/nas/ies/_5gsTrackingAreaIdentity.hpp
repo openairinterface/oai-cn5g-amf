@@ -42,7 +42,7 @@ class _5gsTrackingAreaIdentity : public Type3NasIe {
   int Encode(uint8_t* buf, int len);
   int Decode(uint8_t* buf, int len, bool is_iei = true);
 
-  void SetTac(const uint32_t& value);
+  void SetTac(uint32_t value);
   uint32_t GetTac() const;
   void GetTac(uint32_t& value) const;
 

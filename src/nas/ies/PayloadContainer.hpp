@@ -38,7 +38,7 @@ class PayloadContainer : Type6NasIe {
   PayloadContainer(uint8_t iei, const bstring& b);
   PayloadContainer(const std::vector<PayloadContainerEntry>& content);
   PayloadContainer(
-      const uint8_t iei, const std::vector<PayloadContainerEntry>& content);
+      uint8_t iei, const std::vector<PayloadContainerEntry>& content);
   ~PayloadContainer();
 
   static std::string GetIeName() { return kPayloadContainerIeName; }
@@ -54,8 +54,8 @@ class PayloadContainer : Type6NasIe {
   bool GetValue(std::vector<PayloadContainerEntry>& content) const;
 
  private:
-  std::optional<bstring> content;
-  std::optional<std::vector<PayloadContainerEntry>> CONTENT;
+  std::optional<bstring> content_;
+  std::optional<std::vector<PayloadContainerEntry>> contents_;
 };
 
 }  // namespace nas

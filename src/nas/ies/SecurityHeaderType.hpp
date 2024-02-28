@@ -38,7 +38,7 @@ class SecurityHeaderType : public NasIe {
 
   bool Validate(const int& len) const override;
 
-  void Set(const uint8_t& secu_header_type, const uint8_t& spare = 0);
+  void Set(uint8_t secu_header_type, uint8_t spare = 0);
   void Get(uint8_t& secu_header_type) const;
   uint8_t Get() const;
 

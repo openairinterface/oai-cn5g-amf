@@ -31,7 +31,7 @@ namespace nas {
 class UeRadioCapabilityId : public Type4NasIe {
  public:
   UeRadioCapabilityId();
-  UeRadioCapabilityId(bstring value);
+  UeRadioCapabilityId(const bstring& value);
   ~UeRadioCapabilityId();
 
   static std::string GetIeName() { return kUeRadioCapabilityIdIeName; }
@@ -39,8 +39,8 @@ class UeRadioCapabilityId : public Type4NasIe {
   int Encode(uint8_t* buf, int len);
   int Decode(uint8_t* buf, int len, bool is_iei);
 
-  void setValue(bstring value);
-  void getValue(bstring& value) const;
+  void SetValue(const bstring& value);
+  void GetValue(bstring& value) const;
 
  private:
   bstring value_;

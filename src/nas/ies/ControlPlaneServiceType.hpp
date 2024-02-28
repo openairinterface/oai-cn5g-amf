@@ -36,9 +36,6 @@ class ControlPlaneServiceType : public Type1NasIe {
 
   static std::string GetIeName() { return kControlPlaneServiceTypeIeName; }
 
-  // int Encode(uint8_t* buf, int len);
-  // int Decode(uint8_t* nuf, int len, bool is_iei, bool is_high);
-
   void SetValue(uint8_t value);
   void GetValue(uint8_t& value) const;
 

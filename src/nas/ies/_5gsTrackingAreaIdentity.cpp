@@ -22,8 +22,8 @@
 #include "_5gsTrackingAreaIdentity.hpp"
 
 #include "3gpp_24.501.hpp"
-#include "common_defs.h"
 #include "IeConst.hpp"
+#include "common_defs.h"
 #include "logger.hpp"
 #include "utils.hpp"
 
@@ -50,7 +50,7 @@ _5gsTrackingAreaIdentity::_5gsTrackingAreaIdentity(
 _5gsTrackingAreaIdentity::~_5gsTrackingAreaIdentity() {}
 
 //------------------------------------------------------------------------------
-void _5gsTrackingAreaIdentity::SetTac(const uint32_t& value) {
+void _5gsTrackingAreaIdentity::SetTac(uint32_t value) {
   tac_ = value & 0x0fff;
 }
 
