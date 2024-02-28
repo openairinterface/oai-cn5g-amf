@@ -35,7 +35,7 @@ UeRadioCapabilityId::UeRadioCapabilityId()
 }
 
 //------------------------------------------------------------------------------
-UeRadioCapabilityId::UeRadioCapabilityId(bstring value)
+UeRadioCapabilityId::UeRadioCapabilityId(const bstring& value)
     : Type4NasIe(kIeiUeRadioCapabilityId) {
   value_ = bstrcpy(value);
   SetLengthIndicator(blength(value_));
@@ -45,12 +45,12 @@ UeRadioCapabilityId::UeRadioCapabilityId(bstring value)
 UeRadioCapabilityId::~UeRadioCapabilityId() {}
 
 //------------------------------------------------------------------------------
-void UeRadioCapabilityId::setValue(bstring value) {
+void UeRadioCapabilityId::SetValue(const bstring& value) {
   value_ = bstrcpy(value);
 }
 
 //------------------------------------------------------------------------------
-void UeRadioCapabilityId::getValue(bstring& value) const {
+void UeRadioCapabilityId::GetValue(bstring& value) const {
   value = bstrcpy(value_);
 }
 

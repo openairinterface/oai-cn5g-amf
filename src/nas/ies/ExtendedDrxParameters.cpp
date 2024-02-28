@@ -43,22 +43,22 @@ ExtendedDrxParameters::ExtendedDrxParameters(uint8_t paging_time, uint8_t value)
 ExtendedDrxParameters::~ExtendedDrxParameters() {}
 
 //------------------------------------------------------------------------------
-void ExtendedDrxParameters::setValue(uint8_t value) {
+void ExtendedDrxParameters::SetValue(uint8_t value) {
   e_drx_value_ = value & 0x0F;
 }
 
 //------------------------------------------------------------------------------
-void ExtendedDrxParameters::setPaging_time(uint8_t value) {
+void ExtendedDrxParameters::SetPagingTime(uint8_t value) {
   paging_time_ = value & 0x0F;
 }
 
 //------------------------------------------------------------------------------
-uint8_t ExtendedDrxParameters::getValue() const {
+uint8_t ExtendedDrxParameters::GetValue() const {
   return e_drx_value_;
 }
 
 //------------------------------------------------------------------------------
-uint8_t ExtendedDrxParameters::getPaging_time() const {
+uint8_t ExtendedDrxParameters::GetPagingTime() const {
   return paging_time_;
 }
 

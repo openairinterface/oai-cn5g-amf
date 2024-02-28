@@ -40,7 +40,7 @@ GprsTimer3::GprsTimer3(const uint8_t iei, uint8_t unit, uint8_t value)
 GprsTimer3::~GprsTimer3() {}
 
 //------------------------------------------------------------------------------
-void GprsTimer3::setValue(uint8_t unit, uint8_t value) {
+void GprsTimer3::SetValue(uint8_t unit, uint8_t value) {
   unit_  = unit;
   value_ = value;
 }
@@ -51,7 +51,7 @@ uint8_t GprsTimer3::getUnit() const {
 }
 
 //------------------------------------------------------------------------------
-uint8_t GprsTimer3::getValue() const {
+uint8_t GprsTimer3::GetValue() const {
   return value_;
 }
 

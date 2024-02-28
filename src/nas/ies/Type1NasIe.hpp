@@ -30,19 +30,19 @@ namespace nas {
 class Type1NasIe : public NasIe {
  public:
   Type1NasIe();
-  Type1NasIe(const bool& high_pos, const uint8_t& value);
-  Type1NasIe(const bool& high_pos);
-  Type1NasIe(const uint8_t& iei, const uint8_t& value);
-  Type1NasIe(const uint8_t& iei);
+  Type1NasIe(bool high_pos, uint8_t value);
+  Type1NasIe(bool high_pos);
+  Type1NasIe(uint8_t iei, uint8_t value);
+  Type1NasIe(uint8_t iei);
   virtual ~Type1NasIe();
 
   bool Validate(const int& len) const override;
 
-  // void SetIei(const uint8_t& iei);
-  void Set(const bool& high_pos, const uint8_t& value);
-  void Set(const bool& high_pos);
+  // void SetIei(uint8_t iei);
+  void Set(bool high_pos, uint8_t value);
+  void Set(bool high_pos);
 
-  void SetValue(const uint8_t& value);
+  void SetValue(uint8_t value);
 
   int Encode(uint8_t* buf, const int& len) override;
   int Decode(

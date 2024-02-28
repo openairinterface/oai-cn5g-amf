@@ -29,30 +29,30 @@ using namespace nas;
 
 //------------------------------------------------------------------------------
 PayloadContainer::PayloadContainer() : Type6NasIe() {
-  content = std::nullopt;
-  CONTENT = std::nullopt;
+  content_  = std::nullopt;
+  contents_ = std::nullopt;
   SetLengthIndicator(0);
 }
 
 //------------------------------------------------------------------------------
 PayloadContainer::PayloadContainer(uint8_t iei) : Type6NasIe(iei) {
-  content = std::nullopt;
-  CONTENT = std::nullopt;
+  content_  = std::nullopt;
+  contents_ = std::nullopt;
   SetLengthIndicator(0);
 }
 
 //------------------------------------------------------------------------------
 PayloadContainer::PayloadContainer(const bstring& b) : Type6NasIe() {
-  content = std::optional<bstring>(b);
-  CONTENT = std::nullopt;
+  content_  = std::optional<bstring>(b);
+  contents_ = std::nullopt;
   SetLengthIndicator(blength(b));
 }
 
 //------------------------------------------------------------------------------
 PayloadContainer::PayloadContainer(uint8_t iei, const bstring& b)
     : Type6NasIe(iei) {
-  content = std::optional<bstring>(b);
-  CONTENT = std::nullopt;
+  content_  = std::optional<bstring>(b);
+  contents_ = std::nullopt;
   SetLengthIndicator(blength(b));
 }
 
@@ -60,11 +60,11 @@ PayloadContainer::PayloadContainer(uint8_t iei, const bstring& b)
 PayloadContainer::PayloadContainer(
     const std::vector<PayloadContainerEntry>& contents)
     : Type6NasIe() {
-  content = std::nullopt;
+  content_ = std::nullopt;
 
   int length = 1;  // for number of entries
-  // CONTENT.assign(content.begin(), content.end());
-  CONTENT = std::optional<std::vector<PayloadContainerEntry>>(contents);
+  // contents_.assign(content_.begin(), content_.end());
+  contents_ = std::optional<std::vector<PayloadContainerEntry>>(contents);
   for (int i = 0; i < contents.size(); i++) {
     length = length + 2 +
              contents.at(i).length;  // 2 for Length of Payload container entry
@@ -74,13 +74,13 @@ PayloadContainer::PayloadContainer(
 
 //------------------------------------------------------------------------------
 PayloadContainer::PayloadContainer(
-    const uint8_t iei, const std::vector<PayloadContainerEntry>& contents)
+    uint8_t iei, const std::vector<PayloadContainerEntry>& contents)
     : Type6NasIe(iei) {
-  content = std::nullopt;
+  content_ = std::nullopt;
 
   int length = 1;  // for number of entries
-  // CONTENT.assign(content.begin(), content.end());
-  CONTENT = std::optional<std::vector<PayloadContainerEntry>>(contents);
+  // contents_.assign(content_.begin(), content_.end());
+  contents_ = std::optional<std::vector<PayloadContainerEntry>>(contents);
   for (int i = 0; i < contents.size(); i++) {
     length = length + 2 +
              contents.at(i).length;  // 2 for Length of Payload container entry
@@ -93,7 +93,7 @@ PayloadContainer::~PayloadContainer() {}
 
 //------------------------------------------------------------------------------
 void PayloadContainer::SetValue(const bstring& cnt) {
-  content = std::optional<bstring>(cnt);
+  content_ = std::optional<bstring>(cnt);
   SetLengthIndicator(blength(cnt));
 }
 
@@ -101,8 +101,8 @@ void PayloadContainer::SetValue(const bstring& cnt) {
 void PayloadContainer::SetValue(
     const std::vector<PayloadContainerEntry>& content) {
   int length = 1;  // for number of entries
-  // CONTENT.assign(content.begin(), content.end());
-  CONTENT = std::optional<std::vector<PayloadContainerEntry>>(content);
+  // contents_.assign(content.begin(), content.end());
+  contents_ = std::optional<std::vector<PayloadContainerEntry>>(content);
   for (int i = 0; i < content.size(); i++) {
     length = length + 2 +
              content.at(i).length;  // 2 for Length of Payload container entry
@@ -113,8 +113,8 @@ void PayloadContainer::SetValue(
 //------------------------------------------------------------------------------
 bool PayloadContainer::GetValue(
     std::vector<PayloadContainerEntry>& content) const {
-  if (CONTENT.has_value()) {
-    content.assign(CONTENT.value().begin(), CONTENT.value().end());
+  if (contents_.has_value()) {
+    content.assign(contents_.value().begin(), contents_.value().end());
     return true;
   }
   return false;
@@ -122,8 +122,8 @@ bool PayloadContainer::GetValue(
 
 //------------------------------------------------------------------------------
 bool PayloadContainer::GetValue(bstring& cnt) const {
-  if (content.has_value()) {
-    cnt = content.value();
+  if (content_.has_value()) {
+    cnt = content_.value();
     return true;
   }
   return false;
@@ -150,36 +150,37 @@ int PayloadContainer::Encode(uint8_t* buf, int len, uint8_t type) {
   if (encoded_header_size == KEncodeDecodeError) return KEncodeDecodeError;
   encoded_size += encoded_header_size;
 
-  if (content.has_value()) {
-    uint8_t* buf_tmp = (uint8_t*) bdata(content.value());
+  if (content_.has_value()) {
+    uint8_t* buf_tmp = (uint8_t*) bdata(content_.value());
     if (buf_tmp != nullptr)
-      memcpy(buf + encoded_size, buf_tmp, blength(content.value()));
-    encoded_size += blength(content.value());
-  } else if (CONTENT.has_value()) {
+      memcpy(buf + encoded_size, buf_tmp, blength(content_.value()));
+    encoded_size += blength(content_.value());
+  } else if (contents_.has_value()) {
     // Number of entries
-    ENCODE_U8(buf + encoded_size, CONTENT.value().size(), encoded_size);
+    ENCODE_U8(buf + encoded_size, contents_.value().size(), encoded_size);
 
-    for (int i = 0; i < CONTENT.value().size(); i++) {
+    for (int i = 0; i < contents_.value().size(); i++) {
       // Length of Payload container entry
-      ENCODE_U8(buf + encoded_size, CONTENT.value().at(i).length, encoded_size);
+      ENCODE_U8(
+          buf + encoded_size, contents_.value().at(i).length, encoded_size);
       // Number of optional IEs and Payload container type
       uint8_t octet = 0;
-      octet         = ((CONTENT.value().at(i).optionalIE.size() & 0x0f) << 4) |
-              CONTENT.value().at(i).payloadContainerType;
+      octet = ((contents_.value().at(i).optionalIE.size() & 0x0f) << 4) |
+              contents_.value().at(i).payloadContainerType;
       ENCODE_U8(buf + encoded_size, octet, encoded_size);
       // Optional IEs
-      for (int j = 0; j < CONTENT.value().at(i).optionalIE.size(); j++) {
+      for (int j = 0; j < contents_.value().at(i).optionalIE.size(); j++) {
         // Type
         ENCODE_U8(
-            buf + encoded_size, CONTENT.value().at(i).optionalIE.at(j).ie_type,
-            encoded_size);
+            buf + encoded_size,
+            contents_.value().at(i).optionalIE.at(j).ie_type, encoded_size);
         // Length
         ENCODE_U8(
-            buf + encoded_size, CONTENT.value().at(i).optionalIE.at(j).ie_len,
+            buf + encoded_size, contents_.value().at(i).optionalIE.at(j).ie_len,
             encoded_size);
         // Value
         int size = encode_bstring(
-            CONTENT.value().at(i).optionalIE.at(j).ie_value,
+            contents_.value().at(i).optionalIE.at(j).ie_value,
             (buf + encoded_size), len - encoded_size);
         encoded_size += size;
       }
@@ -207,11 +208,11 @@ int PayloadContainer::Decode(uint8_t* buf, int len, bool is_iei, uint8_t type) {
   decoded_size += decoded_header_size;
   ie_len = GetLengthIndicator();
 
-  if (type != MULTIPLE_PAYLOADS) {  // not multiple payloads
+  if (type != kMultiplePayloads) {  // not multiple payloads
     uint8_t octet       = 0;
     bstring content_tmp = {};
     content_tmp         = blk2bstr(buf + decoded_size, ie_len);
-    content             = std::optional<bstring>(content_tmp);
+    content_            = std::optional<bstring>(content_tmp);
     decoded_size += ie_len;
     return decoded_size;
   }
@@ -249,7 +250,7 @@ int PayloadContainer::Decode(uint8_t* buf, int len, bool is_iei, uint8_t type) {
     CONTENT_tmp.insert(CONTENT_tmp.end(), payloadcontainerentry);
     num_entries--;
   }
-  CONTENT = std::optional<std::vector<PayloadContainerEntry>>(CONTENT);
+  contents_ = std::optional<std::vector<PayloadContainerEntry>>(contents_);
 
   Logger::nas_mm().debug(
       "Decoded %s (len %d)", GetIeName().c_str(), decoded_size);

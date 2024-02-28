@@ -36,32 +36,35 @@ namespace nas {
 class NetworkName {
  public:
   NetworkName();
-  NetworkName(const uint8_t& iei);
+  NetworkName(uint8_t iei);
   ~NetworkName();
 
   static std::string GetIeName() { return kNetworkNameIeName; }
 
-  void setIEI(const uint8_t& iei);
-  void setCodingScheme(const uint8_t& value);
+  void SetIei(uint8_t iei);
+
+  void SetCodingScheme(uint8_t value);
   // TODO: getCodingScheme
-  void setAddCI(const uint8_t& value);
+
+  void SetAddCI(uint8_t value);
   // TODO: getAddCI
-  void setNumberOfSpareBits(const uint8_t& value);
+
+  void SetNumberOfSpareBits(uint8_t value);
   // TODO: getNumberOfSpareBits
 
-  void setTextString(const std::string& str);
-  void setTextString(const bstring& str);
+  void SetTextString(const std::string& str);
+  void SetTextString(const bstring& str);
 
   int Encode(uint8_t* buf, int len);
   int Decode(uint8_t* buf, int len, bool is_option = true);
 
  private:
   uint8_t iei_;
-  uint16_t length;
-  uint8_t coding_scheme;         // octet 3
-  uint8_t add_CI;                // octet 3
-  uint8_t number_of_spare_bits;  // octet 3
-  bstring text_string;
+  uint16_t length_;
+  uint8_t coding_scheme_;         // octet 3
+  uint8_t add_ci_;                // octet 3
+  uint8_t number_of_spare_bits_;  // octet 3
+  bstring text_string_;
 };
 }  // namespace nas
 

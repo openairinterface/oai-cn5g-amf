@@ -46,7 +46,7 @@ SorTransparentContainer::SorTransparentContainer(
 SorTransparentContainer::~SorTransparentContainer() {}
 
 //------------------------------------------------------------------------------
-void SorTransparentContainer::getValue(
+void SorTransparentContainer::GetValue(
     uint8_t (&value)[kSorTransparentContainerIeMacLength]) const {
   for (int i = 0; i < 16; i++) {
     value[i] = sor_mac_i_[i];

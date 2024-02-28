@@ -63,15 +63,15 @@ class ServiceRequest : public NasMmPlainHeader {
   bool GetNasMessageContainer(bstring& nas) const;
 
  private:
-  NasKeySetIdentifier ie_ng_ksi;    // Mandatory
-  ServiceType ie_service_type;      // Mandatory
-  _5gsMobileIdentity ie_5g_s_tmsi;  // Mandatory
+  NasKeySetIdentifier ie_ng_ksi_;    // Mandatory
+  ServiceType ie_service_type_;      // Mandatory
+  _5gsMobileIdentity ie_5g_s_tmsi_;  // Mandatory
 
-  std::optional<UplinkDataStatus> ie_uplink_data_status;  // Optional
-  std::optional<PduSessionStatus> ie_pdu_session_status;  // Optional
+  std::optional<UplinkDataStatus> ie_uplink_data_status_;  // Optional
+  std::optional<PduSessionStatus> ie_pdu_session_status_;  // Optional
   std::optional<AllowedPduSessionStatus>
-      ie_allowed_pdu_session_status;                            // Optional
-  std::optional<NasMessageContainer> ie_nas_message_container;  // Optional
+      ie_allowed_pdu_session_status_;                            // Optional
+  std::optional<NasMessageContainer> ie_nas_message_container_;  // Optional
 };
 
 }  // namespace nas

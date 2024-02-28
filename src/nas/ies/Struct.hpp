@@ -22,13 +22,14 @@
 #ifndef _STRUCT_H_
 #define _STRUCT_H_
 
+#include <fmt/format.h>
 #include <stdint.h>
+#include <optional>
 
 #include <iostream>
 #include <vector>
 
 #include "3gpp_23.003.h"
-#include <fmt/format.h>
 
 extern "C" {
 #include "TLVDecoder.h"

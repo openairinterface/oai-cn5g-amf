@@ -31,9 +31,9 @@ using namespace nas;
 //------------------------------------------------------------------------------
 PduSessionReactivationResultErrorCause::PduSessionReactivationResultErrorCause()
     : Type6NasIe(kIeiPduSessionReactivationResultErrorCause),
-      pdu_session_id_cause_value_pair() {
+      pdu_session_id_cause_value_pair_() {
   std::pair<uint8_t, uint8_t> value = std::make_pair<uint8_t, uint8_t>(0, 0);
-  pdu_session_id_cause_value_pair.push_back(value);
+  pdu_session_id_cause_value_pair_.push_back(value);
   SetLengthIndicator(
       2);  // Minimum length with 1 pair (PDU Session ID, Cause Value)
 }
@@ -43,7 +43,7 @@ PduSessionReactivationResultErrorCause::PduSessionReactivationResultErrorCause(
     uint8_t session_id, uint8_t cause)
     : Type6NasIe(kIeiPduSessionReactivationResultErrorCause) {
   std::pair<uint8_t, uint8_t> value = std::make_pair(session_id, cause);
-  pdu_session_id_cause_value_pair.push_back(value);
+  pdu_session_id_cause_value_pair_.push_back(value);
   SetLengthIndicator(
       2);  // Minimum length with 1 pair (PDU Session ID, Cause Value)
 }
@@ -53,25 +53,25 @@ PduSessionReactivationResultErrorCause::
     ~PduSessionReactivationResultErrorCause() {}
 
 //------------------------------------------------------------------------------
-void PduSessionReactivationResultErrorCause::setValue(
+void PduSessionReactivationResultErrorCause::SetValue(
     uint8_t session_id, uint8_t cause) {
   std::pair<uint8_t, uint8_t> value = std::make_pair(session_id, cause);
-  pdu_session_id_cause_value_pair.clear();
-  pdu_session_id_cause_value_pair.push_back(value);
+  pdu_session_id_cause_value_pair_.clear();
+  pdu_session_id_cause_value_pair_.push_back(value);
 }
 
 //------------------------------------------------------------------------------
-void PduSessionReactivationResultErrorCause::setValue(
+void PduSessionReactivationResultErrorCause::SetValue(
     const std::vector<std::pair<uint8_t, uint8_t>>& value) {
-  if (value.size() > 0) pdu_session_id_cause_value_pair = value;
+  if (value.size() > 0) pdu_session_id_cause_value_pair_ = value;
   SetLengthIndicator(value.size() * 2);
 }
 
 //------------------------------------------------------------------------------
-std::pair<uint8_t, uint8_t> PduSessionReactivationResultErrorCause::getValue()
+std::pair<uint8_t, uint8_t> PduSessionReactivationResultErrorCause::GetValue()
     const {
-  if (pdu_session_id_cause_value_pair.size() > 0) {
-    return pdu_session_id_cause_value_pair[0];
+  if (pdu_session_id_cause_value_pair_.size() > 0) {
+    return pdu_session_id_cause_value_pair_[0];
   }
   return std::pair<uint8_t, uint8_t>(0, 0);
 }
@@ -98,7 +98,7 @@ int PduSessionReactivationResultErrorCause::Encode(uint8_t* buf, int len) {
   encoded_size += encoded_header_size;
 
   // PDU Session ID/Cause Value
-  for (const auto& i : pdu_session_id_cause_value_pair) {
+  for (const auto& i : pdu_session_id_cause_value_pair_) {
     ENCODE_U8(buf + encoded_size, i.first, encoded_size);
     ENCODE_U8(buf + encoded_size, i.second, encoded_size);
   }
@@ -126,7 +126,7 @@ int PduSessionReactivationResultErrorCause::Decode(
   ie_len = GetLengthIndicator();
 
   // Decode PDU Session ID/Cause Value
-  pdu_session_id_cause_value_pair.clear();
+  pdu_session_id_cause_value_pair_.clear();
   while (decoded_size < ie_len - 2) {
     uint8_t pdu_session_id = {};
     uint8_t cause_value    = {};
@@ -134,10 +134,10 @@ int PduSessionReactivationResultErrorCause::Decode(
     DECODE_U8(buf + decoded_size, cause_value, decoded_size);
     std::pair<uint8_t, uint8_t> value =
         std::make_pair(pdu_session_id, cause_value);
-    pdu_session_id_cause_value_pair.push_back(value);
+    pdu_session_id_cause_value_pair_.push_back(value);
   }
 
-  for (const auto& i : pdu_session_id_cause_value_pair) {
+  for (const auto& i : pdu_session_id_cause_value_pair_) {
     Logger::nas_mm().debug(
         "PDU Session ID 0x%x, Cause Value", i.first, i.second);
   }

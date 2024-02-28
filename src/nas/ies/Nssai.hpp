@@ -47,7 +47,7 @@ class Nssai : public Type4NasIe {
 
  private:
   std::vector<struct SNSSAI_s>
-      s_nssais;  // TODO: use class S-NSSAI instead of struct SNSSAI_s
+      s_nssais_;  // TODO: use class S-NSSAI instead of struct SNSSAI_s
 };
 
 }  // namespace nas

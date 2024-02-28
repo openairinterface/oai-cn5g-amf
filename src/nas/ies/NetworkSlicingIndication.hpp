@@ -33,7 +33,7 @@ class NetworkSlicingIndication : Type1NasIeFormatTv {
  public:
   NetworkSlicingIndication();
   NetworkSlicingIndication(uint8_t iei);
-  NetworkSlicingIndication(const uint8_t iei, bool dcni, bool nssci);
+  NetworkSlicingIndication(uint8_t iei, bool dcni, bool nssci);
   NetworkSlicingIndication(bool dcni, bool nssci);
   ~NetworkSlicingIndication();
 
@@ -44,6 +44,7 @@ class NetworkSlicingIndication : Type1NasIeFormatTv {
 
   void SetValue();
   void GetValue();
+
   void SetDcni(bool value);
   bool GetDcni() const;
 

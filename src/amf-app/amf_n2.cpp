@@ -1471,7 +1471,7 @@ void amf_n2::handle_itti_message(
       amf_n1_inst->set_5gcm_state(nc, CM_IDLE);
       // Start/reset the Mobile Reachable Timer
       timer_id_t tid = itti_inst->timer_setup(
-          MOBILE_REACHABLE_TIMER_NO_EMERGENCY_SERVICES_MIN * 60, 0, TASK_AMF_N1,
+          kMobileReachableTimerNoEmergencyServicesMin * 60, 0, TASK_AMF_N1,
           TASK_AMF_MOBILE_REACHABLE_TIMER_EXPIRE,
           std::to_string(amf_ue_ngap_id));
       Logger::amf_n2().startup("Started mobile reachable timer (tid %d)", tid);

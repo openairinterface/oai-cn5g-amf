@@ -33,10 +33,10 @@ namespace nas {
 class _5gmmCapability : public Type4NasIe {
  public:
   _5gmmCapability();
-  _5gmmCapability(const uint8_t iei, uint8_t octet3);
+  _5gmmCapability(uint8_t iei, uint8_t octet3);
   ~_5gmmCapability();
 
-  void SetOctet3(const uint8_t iei, uint8_t octet3);
+  void SetOctet3(uint8_t iei, uint8_t octet3);
   uint8_t GetOctet3() const;
 
   int Encode(uint8_t* buf, int len);

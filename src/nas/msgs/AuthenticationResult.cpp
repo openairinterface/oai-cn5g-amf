@@ -27,8 +27,8 @@ using namespace nas;
 
 //------------------------------------------------------------------------------
 AuthenticationResult::AuthenticationResult()
-    : NasMmPlainHeader(EPD_5GS_MM_MSG, AUTHENTICATION_RESULT) {
-  ie_abba = std::nullopt;
+    : NasMmPlainHeader(k5gsMobilityManagementMessages, kAuthenticationResult) {
+  ie_abba_ = std::nullopt;
 }
 
 //------------------------------------------------------------------------------
@@ -41,19 +41,19 @@ void AuthenticationResult::SetHeader(uint8_t security_header_type) {
 
 //------------------------------------------------------------------------------
 void AuthenticationResult::SetNgKsi(uint8_t tsc, uint8_t key_set_id) {
-  ie_ng_ksi.Set(false);  // 4 lower bits
-  ie_ng_ksi.SetTypeOfSecurityContext(tsc);
-  ie_ng_ksi.SetNasKeyIdentifier(key_set_id);
+  ie_ng_ksi_.Set(false);  // 4 lower bits
+  ie_ng_ksi_.SetTypeOfSecurityContext(tsc);
+  ie_ng_ksi_.SetNasKeyIdentifier(key_set_id);
 }
 
 //------------------------------------------------------------------------------
 void AuthenticationResult::SetAbba(uint8_t length, uint8_t* value) {
-  ie_abba = std::make_optional<Abba>(kIeiAbba, length, value);
+  ie_abba_ = std::make_optional<Abba>(kIeiAbba, length, value);
 }
 
 //------------------------------------------------------------------------------
 void AuthenticationResult::SetEapMessage(const bstring& eap) {
-  ie_eap_message.SetValue(eap);
+  ie_eap_message_.SetValue(eap);
 }
 
 //------------------------------------------------------------------------------
@@ -72,7 +72,7 @@ int AuthenticationResult::Encode(uint8_t* buf, int len) {
 
   // ngKSI
   if ((encoded_ie_size = NasHelper::Encode(
-           ie_ng_ksi, buf, len, encoded_size)) == KEncodeDecodeError) {
+           ie_ng_ksi_, buf, len, encoded_size)) == KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
   // Spare half octet
@@ -81,12 +81,12 @@ int AuthenticationResult::Encode(uint8_t* buf, int len) {
 
   // EAP message
   if ((encoded_ie_size = NasHelper::Encode(
-           ie_eap_message, buf, len, encoded_size)) == KEncodeDecodeError) {
+           ie_eap_message_, buf, len, encoded_size)) == KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
 
   // ABBA
-  if ((encoded_ie_size = NasHelper::Encode(ie_abba, buf, len, encoded_size)) ==
+  if ((encoded_ie_size = NasHelper::Encode(ie_abba_, buf, len, encoded_size)) ==
       KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
@@ -111,7 +111,7 @@ int AuthenticationResult::Decode(uint8_t* buf, int len) {
 
   // NAS key set identifier
   if ((decoded_ie_size = NasHelper::Decode(
-           ie_ng_ksi, buf, len, decoded_size, false, false)) ==
+           ie_ng_ksi_, buf, len, decoded_size, false, false)) ==
       KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
@@ -120,7 +120,7 @@ int AuthenticationResult::Decode(uint8_t* buf, int len) {
 
   // EAP message
   if ((decoded_ie_size =
-           NasHelper::Decode(ie_eap_message, buf, len, decoded_size, false)) ==
+           NasHelper::Decode(ie_eap_message_, buf, len, decoded_size, false)) ==
       KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
@@ -136,7 +136,7 @@ int AuthenticationResult::Decode(uint8_t* buf, int len) {
     switch (octet) {
       case kIeiAbba: {
         if ((decoded_ie_size =
-                 NasHelper::Decode(ie_abba, buf, len, decoded_size, true)) ==
+                 NasHelper::Decode(ie_abba_, buf, len, decoded_size, true)) ==
             KEncodeDecodeError) {
           return KEncodeDecodeError;
         }

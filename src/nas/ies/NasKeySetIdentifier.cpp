@@ -32,8 +32,7 @@ NasKeySetIdentifier::NasKeySetIdentifier()
     : Type1NasIe(), tsc_(false), key_id_() {}
 
 //------------------------------------------------------------------------------
-NasKeySetIdentifier::NasKeySetIdentifier(
-    const uint8_t& iei, const bool& tsc, const uint8_t& key_id)
+NasKeySetIdentifier::NasKeySetIdentifier(uint8_t iei, bool tsc, uint8_t key_id)
     : Type1NasIe(iei) {
   tsc_    = 0x01 & tsc;
   key_id_ = 0x07 & key_id;
@@ -41,7 +40,7 @@ NasKeySetIdentifier::NasKeySetIdentifier(
 }
 
 //------------------------------------------------------------------------------
-NasKeySetIdentifier::NasKeySetIdentifier(const bool& tsc, const uint8_t& key_id)
+NasKeySetIdentifier::NasKeySetIdentifier(bool tsc, uint8_t key_id)
     : Type1NasIe(false) {
   tsc_    = 0x01 & tsc;
   key_id_ = 0x07 & key_id;
@@ -52,7 +51,7 @@ NasKeySetIdentifier::NasKeySetIdentifier(const bool& tsc, const uint8_t& key_id)
 NasKeySetIdentifier::~NasKeySetIdentifier(){};
 
 //------------------------------------------------------------------------------
-void NasKeySetIdentifier::Set(const bool& high_pos) {
+void NasKeySetIdentifier::Set(bool high_pos) {
   Type1NasIe::Set(high_pos);
 }
 
@@ -127,13 +126,13 @@ int NasKeySetIdentifier::Decode(
 */
 
 //------------------------------------------------------------------------------
-void NasKeySetIdentifier::SetTypeOfSecurityContext(const bool& type) {
+void NasKeySetIdentifier::SetTypeOfSecurityContext(bool type) {
   tsc_ = type;
   SetValue();  // Update value
 }
 
 //------------------------------------------------------------------------------
-void NasKeySetIdentifier::SetNasKeyIdentifier(const uint8_t& id) {
+void NasKeySetIdentifier::SetNasKeyIdentifier(uint8_t id) {
   key_id_ = 0x07 & id;
   SetValue();  // Update value
 }

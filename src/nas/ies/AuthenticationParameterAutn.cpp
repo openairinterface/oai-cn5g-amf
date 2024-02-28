@@ -28,7 +28,7 @@ using namespace nas;
 
 //------------------------------------------------------------------------------
 AuthenticationParameterAutn::AuthenticationParameterAutn(uint8_t iei)
-    : Type4NasIe(iei), _value() {
+    : Type4NasIe(iei), value_() {
   SetLengthIndicator(0);
 }
 
@@ -37,14 +37,14 @@ AuthenticationParameterAutn::AuthenticationParameterAutn(
     const uint8_t iei, uint8_t value[kAuthenticationParameterAutnValueLength])
     : Type4NasIe(iei) {
   for (int i = 0; i < kAuthenticationParameterAutnValueLength; i++) {
-    this->_value[i] = value[i];
+    this->value_[i] = value[i];
   }
   SetLengthIndicator(kAuthenticationParameterAutnValueLength);
 }
 
 //------------------------------------------------------------------------------
 AuthenticationParameterAutn::AuthenticationParameterAutn()
-    : Type4NasIe(), _value() {
+    : Type4NasIe(), value_() {
   SetLengthIndicator(0);
 }
 
@@ -71,7 +71,7 @@ int AuthenticationParameterAutn::Encode(uint8_t* buf, int len) {
     return KEncodeDecodeError;
 
   for (int i = 0; i < kAuthenticationParameterAutnValueLength; i++) {
-    ENCODE_U8(buf + encoded_size, _value[i], encoded_size);
+    ENCODE_U8(buf + encoded_size, value_[i], encoded_size);
   }
 
   Logger::nas_mm().debug(
@@ -94,11 +94,11 @@ int AuthenticationParameterAutn::Decode(uint8_t* buf, int len, bool is_iei) {
     return KEncodeDecodeError;
 
   for (int i = 0; i < kAuthenticationParameterAutnValueLength; i++) {
-    DECODE_U8(buf + decoded_size, _value[i], decoded_size);
+    DECODE_U8(buf + decoded_size, value_[i], decoded_size);
   }
   for (int j = 0; j < kAuthenticationParameterAutnValueLength; j++) {
     Logger::nas_mm().debug(
-        "Decoded AuthenticationParameterAutn value (0x%2x)", _value[j]);
+        "Decoded AuthenticationParameterAutn value (0x%2x)", value_[j]);
   }
   Logger::nas_mm().debug(
       "Decoded %s, len (%d)", GetIeName().c_str(), decoded_size);

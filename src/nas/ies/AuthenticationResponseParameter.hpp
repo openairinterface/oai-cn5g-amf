@@ -34,7 +34,7 @@ namespace nas {
 class AuthenticationResponseParameter : public Type4NasIe {
  public:
   AuthenticationResponseParameter();
-  AuthenticationResponseParameter(bstring para);
+  AuthenticationResponseParameter(const bstring& para);
   ~AuthenticationResponseParameter();
 
   static std::string GetIeName() {

@@ -56,7 +56,7 @@ Abba::Abba(uint8_t iei, uint8_t length, uint8_t* value) : Type4NasIe(iei) {
 Abba::~Abba() {}
 
 //------------------------------------------------------------------------------
-void Abba::Set(uint8_t length, uint8_t* value) {
+void Abba::Set(uint8_t length, const uint8_t* value) {
   for (int i = 0; i < length; i++) {
     this->value_[i] = value[i];
   }
@@ -64,7 +64,7 @@ void Abba::Set(uint8_t length, uint8_t* value) {
 }
 
 //------------------------------------------------------------------------------
-void Abba::Set(uint8_t iei, uint8_t length, uint8_t* value) {
+void Abba::Set(uint8_t iei, uint8_t length, const uint8_t* value) {
   SetIei(iei);
   for (int i = 0; i < length; i++) {
     this->value_[i] = value[i];

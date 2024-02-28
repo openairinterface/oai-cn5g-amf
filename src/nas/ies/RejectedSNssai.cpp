@@ -35,8 +35,7 @@ RejectedSNssai::RejectedSNssai() {
 }
 
 //------------------------------------------------------------------------------
-RejectedSNssai::RejectedSNssai(
-    const uint8_t& cause, const uint8_t& sst, const uint32_t& sd) {
+RejectedSNssai::RejectedSNssai(uint8_t cause, uint8_t sst, uint32_t sd) {
   cause_  = cause;
   sst_    = sst;
   sd_     = std::optional<uint32_t>(sd);
@@ -49,34 +48,34 @@ RejectedSNssai::~RejectedSNssai() {
 }
 
 //------------------------------------------------------------------------------
-uint8_t RejectedSNssai::getLength() {
+uint8_t RejectedSNssai::GetLength() const {
   return (length_ + 1);  // 1 for length + cause
 }
 
 //------------------------------------------------------------------------------
-void RejectedSNssai::setSST(const uint8_t& sst) {
+void RejectedSNssai::SetSST(uint8_t sst) {
   sst_ = sst;
   // length_ = 1;
 }
 
 //------------------------------------------------------------------------------
-void RejectedSNssai::getSST(uint8_t& sst) {
+void RejectedSNssai::GetSST(uint8_t& sst) const {
   sst = sst_;
 }
 
 //------------------------------------------------------------------------------
-uint8_t RejectedSNssai::getSST() {
+uint8_t RejectedSNssai::GetSST() const {
   return sst_;
 }
 
 //------------------------------------------------------------------------------
-void RejectedSNssai::setSd(const uint32_t& sd) {
+void RejectedSNssai::SetSd(uint32_t sd) {
   sd_.emplace(sd);
   length_ = 4;
 }
 
 //------------------------------------------------------------------------------
-bool RejectedSNssai::getSd(uint32_t& sd) {
+bool RejectedSNssai::GetSd(uint32_t& sd) const {
   if (sd_.has_value()) {
     sd = sd_.value();
     return true;
@@ -86,23 +85,23 @@ bool RejectedSNssai::getSd(uint32_t& sd) {
 
 //------------------------------------------------------------------------------
 
-void RejectedSNssai::getSd(std::optional<uint32_t>& sd) {
+void RejectedSNssai::GetSd(std::optional<uint32_t>& sd) const {
   sd = sd_;
 }
 
 //------------------------------------------------------------------------------
-void RejectedSNssai::setCause(const uint8_t& cause) {
+void RejectedSNssai::SetCause(uint8_t cause) {
   cause_ = cause;
 }
 
 //------------------------------------------------------------------------------
-uint8_t RejectedSNssai::getCause() {
+uint8_t RejectedSNssai::GetCause() const {
   return cause_;
 }
 
 //------------------------------------------------------------------------------
 
-void RejectedSNssai::getCause(uint8_t& cause) {
+void RejectedSNssai::GetCause(uint8_t& cause) const {
   cause = cause_;
 }
 
@@ -133,12 +132,6 @@ int RejectedSNssai::Encode(uint8_t* buf, int len) {
   // SD
   if (sd_.has_value()) {
     ENCODE_U24(buf + encoded_size, sd_.value(), encoded_size);
-    /*ENCODE_U8(
-        buf + encoded_size, (sd_.value() & 0x00ff0000) >> 16, encoded_size);
-    ENCODE_U8(
-        buf + encoded_size, (sd_.value() & 0x0000ff00) >> 8, encoded_size);
-    ENCODE_U8(buf + encoded_size, (sd_.value() & 0x000000ff), encoded_size);
-    */
     Logger::nas_mm().debug("SD 0x%x", sd_.value());
   }
 

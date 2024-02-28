@@ -32,7 +32,7 @@ namespace nas {
 class MicoIndication : public Type1NasIeFormatTv {
  public:
   MicoIndication();
-  MicoIndication(const uint8_t _iei, bool sprti, bool raai);
+  MicoIndication(uint8_t _iei, bool sprti, bool raai);
   MicoIndication(bool sprti, bool raai);
   ~MicoIndication();
 

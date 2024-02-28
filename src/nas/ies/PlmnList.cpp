@@ -43,7 +43,7 @@ PlmnList::~PlmnList() {}
 
 //------------------------------------------------------------------------------
 void PlmnList::Set(uint8_t iei, const std::vector<nas_plmn_t>& list) {
-  plmn_list  = list;
+  plmn_list_ = list;
   int length = 0;
   if (list.size() > 0)
     length =
@@ -56,8 +56,8 @@ void PlmnList::Set(uint8_t iei, const std::vector<nas_plmn_t>& list) {
 }
 
 //------------------------------------------------------------------------------
-void PlmnList::GetPLMNList(std::vector<nas_plmn_t>& list) const {
-  list = plmn_list;
+void PlmnList::Get(std::vector<nas_plmn_t>& list) const {
+  list = plmn_list_;
 }
 
 //------------------------------------------------------------------------------
@@ -77,7 +77,7 @@ int PlmnList::Encode(uint8_t* buf, int len) {
   if (encoded_header_size == KEncodeDecodeError) return KEncodeDecodeError;
   encoded_size += encoded_header_size;
 
-  for (auto it : plmn_list)
+  for (auto it : plmn_list_)
     encoded_size += utils::encodeMccMnc2Buffer(
         it.mcc, it.mnc, buf + encoded_size, len - encoded_size);
 
@@ -111,7 +111,7 @@ int PlmnList::Decode(uint8_t* buf, int len, bool is_iei) {
         nas_plmn.mcc, nas_plmn.mnc, buf + decoded_size, len - decoded_size);
     if (size > 0) {
       len_ie -= size;
-      plmn_list.push_back(nas_plmn);
+      plmn_list_.push_back(nas_plmn);
     } else {
       break;
     }

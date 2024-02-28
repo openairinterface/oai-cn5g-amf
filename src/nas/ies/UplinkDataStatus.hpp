@@ -33,7 +33,7 @@ namespace nas {
 class UplinkDataStatus : public Type4NasIe {
  public:
   UplinkDataStatus();
-  UplinkDataStatus(const uint16_t& value);
+  UplinkDataStatus(uint16_t value);
   ~UplinkDataStatus();
 
   static std::string GetIeName() { return kUplinkDataStatusIeName; }
@@ -45,7 +45,7 @@ class UplinkDataStatus : public Type4NasIe {
   int Decode(uint8_t* buf, int len, bool is_iei);
 
  private:
-  uint16_t _value;
+  uint16_t value_;
   // TODO: spare
 };
 

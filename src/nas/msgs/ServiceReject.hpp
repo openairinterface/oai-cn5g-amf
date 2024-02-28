@@ -45,19 +45,19 @@ class ServiceReject : public NasMmPlainHeader {
   void SetT3346Value(uint8_t value);
   // TODO: Get
 
-  void SetEapMessage(bstring eap);
+  void SetEapMessage(const bstring& eap);
   // TODO: Get
 
   void SetT3448Value(uint8_t unit, uint8_t value);
   // TODO: Get
 
  private:
-  _5gmmCause ie_5gmm_cause;  // Mandatory
+  _5gmmCause ie_5gmm_cause_;  // Mandatory
 
-  std::optional<PduSessionStatus> ie_pdu_session_status;  // Optional
-  std::optional<GprsTimer2> ie_t3346_value;               // Optional
-  std::optional<EapMessage> ie_eap_message;               // Optional
-  std::optional<GprsTimer3> ie_t3448_value;               // Optional
+  std::optional<PduSessionStatus> ie_pdu_session_status_;  // Optional
+  std::optional<GprsTimer2> ie_t3346_value_;               // Optional
+  std::optional<EapMessage> ie_eap_message_;               // Optional
+  std::optional<GprsTimer3> ie_t3448_value_;               // Optional
   // TODO: CAG information list (Rel 16.14.0, Optional)
 };
 

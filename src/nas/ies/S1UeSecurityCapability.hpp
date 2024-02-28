@@ -34,9 +34,9 @@ class S1UeSecurityCapability : public Type4NasIe {
  public:
   S1UeSecurityCapability();
   S1UeSecurityCapability(uint8_t iei);
-  S1UeSecurityCapability(const uint8_t iei, uint8_t eea, uint8_t eia);
+  S1UeSecurityCapability(uint8_t iei, uint8_t eea, uint8_t eia);
   S1UeSecurityCapability(
-      const uint8_t iei, uint8_t eea, uint8_t eia, uint8_t uea, uint8_t uia);
+      uint8_t iei, uint8_t eea, uint8_t eia, uint8_t uea, uint8_t uia);
   ~S1UeSecurityCapability();
 
   static std::string GetIeName() { return kS1UeSecurityCapabilityIeName; }

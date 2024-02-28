@@ -26,18 +26,18 @@
 using namespace nas;
 
 //------------------------------------------------------------------------------
-Dnn::Dnn() : Type4NasIe(kIeiDnn), _dnn() {
+Dnn::Dnn() : Type4NasIe(kIeiDnn), dnn_() {
   SetLengthIndicator(1);
 }
 
 //------------------------------------------------------------------------------
-Dnn::Dnn(bstring dnn) : Type4NasIe(kIeiDnn) {
-  _dnn = bstrcpy(dnn);
+Dnn::Dnn(const bstring& dnn) : Type4NasIe(kIeiDnn) {
+  dnn_ = bstrcpy(dnn);
   SetLengthIndicator(blength(dnn));
 }
 
 //------------------------------------------------------------------------------
-Dnn::Dnn(bool iei) : Type4NasIe(), _dnn() {
+Dnn::Dnn(bool iei) : Type4NasIe(), dnn_() {
   if (iei) SetIei(kIeiDnn);
   SetLengthIndicator(1);
 }
@@ -47,12 +47,12 @@ Dnn::~Dnn() {}
 
 //------------------------------------------------------------------------------
 void Dnn::SetValue(const bstring& dnn) {
-  _dnn = bstrcpy(dnn);
+  dnn_ = bstrcpy(dnn);
 }
 
 //------------------------------------------------------------------------------
 void Dnn::GetValue(bstring& dnn) const {
-  dnn = bstrcpy(_dnn);
+  dnn = bstrcpy(dnn_);
 }
 
 //------------------------------------------------------------------------------
@@ -72,7 +72,7 @@ int Dnn::Encode(uint8_t* buf, int len) {
   encoded_size += encoded_header_size;
 
   // Value
-  int size = encode_bstring(_dnn, (buf + encoded_size), len - encoded_size);
+  int size = encode_bstring(dnn_, (buf + encoded_size), len - encoded_size);
   encoded_size += size;
 
   Logger::nas_mm().debug(
@@ -100,11 +100,11 @@ int Dnn::Decode(uint8_t* buf, int len, bool is_iei) {
 
   // DNN
   uint8_t ie_len = GetLengthIndicator();
-  decode_bstring(&_dnn, ie_len, (buf + decoded_size), len - decoded_size);
+  decode_bstring(&dnn_, ie_len, (buf + decoded_size), len - decoded_size);
   decoded_size += ie_len;
 
   for (int i = 0; i < ie_len; i++) {
-    Logger::nas_mm().debug("Decoded value 0x%x", (uint8_t) _dnn->data[i]);
+    Logger::nas_mm().debug("Decoded value 0x%x", (uint8_t) dnn_->data[i]);
   }
 
   Logger::nas_mm().debug(

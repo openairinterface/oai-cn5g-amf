@@ -36,7 +36,7 @@ PduSessionReactivationResult::PduSessionReactivationResult()
 //------------------------------------------------------------------------------
 PduSessionReactivationResult::PduSessionReactivationResult(uint16_t value)
     : Type4NasIe(kIeiPduSessionReactivationResult) {
-  _value = value;
+  value_ = value;
   SetLengthIndicator(2);
 }
 
@@ -44,13 +44,13 @@ PduSessionReactivationResult::PduSessionReactivationResult(uint16_t value)
 PduSessionReactivationResult::~PduSessionReactivationResult() {}
 
 //------------------------------------------------------------------------------
-void PduSessionReactivationResult::setValue(uint16_t value) {
-  _value = value;
+void PduSessionReactivationResult::SetValue(uint16_t value) {
+  value_ = value;
 }
 
 //------------------------------------------------------------------------------
-uint16_t PduSessionReactivationResult::getValue() const {
-  return _value;
+uint16_t PduSessionReactivationResult::GetValue() const {
+  return value_;
 }
 
 //------------------------------------------------------------------------------
@@ -70,7 +70,7 @@ int PduSessionReactivationResult::Encode(uint8_t* buf, int len) {
   encoded_size += encoded_header_size;
 
   // Octet 3
-  ENCODE_U16(buf + encoded_size, _value, encoded_size);
+  ENCODE_U16(buf + encoded_size, value_, encoded_size);
   // TODO: Encode spare for the rest
   uint8_t spare = 0;
   int spare_len = ie_len - encoded_size;
@@ -98,12 +98,11 @@ int PduSessionReactivationResult::Decode(uint8_t* buf, int len, bool is_iei) {
 
   // IEI and Length
   int decoded_header_size = Type4NasIe::Decode(buf + decoded_size, len, is_iei);
-  // decoded_size += Type4NasIe::Decode(buf + decoded_size, len, is_iei);
   if (decoded_header_size == KEncodeDecodeError) return KEncodeDecodeError;
   decoded_size += decoded_header_size;
 
   // Value
-  DECODE_U16(buf + decoded_size, _value, decoded_size);
+  DECODE_U16(buf + decoded_size, value_, decoded_size);
   // TODO: decode the rest as spare for now
   uint8_t spare = 0;
   for (int i = 0; i < (GetLengthIndicator() - 2); i++) {
@@ -111,7 +110,7 @@ int PduSessionReactivationResult::Decode(uint8_t* buf, int len, bool is_iei) {
   }
 
   Logger::nas_mm().debug(
-      "Decoded %s, Value (0x%x)", GetIeName().c_str(), _value);
+      "Decoded %s, Value (0x%x)", GetIeName().c_str(), value_);
   Logger::nas_mm().debug(
       "Decoded %s, len (%d)", GetIeName().c_str(), decoded_size);
   return decoded_size;

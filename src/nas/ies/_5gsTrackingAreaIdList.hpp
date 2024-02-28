@@ -24,8 +24,8 @@
 
 #include <vector>
 
-#include "Type4NasIe.hpp"
 #include "Struct.hpp"
+#include "Type4NasIe.hpp"
 
 constexpr uint8_t k5gsTrackingAreaIdListMinimumLength        = 9;
 constexpr uint8_t k5gsTrackingAreaIdListMaximumLength        = 114;
@@ -44,12 +44,12 @@ class _5gsTrackingAreaIdList : public Type4NasIe {
   static std::string GetIeName() { return k5gsTrackingAreaIdListIeName; }
 
  private:
-  std::vector<p_tai_t> m_tai_list;
+  std::vector<p_tai_t> tai_list_;
 
  private:
-  int encode_00_type(p_tai_t item, uint8_t* buf, int len);
-  int encode_01_type(p_tai_t item, uint8_t* buf, int len);
-  int encode_10_type(p_tai_t item, uint8_t* buf, int len);
+  int EncodeType00(p_tai_t item, uint8_t* buf, int len);
+  int EncodeType01(p_tai_t item, uint8_t* buf, int len);
+  int EncodeType10(p_tai_t item, uint8_t* buf, int len);
 };
 
 }  // namespace nas
