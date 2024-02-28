@@ -44,7 +44,7 @@ class RejectedNssai : public Type4NasIe {
   int Decode(uint8_t* buf, int len, bool is_iei);
 
   void SetRejectedSNssais(const std::vector<RejectedSNssai>& nssais);
-  void GetRejectedSNssais(std::vector<RejectedSNssai>& nssais);
+  void GetRejectedSNssais(std::vector<RejectedSNssai>& nssais) const;
 
  private:
   std::vector<RejectedSNssai> rejected_nssais_;

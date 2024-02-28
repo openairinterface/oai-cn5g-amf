@@ -45,8 +45,7 @@ UeNetworkCapability::UeNetworkCapability(uint8_t iei) : Type4NasIe(iei) {
 UeNetworkCapability::~UeNetworkCapability() {}
 
 //------------------------------------------------------------------------------
-UeNetworkCapability::UeNetworkCapability(
-    const uint8_t iei, uint8_t eea, uint8_t eia)
+UeNetworkCapability::UeNetworkCapability(uint8_t iei, uint8_t eea, uint8_t eia)
     : Type4NasIe(iei) {
   eea_ = eea;
   eia_ = eia;
@@ -126,7 +125,6 @@ int UeNetworkCapability::Decode(uint8_t* buf, int len, bool is_iei) {
 
   // IEI and Length
   int decoded_header_size = Type4NasIe::Decode(buf + decoded_size, len, is_iei);
-  // decoded_size += Type4NasIe::Decode(buf + decoded_size, len, is_iei);
   if (decoded_header_size == KEncodeDecodeError) return KEncodeDecodeError;
   decoded_size += decoded_header_size;
 

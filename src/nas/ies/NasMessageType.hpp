@@ -32,14 +32,14 @@ namespace nas {
 class NasMessageType : public NasIe {
  public:
   NasMessageType(){};  // TODO: = delete;
-  NasMessageType(const uint8_t& message_type);
+  NasMessageType(uint8_t message_type);
   virtual ~NasMessageType();
 
   static std::string GetIeName() { return kNasMessageTypeIeName; }
 
   bool Validate(const int& len) const override;
 
-  void Set(const uint8_t& message_type);
+  void Set(uint8_t message_type);
   void Get(uint8_t& message_type) const;
   uint8_t Get() const;
 

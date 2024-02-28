@@ -31,7 +31,8 @@ AuthenticationResponseParameter::AuthenticationResponseParameter()
 }
 
 //------------------------------------------------------------------------------
-AuthenticationResponseParameter::AuthenticationResponseParameter(bstring para)
+AuthenticationResponseParameter::AuthenticationResponseParameter(
+    const bstring& para)
     : Type4NasIe(kIeiAuthenticationResponseParameter) {
   res_or_res_star_ = bstrcpy(para);
   SetLengthIndicator(blength(res_or_res_star_));

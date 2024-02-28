@@ -22,8 +22,8 @@
 #ifndef _S_NSSAI_NAS_H_
 #define _S_NSSAI_NAS_H_
 
-#include "Type4NasIe.hpp"
 #include "Struct.hpp"
+#include "Type4NasIe.hpp"
 
 constexpr uint8_t kSNssaiMinimumLength = 3;
 constexpr uint8_t kSNssaiMaximumLength = 10;
@@ -39,11 +39,10 @@ class SNssai : public Type4NasIe {
 
   static std::string GetIeName() { return kSNssaiIeName; }
 
-  // void SetSNssai(SNSSAI_s snssai);
   int Encode(uint8_t* buf, int len);
   int Decode(uint8_t* buf, int len, const bool is_option = true);
 
-  void getValue(SNSSAI_t& snssai) const;
+  void GetValue(SNSSAI_t& snssai) const;
 
   void SetSNSSAI(
       std::optional<int8_t> iei, uint8_t sst, std::optional<int32_t> sd,

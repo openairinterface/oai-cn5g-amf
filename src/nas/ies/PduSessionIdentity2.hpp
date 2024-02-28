@@ -33,7 +33,7 @@ class PduSessionIdentity2 : public Type3NasIe {
  public:
   PduSessionIdentity2();
   PduSessionIdentity2(uint8_t iei);
-  PduSessionIdentity2(const uint8_t iei, uint8_t value);
+  PduSessionIdentity2(uint8_t iei, uint8_t value);
   ~PduSessionIdentity2();
 
   static std::string GetIeName() { return kPduSessionIdentity2IeName; }

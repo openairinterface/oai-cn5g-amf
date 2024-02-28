@@ -31,13 +31,11 @@ using namespace nas;
 Type1NasIeFormatV::Type1NasIeFormatV() : NasIe(), high_pos_(false), value_(0) {}
 
 //------------------------------------------------------------------------------
-Type1NasIeFormatV::Type1NasIeFormatV(const bool& high_pos)
-    : NasIe(), value_(0) {
+Type1NasIeFormatV::Type1NasIeFormatV(bool high_pos) : NasIe(), value_(0) {
   high_pos_ = high_pos;
 }
 //------------------------------------------------------------------------------
-Type1NasIeFormatV::Type1NasIeFormatV(const bool& high_pos, const uint8_t& value)
-    : NasIe() {
+Type1NasIeFormatV::Type1NasIeFormatV(bool high_pos, uint8_t value) : NasIe() {
   high_pos_ = high_pos;
   value_    = value & 0x0f;
 }
@@ -57,13 +55,13 @@ bool Type1NasIeFormatV::Validate(const int& len) const {
 }
 
 //------------------------------------------------------------------------------
-void Type1NasIeFormatV::Set(const bool& high_pos, const uint8_t& value) {
+void Type1NasIeFormatV::Set(bool high_pos, uint8_t value) {
   high_pos_ = high_pos;
   value_    = value & 0x0f;  // 4 bits
 }
 
 //------------------------------------------------------------------------------
-void Type1NasIeFormatV::Set(const uint8_t& value) {
+void Type1NasIeFormatV::Set(uint8_t value) {
   value_ = value & 0x0f;  // 4 bits
 }
 //------------------------------------------------------------------------------

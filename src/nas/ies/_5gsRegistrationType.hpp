@@ -31,26 +31,25 @@ namespace nas {
 class _5gsRegistrationType : public Type1NasIeFormatTv {
  public:
   _5gsRegistrationType();
-  _5gsRegistrationType(const bool& follow_on_req, const uint8_t& type);
-  _5gsRegistrationType(
-      const uint8_t& iei, const bool& follow_on_req, const uint8_t& type);
+  _5gsRegistrationType(bool follow_on_req, uint8_t type);
+  _5gsRegistrationType(uint8_t iei, bool follow_on_req, uint8_t type);
   virtual ~_5gsRegistrationType();
 
   static std::string GetIeName() { return k5gsRegistrationTypeName; }
 
-  void setValue();
-  void getValue();
+  void SetValue();
+  void GetValue();
 
-  bool validateValue(const bool& follow_on_req, const uint8_t& type);
+  bool ValidateValue(bool follow_on_req, uint8_t type);
 
-  void set(const bool& follow_on_req, const uint8_t& type, const uint8_t& iei);
-  void set(const bool& follow_on_req, const uint8_t& type);
+  void Set(bool follow_on_req, uint8_t type, uint8_t iei);
+  void Set(bool follow_on_req, uint8_t type);
 
-  void setFollowOnReq(bool is);
-  bool isFollowOnReq();
+  void SetFollowOnReq(bool is);
+  bool IsFollowOnReq();
 
-  void setRegType(uint8_t type);
-  uint8_t getRegType();
+  void SetRegType(uint8_t type);
+  uint8_t GetRegType();
 
  private:
   bool follow_on_req_;

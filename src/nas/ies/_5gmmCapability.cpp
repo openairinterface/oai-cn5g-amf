@@ -29,7 +29,7 @@
 using namespace nas;
 
 //------------------------------------------------------------------------------
-_5gmmCapability::_5gmmCapability(const uint8_t iei, uint8_t octet3)
+_5gmmCapability::_5gmmCapability(uint8_t iei, uint8_t octet3)
     : Type4NasIe(kIei5gmmCapability) {
   octet3_ = octet3;
   octet4_ = std::nullopt;
@@ -48,7 +48,7 @@ _5gmmCapability::_5gmmCapability() : Type4NasIe(kIei5gmmCapability) {
 _5gmmCapability::~_5gmmCapability() {}
 
 //------------------------------------------------------------------------------
-void _5gmmCapability::SetOctet3(const uint8_t iei, uint8_t octet3) {
+void _5gmmCapability::SetOctet3(uint8_t iei, uint8_t octet3) {
   SetIei(iei);
   SetLengthIndicator(1);
   octet3_ = octet3;
@@ -104,7 +104,6 @@ int _5gmmCapability::Decode(uint8_t* buf, int len, bool is_iei) {
 
   // IEI and Length
   int decoded_header_size = Type4NasIe::Decode(buf + decoded_size, len, is_iei);
-  // decoded_size += Type4NasIe::Decode(buf + decoded_size, len, is_iei);
   if (decoded_header_size == KEncodeDecodeError) return KEncodeDecodeError;
   decoded_size += decoded_header_size;
 

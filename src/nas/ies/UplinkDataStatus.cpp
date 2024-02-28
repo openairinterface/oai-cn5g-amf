@@ -30,14 +30,14 @@ using namespace nas;
 
 //------------------------------------------------------------------------------
 UplinkDataStatus::UplinkDataStatus() : Type4NasIe(kIeiUplinkDataStatus) {
-  _value = 0;
+  value_ = 0;
   SetLengthIndicator(2);
 }
 
 //------------------------------------------------------------------------------
-UplinkDataStatus::UplinkDataStatus(const uint16_t& value)
+UplinkDataStatus::UplinkDataStatus(uint16_t value)
     : Type4NasIe(kIeiUplinkDataStatus) {
-  _value = value;
+  value_ = value;
   SetLengthIndicator(2);
 }
 
@@ -46,12 +46,12 @@ UplinkDataStatus::~UplinkDataStatus() {}
 
 //------------------------------------------------------------------------------
 void UplinkDataStatus::SetValue(uint16_t value) {
-  _value = value;
+  value_ = value;
 }
 
 //------------------------------------------------------------------------------
 uint16_t UplinkDataStatus::GetValue() const {
-  return _value;
+  return value_;
 }
 
 //------------------------------------------------------------------------------
@@ -65,7 +65,7 @@ int UplinkDataStatus::Encode(uint8_t* buf, int len) {
   encoded_size += encoded_header_size;
 
   // Value
-  ENCODE_U16(buf + encoded_size, _value, encoded_size);
+  ENCODE_U16(buf + encoded_size, value_, encoded_size);
 
   Logger::nas_mm().debug(
       "Encoded %s, len (%d)", GetIeName().c_str(), encoded_size);
@@ -83,10 +83,10 @@ int UplinkDataStatus::Decode(uint8_t* buf, int len, bool is_iei) {
   if (decoded_header_size == KEncodeDecodeError) return KEncodeDecodeError;
   decoded_size += decoded_header_size;
 
-  DECODE_U16(buf + decoded_size, _value, decoded_size);
+  DECODE_U16(buf + decoded_size, value_, decoded_size);
 
   Logger::nas_mm().debug(
-      "Decoded %s, value 0x%x len %d", GetIeName().c_str(), _value,
+      "Decoded %s, value 0x%x len %d", GetIeName().c_str(), value_,
       decoded_size);
   return decoded_size;
 }

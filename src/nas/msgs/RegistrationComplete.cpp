@@ -27,8 +27,8 @@ using namespace nas;
 
 //------------------------------------------------------------------------------
 RegistrationComplete::RegistrationComplete()
-    : NasMmPlainHeader(EPD_5GS_MM_MSG, REGISTRATION_COMPLETE) {
-  ie_sor_transparent_container = std::nullopt;
+    : NasMmPlainHeader(k5gsMobilityManagementMessages, kRegistrationComplete) {
+  ie_sor_transparent_container_ = std::nullopt;
 }
 
 //------------------------------------------------------------------------------
@@ -43,7 +43,7 @@ void RegistrationComplete::SetHeader(uint8_t security_header_type) {
 void RegistrationComplete::SetSorTransparentContainer(
     uint8_t header,
     const uint8_t (&value)[kSorTransparentContainerIeMacLength]) {
-  ie_sor_transparent_container =
+  ie_sor_transparent_container_ =
       std::make_optional<SorTransparentContainer>(header, value);
 }
 
@@ -63,7 +63,7 @@ int RegistrationComplete::Encode(uint8_t* buf, int len) {
   encoded_size += encoded_ie_size;
 
   if ((encoded_ie_size = NasHelper::Encode(
-           ie_sor_transparent_container, buf, len, encoded_size)) ==
+           ie_sor_transparent_container_, buf, len, encoded_size)) ==
       KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
@@ -100,8 +100,8 @@ int RegistrationComplete::Decode(uint8_t* buf, int len) {
         Logger::nas_mm().debug(
             "Decoding IEI 0x%x", kIeiSorTransparentContainer);
         if ((decoded_ie_size = NasHelper::Decode(
-                 ie_sor_transparent_container, buf, len, decoded_size, true)) ==
-            KEncodeDecodeError) {
+                 ie_sor_transparent_container_, buf, len, decoded_size,
+                 true)) == KEncodeDecodeError) {
           return KEncodeDecodeError;
         }
         DECODE_U8_VALUE(buf + decoded_size, octet);

@@ -32,8 +32,7 @@ Type1NasIeFormatTv::Type1NasIeFormatTv() : NasIe(), value_(0) {
 }
 
 //------------------------------------------------------------------------------
-Type1NasIeFormatTv::Type1NasIeFormatTv(const uint8_t& iei)
-    : NasIe(), value_(0) {
+Type1NasIeFormatTv::Type1NasIeFormatTv(uint8_t iei) : NasIe(), value_(0) {
   iei_ = std::optional<uint8_t>(iei & 0x0f);
 }
 
@@ -41,7 +40,7 @@ Type1NasIeFormatTv::Type1NasIeFormatTv(const uint8_t& iei)
 Type1NasIeFormatTv::~Type1NasIeFormatTv() {}
 
 //------------------------------------------------------------------------------
-void Type1NasIeFormatTv::SetIei(const uint8_t& iei) {
+void Type1NasIeFormatTv::SetIei(uint8_t iei) {
   iei_ = std::optional<uint8_t>(iei & 0x0f);
 }
 
@@ -62,7 +61,7 @@ uint8_t Type1NasIeFormatTv::GetIeLength() const {
 }
 
 //------------------------------------------------------------------------------
-void Type1NasIeFormatTv::SetValue(const uint8_t& value) {
+void Type1NasIeFormatTv::SetValue(uint8_t value) {
   value_ = value & 0x0f;  // 4 lower bits
 }
 

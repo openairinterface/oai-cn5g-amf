@@ -57,36 +57,35 @@ class ConfigurationUpdateCommand : public NasMmPlainHeader {
   int Encode(uint8_t* buf, int len);
   int Decode(uint8_t* buf, int len);
 
- public:
-  // Optional
+ private:
   // Configuration update indication
   std::optional<ConfigurationUpdateIndication>
-      ie_configuration_update_indication;        // Optional
-  std::optional<_5gsMobileIdentity> ie_5g_guti;  // Optional
-  // TODO: TAI list
-  // TODO: Allowed NSSAI
-  // TODO: Service area list
-  // Full name for network
-  std::optional<NetworkName> ie_full_name_for_network;
+      ie_configuration_update_indication_;        // Optional
+  std::optional<_5gsMobileIdentity> ie_5g_guti_;  // Optional
+  // TODO: TAI list (Optional)
+  // TODO: Allowed NSSAI (Optional)
+  // TODO: Service area list (Optional)
+  // Full name for network (Optional)
+  std::optional<NetworkName> ie_full_name_for_network_;  // Optional
   // Short name for network
-  std::optional<NetworkName> ie_short_name_for_network;
-  // TODO: Local time zone
-  // TODO: Universal time and local time zone
-  // TODO: Network daylight saving time
-  // TODO: LADN information
-  // TODO: MICO indication
-  // TODO: Network slicing indication
-  // TODO: Configured NSSAI
-  // TODO: Rejected NSSAI
-  // TODO: Operator-defined access category definitions
-  // TODO: SMS indication
-  // TODO: T3447 value
-  // TODO: CAG information list (Rel 16.4.1)
-  // TODO: UE radio capability ID (Rel 16.4.1)
-  // TODO: UE radio capability ID deletion indication (Rel 16.4.1)
-  // TODO: 5GS registration result (Rel 16.4.1)
-  // TODO: Truncated 5G-S-TMSI configuration (Rel 16.4.1)
-  // TODO: Additional configuration indication (Rel 16.14.0)
+  std::optional<NetworkName> ie_short_name_for_network_;  // Optional
+  // TODO: Local time zone (Optional)
+  // TODO: Universal time and local time zone (Optional)
+  // TODO: Network daylight saving time (Optional)
+  // TODO: LADN information (Optional)
+  // TODO: MICO indication (Optional)
+  // TODO: Network slicing indication (Optional)
+  // TODO: Configured NSSAI (Optional)
+  // TODO: Rejected NSSAI (Optional)
+  // TODO: Operator-defined access category definitions (Optional)
+  // TODO: SMS indication (Optional)
+  // TODO: T3447 value (Optional)
+  // TODO: CAG information list (Rel 16.4.1) (Optional)
+  // TODO: UE radio capability ID (Rel 16.4.1) (Optional)
+  // TODO: UE radio capability ID deletion indication (Rel 16.4.1) (Optional)
+  // TODO: 5GS registration result (Rel 16.4.1) (Optional)
+  // TODO: Truncated 5G-S-TMSI configuration (Rel 16.4.1) (Optional)
+  // TODO: Additional configuration indication (Rel 16.14.0) (Optional)
 };
 
 }  // namespace nas

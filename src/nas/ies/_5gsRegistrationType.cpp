@@ -31,27 +31,26 @@ _5gsRegistrationType::_5gsRegistrationType()
     : Type1NasIeFormatTv(), follow_on_req_(false), reg_type_(0) {}
 
 //------------------------------------------------------------------------------
-_5gsRegistrationType::_5gsRegistrationType(
-    const bool& follow_on_req, const uint8_t& type)
+_5gsRegistrationType::_5gsRegistrationType(bool follow_on_req, uint8_t type)
     : Type1NasIeFormatTv(), follow_on_req_(follow_on_req) {
-  if (validateValue(follow_on_req, type)) reg_type_ = type;
-  setValue();
+  if (ValidateValue(follow_on_req, type)) reg_type_ = type;
+  SetValue();
 }
 
 //------------------------------------------------------------------------------
 _5gsRegistrationType::_5gsRegistrationType(
-    const uint8_t& iei, const bool& follow_on_req, const uint8_t& type)
+    uint8_t iei, bool follow_on_req, uint8_t type)
     : Type1NasIeFormatTv(iei) {
   follow_on_req_ = follow_on_req;
-  if (validateValue(follow_on_req, type)) reg_type_ = type;
-  setValue();
+  if (ValidateValue(follow_on_req, type)) reg_type_ = type;
+  SetValue();
 }
 
 //------------------------------------------------------------------------------
 _5gsRegistrationType::~_5gsRegistrationType() {}
 
 //------------------------------------------------------------------------------
-void _5gsRegistrationType::setValue() {
+void _5gsRegistrationType::SetValue() {
   if (follow_on_req_)
     value_ = 0b1000 | (0x07 & reg_type_);
   else
@@ -59,43 +58,40 @@ void _5gsRegistrationType::setValue() {
 }
 
 //------------------------------------------------------------------------------
-void _5gsRegistrationType::getValue() {
+void _5gsRegistrationType::GetValue() {
   follow_on_req_ = (0b1000 & value_) >> 3;
   reg_type_      = value_ & 0b00000111;
 }
 
 //------------------------------------------------------------------------------
-bool _5gsRegistrationType::validateValue(
-    const bool& follow_on_req, const uint8_t& type) {
-  if (type > static_cast<uint8_t>(_5gsMobileIdentityEnum::MAX_VALUE))
-    return false;
+bool _5gsRegistrationType::ValidateValue(bool follow_on_req, uint8_t type) {
+  if (type > k5gsMobileIdentityMaxValue) return false;
   return true;
 }
 
 //------------------------------------------------------------------------------
-void _5gsRegistrationType::set(
-    const bool& follow_on_req, const uint8_t& type, const uint8_t& iei) {
+void _5gsRegistrationType::Set(bool follow_on_req, uint8_t type, uint8_t iei) {
   follow_on_req_ = follow_on_req;
-  if (validateValue(follow_on_req, type)) reg_type_ = type;
-  setValue();
+  if (ValidateValue(follow_on_req, type)) reg_type_ = type;
+  SetValue();
   SetIei(iei);
 }
 
 //------------------------------------------------------------------------------
-void _5gsRegistrationType::set(const bool& follow_on_req, const uint8_t& type) {
+void _5gsRegistrationType::Set(bool follow_on_req, uint8_t type) {
   follow_on_req_ = follow_on_req;
-  if (validateValue(follow_on_req, type)) reg_type_ = type;
-  setValue();
+  if (ValidateValue(follow_on_req, type)) reg_type_ = type;
+  SetValue();
 }
 
 //------------------------------------------------------------------------------
-bool _5gsRegistrationType::isFollowOnReq() {
-  getValue();
+bool _5gsRegistrationType::IsFollowOnReq() {
+  GetValue();
   return follow_on_req_;
 }
 
 //------------------------------------------------------------------------------
-uint8_t _5gsRegistrationType::getRegType() {
-  getValue();
+uint8_t _5gsRegistrationType::GetRegType() {
+  GetValue();
   return reg_type_;
 }

@@ -71,17 +71,17 @@ _5gsRegistrationResult::_5gsRegistrationResult(
 _5gsRegistrationResult::~_5gsRegistrationResult() {}
 
 //------------------------------------------------------------------------------
-void _5gsRegistrationResult::setValue(uint8_t value) {
+void _5gsRegistrationResult::SetValue(uint8_t value) {
   value_ = value & 0x07;
 }
 
 //------------------------------------------------------------------------------
-uint8_t _5gsRegistrationResult::getValue() const {
+uint8_t _5gsRegistrationResult::GetValue() const {
   return value_;
 }
 
 //------------------------------------------------------------------------------
-void _5gsRegistrationResult::set(
+void _5gsRegistrationResult::Set(
     uint8_t iei, bool emergency, bool nssaa, bool sms, uint8_t value) {
   emergency_registered_ = emergency;
   nssaa_performed_      = nssaa;
@@ -91,7 +91,7 @@ void _5gsRegistrationResult::set(
 }
 
 //------------------------------------------------------------------------------
-void _5gsRegistrationResult::set(
+void _5gsRegistrationResult::Set(
     bool emergency, bool nssaa, bool sms, uint8_t value) {
   emergency_registered_ = emergency;
   nssaa_performed_      = nssaa;

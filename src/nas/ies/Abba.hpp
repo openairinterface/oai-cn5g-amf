@@ -39,8 +39,8 @@ class Abba : public Type4NasIe {
 
   static std::string GetIeName() { return kAbbaIeName; }
 
-  void Set(uint8_t length, uint8_t* value);
-  void Set(uint8_t iei, uint8_t length, uint8_t* value);
+  void Set(uint8_t length, const uint8_t* value);
+  void Set(uint8_t iei, uint8_t length, const uint8_t* value);
 
   int Encode(uint8_t* buf, int len);
   int Decode(uint8_t* buf, int len, bool is_option);

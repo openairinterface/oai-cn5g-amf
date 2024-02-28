@@ -35,14 +35,15 @@ class Ladn {
 
   void Set(const Dnn& value);
   void Set(const _5gsTrackingAreaIdList& value);
+
   uint32_t GetLength() const;
 
   int Encode(uint8_t* buf, int len);
   int Decode(uint8_t* buf, int len);
 
  private:
-  Dnn dnn;
-  _5gsTrackingAreaIdList ta_list;
+  Dnn dnn_;
+  _5gsTrackingAreaIdList ta_list_;
 };
 
 }  // namespace nas

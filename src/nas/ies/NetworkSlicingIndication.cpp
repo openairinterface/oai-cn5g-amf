@@ -47,7 +47,7 @@ NetworkSlicingIndication::NetworkSlicingIndication(bool dcni, bool nssci)
 
 //------------------------------------------------------------------------------
 NetworkSlicingIndication::NetworkSlicingIndication(
-    const uint8_t iei, bool dcni, bool nssci)
+    uint8_t iei, bool dcni, bool nssci)
     : Type1NasIeFormatTv(iei) {
   dcni_  = dcni;
   nssci_ = nssci;

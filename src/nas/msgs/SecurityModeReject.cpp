@@ -27,7 +27,7 @@ using namespace nas;
 
 //------------------------------------------------------------------------------
 SecurityModeReject::SecurityModeReject()
-    : NasMmPlainHeader(EPD_5GS_MM_MSG, SECURITY_MODE_REJECT) {}
+    : NasMmPlainHeader(k5gsMobilityManagementMessages, kSecurityModeReject) {}
 
 //------------------------------------------------------------------------------
 SecurityModeReject::~SecurityModeReject() {}
@@ -39,7 +39,7 @@ void SecurityModeReject::SetHeader(uint8_t security_header_type) {
 
 //------------------------------------------------------------------------------
 void SecurityModeReject::Set5gmmCause(uint8_t value) {
-  ie_5gmm_cause.SetValue(value);
+  ie_5gmm_cause_.SetValue(value);
 }
 
 //------------------------------------------------------------------------------
@@ -58,7 +58,7 @@ int SecurityModeReject::Encode(uint8_t* buf, int len) {
 
   // 5GMM Cause
   if ((encoded_ie_size = NasHelper::Encode(
-           ie_5gmm_cause, buf, len, encoded_size)) == KEncodeDecodeError) {
+           ie_5gmm_cause_, buf, len, encoded_size)) == KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
 
@@ -83,7 +83,7 @@ int SecurityModeReject::Decode(uint8_t* buf, int len) {
 
   // 5GMM Cause
   if ((decoded_ie_size =
-           NasHelper::Decode(ie_5gmm_cause, buf, len, decoded_size, false)) ==
+           NasHelper::Decode(ie_5gmm_cause_, buf, len, decoded_size, false)) ==
       KEncodeDecodeError) {
     return KEncodeDecodeError;
   }

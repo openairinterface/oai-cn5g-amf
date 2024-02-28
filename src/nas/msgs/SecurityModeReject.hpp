@@ -39,8 +39,8 @@ class SecurityModeReject : public NasMmPlainHeader {
   void Set5gmmCause(uint8_t value);
   // TODO: Get
 
- public:
-  _5gmmCause ie_5gmm_cause;  // Mandatory
+ private:
+  _5gmmCause ie_5gmm_cause_;  // Mandatory
 };
 
 }  // namespace nas

@@ -22,8 +22,8 @@
 #ifndef _5GS_MOBILE_IDENTITY_H_
 #define _5GS_MOBILE_IDENTITY_H_
 
-#include "Type6NasIe.hpp"
 #include "Struct.hpp"
+#include "Type6NasIe.hpp"
 
 constexpr uint8_t k5gsMobileIdentityIe5gGutiLength  = 11;
 constexpr uint8_t k5gsMobileIdentityIe5gSTmsiLength = 7;
@@ -44,7 +44,9 @@ class _5gsMobileIdentity : public Type6NasIe {
 
   // Common
   void ClearIe();
+
   uint8_t GetTypeOfIdentity() const { return type_of_identity_; };
+
   int Encode(uint8_t* buf, int len);
   int Decode(uint8_t* buf, int len, bool is_iei);
 
@@ -79,8 +81,7 @@ class _5gsMobileIdentity : public Type6NasIe {
   int Decode5gSTmsi(uint8_t* buf, int len);
 
   void Set5gSTmsi(
-      const uint16_t amf_set_id, const uint8_t amf_pointer,
-      const std::string& tmsi);
+      uint16_t amf_set_id, uint8_t amf_pointer, const std::string& tmsi);
   bool Get5gSTmsi(
       uint16_t& amf_set_id, uint8_t& amf_pointer, std::string& tmsi) const;
 

@@ -31,25 +31,25 @@ using namespace nas;
 //------------------------------------------------------------------------------
 _5gsDrxParameters::_5gsDrxParameters(uint8_t value)
     : Type4NasIe(kIei5gsDrxParameters) {
-  _value = value & 0x0F;
+  value_ = value & 0x0F;
   SetLengthIndicator(1);
 }
 
 //------------------------------------------------------------------------------
 _5gsDrxParameters::_5gsDrxParameters() {
-  _value = 0;
+  value_ = 0;
   SetLengthIndicator(1);
 }
 _5gsDrxParameters::~_5gsDrxParameters() {}
 
 //------------------------------------------------------------------------------
 void _5gsDrxParameters::SetValue(uint8_t value) {
-  _value = value & 0x0F;
+  value_ = value & 0x0F;
 }
 
 //------------------------------------------------------------------------------
 uint8_t _5gsDrxParameters::GetValue() const {
-  return _value;
+  return value_;
 }
 
 //------------------------------------------------------------------------------
@@ -69,7 +69,7 @@ int _5gsDrxParameters::Encode(uint8_t* buf, int len) {
   if (encoded_header_size == KEncodeDecodeError) return KEncodeDecodeError;
   encoded_size += encoded_header_size;
 
-  ENCODE_U8(buf + encoded_size, _value, encoded_size);
+  ENCODE_U8(buf + encoded_size, value_, encoded_size);
 
   Logger::nas_mm().debug(
       "Encoded %s, len (%d)", GetIeName().c_str(), encoded_size);
@@ -96,10 +96,10 @@ int _5gsDrxParameters::Decode(uint8_t* buf, int len, bool is_iei) {
 
   uint8_t octet = 0;
   DECODE_U8(buf + decoded_size, octet, decoded_size);
-  _value = octet & 0x0f;
+  value_ = octet & 0x0f;
 
   Logger::nas_mm().debug(
-      "Decoded %s, DRX value 0x%x, len %d", GetIeName().c_str(), _value,
+      "Decoded %s, DRX value 0x%x, len %d", GetIeName().c_str(), value_,
       decoded_size);
   return decoded_size;
 }

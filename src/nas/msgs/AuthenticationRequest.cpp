@@ -27,10 +27,10 @@ using namespace nas;
 
 //------------------------------------------------------------------------------
 AuthenticationRequest::AuthenticationRequest()
-    : NasMmPlainHeader(EPD_5GS_MM_MSG, AUTHENTICATION_REQUEST) {
-  ie_authentication_parameter_rand = std::nullopt;
-  ie_authentication_parameter_autn = std::nullopt;
-  ie_eap_message                   = std::nullopt;
+    : NasMmPlainHeader(k5gsMobilityManagementMessages, kAuthenticationRequest) {
+  ie_authentication_parameter_rand_ = std::nullopt;
+  ie_authentication_parameter_autn_ = std::nullopt;
+  ie_eap_message_                   = std::nullopt;
 }
 
 //------------------------------------------------------------------------------
@@ -43,20 +43,20 @@ void AuthenticationRequest::SetHeader(uint8_t security_header_type) {
 
 //------------------------------------------------------------------------------
 void AuthenticationRequest::SetNgKsi(uint8_t tsc, uint8_t key_set_id) {
-  ie_ng_ksi.Set(false);  // 4 lower bits
-  ie_ng_ksi.SetNasKeyIdentifier(key_set_id);
-  ie_ng_ksi.SetTypeOfSecurityContext(tsc);
+  ie_ng_ksi_.Set(false);  // 4 lower bits
+  ie_ng_ksi_.SetNasKeyIdentifier(key_set_id);
+  ie_ng_ksi_.SetTypeOfSecurityContext(tsc);
 }
 
 //------------------------------------------------------------------------------
 void AuthenticationRequest::SetAbba(uint8_t length, uint8_t* value) {
-  ie_abba.Set(length, value);
+  ie_abba_.Set(length, value);
 }
 
 //------------------------------------------------------------------------------
 void AuthenticationRequest::SetAuthenticationParameterRand(
     uint8_t value[kAuthenticationParameterRandValueLength]) {
-  ie_authentication_parameter_rand =
+  ie_authentication_parameter_rand_ =
       std::make_optional<AuthenticationParameterRand>(
           kIeiAuthenticationParameterRand, value);
 }
@@ -64,14 +64,14 @@ void AuthenticationRequest::SetAuthenticationParameterRand(
 //------------------------------------------------------------------------------
 void AuthenticationRequest::SetAuthenticationParameterAutn(
     uint8_t value[kAuthenticationParameterAutnValueLength]) {
-  ie_authentication_parameter_autn =
+  ie_authentication_parameter_autn_ =
       std::make_optional<AuthenticationParameterAutn>(
           kIeiAuthenticationParameterAutn, value);
 }
 
 //------------------------------------------------------------------------------
 void AuthenticationRequest::SetEapMessage(const bstring& eap) {
-  ie_eap_message = std::make_optional<EapMessage>(kIeiEapMessage, eap);
+  ie_eap_message_ = std::make_optional<EapMessage>(kIeiEapMessage, eap);
 }
 
 //------------------------------------------------------------------------------
@@ -89,36 +89,36 @@ int AuthenticationRequest::Encode(uint8_t* buf, int len) {
   encoded_size += encoded_ie_size;
 
   if ((encoded_ie_size = NasHelper::Encode(
-           ie_ng_ksi, buf, len, encoded_size)) == KEncodeDecodeError) {
+           ie_ng_ksi_, buf, len, encoded_size)) == KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
   // Spare half octet
   if (encoded_ie_size == 0)
-    encoded_size++;  // 1/2 octet + 1/2 octet from ie_ng_ksi
+    encoded_size++;  // 1/2 octet + 1/2 octet from ie_ng_ksi_
 
   // ABBA
-  if ((encoded_ie_size = NasHelper::Encode(ie_abba, buf, len, encoded_size)) ==
+  if ((encoded_ie_size = NasHelper::Encode(ie_abba_, buf, len, encoded_size)) ==
       KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
 
   // Authentication parameter RAND
   if ((encoded_ie_size = NasHelper::Encode(
-           ie_authentication_parameter_rand, buf, len, encoded_size)) ==
+           ie_authentication_parameter_rand_, buf, len, encoded_size)) ==
       KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
 
   // Authentication parameter AUTN
   if ((encoded_ie_size = NasHelper::Encode(
-           ie_authentication_parameter_autn, buf, len, encoded_size)) ==
+           ie_authentication_parameter_autn_, buf, len, encoded_size)) ==
       KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
 
   // EAP message
   if ((encoded_ie_size = NasHelper::Encode(
-           ie_eap_message, buf, len, encoded_size)) == KEncodeDecodeError) {
+           ie_eap_message_, buf, len, encoded_size)) == KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
 
@@ -143,7 +143,7 @@ int AuthenticationRequest::Decode(uint8_t* buf, int len) {
 
   // NgKSI
   if ((decoded_ie_size = NasHelper::Decode(
-           ie_ng_ksi, buf, len, decoded_size, false, false)) ==
+           ie_ng_ksi_, buf, len, decoded_size, false, false)) ==
       KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
@@ -152,7 +152,7 @@ int AuthenticationRequest::Decode(uint8_t* buf, int len) {
 
   // ABBA
   if ((decoded_ie_size = NasHelper::Decode(
-           ie_abba, buf, len, decoded_size, false)) == KEncodeDecodeError) {
+           ie_abba_, buf, len, decoded_size, false)) == KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
   Logger::nas_mm().debug("Decoded_size %d", decoded_size);
@@ -166,7 +166,7 @@ int AuthenticationRequest::Decode(uint8_t* buf, int len) {
     switch (octet) {
       case kIeiAuthenticationParameterRand: {
         if ((decoded_ie_size = NasHelper::Decode(
-                 ie_authentication_parameter_rand, buf, len, decoded_size,
+                 ie_authentication_parameter_rand_, buf, len, decoded_size,
                  true)) == KEncodeDecodeError) {
           return KEncodeDecodeError;
         }
@@ -176,7 +176,7 @@ int AuthenticationRequest::Decode(uint8_t* buf, int len) {
 
       case kIeiAuthenticationParameterAutn: {
         if ((decoded_ie_size = NasHelper::Decode(
-                 ie_authentication_parameter_autn, buf, len, decoded_size,
+                 ie_authentication_parameter_autn_, buf, len, decoded_size,
                  true)) == KEncodeDecodeError) {
           return KEncodeDecodeError;
         }
@@ -186,7 +186,7 @@ int AuthenticationRequest::Decode(uint8_t* buf, int len) {
 
       case kIeiEapMessage: {
         if ((decoded_ie_size = NasHelper::Decode(
-                 ie_eap_message, buf, len, decoded_size, true)) ==
+                 ie_eap_message_, buf, len, decoded_size, true)) ==
             KEncodeDecodeError) {
           return KEncodeDecodeError;
         }

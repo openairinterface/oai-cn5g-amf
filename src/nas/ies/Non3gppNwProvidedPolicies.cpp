@@ -39,11 +39,11 @@ Non3gppNwProvidedPolicies::Non3gppNwProvidedPolicies()
 Non3gppNwProvidedPolicies::~Non3gppNwProvidedPolicies(){};
 
 //------------------------------------------------------------------------------
-void Non3gppNwProvidedPolicies::setValue(uint8_t value) {
+void Non3gppNwProvidedPolicies::SetValue(uint8_t value) {
   SetValue(value & 0x01);
 }
 
 //------------------------------------------------------------------------------
-uint8_t Non3gppNwProvidedPolicies::getValue() const {
+uint8_t Non3gppNwProvidedPolicies::GetValue() const {
   return GetValue();
 }

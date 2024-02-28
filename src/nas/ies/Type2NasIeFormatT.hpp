@@ -30,7 +30,7 @@ namespace nas {
 class Type2NasIeFormatT : public NasIe {
  public:
   Type2NasIeFormatT();
-  Type2NasIeFormatT(const uint8_t& iei);
+  Type2NasIeFormatT(uint8_t iei);
   virtual ~Type2NasIeFormatT();
 
   bool Validate(const int& len) const override;

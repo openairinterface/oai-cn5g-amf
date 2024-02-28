@@ -47,17 +47,11 @@ class NasIe {
 
   virtual bool Validate(const int& len) const = 0;
 
-  /*  void SetIeName(const std::string& name);
-    std::string GetIeName() const;
-    void GetIeName(std::string& name) const;
-  */
-
   virtual int Encode(uint8_t* buf, const int& len) = 0;
   virtual int Decode(
       const uint8_t* const buf, const int& len, bool is_option = false) = 0;
 
  protected:
-  // std::string ie_name_;
 };
 
 }  // namespace nas

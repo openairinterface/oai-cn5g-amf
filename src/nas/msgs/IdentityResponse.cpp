@@ -27,7 +27,7 @@ using namespace nas;
 
 //------------------------------------------------------------------------------
 IdentityResponse::IdentityResponse()
-    : NasMmPlainHeader(EPD_5GS_MM_MSG, IDENTITY_RESPONSE) {}
+    : NasMmPlainHeader(k5gsMobilityManagementMessages, kIdentityResponse) {}
 
 //------------------------------------------------------------------------------
 IdentityResponse::~IdentityResponse() {}
@@ -40,20 +40,26 @@ void IdentityResponse::SetHeader(uint8_t security_header_type) {
 //------------------------------------------------------------------------------
 void IdentityResponse::Get5gsMobileIdentity(
     _5gsMobileIdentity& mobile_identity) const {
-  mobile_identity = ie_mobile_identity;
+  mobile_identity = ie_mobile_identity_;
 }
+
+//------------------------------------------------------------------------------
+_5gsMobileIdentity IdentityResponse::Get5gsMobileIdentity() const {
+  return ie_mobile_identity_;
+}
+
 //------------------------------------------------------------------------------
 void IdentityResponse::SetSuciSupiFormatImsi(
     const std::string& mcc, const std::string& mnc,
     const std::string& routing_ind, uint8_t protection_sch_id,
     const std::string& msin) {
-  if (protection_sch_id != NULL_SCHEME) {
+  if (protection_sch_id != kNullScheme) {
     Logger::nas_mm().error(
         "Encoding suci and supi format for imsi error, please choose right "
         "interface");
     return;
   } else {
-    ie_mobile_identity.SetSuciWithSupiImsi(
+    ie_mobile_identity_.SetSuciWithSupiImsi(
         mcc, mnc, routing_ind, protection_sch_id, msin);
   }
 }
@@ -96,8 +102,9 @@ int IdentityResponse::Encode(uint8_t* buf, int len) {
   encoded_size += encoded_ie_size;
 
   // Mobile Identity
-  if ((encoded_ie_size = NasHelper::Encode(
-           ie_mobile_identity, buf, len, encoded_size)) == KEncodeDecodeError) {
+  if ((encoded_ie_size =
+           NasHelper::Encode(ie_mobile_identity_, buf, len, encoded_size)) ==
+      KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
 
@@ -123,7 +130,7 @@ int IdentityResponse::Decode(uint8_t* buf, int len) {
 
   // Mobile Identity
   if ((decoded_ie_size = NasHelper::Decode(
-           ie_mobile_identity, buf, len, decoded_size, false)) ==
+           ie_mobile_identity_, buf, len, decoded_size, false)) ==
       KEncodeDecodeError) {
     return KEncodeDecodeError;
   }

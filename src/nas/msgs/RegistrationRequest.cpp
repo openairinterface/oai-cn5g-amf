@@ -29,29 +29,29 @@ using namespace nas;
 
 //------------------------------------------------------------------------------
 RegistrationRequest::RegistrationRequest()
-    : NasMmPlainHeader(EPD_5GS_MM_MSG, REGISTRATION_REQUEST) {
-  ie_non_current_native_nas_ksi  = std::nullopt;
-  ie_5g_mm_capability            = std::nullopt;
-  ie_ue_security_capability      = std::nullopt;
-  ie_requested_nssai             = std::nullopt;
-  ie_s1_ue_network_capability    = std::nullopt;
-  ie_uplink_data_status          = std::nullopt;
-  ie_last_visited_registered_tai = std::nullopt;
-  ie_pdu_session_status          = std::nullopt;
-  ie_mico_indication             = std::nullopt;
-  ie_ue_status                   = std::nullopt;
-  ie_additional_guti             = std::nullopt;
-  ie_allowed_pdu_session_status  = std::nullopt;
-  ie_ues_usage_setting           = std::nullopt;
-  ie_5gs_drx_parameters          = std::nullopt;
-  ie_eps_nas_message_container   = std::nullopt;
-  ie_ladn_indication             = std::nullopt;
-  ie_payload_container_type      = std::nullopt;
-  ie_payload_container           = std::nullopt;
-  ie_network_slicing_indication  = std::nullopt;
-  ie_5gs_update_type             = std::nullopt;
-  ie_nas_message_container       = std::nullopt;
-  ie_eps_bearer_context_status   = std::nullopt;
+    : NasMmPlainHeader(k5gsMobilityManagementMessages, kRegistrationRequest) {
+  ie_non_current_native_nas_ksi_  = std::nullopt;
+  ie_5g_mm_capability_            = std::nullopt;
+  ie_ue_security_capability_      = std::nullopt;
+  ie_requested_nssai_             = std::nullopt;
+  ie_s1_ue_network_capability_    = std::nullopt;
+  ie_uplink_data_status_          = std::nullopt;
+  ie_last_visited_registered_tai_ = std::nullopt;
+  ie_pdu_session_status_          = std::nullopt;
+  ie_mico_indication_             = std::nullopt;
+  ie_ue_status_                   = std::nullopt;
+  ie_additional_guti_             = std::nullopt;
+  ie_allowed_pdu_session_status_  = std::nullopt;
+  ie_ues_usage_setting_           = std::nullopt;
+  ie_5gs_drx_parameters_          = std::nullopt;
+  ie_eps_nas_message_container_   = std::nullopt;
+  ie_ladn_indication_             = std::nullopt;
+  ie_payload_container_type_      = std::nullopt;
+  ie_payload_container_           = std::nullopt;
+  ie_network_slicing_indication_  = std::nullopt;
+  ie_5gs_update_type_             = std::nullopt;
+  ie_nas_message_container_       = std::nullopt;
+  ie_eps_bearer_context_status_   = std::nullopt;
 }
 
 //------------------------------------------------------------------------------
@@ -64,28 +64,28 @@ void RegistrationRequest::SetHeader(uint8_t security_header_type) {
 
 //------------------------------------------------------------------------------
 void RegistrationRequest::Set5gsRegistrationType(bool is_for, uint8_t type) {
-  ie_5gs_registration_type.set(is_for, type);
+  ie_5gs_registration_type_.Set(is_for, type);
 }
 
 //------------------------------------------------------------------------------
 bool RegistrationRequest::Get5gsRegistrationType(
     bool& is_for, uint8_t& reg_type) {
-  is_for   = ie_5gs_registration_type.isFollowOnReq();
-  reg_type = ie_5gs_registration_type.getRegType();
+  is_for   = ie_5gs_registration_type_.IsFollowOnReq();
+  reg_type = ie_5gs_registration_type_.GetRegType();
   return true;
 }
 
 //------------------------------------------------------------------------------
 void RegistrationRequest::SetNgKsi(uint8_t tsc, uint8_t key_set_id) {
-  ie_ng_ksi.Set(true);  // high pos
-  ie_ng_ksi.SetNasKeyIdentifier(key_set_id);
-  ie_ng_ksi.SetTypeOfSecurityContext(tsc);
+  ie_ng_ksi_.Set(true);  // high pos
+  ie_ng_ksi_.SetNasKeyIdentifier(key_set_id);
+  ie_ng_ksi_.SetTypeOfSecurityContext(tsc);
 }
 
 //------------------------------------------------------------------------------
 bool RegistrationRequest::GetNgKsi(uint8_t& ng_ksi) const {
-  ng_ksi =
-      (ie_ng_ksi.GetTypeOfSecurityContext()) | ie_ng_ksi.GetNasKeyIdentifier();
+  ng_ksi = (ie_ng_ksi_.GetTypeOfSecurityContext()) |
+           ie_ng_ksi_.GetNasKeyIdentifier();
   return true;
 }
 
@@ -94,32 +94,32 @@ void RegistrationRequest::SetSuciSupiFormatImsi(
     const std::string& mcc, const std::string& mnc,
     const std::string& routing_ind, uint8_t protection_sch_id,
     const std::string& msin) {
-  if (protection_sch_id != NULL_SCHEME) {
+  if (protection_sch_id != kNullScheme) {
     Logger::nas_mm().error(
         "encoding suci and supi format for imsi error, please choose right "
         "interface");
     return;
   } else {
-    ie_5gs_mobile_identity.SetSuciWithSupiImsi(
+    ie_5gs_mobile_identity_.SetSuciWithSupiImsi(
         mcc, mnc, routing_ind, protection_sch_id, msin);
   }
 }
 
 //------------------------------------------------------------------------------
 uint8_t RegistrationRequest::GetMobileIdentityType() const {
-  return ie_5gs_mobile_identity.GetTypeOfIdentity();
+  return ie_5gs_mobile_identity_.GetTypeOfIdentity();
 }
 
 //------------------------------------------------------------------------------
 bool RegistrationRequest::GetSuciSupiFormatImsi(nas::SUCI_imsi_t& imsi) const {
-  ie_5gs_mobile_identity.GetSuciWithSupiImsi(imsi);
+  ie_5gs_mobile_identity_.GetSuciWithSupiImsi(imsi);
   return true;
 }
 
 //------------------------------------------------------------------------------
 std::string RegistrationRequest::Get5gGuti() const {
   std::optional<nas::_5G_GUTI_t> guti = std::nullopt;
-  ie_5gs_mobile_identity.Get5gGuti(guti);
+  ie_5gs_mobile_identity_.Get5gGuti(guti);
   if (!guti.has_value()) return {};
 
   std::string guti_str = guti.value().mcc + guti.value().mnc +
@@ -141,15 +141,15 @@ void RegistrationRequest::SetAdditionalGuti(
   uint32_t tmsi = utils::fromString<uint32_t>(_5g_tmsi);
   ie_additional_guti_tmp.Set5gGuti(
       mcc, mnc, amf_region_id, amf_set_id, amf_pointer, tmsi);
-  ie_additional_guti =
+  ie_additional_guti_ =
       std::optional<_5gsMobileIdentity>(ie_additional_guti_tmp);
 }
 
 //------------------------------------------------------------------------------
 bool RegistrationRequest::GetAdditionalGuti(nas::_5G_GUTI_t& guti) const {
-  if (ie_additional_guti.has_value()) {
+  if (ie_additional_guti_.has_value()) {
     std::optional<nas::_5G_GUTI_t> guti = std::nullopt;
-    ie_additional_guti.value().Get5gGuti(guti);
+    ie_additional_guti_.value().Get5gGuti(guti);
     if (!guti.has_value()) return false;
     return true;
   } else {
@@ -177,16 +177,16 @@ void RegistrationRequest::Set5gSTmsi() {}
 //------------------------------------------------------------------------------
 void RegistrationRequest::SetNonCurrentNativeNasKSI(
     uint8_t tsc, uint8_t key_set_id) {
-  ie_non_current_native_nas_ksi = std::make_optional<NasKeySetIdentifier>(
+  ie_non_current_native_nas_ksi_ = std::make_optional<NasKeySetIdentifier>(
       kIeiNasKeySetIdentifier, tsc, key_set_id);
 }
 
 //------------------------------------------------------------------------------
 bool RegistrationRequest::GetNonCurrentNativeNasKSI(uint8_t& value) const {
-  if (ie_non_current_native_nas_ksi.has_value()) {
+  if (ie_non_current_native_nas_ksi_.has_value()) {
     value |=
-        (ie_non_current_native_nas_ksi.value().GetTypeOfSecurityContext()) |
-        (ie_non_current_native_nas_ksi.value().GetNasKeyIdentifier());
+        (ie_non_current_native_nas_ksi_.value().GetTypeOfSecurityContext()) |
+        (ie_non_current_native_nas_ksi_.value().GetNasKeyIdentifier());
     return true;
   } else {
     return false;
@@ -195,15 +195,15 @@ bool RegistrationRequest::GetNonCurrentNativeNasKSI(uint8_t& value) const {
 
 //------------------------------------------------------------------------------
 void RegistrationRequest::Set5gmmCapability(uint8_t value) {
-  ie_5g_mm_capability =
+  ie_5g_mm_capability_ =
       std::make_optional<_5gmmCapability>(kIei5gmmCapability, value);
 }
 
 //------------------------------------------------------------------------------
 bool RegistrationRequest::Get5gmmCapability(uint8_t& value) const {
-  if (ie_5g_mm_capability.has_value()) {
+  if (ie_5g_mm_capability_.has_value()) {
     value =
-        ie_5g_mm_capability.value().GetOctet3();  // TODO: get multiple octets
+        ie_5g_mm_capability_.value().GetOctet3();  // TODO: get multiple octets
     return true;
   } else
     return false;
@@ -211,23 +211,23 @@ bool RegistrationRequest::Get5gmmCapability(uint8_t& value) const {
 
 //------------------------------------------------------------------------------
 void RegistrationRequest::SetUeSecurityCapability(uint8_t ea, uint8_t ia) {
-  ie_ue_security_capability = std::make_optional<UeSecurityCapability>(
+  ie_ue_security_capability_ = std::make_optional<UeSecurityCapability>(
       kIeiUeSecurityCapability, ea, ia);
 }
 
 //------------------------------------------------------------------------------
 void RegistrationRequest::SetUeSecurityCapability(
     uint8_t ea, uint8_t ia, uint8_t eea, uint8_t eia) {
-  ie_ue_security_capability = std::make_optional<UeSecurityCapability>(
+  ie_ue_security_capability_ = std::make_optional<UeSecurityCapability>(
       kIeiUeSecurityCapability, ea, ia, eea, eia);
 }
 
 //------------------------------------------------------------------------------
 bool RegistrationRequest::GetUeSecurityCapability(
     uint8_t& ea, uint8_t& ia) const {
-  if (ie_ue_security_capability.has_value()) {
-    ea = ie_ue_security_capability.value().GetEa();
-    ia = ie_ue_security_capability.value().GetIa();
+  if (ie_ue_security_capability_.has_value()) {
+    ea = ie_ue_security_capability_.value().GetEa();
+    ia = ie_ue_security_capability_.value().GetIa();
     return true;
   } else {
     return false;
@@ -238,12 +238,12 @@ bool RegistrationRequest::GetUeSecurityCapability(
 //------------------------------------------------------------------------------
 bool RegistrationRequest::GetUeSecurityCapability(
     uint8_t& ea, uint8_t& ia, uint8_t& eea, uint8_t& eia) const {
-  if (ie_ue_security_capability.has_value()) {
-    ea = ie_ue_security_capability.value().GetEa();
-    ia = ie_ue_security_capability.value().GetIa();
-    if (ie_ue_security_capability.value().GetLengthIndicator() >= 4) {
-      ie_ue_security_capability.value().GetEea(eea);
-      ie_ue_security_capability.value().GetEia(eia);
+  if (ie_ue_security_capability_.has_value()) {
+    ea = ie_ue_security_capability_.value().GetEa();
+    ia = ie_ue_security_capability_.value().GetIa();
+    if (ie_ue_security_capability_.value().GetLengthIndicator() >= 4) {
+      ie_ue_security_capability_.value().GetEea(eea);
+      ie_ue_security_capability_.value().GetEia(eia);
     }
     return true;
   } else {
@@ -255,20 +255,20 @@ bool RegistrationRequest::GetUeSecurityCapability(
 //------------------------------------------------------------------------------
 std::optional<UeSecurityCapability>
 RegistrationRequest::GetUeSecurityCapability() const {
-  return ie_ue_security_capability;
+  return ie_ue_security_capability_;
 }
 
 //------------------------------------------------------------------------------
 void RegistrationRequest::SetRequestedNssai(
     const std::vector<struct SNSSAI_s>& nssai) {
-  ie_requested_nssai = std::make_optional<Nssai>(kIeiNSSAIRequested, nssai);
+  ie_requested_nssai_ = std::make_optional<Nssai>(kIeiNSSAIRequested, nssai);
 }
 
 //------------------------------------------------------------------------------
 bool RegistrationRequest::GetRequestedNssai(
     std::vector<struct SNSSAI_s>& nssai) const {
-  if (ie_requested_nssai.has_value()) {
-    ie_requested_nssai.value().GetValue(nssai);
+  if (ie_requested_nssai_.has_value()) {
+    ie_requested_nssai_.value().GetValue(nssai);
   } else {
     return false;
   }
@@ -278,22 +278,22 @@ bool RegistrationRequest::GetRequestedNssai(
 //------------------------------------------------------------------------------
 void RegistrationRequest::SetLastVisitedRegisteredTai(
     const std::string& mcc, const std::string& mnc, uint32_t tac) {
-  ie_last_visited_registered_tai =
+  ie_last_visited_registered_tai_ =
       std::make_optional<_5gsTrackingAreaIdentity>(mcc, mnc, tac);
 }
 
 //------------------------------------------------------------------------------
 void RegistrationRequest::SetUeNetworkCapability(uint8_t eea, uint8_t eia) {
-  ie_s1_ue_network_capability = std::make_optional<UeNetworkCapability>(
+  ie_s1_ue_network_capability_ = std::make_optional<UeNetworkCapability>(
       kIeiUeNetworkCapability, eea, eia);
 }
 
 //------------------------------------------------------------------------------
 bool RegistrationRequest::GetS1UeNetworkCapability(
     uint8_t& eea, uint8_t& eia) const {
-  if (ie_s1_ue_network_capability.has_value()) {
-    eea = ie_s1_ue_network_capability.value().GetEea();
-    eia = ie_s1_ue_network_capability.value().GetEia();
+  if (ie_s1_ue_network_capability_.has_value()) {
+    eea = ie_s1_ue_network_capability_.value().GetEea();
+    eia = ie_s1_ue_network_capability_.value().GetEia();
   } else {
     return false;
   }
@@ -302,13 +302,13 @@ bool RegistrationRequest::GetS1UeNetworkCapability(
 
 //------------------------------------------------------------------------------
 void RegistrationRequest::SetUplinkDataStatus(uint16_t value) {
-  ie_uplink_data_status = std::make_optional<UplinkDataStatus>(value);
+  ie_uplink_data_status_ = std::make_optional<UplinkDataStatus>(value);
 }
 
 //------------------------------------------------------------------------------
 bool RegistrationRequest::GetUplinkDataStatus(uint16_t& value) const {
-  if (ie_uplink_data_status.has_value()) {
-    value = ie_uplink_data_status.value().GetValue();
+  if (ie_uplink_data_status_.has_value()) {
+    value = ie_uplink_data_status_.value().GetValue();
     return true;
   } else {
     return false;
@@ -317,20 +317,20 @@ bool RegistrationRequest::GetUplinkDataStatus(uint16_t& value) const {
 
 //------------------------------------------------------------------------------
 std::optional<uint16_t> RegistrationRequest::GetUplinkDataStatus() const {
-  if (ie_uplink_data_status.has_value()) {
-    return std::optional<uint16_t>(ie_uplink_data_status.value().GetValue());
+  if (ie_uplink_data_status_.has_value()) {
+    return std::optional<uint16_t>(ie_uplink_data_status_.value().GetValue());
   }
   return std::nullopt;
 }
 //------------------------------------------------------------------------------
 void RegistrationRequest::SetPduSessionStatus(uint16_t value) {
-  ie_pdu_session_status = std::make_optional<PduSessionStatus>(value);
+  ie_pdu_session_status_ = std::make_optional<PduSessionStatus>(value);
 }
 
 //------------------------------------------------------------------------------
 bool RegistrationRequest::GetPduSessionStatus(uint16_t& value) const {
-  if (ie_pdu_session_status.has_value()) {
-    value = ie_pdu_session_status.value().GetValue();
+  if (ie_pdu_session_status_.has_value()) {
+    value = ie_pdu_session_status_.value().GetValue();
     return true;
   } else {
     return false;
@@ -339,23 +339,23 @@ bool RegistrationRequest::GetPduSessionStatus(uint16_t& value) const {
 
 //------------------------------------------------------------------------------
 std::optional<uint16_t> RegistrationRequest::GetPduSessionStatus() const {
-  if (ie_pdu_session_status.has_value()) {
-    return std::optional<uint16_t>(ie_pdu_session_status.value().GetValue());
+  if (ie_pdu_session_status_.has_value()) {
+    return std::optional<uint16_t>(ie_pdu_session_status_.value().GetValue());
   }
   return std::nullopt;
 }
 
 //------------------------------------------------------------------------------
 void RegistrationRequest::SetMicoIndication(bool sprti, bool raai) {
-  ie_mico_indication = std::make_optional<MicoIndication>(sprti, raai);
+  ie_mico_indication_ = std::make_optional<MicoIndication>(sprti, raai);
 }
 
 //------------------------------------------------------------------------------
 bool RegistrationRequest::GetMicoIndication(
     uint8_t& sprti, uint8_t& raai) const {
-  if (ie_mico_indication.has_value()) {
-    sprti = ie_mico_indication.value().GetSprti();
-    raai  = ie_mico_indication.value().GetRaai();
+  if (ie_mico_indication_.has_value()) {
+    sprti = ie_mico_indication_.value().GetSprti();
+    raai  = ie_mico_indication_.value().GetRaai();
     return true;
   } else {
     return false;
@@ -364,15 +364,15 @@ bool RegistrationRequest::GetMicoIndication(
 
 //------------------------------------------------------------------------------
 void RegistrationRequest::SetUeStatus(bool n1, bool s1) {
-  ie_ue_status = std::make_optional<UeStatus>(n1, s1);
+  ie_ue_status_ = std::make_optional<UeStatus>(n1, s1);
 }
 
 //------------------------------------------------------------------------------
 bool RegistrationRequest::GetUeStatus(
     uint8_t& n1_mode, uint8_t& s1_mode) const {
-  if (ie_ue_status.has_value()) {
-    n1_mode = ie_ue_status.value().GetN1();
-    s1_mode = ie_ue_status.value().GetS1();
+  if (ie_ue_status_.has_value()) {
+    n1_mode = ie_ue_status_.value().GetN1();
+    s1_mode = ie_ue_status_.value().GetS1();
     return true;
   } else {
     return false;
@@ -381,14 +381,14 @@ bool RegistrationRequest::GetUeStatus(
 
 //------------------------------------------------------------------------------
 void RegistrationRequest::SetAllowedPduSessionStatus(uint16_t value) {
-  ie_allowed_pdu_session_status =
+  ie_allowed_pdu_session_status_ =
       std::make_optional<AllowedPduSessionStatus>(value);
 }
 
 //------------------------------------------------------------------------------
 uint16_t RegistrationRequest::GetAllowedPduSessionStatus() const {
-  if (ie_allowed_pdu_session_status.has_value()) {
-    return ie_allowed_pdu_session_status.value().GetValue();
+  if (ie_allowed_pdu_session_status_.has_value()) {
+    return ie_allowed_pdu_session_status_.value().GetValue();
   } else {
     return 0;
   }
@@ -396,13 +396,13 @@ uint16_t RegistrationRequest::GetAllowedPduSessionStatus() const {
 
 //------------------------------------------------------------------------------
 void RegistrationRequest::SetUeUsageSetting(bool ues_usage_setting) {
-  ie_ues_usage_setting = std::make_optional<UeUsageSetting>(ues_usage_setting);
+  ie_ues_usage_setting_ = std::make_optional<UeUsageSetting>(ues_usage_setting);
 }
 
 //------------------------------------------------------------------------------
 uint8_t RegistrationRequest::GetUeUsageSetting() const {
-  if (ie_ues_usage_setting.has_value()) {
-    return ie_ues_usage_setting.value().GetValue();
+  if (ie_ues_usage_setting_.has_value()) {
+    return ie_ues_usage_setting_.value().GetValue();
   } else {
     return 0;
   }
@@ -410,13 +410,13 @@ uint8_t RegistrationRequest::GetUeUsageSetting() const {
 
 //------------------------------------------------------------------------------
 void RegistrationRequest::Set5gsDrxParameters(uint8_t value) {
-  ie_5gs_drx_parameters = std::make_optional<_5gsDrxParameters>(value);
+  ie_5gs_drx_parameters_ = std::make_optional<_5gsDrxParameters>(value);
 }
 
 //------------------------------------------------------------------------------
 uint8_t RegistrationRequest::Get5gsDrxParameters() const {
-  if (ie_5gs_drx_parameters.has_value()) {
-    return ie_5gs_drx_parameters.value().GetValue();
+  if (ie_5gs_drx_parameters_.has_value()) {
+    return ie_5gs_drx_parameters_.value().GetValue();
   } else {
     return 0;
   }
@@ -424,14 +424,14 @@ uint8_t RegistrationRequest::Get5gsDrxParameters() const {
 
 //------------------------------------------------------------------------------
 void RegistrationRequest::SetEpsNasMessageContainer(const bstring& value) {
-  ie_eps_nas_message_container =
+  ie_eps_nas_message_container_ =
       std::make_optional<EpsNasMessageContainer>(value);
 }
 
 //------------------------------------------------------------------------------
 bool RegistrationRequest::GetEpsNasMessageContainer(bstring& epsNas) const {
-  if (ie_eps_nas_message_container) {
-    ie_eps_nas_message_container->getValue(epsNas);
+  if (ie_eps_nas_message_container_) {
+    ie_eps_nas_message_container_->GetValue(epsNas);
     return true;
   } else {
     return false;
@@ -441,14 +441,14 @@ bool RegistrationRequest::GetEpsNasMessageContainer(bstring& epsNas) const {
 //------------------------------------------------------------------------------
 void RegistrationRequest::SetLadnIndication(
     const std::vector<bstring>& ladn_value) {
-  ie_ladn_indication = std::make_optional<LadnIndication>(ladn_value);
+  ie_ladn_indication_ = std::make_optional<LadnIndication>(ladn_value);
 }
 
 //------------------------------------------------------------------------------
 bool RegistrationRequest::GetLadnIndication(
     std::vector<bstring>& ladn_value) const {
-  if (ie_ladn_indication.has_value()) {
-    ie_ladn_indication.value().GetValue(ladn_value);
+  if (ie_ladn_indication_.has_value()) {
+    ie_ladn_indication_.value().GetValue(ladn_value);
     return true;
   } else {
     return false;
@@ -457,14 +457,14 @@ bool RegistrationRequest::GetLadnIndication(
 
 //------------------------------------------------------------------------------
 void RegistrationRequest::SetPayloadContainerType(uint8_t value) {
-  ie_payload_container_type =
+  ie_payload_container_type_ =
       std::make_optional<PayloadContainerType>(kIeiPayloadContainerType, value);
 }
 
 //------------------------------------------------------------------------------
 uint8_t RegistrationRequest::GetPayloadContainerType() const {
-  if (ie_payload_container_type.has_value()) {
-    return ie_payload_container_type.value().GetValue();
+  if (ie_payload_container_type_.has_value()) {
+    return ie_payload_container_type_.value().GetValue();
   } else {
     return 0;
   }
@@ -473,15 +473,15 @@ uint8_t RegistrationRequest::GetPayloadContainerType() const {
 //------------------------------------------------------------------------------
 void RegistrationRequest::SetPayloadContainer(
     const std::vector<PayloadContainerEntry>& content) {
-  ie_payload_container =
+  ie_payload_container_ =
       std::make_optional<PayloadContainer>(kIeiPayloadContainer, content);
 }
 
 //------------------------------------------------------------------------------
 bool RegistrationRequest::GetPayloadContainer(
     std::vector<PayloadContainerEntry>& content) const {
-  if (ie_payload_container.has_value()) {
-    return ie_payload_container.value().GetValue(content);
+  if (ie_payload_container_.has_value()) {
+    return ie_payload_container_.value().GetValue(content);
   } else {
     return false;
   }
@@ -489,16 +489,16 @@ bool RegistrationRequest::GetPayloadContainer(
 
 //------------------------------------------------------------------------------
 void RegistrationRequest::SetNetworkSlicingIndication(bool dcni, bool nssci) {
-  ie_network_slicing_indication = std::make_optional<NetworkSlicingIndication>(
+  ie_network_slicing_indication_ = std::make_optional<NetworkSlicingIndication>(
       kIeiNetworkSlicingIndication, dcni, nssci);
 }
 
 //------------------------------------------------------------------------------
 bool RegistrationRequest::GetNetworkSlicingIndication(
     uint8_t& dcni, uint8_t& nssci) const {
-  if (ie_network_slicing_indication.has_value()) {
-    dcni  = ie_network_slicing_indication.value().GetDcni();
-    nssci = ie_network_slicing_indication.value().GetNssci();
+  if (ie_network_slicing_indication_.has_value()) {
+    dcni  = ie_network_slicing_indication_.value().GetDcni();
+    nssci = ie_network_slicing_indication_.value().GetNssci();
     return true;
   } else {
     return false;
@@ -508,7 +508,7 @@ bool RegistrationRequest::GetNetworkSlicingIndication(
 //------------------------------------------------------------------------------
 void RegistrationRequest::Set5gsUpdateType(
     uint8_t eps_pnb_ciot, uint8_t _5gs_pnb_ciot, bool ng_ran, bool sms) {
-  ie_5gs_update_type = std::make_optional<_5gsUpdateType>(
+  ie_5gs_update_type_ = std::make_optional<_5gsUpdateType>(
       eps_pnb_ciot, _5gs_pnb_ciot, ng_ran, sms);
 }
 
@@ -516,11 +516,11 @@ void RegistrationRequest::Set5gsUpdateType(
 bool RegistrationRequest::Get5gsUpdateType(
     uint8_t& eps_pnb_ciot, uint8_t& _5gs_pnb_ciot, bool& ng_ran_rcu,
     bool& sms_requested) const {
-  if (ie_5gs_update_type.has_value()) {
-    eps_pnb_ciot  = ie_5gs_update_type.value().GetEpsPnbCiot();
-    _5gs_pnb_ciot = ie_5gs_update_type.value().Get5gsPnbCiot();
-    ng_ran_rcu    = ie_5gs_update_type.value().GetNgRan();
-    sms_requested = ie_5gs_update_type.value().GetSms();
+  if (ie_5gs_update_type_.has_value()) {
+    eps_pnb_ciot  = ie_5gs_update_type_.value().GetEpsPnbCiot();
+    _5gs_pnb_ciot = ie_5gs_update_type_.value().Get5gsPnbCiot();
+    ng_ran_rcu    = ie_5gs_update_type_.value().GetNgRan();
+    sms_requested = ie_5gs_update_type_.value().GetSms();
     return true;
   } else {
     return false;
@@ -529,13 +529,13 @@ bool RegistrationRequest::Get5gsUpdateType(
 
 //------------------------------------------------------------------------------
 void RegistrationRequest::SetNasMessageContainer(const bstring& value) {
-  ie_nas_message_container = std::make_optional<NasMessageContainer>(value);
+  ie_nas_message_container_ = std::make_optional<NasMessageContainer>(value);
 }
 
 //------------------------------------------------------------------------------
 bool RegistrationRequest::GetNasMessageContainer(bstring& nas) const {
-  if (ie_nas_message_container.has_value()) {
-    ie_nas_message_container.value().GetValue(nas);
+  if (ie_nas_message_container_.has_value()) {
+    ie_nas_message_container_.value().GetValue(nas);
     return true;
   } else {
     return false;
@@ -544,14 +544,14 @@ bool RegistrationRequest::GetNasMessageContainer(bstring& nas) const {
 
 //------------------------------------------------------------------------------
 void RegistrationRequest::SetEpsBearerContextsStatus(uint16_t value) {
-  ie_eps_bearer_context_status =
+  ie_eps_bearer_context_status_ =
       std::make_optional<EpsBearerContextStatus>(value);
 }
 
 //------------------------------------------------------------------------------
 bool RegistrationRequest::GetEpsBearerContextStatus(uint16_t& value) const {
-  if (ie_eps_bearer_context_status.has_value()) {
-    value = ie_eps_bearer_context_status.value().GetValue();
+  if (ie_eps_bearer_context_status_.has_value()) {
+    value = ie_eps_bearer_context_status_.value().GetValue();
     return true;
   } else {
     return false;
@@ -574,14 +574,14 @@ int RegistrationRequest::Encode(uint8_t* buf, int len) {
 
   // 5GS Registration Type
   if ((encoded_ie_size = NasHelper::Encode(
-           ie_5gs_registration_type, buf, len, encoded_size)) ==
+           ie_5gs_registration_type_, buf, len, encoded_size)) ==
       KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
 
   //  ngKSI
   if ((encoded_ie_size = NasHelper::Encode(
-           ie_ng_ksi, buf, len, encoded_size)) == KEncodeDecodeError) {
+           ie_ng_ksi_, buf, len, encoded_size)) == KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
   // Spare half octet
@@ -589,134 +589,138 @@ int RegistrationRequest::Encode(uint8_t* buf, int len) {
     encoded_size++;  // 1/2 for 5GS registration type and 1/2 for ngKSI
 
   // 5GS Mobile Identity
-  if ((encoded_ie_size =
-           NasHelper::Encode(ie_5gs_mobile_identity, buf, len, encoded_size)) ==
+  if ((encoded_ie_size = NasHelper::Encode(
+           ie_5gs_mobile_identity_, buf, len, encoded_size)) ==
       KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
 
   // Non-current native NAS key set identifier
   if ((encoded_ie_size = NasHelper::Encode(
-           ie_non_current_native_nas_ksi, buf, len, encoded_size)) ==
+           ie_non_current_native_nas_ksi_, buf, len, encoded_size)) ==
       KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
 
   // 5GMM capability
   if ((encoded_ie_size =
-           NasHelper::Encode(ie_5g_mm_capability, buf, len, encoded_size)) ==
+           NasHelper::Encode(ie_5g_mm_capability_, buf, len, encoded_size)) ==
       KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
 
   // UE security capability
   if ((encoded_ie_size = NasHelper::Encode(
-           ie_ue_security_capability, buf, len, encoded_size)) ==
+           ie_ue_security_capability_, buf, len, encoded_size)) ==
       KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
 
   // Requested NSSAI
-  if ((encoded_ie_size = NasHelper::Encode(
-           ie_requested_nssai, buf, len, encoded_size)) == KEncodeDecodeError) {
+  if ((encoded_ie_size =
+           NasHelper::Encode(ie_requested_nssai_, buf, len, encoded_size)) ==
+      KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
 
   // Last visited registered TAI
   if ((encoded_ie_size = NasHelper::Encode(
-           ie_last_visited_registered_tai, buf, len, encoded_size)) ==
+           ie_last_visited_registered_tai_, buf, len, encoded_size)) ==
       KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
 
   // S1 UE network capability
   if ((encoded_ie_size = NasHelper::Encode(
-           ie_s1_ue_network_capability, buf, len, encoded_size)) ==
+           ie_s1_ue_network_capability_, buf, len, encoded_size)) ==
       KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
 
   // Uplink Data Status
   if ((encoded_ie_size =
-           NasHelper::Encode(ie_uplink_data_status, buf, len, encoded_size)) ==
+           NasHelper::Encode(ie_uplink_data_status_, buf, len, encoded_size)) ==
       KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
 
   // PDU Session Status
   if ((encoded_ie_size =
-           NasHelper::Encode(ie_pdu_session_status, buf, len, encoded_size)) ==
+           NasHelper::Encode(ie_pdu_session_status_, buf, len, encoded_size)) ==
       KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
 
   // Mico Indication
-  if ((encoded_ie_size = NasHelper::Encode(
-           ie_mico_indication, buf, len, encoded_size)) == KEncodeDecodeError) {
+  if ((encoded_ie_size =
+           NasHelper::Encode(ie_mico_indication_, buf, len, encoded_size)) ==
+      KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
 
   // UE status
   if ((encoded_ie_size = NasHelper::Encode(
-           ie_ue_status, buf, len, encoded_size)) == KEncodeDecodeError) {
+           ie_ue_status_, buf, len, encoded_size)) == KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
 
   // Additional GUTI
-  if ((encoded_ie_size = NasHelper::Encode(
-           ie_additional_guti, buf, len, encoded_size)) == KEncodeDecodeError) {
+  if ((encoded_ie_size =
+           NasHelper::Encode(ie_additional_guti_, buf, len, encoded_size)) ==
+      KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
 
   // Allowed PDU Session Status
   if ((encoded_ie_size = NasHelper::Encode(
-           ie_allowed_pdu_session_status, buf, len, encoded_size)) ==
+           ie_allowed_pdu_session_status_, buf, len, encoded_size)) ==
       KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
 
   // UEs Usage Setting
   if ((encoded_ie_size =
-           NasHelper::Encode(ie_ues_usage_setting, buf, len, encoded_size)) ==
+           NasHelper::Encode(ie_ues_usage_setting_, buf, len, encoded_size)) ==
       KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
 
   // 5GS DRX Parameters
   if ((encoded_ie_size =
-           NasHelper::Encode(ie_5gs_drx_parameters, buf, len, encoded_size)) ==
+           NasHelper::Encode(ie_5gs_drx_parameters_, buf, len, encoded_size)) ==
       KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
 
   // EPS NAS Message Container
   if ((encoded_ie_size = NasHelper::Encode(
-           ie_eps_nas_message_container, buf, len, encoded_size)) ==
+           ie_eps_nas_message_container_, buf, len, encoded_size)) ==
       KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
 
   // LADN Indication
-  if ((encoded_ie_size = NasHelper::Encode(
-           ie_ladn_indication, buf, len, encoded_size)) == KEncodeDecodeError) {
+  if ((encoded_ie_size =
+           NasHelper::Encode(ie_ladn_indication_, buf, len, encoded_size)) ==
+      KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
 
   // Payload Container Type
   if ((encoded_ie_size = NasHelper::Encode(
-           ie_payload_container_type, buf, len, encoded_size)) ==
+           ie_payload_container_type_, buf, len, encoded_size)) ==
       KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
 
   // TODO: use NAS helper
-  if (!ie_payload_container or !ie_payload_container_type) {
+  if (!ie_payload_container_ or !ie_payload_container_type_) {
     Logger::nas_mm().debug(
         "IE %s is not available", PayloadContainer::GetIeName().c_str());
   } else {
-    if ((encoded_ie_size = ie_payload_container->Encode(
+    if ((encoded_ie_size = ie_payload_container_->Encode(
              buf + encoded_size, len - encoded_size,
-             ie_payload_container_type.value().GetValue())) ==
+             ie_payload_container_type_.value().GetValue())) ==
         KEncodeDecodeError) {
       Logger::nas_mm().error(
           "Encoding %s error", PayloadContainer::GetIeName().c_str());
@@ -728,27 +732,28 @@ int RegistrationRequest::Encode(uint8_t* buf, int len) {
 
   // Network Slicing Indication
   if ((encoded_ie_size = NasHelper::Encode(
-           ie_network_slicing_indication, buf, len, encoded_size)) ==
+           ie_network_slicing_indication_, buf, len, encoded_size)) ==
       KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
 
   // 5GS Update Type
-  if ((encoded_ie_size = NasHelper::Encode(
-           ie_5gs_update_type, buf, len, encoded_size)) == KEncodeDecodeError) {
+  if ((encoded_ie_size =
+           NasHelper::Encode(ie_5gs_update_type_, buf, len, encoded_size)) ==
+      KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
 
   // NAS Message Container
   if ((encoded_ie_size = NasHelper::Encode(
-           ie_nas_message_container, buf, len, encoded_size)) ==
+           ie_nas_message_container_, buf, len, encoded_size)) ==
       KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
 
   // EPS Bearer Context Status
   if ((encoded_ie_size = NasHelper::Encode(
-           ie_eps_bearer_context_status, buf, len, encoded_size)) ==
+           ie_eps_bearer_context_status_, buf, len, encoded_size)) ==
       KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
@@ -774,22 +779,22 @@ int RegistrationRequest::Decode(uint8_t* buf, int len) {
 
   // Registration Type and Ng KSI
   if ((decoded_ie_size = NasHelper::Decode(
-           ie_5gs_registration_type, buf, len, decoded_size, false)) ==
+           ie_5gs_registration_type_, buf, len, decoded_size, false)) ==
       KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
   if ((decoded_ie_size = NasHelper::Decode(
-           ie_ng_ksi, buf, len, decoded_size, true,
+           ie_ng_ksi_, buf, len, decoded_size, true,
            false)) ==  // high, 1/2 octet
       KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
   if (decoded_ie_size == 0)
-    decoded_size++;  // 1/2 octet for ie_5gs_registration_type, 1/2 octet for
+    decoded_size++;  // 1/2 octet for ie_5gs_registration_type_, 1/2 octet for
                      // ie_ng_ksi
 
   if ((decoded_ie_size = NasHelper::Decode(
-           ie_5gs_mobile_identity, buf, len, decoded_size, false)) ==
+           ie_5gs_mobile_identity_, buf, len, decoded_size, false)) ==
       KEncodeDecodeError) {
     return KEncodeDecodeError;
   }
@@ -805,7 +810,7 @@ int RegistrationRequest::Decode(uint8_t* buf, int len) {
       case kIeiNasKeySetIdentifier: {
         Logger::nas_mm().debug("Decoding IEI 0x%x", kIeiNasKeySetIdentifier);
         if ((decoded_ie_size = NasHelper::Decode(
-                 ie_non_current_native_nas_ksi, buf, len, decoded_size, false,
+                 ie_non_current_native_nas_ksi_, buf, len, decoded_size, false,
                  true)) == KEncodeDecodeError) {
           return KEncodeDecodeError;
         }
@@ -816,7 +821,7 @@ int RegistrationRequest::Decode(uint8_t* buf, int len) {
       case kIeiMicoIndication: {
         Logger::nas_mm().debug("Decoding IEI 0x%x", kIeiMicoIndication);
         if ((decoded_ie_size = NasHelper::Decode(
-                 ie_mico_indication, buf, len, decoded_size, true)) ==
+                 ie_mico_indication_, buf, len, decoded_size, true)) ==
             KEncodeDecodeError) {
           return KEncodeDecodeError;
         }
@@ -827,7 +832,7 @@ int RegistrationRequest::Decode(uint8_t* buf, int len) {
       case kIeiPayloadContainerType: {
         Logger::nas_mm().debug("Decoding IEI 0x%x", kIeiPayloadContainerType);
         if ((decoded_ie_size = NasHelper::Decode(
-                 ie_payload_container_type, buf, len, decoded_size, true)) ==
+                 ie_payload_container_type_, buf, len, decoded_size, true)) ==
             KEncodeDecodeError) {
           return KEncodeDecodeError;
         }
@@ -839,7 +844,7 @@ int RegistrationRequest::Decode(uint8_t* buf, int len) {
         Logger::nas_mm().debug(
             "Decoding IEI 0x%x", kIeiNetworkSlicingIndication);
         if ((decoded_ie_size = NasHelper::Decode(
-                 ie_network_slicing_indication, buf, len, decoded_size,
+                 ie_network_slicing_indication_, buf, len, decoded_size,
                  true)) == KEncodeDecodeError) {
           return KEncodeDecodeError;
         }
@@ -856,7 +861,7 @@ int RegistrationRequest::Decode(uint8_t* buf, int len) {
       case kIei5gmmCapability: {
         Logger::nas_mm().debug("Decoding IEI 0x%x", kIei5gmmCapability);
         if ((decoded_ie_size = NasHelper::Decode(
-                 ie_5g_mm_capability, buf, len, decoded_size, true)) ==
+                 ie_5g_mm_capability_, buf, len, decoded_size, true)) ==
             KEncodeDecodeError) {
           return KEncodeDecodeError;
         }
@@ -867,7 +872,7 @@ int RegistrationRequest::Decode(uint8_t* buf, int len) {
       case kIeiUeSecurityCapability: {
         Logger::nas_mm().debug("Decoding IEI 0x%x", kIeiUeSecurityCapability);
         if ((decoded_ie_size = NasHelper::Decode(
-                 ie_ue_security_capability, buf, len, decoded_size, true)) ==
+                 ie_ue_security_capability_, buf, len, decoded_size, true)) ==
             KEncodeDecodeError) {
           return KEncodeDecodeError;
         }
@@ -878,7 +883,7 @@ int RegistrationRequest::Decode(uint8_t* buf, int len) {
       case kIeiNSSAIRequested: {
         Logger::nas_mm().debug("Decoding IEI %d", kIeiNSSAIRequested);
         if ((decoded_ie_size = NasHelper::Decode(
-                 ie_requested_nssai, buf, len, decoded_size, true)) ==
+                 ie_requested_nssai_, buf, len, decoded_size, true)) ==
             KEncodeDecodeError) {
           return KEncodeDecodeError;
         }
@@ -890,7 +895,7 @@ int RegistrationRequest::Decode(uint8_t* buf, int len) {
         Logger::nas_mm().debug(
             "Decoding IEI 0x%x", kIei5gsTrackingAreaIdentity);
         if ((decoded_ie_size = NasHelper::Decode(
-                 ie_last_visited_registered_tai, buf, len, decoded_size,
+                 ie_last_visited_registered_tai_, buf, len, decoded_size,
                  true)) == KEncodeDecodeError) {
           return KEncodeDecodeError;
         }
@@ -901,7 +906,7 @@ int RegistrationRequest::Decode(uint8_t* buf, int len) {
       case kIeiUeNetworkCapability: {
         Logger::nas_mm().debug("Decoding IEI 0x%x", kIeiUeNetworkCapability);
         if ((decoded_ie_size = NasHelper::Decode(
-                 ie_s1_ue_network_capability, buf, len, decoded_size, true)) ==
+                 ie_s1_ue_network_capability_, buf, len, decoded_size, true)) ==
             KEncodeDecodeError) {
           return KEncodeDecodeError;
         }
@@ -912,7 +917,7 @@ int RegistrationRequest::Decode(uint8_t* buf, int len) {
       case kIeiUplinkDataStatus: {
         Logger::nas_mm().debug("Decoding IEI 0x%x", kIeiUplinkDataStatus);
         if ((decoded_ie_size = NasHelper::Decode(
-                 ie_uplink_data_status, buf, len, decoded_size, true)) ==
+                 ie_uplink_data_status_, buf, len, decoded_size, true)) ==
             KEncodeDecodeError) {
           return KEncodeDecodeError;
         }
@@ -923,7 +928,7 @@ int RegistrationRequest::Decode(uint8_t* buf, int len) {
       case kIeiPduSessionStatus: {
         Logger::nas_mm().debug("Decoding IEI 0x%x", kIeiPduSessionStatus);
         if ((decoded_ie_size = NasHelper::Decode(
-                 ie_pdu_session_status, buf, len, decoded_size, true)) ==
+                 ie_pdu_session_status_, buf, len, decoded_size, true)) ==
             KEncodeDecodeError) {
           return KEncodeDecodeError;
         }
@@ -934,7 +939,7 @@ int RegistrationRequest::Decode(uint8_t* buf, int len) {
       case kIeiUeStatus: {
         Logger::nas_mm().debug("Decoding IEI 0x%x", kIeiUeStatus);
         if ((decoded_ie_size = NasHelper::Decode(
-                 ie_ue_status, buf, len, decoded_size, true)) ==
+                 ie_ue_status_, buf, len, decoded_size, true)) ==
             KEncodeDecodeError) {
           return KEncodeDecodeError;
         }
@@ -945,7 +950,7 @@ int RegistrationRequest::Decode(uint8_t* buf, int len) {
       case kIei5gGuti: {
         Logger::nas_mm().debug("Decoding IEI 0x%x", kIei5gGuti);
         if ((decoded_ie_size = NasHelper::Decode(
-                 ie_additional_guti, buf, len, decoded_size, true)) ==
+                 ie_additional_guti_, buf, len, decoded_size, true)) ==
             KEncodeDecodeError) {
           return KEncodeDecodeError;
         }
@@ -957,7 +962,7 @@ int RegistrationRequest::Decode(uint8_t* buf, int len) {
         Logger::nas_mm().debug(
             "Decoding IEI 0x%x", kIeiAllowedPduSessionStatus);
         if ((decoded_ie_size = NasHelper::Decode(
-                 ie_allowed_pdu_session_status, buf, len, decoded_size,
+                 ie_allowed_pdu_session_status_, buf, len, decoded_size,
                  true)) == KEncodeDecodeError) {
           return KEncodeDecodeError;
         }
@@ -968,7 +973,7 @@ int RegistrationRequest::Decode(uint8_t* buf, int len) {
       case kIeiUeUsageSetting: {
         Logger::nas_mm().debug("Decoding IEI 0x%x", kIeiUeUsageSetting);
         if ((decoded_ie_size = NasHelper::Decode(
-                 ie_ues_usage_setting, buf, len, decoded_size, true)) ==
+                 ie_ues_usage_setting_, buf, len, decoded_size, true)) ==
             KEncodeDecodeError) {
           return KEncodeDecodeError;
         }
@@ -979,7 +984,7 @@ int RegistrationRequest::Decode(uint8_t* buf, int len) {
       case kIei5gsDrxParameters: {
         Logger::nas_mm().debug("Decoding IEI 0x%x", kIei5gsDrxParameters);
         if ((decoded_ie_size = NasHelper::Decode(
-                 ie_5gs_drx_parameters, buf, len, decoded_size, true)) ==
+                 ie_5gs_drx_parameters_, buf, len, decoded_size, true)) ==
             KEncodeDecodeError) {
           return KEncodeDecodeError;
         }
@@ -990,8 +995,8 @@ int RegistrationRequest::Decode(uint8_t* buf, int len) {
       case kIeiEpsNasMessageContainer: {
         Logger::nas_mm().debug("Decoding IEI 0x%x", kIeiEpsNasMessageContainer);
         if ((decoded_ie_size = NasHelper::Decode(
-                 ie_eps_nas_message_container, buf, len, decoded_size, true)) ==
-            KEncodeDecodeError) {
+                 ie_eps_nas_message_container_, buf, len, decoded_size,
+                 true)) == KEncodeDecodeError) {
           return KEncodeDecodeError;
         }
         DECODE_U8_VALUE(buf + decoded_size, octet);
@@ -1001,7 +1006,7 @@ int RegistrationRequest::Decode(uint8_t* buf, int len) {
       case kIeiLadnIndication: {
         Logger::nas_mm().debug("Decoding IEI 0x%x", kIeiLadnIndication);
         if ((decoded_ie_size = NasHelper::Decode(
-                 ie_ladn_indication, buf, len, decoded_size, true)) ==
+                 ie_ladn_indication_, buf, len, decoded_size, true)) ==
             KEncodeDecodeError) {
           return KEncodeDecodeError;
         }
@@ -1015,11 +1020,11 @@ int RegistrationRequest::Decode(uint8_t* buf, int len) {
         // TODO: verified type of Payload container
         if ((decoded_ie_size = ie_payload_container_tmp.Decode(
                  buf + decoded_size, len - decoded_size, true,
-                 N1_SM_INFORMATION)) == KEncodeDecodeError) {
+                 kN1SmInformation)) == KEncodeDecodeError) {
           return KEncodeDecodeError;
         }
         decoded_size += decoded_ie_size;
-        ie_payload_container =
+        ie_payload_container_ =
             std::optional<PayloadContainer>(ie_payload_container_tmp);
         DECODE_U8_VALUE(buf + decoded_size, octet);
         Logger::nas_mm().debug("Next IEI 0x%x", octet);
@@ -1028,7 +1033,7 @@ int RegistrationRequest::Decode(uint8_t* buf, int len) {
       case 0x53: {
         Logger::nas_mm().debug("Decoding IEI 0x%x", kIei5gsUpdateType);
         if ((decoded_ie_size = NasHelper::Decode(
-                 ie_5gs_update_type, buf, len, decoded_size, true)) ==
+                 ie_5gs_update_type_, buf, len, decoded_size, true)) ==
             KEncodeDecodeError) {
           return KEncodeDecodeError;
         }
@@ -1039,7 +1044,7 @@ int RegistrationRequest::Decode(uint8_t* buf, int len) {
       case kIeiNasMessageContainer: {
         Logger::nas_mm().debug("Decoding IEI 0x%x", kIeiNasMessageContainer);
         if ((decoded_ie_size = NasHelper::Decode(
-                 ie_nas_message_container, buf, len, decoded_size, true)) ==
+                 ie_nas_message_container_, buf, len, decoded_size, true)) ==
             KEncodeDecodeError) {
           return KEncodeDecodeError;
         }
@@ -1050,8 +1055,8 @@ int RegistrationRequest::Decode(uint8_t* buf, int len) {
       case kIeiEpsBearerContextStatus: {
         Logger::nas_mm().debug("Decoding IEI 0x%x", kIeiEpsBearerContextStatus);
         if ((decoded_ie_size = NasHelper::Decode(
-                 ie_eps_bearer_context_status, buf, len, decoded_size, true)) ==
-            KEncodeDecodeError) {
+                 ie_eps_bearer_context_status_, buf, len, decoded_size,
+                 true)) == KEncodeDecodeError) {
           return KEncodeDecodeError;
         }
         DECODE_U8_VALUE(buf + decoded_size, octet);

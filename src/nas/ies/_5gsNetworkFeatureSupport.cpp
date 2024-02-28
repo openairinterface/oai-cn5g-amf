@@ -31,16 +31,16 @@ using namespace nas;
 //------------------------------------------------------------------------------
 _5gsNetworkFeatureSupport::_5gsNetworkFeatureSupport()
     : Type4NasIe(kIei5gsNetworkFeatureSupport) {
-  _value  = 0;
-  _value2 = 0;
+  value_  = 0;
+  value2_ = 0;
   SetLengthIndicator(1);  // With mimimum length of 3
 }
 
 //------------------------------------------------------------------------------
 _5gsNetworkFeatureSupport::_5gsNetworkFeatureSupport(uint8_t value)
     : Type4NasIe(kIei5gsNetworkFeatureSupport) {
-  _value  = value;
-  _value2 = 0;
+  value_  = value;
+  value2_ = 0;
   SetLengthIndicator(1);  // With mimimum length of 3
 }
 
@@ -48,8 +48,8 @@ _5gsNetworkFeatureSupport::_5gsNetworkFeatureSupport(uint8_t value)
 _5gsNetworkFeatureSupport::_5gsNetworkFeatureSupport(
     uint8_t value, uint8_t value2)
     : Type4NasIe(kIei5gsNetworkFeatureSupport) {
-  _value  = value;
-  _value2 = value2;
+  value_  = value;
+  value2_ = value2;
   SetLengthIndicator(2);
 }
 
@@ -57,15 +57,15 @@ _5gsNetworkFeatureSupport::_5gsNetworkFeatureSupport(
 _5gsNetworkFeatureSupport::~_5gsNetworkFeatureSupport() {}
 
 //------------------------------------------------------------------------------
-void _5gsNetworkFeatureSupport::setValue(uint8_t value, uint8_t value2) {
-  _value  = value;
-  _value2 = value2;
+void _5gsNetworkFeatureSupport::SetValue(uint8_t value, uint8_t value2) {
+  value_  = value;
+  value2_ = value2;
 }
 
 /*
 //------------------------------------------------------------------------------
-uint8_t _5gsNetworkFeatureSupport::getValue() {
-  return _value;
+uint8_t _5gsNetworkFeatureSupport::GetValue() {
+  return value_;
 }
 */
 
@@ -86,11 +86,11 @@ int _5gsNetworkFeatureSupport::Encode(uint8_t* buf, int len) {
   encoded_size += encoded_header_size;
 
   // Octet 3
-  ENCODE_U8(buf + encoded_size, _value, encoded_size);
+  ENCODE_U8(buf + encoded_size, value_, encoded_size);
 
   // Octet 4
   if (GetIeLength() > encoded_size)
-    ENCODE_U8(buf + encoded_size, _value2, encoded_size);
+    ENCODE_U8(buf + encoded_size, value2_, encoded_size);
 
   // Spare
   if (GetIeLength() > encoded_size) {
@@ -122,10 +122,10 @@ int _5gsNetworkFeatureSupport::Decode(uint8_t* buf, int len, bool is_iei) {
   decoded_size += decoded_header_size;
 
   // Octet 3
-  DECODE_U8(buf + decoded_size, _value, decoded_size);
+  DECODE_U8(buf + decoded_size, value_, decoded_size);
   // Octet 4
   if (GetLengthIndicator() > 1) {
-    DECODE_U8(buf + decoded_size, _value2, decoded_size);
+    DECODE_U8(buf + decoded_size, value2_, decoded_size);
   }
   // Spare
   if (GetLengthIndicator() > 2) {
@@ -134,7 +134,7 @@ int _5gsNetworkFeatureSupport::Decode(uint8_t* buf, int len, bool is_iei) {
   }
 
   Logger::nas_mm().debug(
-      "Decoded %s, value (0x%x)", GetIeName().c_str(), _value);
+      "Decoded %s, value (0x%x)", GetIeName().c_str(), value_);
 
   Logger::nas_mm().debug(
       "Decoded %s, len (%d)", GetIeName().c_str(), decoded_size);

@@ -33,7 +33,7 @@ namespace nas {
 class ExtendedProtocolDiscriminator : public NasIe {
  public:
   ExtendedProtocolDiscriminator(){};  // TODO: = delete;
-  ExtendedProtocolDiscriminator(const uint8_t& epd);
+  ExtendedProtocolDiscriminator(uint8_t epd);
   virtual ~ExtendedProtocolDiscriminator();
 
   static std::string GetIeName() {
@@ -41,7 +41,8 @@ class ExtendedProtocolDiscriminator : public NasIe {
   }
 
   bool Validate(const int& len) const override;
-  void Set(const uint8_t& epd);
+
+  void Set(uint8_t epd);
   void Get(uint8_t& epd) const;
   uint8_t Get() const;
 

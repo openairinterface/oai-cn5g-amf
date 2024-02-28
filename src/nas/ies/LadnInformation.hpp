@@ -47,7 +47,7 @@ class LadnInformation : Type6NasIe {
   int Decode(uint8_t* buf, int len, bool is_option);
 
  private:
-  std::vector<Ladn> ladn_list;
+  std::vector<Ladn> ladn_list_;
 };
 
 }  // namespace nas

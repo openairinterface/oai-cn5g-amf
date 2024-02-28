@@ -40,11 +40,11 @@ class ExtendedDrxParameters : public Type4NasIe {
   int Encode(uint8_t* buf, int len);
   int Decode(uint8_t* buf, int len, bool is_iei);
 
-  void setValue(uint8_t value);
-  uint8_t getValue() const;
+  void SetValue(uint8_t value);
+  uint8_t GetValue() const;
 
-  void setPaging_time(uint8_t value);
-  uint8_t getPaging_time() const;
+  void SetPagingTime(uint8_t value);
+  uint8_t GetPagingTime() const;
 
  private:
   uint8_t paging_time_;

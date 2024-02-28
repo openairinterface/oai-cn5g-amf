@@ -41,9 +41,9 @@ class RegistrationComplete : public NasMmPlainHeader {
       const uint8_t (&value)[kSorTransparentContainerIeMacLength]);
   // TODO: Get
 
- public:
+ private:
   std::optional<SorTransparentContainer>
-      ie_sor_transparent_container;  // Optional
+      ie_sor_transparent_container_;  // Optional
 };
 
 }  // namespace nas

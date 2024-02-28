@@ -105,7 +105,6 @@ int UeStatus::Decode(uint8_t* buf, int len, bool is_iei) {
   int decoded_size = 0;
   // IEI and Length
   int decoded_header_size = Type4NasIe::Decode(buf + decoded_size, len, is_iei);
-  // decoded_size += Type4NasIe::Decode(buf + decoded_size, len, is_iei);
   if (decoded_header_size == KEncodeDecodeError) return KEncodeDecodeError;
   decoded_size += decoded_header_size;
 
