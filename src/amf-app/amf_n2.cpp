@@ -1096,45 +1096,57 @@ void amf_n2::handle_itti_message(
     return;
   }
 
-  auto psrsr = std::make_unique<PduSessionResourceSetupRequestMsg>();
-  psrsr->setAmfUeNgapId(itti_msg->amf_ue_ngap_id);
-  psrsr->setRanUeNgapId(itti_msg->ran_ue_ngap_id);
-
-  std::vector<PDUSessionResourceSetupRequestItem_t> list;
-  PDUSessionResourceSetupRequestItem_t item = {};
-  item.pduSessionId                         = itti_msg->pdu_session_id;
-  item.nas_pdu                              = bstrcpy(itti_msg->nas);
-
-  // Get NSSAI from PDU Session Context
   std::shared_ptr<nas_context> nc = {};
   if (!amf_n1_inst->amf_ue_id_2_nas_context(itti_msg->amf_ue_ngap_id, nc)) {
-    // TODO:
+    Logger::amf_n2().error(
+        "No existing NAS context with amf_ue_ngap_id(" AMF_UE_NGAP_ID_FMT ")",
+        itti_msg->amf_ue_ngap_id);
     return;
   }
   std::string supi = amf_conv::imsi_to_supi(nc->imsi);
   Logger::amf_n2().debug("SUPI (%s)", supi.c_str());
 
-  // Get SNSSAI info from PDU Session Context
-  item.s_nssai.sd                          = {};
-  std::shared_ptr<pdu_session_context> psc = {};
-  if (!amf_app_inst->find_pdu_session_context(
-          supi, itti_msg->pdu_session_id, psc)) {
-    item.s_nssai.sst = "01";  // TODO: get from N1N2msgTranferMsg
-    item.s_nssai.sd =
-        std::to_string(SD_NO_VALUE);  // TODO: get from N1N2msgTranferMsg
-  } else {
-    item.s_nssai.sst = std::to_string(psc->snssai.sST);
-    item.s_nssai.sd  = psc->snssai.sD;
+  auto psrsr = std::make_unique<PduSessionResourceSetupRequestMsg>();
+  psrsr->setAmfUeNgapId(itti_msg->amf_ue_ngap_id);
+  psrsr->setRanUeNgapId(itti_msg->ran_ue_ngap_id);
+
+  if (!itti_msg->pdu_sessions.empty()) {
+    std::vector<PDUSessionResourceSetupRequestItem_t> list;
+    for (auto& p : itti_msg->pdu_sessions) {
+      PDUSessionResourceSetupRequestItem_t item = {};
+      item.pduSessionId                         = p.first;
+      item.nas_pdu                              = bstrcpy(itti_msg->nas);
+
+      // Get SNSSAI info from PDU Session Context
+      item.s_nssai.sd                          = {};
+      std::shared_ptr<pdu_session_context> psc = {};
+      if (!amf_app_inst->find_pdu_session_context(supi, p.first, psc)) {
+        // TODO: get from N1N2msgTranferMsg
+        item.s_nssai.sst = std::to_string(DEFAULT_SST);
+        item.s_nssai.sd  = std::to_string(SD_NO_VALUE);
+      } else {
+        item.s_nssai.sst = std::to_string(psc->snssai.sST);
+        item.s_nssai.sd  = psc->snssai.sD;
+      }
+
+      Logger::amf_n2().debug(
+          "S_NSSAI (SST, SD) %s, %s", item.s_nssai.sst.c_str(),
+          item.s_nssai.sd.c_str());
+
+      if (p.second.is_n2sm_avaliable) {
+        if (blength(p.second.n2sm) != 0) {
+          amf_conv::bstring_2_octet_string(
+              p.second.n2sm, item.pduSessionResourceSetupRequestTransfer);
+          list.push_back(item);
+        } else {
+          Logger::amf_n2().error("n2sm empty!");
+        }
+      }
+    }
+
+    if (list.size() > 0) psrsr->setPduSessionResourceSetupRequestList(list);
   }
 
-  Logger::amf_n2().debug(
-      "S_NSSAI (SST, SD) %s, %s", item.s_nssai.sst.c_str(),
-      item.s_nssai.sd.c_str());
-
-  amf_conv::bstring_2_octet_string(
-      itti_msg->n2sm, item.pduSessionResourceSetupRequestTransfer);
-  list.push_back(item);
-  psrsr->setPduSessionResourceSetupRequestList(list);
   psrsr->setUEAggregateMaxBitRate(
       UE_AGGREGATE_MAXIMUM_BIT_RATE_DL, UE_AGGREGATE_MAXIMUM_BIT_RATE_UL);
 
