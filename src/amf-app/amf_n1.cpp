@@ -65,7 +65,7 @@
 #include "sha256.hpp"
 #include "utils.hpp"
 
-using namespace nas;
+using namespace oai::nas;
 using namespace amf_application;
 using namespace oai::config;
 using namespace boost::placeholders;
@@ -737,7 +737,7 @@ void amf_n1::identity_response_handle(
   }
   std::string imsi_str = {};
   // TODO: avoid accessing member function directly
-  nas::SUCI_imsi_t imsi = {};
+  oai::nas::SUCI_imsi_t imsi = {};
   identity_response->Get5gsMobileIdentity().GetSuciWithSupiImsi(imsi);
   imsi_str = imsi.mcc + imsi.mnc + imsi.msin;
   Logger::amf_n1().debug("Identity Response: SUCI (%s)", imsi_str.c_str());
@@ -1036,8 +1036,8 @@ void amf_n1::service_request_handle(
         nc->old_ran_ue_ngap_id = old_nc->ran_ue_ngap_id;
         nc->old_amf_ue_ngap_id = old_nc->amf_ue_ngap_id;
         if (old_nc->imeisv.has_value()) {
-          nc->imeisv =
-              std::make_optional<nas::IMEI_IMEISV_t>(old_nc->imeisv.value());
+          nc->imeisv = std::make_optional<oai::nas::IMEI_IMEISV_t>(
+              old_nc->imeisv.value());
           Logger::nas_mm().debug(
               "Stored IMEISV in the new NAS Context: %s",
               nc->imeisv.value().identity.c_str());
@@ -1444,7 +1444,7 @@ void amf_n1::registration_request_handle(
   uint8_t mobility_id_type = registration_request->GetMobileIdentityType();
   switch (mobility_id_type) {
     case kSuci: {
-      nas::SUCI_imsi_t imsi = {};
+      oai::nas::SUCI_imsi_t imsi = {};
       if (!registration_request->GetSuciSupiFormatImsi(imsi)) {
         Logger::amf_n1().warn("No SUCI and IMSI for SUPI Format");
       } else {
@@ -2808,11 +2808,11 @@ void amf_n1::security_mode_complete_handle(
       (uint8_t*) bdata(nas_msg), blength(nas_msg));
 
   // Store UE Id (IMEISV) if available
-  nas::IMEI_IMEISV_t imeisv = {};
+  oai::nas::IMEI_IMEISV_t imeisv = {};
   if (security_mode_complete->GetImeisv(imeisv)) {
     Logger::nas_mm().debug(
         "Stored IMEISV in the NAS Context: %s", imeisv.identity.c_str());
-    nc->imeisv = std::make_optional<nas::IMEI_IMEISV_t>(imeisv);
+    nc->imeisv = std::make_optional<oai::nas::IMEI_IMEISV_t>(imeisv);
   }
 
   std::optional<uint16_t> uplink_data_status_opt = std::nullopt;
@@ -4491,7 +4491,7 @@ void amf_n1::get_pdu_session_to_be_activated(
 
 //------------------------------------------------------------------------------
 void amf_n1::initialize_registration_accept(
-    std::unique_ptr<nas::RegistrationAccept>& registration_accept,
+    std::unique_ptr<RegistrationAccept>& registration_accept,
     const std::shared_ptr<nas_context>& nc) {
   registration_accept->SetHeader(kPlain5gsMessage);
 
@@ -5098,12 +5098,12 @@ bool amf_n1::get_slice_selection_subscription_data(
       std::vector<Snssai> default_snssais = nssai.getDefaultSingleNssais();
       // bool default_subscribed_snssai = true;
       for (const auto& ds : default_snssais) {
-        nas::SNSSAI_t subscribed_snssai = {};
-        subscribed_snssai.sst           = ds.getSst();
-        uint32_t subscribed_snssai_sd   = SD_NO_VALUE;
+        oai::nas::SNSSAI_t subscribed_snssai = {};
+        subscribed_snssai.sst                = ds.getSst();
+        uint32_t subscribed_snssai_sd        = SD_NO_VALUE;
         amf_conv::sd_string_to_int(ds.getSd(), subscribed_snssai_sd);
         subscribed_snssai.sd = subscribed_snssai_sd;
-        std::pair<bool, nas::SNSSAI_t> tmp;
+        std::pair<bool, oai::nas::SNSSAI_t> tmp;
         tmp.second = subscribed_snssai;
         tmp.first  = true;
         /*
@@ -5178,12 +5178,12 @@ bool amf_n1::get_slice_selection_subscription_data_from_conf_file(
             "Added S-NSSAI (SST %d, SD %s)", sst, s.sd.c_str());
         common_snssais.push_back(nssai);
         // Store this info in UE NAS Context
-        nas::SNSSAI_t subscribed_snssai = {};
-        subscribed_snssai.sst           = sst;
-        uint32_t subscribed_snssai_sd   = SD_NO_VALUE;
+        oai::nas::SNSSAI_t subscribed_snssai = {};
+        subscribed_snssai.sst                = sst;
+        uint32_t subscribed_snssai_sd        = SD_NO_VALUE;
         amf_conv::sd_string_to_int(s.sd, subscribed_snssai_sd);
         subscribed_snssai.sd = subscribed_snssai_sd;
-        std::pair<bool, nas::SNSSAI_t> tmp;
+        std::pair<bool, oai::nas::SNSSAI_t> tmp;
         tmp.second = subscribed_snssai;
         tmp.first  = true;
         /*

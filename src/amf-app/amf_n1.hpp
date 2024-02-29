@@ -475,13 +475,13 @@ class amf_n1 {
 
   /*
    * Initialize Registration Accept with the parameters from NAS context
-   * @param [std::unique_ptr<nas::RegistrationAccept>&] registration_accept:
-   * Pointer to the Registration Accept message
+   * @param [std::unique_ptr<oai::nas::RegistrationAccept>&]
+   * registration_accept: Pointer to the Registration Accept message
    * @param [std::shared_ptr<nas_context>&] nc: Pointer to the UE NAS Context
    * @return void
    */
   void initialize_registration_accept(
-      std::unique_ptr<nas::RegistrationAccept>& registration_accept,
+      std::unique_ptr<oai::nas::RegistrationAccept>& registration_accept,
       const std::shared_ptr<nas_context>& nc);
 
   /*

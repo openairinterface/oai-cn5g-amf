@@ -82,20 +82,20 @@ class nas_context {
   uint8_t ngksi;  // 4 bits
 
   std::string imsi;  // TODO: use SUPI instead
-  std::optional<nas::IMEI_IMEISV_t> imeisv;
+  std::optional<oai::nas::IMEI_IMEISV_t> imeisv;
   std::optional<std::string> guti;
 
   std::uint8_t _5gmm_capability[13];
-  nas::UeSecurityCapability ue_security_capability;
+  oai::nas::UeSecurityCapability ue_security_capability;
 
-  std::vector<nas::SNSSAI_t> requested_nssai;
-  std::vector<nas::SNSSAI_t> allowed_nssai;  // in Registration Accept
+  std::vector<oai::nas::SNSSAI_t> requested_nssai;
+  std::vector<oai::nas::SNSSAI_t> allowed_nssai;  // in Registration Accept
   // Set to true if marked as default
-  std::vector<std::pair<bool, nas::SNSSAI_t>> subscribed_snssai;
-  std::vector<nas::SNSSAI_t> configured_nssai;
+  std::vector<std::pair<bool, oai::nas::SNSSAI_t>> subscribed_snssai;
+  std::vector<oai::nas::SNSSAI_t> configured_nssai;
   // TODO: rejected_nssai;
-  // std::vector<nas::SNSSAI_t>  default_configured_nssai;
-  // std::vector<nas::SNSSAI_t> s_nssai; //for Network Slice selection
+  // std::vector<oai::nas::SNSSAI_t>  default_configured_nssai;
+  // std::vector<oai::nas::SNSSAI_t> s_nssai; //for Network Slice selection
 
   bstring registration_request;  // for AMF re-allocation procedure
   bool registration_request_is_set;

@@ -2807,7 +2807,7 @@ bool amf_n2::get_common_plmn(
 //------------------------------------------------------------------------------
 bool amf_n2::get_common_NSSAI(
     const uint32_t& ran_ue_ngap_id, uint32_t gnb_id,
-    std::vector<nas::SNSSAI_t>& common_nssai) {
+    std::vector<oai::nas::SNSSAI_t>& common_nssai) {
   Logger::amf_n2().debug("Getting common S-NSSAIs between gNB and AMF");
 
   bool found = false;
@@ -2827,8 +2827,8 @@ bool amf_n2::get_common_NSSAI(
   for (const auto& ta : gc->supported_ta_list) {
     for (const auto& plmn : ta.b_plmn_list) {
       for (const auto& slice : plmn.slice_list) {
-        nas::SNSSAI_t snssai = {};
-        uint32_t sd          = SD_NO_VALUE;
+        oai::nas::SNSSAI_t snssai = {};
+        uint32_t sd               = SD_NO_VALUE;
         try {
           snssai.sst = std::stoi(slice.sst);
           amf_conv::sd_string_to_int(slice.sd, sd);
