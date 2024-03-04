@@ -413,7 +413,7 @@ void amf_sbi::handle_itti_message(itti_nsmf_pdusession_create_sm_context& smf) {
       uint8_t pti     = sm_msg[2];
       Logger::amf_sbi().debug(
           "Decoded PTI for PDUSessionEstablishmentRequest(0x%x)", pti);
-      psc->is_n2sm_avaliable = false;
+      psc->is_n2sm_available = false;
       handle_pdu_session_initial_request(
           supi, psc, smf_uri_root, smf_api_version, smf.sm_msg, dnn);
     } break;
@@ -1449,7 +1449,7 @@ bool amf_sbi::curl_http_client(
                 "amf_sbi", "[Service Request] Get response N2 SM:",
                 (uint8_t*) bdata(n2sm_hex), blength(n2sm_hex));
             psc->n2sm              = bstrcpy(n2sm_hex);
-            psc->is_n2sm_avaliable = true;
+            psc->is_n2sm_available = true;
           }
         }
       }

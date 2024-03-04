@@ -501,7 +501,7 @@ int ngap_amf_handle_pdu_session_resource_setup_response(
           return RETURNerror;
         }
       }
-      psc->is_n2sm_avaliable = false;
+      psc->is_n2sm_available = false;
       // TODO:
       return RETURNok;
     }

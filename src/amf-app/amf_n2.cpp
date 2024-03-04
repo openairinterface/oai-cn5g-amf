@@ -1047,7 +1047,7 @@ void amf_n2::handle_itti_message(
             item.s_nssai.sd.c_str());
 
         // TODO: NAS PDU
-        if (p.second.is_n2sm_avaliable) {
+        if (p.second.is_n2sm_available) {
           if (blength(p.second.n2sm) != 0) {
             amf_conv::bstring_2_octet_string(
                 p.second.n2sm, item.pduSessionResourceSetupRequestTransfer);
@@ -1122,18 +1122,20 @@ void amf_n2::handle_itti_message(
       std::shared_ptr<pdu_session_context> psc = {};
       if (!amf_app_inst->find_pdu_session_context(supi, p.first, psc)) {
         // TODO: get from N1N2msgTranferMsg
+        Logger::amf_n2().debug(
+            "Using default value for S_NSSAI (SST, SD) %s, %s",
+            item.s_nssai.sst.c_str(), item.s_nssai.sd.c_str());
         item.s_nssai.sst = std::to_string(DEFAULT_SST);
         item.s_nssai.sd  = std::to_string(SD_NO_VALUE);
       } else {
         item.s_nssai.sst = std::to_string(psc->snssai.sST);
         item.s_nssai.sd  = psc->snssai.sD;
+        Logger::amf_n2().debug(
+            "S_NSSAI (SST, SD) %s, %s", item.s_nssai.sst.c_str(),
+            item.s_nssai.sd.c_str());
       }
 
-      Logger::amf_n2().debug(
-          "S_NSSAI (SST, SD) %s, %s", item.s_nssai.sst.c_str(),
-          item.s_nssai.sd.c_str());
-
-      if (p.second.is_n2sm_avaliable) {
+      if (p.second.is_n2sm_available) {
         if (blength(p.second.n2sm) != 0) {
           amf_conv::bstring_2_octet_string(
               p.second.n2sm, item.pduSessionResourceSetupRequestTransfer);

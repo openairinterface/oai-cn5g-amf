@@ -45,9 +45,9 @@ class pdu_session_context {
   uint8_t req_type;
   uint8_t pdu_session_id;
   bstring n2sm;
-  bool is_n2sm_avaliable;
+  bool is_n2sm_available;
   bstring n1sm;
-  bool is_n1sm_avaliable;
+  bool is_n1sm_available;
   std::string dnn;
   smf_context_info_t smf_info;
   snssai_t snssai;

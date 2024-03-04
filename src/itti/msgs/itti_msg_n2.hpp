@@ -42,7 +42,7 @@ using namespace sctp;
 
 typedef struct pdu_session_info_s {
   bstring n2sm;
-  bool is_n2sm_avaliable;
+  bool is_n2sm_available;
 } pdu_session_info_t;
 
 class itti_msg_n2 : public itti_msg {
@@ -177,7 +177,7 @@ class itti_initial_context_setup_request : public itti_msg_n2 {
     for (const auto& p : i.pdu_sessions) {
       pdu_session_info_t item = {};
       item.n2sm               = bstrcpy(p.second.n2sm);
-      item.is_n2sm_avaliable  = p.second.is_n2sm_avaliable;
+      item.is_n2sm_available  = p.second.is_n2sm_available;
       uint8_t pdu_session_id  = p.first;
       pdu_sessions.insert(
           std::pair<uint8_t, pdu_session_info_t>(pdu_session_id, item));
@@ -217,9 +217,9 @@ class itti_pdu_session_resource_setup_request : public itti_msg_n2 {
     amf_ue_ngap_id = i.amf_ue_ngap_id;
     for (const auto& p : i.pdu_sessions) {
       pdu_session_info_t item = {};
-      item.n2sm               = bstrcpy(p.second.n2sm);
-      item.is_n2sm_avaliable  = p.second.is_n2sm_avaliable;
-      uint8_t pdu_session_id  = p.first;
+      item.is_n2sm_available  = p.second.is_n2sm_available;
+      if (item.is_n2sm_available) item.n2sm = bstrcpy(p.second.n2sm);
+      uint8_t pdu_session_id = p.first;
       pdu_sessions.insert(
           std::pair<uint8_t, pdu_session_info_t>(pdu_session_id, item));
     }

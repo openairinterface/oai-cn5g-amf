@@ -121,7 +121,7 @@ void N1N2MessageCollectionDocumentApiImpl::n1_n2_message_transfer(
         amf_conv::msg_str_2_msg_hex(parts[n2_content_id].body, n2sm);
         // Store N2 SM in PDU Session Context
         psc->n2sm              = bstrcpy(n2sm);
-        psc->is_n2sm_avaliable = true;
+        psc->is_n2sm_available = true;
 
         itti_msg->n2sm           = bstrcpy(n2sm);
         itti_msg->is_n2sm_set    = true;
@@ -230,7 +230,7 @@ void N1N2MessageCollectionDocumentApiImpl::n1_n2_message_transfer(
             blength(n1sm));
         // Store N1 SM in PDU Session Context
         psc->n1sm              = bstrcpy(n1sm);
-        psc->is_n1sm_avaliable = true;
+        psc->is_n1sm_available = true;
 
         itti_msg->n1sm        = bstrcpy(n1sm);
         itti_msg->is_n1sm_set = true;

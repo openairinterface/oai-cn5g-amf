@@ -289,7 +289,7 @@ void amf_n1::handle_itti_message(itti_downlink_nas_transfer& itti_msg) {
 
         pdu_session_info_t item = {};
         item.n2sm               = bstrcpy(itti_msg.n2sm);
-        item.is_n2sm_avaliable  = true;
+        item.is_n2sm_available  = true;
         psrsr->pdu_sessions.insert(std::pair<uint8_t, pdu_session_info_t>(
             itti_msg.pdu_session_id, item));
 
@@ -322,7 +322,7 @@ void amf_n1::handle_itti_message(itti_downlink_nas_transfer& itti_msg) {
         csr->nas                = protected_nas;
         pdu_session_info_t item = {};
         item.n2sm               = bstrcpy(itti_msg.n2sm);
-        item.is_n2sm_avaliable  = true;
+        item.is_n2sm_available  = true;
         csr->pdu_sessions.insert(std::pair<uint8_t, pdu_session_info_t>(
             itti_msg.pdu_session_id, item));
         csr->is_sr = false;  // TODO: for Service Request procedure
@@ -995,11 +995,11 @@ void amf_n1::service_request_handle(
       }
 
       pdu_session_info_t item = {};
-      if (psc and psc->is_n2sm_avaliable) {
+      if (psc and psc->is_n2sm_available) {
         item.n2sm              = bstrcpy(psc->n2sm);
-        item.is_n2sm_avaliable = true;
+        item.is_n2sm_available = true;
       } else {
-        item.is_n2sm_avaliable = false;
+        item.is_n2sm_available = false;
         if (uplink_data_status_opt.has_value()) {
           set_pdu_session_reactivation_result(
               pdu_session_id, pdu_session_reactivation_result);
@@ -1357,11 +1357,11 @@ void amf_n1::service_request_handle(
       }
 
       pdu_session_info_t item = {};
-      if (psc and psc->is_n2sm_avaliable) {
+      if (psc and psc->is_n2sm_available) {
         item.n2sm              = bstrcpy(psc->n2sm);
-        item.is_n2sm_avaliable = true;
+        item.is_n2sm_available = true;
       } else {
-        item.is_n2sm_avaliable = false;
+        item.is_n2sm_available = false;
         if (uplink_data_status_opt.has_value()) {
           set_pdu_session_reactivation_result(
               pdu_session_id, pdu_session_reactivation_result);
@@ -2988,11 +2988,11 @@ void amf_n1::security_mode_complete_handle(
     }
 
     pdu_session_info_t item = {};
-    if (psc and psc->is_n2sm_avaliable) {
+    if (psc and psc->is_n2sm_available) {
       item.n2sm              = bstrcpy(psc->n2sm);
-      item.is_n2sm_avaliable = true;
+      item.is_n2sm_available = true;
     } else {
-      item.is_n2sm_avaliable = false;
+      item.is_n2sm_available = false;
       if (uplink_data_status_opt.has_value()) {
         set_pdu_session_reactivation_result(
             pdu_session_id, pdu_session_reactivation_result);
@@ -3080,10 +3080,10 @@ void amf_n1::security_mode_complete_handle(
 
     for (auto const& pdu_session : pdu_sessions) {
       pdu_session_info_t item = {};
-      if (pdu_session.second.is_n2sm_avaliable) {
+      if (pdu_session.second.is_n2sm_available) {
         item.n2sm = bstrcpy(pdu_session.second.n2sm);
       }
-      item.is_n2sm_avaliable = pdu_session.second.is_n2sm_avaliable;
+      item.is_n2sm_available = pdu_session.second.is_n2sm_available;
       itti_msg->pdu_sessions.insert(
           std::pair<uint8_t, pdu_session_info_t>(pdu_session.first, item));
     }

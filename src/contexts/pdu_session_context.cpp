@@ -23,8 +23,8 @@
 
 //------------------------------------------------------------------------------
 pdu_session_context::pdu_session_context() {
-  is_n2sm_avaliable       = false;
-  is_n1sm_avaliable       = false;
+  is_n2sm_available       = false;
+  is_n1sm_available       = false;
   ran_ue_ngap_id          = 0;
   amf_ue_ngap_id          = 0;
   req_type                = 0;
