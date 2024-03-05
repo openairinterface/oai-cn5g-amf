@@ -344,7 +344,7 @@ include_directories(${SRC_TOP_DIR}/${MOUNTED_COMMON}/utils)
 include_directories(${SRC_TOP_DIR}/${MOUNTED_COMMON}/utils/bstr)
 include_directories(${SRC_TOP_DIR}/${MOUNTED_COMMON}/nas/ies)
 include_directories(${SRC_TOP_DIR}/${MOUNTED_COMMON}/nas/common)
-include_directories(${SRC_TOP_DIR}/${MOUNTED_COMMON}/nas/msgs)
+include_directories(${SRC_TOP_DIR}/${MOUNTED_COMMON}/nas/5gmm-msgs)
 include_directories(${SRC_TOP_DIR}/${MOUNTED_COMMON}/nas/utils)
 
 add_executable(amf
