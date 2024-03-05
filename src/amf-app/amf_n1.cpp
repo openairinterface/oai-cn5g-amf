@@ -65,13 +65,13 @@
 #include "sha256.hpp"
 #include "utils.hpp"
 
-using namespace nas;
 using namespace amf_application;
-using namespace oai::config;
 using namespace boost::placeholders;
-using namespace oai::model::common;
 using namespace oai::amf::model;
 using namespace oai::amf::api;
+using namespace oai::config;
+using namespace oai::model::common;
+using namespace oai::nas;
 
 extern itti_mw* itti_inst;
 extern amf_n1* amf_n1_inst;
@@ -284,10 +284,14 @@ void amf_n1::handle_itti_message(itti_downlink_nas_transfer& itti_msg) {
         auto psrsr = std::make_shared<itti_pdu_session_resource_setup_request>(
             TASK_AMF_N1, TASK_AMF_N2);
         psrsr->nas            = protected_nas;
-        psrsr->n2sm           = bstrcpy(itti_msg.n2sm);
         psrsr->amf_ue_ngap_id = amf_ue_ngap_id;
         psrsr->ran_ue_ngap_id = ran_ue_ngap_id;
-        psrsr->pdu_session_id = itti_msg.pdu_session_id;
+
+        pdu_session_info_t item = {};
+        item.n2sm               = bstrcpy(itti_msg.n2sm);
+        item.is_n2sm_available  = true;
+        psrsr->pdu_sessions.insert(std::pair<uint8_t, pdu_session_info_t>(
+            itti_msg.pdu_session_id, item));
 
         int ret = itti_inst->send_msg(psrsr);
         if (0 != ret) {
@@ -318,7 +322,7 @@ void amf_n1::handle_itti_message(itti_downlink_nas_transfer& itti_msg) {
         csr->nas                = protected_nas;
         pdu_session_info_t item = {};
         item.n2sm               = bstrcpy(itti_msg.n2sm);
-        item.is_n2sm_avaliable  = true;
+        item.is_n2sm_available  = true;
         csr->pdu_sessions.insert(std::pair<uint8_t, pdu_session_info_t>(
             itti_msg.pdu_session_id, item));
         csr->is_sr = false;  // TODO: for Service Request procedure
@@ -433,19 +437,23 @@ void amf_n1::handle_itti_message(itti_uplink_nas_data_ind& nas_data_ind) {
   uint8_t ulCount = 0;
 
   switch (type) {
-    case PlainNasMsg: {
+    case kPlain5gsMessage: {
       Logger::amf_n1().debug("Received plain NAS message");
       decoded_plain_msg = bstrcpy(received_nas_msg);
     } break;
 
     case IntegrityProtected: {
       Logger::amf_n1().debug("Received integrity protected NAS message");
-      ulCount = *((uint8_t*) bdata(received_nas_msg) + 6);
+      ulCount =
+          *((uint8_t*) bdata(received_nas_msg) +
+            kSecurityProtected5gsNasMessageSequenceNumberOctet);
       Logger::amf_n1().info(
           "Integrity protected message: ulCount(%d)", ulCount);
       decoded_plain_msg = blk2bstr(
-          (uint8_t*) bdata(received_nas_msg) + 7,
-          blength(received_nas_msg) - 7);
+          (uint8_t*) bdata(received_nas_msg) +
+              kSecurityProtected5gsNasMessageHeaderLength,
+          blength(received_nas_msg) -
+              kSecurityProtected5gsNasMessageHeaderLength);
     } break;
 
     case IntegrityProtectedAndCiphered: {
@@ -473,8 +481,11 @@ void amf_n1::handle_itti_message(itti_uplink_nas_data_ind& nas_data_ind) {
       uint32_t mac32 = 0;
       if (!nas_message_integrity_protected(
               nc->security_ctx.value(), NAS_MESSAGE_UPLINK,
-              (uint8_t*) bdata(received_nas_msg) + 6,
-              blength(received_nas_msg) - 6, mac32)) {
+              (uint8_t*) bdata(received_nas_msg) +
+                  kSecurityProtected5gsNasMessageSequenceNumberOctet,
+              blength(received_nas_msg) -
+                  kSecurityProtected5gsNasMessageSequenceNumberOctet,
+              mac32)) {
         Logger::amf_n1().debug("IA0_5G");
       } else {
         bool isMatched      = false;
@@ -495,8 +506,10 @@ void amf_n1::handle_itti_message(itti_uplink_nas_data_ind& nas_data_ind) {
       }
 
       bstring ciphered = blk2bstr(
-          (uint8_t*) bdata(received_nas_msg) + 7,
-          blength(received_nas_msg) - 7);
+          (uint8_t*) bdata(received_nas_msg) +
+              kSecurityProtected5gsNasMessageHeaderLength,
+          blength(received_nas_msg) -
+              kSecurityProtected5gsNasMessageHeaderLength);
       if (!nas_message_cipher_protected(
               nc->security_ctx.value(), NAS_MESSAGE_UPLINK, ciphered,
               decoded_plain_msg)) {
@@ -699,30 +712,18 @@ bool amf_n1::check_security_header_type(
   }
   uint8_t octet        = 0;
   uint8_t decoded_size = 0;
-  octet                = *(buffer + decoded_size);
-  decoded_size++;
-  if (octet != 0x7e) return false;
-  octet = *(buffer + decoded_size);
-  decoded_size++;
-  // TODO: remove hardcoded value
-  switch (octet & 0x0f) {
-    case 0x0:
-      type = PlainNasMsg;
-      break;
-    case 0x1:
-      type = IntegrityProtected;
-      break;
-    case 0x2:
-      type = IntegrityProtectedAndCiphered;
-      break;
-    case 0x3:
-      type = IntegrityProtectedWithNew5GNASSecurityContext;
-      break;
-    case 0x4:
-      type = IntegrityProtectedAndCipheredWithNew5GNASSecurityContext;
-      break;
+  // Decode first octet (
+  DECODE_U8(buffer + decoded_size, octet, decoded_size);
+  if (octet != k5gsMobilityManagementMessages) return false;
+
+  // Decode second octet
+  DECODE_U8(buffer + decoded_size, octet, decoded_size);
+  if ((octet & 0x0f) <=
+      IntegrityProtectedAndCipheredWithNew5GNASSecurityContext) {
+    type = static_cast<SecurityHeaderType_t>(octet & 0x0f);
+    return true;
   }
-  return true;
+  return false;
 }
 
 //------------------------------------------------------------------------------
@@ -737,7 +738,7 @@ void amf_n1::identity_response_handle(
   }
   std::string imsi_str = {};
   // TODO: avoid accessing member function directly
-  nas::SUCI_imsi_t imsi = {};
+  oai::nas::SUCI_imsi_t imsi = {};
   identity_response->Get5gsMobileIdentity().GetSuciWithSupiImsi(imsi);
   imsi_str = imsi.mcc + imsi.mnc + imsi.msin;
   Logger::amf_n1().debug("Identity Response: SUCI (%s)", imsi_str.c_str());
@@ -876,12 +877,20 @@ void amf_n1::service_request_handle(
       amf_ue_ngap_id, ran_ue_ngap_id);
   Logger::amf_n1().debug("Key for PDU Session context: SUPI %s", supi.c_str());
 
-  // TODO: Uplink Data Status
+  // Uplink Data Status
+  std::optional<uint16_t> uplink_data_status_opt =
+      service_request->GetUplinkDataStatus();
+
+  // PDU Session Status
+  std::optional<uint16_t> pdu_session_status_opt =
+      service_request->GetPduSessionStatus();
+
   // Get PDU session status from Service Request
-  uint16_t pdu_session_status = 0;
-  if (!service_request->GetPduSessionStatus(pdu_session_status) or
-      (pdu_session_status == 0)) {
-    // Get PDU Session Status from NAS Message Container if available
+  if (!uplink_data_status_opt.has_value() or
+      !pdu_session_status_opt.has_value()) {
+    // Get Uplink Data Status/PDU Session Status from NAS Message Container if
+    // available
+
     bstring plain_msg = nullptr;
     if (service_request->GetNasMessageContainer(plain_msg)) {
       if (blength(plain_msg) < kNasMessageMinLength) {
@@ -908,8 +917,19 @@ void amf_n1::service_request_handle(
           service_request_nas->Decode(
               (uint8_t*) bdata(plain_msg), blength(plain_msg));
           utils::bdestroy_wrapper(&plain_msg);
-          if (!service_request_nas->GetPduSessionStatus(pdu_session_status)) {
-            Logger::nas_mm().debug("IE PDU Session Status is not present");
+
+          // Get Uplink Data Status from NAS message container if not available
+          if (!uplink_data_status_opt.has_value()) {
+            uplink_data_status_opt = service_request_nas->GetUplinkDataStatus();
+            if (!uplink_data_status_opt.has_value())
+              Logger::nas_mm().debug("IE Uplink Data Status is not present");
+          }
+
+          // Get PDU Session Status from NAS message container if not available
+          if (!pdu_session_status_opt.has_value()) {
+            pdu_session_status_opt = service_request_nas->GetPduSessionStatus();
+            if (!pdu_session_status_opt.has_value())
+              Logger::nas_mm().debug("IE PDU Session Status is not present");
           }
         } break;
 
@@ -920,9 +940,34 @@ void amf_n1::service_request_handle(
     }
   }
 
+  uint16_t pdu_session_status = 0x0000;
+  if (pdu_session_status_opt.has_value())
+    pdu_session_status = pdu_session_status_opt.value();
+
+  uint16_t uplink_data_status = 0x0000;
+  if (uplink_data_status_opt.has_value())
+    uplink_data_status = uplink_data_status_opt.value();
+
   std::vector<uint8_t> pdu_session_to_be_activated = {};
-  get_pdu_session_to_be_activated(
-      pdu_session_status, pdu_session_to_be_activated);
+  if (uplink_data_status_opt.has_value())
+    get_pdu_session_to_be_activated(
+        uplink_data_status, pdu_session_to_be_activated);
+  else if (pdu_session_status_opt.has_value())
+    get_pdu_session_to_be_activated(
+        pdu_session_status, pdu_session_to_be_activated);
+
+  // Set default value for PDU Session Reactivation Result
+  uint16_t pdu_session_reactivation_result = 0x0000;
+  if (uplink_data_status_opt.has_value())
+    service_accept->SetPduSessionReactivationResult(
+        pdu_session_reactivation_result);
+
+  // Set default value for PDU Session Status
+  if (pdu_session_status_opt.has_value())
+    service_accept->SetPduSessionStatus(pdu_session_status);
+
+  // TODO: PDU session to be released
+  // TODO: PDU session reactivation result IE
 
   // No PDU Sessions To Be Activated
   if (pdu_session_to_be_activated.size() == 0) {
@@ -932,32 +977,41 @@ void amf_n1::service_request_handle(
     send_service_reject(nc, k5gmmCauseSemanticallyIncorrect);
     return;
   } else {
-    // TODO: Contact SMF to activate UP for these sessions
-    // TODO: modify itti_initial_context_setup_request for supporting multiple
-    // PDU sessions
+    // Contact SMF to activate UP for these sessions
+    // PDU SESSION RESOURCE SETUP_REQUEST
+    auto psrsr = std::make_shared<itti_pdu_session_resource_setup_request>(
+        TASK_AMF_N1, TASK_AMF_N2);
 
-    std::shared_ptr<pdu_session_context> psc = {};
+    for (auto& pdu_session_id : pdu_session_to_be_activated) {
+      std::shared_ptr<pdu_session_context> psc = {};
+      if (!amf_app_inst->find_pdu_session_context(supi, pdu_session_id, psc)) {
+        Logger::amf_n1().warn(
+            "No PDU Session Context with PDU Session ID %d", pdu_session_id);
+      }
 
-    uint8_t pdu_session_id = pdu_session_to_be_activated.at(0);
-    if (!amf_app_inst->find_pdu_session_context(supi, pdu_session_id, psc)) {
-      // TODO:
-      // Set PDU session Status to 0x00
-      // service_accept->SetPduSessionStatus(0x00);
-    } else {
-      service_accept->SetPduSessionStatus(pdu_session_status);
-      service_accept->SetPduSessionReactivationResult(0x0000);
-    }
+      if (psc and
+          (psc->up_cnx_state == up_cnx_state_e::UPCNX_STATE_DEACTIVATED)) {
+        amf_app_inst->trigger_pdu_session_up_activation(pdu_session_id, uc);
+      }
 
-    if (psc and
-        (psc->up_cnx_state == up_cnx_state_e::UPCNX_STATE_DEACTIVATED)) {
-      // TODO: modify itti_initial_context_setup_request for supporting multiple
-      // PDU sessions
+      pdu_session_info_t item = {};
+      if (psc and psc->is_n2sm_available) {
+        item.n2sm              = bstrcpy(psc->n2sm);
+        item.is_n2sm_available = true;
+      } else {
+        item.is_n2sm_available = false;
+        if (uplink_data_status_opt.has_value()) {
+          set_pdu_session_reactivation_result(
+              pdu_session_id, pdu_session_reactivation_result);
+        }
+        if (pdu_session_status_opt.has_value()) {
+          set_pdu_session_status_inactive(pdu_session_id, pdu_session_status);
+        }
+        Logger::amf_n1().debug("Cannot get PDU session information");
+      }
 
-      amf_app_inst->trigger_pdu_session_up_activation(uc);
-    } else {
-      Logger::amf_n1().warn(
-          "UP CNX State: %s",
-          up_cnx_state_e2str[static_cast<int>(psc->up_cnx_state)].c_str());
+      psrsr->pdu_sessions.insert(
+          std::pair<uint8_t, pdu_session_info_t>(pdu_session_id, item));
     }
 
     uint8_t buffer[BUFFER_SIZE_1024];
@@ -967,17 +1021,9 @@ void amf_n1::service_request_handle(
         nc->security_ctx.value(), false, kIntegrityProtectedAndCiphered,
         NAS_MESSAGE_DOWNLINK, buffer, encoded_size, protected_nas);
 
-    // PDU SESSION RESOURCE SETUP_REQUEST
-    auto psrsr = std::make_shared<itti_pdu_session_resource_setup_request>(
-        TASK_AMF_N1, TASK_AMF_N2);
     psrsr->nas            = bstrcpy(protected_nas);
     psrsr->amf_ue_ngap_id = amf_ue_ngap_id;
     psrsr->ran_ue_ngap_id = ran_ue_ngap_id;
-    psrsr->pdu_session_id = pdu_session_id;
-
-    if (psc and psc->is_n2sm_avaliable) {
-      psrsr->n2sm = bstrcpy(psc->n2sm);
-    }
 
     int ret = itti_inst->send_msg(psrsr);
     if (0 != ret) {
@@ -1036,8 +1082,8 @@ void amf_n1::service_request_handle(
         nc->old_ran_ue_ngap_id = old_nc->ran_ue_ngap_id;
         nc->old_amf_ue_ngap_id = old_nc->amf_ue_ngap_id;
         if (old_nc->imeisv.has_value()) {
-          nc->imeisv =
-              std::make_optional<nas::IMEI_IMEISV_t>(old_nc->imeisv.value());
+          nc->imeisv = std::make_optional<oai::nas::IMEI_IMEISV_t>(
+              old_nc->imeisv.value());
           Logger::nas_mm().debug(
               "Stored IMEISV in the new NAS Context: %s",
               nc->imeisv.value().identity.c_str());
@@ -1311,11 +1357,11 @@ void amf_n1::service_request_handle(
       }
 
       pdu_session_info_t item = {};
-      if (psc and psc->is_n2sm_avaliable) {
+      if (psc and psc->is_n2sm_available) {
         item.n2sm              = bstrcpy(psc->n2sm);
-        item.is_n2sm_avaliable = true;
+        item.is_n2sm_available = true;
       } else {
-        item.is_n2sm_avaliable = false;
+        item.is_n2sm_available = false;
         if (uplink_data_status_opt.has_value()) {
           set_pdu_session_reactivation_result(
               pdu_session_id, pdu_session_reactivation_result);
@@ -1444,7 +1490,7 @@ void amf_n1::registration_request_handle(
   uint8_t mobility_id_type = registration_request->GetMobileIdentityType();
   switch (mobility_id_type) {
     case kSuci: {
-      nas::SUCI_imsi_t imsi = {};
+      oai::nas::SUCI_imsi_t imsi = {};
       if (!registration_request->GetSuciSupiFormatImsi(imsi)) {
         Logger::amf_n1().warn("No SUCI and IMSI for SUPI Format");
       } else {
@@ -2808,11 +2854,11 @@ void amf_n1::security_mode_complete_handle(
       (uint8_t*) bdata(nas_msg), blength(nas_msg));
 
   // Store UE Id (IMEISV) if available
-  nas::IMEI_IMEISV_t imeisv = {};
+  oai::nas::IMEI_IMEISV_t imeisv = {};
   if (security_mode_complete->GetImeisv(imeisv)) {
     Logger::nas_mm().debug(
         "Stored IMEISV in the NAS Context: %s", imeisv.identity.c_str());
-    nc->imeisv = std::make_optional<nas::IMEI_IMEISV_t>(imeisv);
+    nc->imeisv = std::make_optional<oai::nas::IMEI_IMEISV_t>(imeisv);
   }
 
   std::optional<uint16_t> uplink_data_status_opt = std::nullopt;
@@ -2942,11 +2988,11 @@ void amf_n1::security_mode_complete_handle(
     }
 
     pdu_session_info_t item = {};
-    if (psc and psc->is_n2sm_avaliable) {
+    if (psc and psc->is_n2sm_available) {
       item.n2sm              = bstrcpy(psc->n2sm);
-      item.is_n2sm_avaliable = true;
+      item.is_n2sm_available = true;
     } else {
-      item.is_n2sm_avaliable = false;
+      item.is_n2sm_available = false;
       if (uplink_data_status_opt.has_value()) {
         set_pdu_session_reactivation_result(
             pdu_session_id, pdu_session_reactivation_result);
@@ -3034,10 +3080,10 @@ void amf_n1::security_mode_complete_handle(
 
     for (auto const& pdu_session : pdu_sessions) {
       pdu_session_info_t item = {};
-      if (pdu_session.second.is_n2sm_avaliable) {
+      if (pdu_session.second.is_n2sm_available) {
         item.n2sm = bstrcpy(pdu_session.second.n2sm);
       }
-      item.is_n2sm_avaliable = pdu_session.second.is_n2sm_avaliable;
+      item.is_n2sm_available = pdu_session.second.is_n2sm_available;
       itti_msg->pdu_sessions.insert(
           std::pair<uint8_t, pdu_session_info_t>(pdu_session.first, item));
     }
@@ -3182,21 +3228,27 @@ void amf_n1::encode_nas_message_protected(
       nas_message_cipher_protected(nsc, NAS_MESSAGE_DOWNLINK, input, ciphered);
       protected_nas_buf[0] = k5gsMobilityManagementMessages;
       protected_nas_buf[1] = kIntegrityProtectedAndCiphered;
-      protected_nas_buf[6] = (uint8_t) nsc.dl_count.seq_num;
+      protected_nas_buf[kSecurityProtected5gsNasMessageSequenceNumberOctet] =
+          (uint8_t) nsc.dl_count.seq_num;
 
       uint8_t* buf_tmp = (uint8_t*) bdata(ciphered);
       if (buf_tmp != nullptr)
-        memcpy(&protected_nas_buf[7], (uint8_t*) buf_tmp, blength(ciphered));
+        memcpy(
+            &protected_nas_buf[kSecurityProtected5gsNasMessageHeaderLength],
+            (uint8_t*) buf_tmp, blength(ciphered));
 
       uint32_t mac32 = 0;
       if (!(nas_message_integrity_protected(
-              nsc, NAS_MESSAGE_DOWNLINK, protected_nas_buf + 6,
+              nsc, NAS_MESSAGE_DOWNLINK,
+              protected_nas_buf +
+                  kSecurityProtected5gsNasMessageSequenceNumberOctet,
               input_nas_len + 1, mac32))) {
         memcpy(protected_nas_buf, input_nas_buf, input_nas_len);
         encoded_size = input_nas_len;
       } else {
         *(uint32_t*) (protected_nas_buf + 2) = htonl(mac32);
-        encoded_size                         = 7 + input_nas_len;
+        encoded_size =
+            kSecurityProtected5gsNasMessageHeaderLength + input_nas_len;
       }
 
       utils::bdestroy_wrapper(&input);
@@ -3210,18 +3262,24 @@ void amf_n1::encode_nas_message_protected(
       }
       protected_nas_buf[0] = k5gsMobilityManagementMessages;
       protected_nas_buf[1] = kIntegrityProtectedWithNewSecurityContext;
-      protected_nas_buf[6] = (uint8_t) nsc.dl_count.seq_num;
-      memcpy(&protected_nas_buf[7], input_nas_buf, input_nas_len);
+      protected_nas_buf[kSecurityProtected5gsNasMessageSequenceNumberOctet] =
+          (uint8_t) nsc.dl_count.seq_num;
+      memcpy(
+          &protected_nas_buf[kSecurityProtected5gsNasMessageHeaderLength],
+          input_nas_buf, input_nas_len);
       uint32_t mac32 = {};
       if (!(nas_message_integrity_protected(
-              nsc, NAS_MESSAGE_DOWNLINK, protected_nas_buf + 6,
+              nsc, NAS_MESSAGE_DOWNLINK,
+              protected_nas_buf +
+                  kSecurityProtected5gsNasMessageSequenceNumberOctet,
               input_nas_len + 1, mac32))) {
         memcpy(protected_nas_buf, input_nas_buf, input_nas_len);
         encoded_size = input_nas_len;
       } else {
         Logger::amf_n1().debug("mac32: 0x%x", mac32);
         *(uint32_t*) (protected_nas_buf + 2) = htonl(mac32);
-        encoded_size                         = 7 + input_nas_len;
+        encoded_size =
+            kSecurityProtected5gsNasMessageHeaderLength + input_nas_len;
       }
     } break;
 
@@ -4491,7 +4549,7 @@ void amf_n1::get_pdu_session_to_be_activated(
 
 //------------------------------------------------------------------------------
 void amf_n1::initialize_registration_accept(
-    std::unique_ptr<nas::RegistrationAccept>& registration_accept,
+    std::unique_ptr<RegistrationAccept>& registration_accept,
     const std::shared_ptr<nas_context>& nc) {
   registration_accept->SetHeader(kPlain5gsMessage);
 
@@ -5098,12 +5156,12 @@ bool amf_n1::get_slice_selection_subscription_data(
       std::vector<Snssai> default_snssais = nssai.getDefaultSingleNssais();
       // bool default_subscribed_snssai = true;
       for (const auto& ds : default_snssais) {
-        nas::SNSSAI_t subscribed_snssai = {};
-        subscribed_snssai.sst           = ds.getSst();
-        uint32_t subscribed_snssai_sd   = SD_NO_VALUE;
+        oai::nas::SNSSAI_t subscribed_snssai = {};
+        subscribed_snssai.sst                = ds.getSst();
+        uint32_t subscribed_snssai_sd        = SD_NO_VALUE;
         amf_conv::sd_string_to_int(ds.getSd(), subscribed_snssai_sd);
         subscribed_snssai.sd = subscribed_snssai_sd;
-        std::pair<bool, nas::SNSSAI_t> tmp;
+        std::pair<bool, oai::nas::SNSSAI_t> tmp;
         tmp.second = subscribed_snssai;
         tmp.first  = true;
         /*
@@ -5178,12 +5236,12 @@ bool amf_n1::get_slice_selection_subscription_data_from_conf_file(
             "Added S-NSSAI (SST %d, SD %s)", sst, s.sd.c_str());
         common_snssais.push_back(nssai);
         // Store this info in UE NAS Context
-        nas::SNSSAI_t subscribed_snssai = {};
-        subscribed_snssai.sst           = sst;
-        uint32_t subscribed_snssai_sd   = SD_NO_VALUE;
+        oai::nas::SNSSAI_t subscribed_snssai = {};
+        subscribed_snssai.sst                = sst;
+        uint32_t subscribed_snssai_sd        = SD_NO_VALUE;
         amf_conv::sd_string_to_int(s.sd, subscribed_snssai_sd);
         subscribed_snssai.sd = subscribed_snssai_sd;
-        std::pair<bool, nas::SNSSAI_t> tmp;
+        std::pair<bool, oai::nas::SNSSAI_t> tmp;
         tmp.second = subscribed_snssai;
         tmp.first  = true;
         /*

@@ -279,12 +279,13 @@ class amf_n2 : public ngap::ngap_app {
   /*
    * Get list of common S-NSSAIs between AMF and gNB to be used by UE
    * @param [const uint32_t&] ran_ue_ngap_id: RAN UE NGAP ID
-   * @param [std::vector<nas::SNSSAI_t>&] common_nssai: list of common S-NSSAIs
+   * @param [std::vector<oai::nas::SNSSAI_t>&] common_nssai: list of common
+   * S-NSSAIs
    * @return void
    */
   bool get_common_NSSAI(
       const uint32_t& ran_ue_ngap_id, uint32_t gnb_id,
-      std::vector<nas::SNSSAI_t>& common_nssai);
+      std::vector<oai::nas::SNSSAI_t>& common_nssai);
 
   /*
    * Get the UE NGAP context associated with a RAN UE NGAP ID if it exists and

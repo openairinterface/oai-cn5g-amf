@@ -36,10 +36,11 @@ static const std::string AMF_N1         = "amf_n1";
 static const std::string AMF_SBI        = "amf_sbi";
 static const std::string AMF_SERVER_LOG = "amf_server";
 
-class Logger {
+class Logger : public oai::logger::logger_common {
  public:
   static void init(
       const std::string& name, const bool log_stdout, const bool log_rot_file) {
+    oai::logger::logger_common(name, log_stdout, log_rot_file);
     oai::logger::logger_registry::register_logger(
         name, ASYNC_CMD, log_stdout, log_rot_file);
     oai::logger::logger_registry::register_logger(

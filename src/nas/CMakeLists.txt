@@ -19,27 +19,18 @@
 #      contact@openairinterface.org
 ################################################################################
 file(GLOB AMF_NAS_src_files
-  msgs/*.cpp
-  ies/*.cpp
-  utils/*.c
+  ${SRC_TOP_DIR}/${MOUNTED_COMMON}/nas/5gmm-msgs/*.cpp
+  ${SRC_TOP_DIR}/${MOUNTED_COMMON}/nas/ies/*.cpp
+  ${SRC_TOP_DIR}/${MOUNTED_COMMON}/nas/utils/*.c
 )
 
 add_library (AMF_NAS STATIC ${AMF_NAS_src_files})
 
-set(NAS_DIR "${SRC_TOP_DIR}/nas")
-target_include_directories(AMF_NAS PUBLIC ${NAS_DIR}/ies)
-target_include_directories(AMF_NAS PUBLIC ${NAS_DIR}/common)
-target_include_directories(AMF_NAS PUBLIC ${NAS_DIR}/msgs)
-target_include_directories(AMF_NAS PUBLIC ${NAS_DIR}/utils)
-target_include_directories(AMF_NAS PUBLIC ${SRC_TOP_DIR}/ngap/libngap)
-target_include_directories(AMF_NAS PUBLIC ${SRC_TOP_DIR}/common)
-target_include_directories(AMF_NAS PUBLIC ${SRC_TOP_DIR}/common/unicode)
-target_include_directories(AMF_NAS PUBLIC ${SRC_TOP_DIR}/sbi/model)
-target_include_directories(AMF_NAS PUBLIC ${SRC_TOP_DIR}/sctp)
-target_include_directories(AMF_NAS PUBLIC ${SRC_TOP_DIR}/secu_algorithms/5gaka)
-target_include_directories(AMF_NAS PUBLIC ${SRC_TOP_DIR}/secu_algorithms/nas_enc_int)
-target_include_directories(AMF_NAS PUBLIC ${SRC_TOP_DIR}/utils)
-target_include_directories(AMF_NAS PUBLIC ${SRC_TOP_DIR}/utils/bstr)
+target_include_directories(AMF_NAS PUBLIC ${SRC_TOP_DIR}/${MOUNTED_COMMON}/nas/ies)
+target_include_directories(AMF_NAS PUBLIC ${SRC_TOP_DIR}/${MOUNTED_COMMON}/nas/common)
+target_include_directories(AMF_NAS PUBLIC ${SRC_TOP_DIR}/${MOUNTED_COMMON}/nas/5gmm-msgs)
+target_include_directories(AMF_NAS PUBLIC ${SRC_TOP_DIR}/${MOUNTED_COMMON}/nas/utils)
 target_include_directories(AMF_NAS PUBLIC ${SRC_TOP_DIR}/${MOUNTED_COMMON}/logger)
 target_include_directories(AMF_NAS PUBLIC ${SRC_TOP_DIR}/${MOUNTED_COMMON}/common)
 target_include_directories(AMF_NAS PUBLIC ${SRC_TOP_DIR}/${MOUNTED_COMMON}/utils)
+target_include_directories(AMF_NAS PUBLIC ${SRC_TOP_DIR}/${MOUNTED_COMMON}/utils/bstr)

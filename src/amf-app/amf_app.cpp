@@ -44,7 +44,7 @@
 #include "utils.hpp"
 
 using namespace ngap;
-using namespace nas;
+using namespace oai::nas;
 using namespace amf_application;
 using namespace oai::config;
 using namespace oai::amf::api;

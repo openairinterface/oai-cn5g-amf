@@ -42,7 +42,7 @@ using namespace sctp;
 
 typedef struct pdu_session_info_s {
   bstring n2sm;
-  bool is_n2sm_avaliable;
+  bool is_n2sm_available;
 } pdu_session_info_t;
 
 class itti_msg_n2 : public itti_msg {
@@ -177,7 +177,7 @@ class itti_initial_context_setup_request : public itti_msg_n2 {
     for (const auto& p : i.pdu_sessions) {
       pdu_session_info_t item = {};
       item.n2sm               = bstrcpy(p.second.n2sm);
-      item.is_n2sm_avaliable  = p.second.is_n2sm_avaliable;
+      item.is_n2sm_available  = p.second.is_n2sm_available;
       uint8_t pdu_session_id  = p.first;
       pdu_sessions.insert(
           std::pair<uint8_t, pdu_session_info_t>(pdu_session_id, item));
@@ -206,30 +206,36 @@ class itti_pdu_session_resource_setup_request : public itti_msg_n2 {
       const task_id_t origin, const task_id_t destination)
       : itti_msg_n2(PDU_SESSION_RESOURCE_SETUP_REQUEST, origin, destination) {
     nas            = nullptr;
-    n2sm           = nullptr;
     ran_ue_ngap_id = 0;
     amf_ue_ngap_id = 0;
-    pdu_session_id = 0;
   }
   itti_pdu_session_resource_setup_request(
       const itti_pdu_session_resource_setup_request& i)
       : itti_msg_n2(i) {
     nas            = bstrcpy(i.nas);
-    n2sm           = bstrcpy(i.n2sm);
     ran_ue_ngap_id = i.ran_ue_ngap_id;
     amf_ue_ngap_id = i.amf_ue_ngap_id;
-    pdu_session_id = i.pdu_session_id;
+    for (const auto& p : i.pdu_sessions) {
+      pdu_session_info_t item = {};
+      item.is_n2sm_available  = p.second.is_n2sm_available;
+      if (item.is_n2sm_available) item.n2sm = bstrcpy(p.second.n2sm);
+      uint8_t pdu_session_id = p.first;
+      pdu_sessions.insert(
+          std::pair<uint8_t, pdu_session_info_t>(pdu_session_id, item));
+    }
   }
   virtual ~itti_pdu_session_resource_setup_request() {
     utils::bdestroy_wrapper(&nas);
-    utils::bdestroy_wrapper(&n2sm);
+    for (auto& p : pdu_sessions) {
+      pdu_session_info_t item = {};
+      utils::bdestroy_wrapper(&p.second.n2sm);
+    }
   }
 
   bstring nas;
-  bstring n2sm;
   uint32_t ran_ue_ngap_id;
   long amf_ue_ngap_id;
-  uint8_t pdu_session_id;
+  std::map<uint8_t, pdu_session_info_t> pdu_sessions;
 };
 
 class itti_pdu_session_resource_modify_request : public itti_msg_n2 {
