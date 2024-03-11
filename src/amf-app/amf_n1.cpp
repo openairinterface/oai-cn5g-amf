@@ -2093,8 +2093,9 @@ bool amf_n1::auth_vectors_generator(std::shared_ptr<nas_context>& nc) {
     if (!authentication::get_instance().authentication_vectors_generator_in_udm(
             nc))
       return false;
-    id(!authentication::get_instance().authentication_vectors_generator_in_ausf(
-        nc)) return false;
+    if (!authentication::get_instance()
+             .authentication_vectors_generator_in_ausf(nc))
+      return false;
     Logger::amf_n1().debug("Deriving kamf");
     for (int i = 0; i < MAX_5GS_AUTH_VECTORS; i++) {
       Authentication_5gaka::derive_kamf(

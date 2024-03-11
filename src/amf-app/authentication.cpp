@@ -46,8 +46,8 @@ authentication::authentication() {
 
 //------------------------------------------------------------------------------
 bool authentication::authentication_vectors_generator_in_ausf(
-    std::shared_ptr<nas_context>& nc) {  // A.5, 3gpp ts33.501
-
+    std::shared_ptr<nas_context>& nc) {
+  // Note: ref A.5@3GPP TS 33.501
   Logger::authentication().debug(
       "Generate Authentication Vectors in AUSF (locally in AMF)");
   uint8_t inputString[MAX_5GS_AUTH_VECTORS][40];
