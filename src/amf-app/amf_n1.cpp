@@ -83,7 +83,6 @@ extern amf_n2* amf_n2_inst;
 extern statistics stacs;
 
 // Static variables
-uint8_t amf_n1::no_random_delta                        = 0;
 std::map<std::string, std::string> amf_n1::rand_record = {};
 
 void amf_n1_task(void*);
@@ -156,9 +155,6 @@ amf_n1::amf_n1()
   supi2amfId          = {};
   supi2ranId          = {};
   guti2nas_context    = {};
-  random_state        = {};
-  // db_desc             = {};
-  // db_desc.db_conn     = nullptr;
 
   // EventExposure: subscribe to UE Location Report
   ee_ue_location_report_connection = event_sub.subscribe_ue_location_report(
@@ -2090,12 +2086,15 @@ void amf_n1::run_registration_procedure(std::shared_ptr<nas_context>& nc) {
 //------------------------------------------------------------------------------
 bool amf_n1::auth_vectors_generator(std::shared_ptr<nas_context>& nc) {
   Logger::amf_n1().debug("Start to generate Authentication Vectors");
-  if (amf_cfg.support_features.enable_external_ausf) {
+  if (amf_cfg.support_features.enable_external_ausf_udm) {
     // get authentication vectors from AUSF
     if (!get_authentication_vectors_from_ausf(nc)) return false;
   } else {  // Generate locally
-    authentication::get_instance().authentication_vectors_generator_in_udm(nc);
-    authentication::get_instance().authentication_vectors_generator_in_ausf(nc);
+    if (!authentication::get_instance().authentication_vectors_generator_in_udm(
+            nc))
+      return false;
+    id(!authentication::get_instance().authentication_vectors_generator_in_ausf(
+        nc)) return false;
     Logger::amf_n1().debug("Deriving kamf");
     for (int i = 0; i < MAX_5GS_AUTH_VECTORS; i++) {
       Authentication_5gaka::derive_kamf(
@@ -2391,7 +2390,7 @@ void amf_n1::authentication_response_handle(
     Logger::amf_n1().warn(
         "Cannot receive AuthenticationResponseParameter (RES*)");
   } else {
-    if (amf_cfg.support_features.enable_external_ausf) {
+    if (amf_cfg.support_features.enable_external_ausf_udm) {
       // std::string data = bdata(resStar);
       if (!_5g_aka_confirmation_from_ausf(nc, resStar)) isAuthOk = false;
     } else {
@@ -4894,7 +4893,7 @@ bool amf_n1::check_subscribed_nssai(
 bool amf_n1::get_slice_selection_subscription_data(
     const std::shared_ptr<nas_context>& nc, oai::amf::model::Nssai& nssai) {
   // TODO: UDM selection (from NRF or configuration file)
-  if (amf_cfg.support_features.enable_external_udm) {
+  if (amf_cfg.support_features.enable_external_ausf_udm) {
     Logger::amf_n1().debug(
         "Get the Slice Selection Subscription Data from UDM");
 

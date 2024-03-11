@@ -37,7 +37,6 @@
 #include "bstrlib.h"
 #include "itti.hpp"
 #include "itti_msg_n1.hpp"
-//#include "mysql_db.hpp"
 #include "nas_context.hpp"
 #include "pdu_session_context.hpp"
 #include "ue_context.hpp"
@@ -936,9 +935,6 @@ class amf_n1 {
   mutable std::shared_mutex m_guti2nas_context;
 
   static std::map<std::string, std::string> rand_record;
-  static uint8_t no_random_delta;
-  random_state_t random_state;
-  // database_t db_desc;
 };
 }  // namespace amf_application
 

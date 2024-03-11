@@ -45,20 +45,18 @@ namespace oai::config {
 typedef struct support_features_s {
   bool enable_nf_registration;
   bool enable_smf_selection;
-  bool enable_external_ausf;
-  bool enable_external_udm;
+  bool enable_external_ausf_udm;
   bool enable_nssf;
   bool enable_lmf;
   uint8_t http_version;
   nlohmann::json to_json() const {
-    nlohmann::json json_data            = {};
-    json_data["enable_nf_registration"] = this->enable_nf_registration;
-    json_data["enable_smf_selection"]   = this->enable_smf_selection;
-    json_data["enable_external_ausf"]   = this->enable_external_ausf;
-    json_data["enable_external_udm"]    = this->enable_external_udm;
-    json_data["enable_nssf"]            = this->enable_nssf;
-    json_data["enable_lmf"]             = this->enable_lmf;
-    json_data["http_version"]           = this->http_version;
+    nlohmann::json json_data              = {};
+    json_data["enable_nf_registration"]   = this->enable_nf_registration;
+    json_data["enable_smf_selection"]     = this->enable_smf_selection;
+    json_data["enable_external_ausf_udm"] = this->enable_external_ausf_udm;
+    json_data["enable_nssf"]              = this->enable_nssf;
+    json_data["enable_lmf"]               = this->enable_lmf;
+    json_data["http_version"]             = this->http_version;
     return json_data;
   }
 
@@ -72,13 +70,9 @@ typedef struct support_features_s {
         this->enable_smf_selection =
             json_data["enable_smf_selection"].get<bool>();
       }
-      if (json_data.find("enable_external_ausf") != json_data.end()) {
-        this->enable_external_ausf =
-            json_data["enable_external_ausf"].get<bool>();
-      }
-      if (json_data.find("enable_external_udm") != json_data.end()) {
-        this->enable_external_udm =
-            json_data["enable_external_udm"].get<bool>();
+      if (json_data.find("enable_external_ausf_udm") != json_data.end()) {
+        this->enable_external_ausf_udm =
+            json_data["enable_external_ausf_udm"].get<bool>();
       }
       if (json_data.find("enable_nssf") != json_data.end()) {
         this->enable_nssf = json_data["enable_nssf"].get<bool>();

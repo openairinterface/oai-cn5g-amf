@@ -43,20 +43,17 @@ authentication::authentication() {
   db_desc         = {};
   db_desc.db_conn = nullptr;
 }
+
 //------------------------------------------------------------------------------
 bool authentication::authentication_vectors_generator_in_ausf(
     std::shared_ptr<nas_context>& nc) {  // A.5, 3gpp ts33.501
-                                         // TODO: remove naked ptr
+
   Logger::authentication().debug(
       "Generate Authentication Vectors in AUSF (locally in AMF)");
   uint8_t inputString[MAX_5GS_AUTH_VECTORS][40];
-  uint8_t* xresStar[MAX_5GS_AUTH_VECTORS];
-  uint8_t* rand[MAX_5GS_AUTH_VECTORS];
   for (int i = 0; i < MAX_5GS_AUTH_VECTORS; i++) {
-    xresStar[i] = nc->_5g_he_av[i].xresStar;
-    rand[i]     = nc->_5g_he_av[i].rand;
-    memcpy(&inputString[i][0], rand[i], 16);
-    memcpy(&inputString[i][16], xresStar[i], 16);
+    memcpy(&inputString[i][0], nc->_5g_he_av[i].rand, 16);
+    memcpy(&inputString[i][16], nc->_5g_he_av[i].xresStar, 16);
     unsigned char sha256Out[Sha256::DIGEST_SIZE];
     apply_sha256(
         (unsigned char*) inputString[i], AUTH_VECTOR_LENGTH_OCTETS, sha256Out);
@@ -260,9 +257,7 @@ void authentication::apply_sha256(
 
 //------------------------------------------------------------------------------
 bool authentication::get_mysql_auth_info(
-    const std::string& imsi,
-    mysql_auth_info_t&
-        resp) {  // openair-cn/tree/v0.5.0/src/oai_hss/db/db_connector.c
+    const std::string& imsi, mysql_auth_info_t& resp) {
   MYSQL_RES* res;
   MYSQL_ROW row;
   std::string query;
