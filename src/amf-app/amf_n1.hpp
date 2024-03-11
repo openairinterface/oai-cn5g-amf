@@ -37,7 +37,7 @@
 #include "bstrlib.h"
 #include "itti.hpp"
 #include "itti_msg_n1.hpp"
-#include "mysql_db.hpp"
+//#include "mysql_db.hpp"
 #include "nas_context.hpp"
 #include "pdu_session_context.hpp"
 #include "ue_context.hpp"
@@ -294,22 +294,6 @@ class amf_n1 {
       std::shared_ptr<nas_context>& nc, bstring resStar);
 
   /*
-   * Generate the Authentication Vectors (locally at AMF)
-   * @param [std::shared_ptr<nas_context>&] nc: Pointer to the UE NAS Context
-   * @return true if generated successfully, otherwise return false
-   */
-  bool authentication_vectors_generator_in_ausf(
-      std::shared_ptr<nas_context>& nc);
-
-  /*
-   * Generate the Authentication Vectors (RANDOM, locally at AMF)
-   * @param [std::shared_ptr<nas_context>&] nc: Pointer to the UE NAS Context
-   * @return true if generated successfully, otherwise return false
-   */
-  bool authentication_vectors_generator_in_udm(
-      std::shared_ptr<nas_context>& nc);
-
-  /*
    * Handle the Authentication Vector to setup security context with the UE
    * @param [std::shared_ptr<nas_context>&] nc: Pointer to the UE NAS Context
    * @return void
@@ -392,76 +376,6 @@ class amf_n1 {
   bool nas_message_cipher_protected(
       nas_secu_ctx& nsc, uint8_t direction, bstring input_nas,
       bstring& output_nas);
-
-  // NOTE: All the MySQL-related functions are currently implemented in
-  // mysql_db.cpp
-
-  /*
-   * Get the Authentication info from the DB (MySQL)
-   * @param [const std::string&] imsi: UE IMSI
-   * @param [mysql_auth_info_t&] resp: Response from MySQL
-   * @return true if retrieve successfully, otherwise return false
-   */
-  bool get_mysql_auth_info(const std::string& imsi, mysql_auth_info_t& resp);
-
-  /*
-   * Update the RAND and SQN to the DB (MySQL)
-   * @param [const std::string&] imsi: UE IMSI
-   * @param [uint8_t*] rand_p: RAND
-   * @param [uint8_t*] sqn: SQN
-   * @return void
-   */
-  void mysql_push_rand_sqn(
-      const std::string& imsi, uint8_t* rand_p, uint8_t* sqn);
-
-  /*
-   * Increment SQN in the DB for next round (MySQL)
-   * @param [const std::string&] imsi: UE IMSI
-   * @return void
-   */
-  void mysql_increment_sqn(const std::string& imsi);
-
-  /*
-   * Establish the connection to the DB (MySQL)
-   * @return true if successfully, otherwise return false
-   */
-  bool connect_to_mysql();
-
-  /*
-   * Generate a RAND with corresponding length
-   * @param [uint8_t*] random_p: RAND
-   * @param [ssize_t] length: length of RAND
-   * @return void
-   */
-  void generate_random(uint8_t* random_p, ssize_t length);
-
-  /*
-   * Generate 5G HE AV Vector (locally at AMF)
-   * @param [uint8_t[16]] opc: OPC
-   * @param [const std::string&] imsi: UE IMSI
-   * @param [uint8_t[16]] key: Operator Key
-   * @param [uint8_t[16]] sqn: SQN
-   * @param [std::string&] serving_network: Serving Network
-   * @param [_5G_HE_AV_t&] vector: Generated vector
-   * @return void
-   */
-  void generate_5g_he_av_in_udm(
-      const uint8_t opc[16], const std::string& imsi, uint8_t key[16],
-      uint8_t sqn[6], std::string& serving_network, _5G_HE_AV_t& vector);
-
-  /*
-   * Perform annex_a_4_33501 algorithm
-   * @param [uint8_t[16]] ck: ck
-   * @param [uint8_t[16]] ik: ik
-   * @param [uint8_t*] input: input
-   * @param [uint8_t[16]] rand: rand
-   * @param [std::string&] serving_network: Serving Network
-   * @param [uint8_t*] output: output
-   * @return void
-   */
-  void annex_a_4_33501(
-      uint8_t ck[16], uint8_t ik[16], uint8_t* input, uint8_t rand[16],
-      std::string& serving_network, uint8_t* output);
 
   /*
    * Get the list of PDU session to be activated from PDU session status
@@ -964,15 +878,6 @@ class amf_n1 {
       const plmn_t& plmn);
 
   /*
-   * Sha256 Algorithm
-   * @param [unsigned char*] message: Input message
-   * @param [int] msg_len: Length of the input message
-   * @param [unsigned char*] output: Output message
-   * @return void
-   */
-  void sha256(unsigned char* message, int msg_len, unsigned char* output);
-
-  /*
    * Send ITTI message DL NAS Buffer to task N2
    * @param [bstring&] nas_msg: NAS message
    * @param [const uint32_t] ran_ue_ngap_id: RAN UE NGAP ID
@@ -1033,7 +938,7 @@ class amf_n1 {
   static std::map<std::string, std::string> rand_record;
   static uint8_t no_random_delta;
   random_state_t random_state;
-  database_t db_desc;
+  // database_t db_desc;
 };
 }  // namespace amf_application
 

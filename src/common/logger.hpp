@@ -23,18 +23,19 @@
 
 #include "logger_base.hpp"
 
-static const std::string ASYNC_CMD      = "async_cmd";
-static const std::string AMF_APP        = "amf_app";
-static const std::string CONFIG         = "config";
-static const std::string SYSTEM         = "system";
-static const std::string SCTP           = "sctp";
-static const std::string NAS_MM         = "nas_mm";
-static const std::string NGAP           = "ngap";
-static const std::string ITTI           = "itti";
-static const std::string AMF_N2         = "amf_n2";
-static const std::string AMF_N1         = "amf_n1";
-static const std::string AMF_SBI        = "amf_sbi";
-static const std::string AMF_SERVER_LOG = "amf_server";
+static const std::string ASYNC_CMD          = "async_cmd";
+static const std::string AMF_APP            = "amf_app";
+static const std::string CONFIG             = "config";
+static const std::string SYSTEM             = "system";
+static const std::string SCTP               = "sctp";
+static const std::string NAS_MM             = "nas_mm";
+static const std::string NGAP               = "ngap";
+static const std::string ITTI               = "itti";
+static const std::string AMF_N2             = "amf_n2";
+static const std::string AMF_N1             = "amf_n1";
+static const std::string AMF_SBI            = "amf_sbi";
+static const std::string AMF_SERVER_LOG     = "amf_server";
+static const std::string AMF_AUTHENTICATION = "amf_authentication";
 
 class Logger : public oai::logger::logger_common {
  public:
@@ -65,6 +66,8 @@ class Logger : public oai::logger::logger_common {
         name, AMF_SBI, log_stdout, log_rot_file);
     oai::logger::logger_registry::register_logger(
         name, AMF_SERVER_LOG, log_stdout, log_rot_file);
+    oai::logger::logger_registry::register_logger(
+        name, AMF_AUTHENTICATION, log_stdout, log_rot_file);
   }
   static void set_level(spdlog::level::level_enum level) {
     oai::logger::logger_registry::set_level(level);
@@ -108,5 +111,8 @@ class Logger : public oai::logger::logger_common {
   }
   static const oai::logger::printf_logger& amf_server() {
     return oai::logger::logger_registry::get_logger(AMF_SERVER_LOG);
+  }
+  static const oai::logger::printf_logger& authentication() {
+    return oai::logger::logger_registry::get_logger(AMF_AUTHENTICATION);
   }
 };
