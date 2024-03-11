@@ -40,6 +40,16 @@ RUN apt-get update && \
     DEBIAN_FRONTEND=noninteractive apt-get install --yes \
       psmisc \
       git \
+      make \
+      gcc \
+      pkg-config \
+      libnuma-dev \
+      libpopt-dev \
+      flex bison \
+      libxml2-dev \
+      lttng-modules-dkms \
+      liblttng-ust-dev \
+      lttng-tools \
   && rm -rf /var/lib/apt/lists/*
 
 # Some GIT configuration commands quite useful
@@ -93,6 +103,9 @@ RUN apt-get update && \
       openssl \
       libbrotli1 \
       netbase \
+      lttng-modules-dkms \
+      liblttng-ust-dev \
+      lttng-tools \      
 # Ubuntu 20 --> libasan5
 # Ubuntu 22 --> libasan6
 #      libasan? \
@@ -144,7 +157,7 @@ COPY --from=oai-amf-builder \
 WORKDIR /openair-amf
 
 # expose ports
-EXPOSE 80/tcp 9090/tcp 38412/sctp
+EXPOSE 80/tcp 9090/tcp 38412/sctp 5342 5343 5344
 # healthcheck
 HEALTHCHECK --interval=10s \
             --timeout=15s \

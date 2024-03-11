@@ -23,6 +23,8 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <iostream>
+
 
 #include <cstring>
 #include <iostream>
@@ -56,6 +58,7 @@ amf_http1_server* http1_server = nullptr;
 amf_http2_server* http2_server = nullptr;
 
 std::unique_ptr<amf_config_yaml> amf_cfg_yaml;
+std::unique_ptr<lttng_configuration> lttng_config_yaml;
 
 //------------------------------------------------------------------------------
 void amf_signal_handler(int s) {
@@ -122,7 +125,20 @@ int main(int argc, char** argv) {
     std::cout << "Options::parse() failed" << std::endl;
     return 1;
   }
+  std::string conf_file_name = Options::getYamlConfig();
+  std::string file_ext       = ".conf";
+  if (conf_file_name.find(file_ext) != std::string::npos) {
+    std::cout << "Currently not support .conf file\n";
+  } else {
+    std::cout << "Trying to read .yaml configuration file\n";
+    lttng_config_yaml = std::make_unique<lttng_configuration>(conf_file_name);
+    lttng_config_yaml->read_from_file();
 
+    std::cout << "LTTNG Log Activation: " << lttng_config_yaml->is_lttng_active() << "\n";
+    std::cout << "Log Level of LTTng: " << lttng_config_yaml->get_lttng_log_level() << "\n";
+  }
+
+  Logger::set_lttng(static_cast<bool>(lttng_config_yaml->is_lttng_active()));
   Logger::init("AMF", Options::getlogStdout(), Options::getlogRotFilelog());
   Logger::amf_app().startup("Options parsed!");
 
