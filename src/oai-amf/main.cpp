@@ -25,7 +25,6 @@
 #include <unistd.h>
 #include <iostream>
 
-
 #include <cstring>
 #include <iostream>
 #include <string>
@@ -134,8 +133,16 @@ int main(int argc, char** argv) {
     lttng_config_yaml = std::make_unique<lttng_configuration>(conf_file_name);
     lttng_config_yaml->read_from_file();
 
-    std::cout << "LTTNG Log Activation: " << lttng_config_yaml->is_lttng_active() << "\n";
-    std::cout << "Log Level of LTTng: " << lttng_config_yaml->get_lttng_log_level() << "\n";
+#ifdef LOGGER_CAN_USE_LTTNG
+    std::cout << "LTTNG Log Activation: "
+              << lttng_config_yaml->is_lttng_active() << "\n";
+    std::cout << "Log Level of LTTng: "
+              << lttng_config_yaml->get_lttng_log_level() << "\n";
+#else
+    std::cout << "LTTNG Tracing disabled at build-time!\n";
+    if (lttng_config_yaml->is_lttng_active())
+      std::cout << "Cannot use lttng log scheme on this build variant!\n";
+#endif
   }
 
   Logger::set_lttng(static_cast<bool>(lttng_config_yaml->is_lttng_active()));
@@ -145,7 +152,6 @@ int main(int argc, char** argv) {
   std::signal(SIGTERM, amf_signal_handler);
   std::signal(SIGINT, amf_signal_handler);
 
-  std::string conf_file_name = Options::getYamlConfig();
   Logger::system().debug("Parsing the configuration file, file type YAML.");
   amf_cfg_yaml = std::make_unique<amf_config_yaml>(
       conf_file_name, Options::getlogStdout(), Options::getlogRotFilelog());
