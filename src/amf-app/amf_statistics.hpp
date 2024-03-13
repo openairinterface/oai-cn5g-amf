@@ -25,6 +25,7 @@
 #include <vector>
 
 #include "amf.hpp"
+#include "config.hpp"
 #include "ngap_app.hpp"
 
 typedef struct {
@@ -34,6 +35,7 @@ typedef struct {
   std::string mcc;
   std::string mnc;
   std::string gnb_name;
+  std::string status;
   uint32_t tac;
   // long nrCellId;
   std::string plmn_to_string() const {
@@ -66,6 +68,10 @@ typedef struct ue_info_s {
   uint32_t cellId;
 } ue_info_t;
 
+constexpr uint8_t kStatisticsIndent            = 4;
+constexpr uint8_t kStatisticsHalfIeLength      = 16;
+constexpr uint8_t kStatisticsHalfIeLengthForUe = 10;
+
 class statistics {
  public:
   statistics();
@@ -77,6 +83,12 @@ class statistics {
    * @return void
    */
   void display();
+
+  std::string ie_to_string(
+      uint8_t half_ie_len, const std::string& ie_str) const;
+  std::string header_to_string(
+      uint8_t half_header_len, const std::string& str) const;
+  std::string to_string() const;
 
   /*
    * Update UE information
