@@ -20,10 +20,11 @@
  */
 
 #include "amf_statistics.hpp"
-#include <cstdio>
+
 #include <string>
-#include "logger.hpp"
+
 #include "amf_conversions.hpp"
+#include "logger.hpp"
 
 //------------------------------------------------------------------------------
 statistics::statistics() : m_ue_infos(), m_gnbs() {
@@ -44,7 +45,7 @@ void statistics::display() {
 //------------------------------------------------------------------------------
 std::string statistics::ie_to_string(
     uint8_t half_ie_len, const std::string& ie_str) const {
-  std::string out;
+  std::string out          = {};
   std::string ie_formatter = "{}{: <{}}{}";
   // Display only maximum half_ie_len*2 characters
   std::string input_str = ie_str;
@@ -60,7 +61,7 @@ std::string statistics::ie_to_string(
 //------------------------------------------------------------------------------
 std::string statistics::header_to_string(
     uint8_t header_len, const std::string& header_str) const {
-  std::string out;
+  std::string out              = {};
   std::string header_formatter = "{}{:-<{}}{}";
   uint8_t half_header_len      = header_len / 2;
   // Display only maximum half_table_len*2 characters
@@ -82,7 +83,7 @@ std::string statistics::header_to_string(
 
 //------------------------------------------------------------------------------
 void statistics::display_gnbs() const {
-  std::string out;
+  std::string out          = {};
   std::string inner_indent = fmt::format("{:<{}}", "", kStatisticsIndent);
   uint8_t header_length    = 0;
   // List of gNBs
@@ -105,25 +106,7 @@ void statistics::display_gnbs() const {
       .append(ie_to_string(kStatisticsHalfIeLengthForGnb, "gNB Name"))
       .append(ie_to_string(kStatisticsHalfIeLengthForGnb, "PLMN"))
       .append("|\n");
-  /*
-    // For testing only
-    out.append(inner_indent)
-        .append(ie_to_string(kStatisticsHalfIeLengthForGnb, "1"))
-        .append(ie_to_string(kStatisticsHalfIeLengthForGnb, "Connected"))
-        .append(ie_to_string(kStatisticsHalfIeLengthForGnb, "0xe000"))
-        .append(ie_to_string(kStatisticsHalfIeLengthForGnb, "gNB-OAI"))
-        .append(ie_to_string(kStatisticsHalfIeLengthForGnb, "001,01"))
-        .append("|\n");
 
-    // For testing only
-    out.append(inner_indent)
-        .append(ie_to_string(kStatisticsHalfIeLengthForGnb, "11"))
-        .append(ie_to_string(kStatisticsHalfIeLengthForGnb, "Disconnected"))
-        .append(ie_to_string(kStatisticsHalfIeLengthForGnb, "0xe000"))
-        .append(ie_to_string(kStatisticsHalfIeLengthForGnb, "gNB-OAI"))
-        .append(ie_to_string(kStatisticsHalfIeLengthForGnb, "001,01"))
-        .append("|\n");
-  */
   if (gnbs.size() == 0) {
     out.append(inner_indent)
         .append(ie_to_string(kStatisticsHalfIeLengthForGnb, "-"))
@@ -161,7 +144,7 @@ void statistics::display_gnbs() const {
 
 //------------------------------------------------------------------------------
 void statistics::display_ues() const {
-  std::string out;
+  std::string out          = {};
   std::string inner_indent = fmt::format("{:<{}}", "", kStatisticsIndent);
   uint8_t header_length    = 0;
 
@@ -189,19 +172,6 @@ void statistics::display_ues() const {
       .append(ie_to_string(kStatisticsHalfIeLengthForUe, "Cell Id"))
       .append("|\n");
 
-  /*
-  // For testing only
-  out.append(inner_indent)
-      .append(ie_to_string(kStatisticsHalfIeLengthForUe, "1"))
-      .append(ie_to_string(kStatisticsHalfIeLengthForUe, "5GMM-REGISTERED"))
-      .append(ie_to_string(kStatisticsHalfIeLengthForUe, "001010000000004"))
-      .append(ie_to_string(kStatisticsHalfIeLengthForUe, "-"))
-      .append(ie_to_string(kStatisticsHalfIeLengthForUe, "1"))
-      .append(ie_to_string(kStatisticsHalfIeLengthForUe, "4"))
-      .append(ie_to_string(kStatisticsHalfIeLengthForUe, "001,01"))
-      .append(ie_to_string(kStatisticsHalfIeLengthForUe, "0xe000"))
-      .append("|\n");
-*/
   if (ue_infos.size() == 0) {
     out.append(inner_indent)
         .append(ie_to_string(kStatisticsHalfIeLengthForUe, "-"))
