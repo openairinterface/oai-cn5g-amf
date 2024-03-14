@@ -37,8 +37,8 @@ statistics::~statistics() {}
 
 //------------------------------------------------------------------------------
 void statistics::display() {
-  Logger::amf_app().info("");
-  to_string();
+  display_gnbs();
+  display_ues();
 }
 
 //------------------------------------------------------------------------------
@@ -59,9 +59,10 @@ std::string statistics::ie_to_string(
 
 //------------------------------------------------------------------------------
 std::string statistics::header_to_string(
-    uint8_t half_header_len, const std::string& header_str) const {
+    uint8_t header_len, const std::string& header_str) const {
   std::string out;
   std::string header_formatter = "{}{:-<{}}{}";
+  uint8_t half_header_len      = header_len / 2;
   // Display only maximum half_table_len*2 characters
   std::string input_str = header_str;
   uint8_t len           = header_str.length();
@@ -72,107 +73,109 @@ std::string statistics::header_to_string(
           header_formatter, "", "", half_header_len - len / 2, header_str))
       .append(fmt::format(
           header_formatter, "", "", half_header_len + len / 2 - len, ""));
+  if (header_len % 2 == 1) {
+    std::string aligned_str = fmt::format("{:-<{}}", "", 1);
+    out.append(aligned_str);
+  }
   return out;
 }
 
 //------------------------------------------------------------------------------
-std::string statistics::to_string() const {
+void statistics::display_gnbs() const {
   std::string out;
-
-  uint8_t half_header_length =
-      (kStatisticsIndent + kStatisticsHalfIeLength * 2 * 5) / 2;
   std::string inner_indent = fmt::format("{:<{}}", "", kStatisticsIndent);
-
-  std::string line_formatter  = "{}{:-<{}}";
-  std::string table_formatter = "{}{:-<{}}{}";
-  std::string ie_formatter    = "{}{: <{}}{}";
-  std::string base_formatter  = "{}{:-<{}}{}\n";
-
+  uint8_t header_length    = 0;
   // List of gNBs
+  uint8_t number_cols = 5;
+  header_length =
+      kStatisticsHalfIeLengthForGnb * 2 * number_cols + (number_cols - 1);
   out.append("\n");
   out.append(inner_indent)
-      .append(header_to_string(half_header_length, ""))
+      .append(header_to_string(header_length, ""))
       .append("|\n");
 
   out.append(inner_indent)
-      .append(header_to_string(half_header_length, "gNBs' Information"))
+      .append(header_to_string(header_length, "gNBs' Information"))
       .append("|\n");
 
   out.append(inner_indent)
-      .append(ie_to_string(kStatisticsHalfIeLength, "Index"))
-      .append(ie_to_string(kStatisticsHalfIeLength, "Status"))
-      .append(ie_to_string(kStatisticsHalfIeLength, "Global Id"))
-      .append(ie_to_string(kStatisticsHalfIeLength, "gNB Name"))
-      .append(ie_to_string(kStatisticsHalfIeLength, "PLMN"))
+      .append(ie_to_string(kStatisticsHalfIeLengthForGnb, "Index"))
+      .append(ie_to_string(kStatisticsHalfIeLengthForGnb, "Status"))
+      .append(ie_to_string(kStatisticsHalfIeLengthForGnb, "Global Id"))
+      .append(ie_to_string(kStatisticsHalfIeLengthForGnb, "gNB Name"))
+      .append(ie_to_string(kStatisticsHalfIeLengthForGnb, "PLMN"))
       .append("|\n");
 
+  // For testing only
   out.append(inner_indent)
-      .append(ie_to_string(kStatisticsHalfIeLength, "1"))
-      .append(ie_to_string(kStatisticsHalfIeLength, "Connected"))
-      .append(ie_to_string(kStatisticsHalfIeLength, "0xe000"))
-      .append(ie_to_string(kStatisticsHalfIeLength, "gNB-OAI"))
-      .append(ie_to_string(kStatisticsHalfIeLength, "001,01"))
+      .append(ie_to_string(kStatisticsHalfIeLengthForGnb, "1"))
+      .append(ie_to_string(kStatisticsHalfIeLengthForGnb, "Connected"))
+      .append(ie_to_string(kStatisticsHalfIeLengthForGnb, "0xe000"))
+      .append(ie_to_string(kStatisticsHalfIeLengthForGnb, "gNB-OAI"))
+      .append(ie_to_string(kStatisticsHalfIeLengthForGnb, "001,01"))
       .append("|\n");
 
+  // For testing only
   out.append(inner_indent)
-      .append(ie_to_string(kStatisticsHalfIeLength, "11"))
-      .append(ie_to_string(kStatisticsHalfIeLength, "Disconnected"))
-      .append(ie_to_string(kStatisticsHalfIeLength, "0xe000"))
-      .append(ie_to_string(kStatisticsHalfIeLength, "gNB-OAI"))
-      .append(ie_to_string(kStatisticsHalfIeLength, "001,01"))
-      .append("|\n");
-
-  out.append(inner_indent)
-      .append(ie_to_string(kStatisticsHalfIeLength, "9"))
-      .append(ie_to_string(kStatisticsHalfIeLength, "Disconnected"))
-      .append(ie_to_string(kStatisticsHalfIeLength, "0xe000"))
-      .append(ie_to_string(kStatisticsHalfIeLength, "gNB-OAI"))
-      .append(ie_to_string(kStatisticsHalfIeLength, "001,01"))
+      .append(ie_to_string(kStatisticsHalfIeLengthForGnb, "11"))
+      .append(ie_to_string(kStatisticsHalfIeLengthForGnb, "Disconnected"))
+      .append(ie_to_string(kStatisticsHalfIeLengthForGnb, "0xe000"))
+      .append(ie_to_string(kStatisticsHalfIeLengthForGnb, "gNB-OAI"))
+      .append(ie_to_string(kStatisticsHalfIeLengthForGnb, "001,01"))
       .append("|\n");
 
   if (gnbs.size() == 0) {
     out.append(inner_indent)
-        .append(ie_to_string(kStatisticsHalfIeLength, "-"))
-        .append(ie_to_string(kStatisticsHalfIeLength, "-"))
-        .append(ie_to_string(kStatisticsHalfIeLength, "-"))
-        .append(ie_to_string(kStatisticsHalfIeLength, "-"))
-        .append(ie_to_string(kStatisticsHalfIeLength, "-"))
+        .append(ie_to_string(kStatisticsHalfIeLengthForGnb, "-"))
+        .append(ie_to_string(kStatisticsHalfIeLengthForGnb, "-"))
+        .append(ie_to_string(kStatisticsHalfIeLengthForGnb, "-"))
+        .append(ie_to_string(kStatisticsHalfIeLengthForGnb, "-"))
+        .append(ie_to_string(kStatisticsHalfIeLengthForGnb, "-"))
         .append("|\n");
   } else {
     int i = 1;
     for (auto const& gnb : gnbs) {
       std::string plmn = gnb.second.mcc + "," + gnb.second.mnc;
       out.append(inner_indent)
-          .append(ie_to_string(kStatisticsHalfIeLength, std::to_string(i)))
-          .append(ie_to_string(kStatisticsHalfIeLength, gnb.second.status))
+          .append(
+              ie_to_string(kStatisticsHalfIeLengthForGnb, std::to_string(i)))
+          .append(
+              ie_to_string(kStatisticsHalfIeLengthForGnb, gnb.second.status))
           .append(ie_to_string(
-              kStatisticsHalfIeLength,
+              kStatisticsHalfIeLengthForGnb,
               amf_conv::uint32_to_hex_string(gnb.second.gnb_id)))
-          .append(ie_to_string(kStatisticsHalfIeLength, gnb.second.gnb_name))
-          .append(ie_to_string(kStatisticsHalfIeLength, plmn))
+          .append(
+              ie_to_string(kStatisticsHalfIeLengthForGnb, gnb.second.gnb_name))
+          .append(ie_to_string(kStatisticsHalfIeLengthForGnb, plmn))
           .append("|\n");
       i++;
     }
   }
 
   out.append(inner_indent)
-      .append(header_to_string(half_header_length, ""))
+      .append(header_to_string(header_length, ""))
       .append("|\n");
 
   Logger::amf_app().info(out);
-  Logger::amf_app().info("\n");
+}
+
+//------------------------------------------------------------------------------
+void statistics::display_ues() const {
+  std::string out;
+  std::string inner_indent = fmt::format("{:<{}}", "", kStatisticsIndent);
+  uint8_t header_length    = 0;
 
   // List of UEs
-
-  half_header_length =
-      (kStatisticsIndent + kStatisticsHalfIeLengthForUe * 2 * 8) / 2;
+  uint8_t number_cols = 8;
+  header_length =
+      kStatisticsHalfIeLengthForUe * 2 * number_cols + (number_cols - 1);
   out.append("\n");
   out.append(inner_indent)
-      .append(header_to_string(half_header_length, ""))
+      .append(header_to_string(header_length, ""))
       .append("|\n");
 
   out.append(inner_indent)
-      .append(header_to_string(half_header_length, "UEs' Information"))
+      .append(header_to_string(header_length, "UEs' Information"))
       .append("|\n");
 
   out.append(inner_indent)
@@ -186,6 +189,7 @@ std::string statistics::to_string() const {
       .append(ie_to_string(kStatisticsHalfIeLengthForUe, "CELL ID"))
       .append("|\n");
 
+  // For testing only
   out.append(inner_indent)
       .append(ie_to_string(kStatisticsHalfIeLengthForUe, "1"))
       .append(ie_to_string(kStatisticsHalfIeLengthForUe, "5GMM-REGISTERED"))
@@ -233,41 +237,10 @@ std::string statistics::to_string() const {
   }
 
   out.append(inner_indent)
-      .append(header_to_string(half_header_length, ""))
+      .append(header_to_string(header_length, ""))
       .append("|\n");
 
   Logger::amf_app().info(out);
-  Logger::amf_app().info("\n");
-
-  Logger::amf_app().info(
-      "|-----------------------------------------------------------------------"
-      "---------------------------------------------|");
-  Logger::amf_app().info("");
-
-  Logger::amf_app().info(
-      "|-----------------------------------------------------------------------"
-      "---------------------------------------------|");
-  Logger::amf_app().info(
-      "|----------------------------------------------------UEs' "
-      "information------------------------------------------------|");
-  Logger::amf_app().info(
-      "| Index |      5GMM state      |      IMSI        |     GUTI      | RAN "
-      "UE NGAP ID | AMF UE ID |  PLMN   |  Cell ID  |");
-
-  int i = 0;
-  for (auto const& ue : ue_infos) {
-    Logger::amf_app().info(
-        "|%7d|%22s|%18s|%15s|%16ld|%11ld| %3s,%3s |0x%9x|", i + 1,
-        ue.second.registerStatus.c_str(), ue.second.imsi.c_str(),
-        ue.second.guti.c_str(), ue.second.ranid, ue.second.amfid,
-        ue.second.mcc.c_str(), ue.second.mnc.c_str(), ue.second.cellId);
-    i++;
-  }
-  Logger::amf_app().info(
-      "|-----------------------------------------------------------------------"
-      "---------------------------------------------|");
-  Logger::amf_app().info("");
-  return out;
 }
 
 //------------------------------------------------------------------------------

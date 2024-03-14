@@ -68,9 +68,9 @@ typedef struct ue_info_s {
   uint32_t cellId;
 } ue_info_t;
 
-constexpr uint8_t kStatisticsIndent            = 4;
-constexpr uint8_t kStatisticsHalfIeLength      = 16;
-constexpr uint8_t kStatisticsHalfIeLengthForUe = 10;
+constexpr uint8_t kStatisticsIndent             = 4;
+constexpr uint8_t kStatisticsHalfIeLengthForGnb = 16;
+constexpr uint8_t kStatisticsHalfIeLengthForUe  = 10;
 
 class statistics {
  public:
@@ -78,17 +78,43 @@ class statistics {
   ~statistics();
 
   /*
-   * Display the AMF configuration parameters
+   * Display the statistic information for gNB and UE
    * @param void
    * @return void
    */
   void display();
 
+  /*
+   * Display the statistic information for gNB
+   * @param void
+   * @return void
+   */
+  void display_gnbs() const;
+
+  /*
+   * Display the statistic information for UE
+   * @param void
+   * @return void
+   */
+  void display_ues() const;
+
+  /*
+   * Represent column information in string format
+   * @param [uint8_t] half_ie_len: half of the column's length
+   * @param [const std::string&] ie_str: info in string format
+   * @return void
+   */
   std::string ie_to_string(
       uint8_t half_ie_len, const std::string& ie_str) const;
+
+  /*
+   * Represent table header in string format
+   * @param [uint8_t] header_len: the column's length
+   * @param [const std::string&] str: info in string format
+   * @return void
+   */
   std::string header_to_string(
-      uint8_t half_header_len, const std::string& str) const;
-  std::string to_string() const;
+      uint8_t header_len, const std::string& str) const;
 
   /*
    * Update UE information
