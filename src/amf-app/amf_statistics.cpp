@@ -186,7 +186,7 @@ void statistics::display_ues() const {
       .append(ie_to_string(kStatisticsHalfIeLengthForUe, "RAN UE NGAP ID"))
       .append(ie_to_string(kStatisticsHalfIeLengthForUe, "AMF UE NGAP ID"))
       .append(ie_to_string(kStatisticsHalfIeLengthForUe, "PLMN"))
-      .append(ie_to_string(kStatisticsHalfIeLengthForUe, "CELL ID"))
+      .append(ie_to_string(kStatisticsHalfIeLengthForUe, "Cell Id"))
       .append("|\n");
 
   // For testing only
@@ -304,6 +304,7 @@ void statistics::add_gnb(const std::shared_ptr<gnb_context>& gc) {
   gnb.mcc       = gc->plmn.mcc;
   gnb.mnc       = gc->plmn.mnc;
   gnb.gnb_name  = gc->gnb_name;
+  gnb.status    = "Connected";
   for (auto i : gc->supported_ta_list) {
     gnb.plmn_list.push_back(i);
   }
@@ -313,10 +314,26 @@ void statistics::add_gnb(const std::shared_ptr<gnb_context>& gc) {
 }
 
 //------------------------------------------------------------------------------
-void statistics::update_gnb(const uint32_t& gnb_id, const gnb_infos& gnb) {
+void statistics::update_gnb(
+    const std::shared_ptr<gnb_context>& gc, const std::string& status) {
+  gnb_infos gnb = {};
+  gnb.gnb_id    = gc->gnb_id;
+  gnb.mcc       = gc->plmn.mcc;
+  gnb.mnc       = gc->plmn.mnc;
+  gnb.gnb_name  = gc->gnb_name;
+  gnb.status    = status;
+  for (auto i : gc->supported_ta_list) {
+    gnb.plmn_list.push_back(i);
+  }
+
   std::unique_lock lock(m_gnbs);
-  if (gnbs.count(gnb_id) > 0) {
-    gnbs[gnb_id] = gnb;
+  if (gnbs.count(gc->gnb_id) > 0) {
+    gnbs[gc->gnb_id] = gnb;
+    Logger::amf_app().debug("Update gNB info success");
+  } else {
+    gnbs.insert(std::pair<uint32_t, gnb_infos>(gc->gnb_id, gnb));
+    gNB_connected += 1;
+    Logger::amf_app().debug("Add new gNB success");
   }
 }
 

@@ -155,11 +155,12 @@ class statistics {
 
   /*
    * Update gNB info
-   * @param [const uint32_t&] gnb_id: gNB ID
-   * @param [const gnb_infos&] gnb: gNB Info
+   * @param [const std::shared_ptr<gnb_context>] gc: gNB's context
+   * @param [const std::string&] status: gNB's status
    * @return void
    */
-  void update_gnb(const uint32_t& gnb_id, const gnb_infos& gnb);
+  void update_gnb(
+      const std::shared_ptr<gnb_context>& gc, const std::string& status);
 
   /*
    * Get number of connected gNBs

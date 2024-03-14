@@ -675,9 +675,9 @@ void amf_n2::handle_itti_message(std::shared_ptr<itti_ng_shutdown>& itti_msg) {
         ue_context->ran_ue_ngap_id, gc->gnb_id);
   }
 
-  // Delete gNB context
+  // Delete gNB context and update statistic
   remove_gnb_context(itti_msg->assoc_id);
-  stacs.remove_gnb(gc->gnb_id);
+  stacs.update_gnb(gc, "Disconnected");
 
   Logger::amf_n2().debug(
       "Remove gNB with association id %d, gnb_id 0x%x", itti_msg->assoc_id,
