@@ -69,8 +69,8 @@ typedef struct ue_info_s {
 } ue_info_t;
 
 constexpr uint8_t kStatisticsIndent             = 4;
-constexpr uint8_t kStatisticsHalfIeLengthForGnb = 16;
-constexpr uint8_t kStatisticsHalfIeLengthForUe  = 10;
+constexpr uint8_t kStatisticsHalfIeLengthForGnb = 13;
+constexpr uint8_t kStatisticsHalfIeLengthForUe  = 8;
 
 class statistics {
  public:

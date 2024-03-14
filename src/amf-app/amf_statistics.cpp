@@ -188,6 +188,8 @@ void statistics::display_ues() const {
     for (auto const& ue : ue_infos) {
       std::string plmn = ue.second.mcc + "," + ue.second.mnc;
       out.append(inner_indent)
+          .append(
+              ie_to_string(kStatisticsHalfIeLengthForGnb, std::to_string(i)))
           .append(ie_to_string(
               kStatisticsHalfIeLengthForUe, ue.second.registerStatus))
           .append(ie_to_string(kStatisticsHalfIeLengthForUe, ue.second.imsi))
