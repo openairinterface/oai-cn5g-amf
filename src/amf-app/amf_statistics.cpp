@@ -105,25 +105,25 @@ void statistics::display_gnbs() const {
       .append(ie_to_string(kStatisticsHalfIeLengthForGnb, "gNB Name"))
       .append(ie_to_string(kStatisticsHalfIeLengthForGnb, "PLMN"))
       .append("|\n");
+  /*
+    // For testing only
+    out.append(inner_indent)
+        .append(ie_to_string(kStatisticsHalfIeLengthForGnb, "1"))
+        .append(ie_to_string(kStatisticsHalfIeLengthForGnb, "Connected"))
+        .append(ie_to_string(kStatisticsHalfIeLengthForGnb, "0xe000"))
+        .append(ie_to_string(kStatisticsHalfIeLengthForGnb, "gNB-OAI"))
+        .append(ie_to_string(kStatisticsHalfIeLengthForGnb, "001,01"))
+        .append("|\n");
 
-  // For testing only
-  out.append(inner_indent)
-      .append(ie_to_string(kStatisticsHalfIeLengthForGnb, "1"))
-      .append(ie_to_string(kStatisticsHalfIeLengthForGnb, "Connected"))
-      .append(ie_to_string(kStatisticsHalfIeLengthForGnb, "0xe000"))
-      .append(ie_to_string(kStatisticsHalfIeLengthForGnb, "gNB-OAI"))
-      .append(ie_to_string(kStatisticsHalfIeLengthForGnb, "001,01"))
-      .append("|\n");
-
-  // For testing only
-  out.append(inner_indent)
-      .append(ie_to_string(kStatisticsHalfIeLengthForGnb, "11"))
-      .append(ie_to_string(kStatisticsHalfIeLengthForGnb, "Disconnected"))
-      .append(ie_to_string(kStatisticsHalfIeLengthForGnb, "0xe000"))
-      .append(ie_to_string(kStatisticsHalfIeLengthForGnb, "gNB-OAI"))
-      .append(ie_to_string(kStatisticsHalfIeLengthForGnb, "001,01"))
-      .append("|\n");
-
+    // For testing only
+    out.append(inner_indent)
+        .append(ie_to_string(kStatisticsHalfIeLengthForGnb, "11"))
+        .append(ie_to_string(kStatisticsHalfIeLengthForGnb, "Disconnected"))
+        .append(ie_to_string(kStatisticsHalfIeLengthForGnb, "0xe000"))
+        .append(ie_to_string(kStatisticsHalfIeLengthForGnb, "gNB-OAI"))
+        .append(ie_to_string(kStatisticsHalfIeLengthForGnb, "001,01"))
+        .append("|\n");
+  */
   if (gnbs.size() == 0) {
     out.append(inner_indent)
         .append(ie_to_string(kStatisticsHalfIeLengthForGnb, "-"))
@@ -189,6 +189,7 @@ void statistics::display_ues() const {
       .append(ie_to_string(kStatisticsHalfIeLengthForUe, "Cell Id"))
       .append("|\n");
 
+  /*
   // For testing only
   out.append(inner_indent)
       .append(ie_to_string(kStatisticsHalfIeLengthForUe, "1"))
@@ -200,7 +201,7 @@ void statistics::display_ues() const {
       .append(ie_to_string(kStatisticsHalfIeLengthForUe, "001,01"))
       .append(ie_to_string(kStatisticsHalfIeLengthForUe, "0xe000"))
       .append("|\n");
-
+*/
   if (ue_infos.size() == 0) {
     out.append(inner_indent)
         .append(ie_to_string(kStatisticsHalfIeLengthForUe, "-"))
