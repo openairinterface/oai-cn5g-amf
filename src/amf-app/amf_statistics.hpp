@@ -69,9 +69,10 @@ typedef struct ue_info_s {
   uint32_t cellId;
 } ue_info_t;
 
-constexpr uint8_t kStatisticsIndent             = 4;
-constexpr uint8_t kStatisticsHalfIeLengthForGnb = 13;
-constexpr uint8_t kStatisticsHalfIeLengthForUe  = 8;
+constexpr uint8_t kStatisticsIndent             = 3;
+constexpr uint8_t kStatisticsHalfIndexColLength = 4;
+constexpr uint8_t kStatisticsHalfIeLengthForGnb = 18;
+constexpr uint8_t kStatisticsHalfIeLengthForUe  = 10;
 
 class statistics {
  public:

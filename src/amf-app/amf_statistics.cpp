@@ -53,8 +53,10 @@ std::string statistics::ie_to_string(
   std::string input_str = ie_str;
   uint8_t len           = ie_str.length();
   if (len > (half_ie_len * 2)) input_str = ie_str.substr(0, half_ie_len * 2);
+  len = input_str.length();
   out.append("|")
-      .append(fmt::format(ie_formatter, "", "", half_ie_len - len / 2, ie_str))
+      .append(
+          fmt::format(ie_formatter, "", "", half_ie_len - len / 2, input_str))
       .append(
           fmt::format(ie_formatter, "", "", half_ie_len + len / 2 - len, ""));
   return out;
@@ -89,9 +91,9 @@ std::string statistics::get_gnbs_info() const {
   std::string inner_indent = fmt::format("{:<{}}", "", kStatisticsIndent);
   uint8_t header_length    = 0;
   // List of gNBs
-  uint8_t number_cols = 5;
-  header_length =
-      kStatisticsHalfIeLengthForGnb * 2 * number_cols + (number_cols - 1);
+  uint8_t number_cols = 4;  // without column index
+  header_length       = kStatisticsHalfIndexColLength * 2 +
+                  kStatisticsHalfIeLengthForGnb * 2 * number_cols + number_cols;
   out.append("\n");
   out.append(inner_indent)
       .append(header_to_string(header_length, ""))
@@ -102,7 +104,7 @@ std::string statistics::get_gnbs_info() const {
       .append("|\n");
 
   out.append(inner_indent)
-      .append(ie_to_string(kStatisticsHalfIeLengthForGnb, "Index"))
+      .append(ie_to_string(kStatisticsHalfIndexColLength, "Index"))
       .append(ie_to_string(kStatisticsHalfIeLengthForGnb, "Status"))
       .append(ie_to_string(kStatisticsHalfIeLengthForGnb, "Global Id"))
       .append(ie_to_string(kStatisticsHalfIeLengthForGnb, "gNB Name"))
@@ -111,7 +113,7 @@ std::string statistics::get_gnbs_info() const {
 
   if (gnbs.size() == 0) {
     out.append(inner_indent)
-        .append(ie_to_string(kStatisticsHalfIeLengthForGnb, "-"))
+        .append(ie_to_string(kStatisticsHalfIndexColLength, "-"))
         .append(ie_to_string(kStatisticsHalfIeLengthForGnb, "-"))
         .append(ie_to_string(kStatisticsHalfIeLengthForGnb, "-"))
         .append(ie_to_string(kStatisticsHalfIeLengthForGnb, "-"))
@@ -123,7 +125,7 @@ std::string statistics::get_gnbs_info() const {
       std::string plmn = gnb.second.mcc + "," + gnb.second.mnc;
       out.append(inner_indent)
           .append(
-              ie_to_string(kStatisticsHalfIeLengthForGnb, std::to_string(i)))
+              ie_to_string(kStatisticsHalfIndexColLength, std::to_string(i)))
           .append(
               ie_to_string(kStatisticsHalfIeLengthForGnb, gnb.second.status))
           .append(ie_to_string(
@@ -151,9 +153,9 @@ std::string statistics::get_ues_info() const {
   uint8_t header_length    = 0;
 
   // List of UEs
-  uint8_t number_cols = 8;
-  header_length =
-      kStatisticsHalfIeLengthForUe * 2 * number_cols + (number_cols - 1);
+  uint8_t number_cols = 7;
+  header_length       = kStatisticsHalfIndexColLength * 2 +
+                  kStatisticsHalfIeLengthForUe * 2 * number_cols + number_cols;
   out.append("\n");
   out.append(inner_indent)
       .append(header_to_string(header_length, ""))
@@ -164,7 +166,7 @@ std::string statistics::get_ues_info() const {
       .append("|\n");
 
   out.append(inner_indent)
-      .append(ie_to_string(kStatisticsHalfIeLengthForUe, "Index"))
+      .append(ie_to_string(kStatisticsHalfIndexColLength, "Index"))
       .append(ie_to_string(kStatisticsHalfIeLengthForUe, "5GMM State"))
       .append(ie_to_string(kStatisticsHalfIeLengthForUe, "IMSI"))
       .append(ie_to_string(kStatisticsHalfIeLengthForUe, "GUTI"))
@@ -176,7 +178,7 @@ std::string statistics::get_ues_info() const {
 
   if (ue_infos.size() == 0) {
     out.append(inner_indent)
-        .append(ie_to_string(kStatisticsHalfIeLengthForUe, "-"))
+        .append(ie_to_string(kStatisticsHalfIndexColLength, "-"))
         .append(ie_to_string(kStatisticsHalfIeLengthForUe, "-"))
         .append(ie_to_string(kStatisticsHalfIeLengthForUe, "-"))
         .append(ie_to_string(kStatisticsHalfIeLengthForUe, "-"))
@@ -190,7 +192,8 @@ std::string statistics::get_ues_info() const {
     for (auto const& ue : ue_infos) {
       std::string plmn = ue.second.mcc + "," + ue.second.mnc;
       out.append(inner_indent)
-          .append(ie_to_string(kStatisticsHalfIeLengthForUe, std::to_string(i)))
+          .append(
+              ie_to_string(kStatisticsHalfIndexColLength, std::to_string(i)))
           .append(ie_to_string(
               kStatisticsHalfIeLengthForUe, ue.second.registerStatus))
           .append(ie_to_string(kStatisticsHalfIeLengthForUe, ue.second.imsi))
