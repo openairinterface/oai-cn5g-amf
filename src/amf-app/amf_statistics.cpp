@@ -128,7 +128,7 @@ std::string statistics::get_gnbs_info() const {
               ie_to_string(kStatisticsHalfIeLengthForGnb, gnb.second.status))
           .append(ie_to_string(
               kStatisticsHalfIeLengthForGnb,
-              "0x" + amf_conv::uint32_to_hex_string(gnb.second.gnb_id)))
+              amf_conv::uint32_to_hex_string_full_format(gnb.second.gnb_id)))
           .append(
               ie_to_string(kStatisticsHalfIeLengthForGnb, gnb.second.gnb_name))
           .append(ie_to_string(kStatisticsHalfIeLengthForGnb, plmn))
@@ -197,14 +197,14 @@ std::string statistics::get_ues_info() const {
           .append(ie_to_string(kStatisticsHalfIeLengthForUe, ue.second.guti))
           .append(ie_to_string(
               kStatisticsHalfIeLengthForUe,
-              "0x" + amf_conv::uint32_to_hex_string(ue.second.ranid)))
+              amf_conv::uint32_to_hex_string_full_format(ue.second.ranid)))
           .append(ie_to_string(
               kStatisticsHalfIeLengthForUe,
-              "0x" + amf_conv::uint32_to_hex_string(ue.second.amfid)))
+              amf_conv::uint32_to_hex_string_full_format(ue.second.amfid)))
           .append(ie_to_string(kStatisticsHalfIeLengthForUe, plmn))
           .append(ie_to_string(
               kStatisticsHalfIeLengthForUe,
-              "0x" + amf_conv::uint32_to_hex_string(ue.second.cellId)))
+              amf_conv::uint32_to_hex_string_full_format(ue.second.cellId)))
           .append("|\n");
       i++;
     }
