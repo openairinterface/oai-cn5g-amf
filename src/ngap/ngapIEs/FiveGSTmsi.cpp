@@ -50,7 +50,7 @@ bool FiveGSTmsi::set(
     const std::string& tmsi) {
   if (!amf_set_id_.set(set_id)) return false;
   if (!amf_pointer_.set(pointer)) return false;
-  _5g_s_tmsi_ = tmsi;
+  tmsi_value_ = tmsi;
   return true;
 }
 
@@ -59,7 +59,7 @@ bool FiveGSTmsi::encode(Ngap_FiveG_S_TMSI_t& pdu) {
   amf_set_id_.encode(pdu.aMFSetID);
   amf_pointer_.encode(pdu.aMFPointer);
 
-  uint32_t tmsi       = (uint32_t) std::stol(_5g_s_tmsi_);
+  uint32_t tmsi       = (uint32_t) std::stol(tmsi_value_);
   uint8_t* buf        = (uint8_t*) malloc(sizeof(uint32_t));
   *(uint32_t*) buf    = htonl(tmsi);
   pdu.fiveG_TMSI.buf  = buf;
@@ -75,11 +75,19 @@ bool FiveGSTmsi::decode(const Ngap_FiveG_S_TMSI_t& pdu) {
 
   uint32_t tmsi = ntohl(*(uint32_t*) pdu.fiveG_TMSI.buf);
   int size      = pdu.fiveG_TMSI.size;
-  std::string setId, pointer;
-  amf_set_id_.get(setId);
-  amf_pointer_.get(pointer);
-  _5g_s_tmsi_ = setId + pointer + amf_conv::tmsi_to_string(tmsi);
+
+  // AMF Set ID: 10 bits, AMF pointer ID: 6 bits
+  uint16_t amf_set_id_value = 0;
+  amf_set_id_.get(amf_set_id_value);
+  uint8_t amf_pointer_value = 0;
+  amf_pointer_.get(amf_pointer_value);
+  uint16_t first_part_tmsi = 0xffff & (((amf_set_id_value & 0x03ff) << 6) |
+                                       (amf_pointer_value & 0x3f));
+  std::string first_part_tmsi_str = {};
+  amf_conv::int_to_string_hex(first_part_tmsi, first_part_tmsi_str, 2);
+
   tmsi_value_ = amf_conv::tmsi_to_string(tmsi);
+  _5g_s_tmsi_ = first_part_tmsi_str + tmsi_value_;
 
   return true;
 }

@@ -508,7 +508,6 @@ void amf_app::handle_itti_message(
   if (itti_msg.is_5g_s_tmsi_present) {
     guti = amf_conv::tmsi_to_guti(
         itti_msg.tai.mcc, itti_msg.tai.mnc, amf_cfg.guami.region_id,
-        amf_cfg.guami.amf_set_id, amf_cfg.guami.amf_pointer,
         itti_msg._5g_s_tmsi);
     is_guti_valid = true;
     Logger::amf_app().debug("Receiving GUTI %s", guti.c_str());
