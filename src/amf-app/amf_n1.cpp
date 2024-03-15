@@ -2967,6 +2967,7 @@ void amf_n1::security_mode_complete_handle(
   // registration_accept->SetT3512Value(0x5, T3512_TIMER_VALUE_MIN);
 
   set_guti_2_nas_context(guti, nc);
+  nc->guti = std::make_optional<std::string>(guti);
   nc->is_common_procedure_for_security_mode_control_running = false;
 
   if (!nc->security_ctx.has_value()) {
