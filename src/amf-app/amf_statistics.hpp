@@ -26,6 +26,7 @@
 
 #include "amf.hpp"
 #include "config.hpp"
+#include "nas_context.hpp"
 #include "ngap_app.hpp"
 
 typedef struct {
@@ -85,18 +86,18 @@ class statistics {
   void display();
 
   /*
-   * Display the statistic information for gNB
+   * Get the statistic information for all gNBs in string format
    * @param void
-   * @return void
+   * @return std::string
    */
-  void display_gnbs() const;
+  std::string get_gnbs_info() const;
 
   /*
-   * Display the statistic information for UE
+   * Get all the statistic information for all UEs in string format
    * @param void
-   * @return void
+   * @return std::string
    */
-  void display_ues() const;
+  std::string get_ues_info() const;
 
   /*
    * Represent column information in string format
@@ -125,11 +126,12 @@ class statistics {
 
   /*
    * Update UE 5GMM state
-   * @param [const std::string&] imsi: UE IMSI
+   * @param [std::shared_ptr<nas_context>&] nc: UE's NAS context
    * @param [const std::string&] state: UE State
    * @return void
    */
-  void update_5gmm_state(const std::string& imsi, const std::string& state);
+  void update_5gmm_state(
+      const std::shared_ptr<nas_context>& nc, const std::string& state);
 
   /*
    * Remove gNB from the list connected gNB to this AMF

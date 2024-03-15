@@ -38,8 +38,10 @@ statistics::~statistics() {}
 
 //------------------------------------------------------------------------------
 void statistics::display() {
-  display_gnbs();
-  display_ues();
+  std::string out = {};
+  out.append(get_gnbs_info());
+  out.append(get_ues_info());
+  Logger::amf_app().info(out);
 }
 
 //------------------------------------------------------------------------------
@@ -82,7 +84,7 @@ std::string statistics::header_to_string(
 }
 
 //------------------------------------------------------------------------------
-void statistics::display_gnbs() const {
+std::string statistics::get_gnbs_info() const {
   std::string out          = {};
   std::string inner_indent = fmt::format("{:<{}}", "", kStatisticsIndent);
   uint8_t header_length    = 0;
@@ -139,11 +141,11 @@ void statistics::display_gnbs() const {
       .append(header_to_string(header_length, ""))
       .append("|\n");
 
-  Logger::amf_app().info(out);
+  return out;
 }
 
 //------------------------------------------------------------------------------
-void statistics::display_ues() const {
+std::string statistics::get_ues_info() const {
   std::string out          = {};
   std::string inner_indent = fmt::format("{:<{}}", "", kStatisticsIndent);
   uint8_t header_length    = 0;
@@ -212,7 +214,7 @@ void statistics::display_ues() const {
       .append(header_to_string(header_length, ""))
       .append("|\n");
 
-  Logger::amf_app().info(out);
+  return out;
 }
 
 //------------------------------------------------------------------------------
@@ -237,19 +239,21 @@ void statistics::update_ue_info(const ue_info_t& ue_info) {
 
 //------------------------------------------------------------------------------
 void statistics::update_5gmm_state(
-    const std::string& imsi, const std::string& state) {
+    const std::shared_ptr<nas_context>& nc, const std::string& state) {
+  if (!nc) return;
   std::unique_lock lock(m_ue_infos);
-  if (ue_infos.count(imsi) > 0) {
-    ue_info_t ue_info      = ue_infos.at(imsi);
+  if (ue_infos.count(nc->imsi) > 0) {
+    ue_info_t ue_info      = ue_infos.at(nc->imsi);
     ue_info.registerStatus = state;
+    if (nc->guti.has_value()) ue_info.guti = nc->guti.value();
     ue_infos.erase(ue_info.imsi);
-    ue_infos.insert(std::pair<std::string, ue_info_t>(imsi, ue_info));
+    ue_infos.insert(std::pair<std::string, ue_info_t>(nc->imsi, ue_info));
     Logger::amf_app().debug(
-        "Update UE State (IMSI %s, State %s) success", imsi.c_str(),
+        "Update UE State (IMSI %s, State %s) success", nc->imsi.c_str(),
         state.c_str());
   } else {
     Logger::amf_app().warn(
-        "Update UE State (IMSI %s), UE does not exist!", imsi.c_str());
+        "Update UE State (IMSI %s), UE does not exist!", nc->imsi.c_str());
   }
 }
 

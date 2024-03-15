@@ -2652,7 +2652,7 @@ void amf_n2::remove_ue_context_with_ran_ue_ngap_id(
     // TODO: Verify where it's current context
     // Remove all NAS context
     std::string supi = amf_conv::imsi_to_supi(nc->imsi);
-    stacs.update_5gmm_state(nc->imsi, "5GMM-DEREGISTERED");
+    stacs.update_5gmm_state(nc, "5GMM-DEREGISTERED");
 
     // Trigger UE Loss of Connectivity Status Notify
     Logger::amf_n2().debug(
@@ -2729,7 +2729,7 @@ void amf_n2::remove_ue_context_with_amf_ue_ngap_id(const long& amf_ue_ngap_id) {
     // Remove all NAS context
     std::string supi = amf_conv::imsi_to_supi(nc->imsi);
     // Update UE status
-    stacs.update_5gmm_state(nc->imsi, "5GMM-DEREGISTERED");
+    stacs.update_5gmm_state(nc, "5GMM-DEREGISTERED");
 
     // Trigger UE Loss of Connectivity Status Notify
     Logger::amf_n2().debug(

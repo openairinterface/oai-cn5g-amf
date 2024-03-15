@@ -791,10 +791,11 @@ void amf_n1::identity_response_handle(
     ue_info_t ueItem;
     ueItem.connStatus = "5GMM-CONNECTED";  //"CM-CONNECTED";
     ueItem.registerStatus =
-        "5GMM-REG-INITIATED";  // 5GMM-COMMON-PROCEDURE-INITIATED
+        "COMM-PROC-INIT";  // 5GMM-COMMON-PROCEDURE-INITIATED
     ueItem.ranid = ran_ue_ngap_id;
     ueItem.amfid = amf_ue_ngap_id;
     ueItem.imsi  = nc->imsi;
+    if (nc->guti.has_value()) ueItem.guti = nc->guti.value();
 
     // Find UE context
     std::shared_ptr<ue_context> uc = {};
@@ -1332,7 +1333,7 @@ void amf_n1::service_request_handle(
           itti_msg->get_msg_name());
     } else {
       // Update 5GMM State
-      stacs.update_5gmm_state(nc->imsi, "5GMM-REGISTERED");
+      stacs.update_5gmm_state(nc, "5GMM-REGISTERED");
       set_5gmm_state(nc, _5GMM_REGISTERED);
       stacs.display();
     }
@@ -1421,7 +1422,7 @@ void amf_n1::service_request_handle(
           itti_msg->get_msg_name());
     }
     // Update 5GMM State
-    stacs.update_5gmm_state(nc->imsi, "5GMM-REGISTERED");
+    stacs.update_5gmm_state(nc, "5GMM-REGISTERED");
     set_5gmm_state(nc, _5GMM_REGISTERED);
     stacs.display();
 
@@ -1460,7 +1461,7 @@ void amf_n1::send_service_reject(
         dnt->get_msg_name());
   } else {
     // Update 5GMM State
-    stacs.update_5gmm_state(nc->imsi, "5GMM-DEREGISTERED");
+    stacs.update_5gmm_state(nc, "5GMM-DEREG");
     set_5gmm_state(nc, _5GMM_DEREGISTERED);
     stacs.display();
   }
@@ -1546,10 +1547,11 @@ void amf_n1::registration_request_handle(
         ue_info_t ueItem;
         ueItem.connStatus = "5GMM-CONNECTED";  //"CM-CONNECTED";
         ueItem.registerStatus =
-            "5GMM-REG-INITIATED";  // 5GMM-COMMON-PROCEDURE-INITIATED
-        ueItem.ranid  = ran_ue_ngap_id;
-        ueItem.amfid  = amf_ue_ngap_id;
-        ueItem.imsi   = nc->imsi;
+            "COMM-PROC-INIT";  // 5GMM-COMMON-PROCEDURE-INITIATED
+        ueItem.ranid = ran_ue_ngap_id;
+        ueItem.amfid = amf_ue_ngap_id;
+        ueItem.imsi  = nc->imsi;
+        if (nc->guti.has_value()) ueItem.guti = nc->guti.value();
         ueItem.mcc    = uc->cgi.mcc;
         ueItem.mnc    = uc->cgi.mnc;
         ueItem.cellId = uc->cgi.nrCellID;
@@ -3101,7 +3103,7 @@ void amf_n1::security_mode_complete_handle(
       "registered to the network",
       nc->imsi.c_str(), guti.c_str(), ran_ue_ngap_id, amf_ue_ngap_id);
 
-  stacs.update_5gmm_state(nc->imsi, "5GMM-REGISTERED");
+  stacs.update_5gmm_state(nc, "5GMM-REGISTERED");
   set_5gmm_state(nc, _5GMM_REGISTERED);
   stacs.display();
 
@@ -3550,7 +3552,7 @@ void amf_n1::ue_initiate_de_registration_handle(
     usleep(200000);
   }
 
-  stacs.update_5gmm_state(nc->imsi, "5GMM-DEREGISTERED");
+  stacs.update_5gmm_state(nc, "5GMM-DEREGISTERED");
   set_5gmm_state(nc, _5GMM_DEREGISTERED);
   stacs.display();
 
@@ -3580,7 +3582,7 @@ void amf_n1::ue_initiate_de_registration_handle(
   // amf_ue_ngap_id);
 
   // Update 5GMM state
-  stacs.update_5gmm_state(nc->imsi, "5GMM-DEREGISTERED");
+  stacs.update_5gmm_state(nc, "5GMM-DEREGISTERED");
 
   // Remove NC context
   if (remove_amf_ue_ngap_id_2_nas_context(amf_ue_ngap_id)) {
