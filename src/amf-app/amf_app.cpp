@@ -399,8 +399,10 @@ void amf_app::handle_itti_message(
           (uint8_t*) bdata(bstrcpy(itti_msg.n1sm)), blength(itti_msg.n1sm));
       dl->SetPduSessionId(itti_msg.pdu_session_id);
 
-      uint8_t nas[BUFFER_SIZE_1024];
-      int encoded_size = dl->Encode(nas, BUFFER_SIZE_1024);
+      uint32_t msg_len = dl->GetLength();
+      Logger::nas_mm().debug("Size of DL NAS Transport message %ld", msg_len);
+      uint8_t nas[msg_len] = {0};
+      int encoded_size     = dl->Encode(nas, msg_len);
       output_wrapper::print_buffer(
           "amf_app", "N1N2 message transfer", nas, encoded_size);
       dl_msg->dl_nas = blk2bstr(nas, encoded_size);

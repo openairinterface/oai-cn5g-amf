@@ -1014,9 +1014,12 @@ void amf_n1::service_request_handle(
           std::pair<uint8_t, pdu_session_info_t>(pdu_session_id, item));
     }
 
-    uint8_t buffer[BUFFER_SIZE_1024];
-    int encoded_size      = service_accept->Encode(buffer, BUFFER_SIZE_1024);
-    bstring protected_nas = nullptr;
+    uint32_t msg_len = service_accept->GetLength();
+    Logger::nas_mm().debug("Size of Service Accept message %ld", msg_len);
+
+    uint8_t buffer[msg_len] = {0};
+    int encoded_size        = service_accept->Encode(buffer, msg_len);
+    bstring protected_nas   = nullptr;
     encode_nas_message_protected(
         nc->security_ctx.value(), false, kIntegrityProtectedAndCiphered,
         NAS_MESSAGE_DOWNLINK, buffer, encoded_size, protected_nas);
@@ -1296,9 +1299,11 @@ void amf_n1::service_request_handle(
   // No PDU Sessions To Be Activated
   if (pdu_session_to_be_activated.size() == 0) {
     Logger::amf_n1().debug("There is no PDU session to be activated");
-    uint8_t buffer[BUFFER_SIZE_1024];
-    int encoded_size      = service_accept->Encode(buffer, BUFFER_SIZE_1024);
-    bstring protected_nas = nullptr;
+    uint32_t msg_len = service_accept->GetLength();
+    Logger::nas_mm().debug("Size of Service Accept message %ld", msg_len);
+    uint8_t buffer[msg_len] = {0};
+    int encoded_size        = service_accept->Encode(buffer, msg_len);
+    bstring protected_nas   = nullptr;
     encode_nas_message_protected(
         nc->security_ctx.value(), false, kIntegrityProtectedAndCiphered,
         NAS_MESSAGE_DOWNLINK, buffer, encoded_size, protected_nas);
@@ -1386,9 +1391,11 @@ void amf_n1::service_request_handle(
       service_accept->SetPduSessionStatus(pdu_session_status);
     }
 
-    uint8_t buffer[BUFFER_SIZE_1024];
-    int encoded_size      = service_accept->Encode(buffer, BUFFER_SIZE_1024);
-    bstring protected_nas = nullptr;
+    uint32_t msg_len = service_accept->GetLength();
+    Logger::nas_mm().debug("Size of Service Accept message %ld", msg_len);
+    uint8_t buffer[msg_len] = {0};
+    int encoded_size        = service_accept->Encode(buffer, msg_len);
+    bstring protected_nas   = nullptr;
     encode_nas_message_protected(
         nc->security_ctx.value(), false, kIntegrityProtectedAndCiphered,
         NAS_MESSAGE_DOWNLINK, buffer, encoded_size, protected_nas);
@@ -1439,8 +1446,10 @@ void amf_n1::send_service_reject(
   service_reject->SetHeader(kPlain5gsMessage);
   service_reject->Set5gmmCause(cause);
 
-  uint8_t buffer[BUFFER_SIZE_512] = {0};
-  int encoded_size = service_reject->Encode(buffer, BUFFER_SIZE_512);
+  uint32_t msg_len = service_reject->GetLength();
+  Logger::nas_mm().debug("Size of Service Reject message %ld", msg_len);
+  uint8_t buffer[msg_len] = {0};
+  int encoded_size        = service_reject->Encode(buffer, msg_len);
   output_wrapper::print_buffer(
       "amf_n1", "Service-Reject message buffer", buffer, encoded_size);
   if (!encoded_size) {
@@ -1988,8 +1997,10 @@ void amf_n1::send_registration_reject_msg(
   auto registration_reject = std::make_unique<RegistrationReject>();
   registration_reject->SetHeader(kPlain5gsMessage);
   registration_reject->Set5gmmCause(cause_value);
-  uint8_t buffer[BUFFER_SIZE_1024] = {0};
-  int encoded_size = registration_reject->Encode(buffer, BUFFER_SIZE_1024);
+  uint32_t msg_len = registration_reject->GetLength();
+  Logger::nas_mm().debug("Size of Registration Reject message %ld", msg_len);
+  uint8_t buffer[msg_len] = {0};
+  int encoded_size        = registration_reject->Encode(buffer, msg_len);
   output_wrapper::print_buffer(
       "amf_n1", "Registration-Reject message buffer", buffer, encoded_size);
   if (!encoded_size) {
@@ -2068,8 +2079,11 @@ void amf_n1::run_registration_procedure(std::shared_ptr<nas_context>& nc) {
     auto identity_request       = std::make_unique<IdentityRequest>();
     identity_request->SetHeader(kPlain5gsMessage);
     identity_request->Set5gsIdentityType(kSuci);
-    uint8_t buffer[BUFFER_SIZE_256];
-    int encoded_size = identity_request->Encode(buffer, BUFFER_SIZE_256);
+
+    uint32_t msg_len = identity_request->GetLength();
+    Logger::nas_mm().debug("Size of Identity Request message %ld", msg_len);
+    uint8_t buffer[msg_len] = {0};
+    int encoded_size        = identity_request->Encode(buffer, msg_len);
 
     auto dnt =
         std::make_shared<itti_dl_nas_transport>(TASK_AMF_N1, TASK_AMF_N2);
@@ -2526,7 +2540,7 @@ bool amf_n1::start_authentication_procedure(
   if (autn) auth_request->SetAuthenticationParameterAutn(autn);
 
   uint32_t msg_len = auth_request->GetLength();
-  Logger::nas_mm().error("Size of Authentication Request %d", msg_len);
+  Logger::nas_mm().debug("Size of Authentication Request message %ld", msg_len);
 
   uint8_t buffer[msg_len] = {0};
   int encoded_size        = auth_request->Encode(buffer, msg_len);
@@ -2790,8 +2804,10 @@ bool amf_n1::start_security_mode_control_procedure(
   smc->SetUeSecurityCapability(nc->ue_security_capability);
   smc->SetImeisvRequest(0xe1);  // TODO: remove hardcoded value
   smc->SetAdditional5gSecurityInformation(true, false);
-  uint8_t buffer[BUFFER_SIZE_1024];
-  int encoded_size = smc->Encode(buffer, BUFFER_SIZE_1024);
+  uint32_t msg_len = smc->GetLength();
+  Logger::nas_mm().debug("Size of Security Mode Command message %ld", msg_len);
+  uint8_t buffer[msg_len] = {0};
+  int encoded_size        = smc->Encode(buffer, msg_len);
   output_wrapper::print_buffer(
       "amf_n1", "Security-Mode-Command message buffer", buffer, encoded_size);
 
@@ -3020,9 +3036,12 @@ void amf_n1::security_mode_complete_handle(
   }
 
   // Encode Registration Accept
-  uint8_t buffer[BUFFER_SIZE_1024] = {0};
-  bstring protected_nas            = nullptr;
-  int encoded_size = registration_accept->Encode(buffer, BUFFER_SIZE_1024);
+  bstring protected_nas = nullptr;
+  uint32_t msg_len      = registration_accept->GetLength();
+  Logger::nas_mm().debug("Size of Registration Accept message %ld", msg_len);
+  uint8_t buffer[msg_len] = {0};
+
+  int encoded_size = registration_accept->Encode(buffer, msg_len);
   output_wrapper::print_buffer(
       "amf_n1", "Registration-Accept message buffer", buffer, encoded_size);
   if (!encoded_size) {
@@ -3536,8 +3555,11 @@ void amf_n1::ue_initiate_de_registration_handle(
     auto dereg_accept = std::make_unique<DeregistrationAccept>();
     dereg_accept->SetHeader(kPlain5gsMessage);
 
-    uint8_t buffer[BUFFER_SIZE_512] = {0};
-    int encoded_size = dereg_accept->Encode(buffer, BUFFER_SIZE_512);
+    uint32_t msg_len = dereg_accept->GetLength();
+    Logger::nas_mm().debug(
+        "Size of Deregistration Accept message %ld", msg_len);
+    uint8_t buffer[msg_len] = {0};
+    int encoded_size        = dereg_accept->Encode(buffer, msg_len);
 
     output_wrapper::print_buffer(
         "amf_n1", "De-registration Accept message buffer", buffer,
@@ -3857,8 +3879,10 @@ void amf_n1::run_mobility_registration_update_procedure(
       amf_cfg.guami.mcc, amf_cfg.guami.mnc, amf_cfg.guami.region_id,
       amf_cfg.guami.amf_set_id, amf_cfg.guami.amf_pointer, uc->tmsi);
 
-  uint8_t buffer[BUFFER_SIZE_1024] = {0};
-  int encoded_size = reg_accept->Encode(buffer, BUFFER_SIZE_1024);
+  uint32_t msg_len = reg_accept->GetLength();
+  Logger::nas_mm().debug("Size of Registration Accept message %ld", msg_len);
+  uint8_t buffer[msg_len] = {0};
+  int encoded_size        = reg_accept->Encode(buffer, msg_len);
   output_wrapper::print_buffer(
       "amf_n1", "Registration-Accept Message Buffer", buffer, encoded_size);
   if (!encoded_size) {
@@ -3950,8 +3974,11 @@ void amf_n1::run_periodic_registration_update_procedure(
         "PDU Session Status 0x%02x", htonl(pdu_session_status));
   }
 
-  uint8_t buffer[BUFFER_SIZE_1024] = {0};
-  int encoded_size = reg_accept->Encode(buffer, BUFFER_SIZE_1024);
+  uint32_t msg_len = reg_accept->GetLength();
+  Logger::nas_mm().debug("Size of Registration Accept message %ld", msg_len);
+  uint8_t buffer[msg_len] = {0};
+
+  int encoded_size = reg_accept->Encode(buffer, msg_len);
   output_wrapper::print_buffer(
       "amf_n1", "Registration-Accept Message Buffer", buffer, encoded_size);
   if (!encoded_size) {
@@ -4011,8 +4038,10 @@ void amf_n1::run_periodic_registration_update_procedure(
   Logger::amf_n1().debug(
       "PDU Session Status 0x%02x", htonl(pdu_session_status));
 
-  uint8_t buffer[BUFFER_SIZE_1024] = {0};
-  int encoded_size = reg_accept->Encode(buffer, BUFFER_SIZE_1024);
+  uint32_t msg_len = reg_accept->GetLength();
+  Logger::nas_mm().debug("Size of Registration Accept message %ld", msg_len);
+  uint8_t buffer[msg_len] = {0};
+  int encoded_size        = reg_accept->Encode(buffer, msg_len);
   output_wrapper::print_buffer(
       "amf_n1", "Registration-Accept Message Buffer", buffer, encoded_size);
   if (!encoded_size) {
