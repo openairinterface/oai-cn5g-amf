@@ -2516,7 +2516,6 @@ bool amf_n1::start_authentication_procedure(
   abba[0] = 0x00;
   abba[1] = 0x00;
   auth_request->SetAbba(2, abba);
-  // uint8_t* rand = nc->_5g_av[vindex].rand;
   auth_request->SetAuthenticationParameterRand(nc->_5g_av[vindex].rand);
   Logger::amf_n1().debug("Sending Authentication Request with RAND");
   output_wrapper::print_buffer(
@@ -2525,8 +2524,12 @@ bool amf_n1::start_authentication_procedure(
 
   uint8_t* autn = nc->_5g_av[vindex].autn;
   if (autn) auth_request->SetAuthenticationParameterAutn(autn);
-  uint8_t buffer[1024] = {0};
-  int encoded_size     = auth_request->Encode(buffer, 1024);
+
+  uint32_t msg_len = auth_request->GetLength();
+  Logger::nas_mm().error("Size of Authentication Request %d", msg_len);
+
+  uint8_t buffer[msg_len] = {0};
+  int encoded_size        = auth_request->Encode(buffer, msg_len);
   if (!encoded_size) {
     Logger::nas_mm().error("Encode Authentication Request message error");
     return false;
