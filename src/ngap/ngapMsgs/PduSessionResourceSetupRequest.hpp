@@ -24,10 +24,10 @@
 
 #include <optional>
 
-#include "NgapUEMessage.hpp"
+#include "NgapUeMessage.hpp"
 #include "PduSessionResourceSetupListSUReq.hpp"
 #include "RanPagingPriority.hpp"
-#include "UEAggregateMaxBitRate.hpp"
+#include "UeAggregateMaxBitRate.hpp"
 
 extern "C" {
 #include "Ngap_InitialContextSetupRequest.h"
@@ -35,7 +35,7 @@ extern "C" {
 
 namespace ngap {
 
-class PduSessionResourceSetupRequestMsg : public NgapUEMessage {
+class PduSessionResourceSetupRequestMsg : public NgapUeMessage {
  public:
   PduSessionResourceSetupRequestMsg();
   virtual ~PduSessionResourceSetupRequestMsg();
@@ -47,29 +47,28 @@ class PduSessionResourceSetupRequestMsg : public NgapUEMessage {
   bool decode(Ngap_NGAP_PDU_t* ngapMsgPdu) override;
 
   void setRanPagingPriority(const uint32_t& priority);
-  bool getRanPagingPriority(uint32_t& priority);
+  bool getRanPagingPriority(uint32_t& priority) const;
 
   void setNasPdu(const bstring& pdu);
-  bool getNasPdu(bstring& pdu);
+  bool getNasPdu(bstring& pdu) const;
 
   void setPduSessionResourceSetupRequestList(
       const std::vector<PDUSessionResourceSetupRequestItem_t>& list);
   bool getPduSessionResourceSetupRequestList(
-      std::vector<PDUSessionResourceSetupRequestItem_t>& list);
+      std::vector<PDUSessionResourceSetupRequestItem_t>& list) const;
 
-  void setUEAggregateMaxBitRate(
-      const uint64_t& bit_rate_downlink, const uint64_t& bit_rate_uplink);
-  bool getUEAggregateMaxBitRate(
-      uint64_t& bit_rate_downlink, uint64_t& bit_rate_uplink) const;
+  void setUeAggregateMaxBitRate(
+      const uint64_t& bitRateDl, const uint64_t& bitRateUl);
+  bool getUeAggregateMaxBitRate(uint64_t& bitRateDl, uint64_t& bitRateUl) const;
 
  private:
-  Ngap_PDUSessionResourceSetupRequest_t* pduSessionResourceSetupRequestIEs;
+  Ngap_PDUSessionResourceSetupRequest_t* m_PduSessionResourceSetupRequestIes;
 
-  std::optional<RanPagingPriority> ranPagingPriority;  // Optional
-  std::optional<NasPdu> nasPdu;                        // Optional
+  std::optional<RanPagingPriority> m_RanPagingPriority;  // Optional
+  std::optional<NasPdu> m_NasPdu;                        // Optional
   PduSessionResourceSetupListSUReq
-      pduSessionResourceSetupRequestList;                      // Mandatory
-  std::optional<UEAggregateMaxBitRate> uEAggregateMaxBitRate;  // Optional
+      m_PduSessionResourceSetupRequestList;                      // Mandatory
+  std::optional<UeAggregateMaxBitRate> m_UeAggregateMaxBitRate;  // Optional
 };
 
 }  // namespace ngap

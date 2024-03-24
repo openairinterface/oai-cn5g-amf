@@ -46,7 +46,7 @@ class QosFlowListWithDataForwarding {
       const Ngap_QosFlowListWithDataForwarding_t& qosFlowSetupResponseList);
 
  private:
-  std::vector<QosFlowItemWithDataForWarding> list_;
+  std::vector<QosFlowItemWithDataForWarding> m_ItemList;
 };
 }  // namespace ngap
 #endif

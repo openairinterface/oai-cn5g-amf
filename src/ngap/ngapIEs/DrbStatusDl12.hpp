@@ -43,7 +43,7 @@ class DrbStatusDl12 {
   bool decode(const Ngap_DRBStatusDL12_t& dl12);
 
  private:
-  CountValueForPdcpSn12 dl_count_value_;  // Mandatory
+  CountValueForPdcpSn12 m_DlCountValue;  // Mandatory
 };
 }  // namespace ngap
 #endif

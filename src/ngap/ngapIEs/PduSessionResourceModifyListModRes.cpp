@@ -32,13 +32,13 @@ PduSessionResourceModifyListModRes::~PduSessionResourceModifyListModRes() {}
 //------------------------------------------------------------------------------
 void PduSessionResourceModifyListModRes::set(
     const std::vector<PduSessionResourceModifyItemModRes>& list) {
-  item_list_ = list;
+  m_ItemList = list;
 }
 
 //------------------------------------------------------------------------------
 bool PduSessionResourceModifyListModRes::encode(
     Ngap_PDUSessionResourceModifyListModRes_t& list) const {
-  for (auto pdu : item_list_) {
+  for (auto pdu : m_ItemList) {
     Ngap_PDUSessionResourceModifyItemModRes_t* item =
         (Ngap_PDUSessionResourceModifyItemModRes_t*) calloc(
             1, sizeof(Ngap_PDUSessionResourceModifyItemModRes_t));
@@ -63,7 +63,7 @@ bool PduSessionResourceModifyListModRes::decode(
 
     if (!item.decode(*pdu_session_resource_modify_list_mod_res.list.array[i]))
       return false;
-    item_list_.push_back(item);
+    m_ItemList.push_back(item);
   }
 
   return true;
@@ -72,7 +72,7 @@ bool PduSessionResourceModifyListModRes::decode(
 //------------------------------------------------------------------------------
 void PduSessionResourceModifyListModRes::get(
     std::vector<PduSessionResourceModifyItemModRes>& list) const {
-  list = item_list_;
+  list = m_ItemList;
 }
 
 }  // namespace ngap

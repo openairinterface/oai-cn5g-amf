@@ -41,12 +41,12 @@ class QosFlowPerTnlInformationList {
   void get(std::vector<QosFlowPerTnlInformationItem>& list) const;
 
   bool encode(
-      Ngap_QosFlowPerTNLInformationList_t& qosFlowPerTnlInformationList);
+      Ngap_QosFlowPerTNLInformationList_t& qosFlowPerTnlInformationList) const;
   bool decode(
       const Ngap_QosFlowPerTNLInformationList_t& qosFlowPerTnlInformationList);
 
  private:
-  std::vector<QosFlowPerTnlInformationItem> list_;
+  std::vector<QosFlowPerTnlInformationItem> m_ItemList;
   constexpr static uint8_t KMaxNoOfMultiConnectivityMinusOne = 3;
 };
 }  // namespace ngap

@@ -27,50 +27,50 @@ namespace ngap {
 
 //------------------------------------------------------------------------------
 DrbStatusUl::DrbStatusUl() {
-  ul18_ = std::nullopt;
-  ul12_ = std::nullopt;
+  m_Ul18 = std::nullopt;
+  m_Ul12 = std::nullopt;
 }
 
 //------------------------------------------------------------------------------
 DrbStatusUl::~DrbStatusUl() {}
 
 //------------------------------------------------------------------------------
-void DrbStatusUl::setdRBStatusUL(const DrbStatusUl18& ul18) {
-  ul18_ = std::make_optional<DrbStatusUl18>(ul18);
-  ul12_ = std::nullopt;
+void DrbStatusUl::setDrbStatusUl(const DrbStatusUl18& ul18) {
+  m_Ul18 = std::make_optional<DrbStatusUl18>(ul18);
+  m_Ul12 = std::nullopt;
 }
 
 //------------------------------------------------------------------------------
-void DrbStatusUl::getdRBStatusUL(std::optional<DrbStatusUl18>& ul18) const {
-  ul18 = ul18_;
+void DrbStatusUl::getDrbStatusUl(std::optional<DrbStatusUl18>& ul18) const {
+  ul18 = m_Ul18;
 }
 
 //------------------------------------------------------------------------------
-void DrbStatusUl::setdRBStatusUL(const DrbStatusUl12& ul12) {
-  ul18_ = std::nullopt;
-  ul12_ = std::make_optional<DrbStatusUl12>(ul12);
+void DrbStatusUl::setDrbStatusUl(const DrbStatusUl12& ul12) {
+  m_Ul18 = std::nullopt;
+  m_Ul12 = std::make_optional<DrbStatusUl12>(ul12);
 }
 
 //------------------------------------------------------------------------------
-void DrbStatusUl::getdRBStatusUL(std::optional<DrbStatusUl12>& ul12) const {
-  ul12 = ul12_;
+void DrbStatusUl::getDrbStatusUl(std::optional<DrbStatusUl12>& ul12) const {
+  ul12 = m_Ul12;
 }
 
 //------------------------------------------------------------------------------
-bool DrbStatusUl::encode(Ngap_DRBStatusUL_t& uL) {
-  if (ul18_.has_value()) {
-    uL.present = Ngap_DRBStatusUL_PR_dRBStatusUL18;
-    uL.choice.dRBStatusUL18 =
+bool DrbStatusUl::encode(Ngap_DRBStatusUL_t& ul) const {
+  if (m_Ul18.has_value()) {
+    ul.present = Ngap_DRBStatusUL_PR_dRBStatusUL18;
+    ul.choice.dRBStatusUL18 =
         (Ngap_DRBStatusUL18_t*) calloc(1, sizeof(Ngap_DRBStatusUL18_t));
-    if (!ul18_.value().encode(*uL.choice.dRBStatusUL18)) {
+    if (!m_Ul18.value().encode(*ul.choice.dRBStatusUL18)) {
       Logger::ngap().error("Encode DRBStatusUL18 IE error");
       return false;
     }
-  } else if (ul12_.has_value()) {
-    uL.present = Ngap_DRBStatusUL_PR_dRBStatusUL12;
-    uL.choice.dRBStatusUL12 =
+  } else if (m_Ul12.has_value()) {
+    ul.present = Ngap_DRBStatusUL_PR_dRBStatusUL12;
+    ul.choice.dRBStatusUL12 =
         (Ngap_DRBStatusUL12_t*) calloc(1, sizeof(Ngap_DRBStatusUL12_t));
-    if (!ul12_.value().encode(*uL.choice.dRBStatusUL12)) {
+    if (!m_Ul12.value().encode(*ul.choice.dRBStatusUL12)) {
       Logger::ngap().error("Encode DRBStatusUL18 IE error");
       return false;
     }
@@ -80,21 +80,21 @@ bool DrbStatusUl::encode(Ngap_DRBStatusUL_t& uL) {
 }
 
 //------------------------------------------------------------------------------
-bool DrbStatusUl::decode(const Ngap_DRBStatusUL_t& uL) {
-  if (uL.present == Ngap_DRBStatusUL_PR_dRBStatusUL18) {
+bool DrbStatusUl::decode(const Ngap_DRBStatusUL_t& ul) {
+  if (ul.present == Ngap_DRBStatusUL_PR_dRBStatusUL18) {
     DrbStatusUl18 item = {};
-    if (!item.decode(*uL.choice.dRBStatusUL18)) {
+    if (!item.decode(*ul.choice.dRBStatusUL18)) {
       Logger::ngap().error("Decode DRBStatusUL18 IE error");
       return false;
     }
-    ul18_ = std::make_optional<DrbStatusUl18>(item);
-  } else if (uL.present == Ngap_DRBStatusUL_PR_dRBStatusUL12) {
+    m_Ul18 = std::make_optional<DrbStatusUl18>(item);
+  } else if (ul.present == Ngap_DRBStatusUL_PR_dRBStatusUL12) {
     DrbStatusUl12 item = {};
-    if (!item.decode(*uL.choice.dRBStatusUL12)) {
+    if (!item.decode(*ul.choice.dRBStatusUL12)) {
       Logger::ngap().error("Decode DRBStatusUL12 IE error");
       return false;
     }
-    ul12_ = std::make_optional<DrbStatusUl12>(item);
+    m_Ul12 = std::make_optional<DrbStatusUl12>(item);
   }
 
   return true;

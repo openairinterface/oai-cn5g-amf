@@ -24,7 +24,7 @@
 
 #include "AmfUeNgapId.hpp"
 #include "MessageType.hpp"
-#include "NgapIEsStruct.hpp"
+#include "NgapIesStruct.hpp"
 #include "RanUeNgapId.hpp"
 
 extern "C" {

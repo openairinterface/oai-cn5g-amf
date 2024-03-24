@@ -22,7 +22,7 @@
 #ifndef PDU_SESSION_RESOURCE_MODIFY_REQUEST_H_
 #define PDU_SESSION_RESOURCE_MODIFY_REQUEST_H_
 
-#include "NgapUEMessage.hpp"
+#include "NgapUeMessage.hpp"
 #include "PduSessionResourceModifyListModReq.hpp"
 #include "RanPagingPriority.hpp"
 
@@ -32,7 +32,7 @@ extern "C" {
 
 namespace ngap {
 
-class PduSessionResourceModifyRequestMsg : public NgapUEMessage {
+class PduSessionResourceModifyRequestMsg : public NgapUeMessage {
  public:
   PduSessionResourceModifyRequestMsg();
   virtual ~PduSessionResourceModifyRequestMsg();
@@ -44,21 +44,22 @@ class PduSessionResourceModifyRequestMsg : public NgapUEMessage {
   bool decode(Ngap_NGAP_PDU_t* ngapMsgPdu) override;
 
   void setRanPagingPriority(const uint32_t& priority);
-  int getRanPagingPriority();
+  int getRanPagingPriority() const;
 
   void setNasPdu(const bstring& pdu);
-  bool getNasPdu(bstring& pdu);
+  bool getNasPdu(bstring& pdu) const;
 
   void setPduSessionResourceModifyRequestList(
       const std::vector<PDUSessionResourceModifyRequestItem_t>& list);
   bool getPduSessionResourceModifyRequestList(
-      std::vector<PDUSessionResourceModifyRequestItem_t>& list);
+      std::vector<PDUSessionResourceModifyRequestItem_t>& list) const;
 
  private:
-  Ngap_PDUSessionResourceModifyRequest_t* pduSessionResourceModifyRequestIEs;
+  Ngap_PDUSessionResourceModifyRequest_t* m_PduSessionResourceModifyRequestIes;
 
-  RanPagingPriority* ranPagingPriority;                             // Optional
-  PduSessionResourceModifyListModReq pduSessionResourceModifyList;  // Mandatory
+  RanPagingPriority* m_RanPagingPriority;  // Optional
+  PduSessionResourceModifyListModReq
+      m_PduSessionResourceModifyList;  // Mandatory
 };
 
 }  // namespace ngap

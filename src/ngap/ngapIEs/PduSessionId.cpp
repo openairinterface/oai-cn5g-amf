@@ -25,7 +25,7 @@ namespace ngap {
 
 //------------------------------------------------------------------------------
 PduSessionId::PduSessionId() {
-  id_ = 0;
+  m_PduSessionId = 0;
 }
 
 //------------------------------------------------------------------------------
@@ -33,23 +33,23 @@ PduSessionId::~PduSessionId() {}
 
 //------------------------------------------------------------------------------
 void PduSessionId::set(const uint8_t& id) {
-  id_ = id;
+  m_PduSessionId = id;
 }
 
 //------------------------------------------------------------------------------
 void PduSessionId::get(uint8_t& id) const {
-  id = id_;
+  id = m_PduSessionId;
 }
 
 //------------------------------------------------------------------------------
-bool PduSessionId::encode(Ngap_PDUSessionID_t& pdu_session_id) const {
-  pdu_session_id = id_;
+bool PduSessionId::encode(Ngap_PDUSessionID_t& pduSessionId) const {
+  pduSessionId = m_PduSessionId;
   return true;
 }
 
 //------------------------------------------------------------------------------
-bool PduSessionId::decode(Ngap_PDUSessionID_t pdu_session_id) {
-  id_ = pdu_session_id;
+bool PduSessionId::decode(Ngap_PDUSessionID_t pduSessionId) {
+  m_PduSessionId = pduSessionId;
   return true;
 }
 

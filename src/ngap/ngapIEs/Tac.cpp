@@ -27,7 +27,7 @@ namespace ngap {
 
 //------------------------------------------------------------------------------
 TAC::TAC() {
-  tac_ = 0;
+  m_Tac = 0;
 }
 
 //------------------------------------------------------------------------------
@@ -35,21 +35,21 @@ TAC::~TAC() {}
 
 //------------------------------------------------------------------------------
 void TAC::set(const uint32_t& tac) {
-  tac_ = tac;
+  m_Tac = tac;
 }
 
 //------------------------------------------------------------------------------
 uint32_t TAC::get() const {
-  return tac_;
+  return m_Tac;
 }
 
 //------------------------------------------------------------------------------
-bool TAC::encode(Ngap_TAC_t& tac) {
+bool TAC::encode(Ngap_TAC_t& tac) const {
   tac.size   = 3;  // OCTET_STRING(SIZE(3))
   tac.buf    = (uint8_t*) calloc(3, sizeof(uint8_t));
-  tac.buf[2] = tac_ & 0x0000ff;
-  tac.buf[1] = (tac_ & 0x00ff00) >> 8;
-  tac.buf[0] = (tac_ & 0xff0000) >> 16;
+  tac.buf[2] = m_Tac & 0x0000ff;
+  tac.buf[1] = (m_Tac & 0x00ff00) >> 8;
+  tac.buf[0] = (m_Tac & 0xff0000) >> 16;
 
   return true;
 }
@@ -57,11 +57,11 @@ bool TAC::encode(Ngap_TAC_t& tac) {
 //------------------------------------------------------------------------------
 bool TAC::decode(const Ngap_TAC_t& tac) {
   if (!tac.buf) return false;
-  tac_ = 0;
+  m_Tac = 0;
   for (int i = 0; i < tac.size; i++) {
-    tac_ |= tac.buf[i] << ((tac.size - 1 - i) * 8);
+    m_Tac |= tac.buf[i] << ((tac.size - 1 - i) * 8);
   }
-  Logger::ngap().debug("Received TAC 0x%x", tac_);
+  Logger::ngap().debug("Received TAC 0x%x", m_Tac);
   return true;
 }
 

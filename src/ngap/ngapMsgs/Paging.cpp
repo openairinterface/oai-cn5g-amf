@@ -28,7 +28,7 @@ namespace ngap {
 
 //------------------------------------------------------------------------------
 PagingMsg::PagingMsg() {
-  pagingIEs = nullptr;
+  m_PagingIes = nullptr;
 
   NgapMessage::setMessageType(NgapMessageType::PAGING);
   initialize();
@@ -39,7 +39,7 @@ PagingMsg::~PagingMsg() {}
 
 //------------------------------------------------------------------------------
 void PagingMsg::initialize() {
-  pagingIEs = &(ngapPdu->choice.initiatingMessage->value.choice.Paging);
+  m_PagingIes = &(ngapPdu->choice.initiatingMessage->value.choice.Paging);
 }
 
 //------------------------------------------------------------------------------
@@ -54,7 +54,7 @@ bool PagingMsg::decode(Ngap_NGAP_PDU_t* ngapMsgPdu) {
             Ngap_Criticality_ignore &&
         ngapPdu->choice.initiatingMessage->value.present ==
             Ngap_InitiatingMessage__value_PR_Paging) {
-      pagingIEs = &ngapPdu->choice.initiatingMessage->value.choice.Paging;
+      m_PagingIes = &ngapPdu->choice.initiatingMessage->value.choice.Paging;
     } else {
       Logger::ngap().error("Check Paging message error");
       return false;
@@ -63,15 +63,15 @@ bool PagingMsg::decode(Ngap_NGAP_PDU_t* ngapMsgPdu) {
     Logger::ngap().error("MessageType error");
     return false;
   }
-  for (int i = 0; i < pagingIEs->protocolIEs.list.count; i++) {
-    switch (pagingIEs->protocolIEs.list.array[i]->id) {
+  for (int i = 0; i < m_PagingIes->protocolIEs.list.count; i++) {
+    switch (m_PagingIes->protocolIEs.list.array[i]->id) {
       case Ngap_ProtocolIE_ID_id_UEPagingIdentity: {
-        if (pagingIEs->protocolIEs.list.array[i]->criticality ==
+        if (m_PagingIes->protocolIEs.list.array[i]->criticality ==
                 Ngap_Criticality_ignore &&
-            pagingIEs->protocolIEs.list.array[i]->value.present ==
+            m_PagingIes->protocolIEs.list.array[i]->value.present ==
                 Ngap_PagingIEs__value_PR_UEPagingIdentity) {
-          if (!uePagingIdentity.decode(pagingIEs->protocolIEs.list.array[i]
-                                           ->value.choice.UEPagingIdentity)) {
+          if (!m_UePagingIdentity.decode(m_PagingIes->protocolIEs.list.array[i]
+                                             ->value.choice.UEPagingIdentity)) {
             Logger::ngap().error("Decoded NGAP UEPagingIdentity IE error");
             return false;
           }
@@ -81,12 +81,12 @@ bool PagingMsg::decode(Ngap_NGAP_PDU_t* ngapMsgPdu) {
         }
       } break;
       case Ngap_ProtocolIE_ID_id_TAIListForPaging: {
-        if (pagingIEs->protocolIEs.list.array[i]->criticality ==
+        if (m_PagingIes->protocolIEs.list.array[i]->criticality ==
                 Ngap_Criticality_ignore &&
-            pagingIEs->protocolIEs.list.array[i]->value.present ==
+            m_PagingIes->protocolIEs.list.array[i]->value.present ==
                 Ngap_PagingIEs__value_PR_TAIListForPaging) {
-          if (!taIListForPaging.decode(pagingIEs->protocolIEs.list.array[i]
-                                           ->value.choice.TAIListForPaging)) {
+          if (!m_TaiListForPaging.decode(m_PagingIes->protocolIEs.list.array[i]
+                                             ->value.choice.TAIListForPaging)) {
             Logger::ngap().error("Decoded NGAP TAIListForPaging IE error");
             return false;
           }
@@ -97,7 +97,7 @@ bool PagingMsg::decode(Ngap_NGAP_PDU_t* ngapMsgPdu) {
       } break;
       default: {
         Logger::ngap().warn(
-            "Not decoded IE %d", pagingIEs->protocolIEs.list.array[i]->id);
+            "Not decoded IE %d", m_PagingIes->protocolIEs.list.array[i]->id);
 
         return true;
       }
@@ -108,9 +108,9 @@ bool PagingMsg::decode(Ngap_NGAP_PDU_t* ngapMsgPdu) {
 }
 
 //------------------------------------------------------------------------------
-void PagingMsg::setUEPagingIdentity(
+void PagingMsg::setUePagingIdentity(
     const std::string& setId, const std::string& pointer, std::string tmsi) {
-  uePagingIdentity.setUEPagingIdentity(setId, pointer, tmsi);
+  m_UePagingIdentity.set(setId, pointer, tmsi);
 
   Ngap_PagingIEs_t* ie =
       (Ngap_PagingIEs_t*) calloc(1, sizeof(Ngap_PagingIEs_t));
@@ -118,46 +118,46 @@ void PagingMsg::setUEPagingIdentity(
   ie->criticality   = Ngap_Criticality_ignore;
   ie->value.present = Ngap_PagingIEs__value_PR_UEPagingIdentity;
 
-  int ret = uePagingIdentity.encode(ie->value.choice.UEPagingIdentity);
+  int ret = m_UePagingIdentity.encode(ie->value.choice.UEPagingIdentity);
   if (!ret) {
     Logger::ngap().error("Encode NGAP UEPagingIdentity IE error");
     return;
   }
 
-  ret = ASN_SEQUENCE_ADD(&pagingIEs->protocolIEs.list, ie);
+  ret = ASN_SEQUENCE_ADD(&m_PagingIes->protocolIEs.list, ie);
   if (ret != 0) Logger::ngap().error("Encode NGAP UEPagingIdentity IE error");
 }
 
 //------------------------------------------------------------------------------
-void PagingMsg::getUEPagingIdentity(std::string& _5g_s_tmsi) {
-  uePagingIdentity.getUEPagingIdentity(_5g_s_tmsi);
+void PagingMsg::getUePagingIdentity(std::string& _5g_s_tmsi) const {
+  m_UePagingIdentity.get(_5g_s_tmsi);
 }
 
 //------------------------------------------------------------------------------
-void PagingMsg::getUEPagingIdentity(
-    std::string& setId, std::string& pointer, std::string& tmsi) {
-  uePagingIdentity.getUEPagingIdentity(setId, pointer, tmsi);
+void PagingMsg::getUePagingIdentity(
+    std::string& setId, std::string& pointer, std::string& tmsi) const {
+  m_UePagingIdentity.get(setId, pointer, tmsi);
 }
 
 //------------------------------------------------------------------------------
-void PagingMsg::setTAIListForPaging(const std::vector<Tai_t>& list) {
+void PagingMsg::setTaiListForPaging(const std::vector<Tai_t>& list) {
   if (list.size() == 0) {
     Logger::ngap().warn("Setup failed, vector is empty");
     return;
   }
 
-  std::vector<TAI> tailist;
+  std::vector<Tai> tailist;
 
   PlmnId plmnid[list.size()];
   TAC tac[list.size()];
   for (int i = 0; i < list.size(); i++) {
-    TAI tai = {};
+    Tai tai = {};
     plmnid[i].set(list[i].mcc, list[i].mnc);
     tac[i].set(list[i].tac);
-    tai.setTAI(plmnid[i], tac[i]);
+    tai.set(plmnid[i], tac[i]);
     tailist.push_back(tai);
   }
-  taIListForPaging.setTAIListForPaging(tailist);
+  m_TaiListForPaging.set(tailist);
 
   Ngap_PagingIEs_t* ie =
       (Ngap_PagingIEs_t*) calloc(1, sizeof(Ngap_PagingIEs_t));
@@ -165,24 +165,24 @@ void PagingMsg::setTAIListForPaging(const std::vector<Tai_t>& list) {
   ie->criticality   = Ngap_Criticality_ignore;
   ie->value.present = Ngap_PagingIEs__value_PR_TAIListForPaging;
 
-  int ret = taIListForPaging.encode(ie->value.choice.TAIListForPaging);
+  int ret = m_TaiListForPaging.encode(ie->value.choice.TAIListForPaging);
   if (!ret) {
     Logger::ngap().error("Encode NGAP TAIListForPaging IE error");
     return;
   }
 
-  ret = ASN_SEQUENCE_ADD(&pagingIEs->protocolIEs.list, ie);
+  ret = ASN_SEQUENCE_ADD(&m_PagingIes->protocolIEs.list, ie);
   if (ret != 0) Logger::ngap().error("Encode NGAP TAIListForPaging IE error");
 }
 
 //------------------------------------------------------------------------------
-void PagingMsg::getTAIListForPaging(std::vector<Tai_t>& list) {
-  std::vector<TAI> taiList;
-  taIListForPaging.getTAIListForPaging(taiList);
+void PagingMsg::getTaiListForPaging(std::vector<Tai_t>& list) const {
+  std::vector<Tai> taiList;
+  m_TaiListForPaging.get(taiList);
 
   for (auto& tai : taiList) {
     Tai_t t = {};
-    tai.getTAI(t);
+    tai.get(t);
     list.push_back(t);
   }
 }

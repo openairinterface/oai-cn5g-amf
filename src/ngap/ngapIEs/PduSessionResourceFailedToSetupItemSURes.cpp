@@ -35,28 +35,27 @@ PduSessionResourceFailedToSetupItemSURes::
 
 //------------------------------------------------------------------------------
 void PduSessionResourceFailedToSetupItemSURes::set(
-    const PduSessionId& pdu_session_id,
-    const OCTET_STRING_t& pdu_session_resource) {
-  pdu_session_id_                                   = pdu_session_id;
-  pdu_session_resource_setup_unsuccessful_transfer_ = pdu_session_resource;
+    const PduSessionId& pduSessionId,
+    const OCTET_STRING_t& pduSessionResource) {
+  m_PduSessionId                                = pduSessionId;
+  m_PduSessionResourceSetupUnsuccessfulTransfer = pduSessionResource;
 }
 
 //------------------------------------------------------------------------------
 void PduSessionResourceFailedToSetupItemSURes::get(
-    PduSessionId& pdu_session_id, OCTET_STRING_t& pdu_session_resource) {
-  pdu_session_id       = pdu_session_id_;
-  pdu_session_resource = pdu_session_resource_setup_unsuccessful_transfer_;
+    PduSessionId& pduSessionId, OCTET_STRING_t& pduSessionResource) const {
+  pduSessionId       = m_PduSessionId;
+  pduSessionResource = m_PduSessionResourceSetupUnsuccessfulTransfer;
 }
 
 //------------------------------------------------------------------------------
 bool PduSessionResourceFailedToSetupItemSURes::encode(
-    Ngap_PDUSessionResourceFailedToSetupItemSURes_t&
-        pdu_session_resource_item) {
-  if (!pdu_session_id_.encode(pdu_session_resource_item.pDUSessionID))
-    return false;
+    Ngap_PDUSessionResourceFailedToSetupItemSURes_t& pduSessionResourceItem)
+    const {
+  if (!m_PduSessionId.encode(pduSessionResourceItem.pDUSessionID)) return false;
   amf_conv::octet_string_copy(
-      pdu_session_resource_item.pDUSessionResourceSetupUnsuccessfulTransfer,
-      pdu_session_resource_setup_unsuccessful_transfer_);
+      pduSessionResourceItem.pDUSessionResourceSetupUnsuccessfulTransfer,
+      m_PduSessionResourceSetupUnsuccessfulTransfer);
 
   return true;
 }
@@ -64,12 +63,11 @@ bool PduSessionResourceFailedToSetupItemSURes::encode(
 //------------------------------------------------------------------------------
 bool PduSessionResourceFailedToSetupItemSURes::decode(
     const Ngap_PDUSessionResourceFailedToSetupItemSURes_t&
-        pdu_session_resource_item) {
-  if (!pdu_session_id_.decode(pdu_session_resource_item.pDUSessionID))
-    return false;
+        pduSessionResourceItem) {
+  if (!m_PduSessionId.decode(pduSessionResourceItem.pDUSessionID)) return false;
   amf_conv::octet_string_copy(
-      pdu_session_resource_setup_unsuccessful_transfer_,
-      pdu_session_resource_item.pDUSessionResourceSetupUnsuccessfulTransfer);
+      m_PduSessionResourceSetupUnsuccessfulTransfer,
+      pduSessionResourceItem.pDUSessionResourceSetupUnsuccessfulTransfer);
   return true;
 }
 

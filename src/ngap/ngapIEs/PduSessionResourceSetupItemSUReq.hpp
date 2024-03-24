@@ -26,7 +26,7 @@
 
 #include "NasPdu.hpp"
 #include "PduSessionId.hpp"
-#include "S-NSSAI.hpp"
+#include "SNssai.hpp"
 
 extern "C" {
 #include "Ngap_PDUSessionResourceSetupItemSUReq.h"
@@ -40,24 +40,23 @@ class PduSessionResourceSetupItemSUReq {
   virtual ~PduSessionResourceSetupItemSUReq();
 
   void set(
-      const PduSessionId& pdu_session_id, std::optional<NasPdu>& nas_pdu,
-      const S_NSSAI& s_nssai,
-      const OCTET_STRING_t& pdu_session_resource_setup_request_transfer);
+      const PduSessionId& pduSessionId, std::optional<NasPdu>& nasPdu,
+      const SNssai& sNssai,
+      const OCTET_STRING_t& pduSessionResourceSetupRequestTransfer);
   void get(
-      PduSessionId& pdu_session_id, std::optional<NasPdu>& nas_pdu,
-      S_NSSAI& s_nssai,
-      OCTET_STRING_t& pdu_session_resource_setup_request_transfer) const;
+      PduSessionId& pduSessionId, std::optional<NasPdu>& nasPdu, SNssai& sNssai,
+      OCTET_STRING_t& pduSessionResourceSetupRequestTransfer) const;
 
-  bool encode(Ngap_PDUSessionResourceSetupItemSUReq_t&
-                  pdu_session_resource_setup_item_su_req);
-  bool decode(const Ngap_PDUSessionResourceSetupItemSUReq_t&
-                  pdu_session_resource_setup_item_su_req);
+  bool encode(
+      Ngap_PDUSessionResourceSetupItemSUReq_t& pduSessionResourceItem) const;
+  bool decode(
+      const Ngap_PDUSessionResourceSetupItemSUReq_t& pduSessionResourceItem);
 
  private:
-  PduSessionId pdu_session_id_;                                 // Mandatory
-  std::optional<NasPdu> nas_pdu_;                               // Optional
-  S_NSSAI s_nssai_;                                             // Mandatory
-  OCTET_STRING_t pdu_session_resource_setup_request_transfer_;  // Mandatory
+  PduSessionId m_PduSessionId;                              // Mandatory
+  std::optional<NasPdu> m_NasPdu;                           // Optional
+  SNssai m_SNssai;                                          // Mandatory
+  OCTET_STRING_t m_PduSessionResourceSetupRequestTransfer;  // Mandatory
 };
 
 }  // namespace ngap

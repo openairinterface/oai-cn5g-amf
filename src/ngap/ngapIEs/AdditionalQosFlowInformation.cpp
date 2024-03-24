@@ -25,13 +25,13 @@ namespace ngap {
 
 //------------------------------------------------------------------------------
 AdditionalQosFlowInformation::AdditionalQosFlowInformation() {
-  qos_flow_info_ = 0;
+  m_QosFlowInfo = 0;
 }
 
 //------------------------------------------------------------------------------
 AdditionalQosFlowInformation::AdditionalQosFlowInformation(
     e_Ngap_AdditionalQosFlowInformation value) {
-  qos_flow_info_ = value;
+  m_QosFlowInfo = value;
 }
 //------------------------------------------------------------------------------
 AdditionalQosFlowInformation::~AdditionalQosFlowInformation() {}
@@ -39,14 +39,14 @@ AdditionalQosFlowInformation::~AdditionalQosFlowInformation() {}
 //------------------------------------------------------------------------------
 void AdditionalQosFlowInformation::set(
     e_Ngap_AdditionalQosFlowInformation value) {
-  qos_flow_info_ = value;
+  m_QosFlowInfo = value;
 }
 
 //------------------------------------------------------------------------------
 bool AdditionalQosFlowInformation::get(
-    e_Ngap_AdditionalQosFlowInformation& value) {
-  if (qos_flow_info_ == Ngap_AdditionalQosFlowInformation_more_likely)
-    value = (e_Ngap_AdditionalQosFlowInformation) qos_flow_info_;
+    e_Ngap_AdditionalQosFlowInformation& value) const {
+  if (m_QosFlowInfo == Ngap_AdditionalQosFlowInformation_more_likely)
+    value = (e_Ngap_AdditionalQosFlowInformation) m_QosFlowInfo;
   else
     return false;
 
@@ -56,7 +56,7 @@ bool AdditionalQosFlowInformation::get(
 //------------------------------------------------------------------------------
 bool AdditionalQosFlowInformation::encode(
     Ngap_AdditionalQosFlowInformation_t& value) const {
-  value = qos_flow_info_;
+  value = m_QosFlowInfo;
 
   return true;
 }
@@ -64,7 +64,7 @@ bool AdditionalQosFlowInformation::encode(
 //------------------------------------------------------------------------------
 bool AdditionalQosFlowInformation::decode(
     const Ngap_AdditionalQosFlowInformation_t& value) {
-  qos_flow_info_ = value;
+  m_QosFlowInfo = value;
 
   return true;
 }

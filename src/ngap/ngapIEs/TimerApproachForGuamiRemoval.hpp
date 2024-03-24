@@ -37,10 +37,10 @@ class TimerApproachForGuamiRemoval {
   bool get(long& value) const;
 
   bool encode(Ngap_TimerApproachForGUAMIRemoval_t&) const;
-  bool decode(Ngap_TimerApproachForGUAMIRemoval_t);
+  bool decode(const Ngap_TimerApproachForGUAMIRemoval_t&);
 
  private:
-  long value_;
+  long m_TimerApproachForGuamiRemoval;
 };
 
 }  // namespace ngap

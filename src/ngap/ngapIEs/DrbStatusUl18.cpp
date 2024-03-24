@@ -30,26 +30,26 @@ DrbStatusUl18::DrbStatusUl18() {}
 DrbStatusUl18::~DrbStatusUl18() {}
 
 //------------------------------------------------------------------------------
-void DrbStatusUl18::get(CountValueForPdcpSn18& count_value) const {
-  count_value = pdcp_value;
+void DrbStatusUl18::get(CountValueForPdcpSn18& countValue) const {
+  countValue = m_PdcpValue;
 }
 
 //------------------------------------------------------------------------------
-void DrbStatusUl18::set(const CountValueForPdcpSn18& count_value) {
-  pdcp_value = count_value;
+void DrbStatusUl18::set(const CountValueForPdcpSn18& countValue) {
+  m_PdcpValue = countValue;
 }
 
 //------------------------------------------------------------------------------
-bool DrbStatusUl18::encode(Ngap_DRBStatusUL18_t& UL18) {
-  if (!pdcp_value.encode(UL18.uL_COUNTValue)) {
+bool DrbStatusUl18::encode(Ngap_DRBStatusUL18_t& ul18) const {
+  if (!m_PdcpValue.encode(ul18.uL_COUNTValue)) {
     return false;
   }
   return true;
 }
 
 //------------------------------------------------------------------------------
-bool DrbStatusUl18::decode(const Ngap_DRBStatusUL18_t& UL18) {
-  if (!pdcp_value.decode(UL18.uL_COUNTValue)) {
+bool DrbStatusUl18::decode(const Ngap_DRBStatusUL18_t& ul18) {
+  if (!m_PdcpValue.decode(ul18.uL_COUNTValue)) {
     return false;
   }
   return true;

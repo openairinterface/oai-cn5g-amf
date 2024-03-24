@@ -30,18 +30,18 @@ DrbStatusUl12::DrbStatusUl12() {}
 DrbStatusUl12::~DrbStatusUl12() {}
 
 //------------------------------------------------------------------------------
-void DrbStatusUl12::get(CountValueForPdcpSn12& count_value) const {
-  count_value = pdcp_value;
+void DrbStatusUl12::get(CountValueForPdcpSn12& countValue) const {
+  countValue = m_PdcpValue;
 }
 
 //------------------------------------------------------------------------------
-void DrbStatusUl12::set(const CountValueForPdcpSn12& count_value) {
-  pdcp_value = count_value;
+void DrbStatusUl12::set(const CountValueForPdcpSn12& countValue) {
+  m_PdcpValue = countValue;
 }
 
 //------------------------------------------------------------------------------
-bool DrbStatusUl12::encode(Ngap_DRBStatusUL12_t& ul12) {
-  if (!pdcp_value.encode(ul12.uL_COUNTValue)) {
+bool DrbStatusUl12::encode(Ngap_DRBStatusUL12_t& ul12) const {
+  if (!m_PdcpValue.encode(ul12.uL_COUNTValue)) {
     return false;
   }
   return true;
@@ -49,7 +49,7 @@ bool DrbStatusUl12::encode(Ngap_DRBStatusUL12_t& ul12) {
 
 //------------------------------------------------------------------------------
 bool DrbStatusUl12::decode(const Ngap_DRBStatusUL12_t& ul12) {
-  if (!pdcp_value.decode(ul12.uL_COUNTValue)) {
+  if (!m_PdcpValue.decode(ul12.uL_COUNTValue)) {
     return false;
   }
   return true;

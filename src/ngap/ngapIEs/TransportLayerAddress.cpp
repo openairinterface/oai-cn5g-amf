@@ -34,16 +34,15 @@ TransportLayerAddress::TransportLayerAddress() {}
 TransportLayerAddress::~TransportLayerAddress() {}
 
 //------------------------------------------------------------------------------
-void TransportLayerAddress::setTransportLayerAddress(
-    const std::string m_ipaddress) {
-  // ip_address_ = utils::fromString<long>(m_ipaddress);
-  ip_address_ = m_ipaddress;
+void TransportLayerAddress::set(const std::string& address) {
+  // m_IpAddress = utils::fromString<long>(address);
+  m_IpAddress = address;
 }
 
 //------------------------------------------------------------------------------
-bool TransportLayerAddress::getTransportLayerAddress(std::string& m_ipaddress) {
-  // m_ipaddress = to_string(ip_address_);
-  m_ipaddress = ip_address_;
+bool TransportLayerAddress::get(std::string& address) const {
+  // address = to_string(m_IpAddress);
+  address = m_IpAddress;
 
   return true;
 }
@@ -68,16 +67,16 @@ std::vector<std::string> splite(const std::string& s, const std::string& c) {
 
 //------------------------------------------------------------------------------
 bool TransportLayerAddress::encode(
-    Ngap_TransportLayerAddress_t& transportLayerAddress) {
+    Ngap_TransportLayerAddress_t& transportLayerAddress) const {
   transportLayerAddress.size        = sizeof(uint32_t);
   transportLayerAddress.bits_unused = 0;
   transportLayerAddress.buf = (uint8_t*) calloc(1, transportLayerAddress.size);
   if (!transportLayerAddress.buf) return false;
 
-  std::vector<std::string> ip_address = splite(ip_address_, ".");
+  std::vector<std::string> ipAddress = splite(m_IpAddress, ".");
 
   for (int i = 0; i < transportLayerAddress.size; i++) {
-    transportLayerAddress.buf[i] = utils::fromString<int>(ip_address[i]);
+    transportLayerAddress.buf[i] = utils::fromString<int>(ipAddress[i]);
   }
 
   return true;
@@ -88,10 +87,10 @@ bool TransportLayerAddress::decode(
     const Ngap_TransportLayerAddress_t& transportLayerAddress) {
   if (!transportLayerAddress.buf) return false;
 
-  ip_address_ = std::to_string(transportLayerAddress.buf[0]);
+  m_IpAddress = std::to_string(transportLayerAddress.buf[0]);
   for (int i = 1; i < transportLayerAddress.size; i++) {
-    ip_address_ =
-        ip_address_ + '.' + std::to_string(transportLayerAddress.buf[i]);
+    m_IpAddress =
+        m_IpAddress + '.' + std::to_string(transportLayerAddress.buf[i]);
   }
 
   return true;

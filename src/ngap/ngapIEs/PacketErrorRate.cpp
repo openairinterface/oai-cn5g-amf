@@ -25,39 +25,39 @@ namespace ngap {
 
 //------------------------------------------------------------------------------
 PacketErrorRate::PacketErrorRate() {
-  scalar_   = 0;
-  exponent_ = 0;
+  m_Scalar   = 0;
+  m_Exponent = 0;
 }
 
 //------------------------------------------------------------------------------
 PacketErrorRate::~PacketErrorRate() {}
 
 //------------------------------------------------------------------------------
-void PacketErrorRate::setPacketErrorRate(long scalar, long exponent) {
-  scalar_   = scalar;
-  exponent_ = exponent;
+void PacketErrorRate::set(const long& scalar, const long& exponent) {
+  m_Scalar   = scalar;
+  m_Exponent = exponent;
 }
 
 //------------------------------------------------------------------------------
-bool PacketErrorRate::getPacketErrorRate(long& scalar, long& exponent) const {
-  scalar   = scalar_;
-  exponent = exponent_;
+bool PacketErrorRate::get(long& scalar, long& exponent) const {
+  scalar   = m_Scalar;
+  exponent = m_Exponent;
 
   return true;
 }
 
 //------------------------------------------------------------------------------
-bool PacketErrorRate::encode(Ngap_PacketErrorRate_t& packet_error_rate) const {
-  packet_error_rate.pERScalar   = scalar_;
-  packet_error_rate.pERExponent = exponent_;
+bool PacketErrorRate::encode(Ngap_PacketErrorRate_t& per) const {
+  per.pERScalar   = m_Scalar;
+  per.pERExponent = m_Exponent;
 
   return true;
 }
 
 //------------------------------------------------------------------------------
-bool PacketErrorRate::decode(const Ngap_PacketErrorRate_t& packet_error_rate) {
-  scalar_   = packet_error_rate.pERScalar;
-  exponent_ = packet_error_rate.pERExponent;
+bool PacketErrorRate::decode(const Ngap_PacketErrorRate_t& per) {
+  m_Scalar   = per.pERScalar;
+  m_Exponent = per.pERExponent;
 
   return true;
 }

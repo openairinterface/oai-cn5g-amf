@@ -25,43 +25,43 @@ namespace ngap {
 
 //------------------------------------------------------------------------------
 PeriodicRegistrationUpdateTimer::PeriodicRegistrationUpdateTimer() {
-  update_timer_ = 0;
+  m_UpdateTimer = 0;
 }
 
 //------------------------------------------------------------------------------
 PeriodicRegistrationUpdateTimer::~PeriodicRegistrationUpdateTimer() {}
 
 //------------------------------------------------------------------------------
-void PeriodicRegistrationUpdateTimer::set(const uint8_t& update_timer) {
-  update_timer_ = update_timer;
+void PeriodicRegistrationUpdateTimer::set(uint8_t updateTimer) {
+  m_UpdateTimer = updateTimer;
 }
 
 //------------------------------------------------------------------------------
 bool PeriodicRegistrationUpdateTimer::encode(
-    Ngap_PeriodicRegistrationUpdateTimer_t& periodic_registration_update_timer)
+    Ngap_PeriodicRegistrationUpdateTimer_t& periodicRegistrationUpdateTimer)
     const {
-  periodic_registration_update_timer.size        = sizeof(uint8_t);
-  periodic_registration_update_timer.bits_unused = 0;
-  periodic_registration_update_timer.buf =
-      (uint8_t*) calloc(1, periodic_registration_update_timer.size);
-  if (!periodic_registration_update_timer.buf) return false;
-  periodic_registration_update_timer.buf[0] = update_timer_;
+  periodicRegistrationUpdateTimer.size        = sizeof(uint8_t);
+  periodicRegistrationUpdateTimer.bits_unused = 0;
+  periodicRegistrationUpdateTimer.buf =
+      (uint8_t*) calloc(1, periodicRegistrationUpdateTimer.size);
+  if (!periodicRegistrationUpdateTimer.buf) return false;
+  periodicRegistrationUpdateTimer.buf[0] = m_UpdateTimer;
 
   return true;
 }
 
 //------------------------------------------------------------------------------
 bool PeriodicRegistrationUpdateTimer::decode(
-    Ngap_PeriodicRegistrationUpdateTimer_t periodic_registration_update_timer) {
-  if (!periodic_registration_update_timer.buf) return false;
-  update_timer_ = periodic_registration_update_timer.buf[0];
+    Ngap_PeriodicRegistrationUpdateTimer_t periodicRegistrationUpdateTimer) {
+  if (!periodicRegistrationUpdateTimer.buf) return false;
+  m_UpdateTimer = periodicRegistrationUpdateTimer.buf[0];
 
   return true;
 }
 
 //------------------------------------------------------------------------------
-void PeriodicRegistrationUpdateTimer::get(uint8_t& update_timer) const {
-  update_timer = update_timer_;
+void PeriodicRegistrationUpdateTimer::get(uint8_t& updateTimer) const {
+  updateTimer = m_UpdateTimer;
 }
 
 }  // namespace ngap

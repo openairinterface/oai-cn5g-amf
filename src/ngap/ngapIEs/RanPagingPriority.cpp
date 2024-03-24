@@ -25,34 +25,36 @@ namespace ngap {
 
 //------------------------------------------------------------------------------
 RanPagingPriority::RanPagingPriority() {
-  ran_paging_priority_ = 0;
+  m_RanPagingPriority = 0;
 }
 
 //------------------------------------------------------------------------------
 RanPagingPriority::~RanPagingPriority() {}
 
 //------------------------------------------------------------------------------
-bool RanPagingPriority::set(const uint32_t& ran_paging_priority) {
-  if (ran_paging_priority > kRANPagingPriorityMaxValue) return false;
-  ran_paging_priority_ = ran_paging_priority;
+bool RanPagingPriority::set(const uint32_t& ranPagingPriority) {
+  if (ranPagingPriority > kRANPagingPriorityMaxValue) return false;
+  m_RanPagingPriority = ranPagingPriority;
   return true;
 }
 
 //------------------------------------------------------------------------------
 uint32_t RanPagingPriority::get() const {
-  return ran_paging_priority_;
+  return m_RanPagingPriority;
 }
 
 //------------------------------------------------------------------------------
-bool RanPagingPriority::encode(Ngap_RANPagingPriority_t& ran_paging_priority) {
-  ran_paging_priority = ran_paging_priority_;
+bool RanPagingPriority::encode(
+    Ngap_RANPagingPriority_t& ranPagingPriority) const {
+  ranPagingPriority = m_RanPagingPriority;
   return true;
 }
 
 //------------------------------------------------------------------------------
-bool RanPagingPriority::decode(Ngap_RANPagingPriority_t ran_paging_priority) {
-  if (ran_paging_priority > kRANPagingPriorityMaxValue) return false;
-  ran_paging_priority_ = ran_paging_priority;
+bool RanPagingPriority::decode(
+    const Ngap_RANPagingPriority_t& ranPagingPriority) {
+  if (ranPagingPriority > kRANPagingPriorityMaxValue) return false;
+  m_RanPagingPriority = ranPagingPriority;
   return true;
 }
 }  // namespace ngap

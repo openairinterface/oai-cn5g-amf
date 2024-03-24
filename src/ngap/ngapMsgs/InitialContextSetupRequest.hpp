@@ -25,17 +25,17 @@
 #include <optional>
 
 #include "3gpp_23.003.h"
-#include "AmfName.hpp"
 #include "AllowedNssai.hpp"
+#include "AmfName.hpp"
 #include "CoreNetworkAssistanceInformationForInactive.hpp"
-#include "GUAMI.hpp"
+#include "Guami.hpp"
 #include "MobilityRestrictionList.hpp"
-#include "NgapUEMessage.hpp"
+#include "NgapUeMessage.hpp"
 #include "PduSessionResourceSetupListCxtReq.hpp"
 #include "SecurityKey.hpp"
-#include "UEAggregateMaxBitRate.hpp"
-#include "UERadioCapability.hpp"
-#include "UESecurityCapabilities.hpp"
+#include "UeAggregateMaxBitRate.hpp"
+#include "UeRadioCapability.hpp"
+#include "UeSecurityCapabilities.hpp"
 
 extern "C" {
 #include "Ngap_InitialContextSetupRequest.h"
@@ -43,7 +43,7 @@ extern "C" {
 
 namespace ngap {
 
-class InitialContextSetupRequestMsg : public NgapUEMessage {
+class InitialContextSetupRequestMsg : public NgapUeMessage {
  public:
   InitialContextSetupRequestMsg();
   virtual ~InitialContextSetupRequestMsg();
@@ -55,84 +55,80 @@ class InitialContextSetupRequestMsg : public NgapUEMessage {
   bool decode(Ngap_NGAP_PDU_t* ngapMsgPdu) override;
 
   void setOldAmf(const std::string& name);
-  bool getOldAmf(std::string& name);
+  bool getOldAmf(std::string& name) const;
 
-  void setUEAggregateMaxBitRate(
-      const uint64_t& bit_rate_downlink, const uint64_t& bit_rate_uplink);
-  bool getUEAggregateMaxBitRate(
-      uint64_t& bit_rate_downlink, uint64_t& bit_rate_uplink);
+  void setUeAggregateMaxBitRate(
+      const uint64_t& bitRateDl, const uint64_t& bitRateUl);
+  bool getUeAggregateMaxBitRate(uint64_t& bitRateDl, uint64_t& bitRateUl) const;
 
-  void setUEAggregateMaxBitRate(const UEAggregateMaxBitRate& bit_rate);
-  bool getUEAggregateMaxBitRate(UEAggregateMaxBitRate& bit_rate);
+  void setUeAggregateMaxBitRate(const UeAggregateMaxBitRate& bitRate);
+  bool getUeAggregateMaxBitRate(UeAggregateMaxBitRate& bitRate) const;
 
   void setCoreNetworkAssistanceInfo(
-      const uint16_t& ue_identity_index_value_value,
-      const e_Ngap_PagingDRX& ue_specific_drx_value,
-      const uint8_t& periodic_reg_update_timer_value,
-      const bool& mico_mode_ind_value,
+      uint16_t ue_identity_index_value_value,
+      e_Ngap_PagingDRX ue_specific_drx_value,
+      uint8_t periodic_reg_update_timer_value, bool mico_mode_ind_value,
       const std::vector<Tai_t>& tai_list_for_rrc_inactive);
 
   bool getCoreNetworkAssistanceInfo(
       uint16_t& ue_identity_index_value_value, int& ue_specific_drx_value,
       uint8_t& periodic_reg_update_timer_value, bool& mico_mode_ind_value,
-      std::vector<Tai_t>& tai_list_for_rrc_inactive);
+      std::vector<Tai_t>& tai_list_for_rrc_inactive) const;
 
   void setGuami(const guami_full_format_t& value);
-  bool getGuami(guami_full_format_t& value);
+  bool getGuami(guami_full_format_t& value) const;
 
   void setPduSessionResourceSetupRequestList(
       const std::vector<PDUSessionResourceSetupRequestItem_t>& list);
   bool getPduSessionResourceSetupRequestList(
-      std::vector<PDUSessionResourceSetupRequestItem_t>& list);
+      std::vector<PDUSessionResourceSetupRequestItem_t>& list) const;
 
   void setAllowedNssai(const std::vector<S_Nssai>& list);
-  bool getAllowedNssai(std::vector<S_Nssai>& list);
+  bool getAllowedNssai(std::vector<S_Nssai>& list) const;
 
-  void setUESecurityCapability(
-      const uint16_t& nr_encryption_algs,
-      const uint16_t& nr_integrity_protection_algs,
-      const uint16_t& e_utra_encryption_algs,
-      const uint16_t& e_utra_integrity_protection_algs);
+  void setUeSecurityCapability(
+      uint16_t nr_encryption_algs, uint16_t integrityProtectionAlgorithms,
+      uint16_t eutraEncryptionAlgorithms,
+      uint16_t eutraIntegrityProtectionAlgorithms);
+  bool getUeSecurityCapability(
+      uint16_t& nr_encryption_algs, uint16_t& integrityProtectionAlgorithms,
+      uint16_t& eutraEncryptionAlgorithms,
+      uint16_t& eutraIntegrityProtectionAlgorithms) const;
 
-  bool getUESecurityCapability(
-      uint16_t& nr_encryption_algs, uint16_t& nr_integrity_protection_algs,
-      uint16_t& e_utra_encryption_algs,
-      uint16_t& e_utra_integrity_protection_algs);
-
-  void setSecurityKey(uint8_t* key);   // 256bits
-  bool getSecurityKey(uint8_t*& key);  // 256bits
+  void setSecurityKey(uint8_t* key);         // 256bits
+  bool getSecurityKey(uint8_t*& key) const;  // 256bits
 
   void setMobilityRestrictionList(const PlmnId& plmn_id);
   // TODO: getMobilityRestrictionList
 
-  void setUERadioCapability(const bstring& ue_radio_capability);
-  void getUERadioCapability(bstring& ue_radio_capability);
+  void setUeRadioCapability(const bstring& ue_radio_capability);
+  void getUeRadioCapability(bstring& ue_radio_capability) const;
 
-  void setMaskedIMEISV(const std::string& imeisv);
+  void setMaskedImeisv(const std::string& imeisv);
   // bool getMaskedIMEISV();
 
   void setNasPdu(const bstring& pdu);
-  bool getNasPdu(bstring& pdu);
+  bool getNasPdu(bstring& pdu) const;
 
  private:
-  Ngap_InitialContextSetupRequest_t* initialContextSetupRequestIEs;
+  Ngap_InitialContextSetupRequest_t* m_InitialContextSetupRequestIes;
 
-  std::optional<AmfName> oldAMF;                               // Optional
-  std::optional<UEAggregateMaxBitRate> uEAggregateMaxBitRate;  // Conditional
+  std::optional<AmfName> m_OldAmf;                               // Optional
+  std::optional<UeAggregateMaxBitRate> m_UeAggregateMaxBitRate;  // Conditional
   std::optional<CoreNetworkAssistanceInformationForInactive>
-      coreNetworkAssistanceInformationForInactive;  // Optional
-  GUAMI guami;                                      // Mandatory
+      m_CoreNetworkAssistanceInformationForInactive;  // Optional
+  Guami m_Guami;                                      // Mandatory
   std::optional<PduSessionResourceSetupListCxtReq>
-      pduSessionResourceSetupRequestList;         // Optional
-  AllowedNSSAI allowedNssai;                      // Mandatory
-  UESecurityCapabilities uESecurityCapabilities;  // Mandatory
-  SecurityKey securityKey;                        // Mandatory
+      m_PduSessionResourceSetupRequestList;         // Optional
+  AllowedNSSAI m_AllowedNssai;                      // Mandatory
+  UeSecurityCapabilities m_UeSecurityCapabilities;  // Mandatory
+  SecurityKey m_SecurityKey;                        // Mandatory
   // TODO: Trace Activation (Optional)
-  std::optional<MobilityRestrictionList> mobilityRestrictionList;
-  std::optional<UERadioCapability> ueRadioCapability;  // Optional
+  std::optional<MobilityRestrictionList> m_MobilityRestrictionList;
+  std::optional<UeRadioCapability> m_UeRadioCapability;  // Optional
   // TODO: Index to RAT/Frequency Selection Priority
-  std::optional<Ngap_MaskedIMEISV_t> maskedIMEISV;  // Optional
-  std::optional<NasPdu> nasPdu;                     // Optional
+  std::optional<Ngap_MaskedIMEISV_t> m_MaskedImeiSv;  // Optional
+  std::optional<NasPdu> m_NasPdu;                     // Optional
   // TODO: Emergency Fallback Indicator
   // TODO: RRC Inactive Transition Report Request
   // TODO: UE Radio Capability for Paging

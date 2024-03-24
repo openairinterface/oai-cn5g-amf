@@ -40,11 +40,11 @@ class QosFlowSetupRequestList {
   void set(const std::vector<QosFlowSetupRequestItem>& list);
   void get(std::vector<QosFlowSetupRequestItem>& list) const;
 
-  bool encode(Ngap_QosFlowSetupRequestList_t& qosFlowSetupRequestList);
+  bool encode(Ngap_QosFlowSetupRequestList_t& qosFlowSetupRequestList) const;
   bool decode(const Ngap_QosFlowSetupRequestList_t& qosFlowSetupRequestList);
 
  private:
-  std::vector<QosFlowSetupRequestItem> list_;
+  std::vector<QosFlowSetupRequestItem> m_ItemList;
   constexpr static uint8_t kMaxNoOfQoSFlows = 64;
 };
 }  // namespace ngap

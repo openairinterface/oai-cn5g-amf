@@ -30,13 +30,13 @@ DataForwardingNotPossible::DataForwardingNotPossible() {}
 DataForwardingNotPossible::~DataForwardingNotPossible() {}
 
 //------------------------------------------------------------------------------
-void DataForwardingNotPossible::set(const long value) {
-  value_ = value;
+void DataForwardingNotPossible::set(const long& value) {
+  m_DataForwardingNotPossible = value;
 }
 
 //------------------------------------------------------------------------------
 void DataForwardingNotPossible::get(long& value) const {
-  value = value_;
+  value = m_DataForwardingNotPossible;
 }
 //------------------------------------------------------------------------------
 bool DataForwardingNotPossible::encode(
@@ -48,7 +48,8 @@ bool DataForwardingNotPossible::encode(
 }
 
 //------------------------------------------------------------------------------
-bool DataForwardingNotPossible::decode(Ngap_DataForwardingNotPossible_t value) {
+bool DataForwardingNotPossible::decode(
+    const Ngap_DataForwardingNotPossible_t& value) {
   // TODO:
   if (value != Ngap_DataForwardingNotPossible_data_forwarding_not_possible)
     return false;

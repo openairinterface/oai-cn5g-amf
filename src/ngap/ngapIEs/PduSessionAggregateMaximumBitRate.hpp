@@ -32,18 +32,18 @@ class PduSessionAggregateMaximumBitRate {
  public:
   PduSessionAggregateMaximumBitRate();
   PduSessionAggregateMaximumBitRate(
-      long bit_rate_downlink, long bit_rate_uplink);
+      const long& bitRateDl, const long& bitRateUl);
   virtual ~PduSessionAggregateMaximumBitRate();
 
-  void set(long bit_rate_downlink, long bit_rate_uplink);
-  bool get(long& bit_rate_downlink, long& bit_rate_uplink) const;
+  void set(const long& bitRateDl, const long& bitRateUl);
+  bool get(long& bitRateDl, long& bitRateUl) const;
 
-  bool encode(Ngap_PDUSessionAggregateMaximumBitRate_t& bit_rate);
-  bool decode(const Ngap_PDUSessionAggregateMaximumBitRate_t& bit_rate);
+  bool encode(Ngap_PDUSessionAggregateMaximumBitRate_t& bitRate) const;
+  bool decode(const Ngap_PDUSessionAggregateMaximumBitRate_t& bitRate);
 
  private:
-  long dl_;
-  long ul_;
+  long m_Dl;
+  long m_Ul;
 };
 
 }  // namespace ngap

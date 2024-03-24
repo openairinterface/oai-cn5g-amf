@@ -33,32 +33,32 @@ PduSessionResourceItem::~PduSessionResourceItem() {}
 
 //------------------------------------------------------------------------------
 void PduSessionResourceItem::set(
-    const PduSessionId& pdu_session_id, const OCTET_STRING_t& resource) {
-  pdu_session_id_ = pdu_session_id;
-  // resource_ = resource;
-  amf_conv::octet_string_copy(resource_, resource);
+    const PduSessionId& pduSessionId, const OCTET_STRING_t& resource) {
+  m_PduSessionId = pduSessionId;
+  // m_Resource = resource;
+  amf_conv::octet_string_copy(m_Resource, resource);
 }
 
 //------------------------------------------------------------------------------
 void PduSessionResourceItem::get(
-    PduSessionId& pdu_session_id, OCTET_STRING_t& resource) const {
-  pdu_session_id = pdu_session_id_;
-  // resource = resource_;
-  amf_conv::octet_string_copy(resource, resource_);
+    PduSessionId& pduSessionId, OCTET_STRING_t& resource) const {
+  pduSessionId = m_PduSessionId;
+  // resource = m_Resource;
+  amf_conv::octet_string_copy(resource, m_Resource);
 }
 
 //------------------------------------------------------------------------------
 bool PduSessionResourceItem::encode(
-    Ngap_PDUSessionID_t& pdu_session_id, OCTET_STRING_t& resource) const {
-  if (!pdu_session_id_.encode(pdu_session_id)) return false;
-  return amf_conv::octet_string_copy(resource, resource_);
+    Ngap_PDUSessionID_t& pduSessionId, OCTET_STRING_t& resource) const {
+  if (!m_PduSessionId.encode(pduSessionId)) return false;
+  return amf_conv::octet_string_copy(resource, m_Resource);
 }
 
 //------------------------------------------------------------------------------
 bool PduSessionResourceItem::decode(
-    const Ngap_PDUSessionID_t& pdu_session_id, const OCTET_STRING_t& resource) {
-  if (!pdu_session_id_.decode(pdu_session_id)) return false;
-  return amf_conv::octet_string_copy(resource_, resource);
+    const Ngap_PDUSessionID_t& pduSessionId, const OCTET_STRING_t& resource) {
+  if (!m_PduSessionId.decode(pduSessionId)) return false;
+  return amf_conv::octet_string_copy(m_Resource, resource);
 }
 
 //------------------------------------------------------------------------------

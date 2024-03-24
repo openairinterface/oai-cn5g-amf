@@ -37,18 +37,18 @@ class DrbStatusUl {
   DrbStatusUl();
   virtual ~DrbStatusUl();
 
-  void setdRBStatusUL(const DrbStatusUl18& ul18);
-  void getdRBStatusUL(std::optional<DrbStatusUl18>& ul18) const;
+  void setDrbStatusUl(const DrbStatusUl18& ul18);
+  void getDrbStatusUl(std::optional<DrbStatusUl18>& ul18) const;
 
-  void setdRBStatusUL(const DrbStatusUl12& ul12);
-  void getdRBStatusUL(std::optional<DrbStatusUl12>& ul12) const;
+  void setDrbStatusUl(const DrbStatusUl12& ul12);
+  void getDrbStatusUl(std::optional<DrbStatusUl12>& ul12) const;
 
-  bool encode(Ngap_DRBStatusUL_t& uL);
-  bool decode(const Ngap_DRBStatusUL_t& uL);
+  bool encode(Ngap_DRBStatusUL_t& ul) const;
+  bool decode(const Ngap_DRBStatusUL_t& ul);
 
  private:
-  std::optional<DrbStatusUl18> ul18_;
-  std::optional<DrbStatusUl12> ul12_;
+  std::optional<DrbStatusUl18> m_Ul18;
+  std::optional<DrbStatusUl12> m_Ul12;
 };
 }  // namespace ngap
 #endif

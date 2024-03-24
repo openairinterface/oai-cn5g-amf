@@ -30,32 +30,32 @@ PduSessionResourceHandoverItem::PduSessionResourceHandoverItem() {}
 PduSessionResourceHandoverItem::~PduSessionResourceHandoverItem() {}
 
 //------------------------------------------------------------------------------
-void PduSessionResourceHandoverItem::setPDUSessionResourceHandoverItem(
-    const PduSessionId& sessionID, const OCTET_STRING_t& commandTransfer) {
-  pDUSessionID            = sessionID;
-  handoverCommandTransfer = commandTransfer;
+void PduSessionResourceHandoverItem::set(
+    const PduSessionId& sessionId, const OCTET_STRING_t& commandTransfer) {
+  m_PduSessionId            = sessionId;
+  m_HandoverCommandTransfer = commandTransfer;
 }
 
 //------------------------------------------------------------------------------
-void PduSessionResourceHandoverItem::getPDUSessionResourceHandoverItem(
-    PduSessionId& sessionID, OCTET_STRING_t& commandTransfer) {
-  sessionID       = pDUSessionID;
-  commandTransfer = handoverCommandTransfer;
+void PduSessionResourceHandoverItem::get(
+    PduSessionId& sessionId, OCTET_STRING_t& commandTransfer) const {
+  sessionId       = m_PduSessionId;
+  commandTransfer = m_HandoverCommandTransfer;
 }
 
 //------------------------------------------------------------------------------
 bool PduSessionResourceHandoverItem::encode(
-    Ngap_PDUSessionResourceHandoverItem_t& item) {
-  if (!pDUSessionID.encode(item.pDUSessionID)) return false;
-  item.handoverCommandTransfer = handoverCommandTransfer;
+    Ngap_PDUSessionResourceHandoverItem_t& item) const {
+  if (!m_PduSessionId.encode(item.pDUSessionID)) return false;
+  item.handoverCommandTransfer = m_HandoverCommandTransfer;
   return true;
 }
 
 //------------------------------------------------------------------------------
 bool PduSessionResourceHandoverItem::decode(
     const Ngap_PDUSessionResourceHandoverItem_t& item) {
-  if (!pDUSessionID.decode(item.pDUSessionID)) return false;
-  handoverCommandTransfer = item.handoverCommandTransfer;
+  if (!m_PduSessionId.decode(item.pDUSessionID)) return false;
+  m_HandoverCommandTransfer = item.handoverCommandTransfer;
   return true;
 }
 }  // namespace ngap

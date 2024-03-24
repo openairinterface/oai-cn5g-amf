@@ -23,13 +23,13 @@
 #define _PDU_SESSION_RESOURCE_RELEASE_RESPONSE_H_
 
 #include "CriticalityDiagnostics.hpp"
-#include "NgapUEMessage.hpp"
+#include "NgapUeMessage.hpp"
 #include "PduSessionResourceReleasedListRelRes.hpp"
 #include "UserLocationInformation.hpp"
 
 namespace ngap {
 
-class PduSessionResourceReleaseResponseMsg : public NgapUEMessage {
+class PduSessionResourceReleaseResponseMsg : public NgapUeMessage {
  public:
   PduSessionResourceReleaseResponseMsg();
   virtual ~PduSessionResourceReleaseResponseMsg();
@@ -43,18 +43,18 @@ class PduSessionResourceReleaseResponseMsg : public NgapUEMessage {
   void setPduSessionResourceReleasedList(
       const std::vector<PDUSessionResourceReleasedItem_t>& list);
   bool getPduSessionResourceReleasedList(
-      std::vector<PDUSessionResourceReleasedItem_t>& list);
+      std::vector<PDUSessionResourceReleasedItem_t>& list) const;
 
-  void setUserLocationInfoNR(const NrCgi_t& cig, const Tai_t& tai);
-  bool getUserLocationInfoNR(NrCgi_t& cig, Tai_t& tai);
+  void setUserLocationInfoNr(const NrCgi_t& cig, const Tai_t& tai);
+  bool getUserLocationInfoNr(NrCgi_t& cig, Tai_t& tai) const;
 
  private:
   Ngap_PDUSessionResourceReleaseResponse_t*
-      pduSessionResourceReleaseResponseIEs;
+      m_PduSessionResourceReleaseResponseIes;
 
   PduSessionResourceReleasedListRelRes
-      pduSessionResourceReleasedList;                              // Mandatory
-  std::optional<UserLocationInformation> userLocationInformation;  // Optional
+      m_PduSessionResourceReleasedList;  // Mandatory
+  std::optional<UserLocationInformation> m_UserLocationInformation;  // Optional
   // TODO: CriticalityDiagnostics *criticalityDiagnostics; //Optional
 };
 

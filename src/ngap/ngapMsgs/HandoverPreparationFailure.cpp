@@ -27,9 +27,9 @@
 namespace ngap {
 
 //------------------------------------------------------------------------------
-HandoverPreparationFailure::HandoverPreparationFailure() : NgapUEMessage() {
-  hoPreparationFailureIEs = nullptr;
-  criticalityDiagnostics  = nullptr;
+HandoverPreparationFailure::HandoverPreparationFailure() : NgapUeMessage() {
+  m_HOPreparationFailureIes = nullptr;
+  m_CriticalityDiagnostics  = nullptr;
 
   setMessageType(NgapMessageType::HANDOVER_PREPARATION_FAILURE);
   initialize();
@@ -40,13 +40,13 @@ HandoverPreparationFailure::~HandoverPreparationFailure() {}
 
 //------------------------------------------------------------------------------
 void HandoverPreparationFailure::initialize() {
-  hoPreparationFailureIEs = &(ngapPdu->choice.unsuccessfulOutcome->value.choice
-                                  .HandoverPreparationFailure);
+  m_HOPreparationFailureIes = &(ngapPdu->choice.unsuccessfulOutcome->value
+                                    .choice.HandoverPreparationFailure);
 }
 
 //------------------------------------------------------------------------------
 void HandoverPreparationFailure::setAmfUeNgapId(const unsigned long& id) {
-  amfUeNgapId.set(id);
+  NgapUeMessage::m_AmfUeNgapId.set(id);
 
   Ngap_HandoverPreparationFailureIEs_t* ie =
       (Ngap_HandoverPreparationFailureIEs_t*) calloc(
@@ -56,21 +56,21 @@ void HandoverPreparationFailure::setAmfUeNgapId(const unsigned long& id) {
   ie->value.present =
       Ngap_HandoverPreparationFailureIEs__value_PR_AMF_UE_NGAP_ID;
 
-  int ret = amfUeNgapId.encode(ie->value.choice.AMF_UE_NGAP_ID);
+  int ret =
+      NgapUeMessage::m_AmfUeNgapId.encode(ie->value.choice.AMF_UE_NGAP_ID);
   if (!ret) {
     Logger::ngap().error("Encode AMF_UE_NGAP_ID IE error");
     utils::free_wrapper((void**) &ie);
     return;
   }
 
-  ret = ASN_SEQUENCE_ADD(&hoPreparationFailureIEs->protocolIEs.list, ie);
+  ret = ASN_SEQUENCE_ADD(&m_HOPreparationFailureIes->protocolIEs.list, ie);
   if (ret != 0) Logger::ngap().error("Encode AMF_UE_NGAP_ID IE error");
 }
 
 //------------------------------------------------------------------------------
-void HandoverPreparationFailure::setRanUeNgapId(
-    const uint32_t& ran_ue_ngap_id) {
-  ranUeNgapId.set(ran_ue_ngap_id);
+void HandoverPreparationFailure::setRanUeNgapId(const uint32_t& ranUeNgapId) {
+  NgapUeMessage::m_RanUeNgapId.set(ranUeNgapId);
 
   Ngap_HandoverPreparationFailureIEs_t* ie =
       (Ngap_HandoverPreparationFailureIEs_t*) calloc(
@@ -80,14 +80,15 @@ void HandoverPreparationFailure::setRanUeNgapId(
   ie->value.present =
       Ngap_HandoverPreparationFailureIEs__value_PR_RAN_UE_NGAP_ID;
 
-  int ret = ranUeNgapId.encode(ie->value.choice.RAN_UE_NGAP_ID);
+  int ret =
+      NgapUeMessage::m_RanUeNgapId.encode(ie->value.choice.RAN_UE_NGAP_ID);
   if (!ret) {
     Logger::ngap().error("Encode RAN_UE_NGAP_ID IE error");
     utils::free_wrapper((void**) &ie);
     return;
   }
 
-  ret = ASN_SEQUENCE_ADD(&hoPreparationFailureIEs->protocolIEs.list, ie);
+  ret = ASN_SEQUENCE_ADD(&m_HOPreparationFailureIes->protocolIEs.list, ie);
   if (ret != 0) Logger::ngap().error("Encode RAN_UE_NGAP_ID IE error");
 }
 
@@ -103,16 +104,16 @@ void HandoverPreparationFailure::setCause(
   ie->criticality   = Ngap_Criticality_ignore;
   ie->value.present = Ngap_HandoverPreparationFailureIEs__value_PR_Cause;
 
-  cause.setChoiceOfCause(causePresent);
-  if (causePresent != Ngap_Cause_PR_NOTHING) cause.setValue(value);
-  cause.encode(ie->value.choice.Cause);
-  int ret = ASN_SEQUENCE_ADD(&hoPreparationFailureIEs->protocolIEs.list, ie);
+  m_Cause.setChoiceOfCause(causePresent);
+  if (causePresent != Ngap_Cause_PR_NOTHING) m_Cause.set(value);
+  m_Cause.encode(ie->value.choice.Cause);
+  int ret = ASN_SEQUENCE_ADD(&m_HOPreparationFailureIes->protocolIEs.list, ie);
   if (ret != 0) Logger::ngap().error("Encode Cause IE error");
 }
 
 //------------------------------------------------------------------------------
-Ngap_Cause_PR HandoverPreparationFailure::getChoiceOfCause() {
-  return cause.getChoiceOfCause();
+Ngap_Cause_PR HandoverPreparationFailure::getChoiceOfCause() const {
+  return m_Cause.getChoiceOfCause();
 }
 
 //------------------------------------------------------------------------------
@@ -128,8 +129,8 @@ bool HandoverPreparationFailure::decode(Ngap_NGAP_PDU_t* ngapMsgPdu) {
             Ngap_Criticality_reject &&
         ngapPdu->choice.unsuccessfulOutcome->value.present ==
             Ngap_UnsuccessfulOutcome__value_PR_HandoverPreparationFailure) {
-      hoPreparationFailureIEs = &ngapPdu->choice.unsuccessfulOutcome->value
-                                     .choice.HandoverPreparationFailure;
+      m_HOPreparationFailureIes = &ngapPdu->choice.unsuccessfulOutcome->value
+                                       .choice.HandoverPreparationFailure;
     } else {
       Logger::ngap().error("Check HandoverPreparationFailure message error");
       return false;
@@ -139,15 +140,16 @@ bool HandoverPreparationFailure::decode(Ngap_NGAP_PDU_t* ngapMsgPdu) {
     return false;
   }
 
-  for (int i = 0; i < hoPreparationFailureIEs->protocolIEs.list.count; i++) {
-    switch (hoPreparationFailureIEs->protocolIEs.list.array[i]->id) {
+  for (int i = 0; i < m_HOPreparationFailureIes->protocolIEs.list.count; i++) {
+    switch (m_HOPreparationFailureIes->protocolIEs.list.array[i]->id) {
       case Ngap_ProtocolIE_ID_id_AMF_UE_NGAP_ID: {
-        if (hoPreparationFailureIEs->protocolIEs.list.array[i]->criticality ==
+        if (m_HOPreparationFailureIes->protocolIEs.list.array[i]->criticality ==
                 Ngap_Criticality_ignore &&
-            hoPreparationFailureIEs->protocolIEs.list.array[i]->value.present ==
+            m_HOPreparationFailureIes->protocolIEs.list.array[i]
+                    ->value.present ==
                 Ngap_HandoverPreparationFailureIEs__value_PR_AMF_UE_NGAP_ID) {
-          if (!amfUeNgapId.decode(
-                  hoPreparationFailureIEs->protocolIEs.list.array[i]
+          if (!NgapUeMessage::m_AmfUeNgapId.decode(
+                  m_HOPreparationFailureIes->protocolIEs.list.array[i]
                       ->value.choice.AMF_UE_NGAP_ID)) {
             Logger::ngap().error("Decoded NGAP AMF_UE_NGAP_ID IE error");
             return false;
@@ -158,12 +160,13 @@ bool HandoverPreparationFailure::decode(Ngap_NGAP_PDU_t* ngapMsgPdu) {
         }
       } break;
       case Ngap_ProtocolIE_ID_id_RAN_UE_NGAP_ID: {
-        if (hoPreparationFailureIEs->protocolIEs.list.array[i]->criticality ==
+        if (m_HOPreparationFailureIes->protocolIEs.list.array[i]->criticality ==
                 Ngap_Criticality_ignore &&
-            hoPreparationFailureIEs->protocolIEs.list.array[i]->value.present ==
+            m_HOPreparationFailureIes->protocolIEs.list.array[i]
+                    ->value.present ==
                 Ngap_HandoverPreparationFailureIEs__value_PR_RAN_UE_NGAP_ID) {
-          if (!ranUeNgapId.decode(
-                  hoPreparationFailureIEs->protocolIEs.list.array[i]
+          if (!NgapUeMessage::m_RanUeNgapId.decode(
+                  m_HOPreparationFailureIes->protocolIEs.list.array[i]
                       ->value.choice.RAN_UE_NGAP_ID)) {
             Logger::ngap().error("Decoded NGAP RAN_UE_NGAP_ID IE error");
             return false;
@@ -174,12 +177,14 @@ bool HandoverPreparationFailure::decode(Ngap_NGAP_PDU_t* ngapMsgPdu) {
         }
       } break;
       case Ngap_ProtocolIE_ID_id_Cause: {
-        if (hoPreparationFailureIEs->protocolIEs.list.array[i]->criticality ==
+        if (m_HOPreparationFailureIes->protocolIEs.list.array[i]->criticality ==
                 Ngap_Criticality_ignore &&
-            hoPreparationFailureIEs->protocolIEs.list.array[i]->value.present ==
+            m_HOPreparationFailureIes->protocolIEs.list.array[i]
+                    ->value.present ==
                 Ngap_HandoverPreparationFailureIEs__value_PR_Cause) {
-          if (!cause.decode(hoPreparationFailureIEs->protocolIEs.list.array[i]
-                                ->value.choice.Cause)) {
+          if (!m_Cause.decode(
+                  m_HOPreparationFailureIes->protocolIEs.list.array[i]
+                      ->value.choice.Cause)) {
             Logger::ngap().error("Decoded NGAP Cause IE error");
             return false;
           }
@@ -190,9 +195,10 @@ bool HandoverPreparationFailure::decode(Ngap_NGAP_PDU_t* ngapMsgPdu) {
 
       } break;
       case Ngap_ProtocolIE_ID_id_CriticalityDiagnostics: {
-        if (hoPreparationFailureIEs->protocolIEs.list.array[i]->criticality ==
+        if (m_HOPreparationFailureIes->protocolIEs.list.array[i]->criticality ==
                 Ngap_Criticality_ignore &&
-            hoPreparationFailureIEs->protocolIEs.list.array[i]->value.present ==
+            m_HOPreparationFailureIes->protocolIEs.list.array[i]
+                    ->value.present ==
                 Ngap_HandoverPreparationFailureIEs__value_PR_CriticalityDiagnostics) {
           // TODO:
         } else {

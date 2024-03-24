@@ -26,12 +26,12 @@
 
 #include "DataForwardingNotPossible.hpp"
 #include "NetworkInstance.hpp"
-#include "NgapIEsStruct.hpp"
-#include "PduSessionType.hpp"
+#include "NgapIesStruct.hpp"
 #include "PduSessionAggregateMaximumBitRate.hpp"
+#include "PduSessionType.hpp"
 #include "QosFlowSetupRequestList.hpp"
 #include "SecurityIndication.hpp"
-#include "UPTransportLayerInformation.hpp"
+#include "UpTransportLayerInformation.hpp"
 
 extern "C" {
 #include "Ngap_PDUSessionResourceSetupRequestTransfer.h"
@@ -46,9 +46,9 @@ class PduSessionResourceSetupRequestTransferIE {
   virtual ~PduSessionResourceSetupRequestTransferIE();
 
   void setPduSessionAggregateMaximumBitRate(
-      long bit_rate_downlink, long bit_rate_uplink);
+      const long& bitRateDl, const long& bitRateUl);
   bool getPduSessionAggregateMaximumBitRate(
-      long& bit_rate_downlink, long& bit_rate_uplink) const;
+      long& bitRateDl, long& bitRateUl) const;
 
   void setUlNgUUpTnlInformation(GtpTunnel_t upTnlInfo);
   bool getUlNgUUpTnlInformation(GtpTunnel_t& upTnlInfo) const;
@@ -75,7 +75,7 @@ class PduSessionResourceSetupRequestTransferIE {
       long& integrity_protection, long& confidentiality_protection,
       long& maxIntProtDataRate) const;
 
-  void setNetworkInstance(long value);
+  void setNetworkInstance(const long& value);
   bool getNetworkInstance(long& value) const;
 
   void setQosFlowSetupRequestList(std::vector<QosFlowSetupReq_t> list);
@@ -86,18 +86,18 @@ class PduSessionResourceSetupRequestTransferIE {
 
  private:
   Ngap_PDUSessionResourceSetupRequestTransfer_t*
-      pduSessionResourceSetupRequestTransferIEs;
+      m_PduSessionResourceSetupRequestTransferIe;
 
   std::optional<PduSessionAggregateMaximumBitRate>
-      pduSessionAggregateMaximumBitRateIE;                  // Optional
-  UpTransportLayerInformation upTransportLayerInformation;  // Mandatory
+      m_PduSessionAggregateMaximumBitRateIe;                  // Optional
+  UpTransportLayerInformation m_UpTransportLayerInformation;  // Mandatory
   // TODO: Additional UL NG-U UP TNL Information //Optional
   std::optional<DataForwardingNotPossible>
-      dataForwardingNotPossible;                         // Optional
-  PduSessionType pduSessionType;                         // Mandatory
-  std::optional<SecurityIndication> securityIndication;  // Optional
-  std::optional<NetworkInstance> networkInstance;        // Optional
-  QosFlowSetupRequestList qosFlowSetupRequestList;       // Mandatory
+      m_DataForwardingNotPossible;                         // Optional
+  PduSessionType m_PduSessionType;                         // Mandatory
+  std::optional<SecurityIndication> m_SecurityIndication;  // Optional
+  std::optional<NetworkInstance> m_NetworkInstance;        // Optional
+  QosFlowSetupRequestList m_QosFlowSetupRequestList;       // Mandatory
   // TODO: Common Network Instance //Optional
   // TODO: Direct Forwarding Path Availability //Optional
 };

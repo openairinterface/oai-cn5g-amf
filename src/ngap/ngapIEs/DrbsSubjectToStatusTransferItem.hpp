@@ -36,19 +36,18 @@ class DrbSubjectToStatusTransferItem {
   DrbSubjectToStatusTransferItem();
   virtual ~DrbSubjectToStatusTransferItem();
 
-  void getdRBSubjectItem(
-      Ngap_DRB_ID_t& dRB_ID, DrbStatusUl& dRB_UL, DrbStatusDl& dRB_DL) const;
-  void setdRBSubjectItem(
-      const Ngap_DRB_ID_t& dRB_ID, const DrbStatusUl& dRB_UL,
-      const DrbStatusDl& dRB_DL);
+  void get(Ngap_DRB_ID_t& drbId, DrbStatusUl& drbUl, DrbStatusDl& drbDl) const;
+  void set(
+      const Ngap_DRB_ID_t& drbId, const DrbStatusUl& drbUl,
+      const DrbStatusDl& drbDl);
 
-  bool encode(Ngap_DRBsSubjectToStatusTransferItem_t& dRB_item);
-  bool decode(const Ngap_DRBsSubjectToStatusTransferItem_t& dRB_item);
+  bool encode(Ngap_DRBsSubjectToStatusTransferItem_t& drbItem) const;
+  bool decode(const Ngap_DRBsSubjectToStatusTransferItem_t& drbItem);
 
  private:
-  Ngap_DRB_ID_t drbID;  // Mandatory
-  DrbStatusUl drbUL;    // Mandatory
-  DrbStatusDl drbDL;    // Mandatory
+  Ngap_DRB_ID_t m_DrbId;  // Mandatory
+  DrbStatusUl m_DrbUl;    // Mandatory
+  DrbStatusDl m_DrbDl;    // Mandatory
   // TODO: Old Associated QoS Flow List - UL End Marker Expected
 };
 }  // namespace ngap

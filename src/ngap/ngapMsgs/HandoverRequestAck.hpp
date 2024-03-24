@@ -22,7 +22,7 @@
 #ifndef _HANDOVER_REQUEST_ACK_H_
 #define _HANDOVER_REQUEST_ACK_H_
 
-#include "NgapUEMessage.hpp"
+#include "NgapUeMessage.hpp"
 #include "PduSessionResourceAdmittedList.hpp"
 #include "PduSessionResourceFailedToSetupListHoAck.hpp"
 
@@ -32,7 +32,7 @@ extern "C" {
 
 namespace ngap {
 
-class HandoverRequestAck : public NgapUEMessage {
+class HandoverRequestAck : public NgapUeMessage {
  public:
   HandoverRequestAck();
   virtual ~HandoverRequestAck();
@@ -43,31 +43,31 @@ class HandoverRequestAck : public NgapUEMessage {
   void setRanUeNgapId(const uint32_t& id) override;
   bool decode(Ngap_NGAP_PDU_t* ngapMsgPdu) override;
 
-  void setPDUSessionResourceAdmittedList(
+  void setPduSessionResourceAdmittedList(
       const PduSessionResourceAdmittedList& admittedList);
-  bool getPDUSessionResourceAdmittedList(
-      std::vector<PDUSessionResourceAdmittedItem_t>& list);
+  bool getPduSessionResourceAdmittedList(
+      std::vector<PDUSessionResourceAdmittedItem_t>& list) const;
 
-  void setPDUSessionResourceFailedToSetupListHOAck(
+  void setPduSessionResourceFailedToSetupListHOAck(
       const PduSessionResourceFailedToSetupListHoAck& list);
-  void setPDUSessionResourceFailedToSetupListHOAck(
-      std::vector<PduSessionResourceItem>& list);
-  bool getPDUSessionResourceFailedToSetupListHOAck(
-      std::vector<PduSessionResourceItem>& list);
+  void setPduSessionResourceFailedToSetupListHOAck(
+      const std::vector<PduSessionResourceItem>& list);
+  bool getPduSessionResourceFailedToSetupListHOAck(
+      std::vector<PduSessionResourceItem>& list) const;
 
-  void setTargetToSource_TransparentContainer(
+  void setTargetToSourceTransparentContainer(
       const OCTET_STRING_t& targetTosource);
-  OCTET_STRING_t getTargetToSource_TransparentContainer();
+  OCTET_STRING_t getTargetToSourceTransparentContainer() const;
 
  private:
-  Ngap_HandoverRequestAcknowledge_t* handoverRequestAckIEs;
+  Ngap_HandoverRequestAcknowledge_t* m_HandoverRequestAckIes;
   // AMF_UE_NGAP_ID (Mandatory)
   // RAN_UE_NGAP_ID (Mandatory)
-  PduSessionResourceAdmittedList pduSessionResourceAdmittedList;  // Mandatory
+  PduSessionResourceAdmittedList m_PduSessionResourceAdmittedList;  // Mandatory
   std::optional<PduSessionResourceFailedToSetupListHoAck>
-      PDUSessionResourceFailedToSetupList;                // Optional
-  OCTET_STRING_t TargetToSource_TransparentContainer;     // TODO: Mandatory
-  Ngap_CriticalityDiagnostics_t* CriticalityDiagnostics;  // TODO: Optional
+      m_PduSessionResourceFailedToSetupList;                // Optional
+  OCTET_STRING_t m_TargetToSourceTransparentContainer;      // TODO: Mandatory
+  Ngap_CriticalityDiagnostics_t* m_CriticalityDiagnostics;  // TODO: Optional
   // TODO: NPN Access Information (Optional, Rel 16.14.0)
 };
 

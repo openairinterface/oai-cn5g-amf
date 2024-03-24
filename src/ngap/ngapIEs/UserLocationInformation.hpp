@@ -24,9 +24,9 @@
 
 #include <optional>
 
-#include "UserLocationInformationEUTRA.hpp"
-#include "UserLocationInformationN3IWF.hpp"
-#include "UserLocationInformationNR.hpp"
+#include "UserLocationInformationEutra.hpp"
+#include "UserLocationInformationN3iwf.hpp"
+#include "UserLocationInformationNr.hpp"
 
 extern "C" {
 #include "Ngap_UserLocationInformation.h"
@@ -38,24 +38,24 @@ class UserLocationInformation {
   UserLocationInformation();
   virtual ~UserLocationInformation();
 
-  void setInformation(const UserLocationInformationEUTRA&);
-  bool getInformation(UserLocationInformationEUTRA&);
+  void set(const UserLocationInformationEutra&);
+  bool get(UserLocationInformationEutra&) const;
 
-  void setInformation(const UserLocationInformationNR&);
-  bool getInformation(UserLocationInformationNR&);
+  void set(const UserLocationInformationNr&);
+  bool get(UserLocationInformationNr&) const;
 
-  // void setInformation(const UserLocationInformationN3IWF&);
-  // void getInformation(UserLocationInformationN3IWF&);
+  // void set(const UserLocationInformationN3IWF&);
+  // void get(UserLocationInformationN3IWF&);
 
-  Ngap_UserLocationInformation_PR getChoiceOfUserLocationInformation();
+  Ngap_UserLocationInformation_PR getChoiceOfUserLocationInformation() const;
 
-  bool encode(Ngap_UserLocationInformation_t& user_location_information);
-  bool decode(const Ngap_UserLocationInformation_t& user_location_information);
+  bool encode(Ngap_UserLocationInformation_t& userLocationInformation) const;
+  bool decode(const Ngap_UserLocationInformation_t& userLocationInformation);
 
  private:
-  Ngap_UserLocationInformation_PR present_;
-  std::optional<UserLocationInformationEUTRA> user_location_information_eutra_;
-  std::optional<UserLocationInformationNR> user_location_information_nr_;
+  Ngap_UserLocationInformation_PR m_Present;
+  std::optional<UserLocationInformationEutra> m_UserLocationInformationEutra;
+  std::optional<UserLocationInformationNr> m_UserLocationInformationNr;
   // TODO: UserLocationInformationN3IWF *userLocationInformationN3IWF;
 };
 

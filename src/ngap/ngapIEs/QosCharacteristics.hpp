@@ -24,8 +24,8 @@
 
 #include <optional>
 
-#include "Dynamic5QIDescriptor.hpp"
-#include "NonDynamic5QIDescriptor.hpp"
+#include "Dynamic5qiDescriptor.hpp"
+#include "NonDynamic5qiDescriptor.hpp"
 
 extern "C" {
 #include "Ngap_QosCharacteristics.h"
@@ -40,22 +40,19 @@ class QosCharacteristics {
 
   int QosCharacteristicsPresent();
 
-  void setQosCharacteristics(
-      const NonDynamic5QIDescriptor& m_nonDynamic5QIDescriptor);
-  void getQosCharacteristics(
-      std::optional<NonDynamic5QIDescriptor>& m_nonDynamic5QIDescriptor) const;
+  void set(const NonDynamic5qiDescriptor& nonDynamic5qiDescriptor);
+  void get(
+      std::optional<NonDynamic5qiDescriptor>& nonDynamic5qiDescriptor) const;
 
-  void setQosCharacteristics(
-      const Dynamic5QIDescriptor& m_dynamic5QIDescriptor);
-  void getQosCharacteristics(
-      std::optional<Dynamic5QIDescriptor>& m_dynamic5QIDescriptor) const;
+  void set(const Dynamic5qiDescriptor& dynamic5qiDescriptor);
+  void get(std::optional<Dynamic5qiDescriptor>& dynamic5qiDescriptor) const;
 
-  bool encode(Ngap_QosCharacteristics_t&);
+  bool encode(Ngap_QosCharacteristics_t&) const;
   bool decode(const Ngap_QosCharacteristics_t&);
 
  private:
-  std::optional<NonDynamic5QIDescriptor> nonDynamic5QIDescriptor;
-  std::optional<Dynamic5QIDescriptor> dynamic5QIDescriptor;
+  std::optional<NonDynamic5qiDescriptor> m_NonDynamic5qiDescriptor;
+  std::optional<Dynamic5qiDescriptor> m_Dynamic5qiDescriptor;
 };
 }  // namespace ngap
 

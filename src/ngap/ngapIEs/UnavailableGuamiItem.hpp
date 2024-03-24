@@ -25,7 +25,7 @@
 #include <optional>
 
 #include "AmfName.hpp"
-#include "GUAMI.hpp"
+#include "Guami.hpp"
 #include "TimerApproachForGuamiRemoval.hpp"
 
 extern "C" {
@@ -39,8 +39,8 @@ class UnavailableGuamiItem {
   UnavailableGuamiItem();
   virtual ~UnavailableGuamiItem();
 
-  void setGuami(const GUAMI& guami);
-  void getGuami(GUAMI& guami) const;
+  void setGuami(const Guami& guami);
+  void getGuami(Guami& guami) const;
 
   void setTimerApproachForGuamiRemoval(
       const TimerApproachForGuamiRemoval& timer);
@@ -50,14 +50,14 @@ class UnavailableGuamiItem {
   void setBackupAmfName(const AmfName& name);
   void getBackupAmfName(std::optional<AmfName>& name) const;
 
-  bool encode(Ngap_UnavailableGUAMIItem& item);
+  bool encode(Ngap_UnavailableGUAMIItem& item) const;
   bool decode(const Ngap_UnavailableGUAMIItem& item);
 
  private:
-  GUAMI guami_;
+  Guami m_Guami;
   std::optional<TimerApproachForGuamiRemoval>
-      timer_approach_for_guami_removal_;    // Optional
-  std::optional<AmfName> backup_amf_name_;  // Optional
+      m_TimerApproachForGuamiRemoval;      // Optional
+  std::optional<AmfName> m_BackupAmfName;  // Optional
 };
 
 }  // namespace ngap

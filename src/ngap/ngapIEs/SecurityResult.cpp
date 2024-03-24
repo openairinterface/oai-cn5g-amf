@@ -30,29 +30,29 @@ SecurityResult::SecurityResult() {}
 SecurityResult::~SecurityResult() {}
 
 //------------------------------------------------------------------------------
-void SecurityResult::setSecurityResult(
-    const IntegrityProtectionResult& m_integrityProtectionResult,
-    const ConfidentialityProtectionResult& m_confidentialityProtectionResult) {
-  integrityProtectionResult       = m_integrityProtectionResult;
-  confidentialityProtectionResult = m_confidentialityProtectionResult;
+void SecurityResult::set(
+    const IntegrityProtectionResult& integrityProtectionResult,
+    const ConfidentialityProtectionResult& confidentialityProtectionResult) {
+  m_IntegrityProtectionResult       = integrityProtectionResult;
+  m_ConfidentialityProtectionResult = confidentialityProtectionResult;
 }
 
 //------------------------------------------------------------------------------
-bool SecurityResult::getSecurityResult(
-    IntegrityProtectionResult& m_integrityProtectionResult,
-    ConfidentialityProtectionResult& m_confidentialityProtectionResult) const {
-  m_integrityProtectionResult       = integrityProtectionResult;
-  m_confidentialityProtectionResult = confidentialityProtectionResult;
+bool SecurityResult::get(
+    IntegrityProtectionResult& integrityProtectionResult,
+    ConfidentialityProtectionResult& confidentialityProtectionResult) const {
+  integrityProtectionResult       = m_IntegrityProtectionResult;
+  confidentialityProtectionResult = m_ConfidentialityProtectionResult;
 
   return true;
 }
 
 //------------------------------------------------------------------------------
-bool SecurityResult::encode(Ngap_SecurityResult_t& securityResult) {
-  if (!integrityProtectionResult.encode(
+bool SecurityResult::encode(Ngap_SecurityResult_t& securityResult) const {
+  if (!m_IntegrityProtectionResult.encode(
           securityResult.integrityProtectionResult))
     return false;
-  if (!confidentialityProtectionResult.encode(
+  if (!m_ConfidentialityProtectionResult.encode(
           securityResult.confidentialityProtectionResult))
     return false;
 
@@ -61,10 +61,10 @@ bool SecurityResult::encode(Ngap_SecurityResult_t& securityResult) {
 
 //------------------------------------------------------------------------------
 bool SecurityResult::decode(const Ngap_SecurityResult_t& securityResult) {
-  if (!integrityProtectionResult.decode(
+  if (!m_IntegrityProtectionResult.decode(
           securityResult.integrityProtectionResult))
     return false;
-  if (!confidentialityProtectionResult.decode(
+  if (!m_ConfidentialityProtectionResult.decode(
           securityResult.confidentialityProtectionResult))
     return false;
 
