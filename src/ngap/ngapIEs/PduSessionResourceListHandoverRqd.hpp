@@ -40,11 +40,11 @@ class PduSessionResourceListHandoverRqd {
   void set(const std::vector<PduSessionResourceItem>& list);
   void get(std::vector<PduSessionResourceItem>& list) const;
 
-  bool encode(Ngap_PDUSessionResourceListHORqd_t& list);
+  bool encode(Ngap_PDUSessionResourceListHORqd_t& list) const;
   bool decode(const Ngap_PDUSessionResourceListHORqd_t& list);
 
  private:
-  std::vector<PduSessionResourceItem> item_list_;
+  std::vector<PduSessionResourceItem> m_ItemList;
 };
 
 }  // namespace ngap

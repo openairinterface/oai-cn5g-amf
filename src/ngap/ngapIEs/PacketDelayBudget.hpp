@@ -33,14 +33,14 @@ class PacketDelayBudget {
   PacketDelayBudget();
   virtual ~PacketDelayBudget();
 
-  void setPacketDelayBudget(long value);
-  bool getPacketDelayBudget(long& value) const;
+  void set(const long& value);
+  bool get(long& value) const;
 
   bool encode(Ngap_PacketDelayBudget_t&) const;
-  bool decode(Ngap_PacketDelayBudget_t);
+  bool decode(const Ngap_PacketDelayBudget_t&);
 
  private:
-  long packet_delay_budget_;
+  long m_PacketDelayBudget;
 };
 
 }  // namespace ngap

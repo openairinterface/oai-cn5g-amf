@@ -38,13 +38,13 @@ class PduSessionResourceAdmittedList {
   virtual ~PduSessionResourceAdmittedList();
 
   void set(const std::vector<PduSessionResourceItem>& list);
-  void get(std::vector<PduSessionResourceItem>& list);
+  void get(std::vector<PduSessionResourceItem>& list) const;
 
-  bool encode(Ngap_PDUSessionResourceAdmittedList_t& list);
+  bool encode(Ngap_PDUSessionResourceAdmittedList_t& list) const;
   bool decode(const Ngap_PDUSessionResourceAdmittedList_t& List);
 
  private:
-  std::vector<PduSessionResourceItem> item_list_;
+  std::vector<PduSessionResourceItem> m_ItemList;
 };
 
 }  // namespace ngap

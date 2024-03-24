@@ -38,15 +38,15 @@ class PlmnSupportList {
   virtual ~PlmnSupportList();
 
   void set(const std::vector<PlmnSupportItem>& items);
-  void get(std::vector<PlmnSupportItem>& items);
+  void get(std::vector<PlmnSupportItem>& items) const;
 
   void addItem(const PlmnSupportItem& item);
 
-  bool encode(Ngap_PLMNSupportList_t&);
+  bool encode(Ngap_PLMNSupportList_t&) const;
   bool decode(const Ngap_PLMNSupportList_t&);
 
  private:
-  std::vector<PlmnSupportItem> list_;
+  std::vector<PlmnSupportItem> m_List;
 };
 
 }  // namespace ngap

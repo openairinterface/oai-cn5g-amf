@@ -32,23 +32,20 @@ PduSessionResourceModifyListModReq::~PduSessionResourceModifyListModReq() {}
 //------------------------------------------------------------------------------
 void PduSessionResourceModifyListModReq::set(
     const std::vector<PduSessionResourceModifyItemModReq>& list) {
-  item_list_ = list;
+  m_ItemList = list;
 }
 
 //------------------------------------------------------------------------------
 bool PduSessionResourceModifyListModReq::encode(
-    Ngap_PDUSessionResourceModifyListModReq_t&
-        pdu_session_resource_modify_list_mod_req) {
-  for (auto pdu : item_list_) {
+    Ngap_PDUSessionResourceModifyListModReq_t& pduSessionResourceList) const {
+  for (auto pdu : m_ItemList) {
     Ngap_PDUSessionResourceModifyItemModReq_t* item =
         (Ngap_PDUSessionResourceModifyItemModReq_t*) calloc(
             1, sizeof(Ngap_PDUSessionResourceModifyItemModReq_t));
 
     if (!item) return false;
     if (!pdu.encode(*item)) return false;
-    if (ASN_SEQUENCE_ADD(
-            &pdu_session_resource_modify_list_mod_req.list, item) != 0)
-      return false;
+    if (ASN_SEQUENCE_ADD(&pduSessionResourceList.list, item) != 0) return false;
   }
 
   return true;
@@ -56,17 +53,14 @@ bool PduSessionResourceModifyListModReq::encode(
 
 //------------------------------------------------------------------------------
 bool PduSessionResourceModifyListModReq::decode(
-    const Ngap_PDUSessionResourceModifyListModReq_t&
-        pdu_session_resource_modify_list_mod_req) {
-  uint32_t numberofPDUSessions =
-      pdu_session_resource_modify_list_mod_req.list.count;
+    const Ngap_PDUSessionResourceModifyListModReq_t& pduSessionResourceList) {
+  uint32_t numberofPDUSessions = pduSessionResourceList.list.count;
 
   for (int i = 0; i < numberofPDUSessions; i++) {
     PduSessionResourceModifyItemModReq item = {};
 
-    if (!item.decode(*pdu_session_resource_modify_list_mod_req.list.array[i]))
-      return false;
-    item_list_.push_back(item);
+    if (!item.decode(*pduSessionResourceList.list.array[i])) return false;
+    m_ItemList.push_back(item);
   }
 
   return true;
@@ -75,7 +69,7 @@ bool PduSessionResourceModifyListModReq::decode(
 //------------------------------------------------------------------------------
 void PduSessionResourceModifyListModReq::get(
     std::vector<PduSessionResourceModifyItemModReq>& list) const {
-  list = item_list_;
+  list = m_ItemList;
 }
 
 }  // namespace ngap

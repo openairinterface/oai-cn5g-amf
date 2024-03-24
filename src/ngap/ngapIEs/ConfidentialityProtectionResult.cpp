@@ -25,7 +25,7 @@ namespace ngap {
 
 //------------------------------------------------------------------------------
 ConfidentialityProtectionResult::ConfidentialityProtectionResult() {
-  value_ = -1;
+  m_ConfidentialityProtectionResult = -1;
 }
 
 //------------------------------------------------------------------------------
@@ -33,13 +33,13 @@ ConfidentialityProtectionResult::~ConfidentialityProtectionResult() {}
 
 //------------------------------------------------------------------------------
 void ConfidentialityProtectionResult::set(
-    e_Ngap_ConfidentialityProtectionResult value) {
-  value_ = value;
+    const e_Ngap_ConfidentialityProtectionResult& value) {
+  m_ConfidentialityProtectionResult = value;
 }
 
 //------------------------------------------------------------------------------
 bool ConfidentialityProtectionResult::get(long& value) const {
-  value = value_;
+  value = m_ConfidentialityProtectionResult;
 
   return true;
 }
@@ -47,15 +47,15 @@ bool ConfidentialityProtectionResult::get(long& value) const {
 //------------------------------------------------------------------------------
 bool ConfidentialityProtectionResult::encode(
     Ngap_ConfidentialityProtectionResult_t& value) const {
-  value = value_;
+  value = m_ConfidentialityProtectionResult;
 
   return true;
 }
 
 //------------------------------------------------------------------------------
 bool ConfidentialityProtectionResult::decode(
-    Ngap_ConfidentialityProtectionResult_t value) {
-  value_ = value;
+    const Ngap_ConfidentialityProtectionResult_t& value) {
+  m_ConfidentialityProtectionResult = value;
 
   return true;
 }

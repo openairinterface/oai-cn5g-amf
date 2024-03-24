@@ -40,15 +40,16 @@ class QosFlowItemWithDataForWarding {
 
   void set(
       const QosFlowIdentifier& qfi,
-      const std::optional<long>& data_forwarding_accepted);
-  void getQosFlowIdentifier(Ngap_QosFlowIdentifier_t& qfi);
+      const std::optional<long>& dataForwardingAccepted);
 
-  bool decode(const Ngap_QosFlowItemWithDataForwarding_t& qos_flow_item);
+  void getQosFlowIdentifier(Ngap_QosFlowIdentifier_t& qfi) const;
+
+  bool decode(const Ngap_QosFlowItemWithDataForwarding_t& qosFlowItem);
   // TODO: encode
 
  private:
-  QosFlowIdentifier qfi_;                         // Mandatory
-  std::optional<long> data_forwarding_accepted_;  // Optional
+  QosFlowIdentifier m_Qfi;                       // Mandatory
+  std::optional<long> m_DataForwardingAccepted;  // Optional
 };
 }  // namespace ngap
 

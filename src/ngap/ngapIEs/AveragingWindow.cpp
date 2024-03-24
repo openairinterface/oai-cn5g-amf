@@ -25,34 +25,34 @@ namespace ngap {
 
 //------------------------------------------------------------------------------
 AveragingWindow::AveragingWindow() {
-  averaging_window_ = 0;
+  m_AveragingWindow = 0;
 }
 
 //------------------------------------------------------------------------------
 AveragingWindow::~AveragingWindow() {}
 
 //------------------------------------------------------------------------------
-void AveragingWindow::setAveragingWindow(const long& value) {
-  averaging_window_ = value;
+void AveragingWindow::set(const long& value) {
+  m_AveragingWindow = value;
 }
 
 //------------------------------------------------------------------------------
-bool AveragingWindow::getAveragingWindow(long& value) const {
-  value = averaging_window_;
+bool AveragingWindow::get(long& value) const {
+  value = m_AveragingWindow;
 
   return true;
 }
 
 //------------------------------------------------------------------------------
 bool AveragingWindow::encode(Ngap_AveragingWindow_t& value) const {
-  value = averaging_window_;
+  value = m_AveragingWindow;
 
   return true;
 }
 
 //------------------------------------------------------------------------------
-bool AveragingWindow::decode(Ngap_AveragingWindow_t value) {
-  averaging_window_ = value;
+bool AveragingWindow::decode(const Ngap_AveragingWindow_t& value) {
+  m_AveragingWindow = value;
 
   return true;
 }

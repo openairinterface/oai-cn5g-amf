@@ -30,31 +30,31 @@ PduSessionResourceReleaseListCmd::PduSessionResourceReleaseListCmd() {}
 PduSessionResourceReleaseListCmd::~PduSessionResourceReleaseListCmd() {}
 
 //------------------------------------------------------------------------------
-void PduSessionResourceReleaseListCmd::setPDUSessionResourceReleaseListCmd(
-    const std::vector<PduSessionResourceReleaseItemCmd>& list_item) {
-  uint8_t number_items = (list_item.size() > kMaxNoOfPduSessions) ?
+void PduSessionResourceReleaseListCmd::set(
+    const std::vector<PduSessionResourceReleaseItemCmd>& itemList) {
+  uint8_t number_items = (itemList.size() > kMaxNoOfPduSessions) ?
                              kMaxNoOfPduSessions :
-                             list_item.size();
-  list_.insert(
-      list_.begin(), list_item.begin(), list_item.begin() + number_items);
+                             itemList.size();
+  m_ItemList.insert(
+      m_ItemList.begin(), itemList.begin(), itemList.begin() + number_items);
 }
 
 //------------------------------------------------------------------------------
-void PduSessionResourceReleaseListCmd::getPDUSessionResourceReleaseListCmd(
-    std::vector<PduSessionResourceReleaseItemCmd>& list_item) const {
-  list_item = list_;
+void PduSessionResourceReleaseListCmd::get(
+    std::vector<PduSessionResourceReleaseItemCmd>& itemList) const {
+  itemList = m_ItemList;
 }
 
 //------------------------------------------------------------------------------
 bool PduSessionResourceReleaseListCmd::encode(
     Ngap_PDUSessionResourceToReleaseListRelCmd_t&
-        pduSessionResourceReleaseListCmd) {
-  for (int i = 0; i < list_.size(); i++) {
+        pduSessionResourceReleaseListCmd) const {
+  for (int i = 0; i < m_ItemList.size(); i++) {
     Ngap_PDUSessionResourceToReleaseItemRelCmd_t* item =
         (Ngap_PDUSessionResourceToReleaseItemRelCmd_t*) calloc(
             1, sizeof(Ngap_PDUSessionResourceToReleaseItemRelCmd_t));
     if (!item) return false;
-    if (!list_[i].encode(*item)) return false;
+    if (!m_ItemList[i].encode(*item)) return false;
     if (ASN_SEQUENCE_ADD(&pduSessionResourceReleaseListCmd.list, item) != 0)
       return false;
   }
@@ -70,7 +70,7 @@ bool PduSessionResourceReleaseListCmd::decode(
     PduSessionResourceReleaseItemCmd item = {};
     if (!item.decode(*pduSessionResourceReleaseListCmd.list.array[i]))
       return false;
-    list_.push_back(item);
+    m_ItemList.push_back(item);
   }
 
   return true;

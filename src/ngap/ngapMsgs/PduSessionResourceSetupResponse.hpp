@@ -22,7 +22,7 @@
 #ifndef _PDU_SESSION_RESOURCE_SETUP_RESPONSE_H_
 #define _PDU_SESSION_RESOURCE_SETUP_RESPONSE_H_
 
-#include "NgapUEMessage.hpp"
+#include "NgapUeMessage.hpp"
 #include "PduSessionResourceFailedToSetupListSURes.hpp"
 #include "PduSessionResourceSetupListSURes.hpp"
 
@@ -32,7 +32,7 @@ extern "C" {
 
 namespace ngap {
 
-class PduSessionResourceSetupResponseMsg : public NgapUEMessage {
+class PduSessionResourceSetupResponseMsg : public NgapUeMessage {
  public:
   PduSessionResourceSetupResponseMsg();
   virtual ~PduSessionResourceSetupResponseMsg();
@@ -46,20 +46,19 @@ class PduSessionResourceSetupResponseMsg : public NgapUEMessage {
   void setPduSessionResourceSetupResponseList(
       const std::vector<PDUSessionResourceSetupResponseItem_t>& list);
   bool getPduSessionResourceSetupResponseList(
-      std::vector<PDUSessionResourceSetupResponseItem_t>& list);
+      std::vector<PDUSessionResourceSetupResponseItem_t>& list) const;
 
   void setPduSessionResourceFailedToSetupList(
       const std::vector<PDUSessionResourceFailedToSetupItem_t>& list);
-
   bool getPduSessionResourceFailedToSetupList(
-      std::vector<PDUSessionResourceFailedToSetupItem_t>& list);
+      std::vector<PDUSessionResourceFailedToSetupItem_t>& list) const;
 
  private:
-  Ngap_PDUSessionResourceSetupResponse_t* pduSessionResourceSetupResponseIEs;
+  Ngap_PDUSessionResourceSetupResponse_t* m_PduSessionResourceSetupResponseIes;
   std::optional<PduSessionResourceSetupListSURes>
-      pduSessionResourceSetupResponseList;  // Optional
+      m_PduSessionResourceSetupResponseList;  // Optional
   std::optional<PduSessionResourceFailedToSetupListSURes>
-      pduSessionResourceFailedToSetupResponseList;  // Optional
+      m_PduSessionResourceFailedToSetupResponseList;  // Optional
   // TODO: Criticality Diagnostics (Optional)
 };
 

@@ -25,70 +25,71 @@ namespace ngap {
 
 //------------------------------------------------------------------------------
 QosCharacteristics::QosCharacteristics() {
-  nonDynamic5QIDescriptor = std::nullopt;
-  dynamic5QIDescriptor    = std::nullopt;
+  m_NonDynamic5qiDescriptor = std::nullopt;
+  m_Dynamic5qiDescriptor    = std::nullopt;
 }
 
 //------------------------------------------------------------------------------
 QosCharacteristics::~QosCharacteristics() {}
 
 //------------------------------------------------------------------------------
-void QosCharacteristics::setQosCharacteristics(
-    const NonDynamic5QIDescriptor& m_nonDynamic5QIDescriptor) {
-  nonDynamic5QIDescriptor =
-      std::make_optional<NonDynamic5QIDescriptor>(m_nonDynamic5QIDescriptor);
-  dynamic5QIDescriptor = std::nullopt;
+void QosCharacteristics::set(
+    const NonDynamic5qiDescriptor& nonDynamic5qiDescriptor) {
+  m_NonDynamic5qiDescriptor =
+      std::make_optional<NonDynamic5qiDescriptor>(nonDynamic5qiDescriptor);
+  m_Dynamic5qiDescriptor = std::nullopt;
 }
 
 //------------------------------------------------------------------------------
-void QosCharacteristics::getQosCharacteristics(
-    std::optional<NonDynamic5QIDescriptor>& m_nonDynamic5QIDescriptor) const {
-  m_nonDynamic5QIDescriptor = nonDynamic5QIDescriptor;
+void QosCharacteristics::get(
+    std::optional<NonDynamic5qiDescriptor>& nonDynamic5qiDescriptor) const {
+  nonDynamic5qiDescriptor = m_NonDynamic5qiDescriptor;
 }
 
 //------------------------------------------------------------------------------
-void QosCharacteristics::setQosCharacteristics(
-    const Dynamic5QIDescriptor& m_dynamic5QIDescriptor) {
-  dynamic5QIDescriptor =
-      std::make_optional<Dynamic5QIDescriptor>(m_dynamic5QIDescriptor);
-  nonDynamic5QIDescriptor = std::nullopt;
+void QosCharacteristics::set(const Dynamic5qiDescriptor& dynamic5qiDescriptor) {
+  m_Dynamic5qiDescriptor =
+      std::make_optional<Dynamic5qiDescriptor>(dynamic5qiDescriptor);
+  m_NonDynamic5qiDescriptor = std::nullopt;
 }
 
 //------------------------------------------------------------------------------
-void QosCharacteristics::getQosCharacteristics(
-    std::optional<Dynamic5QIDescriptor>& m_dynamic5QIDescriptor) const {
-  m_dynamic5QIDescriptor = dynamic5QIDescriptor;
+void QosCharacteristics::get(
+    std::optional<Dynamic5qiDescriptor>& dynamic5qiDescriptor) const {
+  dynamic5qiDescriptor = m_Dynamic5qiDescriptor;
 }
 
 //------------------------------------------------------------------------------
 int QosCharacteristics::QosCharacteristicsPresent() {
-  if (nonDynamic5QIDescriptor.has_value())
+  if (m_NonDynamic5qiDescriptor.has_value())
     return Ngap_QosCharacteristics_PR_nonDynamic5QI;
-  else if (dynamic5QIDescriptor.has_value())
+  else if (m_Dynamic5qiDescriptor.has_value())
     return Ngap_QosCharacteristics_PR_dynamic5QI;
   else
     return Ngap_QosCharacteristics_PR_NOTHING;
 }
 
 //------------------------------------------------------------------------------
-bool QosCharacteristics::encode(Ngap_QosCharacteristics_t& qosCharacteristics) {
-  if (nonDynamic5QIDescriptor.has_value()) {
+bool QosCharacteristics::encode(
+    Ngap_QosCharacteristics_t& qosCharacteristics) const {
+  if (m_NonDynamic5qiDescriptor.has_value()) {
     qosCharacteristics.present = Ngap_QosCharacteristics_PR_nonDynamic5QI;
-    Ngap_NonDynamic5QIDescriptor_t* non_dynamic_descriptor =
+    Ngap_NonDynamic5QIDescriptor_t* nonDynamic5qiDescriptor =
         (Ngap_NonDynamic5QIDescriptor_t*) calloc(
             1, sizeof(Ngap_NonDynamic5QIDescriptor_t));
-    if (!non_dynamic_descriptor) return false;
-    if (!nonDynamic5QIDescriptor.value().encode(*non_dynamic_descriptor))
+    if (!nonDynamic5qiDescriptor) return false;
+    if (!m_NonDynamic5qiDescriptor.value().encode(*nonDynamic5qiDescriptor))
       return false;
-    qosCharacteristics.choice.nonDynamic5QI = non_dynamic_descriptor;
-  } else if (dynamic5QIDescriptor.has_value()) {
+    qosCharacteristics.choice.nonDynamic5QI = nonDynamic5qiDescriptor;
+  } else if (m_Dynamic5qiDescriptor.has_value()) {
     qosCharacteristics.present = Ngap_QosCharacteristics_PR_dynamic5QI;
-    Ngap_Dynamic5QIDescriptor_t* dynamic_descriptor =
+    Ngap_Dynamic5QIDescriptor_t* dynamic5qiDescriptor =
         (Ngap_Dynamic5QIDescriptor_t*) calloc(
             1, sizeof(Ngap_Dynamic5QIDescriptor_t));
-    if (!dynamic_descriptor) return false;
-    if (!dynamic5QIDescriptor.value().encode(*dynamic_descriptor)) return false;
-    qosCharacteristics.choice.dynamic5QI = dynamic_descriptor;
+    if (!dynamic5qiDescriptor) return false;
+    if (!m_Dynamic5qiDescriptor.value().encode(*dynamic5qiDescriptor))
+      return false;
+    qosCharacteristics.choice.dynamic5QI = dynamic5qiDescriptor;
   } else {
     return false;
   }
@@ -100,14 +101,15 @@ bool QosCharacteristics::encode(Ngap_QosCharacteristics_t& qosCharacteristics) {
 bool QosCharacteristics::decode(
     const Ngap_QosCharacteristics_t& qosCharacteristics) {
   if (qosCharacteristics.present == Ngap_QosCharacteristics_PR_nonDynamic5QI) {
-    NonDynamic5QIDescriptor tmp = {};
+    NonDynamic5qiDescriptor tmp = {};
     if (!tmp.decode(*qosCharacteristics.choice.nonDynamic5QI)) return false;
-    nonDynamic5QIDescriptor = std::make_optional<NonDynamic5QIDescriptor>(tmp);
+    m_NonDynamic5qiDescriptor =
+        std::make_optional<NonDynamic5qiDescriptor>(tmp);
   } else if (
       qosCharacteristics.present == Ngap_QosCharacteristics_PR_dynamic5QI) {
-    Dynamic5QIDescriptor tmp = {};
+    Dynamic5qiDescriptor tmp = {};
     if (!tmp.decode(*qosCharacteristics.choice.dynamic5QI)) return false;
-    dynamic5QIDescriptor = std::make_optional<Dynamic5QIDescriptor>(tmp);
+    m_Dynamic5qiDescriptor = std::make_optional<Dynamic5qiDescriptor>(tmp);
   } else {
     return false;
   }

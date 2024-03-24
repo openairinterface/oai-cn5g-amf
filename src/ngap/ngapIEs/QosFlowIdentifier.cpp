@@ -25,34 +25,35 @@ namespace ngap {
 
 //------------------------------------------------------------------------------
 QosFlowIdentifier::QosFlowIdentifier() {
-  identifier_ = 0;
+  m_QosFlowIdentifier = 0;
 }
 
 //------------------------------------------------------------------------------
 QosFlowIdentifier::~QosFlowIdentifier() {}
 
 //------------------------------------------------------------------------------
-void QosFlowIdentifier::setQosFlowIdentifier(long value) {
-  identifier_ = value;
+void QosFlowIdentifier::set(const long& value) {
+  m_QosFlowIdentifier = value;
 }
 
 //------------------------------------------------------------------------------
-bool QosFlowIdentifier::getQosFlowIdentifier(long& value) const {
-  value = identifier_;
+bool QosFlowIdentifier::get(long& value) const {
+  value = m_QosFlowIdentifier;
   return true;
 }
 
 //------------------------------------------------------------------------------
 bool QosFlowIdentifier::encode(
     Ngap_QosFlowIdentifier_t& qosFlowIdentifier) const {
-  qosFlowIdentifier = identifier_;
+  qosFlowIdentifier = m_QosFlowIdentifier;
 
   return true;
 }
 
 //------------------------------------------------------------------------------
-bool QosFlowIdentifier::decode(Ngap_QosFlowIdentifier_t qosFlowIdentifier) {
-  identifier_ = qosFlowIdentifier;
+bool QosFlowIdentifier::decode(
+    const Ngap_QosFlowIdentifier_t& qosFlowIdentifier) {
+  m_QosFlowIdentifier = qosFlowIdentifier;
 
   return true;
 }

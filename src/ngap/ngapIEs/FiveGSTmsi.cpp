@@ -32,32 +32,32 @@ FiveGSTmsi::FiveGSTmsi() {}
 FiveGSTmsi::~FiveGSTmsi() {}
 
 //------------------------------------------------------------------------------
-void FiveGSTmsi::getTmsi(std::string& tmsi) {
-  tmsi = _5g_s_tmsi_;
+void FiveGSTmsi::getTmsi(std::string& tmsi) const {
+  tmsi = m_5gSTmsi;
 }
 
 //------------------------------------------------------------------------------
 void FiveGSTmsi::get(
     std::string& set_id, std::string& pointer, std::string& tmsi) const {
-  amf_set_id_.get(set_id);
-  amf_pointer_.get(pointer);
-  tmsi = tmsi_value_;
+  m_AmfSetId.get(set_id);
+  m_AmfPointer.get(pointer);
+  tmsi = m_TmsiValue;
 }
 
 //------------------------------------------------------------------------------
 bool FiveGSTmsi::set(
     const std::string& set_id, const std::string& pointer,
     const std::string& tmsi) {
-  if (!amf_set_id_.set(set_id)) return false;
-  if (!amf_pointer_.set(pointer)) return false;
+  if (!m_AmfSetId.set(set_id)) return false;
+  if (!m_AmfPointer.set(pointer)) return false;
   tmsi_value_ = tmsi;
   return true;
 }
 
 //------------------------------------------------------------------------------
-bool FiveGSTmsi::encode(Ngap_FiveG_S_TMSI_t& pdu) {
-  amf_set_id_.encode(pdu.aMFSetID);
-  amf_pointer_.encode(pdu.aMFPointer);
+bool FiveGSTmsi::encode(Ngap_FiveG_S_TMSI_t& pdu) const {
+  m_AmfSetId.encode(pdu.aMFSetID);
+  m_AmfPointer.encode(pdu.aMFPointer);
 
   uint32_t tmsi       = (uint32_t) std::stol(tmsi_value_);
   uint8_t* buf        = (uint8_t*) malloc(sizeof(uint32_t));
@@ -70,24 +70,23 @@ bool FiveGSTmsi::encode(Ngap_FiveG_S_TMSI_t& pdu) {
 
 //------------------------------------------------------------------------------
 bool FiveGSTmsi::decode(const Ngap_FiveG_S_TMSI_t& pdu) {
-  amf_set_id_.decode(pdu.aMFSetID);
-  amf_pointer_.decode(pdu.aMFPointer);
+  m_AmfSetId.decode(pdu.aMFSetID);
+  m_AmfPointer.decode(pdu.aMFPointer);
 
   uint32_t tmsi = ntohl(*(uint32_t*) pdu.fiveG_TMSI.buf);
   int size      = pdu.fiveG_TMSI.size;
 
   // AMF Set ID: 10 bits, AMF pointer ID: 6 bits
-  uint16_t amf_set_id_value = 0;
-  amf_set_id_.get(amf_set_id_value);
-  uint8_t amf_pointer_value = 0;
-  amf_pointer_.get(amf_pointer_value);
-  uint16_t first_part_tmsi = 0xffff & (((amf_set_id_value & 0x03ff) << 6) |
+  uint16_t amfSetIdValue = 0;
+  m_AmfSetId.get(amfSetIdValue);
+  uint8_t amfPointerValue = 0;
+  m_AmfPointer.get(amfPointerValue);
+  uint16_t firstPartTmsi = 0xffff & (((amfSetIdValue & 0x03ff) << 6) |
                                        (amf_pointer_value & 0x3f));
-  std::string first_part_tmsi_str = {};
-  amf_conv::int_to_string_hex(first_part_tmsi, first_part_tmsi_str, 2);
+  std::string firstPartTmsiStr = {};
+  amf_conv::int_to_string_hex(firstPartTmsi, firstPartTmsiStr, 2);
 
-  tmsi_value_ = amf_conv::tmsi_to_string(tmsi);
-  _5g_s_tmsi_ = first_part_tmsi_str + tmsi_value_;
-
+  m_TmsiValue = amf_conv::tmsi_to_string(tmsi);
+  m_5gSTmsi = firstPartTmsiStr + m_TmsiValue;
   return true;
 }

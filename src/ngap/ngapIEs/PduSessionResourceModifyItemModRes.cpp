@@ -31,50 +31,42 @@ PduSessionResourceModifyItemModRes::~PduSessionResourceModifyItemModRes() {}
 
 //------------------------------------------------------------------------------
 void PduSessionResourceModifyItemModRes::set(
-    const PduSessionId& pdu_session_id,
-    const OCTET_STRING_t pdu_session_resource_modify_response_transfer) {
-  pdu_session_id_ = pdu_session_id;
-  pdu_session_resource_modify_response_transfer_ =
-      pdu_session_resource_modify_response_transfer;
+    const PduSessionId& pduSessionId,
+    const OCTET_STRING_t& pduSessionResourceModifyResponseTransfer) {
+  m_PduSessionId = pduSessionId;
+  m_PduSessionResourceModifyResponseTransfer =
+      pduSessionResourceModifyResponseTransfer;
 }
 
 //------------------------------------------------------------------------------
 bool PduSessionResourceModifyItemModRes::encode(
-    Ngap_PDUSessionResourceModifyItemModRes_t&
-        pdu_session_resource_modify_item_mod_res) {
-  if (!pdu_session_id_.encode(
-          pdu_session_resource_modify_item_mod_res.pDUSessionID))
-    return false;
+    Ngap_PDUSessionResourceModifyItemModRes_t& pduSessionResourceItem) const {
+  if (!m_PduSessionId.encode(pduSessionResourceItem.pDUSessionID)) return false;
 
-  pdu_session_resource_modify_item_mod_res
-      .pDUSessionResourceModifyResponseTransfer =
-      pdu_session_resource_modify_response_transfer_;
+  pduSessionResourceItem.pDUSessionResourceModifyResponseTransfer =
+      m_PduSessionResourceModifyResponseTransfer;
 
   return true;
 }
 
 //------------------------------------------------------------------------------
 bool PduSessionResourceModifyItemModRes::decode(
-    const Ngap_PDUSessionResourceModifyItemModRes_t&
-        pdu_session_resource_modify_item_mod_res) {
-  if (!pdu_session_id_.decode(
-          pdu_session_resource_modify_item_mod_res.pDUSessionID))
-    return false;
+    const Ngap_PDUSessionResourceModifyItemModRes_t& pduSessionResourceItem) {
+  if (!m_PduSessionId.decode(pduSessionResourceItem.pDUSessionID)) return false;
 
-  pdu_session_resource_modify_response_transfer_ =
-      pdu_session_resource_modify_item_mod_res
-          .pDUSessionResourceModifyResponseTransfer;
+  m_PduSessionResourceModifyResponseTransfer =
+      pduSessionResourceItem.pDUSessionResourceModifyResponseTransfer;
 
   return true;
 }
 
 //------------------------------------------------------------------------------
 void PduSessionResourceModifyItemModRes::get(
-    PduSessionId& pdu_session_id,
-    OCTET_STRING_t& pdu_session_resource_modify_response_transfer) const {
-  pdu_session_id = pdu_session_id_;
-  pdu_session_resource_modify_response_transfer =
-      pdu_session_resource_modify_response_transfer_;
+    PduSessionId& pduSessionId,
+    OCTET_STRING_t& pduSessionResourceModifyResponseTransfer) const {
+  pduSessionId = m_PduSessionId;
+  pduSessionResourceModifyResponseTransfer =
+      m_PduSessionResourceModifyResponseTransfer;
 }
 
 }  // namespace ngap

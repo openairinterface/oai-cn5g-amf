@@ -40,11 +40,11 @@ class RanPagingPriority {
   bool set(const uint32_t&);
   uint32_t get() const;
 
-  bool encode(Ngap_RANPagingPriority_t&);
-  bool decode(Ngap_RANPagingPriority_t);
+  bool encode(Ngap_RANPagingPriority_t&) const;
+  bool decode(const Ngap_RANPagingPriority_t&);
 
  private:
-  uint32_t ran_paging_priority_;
+  uint32_t m_RanPagingPriority;
 };
 
 }  // namespace ngap

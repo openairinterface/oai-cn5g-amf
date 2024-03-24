@@ -23,9 +23,9 @@
 #define _NGAP_MESSAGE_CALLBACK_H_
 
 #include "InitialContextSetupResponse.hpp"
-#include "NGReset.hpp"
-#include "NGResetAck.hpp"
-#include "NGSetupRequest.hpp"
+#include "NgReset.hpp"
+#include "NgResetAck.hpp"
+#include "NgSetupRequest.hpp"
 #include "PduSessionResourceSetupUnsuccessfulTransfer.hpp"
 #include "PduSessionResourceReleaseResponse.hpp"
 #include "PduSessionResourceSetupResponse.hpp"
@@ -39,8 +39,8 @@
 #include "nas_context.hpp"
 #include "pdu_session_context.hpp"
 #include "output_wrapper.hpp"
-#include "UplinkUEAssociatedNRPPaTransport.hpp"
-#include "UplinkNonUEAssociatedNRPPaTransport.hpp"
+#include "UplinkUeAssociatedNrppaTransport.hpp"
+#include "UplinkNonUeAssociatedNrppaTransport.hpp"
 
 using namespace sctp;
 using namespace ngap;
@@ -67,7 +67,7 @@ int ngap_amf_handle_ng_setup_request(
       "[gNB Assoc Id %d] Sending ITTI NG Setup Request message to TASK_AMF_N2",
       assoc_id);
   output_wrapper::print_asn_msg(&asn_DEF_Ngap_NGAP_PDU, message_p);
-  NGSetupRequestMsg* ng_setup_req = new NGSetupRequestMsg();
+  NgSetupRequestMsg* ng_setup_req = new NgSetupRequestMsg();
   if (!ng_setup_req->decode(message_p)) {
     Logger::ngap().error("Decoding NGSetupRequest message error");
     return RETURNerror;
@@ -116,7 +116,7 @@ int ngap_amf_handle_initial_ue_message(
       assoc_id);
 
   output_wrapper::print_asn_msg(&asn_DEF_Ngap_NGAP_PDU, message_p);
-  InitialUEMessageMsg* init_ue_msg = new InitialUEMessageMsg();
+  InitialUeMessageMsg* init_ue_msg = new InitialUeMessageMsg();
   if (!init_ue_msg->decode(message_p)) {
     Logger::ngap().error("Decoding InitialUEMessage error");
     return RETURNerror;
@@ -145,7 +145,7 @@ int ngap_amf_handle_uplink_nas_transport(
   Logger::ngap().debug(
       "Sending ITTI Uplink NAS Transport message to TASK_AMF_N2");
   output_wrapper::print_asn_msg(&asn_DEF_Ngap_NGAP_PDU, message_p);
-  UplinkNASTransportMsg* uplink_nas_transport = new UplinkNASTransportMsg();
+  UplinkNasTransportMsg* uplink_nas_transport = new UplinkNasTransportMsg();
   if (!uplink_nas_transport->decode(message_p)) {
     Logger::ngap().error("Decoding UplinkNasTransport message error");
     return RETURNerror;
@@ -272,7 +272,7 @@ int ngap_amf_handle_ue_context_release_request(
     struct Ngap_NGAP_PDU* message_p) {
   Logger::ngap().debug(
       "Sending ITTI UE Context Release Request to TASK_AMF_N2");
-  UEContextReleaseRequestMsg* ue_ctx_rel_req = new UEContextReleaseRequestMsg();
+  UeContextReleaseRequestMsg* ue_ctx_rel_req = new UeContextReleaseRequestMsg();
   if (!ue_ctx_rel_req->decode(message_p)) {
     Logger::ngap().error("Decoding UEContextReleaseRequest message error");
     return RETURNerror;
@@ -895,7 +895,7 @@ int ng_reset(
   Logger::ngap().debug("Sending ITTI NG Reset to TASK_AMF_N2");
 
   output_wrapper::print_asn_msg(&asn_DEF_Ngap_NGAP_PDU, message_p);
-  NGResetMsg* ng_reset = new NGResetMsg();
+  NgResetMsg* ng_reset = new NgResetMsg();
   if (!ng_reset->decode(message_p)) {
     Logger::ngap().error("Decoding NGReset message error");
     return RETURNerror;
@@ -1175,7 +1175,7 @@ int uplink_non_ue_associated_nrppa_transport(
 
   output_wrapper::print_asn_msg(&asn_DEF_Ngap_NGAP_PDU, message_p);
 
-  UplinkNonUEAssociatedNRPPaTransportMsg nrppa_msg = {};
+  UplinkNonUeAssociatedNrppaTransportMsg nrppa_msg = {};
 
   if (!nrppa_msg.decode(message_p)) {
     Logger::ngap().error(
@@ -1189,7 +1189,7 @@ int uplink_non_ue_associated_nrppa_transport(
   itti_msg->assoc_id = assoc_id;
   itti_msg->stream   = stream;
   amf_conv::octet_string_2_bstring(
-      nrppa_msg.getNRPPaPdu(), itti_msg->nrppa_pdu);
+      nrppa_msg.getNrppaPdu(), itti_msg->nrppa_pdu);
   amf_conv::octet_string_2_bstring(
       nrppa_msg.getRoutingId(), itti_msg->routing_id);
 
@@ -1222,8 +1222,8 @@ int uplink_ran_status_transfer(
       "Sending ITTI Uplink RAN Status Transfer to TASK_AMF_N2");
 
   output_wrapper::print_asn_msg(&asn_DEF_Ngap_NGAP_PDU, message_p);
-  UplinkRANStatusTransfer* uplink_ran_status_transfer =
-      new UplinkRANStatusTransfer();
+  UplinkRanStatusTransfer* uplink_ran_status_transfer =
+      new UplinkRanStatusTransfer();
   if (!uplink_ran_status_transfer->decode(message_p)) {
     Logger::ngap().error("Decoding Uplink RAN Status Transfer message error");
     return RETURNerror;
@@ -1254,11 +1254,11 @@ int uplink_ue_associated_nrppa_transport(
 
   output_wrapper::print_asn_msg(&asn_DEF_Ngap_NGAP_PDU, message_p);
 
-  UplinkUEAssociatedNRPPaTransportMsg nrppa_msg = {};
+  UplinkUeAssociatedNrppaTransportMsg nrppa_msg = {};
 
   if (!nrppa_msg.decode(message_p)) {
     Logger::ngap().error(
-        "Decoding UplinkUEAssociatedNRPPaTransportMsg message error");
+        "Decoding UplinkUeAssociatedNrppaTransportMsg message error");
     return RETURNerror;
   }
 
@@ -1269,7 +1269,7 @@ int uplink_ue_associated_nrppa_transport(
   itti_msg->amf_ue_ngap_id = nrppa_msg.getAmfUeNgapId();
   itti_msg->ran_ue_ngap_id = nrppa_msg.getRanUeNgapId();
   amf_conv::octet_string_2_bstring(
-      nrppa_msg.getNRPPaPdu(), itti_msg->nrppa_pdu);
+      nrppa_msg.getNrppaPdu(), itti_msg->nrppa_pdu);
   amf_conv::octet_string_2_bstring(
       nrppa_msg.getRoutingId(), itti_msg->routing_id);
 

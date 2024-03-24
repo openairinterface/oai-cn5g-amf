@@ -31,43 +31,43 @@ namespace ngap {
 //------------------------------------------------------------------------------
 PduSessionResourceHandoverCommandTransfer::
     PduSessionResourceHandoverCommandTransfer() {
-  handovercommandtransferIE = (Ngap_HandoverCommandTransfer_t*) calloc(
+  m_HandoverCommandTransferIe = (Ngap_HandoverCommandTransfer_t*) calloc(
       1, sizeof(Ngap_HandoverCommandTransfer_t));
-  dLForwardingUP_TNLInformation = std::nullopt;
-  qosFlowToBeForwardedList      = std::nullopt;
+  m_DlForwardingUpTnlInformation = std::nullopt;
+  m_QosFlowToBeForwardedList     = std::nullopt;
 }
 
 //------------------------------------------------------------------------------
 PduSessionResourceHandoverCommandTransfer::
     ~PduSessionResourceHandoverCommandTransfer() {}
 void PduSessionResourceHandoverCommandTransfer::setQosFlowToBeForwardedList(
-    std::vector<QosFlowToBeForwardedItem_t> list) {
-  QosFlowToBeForwardedList qos_list = {};
+    const std::vector<QosFlowToBeForwardedItem_t>& list) {
+  QosFlowToBeForwardedList qosList = {};
 
   std::vector<QosFlowToBeForwardedItem> item_list;
 
   for (int i = 0; i < list.size(); i++) {
     QosFlowIdentifier qfi             = {};
     QosFlowToBeForwardedItem qos_item = {};
-    qfi.setQosFlowIdentifier(list[i].QFI);
+    qfi.set(list[i].qfi);
 
-    qos_item.setQosFlowIdentifier(qfi);
+    qos_item.set(qfi);
     item_list.push_back(qos_item);
   }
 
-  qos_list.set(item_list);
-  qosFlowToBeForwardedList =
-      std::make_optional<QosFlowToBeForwardedList>(qos_list);
-  int ret = qosFlowToBeForwardedList.value().encode(
-      handovercommandtransferIE->qosFlowToBeForwardedList);
+  qosList.set(item_list);
+  m_QosFlowToBeForwardedList =
+      std::make_optional<QosFlowToBeForwardedList>(qosList);
+  int ret = m_QosFlowToBeForwardedList.value().encode(
+      m_HandoverCommandTransferIe->qosFlowToBeForwardedList);
   Logger::ngap().debug(
       "Number of QoS flows in the list %d",
-      handovercommandtransferIE->qosFlowToBeForwardedList->list.count);
-  if (handovercommandtransferIE->qosFlowToBeForwardedList->list.array) {
-    if (handovercommandtransferIE->qosFlowToBeForwardedList->list.array[0]) {
+      m_HandoverCommandTransferIe->qosFlowToBeForwardedList->list.count);
+  if (m_HandoverCommandTransferIe->qosFlowToBeForwardedList->list.array) {
+    if (m_HandoverCommandTransferIe->qosFlowToBeForwardedList->list.array[0]) {
       Logger::ngap().debug(
           "QFI in the list %d",
-          handovercommandtransferIE->qosFlowToBeForwardedList->list.array[0]
+          m_HandoverCommandTransferIe->qosFlowToBeForwardedList->list.array[0]
               ->qosFlowIdentifier);
     }
   }
@@ -80,21 +80,21 @@ void PduSessionResourceHandoverCommandTransfer::setQosFlowToBeForwardedList(
 
 //------------------------------------------------------------------------------
 void PduSessionResourceHandoverCommandTransfer::setUPTransportLayerInformation(
-    GtpTunnel_t uptlinfo) {
+    const GtpTunnel_t& upTransportLayerInfo) {
   UpTransportLayerInformation tmp               = {};
   TransportLayerAddress m_transportLayerAddress = {};
   GtpTeid m_gtpTeid                             = {};
-  m_transportLayerAddress.setTransportLayerAddress(uptlinfo.ip_address);
-  m_gtpTeid.setGtpTeid(uptlinfo.gtp_teid);
-  tmp.setUpTransportLayerInformation(m_transportLayerAddress, m_gtpTeid);
-  dLForwardingUP_TNLInformation =
+  m_transportLayerAddress.set(upTransportLayerInfo.ipAddress);
+  m_gtpTeid.set(upTransportLayerInfo.gtpTeid);
+  tmp.set(m_transportLayerAddress, m_gtpTeid);
+  m_DlForwardingUpTnlInformation =
       std::make_optional<UpTransportLayerInformation>(tmp);
 
-  handovercommandtransferIE->dLForwardingUP_TNLInformation =
+  m_HandoverCommandTransferIe->dLForwardingUP_TNLInformation =
       (Ngap_UPTransportLayerInformation*) calloc(
           1, sizeof(Ngap_UPTransportLayerInformation));
-  int ret = dLForwardingUP_TNLInformation.value().encode(
-      *handovercommandtransferIE->dLForwardingUP_TNLInformation);
+  int ret = m_DlForwardingUpTnlInformation.value().encode(
+      *m_HandoverCommandTransferIe->dLForwardingUP_TNLInformation);
   if (!ret) {
     Logger::ngap().debug("Encode dLForwardingUP_TNLInformation IE error");
     return;
@@ -103,11 +103,11 @@ void PduSessionResourceHandoverCommandTransfer::setUPTransportLayerInformation(
 
 //------------------------------------------------------------------------------
 int PduSessionResourceHandoverCommandTransfer::encode(
-    uint8_t* buf, int buf_size) {
+    uint8_t* buf, int buf_size) const {
   output_wrapper::print_asn_msg(
-      &asn_DEF_Ngap_HandoverCommandTransfer, handovercommandtransferIE);
+      &asn_DEF_Ngap_HandoverCommandTransfer, m_HandoverCommandTransferIe);
   asn_enc_rval_t er = aper_encode_to_buffer(
-      &asn_DEF_Ngap_HandoverCommandTransfer, NULL, handovercommandtransferIE,
+      &asn_DEF_Ngap_HandoverCommandTransfer, NULL, m_HandoverCommandTransferIe,
       buf, buf_size);
   Logger::ngap().debug("er.encoded( %d)", er.encoded);
   return er.encoded;

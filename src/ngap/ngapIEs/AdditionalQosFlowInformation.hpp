@@ -35,13 +35,13 @@ class AdditionalQosFlowInformation {
   virtual ~AdditionalQosFlowInformation();
 
   void set(e_Ngap_AdditionalQosFlowInformation value);
-  bool get(e_Ngap_AdditionalQosFlowInformation& value);
+  bool get(e_Ngap_AdditionalQosFlowInformation& value) const;
 
   bool encode(Ngap_AdditionalQosFlowInformation_t&) const;
   bool decode(const Ngap_AdditionalQosFlowInformation_t&);
 
  private:
-  long qos_flow_info_;
+  long m_QosFlowInfo;
 };
 
 }  // namespace ngap

@@ -32,27 +32,27 @@ AmfName::AmfName() {}
 AmfName::~AmfName() {}
 
 //------------------------------------------------------------------------------
-bool AmfName::setValue(const std::string& amf_name) {
+bool AmfName::set(const std::string& amf_name) {
   if (amf_name.size() > AMF_NAME_SIZE_MAX) return false;
-  amf_name_ = amf_name;
+  m_AmfName = amf_name;
   return true;
 }
 
 //------------------------------------------------------------------------------
-void AmfName::getValue(std::string& amf_name) const {
-  amf_name = amf_name_;
+void AmfName::get(std::string& amf_name) const {
+  amf_name = m_AmfName;
 }
 
 //------------------------------------------------------------------------------
-bool AmfName::encode(Ngap_AMFName_t& amf_name_ie) const {
-  amf_conv::string_2_octet_string(amf_name_, amf_name_ie);
+bool AmfName::encode(Ngap_AMFName_t& amf_name) const {
+  amf_conv::string_2_octet_string(m_AmfName, amf_name);
   return true;
 }
 
 //------------------------------------------------------------------------------
-bool AmfName::decode(const Ngap_AMFName_t& amf_name_ie) {
-  if (!amf_name_ie.buf) return false;
-  amf_conv::octet_string_2_string(amf_name_ie, amf_name_);
+bool AmfName::decode(const Ngap_AMFName_t& amf_name) {
+  if (!amf_name.buf) return false;
+  amf_conv::octet_string_2_string(amf_name, m_AmfName);
   return true;
 }
 

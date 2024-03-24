@@ -23,7 +23,7 @@
 #define _AMF_STATUS_INDICATION_H_
 
 #include "MessageType.hpp"
-#include "NgapIEsStruct.hpp"
+#include "NgapIesStruct.hpp"
 #include "NgapMessage.hpp"
 #include "UnavailableGuamiList.hpp"
 
@@ -46,9 +46,9 @@ class AmfStatusIndication : public NgapMessage {
   bool decode(Ngap_NGAP_PDU_t* ngapMsgPdu) override;
 
  private:
-  Ngap_AMFStatusIndication_t* amfStatusIndicationIEs;
+  Ngap_AMFStatusIndication_t* m_AmfStatusIndicationIEs;
 
-  UnavailableGuamiList unavailableGuamiList;  // Mandatory
+  UnavailableGuamiList m_UnavailableGuamiList;  // Mandatory
 };
 }  // namespace ngap
 #endif

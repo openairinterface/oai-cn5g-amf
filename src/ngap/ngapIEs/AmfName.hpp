@@ -37,14 +37,14 @@ class AmfName {
   AmfName();
   virtual ~AmfName();
 
-  bool setValue(const std::string& amf_name);
-  void getValue(std::string& amf_name) const;
+  bool set(const std::string& amf_name);
+  void get(std::string& amf_name) const;
 
   bool encode(Ngap_AMFName_t&) const;
   bool decode(const Ngap_AMFName_t&);
 
  private:
-  std::string amf_name_;
+  std::string m_AmfName;
 };
 }  // namespace ngap
 

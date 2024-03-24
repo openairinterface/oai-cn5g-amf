@@ -25,7 +25,7 @@ namespace ngap {
 
 //------------------------------------------------------------------------------
 QosFlowItemWithDataForWarding::QosFlowItemWithDataForWarding() {
-  data_forwarding_accepted_ = std::nullopt;
+  m_DataForwardingAccepted = std::nullopt;
 }
 
 //------------------------------------------------------------------------------
@@ -33,28 +33,28 @@ QosFlowItemWithDataForWarding::~QosFlowItemWithDataForWarding() {}
 
 void QosFlowItemWithDataForWarding::set(
     const QosFlowIdentifier& qfi,
-    const std::optional<long>& data_forwarding_accepted) {
-  qfi_                      = qfi;
-  data_forwarding_accepted_ = data_forwarding_accepted;
+    const std::optional<long>& dataForwardingAccepted) {
+  m_Qfi                    = qfi;
+  m_DataForwardingAccepted = dataForwardingAccepted;
 }
 //------------------------------------------------------------------------------
 void QosFlowItemWithDataForWarding::getQosFlowIdentifier(
-    Ngap_QosFlowIdentifier_t& qfi) {
+    Ngap_QosFlowIdentifier_t& qfi) const {
   long value = {};
-  if (qfi_.getQosFlowIdentifier(value)) {
+  if (m_Qfi.get(value)) {
     qfi = (Ngap_QosFlowIdentifier_t) value;
   }
 }
 
 //------------------------------------------------------------------------------
 bool QosFlowItemWithDataForWarding::decode(
-    const Ngap_QosFlowItemWithDataForwarding_t& qos_flow_item) {
-  if (!qfi_.decode(qos_flow_item.qosFlowIdentifier)) {
+    const Ngap_QosFlowItemWithDataForwarding_t& qosFlowItem) {
+  if (!m_Qfi.decode(qosFlowItem.qosFlowIdentifier)) {
     return false;
   }
-  if (qos_flow_item.dataForwardingAccepted)
-    data_forwarding_accepted_ =
-        std::make_optional<long>(*qos_flow_item.dataForwardingAccepted);
+  if (qosFlowItem.dataForwardingAccepted)
+    m_DataForwardingAccepted =
+        std::make_optional<long>(*qosFlowItem.dataForwardingAccepted);
   return true;
 }
 }  // namespace ngap

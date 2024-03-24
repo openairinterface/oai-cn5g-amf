@@ -29,7 +29,7 @@ namespace ngap {
 
 //------------------------------------------------------------------------------
 AmfStatusIndication::AmfStatusIndication() : NgapMessage() {
-  amfStatusIndicationIEs = nullptr;
+  m_AmfStatusIndicationIEs = nullptr;
   NgapMessage::setMessageType(NgapMessageType::AMF_STATUS_INDICATION);
   initialize();
 }
@@ -39,20 +39,20 @@ AmfStatusIndication::~AmfStatusIndication() {}
 
 //------------------------------------------------------------------------------
 void AmfStatusIndication::initialize() {
-  amfStatusIndicationIEs =
+  m_AmfStatusIndicationIEs =
       &(ngapPdu->choice.initiatingMessage->value.choice.AMFStatusIndication);
 }
 
 //------------------------------------------------------------------------------
 void AmfStatusIndication::setUnavailableGuamiList(
     const UnavailableGuamiList& list) {
-  unavailableGuamiList = list;
+  m_UnavailableGuamiList = list;
 }
 
 //------------------------------------------------------------------------------
 void AmfStatusIndication::getUnavailableGuamiList(
     UnavailableGuamiList& list) const {
-  list = unavailableGuamiList;
+  list = m_UnavailableGuamiList;
 }
 
 //------------------------------------------------------------------------------
@@ -67,7 +67,7 @@ bool AmfStatusIndication::decode(Ngap_NGAP_PDU_t* ngapMsgPdu) {
             Ngap_Criticality_ignore &&
         ngapPdu->choice.initiatingMessage->value.present ==
             Ngap_InitiatingMessage__value_PR_AMFStatusIndication) {
-      amfStatusIndicationIEs =
+      m_AmfStatusIndicationIEs =
           &ngapPdu->choice.initiatingMessage->value.choice.AMFStatusIndication;
     } else {
       Logger::ngap().error("Check AMFStatusIndication message error");
@@ -79,15 +79,16 @@ bool AmfStatusIndication::decode(Ngap_NGAP_PDU_t* ngapMsgPdu) {
     return false;
   }
 
-  for (int i = 0; i < amfStatusIndicationIEs->protocolIEs.list.count; i++) {
-    switch (amfStatusIndicationIEs->protocolIEs.list.array[i]->id) {
+  for (int i = 0; i < m_AmfStatusIndicationIEs->protocolIEs.list.count; i++) {
+    switch (m_AmfStatusIndicationIEs->protocolIEs.list.array[i]->id) {
       case Ngap_ProtocolIE_ID_id_UnavailableGUAMIList: {
-        if (amfStatusIndicationIEs->protocolIEs.list.array[i]->criticality ==
+        if (m_AmfStatusIndicationIEs->protocolIEs.list.array[i]->criticality ==
                 Ngap_Criticality_reject &&
-            amfStatusIndicationIEs->protocolIEs.list.array[i]->value.present ==
+            m_AmfStatusIndicationIEs->protocolIEs.list.array[i]
+                    ->value.present ==
                 Ngap_AMFStatusIndicationIEs__value_PR_UnavailableGUAMIList) {
-          if (!unavailableGuamiList.decode(
-                  amfStatusIndicationIEs->protocolIEs.list.array[i]
+          if (!m_UnavailableGuamiList.decode(
+                  m_AmfStatusIndicationIEs->protocolIEs.list.array[i]
                       ->value.choice.UnavailableGUAMIList)) {
             Logger::ngap().error("Decoded NGAP UnavailableGUAMIList error");
             return false;

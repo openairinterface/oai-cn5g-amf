@@ -38,17 +38,17 @@ class PduSessionResourceModifyListModRes {
   virtual ~PduSessionResourceModifyListModRes();
 
   void set(const std::vector<PduSessionResourceModifyItemModRes>&
-               m_pduSessionResourceModifyListModRes);
+               pduSessionResourceModifyListModRes);
   void get(std::vector<PduSessionResourceModifyItemModRes>&
-               m_pduSessionResourceModifyListModRes) const;
+               pduSessionResourceModifyListModRes) const;
 
   bool encode(Ngap_PDUSessionResourceModifyListModRes_t&
-                  m_pduSessionResourceModifyListModRes) const;
+                  pduSessionResourceModifyListModRes) const;
   bool decode(const Ngap_PDUSessionResourceModifyListModRes_t&
-                  m_pduSessionResourceModifyListModRes);
+                  pduSessionResourceModifyListModRes);
 
  private:
-  std::vector<PduSessionResourceModifyItemModRes> item_list_;
+  std::vector<PduSessionResourceModifyItemModRes> m_ItemList;
 };
 
 }  // namespace ngap

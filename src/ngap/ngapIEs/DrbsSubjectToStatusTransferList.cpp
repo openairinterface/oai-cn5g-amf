@@ -32,21 +32,22 @@ DrbSubjectToStatusTransferList::DrbSubjectToStatusTransferList() {}
 DrbSubjectToStatusTransferList::~DrbSubjectToStatusTransferList() {}
 
 //------------------------------------------------------------------------------
-void DrbSubjectToStatusTransferList::setdRBSubjectItem(
+void DrbSubjectToStatusTransferList::set(
     const std::vector<DrbSubjectToStatusTransferItem>& list) {
-  itemList = list;
+  m_ItemList = list;
 }
 
 //------------------------------------------------------------------------------
-void DrbSubjectToStatusTransferList::getdRBSubjectItem(
+void DrbSubjectToStatusTransferList::get(
     std::vector<DrbSubjectToStatusTransferItem>& list) const {
-  list = itemList;
+  list = m_ItemList;
 }
 
 //------------------------------------------------------------------------------
 bool DrbSubjectToStatusTransferList::encode(
-    Ngap_DRBsSubjectToStatusTransferList_t& dRBsSubjectToStatusTransferList) {
-  for (auto& item : itemList) {
+    Ngap_DRBsSubjectToStatusTransferList_t& drbsSubjectToStatusTransferList)
+    const {
+  for (auto& item : m_ItemList) {
     Ngap_DRBsSubjectToStatusTransferItem_t* ie =
         (Ngap_DRBsSubjectToStatusTransferItem_t*) calloc(
             1, sizeof(Ngap_DRBsSubjectToStatusTransferItem_t));
@@ -57,7 +58,7 @@ bool DrbSubjectToStatusTransferList::encode(
       utils::free_wrapper((void**) &ie);
       return false;
     }
-    if (ASN_SEQUENCE_ADD(&dRBsSubjectToStatusTransferList.list, ie) != 0) {
+    if (ASN_SEQUENCE_ADD(&drbsSubjectToStatusTransferList.list, ie) != 0) {
       Logger::ngap().error(
           "ASN_SEQUENCE_ADD DrbSubjectToStatusTransferList IE error!");
       return false;
@@ -69,14 +70,14 @@ bool DrbSubjectToStatusTransferList::encode(
 //------------------------------------------------------------------------------
 bool DrbSubjectToStatusTransferList::decode(
     const Ngap_DRBsSubjectToStatusTransferList_t&
-        dRBsSubjectToStatusTransferList) {
-  for (int i = 0; i < dRBsSubjectToStatusTransferList.list.count; i++) {
+        drbsSubjectToStatusTransferList) {
+  for (int i = 0; i < drbsSubjectToStatusTransferList.list.count; i++) {
     DrbSubjectToStatusTransferItem item = {};
-    if (!item.decode(*dRBsSubjectToStatusTransferList.list.array[i])) {
+    if (!item.decode(*drbsSubjectToStatusTransferList.list.array[i])) {
       Logger::ngap().error("Decode DrbSubjectToStatusTransferList IE error!");
       return false;
     }
-    itemList.push_back(item);
+    m_ItemList.push_back(item);
   }
   return true;
 }

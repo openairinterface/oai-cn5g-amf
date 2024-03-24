@@ -31,38 +31,38 @@ PduSessionResourceItemHoRqd::~PduSessionResourceItemHoRqd() {}
 
 //------------------------------------------------------------------------------
 void PduSessionResourceItemHoRqd::set(
-    const PduSessionId& m_pDUSessionID,
+    const PduSessionId& pduSessionId,
     const OCTET_STRING_t& m_handoverRequiredTransfer) {
-  pDUSessionID             = m_pDUSessionID;
-  handoverRequiredTransfer = m_handoverRequiredTransfer;
+  m_PduSessionId             = pduSessionId;
+  m_HandoverRequiredTransfer = m_handoverRequiredTransfer;
 }
 
 //------------------------------------------------------------------------------
 void PduSessionResourceItemHoRqd::get(
-    PduSessionId& m_pDUSessionID,
+    PduSessionId& pduSessionId,
     OCTET_STRING_t& m_handoverRequiredTransfer) const {
-  m_pDUSessionID             = pDUSessionID;
-  m_handoverRequiredTransfer = handoverRequiredTransfer;
+  pduSessionId               = m_PduSessionId;
+  m_handoverRequiredTransfer = m_HandoverRequiredTransfer;
 }
 
 //------------------------------------------------------------------------------
 bool PduSessionResourceItemHoRqd::encode(
-    Ngap_PDUSessionResourceItemHORqd_t& pdUSessionResourceItemHORqd) {
-  if (!pDUSessionID.encode(pdUSessionResourceItemHORqd.pDUSessionID))
+    Ngap_PDUSessionResourceItemHORqd_t& pduSessionResourceItemHORqd) const {
+  if (!m_PduSessionId.encode(pduSessionResourceItemHORqd.pDUSessionID))
     return false;
-  pdUSessionResourceItemHORqd.handoverRequiredTransfer =
-      handoverRequiredTransfer;
+  pduSessionResourceItemHORqd.handoverRequiredTransfer =
+      m_HandoverRequiredTransfer;
 
   return true;
 }
 
 //------------------------------------------------------------------------------
 bool PduSessionResourceItemHoRqd::decode(
-    const Ngap_PDUSessionResourceItemHORqd_t& pdUSessionResourceItemHORqd) {
-  if (!pDUSessionID.decode(pdUSessionResourceItemHORqd.pDUSessionID))
+    const Ngap_PDUSessionResourceItemHORqd_t& pduSessionResourceItemHORqd) {
+  if (!m_PduSessionId.decode(pduSessionResourceItemHORqd.pDUSessionID))
     return false;
-  handoverRequiredTransfer =
-      pdUSessionResourceItemHORqd.handoverRequiredTransfer;
+  m_HandoverRequiredTransfer =
+      pduSessionResourceItemHORqd.handoverRequiredTransfer;
 
   return true;
 }

@@ -39,22 +39,22 @@ class FiveGSTmsi {
   ~FiveGSTmsi();
 
  public:
-  void getTmsi(std::string& value);
+  void getTmsi(std::string& value) const;
 
   void get(std::string& setId, std::string& pointer, std::string& tmsi) const;
   bool set(
       const std::string& setId, const std::string& pointer,
       const std::string& tmsi);
 
-  bool encode(Ngap_FiveG_S_TMSI_t& pdu);
+  bool encode(Ngap_FiveG_S_TMSI_t& pdu) const;
   bool decode(const Ngap_FiveG_S_TMSI_t& pdu);
 
  private:
-  std::string _5g_s_tmsi_;
-  std::string tmsi_value_;
+  std::string m_5gSTmsi;
+  std::string m_TmsiValue;
 
-  AmfSetId amf_set_id_;
-  AmfPointer amf_pointer_;
+  AmfSetId m_AmfSetId;
+  AmfPointer m_AmfPointer;
 };
 
 }  // namespace ngap
