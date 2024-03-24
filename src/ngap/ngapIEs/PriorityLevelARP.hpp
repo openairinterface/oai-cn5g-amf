@@ -33,14 +33,14 @@ class PriorityLevelARP {
   PriorityLevelARP();
   virtual ~PriorityLevelARP();
 
-  void setPriorityLevelARP(long value);
-  bool getPriorityLevelARP(long& value) const;
+  void set(const long& value);
+  bool get(long& value) const;
 
   bool encode(Ngap_PriorityLevelARP_t&) const;
-  bool decode(Ngap_PriorityLevelARP_t);
+  bool decode(const Ngap_PriorityLevelARP_t&);
 
  private:
-  long priority_level_arp_;
+  long m_PriorityLevelArp;
 };
 
 }  // namespace ngap

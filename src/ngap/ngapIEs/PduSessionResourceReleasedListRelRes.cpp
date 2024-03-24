@@ -32,42 +32,36 @@ PduSessionResourceReleasedListRelRes::~PduSessionResourceReleasedListRelRes() {}
 //------------------------------------------------------------------------------
 void PduSessionResourceReleasedListRelRes::set(
     const std::vector<PduSessionResourceReleasedItemRelRes>& list) {
-  item_list_ = list;
+  m_ItemList = list;
 }
 
 //------------------------------------------------------------------------------
 void PduSessionResourceReleasedListRelRes::get(
-    std::vector<PduSessionResourceReleasedItemRelRes>& list) {
-  list = item_list_;
+    std::vector<PduSessionResourceReleasedItemRelRes>& list) const {
+  list = m_ItemList;
 }
 
 //------------------------------------------------------------------------------
 bool PduSessionResourceReleasedListRelRes::encode(
-    Ngap_PDUSessionResourceReleasedListRelRes_t&
-        pdu_session_resource_released_list_rel_res) {
-  for (auto& item : item_list_) {
+    Ngap_PDUSessionResourceReleasedListRelRes_t& pduSessionResourceList) const {
+  for (auto& item : m_ItemList) {
     Ngap_PDUSessionResourceReleasedItemRelRes_t* rel =
         (Ngap_PDUSessionResourceReleasedItemRelRes_t*) calloc(
             1, sizeof(Ngap_PDUSessionResourceReleasedItemRelRes_t));
     if (!rel) return false;
     if (!item.encode(*rel)) return false;
-    if (ASN_SEQUENCE_ADD(
-            &pdu_session_resource_released_list_rel_res.list, rel) != 0)
-      return false;
+    if (ASN_SEQUENCE_ADD(&pduSessionResourceList.list, rel) != 0) return false;
   }
   return true;
 }
 
 //------------------------------------------------------------------------------
 bool PduSessionResourceReleasedListRelRes::decode(
-    const Ngap_PDUSessionResourceReleasedListRelRes_t&
-        pdu_session_resource_released_list_rel_res) {
-  for (int i = 0; i < pdu_session_resource_released_list_rel_res.list.count;
-       i++) {
+    const Ngap_PDUSessionResourceReleasedListRelRes_t& pduSessionResourceList) {
+  for (int i = 0; i < pduSessionResourceList.list.count; i++) {
     PduSessionResourceReleasedItemRelRes item = {};
-    if (!item.decode(*pdu_session_resource_released_list_rel_res.list.array[i]))
-      return false;
-    item_list_.push_back(item);
+    if (!item.decode(*pduSessionResourceList.list.array[i])) return false;
+    m_ItemList.push_back(item);
   }
   return true;
 }

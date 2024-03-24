@@ -33,14 +33,14 @@ class RoutingId {
   RoutingId();
   virtual ~RoutingId();
 
-  void setRoutingId(const OCTET_STRING_t& id);
-  void getRoutingId(OCTET_STRING_t& id);
+  void set(const OCTET_STRING_t& id);
+  void get(OCTET_STRING_t& id) const;
 
-  void encode(Ngap_RoutingID_t&);
+  void encode(Ngap_RoutingID_t&) const;
   void decode(const Ngap_RoutingID_t&);
 
  private:
-  OCTET_STRING_t routing_id_;  // Mandatory
+  OCTET_STRING_t m_RoutingId;  // Mandatory
 };
 
 }  // namespace ngap

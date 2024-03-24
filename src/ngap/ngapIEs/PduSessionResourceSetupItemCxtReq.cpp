@@ -28,7 +28,7 @@ namespace ngap {
 
 //------------------------------------------------------------------------------
 PduSessionResourceSetupItemCxtReq::PduSessionResourceSetupItemCxtReq() {
-  nas_pdu_ = std::nullopt;
+  m_NasPdu = std::nullopt;
 }
 
 //------------------------------------------------------------------------------
@@ -36,49 +36,48 @@ PduSessionResourceSetupItemCxtReq::~PduSessionResourceSetupItemCxtReq() {}
 
 //------------------------------------------------------------------------------
 void PduSessionResourceSetupItemCxtReq::set(
-    const PduSessionId& pdu_session_id, const std::optional<NasPdu>& nas_pdu,
-    const S_NSSAI& s_nssai,
-    const OCTET_STRING_t& pdu_session_resource_setup_request_transfer) {
-  pdu_session_id_ = pdu_session_id;
-  nas_pdu_        = nas_pdu;
-  s_nssai_        = s_nssai;
-  pdu_session_resource_setup_request_transfer_ =
-      pdu_session_resource_setup_request_transfer;
+    const PduSessionId& pduSessionId, const std::optional<NasPdu>& nasPdu,
+    const SNssai& sNssai,
+    const OCTET_STRING_t& pduSessionResourceSetupRequestTransfer) {
+  m_PduSessionId = pduSessionId;
+  m_NasPdu       = nasPdu;
+  m_SNssai       = sNssai;
+  m_PduSessionResourceSetupRequestTransfer =
+      pduSessionResourceSetupRequestTransfer;
 }
 
 //------------------------------------------------------------------------------
 void PduSessionResourceSetupItemCxtReq::get(
-    PduSessionId& pdu_session_id, std::optional<NasPdu>& nas_pdu,
-    S_NSSAI& s_nssai,
-    OCTET_STRING_t& pdu_session_resource_setup_request_transfer) const {
-  pdu_session_id = pdu_session_id_;
-  nas_pdu        = nas_pdu_;
-  s_nssai        = s_nssai_;
-  pdu_session_resource_setup_request_transfer =
-      pdu_session_resource_setup_request_transfer_;
+    PduSessionId& pduSessionId, std::optional<NasPdu>& nasPdu, SNssai& sNssai,
+    OCTET_STRING_t& pduSessionResourceSetupRequestTransfer) const {
+  pduSessionId = m_PduSessionId;
+  nasPdu       = m_NasPdu;
+  sNssai       = m_SNssai;
+  pduSessionResourceSetupRequestTransfer =
+      m_PduSessionResourceSetupRequestTransfer;
 }
 
 //------------------------------------------------------------------------------
 bool PduSessionResourceSetupItemCxtReq::encode(
-    Ngap_PDUSessionResourceSetupItemCxtReq_t&
-        pduSessionResourceSetupItemCxtReq) {
-  if (!pdu_session_id_.encode(pduSessionResourceSetupItemCxtReq.pDUSessionID))
+    Ngap_PDUSessionResourceSetupItemCxtReq_t& pduSessionResourceSetupItemCxtReq)
+    const {
+  if (!m_PduSessionId.encode(pduSessionResourceSetupItemCxtReq.pDUSessionID))
     return false;
 
-  if (nas_pdu_.has_value()) {
+  if (m_NasPdu.has_value()) {
     Ngap_NAS_PDU_t* naspdu =
         (Ngap_NAS_PDU_t*) calloc(1, sizeof(Ngap_NAS_PDU_t));
     if (!naspdu) return false;
-    if (!nas_pdu_.value().encode(*naspdu)) {
+    if (!m_NasPdu.value().encode(*naspdu)) {
       utils::free_wrapper((void**) &naspdu);
       return false;
     }
     pduSessionResourceSetupItemCxtReq.nAS_PDU = naspdu;
   }
 
-  if (!s_nssai_.encode(pduSessionResourceSetupItemCxtReq.s_NSSAI)) return false;
+  if (!m_SNssai.encode(pduSessionResourceSetupItemCxtReq.s_NSSAI)) return false;
   pduSessionResourceSetupItemCxtReq.pDUSessionResourceSetupRequestTransfer =
-      pdu_session_resource_setup_request_transfer_;
+      m_PduSessionResourceSetupRequestTransfer;
 
   return true;
 }
@@ -87,17 +86,17 @@ bool PduSessionResourceSetupItemCxtReq::encode(
 bool PduSessionResourceSetupItemCxtReq::decode(
     const Ngap_PDUSessionResourceSetupItemCxtReq_t&
         pduSessionResourceSetupItemCxtReq) {
-  if (!pdu_session_id_.decode(pduSessionResourceSetupItemCxtReq.pDUSessionID))
+  if (!m_PduSessionId.decode(pduSessionResourceSetupItemCxtReq.pDUSessionID))
     return false;
-  if (!s_nssai_.decode(pduSessionResourceSetupItemCxtReq.s_NSSAI)) return false;
+  if (!m_SNssai.decode(pduSessionResourceSetupItemCxtReq.s_NSSAI)) return false;
 
   if (pduSessionResourceSetupItemCxtReq.nAS_PDU) {
     NasPdu tmp = {};
     if (!tmp.decode(*pduSessionResourceSetupItemCxtReq.nAS_PDU)) return false;
-    nas_pdu_ = std::optional<NasPdu>(tmp);
+    m_NasPdu = std::optional<NasPdu>(tmp);
   }
 
-  pdu_session_resource_setup_request_transfer_ =
+  m_PduSessionResourceSetupRequestTransfer =
       pduSessionResourceSetupItemCxtReq.pDUSessionResourceSetupRequestTransfer;
 
   return true;

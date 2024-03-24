@@ -25,22 +25,20 @@ namespace ngap {
 
 //------------------------------------------------------------------------------
 NotificationControl::NotificationControl() {
-  notification_control_ = 0;
+  m_NotificationControl = 0;
 }
 
 //------------------------------------------------------------------------------
 NotificationControl::~NotificationControl() {}
 
 //------------------------------------------------------------------------------
-void NotificationControl::setNotificationControl(
-    e_Ngap_NotificationControl value) {
-  notification_control_ = value;
+void NotificationControl::set(const e_Ngap_NotificationControl& value) {
+  m_NotificationControl = value;
 }
 
 //------------------------------------------------------------------------------
-bool NotificationControl::getNotificationControl(
-    e_Ngap_NotificationControl& value) const {
-  if (notification_control_ == Ngap_NotificationControl_notification_requested)
+bool NotificationControl::get(e_Ngap_NotificationControl& value) const {
+  if (m_NotificationControl == Ngap_NotificationControl_notification_requested)
     value = Ngap_NotificationControl_notification_requested;
   else
     return 0;
@@ -51,15 +49,15 @@ bool NotificationControl::getNotificationControl(
 //------------------------------------------------------------------------------
 bool NotificationControl::encode(
     Ngap_NotificationControl_t& notificationControl) const {
-  notificationControl = notification_control_;
+  notificationControl = m_NotificationControl;
 
   return true;
 }
 
 //------------------------------------------------------------------------------
 bool NotificationControl::decode(
-    Ngap_NotificationControl_t notificationControl) {
-  notification_control_ = notificationControl;
+    const Ngap_NotificationControl_t& notificationControl) {
+  m_NotificationControl = notificationControl;
 
   return true;
 }

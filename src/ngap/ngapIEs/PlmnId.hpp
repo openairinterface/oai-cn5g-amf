@@ -41,16 +41,16 @@ class PlmnId {
   void getMcc(std::string& mcc) const;
   void getMnc(std::string& mnc) const;
 
-  bool encode(Ngap_PLMNIdentity_t&);
+  bool encode(Ngap_PLMNIdentity_t&) const;
   bool decode(const Ngap_PLMNIdentity_t&);
 
  private:
-  uint8_t mcc_digit2;
-  uint8_t mcc_digit1;
-  uint8_t mnc_digit3;  // in case of 2 digit MNC, it should be 0xf
-  uint8_t mcc_digit3;
-  uint8_t mnc_digit2;
-  uint8_t mnc_digit1;
+  uint8_t m_MccDigit2;
+  uint8_t m_MccDigit1;
+  uint8_t m_MncDigit3;  // in case of 2 digit MNC, it should be 0xf
+  uint8_t m_MccDigit3;
+  uint8_t m_MncDigit2;
+  uint8_t m_MncDigit1;
 };
 
 }  // namespace ngap

@@ -31,17 +31,17 @@ namespace ngap {
 class NetworkInstance {
  public:
   NetworkInstance();
-  NetworkInstance(long m_networkinstance);
+  NetworkInstance(const long& networkInstance);
   virtual ~NetworkInstance();
 
-  void set(long m_networkinstance);
-  bool get(long& m_networkinstance) const;
+  void set(const long& networkInstance);
+  bool get(long& networkInstance) const;
 
-  bool encode(Ngap_NetworkInstance_t&);
-  bool decode(Ngap_NetworkInstance_t);
+  bool encode(Ngap_NetworkInstance_t&) const;
+  bool decode(const Ngap_NetworkInstance_t&);
 
  private:
-  long network_instance_;
+  long m_NetworkInstance;
 };
 
 }  // namespace ngap

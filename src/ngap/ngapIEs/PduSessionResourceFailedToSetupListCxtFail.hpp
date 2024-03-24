@@ -41,12 +41,12 @@ class PduSessionResourceFailedToSetupListCxtFail {
   void get(std::vector<PduSessionResourceFailedToSetupItemCxtFail>& list) const;
 
   bool encode(Ngap_PDUSessionResourceFailedToSetupListCxtFail_t&
-                  pduSessionResourceFailedToSetupListCxtFail);
+                  pduSessionResourceFailedToSetupListCxtFail) const;
   bool decode(const Ngap_PDUSessionResourceFailedToSetupListCxtFail_t&
                   pduSessionResourceFailedToSetupListCxtFail);
 
  private:
-  std::vector<PduSessionResourceFailedToSetupItemCxtFail> itemList;
+  std::vector<PduSessionResourceFailedToSetupItemCxtFail> m_ItemList;
 };
 
 }  // namespace ngap

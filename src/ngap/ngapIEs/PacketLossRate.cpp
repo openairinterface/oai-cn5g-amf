@@ -25,34 +25,34 @@ namespace ngap {
 
 //------------------------------------------------------------------------------
 PacketLossRate::PacketLossRate() {
-  packet_loss_rate_ = 0;
+  m_PacketLossRate = 0;
 }
 
 //------------------------------------------------------------------------------
 PacketLossRate::~PacketLossRate() {}
 
 //------------------------------------------------------------------------------
-void PacketLossRate::setPacketLossRate(long value) {
-  packet_loss_rate_ = value;
+void PacketLossRate::set(long value) {
+  m_PacketLossRate = value;
 }
 
 //------------------------------------------------------------------------------
-bool PacketLossRate::getPacketLossRate(long& value) const {
-  value = packet_loss_rate_;
+bool PacketLossRate::get(long& value) const {
+  value = m_PacketLossRate;
 
   return true;
 }
 
 //------------------------------------------------------------------------------
 bool PacketLossRate::encode(Ngap_PacketLossRate_t& packetLossRate) const {
-  packetLossRate = packet_loss_rate_;
+  packetLossRate = m_PacketLossRate;
 
   return true;
 }
 
 //------------------------------------------------------------------------------
 bool PacketLossRate::decode(const Ngap_PacketLossRate_t& packetLossRate) {
-  packet_loss_rate_ = packetLossRate;
+  m_PacketLossRate = packetLossRate;
 
   return true;
 }

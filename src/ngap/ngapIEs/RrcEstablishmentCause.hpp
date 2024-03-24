@@ -40,7 +40,7 @@ class RrcEstablishmentCause {
   bool decode(Ngap_RRCEstablishmentCause_t);
 
  private:
-  int cause_;
+  int m_Cause;
 };
 
 }  // namespace ngap

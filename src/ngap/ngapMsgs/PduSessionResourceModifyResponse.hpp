@@ -22,7 +22,7 @@
 #ifndef PDU_SESSION_RESOURCE_MODIFY_RESPONSE_H_
 #define PDU_SESSION_RESOURCE_MODIFY_RESPONSE_H_
 
-#include "NgapUEMessage.hpp"
+#include "NgapUeMessage.hpp"
 #include "PduSessionResourceModifyListModRes.hpp"
 
 extern "C" {
@@ -31,7 +31,7 @@ extern "C" {
 
 namespace ngap {
 
-class PduSessionResourceModifyResponseMsg : public NgapUEMessage {
+class PduSessionResourceModifyResponseMsg : public NgapUeMessage {
  public:
   PduSessionResourceModifyResponseMsg();
   virtual ~PduSessionResourceModifyResponseMsg();
@@ -45,13 +45,13 @@ class PduSessionResourceModifyResponseMsg : public NgapUEMessage {
   void setPduSessionResourceModifyResponseList(
       const std::vector<PDUSessionResourceModifyResponseItem_t>& list);
   bool getPduSessionResourceModifyResponseList(
-      std::vector<PDUSessionResourceModifyResponseItem_t>& list);
+      std::vector<PDUSessionResourceModifyResponseItem_t>& list) const;
 
  private:
-  Ngap_PDUSessionResourceModifyResponse_t* pduSessionResourceModifyResponseIEs;
+  Ngap_PDUSessionResourceModifyResponse_t* pduSessionResourceModifyResponseIes;
 
   std::optional<PduSessionResourceModifyListModRes>
-      pduSessionResourceModifyList;  // Optional
+      m_PduSessionResourceModifyList;  // Optional
   // TODO: PDUSessionResourceFailedToModifyListModRes (Optional)
   // TODO: User Location Information (Optional)
   // TODO: Criticality Diagnostics (Optional)

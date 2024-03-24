@@ -40,10 +40,10 @@ typedef struct {
     std::string s = {};
     for (auto supported_item : plmn_list) {
       s.append("TAC " + std::to_string(supported_item.tac));
-      for (auto plmn_slice : supported_item.b_plmn_list) {
+      for (auto plmn_slice : supported_item.plmnSliceSupportList) {
         s.append("( MCC " + plmn_slice.mcc);
         s.append(", MNC " + plmn_slice.mnc);
-        for (auto slice : plmn_slice.slice_list) {
+        for (auto slice : plmn_slice.sliceList) {
           s.append("(SST " + slice.sst + ", SD " + slice.sd + "),");
         }
         s.append(")");

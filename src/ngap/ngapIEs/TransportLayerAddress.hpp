@@ -35,14 +35,14 @@ class TransportLayerAddress {
   TransportLayerAddress();
   virtual ~TransportLayerAddress();
 
-  void setTransportLayerAddress(const std::string m_ipaddress);
-  bool getTransportLayerAddress(std::string& m_ipaddress);
+  void set(const std::string& address);
+  bool get(std::string& address) const;
 
-  bool encode(Ngap_TransportLayerAddress_t& transportLayerAddress);
+  bool encode(Ngap_TransportLayerAddress_t& transportLayerAddress) const;
   bool decode(const Ngap_TransportLayerAddress_t& transportLayerAddress);
 
  private:
-  std::string ip_address_;
+  std::string m_IpAddress;
 };
 
 }  // namespace ngap

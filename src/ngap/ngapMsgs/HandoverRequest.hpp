@@ -24,14 +24,14 @@
 
 #include "AmfUeNgapId.hpp"
 #include "Cause.hpp"
-#include "GUAMI.hpp"
+#include "Guami.hpp"
 #include "MobilityRestrictionList.hpp"
 #include "NgapMessage.hpp"
 #include "PduSessionResourceSetupListHoReq.hpp"
-#include "S-NSSAI.hpp"
+#include "SNssai.hpp"
 #include "SecurityKey.hpp"
-#include "UEAggregateMaxBitRate.hpp"
-#include "UESecurityCapabilities.hpp"
+#include "UeAggregateMaxBitRate.hpp"
+#include "UeSecurityCapabilities.hpp"
 
 extern "C" {
 #include "Ngap_AllowedNSSAI-Item.h"
@@ -50,7 +50,7 @@ class HandoverRequest : public NgapMessage {
   bool decode(Ngap_NGAP_PDU_t* ngapMsgPdu) override;
 
   void setAmfUeNgapId(const unsigned long& id);  // 40 bits
-  unsigned long getAmfUeNgapId();
+  unsigned long getAmfUeNgapId() const;
 
   void setHandoverType(const long& type);
   // TODO: void getHandoverType(long& type);
@@ -58,68 +58,66 @@ class HandoverRequest : public NgapMessage {
   void setCause(const Ngap_Cause_PR& causePresent, const long& value);
   // TODO: getCause
 
-  void setUEAggregateMaximumBitRate(
-      const long& bitRateDownlink, const long& bitRateUplink);
-  // TODO: getUEAggregateMaximumBitRate
+  void setUeAggregateMaximumBitRate(
+      const long& bitRateDl, const long& bitRateUl);
+  // TODO: getUeAggregateMaximumBitRate
 
-  void setUESecurityCapabilities(
-      const uint16_t& nREncryptionAlgs,
-      const uint16_t& nRIntegrityProtectionAlgs,
-      const uint16_t& eUTRAEncryptionAlgs,
-      const uint16_t& eUTRAIntegrityProtectionAlgs);
-  // TODO: getUESecurityCapabilities
+  void setUeSecurityCapabilities(
+      uint16_t nrEncryptionAlgs, uint16_t nrIntegrityProtectionAlgs,
+      uint16_t eutraEncryptionAlgs, uint16_t eutraIntegrityProtectionAlgs);
+  // TODO: getUeSecurityCapabilities
 
-  void setSecurityContext(const long& count, bstring& nh);
+  void setSecurityContext(const long& count, const bstring& nh);
   // TODO: getSecurityContext
 
   void setPduSessionResourceSetupList(
       const std::vector<PDUSessionResourceSetupRequestItem_t>& list);
   // TODO: getPduSessionResourceSetupList
 
-  void setSourceToTarget_TransparentContainer(
+  void setSourceToTargetTransparentContainer(
       const OCTET_STRING_t& sourceTotarget);
-  // TODO: getSourceToTarget_TransparentContainer
+  // TODO: getSourceToTargetTransparentContainer
 
-  void setAllowedNSSAI(std::vector<S_NSSAI>& list);
-  // TODO: getAllowedNSSAI
+  void setAllowedNssai(const std::vector<SNssai>& list);
+  // TODO: getAllowedNssai
 
-  void setGUAMI(
-      const PlmnId& plmnId, const AmfRegionId& aMFRegionID,
-      const AmfSetId& aMFSetID, const AmfPointer& aMFPointer);
-  void setGUAMI(
+  void setGuami(
+      const PlmnId& plmnId, const AmfRegionId& amfRegionId,
+      const AmfSetId& amfSetId, const AmfPointer& amfPointer);
+  void setGuami(
       const std::string& mcc, const std::string& mnc,
       const std::string& regionId, const std::string& setId,
       const std::string& pointer);
-  void setGUAMI(
+  void setGuami(
       const std::string& mcc, const std::string& mnc, uint8_t regionId,
       uint16_t setId, uint8_t pointer);
-  // TODO: getGUAMI
+  // TODO: getGuami
 
   void setMobilityRestrictionList(const PlmnId& m_plmnId);
   // TODO: getMobilityRestrictionList
 
  private:
-  Ngap_HandoverRequest_t* handoverRequestIEs;
+  Ngap_HandoverRequest_t* m_HandoverRequestIes;
 
-  AmfUeNgapId amfUeNgapId;                          // Mandatory
-  Ngap_HandoverType_t handoverType;                 // Mandatory
-  Cause cause;                                      // Mandatory
-  UEAggregateMaxBitRate ueAggregateMaximumBitRate;  // Mandatory
+  AmfUeNgapId m_AmfUeNgapId;                          // Mandatory
+  Ngap_HandoverType_t m_HandoverType;                 // Mandatory
+  Cause m_Cause;                                      // Mandatory
+  UeAggregateMaxBitRate m_UeAggregateMaximumBitRate;  // Mandatory
   // TODO: Core Network Assistance Information for RRC INACTIVE (Optional)
-  UESecurityCapabilities ueSecurityCapabilities;  // Mandatory
-  Ngap_SecurityContext_t securityContext;         // Mandatory
+  UeSecurityCapabilities m_UeSecurityCapabilities;  // Mandatory
+  Ngap_SecurityContext_t m_SecurityContext;         // Mandatory
   // TODO: New Security Context Indicator (Optional)
   // TODO: NASC - NAS-PDU (Optional)
-  PduSessionResourceSetupListHoReq pDUSessionResourceSetupList;  // Mandatory
-  Ngap_AllowedNSSAI_t allowedNSSAI;                              // Mandatory
+  PduSessionResourceSetupListHoReq m_PduSessionResourceSetupList;  // Mandatory
+  Ngap_AllowedNSSAI_t m_AllowedNssai;                              // Mandatory
   // TODO: Trace Activation (Optional)
   // TODO: Masked IMEISV  (Optional)
   Ngap_SourceToTarget_TransparentContainer_t
-      SourceToTarget_TransparentContainer;  // Mandatory
-  std::optional<MobilityRestrictionList> mobilityRestrictionList;
+      m_SourceToTargetTransparentContainer;  // Mandatory
+  std::optional<MobilityRestrictionList> m_MobilityRestrictionList;
   // TODO: Location Reporting Request Type (Optional)
   // TODO: RRC Inactive Transition Report Request (Optional)
-  GUAMI guami;  // Mandatory
+  Guami m_Guami;  // Mandatory
   // TODO: Redirection for Voice EPS Fallback (Optional)
   // TODO: CN Assisted RAN Parameters Tuning (Optional)
   // TODO: SRVCC Operation Possible (Optional, Rel 16.14.0)

@@ -41,13 +41,12 @@ class PduSessionResourceSetupListCxtReq {
   void get(std::vector<PduSessionResourceSetupItemCxtReq>& itemList) const;
 
   bool encode(Ngap_PDUSessionResourceSetupListCxtReq_t&
-                  pduSessionResourceSetupListCxtReq);
+                  pduSessionResourceSetupListCxtReq) const;
   bool decode(const Ngap_PDUSessionResourceSetupListCxtReq_t&
                   pduSessionResourceSetupListCxtReq);
 
  private:
-  std::vector<PduSessionResourceSetupItemCxtReq>
-      pduSessionResourceSetupItemCxtReqList;
+  std::vector<PduSessionResourceSetupItemCxtReq> m_ItemList;
 };
 
 }  // namespace ngap

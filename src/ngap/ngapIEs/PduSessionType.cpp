@@ -25,34 +25,34 @@ namespace ngap {
 
 //------------------------------------------------------------------------------
 PduSessionType::PduSessionType() {
-  pdu_session_type_ = 0;
+  m_PduSessionType = 0;
 }
 
 //------------------------------------------------------------------------------
 PduSessionType::~PduSessionType() {}
 
 //------------------------------------------------------------------------------
-void PduSessionType::set(e_Ngap_PDUSessionType pdu_session_type) {
-  pdu_session_type_ = pdu_session_type;
+void PduSessionType::set(e_Ngap_PDUSessionType pduSessionType) {
+  m_PduSessionType = pduSessionType;
 }
 
 //------------------------------------------------------------------------------
-bool PduSessionType::get(long& pdu_session_type) const {
-  pdu_session_type = pdu_session_type_;
+bool PduSessionType::get(long& pduSessionType) const {
+  pduSessionType = m_PduSessionType;
 
   return true;
 }
 
 //------------------------------------------------------------------------------
-bool PduSessionType::encode(Ngap_PDUSessionType_t& type) {
-  type = pdu_session_type_;
+bool PduSessionType::encode(Ngap_PDUSessionType_t& type) const {
+  type = m_PduSessionType;
 
   return true;
 }
 
 //------------------------------------------------------------------------------
-bool PduSessionType::decode(Ngap_PDUSessionType_t type) {
-  pdu_session_type_ = type;
+bool PduSessionType::decode(const Ngap_PDUSessionType_t& type) {
+  m_PduSessionType = type;
 
   return true;
 }

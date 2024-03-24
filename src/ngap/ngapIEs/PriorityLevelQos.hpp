@@ -33,14 +33,14 @@ class PriorityLevelQos {
   PriorityLevelQos();
   virtual ~PriorityLevelQos();
 
-  void setPriorityLevelQos(long value);
-  bool getPriorityLevelQos(long& value) const;
+  void set(const long& value);
+  bool get(long& value) const;
 
   bool encode(Ngap_PriorityLevelQos_t&) const;
-  bool decode(Ngap_PriorityLevelQos_t);
+  bool decode(const Ngap_PriorityLevelQos_t&);
 
  private:
-  long priority_level_;
+  long m_PriorityLevelQos;
 };
 
 }  // namespace ngap

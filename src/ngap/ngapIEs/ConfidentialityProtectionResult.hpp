@@ -33,14 +33,14 @@ class ConfidentialityProtectionResult {
   ConfidentialityProtectionResult();
   virtual ~ConfidentialityProtectionResult();
 
-  void set(e_Ngap_ConfidentialityProtectionResult value);
+  void set(const e_Ngap_ConfidentialityProtectionResult& value);
   bool get(long& value) const;
 
   bool encode(Ngap_ConfidentialityProtectionResult_t&) const;
-  bool decode(Ngap_ConfidentialityProtectionResult_t);
+  bool decode(const Ngap_ConfidentialityProtectionResult_t&);
 
  private:
-  long value_;
+  long m_ConfidentialityProtectionResult;
 };
 
 }  // namespace ngap

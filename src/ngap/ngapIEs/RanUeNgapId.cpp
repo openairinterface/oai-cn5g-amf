@@ -25,34 +25,34 @@ namespace ngap {
 
 //------------------------------------------------------------------------------
 RanUeNgapId::RanUeNgapId() {
-  id_ = 0;
+  m_Id = 0;
 }
 
 //------------------------------------------------------------------------------
-RanUeNgapId::RanUeNgapId(uint32_t id) : id_(id) {}
+RanUeNgapId::RanUeNgapId(uint32_t id) : m_Id(id) {}
 
 //------------------------------------------------------------------------------
 RanUeNgapId::~RanUeNgapId() {}
 
 //------------------------------------------------------------------------------
 void RanUeNgapId::set(const uint32_t& id) {
-  id_ = id;
+  m_Id = id;
 }
 
 //------------------------------------------------------------------------------
 uint32_t RanUeNgapId::get() const {
-  return id_;
+  return m_Id;
 }
 
 //------------------------------------------------------------------------------
-bool RanUeNgapId::encode(Ngap_RAN_UE_NGAP_ID_t& ran_ue_ngap_id) {
-  ran_ue_ngap_id = id_;
+bool RanUeNgapId::encode(Ngap_RAN_UE_NGAP_ID_t& ranUeNgapId) const {
+  ranUeNgapId = m_Id;
   return true;
 }
 
 //------------------------------------------------------------------------------
-bool RanUeNgapId::decode(Ngap_RAN_UE_NGAP_ID_t ran_ue_ngap_id) {
-  id_ = ran_ue_ngap_id;
+bool RanUeNgapId::decode(const Ngap_RAN_UE_NGAP_ID_t& ranUeNgapId) {
+  m_Id = ranUeNgapId;
   return true;
 }
 }  // namespace ngap

@@ -30,15 +30,14 @@ QosFlowToBeForwardedItem::QosFlowToBeForwardedItem() {}
 QosFlowToBeForwardedItem::~QosFlowToBeForwardedItem() {}
 
 //------------------------------------------------------------------------------
-void QosFlowToBeForwardedItem::setQosFlowIdentifier(
-    const QosFlowIdentifier& qfi) {
-  qfi_ = qfi;
+void QosFlowToBeForwardedItem::set(const QosFlowIdentifier& qfi) {
+  m_Qfi = qfi;
 }
 
 //------------------------------------------------------------------------------
 bool QosFlowToBeForwardedItem::encode(
-    Ngap_QosFlowToBeForwardedItem_t& qos_flow_item) {
-  if (!qfi_.encode(qos_flow_item.qosFlowIdentifier)) {
+    Ngap_QosFlowToBeForwardedItem_t& qosFlowItem) const {
+  if (!m_Qfi.encode(qosFlowItem.qosFlowIdentifier)) {
     return false;
   }
   return true;

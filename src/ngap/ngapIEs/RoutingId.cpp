@@ -29,22 +29,22 @@ RoutingId::RoutingId() {}
 RoutingId::~RoutingId() {}
 
 //------------------------------------------------------------------------------
-void RoutingId::setRoutingId(const OCTET_STRING_t& id) {
-  routing_id_ = id;
+void RoutingId::set(const OCTET_STRING_t& id) {
+  m_RoutingId = id;
 }
 
 //------------------------------------------------------------------------------
-void RoutingId::getRoutingId(OCTET_STRING_t& id) {
-  id = routing_id_;
+void RoutingId::get(OCTET_STRING_t& id) const {
+  id = m_RoutingId;
 }
 
 //------------------------------------------------------------------------------
-void RoutingId::encode(Ngap_RoutingID_t& id) {
-  id = routing_id_;
+void RoutingId::encode(Ngap_RoutingID_t& id) const {
+  id = m_RoutingId;
 }
 
 //------------------------------------------------------------------------------
 void RoutingId::decode(const Ngap_RoutingID_t& id) {
-  routing_id_ = id;
+  m_RoutingId = id;
 }
 }  // namespace ngap

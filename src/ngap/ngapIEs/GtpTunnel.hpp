@@ -37,17 +37,17 @@ class GtpTunnel {
   virtual ~GtpTunnel();
 
   void set(
-      const TransportLayerAddress& m_transportLayerAddress,
-      const GtpTeid& m_gtpTeid);
+      const TransportLayerAddress& transportLayerAddress,
+      const GtpTeid& gtpTeid);
   bool get(
-      TransportLayerAddress& m_transportLayerAddress, GtpTeid& m_gtpTeid) const;
+      TransportLayerAddress& transportLayerAddress, GtpTeid& gtpTeid) const;
 
-  bool encode(Ngap_GTPTunnel& upTransportLayerInfo);
+  bool encode(Ngap_GTPTunnel& upTransportLayerInfo) const;
   bool decode(const Ngap_GTPTunnel& upTransportLayerInfo);
 
  private:
-  TransportLayerAddress transportLayerAddress;
-  GtpTeid gtpTeid;
+  TransportLayerAddress m_TransportLayerAddress;
+  GtpTeid m_GtpTeid;
 };
 
 }  // namespace ngap

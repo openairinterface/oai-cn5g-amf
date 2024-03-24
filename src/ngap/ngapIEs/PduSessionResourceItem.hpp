@@ -40,24 +40,23 @@ class PduSessionResourceItem {
   PduSessionResourceItem();
   virtual ~PduSessionResourceItem();
 
-  void set(const PduSessionId& pdu_session_id, const OCTET_STRING_t& resource);
-  void get(PduSessionId& pdu_session_id, OCTET_STRING_t& resource) const;
+  void set(const PduSessionId& pduSessionId, const OCTET_STRING_t& resource);
+  void get(PduSessionId& pduSessionId, OCTET_STRING_t& resource) const;
 
   bool encode(
-      Ngap_PDUSessionID_t& pdu_session_id, OCTET_STRING_t& resource) const;
+      Ngap_PDUSessionID_t& pduSessionId, OCTET_STRING_t& resource) const;
   bool decode(
-      const Ngap_PDUSessionID_t& pdu_session_id,
-      const OCTET_STRING_t& resource);
+      const Ngap_PDUSessionID_t& pduSessionId, const OCTET_STRING_t& resource);
 
   // PDU SESSION RESOURCE SETUP REQUEST
   // For PDU Session Resource Setup Request Item (in child class)
 
   // PDU SESSION RESOURCE SETUP RESPONSE
   // For PDU Session Resource Setup Response Item
-  bool encode(Ngap_PDUSessionResourceSetupItemCxtRes_t&
-                  pdu_session_resource_setup_item_cxt_res) const;
-  bool decode(const Ngap_PDUSessionResourceSetupItemCxtRes_t&
-                  pdu_session_resource_setup_item_cxt_res);
+  bool encode(
+      Ngap_PDUSessionResourceSetupItemCxtRes_t& pduSessionResourceItem) const;
+  bool decode(
+      const Ngap_PDUSessionResourceSetupItemCxtRes_t& pduSessionResourceItem);
   // TODO: For PDU Session Resource Failed to Setup Item
 
   // PDU SESSION RESOURCE RELEASE COMMAND
@@ -139,8 +138,8 @@ class PduSessionResourceItem {
   // TODO: PDU Session Resource Secondary RAT Usage Item
 
  private:
-  PduSessionId pdu_session_id_;  // Mandatory
-  OCTET_STRING_t resource_;
+  PduSessionId m_PduSessionId;  // Mandatory
+  OCTET_STRING_t m_Resource;
 };
 
 }  // namespace ngap

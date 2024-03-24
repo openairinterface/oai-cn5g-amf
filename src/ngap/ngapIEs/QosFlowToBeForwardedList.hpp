@@ -36,14 +36,14 @@ class QosFlowToBeForwardedList {
   QosFlowToBeForwardedList();
   virtual ~QosFlowToBeForwardedList();
 
-  void set(std::vector<QosFlowToBeForwardedItem> qos_list);
+  void set(const std::vector<QosFlowToBeForwardedItem>& qosList);
   // TODO: get
 
-  bool encode(Ngap_QosFlowToBeForwardedList*& qos_list);
+  bool encode(Ngap_QosFlowToBeForwardedList*& qosList) const;
   // TODO: decode
 
  private:
-  std::vector<QosFlowToBeForwardedItem> list_;
+  std::vector<QosFlowToBeForwardedItem> m_ItemList;
   constexpr static uint8_t kMaxNoOfQosFlows = 64;
 };
 }  // namespace ngap

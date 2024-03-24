@@ -30,51 +30,50 @@ NrCgi::NrCgi() {}
 NrCgi::~NrCgi() {}
 
 //------------------------------------------------------------------------------
-void NrCgi::set(
-    const PlmnId& m_plmnId, const NRCellIdentity& m_nRCellIdentity) {
-  plmnId         = m_plmnId;
-  nRCellIdentity = m_nRCellIdentity;
+void NrCgi::set(const PlmnId& plmnId, const NrCellIdentity& nrCellIdentity) {
+  m_PlmnId         = plmnId;
+  m_NrCellIdentity = nrCellIdentity;
 }
 
 //------------------------------------------------------------------------------
 void NrCgi::set(
     const std::string& mcc, const std::string& mnc,
-    const unsigned long& nrcellidentity) {
-  plmnId.set(mcc, mnc);
-  nRCellIdentity.setNRCellIdentity(nrcellidentity);
+    const unsigned long& nrCellIdentity) {
+  m_PlmnId.set(mcc, mnc);
+  m_NrCellIdentity.set(nrCellIdentity);
 }
 
 //------------------------------------------------------------------------------
 void NrCgi::set(const struct NrCgi_s& cig) {
-  plmnId.set(cig.mcc, cig.mnc);
-  nRCellIdentity.setNRCellIdentity(cig.nrCellID);
+  m_PlmnId.set(cig.mcc, cig.mnc);
+  m_NrCellIdentity.set(cig.nrCellId);
 }
 
 //------------------------------------------------------------------------------
 void NrCgi::get(struct NrCgi_s& cig) const {
-  plmnId.getMcc(cig.mcc);
-  plmnId.getMnc(cig.mnc);
-  cig.nrCellID = nRCellIdentity.getNRCellIdentity();
+  m_PlmnId.getMcc(cig.mcc);
+  m_PlmnId.getMnc(cig.mnc);
+  cig.nrCellId = m_NrCellIdentity.get();
 }
 
 //------------------------------------------------------------------------------
-bool NrCgi::encode(Ngap_NR_CGI_t& nr_cgi) {
-  if (!plmnId.encode(nr_cgi.pLMNIdentity)) return false;
-  if (!nRCellIdentity.encode(nr_cgi.nRCellIdentity)) return false;
+bool NrCgi::encode(Ngap_NR_CGI_t& nrCgi) const {
+  if (!m_PlmnId.encode(nrCgi.pLMNIdentity)) return false;
+  if (!m_NrCellIdentity.encode(nrCgi.nRCellIdentity)) return false;
 
   return true;
 }
 
 //------------------------------------------------------------------------------
-bool NrCgi::decode(const Ngap_NR_CGI_t& nr_cgi) {
-  if (!plmnId.decode(nr_cgi.pLMNIdentity)) return false;
-  if (!nRCellIdentity.decode(nr_cgi.nRCellIdentity)) return false;
+bool NrCgi::decode(const Ngap_NR_CGI_t& nrCgi) {
+  if (!m_PlmnId.decode(nrCgi.pLMNIdentity)) return false;
+  if (!m_NrCellIdentity.decode(nrCgi.nRCellIdentity)) return false;
   return true;
 }
 
 //------------------------------------------------------------------------------
-void NrCgi::get(PlmnId& m_plmnId, NRCellIdentity& m_nRCellIdentity) const {
-  m_plmnId         = plmnId;
-  m_nRCellIdentity = nRCellIdentity;
+void NrCgi::get(PlmnId& plmnId, NrCellIdentity& nrCellIdentity) const {
+  plmnId         = m_PlmnId;
+  nrCellIdentity = m_NrCellIdentity;
 }
 }  // namespace ngap

@@ -35,14 +35,14 @@ class MobilityRestrictionList {
   MobilityRestrictionList();
   virtual ~MobilityRestrictionList();
 
-  void setPLMN(const PlmnId& plmn);
-  void getPLMN(PlmnId& plmn) const;
+  void setPlmn(const PlmnId& plmn);
+  void getPlmn(PlmnId& plmn) const;
 
-  bool encode(Ngap_MobilityRestrictionList_t& mobility_restriction_list);
-  bool decode(const Ngap_MobilityRestrictionList_t& mobility_restriction_list);
+  bool encode(Ngap_MobilityRestrictionList_t& mobilityRestrictionList) const;
+  bool decode(const Ngap_MobilityRestrictionList_t& mobilityRestrictionList);
 
  private:
-  PlmnId servingPLMN;  // Mandatory
+  PlmnId m_ServingPlmn;  // Mandatory
   // TODO: Equivalent PLMNs (optional)
   // TODO: RAT Restrictions (optional)
   // TODO: Forbidden Area Information (optional)

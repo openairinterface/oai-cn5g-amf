@@ -25,34 +25,34 @@ namespace ngap {
 
 //------------------------------------------------------------------------------
 FiveQI::FiveQI() {
-  fiveqi_ = 0;
+  m_FiveQI = 0;
 }
 
 //------------------------------------------------------------------------------
 FiveQI::~FiveQI() {}
 
 //------------------------------------------------------------------------------
-void FiveQI::setFiveQI(long value) {
-  fiveqi_ = value;
+void FiveQI::set(const long& value) {
+  m_FiveQI = value;
 }
 
 //------------------------------------------------------------------------------
-bool FiveQI::getFiveQI(long& value) const {
-  value = fiveqi_;
+bool FiveQI::get(long& value) const {
+  value = m_FiveQI;
 
   return true;
 }
 
 //------------------------------------------------------------------------------
 bool FiveQI::encode(Ngap_FiveQI_t& value) const {
-  value = fiveqi_;
+  value = m_FiveQI;
 
   return true;
 }
 
 //------------------------------------------------------------------------------
-bool FiveQI::decode(Ngap_FiveQI_t value) {
-  fiveqi_ = value;
+bool FiveQI::decode(const Ngap_FiveQI_t& value) {
+  m_FiveQI = value;
 
   return true;
 }

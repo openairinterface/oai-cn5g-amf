@@ -27,34 +27,34 @@ namespace ngap {
 
 //------------------------------------------------------------------------------
 RanNodeName::RanNodeName() {
-  ran_node_name_ = {};
+  m_RanNodeName = {};
 }
 
 //------------------------------------------------------------------------------
 RanNodeName::~RanNodeName() {}
 
 //------------------------------------------------------------------------------
-bool RanNodeName::setValue(const std::string& value) {
+bool RanNodeName::set(const std::string& value) {
   if (value.size() > RAN_NODE_NAME_SIZE_MAX) return false;
-  ran_node_name_ = value;
+  m_RanNodeName = value;
   return true;
 }
 
 //------------------------------------------------------------------------------
-void RanNodeName::getValue(std::string& value) const {
-  value = ran_node_name_;
+void RanNodeName::get(std::string& value) const {
+  value = m_RanNodeName;
 }
 
 //------------------------------------------------------------------------------
-bool RanNodeName::encode(Ngap_RANNodeName_t& ran_node_name) {
-  amf_conv::string_2_octet_string(ran_node_name_, ran_node_name);
+bool RanNodeName::encode(Ngap_RANNodeName_t& ranNodeName) const {
+  amf_conv::string_2_octet_string(m_RanNodeName, ranNodeName);
   return true;
 }
 
 //------------------------------------------------------------------------------
-bool RanNodeName::decode(const Ngap_RANNodeName_t& ran_node_name) {
-  if (!ran_node_name.buf) return false;
-  amf_conv::octet_string_2_string(ran_node_name, ran_node_name_);
+bool RanNodeName::decode(const Ngap_RANNodeName_t& ranNodeName) {
+  if (!ranNodeName.buf) return false;
+  amf_conv::octet_string_2_string(ranNodeName, m_RanNodeName);
   return true;
 }
 
