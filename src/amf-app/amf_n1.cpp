@@ -1333,7 +1333,7 @@ void amf_n1::service_request_handle(
           itti_msg->get_msg_name());
     } else {
       // Update 5GMM State
-      stacs.update_5gmm_state(nc, "5GMM-REGISTERED");
+      stacs.update_5gmm_state(nc, _5GMM_REGISTERED);
       set_5gmm_state(nc, _5GMM_REGISTERED);
       stacs.display();
     }
@@ -1422,7 +1422,7 @@ void amf_n1::service_request_handle(
           itti_msg->get_msg_name());
     }
     // Update 5GMM State
-    stacs.update_5gmm_state(nc, "5GMM-REGISTERED");
+    stacs.update_5gmm_state(nc, _5GMM_REGISTERED);
     set_5gmm_state(nc, _5GMM_REGISTERED);
     stacs.display();
 
@@ -1461,7 +1461,7 @@ void amf_n1::send_service_reject(
         dnt->get_msg_name());
   } else {
     // Update 5GMM State
-    stacs.update_5gmm_state(nc, "5GMM-DEREG");
+    stacs.update_5gmm_state(nc, _5GMM_DEREGISTERED);
     set_5gmm_state(nc, _5GMM_DEREGISTERED);
     stacs.display();
   }
@@ -3104,7 +3104,7 @@ void amf_n1::security_mode_complete_handle(
       "registered to the network",
       nc->imsi.c_str(), guti.c_str(), ran_ue_ngap_id, amf_ue_ngap_id);
 
-  stacs.update_5gmm_state(nc, "5GMM-REGISTERED");
+  stacs.update_5gmm_state(nc, _5GMM_REGISTERED);
   set_5gmm_state(nc, _5GMM_REGISTERED);
   stacs.display();
 
@@ -3553,7 +3553,7 @@ void amf_n1::ue_initiate_de_registration_handle(
     usleep(200000);
   }
 
-  stacs.update_5gmm_state(nc, "5GMM-DEREGISTERED");
+  stacs.update_5gmm_state(nc, _5GMM_DEREGISTERED);
   set_5gmm_state(nc, _5GMM_DEREGISTERED);
   stacs.display();
 
@@ -3583,7 +3583,7 @@ void amf_n1::ue_initiate_de_registration_handle(
   // amf_ue_ngap_id);
 
   // Update 5GMM state
-  stacs.update_5gmm_state(nc, "5GMM-DEREGISTERED");
+  stacs.update_5gmm_state(nc, _5GMM_DEREGISTERED);
 
   // Remove NC context
   if (remove_amf_ue_ngap_id_2_nas_context(amf_ue_ngap_id)) {
@@ -4048,7 +4048,8 @@ void amf_n1::run_periodic_registration_update_procedure(
 void amf_n1::set_5gmm_state(
     std::shared_ptr<nas_context>& nc, const _5gmm_state_t& state) {
   Logger::amf_n1().debug(
-      "Set 5GMM state to %s", _5gmm_state_e2str[state].c_str());
+      "Set 5GMM state to %s",
+      nas_context::fivegmm_state_to_string(state).c_str());
   std::unique_lock lock(m_nas_context);
   nc->_5gmm_state = state;
 }

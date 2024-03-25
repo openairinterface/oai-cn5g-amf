@@ -27,11 +27,7 @@
 #include "logger.hpp"
 
 //------------------------------------------------------------------------------
-statistics::statistics() : m_ue_infos(), m_gnbs() {
-  gNB_connected = 0;
-  UE_connected  = 0;
-  UE_registred  = 0;
-}
+statistics::statistics() : m_ue_infos(), m_gnbs() {}
 
 //------------------------------------------------------------------------------
 statistics::~statistics() {}
@@ -229,31 +225,31 @@ void statistics::update_ue_info(const ue_info_t& ue_info) {
 
   std::unique_lock lock(m_ue_infos);
   if (ue_infos.count(ue_info.imsi) > 0) {
-    ue_infos.erase(ue_info.imsi);
-    ue_infos.insert(std::pair<std::string, ue_info_t>(ue_info.imsi, ue_info));
+    ue_infos.at(ue_info.imsi) = ue_info;
     Logger::amf_app().debug(
-        "Update UE Info (IMSI %s) success", ue_info.imsi.c_str());
+        "The UE's Info (IMSI %s) has been successfully updated!",
+        ue_info.imsi.c_str());
   } else {
-    ue_infos.insert(std::pair<std::string, ue_info_t>(ue_info.imsi, ue_info));
+    ue_infos.emplace(std::make_pair(ue_info.imsi, ue_info));
     Logger::amf_app().debug(
-        "Add UE Info (IMSI %s) success", ue_info.imsi.c_str());
+        "A new UE (IMSI %s) has been successfully added!",
+        ue_info.imsi.c_str());
   }
 }
 
 //------------------------------------------------------------------------------
 void statistics::update_5gmm_state(
-    const std::shared_ptr<nas_context>& nc, const std::string& state) {
+    const std::shared_ptr<nas_context>& nc, const _5gmm_state_t& state) {
   if (!nc) return;
   std::unique_lock lock(m_ue_infos);
   if (ue_infos.count(nc->imsi) > 0) {
     ue_info_t ue_info      = ue_infos.at(nc->imsi);
-    ue_info.registerStatus = state;
+    ue_info.registerStatus = nas_context::fivegmm_state_to_string(state);
     if (nc->guti.has_value()) ue_info.guti = nc->guti.value();
-    ue_infos.erase(ue_info.imsi);
-    ue_infos.insert(std::pair<std::string, ue_info_t>(nc->imsi, ue_info));
+    ue_infos.at(nc->imsi) = ue_info;
     Logger::amf_app().debug(
-        "Update UE State (IMSI %s, State %s) success", nc->imsi.c_str(),
-        state.c_str());
+        "The UE's state (IMSI %s, State %s) has been successfully updated!",
+        nc->imsi.c_str(), ue_info.registerStatus.c_str());
   } else {
     Logger::amf_app().warn(
         "Update UE State (IMSI %s), UE does not exist!", nc->imsi.c_str());
@@ -265,15 +261,7 @@ void statistics::remove_gnb(const uint32_t& gnb_id) {
   std::unique_lock lock(m_gnbs);
   if (gnbs.count(gnb_id) > 0) {
     gnbs.erase(gnb_id);
-    gNB_connected -= 1;
   }
-}
-
-//------------------------------------------------------------------------------
-void statistics::add_gnb(const uint32_t& gnb_id, const gnb_infos& gnb) {
-  std::unique_lock lock(m_gnbs);
-  gnbs.insert(std::pair<uint32_t, gnb_infos>(gnb_id, gnb));
-  gNB_connected += 1;
 }
 
 //------------------------------------------------------------------------------
@@ -283,13 +271,18 @@ void statistics::add_gnb(const std::shared_ptr<gnb_context>& gc) {
   gnb.mcc       = gc->plmn.mcc;
   gnb.mnc       = gc->plmn.mnc;
   gnb.gnb_name  = gc->gnb_name;
-  gnb.status    = "Connected";
+  gnb.status    = kStatisticGnbStatusConnected;
   for (auto i : gc->supported_ta_list) {
     gnb.plmn_list.push_back(i);
   }
   std::unique_lock lock(m_gnbs);
-  gnbs.insert(std::pair<uint32_t, gnb_infos>(gc->gnb_id, gnb));
-  gNB_connected += 1;
+  if (gnbs.count(gc->gnb_id) > 0) {
+    gnbs.at(gc->gnb_id) = gnb;
+    Logger::amf_app().debug("The gNB's info has been successfully updated!");
+  } else {
+    gnbs.emplace(std::make_pair(gc->gnb_id, gnb));
+    Logger::amf_app().debug("A new gNB has been successfully added!");
+  }
 }
 
 //------------------------------------------------------------------------------
@@ -307,12 +300,11 @@ void statistics::update_gnb(
 
   std::unique_lock lock(m_gnbs);
   if (gnbs.count(gc->gnb_id) > 0) {
-    gnbs[gc->gnb_id] = gnb;
-    Logger::amf_app().debug("Update gNB info success");
+    gnbs.at(gc->gnb_id) = gnb;
+    Logger::amf_app().debug("The gNB's info has been successfully updated!");
   } else {
-    gnbs.insert(std::pair<uint32_t, gnb_infos>(gc->gnb_id, gnb));
-    gNB_connected += 1;
-    Logger::amf_app().debug("Add new gNB success");
+    gnbs.emplace(std::make_pair(gc->gnb_id, gnb));
+    Logger::amf_app().debug("A new gNB has been successfully added!");
   }
 }
 

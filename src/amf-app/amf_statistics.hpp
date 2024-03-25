@@ -29,6 +29,9 @@
 #include "nas_context.hpp"
 #include "ngap_app.hpp"
 
+constexpr auto kStatisticGnbStatusConnected    = "Connected";
+constexpr auto kStatisticGnbStatusDisconnected = "Disconnected";
+
 typedef struct {
   uint32_t gnb_id;
   // TODO: list of PLMNs
@@ -132,7 +135,7 @@ class statistics {
    * @return void
    */
   void update_5gmm_state(
-      const std::shared_ptr<nas_context>& nc, const std::string& state);
+      const std::shared_ptr<nas_context>& nc, const _5gmm_state_t& state);
 
   /*
    * Remove gNB from the list connected gNB to this AMF
@@ -140,14 +143,6 @@ class statistics {
    * @return void
    */
   void remove_gnb(const uint32_t& gnb_id);
-
-  /*
-   * Add gNB to the list connected gNB to this AMF
-   * @param [const uint32_t&] gnb_id: gNB ID
-   * @param [const gnb_infos&] gnb: gNB Info
-   * @return void
-   */
-  void add_gnb(const uint32_t& gnb_id, const gnb_infos& gnb);
 
   /*
    * Add gNB to the list connected gNB to this AMF
@@ -173,9 +168,6 @@ class statistics {
   uint32_t get_number_connected_gnbs() const;
 
  private:
-  uint32_t gNB_connected;
-  uint32_t UE_connected;
-  uint32_t UE_registred;
   std::map<uint32_t, gnb_infos> gnbs;
   mutable std::shared_mutex m_gnbs;
   std::map<std::string, ue_info_t> ue_infos;

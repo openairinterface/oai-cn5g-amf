@@ -38,14 +38,6 @@ typedef enum {
   _5GMM_STATE_MAX
 } _5gmm_state_t;
 
-static const std::vector<std::string> _5gmm_state_e2str = {
-    "_5GMM_STATE_INVALID",
-    "_5GMM_DEREGISTERED",
-    "_5GMM_REGISTERED",
-    "_5GMM_DEREGISTERED_INITIATED",
-    "_5GMM_COMMON_PROCEDURE_INITIATED",
-    "_5GMM_STATE_MAX"};
-
 typedef enum { CM_IDLE = 0, CM_CONNECTED } cm_state_t;
 
 static const std::vector<std::string> cm_state_e2str = {
@@ -129,6 +121,7 @@ class nas_context {
   bool to_be_register_by_new_suci;
 
   bool get_kamf(uint8_t index, uint8_t (&k)[AUTH_VECTOR_LENGTH_OCTETS]) const;
+  static std::string fivegmm_state_to_string(const _5gmm_state_t& state);
 };
 
 #endif

@@ -75,3 +75,24 @@ bool nas_context::get_kamf(
   }
   return true;
 }
+
+//------------------------------------------------------------------------------
+std::string nas_context::fivegmm_state_to_string(const _5gmm_state_t& state) {
+  switch (state) {
+    case _5GMM_DEREGISTERED: {
+      return "5GMM-DEREGISTERED";
+    } break;
+    case _5GMM_REGISTERED: {
+      return "5GMM-REGISTERED";
+    } break;
+    case _5GMM_DEREGISTERED_INITIATED: {
+      return "5GMM-DEREG_INIT";
+    } break;
+    case _5GMM_COMMON_PROCEDURE_INITIATED: {
+      return "COMM-PROC-INIT";
+    } break;
+    default:
+      return "STATE-INVALID";
+  }
+  return "STATE-INVALID";
+}
