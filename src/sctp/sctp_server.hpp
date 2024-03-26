@@ -38,6 +38,10 @@ extern "C" {
 #define SCTP_RC_ERROR -1
 #define SCTP_RC_NORMAL_READ 0
 #define SCTP_RC_DISCONNECT 1
+#define SCTP_OUT_STREAMS 16
+#define SCTP_IN_STREAMS 16
+#define SCTP_MAX_ATTEMPTS 2
+#define SCTP_TIMEOUT 10
 
 namespace sctp {
 

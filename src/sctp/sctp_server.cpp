@@ -86,6 +86,20 @@ int sctp_server::create_socket(const char* address, const uint16_t port_num) {
     Logger::sctp().error("Socket bind: %s:%d", strerror(errno), errno);
     return RETURNerror;
   }
+
+  struct sctp_initmsg init_msg;
+  init_msg.sinit_num_ostreams   = SCTP_OUT_STREAMS;
+  init_msg.sinit_max_instreams  = SCTP_IN_STREAMS;
+  init_msg.sinit_max_attempts   = SCTP_MAX_ATTEMPTS;
+  init_msg.sinit_max_init_timeo = SCTP_TIMEOUT;
+
+  if (setsockopt(
+          socket_, IPPROTO_SCTP, SCTP_INITMSG, &init_msg, sizeof(init_msg)) <
+      0) {
+    Logger::sctp().error("setsockopt SCTP_INITMSG");
+    return RETURNerror;
+  }
+
   bzero(&events_, sizeof(events_));
   events_.sctp_data_io_event     = 1;
   events_.sctp_shutdown_event    = 1;
@@ -104,7 +118,10 @@ int sctp_server::create_socket(const char* address, const uint16_t port_num) {
   // - RHEL8/Rocky8 host: 14 bytes
   // - RHEL9/Rocky9 host: 14 bytes
   // 12 is chosen as minimal value.
-  setsockopt(socket_, IPPROTO_SCTP, SCTP_EVENTS, &events_, 12);
+  if (setsockopt(socket_, IPPROTO_SCTP, SCTP_EVENTS, &events_, 12) < 0) {
+    Logger::sctp().error("setsockopt SCTP_EVENTS");
+    return RETURNerror;
+  }
   listen(socket_, 5);  // the queue length for completely established sockets
                        // waiting to be accepted
   return RETURNok;
