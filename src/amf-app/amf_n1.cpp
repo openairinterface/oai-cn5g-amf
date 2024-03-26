@@ -2981,8 +2981,9 @@ void amf_n1::security_mode_complete_handle(
           "No PDU Session Context with PDU Session ID %d", pdu_session_id);
     }
 
-    if (psc and
-        (psc->up_cnx_state == up_cnx_state_e::UPCNX_STATE_DEACTIVATED)) {
+    // TODO:  need to check (psc->up_cnx_state ==
+    // up_cnx_state_e::UPCNX_STATE_DEACTIVATED)?
+    if (psc) {
       amf_app_inst->trigger_pdu_session_up_activation(pdu_session_id, uc);
     }
 

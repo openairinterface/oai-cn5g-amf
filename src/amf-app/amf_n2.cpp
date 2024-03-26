@@ -778,8 +778,7 @@ void amf_n2::handle_itti_message(
   } else {
     itti_msg->is_5g_s_tmsi_present = true;
     itti_msg->_5g_s_tmsi           = _5g_s_tmsi;
-    Logger::amf_n2().debug("5g_s_tmsi present");
-
+    Logger::amf_n2().debug("5g_s_tmsi present: %s", _5g_s_tmsi);
     init_ue_msg->initUeMsg->get5GSTmsi(
         unc->s_setid, unc->s_pointer, unc->s_tmsi);
   }
