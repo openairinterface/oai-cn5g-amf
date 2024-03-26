@@ -31,23 +31,23 @@ ServedGuamiList::~ServedGuamiList() {}
 
 //------------------------------------------------------------------------------
 void ServedGuamiList::set(const std::vector<ServedGuamiItem>& list) {
-  itemList = list;
+  m_ItemList = list;
 }
 
 //------------------------------------------------------------------------------
 void ServedGuamiList::get(std::vector<ServedGuamiItem>& list) const {
-  list = itemList;
+  list = m_ItemList;
 }
 
 //------------------------------------------------------------------------------
 void ServedGuamiList::addItem(const ServedGuamiItem& item) {
-  itemList.push_back(item);
+  m_ItemList.push_back(item);
 }
 
 //------------------------------------------------------------------------------
-bool ServedGuamiList::encode(Ngap_ServedGUAMIList_t& servedGUAMIList) {
-  for (std::vector<ServedGuamiItem>::iterator it = std::begin(itemList);
-       it != std::end(itemList); ++it) {
+bool ServedGuamiList::encode(Ngap_ServedGUAMIList_t& servedGUAMIList) const {
+  for (std::vector<ServedGuamiItem>::const_iterator it = m_ItemList.begin();
+       it != m_ItemList.end(); ++it) {
     Ngap_ServedGUAMIItem* guamiItem =
         (Ngap_ServedGUAMIItem*) calloc(1, sizeof(Ngap_ServedGUAMIItem));
     if (!guamiItem) return false;
@@ -59,11 +59,11 @@ bool ServedGuamiList::encode(Ngap_ServedGUAMIList_t& servedGUAMIList) {
 
 //------------------------------------------------------------------------------
 bool ServedGuamiList::decode(const Ngap_ServedGUAMIList_t& pdu) {
-  itemList.clear();
+  m_ItemList.clear();
   for (int i = 0; i < pdu.list.count; i++) {
     ServedGuamiItem item = {};
     if (item.decode(*pdu.list.array[i])) return false;
-    itemList.push_back(item);
+    m_ItemList.push_back(item);
   }
   return true;
 }

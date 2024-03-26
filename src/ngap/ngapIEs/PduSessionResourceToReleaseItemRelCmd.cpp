@@ -33,33 +33,30 @@ PduSessionResourceToReleaseItemRelCmd::
 
 //------------------------------------------------------------------------------
 void PduSessionResourceToReleaseItemRelCmd::set(
-    const PduSessionId& pdu_session_id,
-    const OCTET_STRING_t& pdu_session_resource_release_command_transfer) {
-  pdu_session_id_ = pdu_session_id;
-  pdu_session_resource_release_command_transfer_ =
-      pdu_session_resource_release_command_transfer;
+    const PduSessionId& pduSessionId,
+    const OCTET_STRING_t& pduSessionResourceReleaseCommandTransfer) {
+  m_PduSessionId = pduSessionId;
+  m_PduSessionResourceReleaseCommandTransfer =
+      pduSessionResourceReleaseCommandTransfer;
 }
 
 //------------------------------------------------------------------------------
 void PduSessionResourceToReleaseItemRelCmd::get(
-    PduSessionId& pdu_session_id,
-    OCTET_STRING_t& pdu_session_resource_release_command_transfer) {
-  pdu_session_id = pdu_session_id_;
-  pdu_session_resource_release_command_transfer =
-      pdu_session_resource_release_command_transfer_;
+    PduSessionId& pduSessionId,
+    OCTET_STRING_t& pduSessionResourceReleaseCommandTransfer) const {
+  pduSessionId = m_PduSessionId;
+  pduSessionResourceReleaseCommandTransfer =
+      m_PduSessionResourceReleaseCommandTransfer;
 }
 
 //------------------------------------------------------------------------------
 bool PduSessionResourceToReleaseItemRelCmd::encode(
-    Ngap_PDUSessionResourceToReleaseItemRelCmd_t&
-        pdu_session_resource_to_release_item_rel_cmd) {
-  if (!pdu_session_id_.encode(
-          pdu_session_resource_to_release_item_rel_cmd.pDUSessionID))
-    return false;
+    Ngap_PDUSessionResourceToReleaseItemRelCmd_t& pduSessionResourceItem)
+    const {
+  if (!m_PduSessionId.encode(pduSessionResourceItem.pDUSessionID)) return false;
 
-  pdu_session_resource_to_release_item_rel_cmd
-      .pDUSessionResourceReleaseCommandTransfer =
-      pdu_session_resource_release_command_transfer_;
+  pduSessionResourceItem.pDUSessionResourceReleaseCommandTransfer =
+      m_PduSessionResourceReleaseCommandTransfer;
 
   return true;
 }
@@ -67,10 +64,9 @@ bool PduSessionResourceToReleaseItemRelCmd::encode(
 //------------------------------------------------------------------------------
 bool PduSessionResourceToReleaseItemRelCmd::decode(
     const Ngap_PDUSessionResourceToReleaseItemRelCmd_t&
-        pdu_session_resource_to_release_item_rel_cmd) {
-  pdu_session_resource_release_command_transfer_ =
-      pdu_session_resource_to_release_item_rel_cmd
-          .pDUSessionResourceReleaseCommandTransfer;
+        pduSessionResourceItem) {
+  m_PduSessionResourceReleaseCommandTransfer =
+      pduSessionResourceItem.pDUSessionResourceReleaseCommandTransfer;
 
   return true;
 }

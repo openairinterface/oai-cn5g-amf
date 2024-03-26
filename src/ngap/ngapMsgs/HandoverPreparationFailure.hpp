@@ -23,7 +23,7 @@
 #define _HANDOVER_PREPARATION_FAILURE_H_
 
 #include "Cause.hpp"
-#include "NgapUEMessage.hpp"
+#include "NgapUeMessage.hpp"
 
 extern "C" {
 #include "Ngap_CriticalityDiagnostics.h"
@@ -32,7 +32,7 @@ extern "C" {
 
 namespace ngap {
 
-class HandoverPreparationFailure : public NgapUEMessage {
+class HandoverPreparationFailure : public NgapUeMessage {
  public:
   HandoverPreparationFailure();
   virtual ~HandoverPreparationFailure();
@@ -44,14 +44,14 @@ class HandoverPreparationFailure : public NgapUEMessage {
 
   void getCause(Cause& cause) const;
   void setCause(const Ngap_Cause_PR& causePresent, const long& value = 0);
-  Ngap_Cause_PR getChoiceOfCause();
+  Ngap_Cause_PR getChoiceOfCause() const;
 
  private:
-  Ngap_HandoverPreparationFailure_t* hoPreparationFailureIEs;
+  Ngap_HandoverPreparationFailure_t* m_HOPreparationFailureIes;
   // AMF_UE_NGAP_ID (Mandatory)
   // RAN_UE_NGAP_ID (Mandatory)
-  Cause cause;                                            // Mandatory
-  Ngap_CriticalityDiagnostics_t* criticalityDiagnostics;  // Optional
+  Cause m_Cause;                                            // Mandatory
+  Ngap_CriticalityDiagnostics_t* m_CriticalityDiagnostics;  // Optional
   // TODO: Target to Source Failure Transparent Container (Optional,
   // Rel 16.14.0)
 };

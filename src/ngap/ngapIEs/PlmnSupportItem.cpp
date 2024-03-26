@@ -35,40 +35,39 @@ PlmnSupportItem::~PlmnSupportItem() {}
 
 //------------------------------------------------------------------------------
 void PlmnSupportItem::set(
-    const PlmnId& plmn_id, const std::vector<S_NSSAI>& snssais) {
-  plmn_id_            = plmn_id;
-  slice_support_list_ = snssais;
+    const PlmnId& plmnId, const std::vector<SNssai>& sNssais) {
+  m_PlmnId           = plmnId;
+  m_SliceSupportList = sNssais;
 }
 
 //------------------------------------------------------------------------------
-void PlmnSupportItem::get(PlmnId& plmn_id, std::vector<S_NSSAI>& snssais) {
-  plmn_id = plmn_id_;
-  snssais = slice_support_list_;
+void PlmnSupportItem::get(PlmnId& plmnId, std::vector<SNssai>& sNssais) const {
+  plmnId  = m_PlmnId;
+  sNssais = m_SliceSupportList;
 }
 
 //------------------------------------------------------------------------------
-bool PlmnSupportItem::encode(Ngap_PLMNSupportItem_t& plmn_support_item) {
-  if (!plmn_id_.encode(plmn_support_item.pLMNIdentity)) return false;
-  for (std::vector<S_NSSAI>::iterator it = std::begin(slice_support_list_);
-       it < std::end(slice_support_list_); ++it) {
+bool PlmnSupportItem::encode(Ngap_PLMNSupportItem_t& plmnSupportItem) const {
+  if (!m_PlmnId.encode(plmnSupportItem.pLMNIdentity)) return false;
+  for (std::vector<SNssai>::const_iterator it = m_SliceSupportList.begin();
+       it < m_SliceSupportList.end(); ++it) {
     Ngap_SliceSupportItem_t* slice =
         (Ngap_SliceSupportItem_t*) calloc(1, sizeof(Ngap_SliceSupportItem_t));
     if (!it->encode(slice->s_NSSAI)) return false;
-    ASN_SEQUENCE_ADD(&plmn_support_item.sliceSupportList.list, slice);
+    ASN_SEQUENCE_ADD(&plmnSupportItem.sliceSupportList.list, slice);
   }
   return true;
 }
 
 //------------------------------------------------------------------------------
-bool PlmnSupportItem::decode(const Ngap_PLMNSupportItem_t& plmn_support_item) {
-  if (!plmn_id_.decode(plmn_support_item.pLMNIdentity)) return false;
+bool PlmnSupportItem::decode(const Ngap_PLMNSupportItem_t& plmnSupportItem) {
+  if (!m_PlmnId.decode(plmnSupportItem.pLMNIdentity)) return false;
 
-  for (int i = 0; i < plmn_support_item.sliceSupportList.list.count; i++) {
-    S_NSSAI snssai = {};
-    if (!snssai.decode(
-            plmn_support_item.sliceSupportList.list.array[i]->s_NSSAI))
+  for (int i = 0; i < plmnSupportItem.sliceSupportList.list.count; i++) {
+    SNssai snssai = {};
+    if (!snssai.decode(plmnSupportItem.sliceSupportList.list.array[i]->s_NSSAI))
       return false;
-    slice_support_list_.push_back(snssai);
+    m_SliceSupportList.push_back(snssai);
   }
   return true;
 }

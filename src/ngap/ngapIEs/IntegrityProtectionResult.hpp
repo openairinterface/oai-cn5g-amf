@@ -33,14 +33,14 @@ class IntegrityProtectionResult {
   IntegrityProtectionResult();
   virtual ~IntegrityProtectionResult();
 
-  void set(e_Ngap_IntegrityProtectionResult value);
+  void set(const e_Ngap_IntegrityProtectionResult& value);
   bool get(long& value) const;
 
   bool encode(Ngap_IntegrityProtectionResult_t&) const;
-  bool decode(Ngap_IntegrityProtectionResult_t);
+  bool decode(const Ngap_IntegrityProtectionResult_t&);
 
  private:
-  long result_;
+  long m_Result;
 };
 
 }  // namespace ngap

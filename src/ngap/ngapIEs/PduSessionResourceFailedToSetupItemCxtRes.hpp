@@ -36,19 +36,19 @@ class PduSessionResourceFailedToSetupItemCxtRes {
   virtual ~PduSessionResourceFailedToSetupItemCxtRes();
 
   void set(
-      const PduSessionId& m_pDUSessionID,
-      const OCTET_STRING_t& m_pDUSessionResource);
+      const PduSessionId& pduSessionId,
+      const OCTET_STRING_t& pduSessionResource);
   void get(
-      PduSessionId& m_pDUSessionID, OCTET_STRING_t& m_pDUSessionResource) const;
+      PduSessionId& pduSessionId, OCTET_STRING_t& pduSessionResource) const;
 
-  bool encode(Ngap_PDUSessionResourceFailedToSetupItemCxtRes_t& pduSessionCxt);
+  bool encode(
+      Ngap_PDUSessionResourceFailedToSetupItemCxtRes_t& pduSessionCxt) const;
   bool decode(
       const Ngap_PDUSessionResourceFailedToSetupItemCxtRes_t& pduSessionCxt);
 
  private:
-  PduSessionId pdu_session_id_;  // Mandatory
-  OCTET_STRING_t
-      pdu_session_resource_setup_unsuccessful_transfer_;  // Mandatory
+  PduSessionId m_PduSessionId;                                   // Mandatory
+  OCTET_STRING_t m_PduSessionResourceSetupUnsuccessfulTransfer;  // Mandatory
 };
 
 }  // namespace ngap

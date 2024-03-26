@@ -36,11 +36,11 @@ class TAC {
   uint32_t get() const;
   void set(const uint32_t& tac);
 
-  bool encode(Ngap_TAC_t&);
+  bool encode(Ngap_TAC_t&) const;
   bool decode(const Ngap_TAC_t& m_tac);
 
  private:
-  uint32_t tac_ : 24;
+  uint32_t m_Tac : 24;
 };
 
 }  // namespace ngap

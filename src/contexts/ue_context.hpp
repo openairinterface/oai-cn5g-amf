@@ -29,7 +29,7 @@
 #include <mutex>
 #include <shared_mutex>
 
-#include "NgapIEsStruct.hpp"
+#include "NgapIesStruct.hpp"
 #include "pdu_session_context.hpp"
 
 extern "C" {

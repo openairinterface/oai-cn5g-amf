@@ -22,8 +22,8 @@
 #ifndef _NR_CGI_H_
 #define _NR_CGI_H_
 
-#include "NRCellIdentity.hpp"
-#include "NgapIEsStruct.hpp"
+#include "NgapIesStruct.hpp"
+#include "NrCellIdentity.hpp"
 #include "PlmnId.hpp"
 
 extern "C" {
@@ -37,22 +37,22 @@ class NrCgi {
   NrCgi();
   virtual ~NrCgi();
 
-  void set(const PlmnId&, const NRCellIdentity&);
-  void get(PlmnId&, NRCellIdentity&) const;
+  void set(const PlmnId&, const NrCellIdentity&);
+  void get(PlmnId&, NrCellIdentity&) const;
 
   void set(
       const std::string& mcc, const std::string& mnc,
-      const unsigned long& nrcellidentity);
+      const unsigned long& nrCellIdentity);
 
   void set(const struct NrCgi_s& cig);
   void get(struct NrCgi_s& cig) const;
 
-  bool encode(Ngap_NR_CGI_t&);
+  bool encode(Ngap_NR_CGI_t&) const;
   bool decode(const Ngap_NR_CGI_t&);
 
  private:
-  PlmnId plmnId;                  // Mandatory
-  NRCellIdentity nRCellIdentity;  // Mandatory
+  PlmnId m_PlmnId;                  // Mandatory
+  NrCellIdentity m_NrCellIdentity;  // Mandatory
 };
 }  // namespace ngap
 

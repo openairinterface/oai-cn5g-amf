@@ -36,8 +36,8 @@ class Cause {
   void setChoiceOfCause(const Ngap_Cause_PR& cause_present);
   Ngap_Cause_PR getChoiceOfCause() const;
 
-  void setValue(const long& value);
-  long getValue() const;
+  void set(const long& value);
+  long get() const;
 
   void set(const long& value, const Ngap_Cause_PR& cause_present);
 
@@ -45,8 +45,8 @@ class Cause {
   bool decode(const Ngap_Cause_t& cause);
 
  private:
-  long cause_value_;
-  Ngap_Cause_PR cause_present_;
+  long m_CauseValue;
+  Ngap_Cause_PR m_CausePresent;
 };
 }  // namespace ngap
 

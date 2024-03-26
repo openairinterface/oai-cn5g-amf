@@ -35,16 +35,16 @@ class QosFlowPerTnlInformationItem {
   QosFlowPerTnlInformationItem();
   virtual ~QosFlowPerTnlInformationItem();
 
-  void set(const QosFlowPerTnlInformation& m_qosFlowPerTNLInformation);
-  void get(QosFlowPerTnlInformation& m_qosFlowPerTNLInformation) const;
+  void set(const QosFlowPerTnlInformation& qosFlowPerTnlInformation);
+  void get(QosFlowPerTnlInformation& qosFlowPerTnlInformation) const;
 
   bool encode(
-      Ngap_QosFlowPerTNLInformationItem_t& qosFlowPerTNLInformationItem);
+      Ngap_QosFlowPerTNLInformationItem_t& qosFlowPerTnlInformationItem) const;
   bool decode(
-      const Ngap_QosFlowPerTNLInformationItem_t& qosFlowPerTNLInformationItem);
+      const Ngap_QosFlowPerTNLInformationItem_t& qosFlowPerTnlInformationItem);
 
  private:
-  QosFlowPerTnlInformation qosFlowPerTNLInformation;  // Mandatory
+  QosFlowPerTnlInformation m_QosFlowPerTnlInformation;  // Mandatory
   // TODO: Ngap_ProtocolExtensionContainer
 };
 

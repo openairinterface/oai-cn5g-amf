@@ -33,14 +33,14 @@ class QosFlowIdentifier {
   QosFlowIdentifier();
   virtual ~QosFlowIdentifier();
 
-  void setQosFlowIdentifier(long value);
-  bool getQosFlowIdentifier(long& value) const;
+  void set(const long& value);
+  bool get(long& value) const;
 
   bool encode(Ngap_QosFlowIdentifier_t&) const;
-  bool decode(Ngap_QosFlowIdentifier_t);
+  bool decode(const Ngap_QosFlowIdentifier_t&);
 
  private:
-  long identifier_;
+  long m_QosFlowIdentifier;
 };
 
 }  // namespace ngap

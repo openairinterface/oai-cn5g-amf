@@ -36,19 +36,20 @@ class SecurityResult {
   SecurityResult();
   virtual ~SecurityResult();
 
-  void setSecurityResult(
-      const IntegrityProtectionResult& m_integrityProtectionResult,
-      const ConfidentialityProtectionResult& m_confidentialityProtectionResult);
-  bool getSecurityResult(
-      IntegrityProtectionResult& m_integrityProtectionResult,
-      ConfidentialityProtectionResult& m_confidentialityProtectionResult) const;
+  void set(
+      const IntegrityProtectionResult& integrityProtectionResult,
+      const ConfidentialityProtectionResult& confidentialityProtectionResult);
+  bool get(
+      IntegrityProtectionResult& integrityProtectionResult,
+      ConfidentialityProtectionResult& confidentialityProtectionResult) const;
 
-  bool encode(Ngap_SecurityResult_t&);
+  bool encode(Ngap_SecurityResult_t&) const;
   bool decode(const Ngap_SecurityResult_t&);
 
  private:
-  IntegrityProtectionResult integrityProtectionResult;              // Mandatory
-  ConfidentialityProtectionResult confidentialityProtectionResult;  // Mandatory
+  IntegrityProtectionResult m_IntegrityProtectionResult;  // Mandatory
+  ConfidentialityProtectionResult
+      m_ConfidentialityProtectionResult;  // Mandatory
 };
 
 }  // namespace ngap

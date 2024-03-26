@@ -34,13 +34,13 @@ class Pre_emptionCapability {
   virtual ~Pre_emptionCapability();
 
   void set(e_Ngap_Pre_emptionCapability value);
-  bool get(e_Ngap_Pre_emptionCapability& value);
+  bool get(e_Ngap_Pre_emptionCapability& value) const;
 
   bool encode(Ngap_Pre_emptionCapability_t&) const;
-  bool decode(Ngap_Pre_emptionCapability_t);
+  bool decode(const Ngap_Pre_emptionCapability_t&);
 
  private:
-  long pre_emption_capability_;
+  long m_Pre_emptionCapability;
 };
 
 }  // namespace ngap

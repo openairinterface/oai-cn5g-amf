@@ -35,17 +35,17 @@ class AmfRegionId {
   AmfRegionId();
   virtual ~AmfRegionId();
 
-  void setAMFRegionID(const std::string&);
-  void getAMFRegionID(std::string&) const;
+  void set(const std::string&);
+  void get(std::string&) const;
 
-  void setAMFRegionID(const uint8_t&);
-  void getAMFRegionID(uint8_t&) const;
+  void set(const uint8_t&);
+  void get(uint8_t&) const;
 
   bool encode(Ngap_AMFRegionID_t&) const;
-  bool decode(Ngap_AMFRegionID_t);
+  bool decode(const Ngap_AMFRegionID_t&);
 
  private:
-  uint8_t region_id_;
+  uint8_t m_RegionId;
 };
 
 }  // namespace ngap

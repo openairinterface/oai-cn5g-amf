@@ -40,18 +40,18 @@ class DrbStatusDl {
   DrbStatusDl();
   virtual ~DrbStatusDl();
 
-  void setDRBStatusDL18(const DrbStatusDl18& dL18);
-  void getDRBStatusDL18(std::optional<DrbStatusDl18>& dL18) const;
+  void setDrbStatusDl18(const DrbStatusDl18& dl18);
+  void getDrbStatusDl18(std::optional<DrbStatusDl18>& dl18) const;
 
-  void setDRBStatusDL12(const DrbStatusDl12& dL12);
-  void getDRBStatusDL12(std::optional<DrbStatusDl12>& dL12) const;
+  void setDrbStatusDl12(const DrbStatusDl12& dl12);
+  void getDrbStatusDl12(std::optional<DrbStatusDl12>& dl12) const;
 
-  bool encode(Ngap_DRBStatusDL_t& dL);
-  bool decode(const Ngap_DRBStatusDL_t& dL);
+  bool encode(Ngap_DRBStatusDL_t& dl) const;
+  bool decode(const Ngap_DRBStatusDL_t& dl);
 
  private:
-  std::optional<DrbStatusDl18> dl18_;
-  std::optional<DrbStatusDl12> dl12_;
+  std::optional<DrbStatusDl18> m_Dl18;
+  std::optional<DrbStatusDl12> m_Dl12;
 };
 
 }  // namespace ngap

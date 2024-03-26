@@ -25,20 +25,21 @@ namespace ngap {
 
 //------------------------------------------------------------------------------
 IntegrityProtectionResult::IntegrityProtectionResult() {
-  result_ = -1;
+  m_Result = -1;
 }
 
 //------------------------------------------------------------------------------
 IntegrityProtectionResult::~IntegrityProtectionResult() {}
 
 //------------------------------------------------------------------------------
-void IntegrityProtectionResult::set(e_Ngap_IntegrityProtectionResult value) {
-  result_ = value;
+void IntegrityProtectionResult::set(
+    const e_Ngap_IntegrityProtectionResult& value) {
+  m_Result = value;
 }
 
 //------------------------------------------------------------------------------
 bool IntegrityProtectionResult::get(long& value) const {
-  value = result_;
+  value = m_Result;
 
   return true;
 }
@@ -46,14 +47,15 @@ bool IntegrityProtectionResult::get(long& value) const {
 //------------------------------------------------------------------------------
 bool IntegrityProtectionResult::encode(
     Ngap_IntegrityProtectionResult_t& value) const {
-  value = result_;
+  value = m_Result;
 
   return true;
 }
 
 //------------------------------------------------------------------------------
-bool IntegrityProtectionResult::decode(Ngap_IntegrityProtectionResult_t value) {
-  result_ = value;
+bool IntegrityProtectionResult::decode(
+    const Ngap_IntegrityProtectionResult_t& value) {
+  m_Result = value;
 
   return true;
 }

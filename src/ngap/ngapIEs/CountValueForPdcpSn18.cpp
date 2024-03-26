@@ -24,36 +24,36 @@
 namespace ngap {
 //------------------------------------------------------------------------------
 CountValueForPdcpSn18::CountValueForPdcpSn18() {
-  pdcp     = 0;
-  hfn_pdcp = 0;
+  m_Pdcp    = 0;
+  m_HfnPdcp = 0;
 }
 
 //------------------------------------------------------------------------------
 CountValueForPdcpSn18::~CountValueForPdcpSn18() {}
-void CountValueForPdcpSn18::setvalue(long pDCP, long hfn_PDCP) {
-  pdcp     = pDCP;
-  hfn_pdcp = hfn_PDCP;
+void CountValueForPdcpSn18::set(const long& pDCP, const long& hfn_PDCP) {
+  m_Pdcp    = pDCP;
+  m_HfnPdcp = hfn_PDCP;
 }
 
 //------------------------------------------------------------------------------
-void CountValueForPdcpSn18::getvalue(long& pDCP, long& hFN_PDCP) const {
-  pDCP     = pdcp;
-  hFN_PDCP = hfn_pdcp;
+void CountValueForPdcpSn18::get(long& pDCP, long& hFN_PDCP) const {
+  pDCP     = m_Pdcp;
+  hFN_PDCP = m_HfnPdcp;
 }
 
 //------------------------------------------------------------------------------
 bool CountValueForPdcpSn18::encode(
     Ngap_COUNTValueForPDCP_SN18_t& countvalue) const {
-  countvalue.pDCP_SN18     = pdcp;
-  countvalue.hFN_PDCP_SN18 = hfn_pdcp;
+  countvalue.pDCP_SN18     = m_Pdcp;
+  countvalue.hFN_PDCP_SN18 = m_HfnPdcp;
   return true;
 }
 
 //------------------------------------------------------------------------------
 bool CountValueForPdcpSn18::decode(
     const Ngap_COUNTValueForPDCP_SN18_t& countValue) {
-  pdcp     = countValue.pDCP_SN18;
-  hfn_pdcp = countValue.hFN_PDCP_SN18;
+  m_Pdcp    = countValue.pDCP_SN18;
+  m_HfnPdcp = countValue.hFN_PDCP_SN18;
   return true;
 }
 }  // namespace ngap

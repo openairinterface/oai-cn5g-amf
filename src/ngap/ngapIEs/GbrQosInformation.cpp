@@ -25,13 +25,13 @@ namespace ngap {
 
 //------------------------------------------------------------------------------
 GbrQosInformation::GbrQosInformation() {
-  maximumFlowBitRateDL    = 0;
-  maximumFlowBitRateUL    = 0;
-  guaranteedFlowBitRateDL = 0;
-  guaranteedFlowBitRateUL = 0;
-  notificationControl     = std::nullopt;
-  maximumPacketLossRateDL = std::nullopt;
-  maximumPacketLossRateUL = std::nullopt;
+  m_MaximumFlowBitRateDl    = 0;
+  m_MaximumFlowBitRateUl    = 0;
+  m_GuaranteedFlowBitRateDl = 0;
+  m_GuaranteedFlowBitRateUl = 0;
+  m_NotificationControl     = std::nullopt;
+  m_MaximumPacketLossRateDl = std::nullopt;
+  m_MaximumPacketLossRateUl = std::nullopt;
 }
 
 //------------------------------------------------------------------------------
@@ -39,106 +39,107 @@ GbrQosInformation::~GbrQosInformation() {}
 
 //------------------------------------------------------------------------------
 void GbrQosInformation::set(
-    long m_maximumFlowBitRateDL, long m_maximumFlowBitRateUL,
-    long m_guaranteedFlowBitRateDL, long m_guaranteedFlowBitRateUL,
-    const std::optional<NotificationControl>& m_notificationControl,
-    const std::optional<PacketLossRate>& m_maximumPacketLossRateDL,
-    const std::optional<PacketLossRate>& m_maximumPacketLossRateUL) {
-  maximumFlowBitRateDL    = m_maximumFlowBitRateDL;
-  maximumFlowBitRateUL    = m_maximumFlowBitRateUL;
-  guaranteedFlowBitRateDL = m_guaranteedFlowBitRateDL;
-  guaranteedFlowBitRateUL = m_guaranteedFlowBitRateUL;
+    const long& maximumFlowBitRateDl, const long& maximumFlowBitRateUl,
+    const long& guaranteedFlowBitRateDl, const long& guaranteedFlowBitRateUl,
+    const std::optional<NotificationControl>& notificationControl,
+    const std::optional<PacketLossRate>& maximumPacketLossRateDl,
+    const std::optional<PacketLossRate>& maximumPacketLossRateUl) {
+  m_MaximumFlowBitRateDl    = maximumFlowBitRateDl;
+  m_MaximumFlowBitRateUl    = maximumFlowBitRateUl;
+  m_GuaranteedFlowBitRateDl = guaranteedFlowBitRateDl;
+  m_GuaranteedFlowBitRateUl = guaranteedFlowBitRateUl;
 
-  notificationControl     = m_notificationControl;
-  maximumPacketLossRateDL = m_maximumPacketLossRateDL;
-  maximumPacketLossRateUL = m_maximumPacketLossRateUL;
+  m_NotificationControl     = notificationControl;
+  m_MaximumPacketLossRateDl = maximumPacketLossRateDl;
+  m_MaximumPacketLossRateUl = maximumPacketLossRateUl;
 }
 
 //------------------------------------------------------------------------------
 bool GbrQosInformation::get(
-    long& m_maximumFlowBitRateDL, long& m_maximumFlowBitRateUL,
-    long& m_guaranteedFlowBitRateDL, long& m_guaranteedFlowBitRateUL,
-    std::optional<NotificationControl>& m_notificationControl,
-    std::optional<PacketLossRate>& m_maximumPacketLossRateDL,
-    std::optional<PacketLossRate>& m_maximumPacketLossRateUL) {
-  m_maximumFlowBitRateDL    = maximumFlowBitRateDL;
-  m_maximumFlowBitRateUL    = maximumFlowBitRateUL;
-  m_guaranteedFlowBitRateDL = guaranteedFlowBitRateDL;
-  m_guaranteedFlowBitRateUL = guaranteedFlowBitRateUL;
+    long& maximumFlowBitRateDl, long& maximumFlowBitRateUl,
+    long& guaranteedFlowBitRateDl, long& guaranteedFlowBitRateUl,
+    std::optional<NotificationControl>& notificationControl,
+    std::optional<PacketLossRate>& maximumPacketLossRateDl,
+    std::optional<PacketLossRate>& maximumPacketLossRateUl) {
+  maximumFlowBitRateDl    = m_MaximumFlowBitRateDl;
+  maximumFlowBitRateUl    = m_MaximumFlowBitRateUl;
+  guaranteedFlowBitRateDl = m_GuaranteedFlowBitRateDl;
+  guaranteedFlowBitRateUl = m_GuaranteedFlowBitRateUl;
 
-  m_notificationControl     = notificationControl;
-  m_maximumPacketLossRateDL = maximumPacketLossRateDL;
-  m_maximumPacketLossRateUL = maximumPacketLossRateUL;
+  notificationControl     = m_NotificationControl;
+  maximumPacketLossRateDl = m_MaximumPacketLossRateDl;
+  maximumPacketLossRateUl = m_MaximumPacketLossRateUl;
 
   return true;
 }
 
 //------------------------------------------------------------------------------
-bool GbrQosInformation::encode(Ngap_GBR_QosInformation_t& gBR_QosInformation) {
-  gBR_QosInformation.maximumFlowBitRateDL.size = 6;
-  gBR_QosInformation.maximumFlowBitRateDL.buf =
-      (uint8_t*) calloc(1, gBR_QosInformation.maximumFlowBitRateDL.size);
-  if (!gBR_QosInformation.maximumFlowBitRateDL.buf) return false;
+bool GbrQosInformation::encode(
+    Ngap_GBR_QosInformation_t& gbrQosInformation) const {
+  gbrQosInformation.maximumFlowBitRateDL.size = 6;
+  gbrQosInformation.maximumFlowBitRateDL.buf =
+      (uint8_t*) calloc(1, gbrQosInformation.maximumFlowBitRateDL.size);
+  if (!gbrQosInformation.maximumFlowBitRateDL.buf) return false;
 
-  for (int i = 0; i < gBR_QosInformation.maximumFlowBitRateDL.size; i++) {
-    gBR_QosInformation.maximumFlowBitRateDL.buf[i] =
-        (maximumFlowBitRateDL & (0xff0000000000 >> i * 8)) >>
-        ((gBR_QosInformation.maximumFlowBitRateDL.size - i - 1) * 8);
+  for (int i = 0; i < gbrQosInformation.maximumFlowBitRateDL.size; i++) {
+    gbrQosInformation.maximumFlowBitRateDL.buf[i] =
+        (m_MaximumFlowBitRateDl & (0xff0000000000 >> i * 8)) >>
+        ((gbrQosInformation.maximumFlowBitRateDL.size - i - 1) * 8);
   }
 
-  gBR_QosInformation.maximumFlowBitRateUL.size = 6;
-  gBR_QosInformation.maximumFlowBitRateUL.buf =
-      (uint8_t*) calloc(1, gBR_QosInformation.maximumFlowBitRateUL.size);
-  if (!gBR_QosInformation.maximumFlowBitRateUL.buf) return false;
+  gbrQosInformation.maximumFlowBitRateUL.size = 6;
+  gbrQosInformation.maximumFlowBitRateUL.buf =
+      (uint8_t*) calloc(1, gbrQosInformation.maximumFlowBitRateUL.size);
+  if (!gbrQosInformation.maximumFlowBitRateUL.buf) return false;
 
-  for (int i = 0; i < gBR_QosInformation.maximumFlowBitRateUL.size; i++) {
-    gBR_QosInformation.maximumFlowBitRateUL.buf[i] =
-        (maximumFlowBitRateUL & (0xff0000000000 >> i * 8)) >>
-        ((gBR_QosInformation.maximumFlowBitRateUL.size - i - 1) * 8);
+  for (int i = 0; i < gbrQosInformation.maximumFlowBitRateUL.size; i++) {
+    gbrQosInformation.maximumFlowBitRateUL.buf[i] =
+        (m_MaximumFlowBitRateUl & (0xff0000000000 >> i * 8)) >>
+        ((gbrQosInformation.maximumFlowBitRateUL.size - i - 1) * 8);
   }
 
-  gBR_QosInformation.guaranteedFlowBitRateDL.size = 6;
-  gBR_QosInformation.guaranteedFlowBitRateDL.buf =
-      (uint8_t*) calloc(1, gBR_QosInformation.guaranteedFlowBitRateDL.size);
-  if (!gBR_QosInformation.guaranteedFlowBitRateDL.buf) return false;
+  gbrQosInformation.guaranteedFlowBitRateDL.size = 6;
+  gbrQosInformation.guaranteedFlowBitRateDL.buf =
+      (uint8_t*) calloc(1, gbrQosInformation.guaranteedFlowBitRateDL.size);
+  if (!gbrQosInformation.guaranteedFlowBitRateDL.buf) return false;
 
-  for (int i = 0; i < gBR_QosInformation.guaranteedFlowBitRateDL.size; i++) {
-    gBR_QosInformation.guaranteedFlowBitRateDL.buf[i] =
-        (guaranteedFlowBitRateDL & (0xff0000000000 >> i * 8)) >>
-        ((gBR_QosInformation.guaranteedFlowBitRateDL.size - i - 1) * 8);
+  for (int i = 0; i < gbrQosInformation.guaranteedFlowBitRateDL.size; i++) {
+    gbrQosInformation.guaranteedFlowBitRateDL.buf[i] =
+        (m_GuaranteedFlowBitRateDl & (0xff0000000000 >> i * 8)) >>
+        ((gbrQosInformation.guaranteedFlowBitRateDL.size - i - 1) * 8);
   }
 
-  gBR_QosInformation.guaranteedFlowBitRateUL.size = 6;
-  gBR_QosInformation.guaranteedFlowBitRateUL.buf =
-      (uint8_t*) calloc(1, gBR_QosInformation.guaranteedFlowBitRateUL.size);
-  if (!gBR_QosInformation.guaranteedFlowBitRateUL.buf) return false;
+  gbrQosInformation.guaranteedFlowBitRateUL.size = 6;
+  gbrQosInformation.guaranteedFlowBitRateUL.buf =
+      (uint8_t*) calloc(1, gbrQosInformation.guaranteedFlowBitRateUL.size);
+  if (!gbrQosInformation.guaranteedFlowBitRateUL.buf) return false;
 
-  for (int i = 0; i < gBR_QosInformation.guaranteedFlowBitRateUL.size; i++) {
-    gBR_QosInformation.guaranteedFlowBitRateUL.buf[i] =
-        (guaranteedFlowBitRateUL & (0xff0000000000 >> i * 8)) >>
-        ((gBR_QosInformation.guaranteedFlowBitRateUL.size - i - 1) * 8);
+  for (int i = 0; i < gbrQosInformation.guaranteedFlowBitRateUL.size; i++) {
+    gbrQosInformation.guaranteedFlowBitRateUL.buf[i] =
+        (m_GuaranteedFlowBitRateUl & (0xff0000000000 >> i * 8)) >>
+        ((gbrQosInformation.guaranteedFlowBitRateUL.size - i - 1) * 8);
   }
 
-  if (notificationControl.has_value()) {
+  if (m_NotificationControl.has_value()) {
     Ngap_NotificationControl_t* nc = (Ngap_NotificationControl_t*) calloc(
         1, sizeof(Ngap_NotificationControl_t));
     if (!nc) return false;
-    if (!notificationControl.value().encode(*nc)) return false;
-    gBR_QosInformation.notificationControl = nc;
+    if (!m_NotificationControl.value().encode(*nc)) return false;
+    gbrQosInformation.notificationControl = nc;
   }
-  if (maximumPacketLossRateDL.has_value()) {
+  if (m_MaximumPacketLossRateDl.has_value()) {
     Ngap_PacketLossRate_t* mplrd =
         (Ngap_PacketLossRate_t*) calloc(1, sizeof(Ngap_PacketLossRate_t));
     if (!mplrd) return false;
-    if (!maximumPacketLossRateDL.value().encode(*mplrd)) return false;
-    gBR_QosInformation.maximumPacketLossRateDL = mplrd;
+    if (!m_MaximumPacketLossRateDl.value().encode(*mplrd)) return false;
+    gbrQosInformation.maximumPacketLossRateDL = mplrd;
   }
-  if (maximumPacketLossRateUL.has_value()) {
+  if (m_MaximumPacketLossRateUl.has_value()) {
     Ngap_PacketLossRate_t* mplru =
         (Ngap_PacketLossRate_t*) calloc(1, sizeof(Ngap_PacketLossRate_t));
     if (!mplru) return false;
-    if (!maximumPacketLossRateUL.value().encode(*mplru)) return false;
-    gBR_QosInformation.maximumPacketLossRateUL = mplru;
+    if (!m_MaximumPacketLossRateUl.value().encode(*mplru)) return false;
+    gbrQosInformation.maximumPacketLossRateUL = mplru;
   }
 
   return true;
@@ -146,50 +147,50 @@ bool GbrQosInformation::encode(Ngap_GBR_QosInformation_t& gBR_QosInformation) {
 
 //------------------------------------------------------------------------------
 bool GbrQosInformation::decode(
-    const Ngap_GBR_QosInformation_t& gBR_QosInformation) {
-  if (!gBR_QosInformation.maximumFlowBitRateDL.buf) return false;
-  if (!gBR_QosInformation.maximumFlowBitRateUL.buf) return false;
-  if (!gBR_QosInformation.guaranteedFlowBitRateDL.buf) return false;
-  if (!gBR_QosInformation.guaranteedFlowBitRateUL.buf) return false;
+    const Ngap_GBR_QosInformation_t& gbrQosInformation) {
+  if (!gbrQosInformation.maximumFlowBitRateDL.buf) return false;
+  if (!gbrQosInformation.maximumFlowBitRateUL.buf) return false;
+  if (!gbrQosInformation.guaranteedFlowBitRateDL.buf) return false;
+  if (!gbrQosInformation.guaranteedFlowBitRateUL.buf) return false;
 
-  maximumFlowBitRateDL    = 0;
-  maximumFlowBitRateUL    = 0;
-  guaranteedFlowBitRateDL = 0;
-  guaranteedFlowBitRateUL = 0;
+  m_MaximumFlowBitRateDl    = 0;
+  m_MaximumFlowBitRateUl    = 0;
+  m_GuaranteedFlowBitRateDl = 0;
+  m_GuaranteedFlowBitRateUl = 0;
 
-  for (int i = 0; i < gBR_QosInformation.maximumFlowBitRateDL.size; i++) {
-    maximumFlowBitRateDL = maximumFlowBitRateDL << 8;
-    maximumFlowBitRateDL |= gBR_QosInformation.maximumFlowBitRateDL.buf[i];
+  for (int i = 0; i < gbrQosInformation.maximumFlowBitRateDL.size; i++) {
+    m_MaximumFlowBitRateDl = m_MaximumFlowBitRateDl << 8;
+    m_MaximumFlowBitRateDl |= gbrQosInformation.maximumFlowBitRateDL.buf[i];
   }
-  for (int i = 0; i < gBR_QosInformation.maximumFlowBitRateUL.size; i++) {
-    maximumFlowBitRateUL = maximumFlowBitRateUL << 8;
-    maximumFlowBitRateUL |= gBR_QosInformation.maximumFlowBitRateUL.buf[i];
+  for (int i = 0; i < gbrQosInformation.maximumFlowBitRateUL.size; i++) {
+    m_MaximumFlowBitRateUl = m_MaximumFlowBitRateUl << 8;
+    m_MaximumFlowBitRateUl |= gbrQosInformation.maximumFlowBitRateUL.buf[i];
   }
-  for (int i = 0; i < gBR_QosInformation.guaranteedFlowBitRateDL.size; i++) {
-    guaranteedFlowBitRateDL = guaranteedFlowBitRateDL << 8;
-    guaranteedFlowBitRateDL |=
-        gBR_QosInformation.guaranteedFlowBitRateDL.buf[i];
+  for (int i = 0; i < gbrQosInformation.guaranteedFlowBitRateDL.size; i++) {
+    m_GuaranteedFlowBitRateDl = m_GuaranteedFlowBitRateDl << 8;
+    m_GuaranteedFlowBitRateDl |=
+        gbrQosInformation.guaranteedFlowBitRateDL.buf[i];
   }
-  for (int i = 0; i < gBR_QosInformation.guaranteedFlowBitRateUL.size; i++) {
-    guaranteedFlowBitRateUL = guaranteedFlowBitRateUL << 8;
-    guaranteedFlowBitRateUL |=
-        gBR_QosInformation.guaranteedFlowBitRateUL.buf[i];
+  for (int i = 0; i < gbrQosInformation.guaranteedFlowBitRateUL.size; i++) {
+    m_GuaranteedFlowBitRateUl = m_GuaranteedFlowBitRateUl << 8;
+    m_GuaranteedFlowBitRateUl |=
+        gbrQosInformation.guaranteedFlowBitRateUL.buf[i];
   }
 
-  if (gBR_QosInformation.notificationControl) {
+  if (gbrQosInformation.notificationControl) {
     NotificationControl tmp = {};
-    if (!tmp.decode(*gBR_QosInformation.notificationControl)) return false;
-    notificationControl = std::make_optional<NotificationControl>(tmp);
+    if (!tmp.decode(*gbrQosInformation.notificationControl)) return false;
+    m_NotificationControl = std::make_optional<NotificationControl>(tmp);
   }
-  if (gBR_QosInformation.maximumPacketLossRateDL) {
+  if (gbrQosInformation.maximumPacketLossRateDL) {
     PacketLossRate tmp = {};
-    if (!tmp.decode(*gBR_QosInformation.maximumPacketLossRateDL)) return false;
-    maximumPacketLossRateDL = std::make_optional<PacketLossRate>(tmp);
+    if (!tmp.decode(*gbrQosInformation.maximumPacketLossRateDL)) return false;
+    m_MaximumPacketLossRateDl = std::make_optional<PacketLossRate>(tmp);
   }
-  if (gBR_QosInformation.maximumPacketLossRateUL) {
+  if (gbrQosInformation.maximumPacketLossRateUL) {
     PacketLossRate tmp = {};
-    if (!tmp.decode(*gBR_QosInformation.maximumPacketLossRateUL)) return false;
-    maximumPacketLossRateUL = std::make_optional<PacketLossRate>(tmp);
+    if (!tmp.decode(*gbrQosInformation.maximumPacketLossRateUL)) return false;
+    m_MaximumPacketLossRateUl = std::make_optional<PacketLossRate>(tmp);
   }
 
   return true;

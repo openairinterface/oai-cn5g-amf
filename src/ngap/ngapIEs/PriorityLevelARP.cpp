@@ -25,34 +25,34 @@ namespace ngap {
 
 //------------------------------------------------------------------------------
 PriorityLevelARP::PriorityLevelARP() {
-  priority_level_arp_ = 0;
+  m_PriorityLevelArp = 0;
 }
 
 //------------------------------------------------------------------------------
 PriorityLevelARP::~PriorityLevelARP() {}
 
 //------------------------------------------------------------------------------
-void PriorityLevelARP::setPriorityLevelARP(long value) {
-  priority_level_arp_ = value;
+void PriorityLevelARP::set(const long& value) {
+  m_PriorityLevelArp = value;
 }
 
 //------------------------------------------------------------------------------
-bool PriorityLevelARP::getPriorityLevelARP(long& value) const {
-  value = priority_level_arp_;
+bool PriorityLevelARP::get(long& value) const {
+  value = m_PriorityLevelArp;
 
   return true;
 }
 
 //------------------------------------------------------------------------------
-bool PriorityLevelARP::encode(Ngap_PriorityLevelARP_t& priorityLevelARP) const {
-  priorityLevelARP = priority_level_arp_;
+bool PriorityLevelARP::encode(Ngap_PriorityLevelARP_t& priorityLevelArp) const {
+  priorityLevelArp = m_PriorityLevelArp;
 
   return true;
 }
 
 //------------------------------------------------------------------------------
-bool PriorityLevelARP::decode(Ngap_PriorityLevelARP_t priorityLevelARP) {
-  priority_level_arp_ = priorityLevelARP;
+bool PriorityLevelARP::decode(const Ngap_PriorityLevelARP_t& priorityLevelArp) {
+  m_PriorityLevelArp = priorityLevelArp;
 
   return true;
 }

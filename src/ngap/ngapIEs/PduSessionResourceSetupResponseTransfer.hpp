@@ -22,14 +22,14 @@
 #ifndef _PDU_SESSION_RESOURCE_SETUP_RESPONSE_TRANSFER_H_
 #define _PDU_SESSION_RESOURCE_SETUP_RESPONSE_TRANSFER_H_
 
-#include "NgapIEsStruct.hpp"
+#include "NgapIesStruct.hpp"
 #include "QosFlowPerTnlInformationList.hpp"
 #include "SecurityResult.hpp"
 
 extern "C" {
 #include "Ngap_PDUSessionResourceSetupResponseTransfer.h"
-#include "Ngap_QosFlowPerTNLInformationList.h"
 #include "Ngap_ProtocolIE-Field.h"
+#include "Ngap_QosFlowPerTNLInformationList.h"
 }
 
 namespace ngap {
@@ -40,16 +40,16 @@ class PduSessionResourceSetupResponseTransferIE {
   virtual ~PduSessionResourceSetupResponseTransferIE();
 
   void set(
-      const GtpTunnel_t& up_transport_layer_info,
+      const GtpTunnel_t& upTransportLayerInfo,
       const std::vector<AssociatedQosFlow_t>& list);
   bool get(
-      GtpTunnel_t& up_transport_layer_info,
+      GtpTunnel_t& upTransportLayerInfo,
       std::vector<AssociatedQosFlow_t>& list) const;
 
   void setAdditionalDLQoSFlowPerTNLInformation(
-      QosFlowPerTnlInformationList& additionDLQoSFlowPerTNLInformation);
+      const QosFlowPerTnlInformationList& additionDlQoSFlowPerTnlInformation);
   bool getAdditionalDLQoSFlowPerTNLInformation(
-      QosFlowPerTnlInformationList& additionDLQoSFlowPerTNLInformation) const;
+      QosFlowPerTnlInformationList& additionDlQoSFlowPerTnlInformation) const;
 
   void setSecurityResult(
       e_Ngap_IntegrityProtectionResult integrityProtectionResult,
@@ -63,12 +63,12 @@ class PduSessionResourceSetupResponseTransferIE {
 
  private:
   Ngap_PDUSessionResourceSetupResponseTransfer_t*
-      pduSessionResourceSetupResponseTransferIEs;
+      m_PduSessionResourceSetupResponseTransferIe;
 
-  QosFlowPerTnlInformation dlQoSFlowPerTNLInformation;  // Mandatory
+  QosFlowPerTnlInformation m_DlQosFlowPerTnlInformation;  // Mandatory
   std::optional<QosFlowPerTnlInformationList>
-      additionalDLQoSFlowPerTNLInformation;
-  std::optional<SecurityResult> securityResult;  // Optional
+      m_AdditionalDlQosFlowPerTnlInformation;
+  std::optional<SecurityResult> m_SecurityResult;  // Optional
   // TODO: QoS Flow Failed to Setup List
 };
 

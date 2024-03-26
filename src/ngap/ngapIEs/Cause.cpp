@@ -27,8 +27,8 @@ namespace ngap {
 
 //------------------------------------------------------------------------------
 Cause::Cause() {
-  cause_present_ = Ngap_Cause_PR_NOTHING;
-  cause_value_   = -1;
+  m_CausePresent = Ngap_Cause_PR_NOTHING;
+  m_CauseValue   = -1;
 }
 
 //------------------------------------------------------------------------------
@@ -36,36 +36,36 @@ Cause::~Cause() {}
 
 //------------------------------------------------------------------------------
 void Cause::setChoiceOfCause(const Ngap_Cause_PR& cause_present) {
-  cause_present_ = cause_present;
+  m_CausePresent = cause_present;
 }
 
 //------------------------------------------------------------------------------
-void Cause::setValue(const long& cause_value) {
-  cause_value_ = cause_value;
+void Cause::set(const long& causeValue) {
+  m_CauseValue = causeValue;
 }
 
 //------------------------------------------------------------------------------
 bool Cause::encode(Ngap_Cause_t& cause) const {
-  cause.present = cause_present_;
-  switch (cause_present_) {
+  cause.present = m_CausePresent;
+  switch (m_CausePresent) {
     case Ngap_Cause_PR_radioNetwork: {
-      cause.choice.radioNetwork = cause_value_;
+      cause.choice.radioNetwork = m_CauseValue;
       break;
     }
     case Ngap_Cause_PR_transport: {
-      cause.choice.transport = cause_value_;
+      cause.choice.transport = m_CauseValue;
       break;
     }
     case Ngap_Cause_PR_nas: {
-      cause.choice.nas = cause_value_;
+      cause.choice.nas = m_CauseValue;
       break;
     }
     case Ngap_Cause_PR_protocol: {
-      cause.choice.protocol = cause_value_;
+      cause.choice.protocol = m_CauseValue;
       break;
     }
     case Ngap_Cause_PR_misc: {
-      cause.choice.misc = cause_value_;
+      cause.choice.misc = m_CauseValue;
       break;
     }
     default: {
@@ -79,22 +79,22 @@ bool Cause::encode(Ngap_Cause_t& cause) const {
 
 //------------------------------------------------------------------------------
 bool Cause::decode(const Ngap_Cause_t& cause) {
-  cause_present_ = cause.present;
-  switch (cause_present_) {
+  m_CausePresent = cause.present;
+  switch (m_CausePresent) {
     case Ngap_Cause_PR_radioNetwork: {
-      cause_value_ = cause.choice.radioNetwork;
+      m_CauseValue = cause.choice.radioNetwork;
     } break;
     case Ngap_Cause_PR_transport: {
-      cause_value_ = cause.choice.transport;
+      m_CauseValue = cause.choice.transport;
     } break;
     case Ngap_Cause_PR_nas: {
-      cause_value_ = cause.choice.nas;
+      m_CauseValue = cause.choice.nas;
     } break;
     case Ngap_Cause_PR_protocol: {
-      cause_value_ = cause.choice.protocol;
+      m_CauseValue = cause.choice.protocol;
     } break;
     case Ngap_Cause_PR_misc: {
-      cause_value_ = cause.choice.misc;
+      m_CauseValue = cause.choice.misc;
     } break;
     default: {
       Logger::ngap().warn("Cause Present error!");
@@ -106,17 +106,17 @@ bool Cause::decode(const Ngap_Cause_t& cause) {
 
 //------------------------------------------------------------------------------
 Ngap_Cause_PR Cause::getChoiceOfCause() const {
-  return cause_present_;
+  return m_CausePresent;
 }
 
 //------------------------------------------------------------------------------
-long Cause::getValue() const {
-  return cause_value_;
+long Cause::get() const {
+  return m_CauseValue;
 }
 
 //------------------------------------------------------------------------------
 void Cause::set(const long& value, const Ngap_Cause_PR& cause_present) {
-  cause_value_   = value;
-  cause_present_ = cause_present;
+  m_CauseValue   = value;
+  m_CausePresent = cause_present;
 }
 }  // namespace ngap

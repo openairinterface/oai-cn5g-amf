@@ -31,28 +31,28 @@ QosFlowSetupRequestItem::~QosFlowSetupRequestItem() {}
 
 //------------------------------------------------------------------------------
 void QosFlowSetupRequestItem::set(
-    const QosFlowIdentifier& m_qosFlowIdentifier,
-    const QosFlowLevelQosParameters& m_qosFlowLevelQosParameters) {
-  qosFlowIdentifier         = m_qosFlowIdentifier;
-  qosFlowLevelQosParameters = m_qosFlowLevelQosParameters;
+    const QosFlowIdentifier& qosFlowIdentifier,
+    const QosFlowLevelQosParameters& qosFlowLevelQosParameters) {
+  m_QosFlowIdentifier         = qosFlowIdentifier;
+  m_QosFlowLevelQosParameters = qosFlowLevelQosParameters;
 }
 
 //------------------------------------------------------------------------------
 bool QosFlowSetupRequestItem::get(
-    QosFlowIdentifier& m_qosFlowIdentifier,
-    QosFlowLevelQosParameters& m_qosFlowLevelQosParameters) const {
-  m_qosFlowIdentifier         = qosFlowIdentifier;
-  m_qosFlowLevelQosParameters = qosFlowLevelQosParameters;
+    QosFlowIdentifier& qosFlowIdentifier,
+    QosFlowLevelQosParameters& qosFlowLevelQosParameters) const {
+  qosFlowIdentifier         = m_QosFlowIdentifier;
+  qosFlowLevelQosParameters = m_QosFlowLevelQosParameters;
 
   return true;
 }
 
 //------------------------------------------------------------------------------
 bool QosFlowSetupRequestItem::encode(
-    Ngap_QosFlowSetupRequestItem_t& qosFlowSetupRequestItem) {
-  if (!qosFlowIdentifier.encode(qosFlowSetupRequestItem.qosFlowIdentifier))
+    Ngap_QosFlowSetupRequestItem_t& qosFlowSetupRequestItem) const {
+  if (!m_QosFlowIdentifier.encode(qosFlowSetupRequestItem.qosFlowIdentifier))
     return false;
-  if (!qosFlowLevelQosParameters.encode(
+  if (!m_QosFlowLevelQosParameters.encode(
           qosFlowSetupRequestItem.qosFlowLevelQosParameters))
     return false;
 
@@ -62,9 +62,9 @@ bool QosFlowSetupRequestItem::encode(
 //------------------------------------------------------------------------------
 bool QosFlowSetupRequestItem::decode(
     const Ngap_QosFlowSetupRequestItem_t& qosFlowSetupRequestItem) {
-  if (!qosFlowIdentifier.decode(qosFlowSetupRequestItem.qosFlowIdentifier))
+  if (!m_QosFlowIdentifier.decode(qosFlowSetupRequestItem.qosFlowIdentifier))
     return false;
-  if (!qosFlowLevelQosParameters.decode(
+  if (!m_QosFlowLevelQosParameters.decode(
           qosFlowSetupRequestItem.qosFlowLevelQosParameters))
     return false;
 

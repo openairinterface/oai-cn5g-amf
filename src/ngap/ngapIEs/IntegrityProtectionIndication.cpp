@@ -25,7 +25,7 @@ namespace ngap {
 
 //------------------------------------------------------------------------------
 IntegrityProtectionIndication::IntegrityProtectionIndication() {
-  indication_ = 0;
+  m_Indication = 0;
 }
 
 //------------------------------------------------------------------------------
@@ -34,12 +34,12 @@ IntegrityProtectionIndication::~IntegrityProtectionIndication() {}
 //------------------------------------------------------------------------------
 void IntegrityProtectionIndication::set(
     const e_Ngap_IntegrityProtectionIndication& indication) {
-  indication_ = indication;
+  m_Indication = indication;
 }
 
 //------------------------------------------------------------------------------
 bool IntegrityProtectionIndication::get(long& indication) const {
-  indication = indication_;
+  indication = m_Indication;
 
   return true;
 }
@@ -47,15 +47,15 @@ bool IntegrityProtectionIndication::get(long& indication) const {
 //------------------------------------------------------------------------------
 bool IntegrityProtectionIndication::encode(
     Ngap_IntegrityProtectionIndication_t& value) const {
-  value = indication_;
+  value = m_Indication;
 
   return true;
 }
 
 //------------------------------------------------------------------------------
 bool IntegrityProtectionIndication::decode(
-    Ngap_IntegrityProtectionIndication_t value) {
-  indication_ = value;
+    const Ngap_IntegrityProtectionIndication_t& value) {
+  m_Indication = value;
 
   return true;
 }

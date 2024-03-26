@@ -804,7 +804,7 @@ void amf_n1::identity_response_handle(
     } else {
       ueItem.mcc    = uc->cgi.mcc;
       ueItem.mnc    = uc->cgi.mnc;
-      ueItem.cellId = uc->cgi.nrCellID;
+      ueItem.cellId = uc->cgi.nrCellId;
     }
 
     stacs.update_ue_info(ueItem);
@@ -1166,8 +1166,7 @@ void amf_n1::service_request_handle(
         itti_msg->amf_ue_ngap_id = nc->old_amf_ue_ngap_id;
         itti_msg->ran_ue_ngap_id = nc->old_ran_ue_ngap_id;
         itti_msg->cause.setChoiceOfCause(Ngap_Cause_PR_radioNetwork);
-        itti_msg->cause.setValue(
-            3);  // TODO: remove hardcoded value cause nas(3)
+        itti_msg->cause.set(3);  // TODO: remove hardcoded value cause nas(3)
 
         int ret = itti_inst->send_msg(itti_msg);
         if (0 != ret) {
@@ -1554,7 +1553,7 @@ void amf_n1::registration_request_handle(
         if (nc->guti.has_value()) ueItem.guti = nc->guti.value();
         ueItem.mcc    = uc->cgi.mcc;
         ueItem.mnc    = uc->cgi.mnc;
-        ueItem.cellId = uc->cgi.nrCellID;
+        ueItem.cellId = uc->cgi.nrCellId;
 
         stacs.update_ue_info(ueItem);
         set_5gmm_state(nc, _5GMM_COMMON_PROCEDURE_INITIATED);
@@ -2985,8 +2984,9 @@ void amf_n1::security_mode_complete_handle(
           "No PDU Session Context with PDU Session ID %d", pdu_session_id);
     }
 
-    if (psc and
-        (psc->up_cnx_state == up_cnx_state_e::UPCNX_STATE_DEACTIVATED)) {
+    // TODO:  need to check (psc->up_cnx_state ==
+    // up_cnx_state_e::UPCNX_STATE_DEACTIVATED)?
+    if (psc) {
       amf_app_inst->trigger_pdu_session_up_activation(pdu_session_id, uc);
     }
 
@@ -3628,7 +3628,7 @@ void amf_n1::ue_initiate_de_registration_handle(
   itti_msg->amf_ue_ngap_id = amf_ue_ngap_id;
   itti_msg->ran_ue_ngap_id = ran_ue_ngap_id;
   itti_msg->cause.setChoiceOfCause(Ngap_Cause_PR_nas);
-  itti_msg->cause.setValue(
+  itti_msg->cause.set(
       2);  // TODO: remove hardcoded value cause nas(2)--deregister
 
   int ret = itti_inst->send_msg(itti_msg);
@@ -4494,11 +4494,11 @@ void amf_n1::trigger_ue_location_report(
       UserLocation user_location = {};
       NrLocation nr_location     = {};
 
-      Tai tai                   = {};
-      nlohmann::json tai_json   = {};
-      tai_json["plmnId"]["mcc"] = uc->cgi.mcc;
-      tai_json["plmnId"]["mnc"] = uc->cgi.mnc;
-      tai_json["tac"]           = std::to_string(uc->tai.tac);
+      oai::model::common::Tai tai = {};
+      nlohmann::json tai_json     = {};
+      tai_json["plmnId"]["mcc"]   = uc->cgi.mcc;
+      tai_json["plmnId"]["mnc"]   = uc->cgi.mnc;
+      tai_json["tac"]             = std::to_string(uc->tai.tac);
 
       nlohmann::json global_ran_node_id_json        = {};
       global_ran_node_id_json["plmnId"]["mcc"]      = uc->cgi.mcc;
@@ -4792,7 +4792,7 @@ void amf_n1::implicit_deregistration_timer_timeout(
   itti_msg_cxt_release->amf_ue_ngap_id = nc->amf_ue_ngap_id;
   itti_msg_cxt_release->ran_ue_ngap_id = nc->ran_ue_ngap_id;
   itti_msg_cxt_release->cause.setChoiceOfCause(Ngap_Cause_PR_nas);
-  itti_msg_cxt_release->cause.setValue(Ngap_CauseNas_deregister);
+  itti_msg_cxt_release->cause.set(Ngap_CauseNas_deregister);
 
   int ret = itti_inst->send_msg(itti_msg_cxt_release);
   if (0 != ret) {
@@ -5224,8 +5224,8 @@ bool amf_n1::get_slice_selection_subscription_data_from_conf_file(
   // bool default_subscribed_snssai = true;
 
   for (auto ta : gc->supported_ta_list) {
-    for (auto p : ta.b_plmn_list) {
-      for (auto s : p.slice_list) {
+    for (auto p : ta.plmnSliceSupportList) {
+      for (auto s : p.sliceList) {
         Snssai nssai = {};
         uint8_t sst  = 0;
         try {

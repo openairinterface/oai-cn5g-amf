@@ -25,10 +25,10 @@
 #include <optional>
 
 #include "Cause.hpp"
-#include "GlobalgNBId.hpp"
-#include "NgapUEMessage.hpp"
+#include "GlobalGnbId.hpp"
+#include "NgapUeMessage.hpp"
 #include "PduSessionResourceListHandoverRqd.hpp"
-#include "TAI.hpp"
+#include "Tai.hpp"
 
 extern "C" {
 #include "Ngap_HandoverRequired.h"
@@ -37,7 +37,7 @@ extern "C" {
 
 namespace ngap {
 
-class HandoverRequiredMsg : public NgapUEMessage {
+class HandoverRequiredMsg : public NgapUeMessage {
  public:
   HandoverRequiredMsg();
   virtual ~HandoverRequiredMsg();
@@ -48,37 +48,37 @@ class HandoverRequiredMsg : public NgapUEMessage {
   void setRanUeNgapId(const uint32_t& id) override;
   bool decode(Ngap_NGAP_PDU_t* ngapMsgPdu) override;
 
-  Ngap_HandoverType_t getHandoverType();
+  Ngap_HandoverType_t getHandoverType() const;
   // TODO Setter
 
-  Ngap_Cause_PR getChoiceOfCause();
-  long getCauseValue();
+  Ngap_Cause_PR getChoiceOfCause() const;
+  long getCauseValue() const;
   // TODO Setter
 
-  bool getTargetID(GlobalgNBId& gnbId, TAI& tai);
+  bool getTargetId(GlobalGnbId& gnbId, Tai& tai) const;
   // TODO Setter
 
   bool getDirectForwardingPathAvailability(long& value) const;
   // TODO: Setter
 
-  bool getPDUSessionResourceList(PduSessionResourceListHandoverRqd& list);
+  bool getPduSessionResourceList(PduSessionResourceListHandoverRqd& list) const;
   // TODO Setter
 
-  OCTET_STRING_t getSourceToTarget_TransparentContainer();
+  OCTET_STRING_t getSourceToTargetTransparentContainer() const;
   // TODO Setter
 
  private:
-  Ngap_HandoverRequired_t* handoverRequiredIEs;
+  Ngap_HandoverRequired_t* m_HandoverRequiredIes;
   // AMF_UE_NGAP_ID (Mandatory)
   // RAN_UE_NGAP_ID (Mandatory)
-  Ngap_HandoverType_t handoverType;  // Mandatory
-  Cause cause;                       // Mandatory
-  Ngap_TargetID_t targetID;          // Mandatory
+  Ngap_HandoverType_t m_HandoverType;  // Mandatory
+  Cause m_Cause;                       // Mandatory
+  Ngap_TargetID_t m_TargetId;          // Mandatory
   std::optional<Ngap_DirectForwardingPathAvailability_t>
-      directForwardingPathAvailability;                      // Optional
-  PduSessionResourceListHandoverRqd pDUSessionResourceList;  // Mandatory
+      m_DirectForwardingPathAvailability;                      // Optional
+  PduSessionResourceListHandoverRqd m_PduSessionResourceList;  // Mandatory
   Ngap_SourceToTarget_TransparentContainer_t
-      sourceToTarget_TransparentContainer;  // Mandatory
+      m_SourceToTargetTransparentContainer;  // Mandatory
 };
 
 }  // namespace ngap

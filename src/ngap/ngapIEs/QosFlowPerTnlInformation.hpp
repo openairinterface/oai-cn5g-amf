@@ -23,7 +23,7 @@
 #define _QOS_FLOW_PER_TNL_INFORMATION_H_
 
 #include "AssociatedQosFlowList.hpp"
-#include "UPTransportLayerInformation.hpp"
+#include "UpTransportLayerInformation.hpp"
 
 extern "C" {
 #include "Ngap_QosFlowPerTNLInformation.h"
@@ -36,19 +36,19 @@ class QosFlowPerTnlInformation {
   QosFlowPerTnlInformation();
   virtual ~QosFlowPerTnlInformation();
 
-  void setQoSFlowPerTNLInformation(
-      const UpTransportLayerInformation& m_uPTransportLayerInformation,
-      const AssociatedQosFlowList& m_associatedQosFlowList);
-  void getQoSFlowPerTNLInformation(
-      UpTransportLayerInformation& m_uPTransportLayerInformation,
-      AssociatedQosFlowList& m_associatedQosFlowList) const;
+  void set(
+      const UpTransportLayerInformation& upTransportLayerInformation,
+      const AssociatedQosFlowList& associatedQosFlowList);
+  void get(
+      UpTransportLayerInformation& upTransportLayerInformation,
+      AssociatedQosFlowList& associatedQosFlowList) const;
 
-  bool encode(Ngap_QosFlowPerTNLInformation_t& qosFlowPerTNLInformation);
-  bool decode(const Ngap_QosFlowPerTNLInformation_t& qosFlowPerTNLInformation);
+  bool encode(Ngap_QosFlowPerTNLInformation_t& qosFlowPerTnlInformation) const;
+  bool decode(const Ngap_QosFlowPerTNLInformation_t& qosFlowPerTnlInformation);
 
  private:
-  UpTransportLayerInformation uPTransportLayerInformation;  // Mandatory
-  AssociatedQosFlowList associatedQosFlowList;              // Mandatory
+  UpTransportLayerInformation m_UpTransportLayerInformation;  // Mandatory
+  AssociatedQosFlowList m_AssociatedQosFlowList;              // Mandatory
 };
 
 }  // namespace ngap

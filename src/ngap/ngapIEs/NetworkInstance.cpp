@@ -25,38 +25,38 @@ namespace ngap {
 
 //------------------------------------------------------------------------------
 NetworkInstance::NetworkInstance() {
-  network_instance_ = 0;
+  m_NetworkInstance = 0;
 }
 
 //------------------------------------------------------------------------------
-NetworkInstance::NetworkInstance(long m_networkinstance) {
-  network_instance_ = m_networkinstance;
+NetworkInstance::NetworkInstance(const long& networkInstance) {
+  m_NetworkInstance = networkInstance;
 }
 //------------------------------------------------------------------------------
 NetworkInstance::~NetworkInstance() {}
 
 //------------------------------------------------------------------------------
-void NetworkInstance::set(long m_networkinstance) {
-  network_instance_ = m_networkinstance;
+void NetworkInstance::set(const long& networkInstance) {
+  m_NetworkInstance = networkInstance;
 }
 
 //------------------------------------------------------------------------------
-bool NetworkInstance::get(long& m_networkinstance) const {
-  m_networkinstance = network_instance_;
+bool NetworkInstance::get(long& networkInstance) const {
+  networkInstance = m_NetworkInstance;
 
   return true;
 }
 
 //------------------------------------------------------------------------------
-bool NetworkInstance::encode(Ngap_NetworkInstance_t& value) {
-  value = network_instance_;
+bool NetworkInstance::encode(Ngap_NetworkInstance_t& value) const {
+  value = m_NetworkInstance;
 
   return true;
 }
 
 //------------------------------------------------------------------------------
-bool NetworkInstance::decode(Ngap_NetworkInstance_t value) {
-  network_instance_ = value;
+bool NetworkInstance::decode(const Ngap_NetworkInstance_t& value) {
+  m_NetworkInstance = value;
 
   return true;
 }

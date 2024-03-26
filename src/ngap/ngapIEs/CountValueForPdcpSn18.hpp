@@ -32,15 +32,15 @@ class CountValueForPdcpSn18 {
   CountValueForPdcpSn18();
   virtual ~CountValueForPdcpSn18();
 
-  void setvalue(long pDCP, long hfn_PDCP);
-  void getvalue(long& pDCP, long& hFN_PDCP) const;
+  void set(const long& pDCP, const long& hfn_PDCP);
+  void get(long& pDCP, long& hFN_PDCP) const;
 
   bool encode(Ngap_COUNTValueForPDCP_SN18_t& countvalue) const;
   bool decode(const Ngap_COUNTValueForPDCP_SN18_t& countValue);
 
  private:
-  long pdcp;      // Mandatory (18 bits)
-  long hfn_pdcp;  // Mandatory (14 bits)
+  long m_Pdcp;     // Mandatory (18 bits)
+  long m_HfnPdcp;  // Mandatory (14 bits)
 };
 
 }  // namespace ngap

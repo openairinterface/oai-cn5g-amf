@@ -29,7 +29,7 @@ namespace ngap {
 //------------------------------------------------------------------------------
 PduSessionResourceReleaseCommandTransfer::
     PduSessionResourceReleaseCommandTransfer() {
-  pduSessionResourceReleaseCommandTransferIEs =
+  m_PduSessionResourceReleaseCommandTransferIe =
       (Ngap_PDUSessionResourceReleaseCommandTransfer_t*) calloc(
           1, sizeof(Ngap_PDUSessionResourceReleaseCommandTransfer_t));
 }
@@ -37,20 +37,20 @@ PduSessionResourceReleaseCommandTransfer::
 //------------------------------------------------------------------------------
 PduSessionResourceReleaseCommandTransfer::
     ~PduSessionResourceReleaseCommandTransfer() {
-  // if(pduSessionResourceReleaseCommandTransferIEs)
-  // ASN_STRUCT_FREE(asn_DEF_Ngap_PDUSessionResourceReleaseCommandTransfer,pduSessionResourceReleaseCommandTransferIEs);
-  // if (pduSessionResourceReleaseCommandTransferIEs)
-  // free(pduSessionResourceReleaseCommandTransferIEs);
+  // if(m_PduSessionResourceReleaseCommandTransferIe)
+  // ASN_STRUCT_FREE(asn_DEF_Ngap_PDUSessionResourceReleaseCommandTransfer,m_PduSessionResourceReleaseCommandTransferIe);
+  // if (m_PduSessionResourceReleaseCommandTransferIe)
+  // free(m_PduSessionResourceReleaseCommandTransferIe);
 }
 
 //------------------------------------------------------------------------------
 void PduSessionResourceReleaseCommandTransfer::setCauseRadioNetwork(
-    e_Ngap_CauseRadioNetwork cause_value) {
-  causeValue_.setChoiceOfCause(Ngap_Cause_PR_radioNetwork);
-  causeValue_.setValue(cause_value);
+    e_Ngap_CauseRadioNetwork causeValue) {
+  m_CauseValue.setChoiceOfCause(Ngap_Cause_PR_radioNetwork);
+  m_CauseValue.set(causeValue);
 
   int ret =
-      causeValue_.encode(pduSessionResourceReleaseCommandTransferIEs->cause);
+      m_CauseValue.encode(m_PduSessionResourceReleaseCommandTransferIe->cause);
   if (!ret) {
     Logger::ngap().error("Encode CauseRadioNetwork IE error");
     return;
@@ -59,12 +59,12 @@ void PduSessionResourceReleaseCommandTransfer::setCauseRadioNetwork(
 
 //------------------------------------------------------------------------------
 void PduSessionResourceReleaseCommandTransfer::setCauseTransport(
-    e_Ngap_CauseTransport cause_value) {
-  causeValue_.setChoiceOfCause(Ngap_Cause_PR_transport);
-  causeValue_.setValue(cause_value);
+    e_Ngap_CauseTransport causeValue) {
+  m_CauseValue.setChoiceOfCause(Ngap_Cause_PR_transport);
+  m_CauseValue.set(causeValue);
 
   int ret =
-      causeValue_.encode(pduSessionResourceReleaseCommandTransferIEs->cause);
+      m_CauseValue.encode(m_PduSessionResourceReleaseCommandTransferIe->cause);
   if (!ret) {
     Logger::ngap().error("Encode CauseTransport IE error");
     return;
@@ -73,12 +73,12 @@ void PduSessionResourceReleaseCommandTransfer::setCauseTransport(
 
 //------------------------------------------------------------------------------
 void PduSessionResourceReleaseCommandTransfer::setCauseNas(
-    e_Ngap_CauseNas cause_value) {
-  causeValue_.setChoiceOfCause(Ngap_Cause_PR_nas);
-  causeValue_.setValue(cause_value);
+    e_Ngap_CauseNas causeValue) {
+  m_CauseValue.setChoiceOfCause(Ngap_Cause_PR_nas);
+  m_CauseValue.set(causeValue);
 
   int ret =
-      causeValue_.encode(pduSessionResourceReleaseCommandTransferIEs->cause);
+      m_CauseValue.encode(m_PduSessionResourceReleaseCommandTransferIe->cause);
   if (!ret) {
     Logger::ngap().error("Encode CauseNas IE error");
     return;
@@ -87,12 +87,12 @@ void PduSessionResourceReleaseCommandTransfer::setCauseNas(
 
 //------------------------------------------------------------------------------
 void PduSessionResourceReleaseCommandTransfer::setCauseProtocol(
-    e_Ngap_CauseProtocol cause_value) {
-  causeValue_.setChoiceOfCause(Ngap_Cause_PR_protocol);
-  causeValue_.setValue(cause_value);
+    e_Ngap_CauseProtocol causeValue) {
+  m_CauseValue.setChoiceOfCause(Ngap_Cause_PR_protocol);
+  m_CauseValue.set(causeValue);
 
   int ret =
-      causeValue_.encode(pduSessionResourceReleaseCommandTransferIEs->cause);
+      m_CauseValue.encode(m_PduSessionResourceReleaseCommandTransferIe->cause);
   if (!ret) {
     Logger::ngap().error("Encode CauseProtocol IE error");
     return;
@@ -101,12 +101,12 @@ void PduSessionResourceReleaseCommandTransfer::setCauseProtocol(
 
 //------------------------------------------------------------------------------
 void PduSessionResourceReleaseCommandTransfer::setCauseMisc(
-    e_Ngap_CauseMisc cause_value) {
-  causeValue_.setChoiceOfCause(Ngap_Cause_PR_misc);
-  causeValue_.setValue(cause_value);
+    e_Ngap_CauseMisc causeValue) {
+  m_CauseValue.setChoiceOfCause(Ngap_Cause_PR_misc);
+  m_CauseValue.set(causeValue);
 
   int ret =
-      causeValue_.encode(pduSessionResourceReleaseCommandTransferIEs->cause);
+      m_CauseValue.encode(m_PduSessionResourceReleaseCommandTransferIe->cause);
   if (!ret) {
     Logger::ngap().error("Encode CauseMisc IE error");
     return;
@@ -118,10 +118,10 @@ int PduSessionResourceReleaseCommandTransfer::encode(
     uint8_t* buf, int buf_size) {
   output_wrapper::print_asn_msg(
       &asn_DEF_Ngap_PDUSessionResourceReleaseCommandTransfer,
-      pduSessionResourceReleaseCommandTransferIEs);
+      m_PduSessionResourceReleaseCommandTransferIe);
   asn_enc_rval_t er = aper_encode_to_buffer(
       &asn_DEF_Ngap_PDUSessionResourceReleaseCommandTransfer, NULL,
-      pduSessionResourceReleaseCommandTransferIEs, buf, buf_size);
+      m_PduSessionResourceReleaseCommandTransferIe, buf, buf_size);
   Logger::ngap().debug("er.encoded( %d)", er.encoded);
   return er.encoded;
 }
@@ -132,7 +132,7 @@ bool PduSessionResourceReleaseCommandTransfer::decode(
   asn_dec_rval_t rc = asn_decode(
       NULL, ATS_ALIGNED_CANONICAL_PER,
       &asn_DEF_Ngap_PDUSessionResourceReleaseCommandTransfer,
-      (void**) &pduSessionResourceReleaseCommandTransferIEs, buf, buf_size);
+      (void**) &m_PduSessionResourceReleaseCommandTransferIe, buf, buf_size);
 
   if (rc.code == RC_OK) {
     Logger::ngap().debug("Decoded successfully");
@@ -149,7 +149,8 @@ bool PduSessionResourceReleaseCommandTransfer::decode(
   // &asn_DEF_Ngap_PDUSessionResourceSetupUnsuccessfulTransfer,
   // pduSessionResourceSetupUnsuccessfulTransferIEs);
 
-  if (!causeValue_.decode(pduSessionResourceReleaseCommandTransferIEs->cause)) {
+  if (!m_CauseValue.decode(
+          m_PduSessionResourceReleaseCommandTransferIe->cause)) {
     Logger::ngap().error("Decode Cause IE error");
     return false;
   }
@@ -157,12 +158,12 @@ bool PduSessionResourceReleaseCommandTransfer::decode(
 }
 
 //------------------------------------------------------------------------------
-long PduSessionResourceReleaseCommandTransfer::getChoiceOfCause() {
-  return causeValue_.getChoiceOfCause();
+long PduSessionResourceReleaseCommandTransfer::getChoiceOfCause() const {
+  return m_CauseValue.getChoiceOfCause();
 }
 
 //------------------------------------------------------------------------------
-long PduSessionResourceReleaseCommandTransfer::getCause() {
-  return causeValue_.getValue();
+long PduSessionResourceReleaseCommandTransfer::getCause() const {
+  return m_CauseValue.get();
 }
 }  // namespace ngap

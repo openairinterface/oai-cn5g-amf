@@ -25,34 +25,34 @@ namespace ngap {
 
 //------------------------------------------------------------------------------
 PriorityLevelQos::PriorityLevelQos() {
-  priority_level_ = 0;
+  m_PriorityLevelQos = 0;
 }
 
 //------------------------------------------------------------------------------
 PriorityLevelQos::~PriorityLevelQos() {}
 
 //------------------------------------------------------------------------------
-void PriorityLevelQos::setPriorityLevelQos(long value) {
-  priority_level_ = value;
+void PriorityLevelQos::set(const long& value) {
+  m_PriorityLevelQos = value;
 }
 
 //------------------------------------------------------------------------------
-bool PriorityLevelQos::getPriorityLevelQos(long& value) const {
-  value = priority_level_;
+bool PriorityLevelQos::get(long& value) const {
+  value = m_PriorityLevelQos;
 
   return true;
 }
 
 //------------------------------------------------------------------------------
-bool PriorityLevelQos::encode(Ngap_PriorityLevelQos_t& priority_level) const {
-  priority_level = priority_level_;
+bool PriorityLevelQos::encode(Ngap_PriorityLevelQos_t& priorityLevel) const {
+  priorityLevel = m_PriorityLevelQos;
 
   return true;
 }
 
 //------------------------------------------------------------------------------
-bool PriorityLevelQos::decode(Ngap_PriorityLevelQos_t priority_level) {
-  priority_level_ = priority_level;
+bool PriorityLevelQos::decode(const Ngap_PriorityLevelQos_t& priorityLevel) {
+  m_PriorityLevelQos = priorityLevel;
 
   return true;
 }

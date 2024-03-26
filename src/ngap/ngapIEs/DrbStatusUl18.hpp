@@ -35,14 +35,14 @@ class DrbStatusUl18 {
   DrbStatusUl18();
   virtual ~DrbStatusUl18();
 
-  void get(CountValueForPdcpSn18& count_value) const;
-  void set(const CountValueForPdcpSn18& count_value);
+  void get(CountValueForPdcpSn18& countValue) const;
+  void set(const CountValueForPdcpSn18& countValue);
 
-  bool encode(Ngap_DRBStatusUL18_t& UL18);
-  bool decode(const Ngap_DRBStatusUL18_t& UL18);
+  bool encode(Ngap_DRBStatusUL18_t& ul18) const;
+  bool decode(const Ngap_DRBStatusUL18_t& ul18);
 
  private:
-  CountValueForPdcpSn18 pdcp_value;  // Mandatory
+  CountValueForPdcpSn18 m_PdcpValue;  // Mandatory
   // TODO: Receive Status of UL PDCP SDUs //Optional
 };
 

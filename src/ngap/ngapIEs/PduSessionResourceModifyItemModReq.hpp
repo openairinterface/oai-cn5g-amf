@@ -26,7 +26,7 @@
 
 #include "NasPdu.hpp"
 #include "PduSessionId.hpp"
-#include "S-NSSAI.hpp"
+#include "SNssai.hpp"
 
 extern "C" {
 #include "Ngap_PDUSessionResourceModifyItemModReq.h"
@@ -40,24 +40,24 @@ class PduSessionResourceModifyItemModReq {
   virtual ~PduSessionResourceModifyItemModReq();
 
   void set(
-      const PduSessionId& pdu_session_id, const std::optional<NasPdu>& nas_pdu,
-      const OCTET_STRING_t& pdu_session_resource_modify_request_transfer,
-      const std::optional<S_NSSAI>& s_nssai);
+      const PduSessionId& pduSessionId, const std::optional<NasPdu>& nasPdu,
+      const OCTET_STRING_t& pduSessionResourceModifyRequestTransfer,
+      const std::optional<SNssai>& sNssai);
   void get(
-      PduSessionId& pdu_session_id, std::optional<NasPdu>& nas_pdu,
-      OCTET_STRING_t& pdu_session_resource_modify_request_transfer,
-      std::optional<S_NSSAI>& s_nssai) const;
+      PduSessionId& pduSessionId, std::optional<NasPdu>& nasPdu,
+      OCTET_STRING_t& pduSessionResourceModifyRequestTransfer,
+      std::optional<SNssai>& sNssai) const;
 
   bool encode(Ngap_PDUSessionResourceModifyItemModReq_t&
-                  pduSessionResourceModifyItemModReq);
+                  pduSessionResourceModifyItemModReq) const;
   bool decode(const Ngap_PDUSessionResourceModifyItemModReq_t&
                   pduSessionResourceModifyItemModReq);
 
  private:
-  PduSessionId pdu_session_id_;                                  // Mandatory
-  std::optional<NasPdu> nas_pdu_;                                // Optional
-  OCTET_STRING_t pdu_session_resource_modify_request_transfer_;  // Mandatory
-  std::optional<S_NSSAI> s_nssai_;                               // Optional
+  PduSessionId m_PduSessionId;                               // Mandatory
+  std::optional<NasPdu> m_NasPdu;                            // Optional
+  OCTET_STRING_t m_PduSessionResourceModifyRequestTransfer;  // Mandatory
+  std::optional<SNssai> m_SNssai;                            // Optional
 };
 
 }  // namespace ngap

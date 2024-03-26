@@ -28,8 +28,8 @@ extern "C" {
 
 #include <optional>
 
-#include "GlobalNgENBId.hpp"
-#include "GlobalgNBId.hpp"
+#include "GlobalGnbId.hpp"
+#include "GlobalNgEnbId.hpp"
 
 namespace ngap {
 
@@ -38,23 +38,23 @@ class GlobalRanNodeId {
   GlobalRanNodeId();
   virtual ~GlobalRanNodeId();
 
-  void set(const GlobalgNBId& global_gnb_id);
-  bool get(GlobalgNBId& global_gnb_id) const;
+  void set(const GlobalGnbId& globalGnbId);
+  bool get(GlobalGnbId& globalGnbId) const;
 
-  void set(const GlobalNgENBId& global_ng_enb_id);
-  bool get(GlobalNgENBId& global_ng_enb_id) const;
+  void set(const GlobalNgEnbId& globalNgEnbId);
+  bool get(GlobalNgEnbId& globalNgEnbId) const;
 
-  void setChoiceOfRanNodeId(const Ngap_GlobalRANNodeID_PR& id_present);
+  void setChoiceOfRanNodeId(const Ngap_GlobalRANNodeID_PR& idPresent);
   Ngap_GlobalRANNodeID_PR getChoiceOfRanNodeId() const;
 
-  bool encode(Ngap_GlobalRANNodeID_t&);
+  bool encode(Ngap_GlobalRANNodeID_t&) const;
   bool decode(const Ngap_GlobalRANNodeID_t&);
 
  private:
-  std::optional<GlobalgNBId> global_gnb_id_;
-  std::optional<GlobalNgENBId> global_ng_enb_id_;
+  std::optional<GlobalGnbId> m_GlobalGnbId;
+  std::optional<GlobalNgEnbId> m_GlobalNgEnbId;
   // TODO: Global N3IWF ID
-  Ngap_GlobalRANNodeID_PR id_present_;
+  Ngap_GlobalRANNodeID_PR m_IdPresent;
 };
 
 }  // namespace ngap

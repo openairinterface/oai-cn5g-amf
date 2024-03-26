@@ -22,11 +22,11 @@
 #ifndef _PDU_SESSION_RESOURCE_HANDOVER_REQUEST_ACK_TRANSFER_H_
 #define _PDU_SESSION_RESOURCE_HANDOVER_REQUEST_ACK_TRANSFER_H_
 
-#include "NgapIEsStruct.hpp"
-#include "QosFlowPerTnlInformation.hpp"
+#include "NgapIesStruct.hpp"
 #include "QosFlowListWithDataForwarding.hpp"
+#include "QosFlowPerTnlInformation.hpp"
 #include "SecurityResult.hpp"
-#include "UPTransportLayerInformation.hpp"
+#include "UpTransportLayerInformation.hpp"
 
 extern "C" {
 #include "Ngap_HandoverRequestAcknowledgeTransfer.h"
@@ -40,18 +40,18 @@ class PduSessionResourceHandoverRequestAckTransfer {
   virtual ~PduSessionResourceHandoverRequestAckTransfer();
 
   bool getUpTransportLayerInformation2(GtpTunnel_t*& upTnlInfo);
-  bool getqosFlowSetupResponseList(
-      std::vector<QosFlowLItemWithDataForwarding_t>& list);
+  bool getQosFlowSetupResponseList(
+      std::vector<QosFlowLItemWithDataForwarding_t>& list) const;
 
   bool decode(uint8_t* buf, int buf_size);  // TODO: remove naked pointer
 
  private:
   Ngap_HandoverRequestAcknowledgeTransfer_t*
-      handoverRequestAcknowledegTransferIEs;
+      m_HandoverRequestAcknowledegTransferIe;
   // TODO: DL NG-U UP TNL Information //Mandatory
-  UpTransportLayerInformation dLForwardingUP_TNLInformation;  // Mandatory
+  UpTransportLayerInformation m_DlForwardingUpTnlInformation;  // Mandatory
   // TODO: Security Result //Optional
-  QosFlowListWithDataForwarding QosFlowSetupResponseList;  // Mandatory
+  QosFlowListWithDataForwarding m_QosFlowSetupResponseList;  // Mandatory
   // TODO: QoS Flow Failed to Setup List //Optional
   // TODO: Data Forwarding Response DRB List //Optional
   // TODO: Additional DL UP TNL Information for HO List //Range 0..1

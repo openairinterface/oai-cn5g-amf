@@ -39,15 +39,15 @@ class PduSessionResourceToReleaseListRelCmd {
   virtual ~PduSessionResourceToReleaseListRelCmd();
 
   void set(const std::vector<PduSessionResourceToReleaseItemRelCmd>& list);
-  void get(std::vector<PduSessionResourceToReleaseItemRelCmd>& list);
+  void get(std::vector<PduSessionResourceToReleaseItemRelCmd>& list) const;
 
   bool encode(Ngap_PDUSessionResourceToReleaseListRelCmd_t&
-                  pduSessionResourceToReleaseListRelCmd);
+                  pduSessionResourceToReleaseListRelCmd) const;
   bool decode(const Ngap_PDUSessionResourceToReleaseListRelCmd_t&
                   pduSessionResourceToReleaseListRelCmd);
 
  private:
-  std::vector<PduSessionResourceToReleaseItemRelCmd> item_list_;
+  std::vector<PduSessionResourceToReleaseItemRelCmd> m_ItemList;
 };
 
 }  // namespace ngap

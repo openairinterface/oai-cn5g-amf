@@ -31,17 +31,17 @@ DrbStatusDl18::~DrbStatusDl18() {}
 
 //------------------------------------------------------------------------------
 void DrbStatusDl18::get(CountValueForPdcpSn18& value) const {
-  value = dl_count_value_;
+  value = m_DlCountValue;
 }
 
 //------------------------------------------------------------------------------
 void DrbStatusDl18::set(const CountValueForPdcpSn18& value) {
-  dl_count_value_ = value;
+  m_DlCountValue = value;
 }
 
 //------------------------------------------------------------------------------
-bool DrbStatusDl18::encode(Ngap_DRBStatusDL18_t& DL18) const {
-  if (!dl_count_value_.encode(DL18.dL_COUNTValue)) {
+bool DrbStatusDl18::encode(Ngap_DRBStatusDL18_t& dl18) const {
+  if (!m_DlCountValue.encode(dl18.dL_COUNTValue)) {
     Logger::ngap().error("Encode DRBStatusDL18 IE error");
     return false;
   }
@@ -49,8 +49,8 @@ bool DrbStatusDl18::encode(Ngap_DRBStatusDL18_t& DL18) const {
 }
 
 //------------------------------------------------------------------------------
-bool DrbStatusDl18::decode(const Ngap_DRBStatusDL18_t& DL18) {
-  if (!dl_count_value_.decode(DL18.dL_COUNTValue)) {
+bool DrbStatusDl18::decode(const Ngap_DRBStatusDL18_t& dl18) {
+  if (!m_DlCountValue.decode(dl18.dL_COUNTValue)) {
     Logger::ngap().error("Decode DRBStatusDL18 IE error");
     return false;
   }

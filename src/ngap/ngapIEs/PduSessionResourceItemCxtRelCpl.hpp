@@ -35,16 +35,16 @@ class PduSessionResourceItemCxtRelCpl {
   PduSessionResourceItemCxtRelCpl();
   virtual ~PduSessionResourceItemCxtRelCpl();
 
-  void set(const PduSessionId& pdu_session_id);
-  void get(PduSessionId& pdu_session_id) const;
+  void set(const PduSessionId& pduSessionId);
+  void get(PduSessionId& pduSessionId) const;
 
-  bool encode(Ngap_PDUSessionResourceItemCxtRelCpl_t&
-                  pdu_session_resource_item_cxt_rel_cpl);
-  bool decode(const Ngap_PDUSessionResourceItemCxtRelCpl_t&
-                  pdu_session_resource_item_cxt_rel_cpl);
+  bool encode(
+      Ngap_PDUSessionResourceItemCxtRelCpl_t& pduSessionResourceItem) const;
+  bool decode(
+      const Ngap_PDUSessionResourceItemCxtRelCpl_t& pduSessionResourceItem);
 
  private:
-  PduSessionId pdu_session_id_;  // Mandatory
+  PduSessionId m_PduSessionId;  // Mandatory
   // TODO (not defined in ASN1C) OCTET_STRING_t
   // pdu_session_resource_release_response_transfer_; //Optional
 };

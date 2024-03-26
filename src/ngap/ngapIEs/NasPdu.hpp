@@ -44,14 +44,14 @@ class NasPdu {
   bool get(bstring& pdu) const;
   bool set(const bstring& pdu);
 
-  bool get(NasPdu& nas_pdu) const;
-  bool set(const NasPdu& nas_pdu);
+  bool get(NasPdu& nasPdu) const;
+  bool set(const NasPdu& nasPdu);
 
-  bool encode(Ngap_NAS_PDU_t&);
+  bool encode(Ngap_NAS_PDU_t&) const;
   bool decode(const Ngap_NAS_PDU_t&);
 
  private:
-  bstring pdu_bstring;
+  bstring m_Pdu;
 };
 
 }  // namespace ngap

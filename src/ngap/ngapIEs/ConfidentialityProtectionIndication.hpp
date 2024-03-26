@@ -33,14 +33,14 @@ class ConfidentialityProtectionIndication {
   ConfidentialityProtectionIndication();
   virtual ~ConfidentialityProtectionIndication();
 
-  void set(e_Ngap_ConfidentialityProtectionIndication indication);
+  void set(const e_Ngap_ConfidentialityProtectionIndication& indication);
   bool get(long& indication) const;
 
   bool encode(Ngap_ConfidentialityProtectionIndication_t&) const;
   bool decode(const Ngap_ConfidentialityProtectionIndication_t&);
 
  private:
-  long indication_;
+  long m_Indication;
 };
 
 }  // namespace ngap

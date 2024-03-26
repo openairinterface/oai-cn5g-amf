@@ -33,15 +33,15 @@ class PacketErrorRate {
   PacketErrorRate();
   virtual ~PacketErrorRate();
 
-  void setPacketErrorRate(long scalar, long exponent);
-  bool getPacketErrorRate(long& scalar, long& exponent) const;
+  void set(const long& scalar, const long& exponent);
+  bool get(long& scalar, long& exponent) const;
 
   bool encode(Ngap_PacketErrorRate_t&) const;
   bool decode(const Ngap_PacketErrorRate_t&);
 
  private:
-  long scalar_;
-  long exponent_;
+  long m_Scalar;
+  long m_Exponent;
 };
 
 }  // namespace ngap

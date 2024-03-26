@@ -25,7 +25,7 @@ namespace ngap {
 
 //------------------------------------------------------------------------------
 Pre_emptionCapability::Pre_emptionCapability() {
-  pre_emption_capability_ = 0;
+  m_Pre_emptionCapability = 0;
 }
 
 //------------------------------------------------------------------------------
@@ -33,13 +33,13 @@ Pre_emptionCapability::~Pre_emptionCapability() {}
 
 //------------------------------------------------------------------------------
 void Pre_emptionCapability::set(e_Ngap_Pre_emptionCapability value) {
-  pre_emption_capability_ = value;
+  m_Pre_emptionCapability = value;
 }
 
 //------------------------------------------------------------------------------
-bool Pre_emptionCapability::get(e_Ngap_Pre_emptionCapability& value) {
-  if ((pre_emption_capability_ == 0) || (pre_emption_capability_ == 1))
-    value = (e_Ngap_Pre_emptionCapability) pre_emption_capability_;
+bool Pre_emptionCapability::get(e_Ngap_Pre_emptionCapability& value) const {
+  if ((m_Pre_emptionCapability == 0) || (m_Pre_emptionCapability == 1))
+    value = (e_Ngap_Pre_emptionCapability) m_Pre_emptionCapability;
   else
     return false;
 
@@ -49,15 +49,15 @@ bool Pre_emptionCapability::get(e_Ngap_Pre_emptionCapability& value) {
 //------------------------------------------------------------------------------
 bool Pre_emptionCapability::encode(
     Ngap_Pre_emptionCapability_t& pre_emptionCapability) const {
-  pre_emptionCapability = pre_emption_capability_;
+  pre_emptionCapability = m_Pre_emptionCapability;
 
   return true;
 }
 
 //------------------------------------------------------------------------------
 bool Pre_emptionCapability::decode(
-    Ngap_Pre_emptionCapability_t pre_emptionCapability) {
-  pre_emption_capability_ = pre_emptionCapability;
+    const Ngap_Pre_emptionCapability_t& pre_emptionCapability) {
+  m_Pre_emptionCapability = pre_emptionCapability;
 
   return true;
 }

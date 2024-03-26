@@ -32,27 +32,25 @@ PduSessionResourceSetupListSURes::~PduSessionResourceSetupListSURes() {}
 //------------------------------------------------------------------------------
 void PduSessionResourceSetupListSURes::set(
     const std::vector<PduSessionResourceSetupItemSURes>& list) {
-  item_list_ = list;
+  m_ItemList = list;
 }
 
 //------------------------------------------------------------------------------
 void PduSessionResourceSetupListSURes::get(
     std::vector<PduSessionResourceSetupItemSURes>& list) const {
-  list = item_list_;
+  list = m_ItemList;
 }
 
 //------------------------------------------------------------------------------
 bool PduSessionResourceSetupListSURes::encode(
-    Ngap_PDUSessionResourceSetupListSURes_t&
-        pdu_session_resource_setup_list_su_res) {
-  for (auto& item : item_list_) {
+    Ngap_PDUSessionResourceSetupListSURes_t& pduSessionResourceList) const {
+  for (auto& item : m_ItemList) {
     Ngap_PDUSessionResourceSetupItemSURes_t* response =
         (Ngap_PDUSessionResourceSetupItemSURes_t*) calloc(
             1, sizeof(Ngap_PDUSessionResourceSetupItemSURes_t));
     if (!response) return false;
     if (!item.encode(*response)) return false;
-    if (ASN_SEQUENCE_ADD(
-            &pdu_session_resource_setup_list_su_res.list, response) != 0)
+    if (ASN_SEQUENCE_ADD(&pduSessionResourceList.list, response) != 0)
       return false;
   }
 
@@ -61,13 +59,11 @@ bool PduSessionResourceSetupListSURes::encode(
 
 //------------------------------------------------------------------------------
 bool PduSessionResourceSetupListSURes::decode(
-    const Ngap_PDUSessionResourceSetupListSURes_t&
-        pdu_session_resource_setup_list_su_res) {
-  for (int i = 0; i < pdu_session_resource_setup_list_su_res.list.count; i++) {
+    const Ngap_PDUSessionResourceSetupListSURes_t& pduSessionResourceList) {
+  for (int i = 0; i < pduSessionResourceList.list.count; i++) {
     PduSessionResourceSetupItemSURes item = {};
-    if (!item.decode(*pdu_session_resource_setup_list_su_res.list.array[i]))
-      return false;
-    item_list_.push_back(item);
+    if (!item.decode(*pduSessionResourceList.list.array[i])) return false;
+    m_ItemList.push_back(item);
   }
 
   return true;

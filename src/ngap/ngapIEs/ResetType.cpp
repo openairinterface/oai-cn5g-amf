@@ -27,57 +27,57 @@ namespace ngap {
 
 //------------------------------------------------------------------------------
 ResetType::ResetType() {
-  present            = Ngap_ResetType_PR_NOTHING;
-  nG_Interface       = std::nullopt;
-  partOfNG_Interface = std::nullopt;
+  m_Present           = Ngap_ResetType_PR_NOTHING;
+  m_NgInterface       = std::nullopt;
+  m_PartOfNgInterface = std::nullopt;
 }
 
 //------------------------------------------------------------------------------
 ResetType::~ResetType() {}
 
 //------------------------------------------------------------------------------
-void ResetType::setResetType(long nG_Interface) {
-  this->present      = Ngap_ResetType_PR_nG_Interface;
-  this->nG_Interface = std::make_optional<long>(nG_Interface);
-  partOfNG_Interface = std::nullopt;
+void ResetType::setResetType(const long& ngInterface) {
+  m_Present           = Ngap_ResetType_PR_nG_Interface;
+  m_NgInterface       = std::make_optional<long>(ngInterface);
+  m_PartOfNgInterface = std::nullopt;
 }
 
 //------------------------------------------------------------------------------
 void ResetType::setResetType(
-    std::vector<UEAssociatedLogicalNGConnectionItem> list) {
-  this->present = Ngap_ResetType_PR_partOfNG_Interface;
-  nG_Interface  = std::nullopt;
+    const std::vector<UeAssociatedLogicalNgConnectionItem>& list) {
+  m_Present     = Ngap_ResetType_PR_partOfNG_Interface;
+  m_NgInterface = std::nullopt;
 
-  UEAssociatedLogicalNGConnectionList list_tmp = {};
+  UeAssociatedLogicalNgConnectionList list_tmp = {};
   list_tmp.set(list);
-  partOfNG_Interface =
-      std::make_optional<UEAssociatedLogicalNGConnectionList>(list_tmp);
+  m_PartOfNgInterface =
+      std::make_optional<UeAssociatedLogicalNgConnectionList>(list_tmp);
 }
 
 //------------------------------------------------------------------------------
 void ResetType::getResetType(
-    struct Ngap_UE_associatedLogicalNG_connectionList*&) {
+    struct Ngap_UE_associatedLogicalNG_connectionList*&) const {
   // TODO:
   return;
 }
 
 //------------------------------------------------------------------------------
-bool ResetType::encode(Ngap_ResetType_t& type) {
+bool ResetType::encode(Ngap_ResetType_t& type) const {
   // TODO:
   return true;
 }
 
 //------------------------------------------------------------------------------
 bool ResetType::decode(const Ngap_ResetType_t& type) {
-  present = type.present;
+  m_Present = type.present;
   if (type.present == Ngap_ResetType_PR_nG_Interface) {
-    nG_Interface = std::make_optional<long>((long) type.choice.nG_Interface);
+    m_NgInterface = std::make_optional<long>((long) type.choice.nG_Interface);
     return true;
   } else if (type.present == Ngap_ResetType_PR_partOfNG_Interface) {
-    UEAssociatedLogicalNGConnectionList list_tmp = {};
+    UeAssociatedLogicalNgConnectionList list_tmp = {};
     list_tmp.decode(*type.choice.partOfNG_Interface);
-    partOfNG_Interface =
-        std::make_optional<UEAssociatedLogicalNGConnectionList>(list_tmp);
+    m_PartOfNgInterface =
+        std::make_optional<UeAssociatedLogicalNgConnectionList>(list_tmp);
   } else {
     return false;
   }
@@ -85,36 +85,37 @@ bool ResetType::decode(const Ngap_ResetType_t& type) {
 }
 
 //------------------------------------------------------------------------------
-void ResetType::getResetType(long& resetType) {
+void ResetType::getResetType(long& resetType) const {
   // TODO
 }
 
-uint8_t ResetType::getResetType() {
-  return present;
+//------------------------------------------------------------------------------
+uint8_t ResetType::getResetType() const {
+  return m_Present;
 }
 
 //------------------------------------------------------------------------------
-void ResetType::getUEAssociatedLogicalNGConnectionList(
-    struct Ngap_UE_associatedLogicalNG_connectionList*& list) {
+void ResetType::getUeAssociatedLogicalNgConnectionList(
+    struct Ngap_UE_associatedLogicalNG_connectionList*& list) const {
   // TODO:
 }
 
 //------------------------------------------------------------------------------
-void ResetType::setUE_associatedLogicalNG_connectionList(
-    std::vector<UEAssociatedLogicalNGConnectionItem> list) {
-  this->present = Ngap_ResetType_PR_partOfNG_Interface;
-  nG_Interface  = std::nullopt;
-  UEAssociatedLogicalNGConnectionList list_tmp = {};
+void ResetType::setUeAssociatedLogicalNgConnectionList(
+    const std::vector<UeAssociatedLogicalNgConnectionItem>& list) {
+  m_Present     = Ngap_ResetType_PR_partOfNG_Interface;
+  m_NgInterface = std::nullopt;
+  UeAssociatedLogicalNgConnectionList list_tmp = {};
   list_tmp.set(list);
-  partOfNG_Interface =
-      std::make_optional<UEAssociatedLogicalNGConnectionList>(list_tmp);
+  m_PartOfNgInterface =
+      std::make_optional<UeAssociatedLogicalNgConnectionList>(list_tmp);
 }
 
 //------------------------------------------------------------------------------
-void ResetType::getUEAssociatedLogicalNGConnectionList(
-    std::vector<UEAssociatedLogicalNGConnectionItem>& list) {
-  if (partOfNG_Interface.has_value()) {
-    partOfNG_Interface.value().get(list);
+void ResetType::getUeAssociatedLogicalNgConnectionList(
+    std::vector<UeAssociatedLogicalNgConnectionItem>& list) const {
+  if (m_PartOfNgInterface.has_value()) {
+    m_PartOfNgInterface.value().get(list);
   }
 }
 
