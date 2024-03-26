@@ -96,3 +96,18 @@ std::string nas_context::fivegmm_state_to_string(const _5gmm_state_t& state) {
   }
   return "STATE-INVALID";
 }
+
+//------------------------------------------------------------------------------
+std::string nas_context::cm_state_to_string(const cm_state_t& state) {
+  switch (state) {
+    case CM_IDLE: {
+      return "5GMM-IDLE";
+    } break;
+    case CM_CONNECTED: {
+      return "5GMM-CONNECTED";
+    } break;
+    default:
+      return "STATE-INVALID";
+  }
+  return "STATE-INVALID";
+}

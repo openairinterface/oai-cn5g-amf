@@ -789,9 +789,9 @@ void amf_n1::identity_response_handle(
   if (nc->to_be_register_by_new_suci) {
     // Update 5GMM State
     ue_info_t ueItem;
-    ueItem.connStatus = "5GMM-CONNECTED";  //"CM-CONNECTED";
+    ueItem.connStatus = nas_context::cm_state_to_string(CM_CONNECTED);
     ueItem.registerStatus =
-        "COMM-PROC-INIT";  // 5GMM-COMMON-PROCEDURE-INITIATED
+        nas_context::fivegmm_state_to_string(_5GMM_COMMON_PROCEDURE_INITIATED);
     ueItem.ranid = ran_ue_ngap_id;
     ueItem.amfid = amf_ue_ngap_id;
     ueItem.imsi  = nc->imsi;
@@ -1545,9 +1545,9 @@ void amf_n1::registration_request_handle(
             "Associating SUPI (%s) with NAS context", supi.c_str());
         // Update 5GMM state
         ue_info_t ueItem;
-        ueItem.connStatus = "5GMM-CONNECTED";  //"CM-CONNECTED";
-        ueItem.registerStatus =
-            "COMM-PROC-INIT";  // 5GMM-COMMON-PROCEDURE-INITIATED
+        ueItem.connStatus     = nas_context::cm_state_to_string(CM_CONNECTED);
+        ueItem.registerStatus = nas_context::fivegmm_state_to_string(
+            _5GMM_COMMON_PROCEDURE_INITIATED);
         ueItem.ranid = ran_ue_ngap_id;
         ueItem.amfid = amf_ue_ngap_id;
         ueItem.imsi  = nc->imsi;
