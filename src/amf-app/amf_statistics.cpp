@@ -191,7 +191,8 @@ std::string statistics::get_ues_info() const {
           .append(
               ie_to_string(kStatisticsHalfIndexColLength, std::to_string(i)))
           .append(ie_to_string(
-              kStatisticsHalfIeLengthForUe, ue.second.registerStatus))
+              kStatisticsHalfIeLengthForUe,
+              nas_context::fivegmm_state_to_string(ue.second.register_status)))
           .append(ie_to_string(kStatisticsHalfIeLengthForUe, ue.second.imsi))
           .append(ie_to_string(kStatisticsHalfIeLengthForUe, ue.second.guti))
           .append(ie_to_string(
@@ -243,13 +244,14 @@ void statistics::update_5gmm_state(
   if (!nc) return;
   std::unique_lock lock(m_ue_infos);
   if (ue_infos.count(nc->imsi) > 0) {
-    ue_info_t ue_info      = ue_infos.at(nc->imsi);
-    ue_info.registerStatus = nas_context::fivegmm_state_to_string(state);
+    ue_info_t ue_info       = ue_infos.at(nc->imsi);
+    ue_info.register_status = state;
+    ;
     if (nc->guti.has_value()) ue_info.guti = nc->guti.value();
     ue_infos.at(nc->imsi) = ue_info;
     Logger::amf_app().debug(
         "The UE's state (IMSI %s, State %s) has been successfully updated!",
-        nc->imsi.c_str(), ue_info.registerStatus.c_str());
+        nc->imsi.c_str(), nas_context::fivegmm_state_to_string(state).c_str());
   } else {
     Logger::amf_app().warn(
         "Update UE State (IMSI %s), UE does not exist!", nc->imsi.c_str());

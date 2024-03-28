@@ -789,12 +789,11 @@ void amf_n1::identity_response_handle(
   if (nc->to_be_register_by_new_suci) {
     // Update 5GMM State
     ue_info_t ueItem;
-    ueItem.connStatus = nas_context::cm_state_to_string(CM_CONNECTED);
-    ueItem.registerStatus =
-        nas_context::fivegmm_state_to_string(_5GMM_COMMON_PROCEDURE_INITIATED);
-    ueItem.ranid = ran_ue_ngap_id;
-    ueItem.amfid = amf_ue_ngap_id;
-    ueItem.imsi  = nc->imsi;
+    ueItem.cm_status       = CM_CONNECTED;
+    ueItem.register_status = _5GMM_COMMON_PROCEDURE_INITIATED;
+    ueItem.ranid           = ran_ue_ngap_id;
+    ueItem.amfid           = amf_ue_ngap_id;
+    ueItem.imsi            = nc->imsi;
     if (nc->guti.has_value()) ueItem.guti = nc->guti.value();
 
     // Find UE context
@@ -1544,12 +1543,11 @@ void amf_n1::registration_request_handle(
             "Associating SUPI (%s) with NAS context", supi.c_str());
         // Update 5GMM state
         ue_info_t ueItem;
-        ueItem.connStatus     = nas_context::cm_state_to_string(CM_CONNECTED);
-        ueItem.registerStatus = nas_context::fivegmm_state_to_string(
-            _5GMM_COMMON_PROCEDURE_INITIATED);
-        ueItem.ranid = ran_ue_ngap_id;
-        ueItem.amfid = amf_ue_ngap_id;
-        ueItem.imsi  = nc->imsi;
+        ueItem.cm_status       = CM_CONNECTED;
+        ueItem.register_status = _5GMM_COMMON_PROCEDURE_INITIATED;
+        ueItem.ranid           = ran_ue_ngap_id;
+        ueItem.amfid           = amf_ue_ngap_id;
+        ueItem.imsi            = nc->imsi;
         if (nc->guti.has_value()) ueItem.guti = nc->guti.value();
         ueItem.mcc    = uc->cgi.mcc;
         ueItem.mnc    = uc->cgi.mnc;

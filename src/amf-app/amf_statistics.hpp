@@ -61,8 +61,8 @@ typedef struct {
 } gnb_infos;
 
 typedef struct ue_info_s {
-  std::string connStatus;
-  std::string registerStatus;
+  cm_state_t cm_status;
+  _5gmm_state_t register_status;
   uint32_t ranid;
   long amfid;
   std::string imsi;
