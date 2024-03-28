@@ -868,8 +868,7 @@ void amf_n1::service_request_handle(
 
   // Prepare Service Accept
   auto service_accept = std::make_unique<ServiceAccept>();
-  service_accept->SetHeader(kPlain5gsMessage);
-  std::string supi = amf_conv::imsi_to_supi(nc->imsi);
+  std::string supi    = amf_conv::imsi_to_supi(nc->imsi);
 
   Logger::amf_n1().debug(
       "amf_ue_ngap_id " AMF_UE_NGAP_ID_FMT
@@ -1182,9 +1181,8 @@ void amf_n1::service_request_handle(
   }
 
   auto service_accept = std::make_unique<ServiceAccept>();
-  service_accept->SetHeader(kPlain5gsMessage);
-  std::string supi = "imsi-" + nc->imsi;
-  uc->supi         = supi;
+  std::string supi    = "imsi-" + nc->imsi;
+  uc->supi            = supi;
   set_supi_2_amf_id(supi, amf_ue_ngap_id);
   set_supi_2_ran_id(supi, ran_ue_ngap_id);
 
@@ -1443,7 +1441,6 @@ void amf_n1::send_service_reject(
 
   std::unique_ptr<ServiceReject> service_reject =
       std::make_unique<ServiceReject>();
-  service_reject->SetHeader(kPlain5gsMessage);
   service_reject->Set5gmmCause(cause);
 
   uint32_t msg_len = service_reject->GetLength();
@@ -1995,7 +1992,6 @@ void amf_n1::send_registration_reject_msg(
     const long amf_ue_ngap_id) {
   Logger::amf_n1().debug("Create Registration Reject and send to UE");
   auto registration_reject = std::make_unique<RegistrationReject>();
-  registration_reject->SetHeader(kPlain5gsMessage);
   registration_reject->Set5gmmCause(cause_value);
   uint32_t msg_len = registration_reject->GetLength();
   Logger::nas_mm().debug("Size of Registration Reject message %ld", msg_len);
@@ -2077,7 +2073,6 @@ void amf_n1::run_registration_procedure(std::shared_ptr<nas_context>& nc) {
     Logger::amf_n1().debug("Start to run UE Identification Request procedure");
     nc->is_auth_vectors_present = false;
     auto identity_request       = std::make_unique<IdentityRequest>();
-    identity_request->SetHeader(kPlain5gsMessage);
     identity_request->Set5gsIdentityType(kSuci);
 
     uint32_t msg_len = identity_request->GetLength();
@@ -2524,7 +2519,6 @@ bool amf_n1::start_authentication_procedure(
 
   nc->is_common_procedure_for_authentication_running = true;
   auto auth_request = std::make_unique<AuthenticationRequest>();
-  auth_request->SetHeader(kPlain5gsMessage);
   auth_request->SetNgKsi(kNasKeySetIdentifierNative, ngksi);
   uint8_t abba[2];
   abba[0] = 0x00;
@@ -2797,7 +2791,6 @@ bool amf_n1::start_security_mode_control_procedure(
   }
 
   auto smc = std::make_unique<SecurityModeCommand>();
-  smc->SetHeader(kPlain5gsMessage);
   smc->SetNasSecurityAlgorithms(amf_nea, amf_nia);
   Logger::amf_n1().debug("Encoded ngKSI 0x%x", nc->ngksi);
   smc->SetNgKsi(kNasKeySetIdentifierNative, nc->ngksi & 0x07);
@@ -3194,7 +3187,6 @@ void amf_n1::registration_complete_handle(
   auto configuration_update_command =
       std::make_unique<ConfigurationUpdateCommand>();
 
-  configuration_update_command->SetHeader(kPlain5gsMessage);
   configuration_update_command->SetFullNameForNetwork("Testing");   // TODO:
   configuration_update_command->SetShortNameForNetwork("Testing");  // TODO:
 
@@ -3553,7 +3545,6 @@ void amf_n1::ue_initiate_de_registration_handle(
   if ((deregType & kDeregistrationTypeMask) == 0) {
     // Prepare DeregistrationAccept
     auto dereg_accept = std::make_unique<DeregistrationAccept>();
-    dereg_accept->SetHeader(kPlain5gsMessage);
 
     uint32_t msg_len = dereg_accept->GetLength();
     Logger::nas_mm().debug(
@@ -4583,8 +4574,6 @@ void amf_n1::get_pdu_session_to_be_activated(
 void amf_n1::initialize_registration_accept(
     std::unique_ptr<RegistrationAccept>& registration_accept,
     const std::shared_ptr<nas_context>& nc) {
-  registration_accept->SetHeader(kPlain5gsMessage);
-
   // Registration Result
   registration_accept->Set5gsRegistrationResult(
       false, false, false,

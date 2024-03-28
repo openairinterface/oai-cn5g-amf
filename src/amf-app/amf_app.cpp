@@ -393,7 +393,6 @@ void amf_app::handle_itti_message(
     if (itti_msg.is_n1sm_set) {
       // Encode DL NAS TRANSPORT message(NAS message)
       auto dl = std::make_unique<DlNasTransport>();
-      dl->SetHeader(kPlain5gsMessage);
       dl->SetPayloadContainerType(kN1SmInformation);
       dl->SetPayloadContainer(
           (uint8_t*) bdata(bstrcpy(itti_msg.n1sm)), blength(itti_msg.n1sm));
