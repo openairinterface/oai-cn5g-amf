@@ -25,7 +25,12 @@
 #include <vector>
 
 #include "amf.hpp"
+#include "config.hpp"
+#include "nas_context.hpp"
 #include "ngap_app.hpp"
+
+constexpr auto kStatisticGnbStatusConnected    = "Connected";
+constexpr auto kStatisticGnbStatusDisconnected = "Disconnected";
 
 typedef struct {
   uint32_t gnb_id;
@@ -34,6 +39,7 @@ typedef struct {
   std::string mcc;
   std::string mnc;
   std::string gnb_name;
+  std::string status;
   uint32_t tac;
   // long nrCellId;
   std::string plmn_to_string() const {
@@ -55,8 +61,8 @@ typedef struct {
 } gnb_infos;
 
 typedef struct ue_info_s {
-  std::string connStatus;
-  std::string registerStatus;
+  cm_state_t cm_status;
+  _5gmm_state_t register_status;
   uint32_t ranid;
   long amfid;
   std::string imsi;
@@ -66,17 +72,54 @@ typedef struct ue_info_s {
   uint32_t cellId;
 } ue_info_t;
 
+constexpr uint8_t kStatisticsIndent             = 3;
+constexpr uint8_t kStatisticsHalfIndexColLength = 4;
+constexpr uint8_t kStatisticsHalfIeLengthForGnb = 18;
+constexpr uint8_t kStatisticsHalfIeLengthForUe  = 10;
+
 class statistics {
  public:
   statistics();
   ~statistics();
 
   /*
-   * Display the AMF configuration parameters
+   * Display the statistic information for gNB and UE
    * @param void
    * @return void
    */
   void display();
+
+  /*
+   * Get the statistic information for all gNBs in string format
+   * @param void
+   * @return std::string
+   */
+  std::string get_gnbs_info() const;
+
+  /*
+   * Get all the statistic information for all UEs in string format
+   * @param void
+   * @return std::string
+   */
+  std::string get_ues_info() const;
+
+  /*
+   * Represent column information in string format
+   * @param [uint8_t] half_ie_len: half of the column's length
+   * @param [const std::string&] ie_str: info in string format
+   * @return void
+   */
+  std::string ie_to_string(
+      uint8_t half_ie_len, const std::string& ie_str) const;
+
+  /*
+   * Represent table header in string format
+   * @param [uint8_t] header_len: the column's length
+   * @param [const std::string&] str: info in string format
+   * @return void
+   */
+  std::string header_to_string(
+      uint8_t header_len, const std::string& str) const;
 
   /*
    * Update UE information
@@ -87,11 +130,12 @@ class statistics {
 
   /*
    * Update UE 5GMM state
-   * @param [const std::string&] imsi: UE IMSI
+   * @param [std::shared_ptr<nas_context>&] nc: UE's NAS context
    * @param [const std::string&] state: UE State
    * @return void
    */
-  void update_5gmm_state(const std::string& imsi, const std::string& state);
+  void update_5gmm_state(
+      const std::shared_ptr<nas_context>& nc, const _5gmm_state_t& state);
 
   /*
    * Remove gNB from the list connected gNB to this AMF
@@ -102,14 +146,6 @@ class statistics {
 
   /*
    * Add gNB to the list connected gNB to this AMF
-   * @param [const uint32_t&] gnb_id: gNB ID
-   * @param [const gnb_infos&] gnb: gNB Info
-   * @return void
-   */
-  void add_gnb(const uint32_t& gnb_id, const gnb_infos& gnb);
-
-  /*
-   * Add gNB to the list connected gNB to this AMF
    * @param [const std::shared_ptr<gnb_context> &] gc: pointer to gNB Context
    * @return void
    */
@@ -117,11 +153,12 @@ class statistics {
 
   /*
    * Update gNB info
-   * @param [const uint32_t&] gnb_id: gNB ID
-   * @param [const gnb_infos&] gnb: gNB Info
+   * @param [const std::shared_ptr<gnb_context>] gc: gNB's context
+   * @param [const std::string&] status: gNB's status
    * @return void
    */
-  void update_gnb(const uint32_t& gnb_id, const gnb_infos& gnb);
+  void update_gnb(
+      const std::shared_ptr<gnb_context>& gc, const std::string& status);
 
   /*
    * Get number of connected gNBs
@@ -131,9 +168,6 @@ class statistics {
   uint32_t get_number_connected_gnbs() const;
 
  private:
-  uint32_t gNB_connected;
-  uint32_t UE_connected;
-  uint32_t UE_registred;
   std::map<uint32_t, gnb_infos> gnbs;
   mutable std::shared_mutex m_gnbs;
   std::map<std::string, ue_info_t> ue_infos;

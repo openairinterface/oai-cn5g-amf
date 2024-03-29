@@ -21,79 +21,200 @@
 
 #include "amf_statistics.hpp"
 
+#include <string>
+
+#include "amf_conversions.hpp"
 #include "logger.hpp"
 
 //------------------------------------------------------------------------------
-statistics::statistics() : m_ue_infos(), m_gnbs() {
-  gNB_connected = 0;
-  UE_connected  = 0;
-  UE_registred  = 0;
-}
+statistics::statistics() : m_ue_infos(), m_gnbs() {}
 
 //------------------------------------------------------------------------------
 statistics::~statistics() {}
 
 //------------------------------------------------------------------------------
 void statistics::display() {
-  Logger::amf_app().info("");
+  std::string out = {};
+  out.append(get_gnbs_info());
+  out.append(get_ues_info());
+  Logger::amf_app().info(out);
+}
 
-  Logger::amf_app().info(
-      "|-----------------------------------------------------------------------"
-      "---------------------------------------------|");
-  Logger::amf_app().info(
-      "|------------------------------------------------------gNBs' "
-      "information---------------------------------------------|");
-  Logger::amf_app().info(
-      "|    Index    |      Status      |       Global ID       |       gNB "
-      "Name       |                 PLMN               |");
+//------------------------------------------------------------------------------
+std::string statistics::ie_to_string(
+    uint8_t half_ie_len, const std::string& ie_str) const {
+  std::string out          = {};
+  std::string ie_formatter = "{}{: <{}}{}";
+  // Display only maximum half_ie_len*2 characters
+  std::string input_str = ie_str;
+  uint8_t len           = ie_str.length();
+  if (len > (half_ie_len * 2)) input_str = ie_str.substr(0, half_ie_len * 2);
+  len = input_str.length();
+  out.append("|")
+      .append(
+          fmt::format(ie_formatter, "", "", half_ie_len - len / 2, input_str))
+      .append(
+          fmt::format(ie_formatter, "", "", half_ie_len + len / 2 - len, ""));
+  return out;
+}
+
+//------------------------------------------------------------------------------
+std::string statistics::header_to_string(
+    uint8_t header_len, const std::string& header_str) const {
+  std::string out              = {};
+  std::string header_formatter = "{}{:-<{}}{}";
+  uint8_t half_header_len      = header_len / 2;
+  // Display only maximum half_table_len*2 characters
+  std::string input_str = header_str;
+  uint8_t len           = header_str.length();
+  if (len > (half_header_len * 2))
+    input_str = header_str.substr(0, half_header_len * 2);
+  out.append("|")
+      .append(fmt::format(
+          header_formatter, "", "", half_header_len - len / 2, header_str))
+      .append(fmt::format(
+          header_formatter, "", "", half_header_len + len / 2 - len, ""));
+  if (header_len % 2 == 1) {
+    std::string aligned_str = fmt::format("{:-<{}}", "", 1);
+    out.append(aligned_str);
+  }
+  return out;
+}
+
+//------------------------------------------------------------------------------
+std::string statistics::get_gnbs_info() const {
+  std::string out          = {};
+  std::string inner_indent = fmt::format("{:<{}}", "", kStatisticsIndent);
+  uint8_t header_length    = 0;
+  // List of gNBs
+  uint8_t number_cols = 4;  // without column index
+  header_length       = kStatisticsHalfIndexColLength * 2 +
+                  kStatisticsHalfIeLengthForGnb * 2 * number_cols + number_cols;
+  out.append("\n");
+  out.append(inner_indent)
+      .append(header_to_string(header_length, ""))
+      .append("|\n");
+
+  out.append(inner_indent)
+      .append(header_to_string(header_length, "gNBs' Information"))
+      .append("|\n");
+
+  out.append(inner_indent)
+      .append(ie_to_string(kStatisticsHalfIndexColLength, "Index"))
+      .append(ie_to_string(kStatisticsHalfIeLengthForGnb, "Status"))
+      .append(ie_to_string(kStatisticsHalfIeLengthForGnb, "Global Id"))
+      .append(ie_to_string(kStatisticsHalfIeLengthForGnb, "gNB Name"))
+      .append(ie_to_string(kStatisticsHalfIeLengthForGnb, "PLMN"))
+      .append("|\n");
+
   if (gnbs.size() == 0) {
-    Logger::amf_app().info(
-        "|      -      |          -       |           -           |           "
-        "-          |                 -                  |");
+    out.append(inner_indent)
+        .append(ie_to_string(kStatisticsHalfIndexColLength, "-"))
+        .append(ie_to_string(kStatisticsHalfIeLengthForGnb, "-"))
+        .append(ie_to_string(kStatisticsHalfIeLengthForGnb, "-"))
+        .append(ie_to_string(kStatisticsHalfIeLengthForGnb, "-"))
+        .append(ie_to_string(kStatisticsHalfIeLengthForGnb, "-"))
+        .append("|\n");
+  } else {
+    int i = 1;
+    for (auto const& gnb : gnbs) {
+      std::string plmn = gnb.second.mcc + "," + gnb.second.mnc;
+      out.append(inner_indent)
+          .append(
+              ie_to_string(kStatisticsHalfIndexColLength, std::to_string(i)))
+          .append(
+              ie_to_string(kStatisticsHalfIeLengthForGnb, gnb.second.status))
+          .append(ie_to_string(
+              kStatisticsHalfIeLengthForGnb,
+              amf_conv::uint32_to_hex_string_full_format(gnb.second.gnb_id)))
+          .append(
+              ie_to_string(kStatisticsHalfIeLengthForGnb, gnb.second.gnb_name))
+          .append(ie_to_string(kStatisticsHalfIeLengthForGnb, plmn))
+          .append("|\n");
+      i++;
+    }
   }
 
-  int i = 1;
-  for (auto const& gnb : gnbs) {
-    Logger::amf_app().info(
-        "|      %d      |    Connected     |        0x%x        |       %s "
-        "      "
-        "    |               %s, %s              | ",
-        i, gnb.second.gnb_id, gnb.second.gnb_name.c_str(),
-        gnb.second.mcc.c_str(), gnb.second.mnc.c_str());
-    // Comment out to show the supported TA list
-    // Logger::amf_app().info(
-    //    "| Supported TA list: %s|", gnb.second.plmn_to_string().c_str());
-    i++;
+  out.append(inner_indent)
+      .append(header_to_string(header_length, ""))
+      .append("|\n");
+
+  return out;
+}
+
+//------------------------------------------------------------------------------
+std::string statistics::get_ues_info() const {
+  std::string out          = {};
+  std::string inner_indent = fmt::format("{:<{}}", "", kStatisticsIndent);
+  uint8_t header_length    = 0;
+
+  // List of UEs
+  uint8_t number_cols = 7;
+  header_length       = kStatisticsHalfIndexColLength * 2 +
+                  kStatisticsHalfIeLengthForUe * 2 * number_cols + number_cols;
+  out.append("\n");
+  out.append(inner_indent)
+      .append(header_to_string(header_length, ""))
+      .append("|\n");
+
+  out.append(inner_indent)
+      .append(header_to_string(header_length, "UEs' Information"))
+      .append("|\n");
+
+  out.append(inner_indent)
+      .append(ie_to_string(kStatisticsHalfIndexColLength, "Index"))
+      .append(ie_to_string(kStatisticsHalfIeLengthForUe, "5GMM State"))
+      .append(ie_to_string(kStatisticsHalfIeLengthForUe, "IMSI"))
+      .append(ie_to_string(kStatisticsHalfIeLengthForUe, "GUTI"))
+      .append(ie_to_string(kStatisticsHalfIeLengthForUe, "RAN UE NGAP ID"))
+      .append(ie_to_string(kStatisticsHalfIeLengthForUe, "AMF UE NGAP ID"))
+      .append(ie_to_string(kStatisticsHalfIeLengthForUe, "PLMN"))
+      .append(ie_to_string(kStatisticsHalfIeLengthForUe, "Cell Id"))
+      .append("|\n");
+
+  if (ue_infos.size() == 0) {
+    out.append(inner_indent)
+        .append(ie_to_string(kStatisticsHalfIndexColLength, "-"))
+        .append(ie_to_string(kStatisticsHalfIeLengthForUe, "-"))
+        .append(ie_to_string(kStatisticsHalfIeLengthForUe, "-"))
+        .append(ie_to_string(kStatisticsHalfIeLengthForUe, "-"))
+        .append(ie_to_string(kStatisticsHalfIeLengthForUe, "-"))
+        .append(ie_to_string(kStatisticsHalfIeLengthForUe, "-"))
+        .append(ie_to_string(kStatisticsHalfIeLengthForUe, "-"))
+        .append(ie_to_string(kStatisticsHalfIeLengthForUe, "-"))
+        .append("|\n");
+  } else {
+    int i = 1;
+    for (auto const& ue : ue_infos) {
+      std::string plmn = ue.second.mcc + "," + ue.second.mnc;
+      out.append(inner_indent)
+          .append(
+              ie_to_string(kStatisticsHalfIndexColLength, std::to_string(i)))
+          .append(ie_to_string(
+              kStatisticsHalfIeLengthForUe,
+              nas_context::fivegmm_state_to_string(ue.second.register_status)))
+          .append(ie_to_string(kStatisticsHalfIeLengthForUe, ue.second.imsi))
+          .append(ie_to_string(kStatisticsHalfIeLengthForUe, ue.second.guti))
+          .append(ie_to_string(
+              kStatisticsHalfIeLengthForUe,
+              amf_conv::uint32_to_hex_string_full_format(ue.second.ranid)))
+          .append(ie_to_string(
+              kStatisticsHalfIeLengthForUe,
+              amf_conv::uint32_to_hex_string_full_format(ue.second.amfid)))
+          .append(ie_to_string(kStatisticsHalfIeLengthForUe, plmn))
+          .append(ie_to_string(
+              kStatisticsHalfIeLengthForUe,
+              amf_conv::uint32_to_hex_string_full_format(ue.second.cellId)))
+          .append("|\n");
+      i++;
+    }
   }
 
-  Logger::amf_app().info(
-      "|-----------------------------------------------------------------------"
-      "---------------------------------------------|");
-  Logger::amf_app().info("");
+  out.append(inner_indent)
+      .append(header_to_string(header_length, ""))
+      .append("|\n");
 
-  Logger::amf_app().info(
-      "|-----------------------------------------------------------------------"
-      "---------------------------------------------|");
-  Logger::amf_app().info(
-      "|----------------------------------------------------UEs' "
-      "information------------------------------------------------|");
-  Logger::amf_app().info(
-      "| Index |      5GMM state      |      IMSI        |     GUTI      | RAN "
-      "UE NGAP ID | AMF UE ID |  PLMN   |  Cell ID  |");
-
-  i = 0;
-  for (auto const& ue : ue_infos) {
-    Logger::amf_app().info(
-        "|%7d|%22s|%18s|%15s|%16ld|%11ld| %3s,%3s |0x%9x|", i + 1,
-        ue.second.registerStatus.c_str(), ue.second.imsi.c_str(),
-        ue.second.guti.c_str(), ue.second.ranid, ue.second.amfid,
-        ue.second.mcc.c_str(), ue.second.mnc.c_str(), ue.second.cellId);
-    i++;
-  }
-  Logger::amf_app().info(
-      "|-----------------------------------------------------------------------"
-      "---------------------------------------------|");
-  Logger::amf_app().info("");
+  return out;
 }
 
 //------------------------------------------------------------------------------
@@ -105,32 +226,35 @@ void statistics::update_ue_info(const ue_info_t& ue_info) {
 
   std::unique_lock lock(m_ue_infos);
   if (ue_infos.count(ue_info.imsi) > 0) {
-    ue_infos.erase(ue_info.imsi);
-    ue_infos.insert(std::pair<std::string, ue_info_t>(ue_info.imsi, ue_info));
+    ue_infos.at(ue_info.imsi) = ue_info;
     Logger::amf_app().debug(
-        "Update UE Info (IMSI %s) success", ue_info.imsi.c_str());
+        "The UE's Info (IMSI %s) has been successfully updated!",
+        ue_info.imsi.c_str());
   } else {
-    ue_infos.insert(std::pair<std::string, ue_info_t>(ue_info.imsi, ue_info));
+    ue_infos.emplace(std::make_pair(ue_info.imsi, ue_info));
     Logger::amf_app().debug(
-        "Add UE Info (IMSI %s) success", ue_info.imsi.c_str());
+        "A new UE (IMSI %s) has been successfully added!",
+        ue_info.imsi.c_str());
   }
 }
 
 //------------------------------------------------------------------------------
 void statistics::update_5gmm_state(
-    const std::string& imsi, const std::string& state) {
+    const std::shared_ptr<nas_context>& nc, const _5gmm_state_t& state) {
+  if (!nc) return;
   std::unique_lock lock(m_ue_infos);
-  if (ue_infos.count(imsi) > 0) {
-    ue_info_t ue_info      = ue_infos.at(imsi);
-    ue_info.registerStatus = state;
-    ue_infos.erase(ue_info.imsi);
-    ue_infos.insert(std::pair<std::string, ue_info_t>(imsi, ue_info));
+  if (ue_infos.count(nc->imsi) > 0) {
+    ue_info_t ue_info       = ue_infos.at(nc->imsi);
+    ue_info.register_status = state;
+    ;
+    if (nc->guti.has_value()) ue_info.guti = nc->guti.value();
+    ue_infos.at(nc->imsi) = ue_info;
     Logger::amf_app().debug(
-        "Update UE State (IMSI %s, State %s) success", imsi.c_str(),
-        state.c_str());
+        "The UE's state (IMSI %s, State %s) has been successfully updated!",
+        nc->imsi.c_str(), nas_context::fivegmm_state_to_string(state).c_str());
   } else {
     Logger::amf_app().warn(
-        "Update UE State (IMSI %s), UE does not exist!", imsi.c_str());
+        "Update UE State (IMSI %s), UE does not exist!", nc->imsi.c_str());
   }
 }
 
@@ -139,15 +263,7 @@ void statistics::remove_gnb(const uint32_t& gnb_id) {
   std::unique_lock lock(m_gnbs);
   if (gnbs.count(gnb_id) > 0) {
     gnbs.erase(gnb_id);
-    gNB_connected -= 1;
   }
-}
-
-//------------------------------------------------------------------------------
-void statistics::add_gnb(const uint32_t& gnb_id, const gnb_infos& gnb) {
-  std::unique_lock lock(m_gnbs);
-  gnbs.insert(std::pair<uint32_t, gnb_infos>(gnb_id, gnb));
-  gNB_connected += 1;
 }
 
 //------------------------------------------------------------------------------
@@ -157,19 +273,40 @@ void statistics::add_gnb(const std::shared_ptr<gnb_context>& gc) {
   gnb.mcc       = gc->plmn.mcc;
   gnb.mnc       = gc->plmn.mnc;
   gnb.gnb_name  = gc->gnb_name;
+  gnb.status    = kStatisticGnbStatusConnected;
   for (auto i : gc->supported_ta_list) {
     gnb.plmn_list.push_back(i);
   }
   std::unique_lock lock(m_gnbs);
-  gnbs.insert(std::pair<uint32_t, gnb_infos>(gc->gnb_id, gnb));
-  gNB_connected += 1;
+  if (gnbs.count(gc->gnb_id) > 0) {
+    gnbs.at(gc->gnb_id) = gnb;
+    Logger::amf_app().debug("The gNB's info has been successfully updated!");
+  } else {
+    gnbs.emplace(std::make_pair(gc->gnb_id, gnb));
+    Logger::amf_app().debug("A new gNB has been successfully added!");
+  }
 }
 
 //------------------------------------------------------------------------------
-void statistics::update_gnb(const uint32_t& gnb_id, const gnb_infos& gnb) {
+void statistics::update_gnb(
+    const std::shared_ptr<gnb_context>& gc, const std::string& status) {
+  gnb_infos gnb = {};
+  gnb.gnb_id    = gc->gnb_id;
+  gnb.mcc       = gc->plmn.mcc;
+  gnb.mnc       = gc->plmn.mnc;
+  gnb.gnb_name  = gc->gnb_name;
+  gnb.status    = status;
+  for (auto i : gc->supported_ta_list) {
+    gnb.plmn_list.push_back(i);
+  }
+
   std::unique_lock lock(m_gnbs);
-  if (gnbs.count(gnb_id) > 0) {
-    gnbs[gnb_id] = gnb;
+  if (gnbs.count(gc->gnb_id) > 0) {
+    gnbs.at(gc->gnb_id) = gnb;
+    Logger::amf_app().debug("The gNB's info has been successfully updated!");
+  } else {
+    gnbs.emplace(std::make_pair(gc->gnb_id, gnb));
+    Logger::amf_app().debug("A new gNB has been successfully added!");
   }
 }
 

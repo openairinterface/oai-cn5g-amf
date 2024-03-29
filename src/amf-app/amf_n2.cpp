@@ -675,9 +675,9 @@ void amf_n2::handle_itti_message(std::shared_ptr<itti_ng_shutdown>& itti_msg) {
         ue_context->ran_ue_ngap_id, gc->gnb_id);
   }
 
-  // Delete gNB context
+  // Delete gNB context and update statistic
   remove_gnb_context(itti_msg->assoc_id);
-  stacs.remove_gnb(gc->gnb_id);
+  stacs.update_gnb(gc, kStatisticGnbStatusDisconnected);
 
   Logger::amf_n2().debug(
       "Remove gNB with association id %d, gnb_id 0x%x", itti_msg->assoc_id,
@@ -2651,7 +2651,7 @@ void amf_n2::remove_ue_context_with_ran_ue_ngap_id(
     // TODO: Verify where it's current context
     // Remove all NAS context
     std::string supi = amf_conv::imsi_to_supi(nc->imsi);
-    stacs.update_5gmm_state(nc->imsi, "5GMM-DEREGISTERED");
+    stacs.update_5gmm_state(nc, _5GMM_DEREGISTERED);
 
     // Trigger UE Loss of Connectivity Status Notify
     Logger::amf_n2().debug(
@@ -2728,7 +2728,7 @@ void amf_n2::remove_ue_context_with_amf_ue_ngap_id(const long& amf_ue_ngap_id) {
     // Remove all NAS context
     std::string supi = amf_conv::imsi_to_supi(nc->imsi);
     // Update UE status
-    stacs.update_5gmm_state(nc->imsi, "5GMM-DEREGISTERED");
+    stacs.update_5gmm_state(nc, _5GMM_DEREGISTERED);
 
     // Trigger UE Loss of Connectivity Status Notify
     Logger::amf_n2().debug(

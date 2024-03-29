@@ -370,6 +370,16 @@ std::string amf_conv::uint32_to_hex_string(uint32_t value) {
 }
 
 //------------------------------------------------------------------------------
+std::string amf_conv::uint32_to_hex_string_full_format(uint32_t value) {
+  char hex_str[kUint32Length + 1];
+  sprintf(hex_str, "%X", value);
+  std::string out = std::string(hex_str);
+  if (out.size() % 2 == 1) out = "0" + out;
+
+  return ("0x" + out);
+}
+
+//------------------------------------------------------------------------------
 std::string amf_conv::tmsi_to_guti(
     const std::string& mcc, const std::string& mnc, uint8_t region_id,
     const std::string& _5g_s_tmsi) {
