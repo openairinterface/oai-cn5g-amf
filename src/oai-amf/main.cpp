@@ -72,12 +72,6 @@ void amf_signal_handler(int s) {
 
   Logger::system().debug("Freeing Allocated memory...");
 
-  if (amf_app_inst) {
-    delete amf_app_inst;
-    amf_app_inst = nullptr;
-    Logger::system().debug("AMF APP memory done.");
-  }
-
   if (http1_server) {
     http1_server->shutdown();
     delete http1_server;
@@ -90,6 +84,12 @@ void amf_signal_handler(int s) {
     delete http2_server;
     http2_server = nullptr;
     Logger::system().debug("HTTP/2 Server memory done.");
+  }
+
+  if (amf_app_inst) {
+    delete amf_app_inst;
+    amf_app_inst = nullptr;
+    Logger::system().debug("AMF APP memory done.");
   }
 
   if (itti_inst) {
