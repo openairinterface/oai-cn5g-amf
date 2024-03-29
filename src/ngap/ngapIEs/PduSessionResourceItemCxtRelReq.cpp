@@ -40,6 +40,11 @@ void PduSessionResourceItemCxtRelReq::get(PduSessionId& pduSessionId) const {
 }
 
 //------------------------------------------------------------------------------
+PduSessionId PduSessionResourceItemCxtRelReq::get() const {
+  return m_PduSessionId;
+}
+
+//------------------------------------------------------------------------------
 bool PduSessionResourceItemCxtRelReq::encode(
     Ngap_PDUSessionResourceItemCxtRelReq_t& pduSessionResourceItem) const {
   if (!m_PduSessionId.encode(pduSessionResourceItem.pDUSessionID)) return false;

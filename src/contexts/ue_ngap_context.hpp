@@ -95,6 +95,7 @@ class ue_ngap_context {
   Ngap_CauseRadioNetwork_t release_cause;
   uint32_t release_gnb;
   bstring ue_radio_cap_ind;
+  std::map<uint8_t, OCTET_STRING_t> pdu_sessions_to_be_released;
 };
 
 #endif

@@ -42,6 +42,11 @@ void PduSessionId::get(uint8_t& id) const {
 }
 
 //------------------------------------------------------------------------------
+uint8_t PduSessionId::get() const {
+  return m_PduSessionId;
+}
+
+//------------------------------------------------------------------------------
 bool PduSessionId::encode(Ngap_PDUSessionID_t& pduSessionId) const {
   pduSessionId = m_PduSessionId;
   return true;
