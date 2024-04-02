@@ -2150,15 +2150,18 @@ bool amf_n1::get_authentication_vectors_from_ausf(
   Logger::amf_n1().debug("Get Authentication Vectors from AUSF");
   // TODO: remove naked ptr
 
-  UEAuthenticationCtx ueauthenticationctx = {};
-  AuthenticationInfo authenticationinfo   = {};
-  authenticationinfo.setSupiOrSuci(nc->imsi);
-  authenticationinfo.setServingNetworkName(nc->serving_network);
-  ResynchronizationInfo resynchronizationInfo = {};
-  uint8_t auts_len                            = blength(nc->auts);   // TODO
-  uint8_t* auts_value                 = (uint8_t*) bdata(nc->auts);  // TODO
-  std::string authenticationinfo_auts = {};
-  std::string authenticationinfo_rand = {};
+  UEAuthenticationCtx ue_authentication_ctx    = {};
+  AuthenticationInfo authentication_info       = {};
+  ResynchronizationInfo resynchronization_info = {};
+
+  authentication_info.setSupiOrSuci(nc->imsi);
+  authentication_info.setServingNetworkName(nc->serving_network);
+  uint8_t auts_len    = blength(nc->auts);           // TODO
+  uint8_t* auts_value = (uint8_t*) bdata(nc->auts);  // TODO
+
+  std::string authentication_info_auts = {};
+  std::string authentication_info_rand = {};
+
   if (auts_value) {
     Logger::amf_n1().debug("has AUTS");
     char* auts_s = (char*) malloc(auts_len * 2 + 1);
@@ -2169,63 +2172,111 @@ bool amf_n1::get_authentication_vectors_from_ausf(
       sprintf(&auts_s[i * 2], "%02X", auts_value[i]);
     }
 
-    authenticationinfo_auts = auts_s;
+    authentication_info_auts = auts_s;
     output_wrapper::print_buffer("amf_n1", "AUTS", auts_value, auts_len);
     Logger::amf_n1().info("ausf_s (%s)", auts_s);
-    // generate_random(rand_value, RAND_LENGTH);
+
     std::map<std::string, std::string>::iterator iter;
     iter = rand_record.find(nc->imsi);
     if (iter != rand_record.end()) {
-      authenticationinfo_rand = iter->second;
-      Logger::amf_n1().info("rand_s (%s)", authenticationinfo_rand.c_str());
+      authentication_info_rand = iter->second;
+      Logger::amf_n1().info("rand_s (%s)", authentication_info_rand.c_str());
     } else {
       Logger::amf_n1().error("There's no last RAND");
     }
 
-    resynchronizationInfo.setAuts(authenticationinfo_auts);
-    resynchronizationInfo.setRand(authenticationinfo_rand);
-    authenticationinfo.setResynchronizationInfo(resynchronizationInfo);
+    resynchronization_info.setAuts(authentication_info_auts);
+    resynchronization_info.setRand(authentication_info_rand);
+    authentication_info.setResynchronizationInfo(resynchronization_info);
     utils::free_wrapper((void**) &auts_s);
   }
 
-  // TODO: use ITTI to send message between N1 and SBI
-  if (amf_sbi_inst->send_ue_authentication_request(
-          authenticationinfo, ueauthenticationctx,
-          amf_cfg.support_features.http_version)) {
-    unsigned char* r5gauthdata_rand = amf_conv::format_string_as_hex(
-        ueauthenticationctx.getR5gAuthData().getRand());
-    memcpy(nc->_5g_av[0].rand, r5gauthdata_rand, 16);
-    rand_record[nc->imsi] = ueauthenticationctx.getR5gAuthData().getRand();
-    output_wrapper::print_buffer(
-        "amf_n1", "5G AV: RAND", nc->_5g_av[0].rand, 16);
-    utils::free_wrapper((void**) &r5gauthdata_rand);
+  // Get UE Authentication from AUSF
+  // Generate a promise and associate this promise to the ITTI message
+  uint32_t promise_id = amf_app_inst->generate_promise_id();
+  Logger::amf_n1().debug("Promise ID generated %d", promise_id);
+  boost::shared_ptr<boost::promise<nlohmann::json>> p =
+      boost::make_shared<boost::promise<nlohmann::json>>();
+  boost::shared_future<nlohmann::json> f = p->get_future();
+  amf_app_inst->add_promise(promise_id, p);
 
-    unsigned char* r5gauthdata_autn = amf_conv::format_string_as_hex(
-        ueauthenticationctx.getR5gAuthData().getAutn());
-    memcpy(nc->_5g_av[0].autn, r5gauthdata_autn, 16);
-    output_wrapper::print_buffer(
-        "amf_n1", "5G AV: AUTN", nc->_5g_av[0].autn, 16);
-    utils::free_wrapper((void**) &r5gauthdata_autn);
+  std::shared_ptr<itti_sbi_ue_authentication_request> itti_msg =
+      std::make_shared<itti_sbi_ue_authentication_request>(
+          TASK_AMF_N1, TASK_AMF_SBI, promise_id);
 
-    unsigned char* r5gauthdata_hxresstar = amf_conv::format_string_as_hex(
-        ueauthenticationctx.getR5gAuthData().getHxresStar());
-    memcpy(nc->_5g_av[0].hxresStar, r5gauthdata_hxresstar, 16);
-    output_wrapper::print_buffer(
-        "amf_n1", "5G AV: hxres*", nc->_5g_av[0].hxresStar, 16);
-    utils::free_wrapper((void**) &r5gauthdata_hxresstar);
+  itti_msg->http_version = amf_cfg.support_features.http_version;
+  itti_msg->auth_info    = authentication_info;
+  itti_msg->promise_id   = promise_id;
 
-    std::map<std::string, LinksValueSchema>::iterator iter;
-    iter = ueauthenticationctx.getLinks().find("5G_AKA");
+  int ret = itti_inst->send_msg(itti_msg);
+  if (0 != ret) {
+    Logger::amf_n1().error(
+        "Could not send ITTI message %s to task TASK_AMF_SBI",
+        itti_msg->get_msg_name());
+  }
 
-    if (iter != ueauthenticationctx.getLinks().end()) {
-      nc->href = iter->second.getHref();
-      Logger::amf_n1().info("Links is: %s", nc->href.c_str());
+  bool is_result_available = true;
+  // Wait for the response available and process accordingly
+  std::optional<nlohmann::json> result_opt = std::nullopt;
+  utils::wait_for_result(f, result_opt);
+  if (result_opt.has_value()) {
+    nlohmann::json result = result_opt.value();
+    Logger::amf_n1().debug("Got result for promise ID %ld", promise_id);
+    if (result.find("jsonData") != result.end()) {
+      Logger::amf_n1().debug(
+          "Got UE Authentication from AUSF: %s", result["jsonData"].dump());
+      try {
+        from_json(result["jsonData"], ue_authentication_ctx);
+        is_result_available = true;
+      } catch (std::exception& e) {
+        Logger::amf_n1().warn("Could not parse UE Authentication from Json");
+        is_result_available = false;
+      }
     } else {
-      Logger::amf_n1().error("Not found 5G_AKA");
+      is_result_available = false;
     }
+
   } else {
+    Logger::amf_n1().debug(
+        "Could not get Authorized Network Slice Info from NSSF");
+    is_result_available = false;
+  }
+
+  if (!is_result_available) {
     Logger::amf_n1().info("Could not get expected response from AUSF");
     // TODO: error handling
+    return false;
+  }
+
+  // Process the response
+  unsigned char* r5g_auth_data_rand = amf_conv::format_string_as_hex(
+      ue_authentication_ctx.getR5gAuthData().getRand());
+  memcpy(nc->_5g_av[0].rand, r5g_auth_data_rand, 16);
+  rand_record[nc->imsi] = ue_authentication_ctx.getR5gAuthData().getRand();
+  output_wrapper::print_buffer("amf_n1", "5G AV: RAND", nc->_5g_av[0].rand, 16);
+  utils::free_wrapper((void**) &r5g_auth_data_rand);
+
+  unsigned char* r5g_auth_data_autn = amf_conv::format_string_as_hex(
+      ue_authentication_ctx.getR5gAuthData().getAutn());
+  memcpy(nc->_5g_av[0].autn, r5g_auth_data_autn, 16);
+  output_wrapper::print_buffer("amf_n1", "5G AV: AUTN", nc->_5g_av[0].autn, 16);
+  utils::free_wrapper((void**) &r5g_auth_data_autn);
+
+  unsigned char* r5g_auth_data_hxresstar = amf_conv::format_string_as_hex(
+      ue_authentication_ctx.getR5gAuthData().getHxresStar());
+  memcpy(nc->_5g_av[0].hxresStar, r5g_auth_data_hxresstar, 16);
+  output_wrapper::print_buffer(
+      "amf_n1", "5G AV: hxres*", nc->_5g_av[0].hxresStar, 16);
+  utils::free_wrapper((void**) &r5g_auth_data_hxresstar);
+
+  std::map<std::string, LinksValueSchema>::iterator iter;
+  iter = ue_authentication_ctx.getLinks().find("5G_AKA");
+
+  if (iter != ue_authentication_ctx.getLinks().end()) {
+    nc->href = iter->second.getHref();
+    Logger::amf_n1().info("Links is: %s", nc->href.c_str());
+  } else {
+    Logger::amf_n1().error("Not found 5G_AKA");
     return false;
   }
 

@@ -149,6 +149,13 @@ class amf_sbi {
   void handle_itti_message(itti_sbi_determine_location_request& itti_msg);
 
   /*
+   * Handle ITTI message to trigger UE Authentication request towards AUSF
+   * @param [itti_sbi_ue_authentication_request&]: ITTI message
+   * @return void
+   */
+  void handle_itti_message(itti_sbi_ue_authentication_request& itti_msg);
+
+  /*
    * Handle request to create a new PDU Session
    * @param [const std::string&] supi: SUPI
    * @param [std::shared_ptr<pdu_session_context>&] psc: Pointer to the PDU
@@ -213,19 +220,6 @@ class amf_sbi {
       std::string& smf_uri_root, std::string& smf_api_version,
       const snssai_t& snssai, const plmn_t& plmn, const std::string& dnn,
       const std::string& nrf_uri = {});
-
-  /*
-   * Send UE Authentication Request to AUSF
-   * @param [const oai::amf::model::AuthenticationInfo&] auth_info:
-   * Authentication Information
-   * @param [oai::amf::model::UEAuthenticationCtx& ] ue_auth_ctx: UE
-   * Authentication Context response
-   * @param [uint8_t] http_version: HTTP versioin
-   * @return true if successful, otherwise return false
-   */
-  bool send_ue_authentication_request(
-      const oai::amf::model::AuthenticationInfo& auth_info,
-      oai::amf::model::UEAuthenticationCtx& ue_auth_ctx, uint8_t http_version);
 
   /*
    * Get NRF's URI from NSSF/configuration file
