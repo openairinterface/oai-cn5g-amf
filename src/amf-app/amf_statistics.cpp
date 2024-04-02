@@ -135,7 +135,7 @@ void statistics::update_5gmm_state(
 }
 
 //------------------------------------------------------------------------------
-void statistics::remove_gnb(const uint32_t& gnb_id) {
+void statistics::remove_gnb(uint32_t gnb_id) {
   std::unique_lock lock(m_gnbs);
   if (gnbs.count(gnb_id) > 0) {
     gnbs.erase(gnb_id);
@@ -144,7 +144,7 @@ void statistics::remove_gnb(const uint32_t& gnb_id) {
 }
 
 //------------------------------------------------------------------------------
-void statistics::add_gnb(const uint32_t& gnb_id, const gnb_infos& gnb) {
+void statistics::add_gnb(uint32_t gnb_id, const gnb_infos& gnb) {
   std::unique_lock lock(m_gnbs);
   gnbs.insert(std::pair<uint32_t, gnb_infos>(gnb_id, gnb));
   gNB_connected += 1;
@@ -166,7 +166,7 @@ void statistics::add_gnb(const std::shared_ptr<gnb_context>& gc) {
 }
 
 //------------------------------------------------------------------------------
-void statistics::update_gnb(const uint32_t& gnb_id, const gnb_infos& gnb) {
+void statistics::update_gnb(uint32_t gnb_id, const gnb_infos& gnb) {
   std::unique_lock lock(m_gnbs);
   if (gnbs.count(gnb_id) > 0) {
     gnbs[gnb_id] = gnb;

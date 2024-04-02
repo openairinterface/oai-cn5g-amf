@@ -98,15 +98,15 @@ class statistics {
    * @param [const uint32_t] gnb_id: gNB ID
    * @return void
    */
-  void remove_gnb(const uint32_t& gnb_id);
+  void remove_gnb(uint32_t gnb_id);
 
   /*
    * Add gNB to the list connected gNB to this AMF
-   * @param [const uint32_t&] gnb_id: gNB ID
+   * @param [uint32_t] gnb_id: gNB ID
    * @param [const gnb_infos&] gnb: gNB Info
    * @return void
    */
-  void add_gnb(const uint32_t& gnb_id, const gnb_infos& gnb);
+  void add_gnb(uint32_t gnb_id, const gnb_infos& gnb);
 
   /*
    * Add gNB to the list connected gNB to this AMF
@@ -117,11 +117,11 @@ class statistics {
 
   /*
    * Update gNB info
-   * @param [const uint32_t&] gnb_id: gNB ID
+   * @param [uint32_t] gnb_id: gNB ID
    * @param [const gnb_infos&] gnb: gNB Info
    * @return void
    */
-  void update_gnb(const uint32_t& gnb_id, const gnb_infos& gnb);
+  void update_gnb(uint32_t gnb_id, const gnb_infos& gnb);
 
   /*
    * Get number of connected gNBs

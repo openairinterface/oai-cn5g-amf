@@ -332,7 +332,7 @@ bool amf_app::get_pdu_sessions_context(
 
 //------------------------------------------------------------------------------
 bool amf_app::update_pdu_sessions_context(
-    const std::string& supi, const uint8_t& pdu_session_id,
+    const std::string& supi, uint8_t pdu_session_id,
     const oai::amf::model::SmContextStatusNotification& statusNotification) {
   std::shared_ptr<ue_context> uc = {};
   if (!supi_2_ue_context(supi, uc)) return false;

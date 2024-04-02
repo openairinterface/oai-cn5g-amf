@@ -98,7 +98,7 @@ int32_t nf_profile::get_nf_heartBeat_timer() const {
 }
 
 //------------------------------------------------------------------------------
-void nf_profile::set_nf_priority(const uint16_t& p) {
+void nf_profile::set_nf_priority(uint16_t p) {
   priority = p;
 }
 
@@ -113,7 +113,7 @@ uint16_t nf_profile::get_nf_priority() const {
 }
 
 //------------------------------------------------------------------------------
-void nf_profile::set_nf_capacity(const uint16_t& c) {
+void nf_profile::set_nf_capacity(uint16_t c) {
   capacity = c;
 }
 

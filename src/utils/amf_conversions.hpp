@@ -52,7 +52,7 @@ class amf_conv : public conv {
       const bstring& b_str, OCTET_STRING_t& octet_str);
   static bool octet_string_2_bit_string(
       const OCTET_STRING_t& octet_str, BIT_STRING_t& bit_str,
-      const uint8_t& bits_unused);
+      uint8_t bits_unused);
   static bool bstring_2_bit_string(const bstring& b_str, BIT_STRING_t& bit_str);
   static bool sd_string_to_int(const std::string& sd_str, uint32_t& sd);
   static bool sd_string_hex_to_int(const std::string& sd_str, uint32_t& sd);
@@ -64,7 +64,7 @@ class amf_conv : public conv {
       const OCTET_STRING_t& octet_str, std::string& str);
   static void string_2_octet_string(
       const std::string& str, OCTET_STRING_t& o_str);
-  static bool int8_2_octet_string(const uint8_t& value, OCTET_STRING_t& o_str);
+  static bool int8_2_octet_string(uint8_t value, OCTET_STRING_t& o_str);
   static bool octet_string_2_int8(const OCTET_STRING_t& o_str, uint8_t& value);
   // TODO: bitstring_2_int32
   static bool octet_string_copy(

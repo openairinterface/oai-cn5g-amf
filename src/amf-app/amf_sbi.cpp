@@ -1017,7 +1017,7 @@ bool amf_sbi::smf_selection_from_configuration(
 //------------------------------------------------------------------------------
 void amf_sbi::handle_post_sm_context_response_error(
     const long code, const std::string& cause, bstring n1sm,
-    const std::string& supi, const uint8_t pdu_session_id) {
+    const std::string& supi, uint8_t pdu_session_id) {
   output_wrapper::print_buffer(
       "amf_sbi", "N1 SM", (uint8_t*) bdata(n1sm), blength(n1sm));
   itti_n1n2_message_transfer_request* itti_msg =
@@ -1159,8 +1159,7 @@ bool amf_sbi::discover_smf(
 //-----------------------------------------------------------------------------------------------------
 bool amf_sbi::send_ue_authentication_request(
     const oai::amf::model::AuthenticationInfo& auth_info,
-    oai::amf::model::UEAuthenticationCtx& ue_auth_ctx,
-    const uint8_t& http_version) {
+    oai::amf::model::UEAuthenticationCtx& ue_auth_ctx, uint8_t http_version) {
   Logger::amf_sbi().debug(
       "Send UE Authentication Request to AUSF (HTTP version %d)", http_version);
 
@@ -1209,8 +1208,8 @@ bool amf_sbi::send_ue_authentication_request(
 bool amf_sbi::curl_http_client(
     const std::string& remote_uri, const std::string& json_data,
     const std::string& n1sm_msg, const std::string& n2sm_msg,
-    const std::string& supi, const uint8_t& pdu_session_id,
-    const uint8_t& http_version, const uint32_t& promise_id) {
+    const std::string& supi, uint8_t pdu_session_id, uint8_t http_version,
+    const uint32_t& promise_id) {
   bool curl_result = false;
   Logger::amf_sbi().debug("Call NF service: %s", remote_uri.c_str());
 
@@ -1523,7 +1522,7 @@ bool amf_sbi::curl_http_client(
 //------------------------------------------------------------------------------
 void amf_sbi::curl_http_client(
     const std::string& remote_uri, std::string& json_data,
-    std::string& n1sm_msg, std::string& n2sm_msg, const uint8_t& http_version,
+    std::string& n1sm_msg, std::string& n2sm_msg, uint8_t http_version,
     uint32_t& response_code, const uint32_t& promise_id) {
   Logger::amf_sbi().debug("Call NF service: %s", remote_uri.c_str());
 
@@ -1689,7 +1688,7 @@ void amf_sbi::curl_http_client(
 void amf_sbi::curl_http_client(
     const std::string& remote_uri, const std::string& method,
     const std::string& msg_body, nlohmann::json& response_json,
-    uint32_t& response_code, const uint8_t& http_version) {
+    uint32_t& response_code, uint8_t http_version) {
   Logger::amf_sbi().info("Send HTTP message to %s", remote_uri.c_str());
   Logger::amf_sbi().info("HTTP message Body: %s", msg_body.c_str());
 
