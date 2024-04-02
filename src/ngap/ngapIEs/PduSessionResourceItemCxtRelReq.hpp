@@ -37,6 +37,7 @@ class PduSessionResourceItemCxtRelReq {
 
   void set(const PduSessionId& pduSessionId);
   void get(PduSessionId& pduSessionId) const;
+  PduSessionId get() const;
 
   bool encode(
       Ngap_PDUSessionResourceItemCxtRelReq_t& pduSessionResourceItem) const;

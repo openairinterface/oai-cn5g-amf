@@ -1292,11 +1292,30 @@ void amf_n2::handle_itti_message(
     std::shared_ptr<itti_ue_context_release_request>& itti_msg) {
   Logger::amf_n2().debug("Handle UE Context Release Request ...");
 
-  unsigned long amf_ue_ngap_id   = itti_msg->ueCtxRel->getAmfUeNgapId();
-  uint32_t ran_ue_ngap_id        = itti_msg->ueCtxRel->getRanUeNgapId();
+  unsigned long amf_ue_ngap_id = itti_msg->ueCtxRel->getAmfUeNgapId();
+  uint32_t ran_ue_ngap_id      = itti_msg->ueCtxRel->getRanUeNgapId();
+
+  // Store the list of PDU Session ID to be released/deactivated
+  std::shared_ptr<ue_ngap_context> unc = {};
+  if (amf_ue_id_2_ue_ngap_context(amf_ue_ngap_id, unc)) {
+    unc->pdu_sessions_to_be_released.clear();
+    PduSessionResourceListCxtRelReq pdu_session_resource_list_cxt_rel_req = {};
+    if (itti_msg->ueCtxRel->getPduSessionResourceList(
+            pdu_session_resource_list_cxt_rel_req)) {
+      std::vector<PduSessionResourceItemCxtRelReq> ctx_rel_req_list;
+      pdu_session_resource_list_cxt_rel_req.get(ctx_rel_req_list);
+      if (ctx_rel_req_list.size() > 0) {
+        for (const auto& cxt_rel_req : ctx_rel_req_list) {
+          OCTET_STRING_t pdu_session_resource_transfer = {};
+          unc->pdu_sessions_to_be_released.emplace(
+              cxt_rel_req.get().get(), pdu_session_resource_transfer);
+        }
+      }
+    }
+  }
+
   e_Ngap_CauseRadioNetwork cause = {};
   itti_msg->ueCtxRel->getCauseRadioNetwork(cause);
-
   auto ueCtxRelCmd = std::make_unique<UeContextReleaseCommandMsg>();
   ueCtxRelCmd->setUeNgapIdPair(amf_ue_ngap_id, ran_ue_ngap_id);
   ueCtxRelCmd->setCauseRadioNetwork(cause);
@@ -1498,11 +1517,23 @@ void amf_n2::handle_itti_message(
 
   // TODO: Process Secondary RAT Usage Information IE if available
 
-  // Get PDU Sessions in UE Context Release Complete and send
-  // Nsmf_PDUSession_UpdateSMContext to SMF
+  // Get PDU Sessions in UE Context Release Complete and send to SMF
+  // Note: According to 3GPP, this steps should be executed after receiving UE
+  // Context Release Request. If this is the case, we won't have PDU Session
+  // Resource Release Response Transfer to be forwarded to SMF. That's why we do
+  // it here!
   std::vector<PDUSessionResourceCxtRelCplItem_t> pdu_sessions_to_be_released;
   itti_msg->ueCtxRelCmpl->getPduSessionResourceCxtRelCplList(
       pdu_sessions_to_be_released);
+
+  // Get info from UE Context Release Request if neccessary
+  if (pdu_sessions_to_be_released.size() == 0) {
+    PDUSessionResourceCxtRelCplItem_t item = {};
+    for (const auto& p : unc->pdu_sessions_to_be_released) {
+      item.pduSessionId = p.first;
+      pdu_sessions_to_be_released.push_back(item);
+    }
+  }
 
   // TODO: may consider releasing all exisiting PDU sessions
   /*
@@ -1526,7 +1557,8 @@ void amf_n2::handle_itti_message(
 
   for (auto pdu_session : pdu_sessions_to_be_released) {
     Logger::amf_n2().debug(
-        "Releasing PDU Session ID %d", pdu_session.pduSessionId);
+        "Trigger PDU Ssesion Deactivation, PDU Session ID %d",
+        pdu_session.pduSessionId);
     // Generate a promise and associate this promise to the curl handle
     uint32_t promise_id = amf_app_inst->generate_promise_id();
     Logger::amf_n2().debug("Promise ID generated %d", promise_id);
@@ -1546,12 +1578,10 @@ void amf_n2::handle_itti_message(
     auto itti_n11_msg =
         std::make_shared<itti_nsmf_pdusession_update_sm_context>(
             TASK_NGAP, TASK_AMF_SBI);
-
     itti_n11_msg->pdu_session_id = pdu_session.pduSessionId;
-
-    // TODO:
-    itti_n11_msg->is_n2sm_set = false;
-
+    itti_n11_msg->is_n2sm_set =
+        false;  // Enable to include PDU Session Resource Release Response
+                // Transfer to SMF
     itti_n11_msg->amf_ue_ngap_id = amf_ue_ngap_id;
     itti_n11_msg->ran_ue_ngap_id = ran_ue_ngap_id;
     itti_n11_msg->promise_id     = promise_id;
@@ -1565,31 +1595,31 @@ void amf_n2::handle_itti_message(
     }
   }
 
-  // Wait for the response available and process accordingly
-
+  bool is_up_activated = true;
   while (!curl_responses.empty()) {
     // Wait for the result available and process accordingly
-    std::optional<nlohmann::json> result = std::nullopt;
-    utils::wait_for_result(curl_responses.begin()->second, result);
+    std::optional<nlohmann::json> result_opt = std::nullopt;
+    utils::wait_for_result(curl_responses.begin()->second, result_opt);
 
-    if (result.has_value()) {
-      nlohmann::json result_json = result.value();
+    if (result_opt.has_value()) {
+      nlohmann::json result_json = result_opt.value();
       Logger::amf_server().debug(
-          "Got result for promise ID %d", curl_responses.begin()->first);
+          "Got result for PDU Session Id %d", curl_responses.begin()->first);
       uint32_t http_response_code = 0;
       if (result_json.find("httpResponseCode") != result_json.end()) {
         http_response_code = result_json["httpResponseCode"].get<int>();
         if ((http_response_code == 200) or (http_response_code == 204)) {
-          // uc->remove_pdu_sessions_context(curl_responses.begin()->first);
           uc->set_up_cnx_state(
               curl_responses.begin()->first,
               up_cnx_state_e::UPCNX_STATE_DEACTIVATED);
         }
       } else {
+        is_up_activated = false;
         Logger::ngap().warn("Couldn't get the HTTP response code");
       }
     } else {
-      Logger::ngap().warn("Couldn't get the HTTP response code");
+      is_up_activated = false;
+      Logger::ngap().warn("Couldn't get the HTTP response");
     }
 
     curl_responses.erase(curl_responses.begin());
