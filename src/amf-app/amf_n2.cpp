@@ -1518,6 +1518,10 @@ void amf_n2::handle_itti_message(
   // TODO: Process Secondary RAT Usage Information IE if available
 
   // Get PDU Sessions in UE Context Release Complete and send to SMF
+  // Note: According to 3GPP, this steps should be executed after receiving UE
+  // Context Release Request. If this is the case, we won't have PDU Session
+  // Resource Release Response Transfer to be forwarded to SMF. That's why we do
+  // it here!
   std::vector<PDUSessionResourceCxtRelCplItem_t> pdu_sessions_to_be_released;
   itti_msg->ueCtxRelCmpl->getPduSessionResourceCxtRelCplList(
       pdu_sessions_to_be_released);
