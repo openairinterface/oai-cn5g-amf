@@ -43,8 +43,11 @@ void itti_mw::timer_manager_task(
   Logger::itti().info("Starting timer_manager_task");
   sched_params.apply(TASK_ITTI_TIMER, Logger::itti());
   while (true) {
-    if (itti_inst->terminate) return;
-    {
+    if (itti_inst->terminate) {
+      Logger::itti().info("timer_manager_task is stopped!");
+      itti_inst->terminate = false;
+      return;
+    } else {
       std::unique_lock<std::mutex> lx(itti_inst->m_timers);
       while (itti_inst->timers.empty()) {
         itti_inst->c_timers.wait(lx);
@@ -53,6 +56,12 @@ void itti_mw::timer_manager_task(
       itti_inst->current_timer          = std::ref(*it);
       itti_inst->timers.erase(it);
       lx.unlock();
+
+      if (itti_inst->terminate) {
+        Logger::itti().info("timer_manager_task is stopped!");
+        itti_inst->terminate = false;
+        return;
+      }
 
       // check time-out
       if (itti_inst->current_timer.time_out >
@@ -109,16 +118,21 @@ itti_mw::itti_mw()
 
 //------------------------------------------------------------------------------
 itti_mw::~itti_mw() {
-  timer_thread.detach();
-  // wake up thread timer if necessary
-  std::unique_lock<std::mutex> l2(m_timeout);
-  c_timeout.notify_one();
+  Logger::itti().info("~itti()");
+  // Making sure the timer thread has finished.
+  // detach is not good since we don't control when the thread will end.
+  if (terminate) {
+    Logger::itti().debug("Joining timer_thread");
+    timer_thread.join();
+  }
 
   for (int t = TASK_FIRST; t < TASK_MAX; t++) {
     if (itti_task_ctxts[t]) {
       delete itti_task_ctxts[t];
     }
   }
+
+  Logger::itti().info("~itti() Done!");
 }
 
 //------------------------------------------------------------------------------

@@ -38,11 +38,13 @@ extern "C" {
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <unistd.h>
-
+#include <signal.h>
 #include "bstrlib.h"
 }
 
 namespace sctp {
+
+pthread_t tmp_thread;
 
 //------------------------------------------------------------------------------
 sctp_application::~sctp_application() {}
@@ -59,7 +61,25 @@ sctp_server::sctp_server(const char* address, const uint16_t port_num) {
 }
 
 //------------------------------------------------------------------------------
-sctp_server::~sctp_server() {}
+sctp_server::~sctp_server() {
+  int res;
+
+  res = pthread_kill(tmp_thread, SIGKILL);
+  if (res != 0) {
+    Logger::sctp().error(
+        "pthread_kill on sctp_receiver_thread failed %s", strerror(errno));
+  }
+
+  res = shutdown(socket_, SHUT_RDWR);
+  if (res != 0) {
+    Logger::sctp().error("shutdown on socket_ failed %s", strerror(errno));
+  }
+  res = close(socket_);
+  if (res != 0) {
+    Logger::sctp().error("close on socket_ failed %s", strerror(errno));
+  }
+  Logger::sctp().debug("Thread on sctp_receiver_thread should have ended!");
+}
 
 //------------------------------------------------------------------------------
 int sctp_server::create_socket(const char* address, const uint16_t port_num) {
@@ -107,6 +127,8 @@ int sctp_server::create_socket(const char* address, const uint16_t port_num) {
   setsockopt(socket_, IPPROTO_SCTP, SCTP_EVENTS, &events_, 12);
   listen(socket_, 5);  // the queue length for completely established sockets
                        // waiting to be accepted
+  // deallocation
+  freeaddrinfo((struct addrinfo*) res);
   return RETURNok;
 }
 
@@ -129,7 +151,8 @@ void* sctp_server::sctp_receiver_thread(void* arg) {
   FD_ZERO(&master);
   FD_ZERO(&read_fds);
   FD_SET(ptr->get_socket(), &master);
-  fdmax = ptr->get_socket();
+  fdmax      = ptr->get_socket();
+  tmp_thread = pthread_self();
 
   while (true) {
     memcpy(&read_fds, &master, sizeof(master));
