@@ -640,40 +640,48 @@ void amf_n1::uplink_nas_msg_handle(
           "Received Authentication Response message, handling...");
       authentication_response_handle(ran_ue_ngap_id, amf_ue_ngap_id, plain_msg);
     } break;
+
     case kAuthenticationFailure: {
       Logger::amf_n1().debug(
           "Received Authentication Failure message, handling...");
       authentication_failure_handle(ran_ue_ngap_id, amf_ue_ngap_id, plain_msg);
     } break;
+
     case kSecurityModeComplete: {
       Logger::amf_n1().debug(
           "Received Security Mode Complete message, handling...");
       security_mode_complete_handle(ran_ue_ngap_id, amf_ue_ngap_id, plain_msg);
     } break;
+
     case kSecurityModeReject: {
       Logger::amf_n1().debug(
           "Received Security Mode Reject message, handling...");
       security_mode_reject_handle(ran_ue_ngap_id, amf_ue_ngap_id, plain_msg);
     } break;
+
     case kUlNasTransport: {
       Logger::amf_n1().debug("Received UL NAS Transport message, handling...");
       ul_nas_transport_handle(ran_ue_ngap_id, amf_ue_ngap_id, plain_msg, plmn);
     } break;
+
     case kDeregistrationRequestUeOriginating: {
       Logger::amf_n1().debug(
           "Received De-registration Request message, handling...");
       ue_initiate_de_registration_handle(
           ran_ue_ngap_id, amf_ue_ngap_id, plain_msg);
     } break;
+
     case kIdentityResponse: {
       Logger::amf_n1().debug("Received Identity Response message, handling...");
       identity_response_handle(ran_ue_ngap_id, amf_ue_ngap_id, plain_msg);
     } break;
+
     case kRegistrationComplete: {
       Logger::amf_n1().debug(
           "Received Registration Complete message, handling...");
       registration_complete_handle(ran_ue_ngap_id, amf_ue_ngap_id, plain_msg);
     } break;
+
     case kServiceRequest: {
       Logger::amf_n1().debug("Received Service Request message, handling...");
       std::shared_ptr<nas_context> nc = {};
@@ -683,6 +691,7 @@ void amf_n1::uplink_nas_msg_handle(
         Logger::amf_n1().debug("No NAS context available");
       }
     } break;
+
     case kRegistrationRequest: {
       Logger::amf_n1().debug("Received Registration Request, handling...");
       std::string snn = amf_conv::get_serving_network_name(plmn.mnc, plmn.mcc);
@@ -694,8 +703,8 @@ void amf_n1::uplink_nas_msg_handle(
       } else {
         Logger::amf_n1().debug("No NAS context available");
       }
-
     } break;
+
     default: {
       Logger::amf_n1().debug(
           "Received Unknown message type 0x%x, ignoring...", message_type);
@@ -706,8 +715,7 @@ void amf_n1::uplink_nas_msg_handle(
 //------------------------------------------------------------------------------
 bool amf_n1::check_security_header_type(
     SecurityHeaderType_t& type, const uint8_t* buffer, const uint32_t length) {
-  // Length should be greater than 2 for SecurityHeaderType
-  if (length < 2) {
+  if (length < kNasMessageMinLength) {
     return false;
   }
   uint8_t octet        = 0;
@@ -718,9 +726,29 @@ bool amf_n1::check_security_header_type(
 
   // Decode second octet
   DECODE_U8(buffer + decoded_size, octet, decoded_size);
-  if ((octet & 0x0f) <=
-      IntegrityProtectedAndCipheredWithNew5GNASSecurityContext) {
+  if (((octet & 0x0f) >= kPlain5gsMessage) and
+      ((octet & 0x0f) <=
+       IntegrityProtectedAndCipheredWithNew5GNASSecurityContext)) {
     type = static_cast<SecurityHeaderType_t>(octet & 0x0f);
+    // Verify the minimum length
+    switch (type) {
+      case kPlain5gsMessage: {
+        // Don't need to check again
+        return true;
+      } break;
+      case IntegrityProtected:
+      case IntegrityProtectedAndCiphered:
+      case IntegrityProtectedWithNew5GNASSecurityContext:
+      case IntegrityProtectedAndCipheredWithNew5GNASSecurityContext: {
+        if (length < (kNasMessageMinLength +
+                      kSecurityProtected5gsNasMessageHeaderLength))
+          return false;
+      } break;
+      default: {
+        Logger::amf_n1().error("Unknown NAS Message Type");
+        return false;
+      }
+    }
     return true;
   }
   return false;
@@ -736,6 +764,7 @@ void amf_n1::identity_response_handle(
     Logger::amf_n1().error("Decode Identity Response error");
     return;
   }
+
   std::string imsi_str = {};
   // TODO: avoid accessing member function directly
   oai::nas::SUCI_imsi_t imsi = {};
@@ -1100,8 +1129,7 @@ void amf_n1::service_request_handle(
 
         for (const auto& sn : nc->subscribed_snssai) {
           if (sn.first) {
-            SNSSAI_t snssai = {};
-            snssai          = sn.second;
+            SNSSAI_t snssai = sn.second;
             Logger::amf_n1().debug(
                 "Configured S-NSSAI %s", snssai.ToString().c_str());
           }
@@ -1236,8 +1264,7 @@ void amf_n1::service_request_handle(
         case kServiceRequest: {
           Logger::nas_mm().debug(
               "NAS Message Container contains a Service Request, handling ...");
-          std::unique_ptr<ServiceRequest> service_request_nas =
-              std::make_unique<ServiceRequest>();
+          auto service_request_nas = std::make_unique<ServiceRequest>();
           service_request_nas->Decode(
               (uint8_t*) bdata(plain_msg), blength(plain_msg));
           utils::bdestroy_wrapper(&plain_msg);
@@ -1993,12 +2020,14 @@ void amf_n1::send_registration_reject_msg(
   Logger::amf_n1().debug("Create Registration Reject and send to UE");
   auto registration_reject = std::make_unique<RegistrationReject>();
   registration_reject->Set5gmmCause(cause_value);
+
   uint32_t msg_len = registration_reject->GetLength();
   Logger::nas_mm().debug("Size of Registration Reject message %ld", msg_len);
   uint8_t buffer[msg_len] = {0};
   int encoded_size        = registration_reject->Encode(buffer, msg_len);
   output_wrapper::print_buffer(
       "amf_n1", "Registration-Reject message buffer", buffer, encoded_size);
+
   if (!encoded_size) {
     Logger::amf_n1().error("Encode Registration-Reject message error");
     return;
@@ -5596,7 +5625,7 @@ bool amf_n1::get_amf_set_id(
 
 //------------------------------------------------------------------------------
 uint8_t amf_n1::get_nas_message_type(uint8_t* buf, uint32_t len) {
-  if (len < 3) return 0;
+  if (len < kNasMessageMinLength) return 0;
   return *(buf + 2);  // message type, 3rd octet
 }
 
