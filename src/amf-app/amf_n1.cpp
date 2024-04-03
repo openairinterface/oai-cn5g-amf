@@ -611,9 +611,13 @@ void amf_n1::nas_signalling_establishment_request_handle(
          */
       if (nc && nc->security_ctx.has_value())
         nc->security_ctx.value().ul_count.seq_num = ulCount;
-
-      service_request_handle(
-          nc, ran_ue_ngap_id, amf_ue_ngap_id, plain_msg, ulCount);
+      uint8_t service_reject_cause = k5gmmCauseProtocolError;
+      if (!service_request_handle(
+              nc, ran_ue_ngap_id, amf_ue_ngap_id, plain_msg, ulCount,
+              service_reject_cause)) {
+        // Send Service Reject with appropriate cause
+        send_service_reject(nc, service_reject_cause);
+      }
     } break;
 
     case kDeregistrationRequestUeOriginating: {
@@ -686,7 +690,14 @@ void amf_n1::uplink_nas_msg_handle(
       Logger::amf_n1().debug("Received Service Request message, handling...");
       std::shared_ptr<nas_context> nc = {};
       if (amf_ue_id_2_nas_context(amf_ue_ngap_id, nc)) {
-        service_request_handle(nc, ran_ue_ngap_id, amf_ue_ngap_id, plain_msg);
+        uint8_t service_reject_cause = k5gmmCauseProtocolError;
+        if (!service_request_handle(
+                nc, ran_ue_ngap_id, amf_ue_ngap_id, plain_msg,
+                service_reject_cause)) {
+          // Send Service Reject with appropriate cause
+          send_service_reject(nc, service_reject_cause);
+        }
+
       } else {
         Logger::amf_n1().debug("No NAS context available");
       }
@@ -850,12 +861,15 @@ void amf_n1::identity_response_handle(
 }
 
 //------------------------------------------------------------------------------
-void amf_n1::service_request_handle(
+bool amf_n1::service_request_handle(
     std::shared_ptr<nas_context> nc, const uint32_t ran_ue_ngap_id,
-    const long amf_ue_ngap_id, bstring nas) {
+    const long amf_ue_ngap_id, bstring nas, uint8_t& service_reject_cause) {
   std::shared_ptr<ue_context> uc = {};
 
-  if (!find_ue_context(ran_ue_ngap_id, amf_ue_ngap_id, uc)) return;
+  if (!find_ue_context(ran_ue_ngap_id, amf_ue_ngap_id, uc)) {
+    service_reject_cause = k5gmmCauseUeIdentityCannotBeDerived;
+    return false;
+  }
 
   // Decode Service Request to get 5G-TMSI
   auto service_request = std::make_unique<ServiceRequest>();
@@ -883,8 +897,8 @@ void amf_n1::service_request_handle(
       (decoded_size == KEncodeDecodeError)) {
     Logger::amf_n1().debug(
         "Cannot find NAS/UE context, send Service Reject to UE");
-    send_service_reject(nc, k5gmmCauseUeIdentityCannotBeDerived);
-    return;
+    service_reject_cause = k5gmmCauseUeIdentityCannotBeDerived;
+    return false;
   }
 
   // Otherwise, continue to process Service Request message
@@ -892,7 +906,9 @@ void amf_n1::service_request_handle(
 
   if (!nc->security_ctx.has_value()) {
     Logger::amf_n1().error("No Security Context found");
-    return;
+    service_reject_cause =
+        k5gmmCauseSecurityModeRejectedUnspecified;  // TODO: verify the cause
+    return false;
   }
 
   // Prepare Service Accept
@@ -924,7 +940,8 @@ void amf_n1::service_request_handle(
       if (blength(plain_msg) < kNasMessageMinLength) {
         Logger::amf_n1().debug("NAS message is too short!");
         utils::bdestroy_wrapper(&plain_msg);
-        return;
+        service_reject_cause = k5gmmCauseSemanticallyIncorrect;
+        return false;
       }
 
       uint8_t message_type =
@@ -940,11 +957,15 @@ void amf_n1::service_request_handle(
         case kServiceRequest: {
           Logger::nas_mm().debug(
               "NAS Message Container contains a Service Request, handling ...");
-          std::unique_ptr<ServiceRequest> service_request_nas =
-              std::make_unique<ServiceRequest>();
-          service_request_nas->Decode(
+          auto service_request_nas = std::make_unique<ServiceRequest>();
+          int decoded_size         = service_request_nas->Decode(
               (uint8_t*) bdata(plain_msg), blength(plain_msg));
           utils::bdestroy_wrapper(&plain_msg);
+          if (decoded_size == KEncodeDecodeError) {
+            Logger::nas_mm().error("Decode Service Request message error");
+            service_reject_cause = k5gmmCauseSemanticallyIncorrect;
+            return false;
+          }
 
           // Get Uplink Data Status from NAS message container if not available
           if (!uplink_data_status_opt.has_value()) {
@@ -1001,9 +1022,8 @@ void amf_n1::service_request_handle(
   if (pdu_session_to_be_activated.size() == 0) {
     // TODO: should be updated
     Logger::amf_n1().debug("There is no PDU session to be activated");
-    // TODO:
-    send_service_reject(nc, k5gmmCauseSemanticallyIncorrect);
-    return;
+    service_reject_cause = k5gmmCauseSemanticallyIncorrect;
+    return false;
   } else {
     // Contact SMF to activate UP for these sessions
     // PDU SESSION RESOURCE SETUP_REQUEST
@@ -1049,7 +1069,8 @@ void amf_n1::service_request_handle(
     int encoded_size        = service_accept->Encode(buffer, msg_len);
     if (encoded_size == KEncodeDecodeError) {
       Logger::nas_mm().error("Encode Service Accept message error");
-      return;
+      service_reject_cause = k5gmmCauseCongestion;  // TODO: verify the cause
+      return false;
     }
 
     bstring protected_nas = nullptr;
@@ -1066,18 +1087,26 @@ void amf_n1::service_request_handle(
       Logger::amf_n1().error(
           "Could not send ITTI message %s to task TASK_AMF_N2",
           psrsr->get_msg_name());
+      utils::bdestroy_wrapper(&protected_nas);
+      service_reject_cause = k5gmmCauseCongestion;
+      return false;
     }
     utils::bdestroy_wrapper(&protected_nas);
   }
+  return true;
 }
 
 //------------------------------------------------------------------------------
-void amf_n1::service_request_handle(
+bool amf_n1::service_request_handle(
     std::shared_ptr<nas_context> nc, const uint32_t ran_ue_ngap_id,
-    const long amf_ue_ngap_id, bstring nas, uint8_t ulCount) {
+    const long amf_ue_ngap_id, bstring nas, uint8_t ulCount,
+    uint8_t& service_reject_cause) {
   std::shared_ptr<ue_context> uc = {};
 
-  if (!find_ue_context(ran_ue_ngap_id, amf_ue_ngap_id, uc)) return;
+  if (!find_ue_context(ran_ue_ngap_id, amf_ue_ngap_id, uc)) {
+    service_reject_cause = k5gmmCauseUeIdentityCannotBeDerived;
+    return false;
+  }
 
   // Decode Service Request to get 5G-TMSI
   std::unique_ptr<ServiceRequest> service_request =
@@ -1157,11 +1186,8 @@ void amf_n1::service_request_handle(
 
   // If there's no appropriate context, send Service Reject
   if (!nc or !uc or !nc->security_ctx or (decoded_size == KEncodeDecodeError)) {
-    // TODO: Try to get
-    Logger::amf_n1().debug(
-        "Cannot find NAS/UE context, send Service Reject to UE");
-    send_service_reject(nc, k5gmmCauseUeIdentityCannotBeDerived);
-    return;
+    service_reject_cause = k5gmmCauseUeIdentityCannotBeDerived;
+    return false;
   }
 
   // Otherwise, continue to process Service Request message
@@ -1169,7 +1195,9 @@ void amf_n1::service_request_handle(
 
   if (!nc->security_ctx.has_value()) {
     Logger::amf_n1().error("No Security Context found");
-    return;
+    service_reject_cause =
+        k5gmmCauseSecurityModeRejectedUnspecified;  // TODO: verify the cause
+    return false;
   }
 
   // First send UEContextReleaseCommand to release old NAS signalling
@@ -1253,7 +1281,8 @@ void amf_n1::service_request_handle(
       if (blength(plain_msg) < kNasMessageMinLength) {
         Logger::amf_n1().debug("NAS message is too short!");
         utils::bdestroy_wrapper(&plain_msg);
-        return;
+        service_reject_cause = k5gmmCauseSemanticallyIncorrect;
+        return false;
       }
 
       uint8_t message_type =
@@ -1270,9 +1299,16 @@ void amf_n1::service_request_handle(
           Logger::nas_mm().debug(
               "NAS Message Container contains a Service Request, handling ...");
           auto service_request_nas = std::make_unique<ServiceRequest>();
-          service_request_nas->Decode(
+
+          int decoded_size = service_request_nas->Decode(
               (uint8_t*) bdata(plain_msg), blength(plain_msg));
           utils::bdestroy_wrapper(&plain_msg);
+
+          if (decoded_size == KEncodeDecodeError) {
+            Logger::nas_mm().error("Decode Service Request message error");
+            service_reject_cause = k5gmmCauseSemanticallyIncorrect;
+            return false;
+          }
 
           // Get Uplink Data Status from NAS message container if not available
           if (!uplink_data_status_opt.has_value()) {
@@ -1334,8 +1370,9 @@ void amf_n1::service_request_handle(
     uint8_t buffer[msg_len] = {0};
     int encoded_size        = service_accept->Encode(buffer, msg_len);
     if (encoded_size == KEncodeDecodeError) {
-      Logger::nas_mm().debug("Emcpde Service Accept message error");
-      return;
+      Logger::nas_mm().debug("Encode Service Accept message error");
+      service_reject_cause = k5gmmCauseCongestion;  // TODO: verify the cause
+      return false;
     }
     bstring protected_nas = nullptr;
     encode_nas_message_protected(
@@ -1347,7 +1384,9 @@ void amf_n1::service_request_handle(
     uint8_t kgnb[AUTH_VECTOR_LENGTH_OCTETS];
     if (!nc->get_kamf(nc->security_ctx.value().vector_pointer, kamf)) {
       Logger::amf_n1().warn("No Kamf found");
-      return;
+      service_reject_cause =
+          k5gmmCauseSecurityModeRejectedUnspecified;  // TODO: verify the cause
+      return false;
     }
     uint32_t ulcount = nc->security_ctx.value().ul_count.seq_num |
                        (nc->security_ctx.value().ul_count.overflow << 8);
@@ -1369,15 +1408,16 @@ void amf_n1::service_request_handle(
       Logger::amf_n1().error(
           "Could not send ITTI message %s to task TASK_AMF_N2",
           itti_msg->get_msg_name());
+      utils::bdestroy_wrapper(&protected_nas);
+      service_reject_cause = k5gmmCauseCongestion;
+      return false;
     } else {
       // Update 5GMM State
       stacs.update_5gmm_state(nc->imsi, "5GMM-REGISTERED");
       set_5gmm_state(nc, _5GMM_REGISTERED);
       stacs.display();
     }
-
     utils::bdestroy_wrapper(&protected_nas);
-    return;
 
   } else {
     auto itti_msg = std::make_shared<itti_initial_context_setup_request>(
@@ -1431,7 +1471,8 @@ void amf_n1::service_request_handle(
     int encoded_size        = service_accept->Encode(buffer, msg_len);
     if (encoded_size == KEncodeDecodeError) {
       Logger::nas_mm().error("Encode Service Accept message error");
-      return;
+      service_reject_cause = k5gmmCauseCongestion;  // TODO: verify the cause
+      return false;
     }
     bstring protected_nas = nullptr;
     encode_nas_message_protected(
@@ -1442,7 +1483,9 @@ void amf_n1::service_request_handle(
     uint8_t kgnb[AUTH_VECTOR_LENGTH_OCTETS];
     if (!nc->get_kamf(nc->security_ctx.value().vector_pointer, kamf)) {
       Logger::amf_n1().warn("No Kamf found");
-      return;
+      service_reject_cause =
+          k5gmmCauseSecurityModeRejectedUnspecified;  // TODO: verify the cause
+      return false;
     }
     uint32_t ulcount = nc->security_ctx.value().ul_count.seq_num |
                        (nc->security_ctx.value().ul_count.overflow << 8);
@@ -1464,6 +1507,9 @@ void amf_n1::service_request_handle(
       Logger::amf_n1().error(
           "Could not send ITTI message %s to task TASK_AMF_N2",
           itti_msg->get_msg_name());
+      utils::bdestroy_wrapper(&protected_nas);
+      service_reject_cause = k5gmmCauseCongestion;
+      return false;
     }
     // Update 5GMM State
     stacs.update_5gmm_state(nc->imsi, "5GMM-REGISTERED");
@@ -1472,12 +1518,14 @@ void amf_n1::service_request_handle(
 
     utils::bdestroy_wrapper(&protected_nas);
   }
+
+  return true;
 }
 
 //------------------------------------------------------------------------------
 void amf_n1::send_service_reject(
     std::shared_ptr<nas_context>& nc, uint8_t cause) {
-  Logger::amf_n1().debug("Send Service Reject to UE");
+  Logger::amf_n1().debug("Send Service Reject with cause %d to UE", cause);
 
   std::unique_ptr<ServiceReject> service_reject =
       std::make_unique<ServiceReject>();

@@ -913,11 +913,13 @@ class amf_n1 {
    * @param [const uint32_t] ran_ue_ngap_id: RAN UE NGAP ID
    * @param [const long] amf_ue_ngap_id: AMF UE NGAP ID
    * @param [bstring] nas: NAS Service Request message
-   * @return void
+   * @param [uint8_t&] cause: 5GMM cause when service request procedure not
+   * accepted by the network
+   * @return true if process the request successfully, otherwise return false
    */
-  void service_request_handle(
+  bool service_request_handle(
       std::shared_ptr<nas_context> nc, const uint32_t ran_ue_ngap_id,
-      const long amf_ue_ngap_id, bstring nas);
+      const long amf_ue_ngap_id, bstring nas, uint8_t& cause);
 
   /*
    * Handle Service Request message
@@ -926,11 +928,13 @@ class amf_n1 {
    * @param [const long] amf_ue_ngap_id: AMF UE NGAP ID
    * @param [bstring] nas: NAS Service Request message
    * @param [uint8_t] ulCount: Uplink NAS count
-   * @return void
+   * @param [uint8_t&] cause: 5GMM cause when service request procedure not
+   * accepted by the network
+   * @return true if process the request successfully, otherwise return false
    */
-  void service_request_handle(
+  bool service_request_handle(
       std::shared_ptr<nas_context> nc, const uint32_t ran_ue_ngap_id,
-      const long amf_ue_ngap_id, bstring nas, uint8_t ulCount);
+      const long amf_ue_ngap_id, bstring nas, uint8_t ulCount, uint8_t& cause);
 
   /*
    * Send Service Reject to the UE
