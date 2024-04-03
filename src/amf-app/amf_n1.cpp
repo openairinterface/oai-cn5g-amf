@@ -1999,7 +1999,7 @@ void amf_n1::send_registration_reject_msg(
   bstring b = blk2bstr(buffer, encoded_size);
   itti_send_dl_nas_buffer_to_task_n2(b, ran_ue_ngap_id, amf_ue_ngap_id);
   // sleep 200ms
-  usleep(200000);
+  // usleep(200000);
 
   // Trigger CommunicationFailure Report notify
   oai::amf::model::CommunicationFailure comm_failure = {};
@@ -2541,7 +2541,7 @@ bool amf_n1::start_authentication_procedure(
       "amf_ue_ngap_id " AMF_UE_NGAP_ID_FMT, nc->amf_ue_ngap_id);
   itti_send_dl_nas_buffer_to_task_n2(b, nc->ran_ue_ngap_id, nc->amf_ue_ngap_id);
   // sleep 200ms
-  usleep(200000);
+  // usleep(200000);
   return true;
 }
 
@@ -2809,7 +2809,7 @@ bool amf_n1::start_security_mode_control_procedure(
   itti_send_dl_nas_buffer_to_task_n2(
       protected_nas, nc->ran_ue_ngap_id, nc->amf_ue_ngap_id);
   // sleep 200ms
-  usleep(200000);
+  // usleep(200000);
   return true;
 }
 
