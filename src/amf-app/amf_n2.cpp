@@ -1526,7 +1526,7 @@ void amf_n2::handle_itti_message(
   itti_msg->ueCtxRelCmpl->getPduSessionResourceCxtRelCplList(
       pdu_sessions_to_be_released);
 
-  // Get info from UE Context Release Request if neccessary
+  // Get info from UE Context Release Request if necessary
   if (pdu_sessions_to_be_released.size() == 0) {
     PDUSessionResourceCxtRelCplItem_t item = {};
     for (const auto& p : unc->pdu_sessions_to_be_released) {
@@ -1535,10 +1535,10 @@ void amf_n2::handle_itti_message(
     }
   }
 
-  // TODO: may consider releasing all exisiting PDU sessions
-  /*
+  // NOTE: SHOULD BE REMOVED when OAI gNB includes PDU Session Resource List in
+  // the UE Context Release Complete Releasing all existing PDU sessions
   if (pdu_sessions_to_be_released.size() == 0) {
-      string supi = amf_conv::imsi_to_supi(nc->imsi);
+    std::string supi = amf_conv::imsi_to_supi(nc->imsi);
     std::vector<std::shared_ptr<pdu_session_context>> sessions_ctx;
     if (!amf_app_inst->get_pdu_sessions_context(supi, sessions_ctx)) {
       Logger::amf_n2().debug("No PDU Session Context found");
@@ -1546,12 +1546,12 @@ void amf_n2::handle_itti_message(
     } else {
       for (auto pdu_session : sessions_ctx) {
         PDUSessionResourceCxtRelCplItem_t item = {};
-        item.pduSessionId = pdu_session->pdu_session_id;
+        item.pduSessionId                      = pdu_session->pdu_session_id;
         pdu_sessions_to_be_released.push_back(item);
       }
     }
   }
-*/
+
   // Send PDUSessionUpdateSMContextRequest to SMF for each PDU session
   std::map<uint32_t, boost::shared_future<nlohmann::json>> curl_responses;
 
