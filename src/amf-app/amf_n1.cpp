@@ -594,8 +594,12 @@ void amf_n1::nas_signalling_establishment_request_handle(
     case kRegistrationRequest: {
       Logger::amf_n1().debug(
           "Received Registration Request message, handling...");
-      registration_request_handle(
-          nc, ran_ue_ngap_id, amf_ue_ngap_id, snn, plain_msg);
+      uint8_t cause = k5gmmCauseProtocolErrorUnspecified;
+      if (!registration_request_handle(
+              nc, ran_ue_ngap_id, amf_ue_ngap_id, snn, plain_msg, cause)) {
+        // Send Registration Reject with appropriate cause
+        send_registration_reject_msg(ran_ue_ngap_id, amf_ue_ngap_id, cause);
+      }
     } break;
 
     case kServiceRequest: {
@@ -611,7 +615,7 @@ void amf_n1::nas_signalling_establishment_request_handle(
          */
       if (nc && nc->security_ctx.has_value())
         nc->security_ctx.value().ul_count.seq_num = ulCount;
-      uint8_t service_reject_cause = k5gmmCauseProtocolError;
+      uint8_t service_reject_cause = k5gmmCauseProtocolErrorUnspecified;
       if (!service_request_handle(
               nc, ran_ue_ngap_id, amf_ue_ngap_id, plain_msg, ulCount,
               service_reject_cause)) {
@@ -690,7 +694,7 @@ void amf_n1::uplink_nas_msg_handle(
       Logger::amf_n1().debug("Received Service Request message, handling...");
       std::shared_ptr<nas_context> nc = {};
       if (amf_ue_id_2_nas_context(amf_ue_ngap_id, nc)) {
-        uint8_t service_reject_cause = k5gmmCauseProtocolError;
+        uint8_t service_reject_cause = k5gmmCauseProtocolErrorUnspecified;
         if (!service_request_handle(
                 nc, ran_ue_ngap_id, amf_ue_ngap_id, plain_msg,
                 service_reject_cause)) {
@@ -709,8 +713,13 @@ void amf_n1::uplink_nas_msg_handle(
       Logger::amf_n1().debug("Serving network name %s", snn.c_str());
       std::shared_ptr<nas_context> nc = {};
       if (amf_ue_id_2_nas_context(amf_ue_ngap_id, nc)) {
-        registration_request_handle(
-            nc, ran_ue_ngap_id, amf_ue_ngap_id, snn, plain_msg);
+        uint8_t cause = k5gmmCauseProtocolErrorUnspecified;
+        if (!registration_request_handle(
+                nc, ran_ue_ngap_id, amf_ue_ngap_id, snn, plain_msg, cause)) {
+          // Send Registration Reject with appropriate cause
+          send_registration_reject_msg(ran_ue_ngap_id, amf_ue_ngap_id, cause);
+        }
+
       } else {
         Logger::amf_n1().debug("No NAS context available");
       }
@@ -855,8 +864,11 @@ void amf_n1::identity_response_handle(
     // event_sub.ue_registration_state(supi, _5GMM_COMMON_PROCEDURE_INITIATED,
     // 1);
     // TODO: Trigger UE Location Report
-
-    run_registration_procedure(nc);
+    uint8_t cause = k5gmmCauseProtocolErrorUnspecified;
+    if (!run_registration_procedure(nc, cause)) {
+      Logger::amf_n1().warn("Failed to run Registration procedure!");
+      // TODO: send registration reject?
+    }
   }
 }
 
@@ -1022,7 +1034,9 @@ bool amf_n1::service_request_handle(
   if (pdu_session_to_be_activated.size() == 0) {
     // TODO: should be updated
     Logger::amf_n1().debug("There is no PDU session to be activated");
-    service_reject_cause = k5gmmCauseSemanticallyIncorrect;
+    service_reject_cause =
+        k5gmmCauseInsufficientUpResourcesForThePduSession;  // TODO: verify the
+                                                            // cause
     return false;
   } else {
     // Contact SMF to activate UP for these sessions
@@ -1069,7 +1083,7 @@ bool amf_n1::service_request_handle(
     int encoded_size        = service_accept->Encode(buffer, msg_len);
     if (encoded_size == KEncodeDecodeError) {
       Logger::nas_mm().error("Encode Service Accept message error");
-      service_reject_cause = k5gmmCauseCongestion;  // TODO: verify the cause
+      service_reject_cause = k5gmmCauseSemanticallyIncorrect;
       return false;
     }
 
@@ -1371,7 +1385,7 @@ bool amf_n1::service_request_handle(
     int encoded_size        = service_accept->Encode(buffer, msg_len);
     if (encoded_size == KEncodeDecodeError) {
       Logger::nas_mm().debug("Encode Service Accept message error");
-      service_reject_cause = k5gmmCauseCongestion;  // TODO: verify the cause
+      service_reject_cause = k5gmmCauseSemanticallyIncorrect;
       return false;
     }
     bstring protected_nas = nullptr;
@@ -1471,7 +1485,7 @@ bool amf_n1::service_request_handle(
     int encoded_size        = service_accept->Encode(buffer, msg_len);
     if (encoded_size == KEncodeDecodeError) {
       Logger::nas_mm().error("Encode Service Accept message error");
-      service_reject_cause = k5gmmCauseCongestion;  // TODO: verify the cause
+      service_reject_cause = k5gmmCauseSemanticallyIncorrect;
       return false;
     }
     bstring protected_nas = nullptr;
@@ -1536,7 +1550,7 @@ void amf_n1::send_service_reject(
   uint8_t buffer[msg_len] = {0};
   int encoded_size        = service_reject->Encode(buffer, msg_len);
   if (encoded_size == KEncodeDecodeError) {
-    Logger::amf_n1().error("Encode Service-Reject message error");
+    Logger::amf_n1().error("Encode Service Reject message error");
     return;
   }
   output_wrapper::print_buffer(
@@ -1563,12 +1577,19 @@ void amf_n1::send_service_reject(
 }
 
 //------------------------------------------------------------------------------
-void amf_n1::registration_request_handle(
+bool amf_n1::registration_request_handle(
     std::shared_ptr<nas_context>& nc, const uint32_t ran_ue_ngap_id,
-    const long amf_ue_ngap_id, const std::string& snn, bstring reg) {
+    const long amf_ue_ngap_id, const std::string& snn, bstring reg,
+    uint8_t& cause) {
   // Decode Registration Request message
   auto registration_request = std::make_unique<RegistrationRequest>();
-  registration_request->Decode((uint8_t*) bdata(reg), blength(reg));
+  int decoded_size =
+      registration_request->Decode((uint8_t*) bdata(reg), blength(reg));
+  if (decoded_size == KEncodeDecodeError) {
+    Logger::nas_mm().error("Decode Registration Request message error");
+    cause = k5gmmCauseSemanticallyIncorrect;
+    return false;
+  }
 
   // store Registration request in Nas Context
   nc->registration_request = blk2bstr((uint8_t*) bdata(reg), blength(reg));
@@ -1576,8 +1597,10 @@ void amf_n1::registration_request_handle(
 
   // Find UE context
   std::shared_ptr<ue_context> uc = {};
-
-  if (!find_ue_context(ran_ue_ngap_id, amf_ue_ngap_id, uc)) return;
+  if (!find_ue_context(ran_ue_ngap_id, amf_ue_ngap_id, uc)) {
+    cause = k5gmmCauseIllegalUe;  // TODO: verify the cause
+    return false;
+  }
 
   // Check 5GS Mobility Identity (Mandatory IE)
   std::string guti         = {};
@@ -1688,7 +1711,8 @@ void amf_n1::registration_request_handle(
         if (!nc) {
           Logger::amf_n1().error(
               "Cannot allocate memory for new nas_context, exit...");
-          return;
+          cause = k5gmmCauseCongestion;  // TODO: verify the cause
+          return false;
         }
         Logger::amf_n1().info(
             "Created a new NAS context and associated with amf_ue_ngap_id "
@@ -1744,18 +1768,20 @@ void amf_n1::registration_request_handle(
         nc->security_ctx.value().sc_type = SECURITY_CTX_TYPE_NOT_AVAILABLE;
     } else {
       Logger::amf_n1().error("No NAS context with GUTI (%s)", guti.c_str());
-      send_registration_reject_msg(
-          k5gmmCauseUeIdentityCannotBeDerived, ran_ue_ngap_id, amf_ue_ngap_id);
       // release ue_ngap_context and ue_context
       if (uc) uc.reset();
 
       std::shared_ptr<ue_ngap_context> unc = {};
       if (!amf_n2_inst->ran_ue_id_2_ue_ngap_context(
-              ran_ue_ngap_id, uc->gnb_id, unc))
-        return;
+              ran_ue_ngap_id, uc->gnb_id, unc)) {
+        cause = k5gmmCauseIllegalUe;  // TODO: verify the cause
+        return false;
+      }
 
       if (unc) unc.reset();
-      return;
+
+      cause = k5gmmCauseUeIdentityCannotBeDerived;  // TODO: verify the cause
+      return false;
     }
   } else {
     Logger::amf_n1().debug("Existing nas_context --> Update");
@@ -1784,9 +1810,8 @@ void amf_n1::registration_request_handle(
   if (!registration_request->Get5gsRegistrationType(
           is_follow_on_req_pending, reg_type)) {
     Logger::amf_n1().error("Missing Mandatory IE 5GS Registration type...");
-    send_registration_reject_msg(
-        k5gmmCauseInvalidMandatoryInfo, ran_ue_ngap_id, amf_ue_ngap_id);
-    return;
+    cause = k5gmmCauseInvalidMandatoryInfo;
+    return false;
   }
   nc->registration_type         = reg_type;
   nc->follow_on_req_pending_ind = is_follow_on_req_pending;
@@ -1795,9 +1820,8 @@ void amf_n1::registration_request_handle(
   uint8_t ngksi = 0;
   if (!registration_request->GetNgKsi(ngksi)) {
     Logger::amf_n1().error("Missing Mandatory IE ngKSI...");
-    send_registration_reject_msg(
-        k5gmmCauseInvalidMandatoryInfo, ran_ue_ngap_id, amf_ue_ngap_id);
-    return;
+    cause = k5gmmCauseInvalidMandatoryInfo;
+    return false;
   }
   nc->ngksi = ngksi;
 
@@ -1866,44 +1890,44 @@ void amf_n1::registration_request_handle(
   // Run the corresponding registration procedure
   switch (reg_type) {
     case kInitialRegistration: {
-      run_registration_procedure(nc);
+      return run_registration_procedure(nc, cause);
     } break;
 
     case kMobilityRegistrationUpdating: {
       Logger::amf_n1().debug("Handling Mobility Registration Update...");
-      run_mobility_registration_update_procedure(
+      return run_mobility_registration_update_procedure(
           nc, registration_request->GetUplinkDataStatus(),
-          registration_request->GetPduSessionStatus());
+          registration_request->GetPduSessionStatus(), cause);
     } break;
 
     case kPeriodicRegistrationUpdating: {
       Logger::amf_n1().debug("Handling Periodic Registration Update...");
       if (is_messagecontainer)
-        run_periodic_registration_update_procedure(nc, nas_msg);
+        return run_periodic_registration_update_procedure(nc, nas_msg, cause);
       else {
         uint16_t pdu_session_status = 0;
         registration_request->GetPduSessionStatus(pdu_session_status);
-        run_periodic_registration_update_procedure(nc, pdu_session_status);
+        return run_periodic_registration_update_procedure(
+            nc, pdu_session_status, cause);
       }
-
     } break;
 
     case kEmergencyRegistration: {
       if (!amf_cfg.is_emergency_support) {
         Logger::amf_n1().error(
             "Network does not support emergency registration, reject ...");
-        send_registration_reject_msg(
-            k5gmmCauseIllegalUe, ran_ue_ngap_id,
-            amf_ue_ngap_id);  // cause?
-        return;
+        cause = k5gmmCause5gsServicesNotAllowed;
+        return false;
       }
     } break;
+
     default: {
       Logger::amf_n1().error("Unknown registration type ...");
-      // TODO:
-      return;
+      cause = k5gmmCauseInvalidMandatoryInfo;
+      return false;
     }
   }
+  return true;
 }
 
 //------------------------------------------------------------------------------
@@ -2076,8 +2100,8 @@ void amf_n1::itti_send_dl_nas_buffer_to_task_n2(
 
 //------------------------------------------------------------------------------
 void amf_n1::send_registration_reject_msg(
-    uint8_t cause_value, const uint32_t ran_ue_ngap_id,
-    const long amf_ue_ngap_id) {
+    const uint32_t ran_ue_ngap_id, const long amf_ue_ngap_id,
+    uint8_t cause_value) {
   Logger::amf_n1().debug("Create Registration Reject and send to UE");
   auto registration_reject = std::make_unique<RegistrationReject>();
   registration_reject->Set5gmmCause(cause_value);
@@ -2116,11 +2140,13 @@ void amf_n1::send_registration_reject_msg(
 }
 
 //------------------------------------------------------------------------------
-void amf_n1::run_registration_procedure(std::shared_ptr<nas_context>& nc) {
+bool amf_n1::run_registration_procedure(
+    std::shared_ptr<nas_context>& nc, uint8_t& cause) {
   Logger::amf_n1().debug("Start to run Registration Procedure");
   if (!nc->ctx_avaliability_ind) {
     Logger::amf_n1().error("NAS context is not available");
-    return;
+    cause = k5gmmCauseIllegalUe;  // TODO: verify the cause
+    return false;
   }
 
   nc->is_specific_procedure_for_registration_running = true;
@@ -2129,7 +2155,7 @@ void amf_n1::run_registration_procedure(std::shared_ptr<nas_context>& nc) {
     if (!nc->is_auth_vectors_present) {
       Logger::amf_n1().debug(
           "Authentication vector in nas_context is not available");
-      if (auth_vectors_generator(nc)) {  // all authentication in one (AMF)
+      if (auth_vectors_generator(nc)) {
         ngksi_t ngksi = 0;
         if (nc->security_ctx.has_value() &&
             nc->ngksi != kNasKeySetIdentifierNotAvailable) {
@@ -2138,10 +2164,8 @@ void amf_n1::run_registration_procedure(std::shared_ptr<nas_context>& nc) {
         nc->ngksi = ngksi;
       } else {
         Logger::amf_n1().error("Request Authentication Vectors failure");
-        send_registration_reject_msg(
-            k5gmmCauseIllegalUe, nc->ran_ue_ngap_id,
-            nc->amf_ue_ngap_id);  // cause?
-        return;
+        cause = k5gmmCauseIllegalUe;  // TODO: verify the cause
+        return false;
       }
     } else {
       Logger::amf_n1().debug(
@@ -2170,7 +2194,8 @@ void amf_n1::run_registration_procedure(std::shared_ptr<nas_context>& nc) {
     int encoded_size        = identity_request->Encode(buffer, msg_len);
     if (encoded_size == KEncodeDecodeError) {
       Logger::nas_mm().error("Encode Identity Request message error");
-      return;
+      cause = k5gmmCauseSemanticallyIncorrect;
+      return false;
     }
     auto dnt =
         std::make_shared<itti_dl_nas_transport>(TASK_AMF_N1, TASK_AMF_N2);
@@ -2183,8 +2208,11 @@ void amf_n1::run_registration_procedure(std::shared_ptr<nas_context>& nc) {
       Logger::amf_n1().error(
           "Could not send ITTI message %s to task TASK_AMF_N2",
           dnt->get_msg_name());
+      cause = k5gmmCauseCongestion;
+      return false;
     }
   }
+  return true;
 }
 
 //------------------------------------------------------------------------------
@@ -2643,8 +2671,8 @@ void amf_n1::handle_auth_vector_successful_result(
     Logger::amf_n1().error(
         "Ran_ue_ngap_id " GNB_UE_NGAP_ID_FMT, nc->ran_ue_ngap_id);
     send_registration_reject_msg(
-        k5gmmCauseInvalidMandatoryInfo, nc->ran_ue_ngap_id,
-        nc->amf_ue_ngap_id);  // cause?
+        nc->ran_ue_ngap_id, nc->amf_ue_ngap_id,
+        k5gmmCauseInvalidMandatoryInfo);  // cause?
   } else {
     // update mm state -> COMMON-PROCEDURE-INITIATED
   }
@@ -2657,8 +2685,8 @@ bool amf_n1::start_authentication_procedure(
   if (check_nas_common_procedure_on_going(nc)) {
     Logger::amf_n1().error("Existed NAS common procedure on going, reject...");
     send_registration_reject_msg(
-        k5gmmCauseInvalidMandatoryInfo, nc->ran_ue_ngap_id,
-        nc->amf_ue_ngap_id);  // cause?
+        nc->ran_ue_ngap_id, nc->amf_ue_ngap_id,
+        k5gmmCauseInvalidMandatoryInfo);  // cause?
     return false;
   }
 
@@ -2728,8 +2756,7 @@ void amf_n1::authentication_response_handle(
 
   if (!amf_ue_id_2_nas_context(amf_ue_ngap_id, nc)) {
     send_registration_reject_msg(
-        k5gmmCauseIllegalUe, ran_ue_ngap_id,
-        amf_ue_ngap_id);  // cause?
+        ran_ue_ngap_id, amf_ue_ngap_id, k5gmmCauseIllegalUe);  // cause?
     return;
   }
 
@@ -2800,8 +2827,7 @@ void amf_n1::authentication_response_handle(
         "Authentication failed for UE with amf_ue_ngap_id " AMF_UE_NGAP_ID_FMT,
         amf_ue_ngap_id);
     send_registration_reject_msg(
-        k5gmmCauseIllegalUe, ran_ue_ngap_id,
-        amf_ue_ngap_id);  // cause?
+        ran_ue_ngap_id, amf_ue_ngap_id, k5gmmCauseIllegalUe);  // cause?
     return;
   } else {
     Logger::amf_n1().debug("Authentication successful by network!");
@@ -2821,8 +2847,7 @@ void amf_n1::authentication_failure_handle(
   std::shared_ptr<nas_context> nc = {};
   if (!amf_ue_id_2_nas_context(amf_ue_ngap_id, nc)) {
     send_registration_reject_msg(
-        k5gmmCauseIllegalUe, ran_ue_ngap_id,
-        amf_ue_ngap_id);  // cause?
+        ran_ue_ngap_id, amf_ue_ngap_id, k5gmmCauseIllegalUe);  // cause?
     return;
   }
 
@@ -2830,15 +2855,24 @@ void amf_n1::authentication_failure_handle(
   // 1. decode AUTHENTICATION FAILURE message
   auto auth_failure = std::make_unique<AuthenticationFailure>();
 
-  auth_failure->Decode((uint8_t*) bdata(plain_msg), blength(plain_msg));
+  int decoded_size =
+      auth_failure->Decode((uint8_t*) bdata(plain_msg), blength(plain_msg));
+  if (decoded_size == KEncodeDecodeError) {
+    Logger::nas_mm().error("Decode Registration Request message error");
+    send_registration_reject_msg(
+        ran_ue_ngap_id, amf_ue_ngap_id, k5gmmCauseSemanticallyIncorrect);
+    return;
+  }
+
   uint8_t mm_cause = auth_failure->Get5gmmCause();
   if (mm_cause == -1) {
     Logger::amf_n1().error("Missing mandatory IE 5G_MM_CAUSE");
     send_registration_reject_msg(
-        k5gmmCauseInvalidMandatoryInfo, ran_ue_ngap_id,
-        amf_ue_ngap_id);  // cause?
+        ran_ue_ngap_id, amf_ue_ngap_id,
+        k5gmmCauseInvalidMandatoryInfo);  // cause?
     return;
   }
+
   switch (mm_cause) {
     case k5gmmCauseSynchFailure: {
       Logger::amf_n1().debug("Initial new Authentication procedure");
@@ -2851,16 +2885,17 @@ void amf_n1::authentication_failure_handle(
       output_wrapper::print_buffer(
           "amf_n1", "Received AUTS", (uint8_t*) bdata(auts), blength(auts));
 
-      if (auth_vectors_generator(nc)) {  // all authentication in one(AMF)
+      if (auth_vectors_generator(nc)) {
         handle_auth_vector_successful_result(nc);
       } else {
         Logger::amf_n1().error("Request Authentication Vectors failure");
         send_registration_reject_msg(
-            k5gmmCauseIllegalUe, nc->ran_ue_ngap_id,
-            nc->amf_ue_ngap_id);  // cause?
+            nc->ran_ue_ngap_id, nc->amf_ue_ngap_id,
+            k5gmmCauseIllegalUe);  // cause?
       }
       // authentication_failure_synch_failure_handle(nc, auts);
     } break;
+
     case k5gmmCauseNgksiAlreadyInUse: {
       Logger::amf_n1().debug(
           "ngKSI already in use, select a new ngKSI and restart the "
@@ -2882,13 +2917,18 @@ void amf_n1::authentication_failure_handle(
         Logger::amf_n1().error(
             "Ran_ue_ngap_id " GNB_UE_NGAP_ID_FMT, nc->ran_ue_ngap_id);
         send_registration_reject_msg(
-            k5gmmCauseInvalidMandatoryInfo, nc->ran_ue_ngap_id,
-            nc->amf_ue_ngap_id);
+            nc->ran_ue_ngap_id, nc->amf_ue_ngap_id,
+            k5gmmCauseInvalidMandatoryInfo);
       } else {
         // update mm state -> COMMON-PROCEDURE-INITIATED
       }
 
     } break;
+    default: {
+      Logger::amf_n1().warn(
+          "Unknown Authentication Failure's cause %d", mm_cause);
+      // TODO:
+    }
   }
 }
 
@@ -3078,7 +3118,7 @@ void amf_n1::security_mode_complete_handle(
   // UE to the target AMFs, thus encoding REGISTRATION REJECT
   if (!reroute_result) {
     uint8_t cause_value = 7;  // TODO: 5GS services not allowed - TO BE VERIFIED
-    send_registration_reject_msg(cause_value, ran_ue_ngap_id, amf_ue_ngap_id);
+    send_registration_reject_msg(ran_ue_ngap_id, amf_ue_ngap_id, cause_value);
     return;
   }
 
@@ -3989,10 +4029,10 @@ void amf_n1::sha256(
 }
 
 //------------------------------------------------------------------------------
-void amf_n1::run_mobility_registration_update_procedure(
+bool amf_n1::run_mobility_registration_update_procedure(
     std::shared_ptr<nas_context>& nc,
     const std::optional<uint16_t>& uplink_data_status_opt,
-    const std::optional<uint16_t>& pdu_session_status_opt) {
+    const std::optional<uint16_t>& pdu_session_status_opt, uint8_t& cause) {
   uint16_t uplink_data_status = 0x0000;
   if (uplink_data_status_opt.has_value())
     uplink_data_status = uplink_data_status_opt.value();
@@ -4002,13 +4042,15 @@ void amf_n1::run_mobility_registration_update_procedure(
     pdu_session_status = pdu_session_status_opt.value();
 
   std::shared_ptr<ue_context> uc = {};
-  if (!find_ue_context(nc, uc)) return;
+  if (!find_ue_context(nc, uc)) {
+    cause = k5gmmCauseIllegalUe;  // TODO: verify the cause
+    return false;
+  }
 
   if (!nc->security_ctx.has_value()) {
     Logger::amf_n1().warn("No Security Context found");
     // Run Registration procedure
-    run_registration_procedure(nc);
-    return;
+    return run_registration_procedure(nc, cause);
   }
 
   // Encoding REGISTRATION ACCEPT
@@ -4025,7 +4067,8 @@ void amf_n1::run_mobility_registration_update_procedure(
   int encoded_size        = reg_accept->Encode(buffer, msg_len);
   if (encoded_size == KEncodeDecodeError) {
     Logger::nas_mm().error("Encode Registration Accept message error");
-    return;
+    cause = k5gmmCauseSemanticallyIncorrect;  // TODO: verify the cause
+    return false;
   }
   output_wrapper::print_buffer(
       "amf_n1", "Registration-Accept Message Buffer", buffer, encoded_size);
@@ -4063,7 +4106,9 @@ void amf_n1::run_mobility_registration_update_procedure(
   uint8_t kgnb[AUTH_VECTOR_LENGTH_OCTETS];
   if (!nc->get_kamf(nc->security_ctx.value().vector_pointer, kamf)) {
     Logger::amf_n1().warn("No Kamf found");
-    return;
+    cause =
+        k5gmmCauseSecurityModeRejectedUnspecified;  // TODO: verify the cause
+    return false;
   }
   uint32_t ulcount = nc->security_ctx.value().ul_count.seq_num |
                      (nc->security_ctx.value().ul_count.overflow << 8);
@@ -4083,13 +4128,17 @@ void amf_n1::run_mobility_registration_update_procedure(
     Logger::amf_n1().error(
         "Could not send ITTI message %s to task TASK_AMF_N2",
         itti_msg->get_msg_name());
+    cause = k5gmmCauseCongestion;
+    return false;
   }
+
+  return true;
 }
 
 //------------------------------------------------------------------------------
-void amf_n1::run_periodic_registration_update_procedure(
+bool amf_n1::run_periodic_registration_update_procedure(
     std::shared_ptr<nas_context>& nc,
-    const std::optional<uint16_t>& pdu_session_status_opt) {
+    const std::optional<uint16_t>& pdu_session_status_opt, uint8_t& cause) {
   // Experimental procedure
 
   uint16_t pdu_session_status = 0x0000;
@@ -4102,7 +4151,10 @@ void amf_n1::run_periodic_registration_update_procedure(
 
   // Get UE context
   std::shared_ptr<ue_context> uc = {};
-  if (!find_ue_context(nc, uc)) return;
+  if (!find_ue_context(nc, uc)) {
+    cause = k5gmmCauseIllegalUe;  // TODO: verify the cause
+    return false;
+  }
 
   reg_accept->Set5gGuti(
       amf_cfg.guami.mcc, amf_cfg.guami.mnc, amf_cfg.guami.region_id,
@@ -4121,14 +4173,17 @@ void amf_n1::run_periodic_registration_update_procedure(
   int encoded_size = reg_accept->Encode(buffer, msg_len);
   if (encoded_size == KEncodeDecodeError) {
     Logger::nas_mm().error("Encode Registration Accept message error");
-    return;
+    cause = k5gmmCauseSemanticallyIncorrect;  // TODO: verify the cause
+    return false;
   }
   output_wrapper::print_buffer(
       "amf_n1", "Registration-Accept Message Buffer", buffer, encoded_size);
 
   if (!nc->security_ctx.has_value()) {
     Logger::amf_n1().error("No Security Context found");
-    return;
+    cause =
+        k5gmmCauseSecurityModeRejectedUnspecified;  // TODO: verify the cause
+    return false;
   }
 
   bstring protected_nas = nullptr;
@@ -4140,25 +4195,38 @@ void amf_n1::run_periodic_registration_update_procedure(
       std::make_shared<itti_dl_nas_transport>(TASK_AMF_N1, TASK_AMF_N2);
   itti_msg->ran_ue_ngap_id = nc->ran_ue_ngap_id;
   itti_msg->amf_ue_ngap_id = nc->amf_ue_ngap_id;
-  itti_msg->nas            = protected_nas;
+  itti_msg->nas            = bstrcpy(protected_nas);
 
   int ret = itti_inst->send_msg(itti_msg);
   if (0 != ret) {
     Logger::amf_n1().error(
         "Could not send ITTI message %s to task TASK_AMF_N2",
         itti_msg->get_msg_name());
+    cause = k5gmmCauseCongestion;
+    utils::bdestroy_wrapper(&protected_nas);
+    return false;
   }
+
+  utils::bdestroy_wrapper(&protected_nas);
+  return true;
 }
+
 //------------------------------------------------------------------------------
-void amf_n1::run_periodic_registration_update_procedure(
-    std::shared_ptr<nas_context>& nc, bstring& nas_msg) {
+bool amf_n1::run_periodic_registration_update_procedure(
+    std::shared_ptr<nas_context>& nc, bstring& nas_msg, uint8_t& cause) {
   // Experimental procedure
 
   // decoding REGISTRATION request
-  std::unique_ptr<RegistrationRequest> registration_request =
-      std::make_unique<RegistrationRequest>();
-  registration_request->Decode((uint8_t*) bdata(nas_msg), blength(nas_msg));
+  auto registration_request = std::make_unique<RegistrationRequest>();
+  int decoded_size =
+      registration_request->Decode((uint8_t*) bdata(nas_msg), blength(nas_msg));
   // utils::bdestroy_wrapper(&nas_msg);  // free buffer
+
+  if (decoded_size == KEncodeDecodeError) {
+    Logger::nas_mm().error("Decode Registration Request message error");
+    cause = k5gmmCauseSemanticallyIncorrect;
+    return false;
+  }
 
   // Encoding REGISTRATION ACCEPT
   auto reg_accept = std::make_unique<RegistrationAccept>();
@@ -4166,7 +4234,10 @@ void amf_n1::run_periodic_registration_update_procedure(
 
   // Get UE context
   std::shared_ptr<ue_context> uc = {};
-  if (!find_ue_context(nc, uc)) return;
+  if (!find_ue_context(nc, uc)) {
+    cause = k5gmmCauseIllegalUe;  // TODO: verify the cause
+    return false;
+  }
 
   reg_accept->Set5gGuti(
       amf_cfg.guami.mcc, amf_cfg.guami.mnc, amf_cfg.guami.region_id,
@@ -4184,14 +4255,17 @@ void amf_n1::run_periodic_registration_update_procedure(
   int encoded_size        = reg_accept->Encode(buffer, msg_len);
   if (encoded_size == KEncodeDecodeError) {
     Logger::nas_mm().error("Encode Registration Accept message error");
-    return;
+    cause = k5gmmCauseSemanticallyIncorrect;
+    return false;
   }
   output_wrapper::print_buffer(
       "amf_n1", "Registration-Accept Message Buffer", buffer, encoded_size);
 
   if (!nc->security_ctx.has_value()) {
     Logger::amf_n1().error("No Security Context found");
-    return;
+    cause =
+        k5gmmCauseSecurityModeRejectedUnspecified;  // TODO: verify the cause
+    return false;
   }
 
   bstring protected_nas = nullptr;
@@ -4203,14 +4277,20 @@ void amf_n1::run_periodic_registration_update_procedure(
       std::make_shared<itti_dl_nas_transport>(TASK_AMF_N1, TASK_AMF_N2);
   itti_msg->ran_ue_ngap_id = nc->ran_ue_ngap_id;
   itti_msg->amf_ue_ngap_id = nc->amf_ue_ngap_id;
-  itti_msg->nas            = protected_nas;
+  itti_msg->nas            = bstrcpy(protected_nas);
 
   int ret = itti_inst->send_msg(itti_msg);
   if (0 != ret) {
     Logger::amf_n1().error(
         "Could not send ITTI message %s to task TASK_AMF_N2",
         itti_msg->get_msg_name());
+    cause = k5gmmCauseCongestion;
+    utils::bdestroy_wrapper(&protected_nas);
+    return false;
   }
+
+  utils::bdestroy_wrapper(&protected_nas);
+  return true;
 }
 
 //------------------------------------------------------------------------------

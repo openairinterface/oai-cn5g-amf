@@ -231,9 +231,12 @@ class amf_n1 {
   /*
    * Perform Registration procedure
    * @param [std::shared_ptr<nas_context>&] nc: Pointer to the UE NAS Context
-   * @return true if successful, otherwise return false
+   * @param [uint8_t&] cause: 5GMM cause when Registration Request procedure not
+   * accepted by the network
+   * @return true if accepted by the network, otherwise return false
    */
-  void run_registration_procedure(std::shared_ptr<nas_context>& nc);
+  bool run_registration_procedure(
+      std::shared_ptr<nas_context>& nc, uint8_t& cause);
 
   /*
    * Perform Mobility Registration procedure
@@ -242,32 +245,38 @@ class amf_n1 {
    * Status
    * @param [const std::optional<uint16_t>&] pdu_session_status_opt: PDU Session
    * Status
-   * @return void
+   * @param [uint8_t&] cause: 5GMM cause when Registration Request procedure not
+   * accepted by the network
+   * @return true if accepted by the network, otherwise return false
    */
-  void run_mobility_registration_update_procedure(
+  bool run_mobility_registration_update_procedure(
       std::shared_ptr<nas_context>& nc,
       const std::optional<uint16_t>& uplink_data_status_opt,
-      const std::optional<uint16_t>& pdu_session_status_opt);
+      const std::optional<uint16_t>& pdu_session_status_opt, uint8_t& cause);
 
   /*
    * Perform Periodic Registration Update procedure
    * @param [std::shared_ptr<nas_context>&] nc: Pointer to the UE NAS Context
    * @param [const std::optional<uint16_t>&] pdu_session_status_opt: PDU Session
    * Status
-   * @return void
+   * @param [uint8_t&] cause: 5GMM cause when Registration Request procedure not
+   * accepted by the network
+   * @return true if success, otherwise return false
    */
-  void run_periodic_registration_update_procedure(
+  bool run_periodic_registration_update_procedure(
       std::shared_ptr<nas_context>& nc,
-      const std::optional<uint16_t>& pdu_session_status_opt);
+      const std::optional<uint16_t>& pdu_session_status_opt, uint8_t& cause);
 
   /*
    * Perform Periodic Registration Update procedure
    * @param [std::shared_ptr<nas_context>&] nc: Pointer to the UE NAS Context
    * @param [bstring&] nas_msg: NAS message
-   * @return void
+   * @param [uint8_t&] cause: 5GMM cause when Registration Request procedure not
+   * accepted by the network
+   * @return true if success, otherwise return false
    */
-  void run_periodic_registration_update_procedure(
-      std::shared_ptr<nas_context>& nc, bstring& nas_msg);
+  bool run_periodic_registration_update_procedure(
+      std::shared_ptr<nas_context>& nc, bstring& nas_msg, uint8_t& cause);
 
   /*
    * Generate the Authentication Vectors (either from AUSF(UDM) or generate
@@ -846,11 +855,14 @@ class amf_n1 {
    * @param [const long] amf_ue_ngap_id: AMF UE NGAP ID
    * @param [const std::string&] snn: Serving Network
    * @param [bstring] reg: NAS Registration Request message
-   * @return void
+   * @param [uint8_t&] cause: 5GMM cause when Registration Request procedure not
+   * accepted by the network
+   * @return true if accepted by the network, otherwise return false
    */
-  void registration_request_handle(
+  bool registration_request_handle(
       std::shared_ptr<nas_context>& nc, const uint32_t ran_ue_ngap_id,
-      const long amf_ue_ngap_id, const std::string& snn, bstring reg);
+      const long amf_ue_ngap_id, const std::string& snn, bstring reg,
+      uint8_t& cause);
 
   /*
    * Handle Authentication Response message
@@ -989,14 +1001,14 @@ class amf_n1 {
 
   /*
    * Send ITTI message DL NAS Buffer to task N2
-   * @param [uint8_t] cause_value: Value for Cause IE in NAS message
    * @param [const uint32_t] ran_ue_ngap_id: RAN UE NGAP ID
    * @param [const long] amf_ue_ngap_id: AMF UE NGAP ID
+   * @param [uint8_t] cause_value: Value for Cause IE in NAS message
    * @return void
    */
   void send_registration_reject_msg(
-      const uint8_t cause_value, const uint32_t ran_ue_ngap_id,
-      const long amf_ue_ngap_id);
+      const uint32_t ran_ue_ngap_id, const long amf_ue_ngap_id,
+      const uint8_t cause_value);
 
   /*
    * Get NAS's message type from message buffer
