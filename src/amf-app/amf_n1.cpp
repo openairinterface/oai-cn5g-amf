@@ -2244,29 +2244,30 @@ bool amf_n1::get_authentication_vectors_from_ausf(
 
   if (!is_result_available) {
     Logger::amf_n1().info("Could not get expected response from AUSF");
-    // TODO: error handling
     return false;
   }
 
   // Process the response
   unsigned char* r5g_auth_data_rand = amf_conv::format_string_as_hex(
       ue_authentication_ctx.getR5gAuthData().getRand());
-  memcpy(nc->_5g_av[0].rand, r5g_auth_data_rand, 16);
+  memcpy(nc->_5g_av[0].rand, r5g_auth_data_rand, RAND_LENGTH_OCTETS);
   rand_record[nc->imsi] = ue_authentication_ctx.getR5gAuthData().getRand();
-  output_wrapper::print_buffer("amf_n1", "5G AV: RAND", nc->_5g_av[0].rand, 16);
+  output_wrapper::print_buffer(
+      "amf_n1", "5G AV: RAND", nc->_5g_av[0].rand, RAND_LENGTH_OCTETS);
   utils::free_wrapper((void**) &r5g_auth_data_rand);
 
   unsigned char* r5g_auth_data_autn = amf_conv::format_string_as_hex(
       ue_authentication_ctx.getR5gAuthData().getAutn());
-  memcpy(nc->_5g_av[0].autn, r5g_auth_data_autn, 16);
-  output_wrapper::print_buffer("amf_n1", "5G AV: AUTN", nc->_5g_av[0].autn, 16);
+  memcpy(nc->_5g_av[0].autn, r5g_auth_data_autn, AUTN_LENGTH_OCTETS);
+  output_wrapper::print_buffer(
+      "amf_n1", "5G AV: AUTN", nc->_5g_av[0].autn, AUTN_LENGTH_OCTETS);
   utils::free_wrapper((void**) &r5g_auth_data_autn);
 
   unsigned char* r5g_auth_data_hxresstar = amf_conv::format_string_as_hex(
       ue_authentication_ctx.getR5gAuthData().getHxresStar());
-  memcpy(nc->_5g_av[0].hxresStar, r5g_auth_data_hxresstar, 16);
+  memcpy(nc->_5g_av[0].hxresStar, r5g_auth_data_hxresstar, HXRES_LENGTH_OCTETS);
   output_wrapper::print_buffer(
-      "amf_n1", "5G AV: hxres*", nc->_5g_av[0].hxresStar, 16);
+      "amf_n1", "5G AV: hxres*", nc->_5g_av[0].hxresStar, HXRES_LENGTH_OCTETS);
   utils::free_wrapper((void**) &r5g_auth_data_hxresstar);
 
   std::map<std::string, LinksValueSchema>::iterator iter;
@@ -2288,48 +2289,49 @@ bool amf_n1::_5g_aka_confirmation_from_ausf(
     std::shared_ptr<nas_context>& nc, bstring resStar) {
   Logger::amf_n1().debug("5G AKA Confirmation from AUSF");
   // TODO: remove naked ptr
-  std::string remoteUri = nc->href;
+  std::string remote_uri = nc->href;
 
-  std::string msgBody        = {};
-  nlohmann::json response    = {};
-  std::string resStar_string = {};
+  std::string msg_body        = {};
+  nlohmann::json response     = {};
+  std::string res_star_string = {};
 
   std::map<std::string, std::string>::iterator iter;
   iter = rand_record.find(nc->imsi);
   rand_record.erase(iter);
-  // convert_string_2_hex(resStar, resStar_string);
-  uint8_t resStar_len    = blength(resStar);
-  uint8_t* resStar_value = (uint8_t*) bdata(resStar);
-  char* resStar_s        = (char*) malloc(resStar_len * 2 + 1);
+  // convert_string_2_hex(resStar, res_star_string);
+  uint8_t res_star_len    = blength(resStar);
+  uint8_t* res_star_value = (uint8_t*) bdata(resStar);
+  char* res_star_s        = (char*) malloc(res_star_len * 2 + 1);
 
-  for (int i = 0; i < resStar_len; i++) {
-    sprintf(&resStar_s[i * 2], "%02X", resStar_value[i]);
+  for (int i = 0; i < res_star_len; i++) {
+    sprintf(&res_star_s[i * 2], "%02X", res_star_value[i]);
   }
-  resStar_string = resStar_s;
-  output_wrapper::print_buffer("amf_n1", "resStar", resStar_value, resStar_len);
-  Logger::amf_n1().info("resStar_s (%s)", resStar_s);
+  res_star_string = res_star_s;
+  output_wrapper::print_buffer(
+      "amf_n1", "resStar", res_star_value, res_star_len);
+  Logger::amf_n1().info("resStar_s (%s)", res_star_s);
 
-  nlohmann::json confirmationdata_j = {};
-  ConfirmationData confirmationdata = {};
-  confirmationdata.setResStar(resStar_string);
+  nlohmann::json confirmation_data_json = {};
+  ConfirmationData confirmation_data    = {};
+  confirmation_data.setResStar(res_star_string);
 
-  to_json(confirmationdata_j, confirmationdata);
-  msgBody = confirmationdata_j.dump();
+  to_json(confirmation_data_json, confirmation_data);
+  msg_body = confirmation_data_json.dump();
 
   // TODO: Should be updated
   uint32_t response_code = 0;
 
   amf_sbi_inst->curl_http_client(
-      remoteUri, "PUT", msgBody, response, response_code,
+      remote_uri, "PUT", msg_body, response, response_code,
       amf_cfg.support_features.http_version);
 
-  utils::free_wrapper((void**) &resStar_s);
+  utils::free_wrapper((void**) &res_star_s);
   try {
-    ConfirmationDataResponse confirmationdataresponse;
-    response.get_to(confirmationdataresponse);
-    if (!confirmationdataresponse.kseafIsSet()) return false;
+    ConfirmationDataResponse confirmation_data_response;
+    response.get_to(confirmation_data_response);
+    if (!confirmation_data_response.kseafIsSet()) return false;
     unsigned char* kseaf_hex =
-        amf_conv::format_string_as_hex(confirmationdataresponse.getKseaf());
+        amf_conv::format_string_as_hex(confirmation_data_response.getKseaf());
     memcpy(nc->_5g_av[0].kseaf, kseaf_hex, AUTH_VECTOR_LENGTH_OCTETS);
     output_wrapper::print_buffer(
         "amf_n1", "5G AV: kseaf", nc->_5g_av[0].kseaf,
@@ -2727,6 +2729,7 @@ void amf_n1::authentication_response_handle(
       }
     }
   }
+
   // If success, start SMC procedure; else if failure, response registration
   // reject message with corresponding cause
   if (!isAuthOk) {
