@@ -1047,7 +1047,12 @@ void amf_n1::service_request_handle(
 
     uint8_t buffer[msg_len] = {0};
     int encoded_size        = service_accept->Encode(buffer, msg_len);
-    bstring protected_nas   = nullptr;
+    if (encoded_size == KEncodeDecodeError) {
+      Logger::nas_mm().error("Encode Service Accept message error");
+      return;
+    }
+
+    bstring protected_nas = nullptr;
     encode_nas_message_protected(
         nc->security_ctx.value(), false, kIntegrityProtectedAndCiphered,
         NAS_MESSAGE_DOWNLINK, buffer, encoded_size, protected_nas);
@@ -1328,7 +1333,11 @@ void amf_n1::service_request_handle(
     Logger::nas_mm().debug("Size of Service Accept message %ld", msg_len);
     uint8_t buffer[msg_len] = {0};
     int encoded_size        = service_accept->Encode(buffer, msg_len);
-    bstring protected_nas   = nullptr;
+    if (encoded_size == KEncodeDecodeError) {
+      Logger::nas_mm().debug("Emcpde Service Accept message error");
+      return;
+    }
+    bstring protected_nas = nullptr;
     encode_nas_message_protected(
         nc->security_ctx.value(), false, kIntegrityProtectedAndCiphered,
         NAS_MESSAGE_DOWNLINK, buffer, encoded_size, protected_nas);
@@ -1420,7 +1429,11 @@ void amf_n1::service_request_handle(
     Logger::nas_mm().debug("Size of Service Accept message %ld", msg_len);
     uint8_t buffer[msg_len] = {0};
     int encoded_size        = service_accept->Encode(buffer, msg_len);
-    bstring protected_nas   = nullptr;
+    if (encoded_size == KEncodeDecodeError) {
+      Logger::nas_mm().error("Encode Service Accept message error");
+      return;
+    }
+    bstring protected_nas = nullptr;
     encode_nas_message_protected(
         nc->security_ctx.value(), false, kIntegrityProtectedAndCiphered,
         NAS_MESSAGE_DOWNLINK, buffer, encoded_size, protected_nas);
@@ -1474,12 +1487,12 @@ void amf_n1::send_service_reject(
   Logger::nas_mm().debug("Size of Service Reject message %ld", msg_len);
   uint8_t buffer[msg_len] = {0};
   int encoded_size        = service_reject->Encode(buffer, msg_len);
-  output_wrapper::print_buffer(
-      "amf_n1", "Service-Reject message buffer", buffer, encoded_size);
-  if (!encoded_size) {
+  if (encoded_size == KEncodeDecodeError) {
     Logger::amf_n1().error("Encode Service-Reject message error");
     return;
   }
+  output_wrapper::print_buffer(
+      "amf_n1", "Service-Reject message buffer", buffer, encoded_size);
 
   auto dnt = std::make_shared<itti_dl_nas_transport>(TASK_AMF_N1, TASK_AMF_N2);
   dnt->nas = blk2bstr(buffer, encoded_size);
@@ -2025,13 +2038,12 @@ void amf_n1::send_registration_reject_msg(
   Logger::nas_mm().debug("Size of Registration Reject message %ld", msg_len);
   uint8_t buffer[msg_len] = {0};
   int encoded_size        = registration_reject->Encode(buffer, msg_len);
-  output_wrapper::print_buffer(
-      "amf_n1", "Registration-Reject message buffer", buffer, encoded_size);
-
-  if (!encoded_size) {
-    Logger::amf_n1().error("Encode Registration-Reject message error");
+  if (encoded_size == KEncodeDecodeError) {
+    Logger::amf_n1().error("Encode Registration Reject message error");
     return;
   }
+  output_wrapper::print_buffer(
+      "amf_n1", "Registration-Reject message buffer", buffer, encoded_size);
 
   bstring b = blk2bstr(buffer, encoded_size);
   itti_send_dl_nas_buffer_to_task_n2(b, ran_ue_ngap_id, amf_ue_ngap_id);
@@ -2108,7 +2120,10 @@ void amf_n1::run_registration_procedure(std::shared_ptr<nas_context>& nc) {
     Logger::nas_mm().debug("Size of Identity Request message %ld", msg_len);
     uint8_t buffer[msg_len] = {0};
     int encoded_size        = identity_request->Encode(buffer, msg_len);
-
+    if (encoded_size == KEncodeDecodeError) {
+      Logger::nas_mm().error("Encode Identity Request message error");
+      return;
+    }
     auto dnt =
         std::make_shared<itti_dl_nas_transport>(TASK_AMF_N1, TASK_AMF_N2);
     dnt->nas            = blk2bstr(buffer, encoded_size);
@@ -2620,7 +2635,7 @@ bool amf_n1::start_authentication_procedure(
 
   uint8_t buffer[msg_len] = {0};
   int encoded_size        = auth_request->Encode(buffer, msg_len);
-  if (!encoded_size) {
+  if (encoded_size == KEncodeDecodeError) {
     Logger::nas_mm().error("Encode Authentication Request message error");
     return false;
   }
@@ -2884,6 +2899,10 @@ bool amf_n1::start_security_mode_control_procedure(
   Logger::nas_mm().debug("Size of Security Mode Command message %ld", msg_len);
   uint8_t buffer[msg_len] = {0};
   int encoded_size        = smc->Encode(buffer, msg_len);
+  if (encoded_size == KEncodeDecodeError) {
+    Logger::nas_mm().error("Encode Security Mode Command message error");
+    return false;
+  }
   output_wrapper::print_buffer(
       "amf_n1", "Security-Mode-Command message buffer", buffer, encoded_size);
 
@@ -3116,14 +3135,14 @@ void amf_n1::security_mode_complete_handle(
   uint32_t msg_len      = registration_accept->GetLength();
   Logger::nas_mm().debug("Size of Registration Accept message %ld", msg_len);
   uint8_t buffer[msg_len] = {0};
-
-  int encoded_size = registration_accept->Encode(buffer, msg_len);
-  output_wrapper::print_buffer(
-      "amf_n1", "Registration-Accept message buffer", buffer, encoded_size);
-  if (!encoded_size) {
-    Logger::nas_mm().error("Encode Registration-Accept message error");
+  int encoded_size        = registration_accept->Encode(buffer, msg_len);
+  if (encoded_size == KEncodeDecodeError) {
+    Logger::nas_mm().error("Encode Registration Accept message error");
     return;
   }
+  output_wrapper::print_buffer(
+      "amf_n1", "Registration-Accept message buffer", buffer, encoded_size);
+
   encode_nas_message_protected(
       nc->security_ctx.value(), false, kIntegrityProtectedAndCiphered,
       NAS_MESSAGE_DOWNLINK, buffer, encoded_size, protected_nas);
@@ -3276,13 +3295,13 @@ void amf_n1::registration_complete_handle(
   uint8_t buffer[BUFFER_SIZE_1024] = {0};
   int encoded_size =
       configuration_update_command->Encode(buffer, BUFFER_SIZE_1024);
-  output_wrapper::print_buffer(
-      "amf_n1", "Configuration Update Command message Buffer", buffer,
-      encoded_size);
-  if (!encoded_size) {
+  if (encoded_size == KEncodeDecodeError) {
     Logger::nas_mm().error("Encode Configuration Update Command message error");
     return;
   }
+  output_wrapper::print_buffer(
+      "amf_n1", "Configuration Update Command message Buffer", buffer,
+      encoded_size);
 
   // Protect NAS message
   bstring protected_nas = nullptr;
@@ -3634,14 +3653,13 @@ void amf_n1::ue_initiate_de_registration_handle(
         "Size of Deregistration Accept message %ld", msg_len);
     uint8_t buffer[msg_len] = {0};
     int encoded_size        = dereg_accept->Encode(buffer, msg_len);
-
+    if (encoded_size == KEncodeDecodeError) {
+      Logger::nas_mm().error("Encode De-registration Accept message error");
+      return;
+    }
     output_wrapper::print_buffer(
         "amf_n1", "De-registration Accept message buffer", buffer,
         encoded_size);
-    if (encoded_size < 1) {
-      Logger::nas_mm().error("Encode De-registration Accept message error!");
-      return;
-    }
 
     bstring b = blk2bstr(buffer, encoded_size);
     itti_send_dl_nas_buffer_to_task_n2(b, ran_ue_ngap_id, amf_ue_ngap_id);
@@ -3957,12 +3975,12 @@ void amf_n1::run_mobility_registration_update_procedure(
   Logger::nas_mm().debug("Size of Registration Accept message %ld", msg_len);
   uint8_t buffer[msg_len] = {0};
   int encoded_size        = reg_accept->Encode(buffer, msg_len);
-  output_wrapper::print_buffer(
-      "amf_n1", "Registration-Accept Message Buffer", buffer, encoded_size);
-  if (!encoded_size) {
-    Logger::nas_mm().error("Encode Registration-Accept message error");
+  if (encoded_size == KEncodeDecodeError) {
+    Logger::nas_mm().error("Encode Registration Accept message error");
     return;
   }
+  output_wrapper::print_buffer(
+      "amf_n1", "Registration-Accept Message Buffer", buffer, encoded_size);
 
   // protect nas message
   bstring protected_nas = nullptr;
@@ -4053,12 +4071,12 @@ void amf_n1::run_periodic_registration_update_procedure(
   uint8_t buffer[msg_len] = {0};
 
   int encoded_size = reg_accept->Encode(buffer, msg_len);
-  output_wrapper::print_buffer(
-      "amf_n1", "Registration-Accept Message Buffer", buffer, encoded_size);
-  if (!encoded_size) {
-    Logger::nas_mm().error("Encode Registration-Accept message error");
+  if (encoded_size == KEncodeDecodeError) {
+    Logger::nas_mm().error("Encode Registration Accept message error");
     return;
   }
+  output_wrapper::print_buffer(
+      "amf_n1", "Registration-Accept Message Buffer", buffer, encoded_size);
 
   if (!nc->security_ctx.has_value()) {
     Logger::amf_n1().error("No Security Context found");
@@ -4116,12 +4134,12 @@ void amf_n1::run_periodic_registration_update_procedure(
   Logger::nas_mm().debug("Size of Registration Accept message %ld", msg_len);
   uint8_t buffer[msg_len] = {0};
   int encoded_size        = reg_accept->Encode(buffer, msg_len);
-  output_wrapper::print_buffer(
-      "amf_n1", "Registration-Accept Message Buffer", buffer, encoded_size);
-  if (!encoded_size) {
-    Logger::nas_mm().error("Encode Registration-Accept message error");
+  if (encoded_size == KEncodeDecodeError) {
+    Logger::nas_mm().error("Encode Registration Accept message error");
     return;
   }
+  output_wrapper::print_buffer(
+      "amf_n1", "Registration-Accept Message Buffer", buffer, encoded_size);
 
   if (!nc->security_ctx.has_value()) {
     Logger::amf_n1().error("No Security Context found");
