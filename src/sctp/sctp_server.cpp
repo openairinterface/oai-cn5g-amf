@@ -64,7 +64,13 @@ sctp_server::sctp_server(const char* address, const uint16_t port_num) {
 sctp_server::~sctp_server() {
   int res;
 
-  res = pthread_kill(tmp_thread, SIGKILL);
+  res = pthread_cancel(tmp_thread);
+  if (res != 0) {
+    Logger::sctp().error(
+        "pthread_cancel on sctp_receiver_thread failed %s", strerror(errno));
+  }
+
+  res = pthread_kill(tmp_thread, SIGTERM);
   if (res != 0) {
     Logger::sctp().error(
         "pthread_kill on sctp_receiver_thread failed %s", strerror(errno));
