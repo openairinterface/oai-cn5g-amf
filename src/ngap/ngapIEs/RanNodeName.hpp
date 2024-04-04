@@ -36,14 +36,14 @@ class RanNodeName {
   RanNodeName();
   virtual ~RanNodeName();
 
-  bool setValue(const std::string& value);
-  void getValue(std::string& value) const;
+  bool set(const std::string& value);
+  void get(std::string& value) const;
 
-  bool encode(Ngap_RANNodeName_t&);
+  bool encode(Ngap_RANNodeName_t&) const;
   bool decode(const Ngap_RANNodeName_t&);
 
  private:
-  std::string ran_node_name_;
+  std::string m_RanNodeName;
 };
 
 }  // namespace ngap

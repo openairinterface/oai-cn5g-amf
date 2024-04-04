@@ -34,19 +34,19 @@ PduSessionResourceToReleaseListHandoverCmd::
 //------------------------------------------------------------------------------
 void PduSessionResourceToReleaseListHandoverCmd::set(
     const std::vector<PduSessionResourceItem>& list) {
-  item_list_ = list;
+  m_ItemList = list;
 }
 
 //------------------------------------------------------------------------------
 void PduSessionResourceToReleaseListHandoverCmd::get(
-    std::vector<PduSessionResourceItem>& list) {
-  list = item_list_;
+    std::vector<PduSessionResourceItem>& list) const {
+  list = m_ItemList;
 }
 
 //------------------------------------------------------------------------------
 bool PduSessionResourceToReleaseListHandoverCmd::encode(
     Ngap_PDUSessionResourceToReleaseListHOCmd_t& list) const {
-  for (auto& item : item_list_) {
+  for (auto& item : m_ItemList) {
     Ngap_PDUSessionResourceToReleaseItemHOCmd_t* rel =
         (Ngap_PDUSessionResourceToReleaseItemHOCmd_t*) calloc(
             1, sizeof(Ngap_PDUSessionResourceToReleaseItemHOCmd_t));
@@ -63,7 +63,7 @@ bool PduSessionResourceToReleaseListHandoverCmd::decode(
   for (int i = 0; i < list.list.count; i++) {
     PduSessionResourceItem item = {};
     if (!item.decode(*list.list.array[i])) return false;
-    item_list_.push_back(item);
+    m_ItemList.push_back(item);
   }
   return true;
 }

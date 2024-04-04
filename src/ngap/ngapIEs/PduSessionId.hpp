@@ -35,12 +35,13 @@ class PduSessionId {
 
   void set(const uint8_t& id);
   void get(uint8_t& id) const;
+  uint8_t get() const;
 
-  bool encode(Ngap_PDUSessionID_t& pdu_session_id) const;
-  bool decode(Ngap_PDUSessionID_t pdu_session_id);
+  bool encode(Ngap_PDUSessionID_t& pduSessionId) const;
+  bool decode(Ngap_PDUSessionID_t pduSessionId);
 
  private:
-  uint8_t id_;
+  uint8_t m_PduSessionId;
 };
 
 }  // namespace ngap

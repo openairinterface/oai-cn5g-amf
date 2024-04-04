@@ -25,33 +25,34 @@ namespace ngap {
 
 //------------------------------------------------------------------------------
 MaximumDataBurstVolume::MaximumDataBurstVolume() {
-  volume_ = 0;
+  m_MaximumDataBurstVolume = 0;
 }
 
 //------------------------------------------------------------------------------
 MaximumDataBurstVolume::~MaximumDataBurstVolume() {}
 
 //------------------------------------------------------------------------------
-void MaximumDataBurstVolume::set(long value) {
-  volume_ = value;
+void MaximumDataBurstVolume::set(const long& value) {
+  m_MaximumDataBurstVolume = value;
 }
 
 //------------------------------------------------------------------------------
 void MaximumDataBurstVolume::get(long& value) const {
-  value = volume_;
+  value = m_MaximumDataBurstVolume;
 }
 
 //------------------------------------------------------------------------------
 bool MaximumDataBurstVolume::encode(
     Ngap_MaximumDataBurstVolume_t& value) const {
-  value = volume_;
+  value = m_MaximumDataBurstVolume;
 
   return true;
 }
 
 //------------------------------------------------------------------------------
-bool MaximumDataBurstVolume::decode(Ngap_MaximumDataBurstVolume_t value) {
-  volume_ = value;
+bool MaximumDataBurstVolume::decode(
+    const Ngap_MaximumDataBurstVolume_t& value) {
+  m_MaximumDataBurstVolume = value;
 
   return true;
 }

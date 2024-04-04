@@ -33,16 +33,16 @@ class PeriodicRegistrationUpdateTimer {
   PeriodicRegistrationUpdateTimer();
   virtual ~PeriodicRegistrationUpdateTimer();
 
-  void set(const uint8_t& update_timer);
-  void get(uint8_t& update_timer) const;
+  void set(uint8_t updateTimer);
+  void get(uint8_t& updateTimer) const;
 
   bool encode(Ngap_PeriodicRegistrationUpdateTimer_t&
-                  periodic_registration_update_timer) const;
-  bool decode(Ngap_PeriodicRegistrationUpdateTimer_t
-                  periodic_registration_update_timer);
+                  periodicRegistrationUpdateTimer) const;
+  bool decode(
+      Ngap_PeriodicRegistrationUpdateTimer_t periodicRegistrationUpdateTimer);
 
  private:
-  uint8_t update_timer_;
+  uint8_t m_UpdateTimer;
 };
 
 }  // namespace ngap

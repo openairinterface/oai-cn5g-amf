@@ -25,7 +25,7 @@
 #include "NasPdu.hpp"
 #include "PduSessionId.hpp"
 #include "PduSessionResourceReleaseCommandTransfer.hpp"
-#include "S-NSSAI.hpp"
+#include "SNssai.hpp"
 
 extern "C" {
 #include "Ngap_PDUSessionResourceToReleaseItemRelCmd.h"
@@ -38,21 +38,21 @@ class PduSessionResourceReleaseItemCmd {
   PduSessionResourceReleaseItemCmd();
   virtual ~PduSessionResourceReleaseItemCmd();
 
-  void setPDUSessionResourceReleaseItemCmd(
-      const PduSessionId& pdu_session_id,
-      const OCTET_STRING_t& pdu_session_resource_release);
-  void getPDUSessionResourceReleaseItemCmd(
-      PduSessionId& pdu_session_id,
-      OCTET_STRING_t& pdu_session_resource_release) const;
+  void set(
+      const PduSessionId& pduSessionId,
+      const OCTET_STRING_t& pduSessionResourceRelease);
+  void get(
+      PduSessionId& pduSessionId,
+      OCTET_STRING_t& pduSessionResourceRelease) const;
 
   bool encode(Ngap_PDUSessionResourceToReleaseItemRelCmd_t&
-                  pdu_session_resource_release_item);
+                  pduSessionResourceReleaseItem) const;
   bool decode(const Ngap_PDUSessionResourceToReleaseItemRelCmd_t&
-                  pdu_session_resource_release_item);
+                  pduSessionResourceReleaseItem);
 
  private:
-  PduSessionId pdu_session_id_;                                   // Mandatory
-  OCTET_STRING_t pdu_session_resource_release_command_transfer_;  // Mandatory
+  PduSessionId m_PduSessionId;                                // Mandatory
+  OCTET_STRING_t m_PduSessionResourceReleaseCommandTransfer;  // Mandatory
 };
 
 }  // namespace ngap

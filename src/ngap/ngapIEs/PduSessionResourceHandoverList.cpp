@@ -32,19 +32,19 @@ PduSessionResourceHandoverList::~PduSessionResourceHandoverList() {}
 //------------------------------------------------------------------------------
 void PduSessionResourceHandoverList::set(
     const std::vector<PduSessionResourceItem>& list) {
-  item_list_ = list;
+  m_ItemList = list;
 }
 
 //------------------------------------------------------------------------------
 void PduSessionResourceHandoverList::get(
-    std::vector<PduSessionResourceItem>& list) {
-  list = item_list_;
+    std::vector<PduSessionResourceItem>& list) const {
+  list = m_ItemList;
 }
 
 //------------------------------------------------------------------------------
 bool PduSessionResourceHandoverList::encode(
-    Ngap_PDUSessionResourceHandoverList_t& list) {
-  for (auto& item : item_list_) {
+    Ngap_PDUSessionResourceHandoverList_t& list) const {
+  for (auto& item : m_ItemList) {
     Ngap_PDUSessionResourceHandoverItem_t* handoverItem =
         (Ngap_PDUSessionResourceHandoverItem_t*) calloc(
             1, sizeof(Ngap_PDUSessionResourceHandoverItem_t));
@@ -64,7 +64,7 @@ bool PduSessionResourceHandoverList::decode(
     PduSessionResourceItem item = {};
 
     if (!item.decode(*list.list.array[i])) return false;
-    item_list_.push_back(item);
+    m_ItemList.push_back(item);
   }
   return true;
 }

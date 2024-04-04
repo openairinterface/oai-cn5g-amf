@@ -37,10 +37,10 @@ class IntegrityProtectionIndication {
   bool get(long& indication) const;
 
   bool encode(Ngap_IntegrityProtectionIndication_t&) const;
-  bool decode(Ngap_IntegrityProtectionIndication_t);
+  bool decode(const Ngap_IntegrityProtectionIndication_t&);
 
  private:
-  long indication_;
+  long m_Indication;
 };
 
 }  // namespace ngap

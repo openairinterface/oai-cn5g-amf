@@ -32,7 +32,7 @@ PduSessionResourceSetupListCxtReq::~PduSessionResourceSetupListCxtReq() {}
 //------------------------------------------------------------------------------
 void PduSessionResourceSetupListCxtReq::set(
     const std::vector<PduSessionResourceSetupItemCxtReq>& itemList) {
-  pduSessionResourceSetupItemCxtReqList = itemList;
+  m_ItemList = itemList;
 }
 
 //------------------------------------------------------------------------------
@@ -41,11 +41,11 @@ void PduSessionResourceSetupListCxtReq::get(
 
 //------------------------------------------------------------------------------
 bool PduSessionResourceSetupListCxtReq::encode(
-    Ngap_PDUSessionResourceSetupListCxtReq_t&
-        pduSessionResourceSetupListCxtReq) {
-  for (std::vector<PduSessionResourceSetupItemCxtReq>::iterator it =
-           std::begin(pduSessionResourceSetupItemCxtReqList);
-       it < std::end(pduSessionResourceSetupItemCxtReqList); ++it) {
+    Ngap_PDUSessionResourceSetupListCxtReq_t& pduSessionResourceSetupListCxtReq)
+    const {
+  for (std::vector<PduSessionResourceSetupItemCxtReq>::const_iterator it =
+           m_ItemList.begin();
+       it < m_ItemList.end(); ++it) {
     Ngap_PDUSessionResourceSetupItemCxtReq_t* request =
         (Ngap_PDUSessionResourceSetupItemCxtReq_t*) calloc(
             1, sizeof(Ngap_PDUSessionResourceSetupItemCxtReq_t));
@@ -62,14 +62,13 @@ bool PduSessionResourceSetupListCxtReq::encode(
 bool PduSessionResourceSetupListCxtReq::decode(
     const Ngap_PDUSessionResourceSetupListCxtReq_t&
         pduSessionResourceSetupListCxtReq) {
-  pduSessionResourceSetupItemCxtReqList.reserve(
-      pduSessionResourceSetupListCxtReq.list.count);
+  m_ItemList.reserve(pduSessionResourceSetupListCxtReq.list.count);
 
   for (int i = 0; i < pduSessionResourceSetupListCxtReq.list.count; i++) {
     PduSessionResourceSetupItemCxtReq item = {};
     if (!item.decode(*pduSessionResourceSetupListCxtReq.list.array[i]))
       return false;
-    pduSessionResourceSetupItemCxtReqList.push_back(item);
+    m_ItemList.push_back(item);
   }
 
   return true;

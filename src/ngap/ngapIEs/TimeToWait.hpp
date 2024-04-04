@@ -36,14 +36,14 @@ class TimeToWait {
   TimeToWait(e_Ngap_TimeToWait);
   virtual ~TimeToWait();
 
-  void setValue(e_Ngap_TimeToWait);
-  long getValue();
+  void set(e_Ngap_TimeToWait);
+  long get() const;
 
-  bool encode(Ngap_TimeToWait_t&);
+  bool encode(Ngap_TimeToWait_t&) const;
   bool decode(const Ngap_TimeToWait_t&);
 
  private:
-  long time_;
+  long m_Time;
 };
 }  // namespace ngap
 

@@ -27,16 +27,16 @@
 #include "3gpp_24.501.hpp"
 #include "DefaultPagingDrx.hpp"
 #include "DownlinkNasTransport.hpp"
-#include "DownlinkNonUEAssociatedNRPPaTransport.hpp"
-#include "DownlinkRANStatusTransfer.hpp"
-#include "DownlinkUEAssociatedNRPPaTransport.hpp"
+#include "DownlinkNonUeAssociatedNrppaTransport.hpp"
+#include "DownlinkRanStatusTransfer.hpp"
+#include "DownlinkUeAssociatedNrppaTransport.hpp"
 #include "HandoverCommandMsg.hpp"
 #include "HandoverPreparationFailure.hpp"
 #include "HandoverRequest.hpp"
 #include "InitialContextSetupRequest.hpp"
-#include "NGResetAck.hpp"
-#include "NGSetupFailure.hpp"
-#include "NGSetupResponse.hpp"
+#include "NgResetAck.hpp"
+#include "NgSetupFailure.hpp"
+#include "NgSetupResponse.hpp"
 #include "Ngap_Cause.h"
 #include "Ngap_CauseNas.h"
 #include "Ngap_CauseRadioNetwork.h"
@@ -46,8 +46,8 @@
 #include "PduSessionResourceModifyRequest.hpp"
 #include "PduSessionResourceReleaseCommand.hpp"
 #include "PduSessionResourceSetupRequest.hpp"
-#include "RerouteNASRequest.hpp"
-#include "UEContextReleaseCommand.hpp"
+#include "RerouteNasRequest.hpp"
+#include "UeContextReleaseCommand.hpp"
 #include "amf_app.hpp"
 #include "amf_config.hpp"
 #include "amf_conversions.hpp"
@@ -354,7 +354,7 @@ void amf_n2::handle_itti_message(std::shared_ptr<itti_paging>& itti_msg) {
   Logger::amf_n2().debug(
       " UE NGAP Context, s_setid (%d), s_pointer (%d), s_tmsi (%d)",
       unc->s_setid, unc->s_pointer, unc->s_tmsi);
-  paging_msg.setUEPagingIdentity(unc->s_setid, unc->s_pointer, unc->s_tmsi);
+  paging_msg.setUePagingIdentity(unc->s_setid, unc->s_pointer, unc->s_tmsi);
 
   std ::vector<struct Tai_s> list;
   Tai_t tai = {};
@@ -363,7 +363,7 @@ void amf_n2::handle_itti_message(std::shared_ptr<itti_paging>& itti_msg) {
   tai.tac   = unc->tai.tac;
 
   list.push_back(tai);
-  paging_msg.setTAIListForPaging(list);
+  paging_msg.setTaiListForPaging(list);
 
   uint8_t buffer[BUFFER_SIZE_512];
   int encoded_size = paging_msg.Encode(buffer, BUFFER_SIZE_512);
@@ -416,7 +416,7 @@ void amf_n2::handle_itti_message(
   uint32_t gnb_id     = {};
   std::string gnb_mcc = {};
   std::string gnb_mnc = {};
-  if (!itti_msg->ngSetupReq->getGlobalGnbID(gnb_id, gnb_mcc, gnb_mnc)) {
+  if (!itti_msg->ngSetupReq->getGlobalGnbId(gnb_id, gnb_mcc, gnb_mnc)) {
     Logger::amf_n2().error(
         "[gNB Assoc ID %d] Missing Mandatory IE Global RAN Node ID",
         itti_msg->assoc_id);
@@ -443,12 +443,12 @@ void amf_n2::handle_itti_message(
   }
 
   // Store Paging DRX in gNB context
-  gc->default_paging_drx = itti_msg->ngSetupReq->getDefaultPagingDRX();
+  gc->default_paging_drx = itti_msg->ngSetupReq->getDefaultPagingDrx();
   Logger::amf_n2().debug("IE DefaultPagingDRX: %d", gc->default_paging_drx);
 
   // Get supported TA List
   std::vector<SupportedTaItem_t> supported_ta_list;
-  if (!itti_msg->ngSetupReq->getSupportedTAList(supported_ta_list)) {
+  if (!itti_msg->ngSetupReq->getSupportedTaList(supported_ta_list)) {
     Logger::amf_n2().error("Missing Mandatory IE Supported TA List");
     send_ng_setup_failure(
         Ngap_CauseProtocol_abstract_syntax_error_falsely_constructed_message,
@@ -456,8 +456,8 @@ void amf_n2::handle_itti_message(
     return;
   }
   // Store UE Retention Information if available
-  std::optional<UERetentionInformation> ue_retention_info = std::nullopt;
-  itti_msg->ngSetupReq->getUERetentionInformation(ue_retention_info);
+  std::optional<UeRetentionInformation> ue_retention_info = std::nullopt;
+  itti_msg->ngSetupReq->getUeRetentionInformation(ue_retention_info);
   gc->ue_retention_info = ue_retention_info;
 
   // Verify PLMN Identity and TAC with configuration and store supportedTAList
@@ -507,19 +507,19 @@ void amf_n2::handle_itti_message(
     return;
   }
 
-  NGSetupResponseMsg ngSetupResp = {};
-  ngSetupResp.setAMFName(amf_cfg.amf_name);
+  NgSetupResponseMsg ngSetupResp = {};
+  ngSetupResp.setAmfName(amf_cfg.amf_name);
   std::vector<GuamiItem_t> guami_list;
   for (int i = 0; i < amf_cfg.guami_list.size(); i++) {
     GuamiItem_t tmp = {};
     tmp.mcc         = amf_cfg.guami_list[i].mcc;
     tmp.mnc         = amf_cfg.guami_list[i].mnc;
-    tmp.region_id   = amf_cfg.guami_list[i].region_id;
-    tmp.amf_set_id  = amf_cfg.guami_list[i].amf_set_id;
-    tmp.amf_pointer = amf_cfg.guami_list[i].amf_pointer;
+    tmp.regionId    = amf_cfg.guami_list[i].region_id;
+    tmp.amfSetId    = amf_cfg.guami_list[i].amf_set_id;
+    tmp.amfPointer  = amf_cfg.guami_list[i].amf_pointer;
     guami_list.push_back(tmp);
   }
-  ngSetupResp.setGUAMIList(guami_list);
+  ngSetupResp.setGuamiList(guami_list);
 
   ngSetupResp.setRelativeAmfCapacity(amf_cfg.relative_amf_capacity);
   std::vector<PlmnSliceSupport_t> plmn_list;
@@ -531,14 +531,14 @@ void amf_n2::handle_itti_message(
       S_Nssai s_tmp = {};
       s_tmp.sst     = std::to_string(amf_cfg.plmn_list[i].slice_list[j].sst);
       s_tmp.sd      = std::to_string(amf_cfg.plmn_list[i].slice_list[j].sd);
-      tmp.slice_list.push_back(s_tmp);
+      tmp.sliceList.push_back(s_tmp);
     }
     plmn_list.push_back(tmp);
   }
 
   ngSetupResp.setPlmnSupportList(plmn_list);
   if (ue_retention_info.has_value() and ue_retention_option)
-    ngSetupResp.setUERetentionInformation(ue_retention_info.value());
+    ngSetupResp.setUeRetentionInformation(ue_retention_info.value());
 
   int encoded = ngSetupResp.Encode(buffer, BUFFER_SIZE_1024);
 
@@ -588,7 +588,7 @@ void amf_n2::handle_itti_message(std::shared_ptr<itti_ng_reset>& itti_msg) {
   // UE association(s) indicated explicitly or implicitly in the NG RESET
   // message and remove the NGAP ID for the indicated UE associations.
   ResetType reset_type = {};
-  std::vector<UEAssociatedLogicalNGConnectionItem>
+  std::vector<UeAssociatedLogicalNgConnectionItem>
       ueAssociatedLogicalNGConnectionList;
   itti_msg->ngReset->getResetType(reset_type);
   if (reset_type.getResetType() == Ngap_ResetType_PR_nG_Interface) {
@@ -608,7 +608,7 @@ void amf_n2::handle_itti_message(std::shared_ptr<itti_ng_reset>& itti_msg) {
   } else if (
       reset_type.getResetType() == Ngap_ResetType_PR_partOfNG_Interface) {
     // TODO:
-    reset_type.getUEAssociatedLogicalNGConnectionList(
+    reset_type.getUeAssociatedLogicalNgConnectionList(
         ueAssociatedLogicalNGConnectionList);
     for (auto ue : ueAssociatedLogicalNGConnectionList) {
       unsigned long amf_ue_ngap_id = {0};
@@ -622,11 +622,11 @@ void amf_n2::handle_itti_message(std::shared_ptr<itti_ng_reset>& itti_msg) {
   }
 
   // Create NGResetAck and reply to gNB
-  std::unique_ptr<NGResetAckMsg> ng_reset_ack =
-      std::make_unique<NGResetAckMsg>();
-  // UEAssociatedLogicalNGConnectionList
+  std::unique_ptr<NgResetAckMsg> ng_reset_ack =
+      std::make_unique<NgResetAckMsg>();
+  // UeAssociatedLogicalNgConnectionList
   if (ueAssociatedLogicalNGConnectionList.size() > 0) {
-    ng_reset_ack->setUE_associatedLogicalNG_connectionList(
+    ng_reset_ack->setUeAssociatedLogicalNgConnectionList(
         ueAssociatedLogicalNGConnectionList);
   }
 
@@ -675,9 +675,9 @@ void amf_n2::handle_itti_message(std::shared_ptr<itti_ng_shutdown>& itti_msg) {
         ue_context->ran_ue_ngap_id, gc->gnb_id);
   }
 
-  // Delete gNB context
+  // Delete gNB context and update statistic
   remove_gnb_context(itti_msg->assoc_id);
-  stacs.remove_gnb(gc->gnb_id);
+  stacs.update_gnb(gc, kStatisticGnbStatusDisconnected);
 
   Logger::amf_n2().debug(
       "Remove gNB with association id %d, gnb_id 0x%x", itti_msg->assoc_id,
@@ -749,7 +749,7 @@ void amf_n2::handle_itti_message(
   // User Location Info NR (Mandatory)
   NrCgi_t cgi = {};
   Tai_t tai   = {};
-  if (init_ue_msg->initUeMsg->getUserLocationInfoNR(cgi, tai)) {
+  if (init_ue_msg->initUeMsg->getUserLocationInfoNr(cgi, tai)) {
     itti_msg->cgi = cgi;
     itti_msg->tai = tai;
     unc->tai      = tai;
@@ -759,7 +759,7 @@ void amf_n2::handle_itti_message(
   }
 
   // RCC Establishment Cause (Mandatory)
-  itti_msg->rrc_cause = init_ue_msg->initUeMsg->getRRCEstablishmentCause();
+  itti_msg->rrc_cause = init_ue_msg->initUeMsg->getRrcEstablishmentCause();
 
   // UE Context Request (Optional)
   // TODO: use std::optional
@@ -772,15 +772,14 @@ void amf_n2::handle_itti_message(
 
   // 5G-S-TMSI (Optional)
   std::string _5g_s_tmsi = {};
-  if (!init_ue_msg->initUeMsg->get5GS_TMSI(_5g_s_tmsi)) {
+  if (!init_ue_msg->initUeMsg->get5GSTmsi(_5g_s_tmsi)) {
     itti_msg->is_5g_s_tmsi_present = false;
     Logger::amf_n2().debug("5g_s_tmsi not present");
   } else {
     itti_msg->is_5g_s_tmsi_present = true;
     itti_msg->_5g_s_tmsi           = _5g_s_tmsi;
-    Logger::amf_n2().debug("5g_s_tmsi present");
-
-    init_ue_msg->initUeMsg->get5GS_TMSI(
+    Logger::amf_n2().debug("5g_s_tmsi present: %s", _5g_s_tmsi);
+    init_ue_msg->initUeMsg->get5GSTmsi(
         unc->s_setid, unc->s_pointer, unc->s_tmsi);
   }
 
@@ -877,7 +876,7 @@ void amf_n2::handle_itti_message(
   // UserLocation
   NrCgi_t cgi = {};
   Tai_t tai   = {};
-  if (ul_nas_transport->ulNas->getUserLocationInfoNR(cgi, tai)) {
+  if (ul_nas_transport->ulNas->getUserLocationInfoNr(cgi, tai)) {
     itti_msg->mcc = cgi.mcc;
     itti_msg->mnc = cgi.mnc;
   } else {
@@ -967,8 +966,8 @@ void amf_n2::handle_itti_message(
   // Get the list allowed NSSAI from the common PLMN between gNB and AMF
   std::vector<S_Nssai> list;
   for (auto s : gc->supported_ta_list) {
-    for (auto p : s.b_plmn_list) {
-      for (auto s : p.slice_list) {
+    for (auto p : s.plmnSliceSupportList) {
+      for (auto s : p.sliceList) {
         S_Nssai item;
         item.sst = s.sst;
         item.sd  = s.sd;
@@ -983,7 +982,7 @@ void amf_n2::handle_itti_message(
   nc->ue_security_capability.GetEea(eea_value);
   uint8_t eia_value = 0x0000;
   nc->ue_security_capability.GetEia(eia_value);
-  msg->setUESecurityCapability(
+  msg->setUeSecurityCapability(
       (nc->ue_security_capability.GetEa() << 9),
       (nc->ue_security_capability.GetIa() << 9), (eea_value << 9),
       (eia_value << 9));
@@ -1001,7 +1000,7 @@ void amf_n2::handle_itti_message(
     Logger::nas_mm().debug(
         "Set IMEISV InitialContextSetupRequestMsg: %s",
         nc->imeisv.value().identity.c_str());
-    msg->setMaskedIMEISV(nc->imeisv.value().identity);
+    msg->setMaskedImeisv(nc->imeisv.value().identity);
   } else {
     Logger::nas_mm().debug("No IMEISV info available");
   }
@@ -1012,7 +1011,7 @@ void amf_n2::handle_itti_message(
     // Set UE Radio Capability if available
     if (unc->ue_radio_cap_ind) {
       // TODO: Disable this for the moment
-      // msg->setUERadioCapability(bstrcpy(unc->ue_radio_cap_ind));
+      // msg->setUeRadioCapability(bstrcpy(unc->ue_radio_cap_ind));
     }
 
     if (itti_msg->is_sr)
@@ -1035,16 +1034,16 @@ void amf_n2::handle_itti_message(
         std::shared_ptr<pdu_session_context> psc = {};
 
         if (!amf_app_inst->find_pdu_session_context(supi, p.first, psc)) {
-          item.s_nssai.sst = std::to_string(DEFAULT_SST);
-          item.s_nssai.sd  = std::to_string(SD_NO_VALUE);
+          item.sNssai.sst = std::to_string(DEFAULT_SST);
+          item.sNssai.sd  = std::to_string(SD_NO_VALUE);
         } else {
-          item.s_nssai.sst = std::to_string(psc->snssai.sST);
-          item.s_nssai.sd  = psc->snssai.sD;
+          item.sNssai.sst = std::to_string(psc->snssai.sST);
+          item.sNssai.sd  = psc->snssai.sD;
         }
 
         Logger::amf_n2().debug(
-            "S_NSSAI (SST, SD) %s, %s", item.s_nssai.sst.c_str(),
-            item.s_nssai.sd.c_str());
+            "S_NSSAI (SST, SD) %s, %s", item.sNssai.sst.c_str(),
+            item.sNssai.sd.c_str());
 
         // TODO: NAS PDU
         if (p.second.is_n2sm_available) {
@@ -1061,7 +1060,7 @@ void amf_n2::handle_itti_message(
       if (list.size() > 0) msg->setPduSessionResourceSetupRequestList(list);
 
       // UEAggregateMaximumBitRate
-      msg->setUEAggregateMaxBitRate(
+      msg->setUeAggregateMaxBitRate(
           UE_AGGREGATE_MAXIMUM_BIT_RATE_DL, UE_AGGREGATE_MAXIMUM_BIT_RATE_UL);
 
       // TODO: Mobility RestrictionList
@@ -1115,24 +1114,24 @@ void amf_n2::handle_itti_message(
     for (auto& p : itti_msg->pdu_sessions) {
       PDUSessionResourceSetupRequestItem_t item = {};
       item.pduSessionId                         = p.first;
-      item.nas_pdu                              = bstrcpy(itti_msg->nas);
+      item.nasPdu                               = bstrcpy(itti_msg->nas);
 
       // Get SNSSAI info from PDU Session Context
-      item.s_nssai.sd                          = {};
+      item.sNssai.sd                           = {};
       std::shared_ptr<pdu_session_context> psc = {};
       if (!amf_app_inst->find_pdu_session_context(supi, p.first, psc)) {
         // TODO: get from N1N2msgTranferMsg
         Logger::amf_n2().debug(
             "Using default value for S_NSSAI (SST, SD) %s, %s",
-            item.s_nssai.sst.c_str(), item.s_nssai.sd.c_str());
-        item.s_nssai.sst = std::to_string(DEFAULT_SST);
-        item.s_nssai.sd  = std::to_string(SD_NO_VALUE);
+            item.sNssai.sst.c_str(), item.sNssai.sd.c_str());
+        item.sNssai.sst = std::to_string(DEFAULT_SST);
+        item.sNssai.sd  = std::to_string(SD_NO_VALUE);
       } else {
-        item.s_nssai.sst = std::to_string(psc->snssai.sST);
-        item.s_nssai.sd  = psc->snssai.sD;
+        item.sNssai.sst = std::to_string(psc->snssai.sST);
+        item.sNssai.sd  = psc->snssai.sD;
         Logger::amf_n2().debug(
-            "S_NSSAI (SST, SD) %s, %s", item.s_nssai.sst.c_str(),
-            item.s_nssai.sd.c_str());
+            "S_NSSAI (SST, SD) %s, %s", item.sNssai.sst.c_str(),
+            item.sNssai.sd.c_str());
       }
 
       if (p.second.is_n2sm_available) {
@@ -1149,7 +1148,7 @@ void amf_n2::handle_itti_message(
     if (list.size() > 0) psrsr->setPduSessionResourceSetupRequestList(list);
   }
 
-  psrsr->setUEAggregateMaxBitRate(
+  psrsr->setUeAggregateMaxBitRate(
       UE_AGGREGATE_MAXIMUM_BIT_RATE_DL, UE_AGGREGATE_MAXIMUM_BIT_RATE_UL);
 
   auto buffer = new (std::nothrow) uint8_t[BUFFER_SIZE_4096]();
@@ -1203,12 +1202,12 @@ void amf_n2::handle_itti_message(
 
   amf_conv::bstring_2_octet_string(
       itti_msg->n2sm, item.pduSessionResourceModifyRequestTransfer);
-  S_Nssai tmp  = {};
-  tmp.sd       = itti_msg->s_NSSAI.getSd();
-  tmp.sst      = itti_msg->s_NSSAI.getSst();
-  item.s_nssai = std::optional<S_Nssai>(tmp);
+  S_Nssai tmp = {};
+  tmp.sd      = itti_msg->s_NSSAI.getSd();
+  tmp.sst     = itti_msg->s_NSSAI.getSst();
+  item.sNssai = std::optional<S_Nssai>(tmp);
 
-  item.nas_pdu = bstrcpy(itti_msg->nas);
+  item.nasPdu = bstrcpy(itti_msg->nas);
   list.push_back(item);
 
   modify_request_msg->setPduSessionResourceModifyRequestList(list);
@@ -1293,12 +1292,31 @@ void amf_n2::handle_itti_message(
     std::shared_ptr<itti_ue_context_release_request>& itti_msg) {
   Logger::amf_n2().debug("Handle UE Context Release Request ...");
 
-  unsigned long amf_ue_ngap_id   = itti_msg->ueCtxRel->getAmfUeNgapId();
-  uint32_t ran_ue_ngap_id        = itti_msg->ueCtxRel->getRanUeNgapId();
+  unsigned long amf_ue_ngap_id = itti_msg->ueCtxRel->getAmfUeNgapId();
+  uint32_t ran_ue_ngap_id      = itti_msg->ueCtxRel->getRanUeNgapId();
+
+  // Store the list of PDU Session ID to be released/deactivated
+  std::shared_ptr<ue_ngap_context> unc = {};
+  if (amf_ue_id_2_ue_ngap_context(amf_ue_ngap_id, unc)) {
+    unc->pdu_sessions_to_be_released.clear();
+    PduSessionResourceListCxtRelReq pdu_session_resource_list_cxt_rel_req = {};
+    if (itti_msg->ueCtxRel->getPduSessionResourceList(
+            pdu_session_resource_list_cxt_rel_req)) {
+      std::vector<PduSessionResourceItemCxtRelReq> ctx_rel_req_list;
+      pdu_session_resource_list_cxt_rel_req.get(ctx_rel_req_list);
+      if (ctx_rel_req_list.size() > 0) {
+        for (const auto& cxt_rel_req : ctx_rel_req_list) {
+          OCTET_STRING_t pdu_session_resource_transfer = {};
+          unc->pdu_sessions_to_be_released.emplace(
+              cxt_rel_req.get().get(), pdu_session_resource_transfer);
+        }
+      }
+    }
+  }
+
   e_Ngap_CauseRadioNetwork cause = {};
   itti_msg->ueCtxRel->getCauseRadioNetwork(cause);
-
-  auto ueCtxRelCmd = std::make_unique<UEContextReleaseCommandMsg>();
+  auto ueCtxRelCmd = std::make_unique<UeContextReleaseCommandMsg>();
   ueCtxRelCmd->setUeNgapIdPair(amf_ue_ngap_id, ran_ue_ngap_id);
   ueCtxRelCmd->setCauseRadioNetwork(cause);
 
@@ -1331,17 +1349,17 @@ void amf_n2::handle_itti_message(
     return;
   }
 
-  auto ueCtxRelCmd = std::make_unique<UEContextReleaseCommandMsg>();
+  auto ueCtxRelCmd = std::make_unique<UeContextReleaseCommandMsg>();
   ueCtxRelCmd->setUeNgapIdPair(
       itti_msg->amf_ue_ngap_id, itti_msg->ran_ue_ngap_id);
 
   if (itti_msg->cause.getChoiceOfCause() == Ngap_Cause_PR_nas) {
-    ueCtxRelCmd->setCauseNas((e_Ngap_CauseNas) itti_msg->cause.getValue());
+    ueCtxRelCmd->setCauseNas((e_Ngap_CauseNas) itti_msg->cause.get());
   }
 
   if (itti_msg->cause.getChoiceOfCause() == Ngap_Cause_PR_radioNetwork) {
     ueCtxRelCmd->setCauseRadioNetwork(
-        (e_Ngap_CauseRadioNetwork) itti_msg->cause.getValue());
+        (e_Ngap_CauseRadioNetwork) itti_msg->cause.get());
   }
 
   uint8_t buffer[BUFFER_SIZE_256];
@@ -1404,7 +1422,7 @@ void amf_n2::handle_itti_message(
 
       NgApCause ngap_cause = {};
       ngap_cause.setGroup(itti_msg->cause.getChoiceOfCause());
-      ngap_cause.setValue(itti_msg->cause.getValue());
+      ngap_cause.setValue(itti_msg->cause.get());
       comm_failure.setRanReleaseCode(ngap_cause);
 
       event_report.setCommFailure(comm_failure);
@@ -1499,11 +1517,23 @@ void amf_n2::handle_itti_message(
 
   // TODO: Process Secondary RAT Usage Information IE if available
 
-  // Get PDU Sessions in UE Context Release Complete and send
-  // Nsmf_PDUSession_UpdateSMContext to SMF
+  // Get PDU Sessions in UE Context Release Complete and send to SMF
+  // Note: According to 3GPP, this steps should be executed after receiving UE
+  // Context Release Request. If this is the case, we won't have PDU Session
+  // Resource Release Response Transfer to be forwarded to SMF. That's why we do
+  // it here!
   std::vector<PDUSessionResourceCxtRelCplItem_t> pdu_sessions_to_be_released;
   itti_msg->ueCtxRelCmpl->getPduSessionResourceCxtRelCplList(
       pdu_sessions_to_be_released);
+
+  // Get info from UE Context Release Request if neccessary
+  if (pdu_sessions_to_be_released.size() == 0) {
+    PDUSessionResourceCxtRelCplItem_t item = {};
+    for (const auto& p : unc->pdu_sessions_to_be_released) {
+      item.pduSessionId = p.first;
+      pdu_sessions_to_be_released.push_back(item);
+    }
+  }
 
   // TODO: may consider releasing all exisiting PDU sessions
   /*
@@ -1527,7 +1557,8 @@ void amf_n2::handle_itti_message(
 
   for (auto pdu_session : pdu_sessions_to_be_released) {
     Logger::amf_n2().debug(
-        "Releasing PDU Session ID %d", pdu_session.pduSessionId);
+        "Trigger PDU Ssesion Deactivation, PDU Session ID %d",
+        pdu_session.pduSessionId);
     // Generate a promise and associate this promise to the curl handle
     uint32_t promise_id = amf_app_inst->generate_promise_id();
     Logger::amf_n2().debug("Promise ID generated %d", promise_id);
@@ -1547,12 +1578,10 @@ void amf_n2::handle_itti_message(
     auto itti_n11_msg =
         std::make_shared<itti_nsmf_pdusession_update_sm_context>(
             TASK_NGAP, TASK_AMF_SBI);
-
     itti_n11_msg->pdu_session_id = pdu_session.pduSessionId;
-
-    // TODO:
-    itti_n11_msg->is_n2sm_set = false;
-
+    itti_n11_msg->is_n2sm_set =
+        false;  // Enable to include PDU Session Resource Release Response
+                // Transfer to SMF
     itti_n11_msg->amf_ue_ngap_id = amf_ue_ngap_id;
     itti_n11_msg->ran_ue_ngap_id = ran_ue_ngap_id;
     itti_n11_msg->promise_id     = promise_id;
@@ -1566,31 +1595,31 @@ void amf_n2::handle_itti_message(
     }
   }
 
-  // Wait for the response available and process accordingly
-
+  bool is_up_activated = true;
   while (!curl_responses.empty()) {
     // Wait for the result available and process accordingly
-    std::optional<nlohmann::json> result = std::nullopt;
-    utils::wait_for_result(curl_responses.begin()->second, result);
+    std::optional<nlohmann::json> result_opt = std::nullopt;
+    utils::wait_for_result(curl_responses.begin()->second, result_opt);
 
-    if (result.has_value()) {
-      nlohmann::json result_json = result.value();
+    if (result_opt.has_value()) {
+      nlohmann::json result_json = result_opt.value();
       Logger::amf_server().debug(
-          "Got result for promise ID %d", curl_responses.begin()->first);
+          "Got result for PDU Session Id %d", curl_responses.begin()->first);
       uint32_t http_response_code = 0;
       if (result_json.find("httpResponseCode") != result_json.end()) {
         http_response_code = result_json["httpResponseCode"].get<int>();
         if ((http_response_code == 200) or (http_response_code == 204)) {
-          // uc->remove_pdu_sessions_context(curl_responses.begin()->first);
           uc->set_up_cnx_state(
               curl_responses.begin()->first,
               up_cnx_state_e::UPCNX_STATE_DEACTIVATED);
         }
       } else {
+        is_up_activated = false;
         Logger::ngap().warn("Couldn't get the HTTP response code");
       }
     } else {
-      Logger::ngap().warn("Couldn't get the HTTP response code");
+      is_up_activated = false;
+      Logger::ngap().warn("Couldn't get the HTTP response");
     }
 
     curl_responses.erase(curl_responses.begin());
@@ -1616,7 +1645,7 @@ void amf_n2::handle_itti_message(
   uint32_t ran_ue_ngap_id      = {0};
   ran_ue_ngap_id               = itti_msg->ueRadioCap->getRanUeNgapId();
   OCTET_STRING_t ue_radio_cap;
-  itti_msg->ueRadioCap->getUERadioCapability(ue_radio_cap);
+  itti_msg->ueRadioCap->getUeRadioCapability(ue_radio_cap);
 
   // Store UE Radio Capability in UE NGAP Context
   std::shared_ptr<ue_ngap_context> unc = {};
@@ -1676,11 +1705,11 @@ bool amf_n2::handle_itti_message(
   unc->ncc++;
   unc->ng_ue_state = NGAP_UE_HANDOVER;
 
-  GlobalgNBId target_global_gnb_id = {};
-  TAI tai                          = {};
-  itti_msg->handoverReq->getTargetID(target_global_gnb_id, tai);
+  GlobalGnbId target_global_gnb_id = {};
+  ngap::Tai tai                    = {};
+  itti_msg->handoverReq->getTargetId(target_global_gnb_id, tai);
   ngap::PlmnId plmn = {};
-  GNB_ID gnbid      = {};
+  GnbId gnbid       = {};
   target_global_gnb_id.get(plmn, gnbid);
   std::string mcc = {};
   std::string mnc = {};
@@ -1697,13 +1726,13 @@ bool amf_n2::handle_itti_message(
   std::string mnc_select_tai = {};
   uint32_t tac               = {};
 
-  tai.getTAI(mcc_select_tai, mnc_select_tai, tac);
+  tai.get(mcc_select_tai, mnc_select_tai, tac);
   Logger::amf_n2().debug(
       "Handover Required: Target ID selected TAI PLMN (MCC %s, MNC %s, TAC %x)",
       mcc_select_tai.c_str(), mnc_select_tai.c_str(), tac);
 
   OCTET_STRING_t source_to_target =
-      itti_msg->handoverReq->getSourceToTarget_TransparentContainer();
+      itti_msg->handoverReq->getSourceToTargetTransparentContainer();
 
   // TODO: T-AMF selection, for now use the same AMF
 
@@ -1714,32 +1743,32 @@ bool amf_n2::handle_itti_message(
   handover_request->setCause(
       Ngap_Cause_PR_radioNetwork,
       Ngap_CauseRadioNetwork_handover_desirable_for_radio_reason);
-  handover_request->setUEAggregateMaximumBitRate(
+  handover_request->setUeAggregateMaximumBitRate(
       UE_AGGREGATE_MAXIMUM_BIT_RATE_DL, UE_AGGREGATE_MAXIMUM_BIT_RATE_UL);
-  handover_request->setUESecurityCapabilities(
+  handover_request->setUeSecurityCapabilities(
       0xe000, 0xe000, 0xe000, 0xe000);  // TODO: remove hardcoded values
 
-  handover_request->setSourceToTarget_TransparentContainer(source_to_target);
+  handover_request->setSourceToTargetTransparentContainer(source_to_target);
 
   // Allowed NSSAI
-  std::vector<S_NSSAI> allowed_nssai;
+  std::vector<ngap::SNssai> allowed_nssai;
   for (int i = 0; i < amf_cfg.plmn_list.size(); i++) {
     for (int j = 0; j < amf_cfg.plmn_list[i].slice_list.size(); j++) {
       S_Nssai s_tmp;
-      S_NSSAI s_nssai = {};
+      ngap::SNssai s_nssai = {};
       s_nssai.setSst(amf_cfg.plmn_list[i].slice_list[j].sst);
       s_nssai.setSd(amf_cfg.plmn_list[i].slice_list[j].sd);
       allowed_nssai.push_back(s_nssai);
     }
   }
-  handover_request->setAllowedNSSAI(allowed_nssai);
+  handover_request->setAllowedNssai(allowed_nssai);
 
   // GUAMI, PLMN
   ngap::PlmnId plmn_id = {};
   plmn_id.set(amf_cfg.guami.mcc, amf_cfg.guami.mnc);
 
   handover_request->setMobilityRestrictionList(plmn_id);
-  handover_request->setGUAMI(
+  handover_request->setGuami(
       amf_cfg.guami.mcc, amf_cfg.guami.mnc, amf_cfg.guami.region_id,
       amf_cfg.guami.amf_set_id, amf_cfg.guami.amf_pointer);
 
@@ -1776,7 +1805,7 @@ bool amf_n2::handle_itti_message(
 
   PduSessionResourceListHandoverRqd pDUSessionResourceListHORqd = {};
   std::vector<PDUSessionResourceItem_t> pdu_session_resource_list;
-  if (!itti_msg->handoverReq->getPDUSessionResourceList(
+  if (!itti_msg->handoverReq->getPduSessionResourceList(
           pDUSessionResourceListHORqd)) {
     Logger::ngap().warn(
         "Decoding PDU Session Resource List IE error or IE missing");
@@ -1861,8 +1890,8 @@ bool amf_n2::handle_itti_message(
                 supi, curl_responses.begin()->first, psc)) {
           PDUSessionResourceSetupRequestItem_t item = {};
           item.pduSessionId                         = psc->pdu_session_id;
-          item.s_nssai.sst = std::to_string(psc->snssai.sST);
-          item.s_nssai.sd  = psc->snssai.sD;
+          item.sNssai.sst = std::to_string(psc->snssai.sST);
+          item.sNssai.sd  = psc->snssai.sD;
           // item.pduSessionNAS_PDU = nullptr;
           unsigned int data_len = n2_sm.length();
           item.pduSessionResourceSetupRequestTransfer.buf =
@@ -1930,14 +1959,14 @@ void amf_n2::handle_itti_message(
   unc->target_ran_ue_ngap_id = ran_ue_ngap_id;  // store target RAN ID
 
   std::vector<PDUSessionResourceAdmittedItem_t> list;
-  if (!itti_msg->handoverRequestAck->getPDUSessionResourceAdmittedList(list)) {
+  if (!itti_msg->handoverRequestAck->getPduSessionResourceAdmittedList(list)) {
     Logger::ngap().error(
-        "Decoding HandoverRequestACK getPDUSessionResourceList IE error");
+        "Decoding HandoverRequestACK getPduSessionResourceList IE error");
     return;
   }
 
   OCTET_STRING_t targetTosource =
-      itti_msg->handoverRequestAck->getTargetToSource_TransparentContainer();
+      itti_msg->handoverRequestAck->getTargetToSourceTransparentContainer();
 
   std::shared_ptr<nas_context> nc = {};
   if (!amf_n1_inst->amf_ue_id_2_nas_context(amf_ue_ngap_id, nc)) return;
@@ -2035,7 +2064,7 @@ void amf_n2::handle_itti_message(
   }
 
   handovercommand->setPduSessionResourceHandoverList(handoverList);
-  handovercommand->setTargetToSource_TransparentContainer(targetTosource);
+  handovercommand->setTargetToSourceTransparentContainer(targetTosource);
 
   uint8_t buffer[BUFFER_SIZE_1024];
   int encoded_size = handovercommand->Encode(buffer, BUFFER_SIZE_1024);
@@ -2070,8 +2099,8 @@ void amf_n2::handle_itti_message(
   if (!amf_ue_id_2_ue_ngap_context(amf_ue_ngap_id, unc)) return;
 
   NrCgi_t NR_CGI = {};
-  Tai_t TAI      = {};
-  if (!itti_msg->handoverNotify->getUserLocationInfoNR(NR_CGI, TAI)) {
+  Tai_t tai      = {};
+  if (!itti_msg->handoverNotify->getUserLocationInfoNr(NR_CGI, tai)) {
     Logger::amf_n2().debug("Missing IE UserLocationInformationNR");
     return;
   }
@@ -2092,7 +2121,7 @@ void amf_n2::handle_itti_message(
   }
   // Store related information
   uc->cgi            = NR_CGI;
-  uc->tai            = TAI;
+  uc->tai            = tai;
   uc->ran_ue_ngap_id = ran_ue_ngap_id;
   uc->amf_ue_ngap_id = amf_ue_ngap_id;
   uc->gnb_id         = gc->gnb_id;
@@ -2177,7 +2206,7 @@ void amf_n2::handle_itti_message(
 
   // Send UE Release Command to Source gNB
   Logger::ngap().info("Send UE Release Command to source gNB");
-  auto ueContextReleaseCommand = std::make_unique<UEContextReleaseCommandMsg>();
+  auto ueContextReleaseCommand = std::make_unique<UeContextReleaseCommandMsg>();
   ueContextReleaseCommand->setUeNgapIdPair(amf_ue_ngap_id, unc->ran_ue_ngap_id);
   ueContextReleaseCommand->setCauseRadioNetwork(
       Ngap_CauseRadioNetwork_successful_handover);
@@ -2212,7 +2241,7 @@ void amf_n2::handle_itti_message(
   NrLocation nr_location     = {};
 
   Ncgi ncgi;
-  Tai tai;
+  oai::model::common::Tai tai_model;
   oai::model::common::PlmnId plmnId;
   oai::model::common::GlobalRanNodeId ranid;
   GNbId gnbid;
@@ -2226,12 +2255,12 @@ void amf_n2::handle_itti_message(
   ranid.setPlmnId(plmnId);
 
   ncgi.setNid("");
-  ncgi.setNrCellId(std::to_string(NR_CGI.nrCellID));
+  ncgi.setNrCellId(std::to_string(NR_CGI.nrCellId));
   ncgi.setPlmnId(plmnId);
-  tai.setPlmnId(plmnId);
-  tai.setTac(std::to_string(TAI.tac));
+  tai_model.setPlmnId(plmnId);
+  tai_model.setTac(std::to_string(tai.tac));
   nr_location.setNcgi(ncgi);
-  nr_location.setTai(tai);
+  nr_location.setTai(tai_model);
   nr_location.setGlobalGnbId(ranid);
 
   user_location.setNrLocation(nr_location);
@@ -2258,41 +2287,41 @@ void amf_n2::handle_itti_message(
   if (!amf_ue_id_2_ue_ngap_context(amf_ue_ngap_id, unc)) return;
 
   RanStatusTransferTransparentContainer ran_status_transfer = {};
-  itti_msg->uplinkRanTransfer->getRANStatusTransfer_TransparentContainer(
+  itti_msg->uplinkRanTransfer->getRanStatusTransferTransparentContainer(
       ran_status_transfer);
   DrbSubjectToStatusTransferList amf_m_list = {};
-  ran_status_transfer.getDRBSubjectList(amf_m_list);
+  ran_status_transfer.getDrbSubjectList(amf_m_list);
   std::vector<DrbSubjectToStatusTransferItem> drb_subject_item_list;
-  amf_m_list.getdRBSubjectItem(drb_subject_item_list);
+  amf_m_list.get(drb_subject_item_list);
   // TODO: check size
 
   DrbStatusDl status_dl = {};
   DrbStatusUl status_ul = {};
   Ngap_DRB_ID_t drb_id  = {};
-  drb_subject_item_list[0].getdRBSubjectItem(drb_id, status_ul, status_dl);
+  drb_subject_item_list[0].get(drb_id, status_ul, status_dl);
   // TODO:dRBStatusUL18 or dRBStatusUL12
   std::optional<DrbStatusUl18> status_ul_18 = {};
   // TODO: DRBStatusDL18 or DRBStatusDL18
   std::optional<DrbStatusDl18> status_dl_18 = std::nullopt;
-  status_dl.getDRBStatusDL18(status_dl_18);
-  status_ul.getdRBStatusUL(status_ul_18);
+  status_dl.getDrbStatusDl18(status_dl_18);
+  status_ul.getDrbStatusUl(status_ul_18);
   CountValueForPdcpSn18 count_value_ul = {};
   CountValueForPdcpSn18 count_value_dl = {};
   if (status_ul_18.has_value()) status_ul_18.value().get(count_value_ul);
   if (status_dl_18.has_value()) status_dl_18.value().get(count_value_dl);
   long amf_ul_pdcp     = {0};
   long amf_hfn_ul_pdcp = {0};
-  count_value_ul.getvalue(amf_ul_pdcp, amf_hfn_ul_pdcp);
+  count_value_ul.get(amf_ul_pdcp, amf_hfn_ul_pdcp);
   long amf_dl_pdcp     = {0};
   long amf_hfn_dl_pdcp = {0};
-  count_value_dl.getvalue(amf_dl_pdcp, amf_hfn_dl_pdcp);
+  count_value_dl.get(amf_dl_pdcp, amf_hfn_dl_pdcp);
   long amf_drb_id = {0};
   amf_drb_id      = drb_id;
 
-  auto dl_ran_status_transfer = std::make_unique<DownlinkRANStatusTransfer>();
+  auto dl_ran_status_transfer = std::make_unique<DownlinkRanStatusTransfer>();
   dl_ran_status_transfer->setAmfUeNgapId(amf_ue_ngap_id);
   dl_ran_status_transfer->setRanUeNgapId(unc->target_ran_ue_ngap_id);
-  dl_ran_status_transfer->setRANStatusTransfer_TransparentContainer(
+  dl_ran_status_transfer->setRanStatusTransferTransparentContainer(
       amf_drb_id, amf_ul_pdcp, amf_hfn_ul_pdcp, amf_dl_pdcp, amf_hfn_dl_pdcp);
   uint8_t buffer[BUFFER_SIZE_1024];
   int encode_size = dl_ran_status_transfer->Encode(buffer, BUFFER_SIZE_1024);
@@ -2323,10 +2352,10 @@ void amf_n2::handle_itti_message(std::shared_ptr<itti_rereoute_nas>& itti_msg) {
     return;
   }
 
-  RerouteNASRequest reroute_nas_request = {};
+  RerouteNasRequest reroute_nas_request = {};
   reroute_nas_request.setRanUeNgapId(itti_msg->ran_ue_ngap_id);
   reroute_nas_request.setAmfUeNgapId(itti_msg->amf_ue_ngap_id);
-  if (!reroute_nas_request.setAMFSetID(itti_msg->amf_set_id)) return;
+  if (!reroute_nas_request.setAmfSetId(itti_msg->amf_set_id)) return;
   if (unc->initial_ue_msg.size > 0)
     reroute_nas_request.setNgapMessage(
         unc->initial_ue_msg);  // Include InitialUEMessage
@@ -2363,11 +2392,11 @@ void amf_n2::handle_itti_message(
     return;
   }
 
-  DownlinkUEAssociatedNRPPaTransportMsg duant = {};
+  DownlinkUeAssociatedNrppaTransportMsg duant = {};
   duant.setAmfUeNgapId(itti_msg->amf_ue_ngap_id);
   duant.setRanUeNgapId(itti_msg->ran_ue_ngap_id);
 
-  duant.setNRPPaPdu(itti_msg->nrppa_pdu);
+  duant.setNrppaPdu(itti_msg->nrppa_pdu);
   duant.setRoutingId(itti_msg->routing_id);
 
   uint8_t buffer[BUFFER_SIZE_4096];
@@ -2386,8 +2415,8 @@ void amf_n2::handle_itti_message(
   Logger::amf_n2().debug(
       "Handle Downlink Non UE Associated NRPPa Transport ...");
 
-  DownlinkNonUEAssociatedNRPPaTransportMsg dnuant = {};
-  dnuant.setNRPPaPdu(itti_msg->nrppa_pdu);
+  DownlinkNonUeAssociatedNrppaTransportMsg dnuant = {};
+  dnuant.setNrppaPdu(itti_msg->nrppa_pdu);
   dnuant.setRoutingId(itti_msg->routing_id);
 
   uint8_t buffer[BUFFER_SIZE_4096];
@@ -2562,7 +2591,7 @@ void amf_n2::send_ng_setup_failure(
     return;
   }
 
-  NGSetupFailureMsg ngSetupFailure = {};
+  NgSetupFailureMsg ngSetupFailure = {};
   ngSetupFailure.set(cause, time_to_wait);
   int encoded = ngSetupFailure.Encode((uint8_t*) buffer, BUFFER_SIZE_1024);
 
@@ -2652,7 +2681,7 @@ void amf_n2::remove_ue_context_with_ran_ue_ngap_id(
     // TODO: Verify where it's current context
     // Remove all NAS context
     std::string supi = amf_conv::imsi_to_supi(nc->imsi);
-    stacs.update_5gmm_state(nc->imsi, "5GMM-DEREGISTERED");
+    stacs.update_5gmm_state(nc, _5GMM_DEREGISTERED);
 
     // Trigger UE Loss of Connectivity Status Notify
     Logger::amf_n2().debug(
@@ -2729,7 +2758,7 @@ void amf_n2::remove_ue_context_with_amf_ue_ngap_id(const long& amf_ue_ngap_id) {
     // Remove all NAS context
     std::string supi = amf_conv::imsi_to_supi(nc->imsi);
     // Update UE status
-    stacs.update_5gmm_state(nc->imsi, "5GMM-DEREGISTERED");
+    stacs.update_5gmm_state(nc, _5GMM_DEREGISTERED);
 
     // Trigger UE Loss of Connectivity Status Notify
     Logger::amf_n2().debug(
@@ -2774,9 +2803,11 @@ bool amf_n2::get_common_plmn(
       if (amf_cfg.plmn_list[i].tac != list[j].tac) {
         continue;
       }
-      for (int k = 0; k < list[j].b_plmn_list.size(); k++) {
-        if (!(list[j].b_plmn_list[k].mcc.compare(amf_cfg.plmn_list[i].mcc)) &&
-            !(list[j].b_plmn_list[k].mnc.compare(amf_cfg.plmn_list[i].mnc))) {
+      for (int k = 0; k < list[j].plmnSliceSupportList.size(); k++) {
+        if (!(list[j].plmnSliceSupportList[k].mcc.compare(
+                amf_cfg.plmn_list[i].mcc)) &&
+            !(list[j].plmnSliceSupportList[k].mnc.compare(
+                amf_cfg.plmn_list[i].mnc))) {
           Logger::amf_n2().debug(
               "Common PLMN MCC %s, MNC %s", amf_cfg.plmn_list[i].mcc.c_str(),
               amf_cfg.plmn_list[i].mnc.c_str());
@@ -2784,10 +2815,10 @@ bool amf_n2::get_common_plmn(
           SupportedTaItem_t item                     = {};
           PlmnSliceSupport_t plmn_slice_support_item = {};
           item.tac                                   = list[j].tac;
-          plmn_slice_support_item.mcc = list[j].b_plmn_list[k].mcc;
-          plmn_slice_support_item.mnc = list[j].b_plmn_list[k].mnc;
+          plmn_slice_support_item.mcc = list[j].plmnSliceSupportList[k].mcc;
+          plmn_slice_support_item.mnc = list[j].plmnSliceSupportList[k].mnc;
 
-          for (auto s1 : list[j].b_plmn_list[k].slice_list) {
+          for (auto s1 : list[j].plmnSliceSupportList[k].sliceList) {
             Logger::amf_n2().debug(
                 "S-NSSAI from gNB (SST %s, SD %s)", s1.sst.c_str(),
                 s1.sd.c_str());
@@ -2802,14 +2833,14 @@ bool amf_n2::get_common_plmn(
                   Logger::amf_n2().debug(
                       "Common S-NSSAI (SST %s, SD %s)", s1.sst.c_str(),
                       s1.sd.c_str());
-                  plmn_slice_support_item.slice_list.push_back(s1);
+                  plmn_slice_support_item.sliceList.push_back(s1);
                   found_common_plmn = true;
                 }
               }
             }
           }
 
-          item.b_plmn_list.push_back(plmn_slice_support_item);
+          item.plmnSliceSupportList.push_back(plmn_slice_support_item);
           result.push_back(item);
         }
       }
@@ -2839,8 +2870,8 @@ bool amf_n2::get_common_NSSAI(
   }
 
   for (const auto& ta : gc->supported_ta_list) {
-    for (const auto& plmn : ta.b_plmn_list) {
-      for (const auto& slice : plmn.slice_list) {
+    for (const auto& plmn : ta.plmnSliceSupportList) {
+      for (const auto& slice : plmn.sliceList) {
         oai::nas::SNSSAI_t snssai = {};
         uint32_t sd               = SD_NO_VALUE;
         try {

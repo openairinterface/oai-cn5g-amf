@@ -28,19 +28,19 @@ MobilityRestrictionList::MobilityRestrictionList() {}
 MobilityRestrictionList::~MobilityRestrictionList() {}
 
 //------------------------------------------------------------------------------
-void MobilityRestrictionList::setPLMN(const PlmnId& plmn) {
-  servingPLMN = plmn;
+void MobilityRestrictionList::setPlmn(const PlmnId& plmn) {
+  m_ServingPlmn = plmn;
 }
 
 //------------------------------------------------------------------------------
-void MobilityRestrictionList::getPLMN(PlmnId& plmn) const {
-  plmn = servingPLMN;
+void MobilityRestrictionList::getPlmn(PlmnId& plmn) const {
+  plmn = m_ServingPlmn;
 }
 
 //------------------------------------------------------------------------------
 bool MobilityRestrictionList::encode(
-    Ngap_MobilityRestrictionList_t& mobility_restriction_list) {
-  if (!servingPLMN.encode(mobility_restriction_list.servingPLMN)) {
+    Ngap_MobilityRestrictionList_t& mobilityRestrictionList) const {
+  if (!m_ServingPlmn.encode(mobilityRestrictionList.servingPLMN)) {
     return false;
   }
   return true;
@@ -48,8 +48,8 @@ bool MobilityRestrictionList::encode(
 
 //------------------------------------------------------------------------------
 bool MobilityRestrictionList::decode(
-    const Ngap_MobilityRestrictionList_t& mobility_restriction_list) {
-  if (!servingPLMN.decode(mobility_restriction_list.servingPLMN)) {
+    const Ngap_MobilityRestrictionList_t& mobilityRestrictionList) {
+  if (!m_ServingPlmn.decode(mobilityRestrictionList.servingPLMN)) {
     return false;
   }
   return true;

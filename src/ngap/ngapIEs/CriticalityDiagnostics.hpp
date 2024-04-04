@@ -24,7 +24,7 @@
 
 #include <vector>
 
-#include "IEsCriticalityDiagnostics.hpp"
+#include "IesCriticalityDiagnostics.hpp"
 
 extern "C" {
 #include "Ngap_CriticalityDiagnostics-IE-List.h"
@@ -42,36 +42,35 @@ class CriticalityDiagnostics {
   CriticalityDiagnostics();
   virtual ~CriticalityDiagnostics();
 
-  void setProcedureCodeValue(Ngap_ProcedureCode_t);
+  void setProcedureCodeValue(const Ngap_ProcedureCode_t&);
   bool getProcedureCodeValue(Ngap_ProcedureCode_t&) const;
 
-  void setTriggeringMessageValue(Ngap_TriggeringMessage_t);
+  void setTriggeringMessageValue(const Ngap_TriggeringMessage_t&);
   bool getTriggeringMessageValue(Ngap_TriggeringMessage_t&) const;
 
-  void setCriticalityValue(Ngap_Criticality_t);
+  void setCriticalityValue(const Ngap_Criticality_t&);
   bool getCriticalityValue(Ngap_Criticality_t&) const;
 
-  void setIEsCriticalityDiagnosticsList(
-      const std::vector<IEsCriticalityDiagnostics>&
-          m_iEsCriticalityDiagnostics);
-  void getIEsCriticalityDiagnosticsList(std::vector<IEsCriticalityDiagnostics>&
-                                            m_iEsCriticalityDiagnostics) const;
+  void setIesCriticalityDiagnosticsList(
+      const std::vector<IesCriticalityDiagnostics>& iEsCriticalityDiagnostics);
+  void getIesCriticalityDiagnosticsList(
+      std::vector<IesCriticalityDiagnostics>& iEsCriticalityDiagnostics) const;
 
-  int encode(Ngap_NGSetupFailure_t&);
+  int encode(Ngap_NGSetupFailure_t&) const;
   bool decode(const Ngap_CriticalityDiagnostics_t&);
 
  private:
-  Ngap_ProcedureCode_t procedureCode;          // TODO: Optional
-  Ngap_TriggeringMessage_t triggeringMessage;  // TODO: Optional
-  Ngap_Criticality_t procedureCriticality;     // TODO: Optional
+  Ngap_ProcedureCode_t m_ProcedureCode;          // TODO: Optional
+  Ngap_TriggeringMessage_t m_TriggeringMessage;  // TODO: Optional
+  Ngap_Criticality_t m_ProcedureCriticality;     // TODO: Optional
   // Ngap_CriticalityDiagnostics_IE_List_t iEsCriticalityDiagnostics;	/*
   // TODO: Optional
-  std::vector<IEsCriticalityDiagnostics> iEsCriticalityDiagnostics;
+  std::vector<IesCriticalityDiagnostics> m_IEsCriticalityDiagnostics;
 
-  bool procedureCodeIsSet;
-  bool triggeringMessageIsSet;
-  bool procedureCriticalityIsSet;
-  int numberOfIEsCriticalityDiagnostics;
+  bool m_ProcedureCodeIsSet;
+  bool m_TriggeringMessageIsSet;
+  bool m_ProcedureCriticalityIsSet;
+  int m_NumberOfIEsCriticalityDiagnostics;
 };
 }  // namespace ngap
 

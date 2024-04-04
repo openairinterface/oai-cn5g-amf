@@ -25,45 +25,45 @@ namespace ngap {
 
 //------------------------------------------------------------------------------
 GtpTeid::GtpTeid() {
-  gtp_teid = 0;
+  m_GtpTeid = 0;
 }
 
 //------------------------------------------------------------------------------
 GtpTeid::~GtpTeid() {}
 
 //------------------------------------------------------------------------------
-void GtpTeid::setGtpTeid(const uint32_t m_gtp_teid) {
-  gtp_teid = m_gtp_teid;
+void GtpTeid::set(const uint32_t gtpTeid) {
+  m_GtpTeid = gtpTeid;
 }
 
 //------------------------------------------------------------------------------
-bool GtpTeid::getGtpTeid(uint32_t& m_gtp_teid) const {
-  m_gtp_teid = gtp_teid;
+bool GtpTeid::get(uint32_t& gtpTeid) const {
+  gtpTeid = m_GtpTeid;
 
   return true;
 }
 
 //------------------------------------------------------------------------------
-bool GtpTeid::encode(Ngap_GTP_TEID_t& gtpTeid) {
+bool GtpTeid::encode(Ngap_GTP_TEID_t& gtpTeid) const {
   gtpTeid.size = sizeof(uint32_t);
   gtpTeid.buf  = (uint8_t*) calloc(1, sizeof(uint32_t));
   if (!gtpTeid.buf) return false;
 
   for (int i = 0; i < gtpTeid.size; i++) {
-    gtpTeid.buf[i] = (gtp_teid >> (gtpTeid.size - i - 1) * 8) & 0xff;
+    gtpTeid.buf[i] = (m_GtpTeid >> (gtpTeid.size - i - 1) * 8) & 0xff;
   }
 
   return true;
 }
 
 //------------------------------------------------------------------------------
-bool GtpTeid::decode(Ngap_GTP_TEID_t gtpTeid) {
+bool GtpTeid::decode(const Ngap_GTP_TEID_t& gtpTeid) {
   if (!gtpTeid.buf) return false;
 
-  gtp_teid = 0;
+  m_GtpTeid = 0;
   for (int i = 0; i < gtpTeid.size; i++) {
-    gtp_teid = gtp_teid << 8;
-    gtp_teid |= gtpTeid.buf[i];
+    m_GtpTeid = m_GtpTeid << 8;
+    m_GtpTeid |= gtpTeid.buf[i];
   }
 
   return true;

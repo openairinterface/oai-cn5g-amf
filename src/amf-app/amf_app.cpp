@@ -100,6 +100,24 @@ amf_app::amf_app(const amf_config& amf_cfg)
 }
 
 //------------------------------------------------------------------------------
+amf_app::~amf_app() {
+  Logger::amf_app().info("Starting destruction of amf_app object");
+
+  if (amf_n1_inst) {
+    Logger::amf_app().info("Deleting N1 object");
+    delete amf_n1_inst;
+  }
+  if (amf_n2_inst) {
+    Logger::amf_app().info("Deleting N2 object");
+    delete amf_n2_inst;
+  }
+  if (amf_sbi_inst) {
+    Logger::amf_app().info("Deleting SBI object");
+    delete amf_sbi_inst;
+  }
+}
+
+//------------------------------------------------------------------------------
 void amf_app_task(void*) {
   const task_id_t task_id = TASK_AMF_APP;
   itti_inst->notify_task_ready(task_id);

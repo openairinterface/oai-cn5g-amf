@@ -24,7 +24,7 @@
 
 #include "PduSessionResourceItem.hpp"
 #include "PduSessionResourceSetupRequestTransfer.hpp"
-#include "S-NSSAI.hpp"
+#include "SNssai.hpp"
 
 extern "C" {
 #include "Ngap_PDUSessionResourceSetupItemHOReq.h"
@@ -38,20 +38,20 @@ class PduSessionResourceSetupItemHoReq : public PduSessionResourceItem {
   virtual ~PduSessionResourceSetupItemHoReq();
 
   void set(
-      const PduSessionId& pdu_session_id, const S_NSSAI& s_nssai,
-      const OCTET_STRING_t& handover_request_transfer);
+      const PduSessionId& pduSessionId, const SNssai& sNssai,
+      const OCTET_STRING_t& handoverRequestTransfer);
   void get(
-      PduSessionId& pdu_session_id, S_NSSAI& s_nssai,
-      OCTET_STRING_t& handover_request_transfer) const;
+      PduSessionId& pduSessionId, SNssai& sNssai,
+      OCTET_STRING_t& handoverRequestTransfer) const;
 
   bool encode(Ngap_PDUSessionResourceSetupItemHOReq_t&
-                  pduSessionResourceSetupItemHOReq);
+                  pduSessionResourceSetupItemHOReq) const;
   bool decode(const Ngap_PDUSessionResourceSetupItemHOReq_t&
                   pduSessionResourceSetupItemHOReq);
 
  private:
   // PduSessionId //Mandatory;
-  S_NSSAI s_NSSAI;  // Mandatory
+  SNssai m_SNssai;  // Mandatory
   // Handover Request Transfer - Mandatory
 };
 

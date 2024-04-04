@@ -27,30 +27,30 @@ namespace ngap {
 
 //------------------------------------------------------------------------------
 AmfRegionId::AmfRegionId() {
-  region_id_ = 0;
+  m_RegionId = 0;
 }
 
 //------------------------------------------------------------------------------
 AmfRegionId::~AmfRegionId() {}
 
 //------------------------------------------------------------------------------
-void AmfRegionId::setAMFRegionID(const std::string& id) {
-  region_id_ = utils::fromString<int>(id);
+void AmfRegionId::set(const std::string& id) {
+  m_RegionId = utils::fromString<int>(id);
 }
 
 //------------------------------------------------------------------------------
-void AmfRegionId::setAMFRegionID(const uint8_t& id) {
-  region_id_ = id;
+void AmfRegionId::set(const uint8_t& id) {
+  m_RegionId = id;
 }
 
 //------------------------------------------------------------------------------
-void AmfRegionId::getAMFRegionID(std::string& id) const {
-  id = std::to_string(region_id_);
+void AmfRegionId::get(std::string& id) const {
+  id = std::to_string(m_RegionId);
 }
 
 //------------------------------------------------------------------------------
-void AmfRegionId::getAMFRegionID(uint8_t& id) const {
-  id = region_id_;
+void AmfRegionId::get(uint8_t& id) const {
+  id = m_RegionId;
 }
 
 //------------------------------------------------------------------------------
@@ -58,7 +58,7 @@ bool AmfRegionId::encode(Ngap_AMFRegionID_t& id) const {
   id.size         = 1;
   uint8_t* buffer = (uint8_t*) calloc(1, sizeof(uint8_t));
   if (!buffer) return false;
-  *buffer        = region_id_;
+  *buffer        = m_RegionId;
   id.buf         = buffer;
   id.bits_unused = 0;
 
@@ -66,9 +66,9 @@ bool AmfRegionId::encode(Ngap_AMFRegionID_t& id) const {
 }
 
 //------------------------------------------------------------------------------
-bool AmfRegionId::decode(Ngap_AMFRegionID_t id) {
+bool AmfRegionId::decode(const Ngap_AMFRegionID_t& id) {
   if (!id.buf) return false;
-  region_id_ = *id.buf;
+  m_RegionId = *id.buf;
 
   return true;
 }

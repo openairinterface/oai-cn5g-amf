@@ -25,8 +25,8 @@
 #include <optional>
 #include <vector>
 
-#include "UEAssociatedLogicalNGConnectionItem.hpp"
-#include "UEAssociatedLogicalNGConnectionList.hpp"
+#include "UeAssociatedLogicalNgConnectionItem.hpp"
+#include "UeAssociatedLogicalNgConnectionList.hpp"
 
 extern "C" {
 #include "Ngap_ResetType.h"
@@ -38,28 +38,29 @@ class ResetType {
   ResetType();
   virtual ~ResetType();
 
-  void setResetType(long);
-  void setResetType(std::vector<UEAssociatedLogicalNGConnectionItem> list);
-  void getResetType(struct Ngap_UE_associatedLogicalNG_connectionList*&);
+  void setResetType(const long&);
+  void setResetType(
+      const std::vector<UeAssociatedLogicalNgConnectionItem>& list);
+  void getResetType(struct Ngap_UE_associatedLogicalNG_connectionList*&) const;
 
-  void getResetType(long&);
-  uint8_t getResetType();
+  void getResetType(long&) const;
+  uint8_t getResetType() const;
 
-  void setUE_associatedLogicalNG_connectionList(
-      std::vector<UEAssociatedLogicalNGConnectionItem> list);
+  void setUeAssociatedLogicalNgConnectionList(
+      const std::vector<UeAssociatedLogicalNgConnectionItem>& list);
 
-  void getUEAssociatedLogicalNGConnectionList(
-      std::vector<UEAssociatedLogicalNGConnectionItem>& list);
-  void getUEAssociatedLogicalNGConnectionList(
-      struct Ngap_UE_associatedLogicalNG_connectionList*&);
+  void getUeAssociatedLogicalNgConnectionList(
+      std::vector<UeAssociatedLogicalNgConnectionItem>& list) const;
+  void getUeAssociatedLogicalNgConnectionList(
+      struct Ngap_UE_associatedLogicalNG_connectionList*&) const;
 
-  bool encode(Ngap_ResetType_t& type);
+  bool encode(Ngap_ResetType_t& type) const;
   bool decode(const Ngap_ResetType_t& type);
 
  private:
-  Ngap_ResetType_PR present;
-  std::optional<long> nG_Interface;
-  std::optional<UEAssociatedLogicalNGConnectionList> partOfNG_Interface;
+  Ngap_ResetType_PR m_Present;
+  std::optional<long> m_NgInterface;
+  std::optional<UeAssociatedLogicalNgConnectionList> m_PartOfNgInterface;
   //	struct Ngap_ProtocolIE_SingleContainer	*choice_Extensions;
 };
 

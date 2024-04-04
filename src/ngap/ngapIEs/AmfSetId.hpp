@@ -42,10 +42,10 @@ class AmfSetId {
   void get(uint16_t&) const;
 
   bool encode(Ngap_AMFSetID_t&) const;
-  bool decode(Ngap_AMFSetID_t);
+  bool decode(const Ngap_AMFSetID_t&);
 
  private:
-  uint16_t id_;
+  uint16_t m_Id;
 };
 
 }  // namespace ngap

@@ -33,14 +33,14 @@ class PduSessionType {
   PduSessionType();
   virtual ~PduSessionType();
 
-  void set(e_Ngap_PDUSessionType pdu_session_type);
-  bool get(long& pdu_session_type) const;
+  void set(e_Ngap_PDUSessionType pduSessionType);
+  bool get(long& pduSessionType) const;
 
-  bool encode(Ngap_PDUSessionType_t&);
-  bool decode(Ngap_PDUSessionType_t);
+  bool encode(Ngap_PDUSessionType_t&) const;
+  bool decode(const Ngap_PDUSessionType_t&);
 
  private:
-  long pdu_session_type_;
+  long m_PduSessionType;
 };
 
 }  // namespace ngap

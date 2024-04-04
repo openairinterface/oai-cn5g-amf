@@ -24,7 +24,7 @@
 
 #include <optional>
 
-#include "NgapUEMessage.hpp"
+#include "NgapUeMessage.hpp"
 #include "PduSessionResourceFailedToSetupListCxtRes.hpp"
 #include "PduSessionResourceSetupListCxtRes.hpp"
 
@@ -34,7 +34,7 @@ extern "C" {
 
 namespace ngap {
 
-class InitialContextSetupResponseMsg : public NgapUEMessage {
+class InitialContextSetupResponseMsg : public NgapUeMessage {
  public:
   InitialContextSetupResponseMsg();
   virtual ~InitialContextSetupResponseMsg();
@@ -48,21 +48,21 @@ class InitialContextSetupResponseMsg : public NgapUEMessage {
   void setPduSessionResourceSetupResponseList(
       const std::vector<PDUSessionResourceSetupResponseItem_t>& list);
   bool getPduSessionResourceSetupResponseList(
-      std::vector<PDUSessionResourceSetupResponseItem_t>& list);
+      std::vector<PDUSessionResourceSetupResponseItem_t>& list) const;
 
   void setPduSessionResourceFailedToSetupList(
       const std::vector<PDUSessionResourceFailedToSetupItem_t>& list);
   bool getPduSessionResourceFailedToSetupList(
-      std::vector<PDUSessionResourceFailedToSetupItem_t>& list);
+      std::vector<PDUSessionResourceFailedToSetupItem_t>& list) const;
 
  private:
-  Ngap_InitialContextSetupResponse_t* initialContextSetupResponseIEs;
+  Ngap_InitialContextSetupResponse_t* m_InitialContextSetupResponseIes;
   // AMF_UE_NGAP_ID //Mandatory
   // RAN_UE_NGAP_ID //Mandatory
   std::optional<PduSessionResourceSetupListCxtRes>
-      pduSessionResourceSetupResponseList;  // Optional
+      m_PduSessionResourceSetupResponseList;  // Optional
   std::optional<PduSessionResourceFailedToSetupListCxtRes>
-      pduSessionResourceFailedToSetupResponseList;  // Optional
+      m_PduSessionResourceFailedToSetupResponseList;  // Optional
   // TODO: Criticality Diagnostics (Optional)
 };
 

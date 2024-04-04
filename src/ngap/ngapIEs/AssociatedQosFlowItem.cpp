@@ -25,47 +25,47 @@ namespace ngap {
 
 //------------------------------------------------------------------------------
 AssociatedQosFlowItem::AssociatedQosFlowItem() {
-  qosFlowMappingIndication = -1;
+  m_QosFlowMappingIndication = -1;
 }
 
 //------------------------------------------------------------------------------
 AssociatedQosFlowItem::~AssociatedQosFlowItem() {}
 
 //------------------------------------------------------------------------------
-void AssociatedQosFlowItem::setAssociatedQosFlowItem(
+void AssociatedQosFlowItem::set(
     const e_Ngap_AssociatedQosFlowItem__qosFlowMappingIndication&
-        m_qosFlowMappingIndication,
-    const QosFlowIdentifier& m_qosFlowIdentifier) {
-  qosFlowMappingIndication = m_qosFlowMappingIndication;
-  qosFlowIdentifier        = m_qosFlowIdentifier;
+        qosFlowMappingIndication,
+    const QosFlowIdentifier& qosFlowIdentifier) {
+  m_QosFlowMappingIndication = qosFlowMappingIndication;
+  m_QosFlowIdentifier        = qosFlowIdentifier;
 }
 
 //------------------------------------------------------------------------------
-void AssociatedQosFlowItem::setAssociatedQosFlowItem(
-    const QosFlowIdentifier& m_qosFlowIdentifier) {
-  qosFlowIdentifier = m_qosFlowIdentifier;
+void AssociatedQosFlowItem::set(const QosFlowIdentifier& qosFlowIdentifier) {
+  m_QosFlowIdentifier = qosFlowIdentifier;
 }
 
 //------------------------------------------------------------------------------
-bool AssociatedQosFlowItem::getAssociatedQosFlowItem(
-    long& m_qosFlowMappingIndication,
-    QosFlowIdentifier& m_qosFlowIdentifier) const {
-  m_qosFlowMappingIndication = qosFlowMappingIndication;
-  m_qosFlowIdentifier        = qosFlowIdentifier;
+bool AssociatedQosFlowItem::get(
+    long& qosFlowMappingIndication,
+    QosFlowIdentifier& qosFlowIdentifier) const {
+  qosFlowMappingIndication = m_QosFlowMappingIndication;
+  qosFlowIdentifier        = m_QosFlowIdentifier;
 
   return true;
 }
 
 //------------------------------------------------------------------------------
 bool AssociatedQosFlowItem::encode(
-    Ngap_AssociatedQosFlowItem_t& associatedQosFlowItem) {
-  if (qosFlowMappingIndication >= 0) {
+    Ngap_AssociatedQosFlowItem_t& associatedQosFlowItem) const {
+  if (m_QosFlowMappingIndication >= 0) {
     associatedQosFlowItem.qosFlowMappingIndication =
         (long*) calloc(1, sizeof(long));
-    *associatedQosFlowItem.qosFlowMappingIndication = qosFlowMappingIndication;
+    *associatedQosFlowItem.qosFlowMappingIndication =
+        m_QosFlowMappingIndication;
   }
 
-  if (!qosFlowIdentifier.encode(associatedQosFlowItem.qosFlowIdentifier))
+  if (!m_QosFlowIdentifier.encode(associatedQosFlowItem.qosFlowIdentifier))
     return false;
 
   return true;
@@ -73,12 +73,13 @@ bool AssociatedQosFlowItem::encode(
 
 //------------------------------------------------------------------------------
 bool AssociatedQosFlowItem::decode(
-    Ngap_AssociatedQosFlowItem_t& associatedQosFlowItem) {
-  if (!qosFlowIdentifier.decode(associatedQosFlowItem.qosFlowIdentifier))
+    const Ngap_AssociatedQosFlowItem_t& associatedQosFlowItem) {
+  if (!m_QosFlowIdentifier.decode(associatedQosFlowItem.qosFlowIdentifier))
     return false;
 
   if (associatedQosFlowItem.qosFlowMappingIndication) {
-    qosFlowMappingIndication = *associatedQosFlowItem.qosFlowMappingIndication;
+    m_QosFlowMappingIndication =
+        *associatedQosFlowItem.qosFlowMappingIndication;
   }
 
   return true;

@@ -26,7 +26,7 @@
 
 #include "NasPdu.hpp"
 #include "PduSessionId.hpp"
-#include "S-NSSAI.hpp"
+#include "SNssai.hpp"
 
 extern "C" {
 #include "Ngap_PDUSessionResourceSetupItemCxtReq.h"
@@ -40,24 +40,23 @@ class PduSessionResourceSetupItemCxtReq {
   virtual ~PduSessionResourceSetupItemCxtReq();
 
   void set(
-      const PduSessionId& m_pDUSessionID,
-      const std::optional<NasPdu>& m_nAS_PDU, const S_NSSAI& m_s_NSSAI,
-      const OCTET_STRING_t& pdu_session_resource_setup_request_transfer);
+      const PduSessionId& pduSessionId, const std::optional<NasPdu>& nasPdu,
+      const SNssai& sNssai,
+      const OCTET_STRING_t& pduSessionResourceSetupRequestTransfer);
   void get(
-      PduSessionId& m_pDUSessionID, std::optional<NasPdu>& m_nAS_PDU,
-      S_NSSAI& m_s_NSSAI,
-      OCTET_STRING_t& pdu_session_resource_setup_request_transfer) const;
+      PduSessionId& pduSessionId, std::optional<NasPdu>& nasPdu, SNssai& sNssai,
+      OCTET_STRING_t& pduSessionResourceSetupRequestTransfer) const;
 
-  bool encode(Ngap_PDUSessionResourceSetupItemCxtReq_t&
-                  pdu_session_resource_setup_item_cxt_req);
-  bool decode(const Ngap_PDUSessionResourceSetupItemCxtReq_t&
-                  pdu_session_resource_setup_item_cxt_req);
+  bool encode(
+      Ngap_PDUSessionResourceSetupItemCxtReq_t& pduSessionResourceItem) const;
+  bool decode(
+      const Ngap_PDUSessionResourceSetupItemCxtReq_t& pduSessionResourceItem);
 
  private:
-  PduSessionId pdu_session_id_;                                 // Mandatory
-  std::optional<NasPdu> nas_pdu_;                               // Optional
-  S_NSSAI s_nssai_;                                             // Mandatory
-  OCTET_STRING_t pdu_session_resource_setup_request_transfer_;  // Mandatory
+  PduSessionId m_PduSessionId;                              // Mandatory
+  std::optional<NasPdu> m_NasPdu;                           // Optional
+  SNssai m_SNssai;                                          // Mandatory
+  OCTET_STRING_t m_PduSessionResourceSetupRequestTransfer;  // Mandatory
 };
 
 }  // namespace ngap

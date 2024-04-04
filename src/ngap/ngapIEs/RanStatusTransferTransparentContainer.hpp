@@ -35,16 +35,16 @@ class RanStatusTransferTransparentContainer {
   RanStatusTransferTransparentContainer();
   virtual ~RanStatusTransferTransparentContainer();
 
-  void getDRBSubjectList(DrbSubjectToStatusTransferList& drblist);
-  void setDRBSubjectList(const DrbSubjectToStatusTransferList& drblist);
+  void getDrbSubjectList(DrbSubjectToStatusTransferList& drblist) const;
+  void setDrbSubjectList(const DrbSubjectToStatusTransferList& drblist);
 
-  bool encode(Ngap_RANStatusTransfer_TransparentContainer_t&
-                  ranstatustransfer_transparentcontainer);
-  bool decode(const Ngap_RANStatusTransfer_TransparentContainer_t&
-                  ranstatustransfer_transparentcontainer);
+  bool encode(
+      Ngap_RANStatusTransfer_TransparentContainer_t& ranStatusTransfer) const;
+  bool decode(
+      const Ngap_RANStatusTransfer_TransparentContainer_t& ranStatusTransfer);
 
  private:
-  DrbSubjectToStatusTransferList drb_sub_list;  // Mandatory
+  DrbSubjectToStatusTransferList m_DrbList;  // Mandatory
 };
 
 }  // namespace ngap

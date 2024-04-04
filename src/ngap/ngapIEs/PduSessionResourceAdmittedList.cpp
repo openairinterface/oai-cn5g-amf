@@ -32,19 +32,19 @@ PduSessionResourceAdmittedList::~PduSessionResourceAdmittedList() {}
 //------------------------------------------------------------------------------
 void PduSessionResourceAdmittedList::set(
     const std::vector<PduSessionResourceItem>& list) {
-  item_list_ = list;
+  m_ItemList = list;
 }
 
 //------------------------------------------------------------------------------
 void PduSessionResourceAdmittedList::get(
-    std::vector<PduSessionResourceItem>& list) {
-  list = item_list_;
+    std::vector<PduSessionResourceItem>& list) const {
+  list = m_ItemList;
 }
 
 //------------------------------------------------------------------------------
 bool PduSessionResourceAdmittedList::encode(
-    Ngap_PDUSessionResourceAdmittedList_t& list) {
-  for (auto& item : item_list_) {
+    Ngap_PDUSessionResourceAdmittedList_t& list) const {
+  for (auto& item : m_ItemList) {
     Ngap_PDUSessionResourceAdmittedItem_t* response =
         (Ngap_PDUSessionResourceAdmittedItem_t*) calloc(
             1, sizeof(Ngap_PDUSessionResourceAdmittedItem_t));
@@ -62,7 +62,7 @@ bool PduSessionResourceAdmittedList::decode(
   for (int i = 0; i < list.list.count; i++) {
     PduSessionResourceItem item = {};
     if (!item.decode(*list.list.array[i])) return false;
-    item_list_.push_back(item);
+    m_ItemList.push_back(item);
   }
 
   return true;

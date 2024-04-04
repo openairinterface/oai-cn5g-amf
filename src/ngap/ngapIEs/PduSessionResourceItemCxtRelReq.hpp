@@ -35,16 +35,17 @@ class PduSessionResourceItemCxtRelReq {
   PduSessionResourceItemCxtRelReq();
   virtual ~PduSessionResourceItemCxtRelReq();
 
-  void set(const PduSessionId& pdu_session_id);
-  void get(PduSessionId& pdu_session_id) const;
+  void set(const PduSessionId& pduSessionId);
+  void get(PduSessionId& pduSessionId) const;
+  PduSessionId get() const;
 
-  bool encode(Ngap_PDUSessionResourceItemCxtRelReq_t&
-                  pdu_session_resource_item_cxt_rel_req) const;
-  bool decode(const Ngap_PDUSessionResourceItemCxtRelReq_t&
-                  pdu_session_resource_item_cxt_rel_req);
+  bool encode(
+      Ngap_PDUSessionResourceItemCxtRelReq_t& pduSessionResourceItem) const;
+  bool decode(
+      const Ngap_PDUSessionResourceItemCxtRelReq_t& pduSessionResourceItem);
 
  private:
-  PduSessionId pdu_session_id_;  // Mandatory
+  PduSessionId m_PduSessionId;  // Mandatory
 };
 
 }  // namespace ngap

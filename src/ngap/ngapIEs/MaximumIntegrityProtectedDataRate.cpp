@@ -25,42 +25,42 @@ namespace ngap {
 
 //------------------------------------------------------------------------------
 MaximumIntegrityProtectedDataRate::MaximumIntegrityProtectedDataRate() {
-  value_ = 0;
+  m_MaximumIntegrityProtectedDataRate = 0;
 }
 
 //------------------------------------------------------------------------------
 MaximumIntegrityProtectedDataRate::MaximumIntegrityProtectedDataRate(
-    e_Ngap_MaximumIntegrityProtectedDataRate value) {
-  value_ = value;
+    const e_Ngap_MaximumIntegrityProtectedDataRate& value) {
+  m_MaximumIntegrityProtectedDataRate = value;
 }
 //------------------------------------------------------------------------------
 MaximumIntegrityProtectedDataRate::~MaximumIntegrityProtectedDataRate() {}
 
 //------------------------------------------------------------------------------
 void MaximumIntegrityProtectedDataRate::set(
-    e_Ngap_MaximumIntegrityProtectedDataRate value) {
-  value_ = value;
+    const e_Ngap_MaximumIntegrityProtectedDataRate& value) {
+  m_MaximumIntegrityProtectedDataRate = value;
 }
 
 //------------------------------------------------------------------------------
 bool MaximumIntegrityProtectedDataRate::get(long& value) const {
-  value = value_;
+  value = m_MaximumIntegrityProtectedDataRate;
 
   return true;
 }
 
 //------------------------------------------------------------------------------
 bool MaximumIntegrityProtectedDataRate::encode(
-    Ngap_MaximumIntegrityProtectedDataRate_t& value) {
-  value = value_;
+    Ngap_MaximumIntegrityProtectedDataRate_t& value) const {
+  value = m_MaximumIntegrityProtectedDataRate;
 
   return true;
 }
 
 //------------------------------------------------------------------------------
 bool MaximumIntegrityProtectedDataRate::decode(
-    Ngap_MaximumIntegrityProtectedDataRate_t value) {
-  value_ = value;
+    const Ngap_MaximumIntegrityProtectedDataRate_t& value) {
+  m_MaximumIntegrityProtectedDataRate = value;
 
   return true;
 }

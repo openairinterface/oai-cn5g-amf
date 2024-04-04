@@ -30,26 +30,25 @@ PlmnSupportList::PlmnSupportList() {}
 PlmnSupportList::~PlmnSupportList() {}
 
 //------------------------------------------------------------------------------
-bool PlmnSupportList::encode(Ngap_PLMNSupportList_t& plmn_support_list) {
-  for (std::vector<PlmnSupportItem>::iterator it = std::begin(list_);
-       it != std::end(list_); ++it) {
+bool PlmnSupportList::encode(Ngap_PLMNSupportList_t& plmnSupportList) const {
+  for (std::vector<PlmnSupportItem>::const_iterator it = m_List.begin();
+       it != m_List.end(); ++it) {
     Ngap_PLMNSupportItem_t* supportItem =
         (Ngap_PLMNSupportItem_t*) calloc(1, sizeof(Ngap_PLMNSupportItem_t));
     if (!supportItem) return false;
     if (!it->encode(*supportItem)) return false;
-    if (ASN_SEQUENCE_ADD(&plmn_support_list.list, supportItem) != 0)
-      return false;
+    if (ASN_SEQUENCE_ADD(&plmnSupportList.list, supportItem) != 0) return false;
   }
   return true;
 }
 
 //------------------------------------------------------------------------------
-bool PlmnSupportList::decode(const Ngap_PLMNSupportList_t& plmn_support_list) {
-  list_.clear();
-  for (int i = 0; i < plmn_support_list.list.count; i++) {
+bool PlmnSupportList::decode(const Ngap_PLMNSupportList_t& plmnSupportList) {
+  m_List.clear();
+  for (int i = 0; i < plmnSupportList.list.count; i++) {
     PlmnSupportItem item = {};
-    if (!item.decode(*plmn_support_list.list.array[i])) return false;
-    list_.push_back(item);
+    if (!item.decode(*plmnSupportList.list.array[i])) return false;
+    m_List.push_back(item);
   }
 
   return true;
@@ -57,17 +56,17 @@ bool PlmnSupportList::decode(const Ngap_PLMNSupportList_t& plmn_support_list) {
 
 //------------------------------------------------------------------------------
 void PlmnSupportList::set(const std::vector<PlmnSupportItem>& items) {
-  list_ = items;
+  m_List = items;
 }
 
 //------------------------------------------------------------------------------
-void PlmnSupportList::get(std::vector<PlmnSupportItem>& items) {
-  items = list_;
+void PlmnSupportList::get(std::vector<PlmnSupportItem>& items) const {
+  items = m_List;
 }
 
 //------------------------------------------------------------------------------
 void PlmnSupportList::addItem(const PlmnSupportItem& item) {
-  list_.push_back(item);
+  m_List.push_back(item);
 }
 
 }  // namespace ngap

@@ -32,32 +32,32 @@ DrbSubjectToStatusTransferItem::DrbSubjectToStatusTransferItem() {}
 DrbSubjectToStatusTransferItem::~DrbSubjectToStatusTransferItem() {}
 
 //------------------------------------------------------------------------------
-void DrbSubjectToStatusTransferItem::setdRBSubjectItem(
-    const Ngap_DRB_ID_t& dRB_ID, const DrbStatusUl& dRB_UL,
-    const DrbStatusDl& dRB_DL) {
-  drbID = dRB_ID;
-  drbUL = dRB_UL;
-  drbDL = dRB_DL;
+void DrbSubjectToStatusTransferItem::set(
+    const Ngap_DRB_ID_t& drbId, const DrbStatusUl& drbUl,
+    const DrbStatusDl& drbDl) {
+  m_DrbId = drbId;
+  m_DrbUl = drbUl;
+  m_DrbDl = drbDl;
 }
 
 //------------------------------------------------------------------------------
-void DrbSubjectToStatusTransferItem::getdRBSubjectItem(
-    Ngap_DRB_ID_t& dRB_ID, DrbStatusUl& dRB_UL, DrbStatusDl& dRB_DL) const {
-  dRB_ID = drbID;
-  dRB_UL = drbUL;
-  dRB_DL = drbDL;
+void DrbSubjectToStatusTransferItem::get(
+    Ngap_DRB_ID_t& drbId, DrbStatusUl& drbUl, DrbStatusDl& drbDl) const {
+  drbId = m_DrbId;
+  drbUl = m_DrbUl;
+  drbDl = m_DrbDl;
 }
 
 //------------------------------------------------------------------------------
 bool DrbSubjectToStatusTransferItem::decode(
-    const Ngap_DRBsSubjectToStatusTransferItem_t& dRB_item) {
-  if (dRB_item.dRB_ID) {
-    drbID = dRB_item.dRB_ID;
+    const Ngap_DRBsSubjectToStatusTransferItem_t& drbItem) {
+  if (drbItem.dRB_ID) {
+    m_DrbId = drbItem.dRB_ID;
   }
-  if (!drbUL.decode(dRB_item.dRBStatusUL)) {
+  if (!m_DrbUl.decode(drbItem.dRBStatusUL)) {
     return false;
   }
-  if (!drbDL.decode(dRB_item.dRBStatusDL)) {
+  if (!m_DrbDl.decode(drbItem.dRBStatusDL)) {
     return false;
   }
   return true;
@@ -65,14 +65,14 @@ bool DrbSubjectToStatusTransferItem::decode(
 
 //------------------------------------------------------------------------------
 bool DrbSubjectToStatusTransferItem::encode(
-    Ngap_DRBsSubjectToStatusTransferItem_t& dRB_item) {
-  dRB_item.dRB_ID = drbID;
+    Ngap_DRBsSubjectToStatusTransferItem_t& drbItem) const {
+  drbItem.dRB_ID = m_DrbId;
 
-  if (!drbUL.encode(dRB_item.dRBStatusUL)) {
+  if (!m_DrbUl.encode(drbItem.dRBStatusUL)) {
     return false;
   }
 
-  if (!drbDL.encode(dRB_item.dRBStatusDL)) {
+  if (!m_DrbDl.encode(drbItem.dRBStatusDL)) {
     return false;
   }
 

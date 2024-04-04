@@ -24,18 +24,18 @@
 
 #include <optional>
 
-#include "AmfName.hpp"
 #include "AllowedNssai.hpp"
+#include "AmfName.hpp"
 #include "IndexToRfsp.hpp"
 #include "MobilityRestrictionList.hpp"
 #include "NasPdu.hpp"
-#include "NgapUEMessage.hpp"
+#include "NgapUeMessage.hpp"
 #include "RanPagingPriority.hpp"
-#include "UEAggregateMaxBitRate.hpp"
+#include "UeAggregateMaxBitRate.hpp"
 
 namespace ngap {
 
-class DownLinkNasTransportMsg : public NgapUEMessage {
+class DownLinkNasTransportMsg : public NgapUeMessage {
  public:
   DownLinkNasTransportMsg();
   virtual ~DownLinkNasTransportMsg();
@@ -47,38 +47,38 @@ class DownLinkNasTransportMsg : public NgapUEMessage {
   bool decode(Ngap_NGAP_PDU_t* ngapMsgPdu) override;
 
   void setOldAmf(const std::string& name);
-  bool getOldAmf(std::string& name);
+  bool getOldAmf(std::string& name) const;
 
   bool setRanPagingPriority(const uint32_t&);  // 1~256
-  bool getRanPagingPriority(uint32_t&);
+  bool getRanPagingPriority(uint32_t&) const;
 
   void setNasPdu(const bstring& pdu);
-  bool getNasPdu(bstring& pdu);
+  bool getNasPdu(bstring& pdu) const;
 
   void setMobilityRestrictionList(const MobilityRestrictionList&);
   bool getMobilityRestrictionList(MobilityRestrictionList&) const;
 
-  void setUEAggregateMaxBitRate(const UEAggregateMaxBitRate& bit_rate);
-  bool getUEAggregateMaxBitRate(UEAggregateMaxBitRate& bit_rate);
+  void setUeAggregateMaxBitRate(const UeAggregateMaxBitRate& bitRate);
+  bool getUeAggregateMaxBitRate(UeAggregateMaxBitRate& bitRate) const;
 
-  void setIndex2Rat_FrequencySelectionPriority(const uint32_t& value);  // 1~256
-  bool getIndex2Rat_FrequencySelectionPriority(uint32_t&) const;
+  void setIndex2RatFrequencySelectionPriority(const uint32_t& value);  // 1~256
+  bool getIndex2RatFrequencySelectionPriority(uint32_t&) const;
 
-  void setAllowedNssai(const AllowedNSSAI& allowed_nssai);
-  bool getAllowedNssai(AllowedNSSAI& allowed_nssai) const;
+  void setAllowedNssai(const AllowedNSSAI& allowedNssai);
+  bool getAllowedNssai(AllowedNSSAI& allowedNssai) const;
 
  private:
-  Ngap_DownlinkNASTransport_t* downLinkNasTransportIEs;
+  Ngap_DownlinkNASTransport_t* m_DownLinkNasTransportIes;
 
   // AMF_UE_NGAP_ID (Mandatory)
   // RAN_UE_NGAP_ID (Mandatory)
-  std::optional<AmfName> oldAMF;                                   // Optional
-  std::optional<RanPagingPriority> ranPagingPriority;              // Optional
-  NasPdu nasPdu;                                                   // Mandatory
-  std::optional<MobilityRestrictionList> mobilityRestrictionList;  // Optional
-  std::optional<IndexToRfsp> indexToRFSP;                          // Optional
-  std::optional<UEAggregateMaxBitRate> uEAggregateMaxBitRate;      // Optional
-  std::optional<AllowedNSSAI> allowedNssai;                        // Optional
+  std::optional<AmfName> m_OldAmf;                       // Optional
+  std::optional<RanPagingPriority> m_RanPagingPriority;  // Optional
+  NasPdu m_NasPdu;                                       // Mandatory
+  std::optional<MobilityRestrictionList> m_MobilityRestrictionList;  // Optional
+  std::optional<IndexToRfsp> m_IndexToRfsp;                          // Optional
+  std::optional<UeAggregateMaxBitRate> m_UeAggregateMaxBitRate;      // Optional
+  std::optional<AllowedNSSAI> m_AllowedNssai;                        // Optional
   // TODO: SRVCC Operation Possible (Optional, Rel 16.14.0)
   // TODO: Enhanced Coverage Restriction (Optional, Rel 16.14.0)
   // TODO: Extended Connected Time (Optional, Rel 16.14.0)

@@ -34,22 +34,22 @@ PduSessionResourceFailedToSetupListCxtFail::
 //------------------------------------------------------------------------------
 void PduSessionResourceFailedToSetupListCxtFail::set(
     const std::vector<PduSessionResourceFailedToSetupItemCxtFail>& list) {
-  itemList = list;
+  m_ItemList = list;
 }
 
 //------------------------------------------------------------------------------
 void PduSessionResourceFailedToSetupListCxtFail::get(
     std::vector<PduSessionResourceFailedToSetupItemCxtFail>& list) const {
-  list = itemList;
+  list = m_ItemList;
 }
 
 //------------------------------------------------------------------------------
 bool PduSessionResourceFailedToSetupListCxtFail::encode(
     Ngap_PDUSessionResourceFailedToSetupListCxtFail_t&
-        pduSessionResourceFailedToSetupListCxtFail) {
-  for (std::vector<PduSessionResourceFailedToSetupItemCxtFail>::iterator it =
-           std::begin(itemList);
-       it < std::end(itemList); ++it) {
+        pduSessionResourceFailedToSetupListCxtFail) const {
+  for (std::vector<PduSessionResourceFailedToSetupItemCxtFail>::const_iterator
+           it = m_ItemList.begin();
+       it < m_ItemList.end(); ++it) {
     Ngap_PDUSessionResourceFailedToSetupItemCxtFail_t* failedToFailure =
         (Ngap_PDUSessionResourceFailedToSetupItemCxtFail_t*) calloc(
             1, sizeof(Ngap_PDUSessionResourceFailedToSetupItemCxtFail_t));
@@ -68,7 +68,7 @@ bool PduSessionResourceFailedToSetupListCxtFail::encode(
 bool PduSessionResourceFailedToSetupListCxtFail::decode(
     const Ngap_PDUSessionResourceFailedToSetupListCxtFail_t&
         pduSessionResourceFailedToSetupListCxtFail) {
-  itemList.reserve(pduSessionResourceFailedToSetupListCxtFail.list.count);
+  m_ItemList.reserve(pduSessionResourceFailedToSetupListCxtFail.list.count);
 
   for (int i = 0; i < pduSessionResourceFailedToSetupListCxtFail.list.count;
        i++) {
@@ -76,7 +76,7 @@ bool PduSessionResourceFailedToSetupListCxtFail::decode(
     if (!itemCxtFail.decode(
             *pduSessionResourceFailedToSetupListCxtFail.list.array[i]))
       return false;
-    itemList.push_back(itemCxtFail);
+    m_ItemList.push_back(itemCxtFail);
   }
 
   return true;

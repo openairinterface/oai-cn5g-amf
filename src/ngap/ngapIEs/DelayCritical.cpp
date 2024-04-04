@@ -25,21 +25,21 @@ namespace ngap {
 
 //------------------------------------------------------------------------------
 DelayCritical::DelayCritical() {
-  delay_critical_ = 0;
+  m_DelayCritical = 0;
 }
 
 //------------------------------------------------------------------------------
 DelayCritical::~DelayCritical() {}
 
 //------------------------------------------------------------------------------
-void DelayCritical::setDelayCritical(e_Ngap_DelayCritical value) {
-  delay_critical_ = value;
+void DelayCritical::set(const e_Ngap_DelayCritical& value) {
+  m_DelayCritical = value;
 }
 
 //------------------------------------------------------------------------------
-bool DelayCritical::getDelayCritical(e_Ngap_DelayCritical& value) const {
-  if ((delay_critical_ >= 0) && (delay_critical_ <= 1))
-    value = (e_Ngap_DelayCritical) delay_critical_;
+bool DelayCritical::get(e_Ngap_DelayCritical& value) const {
+  if ((m_DelayCritical >= 0) && (m_DelayCritical <= 1))
+    value = (e_Ngap_DelayCritical) m_DelayCritical;
   else
     false;
 
@@ -48,14 +48,14 @@ bool DelayCritical::getDelayCritical(e_Ngap_DelayCritical& value) const {
 
 //------------------------------------------------------------------------------
 bool DelayCritical::encode(Ngap_DelayCritical_t& value) const {
-  value = delay_critical_;
+  value = m_DelayCritical;
 
   return true;
 }
 
 //------------------------------------------------------------------------------
-bool DelayCritical::decode(Ngap_DelayCritical_t value) {
-  delay_critical_ = value;
+bool DelayCritical::decode(const Ngap_DelayCritical_t& value) {
+  m_DelayCritical = value;
 
   return true;
 }

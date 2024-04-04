@@ -33,14 +33,14 @@ class DataForwardingNotPossible {
   DataForwardingNotPossible();
   virtual ~DataForwardingNotPossible();
 
-  void set(const long value);
+  void set(const long& value);
   void get(long& value) const;
 
   bool encode(Ngap_DataForwardingNotPossible_t& value) const;
-  bool decode(Ngap_DataForwardingNotPossible_t value);
+  bool decode(const Ngap_DataForwardingNotPossible_t& value);
 
  private:
-  long value_;
+  long m_DataForwardingNotPossible;
 };
 
 }  // namespace ngap

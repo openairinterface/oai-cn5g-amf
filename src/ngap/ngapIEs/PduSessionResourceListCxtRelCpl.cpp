@@ -32,9 +32,9 @@ PduSessionResourceListCxtRelCpl::~PduSessionResourceListCxtRelCpl() {}
 //------------------------------------------------------------------------------
 void PduSessionResourceListCxtRelCpl::set(
     const std::vector<PduSessionResourceItemCxtRelCpl>& list) {
-  cxtRelCplList.clear();
+  m_ItemList.clear();
   for (auto i : list) {
-    cxtRelCplList.push_back(i);
+    m_ItemList.push_back(i);
   }
 }
 
@@ -42,15 +42,16 @@ void PduSessionResourceListCxtRelCpl::set(
 void PduSessionResourceListCxtRelCpl::get(
     std::vector<PduSessionResourceItemCxtRelCpl>& list) const {
   list.clear();
-  for (auto i : cxtRelCplList) {
+  for (auto i : m_ItemList) {
     list.push_back(i);
   }
 }
 
 //------------------------------------------------------------------------------
 bool PduSessionResourceListCxtRelCpl::encode(
-    Ngap_PDUSessionResourceListCxtRelCpl_t& pduSessionResourceListCxtRelCpl) {
-  for (auto& cxtRelCpl : cxtRelCplList) {
+    Ngap_PDUSessionResourceListCxtRelCpl_t& pduSessionResourceListCxtRelCpl)
+    const {
+  for (auto& cxtRelCpl : m_ItemList) {
     Ngap_PDUSessionResourceItemCxtRelCpl_t* item =
         (Ngap_PDUSessionResourceItemCxtRelCpl_t*) calloc(
             1, sizeof(Ngap_PDUSessionResourceItemCxtRelCpl_t));
@@ -70,7 +71,7 @@ bool PduSessionResourceListCxtRelCpl::decode(
     PduSessionResourceItemCxtRelCpl item = {};
     if (!item.decode(*pduSessionResourceListCxtRelCpl.list.array[i]))
       return false;
-    cxtRelCplList.push_back(item);
+    m_ItemList.push_back(item);
   }
   return true;
 }

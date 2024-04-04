@@ -32,17 +32,17 @@ class MaximumIntegrityProtectedDataRate {
  public:
   MaximumIntegrityProtectedDataRate();
   MaximumIntegrityProtectedDataRate(
-      e_Ngap_MaximumIntegrityProtectedDataRate value);
+      const e_Ngap_MaximumIntegrityProtectedDataRate& value);
   virtual ~MaximumIntegrityProtectedDataRate();
 
-  void set(e_Ngap_MaximumIntegrityProtectedDataRate value);
+  void set(const e_Ngap_MaximumIntegrityProtectedDataRate& value);
   bool get(long& value) const;
 
-  bool encode(Ngap_MaximumIntegrityProtectedDataRate_t&);
-  bool decode(Ngap_MaximumIntegrityProtectedDataRate_t);
+  bool encode(Ngap_MaximumIntegrityProtectedDataRate_t&) const;
+  bool decode(const Ngap_MaximumIntegrityProtectedDataRate_t&);
 
  private:
-  long value_;
+  long m_MaximumIntegrityProtectedDataRate;
 };
 
 }  // namespace ngap

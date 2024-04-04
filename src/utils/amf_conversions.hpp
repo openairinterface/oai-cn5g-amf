@@ -81,6 +81,7 @@ class amf_conv : public conv {
   static std::string get_serving_network_name(
       const std::string& mnc, const std::string& mcc);
   static std::string uint32_to_hex_string(uint32_t value);
+  static std::string uint32_to_hex_string_full_format(uint32_t value);
   static std::string tmsi_to_guti(
       const std::string& mcc, const std::string& mnc, uint8_t region_id,
       const std::string& _5g_s_tmsi);

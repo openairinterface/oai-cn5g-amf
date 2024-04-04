@@ -35,23 +35,22 @@ class AssociatedQosFlowItem {
   AssociatedQosFlowItem();
   virtual ~AssociatedQosFlowItem();
 
-  void setAssociatedQosFlowItem(
+  void set(
       const e_Ngap_AssociatedQosFlowItem__qosFlowMappingIndication&
-          m_qosFlowMappingIndication,
-      const QosFlowIdentifier& m_qosFlowIdentifier);
-  bool getAssociatedQosFlowItem(
-      long& m_qosFlowMappingIndication,
-      QosFlowIdentifier& m_qosFlowIdentifier) const;
+          qosFlowMappingIndication,
+      const QosFlowIdentifier& qosFlowIdentifier);
+  bool get(long& qosFlowMappingIndication, QosFlowIdentifier& qosFlowIdentifier)
+      const;
 
-  void setAssociatedQosFlowItem(const QosFlowIdentifier& m_qosFlowIdentifier);
+  void set(const QosFlowIdentifier& qosFlowIdentifier);
   // TODO: Get
 
-  bool encode(Ngap_AssociatedQosFlowItem_t& associatedQosFlowItem);
-  bool decode(Ngap_AssociatedQosFlowItem_t& associatedQosFlowItem);
+  bool encode(Ngap_AssociatedQosFlowItem_t& associatedQosFlowItem) const;
+  bool decode(const Ngap_AssociatedQosFlowItem_t& associatedQosFlowItem);
 
  private:
-  QosFlowIdentifier qosFlowIdentifier;  // Mandatory
-  long qosFlowMappingIndication;        // TODO: Optional
+  QosFlowIdentifier m_QosFlowIdentifier;  // Mandatory
+  long m_QosFlowMappingIndication;        // TODO: Optional
 };
 
 }  // namespace ngap

@@ -24,7 +24,7 @@
 
 #include "AdditionalQosFlowInformation.hpp"
 #include "AllocationAndRetentionPriority.hpp"
-#include "GbrQoSFlowInformation.hpp"
+#include "GbrQosFlowInformation.hpp"
 #include "QosCharacteristics.hpp"
 #include "ReflectiveQosAttribute.hpp"
 
@@ -40,31 +40,31 @@ class QosFlowLevelQosParameters {
   virtual ~QosFlowLevelQosParameters();
 
   void set(
-      const QosCharacteristics& m_qosCharacteristics,
-      const AllocationAndRetentionPriority& m_allocationAndRetentionPriority,
-      const std::optional<GbrQoSFlowInformation>& m_gBR_QosInformation,
-      const std::optional<ReflectiveQosAttribute>& m_reflectiveQosAttribute,
+      const QosCharacteristics& qosCharacteristics,
+      const AllocationAndRetentionPriority& allocationAndRetentionPriority,
+      const std::optional<GbrQosFlowInformation>& gbrQosFlowInformation,
+      const std::optional<ReflectiveQosAttribute>& reflectiveQosAttribute,
       const std::optional<AdditionalQosFlowInformation>&
-          m_additionalQosFlowInformation);
+          additionalQosFlowInformation);
 
   void get(
-      QosCharacteristics& m_qosCharacteristics,
-      AllocationAndRetentionPriority& m_allocationAndRetentionPriority,
-      std::optional<GbrQoSFlowInformation>& m_gBR_QosInformation,
-      std::optional<ReflectiveQosAttribute>& m_reflectiveQosAttribute,
-      std::optional<AdditionalQosFlowInformation>&
-          m_additionalQosFlowInformation) const;
+      QosCharacteristics& qosCharacteristics,
+      AllocationAndRetentionPriority& allocationAndRetentionPriority,
+      std::optional<GbrQosFlowInformation>& gbrQosFlowInformation,
+      std::optional<ReflectiveQosAttribute>& reflectiveQosAttribute,
+      std::optional<AdditionalQosFlowInformation>& additionalQosFlowInformation)
+      const;
 
-  bool encode(Ngap_QosFlowLevelQosParameters_t&);
+  bool encode(Ngap_QosFlowLevelQosParameters_t&) const;
   bool decode(const Ngap_QosFlowLevelQosParameters_t&);
 
  private:
-  QosCharacteristics qosCharacteristics;                          // Mandatory
-  AllocationAndRetentionPriority allocationAndRetentionPriority;  // Mandatory
-  std::optional<GbrQoSFlowInformation> gBR_QosInformation;        // Optional
-  std::optional<ReflectiveQosAttribute> reflectiveQosAttribute;   // Optional
+  QosCharacteristics m_QosCharacteristics;                          // Mandatory
+  AllocationAndRetentionPriority m_AllocationAndRetentionPriority;  // Mandatory
+  std::optional<GbrQosFlowInformation> m_GbrQosInformation;         // Optional
+  std::optional<ReflectiveQosAttribute> m_ReflectiveQosAttribute;   // Optional
   std::optional<AdditionalQosFlowInformation>
-      additionalQosFlowInformation;  // Optional
+      m_AdditionalQosFlowInformation;  // Optional
 };
 
 }  // namespace ngap

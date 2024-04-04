@@ -39,17 +39,15 @@ class PduSessionResourceListCxtRelCpl {
   virtual ~PduSessionResourceListCxtRelCpl();
 
   void set(const std::vector<PduSessionResourceItemCxtRelCpl>& list);
-
   void get(std::vector<PduSessionResourceItemCxtRelCpl>& list) const;
 
-  bool encode(
-      Ngap_PDUSessionResourceListCxtRelCpl_t& pduSessionResourceListCxtRelCpl);
-
+  bool encode(Ngap_PDUSessionResourceListCxtRelCpl_t&
+                  pduSessionResourceListCxtRelCpl) const;
   bool decode(const Ngap_PDUSessionResourceListCxtRelCpl_t&
                   pduSessionResourceListCxtRelCpl);
 
  private:
-  std::vector<PduSessionResourceItemCxtRelCpl> cxtRelCplList;
+  std::vector<PduSessionResourceItemCxtRelCpl> m_ItemList;
 };
 
 }  // namespace ngap

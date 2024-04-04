@@ -37,18 +37,18 @@ class QosFlowSetupRequestItem {
   virtual ~QosFlowSetupRequestItem();
 
   void set(
-      const QosFlowIdentifier& m_qosFlowIdentifier,
-      const QosFlowLevelQosParameters& m_qosFlowLevelQosParameters);
+      const QosFlowIdentifier& qosFlowIdentifier,
+      const QosFlowLevelQosParameters& qosFlowLevelQosParameters);
   bool get(
-      QosFlowIdentifier& m_qosFlowIdentifier,
-      QosFlowLevelQosParameters& m_qosFlowLevelQosParameters) const;
+      QosFlowIdentifier& qosFlowIdentifier,
+      QosFlowLevelQosParameters& qosFlowLevelQosParameters) const;
 
-  bool encode(Ngap_QosFlowSetupRequestItem_t&);
+  bool encode(Ngap_QosFlowSetupRequestItem_t&) const;
   bool decode(const Ngap_QosFlowSetupRequestItem_t&);
 
  private:
-  QosFlowIdentifier qosFlowIdentifier;                  // Mandatory
-  QosFlowLevelQosParameters qosFlowLevelQosParameters;  // Mandatory
+  QosFlowIdentifier m_QosFlowIdentifier;                  // Mandatory
+  QosFlowLevelQosParameters m_QosFlowLevelQosParameters;  // Mandatory
   // TODO: E-RAB ID //Optional
 };
 

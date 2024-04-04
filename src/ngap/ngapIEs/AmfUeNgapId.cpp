@@ -25,7 +25,7 @@ namespace ngap {
 
 //------------------------------------------------------------------------------
 AmfUeNgapId::AmfUeNgapId() {
-  id_ = 0;
+  m_AmfUeNgapId = 0;
 }
 
 //------------------------------------------------------------------------------
@@ -34,37 +34,37 @@ AmfUeNgapId::~AmfUeNgapId() {}
 //------------------------------------------------------------------------------
 bool AmfUeNgapId::set(const uint64_t& id) {
   if (id > AMF_UE_NGAP_ID_MAX_VALUE) return false;
-  id_ = id;
+  m_AmfUeNgapId = id;
   return true;
 }
 
 //------------------------------------------------------------------------------
 uint64_t AmfUeNgapId::get() const {
-  return id_;
+  return m_AmfUeNgapId;
 }
 
 //------------------------------------------------------------------------------
 bool AmfUeNgapId::encode(Ngap_AMF_UE_NGAP_ID_t& amf_ue_ngap_id) const {
-  amf_ue_ngap_id.size = 5;
+  amf_ue_ngap_id.size = 5;  // 40 bits
   amf_ue_ngap_id.buf  = (uint8_t*) calloc(1, amf_ue_ngap_id.size);
   if (!amf_ue_ngap_id.buf) return false;
 
   for (int i = 0; i < amf_ue_ngap_id.size; i++) {
-    amf_ue_ngap_id.buf[i] =
-        (id_ & (0xff00000000 >> i * 8)) >> ((amf_ue_ngap_id.size - i - 1) * 8);
+    amf_ue_ngap_id.buf[i] = (m_AmfUeNgapId & (0xff00000000 >> i * 8)) >>
+                            ((amf_ue_ngap_id.size - i - 1) * 8);
   }
 
   return true;
 }
 
 //------------------------------------------------------------------------------
-bool AmfUeNgapId::decode(Ngap_AMF_UE_NGAP_ID_t amf_ue_ngap_id) {
+bool AmfUeNgapId::decode(const Ngap_AMF_UE_NGAP_ID_t& amf_ue_ngap_id) {
   if (!amf_ue_ngap_id.buf) return false;
 
-  id_ = 0;
+  m_AmfUeNgapId = 0;
   for (int i = 0; i < amf_ue_ngap_id.size; i++) {
-    id_ = id_ << 8;
-    id_ |= amf_ue_ngap_id.buf[i];
+    m_AmfUeNgapId = m_AmfUeNgapId << 8;
+    m_AmfUeNgapId |= amf_ue_ngap_id.buf[i];
   }
 
   return true;

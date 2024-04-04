@@ -31,24 +31,24 @@ PduSessionResourceAdmittedItem::~PduSessionResourceAdmittedItem() {}
 
 //------------------------------------------------------------------------------
 void PduSessionResourceAdmittedItem::set(
-    const PduSessionId& m_pDUSessionID,
-    const OCTET_STRING_t& m_handoverRequestAckTransfer) {
-  pDUSessionID               = m_pDUSessionID;
-  handoverRequestAckTransfer = m_handoverRequestAckTransfer;
+    const PduSessionId& pduSessionID,
+    const OCTET_STRING_t& handoverRequestAckTransfer) {
+  m_PduSessionId               = pduSessionID;
+  m_HandoverRequestAckTransfer = handoverRequestAckTransfer;
 }
 //------------------------------------------------------------------------------
 void PduSessionResourceAdmittedItem::get(
-    PduSessionId& m_pDUSessionID,
-    OCTET_STRING_t& m_handoverRequestAckTransfer) {
-  m_pDUSessionID               = pDUSessionID;
-  m_handoverRequestAckTransfer = handoverRequestAckTransfer;
+    PduSessionId& pduSessionID,
+    OCTET_STRING_t& handoverRequestAckTransfer) const {
+  pduSessionID               = m_PduSessionId;
+  handoverRequestAckTransfer = m_HandoverRequestAckTransfer;
 }
 
 //------------------------------------------------------------------------------
 bool PduSessionResourceAdmittedItem::encode(
-    Ngap_PDUSessionResourceAdmittedItem_t& pduItem) {
-  if (!pDUSessionID.encode(pduItem.pDUSessionID)) return false;
-  pduItem.handoverRequestAcknowledgeTransfer = handoverRequestAckTransfer;
+    Ngap_PDUSessionResourceAdmittedItem_t& pduItem) const {
+  if (!m_PduSessionId.encode(pduItem.pDUSessionID)) return false;
+  pduItem.handoverRequestAcknowledgeTransfer = m_HandoverRequestAckTransfer;
 
   return true;
 }
@@ -56,8 +56,8 @@ bool PduSessionResourceAdmittedItem::encode(
 //------------------------------------------------------------------------------
 bool PduSessionResourceAdmittedItem::decode(
     const Ngap_PDUSessionResourceAdmittedItem_t& pduItem) {
-  if (!pDUSessionID.decode(pduItem.pDUSessionID)) return false;
-  handoverRequestAckTransfer = pduItem.handoverRequestAcknowledgeTransfer;
+  if (!m_PduSessionId.decode(pduItem.pDUSessionID)) return false;
+  m_HandoverRequestAckTransfer = pduItem.handoverRequestAcknowledgeTransfer;
 
   return true;
 }

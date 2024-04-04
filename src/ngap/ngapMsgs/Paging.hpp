@@ -23,8 +23,8 @@
 #define _PAGING_H_
 
 #include "NgapMessage.hpp"
-#include "TAIListforPaging.hpp"
-#include "UEPagingIdentity.hpp"
+#include "TaiListforPaging.hpp"
+#include "UePagingIdentity.hpp"
 
 extern "C" {
 #include "Ngap_NGAP-PDU.h"
@@ -42,22 +42,22 @@ class PagingMsg : public NgapMessage {
   void initialize();
   bool decode(Ngap_NGAP_PDU_t* ngap_msg_pdu) override;
 
-  void setUEPagingIdentity(
+  void setUePagingIdentity(
       const std::string& setId, const std::string& pointer,
       const std::string tmsi);
-  void getUEPagingIdentity(std::string& _5g_s_tmsi);
-  void getUEPagingIdentity(
-      std::string& setId, std::string& pointer, std::string& tmsi);
+  void getUePagingIdentity(std::string& _5g_s_tmsi) const;
+  void getUePagingIdentity(
+      std::string& setId, std::string& pointer, std::string& tmsi) const;
 
-  void setTAIListForPaging(const std::vector<Tai_t>& list);
-  void getTAIListForPaging(std::vector<Tai_t>& list);
+  void setTaiListForPaging(const std::vector<Tai_t>& list);
+  void getTaiListForPaging(std::vector<Tai_t>& list) const;
 
  private:
-  Ngap_Paging_t* pagingIEs;
+  Ngap_Paging_t* m_PagingIes;
 
-  UEPagingIdentity uePagingIdentity;  // Mandatory
+  UePagingIdentity m_UePagingIdentity;  // Mandatory
   // TODO: Paging DRX (Optional)
-  TAIListForPaging taIListForPaging;  // Mandatory
+  TaiListForPaging m_TaiListForPaging;  // Mandatory
   // TODO: Paging Priority (Optional)
   // TODO: UE Radio Capability for Paging (Optional)
   // TODO: Paging Origin (Optional)

@@ -30,30 +30,30 @@ QosFlowPerTnlInformation::QosFlowPerTnlInformation() {}
 QosFlowPerTnlInformation::~QosFlowPerTnlInformation() {}
 
 //------------------------------------------------------------------------------
-void QosFlowPerTnlInformation::setQoSFlowPerTNLInformation(
-    const UpTransportLayerInformation& m_uPTransportLayerInformation,
-    const AssociatedQosFlowList& m_associatedQosFlowList) {
-  uPTransportLayerInformation = m_uPTransportLayerInformation;
-  associatedQosFlowList       = m_associatedQosFlowList;
+void QosFlowPerTnlInformation::set(
+    const UpTransportLayerInformation& uPTransportLayerInformation,
+    const AssociatedQosFlowList& associatedQosFlowList) {
+  m_UpTransportLayerInformation = uPTransportLayerInformation;
+  m_AssociatedQosFlowList       = associatedQosFlowList;
 }
 
 //------------------------------------------------------------------------------
-void QosFlowPerTnlInformation::getQoSFlowPerTNLInformation(
-    UpTransportLayerInformation& m_uPTransportLayerInformation,
-    AssociatedQosFlowList& m_associatedQosFlowList) const {
-  m_uPTransportLayerInformation = uPTransportLayerInformation;
-  m_associatedQosFlowList       = associatedQosFlowList;
+void QosFlowPerTnlInformation::get(
+    UpTransportLayerInformation& uPTransportLayerInformation,
+    AssociatedQosFlowList& associatedQosFlowList) const {
+  uPTransportLayerInformation = m_UpTransportLayerInformation;
+  associatedQosFlowList       = m_AssociatedQosFlowList;
 }
 
 //------------------------------------------------------------------------------
 bool QosFlowPerTnlInformation::encode(
-    Ngap_QosFlowPerTNLInformation_t& qosFlowPerTNLInformation) {
-  if (!uPTransportLayerInformation.encode(
-          qosFlowPerTNLInformation.uPTransportLayerInformation))
+    Ngap_QosFlowPerTNLInformation_t& qosFlowPerTnlInformation) const {
+  if (!m_UpTransportLayerInformation.encode(
+          qosFlowPerTnlInformation.uPTransportLayerInformation))
     return false;
 
-  if (!associatedQosFlowList.encode(
-          qosFlowPerTNLInformation.associatedQosFlowList))
+  if (!m_AssociatedQosFlowList.encode(
+          qosFlowPerTnlInformation.associatedQosFlowList))
     return false;
 
   return true;
@@ -61,12 +61,12 @@ bool QosFlowPerTnlInformation::encode(
 
 //------------------------------------------------------------------------------
 bool QosFlowPerTnlInformation::decode(
-    const Ngap_QosFlowPerTNLInformation_t& qosFlowPerTNLInformation) {
-  if (!uPTransportLayerInformation.decode(
-          qosFlowPerTNLInformation.uPTransportLayerInformation))
+    const Ngap_QosFlowPerTNLInformation_t& qosFlowPerTnlInformation) {
+  if (!m_UpTransportLayerInformation.decode(
+          qosFlowPerTnlInformation.uPTransportLayerInformation))
     return false;
-  if (!associatedQosFlowList.decode(
-          qosFlowPerTNLInformation.associatedQosFlowList))
+  if (!m_AssociatedQosFlowList.decode(
+          qosFlowPerTnlInformation.associatedQosFlowList))
     return false;
 
   return true;

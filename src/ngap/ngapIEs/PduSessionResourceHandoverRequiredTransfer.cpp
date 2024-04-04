@@ -29,9 +29,9 @@ namespace ngap {
 //------------------------------------------------------------------------------
 PduSessionResourceHandoverRequiredTransfer::
     PduSessionResourceHandoverRequiredTransfer() {
-  handoverrquiredTransferIEs = (Ngap_HandoverRequiredTransfer_t*) calloc(
+  m_HandoverRquiredTransferIe = (Ngap_HandoverRequiredTransfer_t*) calloc(
       1, sizeof(Ngap_HandoverRequiredTransfer_t));
-  directForwardingPathAvailability_ = std::nullopt;
+  m_DirectForwardingPathAvailability = std::nullopt;
 }
 
 //------------------------------------------------------------------------------
@@ -40,15 +40,16 @@ PduSessionResourceHandoverRequiredTransfer::
 
 //------------------------------------------------------------------------------
 void PduSessionResourceHandoverRequiredTransfer::
-    setDirectForwardingPathAvailability(Ngap_DirectForwardingPathAvailability_t
-                                            directForwardingPathAvailability) {
-  directForwardingPathAvailability_ =
+    setDirectForwardingPathAvailability(
+        const Ngap_DirectForwardingPathAvailability_t&
+            directForwardingPathAvailability) {
+  m_DirectForwardingPathAvailability =
       std::make_optional<Ngap_DirectForwardingPathAvailability_t>(
           directForwardingPathAvailability);
-  handoverrquiredTransferIEs->directForwardingPathAvailability =
+  m_HandoverRquiredTransferIe->directForwardingPathAvailability =
       (Ngap_DirectForwardingPathAvailability_t*) calloc(
           1, sizeof(Ngap_DirectForwardingPathAvailability_t));
-  *handoverrquiredTransferIEs->directForwardingPathAvailability =
+  *m_HandoverRquiredTransferIe->directForwardingPathAvailability =
       directForwardingPathAvailability;
 }
 
@@ -56,9 +57,9 @@ void PduSessionResourceHandoverRequiredTransfer::
 int PduSessionResourceHandoverRequiredTransfer::encode(
     uint8_t* buf, int buf_size) {
   output_wrapper::print_asn_msg(
-      &asn_DEF_Ngap_HandoverRequiredTransfer, handoverrquiredTransferIEs);
+      &asn_DEF_Ngap_HandoverRequiredTransfer, m_HandoverRquiredTransferIe);
   asn_enc_rval_t er = aper_encode_to_buffer(
-      &asn_DEF_Ngap_HandoverRequiredTransfer, NULL, handoverrquiredTransferIEs,
+      &asn_DEF_Ngap_HandoverRequiredTransfer, NULL, m_HandoverRquiredTransferIe,
       buf, buf_size);
   Logger::ngap().debug("er.encoded %d", er.encoded);
   return er.encoded;
@@ -69,7 +70,7 @@ bool PduSessionResourceHandoverRequiredTransfer::decode(
     uint8_t* buf, int buf_size) {
   asn_dec_rval_t rc = asn_decode(
       NULL, ATS_ALIGNED_CANONICAL_PER, &asn_DEF_Ngap_HandoverRequiredTransfer,
-      (void**) &handoverrquiredTransferIEs, buf, buf_size);
+      (void**) &m_HandoverRquiredTransferIe, buf, buf_size);
   if (rc.code == RC_OK) {
     Logger::ngap().debug("Decoded successfully");
   } else if (rc.code == RC_WMORE) {
@@ -83,11 +84,11 @@ bool PduSessionResourceHandoverRequiredTransfer::decode(
 
   // asn_fprint(stderr, &asn_DEF_Ngap_PDUSessionResourceSetupResponseTransfer,
   // pduSessionResourceSetupResponseTransferIEs);
-  if (handoverrquiredTransferIEs->directForwardingPathAvailability) {
+  if (m_HandoverRquiredTransferIe->directForwardingPathAvailability) {
     Ngap_DirectForwardingPathAvailability_t* directForwardingPathAvailability =
         new Ngap_DirectForwardingPathAvailability_t;
     directForwardingPathAvailability =
-        handoverrquiredTransferIEs->directForwardingPathAvailability;
+        m_HandoverRquiredTransferIe->directForwardingPathAvailability;
   }
 
   return true;
@@ -97,9 +98,9 @@ bool PduSessionResourceHandoverRequiredTransfer::decode(
 bool PduSessionResourceHandoverRequiredTransfer::
     getDirectForwardingPathAvailability(
         long& directForwardingPathAvailability) const {
-  if (directForwardingPathAvailability_.has_value()) {
+  if (m_DirectForwardingPathAvailability.has_value()) {
     directForwardingPathAvailability =
-        (long) directForwardingPathAvailability_.value();
+        (long) m_DirectForwardingPathAvailability.value();
     return true;
   }
   return false;

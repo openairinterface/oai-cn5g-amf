@@ -40,13 +40,13 @@ class PduSessionResourceSetupListSUReq {
   void set(const std::vector<PduSessionResourceSetupItemSUReq>& list);
   void get(std::vector<PduSessionResourceSetupItemSUReq>& list) const;
 
-  bool encode(Ngap_PDUSessionResourceSetupListSUReq_t&
-                  pdu_session_resource_setup_list_su_req);
-  bool decode(const Ngap_PDUSessionResourceSetupListSUReq_t&
-                  pdu_session_resource_setup_list_su_req);
+  bool encode(
+      Ngap_PDUSessionResourceSetupListSUReq_t& pduSessionResourceList) const;
+  bool decode(
+      const Ngap_PDUSessionResourceSetupListSUReq_t& pduSessionResourceList);
 
  private:
-  std::vector<PduSessionResourceSetupItemSUReq> item_list_;
+  std::vector<PduSessionResourceSetupItemSUReq> m_ItemList;
 };
 
 }  // namespace ngap
