@@ -233,7 +233,7 @@ void amf_n1::handle_itti_message(itti_downlink_nas_transfer& itti_msg) {
       auto release_command =
           std::make_shared<itti_pdu_session_resource_release_command>(
               TASK_AMF_N1, TASK_AMF_N2);
-      release_command->nas            = protected_nas;
+      release_command->nas            = bstrcpy(protected_nas);
       release_command->n2sm           = bstrcpy(itti_msg.n2sm);
       release_command->amf_ue_ngap_id = amf_ue_ngap_id;
       release_command->ran_ue_ngap_id = ran_ue_ngap_id;
@@ -250,7 +250,7 @@ void amf_n1::handle_itti_message(itti_downlink_nas_transfer& itti_msg) {
       auto itti_modify_request_msg =
           std::make_shared<itti_pdu_session_resource_modify_request>(
               TASK_AMF_N1, TASK_AMF_N2);
-      itti_modify_request_msg->nas            = protected_nas;
+      itti_modify_request_msg->nas            = bstrcpy(protected_nas);
       itti_modify_request_msg->n2sm           = bstrcpy(itti_msg.n2sm);
       itti_modify_request_msg->amf_ue_ngap_id = amf_ue_ngap_id;
       itti_modify_request_msg->ran_ue_ngap_id = ran_ue_ngap_id;
@@ -283,7 +283,7 @@ void amf_n1::handle_itti_message(itti_downlink_nas_transfer& itti_msg) {
         // PDU SESSION RESOURCE SETUP_REQUEST
         auto psrsr = std::make_shared<itti_pdu_session_resource_setup_request>(
             TASK_AMF_N1, TASK_AMF_N2);
-        psrsr->nas            = protected_nas;
+        psrsr->nas            = bstrcpy(protected_nas);
         psrsr->amf_ue_ngap_id = amf_ue_ngap_id;
         psrsr->ran_ue_ngap_id = ran_ue_ngap_id;
 
@@ -319,7 +319,7 @@ void amf_n1::handle_itti_message(itti_downlink_nas_transfer& itti_msg) {
         csr->ran_ue_ngap_id     = ran_ue_ngap_id;
         csr->amf_ue_ngap_id     = amf_ue_ngap_id;
         csr->kgnb               = blk2bstr(kgnb, AUTH_VECTOR_LENGTH_OCTETS);
-        csr->nas                = protected_nas;
+        csr->nas                = bstrcpy(protected_nas);
         pdu_session_info_t item = {};
         item.n2sm               = bstrcpy(itti_msg.n2sm);
         item.is_n2sm_available  = true;
@@ -338,7 +338,7 @@ void amf_n1::handle_itti_message(itti_downlink_nas_transfer& itti_msg) {
   } else {
     auto dnt =
         std::make_shared<itti_dl_nas_transport>(TASK_AMF_N1, TASK_AMF_N2);
-    dnt->nas            = protected_nas;
+    dnt->nas            = bstrcpy(protected_nas);
     dnt->amf_ue_ngap_id = amf_ue_ngap_id;
     dnt->ran_ue_ngap_id = ran_ue_ngap_id;
 
@@ -2088,7 +2088,7 @@ void amf_n1::itti_send_dl_nas_buffer_to_task_n2(
   auto msg = std::make_shared<itti_dl_nas_transport>(TASK_AMF_N1, TASK_AMF_N2);
   msg->ran_ue_ngap_id = ran_ue_ngap_id;
   msg->amf_ue_ngap_id = amf_ue_ngap_id;
-  msg->nas            = nas_msg;
+  msg->nas            = bstrcpy(nas_msg);
 
   int ret = itti_inst->send_msg(msg);
   if (0 != ret) {
@@ -2756,7 +2756,8 @@ void amf_n1::authentication_response_handle(
 
   if (!amf_ue_id_2_nas_context(amf_ue_ngap_id, nc)) {
     send_registration_reject_msg(
-        ran_ue_ngap_id, amf_ue_ngap_id, k5gmmCauseIllegalUe);  // cause?
+        ran_ue_ngap_id, amf_ue_ngap_id,
+        k5gmmCauseIllegalUe);  // cause?
     return;
   }
 
@@ -2827,7 +2828,8 @@ void amf_n1::authentication_response_handle(
         "Authentication failed for UE with amf_ue_ngap_id " AMF_UE_NGAP_ID_FMT,
         amf_ue_ngap_id);
     send_registration_reject_msg(
-        ran_ue_ngap_id, amf_ue_ngap_id, k5gmmCauseIllegalUe);  // cause?
+        ran_ue_ngap_id, amf_ue_ngap_id,
+        k5gmmCauseIllegalUe);  // cause?
     return;
   } else {
     Logger::amf_n1().debug("Authentication successful by network!");
@@ -2847,7 +2849,8 @@ void amf_n1::authentication_failure_handle(
   std::shared_ptr<nas_context> nc = {};
   if (!amf_ue_id_2_nas_context(amf_ue_ngap_id, nc)) {
     send_registration_reject_msg(
-        ran_ue_ngap_id, amf_ue_ngap_id, k5gmmCauseIllegalUe);  // cause?
+        ran_ue_ngap_id, amf_ue_ngap_id,
+        k5gmmCauseIllegalUe);  // cause?
     return;
   }
 
@@ -3249,7 +3252,7 @@ void amf_n1::security_mode_complete_handle(
 
     auto dnt =
         std::make_shared<itti_dl_nas_transport>(TASK_AMF_N1, TASK_AMF_N2);
-    dnt->nas            = protected_nas;
+    dnt->nas            = bstrcpy(protected_nas);
     dnt->amf_ue_ngap_id = amf_ue_ngap_id;
     dnt->ran_ue_ngap_id = ran_ue_ngap_id;
 
@@ -3281,7 +3284,7 @@ void amf_n1::security_mode_complete_handle(
     itti_msg->amf_ue_ngap_id = amf_ue_ngap_id;
     itti_msg->kgnb           = blk2bstr(kgnb, AUTH_VECTOR_LENGTH_OCTETS);
     itti_msg->is_sr          = false;  // TODO: for Service Request procedure
-    itti_msg->nas            = protected_nas;
+    itti_msg->nas            = bstrcpy(protected_nas);
 
     for (auto const& pdu_session : pdu_sessions) {
       pdu_session_info_t item = {};
@@ -3399,7 +3402,7 @@ void amf_n1::registration_complete_handle(
 
   std::shared_ptr<itti_dl_nas_transport> dnt =
       std::make_shared<itti_dl_nas_transport>(TASK_AMF_N1, TASK_AMF_N2);
-  dnt->nas            = protected_nas;
+  dnt->nas            = bstrcpy(protected_nas);
   dnt->amf_ue_ngap_id = amf_ue_ngap_id;
   dnt->ran_ue_ngap_id = ran_ue_ngap_id;
 
@@ -4121,7 +4124,7 @@ bool amf_n1::run_mobility_registration_update_procedure(
       std::make_shared<itti_dl_nas_transport>(TASK_AMF_N1, TASK_AMF_N2);
   itti_msg->ran_ue_ngap_id = nc->ran_ue_ngap_id;
   itti_msg->amf_ue_ngap_id = nc->amf_ue_ngap_id;
-  itti_msg->nas            = protected_nas;
+  itti_msg->nas            = bstrcpy(protected_nas);
 
   int ret = itti_inst->send_msg(itti_msg);
   if (0 != ret) {
