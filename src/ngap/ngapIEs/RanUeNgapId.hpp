@@ -37,11 +37,11 @@ class RanUeNgapId {
   void set(const uint32_t&);
   uint32_t get() const;
 
-  bool encode(Ngap_RAN_UE_NGAP_ID_t&);
-  bool decode(Ngap_RAN_UE_NGAP_ID_t);
+  bool encode(Ngap_RAN_UE_NGAP_ID_t&) const;
+  bool decode(const Ngap_RAN_UE_NGAP_ID_t&);
 
  private:
-  uint32_t id_;
+  uint32_t m_Id;
 };
 
 }  // namespace ngap

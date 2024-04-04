@@ -25,48 +25,48 @@ namespace ngap {
 
 //------------------------------------------------------------------------------
 DefaultPagingDrx::DefaultPagingDrx() {
-  paging_drx_ = Ngap_PagingDRX_v32;
+  m_PagingDrx = Ngap_PagingDRX_v32;
 }
 
 //------------------------------------------------------------------------------
 DefaultPagingDrx::~DefaultPagingDrx() {}
 
 //------------------------------------------------------------------------------
-void DefaultPagingDrx::setValue(const e_Ngap_PagingDRX& paging_drx) {
-  paging_drx_ = paging_drx;
+void DefaultPagingDrx::set(const e_Ngap_PagingDRX& pagingDrx) {
+  m_PagingDrx = pagingDrx;
 }
 
 //------------------------------------------------------------------------------
-e_Ngap_PagingDRX DefaultPagingDrx::getValue() const {
-  return paging_drx_;
+e_Ngap_PagingDRX DefaultPagingDrx::get() const {
+  return m_PagingDrx;
 }
 
 //------------------------------------------------------------------------------
-bool DefaultPagingDrx::encode(Ngap_PagingDRX_t& paging_drx) const {
-  paging_drx = paging_drx_;
+bool DefaultPagingDrx::encode(Ngap_PagingDRX_t& pagingDrx) const {
+  pagingDrx = m_PagingDrx;
   return true;
 }
 
 //------------------------------------------------------------------------------
-bool DefaultPagingDrx::decode(const Ngap_PagingDRX_t& paging_drx) {
-  switch (paging_drx) {
+bool DefaultPagingDrx::decode(const Ngap_PagingDRX_t& pagingDrx) {
+  switch (pagingDrx) {
     case 32: {
-      paging_drx_ = Ngap_PagingDRX_v32;
+      m_PagingDrx = Ngap_PagingDRX_v32;
     } break;
     case 64: {
-      paging_drx_ = Ngap_PagingDRX_v64;
+      m_PagingDrx = Ngap_PagingDRX_v64;
     } break;
 
     case 128: {
-      paging_drx_ = Ngap_PagingDRX_v128;
+      m_PagingDrx = Ngap_PagingDRX_v128;
     } break;
 
     case 256: {
-      paging_drx_ = Ngap_PagingDRX_v256;
+      m_PagingDrx = Ngap_PagingDRX_v256;
     } break;
 
     default: {
-      paging_drx_ = (e_Ngap_PagingDRX) paging_drx;
+      m_PagingDrx = (e_Ngap_PagingDRX) pagingDrx;
     }
   }
 

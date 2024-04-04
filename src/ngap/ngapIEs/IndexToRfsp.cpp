@@ -25,32 +25,32 @@ namespace ngap {
 
 //------------------------------------------------------------------------------
 IndexToRfsp::IndexToRfsp() {
-  index_ = 0;
+  m_Index = 0;
 }
 //------------------------------------------------------------------------------
-IndexToRfsp::IndexToRfsp(const uint32_t& index) : index_(index) {}
+IndexToRfsp::IndexToRfsp(const uint32_t& index) : m_Index(index) {}
 //------------------------------------------------------------------------------
 IndexToRfsp::~IndexToRfsp() {}
 
 //------------------------------------------------------------------------------
 void IndexToRfsp::set(const uint32_t& index) {
-  index_ = index;
+  m_Index = index;
 }
 
 //------------------------------------------------------------------------------
 uint32_t IndexToRfsp::get() const {
-  return index_;
+  return m_Index;
 }
 
 //------------------------------------------------------------------------------
-bool IndexToRfsp::encode(Ngap_IndexToRFSP_t& index) {
-  index = index_;
+bool IndexToRfsp::encode(Ngap_IndexToRFSP_t& index) const {
+  index = m_Index;
   return true;
 }
 
 //------------------------------------------------------------------------------
-bool IndexToRfsp::decode(Ngap_IndexToRFSP_t index) {
-  index_ = index;
+bool IndexToRfsp::decode(const Ngap_IndexToRFSP_t& index) {
+  m_Index = index;
   return true;
 }
 }  // namespace ngap

@@ -33,16 +33,16 @@ class SecurityKey {
   SecurityKey();
   virtual ~SecurityKey();
 
-  void setSecurityKey(uint8_t* buffer, const size_t& size = 256);
-  bool getSecurityKey(uint8_t*& buffer, size_t& size);
-  bool getSecurityKey(uint8_t*& buffer);
+  void set(uint8_t* buffer, const size_t& size = 256);
+  bool get(uint8_t*& buffer, size_t& size) const;
+  bool get(uint8_t*& buffer) const;
 
-  bool encode(Ngap_SecurityKey_t&);
+  bool encode(Ngap_SecurityKey_t&) const;
   bool decode(const Ngap_SecurityKey_t&);
 
  private:
-  uint8_t* buffer_;
-  size_t size_;
+  uint8_t* m_Buffer;
+  size_t m_Size;
 };
 
 }  // namespace ngap

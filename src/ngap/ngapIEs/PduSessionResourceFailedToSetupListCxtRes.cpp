@@ -34,22 +34,22 @@ PduSessionResourceFailedToSetupListCxtRes::
 //------------------------------------------------------------------------------
 void PduSessionResourceFailedToSetupListCxtRes::set(
     const std::vector<PduSessionResourceFailedToSetupItemCxtRes>& list) {
-  item_list_ = list;
+  m_ItemList = list;
 }
 
 //------------------------------------------------------------------------------
 void PduSessionResourceFailedToSetupListCxtRes::get(
     std::vector<PduSessionResourceFailedToSetupItemCxtRes>& list) const {
-  list = item_list_;
+  list = m_ItemList;
 }
 
 //------------------------------------------------------------------------------
 bool PduSessionResourceFailedToSetupListCxtRes::encode(
     Ngap_PDUSessionResourceFailedToSetupListCxtRes_t&
-        pduSessionResourceFailedToSetupListCxtRes) {
-  for (std::vector<PduSessionResourceFailedToSetupItemCxtRes>::iterator it =
-           std::begin(item_list_);
-       it < std::end(item_list_); ++it) {
+        pduSessionResourceFailedToSetupListCxtRes) const {
+  for (std::vector<PduSessionResourceFailedToSetupItemCxtRes>::const_iterator
+           it = m_ItemList.begin();
+       it < m_ItemList.end(); ++it) {
     Ngap_PDUSessionResourceFailedToSetupItemCxtRes_t* failedToResponse =
         (Ngap_PDUSessionResourceFailedToSetupItemCxtRes_t*) calloc(
             1, sizeof(Ngap_PDUSessionResourceFailedToSetupItemCxtRes_t));
@@ -69,13 +69,13 @@ bool PduSessionResourceFailedToSetupListCxtRes::encode(
 bool PduSessionResourceFailedToSetupListCxtRes::decode(
     const Ngap_PDUSessionResourceFailedToSetupListCxtRes_t&
         pduSessionResourceFailedToSetupListCxtRes) {
-  item_list_.reserve(pduSessionResourceFailedToSetupListCxtRes.list.count);
+  m_ItemList.reserve(pduSessionResourceFailedToSetupListCxtRes.list.count);
   for (int i = 0; i < pduSessionResourceFailedToSetupListCxtRes.list.count;
        i++) {
     PduSessionResourceFailedToSetupItemCxtRes item = {};
     if (!item.decode(*pduSessionResourceFailedToSetupListCxtRes.list.array[i]))
       return false;
-    item_list_.push_back(item);
+    m_ItemList.push_back(item);
   }
 
   return true;

@@ -33,14 +33,14 @@ class AveragingWindow {
   AveragingWindow();
   virtual ~AveragingWindow();
 
-  void setAveragingWindow(const long& value);
-  bool getAveragingWindow(long& value) const;
+  void set(const long& value);
+  bool get(long& value) const;
 
   bool encode(Ngap_AveragingWindow_t&) const;
-  bool decode(Ngap_AveragingWindow_t);
+  bool decode(const Ngap_AveragingWindow_t&);
 
  private:
-  long averaging_window_;  // Madatory
+  long m_AveragingWindow;  // Madatory
 };
 
 }  // namespace ngap

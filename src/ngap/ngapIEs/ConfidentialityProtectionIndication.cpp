@@ -25,7 +25,7 @@ namespace ngap {
 
 //------------------------------------------------------------------------------
 ConfidentialityProtectionIndication::ConfidentialityProtectionIndication() {
-  indication_ = 0;
+  m_Indication = 0;
 }
 
 //------------------------------------------------------------------------------
@@ -33,13 +33,13 @@ ConfidentialityProtectionIndication::~ConfidentialityProtectionIndication() {}
 
 //------------------------------------------------------------------------------
 void ConfidentialityProtectionIndication::set(
-    e_Ngap_ConfidentialityProtectionIndication indication) {
-  indication_ = indication;
+    const e_Ngap_ConfidentialityProtectionIndication& indication) {
+  m_Indication = indication;
 }
 
 //------------------------------------------------------------------------------
 bool ConfidentialityProtectionIndication::get(long& indication) const {
-  indication = indication_;
+  indication = m_Indication;
 
   return true;
 }
@@ -47,7 +47,7 @@ bool ConfidentialityProtectionIndication::get(long& indication) const {
 //------------------------------------------------------------------------------
 bool ConfidentialityProtectionIndication::encode(
     Ngap_ConfidentialityProtectionIndication_t& indication) const {
-  indication = indication_;
+  indication = m_Indication;
 
   return true;
 }
@@ -55,7 +55,7 @@ bool ConfidentialityProtectionIndication::encode(
 //------------------------------------------------------------------------------
 bool ConfidentialityProtectionIndication::decode(
     const Ngap_ConfidentialityProtectionIndication_t& indication) {
-  indication_ = indication;
+  m_Indication = indication;
 
   return true;
 }

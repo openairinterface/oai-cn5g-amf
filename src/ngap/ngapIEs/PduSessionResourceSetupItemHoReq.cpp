@@ -32,42 +32,42 @@ PduSessionResourceSetupItemHoReq::~PduSessionResourceSetupItemHoReq() {}
 
 //------------------------------------------------------------------------------
 void PduSessionResourceSetupItemHoReq::set(
-    const PduSessionId& pdu_session_id, const S_NSSAI& s_nssai,
-    const OCTET_STRING_t& handover_request_transfer) {
-  PduSessionResourceItem::set(pdu_session_id, handover_request_transfer);
-  s_NSSAI = s_nssai;
+    const PduSessionId& pduSessionId, const SNssai& sNssai,
+    const OCTET_STRING_t& handoverRequestTransfer) {
+  PduSessionResourceItem::set(pduSessionId, handoverRequestTransfer);
+  m_SNssai = sNssai;
 }
 
 //------------------------------------------------------------------------------
 void PduSessionResourceSetupItemHoReq::get(
-    PduSessionId& pdu_session_id, S_NSSAI& s_nssai,
-    OCTET_STRING_t& handover_request_transfer) const {
-  PduSessionResourceItem::get(pdu_session_id, handover_request_transfer);
-  s_nssai = s_NSSAI;
+    PduSessionId& pduSessionId, SNssai& sNssai,
+    OCTET_STRING_t& handoverRequestTransfer) const {
+  PduSessionResourceItem::get(pduSessionId, handoverRequestTransfer);
+  sNssai = m_SNssai;
 }
 
 //------------------------------------------------------------------------------
 bool PduSessionResourceSetupItemHoReq::encode(
-    Ngap_PDUSessionResourceSetupItemHOReq_t& resource_setup_item) {
+    Ngap_PDUSessionResourceSetupItemHOReq_t& resourceSetupItem) const {
   if (!PduSessionResourceItem::encode(
-          resource_setup_item.pDUSessionID,
-          resource_setup_item.handoverRequestTransfer))
+          resourceSetupItem.pDUSessionID,
+          resourceSetupItem.handoverRequestTransfer))
     return false;
 
-  if (!s_NSSAI.encode(resource_setup_item.s_NSSAI)) return false;
+  if (!m_SNssai.encode(resourceSetupItem.s_NSSAI)) return false;
 
   return true;
 }
 
 //------------------------------------------------------------------------------
 bool PduSessionResourceSetupItemHoReq::decode(
-    const Ngap_PDUSessionResourceSetupItemHOReq_t& resource_setup_item) {
+    const Ngap_PDUSessionResourceSetupItemHOReq_t& resourceSetupItem) {
   if (!PduSessionResourceItem::decode(
-          resource_setup_item.pDUSessionID,
-          resource_setup_item.handoverRequestTransfer))
+          resourceSetupItem.pDUSessionID,
+          resourceSetupItem.handoverRequestTransfer))
     return false;
 
-  if (!s_NSSAI.decode(resource_setup_item.s_NSSAI)) return false;
+  if (!m_SNssai.decode(resourceSetupItem.s_NSSAI)) return false;
 
   return true;
 }

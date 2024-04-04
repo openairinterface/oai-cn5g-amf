@@ -33,14 +33,14 @@ class NotificationControl {
   NotificationControl();
   virtual ~NotificationControl();
 
-  void setNotificationControl(e_Ngap_NotificationControl value);
-  bool getNotificationControl(e_Ngap_NotificationControl& value) const;
+  void set(const e_Ngap_NotificationControl& value);
+  bool get(e_Ngap_NotificationControl& value) const;
 
   bool encode(Ngap_NotificationControl_t&) const;
-  bool decode(Ngap_NotificationControl_t);
+  bool decode(const Ngap_NotificationControl_t&);
 
  private:
-  long notification_control_;
+  long m_NotificationControl;
 };
 
 }  // namespace ngap

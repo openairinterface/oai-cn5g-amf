@@ -22,7 +22,7 @@
 #include "BroadcastPlmnItem.hpp"
 
 #include "PlmnId.hpp"
-#include "S-NSSAI.hpp"
+#include "SNssai.hpp"
 
 extern "C" {
 #include "Ngap_BroadcastPLMNList.h"
@@ -38,25 +38,26 @@ BroadcastPlmnItem::BroadcastPlmnItem() {}
 BroadcastPlmnItem::~BroadcastPlmnItem() {}
 
 //------------------------------------------------------------------------------
-void BroadcastPlmnItem::setPlmnSliceSupportList(
-    const PlmnId& m_plmn, const std::vector<S_NSSAI>& sliceList) {
-  plmn               = m_plmn;
-  supportedSliceList = sliceList;
+void BroadcastPlmnItem::set(
+    const PlmnId& plmn, const std::vector<SNssai>& sliceList) {
+  m_Plmn               = plmn;
+  m_SupportedSliceList = sliceList;
 }
 
 //------------------------------------------------------------------------------
-void BroadcastPlmnItem::getPlmnSliceSupportList(
-    PlmnId& m_plmn, std::vector<S_NSSAI>& sliceList) const {
-  m_plmn    = plmn;
-  sliceList = supportedSliceList;
+void BroadcastPlmnItem::get(
+    PlmnId& plmn, std::vector<SNssai>& sliceList) const {
+  plmn      = m_Plmn;
+  sliceList = m_SupportedSliceList;
 }
 
 //------------------------------------------------------------------------------
-bool BroadcastPlmnItem::encode(Ngap_BroadcastPLMNItem_t& plmnItem) {
-  if (!plmn.encode(plmnItem.pLMNIdentity)) return false;
+bool BroadcastPlmnItem::encode(Ngap_BroadcastPLMNItem_t& plmnItem) const {
+  if (!m_Plmn.encode(plmnItem.pLMNIdentity)) return false;
 
-  for (std::vector<S_NSSAI>::iterator it = std::begin(supportedSliceList);
-       it < std::end(supportedSliceList); ++it) {
+  for (std::vector<SNssai>::const_iterator it =
+           std::begin(m_SupportedSliceList);
+       it < std::end(m_SupportedSliceList); ++it) {
     Ngap_SliceSupportItem_t* slice =
         (Ngap_SliceSupportItem_t*) calloc(1, sizeof(Ngap_SliceSupportItem_t));
     if (!slice) return false;
@@ -69,12 +70,12 @@ bool BroadcastPlmnItem::encode(Ngap_BroadcastPLMNItem_t& plmnItem) {
 
 //------------------------------------------------------------------------------
 bool BroadcastPlmnItem::decode(const Ngap_BroadcastPLMNItem_t& pdu) {
-  if (!plmn.decode(pdu.pLMNIdentity)) return false;
+  if (!m_Plmn.decode(pdu.pLMNIdentity)) return false;
   for (int i = 0; i < pdu.tAISliceSupportList.list.count; i++) {
-    S_NSSAI snssai = {};
+    SNssai snssai = {};
     if (!snssai.decode(pdu.tAISliceSupportList.list.array[i]->s_NSSAI))
       return false;
-    supportedSliceList.push_back(snssai);
+    m_SupportedSliceList.push_back(snssai);
   }
   return true;
 }

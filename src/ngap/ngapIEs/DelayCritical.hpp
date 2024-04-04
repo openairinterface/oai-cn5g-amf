@@ -33,14 +33,14 @@ class DelayCritical {
   DelayCritical();
   virtual ~DelayCritical();
 
-  void setDelayCritical(e_Ngap_DelayCritical value);
-  bool getDelayCritical(e_Ngap_DelayCritical& value) const;
+  void set(const e_Ngap_DelayCritical& value);
+  bool get(e_Ngap_DelayCritical& value) const;
 
   bool encode(Ngap_DelayCritical_t&) const;
-  bool decode(Ngap_DelayCritical_t);
+  bool decode(const Ngap_DelayCritical_t&);
 
  private:
-  long delay_critical_;
+  long m_DelayCritical;
 };
 
 }  // namespace ngap

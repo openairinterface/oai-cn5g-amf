@@ -40,11 +40,11 @@ class PduSessionResourceFailedToSetupListHoAck {
   void set(const std::vector<PduSessionResourceItem>& list);
   void get(std::vector<PduSessionResourceItem>& list) const;
 
-  bool encode(Ngap_PDUSessionResourceFailedToSetupListHOAck_t& list);
-  bool decode(const Ngap_PDUSessionResourceFailedToSetupListHOAck_t& List);
+  bool encode(Ngap_PDUSessionResourceFailedToSetupListHOAck_t& list) const;
+  bool decode(const Ngap_PDUSessionResourceFailedToSetupListHOAck_t& list);
 
  private:
-  std::vector<PduSessionResourceItem> item_list_;
+  std::vector<PduSessionResourceItem> m_ItemList;
 };
 
 }  // namespace ngap

@@ -33,14 +33,14 @@ class FiveQI {
   FiveQI();
   virtual ~FiveQI();
 
-  void setFiveQI(long value);
-  bool getFiveQI(long& value) const;
+  void set(const long& value);
+  bool get(long& value) const;
 
   bool encode(Ngap_FiveQI_t&) const;
-  bool decode(Ngap_FiveQI_t);
+  bool decode(const Ngap_FiveQI_t&);
 
  private:
-  long fiveqi_;
+  long m_FiveQI;
 };
 
 }  // namespace ngap

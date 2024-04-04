@@ -25,7 +25,7 @@ namespace ngap {
 
 //------------------------------------------------------------------------------
 TimerApproachForGuamiRemoval::TimerApproachForGuamiRemoval() {
-  value_ = -1;
+  m_TimerApproachForGuamiRemoval = -1;
 }
 
 //------------------------------------------------------------------------------
@@ -34,12 +34,12 @@ TimerApproachForGuamiRemoval::~TimerApproachForGuamiRemoval() {}
 //------------------------------------------------------------------------------
 void TimerApproachForGuamiRemoval::set(
     e_Ngap_TimerApproachForGUAMIRemoval value) {
-  value_ = value;
+  m_TimerApproachForGuamiRemoval = value;
 }
 
 //------------------------------------------------------------------------------
 bool TimerApproachForGuamiRemoval::get(long& value) const {
-  value = value_;
+  value = m_TimerApproachForGuamiRemoval;
 
   return true;
 }
@@ -47,15 +47,15 @@ bool TimerApproachForGuamiRemoval::get(long& value) const {
 //------------------------------------------------------------------------------
 bool TimerApproachForGuamiRemoval::encode(
     Ngap_TimerApproachForGUAMIRemoval_t& value) const {
-  value = value_;
+  value = m_TimerApproachForGuamiRemoval;
 
   return true;
 }
 
 //------------------------------------------------------------------------------
 bool TimerApproachForGuamiRemoval::decode(
-    Ngap_TimerApproachForGUAMIRemoval_t value) {
-  value_ = value;
+    const Ngap_TimerApproachForGUAMIRemoval_t& value) {
+  m_TimerApproachForGuamiRemoval = value;
 
   return true;
 }

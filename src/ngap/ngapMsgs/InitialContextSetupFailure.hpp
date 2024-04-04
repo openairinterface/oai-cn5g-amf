@@ -25,7 +25,7 @@
 #include <optional>
 
 #include "Cause.hpp"
-#include "NgapUEMessage.hpp"
+#include "NgapUeMessage.hpp"
 #include "PduSessionResourceFailedToSetupListCxtFail.hpp"
 
 extern "C" {
@@ -34,7 +34,7 @@ extern "C" {
 
 namespace ngap {
 
-class InitialContextSetupFailureMsg : public NgapUEMessage {
+class InitialContextSetupFailureMsg : public NgapUeMessage {
  public:
   InitialContextSetupFailureMsg();
   virtual ~InitialContextSetupFailureMsg();
@@ -47,18 +47,18 @@ class InitialContextSetupFailureMsg : public NgapUEMessage {
   void setPduSessionResourceFailedToSetupList(
       const std::vector<PDUSessionResourceFailedToSetupItem_t>& list);
   bool getPduSessionResourceFailedToSetupList(
-      std::vector<PDUSessionResourceFailedToSetupItem_t>& list);
+      std::vector<PDUSessionResourceFailedToSetupItem_t>& list) const;
 
   void setCause(const long& cause, const Ngap_Cause_PR& cause_present);
   void setCause(const Cause& cause);
   void getCause(Cause& cause) const;
 
  private:
-  Ngap_InitialContextSetupFailure_t* initialContextSetupFailureIEs;
+  Ngap_InitialContextSetupFailure_t* m_InitialContextSetupFailureIes;
 
   std::optional<PduSessionResourceFailedToSetupListCxtFail>
-      pduSessionResourceFailedToSetupFailureList;  // Optional
-  Cause cause_;                                    // Mandatory
+      m_PduSessionResourceFailedToSetupFailureList;  // Optional
+  Cause m_Cause;                                     // Mandatory
   // TODO: Criticality Diagnostics //Optional
 };
 

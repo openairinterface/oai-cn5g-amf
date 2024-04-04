@@ -36,18 +36,16 @@ class DrbSubjectToStatusTransferList {
   DrbSubjectToStatusTransferList();
   virtual ~DrbSubjectToStatusTransferList();
 
-  void setdRBSubjectItem(
-      const std::vector<DrbSubjectToStatusTransferItem>& list);
-  void getdRBSubjectItem(
-      std::vector<DrbSubjectToStatusTransferItem>& list) const;
+  void set(const std::vector<DrbSubjectToStatusTransferItem>& list);
+  void get(std::vector<DrbSubjectToStatusTransferItem>& list) const;
 
-  bool encode(
-      Ngap_DRBsSubjectToStatusTransferList_t& dRBsSubjectToStatusTransferList);
+  bool encode(Ngap_DRBsSubjectToStatusTransferList_t&
+                  drbsSubjectToStatusTransferList) const;
   bool decode(const Ngap_DRBsSubjectToStatusTransferList_t&
-                  dRBsSubjectToStatusTransferList);
+                  drbsSubjectToStatusTransferList);
 
  private:
-  std::vector<DrbSubjectToStatusTransferItem> itemList;
+  std::vector<DrbSubjectToStatusTransferItem> m_ItemList;
 };
 }  // namespace ngap
 #endif

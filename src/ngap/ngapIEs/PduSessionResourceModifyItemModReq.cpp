@@ -25,8 +25,8 @@ namespace ngap {
 
 //------------------------------------------------------------------------------
 PduSessionResourceModifyItemModReq::PduSessionResourceModifyItemModReq() {
-  nas_pdu_ = std::nullopt;
-  s_nssai_ = std::nullopt;
+  m_NasPdu = std::nullopt;
+  m_SNssai = std::nullopt;
 }
 
 //------------------------------------------------------------------------------
@@ -34,32 +34,32 @@ PduSessionResourceModifyItemModReq::~PduSessionResourceModifyItemModReq() {}
 
 //------------------------------------------------------------------------------
 void PduSessionResourceModifyItemModReq::set(
-    const PduSessionId& pdu_session_id, const std::optional<NasPdu>& nas_pdu,
-    const OCTET_STRING_t& pdu_session_resource_modify_request_transfer,
-    const std::optional<S_NSSAI>& s_nssai) {
-  pdu_session_id_ = pdu_session_id;
-  if (nas_pdu.has_value()) {
+    const PduSessionId& pduSessionId, const std::optional<NasPdu>& nasPdu,
+    const OCTET_STRING_t& pduSessionResourceModifyRequestTransfer,
+    const std::optional<SNssai>& sNssai) {
+  m_PduSessionId = pduSessionId;
+  if (nasPdu.has_value()) {
     NasPdu tmp = {};
-    tmp.set(nas_pdu.value());
-    nas_pdu_ = std::optional<NasPdu>(tmp);
+    tmp.set(nasPdu.value());
+    m_NasPdu = std::optional<NasPdu>(tmp);
   }
 
-  pdu_session_resource_modify_request_transfer_ =
-      pdu_session_resource_modify_request_transfer;
-  s_nssai_ = s_nssai;
+  m_PduSessionResourceModifyRequestTransfer =
+      pduSessionResourceModifyRequestTransfer;
+  m_SNssai = sNssai;
 }
 
 //------------------------------------------------------------------------------
 bool PduSessionResourceModifyItemModReq::encode(
     Ngap_PDUSessionResourceModifyItemModReq_t&
-        pduSessionResourceModifyItemModReq) {
-  if (!pdu_session_id_.encode(pduSessionResourceModifyItemModReq.pDUSessionID))
+        pduSessionResourceModifyItemModReq) const {
+  if (!m_PduSessionId.encode(pduSessionResourceModifyItemModReq.pDUSessionID))
     return false;
-  if (nas_pdu_.has_value()) {
+  if (m_NasPdu.has_value()) {
     pduSessionResourceModifyItemModReq.nAS_PDU =
         (Ngap_NAS_PDU_t*) calloc(1, sizeof(Ngap_NAS_PDU_t));
     if (!pduSessionResourceModifyItemModReq.nAS_PDU) return false;
-    if (!nas_pdu_.value().encode(*pduSessionResourceModifyItemModReq.nAS_PDU)) {
+    if (!m_NasPdu.value().encode(*pduSessionResourceModifyItemModReq.nAS_PDU)) {
       if (pduSessionResourceModifyItemModReq.nAS_PDU != nullptr)
         free(pduSessionResourceModifyItemModReq.nAS_PDU);
       return false;
@@ -67,7 +67,7 @@ bool PduSessionResourceModifyItemModReq::encode(
   }
 
   pduSessionResourceModifyItemModReq.pDUSessionResourceModifyRequestTransfer =
-      pdu_session_resource_modify_request_transfer_;
+      m_PduSessionResourceModifyRequestTransfer;
 
   return true;
 }
@@ -76,16 +76,16 @@ bool PduSessionResourceModifyItemModReq::encode(
 bool PduSessionResourceModifyItemModReq::decode(
     const Ngap_PDUSessionResourceModifyItemModReq_t&
         pduSessionResourceModifyItemModReq) {
-  if (!pdu_session_id_.decode(pduSessionResourceModifyItemModReq.pDUSessionID))
+  if (!m_PduSessionId.decode(pduSessionResourceModifyItemModReq.pDUSessionID))
     return false;
 
   if (pduSessionResourceModifyItemModReq.nAS_PDU) {
     NasPdu tmp = {};
     if (!tmp.decode(*pduSessionResourceModifyItemModReq.nAS_PDU)) return false;
-    nas_pdu_ = std::optional<NasPdu>(tmp);
+    m_NasPdu = std::optional<NasPdu>(tmp);
   }
 
-  pdu_session_resource_modify_request_transfer_ =
+  m_PduSessionResourceModifyRequestTransfer =
       pduSessionResourceModifyItemModReq
           .pDUSessionResourceModifyRequestTransfer;
 
@@ -94,20 +94,20 @@ bool PduSessionResourceModifyItemModReq::decode(
 
 //------------------------------------------------------------------------------
 void PduSessionResourceModifyItemModReq::get(
-    PduSessionId& pdu_session_id, std::optional<NasPdu>& nas_pdu,
-    OCTET_STRING_t& pdu_session_resource_modify_request_transfer,
-    std::optional<S_NSSAI>& s_nssai) const {
-  pdu_session_id = pdu_session_id_;
-  nas_pdu        = *nas_pdu_;
-  if (nas_pdu_.has_value()) {
+    PduSessionId& pduSessionId, std::optional<NasPdu>& nasPdu,
+    OCTET_STRING_t& pduSessionResourceModifyRequestTransfer,
+    std::optional<SNssai>& sNssai) const {
+  pduSessionId = m_PduSessionId;
+  nasPdu       = *m_NasPdu;
+  if (m_NasPdu.has_value()) {
     NasPdu tmp = {};
-    tmp.set(nas_pdu.value());
-    nas_pdu = std::optional<NasPdu>(tmp);
+    tmp.set(nasPdu.value());
+    nasPdu = std::optional<NasPdu>(tmp);
   }
 
-  pdu_session_resource_modify_request_transfer =
-      pdu_session_resource_modify_request_transfer_;
-  s_nssai = s_nssai_;
+  pduSessionResourceModifyRequestTransfer =
+      m_PduSessionResourceModifyRequestTransfer;
+  sNssai = m_SNssai;
 }
 
 }  // namespace ngap

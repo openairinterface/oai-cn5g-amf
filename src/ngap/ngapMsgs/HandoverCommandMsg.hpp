@@ -24,7 +24,7 @@
 
 #include <optional>
 
-#include "NgapUEMessage.hpp"
+#include "NgapUeMessage.hpp"
 #include "PduSessionResourceHandoverList.hpp"
 #include "PduSessionResourceToReleaseListHandoverCmd.hpp"
 
@@ -35,7 +35,7 @@ extern "C" {
 
 namespace ngap {
 
-class HandoverCommandMsg : public NgapUEMessage {
+class HandoverCommandMsg : public NgapUeMessage {
  public:
   HandoverCommandMsg();
   virtual ~HandoverCommandMsg();
@@ -48,38 +48,41 @@ class HandoverCommandMsg : public NgapUEMessage {
   void setHandoverType(const long& type);
   // void getHandoverType(Ngap_HandoverType_t &type);
 
-  void setNASSecurityParametersFromNGRAN(
+  void setNasSecurityParametersFromNgRan(
       const OCTET_STRING_t& nasSecurityParameters);
-  bool getNASSecurityParametersFromNGRAN(OCTET_STRING_t& nasSecurityParameters);
+  bool getNasSecurityParametersFromNgRan(
+      OCTET_STRING_t& nasSecurityParameters) const;
 
   void setPduSessionResourceHandoverList(
       const PduSessionResourceHandoverList& list);
-  bool getPduSessionResourceHandoverList(PduSessionResourceHandoverList& list);
+  bool getPduSessionResourceHandoverList(
+      PduSessionResourceHandoverList& list) const;
 
-  void setPDUSessionResourceToReleaseListHOCmd(
+  void setPduSessionResourceToReleaseListHOCmd(
       const PduSessionResourceToReleaseListHandoverCmd& list);
-  bool getPDUSessionResourceToReleaseListHOCmd(
-      PduSessionResourceToReleaseListHandoverCmd& list);
+  bool getPduSessionResourceToReleaseListHOCmd(
+      PduSessionResourceToReleaseListHandoverCmd& list) const;
 
-  void setTargetToSource_TransparentContainer(
+  void setTargetToSourceTransparentContainer(
       const OCTET_STRING_t& targetTosource);
-  void getTargetToSource_TransparentContainer(OCTET_STRING_t& targetTosource);
+  void getTargetToSourceTransparentContainer(
+      OCTET_STRING_t& targetTosource) const;
 
  private:
-  Ngap_HandoverCommand_t* handoverCommandIEs;
+  Ngap_HandoverCommand_t* m_HandoverCommandIes;
 
   // AMF_UE_NGAP_ID (Mandatory)
   // RAN_UE_NGAP_ID (Mandatory)
-  Ngap_HandoverType_t handoverType;  // Mandatory
+  Ngap_HandoverType_t m_HandoverType;  // Mandatory
   std::optional<Ngap_NASSecurityParametersFromNGRAN_t>
-      nASSecurityParametersFromNGRAN;  // TODO: Conditional
+      m_NasSecurityParametersFromNgRan;  // TODO: Conditional
   std::optional<PduSessionResourceHandoverList>
-      pDUSessionResourceHandoverList;  // Optional
+      m_PduSessionResourceHandoverList;  // Optional
   std::optional<PduSessionResourceToReleaseListHandoverCmd>
-      pDUSessionResourceToReleaseListHOCmd;
+      m_PduSessionResourceToReleaseListHOCmd;
   Ngap_TargetToSource_TransparentContainer_t
-      targetToSource_TransparentContainer;                // TODO: Mandatory
-  Ngap_CriticalityDiagnostics_t* criticalityDiagnostics;  // TODO: Optional
+      m_TargetToSourceTransparentContainer;                 // TODO: Mandatory
+  Ngap_CriticalityDiagnostics_t* m_CriticalityDiagnostics;  // TODO: Optional
 };
 
 }  // namespace ngap

@@ -37,36 +37,37 @@ class MessageType {
  public:
   MessageType();
   MessageType(
-      Ngap_ProcedureCode_t m_procedureCode, Ngap_NGAP_PDU_PR m_typeOfMessage);
+      const Ngap_ProcedureCode_t& procedureCode,
+      Ngap_NGAP_PDU_PR m_typeOfMessage);
   virtual ~MessageType();
 
-  void setProcedureCode(Ngap_ProcedureCode_t m_procedureCode);
-  Ngap_ProcedureCode_t getProcedureCode();
+  void setProcedureCode(const Ngap_ProcedureCode_t& procedureCode);
+  Ngap_ProcedureCode_t getProcedureCode() const;
 
-  void setTypeOfMessage(Ngap_NGAP_PDU_PR m_typeOfMessage);
-  Ngap_NGAP_PDU_PR getTypeOfMessage();
+  void setTypeOfMessage(Ngap_NGAP_PDU_PR typeOfMessage);
+  Ngap_NGAP_PDU_PR getTypeOfMessage() const;
 
-  void setCriticality(Ngap_Criticality m_criticality);
-  Ngap_Criticality getCriticality();
+  void setCriticality(Ngap_Criticality criticality);
+  Ngap_Criticality getCriticality() const;
 
-  void setValuePresent(Ngap_InitiatingMessage__value_PR m_valuePresent);
-  void setValuePresent(Ngap_SuccessfulOutcome__value_PR m_valuePresent);
-  void setValuePresent(Ngap_UnsuccessfulOutcome__value_PR m_valuePresent);
+  void setValuePresent(Ngap_InitiatingMessage__value_PR valuePresent);
+  void setValuePresent(Ngap_SuccessfulOutcome__value_PR valuePresent);
+  void setValuePresent(Ngap_UnsuccessfulOutcome__value_PR valuePresent);
 
   int encode(Ngap_NGAP_PDU_t&) const;
   // TODO: void decode(const Ngap_NGAP_PDU_t&);
 
  private:
-  Ngap_ProcedureCode_t procedureCode;  // Ngap_ProcedureCode.h
-  Ngap_NGAP_PDU_PR typeOfMessage;      // Ngap_NGAP-PDU.h
-  Ngap_Criticality criticality;        // Ngap_Criticality.h
+  Ngap_ProcedureCode_t m_ProcedureCode;  // Ngap_ProcedureCode.h
+  Ngap_NGAP_PDU_PR m_TypeOfMessage;      // Ngap_NGAP-PDU.h
+  Ngap_Criticality m_Criticality;        // Ngap_Criticality.h
 
   Ngap_InitiatingMessage__value_PR
-      initiatingMsgValuePresent;  // Ngap_InitiatingMessage.h
+      m_InitiatingMsgValuePresent;  // Ngap_InitiatingMessage.h
   Ngap_SuccessfulOutcome__value_PR
-      successfulOutcomeValuePresent;  // Ngap_SuccessfulOutcome.h
+      m_SuccessfulOutcomeValuePresent;  // Ngap_SuccessfulOutcome.h
   Ngap_UnsuccessfulOutcome__value_PR
-      unsuccessfulOutcomeValuePresent;  // Ngap_UnsuccessfulOutcome.h
+      m_UnsuccessfulOutcomeValuePresent;  // Ngap_UnsuccessfulOutcome.h
 };
 }  // namespace ngap
 

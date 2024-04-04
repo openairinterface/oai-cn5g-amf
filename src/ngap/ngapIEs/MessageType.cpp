@@ -36,95 +36,95 @@ namespace ngap {
 
 //------------------------------------------------------------------------------
 MessageType::MessageType() {
-  criticality = Ngap_Criticality_reject;
+  m_Criticality = Ngap_Criticality_reject;
 }
 
 MessageType::MessageType(
-    Ngap_ProcedureCode_t m_procedureCode, Ngap_NGAP_PDU_PR m_typeOfMessage) {
-  criticality   = Ngap_Criticality_reject;
-  procedureCode = m_procedureCode;
-  typeOfMessage = m_typeOfMessage;
+    const Ngap_ProcedureCode_t& procedureCode, Ngap_NGAP_PDU_PR typeOfMessage) {
+  m_Criticality   = Ngap_Criticality_reject;
+  m_ProcedureCode = procedureCode;
+  m_TypeOfMessage = typeOfMessage;
 }
 
 //------------------------------------------------------------------------------
 MessageType::~MessageType() {}
 
 //------------------------------------------------------------------------------
-void MessageType::setProcedureCode(Ngap_ProcedureCode_t m_procedureCode) {
-  procedureCode = m_procedureCode;
+void MessageType::setProcedureCode(const Ngap_ProcedureCode_t& procedureCode) {
+  m_ProcedureCode = procedureCode;
 }
 
 //------------------------------------------------------------------------------
-void MessageType::setTypeOfMessage(Ngap_NGAP_PDU_PR m_typeOfMessage) {
-  typeOfMessage = m_typeOfMessage;
+void MessageType::setTypeOfMessage(Ngap_NGAP_PDU_PR typeOfMessage) {
+  m_TypeOfMessage = typeOfMessage;
 }
 
 //------------------------------------------------------------------------------
-void MessageType::setCriticality(Ngap_Criticality m_criticality) {
-  criticality = m_criticality;
-}
-
-//------------------------------------------------------------------------------
-void MessageType::setValuePresent(
-    Ngap_InitiatingMessage__value_PR m_valuePresent) {
-  initiatingMsgValuePresent = m_valuePresent;
+void MessageType::setCriticality(Ngap_Criticality criticality) {
+  m_Criticality = criticality;
 }
 
 //------------------------------------------------------------------------------
 void MessageType::setValuePresent(
-    Ngap_SuccessfulOutcome__value_PR m_valuePresent) {
-  successfulOutcomeValuePresent = m_valuePresent;
+    Ngap_InitiatingMessage__value_PR valuePresent) {
+  m_InitiatingMsgValuePresent = valuePresent;
 }
 
 //------------------------------------------------------------------------------
 void MessageType::setValuePresent(
-    Ngap_UnsuccessfulOutcome__value_PR m_valuePresent) {
-  unsuccessfulOutcomeValuePresent = m_valuePresent;
+    Ngap_SuccessfulOutcome__value_PR valuePresent) {
+  m_SuccessfulOutcomeValuePresent = valuePresent;
 }
 
 //------------------------------------------------------------------------------
-Ngap_ProcedureCode_t MessageType::getProcedureCode() {
-  return procedureCode;
+void MessageType::setValuePresent(
+    Ngap_UnsuccessfulOutcome__value_PR valuePresent) {
+  m_UnsuccessfulOutcomeValuePresent = valuePresent;
 }
 
 //------------------------------------------------------------------------------
-Ngap_NGAP_PDU_PR MessageType::getTypeOfMessage() {
-  return typeOfMessage;
+Ngap_ProcedureCode_t MessageType::getProcedureCode() const {
+  return m_ProcedureCode;
 }
 
 //------------------------------------------------------------------------------
-Ngap_Criticality MessageType::getCriticality() {
-  return criticality;
+Ngap_NGAP_PDU_PR MessageType::getTypeOfMessage() const {
+  return m_TypeOfMessage;
+}
+
+//------------------------------------------------------------------------------
+Ngap_Criticality MessageType::getCriticality() const {
+  return m_Criticality;
 }
 
 //------------------------------------------------------------------------------
 int MessageType::encode(Ngap_NGAP_PDU_t& pdu) const {
-  pdu.present = typeOfMessage;
-  switch (typeOfMessage) {
+  pdu.present = m_TypeOfMessage;
+  switch (m_TypeOfMessage) {
     case Ngap_NGAP_PDU_PR_initiatingMessage: {
       pdu.choice.initiatingMessage = (Ngap_InitiatingMessage_t*) calloc(
           1, sizeof(Ngap_InitiatingMessage_t));
-      pdu.choice.initiatingMessage->procedureCode = procedureCode;
-      pdu.choice.initiatingMessage->criticality   = criticality;
-      pdu.choice.initiatingMessage->value.present = initiatingMsgValuePresent;
+      pdu.choice.initiatingMessage->procedureCode = m_ProcedureCode;
+      pdu.choice.initiatingMessage->criticality   = m_Criticality;
+      pdu.choice.initiatingMessage->value.present = m_InitiatingMsgValuePresent;
       break;
     }
     case Ngap_NGAP_PDU_PR_successfulOutcome: {
       pdu.choice.successfulOutcome = (Ngap_SuccessfulOutcome_t*) calloc(
           1, sizeof(Ngap_SuccessfulOutcome_t));
-      pdu.choice.successfulOutcome->procedureCode = procedureCode;
-      pdu.choice.successfulOutcome->criticality   = criticality;
+      pdu.choice.successfulOutcome->procedureCode = m_ProcedureCode;
+      pdu.choice.successfulOutcome->criticality   = m_Criticality;
       pdu.choice.successfulOutcome->value.present =
-          successfulOutcomeValuePresent;
+          m_SuccessfulOutcomeValuePresent;
       break;
     }
     case Ngap_NGAP_PDU_PR_unsuccessfulOutcome: {
       pdu.choice.unsuccessfulOutcome = (Ngap_UnsuccessfulOutcome_t*) calloc(
           1, sizeof(Ngap_UnsuccessfulOutcome_t));
-      pdu.choice.unsuccessfulOutcome->procedureCode = procedureCode;
-      pdu.choice.unsuccessfulOutcome->criticality   = criticality;
+      pdu.choice.unsuccessfulOutcome->procedureCode = m_ProcedureCode;
+      pdu.choice.unsuccessfulOutcome->criticality   = m_Criticality;
       pdu.choice.unsuccessfulOutcome->value.present =
-          unsuccessfulOutcomeValuePresent;
+          m_UnsuccessfulOutcomeValuePresent;
       break;
     }
     case Ngap_NGAP_PDU_PR_NOTHING: {

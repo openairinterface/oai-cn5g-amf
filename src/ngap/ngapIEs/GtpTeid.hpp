@@ -33,14 +33,14 @@ class GtpTeid {
   GtpTeid();
   virtual ~GtpTeid();
 
-  void setGtpTeid(const uint32_t m_gtp_teid);
-  bool getGtpTeid(uint32_t& m_gtp_teid) const;
+  void set(const uint32_t gtpTeid);
+  bool get(uint32_t& gtpTeid) const;
 
-  bool encode(Ngap_GTP_TEID_t& gtpTeid);
-  bool decode(Ngap_GTP_TEID_t gtpTeid);
+  bool encode(Ngap_GTP_TEID_t& gtpTeid) const;
+  bool decode(const Ngap_GTP_TEID_t& gtpTeid);
 
  private:
-  uint32_t gtp_teid;
+  uint32_t m_GtpTeid;
 };
 
 }  // namespace ngap

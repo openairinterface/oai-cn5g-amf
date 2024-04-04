@@ -21,6 +21,7 @@
 
 #ifndef _AMF_UE_NGAP_ID_H_
 #define _AMF_UE_NGAP_ID_H_
+
 #include <cstdint>
 
 constexpr uint64_t AMF_UE_NGAP_ID_MAX_VALUE = 1099511627775;  // 2^40 -1
@@ -40,10 +41,10 @@ class AmfUeNgapId {
   uint64_t get() const;
 
   bool encode(Ngap_AMF_UE_NGAP_ID_t&) const;
-  bool decode(Ngap_AMF_UE_NGAP_ID_t);
+  bool decode(const Ngap_AMF_UE_NGAP_ID_t&);
 
  private:
-  uint64_t id_;
+  uint64_t m_AmfUeNgapId;
 };
 
 }  // namespace ngap

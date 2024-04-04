@@ -25,32 +25,33 @@ namespace ngap {
 
 //------------------------------------------------------------------------------
 RelativeAmfCapacity::RelativeAmfCapacity() {
-  amf_capacity_ = 0;
+  m_AmfCapacity = 0;
 }
 
 //------------------------------------------------------------------------------
 RelativeAmfCapacity::~RelativeAmfCapacity() {}
 
 //------------------------------------------------------------------------------
-void RelativeAmfCapacity::setValue(uint8_t amf_capacity) {
-  amf_capacity_ = amf_capacity;
+void RelativeAmfCapacity::set(uint8_t amfCapacity) {
+  m_AmfCapacity = amfCapacity;
 }
 
 //------------------------------------------------------------------------------
-uint8_t RelativeAmfCapacity::getValue() const {
-  return amf_capacity_;
+uint8_t RelativeAmfCapacity::get() const {
+  return m_AmfCapacity;
 }
 
 //------------------------------------------------------------------------------
 bool RelativeAmfCapacity::encode(
-    Ngap_RelativeAMFCapacity_t& amf_capacity_ie) const {
-  amf_capacity_ie = amf_capacity_;
+    Ngap_RelativeAMFCapacity_t& amfCapacity) const {
+  amfCapacity = m_AmfCapacity;
   return true;
 }
 
 //------------------------------------------------------------------------------
-bool RelativeAmfCapacity::decode(Ngap_RelativeAMFCapacity_t amf_capacity_ie) {
-  amf_capacity_ = (uint8_t) amf_capacity_ie;
+bool RelativeAmfCapacity::decode(
+    const Ngap_RelativeAMFCapacity_t& amfCapacity) {
+  m_AmfCapacity = (uint8_t) amfCapacity;
   return true;
 }
 

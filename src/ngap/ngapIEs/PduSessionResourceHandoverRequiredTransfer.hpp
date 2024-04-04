@@ -24,7 +24,7 @@
 
 #include <optional>
 
-#include "NgapIEsStruct.hpp"
+#include "NgapIesStruct.hpp"
 #include "QosFlowPerTnlInformation.hpp"
 #include "SecurityResult.hpp"
 
@@ -41,7 +41,8 @@ class PduSessionResourceHandoverRequiredTransfer {
   virtual ~PduSessionResourceHandoverRequiredTransfer();
 
   void setDirectForwardingPathAvailability(
-      Ngap_DirectForwardingPathAvailability_t directForwardingPathAvailability);
+      const Ngap_DirectForwardingPathAvailability_t&
+          directForwardingPathAvailability);
   bool getDirectForwardingPathAvailability(
       long& directForwardingPathAvailability) const;
 
@@ -49,9 +50,9 @@ class PduSessionResourceHandoverRequiredTransfer {
   bool decode(uint8_t* buf, int buf_size);  // TODO: remove naked pointer
 
  private:
-  Ngap_HandoverRequiredTransfer_t* handoverrquiredTransferIEs;
+  Ngap_HandoverRequiredTransfer_t* m_HandoverRquiredTransferIe;
   std::optional<Ngap_DirectForwardingPathAvailability_t>
-      directForwardingPathAvailability_;  // Optional
+      m_DirectForwardingPathAvailability;  // Optional
 };
 
 }  // namespace ngap

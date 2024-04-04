@@ -25,49 +25,52 @@ namespace ngap {
 
 //------------------------------------------------------------------------------
 SecurityKey::SecurityKey() {
-  buffer_ = nullptr;
-  size_   = 0;
+  m_Buffer = nullptr;
+  m_Size   = 0;
 }
 
 //------------------------------------------------------------------------------
 SecurityKey::~SecurityKey() {}
 
 //------------------------------------------------------------------------------
-bool SecurityKey::encode(Ngap_SecurityKey_t& security_key) {
+bool SecurityKey::encode(Ngap_SecurityKey_t& security_key) const {
   security_key.bits_unused = 0;
   security_key.size        = 32;
-  uint8_t* buffer          = (uint8_t*) calloc(1, 32);
-  if (!buffer) return false;
-  memcpy(buffer, buffer_, 32);
-  security_key.buf = buffer;
-
+  security_key.buf         = (uint8_t*) calloc(1, 32);
+  if (!security_key.buf) return false;
+  memcpy(security_key.buf, m_Buffer, 32);
   return true;
 }
 
 //------------------------------------------------------------------------------
 bool SecurityKey::decode(const Ngap_SecurityKey_t& security_key) {
-  buffer_ = security_key.buf;
+  m_Buffer = (uint8_t*) calloc(1, security_key.size);
+  memcpy(m_Buffer, security_key.buf, security_key.size);
+  m_Size = security_key.size;
   return true;
 }
 
 //------------------------------------------------------------------------------
-bool SecurityKey::getSecurityKey(uint8_t*& buffer, size_t& size) {
-  if (!buffer_) return false;
-  buffer = (uint8_t*) buffer_;
-  size   = size_;
+bool SecurityKey::get(uint8_t*& buffer, size_t& size) const {
+  if (!m_Buffer) return false;
+  if (!buffer) buffer = (uint8_t*) calloc(1, m_Size);
+  memcpy(buffer, m_Buffer, m_Size);
+  size = m_Size;
   return true;
 }
 
 //------------------------------------------------------------------------------
-bool SecurityKey::getSecurityKey(uint8_t*& buffer) {
-  if (!buffer_) return false;
-  buffer = (uint8_t*) buffer_;
+bool SecurityKey::get(uint8_t*& buffer) const {
+  if (!m_Buffer) return false;
+  if (!buffer) buffer = (uint8_t*) calloc(1, m_Size);
+  memcpy(buffer, m_Buffer, m_Size);
   return true;
 }
 
 //------------------------------------------------------------------------------
-void SecurityKey::setSecurityKey(uint8_t* buffer, const size_t& size) {
-  buffer_ = buffer;
-  size_   = size;
+void SecurityKey::set(uint8_t* buffer, const size_t& size) {
+  if (!m_Buffer) m_Buffer = (uint8_t*) calloc(1, size);
+  memcpy(m_Buffer, buffer, size);
+  m_Size = size;
 }
 }  // namespace ngap

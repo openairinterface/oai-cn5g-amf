@@ -30,30 +30,31 @@ PduSessionResourceItemCxtRelReq::PduSessionResourceItemCxtRelReq() {}
 PduSessionResourceItemCxtRelReq::~PduSessionResourceItemCxtRelReq() {}
 
 //------------------------------------------------------------------------------
-void PduSessionResourceItemCxtRelReq::set(const PduSessionId& pdu_session_id) {
-  pdu_session_id_ = pdu_session_id;
+void PduSessionResourceItemCxtRelReq::set(const PduSessionId& pduSessionId) {
+  m_PduSessionId = pduSessionId;
 }
 
 //------------------------------------------------------------------------------
-void PduSessionResourceItemCxtRelReq::get(PduSessionId& pdu_session_id) const {
-  pdu_session_id = pdu_session_id_;
+void PduSessionResourceItemCxtRelReq::get(PduSessionId& pduSessionId) const {
+  pduSessionId = m_PduSessionId;
+}
+
+//------------------------------------------------------------------------------
+PduSessionId PduSessionResourceItemCxtRelReq::get() const {
+  return m_PduSessionId;
 }
 
 //------------------------------------------------------------------------------
 bool PduSessionResourceItemCxtRelReq::encode(
-    Ngap_PDUSessionResourceItemCxtRelReq_t&
-        pdu_session_resource_item_cxt_rel_req) const {
-  if (!pdu_session_id_.encode(
-          pdu_session_resource_item_cxt_rel_req.pDUSessionID))
-    return false;
+    Ngap_PDUSessionResourceItemCxtRelReq_t& pduSessionResourceItem) const {
+  if (!m_PduSessionId.encode(pduSessionResourceItem.pDUSessionID)) return false;
   return true;
 }
 
 //------------------------------------------------------------------------------
 bool PduSessionResourceItemCxtRelReq::decode(
-    const Ngap_PDUSessionResourceItemCxtRelReq_t&
-        pdu_session_resource_item_cxt_rel_req) {
-  pdu_session_id_.set(pdu_session_resource_item_cxt_rel_req.pDUSessionID);
+    const Ngap_PDUSessionResourceItemCxtRelReq_t& pduSessionResourceItem) {
+  m_PduSessionId.set(pduSessionResourceItem.pDUSessionID);
   return true;
 }
 

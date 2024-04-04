@@ -39,17 +39,17 @@ class SupportedTaItem {
   virtual ~SupportedTaItem();
 
   void setTac(const TAC& m_tac);
-  void getTac(TAC& m_tac);
+  void getTac(TAC& m_tac) const;
 
   void setBroadcastPlmnList(const std::vector<BroadcastPlmnItem>& list);
   void getBroadcastPlmnList(std::vector<BroadcastPlmnItem>& list);
 
-  bool encode(Ngap_SupportedTAItem_t& ta);
+  bool encode(Ngap_SupportedTAItem_t& ta) const;
   bool decode(const Ngap_SupportedTAItem_t& ta);
 
  private:
-  TAC tac;                                           // Mandatory
-  std::vector<BroadcastPlmnItem> broadcastPLMNList;  // Mandatory
+  TAC m_Tac;                                           // Mandatory
+  std::vector<BroadcastPlmnItem> m_BroadcastPlmnList;  // Mandatory
 };
 
 }  // namespace ngap

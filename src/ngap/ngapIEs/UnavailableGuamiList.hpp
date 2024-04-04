@@ -44,11 +44,11 @@ class UnavailableGuamiList {
 
   void addItem(const UnavailableGuamiItem& item);
 
-  bool encode(Ngap_UnavailableGUAMIList_t&);
+  bool encode(Ngap_UnavailableGUAMIList_t&) const;
   bool decode(const Ngap_UnavailableGUAMIList_t&);
 
  private:
-  std::vector<UnavailableGuamiItem> list_;
+  std::vector<UnavailableGuamiItem> m_ItemList;
 };
 
 }  // namespace ngap

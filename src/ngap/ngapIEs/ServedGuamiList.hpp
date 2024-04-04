@@ -42,11 +42,11 @@ class ServedGuamiList {
 
   void addItem(const ServedGuamiItem& item);
 
-  bool encode(Ngap_ServedGUAMIList_t&);
+  bool encode(Ngap_ServedGUAMIList_t&) const;
   bool decode(const Ngap_ServedGUAMIList_t&);
 
  private:
-  std::vector<ServedGuamiItem> itemList;
+  std::vector<ServedGuamiItem> m_ItemList;
 };
 
 }  // namespace ngap

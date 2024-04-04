@@ -24,7 +24,7 @@
 
 #include <string>
 
-#include "NgapIEsStruct.hpp"
+#include "NgapIesStruct.hpp"
 #include "itti_msg.hpp"
 using namespace ngap;
 #include "bstrlib.h"

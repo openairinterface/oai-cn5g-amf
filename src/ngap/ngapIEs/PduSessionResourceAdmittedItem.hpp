@@ -37,18 +37,18 @@ class PduSessionResourceAdmittedItem {
   virtual ~PduSessionResourceAdmittedItem();
 
   void set(
-      const PduSessionId& m_pDUSessionID,
-      const OCTET_STRING_t& m_handoverRequestAckTransfer);
+      const PduSessionId& pduSessionId,
+      const OCTET_STRING_t& handoverRequestAckTransfer);
   void get(
-      PduSessionId& m_pDUSessionID,
-      OCTET_STRING_t& m_handoverRequestAckTransfer);
+      PduSessionId& pduSessionId,
+      OCTET_STRING_t& handoverRequestAckTransfer) const;
 
-  bool encode(Ngap_PDUSessionResourceAdmittedItem_t& pduItem);
+  bool encode(Ngap_PDUSessionResourceAdmittedItem_t& pduItem) const;
   bool decode(const Ngap_PDUSessionResourceAdmittedItem_t& pduItem);
 
  private:
-  PduSessionId pDUSessionID;                  // Mandatory
-  OCTET_STRING_t handoverRequestAckTransfer;  // Mandatory
+  PduSessionId m_PduSessionId;                  // Mandatory
+  OCTET_STRING_t m_HandoverRequestAckTransfer;  // Mandatory
 };
 
 }  // namespace ngap

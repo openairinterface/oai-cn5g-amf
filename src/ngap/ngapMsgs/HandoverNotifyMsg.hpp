@@ -23,7 +23,7 @@
 #define _HANDOVER_NOTIFY_MSG_H_
 
 #include "AmfUeNgapId.hpp"
-#include "NgapUEMessage.hpp"
+#include "NgapUeMessage.hpp"
 #include "UserLocationInformation.hpp"
 
 extern "C" {
@@ -31,7 +31,7 @@ extern "C" {
 }
 
 namespace ngap {
-class HandoverNotifyMsg : public NgapUEMessage {
+class HandoverNotifyMsg : public NgapUeMessage {
  public:
   HandoverNotifyMsg();
   virtual ~HandoverNotifyMsg();
@@ -41,14 +41,14 @@ class HandoverNotifyMsg : public NgapUEMessage {
   void setRanUeNgapId(const uint32_t& id) override;
   bool decode(Ngap_NGAP_PDU_t* ngapMsgPdu) override;
 
-  void setUserLocationInfoNR(const NrCgi_t& cig, const Tai_t& tai);
-  bool getUserLocationInfoNR(NrCgi_t& cig, Tai_t& tai);
+  void setUserLocationInfoNr(const NrCgi_t& cig, const Tai_t& tai);
+  bool getUserLocationInfoNr(NrCgi_t& cig, Tai_t& tai) const;
 
  private:
-  Ngap_HandoverNotify_t* handoverNotifyIEs;
+  Ngap_HandoverNotify_t* m_HandoverNotifyIes;
   // AMF_UE_NGAP_ID (Mandatory)
   // RAN_UE_NGAP_ID (Mandatory)
-  UserLocationInformation userLocationInformation;  // Mandatory
+  UserLocationInformation m_UserLocationInformation;  // Mandatory
   // TODO: Notify Source NG-RAN Node (Optional, Rel 16.14.0)
 };
 

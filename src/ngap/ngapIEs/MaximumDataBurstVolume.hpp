@@ -33,14 +33,14 @@ class MaximumDataBurstVolume {
   MaximumDataBurstVolume();
   virtual ~MaximumDataBurstVolume();
 
-  void set(long value);
+  void set(const long& value);
   void get(long& value) const;
 
   bool encode(Ngap_MaximumDataBurstVolume_t&) const;
-  bool decode(Ngap_MaximumDataBurstVolume_t);
+  bool decode(const Ngap_MaximumDataBurstVolume_t&);
 
  private:
-  long volume_;
+  long m_MaximumDataBurstVolume;
 };
 
 }  // namespace ngap

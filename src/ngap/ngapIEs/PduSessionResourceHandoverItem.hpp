@@ -35,17 +35,16 @@ class PduSessionResourceHandoverItem {
   PduSessionResourceHandoverItem();
   virtual ~PduSessionResourceHandoverItem();
 
-  void setPDUSessionResourceHandoverItem(
-      const PduSessionId& sessionID, const OCTET_STRING_t& commandTransfer);
-  void getPDUSessionResourceHandoverItem(
-      PduSessionId& sessionID, OCTET_STRING_t& commandTransfer);
+  void set(
+      const PduSessionId& sessionId, const OCTET_STRING_t& commandTransfer);
+  void get(PduSessionId& sessionId, OCTET_STRING_t& commandTransfer) const;
 
-  bool encode(Ngap_PDUSessionResourceHandoverItem_t& item);
+  bool encode(Ngap_PDUSessionResourceHandoverItem_t& item) const;
   bool decode(const Ngap_PDUSessionResourceHandoverItem_t& item);
 
  private:
-  PduSessionId pDUSessionID;               // Mandatory
-  OCTET_STRING_t handoverCommandTransfer;  // Mandatory
+  PduSessionId m_PduSessionId;               // Mandatory
+  OCTET_STRING_t m_HandoverCommandTransfer;  // Mandatory
 };
 
 }  // namespace ngap

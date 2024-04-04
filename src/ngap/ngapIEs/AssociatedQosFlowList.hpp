@@ -37,16 +37,14 @@ class AssociatedQosFlowList {
   AssociatedQosFlowList();
   virtual ~AssociatedQosFlowList();
 
-  void setAssociatedQosFlowList(
-      const std::vector<AssociatedQosFlowItem>& item_list);
-  void getAssociatedQosFlowList(
-      std::vector<AssociatedQosFlowItem>& item_list) const;
+  void set(const std::vector<AssociatedQosFlowItem>& item_list);
+  void get(std::vector<AssociatedQosFlowItem>& item_list) const;
 
-  bool encode(Ngap_AssociatedQosFlowList_t& associatedQosFlowList);
+  bool encode(Ngap_AssociatedQosFlowList_t& associatedQosFlowList) const;
   bool decode(const Ngap_AssociatedQosFlowList_t& associatedQosFlowList);
 
  private:
-  std::vector<AssociatedQosFlowItem> list_;
+  std::vector<AssociatedQosFlowItem> m_List;
   constexpr static uint8_t kMaxNoOfQoSFlows = 64;
 };
 

@@ -102,7 +102,7 @@ class amf_app {
  public:
   explicit amf_app(const amf_config& amf_cfg);
   amf_app(amf_app const&) = delete;
-  virtual ~amf_app(){};
+  ~amf_app();
   void operator=(amf_app const&) = delete;
 
   void start();

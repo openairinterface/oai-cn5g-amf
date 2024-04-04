@@ -36,20 +36,20 @@ class PduSessionResourceSetupItemSURes {
   virtual ~PduSessionResourceSetupItemSURes();
 
   void set(
-      const PduSessionId& pdu_session_id,
-      const OCTET_STRING_t& pdu_session_resource_setup_response_transfer);
+      const PduSessionId& pduSessionId,
+      const OCTET_STRING_t& pduSessionResourceSetupResponseTransfer);
   void get(
-      PduSessionId& pdu_session_id,
-      OCTET_STRING_t& pdu_session_resource_setup_response_transfer) const;
+      PduSessionId& pduSessionId,
+      OCTET_STRING_t& pduSessionResourceSetupResponseTransfer) const;
 
-  bool encode(Ngap_PDUSessionResourceSetupItemSURes_t&
-                  pdu_session_resource_setup_item_su_res);
-  bool decode(const Ngap_PDUSessionResourceSetupItemSURes_t&
-                  pdu_session_resource_setup_item_su_res);
+  bool encode(
+      Ngap_PDUSessionResourceSetupItemSURes_t& pduSessionResourceItem) const;
+  bool decode(
+      const Ngap_PDUSessionResourceSetupItemSURes_t& pduSessionResourceItem);
 
  private:
-  PduSessionId pdu_session_id_;                                  // Mandatory
-  OCTET_STRING_t pdu_session_resource_setup_response_transfer_;  // Mandatory
+  PduSessionId m_PduSessionId;                               // Mandatory
+  OCTET_STRING_t m_PduSessionResourceSetupResponseTransfer;  // Mandatory
 };
 
 }  // namespace ngap

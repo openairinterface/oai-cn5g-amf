@@ -33,25 +33,25 @@ PduSessionResourceFailedToSetupItemCxtFail::
 
 //------------------------------------------------------------------------------
 void PduSessionResourceFailedToSetupItemCxtFail::set(
-    const PduSessionId& pdu_session_id,
-    const OCTET_STRING_t& pdu_session_resource) {
-  pdu_session_id_                                   = pdu_session_id;
-  pdu_session_resource_setup_unsuccessful_transfer_ = pdu_session_resource;
+    const PduSessionId& pduSessionId,
+    const OCTET_STRING_t& pduSessionResource) {
+  m_PduSessionId                                = pduSessionId;
+  m_PduSessionResourceSetupUnsuccessfulTransfer = pduSessionResource;
 }
 
 //------------------------------------------------------------------------------
 void PduSessionResourceFailedToSetupItemCxtFail::get(
-    PduSessionId& pdu_session_id, OCTET_STRING_t& pdu_session_resource) const {
-  pdu_session_id       = pdu_session_id_;
-  pdu_session_resource = pdu_session_resource_setup_unsuccessful_transfer_;
+    PduSessionId& pduSessionId, OCTET_STRING_t& pduSessionResource) const {
+  pduSessionId       = m_PduSessionId;
+  pduSessionResource = m_PduSessionResourceSetupUnsuccessfulTransfer;
 }
 
 //------------------------------------------------------------------------------
 bool PduSessionResourceFailedToSetupItemCxtFail::encode(
-    Ngap_PDUSessionResourceFailedToSetupItemCxtFail_t& pdu_session_cxt) {
-  if (!pdu_session_id_.encode(pdu_session_cxt.pDUSessionID)) return false;
+    Ngap_PDUSessionResourceFailedToSetupItemCxtFail_t& pdu_session_cxt) const {
+  if (!m_PduSessionId.encode(pdu_session_cxt.pDUSessionID)) return false;
   pdu_session_cxt.pDUSessionResourceSetupUnsuccessfulTransfer =
-      pdu_session_resource_setup_unsuccessful_transfer_;
+      m_PduSessionResourceSetupUnsuccessfulTransfer;
 
   return true;
 }
@@ -59,8 +59,8 @@ bool PduSessionResourceFailedToSetupItemCxtFail::encode(
 //------------------------------------------------------------------------------
 bool PduSessionResourceFailedToSetupItemCxtFail::decode(
     const Ngap_PDUSessionResourceFailedToSetupItemCxtFail_t& pdu_session_cxt) {
-  if (!pdu_session_id_.decode(pdu_session_cxt.pDUSessionID)) return false;
-  pdu_session_resource_setup_unsuccessful_transfer_ =
+  if (!m_PduSessionId.decode(pdu_session_cxt.pDUSessionID)) return false;
+  m_PduSessionResourceSetupUnsuccessfulTransfer =
       pdu_session_cxt.pDUSessionResourceSetupUnsuccessfulTransfer;
 
   return true;

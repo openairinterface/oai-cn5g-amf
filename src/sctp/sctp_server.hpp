@@ -84,7 +84,7 @@ class sctp_application {
 class sctp_server {
  public:
   sctp_server(const char* address, const uint16_t port_num);
-  virtual ~sctp_server();
+  ~sctp_server();
 
   int create_socket(const char* address, const uint16_t port_num);
   void start_receive(sctp_application* app);

@@ -27,9 +27,9 @@ namespace ngap {
 
 //------------------------------------------------------------------------------
 GlobalRanNodeId::GlobalRanNodeId() {
-  global_gnb_id_    = std::nullopt;
-  global_ng_enb_id_ = std::nullopt;
-  id_present_       = Ngap_GlobalRANNodeID_PR_NOTHING;
+  m_GlobalGnbId   = std::nullopt;
+  m_GlobalNgEnbId = std::nullopt;
+  m_IdPresent     = Ngap_GlobalRANNodeID_PR_NOTHING;
 }
 
 //------------------------------------------------------------------------------
@@ -37,55 +37,55 @@ GlobalRanNodeId::~GlobalRanNodeId() {}
 
 //------------------------------------------------------------------------------
 void GlobalRanNodeId::setChoiceOfRanNodeId(
-    const Ngap_GlobalRANNodeID_PR& id_present) {
-  id_present_ = id_present;
+    const Ngap_GlobalRANNodeID_PR& idPresent) {
+  m_IdPresent = idPresent;
 }
 
 //------------------------------------------------------------------------------
 Ngap_GlobalRANNodeID_PR GlobalRanNodeId::getChoiceOfRanNodeId() const {
-  return id_present_;
+  return m_IdPresent;
 }
 
 //------------------------------------------------------------------------------
-void GlobalRanNodeId::set(const GlobalgNBId& global_gnb_id) {
-  global_gnb_id_ = std::optional<GlobalgNBId>{global_gnb_id};
-  id_present_    = Ngap_GlobalRANNodeID_PR_globalGNB_ID;
+void GlobalRanNodeId::set(const GlobalGnbId& globalGnbId) {
+  m_GlobalGnbId = std::optional<GlobalGnbId>{globalGnbId};
+  m_IdPresent   = Ngap_GlobalRANNodeID_PR_globalGNB_ID;
 }
 
 //------------------------------------------------------------------------------
-void GlobalRanNodeId::set(const GlobalNgENBId& global_ng_enb_id) {
-  global_ng_enb_id_ = std::optional<GlobalNgENBId>{global_ng_enb_id};
-  id_present_       = Ngap_GlobalRANNodeID_PR_globalNgENB_ID;
+void GlobalRanNodeId::set(const GlobalNgEnbId& globalNgEnbId) {
+  m_GlobalNgEnbId = std::optional<GlobalNgEnbId>{globalNgEnbId};
+  m_IdPresent     = Ngap_GlobalRANNodeID_PR_globalNgENB_ID;
 }
 
 //------------------------------------------------------------------------------
-bool GlobalRanNodeId::get(GlobalgNBId& global_gnb_id) const {
-  if (global_gnb_id_.has_value()) {
-    global_gnb_id = global_gnb_id_.value();
+bool GlobalRanNodeId::get(GlobalGnbId& globalGnbId) const {
+  if (m_GlobalGnbId.has_value()) {
+    globalGnbId = m_GlobalGnbId.value();
     return true;
   }
   return false;
 }
 
 //------------------------------------------------------------------------------
-bool GlobalRanNodeId::get(GlobalNgENBId& global_ng_enb_id) const {
-  if (global_ng_enb_id_.has_value()) {
-    global_ng_enb_id = global_ng_enb_id_.value();
+bool GlobalRanNodeId::get(GlobalNgEnbId& globalNgEnbId) const {
+  if (m_GlobalNgEnbId.has_value()) {
+    globalNgEnbId = m_GlobalNgEnbId.value();
     return true;
   }
   return false;
 }
 
 //------------------------------------------------------------------------------
-bool GlobalRanNodeId::encode(Ngap_GlobalRANNodeID_t& globalRANNodeID) {
-  globalRANNodeID.present = id_present_;
+bool GlobalRanNodeId::encode(Ngap_GlobalRANNodeID_t& globalRANNodeID) const {
+  globalRANNodeID.present = m_IdPresent;
 
-  switch (id_present_) {
+  switch (m_IdPresent) {
     case Ngap_GlobalRANNodeID_PR_globalGNB_ID: {
       globalRANNodeID.choice.globalGNB_ID =
           (Ngap_GlobalGNB_ID_t*) calloc(1, sizeof(struct Ngap_GlobalGNB_ID));
       if (!globalRANNodeID.choice.globalGNB_ID) return false;
-      if (!global_gnb_id_.value().encode(*globalRANNodeID.choice.globalGNB_ID))
+      if (!m_GlobalGnbId.value().encode(*globalRANNodeID.choice.globalGNB_ID))
         return false;
       break;
     }
@@ -106,13 +106,13 @@ bool GlobalRanNodeId::encode(Ngap_GlobalRANNodeID_t& globalRANNodeID) {
 
 //------------------------------------------------------------------------------
 bool GlobalRanNodeId::decode(const Ngap_GlobalRANNodeID_t& globalRANNodeID) {
-  id_present_ = globalRANNodeID.present;
+  m_IdPresent = globalRANNodeID.present;
 
-  switch (id_present_) {
+  switch (m_IdPresent) {
     case Ngap_GlobalRANNodeID_PR_globalGNB_ID: {
-      GlobalgNBId tmp = {};
+      GlobalGnbId tmp = {};
       if (!tmp.decode(*globalRANNodeID.choice.globalGNB_ID)) return false;
-      global_gnb_id_ = std::optional<GlobalgNBId>(tmp);
+      m_GlobalGnbId = std::optional<GlobalGnbId>(tmp);
       break;
     }
     case Ngap_GlobalRANNodeID_PR_globalNgENB_ID: {

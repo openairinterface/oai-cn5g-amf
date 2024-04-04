@@ -25,75 +25,75 @@ namespace ngap {
 
 //------------------------------------------------------------------------------
 UnavailableGuamiItem::UnavailableGuamiItem() {
-  timer_approach_for_guami_removal_ = std::nullopt;
-  backup_amf_name_                  = std::nullopt;
+  m_TimerApproachForGuamiRemoval = std::nullopt;
+  m_BackupAmfName                = std::nullopt;
 }
 
 //------------------------------------------------------------------------------
 UnavailableGuamiItem::~UnavailableGuamiItem() {}
 
 //------------------------------------------------------------------------------
-void UnavailableGuamiItem::setGuami(const GUAMI& guami) {
-  guami_ = guami;
+void UnavailableGuamiItem::setGuami(const Guami& guami) {
+  m_Guami = guami;
 }
 
 //------------------------------------------------------------------------------
-void UnavailableGuamiItem::getGuami(GUAMI& guami) const {
-  guami = guami_;
+void UnavailableGuamiItem::getGuami(Guami& guami) const {
+  guami = m_Guami;
 }
 
 //------------------------------------------------------------------------------
 void UnavailableGuamiItem::setTimerApproachForGuamiRemoval(
     const TimerApproachForGuamiRemoval& timer) {
-  timer_approach_for_guami_removal_ =
+  m_TimerApproachForGuamiRemoval =
       std::make_optional<TimerApproachForGuamiRemoval>(timer);
 }
 
 //------------------------------------------------------------------------------
 void UnavailableGuamiItem::getTimerApproachForGuamiRemoval(
     std::optional<TimerApproachForGuamiRemoval>& timer) const {
-  timer = timer_approach_for_guami_removal_;
+  timer = m_TimerApproachForGuamiRemoval;
 }
 
 //------------------------------------------------------------------------------
 void UnavailableGuamiItem::setBackupAmfName(const AmfName& name) {
-  backup_amf_name_ = std::make_optional<AmfName>(name);
+  m_BackupAmfName = std::make_optional<AmfName>(name);
 }
 
 //------------------------------------------------------------------------------
 void UnavailableGuamiItem::getBackupAmfName(
     std::optional<AmfName>& name) const {
-  name = backup_amf_name_;
+  name = m_BackupAmfName;
 }
 
 //------------------------------------------------------------------------------
-bool UnavailableGuamiItem::encode(Ngap_UnavailableGUAMIItem& item) {
-  if (!guami_.encode(item.gUAMI)) return false;
-  if (timer_approach_for_guami_removal_.has_value()) {
-    if (!timer_approach_for_guami_removal_.value().encode(
+bool UnavailableGuamiItem::encode(Ngap_UnavailableGUAMIItem& item) const {
+  if (!m_Guami.encode(item.gUAMI)) return false;
+  if (m_TimerApproachForGuamiRemoval.has_value()) {
+    if (!m_TimerApproachForGuamiRemoval.value().encode(
             *item.timerApproachForGUAMIRemoval))
       return false;
   }
-  if (backup_amf_name_.has_value())
-    if (!backup_amf_name_.value().encode(*item.backupAMFName)) return false;
+  if (m_BackupAmfName.has_value())
+    if (!m_BackupAmfName.value().encode(*item.backupAMFName)) return false;
   return true;
 }
 
 //------------------------------------------------------------------------------
 bool UnavailableGuamiItem::decode(const Ngap_UnavailableGUAMIItem& item) {
-  if (!guami_.decode(item.gUAMI)) return false;
+  if (!m_Guami.decode(item.gUAMI)) return false;
 
   if (item.timerApproachForGUAMIRemoval) {
     TimerApproachForGuamiRemoval tmp = {};
     if (!tmp.decode(*item.timerApproachForGUAMIRemoval)) return false;
-    timer_approach_for_guami_removal_ =
+    m_TimerApproachForGuamiRemoval =
         std::make_optional<TimerApproachForGuamiRemoval>(tmp);
   }
 
   if (item.backupAMFName) {
     AmfName tmp = {};
     if (!tmp.decode(*item.backupAMFName)) return false;
-    backup_amf_name_ = std::make_optional<AmfName>(tmp);
+    m_BackupAmfName = std::make_optional<AmfName>(tmp);
   }
   return true;
 }

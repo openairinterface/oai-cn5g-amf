@@ -25,7 +25,7 @@ namespace ngap {
 
 //------------------------------------------------------------------------------
 RrcEstablishmentCause::RrcEstablishmentCause() {
-  cause_ = -1;
+  m_Cause = -1;
 }
 
 //------------------------------------------------------------------------------
@@ -33,23 +33,23 @@ RrcEstablishmentCause::~RrcEstablishmentCause() {}
 
 //------------------------------------------------------------------------------
 void RrcEstablishmentCause::set(const e_Ngap_RRCEstablishmentCause& cause) {
-  cause_ = cause;
+  m_Cause = cause;
 }
 
 //------------------------------------------------------------------------------
 int RrcEstablishmentCause::get() const {
-  return cause_;
+  return m_Cause;
 }
 
 //------------------------------------------------------------------------------
 bool RrcEstablishmentCause::encode(Ngap_RRCEstablishmentCause_t& cause) const {
-  cause = cause_;
+  cause = m_Cause;
   return true;
 }
 
 //------------------------------------------------------------------------------
 bool RrcEstablishmentCause::decode(Ngap_RRCEstablishmentCause_t cause) {
-  cause_ = cause;
+  m_Cause = cause;
 
   return true;
 }

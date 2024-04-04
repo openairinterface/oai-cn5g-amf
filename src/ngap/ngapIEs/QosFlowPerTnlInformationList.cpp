@@ -35,24 +35,25 @@ void QosFlowPerTnlInformationList::set(
   uint8_t number_items = (list.size() > KMaxNoOfMultiConnectivityMinusOne) ?
                              KMaxNoOfMultiConnectivityMinusOne :
                              list.size();
-  list_.insert(list_.begin(), list.begin(), list.begin() + number_items);
+  m_ItemList.insert(
+      m_ItemList.begin(), list.begin(), list.begin() + number_items);
 }
 
 //------------------------------------------------------------------------------
 void QosFlowPerTnlInformationList::get(
     std::vector<QosFlowPerTnlInformationItem>& list) const {
-  list = list_;
+  list = m_ItemList;
 }
 
 //------------------------------------------------------------------------------
 bool QosFlowPerTnlInformationList::encode(
-    Ngap_QosFlowPerTNLInformationList_t& qosFlowPerTnlInformationList) {
-  for (int i = 0; i < list_.size(); i++) {
+    Ngap_QosFlowPerTNLInformationList_t& qosFlowPerTnlInformationList) const {
+  for (int i = 0; i < m_ItemList.size(); i++) {
     Ngap_QosFlowPerTNLInformationItem_t* item =
         (Ngap_QosFlowPerTNLInformationItem_t*) calloc(
             1, sizeof(Ngap_QosFlowPerTNLInformationItem_t));
     if (!item) return false;
-    if (!list_[i].encode(*item)) return false;
+    if (!m_ItemList[i].encode(*item)) return false;
     if (ASN_SEQUENCE_ADD(&qosFlowPerTnlInformationList.list, item) != 0)
       return false;
   }
@@ -65,7 +66,7 @@ bool QosFlowPerTnlInformationList::decode(
   for (int i = 0; i < qosFlowPerTnlInformationList.list.count; i++) {
     QosFlowPerTnlInformationItem item = {};
     if (!item.decode(*qosFlowPerTnlInformationList.list.array[i])) return false;
-    list_.push_back(item);
+    m_ItemList.push_back(item);
   }
   return true;
 }

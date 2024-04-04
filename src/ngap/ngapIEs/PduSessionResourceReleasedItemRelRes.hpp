@@ -36,21 +36,21 @@ class PduSessionResourceReleasedItemRelRes {
   virtual ~PduSessionResourceReleasedItemRelRes();
 
   void set(
-      const PduSessionId& pdu_session_id,
-      const OCTET_STRING_t& pdu_session_resource_release_response_transfer);
+      const PduSessionId& pduSessionId,
+      const OCTET_STRING_t& pduSessionResourceReleaseResponseTransfer);
 
   void get(
-      PduSessionId& pdu_session_id,
-      OCTET_STRING_t& pdu_session_resource_release_response_transfer);
+      PduSessionId& pduSessionId,
+      OCTET_STRING_t& pduSessionResourceReleaseResponseTransfer) const;
 
   bool encode(Ngap_PDUSessionResourceReleasedItemRelRes_t&
-                  pdu_session_resource_released_item_rel_res);
+                  pduSessionResourceItem) const;
   bool decode(const Ngap_PDUSessionResourceReleasedItemRelRes_t&
-                  pdu_session_resource_released_item_rel_res);
+                  pduSessionResourceItem);
 
  private:
-  PduSessionId pdu_session_id_;
-  OCTET_STRING_t pdu_session_resource_release_response_transfer_;
+  PduSessionId m_PduSessionId;
+  OCTET_STRING_t m_PduSessionResourceReleaseResponseTransfer;
 };
 
 }  // namespace ngap
