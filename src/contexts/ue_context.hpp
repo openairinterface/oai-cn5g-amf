@@ -36,7 +36,7 @@ extern "C" {
 #include "Ngap_RRCEstablishmentCause.h"
 }
 
-using namespace ngap;
+using namespace oai::ngap;
 
 class ue_context {
  public:

@@ -43,7 +43,7 @@
 #include "output_wrapper.hpp"
 #include "utils.hpp"
 
-using namespace ngap;
+using namespace oai::ngap;
 using namespace oai::nas;
 using namespace amf_application;
 using namespace oai::config;

@@ -21,7 +21,7 @@
 
 #include "QosFlowLevelQosParameters.hpp"
 
-namespace ngap {
+namespace oai::ngap {
 
 //------------------------------------------------------------------------------
 QosFlowLevelQosParameters::QosFlowLevelQosParameters() {
@@ -58,7 +58,7 @@ void QosFlowLevelQosParameters::get(
     const {
   qosCharacteristics             = m_QosCharacteristics;
   allocationAndRetentionPriority = m_AllocationAndRetentionPriority;
-  gbrQosFlowInformation          = m_GbrQosInformation;
+  gbrQosFlowInformation             = m_GbrQosInformation;
   reflectiveQosAttribute         = m_ReflectiveQosAttribute;
   additionalQosFlowInformation   = m_AdditionalQosFlowInformation;
 }
@@ -138,4 +138,4 @@ bool QosFlowLevelQosParameters::decode(
 
   return true;
 }
-}  // namespace ngap
+}  // namespace oai::ngap
