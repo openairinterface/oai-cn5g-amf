@@ -26,7 +26,7 @@
 
 #include "NgapIesStruct.hpp"
 #include "itti_msg.hpp"
-using namespace ngap;
+using namespace oai::ngap;
 #include "bstrlib.h"
 
 class itti_msg_amf_app : public itti_msg {

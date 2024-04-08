@@ -37,7 +37,7 @@
 #include "sctp_server.hpp"
 #include "utils.hpp"
 
-using namespace ngap;
+using namespace oai::ngap;
 using namespace sctp;
 
 typedef struct pdu_session_info_s {
@@ -270,7 +270,7 @@ class itti_pdu_session_resource_modify_request : public itti_msg_n2 {
   uint32_t ran_ue_ngap_id;
   long amf_ue_ngap_id;
   uint8_t pdu_session_id;
-  ngap::SNssai s_NSSAI;
+  oai::ngap::SNssai s_NSSAI;
 };
 
 class itti_pdu_session_resource_release_command : public itti_msg_n2 {
@@ -340,7 +340,7 @@ class itti_ue_context_release_command : public itti_msg_n2 {
  public:
   uint32_t ran_ue_ngap_id;
   long amf_ue_ngap_id;
-  ngap::Cause cause;
+  oai::ngap::Cause cause;
 };
 
 class itti_ue_context_release_complete : public itti_msg_n2 {
