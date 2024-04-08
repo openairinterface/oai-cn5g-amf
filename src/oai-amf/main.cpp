@@ -107,6 +107,7 @@ void amf_signal_handler(int s) {
   }
 
   Logger::system().info("Freeing Allocated memory done.");
+  Logger::system().info("Bye.");
   exit(0);
 }
 
