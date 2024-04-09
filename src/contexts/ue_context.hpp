@@ -29,14 +29,14 @@
 #include <mutex>
 #include <shared_mutex>
 
-#include "NgapIEsStruct.hpp"
+#include "NgapIesStruct.hpp"
 #include "pdu_session_context.hpp"
 
 extern "C" {
 #include "Ngap_RRCEstablishmentCause.h"
 }
 
-using namespace ngap;
+using namespace oai::ngap;
 
 class ue_context {
  public:

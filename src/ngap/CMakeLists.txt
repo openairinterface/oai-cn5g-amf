@@ -19,26 +19,27 @@
 #      contact@openairinterface.org
 ################################################################################
 file(GLOB AMF_NGAP_src_files
-  ngapMsgs/*.cpp
-  ngapIEs/*.cpp
+  ${SRC_TOP_DIR}/${MOUNTED_COMMON}/ngap/ngapMsgs/*.cpp
+  ${SRC_TOP_DIR}/${MOUNTED_COMMON}/ngap/ngapIEs/*.cpp
 )
 add_library (AMF_NGAP STATIC
   ${AMF_NGAP_src_files}
 )
 
 set(NGAP_DIR "${SRC_TOP_DIR}/ngap")
-target_include_directories(AMF_NGAP PUBLIC ${NGAP_DIR}/libngap)
-target_include_directories(AMF_NGAP PUBLIC ${NGAP_DIR}/ngapIEs)
-target_include_directories(AMF_NGAP PUBLIC ${NGAP_DIR}/ngapMsgs)
-target_include_directories(AMF_NGAP PUBLIC ${SRC_TOP_DIR}/itti)
-target_include_directories(AMF_NGAP PUBLIC ${SRC_TOP_DIR}/itti/msgs)
+
+target_include_directories(AMF_NGAP PUBLIC ${SRC_TOP_DIR}/${MOUNTED_COMMON}/ngap/libngap)
+target_include_directories(AMF_NGAP PUBLIC ${SRC_TOP_DIR}/${MOUNTED_COMMON}/ngap/ngapIEs)
+target_include_directories(AMF_NGAP PUBLIC ${SRC_TOP_DIR}/${MOUNTED_COMMON}/ngap/ngapMsgs)
 target_include_directories(AMF_NGAP PUBLIC ${SRC_TOP_DIR}/common)
 target_include_directories(AMF_NGAP PUBLIC ${SRC_TOP_DIR}/common/unicode)
+target_include_directories(AMF_NGAP PUBLIC ${SRC_TOP_DIR}/itti)
+target_include_directories(AMF_NGAP PUBLIC ${SRC_TOP_DIR}/itti/msgs)
 target_include_directories(AMF_NGAP PUBLIC ${SRC_TOP_DIR}/sctp)
-target_include_directories(AMF_NGAP PUBLIC ${SRC_TOP_DIR}/utils)
 target_include_directories(AMF_NGAP PUBLIC ${SRC_TOP_DIR}/sbi/model)
+target_include_directories(AMF_NGAP PUBLIC ${SRC_TOP_DIR}/utils)
 target_include_directories(AMF_NGAP PUBLIC ${SRC_TOP_DIR}/${MOUNTED_COMMON}/logger)
 target_include_directories(AMF_NGAP PUBLIC ${SRC_TOP_DIR}/${MOUNTED_COMMON}/common)
+target_include_directories(AMF_NGAP PUBLIC ${SRC_TOP_DIR}/${MOUNTED_COMMON}/nas/common)
 target_include_directories(AMF_NGAP PUBLIC ${SRC_TOP_DIR}/${MOUNTED_COMMON}/utils)
 target_include_directories(AMF_NGAP PUBLIC ${SRC_TOP_DIR}/${MOUNTED_COMMON}/utils/bstr)
-target_include_directories(AMF_NGAP PUBLIC ${SRC_TOP_DIR}/${MOUNTED_COMMON}/nas/common)

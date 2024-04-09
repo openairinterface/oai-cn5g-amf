@@ -25,8 +25,8 @@
 #include <vector>
 
 #include "3gpp_23.003.h"
-#include "UERetentionInformation.hpp"
-#include "NgapIEsStruct.hpp"
+#include "UeRetentionInformation.hpp"
+#include "NgapIesStruct.hpp"
 #include "sctp_server.hpp"
 
 extern "C" {
@@ -35,7 +35,7 @@ extern "C" {
 }
 
 using namespace sctp;
-using namespace ngap;
+using namespace oai::ngap;
 
 typedef enum {
   NGAP_INIT,
@@ -56,7 +56,7 @@ class gnb_context {
   plmn_t plmn;
   e_Ngap_PagingDRX default_paging_drx;  // v32, v64, v128, v256
   std::vector<SupportedTaItem_t> supported_ta_list;
-  std::optional<UERetentionInformation> ue_retention_info;
+  std::optional<UeRetentionInformation> ue_retention_info;
 
   sctp_assoc_id_t sctp_assoc_id;
   sctp_stream_id_t next_sctp_stream;

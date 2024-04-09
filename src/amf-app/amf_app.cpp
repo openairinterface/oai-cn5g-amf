@@ -43,7 +43,7 @@
 #include "output_wrapper.hpp"
 #include "utils.hpp"
 
-using namespace ngap;
+using namespace oai::ngap;
 using namespace oai::nas;
 using namespace amf_application;
 using namespace oai::config;
@@ -97,6 +97,24 @@ amf_app::amf_app(const amf_config& amf_cfg)
       amf_cfg.statistics_interval, 0, TASK_AMF_APP,
       TASK_AMF_APP_PERIODIC_STATISTICS);
   Logger::amf_app().startup("Started timer (%d)", tid);
+}
+
+//------------------------------------------------------------------------------
+amf_app::~amf_app() {
+  Logger::amf_app().info("Starting destruction of amf_app object");
+
+  if (amf_n1_inst) {
+    Logger::amf_app().info("Deleting N1 object");
+    delete amf_n1_inst;
+  }
+  if (amf_n2_inst) {
+    Logger::amf_app().info("Deleting N2 object");
+    delete amf_n2_inst;
+  }
+  if (amf_sbi_inst) {
+    Logger::amf_app().info("Deleting SBI object");
+    delete amf_sbi_inst;
+  }
 }
 
 //------------------------------------------------------------------------------

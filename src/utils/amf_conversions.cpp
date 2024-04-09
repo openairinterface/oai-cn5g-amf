@@ -370,11 +370,21 @@ std::string amf_conv::uint32_to_hex_string(uint32_t value) {
 }
 
 //------------------------------------------------------------------------------
+std::string amf_conv::uint32_to_hex_string_full_format(uint32_t value) {
+  char hex_str[kUint32Length + 1];
+  sprintf(hex_str, "%X", value);
+  std::string out = std::string(hex_str);
+  if (out.size() % 2 == 1) out = "0" + out;
+
+  return ("0x" + out);
+}
+
+//------------------------------------------------------------------------------
 std::string amf_conv::tmsi_to_guti(
     const std::string& mcc, const std::string& mnc, uint8_t region_id,
     const std::string& _5g_s_tmsi) {
   std::string region_id_str = {};
-  int_to_string_hex(region_id, region_id_str);
+  int_to_string_hex(region_id, region_id_str, 2);  // Region ID: 8 bits
   return {mcc + mnc + region_id_str + _5g_s_tmsi};
 }
 
@@ -385,7 +395,7 @@ std::string amf_conv::tmsi_to_guti(
   uint32_t amf_id        = {};
   std::string amf_id_str = {};
   get_amf_id(region_id, amf_set_id, amf_pointer, amf_id);
-  int_to_string_hex(amf_id, amf_id_str);
+  int_to_string_hex(amf_id, amf_id_str, 6);  // AMF ID: 24 bits
   return {mcc + mnc + amf_id_str + tmsi};
 }
 

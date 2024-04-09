@@ -25,19 +25,19 @@
 #include "HandoverNotifyMsg.hpp"
 #include "HandoverRequestAck.hpp"
 #include "HandoverRequiredMsg.hpp"
-#include "InitialUEMessage.hpp"
-#include "NGReset.hpp"
-#include "NGSetupRequest.hpp"
-#include "UEContextReleaseComplete.hpp"
-#include "UEContextReleaseRequest.hpp"
-#include "UERadioCapabilityInfoIndication.hpp"
-#include "UplinkNASTransport.hpp"
-#include "UplinkRANStatusTransfer.hpp"
+#include "InitialUeMessage.hpp"
+#include "NgReset.hpp"
+#include "NgSetupRequest.hpp"
+#include "UeContextReleaseComplete.hpp"
+#include "UeContextReleaseRequest.hpp"
+#include "UeRadioCapabilityInfoIndication.hpp"
+#include "UplinkNasTransport.hpp"
+#include "UplinkRanStatusTransfer.hpp"
 #include "itti_msg.hpp"
 #include "sctp_server.hpp"
 #include "utils.hpp"
 
-using namespace ngap;
+using namespace oai::ngap;
 using namespace sctp;
 
 typedef struct pdu_session_info_s {
@@ -80,7 +80,7 @@ class itti_ng_setup_request : public itti_msg_n2 {
   virtual ~itti_ng_setup_request() { delete ngSetupReq; }
 
  public:
-  NGSetupRequestMsg* ngSetupReq;
+  NgSetupRequestMsg* ngSetupReq;
 };
 
 class itti_ng_reset : public itti_msg_n2 {
@@ -95,7 +95,7 @@ class itti_ng_reset : public itti_msg_n2 {
   virtual ~itti_ng_reset() { delete ngReset; }
 
  public:
-  NGResetMsg* ngReset;
+  NgResetMsg* ngReset;
 };
 
 class itti_ng_shutdown : public itti_msg_n2 {
@@ -117,7 +117,7 @@ class itti_initial_ue_message : public itti_msg_n2 {
   }
   virtual ~itti_initial_ue_message() { delete initUeMsg; }
 
-  InitialUEMessageMsg* initUeMsg;
+  InitialUeMessageMsg* initUeMsg;
 };
 
 class itti_ul_nas_transport : public itti_msg_n2 {
@@ -131,7 +131,7 @@ class itti_ul_nas_transport : public itti_msg_n2 {
   }
   virtual ~itti_ul_nas_transport() { delete ulNas; }
 
-  UplinkNASTransportMsg* ulNas;
+  UplinkNasTransportMsg* ulNas;
 };
 
 class itti_dl_nas_transport : public itti_msg_n2 {
@@ -270,7 +270,7 @@ class itti_pdu_session_resource_modify_request : public itti_msg_n2 {
   uint32_t ran_ue_ngap_id;
   long amf_ue_ngap_id;
   uint8_t pdu_session_id;
-  S_NSSAI s_NSSAI;
+  oai::ngap::SNssai s_NSSAI;
 };
 
 class itti_pdu_session_resource_release_command : public itti_msg_n2 {
@@ -318,7 +318,7 @@ class itti_ue_context_release_request : public itti_msg_n2 {
   }
   virtual ~itti_ue_context_release_request() { delete ueCtxRel; }
 
-  UEContextReleaseRequestMsg* ueCtxRel;
+  UeContextReleaseRequestMsg* ueCtxRel;
 };
 
 class itti_ue_context_release_command : public itti_msg_n2 {
@@ -340,7 +340,7 @@ class itti_ue_context_release_command : public itti_msg_n2 {
  public:
   uint32_t ran_ue_ngap_id;
   long amf_ue_ngap_id;
-  ngap::Cause cause;
+  oai::ngap::Cause cause;
 };
 
 class itti_ue_context_release_complete : public itti_msg_n2 {
@@ -449,7 +449,7 @@ class itti_uplink_ran_status_transfer : public itti_msg_n2 {
   }
   virtual ~itti_uplink_ran_status_transfer() { delete uplinkRanTransfer; }
 
-  UplinkRANStatusTransfer* uplinkRanTransfer;
+  UplinkRanStatusTransfer* uplinkRanTransfer;
 };
 
 class itti_rereoute_nas : public itti_msg_n2 {
