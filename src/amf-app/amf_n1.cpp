@@ -55,6 +55,7 @@
 #include "amf_n2.hpp"
 #include "amf_sbi.hpp"
 #include "amf_sbi_helper.hpp"
+#include "authentication.hpp"
 #include "bstrlib.h"
 #include "itti.hpp"
 #include "itti_msg_n2.hpp"
@@ -82,7 +83,6 @@ extern amf_n2* amf_n2_inst;
 extern statistics stacs;
 
 // Static variables
-uint8_t amf_n1::no_random_delta                        = 0;
 std::map<std::string, std::string> amf_n1::rand_record = {};
 
 void amf_n1_task(void*);
@@ -155,9 +155,6 @@ amf_n1::amf_n1()
   supi2amfId          = {};
   supi2ranId          = {};
   guti2nas_context    = {};
-  random_state        = {};
-  db_desc             = {};
-  db_desc.db_conn     = nullptr;
 
   // EventExposure: subscribe to UE Location Report
   ee_ue_location_report_connection = event_sub.subscribe_ue_location_report(
@@ -2088,12 +2085,16 @@ void amf_n1::run_registration_procedure(std::shared_ptr<nas_context>& nc) {
 //------------------------------------------------------------------------------
 bool amf_n1::auth_vectors_generator(std::shared_ptr<nas_context>& nc) {
   Logger::amf_n1().debug("Start to generate Authentication Vectors");
-  if (amf_cfg.support_features.enable_external_ausf) {
+  if (amf_cfg.support_features.enable_external_ausf_udm) {
     // get authentication vectors from AUSF
     if (!get_authentication_vectors_from_ausf(nc)) return false;
   } else {  // Generate locally
-    authentication_vectors_generator_in_udm(nc);
-    authentication_vectors_generator_in_ausf(nc);
+    if (!authentication::get_instance().authentication_vectors_generator_in_udm(
+            nc))
+      return false;
+    if (!authentication::get_instance()
+             .authentication_vectors_generator_in_ausf(nc))
+      return false;
     Logger::amf_n1().debug("Deriving kamf");
     for (int i = 0; i < MAX_5GS_AUTH_VECTORS; i++) {
       Authentication_5gaka::derive_kamf(
@@ -2263,210 +2264,6 @@ bool amf_n1::_5g_aka_confirmation_from_ausf(
 }
 
 //------------------------------------------------------------------------------
-bool amf_n1::authentication_vectors_generator_in_ausf(
-    std::shared_ptr<nas_context>& nc) {  // A.5, 3gpp ts33.501
-                                         // TODO: remove naked ptr
-  Logger::amf_n1().debug(
-      "Generate Authentication Vectors in AUSF (locally in AMF)");
-  uint8_t inputString[MAX_5GS_AUTH_VECTORS][40];
-  uint8_t* xresStar[MAX_5GS_AUTH_VECTORS];
-  uint8_t* rand[MAX_5GS_AUTH_VECTORS];
-  for (int i = 0; i < MAX_5GS_AUTH_VECTORS; i++) {
-    xresStar[i] = nc->_5g_he_av[i].xresStar;
-    rand[i]     = nc->_5g_he_av[i].rand;
-    memcpy(&inputString[i][0], rand[i], 16);
-    memcpy(&inputString[i][16], xresStar[i], 16);
-    unsigned char sha256Out[Sha256::DIGEST_SIZE];
-    sha256(
-        (unsigned char*) inputString[i], AUTH_VECTOR_LENGTH_OCTETS, sha256Out);
-    for (int j = 0; j < 16; j++)
-      nc->_5g_av[i].hxresStar[j] = (uint8_t) sha256Out[j];
-    memcpy(nc->_5g_av[i].rand, nc->_5g_he_av[i].rand, 16);
-    memcpy(nc->_5g_av[i].autn, nc->_5g_he_av[i].autn, 16);
-    uint8_t kseaf[AUTH_VECTOR_LENGTH_OCTETS];
-    Authentication_5gaka::derive_kseaf(
-        nc->serving_network, nc->_5g_he_av[i].kausf, kseaf);
-    memcpy(nc->_5g_av[i].kseaf, kseaf, AUTH_VECTOR_LENGTH_OCTETS);
-  }
-  return true;
-}
-
-//------------------------------------------------------------------------------
-bool amf_n1::authentication_vectors_generator_in_udm(
-    std::shared_ptr<nas_context>& nc) {
-  // TODO: remove naked ptr
-  Logger::amf_n1().debug(
-      "Generate Authentication Vectors in UDM (locally in AMF)");
-  uint8_t* sqn        = nullptr;
-  uint8_t* auts       = (uint8_t*) bdata(nc->auts);
-  _5G_HE_AV_t* vector = nc->_5g_he_av;
-  // Access to MySQL to fetch UE-related information
-  if (!connect_to_mysql()) {
-    Logger::amf_n1().error("Cannot connect to MySQL DB");
-    return false;
-  }
-  Logger::amf_n1().debug("Connected to MySQL successfully");
-  mysql_auth_info_t mysql_resp = {};
-  if (get_mysql_auth_info(nc->imsi, mysql_resp)) {
-    if (auts) {
-      sqn = Authentication_5gaka::sqn_ms_derive(
-          mysql_resp.opc, mysql_resp.key, auts, mysql_resp.rand);
-      if (sqn) {
-        generate_random(vector[0].rand, RAND_LENGTH);
-        mysql_push_rand_sqn(nc->imsi, vector[0].rand, sqn);
-        mysql_increment_sqn(nc->imsi);
-        utils::free_wrapper((void**) &sqn);
-      }
-      if (!get_mysql_auth_info(nc->imsi, mysql_resp)) {
-        Logger::amf_n1().error("Cannot get data from MySQL");
-        return false;
-      }
-      sqn = mysql_resp.sqn;
-      for (int i = 0; i < MAX_5GS_AUTH_VECTORS; i++) {
-        generate_random(vector[i].rand, RAND_LENGTH);
-        output_wrapper::print_buffer(
-            "amf_n1", "Generated random rand (5G HE AV)", vector[i].rand, 16);
-        generate_5g_he_av_in_udm(
-            mysql_resp.opc, nc->imsi, mysql_resp.key, sqn, nc->serving_network,
-            vector[i]);  // serving network name
-      }
-      mysql_push_rand_sqn(nc->imsi, vector[MAX_5GS_AUTH_VECTORS - 1].rand, sqn);
-    } else {
-      Logger::amf_n1().debug("No AUTS ...");
-      Logger::amf_n1().debug(
-          "Receive information from MySQL with IMSI %s", nc->imsi.c_str());
-      for (int i = 0; i < MAX_5GS_AUTH_VECTORS; i++) {
-        generate_random(vector[i].rand, RAND_LENGTH);
-        sqn = mysql_resp.sqn;
-        generate_5g_he_av_in_udm(
-            mysql_resp.opc, nc->imsi, mysql_resp.key, sqn, nc->serving_network,
-            vector[i]);  // serving network name
-      }
-      mysql_push_rand_sqn(nc->imsi, vector[MAX_5GS_AUTH_VECTORS - 1].rand, sqn);
-    }
-    mysql_increment_sqn(nc->imsi);
-  } else {
-    Logger::amf_n1().error("Failed to fetch user data from MySQL");
-    return false;
-  }
-  return true;
-}
-
-//------------------------------------------------------------------------------
-void amf_n1::generate_random(uint8_t* random_p, ssize_t length) {
-  gmp_randinit_default(random_state.state);
-  gmp_randseed_ui(random_state.state, time(NULL));
-  if (amf_cfg.auth_para.random) {
-    Logger::amf_n1().debug("Database config random -> true");
-    random_t random_nb;
-    mpz_init(random_nb);
-    mpz_init_set_ui(random_nb, 0);
-    pthread_mutex_lock(&random_state.lock);
-    mpz_urandomb(random_nb, random_state.state, 8 * length);
-    pthread_mutex_unlock(&random_state.lock);
-    mpz_export(random_p, NULL, 1, length, 0, 0, random_nb);
-    int r = 0, mask = 0, shift;
-    for (int i = 0; i < length; i++) {
-      if ((i % sizeof(i)) == 0) r = rand();
-      shift       = 8 * (i % sizeof(i));
-      mask        = 0xFF << shift;
-      random_p[i] = (r & mask) >> shift;
-    }
-  } else {
-    Logger::amf_n1().error("Database config random -> false");
-    pthread_mutex_lock(&random_state.lock);
-    for (int i = 0; i < length; i++) {
-      random_p[i] = i + no_random_delta;
-    }
-    no_random_delta += 1;
-    pthread_mutex_unlock(&random_state.lock);
-  }
-}
-
-//------------------------------------------------------------------------------
-void amf_n1::generate_5g_he_av_in_udm(
-    const uint8_t opc[16], const std::string& imsi, uint8_t key[16],
-    uint8_t sqn[6], std::string& serving_network, _5G_HE_AV_t& vector) {
-  Logger::amf_n1().debug("Generate 5g_he_av as in UDM");
-  uint8_t amf[] = {0x80, 0x00};
-  uint8_t mac_a[8];
-  uint8_t ck[16];
-  uint8_t ik[16];
-  uint8_t ak[6];
-  uint64_t _imsi = utils::fromString<uint64_t>(imsi);
-
-  Authentication_5gaka::f1(
-      opc, key, vector.rand, sqn, amf,
-      mac_a);  // to compute MAC, Figure 7, ts33.102
-  // output_wrapper::print_buffer("amf_n1", "Result For F1-Alg: mac_a", mac_a,
-  // 8);
-  Authentication_5gaka::f2345(
-      opc, key, vector.rand, vector.xres, ck, ik,
-      ak);  // to compute XRES, CK, IK, AK
-  annex_a_4_33501(
-      ck, ik, vector.xres, vector.rand, serving_network, vector.xresStar);
-  // output_wrapper::print_buffer("amf_n1", "Result For KDF: xres*(5G HE AV)",
-  // vector.xresStar, 16);
-  Authentication_5gaka::generate_autn(
-      sqn, ak, amf, mac_a,
-      vector.autn);  // generate AUTN
-  // output_wrapper::print_buffer("amf_n1", "Generated autn(5G HE AV)",
-  // vector.autn, 16);
-  Authentication_5gaka::derive_kausf(
-      ck, ik, serving_network, sqn, ak,
-      vector.kausf);  // derive Kausf
-  // output_wrapper::print_buffer("amf_n1", "Result For KDF: Kausf(5G HE AV)",
-  // vector.kausf, AUTH_VECTOR_LENGTH_OCTETS);
-  Logger::amf_n1().debug("Generate_5g_he_av_in_udm finished!");
-  return;
-}
-
-//------------------------------------------------------------------------------
-void amf_n1::annex_a_4_33501(
-    uint8_t ck[16], uint8_t ik[16], uint8_t* input, uint8_t rand[16],
-    std::string& serving_network, uint8_t* output) {
-  OCTET_STRING_t netName;
-  OCTET_STRING_fromBuf(
-      &netName, serving_network.c_str(), serving_network.length());
-  uint8_t S[100];
-  S[0] = 0x6B;
-  memcpy(&S[1], netName.buf, netName.size);
-  S[1 + netName.size] = (netName.size & 0xff00) >> 8;
-  S[2 + netName.size] = (netName.size & 0x00ff);
-  for (int i = 0; i < 16; i++) S[3 + netName.size + i] = rand[i];
-  S[19 + netName.size] = 0x00;
-  S[20 + netName.size] = 0x10;
-  for (int i = 0; i < 8; i++) S[21 + netName.size + i] = input[i];
-  S[29 + netName.size] = 0x00;
-  S[30 + netName.size] = 0x08;
-
-  uint8_t plmn[3] = {0x46, 0x0f, 0x11};
-  uint8_t oldS[100];
-  oldS[0] = 0x6B;
-  memcpy(&oldS[1], plmn, 3);
-  oldS[4] = 0x00;
-  oldS[5] = 0x03;
-  for (int i = 0; i < 16; i++) oldS[6 + i] = rand[i];
-  oldS[22] = 0x00;
-  oldS[23] = 0x10;
-  for (int i = 0; i < 8; i++) oldS[24 + i] = input[i];
-  oldS[32] = 0x00;
-  oldS[33] = 0x08;
-  output_wrapper::print_buffer(
-      "amf_n1", "Input string: ", S, 31 + netName.size);
-  uint8_t key[AUTH_VECTOR_LENGTH_OCTETS];
-  memcpy(&key[0], ck, 16);
-  memcpy(&key[16], ik, 16);  // KEY
-  // Authentication_5gaka::kdf(key, AUTH_VECTOR_LENGTH_OCTETS, oldS, 33, output,
-  // 16);
-  uint8_t out[AUTH_VECTOR_LENGTH_OCTETS];
-  Authentication_5gaka::kdf(key, 32, S, 31 + netName.size, out, 32);
-  for (int i = 0; i < 16; i++) output[i] = out[16 + i];
-  output_wrapper::print_buffer(
-      "amf_n1", "XRES*(new)", out, AUTH_VECTOR_LENGTH_OCTETS);
-}
-
-//------------------------------------------------------------------------------
 void amf_n1::handle_auth_vector_successful_result(
     std::shared_ptr<nas_context>& nc) {
   Logger::amf_n1().debug(
@@ -2593,7 +2390,7 @@ void amf_n1::authentication_response_handle(
     Logger::amf_n1().warn(
         "Cannot receive AuthenticationResponseParameter (RES*)");
   } else {
-    if (amf_cfg.support_features.enable_external_ausf) {
+    if (amf_cfg.support_features.enable_external_ausf_udm) {
       // std::string data = bdata(resStar);
       if (!_5g_aka_confirmation_from_ausf(nc, resStar)) isAuthOk = false;
     } else {
@@ -2612,7 +2409,8 @@ void amf_n1::authentication_response_handle(
         memcpy(&inputstring[0], nc->_5g_av[secu_index].rand, 16);
         memcpy(&inputstring[16], res, blength(resStar));
         unsigned char sha256Out[Sha256::DIGEST_SIZE];
-        sha256((unsigned char*) inputstring, 16 + blength(resStar), sha256Out);
+        authentication::get_instance().apply_sha256(
+            (unsigned char*) inputstring, 16 + blength(resStar), sha256Out);
         uint8_t hres[16];
         for (int i = 0; i < 16; i++) hres[i] = (uint8_t) sha256Out[i];
         output_wrapper::print_buffer(
@@ -3812,16 +3610,6 @@ void amf_n1::ul_nas_transport_handle(
       }
     }
   }
-}
-
-//------------------------------------------------------------------------------
-void amf_n1::sha256(
-    unsigned char* message, int msg_len, unsigned char* output) {
-  memset(output, 0, Sha256::DIGEST_SIZE);
-  Sha256 ctx = {};
-  ctx.init();
-  ctx.update(message, msg_len);
-  ctx.finalResult(output);
 }
 
 //------------------------------------------------------------------------------
@@ -5108,7 +4896,7 @@ bool amf_n1::check_subscribed_nssai(
 bool amf_n1::get_slice_selection_subscription_data(
     const std::shared_ptr<nas_context>& nc, oai::amf::model::Nssai& nssai) {
   // TODO: UDM selection (from NRF or configuration file)
-  if (amf_cfg.support_features.enable_external_udm) {
+  if (amf_cfg.support_features.enable_external_ausf_udm) {
     Logger::amf_n1().debug(
         "Get the Slice Selection Subscription Data from UDM");
 

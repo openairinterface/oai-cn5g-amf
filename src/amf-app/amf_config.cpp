@@ -57,21 +57,20 @@ amf_config::amf_config() {
   n2                         = {};
   sbi                        = {};
   sbi.api_version = std::make_optional<std::string>(DEFAULT_SBI_API_VERSION);
-  statistics_interval                     = 0;
-  guami                                   = {};
-  guami_list                              = {};
-  relative_amf_capacity                   = 0;
-  plmn_list                               = {};
-  auth_para                               = {};
-  nas_cfg                                 = {};
-  support_features.enable_nf_registration = false;
-  support_features.enable_smf_selection   = false;
-  support_features.enable_external_ausf   = false;
-  support_features.enable_external_udm    = false;
-  support_features.enable_nssf            = false;
-  support_features.enable_lmf             = false;
-  support_features.http_version           = 2;  // HTTP/2 by default
-  is_emergency_support                    = false;
+  statistics_interval                       = 0;
+  guami                                     = {};
+  guami_list                                = {};
+  relative_amf_capacity                     = 0;
+  plmn_list                                 = {};
+  auth_para                                 = {};
+  nas_cfg                                   = {};
+  support_features.enable_nf_registration   = false;
+  support_features.enable_smf_selection     = false;
+  support_features.enable_external_ausf_udm = false;
+  support_features.enable_nssf              = false;
+  support_features.enable_lmf               = false;
+  support_features.http_version             = 2;  // HTTP/2 by default
+  is_emergency_support                      = false;
 }
 
 //------------------------------------------------------------------------------
@@ -125,7 +124,7 @@ void amf_config::display() {
                                              AMF_CONFIG_OPTION_YES_STR :
                                              AMF_CONFIG_OPTION_NO_STR);
 
-  if (!support_features.enable_external_ausf) {
+  if (!support_features.enable_external_ausf_udm) {
     Logger::config().info("- Database: ");
     Logger::config().info(
         "    MySQL Server Addr .....: %s", auth_para.mysql_server.c_str());
@@ -175,15 +174,14 @@ void amf_config::display() {
         "    API version ...........: %s", nssf_addr.api_version.c_str());
   }
 
-  if (support_features.enable_external_ausf) {
+  if (support_features.enable_external_ausf_udm) {
+    // AUSF
     Logger::config().info("- AUSF:");
     Logger::config().info(
         "    URI root ...............: %s", ausf_addr.uri_root);
     Logger::config().info(
         "    API version ...........: %s", ausf_addr.api_version.c_str());
-  }
-
-  if (support_features.enable_external_udm) {
+    // UDM
     Logger::config().info("- UDM:");
     Logger::config().info(
         "    URI root ...............: %s", udm_addr.uri_root);
@@ -210,13 +208,13 @@ void amf_config::display() {
                                              AMF_CONFIG_OPTION_YES_STR :
                                              AMF_CONFIG_OPTION_NO_STR);
   Logger::config().info(
-      "    External AUSF .........: %s", support_features.enable_external_ausf ?
-                                             AMF_CONFIG_OPTION_YES_STR :
-                                             AMF_CONFIG_OPTION_NO_STR);
+      "    External AUSF .........: %s",
+      support_features.enable_external_ausf_udm ? AMF_CONFIG_OPTION_YES_STR :
+                                                  AMF_CONFIG_OPTION_NO_STR);
   Logger::config().info(
-      "    External UDM ..........: %s", support_features.enable_external_udm ?
-                                             AMF_CONFIG_OPTION_YES_STR :
-                                             AMF_CONFIG_OPTION_NO_STR);
+      "    External UDM ..........: %s",
+      support_features.enable_external_ausf_udm ? AMF_CONFIG_OPTION_YES_STR :
+                                                  AMF_CONFIG_OPTION_NO_STR);
   Logger::config().info(
       "    External NSSF .........: %s", support_features.enable_nssf ?
                                              AMF_CONFIG_OPTION_YES_STR :
@@ -267,7 +265,7 @@ void amf_config::to_json(nlohmann::json& json_data) const {
                                           AMF_CONFIG_OPTION_YES_STR :
                                           AMF_CONFIG_OPTION_NO_STR;
 
-  if (!support_features.enable_external_ausf) {
+  if (!support_features.enable_external_ausf_udm) {
     json_data["auth_para"] = auth_para.to_json();
   }
 
@@ -286,12 +284,9 @@ void amf_config::to_json(nlohmann::json& json_data) const {
     json_data["nssf"] = nssf_addr.to_json();
   }
 
-  if (support_features.enable_external_ausf) {
+  if (support_features.enable_external_ausf_udm) {
     json_data["ausf"] = ausf_addr.to_json();
-  }
-
-  if (support_features.enable_external_udm) {
-    json_data["udm"] = udm_addr.to_json();
+    json_data["udm"]  = udm_addr.to_json();
   }
 
   json_data["supported_nas_algorithms"] = nas_cfg.to_json();
@@ -377,17 +372,15 @@ bool amf_config::from_json(nlohmann::json& json_data) {
       }
     }
 
-    if (support_features.enable_external_ausf) {
+    if (support_features.enable_external_ausf_udm) {
       if (json_data.find("ausf") != json_data.end()) {
         ausf_addr.from_json(json_data["ausf"]);
       }
-    }
-
-    if (support_features.enable_external_udm) {
       if (json_data.find("udm") != json_data.end()) {
         udm_addr.from_json(json_data["udm"]);
       }
     }
+
     if (support_features.enable_lmf) {
       if (json_data.find("lmf") != json_data.end()) {
         lmf_addr.from_json(json_data["lmf"]);

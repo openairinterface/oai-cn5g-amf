@@ -30,8 +30,8 @@ add_library (AMF_APP STATIC
   amf_profile.cpp
   amf_statistics.cpp
   amf_statistics.cpp
-  mysql_db.cpp
   amf_subscription.cpp
+  authentication.cpp
   ${SRC_TOP_DIR}/ngap/ngap_app.cpp
 )
 
