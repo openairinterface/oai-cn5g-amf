@@ -59,6 +59,9 @@ std::unique_ptr<amf_config_yaml> amf_cfg_yaml;
 
 //------------------------------------------------------------------------------
 void amf_signal_handler(int s) {
+  // Setting log level arbitrarly to debug to show the whole
+  // shutdown procedure in the logs even in case of off-logging
+  Logger::set_level(spdlog::level::debug);
   Logger::system().info("Caught signal %d", s);
 
   // Stop on-going tasks
