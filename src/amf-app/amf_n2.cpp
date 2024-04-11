@@ -988,7 +988,8 @@ void amf_n2::handle_itti_message(
       (eia_value << 9));
 
   // Security Key
-  msg->setSecurityKey((uint8_t*) bdata(itti_msg->kgnb));
+  msg->setSecurityKey(
+      (uint8_t*) bdata(itti_msg->kgnb), AUTH_VECTOR_LENGTH_OCTETS);
 
   // Mobility Restriction List
   oai::ngap::PlmnId plmn_id = {};
