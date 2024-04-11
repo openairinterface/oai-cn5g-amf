@@ -65,16 +65,16 @@ void amf_signal_handler(int s) {
   Logger::system().info("Caught signal %d", s);
 
   // Stop on-going tasks
-  if (amf_app_inst) {
-    amf_app_inst->stop();
-  }
-
   if (http1_server) {
     http1_server->shutdown();
   }
 
   if (http2_server) {
     http2_server->stop();
+  }
+
+  if (amf_app_inst) {
+    amf_app_inst->stop();
   }
 
   if (itti_inst) {
