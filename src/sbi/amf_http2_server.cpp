@@ -1450,4 +1450,7 @@ void amf_http2_server::update_configuration_handler(
 //------------------------------------------------------------------------------
 void amf_http2_server::stop() {
   server.stop();
+  // asio_http2_server.h specifies that after the stop, do a join to wait for
+  // all threads to gracefully finish
+  server.join();
 }
