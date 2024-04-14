@@ -59,7 +59,19 @@ std::unique_ptr<amf_config_yaml> amf_cfg_yaml;
 
 //------------------------------------------------------------------------------
 void amf_signal_handler(int s) {
+  // Setting log level arbitrarly to debug to show the whole
+  // shutdown procedure in the logs even in case of off-logging
+  Logger::set_level(spdlog::level::debug);
   Logger::system().info("Caught signal %d", s);
+
+  // Stop on-going tasks
+  if (http1_server) {
+    http1_server->shutdown();
+  }
+
+  if (http2_server) {
+    http2_server->stop();
+  }
 
   if (amf_app_inst) {
     amf_app_inst->stop();
@@ -72,15 +84,14 @@ void amf_signal_handler(int s) {
 
   Logger::system().debug("Freeing Allocated memory...");
 
+  // Delete instances
   if (http1_server) {
-    http1_server->shutdown();
     delete http1_server;
     http1_server = nullptr;
     Logger::system().debug("HTTP/1 Server memory done.");
   }
 
   if (http2_server) {
-    http2_server->stop();
     delete http2_server;
     http2_server = nullptr;
     Logger::system().debug("HTTP/2 Server memory done.");
@@ -99,6 +110,7 @@ void amf_signal_handler(int s) {
   }
 
   Logger::system().info("Freeing Allocated memory done.");
+  Logger::system().info("Bye.");
   exit(0);
 }
 
