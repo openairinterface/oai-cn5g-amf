@@ -3564,9 +3564,9 @@ void amf_n1::ul_nas_transport_handle(
         itti_msg->dnn            = bstrcpy(dnn);
         itti_msg->sm_msg         = bstrcpy(sm_msg);
         itti_msg->snssai.sST     = snssai.sst;
-        itti_msg->snssai.sD      = std::to_string(snssai.sd);
-        itti_msg->plmn.mnc       = plmn.mnc;
-        itti_msg->plmn.mcc       = plmn.mcc;
+        amf_conv::sd_int_to_string_hex(snssai.sd, itti_msg->snssai.sD);
+        itti_msg->plmn.mnc = plmn.mnc;
+        itti_msg->plmn.mcc = plmn.mcc;
 
         int ret = itti_inst->send_msg(itti_msg);
         if (0 != ret) {
