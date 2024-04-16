@@ -207,7 +207,6 @@ void amf_n2_task(void* args_p) {
         Logger::amf_n2().info("Received Handover Required message, handling");
         auto msg_ptr =
             std::dynamic_pointer_cast<itti_handover_required>(shared_msg);
-        amf_n2_inst->handle_itti_message(msg_ptr);
         if (!amf_n2_inst->handle_itti_message(msg_ptr))
           amf_n2_inst->send_handover_preparation_failure(
               msg_ptr->handoverReq->getAmfUeNgapId(),
