@@ -35,7 +35,7 @@ extern "C" {
 }
 
 using namespace sctp;
-using namespace ngap;
+using namespace oai::ngap;
 
 typedef enum {
   NGAP_INIT,

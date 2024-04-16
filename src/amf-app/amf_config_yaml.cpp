@@ -847,17 +847,15 @@ void amf_config_yaml::to_amf_config(amf_config& cfg) {
 
   // Parse the "Super" option - "enable_simple_scenario"
   if (amf_local->get_support_features().get_option_enable_simple_scenario()) {
-    cfg.support_features.enable_nf_registration = false;
-    cfg.support_features.enable_smf_selection   = false;
-    cfg.support_features.enable_external_ausf   = false;  // TODO: to be removed
-    cfg.support_features.enable_external_udm    = false;  // TODO: to be removed
-    cfg.support_features.enable_nssf            = false;  // TODO: to be removed
-  } else {  // parse the other options
+    cfg.support_features.enable_nf_registration   = false;
+    cfg.support_features.enable_smf_selection     = false;
+    cfg.support_features.enable_external_ausf_udm = false;
+    cfg.support_features.enable_nssf = false;  // TODO: to be removed
+  } else {                                     // parse the other options
     cfg.support_features.enable_nf_registration = register_nrf();
     cfg.support_features.enable_smf_selection =
         amf_local->get_support_features().get_option_enable_smf_selection();
-    cfg.support_features.enable_external_ausf = true;  // To be removed
-    cfg.support_features.enable_external_udm  = true;  // To be removed
+    cfg.support_features.enable_external_ausf_udm = true;  // To be removed
     cfg.support_features.enable_nssf =
         amf_local->get_support_features().get_option_enable_nssf();
   }

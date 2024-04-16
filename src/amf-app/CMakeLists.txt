@@ -30,9 +30,9 @@ add_library (AMF_APP STATIC
   amf_profile.cpp
   amf_statistics.cpp
   amf_statistics.cpp
-  mysql_db.cpp
   amf_subscription.cpp
-  ${SRC_TOP_DIR}/ngap/ngap_app/ngap_app.cpp
+  authentication.cpp
+  ${SRC_TOP_DIR}/ngap/ngap_app.cpp
 )
 
 target_include_directories(AMF_APP PUBLIC ${SRC_TOP_DIR}/amf-app)
@@ -41,10 +41,10 @@ target_include_directories(AMF_APP PUBLIC ${SRC_TOP_DIR}/itti/msgs)
 target_include_directories(AMF_APP PUBLIC ${SRC_TOP_DIR}/common)
 target_include_directories(AMF_APP PUBLIC ${SRC_TOP_DIR}/common/unicode)
 target_include_directories(AMF_APP PUBLIC ${SRC_TOP_DIR}/contexts)
-target_include_directories(AMF_APP PUBLIC ${SRC_TOP_DIR}/ngap/libngap)
-target_include_directories(AMF_APP PUBLIC ${SRC_TOP_DIR}/ngap/ngap_app)
-target_include_directories(AMF_APP PUBLIC ${SRC_TOP_DIR}/ngap/ngapIEs)
-target_include_directories(AMF_APP PUBLIC ${SRC_TOP_DIR}/ngap/ngapMsgs)
+target_include_directories(AMF_APP PUBLIC ${SRC_TOP_DIR}/${MOUNTED_COMMON}/ngap/libngap)
+target_include_directories(AMF_APP PUBLIC ${SRC_TOP_DIR}/ngap)
+target_include_directories(AMF_APP PUBLIC ${SRC_TOP_DIR}/${MOUNTED_COMMON}/ngap/ngapIEs)
+target_include_directories(AMF_APP PUBLIC ${SRC_TOP_DIR}/${MOUNTED_COMMON}/ngap/ngapMsgs)
 target_include_directories(AMF_APP PUBLIC ${SRC_TOP_DIR}/sbi)
 target_include_directories(AMF_APP PUBLIC ${SRC_TOP_DIR}/sbi/api)
 target_include_directories(AMF_APP PUBLIC ${SRC_TOP_DIR}/sbi/impl)

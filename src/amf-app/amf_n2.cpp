@@ -63,7 +63,7 @@
 
 using namespace amf_application;
 using namespace oai::config;
-using namespace ngap;
+using namespace oai::ngap;
 using namespace oai::model::common;
 extern itti_mw* itti_inst;
 extern amf_n2* amf_n2_inst;
@@ -988,10 +988,11 @@ void amf_n2::handle_itti_message(
       (eia_value << 9));
 
   // Security Key
-  msg->setSecurityKey((uint8_t*) bdata(itti_msg->kgnb));
+  msg->setSecurityKey(
+      (uint8_t*) bdata(itti_msg->kgnb), AUTH_VECTOR_LENGTH_OCTETS);
 
   // Mobility Restriction List
-  ngap::PlmnId plmn_id = {};
+  oai::ngap::PlmnId plmn_id = {};
   plmn_id.set(amf_cfg.guami.mcc, amf_cfg.guami.mnc);
   msg->setMobilityRestrictionList(plmn_id);
 
@@ -1706,10 +1707,10 @@ bool amf_n2::handle_itti_message(
   unc->ng_ue_state = NGAP_UE_HANDOVER;
 
   GlobalGnbId target_global_gnb_id = {};
-  ngap::Tai tai                    = {};
+  oai::ngap::Tai tai               = {};
   itti_msg->handoverReq->getTargetId(target_global_gnb_id, tai);
-  ngap::PlmnId plmn = {};
-  GnbId gnbid       = {};
+  oai::ngap::PlmnId plmn = {};
+  GnbId gnbid            = {};
   target_global_gnb_id.get(plmn, gnbid);
   std::string mcc = {};
   std::string mnc = {};
@@ -1751,11 +1752,11 @@ bool amf_n2::handle_itti_message(
   handover_request->setSourceToTargetTransparentContainer(source_to_target);
 
   // Allowed NSSAI
-  std::vector<ngap::SNssai> allowed_nssai;
+  std::vector<oai::ngap::SNssai> allowed_nssai;
   for (int i = 0; i < amf_cfg.plmn_list.size(); i++) {
     for (int j = 0; j < amf_cfg.plmn_list[i].slice_list.size(); j++) {
       S_Nssai s_tmp;
-      ngap::SNssai s_nssai = {};
+      oai::ngap::SNssai s_nssai = {};
       s_nssai.setSst(amf_cfg.plmn_list[i].slice_list[j].sst);
       s_nssai.setSd(amf_cfg.plmn_list[i].slice_list[j].sd);
       allowed_nssai.push_back(s_nssai);
@@ -1764,7 +1765,7 @@ bool amf_n2::handle_itti_message(
   handover_request->setAllowedNssai(allowed_nssai);
 
   // GUAMI, PLMN
-  ngap::PlmnId plmn_id = {};
+  oai::ngap::PlmnId plmn_id = {};
   plmn_id.set(amf_cfg.guami.mcc, amf_cfg.guami.mnc);
 
   handover_request->setMobilityRestrictionList(plmn_id);
