@@ -3821,7 +3821,7 @@ void amf_n1::ul_nas_transport_handle(
 }
 
 //------------------------------------------------------------------------------
-void amf_n1::run_mobility_registration_update_procedure(
+bool amf_n1::run_mobility_registration_update_procedure(
     std::shared_ptr<nas_context>& nc,
     const std::optional<uint16_t>& uplink_data_status_opt,
     const std::optional<uint16_t>& pdu_session_status_opt, uint8_t& cause) {
