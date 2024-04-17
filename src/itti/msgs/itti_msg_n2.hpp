@@ -139,7 +139,7 @@ class itti_dl_nas_transport : public itti_msg_n2 {
   itti_dl_nas_transport(const task_id_t origin, const task_id_t destination)
       : itti_msg_n2(ITTI_DL_NAS_TRANSPORT, origin, destination) {
     ran_ue_ngap_id = 0;
-    amf_ue_ngap_id = 0;
+    amf_ue_ngap_id = INVALID_AMF_UE_NGAP_ID;
     nas            = nullptr;
   }
   itti_dl_nas_transport(const itti_dl_nas_transport& i) : itti_msg_n2(i) {
@@ -151,7 +151,7 @@ class itti_dl_nas_transport : public itti_msg_n2 {
 
  public:
   uint32_t ran_ue_ngap_id;
-  long amf_ue_ngap_id;
+  uint64_t amf_ue_ngap_id;
   bstring nas;
 };
 
@@ -161,7 +161,7 @@ class itti_initial_context_setup_request : public itti_msg_n2 {
       const task_id_t origin, const task_id_t destination)
       : itti_msg_n2(INITIAL_CONTEXT_SETUP_REQUEST, origin, destination) {
     ran_ue_ngap_id = {};
-    amf_ue_ngap_id = {};
+    amf_ue_ngap_id = INVALID_AMF_UE_NGAP_ID;
     kgnb           = nullptr;
     nas            = nullptr;
     is_sr          = false;
@@ -193,7 +193,7 @@ class itti_initial_context_setup_request : public itti_msg_n2 {
   }
 
   uint32_t ran_ue_ngap_id;
-  long amf_ue_ngap_id;
+  uint64_t amf_ue_ngap_id;
   bstring kgnb;
   bstring nas;
   bool is_sr;
@@ -207,7 +207,7 @@ class itti_pdu_session_resource_setup_request : public itti_msg_n2 {
       : itti_msg_n2(PDU_SESSION_RESOURCE_SETUP_REQUEST, origin, destination) {
     nas            = nullptr;
     ran_ue_ngap_id = 0;
-    amf_ue_ngap_id = 0;
+    amf_ue_ngap_id = INVALID_AMF_UE_NGAP_ID;
   }
   itti_pdu_session_resource_setup_request(
       const itti_pdu_session_resource_setup_request& i)
@@ -234,7 +234,7 @@ class itti_pdu_session_resource_setup_request : public itti_msg_n2 {
 
   bstring nas;
   uint32_t ran_ue_ngap_id;
-  long amf_ue_ngap_id;
+  uint64_t amf_ue_ngap_id;
   std::map<uint8_t, pdu_session_info_t> pdu_sessions;
 };
 
@@ -246,7 +246,7 @@ class itti_pdu_session_resource_modify_request : public itti_msg_n2 {
     nas            = nullptr;
     n2sm           = nullptr;
     ran_ue_ngap_id = 0;
-    amf_ue_ngap_id = 0;
+    amf_ue_ngap_id = INVALID_AMF_UE_NGAP_ID;
     pdu_session_id = 0;
     s_NSSAI        = {};
   }
@@ -268,7 +268,7 @@ class itti_pdu_session_resource_modify_request : public itti_msg_n2 {
   bstring nas;
   bstring n2sm;
   uint32_t ran_ue_ngap_id;
-  long amf_ue_ngap_id;
+  uint64_t amf_ue_ngap_id;
   uint8_t pdu_session_id;
   oai::ngap::SNssai s_NSSAI;
 };
@@ -281,7 +281,7 @@ class itti_pdu_session_resource_release_command : public itti_msg_n2 {
     nas            = nullptr;
     n2sm           = nullptr;
     ran_ue_ngap_id = 0;
-    amf_ue_ngap_id = 0;
+    amf_ue_ngap_id = INVALID_AMF_UE_NGAP_ID;
     pdu_session_id = 0;
   }
   itti_pdu_session_resource_release_command(
@@ -301,7 +301,7 @@ class itti_pdu_session_resource_release_command : public itti_msg_n2 {
   bstring nas;
   bstring n2sm;
   uint32_t ran_ue_ngap_id;
-  long amf_ue_ngap_id;
+  uint64_t amf_ue_ngap_id;
   uint8_t pdu_session_id;
 };
 
@@ -327,7 +327,7 @@ class itti_ue_context_release_command : public itti_msg_n2 {
       const task_id_t origin, const task_id_t destination)
       : itti_msg_n2(UE_CONTEXT_RELEASE_COMMAND, origin, destination) {
     ran_ue_ngap_id = 0;
-    amf_ue_ngap_id = 0;
+    amf_ue_ngap_id = INVALID_AMF_UE_NGAP_ID;
     cause          = {};
   }
   itti_ue_context_release_command(const itti_ue_context_release_command& i)
@@ -339,7 +339,7 @@ class itti_ue_context_release_command : public itti_msg_n2 {
 
  public:
   uint32_t ran_ue_ngap_id;
-  long amf_ue_ngap_id;
+  uint64_t amf_ue_ngap_id;
   oai::ngap::Cause cause;
 };
 
@@ -395,7 +395,7 @@ class itti_paging : public itti_msg_n2 {
   itti_paging(const task_id_t origin, const task_id_t destination)
       : itti_msg_n2(PAGING, origin, destination) {
     ran_ue_ngap_id = 0;
-    amf_ue_ngap_id = 0;
+    amf_ue_ngap_id = INVALID_AMF_UE_NGAP_ID;
   }
   itti_paging(const itti_paging& i) : itti_msg_n2(i) {
     ran_ue_ngap_id = i.ran_ue_ngap_id;
@@ -404,7 +404,7 @@ class itti_paging : public itti_msg_n2 {
 
  public:
   uint32_t ran_ue_ngap_id;
-  long amf_ue_ngap_id;
+  uint64_t amf_ue_ngap_id;
 };
 
 class itti_handover_request_ack : public itti_msg_n2 {
@@ -457,7 +457,7 @@ class itti_rereoute_nas : public itti_msg_n2 {
   itti_rereoute_nas(const task_id_t origin, const task_id_t destination)
       : itti_msg_n2(REROUTE_NAS_REQ, origin, destination) {
     ran_ue_ngap_id = 0;
-    amf_ue_ngap_id = 0;
+    amf_ue_ngap_id = INVALID_AMF_UE_NGAP_ID;
     amf_set_id     = 0;
   }
   itti_rereoute_nas(const itti_rereoute_nas& i) : itti_msg_n2(i) {
@@ -467,7 +467,7 @@ class itti_rereoute_nas : public itti_msg_n2 {
   }
 
   uint32_t ran_ue_ngap_id;
-  long amf_ue_ngap_id;
+  uint64_t amf_ue_ngap_id;
   uint16_t amf_set_id;
 };
 
@@ -480,7 +480,7 @@ class itti_downlink_ue_associated_nrppa_transport : public itti_msg_n2 {
     nrppa_pdu      = nullptr;
     routing_id     = nullptr;
     ran_ue_ngap_id = 0;
-    amf_ue_ngap_id = 0;
+    amf_ue_ngap_id = INVALID_AMF_UE_NGAP_ID;
   }
   itti_downlink_ue_associated_nrppa_transport(
       const itti_downlink_ue_associated_nrppa_transport& i)
@@ -495,7 +495,7 @@ class itti_downlink_ue_associated_nrppa_transport : public itti_msg_n2 {
     utils::bdestroy_wrapper(&routing_id);
   };
   uint32_t ran_ue_ngap_id;
-  long amf_ue_ngap_id;
+  uint64_t amf_ue_ngap_id;
   bstring nrppa_pdu;
   bstring routing_id;
 };
@@ -508,7 +508,7 @@ class itti_uplink_ue_associated_nrppa_transport : public itti_msg_n2 {
     nrppa_pdu      = nullptr;
     routing_id     = nullptr;
     ran_ue_ngap_id = 0;
-    amf_ue_ngap_id = 0;
+    amf_ue_ngap_id = INVALID_AMF_UE_NGAP_ID;
   }
   itti_uplink_ue_associated_nrppa_transport(
       const itti_uplink_ue_associated_nrppa_transport& i)
@@ -524,7 +524,7 @@ class itti_uplink_ue_associated_nrppa_transport : public itti_msg_n2 {
   }
 
   uint32_t ran_ue_ngap_id;
-  long amf_ue_ngap_id;
+  uint64_t amf_ue_ngap_id;
   bstring nrppa_pdu;
   bstring routing_id;
 };

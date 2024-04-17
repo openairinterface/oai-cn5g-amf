@@ -51,9 +51,9 @@ class nas_context {
   nas_context();
   ~nas_context();
   bool ctx_avaliability_ind;
-  long amf_ue_ngap_id;
+  uint64_t amf_ue_ngap_id;
   uint32_t ran_ue_ngap_id;
-  long old_amf_ue_ngap_id;
+  uint64_t old_amf_ue_ngap_id;
   uint32_t old_ran_ue_ngap_id;
 
   cm_state_t nas_status;

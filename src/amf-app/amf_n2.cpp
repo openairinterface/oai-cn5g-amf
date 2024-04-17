@@ -611,8 +611,8 @@ void amf_n2::handle_itti_message(std::shared_ptr<itti_ng_reset>& itti_msg) {
     reset_type.getUeAssociatedLogicalNgConnectionList(
         ueAssociatedLogicalNGConnectionList);
     for (auto ue : ueAssociatedLogicalNGConnectionList) {
-      unsigned long amf_ue_ngap_id = {0};
-      uint32_t ran_ue_ngap_id      = {0};
+      uint64_t amf_ue_ngap_id = {0};
+      uint32_t ran_ue_ngap_id = {0};
       if (ue.getAmfUeNgapId(amf_ue_ngap_id)) {
         remove_ue_context_with_amf_ue_ngap_id(amf_ue_ngap_id);
       } else if (ue.getRanUeNgapId(ran_ue_ngap_id)) {
@@ -831,7 +831,7 @@ void amf_n2::handle_itti_message(
     std::shared_ptr<itti_ul_nas_transport>& ul_nas_transport) {
   Logger::amf_n2().debug("Handle Uplink NAS Transport...");
 
-  unsigned long amf_ue_ngap_id    = ul_nas_transport->ulNas->getAmfUeNgapId();
+  uint64_t amf_ue_ngap_id         = ul_nas_transport->ulNas->getAmfUeNgapId();
   uint32_t ran_ue_ngap_id         = ul_nas_transport->ulNas->getRanUeNgapId();
   std::shared_ptr<gnb_context> gc = {};
   if (!assoc_id_2_gnb_context(ul_nas_transport->assoc_id, gc)) {
@@ -1293,8 +1293,8 @@ void amf_n2::handle_itti_message(
     std::shared_ptr<itti_ue_context_release_request>& itti_msg) {
   Logger::amf_n2().debug("Handle UE Context Release Request ...");
 
-  unsigned long amf_ue_ngap_id = itti_msg->ueCtxRel->getAmfUeNgapId();
-  uint32_t ran_ue_ngap_id      = itti_msg->ueCtxRel->getRanUeNgapId();
+  uint64_t amf_ue_ngap_id = itti_msg->ueCtxRel->getAmfUeNgapId();
+  uint32_t ran_ue_ngap_id = itti_msg->ueCtxRel->getRanUeNgapId();
 
   // Store the list of PDU Session ID to be released/deactivated
   std::shared_ptr<ue_ngap_context> unc = {};
@@ -1447,8 +1447,8 @@ void amf_n2::handle_itti_message(
 void amf_n2::handle_itti_message(
     std::shared_ptr<itti_ue_context_release_complete>& itti_msg) {
   Logger::amf_n2().debug("Handle UE Context Release Complete ...");
-  unsigned long amf_ue_ngap_id = itti_msg->ueCtxRelCmpl->getAmfUeNgapId();
-  uint32_t ran_ue_ngap_id      = itti_msg->ueCtxRelCmpl->getRanUeNgapId();
+  uint64_t amf_ue_ngap_id = itti_msg->ueCtxRelCmpl->getAmfUeNgapId();
+  uint32_t ran_ue_ngap_id = itti_msg->ueCtxRelCmpl->getRanUeNgapId();
 
   // Get UE Context
   std::string ue_context_key =
@@ -1489,7 +1489,7 @@ void amf_n2::handle_itti_message(
     std::string supi = amf_conv::imsi_to_supi(nc->imsi);
     // Get the current AMF UE NGAP ID and compare with the one from
     // UEContextReleaseComplete
-    long current_amf_ue_ngap_id = INVALID_AMF_UE_NGAP_ID;
+    uint64_t current_amf_ue_ngap_id = INVALID_AMF_UE_NGAP_ID;
     amf_n1_inst->supi_2_amf_id(supi, current_amf_ue_ngap_id);
     if (current_amf_ue_ngap_id != amf_ue_ngap_id) {
       // Remove UE NGAP context
@@ -1641,10 +1641,8 @@ void amf_n2::handle_itti_message(
     return;
   }
 
-  unsigned long amf_ue_ngap_id = {0};
-  amf_ue_ngap_id               = itti_msg->ueRadioCap->getAmfUeNgapId();
-  uint32_t ran_ue_ngap_id      = {0};
-  ran_ue_ngap_id               = itti_msg->ueRadioCap->getRanUeNgapId();
+  uint64_t amf_ue_ngap_id = itti_msg->ueRadioCap->getAmfUeNgapId();
+  uint32_t ran_ue_ngap_id = itti_msg->ueRadioCap->getRanUeNgapId();
   OCTET_STRING_t ue_radio_cap;
   itti_msg->ueRadioCap->getUeRadioCapability(ue_radio_cap);
 
@@ -1659,8 +1657,8 @@ void amf_n2::handle_itti_message(
 bool amf_n2::handle_itti_message(
     std::shared_ptr<itti_handover_required>& itti_msg) {
   Logger::amf_n2().debug("Handling Handover Required ...");
-  unsigned long amf_ue_ngap_id = itti_msg->handoverReq->getAmfUeNgapId();
-  uint32_t ran_ue_ngap_id      = itti_msg->handoverReq->getRanUeNgapId();
+  uint64_t amf_ue_ngap_id = itti_msg->handoverReq->getAmfUeNgapId();
+  uint32_t ran_ue_ngap_id = itti_msg->handoverReq->getRanUeNgapId();
 
   std::shared_ptr<gnb_context> gc = {};
   if (!assoc_id_2_gnb_context(itti_msg->assoc_id, gc)) {
@@ -1936,8 +1934,8 @@ bool amf_n2::handle_itti_message(
 void amf_n2::handle_itti_message(
     std::shared_ptr<itti_handover_request_ack>& itti_msg) {
   Logger::amf_n2().debug("Handling Handover Request Ack ...");
-  unsigned long amf_ue_ngap_id = itti_msg->handoverRequestAck->getAmfUeNgapId();
-  uint32_t ran_ue_ngap_id      = itti_msg->handoverRequestAck->getRanUeNgapId();
+  uint64_t amf_ue_ngap_id = itti_msg->handoverRequestAck->getAmfUeNgapId();
+  uint32_t ran_ue_ngap_id = itti_msg->handoverRequestAck->getRanUeNgapId();
   Logger::amf_n2().debug(
       "Handover Request Ack ran_ue_ngap_id (" GNB_UE_NGAP_ID_FMT
       ") amf_ue_ngap_id (" AMF_UE_NGAP_ID_FMT ")",
@@ -2078,8 +2076,8 @@ void amf_n2::handle_itti_message(
 void amf_n2::handle_itti_message(
     std::shared_ptr<itti_handover_notify>& itti_msg) {
   Logger::amf_n2().info("Handle Handover Notify ...");
-  unsigned long amf_ue_ngap_id = itti_msg->handoverNotify->getAmfUeNgapId();
-  uint32_t ran_ue_ngap_id      = itti_msg->handoverNotify->getRanUeNgapId();
+  uint64_t amf_ue_ngap_id = itti_msg->handoverNotify->getAmfUeNgapId();
+  uint32_t ran_ue_ngap_id = itti_msg->handoverNotify->getRanUeNgapId();
   Logger::amf_n2().debug(
       "Handover Notify ran_ue_ngap_id (" GNB_UE_NGAP_ID_FMT
       ") amf_ue_ngap_id (" AMF_UE_NGAP_ID_FMT ")",
@@ -2273,7 +2271,7 @@ void amf_n2::handle_itti_message(
 void amf_n2::handle_itti_message(
     std::shared_ptr<itti_uplink_ran_status_transfer>& itti_msg) {
   Logger::amf_n2().debug("Handling Uplink RAN Status Transfer ...");
-  unsigned long amf_ue_ngap_id = itti_msg->uplinkRanTransfer->getAmfUeNgapId();
+  uint64_t amf_ue_ngap_id = itti_msg->uplinkRanTransfer->getAmfUeNgapId();
   Logger::amf_n2().debug(
       "Uplink RAN Status Transfer amf_ue_ngap_id (" AMF_UE_NGAP_ID_FMT ")",
       amf_ue_ngap_id);
@@ -2563,7 +2561,7 @@ void amf_n2::handle_itti_message(
 
 //------------------------------------------------------------------------------
 void amf_n2::send_handover_preparation_failure(
-    const unsigned long amf_ue_ngap_id, const uint32_t ran_ue_ngap_id,
+    const uint64_t amf_ue_ngap_id, const uint32_t ran_ue_ngap_id,
     const sctp_assoc_id_t& gnb_assoc_id) {
   // Create HandoverPreparationFailure message to be sent to target gNB
   auto ho_preparation_failure_msg =
@@ -2721,7 +2719,8 @@ void amf_n2::get_ue_ngap_contexts(
 
 //------------------------------------------------------------------------------
 bool amf_n2::amf_ue_id_2_ue_ngap_context(
-    const long& amf_ue_ngap_id, std::shared_ptr<ue_ngap_context>& unc) const {
+    const uint64_t& amf_ue_ngap_id,
+    std::shared_ptr<ue_ngap_context>& unc) const {
   std::shared_lock lock(m_amfueid2uecontext);
   if (amfueid2uecontext.count(amf_ue_ngap_id) > 0) {
     unc = amfueid2uecontext.at(amf_ue_ngap_id);
@@ -2737,14 +2736,14 @@ bool amf_n2::amf_ue_id_2_ue_ngap_context(
 
 //------------------------------------------------------------------------------
 void amf_n2::set_amf_ue_ngap_id_2_ue_ngap_context(
-    const long& amf_ue_ngap_id, std::shared_ptr<ue_ngap_context> unc) {
+    const uint64_t& amf_ue_ngap_id, std::shared_ptr<ue_ngap_context> unc) {
   std::unique_lock lock(m_amfueid2uecontext);
   amfueid2uecontext[amf_ue_ngap_id] = unc;
 }
 
 //------------------------------------------------------------------------------
 void amf_n2::remove_amf_ue_ngap_id_2_ue_ngap_context(
-    const long& amf_ue_ngap_id) {
+    const uint64_t& amf_ue_ngap_id) {
   std::unique_lock lock(m_amfueid2uecontext);
   if (amfueid2uecontext.count(amf_ue_ngap_id) > 0) {
     amfueid2uecontext.erase(amf_ue_ngap_id);
@@ -2752,7 +2751,8 @@ void amf_n2::remove_amf_ue_ngap_id_2_ue_ngap_context(
 }
 
 //------------------------------------------------------------------------------
-void amf_n2::remove_ue_context_with_amf_ue_ngap_id(const long& amf_ue_ngap_id) {
+void amf_n2::remove_ue_context_with_amf_ue_ngap_id(
+    const uint64_t& amf_ue_ngap_id) {
   // Remove all NAS context if still exist
   std::shared_ptr<nas_context> nc = {};
   if (amf_n1_inst->amf_ue_id_2_nas_context(amf_ue_ngap_id, nc)) {

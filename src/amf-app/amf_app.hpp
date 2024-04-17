@@ -72,7 +72,7 @@ class amf_app {
 
   util::uint_generator<uint32_t> tmsi_generator;
 
-  std::map<long, std::shared_ptr<ue_context>> amf_ue_ngap_id2ue_ctx;
+  std::map<uint64_t, std::shared_ptr<ue_context>> amf_ue_ngap_id2ue_ctx;
   mutable std::shared_mutex m_amf_ue_ngap_id2ue_ctx;
   std::map<std::string, std::shared_ptr<ue_context>> ue_ctx_key;
   mutable std::shared_mutex m_ue_ctx_key;
@@ -115,7 +115,7 @@ class amf_app {
    * Generate AMF UE NGAP ID
    * @return generated ID
    */
-  long generate_amf_ue_ngap_id();
+  uint64_t generate_amf_ue_ngap_id();
 
   /*
    * Handle ITTI message (NAS Signalling Establishment Request: Registration
