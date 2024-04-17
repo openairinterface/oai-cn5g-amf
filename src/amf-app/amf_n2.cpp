@@ -611,8 +611,8 @@ void amf_n2::handle_itti_message(std::shared_ptr<itti_ng_reset>& itti_msg) {
     reset_type.getUeAssociatedLogicalNgConnectionList(
         ueAssociatedLogicalNGConnectionList);
     for (auto ue : ueAssociatedLogicalNGConnectionList) {
-      uint64_t amf_ue_ngap_id = {0};
-      uint32_t ran_ue_ngap_id = {0};
+      uint64_t amf_ue_ngap_id = INVALID_AMF_UE_NGAP_ID;
+      uint32_t ran_ue_ngap_id = 0;
       if (ue.getAmfUeNgapId(amf_ue_ngap_id)) {
         remove_ue_context_with_amf_ue_ngap_id(amf_ue_ngap_id);
       } else if (ue.getRanUeNgapId(ran_ue_ngap_id)) {

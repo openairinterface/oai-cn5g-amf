@@ -4495,7 +4495,7 @@ bool amf_n1::find_ue_context(
 //------------------------------------------------------------------------------
 void amf_n1::mobile_reachable_timer_timeout(
     timer_id_t& timer_id, const std::string amf_ue_ngap_id_str) {
-  uint64_t amf_ue_ngap_id = {};
+  uint64_t amf_ue_ngap_id = INVALID_AMF_UE_NGAP_ID;
   try {
     amf_ue_ngap_id = std::stol(amf_ue_ngap_id_str);
   } catch (const std::exception& err) {
@@ -4532,7 +4532,7 @@ void amf_n1::mobile_reachable_timer_timeout(
 //------------------------------------------------------------------------------
 void amf_n1::implicit_deregistration_timer_timeout(
     timer_id_t timer_id, std::string amf_ue_ngap_id_str) {
-  uint64_t amf_ue_ngap_id = {};
+  uint64_t amf_ue_ngap_id = INVALID_AMF_UE_NGAP_ID;
   try {
     amf_ue_ngap_id = std::stol(amf_ue_ngap_id_str);
   } catch (const std::exception& err) {
