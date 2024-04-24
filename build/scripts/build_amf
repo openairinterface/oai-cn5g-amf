@@ -92,8 +92,12 @@ function main()
         shift 2;
         ;;
       -l | --lttng)
-        cmake_args="$cmake_args -DUSE_LTTNG=True"
-        echo ${cmake_args}
+        check_platform_for_lttng
+        output=$?
+        if [[ $output == 1 ]]; then
+          cmake_args="$cmake_args -DUSE_LTTNG=ON"
+          echo ${cmake_args}
+        fi
         shift;
         ;;
       -c | --clean)

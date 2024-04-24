@@ -61,18 +61,21 @@ RUN ./build_amf --install-deps --force
 #---------------------------------------------------------------------
 FROM oai-amf-base as oai-amf-builder
 # Copying source code
+ARG ENABLE_LTTNG=false
+
 COPY . /openair-amf
 # Building AMF
 WORKDIR /openair-amf/build/scripts
-RUN ldconfig && \
-# Uncomment the following lines if you want to build with lttng
-#    DEBIAN_FRONTEND=noninteractive apt-get install --yes \
-#      psmisc \
-#      git \
-#      liblttng-ust-dev \
-#      lttng-tools && \
-# Add the --lttng flag if you want to build with lttng to the following line
-    ./build_amf --clean --Verbose --build-type Release --jobs && \
+RUN  if [ "$ENABLE_LTTNG" = "true" ]; then DEBIAN_FRONTEND=noninteractive apt-get install --yes \
+        lttng-modules-dkms \
+        liblttng-ust-dev \
+        lttng-tools && \
+        ldconfig && \
+        ./build_amf --clean --Verbose --build-type Release --jobs --lttng; \
+    else \
+        ldconfig && \
+        ./build_amf --clean --Verbose --build-type Release --jobs; \
+    fi && \
     ldd /openair-amf/build/amf/build/amf && \
     mv /openair-amf/build/amf/build/amf /openair-amf/build/amf/build/oai_amf
 
@@ -122,6 +125,7 @@ RUN apt-get update && \
 # Ubuntu 22 --> boost74
       libboost-thread1.7?.0 \
       libboost-chrono1.7?.0 \
+      liblttng-ust-dev \
   && rm -rf /var/lib/apt/lists/*
 
 # Copying executable and generated libraries

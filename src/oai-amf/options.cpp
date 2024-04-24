@@ -27,7 +27,6 @@ int Options::options;
 std::string Options::m_yamlcfg;
 bool Options::m_log_rot_file_log;
 bool Options::m_log_stdout;
-bool Options::m_log_lttng;
 
 //------------------------------------------------------------------------------
 void Options::help() {
@@ -42,9 +41,6 @@ void Options::help() {
             << std::endl
             << "  -r, --rotatelog              Send the application logs to "
                "local file (in  current working directory)."
-            << std::endl
-            << "  -l, --lttng              Send the application logs to "
-               "LTTNG User Space."
             << std::endl;
 }
 
@@ -73,7 +69,6 @@ bool Options::parseInputOptions(int argc, char** argv) {
       {"yamlcfg", required_argument, NULL, 'f'},
       {"stdoutlog", no_argument, NULL, 'o'},
       {"rotatelog", no_argument, NULL, 'r'},
-      {"lttng", no_argument, NULL, 'l'},
       {NULL, 0, NULL, 0}};
 
   // Loop on arguments
@@ -102,11 +97,6 @@ bool Options::parseInputOptions(int argc, char** argv) {
         options |= log_rot_file_log;
         break;
       }
-      case 'l': {
-        m_log_lttng = true;
-        options |= m_log_lttng;
-        break;
-      }      
 
       case '?': {
         switch (optopt) {

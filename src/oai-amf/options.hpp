@@ -31,7 +31,6 @@ class Options {
   static const std::string& getYamlConfig() { return m_yamlcfg; }
   static const bool& getlogRotFilelog() { return m_log_rot_file_log; }
   static const bool& getlogStdout() { return m_log_stdout; }
-  static const bool& getlogLttng() {return m_log_lttng;}
 
  private:
   enum OptionsSelected {
@@ -47,7 +46,6 @@ class Options {
   static bool m_log_rot_file_log;
   static bool m_log_stdout;
   static std::string m_yamlcfg;
-  static bool m_log_lttng;
 };
 
 #endif  // #define __OPTIONS_H
