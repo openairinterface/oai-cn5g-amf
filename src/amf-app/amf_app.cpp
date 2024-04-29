@@ -278,10 +278,10 @@ void amf_app::stop() {
 }
 
 //------------------------------------------------------------------------------
-long amf_app::generate_amf_ue_ngap_id() {
-  long tmp = 0;
-  tmp      = __sync_fetch_and_add(&amf_app_ue_ngap_id_generator, 1);
-  return tmp & 0xffffffffff;
+uint64_t amf_app::generate_amf_ue_ngap_id() {
+  uint64_t tmp = 0;
+  tmp          = __sync_fetch_and_add(&amf_app_ue_ngap_id_generator, 1);
+  return tmp & 0x00ffffffff;  // 40 bits
 }
 
 //------------------------------------------------------------------------------
@@ -474,7 +474,7 @@ void amf_app::handle_itti_message(
 //------------------------------------------------------------------------------
 void amf_app::handle_itti_message(
     itti_nas_signalling_establishment_request& itti_msg) {
-  long amf_ue_ngap_id            = INVALID_AMF_UE_NGAP_ID;
+  uint64_t amf_ue_ngap_id        = INVALID_AMF_UE_NGAP_ID;
   std::shared_ptr<ue_context> uc = {};
 
   // Generate amf_ue_ngap_id if necessary
@@ -626,7 +626,7 @@ void amf_app::handle_itti_message(itti_sbi_n1_message_notification& itti_msg) {
           "No existing UE Context, Create a new one with SUPI %s",
           supi.c_str());
       uc                 = std::shared_ptr<ue_context>(new ue_context());
-      uc->amf_ue_ngap_id = -1;
+      uc->amf_ue_ngap_id = INVALID_AMF_UE_NGAP_ID;
       uc->supi           = supi;
       uc->gnb_id         = gnb_id;
       set_supi_2_ue_context(supi, uc);
@@ -637,7 +637,7 @@ void amf_app::handle_itti_message(itti_sbi_n1_message_notification& itti_msg) {
   // TODO: MmContext
   // TODO: PduSessionContext
 
-  long amf_ue_ngap_id = INVALID_AMF_UE_NGAP_ID;
+  uint64_t amf_ue_ngap_id = INVALID_AMF_UE_NGAP_ID;
   // Generate AMF UE NGAP ID if necessary
   if (!uc) {  // No UE context existed
     amf_ue_ngap_id = generate_amf_ue_ngap_id();

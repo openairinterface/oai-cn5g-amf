@@ -344,7 +344,7 @@ bool amf_conv::check_octet_string(const OCTET_STRING_t& octet_str) {
 
 //------------------------------------------------------------------------------
 std::string amf_conv::get_ue_context_key(
-    const uint32_t ran_ue_ngap_id, long amf_ue_ngap_id) {
+    const uint32_t ran_ue_ngap_id, uint64_t amf_ue_ngap_id) {
   return (
       "app_ue_ranid_" + std::to_string(ran_ue_ngap_id) + ":amfid_" +
       std::to_string(amf_ue_ngap_id));

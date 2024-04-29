@@ -29,7 +29,7 @@ nas_context::nas_context() : _5g_he_av(), _5g_av(), kamf(), _5gmm_capability() {
   is_auth_vectors_present                            = false;
   auts                                               = nullptr;
   ctx_avaliability_ind                               = false;
-  amf_ue_ngap_id                                     = 0;
+  amf_ue_ngap_id                                     = INVALID_AMF_UE_NGAP_ID;
   ran_ue_ngap_id                                     = 0;
   old_amf_ue_ngap_id                                 = INVALID_AMF_UE_NGAP_ID;
   old_ran_ue_ngap_id                                 = 0;

@@ -37,7 +37,7 @@ class ue_ngap_context {
  public:
   ue_ngap_context() {
     ran_ue_ngap_id        = 0;
-    amf_ue_ngap_id        = 0;
+    amf_ue_ngap_id        = INVALID_AMF_UE_NGAP_ID;
     target_ran_ue_ngap_id = 0;
 
     sctp_stream_recv = {};
@@ -67,7 +67,7 @@ class ue_ngap_context {
   }
 
   uint32_t ran_ue_ngap_id;         // 32bits
-  long amf_ue_ngap_id;             // 40bits
+  uint64_t amf_ue_ngap_id;         // 40bits
   uint32_t target_ran_ue_ngap_id;  // 32bits, for HO
 
   sctp_stream_id_t sctp_stream_recv;    // used to decide which ue in gNB

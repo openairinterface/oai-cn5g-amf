@@ -67,7 +67,7 @@ class amf_n1 {
    * @param [SecurityHeaderType_t] type: Security Header Type
    * @param [std::shared_ptr<nas_context>] nc: Shared pointer to the NAS context
    * @param [uint32_t] ran_ue_ngap_id: RAN UE NGAP Id
-   * @param [long] amf_ue_ngap_id: AMF UE NGAP Id
+   * @param [uint64_t] amf_ue_ngap_id: AMF UE NGAP Id
    * @param [bstring] plain_msg: NAS message in plain text
    * @param [std::string] snn: Serving Network
    * @param [uint8_t] ulCount: UL Sequence number
@@ -75,20 +75,20 @@ class amf_n1 {
    */
   void nas_signalling_establishment_request_handle(
       SecurityHeaderType_t type, std::shared_ptr<nas_context> nc,
-      uint32_t ran_ue_ngap_id, long amf_ue_ngap_id, bstring plain_msg,
+      uint32_t ran_ue_ngap_id, uint64_t amf_ue_ngap_id, bstring plain_msg,
       std::string snn, uint8_t ulCount);
 
   /*
    * Handle UL NAS message (Authentication Response, Security Mode Complete,
    * etc)
    * @param [const uint32_t] ran_ue_ngap_id: RAN UE NGAP Id
-   * @param [const long] amf_ue_ngap_id: AMF UE NGAP Id
+   * @param [const uint64_t] amf_ue_ngap_id: AMF UE NGAP Id
    * @param [bstring] plain_msg: NAS message in plain text
    * @param [const plmn_t&] plmn: PLMN
    * @return void
    */
   void uplink_nas_msg_handle(
-      const uint32_t ran_ue_ngap_id, const long amf_ue_ngap_id,
+      const uint32_t ran_ue_ngap_id, const uint64_t amf_ue_ngap_id,
       bstring plain_msg, const plmn_t& plmn);
 
   /*
@@ -131,44 +131,45 @@ class amf_n1 {
   /*
    * Verify if a UE NAS context associated with an AMF UE NGAP ID exists and is
    * not null
-   * @param [const long& ] amf_ue_ngap_id: AMF UE NGAP ID
+   * @param [const uint64_t& ] amf_ue_ngap_id: AMF UE NGAP ID
    * @param [std::shared_ptr<nas_context>&] nc: pointer to UE NAS context
    * @return true if the UE NAS context exists (and not null), otherwise false
    */
   bool amf_ue_id_2_nas_context(
-      const long& amf_ue_ngap_id, std::shared_ptr<nas_context>& nc) const;
+      const uint64_t& amf_ue_ngap_id, std::shared_ptr<nas_context>& nc) const;
 
   /*
    * Store an UE NAS context associated with an AMF UE NGAP ID
-   * @param [const long& ] amf_ue_ngap_id: AMF UE NGAP ID
+   * @param [const uint64_t& ] amf_ue_ngap_id: AMF UE NGAP ID
    * @param [const std::shared_ptr<nas_context>&] nc: pointer to UE NAS context
    * @return void
    */
   void set_amf_ue_ngap_id_2_nas_context(
-      const long& amf_ue_ngap_id, std::shared_ptr<nas_context> nc);
+      const uint64_t& amf_ue_ngap_id, std::shared_ptr<nas_context> nc);
 
   /*
    * Remove UE NAS context associated with an AMF UE NGAP ID
-   * @param [const long& ] amf_ue_ngap_id: AMF UE NGAP ID
+   * @param [const uint64_t& ] amf_ue_ngap_id: AMF UE NGAP ID
    * @return true if successful, otherwise return false
    */
-  bool remove_amf_ue_ngap_id_2_nas_context(const long& amf_ue_ngap_id);
+  bool remove_amf_ue_ngap_id_2_nas_context(const uint64_t& amf_ue_ngap_id);
 
   /*
    * Store the mapping between SUPI and AMF UE NGAP ID
    * @param [const std::string&] SUPI: UE SUPI
-   *@param [const long& ] amf_ue_ngap_id: AMF UE NGAP ID
+   *@param [const uint64_t& ] amf_ue_ngap_id: AMF UE NGAP ID
    * @return void
    */
-  void set_supi_2_amf_id(const std::string& supi, const long& amf_ue_ngap_id);
+  void set_supi_2_amf_id(
+      const std::string& supi, const uint64_t& amf_ue_ngap_id);
 
   /*
    * Get AMF UE NGAP ID
    * @param [const std::string&] SUPI: UE SUPI
-   * @param [long& ] amf_ue_ngap_id: AMF UE NGAP ID
+   * @param [uint64_t& ] amf_ue_ngap_id: AMF UE NGAP ID
    * @return true if success
    */
-  bool supi_2_amf_id(const std::string& supi, long& amf_ue_ngap_id);
+  bool supi_2_amf_id(const std::string& supi, uint64_t& amf_ue_ngap_id);
 
   /*
    * Remove AMF UE NGAP ID from the map with SUPI
@@ -419,19 +420,20 @@ class amf_n1 {
   /*
    * Find the UE Context associated with RAN UE NGAP ID and AMF UE NGAP ID
    * @param [uint32_t] ran_ue_ngap_id: RAN UE NGAP ID
-   * @param [long] amf_ue_ngap_id: AMF UE NGAP ID
+   * @param [uint64_t] amf_ue_ngap_id: AMF UE NGAP ID
    * @param [std::shared_ptr<ue_context>&] uc: Pointer to the UE Context
    * @return true if found, otherwise return false
    */
   bool find_ue_context(
-      uint32_t ran_ue_ngap_id, long amf_ue_ngap_id,
+      uint32_t ran_ue_ngap_id, uint64_t amf_ue_ngap_id,
       std::shared_ptr<ue_context>& uc);
 
   // Timers handling related functions
   /*
    * Handle the UE Reachable Timer timeout
    * @param [timer_id_t] timer_id: Timer ID
-   * @param [uint64_t] amf_ue_ngap_id: AMF UE NGAP ID
+   * @param [std::string] amf_ue_ngap_id_str: string representation of AMF UE
+   * NGAP ID
    * @return void
    */
   void mobile_reachable_timer_timeout(
@@ -486,7 +488,8 @@ class amf_n1 {
   /*
    * Handle the Implicit Deregistration Timer timeout
    * @param [timer_id_t] timer_id: Timer ID
-   * @param [uint64_t] amf_ue_ngap_id: AMF UE NGAP ID
+   * @param [std::string] amf_ue_ngap_id_str: string representation of AMF UE
+   * NGAP ID
    * @return void
    */
   void implicit_deregistration_timer_timeout(
@@ -697,12 +700,12 @@ class amf_n1 {
    * @param [uint8_t] status: Registration status
    * @param [uint8_t] http_version: HTTP version (for the notification)
    * @param [uint32_t] ran_ue_ngap_id: RAN UE NGAP ID
-   * @param [long] amf_ue_ngap_id: AMF UE NGAP ID
+   * @param [uint64_t] amf_ue_ngap_id: AMF UE NGAP ID
    * @return void
    */
   void handle_ue_registration_state_change(
       std::string supi, uint8_t status, uint8_t http_version,
-      uint32_t ran_ue_ngap_id, long amf_ue_ngap_id);
+      uint32_t ran_ue_ngap_id, uint64_t amf_ue_ngap_id);
 
   /*
    * Handle the UE Connectivity State Change event to trigger the notification
@@ -722,12 +725,12 @@ class amf_n1 {
    * @param [uint8_t] status: UE Loss of Connectivity status
    * @param [uint8_t] http_version: HTTP version (for the notification)
    * @param [uint32_t] ran_ue_ngap_id: RAN UE NGAP ID
-   * @param [long] amf_ue_ngap_id: AMF UE NGAP ID
+   * @param [uint64_t] amf_ue_ngap_id: AMF UE NGAP ID
    * @return void
    */
   void handle_ue_loss_of_connectivity_change(
       std::string supi, uint8_t status, uint8_t http_version,
-      uint32_t ran_ue_ngap_id, long amf_ue_ngap_id);
+      uint32_t ran_ue_ngap_id, uint64_t amf_ue_ngap_id);
 
   /*
    * Handle the UE Communication Failure event to trigger the notification to
@@ -745,27 +748,28 @@ class amf_n1 {
   /*
    * Trigger the UE Location Report notification to the subscribed NFs
    * @param [uint32_t] ran_ue_ngap_id: RAN UE NGAP ID
-   * @param [long] amf_ue_ngap_id: AMF UE NGAP ID
+   * @param [const uint64_t] amf_ue_ngap_id: AMF UE NGAP ID
    * @return void
    */
   void trigger_ue_location_report(
-      const uint32_t ran_ue_ngap_id, const long amf_ue_ngap_id);
+      const uint32_t ran_ue_ngap_id, const uint64_t amf_ue_ngap_id);
 
   /*
    * Handle UE-initiated Deregistration Request message
    * @param [const uint32_t] ran_ue_ngap_id: RAN UE NGAP ID
-   * @param [const long] amf_ue_ngap_id: AMF UE NGAP ID
+   * @param [const uint64_t] amf_ue_ngap_id: AMF UE NGAP ID
    * @param [bstring] nas: NAS message
    * @return void
    */
   void ue_initiate_de_registration_handle(
-      const uint32_t ran_ue_ngap_id, const long amf_ue_ngap_id, bstring nas);
+      const uint32_t ran_ue_ngap_id, const uint64_t amf_ue_ngap_id,
+      bstring nas);
 
   /*
    * Handle Registration Request message
    * @param [std::shared_ptr<nas_context>&] nc: Pointer to the NAS context
    * @param [const uint32_t] ran_ue_ngap_id: RAN UE NGAP ID
-   * @param [const long] amf_ue_ngap_id: AMF UE NGAP ID
+   * @param [const uint64_t] amf_ue_ngap_id: AMF UE NGAP ID
    * @param [const std::string&] snn: Serving Network
    * @param [bstring] reg: NAS Registration Request message
    * @param [uint8_t&] cause: 5GMM cause when Registration Request procedure not
@@ -774,69 +778,69 @@ class amf_n1 {
    */
   bool registration_request_handle(
       std::shared_ptr<nas_context>& nc, const uint32_t ran_ue_ngap_id,
-      const long amf_ue_ngap_id, const std::string& snn, bstring reg,
+      const uint64_t amf_ue_ngap_id, const std::string& snn, bstring reg,
       uint8_t& cause);
 
   /*
    * Handle Authentication Response message
    * @param [const uint32_t] ran_ue_ngap_id: RAN UE NGAP ID
-   * @param [const long] amf_ue_ngap_id: AMF UE NGAP ID
+   * @param [const uint64_t] amf_ue_ngap_id: AMF UE NGAP ID
    * @param [bstring] plain_msg: NAS Authentication Response message
    * @return void
    */
   void authentication_response_handle(
-      const uint32_t ran_ue_ngap_id, const long amf_ue_ngap_id,
+      const uint32_t ran_ue_ngap_id, const uint64_t amf_ue_ngap_id,
       bstring plain_msg);
 
   /*
    * Handle Authentication Failure message
    * @param [const uint32_t] ran_ue_ngap_id: RAN UE NGAP ID
-   * @param [const long] amf_ue_ngap_id: AMF UE NGAP ID
+   * @param [const uint64_t] amf_ue_ngap_id: AMF UE NGAP ID
    * @param [bstring] plain_msg: NAS Authentication Failure message
    * @return void
    */
   void authentication_failure_handle(
-      const uint32_t ran_ue_ngap_id, const long amf_ue_ngap_id,
+      const uint32_t ran_ue_ngap_id, const uint64_t amf_ue_ngap_id,
       bstring plain_msg);
 
   /*
    * Handle Security Mode Complete message
    * @param [const uint32_t] ran_ue_ngap_id: RAN UE NGAP ID
-   * @param [const long] amf_ue_ngap_id: AMF UE NGAP ID
+   * @param [const uint64_t] amf_ue_ngap_id: AMF UE NGAP ID
    * @param [bstring] nas_msg: NAS Security Mode Complete message
    * @return void
    */
   void security_mode_complete_handle(
-      const uint32_t ran_ue_ngap_id, const long amf_ue_ngap_id,
+      const uint32_t ran_ue_ngap_id, const uint64_t amf_ue_ngap_id,
       bstring nas_msg);
 
   /*
    * Handle Security Mode Reject message
    * @param [const uint32_t] ran_ue_ngap_id: RAN UE NGAP ID
-   * @param [const long] amf_ue_ngap_id: AMF UE NGAP ID
+   * @param [const uint64_t] amf_ue_ngap_id: AMF UE NGAP ID
    * @param [bstring] nas_msg: NAS Security Mode Reject message
    * @return void
    */
   void security_mode_reject_handle(
-      const uint32_t ran_ue_ngap_id, const long amf_ue_ngap_id,
+      const uint32_t ran_ue_ngap_id, const uint64_t amf_ue_ngap_id,
       bstring nas_msg);
 
   /*
    * Handle Registration Complete message
    * @param [const uint32_t] ran_ue_ngap_id: RAN UE NGAP ID
-   * @param [const long] amf_ue_ngap_id: AMF UE NGAP ID
+   * @param [const uint64_t] amf_ue_ngap_id: AMF UE NGAP ID
    * @param [bstring] nas: NAS message
    * @return void
    */
   void registration_complete_handle(
-      const uint32_t ran_ue_ngap_id, const long amf_ue_ngap_id,
+      const uint32_t ran_ue_ngap_id, const uint64_t amf_ue_ngap_id,
       bstring nas_msg);
 
   /*
    * Handle Service Request message
    * @param [std::shared_ptr<nas_context>&] nc: Pointer to the NAS context
    * @param [const uint32_t] ran_ue_ngap_id: RAN UE NGAP ID
-   * @param [const long] amf_ue_ngap_id: AMF UE NGAP ID
+   * @param [const uint64_t] amf_ue_ngap_id: AMF UE NGAP ID
    * @param [bstring] nas: NAS Service Request message
    * @param [uint8_t&] cause: 5GMM cause when service request procedure not
    * accepted by the network
@@ -844,13 +848,13 @@ class amf_n1 {
    */
   bool service_request_handle(
       std::shared_ptr<nas_context> nc, const uint32_t ran_ue_ngap_id,
-      const long amf_ue_ngap_id, bstring nas, uint8_t& cause);
+      const uint64_t amf_ue_ngap_id, bstring nas, uint8_t& cause);
 
   /*
    * Handle Service Request message
    * @param [std::shared_ptr<nas_context>&] nc: Pointer to the NAS context
    * @param [const uint32_t] ran_ue_ngap_id: RAN UE NGAP ID
-   * @param [const long] amf_ue_ngap_id: AMF UE NGAP ID
+   * @param [const uint64_t] amf_ue_ngap_id: AMF UE NGAP ID
    * @param [bstring] nas: NAS Service Request message
    * @param [uint8_t] ulCount: Uplink NAS count
    * @param [uint8_t&] cause: 5GMM cause when service request procedure not
@@ -859,7 +863,8 @@ class amf_n1 {
    */
   bool service_request_handle(
       std::shared_ptr<nas_context> nc, const uint32_t ran_ue_ngap_id,
-      const long amf_ue_ngap_id, bstring nas, uint8_t ulCount, uint8_t& cause);
+      const uint64_t amf_ue_ngap_id, bstring nas, uint8_t ulCount,
+      uint8_t& cause);
 
   /*
    * Send Service Reject to the UE
@@ -872,46 +877,46 @@ class amf_n1 {
   /*
    * Handle Identity Response message
    * @param [const uint32_t] ran_ue_ngap_id: RAN UE NGAP ID
-   * @param [const long] amf_ue_ngap_id: AMF UE NGAP ID
+   * @param [const uint64_t] amf_ue_ngap_id: AMF UE NGAP ID
    * @param [bstring] nas: NAS Service Request message
    * @return void
    */
   void identity_response_handle(
-      const uint32_t ran_ue_ngap_id, const long amf_ue_ngap_id,
+      const uint32_t ran_ue_ngap_id, const uint64_t amf_ue_ngap_id,
       bstring plain_msg);
 
   /*
    * Handle UL NAS Transport message
    * @param [const uint32_t] ran_ue_ngap_id: RAN UE NGAP ID
-   * @param [const long] amf_ue_ngap_id: AMF UE NGAP ID
+   * @param [const uint64_t] amf_ue_ngap_id: AMF UE NGAP ID
    * @param [bstring] nas: NAS message
    * @param [const plmn_t&] plmnn: PLMN
    * @return void
    */
   void ul_nas_transport_handle(
-      const uint32_t ran_ue_ngap_id, const long amf_ue_ngap_id, bstring nas,
+      const uint32_t ran_ue_ngap_id, const uint64_t amf_ue_ngap_id, bstring nas,
       const plmn_t& plmn);
 
   /*
    * Send ITTI message DL NAS Buffer to task N2
    * @param [bstring&] nas_msg: NAS message
    * @param [const uint32_t] ran_ue_ngap_id: RAN UE NGAP ID
-   * @param [const long] amf_ue_ngap_id: AMF UE NGAP ID
+   * @param [const uint64_t] amf_ue_ngap_id: AMF UE NGAP ID
    * @return void
    */
   void itti_send_dl_nas_buffer_to_task_n2(
       bstring& nas_msg, const uint32_t ran_ue_ngap_id,
-      const long amf_ue_ngap_id);
+      const uint64_t amf_ue_ngap_id);
 
   /*
    * Send ITTI message DL NAS Buffer to task N2
    * @param [const uint32_t] ran_ue_ngap_id: RAN UE NGAP ID
-   * @param [const long] amf_ue_ngap_id: AMF UE NGAP ID
+   * @param [const uint64_t] amf_ue_ngap_id: AMF UE NGAP ID
    * @param [uint8_t] cause_value: Value for Cause IE in NAS message
    * @return void
    */
   void send_registration_reject_msg(
-      const uint32_t ran_ue_ngap_id, const long amf_ue_ngap_id,
+      const uint32_t ran_ue_ngap_id, const uint64_t amf_ue_ngap_id,
       const uint8_t cause_value);
 
   /*

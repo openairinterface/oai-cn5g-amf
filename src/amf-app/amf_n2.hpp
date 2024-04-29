@@ -242,13 +242,13 @@ class amf_n2 : public oai::ngap::ngap_app {
 
   /*
    * Send Handover Preparaton Failure message
-   * @param [const unsigned long] amf_ue_ngap_id: AMF UE NGAP ID
+   * @param [const uint64_t] amf_ue_ngap_id: AMF UE NGAP ID
    * @param [const uint32_t] ran_ue_ngap_id: RAN UE NGAP ID
    * @param [const sctp_assoc_id_t&] gnb_assoc_id: gNB Association ID
    * @return void
    */
   void send_handover_preparation_failure(
-      const unsigned long amf_ue_ngap_id, const uint32_t ran_ue_ngap_id,
+      const uint64_t amf_ue_ngap_id, const uint32_t ran_ue_ngap_id,
       const sctp_assoc_id_t& gnb_assoc_id);
 
   /*
@@ -347,37 +347,38 @@ class amf_n2 : public oai::ngap::ngap_app {
   /*
    * Get UE NGAP context associated with a AMF UE NGAP ID if the context exists
    * and is not null
-   * @param [const long&] amf_ue_ngap_id: AMF UE NGAP ID
+   * @param [const uint64_t&] amf_ue_ngap_id: AMF UE NGAP ID
    * @param [std::shared_ptr<ue_ngap_context>&] unc: store the pointer to UE
    * NGAP context
    * @return true if the context exists and is not null, otherwise return false
    */
   bool amf_ue_id_2_ue_ngap_context(
-      const long& amf_ue_ngap_id, std::shared_ptr<ue_ngap_context>& unc) const;
+      const uint64_t& amf_ue_ngap_id,
+      std::shared_ptr<ue_ngap_context>& unc) const;
 
   /*
    * Store UE NGAP context associated with a AMF UE NGAP ID
-   * @param [const long&] amf_ue_ngap_id: AMF UE NGAP ID
+   * @param [const uint64_t&] amf_ue_ngap_id: AMF UE NGAP ID
    * @param [const std::shared_ptr<ue_ngap_context>&] unc: pointer to UE NGAP
    * context
    * @return void
    */
   void set_amf_ue_ngap_id_2_ue_ngap_context(
-      const long& amf_ue_ngap_id, std::shared_ptr<ue_ngap_context> unc);
+      const uint64_t& amf_ue_ngap_id, std::shared_ptr<ue_ngap_context> unc);
 
   /*
    * Remove UE NGAP context associated with a AMF UE NGAP ID
-   * @param [const long&] amf_ue_ngap_id: AMF UE NGAP ID
+   * @param [const uint64_t&] amf_ue_ngap_id: AMF UE NGAP ID
    * @return void
    */
-  void remove_amf_ue_ngap_id_2_ue_ngap_context(const long& amf_ue_ngap_id);
+  void remove_amf_ue_ngap_id_2_ue_ngap_context(const uint64_t& amf_ue_ngap_id);
 
   /*
    * Remove UE Context associated with a AMF UE NGAP ID
-   * @param [const unsigned long&] amf_ue_ngap_id: AMF UE NGAP ID
+   * @param [const unsigned uint64_t&] amf_ue_ngap_id: AMF UE NGAP ID
    * @return void
    */
-  void remove_ue_context_with_amf_ue_ngap_id(const long& amf_ue_ngap_id);
+  void remove_ue_context_with_amf_ue_ngap_id(const uint64_t& amf_ue_ngap_id);
 
   /*
    * Get list of UE Context associated with a gNB

@@ -431,7 +431,7 @@ int ngap_amf_handle_pdu_session_resource_setup_response(
           list)) {
     Logger::ngap().debug("No PduSessionResourceSetupResponseList available");
   } else {
-    long amf_ue_ngap_id = pdu_session_resource_setup_resp->getAmfUeNgapId();
+    uint64_t amf_ue_ngap_id = pdu_session_resource_setup_resp->getAmfUeNgapId();
     std::shared_ptr<nas_context> nct = {};
     if (!amf_n1_inst->amf_ue_id_2_nas_context(amf_ue_ngap_id, nct)) {
       Logger::ngap().error(
@@ -486,7 +486,8 @@ int ngap_amf_handle_pdu_session_resource_setup_response(
         (resource_setup_unsuccessful_transfer_ie.getCause() ==
          Ngap_CauseRadioNetwork_multiple_PDU_session_ID_instances)) {
       // TODO:
-      long amf_ue_ngap_id = pdu_session_resource_setup_resp->getAmfUeNgapId();
+      uint64_t amf_ue_ngap_id =
+          pdu_session_resource_setup_resp->getAmfUeNgapId();
 
       std::shared_ptr<nas_context> nct = {};
       if (!amf_n1_inst->amf_ue_id_2_nas_context(amf_ue_ngap_id, nct))

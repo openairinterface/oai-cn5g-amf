@@ -37,7 +37,7 @@ class itti_msg_amf_app : public itti_msg {
       : itti_msg(msg_type, origin, destination) {
     gnb_id         = 0;
     ran_ue_ngap_id = 0;
-    amf_ue_ngap_id = 0;
+    amf_ue_ngap_id = INVALID_AMF_UE_NGAP_ID;
   }
 
   itti_msg_amf_app(const itti_msg_amf_app& i) : itti_msg(i) {
@@ -48,7 +48,7 @@ class itti_msg_amf_app : public itti_msg {
 
   uint32_t gnb_id;
   uint32_t ran_ue_ngap_id;
-  long amf_ue_ngap_id;
+  uint64_t amf_ue_ngap_id;
 };
 
 class itti_nas_signalling_establishment_request : public itti_msg_amf_app {
