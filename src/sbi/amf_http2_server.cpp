@@ -51,7 +51,7 @@ extern amf_app* amf_app_inst;
 void amf_http2_server::start() {
   boost::system::error_code ec;
 
-  Logger::amf_server().info("HTTP2 server started");
+  Logger::amf_server().info("HTTP2 server being started");
   // N1N2MessageTransfer (URI:/ue-contexts/{ueContextId}/n1-n2-messages)
   // N1 Message Notify (URI:/ue-contexts/{ueContextId}/n1-message-notify)
   // N1N2MessageSubscribe (URI:
@@ -509,9 +509,10 @@ void amf_http2_server::start() {
         });
       });
 
-  if (server.listen_and_serve(ec, m_address, std::to_string(m_port))) {
-    std::cerr << "HTTP Server error: " << ec.message() << std::endl;
+  if (server.listen_and_serve(ec, m_address, std::to_string(m_port), true)) {
+    Logger::amf_server().debug("HTTP Server status: %s", ec.message());
   }
+  Logger::amf_server().info("HTTP2 server fully started");
 }
 
 //------------------------------------------------------------------------------
