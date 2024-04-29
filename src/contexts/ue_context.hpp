@@ -57,7 +57,7 @@ class ue_context {
 
  public:
   uint32_t ran_ue_ngap_id;  // 32bits
-  long amf_ue_ngap_id;      // 40bits
+  uint64_t amf_ue_ngap_id;  // 40bits
   uint32_t gnb_id;
   std::string supi;
   uint32_t tmsi;

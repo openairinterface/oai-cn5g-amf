@@ -34,7 +34,7 @@ class itti_msg_n1 : public itti_msg {
       : itti_msg(msg_type, origin, destination) {
     is_nas_signalling_estab_req = false;
     ran_ue_ngap_id              = 0;
-    amf_ue_ngap_id              = 0;
+    amf_ue_ngap_id              = INVALID_AMF_UE_NGAP_ID;
   }
   itti_msg_n1(const itti_msg_n1& i) : itti_msg(i) {
     is_nas_signalling_estab_req = i.is_nas_signalling_estab_req;
@@ -45,7 +45,7 @@ class itti_msg_n1 : public itti_msg {
 
  public:
   bool is_nas_signalling_estab_req;
-  long amf_ue_ngap_id;
+  uint64_t amf_ue_ngap_id;
   uint32_t ran_ue_ngap_id;
 };
 
