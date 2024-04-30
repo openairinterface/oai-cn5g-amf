@@ -1449,6 +1449,11 @@ void amf_n2::handle_itti_message(
   uint64_t amf_ue_ngap_id = itti_msg->ueCtxRelCmpl->getAmfUeNgapId();
   uint32_t ran_ue_ngap_id = itti_msg->ueCtxRelCmpl->getRanUeNgapId();
 
+  Logger::amf_n2().debug(
+      "UE Context Release Complete ran_ue_ngap_id (" GNB_UE_NGAP_ID_FMT
+      ") amf_ue_ngap_id (" AMF_UE_NGAP_ID_FMT ")",
+      ran_ue_ngap_id, amf_ue_ngap_id);
+
   // Get UE Context
   std::string ue_context_key =
       amf_conv::get_ue_context_key(ran_ue_ngap_id, amf_ue_ngap_id);
@@ -1479,6 +1484,8 @@ void amf_n2::handle_itti_message(
     unc->release_cause = 0;
     return;
   }
+
+  Logger::amf_n2().debug("Continue with UE Context Release Complete procedure");
 
   // Change UE status from CM-CONNECTED to CM-IDLE
   std::shared_ptr<nas_context> nc = {};
@@ -2667,6 +2674,10 @@ void amf_n2::remove_ran_ue_ngap_id_2_ngap_context(
   std::unique_lock lock(m_ranid2uecontext);
   if (ranid2uecontext.count(ue_id) > 0) {
     ranid2uecontext.erase(ue_id);
+    Logger::amf_n2().debug(
+        "Removed UE NGAP context with ran_ue_ngap_id " GNB_UE_NGAP_ID_FMT
+        ", gnb_id " GNB_ID_FMT "",
+        ran_ue_ngap_id, gnb_id);
   }
 }
 
