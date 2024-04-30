@@ -1468,6 +1468,11 @@ void amf_n2::handle_itti_message(
 
   // verify release cause -> if HandoverSuccessful no further operations
   // required
+  Logger::amf_n2().debug(
+      "Release cause %d No UE NGAP context with gnb_id " GNB_ID_FMT
+      ", Release gnb_id " GNB_ID_FMT "",
+      unc->release_cause, gc->gnb_id, unc->release_gnb);
+
   if (unc->release_cause == Ngap_CauseRadioNetwork_successful_handover &&
       gc->gnb_id == unc->release_gnb) {
     remove_ran_ue_ngap_id_2_ngap_context(ran_ue_ngap_id, gc->gnb_id);
@@ -2746,6 +2751,9 @@ void amf_n2::remove_amf_ue_ngap_id_2_ue_ngap_context(
   std::unique_lock lock(m_amfueid2uecontext);
   if (amfueid2uecontext.count(amf_ue_ngap_id) > 0) {
     amfueid2uecontext.erase(amf_ue_ngap_id);
+    Logger::amf_n2().debug(
+        "Removed UE NGAP context with amf_ue_ngap_id " AMF_UE_NGAP_ID_FMT "",
+        amf_ue_ngap_id);
   }
 }
 
