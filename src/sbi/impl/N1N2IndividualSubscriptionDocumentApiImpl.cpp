@@ -74,8 +74,8 @@ void N1N2IndividualSubscriptionDocumentApiImpl::n1_n2_message_un_subscribe(
       http_response_code = result["httpResponseCode"].get<int>();
     }
 
-    if (static_cast<http_response_codes_e>(http_response_code) ==
-        http_response_codes_e::HTTP_RESPONSE_CODE_204_NO_CONTENT) {
+    if (static_cast<oai::http::status_code_e>(http_response_code) ==
+        oai::http::status_code_e::HTTP_STATUS_CODE_204_NO_CONTENT) {
       response.send(Pistache::Http::Code::No_Content);
     } else {
       // Problem//details

@@ -90,8 +90,8 @@ void N1N2SubscriptionsCollectionForIndividualUEContextsDocumentApiImpl::
       json_data = result["createdData"];
     }
 
-    if (static_cast<http_response_codes_e>(http_response_code) ==
-        http_response_codes_e::HTTP_RESPONSE_CODE_201_CREATED) {
+    if (static_cast<oai::http::status_code_e>(http_response_code) ==
+        oai::http::status_code_e::HTTP_STATUS_CODE_201_CREATED) {
       response.headers().add<Pistache::Http::Header::Location>(
           location);  // Location header
       response.headers().add<Pistache::Http::Header::ContentType>(

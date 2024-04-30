@@ -869,10 +869,10 @@ void amf_sbi::handle_itti_message(
 
   if ((response_code ==
        static_cast<uint32_t>(
-           http_response_codes_e::HTTP_RESPONSE_CODE_201_CREATED)) or
+           oai::http::status_code_e::HTTP_STATUS_CODE_201_CREATED)) or
       (response_code ==
        static_cast<uint32_t>(
-           http_response_codes_e::HTTP_RESPONSE_CODE_200_OK))) {
+           oai::http::status_code_e::HTTP_STATUS_CODE_200_OK))) {
     Logger::amf_sbi().debug("NFRegistration, got successful response from NRF");
     Logger::amf_sbi().debug(
         "NF Instance Registration, response from NRF, JSON data: \n %s",
@@ -1072,8 +1072,8 @@ bool amf_sbi::discover_smf(
       "NFDiscovery, response from NRF, json data: \n %s",
       response_data.dump().c_str());
 
-  if (static_cast<http_response_codes_e>(response_code) !=
-      http_response_codes_e::HTTP_RESPONSE_CODE_200_OK) {
+  if (static_cast<oai::http::status_code_e>(response_code) !=
+      oai::http::status_code_e::HTTP_STATUS_CODE_200_OK) {
     Logger::amf_sbi().warn("NFDiscovery, could not get response from NRF");
     result = false;
   } else {
@@ -1184,10 +1184,10 @@ bool amf_sbi::send_ue_authentication_request(
   Logger::amf_sbi().debug(
       "UE Authentication, response from AUSF, HTTP Code: %lu", response_code);
 
-  if ((static_cast<http_response_codes_e>(response_code) ==
-       http_response_codes_e::HTTP_RESPONSE_CODE_200_OK) or
-      (static_cast<http_response_codes_e>(response_code) ==
-       http_response_codes_e::HTTP_RESPONSE_CODE_201_CREATED)) {
+  if ((static_cast<oai::http::status_code_e>(response_code) ==
+       oai::http::status_code_e::HTTP_STATUS_CODE_200_OK) or
+      (static_cast<oai::http::status_code_e>(response_code) ==
+       oai::http::status_code_e::HTTP_STATUS_CODE_201_CREATED)) {
     Logger::amf_sbi().debug(
         "UE Authentication, response from AUSF\n, %s ",
         response_data.dump().c_str());
@@ -1306,8 +1306,8 @@ bool amf_sbi::curl_http_client(
     Logger::amf_sbi().info("Get response with HTTP code (%ld)", httpCode);
     Logger::amf_sbi().info("Response body %s", response.c_str());
 
-    if (static_cast<http_response_codes_e>(httpCode) ==
-        http_response_codes_e::HTTP_RESPONSE_CODE_0) {
+    if (static_cast<oai::http::status_code_e>(httpCode) ==
+        oai::http::status_code_e::HTTP_STATUS_CODE_0) {
       // TODO: should be removed
       Logger::amf_sbi().error(
           "Cannot get response when calling %s", remote_uri.c_str());
@@ -1331,12 +1331,12 @@ bool amf_sbi::curl_http_client(
 
     Logger::amf_sbi().info("JSON part %s", json_data_response.c_str());
 
-    if ((static_cast<http_response_codes_e>(httpCode) !=
-         http_response_codes_e::HTTP_RESPONSE_CODE_200_OK) &&
-        (static_cast<http_response_codes_e>(httpCode) !=
-         http_response_codes_e::HTTP_RESPONSE_CODE_201_CREATED) &&
-        (static_cast<http_response_codes_e>(httpCode) !=
-         http_response_codes_e::HTTP_RESPONSE_CODE_204_NO_CONTENT)) {
+    if ((static_cast<oai::http::status_code_e>(httpCode) !=
+         oai::http::status_code_e::HTTP_STATUS_CODE_200_OK) &&
+        (static_cast<oai::http::status_code_e>(httpCode) !=
+         oai::http::status_code_e::HTTP_STATUS_CODE_201_CREATED) &&
+        (static_cast<oai::http::status_code_e>(httpCode) !=
+         oai::http::status_code_e::HTTP_STATUS_CODE_204_NO_CONTENT)) {
       // ERROR
       if (response.size() < 1) {
         Logger::amf_sbi().error("There's no content in the response");
@@ -1621,8 +1621,8 @@ void amf_sbi::curl_http_client(
     Logger::amf_sbi().info("Response body %s", response.c_str());
 
     response_code = httpCode;
-    if (static_cast<http_response_codes_e>(httpCode) ==
-        http_response_codes_e::HTTP_RESPONSE_CODE_0) {
+    if (static_cast<oai::http::status_code_e>(httpCode) ==
+        oai::http::status_code_e::HTTP_STATUS_CODE_0) {
       // TODO: should be removed
       Logger::amf_sbi().error(
           "Cannot get response when calling %s", remote_uri.c_str());
@@ -1644,12 +1644,12 @@ void amf_sbi::curl_http_client(
 
     Logger::amf_sbi().info("JSON part %s", json_data_response.c_str());
 
-    if ((static_cast<http_response_codes_e>(httpCode) !=
-         http_response_codes_e::HTTP_RESPONSE_CODE_200_OK) &&
-        (static_cast<http_response_codes_e>(httpCode) !=
-         http_response_codes_e::HTTP_RESPONSE_CODE_201_CREATED) &&
-        (static_cast<http_response_codes_e>(httpCode) !=
-         http_response_codes_e::HTTP_RESPONSE_CODE_204_NO_CONTENT)) {
+    if ((static_cast<oai::http::status_code_e>(httpCode) !=
+         oai::http::status_code_e::HTTP_STATUS_CODE_200_OK) &&
+        (static_cast<oai::http::status_code_e>(httpCode) !=
+         oai::http::status_code_e::HTTP_STATUS_CODE_201_CREATED) &&
+        (static_cast<oai::http::status_code_e>(httpCode) !=
+         oai::http::status_code_e::HTTP_STATUS_CODE_204_NO_CONTENT)) {
       // TODO:
 
     } else {  // Response with success code
@@ -1761,8 +1761,8 @@ void amf_sbi::curl_http_client(
 
     response_code = httpCode;
 
-    if (static_cast<http_response_codes_e>(httpCode) ==
-        http_response_codes_e::HTTP_RESPONSE_CODE_0) {
+    if (static_cast<oai::http::status_code_e>(httpCode) ==
+        oai::http::status_code_e::HTTP_STATUS_CODE_0) {
       Logger::amf_sbi().info(
           "Cannot get response when calling %s", remote_uri.c_str());
       // free curl before returning
@@ -1771,12 +1771,12 @@ void amf_sbi::curl_http_client(
       return;
     }
 
-    if ((static_cast<http_response_codes_e>(httpCode) !=
-         http_response_codes_e::HTTP_RESPONSE_CODE_200_OK) and
-        (static_cast<http_response_codes_e>(httpCode) !=
-         http_response_codes_e::HTTP_RESPONSE_CODE_201_CREATED) and
-        (static_cast<http_response_codes_e>(httpCode) !=
-         http_response_codes_e::HTTP_RESPONSE_CODE_204_NO_CONTENT)) {
+    if ((static_cast<oai::http::status_code_e>(httpCode) !=
+         oai::http::status_code_e::HTTP_STATUS_CODE_200_OK) and
+        (static_cast<oai::http::status_code_e>(httpCode) !=
+         oai::http::status_code_e::HTTP_STATUS_CODE_201_CREATED) and
+        (static_cast<oai::http::status_code_e>(httpCode) !=
+         oai::http::status_code_e::HTTP_STATUS_CODE_204_NO_CONTENT)) {
       is_response_ok = false;
 
       if (response.size() < 1) {
@@ -1830,8 +1830,8 @@ bool amf_sbi::get_nrf_uri(
         snssai, plmn, dnn_opt, amf_app_inst->get_nf_instance(), response_data,
         response_code);
 
-    if (static_cast<http_response_codes_e>(response_code) !=
-        http_response_codes_e::HTTP_RESPONSE_CODE_200_OK) {
+    if (static_cast<oai::http::status_code_e>(response_code) !=
+        oai::http::status_code_e::HTTP_STATUS_CODE_200_OK) {
       Logger::amf_sbi().warn("NS Selection, could not get response from NSSF");
       result = false;
     } else {

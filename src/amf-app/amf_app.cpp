@@ -753,7 +753,7 @@ void amf_app::handle_itti_message(itti_sbi_n1n2_message_subscribe& itti_msg) {
   nlohmann::json response_data      = {};
   response_data["createdData"]      = created_data;
   response_data["httpResponseCode"] = static_cast<uint32_t>(
-      http_response_codes_e::HTTP_RESPONSE_CODE_201_CREATED);
+      oai::http::status_code_e::HTTP_STATUS_CODE_201_CREATED);
   response_data["location"] = location;
 
   // Notify to the result
@@ -774,10 +774,10 @@ void amf_app::handle_itti_message(itti_sbi_n1n2_message_unsubscribe& itti_msg) {
   if (remove_n1n2_message_subscription(
           itti_msg.ue_cxt_id, itti_msg.subscription_id)) {
     response_data["httpResponseCode"] = static_cast<uint32_t>(
-        http_response_codes_e::HTTP_RESPONSE_CODE_204_NO_CONTENT);
+        oai::http::status_code_e::HTTP_STATUS_CODE_204_NO_CONTENT);
   } else {
     response_data["httpResponseCode"] = static_cast<uint32_t>(
-        http_response_codes_e::HTTP_RESPONSE_CODE_BAD_REQUEST);
+        oai::http::status_code_e::HTTP_STATUS_CODE_400_BAD_REQUEST);
     oai::model::common::ProblemDetails problem_details = {};
     // TODO set problem_details
     to_json(response_data["ProblemDetails"], problem_details);
@@ -819,7 +819,7 @@ void amf_app::handle_itti_message(itti_sbi_non_ue_n2_info_subscribe& itti_msg) {
   nlohmann::json response_data      = {};
   response_data["createdData"]      = created_data;
   response_data["httpResponseCode"] = static_cast<uint32_t>(
-      http_response_codes_e::HTTP_RESPONSE_CODE_201_CREATED);
+      oai::http::status_code_e::HTTP_STATUS_CODE_201_CREATED);
   response_data["location"] = location;
 
   // Notify to the result
@@ -840,10 +840,10 @@ void amf_app::handle_itti_message(
   nlohmann::json response_data = {};
   if (remove_non_ue_n2_info_subscription(itti_msg.subscription_id)) {
     response_data["httpResponseCode"] = static_cast<uint32_t>(
-        http_response_codes_e::HTTP_RESPONSE_CODE_204_NO_CONTENT);
+        oai::http::status_code_e::HTTP_STATUS_CODE_204_NO_CONTENT);
   } else {
     response_data["httpResponseCode"] = static_cast<uint32_t>(
-        http_response_codes_e::HTTP_RESPONSE_CODE_BAD_REQUEST);
+        oai::http::status_code_e::HTTP_STATUS_CODE_400_BAD_REQUEST);
     oai::model::common::ProblemDetails problem_details = {};
     // TODO set problem_details
     to_json(response_data["ProblemDetails"], problem_details);
@@ -871,11 +871,11 @@ void amf_app::handle_itti_message(
     Logger::amf_app().debug("Update PDU Session Release successfully");
 
     response_data["httpResponseCode"] = static_cast<uint32_t>(
-        http_response_codes_e::HTTP_RESPONSE_CODE_204_NO_CONTENT);
+        oai::http::status_code_e::HTTP_STATUS_CODE_204_NO_CONTENT);
 
   } else {
     response_data["httpResponseCode"] = static_cast<uint32_t>(
-        http_response_codes_e::HTTP_RESPONSE_CODE_204_NO_CONTENT);
+        oai::http::status_code_e::HTTP_STATUS_CODE_204_NO_CONTENT);
     // TODO check if we set problem_details
     Logger::amf_app().debug("Update PDU Session Release failed");
   }
@@ -900,11 +900,11 @@ void amf_app::handle_itti_message(itti_sbi_amf_configuration& itti_msg) {
   if (read_amf_configuration(response_data["content"])) {
     Logger::amf_app().debug(
         "AMF configuration:\n %s", response_data["content"].dump().c_str());
-    response_data["httpResponseCode"] =
-        static_cast<uint32_t>(http_response_codes_e::HTTP_RESPONSE_CODE_200_OK);
+    response_data["httpResponseCode"] = static_cast<uint32_t>(
+        oai::http::status_code_e::HTTP_STATUS_CODE_200_OK);
   } else {
     response_data["httpResponseCode"] = static_cast<uint32_t>(
-        http_response_codes_e::HTTP_RESPONSE_CODE_BAD_REQUEST);
+        oai::http::status_code_e::HTTP_STATUS_CODE_400_BAD_REQUEST);
     oai::model::common::ProblemDetails problem_details = {};
     // TODO set problem_details
     to_json(response_data["ProblemDetails"], problem_details);
@@ -931,8 +931,8 @@ void amf_app::handle_itti_message(itti_sbi_update_amf_configuration& itti_msg) {
   if (update_amf_configuration(response_data["content"])) {
     Logger::amf_app().debug(
         "AMF configuration:\n %s", response_data["content"].dump().c_str());
-    response_data["httpResponseCode"] =
-        static_cast<uint32_t>(http_response_codes_e::HTTP_RESPONSE_CODE_200_OK);
+    response_data["httpResponseCode"] = static_cast<uint32_t>(
+        oai::http::status_code_e::HTTP_STATUS_CODE_200_OK);
 
     // Update AMF profile
     generate_amf_profile();
@@ -943,7 +943,7 @@ void amf_app::handle_itti_message(itti_sbi_update_amf_configuration& itti_msg) {
 
   } else {
     response_data["httpResponseCode"] = static_cast<uint32_t>(
-        http_response_codes_e::HTTP_RESPONSE_CODE_BAD_REQUEST);
+        oai::http::status_code_e::HTTP_STATUS_CODE_400_BAD_REQUEST);
     oai::model::common::ProblemDetails problem_details = {};
     // TODO set problem_details
     to_json(response_data["ProblemDetails"], problem_details);
@@ -962,10 +962,10 @@ void amf_app::handle_itti_message(itti_sbi_register_nf_instance_response& r) {
 
   if ((r.http_response_code ==
        static_cast<uint32_t>(
-           http_response_codes_e::HTTP_RESPONSE_CODE_200_OK)) or
+           oai::http::status_code_e::HTTP_STATUS_CODE_200_OK)) or
       (r.http_response_code ==
        static_cast<uint32_t>(
-           http_response_codes_e::HTTP_RESPONSE_CODE_201_CREATED))) {
+           oai::http::status_code_e::HTTP_STATUS_CODE_201_CREATED))) {
     Logger::amf_app().debug("AMF has successfully registered to NRF.");
     nf_instance_profile = r.profile;
     // Set heartbeat timer
@@ -991,9 +991,10 @@ void amf_app::handle_itti_message(itti_sbi_register_nf_instance_response& r) {
 void amf_app::handle_itti_message(itti_sbi_deregister_nf_instance_response& r) {
   Logger::amf_app().debug("Handle NF Deregistration response");
 
-  auto response_code = static_cast<http_response_codes_e>(r.http_response_code);
+  auto response_code =
+      static_cast<oai::http::status_code_e>(r.http_response_code);
   if (response_code ==
-      http_response_codes_e::HTTP_RESPONSE_CODE_204_NO_CONTENT) {
+      oai::http::status_code_e::HTTP_STATUS_CODE_204_NO_CONTENT) {
     Logger::amf_app().debug("AMF has successfully deregistered to NRF.");
     // Stop Heartbeat with this NRF
     if (timer_nrfs_heartbeat.count(r.nrf_uri) > 0) {
@@ -1002,9 +1003,9 @@ void amf_app::handle_itti_message(itti_sbi_deregister_nf_instance_response& r) {
 
   } else if (
       (response_code ==
-       http_response_codes_e::HTTP_RESPONSE_CODE_TEMPORARY_REDIRECT) or
+       oai::http::status_code_e::HTTP_STATUS_CODE_307_TEMPORARY_REDIRECT) or
       (response_code ==
-       http_response_codes_e::HTTP_RESPONSE_CODE_PERMANENT_REDIRECT)) {
+       oai::http::status_code_e::HTTP_STATUS_CODE_308_PERMANENT_REDIRECT)) {
     // TODO: send new request to new NRF
   } else {
     // Deregistration failed, just ignore for the moment
@@ -1017,10 +1018,10 @@ void amf_app::handle_itti_message(itti_sbi_update_nf_instance_response& r) {
   Logger::amf_app().debug("Handle NF Update response");
   if (r.http_response_code !=
           static_cast<uint16_t>(
-              http_response_codes_e::HTTP_RESPONSE_CODE_204_NO_CONTENT) and
+              oai::http::status_code_e::HTTP_STATUS_CODE_204_NO_CONTENT) and
       (r.http_response_code !=
        static_cast<uint16_t>(
-           http_response_codes_e::HTTP_RESPONSE_CODE_200_OK))) {
+           oai::http::status_code_e::HTTP_STATUS_CODE_200_OK))) {
     register_to_nrf(r.nrf_uri);  // trigger again registration procedure
   } else {
     Logger::amf_app().debug(
@@ -1296,7 +1297,7 @@ bool amf_app::handle_nf_status_notification(
       "%d)",
       msg->http_version);
   http_code = static_cast<uint32_t>(
-      http_response_codes_e::HTTP_RESPONSE_CODE_204_NO_CONTENT);
+      oai::http::status_code_e::HTTP_STATUS_CODE_204_NO_CONTENT);
   return true;
 }
 
