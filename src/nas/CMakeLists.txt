@@ -22,6 +22,7 @@ file(GLOB AMF_NAS_src_files
   ${SRC_TOP_DIR}/${MOUNTED_COMMON}/nas/5gmm-msgs/*.cpp
   ${SRC_TOP_DIR}/${MOUNTED_COMMON}/nas/ies/*.cpp
   ${SRC_TOP_DIR}/${MOUNTED_COMMON}/nas/utils/*.c
+  ${SRC_TOP_DIR}/${MOUNTED_COMMON}/nas/utils/*.cpp
 )
 
 add_library (AMF_NAS STATIC ${AMF_NAS_src_files})

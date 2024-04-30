@@ -46,7 +46,7 @@ class itti_msg_n11 : public itti_msg {
       const itti_msg_type_t msg_type, const task_id_t origin,
       const task_id_t destination)
       : itti_msg(msg_type, origin, destination) {
-    amf_ue_ngap_id = 0;
+    amf_ue_ngap_id = INVALID_AMF_UE_NGAP_ID;
     ran_ue_ngap_id = 0;
     http_version   = 1;
   }
@@ -59,7 +59,7 @@ class itti_msg_n11 : public itti_msg {
 
  public:
   uint8_t http_version;
-  long amf_ue_ngap_id;
+  uint64_t amf_ue_ngap_id;
   uint32_t ran_ue_ngap_id;
 };
 
@@ -135,7 +135,7 @@ class itti_nsmf_pdusession_update_sm_context : public itti_msg_n11 {
     is_n2sm_set    = false;
     n2sm_info_type = {};
     ran_ue_ngap_id = 0;
-    amf_ue_ngap_id = 0;
+    amf_ue_ngap_id = INVALID_AMF_UE_NGAP_ID;
     promise_id     = 0;
     ho_state       = {};
     up_cnx_state   = {};

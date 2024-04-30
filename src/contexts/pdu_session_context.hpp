@@ -41,7 +41,7 @@ class pdu_session_context {
   ~pdu_session_context();
 
   uint32_t ran_ue_ngap_id;
-  long amf_ue_ngap_id;
+  uint64_t amf_ue_ngap_id;
   uint8_t req_type;
   uint8_t pdu_session_id;
   bstring n2sm;
