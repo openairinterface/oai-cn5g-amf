@@ -2138,8 +2138,15 @@ void amf_n2::handle_itti_message(
 
   std::string supi = amf_conv::imsi_to_supi(nc->imsi);
 
-  std::vector<std::shared_ptr<pdu_session_context>> sessions_ctx;
+  // Get old context and old gNB ID
+  uint32_t old_gnb_id;
+  std::shared_ptr<ue_context> old_uc = {};
+  if (amf_app_inst->supi_2_ue_context(supi, old_uc)) {
+    old_gnb_id = old_uc->gnb_id;
+  }
 
+  // Get PDU Session Context
+  std::vector<std::shared_ptr<pdu_session_context>> sessions_ctx;
   if (!amf_app_inst->get_pdu_sessions_context(supi, sessions_ctx)) {
     Logger::amf_n2().debug("No PDU Session Context found");
   }
@@ -2230,7 +2237,7 @@ void amf_n2::handle_itti_message(
 
   // update the NGAP Context
   unc->release_cause         = Ngap_CauseRadioNetwork_successful_handover;
-  unc->release_gnb           = uc->gnb_id;
+  unc->release_gnb           = old_gnb_id;
   unc->ran_ue_ngap_id        = ran_ue_ngap_id;  // store new RAN ID
   unc->target_ran_ue_ngap_id = 0;               // Clear target RAN ID
   unc->ng_ue_state           = NGAP_UE_CONNECTED;
