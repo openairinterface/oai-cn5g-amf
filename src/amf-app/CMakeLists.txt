@@ -55,6 +55,7 @@ target_include_directories(AMF_APP PUBLIC ${SRC_TOP_DIR}/secu_algorithms/nas_enc
 target_include_directories(AMF_APP PUBLIC ${SRC_TOP_DIR}/utils)
 target_include_directories(AMF_APP PUBLIC ${SRC_TOP_DIR}/${MOUNTED_COMMON}/logger)
 target_include_directories(AMF_APP PUBLIC ${SRC_TOP_DIR}/${MOUNTED_COMMON}/config)
+target_include_directories(AMF_APP PUBLIC ${SRC_TOP_DIR}/${MOUNTED_COMMON}/http)
 target_include_directories(AMF_APP PUBLIC ${SRC_TOP_DIR}/${MOUNTED_COMMON}/utils)
 target_include_directories(AMF_APP PUBLIC ${SRC_TOP_DIR}/${MOUNTED_COMMON}/utils/bstr)
 target_include_directories(AMF_APP PUBLIC ${SRC_TOP_DIR}/${MOUNTED_COMMON}/common)

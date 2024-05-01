@@ -245,6 +245,9 @@ class amf_sbi {
       const std::optional<std::string>& dnn, const std::string& amf_instance_id,
       nlohmann::json& response_data, uint32_t& response_code);
 
+  void create_multipart_content(
+      const std::string& json_data, const std::string& n1sm_msg,
+      const std::string& n2sm_msg, bool is_multipart, std::string& body);
   /*
    * CURL client to send request to the HTTP server
    * @param [const std::string&] remote_uri: Server's Address
