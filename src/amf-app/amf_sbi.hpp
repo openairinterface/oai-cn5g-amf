@@ -22,6 +22,7 @@
 #ifndef _AMF_SBI_H_
 #define _AMF_SBI_H_
 
+#include "3gpp_29.500.h"
 #include "AuthenticationInfo.h"
 #include "UEAuthenticationCtx.h"
 #include "itti_msg_sbi.hpp"
@@ -269,7 +270,7 @@ class amf_sbi {
   /*
    * CURL client to send request to the HTTP server
    * @param [const std::string&] remote_uri: Server's Address
-   * @param [const std::string&] method: HTTP method
+   * @param [oai::http::method_e] method: HTTP method
    * @param [const std::string&] msg_body: Msg body
    * @param [std::string&] response_json: Respone in Json format
    * @param [uint32_t&] response_code: HTTP Response code
@@ -277,7 +278,7 @@ class amf_sbi {
    * @return void
    */
   void curl_http_client(
-      const std::string& remote_uri, const std::string& method,
+      const std::string& remote_uri, oai::http::method_e method,
       const std::string& msg_body, nlohmann::json& response_json,
       uint32_t& response_code, const uint8_t& http_version = 1);
 

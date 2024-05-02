@@ -2232,7 +2232,7 @@ bool amf_n1::_5g_aka_confirmation_from_ausf(
   uint32_t response_code = 0;
 
   amf_sbi_inst->curl_http_client(
-      remoteUri, "PUT", msgBody, response, response_code,
+      remoteUri, oai::http::method_e::PUT, msgBody, response, response_code,
       amf_cfg.support_features.http_version);
 
   utils::free_wrapper((void**) &resStar_s);
