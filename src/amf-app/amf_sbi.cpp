@@ -1294,7 +1294,7 @@ bool amf_sbi::curl_http_client(
             // Establishment
     auto loc_header =
         http_response.headers.tryGet<Pistache::Http::Header::Location>();
-    if (!loc_header) {
+    if (loc_header) {
       std::string location = loc_header->location();
       Logger::amf_sbi().info(
           "Location of the created SMF context: %s", location.c_str());
