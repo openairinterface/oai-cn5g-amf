@@ -346,6 +346,8 @@ void amf_n1::handle_itti_message(itti_downlink_nas_transfer& itti_msg) {
           dnt->get_msg_name());
     }
   }
+
+  utils::bdestroy_wrapper(&protected_nas);
 }
 
 //------------------------------------------------------------------------------
