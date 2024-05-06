@@ -162,7 +162,8 @@ int main(int argc, char** argv) {
     // AMF HTTP2 server
     http2_server = new amf_http2_server(
         conv::toString(amf_cfg.sbi.addr4), amf_cfg.sbi.port, amf_app_inst);
-    http2_server->start();
+    std::thread amf_http2_manager(&amf_http2_server::start, http2_server);
+    amf_http2_manager.join();
   }
 
   Logger::amf_app().debug("Initiation Done!");
