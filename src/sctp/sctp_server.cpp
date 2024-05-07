@@ -70,12 +70,6 @@ sctp_server::~sctp_server() {
         "pthread_cancel on sctp_receiver_thread failed %s", strerror(errno));
   }
 
-  res = pthread_kill(tmp_thread, SIGTERM);
-  if (res != 0) {
-    Logger::sctp().error(
-        "pthread_kill on sctp_receiver_thread failed %s", strerror(errno));
-  }
-
   res = shutdown(socket_, SHUT_RDWR);
   if (res != 0) {
     Logger::sctp().error("shutdown on socket_ failed %s", strerror(errno));
