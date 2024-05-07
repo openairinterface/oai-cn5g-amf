@@ -97,6 +97,7 @@ class amf_http2_server {
   uint32_t m_port;
   http2 server;
   amf_application::amf_app* m_amf_app;
+  bool running_server;
 
  protected:
   static uint64_t generate_promise_id() {
