@@ -37,6 +37,7 @@
 #include "PatchItem.h"
 #include "3gpp_29.500.h"
 #include "utils.hpp"
+#include "AuthenticationInfo.h"
 
 using namespace amf_application;
 
@@ -697,4 +698,34 @@ class itti_sbi_determine_location_request : public itti_sbi_msg {
   uint32_t promise_id;
   nlohmann::json input_data;
 };
+
+//-----------------------------------------------------------------------------
+class itti_sbi_ue_authentication_request : public itti_sbi_msg {
+ public:
+  itti_sbi_ue_authentication_request(
+      const task_id_t orig, const task_id_t dest, uint32_t pid)
+      : itti_sbi_msg(SBI_UE_AUTHENTICATION_REQUEST, orig, dest),
+        promise_id(pid),
+        auth_info() {}
+  itti_sbi_ue_authentication_request(
+      const itti_sbi_ue_authentication_request& i)
+      : itti_sbi_msg(i) {
+    promise_id = i.promise_id;
+    auth_info  = i.auth_info;
+  }
+  itti_sbi_ue_authentication_request(
+      const itti_sbi_ue_authentication_request& i, const task_id_t orig,
+      const task_id_t dest)
+      : itti_sbi_msg(i, orig, dest) {
+    promise_id = i.promise_id;
+    auth_info  = i.auth_info;
+  }
+
+  virtual ~itti_sbi_ue_authentication_request(){};
+  const char* get_msg_name() { return "SBI_UE_AUTHENTICATION_REQUEST"; };
+
+  uint32_t promise_id;
+  oai::amf::model::AuthenticationInfo auth_info;
+};
+
 #endif /* ITTI_MSG_SBI_HPP_INCLUDED_ */

@@ -40,6 +40,7 @@
 #define AUTN_LENGTH_OCTETS (16)
 #define KASME_LENGTH_OCTETS (32)
 #define MAC_S_LENGTH (8)
+#define HXRES_LENGTH_OCTETS (16)
 
 #define AUTH_VECTOR_LENGTH_OCTETS 32
 
@@ -47,28 +48,28 @@ typedef mpz_t random_t;
 typedef mpz_t sqn_t;
 
 typedef struct {
-  uint8_t rand[16];
+  uint8_t rand[RAND_LENGTH_OCTETS];
   uint8_t rand_new;
   uint8_t xres[8];
-  uint8_t autn[16];
+  uint8_t autn[AUTN_LENGTH_OCTETS];
   uint8_t kasme[32];
 } auc_vector_t;
 
 typedef struct {
   uint8_t avType;
-  uint8_t rand[16];
+  uint8_t rand[RAND_LENGTH_OCTETS];
   uint8_t xres[8];
   uint8_t xresStar[16];
-  uint8_t autn[16];
+  uint8_t autn[AUTN_LENGTH_OCTETS];
   uint8_t kausf[32];
 } _5G_HE_AV_t;  // clause 6.3.6.2.5, ts33.501
 
 typedef struct {
   uint8_t avType;
-  uint8_t rand[16];
+  uint8_t rand[RAND_LENGTH_OCTETS];
   uint8_t hxres[16];
   uint8_t hxresStar[16];
-  uint8_t autn[16];
+  uint8_t autn[AUTN_LENGTH_OCTETS];
   uint8_t kseaf[32];
 } _5G_AV_t;
 
@@ -111,17 +112,20 @@ class Authentication_5gaka {
  public:
   /****** internal algorithms f1 f2 f3 f4 f5 ********/
   static void f1(
-      const uint8_t opc[16], const uint8_t k[16], const uint8_t _rand[16],
-      const uint8_t sqn[6], const uint8_t amf[2], uint8_t mac_a[8]);
+      const uint8_t opc[16], const uint8_t k[16],
+      const uint8_t _rand[RAND_LENGTH_OCTETS], const uint8_t sqn[6],
+      const uint8_t amf[2], uint8_t mac_a[8]);
   static void f1star(
-      const uint8_t kP[16], const uint8_t k[16], const uint8_t rand[16],
-      const uint8_t sqn[6], const uint8_t amf[2], uint8_t mac_s[8]);
+      const uint8_t kP[16], const uint8_t k[16],
+      const uint8_t rand[RAND_LENGTH_OCTETS], const uint8_t sqn[6],
+      const uint8_t amf[2], uint8_t mac_s[8]);
   static void f2345(
-      const uint8_t opc[16], const uint8_t k[16], const uint8_t _rand[16],
-      uint8_t res[8], uint8_t ck[16], uint8_t ik[16], uint8_t ak[6]);
+      const uint8_t opc[16], const uint8_t k[16],
+      const uint8_t _rand[RAND_LENGTH_OCTETS], uint8_t res[8], uint8_t ck[16],
+      uint8_t ik[16], uint8_t ak[6]);
   static void f5star(
-      const uint8_t kP[16], const uint8_t k[16], const uint8_t rand[16],
-      uint8_t ak[6]);
+      const uint8_t kP[16], const uint8_t k[16],
+      const uint8_t rand[RAND_LENGTH_OCTETS], uint8_t ak[6]);
 
  public:
   /****** key derive  ***********/
@@ -159,7 +163,7 @@ class Authentication_5gaka {
       const uint8_t kP[16], const uint8_t opP[16], uint8_t opcP[16]);
   static void generate_autn(
       const uint8_t sqn[6], const uint8_t ak[6], const uint8_t amf[2],
-      const uint8_t mac_a[8], uint8_t autn[16]);
+      const uint8_t mac_a[8], uint8_t autn[AUTN_LENGTH_OCTETS]);
   static int generate_vector(
       const uint8_t opc[16], uint64_t imsi, uint8_t key[16], uint8_t plmn[3],
       uint8_t sqn[6], auc_vector_t* vector);

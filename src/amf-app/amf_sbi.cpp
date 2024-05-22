@@ -207,6 +207,15 @@ void amf_sbi_task(void*) {
         amf_sbi_inst->handle_itti_message(std::ref(*m));
       } break;
 
+      case SBI_UE_AUTHENTICATION_REQUEST: {
+        Logger::amf_sbi().info(
+            "Receive UE Authentication Request message, "
+            "handling ...");
+        itti_sbi_ue_authentication_request* m =
+            dynamic_cast<itti_sbi_ue_authentication_request*>(msg);
+        amf_sbi_inst->handle_itti_message(std::ref(*m));
+      } break;
+
       case TERMINATE: {
         if (itti_msg_terminate* terminate =
                 dynamic_cast<itti_msg_terminate*>(msg)) {
@@ -1006,6 +1015,49 @@ void amf_sbi::handle_itti_message(
     return;
   }
 }
+
+//------------------------------------------------------------------------------
+void amf_sbi::handle_itti_message(
+    itti_sbi_ue_authentication_request& itti_msg) {
+  Logger::amf_sbi().debug(
+      "Send UE Authentication Request to AUSF (HTTP version %d)",
+      itti_msg.http_version);
+
+  nlohmann::json json_data = {};
+  to_json(json_data, itti_msg.auth_info);
+  std::string url = amf_cfg.get_ausf_ue_authentications_uri();
+
+  Logger::amf_sbi().debug(
+      "Send UE Authentication Request to AUSF, URL %s", url.c_str());
+
+  std::string body = json_data.dump();
+  Logger::amf_sbi().debug(
+      "Send UE Authentication Request to AUSF, msg body: \n %s", body.c_str());
+
+  nlohmann::json response_json = {};
+  uint32_t response_code       = 0;
+
+  curl_http_client(
+      url, "POST", body, response_json, response_code, itti_msg.http_version);
+
+  Logger::amf_sbi().debug(
+      "UE Authentication, response from AUSF, HTTP Code: %lu", response_code);
+
+  Logger::amf_sbi().debug(
+      "UE Authentication, response from AUSF\n, %s ",
+      response_json.dump().c_str());
+
+  nlohmann::json response_data      = {};
+  response_data["httpResponseCode"] = response_code;
+  response_data["jsonData"]         = response_json;
+
+  // Notify to the result
+  if (itti_msg.promise_id > 0) {
+    amf_app_inst->trigger_process_response(itti_msg.promise_id, response_data);
+    return;
+  }
+}
+
 //------------------------------------------------------------------------------
 bool amf_sbi::smf_selection_from_configuration(
     std::string& smf_uri_root, std::string& smf_api_version) {
@@ -1017,7 +1069,7 @@ bool amf_sbi::smf_selection_from_configuration(
 //------------------------------------------------------------------------------
 void amf_sbi::handle_post_sm_context_response_error(
     const long code, const std::string& cause, bstring n1sm,
-    const std::string& supi, const uint8_t pdu_session_id) {
+    const std::string& supi, uint8_t pdu_session_id) {
   output_wrapper::print_buffer(
       "amf_sbi", "N1 SM", (uint8_t*) bdata(n1sm), blength(n1sm));
   itti_n1n2_message_transfer_request* itti_msg =
@@ -1156,61 +1208,12 @@ bool amf_sbi::discover_smf(
   return result;
 }
 
-//-----------------------------------------------------------------------------------------------------
-bool amf_sbi::send_ue_authentication_request(
-    const oai::amf::model::AuthenticationInfo& auth_info,
-    oai::amf::model::UEAuthenticationCtx& ue_auth_ctx,
-    const uint8_t& http_version) {
-  Logger::amf_sbi().debug(
-      "Send UE Authentication Request to AUSF (HTTP version %d)", http_version);
-
-  nlohmann::json json_data = {};
-  to_json(json_data, auth_info);
-  std::string url = amf_cfg.get_ausf_ue_authentications_uri();
-
-  Logger::amf_sbi().debug(
-      "Send UE Authentication Request to AUSF, URL %s", url.c_str());
-
-  std::string body = json_data.dump();
-  Logger::amf_sbi().debug(
-      "Send UE Authentication Request to AUSF, msg body: \n %s", body.c_str());
-
-  nlohmann::json response_data = {};
-  uint32_t response_code       = 0;
-
-  curl_http_client(
-      url, "POST", body, response_data, response_code, http_version);
-
-  Logger::amf_sbi().debug(
-      "UE Authentication, response from AUSF, HTTP Code: %lu", response_code);
-
-  if ((static_cast<http_response_codes_e>(response_code) ==
-       http_response_codes_e::HTTP_RESPONSE_CODE_200_OK) or
-      (static_cast<http_response_codes_e>(response_code) ==
-       http_response_codes_e::HTTP_RESPONSE_CODE_201_CREATED)) {
-    Logger::amf_sbi().debug(
-        "UE Authentication, response from AUSF\n, %s ",
-        response_data.dump().c_str());
-    try {
-      from_json(response_data, ue_auth_ctx);
-    } catch (std::exception& e) {
-      return false;
-    }
-  } else {
-    Logger::amf_sbi().warn(
-        "UE Authentication, could not get response from AUSF");
-    return false;
-  }
-
-  return true;
-}
-
 //------------------------------------------------------------------------------
 bool amf_sbi::curl_http_client(
     const std::string& remote_uri, const std::string& json_data,
     const std::string& n1sm_msg, const std::string& n2sm_msg,
-    const std::string& supi, const uint8_t& pdu_session_id,
-    const uint8_t& http_version, const uint32_t& promise_id) {
+    const std::string& supi, uint8_t pdu_session_id, uint8_t http_version,
+    const uint32_t& promise_id) {
   bool curl_result = false;
   Logger::amf_sbi().debug("Call NF service: %s", remote_uri.c_str());
 
@@ -1523,7 +1526,7 @@ bool amf_sbi::curl_http_client(
 //------------------------------------------------------------------------------
 void amf_sbi::curl_http_client(
     const std::string& remote_uri, std::string& json_data,
-    std::string& n1sm_msg, std::string& n2sm_msg, const uint8_t& http_version,
+    std::string& n1sm_msg, std::string& n2sm_msg, uint8_t http_version,
     uint32_t& response_code, const uint32_t& promise_id) {
   Logger::amf_sbi().debug("Call NF service: %s", remote_uri.c_str());
 
@@ -1689,7 +1692,7 @@ void amf_sbi::curl_http_client(
 void amf_sbi::curl_http_client(
     const std::string& remote_uri, const std::string& method,
     const std::string& msg_body, nlohmann::json& response_json,
-    uint32_t& response_code, const uint8_t& http_version) {
+    uint32_t& response_code, uint8_t http_version) {
   Logger::amf_sbi().info("Send HTTP message to %s", remote_uri.c_str());
   Logger::amf_sbi().info("HTTP message Body: %s", msg_body.c_str());
 

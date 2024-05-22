@@ -142,7 +142,7 @@ class statistics {
    * @param [const uint32_t] gnb_id: gNB ID
    * @return void
    */
-  void remove_gnb(const uint32_t& gnb_id);
+  void remove_gnb(uint32_t gnb_id);
 
   /*
    * Add gNB to the list connected gNB to this AMF

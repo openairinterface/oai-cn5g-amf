@@ -149,6 +149,13 @@ class amf_sbi {
   void handle_itti_message(itti_sbi_determine_location_request& itti_msg);
 
   /*
+   * Handle ITTI message to trigger UE Authentication request towards AUSF
+   * @param [itti_sbi_ue_authentication_request&]: ITTI message
+   * @return void
+   */
+  void handle_itti_message(itti_sbi_ue_authentication_request& itti_msg);
+
+  /*
    * Handle request to create a new PDU Session
    * @param [const std::string&] supi: SUPI
    * @param [std::shared_ptr<pdu_session_context>&] psc: Pointer to the PDU
@@ -170,12 +177,12 @@ class amf_sbi {
    * @param [const std::string&] cause: Response cause
    * @param [bstring] n1sm: N1 SM message
    * @param [const std::string&] supi: SUPI
-   * @param [const uint8_t] pdu_session_id: PDU Session ID
+   * @param [uint8_t] pdu_session_id: PDU Session ID
    * @return void
    */
   void handle_post_sm_context_response_error(
       const long code, const std::string& cause, bstring n1sm,
-      const std::string& supi, const uint8_t pdu_session_id);
+      const std::string& supi, uint8_t pdu_session_id);
 
   /*
    * Send the request to update PDU session context at SMF
@@ -215,20 +222,6 @@ class amf_sbi {
       const std::string& nrf_uri = {});
 
   /*
-   * Send UE Authentication Request to AUSF
-   * @param [const oai::amf::model::AuthenticationInfo&] auth_info:
-   * Authentication Information
-   * @param [oai::amf::model::UEAuthenticationCtx& ] ue_auth_ctx: UE
-   * Authentication Context response
-   * @param [const uint8_t] http_version: HTTP versioin
-   * @return true if successful, otherwise return false
-   */
-  bool send_ue_authentication_request(
-      const oai::amf::model::AuthenticationInfo& auth_info,
-      oai::amf::model::UEAuthenticationCtx& ue_auth_ctx,
-      const uint8_t& http_version);
-
-  /*
    * Get NRF's URI from NSSF/configuration file
    * @param [const snssai_t&] snssai: SNSSAI
    * @param [const plmn_t&] plmn: PLMN
@@ -253,15 +246,15 @@ class amf_sbi {
    * @param [ const std::string&] n2sm_msg: N2 SM message
    * @param [ const std::string&] supi: SUPI
    * @param [const std::string&] pdu_session_id: PDU Session ID
-   * @param [const uint8_t&] http_version: HTTP versioin
-   * @param [const uint32_t&] promise_id: Promise ID
+   * @param [uint8_t] http_version: HTTP versioin
+   * @param [uint32_t] promise_id: Promise ID
    * @return void
    */
   bool curl_http_client(
       const std::string& remote_uri, const std::string& json_data,
       const std::string& n1sm_msg, const std::string& n2sm_msg,
-      const std::string& supi, const uint8_t& pdu_session_id,
-      const uint8_t& http_version = 1, const uint32_t& promise_id = 0);
+      const std::string& supi, uint8_t pdu_session_id, uint8_t http_version = 1,
+      const uint32_t& promise_id = 0);
 
   /*
    * CURL client to send request to the HTTP server
@@ -270,13 +263,13 @@ class amf_sbi {
    * @param [const std::string&] msg_body: Msg body
    * @param [std::string&] response_json: Respone in Json format
    * @param [uint32_t&] response_code: HTTP Response code
-   * @param [const uint8_t&] http_version: HTTP versioin
+   * @param [uint8_t] http_version: HTTP versioin
    * @return void
    */
   void curl_http_client(
       const std::string& remote_uri, const std::string& method,
       const std::string& msg_body, nlohmann::json& response_json,
-      uint32_t& response_code, const uint8_t& http_version = 1);
+      uint32_t& response_code, uint8_t http_version = 1);
 
   /*
    * CURL client to send request to the HTTP server
@@ -284,14 +277,14 @@ class amf_sbi {
    * @param [std::string&] json_data: Msg body
    * @param [std::string&] n1sm_msg: N1 SM message
    * @param [std::string&] n2sm_msg: N2 SM message
-   * @param [const uint8_t&] http_version: HTTP versioin
+   * @param [uint8_t] http_version: HTTP versioin
    * @param [uint32_t&] response_code: HTTP Response code
-   * @param [const uint32_t&] promise_id: Promise ID
+   * @param [uint32_t] promise_id: Promise ID
    * @return void
    */
   void curl_http_client(
       const std::string& remote_uri, std::string& json_data,
-      std::string& n1sm_msg, std::string& n2sm_msg, const uint8_t& http_version,
+      std::string& n1sm_msg, std::string& n2sm_msg, uint8_t http_version,
       uint32_t& response_code, const uint32_t& promise_id = 0);
 };
 
