@@ -211,7 +211,7 @@ void guami::validate() {
 }
 
 //------------------------------------------------------------------------------
-s_nssai::s_nssai(const uint8_t sst) {
+s_nssai::s_nssai(uint8_t sst) {
   m_sst = int_config_value(AMF_CONFIG_SST, sst);
   m_sst.set_validation_interval(SST_MIN_VALUE, SST_MAX_VALUE);
   m_sd = string_config_value(AMF_CONFIG_SD, AMF_CONFIG_SD_DEFAULT_VALUE);
@@ -220,7 +220,7 @@ s_nssai::s_nssai(const uint8_t sst) {
 }
 
 //------------------------------------------------------------------------------
-s_nssai::s_nssai(const uint8_t sst, const std::string& sd) {
+s_nssai::s_nssai(uint8_t sst, const std::string& sd) {
   m_sst = int_config_value(AMF_CONFIG_SST, sst);
   m_sst.set_validation_interval(SST_MIN_VALUE, SST_MAX_VALUE);
   m_sd = string_config_value(AMF_CONFIG_SD, sd);

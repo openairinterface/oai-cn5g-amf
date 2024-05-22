@@ -182,7 +182,7 @@ bool amf_conv::bstring_2_octet_string(
 //------------------------------------------------------------------------------
 bool amf_conv::octet_string_2_bit_string(
     const OCTET_STRING_t& octet_str, BIT_STRING_t& bit_str,
-    const uint8_t& bits_unused) {
+    uint8_t bits_unused) {
   if (!check_octet_string(octet_str)) return false;
 
   bit_str.buf = (uint8_t*) calloc(octet_str.size + 1, sizeof(uint8_t));
@@ -295,8 +295,7 @@ void amf_conv::string_2_octet_string(
 }
 
 //------------------------------------------------------------------------------
-bool amf_conv::int8_2_octet_string(
-    const uint8_t& value, OCTET_STRING_t& o_str) {
+bool amf_conv::int8_2_octet_string(uint8_t value, OCTET_STRING_t& o_str) {
   o_str.buf = (uint8_t*) calloc(1, sizeof(uint8_t));
   if (!o_str.buf) return false;
   o_str.size   = 1;

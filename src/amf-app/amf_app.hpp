@@ -307,13 +307,13 @@ class amf_app {
   /*
    * Update PDU Session Context status
    * @param [const std::string&] supi: UE SUPI
-   * @param [const uint8_t&] pdu_session_id: PDU Session ID
+   * @param [uint8_t] pdu_session_id: PDU Session ID
    * @param [const oai::amf::model::SmContextStatusNotification&]
    * statusNotification: Notification information received from SMF
    * @return true if success, otherwise false
    */
   bool update_pdu_sessions_context(
-      const std::string& supi, const uint8_t& pdu_session_id,
+      const std::string& supi, uint8_t pdu_session_id,
       const oai::amf::model::SmContextStatusNotification& statusNotification);
 
   /*

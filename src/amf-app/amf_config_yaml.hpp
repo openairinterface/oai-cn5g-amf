@@ -179,8 +179,8 @@ class s_nssai : public config_type {
   string_config_value m_sd{};  // in hex
 
  public:
-  explicit s_nssai(const uint8_t sst);
-  explicit s_nssai(const uint8_t sst, const std::string& sd);
+  explicit s_nssai(uint8_t sst);
+  explicit s_nssai(uint8_t sst, const std::string& sd);
 
   void from_yaml(const YAML::Node& node) override;
 
