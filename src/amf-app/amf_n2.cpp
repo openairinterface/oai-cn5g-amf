@@ -2138,13 +2138,6 @@ void amf_n2::handle_itti_message(
 
   std::string supi = amf_conv::imsi_to_supi(nc->imsi);
 
-  // Get old context and old gNB ID
-  uint32_t old_gnb_id;
-  std::shared_ptr<ue_context> old_uc = {};
-  if (amf_app_inst->supi_2_ue_context(supi, old_uc)) {
-    old_gnb_id = old_uc->gnb_id;
-  }
-
   // Get PDU Session Context
   std::vector<std::shared_ptr<pdu_session_context>> sessions_ctx;
   if (!amf_app_inst->get_pdu_sessions_context(supi, sessions_ctx)) {
