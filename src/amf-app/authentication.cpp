@@ -172,7 +172,7 @@ void authentication::generate_5g_he_av_in_udm(
   uint8_t ck[16];
   uint8_t ik[16];
   uint8_t ak[6];
-  uint64_t _imsi = utils::fromString<uint64_t>(imsi);
+  uint64_t _imsi = oai::utils::utils::fromString<uint64_t>(imsi);
 
   Authentication_5gaka::f1(
       opc, key, vector.rand, sqn, amf,
