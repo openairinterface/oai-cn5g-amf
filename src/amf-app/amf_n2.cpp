@@ -1712,8 +1712,7 @@ bool amf_n2::handle_itti_message(
         direct_forward_path_availability);
 
   unc->gnb_assoc_id = itti_msg->assoc_id;
-  unc->ncc++;
-  unc->ng_ue_state = NGAP_UE_HANDOVER;
+  unc->ng_ue_state  = NGAP_UE_HANDOVER;
 
   GlobalGnbId target_global_gnb_id = {};
   oai::ngap::Tai tai               = {};
@@ -1790,6 +1789,8 @@ bool amf_n2::handle_itti_message(
     Logger::amf_n2().error("No Security Context found");
     return false;
   }
+
+  unc->ncc = nc->security_ctx.value().ul_count.seq_num & 0x07;
 
   uint8_t kamf[AUTH_VECTOR_LENGTH_OCTETS];
   uint8_t kgnb[AUTH_VECTOR_LENGTH_OCTETS];
