@@ -147,7 +147,9 @@ class itti_dl_nas_transport : public itti_msg_n2 {
     amf_ue_ngap_id = i.amf_ue_ngap_id;
     nas            = bstrcpy(i.nas);
   }
-  virtual ~itti_dl_nas_transport() { utils::bdestroy_wrapper(&nas); }
+  virtual ~itti_dl_nas_transport() {
+    oai::utils::utils::bdestroy_wrapper(&nas);
+  }
 
  public:
   uint32_t ran_ue_ngap_id;
@@ -184,11 +186,11 @@ class itti_initial_context_setup_request : public itti_msg_n2 {
     }
   }
   virtual ~itti_initial_context_setup_request() {
-    utils::bdestroy_wrapper(&kgnb);
-    utils::bdestroy_wrapper(&nas);
+    oai::utils::utils::bdestroy_wrapper(&kgnb);
+    oai::utils::utils::bdestroy_wrapper(&nas);
     for (auto& p : pdu_sessions) {
       pdu_session_info_t item = {};
-      utils::bdestroy_wrapper(&p.second.n2sm);
+      oai::utils::utils::bdestroy_wrapper(&p.second.n2sm);
     }
   }
 
@@ -225,10 +227,10 @@ class itti_pdu_session_resource_setup_request : public itti_msg_n2 {
     }
   }
   virtual ~itti_pdu_session_resource_setup_request() {
-    utils::bdestroy_wrapper(&nas);
+    oai::utils::utils::bdestroy_wrapper(&nas);
     for (auto& p : pdu_sessions) {
       pdu_session_info_t item = {};
-      utils::bdestroy_wrapper(&p.second.n2sm);
+      oai::utils::utils::bdestroy_wrapper(&p.second.n2sm);
     }
   }
 
@@ -261,8 +263,8 @@ class itti_pdu_session_resource_modify_request : public itti_msg_n2 {
     s_NSSAI        = i.s_NSSAI;
   }
   virtual ~itti_pdu_session_resource_modify_request() {
-    utils::bdestroy_wrapper(&nas);
-    utils::bdestroy_wrapper(&n2sm);
+    oai::utils::utils::bdestroy_wrapper(&nas);
+    oai::utils::utils::bdestroy_wrapper(&n2sm);
   }
 
   bstring nas;
@@ -294,8 +296,8 @@ class itti_pdu_session_resource_release_command : public itti_msg_n2 {
     pdu_session_id = i.pdu_session_id;
   }
   virtual ~itti_pdu_session_resource_release_command() {
-    utils::bdestroy_wrapper(&nas);
-    utils::bdestroy_wrapper(&n2sm);
+    oai::utils::utils::bdestroy_wrapper(&nas);
+    oai::utils::utils::bdestroy_wrapper(&n2sm);
   }
 
   bstring nas;
@@ -491,8 +493,8 @@ class itti_downlink_ue_associated_nrppa_transport : public itti_msg_n2 {
     amf_ue_ngap_id = i.amf_ue_ngap_id;
   }
   virtual ~itti_downlink_ue_associated_nrppa_transport() {
-    utils::bdestroy_wrapper(&nrppa_pdu);
-    utils::bdestroy_wrapper(&routing_id);
+    oai::utils::utils::bdestroy_wrapper(&nrppa_pdu);
+    oai::utils::utils::bdestroy_wrapper(&routing_id);
   };
   uint32_t ran_ue_ngap_id;
   uint64_t amf_ue_ngap_id;
@@ -519,8 +521,8 @@ class itti_uplink_ue_associated_nrppa_transport : public itti_msg_n2 {
     amf_ue_ngap_id = i.amf_ue_ngap_id;
   }
   virtual ~itti_uplink_ue_associated_nrppa_transport() {
-    utils::bdestroy_wrapper(&nrppa_pdu);
-    utils::bdestroy_wrapper(&routing_id);
+    oai::utils::utils::bdestroy_wrapper(&nrppa_pdu);
+    oai::utils::utils::bdestroy_wrapper(&routing_id);
   }
 
   uint32_t ran_ue_ngap_id;
@@ -545,8 +547,8 @@ class itti_downlink_non_ue_associated_nrppa_transport : public itti_msg_n2 {
     routing_id = bstrcpy(i.routing_id);
   }
   virtual ~itti_downlink_non_ue_associated_nrppa_transport() {
-    utils::bdestroy_wrapper(&nrppa_pdu);
-    utils::bdestroy_wrapper(&routing_id);
+    oai::utils::utils::bdestroy_wrapper(&nrppa_pdu);
+    oai::utils::utils::bdestroy_wrapper(&routing_id);
   };
   bstring nrppa_pdu;
   bstring routing_id;
@@ -568,8 +570,8 @@ class itti_uplink_non_ue_associated_nrppa_transport : public itti_msg_n2 {
     routing_id = bstrcpy(i.routing_id);
   }
   virtual ~itti_uplink_non_ue_associated_nrppa_transport() {
-    utils::bdestroy_wrapper(&nrppa_pdu);
-    utils::bdestroy_wrapper(&routing_id);
+    oai::utils::utils::bdestroy_wrapper(&nrppa_pdu);
+    oai::utils::utils::bdestroy_wrapper(&routing_id);
   }
 
   bstring nrppa_pdu;

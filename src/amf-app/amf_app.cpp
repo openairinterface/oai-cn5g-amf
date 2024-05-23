@@ -722,7 +722,7 @@ void amf_app::handle_itti_message(itti_sbi_n1_message_notification& itti_msg) {
         itti_n1_msg->get_msg_name());
   }
 
-  utils::bdestroy_wrapper(&n1sm);
+  oai::utils::utils::bdestroy_wrapper(&n1sm);
   return;
 }
 
@@ -1331,7 +1331,7 @@ void amf_app::handle_determine_location_request() {
 
     // Wait for the response available and process accordingly
     std::optional<nlohmann::json> location_data = std::nullopt;
-    utils::wait_for_result(f, location_data);
+    oai::utils::utils::wait_for_result(f, location_data);
     if (location_data.has_value()) {
       nlohmann::json location_data_json = location_data.value();
 
@@ -1438,10 +1438,10 @@ void amf_app::generate_amf_profile() {
   nf_instance_profile.add_nf_ipv4_addresses(amf_cfg.sbi.addr4);
 
   // NF services
-  nf_service_t nf_service        = {};
-  nf_service.service_instance_id = "namf_communication";
-  nf_service.service_name        = "namf_communication";
-  nf_service_version_t version   = {};
+  oai::common::sbi::nf_service_t nf_service = {};
+  nf_service.service_instance_id            = "namf_communication";
+  nf_service.service_name                   = "namf_communication";
+  nf_service_version_t version              = {};
   if (amf_cfg.sbi.api_version.has_value())
     version.api_version_in_uri =
         amf_cfg.sbi.api_version.value_or(DEFAULT_SBI_API_VERSION);
@@ -1461,10 +1461,10 @@ void amf_app::generate_amf_profile() {
 
   // TODO: custom info
   // AMF info
-  amf_info_t info = {};
-  conv::int_to_string_hex(
+  oai::common::sbi::amf_info_t info = {};
+  oai::utils::conv::int_to_string_hex(
       amf_cfg.guami.region_id, info.amf_region_id, AMF_REGION_ID_LENGTH);
-  conv::int_to_string_hex(
+  oai::utils::conv::int_to_string_hex(
       amf_cfg.guami.amf_set_id, info.amf_set_id, AMF_SET_ID_LENGTH);
   for (auto g : amf_cfg.guami_list) {
     guami_t guami = {};
@@ -1587,7 +1587,8 @@ void amf_app::get_nrfs(std::unordered_set<std::string>& nrfs) {
     while (!nssf_responses.empty()) {
       // Wait for the result available and process accordingly
       std::optional<nlohmann::json> result_opt = std::nullopt;
-      utils::wait_for_result(nssf_responses.begin()->second, result_opt);
+      oai::utils::utils::wait_for_result(
+          nssf_responses.begin()->second, result_opt);
 
       if (result_opt.has_value()) {
         nlohmann::json result = result_opt.value();
@@ -1747,7 +1748,8 @@ void amf_app::trigger_pdu_session_release(
     while (!smf_responses.empty()) {
       // Wait for the result available and process accordingly
       std::optional<nlohmann::json> result_opt = std::nullopt;
-      utils::wait_for_result(smf_responses.begin()->second, result_opt);
+      oai::utils::utils::wait_for_result(
+          smf_responses.begin()->second, result_opt);
 
       if (result_opt.has_value()) {
         nlohmann::json result = result_opt.value();
@@ -1828,7 +1830,8 @@ void amf_app::trigger_pdu_session_up_deactivation(
     while (!curl_responses.empty()) {
       // Wait for the result available and process accordingly
       std::optional<nlohmann::json> result_opt = std::nullopt;
-      utils::wait_for_result(curl_responses.begin()->second, result_opt);
+      oai::utils::utils::wait_for_result(
+          curl_responses.begin()->second, result_opt);
 
       if (result_opt.has_value()) {
         nlohmann::json result = result_opt.value();
@@ -1915,7 +1918,8 @@ bool amf_app::trigger_pdu_session_up_activation(
     while (!curl_responses.empty()) {
       // Wait for the result available and process accordingly
       std::optional<nlohmann::json> result_opt = std::nullopt;
-      utils::wait_for_result(curl_responses.begin()->second, result_opt);
+      oai::utils::utils::wait_for_result(
+          curl_responses.begin()->second, result_opt);
 
       if (result_opt.has_value()) {
         nlohmann::json result = result_opt.value();
@@ -1997,7 +2001,7 @@ bool amf_app::trigger_pdu_session_up_activation(
 
     // Wait for the result available and process accordingly
     std::optional<nlohmann::json> result_opt = std::nullopt;
-    utils::wait_for_result(f, result_opt);
+    oai::utils::utils::wait_for_result(f, result_opt);
 
     if (result_opt.has_value()) {
       nlohmann::json result = result_opt.value();

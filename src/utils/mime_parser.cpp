@@ -145,7 +145,7 @@ unsigned char* mime_parser::format_string_as_hex(const std::string& str) {
   memcpy((void*) data, (void*) str.c_str(), str_len);
 
   unsigned char* data_hex = (uint8_t*) malloc(str_len / 2 + 1);
-  conv::ascii_to_hex(data_hex, (const char*) data);
+  oai::utils::conv::ascii_to_hex(data_hex, (const char*) data);
 
   Logger::amf_app().debug(
       "[Format string as Hex] Input string (%d bytes): %s ", str_len,
@@ -154,7 +154,7 @@ unsigned char* mime_parser::format_string_as_hex(const std::string& str) {
       "amf_app", "Data (formatted):", data_hex, str_len / 2);
 
   // free memory
-  utils::free_wrapper((void**) &data);
+  oai::utils::utils::free_wrapper((void**) &data);
   return data_hex;
 }
 

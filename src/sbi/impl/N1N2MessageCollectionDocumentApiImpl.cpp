@@ -295,10 +295,10 @@ void N1N2MessageCollectionDocumentApiImpl::n1_n2_message_transfer(
         itti_msg->get_msg_name());
   }
 
-  utils::bdestroy_wrapper(&n1sm);
-  utils::bdestroy_wrapper(&n2sm);
-  utils::bdestroy_wrapper(&nrppa_pdu);
-  utils::bdestroy_wrapper(&routing_id);
+  oai::utils::utils::bdestroy_wrapper(&n1sm);
+  oai::utils::utils::bdestroy_wrapper(&n2sm);
+  oai::utils::utils::bdestroy_wrapper(&nrppa_pdu);
+  oai::utils::utils::bdestroy_wrapper(&routing_id);
 }
 
 void N1N2MessageCollectionDocumentApiImpl::send_response(

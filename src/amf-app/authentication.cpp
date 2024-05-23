@@ -93,7 +93,7 @@ bool authentication::authentication_vectors_generator_in_udm(
         generate_random(vector[0].rand, RAND_LENGTH);
         mysql_push_rand_sqn(nc->imsi, vector[0].rand, sqn);
         mysql_increment_sqn(nc->imsi);
-        utils::free_wrapper((void**) &sqn);
+        oai::utils::utils::free_wrapper((void**) &sqn);
       }
       if (!get_mysql_auth_info(nc->imsi, mysql_resp)) {
         Logger::authentication().error("Cannot get data from MySQL");
