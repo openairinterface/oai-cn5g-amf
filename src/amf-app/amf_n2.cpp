@@ -2118,23 +2118,14 @@ void amf_n2::handle_itti_message(
   std::shared_ptr<nas_context> nc = {};
   if (!amf_n1_inst->amf_ue_id_2_nas_context(amf_ue_ngap_id, nc)) return;
 
-  // Get UE context, if the context doesn't exist, create a new one
+  uint32_t old_ran_ue_ngap_id    = unc->ran_ue_ngap_id;
   std::shared_ptr<ue_context> uc = {};
   std::string ue_context_key =
-      amf_conv::get_ue_context_key(ran_ue_ngap_id, amf_ue_ngap_id);
+      amf_conv::get_ue_context_key(old_ran_ue_ngap_id, amf_ue_ngap_id);
   if (!amf_app_inst->ran_amf_id_2_ue_context(ue_context_key, uc)) {
     Logger::amf_app().debug(
-        "No existing UE Context, Create a new one with ran_amf_id %s",
-        ue_context_key.c_str());
-    uc = std::make_shared<ue_context>();
-    amf_app_inst->set_ran_amf_id_2_ue_context(ue_context_key, uc);
+        "No existing UE Context, with %s", ue_context_key.c_str());
   }
-  // Store related information
-  uc->cgi            = NR_CGI;
-  uc->tai            = tai;
-  uc->ran_ue_ngap_id = ran_ue_ngap_id;
-  uc->amf_ue_ngap_id = amf_ue_ngap_id;
-  uc->gnb_id         = gc->gnb_id;
 
   std::string supi = amf_conv::imsi_to_supi(nc->imsi);
 
@@ -2177,7 +2168,7 @@ void amf_n2::handle_itti_message(
       itti_n11_msg->ho_state    = "COMPLETED";
 
       itti_n11_msg->amf_ue_ngap_id = amf_ue_ngap_id;
-      itti_n11_msg->ran_ue_ngap_id = ran_ue_ngap_id;
+      itti_n11_msg->ran_ue_ngap_id = old_ran_ue_ngap_id;
       itti_n11_msg->promise_id     = promise_id;
 
       int ret = itti_inst->send_msg(itti_n11_msg);
@@ -2217,7 +2208,7 @@ void amf_n2::handle_itti_message(
   // Send UE Release Command to Source gNB
   Logger::ngap().info("Send UE Release Command to source gNB");
   auto ueContextReleaseCommand = std::make_unique<UeContextReleaseCommandMsg>();
-  ueContextReleaseCommand->setUeNgapIdPair(amf_ue_ngap_id, unc->ran_ue_ngap_id);
+  ueContextReleaseCommand->setUeNgapIdPair(amf_ue_ngap_id, old_ran_ue_ngap_id);
   ueContextReleaseCommand->setCauseRadioNetwork(
       Ngap_CauseRadioNetwork_successful_handover);
 
@@ -2235,6 +2226,7 @@ void amf_n2::handle_itti_message(
   unc->target_ran_ue_ngap_id = 0;               // Clear target RAN ID
   unc->ng_ue_state           = NGAP_UE_CONNECTED;
   unc->gnb_assoc_id          = itti_msg->assoc_id;  // update serving gNB
+  set_ran_ue_ngap_id_2_ue_ngap_context(ran_ue_ngap_id, gc->gnb_id, unc);
 
   // update NAS Context
   nc->ran_ue_ngap_id = ran_ue_ngap_id;
@@ -2243,7 +2235,9 @@ void amf_n2::handle_itti_message(
   uc->ran_ue_ngap_id = ran_ue_ngap_id;
   uc->gnb_id         = gc->gnb_id;
 
-  set_ran_ue_ngap_id_2_ue_ngap_context(ran_ue_ngap_id, gc->gnb_id, unc);
+  std::string new_ue_context_key =
+      amf_conv::get_ue_context_key(ran_ue_ngap_id, amf_ue_ngap_id);
+  amf_app_inst->set_ran_amf_id_2_ue_context(new_ue_context_key, uc);
 
   // Retrieve new location from the UE and notify generate location change
   // signal
