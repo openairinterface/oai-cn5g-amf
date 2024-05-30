@@ -1646,6 +1646,8 @@ bool amf_n1::registration_request_handle(
         std::string supi = amf_conv::imsi_to_supi(nc->imsi);
         set_supi_2_amf_id(supi, amf_ue_ngap_id);
         set_supi_2_ran_id(supi, ran_ue_ngap_id);
+        // Update UE context
+        uc->supi = supi;
 
         // Try to find old nas_context and release
         std::shared_ptr<nas_context> old_nc = {};
@@ -1680,6 +1682,11 @@ bool amf_n1::registration_request_handle(
           "Decoded GUTI from registration request message %s", guti.c_str());
       if (guti.empty()) {
         Logger::amf_n1().warn("No GUTI IE");
+      }
+
+      // Update UE context
+      if (uc != nullptr) {
+        oai::utils::conv::get_tmsi_from_guti(guti, uc->tmsi);
       }
 
       if (nc) {
@@ -4727,10 +4734,11 @@ void amf_n1::initialize_registration_accept(
 bool amf_n1::find_ue_context(
     const std::shared_ptr<nas_context>& nc, std::shared_ptr<ue_context>& uc) {
   std::string supi = amf_conv::imsi_to_supi(nc->imsi);
-  Logger::amf_n1().debug("Key for PDU Session Context SUPI (%s)", supi.c_str());
-
   std::string ue_context_key =
       amf_conv::get_ue_context_key(nc->ran_ue_ngap_id, nc->amf_ue_ngap_id);
+
+  Logger::amf_n1().debug(
+      "Key for UE context search: %s", ue_context_key.c_str());
 
   if (!amf_app_inst->ran_amf_id_2_ue_context(ue_context_key, uc)) return false;
 
