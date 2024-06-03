@@ -87,6 +87,8 @@ FROM mikefarah/yq:latest as yq-source
 FROM $BASE_IMAGE as oai-amf
 ENV DEBIAN_FRONTEND=noninteractive
 ENV TZ=Europe/Paris
+ARG ENABLE_LTTNG=false
+
 # We install some debug tools for the moment in addition of mandatory libraries
 RUN apt-get update && \
     DEBIAN_FRONTEND=noninteractive apt-get upgrade --yes && \
@@ -103,8 +105,6 @@ RUN apt-get update && \
       openssl \
       libbrotli1 \
       netbase \
-# Uncomment the following lines if you want to build with lttng
-     liblttng-ust-dev \
 # Ubuntu 20 --> libasan5
 # Ubuntu 22 --> libasan6
 #      libasan? \
@@ -124,6 +124,8 @@ RUN apt-get update && \
 # Ubuntu 22 --> boost74
       libboost-thread1.7?.0 \
       libboost-chrono1.7?.0 \
+# lttng
+  && if [ "$ENABLE_LTTNG" = "true" ]; then DEBIAN_FRONTEND=noninteractive apt-get install --yes liblttng-ust-dev; fi \
   && rm -rf /var/lib/apt/lists/*
 
 # Copying executable and generated libraries
