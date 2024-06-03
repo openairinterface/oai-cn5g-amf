@@ -41,8 +41,9 @@
 */
 
 void Authentication_5gaka::f1(
-    const uint8_t opc[16], const uint8_t k[16], const uint8_t _rand[16],
-    const uint8_t sqn[6], const uint8_t amf[2], uint8_t mac_a[8]) {
+    const uint8_t opc[16], const uint8_t k[16],
+    const uint8_t _rand[RAND_LENGTH_OCTETS], const uint8_t sqn[6],
+    const uint8_t amf[2], uint8_t mac_a[8]) {
   uint8_t temp[16];
   uint8_t in1[16];
   uint8_t out1[16];
@@ -93,8 +94,9 @@ void Authentication_5gaka::f1(
 
   -----------------------------------------------------------------*/
 void Authentication_5gaka::f2345(
-    const uint8_t opc[16], const uint8_t k[16], const uint8_t _rand[16],
-    uint8_t res[8], uint8_t ck[16], uint8_t ik[16], uint8_t ak[6]) {
+    const uint8_t opc[16], const uint8_t k[16],
+    const uint8_t _rand[RAND_LENGTH_OCTETS], uint8_t res[8], uint8_t ck[16],
+    uint8_t ik[16], uint8_t ak[6]) {
   uint8_t temp[16];
   uint8_t out[16];
   uint8_t rijndaelInput[16];
@@ -164,8 +166,9 @@ void Authentication_5gaka::f2345(
   -----------------------------------------------------------------*/
 
 void Authentication_5gaka::f1star(
-    const uint8_t opc[16], const uint8_t k[16], const uint8_t _rand[16],
-    const uint8_t sqn[6], const uint8_t amf[2], uint8_t mac_s[8]) {
+    const uint8_t opc[16], const uint8_t k[16],
+    const uint8_t _rand[RAND_LENGTH_OCTETS], const uint8_t sqn[6],
+    const uint8_t amf[2], uint8_t mac_s[8]) {
   uint8_t temp[16];
   uint8_t in1[16];
   uint8_t out1[16];
@@ -217,8 +220,8 @@ void Authentication_5gaka::f1star(
 
   -----------------------------------------------------------------*/
 void Authentication_5gaka::f5star(
-    const uint8_t opc[16], const uint8_t k[16], const uint8_t _rand[16],
-    uint8_t ak[6]) {
+    const uint8_t opc[16], const uint8_t k[16],
+    const uint8_t _rand[RAND_LENGTH_OCTETS], uint8_t ak[6]) {
   uint8_t temp[16];
   uint8_t out[16];
   uint8_t rijndaelInput[16];
@@ -280,7 +283,7 @@ void Authentication_5gaka::ComputeOPc(
 
 void Authentication_5gaka::generate_autn(
     const uint8_t sqn[6], const uint8_t ak[6], const uint8_t amf[2],
-    const uint8_t mac_a[8], uint8_t autn[16]) {
+    const uint8_t mac_a[8], uint8_t autn[AUTN_LENGTH_OCTETS]) {
   for (int i = 0; i < 6; i++) {
     autn[i] = sqn[i] ^ ak[i];
   }

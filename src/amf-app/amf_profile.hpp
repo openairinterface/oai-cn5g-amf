@@ -177,7 +177,7 @@ class nf_profile : public std::enable_shared_from_this<nf_profile> {
    * @param [const uint16_t] p: instance priority
    * @return void
    */
-  void set_nf_priority(const uint16_t& p);
+  void set_nf_priority(uint16_t p);
 
   /*
    * Get NF instance priority
@@ -198,7 +198,7 @@ class nf_profile : public std::enable_shared_from_this<nf_profile> {
    * @param [const uint16_t] c: instance capacity
    * @return void
    */
-  void set_nf_capacity(const uint16_t& c);
+  void set_nf_capacity(uint16_t c);
 
   /*
    * Get NF instance priority
