@@ -602,7 +602,8 @@ void amf_n1::nas_signalling_establishment_request_handle(
     } break;
 
     case kServiceRequest: {
-      Logger::amf_n1().debug("Received Service Request message, handling...");
+      Logger::amf_n1().debug(
+          "Received Service Request message (InitialUeMessage), handling...");
       if (!nc) {
         Logger::amf_n1().error("No NAS Context found");
         return;
@@ -690,7 +691,8 @@ void amf_n1::uplink_nas_msg_handle(
     } break;
 
     case kServiceRequest: {
-      Logger::amf_n1().debug("Received Service Request message, handling...");
+      Logger::amf_n1().debug(
+          "Received Service Request message (UplinkNasTransport), handling...");
       std::shared_ptr<nas_context> nc = {};
       if (amf_ue_id_2_nas_context(amf_ue_ngap_id, nc)) {
         uint8_t service_reject_cause = k5gmmCauseProtocolErrorUnspecified;
@@ -1213,6 +1215,27 @@ bool amf_n1::service_request_handle(
     return false;
   }
 
+  // Update UE context
+  std::string supi = amf_conv::imsi_to_supi(nc->imsi);
+  uc->supi         = supi;
+  set_supi_2_amf_id(supi, amf_ue_ngap_id);
+  set_supi_2_ran_id(supi, ran_ue_ngap_id);
+
+  Logger::amf_n1().debug(
+      "amf_ue_ngap_id " AMF_UE_NGAP_ID_FMT
+      ", ran_ue_ngap_id " GNB_UE_NGAP_ID_FMT,
+      amf_ue_ngap_id, ran_ue_ngap_id);
+  Logger::amf_n1().debug("Key for PDU Session context: SUPI %s", supi.c_str());
+
+  // Get the status of PDU Session context
+  std::shared_ptr<ue_context> old_uc = {};
+  if (amf_app_inst->supi_2_ue_context(supi, old_uc)) {
+    uc->copy_pdu_sessions(old_uc);
+  }
+
+  // Associate SUPI with UC
+  amf_app_inst->set_supi_2_ue_context(supi, uc);
+
   // First send UEContextReleaseCommand to release old NAS signalling
   if (((nc->old_ran_ue_ngap_id != nc->ran_ue_ngap_id) and
        (nc->old_amf_ue_ngap_id != INVALID_AMF_UE_NGAP_ID))) {
@@ -1229,6 +1252,8 @@ bool amf_n1::service_request_handle(
       Logger::amf_app().error(
           "No UE context for ran_amf_id %s, exit", ue_context_key.c_str());
     } else {
+      // uc->copy_pdu_sessions(old_uc);
+
       std::shared_ptr<ue_ngap_context> unc = {};
       if (!amf_n2_inst->ran_ue_id_2_ue_ngap_context(
               nc->old_ran_ue_ngap_id, uc->gnb_id, unc)) {
@@ -1254,27 +1279,6 @@ bool amf_n1::service_request_handle(
   }
 
   auto service_accept = std::make_unique<ServiceAccept>();
-  std::string supi    = "imsi-" + nc->imsi;
-  uc->supi            = supi;
-  set_supi_2_amf_id(supi, amf_ue_ngap_id);
-  set_supi_2_ran_id(supi, ran_ue_ngap_id);
-
-  Logger::amf_n1().debug(
-      "amf_ue_ngap_id " AMF_UE_NGAP_ID_FMT
-      ", ran_ue_ngap_id " GNB_UE_NGAP_ID_FMT,
-      amf_ue_ngap_id, ran_ue_ngap_id);
-  Logger::amf_n1().debug("Key for PDU Session context: SUPI %s", supi.c_str());
-
-  // Get the status of PDU Session context
-  std::shared_ptr<pdu_session_context> old_psc = {};
-  std::shared_ptr<ue_context> old_uc           = {};
-  if (amf_app_inst->supi_2_ue_context(supi, old_uc)) {
-    uc->copy_pdu_sessions(old_uc);
-    amf_app_inst->set_supi_2_ue_context(supi, uc);
-  }
-
-  // Associate SUPI with UC
-  amf_app_inst->set_supi_2_ue_context(supi, uc);
 
   // Uplink Data Status
   std::optional<uint16_t> uplink_data_status_opt =
