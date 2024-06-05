@@ -386,7 +386,7 @@ void amf_http2_server::start() {
                   "Could not send ITTI message %s to task TASK_AMF_N2",
                   itti_msg->get_msg_name());
             }
-            utils::bdestroy_wrapper(&nrppa_pdu);
+            oai::utils::utils::bdestroy_wrapper(&nrppa_pdu);
           }
         });
       });
@@ -479,7 +479,8 @@ void amf_http2_server::start() {
                   "pdu_session_id %s", pdu_session_id_str.c_str());
 
               uint8_t pdu_session_id = 0;
-              if (conv::string_to_int8(pdu_session_id_str, pdu_session_id)) {
+              if (oai::utils::conv::string_to_int8(
+                      pdu_session_id_str, pdu_session_id)) {
                 Logger::amf_server().debug("Invalid PDU Session ID value");
                 response.write_head(static_cast<uint32_t>(
                     http_response_codes_e::HTTP_RESPONSE_CODE_BAD_REQUEST));
@@ -832,10 +833,10 @@ void amf_http2_server::n1_n2_message_transfer_handler(
         itti_msg->get_msg_name());
   }
 
-  utils::bdestroy_wrapper(&n1sm);
-  utils::bdestroy_wrapper(&n2sm);
-  utils::bdestroy_wrapper(&nrppa_pdu);
-  utils::bdestroy_wrapper(&routing_id);
+  oai::utils::utils::bdestroy_wrapper(&n1sm);
+  oai::utils::utils::bdestroy_wrapper(&n2sm);
+  oai::utils::utils::bdestroy_wrapper(&nrppa_pdu);
+  oai::utils::utils::bdestroy_wrapper(&routing_id);
 }
 
 //------------------------------------------------------------------------------
@@ -953,7 +954,7 @@ void amf_http2_server::n1_n2_message_subscribe_handler(
 
   // Wait for the result available and process accordingly
   std::optional<nlohmann::json> result_opt = std::nullopt;
-  utils::wait_for_result(f, result_opt);
+  oai::utils::utils::wait_for_result(f, result_opt);
 
   if (result_opt.has_value()) {
     Logger::amf_server().debug("Got result for promise ID %d", promise_id);
@@ -1038,7 +1039,7 @@ void amf_http2_server::n1_n2_message_unsubscribe_handler(
 
   // Wait for the result available and process accordingly
   std::optional<nlohmann::json> result_opt = std::nullopt;
-  utils::wait_for_result(f, result_opt);
+  oai::utils::utils::wait_for_result(f, result_opt);
 
   if (result_opt.has_value()) {
     Logger::amf_server().debug("Got result for promise ID %d", promise_id);
@@ -1110,7 +1111,7 @@ void amf_http2_server::non_ue_n2_info_subscribe_handler(
 
   // Wait for the result available and process accordingly
   std::optional<nlohmann::json> result_opt = std::nullopt;
-  utils::wait_for_result(f, result_opt);
+  oai::utils::utils::wait_for_result(f, result_opt);
 
   if (result_opt.has_value()) {
     Logger::amf_server().debug("Got result for promise ID %d", promise_id);
@@ -1191,7 +1192,7 @@ void amf_http2_server::non_ue_n2_info_unsubscribe_handler(
 
   // Wait for the result available and process accordingly
   std::optional<nlohmann::json> result_opt = std::nullopt;
-  utils::wait_for_result(f, result_opt);
+  oai::utils::utils::wait_for_result(f, result_opt);
 
   if (result_opt.has_value()) {
     Logger::amf_server().debug("Got result for promise ID %d", promise_id);
@@ -1265,7 +1266,7 @@ void amf_http2_server::status_notify_handler(
 
   // Wait for the response available and process accordingly
   std::optional<nlohmann::json> result_opt = std::nullopt;
-  utils::wait_for_result(f, result_opt);
+  oai::utils::utils::wait_for_result(f, result_opt);
 
   if (result_opt.has_value()) {
     Logger::amf_server().debug("Got result for promise ID %d", promise_id);
@@ -1336,7 +1337,7 @@ void amf_http2_server::get_configuration_handler(const response& response) {
 
   // Wait for the response available and process accordingly
   std::optional<nlohmann::json> result_opt = std::nullopt;
-  utils::wait_for_result(f, result_opt);
+  oai::utils::utils::wait_for_result(f, result_opt);
 
   if (result_opt.has_value()) {
     Logger::amf_server().debug("Got result for promise ID %d", promise_id);
@@ -1410,7 +1411,7 @@ void amf_http2_server::update_configuration_handler(
 
   // Wait for the response available and process accordingly
   std::optional<nlohmann::json> result_opt = std::nullopt;
-  utils::wait_for_result(f, result_opt);
+  oai::utils::utils::wait_for_result(f, result_opt);
 
   if (result_opt.has_value()) {
     Logger::amf_server().debug("Got result for promise ID %d", promise_id);

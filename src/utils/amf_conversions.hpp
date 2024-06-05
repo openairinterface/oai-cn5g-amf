@@ -37,7 +37,7 @@ extern "C" {
 #include "BIT_STRING.h"
 }
 
-class amf_conv : public conv {
+class amf_conv : public oai::utils::conv {
  public:
   static std::string tmsi_to_string(const uint32_t tmsi);
 

@@ -39,7 +39,8 @@ include_directories(${SRC_TOP_DIR}/${MOUNTED_COMMON}/nas/ies)
 include_directories(${SRC_TOP_DIR}/${MOUNTED_COMMON}/nas/common)
 include_directories(${SRC_TOP_DIR}/${MOUNTED_COMMON}/nas/utils)
 include_directories(${SRC_TOP_DIR}/${MOUNTED_COMMON}/ngap/libngap)
-include_directories(${SRC_TOP_DIR}/${MOUNTED_COMMON}/ngap/ngapIEs)
+include_directories(${SRC_TOP_DIR}/${MOUNTED_COMMON}/ngap/libngap_ies)
+include_directories(${SRC_TOP_DIR}/${MOUNTED_COMMON}/ngap/ngap_ies)
 include(${BUILD_TOP_DIR}/amf/used_models.cmake)
 
 file(GLOB AMF_API_SERVER_src_files

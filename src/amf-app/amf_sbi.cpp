@@ -374,7 +374,7 @@ void amf_sbi::handle_itti_message(itti_nsmf_pdusession_create_sm_context& smf) {
   if ((smf.dnn != nullptr) && (blength(smf.dnn) > 0)) {
     char* tmp = amf_conv::bstring2charString(smf.dnn);
     dnn       = tmp;
-    utils::free_wrapper((void**) &tmp);
+    oai::utils::utils::free_wrapper((void**) &tmp);
   }
 
   Logger::amf_sbi().debug("Requested DNN: %s", dnn.c_str());
@@ -1318,7 +1318,7 @@ bool amf_sbi::curl_http_client(
       curl_slist_free_all(headers);
       curl_easy_cleanup(curl);
       curl_global_cleanup();
-      utils::free_wrapper((void**) &body_data);
+      oai::utils::utils::free_wrapper((void**) &body_data);
       return curl_result;
     }
 
@@ -1346,7 +1346,7 @@ bool amf_sbi::curl_http_client(
         curl_slist_free_all(headers);
         curl_easy_cleanup(curl);
         curl_global_cleanup();
-        utils::free_wrapper((void**) &body_data);
+        oai::utils::utils::free_wrapper((void**) &body_data);
         // TODO: send context response error
         return curl_result;
       }
@@ -1405,7 +1405,7 @@ bool amf_sbi::curl_http_client(
         curl_slist_free_all(headers);
         curl_easy_cleanup(curl);
         curl_global_cleanup();
-        utils::free_wrapper((void**) &body_data);
+        oai::utils::utils::free_wrapper((void**) &body_data);
         // TODO:
         return curl_result;
       }
@@ -1466,8 +1466,8 @@ bool amf_sbi::curl_http_client(
         curl_slist_free_all(headers);
         curl_easy_cleanup(curl);
         curl_global_cleanup();
-        utils::free_wrapper((void**) &body_data);
-        utils::bdestroy_wrapper(&n1sm_hex);
+        oai::utils::utils::free_wrapper((void**) &body_data);
+        oai::utils::utils::bdestroy_wrapper(&n1sm_hex);
         return curl_result;
       }
 
@@ -1512,14 +1512,14 @@ bool amf_sbi::curl_http_client(
       }
     }
 
-    utils::bdestroy_wrapper(&n1sm_hex);
-    utils::bdestroy_wrapper(&n2sm_hex);
+    oai::utils::utils::bdestroy_wrapper(&n1sm_hex);
+    oai::utils::utils::bdestroy_wrapper(&n2sm_hex);
     curl_slist_free_all(headers);
     curl_easy_cleanup(curl);
   }
 
   curl_global_cleanup();
-  utils::free_wrapper((void**) &body_data);
+  oai::utils::utils::free_wrapper((void**) &body_data);
   return curl_result;
 }
 
@@ -1633,7 +1633,7 @@ void amf_sbi::curl_http_client(
       curl_slist_free_all(headers);
       curl_easy_cleanup(curl);
       curl_global_cleanup();
-      utils::free_wrapper((void**) &body_data);
+      oai::utils::utils::free_wrapper((void**) &body_data);
       return;
     }
 
@@ -1664,7 +1664,7 @@ void amf_sbi::curl_http_client(
         curl_slist_free_all(headers);
         curl_easy_cleanup(curl);
         curl_global_cleanup();
-        utils::free_wrapper((void**) &body_data);
+        oai::utils::utils::free_wrapper((void**) &body_data);
         // TODO:
         return;
       }
@@ -1685,7 +1685,7 @@ void amf_sbi::curl_http_client(
   }
 
   curl_global_cleanup();
-  utils::free_wrapper((void**) &body_data);
+  oai::utils::utils::free_wrapper((void**) &body_data);
 }
 
 //-----------------------------------------------------------------------------------------------------

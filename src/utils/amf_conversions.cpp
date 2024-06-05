@@ -56,7 +56,7 @@ void amf_conv::convert_string_2_hex(
     std::string& input_str, std::string& output_str) {
   unsigned char* data = (unsigned char*) malloc(input_str.length() + 1);
   if (!data) {
-    utils::free_wrapper((void**) &data);
+    oai::utils::utils::free_wrapper((void**) &data);
     return;
   }
   memset(data, 0, input_str.length() + 1);
@@ -66,8 +66,8 @@ void amf_conv::convert_string_2_hex(
 
   char* datahex = (char*) malloc(input_str.length() * 2 + 1);
   if (!datahex) {
-    utils::free_wrapper((void**) &datahex);
-    utils::free_wrapper((void**) &data);
+    oai::utils::utils::free_wrapper((void**) &datahex);
+    oai::utils::utils::free_wrapper((void**) &data);
     return;
   }
   memset(datahex, 0, input_str.length() * 2 + 1);
@@ -76,8 +76,8 @@ void amf_conv::convert_string_2_hex(
     sprintf(datahex + i * 2, "%02x", data[i]);
 
   output_str = reinterpret_cast<char*>(datahex);
-  utils::free_wrapper((void**) &datahex);
-  utils::free_wrapper((void**) &data);
+  oai::utils::utils::free_wrapper((void**) &datahex);
+  oai::utils::utils::free_wrapper((void**) &data);
 }
 
 //------------------------------------------------------------------------------
@@ -88,7 +88,7 @@ unsigned char* amf_conv::format_string_as_hex(std::string str) {
 
   unsigned char* data = (unsigned char*) malloc(str_len + 1);
   if (!data) {
-    utils::free_wrapper((void**) &data);
+    oai::utils::utils::free_wrapper((void**) &data);
     return nullptr;
   }
   memset(data, 0, str_len + 1);
@@ -119,7 +119,7 @@ unsigned char* amf_conv::format_string_as_hex(std::string str) {
   }
   if (Logger::should_log(spdlog::level::debug)) printf("\n");
 
-  utils::free_wrapper((void**) &data);
+  oai::utils::utils::free_wrapper((void**) &data);
   return datavalue;
 }
 
@@ -131,7 +131,7 @@ char* amf_conv::bstring2charString(bstring b) {
   uint8_t* value = (uint8_t*) bdata(b);
   for (int i = 0; i < blength(b); i++) buf[i] = (char) value[i];
   buf[blength(b)] = '\0';
-  // utils::free_wrapper((void**) &value);
+  // oai::utils::utils::free_wrapper((void**) &value);
   value = nullptr;
   return buf;
 }
@@ -144,7 +144,7 @@ void amf_conv::msg_str_2_msg_hex(std::string msg, bstring& b) {
   unsigned int msg_len = msg_hex_str.length();
   char* data           = (char*) malloc(msg_len + 1);
   if (!data) {
-    utils::free_wrapper((void**) &data);
+    oai::utils::utils::free_wrapper((void**) &data);
     return;
   }
 
@@ -153,14 +153,14 @@ void amf_conv::msg_str_2_msg_hex(std::string msg, bstring& b) {
 
   uint8_t* msg_hex = (uint8_t*) malloc(msg_len / 2 + 1);
   if (!msg_hex) {
-    utils::free_wrapper((void**) &msg_hex);
+    oai::utils::utils::free_wrapper((void**) &msg_hex);
     return;
   }
 
-  conv::ascii_to_hex(msg_hex, (const char*) data);
+  oai::utils::conv::ascii_to_hex(msg_hex, (const char*) data);
   b = blk2bstr(msg_hex, (msg_len / 2));
-  utils::free_wrapper((void**) &data);
-  utils::free_wrapper((void**) &msg_hex);
+  oai::utils::utils::free_wrapper((void**) &data);
+  oai::utils::utils::free_wrapper((void**) &msg_hex);
 }
 
 //------------------------------------------------------------------------------

@@ -59,7 +59,7 @@ void StatusNotifyApiImpl::receive_pdu_session_status_notification(
   Logger::amf_server().debug("Receive an NF Status Notify, handling...");
 
   uint8_t pdu_session_id = 0;
-  if (conv::string_to_int8(pduSessionId, pdu_session_id)) {
+  if (oai::utils::conv::string_to_int8(pduSessionId, pdu_session_id)) {
     // TODO:
     Logger::amf_server().debug("Invalid PDU Session ID value");
     response.send(Pistache::Http::Code::No_Content);
@@ -94,7 +94,7 @@ void StatusNotifyApiImpl::receive_pdu_session_status_notification(
 
   // Wait for the result available and process accordingly
   std::optional<nlohmann::json> result_opt = std::nullopt;
-  utils::wait_for_result(f, result_opt);
+  oai::utils::utils::wait_for_result(f, result_opt);
 
   if (result_opt.has_value()) {
     Logger::amf_server().debug("Got result for promise ID %d", promise_id);

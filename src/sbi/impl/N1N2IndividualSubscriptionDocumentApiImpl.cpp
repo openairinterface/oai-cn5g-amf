@@ -63,7 +63,7 @@ void N1N2IndividualSubscriptionDocumentApiImpl::n1_n2_message_un_subscribe(
 
   // Wait for the result available and process accordingly
   std::optional<nlohmann::json> result_opt = std::nullopt;
-  utils::wait_for_result(f, result_opt);
+  oai::utils::utils::wait_for_result(f, result_opt);
 
   if (result_opt.has_value()) {
     Logger::amf_server().debug("Got result for promise ID %d", promise_id);

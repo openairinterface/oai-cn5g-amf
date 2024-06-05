@@ -91,7 +91,7 @@ void NonUEN2MessagesCollectionDocumentApiImpl::non_ue_n2_message_transfer(
         "Could not send ITTI message %s to task TASK_AMF_N2",
         itti_msg->get_msg_name());
   }
-  utils::bdestroy_wrapper(&nrppa_pdu);
+  oai::utils::utils::bdestroy_wrapper(&nrppa_pdu);
 }
 
 }  // namespace api
