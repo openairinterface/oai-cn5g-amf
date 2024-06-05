@@ -317,6 +317,7 @@ ADD_SUBDIRECTORY(${SRC_TOP_DIR}/secu_algorithms/5gaka ${CMAKE_CURRENT_BINARY_DIR
 ADD_SUBDIRECTORY(${SRC_TOP_DIR}/secu_algorithms/nas_enc_int ${CMAKE_CURRENT_BINARY_DIR}/secu_algorithms/nas_enc_int)
 ADD_SUBDIRECTORY(${SRC_TOP_DIR}/utils ${CMAKE_CURRENT_BINARY_DIR}/utils)
 ADD_SUBDIRECTORY(${SRC_TOP_DIR}/${MOUNTED_COMMON}/ngap/libngap ${CMAKE_CURRENT_BINARY_DIR}/ngap/libngap)
+ADD_SUBDIRECTORY(${SRC_TOP_DIR}/${MOUNTED_COMMON}/ngap/libngap_ies ${CMAKE_CURRENT_BINARY_DIR}/ngap/libngap_ies)
 
 # Specific part for oai_smf folder
 add_definitions("-DPACKAGE_NAME=\"AMF\"")
@@ -329,10 +330,11 @@ include_directories(${SRC_TOP_DIR}/common)
 include_directories(${SRC_TOP_DIR}/common/unicode)
 include_directories(${SRC_TOP_DIR}/utils)
 include_directories(${SRC_TOP_DIR}/contexts)
-include_directories(${SRC_TOP_DIR}/${MOUNTED_COMMON}/ngap/libngap)
 include_directories(${SRC_TOP_DIR}/ngap)
-include_directories(${SRC_TOP_DIR}/${MOUNTED_COMMON}/ngap/ngapIEs)
-include_directories(${SRC_TOP_DIR}/${MOUNTED_COMMON}/ngap/ngapMsgs)
+include_directories(${SRC_TOP_DIR}/${MOUNTED_COMMON}/ngap/libngap)
+include_directories(${SRC_TOP_DIR}/${MOUNTED_COMMON}/ngap/libngap_ies)
+include_directories(${SRC_TOP_DIR}/${MOUNTED_COMMON}/ngap/ngap_ies)
+include_directories(${SRC_TOP_DIR}/${MOUNTED_COMMON}/ngap/ngap_msgs)
 include_directories(${SRC_TOP_DIR}/sbi)
 include_directories(${SRC_TOP_DIR}/sbi/api)
 include_directories(${SRC_TOP_DIR}/sbi/impl)
@@ -375,4 +377,4 @@ IF(STATIC_LINKING)
 ENDIF(STATIC_LINKING)
 
 target_link_libraries(amf ${ASAN}
-      -Wl,--start-group AMF_APP AMF_COMMON_TYPES CONTEXTS AMF_SCTP NGAP_C AMF_NGAP AMF_NAS AMF_SECU_5GAKA AMF_SECU_NAS AMF_UTILS AMF_SBI_SERVER sctp fmt spdlog -Wl,--end-group pthread ${NETTLE_LIBRARIES} ${MySQL_LIBRARY} ${CRYPTO_LIBRARIES} ${OPENSSL_LIBRARIES} nghttp2_asio boost_system boost_thread boost_chrono ssl crypt gmp pistache curl yaml-cpp cpr::cpr)
+      -Wl,--start-group AMF_APP AMF_COMMON_TYPES CONTEXTS AMF_SCTP NGAP_LIB_C NGAP_LIB_C_IES AMF_NGAP AMF_NAS AMF_SECU_5GAKA AMF_SECU_NAS AMF_UTILS AMF_SBI_SERVER sctp fmt spdlog -Wl,--end-group pthread ${NETTLE_LIBRARIES} ${MySQL_LIBRARY} ${CRYPTO_LIBRARIES} ${OPENSSL_LIBRARIES} nghttp2_asio boost_system boost_thread boost_chrono ssl crypt gmp pistache curl yaml-cpp cpr::cpr)

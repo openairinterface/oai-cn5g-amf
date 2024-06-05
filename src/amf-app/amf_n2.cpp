@@ -372,7 +372,7 @@ void amf_n2::handle_itti_message(std::shared_ptr<itti_paging>& itti_msg) {
   amf_n2_inst->sctp_s_38412.sctp_send_msg(
       unc->gnb_assoc_id, unc->sctp_stream_send, &b);
 
-  utils::bdestroy_wrapper(&b);
+  oai::utils::utils::bdestroy_wrapper(&b);
 }
 
 //------------------------------------------------------------------------------
@@ -564,7 +564,7 @@ void amf_n2::handle_itti_message(
   // TODO: Do we need to store gNB context in UDSF (if available)?
 
   // delete[] buffer;//Free in destructor of NgapMessage
-  utils::bdestroy_wrapper(&b);
+  oai::utils::utils::bdestroy_wrapper(&b);
   return;
 }
 
@@ -635,7 +635,7 @@ void amf_n2::handle_itti_message(std::shared_ptr<itti_ng_reset>& itti_msg) {
 
   bstring b = blk2bstr(buffer, encoded_size);
   sctp_s_38412.sctp_send_msg(gc->sctp_assoc_id, itti_msg->stream, &b);
-  utils::bdestroy_wrapper(&b);
+  oai::utils::utils::bdestroy_wrapper(&b);
   return;
 }
 
@@ -924,7 +924,7 @@ void amf_n2::handle_itti_message(
   int encoded_size = ngap_msg->Encode(buffer, BUFFER_SIZE_1024);
   bstring b        = blk2bstr(buffer, encoded_size);
   sctp_s_38412.sctp_send_msg(gc->sctp_assoc_id, unc->sctp_stream_send, &b);
-  utils::bdestroy_wrapper(&b);
+  oai::utils::utils::bdestroy_wrapper(&b);
 }
 
 //------------------------------------------------------------------------------
@@ -1072,7 +1072,7 @@ void amf_n2::handle_itti_message(
   int encoded_size = msg->Encode(buffer, BUFFER_SIZE_2048);
   bstring b        = blk2bstr(buffer, encoded_size);
   sctp_s_38412.sctp_send_msg(gc->sctp_assoc_id, unc->sctp_stream_send, &b);
-  utils::bdestroy_wrapper(&b);
+  oai::utils::utils::bdestroy_wrapper(&b);
 }
 
 //------------------------------------------------------------------------------
@@ -1166,7 +1166,7 @@ void amf_n2::handle_itti_message(
 
   bstring b = blk2bstr(buffer, encoded_size);
   sctp_s_38412.sctp_send_msg(gc->sctp_assoc_id, unc->sctp_stream_send, &b);
-  utils::bdestroy_wrapper(&b);
+  oai::utils::utils::bdestroy_wrapper(&b);
   // delete[] buffer;//Free in destructor of NgapMessage
 }
 
@@ -1228,7 +1228,7 @@ void amf_n2::handle_itti_message(
   bstring b = blk2bstr(buffer, encoded_size);
   sctp_s_38412.sctp_send_msg(gc->sctp_assoc_id, unc->sctp_stream_send, &b);
   // free memory
-  utils::bdestroy_wrapper(&b);
+  oai::utils::utils::bdestroy_wrapper(&b);
   // delete[] buffer;//Free in destructor of NgapMessage
 }
 
@@ -1284,7 +1284,7 @@ void amf_n2::handle_itti_message(
   bstring b = blk2bstr(buffer, encoded_size);
   sctp_s_38412.sctp_send_msg(gc->sctp_assoc_id, unc->sctp_stream_send, &b);
   // free memory
-  utils::bdestroy_wrapper(&b);
+  oai::utils::utils::bdestroy_wrapper(&b);
   // delete[] buffer;//Free in destructor of NgapMessage
 }
 
@@ -1326,7 +1326,7 @@ void amf_n2::handle_itti_message(
   bstring b        = blk2bstr(buffer, encoded_size);
 
   sctp_s_38412.sctp_send_msg(itti_msg->assoc_id, itti_msg->stream, &b);
-  utils::bdestroy_wrapper(&b);
+  oai::utils::utils::bdestroy_wrapper(&b);
 }
 
 //------------------------------------------------------------------------------
@@ -1368,7 +1368,7 @@ void amf_n2::handle_itti_message(
 
   bstring b = blk2bstr(buffer, encoded_size);
   sctp_s_38412.sctp_send_msg(gc->sctp_assoc_id, unc->sctp_stream_send, &b);
-  utils::bdestroy_wrapper(&b);
+  oai::utils::utils::bdestroy_wrapper(&b);
 
   // Send ITTI to N11 SBI, notify CommunicationFailure Report, RAN Cause
   std::shared_ptr<nas_context> nc = {};
@@ -1600,7 +1600,8 @@ void amf_n2::handle_itti_message(
   while (!curl_responses.empty()) {
     // Wait for the result available and process accordingly
     std::optional<nlohmann::json> result_opt = std::nullopt;
-    utils::wait_for_result(curl_responses.begin()->second, result_opt);
+    oai::utils::utils::wait_for_result(
+        curl_responses.begin()->second, result_opt);
 
     if (result_opt.has_value()) {
       nlohmann::json result_json = result_opt.value();
@@ -1873,7 +1874,8 @@ bool amf_n2::handle_itti_message(
   bool result = true;
   while (!curl_responses.empty()) {
     std::optional<nlohmann::json> result_json_opt = std::nullopt;
-    utils::wait_for_result(curl_responses.begin()->second, result_json_opt);
+    oai::utils::utils::wait_for_result(
+        curl_responses.begin()->second, result_json_opt);
     if (result_json_opt.has_value()) {
       nlohmann::json result_json = result_json_opt.value();
 
@@ -1926,7 +1928,7 @@ bool amf_n2::handle_itti_message(
 
   unc->target_gnb_assoc_id = gc_target->sctp_assoc_id;
   sctp_s_38412.sctp_send_msg(gc_target->sctp_assoc_id, 0, &b);
-  utils::bdestroy_wrapper(&b);
+  oai::utils::utils::bdestroy_wrapper(&b);
   return true;
 }
 
@@ -2028,7 +2030,8 @@ void amf_n2::handle_itti_message(
   bool result = true;
   while (!curl_responses.empty()) {
     std::optional<nlohmann::json> result_json_opt = std::nullopt;
-    utils::wait_for_result(curl_responses.begin()->second, result_json_opt);
+    oai::utils::utils::wait_for_result(
+        curl_responses.begin()->second, result_json_opt);
     if (result_json_opt.has_value()) {
       nlohmann::json result_json = result_json_opt.value();
       if (result_json.find("n2sm") != result_json.end()) {
@@ -2069,7 +2072,7 @@ void amf_n2::handle_itti_message(
   int encoded_size = handovercommand->Encode(buffer, BUFFER_SIZE_1024);
   bstring b        = blk2bstr(buffer, encoded_size);
   sctp_s_38412.sctp_send_msg(unc->gnb_assoc_id, 0, &b);
-  utils::bdestroy_wrapper(&b);
+  oai::utils::utils::bdestroy_wrapper(&b);
 }
 
 //------------------------------------------------------------------------------
@@ -2183,7 +2186,8 @@ void amf_n2::handle_itti_message(
   while (!curl_responses.empty()) {
     // Wait for the result available and process accordingly
     std::optional<nlohmann::json> result_json_opt = std::nullopt;
-    utils::wait_for_result(curl_responses.begin()->second, result_json_opt);
+    oai::utils::utils::wait_for_result(
+        curl_responses.begin()->second, result_json_opt);
 
     if (result_json_opt.has_value()) {
       nlohmann::json result_json = result_json_opt.value();
@@ -2215,7 +2219,7 @@ void amf_n2::handle_itti_message(
   bstring b        = blk2bstr(buffer, encoded_size);
 
   sctp_s_38412.sctp_send_msg(unc->gnb_assoc_id, 0, &b);
-  utils::bdestroy_wrapper(&b);
+  oai::utils::utils::bdestroy_wrapper(&b);
 
   // update the NGAP Context
   unc->release_cause         = Ngap_CauseRadioNetwork_successful_handover;
@@ -2326,7 +2330,7 @@ void amf_n2::handle_itti_message(
   int encode_size = dl_ran_status_transfer->Encode(buffer, BUFFER_SIZE_1024);
   bstring b       = blk2bstr(buffer, encode_size);
   sctp_s_38412.sctp_send_msg(unc->target_gnb_assoc_id, 0, &b);
-  utils::bdestroy_wrapper(&b);
+  oai::utils::utils::bdestroy_wrapper(&b);
 }
 
 //------------------------------------------------------------------------------
@@ -2367,7 +2371,7 @@ void amf_n2::handle_itti_message(std::shared_ptr<itti_rereoute_nas>& itti_msg) {
 
   amf_n2_inst->sctp_s_38412.sctp_send_msg(
       unc->gnb_assoc_id, unc->sctp_stream_send, &b);
-  utils::bdestroy_wrapper(&b);
+  oai::utils::utils::bdestroy_wrapper(&b);
 }
 
 //------------------------------------------------------------------------------
@@ -2403,7 +2407,7 @@ void amf_n2::handle_itti_message(
   if (encoded_size > 0) {
     bstring b = blk2bstr(buffer, encoded_size);
     sctp_s_38412.sctp_send_msg(gc->sctp_assoc_id, unc->sctp_stream_send, &b);
-    utils::bdestroy_wrapper(&b);
+    oai::utils::utils::bdestroy_wrapper(&b);
   }
 }
 
@@ -2427,7 +2431,7 @@ void amf_n2::handle_itti_message(
     for (auto& assoc_id : assoc_ids) {
       sctp_s_38412.sctp_send_msg(assoc_id, 0, &b);
     }
-    utils::bdestroy_wrapper(&b);
+    oai::utils::utils::bdestroy_wrapper(&b);
   }
 }
 
@@ -2576,7 +2580,7 @@ void amf_n2::send_handover_preparation_failure(
   bstring b = blk2bstr(buffer, encoded_size);
 
   sctp_s_38412.sctp_send_msg(gnb_assoc_id, 0, &b);
-  utils::bdestroy_wrapper(&b);
+  oai::utils::utils::bdestroy_wrapper(&b);
 }
 
 //------------------------------------------------------------------------------
@@ -2601,7 +2605,7 @@ void amf_n2::send_ng_setup_failure(
 
   bstring b = blk2bstr(buffer, encoded);
   sctp_s_38412.sctp_send_msg(assoc_id, stream_id, &b);
-  utils::bdestroy_wrapper(&b);
+  oai::utils::utils::bdestroy_wrapper(&b);
   // delete[] buffer;//Free in destructor of NgapMessage
 }
 

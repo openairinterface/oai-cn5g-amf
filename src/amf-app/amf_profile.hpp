@@ -328,21 +328,21 @@ class amf_profile : public nf_profile {
    * @param [std::vector<nf_service_t> &] n: nf_service
    * @return void
    */
-  void set_nf_services(const std::vector<nf_service_t>& n);
+  void set_nf_services(const std::vector<oai::common::sbi::nf_service_t>& n);
 
   /*
    * Add nf service
    * @param [snssai_t &] n: nf service
    * @return void
    */
-  void add_nf_service(const nf_service_t& n);
+  void add_nf_service(const oai::common::sbi::nf_service_t& n);
 
   /*
    * Get NF services
    * @param [std::vector<snssai_t> &] n: store instance's nf services
    * @return void:
    */
-  void get_nf_services(std::vector<nf_service_t>& n) const;
+  void get_nf_services(std::vector<oai::common::sbi::nf_service_t>& n) const;
 
   /*
    * Delete all NF services
@@ -369,14 +369,14 @@ class amf_profile : public nf_profile {
    * @param [amf_info_t &] s: amf info
    * @return void
    */
-  void set_amf_info(const amf_info_t& s);
+  void set_amf_info(const oai::common::sbi::amf_info_t& s);
 
   /*
    * Get NF instance amf info
    * @param [amf_info_t &] s: store instance's amf info
    * @return void:
    */
-  void get_amf_info(amf_info_t& s) const;
+  void get_amf_info(oai::common::sbi::amf_info_t& s) const;
 
   /*
    * Print related-information for NF profile
@@ -407,9 +407,9 @@ class amf_profile : public nf_profile {
   void handle_heartbeart_timeout(uint64_t ms);
 
  protected:
-  std::vector<nf_service_t> nf_services;
+  std::vector<oai::common::sbi::nf_service_t> nf_services;
   nlohmann::json custom_info;  // store extra json data
-  amf_info_t amf_info;
+  oai::common::sbi::amf_info_t amf_info;
 };
 
 }  // namespace amf_application

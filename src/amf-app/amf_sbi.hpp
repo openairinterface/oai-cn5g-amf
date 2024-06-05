@@ -263,7 +263,7 @@ class amf_sbi {
   /*
    * CURL client to send request to the HTTP server
    * @param [const std::string&] remote_uri: Server's Address
-   * @param [oai::http::method_e] method: HTTP method
+   * @param [oai::common::sbi::method_e] method: HTTP method
    * @param [const std::string&] msg_body: Msg body
    * @param [std::string&] response_json: Respone in Json format
    * @param [uint32_t&] response_code: HTTP Response code
@@ -271,7 +271,7 @@ class amf_sbi {
    * @return void
    */
   void curl_http_client(
-      const std::string& remote_uri, oai::http::method_e method,
+      const std::string& remote_uri, oai::common::sbi::method_e method,
       const std::string& msg_body, nlohmann::json& response_json,
       uint32_t& response_code, uint8_t http_version = 1);
 

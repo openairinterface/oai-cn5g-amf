@@ -347,7 +347,7 @@ void amf_n1::handle_itti_message(itti_downlink_nas_transfer& itti_msg) {
     }
   }
 
-  utils::bdestroy_wrapper(&protected_nas);
+  oai::utils::utils::bdestroy_wrapper(&protected_nas);
 }
 
 //------------------------------------------------------------------------------
@@ -513,10 +513,10 @@ void amf_n1::handle_itti_message(itti_uplink_nas_data_ind& nas_data_ind) {
               nc->security_ctx.value(), NAS_MESSAGE_UPLINK, ciphered,
               decoded_plain_msg)) {
         Logger::amf_n1().error("Decrypt NAS message failure");
-        utils::bdestroy_wrapper(&ciphered);
+        oai::utils::utils::bdestroy_wrapper(&ciphered);
         return;
       }
-      utils::bdestroy_wrapper(&ciphered);
+      oai::utils::utils::bdestroy_wrapper(&ciphered);
     } break;
     default: {
       Logger::amf_n1().error("Unknown NAS Message Type");
@@ -886,7 +886,7 @@ bool amf_n1::service_request_handle(
   auto service_request = std::make_unique<ServiceRequest>();
   int decoded_size =
       service_request->Decode((uint8_t*) bdata(nas), blength(nas));
-  // utils::bdestroy_wrapper(&nas);
+  // oai::utils::utils::bdestroy_wrapper(&nas);
 
   // Validate Service Request message
   if ((decoded_size != KEncodeDecodeError)) {
@@ -950,7 +950,7 @@ bool amf_n1::service_request_handle(
     if (service_request->GetNasMessageContainer(plain_msg)) {
       if (blength(plain_msg) < kNasMessageMinLength) {
         Logger::amf_n1().debug("NAS message is too short!");
-        utils::bdestroy_wrapper(&plain_msg);
+        oai::utils::utils::bdestroy_wrapper(&plain_msg);
         service_reject_cause = k5gmmCauseSemanticallyIncorrect;
         return false;
       }
@@ -971,7 +971,7 @@ bool amf_n1::service_request_handle(
           auto service_request_nas = std::make_unique<ServiceRequest>();
           int decoded_size         = service_request_nas->Decode(
               (uint8_t*) bdata(plain_msg), blength(plain_msg));
-          utils::bdestroy_wrapper(&plain_msg);
+          oai::utils::utils::bdestroy_wrapper(&plain_msg);
           if (decoded_size == KEncodeDecodeError) {
             Logger::nas_mm().error("Decode Service Request message error");
             service_reject_cause = k5gmmCauseSemanticallyIncorrect;
@@ -1100,11 +1100,11 @@ bool amf_n1::service_request_handle(
       Logger::amf_n1().error(
           "Could not send ITTI message %s to task TASK_AMF_N2",
           psrsr->get_msg_name());
-      utils::bdestroy_wrapper(&protected_nas);
+      oai::utils::utils::bdestroy_wrapper(&protected_nas);
       service_reject_cause = k5gmmCauseCongestion;
       return false;
     }
-    utils::bdestroy_wrapper(&protected_nas);
+    oai::utils::utils::bdestroy_wrapper(&protected_nas);
   }
   return true;
 }
@@ -1126,7 +1126,7 @@ bool amf_n1::service_request_handle(
       std::make_unique<ServiceRequest>();
   int decoded_size =
       service_request->Decode((uint8_t*) bdata(nas), blength(nas));
-  // utils::bdestroy_wrapper(&nas);
+  // oai::utils::utils::bdestroy_wrapper(&nas);
 
   // Get the old security context if necessary
   if ((decoded_size != KEncodeDecodeError) and (!nc->guti.has_value())) {
@@ -1292,7 +1292,7 @@ bool amf_n1::service_request_handle(
     if (service_request->GetNasMessageContainer(plain_msg)) {
       if (blength(plain_msg) < kNasMessageMinLength) {
         Logger::amf_n1().debug("NAS message is too short!");
-        utils::bdestroy_wrapper(&plain_msg);
+        oai::utils::utils::bdestroy_wrapper(&plain_msg);
         service_reject_cause = k5gmmCauseSemanticallyIncorrect;
         return false;
       }
@@ -1314,7 +1314,7 @@ bool amf_n1::service_request_handle(
 
           int decoded_size = service_request_nas->Decode(
               (uint8_t*) bdata(plain_msg), blength(plain_msg));
-          utils::bdestroy_wrapper(&plain_msg);
+          oai::utils::utils::bdestroy_wrapper(&plain_msg);
 
           if (decoded_size == KEncodeDecodeError) {
             Logger::nas_mm().error("Decode Service Request message error");
@@ -1420,7 +1420,7 @@ bool amf_n1::service_request_handle(
       Logger::amf_n1().error(
           "Could not send ITTI message %s to task TASK_AMF_N2",
           itti_msg->get_msg_name());
-      utils::bdestroy_wrapper(&protected_nas);
+      oai::utils::utils::bdestroy_wrapper(&protected_nas);
       service_reject_cause = k5gmmCauseCongestion;
       return false;
     } else {
@@ -1429,7 +1429,7 @@ bool amf_n1::service_request_handle(
       set_5gmm_state(nc, _5GMM_REGISTERED);
       stacs.display();
     }
-    utils::bdestroy_wrapper(&protected_nas);
+    oai::utils::utils::bdestroy_wrapper(&protected_nas);
 
   } else {
     auto itti_msg = std::make_shared<itti_initial_context_setup_request>(
@@ -1519,7 +1519,7 @@ bool amf_n1::service_request_handle(
       Logger::amf_n1().error(
           "Could not send ITTI message %s to task TASK_AMF_N2",
           itti_msg->get_msg_name());
-      utils::bdestroy_wrapper(&protected_nas);
+      oai::utils::utils::bdestroy_wrapper(&protected_nas);
       service_reject_cause = k5gmmCauseCongestion;
       return false;
     }
@@ -1528,7 +1528,7 @@ bool amf_n1::service_request_handle(
     set_5gmm_state(nc, _5GMM_REGISTERED);
     stacs.display();
 
-    utils::bdestroy_wrapper(&protected_nas);
+    oai::utils::utils::bdestroy_wrapper(&protected_nas);
   }
 
   return true;
@@ -2282,7 +2282,7 @@ bool amf_n1::get_authentication_vectors_from_ausf(
     resynchronization_info.setAuts(authentication_info_auts);
     resynchronization_info.setRand(authentication_info_rand);
     authentication_info.setResynchronizationInfo(resynchronization_info);
-    utils::free_wrapper((void**) &auts_s);
+    oai::utils::utils::free_wrapper((void**) &auts_s);
   }
 
   // Get UE Authentication from AUSF
@@ -2312,7 +2312,7 @@ bool amf_n1::get_authentication_vectors_from_ausf(
   bool is_result_available = true;
   // Wait for the response available and process accordingly
   std::optional<nlohmann::json> result_opt = std::nullopt;
-  utils::wait_for_result(f, result_opt);
+  oai::utils::utils::wait_for_result(f, result_opt);
   if (result_opt.has_value()) {
     nlohmann::json result = result_opt.value();
     Logger::amf_n1().debug("Got result for promise ID %ld", promise_id);
@@ -2348,21 +2348,21 @@ bool amf_n1::get_authentication_vectors_from_ausf(
   rand_record[nc->imsi] = ue_authentication_ctx.getR5gAuthData().getRand();
   output_wrapper::print_buffer(
       "amf_n1", "5G AV: RAND", nc->_5g_av[0].rand, RAND_LENGTH_OCTETS);
-  utils::free_wrapper((void**) &r5g_auth_data_rand);
+  oai::utils::utils::free_wrapper((void**) &r5g_auth_data_rand);
 
   unsigned char* r5g_auth_data_autn = amf_conv::format_string_as_hex(
       ue_authentication_ctx.getR5gAuthData().getAutn());
   memcpy(nc->_5g_av[0].autn, r5g_auth_data_autn, AUTN_LENGTH_OCTETS);
   output_wrapper::print_buffer(
       "amf_n1", "5G AV: AUTN", nc->_5g_av[0].autn, AUTN_LENGTH_OCTETS);
-  utils::free_wrapper((void**) &r5g_auth_data_autn);
+  oai::utils::utils::free_wrapper((void**) &r5g_auth_data_autn);
 
   unsigned char* r5g_auth_data_hxresstar = amf_conv::format_string_as_hex(
       ue_authentication_ctx.getR5gAuthData().getHxresStar());
   memcpy(nc->_5g_av[0].hxresStar, r5g_auth_data_hxresstar, HXRES_LENGTH_OCTETS);
   output_wrapper::print_buffer(
       "amf_n1", "5G AV: hxres*", nc->_5g_av[0].hxresStar, HXRES_LENGTH_OCTETS);
-  utils::free_wrapper((void**) &r5g_auth_data_hxresstar);
+  oai::utils::utils::free_wrapper((void**) &r5g_auth_data_hxresstar);
 
   std::map<std::string, LinksValueSchema>::iterator iter;
   iter = ue_authentication_ctx.getLinks().find("5G_AKA");
@@ -2416,10 +2416,10 @@ bool amf_n1::_5g_aka_confirmation_from_ausf(
   uint32_t response_code = 0;
 
   amf_sbi_inst->curl_http_client(
-      remote_uri, oai::http::method_e::PUT, msg_body, response, response_code,
-      amf_cfg.support_features.http_version);
+      remote_uri, oai::common::sbi::method_e::PUT, msg_body, response,
+      response_code, amf_cfg.support_features.http_version);
 
-  utils::free_wrapper((void**) &res_star_s);
+  oai::utils::utils::free_wrapper((void**) &res_star_s);
   try {
     ConfirmationDataResponse confirmation_data_response;
     response.get_to(confirmation_data_response);
@@ -2430,7 +2430,7 @@ bool amf_n1::_5g_aka_confirmation_from_ausf(
     output_wrapper::print_buffer(
         "amf_n1", "5G AV: kseaf", nc->_5g_av[0].kseaf,
         AUTH_VECTOR_LENGTH_OCTETS);
-    utils::free_wrapper((void**) &kseaf_hex);
+    oai::utils::utils::free_wrapper((void**) &kseaf_hex);
 
     Logger::amf_n1().debug("Deriving Kamf");
     for (int i = 0; i < MAX_5GS_AUTH_VECTORS; i++) {
@@ -2888,7 +2888,8 @@ void amf_n1::security_mode_complete_handle(
       auto registration_request = std::make_unique<RegistrationRequest>();
       registration_request->Decode(
           (uint8_t*) bdata(nas_msg_container), blength(nas_msg_container));
-      // utils::bdestroy_wrapper(&nas_msg_container);  // free buffer
+      // oai::utils::utils::bdestroy_wrapper(&nas_msg_container);  // free
+      // buffer
 
       // Get Requested NSSAI (Optional IE), if provided
       if (registration_request->GetRequestedNssai(nc->requested_nssai)) {
@@ -3263,8 +3264,8 @@ void amf_n1::encode_nas_message_protected(
             kSecurityProtected5gsNasMessageHeaderLength + input_nas_len;
       }
 
-      utils::bdestroy_wrapper(&input);
-      utils::bdestroy_wrapper(&ciphered);
+      oai::utils::utils::bdestroy_wrapper(&input);
+      oai::utils::utils::bdestroy_wrapper(&ciphered);
     } break;
 
     case kIntegrityProtectedWithNewSecurityContext: {
@@ -3502,7 +3503,8 @@ void amf_n1::ue_initiate_de_registration_handle(
       while (!smf_responses.empty()) {
         // Wait for the result available and process accordingly
         std::optional<nlohmann::json> result = std::nullopt;
-        utils::wait_for_result(smf_responses.begin()->second, result);
+        oai::utils::utils::wait_for_result(
+            smf_responses.begin()->second, result);
 
         if (result.has_value()) {
           Logger::amf_server().debug(
@@ -4001,11 +4003,11 @@ bool amf_n1::run_periodic_registration_update_procedure(
         "Could not send ITTI message %s to task TASK_AMF_N2",
         itti_msg->get_msg_name());
     cause = k5gmmCauseCongestion;
-    utils::bdestroy_wrapper(&protected_nas);
+    oai::utils::utils::bdestroy_wrapper(&protected_nas);
     return false;
   }
 
-  utils::bdestroy_wrapper(&protected_nas);
+  oai::utils::utils::bdestroy_wrapper(&protected_nas);
   return true;
 }
 
@@ -4018,7 +4020,6 @@ bool amf_n1::run_periodic_registration_update_procedure(
   auto registration_request = std::make_unique<RegistrationRequest>();
   int decoded_size =
       registration_request->Decode((uint8_t*) bdata(nas_msg), blength(nas_msg));
-  // utils::bdestroy_wrapper(&nas_msg);  // free buffer
 
   if (decoded_size == KEncodeDecodeError) {
     Logger::nas_mm().error("Decode Registration Request message error");
@@ -4083,11 +4084,12 @@ bool amf_n1::run_periodic_registration_update_procedure(
         "Could not send ITTI message %s to task TASK_AMF_N2",
         itti_msg->get_msg_name());
     cause = k5gmmCauseCongestion;
-    utils::bdestroy_wrapper(&protected_nas);
+    oai::utils::utils::bdestroy_wrapper(&protected_nas);
     return false;
   }
 
-  utils::bdestroy_wrapper(&protected_nas);
+  oai::utils::utils::bdestroy_wrapper(&protected_nas);
+
   return true;
 }
 
@@ -5191,7 +5193,7 @@ bool amf_n1::get_slice_selection_subscription_data(
 
     // Wait for the response available and process accordingly
     std::optional<nlohmann::json> result = std::nullopt;
-    utils::wait_for_result(f, result);
+    oai::utils::utils::wait_for_result(f, result);
     if (result.has_value()) {
       nlohmann::json nssai_json = result.value();
       Logger::amf_n1().debug("Got NSSAI from UDM: %s", nssai_json.dump());
@@ -5365,7 +5367,7 @@ bool amf_n1::get_network_slice_selection(
 
     // Wait for the response available and process accordingly
     std::optional<nlohmann::json> result_opt = std::nullopt;
-    utils::wait_for_result(f, result_opt);
+    oai::utils::utils::wait_for_result(f, result_opt);
     if (result_opt.has_value()) {
       nlohmann::json result = result_opt.value();
       Logger::amf_n1().debug("Got result for promise ID %ld", promise_id);
@@ -5484,7 +5486,7 @@ bool amf_n1::get_target_amf(
 
     // Wait for the response available and process accordingly
     std::optional<nlohmann::json> result = std::nullopt;
-    utils::wait_for_result(f, result);
+    oai::utils::utils::wait_for_result(f, result);
     if (result.has_value()) {
       nlohmann::json amf_candidate_list = result.value();
       Logger::amf_n1().debug(

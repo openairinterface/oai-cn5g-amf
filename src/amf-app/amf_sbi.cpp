@@ -368,7 +368,7 @@ void amf_sbi::handle_itti_message(itti_nsmf_pdusession_create_sm_context& smf) {
   if ((smf.dnn != nullptr) && (blength(smf.dnn) > 0)) {
     char* tmp = amf_conv::bstring2charString(smf.dnn);
     dnn       = tmp;
-    utils::free_wrapper((void**) &tmp);
+    oai::utils::utils::free_wrapper((void**) &tmp);
   }
 
   Logger::amf_sbi().debug("Requested DNN: %s", dnn.c_str());
@@ -551,7 +551,7 @@ void amf_sbi::handle_itti_message(
   uint32_t response_code       = 0;
 
   curl_http_client(
-      remote_uri, oai::http::method_e::POST, msg_body, response_json,
+      remote_uri, oai::common::sbi::method_e::POST, msg_body, response_json,
       response_code, amf_cfg.support_features.http_version);
 
   nlohmann::json response_data      = {};
@@ -627,8 +627,8 @@ void amf_sbi::handle_itti_message(itti_sbi_notify_subscribed_event& itti_msg) {
     uint32_t response_code = 0;
 
     curl_http_client(
-        url, oai::http::method_e::POST, body, response_json, response_code,
-        amf_cfg.support_features.http_version);
+        url, oai::common::sbi::method_e::POST, body, response_json,
+        response_code, amf_cfg.support_features.http_version);
     // TODO: process the response
   }
   return;
@@ -661,7 +661,7 @@ void amf_sbi::handle_itti_message(
   uint32_t response_code       = 0;
 
   curl_http_client(
-      url, oai::http::method_e::GET, "", response_data, response_code,
+      url, oai::common::sbi::method_e::GET, "", response_data, response_code,
       amf_cfg.support_features.http_version);
 
   // Notify to the result
@@ -711,7 +711,7 @@ void amf_sbi::handle_itti_message(
   uint32_t response_code       = 0;
 
   curl_http_client(
-      url, oai::http::method_e::GET, "", response_json, response_code,
+      url, oai::common::sbi::method_e::GET, "", response_json, response_code,
       amf_cfg.support_features.http_version);
 
   nlohmann::json response_data      = {};
@@ -829,7 +829,7 @@ void amf_sbi::handle_itti_message(itti_sbi_nf_instance_discovery& itti_msg) {
   uint32_t response_code       = 0;
 
   curl_http_client(
-      url, oai::http::method_e::GET, "", response_data, response_code,
+      url, oai::common::sbi::method_e::GET, "", response_data, response_code,
       amf_cfg.support_features.http_version);
 
   // Notify to the result
@@ -859,7 +859,7 @@ void amf_sbi::handle_itti_message(
   uint32_t response_code       = 0;
 
   curl_http_client(
-      itti_msg.nrf_uri, oai::http::method_e::PUT, body, response_data,
+      itti_msg.nrf_uri, oai::common::sbi::method_e::PUT, body, response_data,
       response_code, amf_cfg.support_features.http_version);
 
   // Send response to APP to process
@@ -871,11 +871,9 @@ void amf_sbi::handle_itti_message(
   itti_msg_response->nrf_uri            = itti_msg.nrf_uri;
 
   if ((response_code ==
-       static_cast<uint32_t>(
-           oai::http::status_code_e::HTTP_STATUS_CODE_201_CREATED)) or
+       static_cast<uint32_t>(oai::common::sbi::http_status_code::CREATED)) or
       (response_code ==
-       static_cast<uint32_t>(
-           oai::http::status_code_e::HTTP_STATUS_CODE_200_OK))) {
+       static_cast<uint32_t>(oai::common::sbi::http_status_code::OK))) {
     Logger::amf_sbi().debug("NFRegistration, got successful response from NRF");
     Logger::amf_sbi().debug(
         "NF Instance Registration, response from NRF, JSON data: \n %s",
@@ -913,7 +911,7 @@ void amf_sbi::handle_itti_message(
   uint32_t response_code       = 0;
 
   curl_http_client(
-      itti_msg.nrf_uri, oai::http::method_e::PATCH, body, response_data,
+      itti_msg.nrf_uri, oai::common::sbi::method_e::PATCH, body, response_data,
       response_code, amf_cfg.support_features.http_version);
 
   Logger::amf_sbi().debug(
@@ -949,7 +947,7 @@ void amf_sbi::handle_itti_message(
   uint32_t response_code       = 0;
 
   curl_http_client(
-      itti_msg.nrf_uri, oai::http::method_e::DELETE, "", response_data,
+      itti_msg.nrf_uri, oai::common::sbi::method_e::DELETE, "", response_data,
       response_code, amf_cfg.support_features.http_version);
 
   // Send response to APP to process
@@ -989,7 +987,7 @@ void amf_sbi::handle_itti_message(
   nlohmann::json response_json = {};
 
   curl_http_client(
-      url, oai::http::method_e::POST, body, response_json, response_code,
+      url, oai::common::sbi::method_e::POST, body, response_json, response_code,
       amf_cfg.support_features.http_version);
 
   Logger::amf_sbi().debug(
@@ -1032,7 +1030,8 @@ void amf_sbi::handle_itti_message(
   uint32_t response_code       = 0;
 
   curl_http_client(
-      url, "POST", body, response_json, response_code, itti_msg.http_version);
+      url, oai::common::sbi::method_e::POST, body, response_json, response_code,
+      itti_msg.http_version);
 
   Logger::amf_sbi().debug(
       "UE Authentication, response from AUSF, HTTP Code: %lu", response_code);
@@ -1111,15 +1110,14 @@ bool amf_sbi::discover_smf(
   uint32_t response_code       = 0;
 
   curl_http_client(
-      url, oai::http::method_e::GET, "", response_data, response_code,
+      url, oai::common::sbi::method_e::GET, "", response_data, response_code,
       amf_cfg.support_features.http_version);
 
   Logger::amf_sbi().debug(
       "NFDiscovery, response from NRF, json data: \n %s",
       response_data.dump().c_str());
 
-  if (static_cast<oai::http::status_code_e>(response_code) !=
-      oai::http::status_code_e::HTTP_STATUS_CODE_200_OK) {
+  if (response_code != oai::common::sbi::http_status_code::OK) {
     Logger::amf_sbi().warn("NFDiscovery, could not get response from NRF");
     result = false;
   } else {
@@ -1228,10 +1226,10 @@ bool amf_sbi::curl_http_client(
       http_client_inst->prepare_multipart_request(remote_uri, body);
   // Send the request and get the response
   auto http_response = http_client_inst->send_http_request(
-      oai::http::method_e::POST, http_request);
+      oai::common::sbi::method_e::POST, http_request);
 
   if (http_response.status_code ==
-      oai::http::status_code_e::HTTP_STATUS_CODE_0_NO_RESPONSE) {
+      oai::common::sbi::http_status_code::NO_RESPONSE) {
     return false;
   }
 
@@ -1254,12 +1252,11 @@ bool amf_sbi::curl_http_client(
 
   Logger::amf_sbi().info("JSON part %s", json_data_response.c_str());
 
-  if ((http_response.status_code !=
-       oai::http::status_code_e::HTTP_STATUS_CODE_200_OK) &&
+  if ((http_response.status_code != oai::common::sbi::http_status_code::OK) &&
       (http_response.status_code !=
-       oai::http::status_code_e::HTTP_STATUS_CODE_201_CREATED) &&
+       oai::common::sbi::http_status_code::CREATED) &&
       (http_response.status_code !=
-       oai::http::status_code_e::HTTP_STATUS_CODE_204_NO_CONTENT)) {
+       oai::common::sbi::http_status_code::NO_CONTENT)) {
     // ERROR
     if (http_response.body.size() < 1) {
       Logger::amf_sbi().error("There's no content in the response");
@@ -1366,7 +1363,7 @@ bool amf_sbi::curl_http_client(
     if ((promise_id > 0) and (is_ho_procedure or is_up_deactivation_procedure or
                               is_service_request)) {
       amf_app_inst->trigger_process_response(promise_id, process_response_data);
-      utils::bdestroy_wrapper(&n1sm_hex);
+      oai::utils::utils::bdestroy_wrapper(&n1sm_hex);
       return curl_result;
     }
 
@@ -1387,6 +1384,7 @@ bool amf_sbi::curl_http_client(
         itti_msg->n1sm        = bstrcpy(n1sm_hex);
         itti_msg->is_n1sm_set = true;
       }
+
       if (n2sm.has_value() > 0) {
         amf_conv::msg_str_2_msg_hex(n2sm.value(), n2sm_hex);
         output_wrapper::print_buffer(
@@ -1408,6 +1406,9 @@ bool amf_sbi::curl_http_client(
             itti_msg->get_msg_name());
       }
     }
+
+    oai::utils::utils::bdestroy_wrapper(&n1sm_hex);
+    oai::utils::utils::bdestroy_wrapper(&n2sm_hex);
   }
 
   return curl_result;
@@ -1433,10 +1434,10 @@ void amf_sbi::curl_http_client(
       http_client_inst->prepare_multipart_request(remote_uri, body);
   // Send the request and get the response
   auto http_response = http_client_inst->send_http_request(
-      oai::http::method_e::POST, http_request);
+      oai::common::sbi::method_e::POST, http_request);
 
   if (http_response.status_code ==
-      oai::http::status_code_e::HTTP_STATUS_CODE_0_NO_RESPONSE) {
+      oai::common::sbi::http_status_code::NO_RESPONSE) {
     return;
   }
 
@@ -1457,7 +1458,7 @@ void amf_sbi::curl_http_client(
 
   response_code = static_cast<int>(http_response.status_code);
   if (http_response.status_code ==
-      oai::http::status_code_e::HTTP_STATUS_CODE_0_NO_RESPONSE) {
+      oai::common::sbi::http_status_code::NO_RESPONSE) {
     // TODO: should be removed
     Logger::amf_sbi().error(
         "Cannot get response when calling %s", remote_uri.c_str());
@@ -1475,12 +1476,11 @@ void amf_sbi::curl_http_client(
 
   Logger::amf_sbi().info("JSON part %s", json_data_response.c_str());
 
-  if ((http_response.status_code !=
-       oai::http::status_code_e::HTTP_STATUS_CODE_200_OK) &&
+  if ((http_response.status_code != oai::common::sbi::http_status_code::OK) &&
       (http_response.status_code !=
-       oai::http::status_code_e::HTTP_STATUS_CODE_201_CREATED) &&
+       oai::common::sbi::http_status_code::CREATED) &&
       (http_response.status_code !=
-       oai::http::status_code_e::HTTP_STATUS_CODE_204_NO_CONTENT)) {
+       oai::common::sbi::http_status_code::NO_CONTENT)) {
     // TODO:
 
   } else {  // Response with success code
@@ -1506,7 +1506,7 @@ void amf_sbi::curl_http_client(
 
 //-----------------------------------------------------------------------------------------------------
 void amf_sbi::curl_http_client(
-    const std::string& remote_uri, const oai::http::method_e method,
+    const std::string& remote_uri, const oai::common::sbi::method_e method,
     const std::string& msg_body, nlohmann::json& response_json,
     uint32_t& response_code, uint8_t http_version) {
   Logger::amf_sbi().info("Send HTTP message to %s", remote_uri.c_str());
@@ -1520,7 +1520,7 @@ void amf_sbi::curl_http_client(
       http_client_inst->send_http_request(method, http_request);
 
   if (http_response.status_code ==
-      oai::http::status_code_e::HTTP_STATUS_CODE_0_NO_RESPONSE) {
+      oai::common::sbi::http_status_code::NO_RESPONSE) {
     Logger::amf_sbi().info(
         "Cannot get response when calling %s", remote_uri.c_str());
     return;
@@ -1531,12 +1531,11 @@ void amf_sbi::curl_http_client(
   response_code        = static_cast<int>(http_response.status_code);
   Logger::amf_sbi().info("Get response with HTTP code (%ld)", response_code);
 
-  if ((http_response.status_code !=
-       oai::http::status_code_e::HTTP_STATUS_CODE_200_OK) and
+  if ((http_response.status_code != oai::common::sbi::http_status_code::OK) and
       (http_response.status_code !=
-       oai::http::status_code_e::HTTP_STATUS_CODE_201_CREATED) and
+       oai::common::sbi::http_status_code::CREATED) and
       (http_response.status_code !=
-       oai::http::status_code_e::HTTP_STATUS_CODE_204_NO_CONTENT)) {
+       oai::common::sbi::http_status_code::NO_CONTENT)) {
     is_response_ok = false;
 
     if (response.size() < 1) {
@@ -1576,8 +1575,7 @@ bool amf_sbi::get_nrf_uri(
         snssai, plmn, dnn_opt, amf_app_inst->get_nf_instance(), response_data,
         response_code);
 
-    if (static_cast<oai::http::status_code_e>(response_code) !=
-        oai::http::status_code_e::HTTP_STATUS_CODE_200_OK) {
+    if (response_code != oai::common::sbi::http_status_code::OK) {
       Logger::amf_sbi().warn("NS Selection, could not get response from NSSF");
       result = false;
     } else {
@@ -1640,8 +1638,8 @@ void amf_sbi::get_network_slice_information(
       "Send Network Slice Information Retrieval, URI %s", nssf_url.c_str());
 
   curl_http_client(
-      nssf_url, oai::http::method_e::GET, "", response_data, response_code,
-      amf_cfg.support_features.http_version);
+      nssf_url, oai::common::sbi::method_e::GET, "", response_data,
+      response_code, amf_cfg.support_features.http_version);
 
   Logger::amf_sbi().debug(
       "NS Selection, response from NSSF, json data: \n %s",

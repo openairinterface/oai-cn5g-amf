@@ -75,8 +75,7 @@ void amf_http2_server::start() {
             if (split_result.size() < 6) {
               Logger::amf_server().warn("Requested URL is not implemented");
               res.write_head(static_cast<uint32_t>(
-                  oai::http::status_code_e::
-                      HTTP_STATUS_CODE_501_NOT_IMPLEMENTED));
+                  oai::common::sbi::http_status_code::NOT_IMPLEMENTED));
               res.end();
               return;
             }
@@ -92,8 +91,7 @@ void amf_http2_server::start() {
               mime_parser sp = {};
               if (!sp.parse(msg)) {
                 res.write_head(static_cast<uint32_t>(
-                    oai::http::status_code_e::
-                        HTTP_STATUS_CODE_400_BAD_REQUEST));
+                    oai::common::sbi::http_status_code::BAD_REQUEST));
                 res.end();
                 return;
               }
@@ -106,8 +104,7 @@ void amf_http2_server::start() {
               // at least 2 parts for Json data and N1 (+ N2)
               if (size < 2) {
                 res.write_head(static_cast<uint32_t>(
-                    oai::http::status_code_e::
-                        HTTP_STATUS_CODE_400_BAD_REQUEST));
+                    oai::common::sbi::http_status_code::BAD_REQUEST));
                 res.end();
                 Logger::amf_server().debug(
                     "Bad request: should have at least 2 MIME parts");
@@ -174,8 +171,7 @@ void amf_http2_server::start() {
               if (split_result.size() != 4) {
                 Logger::amf_server().warn("Requested URL is not implemented");
                 response.write_head(static_cast<uint32_t>(
-                    oai::http::status_code_e::
-                        HTTP_STATUS_CODE_501_NOT_IMPLEMENTED));
+                    oai::common::sbi::http_status_code::NOT_IMPLEMENTED));
                 response.end();
                 return;
               }
@@ -188,8 +184,7 @@ void amf_http2_server::start() {
               if (split_result.size() != 5) {
                 Logger::amf_server().warn("Requested URL is not implemented");
                 response.write_head(static_cast<uint32_t>(
-                    oai::http::status_code_e::
-                        HTTP_STATUS_CODE_501_NOT_IMPLEMENTED));
+                    oai::common::sbi::http_status_code::NOT_IMPLEMENTED));
                 response.end();
                 return;
               }
@@ -199,7 +194,7 @@ void amf_http2_server::start() {
                   "Delete a subscription with ID %s", subscriptionId.c_str());
               if (m_amf_app->handle_event_exposure_delete(subscriptionId)) {
                 response.write_head(static_cast<uint32_t>(
-                    oai::http::status_code_e::HTTP_STATUS_CODE_204_NO_CONTENT));
+                    oai::common::sbi::http_status_code::NO_CONTENT));
                 response.end();
               } else {
                 // Send response
@@ -208,37 +203,35 @@ void amf_http2_server::start() {
                 problem_details.setCause("SUBSCRIPTION_NOT_FOUND");
                 to_json(json_data, problem_details);
                 response.write_head(static_cast<uint32_t>(
-                    oai::http::status_code_e::HTTP_STATUS_CODE_404_NOT_FOUND));
+                    oai::common::sbi::http_status_code::NOT_FOUND));
                 response.end(json_data.dump().c_str());
               }
             } else if (request.method().compare("PATCH") == 0) {
               if (split_result.size() != 5) {
                 Logger::amf_server().warn("Requested URL is not implemented");
                 response.write_head(static_cast<uint32_t>(
-                    oai::http::status_code_e::
-                        HTTP_STATUS_CODE_501_NOT_IMPLEMENTED));
+                    oai::common::sbi::http_status_code::NOT_IMPLEMENTED));
                 response.end();
                 return;
               }
               Logger::amf_server().warn(
                   "Modify EvenExposureSubscription Not Implemented");
               response.write_head(static_cast<uint32_t>(
-                  oai::http::status_code_e::
-                      HTTP_STATUS_CODE_501_NOT_IMPLEMENTED));
+                  oai::common::sbi::http_status_code::NOT_IMPLEMENTED));
               response.end();
               return;
             } else {
               Logger::amf_server().warn(
                   "Invalid request (error: Invalid Request Method)!");
               response.write_head(static_cast<uint32_t>(
-                  oai::http::status_code_e::HTTP_STATUS_CODE_400_BAD_REQUEST));
+                  oai::common::sbi::http_status_code::BAD_REQUEST));
               response.end();
               return;
             }
           } catch (std::exception& e) {
             Logger::amf_server().warn("Invalid request (error: %s)!", e.what());
             response.write_head(static_cast<uint32_t>(
-                oai::http::status_code_e::HTTP_STATUS_CODE_400_BAD_REQUEST));
+                oai::common::sbi::http_status_code::BAD_REQUEST));
             response.end();
             return;
           }
@@ -264,7 +257,7 @@ void amf_http2_server::start() {
             Logger::amf_sbi().warn(
                 "Can not parse the JSON data (error: %s)!", e.what());
             response.write_head(static_cast<uint32_t>(
-                oai::http::status_code_e::HTTP_STATUS_CODE_400_BAD_REQUEST));
+                oai::common::sbi::http_status_code::BAD_REQUEST));
             response.end();
             return;
           }
@@ -289,7 +282,7 @@ void amf_http2_server::start() {
             if (!sp.parse(msg)) {
               // send reply!!!
               res.write_head(static_cast<uint32_t>(
-                  oai::http::status_code_e::HTTP_STATUS_CODE_400_BAD_REQUEST));
+                  oai::common::sbi::http_status_code::BAD_REQUEST));
               res.end();
               return;
             }
@@ -302,7 +295,7 @@ void amf_http2_server::start() {
             // at least 2 parts for Json data and N2
             if (size < 2) {
               res.write_head(static_cast<uint32_t>(
-                  oai::http::status_code_e::HTTP_STATUS_CODE_400_BAD_REQUEST));
+                  oai::common::sbi::http_status_code::BAD_REQUEST));
               res.end();
               Logger::amf_server().debug(
                   "Bad request: should have at least 2 MIME parts");
@@ -318,8 +311,8 @@ void amf_http2_server::start() {
             nlohmann::json response_json = {};
             response_json["cause"] = non_ue_n2_message_transfer_cause_e2str
                 [NON_UE_N2_TRANSFER_INITIATED];
-            auto code = static_cast<uint32_t>(
-                oai::http::status_code_e::HTTP_STATUS_CODE_200_OK);
+            auto code =
+                static_cast<uint32_t>(oai::common::sbi::http_status_code::OK);
 
             oai::amf::model::N2InformationTransferReqData
                 n2InformationTransferReqData = {};
@@ -332,14 +325,13 @@ void amf_http2_server::start() {
               Logger::amf_server().warn(
                   "Cannot parse the JSON data (error: %s)!", e.what());
               res.write_head(static_cast<uint32_t>(
-                  oai::http::status_code_e::HTTP_STATUS_CODE_400_BAD_REQUEST));
+                  oai::common::sbi::http_status_code::BAD_REQUEST));
               res.end();
               return;
             } catch (std::exception& e) {
               Logger::amf_server().warn("Error: %s!", e.what());
               res.write_head(static_cast<uint32_t>(
-                  oai::http::status_code_e::
-                      HTTP_STATUS_CODE_500_INTERNAL_SERVER_ERROR));
+                  oai::common::sbi::http_status_code::INTERNAL_SERVER_ERROR));
               res.end();
               return;
             }
@@ -355,7 +347,7 @@ void amf_http2_server::start() {
                   n1_n2_message_transfer_cause_e2str[N1_MSG_NOT_TRANSFERRED];
               // Send response to the NF Service Consumer (e.g., SMF)
               res.write_head(static_cast<uint32_t>(
-                  oai::http::status_code_e::HTTP_STATUS_CODE_400_BAD_REQUEST));
+                  oai::common::sbi::http_status_code::BAD_REQUEST));
               res.end(response_json.dump().c_str());
               return;
             } else {
@@ -393,7 +385,7 @@ void amf_http2_server::start() {
                   "Could not send ITTI message %s to task TASK_AMF_N2",
                   itti_msg->get_msg_name());
             }
-            utils::bdestroy_wrapper(&nrppa_pdu);
+            oai::utils::utils::bdestroy_wrapper(&nrppa_pdu);
           }
         });
       });
@@ -416,8 +408,7 @@ void amf_http2_server::start() {
               if (split_result.size() < 5) {
                 Logger::amf_server().warn("Requested URL is not implemented");
                 res.write_head(static_cast<uint32_t>(
-                    oai::http::status_code_e::
-                        HTTP_STATUS_CODE_501_NOT_IMPLEMENTED));
+                    oai::common::sbi::http_status_code::NOT_IMPLEMENTED));
                 res.end();
                 return;
               }
@@ -440,8 +431,7 @@ void amf_http2_server::start() {
                 Logger::amf_server().warn(
                     "Invalid request (error: Invalid Request Method)!");
                 res.write_head(static_cast<uint32_t>(
-                    oai::http::status_code_e::
-                        HTTP_STATUS_CODE_400_BAD_REQUEST));
+                    oai::common::sbi::http_status_code::BAD_REQUEST));
                 res.end();
                 return;
               }
@@ -449,7 +439,7 @@ void amf_http2_server::start() {
               Logger::amf_server().warn(
                   "Invalid request (error: %s)!", e.what());
               res.write_head(static_cast<uint32_t>(
-                  oai::http::status_code_e::HTTP_STATUS_CODE_400_BAD_REQUEST));
+                  oai::common::sbi::http_status_code::BAD_REQUEST));
               res.end();
               return;
             }
@@ -473,8 +463,7 @@ void amf_http2_server::start() {
               if (split_result.size() != 7) {
                 Logger::amf_server().warn("Requested URL is not implemented");
                 response.write_head(static_cast<uint32_t>(
-                    oai::http::status_code_e::
-                        HTTP_STATUS_CODE_501_NOT_IMPLEMENTED));
+                    oai::common::sbi::http_status_code::NOT_IMPLEMENTED));
                 response.end();
                 return;
               }
@@ -489,11 +478,11 @@ void amf_http2_server::start() {
                   "pdu_session_id %s", pdu_session_id_str.c_str());
 
               uint8_t pdu_session_id = 0;
-              if (conv::string_to_int8(pdu_session_id_str, pdu_session_id)) {
+              if (oai::utils::conv::string_to_int8(
+                      pdu_session_id_str, pdu_session_id)) {
                 Logger::amf_server().debug("Invalid PDU Session ID value");
                 response.write_head(static_cast<uint32_t>(
-                    oai::http::status_code_e::
-                        HTTP_STATUS_CODE_400_BAD_REQUEST));
+                    oai::common::sbi::http_status_code::BAD_REQUEST));
                 response.end();
                 return;
               }
@@ -506,14 +495,14 @@ void amf_http2_server::start() {
               Logger::amf_server().warn(
                   "Invalid request (error: Invalid Request Method)!");
               response.write_head(static_cast<uint32_t>(
-                  oai::http::status_code_e::HTTP_STATUS_CODE_400_BAD_REQUEST));
+                  oai::common::sbi::http_status_code::BAD_REQUEST));
               response.end();
               return;
             }
           } catch (std::exception& e) {
             Logger::amf_server().warn("Invalid request (error: %s)!", e.what());
             response.write_head(static_cast<uint32_t>(
-                oai::http::status_code_e::HTTP_STATUS_CODE_400_BAD_REQUEST));
+                oai::common::sbi::http_status_code::BAD_REQUEST));
             response.end();
             return;
           }
@@ -567,9 +556,7 @@ void amf_http2_server::create_event_subscription_handler(
   h.insert(std::make_pair<std::string, header_value>(
       "Content-Type", {"application/json", false}));
   response.write_head(
-      static_cast<uint32_t>(
-          oai::http::status_code_e::HTTP_STATUS_CODE_201_CREATED),
-      h);
+      static_cast<uint32_t>(oai::common::sbi::http_status_code::CREATED), h);
   response.end(json_data.dump().c_str());
 }
 
@@ -584,8 +571,7 @@ void amf_http2_server::n1_n2_message_transfer_handler(
   nlohmann::json response_json = {};
   response_json["cause"] =
       n1_n2_message_transfer_cause_e2str[N1_N2_TRANSFER_INITIATED];
-  uint32_t code =
-      static_cast<uint32_t>(oai::http::status_code_e::HTTP_STATUS_CODE_200_OK);
+  uint32_t code = static_cast<uint32_t>(oai::common::sbi::http_status_code::OK);
 
   std::string supi = ueContextId;
 
@@ -722,7 +708,7 @@ void amf_http2_server::n1_n2_message_transfer_handler(
 
       default: {
         response.write_head(static_cast<uint32_t>(
-            oai::http::status_code_e::HTTP_STATUS_CODE_400_BAD_REQUEST));
+            oai::common::sbi::http_status_code::BAD_REQUEST));
         response.end(
             "N1N2MessageCollectionDocumentApiImpl::n1_n2_message_transfer API "
             "(Unsupported N2 Message Class)");
@@ -785,7 +771,7 @@ void amf_http2_server::n1_n2_message_transfer_handler(
         // N1 LPP Container Present
         // TODO:
         response.write_head(static_cast<uint32_t>(
-            oai::http::status_code_e::HTTP_STATUS_CODE_400_BAD_REQUEST));
+            oai::common::sbi::http_status_code::BAD_REQUEST));
         response.end(
             "N1N2MessageCollectionDocumentApiImpl::n1_n2_message_transfer API "
             "(Unsupported N1 Message Class: LPP)");
@@ -795,7 +781,7 @@ void amf_http2_server::n1_n2_message_transfer_handler(
       default: {
         // TODO:
         response.write_head(static_cast<uint32_t>(
-            oai::http::status_code_e::HTTP_STATUS_CODE_400_BAD_REQUEST));
+            oai::common::sbi::http_status_code::BAD_REQUEST));
         response.end(
             "N1N2MessageCollectionDocumentApiImpl::n1_n2_message_transfer API "
             "(Unsupported N1 Message Class)");
@@ -808,16 +794,15 @@ void amf_http2_server::n1_n2_message_transfer_handler(
     response_json["cause"] =
         n1_n2_message_transfer_cause_e2str[N1_MSG_NOT_TRANSFERRED];
     // Send response to the NF Service Consumer (e.g., SMF)
-    response.write_head(static_cast<uint32_t>(
-        oai::http::status_code_e::HTTP_STATUS_CODE_400_BAD_REQUEST));
+    response.write_head(
+        static_cast<uint32_t>(oai::common::sbi::http_status_code::BAD_REQUEST));
     response.end(response_json.dump().c_str());
     return;
   }
 
   response_json["cause"] =
       n1_n2_message_transfer_cause_e2str[N1_N2_TRANSFER_INITIATED];
-  code =
-      static_cast<uint32_t>(oai::http::status_code_e::HTTP_STATUS_CODE_200_OK);
+  code = static_cast<uint32_t>(oai::common::sbi::http_status_code::OK);
 
   // For Paging
   if (n1N2MessageTransferReqData.ppiIsSet()) {
@@ -825,8 +810,7 @@ void amf_http2_server::n1_n2_message_transfer_handler(
     itti_msg->ppi        = n1N2MessageTransferReqData.getPpi();
     response_json["cause"] =
         n1_n2_message_transfer_cause_e2str[ATTEMPTING_TO_REACH_UE];
-    code = static_cast<uint32_t>(
-        oai::http::status_code_e::HTTP_STATUS_CODE_202_ACCEPTED);
+    code = static_cast<uint32_t>(oai::common::sbi::http_status_code::ACCEPTED);
   } else {
     itti_msg->is_ppi_set = false;
   }
@@ -843,10 +827,10 @@ void amf_http2_server::n1_n2_message_transfer_handler(
         itti_msg->get_msg_name());
   }
 
-  utils::bdestroy_wrapper(&n1sm);
-  utils::bdestroy_wrapper(&n2sm);
-  utils::bdestroy_wrapper(&nrppa_pdu);
-  utils::bdestroy_wrapper(&routing_id);
+  oai::utils::utils::bdestroy_wrapper(&n1sm);
+  oai::utils::utils::bdestroy_wrapper(&n2sm);
+  oai::utils::utils::bdestroy_wrapper(&nrppa_pdu);
+  oai::utils::utils::bdestroy_wrapper(&routing_id);
 }
 
 //------------------------------------------------------------------------------
@@ -859,8 +843,8 @@ void amf_http2_server::n1_message_notify_handler(
   nlohmann::json response_json = {};
   response_json["cause"] =
       n1_n2_message_transfer_cause_e2str[N1_N2_TRANSFER_INITIATED];
-  uint32_t code = static_cast<uint32_t>(
-      oai::http::status_code_e::HTTP_STATUS_CODE_204_NO_CONTENT);
+  uint32_t code =
+      static_cast<uint32_t>(oai::common::sbi::http_status_code::NO_CONTENT);
 
   std::string supi                            = ueContextId;
   N1MessageNotification n1MessageNotification = {};
@@ -886,7 +870,7 @@ void amf_http2_server::n1_message_notify_handler(
       if (parts.count(n1_content_id) == 0 ||
           parts[n1_content_id].body.size() == 0) {
         code = static_cast<uint32_t>(
-            oai::http::status_code_e::HTTP_STATUS_CODE_400_BAD_REQUEST);
+            oai::common::sbi::http_status_code::BAD_REQUEST);
         response_json["cause"] =
             n1_n2_message_transfer_cause_e2str[N1_MSG_NOT_TRANSFERRED];
       } else {
@@ -903,7 +887,7 @@ void amf_http2_server::n1_message_notify_handler(
 
     default: {
       code = static_cast<uint32_t>(
-          oai::http::status_code_e::HTTP_STATUS_CODE_400_BAD_REQUEST);
+          oai::common::sbi::http_status_code::BAD_REQUEST);
       response_json["cause"] =
           n1_n2_message_transfer_cause_e2str[N1_MSG_NOT_TRANSFERRED];
     }
@@ -911,8 +895,8 @@ void amf_http2_server::n1_message_notify_handler(
 
   // Send response to the NF Service Consumer (e.g., SMF)
   response.write_head(code);
-  if (code == static_cast<uint32_t>(
-                  oai::http::status_code_e::HTTP_STATUS_CODE_204_NO_CONTENT)) {
+  if (code ==
+      static_cast<uint32_t>(oai::common::sbi::http_status_code::NO_CONTENT)) {
     response.end();
     // Process N1N2 Message Transfer Request in AMF APP
     int ret = itti_inst->send_msg(itti_msg);
@@ -964,7 +948,7 @@ void amf_http2_server::n1_n2_message_subscribe_handler(
 
   // Wait for the result available and process accordingly
   std::optional<nlohmann::json> result_opt = std::nullopt;
-  utils::wait_for_result(f, result_opt);
+  oai::utils::utils::wait_for_result(f, result_opt);
 
   if (result_opt.has_value()) {
     Logger::amf_server().debug("Got result for promise ID %d", promise_id);
@@ -986,16 +970,14 @@ void amf_http2_server::n1_n2_message_subscribe_handler(
       json_data = result["createdData"];
     }
 
-    if (static_cast<oai::http::status_code_e>(http_response_code) ==
-        oai::http::status_code_e::HTTP_STATUS_CODE_201_CREATED) {
+    if (http_response_code == oai::common::sbi::http_status_code::CREATED) {
       h.insert(std::make_pair<std::string, header_value>(
           "Location", {location, false}));
       h.insert(std::make_pair<std::string, header_value>(
           "Content-Type", {"application/json", false}));
 
       response.write_head(
-          static_cast<uint32_t>(
-              oai::http::status_code_e::HTTP_STATUS_CODE_201_CREATED),
+          static_cast<uint32_t>(oai::common::sbi::http_status_code::CREATED),
           h);
       response.end(json_data.dump().c_str());
 
@@ -1005,7 +987,7 @@ void amf_http2_server::n1_n2_message_subscribe_handler(
     }
   } else {
     response.write_head(static_cast<uint32_t>(
-        oai::http::status_code_e::HTTP_STATUS_CODE_504_GATEWAY_TIMEOUT));
+        oai::common::sbi::http_status_code::GATEWAY_TIMEOUT));
     response.end();
   }
 }
@@ -1049,7 +1031,7 @@ void amf_http2_server::n1_n2_message_unsubscribe_handler(
 
   // Wait for the result available and process accordingly
   std::optional<nlohmann::json> result_opt = std::nullopt;
-  utils::wait_for_result(f, result_opt);
+  oai::utils::utils::wait_for_result(f, result_opt);
 
   if (result_opt.has_value()) {
     Logger::amf_server().debug("Got result for promise ID %d", promise_id);
@@ -1062,8 +1044,7 @@ void amf_http2_server::n1_n2_message_unsubscribe_handler(
       http_response_code = result["httpResponseCode"].get<int>();
     }
 
-    if (static_cast<oai::http::status_code_e>(http_response_code) ==
-        oai::http::status_code_e::HTTP_STATUS_CODE_204_NO_CONTENT) {
+    if (http_response_code == oai::common::sbi::http_status_code::NO_CONTENT) {
       response.write_head(http_response_code);
       response.end();
 
@@ -1080,7 +1061,7 @@ void amf_http2_server::n1_n2_message_unsubscribe_handler(
   } else {
     response.write_head(
         static_cast<uint32_t>(
-            oai::http::status_code_e::HTTP_STATUS_CODE_504_GATEWAY_TIMEOUT),
+            oai::common::sbi::http_status_code::GATEWAY_TIMEOUT),
         h);
     response.end();
   }
@@ -1121,7 +1102,7 @@ void amf_http2_server::non_ue_n2_info_subscribe_handler(
 
   // Wait for the result available and process accordingly
   std::optional<nlohmann::json> result_opt = std::nullopt;
-  utils::wait_for_result(f, result_opt);
+  oai::utils::utils::wait_for_result(f, result_opt);
 
   if (result_opt.has_value()) {
     Logger::amf_server().debug("Got result for promise ID %d", promise_id);
@@ -1143,16 +1124,14 @@ void amf_http2_server::non_ue_n2_info_subscribe_handler(
       json_data = result["createdData"];
     }
 
-    if (static_cast<oai::http::status_code_e>(http_response_code) ==
-        oai::http::status_code_e::HTTP_STATUS_CODE_201_CREATED) {
+    if (http_response_code == oai::common::sbi::http_status_code::CREATED) {
       h.insert(std::make_pair<std::string, header_value>(
           "Location", {location, false}));
       h.insert(std::make_pair<std::string, header_value>(
           "Content-Type", {"application/json", false}));
 
       response.write_head(
-          static_cast<uint32_t>(
-              oai::http::status_code_e::HTTP_STATUS_CODE_201_CREATED),
+          static_cast<uint32_t>(oai::common::sbi::http_status_code::CREATED),
           h);
       response.end(json_data.dump().c_str());
 
@@ -1162,7 +1141,7 @@ void amf_http2_server::non_ue_n2_info_subscribe_handler(
     }
   } else {
     response.write_head(static_cast<uint32_t>(
-        oai::http::status_code_e::HTTP_STATUS_CODE_504_GATEWAY_TIMEOUT));
+        oai::common::sbi::http_status_code::GATEWAY_TIMEOUT));
     response.end();
   }
 }
@@ -1202,7 +1181,7 @@ void amf_http2_server::non_ue_n2_info_unsubscribe_handler(
 
   // Wait for the result available and process accordingly
   std::optional<nlohmann::json> result_opt = std::nullopt;
-  utils::wait_for_result(f, result_opt);
+  oai::utils::utils::wait_for_result(f, result_opt);
 
   if (result_opt.has_value()) {
     Logger::amf_server().debug("Got result for promise ID %d", promise_id);
@@ -1215,8 +1194,7 @@ void amf_http2_server::non_ue_n2_info_unsubscribe_handler(
       http_response_code = result["httpResponseCode"].get<int>();
     }
 
-    if (static_cast<oai::http::status_code_e>(http_response_code) ==
-        oai::http::status_code_e::HTTP_STATUS_CODE_204_NO_CONTENT) {
+    if (http_response_code == oai::common::sbi::http_status_code::NO_CONTENT) {
       response.write_head(http_response_code);
       response.end();
 
@@ -1233,7 +1211,7 @@ void amf_http2_server::non_ue_n2_info_unsubscribe_handler(
   } else {
     response.write_head(
         static_cast<uint32_t>(
-            oai::http::status_code_e::HTTP_STATUS_CODE_504_GATEWAY_TIMEOUT),
+            oai::common::sbi::http_status_code::GATEWAY_TIMEOUT),
         h);
     response.end();
   }
@@ -1276,7 +1254,7 @@ void amf_http2_server::status_notify_handler(
 
   // Wait for the response available and process accordingly
   std::optional<nlohmann::json> result_opt = std::nullopt;
-  utils::wait_for_result(f, result_opt);
+  oai::utils::utils::wait_for_result(f, result_opt);
 
   if (result_opt.has_value()) {
     Logger::amf_server().debug("Got result for promise ID %d", promise_id);
@@ -1289,8 +1267,7 @@ void amf_http2_server::status_notify_handler(
       http_response_code = result["httpResponseCode"].get<int>();
     }
 
-    if (static_cast<oai::http::status_code_e>(http_response_code) ==
-        oai::http::status_code_e::HTTP_STATUS_CODE_200_OK) {
+    if (http_response_code == oai::common::sbi::http_status_code::OK) {
       if (result.find("content") != result.end()) {
         json_data = result["content"];
       }
@@ -1312,7 +1289,7 @@ void amf_http2_server::status_notify_handler(
 
   } else {
     response.write_head(static_cast<uint32_t>(
-        oai::http::status_code_e::HTTP_STATUS_CODE_504_GATEWAY_TIMEOUT));
+        oai::common::sbi::http_status_code::GATEWAY_TIMEOUT));
     response.end();
   }
 }
@@ -1347,7 +1324,7 @@ void amf_http2_server::get_configuration_handler(const response& response) {
 
   // Wait for the response available and process accordingly
   std::optional<nlohmann::json> result_opt = std::nullopt;
-  utils::wait_for_result(f, result_opt);
+  oai::utils::utils::wait_for_result(f, result_opt);
 
   if (result_opt.has_value()) {
     Logger::amf_server().debug("Got result for promise ID %d", promise_id);
@@ -1360,8 +1337,7 @@ void amf_http2_server::get_configuration_handler(const response& response) {
       http_response_code = result["httpResponseCode"].get<int>();
     }
 
-    if (static_cast<oai::http::status_code_e>(http_response_code) ==
-        oai::http::status_code_e::HTTP_STATUS_CODE_200_OK) {
+    if (http_response_code == oai::common::sbi::http_status_code::OK) {
       if (result.find("content") != result.end()) {
         json_data = result["content"];
       }
@@ -1382,7 +1358,7 @@ void amf_http2_server::get_configuration_handler(const response& response) {
     }
   } else {
     response.write_head(static_cast<uint32_t>(
-        oai::http::status_code_e::HTTP_STATUS_CODE_504_GATEWAY_TIMEOUT));
+        oai::common::sbi::http_status_code::GATEWAY_TIMEOUT));
     response.end();
   }
 }
@@ -1421,7 +1397,7 @@ void amf_http2_server::update_configuration_handler(
 
   // Wait for the response available and process accordingly
   std::optional<nlohmann::json> result_opt = std::nullopt;
-  utils::wait_for_result(f, result_opt);
+  oai::utils::utils::wait_for_result(f, result_opt);
 
   if (result_opt.has_value()) {
     Logger::amf_server().debug("Got result for promise ID %d", promise_id);
@@ -1435,8 +1411,7 @@ void amf_http2_server::update_configuration_handler(
       http_response_code = result["httpResponseCode"].get<int>();
     }
 
-    if (static_cast<oai::http::status_code_e>(http_response_code) ==
-        oai::http::status_code_e::HTTP_STATUS_CODE_200_OK) {
+    if (http_response_code == oai::common::sbi::http_status_code::OK) {
       if (result.find("content") != result.end()) {
         json_data = result["content"];
       }
@@ -1456,7 +1431,7 @@ void amf_http2_server::update_configuration_handler(
 
   } else {
     response.write_head(static_cast<uint32_t>(
-        oai::http::status_code_e::HTTP_STATUS_CODE_504_GATEWAY_TIMEOUT));
+        oai::common::sbi::http_status_code::GATEWAY_TIMEOUT));
     response.end();
   }
 }

@@ -262,7 +262,7 @@ int sctp_server::sctp_read_from_socket(int sd, uint32_t ppid) {
     app_->handle_receive(
         payload, (sctp_assoc_id_t) sinfo.sinfo_assoc_id, sinfo.sinfo_stream,
         association->instreams, association->outstreams);
-    utils::bdestroy_wrapper(&payload);
+    oai::utils::utils::bdestroy_wrapper(&payload);
   }
   return RETURNok;
 }
