@@ -1809,6 +1809,11 @@ bool amf_n1::registration_request_handle(
   if (uc != nullptr) {
     std::string supi = amf_conv::imsi_to_supi(nc->imsi);
     uc->supi         = supi;
+    // Verify if there's PDU session info in the old context
+    std::shared_ptr<ue_context> old_uc = {};
+    if (amf_app_inst->supi_2_ue_context(uc->supi, old_uc)) {
+      uc->copy_pdu_sessions(old_uc);
+    }
     amf_app_inst->set_supi_2_ue_context(supi, uc);
     Logger::amf_n1().debug("Update UC context, SUPI %s", supi.c_str());
   }
