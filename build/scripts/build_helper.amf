@@ -105,6 +105,9 @@ check_install_amf_deps(){
       "ubuntu22.04")
         specific_packages="libasio-dev libboost-all-dev libasan6"
         ;;
+      "ubuntu24.04")
+        specific_packages="libasio-dev libboost-all-dev libasan8"
+        ;;
     esac
     # removed libspdlog-dev
     PACKAGE_LIST="\
@@ -181,6 +184,15 @@ check_install_amf_deps(){
         #$SUDO $INSTALLER install $OPTION libyaml-cpp0.7 libyaml-cpp-dev
         install_libyaml_cpp_from_git $1 $2
         ret=$?;[[ $ret -ne 0 ]] && return $ret
+        ;;
+      "ubuntu24.04")
+        # looks like we have a good version now
+        $SUDO $INSTALLER install $OPTION libyaml-cpp0.8 libyaml-cpp-dev
+        ret=$?;[[ $ret -ne 0 ]] && return $ret
+        # Having the same location for all OS versions for the moment
+        # So the dockerfile is common.
+        # TODO: to be removed once, we drop U22 support
+        $SUDO ln -s /lib/x86_64-linux-gnu/libyaml-cpp.so.0.8 /usr/local/lib/libyaml-cpp.so.0.8
         ;;
     esac
   elif [[ "$OS_BASEDISTRO" == "fedora" ]]; then

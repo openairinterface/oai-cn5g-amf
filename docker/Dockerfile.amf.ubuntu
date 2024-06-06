@@ -23,13 +23,14 @@
 # Dockerfile for the Open-Air-Interface AMF service
 #   Valid for Ubuntu-20.04 (focal),
 #             Ubuntu-22.04 (jammy)
+#             Ubuntu-24.04 (noble)
 #
 #---------------------------------------------------------------------
 
 #---------------------------------------------------------------------
 # BASE IMAGE
 #---------------------------------------------------------------------
-ARG BASE_IMAGE=ubuntu:jammy
+ARG BASE_IMAGE=ubuntu:noble
 FROM $BASE_IMAGE as oai-amf-base
 
 ENV DEBIAN_FRONTEND=noninteractive
