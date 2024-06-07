@@ -2416,8 +2416,8 @@ bool amf_n1::_5g_aka_confirmation_from_ausf(
   uint32_t response_code = 0;
 
   amf_sbi_inst->curl_http_client(
-      remote_uri, "PUT", msg_body, response, response_code,
-      amf_cfg.support_features.http_version);
+      remote_uri, oai::common::sbi::method_e::PUT, msg_body, response,
+      response_code, amf_cfg.support_features.http_version);
 
   oai::utils::utils::free_wrapper((void**) &res_star_s);
   try {
@@ -4020,7 +4020,6 @@ bool amf_n1::run_periodic_registration_update_procedure(
   auto registration_request = std::make_unique<RegistrationRequest>();
   int decoded_size =
       registration_request->Decode((uint8_t*) bdata(nas_msg), blength(nas_msg));
-  // oai::utils::utils::bdestroy_wrapper(&nas_msg);  // free buffer
 
   if (decoded_size == KEncodeDecodeError) {
     Logger::nas_mm().error("Decode Registration Request message error");
@@ -4090,6 +4089,7 @@ bool amf_n1::run_periodic_registration_update_procedure(
   }
 
   oai::utils::utils::bdestroy_wrapper(&protected_nas);
+
   return true;
 }
 

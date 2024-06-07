@@ -78,8 +78,7 @@ void AMFConfigurationApiImpl::read_configuration(
       http_response_code = result["httpResponseCode"].get<int>();
     }
 
-    if (static_cast<http_response_codes_e>(http_response_code) ==
-        http_response_codes_e::HTTP_RESPONSE_CODE_200_OK) {
+    if (http_response_code == oai::common::sbi::http_status_code::OK) {
       if (result.find("content") != result.end()) {
         json_data = result["content"];
       }
@@ -147,8 +146,7 @@ void AMFConfigurationApiImpl::update_configuration(
       http_response_code = result["httpResponseCode"].get<int>();
     }
 
-    if (static_cast<http_response_codes_e>(http_response_code) ==
-        http_response_codes_e::HTTP_RESPONSE_CODE_200_OK) {
+    if (http_response_code == oai::common::sbi::http_status_code::OK) {
       if (result.find("content") != result.end()) {
         json_data = result["content"];
       }

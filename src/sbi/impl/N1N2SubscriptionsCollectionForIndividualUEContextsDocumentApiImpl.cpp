@@ -90,8 +90,7 @@ void N1N2SubscriptionsCollectionForIndividualUEContextsDocumentApiImpl::
       json_data = result["createdData"];
     }
 
-    if (static_cast<http_response_codes_e>(http_response_code) ==
-        http_response_codes_e::HTTP_RESPONSE_CODE_201_CREATED) {
+    if (http_response_code == oai::common::sbi::http_status_code::CREATED) {
       response.headers().add<Pistache::Http::Header::Location>(
           location);  // Location header
       response.headers().add<Pistache::Http::Header::ContentType>(

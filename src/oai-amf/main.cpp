@@ -35,6 +35,7 @@
 #include "amf_config.hpp"
 #include "amf_config_yaml.hpp"
 #include "amf_statistics.hpp"
+#include "http_client.hpp"
 #include "itti.hpp"
 #include "logger.hpp"
 #include "ngap_app.hpp"
@@ -54,6 +55,8 @@ statistics stacs;
 
 amf_http1_server* http1_server = nullptr;
 amf_http2_server* http2_server = nullptr;
+
+std::shared_ptr<oai::http::http_client> http_client_inst = nullptr;
 
 std::unique_ptr<amf_config_yaml> amf_cfg_yaml;
 
@@ -144,6 +147,11 @@ int main(int argc, char** argv) {
 
   itti_inst = new itti_mw();
   itti_inst->start(amf_cfg.itti.itti_timer_sched_params);
+
+  // HTTP Client
+  http_client_inst = oai::http::http_client::create_instance(
+      Logger::amf_sbi(), oai::common::sbi::kNfDefaultHttpRequestTimeout,
+      amf_cfg.sbi.if_name, amf_cfg.support_features.http_version);
 
   amf_app_inst = new amf_app(amf_cfg);
   amf_app_inst->start();
