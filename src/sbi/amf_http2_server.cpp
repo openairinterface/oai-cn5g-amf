@@ -753,7 +753,7 @@ void amf_http2_server::n1_n2_message_transfer_handler(
             parts[n1_content_id].body.substr(
                 0, parts[n1_content_id].body.length()),
             n1sm);
-        output_wrapper::print_buffer(
+        oai::utils::output_wrapper::print_buffer(
             "amf_server", "Received N1 SM", (uint8_t*) bdata(n1sm),
             blength(n1sm));
         // Store N1 SM in PDU Session Context

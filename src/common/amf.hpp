@@ -23,29 +23,16 @@
 #define FILE_AMF_HPP_SEEN
 
 #include "3gpp_23.003.h"
-#include "inttypes.h"
-#include "stdio.h"
-#include "string.h"
 
-#include <arpa/inet.h>
-#include <netinet/in.h>
-#include <sys/socket.h>
-
-#include <boost/algorithm/string.hpp>
 #include <nlohmann/json.hpp>
 #include <string>
-#include <vector>
-#include <optional>
 
-#include "common_defs.h"
 #include "3gpp_24.501.hpp"
-#include "if.hpp"
 #include "string.hpp"
 #include "thread_sched.hpp"
 
 // for CURL
 constexpr auto CURL_MIME_BOUNDARY = "----Boundary";
-#define CURL_TIMEOUT_MS 10000L
 
 #define BUFFER_SIZE_8192 8192
 #define BUFFER_SIZE_4096 4096

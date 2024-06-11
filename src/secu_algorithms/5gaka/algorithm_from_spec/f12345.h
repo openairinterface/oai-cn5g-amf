@@ -48,7 +48,7 @@ void f5star(u8 k[16], u8 rand[16], u8 ak[6]);
  *-----------------------------------------------------------------*/
 
 void f1(u8 k[16], u8 rand[16], u8 sqn[6], u8 amf[2], u8 mac_a[8]) {
-  output_wrapper::print_buffer("amf_app", "OPC", op_c, 16);
+  oai::utils::output_wrapper::print_buffer("amf_app", "OPC", op_c, 16);
 
   // u8 op_c[16];
   u8 temp[16];

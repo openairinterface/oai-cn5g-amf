@@ -46,6 +46,7 @@ target_include_directories(AMF_APP PUBLIC ${SRC_TOP_DIR}/${MOUNTED_COMMON}/ngap/
 target_include_directories(AMF_APP PUBLIC ${SRC_TOP_DIR}/${MOUNTED_COMMON}/ngap/libngap_ies)
 target_include_directories(AMF_APP PUBLIC ${SRC_TOP_DIR}/${MOUNTED_COMMON}/ngap/ngap_ies)
 target_include_directories(AMF_APP PUBLIC ${SRC_TOP_DIR}/${MOUNTED_COMMON}/ngap/ngap_msgs)
+target_include_directories(AMF_APP PUBLIC ${SRC_TOP_DIR}/${MOUNTED_COMMON}/ngap/utils)
 target_include_directories(AMF_APP PUBLIC ${SRC_TOP_DIR}/sbi)
 target_include_directories(AMF_APP PUBLIC ${SRC_TOP_DIR}/sbi/api)
 target_include_directories(AMF_APP PUBLIC ${SRC_TOP_DIR}/sbi/impl)
