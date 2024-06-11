@@ -36,6 +36,7 @@
 #include "amf_config.hpp"
 #include "amf_config_yaml.hpp"
 #include "amf_statistics.hpp"
+#include "http_client.hpp"
 #include "itti.hpp"
 #include "logger.hpp"
 #include "ngap_app.hpp"
@@ -55,6 +56,8 @@ statistics stacs;
 
 amf_http1_server* http1_server = nullptr;
 amf_http2_server* http2_server = nullptr;
+
+std::shared_ptr<oai::http::http_client> http_client_inst = nullptr;
 
 std::unique_ptr<amf_config_yaml> amf_cfg_yaml;
 std::unique_ptr<lttng_configuration> lttng_config_yaml;
@@ -167,6 +170,11 @@ int main(int argc, char** argv) {
   itti_inst = new itti_mw();
   itti_inst->start(amf_cfg.itti.itti_timer_sched_params);
 
+  // HTTP Client
+  http_client_inst = oai::http::http_client::create_instance(
+      Logger::amf_sbi(), oai::common::sbi::kNfDefaultHttpRequestTimeout,
+      amf_cfg.sbi.if_name, amf_cfg.support_features.http_version);
+
   amf_app_inst = new amf_app(amf_cfg);
   amf_app_inst->start();
 
@@ -183,7 +191,8 @@ int main(int argc, char** argv) {
   } else {
     // AMF HTTP2 server
     http2_server = new amf_http2_server(
-        conv::toString(amf_cfg.sbi.addr4), amf_cfg.sbi.port, amf_app_inst);
+        oai::utils::conv::toString(amf_cfg.sbi.addr4), amf_cfg.sbi.port,
+        amf_app_inst);
     std::thread amf_http2_manager(&amf_http2_server::start, http2_server);
     amf_http2_manager.join();
   }

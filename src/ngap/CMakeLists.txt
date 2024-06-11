@@ -19,8 +19,8 @@
 #      contact@openairinterface.org
 ################################################################################
 file(GLOB AMF_NGAP_src_files
-  ${SRC_TOP_DIR}/${MOUNTED_COMMON}/ngap/ngapMsgs/*.cpp
-  ${SRC_TOP_DIR}/${MOUNTED_COMMON}/ngap/ngapIEs/*.cpp
+  ${SRC_TOP_DIR}/${MOUNTED_COMMON}/ngap/ngap_msgs/*.cpp
+  ${SRC_TOP_DIR}/${MOUNTED_COMMON}/ngap/ngap_ies/*.cpp
 )
 add_library (AMF_NGAP STATIC
   ${AMF_NGAP_src_files}
@@ -29,8 +29,9 @@ add_library (AMF_NGAP STATIC
 set(NGAP_DIR "${SRC_TOP_DIR}/ngap")
 
 target_include_directories(AMF_NGAP PUBLIC ${SRC_TOP_DIR}/${MOUNTED_COMMON}/ngap/libngap)
-target_include_directories(AMF_NGAP PUBLIC ${SRC_TOP_DIR}/${MOUNTED_COMMON}/ngap/ngapIEs)
-target_include_directories(AMF_NGAP PUBLIC ${SRC_TOP_DIR}/${MOUNTED_COMMON}/ngap/ngapMsgs)
+target_include_directories(AMF_NGAP PUBLIC ${SRC_TOP_DIR}/${MOUNTED_COMMON}/ngap/libngap_ies)
+target_include_directories(AMF_NGAP PUBLIC ${SRC_TOP_DIR}/${MOUNTED_COMMON}/ngap/ngap_ies)
+target_include_directories(AMF_NGAP PUBLIC ${SRC_TOP_DIR}/${MOUNTED_COMMON}/ngap/ngap_msgs)
 target_include_directories(AMF_NGAP PUBLIC ${SRC_TOP_DIR}/common)
 target_include_directories(AMF_NGAP PUBLIC ${SRC_TOP_DIR}/common/unicode)
 target_include_directories(AMF_NGAP PUBLIC ${SRC_TOP_DIR}/itti)

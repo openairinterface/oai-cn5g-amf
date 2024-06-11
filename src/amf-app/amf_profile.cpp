@@ -255,11 +255,13 @@ void nf_profile::from_json(const nlohmann::json& data) {
       struct in_addr addr4 = {};
       std::string address  = it.get<std::string>();
       unsigned char buf_in_addr[sizeof(struct in_addr)];
-      if (inet_pton(AF_INET, util::trim(address).c_str(), buf_in_addr) == 1) {
+      if (inet_pton(AF_INET, oai::utils::trim(address).c_str(), buf_in_addr) ==
+          1) {
         memcpy(&addr4, buf_in_addr, sizeof(struct in_addr));
       } else {
         Logger::amf_app().warn(
-            "Address conversion: Bad value %s", util::trim(address).c_str());
+            "Address conversion: Bad value %s",
+            oai::utils::trim(address).c_str());
       }
       // Logger::amf_app().debug("\tIPv4 Addr: %s", address.c_str());
       add_nf_ipv4_addresses(addr4);
@@ -276,17 +278,19 @@ void nf_profile::from_json(const nlohmann::json& data) {
 }
 
 //------------------------------------------------------------------------------
-void amf_profile::set_nf_services(const std::vector<nf_service_t>& n) {
+void amf_profile::set_nf_services(
+    const std::vector<oai::common::sbi::nf_service_t>& n) {
   nf_services = n;
 }
 
 //------------------------------------------------------------------------------
-void amf_profile::add_nf_service(const nf_service_t& n) {
+void amf_profile::add_nf_service(const oai::common::sbi::nf_service_t& n) {
   nf_services.push_back(n);
 }
 
 //------------------------------------------------------------------------------
-void amf_profile::get_nf_services(std::vector<nf_service_t>& n) const {
+void amf_profile::get_nf_services(
+    std::vector<oai::common::sbi::nf_service_t>& n) const {
   n = nf_services;
 }
 
@@ -306,12 +310,12 @@ void amf_profile::get_custom_info(nlohmann::json& c) const {
 }
 
 //------------------------------------------------------------------------------
-void amf_profile::set_amf_info(const amf_info_t& s) {
+void amf_profile::set_amf_info(const oai::common::sbi::amf_info_t& s) {
   amf_info = s;
 }
 
 //------------------------------------------------------------------------------
-void amf_profile::get_amf_info(amf_info_t& s) const {
+void amf_profile::get_amf_info(oai::common::sbi::amf_info_t& s) const {
   s = amf_info;
 }
 
