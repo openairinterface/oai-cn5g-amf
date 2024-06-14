@@ -24,13 +24,13 @@
 #include <arpa/inet.h>
 #include <ctype.h>
 #include <inttypes.h>
-#include <iomanip>
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdlib.h>
-#include <sstream>
 
 #include <boost/algorithm/string.hpp>
+#include <iomanip>
+#include <sstream>
 
 #include "amf.hpp"
 #include "logger.hpp"
@@ -61,7 +61,7 @@ void amf_conv::convert_string_2_hex(
   }
   memset(data, 0, input_str.length() + 1);
   memcpy((void*) data, (void*) input_str.c_str(), input_str.length());
-  output_wrapper::print_buffer(
+  oai::utils::output_wrapper::print_buffer(
       "amf_app", "Data input", data, input_str.length());
 
   char* datahex = (char*) malloc(input_str.length() * 2 + 1);
@@ -442,51 +442,4 @@ bool amf_conv::string_2_masked_imeisv(
   imeisv.size        = 8;
   imeisv.bits_unused = 0;
   return true;
-}
-
-//------------------------------------------------------------------------------
-void amf_conv::get_amf_id(
-    uint8_t amf_region_id, uint16_t amf_set_id, uint8_t amf_pointer,
-    uint32_t& amf_id) {
-  // AMF Region ID: 8bits
-  // AMF Set ID: 10 bits
-  // AMF Pointer: 6 bits
-  amf_id = 0x00ffffff & ((amf_region_id << 16) | ((amf_set_id & 0x03ff) << 6) |
-                         (amf_pointer & 0x3f));
-}
-
-//------------------------------------------------------------------------------
-void amf_conv::get_amf_id(
-    uint8_t amf_region_id, uint16_t amf_set_id, uint8_t amf_pointer,
-    std::string& amf_id) {
-  // AMF Region ID: 8bits
-  // AMF Set ID: 10 bits
-  // AMF Pointer: 6 bits
-  uint32_t amf_id_int = 0;
-  get_amf_id(amf_region_id, amf_set_id, amf_pointer, amf_id_int);
-  int_to_string_hex(amf_id_int, amf_id);
-}
-
-//------------------------------------------------------------------------------
-void amf_conv::get_amf_id(
-    const std::string& amf_region_id, const std::string& amf_set_id,
-    const std::string& amf_pointer, uint32_t& amf_id) {
-  uint8_t amf_region_id_int = {};
-  uint16_t amf_set_id_int   = {};
-  uint8_t amf_pointer_int   = {};
-
-  get_amf_id(
-      string_hex_to_int(amf_region_id), string_hex_to_int(amf_set_id),
-      string_hex_to_int(amf_pointer), amf_id);
-}
-
-//------------------------------------------------------------------------------
-void amf_conv::get_amf_id(
-    const std::string& amf_region_id, const std::string& amf_set_id,
-    const std::string& amf_pointer, std::string& amf_id) {
-  uint32_t amf_id_int = 0;
-  get_amf_id(
-      string_hex_to_int(amf_region_id), string_hex_to_int(amf_set_id),
-      string_hex_to_int(amf_pointer), amf_id_int);
-  int_to_string_hex(amf_id_int, amf_id);
 }

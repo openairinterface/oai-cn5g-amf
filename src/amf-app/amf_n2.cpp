@@ -806,7 +806,7 @@ void amf_n2::handle_itti_message(
       memcpy(
           (void*) unc->initial_ue_msg.buf, (void*) initial_ue_msg_buf,
           encoded_size);
-      output_wrapper::print_buffer(
+      oai::utils::output_wrapper::print_buffer(
           "ngap", "InitialUEMessage", unc->initial_ue_msg.buf, encoded_size);
       unc->initial_ue_msg.size = encoded_size;
     }
@@ -1037,8 +1037,8 @@ void amf_n2::handle_itti_message(
           item.sNssai.sst = std::to_string(DEFAULT_SST);
           item.sNssai.sd  = std::to_string(SD_NO_VALUE);
         } else {
-          item.sNssai.sst = std::to_string(psc->snssai.sST);
-          item.sNssai.sd  = psc->snssai.sD;
+          item.sNssai.sst = std::to_string(psc->snssai.sst);
+          item.sNssai.sd  = psc->snssai.sd;
         }
 
         Logger::amf_n2().debug(
@@ -1127,8 +1127,8 @@ void amf_n2::handle_itti_message(
         item.sNssai.sst = std::to_string(DEFAULT_SST);
         item.sNssai.sd  = std::to_string(SD_NO_VALUE);
       } else {
-        item.sNssai.sst = std::to_string(psc->snssai.sST);
-        item.sNssai.sd  = psc->snssai.sD;
+        item.sNssai.sst = std::to_string(psc->snssai.sst);
+        item.sNssai.sd  = psc->snssai.sd;
         Logger::amf_n2().debug(
             "S_NSSAI (SST, SD) %s, %s", item.sNssai.sst.c_str(),
             item.sNssai.sd.c_str());
@@ -1159,7 +1159,7 @@ void amf_n2::handle_itti_message(
 
   int encoded_size = 0;
   psrsr->encode2NewBuffer(buffer, encoded_size);
-  output_wrapper::print_buffer(
+  oai::utils::output_wrapper::print_buffer(
       "amf_n2", "N2 SM buffer data:", buffer, encoded_size);
   Logger::amf_n2().debug(" (%d bytes) \n", encoded_size);
 
@@ -1220,7 +1220,7 @@ void amf_n2::handle_itti_message(
 
   int encoded_size = 0;
   modify_request_msg->encode2NewBuffer(buffer, encoded_size);
-  output_wrapper::print_buffer(
+  oai::utils::output_wrapper::print_buffer(
       "amf_n2", "N2 SM buffer data:", buffer, encoded_size);
   Logger::amf_n2().debug(" (%d bytes) \n", encoded_size);
 
@@ -1276,7 +1276,7 @@ void amf_n2::handle_itti_message(
 
   int encoded_size = 0;
   release_cmd_msg->encode2NewBuffer(buffer, encoded_size);
-  output_wrapper::print_buffer(
+  oai::utils::output_wrapper::print_buffer(
       "amf_n2", "N2 SM buffer data:", buffer, encoded_size);
   Logger::amf_n2().debug(" (%d bytes) \n", encoded_size);
 
@@ -1903,8 +1903,8 @@ bool amf_n2::handle_itti_message(
                 supi, curl_responses.begin()->first, psc)) {
           PDUSessionResourceSetupRequestItem_t item = {};
           item.pduSessionId                         = psc->pdu_session_id;
-          item.sNssai.sst = std::to_string(psc->snssai.sST);
-          item.sNssai.sd  = psc->snssai.sD;
+          item.sNssai.sst = std::to_string(psc->snssai.sst);
+          item.sNssai.sd  = psc->snssai.sd;
           // item.pduSessionNAS_PDU = nullptr;
           unsigned int data_len = n2_sm.length();
           item.pduSessionResourceSetupRequestTransfer.buf =

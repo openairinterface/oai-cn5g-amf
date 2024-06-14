@@ -21,11 +21,12 @@
 
 #include "mime_parser.hpp"
 
-#include "conversions.hpp"
-#include "output_wrapper.hpp"
-#include "logger.hpp"
-#include "amf.hpp"
 #include <boost/algorithm/string.hpp>
+
+#include "amf.hpp"
+#include "conversions.hpp"
+#include "logger.hpp"
+#include "output_wrapper.hpp"
 #include "utils.hpp"
 
 bool mime_parser::parse(const std::string& str) {
@@ -150,7 +151,7 @@ unsigned char* mime_parser::format_string_as_hex(const std::string& str) {
   Logger::amf_app().debug(
       "[Format string as Hex] Input string (%d bytes): %s ", str_len,
       str.c_str());
-  output_wrapper::print_buffer(
+  oai::utils::output_wrapper::print_buffer(
       "amf_app", "Data (formatted):", data_hex, str_len / 2);
 
   // free memory

@@ -63,14 +63,14 @@ class amf_app {
   // timer_id_t timer_nrf_heartbeat;
   std::map<std::string, timer_id_t> timer_nrfs_heartbeat;
 
-  util::uint_generator<uint32_t> evsub_id_generator;
+  oai::utils::uint_generator<uint32_t> evsub_id_generator;
   std::map<
       std::pair<evsub_id_t, amf_event_type_t>,
       std::shared_ptr<amf_subscription>>
       amf_event_subscriptions;
   mutable std::shared_mutex m_amf_event_subscriptions;
 
-  util::uint_generator<uint32_t> tmsi_generator;
+  oai::utils::uint_generator<uint32_t> tmsi_generator;
 
   std::map<uint64_t, std::shared_ptr<ue_context>> amf_ue_ngap_id2ue_ctx;
   mutable std::shared_mutex m_amf_ue_ngap_id2ue_ctx;
@@ -84,7 +84,7 @@ class amf_app {
   std::map<uint32_t, boost::shared_ptr<boost::promise<nlohmann::json>>>
       curl_handle_responses_sbi;
 
-  util::uint_generator<uint32_t> n1n2sub_id_generator;
+  oai::utils::uint_generator<uint32_t> n1n2sub_id_generator;
   std::map<
       std::pair<std::string, uint32_t>,
       std::shared_ptr<oai::amf::model::UeN1N2InfoSubscriptionCreateData>>
@@ -612,7 +612,7 @@ class amf_app {
    * @return generated promise id
    */
   static uint64_t generate_promise_id() {
-    return util::uint_uid_generator<uint64_t>::get_instance().get_uid();
+    return oai::utils::uint_uid_generator<uint64_t>::get_instance().get_uid();
   }
 
   /*

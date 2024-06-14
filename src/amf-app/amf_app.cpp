@@ -420,7 +420,7 @@ void amf_app::handle_itti_message(
       Logger::nas_mm().debug("Size of DL NAS Transport message %ld", msg_len);
       uint8_t nas[msg_len] = {0};
       int encoded_size     = dl->Encode(nas, msg_len);
-      output_wrapper::print_buffer(
+      oai::utils::output_wrapper::print_buffer(
           "amf_app", "N1N2 message transfer", nas, encoded_size);
       dl_msg->dl_nas = blk2bstr(nas, encoded_size);
     }
@@ -1477,8 +1477,8 @@ void amf_app::generate_amf_profile() {
   for (auto p : amf_cfg.plmn_list) {
     for (auto s : p.slice_list) {
       snssai_t nssai = {};
-      nssai.sST      = s.sst;
-      amf_conv::sd_int_to_string_hex(s.sd, nssai.sD);
+      nssai.sst      = s.sst;
+      amf_conv::sd_int_to_string_hex(s.sd, nssai.sd);
       amf_snssai.push_back(nssai);
     }
   }
@@ -1567,8 +1567,8 @@ void amf_app::get_nrfs(std::unordered_set<std::string>& nrfs) {
         itti_msg->nf_instance_id = amf_instance_id;
         itti_msg->plmn.mcc       = plmn.mcc;
         itti_msg->plmn.mnc       = plmn.mnc;
-        itti_msg->snssai.sST     = s.sst;
-        itti_msg->snssai.sD      = std::to_string(s.sd);
+        itti_msg->snssai.sst     = s.sst;
+        itti_msg->snssai.sd      = std::to_string(s.sd);
         itti_msg->promise_id     = promise_id;
         int ret                  = itti_inst->send_msg(itti_msg);
         if (0 != ret) {

@@ -354,14 +354,14 @@ void amf_sbi::handle_itti_message(itti_nsmf_pdusession_create_sm_context& smf) {
   psc->ran_ue_ngap_id = nc->ran_ue_ngap_id;
   psc->req_type       = smf.req_type;
   psc->pdu_session_id = smf.pdu_sess_id;
-  psc->snssai.sST     = smf.snssai.sST;
-  psc->snssai.sD      = smf.snssai.sD;
+  psc->snssai.sst     = smf.snssai.sst;
+  psc->snssai.sd      = smf.snssai.sd;
   psc->plmn.mcc       = smf.plmn.mcc;
   psc->plmn.mnc       = smf.plmn.mnc;
 
   Logger::amf_sbi().debug(
-      "PDU Session Context, NSSAI SST (0x%x) SD %s", psc->snssai.sST,
-      psc->snssai.sD.c_str());
+      "PDU Session Context, NSSAI SST (0x%x) SD %s", psc->snssai.sst,
+      psc->snssai.sd.c_str());
 
   // parse binary dnn and store
   std::string dnn = DEFAULT_DNN;  // If DNN doesn't available, use "default"
@@ -488,8 +488,8 @@ void amf_sbi::handle_pdu_session_initial_request(
   pdu_session_establishment_request["pei"]           = "imei-200000000000001";
   pdu_session_establishment_request["gpsi"]          = "msisdn-200000000001";
   pdu_session_establishment_request["dnn"]           = dnn.c_str();
-  pdu_session_establishment_request["sNssai"]["sst"] = psc->snssai.sST;
-  pdu_session_establishment_request["sNssai"]["sd"]  = psc->snssai.sD.c_str();
+  pdu_session_establishment_request["sNssai"]["sst"] = psc->snssai.sst;
+  pdu_session_establishment_request["sNssai"]["sd"]  = psc->snssai.sd.c_str();
   pdu_session_establishment_request["pduSessionId"]  = psc->pdu_session_id;
   pdu_session_establishment_request["requestType"] =
       "INITIAL_REQUEST";  // TODO: from SM_MSG
@@ -1063,7 +1063,7 @@ bool amf_sbi::smf_selection_from_configuration(
 void amf_sbi::handle_post_sm_context_response_error(
     const long code, const std::string& cause, bstring n1sm,
     const std::string& supi, uint8_t pdu_session_id) {
-  output_wrapper::print_buffer(
+  oai::utils::output_wrapper::print_buffer(
       "amf_sbi", "N1 SM", (uint8_t*) bdata(n1sm), blength(n1sm));
   itti_n1n2_message_transfer_request* itti_msg =
       new itti_n1n2_message_transfer_request(TASK_AMF_SBI, TASK_AMF_APP);
@@ -1137,13 +1137,13 @@ bool amf_sbi::discover_smf(
             if (Snssai.count("sd") > 0) {
               amf_conv::sd_string_to_int(Snssai["sd"].get<std::string>(), sd);
             }
-            if (sst == snssai.sST) {
+            if (sst == snssai.sst) {
               uint32_t input_sd = SD_NO_VALUE;  // Default value
-              amf_conv::sd_string_to_int(snssai.sD, input_sd);
+              amf_conv::sd_string_to_int(snssai.sd, input_sd);
               if (sd == input_sd) {
                 Logger::amf_sbi().debug(
                     "S-NSSAI [SST- %d, SD -%s] is matched for SMF profile",
-                    snssai.sST, snssai.sD.c_str());
+                    snssai.sst, snssai.sd.c_str());
                 result = true;
                 break;  // NSSAI is included in the list of supported slices
                         // from SMF
@@ -1277,7 +1277,7 @@ bool amf_sbi::curl_http_client(
       Logger::amf_sbi().debug(
           "Get response with json_data: %s", json_data_response.c_str());
       amf_conv::msg_str_2_msg_hex(n1sm.value(), n1sm_hex);
-      output_wrapper::print_buffer(
+      oai::utils::output_wrapper::print_buffer(
           "amf_sbi", "Get response with n1sm:", (uint8_t*) bdata(n1sm_hex),
           blength(n1sm_hex));
 
@@ -1350,7 +1350,7 @@ bool amf_sbi::curl_http_client(
         // Update Pdu Session Context
         if (n2sm.has_value()) {
           amf_conv::msg_str_2_msg_hex(n2sm.value(), n2sm_hex);
-          output_wrapper::print_buffer(
+          oai::utils::output_wrapper::print_buffer(
               "amf_sbi", "[Service Request] Get response N2 SM:",
               (uint8_t*) bdata(n2sm_hex), blength(n2sm_hex));
           psc->n2sm              = bstrcpy(n2sm_hex);
@@ -1378,7 +1378,7 @@ bool amf_sbi::curl_http_client(
 
       if (n1sm.has_value() > 0) {
         amf_conv::msg_str_2_msg_hex(n1sm.value(), n1sm_hex);
-        output_wrapper::print_buffer(
+        oai::utils::output_wrapper::print_buffer(
             "amf_sbi", "Get response N1 SM:", (uint8_t*) bdata(n1sm_hex),
             blength(n1sm_hex));
         itti_msg->n1sm        = bstrcpy(n1sm_hex);
@@ -1387,7 +1387,7 @@ bool amf_sbi::curl_http_client(
 
       if (n2sm.has_value() > 0) {
         amf_conv::msg_str_2_msg_hex(n2sm.value(), n2sm_hex);
-        output_wrapper::print_buffer(
+        oai::utils::output_wrapper::print_buffer(
             "amf_sbi", "Get response N2 SM:", (uint8_t*) bdata(n2sm_hex),
             blength(n2sm_hex));
         itti_msg->n2sm        = bstrcpy(n2sm_hex);
@@ -1618,8 +1618,8 @@ void amf_sbi::get_network_slice_information(
   // Get NSI information from NSSF
   nlohmann::json slice_info  = {};
   nlohmann::json snssai_info = {};
-  snssai_info["sst"]         = snssai.sST;
-  if (!snssai.sD.empty()) snssai_info["sd"] = snssai.sD;
+  snssai_info["sst"]         = snssai.sst;
+  if (!snssai.sd.empty()) snssai_info["sd"] = snssai.sd;
   slice_info["sNssai"]            = snssai_info;
   slice_info["roamingIndication"] = "NON_ROAMING";
   // ToDo Add TAI
