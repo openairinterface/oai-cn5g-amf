@@ -31,14 +31,14 @@ namespace xgpp_conv {
 
 /*
  * Convert AmfCreatedEventSubscription from OpenAPI into Event Exposure Msg
- * @param [const oai::amf::model::AmfCreatedEventSubscription&]
+ * @param [const oai::model::amf::AmfCreatedEventSubscription&]
  * event_subscription: AmfCreatedEventSubscription in OpenAPI
  * @param [amf_application::event_exposure_msg&] event_exposure: Event Exposure
  * Msg
  * @return void
  */
 void amf_event_subscription_from_openapi(
-    const oai::amf::model::AmfCreateEventSubscription& event_subscription,
+    const oai::model::amf::AmfCreateEventSubscription& event_subscription,
     event_exposure_msg& event_exposure);
 
 std::string amf_event_type_to_string(amf_event_type_t type);

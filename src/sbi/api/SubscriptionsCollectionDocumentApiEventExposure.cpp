@@ -21,7 +21,7 @@ extern oai::config::amf_config amf_cfg;
 namespace oai::amf::api {
 
 using namespace oai::model::common::helpers;
-using namespace oai::amf::model;
+using namespace oai::model::amf;
 
 SubscriptionsCollectionDocumentApiEventExposure::
     SubscriptionsCollectionDocumentApiEventExposure(

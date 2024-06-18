@@ -68,7 +68,7 @@
 
 using namespace amf_application;
 using namespace boost::placeholders;
-using namespace oai::amf::model;
+using namespace oai::model::amf;
 using namespace oai::amf::api;
 using namespace oai::config;
 using namespace oai::model::common;
@@ -2120,7 +2120,7 @@ void amf_n1::send_registration_reject_msg(
   itti_send_dl_nas_buffer_to_task_n2(b, ran_ue_ngap_id, amf_ue_ngap_id);
 
   // Trigger CommunicationFailure Report notify
-  oai::amf::model::CommunicationFailure comm_failure = {};
+  oai::model::amf::CommunicationFailure comm_failure = {};
   std::shared_ptr<ue_context> uc                     = {};
   if (!find_ue_context(ran_ue_ngap_id, amf_ue_ngap_id, uc)) {
     Logger::amf_n1().warn(
@@ -4159,12 +4159,12 @@ void amf_n1::handle_ue_location_change(
       ev_notif.set_notify_uri(i->notify_uri);  // Direct subscription
       // ev_notif.set_subs_change_notify_correlation_id(i->notify_uri);
 
-      oai::amf::model::AmfEventReport event_report = {};
-      oai::amf::model::AmfEventType amf_event_type = {};
+      oai::model::amf::AmfEventReport event_report = {};
+      oai::model::amf::AmfEventType amf_event_type = {};
       amf_event_type.set_value("LOCATION_REPORT");
       event_report.setType(amf_event_type);
 
-      oai::amf::model::AmfEventState amf_event_state = {};
+      oai::model::amf::AmfEventState amf_event_state = {};
       amf_event_state.setActive(true);
       event_report.setState(amf_event_state);
 
@@ -4218,16 +4218,16 @@ void amf_n1::handle_ue_reachability_status_change(
       ev_notif.set_notify_uri(i->notify_uri);  // Direct subscription
       // ev_notif.set_subs_change_notify_correlation_id(i->notify_uri);
 
-      oai::amf::model::AmfEventReport event_report = {};
-      oai::amf::model::AmfEventType amf_event_type = {};
+      oai::model::amf::AmfEventReport event_report = {};
+      oai::model::amf::AmfEventType amf_event_type = {};
       amf_event_type.set_value("REACHABILITY_REPORT");
       event_report.setType(amf_event_type);
 
-      oai::amf::model::AmfEventState amf_event_state = {};
+      oai::model::amf::AmfEventState amf_event_state = {};
       amf_event_state.setActive(true);
       event_report.setState(amf_event_state);
 
-      oai::amf::model::UeReachability ue_reachability = {};
+      oai::model::amf::UeReachability ue_reachability = {};
       if (status == CM_CONNECTED)
         ue_reachability.set_value("REACHABLE");
       else
@@ -4283,19 +4283,19 @@ void amf_n1::handle_ue_registration_state_change(
       ev_notif.set_notify_uri(i->notify_uri);  // Direct subscription
       // ev_notif.set_subs_change_notify_correlation_id(i->notify_uri);
 
-      oai::amf::model::AmfEventReport event_report = {};
+      oai::model::amf::AmfEventReport event_report = {};
 
-      oai::amf::model::AmfEventType amf_event_type = {};
+      oai::model::amf::AmfEventType amf_event_type = {};
       amf_event_type.set_value("REGISTRATION_STATE_REPORT");
       event_report.setType(amf_event_type);
 
-      oai::amf::model::AmfEventState amf_event_state = {};
+      oai::model::amf::AmfEventState amf_event_state = {};
       amf_event_state.setActive(true);
       event_report.setState(amf_event_state);
 
-      std::vector<oai::amf::model::RmInfo> rm_infos;
-      oai::amf::model::RmInfo rm_info   = {};
-      oai::amf::model::RmState rm_state = {};
+      std::vector<oai::model::amf::RmInfo> rm_infos;
+      oai::model::amf::RmInfo rm_info   = {};
+      oai::model::amf::RmState rm_state = {};
 
       if (status == _5GMM_DEREGISTERED)
         rm_state.set_value("DEREGISTERED");
@@ -4361,19 +4361,19 @@ void amf_n1::handle_ue_connectivity_state_change(
       ev_notif.set_notify_uri(i->notify_uri);  // Direct subscription
       // ev_notif.set_subs_change_notify_correlation_id(i->notify_uri);
 
-      oai::amf::model::AmfEventReport event_report = {};
+      oai::model::amf::AmfEventReport event_report = {};
 
-      oai::amf::model::AmfEventType amf_event_type = {};
+      oai::model::amf::AmfEventType amf_event_type = {};
       amf_event_type.set_value("CONNECTIVITY_STATE_REPORT");
       event_report.setType(amf_event_type);
 
-      oai::amf::model::AmfEventState amf_event_state = {};
+      oai::model::amf::AmfEventState amf_event_state = {};
       amf_event_state.setActive(true);
       event_report.setState(amf_event_state);
 
-      std::vector<oai::amf::model::CmInfo> cm_infos;
-      oai::amf::model::CmInfo cm_info   = {};
-      oai::amf::model::CmState cm_state = {};
+      std::vector<oai::model::amf::CmInfo> cm_infos;
+      oai::model::amf::CmInfo cm_info   = {};
+      oai::model::amf::CmState cm_state = {};
       if (status == CM_IDLE)
         cm_state.set_value("IDLE");
       else if (status == CM_CONNECTED)
@@ -4404,7 +4404,7 @@ void amf_n1::handle_ue_connectivity_state_change(
 
 //------------------------------------------------------------------------------
 void amf_n1::handle_ue_communication_failure_change(
-    std::string supi, oai::amf::model::CommunicationFailure comm_failure,
+    std::string supi, oai::model::amf::CommunicationFailure comm_failure,
     uint8_t http_version) {
   Logger::amf_n1().debug(
       "Send request to SBI to trigger UE Communication Failure Report (SUPI "
@@ -4435,12 +4435,12 @@ void amf_n1::handle_ue_communication_failure_change(
       ev_notif.set_notify_uri(i->notify_uri);  // Direct subscription
       // ev_notif.set_subs_change_notify_correlation_id(i->notify_uri);
 
-      oai::amf::model::AmfEventReport event_report = {};
-      oai::amf::model::AmfEventType amf_event_type = {};
+      oai::model::amf::AmfEventReport event_report = {};
+      oai::model::amf::AmfEventType amf_event_type = {};
       amf_event_type.set_value("COMMUNICATION_FAILURE_REPORT");
       event_report.setType(amf_event_type);
 
-      oai::amf::model::AmfEventState amf_event_state = {};
+      oai::model::amf::AmfEventState amf_event_state = {};
       amf_event_state.setActive(true);
       event_report.setState(amf_event_state);
 
@@ -4490,16 +4490,16 @@ void amf_n1::handle_ue_loss_of_connectivity_change(
       ev_notif.set_notify_uri(i->notify_uri);  // Direct subscription
       // ev_notif.set_subs_change_notify_correlation_id(i->notify_uri);
 
-      oai::amf::model::AmfEventReport event_report = {};
-      oai::amf::model::AmfEventType amf_event_type = {};
+      oai::model::amf::AmfEventReport event_report = {};
+      oai::model::amf::AmfEventType amf_event_type = {};
       amf_event_type.set_value("LOSS_OF_CONNECTIVITY");
       event_report.setType(amf_event_type);
 
-      oai::amf::model::AmfEventState amf_event_state = {};
+      oai::model::amf::AmfEventState amf_event_state = {};
       amf_event_state.setActive(true);
       event_report.setState(amf_event_state);
 
-      oai::amf::model::LossOfConnectivityReason ue_loss_of_connectivity_reason =
+      oai::model::amf::LossOfConnectivityReason ue_loss_of_connectivity_reason =
           {};
       if (status == DEREGISTERED)
         ue_loss_of_connectivity_reason.set_value("DEREGISTERED");
@@ -4915,7 +4915,7 @@ bool amf_n1::reroute_registration_request(
 */
 
   // Get NSSAI from UDM
-  oai::amf::model::Nssai nssai = {};
+  oai::model::amf::Nssai nssai = {};
   if (!get_slice_selection_subscription_data(nc, nssai)) {
     Logger::amf_n1().debug(
         "Could not get the Slice Selection Subscription Data from UDM");
@@ -4936,8 +4936,8 @@ bool amf_n1::reroute_registration_request(
   // find the appropriate AMFs and let them handle the UE
 
   // Process NS selection to select the appropriate AMF
-  oai::amf::model::SliceInfoForRegistration slice_info = {};
-  oai::amf::model::AuthorizedNetworkSliceInfo authorized_network_slice_info =
+  oai::model::amf::SliceInfoForRegistration slice_info = {};
+  oai::model::amf::AuthorizedNetworkSliceInfo authorized_network_slice_info =
       {};
 
   std::vector<SubscribedSnssai> subscribed_snssais;
@@ -5043,7 +5043,7 @@ bool amf_n1::check_requested_nssai(const std::shared_ptr<nas_context>& nc) {
 
 //------------------------------------------------------------------------------
 bool amf_n1::check_subscribed_nssai(
-    const std::shared_ptr<nas_context>& nc, oai::amf::model::Nssai& nssai) {
+    const std::shared_ptr<nas_context>& nc, oai::model::amf::Nssai& nssai) {
   Logger::amf_n1().debug(
       "Verifying whether this AMF can handle Requested/Subscribed S-NSSAIs");
   // Check if the AMF can serve all the requested/subscribed S-NSSAIs
@@ -5158,7 +5158,7 @@ bool amf_n1::check_subscribed_nssai(
 
 //------------------------------------------------------------------------------
 bool amf_n1::get_slice_selection_subscription_data(
-    const std::shared_ptr<nas_context>& nc, oai::amf::model::Nssai& nssai) {
+    const std::shared_ptr<nas_context>& nc, oai::model::amf::Nssai& nssai) {
   // TODO: UDM selection (from NRF or configuration file)
   if (amf_cfg.support_features.enable_external_ausf_udm) {
     Logger::amf_n1().debug(
@@ -5243,7 +5243,7 @@ bool amf_n1::get_slice_selection_subscription_data(
 
 //------------------------------------------------------------------------------
 bool amf_n1::get_slice_selection_subscription_data_from_conf_file(
-    const std::shared_ptr<nas_context>& nc, oai::amf::model::Nssai& nssai) {
+    const std::shared_ptr<nas_context>& nc, oai::model::amf::Nssai& nssai) {
   Logger::amf_n1().debug(
       "Get the Slice Selection Subscription Data from configuration file");
 
@@ -5326,8 +5326,8 @@ bool amf_n1::get_slice_selection_subscription_data_from_conf_file(
 //------------------------------------------------------------------------------
 bool amf_n1::get_network_slice_selection(
     const std::shared_ptr<nas_context>& nc, const std::string& nf_instance_id,
-    const oai::amf::model::SliceInfoForRegistration& slice_info,
-    oai::amf::model::AuthorizedNetworkSliceInfo&
+    const oai::model::amf::SliceInfoForRegistration& slice_info,
+    oai::model::amf::AuthorizedNetworkSliceInfo&
         authorized_network_slice_info) {
   Logger::amf_n1().debug(
       "Get the Network Slice Selection Information from NSSF");
@@ -5406,8 +5406,8 @@ bool amf_n1::get_network_slice_selection(
 //------------------------------------------------------------------------------
 bool amf_n1::get_network_slice_selection_from_conf_file(
     const std::string& nf_instance_id,
-    const oai::amf::model::SliceInfoForRegistration& slice_info,
-    oai::amf::model::AuthorizedNetworkSliceInfo& authorized_network_slice_info)
+    const oai::model::amf::SliceInfoForRegistration& slice_info,
+    oai::model::amf::AuthorizedNetworkSliceInfo& authorized_network_slice_info)
     const {
   Logger::amf_n1().debug(
       "Get the Network Slice Selection Information from configuration file");
@@ -5420,7 +5420,7 @@ bool amf_n1::get_network_slice_selection_from_conf_file(
 //------------------------------------------------------------------------------
 bool amf_n1::get_target_amf(
     const std::shared_ptr<nas_context>& nc, std::string& target_amf,
-    const oai::amf::model::AuthorizedNetworkSliceInfo&
+    const oai::model::amf::AuthorizedNetworkSliceInfo&
         authorized_network_slice_info) {
   // Get Target AMF from AuthorizedNetworkSliceInfo
   Logger::amf_n1().debug(

@@ -22,7 +22,7 @@ namespace oai {
 namespace amf {
 namespace api {
 
-using namespace oai::amf::model;
+using namespace oai::model::amf;
 
 N1N2SubscriptionsCollectionForIndividualUEContextsDocumentApiImpl::
     N1N2SubscriptionsCollectionForIndividualUEContextsDocumentApiImpl(

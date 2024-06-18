@@ -22,7 +22,7 @@ namespace oai {
 namespace amf {
 namespace api {
 
-using namespace oai::amf::model;
+using namespace oai::model::amf;
 using namespace amf_application;
 using namespace config;
 

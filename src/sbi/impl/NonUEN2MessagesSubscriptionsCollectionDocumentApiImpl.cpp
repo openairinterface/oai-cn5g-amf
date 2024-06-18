@@ -17,7 +17,7 @@ namespace oai {
 namespace amf {
 namespace api {
 
-using namespace oai::amf::model;
+using namespace oai::model::amf;
 
 NonUEN2MessagesSubscriptionsCollectionDocumentApiImpl::
     NonUEN2MessagesSubscriptionsCollectionDocumentApiImpl(
