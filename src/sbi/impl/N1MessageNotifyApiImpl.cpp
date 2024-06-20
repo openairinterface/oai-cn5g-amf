@@ -23,7 +23,7 @@ namespace oai {
 namespace amf {
 namespace api {
 
-using namespace oai::amf::model;
+using namespace oai::model::amf;
 
 N1MessageNotifyApiImpl::N1MessageNotifyApiImpl(
     std::shared_ptr<Pistache::Rest::Router> rtr,

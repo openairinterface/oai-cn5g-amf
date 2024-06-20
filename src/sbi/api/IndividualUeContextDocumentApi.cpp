@@ -23,7 +23,7 @@ namespace amf {
 namespace api {
 
 using namespace oai::model::common::helpers;
-using namespace oai::amf::model;
+using namespace oai::model::amf;
 
 IndividualUeContextDocumentApi::IndividualUeContextDocumentApi(
     std::shared_ptr<Pistache::Rest::Router> rtr) {

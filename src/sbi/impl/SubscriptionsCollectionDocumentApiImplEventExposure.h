@@ -36,7 +36,7 @@
 
 namespace oai::amf::api {
 
-using namespace oai::amf::model;
+using namespace oai::model::amf;
 using namespace oai::amf::api;
 
 class SubscriptionsCollectionDocumentApiImplEventExposure

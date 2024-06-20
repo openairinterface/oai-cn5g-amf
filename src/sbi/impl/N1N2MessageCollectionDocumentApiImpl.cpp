@@ -29,7 +29,7 @@ namespace oai {
 namespace amf {
 namespace api {
 
-using namespace oai::amf::model;
+using namespace oai::model::amf;
 
 N1N2MessageCollectionDocumentApiImpl::N1N2MessageCollectionDocumentApiImpl(
     std::shared_ptr<Pistache::Rest::Router> rtr,

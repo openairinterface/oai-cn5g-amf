@@ -23,7 +23,7 @@ namespace amf {
 namespace api {
 
 using namespace oai::model::common::helpers;
-using namespace oai::amf::model;
+using namespace oai::model::amf;
 
 SubscriptionsCollectionDocumentApi::SubscriptionsCollectionDocumentApi(
     std::shared_ptr<Pistache::Rest::Router> rtr) {

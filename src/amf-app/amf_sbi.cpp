@@ -576,7 +576,7 @@ void amf_sbi::handle_itti_message(itti_sbi_notify_subscribed_event& itti_msg) {
     auto report_lists                = nlohmann::json::array();
     nlohmann::json report            = {};
 
-    std::vector<oai::amf::model::AmfEventReport> event_reports = {};
+    std::vector<oai::model::amf::AmfEventReport> event_reports = {};
     i.get_reports(event_reports);
     for (auto r : event_reports) {
       report["type"]            = r.getType().get_value();

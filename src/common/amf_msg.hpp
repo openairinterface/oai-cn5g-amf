@@ -115,11 +115,11 @@ class event_notification {
   std::string get_subs_change_notify_correlation_id() const {
     return m_subs_change_notify_correlation_id;
   }
-  void add_report(const oai::amf::model::AmfEventReport& report) {
+  void add_report(const oai::model::amf::AmfEventReport& report) {
     m_event_report_list.push_back(report);
   }
   void get_reports(
-      std::vector<oai::amf::model::AmfEventReport>& reports) const {
+      std::vector<oai::model::amf::AmfEventReport>& reports) const {
     reports = m_event_report_list;
   }
 
@@ -132,7 +132,7 @@ class event_notification {
 
   std::string m_subs_change_notify_correlation_id;
   bool m_subs_change_notify_correlation_id_is_set;
-  std::vector<oai::amf::model::AmfEventReport> m_event_report_list;
+  std::vector<oai::model::amf::AmfEventReport> m_event_report_list;
   bool m_report_list_is_set;
 };
 

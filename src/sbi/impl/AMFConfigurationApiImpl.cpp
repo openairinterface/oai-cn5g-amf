@@ -29,7 +29,7 @@ extern itti_mw* itti_inst;
 
 namespace oai::amf::api {
 
-using namespace oai::amf::model;
+using namespace oai::model::amf;
 
 AMFConfigurationApiImpl::AMFConfigurationApiImpl(
     std::shared_ptr<Pistache::Rest::Router> rtr, amf_app* amf_app_inst)

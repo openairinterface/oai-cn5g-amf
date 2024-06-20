@@ -351,7 +351,7 @@ bool amf_app::get_pdu_sessions_context(
 //------------------------------------------------------------------------------
 bool amf_app::update_pdu_sessions_context(
     const std::string& supi, uint8_t pdu_session_id,
-    const oai::amf::model::SmContextStatusNotification& statusNotification) {
+    const oai::model::amf::SmContextStatusNotification& statusNotification) {
   std::shared_ptr<ue_context> uc = {};
   if (!supi_2_ue_context(supi, uc)) return false;
   std::string pdu_session_status =
@@ -570,7 +570,7 @@ void amf_app::handle_itti_message(itti_sbi_n1_message_notification& itti_msg) {
 
   // get RegistrationContextContainer including gNB info
   // UE context information, N1 message from UE, AN address
-  oai::amf::model::RegistrationContextContainer registration_context =
+  oai::model::amf::RegistrationContextContainer registration_context =
       itti_msg.notification_msg.getRegistrationCtxtContainer();
 
   // Step 2. Create gNB context if necessary
@@ -613,7 +613,7 @@ void amf_app::handle_itti_message(itti_sbi_n1_message_notification& itti_msg) {
   // std::string getInitialAmfName()
 
   // Step 3. Create UE Context
-  oai::amf::model::UeContext ue_ctx = registration_context.getUeContext();
+  oai::model::amf::UeContext ue_ctx = registration_context.getUeContext();
   std::string supi                  = {};
   std::shared_ptr<ue_context> uc    = {};
 
@@ -736,7 +736,7 @@ void amf_app::handle_itti_message(itti_sbi_n1n2_message_subscribe& itti_msg) {
   // map (subscription id, info)
   n1n2sub_id_t n1n2sub_id = generate_n1n2_message_subscription_id();
   auto subscription_data =
-      std::make_shared<oai::amf::model::UeN1N2InfoSubscriptionCreateData>(
+      std::make_shared<oai::model::amf::UeN1N2InfoSubscriptionCreateData>(
           itti_msg.subscription_data);
   add_n1n2_message_subscription(
       itti_msg.ue_cxt_id, n1n2sub_id, subscription_data);
@@ -745,7 +745,7 @@ void amf_app::handle_itti_message(itti_sbi_n1n2_message_subscribe& itti_msg) {
       itti_msg.ue_cxt_id, std::to_string((uint32_t) n1n2sub_id));
 
   // Trigger the response from AMF API Server
-  oai::amf::model::UeN1N2InfoSubscriptionCreatedData created_data = {};
+  oai::model::amf::UeN1N2InfoSubscriptionCreatedData created_data = {};
   created_data.setN1n2NotifySubscriptionId(
       std::to_string((uint32_t) n1n2sub_id));
   nlohmann::json created_data_json = {};
@@ -801,7 +801,7 @@ void amf_app::handle_itti_message(itti_sbi_non_ue_n2_info_subscribe& itti_msg) {
   // map (subscription id, info)
   n1n2sub_id_t n2sub_id = generate_n1n2_message_subscription_id();
   auto subscription_data =
-      std::make_shared<oai::amf::model::NonUeN2InfoSubscriptionCreateData>(
+      std::make_shared<oai::model::amf::NonUeN2InfoSubscriptionCreateData>(
           itti_msg.subscription_data);
 
   add_non_ue_n2_info_subscription(n2sub_id, subscription_data);
@@ -810,7 +810,7 @@ void amf_app::handle_itti_message(itti_sbi_non_ue_n2_info_subscribe& itti_msg) {
       std::to_string((uint32_t) n2sub_id));
 
   // Trigger the response from AMF API Server
-  oai::amf::model::NonUeN2InfoSubscriptionCreatedData created_data = {};
+  oai::model::amf::NonUeN2InfoSubscriptionCreatedData created_data = {};
 
   created_data.setN2NotifySubscriptionId(std::to_string((uint32_t) n2sub_id));
 
@@ -1067,7 +1067,7 @@ uint32_t amf_app::get_number_registered_ues() const {
 //---------------------------------------------------------------------------------------------
 void amf_app::add_n1n2_message_subscription(
     const std::string& ue_ctx_id, const n1n2sub_id_t& sub_id,
-    std::shared_ptr<oai::amf::model::UeN1N2InfoSubscriptionCreateData>&
+    std::shared_ptr<oai::model::amf::UeN1N2InfoSubscriptionCreateData>&
         subscription_data) {
   Logger::amf_app().debug("Add an N1N2 Message Subscribe (Sub ID %d)", sub_id);
   std::unique_lock lock(m_n1n2_message_subscribe);
@@ -1105,14 +1105,14 @@ bool amf_app::remove_n1n2_message_subscription(
 //---------------------------------------------------------------------------------------------
 void amf_app::find_n1n2_info_subscriptions(
     const std::string& ue_ctx_id,
-    std::optional<oai::amf::model::N1MessageClass_anyOf::eN1MessageClass_anyOf>&
+    std::optional<oai::model::amf::N1MessageClass_anyOf::eN1MessageClass_anyOf>&
         n1_message_class,
     std::optional<
-        oai::amf::model::N2InformationClass_anyOf::eN2InformationClass_anyOf>&
+        oai::model::amf::N2InformationClass_anyOf::eN2InformationClass_anyOf>&
         n2_info_class,
     std::map<
         n1n2sub_id_t,
-        std::shared_ptr<oai::amf::model::UeN1N2InfoSubscriptionCreateData>>&
+        std::shared_ptr<oai::model::amf::UeN1N2InfoSubscriptionCreateData>>&
         subscriptions) {
   Logger::amf_app().debug("Find an N1N2 Info Subscription");
 
@@ -1126,7 +1126,7 @@ void amf_app::find_n1n2_info_subscriptions(
               std::pair<
                   n1n2sub_id_t,
                   std::shared_ptr<
-                      oai::amf::model::UeN1N2InfoSubscriptionCreateData>>(
+                      oai::model::amf::UeN1N2InfoSubscriptionCreateData>>(
                   subscription.first.second, subscription.second));
         }
       }
@@ -1137,7 +1137,7 @@ void amf_app::find_n1n2_info_subscriptions(
               std::pair<
                   n1n2sub_id_t,
                   std::shared_ptr<
-                      oai::amf::model::UeN1N2InfoSubscriptionCreateData>>(
+                      oai::model::amf::UeN1N2InfoSubscriptionCreateData>>(
                   subscription.first.second, subscription.second));
         }
       }
@@ -1148,7 +1148,7 @@ void amf_app::find_n1n2_info_subscriptions(
 //---------------------------------------------------------------------------------------------
 void amf_app::add_non_ue_n2_info_subscription(
     const n1n2sub_id_t& sub_id,
-    std::shared_ptr<oai::amf::model::NonUeN2InfoSubscriptionCreateData>&
+    std::shared_ptr<oai::model::amf::NonUeN2InfoSubscriptionCreateData>&
         subscription_data) {
   Logger::amf_app().debug(
       "Add an Non UE N2 Info Subscribe (Sub ID %d)", sub_id);
@@ -1185,11 +1185,11 @@ bool amf_app::remove_non_ue_n2_info_subscription(const std::string& sub_id) {
 //---------------------------------------------------------------------------------------------
 void amf_app::find_non_ue_n2_info_subscriptions(
     const std::string& nf_id,
-    const oai::amf::model::N2InformationClass_anyOf::eN2InformationClass_anyOf&
+    const oai::model::amf::N2InformationClass_anyOf::eN2InformationClass_anyOf&
         n2_info_class,
     std::map<
         n1n2sub_id_t,
-        std::shared_ptr<oai::amf::model::NonUeN2InfoSubscriptionCreateData>>&
+        std::shared_ptr<oai::model::amf::NonUeN2InfoSubscriptionCreateData>>&
         subscriptions) {
   Logger::amf_app().debug("Find an Non UE N2 Info Subscription");
 
@@ -1202,7 +1202,7 @@ void amf_app::find_non_ue_n2_info_subscriptions(
           std::pair<
               n1n2sub_id_t,
               std::shared_ptr<
-                  oai::amf::model::NonUeN2InfoSubscriptionCreateData>>(
+                  oai::model::amf::NonUeN2InfoSubscriptionCreateData>>(
               subscription.first, subscription.second));
     }
   }

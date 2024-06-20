@@ -29,24 +29,24 @@ include_directories(${SRC_TOP_DIR}/itti/msgs)
 include_directories(${SRC_TOP_DIR}/sbi)
 include_directories(${SRC_TOP_DIR}/sbi/api)
 include_directories(${SRC_TOP_DIR}/sbi/impl)
-include_directories(${SRC_TOP_DIR}/sbi/model)
 include_directories(${SRC_TOP_DIR}/utils)
 include_directories(${SRC_TOP_DIR}/${MOUNTED_COMMON}/logger)
 include_directories(${SRC_TOP_DIR}/${MOUNTED_COMMON}/common)
-include_directories(${SRC_TOP_DIR}/${MOUNTED_COMMON}/utils)
-include_directories(${SRC_TOP_DIR}/${MOUNTED_COMMON}/utils/bstr)
+include_directories(${SRC_TOP_DIR}/${MOUNTED_COMMON}/model/amf)
 include_directories(${SRC_TOP_DIR}/${MOUNTED_COMMON}/nas/ies)
 include_directories(${SRC_TOP_DIR}/${MOUNTED_COMMON}/nas/common)
 include_directories(${SRC_TOP_DIR}/${MOUNTED_COMMON}/nas/utils)
 include_directories(${SRC_TOP_DIR}/${MOUNTED_COMMON}/ngap/libngap)
 include_directories(${SRC_TOP_DIR}/${MOUNTED_COMMON}/ngap/libngap_ies)
 include_directories(${SRC_TOP_DIR}/${MOUNTED_COMMON}/ngap/ngap_ies)
-include(${BUILD_TOP_DIR}/amf/used_models.cmake)
+include_directories(${SRC_TOP_DIR}/${MOUNTED_COMMON}/utils)
+include_directories(${SRC_TOP_DIR}/${MOUNTED_COMMON}/utils/bstr)
+
+include(${SRC_TOP_DIR}/${MOUNTED_COMMON}/model/amf/amf.cmake)
 
 file(GLOB AMF_API_SERVER_src_files
     ${AMF_API_SERVER_DIR}/amf_http1_server.cpp
     ${AMF_API_SERVER_DIR}/amf_http2_server.cpp
-    ${AMF_API_SERVER_DIR}/model/*.cpp
     ${AMF_API_SERVER_DIR}/api/*.cpp
     ${AMF_API_SERVER_DIR}/impl/*.cpp
 )
