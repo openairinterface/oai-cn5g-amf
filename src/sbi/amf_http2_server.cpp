@@ -38,7 +38,7 @@
 
 using namespace nghttp2::asio_http2;
 using namespace nghttp2::asio_http2::server;
-using namespace oai::amf::model;
+using namespace oai::model::amf;
 using namespace oai::model::common;
 using namespace oai::common::sbi;
 using namespace oai::amf::api;
@@ -314,7 +314,7 @@ void amf_http2_server::start() {
             auto code =
                 static_cast<uint32_t>(oai::common::sbi::http_status_code::OK);
 
-            oai::amf::model::N2InformationTransferReqData
+            oai::model::amf::N2InformationTransferReqData
                 n2InformationTransferReqData = {};
 
             try {
@@ -753,7 +753,7 @@ void amf_http2_server::n1_n2_message_transfer_handler(
             parts[n1_content_id].body.substr(
                 0, parts[n1_content_id].body.length()),
             n1sm);
-        output_wrapper::print_buffer(
+        oai::utils::output_wrapper::print_buffer(
             "amf_server", "Received N1 SM", (uint8_t*) bdata(n1sm),
             blength(n1sm));
         // Store N1 SM in PDU Session Context

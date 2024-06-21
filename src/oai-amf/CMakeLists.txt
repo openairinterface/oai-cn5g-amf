@@ -338,7 +338,6 @@ include_directories(${SRC_TOP_DIR}/${MOUNTED_COMMON}/ngap/ngap_msgs)
 include_directories(${SRC_TOP_DIR}/sbi)
 include_directories(${SRC_TOP_DIR}/sbi/api)
 include_directories(${SRC_TOP_DIR}/sbi/impl)
-include_directories(${SRC_TOP_DIR}/sbi/model)
 include_directories(${SRC_TOP_DIR}/sctp)
 include_directories(${SRC_TOP_DIR}/secu_algorithms/5gaka)
 include_directories(${SRC_TOP_DIR}/secu_algorithms/nas_enc_int)
@@ -346,12 +345,14 @@ include_directories(${SRC_TOP_DIR}/${MOUNTED_COMMON}/config)
 include_directories(${SRC_TOP_DIR}/${MOUNTED_COMMON}/common)
 include_directories(${SRC_TOP_DIR}/${MOUNTED_COMMON}/http)
 include_directories(${SRC_TOP_DIR}/${MOUNTED_COMMON}/logger)
+include_directories(${SRC_TOP_DIR}/${MOUNTED_COMMON}/model/amf)
 include_directories(${SRC_TOP_DIR}/${MOUNTED_COMMON}/nas/ies)
 include_directories(${SRC_TOP_DIR}/${MOUNTED_COMMON}/nas/common)
 include_directories(${SRC_TOP_DIR}/${MOUNTED_COMMON}/nas/5gmm-msgs)
 include_directories(${SRC_TOP_DIR}/${MOUNTED_COMMON}/nas/utils)
 include_directories(${SRC_TOP_DIR}/${MOUNTED_COMMON}/utils)
 include_directories(${SRC_TOP_DIR}/${MOUNTED_COMMON}/utils/bstr)
+
 
 add_executable(amf
   ${SRC_TOP_DIR}/oai-amf/main.cpp
@@ -362,12 +363,11 @@ add_executable(amf
 
 ## Common modules
 include(${SRC_TOP_DIR}/${MOUNTED_COMMON}/common/common.cmake)
+include(${SRC_TOP_DIR}/${MOUNTED_COMMON}/config/config.cmake)
 include(${SRC_TOP_DIR}/${MOUNTED_COMMON}/http/http.cmake)
 include(${SRC_TOP_DIR}/${MOUNTED_COMMON}/logger/logger.cmake)
-include(${SRC_TOP_DIR}/${MOUNTED_COMMON}/config/config.cmake)
+include(${SRC_TOP_DIR}/${MOUNTED_COMMON}/model/amf/amf.cmake)
 include(${SRC_TOP_DIR}/${MOUNTED_COMMON}/utils/utils.cmake)
-include(${BUILD_TOP_DIR}/amf/used_models.cmake)
-
 
 IF(STATIC_LINKING)
     SET(CMAKE_EXE_LINKER_FLAGS "-static")

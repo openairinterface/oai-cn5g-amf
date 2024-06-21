@@ -102,7 +102,7 @@ bool authentication::authentication_vectors_generator_in_udm(
       sqn = mysql_resp.sqn;
       for (int i = 0; i < MAX_5GS_AUTH_VECTORS; i++) {
         generate_random(vector[i].rand, RAND_LENGTH);
-        output_wrapper::print_buffer(
+        oai::utils::output_wrapper::print_buffer(
             "authentication", "Generated random rand (5G HE AV)",
             vector[i].rand, 16);
         generate_5g_he_av_in_udm(
@@ -177,25 +177,25 @@ void authentication::generate_5g_he_av_in_udm(
   Authentication_5gaka::f1(
       opc, key, vector.rand, sqn, amf,
       mac_a);  // to compute MAC, Figure 7, ts33.102
-  // output_wrapper::print_buffer("authentication", "Result For F1-Alg: mac_a",
-  // mac_a, 8);
+  // oai::utils::output_wrapper::print_buffer("authentication", "Result For
+  // F1-Alg: mac_a", mac_a, 8);
   Authentication_5gaka::f2345(
       opc, key, vector.rand, vector.xres, ck, ik,
       ak);  // to compute XRES, CK, IK, AK
   annex_a_4_33501(
       ck, ik, vector.xres, vector.rand, serving_network, vector.xresStar);
-  // output_wrapper::print_buffer("authentication", "Result For KDF: xres*(5G HE
-  // AV)", vector.xresStar, 16);
+  // oai::utils::output_wrapper::print_buffer("authentication", "Result For KDF:
+  // xres*(5G HE AV)", vector.xresStar, 16);
   Authentication_5gaka::generate_autn(
       sqn, ak, amf, mac_a,
       vector.autn);  // generate AUTN
-  // output_wrapper::print_buffer("authentication", "Generated autn(5G HE AV)",
-  // vector.autn, 16);
+  // oai::utils::output_wrapper::print_buffer("authentication", "Generated
+  // autn(5G HE AV)", vector.autn, 16);
   Authentication_5gaka::derive_kausf(
       ck, ik, serving_network, sqn, ak,
       vector.kausf);  // derive Kausf
-  // output_wrapper::print_buffer("authentication", "Result For KDF: Kausf(5G HE
-  // AV)", vector.kausf, AUTH_VECTOR_LENGTH_OCTETS);
+  // oai::utils::output_wrapper::print_buffer("authentication", "Result For KDF:
+  // Kausf(5G HE AV)", vector.kausf, AUTH_VECTOR_LENGTH_OCTETS);
   Logger::authentication().debug("Generate_5g_he_av_in_udm finished!");
   return;
 }
@@ -231,7 +231,7 @@ void authentication::annex_a_4_33501(
   for (int i = 0; i < 8; i++) oldS[24 + i] = input[i];
   oldS[32] = 0x00;
   oldS[33] = 0x08;
-  output_wrapper::print_buffer(
+  oai::utils::output_wrapper::print_buffer(
       "authentication", "Input string: ", S, 31 + netName.size);
   uint8_t key[AUTH_VECTOR_LENGTH_OCTETS];
   memcpy(&key[0], ck, 16);
@@ -241,7 +241,7 @@ void authentication::annex_a_4_33501(
   uint8_t out[AUTH_VECTOR_LENGTH_OCTETS];
   Authentication_5gaka::kdf(key, 32, S, 31 + netName.size, out, 32);
   for (int i = 0; i < 16; i++) output[i] = out[16 + i];
-  output_wrapper::print_buffer(
+  oai::utils::output_wrapper::print_buffer(
       "authentication", "XRES*(new)", out, AUTH_VECTOR_LENGTH_OCTETS);
 }
 

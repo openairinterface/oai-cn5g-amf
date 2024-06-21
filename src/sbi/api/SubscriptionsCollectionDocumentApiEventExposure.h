@@ -75,7 +75,7 @@ class SubscriptionsCollectionDocumentApiEventExposure {
   /// </remarks>
   /// <param name="amfCreateEventSubscription"></param>
   virtual void create_subscription(
-      const oai::amf::model::AmfCreateEventSubscription&
+      const oai::model::amf::AmfCreateEventSubscription&
           amfCreateEventSubscription,
       Pistache::Http::ResponseWriter& response) = 0;
 };

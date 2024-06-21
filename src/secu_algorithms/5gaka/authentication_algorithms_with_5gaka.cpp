@@ -21,6 +21,7 @@
 
 #include "authentication_algorithms_with_5gaka.hpp"
 
+#include <arpa/inet.h>
 #include <errno.h>
 #include <gmp.h>
 #include <nettle/hmac.h>
@@ -28,11 +29,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <arpa/inet.h>
 
 #include "OCTET_STRING.h"
-#include "output_wrapper.hpp"
 #include "logger.hpp"
+#include "output_wrapper.hpp"
 
 /************ algorithm f1 **************/
 /*
@@ -308,7 +308,7 @@ void Authentication_5gaka::derive_kseaf(
   OCTET_STRING_t netName;
   OCTET_STRING_fromBuf(
       &netName, serving_network.c_str(), serving_network.length());
-  // output_wrapper::print_buffer("amf_n1", "inputstring: snn(hex)",
+  // oai::utils::output_wrapper::print_buffer("amf_n1", "inputstring: snn(hex)",
   // netName.buf, netName.size);
   uint8_t S[100];
   S[0] = 0x6C;  // FC
@@ -316,11 +316,12 @@ void Authentication_5gaka::derive_kseaf(
   // memcpy (&S[1+netName.size], &netName.size, 2);
   S[1 + netName.size] = (uint8_t) ((netName.size & 0xff00) >> 8);
   S[2 + netName.size] = (uint8_t) (netName.size & 0x00ff);
-  // output_wrapper::print_buffer("amf_n1", "inputstring S", S, 3+netName.size);
-  // output_wrapper::print_buffer("amf_n1", "key KEY", kausf, 32);
+  // oai::utils::output_wrapper::print_buffer("amf_n1", "inputstring S", S,
+  // 3+netName.size); oai::utils::output_wrapper::print_buffer("amf_n1", "key
+  // KEY", kausf, 32);
   kdf(kausf, 32, S, 3 + netName.size, kseaf, 32);
-  // output_wrapper::print_buffer("amf_n1", "KDF out: Kseaf", kseaf, 32);
-  // Logger::amf_n1().debug("derive kseaf finished!");
+  // oai::utils::output_wrapper::print_buffer("amf_n1", "KDF out: Kseaf", kseaf,
+  // 32); Logger::amf_n1().debug("derive kseaf finished!");
 }
 
 void Authentication_5gaka::derive_kausf(
@@ -331,7 +332,7 @@ void Authentication_5gaka::derive_kausf(
   OCTET_STRING_t netName;
   OCTET_STRING_fromBuf(
       &netName, serving_network.c_str(), serving_network.length());
-  // output_wrapper::print_buffer("amf_n1", "inputstring: snn(hex)",
+  // oai::utils::output_wrapper::print_buffer("amf_n1", "inputstring: snn(hex)",
   // netName.buf, netName.size);
   uint8_t S[100];
   uint8_t key[32];
@@ -347,12 +348,12 @@ void Authentication_5gaka::derive_kausf(
   }
   S[9 + netName.size]  = 0x00;
   S[10 + netName.size] = 0x06;
-  // output_wrapper::print_buffer("amf_n1", "inputstring S", S,
-  // 11+netName.size); output_wrapper::print_buffer("amf_n1", "key KEY", key,
-  // 32);
+  // oai::utils::output_wrapper::print_buffer("amf_n1", "inputstring S", S,
+  // 11+netName.size); oai::utils::output_wrapper::print_buffer("amf_n1", "key
+  // KEY", key, 32);
   kdf(key, 32, S, 11 + netName.size, kausf, 32);
-  // output_wrapper::print_buffer("amf_n1", "KDF out: Kausf", kausf, 32);
-  // Logger::amf_n1().debug("derive kausf finished!");
+  // oai::utils::output_wrapper::print_buffer("amf_n1", "KDF out: Kausf", kausf,
+  // 32); Logger::amf_n1().debug("derive kausf finished!");
 }
 
 void Authentication_5gaka::derive_kamf(
@@ -367,8 +368,8 @@ void Authentication_5gaka::derive_kamf(
   OCTET_STRING_fromBuf(&supi, ueSupi.c_str(), ueSupi.length());
   // uint8_t supi[8] = {0x64, 0xf0, 0x11, 0x10, 0x32, 0x54, 0x76, 0x98};
   int supiLen = supi.size;
-  // output_wrapper::print_buffer("amf_n1", "inputstring: supi(hex)", supi.buf,
-  // supiLen);
+  // oai::utils::output_wrapper::print_buffer("amf_n1", "inputstring:
+  // supi(hex)", supi.buf, supiLen);
   uint8_t S[100];
   S[0] = 0x6D;  // FC = 0x6D
   memcpy(&S[1], supi.buf, supiLen);
@@ -379,11 +380,12 @@ void Authentication_5gaka::derive_kamf(
   S[4 + supiLen] = (abba & 0xff00) >> 8;
   S[5 + supiLen] = 0x00;
   S[6 + supiLen] = 0x02;
-  // output_wrapper::print_buffer("amf_n1", "inputstring S", S, 7+supiLen);
-  // output_wrapper::print_buffer("amf_n1", "key KEY", kseaf, 32);
+  // oai::utils::output_wrapper::print_buffer("amf_n1", "inputstring S", S,
+  // 7+supiLen); oai::utils::output_wrapper::print_buffer("amf_n1", "key KEY",
+  // kseaf, 32);
   kdf(kseaf, 32, S, 7 + supiLen, kamf, 32);
-  // output_wrapper::print_buffer("amf_n1", "KDF out: Kamf", kamf, 32);
-  // Logger::amf_n1().debug("derive kamf finished!");
+  // oai::utils::output_wrapper::print_buffer("amf_n1", "KDF out: Kamf", kamf,
+  // 32); Logger::amf_n1().debug("derive kamf finished!");
 }
 
 void Authentication_5gaka::derive_knas(
@@ -399,12 +401,12 @@ void Authentication_5gaka::derive_knas(
   S[4]            = nas_alg_id;
   S[5]            = 0x00;
   S[6]            = 0x01;
-  // output_wrapper::print_buffer("amf_n1", "inputstring S", S, 7);
-  // output_wrapper::print_buffer("amf_n1", "key KEY", kamf, 32);
+  // oai::utils::output_wrapper::print_buffer("amf_n1", "inputstring S", S, 7);
+  // oai::utils::output_wrapper::print_buffer("amf_n1", "key KEY", kamf, 32);
   kdf(kamf, 32, S, 7, out, 32);
   // memcpy (knas, &out[31 - 16 + 1], 16);
   for (int i = 0; i < 16; i++) knas[i] = out[16 + i];
-  // output_wrapper::print_buffer("amf_n1", "knas", knas, 16);
+  // oai::utils::output_wrapper::print_buffer("amf_n1", "knas", knas, 16);
   // Logger::amf_n1().debug("derive knas finished!");
 }
 
@@ -421,10 +423,10 @@ void Authentication_5gaka::derive_kgnb(
   S[7]                 = accessType;
   S[8]                 = 0x00;
   S[9]                 = 0x01;
-  // output_wrapper::print_buffer("amf_n1", "inputstring S", S, 10);
-  // output_wrapper::print_buffer("amf_n1", "key KEY", kamf, 32);
+  // oai::utils::output_wrapper::print_buffer("amf_n1", "inputstring S", S, 10);
+  // oai::utils::output_wrapper::print_buffer("amf_n1", "key KEY", kamf, 32);
   kdf(kamf, 32, S, 10, kgnb, AUTH_VECTOR_LENGTH_OCTETS);
-  // output_wrapper::print_buffer("amf_n1", "kgnb", kgnb, 32);
+  // oai::utils::output_wrapper::print_buffer("amf_n1", "kgnb", kgnb, 32);
   // Logger::amf_n1().debug("derive kgnb finished!");
 }
 void Authentication_5gaka::handover_ncc_derive_knh(
@@ -456,8 +458,8 @@ void Authentication_5gaka::handover_ncc_derive_knh(
       SS[i][34] = 0x20;
       kdf(kamf, 32, SS[i], 35, knh, 32);
     }
-    output_wrapper::print_buffer("amf_n1", "SS", SS[i], 35);
-    output_wrapper::print_buffer("amf_n1", "Knh", knh, 32);
+    oai::utils::output_wrapper::print_buffer("amf_n1", "SS", SS[i], 35);
+    oai::utils::output_wrapper::print_buffer("amf_n1", "Knh", knh, 32);
   }
 }
 void Authentication_5gaka::derive_kasme(
@@ -517,24 +519,24 @@ int Authentication_5gaka::generate_vector(
    * Compute MAC
    */
   f1(opc, key, vector->rand, sqn, amf, mac_a);
-  // output_wrapper::print_buffer ("MAC_A   : ", mac_a, 8);
-  // output_wrapper::print_buffer ("SQN     : ", sqn, 6);
-  // output_wrapper::print_buffer ("RAND    : ", vector->rand, 16);
+  // oai::utils::output_wrapper::print_buffer ("MAC_A   : ", mac_a, 8);
+  // oai::utils::output_wrapper::print_buffer ("SQN     : ", sqn, 6);
+  // oai::utils::output_wrapper::print_buffer ("RAND    : ", vector->rand, 16);
   /*
    * Compute XRES, CK, IK, AK
    */
   f2345(opc, key, vector->rand, vector->xres, ck, ik, ak);
-  // output_wrapper::print_buffer ("AK      : ", ak, 6);
-  // output_wrapper::print_buffer ("CK      : ", ck, 16);
-  // output_wrapper::print_buffer ("IK      : ", ik, 16);
-  // output_wrapper::print_buffer ("XRES    : ", vector->xres, 8);
+  // oai::utils::output_wrapper::print_buffer ("AK      : ", ak, 6);
+  // oai::utils::output_wrapper::print_buffer ("CK      : ", ck, 16);
+  // oai::utils::output_wrapper::print_buffer ("IK      : ", ik, 16);
+  // oai::utils::output_wrapper::print_buffer ("XRES    : ", vector->xres, 8);
   /*
    * AUTN = SQN ^ AK || AMF || MAC
    */
   generate_autn(sqn, ak, amf, mac_a, vector->autn);
-  // output_wrapper::print_buffer ("AUTN    : ", vector->autn, 16);
+  // oai::utils::output_wrapper::print_buffer ("AUTN    : ", vector->autn, 16);
   derive_kasme(ck, ik, plmn, sqn, ak, vector->kasme);
-  // output_wrapper::print_buffer ("KASME   : ", vector->kasme, 32);
+  // oai::utils::output_wrapper::print_buffer ("KASME   : ", vector->kasme, 32);
   return 0;
 }
 
@@ -566,16 +568,20 @@ uint8_t* Authentication_5gaka::sqn_ms_derive(
     sqn_ms[i] = ak[i] ^ conc_sqn_ms[i];
   }
 
-  output_wrapper::print_buffer("amf_n1", "sqn_ms_derive() KEY    : ", key, 16);
-  output_wrapper::print_buffer(
+  oai::utils::output_wrapper::print_buffer(
+      "amf_n1", "sqn_ms_derive() KEY    : ", key, 16);
+  oai::utils::output_wrapper::print_buffer(
       "amf_n1", "sqn_ms_derive() RAND   : ", rand_p, 16);
-  output_wrapper::print_buffer("amf_n1", "sqn_ms_derive() AUTS   : ", auts, 14);
-  output_wrapper::print_buffer("amf_n1", "sqn_ms_derive() AK     : ", ak, 6);
-  output_wrapper::print_buffer(
+  oai::utils::output_wrapper::print_buffer(
+      "amf_n1", "sqn_ms_derive() AUTS   : ", auts, 14);
+  oai::utils::output_wrapper::print_buffer(
+      "amf_n1", "sqn_ms_derive() AK     : ", ak, 6);
+  oai::utils::output_wrapper::print_buffer(
       "amf_n1", "sqn_ms_derive() SQN_MS : ", sqn_ms, 6);
-  output_wrapper::print_buffer("amf_n1", "sqn_ms_derive() MAC_S  : ", mac_s, 8);
+  oai::utils::output_wrapper::print_buffer(
+      "amf_n1", "sqn_ms_derive() MAC_S  : ", mac_s, 8);
   f1star(opc, key, rand_p, sqn_ms, amf, mac_s_computed);
-  output_wrapper::print_buffer(
+  oai::utils::output_wrapper::print_buffer(
       "amf_n1", "MAC_S computed : ", mac_s_computed, 8);
 
   if (memcmp(mac_s_computed, mac_s, 8) != 0) {

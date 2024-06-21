@@ -24,23 +24,22 @@ include_directories(${SRC_TOP_DIR}/common)
 include_directories(${SRC_TOP_DIR}/common/unicode)
 include_directories(${SRC_TOP_DIR}/itti)
 include_directories(${SRC_TOP_DIR}/itti/msgs)
-include_directories(${SRC_TOP_DIR}/sbi/model)
 include_directories(${SRC_TOP_DIR}/utils)
 include_directories(${SRC_TOP_DIR}/${MOUNTED_COMMON}/logger)
 include_directories(${SRC_TOP_DIR}/${MOUNTED_COMMON}/common)
-include_directories(${SRC_TOP_DIR}/${MOUNTED_COMMON}/utils)
-include_directories(${SRC_TOP_DIR}/${MOUNTED_COMMON}/utils/bstr)
+include_directories(${SRC_TOP_DIR}/${MOUNTED_COMMON}/common.cmake)
+include_directories(${SRC_TOP_DIR}/${MOUNTED_COMMON}/model/amf)
 include_directories(${SRC_TOP_DIR}/${MOUNTED_COMMON}/nas/common)
 include_directories(${SRC_TOP_DIR}/${MOUNTED_COMMON}/ngap/libngap)
-include_directories(${SRC_TOP_DIR}/${MOUNTED_COMMON}/common.cmake)
-include(${BUILD_TOP_DIR}/amf/used_models.cmake)
+include_directories(${SRC_TOP_DIR}/${MOUNTED_COMMON}/utils)
+include_directories(${SRC_TOP_DIR}/${MOUNTED_COMMON}/utils/bstr)
+
+include(${SRC_TOP_DIR}/${MOUNTED_COMMON}/model/amf/amf.cmake)
 
 add_library (AMF_UTILS STATIC
- ${CMAKE_CURRENT_SOURCE_DIR}/backtrace.c
- ${CMAKE_CURRENT_SOURCE_DIR}/thread_sched.cpp
  ${CMAKE_CURRENT_SOURCE_DIR}/mime_parser.cpp
  ${CMAKE_CURRENT_SOURCE_DIR}/3gpp_conversions.cpp
  ${CMAKE_CURRENT_SOURCE_DIR}/amf_conversions.cpp
- ${CMAKE_CURRENT_SOURCE_DIR}/output_wrapper.cpp
+ ${CMAKE_CURRENT_SOURCE_DIR}/thread_sched.cpp
  )
 
