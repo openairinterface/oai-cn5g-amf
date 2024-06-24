@@ -882,14 +882,9 @@ void amf_config_yaml::to_amf_config(amf_config& cfg) {
     item.mnc         = i.get_mnc();
     item.tac         = i.get_tac();
     for (const auto& s : i.get_nssai()) {
-      slice_t slice  = {};
+      snssai_t slice = {};
       slice.sst      = s.get_sst();
-      std::string sd = {};
-      if (s.get_sd(sd)) {
-        amf_conv::sd_string_hex_to_int(sd, slice.sd);
-      } else {
-        slice.sd = SD_NO_VALUE;
-      }
+      slice.sd       = s.get_sd();
       item.slice_list.push_back(slice);
     }
 

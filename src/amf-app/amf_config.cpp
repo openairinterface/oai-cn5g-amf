@@ -108,11 +108,11 @@ void amf_config::display() {
     Logger::config().info("    TAC ...................: %d", plmn_list[i].tac);
     Logger::config().info("    Slice Support .........:");
     for (int j = 0; j < plmn_list[i].slice_list.size(); j++) {
-      if (plmn_list[i].slice_list[j].sd != SD_NO_VALUE) {
+      if (plmn_list[i].slice_list[j].get_sd_int() != SD_NO_VALUE) {
         Logger::config().info(
-            "        SST, SD ...........: %d, %ld (0x%x)",
+            "        SST, SD ...........: %s, %ld (0x%x)",
             plmn_list[i].slice_list[j].sst, plmn_list[i].slice_list[j].sd,
-            plmn_list[i].slice_list[j].sd);
+            plmn_list[i].slice_list[j].get_sd_int());
       } else {
         Logger::config().info(
             "        SST ...............: %d", plmn_list[i].slice_list[j].sst);

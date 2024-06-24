@@ -1132,15 +1132,12 @@ bool amf_sbi::discover_smf(
           for (auto& s : instance_json["sNssais"].items()) {
             nlohmann::json Snssai = s.value();
             int sst               = 0;
-            uint32_t sd           = SD_NO_VALUE;  // Default value
+            std::string sd =
+                oai::model::common::SD_DEFAULT_VALUE;  // Default value
             if (Snssai.count("sst") > 0) sst = Snssai["sst"].get<int>();
-            if (Snssai.count("sd") > 0) {
-              amf_conv::sd_string_to_int(Snssai["sd"].get<std::string>(), sd);
-            }
+            if (Snssai.count("sd") > 0) sd = Snssai["sd"].get<std::string>();
             if (sst == snssai.sst) {
-              uint32_t input_sd = SD_NO_VALUE;  // Default value
-              amf_conv::sd_string_to_int(snssai.sd, input_sd);
-              if (sd == input_sd) {
+              if (sd == snssai.sd) {
                 Logger::amf_sbi().debug(
                     "S-NSSAI [SST- %d, SD -%s] is matched for SMF profile",
                     snssai.sst, snssai.sd.c_str());
