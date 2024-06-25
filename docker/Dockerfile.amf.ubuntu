@@ -61,11 +61,21 @@ RUN ./build_amf --install-deps --force
 #---------------------------------------------------------------------
 FROM oai-amf-base as oai-amf-builder
 # Copying source code
+ARG ENABLE_LTTNG=false
+
 COPY . /openair-amf
 # Building AMF
 WORKDIR /openair-amf/build/scripts
-RUN ldconfig && \
-    ./build_amf --clean --Verbose --build-type Release --jobs && \
+RUN  if [ "$ENABLE_LTTNG" = "true" ]; then DEBIAN_FRONTEND=noninteractive apt-get install --yes \
+        lttng-modules-dkms \
+        liblttng-ust-dev \
+        lttng-tools && \
+        ldconfig && \
+        ./build_amf --clean --Verbose --build-type Release --jobs --lttng; \
+    else \
+        ldconfig && \
+        ./build_amf --clean --Verbose --build-type Release --jobs; \
+    fi && \
     ldd /openair-amf/build/amf/build/amf && \
     mv /openair-amf/build/amf/build/amf /openair-amf/build/amf/build/oai_amf
 
@@ -77,6 +87,8 @@ FROM mikefarah/yq:latest as yq-source
 FROM $BASE_IMAGE as oai-amf
 ENV DEBIAN_FRONTEND=noninteractive
 ENV TZ=Europe/Paris
+ARG ENABLE_LTTNG=false
+
 # We install some debug tools for the moment in addition of mandatory libraries
 RUN apt-get update && \
     DEBIAN_FRONTEND=noninteractive apt-get upgrade --yes && \
@@ -112,6 +124,8 @@ RUN apt-get update && \
 # Ubuntu 22 --> boost74
       libboost-thread1.7?.0 \
       libboost-chrono1.7?.0 \
+# lttng
+  && if [ "$ENABLE_LTTNG" = "true" ]; then DEBIAN_FRONTEND=noninteractive apt-get install --yes liblttng-ust-dev; fi \
   && rm -rf /var/lib/apt/lists/*
 
 # Copying executable and generated libraries
@@ -145,7 +159,7 @@ COPY --from=oai-amf-builder \
 WORKDIR /openair-amf
 
 # expose ports
-EXPOSE 80/tcp 9090/tcp 38412/sctp
+EXPOSE 80/tcp 9090/tcp 38412/sctp 5342 5343 5344
 # healthcheck
 HEALTHCHECK --interval=10s \
             --timeout=15s \

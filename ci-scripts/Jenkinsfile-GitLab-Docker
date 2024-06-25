@@ -68,6 +68,7 @@ pipeline {
     // Minimal checks
     gitlabBuilds(builds: [
       "Build Ubuntu AMF Image",
+      "Build Ubuntu AMF Image with LTTNG",
       "Build RHEL AMF Image",
       "Static Code Analysis",
       "Code Formatting Checker"
@@ -180,6 +181,33 @@ pipeline {
             }
             unsuccessful {
               sh "echo 'OAI-AMF UBUNTU IMAGE BUILD: KO' >> archives/amf_ubuntu_image_build.log"
+            }
+          }
+        }
+        stage ('Build Ubuntu AMF Image with LTTNG') {
+          steps {
+            // I want the previous stage to run always before to profit from the cache
+            // This stage only exists to make sure we don't have a regression in LTTNG build
+            // Generated image is not used
+            sleep 30
+            lock(ubuntuBuildResource) {
+              script {
+                gitlabCommitStatus(name: "Build Ubuntu AMF Image with LTTNG") {
+                  sh "docker image rm oai-amf:lttng-build || true"
+                  sh "docker image prune --force"
+                  sh "docker buildx build --target oai-amf --tag oai-amf:lttng-build --file docker/Dockerfile.amf.ubuntu --build-arg ENABLE_LTTNG=true . > archives/amf_ubuntu_lttng_image_build.log 2>&1"
+                  sh "docker image prune --force"
+                  sh "docker image rm oai-amf:lttng-build || true"
+                }
+              }
+            }
+          }
+          post {
+            success {
+              sh "echo 'OAI-AMF UBUNTU IMAGE BUILD: OK' >> archives/amf_ubuntu_lttng_image_build.log"
+            }
+            unsuccessful {
+              sh "echo 'OAI-AMF UBUNTU IMAGE BUILD: KO' >> archives/amf_ubuntu_lttng_image_build.log"
             }
           }
         }
