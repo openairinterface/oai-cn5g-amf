@@ -134,14 +134,14 @@ int main(int argc, char** argv) {
   lttng_config_yaml->read_from_file();
 
 #ifdef LOGGER_CAN_USE_LTTNG
-    std::cout << "LTTNG Log Activation: "
-              << lttng_config_yaml->is_lttng_active() << "\n";
-    std::cout << "Log Level of LTTng: "
-              << lttng_config_yaml->get_lttng_log_level() << "\n";
+  std::cout << "LTTNG Log Activation: " << lttng_config_yaml->is_lttng_active()
+            << "\n";
+  std::cout << "Log Level of LTTng: "
+            << lttng_config_yaml->get_lttng_log_level() << "\n";
 #else
-    std::cout << "LTTNG Tracing disabled at build-time!\n";
-    if (lttng_config_yaml->is_lttng_active())
-      std::cout << "Cannot use lttng log scheme on this build variant!\n";
+  std::cout << "LTTNG Tracing disabled at build-time!\n";
+  if (lttng_config_yaml->is_lttng_active())
+    std::cout << "Cannot use lttng log scheme on this build variant!\n";
 #endif
 
   Logger::set_lttng(static_cast<bool>(lttng_config_yaml->is_lttng_active()));
