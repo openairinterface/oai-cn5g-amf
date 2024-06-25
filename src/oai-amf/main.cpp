@@ -128,13 +128,10 @@ int main(int argc, char** argv) {
     return 1;
   }
   std::string conf_file_name = Options::getYamlConfig();
-  std::string file_ext       = ".conf";
-  if (conf_file_name.find(file_ext) != std::string::npos) {
-    std::cout << "Currently not support .conf file\n";
-  } else {
-    std::cout << "Trying to read .yaml configuration file\n";
-    lttng_config_yaml = std::make_unique<lttng_configuration>(conf_file_name);
-    lttng_config_yaml->read_from_file();
+
+  std::cout << "Trying to read .yaml configuration file\n";
+  lttng_config_yaml = std::make_unique<lttng_configuration>(conf_file_name);
+  lttng_config_yaml->read_from_file();
 
 #ifdef LOGGER_CAN_USE_LTTNG
     std::cout << "LTTNG Log Activation: "
@@ -146,7 +143,6 @@ int main(int argc, char** argv) {
     if (lttng_config_yaml->is_lttng_active())
       std::cout << "Cannot use lttng log scheme on this build variant!\n";
 #endif
-  }
 
   Logger::set_lttng(static_cast<bool>(lttng_config_yaml->is_lttng_active()));
   Logger::init("AMF", Options::getlogStdout(), Options::getlogRotFilelog());
