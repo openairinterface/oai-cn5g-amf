@@ -214,7 +214,8 @@ void guami::validate() {
 s_nssai::s_nssai(uint8_t sst) {
   m_sst = int_config_value(AMF_CONFIG_SST, sst);
   m_sst.set_validation_interval(SST_MIN_VALUE, SST_MAX_VALUE);
-  m_sd = string_config_value(AMF_CONFIG_SD, AMF_CONFIG_SD_DEFAULT_VALUE);
+  m_sd =
+      string_config_value(AMF_CONFIG_SD, oai::model::common::SD_DEFAULT_VALUE);
   m_sd.set_validation_regex(SD_REGEX);
   m_set = true;
 }
