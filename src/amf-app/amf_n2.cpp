@@ -2844,6 +2844,8 @@ bool amf_n2::get_common_plmn(
               Logger::amf_n2().debug(
                   "S-NSSAI from AMF (SST %d, SD %s)", s2.sst, s2.sd);
               if (s1.sst.compare(std::to_string(s2.sst)) == 0) {
+                // here it is safe to compare SD string because local string is
+                // always uppercase and string from NGAP as well
                 if (s1.sd == s2.sd) {
                   Logger::amf_n2().debug(
                       "Common S-NSSAI (SST %s, SD %s)", s1.sst.c_str(),

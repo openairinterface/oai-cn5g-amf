@@ -1130,21 +1130,16 @@ bool amf_sbi::discover_smf(
         // check with sNSSAI
         if (instance_json.find("sNssais") != instance_json.end()) {
           for (auto& s : instance_json["sNssais"].items()) {
-            nlohmann::json Snssai = s.value();
-            int sst               = 0;
-            std::string sd =
-                oai::model::common::SD_DEFAULT_VALUE;  // Default value
-            if (Snssai.count("sst") > 0) sst = Snssai["sst"].get<int>();
-            if (Snssai.count("sd") > 0) sd = Snssai["sd"].get<std::string>();
-            if (sst == snssai.sst) {
-              if (sd == snssai.sd) {
-                Logger::amf_sbi().debug(
-                    "S-NSSAI [SST- %d, SD -%s] is matched for SMF profile",
-                    snssai.sst, snssai.sd.c_str());
-                result = true;
-                break;  // NSSAI is included in the list of supported slices
-                        // from SMF
-              }
+            oai::model::common::Snssai snssai_model;
+            from_json(s.value(), snssai_model);
+            if (snssai_model.getSst() == snssai.sst &&
+                snssai_model.getSdInt() == snssai.get_sd_int()) {
+              Logger::amf_sbi().debug(
+                  "S-NSSAI [SST- %d, SD -%s] is matched for SMF profile",
+                  snssai.sst, snssai.sd.c_str());
+              result = true;
+              break;  // NSSAI is included in the list of supported slices
+                      // from SMF
             }
           }
         }

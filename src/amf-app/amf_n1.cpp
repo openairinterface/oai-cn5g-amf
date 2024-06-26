@@ -5105,7 +5105,7 @@ bool amf_n1::check_subscribed_nssai(
         bool found_nssai = false;
         for (auto s : p.slice_list) {
           if (s.sst == n.getSst()) {
-            if (n.getSd() == s.sd) {
+            if (n.getSdInt() == s.get_sd_int()) {
               found_nssai = true;
               Logger::amf_n1().debug(
                   "Found S-NSSAI (SST %d, SD %s)", s.sst, n.getSd().c_str());
@@ -5125,7 +5125,7 @@ bool amf_n1::check_subscribed_nssai(
         bool found_nssai = false;
         for (auto s : p.slice_list) {
           if (s.sst == n.getSst()) {
-            if (n.getSd() == s.sd) {
+            if (n.getSdInt() == s.get_sd_int()) {
               found_nssai = true;
               Logger::amf_n1().debug(
                   "Found S-NSSAI (SST %d, SD %s)", s.sst, n.getSd().c_str());
