@@ -2836,17 +2836,20 @@ bool amf_n2::get_common_plmn(
           plmn_slice_support_item.mcc = list[j].plmnSliceSupportList[k].mcc;
           plmn_slice_support_item.mnc = list[j].plmnSliceSupportList[k].mnc;
 
-          for (auto s1 : list[j].plmnSliceSupportList[k].sliceList) {
-            Logger::amf_n2().debug(
-                "S-NSSAI from gNB (SST %s, SD %s)", s1.sst.c_str(),
-                s1.sd.c_str());
-            for (auto s2 : amf_cfg.plmn_list[i].slice_list) {
+          for (const auto& s1 : list[j].plmnSliceSupportList[k].sliceList) {
+            snssai_t s1_snssai;
+            try {
+              s1_snssai.sst = std::stoi(s1.sst);
+              s1_snssai.sd  = s1.sd;
+
               Logger::amf_n2().debug(
-                  "S-NSSAI from AMF (SST %d, SD %s)", s2.sst, s2.sd);
-              if (s1.sst.compare(std::to_string(s2.sst)) == 0) {
-                // here it is safe to compare SD string because local string is
-                // always uppercase and string from NGAP as well
-                if (s1.sd == s2.sd) {
+                  "S-NSSAI from gNB (SST %s, SD %s)", s1.sst.c_str(),
+                  s1.sd.c_str());
+              for (const auto& s2 : amf_cfg.plmn_list[i].slice_list) {
+                Logger::amf_n2().debug(
+                    "S-NSSAI from AMF (SST %d, SD %s)", s2.sst, s2.sd);
+                if (s1_snssai.sst == s2.sst &&
+                    s1_snssai.get_sd_int() == s2.get_sd_int()) {
                   Logger::amf_n2().debug(
                       "Common S-NSSAI (SST %s, SD %s)", s1.sst.c_str(),
                       s1.sd.c_str());
@@ -2854,6 +2857,9 @@ bool amf_n2::get_common_plmn(
                   found_common_plmn = true;
                 }
               }
+            } catch (std::invalid_argument&) {
+              Logger::amf_n2().error(
+                  "Could not convert SST %s to int, wrong NGAP values", s1.sst);
             }
           }
 
