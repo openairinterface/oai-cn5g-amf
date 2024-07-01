@@ -1541,7 +1541,11 @@ bool amf_n1::service_request_handle(
     stacs.update_ue_info(ueItem);
     stacs.display();
 
-    oai::utils::utils::bdestroy_wrapper(&protected_nas);
+    event_sub.ue_registration_state(
+            supi, _5GMM_REGISTERED, amf_cfg.support_features.http_version,
+            ran_ue_ngap_id, amf_ue_ngap_id);
+
+      oai::utils::utils::bdestroy_wrapper(&protected_nas);
   }
 
   return true;
