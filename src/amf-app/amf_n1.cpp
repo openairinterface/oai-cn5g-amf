@@ -1526,6 +1526,19 @@ bool amf_n1::service_request_handle(
     // Update 5GMM State
     stacs.update_5gmm_state(nc, _5GMM_REGISTERED);
     set_5gmm_state(nc, _5GMM_REGISTERED);
+
+    ue_info_t ueItem;
+    ueItem.cm_status       = CM_CONNECTED;
+    ueItem.register_status = _5GMM_REGISTERED;
+    ueItem.ranid           = ran_ue_ngap_id;
+    ueItem.amfid           = amf_ue_ngap_id;
+    ueItem.imsi            = nc->imsi;
+    if (nc->guti.has_value()) ueItem.guti = nc->guti.value();
+    ueItem.mcc    = uc->cgi.mcc;
+    ueItem.mnc    = uc->cgi.mnc;
+    ueItem.cellId = uc->cgi.nrCellId;
+
+    stacs.update_ue_info(ueItem);
     stacs.display();
 
     oai::utils::utils::bdestroy_wrapper(&protected_nas);
