@@ -1292,13 +1292,12 @@ bool amf_sbi::curl_http_client(
   } else {  // Response with success code
             // Store location of the created context in case of PDU Session
             // Establishment
-    auto loc_header =
-        http_response.headers.tryGet<Pistache::Http::Header::Location>();
-    if (loc_header) {
-      std::string location = loc_header->location();
+    if (auto loc_header = http_response.headers.find("location");
+        loc_header != http_response.headers.end()) {
       Logger::amf_sbi().info(
-          "Location of the created SMF context: %s", location.c_str());
-      psc->smf_info.context_location = location;
+          "Location of the created SMF context: %s",
+          loc_header->second.c_str());
+      psc->smf_info.context_location = loc_header->second;
     }
 
     try {
