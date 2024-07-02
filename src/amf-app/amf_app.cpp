@@ -1476,10 +1476,7 @@ void amf_app::generate_amf_profile() {
   std::vector<snssai_t> amf_snssai;
   for (auto p : amf_cfg.plmn_list) {
     for (auto s : p.slice_list) {
-      snssai_t nssai = {};
-      nssai.sst      = s.sst;
-      amf_conv::sd_int_to_string_hex(s.sd, nssai.sd);
-      amf_snssai.push_back(nssai);
+      amf_snssai.push_back(s);
     }
   }
   nf_instance_profile.set_nf_snssais(amf_snssai);
@@ -1568,7 +1565,7 @@ void amf_app::get_nrfs(std::unordered_set<std::string>& nrfs) {
         itti_msg->plmn.mcc       = plmn.mcc;
         itti_msg->plmn.mnc       = plmn.mnc;
         itti_msg->snssai.sst     = s.sst;
-        itti_msg->snssai.sd      = std::to_string(s.sd);
+        itti_msg->snssai.sd      = s.sd;
         itti_msg->promise_id     = promise_id;
         int ret                  = itti_inst->send_msg(itti_msg);
         if (0 != ret) {
