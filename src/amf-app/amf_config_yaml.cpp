@@ -214,7 +214,8 @@ void guami::validate() {
 s_nssai::s_nssai(uint8_t sst) {
   m_sst = int_config_value(AMF_CONFIG_SST, sst);
   m_sst.set_validation_interval(SST_MIN_VALUE, SST_MAX_VALUE);
-  m_sd = string_config_value(AMF_CONFIG_SD, AMF_CONFIG_SD_DEFAULT_VALUE);
+  m_sd =
+      string_config_value(AMF_CONFIG_SD, oai::model::common::SD_DEFAULT_VALUE);
   m_sd.set_validation_regex(SD_REGEX);
   m_set = true;
 }
@@ -882,14 +883,9 @@ void amf_config_yaml::to_amf_config(amf_config& cfg) {
     item.mnc         = i.get_mnc();
     item.tac         = i.get_tac();
     for (const auto& s : i.get_nssai()) {
-      slice_t slice  = {};
+      snssai_t slice = {};
       slice.sst      = s.get_sst();
-      std::string sd = {};
-      if (s.get_sd(sd)) {
-        amf_conv::sd_string_hex_to_int(sd, slice.sd);
-      } else {
-        slice.sd = SD_NO_VALUE;
-      }
+      slice.sd       = s.get_sd();
       item.slice_list.push_back(slice);
     }
 

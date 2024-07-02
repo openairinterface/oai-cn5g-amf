@@ -3783,9 +3783,10 @@ void amf_n1::ul_nas_transport_handle(
         itti_msg->dnn            = bstrcpy(dnn);
         itti_msg->sm_msg         = bstrcpy(sm_msg);
         itti_msg->snssai.sst     = snssai.sst;
-        itti_msg->snssai.sd      = std::to_string(snssai.sd);
         itti_msg->plmn.mnc       = plmn.mnc;
         itti_msg->plmn.mcc       = plmn.mcc;
+
+        amf_conv::sd_int_to_string_hex(snssai.sd, itti_msg->snssai.sd);
 
         int ret = itti_inst->send_msg(itti_msg);
         if (0 != ret) {
@@ -5021,14 +5022,10 @@ bool amf_n1::check_requested_nssai(const std::shared_ptr<nas_context>& nc) {
     for (auto n : nc->requested_nssai) {
       bool found_nssai = false;
       for (auto s : p.slice_list) {
-        std::string sd = std::to_string(s.sd);
-        if (s.sst == n.sst) {
-          if (s.sd == n.sd) {
-            found_nssai = true;
-            Logger::amf_n1().debug(
-                "Found S-NSSAI (SST %d, SD %d)", s.sst, n.sd);
-            break;
-          }
+        if (s.sst == n.sst && s.get_sd_int() == n.sd) {
+          found_nssai = true;
+          Logger::amf_n1().debug("Found S-NSSAI (SST %d, SD %d)", s.sst, n.sd);
+          break;
         }
       }
       if (!found_nssai) {
@@ -5077,12 +5074,10 @@ bool amf_n1::check_subscribed_nssai(
       // Check with default subscribed NSSAIs
       for (auto n : nssai.getDefaultSingleNssais()) {
         if (s.sst == n.getSst()) {
-          uint32_t sd = SD_NO_VALUE;
-          amf_conv::sd_string_to_int(n.getSd(), sd);
+          uint32_t sd = n.getSdInt();
           if (sd == s.sd) {
             common_snssais.push_back(n);
-            Logger::amf_n1().debug(
-                "Common S-NSSAI (SST %d, SD %ld)", s.sst, sd);
+            Logger::amf_n1().debug("Common S-NSSAI (SST %d, SD %s)", s.sst, sd);
             break;
           }
         }
@@ -5091,12 +5086,10 @@ bool amf_n1::check_subscribed_nssai(
       // check with other subscribed NSSAIs
       for (auto n : nssai.getSingleNssais()) {
         if (s.sst == n.getSst()) {
-          uint32_t sd = SD_NO_VALUE;
-          amf_conv::sd_string_to_int(n.getSd(), sd);
+          uint32_t sd = n.getSdInt();
           if (sd == s.sd) {
             common_snssais.push_back(n);
-            Logger::amf_n1().debug(
-                "Common S-NSSAI (SST %d, SD %ld)", s.sst, sd);
+            Logger::amf_n1().debug("Common S-NSSAI (SST %d, SD %s)", s.sst, sd);
             break;
           }
         }
@@ -5112,9 +5105,7 @@ bool amf_n1::check_subscribed_nssai(
         bool found_nssai = false;
         for (auto s : p.slice_list) {
           if (s.sst == n.getSst()) {
-            uint32_t sd = SD_NO_VALUE;
-            amf_conv::sd_string_to_int(n.getSd(), sd);
-            if (sd == s.sd) {
+            if (n.getSdInt() == s.get_sd_int()) {
               found_nssai = true;
               Logger::amf_n1().debug(
                   "Found S-NSSAI (SST %d, SD %s)", s.sst, n.getSd().c_str());
@@ -5134,9 +5125,7 @@ bool amf_n1::check_subscribed_nssai(
         bool found_nssai = false;
         for (auto s : p.slice_list) {
           if (s.sst == n.getSst()) {
-            uint32_t sd = SD_NO_VALUE;
-            amf_conv::sd_string_to_int(n.getSd(), sd);
-            if (sd == s.sd) {
+            if (n.getSdInt() == s.get_sd_int()) {
               found_nssai = true;
               Logger::amf_n1().debug(
                   "Found S-NSSAI (SST %d, SD %s)", s.sst, n.getSd().c_str());
@@ -5212,9 +5201,8 @@ bool amf_n1::get_slice_selection_subscription_data(
       for (const auto& ds : default_snssais) {
         oai::nas::SNSSAI_t subscribed_snssai = {};
         subscribed_snssai.sst                = ds.getSst();
-        uint32_t subscribed_snssai_sd        = SD_NO_VALUE;
-        amf_conv::sd_string_to_int(ds.getSd(), subscribed_snssai_sd);
-        subscribed_snssai.sd = subscribed_snssai_sd;
+        uint32_t subscribed_snssai_sd        = ds.getSdInt();
+        subscribed_snssai.sd                 = subscribed_snssai_sd;
         std::pair<bool, oai::nas::SNSSAI_t> tmp;
         tmp.second = subscribed_snssai;
         tmp.first  = true;
@@ -5292,9 +5280,7 @@ bool amf_n1::get_slice_selection_subscription_data_from_conf_file(
         // Store this info in UE NAS Context
         oai::nas::SNSSAI_t subscribed_snssai = {};
         subscribed_snssai.sst                = sst;
-        uint32_t subscribed_snssai_sd        = SD_NO_VALUE;
-        amf_conv::sd_string_to_int(s.sd, subscribed_snssai_sd);
-        subscribed_snssai.sd = subscribed_snssai_sd;
+        subscribed_snssai.sd                 = nssai.getSdInt();
         std::pair<bool, oai::nas::SNSSAI_t> tmp;
         tmp.second = subscribed_snssai;
         tmp.first  = true;

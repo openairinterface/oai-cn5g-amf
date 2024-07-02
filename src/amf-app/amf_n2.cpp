@@ -529,7 +529,7 @@ void amf_n2::handle_itti_message(
     for (int j = 0; j < amf_cfg.plmn_list[i].slice_list.size(); j++) {
       S_Nssai s_tmp = {};
       s_tmp.sst     = std::to_string(amf_cfg.plmn_list[i].slice_list[j].sst);
-      s_tmp.sd      = std::to_string(amf_cfg.plmn_list[i].slice_list[j].sd);
+      s_tmp.sd      = amf_cfg.plmn_list[i].slice_list[j].sd;
       tmp.sliceList.push_back(s_tmp);
     }
     plmn_list.push_back(tmp);
@@ -2836,18 +2836,20 @@ bool amf_n2::get_common_plmn(
           plmn_slice_support_item.mcc = list[j].plmnSliceSupportList[k].mcc;
           plmn_slice_support_item.mnc = list[j].plmnSliceSupportList[k].mnc;
 
-          for (auto s1 : list[j].plmnSliceSupportList[k].sliceList) {
-            Logger::amf_n2().debug(
-                "S-NSSAI from gNB (SST %s, SD %s)", s1.sst.c_str(),
-                s1.sd.c_str());
-            for (auto s2 : amf_cfg.plmn_list[i].slice_list) {
+          for (const auto& s1 : list[j].plmnSliceSupportList[k].sliceList) {
+            snssai_t s1_snssai;
+            try {
+              s1_snssai.sst = std::stoi(s1.sst);
+              s1_snssai.sd  = s1.sd;
+
               Logger::amf_n2().debug(
-                  "S-NSSAI from AMF (SST %d, SD %s)", s2.sst,
-                  std::to_string(s2.sd).c_str());
-              if (s1.sst.compare(std::to_string(s2.sst)) == 0) {
-                uint32_t s1_sd = SD_NO_VALUE;
-                amf_conv::sd_string_to_int(s1.sd, s1_sd);
-                if (s1_sd == s2.sd) {
+                  "S-NSSAI from gNB (SST %s, SD %s)", s1.sst.c_str(),
+                  s1.sd.c_str());
+              for (const auto& s2 : amf_cfg.plmn_list[i].slice_list) {
+                Logger::amf_n2().debug(
+                    "S-NSSAI from AMF (SST %d, SD %s)", s2.sst, s2.sd);
+                if (s1_snssai.sst == s2.sst &&
+                    s1_snssai.get_sd_int() == s2.get_sd_int()) {
                   Logger::amf_n2().debug(
                       "Common S-NSSAI (SST %s, SD %s)", s1.sst.c_str(),
                       s1.sd.c_str());
@@ -2855,6 +2857,9 @@ bool amf_n2::get_common_plmn(
                   found_common_plmn = true;
                 }
               }
+            } catch (std::invalid_argument&) {
+              Logger::amf_n2().error(
+                  "Could not convert SST %s to int, wrong NGAP values", s1.sst);
             }
           }
 
@@ -2891,15 +2896,14 @@ bool amf_n2::get_common_NSSAI(
     for (const auto& plmn : ta.plmnSliceSupportList) {
       for (const auto& slice : plmn.sliceList) {
         oai::nas::SNSSAI_t snssai = {};
-        uint32_t sd               = SD_NO_VALUE;
         try {
-          snssai.sst = std::stoi(slice.sst);
-          amf_conv::sd_string_to_int(slice.sd, sd);
+          snssai_t slice_parsed(std::stoi(slice.sst), slice.sd);
+          snssai.sst = slice_parsed.sst;
+          snssai.sd  = slice_parsed.get_sd_int();
         } catch (const std::exception& err) {
           Logger::amf_app().error("Invalid SST/SD");
           break;
         }
-        snssai.sd = sd;
         common_nssai.push_back(snssai);
         found = true;
       }
