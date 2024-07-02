@@ -207,7 +207,6 @@ void amf_n2_task(void* args_p) {
         Logger::amf_n2().info("Received Handover Required message, handling");
         auto msg_ptr =
             std::dynamic_pointer_cast<itti_handover_required>(shared_msg);
-        amf_n2_inst->handle_itti_message(msg_ptr);
         if (!amf_n2_inst->handle_itti_message(msg_ptr))
           amf_n2_inst->send_handover_preparation_failure(
               msg_ptr->handoverReq->getAmfUeNgapId(),
@@ -530,7 +529,7 @@ void amf_n2::handle_itti_message(
     for (int j = 0; j < amf_cfg.plmn_list[i].slice_list.size(); j++) {
       S_Nssai s_tmp = {};
       s_tmp.sst     = std::to_string(amf_cfg.plmn_list[i].slice_list[j].sst);
-      s_tmp.sd      = std::to_string(amf_cfg.plmn_list[i].slice_list[j].sd);
+      s_tmp.sd      = amf_cfg.plmn_list[i].slice_list[j].sd;
       tmp.sliceList.push_back(s_tmp);
     }
     plmn_list.push_back(tmp);
@@ -807,7 +806,7 @@ void amf_n2::handle_itti_message(
       memcpy(
           (void*) unc->initial_ue_msg.buf, (void*) initial_ue_msg_buf,
           encoded_size);
-      output_wrapper::print_buffer(
+      oai::utils::output_wrapper::print_buffer(
           "ngap", "InitialUEMessage", unc->initial_ue_msg.buf, encoded_size);
       unc->initial_ue_msg.size = encoded_size;
     }
@@ -1038,8 +1037,8 @@ void amf_n2::handle_itti_message(
           item.sNssai.sst = std::to_string(DEFAULT_SST);
           item.sNssai.sd  = std::to_string(SD_NO_VALUE);
         } else {
-          item.sNssai.sst = std::to_string(psc->snssai.sST);
-          item.sNssai.sd  = psc->snssai.sD;
+          item.sNssai.sst = std::to_string(psc->snssai.sst);
+          item.sNssai.sd  = psc->snssai.sd;
         }
 
         Logger::amf_n2().debug(
@@ -1128,8 +1127,8 @@ void amf_n2::handle_itti_message(
         item.sNssai.sst = std::to_string(DEFAULT_SST);
         item.sNssai.sd  = std::to_string(SD_NO_VALUE);
       } else {
-        item.sNssai.sst = std::to_string(psc->snssai.sST);
-        item.sNssai.sd  = psc->snssai.sD;
+        item.sNssai.sst = std::to_string(psc->snssai.sst);
+        item.sNssai.sd  = psc->snssai.sd;
         Logger::amf_n2().debug(
             "S_NSSAI (SST, SD) %s, %s", item.sNssai.sst.c_str(),
             item.sNssai.sd.c_str());
@@ -1160,7 +1159,7 @@ void amf_n2::handle_itti_message(
 
   int encoded_size = 0;
   psrsr->encode2NewBuffer(buffer, encoded_size);
-  output_wrapper::print_buffer(
+  oai::utils::output_wrapper::print_buffer(
       "amf_n2", "N2 SM buffer data:", buffer, encoded_size);
   Logger::amf_n2().debug(" (%d bytes) \n", encoded_size);
 
@@ -1221,7 +1220,7 @@ void amf_n2::handle_itti_message(
 
   int encoded_size = 0;
   modify_request_msg->encode2NewBuffer(buffer, encoded_size);
-  output_wrapper::print_buffer(
+  oai::utils::output_wrapper::print_buffer(
       "amf_n2", "N2 SM buffer data:", buffer, encoded_size);
   Logger::amf_n2().debug(" (%d bytes) \n", encoded_size);
 
@@ -1277,7 +1276,7 @@ void amf_n2::handle_itti_message(
 
   int encoded_size = 0;
   release_cmd_msg->encode2NewBuffer(buffer, encoded_size);
-  output_wrapper::print_buffer(
+  oai::utils::output_wrapper::print_buffer(
       "amf_n2", "N2 SM buffer data:", buffer, encoded_size);
   Logger::amf_n2().debug(" (%d bytes) \n", encoded_size);
 
@@ -1410,16 +1409,16 @@ void amf_n2::handle_itti_message(
       ev_notif.set_notify_uri(i->notify_uri);  // Direct subscription
       // ev_notif.set_subs_change_notify_correlation_id(i->notify_uri);
 
-      oai::amf::model::AmfEventReport event_report = {};
-      oai::amf::model::AmfEventType amf_event_type = {};
+      oai::model::amf::AmfEventReport event_report = {};
+      oai::model::amf::AmfEventType amf_event_type = {};
       amf_event_type.set_value("COMMUNICATION_FAILURE_REPORT");
       event_report.setType(amf_event_type);
 
-      oai::amf::model::AmfEventState amf_event_state = {};
+      oai::model::amf::AmfEventState amf_event_state = {};
       amf_event_state.setActive(true);
       event_report.setState(amf_event_state);
 
-      oai::amf::model::CommunicationFailure comm_failure = {};
+      oai::model::amf::CommunicationFailure comm_failure = {};
 
       NgApCause ngap_cause = {};
       ngap_cause.setGroup(itti_msg->cause.getChoiceOfCause());
@@ -1450,6 +1449,11 @@ void amf_n2::handle_itti_message(
   uint64_t amf_ue_ngap_id = itti_msg->ueCtxRelCmpl->getAmfUeNgapId();
   uint32_t ran_ue_ngap_id = itti_msg->ueCtxRelCmpl->getRanUeNgapId();
 
+  Logger::amf_n2().debug(
+      "UE Context Release Complete ran_ue_ngap_id (" GNB_UE_NGAP_ID_FMT
+      ") amf_ue_ngap_id (" AMF_UE_NGAP_ID_FMT ")",
+      ran_ue_ngap_id, amf_ue_ngap_id);
+
   // Get UE Context
   std::string ue_context_key =
       amf_conv::get_ue_context_key(ran_ue_ngap_id, amf_ue_ngap_id);
@@ -1469,12 +1473,19 @@ void amf_n2::handle_itti_message(
 
   // verify release cause -> if HandoverSuccessful no further operations
   // required
+  Logger::amf_n2().debug(
+      "Release cause %d No UE NGAP context with gnb_assoc_id " GNB_ID_FMT
+      ", Release gnb_assoc_id " GNB_ID_FMT "",
+      unc->release_cause, itti_msg->assoc_id, unc->release_gnb);
+
   if (unc->release_cause == Ngap_CauseRadioNetwork_successful_handover &&
-      gc->gnb_id == unc->release_gnb) {
+      itti_msg->assoc_id == unc->release_gnb) {
     remove_ran_ue_ngap_id_2_ngap_context(ran_ue_ngap_id, gc->gnb_id);
     unc->release_cause = 0;
     return;
   }
+
+  Logger::amf_n2().debug("Continue with UE Context Release Complete procedure");
 
   // Change UE status from CM-CONNECTED to CM-IDLE
   std::shared_ptr<nas_context> nc = {};
@@ -1702,8 +1713,7 @@ bool amf_n2::handle_itti_message(
         direct_forward_path_availability);
 
   unc->gnb_assoc_id = itti_msg->assoc_id;
-  unc->ncc++;
-  unc->ng_ue_state = NGAP_UE_HANDOVER;
+  unc->ng_ue_state  = NGAP_UE_HANDOVER;
 
   GlobalGnbId target_global_gnb_id = {};
   oai::ngap::Tai tai               = {};
@@ -1780,6 +1790,8 @@ bool amf_n2::handle_itti_message(
     Logger::amf_n2().error("No Security Context found");
     return false;
   }
+
+  unc->ncc = nc->security_ctx.value().ul_count.seq_num & 0x07;
 
   uint8_t kamf[AUTH_VECTOR_LENGTH_OCTETS];
   uint8_t kgnb[AUTH_VECTOR_LENGTH_OCTETS];
@@ -1891,8 +1903,8 @@ bool amf_n2::handle_itti_message(
                 supi, curl_responses.begin()->first, psc)) {
           PDUSessionResourceSetupRequestItem_t item = {};
           item.pduSessionId                         = psc->pdu_session_id;
-          item.sNssai.sst = std::to_string(psc->snssai.sST);
-          item.sNssai.sd  = psc->snssai.sD;
+          item.sNssai.sst = std::to_string(psc->snssai.sst);
+          item.sNssai.sd  = psc->snssai.sd;
           // item.pduSessionNAS_PDU = nullptr;
           unsigned int data_len = n2_sm.length();
           item.pduSessionResourceSetupRequestTransfer.buf =
@@ -2110,28 +2122,19 @@ void amf_n2::handle_itti_message(
   std::shared_ptr<nas_context> nc = {};
   if (!amf_n1_inst->amf_ue_id_2_nas_context(amf_ue_ngap_id, nc)) return;
 
-  // Get UE context, if the context doesn't exist, create a new one
+  uint32_t old_ran_ue_ngap_id    = unc->ran_ue_ngap_id;
   std::shared_ptr<ue_context> uc = {};
   std::string ue_context_key =
-      amf_conv::get_ue_context_key(ran_ue_ngap_id, amf_ue_ngap_id);
+      amf_conv::get_ue_context_key(old_ran_ue_ngap_id, amf_ue_ngap_id);
   if (!amf_app_inst->ran_amf_id_2_ue_context(ue_context_key, uc)) {
     Logger::amf_app().debug(
-        "No existing UE Context, Create a new one with ran_amf_id %s",
-        ue_context_key.c_str());
-    uc = std::make_shared<ue_context>();
-    amf_app_inst->set_ran_amf_id_2_ue_context(ue_context_key, uc);
+        "No existing UE Context, with %s", ue_context_key.c_str());
   }
-  // Store related information
-  uc->cgi            = NR_CGI;
-  uc->tai            = tai;
-  uc->ran_ue_ngap_id = ran_ue_ngap_id;
-  uc->amf_ue_ngap_id = amf_ue_ngap_id;
-  uc->gnb_id         = gc->gnb_id;
 
   std::string supi = amf_conv::imsi_to_supi(nc->imsi);
 
+  // Get PDU Session Context
   std::vector<std::shared_ptr<pdu_session_context>> sessions_ctx;
-
   if (!amf_app_inst->get_pdu_sessions_context(supi, sessions_ctx)) {
     Logger::amf_n2().debug("No PDU Session Context found");
   }
@@ -2169,7 +2172,7 @@ void amf_n2::handle_itti_message(
       itti_n11_msg->ho_state    = "COMPLETED";
 
       itti_n11_msg->amf_ue_ngap_id = amf_ue_ngap_id;
-      itti_n11_msg->ran_ue_ngap_id = ran_ue_ngap_id;
+      itti_n11_msg->ran_ue_ngap_id = old_ran_ue_ngap_id;
       itti_n11_msg->promise_id     = promise_id;
 
       int ret = itti_inst->send_msg(itti_n11_msg);
@@ -2210,7 +2213,7 @@ void amf_n2::handle_itti_message(
   // Send UE Release Command to Source gNB
   Logger::ngap().info("Send UE Release Command to source gNB");
   auto ueContextReleaseCommand = std::make_unique<UeContextReleaseCommandMsg>();
-  ueContextReleaseCommand->setUeNgapIdPair(amf_ue_ngap_id, unc->ran_ue_ngap_id);
+  ueContextReleaseCommand->setUeNgapIdPair(amf_ue_ngap_id, old_ran_ue_ngap_id);
   ueContextReleaseCommand->setCauseRadioNetwork(
       Ngap_CauseRadioNetwork_successful_handover);
 
@@ -2223,11 +2226,12 @@ void amf_n2::handle_itti_message(
 
   // update the NGAP Context
   unc->release_cause         = Ngap_CauseRadioNetwork_successful_handover;
-  unc->release_gnb           = uc->gnb_id;
+  unc->release_gnb           = unc->gnb_assoc_id;
   unc->ran_ue_ngap_id        = ran_ue_ngap_id;  // store new RAN ID
   unc->target_ran_ue_ngap_id = 0;               // Clear target RAN ID
   unc->ng_ue_state           = NGAP_UE_CONNECTED;
   unc->gnb_assoc_id          = itti_msg->assoc_id;  // update serving gNB
+  set_ran_ue_ngap_id_2_ue_ngap_context(ran_ue_ngap_id, gc->gnb_id, unc);
 
   // update NAS Context
   nc->ran_ue_ngap_id = ran_ue_ngap_id;
@@ -2236,7 +2240,9 @@ void amf_n2::handle_itti_message(
   uc->ran_ue_ngap_id = ran_ue_ngap_id;
   uc->gnb_id         = gc->gnb_id;
 
-  set_ran_ue_ngap_id_2_ue_ngap_context(ran_ue_ngap_id, gc->gnb_id, unc);
+  std::string new_ue_context_key =
+      amf_conv::get_ue_context_key(ran_ue_ngap_id, amf_ue_ngap_id);
+  amf_app_inst->set_ran_amf_id_2_ue_context(new_ue_context_key, uc);
 
   // Retrieve new location from the UE and notify generate location change
   // signal
@@ -2460,17 +2466,17 @@ void amf_n2::handle_itti_message(
   std::shared_ptr<ue_context> uc = {};
   if (!amf_app_inst->ran_amf_id_2_ue_context(ue_context_key, uc)) return;
 
-  std::optional<oai::amf::model::N1MessageClass_anyOf::eN1MessageClass_anyOf>
+  std::optional<oai::model::amf::N1MessageClass_anyOf::eN1MessageClass_anyOf>
       n1_message_class = std::nullopt;
   std::optional<
-      oai::amf::model::N2InformationClass_anyOf::eN2InformationClass_anyOf>
+      oai::model::amf::N2InformationClass_anyOf::eN2InformationClass_anyOf>
       n2_info_class = std::make_optional<
-          oai::amf::model::N2InformationClass_anyOf::eN2InformationClass_anyOf>(
-          oai::amf::model::N2InformationClass_anyOf::eN2InformationClass_anyOf::
+          oai::model::amf::N2InformationClass_anyOf::eN2InformationClass_anyOf>(
+          oai::model::amf::N2InformationClass_anyOf::eN2InformationClass_anyOf::
               NRPPA);
   std::map<
       n1n2sub_id_t,
-      std::shared_ptr<oai::amf::model::UeN1N2InfoSubscriptionCreateData>>
+      std::shared_ptr<oai::model::amf::UeN1N2InfoSubscriptionCreateData>>
       subscriptions;
 
   amf_app_inst->find_n1n2_info_subscriptions(
@@ -2488,10 +2494,10 @@ void amf_n2::handle_itti_message(
         std::make_shared<itti_sbi_n2_info_notify>(TASK_AMF_N2, TASK_AMF_SBI);
 
     for (auto sub : subscriptions) {
-      oai::amf::model::N2InformationNotification n2_info_notification = {};
+      oai::model::amf::N2InformationNotification n2_info_notification = {};
       fill_n2_information_notification(
           std::to_string(sub.first),
-          oai::amf::model::NgapIeType_anyOf::eNgapIeType_anyOf::NRPPA_PDU,
+          oai::model::amf::NgapIeType_anyOf::eNgapIeType_anyOf::NRPPA_PDU,
           n2_info_notification);
 
       itti_msg_notification->n2_info_notification = n2_info_notification;
@@ -2519,12 +2525,12 @@ void amf_n2::handle_itti_message(
   std::string lmf_id = {};
   amf_conv::bstring_2_string(itti_msg->routing_id, lmf_id);
 
-  auto n2_info_class = oai::amf::model::N2InformationClass_anyOf::
+  auto n2_info_class = oai::model::amf::N2InformationClass_anyOf::
       eN2InformationClass_anyOf::NRPPA;
 
   std::map<
       n1n2sub_id_t,
-      std::shared_ptr<oai::amf::model::NonUeN2InfoSubscriptionCreateData>>
+      std::shared_ptr<oai::model::amf::NonUeN2InfoSubscriptionCreateData>>
       subscriptions;
 
   amf_app_inst->find_non_ue_n2_info_subscriptions(
@@ -2541,10 +2547,10 @@ void amf_n2::handle_itti_message(
         std::make_shared<itti_sbi_n2_info_notify>(TASK_AMF_N2, TASK_AMF_SBI);
 
     for (auto sub : subscriptions) {
-      oai::amf::model::N2InformationNotification n2_info_notification = {};
+      oai::model::amf::N2InformationNotification n2_info_notification = {};
       fill_n2_information_notification(
           std::to_string(sub.first),
-          oai::amf::model::NgapIeType_anyOf::eNgapIeType_anyOf::NRPPA_PDU,
+          oai::model::amf::NgapIeType_anyOf::eNgapIeType_anyOf::NRPPA_PDU,
           n2_info_notification);
 
       itti_msg_notification->n2_info_notification = n2_info_notification;
@@ -2667,6 +2673,10 @@ void amf_n2::remove_ran_ue_ngap_id_2_ngap_context(
   std::unique_lock lock(m_ranid2uecontext);
   if (ranid2uecontext.count(ue_id) > 0) {
     ranid2uecontext.erase(ue_id);
+    Logger::amf_n2().debug(
+        "Removed UE NGAP context with ran_ue_ngap_id " GNB_UE_NGAP_ID_FMT
+        ", gnb_id " GNB_ID_FMT "",
+        ran_ue_ngap_id, gnb_id);
   }
 }
 
@@ -2751,6 +2761,9 @@ void amf_n2::remove_amf_ue_ngap_id_2_ue_ngap_context(
   std::unique_lock lock(m_amfueid2uecontext);
   if (amfueid2uecontext.count(amf_ue_ngap_id) > 0) {
     amfueid2uecontext.erase(amf_ue_ngap_id);
+    Logger::amf_n2().debug(
+        "Removed UE NGAP context with amf_ue_ngap_id " AMF_UE_NGAP_ID_FMT "",
+        amf_ue_ngap_id);
   }
 }
 
@@ -2823,18 +2836,20 @@ bool amf_n2::get_common_plmn(
           plmn_slice_support_item.mcc = list[j].plmnSliceSupportList[k].mcc;
           plmn_slice_support_item.mnc = list[j].plmnSliceSupportList[k].mnc;
 
-          for (auto s1 : list[j].plmnSliceSupportList[k].sliceList) {
-            Logger::amf_n2().debug(
-                "S-NSSAI from gNB (SST %s, SD %s)", s1.sst.c_str(),
-                s1.sd.c_str());
-            for (auto s2 : amf_cfg.plmn_list[i].slice_list) {
+          for (const auto& s1 : list[j].plmnSliceSupportList[k].sliceList) {
+            snssai_t s1_snssai;
+            try {
+              s1_snssai.sst = std::stoi(s1.sst);
+              s1_snssai.sd  = s1.sd;
+
               Logger::amf_n2().debug(
-                  "S-NSSAI from AMF (SST %d, SD %s)", s2.sst,
-                  std::to_string(s2.sd).c_str());
-              if (s1.sst.compare(std::to_string(s2.sst)) == 0) {
-                uint32_t s1_sd = SD_NO_VALUE;
-                amf_conv::sd_string_to_int(s1.sd, s1_sd);
-                if (s1_sd == s2.sd) {
+                  "S-NSSAI from gNB (SST %s, SD %s)", s1.sst.c_str(),
+                  s1.sd.c_str());
+              for (const auto& s2 : amf_cfg.plmn_list[i].slice_list) {
+                Logger::amf_n2().debug(
+                    "S-NSSAI from AMF (SST %d, SD %s)", s2.sst, s2.sd);
+                if (s1_snssai.sst == s2.sst &&
+                    s1_snssai.get_sd_int() == s2.get_sd_int()) {
                   Logger::amf_n2().debug(
                       "Common S-NSSAI (SST %s, SD %s)", s1.sst.c_str(),
                       s1.sd.c_str());
@@ -2842,6 +2857,9 @@ bool amf_n2::get_common_plmn(
                   found_common_plmn = true;
                 }
               }
+            } catch (std::invalid_argument&) {
+              Logger::amf_n2().error(
+                  "Could not convert SST %s to int, wrong NGAP values", s1.sst);
             }
           }
 
@@ -2878,15 +2896,14 @@ bool amf_n2::get_common_NSSAI(
     for (const auto& plmn : ta.plmnSliceSupportList) {
       for (const auto& slice : plmn.sliceList) {
         oai::nas::SNSSAI_t snssai = {};
-        uint32_t sd               = SD_NO_VALUE;
         try {
-          snssai.sst = std::stoi(slice.sst);
-          amf_conv::sd_string_to_int(slice.sd, sd);
+          snssai_t slice_parsed(std::stoi(slice.sst), slice.sd);
+          snssai.sst = slice_parsed.sst;
+          snssai.sd  = slice_parsed.get_sd_int();
         } catch (const std::exception& err) {
           Logger::amf_app().error("Invalid SST/SD");
           break;
         }
-        snssai.sd = sd;
         common_nssai.push_back(snssai);
         found = true;
       }
@@ -2906,24 +2923,24 @@ bool amf_n2::get_common_NSSAI(
 //------------------------------------------------------------------------------
 void amf_n2::fill_n2_information_notification(
     const std::string& subscription_id,
-    const oai::amf::model::NgapIeType_anyOf::eNgapIeType_anyOf& ngap_ie_type_e,
-    oai::amf::model::N2InformationNotification& n2_info_notification) {
+    const oai::model::amf::NgapIeType_anyOf::eNgapIeType_anyOf& ngap_ie_type_e,
+    oai::model::amf::N2InformationNotification& n2_info_notification) {
   n2_info_notification.setN2NotifySubscriptionId(subscription_id);
-  oai::amf::model::N2InfoContainer n2_info_container = {};
+  oai::model::amf::N2InfoContainer n2_info_container = {};
 
   // N2 Information Class (only for NRPPA for now)
-  oai::amf::model::N2InformationClass n2_information_class = {};
-  n2_information_class.setEnumValue(oai::amf::model::N2InformationClass_anyOf::
+  oai::model::amf::N2InformationClass n2_information_class = {};
+  n2_information_class.setEnumValue(oai::model::amf::N2InformationClass_anyOf::
                                         eN2InformationClass_anyOf::NRPPA);
   n2_info_container.setN2InformationClass(n2_information_class);
 
-  oai::amf::model::N2InfoContent n2_info_content         = {};
-  oai::amf::model::NgapIeType ngap_ie_type               = {};
+  oai::model::amf::N2InfoContent n2_info_content         = {};
+  oai::model::amf::NgapIeType ngap_ie_type               = {};
   oai::model::common::RefToBinaryData ref_to_binary_data = {};
   ngap_ie_type.setEnumValue(ngap_ie_type_e);
   // TODO: for another types
   if (ngap_ie_type_e ==
-      oai::amf::model::NgapIeType_anyOf::eNgapIeType_anyOf::NRPPA_PDU) {
+      oai::model::amf::NgapIeType_anyOf::eNgapIeType_anyOf::NRPPA_PDU) {
     ref_to_binary_data.setContentId(N2_NRPPa_CONTENT_ID);
   }
   n2_info_content.setNgapIeType(ngap_ie_type);
@@ -2931,9 +2948,9 @@ void amf_n2::fill_n2_information_notification(
   n2_info_content.setNgapData(ref_to_binary_data);
 
   if (ngap_ie_type_e ==
-      oai::amf::model::NgapIeType_anyOf::eNgapIeType_anyOf::NRPPA_PDU) {
+      oai::model::amf::NgapIeType_anyOf::eNgapIeType_anyOf::NRPPA_PDU) {
     // NRPPA Info
-    oai::amf::model::NrppaInformation nrppa_information = {};
+    oai::model::amf::NrppaInformation nrppa_information = {};
     nrppa_information.setNrppaPdu(n2_info_content);
     n2_info_container.setNrppaInfo(nrppa_information);
   }

@@ -176,7 +176,7 @@ void nf_profile::display() const {
     Logger::amf_app().debug("\tSNSSAI:");
   }
   for (auto s : snssais) {
-    Logger::amf_app().debug("\t\t SST, SD: %d, %s", s.sST, s.sD.c_str());
+    Logger::amf_app().debug("\t\t SST, SD: %d, %s", s.sst, s.sd.c_str());
   }
 
   // IPv4 Addresses
@@ -199,8 +199,8 @@ void nf_profile::to_json(nlohmann::json& data) const {
   data["sNssais"] = nlohmann::json::array();
   for (auto s : snssais) {
     nlohmann::json tmp = {};
-    tmp["sst"]         = s.sST;
-    tmp["sd"]          = s.sD;
+    tmp["sst"]         = s.sst;
+    tmp["sd"]          = s.sd;
     data["sNssais"].push_back(tmp);
   }
   // ipv4_addresses
@@ -240,11 +240,11 @@ void nf_profile::from_json(const nlohmann::json& data) {
   if (data.find("sNssais") != data.end()) {
     for (auto it : data["sNssais"]) {
       snssai_t s = {};
-      s.sST      = it["sst"].get<int>();
-      s.sD       = it["sd"].get<std::string>();
+      s.sst      = it["sst"].get<int>();
+      s.sd       = it["sd"].get<std::string>();
       snssais.push_back(s);
-      // Logger::amf_app().debug("Added SNSSAI (SST %d, SD %s)", s.sST,
-      // s.sD.c_str());
+      // Logger::amf_app().debug("Added SNSSAI (SST %d, SD %s)", s.sst,
+      // s.sd.c_str());
     }
   }
 

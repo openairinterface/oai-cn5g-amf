@@ -33,7 +33,7 @@ namespace oai {
 namespace amf {
 namespace api {
 
-using namespace oai::amf::model;
+using namespace oai::model::amf;
 
 class IndividualSubscriptionDocumentApiEventExposure {
  public:
@@ -95,7 +95,7 @@ class IndividualSubscriptionDocumentApiEventExposure {
   /// modified</param> <param name="AmfUpdateEventOptionItem"></param>
   virtual void modify_subscription(
       const std::string& subscriptionId,
-      const oai::amf::model::AmfUpdateEventOptionItem& amfUpdateEventOptionItem,
+      const oai::model::amf::AmfUpdateEventOptionItem& amfUpdateEventOptionItem,
       Pistache::Http::ResponseWriter& response) = 0;
 };
 

@@ -36,6 +36,7 @@ source $THIS_SCRIPT_PATH/../common-build/installation/build_helper.pistache
 source $THIS_SCRIPT_PATH/../common-build/installation/build_helper.nlohmann
 source $THIS_SCRIPT_PATH/../common-build/installation/build_helper.nghttp2
 source $THIS_SCRIPT_PATH/../common-build/installation/build_helper.yamlcpp
+source $THIS_SCRIPT_PATH/../common-build/installation/build_helper.cpr
 
 #-------------------------------------------------------------------------------
 #arg1 is force (0 or 1) (no interactive script)
@@ -166,7 +167,10 @@ check_install_amf_deps(){
 
   install_nghttp2_from_git $1 $2
   ret=$?;[[ $ret -ne 0 ]] && return $ret
-
+  
+  install_cpr_from_git $1 $2
+  ret=$?;[[ $ret -ne 0 ]] && return $ret
+  
   # latest usage of yaml-cpp suggests that we should be using 0.7+ version
   # To be sure, let's install from source all the time for the moment
   if [[ $OS_DISTRO == "ubuntu" ]]; then
@@ -193,4 +197,23 @@ check_install_amf_deps(){
   $SUDO ldconfig
   return 0
 
+}
+
+OS_DISTRO=$(grep "^ID=" /etc/os-release | sed "s/ID=//" | sed "s/\"//g")
+OS_RELEASE=$(grep "^VERSION_ID=" /etc/os-release | sed "s/VERSION_ID=//" | sed "s/\"//g")
+
+get_distribution_release() {
+    if [[ ! -z "$OS_DISTRO$OS_RELEASE" ]]; then
+        echo "$OS_DISTRO$OS_RELEASE"
+    else
+        echo Unknown
+    fi
+}
+
+check_platform_for_lttng() {
+  local distribution=$(get_distribution_release)
+  if [[ "$distribution" == "ubuntu18.04" || "$distribution" == "ubuntu20.04" || "$distribution" == "ubuntu22.04" ]]; then
+      return 1
+  fi
+  return 0
 }

@@ -23,29 +23,16 @@
 #define FILE_AMF_HPP_SEEN
 
 #include "3gpp_23.003.h"
-#include "inttypes.h"
-#include "stdio.h"
-#include "string.h"
 
-#include <arpa/inet.h>
-#include <netinet/in.h>
-#include <sys/socket.h>
-
-#include <boost/algorithm/string.hpp>
 #include <nlohmann/json.hpp>
 #include <string>
-#include <vector>
-#include <optional>
 
-#include "common_defs.h"
 #include "3gpp_24.501.hpp"
-#include "if.hpp"
 #include "string.hpp"
 #include "thread_sched.hpp"
 
 // for CURL
 constexpr auto CURL_MIME_BOUNDARY = "----Boundary";
-#define CURL_TIMEOUT_MS 10000L
 
 #define BUFFER_SIZE_8192 8192
 #define BUFFER_SIZE_4096 4096
@@ -149,52 +136,11 @@ typedef struct itti_cfg_s {
   util::thread_sched_params async_cmd_sched_params;
 } itti_cfg_t;
 
-typedef struct slice_s {
-  uint8_t sst;
-  uint32_t sd;
-
-  bool operator==(const struct slice_s& s) const {
-    if ((s.sst == this->sst) && (s.sd == this->sd)) {
-      return true;
-    } else {
-      return false;
-    }
-  }
-
-  bool operator>(const struct slice_s& s) const {
-    if (this->sst > s.sst) return true;
-    if (this->sst == s.sst) {
-      return (this->sd > s.sd);
-    }
-    return false;
-  }
-
-  nlohmann::json to_json() const {
-    nlohmann::json json_data = {};
-    json_data["sst"]         = this->sst;
-    if (this->sd != SD_NO_VALUE) json_data["sd"] = this->sd;
-    return json_data;
-  }
-
-  void from_json(nlohmann::json& json_data) {
-    try {
-      if (json_data.find("sst") != json_data.end()) {
-        this->sst = json_data["sst"].get<int>();
-      }
-      if (json_data.find("sd") != json_data.end()) {
-        this->sd = json_data["sd"].get<int>();
-      }
-    } catch (std::exception& e) {
-      Logger::amf_app().error("%s", e.what());
-    }
-  }
-} slice_t;
-
 typedef struct plmn_support_item_s {
   std::string mcc;
   std::string mnc;
   uint32_t tac;
-  std::vector<slice_t> slice_list;
+  std::vector<snssai_t> slice_list;
 
   nlohmann::json to_json() const {
     nlohmann::json json_data = {};
@@ -222,7 +168,7 @@ typedef struct plmn_support_item_s {
 
       if (json_data.find("slice_list") != json_data.end()) {
         for (auto s : json_data["slice_list"]) {
-          slice_t sl = {};
+          snssai_t sl = {};
           sl.from_json(s);
           slice_list.push_back(sl);
         }

@@ -23,6 +23,7 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <iostream>
 
 #include <cstring>
 #include <iostream>
@@ -35,6 +36,7 @@
 #include "amf_config.hpp"
 #include "amf_config_yaml.hpp"
 #include "amf_statistics.hpp"
+#include "http_client.hpp"
 #include "itti.hpp"
 #include "logger.hpp"
 #include "ngap_app.hpp"
@@ -55,7 +57,10 @@ statistics stacs;
 amf_http1_server* http1_server = nullptr;
 amf_http2_server* http2_server = nullptr;
 
+std::shared_ptr<oai::http::http_client> http_client_inst = nullptr;
+
 std::unique_ptr<amf_config_yaml> amf_cfg_yaml;
+std::unique_ptr<lttng_configuration> lttng_config_yaml;
 
 //------------------------------------------------------------------------------
 void amf_signal_handler(int s) {
@@ -122,14 +127,30 @@ int main(int argc, char** argv) {
     std::cout << "Options::parse() failed" << std::endl;
     return 1;
   }
+  std::string conf_file_name = Options::getYamlConfig();
 
+  std::cout << "Trying to read .yaml configuration file\n";
+  lttng_config_yaml = std::make_unique<lttng_configuration>(conf_file_name);
+  lttng_config_yaml->read_from_file();
+
+#ifdef LOGGER_CAN_USE_LTTNG
+  std::cout << "LTTNG Log Activation: " << lttng_config_yaml->is_lttng_active()
+            << "\n";
+  std::cout << "Log Level of LTTng: "
+            << lttng_config_yaml->get_lttng_log_level() << "\n";
+#else
+  std::cout << "LTTNG Tracing disabled at build-time!\n";
+  if (lttng_config_yaml->is_lttng_active())
+    std::cout << "Cannot use lttng log scheme on this build variant!\n";
+#endif
+
+  Logger::set_lttng(static_cast<bool>(lttng_config_yaml->is_lttng_active()));
   Logger::init("AMF", Options::getlogStdout(), Options::getlogRotFilelog());
   Logger::amf_app().startup("Options parsed!");
 
   std::signal(SIGTERM, amf_signal_handler);
   std::signal(SIGINT, amf_signal_handler);
 
-  std::string conf_file_name = Options::getYamlConfig();
   Logger::system().debug("Parsing the configuration file, file type YAML.");
   amf_cfg_yaml = std::make_unique<amf_config_yaml>(
       conf_file_name, Options::getlogStdout(), Options::getlogRotFilelog());
@@ -144,6 +165,11 @@ int main(int argc, char** argv) {
 
   itti_inst = new itti_mw();
   itti_inst->start(amf_cfg.itti.itti_timer_sched_params);
+
+  // HTTP Client
+  http_client_inst = oai::http::http_client::create_instance(
+      Logger::amf_sbi(), oai::common::sbi::kNfDefaultHttpRequestTimeout,
+      amf_cfg.sbi.if_name, amf_cfg.support_features.http_version);
 
   amf_app_inst = new amf_app(amf_cfg);
   amf_app_inst->start();

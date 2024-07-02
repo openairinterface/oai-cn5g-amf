@@ -33,8 +33,8 @@
 #include "utils.hpp"
 
 extern "C" {
-#include "OCTET_STRING.h"
 #include "BIT_STRING.h"
+#include "OCTET_STRING.h"
 }
 
 class amf_conv : public oai::utils::conv {
@@ -54,10 +54,8 @@ class amf_conv : public oai::utils::conv {
       const OCTET_STRING_t& octet_str, BIT_STRING_t& bit_str,
       uint8_t bits_unused);
   static bool bstring_2_bit_string(const bstring& b_str, BIT_STRING_t& bit_str);
-  static bool sd_string_to_int(const std::string& sd_str, uint32_t& sd);
-  static bool sd_string_hex_to_int(const std::string& sd_str, uint32_t& sd);
-  static void sd_int_to_string_hex(uint32_t sd, std::string& sd_str);
 
+  static void sd_int_to_string_hex(uint32_t sd, std::string& sd_str);
   static void bstring_2_string(const bstring& b_str, std::string& str);
   static void string_2_bstring(const std::string& str, bstring& b_str);
   static void octet_string_2_string(

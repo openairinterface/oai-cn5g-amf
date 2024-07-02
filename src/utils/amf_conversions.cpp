@@ -24,13 +24,13 @@
 #include <arpa/inet.h>
 #include <ctype.h>
 #include <inttypes.h>
-#include <iomanip>
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdlib.h>
-#include <sstream>
 
 #include <boost/algorithm/string.hpp>
+#include <iomanip>
+#include <sstream>
 
 #include "amf.hpp"
 #include "logger.hpp"
@@ -61,7 +61,7 @@ void amf_conv::convert_string_2_hex(
   }
   memset(data, 0, input_str.length() + 1);
   memcpy((void*) data, (void*) input_str.c_str(), input_str.length());
-  output_wrapper::print_buffer(
+  oai::utils::output_wrapper::print_buffer(
       "amf_app", "Data input", data, input_str.length());
 
   char* datahex = (char*) malloc(input_str.length() * 2 + 1);
@@ -215,50 +215,8 @@ bool amf_conv::bstring_2_bit_string(
 }
 
 //------------------------------------------------------------------------------
-bool amf_conv::sd_string_to_int(const std::string& sd_str, uint32_t& sd) {
-  sd = SD_NO_VALUE;
-  if (sd_str.empty()) return false;
-  uint8_t base = 10;
-  try {
-    if (sd_str.size() > 2) {
-      if (boost::iequals(sd_str.substr(0, 2), "0x")) {
-        base = 16;
-      }
-    }
-    sd = std::stoul(sd_str, nullptr, base);
-  } catch (const std::exception& e) {
-    Logger::amf_app().error(
-        "Error when converting from string to int for S-NSSAI SD, error: %s",
-        e.what());
-    sd = SD_NO_VALUE;
-    return false;
-  }
-  return true;
-}
-
-//------------------------------------------------------------------------------
-bool amf_conv::sd_string_hex_to_int(const std::string& sd_str, uint32_t& sd) {
-  sd = SD_NO_VALUE;
-  if (sd_str.empty()) return false;
-  uint8_t base = 16;
-  try {
-    sd = std::stoul(sd_str, nullptr, base);
-  } catch (const std::exception& e) {
-    Logger::amf_app().error(
-        "Error when converting from string to int for S-NSSAI SD, error: %s",
-        e.what());
-    sd = SD_NO_VALUE;
-    return false;
-  }
-  return true;
-}
-
-//------------------------------------------------------------------------------
 void amf_conv::sd_int_to_string_hex(uint32_t sd, std::string& sd_str) {
-  std::stringstream stream_str;
-  stream_str << std::hex << sd;
-  std::string sd_tmp(stream_str.str());
-  sd_str = sd_tmp;
+  sd_str = fmt::format("{0:06X}", sd);
 }
 
 //------------------------------------------------------------------------------

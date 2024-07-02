@@ -29,7 +29,7 @@
 
 namespace oai::amf::api {
 
-using namespace oai::amf::model;
+using namespace oai::model::amf;
 
 class AMFConfigurationApiImpl : public oai::amf::api::AMFConfigurationApi {
  private:
