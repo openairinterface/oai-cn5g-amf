@@ -836,25 +836,25 @@ void amf_n1::identity_response_handle(
   // Continue the Registration Procedure
   if (nc->to_be_register_by_new_suci) {
     // Update 5GMM State
-    ue_info_t ueItem;
-    ueItem.cm_status       = CM_CONNECTED;
-    ueItem.register_status = _5GMM_COMMON_PROCEDURE_INITIATED;
-    ueItem.ranid           = ran_ue_ngap_id;
-    ueItem.amfid           = amf_ue_ngap_id;
-    ueItem.imsi            = nc->imsi;
-    if (nc->guti.has_value()) ueItem.guti = nc->guti.value();
+    ue_info_t ue_item;
+    ue_item.cm_status       = CM_CONNECTED;
+    ue_item.register_status = _5GMM_COMMON_PROCEDURE_INITIATED;
+    ue_item.ranid           = ran_ue_ngap_id;
+    ue_item.amfid           = amf_ue_ngap_id;
+    ue_item.imsi            = nc->imsi;
+    if (nc->guti.has_value()) ue_item.guti = nc->guti.value();
 
     // Find UE context
     std::shared_ptr<ue_context> uc = {};
     if (!find_ue_context(ran_ue_ngap_id, amf_ue_ngap_id, uc)) {
       Logger::amf_n1().warn("Cannot find the UE context");
     } else {
-      ueItem.mcc    = uc->cgi.mcc;
-      ueItem.mnc    = uc->cgi.mnc;
-      ueItem.cellId = uc->cgi.nrCellId;
+      ue_item.mcc    = uc->cgi.mcc;
+      ue_item.mnc    = uc->cgi.mnc;
+      ue_item.cellId = uc->cgi.nrCellId;
     }
 
-    stacs.update_ue_info(ueItem);
+    stacs.update_ue_info(ue_item);
     set_5gmm_state(nc, _5GMM_COMMON_PROCEDURE_INITIATED);
 
     Logger::amf_n1().debug(
@@ -1526,7 +1526,24 @@ bool amf_n1::service_request_handle(
     // Update 5GMM State
     stacs.update_5gmm_state(nc, _5GMM_REGISTERED);
     set_5gmm_state(nc, _5GMM_REGISTERED);
+
+    ue_info_t ue_item;
+    ue_item.cm_status       = CM_CONNECTED;
+    ue_item.register_status = _5GMM_REGISTERED;
+    ue_item.ranid           = ran_ue_ngap_id;
+    ue_item.amfid           = amf_ue_ngap_id;
+    ue_item.imsi            = nc->imsi;
+    if (nc->guti.has_value()) ue_item.guti = nc->guti.value();
+    ue_item.mcc    = uc->cgi.mcc;
+    ue_item.mnc    = uc->cgi.mnc;
+    ue_item.cellId = uc->cgi.nrCellId;
+
+    stacs.update_ue_info(ue_item);
     stacs.display();
+
+    event_sub.ue_registration_state(
+        supi, _5GMM_REGISTERED, amf_cfg.support_features.http_version,
+        ran_ue_ngap_id, amf_ue_ngap_id);
 
     oai::utils::utils::bdestroy_wrapper(&protected_nas);
   }
@@ -1658,18 +1675,18 @@ bool amf_n1::registration_request_handle(
         Logger::amf_n1().info(
             "Associating SUPI (%s) with NAS context", supi.c_str());
         // Update 5GMM state
-        ue_info_t ueItem;
-        ueItem.cm_status       = CM_CONNECTED;
-        ueItem.register_status = _5GMM_COMMON_PROCEDURE_INITIATED;
-        ueItem.ranid           = ran_ue_ngap_id;
-        ueItem.amfid           = amf_ue_ngap_id;
-        ueItem.imsi            = nc->imsi;
-        if (nc->guti.has_value()) ueItem.guti = nc->guti.value();
-        ueItem.mcc    = uc->cgi.mcc;
-        ueItem.mnc    = uc->cgi.mnc;
-        ueItem.cellId = uc->cgi.nrCellId;
+        ue_info_t ue_item;
+        ue_item.cm_status       = CM_CONNECTED;
+        ue_item.register_status = _5GMM_COMMON_PROCEDURE_INITIATED;
+        ue_item.ranid           = ran_ue_ngap_id;
+        ue_item.amfid           = amf_ue_ngap_id;
+        ue_item.imsi            = nc->imsi;
+        if (nc->guti.has_value()) ue_item.guti = nc->guti.value();
+        ue_item.mcc    = uc->cgi.mcc;
+        ue_item.mnc    = uc->cgi.mnc;
+        ue_item.cellId = uc->cgi.nrCellId;
 
-        stacs.update_ue_info(ueItem);
+        stacs.update_ue_info(ue_item);
         set_5gmm_state(nc, _5GMM_COMMON_PROCEDURE_INITIATED);
       }
     } break;
