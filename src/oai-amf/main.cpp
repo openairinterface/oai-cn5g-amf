@@ -40,7 +40,6 @@
 #include "itti.hpp"
 #include "logger.hpp"
 #include "ngap_app.hpp"
-#include "normalizer.hh"
 #include "options.hpp"
 #include "pistache/endpoint.h"
 #include "pistache/http.h"
