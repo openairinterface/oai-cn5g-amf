@@ -1822,19 +1822,6 @@ bool amf_n1::registration_request_handle(
   if (nc->security_ctx.has_value())
     nc->security_ctx.value().sc_type = SECURITY_CTX_TYPE_NOT_AVAILABLE;
 
-  // Update UE context
-  if (uc != nullptr) {
-    std::string supi = amf_conv::imsi_to_supi(nc->imsi);
-    uc->supi         = supi;
-    // Verify if there's PDU session info in the old context
-    std::shared_ptr<ue_context> old_uc = {};
-    if (amf_app_inst->supi_2_ue_context(uc->supi, old_uc)) {
-      uc->copy_pdu_sessions(old_uc);
-    }
-    amf_app_inst->set_supi_2_ue_context(supi, uc);
-    Logger::amf_n1().debug("Update UC context, SUPI %s", supi.c_str());
-  }
-
   // Check 5GS_Registration_type IE (Mandatory IE)
   uint8_t reg_type              = 0;
   bool is_follow_on_req_pending = false;
@@ -1890,6 +1877,24 @@ bool amf_n1::registration_request_handle(
   // PDU Session Status
   std::optional<uint16_t> pdu_session_status_opt =
       registration_request->GetPduSessionStatus();
+
+  // Update UE context
+  if (uc != nullptr) {
+    std::string supi = amf_conv::imsi_to_supi(nc->imsi);
+    uc->supi         = supi;
+
+    if (uplink_data_status_opt.has_value() or
+        pdu_session_status_opt.has_value()) {
+      // Verify if there's PDU session info in the old context
+      std::shared_ptr<ue_context> old_uc = {};
+      if (amf_app_inst->supi_2_ue_context(uc->supi, old_uc)) {
+        uc->copy_pdu_sessions(old_uc);
+      }
+    }
+
+    amf_app_inst->set_supi_2_ue_context(supi, uc);
+    Logger::amf_n1().debug("Update UC context, SUPI %s", supi.c_str());
+  }
 
   bstring nas_msg = nullptr;
   bool is_messagecontainer =
