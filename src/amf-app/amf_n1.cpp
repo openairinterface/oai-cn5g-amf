@@ -1878,24 +1878,6 @@ bool amf_n1::registration_request_handle(
   std::optional<uint16_t> pdu_session_status_opt =
       registration_request->GetPduSessionStatus();
 
-  // Update UE context
-  if (uc != nullptr) {
-    std::string supi = amf_conv::imsi_to_supi(nc->imsi);
-    uc->supi         = supi;
-
-    if (uplink_data_status_opt.has_value() or
-        pdu_session_status_opt.has_value()) {
-      // Verify if there's PDU session info in the old context
-      std::shared_ptr<ue_context> old_uc = {};
-      if (amf_app_inst->supi_2_ue_context(uc->supi, old_uc)) {
-        uc->copy_pdu_sessions(old_uc);
-      }
-    }
-
-    amf_app_inst->set_supi_2_ue_context(supi, uc);
-    Logger::amf_n1().debug("Update UC context, SUPI %s", supi.c_str());
-  }
-
   bstring nas_msg = nullptr;
   bool is_messagecontainer =
       registration_request->GetNasMessageContainer(nas_msg);
@@ -1917,9 +1899,44 @@ bool amf_n1::registration_request_handle(
             s.ToString().c_str());
       }
     }
+
+    // Get Uplink Data Status from NAS message container if not available
+    if (!uplink_data_status_opt.has_value()) {
+      uplink_data_status_opt =
+          registration_request_msg_container->GetUplinkDataStatus();
+      if (!uplink_data_status_opt.has_value())
+        Logger::nas_mm().debug("IE Uplink Data Status is not present");
+    }
+
+    // Get PDU Session Status from NAS message container if not available
+    if (!pdu_session_status_opt.has_value()) {
+      pdu_session_status_opt =
+          registration_request_msg_container->GetPduSessionStatus();
+      if (!pdu_session_status_opt.has_value())
+        Logger::nas_mm().debug("IE PDU Session Status is not present");
+    }
+
   } else {
     Logger::amf_n1().debug(
         "No Optional NAS Container inside Registration Request message");
+  }
+
+  // Update UE context
+  if (uc != nullptr) {
+    std::string supi = amf_conv::imsi_to_supi(nc->imsi);
+    uc->supi         = supi;
+
+    if (uplink_data_status_opt.has_value() or
+        pdu_session_status_opt.has_value()) {
+      // Verify if there's PDU session info in the old context
+      std::shared_ptr<ue_context> old_uc = {};
+      if (amf_app_inst->supi_2_ue_context(uc->supi, old_uc)) {
+        uc->copy_pdu_sessions(old_uc);
+      }
+    }
+
+    amf_app_inst->set_supi_2_ue_context(supi, uc);
+    Logger::amf_n1().debug("Update UC context, SUPI %s", supi.c_str());
   }
 
   // Store NAS information into nas_context
@@ -1941,8 +1958,9 @@ bool amf_n1::registration_request_handle(
       if (is_messagecontainer)
         return run_periodic_registration_update_procedure(nc, nas_msg, cause);
       else {
-        uint16_t pdu_session_status = 0;
-        registration_request->GetPduSessionStatus(pdu_session_status);
+        uint16_t pdu_session_status = 0x0000;
+        if (pdu_session_status_opt.has_value())
+          pdu_session_status = pdu_session_status_opt.value();
         return run_periodic_registration_update_procedure(
             nc, pdu_session_status, cause);
       }
