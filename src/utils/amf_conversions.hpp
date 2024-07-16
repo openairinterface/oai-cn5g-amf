@@ -39,46 +39,18 @@ extern "C" {
 
 class amf_conv : public oai::utils::conv {
  public:
-  static std::string tmsi_to_string(const uint32_t tmsi);
-
   static void msg_str_2_msg_hex(std::string msg, bstring& b);
   static char* bstring2charString(bstring b);
   static unsigned char* format_string_as_hex(std::string str);
-  static void convert_string_2_hex(
-      std::string& input_str, std::string& output_str);
-  static bool octet_string_2_bstring(
-      const OCTET_STRING_t& octet_str, bstring& b_str);
-  static bool bstring_2_octet_string(
-      const bstring& b_str, OCTET_STRING_t& octet_str);
-  static bool octet_string_2_bit_string(
-      const OCTET_STRING_t& octet_str, BIT_STRING_t& bit_str,
-      uint8_t bits_unused);
-  static bool bstring_2_bit_string(const bstring& b_str, BIT_STRING_t& bit_str);
-
-  static void sd_int_to_string_hex(uint32_t sd, std::string& sd_str);
   static void bstring_2_string(const bstring& b_str, std::string& str);
   static void string_2_bstring(const std::string& str, bstring& b_str);
-  static void octet_string_2_string(
-      const OCTET_STRING_t& octet_str, std::string& str);
-  static void string_2_octet_string(
-      const std::string& str, OCTET_STRING_t& o_str);
-  static bool int8_2_octet_string(uint8_t value, OCTET_STRING_t& o_str);
-  static bool octet_string_2_int8(const OCTET_STRING_t& o_str, uint8_t& value);
   // TODO: bitstring_2_int32
-  static bool octet_string_copy(
-      OCTET_STRING_t& destination, const OCTET_STRING_t& source);
-
   static void to_lower(std::string& str);
   static void to_lower(bstring& b_str);
-
-  static bool check_bstring(const bstring& b_str);
-  static bool check_octet_string(const OCTET_STRING_t& octet_str);
-
   static std::string get_ue_context_key(
       const uint32_t ran_ue_ngap_id, uint64_t amf_ue_ngap_id);
   static std::string get_serving_network_name(
       const std::string& mnc, const std::string& mcc);
-  static std::string uint32_to_hex_string(uint32_t value);
   static std::string uint32_to_hex_string_full_format(uint32_t value);
   static std::string tmsi_to_guti(
       const std::string& mcc, const std::string& mnc, uint8_t region_id,
@@ -89,7 +61,5 @@ class amf_conv : public oai::utils::conv {
   static std::string imsi_to_supi(const std::string& imsi);
   static std::string get_imsi(
       const std::string& mcc, const std::string& mnc, const std::string& msin);
-  static bool string_2_masked_imeisv(
-      const std::string& str, BIT_STRING_t& imeisv);
 };
 #endif /* FILE_CONVERSIONS_HPP_SEEN */

@@ -1189,9 +1189,9 @@ int uplink_non_ue_associated_nrppa_transport(
           TASK_NGAP, TASK_AMF_N2);
   itti_msg->assoc_id = assoc_id;
   itti_msg->stream   = stream;
-  amf_conv::octet_string_2_bstring(
+  ngap_utils::octet_string_2_bstring(
       nrppa_msg.getNrppaPdu(), itti_msg->nrppa_pdu);
-  amf_conv::octet_string_2_bstring(
+  ngap_utils::octet_string_2_bstring(
       nrppa_msg.getRoutingId(), itti_msg->routing_id);
 
   int ret = itti_inst->send_msg(itti_msg);
@@ -1269,9 +1269,9 @@ int uplink_ue_associated_nrppa_transport(
   itti_msg->stream         = stream;
   itti_msg->amf_ue_ngap_id = nrppa_msg.getAmfUeNgapId();
   itti_msg->ran_ue_ngap_id = nrppa_msg.getRanUeNgapId();
-  amf_conv::octet_string_2_bstring(
+  ngap_utils::octet_string_2_bstring(
       nrppa_msg.getNrppaPdu(), itti_msg->nrppa_pdu);
-  amf_conv::octet_string_2_bstring(
+  ngap_utils::octet_string_2_bstring(
       nrppa_msg.getRoutingId(), itti_msg->routing_id);
 
   int ret = itti_inst->send_msg(itti_msg);

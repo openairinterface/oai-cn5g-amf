@@ -57,6 +57,7 @@
 #include "itti.hpp"
 #include "itti_msg_amf_app.hpp"
 #include "logger.hpp"
+#include "ngap_utils.hpp"
 #include "output_wrapper.hpp"
 #include "sctp_server.hpp"
 #include "utils.hpp"
@@ -1048,7 +1049,7 @@ void amf_n2::handle_itti_message(
         // TODO: NAS PDU
         if (p.second.is_n2sm_available) {
           if (blength(p.second.n2sm) != 0) {
-            amf_conv::bstring_2_octet_string(
+            ngap_utils::bstring_2_octet_string(
                 p.second.n2sm, item.pduSessionResourceSetupRequestTransfer);
             list.push_back(item);
           } else {
@@ -1136,7 +1137,7 @@ void amf_n2::handle_itti_message(
 
       if (p.second.is_n2sm_available) {
         if (blength(p.second.n2sm) != 0) {
-          amf_conv::bstring_2_octet_string(
+          ngap_utils::bstring_2_octet_string(
               p.second.n2sm, item.pduSessionResourceSetupRequestTransfer);
           list.push_back(item);
         } else {
@@ -1200,7 +1201,7 @@ void amf_n2::handle_itti_message(
   PDUSessionResourceModifyRequestItem_t item = {};
   item.pduSessionId                          = itti_msg->pdu_session_id;
 
-  amf_conv::bstring_2_octet_string(
+  ngap_utils::bstring_2_octet_string(
       itti_msg->n2sm, item.pduSessionResourceModifyRequestTransfer);
   S_Nssai tmp = {};
   tmp.sd      = itti_msg->s_NSSAI.getSd();
@@ -1263,7 +1264,7 @@ void amf_n2::handle_itti_message(
   PDUSessionResourceToReleaseItem_t item = {};
   item.pduSessionId                      = itti_msg->pdu_session_id;
 
-  amf_conv::bstring_2_octet_string(
+  ngap_utils::bstring_2_octet_string(
       itti_msg->n2sm, item.pduSessionResourceReleaseCommandTransfer);
   list.push_back(item);
   release_cmd_msg->setPduSessionResourceToReleaseList(list);

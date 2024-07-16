@@ -62,6 +62,7 @@
 #include "itti_msg_sbi.hpp"
 #include "logger.hpp"
 #include "nas_algorithms.hpp"
+#include "ngap_utils.hpp"
 #include "output_wrapper.hpp"
 #include "sha256.hpp"
 #include "utils.hpp"
@@ -2449,7 +2450,6 @@ bool amf_n1::_5g_aka_confirmation_from_ausf(
   std::map<std::string, std::string>::iterator iter;
   iter = rand_record.find(nc->imsi);
   rand_record.erase(iter);
-  // convert_string_2_hex(resStar, res_star_string);
   uint8_t res_star_len    = blength(resStar);
   uint8_t* res_star_value = (uint8_t*) bdata(resStar);
   char* res_star_s        = (char*) malloc(res_star_len * 2 + 1);
@@ -3842,7 +3842,7 @@ void amf_n1::ul_nas_transport_handle(
         itti_msg->plmn.mnc       = plmn.mnc;
         itti_msg->plmn.mcc       = plmn.mcc;
 
-        amf_conv::sd_int_to_string_hex(snssai.sd, itti_msg->snssai.sd);
+        ngap_utils::sd_int_to_string_hex(snssai.sd, itti_msg->snssai.sd);
 
         int ret = itti_inst->send_msg(itti_msg);
         if (0 != ret) {

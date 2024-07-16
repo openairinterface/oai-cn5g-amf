@@ -40,47 +40,6 @@ constexpr uint8_t kUint32Length =
     8;  // 4 bytes  -8 characters representation in hex
 
 //------------------------------------------------------------------------------
-std::string amf_conv::tmsi_to_string(const uint32_t tmsi) {
-  std::string s        = {};
-  std::string tmsi_str = uint32_to_hex_string(tmsi);
-  uint8_t length       = kUint32Length - tmsi_str.size();
-  for (uint8_t i = 0; i < length; i++) {
-    s.append("0");
-  }
-  s.append(std::to_string(tmsi));
-  return s;
-}
-
-//------------------------------------------------------------------------------
-void amf_conv::convert_string_2_hex(
-    std::string& input_str, std::string& output_str) {
-  unsigned char* data = (unsigned char*) malloc(input_str.length() + 1);
-  if (!data) {
-    oai::utils::utils::free_wrapper((void**) &data);
-    return;
-  }
-  memset(data, 0, input_str.length() + 1);
-  memcpy((void*) data, (void*) input_str.c_str(), input_str.length());
-  oai::utils::output_wrapper::print_buffer(
-      "amf_app", "Data input", data, input_str.length());
-
-  char* datahex = (char*) malloc(input_str.length() * 2 + 1);
-  if (!datahex) {
-    oai::utils::utils::free_wrapper((void**) &datahex);
-    oai::utils::utils::free_wrapper((void**) &data);
-    return;
-  }
-  memset(datahex, 0, input_str.length() * 2 + 1);
-
-  for (int i = 0; i < input_str.length(); i++)
-    sprintf(datahex + i * 2, "%02x", data[i]);
-
-  output_str = reinterpret_cast<char*>(datahex);
-  oai::utils::utils::free_wrapper((void**) &datahex);
-  oai::utils::utils::free_wrapper((void**) &data);
-}
-
-//------------------------------------------------------------------------------
 unsigned char* amf_conv::format_string_as_hex(std::string str) {
   unsigned int str_len     = str.length();
   unsigned char* datavalue = (unsigned char*) malloc(str_len / 2 + 1);
@@ -164,62 +123,6 @@ void amf_conv::msg_str_2_msg_hex(std::string msg, bstring& b) {
 }
 
 //------------------------------------------------------------------------------
-bool amf_conv::octet_string_2_bstring(
-    const OCTET_STRING_t& octet_str, bstring& b_str) {
-  if (!octet_str.buf or (octet_str.size == 0)) return false;
-  b_str = blk2bstr(octet_str.buf, octet_str.size);
-  return true;
-}
-
-//------------------------------------------------------------------------------
-bool amf_conv::bstring_2_octet_string(
-    const bstring& b_str, OCTET_STRING_t& octet_str) {
-  if (!b_str) return false;
-  OCTET_STRING_fromBuf(&octet_str, (char*) bdata(b_str), blength(b_str));
-  return true;
-}
-
-//------------------------------------------------------------------------------
-bool amf_conv::octet_string_2_bit_string(
-    const OCTET_STRING_t& octet_str, BIT_STRING_t& bit_str,
-    uint8_t bits_unused) {
-  if (!check_octet_string(octet_str)) return false;
-
-  bit_str.buf = (uint8_t*) calloc(octet_str.size + 1, sizeof(uint8_t));
-  if (!bit_str.buf) return false;
-
-  memcpy(bit_str.buf, octet_str.buf, octet_str.size);
-  ((uint8_t*) bit_str.buf)[octet_str.size] = '\0';
-  bit_str.bits_unused                      = bits_unused;
-
-  return true;
-}
-
-//------------------------------------------------------------------------------
-bool amf_conv::bstring_2_bit_string(
-    const bstring& b_str, BIT_STRING_t& bit_str) {
-  int size = blength(b_str);
-  if (!b_str or size <= 0) return false;
-  if (!bdata(b_str)) return false;
-
-  bit_str.buf = (uint8_t*) calloc(size + 1, sizeof(uint8_t));
-  if (!bit_str.buf) return false;
-
-  if (check_bstring(b_str))
-    memcpy((void*) bit_str.buf, (char*) b_str->data, blength(b_str));
-  ((uint8_t*) bit_str.buf)[size] = '\0';
-  bit_str.size                   = size;
-  bit_str.bits_unused            = 0;
-
-  return true;
-}
-
-//------------------------------------------------------------------------------
-void amf_conv::sd_int_to_string_hex(uint32_t sd, std::string& sd_str) {
-  sd_str = fmt::format("{0:06X}", sd);
-}
-
-//------------------------------------------------------------------------------
 void amf_conv::bstring_2_string(const bstring& b_str, std::string& str) {
   if (!b_str) return;
   auto b = bstrcpy(b_str);
@@ -233,51 +136,6 @@ void amf_conv::string_2_bstring(const std::string& str, bstring& b_str) {
 }
 
 //------------------------------------------------------------------------------
-void amf_conv::octet_string_2_string(
-    const OCTET_STRING_t& octet_str, std::string& str) {
-  if (!octet_str.buf or (octet_str.size == 0)) return;
-  // std::string str_tmp((char *) octet_str.buf , octet_str.size);
-  str.assign((char*) octet_str.buf, octet_str.size);
-}
-
-//------------------------------------------------------------------------------
-void amf_conv::string_2_octet_string(
-    const std::string& str, OCTET_STRING_t& o_str) {
-  o_str.buf = (uint8_t*) calloc(1, str.length() + 1);
-  if (!o_str.buf) return;
-  // o_str.buf = strcpy(new char[str.length() + 1], str.c_str());
-  // memcpy(o_str.buf, str.c_str(), str.size());
-  std::copy(str.begin(), str.end(), o_str.buf);
-  o_str.size              = str.length();
-  o_str.buf[str.length()] = '\0';  // just in case
-}
-
-//------------------------------------------------------------------------------
-bool amf_conv::int8_2_octet_string(uint8_t value, OCTET_STRING_t& o_str) {
-  o_str.buf = (uint8_t*) calloc(1, sizeof(uint8_t));
-  if (!o_str.buf) return false;
-  o_str.size   = 1;
-  o_str.buf[0] = value;
-  return true;
-}
-
-//------------------------------------------------------------------------------
-bool amf_conv::octet_string_2_int8(
-    const OCTET_STRING_t& o_str, uint8_t& value) {
-  if (o_str.size != 1) return false;
-  value = o_str.buf[0];
-  return true;
-}
-
-//------------------------------------------------------------------------------
-bool amf_conv::octet_string_copy(
-    OCTET_STRING_t& destination, const OCTET_STRING_t& source) {
-  if (!source.buf) return false;
-  OCTET_STRING_fromBuf(&destination, (char*) source.buf, source.size);
-  return true;
-}
-
-//------------------------------------------------------------------------------
 void amf_conv::to_lower(std::string& str) {
   boost::algorithm::to_lower(str);
 }
@@ -285,19 +143,6 @@ void amf_conv::to_lower(std::string& str) {
 //------------------------------------------------------------------------------
 void amf_conv::to_lower(bstring& b_str) {
   btolower(b_str);
-}
-
-//------------------------------------------------------------------------------
-bool amf_conv::check_bstring(const bstring& b_str) {
-  if (b_str == nullptr || b_str->slen < 0 || b_str->data == nullptr)
-    return false;
-  return true;
-}
-
-//------------------------------------------------------------------------------
-bool amf_conv::check_octet_string(const OCTET_STRING_t& octet_str) {
-  if (!octet_str.buf or (octet_str.size == 0)) return false;
-  return true;
 }
 
 //------------------------------------------------------------------------------
@@ -317,13 +162,6 @@ std::string amf_conv::get_serving_network_name(
   else
     snn = "5G:mnc" + mnc + ".mcc" + mcc + ".3gppnetwork.org";
   return snn;
-}
-
-//------------------------------------------------------------------------------
-std::string amf_conv::uint32_to_hex_string(uint32_t value) {
-  char hex_str[kUint32Length + 1];
-  sprintf(hex_str, "%X", value);
-  return std::string(hex_str);
 }
 
 //------------------------------------------------------------------------------
@@ -367,37 +205,4 @@ std::string amf_conv::imsi_to_supi(const std::string& imsi) {
 std::string amf_conv::get_imsi(
     const std::string& mcc, const std::string& mnc, const std::string& msin) {
   return {mcc + mnc + msin};
-}
-
-//------------------------------------------------------------------------------
-bool amf_conv::string_2_masked_imeisv(
-    const std::string& imeisv_str, BIT_STRING_t& imeisv) {
-  int len = imeisv_str.length();
-  if (len != 16) return false;  // Must contain 16 digits
-
-  imeisv.buf = (uint8_t*) calloc(8, sizeof(uint8_t));
-  if (!imeisv.buf) {
-    return false;
-  }
-
-  uint8_t digit_low  = 0;
-  uint8_t digit_high = 0;
-
-  int i = 0;
-  int j = 0;
-  while (i < len) {
-    string_to_int8(imeisv_str.substr(i, 1), digit_low);
-    string_to_int8(imeisv_str.substr(i + 1, 1), digit_high);
-    i             = i + 2;
-    uint8_t octet = (0xf0 & (digit_high << 4)) | (digit_low & 0x0f);
-    imeisv.buf[j] = octet;
-    j++;
-  }
-  // last 4 digits of the SNR masked by setting the corresponding bits to 1
-  imeisv.buf[5] = 0xff;
-  imeisv.buf[6] = 0xff;
-
-  imeisv.size        = 8;
-  imeisv.bits_unused = 0;
-  return true;
 }
