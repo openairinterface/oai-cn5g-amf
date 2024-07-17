@@ -4616,6 +4616,14 @@ void amf_n1::trigger_ue_location_report(
       global_ran_node_id_json["gNbId"]["gNBValue"] = std::to_string(gc->gnb_id);
       oai::model::common::GlobalRanNodeId global_ran_node_id = {};
 
+      Ncgi ncgi = {};
+      oai::model::common::PlmnId plmnId;
+      plmnId.setMcc(uc->cgi.mcc);
+      plmnId.setMnc(uc->cgi.mnc);
+      ncgi.setNid("");
+      ncgi.setNrCellId(std::to_string(uc->cgi.nrCellId));
+      ncgi.setPlmnId(plmnId);
+
       try {
         from_json(tai_json, tai);
         from_json(global_ran_node_id_json, global_ran_node_id);
@@ -4627,6 +4635,7 @@ void amf_n1::trigger_ue_location_report(
       // uc->cgi.nrCellID;
       nr_location.setTai(tai);
       nr_location.setGlobalGnbId(global_ran_node_id);
+      nr_location.setNcgi(ncgi);
       user_location.setNrLocation(nr_location);
 
       // Trigger UE Location Report
