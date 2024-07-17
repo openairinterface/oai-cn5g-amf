@@ -3893,14 +3893,6 @@ bool amf_n1::run_mobility_registration_update_procedure(
     std::shared_ptr<nas_context>& nc,
     const std::optional<uint16_t>& uplink_data_status_opt,
     const std::optional<uint16_t>& pdu_session_status_opt, uint8_t& cause) {
-  uint16_t uplink_data_status = 0x0000;
-  if (uplink_data_status_opt.has_value())
-    uplink_data_status = uplink_data_status_opt.value();
-
-  uint16_t pdu_session_status = 0x0000;
-  if (pdu_session_status_opt.has_value())
-    pdu_session_status = pdu_session_status_opt.value();
-
   std::shared_ptr<ue_context> uc = {};
   if (!find_ue_context(nc, uc)) {
     cause = k5gmmCauseIllegalUe;  // TODO: verify the cause
@@ -3921,6 +3913,71 @@ bool amf_n1::run_mobility_registration_update_procedure(
       amf_cfg.guami.mcc, amf_cfg.guami.mnc, amf_cfg.guami.region_id,
       amf_cfg.guami.amf_set_id, amf_cfg.guami.amf_pointer, uc->tmsi);
 
+  // Get list of PDU sessions to be activated
+  uint16_t uplink_data_status              = 0x0000;
+  uint16_t pdu_session_status              = 0x0000;
+  uint16_t pdu_session_reactivation_result = 0x0000;
+
+  if (uplink_data_status_opt.has_value())
+    uplink_data_status = uplink_data_status_opt.value();
+
+  if (pdu_session_status_opt.has_value())
+    pdu_session_status = pdu_session_status_opt.value();
+
+  std::vector<uint8_t> pdu_session_to_be_activated = {};
+  if (uplink_data_status_opt.has_value())
+    get_pdu_session_to_be_activated(
+        uplink_data_status, pdu_session_to_be_activated);
+  else if (pdu_session_status_opt.has_value())
+    get_pdu_session_to_be_activated(
+        pdu_session_status, pdu_session_to_be_activated);
+
+  // Activate UP for these PDU sessions
+  std::map<uint8_t, pdu_session_info_t> pdu_sessions;
+  for (auto& pdu_session_id : pdu_session_to_be_activated) {
+    std::shared_ptr<pdu_session_context> psc = {};
+    if (!amf_app_inst->find_pdu_session_context(
+            uc->supi, pdu_session_id, psc)) {
+      Logger::amf_n1().warn(
+          "No PDU Session Context with PDU Session ID %d", pdu_session_id);
+    }
+
+    // TODO:  need to check (psc->up_cnx_state ==
+    // up_cnx_state_e::UPCNX_STATE_DEACTIVATED)?
+    if (psc) {
+      amf_app_inst->trigger_pdu_session_up_activation(pdu_session_id, uc);
+    }
+
+    pdu_session_info_t item = {};
+    if (psc and psc->is_n2sm_available) {
+      item.n2sm              = bstrcpy(psc->n2sm);
+      item.is_n2sm_available = true;
+    } else {
+      item.is_n2sm_available = false;
+      if (uplink_data_status_opt.has_value()) {
+        set_pdu_session_reactivation_result(
+            pdu_session_id, pdu_session_reactivation_result);
+      }
+      if (pdu_session_status_opt.has_value()) {
+        set_pdu_session_status_inactive(pdu_session_id, pdu_session_status);
+      }
+      Logger::amf_n1().debug("Cannot get PDU session information");
+    }
+
+    pdu_sessions.insert(
+        std::pair<uint8_t, pdu_session_info_t>(pdu_session_id, item));
+  }
+
+  // Set corresponding IE in Registration Accept
+  if (uplink_data_status_opt.has_value()) {
+    reg_accept->SetPduSessionReactivationResult(
+        pdu_session_reactivation_result);
+  }
+  if (pdu_session_status_opt.has_value()) {
+    reg_accept->SetPduSessionStatus(pdu_session_status);
+  }
+
+  // Encode Registration Accept
   uint32_t msg_len = reg_accept->GetLength();
   Logger::nas_mm().debug("Size of Registration Accept message %ld", msg_len);
   uint8_t buffer[msg_len] = {0};
@@ -3939,57 +3996,76 @@ bool amf_n1::run_mobility_registration_update_procedure(
       nc->security_ctx.value(), false, kIntegrityProtectedAndCiphered,
       NAS_MESSAGE_DOWNLINK, buffer, encoded_size, protected_nas);
 
-  // Get list of PDU sessions to be activated
-  std::vector<uint8_t> pdu_session_to_be_activated = {};
-  if (uplink_data_status_opt.has_value())
-    get_pdu_session_to_be_activated(
-        uplink_data_status, pdu_session_to_be_activated);
-  else if (pdu_session_status_opt.has_value())
-    get_pdu_session_to_be_activated(
-        pdu_session_status, pdu_session_to_be_activated);
+  if (!uc->is_ue_context_request) {
+    // TODO: Use DownlinkNasTransport to convey Registration Accept
+    Logger::amf_n1().debug(
+        "UE Context is not requested, UE with "
+        "ran_ue_ngap_id " GNB_UE_NGAP_ID_FMT
+        ", "
+        "amf_ue_ngap_id " AMF_UE_NGAP_ID_FMT " attached",
+        nc->ran_ue_ngap_id, nc->amf_ue_ngap_id);
 
-  if (pdu_session_to_be_activated.size() > 0) {
-    // TODO:
-    for (auto& pdu_session_id : pdu_session_to_be_activated) {
-      std::shared_ptr<pdu_session_context> psc = {};
-      if (!amf_app_inst->find_pdu_session_context(
-              uc->supi, pdu_session_id, psc)) {
-        Logger::amf_n1().warn(
-            "No PDU Session Context with PDU Session ID %d", pdu_session_id);
-      }
+    // IE: UEAggregateMaximumBitRate
+    // AllowedNSSAI
+
+    auto itti_msg =
+        std::make_shared<itti_dl_nas_transport>(TASK_AMF_N1, TASK_AMF_N2);
+    itti_msg->ran_ue_ngap_id = nc->ran_ue_ngap_id;
+    itti_msg->amf_ue_ngap_id = nc->amf_ue_ngap_id;
+    itti_msg->nas            = bstrcpy(protected_nas);
+
+    int ret = itti_inst->send_msg(itti_msg);
+    if (0 != ret) {
+      Logger::amf_n1().error(
+          "Could not send ITTI message %s to task TASK_AMF_N2",
+          itti_msg->get_msg_name());
+      cause = k5gmmCauseCongestion;
+      return false;
     }
+
   } else {
-    // TODO:
-  }
+    // use InitialContextSetupRequest to convey Registration Accept
+    uint8_t kamf[AUTH_VECTOR_LENGTH_OCTETS];
+    uint8_t kgnb[AUTH_VECTOR_LENGTH_OCTETS];
+    if (!nc->get_kamf(nc->security_ctx.value().vector_pointer, kamf)) {
+      Logger::amf_n1().warn("No Kamf found");
+      cause =
+          k5gmmCauseSecurityModeRejectedUnspecified;  // TODO: verify the cause
+      return false;
+    }
+    uint32_t ulcount = nc->security_ctx.value().ul_count.seq_num |
+                       (nc->security_ctx.value().ul_count.overflow << 8);
 
-  uint8_t kamf[AUTH_VECTOR_LENGTH_OCTETS];
-  uint8_t kgnb[AUTH_VECTOR_LENGTH_OCTETS];
-  if (!nc->get_kamf(nc->security_ctx.value().vector_pointer, kamf)) {
-    Logger::amf_n1().warn("No Kamf found");
-    cause =
-        k5gmmCauseSecurityModeRejectedUnspecified;  // TODO: verify the cause
-    return false;
-  }
-  uint32_t ulcount = nc->security_ctx.value().ul_count.seq_num |
-                     (nc->security_ctx.value().ul_count.overflow << 8);
+    Authentication_5gaka::derive_kgnb(
+        ulcount, KAccessType3gppAccess, kamf, kgnb);
+    oai::utils::output_wrapper::print_buffer(
+        "amf_n1", "Kamf", kamf, AUTH_VECTOR_LENGTH_OCTETS);
 
-  Authentication_5gaka::derive_kgnb(ulcount, KAccessType3gppAccess, kamf, kgnb);
-  oai::utils::output_wrapper::print_buffer(
-      "amf_n1", "Kamf", kamf, AUTH_VECTOR_LENGTH_OCTETS);
+    auto itti_msg = std::make_shared<itti_initial_context_setup_request>(
+        TASK_AMF_N1, TASK_AMF_N2);
+    itti_msg->ran_ue_ngap_id = nc->ran_ue_ngap_id;
+    itti_msg->amf_ue_ngap_id = nc->amf_ue_ngap_id;
+    itti_msg->kgnb           = blk2bstr(kgnb, AUTH_VECTOR_LENGTH_OCTETS);
+    itti_msg->is_sr          = false;  // TODO: for Service Request procedure
+    itti_msg->nas            = bstrcpy(protected_nas);
 
-  auto itti_msg =
-      std::make_shared<itti_dl_nas_transport>(TASK_AMF_N1, TASK_AMF_N2);
-  itti_msg->ran_ue_ngap_id = nc->ran_ue_ngap_id;
-  itti_msg->amf_ue_ngap_id = nc->amf_ue_ngap_id;
-  itti_msg->nas            = bstrcpy(protected_nas);
+    for (auto const& pdu_session : pdu_sessions) {
+      pdu_session_info_t item = {};
+      if (pdu_session.second.is_n2sm_available) {
+        item.n2sm = bstrcpy(pdu_session.second.n2sm);
+      }
+      item.is_n2sm_available = pdu_session.second.is_n2sm_available;
+      itti_msg->pdu_sessions.insert(
+          std::pair<uint8_t, pdu_session_info_t>(pdu_session.first, item));
+    }
 
-  int ret = itti_inst->send_msg(itti_msg);
-  if (0 != ret) {
-    Logger::amf_n1().error(
-        "Could not send ITTI message %s to task TASK_AMF_N2",
-        itti_msg->get_msg_name());
-    cause = k5gmmCauseCongestion;
-    return false;
+    int ret = itti_inst->send_msg(itti_msg);
+    if (0 != ret) {
+      Logger::amf_n1().error(
+          "Could not send ITTI message %s to task TASK_AMF_N2",
+          itti_msg->get_msg_name());
+      return false;
+    }
   }
 
   return true;
@@ -3999,8 +4075,6 @@ bool amf_n1::run_mobility_registration_update_procedure(
 bool amf_n1::run_periodic_registration_update_procedure(
     std::shared_ptr<nas_context>& nc,
     const std::optional<uint16_t>& pdu_session_status_opt, uint8_t& cause) {
-  // Experimental procedure
-
   uint16_t pdu_session_status = 0x0000;
   if (pdu_session_status_opt.has_value())
     pdu_session_status = pdu_session_status_opt.value();
