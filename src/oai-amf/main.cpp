@@ -167,8 +167,8 @@ int main(int argc, char** argv) {
 
   // HTTP Client
   http_client_inst = oai::http::http_client::create_instance(
-      Logger::amf_sbi(), oai::common::sbi::kNfDefaultHttpRequestTimeout,
-      amf_cfg.sbi.if_name, amf_cfg.support_features.http_version);
+      Logger::amf_sbi(), amf_cfg.http_request_timeout, amf_cfg.sbi.if_name,
+      amf_cfg.support_features.http_version);
 
   amf_app_inst = new amf_app(amf_cfg);
   amf_app_inst->start();

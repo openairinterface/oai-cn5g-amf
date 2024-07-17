@@ -845,6 +845,7 @@ void amf_config_yaml::to_amf_config(amf_config& cfg) {
 
   cfg.relative_amf_capacity = amf_local->get_relative_capacity();
   cfg.statistics_interval   = amf_local->get_statistics_timer_interval();
+  cfg.http_request_timeout  = get_http_request_timeout();
 
   // Parse the "Super" option - "enable_simple_scenario"
   if (amf_local->get_support_features().get_option_enable_simple_scenario()) {
