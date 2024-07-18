@@ -29,6 +29,7 @@
 #include <iostream>
 #include <string>
 #include <thread>
+#include <chrono>
 
 #include "amf_http1_server.hpp"
 #include "amf_http2_server.hpp"
@@ -63,6 +64,7 @@ std::unique_ptr<lttng_configuration> lttng_config_yaml;
 
 //------------------------------------------------------------------------------
 void amf_signal_handler(int s) {
+  auto shutdown_start = std::chrono::system_clock::now();
   // Setting log level arbitrarly to debug to show the whole
   // shutdown procedure in the logs even in case of off-logging
   Logger::set_level(spdlog::level::debug);
@@ -114,7 +116,9 @@ void amf_signal_handler(int s) {
   }
 
   Logger::system().info("Freeing Allocated memory done.");
-  Logger::system().info("Bye.");
+  auto elapsed = std::chrono::system_clock::now() - shutdown_start;
+  auto ms_diff = std::chrono::duration_cast<std::chrono::milliseconds>(elapsed);
+  Logger::system().info("Bye. Shutdown Procedure took %d ms", ms_diff.count());
   exit(0);
 }
 
