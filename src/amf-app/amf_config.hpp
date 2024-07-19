@@ -188,6 +188,7 @@ class amf_config {
   interface_cfg_t sbi;
   itti_cfg_t itti;
 
+  uint32_t http_request_timeout;
   unsigned int statistics_interval;
   std::string amf_name;
   guami_full_format_t guami;
