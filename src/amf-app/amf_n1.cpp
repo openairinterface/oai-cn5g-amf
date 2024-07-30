@@ -2440,11 +2440,7 @@ bool amf_n1::get_authentication_vectors_from_ausf(
 bool amf_n1::_5g_aka_confirmation_from_ausf(
     std::shared_ptr<nas_context>& nc, bstring resStar) {
   Logger::amf_n1().debug("5G AKA Confirmation from AUSF");
-  // TODO: remove naked ptr
-  std::string remote_uri = nc->href;
-
-  std::string msg_body        = {};
-  nlohmann::json response     = {};
+  if (!nc) return false;
   std::string res_star_string = {};
 
   std::map<std::string, std::string>::iterator iter;
@@ -2467,41 +2463,87 @@ bool amf_n1::_5g_aka_confirmation_from_ausf(
   confirmation_data.setResStar(res_star_string);
 
   to_json(confirmation_data_json, confirmation_data);
-  msg_body = confirmation_data_json.dump();
 
-  // TODO: Should be updated
-  uint32_t response_code = 0;
+  // Send Confirmation Data to AUSF
+  // Generate a promise and associate this promise to the ITTI message
+  uint32_t promise_id = amf_app_inst->generate_promise_id();
+  Logger::amf_n1().debug("Promise ID generated %d", promise_id);
+  boost::shared_ptr<boost::promise<nlohmann::json>> p =
+      boost::make_shared<boost::promise<nlohmann::json>>();
+  boost::shared_future<nlohmann::json> f = p->get_future();
+  amf_app_inst->add_promise(promise_id, p);
 
-  amf_sbi_inst->curl_http_client(
-      remote_uri, oai::common::sbi::method_e::PUT, msg_body, response,
-      response_code, amf_cfg.support_features.http_version);
+  std::shared_ptr<itti_sbi_ue_authentication_confirmation> itti_msg =
+      std::make_shared<itti_sbi_ue_authentication_confirmation>(
+          TASK_AMF_N1, TASK_AMF_SBI, promise_id);
 
-  oai::utils::utils::free_wrapper((void**) &res_star_s);
-  try {
-    ConfirmationDataResponse confirmation_data_response;
-    response.get_to(confirmation_data_response);
-    if (!confirmation_data_response.kseafIsSet()) return false;
-    unsigned char* kseaf_hex =
-        amf_conv::format_string_as_hex(confirmation_data_response.getKseaf());
-    memcpy(nc->_5g_av[0].kseaf, kseaf_hex, AUTH_VECTOR_LENGTH_OCTETS);
-    oai::utils::output_wrapper::print_buffer(
-        "amf_n1", "5G AV: kseaf", nc->_5g_av[0].kseaf,
-        AUTH_VECTOR_LENGTH_OCTETS);
-    oai::utils::utils::free_wrapper((void**) &kseaf_hex);
+  itti_msg->confirmation_data = confirmation_data_json;
+  itti_msg->promise_id        = promise_id;
+  itti_msg->uri               = nc->href;
+  itti_msg->http_version      = amf_cfg.support_features.http_version;
 
-    Logger::amf_n1().debug("Deriving Kamf");
-    for (int i = 0; i < MAX_5GS_AUTH_VECTORS; i++) {
-      Authentication_5gaka::derive_kamf(
-          nc->imsi, nc->_5g_av[i].kseaf, nc->kamf[i],
-          0x0000);  // second parameter: abba
-      oai::utils::output_wrapper::print_buffer(
-          "amf_n1", "Kamf", nc->kamf[i], AUTH_VECTOR_LENGTH_OCTETS);
+  int ret = itti_inst->send_msg(itti_msg);
+  if (0 != ret) {
+    Logger::amf_n1().error(
+        "Could not send ITTI message %s to task TASK_AMF_SBI",
+        itti_msg->get_msg_name());
+  }
+
+  // Wait and process the response
+  ConfirmationDataResponse confirmation_data_response = {};
+  bool is_result_available                            = true;
+  // Wait for the response available and process accordingly
+  std::optional<nlohmann::json> result_opt = std::nullopt;
+  oai::utils::utils::wait_for_result(f, result_opt);
+  if (result_opt.has_value()) {
+    nlohmann::json result = result_opt.value();
+    Logger::amf_n1().debug("Got result for promise ID %ld", promise_id);
+    if (result.find("jsonData") != result.end()) {
+      Logger::amf_n1().debug(
+          "Got ConfirmationDataResponse from AUSF: %s",
+          result["jsonData"].dump());
+      try {
+        from_json(result["jsonData"], confirmation_data_response);
+        is_result_available = true;
+
+        if (!confirmation_data_response.kseafIsSet()) return false;
+        unsigned char* kseaf_hex = amf_conv::format_string_as_hex(
+            confirmation_data_response.getKseaf());
+        memcpy(nc->_5g_av[0].kseaf, kseaf_hex, AUTH_VECTOR_LENGTH_OCTETS);
+        oai::utils::output_wrapper::print_buffer(
+            "amf_n1", "5G AV: kseaf", nc->_5g_av[0].kseaf,
+            AUTH_VECTOR_LENGTH_OCTETS);
+        oai::utils::utils::free_wrapper((void**) &kseaf_hex);
+
+        Logger::amf_n1().debug("Deriving Kamf");
+        for (int i = 0; i < MAX_5GS_AUTH_VECTORS; i++) {
+          Authentication_5gaka::derive_kamf(
+              nc->imsi, nc->_5g_av[i].kseaf, nc->kamf[i],
+              0x0000);  // second parameter: abba
+          oai::utils::output_wrapper::print_buffer(
+              "amf_n1", "Kamf", nc->kamf[i], AUTH_VECTOR_LENGTH_OCTETS);
+        }
+
+      } catch (std::exception& e) {
+        Logger::amf_n1().warn(
+            "Could not parse Confirmation Data Response from Json");
+        is_result_available = false;
+      }
+    } else {
+      is_result_available = false;
     }
-  } catch (nlohmann::json::exception& e) {
-    Logger::amf_n1().info("Could not get JSON content from AUSF response");
-    // TODO: error handling
+
+  } else {
+    Logger::amf_n1().debug(
+        "Could not get Confirmation Data Response from AUSF");
+    is_result_available = false;
+  }
+
+  if (!is_result_available) {
+    Logger::amf_n1().info("Could not get expected response from AUSF");
     return false;
   }
+
   return true;
 }
 

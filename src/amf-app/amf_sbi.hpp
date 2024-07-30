@@ -157,6 +157,13 @@ class amf_sbi {
   void handle_itti_message(itti_sbi_ue_authentication_request& itti_msg);
 
   /*
+   * Handle ITTI message to trigger UE Authentication Confirmation towards AUSF
+   * @param [itti_sbi_ue_authentication_confirmation&]: ITTI message
+   * @return void
+   */
+  void handle_itti_message(itti_sbi_ue_authentication_confirmation& itti_msg);
+
+  /*
    * Handle request to create a new PDU Session
    * @param [const std::string&] supi: SUPI
    * @param [std::shared_ptr<pdu_session_context>&] psc: Pointer to the PDU

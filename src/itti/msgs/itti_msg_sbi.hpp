@@ -23,21 +23,22 @@
 #define ITTI_MSG_SBI_HPP_INCLUDED_
 
 #include <optional>
+
+#include "3gpp_29.500.h"
+#include "AuthenticationInfo.h"
 #include "N1MessageNotification.h"
+#include "N2InformationNotification.h"
 #include "NonUeN2InfoSubscriptionCreateData.h"
+#include "PatchItem.h"
 #include "SliceInfoForRegistration.h"
+#include "SmContextStatusNotification.h"
 #include "UeN1N2InfoSubscriptionCreateData.h"
 #include "amf.hpp"
 #include "amf_msg.hpp"
 #include "amf_profile.hpp"
 #include "bstrlib.h"
 #include "itti_msg.hpp"
-#include "N2InformationNotification.h"
-#include "SmContextStatusNotification.h"
-#include "PatchItem.h"
-#include "3gpp_29.500.h"
 #include "utils.hpp"
-#include "AuthenticationInfo.h"
 
 using namespace amf_application;
 
@@ -728,6 +729,39 @@ class itti_sbi_ue_authentication_request : public itti_sbi_msg {
 
   uint32_t promise_id;
   oai::model::amf::AuthenticationInfo auth_info;
+};
+
+//-----------------------------------------------------------------------------
+class itti_sbi_ue_authentication_confirmation : public itti_sbi_msg {
+ public:
+  itti_sbi_ue_authentication_confirmation(
+      const task_id_t orig, const task_id_t dest, uint32_t pid)
+      : itti_sbi_msg(SBI_UE_AUTHENTICATION_CONFIRMATION, orig, dest),
+        uri(),
+        promise_id(pid),
+        confirmation_data() {}
+  itti_sbi_ue_authentication_confirmation(
+      const itti_sbi_ue_authentication_confirmation& i)
+      : itti_sbi_msg(i) {
+    uri               = i.uri;
+    promise_id        = i.promise_id;
+    confirmation_data = i.confirmation_data;
+  }
+  itti_sbi_ue_authentication_confirmation(
+      const itti_sbi_ue_authentication_confirmation& i, const task_id_t orig,
+      const task_id_t dest)
+      : itti_sbi_msg(i, orig, dest) {
+    uri               = i.uri;
+    promise_id        = i.promise_id;
+    confirmation_data = i.confirmation_data;
+  }
+
+  virtual ~itti_sbi_ue_authentication_confirmation(){};
+  const char* get_msg_name() { return "SBI_UE_AUTHENTICATION_CONFIRMATION"; };
+
+  std::string uri;
+  uint32_t promise_id;
+  nlohmann::json confirmation_data;
 };
 
 #endif /* ITTI_MSG_SBI_HPP_INCLUDED_ */
