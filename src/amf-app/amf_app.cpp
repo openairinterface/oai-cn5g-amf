@@ -753,7 +753,7 @@ void amf_app::handle_itti_message(itti_sbi_n1n2_message_subscribe& itti_msg) {
 
   nlohmann::json response_data = {};
   response_data["createdData"] = created_data;
-  response_data["httpResponseCode"] =
+  response_data[kSbiResponseHttpResponseCode] =
       static_cast<uint32_t>(oai::common::sbi::http_status_code::CREATED);
   response_data["location"] = location;
 
@@ -774,10 +774,10 @@ void amf_app::handle_itti_message(itti_sbi_n1n2_message_unsubscribe& itti_msg) {
   nlohmann::json response_data = {};
   if (remove_n1n2_message_subscription(
           itti_msg.ue_cxt_id, itti_msg.subscription_id)) {
-    response_data["httpResponseCode"] =
+    response_data[kSbiResponseHttpResponseCode] =
         static_cast<uint32_t>(oai::common::sbi::http_status_code::NO_CONTENT);
   } else {
-    response_data["httpResponseCode"] =
+    response_data[kSbiResponseHttpResponseCode] =
         static_cast<uint32_t>(oai::common::sbi::http_status_code::BAD_REQUEST);
     oai::model::common::ProblemDetails problem_details = {};
     // TODO set problem_details
@@ -819,7 +819,7 @@ void amf_app::handle_itti_message(itti_sbi_non_ue_n2_info_subscribe& itti_msg) {
 
   nlohmann::json response_data = {};
   response_data["createdData"] = created_data;
-  response_data["httpResponseCode"] =
+  response_data[kSbiResponseHttpResponseCode] =
       static_cast<uint32_t>(oai::common::sbi::http_status_code::CREATED);
   response_data["location"] = location;
 
@@ -840,10 +840,10 @@ void amf_app::handle_itti_message(
   // Process the request and trigger the response from AMF API Server
   nlohmann::json response_data = {};
   if (remove_non_ue_n2_info_subscription(itti_msg.subscription_id)) {
-    response_data["httpResponseCode"] =
+    response_data[kSbiResponseHttpResponseCode] =
         static_cast<uint32_t>(oai::common::sbi::http_status_code::NO_CONTENT);
   } else {
-    response_data["httpResponseCode"] =
+    response_data[kSbiResponseHttpResponseCode] =
         static_cast<uint32_t>(oai::common::sbi::http_status_code::BAD_REQUEST);
     oai::model::common::ProblemDetails problem_details = {};
     // TODO set problem_details
@@ -871,11 +871,11 @@ void amf_app::handle_itti_message(
           itti_msg.smContextStatusNotification)) {
     Logger::amf_app().debug("Update PDU Session Release successfully");
 
-    response_data["httpResponseCode"] =
+    response_data[kSbiResponseHttpResponseCode] =
         static_cast<uint32_t>(oai::common::sbi::http_status_code::NO_CONTENT);
 
   } else {
-    response_data["httpResponseCode"] =
+    response_data[kSbiResponseHttpResponseCode] =
         static_cast<uint32_t>(oai::common::sbi::http_status_code::NO_CONTENT);
     // TODO check if we set problem_details
     Logger::amf_app().debug("Update PDU Session Release failed");
@@ -901,10 +901,10 @@ void amf_app::handle_itti_message(itti_sbi_amf_configuration& itti_msg) {
   if (read_amf_configuration(response_data["content"])) {
     Logger::amf_app().debug(
         "AMF configuration:\n %s", response_data["content"].dump().c_str());
-    response_data["httpResponseCode"] =
+    response_data[kSbiResponseHttpResponseCode] =
         static_cast<uint32_t>(oai::common::sbi::http_status_code::OK);
   } else {
-    response_data["httpResponseCode"] =
+    response_data[kSbiResponseHttpResponseCode] =
         static_cast<uint32_t>(oai::common::sbi::http_status_code::BAD_REQUEST);
     oai::model::common::ProblemDetails problem_details = {};
     // TODO set problem_details
@@ -932,7 +932,7 @@ void amf_app::handle_itti_message(itti_sbi_update_amf_configuration& itti_msg) {
   if (update_amf_configuration(response_data["content"])) {
     Logger::amf_app().debug(
         "AMF configuration:\n %s", response_data["content"].dump().c_str());
-    response_data["httpResponseCode"] =
+    response_data[kSbiResponseHttpResponseCode] =
         static_cast<uint32_t>(oai::common::sbi::http_status_code::OK);
 
     // Update AMF profile
@@ -943,7 +943,7 @@ void amf_app::handle_itti_message(itti_sbi_update_amf_configuration& itti_msg) {
     if (amf_cfg.support_features.enable_nf_registration) register_to_nrf();
 
   } else {
-    response_data["httpResponseCode"] =
+    response_data[kSbiResponseHttpResponseCode] =
         static_cast<uint32_t>(oai::common::sbi::http_status_code::BAD_REQUEST);
     oai::model::common::ProblemDetails problem_details = {};
     // TODO set problem_details
@@ -1332,16 +1332,18 @@ void amf_app::handle_determine_location_request() {
       nlohmann::json location_data_json = location_data.value();
 
       uint32_t http_response_code = 0;
-      if (location_data_json.find("httpResponseCode") !=
+      if (location_data_json.find(kSbiResponseHttpResponseCode) !=
           location_data_json.end()) {
-        http_response_code = location_data_json["httpResponseCode"].get<int>();
+        http_response_code =
+            location_data_json[kSbiResponseHttpResponseCode].get<int>();
         // TODO:
       }
-      if (location_data_json.find("jsonData") != location_data_json.end()) {
+      if (location_data_json.find(kSbiResponseJsonData) !=
+          location_data_json.end()) {
         ;
         Logger::amf_app().info(
             "Determine Location Response (SUPI: %s) : \n%s", kvp.first,
-            location_data_json["jsonData"].dump(2).c_str());
+            location_data_json[kSbiResponseJsonData].dump(2).c_str());
       }
     } else {
       Logger::amf_app().error(
@@ -1590,14 +1592,15 @@ void amf_app::get_nrfs(std::unordered_set<std::string>& nrfs) {
             nssf_responses.begin()->first, result.dump());
 
         uint32_t http_response_code = 0;
-        if (result.find("httpResponseCode") != result.end()) {
-          http_response_code = result["httpResponseCode"].get<int>();
+        if (result.find(kSbiResponseHttpResponseCode) != result.end()) {
+          http_response_code = result[kSbiResponseHttpResponseCode].get<int>();
           // if (http_response_code != 200) continue;
         }
 
-        if (result.find("jsonData") != result.end()) {
-          nlohmann::json authorized_network_slice_info = result["jsonData"];
-          NsiInformation nsi_information               = {};
+        if (result.find(kSbiResponseJsonData) != result.end()) {
+          nlohmann::json authorized_network_slice_info =
+              result[kSbiResponseJsonData];
+          NsiInformation nsi_information = {};
           if (authorized_network_slice_info.find("nsiInformation") !=
               authorized_network_slice_info.end()) {
             try {
@@ -1751,8 +1754,8 @@ void amf_app::trigger_pdu_session_release(
             smf_responses.begin()->first, result.dump());
 
         uint32_t http_response_code = 0;
-        if (result.find("httpResponseCode") != result.end()) {
-          http_response_code = result["httpResponseCode"].get<int>();
+        if (result.find(kSbiResponseHttpResponseCode) != result.end()) {
+          http_response_code = result[kSbiResponseHttpResponseCode].get<int>();
           // Remove PDU session
           // TODO for multiple sessions
           if ((http_response_code == 200) or (http_response_code == 204)) {
@@ -1833,9 +1836,9 @@ void amf_app::trigger_pdu_session_up_deactivation(
             curl_responses.begin()->first, result.dump());
 
         uint32_t http_response_code = 0;
-        if (result.find("httpResponseCode") != result.end()) {
+        if (result.find(kSbiResponseHttpResponseCode) != result.end()) {
           is_up_activated    = is_up_activated && true;
-          http_response_code = result["httpResponseCode"].get<int>();
+          http_response_code = result[kSbiResponseHttpResponseCode].get<int>();
 
           if ((http_response_code == 200) or (http_response_code == 204)) {
             uc->set_up_cnx_state(
@@ -1921,8 +1924,8 @@ bool amf_app::trigger_pdu_session_up_activation(
             curl_responses.begin()->first, result.dump());
 
         uint32_t http_response_code = 0;
-        if (result.find("httpResponseCode") != result.end()) {
-          http_response_code = result["httpResponseCode"].get<int>();
+        if (result.find(kSbiResponseHttpResponseCode) != result.end()) {
+          http_response_code = result[kSbiResponseHttpResponseCode].get<int>();
           if ((http_response_code == 200) or (http_response_code == 204)) {
             uc->set_up_cnx_state(
                 curl_responses.begin()->first,
@@ -2004,8 +2007,8 @@ bool amf_app::trigger_pdu_session_up_activation(
           promise_id, pdu_session_id, result.dump());
 
       uint32_t http_response_code = 0;
-      if (result.find("httpResponseCode") != result.end()) {
-        http_response_code = result["httpResponseCode"].get<int>();
+      if (result.find(kSbiResponseHttpResponseCode) != result.end()) {
+        http_response_code = result[kSbiResponseHttpResponseCode].get<int>();
         if ((http_response_code == 200) or (http_response_code == 204)) {
           uc->set_up_cnx_state(
               pdu_session_id, up_cnx_state_e::UPCNX_STATE_ACTIVATED);

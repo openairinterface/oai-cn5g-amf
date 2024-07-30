@@ -2374,11 +2374,12 @@ bool amf_n1::get_authentication_vectors_from_ausf(
   if (result_opt.has_value()) {
     nlohmann::json result = result_opt.value();
     Logger::amf_n1().debug("Got result for promise ID %ld", promise_id);
-    if (result.find("jsonData") != result.end()) {
+    if (result.find(kSbiResponseJsonData) != result.end()) {
       Logger::amf_n1().debug(
-          "Got UE Authentication from AUSF: %s", result["jsonData"].dump());
+          "Got UE Authentication from AUSF: %s",
+          result[kSbiResponseJsonData].dump());
       try {
-        from_json(result["jsonData"], ue_authentication_ctx);
+        from_json(result[kSbiResponseJsonData], ue_authentication_ctx);
         is_result_available = true;
       } catch (std::exception& e) {
         Logger::amf_n1().warn("Could not parse UE Authentication from Json");
@@ -2498,12 +2499,12 @@ bool amf_n1::_5g_aka_confirmation_from_ausf(
   if (result_opt.has_value()) {
     nlohmann::json result = result_opt.value();
     Logger::amf_n1().debug("Got result for promise ID %ld", promise_id);
-    if (result.find("jsonData") != result.end()) {
+    if (result.find(kSbiResponseJsonData) != result.end()) {
       Logger::amf_n1().debug(
           "Got ConfirmationDataResponse from AUSF: %s",
-          result["jsonData"].dump());
+          result[kSbiResponseJsonData].dump());
       try {
-        from_json(result["jsonData"], confirmation_data_response);
+        from_json(result[kSbiResponseJsonData], confirmation_data_response);
         is_result_available = true;
 
         if (!confirmation_data_response.kseafIsSet()) return false;
@@ -3612,8 +3613,10 @@ void amf_n1::ue_initiate_de_registration_handle(
               "Got result for promise ID %d", smf_responses.begin()->first);
           nlohmann::json result_json  = result.value();
           uint32_t http_response_code = 0;
-          if (result_json.find("httpResponseCode") != result_json.end()) {
-            http_response_code = result_json["httpResponseCode"].get<int>();
+          if (result_json.find(kSbiResponseHttpResponseCode) !=
+              result_json.end()) {
+            http_response_code =
+                result_json[kSbiResponseHttpResponseCode].get<int>();
             // Remove PDU session
             // TODO for multiple sessions
             if ((http_response_code == 200) or (http_response_code == 204)) {
@@ -5542,12 +5545,13 @@ bool amf_n1::get_network_slice_selection(
     if (result_opt.has_value()) {
       nlohmann::json result = result_opt.value();
       Logger::amf_n1().debug("Got result for promise ID %ld", promise_id);
-      if (result.find("jsonData") != result.end()) {
+      if (result.find(kSbiResponseJsonData) != result.end()) {
         Logger::amf_n1().debug(
             "Got Authorized Network Slice Info from NSSF: %s",
-            result["jsonData"].dump());
+            result[kSbiResponseJsonData].dump());
         try {
-          from_json(result["jsonData"], authorized_network_slice_info);
+          from_json(
+              result[kSbiResponseJsonData], authorized_network_slice_info);
         } catch (std::exception& e) {
           Logger::amf_n1().warn(
               "Could not parse Authorized Network Slice Info from Json");
