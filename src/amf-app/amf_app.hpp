@@ -60,7 +60,6 @@ class amf_app {
   inline static uint32_t amf_app_ue_ngap_id_generator = 1;
   amf_profile nf_instance_profile;
   std::string amf_instance_id;
-  // timer_id_t timer_nrf_heartbeat;
   std::map<std::string, timer_id_t> timer_nrfs_heartbeat;
 
   oai::utils::uint_generator<uint32_t> evsub_id_generator;
