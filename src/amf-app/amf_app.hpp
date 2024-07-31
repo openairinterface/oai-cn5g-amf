@@ -670,9 +670,9 @@ class amf_app {
    * Store UE Context info in UDSF if available
    * @param [const uint32_t] ran_ue_ngap_id: RAN UE NGAP ID
    * @param [const unsigned long] amf_ue_ngap_id: AMF UE NGAP ID
-   * @return void
+   * @return true if success otherwise return false
    */
-  void store_ue_context(
+  bool store_ue_context(
       const uint32_t ran_ue_ngap_id, const long amf_ue_ngap_id);
 
   /*

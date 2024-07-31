@@ -2030,17 +2030,18 @@ bool amf_app::trigger_pdu_session_up_activation(
 }
 
 //------------------------------------------------------------------------------
-void amf_app::store_ue_context(
+bool amf_app::store_ue_context(
     const uint32_t ran_ue_ngap_id, const long amf_ue_ngap_id) {
   if (!amf_cfg.support_features.enable_udsf) {
-    return;
+    return false;
   }
   oai::model::amf::UeContext ue_cxt = {};
   // Fill UE Context class info from UE's context
   if (prepare_ue_context(ran_ue_ngap_id, amf_ue_ngap_id, ue_cxt)) {
     // Store UE Context in the UDSF
-    store_ue_context_in_udsf(ran_ue_ngap_id, amf_ue_ngap_id, ue_cxt);
+    return store_ue_context_in_udsf(ran_ue_ngap_id, amf_ue_ngap_id, ue_cxt);
   }
+  return false;
 }
 
 //------------------------------------------------------------------------------
@@ -2132,8 +2133,8 @@ bool amf_app::store_ue_context_in_udsf(
         "JSON content %s",
         promise_id, result.dump());
     uint32_t http_response_code = 0;
-    if (result.find("httpResponseCode") != result.end()) {
-      http_response_code = result["httpResponseCode"].get<int>();
+    if (result.find(kSbiResponseHttpResponseCode) != result.end()) {
+      http_response_code = result[kSbiResponseHttpResponseCode].get<int>();
       if ((http_response_code == 200) or (http_response_code == 204)) {
         is_context_stored = true;
       } else {
@@ -2206,8 +2207,8 @@ bool amf_app::retrieve_ue_context_from_udsf(
         "JSON content %s",
         promise_id, result.dump());
     uint32_t http_response_code = 0;
-    if (result.find("httpResponseCode") != result.end()) {
-      http_response_code = result["httpResponseCode"].get<int>();
+    if (result.find(kSbiResponseHttpResponseCode) != result.end()) {
+      http_response_code = result[kSbiResponseHttpResponseCode].get<int>();
       if ((http_response_code == 200) or (http_response_code == 204)) {
         // TODO:
         is_context_retrieved = true;

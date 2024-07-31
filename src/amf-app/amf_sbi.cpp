@@ -219,6 +219,15 @@ void amf_sbi_task(void*) {
         amf_sbi_inst->handle_itti_message(std::ref(*m));
       } break;
 
+      case SBI_STORE_UE_CONTEXT_REQUEST: {
+        Logger::amf_sbi().info(
+            "Receive Store UE Context Request message, "
+            "handling ...");
+        itti_sbi_store_ue_context_request* m =
+            dynamic_cast<itti_sbi_store_ue_context_request*>(msg);
+        amf_sbi_inst->handle_itti_message(std::ref(*m));
+      } break;
+
       case TERMINATE: {
         if (itti_msg_terminate* terminate =
                 dynamic_cast<itti_msg_terminate*>(msg)) {
@@ -1097,6 +1106,35 @@ void amf_sbi::handle_itti_message(
 
   // Notify to the result
   if (itti_msg.promise_id > 0) {
+    amf_app_inst->trigger_process_response(itti_msg.promise_id, response_data);
+    return;
+  }
+}
+
+//------------------------------------------------------------------------------
+void amf_sbi::handle_itti_message(itti_sbi_store_ue_context_request& itti_msg) {
+  Logger::amf_sbi().debug(
+      "Send Store UE Context Request message to UDSF (HTTP version %d)",
+      itti_msg.http_version);
+
+  std::string uri = amf_cfg.get_udsf_record_id_uri(itti_msg.record_id);
+  Logger::amf_sbi().debug(
+      "Send Store UE Context Request message to UDSF, UDSF URI %s",
+      uri.c_str());
+
+  std::string body             = itti_msg.ue_context;
+  nlohmann::json response_json = {};
+  uint32_t response_code       = 0;
+
+  curl_http_client(
+      uri, oai::common::sbi::method_e::PUT, body, response_json, response_code,
+      itti_msg.http_version);
+
+  // Notify to the result
+  if (itti_msg.promise_id > 0) {
+    nlohmann::json response_data                = {};
+    response_data[kSbiResponseHttpResponseCode] = response_code;
+    response_data[kSbiResponseJsonData]         = response_json;
     amf_app_inst->trigger_process_response(itti_msg.promise_id, response_data);
     return;
   }

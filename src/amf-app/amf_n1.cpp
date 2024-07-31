@@ -3218,7 +3218,11 @@ void amf_n1::security_mode_complete_handle(
   stacs.display();
 
   // Store UE-related context into UDSF (if available)
-  amf_app_inst->store_ue_context(ran_ue_ngap_id, amf_ue_ngap_id);
+  if (amf_app_inst->store_ue_context(ran_ue_ngap_id, amf_ue_ngap_id)) {
+    Logger::amf_n1().debug("Stored UE context in UDSF successfully");
+  } else {
+    Logger::amf_n1().debug("Couldn't store UE context in UDSF");
+  }
 
   // Trigger UE location Status Notify
   trigger_ue_location_report(ran_ue_ngap_id, amf_ue_ngap_id);

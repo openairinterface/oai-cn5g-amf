@@ -164,6 +164,14 @@ class amf_sbi {
   void handle_itti_message(itti_sbi_ue_authentication_confirmation& itti_msg);
 
   /*
+   * Handle ITTI message to trigger Store UE Context Request procedure towards
+   * UDSF
+   * @param [itti_sbi_store_ue_context_request&]: ITTI message
+   * @return void
+   */
+  void handle_itti_message(itti_sbi_store_ue_context_request& itti_msg);
+
+  /*
    * Handle request to create a new PDU Session
    * @param [const std::string&] supi: SUPI
    * @param [std::shared_ptr<pdu_session_context>&] psc: Pointer to the PDU
