@@ -3217,6 +3217,9 @@ void amf_n1::security_mode_complete_handle(
   set_5gmm_state(nc, _5GMM_REGISTERED);
   stacs.display();
 
+  // Store UE-related context into UDSF (if available)
+  amf_app_inst->store_ue_context(ran_ue_ngap_id, amf_ue_ngap_id);
+
   // Trigger UE location Status Notify
   trigger_ue_location_report(ran_ue_ngap_id, amf_ue_ngap_id);
 

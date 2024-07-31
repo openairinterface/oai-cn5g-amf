@@ -764,4 +764,55 @@ class itti_sbi_ue_authentication_confirmation : public itti_sbi_msg {
   nlohmann::json confirmation_data;
 };
 
+//-----------------------------------------------------------------------------
+class itti_sbi_store_ue_context_request : public itti_sbi_msg {
+ public:
+  itti_sbi_store_ue_context_request(
+      const task_id_t orig, const task_id_t dest, uint32_t pid)
+      : itti_sbi_msg(SBI_STORE_UE_CONTEXT_REQUEST, orig, dest),
+        ue_context(),
+        record_id(),
+        promise_id(pid) {}
+  itti_sbi_store_ue_context_request(const itti_sbi_store_ue_context_request& i)
+      : itti_sbi_msg(i),
+        ue_context(i.ue_context),
+        record_id(i.record_id),
+        promise_id() {}
+  itti_sbi_store_ue_context_request(
+      const itti_sbi_store_ue_context_request& i, const task_id_t orig,
+      const task_id_t dest)
+      : itti_sbi_msg(i, orig, dest),
+        ue_context(i.ue_context),
+        record_id(i.record_id),
+        promise_id(i.promise_id) {}
+  virtual ~itti_sbi_store_ue_context_request(){};
+  const char* get_msg_name() { return "STORE UE CONTEXT REQUEST"; };
+
+  std::string record_id;
+  // oai::amf::model::UeContext ue_context;
+  nlohmann::json ue_context;
+  uint32_t promise_id;
+};
+
+//-----------------------------------------------------------------------------
+class itti_sbi_retrieve_ue_context_request : public itti_sbi_msg {
+ public:
+  itti_sbi_retrieve_ue_context_request(
+      const task_id_t orig, const task_id_t dest, uint32_t pid)
+      : itti_sbi_msg(SBI_STORE_UE_CONTEXT_REQUEST, orig, dest),
+        supi(),
+        promise_id(pid) {}
+  itti_sbi_retrieve_ue_context_request(
+      const itti_sbi_retrieve_ue_context_request& i)
+      : itti_sbi_msg(i), supi(i.supi), promise_id() {}
+  itti_sbi_retrieve_ue_context_request(
+      const itti_sbi_retrieve_ue_context_request& i, const task_id_t orig,
+      const task_id_t dest)
+      : itti_sbi_msg(i, orig, dest), supi(i.supi), promise_id(i.promise_id) {}
+  virtual ~itti_sbi_retrieve_ue_context_request(){};
+  const char* get_msg_name() { return "RETRIEVE UE CONTEXT REQUEST"; };
+
+  std::string supi;
+  uint32_t promise_id;
+};
 #endif /* ITTI_MSG_SBI_HPP_INCLUDED_ */

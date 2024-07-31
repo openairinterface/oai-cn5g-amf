@@ -22,11 +22,10 @@
 #ifndef FILE_AMF_HPP_SEEN
 #define FILE_AMF_HPP_SEEN
 
-#include "3gpp_23.003.h"
-
 #include <nlohmann/json.hpp>
 #include <string>
 
+#include "3gpp_23.003.h"
 #include "3gpp_24.501.hpp"
 #include "string.hpp"
 #include "thread_sched.hpp"
@@ -90,6 +89,10 @@ constexpr auto DEFAULT_DNN = "default";
 
 constexpr auto kSbiResponseJsonData         = "jsonData";
 constexpr auto kSbiResponseHttpResponseCode = "httpResponseCode";
+
+// For UDSF
+constexpr auto DEFAULT_REALM_ID   = "oai";
+constexpr auto DEFAULT_STORAGE_ID = "amf";
 
 typedef struct auth_conf_s {
   std::string mysql_server;

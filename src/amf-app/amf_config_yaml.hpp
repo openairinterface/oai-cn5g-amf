@@ -44,6 +44,8 @@ constexpr auto AMF_CONFIG_SUPPORT_FEATURES_ENABLE_SMF_SELECTION =
     "enable_smf_selection";
 constexpr auto AMF_CONFIG_SUPPORT_FEATURES_ENABLE_SMF_SELECTION_LABEL =
     "Enable SMF Selection";
+constexpr auto AMF_CONFIG_SUPPORT_FEATURES_ENABLE_UDSF       = "enable_udsf";
+constexpr auto AMF_CONFIG_SUPPORT_FEATURES_ENABLE_UDSF_LABEL = "Enable UDSF";
 constexpr auto AMF_CONFIG_RELATIVE_CAPACITY       = "relative_capacity";
 constexpr auto AMF_CONFIG_RELATIVE_CAPACITY_LABEL = "Relative Capacity";
 constexpr auto AMF_CONFIG_STATISTICS_TIMER_INTERVAL =
@@ -135,6 +137,7 @@ class amf_support_features : public config_type {
   option_config_value m_enable_simple_scenario{};
   option_config_value m_enable_nssf{};
   option_config_value m_enable_smf_selection{};
+  option_config_value m_enable_udsf{};
 
  public:
   explicit amf_support_features();
@@ -145,6 +148,7 @@ class amf_support_features : public config_type {
   [[nodiscard]] bool get_option_enable_simple_scenario() const;
   [[nodiscard]] bool get_option_enable_nssf() const;
   [[nodiscard]] bool get_option_enable_smf_selection() const;
+  [[nodiscard]] bool get_option_enable_udsf() const;
 };
 
 class guami : public config_type {

@@ -52,6 +52,9 @@ amf_config::amf_config() {
   nssf_addr.ipv4_addr.s_addr = INADDR_ANY;
   nssf_addr.port             = DEFAULT_HTTP2_PORT;
   nssf_addr.api_version      = DEFAULT_SBI_API_VERSION;
+  udsf_addr.ipv4_addr.s_addr = INADDR_ANY;
+  udsf_addr.port             = DEFAULT_HTTP2_PORT;
+  udsf_addr.api_version      = DEFAULT_SBI_API_VERSION;
   instance                   = 0;
   log_level                  = spdlog::level::debug;
   n2                         = {};
@@ -69,6 +72,7 @@ amf_config::amf_config() {
   support_features.enable_external_ausf_udm = false;
   support_features.enable_nssf              = false;
   support_features.enable_lmf               = false;
+  support_features.enable_udsf              = false;
   support_features.http_version             = 2;  // HTTP/2 by default
   is_emergency_support                      = false;
 }
@@ -198,6 +202,14 @@ void amf_config::display() {
         "    API version ...........: %s", lmf_addr.api_version.c_str());
   }
 
+  if (support_features.enable_udsf) {
+    Logger::config().info("- UDSF:");
+    Logger::config().info(
+        "    URI root ...............: %s", udsf_addr.uri_root);
+    Logger::config().info(
+        "    API version ...........: %s", udsf_addr.api_version.c_str());
+  }
+
   Logger::config().info("- Supported Features:");
   Logger::config().info(
       "    NF Registration .......: %s",
@@ -287,6 +299,10 @@ void amf_config::to_json(nlohmann::json& json_data) const {
   if (support_features.enable_external_ausf_udm) {
     json_data["ausf"] = ausf_addr.to_json();
     json_data["udm"]  = udm_addr.to_json();
+  }
+
+  if (support_features.enable_udsf) {
+    json_data["udsf"] = udsf_addr.to_json();
   }
 
   json_data["supported_nas_algorithms"] = nas_cfg.to_json();
@@ -387,6 +403,12 @@ bool amf_config::from_json(nlohmann::json& json_data) {
       }
     }
 
+    if (support_features.enable_udsf) {
+      if (json_data.find("udsf") != json_data.end()) {
+        udsf_addr.from_json(json_data["udsf"]);
+      }
+    }
+
   } catch (nlohmann::detail::exception& e) {
     Logger::amf_app().error(
         "Exception when reading configuration from json %s", e.what());
@@ -480,6 +502,27 @@ bool amf_config::get_smf_pdu_session_context_uri(
   else
     smf_uri = psc->smf_info.uri_root + psc->smf_info.context_location;
   return true;
+}
+
+//------------------------------------------------------------------------------
+std::string amf_config::get_udsf_records_uri() {
+  std::string fmr_format_str = {};
+  amf_sbi_helper::get_fmt_format_form(
+      amf_sbi_helper::UdsfDrRecordCRUDApiList, fmr_format_str);
+  return udsf_addr.uri_root + amf_sbi_helper::UdsfDrBase +
+         udsf_addr.api_version +
+         fmt::format(fmr_format_str, DEFAULT_REALM_ID, DEFAULT_STORAGE_ID);
+}
+
+//------------------------------------------------------------------------------
+std::string amf_config::get_udsf_record_id_uri(const std::string& record_id) {
+  std::string fmr_format_str = {};
+  amf_sbi_helper::get_fmt_format_form(
+      amf_sbi_helper::UdsfDrRecordCRUDApi, fmr_format_str);
+  return udsf_addr.uri_root + amf_sbi_helper::UdsfDrBase +
+         udsf_addr.api_version +
+         fmt::format(
+             fmr_format_str, DEFAULT_REALM_ID, DEFAULT_STORAGE_ID, record_id);
 }
 
 }  // namespace oai::config
