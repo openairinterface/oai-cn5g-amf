@@ -210,6 +210,15 @@ void amf_sbi_task(void*) {
         amf_sbi_inst->handle_itti_message(std::ref(*m));
       } break;
 
+      case SBI_UE_AUTHENTICATION_CONFIRMATION: {
+        Logger::amf_sbi().info(
+            "Receive UE Authentication Confirmation message, "
+            "handling ...");
+        itti_sbi_ue_authentication_confirmation* m =
+            dynamic_cast<itti_sbi_ue_authentication_confirmation*>(msg);
+        amf_sbi_inst->handle_itti_message(std::ref(*m));
+      } break;
+
       case TERMINATE: {
         if (itti_msg_terminate* terminate =
                 dynamic_cast<itti_msg_terminate*>(msg)) {
@@ -554,9 +563,9 @@ void amf_sbi::handle_itti_message(
       remote_uri, oai::common::sbi::method_e::POST, msg_body, response_json,
       response_code, amf_cfg.support_features.http_version);
 
-  nlohmann::json response_data      = {};
-  response_data["httpResponseCode"] = response_code;
-  response_data["jsonData"]         = response_json;
+  nlohmann::json response_data                = {};
+  response_data[kSbiResponseHttpResponseCode] = response_code;
+  response_data[kSbiResponseJsonData]         = response_json;
 
   // Notify to the result
   if (itti_msg.promise_id > 0) {
@@ -714,9 +723,9 @@ void amf_sbi::handle_itti_message(
       url, oai::common::sbi::method_e::GET, "", response_json, response_code,
       amf_cfg.support_features.http_version);
 
-  nlohmann::json response_data      = {};
-  response_data["httpResponseCode"] = response_code;
-  response_data["jsonData"]         = response_json;
+  nlohmann::json response_data                = {};
+  response_data[kSbiResponseHttpResponseCode] = response_code;
+  response_data[kSbiResponseJsonData]         = response_json;
 
   // Notify to the result
   if (itti_msg.promise_id > 0) {
@@ -740,9 +749,10 @@ void amf_sbi::handle_itti_message(
   get_network_slice_information(
       itti_msg.snssai, itti_msg.plmn, std::nullopt, itti_msg.nf_instance_id,
       response_json, response_code);
-  nlohmann::json response_data      = {};
-  response_data["httpResponseCode"] = response_code;
-  if (!response_json.is_null()) response_data["jsonData"] = response_json;
+  nlohmann::json response_data                = {};
+  response_data[kSbiResponseHttpResponseCode] = response_code;
+  if (!response_json.is_null())
+    response_data[kSbiResponseJsonData] = response_json;
 
   // Notify to the result
   if (itti_msg.promise_id > 0) {
@@ -997,9 +1007,9 @@ void amf_sbi::handle_itti_message(
       "Determine Location, response from LMF\n, %s ",
       response_json.dump().c_str());
 
-  nlohmann::json response_data      = {};
-  response_data["httpResponseCode"] = response_code;
-  response_data["jsonData"]         = response_json;
+  nlohmann::json response_data                = {};
+  response_data[kSbiResponseHttpResponseCode] = response_code;
+  response_data[kSbiResponseJsonData]         = response_json;
 
   // Notify to the result
   if (itti_msg.promise_id > 0) {
@@ -1040,9 +1050,50 @@ void amf_sbi::handle_itti_message(
       "UE Authentication, response from AUSF\n, %s ",
       response_json.dump().c_str());
 
-  nlohmann::json response_data      = {};
-  response_data["httpResponseCode"] = response_code;
-  response_data["jsonData"]         = response_json;
+  nlohmann::json response_data                = {};
+  response_data[kSbiResponseHttpResponseCode] = response_code;
+  response_data[kSbiResponseJsonData]         = response_json;
+
+  // Notify to the result
+  if (itti_msg.promise_id > 0) {
+    amf_app_inst->trigger_process_response(itti_msg.promise_id, response_data);
+    return;
+  }
+}
+
+//------------------------------------------------------------------------------
+void amf_sbi::handle_itti_message(
+    itti_sbi_ue_authentication_confirmation& itti_msg) {
+  Logger::amf_sbi().debug(
+      "Send UE Authentication Confirmation to AUSF (HTTP version %d)",
+      itti_msg.http_version);
+
+  std::string body = itti_msg.confirmation_data.dump();
+  Logger::amf_sbi().debug(
+      "Send UE Authentication Confirmation to AUSF, URI %s",
+      itti_msg.uri.c_str());
+  Logger::amf_sbi().debug(
+      "Send UE Authentication Confirmation to AUSF, msg body: \n %s",
+      body.c_str());
+
+  nlohmann::json response_json = {};
+  uint32_t response_code       = 0;
+
+  curl_http_client(
+      itti_msg.uri, oai::common::sbi::method_e::PUT, body, response_json,
+      response_code, itti_msg.http_version);
+
+  Logger::amf_sbi().debug(
+      "UE Authentication Confirmation, response from AUSF, HTTP Code: %lu",
+      response_code);
+
+  Logger::amf_sbi().debug(
+      "UE Authentication Confirmation, response from AUSF\n, %s ",
+      response_json.dump().c_str());
+
+  nlohmann::json response_data                = {};
+  response_data[kSbiResponseHttpResponseCode] = response_code;
+  response_data[kSbiResponseJsonData]         = response_json;
 
   // Notify to the result
   if (itti_msg.promise_id > 0) {
@@ -1329,14 +1380,14 @@ bool amf_sbi::curl_http_client(
       response_data.at("upCnxState").get_to(up_cnx_state);
       if (up_cnx_state.compare("DEACTIVATED") == 0) {
         is_up_deactivation_procedure = true;
-        process_response_data["httpResponseCode"] =
+        process_response_data[kSbiResponseHttpResponseCode] =
             static_cast<int>(http_response.status_code);
       }
 
       // Service Request
       if (up_cnx_state.compare("ACTIVATING") == 0) {
         is_service_request = true;
-        process_response_data["httpResponseCode"] =
+        process_response_data[kSbiResponseHttpResponseCode] =
             static_cast<int>(http_response.status_code);
         // Update Pdu Session Context
         if (n2sm.has_value()) {

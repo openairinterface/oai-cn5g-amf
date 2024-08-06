@@ -88,6 +88,9 @@ constexpr auto DEFAULT_SUPI_TYPE =
 constexpr auto DEFAULT_SST = 1;
 constexpr auto DEFAULT_DNN = "default";
 
+constexpr auto kSbiResponseJsonData         = "jsonData";
+constexpr auto kSbiResponseHttpResponseCode = "httpResponseCode";
+
 typedef struct auth_conf_s {
   std::string mysql_server;
   std::string mysql_user;

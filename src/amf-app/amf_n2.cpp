@@ -1620,8 +1620,9 @@ void amf_n2::handle_itti_message(
       Logger::amf_server().debug(
           "Got result for PDU Session Id %d", curl_responses.begin()->first);
       uint32_t http_response_code = 0;
-      if (result_json.find("httpResponseCode") != result_json.end()) {
-        http_response_code = result_json["httpResponseCode"].get<int>();
+      if (result_json.find(kSbiResponseHttpResponseCode) != result_json.end()) {
+        http_response_code =
+            result_json[kSbiResponseHttpResponseCode].get<int>();
         if ((http_response_code == 200) or (http_response_code == 204)) {
           uc->set_up_cnx_state(
               curl_responses.begin()->first,
