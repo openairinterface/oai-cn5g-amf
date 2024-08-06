@@ -675,16 +675,19 @@ class amf_app {
   bool store_ue_context(
       const uint32_t ran_ue_ngap_id, const long amf_ue_ngap_id);
 
+  void ue_context_to_json(
+      oai::model::amf::UeContext& ue_cxt, nlohmann::json& ue_cxt_json);
+
   /*
    * Send request to store UE Context info into UDSF
    * @param [const uint32_t] ran_ue_ngap_id: RAN UE NGAP ID
    * @param [const unsigned long] amf_ue_ngap_id: AMF UE NGAP ID
-   * @param [const oai::model::amf::UeContext&]ue_cxt: UE Context
+   * @param [const nlohmann::json&]ue_cxt: UE Context
    * @return void
    */
   bool store_ue_context_in_udsf(
       const uint32_t ran_ue_ngap_id, const long amf_ue_ngap_id,
-      const oai::model::amf::UeContext& ue_cxt);
+      const nlohmann::json& ue_cxt);
 
   /*
    * Prepare the UE context which then to be stored in UDSF

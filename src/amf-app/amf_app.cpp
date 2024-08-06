@@ -2038,8 +2038,13 @@ bool amf_app::store_ue_context(
   oai::model::amf::UeContext ue_cxt = {};
   // Fill UE Context class info from UE's context
   if (prepare_ue_context(ran_ue_ngap_id, amf_ue_ngap_id, ue_cxt)) {
+    nlohmann::json ue_cxt_json = {};
+    ue_context_to_json(ue_cxt, ue_cxt_json);
+    Logger::amf_app().debug(
+        "UE context to be stored in UDSF:\n %s", ue_cxt_json.dump());
     // Store UE Context in the UDSF
-    return store_ue_context_in_udsf(ran_ue_ngap_id, amf_ue_ngap_id, ue_cxt);
+    return store_ue_context_in_udsf(
+        ran_ue_ngap_id, amf_ue_ngap_id, ue_cxt_json);
   }
   return false;
 }
@@ -2083,14 +2088,88 @@ bool amf_app::prepare_ue_context(
 }
 
 //------------------------------------------------------------------------------
+void amf_app::ue_context_to_json(
+    oai::model::amf::UeContext& ue_cxt, nlohmann::json& ue_cxt_json) {
+  ue_cxt_json["meta"]                    = {};
+  ue_cxt_json["meta"]["tag"]             = {};
+  ue_cxt_json["meta"]["tag"]["recordId"] = nlohmann::json::array();
+  nlohmann::json record_id =
+      "UserRecordValue000000001";  // TODO: generated automatically
+  ue_cxt_json["meta"]["tag"]["recordId"].push_back(record_id);
+  ue_cxt_json["meta"]["tag"]["ueId"] = nlohmann::json::array();
+  nlohmann::json ue_id = "imsi-208950000000031";  // TODO: remove hardcoded
+                                                  // value
+  ue_cxt_json["meta"]["tag"]["ueId"].push_back(ue_id);
+
+  ue_cxt_json["meta"]["tag"]["blockId"] = nlohmann::json::array();
+  nlohmann::json block_id               = {};
+  // Common info
+  block_id["id"]   = "common";
+  block_id["type"] = "common info";
+  ue_cxt_json["meta"]["tag"]["blockId"].push_back(block_id);
+
+  // Mobility management context
+  block_id["id"]   = "MmContext";
+  block_id["type"] = "MmContext";
+  ue_cxt_json["meta"]["tag"]["blockId"].push_back(block_id);
+
+  // Session management context
+  block_id["id"]   = "PduSessionContext";
+  block_id["type"] = "PduSessionContext";
+  ue_cxt_json["meta"]["tag"]["blockId"].push_back(block_id);
+
+  // Blocks
+  ue_cxt_json["blocks"] = nlohmann::json::array();
+
+  // TODO: block-common
+  nlohmann::json block_common = {};
+  block_id["Content-Id"]      = "common";
+  block_id["Content-Type"]    = "application/json";
+  block_id["content"]         = {};
+  block_id["content"]["supi"] =
+      "imsi-208950000000031";  // TODO: remove hardcoded value;
+  // TODO: drxParameter
+  // TODO: subUeAmbr
+  // TODO: 5GMM Capability
+  // TODO: eventSubscriptionList
+  ue_cxt_json["blocks"].push_back(block_common);
+
+  // Block MmContext
+  nlohmann::json block_mm_context  = {};
+  block_mm_context["Content-Id"]   = "MmContext";
+  block_mm_context["Content-Type"] = "application/json";
+  block_mm_context["content"]      = nlohmann::json::array();
+  std::vector<oai::model::amf::MmContext>& mm_context_list =
+      ue_cxt.getMmContextList();
+  for (auto const& cxt : mm_context_list) {
+    nlohmann::json mm_context_json = {};
+    to_json(mm_context_json, cxt);
+    block_mm_context["content"].push_back(mm_context_json);
+  }
+  ue_cxt_json["blocks"].push_back(block_mm_context);
+
+  // Block Session management context
+  nlohmann::json block_pdu_session_context  = {};
+  block_pdu_session_context["Content-Id"]   = "PduSessionContext";
+  block_pdu_session_context["Content-Type"] = "application/json";
+  block_pdu_session_context["content"]      = nlohmann::json::array();
+  std::vector<oai::model::amf::PduSessionContext>& pdu_session_context_list =
+      ue_cxt.getSessionContextList();
+  for (auto const& cxt : pdu_session_context_list) {
+    nlohmann::json pdu_session_context_json = {};
+    to_json(pdu_session_context_json, cxt);
+    block_pdu_session_context["content"].push_back(pdu_session_context_json);
+  }
+  ue_cxt_json["blocks"].push_back(block_pdu_session_context);
+}
+
+//------------------------------------------------------------------------------
 bool amf_app::store_ue_context_in_udsf(
     const uint32_t ran_ue_ngap_id, const long amf_ue_ngap_id,
-    const oai::model::amf::UeContext& ue_cxt) {
+    const nlohmann::json& ue_cxt) {
   Logger::amf_app().debug("Store UE context into UDSF");
-  bool is_context_stored     = false;
-  nlohmann::json ue_cxt_json = {};
-  to_json(ue_cxt_json, ue_cxt);
-  Logger::amf_app().debug("UE context %s", ue_cxt_json.dump());
+  bool is_context_stored = false;
+  Logger::amf_app().debug("UE context %s", ue_cxt.dump());
 
   // Send Store UE Context Request to UDSF
   // Generate a promise and associate this promise to the curl handle
@@ -2111,7 +2190,7 @@ bool amf_app::store_ue_context_in_udsf(
   // Use ue_context_key as Record Id
   itti_n11_msg->record_id =
       amf_conv::get_ue_context_key(ran_ue_ngap_id, amf_ue_ngap_id);
-  itti_n11_msg->ue_context   = ue_cxt_json;
+  itti_n11_msg->ue_context   = ue_cxt;
   itti_n11_msg->http_version = amf_cfg.support_features.http_version;
 
   int ret = itti_inst->send_msg(itti_n11_msg);
