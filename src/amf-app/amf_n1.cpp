@@ -3945,7 +3945,9 @@ bool amf_n1::run_mobility_registration_update_procedure(
     return false;
   }
 
-  if (!nc->security_ctx.has_value() or ((nc->ngksi && 0x07) == 0x07)) {
+  Logger::amf_n1().debug("NAS key set identifier: 0x%x", nc->ngksi);
+  if (!nc->security_ctx.has_value() or
+      ((nc->ngksi && 0x07) == kNasKeySetIdentifierNotAvailable)) {
     Logger::amf_n1().warn("No Security Context/valid key found");
     // Run Registration procedure
     return run_registration_procedure(nc, cause);
