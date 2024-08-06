@@ -2228,8 +2228,8 @@ bool amf_n1::run_registration_procedure(
       Logger::amf_n1().debug(
           "Authentication Vector in nas_context is available");
       ngksi_t ngksi = 0;
-      if (nc->security_ctx.has_value() &&
-          nc->ngksi != kNasKeySetIdentifierNotAvailable) {
+      if (nc->security_ctx.has_value()) {  // TODO: check nc->ngksi !=
+                                           // kNasKeySetIdentifierNotAvailable
         ngksi = (nc->amf_ue_ngap_id + 1);  // % (NGKSI_MAX_VALUE + 1);
         Logger::amf_n1().debug("New ngKSI (%d)", ngksi);
         // TODO: How to handle?
