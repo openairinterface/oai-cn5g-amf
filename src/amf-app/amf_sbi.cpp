@@ -889,10 +889,8 @@ void amf_sbi::handle_itti_message(
   itti_msg_response->http_version       = itti_msg.http_version;
   itti_msg_response->nrf_uri            = itti_msg.nrf_uri;
 
-  if ((response_code ==
-       static_cast<uint32_t>(oai::common::sbi::http_status_code::CREATED)) or
-      (response_code ==
-       static_cast<uint32_t>(oai::common::sbi::http_status_code::OK))) {
+  if ((response_code == oai::common::sbi::http_status_code::CREATED) or
+      (response_code == oai::common::sbi::http_status_code::OK)) {
     Logger::amf_sbi().debug("NFRegistration, got successful response from NRF");
     Logger::amf_sbi().debug(
         "NF Instance Registration, response from NRF, JSON data: \n %s",

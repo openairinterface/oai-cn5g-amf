@@ -754,7 +754,7 @@ void amf_app::handle_itti_message(itti_sbi_n1n2_message_subscribe& itti_msg) {
   nlohmann::json response_data = {};
   response_data["createdData"] = created_data;
   response_data[kSbiResponseHttpResponseCode] =
-      static_cast<uint32_t>(oai::common::sbi::http_status_code::CREATED);
+      oai::common::sbi::http_status_code::CREATED;
   response_data["location"] = location;
 
   // Notify to the result
@@ -775,10 +775,10 @@ void amf_app::handle_itti_message(itti_sbi_n1n2_message_unsubscribe& itti_msg) {
   if (remove_n1n2_message_subscription(
           itti_msg.ue_cxt_id, itti_msg.subscription_id)) {
     response_data[kSbiResponseHttpResponseCode] =
-        static_cast<uint32_t>(oai::common::sbi::http_status_code::NO_CONTENT);
+        oai::common::sbi::http_status_code::NO_CONTENT;
   } else {
     response_data[kSbiResponseHttpResponseCode] =
-        static_cast<uint32_t>(oai::common::sbi::http_status_code::BAD_REQUEST);
+        oai::common::sbi::http_status_code::BAD_REQUEST;
     oai::model::common::ProblemDetails problem_details = {};
     // TODO set problem_details
     to_json(response_data["ProblemDetails"], problem_details);
@@ -820,7 +820,7 @@ void amf_app::handle_itti_message(itti_sbi_non_ue_n2_info_subscribe& itti_msg) {
   nlohmann::json response_data = {};
   response_data["createdData"] = created_data;
   response_data[kSbiResponseHttpResponseCode] =
-      static_cast<uint32_t>(oai::common::sbi::http_status_code::CREATED);
+      oai::common::sbi::http_status_code::CREATED;
   response_data["location"] = location;
 
   // Notify to the result
@@ -841,10 +841,10 @@ void amf_app::handle_itti_message(
   nlohmann::json response_data = {};
   if (remove_non_ue_n2_info_subscription(itti_msg.subscription_id)) {
     response_data[kSbiResponseHttpResponseCode] =
-        static_cast<uint32_t>(oai::common::sbi::http_status_code::NO_CONTENT);
+        oai::common::sbi::http_status_code::NO_CONTENT;
   } else {
     response_data[kSbiResponseHttpResponseCode] =
-        static_cast<uint32_t>(oai::common::sbi::http_status_code::BAD_REQUEST);
+        oai::common::sbi::http_status_code::BAD_REQUEST;
     oai::model::common::ProblemDetails problem_details = {};
     // TODO set problem_details
     to_json(response_data["ProblemDetails"], problem_details);
@@ -872,11 +872,11 @@ void amf_app::handle_itti_message(
     Logger::amf_app().debug("Update PDU Session Release successfully");
 
     response_data[kSbiResponseHttpResponseCode] =
-        static_cast<uint32_t>(oai::common::sbi::http_status_code::NO_CONTENT);
+        oai::common::sbi::http_status_code::NO_CONTENT;
 
   } else {
     response_data[kSbiResponseHttpResponseCode] =
-        static_cast<uint32_t>(oai::common::sbi::http_status_code::NO_CONTENT);
+        oai::common::sbi::http_status_code::NO_CONTENT;
     // TODO check if we set problem_details
     Logger::amf_app().debug("Update PDU Session Release failed");
   }
@@ -902,10 +902,10 @@ void amf_app::handle_itti_message(itti_sbi_amf_configuration& itti_msg) {
     Logger::amf_app().debug(
         "AMF configuration:\n %s", response_data["content"].dump().c_str());
     response_data[kSbiResponseHttpResponseCode] =
-        static_cast<uint32_t>(oai::common::sbi::http_status_code::OK);
+        oai::common::sbi::http_status_code::OK;
   } else {
     response_data[kSbiResponseHttpResponseCode] =
-        static_cast<uint32_t>(oai::common::sbi::http_status_code::BAD_REQUEST);
+        oai::common::sbi::http_status_code::BAD_REQUEST;
     oai::model::common::ProblemDetails problem_details = {};
     // TODO set problem_details
     to_json(response_data["ProblemDetails"], problem_details);
@@ -933,7 +933,7 @@ void amf_app::handle_itti_message(itti_sbi_update_amf_configuration& itti_msg) {
     Logger::amf_app().debug(
         "AMF configuration:\n %s", response_data["content"].dump().c_str());
     response_data[kSbiResponseHttpResponseCode] =
-        static_cast<uint32_t>(oai::common::sbi::http_status_code::OK);
+        oai::common::sbi::http_status_code::OK;
 
     // Update AMF profile
     generate_amf_profile();
@@ -944,7 +944,7 @@ void amf_app::handle_itti_message(itti_sbi_update_amf_configuration& itti_msg) {
 
   } else {
     response_data[kSbiResponseHttpResponseCode] =
-        static_cast<uint32_t>(oai::common::sbi::http_status_code::BAD_REQUEST);
+        oai::common::sbi::http_status_code::BAD_REQUEST;
     oai::model::common::ProblemDetails problem_details = {};
     // TODO set problem_details
     to_json(response_data["ProblemDetails"], problem_details);
@@ -961,10 +961,8 @@ void amf_app::handle_itti_message(itti_sbi_update_amf_configuration& itti_msg) {
 void amf_app::handle_itti_message(itti_sbi_register_nf_instance_response& r) {
   Logger::amf_app().debug("Handle NF Instance Registration response");
 
-  if ((r.http_response_code ==
-       static_cast<uint32_t>(oai::common::sbi::http_status_code::OK)) or
-      (r.http_response_code ==
-       static_cast<uint32_t>(oai::common::sbi::http_status_code::CREATED))) {
+  if ((r.http_response_code == oai::common::sbi::http_status_code::OK) or
+      (r.http_response_code == oai::common::sbi::http_status_code::CREATED)) {
     Logger::amf_app().debug("AMF has successfully registered to NRF.");
     nf_instance_profile = r.profile;
     // Set heartbeat timer
@@ -1292,8 +1290,7 @@ bool amf_app::handle_nf_status_notification(
       "Handle a NF status notification from NRF (HTTP version "
       "%d)",
       msg->http_version);
-  http_code =
-      static_cast<uint32_t>(oai::common::sbi::http_status_code::NO_CONTENT);
+  http_code = oai::common::sbi::http_status_code::NO_CONTENT;
   return true;
 }
 
