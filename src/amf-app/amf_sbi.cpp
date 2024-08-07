@@ -824,7 +824,7 @@ void amf_sbi::handle_itti_message(itti_sbi_n2_info_notify& itti_msg) {
       itti_msg.nf_uri, json_part, n1sm_msg, n2_info_msg,
       amf_cfg.support_features.http_version, response_code);
 
-  if (response_code == 204) {
+  if (response_code == oai::common::sbi::http_status_code::NO_CONTENT) {
     Logger::amf_sbi().debug("Sent notification successfully!");
   }
   return;

@@ -1591,7 +1591,8 @@ void amf_app::get_nrfs(std::unordered_set<std::string>& nrfs) {
         uint32_t http_response_code = 0;
         if (result.find(kSbiResponseHttpResponseCode) != result.end()) {
           http_response_code = result[kSbiResponseHttpResponseCode].get<int>();
-          // if (http_response_code != 200) continue;
+          // if (http_response_code != oai::common::sbi::http_status_code::OK)
+          // continue;
         }
 
         if (result.find(kSbiResponseJsonData) != result.end()) {
@@ -1755,7 +1756,10 @@ void amf_app::trigger_pdu_session_release(
           http_response_code = result[kSbiResponseHttpResponseCode].get<int>();
           // Remove PDU session
           // TODO for multiple sessions
-          if ((http_response_code == 200) or (http_response_code == 204)) {
+          if ((http_response_code == oai::common::sbi::http_status_code::OK) or
+              (http_response_code ==
+               oai::common::sbi::http_status_code::NO_CONTENT::common::sbi::
+                   http_status_code::NO_CONTENT)) {
             for (auto session : sessions_ctx) {
               uc->remove_pdu_sessions_context(session->pdu_session_id);
             }
@@ -1837,7 +1841,9 @@ void amf_app::trigger_pdu_session_up_deactivation(
           is_up_activated    = is_up_activated && true;
           http_response_code = result[kSbiResponseHttpResponseCode].get<int>();
 
-          if ((http_response_code == 200) or (http_response_code == 204)) {
+          if ((http_response_code == oai::common::sbi::http_status_code::OK) or
+              (http_response_code ==
+               oai::common::sbi::http_status_code::NO_CONTENT)) {
             uc->set_up_cnx_state(
                 curl_responses.begin()->first,
                 up_cnx_state_e::UPCNX_STATE_DEACTIVATED);
@@ -1923,7 +1929,9 @@ bool amf_app::trigger_pdu_session_up_activation(
         uint32_t http_response_code = 0;
         if (result.find(kSbiResponseHttpResponseCode) != result.end()) {
           http_response_code = result[kSbiResponseHttpResponseCode].get<int>();
-          if ((http_response_code == 200) or (http_response_code == 204)) {
+          if ((http_response_code == oai::common::sbi::http_status_code::OK) or
+              (http_response_code ==
+               oai::common::sbi::http_status_code::NO_CONTENT)) {
             uc->set_up_cnx_state(
                 curl_responses.begin()->first,
                 up_cnx_state_e::UPCNX_STATE_ACTIVATED);
@@ -2006,7 +2014,9 @@ bool amf_app::trigger_pdu_session_up_activation(
       uint32_t http_response_code = 0;
       if (result.find(kSbiResponseHttpResponseCode) != result.end()) {
         http_response_code = result[kSbiResponseHttpResponseCode].get<int>();
-        if ((http_response_code == 200) or (http_response_code == 204)) {
+        if ((http_response_code == oai::common::sbi::http_status_code::OK) or
+            (http_response_code ==
+             oai::common::sbi::http_status_code::NO_CONTENT)) {
           uc->set_up_cnx_state(
               pdu_session_id, up_cnx_state_e::UPCNX_STATE_ACTIVATED);
           return true;
@@ -2211,7 +2221,9 @@ bool amf_app::store_ue_context_in_udsf(
     uint32_t http_response_code = 0;
     if (result.find(kSbiResponseHttpResponseCode) != result.end()) {
       http_response_code = result[kSbiResponseHttpResponseCode].get<int>();
-      if ((http_response_code == 200) or (http_response_code == 204)) {
+      if ((http_response_code == oai::common::sbi::http_status_code::OK) or
+          (http_response_code ==
+           oai::common::sbi::http_status_code::NO_CONTENT)) {
         is_context_stored = true;
       } else {
         Logger::amf_app().warn("Failed to store UE context into UDSF!");
@@ -2285,7 +2297,9 @@ bool amf_app::retrieve_ue_context_from_udsf(
     uint32_t http_response_code = 0;
     if (result.find(kSbiResponseHttpResponseCode) != result.end()) {
       http_response_code = result[kSbiResponseHttpResponseCode].get<int>();
-      if ((http_response_code == 200) or (http_response_code == 204)) {
+      if ((http_response_code == oai::common::sbi::http_status_code::OK) or
+          (http_response_code ==
+           oai::common::sbi::http_status_code::NO_CONTENT)) {
         // TODO:
         is_context_retrieved = true;
       } else {

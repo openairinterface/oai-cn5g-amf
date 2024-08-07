@@ -1623,7 +1623,9 @@ void amf_n2::handle_itti_message(
       if (result_json.find(kSbiResponseHttpResponseCode) != result_json.end()) {
         http_response_code =
             result_json[kSbiResponseHttpResponseCode].get<int>();
-        if ((http_response_code == 200) or (http_response_code == 204)) {
+        if ((http_response_code == oai::common::sbi::http_status_code::OK) or
+            (http_response_code ==
+             oai::common::sbi::http_status_code::NO_CONTENT)) {
           uc->set_up_cnx_state(
               curl_responses.begin()->first,
               up_cnx_state_e::UPCNX_STATE_DEACTIVATED);
