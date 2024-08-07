@@ -1116,7 +1116,7 @@ void amf_sbi::handle_itti_message(itti_sbi_store_ue_context_request& itti_msg) {
       "Send Store UE Context Request message to UDSF, UDSF URI %s",
       uri.c_str());
 
-  std::string body             = itti_msg.ue_context;
+  std::string body             = itti_msg.ue_context.dump();
   nlohmann::json response_json = {};
   uint32_t response_code       = 0;
 

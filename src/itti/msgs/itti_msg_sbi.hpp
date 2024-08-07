@@ -789,7 +789,6 @@ class itti_sbi_store_ue_context_request : public itti_sbi_msg {
   const char* get_msg_name() { return "STORE UE CONTEXT REQUEST"; };
 
   std::string record_id;
-  // oai::amf::model::UeContext ue_context;
   nlohmann::json ue_context;
   uint32_t promise_id;
 };

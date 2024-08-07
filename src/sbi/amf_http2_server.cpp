@@ -291,7 +291,7 @@ void amf_http2_server::start() {
 
             // at least 2 parts for Json data and N2
             if (size < 2) {
-              res.write_head(                  oai::common::sbi::http_status_code::BAD_REQUEST));
+              res.write_head(oai::common::sbi::http_status_code::BAD_REQUEST);
               res.end();
               Logger::amf_server().debug(
                   "Bad request: should have at least 2 MIME parts");

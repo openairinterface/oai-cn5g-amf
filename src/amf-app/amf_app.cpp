@@ -1758,8 +1758,7 @@ void amf_app::trigger_pdu_session_release(
           // TODO for multiple sessions
           if ((http_response_code == oai::common::sbi::http_status_code::OK) or
               (http_response_code ==
-               oai::common::sbi::http_status_code::NO_CONTENT::common::sbi::
-                   http_status_code::NO_CONTENT)) {
+               oai::common::sbi::http_status_code::NO_CONTENT)) {
             for (auto session : sessions_ctx) {
               uc->remove_pdu_sessions_context(session->pdu_session_id);
             }
@@ -2125,15 +2124,18 @@ void amf_app::ue_context_to_json(
   block_id["type"] = "PduSessionContext";
   ue_cxt_json["meta"]["tag"]["blockId"].push_back(block_id);
 
+  ue_cxt_json["meta"]["callbackReference"] = "URI: to be filled";
+  ue_cxt_json["meta"]["ttl"]               = "100";
+
   // Blocks
   ue_cxt_json["blocks"] = nlohmann::json::array();
 
   // TODO: block-common
-  nlohmann::json block_common = {};
-  block_id["Content-Id"]      = "common";
-  block_id["Content-Type"]    = "application/json";
-  block_id["content"]         = {};
-  block_id["content"]["supi"] =
+  nlohmann::json block_common  = {};
+  block_common["Content-Id"]   = "common";
+  block_common["Content-Type"] = "application/json";
+  block_common["content"]      = {};
+  block_common["content"]["supi"] =
       "imsi-208950000000031";  // TODO: remove hardcoded value;
   // TODO: drxParameter
   // TODO: subUeAmbr
@@ -2195,8 +2197,7 @@ bool amf_app::store_ue_context_in_udsf(
       TASK_NGAP, TASK_AMF_SBI, promise_id);
 
   // Use ue_context_key as Record Id
-  itti_n11_msg->record_id =
-      amf_conv::get_ue_context_key(ran_ue_ngap_id, amf_ue_ngap_id);
+  itti_n11_msg->record_id = "UserRecordValue000000001";  // TODO: AMF ID+ UE_ID
   itti_n11_msg->ue_context   = ue_cxt;
   itti_n11_msg->http_version = amf_cfg.support_features.http_version;
 
