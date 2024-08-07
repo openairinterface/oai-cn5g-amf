@@ -933,10 +933,6 @@ void amf_sbi::handle_itti_message(
       itti_msg.nrf_uri, oai::common::sbi::method_e::PATCH, body, response_data,
       response_code, amf_cfg.support_features.http_version);
 
-  Logger::amf_sbi().debug(
-      "NF Update, response from NRF, JSON data: \n %s",
-      response_data.dump().c_str());
-
   // Send response to APP to process
   std::shared_ptr<itti_sbi_update_nf_instance_response> itti_msg_response =
       std::make_shared<itti_sbi_update_nf_instance_response>(
@@ -1625,11 +1621,14 @@ void amf_sbi::curl_http_client(
     }
   }
 
-  try {
-    response_json = nlohmann::json::parse(response);
-  } catch (nlohmann::json::exception& e) {
-    Logger::amf_sbi().info("Could not get JSON content from the response");
-    response_json = {};
+  if (http_response.status_code !=
+      oai::common::sbi::http_status_code::NO_CONTENT) {
+    try {
+      response_json = nlohmann::json::parse(response);
+    } catch (nlohmann::json::exception& e) {
+      Logger::amf_sbi().info("Could not get JSON content from the response");
+      response_json = {};
+    }
   }
 }
 

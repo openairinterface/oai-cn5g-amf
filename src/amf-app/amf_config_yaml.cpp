@@ -785,7 +785,8 @@ amf_config_yaml::amf_config_yaml(
   m_used_sbi_values = {
       oai::config::AMF_CONFIG_NAME, oai::config::AUSF_CONFIG_NAME,
       oai::config::SMF_CONFIG_NAME, oai::config::UDM_CONFIG_NAME,
-      oai::config::NRF_CONFIG_NAME, oai::config::NSSF_CONFIG_NAME};
+      oai::config::NRF_CONFIG_NAME, oai::config::NSSF_CONFIG_NAME,
+      oai::config::UDSF_CONFIG_NAME};
   m_used_config_values = {
       oai::config::LOG_LEVEL_CONFIG_NAME, oai::config::REGISTER_NF_CONFIG_NAME,
       oai::config::NF_CONFIG_HTTP_NAME,   oai::config::NF_LIST_CONFIG_NAME,
@@ -817,11 +818,11 @@ amf_config_yaml::amf_config_yaml(
 
   auto m_nssf = std::make_shared<nf>(
       "NSSF", "oai-nssf", sbi_interface("SBI", "oai-nssf", 80, "v1", ""));
-  add_nf("nssf", m_nssf);
+  add_nf(oai::config::NSSF_CONFIG_NAME, m_nssf);
 
   auto m_udsf = std::make_shared<nf>(
       "UDSF", "oai-udsf", sbi_interface("SBI", "oai-udsf", 80, "v1", ""));
-  add_nf("udsf", m_udsf);
+  add_nf(oai::config::UDSF_CONFIG_NAME, m_udsf);
 
   update_used_nfs();
 }
