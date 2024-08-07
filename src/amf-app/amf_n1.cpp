@@ -3218,8 +3218,11 @@ void amf_n1::security_mode_complete_handle(
   stacs.display();
 
   // Store UE-related context into UDSF (if available)
-  if (amf_app_inst->store_ue_context(ran_ue_ngap_id, amf_ue_ngap_id)) {
-    Logger::amf_n1().debug("Stored UE context in UDSF successfully");
+  std::string supi = amf_conv::imsi_to_supi(nc->imsi);
+
+  if (amf_app_inst->store_ue_context(supi)) {
+    Logger::amf_n1().debug(
+        "Stored UE (SUPI: %s) context in UDSF successfully", supi);
   } else {
     Logger::amf_n1().debug("Couldn't store UE context in UDSF");
   }
@@ -3228,7 +3231,7 @@ void amf_n1::security_mode_complete_handle(
   trigger_ue_location_report(ran_ue_ngap_id, amf_ue_ngap_id);
 
   // Trigger UE Registration Status Notify
-  std::string supi = amf_conv::imsi_to_supi(nc->imsi);
+
   Logger::amf_n1().debug(
       "Signal the UE Registration State Event notification for SUPI %s",
       supi.c_str());

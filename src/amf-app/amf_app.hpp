@@ -668,37 +668,31 @@ class amf_app {
 
   /*
    * Store UE Context info in UDSF if available
-   * @param [const uint32_t] ran_ue_ngap_id: RAN UE NGAP ID
-   * @param [const uint64_t] amf_ue_ngap_id: AMF UE NGAP ID
+   * @param [const std::string&] supi: SUPI
    * @return true if success otherwise return false
    */
-  bool store_ue_context(
-      const uint32_t ran_ue_ngap_id, const uint64_t amf_ue_ngap_id);
+  bool store_ue_context(const std::string& supi);
 
   void ue_context_to_json(
       oai::model::amf::UeContext& ue_cxt, nlohmann::json& ue_cxt_json);
 
   /*
    * Send request to store UE Context info into UDSF
-   * @param [const uint32_t] ran_ue_ngap_id: RAN UE NGAP ID
-   * @param [const uint64_t] amf_ue_ngap_id: AMF UE NGAP ID
+   * @param [const std::string&] supi: SUPI
    * @param [const nlohmann::json&]ue_cxt: UE Context
    * @return void
    */
   bool store_ue_context_in_udsf(
-      const uint32_t ran_ue_ngap_id, const uint64_t amf_ue_ngap_id,
-      const nlohmann::json& ue_cxt);
+      const std::string& supi, const nlohmann::json& ue_cxt);
 
   /*
    * Prepare the UE context which then to be stored in UDSF
-   * @param [const uint32_t] ran_ue_ngap_id: RAN UE NGAP ID
-   * @param [const uint64_t] amf_ue_ngap_id: AMF UE NGAP ID
+   * @param [const std::string&] supi: SUPI
    * @param [oai::model::amf::UeContext&]ue_cxt: UE Context
    * @return void
    */
   bool prepare_ue_context(
-      const uint32_t ran_ue_ngap_id, const uint64_t amf_ue_ngap_id,
-      oai::model::amf::UeContext& ue_cxt);
+      const std::string& supi, oai::model::amf::UeContext& ue_cxt);
 
   /*
    * Retrieve the UE context from either UDSF or the old AMF

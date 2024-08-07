@@ -2036,34 +2036,29 @@ bool amf_app::trigger_pdu_session_up_activation(
 }
 
 //------------------------------------------------------------------------------
-bool amf_app::store_ue_context(
-    const uint32_t ran_ue_ngap_id, const uint64_t amf_ue_ngap_id) {
+bool amf_app::store_ue_context(const std::string& supi) {
   if (!amf_cfg.support_features.enable_udsf) {
     return false;
   }
   oai::model::amf::UeContext ue_cxt = {};
   // Fill UE Context class info from UE's context
-  if (prepare_ue_context(ran_ue_ngap_id, amf_ue_ngap_id, ue_cxt)) {
+  if (prepare_ue_context(supi, ue_cxt)) {
     nlohmann::json ue_cxt_json = {};
     ue_context_to_json(ue_cxt, ue_cxt_json);
     Logger::amf_app().debug(
         "UE context to be stored in UDSF:\n %s", ue_cxt_json.dump());
     // Store UE Context in the UDSF
-    return store_ue_context_in_udsf(
-        ran_ue_ngap_id, amf_ue_ngap_id, ue_cxt_json);
+    return store_ue_context_in_udsf(supi, ue_cxt_json);
   }
   return false;
 }
 
 //------------------------------------------------------------------------------
 bool amf_app::prepare_ue_context(
-    const uint32_t ran_ue_ngap_id, const uint64_t amf_ue_ngap_id,
-    oai::model::amf::UeContext& ue_cxt) {
+    const std::string& supi, oai::model::amf::UeContext& ue_cxt) {
   // Get UE context
-  std::string ue_context_key =
-      amf_conv::get_ue_context_key(ran_ue_ngap_id, amf_ue_ngap_id);
   std::shared_ptr<ue_context> uc = {};
-  if (!ran_amf_id_2_ue_context(ue_context_key, uc)) return false;
+  if (!supi_2_ue_context(supi, uc)) return false;
 
   // Fill UE context info
   ue_cxt.setSupi(uc->supi);
@@ -2174,8 +2169,7 @@ void amf_app::ue_context_to_json(
 
 //------------------------------------------------------------------------------
 bool amf_app::store_ue_context_in_udsf(
-    const uint32_t ran_ue_ngap_id, const uint64_t amf_ue_ngap_id,
-    const nlohmann::json& ue_cxt) {
+    const std::string& supi, const nlohmann::json& ue_cxt) {
   Logger::amf_app().debug("Store UE context into UDSF");
   bool is_context_stored = false;
   Logger::amf_app().debug("UE context %s", ue_cxt.dump());
@@ -2196,9 +2190,9 @@ bool amf_app::store_ue_context_in_udsf(
   auto itti_n11_msg = std::make_shared<itti_sbi_store_ue_context_request>(
       TASK_NGAP, TASK_AMF_SBI, promise_id);
 
-  // Use ue_context_key as Record Id
-  itti_n11_msg->record_id  = "UserRecordValue000000001";  // TODO: AMF ID+ UE_ID
-  itti_n11_msg->ue_context = ue_cxt;
+  // Use SUPI as Record Id
+  itti_n11_msg->record_id    = supi;
+  itti_n11_msg->ue_context   = ue_cxt;
   itti_n11_msg->http_version = amf_cfg.support_features.http_version;
 
   int ret = itti_inst->send_msg(itti_n11_msg);
