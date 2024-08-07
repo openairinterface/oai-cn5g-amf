@@ -2037,7 +2037,7 @@ bool amf_app::trigger_pdu_session_up_activation(
 
 //------------------------------------------------------------------------------
 bool amf_app::store_ue_context(
-    const uint32_t ran_ue_ngap_id, const long amf_ue_ngap_id) {
+    const uint32_t ran_ue_ngap_id, const uint64_t amf_ue_ngap_id) {
   if (!amf_cfg.support_features.enable_udsf) {
     return false;
   }
@@ -2057,7 +2057,7 @@ bool amf_app::store_ue_context(
 
 //------------------------------------------------------------------------------
 bool amf_app::prepare_ue_context(
-    const uint32_t ran_ue_ngap_id, const long amf_ue_ngap_id,
+    const uint32_t ran_ue_ngap_id, const uint64_t amf_ue_ngap_id,
     oai::model::amf::UeContext& ue_cxt) {
   // Get UE context
   std::string ue_context_key =
@@ -2174,7 +2174,7 @@ void amf_app::ue_context_to_json(
 
 //------------------------------------------------------------------------------
 bool amf_app::store_ue_context_in_udsf(
-    const uint32_t ran_ue_ngap_id, const long amf_ue_ngap_id,
+    const uint32_t ran_ue_ngap_id, const uint64_t amf_ue_ngap_id,
     const nlohmann::json& ue_cxt) {
   Logger::amf_app().debug("Store UE context into UDSF");
   bool is_context_stored = false;
@@ -2197,8 +2197,8 @@ bool amf_app::store_ue_context_in_udsf(
       TASK_NGAP, TASK_AMF_SBI, promise_id);
 
   // Use ue_context_key as Record Id
-  itti_n11_msg->record_id = "UserRecordValue000000001";  // TODO: AMF ID+ UE_ID
-  itti_n11_msg->ue_context   = ue_cxt;
+  itti_n11_msg->record_id  = "UserRecordValue000000001";  // TODO: AMF ID+ UE_ID
+  itti_n11_msg->ue_context = ue_cxt;
   itti_n11_msg->http_version = amf_cfg.support_features.http_version;
 
   int ret = itti_inst->send_msg(itti_n11_msg);
