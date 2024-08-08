@@ -42,6 +42,7 @@
 #include "ngap_app.hpp"
 #include "output_wrapper.hpp"
 #include "utils.hpp"
+#include "ngap_utils.hpp"
 
 using namespace oai::ngap;
 using namespace oai::nas;
@@ -2060,30 +2061,86 @@ bool amf_app::prepare_ue_context(
   std::shared_ptr<ue_context> uc = {};
   if (!supi_2_ue_context(supi, uc)) return false;
 
+  // get NAS context
+  std::shared_ptr<nas_context> nc = {};
+  if (!amf_n1_inst->supi_2_nas_context(supi, nc)) {
+    Logger::amf_n2().warn("No existed nas_context with supi %s", supi);
+  }
+
   // Fill UE context info
   ue_cxt.setSupi(uc->supi);
   // TODO: drxParameter
   // TODO: subUeAmbr
   // TODO: 5GMM Capability
   // TODO: eventSubscriptionList
+  // TODO: UE-AMBR in serving network
 
-  // MmContextList
+  // SeafData
+  oai::model::amf::SeafData seaf_data = {};
+  oai::model::amf::NgKsi ngksi        = {};
+  // ngksi.setTsc((0b1000 & nc->ngksi)>>3); //TODO: use ScType - NATIVE
+  ngksi.setKsi(0b00000111 & nc->ngksi);
+  seaf_data.setNgKsi(ngksi);
+  if (nc->security_ctx.has_value()) {
+    uint8_t kamf[AUTH_VECTOR_LENGTH_OCTETS];
+    if (nc->get_kamf(nc->security_ctx.value().vector_pointer, kamf)) {
+      oai::model::amf::KeyAmf key_amf          = {};
+      oai::model::amf::KeyAmfType key_amf_type = {};  // KAMF
+      // TODO: key_amf.setKeyType(value);
+      // TODO: key_amf.setKeyVal(value);
+      seaf_data.setKeyAmf(key_amf);
+    }
+  }
+  // SeafData: NCC
+  uint64_t amf_ue_ngap_id = INVALID_AMF_UE_NGAP_ID;
+  amf_n1_inst->supi_2_amf_id(supi, amf_ue_ngap_id);
+  std::shared_ptr<ue_ngap_context> unc = {};
+  if (amf_n2_inst->amf_ue_id_2_ue_ngap_context(amf_ue_ngap_id, unc)) {
+    seaf_data.setNcc(unc->ncc);
+  }
+  // TODO: SeafData: NH
+  ue_cxt.setSeafData(seaf_data);
+
+  // Mm Context
   oai::model::amf::MmContext mm_context      = {};
   oai::model::common::AccessType access_type = {};
   access_type.setValue(
-      oai::model::common::AccessType::eAccessType::_3GPP_ACCESS);  // hard-coded
+      oai::model::common::AccessType::eAccessType::
+          _3GPP_ACCESS);  // TODO: only support 3GPP Access for now
   mm_context.setAccessType(access_type);
-  // TODO: NAS Security Mode
-  // TODO: nasDownlinkCount
-  // TODO: nasUplinkCount
+
+  if (nc->security_ctx.has_value()) {
+    // TODO: NAS Security Mode
+    // nasDownlinkCount
+    mm_context.setNasDownlinkCount(nc->security_ctx.value().dl_count.seq_num);
+    // TODO: nasUplinkCount
+    mm_context.setNasUplinkCount(nc->security_ctx.value().ul_count.seq_num);
+  }
+
   // TODO: ueSecurityCapability
+  // mm_context.setUeSecurityCapability(nc->ue_security_capability);
+
   // TODO: allowedNssai
+  std::vector<oai::model::common::Snssai> allowed_nssai =
+      mm_context.getAllowedNssai();
+  for (const auto& an : nc->allowed_nssai) {
+    oai::model::common::Snssai snssai = {};
+    snssai.setSst(an.sst);
+    std::string sd = {};
+    oai::ngap::ngap_utils::sd_int_to_string_hex(an.sd, sd);
+    snssai.setSd(sd);
+    // TODO: HplmnSst/Sd
+  }
+
   std::vector<oai::model::amf::MmContext>& mm_context_list =
       ue_cxt.getMmContextList();
   mm_context_list.push_back(mm_context);
 
-  // TODO: sessionContextList
-  // TODO: UE-AMBR in serving network
+  // PDU Session Context
+  oai::model::amf::PduSessionContext session_context = {};
+  std::vector<PduSessionContext>& session_context_list =
+      ue_cxt.getSessionContextList();
+  session_context_list.push_back(session_context);
 
   return true;
 }
@@ -2094,12 +2151,10 @@ void amf_app::ue_context_to_json(
   ue_cxt_json["meta"]                    = {};
   ue_cxt_json["meta"]["tag"]             = {};
   ue_cxt_json["meta"]["tag"]["recordId"] = nlohmann::json::array();
-  nlohmann::json record_id =
-      "UserRecordValue000000001";  // TODO: generated automatically
+  nlohmann::json record_id = ue_cxt.getSupi();  // UE SUPI, so 1 record per UE
   ue_cxt_json["meta"]["tag"]["recordId"].push_back(record_id);
   ue_cxt_json["meta"]["tag"]["ueId"] = nlohmann::json::array();
-  nlohmann::json ue_id = "imsi-208950000000031";  // TODO: remove hardcoded
-                                                  // value
+  nlohmann::json ue_id               = ue_cxt.getSupi();
   ue_cxt_json["meta"]["tag"]["ueId"].push_back(ue_id);
 
   ue_cxt_json["meta"]["tag"]["blockId"] = nlohmann::json::array();
@@ -2126,12 +2181,13 @@ void amf_app::ue_context_to_json(
   ue_cxt_json["blocks"] = nlohmann::json::array();
 
   // TODO: block-common
-  nlohmann::json block_common  = {};
-  block_common["Content-Id"]   = "common";
-  block_common["Content-Type"] = "application/json";
-  block_common["content"]      = {};
-  block_common["content"]["supi"] =
-      "imsi-208950000000031";  // TODO: remove hardcoded value;
+  nlohmann::json block_common         = {};
+  block_common["Content-Id"]          = "common";
+  block_common["Content-Type"]        = "application/json";
+  block_common["content"]             = {};
+  block_common["content"]["supi"]     = ue_cxt.getSupi();
+  block_common["content"]["SeafData"] = {};
+  to_json(block_common["content"]["SeafData"], ue_cxt.getSeafData());
   // TODO: drxParameter
   // TODO: subUeAmbr
   // TODO: 5GMM Capability
