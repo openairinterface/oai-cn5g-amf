@@ -897,11 +897,12 @@ void amf_app::handle_itti_message(itti_sbi_amf_configuration& itti_msg) {
       itti_msg.http_version);
 
   // Process the request and trigger the response from AMF API Server
-  nlohmann::json response_data = {};
-  response_data["content"]     = {};
-  if (read_amf_configuration(response_data["content"])) {
+  nlohmann::json response_data       = {};
+  response_data[kSbiResponseContent] = {};
+  if (read_amf_configuration(response_data[kSbiResponseContent])) {
     Logger::amf_app().debug(
-        "AMF configuration:\n %s", response_data["content"].dump().c_str());
+        "AMF configuration:\n %s",
+        response_data[kSbiResponseContent].dump().c_str());
     response_data[kSbiResponseHttpResponseCode] =
         oai::common::sbi::http_status_code::OK;
   } else {
@@ -927,12 +928,13 @@ void amf_app::handle_itti_message(itti_sbi_update_amf_configuration& itti_msg) {
       itti_msg.http_version);
 
   // Process the request and trigger the response from AMF API Server
-  nlohmann::json response_data = {};
-  response_data["content"]     = itti_msg.configuration;
+  nlohmann::json response_data       = {};
+  response_data[kSbiResponseContent] = itti_msg.configuration;
 
-  if (update_amf_configuration(response_data["content"])) {
+  if (update_amf_configuration(response_data[kSbiResponseContent])) {
     Logger::amf_app().debug(
-        "AMF configuration:\n %s", response_data["content"].dump().c_str());
+        "AMF configuration:\n %s",
+        response_data[kSbiResponseContent].dump().c_str());
     response_data[kSbiResponseHttpResponseCode] =
         oai::common::sbi::http_status_code::OK;
 
@@ -2059,12 +2061,15 @@ bool amf_app::prepare_ue_context(
     const std::string& supi, oai::model::amf::UeContext& ue_cxt) {
   // Get UE context
   std::shared_ptr<ue_context> uc = {};
-  if (!supi_2_ue_context(supi, uc)) return false;
-
-  // get NAS context
+  if (!supi_2_ue_context(supi, uc)) {
+    Logger::amf_app().warn("No existed ue_context with SUPI %s", supi);
+    return false;
+  }
+  // Get NAS context
   std::shared_ptr<nas_context> nc = {};
   if (!amf_n1_inst->supi_2_nas_context(supi, nc)) {
-    Logger::amf_n2().warn("No existed nas_context with supi %s", supi);
+    Logger::amf_app().warn("No existed nas_context with SUPI %s", supi);
+    return false;
   }
 
   // Fill UE context info
@@ -2111,16 +2116,16 @@ bool amf_app::prepare_ue_context(
 
   if (nc->security_ctx.has_value()) {
     // TODO: NAS Security Mode
-    // nasDownlinkCount
+    // NasDownlinkCount
     mm_context.setNasDownlinkCount(nc->security_ctx.value().dl_count.seq_num);
-    // TODO: nasUplinkCount
+    // NasUplinkCount
     mm_context.setNasUplinkCount(nc->security_ctx.value().ul_count.seq_num);
   }
 
   // TODO: ueSecurityCapability
   // mm_context.setUeSecurityCapability(nc->ue_security_capability);
 
-  // TODO: allowedNssai
+  // AllowedNssai
   std::vector<oai::model::common::Snssai> allowed_nssai =
       mm_context.getAllowedNssai();
   for (const auto& an : nc->allowed_nssai) {
@@ -2130,6 +2135,7 @@ bool amf_app::prepare_ue_context(
     oai::ngap::ngap_utils::sd_int_to_string_hex(an.sd, sd);
     snssai.setSd(sd);
     // TODO: HplmnSst/Sd
+    allowed_nssai.push_back(snssai);
   }
 
   std::vector<oai::model::amf::MmContext>& mm_context_list =
@@ -2148,79 +2154,89 @@ bool amf_app::prepare_ue_context(
 //------------------------------------------------------------------------------
 void amf_app::ue_context_to_json(
     oai::model::amf::UeContext& ue_cxt, nlohmann::json& ue_cxt_json) {
-  ue_cxt_json["meta"]                    = {};
-  ue_cxt_json["meta"]["tag"]             = {};
-  ue_cxt_json["meta"]["tag"]["recordId"] = nlohmann::json::array();
+  ue_cxt_json[KUdsfMetaDataLabel]                = {};
+  ue_cxt_json[KUdsfMetaDataLabel][KUdsfTagLabel] = {};
+  ue_cxt_json[KUdsfMetaDataLabel][KUdsfTagLabel][KUdsfRecordId] =
+      nlohmann::json::array();
   nlohmann::json record_id = ue_cxt.getSupi();  // UE SUPI, so 1 record per UE
-  ue_cxt_json["meta"]["tag"]["recordId"].push_back(record_id);
-  ue_cxt_json["meta"]["tag"]["ueId"] = nlohmann::json::array();
-  nlohmann::json ue_id               = ue_cxt.getSupi();
-  ue_cxt_json["meta"]["tag"]["ueId"].push_back(ue_id);
+  ue_cxt_json[KUdsfMetaDataLabel][KUdsfTagLabel][KUdsfRecordId].push_back(
+      record_id);
+  ue_cxt_json[KUdsfMetaDataLabel][KUdsfTagLabel][KUdsfUeId] =
+      nlohmann::json::array();
+  nlohmann::json ue_id = ue_cxt.getSupi();
+  ue_cxt_json[KUdsfMetaDataLabel][KUdsfTagLabel][KUdsfUeId].push_back(ue_id);
 
-  ue_cxt_json["meta"]["tag"]["blockId"] = nlohmann::json::array();
-  nlohmann::json block_id               = {};
+  ue_cxt_json[KUdsfMetaDataLabel][KUdsfTagLabel][KUdsfBlockId] =
+      nlohmann::json::array();
+  nlohmann::json block_id = {};
   // Common info
-  block_id["id"]   = "common";
-  block_id["type"] = "common info";
-  ue_cxt_json["meta"]["tag"]["blockId"].push_back(block_id);
+  block_id[KUdsfBlockIdId]   = "common";
+  block_id[KUdsfBlockIdType] = "common info";
+  ue_cxt_json[KUdsfMetaDataLabel][KUdsfTagLabel][KUdsfBlockId].push_back(
+      block_id);
 
   // Mobility management context
-  block_id["id"]   = "MmContext";
-  block_id["type"] = "MmContext";
-  ue_cxt_json["meta"]["tag"]["blockId"].push_back(block_id);
+  block_id[KUdsfBlockIdId]   = "MmContext";
+  block_id[KUdsfBlockIdType] = "MmContext";
+  ue_cxt_json[KUdsfMetaDataLabel][KUdsfTagLabel][KUdsfBlockId].push_back(
+      block_id);
 
   // Session management context
-  block_id["id"]   = "PduSessionContext";
-  block_id["type"] = "PduSessionContext";
-  ue_cxt_json["meta"]["tag"]["blockId"].push_back(block_id);
+  block_id[KUdsfBlockIdId]   = "PduSessionContext";
+  block_id[KUdsfBlockIdType] = "PduSessionContext";
+  ue_cxt_json[KUdsfMetaDataLabel][KUdsfTagLabel][KUdsfBlockId].push_back(
+      block_id);
 
-  ue_cxt_json["meta"]["callbackReference"] = "URI: to be filled";
-  ue_cxt_json["meta"]["ttl"]               = "100";
+  ue_cxt_json[KUdsfMetaDataLabel]["callbackReference"] = "URI: to be filled";
+  ue_cxt_json[KUdsfMetaDataLabel]["ttl"]               = "100";
 
   // Blocks
-  ue_cxt_json["blocks"] = nlohmann::json::array();
+  ue_cxt_json[KUdsfBlocksLabel] = nlohmann::json::array();
 
   // TODO: block-common
-  nlohmann::json block_common         = {};
-  block_common["Content-Id"]          = "common";
-  block_common["Content-Type"]        = "application/json";
-  block_common["content"]             = {};
-  block_common["content"]["supi"]     = ue_cxt.getSupi();
-  block_common["content"]["SeafData"] = {};
-  to_json(block_common["content"]["SeafData"], ue_cxt.getSeafData());
+  nlohmann::json block_common            = {};
+  block_common[KUdsfBlockContentId]      = "common";
+  block_common[KUdsfBlockContentType]    = kSbiContentTypeApplicationJson;
+  block_common[KUdsfBlockContentContent] = {};
+  block_common[KUdsfBlockContentContent]["supi"]     = ue_cxt.getSupi();
+  block_common[KUdsfBlockContentContent]["SeafData"] = {};
+  to_json(
+      block_common[KUdsfBlockContentContent]["SeafData"], ue_cxt.getSeafData());
   // TODO: drxParameter
   // TODO: subUeAmbr
   // TODO: 5GMM Capability
   // TODO: eventSubscriptionList
-  ue_cxt_json["blocks"].push_back(block_common);
+  ue_cxt_json[KUdsfBlocksLabel].push_back(block_common);
 
   // Block MmContext
-  nlohmann::json block_mm_context  = {};
-  block_mm_context["Content-Id"]   = "MmContext";
-  block_mm_context["Content-Type"] = "application/json";
-  block_mm_context["content"]      = nlohmann::json::array();
+  nlohmann::json block_mm_context            = {};
+  block_mm_context[KUdsfBlockContentId]      = "MmContext";
+  block_mm_context[KUdsfBlockContentType]    = kSbiContentTypeApplicationJson;
+  block_mm_context[KUdsfBlockContentContent] = nlohmann::json::array();
   std::vector<oai::model::amf::MmContext>& mm_context_list =
       ue_cxt.getMmContextList();
   for (auto const& cxt : mm_context_list) {
     nlohmann::json mm_context_json = {};
     to_json(mm_context_json, cxt);
-    block_mm_context["content"].push_back(mm_context_json);
+    block_mm_context[KUdsfBlockContentContent].push_back(mm_context_json);
   }
-  ue_cxt_json["blocks"].push_back(block_mm_context);
+  ue_cxt_json[KUdsfBlocksLabel].push_back(block_mm_context);
 
   // Block Session management context
-  nlohmann::json block_pdu_session_context  = {};
-  block_pdu_session_context["Content-Id"]   = "PduSessionContext";
-  block_pdu_session_context["Content-Type"] = "application/json";
-  block_pdu_session_context["content"]      = nlohmann::json::array();
+  nlohmann::json block_pdu_session_context       = {};
+  block_pdu_session_context[KUdsfBlockContentId] = "PduSessionContext";
+  block_pdu_session_context[KUdsfBlockContentType] =
+      kSbiContentTypeApplicationJson;
+  block_pdu_session_context[KUdsfBlockContentContent] = nlohmann::json::array();
   std::vector<oai::model::amf::PduSessionContext>& pdu_session_context_list =
       ue_cxt.getSessionContextList();
   for (auto const& cxt : pdu_session_context_list) {
     nlohmann::json pdu_session_context_json = {};
     to_json(pdu_session_context_json, cxt);
-    block_pdu_session_context["content"].push_back(pdu_session_context_json);
+    block_pdu_session_context[KUdsfBlockContentContent].push_back(
+        pdu_session_context_json);
   }
-  ue_cxt_json["blocks"].push_back(block_pdu_session_context);
+  ue_cxt_json[KUdsfBlocksLabel].push_back(block_pdu_session_context);
 }
 
 //------------------------------------------------------------------------------

@@ -87,12 +87,26 @@ constexpr auto DEFAULT_SUPI_TYPE =
 constexpr auto DEFAULT_SST = 1;
 constexpr auto DEFAULT_DNN = "default";
 
-constexpr auto kSbiResponseJsonData         = "jsonData";
-constexpr auto kSbiResponseHttpResponseCode = "httpResponseCode";
+constexpr auto kSbiResponseJsonData           = "jsonData";
+constexpr auto kSbiResponseHttpResponseCode   = "httpResponseCode";
+constexpr auto kSbiResponseContent            = "content";
+constexpr auto kSbiContentTypeApplicationJson = "application/json";
 
 // For UDSF
-constexpr auto DEFAULT_REALM_ID   = "oai";
-constexpr auto DEFAULT_STORAGE_ID = "amf";
+constexpr auto kUdsfRealmId       = "oai";
+constexpr auto kUdsfStorageId     = "amf";
+constexpr auto KUdsfMetaDataLabel = "meta";
+constexpr auto KUdsfTagLabel      = "tag";
+constexpr auto KUdsfBlocksLabel   = "blocks";
+constexpr auto KUdsfRecordId      = "recordId";
+constexpr auto KUdsfUeId          = "ueId";
+constexpr auto KUdsfBlockId       = "blockId";
+constexpr auto KUdsfBlockIdId     = "id";
+constexpr auto KUdsfBlockIdType   = "type";
+
+constexpr auto KUdsfBlockContentId      = "Content-Id";
+constexpr auto KUdsfBlockContentType    = "Content-Type";
+constexpr auto KUdsfBlockContentContent = "content";
 
 typedef struct auth_conf_s {
   std::string mysql_server;

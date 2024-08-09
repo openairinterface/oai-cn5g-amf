@@ -511,7 +511,7 @@ std::string amf_config::get_udsf_records_uri() {
       amf_sbi_helper::UdsfDrRecordCRUDApiList, fmr_format_str);
   return udsf_addr.uri_root + amf_sbi_helper::UdsfDrBase +
          udsf_addr.api_version +
-         fmt::format(fmr_format_str, DEFAULT_REALM_ID, DEFAULT_STORAGE_ID);
+         fmt::format(fmr_format_str, kUdsfRealmId, kUdsfStorageId);
 }
 
 //------------------------------------------------------------------------------
@@ -521,8 +521,7 @@ std::string amf_config::get_udsf_record_id_uri(const std::string& record_id) {
       amf_sbi_helper::UdsfDrRecordCRUDApi, fmr_format_str);
   return udsf_addr.uri_root + amf_sbi_helper::UdsfDrBase +
          udsf_addr.api_version +
-         fmt::format(
-             fmr_format_str, DEFAULT_REALM_ID, DEFAULT_STORAGE_ID, record_id);
+         fmt::format(fmr_format_str, kUdsfRealmId, kUdsfStorageId, record_id);
 }
 
 }  // namespace oai::config
