@@ -60,6 +60,7 @@ class itti_nas_signalling_establishment_request : public itti_msg_amf_app {
     ueCtxReq             = 0;
     cgi                  = {};
     tai                  = {};
+    guami                = {};
     nas_buf              = nullptr;
     is_5g_s_tmsi_present = false;
     _5g_s_tmsi           = {};
@@ -71,6 +72,7 @@ class itti_nas_signalling_establishment_request : public itti_msg_amf_app {
     ueCtxReq             = i.ueCtxReq;
     cgi                  = i.cgi;
     tai                  = i.tai;
+    guami                = i.guami;
     nas_buf              = i.nas_buf;
     is_5g_s_tmsi_present = i.is_5g_s_tmsi_present;
     _5g_s_tmsi           = i._5g_s_tmsi;
@@ -80,6 +82,7 @@ class itti_nas_signalling_establishment_request : public itti_msg_amf_app {
   int ueCtxReq;
   NrCgi_t cgi;
   Tai_t tai;
+  guami_full_format_t guami;
   bstring nas_buf;
   bool is_5g_s_tmsi_present;
   std::string _5g_s_tmsi;
