@@ -595,6 +595,8 @@ void amf_n1::nas_signalling_establishment_request_handle(
       Logger::amf_n1().debug(
           "Received Registration Request message, handling...");
       uint8_t cause = k5gmmCauseProtocolErrorUnspecified;
+      if (nc && nc->security_ctx.has_value())
+        nc->security_ctx.value().ul_count.seq_num = ulCount;
       if (!registration_request_handle(
               nc, ran_ue_ngap_id, amf_ue_ngap_id, snn, plain_msg, cause)) {
         // Send Registration Reject with appropriate cause
