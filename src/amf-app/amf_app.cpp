@@ -2083,15 +2083,23 @@ bool amf_app::prepare_ue_context(
   // SeafData
   oai::model::amf::SeafData seaf_data = {};
   oai::model::amf::NgKsi ngksi        = {};
-  // ngksi.setTsc((0b1000 & nc->ngksi)>>3); //TODO: use ScType - NATIVE
+  oai::model::amf::ScType sc_type     = {};
+  uint8_t tsc                         = (0b1000 & nc->ngksi) >> 3;
+  if (tsc == 0)
+    sc_type.setEnumValue(ScType_anyOf::eScType_anyOf::NATIVE);
+  else
+    sc_type.setEnumValue(ScType_anyOf::eScType_anyOf::MAPPED);
+
+  ngksi.setTsc(sc_type);
   ngksi.setKsi(0b00000111 & nc->ngksi);
   seaf_data.setNgKsi(ngksi);
   if (nc->security_ctx.has_value()) {
     uint8_t kamf[AUTH_VECTOR_LENGTH_OCTETS];
     if (nc->get_kamf(nc->security_ctx.value().vector_pointer, kamf)) {
       oai::model::amf::KeyAmf key_amf          = {};
-      oai::model::amf::KeyAmfType key_amf_type = {};  // KAMF
-      // TODO: key_amf.setKeyType(value);
+      oai::model::amf::KeyAmfType key_amf_type = {};
+      key_amf_type.setEnumValue(KeyAmfType_anyOf::eKeyAmfType_anyOf::KAMF);
+      key_amf.setKeyType(key_amf_type);
       // TODO: key_amf.setKeyVal(value);
       seaf_data.setKeyAmf(key_amf);
     }
@@ -2166,24 +2174,25 @@ void amf_app::ue_context_to_json(
   nlohmann::json ue_id = ue_cxt.getSupi();
   ue_cxt_json[KUdsfMetaDataLabel][KUdsfTagLabel][KUdsfUeId].push_back(ue_id);
 
+  // Block Id
   ue_cxt_json[KUdsfMetaDataLabel][KUdsfTagLabel][KUdsfBlockId] =
       nlohmann::json::array();
   nlohmann::json block_id = {};
   // Common info
-  block_id[KUdsfBlockIdId]   = "common";
-  block_id[KUdsfBlockIdType] = "common info";
+  block_id[KUdsfBlockIdId]   = KUdsfBlockIdCommon;
+  block_id[KUdsfBlockIdType] = KUdsfBlockIdCommon;
   ue_cxt_json[KUdsfMetaDataLabel][KUdsfTagLabel][KUdsfBlockId].push_back(
       block_id);
 
   // Mobility management context
-  block_id[KUdsfBlockIdId]   = "MmContext";
-  block_id[KUdsfBlockIdType] = "MmContext";
+  block_id[KUdsfBlockIdId]   = KUdsfBlockIdMmContext;
+  block_id[KUdsfBlockIdType] = KUdsfBlockIdMmContext;
   ue_cxt_json[KUdsfMetaDataLabel][KUdsfTagLabel][KUdsfBlockId].push_back(
       block_id);
 
   // Session management context
-  block_id[KUdsfBlockIdId]   = "PduSessionContext";
-  block_id[KUdsfBlockIdType] = "PduSessionContext";
+  block_id[KUdsfBlockIdId]   = KUdsfBlockIdPduSessionContext;
+  block_id[KUdsfBlockIdType] = KUdsfBlockIdPduSessionContext;
   ue_cxt_json[KUdsfMetaDataLabel][KUdsfTagLabel][KUdsfBlockId].push_back(
       block_id);
 
@@ -2195,7 +2204,7 @@ void amf_app::ue_context_to_json(
 
   // TODO: block-common
   nlohmann::json block_common            = {};
-  block_common[KUdsfBlockContentId]      = "common";
+  block_common[KUdsfBlockContentId]      = KUdsfBlockIdCommon;
   block_common[KUdsfBlockContentType]    = kSbiContentTypeApplicationJson;
   block_common[KUdsfBlockContentContent] = {};
   block_common[KUdsfBlockContentContent]["supi"]     = ue_cxt.getSupi();
@@ -2210,7 +2219,7 @@ void amf_app::ue_context_to_json(
 
   // Block MmContext
   nlohmann::json block_mm_context            = {};
-  block_mm_context[KUdsfBlockContentId]      = "MmContext";
+  block_mm_context[KUdsfBlockContentId]      = KUdsfBlockIdMmContext;
   block_mm_context[KUdsfBlockContentType]    = kSbiContentTypeApplicationJson;
   block_mm_context[KUdsfBlockContentContent] = nlohmann::json::array();
   std::vector<oai::model::amf::MmContext>& mm_context_list =
@@ -2223,8 +2232,9 @@ void amf_app::ue_context_to_json(
   ue_cxt_json[KUdsfBlocksLabel].push_back(block_mm_context);
 
   // Block Session management context
-  nlohmann::json block_pdu_session_context       = {};
-  block_pdu_session_context[KUdsfBlockContentId] = "PduSessionContext";
+  nlohmann::json block_pdu_session_context = {};
+  block_pdu_session_context[KUdsfBlockContentId] =
+      KUdsfBlockIdPduSessionContext;
   block_pdu_session_context[KUdsfBlockContentType] =
       kSbiContentTypeApplicationJson;
   block_pdu_session_context[KUdsfBlockContentContent] = nlohmann::json::array();

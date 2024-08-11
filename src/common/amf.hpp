@@ -104,6 +104,10 @@ constexpr auto KUdsfBlockId       = "blockId";
 constexpr auto KUdsfBlockIdId     = "id";
 constexpr auto KUdsfBlockIdType   = "type";
 
+constexpr auto KUdsfBlockIdCommon            = "common";
+constexpr auto KUdsfBlockIdMmContext         = "MmContext";
+constexpr auto KUdsfBlockIdPduSessionContext = "PduSessionContext";
+
 constexpr auto KUdsfBlockContentId      = "Content-Id";
 constexpr auto KUdsfBlockContentType    = "Content-Type";
 constexpr auto KUdsfBlockContentContent = "content";
