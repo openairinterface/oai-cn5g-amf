@@ -384,7 +384,7 @@ void amf_sbi::handle_itti_message(itti_nsmf_pdusession_create_sm_context& smf) {
   // parse binary dnn and store
   std::string dnn = DEFAULT_DNN;  // If DNN doesn't available, use "default"
   if ((smf.dnn != nullptr) && (blength(smf.dnn) > 0)) {
-    char* tmp = amf_conv::bstring2charString(smf.dnn);
+    char* tmp = amf_conv::bstring_2_char_string(smf.dnn);
     dnn       = tmp;
     oai::utils::utils::free_wrapper((void**) &tmp);
   }

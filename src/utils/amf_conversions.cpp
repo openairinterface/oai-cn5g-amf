@@ -83,7 +83,7 @@ unsigned char* amf_conv::format_string_as_hex(std::string str) {
 }
 
 //------------------------------------------------------------------------------
-char* amf_conv::bstring2charString(bstring b) {
+char* amf_conv::bstring_2_char_string(bstring b) {
   if (!b) return nullptr;
   char* buf = (char*) calloc(1, blength(b) + 1);
   if (!buf) return nullptr;
