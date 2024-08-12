@@ -46,6 +46,8 @@ constexpr auto CURL_MIME_BOUNDARY = "----Boundary";
 
 constexpr uint64_t INVALID_AMF_UE_NGAP_ID = 0x010000000000;  // 2^40
 
+constexpr uint8_t kAuthVectorLengthOctets = 32;
+
 // Event Subscription IDs)
 typedef uint32_t evsub_id_t;
 #define EVSUB_ID_FMT "0x%" PRIx32

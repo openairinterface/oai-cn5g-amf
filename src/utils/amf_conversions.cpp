@@ -206,3 +206,39 @@ std::string amf_conv::get_imsi(
     const std::string& mcc, const std::string& mnc, const std::string& msin) {
   return {mcc + mnc + msin};
 }
+
+//------------------------------------------------------------------------------
+std::string amf_conv::key_amf_to_string(uint8_t kamf[kAuthVectorLengthOctets]) {
+  std::string key_amf_str = {};
+  for (uint i = 0; i < kAuthVectorLengthOctets; i++) {
+    std::string tmp = {};
+    int_to_string_hex(kamf[i], tmp, 2);
+    key_amf_str.append(tmp);
+  }
+  return key_amf_str;
+}
+
+//------------------------------------------------------------------------------
+bool amf_conv::string_to_key_amf(
+    const std::string str, uint8_t (&kamf)[kAuthVectorLengthOctets]) {
+  if (str.length() != 2 * kAuthVectorLengthOctets) return false;
+  bool result = true;
+  for (uint i = 0; i < kAuthVectorLengthOctets; i++) {
+    uint32_t tmp = 0;
+    if (!string_hex_to_int(str.substr(2 * i, 2), tmp)) {
+      result = false;
+      break;
+    }
+    kamf[i] = tmp;
+  }
+
+  // Clear kamf if failed
+  if (!result) {
+    for (uint i = 0; i < kAuthVectorLengthOctets; i++) {
+      kamf[i] = 0;
+    }
+    return false;
+  }
+
+  return true;
+}

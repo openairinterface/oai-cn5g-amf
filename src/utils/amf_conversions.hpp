@@ -31,6 +31,7 @@
 #include "bstrlib.h"
 #include "conversions.hpp"
 #include "utils.hpp"
+#include "amf.hpp"
 
 extern "C" {
 #include "BIT_STRING.h"
@@ -61,5 +62,9 @@ class amf_conv : public oai::utils::conv {
   static std::string imsi_to_supi(const std::string& imsi);
   static std::string get_imsi(
       const std::string& mcc, const std::string& mnc, const std::string& msin);
+
+  static std::string key_amf_to_string(uint8_t kamf[kAuthVectorLengthOctets]);
+  static bool string_to_key_amf(
+      const std::string str, uint8_t (&kamf)[kAuthVectorLengthOctets]);
 };
 #endif /* FILE_CONVERSIONS_HPP_SEEN */

@@ -2100,7 +2100,7 @@ bool amf_app::prepare_ue_context(
       oai::model::amf::KeyAmfType key_amf_type = {};
       key_amf_type.setEnumValue(KeyAmfType_anyOf::eKeyAmfType_anyOf::KAMF);
       key_amf.setKeyType(key_amf_type);
-      // TODO: key_amf.setKeyVal(value);
+      key_amf.setKeyVal(amf_conv::key_amf_to_string(kamf));
       seaf_data.setKeyAmf(key_amf);
     }
   }
