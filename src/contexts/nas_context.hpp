@@ -22,11 +22,12 @@
 #ifndef _AMF_NAS_CONTEXT_H_
 #define _AMF_NAS_CONTEXT_H_
 
+#include "3gpp_24.501.hpp"
+#include "Struct.hpp"
 #include "UeSecurityCapability.hpp"
 #include "authentication_algorithms_with_5gaka.hpp"
 #include "itti.hpp"
 #include "nas_security_context.hpp"
-#include "Struct.hpp"
 
 typedef enum {
   _5GMM_STATE_MIN     = 0,
@@ -71,7 +72,7 @@ class nas_context {
   std::optional<oai::nas::IMEI_IMEISV_t> imeisv;
   std::optional<std::string> guti;
 
-  std::uint8_t _5gmm_capability[13];
+  std::uint8_t _5gmm_capability[k5gmmCapabilityMaximumLength - 2];
   oai::nas::UeSecurityCapability ue_security_capability;
 
   std::vector<oai::nas::SNSSAI_t> requested_nssai;

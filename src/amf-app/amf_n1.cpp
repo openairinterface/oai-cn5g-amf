@@ -1846,11 +1846,11 @@ bool amf_n1::registration_request_handle(
 
   // Get 5GMM Capability IE (optional), not
   // included for periodic registration updating procedure
-  uint8_t _5g_mm_cap = 0;
-  if (!registration_request->Get5gmmCapability(_5g_mm_cap)) {
-    Logger::amf_n1().warn("No Optional IE 5GMMCapability available");
-  }
-  nc->_5gmm_capability[0] = _5g_mm_cap;
+  std::array<uint8_t, 13> _5g_mm_cap =
+      registration_request->Get5gmmCapability();
+  std::copy(
+      std::begin(_5g_mm_cap), std::end(_5g_mm_cap),
+      std::begin(nc->_5gmm_capability));
 
   // Get UE Security Capability IE (optional), not included for periodic
   // registration updating procedure
