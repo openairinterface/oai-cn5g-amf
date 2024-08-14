@@ -72,7 +72,7 @@ class nas_context {
   std::optional<oai::nas::IMEI_IMEISV_t> imeisv;
   std::optional<std::string> guti;
 
-  std::uint8_t _5gmm_capability[k5gmmCapabilityMaximumLength - 2];
+  std::array<uint8_t, k5gmmCapabilityContentMaximumLength> _5gmm_capability;
   oai::nas::UeSecurityCapability ue_security_capability;
 
   std::vector<oai::nas::SNSSAI_t> requested_nssai;

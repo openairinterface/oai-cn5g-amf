@@ -208,34 +208,35 @@ std::string amf_conv::get_imsi(
 }
 
 //------------------------------------------------------------------------------
-std::string amf_conv::key_amf_to_string(uint8_t kamf[kAuthVectorLengthOctets]) {
-  std::string key_amf_str = {};
-  for (uint i = 0; i < kAuthVectorLengthOctets; i++) {
+std::string amf_conv::array_uint8_to_string(
+    const uint8_t* const arr, uint8_t size) {
+  std::string str = {};
+  for (uint i = 0; i < size; i++) {
     std::string tmp = {};
-    int_to_string_hex(kamf[i], tmp, 2);
-    key_amf_str.append(tmp);
+    int_to_string_hex(arr[i], tmp, 2);
+    str.append(tmp);
   }
-  return key_amf_str;
+  return str;
 }
 
 //------------------------------------------------------------------------------
-bool amf_conv::string_to_key_amf(
-    const std::string str, uint8_t (&kamf)[kAuthVectorLengthOctets]) {
-  if (str.length() != 2 * kAuthVectorLengthOctets) return false;
+bool amf_conv::string_to_array_uint8(
+    const std::string str, uint8_t* arr, uint8_t size) {
+  if (str.length() != 2 * size) return false;
   bool result = true;
-  for (uint i = 0; i < kAuthVectorLengthOctets; i++) {
+  for (uint i = 0; i < size; i++) {
     uint32_t tmp = 0;
     if (!string_hex_to_int(str.substr(2 * i, 2), tmp)) {
       result = false;
       break;
     }
-    kamf[i] = tmp;
+    arr[i] = tmp;
   }
 
-  // Clear kamf if failed
+  // Clear array's content if there's smth wrong
   if (!result) {
-    for (uint i = 0; i < kAuthVectorLengthOctets; i++) {
-      kamf[i] = 0;
+    for (uint i = 0; i < size; i++) {
+      arr[i] = 0;
     }
     return false;
   }

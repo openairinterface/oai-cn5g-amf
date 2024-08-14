@@ -1846,11 +1846,7 @@ bool amf_n1::registration_request_handle(
 
   // Get 5GMM Capability IE (optional), not
   // included for periodic registration updating procedure
-  std::array<uint8_t, 13> _5g_mm_cap =
-      registration_request->Get5gmmCapability();
-  std::copy(
-      std::begin(_5g_mm_cap), std::end(_5g_mm_cap),
-      std::begin(nc->_5gmm_capability));
+  nc->_5gmm_capability = registration_request->Get5gmmCapability();
 
   // Get UE Security Capability IE (optional), not included for periodic
   // registration updating procedure

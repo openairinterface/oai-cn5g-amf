@@ -62,8 +62,20 @@ class amf_conv : public oai::utils::conv {
   static std::string imsi_to_supi(const std::string& imsi);
   static std::string get_imsi(
       const std::string& mcc, const std::string& mnc, const std::string& msin);
-  static std::string key_amf_to_string(uint8_t kamf[kAuthVectorLengthOctets]);
-  static bool string_to_key_amf(
-      const std::string str, uint8_t (&kamf)[kAuthVectorLengthOctets]);
+  static std::string array_uint8_to_string(
+      const uint8_t* const arr, uint8_t size);
+  static bool string_to_array_uint8(
+      const std::string str, uint8_t* arr, uint8_t size);
+
+  template<size_t N>
+  static std::string array_uint8_to_string(const std::array<uint8_t, N>& arr) {
+    std::string str = {};
+    for (auto i : arr) {
+      std::string tmp = {};
+      int_to_string_hex(i, tmp, 2);
+      str.append(tmp);
+    }
+    return str;
+  }
 };
 #endif /* FILE_CONVERSIONS_HPP_SEEN */

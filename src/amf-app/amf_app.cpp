@@ -2076,7 +2076,9 @@ bool amf_app::prepare_ue_context(
   ue_cxt.setSupi(uc->supi);
   // TODO: drxParameter
   // TODO: subUeAmbr
-  // TODO: 5GMM Capability
+  // 5GMM Capability
+  ue_cxt.set5gMmCapability(
+      amf_conv::array_uint8_to_string(nc->_5gmm_capability));
   // TODO: eventSubscriptionList
   // TODO: UE-AMBR in serving network
 
@@ -2100,7 +2102,8 @@ bool amf_app::prepare_ue_context(
       oai::model::amf::KeyAmfType key_amf_type = {};
       key_amf_type.setEnumValue(KeyAmfType_anyOf::eKeyAmfType_anyOf::KAMF);
       key_amf.setKeyType(key_amf_type);
-      key_amf.setKeyVal(amf_conv::key_amf_to_string(kamf));
+      key_amf.setKeyVal(
+          amf_conv::array_uint8_to_string(kamf, kAuthVectorLengthOctets));
       seaf_data.setKeyAmf(key_amf);
     }
   }
@@ -2122,16 +2125,17 @@ bool amf_app::prepare_ue_context(
           _3GPP_ACCESS);  // TODO: only support 3GPP Access for now
   mm_context.setAccessType(access_type);
 
+  // TODO: NAS Security Mode
+
   if (nc->security_ctx.has_value()) {
-    // TODO: NAS Security Mode
     // NasDownlinkCount
     mm_context.setNasDownlinkCount(nc->security_ctx.value().dl_count.seq_num);
     // NasUplinkCount
     mm_context.setNasUplinkCount(nc->security_ctx.value().ul_count.seq_num);
   }
-
-  // TODO: ueSecurityCapability
-  // mm_context.setUeSecurityCapability(nc->ue_security_capability);
+  // UE Security Capability
+  mm_context.setUeSecurityCapability(
+      amf_conv::array_uint8_to_string(nc->ue_security_capability.GetValue()));
 
   // AllowedNssai
   std::vector<oai::model::common::Snssai> allowed_nssai =
