@@ -2084,17 +2084,19 @@ bool amf_app::prepare_ue_context(
 
   // SeafData
   oai::model::amf::SeafData seaf_data = {};
-  oai::model::amf::NgKsi ngksi        = {};
-  oai::model::amf::ScType sc_type     = {};
-  uint8_t tsc                         = (0b1000 & nc->ngksi) >> 3;
+  // SeafData: NgKSI
+  oai::model::amf::NgKsi ngksi    = {};
+  oai::model::amf::ScType sc_type = {};
+  uint8_t tsc                     = (0b1000 & nc->ngksi) >> 3;
   if (tsc == 0)
     sc_type.setEnumValue(ScType_anyOf::eScType_anyOf::NATIVE);
   else
     sc_type.setEnumValue(ScType_anyOf::eScType_anyOf::MAPPED);
-
   ngksi.setTsc(sc_type);
   ngksi.setKsi(0b00000111 & nc->ngksi);
   seaf_data.setNgKsi(ngksi);
+
+  // SeafData: Key AMF
   if (nc->security_ctx.has_value()) {
     uint8_t kamf[AUTH_VECTOR_LENGTH_OCTETS];
     if (nc->get_kamf(nc->security_ctx.value().vector_pointer, kamf)) {
@@ -2155,10 +2157,38 @@ bool amf_app::prepare_ue_context(
   mm_context_list.push_back(mm_context);
 
   // PDU Session Context
-  oai::model::amf::PduSessionContext session_context = {};
   std::vector<PduSessionContext>& session_context_list =
       ue_cxt.getSessionContextList();
-  session_context_list.push_back(session_context);
+
+  std::vector<std::shared_ptr<pdu_session_context>> sessions_ctx;
+
+  if (uc->get_pdu_sessions_context(sessions_ctx)) {
+    for (auto session : sessions_ctx) {
+      oai::model::amf::PduSessionContext session_context = {};
+      // PDU Session Id
+      session_context.setPduSessionId(session->pdu_session_id);
+      // TODO: SmContextRef
+      session_context.setSmContextRef(
+          session->smf_info.uri_root + "/" + session->smf_info.api_version +
+          "/" + session->smf_info.context_location);
+      // SNSSAI
+      oai::model::common::Snssai snssai = {};
+      snssai.setSst(session->snssai.sst);
+      snssai.setSd(session->snssai.sd);
+      session_context.setSNssai(snssai);
+      // DNN
+      session_context.setDnn(session->dnn);
+      // AccessType
+      oai::model::common::AccessType access_type = {};
+      access_type.setValue(
+          oai::model::common::AccessType::eAccessType::_3GPP_ACCESS);
+      session_context.setAccessType(access_type);
+      // TODO: AllocatedEbiList
+      // TODO: NsInstance
+      // TODO: smfServiceInstanceId
+      session_context_list.push_back(session_context);
+    }
+  }
 
   return true;
 }
