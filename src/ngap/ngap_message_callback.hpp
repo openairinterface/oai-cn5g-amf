@@ -67,7 +67,7 @@ int ngap_amf_handle_ng_setup_request(
       "[gNB Assoc Id %d] Sending ITTI NG Setup Request message to TASK_AMF_N2",
       assoc_id);
   ngap_utils::print_asn_msg(&asn_DEF_Ngap_NGAP_PDU, message_p);
-  NgSetupRequestMsg* ng_setup_req = new NgSetupRequestMsg();
+  auto ng_setup_req = std::make_shared<NgSetupRequestMsg>();
   if (!ng_setup_req->decode(message_p)) {
     Logger::ngap().error("Decoding NGSetupRequest message error");
     return RETURNerror;
@@ -75,9 +75,9 @@ int ngap_amf_handle_ng_setup_request(
 
   auto itti_msg =
       std::make_shared<itti_ng_setup_request>(TASK_NGAP, TASK_AMF_N2);
-  itti_msg->assoc_id   = assoc_id;
-  itti_msg->stream     = stream;
-  itti_msg->ngSetupReq = ng_setup_req;
+  itti_msg->assoc_id     = assoc_id;
+  itti_msg->stream       = stream;
+  itti_msg->ng_setup_req = ng_setup_req;
 
   int ret = itti_inst->send_msg(itti_msg);
   if (0 != ret) {
@@ -116,7 +116,7 @@ int ngap_amf_handle_initial_ue_message(
       assoc_id);
 
   ngap_utils::print_asn_msg(&asn_DEF_Ngap_NGAP_PDU, message_p);
-  InitialUeMessageMsg* init_ue_msg = new InitialUeMessageMsg();
+  auto init_ue_msg = std::make_shared<InitialUeMessageMsg>();
   if (!init_ue_msg->decode(message_p)) {
     Logger::ngap().error("Decoding InitialUEMessage error");
     return RETURNerror;
@@ -124,9 +124,9 @@ int ngap_amf_handle_initial_ue_message(
 
   auto itti_msg =
       std::make_shared<itti_initial_ue_message>(TASK_NGAP, TASK_AMF_N2);
-  itti_msg->assoc_id  = assoc_id;
-  itti_msg->stream    = stream;
-  itti_msg->initUeMsg = init_ue_msg;
+  itti_msg->assoc_id        = assoc_id;
+  itti_msg->stream          = stream;
+  itti_msg->init_ue_message = init_ue_msg;
 
   int ret = itti_inst->send_msg(itti_msg);
   if (0 != ret) {
@@ -145,7 +145,7 @@ int ngap_amf_handle_uplink_nas_transport(
   Logger::ngap().debug(
       "Sending ITTI Uplink NAS Transport message to TASK_AMF_N2");
   ngap_utils::print_asn_msg(&asn_DEF_Ngap_NGAP_PDU, message_p);
-  UplinkNasTransportMsg* uplink_nas_transport = new UplinkNasTransportMsg();
+  auto uplink_nas_transport = std::make_shared<UplinkNasTransportMsg>();
   if (!uplink_nas_transport->decode(message_p)) {
     Logger::ngap().error("Decoding UplinkNasTransport message error");
     return RETURNerror;
@@ -155,7 +155,7 @@ int ngap_amf_handle_uplink_nas_transport(
       std::make_shared<itti_ul_nas_transport>(TASK_NGAP, TASK_AMF_N2);
   itti_msg->assoc_id = assoc_id;
   itti_msg->stream   = stream;
-  itti_msg->ulNas    = uplink_nas_transport;
+  itti_msg->ul_nas   = uplink_nas_transport;
 
   int ret = itti_inst->send_msg(itti_msg);
   if (0 != ret) {
@@ -182,8 +182,8 @@ int ngap_amf_handle_initial_context_setup_response(
     struct Ngap_NGAP_PDU* message_p) {
   Logger::ngap().debug("Handling Initial Context Setup Response");
 
-  InitialContextSetupResponseMsg* init_cxt_setup_response =
-      new InitialContextSetupResponseMsg();
+  auto init_cxt_setup_response =
+      std::make_unique<InitialContextSetupResponseMsg>();
   if (!init_cxt_setup_response->decode(message_p)) {
     Logger::ngap().error("Decoding InitialContextSetupResponse message error");
     return RETURNerror;
@@ -242,8 +242,8 @@ int ngap_amf_handle_ue_radio_cap_indication(
   Logger::ngap().debug(
       "Sending ITTI UE Radio Capability Indication to TASK_AMF_N2");
 
-  UeRadioCapabilityInfoIndicationMsg* ue_radio_capability_ind =
-      new UeRadioCapabilityInfoIndicationMsg();
+  auto ue_radio_capability_ind =
+      std::make_shared<UeRadioCapabilityInfoIndicationMsg>();
   if (!ue_radio_capability_ind->decode(message_p)) {
     Logger::ngap().error(
         "Decoding UE Radio Capability Indication message error");
@@ -252,10 +252,10 @@ int ngap_amf_handle_ue_radio_cap_indication(
 
   auto itti_msg = std::make_shared<itti_ue_radio_capability_indication>(
       TASK_NGAP, TASK_AMF_N2);
-  itti_msg->assoc_id   = assoc_id;
-  itti_msg->stream     = stream;
-  itti_msg->ueRadioCap = ue_radio_capability_ind;
-  int ret              = itti_inst->send_msg(itti_msg);
+  itti_msg->assoc_id              = assoc_id;
+  itti_msg->stream                = stream;
+  itti_msg->ue_radio_cap_info_ind = ue_radio_capability_ind;
+  int ret                         = itti_inst->send_msg(itti_msg);
 
   if (0 != ret) {
     Logger::ngap().error(
@@ -272,7 +272,7 @@ int ngap_amf_handle_ue_context_release_request(
     struct Ngap_NGAP_PDU* message_p) {
   Logger::ngap().debug(
       "Sending ITTI UE Context Release Request to TASK_AMF_N2");
-  UeContextReleaseRequestMsg* ue_ctx_rel_req = new UeContextReleaseRequestMsg();
+  auto ue_ctx_rel_req = std::make_shared<UeContextReleaseRequestMsg>();
   if (!ue_ctx_rel_req->decode(message_p)) {
     Logger::ngap().error("Decoding UEContextReleaseRequest message error");
     return RETURNerror;
@@ -280,9 +280,9 @@ int ngap_amf_handle_ue_context_release_request(
 
   auto itti_msg =
       std::make_shared<itti_ue_context_release_request>(TASK_NGAP, TASK_AMF_N2);
-  itti_msg->assoc_id = assoc_id;
-  itti_msg->stream   = stream;
-  itti_msg->ueCtxRel = ue_ctx_rel_req;
+  itti_msg->assoc_id       = assoc_id;
+  itti_msg->stream         = stream;
+  itti_msg->ue_ctx_rel_req = ue_ctx_rel_req;
 
   int ret = itti_inst->send_msg(itti_msg);
   if (0 != ret) {
@@ -310,8 +310,7 @@ int ngap_amf_handle_ue_context_release_complete(
   Logger::ngap().debug(
       "Sending ITTI UE Context Release Complete to TASK_AMF_N2");
 
-  UEContextReleaseCompleteMsg* ue_cxt_rel_complete =
-      new UEContextReleaseCompleteMsg();
+  auto ue_cxt_rel_complete = std::make_shared<UEContextReleaseCompleteMsg>();
   if (!ue_cxt_rel_complete->decode(message_p)) {
     Logger::ngap().error("Decoding UEContextReleaseComplete message error");
     return RETURNerror;
@@ -319,9 +318,9 @@ int ngap_amf_handle_ue_context_release_complete(
 
   auto itti_msg = std::make_shared<itti_ue_context_release_complete>(
       TASK_NGAP, TASK_AMF_N2);
-  itti_msg->assoc_id     = assoc_id;
-  itti_msg->stream       = stream;
-  itti_msg->ueCtxRelCmpl = ue_cxt_rel_complete;
+  itti_msg->assoc_id       = assoc_id;
+  itti_msg->stream         = stream;
+  itti_msg->ue_ctx_rel_cpl = ue_cxt_rel_complete;
 
   int ret = itti_inst->send_msg(itti_msg);
   if (0 != ret) {
@@ -349,8 +348,8 @@ int ngap_amf_handle_pdu_session_resource_release_response(
     struct Ngap_NGAP_PDU* message_p) {
   Logger::ngap().debug("Handle PDU Session Resource Release Response");
 
-  PduSessionResourceReleaseResponseMsg* pdu_session_resource_release_response =
-      new PduSessionResourceReleaseResponseMsg();
+  auto pdu_session_resource_release_response =
+      std::make_unique<PduSessionResourceReleaseResponseMsg>();
   if (!pdu_session_resource_release_response->decode(message_p)) {
     Logger::ngap().error(
         "Decoding PduSessionResourceReleaseResponseMsg message error");
@@ -418,8 +417,8 @@ int ngap_amf_handle_pdu_session_resource_setup_response(
     struct Ngap_NGAP_PDU* message_p) {
   Logger::ngap().debug("Handle PDU Session Resource Setup Response");
 
-  PduSessionResourceSetupResponseMsg* pdu_session_resource_setup_resp =
-      new PduSessionResourceSetupResponseMsg();
+  auto pdu_session_resource_setup_resp =
+      std::make_unique<PduSessionResourceSetupResponseMsg>();
   if (!pdu_session_resource_setup_resp->decode(message_p)) {
     Logger::ngap().error(
         "Decoding PduSessionResourceSetupResponseMsg message error");
@@ -712,7 +711,7 @@ int handover_preparation(
   Logger::ngap().debug("Sending ITTI Handover Preparation to TASK_AMF_N2");
 
   ngap_utils::print_asn_msg(&asn_DEF_Ngap_NGAP_PDU, message_p);
-  HandoverRequiredMsg* handover_required = new HandoverRequiredMsg();
+  auto handover_required = std::make_shared<HandoverRequiredMsg>();
   if (!handover_required->decode(message_p)) {
     Logger::ngap().error("Decoding HandoverRequired message error");
     return RETURNerror;
@@ -720,9 +719,9 @@ int handover_preparation(
   auto itti_msg =
       std::make_shared<itti_handover_required>(TASK_NGAP, TASK_AMF_N2);
 
-  itti_msg->assoc_id    = assoc_id;
-  itti_msg->stream      = stream;
-  itti_msg->handoverReq = handover_required;
+  itti_msg->assoc_id     = assoc_id;
+  itti_msg->stream       = stream;
+  itti_msg->handover_req = handover_required;
 
   int ret = itti_inst->send_msg(itti_msg);
   if (0 != ret) {
@@ -758,7 +757,7 @@ int handover_notification(
     struct Ngap_NGAP_PDU* message_p) {
   Logger::ngap().debug("Sending ITTI Handover Notification to TASK_AMF_N2");
   ngap_utils::print_asn_msg(&asn_DEF_Ngap_NGAP_PDU, message_p);
-  HandoverNotifyMsg* handover_notify = new HandoverNotifyMsg();
+  auto handover_notify = std::make_shared<HandoverNotifyMsg>();
   if (!handover_notify->decode(message_p)) {
     Logger::ngap().error("Decoding HandoverNotify message error");
     return RETURNerror;
@@ -766,9 +765,9 @@ int handover_notification(
   auto itti_msg =
       std::make_shared<itti_handover_notify>(TASK_NGAP, TASK_AMF_N2);
 
-  itti_msg->assoc_id       = assoc_id;
-  itti_msg->stream         = stream;
-  itti_msg->handoverNotify = handover_notify;
+  itti_msg->assoc_id        = assoc_id;
+  itti_msg->stream          = stream;
+  itti_msg->handover_notify = handover_notify;
 
   int ret = itti_inst->send_msg(itti_msg);
   if (0 != ret) {
@@ -790,7 +789,7 @@ int handover_request(
       "TASK_AMF_N2");
 
   ngap_utils::print_asn_msg(&asn_DEF_Ngap_NGAP_PDU, message_p);
-  HandoverRequestAck* handover_request_ack = new HandoverRequestAck();
+  auto handover_request_ack = std::make_shared<HandoverRequestAck>();
   if (!handover_request_ack->decode(message_p)) {
     Logger::ngap().error("Decoding Handover Request Acknowledge message error");
     return RETURNerror;
@@ -798,9 +797,9 @@ int handover_request(
 
   auto itti_msg =
       std::make_shared<itti_handover_request_ack>(TASK_NGAP, TASK_AMF_N2);
-  itti_msg->assoc_id           = assoc_id;
-  itti_msg->stream             = stream;
-  itti_msg->handoverRequestAck = handover_request_ack;
+  itti_msg->assoc_id             = assoc_id;
+  itti_msg->stream               = stream;
+  itti_msg->handover_request_ack = handover_request_ack;
 
   int ret = itti_inst->send_msg(itti_msg);
   if (0 != ret) {
@@ -819,7 +818,7 @@ int handover_request_ack(
   Logger::ngap().debug("Handling Handover Request Ack (AMF->AN)");
 
   ngap_utils::print_asn_msg(&asn_DEF_Ngap_NGAP_PDU, message_p);
-  HandoverRequestAck* handover_request_ack = new HandoverRequestAck();
+  auto handover_request_ack = std::make_shared<HandoverRequestAck>();
   if (!handover_request_ack->decode(message_p)) {
     Logger::ngap().error("Decoding Handover Request Acknowledge message error");
     return RETURNerror;
@@ -827,9 +826,9 @@ int handover_request_ack(
 
   auto itti_msg =
       std::make_shared<itti_handover_request_ack>(TASK_NGAP, TASK_AMF_N2);
-  itti_msg->assoc_id           = assoc_id;
-  itti_msg->stream             = stream;
-  itti_msg->handoverRequestAck = handover_request_ack;
+  itti_msg->assoc_id             = assoc_id;
+  itti_msg->stream               = stream;
+  itti_msg->handover_request_ack = handover_request_ack;
 
   int ret = itti_inst->send_msg(itti_msg);
   if (0 != ret) {
@@ -896,7 +895,7 @@ int ng_reset(
   Logger::ngap().debug("Sending ITTI NG Reset to TASK_AMF_N2");
 
   ngap_utils::print_asn_msg(&asn_DEF_Ngap_NGAP_PDU, message_p);
-  NgResetMsg* ng_reset = new NgResetMsg();
+  auto ng_reset = std::make_shared<NgResetMsg>();
   if (!ng_reset->decode(message_p)) {
     Logger::ngap().error("Decoding NGReset message error");
     return RETURNerror;
@@ -905,7 +904,7 @@ int ng_reset(
   auto itti_msg      = std::make_shared<itti_ng_reset>(TASK_NGAP, TASK_AMF_N2);
   itti_msg->assoc_id = assoc_id;
   itti_msg->stream   = stream;
-  itti_msg->ngReset  = ng_reset;
+  itti_msg->ng_reset = ng_reset;
   int ret            = itti_inst->send_msg(itti_msg);
   if (0 != ret) {
     Logger::ngap().error(
@@ -1223,8 +1222,7 @@ int uplink_ran_status_transfer(
       "Sending ITTI Uplink RAN Status Transfer to TASK_AMF_N2");
 
   ngap_utils::print_asn_msg(&asn_DEF_Ngap_NGAP_PDU, message_p);
-  UplinkRanStatusTransfer* uplink_ran_status_transfer =
-      new UplinkRanStatusTransfer();
+  auto uplink_ran_status_transfer = std::make_shared<UplinkRanStatusTransfer>();
   if (!uplink_ran_status_transfer->decode(message_p)) {
     Logger::ngap().error("Decoding Uplink RAN Status Transfer message error");
     return RETURNerror;
@@ -1232,9 +1230,9 @@ int uplink_ran_status_transfer(
 
   auto itti_msg =
       std::make_shared<itti_uplink_ran_status_transfer>(TASK_NGAP, TASK_AMF_N2);
-  itti_msg->assoc_id          = assoc_id;
-  itti_msg->stream            = stream;
-  itti_msg->uplinkRanTransfer = uplink_ran_status_transfer;
+  itti_msg->assoc_id                   = assoc_id;
+  itti_msg->stream                     = stream;
+  itti_msg->uplink_ran_status_transfer = uplink_ran_status_transfer;
 
   int ret = itti_inst->send_msg(itti_msg);
   if (0 != ret) {
