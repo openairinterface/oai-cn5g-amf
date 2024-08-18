@@ -524,8 +524,7 @@ int ngap_amf_handle_pdu_session_resource_modify_response(
     struct Ngap_NGAP_PDU* message_p) {
   Logger::ngap().debug("Handle PDU Session Resource Modify Response");
 
-  std::unique_ptr<PduSessionResourceModifyResponseMsg> response_msg =
-      std::make_unique<PduSessionResourceModifyResponseMsg>();
+  auto response_msg = std::make_unique<PduSessionResourceModifyResponseMsg>();
 
   if (!response_msg->decode(message_p)) {
     Logger::ngap().error(
@@ -1176,7 +1175,6 @@ int uplink_non_ue_associated_nrppa_transport(
   ngap_utils::print_asn_msg(&asn_DEF_Ngap_NGAP_PDU, message_p);
 
   UplinkNonUeAssociatedNrppaTransportMsg nrppa_msg = {};
-
   if (!nrppa_msg.decode(message_p)) {
     Logger::ngap().error(
         "Decoding UplinkNonUEAssociatedNRPPaTransportMsg message error");
