@@ -486,7 +486,7 @@ void amf_n1::handle_itti_message(itti_uplink_nas_data_ind& nas_data_ind) {
               blength(received_nas_msg) -
                   kSecurityProtected5gsNasMessageSequenceNumberOctet,
               mac32)) {
-        Logger::amf_n1().debug("IA0_5G");
+        Logger::amf_n1().debug(get_5g_ia_str(_5g_ia_e::_5G_IA0));
       } else {
         bool isMatched      = false;
         uint8_t* buf        = (uint8_t*) bdata(received_nas_msg);
