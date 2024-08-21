@@ -43,6 +43,8 @@
 #include "output_wrapper.hpp"
 #include "utils.hpp"
 
+#include <gmp.h>
+
 using namespace oai::ngap;
 using namespace oai::nas;
 using namespace amf_application;
@@ -1211,6 +1213,43 @@ void amf_app::find_non_ue_n2_info_subscriptions(
 //------------------------------------------------------------------------------
 uint32_t amf_app::generate_tmsi() {
   return tmsi_generator.get_uid();
+}
+
+//------------------------------------------------------------------------------
+uint32_t amf_app::generate_random_tmsi() {
+  /*  mpz_t rand_number      = {};
+    mpz_t uint32_max_value = {};
+
+    gmp_randstate_t rand_state = {};
+    gmp_randinit_default(rand_state);
+    uint64_t t = std::chrono::duration_cast<std::chrono::milliseconds>(
+                     std::chrono::system_clock::now().time_since_epoch())
+                     .count();
+    gmp_randseed_ui(rand_state, t);
+
+    mpz_init_set_ui(uint32_max_value, UINT32_MAX);
+    mpz_init(rand_number);
+
+    // Generate a uniform random integer
+    mpz_urandomm(rand_number, rand_state, uint32_max_value);
+    uint32_t rand_number_generated = mpz_get_ui(rand_number);
+    Logger::amf_app().debug(
+        "Random number generated: %ld", rand_number_generated);
+  */
+
+  // Use the getrandom() system call
+  // only supported by RHEL 8 Beta+
+  uint32_t rand_number_generated;
+  if (getrandom(&rand_number_generated, sizeof(uint32_t), GRND_NONBLOCK) ==
+      -1) {
+    Logger::amf_app().warn(
+        "Error when generating a random number using getrandom()");
+  } else {
+    Logger::amf_app().debug(
+        "Random number generated: %ld", rand_number_generated);
+  }
+
+  return rand_number_generated;
 }
 
 //------------------------------------------------------------------------------

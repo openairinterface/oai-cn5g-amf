@@ -324,6 +324,13 @@ class amf_app {
   uint32_t generate_tmsi();
 
   /*
+   * Generate a random TMSI
+   * @param void
+   * @return generated value in uint32_t
+   */
+  uint32_t generate_random_tmsi();
+
+  /*
    * Create a 5G GUTI from PLMN/TMSI
    * @param [const uint32_t] ranid: RAN UE NGAP ID
    * @param [const long] amfid: AMF UE NGAP ID
