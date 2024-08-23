@@ -106,6 +106,20 @@ int sctp_server::create_socket(const char* address, const uint16_t port_num) {
     Logger::sctp().error("Socket bind: %s:%d", strerror(errno), errno);
     return RETURNerror;
   }
+
+  struct sctp_initmsg init_msg;
+  init_msg.sinit_num_ostreams   = SCTP_OUT_STREAMS;
+  init_msg.sinit_max_instreams  = SCTP_IN_STREAMS;
+  init_msg.sinit_max_attempts   = SCTP_MAX_ATTEMPTS;
+  init_msg.sinit_max_init_timeo = SCTP_TIMEOUT;
+
+  if (setsockopt(
+          socket_, IPPROTO_SCTP, SCTP_INITMSG, &init_msg, sizeof(init_msg)) <
+      0) {
+    Logger::sctp().error("setsockopt SCTP_INITMSG");
+    return RETURNerror;
+  }
+
   bzero(&events_, sizeof(events_));
   events_.sctp_data_io_event     = 1;
   events_.sctp_shutdown_event    = 1;
@@ -481,11 +495,11 @@ int sctp_server::sctp_send_msg(
       assoc_desc->sd, sctp_assoc_id, bdata(*payload), blength(*payload), stream,
       assoc_desc->ppid);
 
-  // Set timetolive to 100ms
+  // Set timetolive to 500ms
   if (sctp_sendmsg(
           assoc_desc->sd, (const void*) bdata(*payload),
           (size_t) blength(*payload), NULL, 0, htonl(assoc_desc->ppid), 0,
-          stream, 100, 0) < 0) {
+          stream, 500, 0) < 0) {
     Logger::sctp().error(
         "[Socket %d] Send stream %u, PPID %u, len %u failed (%s, %d)",
         assoc_desc->sd, stream, htonl(assoc_desc->ppid), blength(*payload),

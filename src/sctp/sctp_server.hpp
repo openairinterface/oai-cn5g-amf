@@ -39,6 +39,12 @@ extern "C" {
 #define SCTP_RC_NORMAL_READ 0
 #define SCTP_RC_DISCONNECT 1
 
+// Default SCTP values  (refer to /proc/sys/net/sctp/ for more info)
+#define SCTP_OUT_STREAMS 16
+#define SCTP_IN_STREAMS 16
+#define SCTP_MAX_ATTEMPTS 8
+#define SCTP_TIMEOUT 60000  // in milliseconds
+
 namespace sctp {
 
 typedef uint16_t sctp_stream_id_t;
