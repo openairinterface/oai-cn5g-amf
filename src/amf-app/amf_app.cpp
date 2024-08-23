@@ -1211,11 +1211,6 @@ void amf_app::find_non_ue_n2_info_subscriptions(
 }
 
 //------------------------------------------------------------------------------
-uint32_t amf_app::generate_tmsi() {
-  return tmsi_generator.get_uid();
-}
-
-//------------------------------------------------------------------------------
 uint32_t amf_app::generate_random_tmsi() {
   // Use the getrandom() system call
   // Note: for RHEL only supported by RHEL 8 Beta+

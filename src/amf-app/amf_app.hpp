@@ -70,8 +70,6 @@ class amf_app {
       amf_event_subscriptions;
   mutable std::shared_mutex m_amf_event_subscriptions;
 
-  oai::utils::uint_generator<uint32_t> tmsi_generator;
-
   std::map<uint64_t, std::shared_ptr<ue_context>> amf_ue_ngap_id2ue_ctx;
   mutable std::shared_mutex m_amf_ue_ngap_id2ue_ctx;
   std::map<std::string, std::shared_ptr<ue_context>> ue_ctx_key;
@@ -315,13 +313,6 @@ class amf_app {
   bool update_pdu_sessions_context(
       const std::string& supi, uint8_t pdu_session_id,
       const oai::model::amf::SmContextStatusNotification& statusNotification);
-
-  /*
-   * Generate a TMSI value for UE
-   * @param void
-   * @return generated value in uint32_t
-   */
-  uint32_t generate_tmsi();
 
   /*
    * Generate a random TMSI
