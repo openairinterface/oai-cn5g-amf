@@ -1,5 +1,45 @@
 # RELEASE NOTES: #
 
+## v2.1.0 -- August 2024 ##
+
+* Features
+  - Adding NRPPA protocol support
+  - Support Non UE N2 Info message
+  - Support Multiple PDU sessions service request
+  - Adding gNB statistics
+  - Adding NGAP Utils
+  - Adding LTTNg tracepoints for logging
+  - Using hexadecimal values for SD in all APIs
+  - Updating UE info statistics on AMF after service request
+  - Exposing NCGI in UE Location Report notification
+  - Use HTTP Request Timeout from conf file
+* Fixes
+  - Fix issue for JSON iterator comparison
+  - Fix multiple sessions response handling
+  - Fix NF registration/deregistration when discovering NRFs from NSSF
+  - Fix PDU session resource context request null pointer
+  - Fix issue for retrieving GUTI from 5G-S-TMSI
+  - Fix HTTP/2 server shutdown
+  - Fix shutdown threads procedure
+  - Fix UE Context Release procedure
+  - Fix buffer-overflow issue
+  - Fix AMF UE NGAP ID (uint64_t, 40 bits)
+  - Fix Nas buffer allocation length
+  - Fix issue for N2 handover
+  - Fix GUTI decode
+  - Fix NAS Decode: check buffer length before decoding
+  - Fix issue for mobility registration update procedure
+  - Fix HTTP client by using SBI task to send HTTP request
+* Tech Debt
+  - Cleanup common utils
+  - Stopping support for RHEL8/Rocky8 in favor of RHEL9/Rocky9
+  - Move NAS to common src git submodule
+  - Move NGAP to common src git submodule
+  - Move AMF SBI models to common src git submodule
+  - Move conversions from AMF to common src git submodule
+  - Separate all in one implementation
+  - HTTP client cpr library refactoring effort
+
 ## v2.0.1 -- January 2024 ##
 
 * Features
