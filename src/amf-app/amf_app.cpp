@@ -43,6 +43,8 @@
 #include "output_wrapper.hpp"
 #include "utils.hpp"
 
+#include <gmp.h>
+
 using namespace oai::ngap;
 using namespace oai::nas;
 using namespace amf_application;
@@ -1209,8 +1211,20 @@ void amf_app::find_non_ue_n2_info_subscriptions(
 }
 
 //------------------------------------------------------------------------------
-uint32_t amf_app::generate_tmsi() {
-  return tmsi_generator.get_uid();
+uint32_t amf_app::generate_random_tmsi() {
+  // Use the getrandom() system call
+  // Note: for RHEL only supported by RHEL 8 Beta+
+  uint32_t rand_number_generated;
+  if (getrandom(&rand_number_generated, sizeof(uint32_t), GRND_NONBLOCK) ==
+      -1) {
+    Logger::amf_app().warn(
+        "Error when generating a random number using getrandom()");
+  } else {
+    Logger::amf_app().debug(
+        "Random number generated: %ld", rand_number_generated);
+  }
+
+  return rand_number_generated;
 }
 
 //------------------------------------------------------------------------------
@@ -1224,7 +1238,7 @@ bool amf_app::generate_5g_guti(
 
   mcc      = uc->tai.mcc;
   mnc      = uc->tai.mnc;
-  tmsi     = generate_tmsi();
+  tmsi     = generate_random_tmsi();
   uc->tmsi = tmsi;
   return true;
 }
