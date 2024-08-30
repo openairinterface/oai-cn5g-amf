@@ -186,6 +186,10 @@ std::string statistics::get_ues_info() const {
   } else {
     int i = 1;
     for (auto const& ue : ue_infos) {
+      std::string cell_id_str = {};
+      oai::utils::conv::int_to_string_hex(
+          ue.second.cellId, cell_id_str, 9);  // 36 bits
+
       std::string plmn = ue.second.mcc + "," + ue.second.mnc;
       out.append(inner_indent)
           .append(
@@ -202,9 +206,7 @@ std::string statistics::get_ues_info() const {
               kStatisticsHalfIeLengthForUe,
               amf_conv::uint32_to_hex_string_full_format(ue.second.amfid)))
           .append(ie_to_string(kStatisticsHalfIeLengthForUe, plmn))
-          .append(ie_to_string(
-              kStatisticsHalfIeLengthForUe,
-              amf_conv::uint32_to_hex_string_full_format(ue.second.cellId)))
+          .append(ie_to_string(kStatisticsHalfIeLengthForUe, cell_id_str))
           .append("|\n");
       i++;
     }
