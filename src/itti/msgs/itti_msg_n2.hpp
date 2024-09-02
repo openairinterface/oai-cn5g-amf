@@ -72,30 +72,30 @@ class itti_ng_setup_request : public itti_msg_n2 {
  public:
   itti_ng_setup_request(const task_id_t origin, const task_id_t destination)
       : itti_msg_n2(NG_SETUP_REQ, origin, destination) {
-    ngSetupReq = nullptr;
+    ng_setup_req = nullptr;
   }
   itti_ng_setup_request(const itti_ng_setup_request& i) : itti_msg_n2(i) {
-    ngSetupReq = i.ngSetupReq;
+    ng_setup_req = i.ng_setup_req;
   }
-  virtual ~itti_ng_setup_request() { delete ngSetupReq; }
+  virtual ~itti_ng_setup_request() {}
 
  public:
-  NgSetupRequestMsg* ngSetupReq;
+  std::shared_ptr<NgSetupRequestMsg> ng_setup_req;
 };
 
 class itti_ng_reset : public itti_msg_n2 {
  public:
   itti_ng_reset(const task_id_t origin, const task_id_t destination)
       : itti_msg_n2(NG_RESET, origin, destination) {
-    ngReset = nullptr;
+    ng_reset = nullptr;
   }
   itti_ng_reset(const itti_ng_reset& i) : itti_msg_n2(i) {
-    ngReset = i.ngReset;
+    ng_reset = i.ng_reset;
   }
-  virtual ~itti_ng_reset() { delete ngReset; }
+  virtual ~itti_ng_reset() {}
 
  public:
-  NgResetMsg* ngReset;
+  std::shared_ptr<NgResetMsg> ng_reset;
 };
 
 class itti_ng_shutdown : public itti_msg_n2 {
@@ -110,28 +110,28 @@ class itti_initial_ue_message : public itti_msg_n2 {
  public:
   itti_initial_ue_message(const task_id_t origin, const task_id_t destination)
       : itti_msg_n2(INITIAL_UE_MSG, origin, destination) {
-    initUeMsg = nullptr;
+    init_ue_message = nullptr;
   }
   itti_initial_ue_message(const itti_initial_ue_message& i) : itti_msg_n2(i) {
-    initUeMsg = i.initUeMsg;
+    init_ue_message = i.init_ue_message;
   }
-  virtual ~itti_initial_ue_message() { delete initUeMsg; }
+  virtual ~itti_initial_ue_message() {}
 
-  InitialUeMessageMsg* initUeMsg;
+  std::shared_ptr<InitialUeMessageMsg> init_ue_message;
 };
 
 class itti_ul_nas_transport : public itti_msg_n2 {
  public:
   itti_ul_nas_transport(const task_id_t origin, const task_id_t destination)
       : itti_msg_n2(ITTI_UL_NAS_TRANSPORT, origin, destination) {
-    ulNas = nullptr;
+    ul_nas = nullptr;
   }
   itti_ul_nas_transport(const itti_ul_nas_transport& i) : itti_msg_n2(i) {
-    ulNas = i.ulNas;
+    ul_nas = i.ul_nas;
   }
-  virtual ~itti_ul_nas_transport() { delete ulNas; }
+  virtual ~itti_ul_nas_transport() {}
 
-  UplinkNasTransportMsg* ulNas;
+  std::shared_ptr<UplinkNasTransportMsg> ul_nas;
 };
 
 class itti_dl_nas_transport : public itti_msg_n2 {
@@ -312,15 +312,15 @@ class itti_ue_context_release_request : public itti_msg_n2 {
   itti_ue_context_release_request(
       const task_id_t origin, const task_id_t destination)
       : itti_msg_n2(UE_CONTEXT_RELEASE_REQUEST, origin, destination) {
-    ueCtxRel = nullptr;
+    ue_ctx_rel_req = nullptr;
   }
   itti_ue_context_release_request(const itti_ue_context_release_request& i)
       : itti_msg_n2(i) {
-    ueCtxRel = i.ueCtxRel;
+    ue_ctx_rel_req = i.ue_ctx_rel_req;
   }
-  virtual ~itti_ue_context_release_request() { delete ueCtxRel; }
+  virtual ~itti_ue_context_release_request() {}
 
-  UeContextReleaseRequestMsg* ueCtxRel;
+  std::shared_ptr<UeContextReleaseRequestMsg> ue_ctx_rel_req;
 };
 
 class itti_ue_context_release_command : public itti_msg_n2 {
@@ -350,15 +350,15 @@ class itti_ue_context_release_complete : public itti_msg_n2 {
   itti_ue_context_release_complete(
       const task_id_t origin, const task_id_t destination)
       : itti_msg_n2(UE_CONTEXT_RELEASE_COMPLETE, origin, destination) {
-    ueCtxRelCmpl = nullptr;
+    ue_ctx_rel_cpl = nullptr;
   }
   itti_ue_context_release_complete(const itti_ue_context_release_complete& i)
       : itti_msg_n2(i) {
-    ueCtxRelCmpl = i.ueCtxRelCmpl;
+    ue_ctx_rel_cpl = i.ue_ctx_rel_cpl;
   }
-  virtual ~itti_ue_context_release_complete() { delete ueCtxRelCmpl; }
+  virtual ~itti_ue_context_release_complete() {}
 
-  UEContextReleaseCompleteMsg* ueCtxRelCmpl;
+  std::shared_ptr<UEContextReleaseCompleteMsg> ue_ctx_rel_cpl;
 };
 
 class itti_ue_radio_capability_indication : public itti_msg_n2 {
@@ -366,30 +366,30 @@ class itti_ue_radio_capability_indication : public itti_msg_n2 {
   itti_ue_radio_capability_indication(
       const task_id_t origin, const task_id_t destination)
       : itti_msg_n2(UE_RADIO_CAP_IND, origin, destination) {
-    ueRadioCap = nullptr;
+    ue_radio_cap_info_ind = nullptr;
   }
   itti_ue_radio_capability_indication(
       const itti_ue_radio_capability_indication& i)
       : itti_msg_n2(i) {
-    ueRadioCap = i.ueRadioCap;
+    ue_radio_cap_info_ind = i.ue_radio_cap_info_ind;
   }
-  virtual ~itti_ue_radio_capability_indication() { delete ueRadioCap; }
+  virtual ~itti_ue_radio_capability_indication() {}
 
-  UeRadioCapabilityInfoIndicationMsg* ueRadioCap;
+  std::shared_ptr<UeRadioCapabilityInfoIndicationMsg> ue_radio_cap_info_ind;
 };
 
 class itti_handover_required : public itti_msg_n2 {
  public:
   itti_handover_required(const task_id_t origin, const task_id_t destination)
       : itti_msg_n2(HANDOVER_REQUIRED_MSG, origin, destination) {
-    handoverReq = nullptr;
+    handover_req = nullptr;
   }
   itti_handover_required(const itti_handover_required& i) : itti_msg_n2(i) {
-    handoverReq = i.handoverReq;
+    handover_req = i.handover_req;
   }
-  virtual ~itti_handover_required() { delete handoverReq; }
+  virtual ~itti_handover_required() {}
 
-  HandoverRequiredMsg* handoverReq;
+  std::shared_ptr<HandoverRequiredMsg> handover_req;
 };
 
 class itti_paging : public itti_msg_n2 {
@@ -413,29 +413,29 @@ class itti_handover_request_ack : public itti_msg_n2 {
  public:
   itti_handover_request_ack(const task_id_t origin, const task_id_t destination)
       : itti_msg_n2(HANDOVER_REQUEST_ACK, origin, destination) {
-    handoverRequestAck = nullptr;
+    handover_request_ack = nullptr;
   }
   itti_handover_request_ack(const itti_handover_request_ack& i)
       : itti_msg_n2(i) {
-    handoverRequestAck = i.handoverRequestAck;
+    handover_request_ack = i.handover_request_ack;
   }
-  virtual ~itti_handover_request_ack() { delete handoverRequestAck; }
+  virtual ~itti_handover_request_ack() {}
 
-  HandoverRequestAck* handoverRequestAck;
+  std::shared_ptr<HandoverRequestAck> handover_request_ack;
 };
 
 class itti_handover_notify : public itti_msg_n2 {
  public:
   itti_handover_notify(const task_id_t origin, const task_id_t destination)
       : itti_msg_n2(HANDOVER_NOTIFY, origin, destination) {
-    handoverNotify = nullptr;
+    handover_notify = nullptr;
   }
   itti_handover_notify(const itti_handover_notify& i) : itti_msg_n2(i) {
-    handoverNotify = i.handoverNotify;
+    handover_notify = i.handover_notify;
   }
-  virtual ~itti_handover_notify() { delete handoverNotify; }
+  virtual ~itti_handover_notify() {}
 
-  HandoverNotifyMsg* handoverNotify;
+  std::shared_ptr<HandoverNotifyMsg> handover_notify;
 };
 
 class itti_uplink_ran_status_transfer : public itti_msg_n2 {
@@ -443,15 +443,15 @@ class itti_uplink_ran_status_transfer : public itti_msg_n2 {
   itti_uplink_ran_status_transfer(
       const task_id_t origin, const task_id_t destination)
       : itti_msg_n2(UPLINK_RAN_STATUS_TRANSFER, origin, destination) {
-    uplinkRanTransfer = nullptr;
+    uplink_ran_status_transfer = nullptr;
   }
   itti_uplink_ran_status_transfer(const itti_uplink_ran_status_transfer& i)
       : itti_msg_n2(i) {
-    uplinkRanTransfer = i.uplinkRanTransfer;
+    uplink_ran_status_transfer = i.uplink_ran_status_transfer;
   }
-  virtual ~itti_uplink_ran_status_transfer() { delete uplinkRanTransfer; }
+  virtual ~itti_uplink_ran_status_transfer() {}
 
-  UplinkRanStatusTransfer* uplinkRanTransfer;
+  std::shared_ptr<UplinkRanStatusTransfer> uplink_ran_status_transfer;
 };
 
 class itti_rereoute_nas : public itti_msg_n2 {
