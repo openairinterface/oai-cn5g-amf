@@ -79,6 +79,8 @@ constexpr auto AMF_CONFIG_SD                      = "sd";
 constexpr auto AMF_CONFIG_SD_LABEL                = "SD";
 constexpr auto AMF_CONFIG_N2                      = "n2";
 constexpr auto AMF_CONFIG_N2_LABEL                = "N2";
+constexpr auto AMF_CONFIG_SCTP_TTL                = "sctp_ttl";
+constexpr auto AMF_CONFIG_SCTP_TTL_LABEL          = "SCTP TTL";
 
 constexpr auto AMF_CONFIG_SUPPORTED_INTEGRITY_ALGORITHMS =
     "supported_integrity_algorithms";
@@ -125,6 +127,7 @@ constexpr auto AMF_CONFIG_AMF_SET_ID_DEFAULT_VALUE        = "001";  // hex
 constexpr auto AMF_CONFIG_AMF_POINTER_DEFAULT_VALUE       = "01";   // hex
 constexpr auto AMF_CONFIG_TAC_DEFAULT_VALUE               = 1;
 constexpr auto AMF_CONFIG_RELATIVE_CAPACITY_DEFAULT_VALUE = 10;
+constexpr auto AMF_CONFIG_SCTP_TTL_DEFAULT_VALUE          = 100;
 constexpr uint32_t AMF_CONFIG_STATISTICS_TIMER_INTERVAL_DEFAULT_VALUE =
     20;  // in seconds
 
@@ -259,6 +262,7 @@ class amf : public nf {
   supported_integrity_algorithms m_supported_integrity_algorithms;
   supported_encryption_algorithms m_supported_encryption_algorithms;
   local_interface m_n2;
+  int_config_value m_sctp_ttl;
 
  public:
   explicit amf(
@@ -283,6 +287,7 @@ class amf : public nf {
   [[nodiscard]] std::vector<std::string> get_supported_encryption_algorithms()
       const;
   [[nodiscard]] const local_interface& get_n2() const;
+  [[nodiscard]] const uint32_t get_sctp_ttl() const;
 };
 
 class amf_config_yaml : public config {
