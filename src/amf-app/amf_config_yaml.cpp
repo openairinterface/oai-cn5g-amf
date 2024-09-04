@@ -531,6 +531,8 @@ amf::amf(
       AMF_CONFIG_PID_DIRECTORY, AMF_CONFIG_PID_DIRECTORY_DEFAULT_VALUE);
   m_instance_id = int_config_value(
       AMF_CONFIG_INSTANCE_ID, AMF_CONFIG_INSTANCE_ID_DEFAULT_VALUE);
+  m_sctp_ttl =
+      int_config_value(AMF_CONFIG_SCTP_TTL, AMF_CONFIG_SCTP_TTL_DEFAULT_VALUE);
   m_relative_capacity = int_config_value(
       AMF_CONFIG_RELATIVE_CAPACITY, AMF_CONFIG_RELATIVE_CAPACITY_DEFAULT_VALUE);
   m_relative_capacity.set_validation_interval(
@@ -558,6 +560,10 @@ void amf::from_yaml(const YAML::Node& node) {
 
     if (key == AMF_CONFIG_INSTANCE_ID) {
       m_instance_id.from_yaml(elem.second);
+    }
+
+    if (key == AMF_CONFIG_SCTP_TTL) {
+      m_sctp_ttl.from_yaml(elem.second);
     }
 
     if (key == AMF_CONFIG_PID_DIRECTORY) {
@@ -633,6 +639,11 @@ std::string amf::to_string(const std::string& indent) const {
 
   out.append(inner_indent)
       .append(fmt::format(
+          BASE_FORMATTER, OUTER_LIST_ELEM, AMF_CONFIG_SCTP_TTL_LABEL,
+          inner_width, m_sctp_ttl.get_value()));
+
+  out.append(inner_indent)
+      .append(fmt::format(
           BASE_FORMATTER, OUTER_LIST_ELEM, AMF_CONFIG_INSTANCE_ID_LABEL,
           inner_width, m_instance_id.get_value()));
 
@@ -694,6 +705,7 @@ std::string amf::to_string(const std::string& indent) const {
 
 void amf::validate() {
   nf::validate();
+  m_sctp_ttl.validate();
   m_instance_id.validate();
   m_relative_capacity.validate();
   m_statistics_timer_interval.validate();
@@ -757,8 +769,14 @@ const uint32_t amf::get_statistics_timer_interval() const {
   return m_statistics_timer_interval.get_value();
 }
 
+//------------------------------------------------------------------------------
 const local_interface& amf::get_n2() const {
   return m_n2;
+}
+
+//------------------------------------------------------------------------------
+const uint32_t amf::get_sctp_ttl() const {
+  return m_sctp_ttl.get_value();
 }
 
 //------------------------------------------------------------------------------
@@ -915,6 +933,8 @@ void amf_config_yaml::to_amf_config(amf_config& cfg) {
   cfg.n2.if_name = amf_local->get_n2().get_if_name();
   cfg.n2.addr4   = amf_local->get_n2().get_addr4();
   cfg.n2.port    = amf_local->get_n2().get_port();
+
+  cfg.sctp_ttl = amf_local->get_sctp_ttl();
 
   if (get_nf(oai::config::SMF_CONFIG_NAME)) {
     cfg.smf_addr.api_version =
