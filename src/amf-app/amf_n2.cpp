@@ -2456,8 +2456,31 @@ void amf_n2::handle_itti_message(
   int encoded_size = dnuant.Encode(buffer, BUFFER_SIZE_1024);
   if (encoded_size > 0) {
     bstring b = blk2bstr(buffer, encoded_size);
-    // TODO: Should be verified
-    std::vector<sctp::sctp_assoc_id_t> assoc_ids = get_all_assoc_ids();
+
+    std::vector<sctp::sctp_assoc_id_t> assoc_ids;
+    // Get list of gNBs if available
+    if (itti_msg->global_ran_node_list.size() > 0) {
+      for (auto gnb : itti_msg->global_ran_node_list) {
+        std::string gnb_id_str = gnb.getGNbId().getGNBValue();
+        // Get gNB length and verify the value
+        uint32_t gnb_id_bit_len = gnb.getGNbId().getBitLength();
+        gnb_id_bit_len          = (gnb_id_bit_len > 32) ? 32 : gnb_id_bit_len;
+        gnb_id_bit_len          = (gnb_id_bit_len < 22) ? 22 : gnb_id_bit_len;
+        uint32_t gnb_id         = 0;
+        oai::utils::conv::string_hex_to_int(gnb_id_str, gnb_id);
+        gnb_id = gnb_id >> (32 - gnb_id_bit_len);
+        if (is_gnb_id_2_gnb_context(gnb_id)) {
+          std::shared_ptr<gnb_context> gc = nullptr;
+          if (gnb_id_2_gnb_context(gnb_id, gc)) {
+            assoc_ids.push_back(gc->sctp_assoc_id);
+          }
+        }
+      }
+    } else {  // otherwise send to all associated gNBs
+      assoc_ids = get_all_assoc_ids();
+    }
+
+    // Send message to the corresponding gNBs
     for (auto& assoc_id : assoc_ids) {
       sctp_s_38412.sctp_send_msg(assoc_id, 0, &b);
     }

@@ -26,6 +26,7 @@
 
 #include "NgapIesStruct.hpp"
 #include "itti_msg.hpp"
+#include "GlobalRanNodeId.hpp"
 using namespace oai::ngap;
 #include "bstrlib.h"
 
@@ -157,7 +158,7 @@ class itti_non_ue_n2_message_transfer_request : public itti_msg_amf_app {
   bstring nrppa_pdu;
   bstring routing_id;
   bool is_nrppa_pdu_set;
-  // other parameters
+  std::vector<oai::model::common::GlobalRanNodeId> global_ran_node_list;
 };
 
 #endif

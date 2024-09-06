@@ -36,6 +36,7 @@
 #include "itti_msg.hpp"
 #include "sctp_server.hpp"
 #include "utils.hpp"
+#include "GlobalRanNodeId.h"
 
 using namespace oai::ngap;
 using namespace sctp;
@@ -552,6 +553,7 @@ class itti_downlink_non_ue_associated_nrppa_transport : public itti_msg_n2 {
   };
   bstring nrppa_pdu;
   bstring routing_id;
+  std::vector<oai::model::common::GlobalRanNodeId> global_ran_node_list;
 };
 
 class itti_uplink_non_ue_associated_nrppa_transport : public itti_msg_n2 {

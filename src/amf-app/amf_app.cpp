@@ -460,7 +460,10 @@ void amf_app::handle_itti_message(
             TASK_AMF_APP, TASK_AMF_N2);
     dl_msg->nrppa_pdu  = bstrcpy(itti_msg.nrppa_pdu);
     dl_msg->routing_id = bstrcpy(itti_msg.routing_id);
-    int ret            = itti_inst->send_msg(dl_msg);
+
+    dl_msg->global_ran_node_list = itti_msg.global_ran_node_list;
+
+    int ret = itti_inst->send_msg(dl_msg);
     if (ret != RETURNok) {
       Logger::amf_app().error(
           "Could not send ITTI message %s to task TASK_AMF_N2",
