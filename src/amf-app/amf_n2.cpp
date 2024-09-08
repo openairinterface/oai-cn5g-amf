@@ -30,6 +30,7 @@
 #include "DownlinkNonUeAssociatedNrppaTransport.hpp"
 #include "DownlinkRanStatusTransfer.hpp"
 #include "DownlinkUeAssociatedNrppaTransport.hpp"
+#include "GnbId.hpp"
 #include "HandoverCommandMsg.hpp"
 #include "HandoverPreparationFailure.hpp"
 #include "HandoverRequest.hpp"
@@ -2464,11 +2465,15 @@ void amf_n2::handle_itti_message(
         std::string gnb_id_str = gnb.getGNbId().getGNBValue();
         // Get gNB length and verify the value
         uint32_t gnb_id_bit_len = gnb.getGNbId().getBitLength();
-        gnb_id_bit_len          = (gnb_id_bit_len > 32) ? 32 : gnb_id_bit_len;
-        gnb_id_bit_len          = (gnb_id_bit_len < 22) ? 22 : gnb_id_bit_len;
-        uint32_t gnb_id         = 0;
+        gnb_id_bit_len  = (gnb_id_bit_len > oai::ngap::NGAP_GNB_ID_SIZE_MAX) ?
+                              oai::ngap::NGAP_GNB_ID_SIZE_MAX :
+                              gnb_id_bit_len;
+        gnb_id_bit_len  = (gnb_id_bit_len < oai::ngap::NGAP_GNB_ID_SIZE_MIN) ?
+                              oai::ngap::NGAP_GNB_ID_SIZE_MIN :
+                              gnb_id_bit_len;
+        uint32_t gnb_id = 0;
         oai::utils::conv::string_hex_to_int(gnb_id_str, gnb_id);
-        gnb_id = gnb_id >> (32 - gnb_id_bit_len);
+        gnb_id = gnb_id >> (oai::ngap::NGAP_GNB_ID_SIZE_MAX - gnb_id_bit_len);
         if (is_gnb_id_2_gnb_context(gnb_id)) {
           std::shared_ptr<gnb_context> gc = nullptr;
           if (gnb_id_2_gnb_context(gnb_id, gc)) {
