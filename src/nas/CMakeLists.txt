@@ -27,6 +27,7 @@ file(GLOB AMF_NAS_src_files
 
 add_library (AMF_NAS STATIC ${AMF_NAS_src_files})
 
+target_include_directories(AMF_NAS PUBLIC ${SRC_TOP_DIR}/${MOUNTED_COMMON}/3gpp)
 target_include_directories(AMF_NAS PUBLIC ${SRC_TOP_DIR}/${MOUNTED_COMMON}/nas/ies)
 target_include_directories(AMF_NAS PUBLIC ${SRC_TOP_DIR}/${MOUNTED_COMMON}/nas/common)
 target_include_directories(AMF_NAS PUBLIC ${SRC_TOP_DIR}/${MOUNTED_COMMON}/nas/5gmm-msgs)
