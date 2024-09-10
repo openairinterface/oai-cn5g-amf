@@ -28,6 +28,7 @@
 #include <string>
 
 #include "3gpp_24.501.hpp"
+#include "logger.hpp"
 #include "string.hpp"
 #include "thread_sched.hpp"
 
@@ -132,11 +133,11 @@ typedef struct auth_conf_s {
 } auth_conf_t;
 
 typedef struct itti_cfg_s {
-  util::thread_sched_params itti_timer_sched_params;
-  util::thread_sched_params sx_sched_params;
-  util::thread_sched_params s5s8_sched_params;
-  util::thread_sched_params pgw_app_sched_params;
-  util::thread_sched_params async_cmd_sched_params;
+  oai::utils::thread_sched_params itti_timer_sched_params;
+  oai::utils::thread_sched_params sx_sched_params;
+  oai::utils::thread_sched_params s5s8_sched_params;
+  oai::utils::thread_sched_params pgw_app_sched_params;
+  oai::utils::thread_sched_params async_cmd_sched_params;
 } itti_cfg_t;
 
 typedef struct plmn_support_item_s {
