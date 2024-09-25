@@ -330,6 +330,30 @@ pipeline {
             }
           }
         }
+        stage ('Build and Run Unit-Tests') {
+          steps {
+            sleep 40
+            lock(ubuntuBuildResource) {
+              script {
+                if (fileExists('src/common-src/build/common/Dockerfile.unit-tests.ubuntu')) {
+                  gitlabCommitStatus(name: "Unit Tests") {
+                    sh "docker image rm common-src-unit-tests:latest || true"
+                    sh "docker buildx build --target common-src-unit-tests --tag common-src-unit-tests:latest --file src/common-src/build/common/Dockerfile.unit-tests.ubuntu ./src/common-src/ > archives/build-unit-tests.log 2>&1"
+                  }
+                } else {
+                  echo "Not running yet the Unit Tests"
+                }
+              }
+            }
+          }
+          post {
+            cleanup {
+              script {
+                sh "docker image rm common-src-unit-tests:latest || true"
+              }
+            }
+          }
+        }
       }
       post {
         always {
