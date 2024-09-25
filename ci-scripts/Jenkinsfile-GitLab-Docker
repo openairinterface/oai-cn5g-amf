@@ -157,6 +157,7 @@ pipeline {
                   }
                   if ("MERGE".equals(env.gitlabActionType)) {
                     dockerBuildOptions = ''
+                    sh "date --rfc-email > src/common-src/date.txt"
                   }
                   sh "docker buildx build ${dockerBuildOptions} --target oai-amf --tag oai-amf:${amf_tag} --file docker/Dockerfile.amf.ubuntu . > archives/amf_ubuntu_image_build.log 2>&1"
                   // Putting a place holder to try out on the flattening of image.
@@ -265,6 +266,7 @@ pipeline {
                 gitlabCommitStatus(name: "Static Code Analysis") {
                   // It's a different agent from main one.
                   prepareWorkspaceMergeCase()
+                  sh "date --rfc-email > src/common-src/date.txt"
                   // Moving to focal and cppcheck 1.90 and a dockerfile approach
                   sh 'sed -i -e "s@nfName@amf@" ci-scripts/common/docker/Dockerfile.ci.cppcheck'
                   sh 'docker build --target amf-cppcheck --tag amf-cppcheck:test --file ci-scripts/common/docker/Dockerfile.ci.cppcheck . > archives/cppcheck_install.log 2>&1'
@@ -303,6 +305,7 @@ pipeline {
                 gitlabCommitStatus(name: "Code Formatting Checker") {
                   // It's a different agent from main one.
                   prepareWorkspaceMergeCase()
+                  sh "date --rfc-email > src/common-src/date.txt"
                   sh 'sed -i -e "s@nfName@amf@" ci-scripts/common/docker/Dockerfile.ci.clang-format'
                   if ("MERGE".equals(env.gitlabActionType)) {
                     sh 'docker build --target amf-clang-format-check --tag amf-clang-format-check:test --file ci-scripts/common/docker/Dockerfile.ci.clang-format --build-arg MERGE_REQUEST_CHECK=True --build-arg SOURCE_BRANCH=' + env.gitlabSourceBranch + ' --build-arg TARGET_BRANCH=' + env.gitlabTargetBranch + ' . > archives/clang_format_install.log 2>&1'
@@ -337,6 +340,7 @@ pipeline {
               script {
                 if (fileExists('src/common-src/build/common/Dockerfile.unit-tests.ubuntu')) {
                   gitlabCommitStatus(name: "Unit Tests") {
+                    sh "date --rfc-email > src/common-src/date.txt"
                     sh "docker image rm common-src-unit-tests:latest || true"
                     sh "docker buildx build --target common-src-unit-tests --tag common-src-unit-tests:latest --file src/common-src/build/common/Dockerfile.unit-tests.ubuntu ./src/common-src/ > archives/build-unit-tests.log 2>&1"
                   }
@@ -534,12 +538,6 @@ pipeline {
     }
     cleanup {
       script {
-        // Zipping all archived log files
-        sh "zip -r -qq docker_logs.zip archives"
-        if (fileExists('docker_logs.zip')) {
-          archiveArtifacts artifacts: 'docker_logs.zip'
-        }
-
         // Generating the HTML report(s)
         if ("MERGE".equals(env.gitlabActionType)) {
           sh "./ci-scripts/generateHtmlReport.py --job-name ${JOB_NAME} --build-id ${BUILD_ID} --build-url ${BUILD_URL} --git-url ${GIT_URL} --git-src-branch ${env.gitlabSourceBranch} --git-src-commit ${env.gitlabMergeRequestLastCommit} --git-merge-request --git-dst-branch ${env.gitlabTargetBranch} --git-dst-commit ${GIT_COMMIT}"
@@ -555,6 +553,12 @@ pipeline {
           }
           sh "sed -i -e 's#TEMPLATE_TIME#${JOB_TIMESTAMP}#' ${htmlFile}"
           archiveArtifacts artifacts: htmlFile
+        }
+
+        // Zipping all archived log files
+        sh "zip -r -qq docker_logs.zip archives"
+        if (fileExists('docker_logs.zip')) {
+          archiveArtifacts artifacts: 'docker_logs.zip'
         }
 
         // Sending email to commiter
