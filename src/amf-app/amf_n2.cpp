@@ -2473,7 +2473,7 @@ void amf_n2::handle_itti_message(
                               gnb_id_bit_len;
         uint32_t gnb_id = 0;
         oai::utils::conv::string_hex_to_int(gnb_id_str, gnb_id);
-        gnb_id = gnb_id >> (oai::ngap::NGAP_GNB_ID_SIZE_MAX - gnb_id_bit_len);
+        Logger::amf_n2().debug("gNB Id in the list " GNB_ID_FMT "", gnb_id);
         if (is_gnb_id_2_gnb_context(gnb_id)) {
           std::shared_ptr<gnb_context> gc = nullptr;
           if (gnb_id_2_gnb_context(gnb_id, gc)) {
