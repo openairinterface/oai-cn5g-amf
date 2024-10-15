@@ -208,10 +208,13 @@ void amf_n2_task(void* args_p) {
         Logger::amf_n2().info("Received Handover Required message, handling");
         auto msg_ptr =
             std::dynamic_pointer_cast<itti_handover_required>(shared_msg);
-        if (!amf_n2_inst->handle_itti_message(msg_ptr))
+
+        if (!amf_n2_inst->handle_itti_message(msg_ptr)) {
+          if (!msg_ptr->handover_req) return;
           amf_n2_inst->send_handover_preparation_failure(
-              msg_ptr->handoverReq->getAmfUeNgapId(),
-              msg_ptr->handoverReq->getRanUeNgapId(), msg_ptr->assoc_id);
+              msg_ptr->handover_req->getAmfUeNgapId(),
+              msg_ptr->handover_req->getRanUeNgapId(), msg_ptr->assoc_id);
+        }
       } break;
 
       case HANDOVER_REQUEST_ACK: {
@@ -389,7 +392,11 @@ void amf_n2::handle_itti_message(
   Logger::amf_n2().debug(
       "Parameters: assoc_id %d, stream %d", itti_msg->assoc_id,
       itti_msg->stream);
-
+  if (!itti_msg->ng_setup_req) {
+    Logger::amf_n2().error(
+        "[gNB Assoc ID %d] no content available for NG Setup Request message");
+    return;
+  }
   std::shared_ptr<gnb_context> gc = {};
   if (!assoc_id_2_gnb_context(itti_msg->assoc_id, gc)) {
     Logger::amf_n2().error(
@@ -416,7 +423,7 @@ void amf_n2::handle_itti_message(
   uint32_t gnb_id     = {};
   std::string gnb_mcc = {};
   std::string gnb_mnc = {};
-  if (!itti_msg->ngSetupReq->getGlobalGnbId(gnb_id, gnb_mcc, gnb_mnc)) {
+  if (!itti_msg->ng_setup_req->getGlobalGnbId(gnb_id, gnb_mcc, gnb_mnc)) {
     Logger::amf_n2().error(
         "[gNB Assoc ID %d] Missing Mandatory IE Global RAN Node ID",
         itti_msg->assoc_id);
@@ -435,7 +442,7 @@ void amf_n2::handle_itti_message(
   gc->plmn.mnc = gnb_mnc;
 
   std::string gnb_name = {};
-  if (!itti_msg->ngSetupReq->getRanNodeName(gnb_name)) {
+  if (!itti_msg->ng_setup_req->getRanNodeName(gnb_name)) {
     Logger::amf_n2().warn("Missing IE RanNodeName");
   } else {
     gc->gnb_name = gnb_name;
@@ -443,12 +450,12 @@ void amf_n2::handle_itti_message(
   }
 
   // Store Paging DRX in gNB context
-  gc->default_paging_drx = itti_msg->ngSetupReq->getDefaultPagingDrx();
+  gc->default_paging_drx = itti_msg->ng_setup_req->getDefaultPagingDrx();
   Logger::amf_n2().debug("IE DefaultPagingDRX: %d", gc->default_paging_drx);
 
   // Get supported TA List
   std::vector<SupportedTaItem_t> supported_ta_list;
-  if (!itti_msg->ngSetupReq->getSupportedTaList(supported_ta_list)) {
+  if (!itti_msg->ng_setup_req->getSupportedTaList(supported_ta_list)) {
     Logger::amf_n2().error("Missing Mandatory IE Supported TA List");
     send_ng_setup_failure(
         Ngap_CauseProtocol_abstract_syntax_error_falsely_constructed_message,
@@ -457,7 +464,7 @@ void amf_n2::handle_itti_message(
   }
   // Store UE Retention Information if available
   std::optional<UeRetentionInformation> ue_retention_info = std::nullopt;
-  itti_msg->ngSetupReq->getUeRetentionInformation(ue_retention_info);
+  itti_msg->ng_setup_req->getUeRetentionInformation(ue_retention_info);
   gc->ue_retention_info = ue_retention_info;
 
   // Verify PLMN Identity and TAC with configuration and store supportedTAList
@@ -582,6 +589,11 @@ void amf_n2::handle_itti_message(std::shared_ptr<itti_ng_reset>& itti_msg) {
     return;
   }
 
+  if (!itti_msg->ng_reset) {
+    Logger::amf_n2().error("No content available for NG Reset message");
+    return;
+  }
+
   gc->ng_state = NGAP_RESETING;
   // TODO: (8.7.4.2.2, NG Reset initiated by the NG-RAN node @3GPP TS 38.413
   // V16.0.0) the AMF shall release all allocated resources on NG related to the
@@ -590,7 +602,7 @@ void amf_n2::handle_itti_message(std::shared_ptr<itti_ng_reset>& itti_msg) {
   ResetType reset_type = {};
   std::vector<UeAssociatedLogicalNgConnectionItem>
       ueAssociatedLogicalNGConnectionList;
-  itti_msg->ngReset->getResetType(reset_type);
+  itti_msg->ng_reset->getResetType(reset_type);
   if (reset_type.getResetType() == Ngap_ResetType_PR_nG_Interface) {
     // Reset all
     // release all the resources related to this interface
@@ -718,11 +730,11 @@ void amf_n2::handle_itti_message(
     return;
   }
 
-  if (!init_ue_msg->initUeMsg) return;
+  if (!init_ue_msg->init_ue_message) return;
 
   // UE NGAP Context
   uint32_t ran_ue_ngap_id = 0;
-  if (!init_ue_msg->initUeMsg->getRanUENgapID(ran_ue_ngap_id)) {
+  if (!init_ue_msg->init_ue_message->getRanUENgapID(ran_ue_ngap_id)) {
     Logger::amf_n2().error("Missing Mandatory IE (RanUeNgapId)");
     return;
   }
@@ -749,7 +761,7 @@ void amf_n2::handle_itti_message(
   // User Location Info NR (Mandatory)
   NrCgi_t cgi = {};
   Tai_t tai   = {};
-  if (init_ue_msg->initUeMsg->getUserLocationInfoNr(cgi, tai)) {
+  if (init_ue_msg->init_ue_message->getUserLocationInfoNr(cgi, tai)) {
     itti_msg->cgi = cgi;
     itti_msg->tai = tai;
     unc->tai      = tai;
@@ -759,32 +771,33 @@ void amf_n2::handle_itti_message(
   }
 
   // RCC Establishment Cause (Mandatory)
-  itti_msg->rrc_cause = init_ue_msg->initUeMsg->getRrcEstablishmentCause();
+  itti_msg->rrc_cause =
+      init_ue_msg->init_ue_message->getRrcEstablishmentCause();
 
   // UE Context Request (Optional)
   // TODO: use std::optional
-  if (init_ue_msg->initUeMsg->getUeContextRequest() == -1) {
+  if (init_ue_msg->init_ue_message->getUeContextRequest() == -1) {
     Logger::amf_n2().warn("IE UeContextRequest not present");
     itti_msg->ueCtxReq = -1;  // not present, TODO with optional
   } else {
-    itti_msg->ueCtxReq = init_ue_msg->initUeMsg->getUeContextRequest();
+    itti_msg->ueCtxReq = init_ue_msg->init_ue_message->getUeContextRequest();
   }
 
   // 5G-S-TMSI (Optional)
   std::string _5g_s_tmsi = {};
-  if (!init_ue_msg->initUeMsg->get5GSTmsi(_5g_s_tmsi)) {
+  if (!init_ue_msg->init_ue_message->get5GSTmsi(_5g_s_tmsi)) {
     itti_msg->is_5g_s_tmsi_present = false;
     Logger::amf_n2().debug("5g_s_tmsi not present");
   } else {
     itti_msg->is_5g_s_tmsi_present = true;
     itti_msg->_5g_s_tmsi           = _5g_s_tmsi;
     Logger::amf_n2().debug("5g_s_tmsi present: %s", _5g_s_tmsi);
-    init_ue_msg->initUeMsg->get5GSTmsi(
+    init_ue_msg->init_ue_message->get5GSTmsi(
         unc->s_setid, unc->s_pointer, unc->s_tmsi);
   }
 
   // NAS PDU (Mandatory)
-  if (!init_ue_msg->initUeMsg->getNasPdu(itti_msg->nas_buf)) {
+  if (!init_ue_msg->init_ue_message->getNasPdu(itti_msg->nas_buf)) {
     Logger::amf_n2().error("Missing mandatory IE NAS-PDU");
     return;
   }
@@ -800,7 +813,7 @@ void amf_n2::handle_itti_message(
     }
 
     int encoded_size = 0;
-    init_ue_msg->initUeMsg->Encode(initial_ue_msg_buf, encoded_size);
+    init_ue_msg->init_ue_message->Encode(initial_ue_msg_buf, encoded_size);
 
     if (encoded_size > 0) {
       Logger::amf_n2().debug("Encoded InitialUEMessage size %d", encoded_size);
@@ -830,9 +843,9 @@ void amf_n2::handle_itti_message(
 void amf_n2::handle_itti_message(
     std::shared_ptr<itti_ul_nas_transport>& ul_nas_transport) {
   Logger::amf_n2().debug("Handle Uplink NAS Transport...");
-
-  uint64_t amf_ue_ngap_id         = ul_nas_transport->ulNas->getAmfUeNgapId();
-  uint32_t ran_ue_ngap_id         = ul_nas_transport->ulNas->getRanUeNgapId();
+  if (!ul_nas_transport->ul_nas) return;
+  uint64_t amf_ue_ngap_id         = ul_nas_transport->ul_nas->getAmfUeNgapId();
+  uint32_t ran_ue_ngap_id         = ul_nas_transport->ul_nas->getRanUeNgapId();
   std::shared_ptr<gnb_context> gc = {};
   if (!assoc_id_2_gnb_context(ul_nas_transport->assoc_id, gc)) {
     Logger::amf_n2().error(
@@ -868,7 +881,7 @@ void amf_n2::handle_itti_message(
   itti_msg->ran_ue_ngap_id              = ran_ue_ngap_id;
   itti_msg->is_guti_valid               = false;
 
-  if (!ul_nas_transport->ulNas->getNasPdu(itti_msg->nas_msg)) {
+  if (!ul_nas_transport->ul_nas->getNasPdu(itti_msg->nas_msg)) {
     Logger::amf_n2().error("Missing IE NAS-PDU");
     return;
   }
@@ -876,7 +889,7 @@ void amf_n2::handle_itti_message(
   // UserLocation
   NrCgi_t cgi = {};
   Tai_t tai   = {};
-  if (ul_nas_transport->ulNas->getUserLocationInfoNr(cgi, tai)) {
+  if (ul_nas_transport->ul_nas->getUserLocationInfoNr(cgi, tai)) {
     itti_msg->mcc = cgi.mcc;
     itti_msg->mnc = cgi.mnc;
   } else {
@@ -1293,15 +1306,16 @@ void amf_n2::handle_itti_message(
     std::shared_ptr<itti_ue_context_release_request>& itti_msg) {
   Logger::amf_n2().debug("Handle UE Context Release Request ...");
 
-  uint64_t amf_ue_ngap_id = itti_msg->ueCtxRel->getAmfUeNgapId();
-  uint32_t ran_ue_ngap_id = itti_msg->ueCtxRel->getRanUeNgapId();
+  if (!itti_msg->ue_ctx_rel_req) return;
+  uint64_t amf_ue_ngap_id = itti_msg->ue_ctx_rel_req->getAmfUeNgapId();
+  uint32_t ran_ue_ngap_id = itti_msg->ue_ctx_rel_req->getRanUeNgapId();
 
   // Store the list of PDU Session ID to be released/deactivated
   std::shared_ptr<ue_ngap_context> unc = {};
   if (amf_ue_id_2_ue_ngap_context(amf_ue_ngap_id, unc)) {
     unc->pdu_sessions_to_be_released.clear();
     PduSessionResourceListCxtRelReq pdu_session_resource_list_cxt_rel_req = {};
-    if (itti_msg->ueCtxRel->getPduSessionResourceList(
+    if (itti_msg->ue_ctx_rel_req->getPduSessionResourceList(
             pdu_session_resource_list_cxt_rel_req)) {
       std::vector<PduSessionResourceItemCxtRelReq> ctx_rel_req_list;
       pdu_session_resource_list_cxt_rel_req.get(ctx_rel_req_list);
@@ -1316,7 +1330,7 @@ void amf_n2::handle_itti_message(
   }
 
   e_Ngap_CauseRadioNetwork cause = {};
-  itti_msg->ueCtxRel->getCauseRadioNetwork(cause);
+  itti_msg->ue_ctx_rel_req->getCauseRadioNetwork(cause);
   auto ueCtxRelCmd = std::make_unique<UeContextReleaseCommandMsg>();
   ueCtxRelCmd->setUeNgapIdPair(amf_ue_ngap_id, ran_ue_ngap_id);
   ueCtxRelCmd->setCauseRadioNetwork(cause);
@@ -1447,8 +1461,9 @@ void amf_n2::handle_itti_message(
 void amf_n2::handle_itti_message(
     std::shared_ptr<itti_ue_context_release_complete>& itti_msg) {
   Logger::amf_n2().debug("Handle UE Context Release Complete ...");
-  uint64_t amf_ue_ngap_id = itti_msg->ueCtxRelCmpl->getAmfUeNgapId();
-  uint32_t ran_ue_ngap_id = itti_msg->ueCtxRelCmpl->getRanUeNgapId();
+  if (!itti_msg->ue_ctx_rel_cpl) return;
+  uint64_t amf_ue_ngap_id = itti_msg->ue_ctx_rel_cpl->getAmfUeNgapId();
+  uint32_t ran_ue_ngap_id = itti_msg->ue_ctx_rel_cpl->getRanUeNgapId();
 
   Logger::amf_n2().debug(
       "UE Context Release Complete ran_ue_ngap_id (" GNB_UE_NGAP_ID_FMT
@@ -1536,7 +1551,7 @@ void amf_n2::handle_itti_message(
   // Resource Release Response Transfer to be forwarded to SMF. That's why we do
   // it here!
   std::vector<PDUSessionResourceCxtRelCplItem_t> pdu_sessions_to_be_released;
-  itti_msg->ueCtxRelCmpl->getPduSessionResourceCxtRelCplList(
+  itti_msg->ue_ctx_rel_cpl->getPduSessionResourceCxtRelCplList(
       pdu_sessions_to_be_released);
 
   // Get info from UE Context Release Request if neccessary
@@ -1655,10 +1670,11 @@ void amf_n2::handle_itti_message(
     return;
   }
 
-  uint64_t amf_ue_ngap_id = itti_msg->ueRadioCap->getAmfUeNgapId();
-  uint32_t ran_ue_ngap_id = itti_msg->ueRadioCap->getRanUeNgapId();
+  if (!itti_msg->ue_radio_cap_info_ind) return;
+  uint64_t amf_ue_ngap_id = itti_msg->ue_radio_cap_info_ind->getAmfUeNgapId();
+  uint32_t ran_ue_ngap_id = itti_msg->ue_radio_cap_info_ind->getRanUeNgapId();
   OCTET_STRING_t ue_radio_cap;
-  itti_msg->ueRadioCap->getUeRadioCapability(ue_radio_cap);
+  itti_msg->ue_radio_cap_info_ind->getUeRadioCapability(ue_radio_cap);
 
   // Store UE Radio Capability in UE NGAP Context
   std::shared_ptr<ue_ngap_context> unc = {};
@@ -1671,8 +1687,9 @@ void amf_n2::handle_itti_message(
 bool amf_n2::handle_itti_message(
     std::shared_ptr<itti_handover_required>& itti_msg) {
   Logger::amf_n2().debug("Handling Handover Required ...");
-  uint64_t amf_ue_ngap_id = itti_msg->handoverReq->getAmfUeNgapId();
-  uint32_t ran_ue_ngap_id = itti_msg->handoverReq->getRanUeNgapId();
+  if (!itti_msg->handover_req) return false;
+  uint64_t amf_ue_ngap_id = itti_msg->handover_req->getAmfUeNgapId();
+  uint32_t ran_ue_ngap_id = itti_msg->handover_req->getRanUeNgapId();
 
   std::shared_ptr<gnb_context> gc = {};
   if (!assoc_id_2_gnb_context(itti_msg->assoc_id, gc)) {
@@ -1698,17 +1715,17 @@ bool amf_n2::handle_itti_message(
     return false;
   }
 
-  if (itti_msg->handoverReq->getHandoverType() != Ngap_HandoverType_intra5gs) {
+  if (itti_msg->handover_req->getHandoverType() != Ngap_HandoverType_intra5gs) {
     Logger::amf_n2().error("Handover Type is not supported");
     return false;
   }
 
   Logger::amf_n2().debug(
       "Handover Required, Choice of Cause %d, Cause %ld",
-      (int) itti_msg->handoverReq->getChoiceOfCause(),
-      itti_msg->handoverReq->getCauseValue());
+      (int) itti_msg->handover_req->getChoiceOfCause(),
+      itti_msg->handover_req->getCauseValue());
   long direct_forward_path_availability = {};
-  if (itti_msg->handoverReq->getDirectForwardingPathAvailability(
+  if (itti_msg->handover_req->getDirectForwardingPathAvailability(
           direct_forward_path_availability))
     Logger::amf_n2().debug(
         "Handover Required, DirectForwardingPathAvailability %ld",
@@ -1719,7 +1736,7 @@ bool amf_n2::handle_itti_message(
 
   GlobalGnbId target_global_gnb_id = {};
   oai::ngap::Tai tai               = {};
-  itti_msg->handoverReq->getTargetId(target_global_gnb_id, tai);
+  itti_msg->handover_req->getTargetId(target_global_gnb_id, tai);
   oai::ngap::PlmnId plmn = {};
   GnbId gnbid            = {};
   target_global_gnb_id.get(plmn, gnbid);
@@ -1744,7 +1761,7 @@ bool amf_n2::handle_itti_message(
       mcc_select_tai.c_str(), mnc_select_tai.c_str(), tac);
 
   OCTET_STRING_t source_to_target =
-      itti_msg->handoverReq->getSourceToTargetTransparentContainer();
+      itti_msg->handover_req->getSourceToTargetTransparentContainer();
 
   // TODO: T-AMF selection, for now use the same AMF
 
@@ -1819,7 +1836,7 @@ bool amf_n2::handle_itti_message(
 
   PduSessionResourceListHandoverRqd pDUSessionResourceListHORqd = {};
   std::vector<PDUSessionResourceItem_t> pdu_session_resource_list;
-  if (!itti_msg->handoverReq->getPduSessionResourceList(
+  if (!itti_msg->handover_req->getPduSessionResourceList(
           pDUSessionResourceListHORqd)) {
     Logger::ngap().warn(
         "Decoding PDU Session Resource List IE error or IE missing");
@@ -1950,8 +1967,9 @@ bool amf_n2::handle_itti_message(
 void amf_n2::handle_itti_message(
     std::shared_ptr<itti_handover_request_ack>& itti_msg) {
   Logger::amf_n2().debug("Handling Handover Request Ack ...");
-  uint64_t amf_ue_ngap_id = itti_msg->handoverRequestAck->getAmfUeNgapId();
-  uint32_t ran_ue_ngap_id = itti_msg->handoverRequestAck->getRanUeNgapId();
+  if (!itti_msg->handover_request_ack) return;
+  uint64_t amf_ue_ngap_id = itti_msg->handover_request_ack->getAmfUeNgapId();
+  uint32_t ran_ue_ngap_id = itti_msg->handover_request_ack->getRanUeNgapId();
   Logger::amf_n2().debug(
       "Handover Request Ack ran_ue_ngap_id (" GNB_UE_NGAP_ID_FMT
       ") amf_ue_ngap_id (" AMF_UE_NGAP_ID_FMT ")",
@@ -1974,14 +1992,15 @@ void amf_n2::handle_itti_message(
   unc->target_ran_ue_ngap_id = ran_ue_ngap_id;  // store target RAN ID
 
   std::vector<PDUSessionResourceAdmittedItem_t> list;
-  if (!itti_msg->handoverRequestAck->getPduSessionResourceAdmittedList(list)) {
+  if (!itti_msg->handover_request_ack->getPduSessionResourceAdmittedList(
+          list)) {
     Logger::ngap().error(
         "Decoding HandoverRequestACK getPduSessionResourceList IE error");
     return;
   }
 
   OCTET_STRING_t targetTosource =
-      itti_msg->handoverRequestAck->getTargetToSourceTransparentContainer();
+      itti_msg->handover_request_ack->getTargetToSourceTransparentContainer();
 
   std::shared_ptr<nas_context> nc = {};
   if (!amf_n1_inst->amf_ue_id_2_nas_context(amf_ue_ngap_id, nc)) return;
@@ -2093,8 +2112,9 @@ void amf_n2::handle_itti_message(
 void amf_n2::handle_itti_message(
     std::shared_ptr<itti_handover_notify>& itti_msg) {
   Logger::amf_n2().info("Handle Handover Notify ...");
-  uint64_t amf_ue_ngap_id = itti_msg->handoverNotify->getAmfUeNgapId();
-  uint32_t ran_ue_ngap_id = itti_msg->handoverNotify->getRanUeNgapId();
+  if (!itti_msg->handover_notify) return;
+  uint64_t amf_ue_ngap_id = itti_msg->handover_notify->getAmfUeNgapId();
+  uint32_t ran_ue_ngap_id = itti_msg->handover_notify->getRanUeNgapId();
   Logger::amf_n2().debug(
       "Handover Notify ran_ue_ngap_id (" GNB_UE_NGAP_ID_FMT
       ") amf_ue_ngap_id (" AMF_UE_NGAP_ID_FMT ")",
@@ -2116,7 +2136,7 @@ void amf_n2::handle_itti_message(
 
   NrCgi_t NR_CGI = {};
   Tai_t tai      = {};
-  if (!itti_msg->handoverNotify->getUserLocationInfoNr(NR_CGI, tai)) {
+  if (!itti_msg->handover_notify->getUserLocationInfoNr(NR_CGI, tai)) {
     Logger::amf_n2().debug("Missing IE UserLocationInformationNR");
     return;
   }
@@ -2283,7 +2303,9 @@ void amf_n2::handle_itti_message(
 void amf_n2::handle_itti_message(
     std::shared_ptr<itti_uplink_ran_status_transfer>& itti_msg) {
   Logger::amf_n2().debug("Handling Uplink RAN Status Transfer ...");
-  uint64_t amf_ue_ngap_id = itti_msg->uplinkRanTransfer->getAmfUeNgapId();
+  if (!itti_msg->uplink_ran_status_transfer) return;
+  uint64_t amf_ue_ngap_id =
+      itti_msg->uplink_ran_status_transfer->getAmfUeNgapId();
   Logger::amf_n2().debug(
       "Uplink RAN Status Transfer amf_ue_ngap_id (" AMF_UE_NGAP_ID_FMT ")",
       amf_ue_ngap_id);
@@ -2298,8 +2320,8 @@ void amf_n2::handle_itti_message(
   if (!amf_ue_id_2_ue_ngap_context(amf_ue_ngap_id, unc)) return;
 
   RanStatusTransferTransparentContainer ran_status_transfer = {};
-  itti_msg->uplinkRanTransfer->getRanStatusTransferTransparentContainer(
-      ran_status_transfer);
+  itti_msg->uplink_ran_status_transfer
+      ->getRanStatusTransferTransparentContainer(ran_status_transfer);
   DrbSubjectToStatusTransferList amf_m_list = {};
   ran_status_transfer.getDrbSubjectList(amf_m_list);
   std::vector<DrbSubjectToStatusTransferItem> drb_subject_item_list;

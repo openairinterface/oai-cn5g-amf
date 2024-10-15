@@ -47,6 +47,10 @@ from common.python.building_report import (
     build_summary,
 )
 
+from common.python.unit_tests_analysis import (
+    analyze_unit_tests_run,
+)
+
 REPORT_NAME = 'test_results_oai_amf.html'
 
 class HtmlReport():
@@ -61,6 +65,7 @@ class HtmlReport():
             wfile.write(build_summary(args, 'amf', '22', '9'))
             wfile.write(coding_formatting_log_check(args))
             wfile.write(analyze_sca_log_check())
+            wfile.write(analyze_unit_tests_run())
             wfile.write(generate_footer())
 
     def appendToTestReports(self, args):

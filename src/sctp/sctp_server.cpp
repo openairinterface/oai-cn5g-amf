@@ -58,6 +58,7 @@ sctp_server::sctp_server(const char* address, const uint16_t port_num) {
   server_addr_ = {};
   events_      = {};
   sctp_ctx_    = {};
+  sctp_ttl     = 100;
 }
 
 //------------------------------------------------------------------------------
@@ -485,7 +486,7 @@ int sctp_server::sctp_send_msg(
   if (sctp_sendmsg(
           assoc_desc->sd, (const void*) bdata(*payload),
           (size_t) blength(*payload), NULL, 0, htonl(assoc_desc->ppid), 0,
-          stream, 100, 0) < 0) {
+          stream, this->sctp_ttl, 0) < 0) {
     Logger::sctp().error(
         "[Socket %d] Send stream %u, PPID %u, len %u failed (%s, %d)",
         assoc_desc->sd, stream, htonl(assoc_desc->ppid), blength(*payload),
@@ -498,6 +499,11 @@ int sctp_server::sctp_send_msg(
   //*payload = NULL;
   assoc_desc->messages_sent++;
   return RETURNok;
+}
+
+//------------------------------------------------------------------------------
+void sctp_server::sctp_set_ttl(uint32_t sctp_ttl) {
+  this->sctp_ttl = sctp_ttl;
 }
 
 }  // namespace sctp

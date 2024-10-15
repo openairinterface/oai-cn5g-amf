@@ -43,6 +43,8 @@
 #include "output_wrapper.hpp"
 #include "utils.hpp"
 
+#include <gmp.h>
+
 using namespace oai::ngap;
 using namespace oai::nas;
 using namespace amf_application;
@@ -1209,8 +1211,20 @@ void amf_app::find_non_ue_n2_info_subscriptions(
 }
 
 //------------------------------------------------------------------------------
-uint32_t amf_app::generate_tmsi() {
-  return tmsi_generator.get_uid();
+uint32_t amf_app::generate_random_tmsi() {
+  // Use the getrandom() system call
+  // Note: for RHEL only supported by RHEL 8 Beta+
+  uint32_t rand_number_generated;
+  if (getrandom(&rand_number_generated, sizeof(uint32_t), GRND_NONBLOCK) ==
+      -1) {
+    Logger::amf_app().warn(
+        "Error when generating a random number using getrandom()");
+  } else {
+    Logger::amf_app().debug(
+        "Random number generated: %ld", rand_number_generated);
+  }
+
+  return rand_number_generated;
 }
 
 //------------------------------------------------------------------------------
@@ -1224,7 +1238,7 @@ bool amf_app::generate_5g_guti(
 
   mcc      = uc->tai.mcc;
   mnc      = uc->tai.mnc;
-  tmsi     = generate_tmsi();
+  tmsi     = generate_random_tmsi();
   uc->tmsi = tmsi;
   return true;
 }
@@ -1436,6 +1450,13 @@ void amf_app::generate_amf_profile() {
   nf_instance_profile.add_nf_ipv4_addresses(amf_cfg.sbi.addr4);
 
   // NF services
+  // IP Endpoint (common for each service)
+  ip_endpoint_t endpoint = {};
+  endpoint.ipv4_address  = amf_cfg.sbi.addr4;
+  endpoint.transport     = "TCP";
+  endpoint.port          = amf_cfg.sbi.port;
+
+  // namf_communication
   oai::common::sbi::nf_service_t nf_service = {};
   nf_service.service_instance_id            = "namf_communication";
   nf_service.service_name                   = "namf_communication";
@@ -1447,15 +1468,26 @@ void amf_app::generate_amf_profile() {
   nf_service.versions.push_back(version);
   nf_service.scheme            = "http";
   nf_service.nf_service_status = "REGISTERED";
-  // IP Endpoint
-  ip_endpoint_t endpoint = {};
-  endpoint.ipv4_address  = amf_cfg.sbi.addr4;
-  endpoint.transport     = "TCP";
-  endpoint.port          = amf_cfg.sbi.port;
+
   nf_service.ip_endpoints.push_back(endpoint);
+
+  // namf-evts
+  oai::common::sbi::nf_service_t nf_service_events = {};
+  nf_service_events.service_instance_id            = "namf-evts";
+  nf_service_events.service_name                   = "namf-evts";
+  nf_service_version_t version_events              = {};
+  if (amf_cfg.sbi.api_version.has_value())
+    version_events.api_version_in_uri =
+        amf_cfg.sbi.api_version.value_or(DEFAULT_SBI_API_VERSION);
+  version_events.api_full_version = "1.0.0";  // TODO: to be updated
+  nf_service_events.versions.push_back(version_events);
+  nf_service_events.scheme            = "http";
+  nf_service_events.nf_service_status = "REGISTERED";
+  nf_service_events.ip_endpoints.push_back(endpoint);
 
   nf_instance_profile.delete_nf_services();
   nf_instance_profile.add_nf_service(nf_service);
+  nf_instance_profile.add_nf_service(nf_service_events);
 
   // TODO: custom info
   // AMF info

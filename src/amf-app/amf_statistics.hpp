@@ -64,12 +64,12 @@ typedef struct ue_info_s {
   cm_state_t cm_status;
   _5gmm_state_t register_status;
   uint32_t ranid;
-  long amfid;
+  uint64_t amfid;
   std::string imsi;
   std::string guti;
   std::string mcc;
   std::string mnc;
-  uint32_t cellId;
+  uint64_t cellId;
 } ue_info_t;
 
 constexpr uint8_t kStatisticsIndent             = 3;
