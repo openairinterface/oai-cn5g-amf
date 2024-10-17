@@ -1950,8 +1950,7 @@ bool amf_n1::registration_request_handle(
     case kMobilityRegistrationUpdating: {
       Logger::amf_n1().debug("Handling Mobility Registration Update...");
       return run_mobility_registration_update_procedure(
-          nc, registration_request->GetUplinkDataStatus(),
-          registration_request->GetPduSessionStatus(), cause);
+          nc, uplink_data_status_opt, pdu_session_status_opt, cause);
     } break;
 
     case kPeriodicRegistrationUpdating: {
