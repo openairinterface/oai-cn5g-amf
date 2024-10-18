@@ -1845,6 +1845,7 @@ bool amf_n1::registration_request_handle(
     return false;
   }
   nc->ngksi = ngksi;
+  Logger::amf_n1().debug("NAS key set identifier: 0x%x", nc->ngksi);
 
   // Get 5GMM Capability IE (optional), not
   // included for periodic registration updating procedure
@@ -3945,8 +3946,10 @@ bool amf_n1::run_mobility_registration_update_procedure(
     return false;
   }
 
+  Logger::amf_n1().debug("NAS key set identifier: 0x%x", nc->ngksi);
+
   if (!nc->security_ctx.has_value()) {
-    Logger::amf_n1().warn("No Security Context found");
+    Logger::amf_n1().warn("No Security Context/valid key found");
     // Run Registration procedure
     return run_registration_procedure(nc, cause);
   }
