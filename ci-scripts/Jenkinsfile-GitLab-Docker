@@ -488,6 +488,36 @@ pipeline {
             }
           }
         }
+        // Home-made RAN emulator
+        stage ('Robot-NorthBound-Test') {
+          steps {
+            script {
+              gitlabCommitStatus(name: "Robot-NorthBound-Test") {
+                localStatus = build job: 'OAI-CN5G-RobotTest-NorthBound-Testing',
+                  parameters: [
+                    string(name: 'AMF_TAG', value: String.valueOf(amf_tag)),
+                    string(name: 'AMF_BRANCH', value: String.valueOf(amf_branch))
+                  ], propagate: false
+                localResult = localStatus.getResult()
+
+                if (localStatus.resultIsBetterOrEqualTo('SUCCESS')) {
+                  echo "Robot-NorthBound-Test is OK"
+                } else {
+                  error "Robot-NorthBound-Test is is KO"
+                }
+              }
+            }
+          }
+          post {
+            always {
+              script {
+                copyArtifacts(projectName: 'OAI-CN5G-RobotTest-NorthBound-Testing',
+                              filter: '*.html',
+                              selector: lastCompleted())
+              }
+            }
+          }
+        }
       }
     }
     // We are only publishing the Ubuntu image to Docker-Hub
