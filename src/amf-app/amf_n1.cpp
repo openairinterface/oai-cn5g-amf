@@ -595,6 +595,8 @@ void amf_n1::nas_signalling_establishment_request_handle(
       Logger::amf_n1().debug(
           "Received Registration Request message, handling...");
       uint8_t cause = k5gmmCauseProtocolErrorUnspecified;
+      if (nc && nc->security_ctx.has_value())
+        nc->security_ctx.value().ul_count.seq_num = ulCount;
       if (!registration_request_handle(
               nc, ran_ue_ngap_id, amf_ue_ngap_id, snn, plain_msg, cause)) {
         // Send Registration Reject with appropriate cause
@@ -1843,6 +1845,7 @@ bool amf_n1::registration_request_handle(
     return false;
   }
   nc->ngksi = ngksi;
+  Logger::amf_n1().debug("NAS key set identifier: 0x%x", nc->ngksi);
 
   // Get 5GMM Capability IE (optional), not
   // included for periodic registration updating procedure
@@ -1950,8 +1953,7 @@ bool amf_n1::registration_request_handle(
     case kMobilityRegistrationUpdating: {
       Logger::amf_n1().debug("Handling Mobility Registration Update...");
       return run_mobility_registration_update_procedure(
-          nc, registration_request->GetUplinkDataStatus(),
-          registration_request->GetPduSessionStatus(), cause);
+          nc, uplink_data_status_opt, pdu_session_status_opt, cause);
     } break;
 
     case kPeriodicRegistrationUpdating: {
@@ -3944,8 +3946,10 @@ bool amf_n1::run_mobility_registration_update_procedure(
     return false;
   }
 
+  Logger::amf_n1().debug("NAS key set identifier: 0x%x", nc->ngksi);
+
   if (!nc->security_ctx.has_value()) {
-    Logger::amf_n1().warn("No Security Context found");
+    Logger::amf_n1().warn("No Security Context/valid key found");
     // Run Registration procedure
     return run_registration_procedure(nc, cause);
   }
