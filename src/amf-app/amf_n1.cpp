@@ -3275,6 +3275,41 @@ void amf_n1::registration_complete_handle(
     return;
   }
 
+  // TODO: Stop timer T3550 and Change to state 5GMM-REGISTERED. The 5G-GUTI, if
+  // sent in the REGISTRATION ACCEPT message, shall be considered as valid, and
+  // the UE radio capability ID, if sent in the REGISTRATION ACCEPT, shall be
+  // considered as valid.
+
+  // Check follow-on-request indicator
+  if (!nc->follow_on_req_pending_ind) {
+    // If the UE has set the Follow-on request indicator to "Follow-on request
+    // pending" in the REGISTRATION REQUEST message, or the network has downlink
+    // signalling pending, the AMF shall not immediately release the NAS
+    // signalling connection after the completion of the registration procedure.
+    // Otherwise, release NAS signalling after the completion of the
+    // registration procedure
+    // Please refer to: Section 5.5.1.2.4@3GPP TS 24.501 Rel 16.14.0
+    // and 8.3.3.1@3GPP TS 38.413 Rel 16.14.0
+    // Send N2 UE Release command to NG-RAN
+    Logger::amf_n1().debug(
+        "Sending ITTI UE Context Release Command to TASK_AMF_N2");
+
+    auto itti_msg_cxt_release =
+        std::make_shared<itti_ue_context_release_command>(
+            TASK_AMF_N1, TASK_AMF_N2);
+    itti_msg_cxt_release->amf_ue_ngap_id = amf_ue_ngap_id;
+    itti_msg_cxt_release->ran_ue_ngap_id = ran_ue_ngap_id;
+    itti_msg_cxt_release->cause.setChoiceOfCause(Ngap_Cause_PR_nas);
+    itti_msg_cxt_release->cause.set(Ngap_CauseNas_normal_release);
+
+    int ret = itti_inst->send_msg(itti_msg_cxt_release);
+    if (0 != ret) {
+      Logger::amf_n1().error(
+          "Could not send ITTI message %s to task TASK_AMF_N2",
+          itti_msg_cxt_release->get_msg_name());
+    }
+  }
+
   // TODO: Configuration Update Command message causes issue for UERANSIM
   // (it does not accept the first PDU Session Establishment Accept, then it
   // will send a second PDU Session Establishment Request and accept the second
