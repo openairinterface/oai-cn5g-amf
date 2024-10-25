@@ -3281,7 +3281,8 @@ void amf_n1::registration_complete_handle(
   // considered as valid.
 
   // Check follow-on-request indicator
-  if (!nc->follow_on_req_pending_ind) {
+  if (!nc->follow_on_req_pending_ind and
+      (nc->registration_type == kInitialRegistration)) {
     // If the UE has set the Follow-on request indicator to "Follow-on request
     // pending" in the REGISTRATION REQUEST message, or the network has downlink
     // signalling pending, the AMF shall not immediately release the NAS
