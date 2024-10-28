@@ -30,6 +30,7 @@
 #include "DownlinkNonUeAssociatedNrppaTransport.hpp"
 #include "DownlinkRanStatusTransfer.hpp"
 #include "DownlinkUeAssociatedNrppaTransport.hpp"
+#include "GnbId.hpp"
 #include "HandoverCommandMsg.hpp"
 #include "HandoverPreparationFailure.hpp"
 #include "HandoverRequest.hpp"
@@ -2456,8 +2457,35 @@ void amf_n2::handle_itti_message(
   int encoded_size = dnuant.Encode(buffer, BUFFER_SIZE_1024);
   if (encoded_size > 0) {
     bstring b = blk2bstr(buffer, encoded_size);
-    // TODO: Should be verified
-    std::vector<sctp::sctp_assoc_id_t> assoc_ids = get_all_assoc_ids();
+
+    std::vector<sctp::sctp_assoc_id_t> assoc_ids;
+    // Get list of gNBs if available
+    if (itti_msg->global_ran_node_list.size() > 0) {
+      for (auto gnb : itti_msg->global_ran_node_list) {
+        std::string gnb_id_str = gnb.getGNbId().getGNBValue();
+        // Get gNB length and verify the value
+        uint32_t gnb_id_bit_len = gnb.getGNbId().getBitLength();
+        gnb_id_bit_len  = (gnb_id_bit_len > oai::ngap::NGAP_GNB_ID_SIZE_MAX) ?
+                              oai::ngap::NGAP_GNB_ID_SIZE_MAX :
+                              gnb_id_bit_len;
+        gnb_id_bit_len  = (gnb_id_bit_len < oai::ngap::NGAP_GNB_ID_SIZE_MIN) ?
+                              oai::ngap::NGAP_GNB_ID_SIZE_MIN :
+                              gnb_id_bit_len;
+        uint32_t gnb_id = 0;
+        oai::utils::conv::string_hex_to_int(gnb_id_str, gnb_id);
+        Logger::amf_n2().debug("gNB Id in the list " GNB_ID_FMT "", gnb_id);
+        if (is_gnb_id_2_gnb_context(gnb_id)) {
+          std::shared_ptr<gnb_context> gc = nullptr;
+          if (gnb_id_2_gnb_context(gnb_id, gc)) {
+            assoc_ids.push_back(gc->sctp_assoc_id);
+          }
+        }
+      }
+    } else {  // otherwise send to all associated gNBs
+      assoc_ids = get_all_assoc_ids();
+    }
+
+    // Send message to the corresponding gNBs
     for (auto& assoc_id : assoc_ids) {
       sctp_s_38412.sctp_send_msg(assoc_id, 0, &b);
     }

@@ -338,10 +338,12 @@ void amf_http2_server::start() {
 
             std::string n2_content_id = {};
 
-            if (n2InformationTransferReqData.getN2Information()
-                    .getN2InformationClass()
-                    .getEnumValue() !=
-                N2InformationClass_anyOf::eN2InformationClass_anyOf::NRPPA) {
+            if ((n2InformationTransferReqData.getN2Information()
+                     .getN2InformationClass()
+                     .getEnumValue() !=
+                 N2InformationClass_anyOf::eN2InformationClass_anyOf::NRPPA) or
+                (!n2InformationTransferReqData.getN2Information()
+                      .nrppaInfoIsSet())) {
               // TODO: Only support NRPPA for now
               response_json["cause"] =
                   n1_n2_message_transfer_cause_e2str[N1_MSG_NOT_TRANSFERRED];
@@ -360,24 +362,26 @@ void amf_http2_server::start() {
                   "n2_content_id: %s", n2_content_id.c_str());
             }
 
-            bstring nrppa_pdu  = nullptr;
-            bstring routing_id = nullptr;
+            // Get NRPPA PDU
+            bstring nrppa_pdu = nullptr;
             amf_conv::msg_str_2_msg_hex(parts[n2_content_id].body, nrppa_pdu);
+            // Get Routing ID
+            bstring routing_id = nullptr;
             amf_conv::string_2_bstring(
                 n2InformationTransferReqData.getN2Information()
                     .getNrppaInfo()
                     .getNfId(),
                 routing_id);
+
+            // Create ITTI message to send to task APP to further process
             auto itti_msg =
                 std::make_shared<itti_non_ue_n2_message_transfer_request>(
                     AMF_SERVER, TASK_AMF_APP);
-
             itti_msg->nrppa_pdu        = bstrcpy(nrppa_pdu);
-            itti_msg->routing_id       = bstrcpy(routing_id);
             itti_msg->is_nrppa_pdu_set = true;
-
-            res.write_head(code);
-            res.end(response_json.dump().c_str());
+            itti_msg->routing_id       = bstrcpy(routing_id);
+            itti_msg->global_ran_node_list =
+                n2InformationTransferReqData.getGlobalRanNodeList();
 
             int ret = itti_inst->send_msg(itti_msg);
             if (0 != ret) {
@@ -385,6 +389,11 @@ void amf_http2_server::start() {
                   "Could not send ITTI message %s to task TASK_AMF_N2",
                   itti_msg->get_msg_name());
             }
+
+            // Send reply
+            res.write_head(code);
+            res.end(response_json.dump().c_str());
+
             oai::utils::utils::bdestroy_wrapper(&nrppa_pdu);
           }
         });
