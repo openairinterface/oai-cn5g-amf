@@ -1822,6 +1822,28 @@ bool amf_n1::registration_request_handle(
   nc->amf_ue_ngap_id  = amf_ue_ngap_id;
   nc->serving_network = snn;
 
+  // Update statistics
+  if (uc) {
+    ue_info_t ue_item;
+    ue_item.cm_status       = CM_CONNECTED;
+    ue_item.register_status = _5GMM_REGISTERED;
+    ue_item.ranid           = ran_ue_ngap_id;
+    ue_item.amfid           = amf_ue_ngap_id;
+    ue_item.imsi            = nc->imsi;
+    if (nc->guti.has_value()) ue_item.guti = nc->guti.value();
+    ue_item.mcc    = uc->cgi.mcc;
+    ue_item.mnc    = uc->cgi.mnc;
+    ue_item.cellId = uc->cgi.nrCellId;
+
+    stacs.update_ue_info(ue_item);
+    stacs.display();
+
+    std::string supi = amf_conv::imsi_to_supi(nc->imsi);
+    event_sub.ue_registration_state(
+        supi, _5GMM_REGISTERED, amf_cfg.support_features.http_version,
+        ran_ue_ngap_id, amf_ue_ngap_id);
+  }
+
   if (nc->security_ctx.has_value())
     nc->security_ctx.value().sc_type = SECURITY_CTX_TYPE_NOT_AVAILABLE;
 
