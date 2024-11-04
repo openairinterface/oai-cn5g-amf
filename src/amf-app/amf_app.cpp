@@ -33,7 +33,6 @@
 #include "RegistrationContextContainer.h"
 #include "UeN1N2InfoSubscriptionCreatedData.h"
 #include "amf_config.hpp"
-#include "amf_config_yaml.hpp"
 #include "amf_conversions.hpp"
 #include "amf_n1.hpp"
 #include "amf_n2.hpp"

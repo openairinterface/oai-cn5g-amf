@@ -23,19 +23,17 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <unistd.h>
-#include <iostream>
 
+#include <chrono>
 #include <cstring>
 #include <iostream>
 #include <string>
 #include <thread>
-#include <chrono>
 
-#include "amf_http1_server.hpp"
-#include "amf_http2_server.hpp"
 #include "amf_app.hpp"
 #include "amf_config.hpp"
-#include "amf_config_yaml.hpp"
+#include "amf_http1_server.hpp"
+#include "amf_http2_server.hpp"
 #include "amf_statistics.hpp"
 #include "http_client.hpp"
 #include "itti.hpp"
