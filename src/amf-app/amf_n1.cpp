@@ -1838,7 +1838,7 @@ bool amf_n1::registration_request_handle(
     stacs.update_ue_info(ue_item);
     stacs.display();
 
-    std::string supi   = amf_conv::imsi_to_supi(nc->imsi);
+    std::string supi = amf_conv::imsi_to_supi(nc->imsi);
     event_sub.ue_registration_state(
         supi, _5GMM_REGISTERED, amf_cfg.support_features.http_version,
         ran_ue_ngap_id, amf_ue_ngap_id);
