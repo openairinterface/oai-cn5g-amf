@@ -271,7 +271,7 @@ void amf_sbi::handle_itti_message(
   if (!uc->find_pdu_session_context(itti_msg.pdu_session_id, psc)) return;
 
   std::string remote_uri = {};
-  if (!amf_cfg.get_smf_pdu_session_context_uri(psc, remote_uri)) {
+  if (!amf_sbi_helper::get_smf_pdu_session_context_uri(psc, remote_uri)) {
     Logger::amf_sbi().error("Could not find Nsmf_PDUSession URI");
     return;
   }
@@ -454,7 +454,7 @@ void amf_sbi::send_pdu_session_update_sm_context_request(
       supi.c_str(), psc->pdu_session_id, psc->smf_info.addr.c_str());
 
   std::string remote_uri = {};
-  if (!amf_cfg.get_smf_pdu_session_context_uri(psc, remote_uri)) {
+  if (!amf_sbi_helper::get_smf_pdu_session_context_uri(psc, remote_uri)) {
     Logger::amf_sbi().error("Could not find Nsmf_PDUSession URI");
     return;
   }
@@ -487,8 +487,8 @@ void amf_sbi::handle_pdu_session_initial_request(
   // Provide http2 port if enabled
   std::string amf_port = std::to_string(amf_cfg.sbi.port);
 
-  std::string remote_uri =
-      amf_cfg.get_smf_pdu_session_base_uri(smf_uri_root, smf_api_version);
+  std::string remote_uri = amf_sbi_helper::get_smf_pdu_session_base_uri(
+      smf_uri_root, smf_api_version);
 
   Logger::amf_sbi().debug("SMF URI: %s", remote_uri.c_str());
 
@@ -541,7 +541,7 @@ void amf_sbi::handle_itti_message(
     return;
 
   std::string remote_uri = {};
-  if (!amf_cfg.get_smf_pdu_session_context_uri(psc, remote_uri)) {
+  if (!amf_sbi_helper::get_smf_pdu_session_context_uri(psc, remote_uri)) {
     Logger::amf_sbi().error("Could not find Nsmf_PDUSession URI");
     return;
   }
@@ -652,8 +652,8 @@ void amf_sbi::handle_itti_message(
       itti_msg.http_version);
 
   std::string url =
-      amf_cfg.get_udm_slice_selection_subscription_data_retrieval_uri(
-          itti_msg.supi);
+      amf_sbi_helper::get_udm_slice_selection_subscription_data_retrieval_uri(
+          amf_cfg.udm_addr, itti_msg.supi);
   nlohmann::json plmn_id = {};
   plmn_id["mcc"]         = itti_msg.plmn.mcc;
   plmn_id["mnc"]         = itti_msg.plmn.mnc;
@@ -690,7 +690,9 @@ void amf_sbi::handle_itti_message(
       "%d)",
       itti_msg.http_version);
 
-  std::string url = amf_cfg.get_nssf_network_slice_selection_information_uri();
+  std::string url =
+      amf_sbi_helper::get_nssf_network_slice_selection_information_uri(
+          amf_cfg.nssf_addr);
 
   // Slice Info Request For Registration
   nlohmann::json slice_info = {};
@@ -985,7 +987,8 @@ void amf_sbi::handle_itti_message(
       "Send Determine Location Request to LMF (HTTP version %d)",
       itti_msg.http_version);
 
-  std::string url = amf_cfg.get_lmf_determine_location_uri();
+  std::string url =
+      amf_sbi_helper::get_lmf_determine_location_uri(amf_cfg.lmf_addr);
   Logger::amf_sbi().debug(
       "Send Determine Location Request to LMF, URL %s", url.c_str());
 
@@ -1027,7 +1030,8 @@ void amf_sbi::handle_itti_message(
 
   nlohmann::json json_data = {};
   to_json(json_data, itti_msg.auth_info);
-  std::string url = amf_cfg.get_ausf_ue_authentications_uri();
+  std::string url =
+      amf_sbi_helper::get_ausf_ue_authentications_uri(amf_cfg.ausf_addr);
 
   Logger::amf_sbi().debug(
       "Send UE Authentication Request to AUSF, URL %s", url.c_str());
@@ -1667,7 +1671,8 @@ void amf_sbi::get_network_slice_information(
   // ToDo Add TAI
 
   std::string nssf_url =
-      amf_cfg.get_nssf_network_slice_selection_information_uri();
+      amf_sbi_helper::get_nssf_network_slice_selection_information_uri(
+          amf_cfg.nssf_addr);
 
   std::string parameters = {};
   parameters.append("?nf-type=AMF&nf-id=")

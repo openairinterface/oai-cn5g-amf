@@ -21,6 +21,8 @@
 
 #include "amf_app.hpp"
 
+#include <gmp.h>
+
 #include <boost/uuid/random_generator.hpp>
 #include <boost/uuid/uuid_io.hpp>
 
@@ -42,8 +44,6 @@
 #include "ngap_app.hpp"
 #include "output_wrapper.hpp"
 #include "utils.hpp"
-
-#include <gmp.h>
 
 using namespace oai::ngap;
 using namespace oai::nas;
@@ -746,8 +746,8 @@ void amf_app::handle_itti_message(itti_sbi_n1n2_message_subscribe& itti_msg) {
   add_n1n2_message_subscription(
       itti_msg.ue_cxt_id, n1n2sub_id, subscription_data);
 
-  std::string location = amf_cfg.get_amf_n1n2_message_subscribe_uri(
-      itti_msg.ue_cxt_id, std::to_string((uint32_t) n1n2sub_id));
+  std::string location = amf_sbi_helper::get_amf_n1n2_message_subscribe_uri(
+      amf_cfg.sbi, itti_msg.ue_cxt_id, std::to_string((uint32_t) n1n2sub_id));
 
   // Trigger the response from AMF API Server
   oai::model::amf::UeN1N2InfoSubscriptionCreatedData created_data = {};
@@ -811,8 +811,8 @@ void amf_app::handle_itti_message(itti_sbi_non_ue_n2_info_subscribe& itti_msg) {
 
   add_non_ue_n2_info_subscription(n2sub_id, subscription_data);
 
-  std::string location = amf_cfg.get_non_ue_n2_info_subscribe_uri(
-      std::to_string((uint32_t) n2sub_id));
+  std::string location = amf_sbi_helper::get_non_ue_n2_info_subscribe_uri(
+      amf_cfg.sbi, std::to_string((uint32_t) n2sub_id));
 
   // Trigger the response from AMF API Server
   oai::model::amf::NonUeN2InfoSubscriptionCreatedData created_data = {};
