@@ -32,9 +32,6 @@
 #include "string.hpp"
 #include "thread_sched.hpp"
 
-// for CURL
-constexpr auto CURL_MIME_BOUNDARY = "----Boundary";
-
 #define BUFFER_SIZE_8192 8192
 #define BUFFER_SIZE_4096 4096
 #define BUFFER_SIZE_2048 2048

@@ -21,8 +21,6 @@
 
 #include "amf_sbi.hpp"
 
-#include <curl/curl.h>
-
 #include <nlohmann/json.hpp>
 
 #include "3gpp_24.501.hpp"
@@ -318,11 +316,11 @@ void amf_sbi::handle_itti_message(
 
   std::string json_part = pdu_session_update_request.dump();
 
-  bool curl_result = curl_http_client(
+  bool request_result = send_http_request(
       remote_uri, json_part, n1sm_msg, n2sm_msg, supi, itti_msg.pdu_session_id,
       amf_cfg.support_features.http_version, itti_msg.promise_id);
 
-  if (curl_result and
+  if (request_result and
       (itti_msg.n2sm_info_type.compare("PDU_RES_SETUP_RSP") == 0)) {
     psc->up_cnx_state = up_cnx_state_e::UPCNX_STATE_ACTIVATED;
   }
@@ -470,7 +468,7 @@ void amf_sbi::send_pdu_session_update_sm_context_request(
   octet_stream_2_hex_stream(
       (uint8_t*) bdata(sm_msg), blength(sm_msg), n1sm_msg);
 
-  curl_http_client(
+  send_http_request(
       remote_uri, json_part, n1sm_msg, "", supi, psc->pdu_session_id,
       amf_cfg.support_features.http_version);
 }
@@ -527,7 +525,7 @@ void amf_sbi::handle_pdu_session_initial_request(
   octet_stream_2_hex_stream(
       (uint8_t*) bdata(sm_msg), blength(sm_msg), n1sm_msg);
 
-  curl_http_client(
+  send_http_request(
       remote_uri, json_part, n1sm_msg, "", supi, psc->pdu_session_id,
       amf_cfg.support_features.http_version);
 }
@@ -559,7 +557,7 @@ void amf_sbi::handle_itti_message(
   nlohmann::json response_json = {};
   uint32_t response_code       = 0;
 
-  curl_http_client(
+  send_http_request(
       remote_uri, oai::common::sbi::method_e::POST, msg_body, response_json,
       response_code, amf_cfg.support_features.http_version);
 
@@ -635,7 +633,7 @@ void amf_sbi::handle_itti_message(itti_sbi_notify_subscribed_event& itti_msg) {
     std::string url        = i.get_notify_uri();
     uint32_t response_code = 0;
 
-    curl_http_client(
+    send_http_request(
         url, oai::common::sbi::method_e::POST, body, response_json,
         response_code, amf_cfg.support_features.http_version);
     // TODO: process the response
@@ -669,7 +667,7 @@ void amf_sbi::handle_itti_message(
   nlohmann::json response_data = {};
   uint32_t response_code       = 0;
 
-  curl_http_client(
+  send_http_request(
       url, oai::common::sbi::method_e::GET, "", response_data, response_code,
       amf_cfg.support_features.http_version);
 
@@ -721,7 +719,7 @@ void amf_sbi::handle_itti_message(
   nlohmann::json response_json = {};
   uint32_t response_code       = 0;
 
-  curl_http_client(
+  send_http_request(
       url, oai::common::sbi::method_e::GET, "", response_json, response_code,
       amf_cfg.support_features.http_version);
 
@@ -787,7 +785,7 @@ void amf_sbi::handle_itti_message(itti_sbi_n1_message_notify& itti_msg) {
   uint32_t response_code = 0;
   std::string n2sm_msg   = {};
 
-  curl_http_client(
+  send_http_request(
       url, json_part, n1sm_msg, n2sm_msg, amf_cfg.support_features.http_version,
       response_code);
 
@@ -813,7 +811,7 @@ void amf_sbi::handle_itti_message(itti_sbi_n2_info_notify& itti_msg) {
   uint32_t response_code = 0;
   std::string n1sm_msg   = {};
 
-  curl_http_client(
+  send_http_request(
       itti_msg.nf_uri, json_part, n1sm_msg, n2_info_msg,
       amf_cfg.support_features.http_version, response_code);
 
@@ -840,7 +838,7 @@ void amf_sbi::handle_itti_message(itti_sbi_nf_instance_discovery& itti_msg) {
   nlohmann::json response_data = {};
   uint32_t response_code       = 0;
 
-  curl_http_client(
+  send_http_request(
       url, oai::common::sbi::method_e::GET, "", response_data, response_code,
       amf_cfg.support_features.http_version);
 
@@ -870,7 +868,7 @@ void amf_sbi::handle_itti_message(
   nlohmann::json response_data = {};
   uint32_t response_code       = 0;
 
-  curl_http_client(
+  send_http_request(
       itti_msg.nrf_uri, oai::common::sbi::method_e::PUT, body, response_data,
       response_code, amf_cfg.support_features.http_version);
 
@@ -922,7 +920,7 @@ void amf_sbi::handle_itti_message(
   nlohmann::json response_data = {};
   uint32_t response_code       = 0;
 
-  curl_http_client(
+  send_http_request(
       itti_msg.nrf_uri, oai::common::sbi::method_e::PATCH, body, response_data,
       response_code, amf_cfg.support_features.http_version);
 
@@ -958,7 +956,7 @@ void amf_sbi::handle_itti_message(
   nlohmann::json response_data = {};
   uint32_t response_code       = 0;
 
-  curl_http_client(
+  send_http_request(
       itti_msg.nrf_uri, oai::common::sbi::method_e::DELETE, "", response_data,
       response_code, amf_cfg.support_features.http_version);
 
@@ -999,7 +997,7 @@ void amf_sbi::handle_itti_message(
   uint32_t response_code       = 0;
   nlohmann::json response_json = {};
 
-  curl_http_client(
+  send_http_request(
       url, oai::common::sbi::method_e::POST, body, response_json, response_code,
       amf_cfg.support_features.http_version);
 
@@ -1043,7 +1041,7 @@ void amf_sbi::handle_itti_message(
   nlohmann::json response_json = {};
   uint32_t response_code       = 0;
 
-  curl_http_client(
+  send_http_request(
       url, oai::common::sbi::method_e::POST, body, response_json, response_code,
       itti_msg.http_version);
 
@@ -1083,7 +1081,7 @@ void amf_sbi::handle_itti_message(
   nlohmann::json response_json = {};
   uint32_t response_code       = 0;
 
-  curl_http_client(
+  send_http_request(
       itti_msg.uri, oai::common::sbi::method_e::PUT, body, response_json,
       response_code, itti_msg.http_version);
 
@@ -1164,7 +1162,7 @@ bool amf_sbi::discover_smf(
   nlohmann::json response_data = {};
   uint32_t response_code       = 0;
 
-  curl_http_client(
+  send_http_request(
       url, oai::common::sbi::method_e::GET, "", response_data, response_code,
       amf_cfg.support_features.http_version);
 
@@ -1248,12 +1246,12 @@ bool amf_sbi::discover_smf(
 }
 
 //------------------------------------------------------------------------------
-bool amf_sbi::curl_http_client(
+bool amf_sbi::send_http_request(
     const std::string& remote_uri, const std::string& json_data,
     const std::string& n1sm_msg, const std::string& n2sm_msg,
     const std::string& supi, uint8_t pdu_session_id, uint8_t http_version,
     const uint32_t& promise_id) {
-  bool curl_result = false;
+  bool request_result = false;
 
   mime_parser parser                       = {};
   std::string body                         = {};
@@ -1355,7 +1353,7 @@ bool amf_sbi::curl_http_client(
       return false;
     }
 
-    curl_result                          = true;
+    request_result                       = true;
     nlohmann::json process_response_data = {};
 
     bool is_ho_procedure              = false;
@@ -1410,7 +1408,7 @@ bool amf_sbi::curl_http_client(
                               is_service_request)) {
       amf_app_inst->trigger_process_response(promise_id, process_response_data);
       oai::utils::utils::bdestroy_wrapper(&n1sm_hex);
-      return curl_result;
+      return request_result;
     }
 
     // Transfer N1/N2 to gNB/UE if available
@@ -1457,11 +1455,11 @@ bool amf_sbi::curl_http_client(
     oai::utils::utils::bdestroy_wrapper(&n2sm_hex);
   }
 
-  return curl_result;
+  return request_result;
 }
 
 //------------------------------------------------------------------------------
-void amf_sbi::curl_http_client(
+void amf_sbi::send_http_request(
     const std::string& remote_uri, std::string& json_data,
     std::string& n1sm_msg, std::string& n2sm_msg, uint8_t http_version,
     uint32_t& response_code, const uint32_t& promise_id) {
@@ -1551,7 +1549,7 @@ void amf_sbi::curl_http_client(
 }
 
 //-----------------------------------------------------------------------------------------------------
-void amf_sbi::curl_http_client(
+void amf_sbi::send_http_request(
     const std::string& remote_uri, const oai::common::sbi::method_e method,
     const std::string& msg_body, nlohmann::json& response_json,
     uint32_t& response_code, uint8_t http_version) {
@@ -1684,7 +1682,7 @@ void amf_sbi::get_network_slice_information(
   Logger::amf_sbi().debug(
       "Send Network Slice Information Retrieval, URI %s", nssf_url.c_str());
 
-  curl_http_client(
+  send_http_request(
       nssf_url, oai::common::sbi::method_e::GET, "", response_data,
       response_code, amf_cfg.support_features.http_version);
 
@@ -1703,16 +1701,16 @@ void amf_sbi::create_multipart_content(
   if ((n1sm_msg.size() > 0) and (n2sm_msg.size() > 0)) {
     // prepare the body content
     parser.create_multipart_related_content(
-        body, json_data, CURL_MIME_BOUNDARY, n1sm_msg, n2sm_msg);
+        body, json_data, oai::http::MIME_BOUNDARY, n1sm_msg, n2sm_msg);
   } else if (n1sm_msg.size() > 0) {  // only N1 content
     // prepare the body content
     parser.create_multipart_related_content(
-        body, json_data, CURL_MIME_BOUNDARY, n1sm_msg,
+        body, json_data, oai::http::MIME_BOUNDARY, n1sm_msg,
         multipart_related_content_part_e::NAS);
   } else if (n2sm_msg.size() > 0) {  // only N2 content
     // prepare the body content
     parser.create_multipart_related_content(
-        body, json_data, CURL_MIME_BOUNDARY, n2sm_msg,
+        body, json_data, oai::http::MIME_BOUNDARY, n2sm_msg,
         multipart_related_content_part_e::NGAP);
   } else {
     body         = json_data;
