@@ -54,18 +54,6 @@ extern amf_app* amf_app_inst;
 extern std::shared_ptr<oai::http::http_client> http_client_inst;
 
 //------------------------------------------------------------------------------
-void octet_stream_2_hex_stream(uint8_t* buf, int len, std::string& out) {
-  out       = "";
-  char* tmp = (char*) calloc(1, 2 * len * sizeof(uint8_t) + 1);
-  for (int i = 0; i < len; i++) {
-    sprintf(tmp + 2 * i, "%02x", buf[i]);
-  }
-  tmp[2 * len] = '\0';
-  out          = tmp;
-  Logger::amf_sbi().debug("Buffer: %s", out.c_str());
-}
-
-//------------------------------------------------------------------------------
 void amf_sbi_task(void*) {
   const task_id_t task_id = TASK_AMF_SBI;
   itti_inst->notify_task_ready(task_id);
@@ -284,14 +272,14 @@ void amf_sbi::handle_itti_message(
   if (itti_msg.is_n1sm_set) {
     pdu_session_update_request[N1_SM_CONTENT_ID]["contentId"] =
         N1_SM_CONTENT_ID;
-    octet_stream_2_hex_stream(
+    amf_conv::octet_stream_2_hex_stream(
         (uint8_t*) bdata(itti_msg.n1sm), blength(itti_msg.n1sm), n1sm_msg);
   }
 
   if (itti_msg.is_n2sm_set) {
     pdu_session_update_request["n2SmInfoType"] = itti_msg.n2sm_info_type;
     pdu_session_update_request["n2SmInfo"]["contentId"] = N2_SM_CONTENT_ID;
-    octet_stream_2_hex_stream(
+    amf_conv::octet_stream_2_hex_stream(
         (uint8_t*) bdata(itti_msg.n2sm), blength(itti_msg.n2sm), n2sm_msg);
   }
 
@@ -465,7 +453,7 @@ void amf_sbi::send_pdu_session_update_sm_context_request(
   std::string json_part = pdu_session_update_request.dump();
 
   std::string n1sm_msg = {};
-  octet_stream_2_hex_stream(
+  amf_conv::octet_stream_2_hex_stream(
       (uint8_t*) bdata(sm_msg), blength(sm_msg), n1sm_msg);
 
   send_http_request(
@@ -522,7 +510,7 @@ void amf_sbi::handle_pdu_session_initial_request(
   Logger::amf_sbi().debug("Message body %s", json_part.c_str());
 
   std::string n1sm_msg = {};
-  octet_stream_2_hex_stream(
+  amf_conv::octet_stream_2_hex_stream(
       (uint8_t*) bdata(sm_msg), blength(sm_msg), n1sm_msg);
 
   send_http_request(
@@ -778,7 +766,7 @@ void amf_sbi::handle_itti_message(itti_sbi_n1_message_notify& itti_msg) {
   std::string json_part                    = json_data.dump();
 
   std::string n1sm_msg = {};
-  octet_stream_2_hex_stream(
+  amf_conv::octet_stream_2_hex_stream(
       (uint8_t*) bdata(itti_msg.registration_request),
       blength(itti_msg.registration_request), n1sm_msg);
 
@@ -804,7 +792,7 @@ void amf_sbi::handle_itti_message(itti_sbi_n2_info_notify& itti_msg) {
   std::string json_part = json_data.dump();
 
   std::string n2_info_msg = {};
-  octet_stream_2_hex_stream(
+  amf_conv::octet_stream_2_hex_stream(
       (uint8_t*) bdata(itti_msg.n2_info.value()),
       blength(itti_msg.n2_info.value()), n2_info_msg);
 

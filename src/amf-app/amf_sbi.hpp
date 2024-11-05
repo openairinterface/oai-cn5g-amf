@@ -23,8 +23,6 @@
 #define _AMF_SBI_H_
 
 #include "3gpp_29.500.h"
-#include "AuthenticationInfo.h"
-#include "UEAuthenticationCtx.h"
 #include "itti_msg_sbi.hpp"
 #include "pdu_session_context.hpp"
 

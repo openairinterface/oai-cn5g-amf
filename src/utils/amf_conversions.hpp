@@ -70,5 +70,7 @@ class amf_conv : public oai::utils::conv {
   static std::string imsi_to_supi(const std::string& imsi);
   static std::string get_imsi(
       const std::string& mcc, const std::string& mnc, const std::string& msin);
+  static void octet_stream_2_hex_stream(
+      uint8_t* buf, int len, std::string& out);
 };
 #endif /* FILE_CONVERSIONS_HPP_SEEN */
