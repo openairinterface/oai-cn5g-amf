@@ -356,7 +356,7 @@ class amf : public nf {
 class amf_config {
  public:
   amf_config();
-  ~amf_config();
+  virtual ~amf_config();
 
   /*
    * Display the AMF configuration parameters

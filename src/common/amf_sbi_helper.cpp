@@ -92,6 +92,17 @@ std::string amf_sbi_helper::get_smf_pdu_session_base_uri(
 }
 
 //------------------------------------------------------------------------------
+std::string amf_sbi_helper::get_sm_context_status_notification_uri(
+    const interface_cfg_t& sbi, const std::string& supi,
+    uint8_t pdu_session_id) {
+  std::string fmr_format_str = {};
+  get_fmt_format_form(
+      AmfStatusNotifPathPduSessionReleasePduSessionId, fmr_format_str);
+  return sbi.get_ipv4_root() + AmfStatusNotifyServiceBase +
+         fmt::format(fmr_format_str, supi, std::to_string(pdu_session_id));
+}
+
+//------------------------------------------------------------------------------
 bool amf_sbi_helper::get_smf_pdu_session_context_uri(
     const std::shared_ptr<pdu_session_context>& psc, std::string& smf_uri) {
   if (!psc) return false;

@@ -46,7 +46,7 @@ namespace amf_application {
 class amf_n1 {
  public:
   amf_n1();
-  ~amf_n1();
+  virtual ~amf_n1();
 
   /*
    * Handle ITTI message

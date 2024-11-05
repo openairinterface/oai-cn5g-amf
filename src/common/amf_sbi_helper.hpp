@@ -130,6 +130,17 @@ class amf_sbi_helper : public sbi_helper {
       const std::string& smf_uri_root, const std::string& smf_api_version);
 
   /*
+   * Get the URI of SM context  status notification
+   * @param [const interface_cfg_t&] sbi: SBI interface
+   * @param [const std::string&] supi: UE SUPI
+   * @param [uint8_t] pdu_session_id: PDU Session ID
+   * @return URI in string format
+   */
+  static std::string get_sm_context_status_notification_uri(
+      const interface_cfg_t& sbi, const std::string& supi,
+      uint8_t pdu_session_id);
+
+  /*
    * Get the URI of UDM Slice Selection Subscription Data Retrieval Service
    * @param [const nf_addr_t&] udm_addr: UDM's Address
    * @param [const std::string&] supi: UE SUPI

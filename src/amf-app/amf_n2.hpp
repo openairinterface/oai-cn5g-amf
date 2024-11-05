@@ -35,7 +35,7 @@ namespace amf_application {
 class amf_n2 : public oai::ngap::ngap_app {
  public:
   amf_n2(const std::string& address, const uint16_t port_num);
-  ~amf_n2();
+  virtual ~amf_n2();
 
   /*
    * Handle ITTI message (New SCTP Association)
