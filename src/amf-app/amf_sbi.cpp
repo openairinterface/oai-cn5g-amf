@@ -65,6 +65,7 @@ void amf_sbi_task(void*) {
         Logger::amf_sbi().info("Running ITTI_SMF_PDU_SESSION_CREATE_SM_CTX");
         itti_nsmf_pdusession_create_sm_context* m =
             dynamic_cast<itti_nsmf_pdusession_create_sm_context*>(msg);
+        if (!m) break;
         amf_sbi_inst->handle_itti_message(std::ref(*m));
       } break;
 
@@ -73,6 +74,7 @@ void amf_sbi_task(void*) {
             "Receive Nsmf_PDUSessionUpdateSMContext, handling ...");
         itti_nsmf_pdusession_update_sm_context* m =
             dynamic_cast<itti_nsmf_pdusession_update_sm_context*>(msg);
+        if (!m) break;
         amf_sbi_inst->handle_itti_message(std::ref(*m));
       } break;
 
@@ -81,6 +83,7 @@ void amf_sbi_task(void*) {
             "Receive Nsmf_PDUSessionReleaseSMContext, handling ...");
         itti_nsmf_pdusession_release_sm_context* m =
             dynamic_cast<itti_nsmf_pdusession_release_sm_context*>(msg);
+        if (!m) break;
         amf_sbi_inst->handle_itti_message(std::ref(*m));
       } break;
 
@@ -89,6 +92,7 @@ void amf_sbi_task(void*) {
             "Receive PDU Session Resource Setup response, handling ...");
         itti_pdu_session_resource_setup_response* m =
             dynamic_cast<itti_pdu_session_resource_setup_response*>(msg);
+        if (!m) break;
         amf_sbi_inst->handle_itti_message(std::ref(*m));
       } break;
 
@@ -97,6 +101,7 @@ void amf_sbi_task(void*) {
             "Receive Register NF Instance Request, handling ...");
         itti_sbi_register_nf_instance_request* m =
             dynamic_cast<itti_sbi_register_nf_instance_request*>(msg);
+        if (!m) break;
         amf_sbi_inst->handle_itti_message(std::ref(*m));
       } break;
 
@@ -105,6 +110,7 @@ void amf_sbi_task(void*) {
             "Receive Update NF Instance Request, handling ...");
         itti_sbi_update_nf_instance_request* m =
             dynamic_cast<itti_sbi_update_nf_instance_request*>(msg);
+        if (!m) break;
         amf_sbi_inst->handle_itti_message(std::ref(*m));
       } break;
 
@@ -113,6 +119,7 @@ void amf_sbi_task(void*) {
             "Receive Deregister NF Instance Request, handling ...");
         itti_sbi_deregister_nf_instance_request* m =
             dynamic_cast<itti_sbi_deregister_nf_instance_request*>(msg);
+        if (!m) break;
         amf_sbi_inst->handle_itti_message(std::ref(*m));
       } break;
 
@@ -121,6 +128,7 @@ void amf_sbi_task(void*) {
             "Receive Notify Subscribed Event Request, handling ...");
         itti_sbi_notify_subscribed_event* m =
             dynamic_cast<itti_sbi_notify_subscribed_event*>(msg);
+        if (!m) break;
         amf_sbi_inst->handle_itti_message(std::ref(*m));
       } break;
 
@@ -130,6 +138,7 @@ void amf_sbi_task(void*) {
             "handling ...");
         itti_sbi_slice_selection_subscription_data* m =
             dynamic_cast<itti_sbi_slice_selection_subscription_data*>(msg);
+        if (!m) break;
         amf_sbi_inst->handle_itti_message(std::ref(*m));
       } break;
 
@@ -139,6 +148,7 @@ void amf_sbi_task(void*) {
             "handling ...");
         itti_sbi_network_slice_selection_information* m =
             dynamic_cast<itti_sbi_network_slice_selection_information*>(msg);
+        if (!m) break;
         amf_sbi_inst->handle_itti_message(std::ref(*m));
       } break;
 
@@ -148,6 +158,7 @@ void amf_sbi_task(void*) {
             "handling ...");
         itti_sbi_network_slice_selection_discovery* m =
             dynamic_cast<itti_sbi_network_slice_selection_discovery*>(msg);
+        if (!m) break;
         amf_sbi_inst->handle_itti_message(std::ref(*m));
       } break;
 
@@ -157,6 +168,7 @@ void amf_sbi_task(void*) {
             "handling ...");
         itti_sbi_n1_message_notify* m =
             dynamic_cast<itti_sbi_n1_message_notify*>(msg);
+        if (!m) break;
         amf_sbi_inst->handle_itti_message(std::ref(*m));
       } break;
 
@@ -166,6 +178,7 @@ void amf_sbi_task(void*) {
             "handling ...");
         itti_sbi_n2_info_notify* m =
             dynamic_cast<itti_sbi_n2_info_notify*>(msg);
+        if (!m) break;
         amf_sbi_inst->handle_itti_message(std::ref(*m));
       } break;
 
@@ -175,6 +188,7 @@ void amf_sbi_task(void*) {
             "handling ...");
         itti_sbi_nf_instance_discovery* m =
             dynamic_cast<itti_sbi_nf_instance_discovery*>(msg);
+        if (!m) break;
         amf_sbi_inst->handle_itti_message(std::ref(*m));
       } break;
 
@@ -184,6 +198,7 @@ void amf_sbi_task(void*) {
             "handling ...");
         itti_sbi_determine_location_request* m =
             dynamic_cast<itti_sbi_determine_location_request*>(msg);
+        if (!m) break;
         amf_sbi_inst->handle_itti_message(std::ref(*m));
       } break;
 
@@ -193,6 +208,7 @@ void amf_sbi_task(void*) {
             "handling ...");
         itti_sbi_ue_authentication_request* m =
             dynamic_cast<itti_sbi_ue_authentication_request*>(msg);
+        if (!m) break;
         amf_sbi_inst->handle_itti_message(std::ref(*m));
       } break;
 
@@ -202,6 +218,7 @@ void amf_sbi_task(void*) {
             "handling ...");
         itti_sbi_ue_authentication_confirmation* m =
             dynamic_cast<itti_sbi_ue_authentication_confirmation*>(msg);
+        if (!m) break;
         amf_sbi_inst->handle_itti_message(std::ref(*m));
       } break;
 
@@ -868,10 +885,8 @@ void amf_sbi::handle_itti_message(
   itti_msg_response->http_version       = itti_msg.http_version;
   itti_msg_response->nrf_uri            = itti_msg.nrf_uri;
 
-  if ((response_code ==
-       static_cast<uint32_t>(oai::common::sbi::http_status_code::CREATED)) or
-      (response_code ==
-       static_cast<uint32_t>(oai::common::sbi::http_status_code::OK))) {
+  if ((response_code == oai::common::sbi::http_status_code::CREATED) or
+      (response_code == oai::common::sbi::http_status_code::OK)) {
     Logger::amf_sbi().debug("NFRegistration, got successful response from NRF");
     Logger::amf_sbi().debug(
         "NF Instance Registration, response from NRF, JSON data: \n %s",
@@ -1318,8 +1333,7 @@ bool amf_sbi::send_http_request(
       Logger::amf_sbi().debug(
           "Network Function services failure (with cause %s)", cause.c_str());
       handle_post_sm_context_response_error(
-          static_cast<int>(http_response.status_code), cause, n1sm_hex, supi,
-          pdu_session_id);
+          http_response.status_code, cause, n1sm_hex, supi, pdu_session_id);
     }
 
   } else {  // Response with success code
@@ -1371,14 +1385,14 @@ bool amf_sbi::send_http_request(
       if (up_cnx_state.compare("DEACTIVATED") == 0) {
         is_up_deactivation_procedure = true;
         process_response_data[kSbiResponseHttpResponseCode] =
-            static_cast<int>(http_response.status_code);
+            http_response.status_code;
       }
 
       // Service Request
       if (up_cnx_state.compare("ACTIVATING") == 0) {
         is_service_request = true;
         process_response_data[kSbiResponseHttpResponseCode] =
-            static_cast<int>(http_response.status_code);
+            http_response.status_code;
         // Update Pdu Session Context
         if (n2sm.has_value()) {
           amf_conv::msg_str_2_msg_hex(n2sm.value(), n2sm_hex);
@@ -1484,11 +1498,9 @@ void amf_sbi::send_http_request(
   json_data = {};
 
   Logger::amf_sbi().info(
-      "Get response with HTTP code (%ld)",
-      static_cast<int>(http_response.status_code));
+      "Get response with HTTP code (%ld)", http_response.status_code);
   Logger::amf_sbi().info("Response body %s", http_response.body.c_str());
 
-  response_code = static_cast<int>(http_response.status_code);
   if (http_response.status_code ==
       oai::common::sbi::http_status_code::NO_RESPONSE) {
     // TODO: should be removed
@@ -1560,7 +1572,7 @@ void amf_sbi::send_http_request(
 
   std::string response = http_response.body;
   bool is_response_ok  = true;
-  response_code        = static_cast<int>(http_response.status_code);
+  response_code        = http_response.status_code;
   Logger::amf_sbi().info("Get response with HTTP code (%ld)", response_code);
 
   if ((http_response.status_code != oai::common::sbi::http_status_code::OK) and
