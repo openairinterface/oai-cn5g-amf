@@ -55,7 +55,6 @@ RUN rm -f /etc/rhsm-host && \
         openssl-devel \
         openssl \
         wget \
-        tcpdump \
         libasan && \
     echo "/usr/local/lib" > /etc/ld.so.conf.d/local-lib.conf && \
     echo "/usr/local/lib64" >> /etc/ld.so.conf.d/local-lib.conf
@@ -107,11 +106,11 @@ RUN rm -f /etc/rhsm-host && \
       psmisc \
       net-tools \
       iputils \
-      #tcpdump \
+      tcpdump \
 # Mandatory packages for the NF to run
       lksctp-tools \
       libicu \
-      #boost \
+      boost \
       libevent \
       findutils && \
     microdnf clean all -y && \
@@ -137,24 +136,10 @@ COPY --from=oai-amf-builder \
     /usr/local/lib64/libyaml-cpp.so.0.* \
     /usr/local/lib64/libcpr.so.1 \    
     /usr/lib64/mysql/libmysqlclient.so.21 \
-# HACK: could not install these packages out of 9.5 UBI minimal
-    /lib64/libboost_system.so.1.75.0 \
-    /lib64/libboost_thread.so.1.75.0 \
-    /lib64/libboost_chrono.so.1.75.0 \
-    /lib64/libpcap.so.1 \
-    /lib64/libibverbs.so.1 \
-    /lib64/libnl-route-3.so.200 \
-    /lib64/libnl-3.so.200 \
     /usr/lib64/
 
-# HACK: could not install this executable out of 9.5 UBI minimal
-COPY --from=oai-amf-builder \
-    /usr/sbin/tcpdump \
-    /usr/sbin
-
 RUN ldconfig && \
-    ldd /openair-amf/bin/oai_amf && \
-    ldd /usr/sbin/tcpdump
+    ldd /openair-amf/bin/oai_amf
 
 # Copying template configuration files
 WORKDIR /openair-amf/etc
