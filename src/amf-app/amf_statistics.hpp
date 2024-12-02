@@ -80,7 +80,7 @@ constexpr uint8_t kStatisticsHalfIeLengthForUe  = 10;
 class statistics {
  public:
   statistics();
-  ~statistics();
+  virtual ~statistics();
 
   /*
    * Display the statistic information for gNB and UE

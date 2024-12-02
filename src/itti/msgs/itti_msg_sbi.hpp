@@ -92,6 +92,8 @@ class itti_nsmf_pdusession_create_sm_context : public itti_msg_n11 {
     oai::utils::utils::bdestroy_wrapper(&sm_msg);
   }
 
+  const char* get_msg_name() { return "NSMF_PDU_SESSION_CREATE_SM_CTX"; };
+
  public:
   uint8_t req_type;
   uint8_t pdu_sess_id;
@@ -118,6 +120,8 @@ class itti_pdu_session_resource_setup_response : public itti_msg_n11 {
   virtual ~itti_pdu_session_resource_setup_response() {
     oai::utils::utils::bdestroy_wrapper(&n2sm);
   }
+
+  const char* get_msg_name() { return "PDU_SESSION_RESOURCE_SETUP_RESPONSE"; };
 
  public:
   uint8_t pdu_session_id;
@@ -160,6 +164,8 @@ class itti_nsmf_pdusession_update_sm_context : public itti_msg_n11 {
     oai::utils::utils::bdestroy_wrapper(&n2sm);
   }
 
+  const char* get_msg_name() { return "NSMF_PDU_SESSION_UPDATE_SM_CTX"; };
+
  public:
   std::string supi;
   uint8_t pdu_session_id;
@@ -187,6 +193,7 @@ class itti_nsmf_pdusession_release_sm_context : public itti_msg_n11 {
     context_location = i.context_location;
   }
   virtual ~itti_nsmf_pdusession_release_sm_context() {}
+  const char* get_msg_name() { return "NSMF_PDU_SESSION_RELEASE_SM_CTX"; };
 
  public:
   std::string supi;

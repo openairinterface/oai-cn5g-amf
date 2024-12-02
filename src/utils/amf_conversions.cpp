@@ -206,3 +206,16 @@ std::string amf_conv::get_imsi(
     const std::string& mcc, const std::string& mnc, const std::string& msin) {
   return {mcc + mnc + msin};
 }
+
+//------------------------------------------------------------------------------
+void amf_conv::octet_stream_2_hex_stream(
+    uint8_t* buf, int len, std::string& out) {
+  out       = "";
+  char* tmp = (char*) calloc(1, 2 * len * sizeof(uint8_t) + 1);
+  for (int i = 0; i < len; i++) {
+    sprintf(tmp + 2 * i, "%02x", buf[i]);
+  }
+  tmp[2 * len] = '\0';
+  out          = tmp;
+  Logger::amf_sbi().debug("Buffer: %s", out.c_str());
+}

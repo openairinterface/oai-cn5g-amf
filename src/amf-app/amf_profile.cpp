@@ -21,7 +21,7 @@
 
 #include "amf_profile.hpp"
 
-#include "amf_config_yaml.hpp"
+#include "amf_config.hpp"
 #include "conversions.hpp"
 #include "logger.hpp"
 #include "string.hpp"
