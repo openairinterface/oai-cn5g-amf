@@ -84,7 +84,6 @@ constexpr auto DEFAULT_SUPI_TYPE =
     "imsi";  // Set to "imsi" when supporting both IMSI and NAI as SUPI
 
 constexpr auto DEFAULT_SST = 1;
-constexpr auto DEFAULT_DNN = "default";
 
 constexpr auto kSbiResponseJsonData         = "jsonData";
 constexpr auto kSbiResponseHttpResponseCode = "httpResponseCode";
