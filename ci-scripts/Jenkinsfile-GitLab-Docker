@@ -597,23 +597,6 @@ pipeline {
         if (fileExists('docker_logs.zip')) {
           archiveArtifacts artifacts: 'docker_logs.zip'
         }
-
-        // Sending email to commiter
-        if (params.sendToCommitterEmail != null) {
-          if (params.sendToCommitterEmail) {
-            emailext attachmentsPattern: '*results*.html',
-              body: '''Hi,
-
-
-Here are attached HTML report files for $PROJECT_NAME - Build # $BUILD_NUMBER - $BUILD_STATUS!
-
-Regards,
-OAI CI Team''',
-              replyTo: 'no-reply@openairinterface.org',
-              subject: '$PROJECT_NAME - Build # $BUILD_NUMBER - $BUILD_STATUS!',
-              to: gitCommittorEmailAddr
-          }
-        }
       }
     }
   }
