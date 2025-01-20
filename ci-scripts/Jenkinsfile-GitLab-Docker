@@ -54,6 +54,12 @@ DH_Account = "oaisoftwarealliance"
 // Private Local Registry URL
 PrivateRegistryURL = 'selfix.sboai.cs.eurecom.fr'
 
+// Openshift project name
+Namespace = 'oaicicd-core'
+
+// Openshift server URL
+server = 'https://api.oai.cs.eurecom.fr:6443'
+
 //-------------------------------------------------------------------------------
 // Pipeline start
 pipeline {
@@ -223,7 +229,7 @@ pipeline {
                   withCredentials([
                     [$class: 'UsernamePasswordMultiBinding', credentialsId: "${rhelOcCredentials}", usernameVariable: 'OC_Username', passwordVariable: 'OC_Password']
                   ]) {
-                    sh "oc login -u ${OC_Username} -p ${OC_Password}"
+                    sh "oc login -u ${OC_Username} -p ${OC_Password} --server=${server}"
                   }
                   sh "oc delete istag oai-amf:${amf_tag} || true"
                   // Copy the RHEL Host certificates for building
@@ -231,12 +237,13 @@ pipeline {
                   // Building
                   sh "oc delete -f openshift/build-config.yaml || true"
                   sh "sed -i -e 's@oai-amf:latest@oai-amf:${amf_tag}@g' openshift/build-config.yaml"
+                  sh "oc project ${Namespace}"
                   sh "oc create -f openshift/build-config.yaml"
-                  sh 'oc start-build amf-build-cfg  --from-dir=./ --exclude=""'
+                  sh 'oc start-build amf-build-cfg --from-dir=./ --exclude=""'
                   // need python to wait for pod amf-build-cfg-1-build to be Completed or Error
                   // it fails if it detects error or timeout at 20 minutes
                   sh "./ci-scripts/common/python/check_build_pod_status.py --pod-name amf-build-cfg-1-build --log-file archives/amf_rhel_image_build.log"
-                  sh "oc describe istag oai-amf:${amf_tag} | grep 'Image Size:' >> archives/amf_rhel_image_build.log"
+                  sh "oc describe istag oai-amf:${amf_tag} -n ${Namespace} | grep 'Image Size:' >> archives/amf_rhel_image_build.log"
                 }
               }
             }
@@ -250,7 +257,7 @@ pipeline {
             }
             cleanup {
               script {
-                sh "oc delete build amf-build-cfg-1 || true"
+                sh "oc delete bc amf-build-cfg -n ${Namespace} || true"
                 sh "oc logout || true"
                 stash allowEmpty: true, includes: 'archives/amf_rhel_image_build.log', name: 'rhelBuildLog'
               }
