@@ -3913,12 +3913,12 @@ void amf_n1::ul_nas_transport_handle(
     Logger::amf_n1().debug(
         "S_NSSAI for this PDU Session %s", snssai.ToString().c_str());
 
-    bstring dnn = bfromcstr(DEFAULT_DNN);
+    bstring dnn = bfromcstr(amf_cfg.default_dnn.c_str());
 
     if (!ul_nas->GetDnn(dnn)) {
       Logger::amf_n1().debug(
           "No DNN available in UlNasTransport, use default DNN: %s",
-          DEFAULT_DNN);
+          amf_cfg.default_dnn);
       // TODO: use default DNN for the corresponding NSSAI
     }
 

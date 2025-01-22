@@ -91,6 +91,8 @@ constexpr auto AMF_CONFIG_N2                      = "n2";
 constexpr auto AMF_CONFIG_N2_LABEL                = "N2";
 constexpr auto AMF_CONFIG_SCTP_TTL                = "sctp_ttl";
 constexpr auto AMF_CONFIG_SCTP_TTL_LABEL          = "SCTP TTL";
+constexpr auto AMF_CONFIG_DEFAULT_DNN             = "default_dnn";
+constexpr auto AMF_CONFIG_DEFAULT_DNN_LABEL       = "Default DNN";
 
 constexpr auto AMF_CONFIG_SUPPORTED_INTEGRITY_ALGORITHMS =
     "supported_integrity_algorithms";
@@ -131,6 +133,7 @@ constexpr uint32_t AMF_CONFIG_STATISTICS_TIMER_INTERVAL_MAX_VALUE =
 
 // Default values
 constexpr auto AMF_CONFIG_INSTANCE_ID_DEFAULT_VALUE       = 1;
+constexpr auto AMF_CONFIG_AMF_NAME_DEFAULT_VALUE          = "oai-amf";
 constexpr auto AMF_CONFIG_PID_DIRECTORY_DEFAULT_VALUE     = "/var/run";
 constexpr auto AMF_CONFIG_TEST_PLMN_MCC                   = "001";
 constexpr auto AMF_CONFIG_TEST_PLMN_MNC                   = "01";
@@ -143,6 +146,7 @@ constexpr auto AMF_CONFIG_RELATIVE_CAPACITY_DEFAULT_VALUE = 10;
 constexpr auto AMF_CONFIG_SCTP_TTL_DEFAULT_VALUE          = 100;
 constexpr uint32_t AMF_CONFIG_STATISTICS_TIMER_INTERVAL_DEFAULT_VALUE =
     20;  // in seconds
+constexpr auto AMF_CONFIG_DEFAULT_DNN_VALUE = "default";
 
 using namespace oai::common::sbi;
 
@@ -326,6 +330,7 @@ class amf : public nf {
   supported_encryption_algorithms m_supported_encryption_algorithms;
   local_interface m_n2;
   int_config_value m_sctp_ttl;
+  string_config_value m_default_dnn;
 
  public:
   explicit amf(
@@ -351,6 +356,7 @@ class amf : public nf {
       const;
   [[nodiscard]] const local_interface& get_n2() const;
   [[nodiscard]] const uint32_t get_sctp_ttl() const;
+  [[nodiscard]] const std::string get_default_dnn() const;
 };
 
 class amf_config {
@@ -404,6 +410,8 @@ class amf_config {
   nf_addr_t udm_addr;
   nf_addr_t nssf_addr;
   nf_addr_t lmf_addr;
+
+  std::string default_dnn;
 };
 
 class amf_config_yaml : public config {

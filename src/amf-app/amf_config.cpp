@@ -538,8 +538,12 @@ amf::amf(
       AMF_CONFIG_PID_DIRECTORY, AMF_CONFIG_PID_DIRECTORY_DEFAULT_VALUE);
   m_instance_id = int_config_value(
       AMF_CONFIG_INSTANCE_ID, AMF_CONFIG_INSTANCE_ID_DEFAULT_VALUE);
+  m_amf_name = string_config_value(
+      AMF_CONFIG_AMF_NAME, AMF_CONFIG_AMF_NAME_DEFAULT_VALUE);
   m_sctp_ttl =
       int_config_value(AMF_CONFIG_SCTP_TTL, AMF_CONFIG_SCTP_TTL_DEFAULT_VALUE);
+  m_default_dnn =
+      string_config_value(AMF_CONFIG_DEFAULT_DNN, AMF_CONFIG_DEFAULT_DNN_VALUE);
   m_relative_capacity = int_config_value(
       AMF_CONFIG_RELATIVE_CAPACITY, AMF_CONFIG_RELATIVE_CAPACITY_DEFAULT_VALUE);
   m_relative_capacity.set_validation_interval(
@@ -579,6 +583,10 @@ void amf::from_yaml(const YAML::Node& node) {
 
     if (key == AMF_CONFIG_AMF_NAME) {
       m_amf_name.from_yaml(elem.second);
+    }
+
+    if (key == AMF_CONFIG_DEFAULT_DNN) {
+      m_default_dnn.from_yaml(elem.second);
     }
 
     if (key == AMF_CONFIG_RELATIVE_CAPACITY) {
@@ -646,23 +654,25 @@ std::string amf::to_string(const std::string& indent) const {
 
   out.append(inner_indent)
       .append(fmt::format(
-          BASE_FORMATTER, OUTER_LIST_ELEM, AMF_CONFIG_SCTP_TTL_LABEL,
-          inner_width, m_sctp_ttl.get_value()));
-
-  out.append(inner_indent)
-      .append(fmt::format(
           BASE_FORMATTER, OUTER_LIST_ELEM, AMF_CONFIG_INSTANCE_ID_LABEL,
           inner_width, m_instance_id.get_value()));
-
   out.append(inner_indent)
       .append(fmt::format(
           BASE_FORMATTER, OUTER_LIST_ELEM, AMF_CONFIG_PID_DIRECTORY_LABEL,
           inner_width, m_pid_directory.get_value()));
-
   out.append(inner_indent)
       .append(fmt::format(
           BASE_FORMATTER, OUTER_LIST_ELEM, AMF_CONFIG_AMF_NAME_LABEL,
           inner_width, m_amf_name.get_value()));
+  out.append(inner_indent)
+      .append(fmt::format(
+          BASE_FORMATTER, OUTER_LIST_ELEM, AMF_CONFIG_SCTP_TTL_LABEL,
+          inner_width, m_sctp_ttl.get_value()));
+  out.append(inner_indent)
+      .append(fmt::format(
+          BASE_FORMATTER, OUTER_LIST_ELEM, AMF_CONFIG_DEFAULT_DNN_LABEL,
+          inner_width, m_default_dnn.get_value()))
+      .append("(ms)");
 
   out.append(inner_indent)
       .append(fmt::format(
@@ -735,6 +745,7 @@ const uint32_t amf::get_instance_id() const {
 const std::string amf::get_pid_directory() const {
   return m_pid_directory.get_value();
 }
+
 //------------------------------------------------------------------------------
 const std::string amf::get_amf_name() const {
   return m_amf_name.get_value();
@@ -784,6 +795,11 @@ const local_interface& amf::get_n2() const {
 //------------------------------------------------------------------------------
 const uint32_t amf::get_sctp_ttl() const {
   return m_sctp_ttl.get_value();
+}
+
+//------------------------------------------------------------------------------
+const std::string amf::get_default_dnn() const {
+  return m_default_dnn.get_value();
 }
 
 //------------------------------------------------------------------------------
@@ -941,7 +957,8 @@ void amf_config_yaml::to_amf_config(amf_config& cfg) {
   cfg.n2.addr4   = amf_local->get_n2().get_addr4();
   cfg.n2.port    = amf_local->get_n2().get_port();
 
-  cfg.sctp_ttl = amf_local->get_sctp_ttl();
+  cfg.sctp_ttl    = amf_local->get_sctp_ttl();
+  cfg.default_dnn = amf_local->get_default_dnn();
 
   if (get_nf(oai::config::SMF_CONFIG_NAME)) {
     cfg.smf_addr.api_version =
@@ -1130,6 +1147,9 @@ void amf_config::display() {
       }
     }
   }
+
+  Logger::config().info(
+      "- Default DNN.................: %s", default_dnn.c_str());
   Logger::config().info(
       "- Emergency Support .......: %s", is_emergency_support ?
                                              AMF_CONFIG_OPTION_YES_STR :
@@ -1257,11 +1277,12 @@ void amf_config::display() {
 
 //------------------------------------------------------------------------------
 void amf_config::to_json(nlohmann::json& json_data) const {
-  json_data["instance"]   = instance;
-  json_data["log_level"]  = log_level;
-  json_data["amf_name"]   = amf_name;
-  json_data["guami"]      = guami.to_json();
-  json_data["guami_list"] = nlohmann::json::array();
+  json_data["instance"]    = instance;
+  json_data["log_level"]   = log_level;
+  json_data["amf_name"]    = amf_name;
+  json_data["default_dnn"] = default_dnn;
+  json_data["guami"]       = guami.to_json();
+  json_data["guami_list"]  = nlohmann::json::array();
   for (auto s : guami_list) {
     json_data["guami_list"].push_back(s.to_json());
   }
@@ -1318,6 +1339,9 @@ bool amf_config::from_json(nlohmann::json& json_data) {
     }
     if (json_data.find("amf_name") != json_data.end()) {
       amf_name = json_data["amf_name"].get<std::string>();
+    }
+    if (json_data.find("default_dnn") != json_data.end()) {
+      amf_name = json_data["default_dnn"].get<std::string>();
     }
     if (json_data.find("log_level") != json_data.end()) {
       log_level = json_data["log_level"].get<spdlog::level::level_enum>();
