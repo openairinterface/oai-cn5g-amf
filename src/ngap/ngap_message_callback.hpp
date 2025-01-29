@@ -435,33 +435,31 @@ int ngap_amf_handle_pdu_session_resource_setup_response(
     if (!amf_n1_inst->amf_ue_id_2_nas_context(amf_ue_ngap_id, nct)) {
       Logger::ngap().error(
           "No UE NAS context with amf_ue_ngap_id (0x%x)", amf_ue_ngap_id);
-      return RETURNerror;
-    }
+    } else {
+      for (int i = 0; i < list.size(); i++) {
+        auto itti_msg =
+            std::make_shared<itti_nsmf_pdusession_update_sm_context>(
+                TASK_NGAP, TASK_AMF_SBI);
 
-    for (int i = 0; i < list.size(); i++) {
-      auto itti_msg = std::make_shared<itti_nsmf_pdusession_update_sm_context>(
-          TASK_NGAP, TASK_AMF_SBI);
+        itti_msg->supi           = amf_conv::imsi_to_supi(nct->imsi);
+        itti_msg->pdu_session_id = list[i].pduSessionId;
+        itti_msg->n2sm           = blk2bstr(
+            list[i].pduSessionResourceSetupResponseTransfer.buf,
+            list[i].pduSessionResourceSetupResponseTransfer.size);
+        itti_msg->is_n2sm_set    = true;
+        itti_msg->n2sm_info_type = "PDU_RES_SETUP_RSP";
+        itti_msg->amf_ue_ngap_id =
+            pdu_session_resource_setup_resp->getAmfUeNgapId();
+        itti_msg->ran_ue_ngap_id =
+            pdu_session_resource_setup_resp->getRanUeNgapId();
 
-      itti_msg->supi           = amf_conv::imsi_to_supi(nct->imsi);
-      itti_msg->pdu_session_id = list[i].pduSessionId;
-      itti_msg->n2sm           = blk2bstr(
-          list[i].pduSessionResourceSetupResponseTransfer.buf,
-          list[i].pduSessionResourceSetupResponseTransfer.size);
-      itti_msg->is_n2sm_set    = true;
-      itti_msg->n2sm_info_type = "PDU_RES_SETUP_RSP";
-      itti_msg->amf_ue_ngap_id =
-          pdu_session_resource_setup_resp->getAmfUeNgapId();
-      itti_msg->ran_ue_ngap_id =
-          pdu_session_resource_setup_resp->getRanUeNgapId();
-
-      int ret = itti_inst->send_msg(itti_msg);
-      if (0 != ret) {
-        Logger::ngap().error(
-            "Could not send ITTI message %s to task TASK_AMF_SBI",
-            itti_msg->get_msg_name());
-        return RETURNerror;
+        int ret = itti_inst->send_msg(itti_msg);
+        if (0 != ret) {
+          Logger::ngap().error(
+              "Could not send ITTI message %s to task TASK_AMF_SBI",
+              itti_msg->get_msg_name());
+        }
       }
-      return RETURNok;
     }
   }
 
@@ -503,7 +501,6 @@ int ngap_amf_handle_pdu_session_resource_setup_response(
       }
       psc->is_n2sm_available = false;
       // TODO:
-      return RETURNok;
     }
   }
   return RETURNok;
