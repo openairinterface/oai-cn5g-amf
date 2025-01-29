@@ -2470,7 +2470,9 @@ bool amf_n1::_5g_aka_confirmation_from_ausf(
 
   std::map<std::string, std::string>::iterator iter;
   iter = rand_record.find(nc->imsi);
-  rand_record.erase(iter);
+  if (iter != rand_record.end()) {
+    rand_record.erase(iter);
+  }
   uint8_t res_star_len    = blength(resStar);
   uint8_t* res_star_value = (uint8_t*) bdata(resStar);
   char* res_star_s        = (char*) malloc(res_star_len * 2 + 1);
