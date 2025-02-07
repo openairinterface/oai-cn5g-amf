@@ -3679,7 +3679,10 @@ void amf_n1::ue_initiate_de_registration_handle(
                 result_json[kSbiResponseHttpResponseCode].get<int>();
             // Remove PDU session
             // TODO for multiple sessions
-            if ((http_response_code == 200) or (http_response_code == 204)) {
+            if ((http_response_code ==
+                 oai::common::sbi::http_status_code::OK) or
+                (http_response_code ==
+                 oai::common::sbi::http_status_code::NO_CONTENT)) {
               for (auto session : sessions_ctx) {
                 uc->remove_pdu_sessions_context(session->pdu_session_id);
               }

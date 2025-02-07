@@ -965,10 +965,8 @@ void amf_app::handle_itti_message(itti_sbi_update_amf_configuration& itti_msg) {
 void amf_app::handle_itti_message(itti_sbi_register_nf_instance_response& r) {
   Logger::amf_app().debug("Handle NF Instance Registration response");
 
-  if ((r.http_response_code ==
-       static_cast<uint32_t>(oai::common::sbi::http_status_code::OK)) or
-      (r.http_response_code ==
-       static_cast<uint32_t>(oai::common::sbi::http_status_code::CREATED))) {
+  if ((r.http_response_code == oai::common::sbi::http_status_code::OK) or
+      (r.http_response_code == oai::common::sbi::http_status_code::CREATED)) {
     Logger::amf_app().debug("AMF has successfully registered to NRF.");
     nf_instance_profile = r.profile;
     // Set heartbeat timer
@@ -1017,11 +1015,9 @@ void amf_app::handle_itti_message(itti_sbi_deregister_nf_instance_response& r) {
 //------------------------------------------------------------------------------
 void amf_app::handle_itti_message(itti_sbi_update_nf_instance_response& r) {
   Logger::amf_app().debug("Handle NF Update response");
-  if (r.http_response_code !=
-          static_cast<uint16_t>(
-              oai::common::sbi::http_status_code::NO_CONTENT) and
-      (r.http_response_code !=
-       static_cast<uint16_t>(oai::common::sbi::http_status_code::OK))) {
+  if ((r.http_response_code !=
+       oai::common::sbi::http_status_code::NO_CONTENT) and
+      (r.http_response_code != oai::common::sbi::http_status_code::OK)) {
     register_to_nrf(r.nrf_uri);  // trigger again registration procedure
   } else {
     Logger::amf_app().debug(
@@ -1628,7 +1624,8 @@ void amf_app::get_nrfs(std::unordered_set<std::string>& nrfs) {
         uint32_t http_response_code = 0;
         if (result.find(kSbiResponseHttpResponseCode) != result.end()) {
           http_response_code = result[kSbiResponseHttpResponseCode].get<int>();
-          // if (http_response_code != 200) continue;
+          // if (http_response_code != oai::common::sbi::http_status_code::OK)
+          // continue;
         }
 
         if (result.find(kSbiResponseJsonData) != result.end()) {
@@ -1792,7 +1789,9 @@ void amf_app::trigger_pdu_session_release(
           http_response_code = result[kSbiResponseHttpResponseCode].get<int>();
           // Remove PDU session
           // TODO for multiple sessions
-          if ((http_response_code == 200) or (http_response_code == 204)) {
+          if ((http_response_code == oai::common::sbi::http_status_code::OK) or
+              (http_response_code ==
+               oai::common::sbi::http_status_code::NO_CONTENT)) {
             for (auto session : sessions_ctx) {
               uc->remove_pdu_sessions_context(session->pdu_session_id);
             }
@@ -1874,7 +1873,9 @@ void amf_app::trigger_pdu_session_up_deactivation(
           is_up_activated    = is_up_activated && true;
           http_response_code = result[kSbiResponseHttpResponseCode].get<int>();
 
-          if ((http_response_code == 200) or (http_response_code == 204)) {
+          if ((http_response_code == oai::common::sbi::http_status_code::OK) or
+              (http_response_code ==
+               oai::common::sbi::http_status_code::NO_CONTENT)) {
             uc->set_up_cnx_state(
                 curl_responses.begin()->first,
                 up_cnx_state_e::UPCNX_STATE_DEACTIVATED);
@@ -1960,7 +1961,9 @@ bool amf_app::trigger_pdu_session_up_activation(
         uint32_t http_response_code = 0;
         if (result.find(kSbiResponseHttpResponseCode) != result.end()) {
           http_response_code = result[kSbiResponseHttpResponseCode].get<int>();
-          if ((http_response_code == 200) or (http_response_code == 204)) {
+          if ((http_response_code == oai::common::sbi::http_status_code::OK) or
+              (http_response_code ==
+               oai::common::sbi::http_status_code::NO_CONTENT)) {
             uc->set_up_cnx_state(
                 curl_responses.begin()->first,
                 up_cnx_state_e::UPCNX_STATE_ACTIVATED);
@@ -2043,7 +2046,9 @@ bool amf_app::trigger_pdu_session_up_activation(
       uint32_t http_response_code = 0;
       if (result.find(kSbiResponseHttpResponseCode) != result.end()) {
         http_response_code = result[kSbiResponseHttpResponseCode].get<int>();
-        if ((http_response_code == 200) or (http_response_code == 204)) {
+        if ((http_response_code == oai::common::sbi::http_status_code::OK) or
+            (http_response_code ==
+             oai::common::sbi::http_status_code::NO_CONTENT)) {
           uc->set_up_cnx_state(
               pdu_session_id, up_cnx_state_e::UPCNX_STATE_ACTIVATED);
           return true;
