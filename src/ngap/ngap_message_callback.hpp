@@ -469,7 +469,7 @@ int ngap_amf_handle_pdu_session_resource_setup_response(
     Logger::ngap().debug("No PduSessionResourceFailedToSetupList available");
   } else {
     // TODO: multiple PDU sessions setup failed
-    PduSessionResourceSetupUnSuccessfulTransferIE
+    PduSessionResourceSetupUnsuccessfulTransfer
         resource_setup_unsuccessful_transfer_ie = {};
     uint8_t buffer[BUFFER_SIZE_512];
     memcpy(
