@@ -471,7 +471,9 @@ int ngap_amf_handle_pdu_session_resource_setup_response(
     // TODO: multiple PDU sessions setup failed
     PduSessionResourceSetupUnSuccessfulTransferIE
         resource_setup_unsuccessful_transfer_ie = {};
-    uint8_t buffer[BUFFER_SIZE_512];
+    uint32_t msg_len =
+        list_fail[0].pduSessionResourceSetupUnsuccessfulTransfer.size;
+    uint8_t buffer[msg_len];
     memcpy(
         buffer, list_fail[0].pduSessionResourceSetupUnsuccessfulTransfer.buf,
         list_fail[0].pduSessionResourceSetupUnsuccessfulTransfer.size);
