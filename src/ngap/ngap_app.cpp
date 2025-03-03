@@ -29,6 +29,7 @@
 extern "C" {
 #include "Ngap_InitiatingMessage.h"
 #include "Ngap_NGAP-PDU.h"
+#include "constr_TYPE.h"
 }
 
 using namespace sctp;
@@ -79,6 +80,17 @@ void ngap_app::handle_receive(
         "Invalid procedure code %d or present %d",
         ngap_msg_pdu->choice.initiatingMessage->procedureCode,
         ngap_msg_pdu->present);
+    return;
+  }
+
+  // No handler available
+  if (messages_callback[ngap_msg_pdu->choice.initiatingMessage->procedureCode]
+                       [ngap_msg_pdu->present - 1] == nullptr) {
+    Logger::ngap().error(
+        "No handler available for procedure code %d and present %d",
+        ngap_msg_pdu->choice.initiatingMessage->procedureCode,
+        ngap_msg_pdu->present);
+    ASN_STRUCT_FREE(asn_DEF_Ngap_NGAP_PDU, &ngap_msg_pdu);
     return;
   }
 
