@@ -329,6 +329,11 @@ void amf_sbi::handle_itti_message(
       (itti_msg.n2sm_info_type.compare("PDU_RES_SETUP_RSP") == 0)) {
     psc->up_cnx_state = up_cnx_state_e::UPCNX_STATE_ACTIVATED;
   }
+
+  if (request_result and
+      (itti_msg.n2sm_info_type.compare("PDU_RES_SETUP_FAIL") == 0)) {
+    psc->up_cnx_state = up_cnx_state_e::UPCNX_STATE_DEACTIVATED;
+  }
 }
 
 //------------------------------------------------------------------------------
