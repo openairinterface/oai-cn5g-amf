@@ -464,10 +464,8 @@ int ngap_amf_handle_pdu_session_resource_setup_response(
   }
 
   std::vector<PDUSessionResourceFailedToSetupItem_t> list_fail;
-  if (!pdu_session_resource_setup_resp->getPduSessionResourceFailedToSetupList(
+  if (pdu_session_resource_setup_resp->getPduSessionResourceFailedToSetupList(
           list_fail)) {
-    Logger::ngap().debug("No PduSessionResourceFailedToSetupList available");
-  } else {
     for (int i = 0; i < list_fail.size(); i++) {
       auto itti_msg = std::make_shared<itti_nsmf_pdusession_update_sm_context>(
           TASK_NGAP, TASK_AMF_SBI);
