@@ -28,6 +28,7 @@
 #include "UeRetentionInformation.hpp"
 #include "NgapIesStruct.hpp"
 #include "sctp_server.hpp"
+#include "SupportedTaItem.hpp"
 
 extern "C" {
 #include "Ngap_PagingDRX.h"
@@ -55,7 +56,7 @@ class gnb_context {
   ng_gnb_state_t ng_state;
   plmn_t plmn;
   e_Ngap_PagingDRX default_paging_drx;  // v32, v64, v128, v256
-  std::vector<SupportedTaItem_t> supported_ta_list;
+  std::vector<SupportedTaItem> supported_ta_list;
   std::optional<UeRetentionInformation> ue_retention_info;
 
   sctp_assoc_id_t sctp_assoc_id;

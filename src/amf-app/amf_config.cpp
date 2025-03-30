@@ -333,6 +333,11 @@ void plmn_support_item::from_yaml(const YAML::Node& node) {
       s_nssai snssai(1);
       snssai.from_yaml(node[AMF_CONFIG_NSSAI][i]);
       m_nssai.push_back(snssai);
+
+      oai::model::common::Snssai s_nssai_model = {};
+      nlohmann::json j =
+          oai::utils::conv::yaml_to_json(node[AMF_CONFIG_NSSAI][i], false);
+      nlohmann::from_json(j, s_nssai_model);
     }
   }
 }

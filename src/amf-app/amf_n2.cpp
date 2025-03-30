@@ -62,6 +62,7 @@
 #include "output_wrapper.hpp"
 #include "sctp_server.hpp"
 #include "utils.hpp"
+#include "PlmnId.hpp"
 
 using namespace amf_application;
 using namespace oai::config;
@@ -455,7 +456,7 @@ void amf_n2::handle_itti_message(
   Logger::amf_n2().debug("IE DefaultPagingDRX: %d", gc->default_paging_drx);
 
   // Get supported TA List
-  std::vector<SupportedTaItem_t> supported_ta_list;
+  std::vector<SupportedTaItem> supported_ta_list;
   if (!itti_msg->ng_setup_req->getSupportedTaList(supported_ta_list)) {
     Logger::amf_n2().error("Missing Mandatory IE Supported TA List");
     send_ng_setup_failure(
@@ -980,11 +981,11 @@ void amf_n2::handle_itti_message(
   // Get the list allowed NSSAI from the common PLMN between gNB and AMF
   std::vector<S_Nssai> list;
   for (auto s : gc->supported_ta_list) {
-    for (auto p : s.plmnSliceSupportList) {
-      for (auto s : p.sliceList) {
+    for (auto p : s.getBroadcastPlmnList()) {
+      for (auto s : p.getSNssai()) {
         S_Nssai item;
-        item.sst = s.sst;
-        item.sd  = s.sd;
+        item.sst = s.getSstStr();
+        item.sd  = s.getSd();
         list.push_back(item);
       }
     }
@@ -1219,7 +1220,7 @@ void amf_n2::handle_itti_message(
       itti_msg->n2sm, item.pduSessionResourceModifyRequestTransfer);
   S_Nssai tmp = {};
   tmp.sd      = itti_msg->s_NSSAI.getSd();
-  tmp.sst     = itti_msg->s_NSSAI.getSst();
+  tmp.sst     = itti_msg->s_NSSAI.getSstStr();
   item.sNssai = std::optional<S_Nssai>(tmp);
 
   item.nasPdu = bstrcpy(itti_msg->nas);
@@ -2863,61 +2864,51 @@ void amf_n2::remove_ue_context_with_amf_ue_ngap_id(
 
 //------------------------------------------------------------------------------
 bool amf_n2::get_common_plmn(
-    const std::vector<SupportedTaItem_t>& list,
-    std::vector<SupportedTaItem_t>& result) {
-  std::vector<SupportedTaItem_t> plmn_list = {};
-  bool found_common_plmn                   = false;
+    const std::vector<SupportedTaItem>& list,
+    std::vector<SupportedTaItem>& result) {
+  bool found_common_plmn = false;
   for (int i = 0; i < amf_cfg.plmn_list.size(); i++) {
     for (int j = 0; j < list.size(); j++) {
       Logger::amf_n2().debug(
           "TAC configured %d, TAC received %d", amf_cfg.plmn_list[i].tac,
-          list[j].tac);
-      if (amf_cfg.plmn_list[i].tac != list[j].tac) {
+          list[j].getTac().get());
+      if (amf_cfg.plmn_list[i].tac != list[j].getTac().get()) {
         continue;
       }
-      for (int k = 0; k < list[j].plmnSliceSupportList.size(); k++) {
-        if (!(list[j].plmnSliceSupportList[k].mcc.compare(
+      for (int k = 0; k < list[j].getBroadcastPlmnList().size(); k++) {
+        if (!((list[j].getBroadcastPlmnList())[k].getPlmn().getMcc().compare(
                 amf_cfg.plmn_list[i].mcc)) &&
-            !(list[j].plmnSliceSupportList[k].mnc.compare(
+            !((list[j].getBroadcastPlmnList())[k].getPlmn().getMnc().compare(
                 amf_cfg.plmn_list[i].mnc))) {
           Logger::amf_n2().debug(
               "Common PLMN MCC %s, MNC %s", amf_cfg.plmn_list[i].mcc.c_str(),
               amf_cfg.plmn_list[i].mnc.c_str());
           // Get the common S-NSSAI
-          SupportedTaItem_t item                     = {};
-          PlmnSliceSupport_t plmn_slice_support_item = {};
-          item.tac                                   = list[j].tac;
-          plmn_slice_support_item.mcc = list[j].plmnSliceSupportList[k].mcc;
-          plmn_slice_support_item.mnc = list[j].plmnSliceSupportList[k].mnc;
+          SupportedTaItem item = {};
+          std::vector<BroadcastPlmnItem> broadcast_plmn_list;
+          BroadcastPlmnItem broadcast_plmn_item;
+          item.setTac(list[j].getTac());
+          broadcast_plmn_item.setPlmn(
+              (list[j].getBroadcastPlmnList())[k].getPlmn());
 
-          for (const auto& s1 : list[j].plmnSliceSupportList[k].sliceList) {
-            snssai_t s1_snssai;
-            try {
-              s1_snssai.sst = std::stoi(s1.sst);
-              s1_snssai.sd  = s1.sd;
-
+          for (const auto& s1 :
+               (list[j].getBroadcastPlmnList())[k].getSNssai()) {
+            Logger::amf_n2().debug(
+                "S-NSSAI from gNB (SST %d, SD %s)", s1.getSst(), s1.getSd());
+            for (const auto& s2 : amf_cfg.plmn_list[i].slice_list) {
               Logger::amf_n2().debug(
-                  "S-NSSAI from gNB (SST %s, SD %s)", s1.sst.c_str(),
-                  s1.sd.c_str());
-              for (const auto& s2 : amf_cfg.plmn_list[i].slice_list) {
+                  "S-NSSAI from AMF (SST %d, SD %s)", s2.sst, s2.sd);
+              if (s1.getSst() == s2.sst && s1.getSdInt() == s2.get_sd_int()) {
                 Logger::amf_n2().debug(
-                    "S-NSSAI from AMF (SST %d, SD %s)", s2.sst, s2.sd);
-                if (s1_snssai.sst == s2.sst &&
-                    s1_snssai.get_sd_int() == s2.get_sd_int()) {
-                  Logger::amf_n2().debug(
-                      "Common S-NSSAI (SST %s, SD %s)", s1.sst.c_str(),
-                      s1.sd.c_str());
-                  plmn_slice_support_item.sliceList.push_back(s1);
-                  found_common_plmn = true;
-                }
+                    "Common S-NSSAI (SST %d, SD %s)", s1.getSst(), s1.getSd());
+                broadcast_plmn_item.addSNssai(s1);
+                found_common_plmn = true;
               }
-            } catch (std::invalid_argument&) {
-              Logger::amf_n2().error(
-                  "Could not convert SST %s to int, wrong NGAP values", s1.sst);
             }
           }
 
-          item.plmnSliceSupportList.push_back(plmn_slice_support_item);
+          broadcast_plmn_list.push_back(broadcast_plmn_item);
+          item.setBroadcastPlmnList(broadcast_plmn_list);
           result.push_back(item);
         }
       }
@@ -2946,24 +2937,21 @@ bool amf_n2::get_common_NSSAI(
     return false;
   }
 
+  Logger::amf_n2().debug("Getting common S-NSSAIs between gNB and AMF");
+
   for (const auto& ta : gc->supported_ta_list) {
-    for (const auto& plmn : ta.plmnSliceSupportList) {
-      for (const auto& slice : plmn.sliceList) {
+    for (const auto& plmn : ta.getBroadcastPlmnList()) {
+      for (const auto& slice : plmn.getSNssai()) {
         oai::nas::SNSSAI_t snssai = {};
-        try {
-          snssai_t slice_parsed(std::stoi(slice.sst), slice.sd);
-          snssai.sst = slice_parsed.sst;
-          snssai.sd  = slice_parsed.get_sd_int();
-        } catch (const std::exception& err) {
-          Logger::amf_app().error("Invalid SST/SD");
-          break;
-        }
+        slice.getSst(snssai.sst);
+        snssai.sd = slice.getSdInt();
         common_nssai.push_back(snssai);
         found = true;
+        Logger::amf_n2().debug(
+            "Common S-NSSAI (SST 0x%x, SD %s)", snssai.sst, slice.getSd());
       }
     }
   }
-  Logger::amf_n2().debug("Getting common S-NSSAIs between gNB and AMF");
 
   for (auto s : common_nssai) {
     Logger::amf_n2().debug(
