@@ -1787,7 +1787,6 @@ bool amf_n2::handle_itti_message(
   std::vector<oai::ngap::SNssai> allowed_nssai;
   for (int i = 0; i < amf_cfg.plmn_list.size(); i++) {
     for (int j = 0; j < amf_cfg.plmn_list[i].slice_list.size(); j++) {
-      S_Nssai s_tmp;
       oai::ngap::SNssai s_nssai = {};
       s_nssai.setSst(amf_cfg.plmn_list[i].slice_list[j].sst);
       s_nssai.setSd(amf_cfg.plmn_list[i].slice_list[j].sd);
