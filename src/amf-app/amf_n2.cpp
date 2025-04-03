@@ -531,21 +531,28 @@ void amf_n2::handle_itti_message(
   ngSetupResp.setGuamiList(guami_list);
 
   ngSetupResp.setRelativeAmfCapacity(amf_cfg.relative_amf_capacity);
-  std::vector<PlmnSliceSupport_t> plmn_list;
-  for (int i = 0; i < amf_cfg.plmn_list.size(); i++) {
-    PlmnSliceSupport_t tmp = {};
-    tmp.mcc                = amf_cfg.plmn_list[i].mcc;
-    tmp.mnc                = amf_cfg.plmn_list[i].mnc;
-    for (int j = 0; j < amf_cfg.plmn_list[i].slice_list.size(); j++) {
-      S_Nssai s_tmp = {};
-      s_tmp.sst     = std::to_string(amf_cfg.plmn_list[i].slice_list[j].sst);
-      s_tmp.sd      = amf_cfg.plmn_list[i].slice_list[j].sd;
-      tmp.sliceList.push_back(s_tmp);
-    }
-    plmn_list.push_back(tmp);
-  }
 
-  ngSetupResp.setPlmnSupportList(plmn_list);
+  // PLMN Support List
+  oai::ngap::PlmnSupportList plmn_support_list = {};
+  for (int i = 0; i < amf_cfg.plmn_list.size(); i++) {
+    oai::ngap::PlmnSupportItem plmn_support_item = {};
+    oai::ngap::PlmnId plmn_id                    = {};
+    plmn_id.set(amf_cfg.plmn_list[i].mcc, amf_cfg.plmn_list[i].mnc);
+    SliceSupportList slice_support_list = {};
+    std::vector<SNssai> slice_support_item_list;
+    for (int j = 0; j < amf_cfg.plmn_list[i].slice_list.size(); j++) {
+      SNssai snssai_tmp = {};
+      snssai_tmp.setSst(amf_cfg.plmn_list[i].slice_list[j].sst);
+      snssai_tmp.setSd(amf_cfg.plmn_list[i].slice_list[j].sd);
+      slice_support_item_list.push_back(snssai_tmp);
+    }
+    slice_support_list.setSliceSupportItems(slice_support_item_list);
+    plmn_support_item.setPlmn(plmn_id);
+    plmn_support_item.setSliceSupportList(slice_support_list);
+    plmn_support_list.addItem(plmn_support_item);
+  }
+  ngSetupResp.setPlmnSupportList(plmn_support_list);
+
   if (ue_retention_info.has_value() and ue_retention_option)
     ngSetupResp.setUeRetentionInformation(ue_retention_info.value());
 
