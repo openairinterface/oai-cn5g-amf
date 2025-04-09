@@ -43,7 +43,7 @@
 #include "Ngap_CauseRadioNetwork.h"
 #include "Ngap_TimeToWait.h"
 #include "Paging.hpp"
-#include "PduSessionResourceHandoverCommandTransfer.hpp"
+#include "HandoverCommandTransfer.hpp"
 #include "PduSessionResourceModifyRequest.hpp"
 #include "PduSessionResourceReleaseCommand.hpp"
 #include "PduSessionResourceSetupRequest.hpp"
