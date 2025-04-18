@@ -267,14 +267,14 @@ class amf_n2 : public oai::ngap::ngap_app {
 
   /*
    * Get list of common PLMN between AMF and gNB
-   * @param [const std::vector<SupportedTaItem_t>&] list: Supported TA list from
+   * @param [const std::vector<SupportedTaItem>&] list: Supported TA list from
    * gNB
-   * @param [std::vector<SupportedTaItem_t>&] result: list of common TA
+   * @param [std::vector<SupportedTaItem>&] result: list of common TA
    * @return true if there's at least 1 common TA, otherwise return false
    */
   bool get_common_plmn(
-      const std::vector<SupportedTaItem_t>& list,
-      std::vector<SupportedTaItem_t>& result);
+      const std::vector<SupportedTaItem>& list,
+      std::vector<SupportedTaItem>& result);
 
   /*
    * Get list of common S-NSSAIs between AMF and gNB to be used by UE

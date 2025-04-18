@@ -5514,24 +5514,17 @@ bool amf_n1::get_slice_selection_subscription_data_from_conf_file(
   // bool default_subscribed_snssai = true;
 
   for (auto ta : gc->supported_ta_list) {
-    for (auto p : ta.plmnSliceSupportList) {
-      for (auto s : p.sliceList) {
+    for (auto p : ta.getBroadcastPlmnList()) {
+      for (auto s : p.getSNssai()) {
         Snssai nssai = {};
-        uint8_t sst  = 0;
-        try {
-          sst = std::stoi(s.sst);
-        } catch (const std::exception& err) {
-          Logger::amf_n1().error("Invalid SST");
-          return false;
-        }
-        nssai.setSst(sst);
-        nssai.setSd(s.sd);
+        nssai.setSst(s.getSst());
+        nssai.setSd(s.getSd());
         Logger::amf_n1().debug(
-            "Added S-NSSAI (SST %d, SD %s)", sst, s.sd.c_str());
+            "Added S-NSSAI (SST %d, SD %s)", s.getSst(), s.getSd());
         common_snssais.push_back(nssai);
         // Store this info in UE NAS Context
         oai::nas::SNSSAI_t subscribed_snssai = {};
-        subscribed_snssai.sst                = sst;
+        subscribed_snssai.sst                = nssai.getSst();
         subscribed_snssai.sd                 = nssai.getSdInt();
         std::pair<bool, oai::nas::SNSSAI_t> tmp;
         tmp.second = subscribed_snssai;

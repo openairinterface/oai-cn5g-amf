@@ -119,9 +119,9 @@ constexpr uint8_t AMF_ID_LENGTH        = 6;
 constexpr auto SUPPORTED_INTEGRITY_ALGORITHMS_REGEX  = "^NIA[0-7]$";
 constexpr auto SUPPORTED_ENCRYPTION_ALGORITHMS_REGEX = "^NEA[0-7]$";
 
-constexpr uint8_t SST_MIN_VALUE  = 0;
-constexpr uint8_t SST_MAX_VALUE  = 255;
-constexpr auto SD_REGEX          = "^[A-Fa-f0-9]{6}$";
+constexpr uint8_t SST_MIN_VALUE = 0;
+constexpr uint8_t SST_MAX_VALUE = 255;
+constexpr auto SD_REGEX         = "(^[A-Fa-f0-9]{6}$)|(^0(x|X)[A-Fa-f0-9]{6}$)";
 constexpr uint32_t TAC_MIN_VALUE = 0;
 constexpr uint32_t TAC_MAX_VALUE = 16777215;  // 0xffffff
 constexpr uint8_t AMF_CONFIG_RELATIVE_CAPACITY_MIN_VALUE = 0;

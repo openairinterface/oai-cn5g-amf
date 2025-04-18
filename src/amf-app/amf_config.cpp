@@ -258,7 +258,7 @@ std::string s_nssai::to_string(const std::string& indent) const {
   if (m_sd.is_set())
     out.append(indent).append(fmt::format(
         BASE_FORMATTER, EMPTY_LIST_ELEM, AMF_CONFIG_SD_LABEL, inner_width,
-        m_sd.get_value()));
+        get_sd()));
 
   return out;
 }
@@ -271,7 +271,11 @@ int s_nssai::get_sst() const {
 //------------------------------------------------------------------------------
 bool s_nssai::get_sd(std::string& sd) const {
   if (m_sd.is_set()) {
-    sd = m_sd.get_value();
+    std::string tmp = m_sd.get_value();
+    if (tmp.size() == 8)
+      sd = tmp.substr(2);
+    else
+      sd = tmp;
   }
   return m_sd.is_set();
 }
@@ -279,7 +283,11 @@ bool s_nssai::get_sd(std::string& sd) const {
 //------------------------------------------------------------------------------
 std::string s_nssai::get_sd() const {
   if (m_sd.is_set()) {
-    return m_sd.get_value();
+    std::string tmp = m_sd.get_value();
+    if (tmp.size() == 8)
+      return tmp.substr(2);
+    else
+      return tmp;
   }
   return {};
 }
@@ -333,6 +341,11 @@ void plmn_support_item::from_yaml(const YAML::Node& node) {
       s_nssai snssai(1);
       snssai.from_yaml(node[AMF_CONFIG_NSSAI][i]);
       m_nssai.push_back(snssai);
+
+      oai::model::common::Snssai s_nssai_model = {};
+      nlohmann::json j =
+          oai::utils::conv::yaml_to_json(node[AMF_CONFIG_NSSAI][i], false);
+      nlohmann::from_json(j, s_nssai_model);
     }
   }
 }
