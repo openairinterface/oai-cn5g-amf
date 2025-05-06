@@ -39,7 +39,7 @@ class AMFConfigurationApi {
   virtual ~AMFConfigurationApi() {}
   void init();
 
-  const std::string base = amf_sbi_helper::AmfConfigurationServiceBase;
+  const std::string base = amf_sbi_helper::AmfConfigurationServiceBase();
 
  private:
   void setupRoutes();

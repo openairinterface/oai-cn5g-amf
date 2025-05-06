@@ -51,7 +51,9 @@ extern amf_app* amf_app_inst;
 void amf_http2_server::start() {
   boost::system::error_code ec;
 
-  Logger::amf_server().info("HTTP2 server being started");
+  Logger::amf_server().info(
+      "HTTP2 server being started %s",
+      amf_sbi_helper::AmfCommunicationServiceBase());
   // N1N2MessageTransfer (URI:/ue-contexts/{ueContextId}/n1-n2-messages)
   // N1 Message Notify (URI:/ue-contexts/{ueContextId}/n1-message-notify)
   // N1N2MessageSubscribe (URI:
@@ -59,7 +61,7 @@ void amf_http2_server::start() {
   // N1N2MessageUnSubscribe (URI:
   // /ue-contexts/{ueContextId}/n1-n2-messages/subscriptions/{subscriptionId})
   server.handle(
-      amf_sbi_helper::AmfCommunicationServiceBase +
+      amf_sbi_helper::AmfCommunicationServiceBase() +
           amf_sbi_helper::AmfCommPathUeContext,
       [&](const request& request, const response& res) {
         request.on_data([&](const uint8_t* data, std::size_t len) {
@@ -158,7 +160,7 @@ void amf_http2_server::start() {
 
   // Event Exposure
   server.handle(
-      amf_sbi_helper::AmfEventExposureServiceBase +
+      amf_sbi_helper::AmfEventExposureServiceBase() +
           amf_sbi_helper::AmfEvtsPathSubscriptions,
       [&](const request& request, const response& response) {
         request.on_data([&](const uint8_t* data, std::size_t len) {
@@ -240,7 +242,7 @@ void amf_http2_server::start() {
 
   // AMF configuration-related APIs
   server.handle(
-      amf_sbi_helper::AmfConfigurationServiceBase +
+      amf_sbi_helper::AmfConfigurationServiceBase() +
           amf_sbi_helper::AmfConfPathConfiguration,
       [&](const request& request, const response& response) {
         request.on_data([&](const uint8_t* data, std::size_t len) {
@@ -266,7 +268,7 @@ void amf_http2_server::start() {
 
   // NonUEN2MessageTransfer: /non-ue-n2-messages/transfer
   server.handle(
-      amf_sbi_helper::AmfCommunicationServiceBase +
+      amf_sbi_helper::AmfCommunicationServiceBase() +
           amf_sbi_helper::AmfCommPathNonUeN1N2MessageTransfer,
       [&](const request& request, const response& res) {
         request.on_data([&](const uint8_t* data, std::size_t len) {
@@ -403,7 +405,7 @@ void amf_http2_server::start() {
   // NonUeN2InfoUnSubscribe:
   // /non-ue-n2-messages/subscriptions/{n2NotifySubscriptionId}:
   server.handle(
-      amf_sbi_helper::AmfCommunicationServiceBase +
+      amf_sbi_helper::AmfCommunicationServiceBase() +
           amf_sbi_helper::AmfCommPathNonUeN1N2MessageSubscriptions,
       [&](const request& request, const response& res) {
         request.on_data([&](const uint8_t* data, std::size_t len) {
@@ -459,7 +461,7 @@ void amf_http2_server::start() {
   // NF Status Notify (URL:
   // /namf-status-notify/pdu-session-release/callback/:ueContextId/:pduSessionId)
   server.handle(
-      amf_sbi_helper::AmfStatusNotifyServiceBase +
+      amf_sbi_helper::AmfStatusNotifyServiceBase() +
           amf_sbi_helper::AmfStatusNotifPathPduSessionRelease,
       [&](const request& request, const response& response) {
         request.on_data([&](const uint8_t* data, std::size_t len) {

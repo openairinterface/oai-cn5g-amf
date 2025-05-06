@@ -37,29 +37,34 @@ namespace oai::amf::api {
 
 class amf_sbi_helper : public sbi_helper {
  public:
-  static inline const std::string AmfCommunicationServiceBase =
-      sbi_helper::AmfCommBase +
-      amf_cfg.sbi.api_version.value_or(kDefaultSbiApiVersion);
-
-  static inline const std::string AmfEventExposureServiceBase =
-      sbi_helper::AmfEvtsBase +
-      amf_cfg.sbi.api_version.value_or(kDefaultSbiApiVersion);
-
-  static inline const std::string AmfStatusNotifyServiceBase =
-      sbi_helper::AmfStatusNotifBase +
-      amf_cfg.sbi.api_version.value_or(kDefaultSbiApiVersion);
-
-  static inline const std::string AmfConfigurationServiceBase =
-      sbi_helper::AmfConfBase +
-      amf_cfg.sbi.api_version.value_or(kDefaultSbiApiVersion);
-
-  static inline const std::string AmfLocationServiceBase =
-      sbi_helper::AmflocBase +
-      amf_cfg.sbi.api_version.value_or(kDefaultSbiApiVersion);
-
   static inline const std::string AmfCommPathN1MessageNotify =
       "n1-message-notify";
   static inline const std::string AmfCommPathN1N2Messages = "n1-n2-messages";
+
+  static std::string AmfCommunicationServiceBase() {
+    return sbi_helper::AmfCommBase +
+           amf_cfg.sbi.api_version.value_or(kDefaultSbiApiVersion);
+  }
+
+  static std::string AmfEventExposureServiceBase() {
+    return sbi_helper::AmfEvtsBase +
+           amf_cfg.sbi.api_version.value_or(kDefaultSbiApiVersion);
+  }
+
+  static std::string AmfStatusNotifyServiceBase() {
+    return sbi_helper::AmfStatusNotifBase +
+           amf_cfg.sbi.api_version.value_or(kDefaultSbiApiVersion);
+  }
+
+  static std::string AmfConfigurationServiceBase() {
+    return sbi_helper::AmfConfBase +
+           amf_cfg.sbi.api_version.value_or(kDefaultSbiApiVersion);
+  }
+
+  static std::string AmfLocationServiceBase() {
+    return sbi_helper::AmflocBase +
+           amf_cfg.sbi.api_version.value_or(kDefaultSbiApiVersion);
+  }
 
   static void set_problem_details(
       nlohmann::json& json_data, const std::string& detail);

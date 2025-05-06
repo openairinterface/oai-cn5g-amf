@@ -40,7 +40,7 @@ class SubscriptionsCollectionDocumentApi {
   virtual ~SubscriptionsCollectionDocumentApi() {}
   void init();
 
-  const std::string base = amf_sbi_helper::AmfCommunicationServiceBase;
+  const std::string base = amf_sbi_helper::AmfCommunicationServiceBase();
 
  private:
   void setupRoutes();
