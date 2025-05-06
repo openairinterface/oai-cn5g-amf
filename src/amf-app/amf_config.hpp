@@ -365,7 +365,11 @@ class amf_config : public config {
       const std::string& config_path, bool log_stdout, bool log_rot_file);
   virtual ~amf_config();
 
-  void to_amf_config(amf_config& cfg);
+  /*
+   * Convert the AMF configuration parameters into internal variables
+   * @param void
+   * @return void
+   */
   void pre_process();
 
   /*

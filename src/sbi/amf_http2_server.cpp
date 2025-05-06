@@ -51,10 +51,6 @@ extern amf_app* amf_app_inst;
 void amf_http2_server::start() {
   boost::system::error_code ec;
 
-  Logger::amf_server().info(
-      "HTTP2 server being started %s",
-      amf_sbi_helper::AmfCommunicationServiceBase());
-
   boost::asio::ssl::context tls(boost::asio::ssl::context::sslv23);
   bool enable_tls = amf_cfg->enable_tls();
 
