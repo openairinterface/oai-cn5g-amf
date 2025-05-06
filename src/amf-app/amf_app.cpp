@@ -55,13 +55,13 @@ extern itti_mw* itti_inst;
 amf_n2* amf_n2_inst   = nullptr;
 amf_n1* amf_n1_inst   = nullptr;
 amf_sbi* amf_sbi_inst = nullptr;
-extern amf_config amf_cfg;
+extern std::unique_ptr<oai::config::amf_config> amf_cfg;
 extern statistics stacs;
 
 void amf_app_task(void*);
 
 //------------------------------------------------------------------------------
-amf_app::amf_app(const amf_config& amf_cfg)
+amf_app::amf_app()
     : m_amf_ue_ngap_id2ue_ctx(),
       m_ue_ctx_key(),
       m_supi2ue_ctx(),
@@ -81,7 +81,7 @@ amf_app::amf_app(const amf_config& amf_cfg)
   try {
     amf_n1_inst = new amf_n1();
     amf_n2_inst =
-        new amf_n2(std::string(inet_ntoa(amf_cfg.n2.addr4)), amf_cfg.n2.port);
+        new amf_n2(std::string(inet_ntoa(amf_cfg->n2.addr4)), amf_cfg->n2.port);
     amf_sbi_inst = new amf_sbi();
   } catch (std::exception& e) {
     Logger::amf_app().error("Cannot create AMF APP: %s", e.what());
@@ -95,7 +95,7 @@ amf_app::amf_app(const amf_config& amf_cfg)
   generate_amf_profile();
 
   timer_id_t tid = itti_inst->timer_setup(
-      amf_cfg.statistics_interval, 0, TASK_AMF_APP,
+      amf_cfg->statistics_interval, 0, TASK_AMF_APP,
       TASK_AMF_APP_PERIODIC_STATISTICS);
   Logger::amf_app().startup("Started timer (%d)", tid);
 }
@@ -230,7 +230,7 @@ void amf_app_task(void*) {
           switch (to->arg1_user) {
             case TASK_AMF_APP_PERIODIC_STATISTICS:
               tid = itti_inst->timer_setup(
-                  amf_cfg.statistics_interval, 0, TASK_AMF_APP,
+                  amf_cfg->statistics_interval, 0, TASK_AMF_APP,
                   TASK_AMF_APP_PERIODIC_STATISTICS);
               stacs.display();
               break;
@@ -267,7 +267,7 @@ void amf_app_task(void*) {
 void amf_app::start() {
   if (amf_app_inst) {
     // Register to NRF if needed
-    if (amf_cfg.support_features.enable_nf_registration) register_to_nrf();
+    if (amf_cfg->support_features.enable_nf_registration) register_to_nrf();
   }
 }
 
@@ -530,7 +530,7 @@ void amf_app::handle_itti_message(
   bool is_guti_valid = false;
   if (itti_msg.is_5g_s_tmsi_present) {
     guti = amf_conv::tmsi_to_guti(
-        itti_msg.tai.mcc, itti_msg.tai.mnc, amf_cfg.guami.region_id,
+        itti_msg.tai.mcc, itti_msg.tai.mnc, amf_cfg->guami.region_id,
         itti_msg._5g_s_tmsi);
     is_guti_valid = true;
     Logger::amf_app().debug("Receiving GUTI %s", guti.c_str());
@@ -746,7 +746,7 @@ void amf_app::handle_itti_message(itti_sbi_n1n2_message_subscribe& itti_msg) {
       itti_msg.ue_cxt_id, n1n2sub_id, subscription_data);
 
   std::string location = amf_sbi_helper::get_amf_n1n2_message_subscribe_uri(
-      amf_cfg.sbi, itti_msg.ue_cxt_id, std::to_string((uint32_t) n1n2sub_id));
+      amf_cfg->sbi, itti_msg.ue_cxt_id, std::to_string((uint32_t) n1n2sub_id));
 
   // Trigger the response from AMF API Server
   oai::model::amf::UeN1N2InfoSubscriptionCreatedData created_data = {};
@@ -811,7 +811,7 @@ void amf_app::handle_itti_message(itti_sbi_non_ue_n2_info_subscribe& itti_msg) {
   add_non_ue_n2_info_subscription(n2sub_id, subscription_data);
 
   std::string location = amf_sbi_helper::get_non_ue_n2_info_subscribe_uri(
-      amf_cfg.sbi, std::to_string((uint32_t) n2sub_id));
+      amf_cfg->sbi, std::to_string((uint32_t) n2sub_id));
 
   // Trigger the response from AMF API Server
   oai::model::amf::NonUeN2InfoSubscriptionCreatedData created_data = {};
@@ -944,7 +944,7 @@ void amf_app::handle_itti_message(itti_sbi_update_amf_configuration& itti_msg) {
 
     // Update AMF profile (complete replacement of the existing profile by a new
     // one)
-    if (amf_cfg.support_features.enable_nf_registration) register_to_nrf();
+    if (amf_cfg->support_features.enable_nf_registration) register_to_nrf();
 
   } else {
     response_data[kSbiResponseHttpResponseCode] =
@@ -1037,7 +1037,7 @@ void amf_app::handle_itti_message(itti_sbi_update_nf_instance_response& r) {
 
 //---------------------------------------------------------------------------------------------
 bool amf_app::read_amf_configuration(nlohmann::json& json_data) {
-  amf_cfg.to_json(json_data);
+  amf_cfg->to_json(json_data);
   return true;
 }
 
@@ -1048,7 +1048,7 @@ bool amf_app::update_amf_configuration(nlohmann::json& json_data) {
         "Could not update AMF configuration (connected with gNBs)");
     return false;
   }
-  return amf_cfg.from_json(json_data);
+  return amf_cfg->from_json(json_data);
 }
 
 //---------------------------------------------------------------------------------------------
@@ -1272,7 +1272,7 @@ evsub_id_t amf_app::handle_event_exposure_subscription(
 
     if (i.type == LOCATION_REPORT) {
       // Determine Location
-      if (amf_cfg.support_features.enable_lmf)
+      if (amf_cfg->support_features.enable_lmf)
         handle_determine_location_request();
     }
     ss->display();
@@ -1327,7 +1327,7 @@ void amf_app::handle_determine_location_request() {
     add_promise(promise_id, p);
 
     itti_msg->input_data   = input_data;
-    itti_msg->http_version = amf_cfg.support_features.http_version;
+    itti_msg->http_version = amf_cfg->support_features.http_version;
     itti_msg->promise_id   = promise_id;
 
     int ret = itti_inst->send_msg(itti_msg);
@@ -1437,7 +1437,7 @@ void amf_app::get_ee_subscriptions(
 //---------------------------------------------------------------------------------------------
 void amf_app::generate_amf_profile() {
   nf_instance_profile.set_nf_instance_id(amf_instance_id);
-  nf_instance_profile.set_nf_instance_name(amf_cfg.amf_name);
+  nf_instance_profile.set_nf_instance_name(amf_cfg->amf_name);
   nf_instance_profile.set_nf_type("AMF");
   nf_instance_profile.set_nf_status("REGISTERED");
   nf_instance_profile.set_nf_heartBeat_timer(
@@ -1445,23 +1445,23 @@ void amf_app::generate_amf_profile() {
   nf_instance_profile.set_nf_priority(1);    // TODO: remove hardcoded value
   nf_instance_profile.set_nf_capacity(100);  // TODO: remove hardcoded value
   nf_instance_profile.delete_nf_ipv4_addresses();
-  nf_instance_profile.add_nf_ipv4_addresses(amf_cfg.sbi.addr4);
+  nf_instance_profile.add_nf_ipv4_addresses(amf_cfg->sbi.addr4);
 
   // NF services
   // IP Endpoint (common for each service)
   ip_endpoint_t endpoint = {};
-  endpoint.ipv4_address  = amf_cfg.sbi.addr4;
+  endpoint.ipv4_address  = amf_cfg->sbi.addr4;
   endpoint.transport     = "TCP";
-  endpoint.port          = amf_cfg.sbi.port;
+  endpoint.port          = amf_cfg->sbi.port;
 
   // namf_communication
   oai::common::sbi::nf_service_t nf_service = {};
   nf_service.service_instance_id            = "namf_communication";
   nf_service.service_name                   = "namf_communication";
   nf_service_version_t version              = {};
-  if (amf_cfg.sbi.api_version.has_value())
+  if (amf_cfg->sbi.api_version.has_value())
     version.api_version_in_uri =
-        amf_cfg.sbi.api_version.value_or(DEFAULT_SBI_API_VERSION);
+        amf_cfg->sbi.api_version.value_or(DEFAULT_SBI_API_VERSION);
   version.api_full_version = "1.0.0";  // TODO: to be updated
   nf_service.versions.push_back(version);
   nf_service.scheme            = "http";
@@ -1474,9 +1474,9 @@ void amf_app::generate_amf_profile() {
   nf_service_events.service_instance_id            = "namf-evts";
   nf_service_events.service_name                   = "namf-evts";
   nf_service_version_t version_events              = {};
-  if (amf_cfg.sbi.api_version.has_value())
+  if (amf_cfg->sbi.api_version.has_value())
     version_events.api_version_in_uri =
-        amf_cfg.sbi.api_version.value_or(DEFAULT_SBI_API_VERSION);
+        amf_cfg->sbi.api_version.value_or(DEFAULT_SBI_API_VERSION);
   version_events.api_full_version = "1.0.0";  // TODO: to be updated
   nf_service_events.versions.push_back(version_events);
   nf_service_events.scheme            = "http";
@@ -1491,10 +1491,10 @@ void amf_app::generate_amf_profile() {
   // AMF info
   oai::common::sbi::amf_info_t info = {};
   oai::utils::conv::int_to_string_hex(
-      amf_cfg.guami.region_id, info.amf_region_id, AMF_REGION_ID_LENGTH);
+      amf_cfg->guami.region_id, info.amf_region_id, AMF_REGION_ID_LENGTH);
   oai::utils::conv::int_to_string_hex(
-      amf_cfg.guami.amf_set_id, info.amf_set_id, AMF_SET_ID_LENGTH);
-  for (auto g : amf_cfg.guami_list) {
+      amf_cfg->guami.amf_set_id, info.amf_set_id, AMF_SET_ID_LENGTH);
+  for (auto g : amf_cfg->guami_list) {
     guami_t guami = {};
     amf_conv::get_amf_id(
         g.region_id, g.amf_set_id, g.amf_pointer, guami.amf_id);
@@ -1506,7 +1506,7 @@ void amf_app::generate_amf_profile() {
   nf_instance_profile.set_amf_info(info);
 
   std::vector<snssai_t> amf_snssai;
-  for (auto p : amf_cfg.plmn_list) {
+  for (auto p : amf_cfg->plmn_list) {
     for (auto s : p.slice_list) {
       amf_snssai.push_back(s);
     }
@@ -1570,12 +1570,12 @@ void amf_app::register_to_nrf(const std::string& nrf_uri) const {
 
 //------------------------------------------------------------------------------
 void amf_app::get_nrfs(std::unordered_set<std::string>& nrfs) {
-  if (amf_cfg.support_features.enable_nssf) {
+  if (amf_cfg->support_features.enable_nssf) {
     // Get all related NRFs from NSSF
     std::map<uint32_t, boost::shared_future<nlohmann::json>> nssf_responses;
 
     // Send requests to get appropriate Network Slice Informations from NSSF
-    for (const auto& plmn : amf_cfg.plmn_list) {
+    for (const auto& plmn : amf_cfg->plmn_list) {
       for (auto s : plmn.slice_list) {
         std::shared_ptr<itti_sbi_network_slice_selection_discovery> itti_msg =
             std::make_shared<itti_sbi_network_slice_selection_discovery>(
@@ -1592,7 +1592,7 @@ void amf_app::get_nrfs(std::unordered_set<std::string>& nrfs) {
         nssf_responses.emplace(promise_id, f);
         add_promise(promise_id, p);
 
-        itti_msg->http_version   = amf_cfg.support_features.http_version;
+        itti_msg->http_version   = amf_cfg->support_features.http_version;
         itti_msg->nf_instance_id = amf_instance_id;
         itti_msg->plmn.mcc       = plmn.mcc;
         itti_msg->plmn.mnc       = plmn.mnc;
@@ -1654,7 +1654,7 @@ void amf_app::get_nrfs(std::unordered_set<std::string>& nrfs) {
     // For now we only have 1 NRF from conf file
     std::string nrf_uri = {};
     amf_sbi_helper::get_nrf_nf_instance_uri(
-        amf_cfg.nrf_addr, amf_instance_id, nrf_uri);
+        amf_cfg->nrf_addr, amf_instance_id, nrf_uri);
     nrfs.insert(nrf_uri);
   }
   return;

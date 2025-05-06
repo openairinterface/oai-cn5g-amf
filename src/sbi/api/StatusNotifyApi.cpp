@@ -25,7 +25,7 @@
 #include "SmContextStatusNotification.h"
 #include "amf_config.hpp"
 
-extern oai::config::amf_config amf_cfg;
+extern std::unique_ptr<oai::config::amf_config> amf_cfg;
 
 namespace oai {
 namespace amf {

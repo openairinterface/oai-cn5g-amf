@@ -78,7 +78,7 @@ using namespace oai::nas;
 extern itti_mw* itti_inst;
 extern amf_n1* amf_n1_inst;
 extern amf_sbi* amf_sbi_inst;
-extern amf_config amf_cfg;
+extern std::unique_ptr<oai::config::amf_config> amf_cfg;
 extern amf_app* amf_app_inst;
 extern amf_n2* amf_n2_inst;
 extern statistics stacs;
@@ -577,7 +577,7 @@ void amf_n1::nas_signalling_establishment_request_handle(
           "Signal the UE Reachability Status Event notification for SUPI %s",
           supi.c_str());
       event_sub.ue_reachability_status(
-          supi, CM_CONNECTED, amf_cfg.support_features.http_version);
+          supi, CM_CONNECTED, amf_cfg->support_features.http_version);
     }
   } else {
     Logger::amf_n1().debug(
@@ -900,7 +900,7 @@ bool amf_n1::service_request_handle(
     std::string tmsi    = {};
     if (service_request->Get5gSTmsi(amf_set_id, amf_pointer, tmsi)) {
       std::string guti = amf_conv::tmsi_to_guti(
-          uc->tai.mcc, uc->tai.mnc, amf_cfg.guami.region_id, amf_set_id,
+          uc->tai.mcc, uc->tai.mnc, amf_cfg->guami.region_id, amf_set_id,
           amf_pointer, tmsi);
 
       Logger::amf_app().debug(
@@ -1140,7 +1140,7 @@ bool amf_n1::service_request_handle(
     std::string tmsi    = {};
     if (service_request->Get5gSTmsi(amf_set_id, amf_pointer, tmsi)) {
       std::string guti = amf_conv::tmsi_to_guti(
-          uc->tai.mcc, uc->tai.mnc, amf_cfg.guami.region_id, amf_set_id,
+          uc->tai.mcc, uc->tai.mnc, amf_cfg->guami.region_id, amf_set_id,
           amf_pointer, tmsi);
       Logger::amf_app().debug(
           "GUTI %s, 5G-TMSI %s", guti.c_str(), tmsi.c_str());
@@ -1549,7 +1549,7 @@ bool amf_n1::service_request_handle(
     stacs.display();
 
     event_sub.ue_registration_state(
-        supi, _5GMM_REGISTERED, amf_cfg.support_features.http_version,
+        supi, _5GMM_REGISTERED, amf_cfg->support_features.http_version,
         ran_ue_ngap_id, amf_ue_ngap_id);
 
     oai::utils::utils::bdestroy_wrapper(&protected_nas);
@@ -1663,7 +1663,7 @@ bool amf_n1::registration_request_handle(
               "%s",
               supi.c_str());
           event_sub.ue_reachability_status(
-              supi, CM_CONNECTED, amf_cfg.support_features.http_version);
+              supi, CM_CONNECTED, amf_cfg->support_features.http_version);
         }
 
         // Get SUPI and associate with AMF UE NGAP ID/RAN UE NGAP ID
@@ -1770,7 +1770,7 @@ bool amf_n1::registration_request_handle(
               "%s",
               supi.c_str());
           event_sub.ue_reachability_status(
-              supi, CM_CONNECTED, amf_cfg.support_features.http_version);
+              supi, CM_CONNECTED, amf_cfg->support_features.http_version);
         }
       }
     } break;
@@ -1840,7 +1840,7 @@ bool amf_n1::registration_request_handle(
 
     std::string supi = amf_conv::imsi_to_supi(nc->imsi);
     event_sub.ue_registration_state(
-        supi, _5GMM_REGISTERED, amf_cfg.support_features.http_version,
+        supi, _5GMM_REGISTERED, amf_cfg->support_features.http_version,
         ran_ue_ngap_id, amf_ue_ngap_id);
   }
 
@@ -1992,7 +1992,7 @@ bool amf_n1::registration_request_handle(
     } break;
 
     case kEmergencyRegistration: {
-      if (!amf_cfg.is_emergency_support) {
+      if (!amf_cfg->is_emergency_support) {
         Logger::amf_n1().error(
             "Network does not support emergency registration, reject ...");
         cause = k5gmmCause5gsServicesNotAllowed;
@@ -2216,7 +2216,7 @@ void amf_n1::send_registration_reject_msg(
       supi.c_str());
   comm_failure.setNasReleaseCode(std::to_string(cause_value));
   event_sub.ue_communication_failure(
-      supi, comm_failure, amf_cfg.support_features.http_version);
+      supi, comm_failure, amf_cfg->support_features.http_version);
 }
 
 //------------------------------------------------------------------------------
@@ -2298,7 +2298,7 @@ bool amf_n1::run_registration_procedure(
 //------------------------------------------------------------------------------
 bool amf_n1::auth_vectors_generator(std::shared_ptr<nas_context>& nc) {
   Logger::amf_n1().debug("Start to generate Authentication Vectors");
-  if (amf_cfg.support_features.enable_external_ausf_udm) {
+  if (amf_cfg->support_features.enable_external_ausf_udm) {
     // get authentication vectors from AUSF
     if (!get_authentication_vectors_from_ausf(nc)) return false;
   } else {  // Generate locally
@@ -2380,7 +2380,7 @@ bool amf_n1::get_authentication_vectors_from_ausf(
       std::make_shared<itti_sbi_ue_authentication_request>(
           TASK_AMF_N1, TASK_AMF_SBI, promise_id);
 
-  itti_msg->http_version = amf_cfg.support_features.http_version;
+  itti_msg->http_version = amf_cfg->support_features.http_version;
   itti_msg->auth_info    = authentication_info;
   itti_msg->promise_id   = promise_id;
 
@@ -2507,7 +2507,7 @@ bool amf_n1::_5g_aka_confirmation_from_ausf(
   itti_msg->confirmation_data = confirmation_data_json;
   itti_msg->promise_id        = promise_id;
   itti_msg->uri               = nc->href;
-  itti_msg->http_version      = amf_cfg.support_features.http_version;
+  itti_msg->http_version      = amf_cfg->support_features.http_version;
 
   int ret = itti_inst->send_msg(itti_msg);
   if (0 != ret) {
@@ -2703,7 +2703,7 @@ void amf_n1::authentication_response_handle(
     Logger::amf_n1().warn(
         "Cannot receive AuthenticationResponseParameter (RES*)");
   } else {
-    if (amf_cfg.support_features.enable_external_ausf_udm) {
+    if (amf_cfg->support_features.enable_external_ausf_udm) {
       // std::string data = bdata(resStar);
       if (!_5g_aka_confirmation_from_ausf(nc, resStar)) isAuthOk = false;
     } else {
@@ -2944,19 +2944,21 @@ bool amf_n1::security_select_algorithms(
     uint8_t nea, uint8_t nia, uint8_t& amf_nea, uint8_t& amf_nia) {
   bool found_nea = false;
   bool found_nia = false;
-  for (int i = 0; i < amf_cfg.nas_cfg.prefered_ciphering_algorithm.size();
+  for (int i = 0; i < amf_cfg->nas_cfg.prefered_ciphering_algorithm.size();
        i++) {
-    if (nea & (0x80 >> (int) amf_cfg.nas_cfg.prefered_ciphering_algorithm[i])) {
-      amf_nea = (int) amf_cfg.nas_cfg.prefered_ciphering_algorithm[i];
+    if (nea &
+        (0x80 >> (int) amf_cfg->nas_cfg.prefered_ciphering_algorithm[i])) {
+      amf_nea = (int) amf_cfg->nas_cfg.prefered_ciphering_algorithm[i];
       Logger::amf_n1().debug("Selected AMF NEA: 0x%x", amf_nea);
       found_nea = true;
       break;
     }
   }
-  for (int i = 0; i < amf_cfg.nas_cfg.prefered_integrity_algorithm.size();
+  for (int i = 0; i < amf_cfg->nas_cfg.prefered_integrity_algorithm.size();
        i++) {
-    if (nia & (0x80 >> (int) amf_cfg.nas_cfg.prefered_integrity_algorithm[i])) {
-      amf_nia = (int) amf_cfg.nas_cfg.prefered_integrity_algorithm[i];
+    if (nia &
+        (0x80 >> (int) amf_cfg->nas_cfg.prefered_integrity_algorithm[i])) {
+      amf_nia = (int) amf_cfg->nas_cfg.prefered_integrity_algorithm[i];
       Logger::amf_n1().debug("Selected AMF NIA: 0x%x", amf_nia);
       found_nia = true;
       break;
@@ -3085,12 +3087,12 @@ void amf_n1::security_mode_complete_handle(
     return;
   }
   registration_accept->Set5gGuti(
-      mcc, mnc, amf_cfg.guami.region_id, amf_cfg.guami.amf_set_id,
-      amf_cfg.guami.amf_pointer, tmsi);
+      mcc, mnc, amf_cfg->guami.region_id, amf_cfg->guami.amf_set_id,
+      amf_cfg->guami.amf_pointer, tmsi);
 
   std::string guti = amf_conv::tmsi_to_guti(
-      mcc, mnc, amf_cfg.guami.region_id, amf_cfg.guami.amf_set_id,
-      amf_cfg.guami.amf_pointer, amf_conv::tmsi_to_string(tmsi));
+      mcc, mnc, amf_cfg->guami.region_id, amf_cfg->guami.amf_set_id,
+      amf_cfg->guami.amf_pointer, amf_conv::tmsi_to_string(tmsi));
   Logger::amf_n1().debug(
       "Allocated GUTI %s (TMSI %s)", guti.c_str(),
       amf_conv::tmsi_to_string(tmsi).c_str());
@@ -3252,7 +3254,7 @@ void amf_n1::security_mode_complete_handle(
       "Signal the UE Registration State Event notification for SUPI %s",
       supi.c_str());
   event_sub.ue_registration_state(
-      supi, _5GMM_REGISTERED, amf_cfg.support_features.http_version,
+      supi, _5GMM_REGISTERED, amf_cfg->support_features.http_version,
       ran_ue_ngap_id, amf_ue_ngap_id);
 
   // Trigger UE Connectivity Status Notify
@@ -3260,7 +3262,7 @@ void amf_n1::security_mode_complete_handle(
       "Signal the UE Connectivity Status Event notification for SUPI %s",
       supi.c_str());
   event_sub.ue_connectivity_state(
-      supi, CM_CONNECTED, amf_cfg.support_features.http_version);
+      supi, CM_CONNECTED, amf_cfg->support_features.http_version);
 }
 
 //------------------------------------------------------------------------------
@@ -3744,7 +3746,7 @@ void amf_n1::ue_initiate_de_registration_handle(
       "Signal the UE Registration State Event notification for SUPI %s",
       supi.c_str());
   event_sub.ue_registration_state(
-      supi, _5GMM_DEREGISTERED, amf_cfg.support_features.http_version,
+      supi, _5GMM_DEREGISTERED, amf_cfg->support_features.http_version,
       ran_ue_ngap_id, amf_ue_ngap_id);
 
   // Trigger UE Loss of Connectivity Status Notify
@@ -3752,8 +3754,8 @@ void amf_n1::ue_initiate_de_registration_handle(
       "Signal the UE Loss of Connectivity Event notification for SUPI %s",
       supi.c_str());
   event_sub.ue_loss_of_connectivity(
-      supi, DEREGISTERED, amf_cfg.support_features.http_version, ran_ue_ngap_id,
-      amf_ue_ngap_id);
+      supi, DEREGISTERED, amf_cfg->support_features.http_version,
+      ran_ue_ngap_id, amf_ue_ngap_id);
 
   // TODO: put once this scenario is implemented
   // Trigger UE Loss of Connectivity Status Notify
@@ -3824,7 +3826,7 @@ void amf_n1::ue_initiate_de_registration_handle(
       "Signal the UE Connectivity Status Event notification for SUPI %s",
       supi.c_str());
   event_sub.ue_connectivity_state(
-      supi, CM_IDLE, amf_cfg.support_features.http_version);
+      supi, CM_IDLE, amf_cfg->support_features.http_version);
 }
 
 //------------------------------------------------------------------------------
@@ -3918,12 +3920,12 @@ void amf_n1::ul_nas_transport_handle(
     Logger::amf_n1().debug(
         "S_NSSAI for this PDU Session %s", snssai.ToString().c_str());
 
-    bstring dnn = bfromcstr(amf_cfg.default_dnn.c_str());
+    bstring dnn = bfromcstr(amf_cfg->default_dnn.c_str());
 
     if (!ul_nas->GetDnn(dnn)) {
       Logger::amf_n1().debug(
           "No DNN available in UlNasTransport, use default DNN: %s",
-          amf_cfg.default_dnn);
+          amf_cfg->default_dnn);
       // TODO: use default DNN for the corresponding NSSAI
     }
 
@@ -4022,8 +4024,8 @@ bool amf_n1::run_mobility_registration_update_procedure(
   initialize_registration_accept(reg_accept, nc);
 
   reg_accept->Set5gGuti(
-      amf_cfg.guami.mcc, amf_cfg.guami.mnc, amf_cfg.guami.region_id,
-      amf_cfg.guami.amf_set_id, amf_cfg.guami.amf_pointer, uc->tmsi);
+      amf_cfg->guami.mcc, amf_cfg->guami.mnc, amf_cfg->guami.region_id,
+      amf_cfg->guami.amf_set_id, amf_cfg->guami.amf_pointer, uc->tmsi);
 
   // Get list of PDU sessions to be activated
   uint16_t uplink_data_status              = 0x0000;
@@ -4203,8 +4205,8 @@ bool amf_n1::run_periodic_registration_update_procedure(
   }
 
   reg_accept->Set5gGuti(
-      amf_cfg.guami.mcc, amf_cfg.guami.mnc, amf_cfg.guami.region_id,
-      amf_cfg.guami.amf_set_id, amf_cfg.guami.amf_pointer, uc->tmsi);
+      amf_cfg->guami.mcc, amf_cfg->guami.mnc, amf_cfg->guami.region_id,
+      amf_cfg->guami.amf_set_id, amf_cfg->guami.amf_pointer, uc->tmsi);
 
   if (pdu_session_status_opt.has_value()) {
     reg_accept->SetPduSessionStatus(pdu_session_status);
@@ -4285,8 +4287,8 @@ bool amf_n1::run_periodic_registration_update_procedure(
   }
 
   reg_accept->Set5gGuti(
-      amf_cfg.guami.mcc, amf_cfg.guami.mnc, amf_cfg.guami.region_id,
-      amf_cfg.guami.amf_set_id, amf_cfg.guami.amf_pointer, uc->tmsi);
+      amf_cfg->guami.mcc, amf_cfg->guami.mnc, amf_cfg->guami.region_id,
+      amf_cfg->guami.amf_set_id, amf_cfg->guami.amf_pointer, uc->tmsi);
 
   uint16_t pdu_session_status = 0x0000;
   registration_request->GetPduSessionStatus(pdu_session_status);
@@ -4830,7 +4832,7 @@ void amf_n1::trigger_ue_location_report(
           "Signal the UE Location Report Event notification for SUPI %s",
           supi.c_str());
       event_sub.ue_location_report(
-          supi, user_location, amf_cfg.support_features.http_version);
+          supi, user_location, amf_cfg->support_features.http_version);
     }
   }
 }
@@ -4880,7 +4882,7 @@ void amf_n1::initialize_registration_accept(
 
   // TAI List
   std::vector<p_tai_t> tai_list;
-  for (auto p : amf_cfg.plmn_list) {
+  for (auto p : amf_cfg->plmn_list) {
     p_tai_t item    = {};
     item.type       = 0x00;
     nas_plmn_t plmn = {};
@@ -5028,7 +5030,7 @@ void amf_n1::mobile_reachable_timer_timeout(
       "Signal the UE Loss of Connectivity Event notification for SUPI %s",
       supi.c_str());
   event_sub.ue_loss_of_connectivity(
-      supi, MAX_DETECTION_TIME_EXPIRED, amf_cfg.support_features.http_version,
+      supi, MAX_DETECTION_TIME_EXPIRED, amf_cfg->support_features.http_version,
       nc->ran_ue_ngap_id, amf_ue_ngap_id);
 
   // TODO: Start the implicit de-registration timer
@@ -5110,7 +5112,7 @@ void amf_n1::implicit_deregistration_timer_timeout(
       "Signal the UE Connectivity Status Event notification for SUPI %s",
       supi.c_str());
   event_sub.ue_connectivity_state(
-      supi, CM_IDLE, amf_cfg.support_features.http_version);
+      supi, CM_IDLE, amf_cfg->support_features.http_version);
 }
 
 //------------------------------------------------------------------------------
@@ -5262,7 +5264,7 @@ bool amf_n1::check_requested_nssai(const std::shared_ptr<nas_context>& nc) {
   }
 
   bool result = false;
-  for (auto p : amf_cfg.plmn_list) {
+  for (auto p : amf_cfg->plmn_list) {
     // Check PLMN/TAC
     if ((uc->tai.mcc.compare(p.mcc) != 0) or
         (uc->tai.mnc.compare(p.mnc) != 0) or (uc->tai.tac != p.tac)) {
@@ -5303,7 +5305,7 @@ bool amf_n1::check_subscribed_nssai(
 
   bool result = false;
 
-  for (auto p : amf_cfg.plmn_list) {
+  for (auto p : amf_cfg->plmn_list) {
     Logger::amf_n1().debug(
         "PLMN info: %s",
         p.to_json().dump().c_str());  // TODO: use to_string instead
@@ -5401,7 +5403,7 @@ bool amf_n1::check_subscribed_nssai(
 bool amf_n1::get_slice_selection_subscription_data(
     const std::shared_ptr<nas_context>& nc, oai::model::amf::Nssai& nssai) {
   // TODO: UDM selection (from NRF or configuration file)
-  if (amf_cfg.support_features.enable_external_ausf_udm) {
+  if (amf_cfg->support_features.enable_external_ausf_udm) {
     Logger::amf_n1().debug(
         "Get the Slice Selection Subscription Data from UDM");
 
@@ -5422,7 +5424,7 @@ bool amf_n1::get_slice_selection_subscription_data(
     boost::shared_future<nlohmann::json> f = p->get_future();
     amf_app_inst->add_promise(promise_id, p);
 
-    itti_msg->http_version = amf_cfg.support_features.http_version;
+    itti_msg->http_version = amf_cfg->support_features.http_version;
     itti_msg->supi         = nc->imsi;  // TODO: use SUPI in UDR, uc->supi;
     itti_msg->plmn.mcc     = uc->cgi.mcc;
     itti_msg->plmn.mnc     = uc->cgi.mnc;
@@ -5567,7 +5569,7 @@ bool amf_n1::get_network_slice_selection(
   if (!find_ue_context(nc->ran_ue_ngap_id, nc->amf_ue_ngap_id, uc))
     return false;
 
-  if (amf_cfg.support_features.enable_nssf) {
+  if (amf_cfg->support_features.enable_nssf) {
     // Get Authorized Network Slice Info from an  external NSSF
     std::shared_ptr<itti_sbi_network_slice_selection_information> itti_msg =
         std::make_shared<itti_sbi_network_slice_selection_information>(
@@ -5582,7 +5584,7 @@ bool amf_n1::get_network_slice_selection(
     boost::shared_future<nlohmann::json> f = p->get_future();
     amf_app_inst->add_promise(promise_id, p);
 
-    itti_msg->http_version   = amf_cfg.support_features.http_version;
+    itti_msg->http_version   = amf_cfg->support_features.http_version;
     itti_msg->nf_instance_id = nf_instance_id;
     itti_msg->slice_info     = slice_info;
     itti_msg->promise_id     = promise_id;
@@ -5681,12 +5683,12 @@ bool amf_n1::get_target_amf(
     // TODO:
   }
 
-  if (amf_cfg.support_features
+  if (amf_cfg->support_features
           .enable_smf_selection) {  // TODO: define new option for external NRF
     // use NRF's URI from conf file if not available
     if (nrf_amf_set.empty()) {
       amf_sbi_helper::get_nrf_disc_search_nf_instances_uri(
-          amf_cfg.nrf_addr, nrf_amf_set);
+          amf_cfg->nrf_addr, nrf_amf_set);
       Logger::amf_n1().debug(
           "NRF AMF Set from the configuration file %s", nrf_amf_set.c_str());
     }
@@ -5705,7 +5707,7 @@ bool amf_n1::get_target_amf(
     boost::shared_future<nlohmann::json> f = p->get_future();
     amf_app_inst->add_promise(promise_id, p);
 
-    itti_msg->http_version          = amf_cfg.support_features.http_version;
+    itti_msg->http_version          = amf_cfg->support_features.http_version;
     itti_msg->target_amf_set        = target_amf_set;
     itti_msg->target_amf_set_is_set = true;
     itti_msg->promise_id            = promise_id;
@@ -5786,7 +5788,7 @@ void amf_n1::send_n1_message_notity(
   std::shared_ptr<itti_sbi_n1_message_notify> itti_msg =
       std::make_shared<itti_sbi_n1_message_notify>(TASK_AMF_N1, TASK_AMF_SBI);
 
-  itti_msg->http_version = amf_cfg.support_features.http_version;
+  itti_msg->http_version = amf_cfg->support_features.http_version;
   if (nc->registration_request_is_set) {
     itti_msg->registration_request = nc->registration_request;
   }
