@@ -43,7 +43,7 @@ using namespace oai::model::common;
 using namespace oai::common::sbi;
 using namespace oai::amf::api;
 
-extern oai::config::amf_config amf_cfg;
+extern std::unique_ptr<oai::config::amf_config> amf_cfg;
 extern itti_mw* itti_inst;
 extern amf_app* amf_app_inst;
 
@@ -51,6 +51,25 @@ extern amf_app* amf_app_inst;
 void amf_http2_server::start() {
   boost::system::error_code ec;
 
+  boost::asio::ssl::context tls(boost::asio::ssl::context::sslv23);
+  /*   bool enable_tls = amf_cfg->enable_tls();
+
+     if (enable_tls) {
+       try {
+         std::string key_file =
+             amf_cfg->get_tls_config().get_cert_key_path() + "/oai_amf.key";
+         std::string certificate_file =
+             amf_cfg->get_tls_config().get_cert_certificate_path() +
+             "/oai_amf.crt";
+         tls.use_private_key_file(key_file, boost::asio::ssl::context::pem);
+         tls.use_certificate_chain_file(certificate_file);
+         configure_tls_context_easy(ec, tls);
+       } catch (std::exception& e) {
+         Logger::smf_app().error("%s", e.what());
+         enable_tls = false;
+       }
+     }
+  */
   Logger::amf_server().info("HTTP2 server being started");
   // N1N2MessageTransfer (URI:/ue-contexts/{ueContextId}/n1-n2-messages)
   // N1 Message Notify (URI:/ue-contexts/{ueContextId}/n1-message-notify)
@@ -552,9 +571,9 @@ void amf_http2_server::create_event_subscription_handler(
   // TODO: To be fixed with correct location
   if (sub_id != -1) {
     std::string location =
-        std::string(inet_ntoa(*((struct in_addr*) &amf_cfg.sbi.addr4))) + ":" +
-        std::to_string(amf_cfg.sbi.port) + NAMF_EVENT_EXPOSURE_BASE +
-        amf_cfg.sbi.api_version.value_or(DEFAULT_SBI_API_VERSION) +
+        std::string(inet_ntoa(*((struct in_addr*) &amf_cfg->sbi.addr4))) + ":" +
+        std::to_string(amf_cfg->sbi.port) + NAMF_EVENT_EXPOSURE_BASE +
+        amf_cfg->sbi.api_version.value_or(DEFAULT_SBI_API_VERSION) +
         "/namf-evts/" + std::to_string(sub_id);
 
     json_data["subscriptionId"] = location;

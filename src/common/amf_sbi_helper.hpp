@@ -31,7 +31,7 @@
 using namespace oai::config;
 using namespace oai::common::sbi;
 
-extern amf_config amf_cfg;
+extern std::unique_ptr<oai::config::amf_config> amf_cfg;
 
 namespace oai::amf::api {
 
@@ -39,23 +39,23 @@ class amf_sbi_helper : public sbi_helper {
  public:
   static inline const std::string AmfCommunicationServiceBase =
       sbi_helper::AmfCommBase +
-      amf_cfg.sbi.api_version.value_or(kDefaultSbiApiVersion);
+      (amf_cfg->sbi.api_version).value_or(kDefaultSbiApiVersion);
 
   static inline const std::string AmfEventExposureServiceBase =
       sbi_helper::AmfEvtsBase +
-      amf_cfg.sbi.api_version.value_or(kDefaultSbiApiVersion);
+      amf_cfg->sbi.api_version.value_or(kDefaultSbiApiVersion);
 
   static inline const std::string AmfStatusNotifyServiceBase =
       sbi_helper::AmfStatusNotifBase +
-      amf_cfg.sbi.api_version.value_or(kDefaultSbiApiVersion);
+      amf_cfg->sbi.api_version.value_or(kDefaultSbiApiVersion);
 
   static inline const std::string AmfConfigurationServiceBase =
       sbi_helper::AmfConfBase +
-      amf_cfg.sbi.api_version.value_or(kDefaultSbiApiVersion);
+      amf_cfg->sbi.api_version.value_or(kDefaultSbiApiVersion);
 
   static inline const std::string AmfLocationServiceBase =
       sbi_helper::AmflocBase +
-      amf_cfg.sbi.api_version.value_or(kDefaultSbiApiVersion);
+      amf_cfg->sbi.api_version.value_or(kDefaultSbiApiVersion);
 
   static inline const std::string AmfCommPathN1MessageNotify =
       "n1-message-notify";

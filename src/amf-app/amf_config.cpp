@@ -816,7 +816,7 @@ const std::string amf::get_default_dnn() const {
 }
 
 //------------------------------------------------------------------------------
-amf_config_yaml::amf_config_yaml(
+amf_config::amf_config(
     const std::string& config_path, bool log_stdout, bool log_rot_file)
     : oai::config::config(
           config_path, oai::config::AMF_CONFIG_NAME, log_stdout, log_rot_file) {
@@ -858,12 +858,49 @@ amf_config_yaml::amf_config_yaml(
   add_nf("nssf", m_nssf);
 
   update_used_nfs();
+  smf_addr.ipv4_addr.s_addr  = INADDR_ANY;
+  smf_addr.port              = DEFAULT_HTTP2_PORT;
+  smf_addr.api_version       = DEFAULT_SBI_API_VERSION;
+  nrf_addr.ipv4_addr.s_addr  = INADDR_ANY;
+  nrf_addr.port              = DEFAULT_HTTP2_PORT;
+  nrf_addr.api_version       = DEFAULT_SBI_API_VERSION;
+  ausf_addr.ipv4_addr.s_addr = INADDR_ANY;
+  ausf_addr.port             = DEFAULT_HTTP2_PORT;
+  ausf_addr.api_version      = DEFAULT_SBI_API_VERSION;
+  udm_addr.ipv4_addr.s_addr  = INADDR_ANY;
+  udm_addr.port              = DEFAULT_HTTP2_PORT;
+  udm_addr.api_version       = DEFAULT_SBI_API_VERSION;
+  lmf_addr.ipv4_addr.s_addr  = INADDR_ANY;
+  lmf_addr.port              = DEFAULT_HTTP2_PORT;
+  lmf_addr.api_version       = DEFAULT_SBI_API_VERSION;
+  nssf_addr.ipv4_addr.s_addr = INADDR_ANY;
+  nssf_addr.port             = DEFAULT_HTTP2_PORT;
+  nssf_addr.api_version      = DEFAULT_SBI_API_VERSION;
+  instance                   = 0;
+  amf_log_level              = spdlog::level::debug;
+  n2                         = {};
+  sbi                        = {};
+  sbi.api_version       = std::optional<std::string>(DEFAULT_SBI_API_VERSION);
+  statistics_interval   = 0;
+  guami                 = {};
+  guami_list            = {};
+  relative_amf_capacity = 0;
+  plmn_list             = {};
+  auth_para             = {};
+  nas_cfg               = {};
+  support_features.enable_nf_registration   = false;
+  support_features.enable_smf_selection     = false;
+  support_features.enable_external_ausf_udm = false;
+  support_features.enable_nssf              = false;
+  support_features.enable_lmf               = false;
+  support_features.http_version             = 2;  // HTTP/2 by default
+  is_emergency_support                      = false;
 }
 
 //------------------------------------------------------------------------------
-amf_config_yaml::~amf_config_yaml() {}
+amf_config::~amf_config() {}
 
-void amf_config_yaml::pre_process() {
+void amf_config::pre_process() {
   // Process configuration information to display only the appropriate
   // information
   std::shared_ptr<amf> amf_local = std::static_pointer_cast<amf>(get_local());
@@ -887,15 +924,196 @@ void amf_config_yaml::pre_process() {
     nrf->unset_config();
     // TODO: unset Register_NF
   }
+
+  // TODO: should be removed
+  instance      = amf_local->get_instance_id();
+  pid_dir       = amf_local->get_pid_directory();
+  amf_name      = amf_local->get_amf_name();
+  amf_log_level = spdlog::level::from_str(log_level());
+
+  relative_amf_capacity = amf_local->get_relative_capacity();
+  statistics_interval   = amf_local->get_statistics_timer_interval();
+  http_request_timeout  = get_http_request_timeout();
+
+  // Parse the "Super" option - "enable_simple_scenario"
+  if (amf_local->get_support_features().get_option_enable_simple_scenario()) {
+    support_features.enable_nf_registration   = false;
+    support_features.enable_smf_selection     = false;
+    support_features.enable_external_ausf_udm = false;
+    support_features.enable_nssf              = false;  // TODO: to be removed
+  } else {  // parse the other options
+    support_features.enable_nf_registration = register_nrf();
+    support_features.enable_smf_selection =
+        amf_local->get_support_features().get_option_enable_smf_selection();
+    support_features.enable_external_ausf_udm = true;  // To be removed
+    support_features.enable_nssf =
+        amf_local->get_support_features().get_option_enable_nssf();
+  }
+
+  support_features.http_version = get_http_version();
+
+  for (const auto& i : amf_local->get_guami_list()) {
+    guami_full_format_t guami_item = {};
+    guami_item.mcc                 = i.get_mcc();
+    guami_item.mnc                 = i.get_mnc();
+    guami_item.amf_set_id =
+        oai::utils::conv::string_hex_to_int(i.get_amf_set_id());
+    guami_item.region_id =
+        oai::utils::conv::string_hex_to_int(i.get_amf_region_id());
+    guami_item.amf_pointer =
+        oai::utils::conv::string_hex_to_int(i.get_amf_pointer());
+    guami = guami_item;
+    guami_list.push_back(guami_item);
+  }
+
+  for (const auto& i : amf_local->get_plmn_list()) {
+    plmn_item_t item = {};
+    item.mcc         = i.get_mcc();
+    item.mnc         = i.get_mnc();
+    item.tac         = i.get_tac();
+    for (const auto& s : i.get_nssai()) {
+      snssai_t slice = {};
+      slice.sst      = s.get_sst();
+      slice.sd       = s.get_sd();
+      item.slice_list.push_back(slice);
+    }
+
+    plmn_list.push_back(item);
+  }
+
+  // TODO: Emergency support
+  is_emergency_support = false;
+  // Database
+  if (get_database_config().is_set()) {
+    auth_para.mysql_server = get_database_config().get_host();
+    auth_para.mysql_user   = get_database_config().get_user();
+    auth_para.mysql_pass   = get_database_config().get_pass();
+    auth_para.mysql_db     = get_database_config().get_database_name();
+    // auth_para.connection_timeout =
+    // get_database_config().get_connection_timeout(); database_type =
+    // get_database_config().get_database_type();
+  }
+
+  sbi.api_version =
+      std::make_optional<std::string>(local().get_sbi().get_api_version());
+  sbi.port    = local().get_sbi().get_port();
+  sbi.addr4   = local().get_sbi().get_addr4();
+  sbi.if_name = local().get_sbi().get_if_name();
+
+  n2.if_name = amf_local->get_n2().get_if_name();
+  n2.addr4   = amf_local->get_n2().get_addr4();
+  n2.port    = amf_local->get_n2().get_port();
+
+  sctp_ttl    = amf_local->get_sctp_ttl();
+  default_dnn = amf_local->get_default_dnn();
+
+  if (get_nf(oai::config::SMF_CONFIG_NAME)) {
+    smf_addr.api_version =
+        get_nf(oai::config::SMF_CONFIG_NAME)->get_sbi().get_api_version();
+    smf_addr.uri_root = get_nf(oai::config::SMF_CONFIG_NAME)->get_url();
+  }
+
+  if (get_nf(oai::config::AUSF_CONFIG_NAME)) {
+    ausf_addr.api_version =
+        get_nf(oai::config::AUSF_CONFIG_NAME)->get_sbi().get_api_version();
+    ausf_addr.uri_root = get_nf(oai::config::AUSF_CONFIG_NAME)->get_url();
+  }
+
+  if (get_nf(oai::config::UDM_CONFIG_NAME)) {
+    udm_addr.api_version =
+        get_nf(oai::config::UDM_CONFIG_NAME)->get_sbi().get_api_version();
+    udm_addr.uri_root = get_nf(oai::config::UDM_CONFIG_NAME)->get_url();
+  }
+
+  if (get_nf(oai::config::NRF_CONFIG_NAME)) {
+    nrf_addr.api_version =
+        get_nf(oai::config::NRF_CONFIG_NAME)->get_sbi().get_api_version();
+    nrf_addr.uri_root = get_nf(oai::config::NRF_CONFIG_NAME)->get_url();
+  }
+
+  if (get_nf(oai::config::NSSF_CONFIG_NAME)) {
+    nssf_addr.api_version =
+        get_nf(NSSF_CONFIG_NAME)->get_sbi().get_api_version();
+    nssf_addr.uri_root = get_nf(NSSF_CONFIG_NAME)->get_sbi().get_url();
+  }
+
+  // NAS conf
+  for (const auto& s : amf_local->get_supported_integrity_algorithms()) {
+    if (!s.compare("NIA0")) {
+      nas_cfg.prefered_integrity_algorithm.push_back(_5g_ia_e::_5G_IA0);
+    }
+    if (!s.compare("NIA1")) {
+      nas_cfg.prefered_integrity_algorithm.push_back(_5g_ia_e::_5G_IA1);
+    }
+    if (!s.compare("NIA2")) {
+      nas_cfg.prefered_integrity_algorithm.push_back(_5g_ia_e::_5G_IA2);
+    }
+    if (!s.compare("NIA3")) {
+      nas_cfg.prefered_integrity_algorithm.push_back(_5g_ia_e::_5G_IA3);
+    }
+    if (!s.compare("NIA4")) {
+      nas_cfg.prefered_integrity_algorithm.push_back(_5g_ia_e::_5G_IA4);
+    }
+    if (!s.compare("NIA5")) {
+      nas_cfg.prefered_integrity_algorithm.push_back(_5g_ia_e::_5G_IA5);
+    }
+    if (!s.compare("NIA6")) {
+      nas_cfg.prefered_integrity_algorithm.push_back(_5g_ia_e::_5G_IA6);
+    }
+    if (!s.compare("NIA7")) {
+      nas_cfg.prefered_integrity_algorithm.push_back(_5g_ia_e::_5G_IA7);
+    }
+  }
+
+  // Default values
+  if (amf_local->get_supported_integrity_algorithms().size() == 0) {
+    nas_cfg.prefered_integrity_algorithm.push_back(_5g_ia_e::_5G_IA0);
+    nas_cfg.prefered_integrity_algorithm.push_back(_5g_ia_e::_5G_IA1);
+    nas_cfg.prefered_integrity_algorithm.push_back(_5g_ia_e::_5G_IA2);
+  }
+
+  for (const auto& s : amf_local->get_supported_encryption_algorithms()) {
+    if (!s.compare("NEA0")) {
+      nas_cfg.prefered_ciphering_algorithm.push_back(_5g_ea_e::_5G_EA0);
+    }
+    if (!s.compare("NEA1")) {
+      nas_cfg.prefered_ciphering_algorithm.push_back(_5g_ea_e::_5G_EA1);
+    }
+    if (!s.compare("NEA2")) {
+      nas_cfg.prefered_ciphering_algorithm.push_back(_5g_ea_e::_5G_EA2);
+    }
+    if (!s.compare("NEA3")) {
+      nas_cfg.prefered_ciphering_algorithm.push_back(_5g_ea_e::_5G_EA3);
+    }
+    if (!s.compare("NEA4")) {
+      nas_cfg.prefered_ciphering_algorithm.push_back(_5g_ea_e::_5G_EA4);
+    }
+    if (!s.compare("NEA5")) {
+      nas_cfg.prefered_ciphering_algorithm.push_back(_5g_ea_e::_5G_EA5);
+    }
+    if (!s.compare("NEA6")) {
+      nas_cfg.prefered_ciphering_algorithm.push_back(_5g_ea_e::_5G_EA6);
+    }
+    if (!s.compare("NEA7")) {
+      nas_cfg.prefered_ciphering_algorithm.push_back(_5g_ea_e::_5G_EA7);
+    }
+  }
+
+  // Default values
+  if (amf_local->get_supported_encryption_algorithms().size() == 0) {
+    nas_cfg.prefered_ciphering_algorithm.push_back(_5g_ea_e::_5G_EA0);
+    nas_cfg.prefered_ciphering_algorithm.push_back(_5g_ea_e::_5G_EA1);
+    nas_cfg.prefered_ciphering_algorithm.push_back(_5g_ea_e::_5G_EA2);
+  }
 }
 
 //------------------------------------------------------------------------------
-void amf_config_yaml::to_amf_config(amf_config& cfg) {
+void amf_config::to_amf_config(amf_config& cfg) {
   std::shared_ptr<amf> amf_local = std::static_pointer_cast<amf>(get_local());
   cfg.instance                   = amf_local->get_instance_id();
   cfg.pid_dir                    = amf_local->get_pid_directory();
   cfg.amf_name                   = amf_local->get_amf_name();
-  cfg.log_level                  = spdlog::level::from_str(log_level());
+  cfg.amf_log_level              = spdlog::level::from_str(log_level());
 
   cfg.relative_amf_capacity = amf_local->get_relative_capacity();
   cfg.statistics_interval   = amf_local->get_statistics_timer_interval();
@@ -1074,50 +1292,6 @@ void amf_config_yaml::to_amf_config(amf_config& cfg) {
 }
 
 //------------------------------------------------------------------------------
-amf_config::amf_config() {
-  smf_addr.ipv4_addr.s_addr  = INADDR_ANY;
-  smf_addr.port              = DEFAULT_HTTP2_PORT;
-  smf_addr.api_version       = DEFAULT_SBI_API_VERSION;
-  nrf_addr.ipv4_addr.s_addr  = INADDR_ANY;
-  nrf_addr.port              = DEFAULT_HTTP2_PORT;
-  nrf_addr.api_version       = DEFAULT_SBI_API_VERSION;
-  ausf_addr.ipv4_addr.s_addr = INADDR_ANY;
-  ausf_addr.port             = DEFAULT_HTTP2_PORT;
-  ausf_addr.api_version      = DEFAULT_SBI_API_VERSION;
-  udm_addr.ipv4_addr.s_addr  = INADDR_ANY;
-  udm_addr.port              = DEFAULT_HTTP2_PORT;
-  udm_addr.api_version       = DEFAULT_SBI_API_VERSION;
-  lmf_addr.ipv4_addr.s_addr  = INADDR_ANY;
-  lmf_addr.port              = DEFAULT_HTTP2_PORT;
-  lmf_addr.api_version       = DEFAULT_SBI_API_VERSION;
-  nssf_addr.ipv4_addr.s_addr = INADDR_ANY;
-  nssf_addr.port             = DEFAULT_HTTP2_PORT;
-  nssf_addr.api_version      = DEFAULT_SBI_API_VERSION;
-  instance                   = 0;
-  log_level                  = spdlog::level::debug;
-  n2                         = {};
-  sbi                        = {};
-  sbi.api_version = std::make_optional<std::string>(DEFAULT_SBI_API_VERSION);
-  statistics_interval                       = 0;
-  guami                                     = {};
-  guami_list                                = {};
-  relative_amf_capacity                     = 0;
-  plmn_list                                 = {};
-  auth_para                                 = {};
-  nas_cfg                                   = {};
-  support_features.enable_nf_registration   = false;
-  support_features.enable_smf_selection     = false;
-  support_features.enable_external_ausf_udm = false;
-  support_features.enable_nssf              = false;
-  support_features.enable_lmf               = false;
-  support_features.http_version             = 2;  // HTTP/2 by default
-  is_emergency_support                      = false;
-}
-
-//------------------------------------------------------------------------------
-amf_config::~amf_config() {}
-
-//------------------------------------------------------------------------------
 void amf_config::display() {
   Logger::config().info(
       "==== OAI-CN5G %s v%s ====", PACKAGE_NAME, PACKAGE_VERSION);
@@ -1271,7 +1445,7 @@ void amf_config::display() {
       "    HTTP version...........: %d", support_features.http_version);
   Logger::config().info(
       "- Log Level ...............: %s",
-      spdlog::level::to_string_view(log_level));
+      spdlog::level::to_string_view(amf_log_level));
 
   Logger::config().info("- Supported NAS Algorithm: ");
   std::string supported_integrity_alg = {};
@@ -1291,7 +1465,7 @@ void amf_config::display() {
 //------------------------------------------------------------------------------
 void amf_config::to_json(nlohmann::json& json_data) const {
   json_data["instance"]    = instance;
-  json_data["log_level"]   = log_level;
+  json_data["log_level"]   = amf_log_level;
   json_data["amf_name"]    = amf_name;
   json_data["default_dnn"] = default_dnn;
   json_data["guami"]       = guami.to_json();
@@ -1357,7 +1531,7 @@ bool amf_config::from_json(nlohmann::json& json_data) {
       amf_name = json_data["default_dnn"].get<std::string>();
     }
     if (json_data.find("log_level") != json_data.end()) {
-      log_level = json_data["log_level"].get<spdlog::level::level_enum>();
+      amf_log_level = json_data["log_level"].get<spdlog::level::level_enum>();
     }
     if (json_data.find("guami") != json_data.end()) {
       guami.from_json(json_data["guami"]);
