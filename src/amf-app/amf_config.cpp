@@ -827,7 +827,8 @@ amf_config::amf_config(
   m_used_config_values = {
       oai::config::LOG_LEVEL_CONFIG_NAME, oai::config::REGISTER_NF_CONFIG_NAME,
       oai::config::NF_CONFIG_HTTP_NAME,   oai::config::NF_LIST_CONFIG_NAME,
-      oai::config::AMF_CONFIG_NAME,       oai::config::DATABASE_CONFIG};
+      oai::config::AMF_CONFIG_NAME,       oai::config::DATABASE_CONFIG,
+      oai::config::NF_CONFIG_TLS_NAME};
 
   // TODO with NF_Type and switch
   // TODO: Still we need to add default NFs even we don't use this in all_in_one
@@ -1010,31 +1011,36 @@ void amf_config::pre_process() {
   if (get_nf(oai::config::SMF_CONFIG_NAME)) {
     smf_addr.api_version =
         get_nf(oai::config::SMF_CONFIG_NAME)->get_sbi().get_api_version();
-    smf_addr.uri_root = get_nf(oai::config::SMF_CONFIG_NAME)->get_url();
+    smf_addr.uri_root =
+        get_nf(oai::config::SMF_CONFIG_NAME)->get_url(amf_cfg->enable_tls());
   }
 
   if (get_nf(oai::config::AUSF_CONFIG_NAME)) {
     ausf_addr.api_version =
         get_nf(oai::config::AUSF_CONFIG_NAME)->get_sbi().get_api_version();
-    ausf_addr.uri_root = get_nf(oai::config::AUSF_CONFIG_NAME)->get_url();
+    ausf_addr.uri_root =
+        get_nf(oai::config::AUSF_CONFIG_NAME)->get_url(amf_cfg->enable_tls());
   }
 
   if (get_nf(oai::config::UDM_CONFIG_NAME)) {
     udm_addr.api_version =
         get_nf(oai::config::UDM_CONFIG_NAME)->get_sbi().get_api_version();
-    udm_addr.uri_root = get_nf(oai::config::UDM_CONFIG_NAME)->get_url();
+    udm_addr.uri_root =
+        get_nf(oai::config::UDM_CONFIG_NAME)->get_url(amf_cfg->enable_tls());
   }
 
   if (get_nf(oai::config::NRF_CONFIG_NAME)) {
     nrf_addr.api_version =
         get_nf(oai::config::NRF_CONFIG_NAME)->get_sbi().get_api_version();
-    nrf_addr.uri_root = get_nf(oai::config::NRF_CONFIG_NAME)->get_url();
+    nrf_addr.uri_root =
+        get_nf(oai::config::NRF_CONFIG_NAME)->get_url(amf_cfg->enable_tls());
   }
 
   if (get_nf(oai::config::NSSF_CONFIG_NAME)) {
     nssf_addr.api_version =
         get_nf(NSSF_CONFIG_NAME)->get_sbi().get_api_version();
-    nssf_addr.uri_root = get_nf(NSSF_CONFIG_NAME)->get_sbi().get_url();
+    nssf_addr.uri_root =
+        get_nf(NSSF_CONFIG_NAME)->get_sbi().get_url(amf_cfg->enable_tls());
   }
 
   // NAS conf

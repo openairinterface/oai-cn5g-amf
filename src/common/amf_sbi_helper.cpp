@@ -98,7 +98,11 @@ std::string amf_sbi_helper::get_sm_context_status_notification_uri(
   std::string fmr_format_str = {};
   get_fmt_format_form(
       AmfStatusNotifPathPduSessionReleasePduSessionId, fmr_format_str);
-  return "http://" + sbi.get_ipv4_root() + AmfStatusNotifyServiceBase() +
+  std::string http_str = "http://";
+
+  if (amf_cfg->enable_tls()) http_str = "https://";
+
+  return http_str + sbi.get_ipv4_root() + AmfStatusNotifyServiceBase() +
          fmt::format(fmr_format_str, supi, std::to_string(pdu_session_id));
 }
 
