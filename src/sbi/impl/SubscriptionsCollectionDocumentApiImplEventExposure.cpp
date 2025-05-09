@@ -16,7 +16,7 @@
 #include "amf_config.hpp"
 #include "3gpp_conversions.hpp"
 
-extern amf_config amf_cfg;
+extern std::unique_ptr<oai::config::amf_config> amf_cfg;
 
 namespace oai {
 namespace amf {
@@ -66,9 +66,9 @@ void SubscriptionsCollectionDocumentApiImplEventExposure::create_subscription(
 
   if (sub_id != -1) {
     std::string location =
-        std::string(inet_ntoa(*((struct in_addr*) &amf_cfg.sbi.addr4))) + ":" +
-        std::to_string(amf_cfg.sbi.port) + base +
-        amf_cfg.sbi.api_version.value_or(DEFAULT_SBI_API_VERSION) +
+        std::string(inet_ntoa(*((struct in_addr*) &amf_cfg->sbi.addr4))) + ":" +
+        std::to_string(amf_cfg->sbi.port) + base +
+        amf_cfg->sbi.api_version.value_or(DEFAULT_SBI_API_VERSION) +
         "/namf-evts/" + std::to_string(sub_id);
 
     json_data["subscriptionId"] = location;

@@ -43,7 +43,7 @@ class NonUEN2MessagesCollectionDocumentApi {
   virtual ~NonUEN2MessagesCollectionDocumentApi() {}
   void init();
 
-  const std::string base = amf_sbi_helper::AmfCommunicationServiceBase;
+  const std::string base = amf_sbi_helper::AmfCommunicationServiceBase();
 
  private:
   void setupRoutes();
