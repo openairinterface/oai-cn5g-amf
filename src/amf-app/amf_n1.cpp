@@ -2458,6 +2458,15 @@ bool amf_n1::get_authentication_vectors_from_ausf(
     return false;
   }
 
+  // Check Serving Network Name if available
+  if (ue_authentication_ctx.servingNetworkNameIsSet()) {
+    if (!boost::iequals(
+            nc->serving_network,
+            ue_authentication_ctx.getServingNetworkName())) {
+      return false;
+    }
+  }
+
   return true;
 }
 
@@ -2532,6 +2541,10 @@ bool amf_n1::_5g_aka_confirmation_from_ausf(
       try {
         from_json(result[kSbiResponseJsonData], confirmation_data_response);
         is_result_available = true;
+        if (confirmation_data_response.getAuthResult().getValue() !=
+            AuthResult::eAuthResult::AUTHENTICATION_SUCCESS) {
+          return false;
+        }
 
         if (!confirmation_data_response.kseafIsSet()) return false;
         unsigned char* kseaf_hex = amf_conv::format_string_as_hex(
