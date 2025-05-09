@@ -359,10 +359,18 @@ class amf : public nf {
   [[nodiscard]] const std::string get_default_dnn() const;
 };
 
-class amf_config {
+class amf_config : public config {
  public:
-  amf_config();
+  explicit amf_config(
+      const std::string& config_path, bool log_stdout, bool log_rot_file);
   virtual ~amf_config();
+
+  /*
+   * Convert the AMF configuration parameters into internal variables
+   * @param void
+   * @return void
+   */
+  void pre_process();
 
   /*
    * Display the AMF configuration parameters
@@ -387,7 +395,7 @@ class amf_config {
 
   unsigned int instance;
   std::string pid_dir;
-  spdlog::level::level_enum log_level;
+  spdlog::level::level_enum amf_log_level;
   interface_cfg_t n2;
   interface_cfg_t sbi;
   itti_cfg_t itti;
@@ -412,16 +420,6 @@ class amf_config {
   nf_addr_t lmf_addr;
 
   std::string default_dnn;
-};
-
-class amf_config_yaml : public config {
- public:
-  explicit amf_config_yaml(
-      const std::string& config_path, bool log_stdout, bool log_rot_file);
-  virtual ~amf_config_yaml();
-
-  void to_amf_config(amf_config& cfg);
-  void pre_process();
 };
 
 }  // namespace oai::config

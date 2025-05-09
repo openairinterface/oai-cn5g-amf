@@ -48,7 +48,7 @@ std::string amf_sbi_helper::get_amf_n1n2_message_subscribe_uri(
   get_fmt_format_form(
       AmfCommPathUeContextContextIdN1N2MessageSubscriptionsSubscriptionId,
       fmr_format_str);
-  return sbi.get_ipv4_root() + AmfCommunicationServiceBase +
+  return sbi.get_ipv4_root() + AmfCommunicationServiceBase() +
          fmt::format(fmr_format_str, ue_cxt_id, subscription_id);
 }
 
@@ -59,7 +59,7 @@ std::string amf_sbi_helper::get_non_ue_n2_info_subscribe_uri(
   get_fmt_format_form(
       AmfCommPathNonUeN1N2MessageSubscriptionsn2NotifySubscriptionId,
       fmr_format_str);
-  return sbi.get_ipv4_root() + AmfCommunicationServiceBase +
+  return sbi.get_ipv4_root() + AmfCommunicationServiceBase() +
          fmt::format(fmr_format_str, subscription_id);
 }
 
@@ -80,7 +80,7 @@ std::string amf_sbi_helper::get_ausf_ue_authentications_uri(
 //------------------------------------------------------------------------------
 std::string amf_sbi_helper::get_lmf_determine_location_uri(
     const nf_addr_t& lmf_addr) {
-  return lmf_addr.uri_root + AmfLocationServiceBase +
+  return lmf_addr.uri_root + AmfLocationServiceBase() +
          AmflocPathDetermineLocation;
 }
 
@@ -98,7 +98,7 @@ std::string amf_sbi_helper::get_sm_context_status_notification_uri(
   std::string fmr_format_str = {};
   get_fmt_format_form(
       AmfStatusNotifPathPduSessionReleasePduSessionId, fmr_format_str);
-  return "http://" + sbi.get_ipv4_root() + AmfStatusNotifyServiceBase +
+  return "http://" + sbi.get_ipv4_root() + AmfStatusNotifyServiceBase() +
          fmt::format(fmr_format_str, supi, std::to_string(pdu_session_id));
 }
 

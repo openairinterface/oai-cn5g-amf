@@ -42,7 +42,7 @@ class IndividualSubscriptionDocumentApiEventExposure {
   virtual ~IndividualSubscriptionDocumentApiEventExposure() = default;
   void init();
 
-  const std::string base = amf_sbi_helper::AmfEventExposureServiceBase;
+  const std::string base = amf_sbi_helper::AmfEventExposureServiceBase();
 
  private:
   void setupRoutes();

@@ -98,7 +98,7 @@ class amf_app {
   std::unordered_set<std::string> registered_nrfs;
 
  public:
-  explicit amf_app(const amf_config& amf_cfg);
+  explicit amf_app();
   amf_app(amf_app const&) = delete;
   virtual ~amf_app();
   void operator=(amf_app const&) = delete;

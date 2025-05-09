@@ -40,7 +40,7 @@ class NonUEN2MessageNotificationIndividualSubscriptionDocumentApi {
   virtual ~NonUEN2MessageNotificationIndividualSubscriptionDocumentApi() {}
   void init();
 
-  const std::string base = amf_sbi_helper::AmfCommunicationServiceBase;
+  const std::string base = amf_sbi_helper::AmfCommunicationServiceBase();
 
  private:
   void setupRoutes();

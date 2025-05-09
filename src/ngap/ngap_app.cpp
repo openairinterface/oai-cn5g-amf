@@ -36,12 +36,12 @@ using namespace sctp;
 using namespace oai::config;
 using namespace oai::ngap;
 
-extern amf_config amf_cfg;
+extern std::unique_ptr<oai::config::amf_config> amf_cfg;
 
 //------------------------------------------------------------------------------
 ngap_app::ngap_app(const std::string& address, const uint16_t port_num)
     : ppid_(60), sctp_s_38412(address.c_str(), port_num) {
-  sctp_s_38412.sctp_set_ttl(amf_cfg.sctp_ttl);
+  sctp_s_38412.sctp_set_ttl(amf_cfg->sctp_ttl);
   sctp_s_38412.start_receive(this);
   Logger::ngap().info(
       "Set N2 AMF IPv4 Addr %s, port %d", address.c_str(), port_num);

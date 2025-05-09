@@ -71,7 +71,7 @@ using namespace oai::model::common;
 extern itti_mw* itti_inst;
 extern amf_n2* amf_n2_inst;
 extern amf_n1* amf_n1_inst;
-extern amf_config amf_cfg;
+extern std::unique_ptr<oai::config::amf_config> amf_cfg;
 extern amf_app* amf_app_inst;
 extern statistics stacs;
 
@@ -517,33 +517,33 @@ void amf_n2::handle_itti_message(
   }
 
   NgSetupResponseMsg ngSetupResp = {};
-  ngSetupResp.setAmfName(amf_cfg.amf_name);
+  ngSetupResp.setAmfName(amf_cfg->amf_name);
   std::vector<GuamiItem_t> guami_list;
-  for (int i = 0; i < amf_cfg.guami_list.size(); i++) {
+  for (int i = 0; i < amf_cfg->guami_list.size(); i++) {
     GuamiItem_t tmp = {};
-    tmp.mcc         = amf_cfg.guami_list[i].mcc;
-    tmp.mnc         = amf_cfg.guami_list[i].mnc;
-    tmp.regionId    = amf_cfg.guami_list[i].region_id;
-    tmp.amfSetId    = amf_cfg.guami_list[i].amf_set_id;
-    tmp.amfPointer  = amf_cfg.guami_list[i].amf_pointer;
+    tmp.mcc         = amf_cfg->guami_list[i].mcc;
+    tmp.mnc         = amf_cfg->guami_list[i].mnc;
+    tmp.regionId    = amf_cfg->guami_list[i].region_id;
+    tmp.amfSetId    = amf_cfg->guami_list[i].amf_set_id;
+    tmp.amfPointer  = amf_cfg->guami_list[i].amf_pointer;
     guami_list.push_back(tmp);
   }
   ngSetupResp.setGuamiList(guami_list);
 
-  ngSetupResp.setRelativeAmfCapacity(amf_cfg.relative_amf_capacity);
+  ngSetupResp.setRelativeAmfCapacity(amf_cfg->relative_amf_capacity);
 
   // PLMN Support List
   oai::ngap::PlmnSupportList plmn_support_list = {};
-  for (int i = 0; i < amf_cfg.plmn_list.size(); i++) {
+  for (int i = 0; i < amf_cfg->plmn_list.size(); i++) {
     oai::ngap::PlmnSupportItem plmn_support_item = {};
     oai::ngap::PlmnId plmn_id                    = {};
-    plmn_id.set(amf_cfg.plmn_list[i].mcc, amf_cfg.plmn_list[i].mnc);
+    plmn_id.set(amf_cfg->plmn_list[i].mcc, amf_cfg->plmn_list[i].mnc);
     SliceSupportList slice_support_list = {};
     std::vector<SNssai> slice_support_item_list;
-    for (int j = 0; j < amf_cfg.plmn_list[i].slice_list.size(); j++) {
+    for (int j = 0; j < amf_cfg->plmn_list[i].slice_list.size(); j++) {
       SNssai snssai_tmp = {};
-      snssai_tmp.setSst(amf_cfg.plmn_list[i].slice_list[j].sst);
-      snssai_tmp.setSd(amf_cfg.plmn_list[i].slice_list[j].sd);
+      snssai_tmp.setSst(amf_cfg->plmn_list[i].slice_list[j].sst);
+      snssai_tmp.setSd(amf_cfg->plmn_list[i].slice_list[j].sd);
       slice_support_item_list.push_back(snssai_tmp);
     }
     slice_support_list.setSliceSupportItems(slice_support_item_list);
@@ -979,11 +979,11 @@ void amf_n2::handle_itti_message(
   msg->setAmfUeNgapId(itti_msg->amf_ue_ngap_id);
   msg->setRanUeNgapId(itti_msg->ran_ue_ngap_id);
   guami_full_format_t guami = {};
-  guami.mcc                 = amf_cfg.guami.mcc;
-  guami.mnc                 = amf_cfg.guami.mnc;
-  guami.region_id           = amf_cfg.guami.region_id;
-  guami.amf_set_id          = amf_cfg.guami.amf_set_id;
-  guami.amf_pointer         = amf_cfg.guami.amf_pointer;
+  guami.mcc                 = amf_cfg->guami.mcc;
+  guami.mnc                 = amf_cfg->guami.mnc;
+  guami.region_id           = amf_cfg->guami.region_id;
+  guami.amf_set_id          = amf_cfg->guami.amf_set_id;
+  guami.amf_pointer         = amf_cfg->guami.amf_pointer;
   msg->setGuami(guami);
   // Get the list allowed NSSAI from the common PLMN between gNB and AMF
   std::vector<S_Nssai> list;
@@ -1015,7 +1015,7 @@ void amf_n2::handle_itti_message(
 
   // Mobility Restriction List
   oai::ngap::PlmnId plmn_id = {};
-  plmn_id.set(amf_cfg.guami.mcc, amf_cfg.guami.mnc);
+  plmn_id.set(amf_cfg->guami.mcc, amf_cfg->guami.mnc);
   msg->setMobilityRestrictionList(plmn_id);
 
   // IMEISV
@@ -1420,7 +1420,7 @@ void amf_n2::handle_itti_message(
     auto itti_msg_ev = std::make_shared<itti_sbi_notify_subscribed_event>(
         TASK_AMF_N2, TASK_AMF_SBI);
 
-    itti_msg_ev->http_version = amf_cfg.support_features.http_version;
+    itti_msg_ev->http_version = amf_cfg->support_features.http_version;
 
     for (auto i : subscriptions) {
       // Avoid repeated notifications
@@ -1792,11 +1792,11 @@ bool amf_n2::handle_itti_message(
 
   // Allowed NSSAI
   std::vector<oai::ngap::SNssai> allowed_nssai;
-  for (int i = 0; i < amf_cfg.plmn_list.size(); i++) {
-    for (int j = 0; j < amf_cfg.plmn_list[i].slice_list.size(); j++) {
+  for (int i = 0; i < amf_cfg->plmn_list.size(); i++) {
+    for (int j = 0; j < amf_cfg->plmn_list[i].slice_list.size(); j++) {
       oai::ngap::SNssai s_nssai = {};
-      s_nssai.setSst(amf_cfg.plmn_list[i].slice_list[j].sst);
-      s_nssai.setSd(amf_cfg.plmn_list[i].slice_list[j].sd);
+      s_nssai.setSst(amf_cfg->plmn_list[i].slice_list[j].sst);
+      s_nssai.setSd(amf_cfg->plmn_list[i].slice_list[j].sd);
       allowed_nssai.push_back(s_nssai);
     }
   }
@@ -1804,12 +1804,12 @@ bool amf_n2::handle_itti_message(
 
   // GUAMI, PLMN
   oai::ngap::PlmnId plmn_id = {};
-  plmn_id.set(amf_cfg.guami.mcc, amf_cfg.guami.mnc);
+  plmn_id.set(amf_cfg->guami.mcc, amf_cfg->guami.mnc);
 
   handover_request->setMobilityRestrictionList(plmn_id);
   handover_request->setGuami(
-      amf_cfg.guami.mcc, amf_cfg.guami.mnc, amf_cfg.guami.region_id,
-      amf_cfg.guami.amf_set_id, amf_cfg.guami.amf_pointer);
+      amf_cfg->guami.mcc, amf_cfg->guami.mnc, amf_cfg->guami.region_id,
+      amf_cfg->guami.amf_set_id, amf_cfg->guami.amf_pointer);
 
   // Security context
   std::shared_ptr<nas_context> nc = {};
@@ -2306,7 +2306,7 @@ void amf_n2::handle_itti_message(
 
   user_location.setNrLocation(nr_location);
   amf_n1_inst->event_sub.ue_location_report(
-      supi, user_location, amf_cfg.support_features.http_version);
+      supi, user_location, amf_cfg->support_features.http_version);
 }
 
 //------------------------------------------------------------------------------
@@ -2762,7 +2762,7 @@ void amf_n2::remove_ue_context_with_ran_ue_ngap_id(
         "Signal the UE Loss of Connectivity Event notification for SUPI %s",
         supi.c_str());
     amf_n1_inst->event_sub.ue_loss_of_connectivity(
-        supi, DEREGISTERED, amf_cfg.support_features.http_version,
+        supi, DEREGISTERED, amf_cfg->support_features.http_version,
         ran_ue_ngap_id, unc->amf_ue_ngap_id);
 
     amf_n1_inst->remove_supi_2_nas_context(supi);
@@ -2844,7 +2844,7 @@ void amf_n2::remove_ue_context_with_amf_ue_ngap_id(
         "Signal the UE Loss of Connectivity Event notification for SUPI %s",
         supi.c_str());
     amf_n1_inst->event_sub.ue_loss_of_connectivity(
-        supi, DEREGISTERED, amf_cfg.support_features.http_version,
+        supi, DEREGISTERED, amf_cfg->support_features.http_version,
         nc->ran_ue_ngap_id, amf_ue_ngap_id);
 
     amf_n1_inst->remove_supi_2_nas_context(supi);
@@ -2873,22 +2873,22 @@ bool amf_n2::get_common_plmn(
     const std::vector<SupportedTaItem>& list,
     std::vector<SupportedTaItem>& result) {
   bool found_common_plmn = false;
-  for (int i = 0; i < amf_cfg.plmn_list.size(); i++) {
+  for (int i = 0; i < amf_cfg->plmn_list.size(); i++) {
     for (int j = 0; j < list.size(); j++) {
       Logger::amf_n2().debug(
-          "TAC configured %d, TAC received %d", amf_cfg.plmn_list[i].tac,
+          "TAC configured %d, TAC received %d", amf_cfg->plmn_list[i].tac,
           list[j].getTac().get());
-      if (amf_cfg.plmn_list[i].tac != list[j].getTac().get()) {
+      if (amf_cfg->plmn_list[i].tac != list[j].getTac().get()) {
         continue;
       }
       for (int k = 0; k < list[j].getBroadcastPlmnList().size(); k++) {
         if (!((list[j].getBroadcastPlmnList())[k].getPlmn().getMcc().compare(
-                amf_cfg.plmn_list[i].mcc)) &&
+                amf_cfg->plmn_list[i].mcc)) &&
             !((list[j].getBroadcastPlmnList())[k].getPlmn().getMnc().compare(
-                amf_cfg.plmn_list[i].mnc))) {
+                amf_cfg->plmn_list[i].mnc))) {
           Logger::amf_n2().debug(
-              "Common PLMN MCC %s, MNC %s", amf_cfg.plmn_list[i].mcc.c_str(),
-              amf_cfg.plmn_list[i].mnc.c_str());
+              "Common PLMN MCC %s, MNC %s", amf_cfg->plmn_list[i].mcc.c_str(),
+              amf_cfg->plmn_list[i].mnc.c_str());
           // Get the common S-NSSAI
           SupportedTaItem item = {};
           std::vector<BroadcastPlmnItem> broadcast_plmn_list;
@@ -2901,7 +2901,7 @@ bool amf_n2::get_common_plmn(
                (list[j].getBroadcastPlmnList())[k].getSNssai()) {
             Logger::amf_n2().debug(
                 "S-NSSAI from gNB (SST %d, SD %s)", s1.getSst(), s1.getSd());
-            for (const auto& s2 : amf_cfg.plmn_list[i].slice_list) {
+            for (const auto& s2 : amf_cfg->plmn_list[i].slice_list) {
               Logger::amf_n2().debug(
                   "S-NSSAI from AMF (SST %d, SD %s)", s2.sst, s2.sd);
               if (s1.getSst() == s2.sst && s1.getSdInt() == s2.get_sd_int()) {
