@@ -776,11 +776,21 @@ class itti_sbi_register_with_udm : public itti_sbi_msg {
  public:
   itti_sbi_register_with_udm(
       const task_id_t orig, const task_id_t dest, uint32_t pid)
-      : itti_sbi_msg(SBI_REGISTER_WITH_UDM, orig, dest), promise_id(pid) {}
+      : itti_sbi_msg(SBI_REGISTER_WITH_UDM, orig, dest),
+        promise_id(pid),
+        supi() {}
+
+  itti_sbi_register_with_udm(const itti_sbi_register_with_udm& i)
+      : itti_sbi_msg(i) {
+    promise_id        = i.promise_id;
+    supi              = i.supi;
+    registration_data = i.registration_data;
+  }
   virtual ~itti_sbi_register_with_udm(){};
   const char* get_msg_name() { return "SBI_REGISTER_WITH_UDM"; };
 
   uint32_t promise_id;
+  std::string supi;
   nlohmann::json registration_data;  // Amf3GppAccessRegistration
 };
 

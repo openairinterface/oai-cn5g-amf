@@ -3113,6 +3113,7 @@ void amf_n1::security_mode_complete_handle(
 
   itti_msg->registration_data = registration_data_json;
   itti_msg->promise_id        = promise_id;
+  itti_msg->supi              = uc->supi;
 
   int ret = itti_inst->send_msg(itti_msg);
   if (0 != ret) {

@@ -158,6 +158,15 @@ class amf_sbi_helper : public sbi_helper {
    */
   static std::string get_udm_slice_selection_subscription_data_retrieval_uri(
       const nf_addr_t& udm_addr, const std::string& supi);
+
+  /*
+   * Get the URI of UDM AMF Registration for 3GPP access
+   * @param [const nf_addr_t&] udm_addr: UDM's Address
+   * @param [const std::string&] supi: UE SUPI
+   * @return URI in string format
+   */
+  static std::string get_udm_amf_3gpp_access_registration_uri(
+      const nf_addr_t& udm_addr, const std::string& supi);
 };
 
 }  // namespace oai::amf::api
