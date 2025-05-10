@@ -66,6 +66,11 @@ class amf_sbi_helper : public sbi_helper {
            amf_cfg->sbi.api_version.value_or(kDefaultSbiApiVersion);
   }
 
+  static std::string AmfCallbackBase() {
+    return sbi_helper::AmfCallbackBase +
+           amf_cfg->sbi.api_version.value_or(kDefaultSbiApiVersion);
+  }
+
   static void set_problem_details(
       nlohmann::json& json_data, const std::string& detail);
 

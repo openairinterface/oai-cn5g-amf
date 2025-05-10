@@ -771,4 +771,17 @@ class itti_sbi_ue_authentication_confirmation : public itti_sbi_msg {
   nlohmann::json confirmation_data;
 };
 
+//-----------------------------------------------------------------------------
+class itti_sbi_register_with_udm : public itti_sbi_msg {
+ public:
+  itti_sbi_register_with_udm(
+      const task_id_t orig, const task_id_t dest, uint32_t pid)
+      : itti_sbi_msg(SBI_REGISTER_WITH_UDM, orig, dest), promise_id(pid) {}
+  virtual ~itti_sbi_register_with_udm(){};
+  const char* get_msg_name() { return "SBI_REGISTER_WITH_UDM"; };
+
+  uint32_t promise_id;
+  nlohmann::json registration_data;  // Amf3GppAccessRegistration
+};
+
 #endif /* ITTI_MSG_SBI_HPP_INCLUDED_ */
