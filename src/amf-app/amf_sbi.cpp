@@ -232,6 +232,16 @@ void amf_sbi_task(void*) {
         amf_sbi_inst->handle_itti_message(std::ref(*m));
       } break;
 
+      case SBI_RETRIEVE_AM_DATA: {
+        Logger::amf_sbi().info(
+            "Receive Access and Mobility Subscription Data Retrieval message, "
+            "handling ...");
+        itti_sbi_retrieve_am_data* m =
+            dynamic_cast<itti_sbi_retrieve_am_data*>(msg);
+        if (!m) break;
+        amf_sbi_inst->handle_itti_message(std::ref(*m));
+      } break;
+
       case TERMINATE: {
         if (itti_msg_terminate* terminate =
                 dynamic_cast<itti_msg_terminate*>(msg)) {
@@ -1156,6 +1166,42 @@ void amf_sbi::handle_itti_message(itti_sbi_register_with_udm& itti_msg) {
         "Location of the created resource: %s", loc_header->second.c_str());
     response_data[kSbiResponseHeaderLocation] = loc_header->second;
   }
+
+  // Notify to the result
+  if (itti_msg.promise_id > 0) {
+    amf_app_inst->trigger_process_response(itti_msg.promise_id, response_data);
+    return;
+  }
+}
+
+//------------------------------------------------------------------------------
+void amf_sbi::handle_itti_message(itti_sbi_retrieve_am_data& itti_msg) {
+  Logger::amf_sbi().debug(
+      "Send Access and Mobility Subscription Data Retrieval towards UDM");
+
+  std::string uri = amf_sbi_helper::get_udm_am_data_retrieval_uri(
+      amf_cfg->udm_addr, itti_msg.supi);
+  nlohmann::json plmn_id = {};
+  to_json(plmn_id, itti_msg.plmn_id);
+  std::string parameters = {};
+  parameters             = "?plmn-id=" + plmn_id.dump();
+  uri += parameters;
+  Logger::amf_sbi().debug("URI %s", uri.c_str());
+
+  oai::http::response http_response = {};
+  send_http_request(uri, oai::common::sbi::method_e::GET, "", http_response);
+
+  Logger::amf_sbi().debug(
+      "AccessAndMobilitySubscriptionData, response from UDM, HTTP Code: %lu",
+      http_response.status_code);
+  Logger::amf_sbi().debug(
+      "AccessAndMobilitySubscriptionData, response from UDM\n, %s ",
+      http_response.body);
+
+  nlohmann::json response_data                = {};
+  response_data[kSbiResponseHttpResponseCode] = http_response.status_code;
+  response_data[kSbiResponseJsonData]         = http_response.get_json();
+  // TODO: process headers (Cache-Control, ETag, Last-Modified)
 
   // Notify to the result
   if (itti_msg.promise_id > 0) {

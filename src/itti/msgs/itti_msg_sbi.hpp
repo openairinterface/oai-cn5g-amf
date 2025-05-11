@@ -39,6 +39,7 @@
 #include "bstrlib.h"
 #include "itti_msg.hpp"
 #include "utils.hpp"
+#include "PlmnIdNid.h"
 
 using namespace amf_application;
 
@@ -792,6 +793,30 @@ class itti_sbi_register_with_udm : public itti_sbi_msg {
   uint32_t promise_id;
   std::string supi;
   nlohmann::json registration_data;  // Amf3GppAccessRegistration
+};
+
+//-----------------------------------------------------------------------------
+class itti_sbi_retrieve_am_data : public itti_sbi_msg {
+ public:
+  itti_sbi_retrieve_am_data(
+      const task_id_t orig, const task_id_t dest, uint32_t pid)
+      : itti_sbi_msg(SBI_REGISTER_WITH_UDM, orig, dest),
+        promise_id(pid),
+        supi(),
+        plmn_id() {}
+
+  itti_sbi_retrieve_am_data(const itti_sbi_retrieve_am_data& i)
+      : itti_sbi_msg(i) {
+    promise_id = i.promise_id;
+    supi       = i.supi;
+    plmn_id    = i.plmn_id;
+  }
+  virtual ~itti_sbi_retrieve_am_data(){};
+  const char* get_msg_name() { return "SBI_RETRIEVE_AM_DATA"; };
+
+  uint32_t promise_id;
+  std::string supi;
+  oai::model::common::PlmnIdNid plmn_id;
 };
 
 #endif /* ITTI_MSG_SBI_HPP_INCLUDED_ */

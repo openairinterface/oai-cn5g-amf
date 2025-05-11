@@ -170,6 +170,14 @@ class amf_sbi {
   void handle_itti_message(itti_sbi_register_with_udm& itti_msg);
 
   /*
+   * Handle ITTI message to Retrieve a UE's Access and Mobility Subscription
+   * Data from UDM
+   * @param [itti_sbi_retrieve_am_data&]: ITTI message
+   * @return void
+   */
+  void handle_itti_message(itti_sbi_retrieve_am_data& itti_msg);
+
+  /*
    * Handle request to create a new PDU Session
    * @param [const std::string&] supi: SUPI
    * @param [std::shared_ptr<pdu_session_context>&] psc: Pointer to the PDU
