@@ -222,6 +222,16 @@ void amf_sbi_task(void*) {
         amf_sbi_inst->handle_itti_message(std::ref(*m));
       } break;
 
+      case SBI_REGISTER_WITH_UDM: {
+        Logger::amf_sbi().info(
+            "Receive AMF Registration for 3GPP Access message, "
+            "handling ...");
+        itti_sbi_register_with_udm* m =
+            dynamic_cast<itti_sbi_register_with_udm*>(msg);
+        if (!m) break;
+        amf_sbi_inst->handle_itti_message(std::ref(*m));
+      } break;
+
       case TERMINATE: {
         if (itti_msg_terminate* terminate =
                 dynamic_cast<itti_msg_terminate*>(msg)) {
@@ -1114,6 +1124,47 @@ void amf_sbi::handle_itti_message(
 }
 
 //------------------------------------------------------------------------------
+void amf_sbi::handle_itti_message(itti_sbi_register_with_udm& itti_msg) {
+  Logger::amf_sbi().debug("Send AMF Registration for 3GPP Access towards UDM");
+
+  std::string body = itti_msg.registration_data.dump();
+  std::string uri  = amf_sbi_helper::get_udm_amf_3gpp_access_registration_uri(
+      amf_cfg->udm_addr, itti_msg.supi);
+  Logger::amf_sbi().debug("URI %s", uri.c_str());
+  Logger::amf_sbi().debug("Message body: \n %s", body.c_str());
+
+  nlohmann::json response_json = {};
+  uint32_t response_code       = 0;
+
+  oai::http::response http_response = {};
+  send_http_request(uri, oai::common::sbi::method_e::PUT, body, http_response);
+
+  Logger::amf_sbi().debug(
+      "AMF Registration for 3GPP Access, response from UDM, HTTP Code: %lu",
+      http_response.status_code);
+  Logger::amf_sbi().debug(
+      "AMF Registration for 3GPP Access, response from UDM\n, %s ",
+      http_response.body);
+
+  nlohmann::json response_data                = {};
+  response_data[kSbiResponseHttpResponseCode] = http_response.status_code;
+  response_data[kSbiResponseJsonData]         = http_response.get_json();
+
+  if (auto loc_header = http_response.headers.find("location");
+      loc_header != http_response.headers.end()) {
+    Logger::amf_sbi().info(
+        "Location of the created resource: %s", loc_header->second.c_str());
+    response_data[kSbiResponseHeaderLocation] = loc_header->second;
+  }
+
+  // Notify to the result
+  if (itti_msg.promise_id > 0) {
+    amf_app_inst->trigger_process_response(itti_msg.promise_id, response_data);
+    return;
+  }
+}
+
+//------------------------------------------------------------------------------
 bool amf_sbi::smf_selection_from_configuration(
     std::string& smf_uri_root, std::string& smf_api_version) {
   smf_uri_root    = amf_cfg->smf_addr.uri_root;
@@ -1602,6 +1653,30 @@ void amf_sbi::send_http_request(
     Logger::amf_sbi().info("Could not get JSON content from the response");
     response_json = {};
   }
+}
+
+//-----------------------------------------------------------------------------------------------------
+void amf_sbi::send_http_request(
+    const std::string& remote_uri, const oai::common::sbi::method_e method,
+    const std::string& msg_body, oai::http::response& http_response) {
+  Logger::amf_sbi().info("Send HTTP message to %s", remote_uri.c_str());
+  Logger::amf_sbi().info("HTTP message Body: %s", msg_body.c_str());
+
+  oai::http::request http_request =
+      http_client_inst->prepare_json_request(remote_uri, msg_body);
+
+  // Send the request and get the response
+  http_response = http_client_inst->send_http_request(method, http_request);
+
+  if (http_response.status_code ==
+      oai::common::sbi::http_status_code::NO_RESPONSE) {
+    Logger::amf_sbi().warn(
+        "Cannot get response when calling %s", remote_uri.c_str());
+  }
+
+  Logger::amf_sbi().info(
+      "Get response with HTTP code (%ld)", http_response.status_code);
+  return;
 }
 
 //------------------------------------------------------------------------------

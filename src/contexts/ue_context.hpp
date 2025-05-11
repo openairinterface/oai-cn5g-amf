@@ -69,6 +69,8 @@ class ue_context {
   // pdu session id <-> pdu_session_contex
   std::map<std::uint8_t, std::shared_ptr<pdu_session_context>> pdu_sessions;
   mutable std::shared_mutex m_pdu_session;
+
+  std::string amf_3gpp_access_location;
 };
 
 #endif

@@ -87,6 +87,7 @@ constexpr auto DEFAULT_SST = 1;
 
 constexpr auto kSbiResponseJsonData         = "jsonData";
 constexpr auto kSbiResponseHttpResponseCode = "httpResponseCode";
+constexpr auto kSbiResponseHeaderLocation   = "httpResponseLocation";
 
 typedef struct auth_conf_s {
   std::string mysql_server;
