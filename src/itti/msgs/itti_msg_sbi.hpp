@@ -800,7 +800,7 @@ class itti_sbi_retrieve_am_data : public itti_sbi_msg {
  public:
   itti_sbi_retrieve_am_data(
       const task_id_t orig, const task_id_t dest, uint32_t pid)
-      : itti_sbi_msg(SBI_REGISTER_WITH_UDM, orig, dest),
+      : itti_sbi_msg(SBI_RETRIEVE_AM_DATA, orig, dest),
         promise_id(pid),
         supi(),
         plmn_id() {}

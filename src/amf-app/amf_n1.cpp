@@ -6105,8 +6105,6 @@ void amf_n1::get_access_and_mobility_subscription_data(
     }
 
   } else {
-    Logger::amf_n1().warn(
-        "Could not get Access and Mobility Subscription Data from UDM");
     is_result_available = false;
   }
 
