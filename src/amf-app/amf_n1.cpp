@@ -3060,7 +3060,7 @@ void amf_n1::security_mode_complete_handle(
   register_3gpp_access(uc);
 
   // TODO:Retrieving the Access and Mobility Subscription data from UDM
-  get_access_and_mobility_subscription_data(uc);
+  // get_access_and_mobility_subscription_data(uc);
 
   // TODO: Retrieving SMF Selection Subscription data from UDM
   // TODO: Retrieving UE context in SMF data and LCS mobile origination
