@@ -363,7 +363,6 @@ void amf_sbi::handle_itti_message(itti_nsmf_pdusession_create_sm_context& smf) {
   std::shared_ptr<nas_context> nc = {};
   if (!amf_n1_inst->amf_ue_id_2_nas_context(smf.amf_ue_ngap_id, nc)) return;
 
-  std::string supi = amf_conv::imsi_to_supi(nc->imsi);
   std::string ue_context_key =
       amf_conv::get_ue_context_key(nc->ran_ue_ngap_id, nc->amf_ue_ngap_id);
   std::shared_ptr<ue_context> uc = {};
@@ -460,7 +459,7 @@ void amf_sbi::handle_itti_message(itti_nsmf_pdusession_create_sm_context& smf) {
           "Decoded PTI for PDUSessionEstablishmentRequest(0x%x)", pti);
       psc->is_n2sm_available = false;
       handle_pdu_session_initial_request(
-          supi, psc, smf_uri_root, smf_api_version, smf.sm_msg, dnn);
+          nc->supi, psc, smf_uri_root, smf_api_version, smf.sm_msg, dnn);
     } break;
     case kExistingPduSession: {
       // TODO:
@@ -472,7 +471,8 @@ void amf_sbi::handle_itti_message(itti_nsmf_pdusession_create_sm_context& smf) {
       // TODO: should be removed
       // send Nsmf_PDUSession_UpdateSM_Context to SMF e.g., for PDU Session
       // release request
-      send_pdu_session_update_sm_context_request(supi, psc, smf.sm_msg, dnn);
+      send_pdu_session_update_sm_context_request(
+          nc->supi, psc, smf.sm_msg, dnn);
     }
   }
 }

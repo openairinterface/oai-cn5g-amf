@@ -1050,13 +1050,12 @@ void amf_n2::handle_itti_message(
         item.pduSessionId                         = p.first;
 
         // Get NSSAI from PDU Session Context
-        std::string supi = amf_conv::imsi_to_supi(nc->imsi);
-        Logger::amf_n2().debug("SUPI %s", supi.c_str());
+        Logger::amf_n2().debug("SUPI %s", nc->supi.c_str());
 
         // Get S_NSSAI from PDU Session Context
         std::shared_ptr<pdu_session_context> psc = {};
 
-        if (!amf_app_inst->find_pdu_session_context(supi, p.first, psc)) {
+        if (!amf_app_inst->find_pdu_session_context(nc->supi, p.first, psc)) {
           item.sNssai.sst = std::to_string(DEFAULT_SST);
           item.sNssai.sd  = std::to_string(SD_NO_VALUE);
         } else {
@@ -1125,8 +1124,7 @@ void amf_n2::handle_itti_message(
         itti_msg->amf_ue_ngap_id);
     return;
   }
-  std::string supi = amf_conv::imsi_to_supi(nc->imsi);
-  Logger::amf_n2().debug("SUPI (%s)", supi.c_str());
+  Logger::amf_n2().debug("SUPI (%s)", nc->supi.c_str());
 
   auto psrsr = std::make_unique<PduSessionResourceSetupRequestMsg>();
   psrsr->setAmfUeNgapId(itti_msg->amf_ue_ngap_id);
@@ -1142,7 +1140,7 @@ void amf_n2::handle_itti_message(
       // Get SNSSAI info from PDU Session Context
       item.sNssai.sd                           = {};
       std::shared_ptr<pdu_session_context> psc = {};
-      if (!amf_app_inst->find_pdu_session_context(supi, p.first, psc)) {
+      if (!amf_app_inst->find_pdu_session_context(nc->supi, p.first, psc)) {
         // TODO: get from N1N2msgTranferMsg
         Logger::amf_n2().debug(
             "Using default value for S_NSSAI (SST, SD) %s, %s",
@@ -1402,12 +1400,11 @@ void amf_n2::handle_itti_message(
         itti_msg->amf_ue_ngap_id);
     return;
   }
-  std::string supi = amf_conv::imsi_to_supi(nc->imsi);
 
   Logger::amf_n2().debug(
       "Send request to SBI to trigger UE Communication Failure Report (SUPI "
       "%s )",
-      supi.c_str());
+      nc->supi.c_str());
   std::vector<std::shared_ptr<amf_subscription>> subscriptions = {};
   amf_app_inst->get_ee_subscriptions(
       amf_event_type_t::COMMUNICATION_FAILURE_REPORT, subscriptions);
@@ -1425,7 +1422,7 @@ void amf_n2::handle_itti_message(
     for (auto i : subscriptions) {
       // Avoid repeated notifications
       // TODO: use the anyUE field from the subscription request
-      if (i->supi_is_set && std::strcmp(i->supi.c_str(), supi.c_str()))
+      if (i->supi_is_set && std::strcmp(i->supi.c_str(), nc->supi.c_str()))
         continue;
 
       event_notification ev_notif = {};
@@ -1451,7 +1448,7 @@ void amf_n2::handle_itti_message(
 
       event_report.setCommFailure(comm_failure);
 
-      event_report.setSupi(supi);
+      event_report.setSupi(nc->supi);
       ev_notif.add_report(event_report);
 
       itti_msg_ev->event_notifs.push_back(ev_notif);
@@ -1521,12 +1518,10 @@ void amf_n2::handle_itti_message(
   }
 
   if (nc != nullptr) {
-    // Get SUPI
-    std::string supi = amf_conv::imsi_to_supi(nc->imsi);
     // Get the current AMF UE NGAP ID and compare with the one from
     // UEContextReleaseComplete
     uint64_t current_amf_ue_ngap_id = INVALID_AMF_UE_NGAP_ID;
-    amf_n1_inst->supi_2_amf_id(supi, current_amf_ue_ngap_id);
+    amf_n1_inst->supi_2_amf_id(nc->supi, current_amf_ue_ngap_id);
     if (current_amf_ue_ngap_id != amf_ue_ngap_id) {
       // Remove UE NGAP context
       Logger::amf_n2().debug("UE Context Release Complete for the old context");
@@ -1575,9 +1570,8 @@ void amf_n2::handle_itti_message(
   // TODO: may consider releasing all exisiting PDU sessions
   /*
   if (pdu_sessions_to_be_released.size() == 0) {
-      string supi = amf_conv::imsi_to_supi(nc->imsi);
     std::vector<std::shared_ptr<pdu_session_context>> sessions_ctx;
-    if (!amf_app_inst->get_pdu_sessions_context(supi, sessions_ctx)) {
+    if (!amf_app_inst->get_pdu_sessions_context(nc->supi, sessions_ctx)) {
       Logger::amf_n2().debug("No PDU Session Context found");
       return;
     } else {
@@ -1840,9 +1834,8 @@ bool amf_n2::handle_itti_message(
   bstring knh_bs = blk2bstr(knh, AUTH_VECTOR_LENGTH_OCTETS);
   handover_request->setSecurityContext(unc->ncc /*NCC count*/, knh_bs);
 
-  std::string supi = amf_conv::imsi_to_supi(nc->imsi);
   Logger::amf_n2().debug(
-      "Received Handover Required for UE (SUPI %s)", supi.c_str());
+      "Received Handover Required for UE (SUPI %s)", nc->supi.c_str());
 
   PduSessionResourceListHandoverRqd pDUSessionResourceListHORqd = {};
   std::vector<PDUSessionResourceItem_t> pdu_session_resource_list;
@@ -1869,7 +1862,7 @@ bool amf_n2::handle_itti_message(
     Logger::ngap().debug("PDU Session ID %d", pdu_session_id_value);
     std::shared_ptr<pdu_session_context> psc = {};
     if (amf_app_inst->find_pdu_session_context(
-            supi, pdu_session_id_value, psc)) {
+            nc->supi, pdu_session_id_value, psc)) {
       // Generate a promise and associate this promise to the curl handle
       uint32_t promise_id = amf_app_inst->generate_promise_id();
       Logger::amf_n2().debug("Promise ID generated %d", promise_id);
@@ -1929,7 +1922,7 @@ bool amf_n2::handle_itti_message(
 
         std::shared_ptr<pdu_session_context> psc = {};
         if (amf_app_inst->find_pdu_session_context(
-                supi, curl_responses.begin()->first, psc)) {
+                nc->supi, curl_responses.begin()->first, psc)) {
           PDUSessionResourceSetupRequestItem_t item = {};
           item.pduSessionId                         = psc->pdu_session_id;
           item.sNssai.sst = std::to_string(psc->snssai.sst);
@@ -2015,8 +2008,6 @@ void amf_n2::handle_itti_message(
   std::shared_ptr<nas_context> nc = {};
   if (!amf_n1_inst->amf_ue_id_2_nas_context(amf_ue_ngap_id, nc)) return;
 
-  std::string supi = amf_conv::imsi_to_supi(nc->imsi);
-
   // Send PDUSessionUpdateSMContextRequest to SMF for all associated PDU
   // sessions
   std::map<uint8_t, boost::shared_future<nlohmann::json>> curl_responses;
@@ -2097,7 +2088,7 @@ void amf_n2::handle_itti_message(
 
         std::shared_ptr<pdu_session_context> psc = {};
         if (amf_app_inst->find_pdu_session_context(
-                supi, pdu_session_id_value, psc)) {
+                nc->supi, pdu_session_id_value, psc)) {
           psc->is_ho_accepted = true;
         }
       } else {
@@ -2163,11 +2154,9 @@ void amf_n2::handle_itti_message(
         "No existing UE Context, with %s", ue_context_key.c_str());
   }
 
-  std::string supi = amf_conv::imsi_to_supi(nc->imsi);
-
   // Get PDU Session Context
   std::vector<std::shared_ptr<pdu_session_context>> sessions_ctx;
-  if (!amf_app_inst->get_pdu_sessions_context(supi, sessions_ctx)) {
+  if (!amf_app_inst->get_pdu_sessions_context(nc->supi, sessions_ctx)) {
     Logger::amf_n2().debug("No PDU Session Context found");
   }
 
@@ -2306,7 +2295,7 @@ void amf_n2::handle_itti_message(
 
   user_location.setNrLocation(nr_location);
   amf_n1_inst->event_sub.ue_location_report(
-      supi, user_location, amf_cfg->support_features.http_version);
+      nc->supi, user_location, amf_cfg->support_features.http_version);
 }
 
 //------------------------------------------------------------------------------
@@ -2754,18 +2743,17 @@ void amf_n2::remove_ue_context_with_ran_ue_ngap_id(
   if (amf_n1_inst->amf_ue_id_2_nas_context(unc->amf_ue_ngap_id, nc)) {
     // TODO: Verify where it's current context
     // Remove all NAS context
-    std::string supi = amf_conv::imsi_to_supi(nc->imsi);
     stacs.update_5gmm_state(nc, _5GMM_DEREGISTERED);
 
     // Trigger UE Loss of Connectivity Status Notify
     Logger::amf_n2().debug(
         "Signal the UE Loss of Connectivity Event notification for SUPI %s",
-        supi.c_str());
+        nc->supi.c_str());
     amf_n1_inst->event_sub.ue_loss_of_connectivity(
-        supi, DEREGISTERED, amf_cfg->support_features.http_version,
+        nc->supi, DEREGISTERED, amf_cfg->support_features.http_version,
         ran_ue_ngap_id, unc->amf_ue_ngap_id);
 
-    amf_n1_inst->remove_supi_2_nas_context(supi);
+    amf_n1_inst->remove_supi_2_nas_context(nc->supi);
     // TODO:  remove_guti_2_nas_context(guti);
     amf_n1_inst->remove_amf_ue_ngap_id_2_nas_context(unc->amf_ue_ngap_id);
     // Update UE status
@@ -2835,19 +2823,18 @@ void amf_n2::remove_ue_context_with_amf_ue_ngap_id(
   std::shared_ptr<nas_context> nc = {};
   if (amf_n1_inst->amf_ue_id_2_nas_context(amf_ue_ngap_id, nc)) {
     // Remove all NAS context
-    std::string supi = amf_conv::imsi_to_supi(nc->imsi);
     // Update UE status
     stacs.update_5gmm_state(nc, _5GMM_DEREGISTERED);
 
     // Trigger UE Loss of Connectivity Status Notify
     Logger::amf_n2().debug(
         "Signal the UE Loss of Connectivity Event notification for SUPI %s",
-        supi.c_str());
+        nc->supi.c_str());
     amf_n1_inst->event_sub.ue_loss_of_connectivity(
-        supi, DEREGISTERED, amf_cfg->support_features.http_version,
+        nc->supi, DEREGISTERED, amf_cfg->support_features.http_version,
         nc->ran_ue_ngap_id, amf_ue_ngap_id);
 
-    amf_n1_inst->remove_supi_2_nas_context(supi);
+    amf_n1_inst->remove_supi_2_nas_context(nc->supi);
     // TODO:  remove_guti_2_nas_context(guti);
     amf_n1_inst->remove_amf_ue_ngap_id_2_nas_context(amf_ue_ngap_id);
     // Remove NGAP context related to RAN UE NGAP ID
