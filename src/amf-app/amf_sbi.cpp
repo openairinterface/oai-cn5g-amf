@@ -42,6 +42,7 @@
 #include "output_wrapper.hpp"
 #include "ue_context.hpp"
 #include "utils.hpp"
+#include "Guami.h"
 
 using namespace oai::config;
 using namespace amf_application;
@@ -515,31 +516,45 @@ void amf_sbi::handle_pdu_session_initial_request(
 
   Logger::amf_sbi().debug("SMF's URI: %s", remote_uri.c_str());
 
-  nlohmann::json pdu_session_establishment_request;
-  pdu_session_establishment_request["supi"]          = supi.c_str();
-  pdu_session_establishment_request["pei"]           = "imei-200000000000001";
-  pdu_session_establishment_request["gpsi"]          = "msisdn-200000000001";
-  pdu_session_establishment_request["dnn"]           = dnn.c_str();
-  pdu_session_establishment_request["sNssai"]["sst"] = psc->snssai.sst;
-  pdu_session_establishment_request["sNssai"]["sd"]  = psc->snssai.sd.c_str();
-  pdu_session_establishment_request["pduSessionId"]  = psc->pdu_session_id;
-  pdu_session_establishment_request["requestType"] =
-      "INITIAL_REQUEST";  // TODO: from SM_MSG
-  pdu_session_establishment_request["servingNfId"] = "servingNfId";
-  pdu_session_establishment_request["servingNetwork"]["mcc"] =
-      psc->plmn.mcc.c_str();
-  pdu_session_establishment_request["servingNetwork"]["mnc"] =
-      psc->plmn.mnc.c_str();
-  pdu_session_establishment_request["anType"] = "3GPP_ACCESS";  // TODO
-  pdu_session_establishment_request["smContextStatusUri"] =
+  nlohmann::json session_estb_request   = {};
+  session_estb_request["supi"]          = supi.c_str();
+  session_estb_request["pei"]           = "imei-200000000000001";
+  session_estb_request["gpsi"]          = "msisdn-200000000001";
+  session_estb_request["dnn"]           = "oai";
+  session_estb_request["sNssai"]["sst"] = psc->snssai.sst;
+  session_estb_request["sNssai"]["sd"]  = psc->snssai.sd.c_str();
+  session_estb_request["pduSessionId"]  = psc->pdu_session_id;
+  session_estb_request["requestType"] = "INITIAL_REQUEST";  // TODO: from SM_MSG
+  session_estb_request["servingNfId"] = amf_app_inst->get_nf_instance();
+  session_estb_request["servingNetwork"]["mcc"] = psc->plmn.mcc.c_str();
+  session_estb_request["servingNetwork"]["mnc"] = psc->plmn.mnc.c_str();
+  session_estb_request["anType"]                = "3GPP_ACCESS";  // TODO
+  session_estb_request["ratType"]               = "NR";
+  session_estb_request["selMode"]               = "VERIFIED";
+
+  session_estb_request["smContextStatusUri"] =
       amf_sbi_helper::get_sm_context_status_notification_uri(
           amf_cfg->sbi, supi, psc->pdu_session_id);
-  pdu_session_establishment_request["n1MessageContainer"]["n1MessageClass"] =
-      "SM";
-  pdu_session_establishment_request["n1MessageContainer"]["n1MessageContent"]
-                                   ["contentId"] = N1_SM_CONTENT_ID;
+  session_estb_request["n1MessageContainer"]["n1MessageClass"] = "SM";
+  session_estb_request["n1MessageContainer"]["n1MessageContent"]["contentId"] =
+      N1_SM_CONTENT_ID;
+  // TODO: UE location
+  // GUAMI
+  oai::model::common::Guami guami       = {};
+  oai::model::common::PlmnIdNid plmn_id = {};
+  std::string amf_id                    = {};
+  amf_conv::get_amf_id(
+      amf_cfg->guami.region_id, amf_cfg->guami.amf_set_id,
+      amf_cfg->guami.amf_pointer, amf_id);
+  guami.setAmfId(amf_id);
+  plmn_id.setMcc(psc->plmn.mcc);
+  plmn_id.setMnc(psc->plmn.mnc);
+  guami.setPlmnId(plmn_id);
+  nlohmann::json guami_json = {};
+  to_json(guami_json, guami);
+  session_estb_request["guami"] = guami_json;
 
-  std::string json_part = pdu_session_establishment_request.dump();
+  std::string json_part = session_estb_request.dump();
   Logger::amf_sbi().debug("Message body %s", json_part.c_str());
 
   std::string n1sm_msg = {};
@@ -1258,6 +1273,29 @@ bool amf_sbi::discover_smf(
           }
         }
 
+        // Check if SNSSAI info is available in SMF Info
+        if (instance_json.find("smfInfo") != instance_json.end()) {
+          auto smf_info = instance_json["smfInfo"];
+          if (smf_info.find("sNssaiSmfInfoList") != smf_info.end()) {
+            for (auto& s : smf_info["sNssaiSmfInfoList"].items()) {
+              auto snssai_json = s.value();
+              if (snssai_json.find("sNssai") != snssai_json.end()) {
+                oai::model::common::Snssai snssai_model;
+                from_json(snssai_json["sNssai"], snssai_model);
+                if (snssai_model.getSst() == snssai.sst &&
+                    snssai_model.getSdInt() == snssai.get_sd_int()) {
+                  Logger::amf_sbi().debug(
+                      "S-NSSAI [SST- %d, SD -%s] is matched for SMF profile",
+                      snssai.sst, snssai.sd.c_str());
+                  result = true;
+                  break;  // NSSAI is included in the list of supported slices
+                          // from SMF
+                }
+              }
+            }
+          }
+        }
+
         if (!result) {
           Logger::amf_sbi().debug("S-NSSAI is not matched for SMF profile");
           // continue;
@@ -1296,6 +1334,8 @@ bool amf_sbi::discover_smf(
       }
     }
 
+    smf_api_version = "v1";
+    smf_port        = 80;
     Logger::amf_sbi().debug(
         "NFDiscovery, SMF Info: Addr %s, Port %d, API Version %s",
         smf_addr.c_str(), smf_port, smf_api_version.c_str());
