@@ -1338,8 +1338,6 @@ bool amf_sbi::discover_smf(
       }
     }
 
-    smf_api_version = "v1";
-    smf_port        = 80;
     Logger::amf_sbi().debug(
         "NFDiscovery, SMF Info: Addr %s, Port %d, API Version %s",
         smf_addr.c_str(), smf_port, smf_api_version.c_str());
