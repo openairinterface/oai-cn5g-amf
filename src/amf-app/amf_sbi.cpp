@@ -1275,23 +1275,25 @@ bool amf_sbi::discover_smf(
           }
         }
 
-        // Check if SNSSAI info is available in SMF Info
-        if (instance_json.find("smfInfo") != instance_json.end()) {
-          auto smf_info = instance_json["smfInfo"];
-          if (smf_info.find("sNssaiSmfInfoList") != smf_info.end()) {
-            for (auto& s : smf_info["sNssaiSmfInfoList"].items()) {
-              auto snssai_json = s.value();
-              if (snssai_json.find("sNssai") != snssai_json.end()) {
-                oai::model::common::Snssai snssai_model;
-                from_json(snssai_json["sNssai"], snssai_model);
-                if (snssai_model.getSst() == snssai.sst &&
-                    snssai_model.getSdInt() == snssai.get_sd_int()) {
-                  Logger::amf_sbi().debug(
-                      "S-NSSAI [SST- %d, SD -%s] is matched for SMF profile",
-                      snssai.sst, snssai.sd.c_str());
-                  result = true;
-                  break;  // NSSAI is included in the list of supported slices
-                          // from SMF
+        if (!result) {
+          // Check if SNSSAI info is available in SMF Info
+          if (instance_json.find("smfInfo") != instance_json.end()) {
+            auto smf_info = instance_json["smfInfo"];
+            if (smf_info.find("sNssaiSmfInfoList") != smf_info.end()) {
+              for (auto& s : smf_info["sNssaiSmfInfoList"].items()) {
+                auto snssai_json = s.value();
+                if (snssai_json.find("sNssai") != snssai_json.end()) {
+                  oai::model::common::Snssai snssai_model;
+                  from_json(snssai_json["sNssai"], snssai_model);
+                  if (snssai_model.getSst() == snssai.sst &&
+                      snssai_model.getSdInt() == snssai.get_sd_int()) {
+                    Logger::amf_sbi().debug(
+                        "S-NSSAI [SST- %d, SD -%s] is matched for SMF profile",
+                        snssai.sst, snssai.sd.c_str());
+                    result = true;
+                    break;  // NSSAI is included in the list of supported slices
+                            // from SMF
+                  }
                 }
               }
             }
