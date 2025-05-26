@@ -43,6 +43,7 @@
 #include "ue_context.hpp"
 #include "utils.hpp"
 #include "Guami.h"
+#include "string.hpp"
 
 using namespace oai::config;
 using namespace amf_application;
@@ -508,26 +509,27 @@ void amf_sbi::handle_pdu_session_initial_request(
       "Handle PDU Session Establishment Request (SUPI %s, PDU Session ID %d)",
       supi.c_str(), psc->pdu_session_id);
 
-  // Provide http2 port if enabled
-  std::string amf_port = std::to_string(amf_cfg->sbi.port);
-
   std::string remote_uri = amf_sbi_helper::get_smf_pdu_session_base_uri(
       smf_uri_root, smf_api_version);
 
   Logger::amf_sbi().debug("SMF's URI: %s", remote_uri.c_str());
 
+  // TODO: DNN in dotted format
+  // std::string dotted_dnn;
+  // oai::utils::string_to_dotted(dnn, dotted_dnn);
+
   nlohmann::json session_estb_request   = {};
-  session_estb_request["supi"]          = supi.c_str();
+  session_estb_request["supi"]          = supi;
   session_estb_request["pei"]           = "imei-200000000000001";
   session_estb_request["gpsi"]          = "msisdn-200000000001";
-  session_estb_request["dnn"]           = "oai";
+  session_estb_request["dnn"]           = dnn;
   session_estb_request["sNssai"]["sst"] = psc->snssai.sst;
-  session_estb_request["sNssai"]["sd"]  = psc->snssai.sd.c_str();
+  session_estb_request["sNssai"]["sd"]  = psc->snssai.sd;
   session_estb_request["pduSessionId"]  = psc->pdu_session_id;
   session_estb_request["requestType"] = "INITIAL_REQUEST";  // TODO: from SM_MSG
   session_estb_request["servingNfId"] = amf_app_inst->get_nf_instance();
-  session_estb_request["servingNetwork"]["mcc"] = psc->plmn.mcc.c_str();
-  session_estb_request["servingNetwork"]["mnc"] = psc->plmn.mnc.c_str();
+  session_estb_request["servingNetwork"]["mcc"] = psc->plmn.mcc;
+  session_estb_request["servingNetwork"]["mnc"] = psc->plmn.mnc;
   session_estb_request["anType"]                = "3GPP_ACCESS";  // TODO
   session_estb_request["ratType"]               = "NR";
   session_estb_request["selMode"]               = "VERIFIED";
