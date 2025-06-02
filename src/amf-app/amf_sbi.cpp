@@ -515,14 +515,14 @@ void amf_sbi::handle_pdu_session_initial_request(
   Logger::amf_sbi().debug("SMF's URI: %s", remote_uri.c_str());
 
   // Get DNN
-  std::string dnn_str = {};
-  oai::utils::dotted_to_string(dnn, dnn_str);
+  // std::string dnn_str = {};
+  // oai::utils::dotted_to_string(dnn, dnn_str);
 
   nlohmann::json session_estb_request   = {};
   session_estb_request["supi"]          = supi;
   session_estb_request["pei"]           = "imei-200000000000001";
   session_estb_request["gpsi"]          = "msisdn-200000000001";
-  session_estb_request["dnn"]           = dnn_str;
+  session_estb_request["dnn"]           = dnn;
   session_estb_request["sNssai"]["sst"] = psc->snssai.sst;
   session_estb_request["sNssai"]["sd"]  = psc->snssai.sd;
   session_estb_request["pduSessionId"]  = psc->pdu_session_id;
