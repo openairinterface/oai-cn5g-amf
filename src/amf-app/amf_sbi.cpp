@@ -404,7 +404,7 @@ void amf_sbi::handle_itti_message(itti_nsmf_pdusession_create_sm_context& smf) {
   psc->dnn = dnn;
 
   std::string smf_uri_root    = {};
-  std::string smf_api_version = {};
+  std::string smf_api_version = oai::common::sbi::kDefaultSbiApiVersion;
   if (!psc->smf_info.info_available) {
     if (amf_cfg->support_features.enable_smf_selection) {
       // Find NRF's URI
@@ -514,9 +514,9 @@ void amf_sbi::handle_pdu_session_initial_request(
 
   Logger::amf_sbi().debug("SMF's URI: %s", remote_uri.c_str());
 
-  // TODO: DNN in dotted format
-  // std::string dotted_dnn;
-  // oai::utils::string_to_dotted(dnn, dotted_dnn);
+  // Get DNN
+  // std::string dnn_str = {};
+  // oai::utils::dotted_to_string(dnn, dnn_str);
 
   nlohmann::json session_estb_request   = {};
   session_estb_request["supi"]          = supi;
@@ -537,9 +537,7 @@ void amf_sbi::handle_pdu_session_initial_request(
   session_estb_request["smContextStatusUri"] =
       amf_sbi_helper::get_sm_context_status_notification_uri(
           amf_cfg->sbi, supi, psc->pdu_session_id);
-  session_estb_request["n1MessageContainer"]["n1MessageClass"] = "SM";
-  session_estb_request["n1MessageContainer"]["n1MessageContent"]["contentId"] =
-      N1_SM_CONTENT_ID;
+  session_estb_request["n1SmMsg"]["contentId"] = N1_SM_CONTENT_ID;
   // TODO: UE location
   // GUAMI
   oai::model::common::Guami guami       = {};
