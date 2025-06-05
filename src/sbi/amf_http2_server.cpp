@@ -85,7 +85,8 @@ void amf_http2_server::start() {
         request.on_data([&](const uint8_t* data, std::size_t len) {
           if (len > 0) {
             std::string msg((char*) data, len);
-            Logger::amf_server().debug("");
+            Logger::amf_server().debug(
+                "Received message with URI: %s", request.uri().path);
             Logger::amf_server().debug("Message content \n %s", msg.c_str());
 
             // Get the ueContextId and method
@@ -108,7 +109,7 @@ void amf_http2_server::start() {
                 6) {  // N1N2MessageTransfer or N1 Message Notify
 
               // simple parser
-              mime_parser sp = {};
+              oai::utils::mime_parser sp = {};
               if (!sp.parse(msg)) {
                 res.write_head(static_cast<uint32_t>(
                     oai::common::sbi::http_status_code::BAD_REQUEST));
@@ -116,7 +117,7 @@ void amf_http2_server::start() {
                 return;
               }
 
-              std::unordered_map<std::string, mime_part> parts = {};
+              std::unordered_map<std::string, oai::utils::mime_part> parts = {};
               sp.get_mime_parts(parts);
               uint8_t size = parts.size();
               Logger::amf_server().debug("Number of MIME parts %d", size);
@@ -183,6 +184,8 @@ void amf_http2_server::start() {
       [&](const request& request, const response& response) {
         request.on_data([&](const uint8_t* data, std::size_t len) {
           std::string msg((char*) data, len);
+          Logger::amf_server().debug(
+              "Received message with URI: %s", request.uri().path);
           try {
             std::vector<std::string> split_result;
             boost::split(
@@ -264,6 +267,8 @@ void amf_http2_server::start() {
           amf_sbi_helper::AmfConfPathConfiguration,
       [&](const request& request, const response& response) {
         request.on_data([&](const uint8_t* data, std::size_t len) {
+          Logger::amf_server().debug(
+              "Received message with URI: %s", request.uri().path);
           try {
             if (request.method().compare("GET") == 0) {
               this->get_configuration_handler(response);
@@ -292,13 +297,15 @@ void amf_http2_server::start() {
         request.on_data([&](const uint8_t* data, std::size_t len) {
           if (len > 0) {
             std::string msg((char*) data, len);
+            Logger::amf_server().debug(
+                "Received message with URI: %s", request.uri().path);
             Logger::amf_server().debug("");
             Logger::amf_server().info(
                 "Received NonUEN2MessageTransfer Request");
             Logger::amf_server().debug("Message content \n %s", msg.c_str());
 
             // simple parser
-            mime_parser sp = {};
+            oai::utils::mime_parser sp = {};
             if (!sp.parse(msg)) {
               // send reply!!!
               res.write_head(static_cast<uint32_t>(
@@ -307,7 +314,7 @@ void amf_http2_server::start() {
               return;
             }
 
-            std::unordered_map<std::string, mime_part> parts = {};
+            std::unordered_map<std::string, oai::utils::mime_part> parts = {};
             sp.get_mime_parts(parts);
             uint8_t size = parts.size();
             Logger::amf_server().debug("Number of MIME parts %d", size);
@@ -338,7 +345,8 @@ void amf_http2_server::start() {
                 n2InformationTransferReqData = {};
 
             try {
-              nlohmann::json::parse(parts[JSON_CONTENT_ID_MIME].body.c_str())
+              nlohmann::json::parse(
+                  parts[oai::utils::JSON_CONTENT_ID_MIME].body.c_str())
                   .get_to(n2InformationTransferReqData);
 
             } catch (nlohmann::detail::exception& e) {
@@ -598,7 +606,7 @@ void amf_http2_server::create_event_subscription_handler(
 //------------------------------------------------------------------------------
 void amf_http2_server::n1_n2_message_transfer_handler(
     const std::string& ueContextId,
-    std::unordered_map<std::string, mime_part>& parts,
+    std::unordered_map<std::string, oai::utils::mime_part>& parts,
     const response& response) {
   Logger::amf_server().debug(
       "Receive N1N2MessageTransfer Request, handling...");
@@ -611,7 +619,7 @@ void amf_http2_server::n1_n2_message_transfer_handler(
   std::string supi = ueContextId;
 
   N1N2MessageTransferReqData n1N2MessageTransferReqData = {};
-  nlohmann::json::parse(parts[JSON_CONTENT_ID_MIME].body.c_str())
+  nlohmann::json::parse(parts[oai::utils::JSON_CONTENT_ID_MIME].body.c_str())
       .get_to(n1N2MessageTransferReqData);
 
   bool request_valid = true;
@@ -871,7 +879,7 @@ void amf_http2_server::n1_n2_message_transfer_handler(
 //------------------------------------------------------------------------------
 void amf_http2_server::n1_message_notify_handler(
     const std::string& ueContextId,
-    std::unordered_map<std::string, mime_part>& parts,
+    std::unordered_map<std::string, oai::utils::mime_part>& parts,
     const response& response) {
   Logger::amf_server().debug("Receive N1MessageNotify, handling...");
 
@@ -883,7 +891,7 @@ void amf_http2_server::n1_message_notify_handler(
 
   std::string supi                            = ueContextId;
   N1MessageNotification n1MessageNotification = {};
-  nlohmann::json::parse(parts[JSON_CONTENT_ID_MIME].body.c_str())
+  nlohmann::json::parse(parts[oai::utils::JSON_CONTENT_ID_MIME].body.c_str())
       .get_to(n1MessageNotification);
 
   Logger::amf_server().debug("N1MessageContainer is present, handling...");

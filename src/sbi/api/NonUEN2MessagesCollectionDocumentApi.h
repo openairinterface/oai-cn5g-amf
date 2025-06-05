@@ -65,7 +65,7 @@ class NonUEN2MessagesCollectionDocumentApi {
   /// </remarks>
   /// <param name="n2InformationTransferReqData"></param>
   virtual void non_ue_n2_message_transfer(
-      std::unordered_map<std::string, mime_part>& parts,
+      std::unordered_map<std::string, oai::utils::mime_part>& parts,
       Pistache::Http::ResponseWriter& response) = 0;
 };
 

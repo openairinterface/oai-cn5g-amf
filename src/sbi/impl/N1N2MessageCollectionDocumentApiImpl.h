@@ -54,7 +54,7 @@ class N1N2MessageCollectionDocumentApiImpl
 
   void n1_n2_message_transfer(
       const std::string& ueContextId,
-      std::unordered_map<std::string, mime_part>& parts,
+      std::unordered_map<std::string, oai::utils::mime_part>& parts,
       Pistache::Http::ResponseWriter& response);
 
   void send_response(

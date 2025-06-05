@@ -26,6 +26,7 @@
 #include "http_definitions.hpp"
 #include "itti_msg_sbi.hpp"
 #include "pdu_session_context.hpp"
+#include "ue_context.hpp"
 
 namespace amf_application {
 
@@ -183,7 +184,8 @@ class amf_sbi {
   void handle_pdu_session_initial_request(
       const std::string& supi, std::shared_ptr<pdu_session_context>& psc,
       const std::string& smf_uri_root, const std::string& smf_api_version,
-      bstring sm_msg, const std::string& dnn);
+      bstring sm_msg, const std::string& dnn,
+      const std::shared_ptr<ue_context>& uc);
 
   /*
    * Send SM Context response error to AMF

@@ -63,6 +63,7 @@
 #include "sctp_server.hpp"
 #include "utils.hpp"
 #include "PlmnId.hpp"
+#include "mime_parser.hpp"
 
 using namespace amf_application;
 using namespace oai::config;
@@ -2976,7 +2977,7 @@ void amf_n2::fill_n2_information_notification(
   // TODO: for another types
   if (ngap_ie_type_e ==
       oai::model::amf::NgapIeType_anyOf::eNgapIeType_anyOf::NRPPA_PDU) {
-    ref_to_binary_data.setContentId(N2_NRPPa_CONTENT_ID);
+    ref_to_binary_data.setContentId(oai::utils::N2_NRPPa_CONTENT_ID);
   }
   n2_info_content.setNgapIeType(ngap_ie_type);
   // n2_info_content.setNgapMessageType(value)
