@@ -2285,10 +2285,11 @@ void amf_n2::handle_itti_message(
   ranid.setGNbId(gnbid);
   ranid.setPlmnId(plmnId);
 
-  std::string nr_cell_id_str = {};
-  amf_conv::int_to_string_hex(cgi.nrCellId, nr_cell_id_str, 9);
+  // std::string nr_cell_id_str = {};
+  // amf_conv::int_to_string_hex(cgi.nrCellId, nr_cell_id_str, 9);
+  // ncgi.setNrCellId(nr_cell_id_str);
+  ncgi.setNrCellId(std::to_string(cgi.nrCellId));
   ncgi.setNid("");  // TODO:
-  ncgi.setNrCellId(nr_cell_id_str);
   ncgi.setPlmnId(plmnId);
   tai_model.setPlmnId(plmnId);
   tai_model.setTac(std::to_string(tai.tac));

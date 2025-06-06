@@ -4940,10 +4940,11 @@ void amf_n1::trigger_ue_location_report(
       plmnId.setMcc(uc->cgi.mcc);
       plmnId.setMnc(uc->cgi.mnc);
 
-      std::string nr_cell_id_str = {};
-      amf_conv::int_to_string_hex(uc->cgi.nrCellId, nr_cell_id_str, 9);
+      // std::string nr_cell_id_str = {};
+      // amf_conv::int_to_string_hex(uc->cgi.nrCellId, nr_cell_id_str, 9);
+      // ncgi.setNrCellId(nr_cell_id_str);
+      ncgi.setNrCellId(std::to_string(uc->cgi.nrCellId));
       ncgi.setNid("");  // TODO
-      ncgi.setNrCellId(nr_cell_id_str);
       ncgi.setPlmnId(plmnId);
 
       try {
