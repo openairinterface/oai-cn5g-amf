@@ -559,17 +559,14 @@ void amf_sbi::handle_pdu_session_initial_request(
   session_estb_request["guami"] = guami_json;
 
   // UE location
-
   oai::model::common::UserLocation user_location = {};
   oai::model::common::NrLocation nr_location     = {};
-
-  oai::model::common::Tai tai        = {};
-  oai::model::common::PlmnId plmn_id = {};
+  oai::model::common::Tai tai                    = {};
+  oai::model::common::PlmnId plmn_id             = {};
   plmn_id.setMcc(psc->plmn.mcc);
   plmn_id.setMnc(psc->plmn.mnc);
   tai.setPlmnId(plmn_id);
-  // tai.setTac(std::to_string(uc->tai.tac));
-  tai.setTac("03F3");
+  tai.setTac(std::to_string(uc->tai.tac));
 
   oai::model::common::GNbId gnb_id = {};
   gnb_id.setBitLength(32);
@@ -581,8 +578,9 @@ void amf_sbi::handle_pdu_session_initial_request(
 
   oai::model::common::Ncgi ncgi = {};
   // ncgi.setNid(""); //TODO:
-  // ncgi.setNrCellId(std::to_string(uc->cgi.nrCellId));
-  ncgi.setNrCellId("000138001");
+  std::string nr_cell_id_str = {};
+  amf_conv::int_to_string_hex(uc->cgi.nrCellId, nr_cell_id_str, 9);
+  ncgi.setNrCellId(nr_cell_id_str);
   ncgi.setPlmnId(plmn_id);
 
   nr_location.setTai(tai);

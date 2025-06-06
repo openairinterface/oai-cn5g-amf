@@ -2136,9 +2136,9 @@ void amf_n2::handle_itti_message(
   std::shared_ptr<ue_ngap_context> unc = {};
   if (!amf_ue_id_2_ue_ngap_context(amf_ue_ngap_id, unc)) return;
 
-  NrCgi_t NR_CGI = {};
-  Tai_t tai      = {};
-  if (!itti_msg->handover_notify->getUserLocationInfoNr(NR_CGI, tai)) {
+  NrCgi_t cgi = {};
+  Tai_t tai   = {};
+  if (!itti_msg->handover_notify->getUserLocationInfoNr(cgi, tai)) {
     Logger::amf_n2().debug("Missing IE UserLocationInformationNR");
     return;
   }
@@ -2277,16 +2277,18 @@ void amf_n2::handle_itti_message(
   oai::model::common::GlobalRanNodeId ranid;
   GNbId gnbid;
 
-  plmnId.setMcc(NR_CGI.mcc);
-  plmnId.setMnc(NR_CGI.mnc);
+  plmnId.setMcc(cgi.mcc);
+  plmnId.setMnc(cgi.mnc);
 
   gnbid.setBitLength(32);
   gnbid.setGNBValue(std::to_string(gc->gnb_id));
   ranid.setGNbId(gnbid);
   ranid.setPlmnId(plmnId);
 
-  ncgi.setNid("");
-  ncgi.setNrCellId(std::to_string(NR_CGI.nrCellId));
+  std::string nr_cell_id_str = {};
+  amf_conv::int_to_string_hex(cgi.nrCellId, nr_cell_id_str, 9);
+  ncgi.setNid("");  // TODO:
+  ncgi.setNrCellId(nr_cell_id_str);
   ncgi.setPlmnId(plmnId);
   tai_model.setPlmnId(plmnId);
   tai_model.setTac(std::to_string(tai.tac));
