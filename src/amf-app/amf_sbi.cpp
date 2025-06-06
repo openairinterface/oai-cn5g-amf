@@ -517,15 +517,11 @@ void amf_sbi::handle_pdu_session_initial_request(
 
   Logger::amf_sbi().debug("SMF's URI: %s", remote_uri.c_str());
 
-  // Get DNN
-  // std::string dnn_str = {};
-  // oai::utils::dotted_to_string(dnn, dnn_str);
-
   nlohmann::json session_estb_request   = {};
   session_estb_request["supi"]          = supi;
   session_estb_request["pei"]           = "imeisv-8670000000000001";
   session_estb_request["gpsi"]          = "msisdn-10000000000";
-  session_estb_request["dnn"]           = "oai";
+  session_estb_request["dnn"]           = dnn;
   session_estb_request["sNssai"]["sst"] = psc->snssai.sst;
   session_estb_request["sNssai"]["sd"]  = psc->snssai.sd;
   session_estb_request["pduSessionId"]  = psc->pdu_session_id;
@@ -567,27 +563,22 @@ void amf_sbi::handle_pdu_session_initial_request(
   plmn_id.setMnc(psc->plmn.mnc);
   tai.setPlmnId(plmn_id);
   tai.setTac(std::to_string(uc->tai.tac));
-
   oai::model::common::GNbId gnb_id = {};
   gnb_id.setBitLength(32);
   gnb_id.setGNBValue(std::to_string(uc->gnb_id));
-
   oai::model::common::GlobalRanNodeId global_ran_node_id = {};
   global_ran_node_id.setGNbId(gnb_id);
   global_ran_node_id.setPlmnId(plmn_id);
-
   oai::model::common::Ncgi ncgi = {};
   // ncgi.setNid(""); //TODO:
   std::string nr_cell_id_str = {};
   amf_conv::int_to_string_hex(uc->cgi.nrCellId, nr_cell_id_str, 9);
   ncgi.setNrCellId(nr_cell_id_str);
   ncgi.setPlmnId(plmn_id);
-
   nr_location.setTai(tai);
-  // nr_location.setGlobalGnbId(global_ran_node_id);
+  // TODO: nr_location.setGlobalGnbId(global_ran_node_id);
   nr_location.setNcgi(ncgi);
   user_location.setNrLocation(nr_location);
-
   nlohmann::json user_location_json = {};
   to_json(user_location_json, user_location);
   session_estb_request["ueLocation"] = user_location_json;
