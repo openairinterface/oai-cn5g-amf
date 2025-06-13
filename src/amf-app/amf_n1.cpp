@@ -4939,8 +4939,12 @@ void amf_n1::trigger_ue_location_report(
       oai::model::common::PlmnId plmnId;
       plmnId.setMcc(uc->cgi.mcc);
       plmnId.setMnc(uc->cgi.mnc);
-      ncgi.setNid("");
+
+      // std::string nr_cell_id_str = {};
+      // amf_conv::int_to_string_hex(uc->cgi.nrCellId, nr_cell_id_str, 9);
+      // ncgi.setNrCellId(nr_cell_id_str);
       ncgi.setNrCellId(std::to_string(uc->cgi.nrCellId));
+      ncgi.setNid("");  // TODO
       ncgi.setPlmnId(plmnId);
 
       try {

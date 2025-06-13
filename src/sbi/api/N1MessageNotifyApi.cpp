@@ -61,10 +61,10 @@ void N1MessageNotifyApi::n1_message_notify_handler(
   N1MessageNotification n1MessageNotification = {};
 
   // simple parser
-  mime_parser sp = {};
+  oai::utils::mime_parser sp = {};
   sp.parse(request.body());
 
-  std::unordered_map<std::string, mime_part> parts = {};
+  std::unordered_map<std::string, oai::utils::mime_part> parts = {};
   sp.get_mime_parts(parts);
   uint8_t size = parts.size();
   Logger::amf_server().debug("Number of MIME parts %d", size);
@@ -82,11 +82,11 @@ void N1MessageNotifyApi::n1_message_notify_handler(
   }
 
   try {
-    nlohmann::json::parse(parts[JSON_CONTENT_ID_MIME].body)
+    nlohmann::json::parse(parts[oai::utils::JSON_CONTENT_ID_MIME].body)
         .get_to(n1MessageNotification);
     this->receive_n1_message_notification(
-        ueContextId, n1MessageNotification, parts[N1_SM_CONTENT_ID].body,
-        response);
+        ueContextId, n1MessageNotification,
+        parts[oai::utils::N1_SM_CONTENT_ID].body, response);
   } catch (nlohmann::detail::exception& e) {
     // send a 400 error
     response.send(Pistache::Http::Code::Bad_Request, e.what());

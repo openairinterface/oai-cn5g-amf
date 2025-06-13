@@ -62,10 +62,10 @@ void N1N2MessageCollectionDocumentApi::n1_n2_message_transfer_handler(
   // Getting the body param
 
   // simple parser
-  mime_parser sp = {};
+  oai::utils::mime_parser sp = {};
   sp.parse(request.body());
 
-  std::unordered_map<std::string, mime_part> parts = {};
+  std::unordered_map<std::string, oai::utils::mime_part> parts = {};
   sp.get_mime_parts(parts);
   uint8_t size = parts.size();
   Logger::amf_server().debug("Number of MIME parts %d", size);

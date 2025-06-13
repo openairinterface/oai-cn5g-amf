@@ -30,7 +30,7 @@ NonUEN2MessagesCollectionDocumentApiImpl::
     : NonUEN2MessagesCollectionDocumentApi(rtr), m_amf_app(amf_app_inst) {}
 
 void NonUEN2MessagesCollectionDocumentApiImpl::non_ue_n2_message_transfer(
-    std::unordered_map<std::string, mime_part>& parts,
+    std::unordered_map<std::string, oai::utils::mime_part>& parts,
     Pistache::Http::ResponseWriter& response) {
   Logger::amf_server().debug(
       "Receive N2InformationTransfer Request, handling...");
@@ -41,7 +41,7 @@ void NonUEN2MessagesCollectionDocumentApiImpl::non_ue_n2_message_transfer(
   Pistache::Http::Code code = Pistache::Http::Code::Ok;
 
   N2InformationTransferReqData n2InformationTransferReqData = {};
-  nlohmann::json::parse(parts[JSON_CONTENT_ID_MIME].body.c_str())
+  nlohmann::json::parse(parts[oai::utils::JSON_CONTENT_ID_MIME].body.c_str())
       .get_to(n2InformationTransferReqData);
 
   bool request_valid = true;
