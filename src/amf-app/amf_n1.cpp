@@ -2445,7 +2445,7 @@ bool amf_n1::get_authentication_vectors_from_ausf(
   oai::utils::utils::free_wrapper((void**) &r5g_auth_data_hxresstar);
 
   std::map<std::string, LinksValueSchema>::iterator iter;
-  iter = ue_authentication_ctx.getLinks().find("5G_AKA");
+  iter = ue_authentication_ctx.getLinks().find("5g-aka");
 
   if (iter != ue_authentication_ctx.getLinks().end()) {
     nc->href = iter->second.getHref();
@@ -2453,6 +2453,15 @@ bool amf_n1::get_authentication_vectors_from_ausf(
   } else {
     Logger::amf_n1().error("Not found 5G_AKA");
     return false;
+  }
+
+  // Check Serving Network Name if available
+  if (ue_authentication_ctx.servingNetworkNameIsSet()) {
+    if (!boost::iequals(
+            nc->serving_network,
+            ue_authentication_ctx.getServingNetworkName())) {
+      return false;
+    }
   }
 
   return true;
@@ -2529,6 +2538,11 @@ bool amf_n1::_5g_aka_confirmation_from_ausf(
       try {
         from_json(result[kSbiResponseJsonData], confirmation_data_response);
         is_result_available = true;
+
+        if (confirmation_data_response.getAuthResult().getValue() !=
+            AuthResult::eAuthResult::AUTHENTICATION_SUCCESS) {
+          return false;
+        }
 
         if (!confirmation_data_response.kseafIsSet()) return false;
         unsigned char* kseaf_hex = amf_conv::format_string_as_hex(
@@ -4811,8 +4825,12 @@ void amf_n1::trigger_ue_location_report(
       oai::model::common::PlmnId plmnId;
       plmnId.setMcc(uc->cgi.mcc);
       plmnId.setMnc(uc->cgi.mnc);
-      ncgi.setNid("");
+
+      // std::string nr_cell_id_str = {};
+      // amf_conv::int_to_string_hex(uc->cgi.nrCellId, nr_cell_id_str, 9);
+      // ncgi.setNrCellId(nr_cell_id_str);
       ncgi.setNrCellId(std::to_string(uc->cgi.nrCellId));
+      ncgi.setNid("");  // TODO
       ncgi.setPlmnId(plmnId);
 
       try {

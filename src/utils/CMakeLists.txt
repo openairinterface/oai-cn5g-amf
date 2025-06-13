@@ -40,6 +40,5 @@ include(${SRC_TOP_DIR}/${MOUNTED_COMMON}/model/amf/amf.cmake)
 add_library (AMF_UTILS STATIC
  ${CMAKE_CURRENT_SOURCE_DIR}/3gpp_conversions.cpp
  ${CMAKE_CURRENT_SOURCE_DIR}/amf_conversions.cpp
- ${CMAKE_CURRENT_SOURCE_DIR}/mime_parser.cpp 
  )
 

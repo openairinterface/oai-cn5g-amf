@@ -42,6 +42,8 @@
 #include "output_wrapper.hpp"
 #include "ue_context.hpp"
 #include "utils.hpp"
+#include "Guami.h"
+#include "string.hpp"
 
 using namespace oai::config;
 using namespace amf_application;
@@ -307,15 +309,16 @@ void amf_sbi::handle_itti_message(
   nlohmann::json pdu_session_update_request = {};
 
   if (itti_msg.is_n1sm_set) {
-    pdu_session_update_request[N1_SM_CONTENT_ID]["contentId"] =
-        N1_SM_CONTENT_ID;
+    pdu_session_update_request[oai::utils::N1_SM_CONTENT_ID]["contentId"] =
+        oai::utils::N1_SM_CONTENT_ID;
     amf_conv::octet_stream_2_hex_stream(
         (uint8_t*) bdata(itti_msg.n1sm), blength(itti_msg.n1sm), n1sm_msg);
   }
 
   if (itti_msg.is_n2sm_set) {
     pdu_session_update_request["n2SmInfoType"] = itti_msg.n2sm_info_type;
-    pdu_session_update_request["n2SmInfo"]["contentId"] = N2_SM_CONTENT_ID;
+    pdu_session_update_request["n2SmInfo"]["contentId"] =
+        oai::utils::N2_SM_CONTENT_ID;
     amf_conv::octet_stream_2_hex_stream(
         (uint8_t*) bdata(itti_msg.n2sm), blength(itti_msg.n2sm), n2sm_msg);
   }
@@ -412,7 +415,7 @@ void amf_sbi::handle_itti_message(itti_nsmf_pdusession_create_sm_context& smf) {
   psc->dnn = dnn;
 
   std::string smf_uri_root    = {};
-  std::string smf_api_version = {};
+  std::string smf_api_version = oai::common::sbi::kDefaultSbiApiVersion;
   if (!psc->smf_info.info_available) {
     if (amf_cfg->support_features.enable_smf_selection) {
       // Find NRF's URI
@@ -459,7 +462,7 @@ void amf_sbi::handle_itti_message(itti_nsmf_pdusession_create_sm_context& smf) {
           "Decoded PTI for PDUSessionEstablishmentRequest(0x%x)", pti);
       psc->is_n2sm_available = false;
       handle_pdu_session_initial_request(
-          nc->supi, psc, smf_uri_root, smf_api_version, smf.sm_msg, dnn);
+          nc->supi, psc, smf_uri_root, smf_api_version, smf.sm_msg, dnn, uc);
     } break;
     case kExistingPduSession: {
       // TODO:
@@ -495,8 +498,9 @@ void amf_sbi::send_pdu_session_update_sm_context_request(
 
   Logger::amf_sbi().debug("SMF URI: %s", remote_uri.c_str());
 
-  nlohmann::json pdu_session_update_request                 = {};
-  pdu_session_update_request[N1_SM_CONTENT_ID]["contentId"] = N1_SM_CONTENT_ID;
+  nlohmann::json pdu_session_update_request = {};
+  pdu_session_update_request[oai::utils::N1_SM_CONTENT_ID]["contentId"] =
+      oai::utils::N1_SM_CONTENT_ID;
   std::string json_part = pdu_session_update_request.dump();
 
   std::string n1sm_msg = {};
@@ -512,44 +516,84 @@ void amf_sbi::send_pdu_session_update_sm_context_request(
 void amf_sbi::handle_pdu_session_initial_request(
     const std::string& supi, std::shared_ptr<pdu_session_context>& psc,
     const std::string& smf_uri_root, const std::string& smf_api_version,
-    bstring sm_msg, const std::string& dnn) {
+    bstring sm_msg, const std::string& dnn,
+    const std::shared_ptr<ue_context>& uc) {
   Logger::amf_sbi().debug(
       "Handle PDU Session Establishment Request (SUPI %s, PDU Session ID %d)",
       supi.c_str(), psc->pdu_session_id);
-
-  // Provide http2 port if enabled
-  std::string amf_port = std::to_string(amf_cfg->sbi.port);
 
   std::string remote_uri = amf_sbi_helper::get_smf_pdu_session_base_uri(
       smf_uri_root, smf_api_version);
 
   Logger::amf_sbi().debug("SMF's URI: %s", remote_uri.c_str());
 
-  nlohmann::json pdu_session_establishment_request;
-  pdu_session_establishment_request["supi"]          = supi.c_str();
-  pdu_session_establishment_request["pei"]           = "imei-200000000000001";
-  pdu_session_establishment_request["gpsi"]          = "msisdn-200000000001";
-  pdu_session_establishment_request["dnn"]           = dnn.c_str();
-  pdu_session_establishment_request["sNssai"]["sst"] = psc->snssai.sst;
-  pdu_session_establishment_request["sNssai"]["sd"]  = psc->snssai.sd.c_str();
-  pdu_session_establishment_request["pduSessionId"]  = psc->pdu_session_id;
-  pdu_session_establishment_request["requestType"] =
-      "INITIAL_REQUEST";  // TODO: from SM_MSG
-  pdu_session_establishment_request["servingNfId"] = "servingNfId";
-  pdu_session_establishment_request["servingNetwork"]["mcc"] =
-      psc->plmn.mcc.c_str();
-  pdu_session_establishment_request["servingNetwork"]["mnc"] =
-      psc->plmn.mnc.c_str();
-  pdu_session_establishment_request["anType"] = "3GPP_ACCESS";  // TODO
-  pdu_session_establishment_request["smContextStatusUri"] =
+  nlohmann::json session_estb_request   = {};
+  session_estb_request["supi"]          = supi;
+  session_estb_request["pei"]           = "imeisv-8670000000000001";
+  session_estb_request["gpsi"]          = "msisdn-10000000000";
+  session_estb_request["dnn"]           = dnn;
+  session_estb_request["sNssai"]["sst"] = psc->snssai.sst;
+  session_estb_request["sNssai"]["sd"]  = psc->snssai.sd;
+  session_estb_request["pduSessionId"]  = psc->pdu_session_id;
+  session_estb_request["requestType"] = "INITIAL_REQUEST";  // TODO: from SM_MSG
+  session_estb_request["servingNfId"] = amf_app_inst->get_nf_instance();
+  session_estb_request["servingNetwork"]["mcc"] = psc->plmn.mcc;
+  session_estb_request["servingNetwork"]["mnc"] = psc->plmn.mnc;
+  session_estb_request["anType"]                = "3GPP_ACCESS";  // TODO
+  session_estb_request["ratType"]               = "NR";
+  session_estb_request["selMode"]               = "VERIFIED";
+  session_estb_request["epsInterworkingInd"]    = "NONE";
+
+  session_estb_request["smContextStatusUri"] =
       amf_sbi_helper::get_sm_context_status_notification_uri(
           amf_cfg->sbi, supi, psc->pdu_session_id);
-  pdu_session_establishment_request["n1MessageContainer"]["n1MessageClass"] =
-      "SM";
-  pdu_session_establishment_request["n1MessageContainer"]["n1MessageContent"]
-                                   ["contentId"] = N1_SM_CONTENT_ID;
+  session_estb_request["n1SmMsg"]["contentId"] = oai::utils::N1_SM_CONTENT_ID;
 
-  std::string json_part = pdu_session_establishment_request.dump();
+  // GUAMI
+  oai::model::common::Guami guami           = {};
+  oai::model::common::PlmnIdNid plmn_id_nid = {};
+  std::string amf_id                        = {};
+  amf_conv::get_amf_id(
+      amf_cfg->guami.region_id, amf_cfg->guami.amf_set_id,
+      amf_cfg->guami.amf_pointer, amf_id);
+  guami.setAmfId(amf_id);
+  plmn_id_nid.setMcc(psc->plmn.mcc);
+  plmn_id_nid.setMnc(psc->plmn.mnc);
+  guami.setPlmnId(plmn_id_nid);
+  nlohmann::json guami_json = {};
+  to_json(guami_json, guami);
+  session_estb_request["guami"] = guami_json;
+
+  // UE location
+  oai::model::common::UserLocation user_location = {};
+  oai::model::common::NrLocation nr_location     = {};
+  oai::model::common::Tai tai                    = {};
+  oai::model::common::PlmnId plmn_id             = {};
+  plmn_id.setMcc(psc->plmn.mcc);
+  plmn_id.setMnc(psc->plmn.mnc);
+  tai.setPlmnId(plmn_id);
+  tai.setTac(std::to_string(uc->tai.tac));
+  oai::model::common::GNbId gnb_id = {};
+  gnb_id.setBitLength(32);
+  gnb_id.setGNBValue(std::to_string(uc->gnb_id));
+  oai::model::common::GlobalRanNodeId global_ran_node_id = {};
+  global_ran_node_id.setGNbId(gnb_id);
+  global_ran_node_id.setPlmnId(plmn_id);
+  oai::model::common::Ncgi ncgi = {};
+  // ncgi.setNid(""); //TODO:
+  std::string nr_cell_id_str = {};
+  amf_conv::int_to_string_hex(uc->cgi.nrCellId, nr_cell_id_str, 9);
+  ncgi.setNrCellId(nr_cell_id_str);
+  ncgi.setPlmnId(plmn_id);
+  nr_location.setTai(tai);
+  // TODO: nr_location.setGlobalGnbId(global_ran_node_id);
+  nr_location.setNcgi(ncgi);
+  user_location.setNrLocation(nr_location);
+  nlohmann::json user_location_json = {};
+  to_json(user_location_json, user_location);
+  session_estb_request["ueLocation"] = user_location_json;
+
+  std::string json_part = session_estb_request.dump();
   Logger::amf_sbi().debug("Message body %s", json_part.c_str());
 
   std::string n1sm_msg = {};
@@ -804,9 +848,10 @@ void amf_sbi::handle_itti_message(itti_sbi_n1_message_notify& itti_msg) {
 
   Logger::amf_sbi().debug("Target AMF URI: %s", uri.c_str());
 
-  nlohmann::json json_data                 = {};
-  json_data[N1_SM_CONTENT_ID]["contentId"] = N1_SM_CONTENT_ID;
-  std::string json_part                    = json_data.dump();
+  nlohmann::json json_data = {};
+  json_data[oai::utils::N1_SM_CONTENT_ID]["contentId"] =
+      oai::utils::N1_SM_CONTENT_ID;
+  std::string json_part = json_data.dump();
 
   std::string n1sm_msg = {};
   amf_conv::octet_stream_2_hex_stream(
@@ -1305,6 +1350,31 @@ bool amf_sbi::discover_smf(
         }
 
         if (!result) {
+          // Check if SNSSAI info is available in SMF Info
+          if (instance_json.find("smfInfo") != instance_json.end()) {
+            auto smf_info = instance_json["smfInfo"];
+            if (smf_info.find("sNssaiSmfInfoList") != smf_info.end()) {
+              for (auto& s : smf_info["sNssaiSmfInfoList"].items()) {
+                auto snssai_json = s.value();
+                if (snssai_json.find("sNssai") != snssai_json.end()) {
+                  oai::model::common::Snssai snssai_model;
+                  from_json(snssai_json["sNssai"], snssai_model);
+                  if (snssai_model.getSst() == snssai.sst &&
+                      snssai_model.getSdInt() == snssai.get_sd_int()) {
+                    Logger::amf_sbi().debug(
+                        "S-NSSAI [SST- %d, SD -%s] is matched for SMF profile",
+                        snssai.sst, snssai.sd.c_str());
+                    result = true;
+                    break;  // NSSAI is included in the list of supported slices
+                            // from SMF
+                  }
+                }
+              }
+            }
+          }
+        }
+
+        if (!result) {
           Logger::amf_sbi().debug("S-NSSAI is not matched for SMF profile");
           // continue;
         }
@@ -1360,7 +1430,7 @@ bool amf_sbi::send_http_request(
     const uint32_t& promise_id) {
   bool request_result = false;
 
-  mime_parser parser                       = {};
+  oai::utils::mime_parser parser           = {};
   std::string body                         = {};
   std::shared_ptr<pdu_session_context> psc = {};
   bool is_multipart                        = true;
@@ -1396,9 +1466,9 @@ bool amf_sbi::send_http_request(
     if (!parser.parse(http_response.body)) {
       json_data_response = http_response.body;
     } else {
-      parser.get(JSON_CONTENT_ID_MIME, json_data_response);
-      parser.get(N1_SM_CONTENT_ID, n1sm);
-      parser.get(N2_SM_CONTENT_ID, n2sm);
+      parser.get(oai::utils::JSON_CONTENT_ID_MIME, json_data_response);
+      parser.get(oai::utils::N1_SM_CONTENT_ID, n1sm);
+      parser.get(oai::utils::N2_SM_CONTENT_ID, n2sm);
     }
   }
 
@@ -1569,10 +1639,10 @@ void amf_sbi::send_http_request(
     const std::string& remote_uri, std::string& json_data,
     std::string& n1sm_msg, std::string& n2sm_msg, uint8_t http_version,
     uint32_t& response_code, const uint32_t& promise_id) {
-  uint8_t number_parts = 0;
-  mime_parser parser   = {};
-  std::string body     = {};
-  bool is_multipart    = true;
+  uint8_t number_parts           = 0;
+  oai::utils::mime_parser parser = {};
+  std::string body               = {};
+  bool is_multipart              = true;
 
   // prepare the body content
   create_multipart_content(json_data, n1sm_msg, n2sm_msg, is_multipart, body);
@@ -1823,8 +1893,8 @@ void amf_sbi::get_network_slice_information(
 void amf_sbi::create_multipart_content(
     const std::string& json_data, const std::string& n1sm_msg,
     const std::string& n2sm_msg, bool is_multipart, std::string& body) {
-  mime_parser parser = {};
-  is_multipart       = true;
+  oai::utils::mime_parser parser = {};
+  is_multipart                   = true;
 
   if ((n1sm_msg.size() > 0) and (n2sm_msg.size() > 0)) {
     parser.create_multipart_related_content(
@@ -1832,11 +1902,11 @@ void amf_sbi::create_multipart_content(
   } else if (n1sm_msg.size() > 0) {  // only N1 content
     parser.create_multipart_related_content(
         body, json_data, oai::http::MIME_BOUNDARY, n1sm_msg,
-        multipart_related_content_part_e::NAS);
+        oai::utils::multipart_related_content_part_e::NAS);
   } else if (n2sm_msg.size() > 0) {  // only N2 content
     parser.create_multipart_related_content(
         body, json_data, oai::http::MIME_BOUNDARY, n2sm_msg,
-        multipart_related_content_part_e::NGAP);
+        oai::utils::multipart_related_content_part_e::NGAP);
   } else {
     body         = json_data;
     is_multipart = false;

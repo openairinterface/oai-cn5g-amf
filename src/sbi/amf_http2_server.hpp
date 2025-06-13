@@ -57,11 +57,13 @@ class amf_http2_server {
 
   void n1_n2_message_transfer_handler(
       const std::string& ueContextId,
-      std::unordered_map<std::string, mime_part>& parts, const response& res);
+      std::unordered_map<std::string, oai::utils::mime_part>& parts,
+      const response& res);
 
   void n1_message_notify_handler(
       const std::string& ueContextId,
-      std::unordered_map<std::string, mime_part>& parts, const response& res);
+      std::unordered_map<std::string, oai::utils::mime_part>& parts,
+      const response& res);
 
   void n1_n2_message_subscribe_handler(
       const std::string& ueContextId,
