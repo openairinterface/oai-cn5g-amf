@@ -6052,12 +6052,12 @@ void amf_n1::get_access_and_mobility_subscription_data(
   plmn_id.setMnc(uc->tai.mnc);
 
   // Generate a promise and associate this promise to the ITTI message
-  uint32_t promise_id = amf_app_inst->generate_promise_id();
-  Logger::amf_n1().debug("Promise ID generated %d", promise_id);
+  uint32_t promise_id = {};
   boost::shared_ptr<boost::promise<nlohmann::json>> p =
       boost::make_shared<boost::promise<nlohmann::json>>();
+  amf_app_inst->store_promise(promise_id, p);
   boost::shared_future<nlohmann::json> f = p->get_future();
-  amf_app_inst->add_promise(promise_id, p);
+  Logger::amf_n1().debug("Promise ID generated %ld", promise_id);
 
   std::shared_ptr<itti_sbi_retrieve_am_data> itti_msg =
       std::make_shared<itti_sbi_retrieve_am_data>(
@@ -6090,7 +6090,8 @@ void amf_n1::get_access_and_mobility_subscription_data(
           "UDM: %s",
           result[kSbiResponseJsonData].dump());
 
-      uint32_t http_response_code = 0;
+      uint32_t http_response_code =
+          oai::common::sbi::http_status_code::NO_RESPONSE;
       if (result.find(kSbiResponseHttpResponseCode) != result.end()) {
         http_response_code = result[kSbiResponseHttpResponseCode].get<int>();
         if (http_response_code == oai::common::sbi::http_status_code::OK) {

@@ -1720,6 +1720,15 @@ void amf_app::add_promise(
   curl_handle_responses_sbi.emplace(pid, p);
 }
 
+//---------------------------------------------------------------------------------------------
+void amf_app::store_promise(
+    uint32_t pid, const boost::shared_ptr<boost::promise<nlohmann::json>>& p) {
+  // Generate promise ID
+  pid = generate_promise_id();
+  std::unique_lock lock(m_curl_handle_responses_sbi);
+  curl_handle_responses_sbi.emplace(pid, p);
+}
+
 //------------------------------------------------------------------------------
 void amf_app::trigger_process_response(
     const uint32_t pid, const nlohmann::json& json_data) {

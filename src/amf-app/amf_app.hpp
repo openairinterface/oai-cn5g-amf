@@ -614,6 +614,17 @@ class amf_app {
   }
 
   /*
+   * Generate an unique value for promise id and associate this generated id
+   * with the promise itself
+   * @param [const uint32_t] pid: promise id
+   * @param [const boost::shared_ptr<boost::promise<nlohmann::json>>&] p:
+   * promise
+   * @return void
+   */
+  void store_promise(
+      uint32_t pid, const boost::shared_ptr<boost::promise<nlohmann::json>>& p);
+
+  /*
    * Trigger the response from API server
    * @param [const uint32_t] pid: promise id
    * @param [const nlohmann::json&] json_data: result for the corresponding
