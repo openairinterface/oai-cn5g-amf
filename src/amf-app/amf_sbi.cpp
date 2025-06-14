@@ -531,7 +531,7 @@ void amf_sbi::handle_pdu_session_initial_request(
   session_estb_request["supi"]          = supi;
   session_estb_request["pei"]           = "imeisv-8670000000000001";
   session_estb_request["gpsi"]          = "msisdn-10000000000";
-  session_estb_request["dnn"]           = dnn;
+  session_estb_request["dnn"]           = "oai";
   session_estb_request["sNssai"]["sst"] = psc->snssai.sst;
   session_estb_request["sNssai"]["sd"]  = psc->snssai.sd;
   session_estb_request["pduSessionId"]  = psc->pdu_session_id;
@@ -1212,10 +1212,17 @@ void amf_sbi::handle_itti_message(itti_sbi_register_with_udm& itti_msg) {
     response_data[kSbiResponseHeaderLocation] = loc_header->second;
   }
 
-  // Notify to the result
-  if (itti_msg.promise_id > 0) {
-    amf_app_inst->trigger_process_response(itti_msg.promise_id, response_data);
-    return;
+  // Send response to APP to process
+  std::shared_ptr<itti_sbi_register_with_udm_response> itti_msg_response =
+      std::make_shared<itti_sbi_register_with_udm_response>(
+          TASK_AMF_SBI, TASK_AMF_APP);
+  itti_msg_response->response_data = response_data;
+
+  int ret = itti_inst->send_msg(itti_msg_response);
+  if (RETURNok != ret) {
+    Logger::amf_sbi().error(
+        "Could not send ITTI message %s to task TASK_AMF_APP",
+        itti_msg_response->get_msg_name());
   }
 }
 
@@ -1248,10 +1255,17 @@ void amf_sbi::handle_itti_message(itti_sbi_retrieve_am_data& itti_msg) {
   response_data[kSbiResponseJsonData]         = http_response.get_json();
   // TODO: process headers (Cache-Control, ETag, Last-Modified)
 
-  // Notify to the result
-  if (itti_msg.promise_id > 0) {
-    amf_app_inst->trigger_process_response(itti_msg.promise_id, response_data);
-    return;
+  // Send response to APP to process
+  std::shared_ptr<itti_sbi_retrieve_am_data_response> itti_msg_response =
+      std::make_shared<itti_sbi_retrieve_am_data_response>(
+          TASK_AMF_SBI, TASK_AMF_APP);
+  itti_msg_response->response_data = response_data;
+
+  int ret = itti_inst->send_msg(itti_msg_response);
+  if (RETURNok != ret) {
+    Logger::amf_sbi().error(
+        "Could not send ITTI message %s to task TASK_AMF_APP",
+        itti_msg_response->get_msg_name());
   }
 }
 
@@ -1411,7 +1425,7 @@ bool amf_sbi::discover_smf(
         if (result) break;
       }
     }
-
+    smf_port = 80;
     Logger::amf_sbi().debug(
         "NFDiscovery, SMF Info: Addr %s, Port %d, API Version %s",
         smf_addr.c_str(), smf_port, smf_api_version.c_str());

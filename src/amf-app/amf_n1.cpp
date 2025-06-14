@@ -3065,14 +3065,19 @@ void amf_n1::security_mode_complete_handle(
     return;
   }
 
+  // Step 14a. Figure 4.2.2.2.2-1: Registration procedure@3GPP TS 23.502
   // AMF registers with the UDM using Nudm_UECM_Registration for 3GPP Access
   register_3gpp_access(uc);
 
+  // Step 14b. Figure 4.2.2.2.2-1: Registration procedure@3GPP TS 23.502
   // TODO:Retrieving the Access and Mobility Subscription data from UDM
   get_access_and_mobility_subscription_data(uc);
 
-  // TODO: Retrieving SMF Selection Subscription data from UDM
-  // TODO: Retrieving UE context in SMF data and LCS mobile origination
+  // TODO: Step 14b. Figure 4.2.2.2.2-1: Registration procedure@3GPP TS 23.502
+  // Retrieving SMF Selection Subscription data from UDM
+
+  // TODO: Step 14b. Figure 4.2.2.2.2-1: Registration procedure@3GPP TS 23.502
+  // Retrieving UE context in SMF data and LCS mobile origination
 
   // Process Uplink Data Status / PDU Session status
   uint16_t uplink_data_status              = 0x0000;
@@ -5961,12 +5966,12 @@ void amf_n1::register_3gpp_access(std::shared_ptr<ue_context>& uc) const {
   to_json(registration_data_json, registration_data);
 
   // Generate a promise and associate this promise to the ITTI message
-  uint32_t promise_id = amf_app_inst->generate_promise_id();
-  Logger::amf_n1().debug("Promise ID generated %d", promise_id);
+  uint32_t promise_id = {};
   boost::shared_ptr<boost::promise<nlohmann::json>> p =
       boost::make_shared<boost::promise<nlohmann::json>>();
+  amf_app_inst->store_promise(promise_id, p);
+  Logger::amf_n1().debug("Promise ID generated %d", promise_id);
   boost::shared_future<nlohmann::json> f = p->get_future();
-  amf_app_inst->add_promise(promise_id, p);
 
   std::shared_ptr<itti_sbi_register_with_udm> itti_msg =
       std::make_shared<itti_sbi_register_with_udm>(
@@ -5983,6 +5988,7 @@ void amf_n1::register_3gpp_access(std::shared_ptr<ue_context>& uc) const {
         itti_msg->get_msg_name());
   }
 
+  /*
   bool is_result_available = true;
   // Wait for the response available and process accordingly
   std::optional<nlohmann::json> result_opt = std::nullopt;
@@ -5995,7 +6001,8 @@ void amf_n1::register_3gpp_access(std::shared_ptr<ue_context>& uc) const {
           "Got Registration Response from UDM: %s",
           result[kSbiResponseJsonData].dump());
 
-      uint32_t http_response_code = 0;
+      uint32_t http_response_code =
+          oai::common::sbi::http_status_code::NO_RESPONSE;
       if (result.find(kSbiResponseHttpResponseCode) != result.end()) {
         http_response_code = result[kSbiResponseHttpResponseCode].get<int>();
         if ((http_response_code == oai::common::sbi::http_status_code::OK) or
@@ -6039,6 +6046,7 @@ void amf_n1::register_3gpp_access(std::shared_ptr<ue_context>& uc) const {
   if (!is_result_available) {
     Logger::amf_n1().warn("Could not get Registration Response from UDM");
   }
+  */
 }
 
 //------------------------------------------------------------------------------
@@ -6073,10 +6081,11 @@ void amf_n1::get_access_and_mobility_subscription_data(
         "Could not send ITTI message %s to task TASK_AMF_SBI",
         itti_msg->get_msg_name());
   }
-
+  /*
   bool is_result_available = true;
 
   oai::model::udm::AccessAndMobilitySubscriptionData am_data = {};
+
 
   // Wait for the response available and process accordingly
   std::optional<nlohmann::json> result_opt = std::nullopt;
@@ -6122,4 +6131,5 @@ void amf_n1::get_access_and_mobility_subscription_data(
     Logger::amf_n1().warn(
         "Could not get Access and Mobility Subscription Data from UDM");
   }
+  */
 }

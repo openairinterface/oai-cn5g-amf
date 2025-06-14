@@ -225,6 +225,20 @@ void amf_app_task(void*) {
         amf_app_inst->handle_itti_message(std::ref(*m));
       } break;
 
+      case SBI_REGISTER_WITH_UDM_RESPONSE: {
+        Logger::amf_app().debug("Received SBI_REGISTER_WITH_UDM_RESPONSE");
+        itti_sbi_register_with_udm_response* m =
+            dynamic_cast<itti_sbi_register_with_udm_response*>(msg);
+        amf_app_inst->handle_itti_message(std::ref(*m));
+      } break;
+
+      case SBI_RETRIEVE_AM_DATA_RESPONSE: {
+        Logger::amf_app().debug("Received SBI_RETRIEVE_AM_DATA_RESPONSE");
+        itti_sbi_retrieve_am_data_response* m =
+            dynamic_cast<itti_sbi_retrieve_am_data_response*>(msg);
+        amf_app_inst->handle_itti_message(std::ref(*m));
+      } break;
+
       case TIME_OUT: {
         if (itti_msg_timeout* to = dynamic_cast<itti_msg_timeout*>(msg)) {
           switch (to->arg1_user) {
@@ -1032,6 +1046,59 @@ void amf_app::handle_itti_message(itti_sbi_update_nf_instance_response& r) {
 
     // Store the registered NRF
     registered_nrfs.insert(r.nrf_uri);
+  }
+}
+
+//------------------------------------------------------------------------------
+void amf_app::handle_itti_message(itti_sbi_register_with_udm_response& r) {
+  Logger::amf_app().debug("Handle SBI_REGISTER_WITH_UDM_RESPONSE response");
+
+  uint32_t response_code = oai::common::sbi::http_status_code::NO_RESPONSE;
+  if (r.response_data.find(kSbiResponseHttpResponseCode) !=
+      r.response_data.end()) {
+    response_code = r.response_data[kSbiResponseHttpResponseCode].get<int>();
+  }
+
+  if (response_code == oai::common::sbi::http_status_code::NO_CONTENT) {
+    // TODO:
+  } else if (response_code == oai::common::sbi::http_status_code::CREATED) {
+    // Store location
+    if (r.response_data.find(kSbiResponseHeaderLocation) !=
+        r.response_data.end()) {
+      std::shared_ptr<ue_context> uc = {};
+      if (supi_2_ue_context(r.supi, uc)) {
+        uc->amf_3gpp_access_location =
+            r.response_data[kSbiResponseHeaderLocation].get<std::string>();
+      }
+    }
+    // TODO:
+  } else if (response_code == oai::common::sbi::http_status_code::OK) {
+    // TODO:
+  } else {
+    Logger::amf_app().debug("AMF has failed to register to UDM.");
+  }
+}
+
+//------------------------------------------------------------------------------
+void amf_app::handle_itti_message(itti_sbi_retrieve_am_data_response& r) {
+  Logger::amf_app().debug("Handle SBI_RETRIEVE_AM_DATA_RESPONSE response");
+
+  uint32_t response_code = oai::common::sbi::http_status_code::NO_RESPONSE;
+  if (r.response_data.find(kSbiResponseHttpResponseCode) !=
+      r.response_data.end()) {
+    response_code = r.response_data[kSbiResponseHttpResponseCode].get<int>();
+  }
+
+  if (response_code == oai::common::sbi::http_status_code::NO_CONTENT) {
+    // TODO:
+  } else if (response_code == oai::common::sbi::http_status_code::CREATED) {
+    // TODO:
+  } else if (response_code == oai::common::sbi::http_status_code::OK) {
+    // TODO:
+  } else {
+    Logger::amf_app().debug(
+        "AMF has failed to get Access and Mobility Subscription Data from "
+        "UDM.");
   }
 }
 
