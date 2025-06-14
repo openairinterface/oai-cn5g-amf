@@ -531,7 +531,7 @@ void amf_sbi::handle_pdu_session_initial_request(
   session_estb_request["supi"]          = supi;
   session_estb_request["pei"]           = "imeisv-8670000000000001";
   session_estb_request["gpsi"]          = "msisdn-10000000000";
-  session_estb_request["dnn"]           = "oai";
+  session_estb_request["dnn"]           = dnn;
   session_estb_request["sNssai"]["sst"] = psc->snssai.sst;
   session_estb_request["sNssai"]["sd"]  = psc->snssai.sd;
   session_estb_request["pduSessionId"]  = psc->pdu_session_id;
@@ -1425,7 +1425,7 @@ bool amf_sbi::discover_smf(
         if (result) break;
       }
     }
-    smf_port = 80;
+
     Logger::amf_sbi().debug(
         "NFDiscovery, SMF Info: Addr %s, Port %d, API Version %s",
         smf_addr.c_str(), smf_port, smf_api_version.c_str());
