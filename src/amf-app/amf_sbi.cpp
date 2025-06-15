@@ -1213,16 +1213,19 @@ void amf_sbi::handle_itti_message(itti_sbi_register_with_udm& itti_msg) {
   }
 
   // Send response to APP to process
-  std::shared_ptr<itti_sbi_register_with_udm_response> itti_msg_response =
-      std::make_shared<itti_sbi_register_with_udm_response>(
-          TASK_AMF_SBI, TASK_AMF_APP);
-  itti_msg_response->response_data = response_data;
+  if (http_response.status_code !=
+      oai::common::sbi::http_status_code::NO_RESPONSE) {
+    std::shared_ptr<itti_sbi_register_with_udm_response> itti_msg_response =
+        std::make_shared<itti_sbi_register_with_udm_response>(
+            TASK_AMF_SBI, TASK_AMF_APP);
+    itti_msg_response->response_data = response_data;
 
-  int ret = itti_inst->send_msg(itti_msg_response);
-  if (RETURNok != ret) {
-    Logger::amf_sbi().error(
-        "Could not send ITTI message %s to task TASK_AMF_APP",
-        itti_msg_response->get_msg_name());
+    int ret = itti_inst->send_msg(itti_msg_response);
+    if (RETURNok != ret) {
+      Logger::amf_sbi().error(
+          "Could not send ITTI message %s to task TASK_AMF_APP",
+          itti_msg_response->get_msg_name());
+    }
   }
 }
 
@@ -1256,16 +1259,19 @@ void amf_sbi::handle_itti_message(itti_sbi_retrieve_am_data& itti_msg) {
   // TODO: process headers (Cache-Control, ETag, Last-Modified)
 
   // Send response to APP to process
-  std::shared_ptr<itti_sbi_retrieve_am_data_response> itti_msg_response =
-      std::make_shared<itti_sbi_retrieve_am_data_response>(
-          TASK_AMF_SBI, TASK_AMF_APP);
-  itti_msg_response->response_data = response_data;
+  if (http_response.status_code !=
+      oai::common::sbi::http_status_code::NO_RESPONSE) {
+    std::shared_ptr<itti_sbi_retrieve_am_data_response> itti_msg_response =
+        std::make_shared<itti_sbi_retrieve_am_data_response>(
+            TASK_AMF_SBI, TASK_AMF_APP);
+    itti_msg_response->response_data = response_data;
 
-  int ret = itti_inst->send_msg(itti_msg_response);
-  if (RETURNok != ret) {
-    Logger::amf_sbi().error(
-        "Could not send ITTI message %s to task TASK_AMF_APP",
-        itti_msg_response->get_msg_name());
+    int ret = itti_inst->send_msg(itti_msg_response);
+    if (RETURNok != ret) {
+      Logger::amf_sbi().error(
+          "Could not send ITTI message %s to task TASK_AMF_APP",
+          itti_msg_response->get_msg_name());
+    }
   }
 }
 
