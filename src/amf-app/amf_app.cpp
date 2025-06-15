@@ -1789,7 +1789,7 @@ void amf_app::add_promise(
 
 //---------------------------------------------------------------------------------------------
 void amf_app::store_promise(
-    uint32_t pid, const boost::shared_ptr<boost::promise<nlohmann::json>>& p) {
+    uint32_t& pid, const boost::shared_ptr<boost::promise<nlohmann::json>>& p) {
   // Generate promise ID
   pid = generate_promise_id();
   std::unique_lock lock(m_curl_handle_responses_sbi);

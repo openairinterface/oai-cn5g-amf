@@ -636,7 +636,8 @@ class amf_app {
    * @return void
    */
   void store_promise(
-      uint32_t pid, const boost::shared_ptr<boost::promise<nlohmann::json>>& p);
+      uint32_t& pid,
+      const boost::shared_ptr<boost::promise<nlohmann::json>>& p);
 
   /*
    * Trigger the response from API server
