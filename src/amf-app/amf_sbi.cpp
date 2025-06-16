@@ -1213,8 +1213,11 @@ void amf_sbi::handle_itti_message(itti_sbi_register_with_udm& itti_msg) {
   }
 
   // Send response to APP to process
-  if (http_response.status_code !=
-      oai::common::sbi::http_status_code::NO_RESPONSE) {
+  if ((http_response.status_code == oai::common::sbi::http_status_code::OK) or
+      (http_response.status_code ==
+       oai::common::sbi::http_status_code::CREATED) or
+      (http_response.status_code ==
+       oai::common::sbi::http_status_code::ACCEPTED)) {
     std::shared_ptr<itti_sbi_register_with_udm_response> itti_msg_response =
         std::make_shared<itti_sbi_register_with_udm_response>(
             TASK_AMF_SBI, TASK_AMF_APP);
@@ -1259,8 +1262,11 @@ void amf_sbi::handle_itti_message(itti_sbi_retrieve_am_data& itti_msg) {
   // TODO: process headers (Cache-Control, ETag, Last-Modified)
 
   // Send response to APP to process
-  if (http_response.status_code !=
-      oai::common::sbi::http_status_code::NO_RESPONSE) {
+  if ((http_response.status_code == oai::common::sbi::http_status_code::OK) or
+      (http_response.status_code ==
+       oai::common::sbi::http_status_code::CREATED) or
+      (http_response.status_code ==
+       oai::common::sbi::http_status_code::ACCEPTED)) {
     std::shared_ptr<itti_sbi_retrieve_am_data_response> itti_msg_response =
         std::make_shared<itti_sbi_retrieve_am_data_response>(
             TASK_AMF_SBI, TASK_AMF_APP);
