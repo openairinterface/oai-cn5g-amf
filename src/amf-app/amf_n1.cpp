@@ -3071,7 +3071,7 @@ void amf_n1::security_mode_complete_handle(
 
   // Step 14b. Figure 4.2.2.2.2-1: Registration procedure@3GPP TS 23.502
   // TODO:Retrieving the Access and Mobility Subscription data from UDM
-  // get_access_and_mobility_subscription_data(uc);
+  get_access_and_mobility_subscription_data(uc);
 
   // TODO: Step 14b. Figure 4.2.2.2.2-1: Registration procedure@3GPP TS 23.502
   // Retrieving SMF Selection Subscription data from UDM

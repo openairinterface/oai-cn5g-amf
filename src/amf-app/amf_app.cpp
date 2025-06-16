@@ -21,6 +21,7 @@
 
 #include "amf_app.hpp"
 
+#include <chrono>
 #include <gmp.h>
 
 #include <boost/uuid/random_generator.hpp>
@@ -43,7 +44,9 @@
 #include "ngap_app.hpp"
 #include "output_wrapper.hpp"
 #include "utils.hpp"
+#include "AccessAndMobilitySubscriptionData.h"
 
+using namespace std::chrono;
 using namespace oai::ngap;
 using namespace oai::nas;
 using namespace amf_application;
@@ -1089,12 +1092,23 @@ void amf_app::handle_itti_message(itti_sbi_retrieve_am_data_response& r) {
     response_code = r.response_data[kSbiResponseHttpResponseCode].get<int>();
   }
 
-  if (response_code == oai::common::sbi::http_status_code::NO_CONTENT) {
-    // TODO:
-  } else if (response_code == oai::common::sbi::http_status_code::CREATED) {
-    // TODO:
-  } else if (response_code == oai::common::sbi::http_status_code::OK) {
-    // TODO:
+  if (response_code == oai::common::sbi::http_status_code::OK) {
+    // Store Access and Mobility Subscription Data
+    if (r.response_data.find(kSbiResponseJsonData) != r.response_data.end()) {
+      std::shared_ptr<ue_context> uc = {};
+      if (supi_2_ue_context(r.supi, uc)) {
+        try {
+          oai::model::udm::AccessAndMobilitySubscriptionData am_data = {};
+          from_json(r.response_data[kSbiResponseJsonData], am_data);
+          //  uc->am_data =
+          //  std::make_optional<oai::model::udm::AccessAndMobilitySubscriptionData>(am_data);
+        } catch (std::exception& e) {
+          Logger::amf_n1().warn(
+              "Could not parse Access and Mobility Subscription Data from "
+              "Json");
+        }
+      }
+    }
   } else {
     Logger::amf_app().debug(
         "AMF has failed to get Access and Mobility Subscription Data from "
