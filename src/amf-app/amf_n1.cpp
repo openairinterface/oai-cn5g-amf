@@ -6081,11 +6081,10 @@ void amf_n1::get_access_and_mobility_subscription_data(
         "Could not send ITTI message %s to task TASK_AMF_SBI",
         itti_msg->get_msg_name());
   }
-  /*
+
   bool is_result_available = true;
 
   oai::model::udm::AccessAndMobilitySubscriptionData am_data = {};
-
 
   // Wait for the response available and process accordingly
   std::optional<nlohmann::json> result_opt = std::nullopt;
@@ -6131,5 +6130,4 @@ void amf_n1::get_access_and_mobility_subscription_data(
     Logger::amf_n1().warn(
         "Could not get Access and Mobility Subscription Data from UDM");
   }
-  */
 }

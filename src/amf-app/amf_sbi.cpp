@@ -1261,12 +1261,9 @@ void amf_sbi::handle_itti_message(itti_sbi_retrieve_am_data& itti_msg) {
   response_data[kSbiResponseJsonData]         = http_response.get_json();
   // TODO: process headers (Cache-Control, ETag, Last-Modified)
 
+  /*
   // Send response to APP to process
-  if ((http_response.status_code == oai::common::sbi::http_status_code::OK) or
-      (http_response.status_code ==
-       oai::common::sbi::http_status_code::CREATED) or
-      (http_response.status_code ==
-       oai::common::sbi::http_status_code::ACCEPTED)) {
+  if (http_response.status_code == oai::common::sbi::http_status_code::OK) {
     std::shared_ptr<itti_sbi_retrieve_am_data_response> itti_msg_response =
         std::make_shared<itti_sbi_retrieve_am_data_response>(
             TASK_AMF_SBI, TASK_AMF_APP);
@@ -1278,6 +1275,12 @@ void amf_sbi::handle_itti_message(itti_sbi_retrieve_am_data& itti_msg) {
           "Could not send ITTI message %s to task TASK_AMF_APP",
           itti_msg_response->get_msg_name());
     }
+  }
+  */
+  // Notify to the result
+  if (itti_msg.promise_id > 0) {
+    amf_app_inst->trigger_process_response(itti_msg.promise_id, response_data);
+    return;
   }
 }
 
