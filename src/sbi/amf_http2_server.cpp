@@ -506,7 +506,7 @@ void amf_http2_server::start() {
     server.listen_and_serve(ec, m_address, std::to_string(m_port));
   }
 
-  Logger::amf_server().error("HTTP2 server status: %s", ec.message());
+  Logger::amf_server().debug("HTTP2 server status: %s", ec.message());
 
   running_server = false;
   Logger::amf_server().info("HTTP2 server fully stopped");
