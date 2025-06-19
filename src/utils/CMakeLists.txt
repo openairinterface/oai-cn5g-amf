@@ -29,13 +29,13 @@ include_directories(${SRC_TOP_DIR}/${MOUNTED_COMMON}/3gpp)
 include_directories(${SRC_TOP_DIR}/${MOUNTED_COMMON}/common)
 include_directories(${SRC_TOP_DIR}/${MOUNTED_COMMON}/common.cmake)
 include_directories(${SRC_TOP_DIR}/${MOUNTED_COMMON}/logger)
-include_directories(${SRC_TOP_DIR}/${MOUNTED_COMMON}/model/amf)
+include_directories(${SRC_TOP_DIR}/${MOUNTED_COMMON}/model)
 include_directories(${SRC_TOP_DIR}/${MOUNTED_COMMON}/nas/common)
 include_directories(${SRC_TOP_DIR}/${MOUNTED_COMMON}/ngap/libngap)
 include_directories(${SRC_TOP_DIR}/${MOUNTED_COMMON}/utils)
 include_directories(${SRC_TOP_DIR}/${MOUNTED_COMMON}/utils/bstr)
 
-include(${SRC_TOP_DIR}/${MOUNTED_COMMON}/model/amf/amf.cmake)
+include(${SRC_TOP_DIR}/${MOUNTED_COMMON}/model/amf.cmake)
 
 add_library (AMF_UTILS STATIC
  ${CMAKE_CURRENT_SOURCE_DIR}/3gpp_conversions.cpp
