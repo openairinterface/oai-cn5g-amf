@@ -40,7 +40,7 @@
 
 using namespace nghttp2::asio_http2;
 using namespace nghttp2::asio_http2::server;
-using namespace oai::model::amf;
+using namespace oai::_3gpp::model;
 
 class amf_http2_server {
  public:

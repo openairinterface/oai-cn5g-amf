@@ -540,9 +540,9 @@ void amf_sbi::handle_pdu_session_initial_request(
   session_estb_request["n1SmMsg"]["contentId"] = oai::utils::N1_SM_CONTENT_ID;
 
   // GUAMI
-  oai::model::common::Guami guami           = {};
-  oai::model::common::PlmnIdNid plmn_id_nid = {};
-  std::string amf_id                        = {};
+  oai::_3gpp::model::Guami guami           = {};
+  oai::_3gpp::model::PlmnIdNid plmn_id_nid = {};
+  std::string amf_id                       = {};
   amf_conv::get_amf_id(
       amf_cfg->guami.region_id, amf_cfg->guami.amf_set_id,
       amf_cfg->guami.amf_pointer, amf_id);
@@ -555,21 +555,21 @@ void amf_sbi::handle_pdu_session_initial_request(
   session_estb_request["guami"] = guami_json;
 
   // UE location
-  oai::model::common::UserLocation user_location = {};
-  oai::model::common::NrLocation nr_location     = {};
-  oai::model::common::Tai tai                    = {};
-  oai::model::common::PlmnId plmn_id             = {};
+  oai::_3gpp::model::UserLocation user_location = {};
+  oai::_3gpp::model::NrLocation nr_location     = {};
+  oai::_3gpp::model::Tai tai                    = {};
+  oai::_3gpp::model::PlmnId plmn_id             = {};
   plmn_id.setMcc(psc->plmn.mcc);
   plmn_id.setMnc(psc->plmn.mnc);
   tai.setPlmnId(plmn_id);
   tai.setTac(std::to_string(uc->tai.tac));
-  oai::model::common::GNbId gnb_id = {};
+  oai::_3gpp::model::GNbId gnb_id = {};
   gnb_id.setBitLength(32);
   gnb_id.setGNBValue(std::to_string(uc->gnb_id));
-  oai::model::common::GlobalRanNodeId global_ran_node_id = {};
+  oai::_3gpp::model::GlobalRanNodeId global_ran_node_id = {};
   global_ran_node_id.setGNbId(gnb_id);
   global_ran_node_id.setPlmnId(plmn_id);
-  oai::model::common::Ncgi ncgi = {};
+  oai::_3gpp::model::Ncgi ncgi = {};
   // ncgi.setNid(""); //TODO:
   std::string nr_cell_id_str = {};
   amf_conv::int_to_string_hex(uc->cgi.nrCellId, nr_cell_id_str, 9);
@@ -648,10 +648,13 @@ void amf_sbi::handle_itti_message(itti_sbi_notify_subscribed_event& itti_msg) {
     auto report_lists                = nlohmann::json::array();
     nlohmann::json report            = {};
 
-    std::vector<oai::model::amf::AmfEventReport> event_reports = {};
+    std::vector<oai::_3gpp::model::AmfEventReport> event_reports = {};
     i.get_reports(event_reports);
     for (auto r : event_reports) {
-      report["type"]            = r.getType().get_value();
+      auto report_type                = r.getType().getValue();
+      nlohmann::json report_type_json = {};
+      to_json(report_type_json, report_type);
+      report["type"]            = report_type_json;
       report["state"]["active"] = true;
       if (r.supiIsSet()) {
         report["supi"] = r.getSupi();
@@ -667,17 +670,20 @@ void amf_sbi::handle_itti_message(itti_sbi_notify_subscribed_event& itti_msg) {
         report["cmInfoList"] = r.getCmInfoList();
       }
       if (r.reachabilityIsSet()) {
-        report["reachability"] = r.getReachability().get_value();
+        auto report_reachability = r.getReachability().getValue();
+        nlohmann::json report_reachability_json = {};
+        to_json(report_reachability_json, report_reachability);
+        report["reachability"] = report_reachability_json;
       }
       if (r.lossOfConnectReasonIsSet()) {
-        report["lossOfConnectReason"] = r.getLossOfConnectReason().get_value();
+        auto report_loss_of_connect_reason =
+            r.getLossOfConnectReason().getValue();
+        nlohmann::json report_loss_of_connect_reason_json = {};
+        to_json(
+            report_loss_of_connect_reason_json, report_loss_of_connect_reason);
+        report["lossOfConnectReason"] = report_loss_of_connect_reason_json;
       }
-      if (r.ranUeNgapIdIsSet()) {
-        report["ranUeNgapId"] = r.getRanUeNgapId();
-      }
-      if (r.amfUeNgapIdIsSet()) {
-        report["amfUeNgapId"] = r.getAmfUeNgapId();
-      }
+
       if (r.commFailureIsSet()) {
         report["commFailure"] = r.getCommFailure();
       }
@@ -1289,7 +1295,7 @@ bool amf_sbi::discover_smf(
         // check with sNSSAI
         if (instance_json.find("sNssais") != instance_json.end()) {
           for (auto& s : instance_json["sNssais"].items()) {
-            oai::model::common::Snssai snssai_model;
+            oai::_3gpp::model::Snssai snssai_model;
             from_json(s.value(), snssai_model);
             if (snssai_model.getSst() == snssai.sst &&
                 snssai_model.getSdInt() == snssai.get_sd_int()) {
@@ -1311,7 +1317,7 @@ bool amf_sbi::discover_smf(
               for (auto& s : smf_info["sNssaiSmfInfoList"].items()) {
                 auto snssai_json = s.value();
                 if (snssai_json.find("sNssai") != snssai_json.end()) {
-                  oai::model::common::Snssai snssai_model;
+                  oai::_3gpp::model::Snssai snssai_model;
                   from_json(snssai_json["sNssai"], snssai_model);
                   if (snssai_model.getSst() == snssai.sst &&
                       snssai_model.getSdInt() == snssai.get_sd_int()) {

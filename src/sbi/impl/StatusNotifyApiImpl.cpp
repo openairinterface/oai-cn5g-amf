@@ -45,7 +45,7 @@ namespace oai {
 namespace amf {
 namespace api {
 
-using namespace oai::model::amf;
+using namespace oai::_3gpp::model;
 
 StatusNotifyApiImpl::StatusNotifyApiImpl(
     std::shared_ptr<Pistache::Rest::Router> rtr,

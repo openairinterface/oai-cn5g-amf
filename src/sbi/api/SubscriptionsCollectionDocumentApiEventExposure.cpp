@@ -20,8 +20,8 @@ extern std::unique_ptr<oai::config::amf_config> amf_cfg;
 
 namespace oai::amf::api {
 
-using namespace oai::model::common::helpers;
-using namespace oai::model::amf;
+using namespace oai::_3gpp::model::helpers;
+using namespace oai::_3gpp::model;
 
 SubscriptionsCollectionDocumentApiEventExposure::
     SubscriptionsCollectionDocumentApiEventExposure(

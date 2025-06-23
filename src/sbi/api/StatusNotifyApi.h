@@ -38,7 +38,7 @@
 
 namespace oai::amf::api {
 
-using namespace oai::model::amf;
+using namespace oai::_3gpp::model;
 
 class StatusNotifyApi {
  public:

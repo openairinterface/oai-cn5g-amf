@@ -271,7 +271,7 @@ class itti_sbi_update_nf_instance_request : public itti_sbi_msg {
   virtual ~itti_sbi_update_nf_instance_request(){};
   const char* get_msg_name() { return "SBI_UPDATE_NF_INSTANCE_REQUEST"; };
 
-  std::vector<oai::model::common::PatchItem> patch_items;
+  std::vector<oai::_3gpp::model::PatchItem> patch_items;
   std::string amf_instance_id;
   std::string nrf_uri;
 };
@@ -348,7 +348,7 @@ class itti_sbi_network_slice_selection_information : public itti_sbi_msg {
   };
 
   std::string nf_instance_id;
-  oai::model::amf::SliceInfoForRegistration slice_info;
+  oai::_3gpp::model::SliceInfoForRegistration slice_info;
   tai_t tai;
   uint32_t promise_id;
 };
@@ -427,7 +427,7 @@ class itti_sbi_n2_info_notify : public itti_sbi_msg {
   const char* get_msg_name() { return "SBI_N2_INFO_NOTIFY"; };
 
   std::string nf_uri;
-  oai::model::amf::N2InformationNotification n2_info_notification;
+  oai::_3gpp::model::N2InformationNotification n2_info_notification;
   std::optional<bstring> n1_message;
   std::optional<bstring> n2_info;
 };
@@ -509,7 +509,7 @@ class itti_sbi_n1_message_notification : public itti_sbi_msg {
   virtual ~itti_sbi_n1_message_notification(){};
   const char* get_msg_name() { return "SBI_N1_MESSAGE_NOTIFICATION"; };
 
-  oai::model::amf::N1MessageNotification notification_msg;
+  oai::_3gpp::model::N1MessageNotification notification_msg;
   std::string ue_id;
   std::string n1sm;
 };
@@ -539,7 +539,7 @@ class itti_sbi_n1n2_message_subscribe : public itti_sbi_msg {
   const char* get_msg_name() { return "SBI_N1N2_MESSAGE_SUBSCRIBE"; };
 
   std::string ue_cxt_id;
-  oai::model::amf::UeN1N2InfoSubscriptionCreateData subscription_data;
+  oai::_3gpp::model::UeN1N2InfoSubscriptionCreateData subscription_data;
   uint32_t promise_id;
 };
 
@@ -591,7 +591,7 @@ class itti_sbi_non_ue_n2_info_subscribe : public itti_sbi_msg {
   virtual ~itti_sbi_non_ue_n2_info_subscribe(){};
   const char* get_msg_name() { return "NON UE N2 INFO SUBSCRIBE"; };
 
-  oai::model::amf::NonUeN2InfoSubscriptionCreateData subscription_data;
+  oai::_3gpp::model::NonUeN2InfoSubscriptionCreateData subscription_data;
   uint32_t promise_id;
 };
 
@@ -677,7 +677,7 @@ class itti_sbi_pdu_session_release_notif : public itti_sbi_msg {
   uint32_t promise_id;
   std::string ue_id;
   uint8_t pdu_session_id;
-  oai::model::amf::SmContextStatusNotification smContextStatusNotification;
+  oai::_3gpp::model::SmContextStatusNotification smContextStatusNotification;
 };
 
 //-----------------------------------------------------------------------------
@@ -735,7 +735,7 @@ class itti_sbi_ue_authentication_request : public itti_sbi_msg {
   const char* get_msg_name() { return "SBI_UE_AUTHENTICATION_REQUEST"; };
 
   uint32_t promise_id;
-  oai::model::amf::AuthenticationInfo auth_info;
+  oai::_3gpp::model::AuthenticationInfo auth_info;
 };
 
 //-----------------------------------------------------------------------------

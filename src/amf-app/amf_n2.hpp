@@ -394,16 +394,17 @@ class amf_n2 : public oai::ngap::ngap_app {
   /*
    * Fill the content of N2InformationNotification with the corresponding info
    * @param [const std::string&] subscription_id: Subscription ID
-   * @param [const oai::model::amf::NgapIeType_anyOf::eNgapIeType_anyOf&]
+   * @param [const oai::_3gpp::model::NgapIeType_anyOf::eNgapIeType_anyOf&]
    * ngap_ie_type: Type of NGAP Ie
-   * @param [oai::model::amf::N2InformationNotification&] n2_info_notification:
-   * N2InformationNotification
+   * @param [oai::_3gpp::model::N2InformationNotification&]
+   * n2_info_notification: N2InformationNotification
    * @return void
    */
   void fill_n2_information_notification(
       const std::string& subscription_id,
-      const oai::model::amf::NgapIeType_anyOf::eNgapIeType_anyOf& ngap_ie_type,
-      oai::model::amf::N2InformationNotification& n2_info_notification);
+      const oai::_3gpp::model::NgapIeType_anyOf::eNgapIeType_anyOf&
+          ngap_ie_type,
+      oai::_3gpp::model::N2InformationNotification& n2_info_notification);
 
  private:
   // <RAN UE NGAP ID, gNB ID> <-> UE Context

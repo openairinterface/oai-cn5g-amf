@@ -222,7 +222,7 @@ s_nssai::s_nssai(uint8_t sst) {
   m_sst = int_config_value(AMF_CONFIG_SST, sst);
   m_sst.set_validation_interval(SST_MIN_VALUE, SST_MAX_VALUE);
   m_sd =
-      string_config_value(AMF_CONFIG_SD, oai::model::common::SD_DEFAULT_VALUE);
+      string_config_value(AMF_CONFIG_SD, oai::_3gpp::model::SD_DEFAULT_VALUE);
   m_sd.set_validation_regex(SD_REGEX);
   m_set = true;
 }
@@ -342,7 +342,7 @@ void plmn_support_item::from_yaml(const YAML::Node& node) {
       snssai.from_yaml(node[AMF_CONFIG_NSSAI][i]);
       m_nssai.push_back(snssai);
 
-      oai::model::common::Snssai s_nssai_model = {};
+      oai::_3gpp::model::Snssai s_nssai_model = {};
       nlohmann::json j =
           oai::utils::conv::yaml_to_json(node[AMF_CONFIG_NSSAI][i], false);
       nlohmann::from_json(j, s_nssai_model);
