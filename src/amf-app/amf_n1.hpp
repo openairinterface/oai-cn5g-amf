@@ -933,6 +933,21 @@ class amf_n1 {
   void set_pdu_session_reactivation_result(
       uint8_t pdu_session_id, uint16_t& pdu_session_reactivation_result);
 
+  /*
+   * Trigger AMF Registration for 3GPP Access towards UDM
+   * @param [std::shared_ptr<ue_context>&] uc: UE context
+   * @return void
+   */
+  void register_3gpp_access(std::shared_ptr<ue_context>& uc) const;
+
+  /*
+   * Retrieve a UE's Access and Mobility Subscription Data from UDM
+   * @param [std::shared_ptr<ue_context>&] uc: UE context
+   * @return void
+   */
+  void get_access_and_mobility_subscription_data(
+      std::shared_ptr<ue_context>& uc) const;
+
   // for Event Handling
   amf_event event_sub;
   bs2::connection ee_ue_location_report_connection;

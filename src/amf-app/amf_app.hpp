@@ -215,6 +215,20 @@ class amf_app {
   void handle_itti_message(itti_sbi_deregister_nf_instance_response& r);
 
   /*
+   * Handle ITTI message (Register with UDM Response)
+   * @param [itti_sbi_register_with_udm_response&]: ITTI message
+   * @return void
+   */
+  void handle_itti_message(itti_sbi_register_with_udm_response& r);
+
+  /*
+   * Handle ITTI message (Retrieve AM Data Response)
+   * @param [itti_sbi_retrieve_am_data_response&]: ITTI message
+   * @return void
+   */
+  void handle_itti_message(itti_sbi_retrieve_am_data_response& r);
+
+  /*
    * Get the current AMF's configuration
    * @param [nlohmann::json&]: json_data: Store AMF configuration
    * @return true if success, otherwise return false
@@ -612,6 +626,18 @@ class amf_app {
   static uint64_t generate_promise_id() {
     return oai::utils::uint_uid_generator<uint64_t>::get_instance().get_uid();
   }
+
+  /*
+   * Generate an unique value for promise id and associate this generated id
+   * with the promise itself
+   * @param [const uint32_t] pid: promise id
+   * @param [const boost::shared_ptr<boost::promise<nlohmann::json>>&] p:
+   * promise
+   * @return void
+   */
+  void store_promise(
+      uint32_t& pid,
+      const boost::shared_ptr<boost::promise<nlohmann::json>>& p);
 
   /*
    * Trigger the response from API server
