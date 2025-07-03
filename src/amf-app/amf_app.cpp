@@ -21,6 +21,7 @@
 
 #include "amf_app.hpp"
 
+#include <chrono>
 #include <gmp.h>
 
 #include <boost/uuid/random_generator.hpp>
@@ -43,7 +44,9 @@
 #include "ngap_app.hpp"
 #include "output_wrapper.hpp"
 #include "utils.hpp"
+#include "AccessAndMobilitySubscriptionData.h"
 
+using namespace std::chrono;
 using namespace oai::ngap;
 using namespace oai::nas;
 using namespace amf_application;
@@ -222,6 +225,20 @@ void amf_app_task(void*) {
         Logger::amf_app().debug("Received SBI_DEREGISTER_NF_INSTANCE_RESPONSE");
         itti_sbi_deregister_nf_instance_response* m =
             dynamic_cast<itti_sbi_deregister_nf_instance_response*>(msg);
+        amf_app_inst->handle_itti_message(std::ref(*m));
+      } break;
+
+      case SBI_REGISTER_WITH_UDM_RESPONSE: {
+        Logger::amf_app().debug("Received SBI_REGISTER_WITH_UDM_RESPONSE");
+        itti_sbi_register_with_udm_response* m =
+            dynamic_cast<itti_sbi_register_with_udm_response*>(msg);
+        amf_app_inst->handle_itti_message(std::ref(*m));
+      } break;
+
+      case SBI_RETRIEVE_AM_DATA_RESPONSE: {
+        Logger::amf_app().debug("Received SBI_RETRIEVE_AM_DATA_RESPONSE");
+        itti_sbi_retrieve_am_data_response* m =
+            dynamic_cast<itti_sbi_retrieve_am_data_response*>(msg);
         amf_app_inst->handle_itti_message(std::ref(*m));
       } break;
 
@@ -1035,6 +1052,70 @@ void amf_app::handle_itti_message(itti_sbi_update_nf_instance_response& r) {
   }
 }
 
+//------------------------------------------------------------------------------
+void amf_app::handle_itti_message(itti_sbi_register_with_udm_response& r) {
+  Logger::amf_app().debug("Handle SBI_REGISTER_WITH_UDM_RESPONSE response");
+
+  uint32_t response_code = oai::common::sbi::http_status_code::NO_RESPONSE;
+  if (r.response_data.find(kSbiResponseHttpResponseCode) !=
+      r.response_data.end()) {
+    response_code = r.response_data[kSbiResponseHttpResponseCode].get<int>();
+  }
+
+  if (response_code == oai::common::sbi::http_status_code::NO_CONTENT) {
+    // TODO:
+  } else if (response_code == oai::common::sbi::http_status_code::CREATED) {
+    // Store location
+    if (r.response_data.find(kSbiResponseHeaderLocation) !=
+        r.response_data.end()) {
+      std::shared_ptr<ue_context> uc = {};
+      if (supi_2_ue_context(r.supi, uc)) {
+        uc->amf_3gpp_access_location =
+            r.response_data[kSbiResponseHeaderLocation].get<std::string>();
+      }
+    }
+    // TODO:
+  } else if (response_code == oai::common::sbi::http_status_code::OK) {
+    // TODO:
+  } else {
+    Logger::amf_app().debug("AMF has failed to register to UDM.");
+  }
+}
+
+//------------------------------------------------------------------------------
+void amf_app::handle_itti_message(itti_sbi_retrieve_am_data_response& r) {
+  Logger::amf_app().debug("Handle SBI_RETRIEVE_AM_DATA_RESPONSE response");
+
+  uint32_t response_code = oai::common::sbi::http_status_code::NO_RESPONSE;
+  if (r.response_data.find(kSbiResponseHttpResponseCode) !=
+      r.response_data.end()) {
+    response_code = r.response_data[kSbiResponseHttpResponseCode].get<int>();
+  }
+
+  if (response_code == oai::common::sbi::http_status_code::OK) {
+    // Store Access and Mobility Subscription Data
+    if (r.response_data.find(kSbiResponseJsonData) != r.response_data.end()) {
+      std::shared_ptr<ue_context> uc = {};
+      if (supi_2_ue_context(r.supi, uc)) {
+        try {
+          oai::model::udm::AccessAndMobilitySubscriptionData am_data = {};
+          from_json(r.response_data[kSbiResponseJsonData], am_data);
+          //  uc->am_data =
+          //  std::make_optional<oai::model::udm::AccessAndMobilitySubscriptionData>(am_data);
+        } catch (std::exception& e) {
+          Logger::amf_n1().warn(
+              "Could not parse Access and Mobility Subscription Data from "
+              "Json");
+        }
+      }
+    }
+  } else {
+    Logger::amf_app().debug(
+        "AMF has failed to get Access and Mobility Subscription Data from "
+        "UDM.");
+  }
+}
+
 //---------------------------------------------------------------------------------------------
 bool amf_app::read_amf_configuration(nlohmann::json& json_data) {
   amf_cfg->to_json(json_data);
@@ -1717,6 +1798,15 @@ void amf_app::timer_nrf_registration_timeout(
 void amf_app::add_promise(
     const uint32_t pid,
     const boost::shared_ptr<boost::promise<nlohmann::json>>& p) {
+  std::unique_lock lock(m_curl_handle_responses_sbi);
+  curl_handle_responses_sbi.emplace(pid, p);
+}
+
+//---------------------------------------------------------------------------------------------
+void amf_app::store_promise(
+    uint32_t& pid, const boost::shared_ptr<boost::promise<nlohmann::json>>& p) {
+  // Generate promise ID
+  pid = generate_promise_id();
   std::unique_lock lock(m_curl_handle_responses_sbi);
   curl_handle_responses_sbi.emplace(pid, p);
 }

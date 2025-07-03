@@ -92,6 +92,7 @@ class amf_http2_server {
       nlohmann::json& configuration_info, const response& response);
 
   void stop();
+  void send_response(const response& res, uint32_t response_code);
 
  private:
   oai::utils::uint_generator<uint32_t> m_promise_id_generator;

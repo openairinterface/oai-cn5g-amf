@@ -147,4 +147,13 @@ std::string amf_sbi_helper::get_udm_amf_3gpp_access_registration_uri(
          fmt::format(fmr_format_str, supi);
 }
 
+//------------------------------------------------------------------------------
+std::string amf_sbi_helper::get_udm_am_data_retrieval_uri(
+    const nf_addr_t& udm_addr, const std::string& supi) {
+  std::string fmr_format_str = {};
+  get_fmt_format_form(UdmSdmPathSupiAmData, fmr_format_str);
+  return udm_addr.uri_root + UdmSdmBase + udm_addr.api_version +
+         fmt::format(fmr_format_str, supi);
+}
+
 }  // namespace oai::amf::api
