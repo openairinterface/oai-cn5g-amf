@@ -244,6 +244,17 @@ void amf_sbi_task(void*) {
         amf_sbi_inst->handle_itti_message(std::ref(*m));
       } break;
 
+      case SBI_RETRIEVE_SMF_SELECTION_SUBSCRIPTION_DATA: {
+        Logger::amf_sbi().info(
+            "Receive SMF Selection Subscription Data Retrieval message, "
+            "handling ...");
+        itti_sbi_retrieve_smf_selection_subscription_data* m =
+            dynamic_cast<itti_sbi_retrieve_smf_selection_subscription_data*>(
+                msg);
+        if (!m) break;
+        amf_sbi_inst->handle_itti_message(std::ref(*m));
+      } break;
+
       case TERMINATE: {
         if (itti_msg_terminate* terminate =
                 dynamic_cast<itti_msg_terminate*>(msg)) {
@@ -1281,6 +1292,56 @@ void amf_sbi::handle_itti_message(itti_sbi_retrieve_am_data& itti_msg) {
   if (itti_msg.promise_id > 0) {
     amf_app_inst->trigger_process_response(itti_msg.promise_id, response_data);
     return;
+  }
+}
+
+//------------------------------------------------------------------------------
+void amf_sbi::handle_itti_message(
+    itti_sbi_retrieve_smf_selection_subscription_data& itti_msg) {
+  Logger::amf_sbi().debug(
+      "Send SMF Selection Subscription Data Retrieval towards UDM");
+
+  std::string uri =
+      amf_sbi_helper::get_udm_smf_selection_subscription_data_retrieval_uri(
+          amf_cfg->udm_addr, itti_msg.supi);
+  nlohmann::json plmn_id = {};
+  to_json(plmn_id, itti_msg.plmn_id);
+  std::string parameters = {};
+  parameters             = "?plmn-id=" + plmn_id.dump();
+  uri += parameters;
+  Logger::amf_sbi().debug("URI %s", uri.c_str());
+
+  oai::http::response http_response = {};
+  send_http_request(uri, oai::common::sbi::method_e::GET, "", http_response);
+
+  Logger::amf_sbi().debug(
+      "SMF Selection Subscription Data Retrieval, response from UDM, HTTP "
+      "Code: %lu",
+      http_response.status_code);
+  Logger::amf_sbi().debug(
+      "SMF Selection Subscription Data Retrieval, response from UDM\n, %s ",
+      http_response.body);
+
+  nlohmann::json response_data                = {};
+  response_data[kSbiResponseHttpResponseCode] = http_response.status_code;
+  response_data[kSbiResponseJsonData]         = http_response.get_json();
+  // TODO: process headers (Cache-Control, ETag, Last-Modified)
+
+  // Send response to APP to process
+  if (http_response.status_code == oai::common::sbi::http_status_code::OK) {
+    std::shared_ptr<itti_sbi_retrieve_smf_selection_subscription_data_response>
+        itti_msg_response = std::make_shared<
+            itti_sbi_retrieve_smf_selection_subscription_data_response>(
+            TASK_AMF_SBI, TASK_AMF_APP);
+    itti_msg_response->supi          = itti_msg.supi;
+    itti_msg_response->response_data = response_data;
+
+    int ret = itti_inst->send_msg(itti_msg_response);
+    if (RETURNok != ret) {
+      Logger::amf_sbi().error(
+          "Could not send ITTI message %s to task TASK_AMF_APP",
+          itti_msg_response->get_msg_name());
+    }
   }
 }
 
