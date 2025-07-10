@@ -5933,7 +5933,7 @@ void amf_n1::set_pdu_session_reactivation_result(
 void amf_n1::register_3gpp_access(std::shared_ptr<ue_context>& uc) const {
   Logger::amf_n1().debug("AMF registers for 3GPP access with UDM");
 
-  oai::model::udm::Amf3GppAccessRegistration registration_data = {};
+  oai::_3gpp::model::Amf3GppAccessRegistration registration_data = {};
   // AMF Instance ID
   registration_data.setAmfInstanceId(amf_app_inst->get_nf_instance());
   // Callback URI
@@ -5951,8 +5951,8 @@ void amf_n1::register_3gpp_access(std::shared_ptr<ue_context>& uc) const {
   registration_data.setInitialRegistrationInd(true);
   // TODO: Pei
   // Guami
-  oai::model::common::Guami guami       = {};
-  oai::model::common::PlmnIdNid plmn_id = {};
+  oai::_3gpp::model::Guami guami       = {};
+  oai::_3gpp::model::PlmnIdNid plmn_id = {};
   for (auto g : amf_cfg->guami_list) {
     if (boost::iequals(uc->tai.mcc, g.mcc) and
         boost::iequals(uc->tai.mnc, g.mnc)) {
@@ -5967,8 +5967,8 @@ void amf_n1::register_3gpp_access(std::shared_ptr<ue_context>& uc) const {
   }
   registration_data.setGuami(guami);
   // Rat type
-  oai::model::common::RatType rat_type = {};
-  rat_type.setEnumValue(oai::model::common::RatType_anyOf::eRatType_anyOf::NR);
+  oai::_3gpp::model::RatType rat_type = {};
+  rat_type.setEnumValue(oai::_3gpp::model::RatType_anyOf::eRatType_anyOf::NR);
   registration_data.setRatType(rat_type);
 
   // Send request to SBI to trigger registering to UDM and wait for the response
@@ -6065,7 +6065,7 @@ void amf_n1::get_access_and_mobility_subscription_data(
   Logger::amf_n1().debug(
       "Retrieving a UE's Access and Mobility Subscription Data from UDM");
 
-  oai::model::common::PlmnIdNid plmn_id = {};
+  oai::_3gpp::model::PlmnIdNid plmn_id = {};
   plmn_id.setMcc(uc->tai.mcc);
   plmn_id.setMnc(uc->tai.mnc);
 
@@ -6094,7 +6094,7 @@ void amf_n1::get_access_and_mobility_subscription_data(
 
   bool is_result_available = true;
 
-  oai::model::udm::AccessAndMobilitySubscriptionData am_data = {};
+  oai::_3gpp::model::AccessAndMobilitySubscriptionData am_data = {};
 
   // Wait for the response available and process accordingly
   std::optional<nlohmann::json> result_opt = std::nullopt;

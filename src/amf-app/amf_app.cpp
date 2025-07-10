@@ -1098,10 +1098,10 @@ void amf_app::handle_itti_message(itti_sbi_retrieve_am_data_response& r) {
       std::shared_ptr<ue_context> uc = {};
       if (supi_2_ue_context(r.supi, uc)) {
         try {
-          oai::model::udm::AccessAndMobilitySubscriptionData am_data = {};
+          oai::_3gpp::model::AccessAndMobilitySubscriptionData am_data = {};
           from_json(r.response_data[kSbiResponseJsonData], am_data);
           //  uc->am_data =
-          //  std::make_optional<oai::model::udm::AccessAndMobilitySubscriptionData>(am_data);
+          //  std::make_optional<oai::_3gpp::model::AccessAndMobilitySubscriptionData>(am_data);
         } catch (std::exception& e) {
           Logger::amf_n1().warn(
               "Could not parse Access and Mobility Subscription Data from "

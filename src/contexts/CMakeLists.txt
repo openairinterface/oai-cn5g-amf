@@ -31,7 +31,7 @@ include_directories(${SRC_TOP_DIR}/utils)
 include_directories(${SRC_TOP_DIR}/${MOUNTED_COMMON}/3gpp)
 include_directories(${SRC_TOP_DIR}/${MOUNTED_COMMON}/common)
 include_directories(${SRC_TOP_DIR}/${MOUNTED_COMMON}/logger)
-include_directories(${SRC_TOP_DIR}/${MOUNTED_COMMON}/model)
+#include_directories(${SRC_TOP_DIR}/${MOUNTED_COMMON}/model)
 include_directories(${SRC_TOP_DIR}/${MOUNTED_COMMON}/ngap/libngap)
 include_directories(${SRC_TOP_DIR}/${MOUNTED_COMMON}/ngap/libngap_ies)
 include_directories(${SRC_TOP_DIR}/${MOUNTED_COMMON}/ngap/ngap_ies)
@@ -47,3 +47,4 @@ add_library (CONTEXTS STATIC
   ${CMAKE_CURRENT_SOURCE_DIR}/ue_context.cpp
 )
 
+include(${SRC_TOP_DIR}/${MOUNTED_COMMON}/model/amf.cmake)

@@ -53,7 +53,7 @@ target_include_directories(AMF_APP PUBLIC ${SRC_TOP_DIR}/${MOUNTED_COMMON}/commo
 target_include_directories(AMF_APP PUBLIC ${SRC_TOP_DIR}/${MOUNTED_COMMON}/config)
 target_include_directories(AMF_APP PUBLIC ${SRC_TOP_DIR}/${MOUNTED_COMMON}/http)
 target_include_directories(AMF_APP PUBLIC ${SRC_TOP_DIR}/${MOUNTED_COMMON}/logger)
-target_include_directories(AMF_APP PUBLIC ${SRC_TOP_DIR}/${MOUNTED_COMMON}/model)
+#target_include_directories(AMF_APP PUBLIC ${SRC_TOP_DIR}/${MOUNTED_COMMON}/model)
 target_include_directories(AMF_APP PUBLIC ${SRC_TOP_DIR}/${MOUNTED_COMMON}/nas/ies)
 target_include_directories(AMF_APP PUBLIC ${SRC_TOP_DIR}/${MOUNTED_COMMON}/nas/common)
 target_include_directories(AMF_APP PUBLIC ${SRC_TOP_DIR}/${MOUNTED_COMMON}/nas/5gmm-msgs)

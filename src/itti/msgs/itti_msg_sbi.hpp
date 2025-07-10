@@ -836,7 +836,7 @@ class itti_sbi_retrieve_am_data : public itti_sbi_msg {
 
   uint32_t promise_id;
   std::string supi;
-  oai::model::common::PlmnIdNid plmn_id;
+  oai::_3gpp::model::PlmnIdNid plmn_id;
 };
 
 //-----------------------------------------------------------------------------
