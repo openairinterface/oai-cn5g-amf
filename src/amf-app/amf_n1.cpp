@@ -2445,11 +2445,11 @@ bool amf_n1::get_authentication_vectors_from_ausf(
   oai::utils::utils::free_wrapper((void**) &r5g_auth_data_hxresstar);
 
   std::map<std::string, LinksValueSchema>::iterator iter;
-  iter = ue_authentication_ctx.getLinks().find("5g-aka");
+  iter = (ue_authentication_ctx.getLinks()).find("5g-aka");
 
-  if (iter != ue_authentication_ctx.getLinks().end()) {
+  if (iter != (ue_authentication_ctx.getLinks()).end()) {
     nc->href = iter->second.getHref();
-    Logger::amf_n1().info("Links is: %s", nc->href.c_str());
+    Logger::amf_n1().info("Links is: %s", nc->href);
   } else {
     Logger::amf_n1().error("Not found 5G_AKA");
     return false;
