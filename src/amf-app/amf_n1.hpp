@@ -948,6 +948,9 @@ class amf_n1 {
   void get_access_and_mobility_subscription_data(
       std::shared_ptr<ue_context>& uc) const;
 
+  void get_smf_selection_subscription_data(
+      std::shared_ptr<ue_context>& uc) const;
+
   // for Event Handling
   amf_event event_sub;
   bs2::connection ee_ue_location_report_connection;

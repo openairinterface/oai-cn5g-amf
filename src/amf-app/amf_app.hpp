@@ -229,6 +229,15 @@ class amf_app {
   void handle_itti_message(itti_sbi_retrieve_am_data_response& r);
 
   /*
+   * Handle ITTI message (retrieve a UE's SMF Selection Subscription Data)
+   * @param [itti_sbi_retrieve_smf_selection_subscription_data_response&]: ITTI
+   * message
+   * @return void
+   */
+  void handle_itti_message(
+      itti_sbi_retrieve_smf_selection_subscription_data_response& r);
+
+  /*
    * Get the current AMF's configuration
    * @param [nlohmann::json&]: json_data: Store AMF configuration
    * @return true if success, otherwise return false
