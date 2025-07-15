@@ -876,7 +876,7 @@ class itti_sbi_retrieve_smf_selection_subscription_data : public itti_sbi_msg {
   };
 
   std::string supi;
-  oai::model::common::PlmnIdNid plmn_id;
+  oai::_3gpp::model::PlmnIdNid plmn_id;
 };
 
 //-----------------------------------------------------------------------------

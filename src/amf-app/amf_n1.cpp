@@ -6078,7 +6078,7 @@ void amf_n1::get_smf_selection_subscription_data(
     std::shared_ptr<ue_context>& uc) const {
   Logger::amf_n1().debug("Retrieving SMF Selection Subscription Data from UDM");
 
-  oai::model::common::PlmnIdNid plmn_id = {};
+  oai::_3gpp::model::PlmnIdNid plmn_id = {};
   plmn_id.setMcc(uc->tai.mcc);
   plmn_id.setMnc(uc->tai.mnc);
 

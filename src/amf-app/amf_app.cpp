@@ -1145,7 +1145,7 @@ void amf_app::handle_itti_message(
       std::shared_ptr<ue_context> uc = {};
       if (supi_2_ue_context(r.supi, uc)) {
         try {
-          oai::model::udm::SmfSelectionSubscriptionData
+          oai::_3gpp::model::SmfSelectionSubscriptionData
               smf_selection_subscription_data = {};
           from_json(
               r.response_data[kSbiResponseJsonData],
