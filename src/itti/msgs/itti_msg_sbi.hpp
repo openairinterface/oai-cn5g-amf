@@ -775,22 +775,17 @@ class itti_sbi_ue_authentication_confirmation : public itti_sbi_msg {
 //-----------------------------------------------------------------------------
 class itti_sbi_register_with_udm : public itti_sbi_msg {
  public:
-  itti_sbi_register_with_udm(
-      const task_id_t orig, const task_id_t dest, uint32_t pid)
-      : itti_sbi_msg(SBI_REGISTER_WITH_UDM, orig, dest),
-        promise_id(pid),
-        supi() {}
+  itti_sbi_register_with_udm(const task_id_t orig, const task_id_t dest)
+      : itti_sbi_msg(SBI_REGISTER_WITH_UDM, orig, dest), supi() {}
 
   itti_sbi_register_with_udm(const itti_sbi_register_with_udm& i)
       : itti_sbi_msg(i) {
-    promise_id        = i.promise_id;
     supi              = i.supi;
     registration_data = i.registration_data;
   }
   virtual ~itti_sbi_register_with_udm(){};
   const char* get_msg_name() { return "SBI_REGISTER_WITH_UDM"; };
 
-  uint32_t promise_id;
   std::string supi;
   nlohmann::json registration_data;  // Amf3GppAccessRegistration
 };
@@ -855,6 +850,56 @@ class itti_sbi_retrieve_am_data_response : public itti_sbi_msg {
   }
   virtual ~itti_sbi_retrieve_am_data_response(){};
   const char* get_msg_name() { return "SBI_RETRIEVE_AM_DATA_RESPONSE"; };
+
+  std::string supi;
+  nlohmann::json response_data;
+};
+
+//-----------------------------------------------------------------------------
+class itti_sbi_retrieve_smf_selection_subscription_data : public itti_sbi_msg {
+ public:
+  itti_sbi_retrieve_smf_selection_subscription_data(
+      const task_id_t orig, const task_id_t dest)
+      : itti_sbi_msg(SBI_RETRIEVE_SMF_SELECTION_SUBSCRIPTION_DATA, orig, dest),
+        supi(),
+        plmn_id() {}
+
+  itti_sbi_retrieve_smf_selection_subscription_data(
+      const itti_sbi_retrieve_smf_selection_subscription_data& i)
+      : itti_sbi_msg(i) {
+    supi    = i.supi;
+    plmn_id = i.plmn_id;
+  }
+  virtual ~itti_sbi_retrieve_smf_selection_subscription_data(){};
+  const char* get_msg_name() {
+    return "SBI_RETRIEVE_SMF_SELECTION_SUBSCRIPTION_DATA";
+  };
+
+  std::string supi;
+  oai::model::common::PlmnIdNid plmn_id;
+};
+
+//-----------------------------------------------------------------------------
+class itti_sbi_retrieve_smf_selection_subscription_data_response
+    : public itti_sbi_msg {
+ public:
+  itti_sbi_retrieve_smf_selection_subscription_data_response(
+      const task_id_t orig, const task_id_t dest)
+      : itti_sbi_msg(
+            SBI_RETRIEVE_SMF_SELECTION_SUBSCRIPTION_DATA_RESPONSE, orig, dest),
+        supi(),
+        response_data() {}
+
+  itti_sbi_retrieve_smf_selection_subscription_data_response(
+      const itti_sbi_retrieve_smf_selection_subscription_data_response& i)
+      : itti_sbi_msg(i) {
+    supi          = i.supi;
+    response_data = i.response_data;
+  }
+  virtual ~itti_sbi_retrieve_smf_selection_subscription_data_response(){};
+  const char* get_msg_name() {
+    return "SBI_RETRIEVE_SMF_SELECTION_SUBSCRIPTION_DATA_RESPONSE";
+  };
 
   std::string supi;
   nlohmann::json response_data;

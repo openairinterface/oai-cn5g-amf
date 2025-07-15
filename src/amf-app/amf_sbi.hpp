@@ -179,6 +179,15 @@ class amf_sbi {
   void handle_itti_message(itti_sbi_retrieve_am_data& itti_msg);
 
   /*
+   * Handle ITTI message to retrieve a UE's SMF Selection Subscription Data from
+   * UDM
+   * @param [itti_sbi_retrieve_smf_selection_subscription_data&]: ITTI message
+   * @return void
+   */
+  void handle_itti_message(
+      itti_sbi_retrieve_smf_selection_subscription_data& itti_msg);
+
+  /*
    * Handle request to create a new PDU Session
    * @param [const std::string&] supi: SUPI
    * @param [std::shared_ptr<pdu_session_context>&] psc: Pointer to the PDU

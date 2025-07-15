@@ -3070,11 +3070,12 @@ void amf_n1::security_mode_complete_handle(
   register_3gpp_access(uc);
 
   // Step 14b. Figure 4.2.2.2.2-1: Registration procedure@3GPP TS 23.502
-  // TODO:Retrieving the Access and Mobility Subscription data from UDM
+  // Retrieving the Access and Mobility Subscription data from UDM
   // get_access_and_mobility_subscription_data(uc);
 
-  // TODO: Step 14b. Figure 4.2.2.2.2-1: Registration procedure@3GPP TS 23.502
+  // Step 14b. Figure 4.2.2.2.2-1: Registration procedure@3GPP TS 23.502
   // Retrieving SMF Selection Subscription data from UDM
+  get_smf_selection_subscription_data(uc);
 
   // TODO: Step 14b. Figure 4.2.2.2.2-1: Registration procedure@3GPP TS 23.502
   // Retrieving UE context in SMF data and LCS mobile origination
@@ -5965,20 +5966,10 @@ void amf_n1::register_3gpp_access(std::shared_ptr<ue_context>& uc) const {
   nlohmann::json registration_data_json = {};
   to_json(registration_data_json, registration_data);
 
-  // Generate a promise and associate this promise to the ITTI message
-  uint32_t promise_id = {};
-  boost::shared_ptr<boost::promise<nlohmann::json>> p =
-      boost::make_shared<boost::promise<nlohmann::json>>();
-  amf_app_inst->store_promise(promise_id, p);
-  Logger::amf_n1().debug("Promise ID generated %d", promise_id);
-  boost::shared_future<nlohmann::json> f = p->get_future();
-
   std::shared_ptr<itti_sbi_register_with_udm> itti_msg =
-      std::make_shared<itti_sbi_register_with_udm>(
-          TASK_AMF_N1, TASK_AMF_SBI, promise_id);
+      std::make_shared<itti_sbi_register_with_udm>(TASK_AMF_N1, TASK_AMF_SBI);
 
   itti_msg->registration_data = registration_data_json;
-  itti_msg->promise_id        = promise_id;
   itti_msg->supi              = uc->supi;
 
   int ret = itti_inst->send_msg(itti_msg);
@@ -5987,66 +5978,6 @@ void amf_n1::register_3gpp_access(std::shared_ptr<ue_context>& uc) const {
         "Could not send ITTI message %s to task TASK_AMF_SBI",
         itti_msg->get_msg_name());
   }
-
-  /*
-  bool is_result_available = true;
-  // Wait for the response available and process accordingly
-  std::optional<nlohmann::json> result_opt = std::nullopt;
-  oai::utils::utils::wait_for_result(f, result_opt);
-  if (result_opt.has_value()) {
-    nlohmann::json result = result_opt.value();
-    Logger::amf_n1().debug("Got result for promise ID %ld", promise_id);
-    if (result.find(kSbiResponseJsonData) != result.end()) {
-      Logger::amf_n1().debug(
-          "Got Registration Response from UDM: %s",
-          result[kSbiResponseJsonData].dump());
-
-      uint32_t http_response_code =
-          oai::common::sbi::http_status_code::NO_RESPONSE;
-      if (result.find(kSbiResponseHttpResponseCode) != result.end()) {
-        http_response_code = result[kSbiResponseHttpResponseCode].get<int>();
-        if ((http_response_code == oai::common::sbi::http_status_code::OK) or
-            (http_response_code ==
-             oai::common::sbi::http_status_code::CREATED)) {
-          // Process the content
-          try {
-            from_json(result[kSbiResponseJsonData], registration_data);
-            is_result_available = true;
-          } catch (std::exception& e) {
-            Logger::amf_n1().warn(
-                "Could not parse Registration Response from Json");
-            is_result_available = false;
-          }
-
-          // Store location
-          if (http_response_code ==
-              oai::common::sbi::http_status_code::CREATED) {
-            if (result.find(kSbiResponseHeaderLocation) != result.end()) {
-              // Store location
-              uc->amf_3gpp_access_location =
-                  result[kSbiResponseHeaderLocation].get<std::string>();
-            }
-          }
-        } else if (
-            http_response_code !=
-            oai::common::sbi::http_status_code::NO_CONTENT) {
-          is_result_available = false;
-        }
-      }
-
-    } else {
-      is_result_available = false;
-    }
-
-  } else {
-    Logger::amf_n1().warn("Could not get Registration Response from UDM");
-    is_result_available = false;
-  }
-
-  if (!is_result_available) {
-    Logger::amf_n1().warn("Could not get Registration Response from UDM");
-  }
-  */
 }
 
 //------------------------------------------------------------------------------
@@ -6129,5 +6060,29 @@ void amf_n1::get_access_and_mobility_subscription_data(
   if (!is_result_available) {
     Logger::amf_n1().warn(
         "Could not get Access and Mobility Subscription Data from UDM");
+  }
+}
+
+//------------------------------------------------------------------------------
+void amf_n1::get_smf_selection_subscription_data(
+    std::shared_ptr<ue_context>& uc) const {
+  Logger::amf_n1().debug("Retrieving SMF Selection Subscription Data from UDM");
+
+  oai::model::common::PlmnIdNid plmn_id = {};
+  plmn_id.setMcc(uc->tai.mcc);
+  plmn_id.setMnc(uc->tai.mnc);
+
+  std::shared_ptr<itti_sbi_retrieve_smf_selection_subscription_data> itti_msg =
+      std::make_shared<itti_sbi_retrieve_smf_selection_subscription_data>(
+          TASK_AMF_N1, TASK_AMF_SBI);
+
+  itti_msg->supi    = uc->supi;
+  itti_msg->plmn_id = plmn_id;
+
+  int ret = itti_inst->send_msg(itti_msg);
+  if (0 != ret) {
+    Logger::amf_n1().error(
+        "Could not send ITTI message %s to task TASK_AMF_SBI",
+        itti_msg->get_msg_name());
   }
 }
