@@ -3080,6 +3080,12 @@ void amf_n1::security_mode_complete_handle(
   // TODO: Step 14b. Figure 4.2.2.2.2-1: Registration procedure@3GPP TS 23.502
   // Retrieving UE context in SMF data and LCS mobile origination
 
+  // TODO: Step 15: PCF discovery and selection
+  discover_pcf(uc);
+
+  // TODO: Step 16: Perform an AM Policy Association Establishment/Modification
+  perform_am_policy_association(uc);
+
   // Process Uplink Data Status / PDU Session status
   uint16_t uplink_data_status              = 0x0000;
   uint16_t pdu_session_status              = 0x0000;
@@ -6084,5 +6090,92 @@ void amf_n1::get_smf_selection_subscription_data(
     Logger::amf_n1().error(
         "Could not send ITTI message %s to task TASK_AMF_SBI",
         itti_msg->get_msg_name());
+  }
+}
+
+//------------------------------------------------------------------------------
+void amf_n1::discover_pcf(std::shared_ptr<ue_context>& uc) {
+  Logger::amf_n1().debug("Discovering PCF for the UE");
+
+  oai::model::common::PlmnIdNid plmn_id = {};
+  plmn_id.setMcc(uc->tai.mcc);
+  plmn_id.setMnc(uc->tai.mnc);
+
+  // Generate a promise and associate this promise to the ITTI message
+  uint32_t promise_id = {};
+  boost::shared_ptr<boost::promise<nlohmann::json>> p =
+      boost::make_shared<boost::promise<nlohmann::json>>();
+  amf_app_inst->store_promise(promise_id, p);
+  boost::shared_future<nlohmann::json> f = p->get_future();
+  Logger::amf_n1().debug("Promise ID generated %ld", promise_id);
+
+  std::shared_ptr<itti_sbi_pcf_discovery> itti_msg =
+      std::make_shared<itti_sbi_pcf_discovery>(
+          TASK_AMF_N1, TASK_AMF_SBI, promise_id);
+
+  itti_msg->promise_id = promise_id;
+  itti_msg->supi       = uc->supi;
+  itti_msg->snssai     = uc->snssai;
+  itti_msg->plmn_id    = plmn_id;
+  // TODO: add support for PCF Set ID
+  // TODO: add support for PCF Group ID
+  itti_msg->dnn = uc->dnn;
+  // TODO: add support for PCF Selection Assistance Info and PCF ID(s) serving
+  // the established PDU Sessions
+
+  int ret = itti_inst->send_msg(itti_msg);
+  if (0 != ret) {
+    Logger::amf_n1().error(
+        "Could not send ITTI message %s to task TASK_AMF_SBI",
+        itti_msg->get_msg_name());
+  }
+
+  bool is_result_available = true;
+
+  oai::model::udm::AccessAndMobilitySubscriptionData am_data = {};
+
+  // Wait for the response available and process accordingly
+  std::optional<nlohmann::json> result_opt = std::nullopt;
+  oai::utils::utils::wait_for_result(f, result_opt);
+  if (result_opt.has_value()) {
+    nlohmann::json result = result_opt.value();
+    Logger::amf_n1().debug("Got result for promise ID %ld", promise_id);
+    if (result.find(kSbiResponseJsonData) != result.end()) {
+      Logger::amf_n1().debug(
+          "Got Access and Mobility Subscription Data Retrievel response from "
+          "UDM: %s",
+          result[kSbiResponseJsonData].dump());
+
+      uint32_t http_response_code =
+          oai::common::sbi::http_status_code::NO_RESPONSE;
+      if (result.find(kSbiResponseHttpResponseCode) != result.end()) {
+        http_response_code = result[kSbiResponseHttpResponseCode].get<int>();
+        if (http_response_code == oai::common::sbi::http_status_code::OK) {
+          // Process the content
+          try {
+            from_json(result[kSbiResponseJsonData], am_data);
+            is_result_available = true;
+            // TODO: store AM Data
+          } catch (std::exception& e) {
+            Logger::amf_n1().warn(
+                "Could not parse Access and Mobility Subscription Data from "
+                "Json");
+            is_result_available = false;
+          }
+          // TODO: process locations
+        }
+      }
+
+    } else {
+      is_result_available = false;
+    }
+
+  } else {
+    is_result_available = false;
+  }
+
+  if (!is_result_available) {
+    Logger::amf_n1().warn(
+        "Could not get Access and Mobility Subscription Data from UDM");
   }
 }

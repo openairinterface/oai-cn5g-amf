@@ -255,6 +255,15 @@ void amf_sbi_task(void*) {
         amf_sbi_inst->handle_itti_message(std::ref(*m));
       } break;
 
+      case SBI_PCF_DISCOVERY: {
+        Logger::amf_sbi().info(
+            "Receive PCF Discovery message, "
+            "handling ...");
+        itti_sbi_pcf_discovery* m = dynamic_cast<itti_sbi_pcf_discovery*>(msg);
+        if (!m) break;
+        amf_sbi_inst->handle_itti_message(std::ref(*m));
+      }
+
       case TERMINATE: {
         if (itti_msg_terminate* terminate =
                 dynamic_cast<itti_msg_terminate*>(msg)) {
@@ -435,8 +444,11 @@ void amf_sbi::handle_itti_message(itti_nsmf_pdusession_create_sm_context& smf) {
         Logger::amf_sbi().error("No NRF available");
         return;
       }
-      Logger::amf_sbi().debug("NRF NF Discover URI: %s", nrf_uri.c_str());
-      // use NRF to find suitable SMF based on snssai, plmn and dnn
+      uc->nrf_uri = nrf_uri;
+      Logger::amf_sbi().debug(
+          "NRF NF Discover URI: %s",
+          nrf_uri.c_str());  // use NRF to find suitable SMF based on snssai,
+                             // plmn and dnn
       if (!discover_smf(
               smf_uri_root, smf_api_version, psc->snssai, psc->plmn, psc->dnn,
               nrf_uri)) {
@@ -1342,6 +1354,46 @@ void amf_sbi::handle_itti_message(
           "Could not send ITTI message %s to task TASK_AMF_APP",
           itti_msg_response->get_msg_name());
     }
+  }
+}
+
+//------------------------------------------------------------------------------
+bool amf_sbi::void amf_sbi::handle_itti_message(
+    itti_sbi_pcf_discovery& itti_msg) {
+  Logger::amf_sbi().debug("Send PCF Discovery to NRF");
+
+  std::string nrf_uri = {};
+
+  std::shared_ptr<ue_context> uc = {};
+  if (!amf_app_inst->supi_2_ue_context(itti_msg.supi, uc)) {
+    return false;
+  }
+  nrf_uri = uc->nrf_uri;
+
+  nlohmann::json plmn_id = {};
+  to_json(plmn_id, itti_msg.plmn_id);
+  // TODO: support parameters PLMN ID, SNSSAI,
+  nrf_uri += "?target-nf-type=PCF&requester-nf-type=AMF";
+  Logger::amf_sbi().debug("NRF's URI %s", uri.c_str());
+
+  oai::http::response http_response = {};
+  send_http_request(uri, oai::common::sbi::method_e::GET, "", http_response);
+
+  Logger::amf_sbi().debug(
+      "PCF Discovery, response from NRF, HTTP "
+      "Code: %lu",
+      http_response.status_code);
+  Logger::amf_sbi().debug(
+      "PCF Discovery, response from NRF\n, %s ", http_response.body);
+
+  nlohmann::json response_data                = {};
+  response_data[kSbiResponseHttpResponseCode] = http_response.status_code;
+  response_data[kSbiResponseJsonData]         = http_response.get_json();
+
+  // Notify to the result
+  if (itti_msg.promise_id > 0) {
+    amf_app_inst->trigger_process_response(itti_msg.promise_id, response_data);
+    return;
   }
 }
 

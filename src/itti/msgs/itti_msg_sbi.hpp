@@ -905,4 +905,32 @@ class itti_sbi_retrieve_smf_selection_subscription_data_response
   nlohmann::json response_data;
 };
 
+class itti_sbi_pcf_discovery : public itti_sbi_msg {
+ public:
+  itti_sbi_pcf_discovery(
+      const task_id_t orig, const task_id_t dest, uint32_t pid)
+      : itti_sbi_msg(SBI_PCF_DISCOVERY, orig, dest),
+        promise_id(pid),
+        supi(),
+        dnn(),
+        plmn_id(),
+        snssai() {}
+
+  itti_sbi_pcf_discovery(const itti_sbi_pcf_discovery& i) : itti_sbi_msg(i) {
+    promise_id = i.promise_id;
+    supi       = i.supi;
+    dnn        = i.dnn;
+    plmn_id    = i.plmn_id;
+    snssai     = i.snssai;
+  }
+  virtual ~itti_sbi_pcf_discovery(){};
+  const char* get_msg_name() { return "SBI_PCF_DISCOVERY"; };
+
+  uint32_t promise_id;
+  std::string supi;
+  std::string dnn;
+  oai::model::common::PlmnIdNid plmn_id;
+  snssai_t snssai;
+};
+
 #endif /* ITTI_MSG_SBI_HPP_INCLUDED_ */
