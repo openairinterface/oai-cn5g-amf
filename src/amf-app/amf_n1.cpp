@@ -4792,6 +4792,9 @@ void amf_n1::handle_ue_loss_of_connectivity_change(
                 PURGED);
       event_report.setLossOfConnectReason(ue_loss_of_connectivity_reason);
 
+      event_report.setRanUeNgapId(ran_ue_ngap_id);
+      event_report.setAmfUeNgapId(amf_ue_ngap_id);
+
       event_report.setSupi(supi);
       ev_notif.add_report(event_report);
 
