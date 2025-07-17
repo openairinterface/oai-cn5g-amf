@@ -68,6 +68,7 @@
 #include "utils.hpp"
 #include "Amf3GppAccessRegistration.h"
 #include "AccessAndMobilitySubscriptionData.h"
+#include "Av5gAka.h"
 
 using namespace amf_application;
 using namespace boost::placeholders;
