@@ -4586,6 +4586,8 @@ void amf_n1::handle_ue_registration_state_change(
       event_report.setRmInfoList(rm_infos);
 
       event_report.setSupi(supi);
+      event_report.setRanUeNgapId(ran_ue_ngap_id);
+      event_report.setAmfUeNgapId(amf_ue_ngap_id);
       ev_notif.add_report(event_report);
 
       itti_msg->event_notifs.push_back(ev_notif);
