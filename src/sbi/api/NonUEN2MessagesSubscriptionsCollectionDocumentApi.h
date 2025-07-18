@@ -33,7 +33,7 @@ namespace oai {
 namespace amf {
 namespace api {
 
-using namespace oai::model::amf;
+using namespace oai::_3gpp::model;
 
 class NonUEN2MessagesSubscriptionsCollectionDocumentApi {
  public:

@@ -22,7 +22,7 @@ namespace oai {
 namespace amf {
 namespace api {
 
-using namespace oai::model::common::helpers;
+using namespace oai::_3gpp::model::helpers;
 
 NonUEN2MessageNotificationIndividualSubscriptionDocumentApi::
     NonUEN2MessageNotificationIndividualSubscriptionDocumentApi(

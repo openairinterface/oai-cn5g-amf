@@ -158,7 +158,7 @@ class itti_non_ue_n2_message_transfer_request : public itti_msg_amf_app {
   bstring nrppa_pdu;
   bstring routing_id;
   bool is_nrppa_pdu_set;
-  std::vector<oai::model::common::GlobalRanNodeId> global_ran_node_list;
+  std::vector<oai::_3gpp::model::GlobalRanNodeId> global_ran_node_list;
 };
 
 #endif

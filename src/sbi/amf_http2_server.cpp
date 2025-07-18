@@ -38,8 +38,8 @@
 
 using namespace nghttp2::asio_http2;
 using namespace nghttp2::asio_http2::server;
-using namespace oai::model::amf;
-using namespace oai::model::common;
+using namespace oai::_3gpp::model;
+using namespace oai::_3gpp::model;
 using namespace oai::common::sbi;
 using namespace oai::amf::api;
 
@@ -312,7 +312,7 @@ void amf_http2_server::start() {
                 [NON_UE_N2_TRANSFER_INITIATED];
             auto code = oai::common::sbi::http_status_code::OK;
 
-            oai::model::amf::N2InformationTransferReqData
+            oai::_3gpp::model::N2InformationTransferReqData
                 n2InformationTransferReqData = {};
 
             try {

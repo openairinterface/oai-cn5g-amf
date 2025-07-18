@@ -44,7 +44,7 @@
 #include "uint_generator.hpp"
 
 using namespace oai::config;
-using namespace oai::model::amf;
+using namespace oai::_3gpp::model;
 
 namespace amf_application {
 
@@ -85,13 +85,13 @@ class amf_app {
   oai::utils::uint_generator<uint32_t> n1n2sub_id_generator;
   std::map<
       std::pair<std::string, uint32_t>,
-      std::shared_ptr<oai::model::amf::UeN1N2InfoSubscriptionCreateData>>
+      std::shared_ptr<oai::_3gpp::model::UeN1N2InfoSubscriptionCreateData>>
       n1n2_message_subscribe;
   mutable std::shared_mutex m_n1n2_message_subscribe;
 
   std::map<
       n1n2sub_id_t,
-      std::shared_ptr<oai::model::amf::NonUeN2InfoSubscriptionCreateData>>
+      std::shared_ptr<oai::_3gpp::model::NonUeN2InfoSubscriptionCreateData>>
       non_ue_n2_info_subscribe;
   mutable std::shared_mutex m_non_ue_n2_info_subscribe;
 
@@ -329,13 +329,13 @@ class amf_app {
    * Update PDU Session Context status
    * @param [const std::string&] supi: UE SUPI
    * @param [uint8_t] pdu_session_id: PDU Session ID
-   * @param [const oai::model::amf::SmContextStatusNotification&]
+   * @param [const oai::_3gpp::model::SmContextStatusNotification&]
    * statusNotification: Notification information received from SMF
    * @return true if success, otherwise false
    */
   bool update_pdu_sessions_context(
       const std::string& supi, uint8_t pdu_session_id,
-      const oai::model::amf::SmContextStatusNotification& statusNotification);
+      const oai::_3gpp::model::SmContextStatusNotification& statusNotification);
 
   /*
    * Generate a random TMSI
@@ -375,14 +375,15 @@ class amf_app {
    * Add an N1N2MessageSubscribe subscription to the list
    * @param [const std::string&] ue_ctx_id: UE Context ID
    * @param [const n1n2sub_id_t&] sub_id: Subscription ID
-   * @param [std::shared_ptr<oai::model::amf::UeN1N2InfoSubscriptionCreateData>]
-   * oai::model::amf::UeN1N2InfoSubscriptionCreateData: a shared pointer stored
-   * information of the subscription
+   * @param
+   * [std::shared_ptr<oai::_3gpp::model::UeN1N2InfoSubscriptionCreateData>]
+   * oai::_3gpp::model::UeN1N2InfoSubscriptionCreateData: a shared pointer
+   * stored information of the subscription
    * @return void
    */
   void add_n1n2_message_subscription(
       const std::string& ue_ctx_id, const n1n2sub_id_t& sub_id,
-      std::shared_ptr<oai::model::amf::UeN1N2InfoSubscriptionCreateData>&
+      std::shared_ptr<oai::_3gpp::model::UeN1N2InfoSubscriptionCreateData>&
           subscription);
 
   /*
@@ -399,40 +400,39 @@ class amf_app {
    * Find the subscriptions matched with certain conditions
    * @param [const std::string&] ue_ctx_id: UE Context ID
    * @param
-   * [std::optional<oai::model::amf::N1MessageClass_anyOf::eN1MessageClass_anyOf>&]
+   * [std::optional<oai::_3gpp::model::N1MessageClass_anyOf::eN1MessageClass_anyOf>&]
    * n1_message_class: Type of N1 Message
    * @param
-   * [std::optional<oai::model::amf::N2InformationClass_anyOf::eN2InformationClass_anyOf>&]
+   * [std::optional<oai::_3gpp::model::N2InformationClass_anyOf::eN2InformationClass_anyOf>&]
    * n2_info_class: Type of N2 Message
    * @param [std::map<n1n2sub_id_t,
-   * std::shared_ptr<oai::model::amf::UeN1N2InfoSubscriptionCreateData>>&]
+   * std::shared_ptr<oai::_3gpp::model::UeN1N2InfoSubscriptionCreateData>>&]
    * subscriptions: list of subscriptions matched
    * @return void
    */
   void find_n1n2_info_subscriptions(
       const std::string& ue_ctx_id,
       std::optional<
-          oai::model::amf::N1MessageClass_anyOf::eN1MessageClass_anyOf>&
+          oai::_3gpp::model::N1MessageClass_anyOf::eN1MessageClass_anyOf>&
           n1_message_class,
-      std::optional<
-          oai::model::amf::N2InformationClass_anyOf::eN2InformationClass_anyOf>&
-          n2_info_class,
+      std::optional<oai::_3gpp::model::N2InformationClass_anyOf::
+                        eN2InformationClass_anyOf>& n2_info_class,
       std::map<
           n1n2sub_id_t,
-          std::shared_ptr<oai::model::amf::UeN1N2InfoSubscriptionCreateData>>&
+          std::shared_ptr<oai::_3gpp::model::UeN1N2InfoSubscriptionCreateData>>&
           subscriptions);
 
   /*
    * Add an NonUEN2InfoSubscribe subscription to the list
    * @param [const n1n2sub_id_t&] sub_id: Subscription ID
    * @param
-   * [std::shared_ptr<oai::model::amf::NonUeN2InfoSubscriptionCreateData>]
+   * [std::shared_ptr<oai::_3gpp::model::NonUeN2InfoSubscriptionCreateData>]
    * subscription_data: a shared pointer stored information of the subscription
    * @return void
    */
   void add_non_ue_n2_info_subscription(
       const n1n2sub_id_t& sub_id,
-      std::shared_ptr<oai::model::amf::NonUeN2InfoSubscriptionCreateData>&
+      std::shared_ptr<oai::_3gpp::model::NonUeN2InfoSubscriptionCreateData>&
           subscription_data);
 
   /*
@@ -447,20 +447,21 @@ class amf_app {
    * Find the subscriptions matched with certain conditions
    * @param [const std::string&] nf_id: NF Id
    * @param
-   * [std::optional<oai::model::amf::N2InformationClass_anyOf::eN2InformationClass_anyOf>&]
+   * [std::optional<oai::_3gpp::model::N2InformationClass_anyOf::eN2InformationClass_anyOf>&]
    * n2_info_class: Type of N2 Message
    * @param [std::map<n1n2sub_id_t,
-   * std::shared_ptr<oai::model::amf::NonUeN2InfoSubscriptionCreateData>>&]
+   * std::shared_ptr<oai::_3gpp::model::NonUeN2InfoSubscriptionCreateData>>&]
    * subscriptions: list of subscriptions matched
    * @return void
    */
   void find_non_ue_n2_info_subscriptions(
       const std::string& nf_id,
-      const oai::model::amf::N2InformationClass_anyOf::
+      const oai::_3gpp::model::N2InformationClass_anyOf::
           eN2InformationClass_anyOf& n2_info_class,
       std::map<
           n1n2sub_id_t,
-          std::shared_ptr<oai::model::amf::NonUeN2InfoSubscriptionCreateData>>&
+          std::shared_ptr<
+              oai::_3gpp::model::NonUeN2InfoSubscriptionCreateData>>&
           subscriptions);
 
   /*
@@ -503,13 +504,13 @@ class amf_app {
   /*
    * Handle NF status notification (e.g., when an UPF becomes available)
    * @param [std::shared_ptr<itti_sbi_notification_data>& ] msg: message
-   * @param [oai::model::amf::ProblemDetails& ] problem_details
+   * @param [oai::_3gpp::model::ProblemDetails& ] problem_details
    * @param [uint32_t&] http_code
    * @return true if handle successfully, otherwise return false
    */
   bool handle_nf_status_notification(
       std::shared_ptr<itti_sbi_notification_data>& msg,
-      oai::model::common::ProblemDetails& problem_details, uint32_t& http_code);
+      oai::_3gpp::model::ProblemDetails& problem_details, uint32_t& http_code);
 
   /*
    * Handle a request to determine location from LMF

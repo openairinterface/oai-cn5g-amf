@@ -39,7 +39,7 @@ namespace oai {
 namespace amf {
 namespace api {
 
-using namespace oai::model::amf;
+using namespace oai::_3gpp::model;
 
 class IndividualSubscriptionDocumentApiImpl
     : public oai::amf::api::IndividualSubscriptionDocumentApi {
