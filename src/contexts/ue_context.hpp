@@ -73,8 +73,9 @@ class ue_context {
 
   std::string amf_3gpp_access_location;
   // std::optional<oai::model::udm::AccessAndMobilitySubscriptionData> am_data;
-
   std::string nrf_uri;
+  // std::optional<oai::_3gpp::model::AccessAndMobilitySubscriptionData>
+  // am_data;
 };
 
 #endif

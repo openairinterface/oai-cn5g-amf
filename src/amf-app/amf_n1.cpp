@@ -68,13 +68,17 @@
 #include "utils.hpp"
 #include "Amf3GppAccessRegistration.h"
 #include "AccessAndMobilitySubscriptionData.h"
+#include "Av5gAka.h"
+#include "SearchResult.h"
+#include "NFProfile.h"
+#include "PcfInfo.h"
 
 using namespace amf_application;
 using namespace boost::placeholders;
-using namespace oai::model::amf;
+using namespace oai::_3gpp::model;
 using namespace oai::amf::api;
 using namespace oai::config;
-using namespace oai::model::common;
+using namespace oai::_3gpp::model;
 using namespace oai::nas;
 
 extern itti_mw* itti_inst;
@@ -2198,8 +2202,8 @@ void amf_n1::send_registration_reject_msg(
   itti_send_dl_nas_buffer_to_task_n2(b, ran_ue_ngap_id, amf_ue_ngap_id);
 
   // Trigger CommunicationFailure Report notify
-  oai::model::amf::CommunicationFailure comm_failure = {};
-  std::shared_ptr<ue_context> uc                     = {};
+  oai::_3gpp::model::CommunicationFailure comm_failure = {};
+  std::shared_ptr<ue_context> uc                       = {};
   if (!find_ue_context(ran_ue_ngap_id, amf_ue_ngap_id, uc)) {
     Logger::amf_n1().warn(
         "Cannot find the UE context, unable to notify CommunicationFailure "
@@ -2445,11 +2449,11 @@ bool amf_n1::get_authentication_vectors_from_ausf(
   oai::utils::utils::free_wrapper((void**) &r5g_auth_data_hxresstar);
 
   std::map<std::string, LinksValueSchema>::iterator iter;
-  iter = ue_authentication_ctx.getLinks().find("5g-aka");
+  iter = (ue_authentication_ctx.getLinks()).find("5g-aka");
 
-  if (iter != ue_authentication_ctx.getLinks().end()) {
+  if (iter != (ue_authentication_ctx.getLinks()).end()) {
     nc->href = iter->second.getHref();
-    Logger::amf_n1().info("Links is: %s", nc->href.c_str());
+    Logger::amf_n1().info("Links is: %s", nc->href);
   } else {
     Logger::amf_n1().error("Not found 5G_AKA");
     return false;
@@ -3084,7 +3088,7 @@ void amf_n1::security_mode_complete_handle(
   discover_pcf(uc);
 
   // TODO: Step 16: Perform an AM Policy Association Establishment/Modification
-  perform_am_policy_association(uc);
+  // perform_am_policy_association(uc);
 
   // Process Uplink Data Status / PDU Session status
   uint16_t uplink_data_status              = 0x0000;
@@ -4433,12 +4437,13 @@ void amf_n1::handle_ue_location_change(
       ev_notif.set_notify_uri(i->notify_uri);  // Direct subscription
       // ev_notif.set_subs_change_notify_correlation_id(i->notify_uri);
 
-      oai::model::amf::AmfEventReport event_report = {};
-      oai::model::amf::AmfEventType amf_event_type = {};
-      amf_event_type.set_value("LOCATION_REPORT");
+      oai::_3gpp::model::AmfEventReport event_report = {};
+      oai::_3gpp::model::AmfEventType amf_event_type = {};
+      amf_event_type.setEnumValue(
+          AmfEventType_anyOf::eAmfEventType_anyOf::LOCATION_REPORT);
       event_report.setType(amf_event_type);
 
-      oai::model::amf::AmfEventState amf_event_state = {};
+      oai::_3gpp::model::AmfEventState amf_event_state = {};
       amf_event_state.setActive(true);
       event_report.setState(amf_event_state);
 
@@ -4492,20 +4497,23 @@ void amf_n1::handle_ue_reachability_status_change(
       ev_notif.set_notify_uri(i->notify_uri);  // Direct subscription
       // ev_notif.set_subs_change_notify_correlation_id(i->notify_uri);
 
-      oai::model::amf::AmfEventReport event_report = {};
-      oai::model::amf::AmfEventType amf_event_type = {};
-      amf_event_type.set_value("REACHABILITY_REPORT");
+      oai::_3gpp::model::AmfEventReport event_report = {};
+      oai::_3gpp::model::AmfEventType amf_event_type = {};
+      amf_event_type.setEnumValue(
+          AmfEventType_anyOf::eAmfEventType_anyOf::REACHABILITY_REPORT);
       event_report.setType(amf_event_type);
 
-      oai::model::amf::AmfEventState amf_event_state = {};
+      oai::_3gpp::model::AmfEventState amf_event_state = {};
       amf_event_state.setActive(true);
       event_report.setState(amf_event_state);
 
-      oai::model::amf::UeReachability ue_reachability = {};
+      oai::_3gpp::model::UeReachability ue_reachability = {};
       if (status == CM_CONNECTED)
-        ue_reachability.set_value("REACHABLE");
+        ue_reachability.setEnumValue(
+            UeReachability_anyOf::eUeReachability_anyOf::REACHABLE);
       else
-        ue_reachability.set_value("UNREACHABLE");
+        ue_reachability.setEnumValue(
+            UeReachability_anyOf::eUeReachability_anyOf::UNREACHABLE);
 
       event_report.setReachability(ue_reachability);
       event_report.setSupi(supi);
@@ -4557,24 +4565,25 @@ void amf_n1::handle_ue_registration_state_change(
       ev_notif.set_notify_uri(i->notify_uri);  // Direct subscription
       // ev_notif.set_subs_change_notify_correlation_id(i->notify_uri);
 
-      oai::model::amf::AmfEventReport event_report = {};
+      oai::_3gpp::model::AmfEventReport event_report = {};
 
-      oai::model::amf::AmfEventType amf_event_type = {};
-      amf_event_type.set_value("REGISTRATION_STATE_REPORT");
+      oai::_3gpp::model::AmfEventType amf_event_type = {};
+      amf_event_type.setEnumValue(
+          AmfEventType_anyOf::eAmfEventType_anyOf::REGISTRATION_STATE_REPORT);
       event_report.setType(amf_event_type);
 
-      oai::model::amf::AmfEventState amf_event_state = {};
+      oai::_3gpp::model::AmfEventState amf_event_state = {};
       amf_event_state.setActive(true);
       event_report.setState(amf_event_state);
 
-      std::vector<oai::model::amf::RmInfo> rm_infos;
-      oai::model::amf::RmInfo rm_info   = {};
-      oai::model::amf::RmState rm_state = {};
+      std::vector<oai::_3gpp::model::RmInfo> rm_infos;
+      oai::_3gpp::model::RmInfo rm_info   = {};
+      oai::_3gpp::model::RmState rm_state = {};
 
       if (status == _5GMM_DEREGISTERED)
-        rm_state.set_value("DEREGISTERED");
+        rm_state.setEnumValue(RmState_anyOf::eRmState_anyOf::DEREGISTERED);
       else if (status == _5GMM_REGISTERED)
-        rm_state.set_value("REGISTERED");
+        rm_state.setEnumValue(RmState_anyOf::eRmState_anyOf::REGISTERED);
       rm_info.setRmState(rm_state);
 
       AccessType access_type = {};
@@ -4635,23 +4644,24 @@ void amf_n1::handle_ue_connectivity_state_change(
       ev_notif.set_notify_uri(i->notify_uri);  // Direct subscription
       // ev_notif.set_subs_change_notify_correlation_id(i->notify_uri);
 
-      oai::model::amf::AmfEventReport event_report = {};
+      oai::_3gpp::model::AmfEventReport event_report = {};
 
-      oai::model::amf::AmfEventType amf_event_type = {};
-      amf_event_type.set_value("CONNECTIVITY_STATE_REPORT");
+      oai::_3gpp::model::AmfEventType amf_event_type = {};
+      amf_event_type.setEnumValue(
+          AmfEventType_anyOf::eAmfEventType_anyOf::CONNECTIVITY_STATE_REPORT);
       event_report.setType(amf_event_type);
 
-      oai::model::amf::AmfEventState amf_event_state = {};
+      oai::_3gpp::model::AmfEventState amf_event_state = {};
       amf_event_state.setActive(true);
       event_report.setState(amf_event_state);
 
-      std::vector<oai::model::amf::CmInfo> cm_infos;
-      oai::model::amf::CmInfo cm_info   = {};
-      oai::model::amf::CmState cm_state = {};
+      std::vector<oai::_3gpp::model::CmInfo> cm_infos;
+      oai::_3gpp::model::CmInfo cm_info   = {};
+      oai::_3gpp::model::CmState cm_state = {};
       if (status == CM_IDLE)
-        cm_state.set_value("IDLE");
+        cm_state.setEnumValue(CmState_anyOf::eCmState_anyOf::IDLE);
       else if (status == CM_CONNECTED)
-        cm_state.set_value("CONNECTED");
+        cm_state.setEnumValue(CmState_anyOf::eCmState_anyOf::CONNECTED);
       cm_info.setCmState(cm_state);
 
       AccessType access_type = {};
@@ -4678,7 +4688,7 @@ void amf_n1::handle_ue_connectivity_state_change(
 
 //------------------------------------------------------------------------------
 void amf_n1::handle_ue_communication_failure_change(
-    std::string supi, oai::model::amf::CommunicationFailure comm_failure,
+    std::string supi, oai::_3gpp::model::CommunicationFailure comm_failure,
     uint8_t http_version) {
   Logger::amf_n1().debug(
       "Send request to SBI to trigger UE Communication Failure Report (SUPI "
@@ -4709,12 +4719,13 @@ void amf_n1::handle_ue_communication_failure_change(
       ev_notif.set_notify_uri(i->notify_uri);  // Direct subscription
       // ev_notif.set_subs_change_notify_correlation_id(i->notify_uri);
 
-      oai::model::amf::AmfEventReport event_report = {};
-      oai::model::amf::AmfEventType amf_event_type = {};
-      amf_event_type.set_value("COMMUNICATION_FAILURE_REPORT");
+      oai::_3gpp::model::AmfEventReport event_report = {};
+      oai::_3gpp::model::AmfEventType amf_event_type = {};
+      amf_event_type.setEnumValue(AmfEventType_anyOf::eAmfEventType_anyOf::
+                                      COMMUNICATION_FAILURE_REPORT);
       event_report.setType(amf_event_type);
 
-      oai::model::amf::AmfEventState amf_event_state = {};
+      oai::_3gpp::model::AmfEventState amf_event_state = {};
       amf_event_state.setActive(true);
       event_report.setState(amf_event_state);
 
@@ -4764,27 +4775,35 @@ void amf_n1::handle_ue_loss_of_connectivity_change(
       ev_notif.set_notify_uri(i->notify_uri);  // Direct subscription
       // ev_notif.set_subs_change_notify_correlation_id(i->notify_uri);
 
-      oai::model::amf::AmfEventReport event_report = {};
-      oai::model::amf::AmfEventType amf_event_type = {};
-      amf_event_type.set_value("LOSS_OF_CONNECTIVITY");
+      oai::_3gpp::model::AmfEventReport event_report = {};
+      oai::_3gpp::model::AmfEventType amf_event_type = {};
+      amf_event_type.setEnumValue(
+          AmfEventType_anyOf::eAmfEventType_anyOf::LOSS_OF_CONNECTIVITY);
       event_report.setType(amf_event_type);
 
-      oai::model::amf::AmfEventState amf_event_state = {};
+      oai::_3gpp::model::AmfEventState amf_event_state = {};
       amf_event_state.setActive(true);
       event_report.setState(amf_event_state);
 
-      oai::model::amf::LossOfConnectivityReason ue_loss_of_connectivity_reason =
-          {};
+      oai::_3gpp::model::LossOfConnectivityReason
+          ue_loss_of_connectivity_reason = {};
       if (status == DEREGISTERED)
-        ue_loss_of_connectivity_reason.set_value("DEREGISTERED");
+        ue_loss_of_connectivity_reason.setEnumValue(
+            LossOfConnectivityReason_anyOf::eLossOfConnectivityReason_anyOf::
+                DEREGISTERED);
       else if (status == MAX_DETECTION_TIME_EXPIRED)
-        ue_loss_of_connectivity_reason.set_value("MAX_DETECTION_TIME_EXPIRED");
+        ue_loss_of_connectivity_reason.setEnumValue(
+            LossOfConnectivityReason_anyOf::eLossOfConnectivityReason_anyOf::
+                MAX_DETECTION_TIME_EXPIRED);
       else if (status == PURGED)
-        ue_loss_of_connectivity_reason.set_value("PURGED");
-
+        ue_loss_of_connectivity_reason.setEnumValue(
+            LossOfConnectivityReason_anyOf::eLossOfConnectivityReason_anyOf::
+                PURGED);
       event_report.setLossOfConnectReason(ue_loss_of_connectivity_reason);
+
       event_report.setRanUeNgapId(ran_ue_ngap_id);
       event_report.setAmfUeNgapId(amf_ue_ngap_id);
+
       event_report.setSupi(supi);
       ev_notif.add_report(event_report);
 
@@ -4820,21 +4839,21 @@ void amf_n1::trigger_ue_location_report(
       UserLocation user_location = {};
       NrLocation nr_location     = {};
 
-      oai::model::common::Tai tai = {};
-      nlohmann::json tai_json     = {};
-      tai_json["plmnId"]["mcc"]   = uc->cgi.mcc;
-      tai_json["plmnId"]["mnc"]   = uc->cgi.mnc;
-      tai_json["tac"]             = std::to_string(uc->tai.tac);
+      oai::_3gpp::model::Tai tai = {};
+      nlohmann::json tai_json    = {};
+      tai_json["plmnId"]["mcc"]  = uc->cgi.mcc;
+      tai_json["plmnId"]["mnc"]  = uc->cgi.mnc;
+      tai_json["tac"]            = std::to_string(uc->tai.tac);
 
       nlohmann::json global_ran_node_id_json        = {};
       global_ran_node_id_json["plmnId"]["mcc"]      = uc->cgi.mcc;
       global_ran_node_id_json["plmnId"]["mnc"]      = uc->cgi.mnc;
       global_ran_node_id_json["gNbId"]["bitLength"] = 32;
       global_ran_node_id_json["gNbId"]["gNBValue"] = std::to_string(gc->gnb_id);
-      oai::model::common::GlobalRanNodeId global_ran_node_id = {};
+      oai::_3gpp::model::GlobalRanNodeId global_ran_node_id = {};
 
       Ncgi ncgi = {};
-      oai::model::common::PlmnId plmnId;
+      oai::_3gpp::model::PlmnId plmnId;
       plmnId.setMcc(uc->cgi.mcc);
       plmnId.setMnc(uc->cgi.mnc);
 
@@ -5201,7 +5220,7 @@ bool amf_n1::reroute_registration_request(
 */
 
   // Get NSSAI from UDM
-  oai::model::amf::Nssai nssai = {};
+  oai::_3gpp::model::Nssai nssai = {};
   if (!get_slice_selection_subscription_data(nc, nssai)) {
     Logger::amf_n1().debug(
         "Could not get the Slice Selection Subscription Data from UDM");
@@ -5222,8 +5241,8 @@ bool amf_n1::reroute_registration_request(
   // find the appropriate AMFs and let them handle the UE
 
   // Process NS selection to select the appropriate AMF
-  oai::model::amf::SliceInfoForRegistration slice_info = {};
-  oai::model::amf::AuthorizedNetworkSliceInfo authorized_network_slice_info =
+  oai::_3gpp::model::SliceInfoForRegistration slice_info = {};
+  oai::_3gpp::model::AuthorizedNetworkSliceInfo authorized_network_slice_info =
       {};
 
   std::vector<SubscribedSnssai> subscribed_snssais;
@@ -5325,7 +5344,7 @@ bool amf_n1::check_requested_nssai(const std::shared_ptr<nas_context>& nc) {
 
 //------------------------------------------------------------------------------
 bool amf_n1::check_subscribed_nssai(
-    const std::shared_ptr<nas_context>& nc, oai::model::amf::Nssai& nssai) {
+    const std::shared_ptr<nas_context>& nc, oai::_3gpp::model::Nssai& nssai) {
   Logger::amf_n1().debug(
       "Verifying whether this AMF can handle Requested/Subscribed S-NSSAIs");
   // Check if the AMF can serve all the requested/subscribed S-NSSAIs
@@ -5432,7 +5451,7 @@ bool amf_n1::check_subscribed_nssai(
 
 //------------------------------------------------------------------------------
 bool amf_n1::get_slice_selection_subscription_data(
-    const std::shared_ptr<nas_context>& nc, oai::model::amf::Nssai& nssai) {
+    const std::shared_ptr<nas_context>& nc, oai::_3gpp::model::Nssai& nssai) {
   // TODO: UDM selection (from NRF or configuration file)
   if (amf_cfg->support_features.enable_external_ausf_udm) {
     Logger::amf_n1().debug(
@@ -5516,7 +5535,7 @@ bool amf_n1::get_slice_selection_subscription_data(
 
 //------------------------------------------------------------------------------
 bool amf_n1::get_slice_selection_subscription_data_from_conf_file(
-    const std::shared_ptr<nas_context>& nc, oai::model::amf::Nssai& nssai) {
+    const std::shared_ptr<nas_context>& nc, oai::_3gpp::model::Nssai& nssai) {
   Logger::amf_n1().debug(
       "Get the Slice Selection Subscription Data from configuration file");
 
@@ -5590,8 +5609,8 @@ bool amf_n1::get_slice_selection_subscription_data_from_conf_file(
 //------------------------------------------------------------------------------
 bool amf_n1::get_network_slice_selection(
     const std::shared_ptr<nas_context>& nc, const std::string& nf_instance_id,
-    const oai::model::amf::SliceInfoForRegistration& slice_info,
-    oai::model::amf::AuthorizedNetworkSliceInfo&
+    const oai::_3gpp::model::SliceInfoForRegistration& slice_info,
+    oai::_3gpp::model::AuthorizedNetworkSliceInfo&
         authorized_network_slice_info) {
   Logger::amf_n1().debug(
       "Get the Network Slice Selection Information from NSSF");
@@ -5671,9 +5690,9 @@ bool amf_n1::get_network_slice_selection(
 //------------------------------------------------------------------------------
 bool amf_n1::get_network_slice_selection_from_conf_file(
     const std::string& nf_instance_id,
-    const oai::model::amf::SliceInfoForRegistration& slice_info,
-    oai::model::amf::AuthorizedNetworkSliceInfo& authorized_network_slice_info)
-    const {
+    const oai::_3gpp::model::SliceInfoForRegistration& slice_info,
+    oai::_3gpp::model::AuthorizedNetworkSliceInfo&
+        authorized_network_slice_info) const {
   Logger::amf_n1().debug(
       "Get the Network Slice Selection Information from configuration file");
   // TODO: Get Authorized Network Slice Info from local configuration file
@@ -5685,7 +5704,7 @@ bool amf_n1::get_network_slice_selection_from_conf_file(
 //------------------------------------------------------------------------------
 bool amf_n1::get_target_amf(
     const std::shared_ptr<nas_context>& nc, std::string& target_amf,
-    const oai::model::amf::AuthorizedNetworkSliceInfo&
+    const oai::_3gpp::model::AuthorizedNetworkSliceInfo&
         authorized_network_slice_info) {
   // Get Target AMF from AuthorizedNetworkSliceInfo
   Logger::amf_n1().debug(
@@ -5930,7 +5949,7 @@ void amf_n1::set_pdu_session_reactivation_result(
 void amf_n1::register_3gpp_access(std::shared_ptr<ue_context>& uc) const {
   Logger::amf_n1().debug("AMF registers for 3GPP access with UDM");
 
-  oai::model::udm::Amf3GppAccessRegistration registration_data = {};
+  oai::_3gpp::model::Amf3GppAccessRegistration registration_data = {};
   // AMF Instance ID
   registration_data.setAmfInstanceId(amf_app_inst->get_nf_instance());
   // Callback URI
@@ -5948,8 +5967,8 @@ void amf_n1::register_3gpp_access(std::shared_ptr<ue_context>& uc) const {
   registration_data.setInitialRegistrationInd(true);
   // TODO: Pei
   // Guami
-  oai::model::common::Guami guami       = {};
-  oai::model::common::PlmnIdNid plmn_id = {};
+  oai::_3gpp::model::Guami guami       = {};
+  oai::_3gpp::model::PlmnIdNid plmn_id = {};
   for (auto g : amf_cfg->guami_list) {
     if (boost::iequals(uc->tai.mcc, g.mcc) and
         boost::iequals(uc->tai.mnc, g.mnc)) {
@@ -5964,8 +5983,8 @@ void amf_n1::register_3gpp_access(std::shared_ptr<ue_context>& uc) const {
   }
   registration_data.setGuami(guami);
   // Rat type
-  oai::model::common::RatType rat_type = {};
-  rat_type.setEnumValue(oai::model::common::RatType_anyOf::eRatType_anyOf::NR);
+  oai::_3gpp::model::RatType rat_type = {};
+  rat_type.setEnumValue(oai::_3gpp::model::RatType_anyOf::eRatType_anyOf::NR);
   registration_data.setRatType(rat_type);
 
   // Send request to SBI to trigger registering to UDM and wait for the response
@@ -5992,7 +6011,7 @@ void amf_n1::get_access_and_mobility_subscription_data(
   Logger::amf_n1().debug(
       "Retrieving a UE's Access and Mobility Subscription Data from UDM");
 
-  oai::model::common::PlmnIdNid plmn_id = {};
+  oai::_3gpp::model::PlmnIdNid plmn_id = {};
   plmn_id.setMcc(uc->tai.mcc);
   plmn_id.setMnc(uc->tai.mnc);
 
@@ -6021,7 +6040,7 @@ void amf_n1::get_access_and_mobility_subscription_data(
 
   bool is_result_available = true;
 
-  oai::model::udm::AccessAndMobilitySubscriptionData am_data = {};
+  oai::_3gpp::model::AccessAndMobilitySubscriptionData am_data = {};
 
   // Wait for the response available and process accordingly
   std::optional<nlohmann::json> result_opt = std::nullopt;
@@ -6074,7 +6093,7 @@ void amf_n1::get_smf_selection_subscription_data(
     std::shared_ptr<ue_context>& uc) const {
   Logger::amf_n1().debug("Retrieving SMF Selection Subscription Data from UDM");
 
-  oai::model::common::PlmnIdNid plmn_id = {};
+  oai::_3gpp::model::PlmnIdNid plmn_id = {};
   plmn_id.setMcc(uc->tai.mcc);
   plmn_id.setMnc(uc->tai.mnc);
 
@@ -6097,7 +6116,7 @@ void amf_n1::get_smf_selection_subscription_data(
 void amf_n1::discover_pcf(std::shared_ptr<ue_context>& uc) {
   Logger::amf_n1().debug("Discovering PCF for the UE");
 
-  oai::model::common::PlmnIdNid plmn_id = {};
+  oai::_3gpp::model::PlmnIdNid plmn_id = {};
   plmn_id.setMcc(uc->tai.mcc);
   plmn_id.setMnc(uc->tai.mnc);
 
@@ -6115,11 +6134,11 @@ void amf_n1::discover_pcf(std::shared_ptr<ue_context>& uc) {
 
   itti_msg->promise_id = promise_id;
   itti_msg->supi       = uc->supi;
-  itti_msg->snssai     = uc->snssai;
-  itti_msg->plmn_id    = plmn_id;
+  // itti_msg->snssai     = uc->snssai;
+  itti_msg->plmn_id = plmn_id;
   // TODO: add support for PCF Set ID
   // TODO: add support for PCF Group ID
-  itti_msg->dnn = uc->dnn;
+  // itti_msg->dnn = uc->dnn;
   // TODO: add support for PCF Selection Assistance Info and PCF ID(s) serving
   // the established PDU Sessions
 
@@ -6132,7 +6151,7 @@ void amf_n1::discover_pcf(std::shared_ptr<ue_context>& uc) {
 
   bool is_result_available = true;
 
-  oai::model::udm::AccessAndMobilitySubscriptionData am_data = {};
+  oai::_3gpp::model::SearchResult search_result = {};
 
   // Wait for the response available and process accordingly
   std::optional<nlohmann::json> result_opt = std::nullopt;
@@ -6142,8 +6161,8 @@ void amf_n1::discover_pcf(std::shared_ptr<ue_context>& uc) {
     Logger::amf_n1().debug("Got result for promise ID %ld", promise_id);
     if (result.find(kSbiResponseJsonData) != result.end()) {
       Logger::amf_n1().debug(
-          "Got Access and Mobility Subscription Data Retrievel response from "
-          "UDM: %s",
+          "Got Search Result response from "
+          "NRF: %s",
           result[kSbiResponseJsonData].dump());
 
       uint32_t http_response_code =
@@ -6153,16 +6172,25 @@ void amf_n1::discover_pcf(std::shared_ptr<ue_context>& uc) {
         if (http_response_code == oai::common::sbi::http_status_code::OK) {
           // Process the content
           try {
-            from_json(result[kSbiResponseJsonData], am_data);
+            from_json(result[kSbiResponseJsonData], search_result);
             is_result_available = true;
-            // TODO: store AM Data
+            std::vector<oai::_3gpp::model::NFProfile> nf_instances =
+                search_result.getNfInstances();
+            for (auto const& it : nf_instances) {
+              // IPv4 addresses
+
+              // PCF info
+              if (it.pcfInfoIsSet()) {
+                oai::_3gpp::model::PcfInfo pcf_info = it.getPcfInfo();
+              }
+            }
+
           } catch (std::exception& e) {
             Logger::amf_n1().warn(
-                "Could not parse Access and Mobility Subscription Data from "
+                "Could not parse Search Result from "
                 "Json");
             is_result_available = false;
           }
-          // TODO: process locations
         }
       }
 
@@ -6175,7 +6203,6 @@ void amf_n1::discover_pcf(std::shared_ptr<ue_context>& uc) {
   }
 
   if (!is_result_available) {
-    Logger::amf_n1().warn(
-        "Could not get Access and Mobility Subscription Data from UDM");
+    Logger::amf_n1().warn("Could not get Search Result from NRF");
   }
 }

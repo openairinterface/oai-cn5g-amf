@@ -68,7 +68,7 @@
 using namespace amf_application;
 using namespace oai::config;
 using namespace oai::ngap;
-using namespace oai::model::common;
+using namespace oai::_3gpp::model;
 extern itti_mw* itti_inst;
 extern amf_n2* amf_n2_inst;
 extern amf_n1* amf_n1_inst;
@@ -1431,16 +1431,17 @@ void amf_n2::handle_itti_message(
       ev_notif.set_notify_uri(i->notify_uri);  // Direct subscription
       // ev_notif.set_subs_change_notify_correlation_id(i->notify_uri);
 
-      oai::model::amf::AmfEventReport event_report = {};
-      oai::model::amf::AmfEventType amf_event_type = {};
-      amf_event_type.set_value("COMMUNICATION_FAILURE_REPORT");
+      oai::_3gpp::model::AmfEventReport event_report = {};
+      oai::_3gpp::model::AmfEventType amf_event_type = {};
+      amf_event_type.setEnumValue(AmfEventType_anyOf::eAmfEventType_anyOf::
+                                      COMMUNICATION_FAILURE_REPORT);
       event_report.setType(amf_event_type);
 
-      oai::model::amf::AmfEventState amf_event_state = {};
+      oai::_3gpp::model::AmfEventState amf_event_state = {};
       amf_event_state.setActive(true);
       event_report.setState(amf_event_state);
 
-      oai::model::amf::CommunicationFailure comm_failure = {};
+      oai::_3gpp::model::CommunicationFailure comm_failure = {};
 
       NgApCause ngap_cause = {};
       ngap_cause.setGroup(itti_msg->cause.getChoiceOfCause());
@@ -2272,9 +2273,9 @@ void amf_n2::handle_itti_message(
   NrLocation nr_location     = {};
 
   Ncgi ncgi;
-  oai::model::common::Tai tai_model;
-  oai::model::common::PlmnId plmnId;
-  oai::model::common::GlobalRanNodeId ranid;
+  oai::_3gpp::model::Tai tai_model;
+  oai::_3gpp::model::PlmnId plmnId;
+  oai::_3gpp::model::GlobalRanNodeId ranid;
   GNbId gnbid;
 
   plmnId.setMcc(cgi.mcc);
@@ -2520,17 +2521,18 @@ void amf_n2::handle_itti_message(
   std::shared_ptr<ue_context> uc = {};
   if (!amf_app_inst->ran_amf_id_2_ue_context(ue_context_key, uc)) return;
 
-  std::optional<oai::model::amf::N1MessageClass_anyOf::eN1MessageClass_anyOf>
+  std::optional<oai::_3gpp::model::N1MessageClass_anyOf::eN1MessageClass_anyOf>
       n1_message_class = std::nullopt;
   std::optional<
-      oai::model::amf::N2InformationClass_anyOf::eN2InformationClass_anyOf>
-      n2_info_class = std::make_optional<
-          oai::model::amf::N2InformationClass_anyOf::eN2InformationClass_anyOf>(
-          oai::model::amf::N2InformationClass_anyOf::eN2InformationClass_anyOf::
-              NRPPA);
+      oai::_3gpp::model::N2InformationClass_anyOf::eN2InformationClass_anyOf>
+      n2_info_class =
+          std::make_optional<oai::_3gpp::model::N2InformationClass_anyOf::
+                                 eN2InformationClass_anyOf>(
+              oai::_3gpp::model::N2InformationClass_anyOf::
+                  eN2InformationClass_anyOf::NRPPA);
   std::map<
       n1n2sub_id_t,
-      std::shared_ptr<oai::model::amf::UeN1N2InfoSubscriptionCreateData>>
+      std::shared_ptr<oai::_3gpp::model::UeN1N2InfoSubscriptionCreateData>>
       subscriptions;
 
   amf_app_inst->find_n1n2_info_subscriptions(
@@ -2548,10 +2550,10 @@ void amf_n2::handle_itti_message(
         std::make_shared<itti_sbi_n2_info_notify>(TASK_AMF_N2, TASK_AMF_SBI);
 
     for (auto sub : subscriptions) {
-      oai::model::amf::N2InformationNotification n2_info_notification = {};
+      oai::_3gpp::model::N2InformationNotification n2_info_notification = {};
       fill_n2_information_notification(
           std::to_string(sub.first),
-          oai::model::amf::NgapIeType_anyOf::eNgapIeType_anyOf::NRPPA_PDU,
+          oai::_3gpp::model::NgapIeType_anyOf::eNgapIeType_anyOf::NRPPA_PDU,
           n2_info_notification);
 
       itti_msg_notification->n2_info_notification = n2_info_notification;
@@ -2579,12 +2581,12 @@ void amf_n2::handle_itti_message(
   std::string lmf_id = {};
   amf_conv::bstring_2_string(itti_msg->routing_id, lmf_id);
 
-  auto n2_info_class = oai::model::amf::N2InformationClass_anyOf::
+  auto n2_info_class = oai::_3gpp::model::N2InformationClass_anyOf::
       eN2InformationClass_anyOf::NRPPA;
 
   std::map<
       n1n2sub_id_t,
-      std::shared_ptr<oai::model::amf::NonUeN2InfoSubscriptionCreateData>>
+      std::shared_ptr<oai::_3gpp::model::NonUeN2InfoSubscriptionCreateData>>
       subscriptions;
 
   amf_app_inst->find_non_ue_n2_info_subscriptions(
@@ -2601,10 +2603,10 @@ void amf_n2::handle_itti_message(
         std::make_shared<itti_sbi_n2_info_notify>(TASK_AMF_N2, TASK_AMF_SBI);
 
     for (auto sub : subscriptions) {
-      oai::model::amf::N2InformationNotification n2_info_notification = {};
+      oai::_3gpp::model::N2InformationNotification n2_info_notification = {};
       fill_n2_information_notification(
           std::to_string(sub.first),
-          oai::model::amf::NgapIeType_anyOf::eNgapIeType_anyOf::NRPPA_PDU,
+          oai::_3gpp::model::NgapIeType_anyOf::eNgapIeType_anyOf::NRPPA_PDU,
           n2_info_notification);
 
       itti_msg_notification->n2_info_notification = n2_info_notification;
@@ -2962,24 +2964,26 @@ bool amf_n2::get_common_NSSAI(
 //------------------------------------------------------------------------------
 void amf_n2::fill_n2_information_notification(
     const std::string& subscription_id,
-    const oai::model::amf::NgapIeType_anyOf::eNgapIeType_anyOf& ngap_ie_type_e,
-    oai::model::amf::N2InformationNotification& n2_info_notification) {
+    const oai::_3gpp::model::NgapIeType_anyOf::eNgapIeType_anyOf&
+        ngap_ie_type_e,
+    oai::_3gpp::model::N2InformationNotification& n2_info_notification) {
   n2_info_notification.setN2NotifySubscriptionId(subscription_id);
-  oai::model::amf::N2InfoContainer n2_info_container = {};
+  oai::_3gpp::model::N2InfoContainer n2_info_container = {};
 
   // N2 Information Class (only for NRPPA for now)
-  oai::model::amf::N2InformationClass n2_information_class = {};
-  n2_information_class.setEnumValue(oai::model::amf::N2InformationClass_anyOf::
-                                        eN2InformationClass_anyOf::NRPPA);
+  oai::_3gpp::model::N2InformationClass n2_information_class = {};
+  n2_information_class.setEnumValue(
+      oai::_3gpp::model::N2InformationClass_anyOf::eN2InformationClass_anyOf::
+          NRPPA);
   n2_info_container.setN2InformationClass(n2_information_class);
 
-  oai::model::amf::N2InfoContent n2_info_content         = {};
-  oai::model::amf::NgapIeType ngap_ie_type               = {};
-  oai::model::common::RefToBinaryData ref_to_binary_data = {};
+  oai::_3gpp::model::N2InfoContent n2_info_content      = {};
+  oai::_3gpp::model::NgapIeType ngap_ie_type            = {};
+  oai::_3gpp::model::RefToBinaryData ref_to_binary_data = {};
   ngap_ie_type.setEnumValue(ngap_ie_type_e);
   // TODO: for another types
   if (ngap_ie_type_e ==
-      oai::model::amf::NgapIeType_anyOf::eNgapIeType_anyOf::NRPPA_PDU) {
+      oai::_3gpp::model::NgapIeType_anyOf::eNgapIeType_anyOf::NRPPA_PDU) {
     ref_to_binary_data.setContentId(oai::utils::N2_NRPPa_CONTENT_ID);
   }
   n2_info_content.setNgapIeType(ngap_ie_type);
@@ -2987,9 +2991,9 @@ void amf_n2::fill_n2_information_notification(
   n2_info_content.setNgapData(ref_to_binary_data);
 
   if (ngap_ie_type_e ==
-      oai::model::amf::NgapIeType_anyOf::eNgapIeType_anyOf::NRPPA_PDU) {
+      oai::_3gpp::model::NgapIeType_anyOf::eNgapIeType_anyOf::NRPPA_PDU) {
     // NRPPA Info
-    oai::model::amf::NrppaInformation nrppa_information = {};
+    oai::_3gpp::model::NrppaInformation nrppa_information = {};
     nrppa_information.setNrppaPdu(n2_info_content);
     n2_info_container.setNrppaInfo(nrppa_information);
   }

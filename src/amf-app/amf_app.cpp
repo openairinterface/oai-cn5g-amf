@@ -380,12 +380,12 @@ bool amf_app::get_pdu_sessions_context(
 //------------------------------------------------------------------------------
 bool amf_app::update_pdu_sessions_context(
     const std::string& supi, uint8_t pdu_session_id,
-    const oai::model::amf::SmContextStatusNotification& statusNotification) {
+    const oai::_3gpp::model::SmContextStatusNotification& statusNotification) {
   std::shared_ptr<ue_context> uc = {};
   if (!supi_2_ue_context(supi, uc)) return false;
-  std::string pdu_session_status =
-      statusNotification.getStatusInfo().getResourceStatus().getValue();
-  if (boost::iequals(pdu_session_status, "released")) {
+  auto pdu_session_status = statusNotification.getStatus().getEnumValue();
+  if (pdu_session_status == oai::_3gpp::model::SmContextStatus_anyOf::
+                                eSmContextStatus_anyOf::RELEASED) {
     if (uc->remove_pdu_sessions_context(pdu_session_id)) return true;
   }
   return false;
@@ -602,7 +602,7 @@ void amf_app::handle_itti_message(itti_sbi_n1_message_notification& itti_msg) {
 
   // get RegistrationContextContainer including gNB info
   // UE context information, N1 message from UE, AN address
-  oai::model::amf::RegistrationContextContainer registration_context =
+  oai::_3gpp::model::RegistrationContextContainer registration_context =
       itti_msg.notification_msg.getRegistrationCtxtContainer();
 
   // Step 2. Create gNB context if necessary
@@ -612,14 +612,14 @@ void amf_app::handle_itti_message(itti_sbi_n1_message_notification& itti_msg) {
   std::shared_ptr<gnb_context> gc = {};
 
   // GlobalRAN Node ID (~in NGSetupRequest)
-  oai::model::common::GlobalRanNodeId ran_node_id =
+  oai::_3gpp::model::GlobalRanNodeId ran_node_id =
       registration_context.getRanNodeId();
   // RAN UE NGAP ID
   uint32_t ran_ue_ngap_id = registration_context.getAnN2ApId();
   uint32_t gnb_id         = {};
 
   if (ran_node_id.gNbIdIsSet()) {
-    oai::model::common::GNbId gnb_id_model = ran_node_id.getGNbId();
+    oai::_3gpp::model::GNbId gnb_id_model = ran_node_id.getGNbId();
     try {
       gnb_id = std::stoul(gnb_id_model.getGNBValue(), nullptr, 10);
     } catch (const std::exception& e) {
@@ -645,9 +645,9 @@ void amf_app::handle_itti_message(itti_sbi_n1_message_notification& itti_msg) {
   // std::string getInitialAmfName()
 
   // Step 3. Create UE Context
-  oai::model::amf::UeContext ue_ctx = registration_context.getUeContext();
-  std::string supi                  = {};
-  std::shared_ptr<ue_context> uc    = {};
+  oai::_3gpp::model::UeContext ue_ctx = registration_context.getUeContext();
+  std::string supi                    = {};
+  std::shared_ptr<ue_context> uc      = {};
 
   if (ue_ctx.supiIsSet()) {
     supi = ue_ctx.getSupi();
@@ -768,7 +768,7 @@ void amf_app::handle_itti_message(itti_sbi_n1n2_message_subscribe& itti_msg) {
   // map (subscription id, info)
   n1n2sub_id_t n1n2sub_id = generate_n1n2_message_subscription_id();
   auto subscription_data =
-      std::make_shared<oai::model::amf::UeN1N2InfoSubscriptionCreateData>(
+      std::make_shared<oai::_3gpp::model::UeN1N2InfoSubscriptionCreateData>(
           itti_msg.subscription_data);
   add_n1n2_message_subscription(
       itti_msg.ue_cxt_id, n1n2sub_id, subscription_data);
@@ -777,7 +777,7 @@ void amf_app::handle_itti_message(itti_sbi_n1n2_message_subscribe& itti_msg) {
       amf_cfg->sbi, itti_msg.ue_cxt_id, std::to_string((uint32_t) n1n2sub_id));
 
   // Trigger the response from AMF API Server
-  oai::model::amf::UeN1N2InfoSubscriptionCreatedData created_data = {};
+  oai::_3gpp::model::UeN1N2InfoSubscriptionCreatedData created_data = {};
   created_data.setN1n2NotifySubscriptionId(
       std::to_string((uint32_t) n1n2sub_id));
   nlohmann::json created_data_json = {};
@@ -811,7 +811,7 @@ void amf_app::handle_itti_message(itti_sbi_n1n2_message_unsubscribe& itti_msg) {
   } else {
     response_data[kSbiResponseHttpResponseCode] =
         static_cast<uint32_t>(oai::common::sbi::http_status_code::BAD_REQUEST);
-    oai::model::common::ProblemDetails problem_details = {};
+    oai::_3gpp::model::ProblemDetails problem_details = {};
     // TODO set problem_details
     to_json(response_data["ProblemDetails"], problem_details);
   }
@@ -833,7 +833,7 @@ void amf_app::handle_itti_message(itti_sbi_non_ue_n2_info_subscribe& itti_msg) {
   // map (subscription id, info)
   n1n2sub_id_t n2sub_id = generate_n1n2_message_subscription_id();
   auto subscription_data =
-      std::make_shared<oai::model::amf::NonUeN2InfoSubscriptionCreateData>(
+      std::make_shared<oai::_3gpp::model::NonUeN2InfoSubscriptionCreateData>(
           itti_msg.subscription_data);
 
   add_non_ue_n2_info_subscription(n2sub_id, subscription_data);
@@ -842,7 +842,7 @@ void amf_app::handle_itti_message(itti_sbi_non_ue_n2_info_subscribe& itti_msg) {
       amf_cfg->sbi, std::to_string((uint32_t) n2sub_id));
 
   // Trigger the response from AMF API Server
-  oai::model::amf::NonUeN2InfoSubscriptionCreatedData created_data = {};
+  oai::_3gpp::model::NonUeN2InfoSubscriptionCreatedData created_data = {};
 
   created_data.setN2NotifySubscriptionId(std::to_string((uint32_t) n2sub_id));
 
@@ -877,7 +877,7 @@ void amf_app::handle_itti_message(
   } else {
     response_data[kSbiResponseHttpResponseCode] =
         static_cast<uint32_t>(oai::common::sbi::http_status_code::BAD_REQUEST);
-    oai::model::common::ProblemDetails problem_details = {};
+    oai::_3gpp::model::ProblemDetails problem_details = {};
     // TODO set problem_details
     to_json(response_data["ProblemDetails"], problem_details);
   }
@@ -938,7 +938,7 @@ void amf_app::handle_itti_message(itti_sbi_amf_configuration& itti_msg) {
   } else {
     response_data[kSbiResponseHttpResponseCode] =
         static_cast<uint32_t>(oai::common::sbi::http_status_code::BAD_REQUEST);
-    oai::model::common::ProblemDetails problem_details = {};
+    oai::_3gpp::model::ProblemDetails problem_details = {};
     // TODO set problem_details
     to_json(response_data["ProblemDetails"], problem_details);
   }
@@ -977,7 +977,7 @@ void amf_app::handle_itti_message(itti_sbi_update_amf_configuration& itti_msg) {
   } else {
     response_data[kSbiResponseHttpResponseCode] =
         static_cast<uint32_t>(oai::common::sbi::http_status_code::BAD_REQUEST);
-    oai::model::common::ProblemDetails problem_details = {};
+    oai::_3gpp::model::ProblemDetails problem_details = {};
     // TODO set problem_details
     to_json(response_data["ProblemDetails"], problem_details);
   }
@@ -1109,10 +1109,10 @@ void amf_app::handle_itti_message(itti_sbi_retrieve_am_data_response& r) {
       std::shared_ptr<ue_context> uc = {};
       if (supi_2_ue_context(r.supi, uc)) {
         try {
-          oai::model::udm::AccessAndMobilitySubscriptionData am_data = {};
+          oai::_3gpp::model::AccessAndMobilitySubscriptionData am_data = {};
           from_json(r.response_data[kSbiResponseJsonData], am_data);
           //  uc->am_data =
-          //  std::make_optional<oai::model::udm::AccessAndMobilitySubscriptionData>(am_data);
+          //  std::make_optional<oai::_3gpp::model::AccessAndMobilitySubscriptionData>(am_data);
         } catch (std::exception& e) {
           Logger::amf_n1().warn(
               "Could not parse Access and Mobility Subscription Data from "
@@ -1145,7 +1145,7 @@ void amf_app::handle_itti_message(
       std::shared_ptr<ue_context> uc = {};
       if (supi_2_ue_context(r.supi, uc)) {
         try {
-          oai::model::udm::SmfSelectionSubscriptionData
+          oai::_3gpp::model::SmfSelectionSubscriptionData
               smf_selection_subscription_data = {};
           from_json(
               r.response_data[kSbiResponseJsonData],
@@ -1198,7 +1198,7 @@ uint32_t amf_app::get_number_registered_ues() const {
 //---------------------------------------------------------------------------------------------
 void amf_app::add_n1n2_message_subscription(
     const std::string& ue_ctx_id, const n1n2sub_id_t& sub_id,
-    std::shared_ptr<oai::model::amf::UeN1N2InfoSubscriptionCreateData>&
+    std::shared_ptr<oai::_3gpp::model::UeN1N2InfoSubscriptionCreateData>&
         subscription_data) {
   Logger::amf_app().debug("Add an N1N2 Message Subscribe (Sub ID %d)", sub_id);
   std::unique_lock lock(m_n1n2_message_subscribe);
@@ -1236,14 +1236,15 @@ bool amf_app::remove_n1n2_message_subscription(
 //---------------------------------------------------------------------------------------------
 void amf_app::find_n1n2_info_subscriptions(
     const std::string& ue_ctx_id,
-    std::optional<oai::model::amf::N1MessageClass_anyOf::eN1MessageClass_anyOf>&
+    std::optional<
+        oai::_3gpp::model::N1MessageClass_anyOf::eN1MessageClass_anyOf>&
         n1_message_class,
     std::optional<
-        oai::model::amf::N2InformationClass_anyOf::eN2InformationClass_anyOf>&
+        oai::_3gpp::model::N2InformationClass_anyOf::eN2InformationClass_anyOf>&
         n2_info_class,
     std::map<
         n1n2sub_id_t,
-        std::shared_ptr<oai::model::amf::UeN1N2InfoSubscriptionCreateData>>&
+        std::shared_ptr<oai::_3gpp::model::UeN1N2InfoSubscriptionCreateData>>&
         subscriptions) {
   Logger::amf_app().debug("Find an N1N2 Info Subscription");
 
@@ -1257,7 +1258,7 @@ void amf_app::find_n1n2_info_subscriptions(
               std::pair<
                   n1n2sub_id_t,
                   std::shared_ptr<
-                      oai::model::amf::UeN1N2InfoSubscriptionCreateData>>(
+                      oai::_3gpp::model::UeN1N2InfoSubscriptionCreateData>>(
                   subscription.first.second, subscription.second));
         }
       }
@@ -1268,7 +1269,7 @@ void amf_app::find_n1n2_info_subscriptions(
               std::pair<
                   n1n2sub_id_t,
                   std::shared_ptr<
-                      oai::model::amf::UeN1N2InfoSubscriptionCreateData>>(
+                      oai::_3gpp::model::UeN1N2InfoSubscriptionCreateData>>(
                   subscription.first.second, subscription.second));
         }
       }
@@ -1279,7 +1280,7 @@ void amf_app::find_n1n2_info_subscriptions(
 //---------------------------------------------------------------------------------------------
 void amf_app::add_non_ue_n2_info_subscription(
     const n1n2sub_id_t& sub_id,
-    std::shared_ptr<oai::model::amf::NonUeN2InfoSubscriptionCreateData>&
+    std::shared_ptr<oai::_3gpp::model::NonUeN2InfoSubscriptionCreateData>&
         subscription_data) {
   Logger::amf_app().debug(
       "Add an Non UE N2 Info Subscribe (Sub ID %d)", sub_id);
@@ -1316,11 +1317,11 @@ bool amf_app::remove_non_ue_n2_info_subscription(const std::string& sub_id) {
 //---------------------------------------------------------------------------------------------
 void amf_app::find_non_ue_n2_info_subscriptions(
     const std::string& nf_id,
-    const oai::model::amf::N2InformationClass_anyOf::eN2InformationClass_anyOf&
-        n2_info_class,
+    const oai::_3gpp::model::N2InformationClass_anyOf::
+        eN2InformationClass_anyOf& n2_info_class,
     std::map<
         n1n2sub_id_t,
-        std::shared_ptr<oai::model::amf::NonUeN2InfoSubscriptionCreateData>>&
+        std::shared_ptr<oai::_3gpp::model::NonUeN2InfoSubscriptionCreateData>>&
         subscriptions) {
   Logger::amf_app().debug("Find an Non UE N2 Info Subscription");
 
@@ -1333,7 +1334,7 @@ void amf_app::find_non_ue_n2_info_subscriptions(
           std::pair<
               n1n2sub_id_t,
               std::shared_ptr<
-                  oai::model::amf::NonUeN2InfoSubscriptionCreateData>>(
+                  oai::_3gpp::model::NonUeN2InfoSubscriptionCreateData>>(
               subscription.first, subscription.second));
     }
   }
@@ -1430,7 +1431,7 @@ bool amf_app::handle_event_exposure_delete(const std::string& subscription_id) {
 //------------------------------------------------------------------------------
 bool amf_app::handle_nf_status_notification(
     std::shared_ptr<itti_sbi_notification_data>& msg,
-    oai::model::common::ProblemDetails& problem_details, uint32_t& http_code) {
+    oai::_3gpp::model::ProblemDetails& problem_details, uint32_t& http_code) {
   Logger::amf_app().info(
       "Handle a NF status notification from NRF (HTTP version "
       "%d)",
@@ -1818,10 +1819,10 @@ void amf_app::timer_nrf_heartbeat_timeout(
   auto itti_msg = std::make_shared<itti_sbi_update_nf_instance_request>(
       TASK_AMF_APP, TASK_AMF_SBI);
 
-  oai::model::common::PatchItem patch_item = {};
-  oai::model::common::PatchOperation op;
+  oai::_3gpp::model::PatchItem patch_item = {};
+  oai::_3gpp::model::PatchOperation op;
   op.setEnumValue(
-      oai::model::common::PatchOperation_anyOf::ePatchOperation_anyOf::REPLACE);
+      oai::_3gpp::model::PatchOperation_anyOf::ePatchOperation_anyOf::REPLACE);
   patch_item.setOp(op);
   patch_item.setPath("/nfStatus");
   patch_item.setValue("REGISTERED");

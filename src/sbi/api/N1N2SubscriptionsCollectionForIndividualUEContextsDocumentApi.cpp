@@ -22,8 +22,8 @@ namespace oai {
 namespace amf {
 namespace api {
 
-using namespace oai::model::common::helpers;
-using namespace oai::model::amf;
+using namespace oai::_3gpp::model::helpers;
+using namespace oai::_3gpp::model;
 
 N1N2SubscriptionsCollectionForIndividualUEContextsDocumentApi::
     N1N2SubscriptionsCollectionForIndividualUEContextsDocumentApi(

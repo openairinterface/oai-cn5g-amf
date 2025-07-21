@@ -509,36 +509,36 @@ class amf_n1 {
   /*
    * Get the Slice Selection Subscription Data (from UDM/configuration file)
    * @param [std::shared_ptr<nas_context>&] nc: Pointer to the UE NAS Context
-   * @param [oai::model::amf::Nssai&] nssai: NSSAI
+   * @param [oai::_3gpp::model::Nssai&] nssai: NSSAI
    * @return true if can get NSSAI from UDM/configuration file
    */
   bool get_slice_selection_subscription_data(
-      const std::shared_ptr<nas_context>& nc, oai::model::amf::Nssai& nssai);
+      const std::shared_ptr<nas_context>& nc, oai::_3gpp::model::Nssai& nssai);
 
   /*
    * Get the Slice Selection Subscription Data from the configuration file
    * @param [std::shared_ptr<nas_context>&] nc: Pointer to the UE NAS Context
-   * @param [oai::model::amf::Nssai&] nssai: NSSAI
+   * @param [oai::_3gpp::model::Nssai&] nssai: NSSAI
    * @return true if can get NSSAI from the configuration file
    */
   bool get_slice_selection_subscription_data_from_conf_file(
-      const std::shared_ptr<nas_context>& nc, oai::model::amf::Nssai& nssai);
+      const std::shared_ptr<nas_context>& nc, oai::_3gpp::model::Nssai& nssai);
 
   /*
    * Verify whether the current AMF can process the Subscribed NSSAIs or not
    * @param [const std::shared_ptr<nas_context>&] nc: Pointer to the UE NAS
    * Context
-   * @param [oai::model::amf::Nssai&] nssai: NSSAI
+   * @param [oai::_3gpp::model::Nssai&] nssai: NSSAI
    * @return true if AMF can process, otherwise return false
    */
   bool check_subscribed_nssai(
-      const std::shared_ptr<nas_context>& nc, oai::model::amf::Nssai& nssai);
+      const std::shared_ptr<nas_context>& nc, oai::_3gpp::model::Nssai& nssai);
 
   /*
    * Verify whether the current AMF can process the Requested NSSAIs or not
    * @param [const std::shared_ptr<nas_context>&] nc: Pointer to the UE NAS
    * Context
-   * @param [oai::model::amf::Nssai&] nssai: NSSAI
+   * @param [oai::_3gpp::model::Nssai&] nssai: NSSAI
    * @return true if AMF can process, otherwise return false
    */
   bool check_requested_nssai(const std::shared_ptr<nas_context>& nc);
@@ -548,16 +548,16 @@ class amf_n1 {
    * @param [const std::shared_ptr<nas_context>&] nc: Pointer to the UE NAS
    * Context
    * @param [const std::string&] nf_instance_id: NF instance ID
-   * @param [const oai::model::amf::SliceInfoForRegistration&] slice_info: Slice
-   * information
-   * @param [oai::model::amf::AuthorizedNetworkSliceInfo&]
+   * @param [const oai::_3gpp::model::SliceInfoForRegistration&] slice_info:
+   * Slice information
+   * @param [oai::_3gpp::model::AuthorizedNetworkSliceInfo&]
    * authorized_network_slice_info: Authorized NSSAI
    * @return true if can get Network Selection Data from NSSF/configuration file
    */
   bool get_network_slice_selection(
       const std::shared_ptr<nas_context>& nc, const std::string& nf_instance_id,
-      const oai::model::amf::SliceInfoForRegistration& slice_info,
-      oai::model::amf::AuthorizedNetworkSliceInfo&
+      const oai::_3gpp::model::SliceInfoForRegistration& slice_info,
+      oai::_3gpp::model::AuthorizedNetworkSliceInfo&
           authorized_network_slice_info);
 
   /*
@@ -565,16 +565,16 @@ class amf_n1 {
    * @param [const std::shared_ptr<nas_context>&] nc: Pointer to the UE NAS
    * Context
    * @param [const std::string&] nf_instance_id: NF instance ID
-   * @param [const oai::model::amf::SliceInfoForRegistration&] slice_info: Slice
-   * information
-   * @param [oai::model::amf::AuthorizedNetworkSliceInfo&]
+   * @param [const oai::_3gpp::model::SliceInfoForRegistration&] slice_info:
+   * Slice information
+   * @param [oai::_3gpp::model::AuthorizedNetworkSliceInfo&]
    * authorized_network_slice_info: Authorized Network Slice Info
    * @return true if can get Network Selection Data from the configuration file
    */
   bool get_network_slice_selection_from_conf_file(
       const std::string& nf_instance_id,
-      const oai::model::amf::SliceInfoForRegistration& slice_info,
-      oai::model::amf::AuthorizedNetworkSliceInfo&
+      const oai::_3gpp::model::SliceInfoForRegistration& slice_info,
+      oai::_3gpp::model::AuthorizedNetworkSliceInfo&
           authorized_network_slice_info) const;
 
   /*
@@ -582,13 +582,13 @@ class amf_n1 {
    * information (from NSSF/Conf file)
    * @param [const std::shared_ptr<nas_context>&] nc: Pointer to the UE NAS
    * Context
-   * @param [oai::model::amf::AuthorizedNetworkSliceInfo&]
+   * @param [oai::_3gpp::model::AuthorizedNetworkSliceInfo&]
    * authorized_network_slice_info: Authorized NSSAI
    * @return true if can get the Target AMF info, otherwise return false
    */
   bool get_target_amf(
       const std::shared_ptr<nas_context>& nc, std::string& target_amf,
-      const oai::model::amf::AuthorizedNetworkSliceInfo&
+      const oai::_3gpp::model::AuthorizedNetworkSliceInfo&
           authorized_network_slice_info);
 
   /*
@@ -674,13 +674,13 @@ class amf_n1 {
    * Handle the UE Location Change event to trigger the notification to the
    * subscribed NFs
    * @param [std::string] supi: SUPI
-   * @param [oai::model::amf::UserLocation] user_location: User location
+   * @param [oai::_3gpp::model::UserLocation] user_location: User location
    * information
    * @param [uint8_t] http_version: HTTP version (for the notification)
    * @return void
    */
   void handle_ue_location_change(
-      std::string supi, oai::model::common::UserLocation, uint8_t http_version);
+      std::string supi, oai::_3gpp::model::UserLocation, uint8_t http_version);
 
   /*
    * Handle the UE Reachability Status Change event to trigger the notification
@@ -736,13 +736,13 @@ class amf_n1 {
    * Handle the UE Communication Failure event to trigger the notification to
    * the subscribed NFs
    * @param [std::string] supi: SUPI
-   * @param [oai::model::amf::CommunicationFailure] comm_failure: Communication
-   * Failure reason
+   * @param [oai::_3gpp::model::CommunicationFailure] comm_failure:
+   * Communication Failure reason
    * @param [uint8_t] http_version: HTTP version (for the notification)
    * @return void
    */
   void handle_ue_communication_failure_change(
-      std::string supi, oai::model::amf::CommunicationFailure,
+      std::string supi, oai::_3gpp::model::CommunicationFailure,
       uint8_t http_version);
 
   /*
@@ -950,6 +950,8 @@ class amf_n1 {
 
   void get_smf_selection_subscription_data(
       std::shared_ptr<ue_context>& uc) const;
+
+  void discover_pcf(std::shared_ptr<ue_context>& uc);
 
   // for Event Handling
   amf_event event_sub;
