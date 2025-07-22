@@ -433,17 +433,25 @@ void Authentication_5gaka::handover_ncc_derive_knh(
     uint32_t uplinkCount, uint8_t accessType,
     uint8_t kamf[AUTH_VECTOR_LENGTH_OCTETS],
     uint8_t (&kgnb)[AUTH_VECTOR_LENGTH_OCTETS],
-    uint8_t (&knh)[AUTH_VECTOR_LENGTH_OCTETS], int ncc) {
+    uint8_t (&knh)[AUTH_VECTOR_LENGTH_OCTETS], int ncc, bool is_prev_kgnb_set,
+    uint8_t (&prev_kgnb)[AUTH_VECTOR_LENGTH_OCTETS]) {
   Logger::amf_n1().debug("derive_handover_ncc_knh ...");
   uint8_t S[20], SS[ncc][35];
-  S[0]                 = 0x6E;
-  *(uint32_t*) (S + 1) = htonl(uplinkCount);
-  S[5]                 = 0x00;
-  S[6]                 = 0x04;
-  S[7]                 = accessType;
-  S[8]                 = 0x00;
-  S[9]                 = 0x01;
-  kdf(kamf, 32, S, 10, kgnb, 32);
+
+  if (is_prev_kgnb_set) {
+    // If prev kgNB is already exists, copy directly
+    std::copy(std::begin(prev_kgnb), std::end(prev_kgnb), std::begin(kgnb));
+  } else {
+    S[0]                 = 0x6E;
+    *(uint32_t*) (S + 1) = htonl(uplinkCount);
+    S[5]                 = 0x00;
+    S[6]                 = 0x04;
+    S[7]                 = accessType;
+    S[8]                 = 0x00;
+    S[9]                 = 0x01;
+    kdf(kamf, 32, S, 10, kgnb, 32);
+  }
+
   for (int i = 0; i < ncc; i++) {
     if (i == 0) {
       SS[0][0] = 0x6f;

@@ -3434,6 +3434,13 @@ void amf_n1::security_mode_complete_handle(
     oai::utils::output_wrapper::print_buffer(
         "amf_n1", "Kamf", kamf, AUTH_VECTOR_LENGTH_OCTETS);
 
+    /** For the HO, we do not derive kGNB again.
+     * Use the existing one by keeping the CTXT */
+    if (nc->is_kgNB_set) std::fill(std::begin(nc->kgNB), std::end(nc->kgNB), 0);
+
+    std::copy(std::begin(kgnb), std::end(kgnb), std::begin(nc->kgNB));
+    nc->is_kgNB_set = true;
+
     auto itti_msg = std::make_shared<itti_initial_context_setup_request>(
         TASK_AMF_N1, TASK_AMF_N2);
     itti_msg->ran_ue_ngap_id = ran_ue_ngap_id;
