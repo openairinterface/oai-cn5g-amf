@@ -188,6 +188,9 @@ class amf_sbi {
       itti_sbi_retrieve_smf_selection_subscription_data& itti_msg);
 
   bool handle_itti_message(itti_sbi_pcf_discovery& itti_msg);
+
+  bool handle_itti_message(itti_sbi_am_policy_association& itti_msg);
+  
   /*
    * Handle request to create a new PDU Session
    * @param [const std::string&] supi: SUPI

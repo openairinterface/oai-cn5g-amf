@@ -264,6 +264,16 @@ void amf_sbi_task(void*) {
         amf_sbi_inst->handle_itti_message(std::ref(*m));
       } break;
 
+      case SBI_AM_POLICY_ASSOCIATION: {
+        Logger::amf_sbi().info(
+            "Receive AM Policy Association message, "
+            "handling ...");
+        itti_sbi_am_policy_association* m =
+            dynamic_cast<itti_sbi_am_policy_association*>(msg);
+        if (!m) break;
+        amf_sbi_inst->handle_itti_message(std::ref(*m));
+      } break;
+
       case TERMINATE: {
         if (itti_msg_terminate* terminate =
                 dynamic_cast<itti_msg_terminate*>(msg)) {
@@ -1409,6 +1419,61 @@ bool amf_sbi::handle_itti_message(itti_sbi_pcf_discovery& itti_msg) {
     amf_app_inst->trigger_process_response(itti_msg.promise_id, response_data);
   }
   return true;
+}
+
+//------------------------------------------------------------------------------
+bool amf_sbi::handle_itti_message(itti_sbi_am_policy_association& itti_msg) {
+  Logger::amf_sbi().debug("Send AM Policy Association to PCF");
+
+  std::shared_ptr<ue_context> uc = {};
+  std::string supi               = itti_msg.policy_assoc_req.getSupi();
+  if (!amf_app_inst->supi_2_ue_context(supi, uc)) {
+    return false;
+  }
+
+  std::string uri =
+      amf_sbi_helper::get_pcf_am_policy_association_uri(uc->pcf_addr, supi);
+  Logger::amf_sbi().debug("URI %s", uri.c_str());
+
+  nlohmann::json json_data = {};
+  to_json(json_data, itti_msg.policy_assoc_req);
+
+  std::string body = json_data.dump();
+  Logger::amf_sbi().debug("Message body: \n %s", body.c_str());
+
+  nlohmann::json response_json = {};
+  uint32_t response_code       = 0;
+
+  oai::http::response http_response = {};
+
+  send_http_request(uri, oai::common::sbi::method_e::POST, body, http_response);
+
+  Logger::amf_sbi().debug(
+      "AM Policy Association, response from PCF, HTTP Code: %lu",
+      http_response.status_code);
+  Logger::amf_sbi().debug(
+      "AM Policy Association, response from PCF\n, %s ", http_response.body);
+
+  nlohmann::json response_data                = {};
+  response_data[kSbiResponseHttpResponseCode] = http_response.status_code;
+  response_data[kSbiResponseJsonData]         = http_response.get_json();
+
+  // Send response to APP to process
+  if (http_response.status_code ==
+      oai::common::sbi::http_status_code::CREATED) {
+    std::shared_ptr<itti_sbi_am_policy_association_response> itti_msg_response =
+        std::make_shared<itti_sbi_am_policy_association_response>(
+            TASK_AMF_SBI, TASK_AMF_APP);
+    itti_msg_response->supi          = supi;
+    itti_msg_response->response_data = response_data;
+
+    int ret = itti_inst->send_msg(itti_msg_response);
+    if (RETURNok != ret) {
+      Logger::amf_sbi().error(
+          "Could not send ITTI message %s to task TASK_AMF_APP",
+          itti_msg_response->get_msg_name());
+    }
+  }
 }
 
 //------------------------------------------------------------------------------

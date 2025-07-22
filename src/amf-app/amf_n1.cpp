@@ -3088,7 +3088,7 @@ void amf_n1::security_mode_complete_handle(
   discover_pcf(uc);
 
   // TODO: Step 16: Perform an AM Policy Association Establishment/Modification
-  // perform_am_policy_association(uc);
+  perform_am_policy_association(uc);
 
   // Process Uplink Data Status / PDU Session status
   uint16_t uplink_data_status              = 0x0000;
@@ -6153,6 +6153,8 @@ void amf_n1::discover_pcf(std::shared_ptr<ue_context>& uc) {
 
   oai::_3gpp::model::SearchResult search_result = {};
 
+  std::string pcf_addr = {};
+
   // Wait for the response available and process accordingly
   std::optional<nlohmann::json> result_opt = std::nullopt;
   oai::utils::utils::wait_for_result(f, result_opt);
@@ -6173,16 +6175,35 @@ void amf_n1::discover_pcf(std::shared_ptr<ue_context>& uc) {
           // Process the content
           try {
             from_json(result[kSbiResponseJsonData], search_result);
-            is_result_available = true;
             std::vector<oai::_3gpp::model::NFProfile> nf_instances =
                 search_result.getNfInstances();
             for (auto const& it : nf_instances) {
-              // IPv4 addresses
-
               // PCF info
               if (it.pcfInfoIsSet()) {
                 oai::_3gpp::model::PcfInfo pcf_info = it.getPcfInfo();
               }
+
+              // TODO: PCF selection
+
+              // IPv4 addresses (get first IP v4 address)
+              pcf_addr = it.getIpv4Addresses().at(0);
+              Logger::amf_n1().debug("PCF Address: %s", pcf_addr.c_str());
+              // TODO: Port
+              break;
+            }
+
+            if (pcf_addr.empty()) {
+              Logger::amf_n1().warn("No PCF Address found in Search Result");
+              is_result_available = false;
+            } else {
+              // Store PCF URI in UE context
+              std::string pcf_uri_root = {};
+              uint32_t pcf_port        = DEFAULT_HTTP2_PORT;
+              pcf_uri_root.append(pcf_addr).append(":").append(
+                  std::to_string(pcf_port));
+              uc->pcf_addr.uri_root    = pcf_uri_root;
+              uc->pcf_addr.api_version = "v1";  // TODO: get from PCF
+              is_result_available      = true;
             }
 
           } catch (std::exception& e) {
@@ -6204,5 +6225,34 @@ void amf_n1::discover_pcf(std::shared_ptr<ue_context>& uc) {
 
   if (!is_result_available) {
     Logger::amf_n1().warn("Could not get Search Result from NRF");
+  }
+}
+
+//------------------------------------------------------------------------------
+void amf_n1::perform_am_policy_association(std::shared_ptr<ue_context>& uc) {
+  Logger::amf_n1().debug("Perform AM Policy Association with PCF for the UE");
+
+  oai::_3gpp::model::PolicyAssociationRequest policy_assc_request = {};
+  policy_assc_request.setSupi(uc->supi);
+  // TODO: Set Notification URI
+  std::string notification_uri = {};
+  policy_assc_request.setNotificationUri(notification_uri);
+  // TODO: Add support for Support Features
+  std::string support_features = {};
+  policy_assc_request.setSuppFeat(support_features);
+
+  // Send request to SBI to trigger AM Policy Associtiation with PCF
+
+  std::shared_ptr<itti_sbi_am_policy_association> itti_msg =
+      std::make_shared<itti_sbi_am_policy_association>(
+          TASK_AMF_N1, TASK_AMF_SBI);
+
+  itti_msg->policy_assoc_req = policy_assc_request;
+
+  int ret = itti_inst->send_msg(itti_msg);
+  if (0 != ret) {
+    Logger::amf_n1().error(
+        "Could not send ITTI message %s to task TASK_AMF_SBI",
+        itti_msg->get_msg_name());
   }
 }

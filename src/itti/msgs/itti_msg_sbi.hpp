@@ -40,6 +40,7 @@
 #include "itti_msg.hpp"
 #include "utils.hpp"
 #include "PlmnIdNid.h"
+#include "PolicyAssociationRequest.h"
 
 using namespace amf_application;
 
@@ -931,6 +932,43 @@ class itti_sbi_pcf_discovery : public itti_sbi_msg {
   std::string dnn;
   oai::_3gpp::model::PlmnIdNid plmn_id;
   snssai_t snssai;
+};
+
+class itti_sbi_am_policy_association : public itti_sbi_msg {
+ public:
+  itti_sbi_am_policy_association(const task_id_t orig, const task_id_t dest)
+      : itti_sbi_msg(SBI_AM_POLICY_ASSOCIATION, orig, dest),
+        policy_assoc_req() {}
+
+  itti_sbi_am_policy_association(const itti_sbi_am_policy_association& i)
+      : itti_sbi_msg(i) {
+    policy_assoc_req = i.policy_assoc_req;
+  }
+  virtual ~itti_sbi_am_policy_association(){};
+  const char* get_msg_name() { return "SBI_AM_POLICY_ASSOCIATION"; };
+
+  oai::_3gpp::model::PolicyAssociationRequest policy_assoc_req;
+};
+
+class itti_sbi_am_policy_association_response : public itti_sbi_msg {
+ public:
+  itti_sbi_am_policy_association_response(
+      const task_id_t orig, const task_id_t dest)
+      : itti_sbi_msg(SBI_AM_POLICY_ASSOCIATION_RESPONSE, orig, dest),
+        supi(),
+        response_data() {}
+
+  itti_sbi_am_policy_association_response(
+      const itti_sbi_am_policy_association_response& i)
+      : itti_sbi_msg(i) {
+    supi          = i.supi;
+    response_data = i.response_data;
+  }
+  virtual ~itti_sbi_am_policy_association_response(){};
+  const char* get_msg_name() { return "SBI_AM_POLICY_ASSOCIATION_RESPONSE"; };
+
+  std::string supi;
+  nlohmann::json response_data;
 };
 
 #endif /* ITTI_MSG_SBI_HPP_INCLUDED_ */
