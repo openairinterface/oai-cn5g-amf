@@ -485,6 +485,31 @@ void amf_n2::handle_itti_message(
     return;
   }
 
+  // Verify if the PLMN Identity of the GNB is included in the common PLMNs
+  bool plmn_found = false;
+  for (auto const& it : gc->supported_ta_list) {
+    for (auto const& plmn_item : it.getBroadcastPlmnList()) {
+      oai::ngap::PlmnId plmn_id = plmn_item.getPlmn();
+      if (plmn_id.getMcc() == gc->plmn.mcc &&
+          plmn_id.getMnc() == gc->plmn.mnc) {
+        Logger::amf_n2().debug(
+            "GNB PLMN (%s, %s) is included in the common PLMNs", gc->plmn.mcc,
+            gc->plmn.mnc);
+        plmn_found = true;
+        break;
+      }
+    }
+  }
+  if (!plmn_found) {
+    Logger::amf_n2().error(
+        "[gNB ID %d] GNB PLMN (%s, %s) is not included in the common PLMNs",
+        gc->gnb_id, gc->plmn.mcc.c_str(), gc->plmn.mnc.c_str());
+    send_ng_setup_failure(
+        Ngap_CauseMisc_unknown_PLMN_or_SNPN, Ngap_TimeToWait_v5s,
+        itti_msg->assoc_id, itti_msg->stream);
+    return;
+  }
+
   set_gnb_id_2_gnb_context(gnb_id, gc);
 
   // Re-initialises the NGAP UE-related contexts (except if AMF agree on
@@ -749,6 +774,49 @@ void amf_n2::handle_itti_message(
     return;
   }
 
+  // Verify User Location Info NR (Mandatory)
+  NrCgi_t cgi = {};
+  Tai_t tai   = {};
+  if (init_ue_msg->init_ue_message->getUserLocationInfoNr(cgi, tai)) {
+    itti_msg->cgi = cgi;
+    itti_msg->tai = tai;
+  } else {
+    Logger::amf_n2().error("Missing Mandatory IE UserLocationInfoNR");
+    return;
+  }
+
+  // Verify if the User Location Info NR is included in the supported TA List
+  bool tai_found = false;
+  for (auto const& it : gc->supported_ta_list) {
+    for (auto const& plmn_item : it.getBroadcastPlmnList()) {
+      oai::ngap::PlmnId plmn_id = plmn_item.getPlmn();
+      oai::ngap::TAC tac        = it.getTac();
+      if (plmn_id.getMcc() == tai.mcc && plmn_id.getMnc() == tai.mnc &&
+          tac.get() == tai.tac) {
+        Logger::amf_n2().debug(
+            "User Location Info NR (MCC %s, MNC %s, TAC %d) is included in the "
+            "supported TA List",
+            tai.mcc.c_str(), tai.mnc.c_str(), tai.tac);
+        tai_found = true;
+        break;
+      }
+    }
+    if (tai_found) {
+      break;
+    }
+  }
+
+  if (!tai_found) {
+    Logger::amf_n2().error(
+        "User Location Info NR (MCC %s, MNC %s, TAC %d) is not included in the "
+        "supported TA List",
+        tai.mcc.c_str(), tai.mnc.c_str(), tai.tac);
+    // TODO: Send Registration Reject with appropriate cause
+    // amf_n1_inst->send_registration_reject_msg(ran_ue_ngap_id, amf_ue_ngap_id,
+    // k5gmmCausePlmnNotAllowed);
+    return;
+  }
+
   std::shared_ptr<ue_ngap_context> unc = {};
   if (!ran_ue_id_2_ue_ngap_context(ran_ue_ngap_id, gc->gnb_id, unc)) {
     Logger::amf_n2().debug(
@@ -767,18 +835,7 @@ void amf_n2::handle_itti_message(
   gc->next_sctp_stream += 1;
   if (gc->next_sctp_stream >= gc->instreams) gc->next_sctp_stream = 1;
   unc->gnb_assoc_id = init_ue_msg->assoc_id;
-
-  // User Location Info NR (Mandatory)
-  NrCgi_t cgi = {};
-  Tai_t tai   = {};
-  if (init_ue_msg->init_ue_message->getUserLocationInfoNr(cgi, tai)) {
-    itti_msg->cgi = cgi;
-    itti_msg->tai = tai;
-    unc->tai      = tai;
-  } else {
-    Logger::amf_n2().error("Missing Mandatory IE UserLocationInfoNR");
-    return;
-  }
+  unc->tai          = tai;
 
   // RCC Establishment Cause (Mandatory)
   itti_msg->rrc_cause =

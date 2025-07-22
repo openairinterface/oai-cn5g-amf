@@ -1627,6 +1627,15 @@ bool amf_n1::registration_request_handle(
     cause = k5gmmCauseIllegalUe;  // TODO: verify the cause
     return false;
   }
+  std::shared_ptr<ue_ngap_context> unc = {};
+  if (!amf_n2_inst->ran_ue_id_2_ue_ngap_context(
+          ran_ue_ngap_id, uc->gnb_id, unc)) {
+    Logger::amf_n1().debug(
+        "No existed UE NGAP context with ran_ue_ngap_id (" GNB_UE_NGAP_ID_FMT
+        "), amf_ue_ngap_id (" AMF_UE_NGAP_ID_FMT ")",
+        ran_ue_ngap_id, amf_ue_ngap_id);
+    return false;
+  }
 
   // Check 5GS Mobility Identity (Mandatory IE)
   std::string guti         = {};
@@ -1637,10 +1646,29 @@ bool amf_n1::registration_request_handle(
       if (!registration_request->GetSuciSupiFormatImsi(imsi)) {
         Logger::amf_n1().warn("No SUCI and IMSI for SUPI Format");
       } else {
+        // Verify PLMN
+        std::shared_ptr<gnb_context> gc = {};
+        if (!amf_n2_inst->assoc_id_2_gnb_context(unc->gnb_assoc_id, gc)) {
+          Logger::amf_n1().error(
+              "No existed gNB context with assoc_id (%d)", unc->gnb_assoc_id);
+          return false;
+        }
+
+        if (imsi.mcc != gc->plmn.mcc || imsi.mnc != gc->plmn.mnc) {
+          Logger::amf_n1().error(
+              "PLMN (MCC %s, MNC %s ) in SUCI does not match with gNB PLMN "
+              "(MCC %s, MNC %s)",
+              imsi.mcc, imsi.mnc, gc->plmn.mcc, gc->plmn.mnc);
+          // Send Registration Reject with appropriate cause
+          send_registration_reject_msg(
+              ran_ue_ngap_id, amf_ue_ngap_id, k5gmmCausePlmnNotAllowed);
+          return false;
+        }
+
         if (!nc) {
           Logger::amf_n1().debug(
-              "No existing nas_context with amf_ue_ngap_id (" AMF_UE_NGAP_ID_FMT
-              ") --> Create new one",
+              "No existing nas_context with amf_ue_ngap_id "
+              "(" AMF_UE_NGAP_ID_FMT ") --> Create new one",
               amf_ue_ngap_id);
           nc = std::shared_ptr<nas_context>(new nas_context);
           set_amf_ue_ngap_id_2_nas_context(amf_ue_ngap_id, nc);
@@ -2763,7 +2791,8 @@ void amf_n1::authentication_response_handle(
   // reject message with corresponding cause
   if (!isAuthOk) {
     Logger::amf_n1().error(
-        "Authentication failed for UE with amf_ue_ngap_id " AMF_UE_NGAP_ID_FMT,
+        "Authentication failed for UE with "
+        "amf_ue_ngap_id " AMF_UE_NGAP_ID_FMT,
         amf_ue_ngap_id);
     send_registration_reject_msg(
         ran_ue_ngap_id, amf_ue_ngap_id,
@@ -3326,23 +3355,22 @@ void amf_n1::registration_complete_handle(
     return;
   }
 
-  // TODO: Stop timer T3550 and Change to state 5GMM-REGISTERED. The 5G-GUTI, if
-  // sent in the REGISTRATION ACCEPT message, shall be considered as valid, and
-  // the UE radio capability ID, if sent in the REGISTRATION ACCEPT, shall be
-  // considered as valid.
+  // TODO: Stop timer T3550 and Change to state 5GMM-REGISTERED. The 5G-GUTI,
+  // if sent in the REGISTRATION ACCEPT message, shall be considered as valid,
+  // and the UE radio capability ID, if sent in the REGISTRATION ACCEPT, shall
+  // be considered as valid.
 
   // Check follow-on-request indicator
   if (!nc->follow_on_req_pending_ind and
       (nc->registration_type == kInitialRegistration)) {
     // If the UE has set the Follow-on request indicator to "Follow-on request
-    // pending" in the REGISTRATION REQUEST message, or the network has downlink
-    // signalling pending, the AMF shall not immediately release the NAS
-    // signalling connection after the completion of the registration procedure.
-    // Otherwise, release NAS signalling after the completion of the
-    // registration procedure
-    // Please refer to: Section 5.5.1.2.4@3GPP TS 24.501 Rel 16.14.0
-    // and 8.3.3.1@3GPP TS 38.413 Rel 16.14.0
-    // Send N2 UE Release command to NG-RAN
+    // pending" in the REGISTRATION REQUEST message, or the network has
+    // downlink signalling pending, the AMF shall not immediately release the
+    // NAS signalling connection after the completion of the registration
+    // procedure. Otherwise, release NAS signalling after the completion of
+    // the registration procedure Please refer to: Section 5.5.1.2.4@3GPP
+    // TS 24.501 Rel 16.14.0 and 8.3.3.1@3GPP TS 38.413 Rel 16.14.0 Send N2 UE
+    // Release command to NG-RAN
     Logger::amf_n1().debug(
         "Sending ITTI UE Context Release Command to TASK_AMF_N2");
 
@@ -3364,9 +3392,9 @@ void amf_n1::registration_complete_handle(
 
   // TODO: Configuration Update Command message causes issue for UERANSIM
   // (it does not accept the first PDU Session Establishment Accept, then it
-  // will send a second PDU Session Establishment Request and accept the second
-  // PDU Session Establishment Accept) Therefore, we disable this temporarily to
-  // make it work with UERANSIM
+  // will send a second PDU Session Establishment Request and accept the
+  // second PDU Session Establishment Accept) Therefore, we disable this
+  // temporarily to make it work with UERANSIM
   Logger::amf_n1().debug(
       "Do not sending Configuration Update Command in this version!");
   /*
@@ -3382,8 +3410,8 @@ void amf_n1::registration_complete_handle(
   int encoded_size =
       configuration_update_command->Encode(buffer, BUFFER_SIZE_1024);
   if (encoded_size == KEncodeDecodeError) {
-    Logger::nas_mm().error("Encode Configuration Update Command message error");
-    return;
+    Logger::nas_mm().error("Encode Configuration Update Command message
+  error"); return;
   }
   oai::utils::output_wrapper::print_buffer(
       "amf_n1", "Configuration Update Command message Buffer", buffer,
@@ -3824,8 +3852,8 @@ void amf_n1::ue_initiate_de_registration_handle(
   }
 
   // TODO: AMF to AN: N2 UE Context Release Request
-  // AMF sends N2 UE Release command to NG-RAN with Cause set to Deregistration
-  // to release N2 signalling connection
+  // AMF sends N2 UE Release command to NG-RAN with Cause set to
+  // Deregistration to release N2 signalling connection
 
   Logger::amf_n1().debug(
       "Sending ITTI UE Context Release Command to TASK_AMF_N2");
@@ -3877,8 +3905,8 @@ void amf_n1::ul_nas_transport_handle(
       ((request_type & 0x07) == kExistingPduSession)) {
     // SNSSAI
     SNSSAI_t snssai = {};
-    if (!ul_nas->GetSNssai(snssai)) {  // If no SNSSAI in this message, use the
-                                       // one in Registration Request
+    if (!ul_nas->GetSNssai(snssai)) {  // If no SNSSAI in this message, use
+                                       // the one in Registration Request
       Logger::amf_n1().debug(
           "No Requested NSSAI available in UlNasTransport, use NSSAI from "
           "Requested/Configured NSSAI!");
@@ -3887,7 +3915,8 @@ void amf_n1::ul_nas_transport_handle(
       if (!amf_ue_id_2_nas_context(amf_ue_ngap_id, nc)) return;
 
       // TODO: Only use the first one for now if there's multiple requested
-      // NSSAI since we don't know which slice associated with this PDU session
+      // NSSAI since we don't know which slice associated with this PDU
+      // session
       if (nc->allowed_nssai.size() > 0) {
         snssai = nc->allowed_nssai[0];
         Logger::amf_n1().debug(
@@ -4167,8 +4196,8 @@ bool amf_n1::run_mobility_registration_update_procedure(
     uint8_t kgnb[AUTH_VECTOR_LENGTH_OCTETS];
     if (!nc->get_kamf(nc->security_ctx.value().vector_pointer, kamf)) {
       Logger::amf_n1().warn("No Kamf found");
-      cause =
-          k5gmmCauseSecurityModeRejectedUnspecified;  // TODO: verify the cause
+      cause = k5gmmCauseSecurityModeRejectedUnspecified;  // TODO: verify the
+                                                          // cause
       return false;
     }
     uint32_t ulcount = nc->security_ctx.value().ul_count.seq_num |
@@ -5008,8 +5037,8 @@ void amf_n1::initialize_registration_accept(
       if (rn.sd != SD_NO_VALUE) {
         rejected_snssai.SetSd(rn.sd);
       }
-      rejected_snssai.SetCause(1);  // TODO: Hardcoded, S-NSSAI not available in
-                                    // the current registration area
+      rejected_snssai.SetCause(1);  // TODO: Hardcoded, S-NSSAI not available
+                                    // in the current registration area
       rejected_nssais.push_back(rejected_snssai);
       Logger::amf_n1().debug(
           "Rejected S-NSSAI (SST 0x%x, SD 0x%x)", rn.sst, rn.sd);
@@ -5104,8 +5133,8 @@ void amf_n1::implicit_deregistration_timer_timeout(
   // Implicitly de-register UE
   // TODO (4.2.2.3.3 Network-initiated Deregistration @3GPP TS 23.502V16.0.0):
   // If the UE is in CM-CONNECTED state, the AMF may explicitly deregister the
-  // UE by sending a Deregistration Request message (Deregistration type, Access
-  // Type) to the UE
+  // UE by sending a Deregistration Request message (Deregistration type,
+  // Access Type) to the UE
 
   // Send PDU Session Release SM Context Request to SMF for each PDU Session
   std::shared_ptr<ue_context> uc = {};
@@ -5129,8 +5158,8 @@ void amf_n1::implicit_deregistration_timer_timeout(
     }
   }
 
-  // Send N2 UE Release command to NG-RAN if there is a N2 signalling connection
-  // to NG-RAN
+  // Send N2 UE Release command to NG-RAN if there is a N2 signalling
+  // connection to NG-RAN
   Logger::amf_n1().debug(
       "Sending ITTI UE Context Release Command to TASK_AMF_N2");
 
@@ -5391,8 +5420,8 @@ bool amf_n1::check_subscribed_nssai(
       }
     }
 
-    // If there no requested NSSAIs or no common NSSAIs between requested NSSAIs
-    // and Subscribed NSSAIs
+    // If there no requested NSSAIs or no common NSSAIs between requested
+    // NSSAIs and Subscribed NSSAIs
     if ((nc->requested_nssai.size() == 0) or (common_snssais.size() == 0)) {
       // Each S-NSSAI in the Default Single NSSAIs must be in the AMF's Slice
       // List
@@ -5699,11 +5728,12 @@ bool amf_n1::get_target_amf(
         authorized_network_slice_info) {
   // Get Target AMF from AuthorizedNetworkSliceInfo
   Logger::amf_n1().debug(
-      "Get the list of candidates AMFs from the AuthorizedNetworkSliceInfo and "
+      "Get the list of candidates AMFs from the AuthorizedNetworkSliceInfo "
+      "and "
       "select the appropriate one");
   std::string target_amf_set = {};
-  std::string nrf_amf_set = {};  // The URI of NRF NFDiscovery Service to query
-                                 // the list of AMF candidates
+  std::string nrf_amf_set    = {};  // The URI of NRF NFDiscovery Service to
+                                    // query the list of AMF candidates
 
   if (authorized_network_slice_info.targetAmfSetIsSet()) {
     target_amf_set = authorized_network_slice_info.getTargetAmfSet();
@@ -5725,7 +5755,8 @@ bool amf_n1::get_target_amf(
   }
 
   if (amf_cfg->support_features
-          .enable_smf_selection) {  // TODO: define new option for external NRF
+          .enable_smf_selection) {  // TODO: define new option for external
+                                    // NRF
     // use NRF's URI from conf file if not available
     if (nrf_amf_set.empty()) {
       amf_sbi_helper::get_nrf_disc_search_nf_instances_uri(
@@ -5801,8 +5832,8 @@ bool amf_n1::select_target_amf(
       nlohmann::json instance_json = it.value();
       // TODO: do we need to check with sNSSAI?
       if (instance_json.find("sNssais") != instance_json.end()) {
-        // Each S-NSSAI in the Default Single NSSAIs must be in the AMF's Slice
-        // List
+        // Each S-NSSAI in the Default Single NSSAIs must be in the AMF's
+        // Slice List
         for (auto& s : instance_json["sNssais"].items()) {
           nlohmann::json Snssai = s.value();  // TODO: validate NSSAIs
         }
@@ -5978,7 +6009,8 @@ void amf_n1::register_3gpp_access(std::shared_ptr<ue_context>& uc) const {
   rat_type.setEnumValue(oai::_3gpp::model::RatType_anyOf::eRatType_anyOf::NR);
   registration_data.setRatType(rat_type);
 
-  // Send request to SBI to trigger registering to UDM and wait for the response
+  // Send request to SBI to trigger registering to UDM and wait for the
+  // response
   nlohmann::json registration_data_json = {};
   to_json(registration_data_json, registration_data);
 
