@@ -179,6 +179,9 @@ class amf_sbi_helper : public sbi_helper {
 
   static std::string get_udm_smf_selection_subscription_data_retrieval_uri(
       const nf_addr_t& udm_addr, const std::string& supi);
+
+  static std::string get_pcf_am_policy_association_uri(
+      const nf_addr_t& pcf_add);
 };
 
 }  // namespace oai::amf::api

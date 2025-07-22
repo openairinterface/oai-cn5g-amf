@@ -1432,7 +1432,7 @@ bool amf_sbi::handle_itti_message(itti_sbi_am_policy_association& itti_msg) {
   }
 
   std::string uri =
-      amf_sbi_helper::get_pcf_am_policy_association_uri(uc->pcf_addr, supi);
+      amf_sbi_helper::get_pcf_am_policy_association_uri(uc->pcf_addr);
   Logger::amf_sbi().debug("URI %s", uri.c_str());
 
   nlohmann::json json_data = {};
@@ -1474,6 +1474,7 @@ bool amf_sbi::handle_itti_message(itti_sbi_am_policy_association& itti_msg) {
           itti_msg_response->get_msg_name());
     }
   }
+  return true;
 }
 
 //------------------------------------------------------------------------------
