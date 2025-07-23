@@ -551,7 +551,9 @@ pipeline {
               withCredentials([
                 [$class: 'UsernamePasswordMultiBinding', credentialsId: "${params.DockerHubCredentials}", usernameVariable: 'DH_Username', passwordVariable: 'DH_Password']
               ]) {
-                sh "echo ${DH_Password} | docker login --username ${DH_Username} --password-stdin"
+              sh '''
+               echo "$DH_Password" | docker login --username "$DH_Username" --password-stdin
+              '''
               }
               sh "docker login -u oaicicd -p oaicicd ${PrivateRegistryURL}"
               sh "docker pull ${PrivateRegistryURL}/oai-amf:${amf_tag}"
