@@ -1195,11 +1195,13 @@ void amf_app::handle_itti_message(itti_sbi_am_policy_association_response& r) {
           // Store the policy association in the UE context
           uc->policy_association = policy_association;
           // Store the location of the Policy Association
-          uc->policy_association_location =
-              r.response_data[kSbiResponseHeaderLocation].get<std::string>();
-
+          if (r.response_data.find(kSbiResponseHeaderLocation) !=
+              r.response_data.end()) {
+            uc->policy_association_location =
+                r.response_data[kSbiResponseHeaderLocation].get<std::string>();
+          }
         } catch (std::exception& e) {
-          Logger::amf_n1().warn(
+          Logger::amf_app().warn(
               "Could not parse the Policy Association from "
               "Json");
         }
