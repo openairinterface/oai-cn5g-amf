@@ -1467,6 +1467,13 @@ bool amf_sbi::handle_itti_message(itti_sbi_am_policy_association& itti_msg) {
     itti_msg_response->supi          = supi;
     itti_msg_response->response_data = response_data;
 
+    if (auto loc_header = http_response.headers.find("location");
+        loc_header != http_response.headers.end()) {
+      Logger::amf_sbi().info(
+          "Location of the created resource: %s", loc_header->second.c_str());
+      response_data[kSbiResponseHeaderLocation] = loc_header->second;
+    }
+
     int ret = itti_inst->send_msg(itti_msg_response);
     if (RETURNok != ret) {
       Logger::amf_sbi().error(

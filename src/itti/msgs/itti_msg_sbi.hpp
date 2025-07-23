@@ -956,19 +956,22 @@ class itti_sbi_am_policy_association_response : public itti_sbi_msg {
       const task_id_t orig, const task_id_t dest)
       : itti_sbi_msg(SBI_AM_POLICY_ASSOCIATION_RESPONSE, orig, dest),
         supi(),
-        response_data() {}
+        response_data(),
+        policy_assoc_location() {}
 
   itti_sbi_am_policy_association_response(
       const itti_sbi_am_policy_association_response& i)
       : itti_sbi_msg(i) {
-    supi          = i.supi;
-    response_data = i.response_data;
+    supi                  = i.supi;
+    response_data         = i.response_data;
+    policy_assoc_location = i.policy_assoc_location;
   }
   virtual ~itti_sbi_am_policy_association_response(){};
   const char* get_msg_name() { return "SBI_AM_POLICY_ASSOCIATION_RESPONSE"; };
 
   std::string supi;
   nlohmann::json response_data;
+  std::string policy_assoc_location;
 };
 
 #endif /* ITTI_MSG_SBI_HPP_INCLUDED_ */

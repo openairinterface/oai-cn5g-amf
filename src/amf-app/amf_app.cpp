@@ -46,6 +46,7 @@
 #include "utils.hpp"
 #include "AccessAndMobilitySubscriptionData.h"
 #include "SmfSelectionSubscriptionData.h"
+#include "PolicyAssociation.h"
 
 using namespace std::chrono;
 using namespace oai::ngap;
@@ -250,6 +251,13 @@ void amf_app_task(void*) {
             dynamic_cast<
                 itti_sbi_retrieve_smf_selection_subscription_data_response*>(
                 msg);
+        amf_app_inst->handle_itti_message(std::ref(*m));
+      } break;
+
+      case SBI_AM_POLICY_ASSOCIATION_RESPONSE: {
+        Logger::amf_app().debug("Received SBI_AM_POLICY_ASSOCIATION_RESPONSE");
+        itti_sbi_am_policy_association_response* m =
+            dynamic_cast<itti_sbi_am_policy_association_response*>(msg);
         amf_app_inst->handle_itti_message(std::ref(*m));
       } break;
 
@@ -1163,6 +1171,44 @@ void amf_app::handle_itti_message(
     Logger::amf_app().debug(
         "AMF has failed to get SMF Selection Subscription Data from "
         "UDM.");
+  }
+}
+
+//------------------------------------------------------------------------------
+void amf_app::handle_itti_message(itti_sbi_am_policy_association_response& r) {
+  Logger::amf_app().debug("Handle SBI_AM_POLICY_ASSOCIATION_RESPONSE response");
+
+  uint32_t response_code = oai::common::sbi::http_status_code::NO_RESPONSE;
+  if (r.response_data.find(kSbiResponseHttpResponseCode) !=
+      r.response_data.end()) {
+    response_code = r.response_data[kSbiResponseHttpResponseCode].get<int>();
+  }
+
+  if (response_code == oai::common::sbi::http_status_code::OK) {
+    // Store PolicyAssociation
+    if (r.response_data.find(kSbiResponseJsonData) != r.response_data.end()) {
+      std::shared_ptr<ue_context> uc = {};
+      if (supi_2_ue_context(r.supi, uc)) {
+        try {
+          oai::_3gpp::model::PolicyAssociation policy_association = {};
+          from_json(r.response_data[kSbiResponseJsonData], policy_association);
+          // Store the policy association in the UE context
+          uc->policy_association = policy_association;
+          // Store the location of the Policy Association
+          uc->policy_association_location =
+              r.response_data[kSbiResponseHeaderLocation].get<std::string>();
+
+        } catch (std::exception& e) {
+          Logger::amf_n1().warn(
+              "Could not parse the Policy Association from "
+              "Json");
+        }
+      }
+    }
+  } else {
+    Logger::amf_app().debug(
+        "AMF has failed to get the Policy Association from "
+        "PCF.");
   }
 }
 
