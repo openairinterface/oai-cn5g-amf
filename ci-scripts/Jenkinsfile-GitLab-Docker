@@ -55,7 +55,7 @@ gitCommittorEmailAddr  = ''
 DH_Account = "oaisoftwarealliance"
 
 // Private Local Registry URL
-PrivateRegistryURL = 'selfix.sboai.cs.eurecom.fr'
+PrivateRegistryURL = ''
 
 // Openshift project name
 Namespace = 'oaicicd-core'
@@ -179,17 +179,22 @@ pipeline {
                   sh "docker buildx build ${dockerBuildOptions} --target oai-amf --tag oai-amf:${amf_tag} --file docker/Dockerfile.amf.ubuntu . > archives/amf_ubuntu_image_build.log 2>&1"
                   // Putting a place holder to try out on the flattening of image.
                   // If not satisfactory, we can remove it.
+                  sh "docker logout"
                   sh "python3 ./ci-scripts/flatten_image.py --tag oai-amf:${amf_tag}"
                   sh "docker image prune --force"
-                  sh "docker image ls | egrep --color=never 'amf|REPOSITORY' >> archives/amf_ubuntu_image_build.log"
+                  //sh "docker image ls | egrep --color=never 'amf|REPOSITORY' >> archives/amf_ubuntu_image_build.log"
+                  sh 'docker images --filter=reference="oai-amf:' + amf_tag + '" >> archives/amf_ubuntu_image_build.log'
                   // Pushing to local private registry for testing purpose
-                  sh "docker login -u oaicicd -p oaicicd ${PrivateRegistryURL}"
-                  sh "docker image tag oai-amf:${amf_tag} ${PrivateRegistryURL}/oai-amf:${amf_tag}"
-                  sh "docker push ${PrivateRegistryURL}/oai-amf:${amf_tag}"
-                  // Remove all images locally
-                  sh "docker rmi oai-amf:${amf_tag} ${PrivateRegistryURL}/oai-amf:${amf_tag}"
-                  sh "docker logout ${PrivateRegistryURL}"
-                  sh "docker logout"
+                  
+                  withCredentials([string(credentialsId: 'OAICNPrivateRegistryURL', variable: 'PRIV_REG_URL')]) {
+                                    
+                  sh "docker login -u oaicicd -p oaicicd ${PRIV_REG_URL}"
+                  sh "docker image tag oai-amf:${amf_tag} ${PRIV_REG_URL}/oai-amf:${amf_tag}"
+                  sh "docker push ${PRIV_REG_URL}/oai-amf:${amf_tag}"
+                  sh "docker rmi oai-amf:${amf_tag} ${PRIV_REG_URL}/oai-amf:${amf_tag}"
+                  sh "docker logout ${PRIV_REG_URL}"
+                    
+                  }
                 }
               }
             }
@@ -552,15 +557,18 @@ pipeline {
                 [$class: 'UsernamePasswordMultiBinding', credentialsId: "${params.DockerHubCredentials}", usernameVariable: 'DH_Username', passwordVariable: 'DH_Password']
               ]) {
               sh '''
-               echo "$DH_Password" | docker login --username "$DH_Username" --password-stdin
+               echo "$DH_Password" | docker login --username "$DH_Username" --password-stdin 
               '''
               }
-              sh "docker login -u oaicicd -p oaicicd ${PrivateRegistryURL}"
-              sh "docker pull ${PrivateRegistryURL}/oai-amf:${amf_tag}"
-              sh "docker image tag ${PrivateRegistryURL}/oai-amf:${amf_tag} ${DH_Account}/oai-amf:develop"
-              sh "docker push ${DH_Account}/oai-amf:develop"
-              sh "docker rmi ${DH_Account}/oai-amf:develop ${PrivateRegistryURL}/oai-amf:${amf_tag}"
-              sh "docker logout ${PrivateRegistryURL}"
+              withCredentials([string(credentialsId: 'OAICNPrivateRegistryURL', variable: 'PRIV_REG_URL')]) {
+                sh "docker login -u oaicicd -p oaicicd ${PRIV_REG_URL}"
+                sh "docker pull ${PRIV_REG_URL}/oai-amf:${amf_tag}"
+                sh "docker image tag ${PRIV_REG_URL}/oai-amf:${amf_tag} ${DH_Account}/oai-amf:develop"
+                sh "docker push ${DH_Account}/oai-amf:develop"
+                sh "docker rmi ${DH_Account}/oai-amf:develop ${PRIV_REG_URL}/oai-amf:${amf_tag}"
+                sh "docker logout ${PRIV_REG_URL}"
+              }
+              
               sh "docker logout"
             }
           }
