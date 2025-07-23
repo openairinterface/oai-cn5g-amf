@@ -40,6 +40,9 @@ cppcheckResource = params.CppCheckResource
 formatCheckNode = params.FormatCheckNode
 formatCheckResource = params.FormatCheckResource
 
+// Docker Hub
+dockerHubCredentials = params.DockerHubCredentials
+
 // Tags/Branches to use
 def amf_tag = "develop"
 def amf_branch = "develop"
@@ -168,6 +171,11 @@ pipeline {
                     dockerBuildOptions = ''
                     sh "date --rfc-email > src/common-src/date.txt"
                   }
+                  withCredentials([
+                    [$class: 'UsernamePasswordMultiBinding', credentialsId: dockerHubCredentials, usernameVariable: 'DH_Username', passwordVariable: 'DH_Password']
+                  ]) {
+                    sh "echo '${DH_Password}' | docker login --username '${DH_Username}' --password-stdin"
+                  }                
                   sh "docker buildx build ${dockerBuildOptions} --target oai-amf --tag oai-amf:${amf_tag} --file docker/Dockerfile.amf.ubuntu . > archives/amf_ubuntu_image_build.log 2>&1"
                   // Putting a place holder to try out on the flattening of image.
                   // If not satisfactory, we can remove it.
@@ -181,6 +189,7 @@ pipeline {
                   // Remove all images locally
                   sh "docker rmi oai-amf:${amf_tag} ${PrivateRegistryURL}/oai-amf:${amf_tag}"
                   sh "docker logout ${PrivateRegistryURL}"
+                  sh "docker logout"
                 }
               }
             }
