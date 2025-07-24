@@ -974,4 +974,49 @@ class itti_sbi_am_policy_association_response : public itti_sbi_msg {
   std::string policy_assoc_location;
 };
 
+class itti_sbi_am_policy_association_termination : public itti_sbi_msg {
+ public:
+  itti_sbi_am_policy_association_termination(
+      const task_id_t orig, const task_id_t dest)
+      : itti_sbi_msg(SBI_AM_POLICY_ASSOCIATION_TERMINATION, orig, dest),
+        supi() {}
+
+  itti_sbi_am_policy_association_termination(
+      const itti_sbi_am_policy_association_termination& i)
+      : itti_sbi_msg(i) {
+    supi = i.supi;
+  }
+  virtual ~itti_sbi_am_policy_association_termination(){};
+  const char* get_msg_name() {
+    return "SBI_AM_POLICY_ASSOCIATION_TERMINATION";
+  };
+
+  std::string supi;
+};
+
+class itti_sbi_am_policy_association_termination_response
+    : public itti_sbi_msg {
+ public:
+  itti_sbi_am_policy_association_termination_response(
+      const task_id_t orig, const task_id_t dest)
+      : itti_sbi_msg(
+            SBI_AM_POLICY_ASSOCIATION_TERMINATION_RESPONSE, orig, dest),
+        supi(),
+        response_data() {}
+
+  itti_sbi_am_policy_association_termination_response(
+      const itti_sbi_am_policy_association_termination_response& i)
+      : itti_sbi_msg(i) {
+    supi          = i.supi;
+    response_data = i.response_data;
+  }
+  virtual ~itti_sbi_am_policy_association_termination_response(){};
+  const char* get_msg_name() {
+    return "SBI_AM_POLICY_ASSOCIATION_TERMINATION_RESPONSE";
+  };
+
+  std::string supi;
+  nlohmann::json response_data;
+};
+
 #endif /* ITTI_MSG_SBI_HPP_INCLUDED_ */

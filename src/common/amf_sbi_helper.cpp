@@ -157,6 +157,17 @@ std::string amf_sbi_helper::get_udm_am_data_retrieval_uri(
 }
 
 //------------------------------------------------------------------------------
+std::string amf_sbi_helper::get_amf_callback_deregistration_notification_uri(
+    const std::string& supi) {
+  std::string fmr_format_str = {};
+  get_fmt_format_form(
+      AmfCallbackPathDeregistrationNotification, fmr_format_str);
+  return amf_cfg->sbi.get_ipv4_root() + AmfCallbackBase() +
+         amf_cfg->sbi.api_version.value_or(DEFAULT_SBI_API_VERSION) +
+         fmt::format(fmr_format_str, supi);
+}
+
+//------------------------------------------------------------------------------
 std::string
 amf_sbi_helper::get_udm_smf_selection_subscription_data_retrieval_uri(
     const nf_addr_t& udm_addr, const std::string& supi) {
@@ -171,6 +182,27 @@ std::string amf_sbi_helper::get_pcf_am_policy_association_uri(
     const nf_addr_t& pcf_addr) {
   return pcf_addr.uri_root + PcfAmPolicyControlBase + pcf_addr.api_version +
          PcfAmPolicyControlPathPolicies;
+}
+
+//------------------------------------------------------------------------------
+std::string amf_sbi_helper::get_pcf_policy_update_notification_uri(
+    const std::string& supi) {
+  std::string fmr_format_str = {};
+  get_fmt_format_form(AmfCallbackPathPolicyUpdateNotification, fmr_format_str);
+
+  return amf_cfg->sbi.get_ipv4_root() + AmfCallbackBase() +
+         amf_cfg->sbi.api_version.value_or(DEFAULT_SBI_API_VERSION) +
+         fmt::format(fmr_format_str, supi);
+}
+
+//------------------------------------------------------------------------------
+std::string amf_sbi_helper::get_pcf_am_policy_individual_association_uri(
+    const nf_addr_t& pcf_addr, std::string policy_association_id) {
+  std::string fmr_format_str = {};
+  get_fmt_format_form(PcfAmPolicyControlPathPoliciesAssoId, fmr_format_str);
+
+  return pcf_addr.uri_root + PcfAmPolicyControlBase + pcf_addr.api_version +
+         fmt::format(fmr_format_str, policy_association_id);
 }
 
 }  // namespace oai::amf::api

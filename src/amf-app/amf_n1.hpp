@@ -954,6 +954,8 @@ class amf_n1 {
   void discover_pcf(std::shared_ptr<ue_context>& uc);
 
   void perform_am_policy_association(std::shared_ptr<ue_context>& uc);
+  void perform_am_policy_association_termination(
+      const std::shared_ptr<ue_context>& uc);
 
   // for Event Handling
   amf_event event_sub;

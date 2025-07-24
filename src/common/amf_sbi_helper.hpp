@@ -169,6 +169,14 @@ class amf_sbi_helper : public sbi_helper {
       const nf_addr_t& udm_addr, const std::string& supi);
 
   /*
+   * Get the URI of AMF Callback for Deregistration Notification
+   * @param [const std::string&] supi: UE SUPI
+   * @return URI in string format
+   */
+  static std::string get_amf_callback_deregistration_notification_uri(
+      const std::string& supi);
+
+  /*
    * Get the URI of UDM's Access and Mobility Subscription Data Retrieval API
    * @param [const nf_addr_t&] udm_addr: UDM's Address
    * @param [const std::string&] supi: UE SUPI
@@ -182,6 +190,17 @@ class amf_sbi_helper : public sbi_helper {
 
   static std::string get_pcf_am_policy_association_uri(
       const nf_addr_t& pcf_add);
+
+  /*
+   * Get the URI of AMF Callback for Policy Update Notification
+   * @param [const std::string&] supi: UE SUPI
+   * @return URI in string format
+   */
+  static std::string get_pcf_policy_update_notification_uri(
+      const std::string& supi);
+
+  std::string get_pcf_am_policy_individual_association_uri(
+      const nf_addr_t& pcf_addr, std::string policy_association_id);
 };
 
 }  // namespace oai::amf::api
