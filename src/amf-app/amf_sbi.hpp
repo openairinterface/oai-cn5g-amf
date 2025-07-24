@@ -191,6 +191,8 @@ class amf_sbi {
 
   bool handle_itti_message(itti_sbi_am_policy_association& itti_msg);
 
+  bool handle_itti_message(
+      itti_sbi_am_policy_association_termination& itti_msg);
   /*
    * Handle request to create a new PDU Session
    * @param [const std::string&] supi: SUPI

@@ -5984,14 +5984,9 @@ void amf_n1::register_3gpp_access(std::shared_ptr<ue_context>& uc) const {
   // AMF Instance ID
   registration_data.setAmfInstanceId(amf_app_inst->get_nf_instance());
   // Callback URI
-  std::string fmr_format_str = {};
-  oai::amf::api::amf_sbi_helper::get_fmt_format_form(
-      oai::amf::api::amf_sbi_helper::AmfCallbackPathDeregistrationNotification,
-      fmr_format_str);
   std::string amf_callback_deregistration_notification_uri =
-      amf_cfg->sbi.get_ipv4_root() +
-      oai::amf::api::amf_sbi_helper::AmfCallbackBase() +
-      fmt::format(fmr_format_str, uc->supi);
+      oai::amf::api::amf_sbi_helper::
+          get_amf_callback_deregistration_notification_uri(uc->supi);
   registration_data.setDeregCallbackUri(
       amf_callback_deregistration_notification_uri);
   // Initial Registration
@@ -6274,8 +6269,9 @@ void amf_n1::perform_am_policy_association(std::shared_ptr<ue_context>& uc) {
 
   oai::_3gpp::model::PolicyAssociationRequest policy_assc_request = {};
   policy_assc_request.setSupi(uc->supi);
-  // TODO: Set Notification URI
-  std::string notification_uri = {};
+  // Set Notification URI
+  std::string notification_uri =
+      amf_sbi_helper::get_pcf_policy_update_notification_uri(uc->supi);
   policy_assc_request.setNotificationUri(notification_uri);
   // TODO: Add support for Support Features
   std::string support_features = {};
@@ -6288,6 +6284,27 @@ void amf_n1::perform_am_policy_association(std::shared_ptr<ue_context>& uc) {
           TASK_AMF_N1, TASK_AMF_SBI);
 
   itti_msg->policy_assoc_req = policy_assc_request;
+
+  int ret = itti_inst->send_msg(itti_msg);
+  if (0 != ret) {
+    Logger::amf_n1().error(
+        "Could not send ITTI message %s to task TASK_AMF_SBI",
+        itti_msg->get_msg_name());
+  }
+}
+
+//------------------------------------------------------------------------------
+void amf_n1::perform_am_policy_association_termination(
+    const std::shared_ptr<ue_context>& uc) {
+  Logger::amf_n1().debug(
+      "Perform AM Policy Association Termination with PCF for the UE");
+
+  // Send request to SBI to trigger AM Policy Associtiation Termination with PCF
+  std::shared_ptr<itti_sbi_am_policy_association_termination> itti_msg =
+      std::make_shared<itti_sbi_am_policy_association_termination>(
+          TASK_AMF_N1, TASK_AMF_SBI);
+
+  itti_msg->supi = uc->supi;
 
   int ret = itti_inst->send_msg(itti_msg);
   if (0 != ret) {

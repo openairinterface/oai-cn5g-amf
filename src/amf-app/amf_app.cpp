@@ -1193,7 +1193,9 @@ void amf_app::handle_itti_message(itti_sbi_am_policy_association_response& r) {
           oai::_3gpp::model::PolicyAssociation policy_association = {};
           from_json(r.response_data[kSbiResponseJsonData], policy_association);
           // Store the policy association in the UE context
-          uc->policy_association = policy_association;
+          uc->policy_association =
+              std::make_optional<oai::_3gpp::model::PolicyAssociation>(
+                  policy_association);
           // Store the location of the Policy Association
           if (r.response_data.find(kSbiResponseHeaderLocation) !=
               r.response_data.end()) {
@@ -1211,6 +1213,28 @@ void amf_app::handle_itti_message(itti_sbi_am_policy_association_response& r) {
     Logger::amf_app().debug(
         "AMF has failed to get the Policy Association from "
         "PCF.");
+  }
+}
+
+//------------------------------------------------------------------------------
+void amf_app::handle_itti_message(
+    itti_sbi_am_policy_association_termination_response& r) {
+  Logger::amf_app().debug(
+      "Handle SBI_AM_POLICY_ASSOCIATION_TERMINATION_RESPONSE response");
+
+  uint32_t response_code = oai::common::sbi::http_status_code::NO_RESPONSE;
+  if (r.response_data.find(kSbiResponseHttpResponseCode) !=
+      r.response_data.end()) {
+    response_code = r.response_data[kSbiResponseHttpResponseCode].get<int>();
+  }
+
+  if (response_code == oai::common::sbi::http_status_code::NO_CONTENT) {
+    // Remove PolicyAssociation
+    std::shared_ptr<ue_context> uc = {};
+    if (supi_2_ue_context(r.supi, uc)) {
+      uc->policy_association_location = {};
+      uc->policy_association          = {};
+    }
   }
 }
 
