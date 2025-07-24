@@ -6186,10 +6186,18 @@ void amf_n1::discover_pcf(std::shared_ptr<ue_context>& uc) {
               // TODO: PCF selection
 
               // IPv4 addresses (get first IP v4 address)
-              pcf_addr = it.getIpv4Addresses().at(0);
+              if (it.ipv4AddressesIsSet()) {
+                if (it.getIpv4Addresses().size() == 0) {
+                  Logger::amf_n1().warn(
+                      "No IPv4 Addresses found in Search Result");
+                } else {
+                  pcf_addr = it.getIpv4Addresses().at(0);
+                  break;
+                }
+              }
+
               Logger::amf_n1().debug("PCF Address: %s", pcf_addr.c_str());
               // TODO: Port
-              break;
             }
 
             if (pcf_addr.empty()) {
