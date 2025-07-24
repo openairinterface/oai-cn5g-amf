@@ -166,4 +166,11 @@ amf_sbi_helper::get_udm_smf_selection_subscription_data_retrieval_uri(
          fmt::format(fmr_format_str, supi);
 }
 
+//------------------------------------------------------------------------------
+std::string amf_sbi_helper::get_pcf_am_policy_association_uri(
+    const nf_addr_t& pcf_addr) {
+  return pcf_addr.uri_root + PcfAmPolicyControlBase + pcf_addr.api_version +
+         PcfAmPolicyControlPathPolicies;
+}
+
 }  // namespace oai::amf::api

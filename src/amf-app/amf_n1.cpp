@@ -69,6 +69,9 @@
 #include "Amf3GppAccessRegistration.h"
 #include "AccessAndMobilitySubscriptionData.h"
 #include "Av5gAka.h"
+#include "SearchResult.h"
+#include "NFProfile.h"
+#include "PcfInfo.h"
 
 using namespace amf_application;
 using namespace boost::placeholders;
@@ -3110,6 +3113,12 @@ void amf_n1::security_mode_complete_handle(
   // TODO: Step 14b. Figure 4.2.2.2.2-1: Registration procedure@3GPP TS 23.502
   // Retrieving UE context in SMF data and LCS mobile origination
 
+  // TODO: Step 15: PCF discovery and selection
+  discover_pcf(uc);
+
+  // TODO: Step 16: Perform an AM Policy Association Establishment/Modification
+  perform_am_policy_association(uc);
+
   // Process Uplink Data Status / PDU Session status
   uint16_t uplink_data_status              = 0x0000;
   uint16_t pdu_session_status              = 0x0000;
@@ -6126,6 +6135,159 @@ void amf_n1::get_smf_selection_subscription_data(
 
   itti_msg->supi    = uc->supi;
   itti_msg->plmn_id = plmn_id;
+
+  int ret = itti_inst->send_msg(itti_msg);
+  if (0 != ret) {
+    Logger::amf_n1().error(
+        "Could not send ITTI message %s to task TASK_AMF_SBI",
+        itti_msg->get_msg_name());
+  }
+}
+
+//------------------------------------------------------------------------------
+void amf_n1::discover_pcf(std::shared_ptr<ue_context>& uc) {
+  Logger::amf_n1().debug("Discovering PCF for the UE");
+
+  oai::_3gpp::model::PlmnIdNid plmn_id = {};
+  plmn_id.setMcc(uc->tai.mcc);
+  plmn_id.setMnc(uc->tai.mnc);
+
+  // Generate a promise and associate this promise to the ITTI message
+  uint32_t promise_id = {};
+  boost::shared_ptr<boost::promise<nlohmann::json>> p =
+      boost::make_shared<boost::promise<nlohmann::json>>();
+  amf_app_inst->store_promise(promise_id, p);
+  boost::shared_future<nlohmann::json> f = p->get_future();
+  Logger::amf_n1().debug("Promise ID generated %ld", promise_id);
+
+  std::shared_ptr<itti_sbi_pcf_discovery> itti_msg =
+      std::make_shared<itti_sbi_pcf_discovery>(
+          TASK_AMF_N1, TASK_AMF_SBI, promise_id);
+
+  itti_msg->promise_id = promise_id;
+  itti_msg->supi       = uc->supi;
+  // itti_msg->snssai     = uc->snssai;
+  itti_msg->plmn_id = plmn_id;
+  // TODO: add support for PCF Set ID
+  // TODO: add support for PCF Group ID
+  // itti_msg->dnn = uc->dnn;
+  // TODO: add support for PCF Selection Assistance Info and PCF ID(s) serving
+  // the established PDU Sessions
+
+  int ret = itti_inst->send_msg(itti_msg);
+  if (0 != ret) {
+    Logger::amf_n1().error(
+        "Could not send ITTI message %s to task TASK_AMF_SBI",
+        itti_msg->get_msg_name());
+  }
+
+  bool is_result_available = true;
+
+  oai::_3gpp::model::SearchResult search_result = {};
+
+  std::string pcf_addr = {};
+
+  // Wait for the response available and process accordingly
+  std::optional<nlohmann::json> result_opt = std::nullopt;
+  oai::utils::utils::wait_for_result(f, result_opt);
+  if (result_opt.has_value()) {
+    nlohmann::json result = result_opt.value();
+    Logger::amf_n1().debug("Got result for promise ID %ld", promise_id);
+    if (result.find(kSbiResponseJsonData) != result.end()) {
+      Logger::amf_n1().debug(
+          "Got Search Result response from "
+          "NRF: %s",
+          result[kSbiResponseJsonData].dump());
+
+      uint32_t http_response_code =
+          oai::common::sbi::http_status_code::NO_RESPONSE;
+      if (result.find(kSbiResponseHttpResponseCode) != result.end()) {
+        http_response_code = result[kSbiResponseHttpResponseCode].get<int>();
+        if (http_response_code == oai::common::sbi::http_status_code::OK) {
+          // Process the content
+          try {
+            from_json(result[kSbiResponseJsonData], search_result);
+            std::vector<oai::_3gpp::model::NFProfile> nf_instances =
+                search_result.getNfInstances();
+            for (auto const& it : nf_instances) {
+              // PCF info
+              if (it.pcfInfoIsSet()) {
+                oai::_3gpp::model::PcfInfo pcf_info = it.getPcfInfo();
+              }
+
+              // TODO: PCF selection
+
+              // IPv4 addresses (get first IP v4 address)
+              if (it.ipv4AddressesIsSet()) {
+                if (it.getIpv4Addresses().size() == 0) {
+                  Logger::amf_n1().warn(
+                      "No IPv4 Addresses found in Search Result");
+                } else {
+                  pcf_addr = it.getIpv4Addresses().at(0);
+                  break;
+                }
+              }
+
+              Logger::amf_n1().debug("PCF Address: %s", pcf_addr.c_str());
+              // TODO: Port
+            }
+
+            if (pcf_addr.empty()) {
+              Logger::amf_n1().warn("No PCF Address found in Search Result");
+              is_result_available = false;
+            } else {
+              // Store PCF URI in UE context
+              std::string pcf_uri_root = {};
+              uint32_t pcf_port        = DEFAULT_HTTP2_PORT;
+              pcf_uri_root.append(pcf_addr).append(":").append(
+                  std::to_string(pcf_port));
+              uc->pcf_addr.uri_root    = pcf_uri_root;
+              uc->pcf_addr.api_version = "v1";  // TODO: get from PCF
+              is_result_available      = true;
+            }
+
+          } catch (std::exception& e) {
+            Logger::amf_n1().warn(
+                "Could not parse Search Result from "
+                "Json");
+            is_result_available = false;
+          }
+        }
+      }
+
+    } else {
+      is_result_available = false;
+    }
+
+  } else {
+    is_result_available = false;
+  }
+
+  if (!is_result_available) {
+    Logger::amf_n1().warn("Could not get Search Result from NRF");
+  }
+}
+
+//------------------------------------------------------------------------------
+void amf_n1::perform_am_policy_association(std::shared_ptr<ue_context>& uc) {
+  Logger::amf_n1().debug("Perform AM Policy Association with PCF for the UE");
+
+  oai::_3gpp::model::PolicyAssociationRequest policy_assc_request = {};
+  policy_assc_request.setSupi(uc->supi);
+  // TODO: Set Notification URI
+  std::string notification_uri = {};
+  policy_assc_request.setNotificationUri(notification_uri);
+  // TODO: Add support for Support Features
+  std::string support_features = {};
+  policy_assc_request.setSuppFeat(support_features);
+
+  // Send request to SBI to trigger AM Policy Associtiation with PCF
+
+  std::shared_ptr<itti_sbi_am_policy_association> itti_msg =
+      std::make_shared<itti_sbi_am_policy_association>(
+          TASK_AMF_N1, TASK_AMF_SBI);
+
+  itti_msg->policy_assoc_req = policy_assc_request;
 
   int ret = itti_inst->send_msg(itti_msg);
   if (0 != ret) {

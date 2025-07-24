@@ -237,6 +237,7 @@ class amf_app {
   void handle_itti_message(
       itti_sbi_retrieve_smf_selection_subscription_data_response& r);
 
+  void handle_itti_message(itti_sbi_am_policy_association_response& r);
   /*
    * Get the current AMF's configuration
    * @param [nlohmann::json&]: json_data: Store AMF configuration

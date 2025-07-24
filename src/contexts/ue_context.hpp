@@ -32,6 +32,8 @@
 #include "NgapIesStruct.hpp"
 #include "pdu_session_context.hpp"
 //#include "AccessAndMobilitySubscriptionData.h"
+#include "sbi_helper.hpp"
+#include "PolicyAssociation.h"
 
 extern "C" {
 #include "Ngap_RRCEstablishmentCause.h"
@@ -72,6 +74,11 @@ class ue_context {
   mutable std::shared_mutex m_pdu_session;
 
   std::string amf_3gpp_access_location;
+  // std::optional<oai::model::udm::AccessAndMobilitySubscriptionData> am_data;
+  std::string nrf_uri;
+  oai::common::sbi::nf_addr_t pcf_addr;
+  oai::_3gpp::model::PolicyAssociation policy_association;
+  std::string policy_association_location;
   // std::optional<oai::_3gpp::model::AccessAndMobilitySubscriptionData>
   // am_data;
 };

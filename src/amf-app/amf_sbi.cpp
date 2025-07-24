@@ -255,6 +255,25 @@ void amf_sbi_task(void*) {
         amf_sbi_inst->handle_itti_message(std::ref(*m));
       } break;
 
+      case SBI_PCF_DISCOVERY: {
+        Logger::amf_sbi().info(
+            "Receive PCF Discovery message, "
+            "handling ...");
+        itti_sbi_pcf_discovery* m = dynamic_cast<itti_sbi_pcf_discovery*>(msg);
+        if (!m) break;
+        amf_sbi_inst->handle_itti_message(std::ref(*m));
+      } break;
+
+      case SBI_AM_POLICY_ASSOCIATION: {
+        Logger::amf_sbi().info(
+            "Receive AM Policy Association message, "
+            "handling ...");
+        itti_sbi_am_policy_association* m =
+            dynamic_cast<itti_sbi_am_policy_association*>(msg);
+        if (!m) break;
+        amf_sbi_inst->handle_itti_message(std::ref(*m));
+      } break;
+
       case TERMINATE: {
         if (itti_msg_terminate* terminate =
                 dynamic_cast<itti_msg_terminate*>(msg)) {
@@ -435,8 +454,11 @@ void amf_sbi::handle_itti_message(itti_nsmf_pdusession_create_sm_context& smf) {
         Logger::amf_sbi().error("No NRF available");
         return;
       }
-      Logger::amf_sbi().debug("NRF NF Discover URI: %s", nrf_uri.c_str());
-      // use NRF to find suitable SMF based on snssai, plmn and dnn
+      uc->nrf_uri = nrf_uri;
+      Logger::amf_sbi().debug(
+          "NRF NF Discover URI: %s",
+          nrf_uri.c_str());  // use NRF to find suitable SMF based on snssai,
+                             // plmn and dnn
       if (!discover_smf(
               smf_uri_root, smf_api_version, psc->snssai, psc->plmn, psc->dnn,
               nrf_uri)) {
@@ -1357,6 +1379,109 @@ void amf_sbi::handle_itti_message(
           itti_msg_response->get_msg_name());
     }
   }
+}
+
+//------------------------------------------------------------------------------
+bool amf_sbi::handle_itti_message(itti_sbi_pcf_discovery& itti_msg) {
+  Logger::amf_sbi().debug("Send PCF Discovery to NRF");
+
+  std::string nrf_uri = {};
+
+  std::shared_ptr<ue_context> uc = {};
+  if (!amf_app_inst->supi_2_ue_context(itti_msg.supi, uc)) {
+    return false;
+  }
+  nrf_uri = uc->nrf_uri;
+
+  nlohmann::json plmn_id = {};
+  to_json(plmn_id, itti_msg.plmn_id);
+  // TODO: support parameters PLMN ID, SNSSAI,
+  nrf_uri += "?target-nf-type=PCF&requester-nf-type=AMF";
+  Logger::amf_sbi().debug("NRF's URI %s", nrf_uri.c_str());
+
+  oai::http::response http_response = {};
+  send_http_request(
+      nrf_uri, oai::common::sbi::method_e::GET, "", http_response);
+
+  Logger::amf_sbi().debug(
+      "PCF Discovery, response from NRF, HTTP "
+      "Code: %lu",
+      http_response.status_code);
+  Logger::amf_sbi().debug(
+      "PCF Discovery, response from NRF\n, %s ", http_response.body);
+
+  nlohmann::json response_data                = {};
+  response_data[kSbiResponseHttpResponseCode] = http_response.status_code;
+  response_data[kSbiResponseJsonData]         = http_response.get_json();
+
+  // Notify to the result
+  if (itti_msg.promise_id > 0) {
+    amf_app_inst->trigger_process_response(itti_msg.promise_id, response_data);
+  }
+  return true;
+}
+
+//------------------------------------------------------------------------------
+bool amf_sbi::handle_itti_message(itti_sbi_am_policy_association& itti_msg) {
+  Logger::amf_sbi().debug("Send AM Policy Association to PCF");
+
+  std::shared_ptr<ue_context> uc = {};
+  std::string supi               = itti_msg.policy_assoc_req.getSupi();
+  if (!amf_app_inst->supi_2_ue_context(supi, uc)) {
+    return false;
+  }
+
+  std::string uri =
+      amf_sbi_helper::get_pcf_am_policy_association_uri(uc->pcf_addr);
+  Logger::amf_sbi().debug("URI %s", uri.c_str());
+
+  nlohmann::json json_data = {};
+  to_json(json_data, itti_msg.policy_assoc_req);
+
+  std::string body = json_data.dump();
+  Logger::amf_sbi().debug("Message body: \n %s", body.c_str());
+
+  nlohmann::json response_json = {};
+  uint32_t response_code       = 0;
+
+  oai::http::response http_response = {};
+
+  send_http_request(uri, oai::common::sbi::method_e::POST, body, http_response);
+
+  Logger::amf_sbi().debug(
+      "AM Policy Association, response from PCF, HTTP Code: %lu",
+      http_response.status_code);
+  Logger::amf_sbi().debug(
+      "AM Policy Association, response from PCF\n, %s ", http_response.body);
+
+  nlohmann::json response_data                = {};
+  response_data[kSbiResponseHttpResponseCode] = http_response.status_code;
+  response_data[kSbiResponseJsonData]         = http_response.get_json();
+
+  // Send response to APP to process
+  if (http_response.status_code ==
+      oai::common::sbi::http_status_code::CREATED) {
+    std::shared_ptr<itti_sbi_am_policy_association_response> itti_msg_response =
+        std::make_shared<itti_sbi_am_policy_association_response>(
+            TASK_AMF_SBI, TASK_AMF_APP);
+    itti_msg_response->supi          = supi;
+    itti_msg_response->response_data = response_data;
+
+    if (auto loc_header = http_response.headers.find("location");
+        loc_header != http_response.headers.end()) {
+      Logger::amf_sbi().info(
+          "Location of the created resource: %s", loc_header->second.c_str());
+      response_data[kSbiResponseHeaderLocation] = loc_header->second;
+    }
+
+    int ret = itti_inst->send_msg(itti_msg_response);
+    if (RETURNok != ret) {
+      Logger::amf_sbi().error(
+          "Could not send ITTI message %s to task TASK_AMF_APP",
+          itti_msg_response->get_msg_name());
+    }
+  }
+  return true;
 }
 
 //------------------------------------------------------------------------------

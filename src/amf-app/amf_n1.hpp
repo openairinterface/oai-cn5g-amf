@@ -951,6 +951,10 @@ class amf_n1 {
   void get_smf_selection_subscription_data(
       std::shared_ptr<ue_context>& uc) const;
 
+  void discover_pcf(std::shared_ptr<ue_context>& uc);
+
+  void perform_am_policy_association(std::shared_ptr<ue_context>& uc);
+
   // for Event Handling
   amf_event event_sub;
   bs2::connection ee_ue_location_report_connection;
