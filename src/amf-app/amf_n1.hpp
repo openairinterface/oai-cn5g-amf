@@ -927,35 +927,24 @@ class amf_n1 {
    */
   uint8_t get_nas_message_type(uint8_t* buf, uint32_t len);
 
+  /*
+   * Set PDU Session Status
+   * @param [uint8_t] pdu_session_id: PDU Session ID
+   * @param [uint16_t&] pdu_session_status: PDU Session Status
+   * @return void
+   */
   void set_pdu_session_status_inactive(
       uint8_t pdu_session_id, uint16_t& pdu_session_status);
 
+  /*
+   * Set PDU Session Reactivation Result
+   * @param [uint8_t] pdu_session_id: PDU Session ID
+   * @param [uint16_t&] pdu_session_reactivation_result: PDU Session
+   * Reactivation Result
+   * @return void
+   */
   void set_pdu_session_reactivation_result(
       uint8_t pdu_session_id, uint16_t& pdu_session_reactivation_result);
-
-  /*
-   * Trigger AMF Registration for 3GPP Access towards UDM
-   * @param [std::shared_ptr<ue_context>&] uc: UE context
-   * @return void
-   */
-  void register_3gpp_access(std::shared_ptr<ue_context>& uc) const;
-
-  /*
-   * Retrieve a UE's Access and Mobility Subscription Data from UDM
-   * @param [std::shared_ptr<ue_context>&] uc: UE context
-   * @return void
-   */
-  void get_access_and_mobility_subscription_data(
-      std::shared_ptr<ue_context>& uc) const;
-
-  void get_smf_selection_subscription_data(
-      std::shared_ptr<ue_context>& uc) const;
-
-  void discover_pcf(std::shared_ptr<ue_context>& uc);
-
-  void perform_am_policy_association(std::shared_ptr<ue_context>& uc);
-  void perform_am_policy_association_termination(
-      const std::shared_ptr<ue_context>& uc);
 
   // for Event Handling
   amf_event event_sub;
