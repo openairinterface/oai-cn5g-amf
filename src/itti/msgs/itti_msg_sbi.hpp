@@ -42,6 +42,8 @@
 #include "PlmnIdNid.h"
 #include "PolicyAssociationRequest.h"
 #include "PolicyAssociationUpdateRequest.h"
+#include "PolicyUpdate.h"
+#include "TerminationNotification.h"
 
 using namespace amf_application;
 
@@ -1103,4 +1105,57 @@ class itti_sbi_am_policy_association_retrieval_response : public itti_sbi_msg {
   std::string supi;
   nlohmann::json response_data;
 };
+
+class itti_sbi_am_policy_update_notification : public itti_sbi_msg {
+ public:
+  itti_sbi_am_policy_update_notification(
+      const task_id_t orig, const task_id_t dest, uint32_t pid)
+      : itti_sbi_msg(SBI_AM_POLICY_UPDATE_NOTIFICATION, orig, dest),
+        promise_id(pid),
+        supi(),
+        policy_update() {}
+
+  itti_sbi_am_policy_update_notification(
+      const itti_sbi_am_policy_update_notification& i)
+      : itti_sbi_msg(i) {
+    promise_id    = i.promise_id;
+    supi          = i.supi;
+    policy_update = i.policy_update;
+  }
+  virtual ~itti_sbi_am_policy_update_notification(){};
+  const char* get_msg_name() { return "SBI_AM_POLICY_UPDATE_NOTIFICATION"; };
+
+  std::string supi;
+  uint32_t promise_id;
+  oai::_3gpp::model::PolicyUpdate policy_update;
+};
+
+class itti_sbi_am_policy_association_termination_notification
+    : public itti_sbi_msg {
+ public:
+  itti_sbi_am_policy_association_termination_notification(
+      const task_id_t orig, const task_id_t dest, uint32_t pid)
+      : itti_sbi_msg(
+            SBI_AM_POLICY_ASSOCIATION_TERMINATION_NOTIFICATION, orig, dest),
+        promise_id(pid),
+        supi(),
+        termination_notification() {}
+
+  itti_sbi_am_policy_association_termination_notification(
+      const itti_sbi_am_policy_association_termination_notification& i)
+      : itti_sbi_msg(i) {
+    promise_id               = i.promise_id;
+    supi                     = i.supi;
+    termination_notification = i.termination_notification;
+  }
+  virtual ~itti_sbi_am_policy_association_termination_notification(){};
+  const char* get_msg_name() {
+    return "SBI_AM_POLICY_ASSOCIATION_TERMINATION_NOTIFICATION";
+  };
+
+  std::string supi;
+  uint32_t promise_id;
+  oai::_3gpp::model::TerminationNotification termination_notification;
+};
+
 #endif /* ITTI_MSG_SBI_HPP_INCLUDED_ */

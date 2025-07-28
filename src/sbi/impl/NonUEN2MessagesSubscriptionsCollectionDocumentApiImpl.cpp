@@ -68,18 +68,18 @@ void NonUEN2MessagesSubscriptionsCollectionDocumentApiImpl::
     // process data
     std::string location        = {};
     uint32_t http_response_code = 0;
-    if (result.find("location") != result.end()) {
-      location = result["location"].get<std::string>();
+    if (result.find(kSbiResponseHeaderLocation) != result.end()) {
+      location = result[kSbiResponseHeaderLocation].get<std::string>();
     }
 
-    if (result.find("httpResponseCode") != result.end()) {
-      http_response_code = result["httpResponseCode"].get<int>();
+    if (result.find(kSbiResponseHttpResponseCode) != result.end()) {
+      http_response_code = result[kSbiResponseHttpResponseCode].get<int>();
     }
 
     // NonUeN2InfoSubscriptionCreatedData
     nlohmann::json json_data = {};
-    if (result.find("createdData") != result.end()) {
-      json_data = result["createdData"];
+    if (result.find(kSbiResponseJsonData) != result.end()) {
+      json_data = result[kSbiResponseJsonData];
     }
 
     if (http_response_code == oai::common::sbi::http_status_code::CREATED) {

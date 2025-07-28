@@ -37,6 +37,8 @@
 #include "pistache/http.h"
 #include "pistache/router.h"
 #include "uint_generator.hpp"
+#include "PolicyUpdate.h"
+#include "TerminationNotification.h"
 
 using namespace nghttp2::asio_http2;
 using namespace nghttp2::asio_http2::server;
@@ -91,6 +93,14 @@ class amf_http2_server {
   void update_configuration_handler(
       nlohmann::json& configuration_info, const response& response);
 
+  void update_policy_notification_handler(
+      const std::string& ue_context_id, const PolicyUpdate& policy_update,
+      const response& res);
+
+  void terminate_policy_notification_handler(
+      const std::string& ue_context_id,
+      const TerminationNotification& termination_notification,
+      const response& res);
   void stop();
   void send_response(const response& res, uint32_t response_code);
 

@@ -35,6 +35,8 @@
 #include "logger.hpp"
 #include "output_wrapper.hpp"
 #include "utils.hpp"
+#include "PolicyUpdate.h"
+#include "TerminationNotification.h"
 
 using namespace nghttp2::asio_http2;
 using namespace nghttp2::asio_http2::server;
@@ -484,6 +486,68 @@ void amf_http2_server::start() {
               nlohmann::json::parse(msg.c_str()).get_to(statusNotification);
               this->status_notify_handler(
                   ue_context_id, pdu_session_id, statusNotification, res);
+            } else {
+              Logger::amf_server().warn(
+                  "Invalid request (error: Invalid Request Method)!");
+              return send_response(
+                  res, oai::common::sbi::http_status_code::BAD_REQUEST);
+            }
+          } catch (std::exception& e) {
+            Logger::amf_server().warn("Invalid request (error: %s)!", e.what());
+            return send_response(
+                res, oai::common::sbi::http_status_code::BAD_REQUEST);
+          }
+        });
+      });
+
+  // AM Policy Assocition Notification
+  // http:://amf_ipaddr:port/namf-callback/v1/:ueId/PolicyUpdateNotification/update
+  // http:://amf_ipaddr:port/namf-callback/v1/:ueId/PolicyUpdateNotification/terminate
+  server.handle(
+      amf_sbi_helper::AmfCallbackBase() +
+          amf_sbi_helper::AmfCallbackPathPolicyUpdateNotification,
+      [&](const request& request, const response& res) {
+        request.on_data([&](const uint8_t* data, std::size_t len) {
+          std::string msg((char*) data, len);
+          try {
+            std::vector<std::string> split_result;
+            boost::split(
+                split_result, request.uri().path, boost::is_any_of("/"));
+            if (request.method().compare("POST") == 0 && len > 0) {
+              if (split_result.size() != 7) {
+                Logger::amf_server().warn("Requested URL is not implemented");
+                return send_response(
+                    res, oai::common::sbi::http_status_code::NOT_IMPLEMENTED);
+              }
+
+              std::string ue_context_id = split_result[split_result.size() - 3];
+              std::string action        = split_result[split_result.size() - 1];
+
+              Logger::amf_server().info(
+                  "ue_context_id %s", ue_context_id.c_str());
+
+              if (boost::iequals(
+                      action, "update")) {  // policyUpdateNotification
+                oai::_3gpp::model::PolicyUpdate policy_update = {};
+                nlohmann::json::parse(msg.c_str()).get_to(policy_update);
+                this->update_policy_notification_handler(
+                    ue_context_id, policy_update, res);
+              } else if (
+                  boost::iequals(
+                      action,
+                      "terminate")) {  // policyAssocitionTerminationRequestNotification
+                oai::_3gpp::model::TerminationNotification
+                    termination_notification = {};
+                nlohmann::json::parse(msg.c_str())
+                    .get_to(termination_notification);
+                this->terminate_policy_notification_handler(
+                    ue_context_id, termination_notification, res);
+              } else {
+                res.write_head(http_status_code::BAD_REQUEST);
+                res.end();
+                return;
+              }
+
             } else {
               Logger::amf_server().warn(
                   "Invalid request (error: Invalid Request Method)!");
@@ -950,18 +1014,18 @@ void amf_http2_server::n1_n2_message_subscribe_handler(
     // process data
     std::string location        = {};
     uint32_t http_response_code = 0;
-    if (result.find("location") != result.end()) {
-      location = result["location"].get<std::string>();
+    if (result.find(kSbiResponseHeaderLocation) != result.end()) {
+      location = result[kSbiResponseHeaderLocation].get<std::string>();
     }
 
-    if (result.find("httpResponseCode") != result.end()) {
-      http_response_code = result["httpResponseCode"].get<int>();
+    if (result.find(kSbiResponseHttpResponseCode) != result.end()) {
+      http_response_code = result[kSbiResponseHttpResponseCode].get<int>();
     }
 
     // UeN1N2InfoSubscriptionCreatedData
     nlohmann::json json_data = {};
-    if (result.find("createdData") != result.end()) {
-      json_data = result["createdData"];
+    if (result.find(kSbiResponseJsonData) != result.end()) {
+      json_data = result[kSbiResponseJsonData];
     }
 
     if (http_response_code == oai::common::sbi::http_status_code::CREATED) {
@@ -1031,8 +1095,8 @@ void amf_http2_server::n1_n2_message_unsubscribe_handler(
     uint32_t http_response_code = 0;
     nlohmann::json json_data    = {};
 
-    if (result.find("httpResponseCode") != result.end()) {
-      http_response_code = result["httpResponseCode"].get<int>();
+    if (result.find(kSbiResponseHttpResponseCode) != result.end()) {
+      http_response_code = result[kSbiResponseHttpResponseCode].get<int>();
     }
 
     if (http_response_code == oai::common::sbi::http_status_code::NO_CONTENT) {
@@ -1099,18 +1163,18 @@ void amf_http2_server::non_ue_n2_info_subscribe_handler(
     // process data
     std::string location        = {};
     uint32_t http_response_code = 0;
-    if (result.find("location") != result.end()) {
-      location = result["location"].get<std::string>();
+    if (result.find(kSbiResponseHeaderLocation) != result.end()) {
+      location = result[kSbiResponseHeaderLocation].get<std::string>();
     }
 
-    if (result.find("httpResponseCode") != result.end()) {
-      http_response_code = result["httpResponseCode"].get<int>();
+    if (result.find(kSbiResponseHttpResponseCode) != result.end()) {
+      http_response_code = result[kSbiResponseHttpResponseCode].get<int>();
     }
 
     // NonUeN2InfoSubscriptionCreatedData
     nlohmann::json json_data = {};
-    if (result.find("createdData") != result.end()) {
-      json_data = result["createdData"];
+    if (result.find(kSbiResponseJsonData) != result.end()) {
+      json_data = result[kSbiResponseJsonData];
     }
 
     if (http_response_code == oai::common::sbi::http_status_code::CREATED) {
@@ -1176,8 +1240,8 @@ void amf_http2_server::non_ue_n2_info_unsubscribe_handler(
     uint32_t http_response_code = 0;
     nlohmann::json json_data    = {};
 
-    if (result.find("httpResponseCode") != result.end()) {
-      http_response_code = result["httpResponseCode"].get<int>();
+    if (result.find(kSbiResponseHttpResponseCode) != result.end()) {
+      http_response_code = result[kSbiResponseHttpResponseCode].get<int>();
     }
 
     if (http_response_code == oai::common::sbi::http_status_code::NO_CONTENT) {
@@ -1244,13 +1308,13 @@ void amf_http2_server::status_notify_handler(
     uint32_t http_response_code = 0;
     nlohmann::json json_data    = {};
 
-    if (result.find("httpResponseCode") != result.end()) {
-      http_response_code = result["httpResponseCode"].get<int>();
+    if (result.find(kSbiResponseHttpResponseCode) != result.end()) {
+      http_response_code = result[kSbiResponseHttpResponseCode].get<int>();
     }
 
     if (http_response_code == oai::common::sbi::http_status_code::OK) {
-      if (result.find("content") != result.end()) {
-        json_data = result["content"];
+      if (result.find(kSbiResponseJsonData) != result.end()) {
+        json_data = result[kSbiResponseJsonData];
       }
 
       h.emplace("content-type", header_value{"application/json"});
@@ -1312,13 +1376,13 @@ void amf_http2_server::get_configuration_handler(const response& res) {
     uint32_t http_response_code = 0;
     nlohmann::json json_data    = {};
 
-    if (result.find("httpResponseCode") != result.end()) {
-      http_response_code = result["httpResponseCode"].get<int>();
+    if (result.find(kSbiResponseHttpResponseCode) != result.end()) {
+      http_response_code = result[kSbiResponseHttpResponseCode].get<int>();
     }
 
     if (http_response_code == oai::common::sbi::http_status_code::OK) {
-      if (result.find("content") != result.end()) {
-        json_data = result["content"];
+      if (result.find(kSbiResponseJsonData) != result.end()) {
+        json_data = result[kSbiResponseJsonData];
       }
 
       h.emplace("content-type", header_value{"application/json"});
@@ -1384,13 +1448,13 @@ void amf_http2_server::update_configuration_handler(
     uint32_t http_response_code = {0};
     nlohmann::json json_data    = {};
 
-    if (result.find("httpResponseCode") != result.end()) {
-      http_response_code = result["httpResponseCode"].get<int>();
+    if (result.find(kSbiResponseHttpResponseCode) != result.end()) {
+      http_response_code = result[kSbiResponseHttpResponseCode].get<int>();
     }
 
     if (http_response_code == oai::common::sbi::http_status_code::OK) {
-      if (result.find("content") != result.end()) {
-        json_data = result["content"];
+      if (result.find(kSbiResponseJsonData) != result.end()) {
+        json_data = result[kSbiResponseJsonData];
       }
       h.emplace("content-type", header_value{"application/json"});
       res.write_head(http_response_code);
@@ -1411,6 +1475,153 @@ void amf_http2_server::update_configuration_handler(
   }
 }
 
+//------------------------------------------------------------------------------
+void amf_http2_server::update_policy_notification_handler(
+    const std::string& ue_context_id, const PolicyUpdate& policy_update,
+    const response& res) {
+  Logger::amf_server().debug(
+      "Receive an PolicyUpdateNotification, handling...");
+  header_map h;
+
+  // Generate a promise and associate this promise to the ITTI message
+  uint32_t promise_id = m_amf_app->generate_promise_id();
+  Logger::amf_n1().debug("Promise ID generated %d", promise_id);
+
+  boost::shared_ptr<boost::promise<nlohmann::json>> p =
+      boost::make_shared<boost::promise<nlohmann::json>>();
+  boost::shared_future<nlohmann::json> f = p->get_future();
+  m_amf_app->add_promise(promise_id, p);
+
+  // Handle the PolicyUpdateNotification in amf_app
+  std::shared_ptr<itti_sbi_am_policy_update_notification> itti_msg =
+      std::make_shared<itti_sbi_am_policy_update_notification>(
+          TASK_AMF_SBI, TASK_AMF_APP, promise_id);
+
+  itti_msg->promise_id    = promise_id;
+  itti_msg->supi          = ue_context_id;
+  itti_msg->policy_update = policy_update;
+
+  int ret = itti_inst->send_msg(itti_msg);
+  if (0 != ret) {
+    Logger::amf_server().error(
+        "Could not send ITTI message %s to task TASK_AMF_APP",
+        itti_msg->get_msg_name());
+  }
+
+  // Wait for the response available and process accordingly
+  std::optional<nlohmann::json> result_opt = std::nullopt;
+  oai::utils::utils::wait_for_result(f, result_opt);
+
+  if (result_opt.has_value()) {
+    Logger::amf_server().debug("Got result for promise ID %d", promise_id);
+    nlohmann::json result = result_opt.value();
+    // process data
+    uint32_t http_response_code = 0;
+    nlohmann::json json_data    = {};
+
+    if (result.find(kSbiResponseHttpResponseCode) != result.end()) {
+      http_response_code = result[kSbiResponseHttpResponseCode].get<int>();
+    }
+
+    if (http_response_code == oai::common::sbi::http_status_code::OK) {
+      if (result.find(kSbiResponseJsonData) != result.end()) {
+        json_data = result[kSbiResponseJsonData];
+      }
+
+      h.emplace("content-type", header_value{"application/json"});
+      res.write_head(http_response_code);
+      res.end(json_data.dump().c_str());
+
+    } else {
+      // Problem details
+      if (result.find(kSbiResponseJsonData) != result.end()) {
+        json_data = result[kSbiResponseJsonData];
+      }
+
+      h.emplace("content-type", header_value{"application/problem+json"});
+      res.write_head(http_response_code);
+      res.end(json_data.dump().c_str());
+    }
+
+  } else {
+    send_response(res, oai::common::sbi::http_status_code::GATEWAY_TIMEOUT);
+  }
+}
+
+//------------------------------------------------------------------------------
+void amf_http2_server::terminate_policy_notification_handler(
+    const std::string& ue_context_id,
+    const TerminationNotification& termination_notification,
+    const response& res) {
+  Logger::amf_server().debug(
+      "Receive an policyAssocitionTerminationRequestNotification, handling...");
+  header_map h;
+
+  // Generate a promise and associate this promise to the ITTI message
+  uint32_t promise_id = m_amf_app->generate_promise_id();
+  Logger::amf_n1().debug("Promise ID generated %d", promise_id);
+
+  boost::shared_ptr<boost::promise<nlohmann::json>> p =
+      boost::make_shared<boost::promise<nlohmann::json>>();
+  boost::shared_future<nlohmann::json> f = p->get_future();
+  m_amf_app->add_promise(promise_id, p);
+
+  // Handle the policyAssocitionTerminationRequestNotification in amf_app
+  std::shared_ptr<itti_sbi_am_policy_association_termination_notification>
+      itti_msg = std::make_shared<
+          itti_sbi_am_policy_association_termination_notification>(
+          TASK_AMF_SBI, TASK_AMF_APP, promise_id);
+
+  itti_msg->promise_id               = promise_id;
+  itti_msg->supi                     = ue_context_id;
+  itti_msg->termination_notification = termination_notification;
+
+  int ret = itti_inst->send_msg(itti_msg);
+  if (0 != ret) {
+    Logger::amf_server().error(
+        "Could not send ITTI message %s to task TASK_AMF_APP",
+        itti_msg->get_msg_name());
+  }
+
+  // Wait for the response available and process accordingly
+  std::optional<nlohmann::json> result_opt = std::nullopt;
+  oai::utils::utils::wait_for_result(f, result_opt);
+
+  if (result_opt.has_value()) {
+    Logger::amf_server().debug("Got result for promise ID %d", promise_id);
+    nlohmann::json result = result_opt.value();
+    // process data
+    uint32_t http_response_code = 0;
+    nlohmann::json json_data    = {};
+
+    if (result.find(kSbiResponseHttpResponseCode) != result.end()) {
+      http_response_code = result[kSbiResponseHttpResponseCode].get<int>();
+    }
+
+    if (http_response_code == oai::common::sbi::http_status_code::OK) {
+      if (result.find(kSbiResponseJsonData) != result.end()) {
+        json_data = result[kSbiResponseJsonData];
+      }
+
+      h.emplace("content-type", header_value{"application/json"});
+      res.write_head(http_response_code);
+      res.end(json_data.dump().c_str());
+
+    } else {
+      // Problem details
+      if (result.find("ProblemDetails") != result.end()) {
+        json_data = result["ProblemDetails"];
+      }
+
+      h.emplace("content-type", header_value{"application/problem+json"});
+      res.write_head(http_response_code);
+      res.end(json_data.dump().c_str());
+    }
+
+  } else {
+    send_response(res, oai::common::sbi::http_status_code::GATEWAY_TIMEOUT);
+  }
+}
 //------------------------------------------------------------------------------
 void amf_http2_server::stop() {
   server.stop();

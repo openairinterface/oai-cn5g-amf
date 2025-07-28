@@ -53,6 +53,7 @@
 #include "NFProfile.h"
 #include "PcfInfo.h"
 #include "PolicyUpdate.h"
+#include "AmRequestedValueRep.h"
 
 using namespace std::chrono;
 using namespace oai::ngap;
@@ -281,6 +282,22 @@ void amf_app_task(void*) {
             "Received SBI_AM_POLICY_ASSOCIATION_UPDATE_RESPONSE");
         itti_sbi_am_policy_association_update_response* m =
             dynamic_cast<itti_sbi_am_policy_association_update_response*>(msg);
+        amf_app_inst->handle_itti_message(std::ref(*m));
+      } break;
+
+      case SBI_AM_POLICY_UPDATE_NOTIFICATION: {
+        Logger::amf_app().debug("Received SBI_AM_POLICY_UPDATE_NOTIFICATION");
+        itti_sbi_am_policy_update_notification* m =
+            dynamic_cast<itti_sbi_am_policy_update_notification*>(msg);
+        amf_app_inst->handle_itti_message(std::ref(*m));
+      } break;
+
+      case SBI_AM_POLICY_ASSOCIATION_TERMINATION_NOTIFICATION: {
+        Logger::amf_app().debug(
+            "Received SBI_AM_POLICY_ASSOCIATION_TERMINATION_NOTIFICATION");
+        itti_sbi_am_policy_association_termination_notification&* m =
+            dynamic_cast<
+                itti_sbi_am_policy_association_termination_notification&*>(msg);
         amf_app_inst->handle_itti_message(std::ref(*m));
       } break;
 
@@ -814,11 +831,11 @@ void amf_app::handle_itti_message(itti_sbi_n1n2_message_subscribe& itti_msg) {
   nlohmann::json created_data_json = {};
   to_json(created_data_json, created_data);
 
-  nlohmann::json response_data = {};
-  response_data["createdData"] = created_data;
+  nlohmann::json response_data        = {};
+  response_data[kSbiResponseJsonData] = created_data;
   response_data[kSbiResponseHttpResponseCode] =
       static_cast<uint32_t>(oai::common::sbi::http_status_code::CREATED);
-  response_data["location"] = location;
+  response_data[kSbiResponseHeaderLocation] = location;
 
   // Notify to the result
   if (itti_msg.promise_id > 0) {
@@ -880,11 +897,11 @@ void amf_app::handle_itti_message(itti_sbi_non_ue_n2_info_subscribe& itti_msg) {
   nlohmann::json created_data_json = {};
   to_json(created_data_json, created_data);
 
-  nlohmann::json response_data = {};
-  response_data["createdData"] = created_data;
+  nlohmann::json response_data        = {};
+  response_data[kSbiResponseJsonData] = created_data;
   response_data[kSbiResponseHttpResponseCode] =
       static_cast<uint32_t>(oai::common::sbi::http_status_code::CREATED);
-  response_data["location"] = location;
+  response_data[kSbiResponseHeaderLocation] = location;
 
   // Notify to the result
   if (itti_msg.promise_id > 0) {
@@ -959,11 +976,12 @@ void amf_app::handle_itti_message(itti_sbi_amf_configuration& itti_msg) {
       itti_msg.http_version);
 
   // Process the request and trigger the response from AMF API Server
-  nlohmann::json response_data = {};
-  response_data["content"]     = {};
-  if (read_amf_configuration(response_data["content"])) {
+  nlohmann::json response_data        = {};
+  response_data[kSbiResponseJsonData] = {};
+  if (read_amf_configuration(response_data[kSbiResponseJsonData])) {
     Logger::amf_app().debug(
-        "AMF configuration:\n %s", response_data["content"].dump().c_str());
+        "AMF configuration:\n %s",
+        response_data[kSbiResponseJsonData].dump().c_str());
     response_data[kSbiResponseHttpResponseCode] =
         static_cast<uint32_t>(oai::common::sbi::http_status_code::OK);
   } else {
@@ -989,12 +1007,13 @@ void amf_app::handle_itti_message(itti_sbi_update_amf_configuration& itti_msg) {
       itti_msg.http_version);
 
   // Process the request and trigger the response from AMF API Server
-  nlohmann::json response_data = {};
-  response_data["content"]     = itti_msg.configuration;
+  nlohmann::json response_data        = {};
+  response_data[kSbiResponseJsonData] = itti_msg.configuration;
 
-  if (update_amf_configuration(response_data["content"])) {
+  if (update_amf_configuration(response_data[kSbiResponseJsonData])) {
     Logger::amf_app().debug(
-        "AMF configuration:\n %s", response_data["content"].dump().c_str());
+        "AMF configuration:\n %s",
+        response_data[kSbiResponseJsonData].dump().c_str());
     response_data[kSbiResponseHttpResponseCode] =
         static_cast<uint32_t>(oai::common::sbi::http_status_code::OK);
 
@@ -1332,6 +1351,70 @@ void amf_app::handle_itti_message(
         }
       }
     }
+  }
+}
+
+//------------------------------------------------------------------------------
+void amf_app::handle_itti_message(
+    itti_sbi_am_policy_update_notification& itti_msg) {
+  Logger::amf_app().debug("Handle SBI_AM_POLICY_UPDATE_NOTIFICATION");
+
+  nlohmann::json response_data = {};
+
+  std::shared_ptr<ue_context> uc = {};
+  if (supi_2_ue_context(itti_msg.supi, uc)) {
+    // TODO: Store the updated policy association in the UE context
+    oai::_3gpp::model::PolicyAssociation policy_association = {};
+    uc->policy_association =
+        std::make_optional<oai::_3gpp::model::PolicyAssociation>(
+            policy_association);
+
+    // TODO: Prepare the response
+    oai::_3gpp::model::AmRequestedValueRep am_requested_value_rep = {};
+
+    response_data[kSbiResponseHttpResponseCode] =
+        static_cast<uint32_t>(oai::common::sbi::http_status_code::OK);
+    to_json(response_data[kSbiResponseJsonData], am_requested_value_rep);
+
+  } else {
+    response_data[kSbiResponseHttpResponseCode] =
+        static_cast<uint32_t>(oai::common::sbi::http_status_code::BAD_REQUEST);
+    oai::_3gpp::model::ProblemDetails problem_details = {};
+    // TODO set problem_details
+    to_json(response_data[kSbiResponseJsonData], problem_details);
+  }
+
+  // Notify to the result
+  if (itti_msg.promise_id > 0) {
+    trigger_process_response(itti_msg.promise_id, response_data);
+    return;
+  }
+}
+
+//------------------------------------------------------------------------------
+void amf_app::handle_itti_message(
+    itti_sbi_am_policy_association_termination_notification& itti_msg) {
+  Logger::amf_app().debug(
+      "Handle SBI_AM_POLICY_ASSOCIATION_TERMINATION_NOTIFICATION");
+
+  nlohmann::json response_data = {};
+  // Process the Termination Notification and clear the policy association
+
+  std::shared_ptr<ue_context> uc = {};
+  if (supi_2_ue_context(itti_msg.supi, uc)) {
+    uc->policy_association = std::nullopt;
+  } else {
+    response_data[kSbiResponseHttpResponseCode] =
+        static_cast<uint32_t>(oai::common::sbi::http_status_code::BAD_REQUEST);
+    oai::_3gpp::model::ProblemDetails problem_details = {};
+    // TODO set problem_details
+    to_json(response_data[kSbiResponseJsonData], problem_details);
+  }
+
+  // Notify to the result
+  if (itti_msg.promise_id > 0) {
+    trigger_process_response(itti_msg.promise_id, response_data);
+    return;
   }
 }
 
