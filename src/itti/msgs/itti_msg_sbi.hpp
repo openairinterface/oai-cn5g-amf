@@ -41,6 +41,7 @@
 #include "utils.hpp"
 #include "PlmnIdNid.h"
 #include "PolicyAssociationRequest.h"
+#include "PolicyAssociationUpdateRequest.h"
 
 using namespace amf_application;
 
@@ -1013,6 +1014,50 @@ class itti_sbi_am_policy_association_termination_response
   virtual ~itti_sbi_am_policy_association_termination_response(){};
   const char* get_msg_name() {
     return "SBI_AM_POLICY_ASSOCIATION_TERMINATION_RESPONSE";
+  };
+
+  std::string supi;
+  nlohmann::json response_data;
+};
+
+class itti_sbi_am_policy_association_update : public itti_sbi_msg {
+ public:
+  itti_sbi_am_policy_association_update(
+      const task_id_t orig, const task_id_t dest)
+      : itti_sbi_msg(SBI_AM_POLICY_ASSOCIATION_UPDATE, orig, dest),
+        supi(),
+        policy_assoc_update_req() {}
+
+  itti_sbi_am_policy_association_update(
+      const itti_sbi_am_policy_association_update& i)
+      : itti_sbi_msg(i) {
+    supi                    = i.supi;
+    policy_assoc_update_req = i.policy_assoc_update_req;
+  }
+  virtual ~itti_sbi_am_policy_association_update(){};
+  const char* get_msg_name() { return "SBI_AM_POLICY_ASSOCIATION_UPDATE"; };
+
+  std::string supi;
+  oai::_3gpp::model::PolicyAssociationUpdateRequest policy_assoc_update_req;
+};
+
+class itti_sbi_am_policy_association_update_response : public itti_sbi_msg {
+ public:
+  itti_sbi_am_policy_association_update_response(
+      const task_id_t orig, const task_id_t dest)
+      : itti_sbi_msg(SBI_AM_POLICY_ASSOCIATION_UPDATE_RESPONSE, orig, dest),
+        supi(),
+        response_data() {}
+
+  itti_sbi_am_policy_association_update_response(
+      const itti_sbi_am_policy_association_update_response& i)
+      : itti_sbi_msg(i) {
+    supi          = i.supi;
+    response_data = i.response_data;
+  }
+  virtual ~itti_sbi_am_policy_association_update_response(){};
+  const char* get_msg_name() {
+    return "SBI_AM_POLICY_ASSOCIATION_UPDATE_RESPONSE";
   };
 
   std::string supi;

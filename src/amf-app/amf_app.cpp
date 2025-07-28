@@ -52,6 +52,7 @@
 #include "SearchResult.h"
 #include "NFProfile.h"
 #include "PcfInfo.h"
+#include "PolicyUpdate.h"
 
 using namespace std::chrono;
 using namespace oai::ngap;
@@ -263,6 +264,23 @@ void amf_app_task(void*) {
         Logger::amf_app().debug("Received SBI_AM_POLICY_ASSOCIATION_RESPONSE");
         itti_sbi_am_policy_association_response* m =
             dynamic_cast<itti_sbi_am_policy_association_response*>(msg);
+        amf_app_inst->handle_itti_message(std::ref(*m));
+      } break;
+
+      case SBI_AM_POLICY_ASSOCIATION_TERMINATION_RESPONSE: {
+        Logger::amf_app().debug(
+            "Received SBI_AM_POLICY_ASSOCIATION_TERMINATION_RESPONSE");
+        itti_sbi_am_policy_association_termination_response* m =
+            dynamic_cast<itti_sbi_am_policy_association_termination_response*>(
+                msg);
+        amf_app_inst->handle_itti_message(std::ref(*m));
+      } break;
+
+      case SBI_AM_POLICY_ASSOCIATION_UPDATE_RESPONSE: {
+        Logger::amf_app().debug(
+            "Received SBI_AM_POLICY_ASSOCIATION_UPDATE_RESPONSE");
+        itti_sbi_am_policy_association_update_response* m =
+            dynamic_cast<itti_sbi_am_policy_association_update_response*>(msg);
         amf_app_inst->handle_itti_message(std::ref(*m));
       } break;
 
@@ -1244,6 +1262,45 @@ void amf_app::handle_itti_message(
 }
 
 //------------------------------------------------------------------------------
+void amf_app::handle_itti_message(
+    itti_sbi_am_policy_association_update_response& r) {
+  Logger::amf_app().debug(
+      "Handle SBI_AM_POLICY_ASSOCIATION_UPDATE_RESPONSE response");
+
+  uint32_t response_code = oai::common::sbi::http_status_code::NO_RESPONSE;
+  if (r.response_data.find(kSbiResponseHttpResponseCode) !=
+      r.response_data.end()) {
+    response_code = r.response_data[kSbiResponseHttpResponseCode].get<int>();
+  }
+
+  if (response_code == oai::common::sbi::http_status_code::OK) {
+    // Process Policy Update
+
+    if (r.response_data.find(kSbiResponseJsonData) != r.response_data.end()) {
+      std::shared_ptr<ue_context> uc = {};
+      if (supi_2_ue_context(r.supi, uc)) {
+        try {
+          oai::_3gpp::model::PolicyUpdate policy_update = {};
+          from_json(r.response_data[kSbiResponseJsonData], policy_update);
+
+          // Store the updated policy association in the UE context
+          oai::_3gpp::model::PolicyAssociation policy_association = {};
+          // TODO:
+          uc->policy_association =
+              std::make_optional<oai::_3gpp::model::PolicyAssociation>(
+                  policy_association);
+
+        } catch (std::exception& e) {
+          Logger::amf_app().warn(
+              "Could not parse the Policy Association from "
+              "Json");
+        }
+      }
+    }
+  }
+}
+
+//------------------------------------------------------------------------------
 void amf_app::register_3gpp_access(std::shared_ptr<ue_context>& uc) const {
   Logger::amf_app().debug("AMF registers for 3GPP access with UDM");
 
@@ -1573,6 +1630,33 @@ void amf_app::perform_am_policy_association_termination(
           TASK_AMF_APP, TASK_AMF_SBI);
 
   itti_msg->supi = uc->supi;
+
+  int ret = itti_inst->send_msg(itti_msg);
+  if (0 != ret) {
+    Logger::amf_app().error(
+        "Could not send ITTI message %s to task TASK_AMF_SBI",
+        itti_msg->get_msg_name());
+  }
+}
+
+//------------------------------------------------------------------------------
+void amf_app::perform_am_policy_association_update(
+    const std::shared_ptr<ue_context>& uc) {
+  Logger::amf_app().debug(
+      "Perform AM Policy Association Update with PCF for the UE");
+
+  oai::_3gpp::model::PolicyAssociationUpdateRequest policy_assc_update_request =
+      {};
+  // Set the info that AMF wants to update e.g., Notification URI, AMBR, Slice
+  // MBRS, SMF Selection Data, etc.
+
+  // Send request to SBI to trigger AM Policy Associtiation Update with PCF
+  std::shared_ptr<itti_sbi_am_policy_association_update> itti_msg =
+      std::make_shared<itti_sbi_am_policy_association_update>(
+          TASK_AMF_APP, TASK_AMF_SBI);
+
+  itti_msg->supi                    = uc->supi;
+  itti_msg->policy_assoc_update_req = policy_assc_update_request;
 
   int ret = itti_inst->send_msg(itti_msg);
   if (0 != ret) {
