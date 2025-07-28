@@ -1301,6 +1301,41 @@ void amf_app::handle_itti_message(
 }
 
 //------------------------------------------------------------------------------
+void amf_app::handle_itti_message(
+    itti_sbi_am_policy_association_retrieval_response& r) {
+  Logger::amf_app().debug(
+      "Handle SBI_AM_POLICY_ASSOCIATION_RETRIEVAL_RESPONSE response");
+
+  uint32_t response_code = oai::common::sbi::http_status_code::NO_RESPONSE;
+  if (r.response_data.find(kSbiResponseHttpResponseCode) !=
+      r.response_data.end()) {
+    response_code = r.response_data[kSbiResponseHttpResponseCode].get<int>();
+  }
+
+  if (response_code == oai::common::sbi::http_status_code::OK) {
+    // Process PolicyAssociation and update the UE context
+
+    if (r.response_data.find(kSbiResponseJsonData) != r.response_data.end()) {
+      std::shared_ptr<ue_context> uc = {};
+      if (supi_2_ue_context(r.supi, uc)) {
+        try {
+          oai::_3gpp::model::PolicyAssociation policy_association = {};
+          from_json(r.response_data[kSbiResponseJsonData], policy_association);
+          uc->policy_association =
+              std::make_optional<oai::_3gpp::model::PolicyAssociation>(
+                  policy_association);
+
+        } catch (std::exception& e) {
+          Logger::amf_app().warn(
+              "Could not parse the Policy Association from "
+              "Json");
+        }
+      }
+    }
+  }
+}
+
+//------------------------------------------------------------------------------
 void amf_app::register_3gpp_access(std::shared_ptr<ue_context>& uc) const {
   Logger::amf_app().debug("AMF registers for 3GPP access with UDM");
 
@@ -1657,6 +1692,25 @@ void amf_app::perform_am_policy_association_update(
 
   itti_msg->supi                    = uc->supi;
   itti_msg->policy_assoc_update_req = policy_assc_update_request;
+
+  int ret = itti_inst->send_msg(itti_msg);
+  if (0 != ret) {
+    Logger::amf_app().error(
+        "Could not send ITTI message %s to task TASK_AMF_SBI",
+        itti_msg->get_msg_name());
+  }
+}
+
+//------------------------------------------------------------------------------
+void amf_app::get_am_policy_association(const std::shared_ptr<ue_context>& uc) {
+  Logger::amf_app().debug("Retrieve AM Policy Association for the UE");
+
+  // Send request to SBI to trigger AM Policy Associtiation Retrieval with PCF
+  std::shared_ptr<itti_sbi_am_policy_association_retrieval> itti_msg =
+      std::make_shared<itti_sbi_am_policy_association_retrieval>(
+          TASK_AMF_APP, TASK_AMF_SBI);
+
+  itti_msg->supi = uc->supi;
 
   int ret = itti_inst->send_msg(itti_msg);
   if (0 != ret) {

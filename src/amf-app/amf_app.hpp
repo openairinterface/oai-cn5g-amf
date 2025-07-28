@@ -263,6 +263,15 @@ class amf_app {
   void handle_itti_message(itti_sbi_am_policy_association_update_response& r);
 
   /*
+   * Handle ITTI message (AM Policy Association Retrieval response)
+   * @param [itti_sbi_am_policy_association_retrieval_response&]: ITTI
+   * message
+   * @return void
+   */
+  void handle_itti_message(
+      itti_sbi_am_policy_association_retrieval_response& r);
+
+  /*
    * Trigger AMF Registration for 3GPP Access towards UDM
    * @param [std::shared_ptr<ue_context>&] uc: UE context
    * @return void
@@ -316,6 +325,13 @@ class amf_app {
   void perform_am_policy_association_update(
       const std::shared_ptr<ue_context>& uc);
 
+  /*
+   * Retrieve policies for an AM Policy Association with the
+   * PCF
+   * @param [std::shared_ptr<ue_context>&] uc: UE context
+   * @return void
+   */
+  void get_am_policy_association(const std::shared_ptr<ue_context>& uc);
   /*
    * Get the current AMF's configuration
    * @param [nlohmann::json&]: json_data: Store AMF configuration

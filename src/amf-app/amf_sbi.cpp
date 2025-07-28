@@ -294,6 +294,16 @@ void amf_sbi_task(void*) {
         amf_sbi_inst->handle_itti_message(std::ref(*m));
       } break;
 
+      case SBI_AM_POLICY_ASSOCIATION_RETRIEVAL: {
+        Logger::amf_sbi().info(
+            "Receive AM Policy Association Retrieval message, "
+            "handling ...");
+        itti_sbi_am_policy_association_retrieval* m =
+            dynamic_cast<itti_sbi_am_policy_association_retrieval*>(msg);
+        if (!m) break;
+        amf_sbi_inst->handle_itti_message(std::ref(*m));
+      } break;
+
       case TERMINATE: {
         if (itti_msg_terminate* terminate =
                 dynamic_cast<itti_msg_terminate*>(msg)) {
@@ -1610,6 +1620,53 @@ bool amf_sbi::handle_itti_message(
   return true;
 }
 
+//------------------------------------------------------------------------------
+bool amf_sbi::handle_itti_message(
+    itti_sbi_am_policy_association_retrieval& itti_msg) {
+  Logger::amf_sbi().debug("Send AM Policy Association Retrieval to PCF");
+  std::shared_ptr<ue_context> uc = {};
+  if (!amf_app_inst->supi_2_ue_context(itti_msg.supi, uc)) {
+    return false;
+  }
+  Logger::amf_sbi().debug("URI %s", uc->policy_association_location);
+
+  nlohmann::json response_json = {};
+  uint32_t response_code       = 0;
+
+  oai::http::response http_response = {};
+
+  send_http_request(
+      uc->policy_association_location, oai::common::sbi::method_e::GET, "",
+      http_response);
+
+  Logger::amf_sbi().debug(
+      "AM Policy Association Retrieval, response from PCF, HTTP Code: %lu",
+      http_response.status_code);
+  Logger::amf_sbi().debug(
+      "AM Policy Association Retrieval, response from PCF\n, %s ",
+      http_response.body);
+
+  nlohmann::json response_data                = {};
+  response_data[kSbiResponseHttpResponseCode] = http_response.status_code;
+
+  // Send response to APP to process
+  if (http_response.status_code == oai::common::sbi::http_status_code::OK) {
+    std::shared_ptr<itti_sbi_am_policy_association_termination_response>
+        itti_msg_response = std::make_shared<
+            itti_sbi_am_policy_association_termination_response>(
+            TASK_AMF_SBI, TASK_AMF_APP);
+    itti_msg_response->supi          = uc->supi;
+    itti_msg_response->response_data = response_data;
+
+    int ret = itti_inst->send_msg(itti_msg_response);
+    if (RETURNok != ret) {
+      Logger::amf_sbi().error(
+          "Could not send ITTI message %s to task TASK_AMF_APP",
+          itti_msg_response->get_msg_name());
+    }
+  }
+  return true;
+}
 //------------------------------------------------------------------------------
 bool amf_sbi::smf_selection_from_configuration(
     std::string& smf_uri_root, std::string& smf_api_version) {
