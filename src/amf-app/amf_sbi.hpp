@@ -187,12 +187,42 @@ class amf_sbi {
   void handle_itti_message(
       itti_sbi_retrieve_smf_selection_subscription_data& itti_msg);
 
+  /*
+   * Handle ITTI message to discover PCF's info from the corresponding NRF
+   * @param [itti_sbi_pcf_discovery&]: ITTI message
+   * @return void
+   */
   bool handle_itti_message(itti_sbi_pcf_discovery& itti_msg);
 
+  /*
+   * Handle ITTI message to perform AM Policy Association with PCF
+   * @param [itti_sbi_am_policy_association&]: ITTI message
+   * @return void
+   */
   bool handle_itti_message(itti_sbi_am_policy_association& itti_msg);
 
+  /*
+   * Handle ITTI message to perform AM Policy Association Termination with PCF
+   * @param [itti_sbi_am_policy_association_termination&]: ITTI message
+   * @return void
+   */
   bool handle_itti_message(
       itti_sbi_am_policy_association_termination& itti_msg);
+
+  /*
+   * Handle ITTI message to update the AM Policy Association with PCF
+   * @param [itti_sbi_am_policy_association_update&]: ITTI message
+   * @return void
+   */
+  bool handle_itti_message(itti_sbi_am_policy_association_update& itti_msg);
+
+  /*
+   * Handle ITTI message to retrieve the AM Policy Association with PCF
+   * @param [itti_sbi_am_policy_association_update&]: ITTI message
+   * @return void
+   */
+  bool handle_itti_message(itti_sbi_am_policy_association_retrieval& itti_msg);
+
   /*
    * Handle request to create a new PDU Session
    * @param [const std::string&] supi: SUPI
