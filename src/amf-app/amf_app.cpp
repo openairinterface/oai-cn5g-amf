@@ -295,9 +295,9 @@ void amf_app_task(void*) {
       case SBI_AM_POLICY_ASSOCIATION_TERMINATION_NOTIFICATION: {
         Logger::amf_app().debug(
             "Received SBI_AM_POLICY_ASSOCIATION_TERMINATION_NOTIFICATION");
-        itti_sbi_am_policy_association_termination_notification&* m =
+        itti_sbi_am_policy_association_termination_notification* m =
             dynamic_cast<
-                itti_sbi_am_policy_association_termination_notification&*>(msg);
+                itti_sbi_am_policy_association_termination_notification*>(msg);
         amf_app_inst->handle_itti_message(std::ref(*m));
       } break;
 
