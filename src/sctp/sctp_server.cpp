@@ -143,6 +143,8 @@ int sctp_server::create_socket(const char* address, const uint16_t port_num) {
   // - RHEL9/Rocky9 host: 14 bytes
   // 12 is chosen as minimal value.
   setsockopt(socket_, IPPROTO_SCTP, SCTP_EVENTS, &events_, 12);
+  int flag = 1;
+  setsockopt(socket_, IPPROTO_SCTP, SCTP_NODELAY, &flag, sizeof(flag));
   listen(socket_, 5);  // the queue length for completely established sockets
                        // waiting to be accepted
   // deallocation
