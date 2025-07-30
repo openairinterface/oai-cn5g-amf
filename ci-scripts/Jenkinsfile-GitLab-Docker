@@ -114,7 +114,7 @@ pipeline {
             gitlabMergeRequestLink = sh returnStdout: true, script: "curl --silent 'https://gitlab.eurecom.fr/api/v4/projects/oai%2Fcn5g%2Foai-cn5g-amf/merge_requests/${env.gitlabMergeRequestIid}' | jq .web_url | sed 's#\"##g'"
             gitlabMergeRequestLink = gitlabMergeRequestLink.trim()
             gitCommittorEmailAddr  = env.gitlabUserEmail
-
+            
             shortenShaOne = sh returnStdout: true, script: 'git log -1 --pretty=format:"%h" --abbrev=8 ' + env.gitlabMergeRequestLastCommit
             shortenShaOne = shortenShaOne.trim()
             amf_tag       = 'ci-tmp-pr-' + env.gitlabMergeRequestIid + '-' + shortenShaOne
@@ -126,6 +126,11 @@ pipeline {
             echo "MR TITLE    is ${env.gitlabMergeRequestTitle}"
             echo "MR Usermail is ${gitCommittorEmailAddr}"
             echo "MR TAG      is ${amf_tag}"
+            
+            def validMRTitlePattern = /^[a-zA-Z0-9_\-\,\.\/\(\) ]+$/  // REGEX for characters allowed in the title of the merge request
+            if (!(env.gitlabMergeRequestTitle ==~ validMRTitlePattern)) {
+                error("Merge request title contains invalid characters. Allowed: letters, numbers, _ - , . / () and spaces.")
+            }
           } else {
             gitCommittorEmailAddr = sh returnStdout: true, script: 'git log -n1 --pretty=format:%ae ${GIT_COMMIT}'
             gitCommittorEmailAddr = gitCommittorEmailAddr.trim()
@@ -612,7 +617,8 @@ pipeline {
         for (htmlFile in htmlFiles) {
           if ("MERGE".equals(env.gitlabActionType)) {
             sh "sed -i -e 's#TEMPLATE_MERGE_REQUEST_LINK#${gitlabMergeRequestLink}#g' ${htmlFile}"
-            sh "sed -i -e 's#TEMPLATE_MERGE_REQUEST_TEMPLATE#${env.gitlabMergeRequestTitle}#' ${htmlFile}"
+            //sh "sed -i -e 's#TEMPLATE_MERGE_REQUEST_TEMPLATE#${env.gitlabMergeRequestTitle}#' ${htmlFile}"
+            sh "sed -i -e \"s#TEMPLATE_MERGE_REQUEST_TEMPLATE#${env.gitlabMergeRequestTitle}#g\" ${htmlFile}"
           }
           sh "sed -i -e 's#TEMPLATE_TIME#${JOB_TIMESTAMP}#' ${htmlFile}"
           archiveArtifacts artifacts: htmlFile
