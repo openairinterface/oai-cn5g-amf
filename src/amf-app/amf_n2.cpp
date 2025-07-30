@@ -1476,8 +1476,6 @@ void amf_n2::handle_itti_message(
     auto itti_msg_ev = std::make_shared<itti_sbi_notify_subscribed_event>(
         TASK_AMF_N2, TASK_AMF_SBI);
 
-    itti_msg_ev->http_version = amf_cfg->support_features.http_version;
-
     for (auto i : subscriptions) {
       // Avoid repeated notifications
       // TODO: use the anyUE field from the subscription request

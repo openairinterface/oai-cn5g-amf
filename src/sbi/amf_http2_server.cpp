@@ -591,7 +591,6 @@ void amf_http2_server::create_event_subscription_handler(
       std::make_shared<itti_sbi_event_exposure_request>(
           AMF_SERVER, TASK_AMF_APP);
   itti_msg->event_exposure = event_exposure;
-  itti_msg->http_version   = 2;
 
   evsub_id_t sub_id = m_amf_app->handle_event_exposure_subscription(itti_msg);
 
@@ -936,7 +935,6 @@ void amf_http2_server::n1_message_notify_handler(
         itti_msg->notification_msg = n1MessageNotification;
         itti_msg->ue_id            = supi;
         itti_msg->n1sm             = parts[n1_content_id].body;
-        itti_msg->http_version     = 2;
       }
     } break;
 
@@ -994,7 +992,6 @@ void amf_http2_server::n1_n2_message_subscribe_handler(
 
   itti_msg->ue_cxt_id         = ueContextId;
   itti_msg->subscription_data = ueN1N2InfoSubscriptionCreateData;
-  itti_msg->http_version      = 2;
   itti_msg->promise_id        = promise_id;
 
   int ret = itti_inst->send_msg(itti_msg);
@@ -1074,7 +1071,6 @@ void amf_http2_server::n1_n2_message_unsubscribe_handler(
 
   itti_msg->ue_cxt_id       = ueContextId;
   itti_msg->subscription_id = subscriptionId;
-  itti_msg->http_version    = 2;
   itti_msg->promise_id      = promise_id;
 
   int ret = itti_inst->send_msg(itti_msg);
@@ -1143,7 +1139,6 @@ void amf_http2_server::non_ue_n2_info_subscribe_handler(
           TASK_AMF_SBI, TASK_AMF_APP, promise_id);
 
   itti_msg->subscription_data = subscriptionCreateData;
-  itti_msg->http_version      = 2;
   itti_msg->promise_id        = promise_id;
 
   int ret = itti_inst->send_msg(itti_msg);
@@ -1219,7 +1214,6 @@ void amf_http2_server::non_ue_n2_info_unsubscribe_handler(
           TASK_AMF_SBI, TASK_AMF_APP, promise_id);
 
   itti_msg->subscription_id = subscriptionId;
-  itti_msg->http_version    = 2;
   itti_msg->promise_id      = promise_id;
 
   int ret = itti_inst->send_msg(itti_msg);
@@ -1284,7 +1278,6 @@ void amf_http2_server::status_notify_handler(
       std::make_shared<itti_sbi_pdu_session_release_notif>(
           TASK_AMF_SBI, TASK_AMF_APP, promise_id);
 
-  itti_msg->http_version                = 2;
   itti_msg->promise_id                  = promise_id;
   itti_msg->ue_id                       = ueContextId;
   itti_msg->pdu_session_id              = pduSessionId;
@@ -1355,8 +1348,7 @@ void amf_http2_server::get_configuration_handler(const response& res) {
       std::make_shared<itti_sbi_amf_configuration>(
           TASK_AMF_SBI, TASK_AMF_APP, promise_id);
 
-  itti_msg->http_version = 2;
-  itti_msg->promise_id   = promise_id;
+  itti_msg->promise_id = promise_id;
 
   int ret = itti_inst->send_msg(itti_msg);
   if (0 != ret) {
@@ -1425,7 +1417,6 @@ void amf_http2_server::update_configuration_handler(
       std::make_shared<itti_sbi_update_amf_configuration>(
           TASK_AMF_SBI, TASK_AMF_APP, promise_id);
 
-  itti_msg->http_version  = 2;
   itti_msg->promise_id    = promise_id;
   itti_msg->configuration = configuration_info;
 

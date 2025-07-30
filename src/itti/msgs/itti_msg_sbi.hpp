@@ -55,17 +55,14 @@ class itti_msg_n11 : public itti_msg {
       : itti_msg(msg_type, origin, destination) {
     amf_ue_ngap_id = INVALID_AMF_UE_NGAP_ID;
     ran_ue_ngap_id = 0;
-    http_version   = 1;
   }
   itti_msg_n11(const itti_msg_n11& i) : itti_msg(i) {
     ran_ue_ngap_id = i.ran_ue_ngap_id;
     amf_ue_ngap_id = i.amf_ue_ngap_id;
-    http_version   = i.http_version;
   }
   virtual ~itti_msg_n11(){};
 
  public:
-  uint8_t http_version;
   uint64_t amf_ue_ngap_id;
   uint32_t ran_ue_ngap_id;
 };
@@ -212,23 +209,17 @@ class itti_sbi_msg : public itti_msg {
   itti_sbi_msg(
       const itti_msg_type_t msg_type, const task_id_t orig,
       const task_id_t dest)
-      : itti_msg(msg_type, orig, dest) {
-    http_version = 1;
-  }
-  itti_sbi_msg(const itti_sbi_msg& i) : itti_msg(i) {
-    http_version = i.http_version;
-  }
+      : itti_msg(msg_type, orig, dest) {}
+  itti_sbi_msg(const itti_sbi_msg& i) : itti_msg(i) {}
   itti_sbi_msg(
       const itti_sbi_msg& i, const task_id_t orig, const task_id_t dest)
       : itti_sbi_msg(i) {
-    origin       = orig;
-    destination  = dest;
-    http_version = i.http_version;
+    origin      = orig;
+    destination = dest;
   }
   virtual ~itti_sbi_msg() {}
 
  public:
-  uint8_t http_version;
 };
 
 //-----------------------------------------------------------------------------
@@ -396,7 +387,6 @@ class itti_sbi_n1_message_notify : public itti_sbi_msg {
  public:
   itti_sbi_n1_message_notify(const task_id_t orig, const task_id_t dest)
       : itti_sbi_msg(SBI_N1_MESSAGE_NOTIFY, orig, dest) {
-    http_version         = 0;
     target_amf_uri       = {};
     supi                 = {};
     registration_request = nullptr;
@@ -916,6 +906,7 @@ class itti_sbi_pcf_discovery : public itti_sbi_msg {
       : itti_sbi_msg(SBI_PCF_DISCOVERY, orig, dest),
         promise_id(pid),
         supi(),
+        nrf_uri(),
         dnn(),
         plmn_id(),
         snssai() {}
@@ -923,6 +914,7 @@ class itti_sbi_pcf_discovery : public itti_sbi_msg {
   itti_sbi_pcf_discovery(const itti_sbi_pcf_discovery& i) : itti_sbi_msg(i) {
     promise_id = i.promise_id;
     supi       = i.supi;
+    nrf_uri    = i.nrf_uri;
     dnn        = i.dnn;
     plmn_id    = i.plmn_id;
     snssai     = i.snssai;
@@ -932,6 +924,7 @@ class itti_sbi_pcf_discovery : public itti_sbi_msg {
 
   uint32_t promise_id;
   std::string supi;
+  std::string nrf_uri;
   std::string dnn;
   oai::_3gpp::model::PlmnIdNid plmn_id;
   snssai_t snssai;

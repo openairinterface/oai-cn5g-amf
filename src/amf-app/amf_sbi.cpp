@@ -484,7 +484,8 @@ void amf_sbi::handle_itti_message(itti_nsmf_pdusession_create_sm_context& smf) {
         Logger::amf_sbi().error("No NRF available");
         return;
       }
-      uc->nrf_uri = nrf_uri;
+      // Store NRF's URI in UE Context
+      uc->nrf_uri = std::make_optional<std::string>(nrf_uri);
       Logger::amf_sbi().debug(
           "NRF NF Discover URI: %s",
           nrf_uri.c_str());  // use NRF to find suitable SMF based on snssai,
@@ -795,9 +796,7 @@ void amf_sbi::handle_itti_message(itti_sbi_notify_subscribed_event& itti_msg) {
 void amf_sbi::handle_itti_message(
     itti_sbi_slice_selection_subscription_data& itti_msg) {
   Logger::amf_sbi().debug(
-      "Send Slice Selection Subscription Data Retrieval to UDM (HTTP version "
-      "%d)",
-      itti_msg.http_version);
+      "Send Slice Selection Subscription Data Retrieval to UDM ");
 
   std::string uri =
       amf_sbi_helper::get_udm_slice_selection_subscription_data_retrieval_uri(
@@ -834,10 +833,7 @@ void amf_sbi::handle_itti_message(
 void amf_sbi::handle_itti_message(
     itti_sbi_network_slice_selection_information& itti_msg) {
   Logger::amf_sbi().debug(
-      "Send Network Slice Selection Information Request to NSSF (HTTP "
-      "version "
-      "%d)",
-      itti_msg.http_version);
+      "Send Network Slice Selection Information Request to NSSF");
 
   std::string uri =
       amf_sbi_helper::get_nssf_network_slice_selection_information_uri(
@@ -914,10 +910,7 @@ void amf_sbi::handle_itti_message(
 
 //------------------------------------------------------------------------------
 void amf_sbi::handle_itti_message(itti_sbi_n1_message_notify& itti_msg) {
-  Logger::amf_sbi().debug(
-      "Send N1 Message Notify to the target AMF (HTTP version "
-      "%d)",
-      itti_msg.http_version);
+  Logger::amf_sbi().debug("Send N1 Message Notify to the target AMF ");
 
   std::string uri = itti_msg.target_amf_uri + "/ue-contexts/" + itti_msg.supi +
                     "/n1-message-notify";
@@ -975,9 +968,7 @@ void amf_sbi::handle_itti_message(itti_sbi_n2_info_notify& itti_msg) {
 
 //------------------------------------------------------------------------------
 void amf_sbi::handle_itti_message(itti_sbi_nf_instance_discovery& itti_msg) {
-  Logger::amf_sbi().debug(
-      "Send NF Instance Discovery to NRF (HTTP version %d)",
-      itti_msg.http_version);
+  Logger::amf_sbi().debug("Send NF Instance Discovery to NRF ");
 
   Logger::amf_sbi().debug("NRF URI: %s", itti_msg.nrf_amf_set.c_str());
 
@@ -1030,7 +1021,6 @@ void amf_sbi::handle_itti_message(
       std::make_shared<itti_sbi_register_nf_instance_response>(
           TASK_AMF_SBI, TASK_AMF_APP);
   itti_msg_response->http_response_code = response_code;
-  itti_msg_response->http_version       = itti_msg.http_version;
   itti_msg_response->nrf_uri            = itti_msg.nrf_uri;
 
   if ((response_code == oai::common::sbi::http_status_code::CREATED) or
@@ -1098,8 +1088,7 @@ void amf_sbi::handle_itti_message(
 //------------------------------------------------------------------------------
 void amf_sbi::handle_itti_message(
     itti_sbi_deregister_nf_instance_request& itti_msg) {
-  Logger::amf_sbi().debug(
-      "Send NF Deregistration to NRF (HTTP version %d)", itti_msg.http_version);
+  Logger::amf_sbi().debug("Send NF Deregistration to NRF ");
 
   Logger::amf_sbi().debug(
       "Send NF Deregistration to NRF, NRF URI %s", itti_msg.nrf_uri.c_str());
@@ -1117,7 +1106,6 @@ void amf_sbi::handle_itti_message(
           TASK_AMF_SBI, TASK_AMF_APP);
   itti_msg_response->amf_instance_id    = itti_msg.amf_instance_id;
   itti_msg_response->http_response_code = response_code;
-  itti_msg_response->http_version       = itti_msg.http_version;
   itti_msg_response->nrf_uri            = itti_msg.nrf_uri;
 
   // TODO: Response code 307/308
@@ -1132,9 +1120,7 @@ void amf_sbi::handle_itti_message(
 //------------------------------------------------------------------------------
 void amf_sbi::handle_itti_message(
     itti_sbi_determine_location_request& itti_msg) {
-  Logger::amf_sbi().debug(
-      "Send Determine Location Request to LMF (HTTP version %d)",
-      itti_msg.http_version);
+  Logger::amf_sbi().debug("Send Determine Location Request to LMF ");
 
   std::string uri =
       amf_sbi_helper::get_lmf_determine_location_uri(amf_cfg->lmf_addr);
@@ -1173,9 +1159,7 @@ void amf_sbi::handle_itti_message(
 //------------------------------------------------------------------------------
 void amf_sbi::handle_itti_message(
     itti_sbi_ue_authentication_request& itti_msg) {
-  Logger::amf_sbi().debug(
-      "Send UE Authentication Request to AUSF (HTTP version %d)",
-      itti_msg.http_version);
+  Logger::amf_sbi().debug("Send UE Authentication Request to AUSF ");
 
   nlohmann::json json_data = {};
   to_json(json_data, itti_msg.auth_info);
@@ -1194,7 +1178,7 @@ void amf_sbi::handle_itti_message(
 
   send_http_request(
       uri, oai::common::sbi::method_e::POST, body, response_json, response_code,
-      itti_msg.http_version);
+      amf_cfg->support_features.http_version);
 
   Logger::amf_sbi().debug(
       "UE Authentication, response from AUSF, HTTP Code: %lu", response_code);
@@ -1217,9 +1201,7 @@ void amf_sbi::handle_itti_message(
 //------------------------------------------------------------------------------
 void amf_sbi::handle_itti_message(
     itti_sbi_ue_authentication_confirmation& itti_msg) {
-  Logger::amf_sbi().debug(
-      "Send UE Authentication Confirmation to AUSF (HTTP version %d)",
-      itti_msg.http_version);
+  Logger::amf_sbi().debug("Send UE Authentication Confirmation to AUSF ");
 
   std::string body = itti_msg.confirmation_data.dump();
   Logger::amf_sbi().debug(
@@ -1234,7 +1216,7 @@ void amf_sbi::handle_itti_message(
 
   send_http_request(
       itti_msg.uri, oai::common::sbi::method_e::PUT, body, response_json,
-      response_code, itti_msg.http_version);
+      response_code, amf_cfg->support_features.http_version);
 
   Logger::amf_sbi().debug(
       "UE Authentication Confirmation, response from AUSF, HTTP Code: %lu",
@@ -1415,13 +1397,7 @@ void amf_sbi::handle_itti_message(
 bool amf_sbi::handle_itti_message(itti_sbi_pcf_discovery& itti_msg) {
   Logger::amf_sbi().debug("Send PCF Discovery to NRF");
 
-  std::string nrf_uri = {};
-
-  std::shared_ptr<ue_context> uc = {};
-  if (!amf_app_inst->supi_2_ue_context(itti_msg.supi, uc)) {
-    return false;
-  }
-  nrf_uri = uc->nrf_uri;
+  std::string nrf_uri = itti_msg.nrf_uri;
 
   nlohmann::json plmn_id = {};
   to_json(plmn_id, itti_msg.plmn_id);

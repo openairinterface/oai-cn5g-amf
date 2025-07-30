@@ -2403,9 +2403,8 @@ bool amf_n1::get_authentication_vectors_from_ausf(
       std::make_shared<itti_sbi_ue_authentication_request>(
           TASK_AMF_N1, TASK_AMF_SBI, promise_id);
 
-  itti_msg->http_version = amf_cfg->support_features.http_version;
-  itti_msg->auth_info    = authentication_info;
-  itti_msg->promise_id   = promise_id;
+  itti_msg->auth_info  = authentication_info;
+  itti_msg->promise_id = promise_id;
 
   int ret = itti_inst->send_msg(itti_msg);
   if (0 != ret) {
@@ -2539,7 +2538,6 @@ bool amf_n1::_5g_aka_confirmation_from_ausf(
   itti_msg->confirmation_data = confirmation_data_json;
   itti_msg->promise_id        = promise_id;
   itti_msg->uri               = nc->href;
-  itti_msg->http_version      = amf_cfg->support_features.http_version;
 
   int ret = itti_inst->send_msg(itti_msg);
   if (0 != ret) {
@@ -4447,8 +4445,6 @@ void amf_n1::handle_ue_location_change(
     auto itti_msg = std::make_shared<itti_sbi_notify_subscribed_event>(
         TASK_AMF_N1, TASK_AMF_SBI);
 
-    itti_msg->http_version = http_version;
-
     for (auto i : subscriptions) {
       // Avoid repeated notifications
       // TODO: use the anyUE field from the subscription request
@@ -4506,8 +4502,6 @@ void amf_n1::handle_ue_reachability_status_change(
 
     auto itti_msg = std::make_shared<itti_sbi_notify_subscribed_event>(
         TASK_AMF_N1, TASK_AMF_SBI);
-
-    itti_msg->http_version = http_version;
 
     for (auto i : subscriptions) {
       // Avoid repeated notifications
@@ -4574,8 +4568,6 @@ void amf_n1::handle_ue_registration_state_change(
 
     auto itti_msg = std::make_shared<itti_sbi_notify_subscribed_event>(
         TASK_AMF_N1, TASK_AMF_SBI);
-
-    itti_msg->http_version = http_version;
 
     for (auto i : subscriptions) {
       // Avoid repeated notifications
@@ -4654,8 +4646,6 @@ void amf_n1::handle_ue_connectivity_state_change(
     auto itti_msg = std::make_shared<itti_sbi_notify_subscribed_event>(
         TASK_AMF_N1, TASK_AMF_SBI);
 
-    itti_msg->http_version = http_version;
-
     for (auto i : subscriptions) {
       // Avoid repeated notifications
       // TODO: use the anyUE field from the subscription request
@@ -4729,8 +4719,6 @@ void amf_n1::handle_ue_communication_failure_change(
     auto itti_msg = std::make_shared<itti_sbi_notify_subscribed_event>(
         TASK_AMF_N1, TASK_AMF_SBI);
 
-    itti_msg->http_version = http_version;
-
     for (auto i : subscriptions) {
       // Avoid repeated notifications
       // TODO: use the anyUE field from the subscription request
@@ -4789,8 +4777,6 @@ void amf_n1::handle_ue_loss_of_connectivity_change(
 
     auto itti_msg = std::make_shared<itti_sbi_notify_subscribed_event>(
         TASK_AMF_N1, TASK_AMF_SBI);
-
-    itti_msg->http_version = http_version;
 
     for (auto i : subscriptions) {
       event_notification ev_notif = {};
@@ -5497,11 +5483,10 @@ bool amf_n1::get_slice_selection_subscription_data(
     boost::shared_future<nlohmann::json> f = p->get_future();
     amf_app_inst->add_promise(promise_id, p);
 
-    itti_msg->http_version = amf_cfg->support_features.http_version;
-    itti_msg->supi         = nc->supi;
-    itti_msg->plmn.mcc     = uc->cgi.mcc;
-    itti_msg->plmn.mnc     = uc->cgi.mnc;
-    itti_msg->promise_id   = promise_id;
+    itti_msg->supi       = nc->supi;
+    itti_msg->plmn.mcc   = uc->cgi.mcc;
+    itti_msg->plmn.mnc   = uc->cgi.mnc;
+    itti_msg->promise_id = promise_id;
 
     int ret = itti_inst->send_msg(itti_msg);
     if (0 != ret) {
@@ -5657,7 +5642,6 @@ bool amf_n1::get_network_slice_selection(
     boost::shared_future<nlohmann::json> f = p->get_future();
     amf_app_inst->add_promise(promise_id, p);
 
-    itti_msg->http_version   = amf_cfg->support_features.http_version;
     itti_msg->nf_instance_id = nf_instance_id;
     itti_msg->slice_info     = slice_info;
     itti_msg->promise_id     = promise_id;
@@ -5782,7 +5766,6 @@ bool amf_n1::get_target_amf(
     boost::shared_future<nlohmann::json> f = p->get_future();
     amf_app_inst->add_promise(promise_id, p);
 
-    itti_msg->http_version          = amf_cfg->support_features.http_version;
     itti_msg->target_amf_set        = target_amf_set;
     itti_msg->target_amf_set_is_set = true;
     itti_msg->promise_id            = promise_id;
@@ -5863,7 +5846,6 @@ void amf_n1::send_n1_message_notity(
   std::shared_ptr<itti_sbi_n1_message_notify> itti_msg =
       std::make_shared<itti_sbi_n1_message_notify>(TASK_AMF_N1, TASK_AMF_SBI);
 
-  itti_msg->http_version = amf_cfg->support_features.http_version;
   if (nc->registration_request_is_set) {
     itti_msg->registration_request = nc->registration_request;
   }

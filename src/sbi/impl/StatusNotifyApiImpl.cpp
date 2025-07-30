@@ -79,7 +79,6 @@ void StatusNotifyApiImpl::receive_pdu_session_status_notification(
       std::make_shared<itti_sbi_pdu_session_release_notif>(
           TASK_AMF_SBI, TASK_AMF_APP, promise_id);
 
-  itti_msg->http_version                = 1;
   itti_msg->promise_id                  = promise_id;
   itti_msg->ue_id                       = ueContextId;
   itti_msg->pdu_session_id              = pdu_session_id;

@@ -55,7 +55,6 @@ void SubscriptionsCollectionDocumentApiImplEventExposure::create_subscription(
       std::make_shared<itti_sbi_event_exposure_request>(
           TASK_AMF_SBI, TASK_AMF_APP);
   itti_msg->event_exposure = event_exposure;
-  itti_msg->http_version   = 1;
 
   evsub_id_t sub_id = m_amf_app->handle_event_exposure_subscription(itti_msg);
 

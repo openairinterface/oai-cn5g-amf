@@ -36,7 +36,7 @@ ue_context::ue_context() {
   cgi                   = {};
   tai                   = {};
   pdu_sessions          = {};
-  nrf_uri               = {};
+  nrf_uri               = std::nullopt;
   pcf_addr              = {};
 }
 
