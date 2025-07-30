@@ -64,14 +64,6 @@ constexpr uint64_t SECONDS_SINCE_FIRST_EPOCH = 2208988800;
 #define NAS_MESSAGE_DOWNLINK 1
 #define NAS_MESSAGE_UPLINK 0
 
-typedef enum {
-  PlainNasMsg                                              = 0x0,
-  IntegrityProtected                                       = 0x1,
-  IntegrityProtectedAndCiphered                            = 0x2,
-  IntegrityProtectedWithNew5GNASSecurityContext            = 0x3,
-  IntegrityProtectedAndCipheredWithNew5GNASSecurityContext = 0x4,
-} SecurityHeaderType_t;
-
 constexpr uint32_t DEFAULT_HTTP1_PORT  = 80;
 constexpr uint32_t DEFAULT_HTTP2_PORT  = 8080;
 constexpr auto DEFAULT_SBI_API_VERSION = "v1";

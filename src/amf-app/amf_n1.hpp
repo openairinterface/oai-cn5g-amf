@@ -64,7 +64,7 @@ class amf_n1 {
 
   /*
    * Handle NAS Establishment Request (Registration Request, Service Request)
-   * @param [SecurityHeaderType_t] type: Security Header Type
+   * @param [uint8_t] security_header_type: Security Header Type
    * @param [std::shared_ptr<nas_context>] nc: Shared pointer to the NAS context
    * @param [uint32_t] ran_ue_ngap_id: RAN UE NGAP Id
    * @param [uint64_t] amf_ue_ngap_id: AMF UE NGAP Id
@@ -74,7 +74,7 @@ class amf_n1 {
    * @return void
    */
   void nas_signalling_establishment_request_handle(
-      SecurityHeaderType_t type, std::shared_ptr<nas_context> nc,
+      uint8_t security_header_type, std::shared_ptr<nas_context> nc,
       uint32_t ran_ue_ngap_id, uint64_t amf_ue_ngap_id, bstring plain_msg,
       std::string snn, uint8_t ulCount);
 
@@ -84,23 +84,24 @@ class amf_n1 {
    * @param [const uint32_t] ran_ue_ngap_id: RAN UE NGAP Id
    * @param [const uint64_t] amf_ue_ngap_id: AMF UE NGAP Id
    * @param [bstring] plain_msg: NAS message in plain text
+   * @param [uint8_t] security_header_type: Security header type
    * @param [const plmn_t&] plmn: PLMN
    * @return void
    */
   void uplink_nas_msg_handle(
       const uint32_t ran_ue_ngap_id, const uint64_t amf_ue_ngap_id,
-      bstring plain_msg, const plmn_t& plmn);
+      bstring plain_msg, uint8_t security_header_type, const plmn_t& plmn);
 
   /*
    * Get Security Header Type (2 bytes) from NAS message
-   * @param [SecurityHeaderType_t&] type: Security Header Type
+   * @param [uint8_t&] type: Security Header Type
    * @param [uint8_t*] buffer: NAS message
    * @param [uint32_t] length: Length of NAS message
    * @return true if can decode with an appropriate Security Header Type,
    * otherwise return false
    */
   bool check_security_header_type(
-      SecurityHeaderType_t& type, const uint8_t* buffer, const uint32_t length);
+      uint8_t& type, const uint8_t* buffer, const uint32_t length);
 
   /*
    * Get UE NAS context associated with a GUTI if the context exists and is not
@@ -808,11 +809,12 @@ class amf_n1 {
    * @param [const uint32_t] ran_ue_ngap_id: RAN UE NGAP ID
    * @param [const uint64_t] amf_ue_ngap_id: AMF UE NGAP ID
    * @param [bstring] nas_msg: NAS Security Mode Complete message
+   * @param [uint8_t] security_header_type: Security Header Type
    * @return void
    */
   void security_mode_complete_handle(
       const uint32_t ran_ue_ngap_id, const uint64_t amf_ue_ngap_id,
-      bstring nas_msg);
+      bstring nas_msg, uint8_t security_header_type);
 
   /*
    * Handle Security Mode Reject message

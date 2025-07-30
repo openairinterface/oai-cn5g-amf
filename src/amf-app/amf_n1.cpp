@@ -421,9 +421,9 @@ void amf_n1::handle_itti_message(itti_uplink_nas_data_ind& nas_data_ind) {
           amf_ue_ngap_id);
   }
 
-  SecurityHeaderType_t type = {};
+  uint8_t security_header_type = {};
   if (!check_security_header_type(
-          type, (uint8_t*) bdata(received_nas_msg),
+          security_header_type, (uint8_t*) bdata(received_nas_msg),
           blength(received_nas_msg))) {
     Logger::amf_n1().error("Not 5GS MOBILITY MANAGEMENT message");
     return;
@@ -435,7 +435,7 @@ void amf_n1::handle_itti_message(itti_uplink_nas_data_ind& nas_data_ind) {
 
   uint8_t ulCount = 0;
 
-  switch (type) {
+  switch (security_header_type) {
     case kPlain5gsMessage: {
       Logger::amf_n1().debug("Received plain NAS message");
       decoded_plain_msg = bstrcpy(received_nas_msg);
@@ -531,19 +531,19 @@ void amf_n1::handle_itti_message(itti_uplink_nas_data_ind& nas_data_ind) {
   if (nas_data_ind.is_nas_signalling_estab_req) {
     Logger::amf_n1().debug("Received NAS Signalling Establishment request...");
     nas_signalling_establishment_request_handle(
-        type, nc, nas_data_ind.ran_ue_ngap_id, nas_data_ind.amf_ue_ngap_id,
-        decoded_plain_msg, snn, ulCount);
+        security_header_type, nc, nas_data_ind.ran_ue_ngap_id,
+        nas_data_ind.amf_ue_ngap_id, decoded_plain_msg, snn, ulCount);
   } else {
     Logger::amf_n1().debug("Received Uplink NAS message...");
     uplink_nas_msg_handle(
         nas_data_ind.ran_ue_ngap_id, nas_data_ind.amf_ue_ngap_id,
-        decoded_plain_msg, plmn);
+        decoded_plain_msg, security_header_type, plmn);
   }
 }
 
 //------------------------------------------------------------------------------
 void amf_n1::nas_signalling_establishment_request_handle(
-    SecurityHeaderType_t type, std::shared_ptr<nas_context> nc,
+    uint8_t security_header_type, std::shared_ptr<nas_context> nc,
     uint32_t ran_ue_ngap_id, uint64_t amf_ue_ngap_id, bstring plain_msg,
     std::string snn, uint8_t ulCount) {
   // Create NAS Context, or Update if existed
@@ -639,7 +639,7 @@ void amf_n1::nas_signalling_establishment_request_handle(
 //------------------------------------------------------------------------------
 void amf_n1::uplink_nas_msg_handle(
     const uint32_t ran_ue_ngap_id, const uint64_t amf_ue_ngap_id,
-    bstring plain_msg, const plmn_t& plmn) {
+    bstring plain_msg, uint8_t security_header_type, const plmn_t& plmn) {
   uint8_t message_type =
       get_nas_message_type((uint8_t*) bdata(plain_msg), blength(plain_msg));
 
@@ -659,7 +659,8 @@ void amf_n1::uplink_nas_msg_handle(
     case kSecurityModeComplete: {
       Logger::amf_n1().debug(
           "Received Security Mode Complete message, handling...");
-      security_mode_complete_handle(ran_ue_ngap_id, amf_ue_ngap_id, plain_msg);
+      security_mode_complete_handle(
+          ran_ue_ngap_id, amf_ue_ngap_id, plain_msg, security_header_type);
     } break;
 
     case kSecurityModeReject: {
@@ -736,7 +737,7 @@ void amf_n1::uplink_nas_msg_handle(
 
 //------------------------------------------------------------------------------
 bool amf_n1::check_security_header_type(
-    SecurityHeaderType_t& type, const uint8_t* buffer, const uint32_t length) {
+    uint8_t& type, const uint8_t* buffer, const uint32_t length) {
   if (length < kNasMessageMinLength) {
     return false;
   }
@@ -3005,8 +3006,18 @@ bool amf_n1::security_select_algorithms(
 //------------------------------------------------------------------------------
 void amf_n1::security_mode_complete_handle(
     const uint32_t ran_ue_ngap_id, const uint64_t amf_ue_ngap_id,
-    bstring nas_msg) {
+    bstring nas_msg, uint8_t security_header_type) {
   Logger::amf_n1().debug("Handling Security Mode Complete ...");
+
+  if (security_header_type == kPlain5gsMessage) {
+    Logger::amf_n1().debug(
+        "Security Mode Complete message is not integrity protected, sending "
+        "registration reject message");
+    // Send Registration Reject message
+    return send_registration_reject_msg(
+        ran_ue_ngap_id, amf_ue_ngap_id,
+        k5gmmCauseSemanticallyIncorrect);  // verify cause
+  }
 
   std::shared_ptr<ue_context> uc = {};
   if (!find_ue_context(ran_ue_ngap_id, amf_ue_ngap_id, uc)) return;
