@@ -186,15 +186,17 @@ pipeline {
                   sh 'docker images --filter=reference="oai-amf:' + amf_tag + '" >> archives/amf_ubuntu_image_build.log'
                   // Pushing to local private registry for testing purpose
                   
-                  withCredentials([string(credentialsId: 'OAICNPrivateRegistryURL', variable: 'PRIV_REG_URL')]) {
-                                    
-                  sh "docker login -u oaicicd -p oaicicd ${PRIV_REG_URL}"
-                  sh "docker image tag oai-amf:${amf_tag} ${PRIV_REG_URL}/oai-amf:${amf_tag}"
-                  sh "docker push ${PRIV_REG_URL}/oai-amf:${amf_tag}"
-                  sh "docker rmi oai-amf:${amf_tag} ${PRIV_REG_URL}/oai-amf:${amf_tag}"
-                  sh "docker logout ${PRIV_REG_URL}"
-                    
+                  withCredentials([
+                    string(credentialsId: 'OAICNPrivateRegistryURL', variable: 'PRIV_REG_URL'),
+                    [$class: 'UsernamePasswordMultiBinding', credentialsId: 'OAICNPrivateRegistryCredentials', usernameVariable: 'PR_Username', passwordVariable: 'PR_Password']
+                  ]) {
+                    sh "docker login -u ${PR_Username} -p ${PR_Password} ${PRIV_REG_URL}"
+                    sh "docker image tag oai-amf:${amf_tag} ${PRIV_REG_URL}/oai-amf:${amf_tag}"
+                    sh "docker push ${PRIV_REG_URL}/oai-amf:${amf_tag}"
+                    sh "docker rmi oai-amf:${amf_tag} ${PRIV_REG_URL}/oai-amf:${amf_tag}"
+                    sh "docker logout ${PRIV_REG_URL}"
                   }
+
                 }
               }
             }
@@ -560,8 +562,10 @@ pipeline {
                echo "$DH_Password" | docker login --username "$DH_Username" --password-stdin 
               '''
               }
-              withCredentials([string(credentialsId: 'OAICNPrivateRegistryURL', variable: 'PRIV_REG_URL')]) {
-                sh "docker login -u oaicicd -p oaicicd ${PRIV_REG_URL}"
+              withCredentials([string(credentialsId: 'OAICNPrivateRegistryURL', variable: 'PRIV_REG_URL'),
+                [$class: 'UsernamePasswordMultiBinding', credentialsId: 'OAICNPrivateRegistryCredentials', usernameVariable: 'PR_Username', passwordVariable: 'PR_Password']
+                ]) {
+                sh "docker login -u ${PR_Username} -p ${PR_Password} ${PRIV_REG_URL}"
                 sh "docker pull ${PRIV_REG_URL}/oai-amf:${amf_tag}"
                 sh "docker image tag ${PRIV_REG_URL}/oai-amf:${amf_tag} ${DH_Account}/oai-amf:develop"
                 sh "docker push ${DH_Account}/oai-amf:develop"
