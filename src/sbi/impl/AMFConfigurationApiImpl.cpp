@@ -53,8 +53,7 @@ void AMFConfigurationApiImpl::read_configuration(
       std::make_shared<itti_sbi_amf_configuration>(
           TASK_AMF_SBI, TASK_AMF_APP, promise_id);
 
-  itti_msg->http_version = 1;
-  itti_msg->promise_id   = promise_id;
+  itti_msg->promise_id = promise_id;
 
   int ret = itti_inst->send_msg(itti_msg);
   if (0 != ret) {
@@ -121,7 +120,6 @@ void AMFConfigurationApiImpl::update_configuration(
       std::make_shared<itti_sbi_update_amf_configuration>(
           TASK_AMF_SBI, TASK_AMF_APP, promise_id);
 
-  itti_msg->http_version  = 1;
   itti_msg->promise_id    = promise_id;
   itti_msg->configuration = configuration_info;
 

@@ -808,9 +808,7 @@ void amf_app::handle_itti_message(itti_sbi_n1_message_notification& itti_msg) {
 
 //------------------------------------------------------------------------------
 void amf_app::handle_itti_message(itti_sbi_n1n2_message_subscribe& itti_msg) {
-  Logger::amf_app().info(
-      "Handle an N1N2MessageSubscribe from a NF (HTTP version %d)",
-      itti_msg.http_version);
+  Logger::amf_app().info("Handle an N1N2MessageSubscribe from a NF");
 
   // Generate a subscription ID Id and store the corresponding information in a
   // map (subscription id, info)
@@ -846,9 +844,7 @@ void amf_app::handle_itti_message(itti_sbi_n1n2_message_subscribe& itti_msg) {
 
 //------------------------------------------------------------------------------
 void amf_app::handle_itti_message(itti_sbi_n1n2_message_unsubscribe& itti_msg) {
-  Logger::amf_app().info(
-      "Handle an N1N2MessageUnSubscribe from a NF (HTTP version %d)",
-      itti_msg.http_version);
+  Logger::amf_app().info("Handle an N1N2MessageUnSubscribe from a NF");
 
   // Process the request and trigger the response from AMF API Server
   nlohmann::json response_data = {};
@@ -873,9 +869,7 @@ void amf_app::handle_itti_message(itti_sbi_n1n2_message_unsubscribe& itti_msg) {
 
 //------------------------------------------------------------------------------
 void amf_app::handle_itti_message(itti_sbi_non_ue_n2_info_subscribe& itti_msg) {
-  Logger::amf_app().info(
-      "Handle an NonUEN2InfoSubscribe from a NF (HTTP version %d)",
-      itti_msg.http_version);
+  Logger::amf_app().info("Handle an NonUEN2InfoSubscribe from a NF");
 
   // Generate a subscription ID Id and store the corresponding information in a
   // map (subscription id, info)
@@ -913,9 +907,7 @@ void amf_app::handle_itti_message(itti_sbi_non_ue_n2_info_subscribe& itti_msg) {
 //------------------------------------------------------------------------------
 void amf_app::handle_itti_message(
     itti_sbi_non_ue_n2_info_unsubscribe& itti_msg) {
-  Logger::amf_app().info(
-      "Handle an NonUEN2InfoUnsubscribe from a NF (HTTP version %d)",
-      itti_msg.http_version);
+  Logger::amf_app().info("Handle an NonUEN2InfoUnsubscribe from a NF");
 
   // Process the request and trigger the response from AMF API Server
   nlohmann::json response_data = {};
@@ -939,10 +931,7 @@ void amf_app::handle_itti_message(
 //------------------------------------------------------------------------------
 void amf_app::handle_itti_message(
     itti_sbi_pdu_session_release_notif& itti_msg) {
-  Logger::amf_app().info(
-      "Handle an PDU Session Release notification from SMF (HTTP version "
-      "%d)",
-      itti_msg.http_version);
+  Logger::amf_app().info("Handle an PDU Session Release notification from SMF");
 
   // Process the request and trigger the response from AMF API Server
   nlohmann::json response_data = {};
@@ -970,10 +959,7 @@ void amf_app::handle_itti_message(
 
 //------------------------------------------------------------------------------
 void amf_app::handle_itti_message(itti_sbi_amf_configuration& itti_msg) {
-  Logger::amf_app().info(
-      "Handle an SBIAMFConfiguration from a NF (HTTP version "
-      "%d)",
-      itti_msg.http_version);
+  Logger::amf_app().info("Handle an SBIAMFConfiguration from a NF");
 
   // Process the request and trigger the response from AMF API Server
   nlohmann::json response_data        = {};
@@ -1001,10 +987,7 @@ void amf_app::handle_itti_message(itti_sbi_amf_configuration& itti_msg) {
 
 //---------------------------------------------------------------------------------------------
 void amf_app::handle_itti_message(itti_sbi_update_amf_configuration& itti_msg) {
-  Logger::amf_app().info(
-      "Handle a request UpdateAMFConfiguration from a NF (HTTP version "
-      "%d)",
-      itti_msg.http_version);
+  Logger::amf_app().info("Handle a request UpdateAMFConfiguration from a NF");
 
   // Process the request and trigger the response from AMF API Server
   nlohmann::json response_data        = {};
@@ -1586,6 +1569,15 @@ void amf_app::get_smf_selection_subscription_data(
 void amf_app::discover_pcf(std::shared_ptr<ue_context>& uc) {
   Logger::amf_app().debug("Discovering PCF for the UE");
 
+  // Check if the NRF is available
+  std::string nrf_uri = {};
+  if (uc->nrf_uri.has_value()) {
+    nrf_uri = uc->nrf_uri.value();
+  } else {
+    Logger::amf_sbi().warn("No NRF available");
+    return;
+  }
+
   oai::_3gpp::model::PlmnIdNid plmn_id = {};
   plmn_id.setMcc(uc->tai.mcc);
   plmn_id.setMnc(uc->tai.mnc);
@@ -1604,6 +1596,7 @@ void amf_app::discover_pcf(std::shared_ptr<ue_context>& uc) {
 
   itti_msg->promise_id = promise_id;
   itti_msg->supi       = uc->supi;
+  itti_msg->nrf_uri    = nrf_uri;
   // itti_msg->snssai     = uc->snssai;
   itti_msg->plmn_id = plmn_id;
   // TODO: add support for PCF Set ID
@@ -1619,7 +1612,7 @@ void amf_app::discover_pcf(std::shared_ptr<ue_context>& uc) {
         itti_msg->get_msg_name());
   }
 
-  bool is_result_available = true;
+  bool is_result_available = false;
 
   oai::_3gpp::model::SearchResult search_result = {};
 
@@ -2014,9 +2007,7 @@ bool amf_app::generate_5g_guti(
 evsub_id_t amf_app::handle_event_exposure_subscription(
     std::shared_ptr<itti_sbi_event_exposure_request> msg) {
   Logger::amf_app().info(
-      "Handle an Event Exposure Subscription Request from a NF (HTTP version "
-      "%d)",
-      msg->http_version);
+      "Handle an Event Exposure Subscription Request from a NF");
 
   // Generate a subscription ID Id and store the corresponding information in a
   // map (subscription id, info)
@@ -2069,10 +2060,7 @@ bool amf_app::handle_event_exposure_delete(const std::string& subscription_id) {
 bool amf_app::handle_nf_status_notification(
     std::shared_ptr<itti_sbi_notification_data>& msg,
     oai::_3gpp::model::ProblemDetails& problem_details, uint32_t& http_code) {
-  Logger::amf_app().info(
-      "Handle a NF status notification from NRF (HTTP version "
-      "%d)",
-      msg->http_version);
+  Logger::amf_app().info("Handle a NF status notification from NRF");
   http_code =
       static_cast<uint32_t>(oai::common::sbi::http_status_code::NO_CONTENT);
   return true;
@@ -2095,9 +2083,8 @@ void amf_app::handle_determine_location_request() {
     boost::shared_future<nlohmann::json> f = p->get_future();
     add_promise(promise_id, p);
 
-    itti_msg->input_data   = input_data;
-    itti_msg->http_version = amf_cfg->support_features.http_version;
-    itti_msg->promise_id   = promise_id;
+    itti_msg->input_data = input_data;
+    itti_msg->promise_id = promise_id;
 
     int ret = itti_inst->send_msg(itti_msg);
     if (0 != ret) {
@@ -2361,7 +2348,6 @@ void amf_app::get_nrfs(std::unordered_set<std::string>& nrfs) {
         nssf_responses.emplace(promise_id, f);
         add_promise(promise_id, p);
 
-        itti_msg->http_version   = amf_cfg->support_features.http_version;
         itti_msg->nf_instance_id = amf_instance_id;
         itti_msg->plmn.mcc       = plmn.mcc;
         itti_msg->plmn.mnc       = plmn.mnc;

@@ -77,7 +77,7 @@ class ue_context {
   // std::optional<oai::_3gpp::model::AccessAndMobilitySubscriptionData>
   // am_data;
 
-  std::string nrf_uri;
+  std::optional<std::string> nrf_uri;
 
   // PCF related info
   oai::common::sbi::nf_addr_t pcf_addr;

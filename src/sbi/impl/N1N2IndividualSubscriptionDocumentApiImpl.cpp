@@ -51,7 +51,6 @@ void N1N2IndividualSubscriptionDocumentApiImpl::n1_n2_message_un_subscribe(
 
   itti_msg->ue_cxt_id       = ueContextId;
   itti_msg->subscription_id = subscriptionId;
-  itti_msg->http_version    = 1;
   itti_msg->promise_id      = promise_id;
 
   int ret = itti_inst->send_msg(itti_msg);
