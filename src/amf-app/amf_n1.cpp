@@ -66,6 +66,7 @@
 #include "output_wrapper.hpp"
 #include "sha256.hpp"
 #include "utils.hpp"
+#include "AuthenticationReject.hpp"
 
 using namespace amf_application;
 using namespace boost::placeholders;
@@ -421,9 +422,9 @@ void amf_n1::handle_itti_message(itti_uplink_nas_data_ind& nas_data_ind) {
           amf_ue_ngap_id);
   }
 
-  SecurityHeaderType_t type = {};
+  uint8_t security_header_type = {};
   if (!check_security_header_type(
-          type, (uint8_t*) bdata(received_nas_msg),
+          security_header_type, (uint8_t*) bdata(received_nas_msg),
           blength(received_nas_msg))) {
     Logger::amf_n1().error("Not 5GS MOBILITY MANAGEMENT message");
     return;
@@ -435,13 +436,13 @@ void amf_n1::handle_itti_message(itti_uplink_nas_data_ind& nas_data_ind) {
 
   uint8_t ulCount = 0;
 
-  switch (type) {
+  switch (security_header_type) {
     case kPlain5gsMessage: {
       Logger::amf_n1().debug("Received plain NAS message");
       decoded_plain_msg = bstrcpy(received_nas_msg);
     } break;
 
-    case IntegrityProtected: {
+    case kIntegrityProtected: {
       Logger::amf_n1().debug("Received integrity protected NAS message");
       ulCount =
           *((uint8_t*) bdata(received_nas_msg) +
@@ -455,15 +456,15 @@ void amf_n1::handle_itti_message(itti_uplink_nas_data_ind& nas_data_ind) {
               kSecurityProtected5gsNasMessageHeaderLength);
     } break;
 
-    case IntegrityProtectedAndCiphered: {
+    case kIntegrityProtectedAndCiphered: {
       Logger::amf_n1().debug(
           "Received integrity protected and ciphered NAS message");
     }
-    case IntegrityProtectedWithNew5GNASSecurityContext: {
+    case kIntegrityProtectedWithNewSecurityContext: {
       Logger::amf_n1().debug(
           "Received integrity protected with new security context NAS message");
     }
-    case IntegrityProtectedAndCipheredWithNew5GNASSecurityContext: {
+    case kIntegrityProtectedAndCipheredWithNewSecurityContext: {
       Logger::amf_n1().debug(
           "Received integrity protected and ciphered with new security context "
           "NAS message");
@@ -531,19 +532,19 @@ void amf_n1::handle_itti_message(itti_uplink_nas_data_ind& nas_data_ind) {
   if (nas_data_ind.is_nas_signalling_estab_req) {
     Logger::amf_n1().debug("Received NAS Signalling Establishment request...");
     nas_signalling_establishment_request_handle(
-        type, nc, nas_data_ind.ran_ue_ngap_id, nas_data_ind.amf_ue_ngap_id,
-        decoded_plain_msg, snn, ulCount);
+        security_header_type, nc, nas_data_ind.ran_ue_ngap_id,
+        nas_data_ind.amf_ue_ngap_id, decoded_plain_msg, snn, ulCount);
   } else {
     Logger::amf_n1().debug("Received Uplink NAS message...");
     uplink_nas_msg_handle(
         nas_data_ind.ran_ue_ngap_id, nas_data_ind.amf_ue_ngap_id,
-        decoded_plain_msg, plmn);
+        decoded_plain_msg, security_header_type, plmn);
   }
 }
 
 //------------------------------------------------------------------------------
 void amf_n1::nas_signalling_establishment_request_handle(
-    SecurityHeaderType_t type, std::shared_ptr<nas_context> nc,
+    uint8_t security_header_type, std::shared_ptr<nas_context> nc,
     uint32_t ran_ue_ngap_id, uint64_t amf_ue_ngap_id, bstring plain_msg,
     std::string snn, uint8_t ulCount) {
   // Create NAS Context, or Update if existed
@@ -639,7 +640,7 @@ void amf_n1::nas_signalling_establishment_request_handle(
 //------------------------------------------------------------------------------
 void amf_n1::uplink_nas_msg_handle(
     const uint32_t ran_ue_ngap_id, const uint64_t amf_ue_ngap_id,
-    bstring plain_msg, const plmn_t& plmn) {
+    bstring plain_msg, uint8_t security_header_type, const plmn_t& plmn) {
   uint8_t message_type =
       get_nas_message_type((uint8_t*) bdata(plain_msg), blength(plain_msg));
 
@@ -647,7 +648,8 @@ void amf_n1::uplink_nas_msg_handle(
     case kAuthenticationResponse: {
       Logger::amf_n1().debug(
           "Received Authentication Response message, handling...");
-      authentication_response_handle(ran_ue_ngap_id, amf_ue_ngap_id, plain_msg);
+      authentication_response_handle(
+          ran_ue_ngap_id, amf_ue_ngap_id, plain_msg, security_header_type);
     } break;
 
     case kAuthenticationFailure: {
@@ -659,7 +661,8 @@ void amf_n1::uplink_nas_msg_handle(
     case kSecurityModeComplete: {
       Logger::amf_n1().debug(
           "Received Security Mode Complete message, handling...");
-      security_mode_complete_handle(ran_ue_ngap_id, amf_ue_ngap_id, plain_msg);
+      security_mode_complete_handle(
+          ran_ue_ngap_id, amf_ue_ngap_id, plain_msg, security_header_type);
     } break;
 
     case kSecurityModeReject: {
@@ -736,7 +739,7 @@ void amf_n1::uplink_nas_msg_handle(
 
 //------------------------------------------------------------------------------
 bool amf_n1::check_security_header_type(
-    SecurityHeaderType_t& type, const uint8_t* buffer, const uint32_t length) {
+    uint8_t& type, const uint8_t* buffer, const uint32_t length) {
   if (length < kNasMessageMinLength) {
     return false;
   }
@@ -750,18 +753,18 @@ bool amf_n1::check_security_header_type(
   DECODE_U8(buffer + decoded_size, octet, decoded_size);
   if (((octet & 0x0f) >= kPlain5gsMessage) and
       ((octet & 0x0f) <=
-       IntegrityProtectedAndCipheredWithNew5GNASSecurityContext)) {
-    type = static_cast<SecurityHeaderType_t>(octet & 0x0f);
+       kIntegrityProtectedAndCipheredWithNewSecurityContext)) {
+    type = octet & 0x0f;
     // Verify the minimum length
     switch (type) {
       case kPlain5gsMessage: {
         // Don't need to check again
         return true;
       } break;
-      case IntegrityProtected:
-      case IntegrityProtectedAndCiphered:
-      case IntegrityProtectedWithNew5GNASSecurityContext:
-      case IntegrityProtectedAndCipheredWithNew5GNASSecurityContext: {
+      case kIntegrityProtected:
+      case kIntegrityProtectedAndCiphered:
+      case kIntegrityProtectedWithNewSecurityContext:
+      case kIntegrityProtectedAndCipheredWithNewSecurityContext: {
         if (length < (kNasMessageMinLength +
                       kSecurityProtected5gsNasMessageHeaderLength))
           return false;
@@ -2243,6 +2246,29 @@ void amf_n1::send_registration_reject_msg(
 }
 
 //------------------------------------------------------------------------------
+void amf_n1::send_authentication_reject_msg(
+    const uint32_t ran_ue_ngap_id, const uint64_t amf_ue_ngap_id,
+    uint8_t cause_value) {
+  Logger::amf_n1().debug("Create Authentication Reject and send to UE");
+  auto authentication_reject = std::make_unique<AuthenticationReject>();
+  // TODO: set EAP Message if needed
+
+  uint32_t msg_len = authentication_reject->GetLength();
+  Logger::nas_mm().debug("Size of Authentication Reject message %ld", msg_len);
+  uint8_t buffer[msg_len] = {0};
+  int encoded_size        = authentication_reject->Encode(buffer, msg_len);
+  if (encoded_size == KEncodeDecodeError) {
+    Logger::amf_n1().error("Encode Authentication Reject message error");
+    return;
+  }
+  oai::utils::output_wrapper::print_buffer(
+      "amf_n1", "Authentication Reject message buffer", buffer, encoded_size);
+
+  bstring b = blk2bstr(buffer, encoded_size);
+  itti_send_dl_nas_buffer_to_task_n2(b, ran_ue_ngap_id, amf_ue_ngap_id);
+}
+
+//------------------------------------------------------------------------------
 bool amf_n1::run_registration_procedure(
     std::shared_ptr<nas_context>& nc, uint8_t& cause) {
   Logger::amf_n1().debug("Start to run Registration Procedure");
@@ -2300,6 +2326,11 @@ bool amf_n1::run_registration_procedure(
       cause = k5gmmCauseSemanticallyIncorrect;
       return false;
     }
+
+    // Set NAS message for current procedure running
+    nc->nas_message_for_current_procedure_running = kIdentityRequest;
+
+    // Send to UE via APP N2 task
     auto dnt =
         std::make_shared<itti_dl_nas_transport>(TASK_AMF_N1, TASK_AMF_N2);
     dnt->nas            = blk2bstr(buffer, encoded_size);
@@ -2676,6 +2707,10 @@ bool amf_n1::start_authentication_procedure(
     return false;
   }
 
+  // Set NAS message for current procedure running
+  nc->nas_message_for_current_procedure_running = kAuthenticationRequest;
+
+  // Send to UE via APP N2 task
   bstring b = blk2bstr(buffer, encoded_size);
   oai::utils::output_wrapper::print_buffer(
       "amf_n1", "Authentication-Request message buffer", (uint8_t*) bdata(b),
@@ -2711,7 +2746,7 @@ bool amf_n1::check_nas_common_procedure_on_going(
 //------------------------------------------------------------------------------
 void amf_n1::authentication_response_handle(
     const uint32_t ran_ue_ngap_id, const uint64_t amf_ue_ngap_id,
-    bstring plain_msg) {
+    bstring plain_msg, uint8_t security_header_type) {
   std::shared_ptr<nas_context> nc = {};
 
   if (!amf_ue_id_2_nas_context(amf_ue_ngap_id, nc)) {
@@ -2719,6 +2754,15 @@ void amf_n1::authentication_response_handle(
         ran_ue_ngap_id, amf_ue_ngap_id,
         k5gmmCauseIllegalUe);  // cause?
     return;
+  }
+
+  uint8_t nas_message_type = kAuthenticationResponse;
+  if (!check_nas_message_for_current_procedure_running(
+          nc, kAuthenticationResponse, security_header_type)) {
+    if (nc->is_imsi_present)
+      // Send Authentication Reject with appropriate cause
+      send_authentication_reject_msg(
+          ran_ue_ngap_id, amf_ue_ngap_id, k5gmmCauseSemanticallyIncorrect);
   }
 
   Logger::amf_n1().info(
@@ -2961,6 +3005,10 @@ bool amf_n1::start_security_mode_control_procedure(
   std::string str = security_context_is_new ? "true" : "false";
   Logger::amf_n1().debug("Security Context status (is new:  %s)", str.c_str());
 
+  // Set NAS message for current procedure running
+  nc->nas_message_for_current_procedure_running = kSecurityModeCommand;
+
+  // Send to UE via APP N2 task
   bstring protected_nas = nullptr;
   encode_nas_message_protected(
       nc->security_ctx.value(), security_context_is_new,
@@ -3005,7 +3053,7 @@ bool amf_n1::security_select_algorithms(
 //------------------------------------------------------------------------------
 void amf_n1::security_mode_complete_handle(
     const uint32_t ran_ue_ngap_id, const uint64_t amf_ue_ngap_id,
-    bstring nas_msg) {
+    bstring nas_msg, uint8_t security_header_type) {
   Logger::amf_n1().debug("Handling Security Mode Complete ...");
 
   std::shared_ptr<ue_context> uc = {};
@@ -3013,6 +3061,24 @@ void amf_n1::security_mode_complete_handle(
 
   std::shared_ptr<nas_context> nc = {};
   if (!amf_ue_id_2_nas_context(amf_ue_ngap_id, nc)) return;
+
+  uint8_t nas_message_type = kSecurityModeComplete;
+  if (!check_nas_message_for_current_procedure_running(
+          nc, nas_message_type, security_header_type)) {
+    // Send Registration Reject with appropriate cause
+    send_registration_reject_msg(
+        ran_ue_ngap_id, amf_ue_ngap_id, k5gmmCauseSemanticallyIncorrect);
+  };
+
+  if (security_header_type == kPlain5gsMessage) {
+    Logger::amf_n1().debug(
+        "Security Mode Complete message is not integrity protected, sending "
+        "registration reject message");
+    // Send Registration Reject message
+    return send_registration_reject_msg(
+        ran_ue_ngap_id, amf_ue_ngap_id,
+        k5gmmCauseSemanticallyIncorrect);  // verify cause
+  }
 
   // Decode Security Mode Complete
   auto security_mode_complete = std::make_unique<SecurityModeComplete>();
@@ -3208,6 +3274,9 @@ void amf_n1::security_mode_complete_handle(
   if (pdu_session_status_opt.has_value()) {
     registration_accept->SetPduSessionStatus(pdu_session_status);
   }
+
+  // Set NAS message for current procedure running
+  nc->nas_message_for_current_procedure_running = kRegistrationAccept;
 
   // Encode Registration Accept
   bstring protected_nas = nullptr;
@@ -4176,6 +4245,9 @@ bool amf_n1::run_mobility_registration_update_procedure(
     // IE: UEAggregateMaximumBitRate
     // AllowedNSSAI
 
+    // Set NAS message for current procedure running
+    nc->nas_message_for_current_procedure_running = kRegistrationAccept;
+
     auto itti_msg =
         std::make_shared<itti_dl_nas_transport>(TASK_AMF_N1, TASK_AMF_N2);
     itti_msg->ran_ue_ngap_id = nc->ran_ue_ngap_id;
@@ -4208,6 +4280,9 @@ bool amf_n1::run_mobility_registration_update_procedure(
         ulcount, KAccessType3gppAccess, kamf, kgnb);
     oai::utils::output_wrapper::print_buffer(
         "amf_n1", "Kamf", kamf, AUTH_VECTOR_LENGTH_OCTETS);
+
+    // Set NAS message for current procedure running
+    nc->nas_message_for_current_procedure_running = kRegistrationAccept;
 
     auto itti_msg = std::make_shared<itti_initial_context_setup_request>(
         TASK_AMF_N1, TASK_AMF_N2);
@@ -4287,6 +4362,9 @@ bool amf_n1::run_periodic_registration_update_procedure(
         k5gmmCauseSecurityModeRejectedUnspecified;  // TODO: verify the cause
     return false;
   }
+
+  // Set NAS message for current procedure running
+  nc->nas_message_for_current_procedure_running = kRegistrationAccept;
 
   bstring protected_nas = nullptr;
   encode_nas_message_protected(
@@ -4368,6 +4446,9 @@ bool amf_n1::run_periodic_registration_update_procedure(
         k5gmmCauseSecurityModeRejectedUnspecified;  // TODO: verify the cause
     return false;
   }
+
+  // Set NAS message for current procedure running
+  nc->nas_message_for_current_procedure_running = kRegistrationAccept;
 
   bstring protected_nas = nullptr;
   encode_nas_message_protected(
@@ -5950,4 +6031,201 @@ void amf_n1::set_pdu_session_reactivation_result(
 
   pdu_session_reactivation_result =
       pdu_session_reactivation_result_bits.to_ulong();
+}
+
+//------------------------------------------------------------------------------
+bool amf_n1::check_nas_message_for_current_procedure_running(
+    const std::shared_ptr<nas_context>& nc, uint8_t message_type,
+    uint8_t security_header_type) {
+  if ((message_type != kRegistrationRequest) and
+      (message_type != kIdentityResponse) and
+      (message_type != kAuthenticationResponse) and
+      (message_type != kAuthenticationFailure) and
+      (message_type != kSecurityModeReject) and
+      (message_type != kDeregistrationRequestUeTerminated) and
+      (message_type != kDeregistrationAcceptUeTerminated) and
+      (message_type != kDeregistrationRequestUeOriginating) and
+      (message_type != kDeregistrationAcceptUeOriginating)) {
+    if (security_header_type == kPlain5gsMessage) {
+      Logger::amf_n1().warn(
+          "NAS message %d is not integrity protected", message_type);
+      return false;
+    }
+  }
+
+  // verify with the order of NAS message with the on-going procedure running
+  // For now just do a simple check
+  // TODO: check with 5GMM state machine
+  switch (message_type) {
+    case k5gsMobilityManagementMessageTypeUnknown:
+    case kRegistrationRequest: {
+      if (nc->nas_message_for_current_procedure_running > message_type) {
+        Logger::amf_n1().warn(
+            "Message %d is not expected for current procedure "
+            "running",
+            message_type);
+        return false;
+      }
+    } break;
+    case kRegistrationAccept: {
+      // Do not need to check DL message
+    } break;
+    case kRegistrationComplete: {
+      if (nc->nas_message_for_current_procedure_running !=
+          kRegistrationAccept) {
+        Logger::amf_n1().warn(
+            "Message %d is not expected for current procedure "
+            "running",
+            message_type);
+        return false;
+      }
+    } break;
+    case kRegistrationReject: {
+      // Do not need to check DL message
+    } break;
+    case kDeregistrationRequestUeOriginating: {
+      // TODO:
+    } break;
+    case kDeregistrationAcceptUeOriginating: {
+      // Do not need to check DL message
+    } break;
+    case kDeregistrationRequestUeTerminated: {
+      // Do not need to check DL message
+    } break;
+    case kDeregistrationAcceptUeTerminated: {
+      if (nc->nas_message_for_current_procedure_running !=
+          kDeregistrationRequestUeTerminated) {
+        Logger::amf_n1().warn(
+            "Message %d is not expected for current procedure "
+            "running",
+            message_type);
+        return false;
+      }
+    } break;
+    case kServiceRequest: {
+      // TODO:
+    } break;
+    case kServiceReject: {
+      // Do not need to check DL message
+    } break;
+    case kServiceAccept: {
+      // Do not need to check DL message
+    } break;
+    case kControlPlaneServiceRequest: {
+      // TODO:
+    } break;
+    case kNetworkSliceSpecificAuthenticationCommand: {
+    } break;
+    case kNetworkSliceSpecificAuthenticationComplete: {
+      if (nc->nas_message_for_current_procedure_running !=
+          kNetworkSliceSpecificAuthenticationCommand) {
+        Logger::amf_n1().warn(
+            "Message %d is not expected for current procedure "
+            "running",
+            message_type);
+        return false;
+      }
+    } break;
+    case kNetworkSliceSpecificAuthenticationResult: {
+      // Do not need to check DL message
+    } break;
+    case kConfigurationUpdateCommand: {
+    } break;
+    case kConfigurationUpdateComplete: {
+      if (nc->nas_message_for_current_procedure_running !=
+          kConfigurationUpdateCommand) {
+        Logger::amf_n1().warn(
+            "Message %d is not expected for current procedure "
+            "running",
+            message_type);
+        return false;
+      }
+    } break;
+    case kAuthenticationRequest: {
+      // Do not need to check DL message
+    } break;
+    case kAuthenticationResponse: {
+      if (nc->nas_message_for_current_procedure_running !=
+          kAuthenticationRequest) {
+        Logger::amf_n1().warn(
+            "Message %d is not expected for current procedure "
+            "running",
+            message_type);
+        return false;
+      }
+    } break;
+    case kAuthenticationReject: {
+      // Do not need to check DL message
+    } break;
+    case kAuthenticationFailure: {
+      if (nc->nas_message_for_current_procedure_running !=
+          kAuthenticationRequest) {
+        Logger::amf_n1().warn(
+            "Message %d is not expected for current procedure "
+            "running",
+            message_type);
+        return false;
+      }
+    } break;
+    case kAuthenticationResult: {
+      // Do not need to check DL message
+    } break;
+    case kIdentityRequest: {
+      // Do not need to check DL message
+    } break;
+    case kIdentityResponse: {
+      if (nc->nas_message_for_current_procedure_running != kIdentityRequest) {
+        Logger::amf_n1().warn(
+            "Message %d is not expected for current procedure "
+            "running",
+            message_type);
+        return false;
+      }
+    } break;
+    case kSecurityModeCommand: {
+      // Do not need to check DL message
+    } break;
+    case kSecurityModeComplete:
+    case kSecurityModeReject: {
+      if (nc->nas_message_for_current_procedure_running !=
+          kSecurityModeCommand) {
+        Logger::amf_n1().warn(
+            "Message %d is not expected for current procedure "
+            "running",
+            message_type);
+        return false;
+      }
+    } break;
+    case k5gmmStatus: {
+      // check only in case of UL message
+      // TODO:
+    } break;
+    case kMessageTypeNotification: {
+      // Do not need to check DL message
+    } break;
+    case kMessageTypeNotificationResponse: {
+      if (nc->nas_message_for_current_procedure_running !=
+          kMessageTypeNotification) {
+        Logger::amf_n1().warn(
+            "Message %d is not expected for current procedure "
+            "running",
+            message_type);
+        return false;
+      }
+    } break;
+    case kUlNasTransport: {
+      // TODO: check with the current procedure running
+    } break;
+    case kDlNasTransport: {
+      // DL Message, do not need to check
+    } break;
+
+    default:
+      Logger::amf_n1().warn(
+          "Unknown NAS message type %d for current procedure running",
+          message_type);
+      return false;
+  }
+
+  return true;
 }
