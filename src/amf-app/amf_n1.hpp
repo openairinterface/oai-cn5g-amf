@@ -787,11 +787,12 @@ class amf_n1 {
    * @param [const uint32_t] ran_ue_ngap_id: RAN UE NGAP ID
    * @param [const uint64_t] amf_ue_ngap_id: AMF UE NGAP ID
    * @param [bstring] plain_msg: NAS Authentication Response message
+   * @param [uint8_t] security_header_type: Security Header Type
    * @return void
    */
   void authentication_response_handle(
       const uint32_t ran_ue_ngap_id, const uint64_t amf_ue_ngap_id,
-      bstring plain_msg);
+      bstring plain_msg, uint8_t security_header_type);
 
   /*
    * Handle Authentication Failure message
@@ -911,7 +912,7 @@ class amf_n1 {
       const uint64_t amf_ue_ngap_id);
 
   /*
-   * Send ITTI message DL NAS Buffer to task N2
+   * Create Registration Reject message and send to the UE (using TASK N2)
    * @param [const uint32_t] ran_ue_ngap_id: RAN UE NGAP ID
    * @param [const uint64_t] amf_ue_ngap_id: AMF UE NGAP ID
    * @param [uint8_t] cause_value: Value for Cause IE in NAS message
@@ -920,6 +921,17 @@ class amf_n1 {
   void send_registration_reject_msg(
       const uint32_t ran_ue_ngap_id, const uint64_t amf_ue_ngap_id,
       const uint8_t cause_value);
+
+  /*
+   * Create Authentication Reject message and send to the UE (using TASK N2)
+   * @param [const uint32_t] ran_ue_ngap_id: RAN UE NGAP ID
+   * @param [const uint64_t] amf_ue_ngap_id: AMF UE NGAP ID
+   * @param [uint8_t] cause_value: Value for Cause IE in NAS message
+   * @return void
+   */
+  void send_authentication_reject_msg(
+      const uint32_t ran_ue_ngap_id, const uint64_t amf_ue_ngap_id,
+      uint8_t cause_value);
 
   /*
    * Get NAS's message type from message buffer
@@ -947,6 +959,19 @@ class amf_n1 {
    */
   void set_pdu_session_reactivation_result(
       uint8_t pdu_session_id, uint16_t& pdu_session_reactivation_result);
+
+  /*
+   * Verify the current message according to the on-going NAS procedure
+   * @param [const std::shared_ptr<nas_context>&] nc: pointer to UE NAS context
+   * @param [uint8_t] message_type: NAS message type
+   * @param [uint8_t] security_header_type: Security Header Type
+   * @note This function is used to verify whether the current NAS message is
+   * expected according to the current NAS procedure or not
+   * @return bool, true if yes, otherwise return false
+   */
+  bool check_nas_message_for_current_procedure_running(
+      const std::shared_ptr<nas_context>& nc, uint8_t message_type,
+      uint8_t security_header_type);
 
   // for Event Handling
   amf_event event_sub;
