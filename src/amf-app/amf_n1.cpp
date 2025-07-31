@@ -2326,6 +2326,11 @@ bool amf_n1::run_registration_procedure(
       cause = k5gmmCauseSemanticallyIncorrect;
       return false;
     }
+
+    // Set NAS message for current procedure running
+    nc->nas_message_for_current_procedure_running = kIdentityRequest;
+
+    // Send to UE via APP N2 task
     auto dnt =
         std::make_shared<itti_dl_nas_transport>(TASK_AMF_N1, TASK_AMF_N2);
     dnt->nas            = blk2bstr(buffer, encoded_size);
@@ -2702,6 +2707,10 @@ bool amf_n1::start_authentication_procedure(
     return false;
   }
 
+  // Set NAS message for current procedure running
+  nc->nas_message_for_current_procedure_running = kAuthenticationRequest;
+
+  // Send to UE via APP N2 task
   bstring b = blk2bstr(buffer, encoded_size);
   oai::utils::output_wrapper::print_buffer(
       "amf_n1", "Authentication-Request message buffer", (uint8_t*) bdata(b),
@@ -2996,6 +3005,10 @@ bool amf_n1::start_security_mode_control_procedure(
   std::string str = security_context_is_new ? "true" : "false";
   Logger::amf_n1().debug("Security Context status (is new:  %s)", str.c_str());
 
+  // Set NAS message for current procedure running
+  nc->nas_message_for_current_procedure_running = kSecurityModeCommand;
+
+  // Send to UE via APP N2 task
   bstring protected_nas = nullptr;
   encode_nas_message_protected(
       nc->security_ctx.value(), security_context_is_new,
@@ -3261,6 +3274,9 @@ void amf_n1::security_mode_complete_handle(
   if (pdu_session_status_opt.has_value()) {
     registration_accept->SetPduSessionStatus(pdu_session_status);
   }
+
+  // Set NAS message for current procedure running
+  nc->nas_message_for_current_procedure_running = kRegistrationAccept;
 
   // Encode Registration Accept
   bstring protected_nas = nullptr;
@@ -4229,6 +4245,9 @@ bool amf_n1::run_mobility_registration_update_procedure(
     // IE: UEAggregateMaximumBitRate
     // AllowedNSSAI
 
+    // Set NAS message for current procedure running
+    nc->nas_message_for_current_procedure_running = kRegistrationAccept;
+
     auto itti_msg =
         std::make_shared<itti_dl_nas_transport>(TASK_AMF_N1, TASK_AMF_N2);
     itti_msg->ran_ue_ngap_id = nc->ran_ue_ngap_id;
@@ -4261,6 +4280,9 @@ bool amf_n1::run_mobility_registration_update_procedure(
         ulcount, KAccessType3gppAccess, kamf, kgnb);
     oai::utils::output_wrapper::print_buffer(
         "amf_n1", "Kamf", kamf, AUTH_VECTOR_LENGTH_OCTETS);
+
+    // Set NAS message for current procedure running
+    nc->nas_message_for_current_procedure_running = kRegistrationAccept;
 
     auto itti_msg = std::make_shared<itti_initial_context_setup_request>(
         TASK_AMF_N1, TASK_AMF_N2);
@@ -4340,6 +4362,9 @@ bool amf_n1::run_periodic_registration_update_procedure(
         k5gmmCauseSecurityModeRejectedUnspecified;  // TODO: verify the cause
     return false;
   }
+
+  // Set NAS message for current procedure running
+  nc->nas_message_for_current_procedure_running = kRegistrationAccept;
 
   bstring protected_nas = nullptr;
   encode_nas_message_protected(
@@ -4421,6 +4446,9 @@ bool amf_n1::run_periodic_registration_update_procedure(
         k5gmmCauseSecurityModeRejectedUnspecified;  // TODO: verify the cause
     return false;
   }
+
+  // Set NAS message for current procedure running
+  nc->nas_message_for_current_procedure_running = kRegistrationAccept;
 
   bstring protected_nas = nullptr;
   encode_nas_message_protected(
