@@ -6038,13 +6038,14 @@ bool amf_n1::check_nas_message_for_current_procedure_running(
     const std::shared_ptr<nas_context>& nc, uint8_t message_type,
     uint8_t security_header_type) {
   if ((message_type != kRegistrationRequest) and
-          (message_type != kIdentityResponse) or
+      (message_type != kIdentityResponse) and
+      (message_type != kAuthenticationResponse) and
       (message_type != kAuthenticationFailure) and
-          (message_type != kSecurityModeReject) and
-          (message_type != kDeregistrationRequestUeTerminated) and
-          (message_type != kDeregistrationAcceptUeTerminated) and
-          (message_type != kDeregistrationRequestUeOriginating) and
-          (message_type != kDeregistrationAcceptUeOriginating)) {
+      (message_type != kSecurityModeReject) and
+      (message_type != kDeregistrationRequestUeTerminated) and
+      (message_type != kDeregistrationAcceptUeTerminated) and
+      (message_type != kDeregistrationRequestUeOriginating) and
+      (message_type != kDeregistrationAcceptUeOriginating)) {
     if (security_header_type == kPlain5gsMessage) {
       Logger::amf_n1().warn(
           "NAS message %d is not integrity protected", message_type);
