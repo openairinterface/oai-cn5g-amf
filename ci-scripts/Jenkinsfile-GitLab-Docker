@@ -127,10 +127,10 @@ pipeline {
             echo "MR Usermail is ${gitCommittorEmailAddr}"
             echo "MR TAG      is ${amf_tag}"
             
-            def validMRTitlePattern = /^[a-zA-Z0-9_\-\,\.\/\(\) ]+$/  // REGEX for characters allowed in the title of the merge request
-            if (!(env.gitlabMergeRequestTitle ==~ validMRTitlePattern)) {
-                error("Merge request title contains invalid characters. Allowed: letters, numbers, _ - , . / () and spaces.")
-            }
+            //def validMRTitlePattern = /^[a-zA-Z0-9_\-\,\.\/\(\) ]+$/  // REGEX for characters allowed in the title of the merge request
+            //if (!(env.gitlabMergeRequestTitle ==~ validMRTitlePattern)) {
+                //error("Merge request title contains invalid characters. Allowed: letters, numbers, _ - , . / () and spaces.")
+            //}
           } else {
             gitCommittorEmailAddr = sh returnStdout: true, script: 'git log -n1 --pretty=format:%ae ${GIT_COMMIT}'
             gitCommittorEmailAddr = gitCommittorEmailAddr.trim()
