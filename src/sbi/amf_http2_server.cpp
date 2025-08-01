@@ -379,12 +379,7 @@ void amf_http2_server::start() {
             itti_msg->global_ran_node_list =
                 n2InformationTransferReqData.getGlobalRanNodeList();
 
-            int ret = itti_inst->send_msg(itti_msg);
-            if (0 != ret) {
-              Logger::amf_server().error(
-                  "Could not send ITTI message %s to task TASK_AMF_N2",
-                  itti_msg->get_msg_name());
-            }
+            itti_inst->send_msg(itti_msg);
 
             // Send reply
             res.write_head(code);
@@ -878,12 +873,7 @@ void amf_http2_server::n1_n2_message_transfer_handler(
   res.end(response_json.dump().c_str());
 
   // Process N1N2 Message Transfer Request in AMF APP
-  int ret = itti_inst->send_msg(itti_msg);
-  if (0 != ret) {
-    Logger::amf_server().error(
-        "Could not send ITTI message %s to task TASK_AMF_N2",
-        itti_msg->get_msg_name());
-  }
+  itti_inst->send_msg(itti_msg);
 
   oai::utils::utils::bdestroy_wrapper(&n1sm);
   oai::utils::utils::bdestroy_wrapper(&n2sm);
@@ -955,12 +945,8 @@ void amf_http2_server::n1_message_notify_handler(
   if (code == oai::common::sbi::http_status_code::NO_CONTENT) {
     res.end();
     // Process N1N2 Message Transfer Request in AMF APP
-    int ret = itti_inst->send_msg(itti_msg);
-    if (0 != ret) {
-      Logger::amf_server().error(
-          "Could not send ITTI message %s to task TASK_AMF_N2",
-          itti_msg->get_msg_name());
-    }
+    itti_inst->send_msg(itti_msg);
+
   } else {
     res.end(response_json.dump().c_str());
   }
@@ -994,12 +980,7 @@ void amf_http2_server::n1_n2_message_subscribe_handler(
   itti_msg->subscription_data = ueN1N2InfoSubscriptionCreateData;
   itti_msg->promise_id        = promise_id;
 
-  int ret = itti_inst->send_msg(itti_msg);
-  if (0 != ret) {
-    Logger::amf_server().error(
-        "Could not send ITTI message %s to task TASK_AMF_APP",
-        itti_msg->get_msg_name());
-  }
+  itti_inst->send_msg(itti_msg);
 
   // Wait for the result available and process accordingly
   std::optional<nlohmann::json> result_opt = std::nullopt;
@@ -1073,12 +1054,7 @@ void amf_http2_server::n1_n2_message_unsubscribe_handler(
   itti_msg->subscription_id = subscriptionId;
   itti_msg->promise_id      = promise_id;
 
-  int ret = itti_inst->send_msg(itti_msg);
-  if (0 != ret) {
-    Logger::amf_server().error(
-        "Could not send ITTI message %s to task TASK_AMF_APP",
-        itti_msg->get_msg_name());
-  }
+  itti_inst->send_msg(itti_msg);
 
   // Wait for the result available and process accordingly
   std::optional<nlohmann::json> result_opt = std::nullopt;
@@ -1141,12 +1117,7 @@ void amf_http2_server::non_ue_n2_info_subscribe_handler(
   itti_msg->subscription_data = subscriptionCreateData;
   itti_msg->promise_id        = promise_id;
 
-  int ret = itti_inst->send_msg(itti_msg);
-  if (0 != ret) {
-    Logger::amf_server().error(
-        "Could not send ITTI message %s to task TASK_AMF_APP",
-        itti_msg->get_msg_name());
-  }
+  itti_inst->send_msg(itti_msg);
 
   // Wait for the result available and process accordingly
   std::optional<nlohmann::json> result_opt = std::nullopt;
@@ -1216,12 +1187,7 @@ void amf_http2_server::non_ue_n2_info_unsubscribe_handler(
   itti_msg->subscription_id = subscriptionId;
   itti_msg->promise_id      = promise_id;
 
-  int ret = itti_inst->send_msg(itti_msg);
-  if (0 != ret) {
-    Logger::amf_server().error(
-        "Could not send ITTI message %s to task TASK_AMF_APP",
-        itti_msg->get_msg_name());
-  }
+  itti_inst->send_msg(itti_msg);
 
   // Wait for the result available and process accordingly
   std::optional<nlohmann::json> result_opt = std::nullopt;
@@ -1283,12 +1249,7 @@ void amf_http2_server::status_notify_handler(
   itti_msg->pdu_session_id              = pduSessionId;
   itti_msg->smContextStatusNotification = statusNotification;
 
-  int ret = itti_inst->send_msg(itti_msg);
-  if (0 != ret) {
-    Logger::amf_server().error(
-        "Could not send ITTI message %s to task TASK_AMF_APP",
-        itti_msg->get_msg_name());
-  }
+  itti_inst->send_msg(itti_msg);
 
   // Wait for the response available and process accordingly
   std::optional<nlohmann::json> result_opt = std::nullopt;
@@ -1350,12 +1311,7 @@ void amf_http2_server::get_configuration_handler(const response& res) {
 
   itti_msg->promise_id = promise_id;
 
-  int ret = itti_inst->send_msg(itti_msg);
-  if (0 != ret) {
-    Logger::amf_server().error(
-        "Could not send ITTI message %s to task TASK_AMF_APP",
-        itti_msg->get_msg_name());
-  }
+  itti_inst->send_msg(itti_msg);
 
   // Wait for the response available and process accordingly
   std::optional<nlohmann::json> result_opt = std::nullopt;
@@ -1420,12 +1376,7 @@ void amf_http2_server::update_configuration_handler(
   itti_msg->promise_id    = promise_id;
   itti_msg->configuration = configuration_info;
 
-  int ret = itti_inst->send_msg(itti_msg);
-  if (0 != ret) {
-    Logger::amf_server().error(
-        "Could not send ITTI message %s to task TASK_AMF_APP",
-        itti_msg->get_msg_name());
-  }
+  itti_inst->send_msg(itti_msg);
 
   // Wait for the response available and process accordingly
   std::optional<nlohmann::json> result_opt = std::nullopt;
@@ -1492,12 +1443,7 @@ void amf_http2_server::update_policy_notification_handler(
   itti_msg->supi          = ue_context_id;
   itti_msg->policy_update = policy_update;
 
-  int ret = itti_inst->send_msg(itti_msg);
-  if (0 != ret) {
-    Logger::amf_server().error(
-        "Could not send ITTI message %s to task TASK_AMF_APP",
-        itti_msg->get_msg_name());
-  }
+  itti_inst->send_msg(itti_msg);
 
   // Wait for the response available and process accordingly
   std::optional<nlohmann::json> result_opt = std::nullopt;
@@ -1567,12 +1513,7 @@ void amf_http2_server::terminate_policy_notification_handler(
   itti_msg->supi                     = ue_context_id;
   itti_msg->termination_notification = termination_notification;
 
-  int ret = itti_inst->send_msg(itti_msg);
-  if (0 != ret) {
-    Logger::amf_server().error(
-        "Could not send ITTI message %s to task TASK_AMF_APP",
-        itti_msg->get_msg_name());
-  }
+  itti_inst->send_msg(itti_msg);
 
   // Wait for the response available and process accordingly
   std::optional<nlohmann::json> result_opt = std::nullopt;

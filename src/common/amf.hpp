@@ -76,6 +76,12 @@ constexpr auto kSbiResponseJsonData         = "jsonData";
 constexpr auto kSbiResponseHttpResponseCode = "httpResponseCode";
 constexpr auto kSbiResponseHeaderLocation   = "httpResponseLocation";
 
+typedef struct response_data_s {
+  std::optional<nlohmann::json> json_data;
+  uint32_t response_code;
+  std::optional<std::string> location;
+} response_data_t;
+
 typedef struct auth_conf_s {
   std::string mysql_server;
   std::string mysql_user;

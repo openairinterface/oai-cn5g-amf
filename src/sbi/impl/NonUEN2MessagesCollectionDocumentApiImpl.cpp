@@ -85,12 +85,7 @@ void NonUEN2MessagesCollectionDocumentApiImpl::non_ue_n2_message_transfer(
   itti_msg->is_nrppa_pdu_set = true;
 
   response.send(code, response_json.dump().c_str());
-  int ret = itti_inst->send_msg(itti_msg);
-  if (0 != ret) {
-    Logger::amf_server().error(
-        "Could not send ITTI message %s to task TASK_AMF_N2",
-        itti_msg->get_msg_name());
-  }
+  itti_inst->send_msg(itti_msg);
   oai::utils::utils::bdestroy_wrapper(&nrppa_pdu);
 }
 

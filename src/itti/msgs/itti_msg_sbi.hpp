@@ -1151,4 +1151,45 @@ class itti_sbi_am_policy_association_termination_notification
   oai::_3gpp::model::TerminationNotification termination_notification;
 };
 
+class itti_sbi_ue_context_in_smf_data_retrieval : public itti_sbi_msg {
+ public:
+  itti_sbi_ue_context_in_smf_data_retrieval(
+      const task_id_t orig, const task_id_t dest)
+      : itti_sbi_msg(SBI_UE_CONTEXT_IN_SMF_DATA_RETRIEVAL, orig, dest),
+        supi() {}
+
+  itti_sbi_ue_context_in_smf_data_retrieval(
+      const itti_sbi_ue_context_in_smf_data_retrieval& i)
+      : itti_sbi_msg(i) {
+    supi = i.supi;
+  }
+  virtual ~itti_sbi_ue_context_in_smf_data_retrieval(){};
+  const char* get_msg_name() { return "SBI_UE_CONTEXT_IN_SMF_DATA_RETRIEVAL"; };
+
+  std::string supi;
+};
+
+class itti_sbi_ue_context_in_smf_data_retrieval_response : public itti_sbi_msg {
+ public:
+  itti_sbi_ue_context_in_smf_data_retrieval_response(
+      const task_id_t orig, const task_id_t dest)
+      : itti_sbi_msg(SBI_UE_CONTEXT_IN_SMF_DATA_RETRIEVAL_RESPONSE, orig, dest),
+        supi(),
+        response_data() {}
+
+  itti_sbi_ue_context_in_smf_data_retrieval_response(
+      const itti_sbi_ue_context_in_smf_data_retrieval_response& i)
+      : itti_sbi_msg(i) {
+    supi          = i.supi;
+    response_data = i.response_data;
+  }
+  virtual ~itti_sbi_ue_context_in_smf_data_retrieval_response(){};
+  const char* get_msg_name() {
+    return "SBI_UE_CONTEXT_IN_SMF_DATA_RETRIEVAL_RESPONSE";
+  };
+
+  std::string supi;
+  nlohmann::json response_data;
+};
+
 #endif /* ITTI_MSG_SBI_HPP_INCLUDED_ */

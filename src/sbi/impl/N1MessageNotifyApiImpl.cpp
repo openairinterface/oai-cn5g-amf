@@ -55,12 +55,7 @@ void N1MessageNotifyApiImpl::receive_n1_message_notification(
   // TODO: problem
 
   // Process N1 Notification Message at AMF APP
-  int ret = itti_inst->send_msg(itti_msg);
-  if (0 != ret) {
-    Logger::amf_server().error(
-        "Could not send ITTI message %s to task TASK_AMF_APP",
-        itti_msg->get_msg_name());
-  }
+  itti_inst->send_msg(itti_msg);
 }
 
 }  // namespace api

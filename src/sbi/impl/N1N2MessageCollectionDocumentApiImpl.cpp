@@ -288,12 +288,7 @@ void N1N2MessageCollectionDocumentApiImpl::n1_n2_message_transfer(
   response.send(code, response_json.dump().c_str());
 
   // Process N1N2 Message Transfer Request in AMF APP
-  int ret = itti_inst->send_msg(itti_msg);
-  if (0 != ret) {
-    Logger::amf_server().error(
-        "Could not send ITTI message %s to task TASK_AMF_N2",
-        itti_msg->get_msg_name());
-  }
+  itti_inst->send_msg(itti_msg);
 
   oai::utils::utils::bdestroy_wrapper(&n1sm);
   oai::utils::utils::bdestroy_wrapper(&n2sm);

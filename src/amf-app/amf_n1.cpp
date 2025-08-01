@@ -238,12 +238,7 @@ void amf_n1::handle_itti_message(itti_downlink_nas_transfer& itti_msg) {
       release_command->ran_ue_ngap_id = ran_ue_ngap_id;
       release_command->pdu_session_id = itti_msg.pdu_session_id;
 
-      int ret = itti_inst->send_msg(release_command);
-      if (0 != ret) {
-        Logger::amf_n1().error(
-            "Could not send ITTI message %s to task TASK_AMF_N2",
-            release_command->get_msg_name());
-      }
+      itti_inst->send_msg(release_command);
       // PDU Session Resource Modify Request
     } else if (itti_msg.n2sm_info_type.compare("PDU_RES_MOD_REQ") == 0) {
       auto itti_modify_request_msg =
@@ -267,12 +262,7 @@ void amf_n1::handle_itti_message(itti_downlink_nas_transfer& itti_msg) {
       itti_modify_request_msg->s_NSSAI.setSd(psc->snssai.sd);
       itti_modify_request_msg->s_NSSAI.setSst(psc->snssai.sst);
 
-      int ret = itti_inst->send_msg(itti_modify_request_msg);
-      if (0 != ret) {
-        Logger::amf_n1().error(
-            "Could not send ITTI message %s to task TASK_AMF_N2",
-            itti_modify_request_msg->get_msg_name());
-      }
+      itti_inst->send_msg(itti_modify_request_msg);
 
     } else {
       std::shared_ptr<ue_context> uc = {};
@@ -292,12 +282,7 @@ void amf_n1::handle_itti_message(itti_downlink_nas_transfer& itti_msg) {
         psrsr->pdu_sessions.insert(std::pair<uint8_t, pdu_session_info_t>(
             itti_msg.pdu_session_id, item));
 
-        int ret = itti_inst->send_msg(psrsr);
-        if (0 != ret) {
-          Logger::amf_n1().error(
-              "Could not send ITTI message %s to task TASK_AMF_N2",
-              psrsr->get_msg_name());
-        }
+        itti_inst->send_msg(psrsr);
       } else {
         // send using InitialContextSetupRequest
         uint8_t kamf[AUTH_VECTOR_LENGTH_OCTETS];
@@ -326,12 +311,7 @@ void amf_n1::handle_itti_message(itti_downlink_nas_transfer& itti_msg) {
             itti_msg.pdu_session_id, item));
         csr->is_sr = false;  // TODO: for Service Request procedure
 
-        int ret = itti_inst->send_msg(csr);
-        if (0 != ret) {
-          Logger::amf_n1().error(
-              "Could not send ITTI message %s to task TASK_AMF_N2",
-              csr->get_msg_name());
-        }
+        itti_inst->send_msg(csr);
       }
     }
   } else {
@@ -341,12 +321,7 @@ void amf_n1::handle_itti_message(itti_downlink_nas_transfer& itti_msg) {
     dnt->amf_ue_ngap_id = amf_ue_ngap_id;
     dnt->ran_ue_ngap_id = ran_ue_ngap_id;
 
-    int ret = itti_inst->send_msg(dnt);
-    if (0 != ret) {
-      Logger::amf_n1().error(
-          "Could not send ITTI message %s to task TASK_AMF_N2",
-          dnt->get_msg_name());
-    }
+    itti_inst->send_msg(dnt);
   }
 
   oai::utils::utils::bdestroy_wrapper(&protected_nas);
@@ -1104,9 +1079,6 @@ bool amf_n1::service_request_handle(
 
     int ret = itti_inst->send_msg(psrsr);
     if (0 != ret) {
-      Logger::amf_n1().error(
-          "Could not send ITTI message %s to task TASK_AMF_N2",
-          psrsr->get_msg_name());
       oai::utils::utils::bdestroy_wrapper(&protected_nas);
       service_reject_cause = k5gmmCauseCongestion;
       return false;
@@ -1274,12 +1246,7 @@ bool amf_n1::service_request_handle(
         itti_msg->cause.setChoiceOfCause(Ngap_Cause_PR_radioNetwork);
         itti_msg->cause.set(3);  // TODO: remove hardcoded value cause nas(3)
 
-        int ret = itti_inst->send_msg(itti_msg);
-        if (0 != ret) {
-          Logger::amf_n1().error(
-              "Could not send ITTI message %s to task TASK_AMF_N2",
-              itti_msg->get_msg_name());
-        }
+        itti_inst->send_msg(itti_msg);
       }
     }
   }
@@ -1427,9 +1394,6 @@ bool amf_n1::service_request_handle(
 
     int ret = itti_inst->send_msg(itti_msg);
     if (0 != ret) {
-      Logger::amf_n1().error(
-          "Could not send ITTI message %s to task TASK_AMF_N2",
-          itti_msg->get_msg_name());
       oai::utils::utils::bdestroy_wrapper(&protected_nas);
       service_reject_cause = k5gmmCauseCongestion;
       return false;
@@ -1527,9 +1491,6 @@ bool amf_n1::service_request_handle(
 
     int ret = itti_inst->send_msg(itti_msg);
     if (0 != ret) {
-      Logger::amf_n1().error(
-          "Could not send ITTI message %s to task TASK_AMF_N2",
-          itti_msg->get_msg_name());
       oai::utils::utils::bdestroy_wrapper(&protected_nas);
       service_reject_cause = k5gmmCauseCongestion;
       return false;
@@ -1588,11 +1549,7 @@ void amf_n1::send_service_reject(
   dnt->ran_ue_ngap_id = nc->ran_ue_ngap_id;
 
   int ret = itti_inst->send_msg(dnt);
-  if (0 != ret) {
-    Logger::amf_n1().error(
-        "Could not send ITTI message %s to task TASK_AMF_N2",
-        dnt->get_msg_name());
-  } else {
+  if (0 == ret) {
     // Update 5GMM State
     stacs.update_5gmm_state(nc, _5GMM_DEREGISTERED);
     set_5gmm_state(nc, _5GMM_DEREGISTERED);
@@ -2196,12 +2153,7 @@ void amf_n1::itti_send_dl_nas_buffer_to_task_n2(
   msg->amf_ue_ngap_id = amf_ue_ngap_id;
   msg->nas            = bstrcpy(nas_msg);
 
-  int ret = itti_inst->send_msg(msg);
-  if (0 != ret) {
-    Logger::amf_n1().error(
-        "Could not send ITTI message %s to task TASK_AMF_N2",
-        msg->get_msg_name());
-  }
+  itti_inst->send_msg(msg);
 }
 
 //------------------------------------------------------------------------------
@@ -2339,9 +2291,6 @@ bool amf_n1::run_registration_procedure(
 
     int ret = itti_inst->send_msg(dnt);
     if (0 != ret) {
-      Logger::amf_n1().error(
-          "Could not send ITTI message %s to task TASK_AMF_N2",
-          dnt->get_msg_name());
       cause = k5gmmCauseCongestion;
       return false;
     }
@@ -2437,12 +2386,7 @@ bool amf_n1::get_authentication_vectors_from_ausf(
   itti_msg->auth_info  = authentication_info;
   itti_msg->promise_id = promise_id;
 
-  int ret = itti_inst->send_msg(itti_msg);
-  if (0 != ret) {
-    Logger::amf_n1().error(
-        "Could not send ITTI message %s to task TASK_AMF_SBI",
-        itti_msg->get_msg_name());
-  }
+  itti_inst->send_msg(itti_msg);
 
   bool is_result_available = true;
   // Wait for the response available and process accordingly
@@ -2570,12 +2514,7 @@ bool amf_n1::_5g_aka_confirmation_from_ausf(
   itti_msg->promise_id        = promise_id;
   itti_msg->uri               = nc->href;
 
-  int ret = itti_inst->send_msg(itti_msg);
-  if (0 != ret) {
-    Logger::amf_n1().error(
-        "Could not send ITTI message %s to task TASK_AMF_SBI",
-        itti_msg->get_msg_name());
-  }
+  itti_inst->send_msg(itti_msg);
 
   // Wait and process the response
   ConfirmationDataResponse confirmation_data_response = {};
@@ -3313,12 +3252,7 @@ void amf_n1::security_mode_complete_handle(
     dnt->amf_ue_ngap_id = amf_ue_ngap_id;
     dnt->ran_ue_ngap_id = ran_ue_ngap_id;
 
-    int ret = itti_inst->send_msg(dnt);
-    if (0 != ret) {
-      Logger::amf_n1().error(
-          "Could not send ITTI message %s to task TASK_AMF_N2",
-          dnt->get_msg_name());
-    }
+    itti_inst->send_msg(dnt);
   } else {
     // use InitialContextSetupRequest to convey Registration Accept
     uint8_t kamf[AUTH_VECTOR_LENGTH_OCTETS];
@@ -3353,12 +3287,7 @@ void amf_n1::security_mode_complete_handle(
           std::pair<uint8_t, pdu_session_info_t>(pdu_session.first, item));
     }
 
-    int ret = itti_inst->send_msg(itti_msg);
-    if (0 != ret) {
-      Logger::amf_n1().error(
-          "Could not send ITTI message %s to task TASK_AMF_N2",
-          itti_msg->get_msg_name());
-    }
+    itti_inst->send_msg(itti_msg);
   }
 
   Logger::amf_n1().info(
@@ -3452,12 +3381,7 @@ void amf_n1::registration_complete_handle(
     itti_msg_cxt_release->cause.setChoiceOfCause(Ngap_Cause_PR_nas);
     itti_msg_cxt_release->cause.set(Ngap_CauseNas_normal_release);
 
-    int ret = itti_inst->send_msg(itti_msg_cxt_release);
-    if (0 != ret) {
-      Logger::amf_n1().error(
-          "Could not send ITTI message %s to task TASK_AMF_N2",
-          itti_msg_cxt_release->get_msg_name());
-    }
+    itti_inst->send_msg(itti_msg_cxt_release);
   }
 
   // TODO: Configuration Update Command message causes issue for UERANSIM
@@ -3499,12 +3423,7 @@ void amf_n1::registration_complete_handle(
   dnt->amf_ue_ngap_id = amf_ue_ngap_id;
   dnt->ran_ue_ngap_id = ran_ue_ngap_id;
 
-  int ret = itti_inst->send_msg(dnt);
-  if (0 != ret) {
-    Logger::amf_n1().error(
-        "Could not send ITTI message %s to task TASK_AMF_N2",
-        dnt->get_msg_name());
-  }
+  itti_inst->send_msg(dnt);
   */
 }
 
@@ -3780,12 +3699,7 @@ void amf_n1::ue_initiate_de_registration_handle(
         itti_msg->promise_id       = promise_id;
         itti_msg->context_location = session->smf_info.context_location;
 
-        int ret = itti_inst->send_msg(itti_msg);
-        if (0 != ret) {
-          Logger::amf_n1().error(
-              "Could not send ITTI message %s to task TASK_AMF_SBI",
-              itti_msg->get_msg_name());
-        }
+        itti_inst->send_msg(itti_msg);
       }
 
       // Wait for the response available and process accordingly
@@ -3936,12 +3850,7 @@ void amf_n1::ue_initiate_de_registration_handle(
   itti_msg->cause.set(
       2);  // TODO: remove hardcoded value cause nas(2)--deregister
 
-  int ret = itti_inst->send_msg(itti_msg);
-  if (0 != ret) {
-    Logger::amf_n1().error(
-        "Could not send ITTI message %s to task TASK_AMF_N2",
-        itti_msg->get_msg_name());
-  }
+  itti_inst->send_msg(itti_msg);
 
   // Trigger UE Connectivity Status Notify
   Logger::amf_n1().debug(
@@ -4079,13 +3988,7 @@ void amf_n1::ul_nas_transport_handle(
 
         ngap_utils::sd_int_to_string_hex(snssai.sd, itti_msg->snssai.sd);
 
-        int ret = itti_inst->send_msg(itti_msg);
-        if (0 != ret) {
-          Logger::amf_n1().error(
-              "Could not send ITTI message %s to task TASK_AMF_SBI",
-              itti_msg->get_msg_name());
-        }
-
+        itti_inst->send_msg(itti_msg);
       } break;
       default: {
         Logger::amf_n1().debug("Transport message un supported");
@@ -4108,12 +4011,7 @@ void amf_n1::ul_nas_transport_handle(
         itti_msg->n1sm           = bstrcpy(sm_msg);
         itti_msg->is_n1sm_set    = true;
 
-        int ret = itti_inst->send_msg(itti_msg);
-        if (0 != ret) {
-          Logger::amf_n1().error(
-              "Could not send ITTI message %s to task TASK_AMF_SBI",
-              itti_msg->get_msg_name());
-        }
+        itti_inst->send_msg(itti_msg);
 
       } break;
       default: {
@@ -4256,9 +4154,6 @@ bool amf_n1::run_mobility_registration_update_procedure(
 
     int ret = itti_inst->send_msg(itti_msg);
     if (0 != ret) {
-      Logger::amf_n1().error(
-          "Could not send ITTI message %s to task TASK_AMF_N2",
-          itti_msg->get_msg_name());
       cause = k5gmmCauseCongestion;
       return false;
     }
@@ -4304,9 +4199,6 @@ bool amf_n1::run_mobility_registration_update_procedure(
 
     int ret = itti_inst->send_msg(itti_msg);
     if (0 != ret) {
-      Logger::amf_n1().error(
-          "Could not send ITTI message %s to task TASK_AMF_N2",
-          itti_msg->get_msg_name());
       return false;
     }
   }
@@ -4379,9 +4271,6 @@ bool amf_n1::run_periodic_registration_update_procedure(
 
   int ret = itti_inst->send_msg(itti_msg);
   if (0 != ret) {
-    Logger::amf_n1().error(
-        "Could not send ITTI message %s to task TASK_AMF_N2",
-        itti_msg->get_msg_name());
     cause = k5gmmCauseCongestion;
     oai::utils::utils::bdestroy_wrapper(&protected_nas);
     return false;
@@ -4463,9 +4352,6 @@ bool amf_n1::run_periodic_registration_update_procedure(
 
   int ret = itti_inst->send_msg(itti_msg);
   if (0 != ret) {
-    Logger::amf_n1().error(
-        "Could not send ITTI message %s to task TASK_AMF_N2",
-        itti_msg->get_msg_name());
     cause = k5gmmCauseCongestion;
     oai::utils::utils::bdestroy_wrapper(&protected_nas);
     return false;
@@ -4555,12 +4441,7 @@ void amf_n1::handle_ue_location_change(
       itti_msg->event_notifs.push_back(ev_notif);
     }
 
-    int ret = itti_inst->send_msg(itti_msg);
-    if (0 != ret) {
-      Logger::amf_n1().error(
-          "Could not send ITTI message %s to task TASK_AMF_SBI",
-          itti_msg->get_msg_name());
-    }
+    itti_inst->send_msg(itti_msg);
   }
 }
 
@@ -4620,12 +4501,7 @@ void amf_n1::handle_ue_reachability_status_change(
       itti_msg->event_notifs.push_back(ev_notif);
     }
 
-    int ret = itti_inst->send_msg(itti_msg);
-    if (0 != ret) {
-      Logger::amf_n1().error(
-          "Could not send ITTI message %s to task TASK_AMF_SBI",
-          itti_msg->get_msg_name());
-    }
+    itti_inst->send_msg(itti_msg);
   }
 }
 
@@ -4698,12 +4574,7 @@ void amf_n1::handle_ue_registration_state_change(
       itti_msg->event_notifs.push_back(ev_notif);
     }
 
-    int ret = itti_inst->send_msg(itti_msg);
-    if (0 != ret) {
-      Logger::amf_n1().error(
-          "Could not send ITTI message %s to task TASK_AMF_SBI",
-          itti_msg->get_msg_name());
-    }
+    itti_inst->send_msg(itti_msg);
   }
 }
 
@@ -4771,12 +4642,7 @@ void amf_n1::handle_ue_connectivity_state_change(
       itti_msg->event_notifs.push_back(ev_notif);
     }
 
-    int ret = itti_inst->send_msg(itti_msg);
-    if (0 != ret) {
-      Logger::amf_n1().error(
-          "Could not send ITTI message %s to task TASK_AMF_SBI",
-          itti_msg->get_msg_name());
-    }
+    itti_inst->send_msg(itti_msg);
   }
 }
 
@@ -4829,12 +4695,7 @@ void amf_n1::handle_ue_communication_failure_change(
       itti_msg->event_notifs.push_back(ev_notif);
     }
 
-    int ret = itti_inst->send_msg(itti_msg);
-    if (0 != ret) {
-      Logger::amf_n1().error(
-          "Could not send ITTI message %s to task TASK_AMF_SBI",
-          itti_msg->get_msg_name());
-    }
+    itti_inst->send_msg(itti_msg);
   }
 }
 
@@ -4900,12 +4761,7 @@ void amf_n1::handle_ue_loss_of_connectivity_change(
       itti_msg->event_notifs.push_back(ev_notif);
     }
 
-    int ret = itti_inst->send_msg(itti_msg);
-    if (0 != ret) {
-      Logger::amf_n1().error(
-          "Could not send ITTI message %s to task TASK_AMF_SBI",
-          itti_msg->get_msg_name());
-    }
+    itti_inst->send_msg(itti_msg);
   }
 }
 
@@ -5220,12 +5076,7 @@ void amf_n1::implicit_deregistration_timer_timeout(
     itti_msg->supi           = uc->supi;
     itti_msg->pdu_session_id = p->pdu_session_id;
 
-    int ret = itti_inst->send_msg(itti_msg);
-    if (0 != ret) {
-      Logger::amf_n1().error(
-          "Could not send ITTI message %s to task TASK_AMF_SBI",
-          itti_msg->get_msg_name());
-    }
+    itti_inst->send_msg(itti_msg);
   }
 
   // Send N2 UE Release command to NG-RAN if there is a N2 signalling
@@ -5240,12 +5091,7 @@ void amf_n1::implicit_deregistration_timer_timeout(
   itti_msg_cxt_release->cause.setChoiceOfCause(Ngap_Cause_PR_nas);
   itti_msg_cxt_release->cause.set(Ngap_CauseNas_deregister);
 
-  int ret = itti_inst->send_msg(itti_msg_cxt_release);
-  if (0 != ret) {
-    Logger::amf_n1().error(
-        "Could not send ITTI message %s to task TASK_AMF_N2",
-        itti_msg_cxt_release->get_msg_name());
-  }
+  itti_inst->send_msg(itti_msg_cxt_release);
 
   // Trigger UE Connectivity Status Notify
   Logger::amf_n1().debug(
@@ -5569,12 +5415,7 @@ bool amf_n1::get_slice_selection_subscription_data(
     itti_msg->plmn.mnc   = uc->cgi.mnc;
     itti_msg->promise_id = promise_id;
 
-    int ret = itti_inst->send_msg(itti_msg);
-    if (0 != ret) {
-      Logger::amf_n1().error(
-          "Could not send ITTI message %s to task TASK_AMF_SBI",
-          itti_msg->get_msg_name());
-    }
+    itti_inst->send_msg(itti_msg);
 
     // Wait for the response available and process accordingly
     std::optional<nlohmann::json> result = std::nullopt;
@@ -5732,12 +5573,7 @@ bool amf_n1::get_network_slice_selection(
     itti_msg->tai.plmn.mnc = uc->tai.mnc;
     itti_msg->tai.tac      = uc->tai.tac;
 
-    int ret = itti_inst->send_msg(itti_msg);
-    if (0 != ret) {
-      Logger::amf_n1().error(
-          "Could not send ITTI message %s to task TASK_AMF_SBI",
-          itti_msg->get_msg_name());
-    }
+    itti_inst->send_msg(itti_msg);
 
     // Wait for the response available and process accordingly
     std::optional<nlohmann::json> result_opt = std::nullopt;
@@ -5853,12 +5689,7 @@ bool amf_n1::get_target_amf(
     itti_msg->target_nf_type        = "AMF";
     itti_msg->nrf_amf_set           = nrf_amf_set;
 
-    int ret = itti_inst->send_msg(itti_msg);
-    if (0 != ret) {
-      Logger::amf_n1().error(
-          "Could not send ITTI message %s to task TASK_AMF_SBI",
-          itti_msg->get_msg_name());
-    }
+    itti_inst->send_msg(itti_msg);
 
     // Wait for the response available and process accordingly
     std::optional<nlohmann::json> result = std::nullopt;
@@ -5933,12 +5764,7 @@ void amf_n1::send_n1_message_notity(
   itti_msg->target_amf_uri = target_amf;
   itti_msg->supi           = nc->supi;
 
-  int ret = itti_inst->send_msg(itti_msg);
-  if (0 != ret) {
-    Logger::amf_n1().error(
-        "Could not send ITTI message %s to task TASK_AMF_SBI",
-        itti_msg->get_msg_name());
-  }
+  itti_inst->send_msg(itti_msg);
 }
 
 //------------------------------------------------------------------------------
@@ -5959,12 +5785,7 @@ bool amf_n1::reroute_nas_via_an(
   itti_msg->amf_ue_ngap_id = nc->amf_ue_ngap_id;
   itti_msg->amf_set_id     = amf_set_id;
 
-  int ret = itti_inst->send_msg(itti_msg);
-  if (0 != ret) {
-    Logger::amf_n1().error(
-        "Could not send ITTI message %s to task TASK_AMF_N2",
-        itti_msg->get_msg_name());
-  }
+  itti_inst->send_msg(itti_msg);
 
   return true;
 }

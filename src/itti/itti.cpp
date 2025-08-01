@@ -233,6 +233,11 @@ int itti_mw::send_msg(std::shared_ptr<itti_msg> message) {
   } else if (message->destination == TASK_ALL) {
     return send_broadcast_msg(message);
   }
+
+  Logger::itti().warn(
+      "Could not send ITTI message %s from %d to %d!", i->get_msg_name(),
+      message->origin, message->destination);
+  // TODO: Add retry mechanism or error handling
   return RETURNerror;
 }
 

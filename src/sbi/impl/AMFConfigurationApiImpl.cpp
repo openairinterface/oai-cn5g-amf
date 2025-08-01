@@ -55,12 +55,7 @@ void AMFConfigurationApiImpl::read_configuration(
 
   itti_msg->promise_id = promise_id;
 
-  int ret = itti_inst->send_msg(itti_msg);
-  if (0 != ret) {
-    Logger::amf_server().error(
-        "Could not send ITTI message %s to task TASK_AMF_APP",
-        itti_msg->get_msg_name());
-  }
+  itti_inst->send_msg(itti_msg);
 
   // Wait for the response available and process accordingly
   std::optional<nlohmann::json> result_opt = std::nullopt;
@@ -123,12 +118,7 @@ void AMFConfigurationApiImpl::update_configuration(
   itti_msg->promise_id    = promise_id;
   itti_msg->configuration = configuration_info;
 
-  int ret = itti_inst->send_msg(itti_msg);
-  if (0 != ret) {
-    Logger::amf_server().error(
-        "Could not send ITTI message %s to task TASK_AMF_APP",
-        itti_msg->get_msg_name());
-  }
+  itti_inst->send_msg(itti_msg);
 
   // Wait for the response available and process accordingly
   std::optional<nlohmann::json> result_opt = std::nullopt;

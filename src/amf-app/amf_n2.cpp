@@ -899,12 +899,7 @@ void amf_n2::handle_itti_message(
   itti_msg->ran_ue_ngap_id = ran_ue_ngap_id;
   itti_msg->amf_ue_ngap_id = INVALID_AMF_UE_NGAP_ID;
 
-  int ret = itti_inst->send_msg(itti_msg);
-  if (0 != ret) {
-    Logger::amf_n2().error(
-        "Could not send ITTI message %s to task TASK_AMF_APP",
-        itti_msg->get_msg_name());
-  }
+  itti_inst->send_msg(itti_msg);
 }
 
 //------------------------------------------------------------------------------
@@ -964,12 +959,7 @@ void amf_n2::handle_itti_message(
     Logger::amf_n2().debug("Missing IE UserLocationInformationNR");
   }
 
-  int ret = itti_inst->send_msg(itti_msg);
-  if (0 != ret) {
-    Logger::amf_n2().error(
-        "Could not send ITTI message %s to task TASK_AMF_N1",
-        itti_msg->get_msg_name());
-  }
+  itti_inst->send_msg(itti_msg);
 }
 
 //------------------------------------------------------------------------------
@@ -1512,12 +1502,7 @@ void amf_n2::handle_itti_message(
       itti_msg_ev->event_notifs.push_back(ev_notif);
     }
 
-    int ret = itti_inst->send_msg(itti_msg_ev);
-    if (0 != ret) {
-      Logger::amf_n2().error(
-          "Could not send ITTI message %s to task TASK_AMF_SBI",
-          itti_msg_ev->get_msg_name());
-    }
+    itti_inst->send_msg(itti_msg_ev);
   }
 }
 
@@ -1676,12 +1661,7 @@ void amf_n2::handle_itti_message(
     itti_n11_msg->promise_id     = promise_id;
     itti_n11_msg->up_cnx_state   = "DEACTIVATED";
 
-    int ret = itti_inst->send_msg(itti_n11_msg);
-    if (0 != ret) {
-      Logger::ngap().error(
-          "Could not send ITTI message %s to task TASK_AMF_SBI",
-          itti_n11_msg->get_msg_name());
-    }
+    itti_inst->send_msg(itti_n11_msg);
   }
 
   bool is_up_activated = true;
@@ -1949,12 +1929,7 @@ bool amf_n2::handle_itti_message(
       itti_msg->ran_ue_ngap_id = ran_ue_ngap_id;
       itti_msg->promise_id     = promise_id;
 
-      int ret = itti_inst->send_msg(itti_msg);
-      if (0 != ret) {
-        Logger::ngap().error(
-            "Could not send ITTI message %s to task TASK_AMF_SBI",
-            itti_msg->get_msg_name());
-      }
+      itti_inst->send_msg(itti_msg);
     }
   }
 
@@ -2099,12 +2074,7 @@ void amf_n2::handle_itti_message(
     itti_msg->ran_ue_ngap_id = unc.get()->ran_ue_ngap_id;
     itti_msg->promise_id     = promise_id;
 
-    int ret = itti_inst->send_msg(itti_msg);
-    if (0 != ret) {
-      Logger::ngap().error(
-          "Could not send ITTI message %s to task TASK_AMF_SBI",
-          itti_msg->get_msg_name());
-    }
+    itti_inst->send_msg(itti_msg);
   }
 
   // Send HandoverCommandMsg to Source gNB
@@ -2254,12 +2224,7 @@ void amf_n2::handle_itti_message(
       itti_n11_msg->ran_ue_ngap_id = old_ran_ue_ngap_id;
       itti_n11_msg->promise_id     = promise_id;
 
-      int ret = itti_inst->send_msg(itti_n11_msg);
-      if (0 != ret) {
-        Logger::ngap().error(
-            "Could not send ITTI message %s to task TASK_AMF_SBI",
-            itti_n11_msg->get_msg_name());
-      }
+      itti_inst->send_msg(itti_n11_msg);
     }
   }
 
@@ -2619,12 +2584,7 @@ void amf_n2::handle_itti_message(
           sub.second.get()->getN2NotifyCallbackUri();
     }
 
-    int ret = itti_inst->send_msg(itti_msg_notification);
-    if (0 != ret) {
-      Logger::amf_n2().error(
-          "Could not send ITTI message %s to task TASK_AMF_SBI",
-          itti_msg_notification->get_msg_name());
-    }
+    itti_inst->send_msg(itti_msg_notification);
   }
 }
 
@@ -2672,12 +2632,7 @@ void amf_n2::handle_itti_message(
           sub.second.get()->getN2NotifyCallbackUri();
     }
 
-    int ret = itti_inst->send_msg(itti_msg_notification);
-    if (0 != ret) {
-      Logger::amf_n2().error(
-          "Could not send ITTI message %s to task TASK_AMF_SBI",
-          itti_msg_notification->get_msg_name());
-    }
+    itti_inst->send_msg(itti_msg_notification);
   }
 }
 

@@ -54,6 +54,7 @@
 #include "PcfInfo.h"
 #include "PolicyUpdate.h"
 #include "AmRequestedValueRep.h"
+#include "UeContextInSmfData.h"
 
 using namespace std::chrono;
 using namespace oai::ngap;
@@ -301,6 +302,15 @@ void amf_app_task(void*) {
         amf_app_inst->handle_itti_message(std::ref(*m));
       } break;
 
+      case SBI_UE_CONTEXT_IN_SMF_DATA_RETRIEVAL_RESPONSE: {
+        Logger::amf_app().debug(
+            "Received SBI_UE_CONTEXT_IN_SMF_DATA_RETRIEVAL_RESPONSE");
+        itti_sbi_ue_context_in_smf_data_retrieval_response* m =
+            dynamic_cast<itti_sbi_ue_context_in_smf_data_retrieval_response*>(
+                msg);
+        amf_app_inst->handle_itti_message(std::ref(*m));
+      } break;
+
       case TIME_OUT: {
         if (itti_msg_timeout* to = dynamic_cast<itti_msg_timeout*>(msg)) {
           switch (to->arg1_user) {
@@ -459,12 +469,7 @@ void amf_app::handle_itti_message(
     amf_n1_inst->supi_2_amf_id(itti_msg.supi, paging_msg->amf_ue_ngap_id);
     amf_n1_inst->supi_2_ran_id(itti_msg.supi, paging_msg->ran_ue_ngap_id);
 
-    int ret = itti_inst->send_msg(paging_msg);
-    if (ret != RETURNok) {
-      Logger::amf_app().error(
-          "Could not send ITTI message %s to task TASK_AMF_N2",
-          paging_msg->get_msg_name());
-    }
+    itti_inst->send_msg(paging_msg);
   } else if (itti_msg.is_nrppa_pdu_set) {
     Logger::amf_app().info(
         "Handle ITTI N1N2 Message Transfer Request for NRPPa PDU");
@@ -474,12 +479,7 @@ void amf_app::handle_itti_message(
     dl_msg->routing_id = bstrcpy(itti_msg.routing_id);
     amf_n1_inst->supi_2_amf_id(itti_msg.supi, dl_msg->amf_ue_ngap_id);
     amf_n1_inst->supi_2_ran_id(itti_msg.supi, dl_msg->ran_ue_ngap_id);
-    int ret = itti_inst->send_msg(dl_msg);
-    if (ret != RETURNok) {
-      Logger::amf_app().error(
-          "Could not send ITTI message %s to task TASK_AMF_N2",
-          dl_msg->get_msg_name());
-    }
+    itti_inst->send_msg(dl_msg);
   } else if (itti_msg.is_n1sm_set or itti_msg.is_n2sm_set) {
     Logger::amf_app().info("Handle ITTI N1N2 Message Transfer Request");
     auto dl_msg =
@@ -513,12 +513,7 @@ void amf_app::handle_itti_message(
     amf_n1_inst->supi_2_amf_id(itti_msg.supi, dl_msg->amf_ue_ngap_id);
     amf_n1_inst->supi_2_ran_id(itti_msg.supi, dl_msg->ran_ue_ngap_id);
 
-    int ret = itti_inst->send_msg(dl_msg);
-    if (ret != RETURNok) {
-      Logger::amf_app().error(
-          "Could not send ITTI message %s to task TASK_AMF_N1",
-          dl_msg->get_msg_name());
-    }
+    itti_inst->send_msg(dl_msg);
   } else {
     Logger::amf_app().warn("Unknown N1N2 Message Transfer Request type");
   }
@@ -538,12 +533,7 @@ void amf_app::handle_itti_message(
 
     dl_msg->global_ran_node_list = itti_msg.global_ran_node_list;
 
-    int ret = itti_inst->send_msg(dl_msg);
-    if (ret != RETURNok) {
-      Logger::amf_app().error(
-          "Could not send ITTI message %s to task TASK_AMF_N2",
-          dl_msg->get_msg_name());
-    }
+    itti_inst->send_msg(dl_msg);
   } else {
     Logger::amf_app().info(
         "Handle ITTI Non UE N2 Message Transfer Request: No NRPPa PDU "
@@ -627,12 +617,7 @@ void amf_app::handle_itti_message(
     itti_n1_msg->guti = guti;
   }
 
-  int ret = itti_inst->send_msg(itti_n1_msg);
-  if (0 != ret) {
-    Logger::amf_app().error(
-        "Could not send ITTI message %s to task TASK_AMF_N1",
-        itti_n1_msg->get_msg_name());
-  }
+  itti_inst->send_msg(itti_n1_msg);
 }
 
 //------------------------------------------------------------------------------
@@ -795,12 +780,7 @@ void amf_app::handle_itti_message(itti_sbi_n1_message_notification& itti_msg) {
   itti_n1_msg->mnc                         = ran_node_id.getPlmnId().getMnc();
   itti_n1_msg->is_guti_valid               = false;
 
-  int ret = itti_inst->send_msg(itti_n1_msg);
-  if (0 != ret) {
-    Logger::amf_app().error(
-        "Could not send ITTI message %s to task TASK_AMF_N1",
-        itti_n1_msg->get_msg_name());
-  }
+  itti_inst->send_msg(itti_n1_msg);
 
   oai::utils::utils::bdestroy_wrapper(&n1sm);
   return;
@@ -1402,6 +1382,39 @@ void amf_app::handle_itti_message(
 }
 
 //------------------------------------------------------------------------------
+void amf_app::handle_itti_message(
+    itti_sbi_ue_context_in_smf_data_retrieval_response& r) {
+  Logger::amf_app().debug(
+      "Handle SBI_UE_CONTEXT_IN_SMF_DATA_RETRIEVAL_RESPONSE response");
+
+  uint32_t response_code = oai::common::sbi::http_status_code::NO_RESPONSE;
+  if (r.response_data.find(kSbiResponseHttpResponseCode) !=
+      r.response_data.end()) {
+    response_code = r.response_data[kSbiResponseHttpResponseCode].get<int>();
+  }
+
+  if (response_code == oai::common::sbi::http_status_code::OK) {
+    // Process the response
+
+    if (r.response_data.find(kSbiResponseJsonData) != r.response_data.end()) {
+      std::shared_ptr<ue_context> uc = {};
+      if (supi_2_ue_context(r.supi, uc)) {
+        try {
+          oai::_3gpp::model::UeContextInSmfData ue_context = {};
+          from_json(r.response_data[kSbiResponseJsonData], ue_context);
+          // Store the UE Context
+          // TODO:
+        } catch (std::exception& e) {
+          Logger::amf_app().warn(
+              "Could not parse the UeContextInSmfData from "
+              "Json");
+        }
+      }
+    }
+  }
+}
+
+//------------------------------------------------------------------------------
 void amf_app::register_3gpp_access(std::shared_ptr<ue_context>& uc) const {
   Logger::amf_app().debug("AMF registers for 3GPP access with UDM");
 
@@ -1449,12 +1462,7 @@ void amf_app::register_3gpp_access(std::shared_ptr<ue_context>& uc) const {
   itti_msg->registration_data = registration_data_json;
   itti_msg->supi              = uc->supi;
 
-  int ret = itti_inst->send_msg(itti_msg);
-  if (0 != ret) {
-    Logger::amf_app().error(
-        "Could not send ITTI message %s to task TASK_AMF_SBI",
-        itti_msg->get_msg_name());
-  }
+  itti_inst->send_msg(itti_msg);
 }
 
 //------------------------------------------------------------------------------
@@ -1483,12 +1491,7 @@ void amf_app::get_access_and_mobility_subscription_data(
   itti_msg->supi       = uc->supi;
   itti_msg->plmn_id    = plmn_id;
 
-  int ret = itti_inst->send_msg(itti_msg);
-  if (0 != ret) {
-    Logger::amf_app().error(
-        "Could not send ITTI message %s to task TASK_AMF_SBI",
-        itti_msg->get_msg_name());
-  }
+  itti_inst->send_msg(itti_msg);
 
   bool is_result_available = true;
 
@@ -1557,12 +1560,7 @@ void amf_app::get_smf_selection_subscription_data(
   itti_msg->supi    = uc->supi;
   itti_msg->plmn_id = plmn_id;
 
-  int ret = itti_inst->send_msg(itti_msg);
-  if (0 != ret) {
-    Logger::amf_app().error(
-        "Could not send ITTI message %s to task TASK_AMF_SBI",
-        itti_msg->get_msg_name());
-  }
+  itti_inst->send_msg(itti_msg);
 }
 
 //------------------------------------------------------------------------------
@@ -1605,12 +1603,7 @@ void amf_app::discover_pcf(std::shared_ptr<ue_context>& uc) {
   // TODO: add support for PCF Selection Assistance Info and PCF ID(s) serving
   // the established PDU Sessions
 
-  int ret = itti_inst->send_msg(itti_msg);
-  if (0 != ret) {
-    Logger::amf_app().error(
-        "Could not send ITTI message %s to task TASK_AMF_SBI",
-        itti_msg->get_msg_name());
-  }
+  itti_inst->send_msg(itti_msg);
 
   bool is_result_available = false;
 
@@ -1721,12 +1714,7 @@ void amf_app::perform_am_policy_association(std::shared_ptr<ue_context>& uc) {
 
   itti_msg->policy_assoc_req = policy_assc_request;
 
-  int ret = itti_inst->send_msg(itti_msg);
-  if (0 != ret) {
-    Logger::amf_app().error(
-        "Could not send ITTI message %s to task TASK_AMF_SBI",
-        itti_msg->get_msg_name());
-  }
+  itti_inst->send_msg(itti_msg);
 }
 
 //------------------------------------------------------------------------------
@@ -1742,12 +1730,7 @@ void amf_app::perform_am_policy_association_termination(
 
   itti_msg->supi = uc->supi;
 
-  int ret = itti_inst->send_msg(itti_msg);
-  if (0 != ret) {
-    Logger::amf_app().error(
-        "Could not send ITTI message %s to task TASK_AMF_SBI",
-        itti_msg->get_msg_name());
-  }
+  itti_inst->send_msg(itti_msg);
 }
 
 //------------------------------------------------------------------------------
@@ -1769,12 +1752,7 @@ void amf_app::perform_am_policy_association_update(
   itti_msg->supi                    = uc->supi;
   itti_msg->policy_assoc_update_req = policy_assc_update_request;
 
-  int ret = itti_inst->send_msg(itti_msg);
-  if (0 != ret) {
-    Logger::amf_app().error(
-        "Could not send ITTI message %s to task TASK_AMF_SBI",
-        itti_msg->get_msg_name());
-  }
+  itti_inst->send_msg(itti_msg);
 }
 
 //------------------------------------------------------------------------------
@@ -1788,12 +1766,22 @@ void amf_app::get_am_policy_association(const std::shared_ptr<ue_context>& uc) {
 
   itti_msg->supi = uc->supi;
 
-  int ret = itti_inst->send_msg(itti_msg);
-  if (0 != ret) {
-    Logger::amf_app().error(
-        "Could not send ITTI message %s to task TASK_AMF_SBI",
-        itti_msg->get_msg_name());
-  }
+  itti_inst->send_msg(itti_msg);
+}
+
+//------------------------------------------------------------------------------
+void amf_app::get_ue_context_in_smf_data(
+    const std::shared_ptr<ue_context>& uc) {
+  Logger::amf_app().debug("Retrieve UE Context In SMF Data");
+
+  // Send request to SBI to trigger UE Context In SMF Data Retrieval with UDM
+  std::shared_ptr<itti_sbi_ue_context_in_smf_data_retrieval> itti_msg =
+      std::make_shared<itti_sbi_ue_context_in_smf_data_retrieval>(
+          TASK_AMF_APP, TASK_AMF_SBI);
+
+  itti_msg->supi = uc->supi;
+
+  itti_inst->send_msg(itti_msg);
 }
 
 //---------------------------------------------------------------------------------------------
@@ -2086,12 +2074,7 @@ void amf_app::handle_determine_location_request() {
     itti_msg->input_data = input_data;
     itti_msg->promise_id = promise_id;
 
-    int ret = itti_inst->send_msg(itti_msg);
-    if (0 != ret) {
-      Logger::amf_app().error(
-          "Could not send ITTI message %s to task TASK_AMF_SBI",
-          itti_msg->get_msg_name());
-    }
+    itti_inst->send_msg(itti_msg);
 
     // Wait for the response available and process accordingly
     std::optional<nlohmann::json> location_data = std::nullopt;
@@ -2295,12 +2278,7 @@ void amf_app::register_to_nrf() {
     itti_msg->profile = nf_instance_profile;
     itti_msg->nrf_uri = nrf_instance;
 
-    int ret = itti_inst->send_msg(itti_msg);
-    if (RETURNok != ret) {
-      Logger::amf_app().error(
-          "Could not send ITTI message %s to task TASK_AMF_SBI",
-          itti_msg->get_msg_name());
-    }
+    itti_inst->send_msg(itti_msg);
   }
 }
 
@@ -2316,12 +2294,7 @@ void amf_app::register_to_nrf(const std::string& nrf_uri) const {
   itti_msg->profile = nf_instance_profile;
   itti_msg->nrf_uri = nrf_uri;
 
-  int ret = itti_inst->send_msg(itti_msg);
-  if (RETURNok != ret) {
-    Logger::amf_app().error(
-        "Could not send ITTI message %s to task TASK_AMF_SBI",
-        itti_msg->get_msg_name());
-  }
+  itti_inst->send_msg(itti_msg);
 }
 
 //------------------------------------------------------------------------------
@@ -2354,12 +2327,7 @@ void amf_app::get_nrfs(std::unordered_set<std::string>& nrfs) {
         itti_msg->snssai.sst     = s.sst;
         itti_msg->snssai.sd      = s.sd;
         itti_msg->promise_id     = promise_id;
-        int ret                  = itti_inst->send_msg(itti_msg);
-        if (0 != ret) {
-          Logger::amf_app().error(
-              "Could not send ITTI message %s to task TASK_AMF_SBI",
-              itti_msg->get_msg_name());
-        }
+        itti_inst->send_msg(itti_msg);
       }
     }
 
@@ -2425,12 +2393,7 @@ void amf_app::deregister_to_nrf() const {
         TASK_AMF_APP, TASK_AMF_SBI);
     itti_msg->amf_instance_id = amf_instance_id;
     itti_msg->nrf_uri         = nrf_instance_uri;
-    int ret                   = itti_inst->send_msg(itti_msg);
-    if (RETURNok != ret) {
-      Logger::amf_app().error(
-          "Could not send ITTI message %s to task TASK_AMF_SBI",
-          itti_msg->get_msg_name());
-    }
+    itti_inst->send_msg(itti_msg);
   }
 }
 
@@ -2453,12 +2416,7 @@ void amf_app::timer_nrf_heartbeat_timeout(
   itti_msg->amf_instance_id = amf_instance_id;
   itti_msg->nrf_uri         = nrf_uri;
 
-  int ret = itti_inst->send_msg(itti_msg);
-  if (RETURNok != ret) {
-    Logger::amf_app().error(
-        "Could not send ITTI message %s to task TASK_AMF_SBI",
-        itti_msg->get_msg_name());
-  }
+  itti_inst->send_msg(itti_msg);
 }
 
 //---------------------------------------------------------------------------------------------
@@ -2528,12 +2486,7 @@ void amf_app::trigger_pdu_session_release(
       itti_msg->promise_id       = promise_id;
       itti_msg->context_location = session->smf_info.context_location;
 
-      int ret = itti_inst->send_msg(itti_msg);
-      if (0 != ret) {
-        Logger::amf_app().error(
-            "Could not send ITTI message %s to task TASK_AMF_SBI",
-            itti_msg->get_msg_name());
-      }
+      itti_inst->send_msg(itti_msg);
     }
 
     while (!smf_responses.empty()) {
@@ -2611,12 +2564,7 @@ void amf_app::trigger_pdu_session_up_deactivation(
       itti_n11_msg->promise_id     = promise_id;
       itti_n11_msg->up_cnx_state   = "DEACTIVATED";
 
-      int ret = itti_inst->send_msg(itti_n11_msg);
-      if (0 != ret) {
-        Logger::amf_app().error(
-            "Could not send ITTI message %s to task TASK_AMF_SBI",
-            itti_n11_msg->get_msg_name());
-      }
+      itti_inst->send_msg(itti_n11_msg);
     }
 
     bool is_up_activated = true;
@@ -2701,13 +2649,7 @@ bool amf_app::trigger_pdu_session_up_activation(
       itti_n11_msg->promise_id     = promise_id;
       itti_n11_msg->up_cnx_state   = "ACTIVATING";
 
-      int ret = itti_inst->send_msg(itti_n11_msg);
-      if (0 != ret) {
-        Logger::amf_app().error(
-            "Could not send ITTI message %s to task TASK_AMF_SBI",
-            itti_n11_msg->get_msg_name());
-        return false;
-      }
+      itti_inst->send_msg(itti_n11_msg);
     }
 
     while (!curl_responses.empty()) {
@@ -2788,13 +2730,7 @@ bool amf_app::trigger_pdu_session_up_activation(
     itti_n11_msg->promise_id     = promise_id;
     itti_n11_msg->up_cnx_state   = "ACTIVATING";
 
-    int ret = itti_inst->send_msg(itti_n11_msg);
-    if (0 != ret) {
-      Logger::amf_app().error(
-          "Could not send ITTI message %s to task TASK_AMF_SBI",
-          itti_n11_msg->get_msg_name());
-      return false;
-    }
+    itti_inst->send_msg(itti_n11_msg);
 
     // Wait for the result available and process accordingly
     std::optional<nlohmann::json> result_opt = std::nullopt;

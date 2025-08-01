@@ -79,14 +79,7 @@ int ngap_amf_handle_ng_setup_request(
   itti_msg->stream       = stream;
   itti_msg->ng_setup_req = ng_setup_req;
 
-  int ret = itti_inst->send_msg(itti_msg);
-  if (0 != ret) {
-    Logger::ngap().error(
-        "Could not send ITTI message %s to task TASK_AMF_N2",
-        itti_msg->get_msg_name());
-    return RETURNerror;
-  }
-  return RETURNok;
+  return itti_inst->send_msg(itti_msg);
 }
 
 //------------------------------------------------------------------------------
@@ -128,14 +121,7 @@ int ngap_amf_handle_initial_ue_message(
   itti_msg->stream          = stream;
   itti_msg->init_ue_message = init_ue_msg;
 
-  int ret = itti_inst->send_msg(itti_msg);
-  if (0 != ret) {
-    Logger::ngap().error(
-        "Could not send ITTI message %s to task TASK_AMF_N2",
-        itti_msg->get_msg_name());
-    return RETURNerror;
-  }
-  return RETURNok;
+  return itti_inst->send_msg(itti_msg);
 }
 
 //------------------------------------------------------------------------------
@@ -157,14 +143,7 @@ int ngap_amf_handle_uplink_nas_transport(
   itti_msg->stream   = stream;
   itti_msg->ul_nas   = uplink_nas_transport;
 
-  int ret = itti_inst->send_msg(itti_msg);
-  if (0 != ret) {
-    Logger::ngap().error(
-        "Could not send ITTI message %s to task TASK_AMF_N2",
-        itti_msg->get_msg_name());
-    return RETURNerror;
-  }
-  return RETURNok;
+  return itti_inst->send_msg(itti_msg);
 }
 
 //------------------------------------------------------------------------------
@@ -215,9 +194,6 @@ int ngap_amf_handle_initial_context_setup_response(
 
     int ret = itti_inst->send_msg(itti_msg);
     if (0 != ret) {
-      Logger::ngap().error(
-          "Could not send ITTI message %s to task TASK_AMF_SBI",
-          itti_msg->get_msg_name());
       return RETURNerror;
     }
   }
@@ -255,15 +231,8 @@ int ngap_amf_handle_ue_radio_cap_indication(
   itti_msg->assoc_id              = assoc_id;
   itti_msg->stream                = stream;
   itti_msg->ue_radio_cap_info_ind = ue_radio_capability_ind;
-  int ret                         = itti_inst->send_msg(itti_msg);
 
-  if (0 != ret) {
-    Logger::ngap().error(
-        "Could not send ITTI message %s to task TASK_AMF_N2",
-        itti_msg->get_msg_name());
-    return RETURNerror;
-  }
-  return RETURNok;
+  return itti_inst->send_msg(itti_msg);
 }
 
 //------------------------------------------------------------------------------
@@ -284,14 +253,7 @@ int ngap_amf_handle_ue_context_release_request(
   itti_msg->stream         = stream;
   itti_msg->ue_ctx_rel_req = ue_ctx_rel_req;
 
-  int ret = itti_inst->send_msg(itti_msg);
-  if (0 != ret) {
-    Logger::ngap().error(
-        "Could not send ITTI message %s to task TASK_AMF_N2",
-        itti_msg->get_msg_name());
-    return RETURNerror;
-  }
-  return RETURNok;
+  return itti_inst->send_msg(itti_msg);
 }
 
 //------------------------------------------------------------------------------
@@ -322,14 +284,7 @@ int ngap_amf_handle_ue_context_release_complete(
   itti_msg->stream         = stream;
   itti_msg->ue_ctx_rel_cpl = ue_cxt_rel_complete;
 
-  int ret = itti_inst->send_msg(itti_msg);
-  if (0 != ret) {
-    Logger::ngap().error(
-        "Could not send ITTI message %s to task TASK_AMF_N2",
-        itti_msg->get_msg_name());
-    return RETURNerror;
-  }
-  return RETURNok;
+  return itti_inst->send_msg(itti_msg);
 }
 
 //------------------------------------------------------------------------------
@@ -388,9 +343,6 @@ int ngap_amf_handle_pdu_session_resource_release_response(
 
     int ret = itti_inst->send_msg(itti_msg);
     if (0 != ret) {
-      Logger::ngap().error(
-          "Could not send ITTI message %s to task TASK_AMF_SBI",
-          itti_msg->get_msg_name());
       return RETURNerror;
     }
   } else {
@@ -454,12 +406,7 @@ int ngap_amf_handle_pdu_session_resource_setup_response(
       itti_msg->ran_ue_ngap_id =
           pdu_session_resource_setup_resp->getRanUeNgapId();
 
-      int ret = itti_inst->send_msg(itti_msg);
-      if (0 != ret) {
-        Logger::ngap().error(
-            "Could not send ITTI message %s to task TASK_AMF_SBI",
-            itti_msg->get_msg_name());
-      }
+      itti_inst->send_msg(itti_msg);
     }
   }
 
@@ -482,12 +429,7 @@ int ngap_amf_handle_pdu_session_resource_setup_response(
       itti_msg->ran_ue_ngap_id =
           pdu_session_resource_setup_resp->getRanUeNgapId();
 
-      int ret = itti_inst->send_msg(itti_msg);
-      if (0 != ret) {
-        Logger::ngap().error(
-            "Could not send ITTI message %s to task TASK_AMF_SBI",
-            itti_msg->get_msg_name());
-      }
+      itti_inst->send_msg(itti_msg);
     }
   }
 
@@ -544,9 +486,6 @@ int ngap_amf_handle_pdu_session_resource_modify_response(
 
     int ret = itti_inst->send_msg(itti_msg);
     if (0 != ret) {
-      Logger::ngap().error(
-          "Could not send ITTI message %s to task TASK_AMF_SBI",
-          itti_msg->get_msg_name());
       return RETURNerror;
     }
   }
@@ -707,14 +646,7 @@ int handover_preparation(
   itti_msg->stream       = stream;
   itti_msg->handover_req = handover_required;
 
-  int ret = itti_inst->send_msg(itti_msg);
-  if (0 != ret) {
-    Logger::ngap().error(
-        "Could not send ITTI message %s to task TASK_AMF_N2",
-        itti_msg->get_msg_name());
-    return RETURNerror;
-  }
-  return RETURNok;
+  return itti_inst->send_msg(itti_msg);
 }
 
 //------------------------------------------------------------------------------
@@ -753,14 +685,7 @@ int handover_notification(
   itti_msg->stream          = stream;
   itti_msg->handover_notify = handover_notify;
 
-  int ret = itti_inst->send_msg(itti_msg);
-  if (0 != ret) {
-    Logger::ngap().error(
-        "Could not send ITTI message %s to task TASK_AMF_N2",
-        itti_msg->get_msg_name());
-    return RETURNerror;
-  }
-  return RETURNok;
+  return itti_inst->send_msg(itti_msg);
 }
 
 //------------------------------------------------------------------------------
@@ -785,14 +710,7 @@ int handover_request(
   itti_msg->stream               = stream;
   itti_msg->handover_request_ack = handover_request_ack;
 
-  int ret = itti_inst->send_msg(itti_msg);
-  if (0 != ret) {
-    Logger::ngap().error(
-        "Could not send ITTI message %s to task TASK_AMF_N2",
-        itti_msg->get_msg_name());
-    return RETURNerror;
-  }
-  return RETURNok;
+  return itti_inst->send_msg(itti_msg);
 }
 
 //------------------------------------------------------------------------------
@@ -814,14 +732,7 @@ int handover_request_ack(
   itti_msg->stream               = stream;
   itti_msg->handover_request_ack = handover_request_ack;
 
-  int ret = itti_inst->send_msg(itti_msg);
-  if (0 != ret) {
-    Logger::ngap().error(
-        "Could not send ITTI message %s to task TASK_AMF_N2",
-        itti_msg->get_msg_name());
-    return RETURNerror;
-  }
-  return RETURNok;
+  return itti_inst->send_msg(itti_msg);
 }
 
 //------------------------------------------------------------------------------
@@ -889,15 +800,7 @@ int ng_reset(
   itti_msg->assoc_id = assoc_id;
   itti_msg->stream   = stream;
   itti_msg->ng_reset = ng_reset;
-  int ret            = itti_inst->send_msg(itti_msg);
-  if (0 != ret) {
-    Logger::ngap().error(
-        "Could not send ITTI message %s to task TASK_AMF_N2",
-        itti_msg->get_msg_name());
-    return RETURNerror;
-  }
-
-  return RETURNok;
+  return itti_inst->send_msg(itti_msg);
 }
 
 //------------------------------------------------------------------------------
@@ -1176,15 +1079,7 @@ int uplink_non_ue_associated_nrppa_transport(
   ngap_utils::octet_string_2_bstring(
       nrppa_msg.getRoutingId(), itti_msg->routing_id);
 
-  int ret = itti_inst->send_msg(itti_msg);
-  if (0 != ret) {
-    Logger::ngap().error(
-        "Could not send ITTI message %s to task TASK_AMF_N2",
-        itti_msg->get_msg_name());
-    return RETURNerror;
-  }
-
-  return RETURNok;
+  return itti_inst->send_msg(itti_msg);
 }
 
 //------------------------------------------------------------------------------
@@ -1217,14 +1112,7 @@ int uplink_ran_status_transfer(
   itti_msg->stream                     = stream;
   itti_msg->uplink_ran_status_transfer = uplink_ran_status_transfer;
 
-  int ret = itti_inst->send_msg(itti_msg);
-  if (0 != ret) {
-    Logger::ngap().error(
-        "Could not send ITTI message %s to task TASK_AMF_N2",
-        itti_msg->get_msg_name());
-    return RETURNerror;
-  }
-  return RETURNok;
+  return itti_inst->send_msg(itti_msg);
 }
 
 //------------------------------------------------------------------------------
@@ -1255,15 +1143,7 @@ int uplink_ue_associated_nrppa_transport(
   ngap_utils::octet_string_2_bstring(
       nrppa_msg.getRoutingId(), itti_msg->routing_id);
 
-  int ret = itti_inst->send_msg(itti_msg);
-  if (0 != ret) {
-    Logger::ngap().error(
-        "Could not send ITTI message %s to task TASK_AMF_N2",
-        itti_msg->get_msg_name());
-    return RETURNerror;
-  }
-
-  return RETURNok;
+  return itti_inst->send_msg(itti_msg);
 }
 
 //------------------------------------------------------------------------------
@@ -1376,12 +1256,7 @@ void ngap_sctp_shutdown(const sctp_assoc_id_t assoc_id) {
   auto itti_msg = std::make_shared<itti_ng_shutdown>(TASK_NGAP, TASK_AMF_N2);
   itti_msg->assoc_id = assoc_id;
 
-  int ret = itti_inst->send_msg(itti_msg);
-  if (0 != ret) {
-    Logger::ngap().error(
-        "Could not send ITTI message %s to task TASK_AMF_N2",
-        itti_msg->get_msg_name());
-  }
+  itti_inst->send_msg(itti_msg);
   return;
 }
 
