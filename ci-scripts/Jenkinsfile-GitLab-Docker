@@ -40,6 +40,10 @@ cppcheckResource = params.CppCheckResource
 formatCheckNode = params.FormatCheckNode
 formatCheckResource = params.FormatCheckResource
 
+// Its main purpose is the ARM Build
+armNode = params.armBuildNode
+armBuildResource = params.armBuildResource
+
 // Tags/Branches to use
 def amf_tag = "develop"
 def amf_branch = "develop"
@@ -78,6 +82,7 @@ pipeline {
     gitlabBuilds(builds: [
       "Build Ubuntu AMF Image",
       "Build Ubuntu AMF Image with LTTNG",
+      "Build ARM AMF Image",
       "Build RHEL AMF Image",
       "Static Code Analysis",
       "Code Formatting Checker"
@@ -221,6 +226,58 @@ pipeline {
             }
           }
         }
+        stage ('Build ARM AMF Image') {
+          agent { label armNode }
+          steps {
+            // Now it is only locked during this build stage and not for the whole pipeline
+            lock(armBuildResource) {
+              script {
+                gitlabCommitStatus(name: "Build ARM AMF Image") {
+                  prepareWorkspaceMergeCase()
+                  def amf_arm64_tag = "${amf_tag}-arm64"
+                  sh "docker image rm oai-amf:${amf_arm64_tag} || true"
+                  sh "docker image prune --force"
+                  if ("PUSH".equals(env.gitlabActionType)) {
+                    dockerBuildOptions = '--no-cache '
+                  }
+                  if ("MERGE".equals(env.gitlabActionType)) {
+                    dockerBuildOptions = ''
+                    sh "date --rfc-email > src/common-src/date.txt"
+                  }
+                  sh "docker buildx build ${dockerBuildOptions} --target oai-amf --tag oai-amf:${amf_arm64_tag} --file docker/Dockerfile.amf.ubuntu . > archives/amf_arm_image_build.log 2>&1"
+                  // Putting a place holder to try out on the flattening of image.
+                  // If not satisfactory, we can remove it.
+                  sh "python3 ./ci-scripts/flatten_image.py --tag oai-amf:${amf_arm64_tag}"
+                  sh "docker image prune --force"
+                  // sh "docker image ls | egrep --color=never 'amf|REPOSITORY' >> archives/amf_arm_image_build.log"
+                  sh 'echo "" >> archives/amf_arm_image_build.log'
+                  sh "docker images --filter=reference=\"oai-amf:${amf_arm64_tag}\" >> archives/amf_arm_image_build.log"
+                  // Pushing to local private registry for testing purpose
+                  sh "docker login -u oaicicd -p oaicicd ${PrivateRegistryURL}"
+                  sh "docker image tag oai-amf:${amf_arm64_tag} ${PrivateRegistryURL}/oai-amf:${amf_arm64_tag}"
+                  sh "docker push ${PrivateRegistryURL}/oai-amf:${amf_arm64_tag}"
+                  // Remove all images locally
+                  sh "docker rmi oai-amf:${amf_arm64_tag} ${PrivateRegistryURL}/oai-amf:${amf_arm64_tag}"
+                  sh "docker logout ${PrivateRegistryURL}"
+                }
+              }
+            }
+          }
+          post {
+            success {
+              sh "echo 'OAI-AMF ARM IMAGE BUILD: OK' >> archives/amf_arm_image_build.log"
+            }
+            unsuccessful {
+              sh "echo 'OAI-AMF ARM IMAGE BUILD: KO' >> archives/amf_arm_image_build.log"
+            }
+            cleanup {
+              script {
+                stash allowEmpty: true, includes: 'archives/amf_arm_image_build.log', name: 'armBuildLog'
+              }
+            }
+          }
+        }
+
         stage ('Build RHEL AMF Image') {
           agent { label rhelNode }
           steps {
@@ -375,6 +432,7 @@ pipeline {
             unstash 'rhelBuildLog'
             unstash 'cppcheckLogs'
             unstash 'formatCheckLogs'
+            unstash 'armBuildLog'
           }
         }
       }
