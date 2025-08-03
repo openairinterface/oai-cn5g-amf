@@ -78,12 +78,12 @@ amf_app::amf_app()
     : m_amf_ue_ngap_id2ue_ctx(),
       m_ue_ctx_key(),
       m_supi2ue_ctx(),
-      m_curl_handle_responses_sbi() {
-  amf_ue_ngap_id2ue_ctx     = {};
-  ue_ctx_key                = {};
-  supi2ue_ctx               = {};
-  curl_handle_responses_sbi = {};
-  registered_nrfs           = {};
+      m_http_response_sbi_promises() {
+  amf_ue_ngap_id2ue_ctx      = {};
+  ue_ctx_key                 = {};
+  supi2ue_ctx                = {};
+  http_response_sbi_promises = {};
+  registered_nrfs            = {};
 
   Logger::amf_app().startup("Creating AMF application functionality layer");
   if (itti_inst->create_task(TASK_AMF_APP, amf_app_task, nullptr)) {
@@ -1477,10 +1477,8 @@ void amf_app::get_access_and_mobility_subscription_data(
 
   // Generate a promise and associate this promise to the ITTI message
   uint32_t promise_id = {};
-  boost::shared_ptr<boost::promise<nlohmann::json>> p =
-      boost::make_shared<boost::promise<nlohmann::json>>();
-  amf_app_inst->store_promise(promise_id, p);
-  boost::shared_future<nlohmann::json> f = p->get_future();
+  boost::shared_future<nlohmann::json> f =
+      amf_app_inst->store_promise(promise_id);
   Logger::amf_app().debug("Promise ID generated %ld", promise_id);
 
   std::shared_ptr<itti_sbi_retrieve_am_data> itti_msg =
@@ -1582,10 +1580,8 @@ void amf_app::discover_pcf(std::shared_ptr<ue_context>& uc) {
 
   // Generate a promise and associate this promise to the ITTI message
   uint32_t promise_id = {};
-  boost::shared_ptr<boost::promise<nlohmann::json>> p =
-      boost::make_shared<boost::promise<nlohmann::json>>();
-  amf_app_inst->store_promise(promise_id, p);
-  boost::shared_future<nlohmann::json> f = p->get_future();
+  boost::shared_future<nlohmann::json> f =
+      amf_app_inst->store_promise(promise_id);
   Logger::amf_app().debug("Promise ID generated %ld", promise_id);
 
   std::shared_ptr<itti_sbi_pcf_discovery> itti_msg =
@@ -1682,7 +1678,6 @@ void amf_app::discover_pcf(std::shared_ptr<ue_context>& uc) {
     } else {
       is_result_available = false;
     }
-
   } else {
     is_result_available = false;
   }
@@ -1711,9 +1706,7 @@ void amf_app::perform_am_policy_association(std::shared_ptr<ue_context>& uc) {
   std::shared_ptr<itti_sbi_am_policy_association> itti_msg =
       std::make_shared<itti_sbi_am_policy_association>(
           TASK_AMF_APP, TASK_AMF_SBI);
-
   itti_msg->policy_assoc_req = policy_assc_request;
-
   itti_inst->send_msg(itti_msg);
 }
 
@@ -1727,9 +1720,7 @@ void amf_app::perform_am_policy_association_termination(
   std::shared_ptr<itti_sbi_am_policy_association_termination> itti_msg =
       std::make_shared<itti_sbi_am_policy_association_termination>(
           TASK_AMF_APP, TASK_AMF_SBI);
-
   itti_msg->supi = uc->supi;
-
   itti_inst->send_msg(itti_msg);
 }
 
@@ -1748,10 +1739,8 @@ void amf_app::perform_am_policy_association_update(
   std::shared_ptr<itti_sbi_am_policy_association_update> itti_msg =
       std::make_shared<itti_sbi_am_policy_association_update>(
           TASK_AMF_APP, TASK_AMF_SBI);
-
   itti_msg->supi                    = uc->supi;
   itti_msg->policy_assoc_update_req = policy_assc_update_request;
-
   itti_inst->send_msg(itti_msg);
 }
 
@@ -1763,9 +1752,7 @@ void amf_app::get_am_policy_association(const std::shared_ptr<ue_context>& uc) {
   std::shared_ptr<itti_sbi_am_policy_association_retrieval> itti_msg =
       std::make_shared<itti_sbi_am_policy_association_retrieval>(
           TASK_AMF_APP, TASK_AMF_SBI);
-
   itti_msg->supi = uc->supi;
-
   itti_inst->send_msg(itti_msg);
 }
 
@@ -1778,9 +1765,7 @@ void amf_app::get_ue_context_in_smf_data(
   std::shared_ptr<itti_sbi_ue_context_in_smf_data_retrieval> itti_msg =
       std::make_shared<itti_sbi_ue_context_in_smf_data_retrieval>(
           TASK_AMF_APP, TASK_AMF_SBI);
-
   itti_msg->supi = uc->supi;
-
   itti_inst->send_msg(itti_msg);
 }
 
@@ -2061,15 +2046,13 @@ void amf_app::handle_determine_location_request() {
     input_data["supi"]        = kvp.first;
 
     // Generate a promise and associate this promise to the ITTI message
-    uint32_t promise_id = generate_promise_id();
+    uint32_t promise_id = {};
+    boost::shared_future<nlohmann::json> f =
+        amf_app_inst->store_promise(promise_id);
     Logger::amf_app().debug("Promise ID generated %d", promise_id);
 
     auto itti_msg = std::make_shared<itti_sbi_determine_location_request>(
         TASK_AMF_APP, TASK_AMF_SBI, promise_id);
-
-    auto p = boost::make_shared<boost::promise<nlohmann::json>>();
-    boost::shared_future<nlohmann::json> f = p->get_future();
-    add_promise(promise_id, p);
 
     itti_msg->input_data = input_data;
     itti_msg->promise_id = promise_id;
@@ -2311,15 +2294,13 @@ void amf_app::get_nrfs(std::unordered_set<std::string>& nrfs) {
                 TASK_AMF_APP, TASK_AMF_SBI);
 
         // Generate a promise and associate this promise to the ITTI message
-        uint32_t promise_id = amf_app_inst->generate_promise_id();
+        uint32_t promise_id = {};
+        boost::shared_future<nlohmann::json> f =
+            amf_app_inst->store_promise(promise_id);
         Logger::amf_app().debug("Promise ID generated %d", promise_id);
-
-        auto p = boost::make_shared<boost::promise<nlohmann::json>>();
-        boost::shared_future<nlohmann::json> f = p->get_future();
 
         // Store the future to be processed later
         nssf_responses.emplace(promise_id, f);
-        add_promise(promise_id, p);
 
         itti_msg->nf_instance_id = amf_instance_id;
         itti_msg->plmn.mcc       = plmn.mcc;
@@ -2429,31 +2410,40 @@ void amf_app::timer_nrf_registration_timeout(
 void amf_app::add_promise(
     const uint32_t pid,
     const boost::shared_ptr<boost::promise<nlohmann::json>>& p) {
-  std::unique_lock lock(m_curl_handle_responses_sbi);
-  curl_handle_responses_sbi.emplace(pid, p);
+  std::unique_lock lock(m_http_response_sbi_promises);
+  http_response_sbi_promises.emplace(pid, p);
 }
 
 //---------------------------------------------------------------------------------------------
 void amf_app::store_promise(
-    uint32_t& pid, const boost::shared_ptr<boost::promise<nlohmann::json>>& p) {
+    uint32_t& promise_id,
+    const boost::shared_ptr<boost::promise<nlohmann::json>>& p) {
   // Generate promise ID
-  pid = generate_promise_id();
-  std::unique_lock lock(m_curl_handle_responses_sbi);
-  curl_handle_responses_sbi.emplace(pid, p);
+  promise_id = generate_promise_id();
+  std::unique_lock lock(m_http_response_sbi_promises);
+  http_response_sbi_promises.emplace(promise_id, p);
 }
 
+//---------------------------------------------------------------------------------------------
+boost::shared_future<nlohmann::json> amf_app::store_promise(
+    uint32_t& promise_id) {
+  boost::shared_ptr<boost::promise<nlohmann::json>> p =
+      boost::make_shared<boost::promise<nlohmann::json>>();
+  store_promise(promise_id, p);
+  return p->get_future();
+}
 //------------------------------------------------------------------------------
 void amf_app::trigger_process_response(
-    const uint32_t pid, const nlohmann::json& json_data) {
+    const uint32_t promise_id, const nlohmann::json& json_data) {
   Logger::amf_app().debug(
       "Trigger process response: Set promise with ID %u "
       "to ready",
-      pid);
-  std::unique_lock lock(m_curl_handle_responses_sbi);
-  if (curl_handle_responses_sbi.count(pid) > 0) {
-    curl_handle_responses_sbi[pid]->set_value(json_data);
+      promise_id);
+  std::unique_lock lock(m_http_response_sbi_promises);
+  if (http_response_sbi_promises.count(promise_id) > 0) {
+    http_response_sbi_promises[promise_id]->set_value(json_data);
     // Remove this promise from list
-    curl_handle_responses_sbi.erase(pid);
+    http_response_sbi_promises.erase(promise_id);
   }
 }
 
@@ -2471,15 +2461,12 @@ void amf_app::trigger_pdu_session_release(
           TASK_AMF_N2, TASK_AMF_SBI);
 
       // Generate a promise and associate this promise to the ITTI message
-      uint32_t promise_id = generate_promise_id();
+      uint32_t promise_id = {};
+      boost::shared_future<nlohmann::json> f =
+          amf_app_inst->store_promise(promise_id);
       Logger::amf_app().debug("Promise ID generated %d", promise_id);
-
-      auto p = boost::make_shared<boost::promise<nlohmann::json>>();
-      boost::shared_future<nlohmann::json> f = p->get_future();
-
       // Store the future to be processed later
       smf_responses.emplace(promise_id, f);
-      amf_app_inst->add_promise(promise_id, p);
 
       itti_msg->supi             = uc->supi;
       itti_msg->pdu_session_id   = session->pdu_session_id;
@@ -2537,15 +2524,13 @@ void amf_app::trigger_pdu_session_up_deactivation(
     for (auto session : sessions_ctx) {
       Logger::amf_app().debug("PDU Session ID %d", session->pdu_session_id);
       // Generate a promise and associate this promise to the curl handle
-      uint32_t promise_id = generate_promise_id();
+      uint32_t promise_id = {};
+      boost::shared_future<nlohmann::json> f =
+          amf_app_inst->store_promise(promise_id);
       Logger::amf_app().debug("Promise ID generated %d", promise_id);
-
-      auto p = boost::make_shared<boost::promise<nlohmann::json>>();
-      boost::shared_future<nlohmann::json> f = p->get_future();
 
       // Store the future to be processed later
       curl_responses.emplace(session->pdu_session_id, f);
-      amf_app_inst->add_promise(promise_id, p);
 
       Logger::amf_app().debug(
           "Sending ITTI to trigger PDUSessionUpdateSMContextRequest to SMF to "
@@ -2622,15 +2607,13 @@ bool amf_app::trigger_pdu_session_up_activation(
     for (auto session : sessions_ctx) {
       Logger::amf_app().debug("PDU Session ID %d", session->pdu_session_id);
       // Generate a promise and associate this promise to the curl handle
-      uint32_t promise_id = generate_promise_id();
+      uint32_t promise_id = {};
+      boost::shared_future<nlohmann::json> f =
+          amf_app_inst->store_promise(promise_id);
       Logger::amf_app().debug("Promise ID generated %d", promise_id);
-
-      auto p = boost::make_shared<boost::promise<nlohmann::json>>();
-      boost::shared_future<nlohmann::json> f = p->get_future();
 
       // Store the future to be processed later
       curl_responses.emplace(session->pdu_session_id, f);
-      amf_app_inst->add_promise(promise_id, p);
 
       Logger::amf_app().debug(
           "Sending ITTI to trigger PDUSessionUpdateSMContextRequest to SMF to "
@@ -2705,13 +2688,10 @@ bool amf_app::trigger_pdu_session_up_activation(
     // Send PDUSessionUpdateSMContextRequest to SMF
     Logger::amf_app().debug("PDU Session ID %d", pdu_session_id);
     // Generate a promise and associate this promise to the curl handle
-    uint32_t promise_id = generate_promise_id();
+    uint32_t promise_id = {};
+    boost::shared_future<nlohmann::json> f =
+        amf_app_inst->store_promise(promise_id);
     Logger::amf_app().debug("Promise ID generated %d", promise_id);
-
-    auto p = boost::make_shared<boost::promise<nlohmann::json>>();
-    boost::shared_future<nlohmann::json> f = p->get_future();
-
-    amf_app_inst->add_promise(promise_id, p);
 
     Logger::amf_app().debug(
         "Sending ITTI to trigger PDUSessionUpdateSMContextRequest to SMF to "

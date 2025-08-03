@@ -78,9 +78,9 @@ class amf_app {
   std::map<std::string, std::shared_ptr<ue_context>> supi2ue_ctx;
   mutable std::shared_mutex m_supi2ue_ctx;
 
-  mutable std::shared_mutex m_curl_handle_responses_sbi;
+  mutable std::shared_mutex m_http_response_sbi_promises;
   std::map<uint32_t, boost::shared_ptr<boost::promise<nlohmann::json>>>
-      curl_handle_responses_sbi;
+      http_response_sbi_promises;
 
   oai::utils::uint_generator<uint32_t> n1n2sub_id_generator;
   std::map<
@@ -769,24 +769,32 @@ class amf_app {
   /*
    * Generate an unique value for promise id and associate this generated id
    * with the promise itself
-   * @param [const uint32_t] pid: promise id
+   * @param [const uint32_t] promise_id: promise id
    * @param [const boost::shared_ptr<boost::promise<nlohmann::json>>&] p:
    * promise
    * @return void
    */
   void store_promise(
-      uint32_t& pid,
+      uint32_t& promise_id,
       const boost::shared_ptr<boost::promise<nlohmann::json>>& p);
 
   /*
+   * Generate an unique value for promise id and associate this generated id
+   * with the promise itself
+   * @param [const uint32_t] promise_id: promise id
+   * @return the future of the promise
+   */
+  boost::shared_future<nlohmann::json> store_promise(uint32_t& promise_id);
+
+  /*
    * Trigger the response from API server
-   * @param [const uint32_t] pid: promise id
+   * @param [const uint32_t] promise_id: promise id
    * @param [const nlohmann::json&] json_data: result for the corresponding
    * promise
    * @return void
    */
   void trigger_process_response(
-      const uint32_t pid, const nlohmann::json& json_data);
+      const uint32_t promise_id, const nlohmann::json& json_data);
 
   /*
    * Send request to SBI task to trigger PDU session release to SMF

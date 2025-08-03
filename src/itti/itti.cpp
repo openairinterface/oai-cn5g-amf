@@ -235,7 +235,7 @@ int itti_mw::send_msg(std::shared_ptr<itti_msg> message) {
   }
 
   Logger::itti().warn(
-      "Could not send ITTI message %s from %d to %d!", i->get_msg_name(),
+      "Could not send ITTI message %s from %d to %d!", message->get_msg_name(),
       message->origin, message->destination);
   // TODO: Add retry mechanism or error handling
   return RETURNerror;
