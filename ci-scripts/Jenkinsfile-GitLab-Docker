@@ -248,8 +248,10 @@ pipeline {
                   //sh "docker buildx build ${dockerBuildOptions} --target oai-amf --tag oai-amf:${amf_arm64_tag} --file docker/Dockerfile.amf.ubuntu . > archives/amf_arm_image_build.log 2>&1"
                   // Putting a place holder to try out on the flattening of image.
                   // If not satisfactory, we can remove it.
+                  
+                  //sh "python3 ./ci-scripts/flatten_image.py --tag oai-amf:${amf_arm64_tag}"
+                  sh "python3 ./ci-scripts/flatten_image.py --tag oai-amf:${amf_arm64_tag} --git-commit ${shortenShaOne}"
                   sh "docker inspect oai-amf:${amf_arm64_tag} >> archives/amf_arm_image_build.log"
-                  sh "python3 ./ci-scripts/flatten_image.py --tag oai-amf:${amf_arm64_tag}"
                   sh "docker image prune --force"
                   // sh "docker image ls | egrep --color=never 'amf|REPOSITORY' >> archives/amf_arm_image_build.log"
                   sh 'echo "" >> archives/amf_arm_image_build.log'

@@ -26,7 +26,7 @@ import sys
 
 def main() -> None:
     args = _parse_args()
-    status = perform_flattening(args.tag)
+    status = perform_flattening(args.tag, args.git_commit)
     sys.exit(status)
 
 def _parse_args() -> argparse.Namespace:
@@ -38,9 +38,14 @@ def _parse_args() -> argparse.Namespace:
         required=True,
         help='Image Tag in image-name:image tag format',
     )
+    parser.add_argument(
+    '--git-commit',
+    required=False,
+    help='Git commit hash to be embedded in the image label',
+    )
     return parser.parse_args()
 
-def perform_flattening(tag):
+def perform_flattening(tag, git_commit=None):
     # First detect which docker/podman command to use
     cli = ''
     image_prefix = ''
@@ -81,6 +86,13 @@ def perform_flattening(tag):
         cmd += ' --change "EXPOSE 38412/sctp" '
     cmd += ' --change "HEALTHCHECK --interval=10s --timeout=15s --retries=6 CMD /openair-amf/bin/healthcheck.sh" '
     cmd += ' --change "CMD [\\"/openair-amf/bin/oai_amf\\", \\"-c\\", \\"/openair-amf/etc/config.yaml\\", \\"-o\\"]" '
+    
+    cmd += ' --change "LABEL maintainer=\\"OpenAirInterface <contact@openairinterface.org>\\"" '
+    if git_commit:
+        cmd += f' --change "LABEL org.opencontainers.image.authors=\\"commit:{git_commit}\\"" '
+    
+    
+    
     cmd += ' - ' + image_prefix + tag
     print (cmd)
     subprocess.check_output(cmd, shell=True, universal_newlines=True)
