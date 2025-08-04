@@ -94,9 +94,13 @@ def perform_flattening(tag, git_commit=None):
     cmd += ' --change "HEALTHCHECK --interval=10s --timeout=15s --retries=6 CMD /openair-amf/bin/healthcheck.sh" '
     cmd += ' --change "CMD [\\"/openair-amf/bin/oai_amf\\", \\"-c\\", \\"/openair-amf/etc/config.yaml\\", \\"-o\\"]" '
     
-    cmd += ' --change "LABEL maintainer=\\"OpenAirInterface <contact@openairinterface.org>\\"" '
+    cmd += ' --change "LABEL org.opencontainers.image.authors=\\"OpenAirInterface <contact@openairinterface.org>\\"" '
+    cmd += ' --change "LABEL org.opencontainers.image.vendor=\\"OpenAirInterface Software Alliance\\"" '
+    cmd += ' --change "LABEL org.opencontainers.image.licenses=\\"OAI Public License, Version 1.1\\"" '
+    cmd += ' --change "LABEL org.opencontainers.image.title=\\"OAI AMF\\"" '
+    cmd += ' --change "LABEL org.opencontainers.image.description=\\"OpenAirInterface Access and Mobility Management Function\\"" '
     if git_commit:
-        cmd += f' --change "LABEL org.opencontainers.image.authors=\\"commit:{git_commit}\\"" '
+        cmd += f' --change "LABEL org.opencontainers.image.revision=\\"commit:{git_commit}\\"" '
 
     
     

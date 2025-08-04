@@ -30,7 +30,7 @@
 # BASE IMAGE
 #---------------------------------------------------------------------
 ARG BASE_IMAGE=ubuntu:jammy
-ARG GIT_COMMIT
+
 FROM $BASE_IMAGE as oai-amf-base
 
 ENV DEBIAN_FRONTEND=noninteractive
@@ -90,9 +90,6 @@ ENV DEBIAN_FRONTEND=noninteractive
 ENV TZ=Europe/Paris
 ARG ENABLE_LTTNG=false
 
-ARG GIT_COMMIT
-LABEL maintainer="OpenAirInterface <contact@openairinterface.org>"
-LABEL org.opencontainers.image.authors="commit:$GIT_COMMIT"
 
 # We install some debug tools for the moment in addition of mandatory libraries
 RUN apt-get update && \

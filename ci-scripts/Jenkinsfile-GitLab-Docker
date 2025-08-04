@@ -82,7 +82,7 @@ pipeline {
     gitlabBuilds(builds: [
       "Build Ubuntu AMF Image",
       "Build Ubuntu AMF Image with LTTNG",
-      "Build ARM AMF Image",
+      "Build ARM Neoverse-V2 AMF Image",
       "Build RHEL AMF Image",
       "Static Code Analysis",
       "Code Formatting Checker"
@@ -176,7 +176,7 @@ pipeline {
                   sh "docker buildx build ${dockerBuildOptions} --target oai-amf --tag oai-amf:${amf_tag} --file docker/Dockerfile.amf.ubuntu . > archives/amf_ubuntu_image_build.log 2>&1"
                   // Putting a place holder to try out on the flattening of image.
                   // If not satisfactory, we can remove it.
-                  sh "python3 ./ci-scripts/flatten_image.py --tag oai-amf:${amf_tag}"
+                  sh "python3 ./ci-scripts/flatten_image.py --tag oai-amf:${amf_tag} --git-commit ${shortenShaOne}"
                   sh "docker image prune --force"
                   sh "docker image ls | egrep --color=never 'amf|REPOSITORY' >> archives/amf_ubuntu_image_build.log"
                   // Pushing to local private registry for testing purpose
@@ -226,16 +226,16 @@ pipeline {
             }
           }
         }
-        stage ('Build ARM AMF Image') {
+        stage ('Build ARM Neoverse-V2 AMF Image') {
           agent { label armNode }
           steps {
             // Now it is only locked during this build stage and not for the whole pipeline
             lock(armBuildResource) {
               script {
-                gitlabCommitStatus(name: "Build ARM AMF Image") {
+                gitlabCommitStatus(name: "Build ARM Neoverse-V2 AMF Image") {
                   prepareWorkspaceMergeCase()
-                  def amf_arm64_tag = "${amf_tag}-arm64"
-                  sh "docker image rm oai-amf:${amf_arm64_tag} || true"
+                  def amfNeoverseV2Tag = "${amf_tag}-neoverse-v2"
+                  sh "docker image rm oai-amf:${amfNeoverseV2Tag} || true"
                   sh "docker image prune --force"
                   if ("PUSH".equals(env.gitlabActionType)) {
                     dockerBuildOptions = '--no-cache '
@@ -244,24 +244,24 @@ pipeline {
                     dockerBuildOptions = ''
                     sh "date --rfc-email > src/common-src/date.txt"
                   }
-                  sh "docker buildx build ${dockerBuildOptions} --target oai-amf --tag oai-amf:${amf_arm64_tag} --build-arg GIT_COMMIT=${shortenShaOne} --file docker/Dockerfile.amf.ubuntu . > archives/amf_arm_image_build.log 2>&1"
-                  //sh "docker buildx build ${dockerBuildOptions} --target oai-amf --tag oai-amf:${amf_arm64_tag} --file docker/Dockerfile.amf.ubuntu . > archives/amf_arm_image_build.log 2>&1"
+                  sh "docker buildx build ${dockerBuildOptions} --target oai-amf --tag oai-amf:${amfNeoverseV2Tag} --file docker/Dockerfile.amf.ubuntu . > archives/amf_arm_neoverse-v2_image_build.log 2>&1"
+                  //sh "docker buildx build ${dockerBuildOptions} --target oai-amf --tag oai-amf:${amfNeoverseV2Tag} --file docker/Dockerfile.amf.ubuntu . > archives/amf_arm_neoverse-v2_image_build.log 2>&1"
                   // Putting a place holder to try out on the flattening of image.
                   // If not satisfactory, we can remove it.
                   
-                  //sh "python3 ./ci-scripts/flatten_image.py --tag oai-amf:${amf_arm64_tag}"
-                  sh "python3 ./ci-scripts/flatten_image.py --tag oai-amf:${amf_arm64_tag} --git-commit ${shortenShaOne}"
-                  sh "docker inspect oai-amf:${amf_arm64_tag} >> archives/amf_arm_image_build.log"
+                  //sh "python3 ./ci-scripts/flatten_image.py --tag oai-amf:${amfNeoverseV2Tag}"
+                  sh "python3 ./ci-scripts/flatten_image.py --tag oai-amf:${amfNeoverseV2Tag} --git-commit ${shortenShaOne}"
+                  sh "docker inspect oai-amf:${amfNeoverseV2Tag} >> archives/amf_arm_neoverse-v2_image_build.log"
                   sh "docker image prune --force"
-                  // sh "docker image ls | egrep --color=never 'amf|REPOSITORY' >> archives/amf_arm_image_build.log"
-                  sh 'echo "" >> archives/amf_arm_image_build.log'
-                  sh "docker images --filter=reference=\"oai-amf:${amf_arm64_tag}\" >> archives/amf_arm_image_build.log"
+                  // sh "docker image ls | egrep --color=never 'amf|REPOSITORY' >> archives/amf_arm_neoverse-v2_image_build.log"
+                  sh 'echo "" >> archives/amf_arm_neoverse-v2_image_build.log'
+                  sh "docker images --filter=reference=\"oai-amf:${amfNeoverseV2Tag}\" >> archives/amf_arm_neoverse-v2_image_build.log"
                   // Pushing to local private registry for testing purpose
                   sh "docker login -u oaicicd -p oaicicd ${PrivateRegistryURL}"
-                  sh "docker image tag oai-amf:${amf_arm64_tag} ${PrivateRegistryURL}/oai-amf:${amf_arm64_tag}"
-                  sh "docker push ${PrivateRegistryURL}/oai-amf:${amf_arm64_tag}"
+                  sh "docker image tag oai-amf:${amfNeoverseV2Tag} ${PrivateRegistryURL}/oai-amf:${amfNeoverseV2Tag}"
+                  sh "docker push ${PrivateRegistryURL}/oai-amf:${amfNeoverseV2Tag}"
                   // Remove all images locally
-                  sh "docker rmi oai-amf:${amf_arm64_tag} ${PrivateRegistryURL}/oai-amf:${amf_arm64_tag}"
+                  sh "docker rmi oai-amf:${amfNeoverseV2Tag} ${PrivateRegistryURL}/oai-amf:${amfNeoverseV2Tag}"
                   sh "docker logout ${PrivateRegistryURL}"
                 }
               }
@@ -269,14 +269,14 @@ pipeline {
           }
           post {
             success {
-              sh "echo 'OAI-AMF ARM IMAGE BUILD: OK' >> archives/amf_arm_image_build.log"
+              sh "echo 'OAI-AMF ARM IMAGE BUILD: OK' >> archives/amf_arm_neoverse-v2_image_build.log"
             }
             unsuccessful {
-              sh "echo 'OAI-AMF ARM IMAGE BUILD: KO' >> archives/amf_arm_image_build.log"
+              sh "echo 'OAI-AMF ARM IMAGE BUILD: KO' >> archives/amf_arm_neoverse-v2_image_build.log"
             }
             cleanup {
               script {
-                stash allowEmpty: true, includes: 'archives/amf_arm_image_build.log', name: 'armBuildLog'
+                stash allowEmpty: true, includes: 'archives/amf_arm_neoverse-v2_image_build.log', name: 'armBuildLog'
               }
             }
           }
