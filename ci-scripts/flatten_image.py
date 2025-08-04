@@ -66,14 +66,21 @@ def perform_flattening(tag, git_commit=None):
     if cli == '':
         print ('No docker / podman installed: quitting')
         return -1
+    
+    # Set container name based on tag
+    if 'arm64' in tag:
+        container_name = 'test-flatten-arm64'
+    else:
+        container_name = 'test-flatten'
     print (f'Flattening {tag}')
     # Creating a container
-    cmd = cli + ' run --name test-flatten --entrypoint /bin/true -d ' + tag
+    cmd = f'{cli} run --name {container_name} --entrypoint /bin/true -d {tag}'
+
     print (cmd)
     subprocess.check_output(cmd, shell=True, universal_newlines=True)
 
     # Export / Import trick
-    cmd = cli + ' export test-flatten | ' + cli + ' import '
+    cmd = cli + ' export ' + container_name + ' | ' + cli + ' import '
     # Bizarro syntax issue with podman
     if cli == 'docker':
       cmd += ' --change "ENV PATH /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin" '
@@ -90,7 +97,7 @@ def perform_flattening(tag, git_commit=None):
     cmd += ' --change "LABEL maintainer=\\"OpenAirInterface <contact@openairinterface.org>\\"" '
     if git_commit:
         cmd += f' --change "LABEL org.opencontainers.image.authors=\\"commit:{git_commit}\\"" '
-    
+
     
     
     cmd += ' - ' + image_prefix + tag
@@ -98,7 +105,8 @@ def perform_flattening(tag, git_commit=None):
     subprocess.check_output(cmd, shell=True, universal_newlines=True)
 
     # Remove container
-    cmd = cli + ' rm -f test-flatten'
+    cmd = f'{cli} rm -f {container_name}'
+
     print (cmd)
     subprocess.check_output(cmd, shell=True, universal_newlines=True)
 
