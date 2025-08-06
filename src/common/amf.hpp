@@ -25,6 +25,7 @@
 #include "3gpp_23.003.h"
 
 #include <nlohmann/json.hpp>
+#include <optional>
 #include <string>
 
 #include "3gpp_24.501.hpp"
