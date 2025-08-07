@@ -358,6 +358,14 @@ class amf_app {
    * @return void
    */
   void get_am_policy_association(const std::shared_ptr<ue_context>& uc);
+
+  /*
+   * Retrieve UE Context In SMF Data with the UDM
+   * @param [std::shared_ptr<ue_context>&] uc: UE context
+   * @return void
+   */
+  void get_ue_context_in_smf_data(const std::shared_ptr<ue_context>& uc);
+
   /*
    * Get the current AMF's configuration
    * @param [nlohmann::json&]: json_data: Store AMF configuration
