@@ -54,6 +54,7 @@
 #include "PcfInfo.h"
 #include "PolicyUpdate.h"
 #include "AmRequestedValueRep.h"
+#include "UeContextInSmfData.h"
 
 using namespace std::chrono;
 using namespace oai::ngap;
@@ -298,6 +299,15 @@ void amf_app_task(void*) {
         itti_sbi_am_policy_association_termination_notification* m =
             dynamic_cast<
                 itti_sbi_am_policy_association_termination_notification*>(msg);
+        amf_app_inst->handle_itti_message(std::ref(*m));
+      } break;
+
+      case SBI_UE_CONTEXT_IN_SMF_DATA_RETRIEVAL_RESPONSE: {
+        Logger::amf_app().debug(
+            "Received SBI_UE_CONTEXT_IN_SMF_DATA_RETRIEVAL_RESPONSE");
+        itti_sbi_ue_context_in_smf_data_retrieval_response* m =
+            dynamic_cast<itti_sbi_ue_context_in_smf_data_retrieval_response*>(
+                msg);
         amf_app_inst->handle_itti_message(std::ref(*m));
       } break;
 
@@ -1402,6 +1412,39 @@ void amf_app::handle_itti_message(
 }
 
 //------------------------------------------------------------------------------
+void amf_app::handle_itti_message(
+    itti_sbi_ue_context_in_smf_data_retrieval_response& r) {
+  Logger::amf_app().debug(
+      "Handle SBI_UE_CONTEXT_IN_SMF_DATA_RETRIEVAL_RESPONSE response");
+
+  uint32_t response_code = oai::common::sbi::http_status_code::NO_RESPONSE;
+  if (r.response_data.find(kSbiResponseHttpResponseCode) !=
+      r.response_data.end()) {
+    response_code = r.response_data[kSbiResponseHttpResponseCode].get<int>();
+  }
+
+  if (response_code == oai::common::sbi::http_status_code::OK) {
+    // Process the response
+
+    if (r.response_data.find(kSbiResponseJsonData) != r.response_data.end()) {
+      std::shared_ptr<ue_context> uc = {};
+      if (supi_2_ue_context(r.supi, uc)) {
+        try {
+          oai::_3gpp::model::UeContextInSmfData ue_context = {};
+          from_json(r.response_data[kSbiResponseJsonData], ue_context);
+          // Store the UE Context
+          // TODO:
+        } catch (std::exception& e) {
+          Logger::amf_app().warn(
+              "Could not parse the UeContextInSmfData from "
+              "Json");
+        }
+      }
+    }
+  }
+}
+
+//------------------------------------------------------------------------------
 void amf_app::register_3gpp_access(std::shared_ptr<ue_context>& uc) const {
   Logger::amf_app().debug("AMF registers for 3GPP access with UDM");
 
@@ -1789,6 +1832,23 @@ void amf_app::get_am_policy_association(const std::shared_ptr<ue_context>& uc) {
   itti_msg->supi = uc->supi;
 
   int ret = itti_inst->send_msg(itti_msg);
+  if (0 != ret) {
+    Logger::amf_app().error(
+        "Could not send ITTI message %s to task TASK_AMF_SBI",
+        itti_msg->get_msg_name());
+  }
+}
+
+//------------------------------------------------------------------------------
+void amf_app::get_ue_context_in_smf_data(
+    const std::shared_ptr<ue_context>& uc) {
+  Logger::amf_app().debug("Retrieve UE Context In SMF Data");
+
+  // Send request to SBI to trigger UE Context In SMF Data Retrieval with UDM
+  std::shared_ptr<itti_sbi_ue_context_in_smf_data_retrieval> itti_msg =
+      std::make_shared<itti_sbi_ue_context_in_smf_data_retrieval>(
+          TASK_AMF_APP, TASK_AMF_SBI);
+  int ret = itti_msg->supi = uc->supi;
   if (0 != ret) {
     Logger::amf_app().error(
         "Could not send ITTI message %s to task TASK_AMF_SBI",

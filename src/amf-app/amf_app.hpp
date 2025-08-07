@@ -289,6 +289,15 @@ class amf_app {
       itti_sbi_am_policy_association_termination_notification& itti_msg);
 
   /*
+   * Handle ITTI message (UE Context In SMF Data Retrieval response)
+   * @param [itti_sbi_ue_context_in_smf_data_retrieval_response&]: ITTI
+   * message
+   * @return void
+   */
+  void handle_itti_message(
+      itti_sbi_ue_context_in_smf_data_retrieval_response& r);
+
+  /*
    * Trigger AMF Registration for 3GPP Access towards UDM
    * @param [std::shared_ptr<ue_context>&] uc: UE context
    * @return void

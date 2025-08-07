@@ -304,6 +304,16 @@ void amf_sbi_task(void*) {
         amf_sbi_inst->handle_itti_message(std::ref(*m));
       } break;
 
+      case SBI_UE_CONTEXT_IN_SMF_DATA_RETRIEVAL: {
+        Logger::amf_sbi().info(
+            "Receive UE Context In SMF Data Retrieval message, "
+            "handling ...");
+        itti_sbi_ue_context_in_smf_data_retrieval* m =
+            dynamic_cast<itti_sbi_ue_context_in_smf_data_retrieval*>(msg);
+        if (!m) break;
+        amf_sbi_inst->handle_itti_message(std::ref(*m));
+      } break;
+
       case TERMINATE: {
         if (itti_msg_terminate* terminate =
                 dynamic_cast<itti_msg_terminate*>(msg)) {
@@ -809,10 +819,6 @@ void amf_sbi::handle_itti_message(
   parameters             = "?plmn-id=" + plmn_id.dump();
   uri += parameters;
 
-  Logger::amf_sbi().debug(
-      "Send Slice Selection Subscription Data Retrieval to UDM, URI %s",
-      uri.c_str());
-
   nlohmann::json response_data = {};
   uint32_t response_code       = 0;
 
@@ -859,9 +865,6 @@ void amf_sbi::handle_itti_message(
                "&tai=" + tai.dump();
   //"?home-plmn-id=" + home_plmn_id.dump();
   uri += parameters;
-  Logger::amf_sbi().debug(
-      "Send Slice Selection Information Retrieval to NSSF, URI %s",
-      uri.c_str());
 
   nlohmann::json response_json = {};
   uint32_t response_code       = 0;
@@ -915,8 +918,6 @@ void amf_sbi::handle_itti_message(itti_sbi_n1_message_notify& itti_msg) {
   std::string uri = itti_msg.target_amf_uri + "/ue-contexts/" + itti_msg.supi +
                     "/n1-message-notify";
 
-  Logger::amf_sbi().debug("Target AMF URI: %s", uri.c_str());
-
   nlohmann::json json_data = {};
   json_data[oai::utils::N1_SM_CONTENT_ID]["contentId"] =
       oai::utils::N1_SM_CONTENT_ID;
@@ -941,8 +942,6 @@ void amf_sbi::handle_itti_message(itti_sbi_n1_message_notify& itti_msg) {
 //------------------------------------------------------------------------------
 void amf_sbi::handle_itti_message(itti_sbi_n2_info_notify& itti_msg) {
   Logger::amf_sbi().debug("Send N2 Info Notify to the subscribed NF");
-
-  Logger::amf_sbi().debug("NF URI: %s", itti_msg.nf_uri.c_str());
 
   nlohmann::json json_data = {};
   to_json(json_data, itti_msg.n2_info_notification);
@@ -969,8 +968,6 @@ void amf_sbi::handle_itti_message(itti_sbi_n2_info_notify& itti_msg) {
 //------------------------------------------------------------------------------
 void amf_sbi::handle_itti_message(itti_sbi_nf_instance_discovery& itti_msg) {
   Logger::amf_sbi().debug("Send NF Instance Discovery to NRF ");
-
-  Logger::amf_sbi().debug("NRF URI: %s", itti_msg.nrf_amf_set.c_str());
 
   nlohmann::json json_data = {};
   std::string uri          = itti_msg.nrf_amf_set;
@@ -999,16 +996,7 @@ void amf_sbi::handle_itti_message(
   nlohmann::json json_data = {};
   itti_msg.profile.to_json(json_data);
 
-  Logger::amf_sbi().debug(
-      "Send NF Instance Registration to NRF, NRF URI (RegisterNFInstance "
-      "API) "
-      "%s",
-      itti_msg.nrf_uri);
-
-  std::string body = json_data.dump();
-  Logger::amf_sbi().debug(
-      "Send NF Instance Registration to NRF, msg body: \n %s", body.c_str());
-
+  std::string body             = json_data.dump();
   nlohmann::json response_data = {};
   uint32_t response_code       = 0;
 
@@ -1026,10 +1014,6 @@ void amf_sbi::handle_itti_message(
   if ((response_code == oai::common::sbi::http_status_code::CREATED) or
       (response_code == oai::common::sbi::http_status_code::OK)) {
     Logger::amf_sbi().debug("NFRegistration, got successful response from NRF");
-    Logger::amf_sbi().debug(
-        "NF Instance Registration, response from NRF, JSON data: \n %s",
-        response_data.dump().c_str());
-
     Logger::amf_sbi().debug("Registered AMF profile (from NRF)");
     itti_msg_response->profile.from_json(response_data);
   }
@@ -1052,22 +1036,13 @@ void amf_sbi::handle_itti_message(
     to_json(item, i);
     json_data.push_back(item);
   }
-  std::string body = json_data.dump();
-  Logger::amf_sbi().debug("Send NF Update to NRF, Msg body %s", body.c_str());
-
-  Logger::amf_sbi().debug(
-      "Send NF Update to NRF, NRF URI %s", itti_msg.nrf_uri.c_str());
-
+  std::string body             = json_data.dump();
   nlohmann::json response_data = {};
   uint32_t response_code       = 0;
 
   send_http_request(
       itti_msg.nrf_uri, oai::common::sbi::method_e::PATCH, body, response_data,
       response_code, amf_cfg->support_features.http_version);
-
-  Logger::amf_sbi().debug(
-      "NF Update, response from NRF, JSON data: \n %s",
-      response_data.dump().c_str());
 
   // Send response to APP to process
   std::shared_ptr<itti_sbi_update_nf_instance_response> itti_msg_response =
@@ -1089,9 +1064,6 @@ void amf_sbi::handle_itti_message(
 void amf_sbi::handle_itti_message(
     itti_sbi_deregister_nf_instance_request& itti_msg) {
   Logger::amf_sbi().debug("Send NF Deregistration to NRF ");
-
-  Logger::amf_sbi().debug(
-      "Send NF Deregistration to NRF, NRF URI %s", itti_msg.nrf_uri.c_str());
 
   nlohmann::json response_data = {};
   uint32_t response_code       = 0;
@@ -1124,26 +1096,14 @@ void amf_sbi::handle_itti_message(
 
   std::string uri =
       amf_sbi_helper::get_lmf_determine_location_uri(amf_cfg->lmf_addr);
-  Logger::amf_sbi().debug(
-      "Send Determine Location Request to LMF, URI %s", uri.c_str());
 
-  std::string body = itti_msg.input_data.dump();
-  Logger::amf_sbi().debug(
-      "Send Determine Location Request to LMF, msg body: \n %s", body.c_str());
-
+  std::string body             = itti_msg.input_data.dump();
   uint32_t response_code       = 0;
   nlohmann::json response_json = {};
 
   send_http_request(
       uri, oai::common::sbi::method_e::POST, body, response_json, response_code,
       amf_cfg->support_features.http_version);
-
-  Logger::amf_sbi().debug(
-      "Determine Location, response from LMF, HTTP Code: %d", response_code);
-
-  Logger::amf_sbi().debug(
-      "Determine Location, response from LMF\n, %s ",
-      response_json.dump().c_str());
 
   nlohmann::json response_data                = {};
   response_data[kSbiResponseHttpResponseCode] = response_code;
@@ -1166,26 +1126,13 @@ void amf_sbi::handle_itti_message(
   std::string uri =
       amf_sbi_helper::get_ausf_ue_authentications_uri(amf_cfg->ausf_addr);
 
-  Logger::amf_sbi().debug(
-      "Send UE Authentication Request to AUSF, URI %s", uri.c_str());
-
-  std::string body = json_data.dump();
-  Logger::amf_sbi().debug(
-      "Send UE Authentication Request to AUSF, msg body: \n %s", body.c_str());
-
+  std::string body             = json_data.dump();
   nlohmann::json response_json = {};
   uint32_t response_code       = 0;
 
   send_http_request(
       uri, oai::common::sbi::method_e::POST, body, response_json, response_code,
       amf_cfg->support_features.http_version);
-
-  Logger::amf_sbi().debug(
-      "UE Authentication, response from AUSF, HTTP Code: %lu", response_code);
-
-  Logger::amf_sbi().debug(
-      "UE Authentication, response from AUSF\n, %s ",
-      response_json.dump().c_str());
 
   nlohmann::json response_data                = {};
   response_data[kSbiResponseHttpResponseCode] = response_code;
@@ -1204,27 +1151,12 @@ void amf_sbi::handle_itti_message(
   Logger::amf_sbi().debug("Send UE Authentication Confirmation to AUSF ");
 
   std::string body = itti_msg.confirmation_data.dump();
-  Logger::amf_sbi().debug(
-      "Send UE Authentication Confirmation to AUSF, URI %s",
-      itti_msg.uri.c_str());
-  Logger::amf_sbi().debug(
-      "Send UE Authentication Confirmation to AUSF, msg body: \n %s",
-      body.c_str());
 
   nlohmann::json response_json = {};
   uint32_t response_code       = 0;
-
   send_http_request(
       itti_msg.uri, oai::common::sbi::method_e::PUT, body, response_json,
       response_code, amf_cfg->support_features.http_version);
-
-  Logger::amf_sbi().debug(
-      "UE Authentication Confirmation, response from AUSF, HTTP Code: %lu",
-      response_code);
-
-  Logger::amf_sbi().debug(
-      "UE Authentication Confirmation, response from AUSF\n, %s ",
-      response_json.dump().c_str());
 
   nlohmann::json response_data                = {};
   response_data[kSbiResponseHttpResponseCode] = response_code;
@@ -1244,21 +1176,11 @@ void amf_sbi::handle_itti_message(itti_sbi_register_with_udm& itti_msg) {
   std::string body = itti_msg.registration_data.dump();
   std::string uri  = amf_sbi_helper::get_udm_amf_3gpp_access_registration_uri(
       amf_cfg->udm_addr, itti_msg.supi);
-  Logger::amf_sbi().debug("URI %s", uri.c_str());
-  Logger::amf_sbi().debug("Message body: \n %s", body.c_str());
 
-  nlohmann::json response_json = {};
-  uint32_t response_code       = 0;
-
+  nlohmann::json response_json      = {};
+  uint32_t response_code            = 0;
   oai::http::response http_response = {};
   send_http_request(uri, oai::common::sbi::method_e::PUT, body, http_response);
-
-  Logger::amf_sbi().debug(
-      "AMF Registration for 3GPP Access, response from UDM, HTTP Code: %lu",
-      http_response.status_code);
-  Logger::amf_sbi().debug(
-      "AMF Registration for 3GPP Access, response from UDM\n, %s ",
-      http_response.body);
 
   nlohmann::json response_data                = {};
   response_data[kSbiResponseHttpResponseCode] = http_response.status_code;
@@ -1303,17 +1225,9 @@ void amf_sbi::handle_itti_message(itti_sbi_retrieve_am_data& itti_msg) {
   std::string parameters = {};
   parameters             = "?plmn-id=" + plmn_id.dump();
   uri += parameters;
-  Logger::amf_sbi().debug("URI %s", uri.c_str());
 
   oai::http::response http_response = {};
   send_http_request(uri, oai::common::sbi::method_e::GET, "", http_response);
-
-  Logger::amf_sbi().debug(
-      "AccessAndMobilitySubscriptionData, response from UDM, HTTP Code: %lu",
-      http_response.status_code);
-  Logger::amf_sbi().debug(
-      "AccessAndMobilitySubscriptionData, response from UDM\n, %s ",
-      http_response.body);
 
   nlohmann::json response_data                = {};
   response_data[kSbiResponseHttpResponseCode] = http_response.status_code;
@@ -1357,18 +1271,9 @@ void amf_sbi::handle_itti_message(
   std::string parameters = {};
   parameters             = "?plmn-id=" + plmn_id.dump();
   uri += parameters;
-  Logger::amf_sbi().debug("URI %s", uri.c_str());
 
   oai::http::response http_response = {};
   send_http_request(uri, oai::common::sbi::method_e::GET, "", http_response);
-
-  Logger::amf_sbi().debug(
-      "SMF Selection Subscription Data Retrieval, response from UDM, HTTP "
-      "Code: %lu",
-      http_response.status_code);
-  Logger::amf_sbi().debug(
-      "SMF Selection Subscription Data Retrieval, response from UDM\n, %s ",
-      http_response.body);
 
   nlohmann::json response_data                = {};
   response_data[kSbiResponseHttpResponseCode] = http_response.status_code;
@@ -1403,18 +1308,10 @@ bool amf_sbi::handle_itti_message(itti_sbi_pcf_discovery& itti_msg) {
   to_json(plmn_id, itti_msg.plmn_id);
   // TODO: support parameters PLMN ID, SNSSAI,
   nrf_uri += "?target-nf-type=PCF&requester-nf-type=AMF";
-  Logger::amf_sbi().debug("NRF's URI %s", nrf_uri.c_str());
 
   oai::http::response http_response = {};
   send_http_request(
       nrf_uri, oai::common::sbi::method_e::GET, "", http_response);
-
-  Logger::amf_sbi().debug(
-      "PCF Discovery, response from NRF, HTTP "
-      "Code: %lu",
-      http_response.status_code);
-  Logger::amf_sbi().debug(
-      "PCF Discovery, response from NRF\n, %s ", http_response.body);
 
   nlohmann::json response_data                = {};
   response_data[kSbiResponseHttpResponseCode] = http_response.status_code;
@@ -1439,26 +1336,16 @@ bool amf_sbi::handle_itti_message(itti_sbi_am_policy_association& itti_msg) {
 
   std::string uri =
       amf_sbi_helper::get_pcf_am_policy_association_uri(uc->pcf_addr);
-  Logger::amf_sbi().debug("URI %s", uri.c_str());
 
   nlohmann::json json_data = {};
   to_json(json_data, itti_msg.policy_assoc_req);
 
-  std::string body = json_data.dump();
-  Logger::amf_sbi().debug("Message body: \n %s", body.c_str());
-
+  std::string body             = json_data.dump();
   nlohmann::json response_json = {};
   uint32_t response_code       = 0;
 
   oai::http::response http_response = {};
-
   send_http_request(uri, oai::common::sbi::method_e::POST, body, http_response);
-
-  Logger::amf_sbi().debug(
-      "AM Policy Association, response from PCF, HTTP Code: %lu",
-      http_response.status_code);
-  Logger::amf_sbi().debug(
-      "AM Policy Association, response from PCF\n, %s ", http_response.body);
 
   nlohmann::json response_data                = {};
   response_data[kSbiResponseHttpResponseCode] = http_response.status_code;
@@ -1499,23 +1386,14 @@ bool amf_sbi::handle_itti_message(
   if (!amf_app_inst->supi_2_ue_context(itti_msg.supi, uc)) {
     return false;
   }
-  Logger::amf_sbi().debug("URI %s", uc->policy_association_location);
 
-  nlohmann::json response_json = {};
-  uint32_t response_code       = 0;
-
+  nlohmann::json response_json      = {};
+  uint32_t response_code            = 0;
   oai::http::response http_response = {};
 
   send_http_request(
       uc->policy_association_location, oai::common::sbi::method_e::POST, "",
       http_response);
-
-  Logger::amf_sbi().debug(
-      "AM Policy Association Termination, response from PCF, HTTP Code: %lu",
-      http_response.status_code);
-  Logger::amf_sbi().debug(
-      "AM Policy Association Termination, response from PCF\n, %s ",
-      http_response.body);
 
   nlohmann::json response_data                = {};
   response_data[kSbiResponseHttpResponseCode] = http_response.status_code;
@@ -1551,27 +1429,17 @@ bool amf_sbi::handle_itti_message(
   }
 
   std::string uri = uc->policy_association_location + "/update";
-  Logger::amf_sbi().debug("URI %s", uri);
 
   nlohmann::json json_data = {};
   to_json(json_data, itti_msg.policy_assoc_update_req);
 
-  std::string body = json_data.dump();
-  Logger::amf_sbi().debug("Message body: \n %s", body.c_str());
-
+  std::string body             = json_data.dump();
   nlohmann::json response_json = {};
   uint32_t response_code       = 0;
 
   oai::http::response http_response = {};
 
   send_http_request(uri, oai::common::sbi::method_e::POST, body, http_response);
-
-  Logger::amf_sbi().debug(
-      "AM Policy Association Update, response from PCF, HTTP Code: %lu",
-      http_response.status_code);
-  Logger::amf_sbi().debug(
-      "AM Policy Association Update, response from PCF\n, %s ",
-      http_response.body);
 
   nlohmann::json response_data                = {};
   response_data[kSbiResponseHttpResponseCode] = http_response.status_code;
@@ -1604,23 +1472,14 @@ bool amf_sbi::handle_itti_message(
   if (!amf_app_inst->supi_2_ue_context(itti_msg.supi, uc)) {
     return false;
   }
-  Logger::amf_sbi().debug("URI %s", uc->policy_association_location);
 
-  nlohmann::json response_json = {};
-  uint32_t response_code       = 0;
-
+  nlohmann::json response_json      = {};
+  uint32_t response_code            = 0;
   oai::http::response http_response = {};
 
   send_http_request(
       uc->policy_association_location, oai::common::sbi::method_e::GET, "",
       http_response);
-
-  Logger::amf_sbi().debug(
-      "AM Policy Association Retrieval, response from PCF, HTTP Code: %lu",
-      http_response.status_code);
-  Logger::amf_sbi().debug(
-      "AM Policy Association Retrieval, response from PCF\n, %s ",
-      http_response.body);
 
   nlohmann::json response_data                = {};
   response_data[kSbiResponseHttpResponseCode] = http_response.status_code;
@@ -1643,6 +1502,43 @@ bool amf_sbi::handle_itti_message(
   }
   return true;
 }
+
+//------------------------------------------------------------------------------
+bool amf_sbi::handle_itti_message(
+    itti_sbi_ue_context_in_smf_data_retrieval& itti_msg) {
+  Logger::amf_sbi().debug("Send UE Context In SMF Data Retrieval to UDM");
+  std::shared_ptr<ue_context> uc = {};
+  if (!amf_app_inst->supi_2_ue_context(itti_msg.supi, uc)) {
+    return false;
+  }
+
+  std::string uri =
+      amf_sbi_helper::get_udm_ue_context_in_smf_data_retrieval_uri(
+          amf_cfg->udm_addr, itti_msg.supi);
+
+  nlohmann::json response_json      = {};
+  uint32_t response_code            = 0;
+  oai::http::response http_response = {};
+
+  send_http_request(uri, oai::common::sbi::method_e::GET, "", http_response);
+
+  nlohmann::json response_data                = {};
+  response_data[kSbiResponseHttpResponseCode] = http_response.status_code;
+
+  // Send response to APP to process
+  if (http_response.status_code == oai::common::sbi::http_status_code::OK) {
+    std::shared_ptr<itti_sbi_ue_context_in_smf_data_retrieval_response>
+        itti_msg_response = std::make_shared<
+            itti_sbi_ue_context_in_smf_data_retrieval_response>(
+            TASK_AMF_SBI, TASK_AMF_APP);
+    itti_msg_response->supi          = uc->supi;
+    itti_msg_response->response_data = response_data;
+
+    itti_inst->send_msg(itti_msg_response);
+  }
+  return true;
+}
+
 //------------------------------------------------------------------------------
 bool amf_sbi::smf_selection_from_configuration(
     std::string& smf_uri_root, std::string& smf_api_version) {
@@ -1705,10 +1601,6 @@ bool amf_sbi::discover_smf(
   send_http_request(
       uri, oai::common::sbi::method_e::GET, "", response_data, response_code,
       amf_cfg->support_features.http_version);
-
-  Logger::amf_sbi().debug(
-      "NFDiscovery, response from NRF, json data: \n %s",
-      response_data.dump().c_str());
 
   if (response_code != oai::common::sbi::http_status_code::OK) {
     Logger::amf_sbi().warn("NFDiscovery, could not get response from NRF");
@@ -1829,9 +1721,6 @@ bool amf_sbi::send_http_request(
 
   // prepare the body content
   create_multipart_content(json_data, n1sm_msg, n2sm_msg, is_multipart, body);
-
-  Logger::amf_sbi().debug("Send HTTP message to %s", remote_uri.c_str());
-  Logger::amf_sbi().debug("Send HTTP message to NF with body %s", body.c_str());
 
   oai::http::request http_request =
       http_client_inst->prepare_multipart_request(remote_uri, body);
@@ -2180,7 +2069,9 @@ void amf_sbi::send_http_request(
   }
 
   Logger::amf_sbi().info(
-      "Get response with HTTP code (%ld)", http_response.status_code);
+      "Get response with HTTP code: %ld", http_response.status_code);
+
+  Logger::amf_sbi().debug("Get response with body\n, %s ", http_response.body);
   return;
 }
 
