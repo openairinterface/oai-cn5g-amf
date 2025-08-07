@@ -30,7 +30,7 @@
 # BASE IMAGE
 #---------------------------------------------------------------------
 ARG BASE_IMAGE=ubuntu:jammy
-FROM $BASE_IMAGE as oai-amf-base
+FROM $BASE_IMAGE AS oai-amf-base
 
 ENV DEBIAN_FRONTEND=noninteractive
 ENV TZ=Europe/Paris
@@ -59,7 +59,7 @@ RUN ./build_amf --install-deps --force
 #---------------------------------------------------------------------
 # BUILDER IMAGE
 #---------------------------------------------------------------------
-FROM oai-amf-base as oai-amf-builder
+FROM oai-amf-base AS oai-amf-builder
 # Copying source code
 ARG ENABLE_LTTNG=false
 
@@ -79,12 +79,12 @@ RUN  if [ "$ENABLE_LTTNG" = "true" ]; then DEBIAN_FRONTEND=noninteractive apt-ge
     ldd /openair-amf/build/amf/build/amf && \
     mv /openair-amf/build/amf/build/amf /openair-amf/build/amf/build/oai_amf
 
-FROM mikefarah/yq:latest as yq-source
+FROM mikefarah/yq:latest AS yq-source
 
 #---------------------------------------------------------------------
 # TARGET IMAGE
 #---------------------------------------------------------------------
-FROM $BASE_IMAGE as oai-amf
+FROM $BASE_IMAGE AS oai-amf
 ENV DEBIAN_FRONTEND=noninteractive
 ENV TZ=Europe/Paris
 ARG ENABLE_LTTNG=false
@@ -157,6 +157,15 @@ COPY --from=oai-amf-builder \
     /openair-amf/etc/config.yaml ./
 
 WORKDIR /openair-amf
+
+ARG GIT_COMMIT
+
+LABEL org.opencontainers.image.authors="OpenAirInterface <contact@openairinterface.org>" \
+      org.opencontainers.image.vendor="OpenAirInterface Software Alliance" \
+      org.opencontainers.image.licenses="OAI Public License, Version 1.1" \
+      org.opencontainers.image.title="OAI AMF" \
+      org.opencontainers.image.description="OpenAirInterface Access and Mobility Management Function" \
+      org.opencontainers.image.revision="commit:${GIT_COMMIT}"
 
 # expose ports
 EXPOSE 80/tcp 9090/tcp 38412/sctp 5342 5343 5344

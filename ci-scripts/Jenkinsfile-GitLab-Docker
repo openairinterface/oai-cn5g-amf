@@ -40,6 +40,9 @@ cppcheckResource = params.CppCheckResource
 formatCheckNode = params.FormatCheckNode
 formatCheckResource = params.FormatCheckResource
 
+// Its main purpose is the ARM Neoverse-v2 Build
+armBuildResource = params.armBuildResource
+
 // Tags/Branches to use
 def amf_tag = "develop"
 def amf_branch = "develop"
@@ -76,7 +79,7 @@ pipeline {
     gitLabConnection('OAI GitLab')
     // Minimal checks
     gitlabBuilds(builds: [
-      "Build Ubuntu AMF Image",
+      "Build Ubuntu MultiArch AMF Image",
       "Build Ubuntu AMF Image with LTTNG",
       "Build RHEL AMF Image",
       "Static Code Analysis",
@@ -153,44 +156,52 @@ pipeline {
     }
     stage('Build Core Network Function') {
       parallel {
-        stage ('Build Ubuntu AMF Image') {
+        stage ('Build Ubuntu MultiArch AMF Image') {
           steps {
             // Now it is only locked during this build stage and not for the whole pipeline
             lock(ubuntuBuildResource) {
-              script {
-                gitlabCommitStatus(name: "Build Ubuntu AMF Image") {
-                  sh "docker image rm oai-amf:${amf_tag} || true"
-                  sh "docker image prune --force"
-                  if ("PUSH".equals(env.gitlabActionType)) {
-                    dockerBuildOptions = '--no-cache '
+              lock(armBuildResource) {
+                script {
+                  gitlabCommitStatus(name: "Build Ubuntu MultiArch AMF Image") {
+                    sh "docker image rm ${PrivateRegistryURL}/oai-amf:${amf_tag} || true"
+                    sh "docker image prune --force"
+                    if ("PUSH".equals(env.gitlabActionType)) {
+                      dockerBuildOptions = '--no-cache '
+                    }
+                    if ("MERGE".equals(env.gitlabActionType)) {
+                      dockerBuildOptions = ''
+                      sh "date --rfc-email > src/common-src/date.txt"
+                    }
+                    // Building Pushing to local private registry for testing purpose
+                    sh "docker login -u oaicicd -p oaicicd ${PrivateRegistryURL}"
+                    sh "docker buildx build ${dockerBuildOptions} \
+                      --target oai-amf \
+                      --tag ${PrivateRegistryURL}/oai-amf:${amf_tag} \
+                      --platform linux/amd64,linux/arm64 \
+                      --build-arg GIT_COMMIT=\"${shortenShaOne}\" \
+                      --file docker/Dockerfile.amf.ubuntu \
+                      --builder multiarch-localremote-builder \
+                      --progress=plain \
+                      --push . > archives/amf_multiarch_buildx.log 2>&1"
+                    // Remove all images locally
+                    sh "docker image prune --force"
+                    sh "docker rmi ${PrivateRegistryURL}/oai-amf:${amf_tag} || true"
+                    sh "docker pull ${PrivateRegistryURL}/oai-amf:${amf_tag}"
+                    sh "docker image inspect ${PrivateRegistryURL}/oai-amf:${amf_tag} | jq '.[0] | {RepoTags, Labels: .Config.Labels, DockerVersion}' >> archives/amf_multiarch_buildx.log 2>&1"
+                    sh "docker rmi ${PrivateRegistryURL}/oai-amf:${amf_tag} || true"
+                    sh "docker logout ${PrivateRegistryURL}"
+                    sh "bash ./ci-scripts/common/bash/extract_arm_amd_logs.sh archives/amf_multiarch_buildx.log"
                   }
-                  if ("MERGE".equals(env.gitlabActionType)) {
-                    dockerBuildOptions = ''
-                    sh "date --rfc-email > src/common-src/date.txt"
-                  }
-                  sh "docker buildx build ${dockerBuildOptions} --target oai-amf --tag oai-amf:${amf_tag} --file docker/Dockerfile.amf.ubuntu . > archives/amf_ubuntu_image_build.log 2>&1"
-                  // Putting a place holder to try out on the flattening of image.
-                  // If not satisfactory, we can remove it.
-                  sh "python3 ./ci-scripts/flatten_image.py --tag oai-amf:${amf_tag}"
-                  sh "docker image prune --force"
-                  sh "docker image ls | egrep --color=never 'amf|REPOSITORY' >> archives/amf_ubuntu_image_build.log"
-                  // Pushing to local private registry for testing purpose
-                  sh "docker login -u oaicicd -p oaicicd ${PrivateRegistryURL}"
-                  sh "docker image tag oai-amf:${amf_tag} ${PrivateRegistryURL}/oai-amf:${amf_tag}"
-                  sh "docker push ${PrivateRegistryURL}/oai-amf:${amf_tag}"
-                  // Remove all images locally
-                  sh "docker rmi oai-amf:${amf_tag} ${PrivateRegistryURL}/oai-amf:${amf_tag}"
-                  sh "docker logout ${PrivateRegistryURL}"
                 }
               }
             }
           }
           post {
             success {
-              sh "echo 'OAI-AMF UBUNTU IMAGE BUILD: OK' >> archives/amf_ubuntu_image_build.log"
+              sh "echo 'OAI-AMF UBUNTU IMAGE BUILD: OK' >> archives/amf_multiarch_buildx.log"
             }
             unsuccessful {
-              sh "echo 'OAI-AMF UBUNTU IMAGE BUILD: KO' >> archives/amf_ubuntu_image_build.log"
+              sh "echo 'OAI-AMF UBUNTU IMAGE BUILD: KO' >> archives/amf_multiarch_buildx.log"
             }
           }
         }
