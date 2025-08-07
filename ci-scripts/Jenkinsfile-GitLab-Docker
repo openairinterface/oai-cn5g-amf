@@ -43,6 +43,9 @@ formatCheckResource = params.FormatCheckResource
 // Its main purpose is the ARM Neoverse-v2 Build
 armBuildResource = params.armBuildResource
 
+// Boolean param to control trivy scan
+runTrivyScan = params.runTrivyScan
+
 // Tags/Branches to use
 def amf_tag = "develop"
 def amf_branch = "develop"
@@ -79,7 +82,7 @@ pipeline {
     gitLabConnection('OAI GitLab')
     // Minimal checks
     gitlabBuilds(builds: [
-      "Build Ubuntu MultiArch AMF Image",
+      "Build Ubuntu ARM Neoverse V2 (Grace) Image",
       "Build Ubuntu AMF Image with LTTNG",
       "Build RHEL AMF Image",
       "Static Code Analysis",
@@ -156,13 +159,13 @@ pipeline {
     }
     stage('Build Core Network Function') {
       parallel {
-        stage ('Build Ubuntu MultiArch AMF Image') {
+        stage ('Build Ubuntu ARM Neoverse V2 (Grace) Image') {
           steps {
             // Now it is only locked during this build stage and not for the whole pipeline
             lock(ubuntuBuildResource) {
               lock(armBuildResource) {
                 script {
-                  gitlabCommitStatus(name: "Build Ubuntu MultiArch AMF Image") {
+                  gitlabCommitStatus(name: "Build Ubuntu ARM Neoverse V2 (Grace) Image") {
                     sh "docker image rm ${PrivateRegistryURL}/oai-amf:${amf_tag} || true"
                     sh "docker image prune --force"
                     if ("PUSH".equals(env.gitlabActionType)) {
@@ -188,6 +191,15 @@ pipeline {
                     sh "docker rmi ${PrivateRegistryURL}/oai-amf:${amf_tag} || true"
                     sh "docker pull ${PrivateRegistryURL}/oai-amf:${amf_tag}"
                     sh "docker image inspect ${PrivateRegistryURL}/oai-amf:${amf_tag} | jq '.[0] | {RepoTags, Labels: .Config.Labels, DockerVersion}' >> archives/amf_multiarch_buildx.log 2>&1"
+                    
+                    // Run the trivy scan only if the boolean variable runTrivyScan is True
+                    if (runTrivyScan) {
+                       sh "docker rmi oai-amf:${shortenShaOne} || true"
+                       sh "docker image tag ${PrivateRegistryURL}/oai-amf:${amf_tag} oai-amf:${shortenShaOne}"
+                       sh "trivy image --exit-code 1 --severity MEDIUM,HIGH,CRITICAL --no-progress --format=template --template @./ci-scripts/common/html-templates/trivy_html.tpl --output archives/amf_multiarch_image_trivy_report.html oai-amf:${shortenShaOne} > /dev/null || true"
+                       sh "docker rmi oai-amf:${shortenShaOne} || true"
+                    }
+
                     sh "docker rmi ${PrivateRegistryURL}/oai-amf:${amf_tag} || true"
                     sh "docker logout ${PrivateRegistryURL}"
                     sh "bash ./ci-scripts/common/bash/extract_arm_amd_logs.sh archives/amf_multiarch_buildx.log"
@@ -605,9 +617,12 @@ pipeline {
           sh "sed -i -e 's#TEMPLATE_TIME#${JOB_TIMESTAMP}#' ${htmlFile}"
           archiveArtifacts artifacts: htmlFile
         }
-
+        if (fileExists('archives/amf_multiarch_image_trivy_report.html')) 
+        {
+              archiveArtifacts artifacts: 'archives/amf_multiarch_image_trivy_report.html'
+        }
         // Zipping all archived log files
-        sh "zip -r -qq docker_logs.zip archives"
+        sh "zip -r -qq docker_logs.zip archives -x archives/amf_multiarch_image_trivy_report.html"
         if (fileExists('docker_logs.zip')) {
           archiveArtifacts artifacts: 'docker_logs.zip'
         }
