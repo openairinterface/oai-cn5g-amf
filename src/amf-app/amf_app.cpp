@@ -1848,7 +1848,8 @@ void amf_app::get_ue_context_in_smf_data(
   std::shared_ptr<itti_sbi_ue_context_in_smf_data_retrieval> itti_msg =
       std::make_shared<itti_sbi_ue_context_in_smf_data_retrieval>(
           TASK_AMF_APP, TASK_AMF_SBI);
-  int ret = itti_msg->supi = uc->supi;
+  itti_msg->supi = uc->supi;
+  int ret        = itti_inst->send_msg(itti_msg);
   if (0 != ret) {
     Logger::amf_app().error(
         "Could not send ITTI message %s to task TASK_AMF_SBI",
