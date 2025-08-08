@@ -224,6 +224,13 @@ class amf_sbi {
   bool handle_itti_message(itti_sbi_am_policy_association_retrieval& itti_msg);
 
   /*
+   * Handle ITTI message to retrieve a UE's UE Context In SMF Data
+   * @param [itti_sbi_ue_context_in_smf_data_retrieval&]: ITTI message
+   * @return void
+   */
+  bool handle_itti_message(itti_sbi_ue_context_in_smf_data_retrieval& itti_msg);
+
+  /*
    * Handle request to create a new PDU Session
    * @param [const std::string&] supi: SUPI
    * @param [std::shared_ptr<pdu_session_context>&] psc: Pointer to the PDU

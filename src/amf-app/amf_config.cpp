@@ -51,6 +51,18 @@ void amf_support_features::from_yaml(const YAML::Node& node) {
     m_enable_smf_selection.from_yaml(
         node[AMF_CONFIG_SUPPORT_FEATURES_ENABLE_SMF_SELECTION]);
   }
+  if (node[AMF_CONFIG_SUPPORT_FEATURES_ENABLE_ACCESS_AND_MOBILITY_SUBSCRIPTION_DATA_RETRIEVAL]) {
+    m_enable_smf_selection.from_yaml(
+        node[AMF_CONFIG_SUPPORT_FEATURES_ENABLE_ACCESS_AND_MOBILITY_SUBSCRIPTION_DATA_RETRIEVAL]);
+  }
+  if (node[AMF_CONFIG_SUPPORT_FEATURES_ENABLE_SMF_SELECTION_SUBSCRIPTION_DATA_RETRIEVAL]) {
+    m_enable_smf_selection_subscription_data_retrieval.from_yaml(
+        node[AMF_CONFIG_SUPPORT_FEATURES_ENABLE_SMF_SELECTION_SUBSCRIPTION_DATA_RETRIEVAL]);
+  }
+  if (node[AMF_CONFIG_SUPPORT_FEATURES_ENABLE_UE_CONTEXT_IN_SMF_DATA_RETRIEVAL]) {
+    m_enable_ue_context_in_smf_data_retrieval.from_yaml(
+        node[AMF_CONFIG_SUPPORT_FEATURES_ENABLE_UE_CONTEXT_IN_SMF_DATA_RETRIEVAL]);
+  }
 }
 
 //------------------------------------------------------------------------------
@@ -81,6 +93,35 @@ std::string amf_support_features::to_string(const std::string& indent) const {
       BASE_FORMATTER, INNER_LIST_ELEM,
       AMF_CONFIG_SUPPORT_FEATURES_ENABLE_SMF_SELECTION_LABEL, inner_width,
       enable_smf_selection_string));
+
+  std::string enable_access_and_mobility_subscription_data_retrieval_string =
+      m_enable_access_and_mobility_subscription_data_retrieval.get_value() ?
+          AMF_CONFIG_OPTION_YES_STR :
+          AMF_CONFIG_OPTION_NO_STR;
+  out.append(indent).append(fmt::format(
+      BASE_FORMATTER, INNER_LIST_ELEM,
+      AMF_CONFIG_SUPPORT_FEATURES_ENABLE_ACCESS_AND_MOBILITY_SUBSCRIPTION_DATA_RETRIEVAL_LABEL,
+      inner_width,
+      enable_access_and_mobility_subscription_data_retrieval_string));
+
+  std::string enable_smf_selection_subscription_data_retrieval_string =
+      m_enable_smf_selection_subscription_data_retrieval.get_value() ?
+          AMF_CONFIG_OPTION_YES_STR :
+          AMF_CONFIG_OPTION_NO_STR;
+  out.append(indent).append(fmt::format(
+      BASE_FORMATTER, INNER_LIST_ELEM,
+      AMF_CONFIG_SUPPORT_FEATURES_ENABLE_SMF_SELECTION_SUBSCRIPTION_DATA_RETRIEVAL_LABEL,
+      inner_width, enable_smf_selection_subscription_data_retrieval_string));
+
+  std::string enable_ue_context_in_smf_data_retrieval_string =
+      m_enable_ue_context_in_smf_data_retrieval.get_value() ?
+          AMF_CONFIG_OPTION_YES_STR :
+          AMF_CONFIG_OPTION_NO_STR;
+  out.append(indent).append(fmt::format(
+      BASE_FORMATTER, INNER_LIST_ELEM,
+      AMF_CONFIG_SUPPORT_FEATURES_ENABLE_UE_CONTEXT_IN_SMF_DATA_RETRIEVAL_LABEL,
+      inner_width, enable_ue_context_in_smf_data_retrieval_string));
+
   return out;
 }
 
@@ -97,6 +138,24 @@ bool amf_support_features::get_option_enable_nssf() const {
 //------------------------------------------------------------------------------
 bool amf_support_features::get_option_enable_smf_selection() const {
   return m_enable_smf_selection.get_value();
+}
+
+//------------------------------------------------------------------------------
+bool amf_support_features::
+    get_option_enable_access_and_mobility_subscription_data_retrieval() const {
+  return m_enable_access_and_mobility_subscription_data_retrieval.get_value();
+}
+
+//------------------------------------------------------------------------------
+bool amf_support_features::
+    get_option_enable_smf_selection_subscription_data_retrieval() const {
+  return m_enable_smf_selection_subscription_data_retrieval.get_value();
+}
+
+//------------------------------------------------------------------------------
+bool amf_support_features::get_option_enable_ue_context_in_smf_data_retrieval()
+    const {
+  return m_enable_ue_context_in_smf_data_retrieval.get_value();
 }
 
 //------------------------------------------------------------------------------
@@ -894,8 +953,12 @@ amf_config::amf_config(
   support_features.enable_external_ausf_udm = false;
   support_features.enable_nssf              = false;
   support_features.enable_lmf               = false;
-  support_features.http_version             = 2;  // HTTP/2 by default
-  is_emergency_support                      = false;
+  support_features.enable_access_and_mobility_subscription_data_retrieval =
+      false;
+  support_features.enable_smf_selection_subscription_data_retrieval = false;
+  support_features.enable_ue_context_in_smf_data_retrieval          = false;
+  support_features.http_version = 2;  // HTTP/2 by default
+  is_emergency_support          = false;
 }
 
 //------------------------------------------------------------------------------
@@ -942,6 +1005,10 @@ void amf_config::pre_process() {
     support_features.enable_smf_selection     = false;
     support_features.enable_external_ausf_udm = false;
     support_features.enable_nssf              = false;  // TODO: to be removed
+    support_features.enable_access_and_mobility_subscription_data_retrieval =
+        false;
+    support_features.enable_smf_selection_subscription_data_retrieval = false;
+    support_features.enable_ue_context_in_smf_data_retrieval          = false;
   } else {  // parse the other options
     support_features.enable_nf_registration = register_nrf();
     support_features.enable_smf_selection =
@@ -949,6 +1016,15 @@ void amf_config::pre_process() {
     support_features.enable_external_ausf_udm = true;  // To be removed
     support_features.enable_nssf =
         amf_local->get_support_features().get_option_enable_nssf();
+    support_features.enable_access_and_mobility_subscription_data_retrieval =
+        amf_local->get_support_features()
+            .get_option_enable_access_and_mobility_subscription_data_retrieval();
+    support_features.enable_smf_selection_subscription_data_retrieval =
+        amf_local->get_support_features()
+            .get_option_enable_smf_selection_subscription_data_retrieval();
+    support_features.enable_ue_context_in_smf_data_retrieval =
+        amf_local->get_support_features()
+            .get_option_enable_ue_context_in_smf_data_retrieval();
   }
 
   support_features.http_version = get_http_version();

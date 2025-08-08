@@ -54,6 +54,24 @@ constexpr auto AMF_CONFIG_SUPPORT_FEATURES_ENABLE_SMF_SELECTION =
     "enable_smf_selection";
 constexpr auto AMF_CONFIG_SUPPORT_FEATURES_ENABLE_SMF_SELECTION_LABEL =
     "Enable SMF Selection";
+constexpr auto
+    AMF_CONFIG_SUPPORT_FEATURES_ENABLE_ACCESS_AND_MOBILITY_SUBSCRIPTION_DATA_RETRIEVAL =
+        "enable_access_and_mobility_subscription_data_retrieval";
+constexpr auto
+    AMF_CONFIG_SUPPORT_FEATURES_ENABLE_ACCESS_AND_MOBILITY_SUBSCRIPTION_DATA_RETRIEVAL_LABEL =
+        "Enable Access and Mobility Subscription Data Retrieval";
+constexpr auto
+    AMF_CONFIG_SUPPORT_FEATURES_ENABLE_SMF_SELECTION_SUBSCRIPTION_DATA_RETRIEVAL =
+        "enable_smf_selection_subscription_data_retrieval";
+constexpr auto
+    AMF_CONFIG_SUPPORT_FEATURES_ENABLE_SMF_SELECTION_SUBSCRIPTION_DATA_RETRIEVAL_LABEL =
+        "Enable SMF Selection Subscription Data Retrieval";
+constexpr auto
+    AMF_CONFIG_SUPPORT_FEATURES_ENABLE_UE_CONTEXT_IN_SMF_DATA_RETRIEVAL =
+        "enable_ue_context_in_smf_data_retrieval";
+constexpr auto
+    AMF_CONFIG_SUPPORT_FEATURES_ENABLE_UE_CONTEXT_IN_SMF_DATA_RETRIEVAL_LABEL =
+        "Enable UE Context in SMF Data Retrieval";
 constexpr auto AMF_CONFIG_RELATIVE_CAPACITY       = "relative_capacity";
 constexpr auto AMF_CONFIG_RELATIVE_CAPACITY_LABEL = "Relative Capacity";
 constexpr auto AMF_CONFIG_STATISTICS_TIMER_INTERVAL =
@@ -157,6 +175,10 @@ class amf_support_features : public config_type {
   option_config_value m_enable_simple_scenario{};
   option_config_value m_enable_nssf{};
   option_config_value m_enable_smf_selection{};
+  option_config_value
+      m_enable_access_and_mobility_subscription_data_retrieval{};
+  option_config_value m_enable_smf_selection_subscription_data_retrieval{};
+  option_config_value m_enable_ue_context_in_smf_data_retrieval{};
 
  public:
   explicit amf_support_features();
@@ -167,6 +189,11 @@ class amf_support_features : public config_type {
   [[nodiscard]] bool get_option_enable_simple_scenario() const;
   [[nodiscard]] bool get_option_enable_nssf() const;
   [[nodiscard]] bool get_option_enable_smf_selection() const;
+  [[nodiscard]] bool
+  get_option_enable_access_and_mobility_subscription_data_retrieval() const;
+  [[nodiscard]] bool
+  get_option_enable_smf_selection_subscription_data_retrieval() const;
+  [[nodiscard]] bool get_option_enable_ue_context_in_smf_data_retrieval() const;
 };
 
 class guami : public config_type {
@@ -273,6 +300,10 @@ typedef struct support_features_s {
   bool enable_external_ausf_udm;
   bool enable_nssf;
   bool enable_lmf;
+  bool enable_smf_selection_subscription_data_retrieval;
+  bool enable_ue_context_in_smf_data_retrieval;
+  bool enable_access_and_mobility_subscription_data_retrieval;
+
   uint8_t http_version;
   nlohmann::json to_json() const {
     nlohmann::json json_data              = {};
@@ -281,7 +312,13 @@ typedef struct support_features_s {
     json_data["enable_external_ausf_udm"] = this->enable_external_ausf_udm;
     json_data["enable_nssf"]              = this->enable_nssf;
     json_data["enable_lmf"]               = this->enable_lmf;
-    json_data["http_version"]             = this->http_version;
+    json_data["enable_smf_selection_subscription_data_retrieval"] =
+        this->enable_smf_selection_subscription_data_retrieval;
+    json_data["enable_ue_context_in_smf_data_retrieval"] =
+        this->enable_ue_context_in_smf_data_retrieval;
+    json_data["enable_access_and_mobility_subscription_data_retrieval"] =
+        this->enable_access_and_mobility_subscription_data_retrieval;
+    json_data["http_version"] = this->http_version;
     return json_data;
   }
 
@@ -302,11 +339,29 @@ typedef struct support_features_s {
       if (json_data.find("enable_nssf") != json_data.end()) {
         this->enable_nssf = json_data["enable_nssf"].get<bool>();
       }
-      if (json_data.find("http_version") != json_data.end()) {
-        this->http_version = json_data["http_version"].get<int>();
-      }
       if (json_data.find("enable_lmf") != json_data.end()) {
         this->enable_lmf = json_data["enable_lmf"].get<bool>();
+      }
+      if (json_data.find("enable_smf_selection_subscription_data_retrieval") !=
+          json_data.end()) {
+        this->enable_smf_selection_subscription_data_retrieval =
+            json_data["enable_smf_selection_subscription_data_retrieval"]
+                .get<bool>();
+      }
+      if (json_data.find("enable_ue_context_in_smf_data_retrieval") !=
+          json_data.end()) {
+        this->enable_ue_context_in_smf_data_retrieval =
+            json_data["enable_ue_context_in_smf_data_retrieval"].get<bool>();
+      }
+      if (json_data.find(
+              "enable_access_and_mobility_subscription_data_retrieval") !=
+          json_data.end()) {
+        this->enable_access_and_mobility_subscription_data_retrieval =
+            json_data["enable_access_and_mobility_subscription_data_retrieval"]
+                .get<bool>();
+      }
+      if (json_data.find("http_version") != json_data.end()) {
+        this->http_version = json_data["http_version"].get<int>();
       }
     } catch (std::exception& e) {
       Logger::amf_app().error("%s", e.what());
