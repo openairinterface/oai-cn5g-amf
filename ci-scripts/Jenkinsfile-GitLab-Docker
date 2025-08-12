@@ -394,7 +394,9 @@ pipeline {
 
                 if (localStatus.resultIsBetterOrEqualTo('SUCCESS')) {
                   echo "Tutorials Test Job is OK"
+                  env.StatusTutorials = "OK"
                 } else {
+                  env.StatusTutorials = "KO"
                   error "Tutorials Test Job is KO"
                 }
               }
@@ -423,7 +425,9 @@ pipeline {
 
                 if (localStatus.resultIsBetterOrEqualTo('SUCCESS')) {
                   echo "Test Job with COTS-UE is OK"
+                  env.StatusCOTSUE = "OK"
                 } else {
+                  env.StatusCOTSUE = "KO"
                   error "Test Job with COTS-UE is is KO"
                 }
               }
@@ -452,7 +456,9 @@ pipeline {
 
                 if (localStatus.resultIsBetterOrEqualTo('SUCCESS')) {
                   echo "Load Testing is OK"
+                  env.StatusLoadTesting = "OK"
                 } else {
+                  env.StatusLoadTesting = "KO"
                   error "Load Testing is is KO"
                 }
               }
@@ -482,7 +488,9 @@ pipeline {
 
                 if (localStatus.resultIsBetterOrEqualTo('SUCCESS')) {
                   echo "Robot-Test is OK"
+                  env.StatusRobotTesting = "OK"
                 } else {
+                  env.StatusRobotTesting = "KO"
                   error "Robot-Test is is KO"
                 }
               }
@@ -511,8 +519,10 @@ pipeline {
                 localResult = localStatus.getResult()
 
                 if (localStatus.resultIsBetterOrEqualTo('SUCCESS')) {
+                  env.StatusRobotNorthBoundTesting = "OK"
                   echo "Robot-NorthBound-Test is OK"
                 } else {
+                  env.StatusRobotNorthBoundTesting = "KO"
                   error "Robot-NorthBound-Test is is KO"
                 }
               }
@@ -537,6 +547,11 @@ pipeline {
       steps {
         lock(ubuntuBuildResource) {
           script {
+            echo "Tutorials Test Job Status: ${env.StatusTutorials}"
+            echo "Test Job with COTS-UE Status: ${env.StatusCOTSUE}"
+            echo "Load Testing Job Status: ${env.StatusLoadTesting}"
+            echo "Robot-Test Job Status: ${env.StatusRobotTesting}"
+            echo "Robot-NorthBound-Test Job Status: ${env.StatusRobotNorthBoundTesting}"
             // Only in case of push to target branch!
             if ("PUSH".equals(env.gitlabActionType)) {
               withCredentials([
