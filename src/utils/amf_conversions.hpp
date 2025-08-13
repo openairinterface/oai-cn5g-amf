@@ -61,12 +61,6 @@ class amf_conv : public oai::utils::conv {
     if (out.size() % 2 == 1) out = "0" + out;
     return ("0x" + out);
   }
-  static std::string tmsi_to_guti(
-      const std::string& mcc, const std::string& mnc, uint8_t region_id,
-      const std::string& _5g_s_tmsi);
-  static std::string tmsi_to_guti(
-      const std::string& mcc, const std::string& mnc, uint8_t region_id,
-      uint16_t amf_set_id, uint8_t amf_pointer, const std::string& tmsi);
   static std::string imsi_to_supi(const std::string& imsi);
   static std::string get_imsi(
       const std::string& mcc, const std::string& mnc, const std::string& msin);
