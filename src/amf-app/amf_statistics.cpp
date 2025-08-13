@@ -249,7 +249,6 @@ void statistics::update_5gmm_state(
   if (ue_infos.count(nc->imsi) > 0) {
     ue_info_t ue_info       = ue_infos.at(nc->imsi);
     ue_info.register_status = state;
-    ;
     if (nc->guti.has_value()) ue_info.guti = nc->guti.value();
     ue_infos.at(nc->imsi) = ue_info;
     Logger::amf_app().debug(
