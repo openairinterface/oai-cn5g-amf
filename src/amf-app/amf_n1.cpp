@@ -3746,7 +3746,7 @@ void amf_n1::ue_initiate_de_registration_handle(
   // TODO: validate 5G Mobile Identity
   uint8_t mobile_id_type = 0;
   dereg_request->GetMobilityIdentityType(mobile_id_type);
-  Logger::amf_n1().debug("5G Mobile Identity %X", mobile_id_type);
+  Logger::amf_n1().debug("5G Mobile Identity Type %d", mobile_id_type);
   switch (mobile_id_type) {
     case k5gGuti: {
       guti = dereg_request->Get5gGuti();
@@ -3769,12 +3769,14 @@ void amf_n1::ue_initiate_de_registration_handle(
   if (guti_2_nas_context(guti, old_nc)) {
     if ((!old_nc->supi.empty()) and nc->supi.empty()) {
       nc->supi = old_nc->supi;
+      nc->imsi = old_nc->imsi;
     }
   }
 
   if (nc->supi.empty()) {
     Logger::amf_n1().error(
-        "No SUPI found in NAS context, cannot proceed with de-registration");
+        "No SUPI found in the NAS context, cannot proceed with de-registration "
+        "procedure");
     return;
   }
 
