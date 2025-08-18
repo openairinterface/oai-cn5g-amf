@@ -46,6 +46,9 @@ armBuildResource = params.armBuildResource
 // Boolean param to control trivy scan
 runTrivyScan = params.runTrivyScan
 
+// Boolean param to control the run of "Pushing Image to Official Registry" stage (keep it false by default)
+runDockerHubPushStage = false // Please set it to true when replaying a "PUSH" event Pipeline
+
 // Tags/Branches to use
 def amf_tag = "develop"
 def amf_branch = "develop"
@@ -185,13 +188,13 @@ pipeline {
                       --file docker/Dockerfile.amf.ubuntu \
                       --builder multiarch-localremote-builder \
                       --progress=plain \
-                      --push . > archives/amf_multiarch_buildx.log 2>&1"
+                      --push . > archives/amf_ubuntu_image_build.log 2>&1"
                     // Remove all images locally
                     sh "docker image prune --force"
                     sh "docker rmi ${PrivateRegistryURL}/oai-amf:${amf_tag} || true"
                     sh "docker pull ${PrivateRegistryURL}/oai-amf:${amf_tag}"
-                    sh "docker image inspect ${PrivateRegistryURL}/oai-amf:${amf_tag} | jq '.[0] | {RepoTags, Labels: .Config.Labels, DockerVersion}' >> archives/amf_multiarch_buildx.log 2>&1"
-                    
+                    sh "docker image inspect ${PrivateRegistryURL}/oai-amf:${amf_tag} | jq '.[0] | {RepoTags, Labels: .Config.Labels, DockerVersion}' >> archives/amf_ubuntu_image_build.log 2>&1"
+                    sh "docker images ${PrivateRegistryURL}/oai-amf:${amf_tag} >> archives/amf_ubuntu_image_build.log 2>&1"
                     // Run the trivy scan only if the boolean variable runTrivyScan is True
                     if (runTrivyScan) {
                        sh "docker rmi oai-amf:${shortenShaOne} || true"
@@ -202,7 +205,7 @@ pipeline {
 
                     sh "docker rmi ${PrivateRegistryURL}/oai-amf:${amf_tag} || true"
                     sh "docker logout ${PrivateRegistryURL}"
-                    sh "bash ./ci-scripts/common/bash/extract_arm_amd_logs.sh archives/amf_multiarch_buildx.log"
+                    sh "bash ./ci-scripts/common/bash/extract_arm_amd_logs.sh archives/amf_ubuntu_image_build.log"
                   }
                 }
               }
@@ -210,10 +213,10 @@ pipeline {
           }
           post {
             success {
-              sh "echo 'OAI-AMF UBUNTU IMAGE BUILD: OK' >> archives/amf_multiarch_buildx.log"
+              sh "echo 'OAI-AMF UBUNTU IMAGE BUILD: OK' >> archives/amf_ubuntu_image_build.log"
             }
             unsuccessful {
-              sh "echo 'OAI-AMF UBUNTU IMAGE BUILD: KO' >> archives/amf_multiarch_buildx.log"
+              sh "echo 'OAI-AMF UBUNTU IMAGE BUILD: KO' >> archives/amf_ubuntu_image_build.log"
             }
           }
         }
@@ -561,17 +564,16 @@ pipeline {
         lock(ubuntuBuildResource) {
           script {
             // Only in case of push to target branch!
-            if ("PUSH".equals(env.gitlabActionType)) {
+            if ("PUSH".equals(env.gitlabActionType) || runDockerHubPushStage) {
               withCredentials([
                 [$class: 'UsernamePasswordMultiBinding', credentialsId: "${params.DockerHubCredentials}", usernameVariable: 'DH_Username', passwordVariable: 'DH_Password']
               ]) {
                 sh "echo ${DH_Password} | docker login --username ${DH_Username} --password-stdin"
               }
               sh "docker login -u oaicicd -p oaicicd ${PrivateRegistryURL}"
-              sh "docker pull ${PrivateRegistryURL}/oai-amf:${amf_tag}"
-              sh "docker image tag ${PrivateRegistryURL}/oai-amf:${amf_tag} ${DH_Account}/oai-amf:develop"
-              sh "docker push ${DH_Account}/oai-amf:develop"
-              sh "docker rmi ${DH_Account}/oai-amf:develop ${PrivateRegistryURL}/oai-amf:${amf_tag}"
+              sh "docker rmi ${PrivateRegistryURL}/oai-amf:${amf_tag} || true"
+              sh "docker buildx imagetools create -t ${DH_Account}/oai-amf:develop ${PrivateRegistryURL}/oai-amf:${amf_tag}"
+              sh "docker rmi ${DH_Account}/oai-amf:develop ${PrivateRegistryURL}/oai-amf:${amf_tag} || true"
               sh "docker logout ${PrivateRegistryURL}"
               sh "docker logout"
             }
