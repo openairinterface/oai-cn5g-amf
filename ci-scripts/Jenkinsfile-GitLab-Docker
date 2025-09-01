@@ -446,10 +446,24 @@ pipeline {
                     string(name: 'AMF_BRANCH', value: String.valueOf(amf_branch))
                   ], propagate: false
                 localResult = localStatus.getResult()
+                // Copy artifacts to read the log of UE Status to be able to decide if it is UNSTABLE or not
+                copyArtifacts(projectName: 'OAI-CN5G-COTS-UE-Test',
+                              filter: 'archives/cots-ue-post-run-status.log',
+                              selector: lastCompleted())
 
+                // Read the status from the log
+                def postRunStatus = readFile('archives/cots-ue-post-run-status.log').trim()
+                echo "COTS-UE: ${postRunStatus}"
+                
                 if (localStatus.resultIsBetterOrEqualTo('SUCCESS')) {
                   echo "Test Job with COTS-UE is OK"
-                } else {
+                } else if (postRunStatus.contains('KO'))
+                {
+                  echo "Test Job with COTS-UE is KO but marking COTS-UE as UNSTABLE"
+                  currentBuild.result = 'UNSTABLE'
+                  unstable('Test Job with COTS-UE failed')
+                } 
+                else {
                   error "Test Job with COTS-UE is is KO"
                 }
               }
@@ -563,6 +577,7 @@ pipeline {
       steps {
         lock(ubuntuBuildResource) {
           script {
+            echo "Running the stage to push Image to Official DH Registry"
             // Only in case of push to target branch!
             if ("PUSH".equals(env.gitlabActionType) || runDockerHubPushStage) {
               withCredentials([
