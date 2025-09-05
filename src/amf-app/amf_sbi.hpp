@@ -302,12 +302,12 @@ class amf_sbi {
    * @param [const snssai_t&] snssai: SNSSAI
    * @param [const plmn_t&] plmn: PLMN
    * @param [const std::string&] dnn: DNN
-   * @param [std::string&] nrf_uri: NRF's NF Discovery Service URI
+   * @param [std::string&] nrf_disc_uri: NRF's NF Discovery Service URI
    * @return true if successful, otherwise return false
    */
-  bool get_nrf_uri(
+  bool get_nrf_disc_uri(
       const snssai_t& snssai, const plmn_t& plmn, const std::string& dnn,
-      std::string& nrf_uri);
+      std::string& nrf_disc_uri);
 
   void get_network_slice_information(
       const snssai_t& snssai, const plmn_t& plmn,

@@ -489,20 +489,21 @@ void amf_sbi::handle_itti_message(itti_nsmf_pdusession_create_sm_context& smf) {
   if (!psc->smf_info.info_available) {
     if (amf_cfg->support_features.enable_smf_selection) {
       // Find NRF's URI
-      std::string nrf_uri = {};
-      if (!amf_sbi::get_nrf_uri(psc->snssai, psc->plmn, psc->dnn, nrf_uri)) {
+      std::string nrf_disc_uri = {};
+      if (!amf_sbi::get_nrf_disc_uri(
+              psc->snssai, psc->plmn, psc->dnn, nrf_disc_uri)) {
         Logger::amf_sbi().error("No NRF available");
         return;
       }
       // Store NRF's URI in UE Context
-      uc->nrf_uri = std::make_optional<std::string>(nrf_uri);
+      uc->nrf_uri = std::make_optional<std::string>(nrf_disc_uri);
       Logger::amf_sbi().debug(
           "NRF NF Discover URI: %s",
-          nrf_uri.c_str());  // use NRF to find suitable SMF based on snssai,
-                             // plmn and dnn
+          nrf_disc_uri.c_str());  // use NRF to find suitable SMF based on
+                                  // snssai, plmn and dnn
       if (!discover_smf(
               smf_uri_root, smf_api_version, psc->snssai, psc->plmn, psc->dnn,
-              nrf_uri)) {
+              nrf_disc_uri)) {
         Logger::amf_sbi().error("SMF Selection, no SMF candidate is available");
         return;
       }
@@ -2076,13 +2077,13 @@ void amf_sbi::send_http_request(
 }
 
 //------------------------------------------------------------------------------
-bool amf_sbi::get_nrf_uri(
+bool amf_sbi::get_nrf_disc_uri(
     const snssai_t& snssai, const plmn_t& plmn, const std::string& dnn,
-    std::string& nrf_uri) {
+    std::string& nrf_disc_uri) {
   if (!amf_cfg->support_features.enable_nssf) {
     // Get NRF info from configuration file if available
     amf_sbi_helper::get_nrf_disc_search_nf_instances_uri(
-        amf_cfg->nrf_addr, nrf_uri);
+        amf_cfg->nrf_addr, nrf_disc_uri);
     return true;
   } else {  // Get NRF info from NSSF
     Logger::amf_sbi().debug(
@@ -2104,32 +2105,23 @@ bool amf_sbi::get_nrf_uri(
       // Process data to obtain NRF info
       if (response_data.find("nsiInformation") != response_data.end()) {
         if (response_data["nsiInformation"].count("nrfId") > 0) {
-          // nrf_uri =
-          // response_data["nsiInformation"]["nrfId"].get<std::string>();
-
-          // TODO: Should be remove when NSSF is updated with NRF Disc URI
-          std::string nrf_id =
+          nrf_disc_uri =
               response_data["nsiInformation"]["nrfId"].get<std::string>();
-          std::vector<std::string> split_result;
-          boost::split(split_result, nrf_id, boost::is_any_of("/"));
-          if (split_result.size() > 4) {
-            nrf_uri = split_result[2] + "/nnrf-disc/" + split_result[4] +
-                      "/nf-instances";
-          }
-          Logger::amf_sbi().debug(
-              "NS Selection, NRF's URI: %s", nrf_uri.c_str());
-          result = true;
         }
-
-        std::string nsi_id = {};
-        if (response_data["nsiInformation"].count("nsi_id") > 0)
-          nsi_id = response_data["nsiInformation"]["nsiId"].get<std::string>();
+        Logger::amf_sbi().debug(
+            "NS Selection, NRF's URI: %s", nrf_disc_uri.c_str());
+        result = true;
       }
-    }
 
-    return result;
+      std::string nsi_id = {};
+      if (response_data["nsiInformation"].count("nsiId") > 0)
+        nsi_id = response_data["nsiInformation"]["nsiId"].get<std::string>();
+    }
   }
-  return true;
+
+  return result;
+}
+return true;
 }
 
 //------------------------------------------------------------------------------
