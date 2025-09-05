@@ -476,11 +476,20 @@ void amf_sbi::handle_itti_message(itti_nsmf_pdusession_create_sm_context& smf) {
   std::string dnn =
       amf_cfg->default_dnn;  // If DNN doesn't available, use the default value
   if ((smf.dnn != nullptr) && (blength(smf.dnn) > 0)) {
+    oai::utils::output_wrapper::print_buffer(
+        "amf_sbi", "DNN Bit String", (uint8_t*) bdata(smf.dnn),
+        blength(smf.dnn));
+
     char* tmp = amf_conv::bstring2charString(smf.dnn);
     dnn       = tmp;
     oai::utils::utils::free_wrapper((void**) &tmp);
   }
 
+  std::string nd_dnn = {};
+  oai::utils::dotted_to_string(dnn, nd_dnn);
+  dnn = nd_dnn;
+
+  // dnn = "oai";  // Hardcoded for testing with Keysight
   Logger::amf_sbi().debug("Requested DNN: %s", dnn.c_str());
   psc->dnn = dnn;
 
@@ -1693,6 +1702,7 @@ bool amf_sbi::discover_smf(
       }
     }
 
+    smf_port = 80;
     Logger::amf_sbi().debug(
         "NFDiscovery, SMF Info: Addr %s, Port %d, API Version %s",
         smf_addr.c_str(), smf_port, smf_api_version.c_str());
