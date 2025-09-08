@@ -446,6 +446,74 @@ void amf_http2_server::start() {
         });
       });
 
+  // AMFStatusChangeSubscribe
+  // /subscriptions:
+  server.handle(
+      amf_sbi_helper::AmfCommunicationServiceBase() +
+          amf_sbi_helper::AmfCommPathSubscriptions,
+      [&](const request& request, const response& res) {
+        request.on_data([&](const uint8_t* data, std::size_t len) {
+          if (len > 0) {
+            std::string msg((char*) data, len);
+            try {
+              std::vector<std::string> split_result;
+              boost::split(
+                  split_result, request.uri().path, boost::is_any_of("/"));
+
+              if (split_result.size() < 5) {
+                Logger::amf_server().warn("Requested URL is not implemented");
+                return send_response(
+                    res, oai::common::sbi::http_status_code::NOT_IMPLEMENTED);
+              }
+
+              // AMFStatusChangeSubscribe
+              if (request.method().compare("POST") == 0 && len > 0 &&
+                  (split_result.size() == 5)) {
+                SubscriptionData subscription_data = {};
+                nlohmann::json::parse(msg.c_str()).get_to(subscription_data);
+                this->amf_status_change_subscribe_handler(
+                    subscription_data, res);
+              } else if (
+                  request.method().compare("DELETE") == 0 &&
+                  (split_result.size() == 6)) {  // AMFStatusChangeUnSubscribe
+                std::string subscription_id =
+                    split_result[split_result.size() - 1];
+                Logger::amf_server().info(
+                    " AMF Status Change Subscription Id %s",
+                    subscription_id.c_str());
+
+                this->amf_status_change_unsubscribe_handler(
+                    subscription_id, res);
+              } else if (
+                  request.method().compare("PUT") == 0 &&
+                  (split_result.size() ==
+                   6)) {  // AMFStatusChangeSubscribeModify
+                std::string subscription_id =
+                    split_result[split_result.size() - 1];
+                Logger::amf_server().info(
+                    " AMF Status Change Subscription Id %s",
+                    subscription_id.c_str());
+
+                SubscriptionData subscription_data = {};
+                nlohmann::json::parse(msg.c_str()).get_to(subscription_data);
+                this->amf_status_change_subscribe_modify_handler(
+                    subscription_data, res);
+              } else {
+                Logger::amf_server().warn(
+                    "Invalid request (error: Invalid Request Method)!");
+                return send_response(
+                    res, oai::common::sbi::http_status_code::BAD_REQUEST);
+              }
+            } catch (std::exception& e) {
+              Logger::amf_server().warn(
+                  "Invalid request (error: %s)!", e.what());
+              return send_response(
+                  res, oai::common::sbi::http_status_code::BAD_REQUEST);
+            }
+          }
+        });
+      });
+
   // NF Status Notify (URL:
   // /namf-status-notify/pdu-session-release/callback/:ueContextId/:pduSessionId)
   server.handle(
@@ -1255,6 +1323,50 @@ void amf_http2_server::non_ue_n2_info_unsubscribe_handler(
     res.end();
   }
 }
+
+//------------------------------------------------------------------------------
+void amf_http2_server::amf_status_change_subscribe_handler(
+    const SubscriptionData& subscription_data, const response& res) {
+  Logger::amf_server().info("Received AMFStatusChangeSubscribe Request");
+
+  header_map h;
+
+  std::shared_ptr<itti_msg_sbi> itti_msg = std::make_shared<itti_msg_sbi>(
+      SBI_AMF_STATUS_CHANGE_SUBSCRIBE_REQUEST, AMF_SERVER, TASK_AMF_APP);
+
+  // evsub_id_t sub_id =
+  // m_amf_app->handle_amf_status_change_subscribe(itti_msg);
+  nlohmann::json json_data = {};
+
+  /*
+    // TODO: To be fixed with correct location
+    if (sub_id != -1) {
+      std::string location =
+          std::string(inet_ntoa(*((struct in_addr*) &amf_cfg->sbi.addr4))) + ":"
+    + std::to_string(amf_cfg->sbi.port) + NAMF_EVENT_EXPOSURE_BASE +
+          amf_cfg->sbi.api_version.value_or(DEFAULT_SBI_API_VERSION) +
+          "/namf-evts/" + std::to_string(sub_id);
+
+      json_data["subscriptionId"] = location;
+      h.insert(std::make_pair<std::string, header_value>(
+          "Location", {location, false}));
+    }
+  */
+
+  h.insert(std::make_pair<std::string, header_value>(
+      "Content-Type", {"application/json", false}));
+  res.write_head(
+      static_cast<uint32_t>(oai::common::sbi::http_status_code::CREATED), h);
+  res.end(json_data.dump().c_str());
+}
+
+//------------------------------------------------------------------------------
+void amf_http2_server::amf_status_change_unsubscribe_handler(
+    const std::string& subscription_id, const response& res) {}
+
+//------------------------------------------------------------------------------
+void amf_http2_server::amf_status_change_subscribe_modify_handler(
+    const SubscriptionData& subscription_data, const response& res) {}
 
 //------------------------------------------------------------------------------
 void amf_http2_server::status_notify_handler(
