@@ -44,26 +44,184 @@
 #include "PolicyAssociationUpdateRequest.h"
 #include "PolicyUpdate.h"
 #include "TerminationNotification.h"
+#include "SubscriptionData.h"
 
 using namespace amf_application;
 
-class itti_msg_sbi : public itti_msg {
+class itti_msg_n11 : public itti_msg {
  public:
-  itti_msg_sbi(
+  itti_msg_n11(
       const itti_msg_type_t msg_type, const task_id_t origin,
       const task_id_t destination)
       : itti_msg(msg_type, origin, destination) {
-    json_data = {};
+    amf_ue_ngap_id = INVALID_AMF_UE_NGAP_ID;
+    ran_ue_ngap_id = 0;
   }
-  itti_msg_sbi(const itti_msg_sbi& i) : itti_msg(i) { json_data = i.json_data; }
-  virtual ~itti_msg_sbi(){};
+  itti_msg_n11(const itti_msg_n11& i) : itti_msg(i) {
+    ran_ue_ngap_id = i.ran_ue_ngap_id;
+    amf_ue_ngap_id = i.amf_ue_ngap_id;
+  }
+  virtual ~itti_msg_n11(){};
 
+ public:
+  uint64_t amf_ue_ngap_id;
+  uint32_t ran_ue_ngap_id;
+};
+
+class itti_nsmf_pdusession_create_sm_context : public itti_msg_n11 {
+ public:
+  itti_nsmf_pdusession_create_sm_context(
+      const task_id_t origin, const task_id_t destination)
+      : itti_msg_n11(NSMF_PDU_SESSION_CREATE_SM_CTX, origin, destination) {
+    req_type    = 0;
+    pdu_sess_id = 0;
+    dnn         = nullptr;
+    sm_msg      = nullptr;
+    snssai      = {};
+    plmn        = {};
+  }
+  itti_nsmf_pdusession_create_sm_context(
+      const itti_nsmf_pdusession_create_sm_context& i)
+      : itti_msg_n11(i) {
+    req_type    = i.req_type;
+    pdu_sess_id = i.pdu_sess_id;
+    dnn         = i.dnn;
+    sm_msg      = i.sm_msg;
+    snssai      = {};
+    plmn        = {};
+  }
+  virtual ~itti_nsmf_pdusession_create_sm_context() {
+    oai::utils::utils::bdestroy_wrapper(&dnn);
+    oai::utils::utils::bdestroy_wrapper(&sm_msg);
+  }
+
+  const char* get_msg_name() { return "NSMF_PDU_SESSION_CREATE_SM_CTX"; };
+
+ public:
+  uint8_t req_type;
+  uint8_t pdu_sess_id;
+  bstring dnn;
+  bstring sm_msg;
+  snssai_t snssai;
+  plmn_t plmn;
+};
+
+class itti_pdu_session_resource_setup_response : public itti_msg_n11 {
+ public:
+  itti_pdu_session_resource_setup_response(
+      const task_id_t origin, const task_id_t destination)
+      : itti_msg_n11(PDU_SESSION_RESOURCE_SETUP_RESPONSE, origin, destination) {
+    pdu_session_id = 0;
+    n2sm           = nullptr;
+  }
+  itti_pdu_session_resource_setup_response(
+      const itti_pdu_session_resource_setup_response& i)
+      : itti_msg_n11(i) {
+    pdu_session_id = i.pdu_session_id;
+    n2sm           = i.n2sm;
+  }
+  virtual ~itti_pdu_session_resource_setup_response() {
+    oai::utils::utils::bdestroy_wrapper(&n2sm);
+  }
+
+  const char* get_msg_name() { return "PDU_SESSION_RESOURCE_SETUP_RESPONSE"; };
+
+ public:
+  uint8_t pdu_session_id;
+  bstring n2sm;
+};
+
+class itti_nsmf_pdusession_update_sm_context : public itti_msg_n11 {
+ public:
+  itti_nsmf_pdusession_update_sm_context(
+      const task_id_t origin, const task_id_t destination)
+      : itti_msg_n11(NSMF_PDU_SESSION_UPDATE_SM_CTX, origin, destination) {
+    supi           = {};
+    pdu_session_id = 0;
+    n1sm           = nullptr;
+    is_n1sm_set    = false;
+    n2sm           = nullptr;
+    is_n2sm_set    = false;
+    n2sm_info_type = {};
+    ran_ue_ngap_id = 0;
+    amf_ue_ngap_id = INVALID_AMF_UE_NGAP_ID;
+    promise_id     = 0;
+    ho_state       = {};
+    up_cnx_state   = {};
+  }
+  itti_nsmf_pdusession_update_sm_context(
+      const itti_nsmf_pdusession_update_sm_context& i)
+      : itti_msg_n11(i) {
+    supi           = i.supi;
+    pdu_session_id = i.pdu_session_id;
+    n1sm           = i.n1sm;
+    is_n1sm_set    = i.is_n1sm_set;
+    n2sm           = i.n2sm;
+    is_n2sm_set    = i.is_n2sm_set;
+    n2sm_info_type = i.n2sm_info_type;
+    promise_id     = i.promise_id;
+    ho_state       = i.ho_state;
+    up_cnx_state   = i.up_cnx_state;
+  }
+  virtual ~itti_nsmf_pdusession_update_sm_context() {
+    oai::utils::utils::bdestroy_wrapper(&n2sm);
+  }
+
+  const char* get_msg_name() { return "NSMF_PDU_SESSION_UPDATE_SM_CTX"; };
+
+ public:
+  std::string supi;
+  uint8_t pdu_session_id;
+  bstring n1sm;
+  bool is_n1sm_set;
+  bstring n2sm;
+  bool is_n2sm_set;
+  std::string n2sm_info_type;
+  uint32_t promise_id;
+  std::string ho_state;
+  std::string up_cnx_state;
+};
+
+class itti_nsmf_pdusession_release_sm_context : public itti_msg_n11 {
+ public:
+  itti_nsmf_pdusession_release_sm_context(
+      const task_id_t origin, const task_id_t destination)
+      : itti_msg_n11(NSMF_PDU_SESSION_RELEASE_SM_CTX, origin, destination) {}
+  itti_nsmf_pdusession_release_sm_context(
+      const itti_nsmf_pdusession_release_sm_context& i)
+      : itti_msg_n11(i) {
+    supi             = i.supi;
+    pdu_session_id   = i.pdu_session_id;
+    promise_id       = i.promise_id;
+    context_location = i.context_location;
+  }
+  virtual ~itti_nsmf_pdusession_release_sm_context() {}
+  const char* get_msg_name() { return "NSMF_PDU_SESSION_RELEASE_SM_CTX"; };
+
+ public:
+  std::string supi;
+  uint8_t pdu_session_id;
+  uint32_t promise_id;
+  std::string context_location;
+};
+
+class itti_sbi_msg : public itti_msg {
+ public:
+  itti_sbi_msg(
+      const itti_msg_type_t msg_type, const task_id_t orig,
+      const task_id_t dest)
+      : itti_msg(msg_type, orig, dest) {}
+  itti_sbi_msg(const itti_sbi_msg& i) : itti_msg(i) {}
+  itti_sbi_msg(
+      const itti_sbi_msg& i, const task_id_t orig, const task_id_t dest)
+      : itti_sbi_msg(i) {
+    origin      = orig;
+    destination = dest;
+  }
   const char* get_msg_name() {
     switch (msg_type) {
       case ITTI_MSG_TYPE_NONE:
         return "ITTI_MSG_TYPE_NONE";
-      case ITTI_MSG_TYPE_FIRST:
-        return "ITTI_MSG_TYPE_FIRST";
       case ASYNC_SHELL_CMD:
         return "ASYNC_SHELL_CMD";
       case NEW_SCTP_ASSOCIATION:
@@ -73,7 +231,6 @@ class itti_msg_sbi : public itti_msg {
       case NG_RESET:
         return "NG_RESET";
       case NG_SHUTDOWN:
-
         return "NG_SHUTDOWN";
       case INITIAL_UE_MSG:
         return "INITIAL_UE_MSG";
@@ -247,182 +404,6 @@ class itti_msg_sbi : public itti_msg {
         return "UNKNOWN";
     }
   };
-
- public:
-  nlohmann::json json_data;
-};
-
-class itti_msg_n11 : public itti_msg {
- public:
-  itti_msg_n11(
-      const itti_msg_type_t msg_type, const task_id_t origin,
-      const task_id_t destination)
-      : itti_msg(msg_type, origin, destination) {
-    amf_ue_ngap_id = INVALID_AMF_UE_NGAP_ID;
-    ran_ue_ngap_id = 0;
-  }
-  itti_msg_n11(const itti_msg_n11& i) : itti_msg(i) {
-    ran_ue_ngap_id = i.ran_ue_ngap_id;
-    amf_ue_ngap_id = i.amf_ue_ngap_id;
-  }
-  virtual ~itti_msg_n11(){};
-
- public:
-  uint64_t amf_ue_ngap_id;
-  uint32_t ran_ue_ngap_id;
-};
-
-class itti_nsmf_pdusession_create_sm_context : public itti_msg_n11 {
- public:
-  itti_nsmf_pdusession_create_sm_context(
-      const task_id_t origin, const task_id_t destination)
-      : itti_msg_n11(NSMF_PDU_SESSION_CREATE_SM_CTX, origin, destination) {
-    req_type    = 0;
-    pdu_sess_id = 0;
-    dnn         = nullptr;
-    sm_msg      = nullptr;
-    snssai      = {};
-    plmn        = {};
-  }
-  itti_nsmf_pdusession_create_sm_context(
-      const itti_nsmf_pdusession_create_sm_context& i)
-      : itti_msg_n11(i) {
-    req_type    = i.req_type;
-    pdu_sess_id = i.pdu_sess_id;
-    dnn         = i.dnn;
-    sm_msg      = i.sm_msg;
-    snssai      = {};
-    plmn        = {};
-  }
-  virtual ~itti_nsmf_pdusession_create_sm_context() {
-    oai::utils::utils::bdestroy_wrapper(&dnn);
-    oai::utils::utils::bdestroy_wrapper(&sm_msg);
-  }
-
-  const char* get_msg_name() { return "NSMF_PDU_SESSION_CREATE_SM_CTX"; };
-
- public:
-  uint8_t req_type;
-  uint8_t pdu_sess_id;
-  bstring dnn;
-  bstring sm_msg;
-  snssai_t snssai;
-  plmn_t plmn;
-};
-
-class itti_pdu_session_resource_setup_response : public itti_msg_n11 {
- public:
-  itti_pdu_session_resource_setup_response(
-      const task_id_t origin, const task_id_t destination)
-      : itti_msg_n11(PDU_SESSION_RESOURCE_SETUP_RESPONSE, origin, destination) {
-    pdu_session_id = 0;
-    n2sm           = nullptr;
-  }
-  itti_pdu_session_resource_setup_response(
-      const itti_pdu_session_resource_setup_response& i)
-      : itti_msg_n11(i) {
-    pdu_session_id = i.pdu_session_id;
-    n2sm           = i.n2sm;
-  }
-  virtual ~itti_pdu_session_resource_setup_response() {
-    oai::utils::utils::bdestroy_wrapper(&n2sm);
-  }
-
-  const char* get_msg_name() { return "PDU_SESSION_RESOURCE_SETUP_RESPONSE"; };
-
- public:
-  uint8_t pdu_session_id;
-  bstring n2sm;
-};
-
-class itti_nsmf_pdusession_update_sm_context : public itti_msg_n11 {
- public:
-  itti_nsmf_pdusession_update_sm_context(
-      const task_id_t origin, const task_id_t destination)
-      : itti_msg_n11(NSMF_PDU_SESSION_UPDATE_SM_CTX, origin, destination) {
-    supi           = {};
-    pdu_session_id = 0;
-    n1sm           = nullptr;
-    is_n1sm_set    = false;
-    n2sm           = nullptr;
-    is_n2sm_set    = false;
-    n2sm_info_type = {};
-    ran_ue_ngap_id = 0;
-    amf_ue_ngap_id = INVALID_AMF_UE_NGAP_ID;
-    promise_id     = 0;
-    ho_state       = {};
-    up_cnx_state   = {};
-  }
-  itti_nsmf_pdusession_update_sm_context(
-      const itti_nsmf_pdusession_update_sm_context& i)
-      : itti_msg_n11(i) {
-    supi           = i.supi;
-    pdu_session_id = i.pdu_session_id;
-    n1sm           = i.n1sm;
-    is_n1sm_set    = i.is_n1sm_set;
-    n2sm           = i.n2sm;
-    is_n2sm_set    = i.is_n2sm_set;
-    n2sm_info_type = i.n2sm_info_type;
-    promise_id     = i.promise_id;
-    ho_state       = i.ho_state;
-    up_cnx_state   = i.up_cnx_state;
-  }
-  virtual ~itti_nsmf_pdusession_update_sm_context() {
-    oai::utils::utils::bdestroy_wrapper(&n2sm);
-  }
-
-  const char* get_msg_name() { return "NSMF_PDU_SESSION_UPDATE_SM_CTX"; };
-
- public:
-  std::string supi;
-  uint8_t pdu_session_id;
-  bstring n1sm;
-  bool is_n1sm_set;
-  bstring n2sm;
-  bool is_n2sm_set;
-  std::string n2sm_info_type;
-  uint32_t promise_id;
-  std::string ho_state;
-  std::string up_cnx_state;
-};
-
-class itti_nsmf_pdusession_release_sm_context : public itti_msg_n11 {
- public:
-  itti_nsmf_pdusession_release_sm_context(
-      const task_id_t origin, const task_id_t destination)
-      : itti_msg_n11(NSMF_PDU_SESSION_RELEASE_SM_CTX, origin, destination) {}
-  itti_nsmf_pdusession_release_sm_context(
-      const itti_nsmf_pdusession_release_sm_context& i)
-      : itti_msg_n11(i) {
-    supi             = i.supi;
-    pdu_session_id   = i.pdu_session_id;
-    promise_id       = i.promise_id;
-    context_location = i.context_location;
-  }
-  virtual ~itti_nsmf_pdusession_release_sm_context() {}
-  const char* get_msg_name() { return "NSMF_PDU_SESSION_RELEASE_SM_CTX"; };
-
- public:
-  std::string supi;
-  uint8_t pdu_session_id;
-  uint32_t promise_id;
-  std::string context_location;
-};
-
-class itti_sbi_msg : public itti_msg {
- public:
-  itti_sbi_msg(
-      const itti_msg_type_t msg_type, const task_id_t orig,
-      const task_id_t dest)
-      : itti_msg(msg_type, orig, dest) {}
-  itti_sbi_msg(const itti_sbi_msg& i) : itti_msg(i) {}
-  itti_sbi_msg(
-      const itti_sbi_msg& i, const task_id_t orig, const task_id_t dest)
-      : itti_sbi_msg(i) {
-    origin      = orig;
-    destination = dest;
-  }
-  virtual ~itti_sbi_msg() {}
 
  public:
 };
@@ -1395,6 +1376,26 @@ class itti_sbi_ue_context_in_smf_data_retrieval_response : public itti_sbi_msg {
 
   std::string supi;
   nlohmann::json response_data;
+};
+
+class itti_sbi_amf_status_change_subscribe_request : public itti_sbi_msg {
+ public:
+  itti_sbi_amf_status_change_subscribe_request(
+      const task_id_t orig, const task_id_t dest, uint32_t pid)
+      : itti_sbi_msg(SBI_AMF_STATUS_CHANGE_SUBSCRIBE_REQUEST, orig, dest),
+        subscription_data(),
+        promise_id(pid) {}
+
+  itti_sbi_amf_status_change_subscribe_request(
+      const itti_sbi_amf_status_change_subscribe_request& i)
+      : itti_sbi_msg(i) {
+    promise_id        = i.promise_id;
+    subscription_data = i.subscription_data;
+  }
+  virtual ~itti_sbi_amf_status_change_subscribe_request(){};
+
+  uint32_t promise_id;
+  oai::_3gpp::model::SubscriptionData subscription_data;
 };
 
 #endif /* ITTI_MSG_SBI_HPP_INCLUDED_ */

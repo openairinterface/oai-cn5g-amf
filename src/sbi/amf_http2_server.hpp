@@ -39,6 +39,7 @@
 #include "uint_generator.hpp"
 #include "PolicyUpdate.h"
 #include "TerminationNotification.h"
+#include "SubscriptionData.h"
 
 using namespace nghttp2::asio_http2;
 using namespace nghttp2::asio_http2::server;

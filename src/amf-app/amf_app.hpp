@@ -97,6 +97,12 @@ class amf_app {
 
   std::unordered_set<std::string> registered_nrfs;
 
+  oai::utils::uint_generator<uint32_t> amf_status_change_sub_id_generator;
+
+  std::map<std::string, std::shared_ptr<oai::_3gpp::model::SubscriptionData>>
+      amf_status_change_subscriptions;
+  mutable std::shared_mutex m_amf_status_change_subscriptions;
+
  public:
   explicit amf_app();
   amf_app(amf_app const&) = delete;
@@ -296,6 +302,14 @@ class amf_app {
    */
   void handle_itti_message(
       itti_sbi_ue_context_in_smf_data_retrieval_response& r);
+
+  /*
+   * Handle ITTI message (AMF Status Change Subscribe Request)
+   * @param [itti_sbi_amf_status_change_subscribe_request&]: ITTI
+   * message
+   * @return void
+   */
+  void handle_itti_message(itti_sbi_amf_status_change_subscribe_request& r);
 
   /*
    * Trigger AMF Registration for 3GPP Access towards UDM
@@ -828,6 +842,17 @@ class amf_app {
    * @return NF instance in string format
    */
   std::string get_nf_instance() const;
+
+  /*
+   * Generate an AMFStatusChangeSubscribe ID
+   * @param [void]
+   * @return the generated reference
+   */
+  std::string generate_amf_status_change_sub_id_generator();
+
+  bool add_amf_status_change_subscription(
+      std::string& subscription_id,
+      const std::shared_ptr<oai::_3gpp::model::SubscriptionData>& sd);
 };
 
 }  // namespace amf_application

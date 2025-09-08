@@ -311,6 +311,14 @@ void amf_app_task(void*) {
         amf_app_inst->handle_itti_message(std::ref(*m));
       } break;
 
+      case SBI_AMF_STATUS_CHANGE_SUBSCRIBE_REQUEST: {
+        itti_sbi_amf_status_change_subscribe_request* m =
+            dynamic_cast<itti_sbi_amf_status_change_subscribe_request*>(msg);
+        Logger::amf_app().debug("Received %s", m->get_msg_name());
+
+        amf_app_inst->handle_itti_message(std::ref(*m));
+      } break;
+
       case TIME_OUT: {
         if (itti_msg_timeout* to = dynamic_cast<itti_msg_timeout*>(msg)) {
           switch (to->arg1_user) {
@@ -457,6 +465,10 @@ evsub_id_t amf_app::generate_ev_subscription_id() {
 //------------------------------------------------------------------------------
 n1n2sub_id_t amf_app::generate_n1n2_message_subscription_id() {
   return n1n2sub_id_generator.get_uid();
+}
+
+std::string amf_app::generate_amf_status_change_sub_id_generator() {
+  return std::to_string(amf_status_change_sub_id_generator.get_uid());
 }
 
 //------------------------------------------------------------------------------
@@ -1442,6 +1454,37 @@ void amf_app::handle_itti_message(
       }
     }
   }
+}
+
+//------------------------------------------------------------------------------
+void amf_app::handle_itti_message(
+    itti_sbi_amf_status_change_subscribe_request& r) {
+  Logger::amf_app().debug("Handle %s", r.get_msg_name());
+
+  // Generate a subscription ID Id and store the corresponding information in a
+  // map (subscription id, subscription data)
+  std::string amf_status_change_sub_id =
+      generate_amf_status_change_sub_id_generator();
+
+  auto sd = std::make_shared<oai::_3gpp::model::SubscriptionData>(
+      r.subscription_data);
+
+  // Store subscription data
+  add_amf_status_change_subscription(amf_status_change_sub_id, sd);
+
+  nlohmann::json response_data = {};
+  response_data[kSbiResponseHttpResponseCode] =
+      static_cast<uint32_t>(oai::common::sbi::http_status_code::CREATED);
+  response_data[kSbiResponseHeaderLocation] =
+      get_amf_status_change_subscribe_uri(sub_id);
+
+  // Notify to the result
+  if (itti_msg.promise_id > 0) {
+    trigger_process_response(itti_msg.promise_id, response_data);
+    return;
+  }
+
+  return amf_status_change_sub_id;
 }
 
 //------------------------------------------------------------------------------
@@ -2891,4 +2934,14 @@ bool amf_app::trigger_pdu_session_up_activation(
   }
 
   return false;
+}
+
+//------------------------------------------------------------------------------
+bool amf_app::add_amf_status_change_subscription(
+    std::string& subscription_id,
+    const std::shared_ptr<oai::_3gpp::model::SubscriptionData>& sd) {
+  Logger::amf_app().debug(
+      "Add an AMF Status Change Subscription (Sub ID %s)", subscription_id);
+  std::unique_lock lock(m_amf_status_change_subscriptions);
+  amf_status_change_subscriptions.emplace(subscription_id, ss);
 }
