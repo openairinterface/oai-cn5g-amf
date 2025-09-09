@@ -39,6 +39,7 @@
 #include "uint_generator.hpp"
 #include "PolicyUpdate.h"
 #include "TerminationNotification.h"
+#include "SubscriptionData.h"
 
 using namespace nghttp2::asio_http2;
 using namespace nghttp2::asio_http2::server;
@@ -82,6 +83,15 @@ class amf_http2_server {
 
   void non_ue_n2_info_unsubscribe_handler(
       const std::string& subscriptionId, const response& response);
+
+  void amf_status_change_subscribe_handler(
+      const SubscriptionData& subscription_data, const response& res);
+
+  void amf_status_change_unsubscribe_handler(
+      const std::string& subscription_id, const response& res);
+  void amf_status_change_subscribe_modify_handler(
+      const std::string& subscription_id,
+      const SubscriptionData& subscription_data, const response& res);
 
   void status_notify_handler(
       const std::string& ueContextId, uint8_t pduSessionId,
