@@ -497,7 +497,7 @@ void amf_http2_server::start() {
                 SubscriptionData subscription_data = {};
                 nlohmann::json::parse(msg.c_str()).get_to(subscription_data);
                 this->amf_status_change_subscribe_modify_handler(
-                    subscription_data, res);
+                    subscription_id, subscription_data, res);
               } else {
                 Logger::amf_server().warn(
                     "Invalid request (error: Invalid Request Method)!");
@@ -1332,22 +1332,19 @@ void amf_http2_server::amf_status_change_subscribe_handler(
   header_map h;
 
   // Generate a promise and associate this promise to the ITTI message
-  uint32_t promise_id = m_amf_app->generate_promise_id();
-  Logger::amf_n1().debug("Promise ID generated %d", promise_id);
-
+  uint32_t promise_id = {};
   boost::shared_ptr<boost::promise<nlohmann::json>> p =
       boost::make_shared<boost::promise<nlohmann::json>>();
+  m_amf_app->store_promise(promise_id, p);
   boost::shared_future<nlohmann::json> f = p->get_future();
-  m_amf_app->add_promise(promise_id, p);
+  Logger::amf_app().debug("Promise ID generated %ld", promise_id);
 
   // Handle the AMFStatusChangeSubscription in amf_app
-
   std::shared_ptr<itti_sbi_amf_status_change_subscribe_request> itti_msg =
       std::make_shared<itti_sbi_amf_status_change_subscribe_request>(
           AMF_SERVER, TASK_AMF_APP, promise_id);
   itti_msg->subscription_data = subscription_data;
-
-  itti_msg->promise_id = promise_id;
+  itti_msg->promise_id        = promise_id;
 
   int ret = itti_inst->send_msg(itti_msg);
   if (0 != ret) {
@@ -1407,11 +1404,144 @@ void amf_http2_server::amf_status_change_subscribe_handler(
 
 //------------------------------------------------------------------------------
 void amf_http2_server::amf_status_change_unsubscribe_handler(
-    const std::string& subscription_id, const response& res) {}
+    const std::string& subscription_id, const response& res) {
+  Logger::amf_server().info("Received AMFStatusChangeUnsubscribe Request");
+  header_map h;
+
+  // Generate a promise and associate this promise to the ITTI message
+  uint32_t promise_id = {};
+  boost::shared_ptr<boost::promise<nlohmann::json>> p =
+      boost::make_shared<boost::promise<nlohmann::json>>();
+  m_amf_app->store_promise(promise_id, p);
+  boost::shared_future<nlohmann::json> f = p->get_future();
+  Logger::amf_app().debug("Promise ID generated %ld", promise_id);
+
+  // Handle the AMFStatusChangeUnsubscribe in amf_app
+  std::shared_ptr<itti_sbi_amf_status_change_unsubscribe_request> itti_msg =
+      std::make_shared<itti_sbi_amf_status_change_unsubscribe_request>(
+          AMF_SERVER, TASK_AMF_APP, promise_id);
+  itti_msg->subscription_id = subscription_id;
+  itti_msg->promise_id      = promise_id;
+
+  int ret = itti_inst->send_msg(itti_msg);
+  if (0 != ret) {
+    Logger::amf_server().error(
+        "Could not send ITTI message %s to task TASK_AMF_APP",
+        itti_msg->get_msg_name());
+  }
+
+  // Wait for the response available and process accordingly
+  std::optional<nlohmann::json> result_opt = std::nullopt;
+  oai::utils::utils::wait_for_result(f, result_opt);
+
+  if (result_opt.has_value()) {
+    Logger::amf_server().debug("Got result for promise ID %d", promise_id);
+    nlohmann::json result = result_opt.value();
+    // process data
+    uint32_t http_response_code = 0;
+    nlohmann::json json_data    = {};
+
+    if (result.find(kSbiResponseHttpResponseCode) != result.end()) {
+      http_response_code = result[kSbiResponseHttpResponseCode].get<int>();
+    }
+
+    if (http_response_code == oai::common::sbi::http_status_code::NO_CONTENT) {
+      h.insert(std::make_pair<std::string, header_value>(
+          "Content-Type", {"application/json", false}));
+      res.write_head(oai::common::sbi::http_status_code::NO_CONTENT);
+      res.end();
+
+    } else {
+      // Problem details
+      if (result.find("ProblemDetails") != result.end()) {
+        json_data = result["ProblemDetails"];
+      }
+
+      h.emplace("content-type", header_value{"application/problem+json"});
+      res.write_head(http_response_code);
+      res.end(json_data.dump().c_str());
+    }
+  } else {
+    send_response(res, oai::common::sbi::http_status_code::GATEWAY_TIMEOUT);
+  }
+}
 
 //------------------------------------------------------------------------------
 void amf_http2_server::amf_status_change_subscribe_modify_handler(
-    const SubscriptionData& subscription_data, const response& res) {}
+    const std::string& subscription_id,
+    const SubscriptionData& subscription_data, const response& res) {
+  Logger::amf_server().info("Received AMFStatusChangeSubscribeModify");
+
+  header_map h;
+
+  // Generate a promise and associate this promise to the ITTI message
+  uint32_t promise_id = {};
+  boost::shared_ptr<boost::promise<nlohmann::json>> p =
+      boost::make_shared<boost::promise<nlohmann::json>>();
+  m_amf_app->store_promise(promise_id, p);
+  boost::shared_future<nlohmann::json> f = p->get_future();
+  Logger::amf_app().debug("Promise ID generated %ld", promise_id);
+
+  // Handle the AMFStatusChangeSubscription in amf_app
+  std::shared_ptr<itti_sbi_amf_status_change_subscribe_modify> itti_msg =
+      std::make_shared<itti_sbi_amf_status_change_subscribe_modify>(
+          AMF_SERVER, TASK_AMF_APP, promise_id);
+  itti_msg->subscription_id   = subscription_id;
+  itti_msg->subscription_data = subscription_data;
+  itti_msg->promise_id        = promise_id;
+
+  int ret = itti_inst->send_msg(itti_msg);
+  if (0 != ret) {
+    Logger::amf_server().error(
+        "Could not send ITTI message %s to task TASK_AMF_APP",
+        itti_msg->get_msg_name());
+  }
+
+  // Wait for the response available and process accordingly
+  std::optional<nlohmann::json> result_opt = std::nullopt;
+  oai::utils::utils::wait_for_result(f, result_opt);
+
+  if (result_opt.has_value()) {
+    Logger::amf_server().debug("Got result for promise ID %d", promise_id);
+    nlohmann::json result = result_opt.value();
+    // process data
+    uint32_t http_response_code = 0;
+    nlohmann::json json_data    = {};
+
+    if (result.find(kSbiResponseHttpResponseCode) != result.end()) {
+      http_response_code = result[kSbiResponseHttpResponseCode].get<int>();
+    }
+
+    if (http_response_code == oai::common::sbi::http_status_code::OK) {
+      if (result.find(kSbiResponseJsonData) != result.end()) {
+        json_data = result[kSbiResponseJsonData];
+      }
+
+      h.insert(std::make_pair<std::string, header_value>(
+          "Content-Type", {"application/json", false}));
+      res.write_head(oai::common::sbi::http_status_code::OK, h);
+      res.end(json_data.dump().c_str());
+
+    } else if (
+        http_response_code == oai::common::sbi::http_status_code::NO_CONTENT) {
+      h.insert(std::make_pair<std::string, header_value>(
+          "Content-Type", {"application/json", false}));
+      res.write_head(oai::common::sbi::http_status_code::NO_CONTENT, h);
+      res.end();
+    } else {
+      // Problem details
+      if (result.find("ProblemDetails") != result.end()) {
+        json_data = result["ProblemDetails"];
+      }
+
+      h.emplace("content-type", header_value{"application/problem+json"});
+      res.write_head(http_response_code);
+      res.end(json_data.dump().c_str());
+    }
+  } else {
+    send_response(res, oai::common::sbi::http_status_code::GATEWAY_TIMEOUT);
+  }
+}
 
 //------------------------------------------------------------------------------
 void amf_http2_server::status_notify_handler(

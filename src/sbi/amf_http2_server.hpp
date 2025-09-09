@@ -90,6 +90,7 @@ class amf_http2_server {
   void amf_status_change_unsubscribe_handler(
       const std::string& subscription_id, const response& res);
   void amf_status_change_subscribe_modify_handler(
+      const std::string& subscription_id,
       const SubscriptionData& subscription_data, const response& res);
 
   void status_notify_handler(

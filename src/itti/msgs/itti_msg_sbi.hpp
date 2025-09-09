@@ -374,6 +374,10 @@ class itti_sbi_msg : public itti_msg {
         return "SBI_UE_CONTEXT_IN_SMF_DATA_RETRIEVAL_RESPONSE";
       case SBI_AMF_STATUS_CHANGE_SUBSCRIBE_REQUEST:
         return "SBI_AMF_STATUS_CHANGE_SUBSCRIBE_REQUEST";
+      case SBI_AMF_STATUS_CHANGE_UNSUBSCRIBE_REQUEST:
+        return "SBI_AMF_STATUS_CHANGE_UNSUBSCRIBE_REQUEST";
+      case SBI_AMF_STATUS_CHANGE_SUBSCRIBE_MODIFY:
+        return "SBI_AMF_STATUS_CHANGE_SUBSCRIBE_MODIFY";
       case HANDOVER_REQUIRED_MSG:
         return "HANDOVER_REQUIRED_MSG";
       case HANDOVER_REQUEST_ACK:
@@ -1395,6 +1399,49 @@ class itti_sbi_amf_status_change_subscribe_request : public itti_sbi_msg {
   virtual ~itti_sbi_amf_status_change_subscribe_request(){};
 
   uint32_t promise_id;
+  oai::_3gpp::model::SubscriptionData subscription_data;
+};
+
+class itti_sbi_amf_status_change_unsubscribe_request : public itti_sbi_msg {
+ public:
+  itti_sbi_amf_status_change_unsubscribe_request(
+      const task_id_t orig, const task_id_t dest, uint32_t pid)
+      : itti_sbi_msg(SBI_AMF_STATUS_CHANGE_UNSUBSCRIBE_REQUEST, orig, dest),
+        subscription_id(),
+        promise_id(pid) {}
+
+  itti_sbi_amf_status_change_unsubscribe_request(
+      const itti_sbi_amf_status_change_unsubscribe_request& i)
+      : itti_sbi_msg(i) {
+    promise_id      = i.promise_id;
+    subscription_id = i.subscription_id;
+  }
+  virtual ~itti_sbi_amf_status_change_unsubscribe_request(){};
+
+  uint32_t promise_id;
+  std::string subscription_id;
+};
+
+class itti_sbi_amf_status_change_subscribe_modify : public itti_sbi_msg {
+ public:
+  itti_sbi_amf_status_change_subscribe_modify(
+      const task_id_t orig, const task_id_t dest, uint32_t pid)
+      : itti_sbi_msg(SBI_AMF_STATUS_CHANGE_SUBSCRIBE_MODIFY, orig, dest),
+        subscription_id(),
+        subscription_data(),
+        promise_id(pid) {}
+
+  itti_sbi_amf_status_change_subscribe_modify(
+      const itti_sbi_amf_status_change_subscribe_modify& i)
+      : itti_sbi_msg(i) {
+    promise_id        = i.promise_id;
+    subscription_id   = i.subscription_id;
+    subscription_data = i.subscription_data;
+  }
+  virtual ~itti_sbi_amf_status_change_subscribe_modify(){};
+
+  uint32_t promise_id;
+  std::string subscription_id;
   oai::_3gpp::model::SubscriptionData subscription_data;
 };
 

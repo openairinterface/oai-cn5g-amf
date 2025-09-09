@@ -204,35 +204,35 @@ class amf_app {
    * @param [itti_sbi_register_nf_instance_response&]: ITTI message
    * @return void
    */
-  void handle_itti_message(itti_sbi_register_nf_instance_response& r);
+  void handle_itti_message(itti_sbi_register_nf_instance_response& itti_msg);
 
   /*
    * Handle ITTI message (Update NF Instance Response)
    * @param [itti_sbi_update_nf_instance_response&]: ITTI message
    * @return void
    */
-  void handle_itti_message(itti_sbi_update_nf_instance_response& r);
+  void handle_itti_message(itti_sbi_update_nf_instance_response& itti_msg);
 
   /*
    * Handle ITTI message (Deregister NF Instance Response)
    * @param [itti_sbi_deregister_nf_instance_response&]: ITTI message
    * @return void
    */
-  void handle_itti_message(itti_sbi_deregister_nf_instance_response& r);
+  void handle_itti_message(itti_sbi_deregister_nf_instance_response& itti_msg);
 
   /*
    * Handle ITTI message (Register with UDM Response)
    * @param [itti_sbi_register_with_udm_response&]: ITTI message
    * @return void
    */
-  void handle_itti_message(itti_sbi_register_with_udm_response& r);
+  void handle_itti_message(itti_sbi_register_with_udm_response& itti_msg);
 
   /*
    * Handle ITTI message (Retrieve AM Data Response)
    * @param [itti_sbi_retrieve_am_data_response&]: ITTI message
    * @return void
    */
-  void handle_itti_message(itti_sbi_retrieve_am_data_response& r);
+  void handle_itti_message(itti_sbi_retrieve_am_data_response& itti_msg);
 
   /*
    * Handle ITTI message (retrieve a UE's SMF Selection Subscription Data)
@@ -241,7 +241,7 @@ class amf_app {
    * @return void
    */
   void handle_itti_message(
-      itti_sbi_retrieve_smf_selection_subscription_data_response& r);
+      itti_sbi_retrieve_smf_selection_subscription_data_response& itti_msg);
 
   /*
    * Handle ITTI message (AM Policy Association response)
@@ -249,7 +249,7 @@ class amf_app {
    * message
    * @return void
    */
-  void handle_itti_message(itti_sbi_am_policy_association_response& r);
+  void handle_itti_message(itti_sbi_am_policy_association_response& itti_msg);
 
   /*
    * Handle ITTI message (AM Policy Association Termination response)
@@ -258,7 +258,7 @@ class amf_app {
    * @return void
    */
   void handle_itti_message(
-      itti_sbi_am_policy_association_termination_response& r);
+      itti_sbi_am_policy_association_termination_response& itti_msg);
 
   /*
    * Handle ITTI message (AM Policy Association Update response)
@@ -266,7 +266,8 @@ class amf_app {
    * message
    * @return void
    */
-  void handle_itti_message(itti_sbi_am_policy_association_update_response& r);
+  void handle_itti_message(
+      itti_sbi_am_policy_association_update_response& itti_msg);
 
   /*
    * Handle ITTI message (AM Policy Association Retrieval response)
@@ -275,7 +276,7 @@ class amf_app {
    * @return void
    */
   void handle_itti_message(
-      itti_sbi_am_policy_association_retrieval_response& r);
+      itti_sbi_am_policy_association_retrieval_response& itti_msg);
 
   /*
    * Handle ITTI message (AM Policy Update Notification)
@@ -301,7 +302,7 @@ class amf_app {
    * @return void
    */
   void handle_itti_message(
-      itti_sbi_ue_context_in_smf_data_retrieval_response& r);
+      itti_sbi_ue_context_in_smf_data_retrieval_response& itti_msg);
 
   /*
    * Handle ITTI message (AMF Status Change Subscribe Request)
@@ -309,7 +310,26 @@ class amf_app {
    * message
    * @return void
    */
-  void handle_itti_message(itti_sbi_amf_status_change_subscribe_request& r);
+  void handle_itti_message(
+      itti_sbi_amf_status_change_subscribe_request& itti_msg);
+
+  /*
+   * Handle ITTI message (AMF Status Change Unsubscribe Request)
+   * @param [itti_sbi_amf_status_change_unsubscribe_request&]: ITTI
+   * message
+   * @return void
+   */
+  void handle_itti_message(
+      itti_sbi_amf_status_change_unsubscribe_request& itti_msg);
+
+  /*
+   * Handle ITTI message (AMF Status Change Subscribe Modify)
+   * @param [itti_sbi_amf_status_change_subscribe_modify&]: ITTI
+   * message
+   * @return void
+   */
+  void handle_itti_message(
+      itti_sbi_amf_status_change_subscribe_modify& itti_msg);
 
   /*
    * Trigger AMF Registration for 3GPP Access towards UDM
@@ -850,8 +870,35 @@ class amf_app {
    */
   std::string generate_amf_status_change_sub_id_generator();
 
-  bool add_amf_status_change_subscription(
-      std::string& subscription_id,
+  /*
+   * Store an AMF Status Change Subcription
+   * @param [const std::string&] subscription_id: Subscription ID
+   * @param [const std::shared_ptr<oai::_3gpp::model::SubscriptionData>&] sd: a
+   * shared pointer stored information of the subscription
+   * @return the generated reference
+   */
+  void add_amf_status_change_subscription(
+      const std::string& subscription_id,
+      const std::shared_ptr<oai::_3gpp::model::SubscriptionData>& sd);
+
+  /*
+   * Remove an AMF Status Change Subcription
+   * @param [const std::string&] subscription_id: Subscription ID
+   * @return true if success otherwise return false
+   */
+  bool remove_amf_status_change_subscription(
+      const std::string& subscription_id);
+
+  /*
+   * Update an AMF Status Change Subcription
+   * @param [const std::string&] subscription_id: Subscription ID
+   * @param [const std::shared_ptr<oai::_3gpp::model::SubscriptionData>&] sd: a
+   * shared pointer stored information of the subscription
+   * @return true if success otherwise return false
+   */
+
+  bool update_amf_status_change_subscription(
+      const std::string& subscription_id,
       const std::shared_ptr<oai::_3gpp::model::SubscriptionData>& sd);
 };
 
