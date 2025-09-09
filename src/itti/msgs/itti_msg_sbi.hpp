@@ -45,6 +45,7 @@
 #include "PolicyUpdate.h"
 #include "TerminationNotification.h"
 #include "SubscriptionData.h"
+#include "AmfStatusChangeNotification.h"
 
 using namespace amf_application;
 
@@ -378,6 +379,8 @@ class itti_sbi_msg : public itti_msg {
         return "SBI_AMF_STATUS_CHANGE_UNSUBSCRIBE_REQUEST";
       case SBI_AMF_STATUS_CHANGE_SUBSCRIBE_MODIFY:
         return "SBI_AMF_STATUS_CHANGE_SUBSCRIBE_MODIFY";
+      case SBI_AMF_STATUS_CHANGE_NOTIFICATION:
+        return "SBI_AMF_STATUS_CHANGE_NOTIFICATION";
       case HANDOVER_REQUIRED_MSG:
         return "HANDOVER_REQUIRED_MSG";
       case HANDOVER_REQUEST_ACK:
@@ -1443,6 +1446,27 @@ class itti_sbi_amf_status_change_subscribe_modify : public itti_sbi_msg {
   uint32_t promise_id;
   std::string subscription_id;
   oai::_3gpp::model::SubscriptionData subscription_data;
+};
+
+class itti_sbi_amf_status_change_notification : public itti_sbi_msg {
+ public:
+  itti_sbi_amf_status_change_notification(
+      const task_id_t orig, const task_id_t dest)
+      : itti_sbi_msg(SBI_AMF_STATUS_CHANGE_NOTIFICATION, orig, dest),
+
+        amf_status_change_notification(),
+        notification_uris() {}
+
+  itti_sbi_amf_status_change_notification(
+      const itti_sbi_amf_status_change_notification& i)
+      : itti_sbi_msg(i) {
+    amf_status_change_notification = i.amf_status_change_notification;
+    notification_uris              = i.notification_uris;
+  }
+  virtual ~itti_sbi_amf_status_change_notification(){};
+
+  std::vector<std::string> notification_uris;
+  oai::_3gpp::model::AmfStatusChangeNotification amf_status_change_notification;
 };
 
 #endif /* ITTI_MSG_SBI_HPP_INCLUDED_ */

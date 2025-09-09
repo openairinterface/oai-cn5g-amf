@@ -3049,3 +3049,68 @@ bool amf_app::update_amf_status_change_subscription(
   amf_status_change_subscriptions[subscription_id] = sd;
   return true;
 }
+
+//------------------------------------------------------------------------------
+std::vector<std::string> amf_app::get_amf_status_change_subscription_uris(
+    const std::vector<oai::_3gpp::model::Guami>& guamis) {
+  std::vector<std::string> uris;
+  // TODO: filter the subscriptions based on the guami list
+  std::shared_lock lock(m_amf_status_change_subscriptions);
+  for (auto const& it : amf_status_change_subscriptions) {
+    if (it.second) {
+      uris.push_back(it.second->getAmfStatusUri());
+    }
+  }
+  return uris;
+}
+
+//------------------------------------------------------------------------------
+void amf_app::perform_amf_status_change_notification(
+    const oai::_3gpp::model::StatusChange& status_change) {
+  // Prepare the info
+  oai::_3gpp::model::AmfStatusChangeNotification
+      amf_status_change_notification               = {};
+  oai::_3gpp::model::AmfStatusInfo amf_status_info = {};
+  std::vector<oai::_3gpp::model::AmfStatusInfo> amf_status_info_list;
+
+  // Guami List
+  oai::_3gpp::model::Guami guami = {};
+  std::vector<oai::_3gpp::model::Guami> guamis;
+  oai::_3gpp::model::PlmnIdNid plmn_id = {};
+  for (auto g : amf_cfg->guami_list) {
+    std::string amf_id = {};
+    amf_conv::get_amf_id(g.region_id, g.amf_set_id, g.amf_pointer, amf_id);
+    guami.setAmfId(amf_id);
+    plmn_id.setMcc(g.mcc);
+    plmn_id.setMnc(g.mnc);
+    guami.setPlmnId(plmn_id);
+    guamis.push_back(guami);
+  }
+  amf_status_info.setGuamiList(guamis);
+
+  // Status Change
+  amf_status_info.setStatusChange(status_change);
+  // Target AMF removal
+  amf_status_info.setTargetAmfRemoval(amf_cfg->amf_name);
+  // target AMF failure
+
+  amf_status_info_list.push_back(amf_status_info);
+  amf_status_change_notification.setAmfStatusInfoList(amf_status_info_list);
+
+  std::vector<std::string> notification_uris =
+      get_amf_status_change_subscription_uris(guamis);
+
+  // Send request to SBI to send AMF status change notification to subscribed NF
+  // instances
+  auto itti_msg = std::make_shared<itti_sbi_amf_status_change_notification>(
+      TASK_AMF_APP, TASK_AMF_SBI);
+  itti_msg->amf_status_change_notification = amf_status_change_notification;
+  itti_msg->notification_uris              = notification_uris;
+
+  int ret = itti_inst->send_msg(itti_msg);
+  if (RETURNok != ret) {
+    Logger::amf_app().error(
+        "Could not send ITTI message %s to task TASK_AMF_SBI",
+        itti_msg->get_msg_name());
+  }
+}

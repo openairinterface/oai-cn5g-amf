@@ -42,6 +42,7 @@
 #include "itti_msg_sbi.hpp"
 #include "ue_context.hpp"
 #include "uint_generator.hpp"
+#include "StatusChange.h"
 
 using namespace oai::config;
 using namespace oai::_3gpp::model;
@@ -900,6 +901,25 @@ class amf_app {
   bool update_amf_status_change_subscription(
       const std::string& subscription_id,
       const std::shared_ptr<oai::_3gpp::model::SubscriptionData>& sd);
+
+  /*
+   * Get a list of AMF Status Change Subscription URIs based on the GUAMI list
+   * @param [const std::vector<oai::_3gpp::model::Guami>&] guamis: list of
+   * GUAMIs
+   * @return a vector of notification URIs
+   */
+
+  std::vector<std::string> get_amf_status_change_subscription_uris(
+      const std::vector<oai::_3gpp::model::Guami>& guamis);
+
+  /*
+   * Perform AMF Status Change Notification to the subscribed NF instances
+   * @param [const oai::_3gpp::model::StatusChange&] status_change: status
+   * change information
+   * @return void
+   */
+  void perform_amf_status_change_notification(
+      const oai::_3gpp::model::StatusChange& status_change);
 };
 
 }  // namespace amf_application
