@@ -37,6 +37,7 @@
 #include "utils.hpp"
 #include "PolicyUpdate.h"
 #include "TerminationNotification.h"
+#include "Helpers.h"
 
 using namespace nghttp2::asio_http2;
 using namespace nghttp2::asio_http2::server;
@@ -624,6 +625,63 @@ void amf_http2_server::start() {
             }
           } catch (std::exception& e) {
             Logger::amf_server().warn("Invalid request (error: %s)!", e.what());
+            return send_response(
+                res, oai::common::sbi::http_status_code::BAD_REQUEST);
+          }
+        });
+      });
+
+  // AMF Mobile Terminated Service
+  //  /ue-contexts/{ueContextId}
+  server.handle(
+      amf_sbi_helper::AmfMTBase() + amf_sbi_helper::AmfMTPathDomainSelection,
+      [&](const request& request, const response& res) {
+        request.on_data([&](const uint8_t* data, std::size_t len) {
+          Logger::amf_server().debug(
+              "Received message with URI: %s", request.uri().path);
+          try {
+            // Get the ueContextId and method
+            std::vector<std::string> split_result;
+            boost::split(
+                split_result, request.uri().path, boost::is_any_of("/"));
+            if (request.method().compare("GET") == 0 && len > 0) {
+              if (split_result.size() != 6) {
+                Logger::amf_server().warn("Requested URL is not implemented");
+                return send_response(
+                    res, oai::common::sbi::http_status_code::NOT_IMPLEMENTED);
+              }
+
+              std::string ue_context_id = split_result[split_result.size() - 1];
+
+              Logger::amf_server().info(
+                  "ue_context_id %s", ue_context_id.c_str());
+
+              // Parse query parameters
+              std::map<std::string, std::string> query_parameters;
+              amf_sbi_helper::parse_query(
+                  request.uri().raw_query, query_parameters);
+
+              oai::_3gpp::model::UeContextInfoClass ue_context_info_class = {};
+              // Query parameters
+              // info-class: Mandatory
+              if (auto search = query_parameters.find("info-class");
+                  search != query_parameters.end()) {
+                oai::_3gpp::model::helpers::fromStringValue(
+                    search->second, ue_context_info_class);
+              } else {
+                return send_response(
+                    res, oai::common::sbi::http_status_code::BAD_REQUEST);
+              }
+              // TODO: supported-features
+              // TODO: old-guami
+
+              this->provide_domain_selection_info_handler(
+                  ue_context_id, ue_context_info_class, res);
+            }
+
+          } catch (nlohmann::detail::exception& e) {
+            Logger::amf_sbi().warn(
+                "Can not parse the JSON data (error: %s)!", e.what());
             return send_response(
                 res, oai::common::sbi::http_status_code::BAD_REQUEST);
           }
@@ -1853,6 +1911,79 @@ void amf_http2_server::terminate_policy_notification_handler(
   itti_msg->promise_id               = promise_id;
   itti_msg->supi                     = ue_context_id;
   itti_msg->termination_notification = termination_notification;
+
+  int ret = itti_inst->send_msg(itti_msg);
+  if (0 != ret) {
+    Logger::amf_server().error(
+        "Could not send ITTI message %s to task TASK_AMF_APP",
+        itti_msg->get_msg_name());
+  }
+
+  // Wait for the response available and process accordingly
+  std::optional<nlohmann::json> result_opt = std::nullopt;
+  oai::utils::utils::wait_for_result(f, result_opt);
+
+  if (result_opt.has_value()) {
+    Logger::amf_server().debug("Got result for promise ID %d", promise_id);
+    nlohmann::json result = result_opt.value();
+    // process data
+    uint32_t http_response_code = 0;
+    nlohmann::json json_data    = {};
+
+    if (result.find(kSbiResponseHttpResponseCode) != result.end()) {
+      http_response_code = result[kSbiResponseHttpResponseCode].get<int>();
+    }
+
+    if (http_response_code == oai::common::sbi::http_status_code::OK) {
+      if (result.find(kSbiResponseJsonData) != result.end()) {
+        json_data = result[kSbiResponseJsonData];
+      }
+
+      h.emplace("content-type", header_value{"application/json"});
+      res.write_head(http_response_code);
+      res.end(json_data.dump().c_str());
+
+    } else {
+      // Problem details
+      if (result.find("ProblemDetails") != result.end()) {
+        json_data = result["ProblemDetails"];
+      }
+
+      h.emplace("content-type", header_value{"application/problem+json"});
+      res.write_head(http_response_code);
+      res.end(json_data.dump().c_str());
+    }
+
+  } else {
+    send_response(res, oai::common::sbi::http_status_code::GATEWAY_TIMEOUT);
+  }
+}
+
+//------------------------------------------------------------------------------
+void amf_http2_server::provide_domain_selection_info_handler(
+    const std::string& ue_context_id,
+    const oai::_3gpp::model::UeContextInfoClass& ue_context_info_class,
+    const response& res) {
+  Logger::amf_server().debug(
+      "Receive an Provide Domain Selection Info request, handling...");
+  header_map h;
+
+  // Generate a promise and associate this promise to the ITTI message
+  uint32_t promise_id = m_amf_app->generate_promise_id();
+  Logger::amf_n1().debug("Promise ID generated %d", promise_id);
+
+  boost::shared_ptr<boost::promise<nlohmann::json>> p =
+      boost::make_shared<boost::promise<nlohmann::json>>();
+  boost::shared_future<nlohmann::json> f = p->get_future();
+  m_amf_app->add_promise(promise_id, p);
+
+  // Handle the request in amf_app
+  auto itti_msg = std::make_shared<itti_sbi_provide_domain_selection_info>(
+      TASK_AMF_SBI, TASK_AMF_APP, promise_id);
+
+  itti_msg->promise_id            = promise_id;
+  itti_msg->ue_context_id         = ue_context_id;
+  itti_msg->ue_context_info_class = ue_context_info_class;
 
   int ret = itti_inst->send_msg(itti_msg);
   if (0 != ret) {
