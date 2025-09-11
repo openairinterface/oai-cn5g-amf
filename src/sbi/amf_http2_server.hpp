@@ -40,6 +40,7 @@
 #include "PolicyUpdate.h"
 #include "TerminationNotification.h"
 #include "SubscriptionData.h"
+#include "UeContextInfoClass.h"
 
 using namespace nghttp2::asio_http2;
 using namespace nghttp2::asio_http2::server;
@@ -111,6 +112,12 @@ class amf_http2_server {
       const std::string& ue_context_id,
       const TerminationNotification& termination_notification,
       const response& res);
+
+  void provide_domain_selection_info_handler(
+      const std::string& ue_context_id,
+      const oai::_3gpp::model::UeContextInfoClass& ue_context_info_class,
+      const response& res);
+
   void stop();
   void send_response(const response& res, uint32_t response_code);
 

@@ -55,6 +55,7 @@
 #include "PolicyUpdate.h"
 #include "AmRequestedValueRep.h"
 #include "UeContextInSmfData.h"
+#include "UeContextInfo.h"
 
 using namespace std::chrono;
 using namespace oai::ngap;
@@ -330,6 +331,14 @@ void amf_app_task(void*) {
       case SBI_AMF_STATUS_CHANGE_SUBSCRIBE_MODIFY: {
         itti_sbi_amf_status_change_subscribe_modify* m =
             dynamic_cast<itti_sbi_amf_status_change_subscribe_modify*>(msg);
+        Logger::amf_app().debug("Received %s", m->get_msg_name());
+
+        amf_app_inst->handle_itti_message(std::ref(*m));
+      } break;
+
+      case SBI_PROVIDE_DOMAIN_SELECTION_INFO: {
+        itti_sbi_provide_domain_selection_info* m =
+            dynamic_cast<itti_sbi_provide_domain_selection_info*>(msg);
         Logger::amf_app().debug("Received %s", m->get_msg_name());
 
         amf_app_inst->handle_itti_message(std::ref(*m));
@@ -1559,6 +1568,32 @@ void amf_app::handle_itti_message(
   }
 
   nlohmann::json response_data                = {};
+  response_data[kSbiResponseHttpResponseCode] = response_code;
+
+  // Notify to the result
+  if (itti_msg.promise_id > 0) {
+    trigger_process_response(itti_msg.promise_id, response_data);
+    return;
+  }
+
+  return;
+}
+
+//------------------------------------------------------------------------------
+void amf_app::handle_itti_message(
+    itti_sbi_provide_domain_selection_info& itti_msg) {
+  Logger::amf_app().debug("Handle %s", itti_msg.get_msg_name());
+
+  // TODO: process the request and prepare the response
+  uint32_t response_code = oai::common::sbi::http_status_code::OK;
+
+  oai::_3gpp::model::UeContextInfo ue_context_info = {};
+  ue_context_info.setSupportVoPS(true);
+  nlohmann::json ue_context_info_json = {};
+  to_json(ue_context_info_json, ue_context_info);
+
+  nlohmann::json response_data                = {};
+  response_data[kSbiResponseJsonData]         = ue_context_info_json;
   response_data[kSbiResponseHttpResponseCode] = response_code;
 
   // Notify to the result

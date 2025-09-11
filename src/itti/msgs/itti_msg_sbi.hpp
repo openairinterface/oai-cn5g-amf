@@ -46,6 +46,7 @@
 #include "TerminationNotification.h"
 #include "SubscriptionData.h"
 #include "AmfStatusChangeNotification.h"
+#include "UeContextInfoClass.h"
 
 using namespace amf_application;
 
@@ -381,6 +382,8 @@ class itti_sbi_msg : public itti_msg {
         return "SBI_AMF_STATUS_CHANGE_SUBSCRIBE_MODIFY";
       case SBI_AMF_STATUS_CHANGE_NOTIFICATION:
         return "SBI_AMF_STATUS_CHANGE_NOTIFICATION";
+      case SBI_PROVIDE_DOMAIN_SELECTION_INFO:
+        return "SBI_PROVIDE_DOMAIN_SELECTION_INFO";
       case HANDOVER_REQUIRED_MSG:
         return "HANDOVER_REQUIRED_MSG";
       case HANDOVER_REQUEST_ACK:
@@ -1467,6 +1470,29 @@ class itti_sbi_amf_status_change_notification : public itti_sbi_msg {
 
   std::vector<std::string> notification_uris;
   oai::_3gpp::model::AmfStatusChangeNotification amf_status_change_notification;
+};
+
+class itti_sbi_provide_domain_selection_info : public itti_sbi_msg {
+ public:
+  itti_sbi_provide_domain_selection_info(
+      const task_id_t orig, const task_id_t dest, uint32_t pid)
+      : itti_sbi_msg(SBI_PROVIDE_DOMAIN_SELECTION_INFO, orig, dest),
+        ue_context_id(),
+        ue_context_info_class(),
+        promise_id(pid) {}
+
+  itti_sbi_provide_domain_selection_info(
+      const itti_sbi_provide_domain_selection_info& i)
+      : itti_sbi_msg(i) {
+    promise_id            = i.promise_id;
+    ue_context_id         = i.ue_context_id;
+    ue_context_info_class = i.ue_context_info_class;
+  }
+  virtual ~itti_sbi_provide_domain_selection_info(){};
+
+  uint32_t promise_id;
+  std::string ue_context_id;
+  oai::_3gpp::model::UeContextInfoClass ue_context_info_class;
 };
 
 #endif /* ITTI_MSG_SBI_HPP_INCLUDED_ */
