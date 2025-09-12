@@ -41,6 +41,7 @@
 #include "TerminationNotification.h"
 #include "SubscriptionData.h"
 #include "UeContextInfoClass.h"
+#include "RequestLocInfo.h"
 
 using namespace nghttp2::asio_http2;
 using namespace nghttp2::asio_http2::server;
@@ -116,6 +117,11 @@ class amf_http2_server {
   void provide_domain_selection_info_handler(
       const std::string& ue_context_id,
       const oai::_3gpp::model::UeContextInfoClass& ue_context_info_class,
+      const response& res);
+
+  void provide_location_info_handler(
+      const std::string& ue_context_id,
+      const oai::_3gpp::model::RequestLocInfo& request_loc_info,
       const response& res);
 
   void stop();

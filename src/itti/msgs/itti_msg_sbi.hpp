@@ -47,6 +47,7 @@
 #include "SubscriptionData.h"
 #include "AmfStatusChangeNotification.h"
 #include "UeContextInfoClass.h"
+#include "RequestLocInfo.h"
 
 using namespace amf_application;
 
@@ -384,6 +385,8 @@ class itti_sbi_msg : public itti_msg {
         return "SBI_AMF_STATUS_CHANGE_NOTIFICATION";
       case SBI_PROVIDE_DOMAIN_SELECTION_INFO:
         return "SBI_PROVIDE_DOMAIN_SELECTION_INFO";
+      case SBI_PROVIDE_LOCATION_INFO:
+        return "SBI_PROVIDE_LOCATION_INFO";
       case HANDOVER_REQUIRED_MSG:
         return "HANDOVER_REQUIRED_MSG";
       case HANDOVER_REQUEST_ACK:
@@ -1495,4 +1498,25 @@ class itti_sbi_provide_domain_selection_info : public itti_sbi_msg {
   oai::_3gpp::model::UeContextInfoClass ue_context_info_class;
 };
 
+class itti_sbi_provide_location_info : public itti_sbi_msg {
+ public:
+  itti_sbi_provide_location_info(
+      const task_id_t orig, const task_id_t dest, uint32_t pid)
+      : itti_sbi_msg(SBI_PROVIDE_LOCATION_INFO, orig, dest),
+        ue_context_id(),
+        request_loc_info(),
+        promise_id(pid) {}
+
+  itti_sbi_provide_location_info(const itti_sbi_provide_location_info& i)
+      : itti_sbi_msg(i) {
+    promise_id       = i.promise_id;
+    ue_context_id    = i.ue_context_id;
+    request_loc_info = i.request_loc_info;
+  }
+  virtual ~itti_sbi_provide_location_info(){};
+
+  uint32_t promise_id;
+  std::string ue_context_id;
+  oai::_3gpp::model::RequestLocInfo request_loc_info;
+};
 #endif /* ITTI_MSG_SBI_HPP_INCLUDED_ */

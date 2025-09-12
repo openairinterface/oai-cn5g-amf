@@ -341,6 +341,14 @@ class amf_app {
   void handle_itti_message(itti_sbi_provide_domain_selection_info& itti_msg);
 
   /*
+   * Handle ITTI message (Provide Location Info)
+   * @param [itti_sbi_provide_location_info&]: ITTI
+   * message
+   * @return void
+   */
+  void handle_itti_message(itti_sbi_provide_location_info& itti_msg);
+
+  /*
    * Trigger AMF Registration for 3GPP Access towards UDM
    * @param [std::shared_ptr<ue_context>&] uc: UE context
    * @return void
