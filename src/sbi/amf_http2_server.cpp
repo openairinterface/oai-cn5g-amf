@@ -688,6 +688,49 @@ void amf_http2_server::start() {
         });
       });
 
+  // AMF Location Service
+  //  /{ueContextId}/provide-loc-info
+  server.handle(
+      amf_sbi_helper::AmfLocationServiceBase() +
+          amf_sbi_helper::AmflocPathUeContextIdProvideLocInfo,
+      [&](const request& request, const response& res) {
+        request.on_data([&](const uint8_t* data, std::size_t len) {
+          Logger::amf_server().debug(
+              "Received message with URI: %s", request.uri().path);
+          std::string msg((char*) data, len);
+          try {
+            // Get the ueContextId and method
+            std::vector<std::string> split_result;
+            boost::split(
+                split_result, request.uri().path, boost::is_any_of("/"));
+            if (request.method().compare("POST") == 0 && len > 0) {
+              if (split_result.size() != 6) {
+                Logger::amf_server().warn("Requested URL is not implemented");
+                return send_response(
+                    res, oai::common::sbi::http_status_code::NOT_IMPLEMENTED);
+              }
+
+              std::string ue_context_id = split_result[split_result.size() - 2];
+
+              Logger::amf_server().info(
+                  "ue_context_id %s", ue_context_id.c_str());
+
+              oai::_3gpp::model::RequestLocInfo request_loc_info = {};
+              nlohmann::json::parse(msg.c_str()).get_to(request_loc_info);
+
+              this->provide_location_info_handler(
+                  ue_context_id, request_loc_info, res);
+            }
+
+          } catch (nlohmann::detail::exception& e) {
+            Logger::amf_sbi().warn(
+                "Can not parse the JSON data (error: %s)!", e.what());
+            return send_response(
+                res, oai::common::sbi::http_status_code::BAD_REQUEST);
+          }
+        });
+      });
+
   running_server = true;
 
   if (enable_tls) {
@@ -2031,6 +2074,80 @@ void amf_http2_server::provide_domain_selection_info_handler(
     send_response(res, oai::common::sbi::http_status_code::GATEWAY_TIMEOUT);
   }
 }
+
+//------------------------------------------------------------------------------
+void amf_http2_server::provide_location_info_handler(
+    const std::string& ue_context_id,
+    const oai::_3gpp::model::RequestLocInfo& request_loc_info,
+    const response& res) {
+  Logger::amf_server().debug(
+      "Receive an Provide Location Info request, handling...");
+  header_map h;
+
+  // Generate a promise and associate this promise to the ITTI message
+  uint32_t promise_id = m_amf_app->generate_promise_id();
+  Logger::amf_n1().debug("Promise ID generated %d", promise_id);
+
+  boost::shared_ptr<boost::promise<nlohmann::json>> p =
+      boost::make_shared<boost::promise<nlohmann::json>>();
+  boost::shared_future<nlohmann::json> f = p->get_future();
+  m_amf_app->add_promise(promise_id, p);
+
+  // Handle the request in amf_app
+  auto itti_msg = std::make_shared<itti_sbi_provide_location_info>(
+      TASK_AMF_SBI, TASK_AMF_APP, promise_id);
+
+  itti_msg->promise_id       = promise_id;
+  itti_msg->ue_context_id    = ue_context_id;
+  itti_msg->request_loc_info = request_loc_info;
+
+  int ret = itti_inst->send_msg(itti_msg);
+  if (0 != ret) {
+    Logger::amf_server().error(
+        "Could not send ITTI message %s to task TASK_AMF_APP",
+        itti_msg->get_msg_name());
+  }
+
+  // Wait for the response available and process accordingly
+  std::optional<nlohmann::json> result_opt = std::nullopt;
+  oai::utils::utils::wait_for_result(f, result_opt);
+
+  if (result_opt.has_value()) {
+    Logger::amf_server().debug("Got result for promise ID %d", promise_id);
+    nlohmann::json result = result_opt.value();
+    // process data
+    uint32_t http_response_code = 0;
+    nlohmann::json json_data    = {};
+
+    if (result.find(kSbiResponseHttpResponseCode) != result.end()) {
+      http_response_code = result[kSbiResponseHttpResponseCode].get<int>();
+    }
+
+    if (http_response_code == oai::common::sbi::http_status_code::OK) {
+      if (result.find(kSbiResponseJsonData) != result.end()) {
+        json_data = result[kSbiResponseJsonData];
+      }
+
+      h.emplace("content-type", header_value{"application/json"});
+      res.write_head(http_response_code);
+      res.end(json_data.dump().c_str());
+
+    } else {
+      // Problem details
+      if (result.find("ProblemDetails") != result.end()) {
+        json_data = result["ProblemDetails"];
+      }
+
+      h.emplace("content-type", header_value{"application/problem+json"});
+      res.write_head(http_response_code);
+      res.end(json_data.dump().c_str());
+    }
+
+  } else {
+    send_response(res, oai::common::sbi::http_status_code::GATEWAY_TIMEOUT);
+  }
+}
+
 //------------------------------------------------------------------------------
 void amf_http2_server::stop() {
   server.stop();

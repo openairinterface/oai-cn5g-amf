@@ -56,6 +56,7 @@
 #include "AmRequestedValueRep.h"
 #include "UeContextInSmfData.h"
 #include "UeContextInfo.h"
+#include "ProvideLocInfo.h"
 
 using namespace std::chrono;
 using namespace oai::ngap;
@@ -339,6 +340,14 @@ void amf_app_task(void*) {
       case SBI_PROVIDE_DOMAIN_SELECTION_INFO: {
         itti_sbi_provide_domain_selection_info* m =
             dynamic_cast<itti_sbi_provide_domain_selection_info*>(msg);
+        Logger::amf_app().debug("Received %s", m->get_msg_name());
+
+        amf_app_inst->handle_itti_message(std::ref(*m));
+      } break;
+
+      case SBI_PROVIDE_LOCATION_INFO: {
+        itti_sbi_provide_location_info* m =
+            dynamic_cast<itti_sbi_provide_location_info*>(msg);
         Logger::amf_app().debug("Received %s", m->get_msg_name());
 
         amf_app_inst->handle_itti_message(std::ref(*m));
@@ -1594,6 +1603,77 @@ void amf_app::handle_itti_message(
 
   nlohmann::json response_data                = {};
   response_data[kSbiResponseJsonData]         = ue_context_info_json;
+  response_data[kSbiResponseHttpResponseCode] = response_code;
+
+  // Notify to the result
+  if (itti_msg.promise_id > 0) {
+    trigger_process_response(itti_msg.promise_id, response_data);
+    return;
+  }
+
+  return;
+}
+
+//------------------------------------------------------------------------------
+void amf_app::handle_itti_message(itti_sbi_provide_location_info& itti_msg) {
+  Logger::amf_app().debug("Handle %s", itti_msg.get_msg_name());
+
+  nlohmann::json response_data = {};
+  uint32_t response_code = oai::common::sbi::http_status_code::BAD_REQUEST;
+
+  std::shared_ptr<ue_context> uc = {};
+  if (supi_2_ue_context(itti_msg.ue_context_id, uc)) {
+    oai::_3gpp::model::ProvideLocInfo provide_loc_info = {};
+    // Current Loc
+    provide_loc_info.setCurrentLoc(true);
+
+    // UserLocation
+    oai::_3gpp::model::UserLocation user_location = {};
+    oai::_3gpp::model::NrLocation nr_location     = {};
+    oai::_3gpp::model::Tai tai                    = {};
+    oai::_3gpp::model::PlmnId plmn_id             = {};
+    plmn_id.setMcc(uc->tai.mcc);
+    plmn_id.setMnc(uc->tai.mnc);
+    tai.setPlmnId(plmn_id);
+    tai.setTac(std::to_string(uc->tai.tac));
+
+    nr_location.setTai(tai);
+    // nr_location.setNcgi(uc->cgi);
+
+    oai::_3gpp::model::GNbId gnb_id = {};
+    gnb_id.setBitLength(32);
+    gnb_id.setGNBValue(std::to_string(uc->gnb_id));
+    oai::_3gpp::model::GlobalRanNodeId global_ran_node_id = {};
+    global_ran_node_id.setGNbId(gnb_id);
+    global_ran_node_id.setPlmnId(plmn_id);
+    oai::_3gpp::model::Ncgi ncgi = {};
+    // ncgi.setNid(""); //TODO:
+    std::string nr_cell_id_str = {};
+    amf_conv::int_to_string_hex(uc->cgi.nrCellId, nr_cell_id_str, 9);
+    ncgi.setNrCellId(nr_cell_id_str);
+    ncgi.setPlmnId(plmn_id);
+    // nr_location.setTai(tai);
+    nr_location.setGlobalGnbId(global_ran_node_id);
+    nr_location.setNcgi(ncgi);
+    user_location.setNrLocation(nr_location);
+
+    provide_loc_info.setLocation(user_location);
+
+    // RAT Type
+    oai::_3gpp::model::RatType rat_type = {};
+    rat_type.setEnumValue(oai::_3gpp::model::RatType_anyOf::eRatType_anyOf::NR);
+    provide_loc_info.setRatType(rat_type);
+
+    // Old GUAMI
+
+    nlohmann::json provide_loc_info_json = {};
+    to_json(provide_loc_info_json, provide_loc_info);
+    response_data[kSbiResponseJsonData] = provide_loc_info_json;
+  } else {
+    // TODO: problem details
+    response_code = oai::common::sbi::http_status_code::BAD_REQUEST;
+  }
+
   response_data[kSbiResponseHttpResponseCode] = response_code;
 
   // Notify to the result
