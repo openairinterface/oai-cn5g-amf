@@ -1853,15 +1853,6 @@ void amf_app::get_smf_selection_subscription_data(
 void amf_app::discover_pcf(std::shared_ptr<ue_context>& uc) {
   Logger::amf_app().debug("Discovering PCF for the UE");
 
-  // Check if the NRF is available
-  std::string nrf_uri = {};
-  if (uc->nrf_uri.has_value()) {
-    nrf_uri = uc->nrf_uri.value();
-  } else {
-    Logger::amf_sbi().warn("No NRF available");
-    return;
-  }
-
   oai::_3gpp::model::PlmnIdNid plmn_id = {};
   plmn_id.setMcc(uc->tai.mcc);
   plmn_id.setMnc(uc->tai.mnc);
@@ -1880,7 +1871,6 @@ void amf_app::discover_pcf(std::shared_ptr<ue_context>& uc) {
 
   itti_msg->promise_id = promise_id;
   itti_msg->supi       = uc->supi;
-  itti_msg->nrf_uri    = nrf_uri;
   // itti_msg->snssai     = uc->snssai;
   itti_msg->plmn_id = plmn_id;
   // TODO: add support for PCF Set ID
