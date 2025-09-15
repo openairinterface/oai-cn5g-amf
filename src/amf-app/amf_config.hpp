@@ -304,6 +304,7 @@ typedef struct support_features_s {
   bool enable_external_ausf_udm;
   bool enable_nssf;
   bool enable_lmf;
+  bool enable_pcf;
   bool enable_smf_selection_subscription_data_retrieval;
   bool enable_ue_context_in_smf_data_retrieval;
   bool enable_access_and_mobility_subscription_data_retrieval;
@@ -316,6 +317,7 @@ typedef struct support_features_s {
     json_data["enable_external_ausf_udm"] = this->enable_external_ausf_udm;
     json_data["enable_nssf"]              = this->enable_nssf;
     json_data["enable_lmf"]               = this->enable_lmf;
+    json_data["enable_pcf"]               = this->enable_pcf;
     json_data["enable_smf_selection_subscription_data_retrieval"] =
         this->enable_smf_selection_subscription_data_retrieval;
     json_data["enable_ue_context_in_smf_data_retrieval"] =
@@ -345,6 +347,9 @@ typedef struct support_features_s {
       }
       if (json_data.find("enable_lmf") != json_data.end()) {
         this->enable_lmf = json_data["enable_lmf"].get<bool>();
+      }
+      if (json_data.find("enable_pcf") != json_data.end()) {
+        this->enable_pcf = json_data["enable_pcf"].get<bool>();
       }
       if (json_data.find("enable_smf_selection_subscription_data_retrieval") !=
           json_data.end()) {
