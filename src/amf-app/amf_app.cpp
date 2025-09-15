@@ -1852,124 +1852,130 @@ void amf_app::get_smf_selection_subscription_data(
 //------------------------------------------------------------------------------
 void amf_app::discover_pcf(std::shared_ptr<ue_context>& uc) {
   Logger::amf_app().debug("Discovering PCF for the UE");
+  // TODO: enable PCF discovery feature flag:
+  // amf_cfg->support_features.enable_pcf_discovery
+  if (false) {
+    oai::_3gpp::model::PlmnIdNid plmn_id = {};
+    plmn_id.setMcc(uc->tai.mcc);
+    plmn_id.setMnc(uc->tai.mnc);
 
-  oai::_3gpp::model::PlmnIdNid plmn_id = {};
-  plmn_id.setMcc(uc->tai.mcc);
-  plmn_id.setMnc(uc->tai.mnc);
+    // Generate a promise and associate this promise to the ITTI message
+    uint32_t promise_id = {};
+    boost::shared_ptr<boost::promise<nlohmann::json>> p =
+        boost::make_shared<boost::promise<nlohmann::json>>();
+    amf_app_inst->store_promise(promise_id, p);
+    boost::shared_future<nlohmann::json> f = p->get_future();
+    Logger::amf_app().debug("Promise ID generated %ld", promise_id);
 
-  // Generate a promise and associate this promise to the ITTI message
-  uint32_t promise_id = {};
-  boost::shared_ptr<boost::promise<nlohmann::json>> p =
-      boost::make_shared<boost::promise<nlohmann::json>>();
-  amf_app_inst->store_promise(promise_id, p);
-  boost::shared_future<nlohmann::json> f = p->get_future();
-  Logger::amf_app().debug("Promise ID generated %ld", promise_id);
+    std::shared_ptr<itti_sbi_pcf_discovery> itti_msg =
+        std::make_shared<itti_sbi_pcf_discovery>(
+            TASK_AMF_APP, TASK_AMF_SBI, promise_id);
 
-  std::shared_ptr<itti_sbi_pcf_discovery> itti_msg =
-      std::make_shared<itti_sbi_pcf_discovery>(
-          TASK_AMF_APP, TASK_AMF_SBI, promise_id);
+    itti_msg->promise_id = promise_id;
+    itti_msg->supi       = uc->supi;
+    // itti_msg->snssai     = uc->snssai;
+    itti_msg->plmn_id = plmn_id;
+    // TODO: add support for PCF Set ID
+    // TODO: add support for PCF Group ID
+    // itti_msg->dnn = uc->dnn;
+    // TODO: add support for PCF Selection Assistance Info and PCF ID(s) serving
+    // the established PDU Sessions
 
-  itti_msg->promise_id = promise_id;
-  itti_msg->supi       = uc->supi;
-  // itti_msg->snssai     = uc->snssai;
-  itti_msg->plmn_id = plmn_id;
-  // TODO: add support for PCF Set ID
-  // TODO: add support for PCF Group ID
-  // itti_msg->dnn = uc->dnn;
-  // TODO: add support for PCF Selection Assistance Info and PCF ID(s) serving
-  // the established PDU Sessions
+    int ret = itti_inst->send_msg(itti_msg);
+    if (0 != ret) {
+      Logger::amf_app().error(
+          "Could not send ITTI message %s to task TASK_AMF_SBI",
+          itti_msg->get_msg_name());
+    }
 
-  int ret = itti_inst->send_msg(itti_msg);
-  if (0 != ret) {
-    Logger::amf_app().error(
-        "Could not send ITTI message %s to task TASK_AMF_SBI",
-        itti_msg->get_msg_name());
-  }
+    bool is_result_available = false;
 
-  bool is_result_available = false;
+    oai::_3gpp::model::SearchResult search_result = {};
 
-  oai::_3gpp::model::SearchResult search_result = {};
+    std::string pcf_addr = {};
 
-  std::string pcf_addr = {};
+    // Wait for the response available and process accordingly
+    std::optional<nlohmann::json> result_opt = std::nullopt;
+    oai::utils::utils::wait_for_result(f, result_opt);
+    if (result_opt.has_value()) {
+      nlohmann::json result = result_opt.value();
+      Logger::amf_app().debug("Got result for promise ID %ld", promise_id);
+      if (result.find(kSbiResponseJsonData) != result.end()) {
+        Logger::amf_app().debug(
+            "Got Search Result response from "
+            "NRF: %s",
+            result[kSbiResponseJsonData].dump());
 
-  // Wait for the response available and process accordingly
-  std::optional<nlohmann::json> result_opt = std::nullopt;
-  oai::utils::utils::wait_for_result(f, result_opt);
-  if (result_opt.has_value()) {
-    nlohmann::json result = result_opt.value();
-    Logger::amf_app().debug("Got result for promise ID %ld", promise_id);
-    if (result.find(kSbiResponseJsonData) != result.end()) {
-      Logger::amf_app().debug(
-          "Got Search Result response from "
-          "NRF: %s",
-          result[kSbiResponseJsonData].dump());
-
-      uint32_t http_response_code =
-          oai::common::sbi::http_status_code::NO_RESPONSE;
-      if (result.find(kSbiResponseHttpResponseCode) != result.end()) {
-        http_response_code = result[kSbiResponseHttpResponseCode].get<int>();
-        if (http_response_code == oai::common::sbi::http_status_code::OK) {
-          // Process the content
-          try {
-            from_json(result[kSbiResponseJsonData], search_result);
-            std::vector<oai::_3gpp::model::NFProfile> nf_instances =
-                search_result.getNfInstances();
-            for (auto const& it : nf_instances) {
-              // PCF info
-              if (it.pcfInfoIsSet()) {
-                oai::_3gpp::model::PcfInfo pcf_info = it.getPcfInfo();
-              }
-
-              // TODO: PCF selection
-
-              // IPv4 addresses (get first IP v4 address)
-              if (it.ipv4AddressesIsSet()) {
-                if (it.getIpv4Addresses().size() == 0) {
-                  Logger::amf_app().warn(
-                      "No IPv4 Addresses found in Search Result");
-                } else {
-                  pcf_addr = it.getIpv4Addresses().at(0);
-                  break;
+        uint32_t http_response_code =
+            oai::common::sbi::http_status_code::NO_RESPONSE;
+        if (result.find(kSbiResponseHttpResponseCode) != result.end()) {
+          http_response_code = result[kSbiResponseHttpResponseCode].get<int>();
+          if (http_response_code == oai::common::sbi::http_status_code::OK) {
+            // Process the content
+            try {
+              from_json(result[kSbiResponseJsonData], search_result);
+              std::vector<oai::_3gpp::model::NFProfile> nf_instances =
+                  search_result.getNfInstances();
+              for (auto const& it : nf_instances) {
+                // PCF info
+                if (it.pcfInfoIsSet()) {
+                  oai::_3gpp::model::PcfInfo pcf_info = it.getPcfInfo();
                 }
+
+                // TODO: PCF selection
+
+                // IPv4 addresses (get first IP v4 address)
+                if (it.ipv4AddressesIsSet()) {
+                  if (it.getIpv4Addresses().size() == 0) {
+                    Logger::amf_app().warn(
+                        "No IPv4 Addresses found in Search Result");
+                  } else {
+                    pcf_addr = it.getIpv4Addresses().at(0);
+                    break;
+                  }
+                }
+
+                Logger::amf_app().debug("PCF Address: %s", pcf_addr.c_str());
+                // TODO: Port
               }
 
-              Logger::amf_app().debug("PCF Address: %s", pcf_addr.c_str());
-              // TODO: Port
-            }
+              if (pcf_addr.empty()) {
+                Logger::amf_app().warn("No PCF Address found in Search Result");
+                is_result_available = false;
+              } else {
+                // Store PCF URI in UE context
+                std::string pcf_uri_root = {};
+                uint32_t pcf_port        = DEFAULT_HTTP2_PORT;
+                pcf_uri_root.append(pcf_addr).append(":").append(
+                    std::to_string(pcf_port));
+                uc->pcf_addr.uri_root    = pcf_uri_root;
+                uc->pcf_addr.api_version = "v1";  // TODO: get from PCF
+                is_result_available      = true;
+              }
 
-            if (pcf_addr.empty()) {
-              Logger::amf_app().warn("No PCF Address found in Search Result");
+            } catch (std::exception& e) {
+              Logger::amf_app().warn(
+                  "Could not parse Search Result from "
+                  "Json");
               is_result_available = false;
-            } else {
-              // Store PCF URI in UE context
-              std::string pcf_uri_root = {};
-              uint32_t pcf_port        = DEFAULT_HTTP2_PORT;
-              pcf_uri_root.append(pcf_addr).append(":").append(
-                  std::to_string(pcf_port));
-              uc->pcf_addr.uri_root    = pcf_uri_root;
-              uc->pcf_addr.api_version = "v1";  // TODO: get from PCF
-              is_result_available      = true;
             }
-
-          } catch (std::exception& e) {
-            Logger::amf_app().warn(
-                "Could not parse Search Result from "
-                "Json");
-            is_result_available = false;
           }
         }
+
+      } else {
+        is_result_available = false;
       }
 
     } else {
       is_result_available = false;
     }
 
+    if (!is_result_available) {
+      Logger::amf_app().warn("Could not get Search Result from NRF");
+    }
   } else {
-    is_result_available = false;
-  }
-
-  if (!is_result_available) {
-    Logger::amf_app().warn("Could not get Search Result from NRF");
+    // Store PCF Addr in UE context
+    uc->pcf_addr = amf_cfg->pcf_addr;
   }
 }
 

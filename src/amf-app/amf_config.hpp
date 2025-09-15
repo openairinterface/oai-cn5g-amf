@@ -54,6 +54,8 @@ constexpr auto AMF_CONFIG_SUPPORT_FEATURES_ENABLE_SMF_SELECTION =
     "enable_smf_selection";
 constexpr auto AMF_CONFIG_SUPPORT_FEATURES_ENABLE_SMF_SELECTION_LABEL =
     "Enable SMF Selection";
+constexpr auto AMF_CONFIG_SUPPORT_FEATURES_ENABLE_PCF       = "enable_pcf";
+constexpr auto AMF_CONFIG_SUPPORT_FEATURES_ENABLE_PCF_LABEL = "Enable PCF";
 constexpr auto
     AMF_CONFIG_SUPPORT_FEATURES_ENABLE_ACCESS_AND_MOBILITY_SUBSCRIPTION_DATA_RETRIEVAL =
         "enable_access_and_mobility_subscription_data_retrieval";
@@ -175,6 +177,7 @@ class amf_support_features : public config_type {
   option_config_value m_enable_simple_scenario{};
   option_config_value m_enable_nssf{};
   option_config_value m_enable_smf_selection{};
+  option_config_value m_enable_pcf{};
   option_config_value
       m_enable_access_and_mobility_subscription_data_retrieval{};
   option_config_value m_enable_smf_selection_subscription_data_retrieval{};
@@ -189,6 +192,7 @@ class amf_support_features : public config_type {
   [[nodiscard]] bool get_option_enable_simple_scenario() const;
   [[nodiscard]] bool get_option_enable_nssf() const;
   [[nodiscard]] bool get_option_enable_smf_selection() const;
+  [[nodiscard]] bool get_option_enable_pcf() const;
   [[nodiscard]] bool
   get_option_enable_access_and_mobility_subscription_data_retrieval() const;
   [[nodiscard]] bool
@@ -473,6 +477,7 @@ class amf_config : public config {
   nf_addr_t udm_addr;
   nf_addr_t nssf_addr;
   nf_addr_t lmf_addr;
+  nf_addr_t pcf_addr;
 
   std::string default_dnn;
 };
