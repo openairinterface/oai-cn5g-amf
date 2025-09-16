@@ -1105,7 +1105,6 @@ class itti_sbi_pcf_discovery : public itti_sbi_msg {
       : itti_sbi_msg(SBI_PCF_DISCOVERY, orig, dest),
         promise_id(pid),
         supi(),
-        nrf_uri(),
         dnn(),
         plmn_id(),
         snssai() {}
@@ -1113,7 +1112,6 @@ class itti_sbi_pcf_discovery : public itti_sbi_msg {
   itti_sbi_pcf_discovery(const itti_sbi_pcf_discovery& i) : itti_sbi_msg(i) {
     promise_id = i.promise_id;
     supi       = i.supi;
-    nrf_uri    = i.nrf_uri;
     dnn        = i.dnn;
     plmn_id    = i.plmn_id;
     snssai     = i.snssai;
@@ -1123,7 +1121,6 @@ class itti_sbi_pcf_discovery : public itti_sbi_msg {
 
   uint32_t promise_id;
   std::string supi;
-  std::string nrf_uri;
   std::string dnn;
   oai::_3gpp::model::PlmnIdNid plmn_id;
   snssai_t snssai;

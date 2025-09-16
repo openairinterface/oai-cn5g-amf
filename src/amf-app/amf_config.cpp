@@ -51,6 +51,9 @@ void amf_support_features::from_yaml(const YAML::Node& node) {
     m_enable_smf_selection.from_yaml(
         node[AMF_CONFIG_SUPPORT_FEATURES_ENABLE_SMF_SELECTION]);
   }
+  if (node[AMF_CONFIG_SUPPORT_FEATURES_ENABLE_PCF]) {
+    m_enable_pcf.from_yaml(node[AMF_CONFIG_SUPPORT_FEATURES_ENABLE_PCF]);
+  }
   if (node[AMF_CONFIG_SUPPORT_FEATURES_ENABLE_ACCESS_AND_MOBILITY_SUBSCRIPTION_DATA_RETRIEVAL]) {
     m_enable_smf_selection.from_yaml(
         node[AMF_CONFIG_SUPPORT_FEATURES_ENABLE_ACCESS_AND_MOBILITY_SUBSCRIPTION_DATA_RETRIEVAL]);
@@ -93,6 +96,14 @@ std::string amf_support_features::to_string(const std::string& indent) const {
       BASE_FORMATTER, INNER_LIST_ELEM,
       AMF_CONFIG_SUPPORT_FEATURES_ENABLE_SMF_SELECTION_LABEL, inner_width,
       enable_smf_selection_string));
+
+  std::string enable_pcf_string = m_enable_pcf.get_value() ?
+                                      AMF_CONFIG_OPTION_YES_STR :
+                                      AMF_CONFIG_OPTION_NO_STR;
+  out.append(indent).append(fmt::format(
+      BASE_FORMATTER, INNER_LIST_ELEM,
+      AMF_CONFIG_SUPPORT_FEATURES_ENABLE_PCF_LABEL, inner_width,
+      enable_pcf_string));
 
   std::string enable_access_and_mobility_subscription_data_retrieval_string =
       m_enable_access_and_mobility_subscription_data_retrieval.get_value() ?
@@ -138,6 +149,11 @@ bool amf_support_features::get_option_enable_nssf() const {
 //------------------------------------------------------------------------------
 bool amf_support_features::get_option_enable_smf_selection() const {
   return m_enable_smf_selection.get_value();
+}
+
+//------------------------------------------------------------------------------
+bool amf_support_features::get_option_enable_pcf() const {
+  return m_enable_pcf.get_value();
 }
 
 //------------------------------------------------------------------------------
@@ -936,6 +952,9 @@ amf_config::amf_config(
   nssf_addr.ipv4_addr.s_addr = INADDR_ANY;
   nssf_addr.port             = DEFAULT_HTTP2_PORT;
   nssf_addr.api_version      = DEFAULT_SBI_API_VERSION;
+  pcf_addr.ipv4_addr.s_addr  = INADDR_ANY;
+  pcf_addr.port              = DEFAULT_HTTP2_PORT;
+  pcf_addr.api_version       = DEFAULT_SBI_API_VERSION;
   instance                   = 0;
   amf_log_level              = spdlog::level::debug;
   n2                         = {};
@@ -979,6 +998,9 @@ void amf_config::pre_process() {
     if (amf_local->get_support_features().get_option_enable_nssf()) {
       get_nf(NSSF_CONFIG_NAME)->set_config();
     }
+    if (amf_local->get_support_features().get_option_enable_pcf()) {
+      get_nf(PCF_CONFIG_NAME)->set_config();
+    }
   } else {
     std::shared_ptr<nf> ausf = get_nf(AUSF_CONFIG_NAME);
     ausf->unset_config();
@@ -1005,6 +1027,7 @@ void amf_config::pre_process() {
     support_features.enable_smf_selection     = false;
     support_features.enable_external_ausf_udm = false;
     support_features.enable_nssf              = false;  // TODO: to be removed
+    support_features.enable_pcf               = false;
     support_features.enable_access_and_mobility_subscription_data_retrieval =
         false;
     support_features.enable_smf_selection_subscription_data_retrieval = false;
@@ -1016,6 +1039,8 @@ void amf_config::pre_process() {
     support_features.enable_external_ausf_udm = true;  // To be removed
     support_features.enable_nssf =
         amf_local->get_support_features().get_option_enable_nssf();
+    support_features.enable_pcf =
+        amf_local->get_support_features().get_option_enable_pcf();
     support_features.enable_access_and_mobility_subscription_data_retrieval =
         amf_local->get_support_features()
             .get_option_enable_access_and_mobility_subscription_data_retrieval();
@@ -1117,6 +1142,12 @@ void amf_config::pre_process() {
         get_nf(NSSF_CONFIG_NAME)->get_sbi().get_api_version();
     nssf_addr.uri_root =
         get_nf(NSSF_CONFIG_NAME)->get_sbi().get_url(amf_cfg->enable_tls());
+  }
+
+  if (get_nf(oai::config::PCF_CONFIG_NAME)) {
+    pcf_addr.api_version = get_nf(PCF_CONFIG_NAME)->get_sbi().get_api_version();
+    pcf_addr.uri_root =
+        get_nf(PCF_CONFIG_NAME)->get_sbi().get_url(amf_cfg->enable_tls());
   }
 
   // NAS conf
@@ -1289,6 +1320,14 @@ void amf_config::display() {
         "    API version ...........: %s", nssf_addr.api_version.c_str());
   }
 
+  if (support_features.enable_pcf) {
+    Logger::config().info("- PCF:");
+    Logger::config().info(
+        "    URI root ...............: %s", pcf_addr.uri_root);
+    Logger::config().info(
+        "    API version ...........: %s", pcf_addr.api_version.c_str());
+  }
+
   if (support_features.enable_external_ausf_udm) {
     // AUSF
     Logger::config().info("- AUSF:");
@@ -1405,6 +1444,10 @@ void amf_config::to_json(nlohmann::json& json_data) const {
     json_data["udm"]  = udm_addr.to_json();
   }
 
+  if (support_features.enable_pcf) {
+    json_data["pcf"] = pcf_addr.to_json();
+  }
+
   json_data["supported_nas_algorithms"] = nas_cfg.to_json();
   if (support_features.enable_lmf) {
     json_data["lmf"] = lmf_addr.to_json();
@@ -1503,6 +1546,12 @@ bool amf_config::from_json(nlohmann::json& json_data) {
     if (support_features.enable_lmf) {
       if (json_data.find("lmf") != json_data.end()) {
         lmf_addr.from_json(json_data["lmf"]);
+      }
+    }
+
+    if (support_features.enable_pcf) {
+      if (json_data.find("pcf") != json_data.end()) {
+        pcf_addr.from_json(json_data["pcf"]);
       }
     }
 
