@@ -64,6 +64,14 @@ std::string amf_sbi_helper::get_non_ue_n2_info_subscribe_uri(
 }
 
 //------------------------------------------------------------------------------
+std::string amf_sbi_helper::get_amf_status_change_subscribe_uri(
+    const interface_cfg_t& sbi, const std::string& subscription_id) {
+  std::string fmr_format_str = {};
+  get_fmt_format_form(AmfCommPathSubscriptionsSubscriptionId, fmr_format_str);
+  return sbi.get_ipv4_root() + AmfCommunicationServiceBase() +
+         fmt::format(fmr_format_str, subscription_id);
+}
+//------------------------------------------------------------------------------
 std::string amf_sbi_helper::get_nssf_network_slice_selection_information_uri(
     const nf_addr_t& nssf_addr) {
   return nssf_addr.uri_root + NssfNsSelectionBase + nssf_addr.api_version +

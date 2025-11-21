@@ -1311,7 +1311,12 @@ void amf_sbi::handle_itti_message(
 bool amf_sbi::handle_itti_message(itti_sbi_pcf_discovery& itti_msg) {
   Logger::amf_sbi().debug("Send PCF Discovery to NRF");
 
-  std::string nrf_uri = itti_msg.nrf_uri;
+  // Get NRF info from configuration file if available
+  std::string nrf_uri = {};
+
+  amf_sbi_helper::get_nrf_disc_search_nf_instances_uri(
+      amf_cfg->nrf_addr, nrf_uri);
+  // TODO: get NRF from NSSF
 
   nlohmann::json plmn_id = {};
   to_json(plmn_id, itti_msg.plmn_id);

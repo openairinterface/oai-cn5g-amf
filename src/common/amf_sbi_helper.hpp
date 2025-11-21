@@ -71,6 +71,11 @@ class amf_sbi_helper : public sbi_helper {
            amf_cfg->sbi.api_version.value_or(kDefaultSbiApiVersion);
   }
 
+  static std::string AmfMTBase() {
+    return sbi_helper::AmfMTBase +
+           amf_cfg->sbi.api_version.value_or(kDefaultSbiApiVersion);
+  }
+
   static void set_problem_details(
       nlohmann::json& json_data, const std::string& detail);
 
@@ -91,6 +96,15 @@ class amf_sbi_helper : public sbi_helper {
    * @return URI in string format
    */
   static std::string get_non_ue_n2_info_subscribe_uri(
+      const interface_cfg_t& sbi, const std::string& subscription_id);
+
+  /*
+   * Get the URI of AMF Status Change Subscription ID
+   * @param [const interface_cfg_t&] sbi: SBI interface
+   * @param [const std::string&] subscription_id: Subscription Id
+   * @return URI in string format
+   */
+  static std::string get_amf_status_change_subscribe_uri(
       const interface_cfg_t& sbi, const std::string& subscription_id);
 
   /*
