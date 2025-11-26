@@ -49,6 +49,9 @@ runTrivyScan = params.runTrivyScan
 // Boolean param to control the run of "Pushing Image to Official Registry" stage (keep it false by default)
 runDockerHubPushStage = false // Please set it to true when replaying a "PUSH" event Pipeline
 
+// Please set the value in the pipeline accordingly; true if you want the robot tests to run else false
+runRobotStage = params.runRobotTests
+
 // Tags/Branches to use
 def amf_tag = "develop"
 def amf_branch = "develop"
@@ -496,6 +499,9 @@ pipeline {
         }
         // Home-made RAN emulator
         stage ('Robot-Test') {
+          when {
+            expression { runRobotStage }
+          }
           steps {
             script {
               gitlabCommitStatus(name: "Robot-Test") {
@@ -526,6 +532,9 @@ pipeline {
         }
         // Home-made RAN emulator
         stage ('Robot-NorthBound-Test') {
+          when {
+            expression { runRobotStage }
+          }
           steps {
             script {
               gitlabCommitStatus(name: "Robot-NorthBound-Test") {
