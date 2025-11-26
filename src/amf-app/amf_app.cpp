@@ -2511,7 +2511,7 @@ void amf_app::generate_amf_profile() {
   // namf_communication
   oai::common::sbi::nf_service_t nf_service = {};
   nf_service.service_instance_id            = amf_instance_id;
-  nf_service.service_name                   = "namf-comm";
+  nf_service.service_name                   = "NAMF_COMM";
   nf_service_version_t version              = {};
   if (amf_cfg->sbi.api_version.has_value())
     version.api_version_in_uri =

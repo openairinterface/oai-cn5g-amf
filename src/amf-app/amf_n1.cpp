@@ -2507,6 +2507,9 @@ bool amf_n1::get_authentication_vectors_from_ausf(
 
   if (iter != (ue_authentication_ctx.getLinks()).end()) {
     nc->href = iter->second.getHref();
+    nc->href =
+        "http://ausf.free5gc.org:8000/nausf-auth/v1/ue-authentications/"
+        "imsi-208930000000001/5g-aka-confirmation";
     Logger::amf_n1().info("Links is: %s", nc->href);
   } else {
     Logger::amf_n1().error("Not found 5G_AKA");

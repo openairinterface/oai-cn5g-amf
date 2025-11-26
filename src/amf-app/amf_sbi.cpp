@@ -487,10 +487,10 @@ void amf_sbi::handle_itti_message(itti_nsmf_pdusession_create_sm_context& smf) {
 
   // Convert dnn format to plain text string
   // TODO: temporary disabled to avoid issues with CI
-  /*std::string nd_dnn = {};
+  std::string nd_dnn = {};
   oai::utils::dotted_to_string(dnn, nd_dnn);
   dnn = nd_dnn;
-  */
+
   Logger::amf_sbi().debug("Requested DNN: %s", dnn.c_str());
   psc->dnn = dnn;
 
@@ -611,22 +611,23 @@ void amf_sbi::handle_pdu_session_initial_request(
 
   Logger::amf_sbi().debug("SMF's URI: %s", remote_uri.c_str());
 
-  nlohmann::json session_estb_request   = {};
-  session_estb_request["supi"]          = supi;
-  session_estb_request["pei"]           = "imeisv-8670000000000001";
-  session_estb_request["gpsi"]          = "msisdn-10000000000";
+  nlohmann::json session_estb_request = {};
+  session_estb_request["supi"]        = supi;
+  // session_estb_request["pei"]           = "imeisv-8670000000000001";
+  // session_estb_request["gpsi"]          = "msisdn-10000000000";
   session_estb_request["dnn"]           = dnn;
   session_estb_request["sNssai"]["sst"] = psc->snssai.sst;
   session_estb_request["sNssai"]["sd"]  = psc->snssai.sd;
   session_estb_request["pduSessionId"]  = psc->pdu_session_id;
-  session_estb_request["requestType"] = "INITIAL_REQUEST";  // TODO: from SM_MSG
+  // session_estb_request["requestType"] = "INITIAL_REQUEST";  // TODO: from
+  // SM_MSG
   session_estb_request["servingNfId"] = amf_app_inst->get_nf_instance();
   session_estb_request["servingNetwork"]["mcc"] = psc->plmn.mcc;
   session_estb_request["servingNetwork"]["mnc"] = psc->plmn.mnc;
   session_estb_request["anType"]                = "3GPP_ACCESS";  // TODO
-  session_estb_request["ratType"]               = "NR";
-  session_estb_request["selMode"]               = "VERIFIED";
-  session_estb_request["epsInterworkingInd"]    = "NONE";
+  // session_estb_request["ratType"]               = "NR";
+  // session_estb_request["selMode"]               = "VERIFIED";
+  // session_estb_request["epsInterworkingInd"]    = "NONE";
 
   session_estb_request["smContextStatusUri"] =
       amf_sbi_helper::get_sm_context_status_notification_uri(
