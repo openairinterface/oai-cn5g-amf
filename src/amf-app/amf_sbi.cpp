@@ -476,10 +476,20 @@ void amf_sbi::handle_itti_message(itti_nsmf_pdusession_create_sm_context& smf) {
   std::string dnn =
       amf_cfg->default_dnn;  // If DNN doesn't available, use the default value
   if ((smf.dnn != nullptr) && (blength(smf.dnn) > 0)) {
+    oai::utils::output_wrapper::print_buffer(
+        "amf_sbi", "DNN Bit String", (uint8_t*) bdata(smf.dnn),
+        blength(smf.dnn));
+
     char* tmp = amf_conv::bstring2charString(smf.dnn);
     dnn       = tmp;
     oai::utils::utils::free_wrapper((void**) &tmp);
   }
+
+  // Convert dnn format to plain text string
+  // TODO: temporary disabled to avoid issues with CI
+  std::string nd_dnn = {};
+  oai::utils::dotted_to_string(dnn, nd_dnn);
+  dnn = nd_dnn;
 
   Logger::amf_sbi().debug("Requested DNN: %s", dnn.c_str());
   psc->dnn = dnn;

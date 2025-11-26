@@ -2510,8 +2510,8 @@ void amf_app::generate_amf_profile() {
 
   // namf_communication
   oai::common::sbi::nf_service_t nf_service = {};
-  nf_service.service_instance_id            = "namf_communication";
-  nf_service.service_name                   = "namf_communication";
+  nf_service.service_instance_id            = amf_instance_id;
+  nf_service.service_name                   = "namf-comm";
   nf_service_version_t version              = {};
   if (amf_cfg->sbi.api_version.has_value())
     version.api_version_in_uri =
@@ -2522,6 +2522,8 @@ void amf_app::generate_amf_profile() {
   nf_service.nf_service_status = "REGISTERED";
 
   nf_service.ip_endpoints.push_back(endpoint);
+
+  nf_instance_profile.add_nf_service_list(nf_service);
 
   // namf-evts
   oai::common::sbi::nf_service_t nf_service_events = {};
