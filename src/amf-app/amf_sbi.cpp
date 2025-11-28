@@ -487,10 +487,10 @@ void amf_sbi::handle_itti_message(itti_nsmf_pdusession_create_sm_context& smf) {
 
   // Convert dnn format to plain text string
   // TODO: temporary disabled to avoid issues with CI
-  std::string nd_dnn = {};
+  /* std::string nd_dnn = {};
   oai::utils::dotted_to_string(dnn, nd_dnn);
   dnn = nd_dnn;
-
+  */
   Logger::amf_sbi().debug("Requested DNN: %s", dnn.c_str());
   psc->dnn = dnn;
 
