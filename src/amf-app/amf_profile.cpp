@@ -377,20 +377,23 @@ void amf_profile::to_json(nlohmann::json& data) const {
       nlohmann::json v_tmp     = {};
       v_tmp["apiVersionInUri"] = v.api_version_in_uri;
       v_tmp["apiFullVersion"]  = v.api_full_version;
+
       srv_tmp["versions"].push_back(v_tmp);
     }
     srv_tmp["scheme"]          = service.scheme;
     srv_tmp["nfServiceStatus"] = service.nf_service_status;
     // IP endpoints
-    srv_tmp["ipEndPoints"] = nlohmann::json::array();
-    for (auto endpoint : service.ip_endpoints) {
-      nlohmann::json ep_tmp = {};
-      ep_tmp["ipv4Address"] = nlohmann::json::array();
-      ep_tmp["ipv4Address"] = inet_ntoa(endpoint.ipv4_address);
-      ep_tmp["transport"]   = endpoint.transport;
-      ep_tmp["port"]        = endpoint.port;
-      srv_tmp["ipEndPoints"].push_back(ep_tmp);
-    }
+    // srv_tmp["ipEndPoints"] = nlohmann::json::array();
+    /*  for (auto endpoint : service.ip_endpoints) {
+        nlohmann::json ep_tmp = {};
+        ep_tmp["ipv4Address"] = nlohmann::json::array();
+        ep_tmp["ipv4Address"] = inet_ntoa(endpoint.ipv4_address);
+        ep_tmp["transport"]   = endpoint.transport;
+        ep_tmp["port"]        = endpoint.port;
+        srv_tmp["ipEndPoints"].push_back(ep_tmp);
+      }
+      */
+    srv_tmp["apiPrefix"] = "http://10.100.200.16:8080";
 
     data["nfServices"].push_back(srv_tmp);
   }

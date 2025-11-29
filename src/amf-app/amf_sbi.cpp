@@ -611,10 +611,10 @@ void amf_sbi::handle_pdu_session_initial_request(
 
   Logger::amf_sbi().debug("SMF's URI: %s", remote_uri.c_str());
 
-  nlohmann::json session_estb_request = {};
-  session_estb_request["supi"]        = supi;
-  // session_estb_request["pei"]           = "imeisv-8670000000000001";
-  // session_estb_request["gpsi"]          = "msisdn-10000000000";
+  nlohmann::json session_estb_request   = {};
+  session_estb_request["supi"]          = supi;
+  session_estb_request["pei"]           = "imeisv-4370816125816151";
+  session_estb_request["gpsi"]          = "msisdn-";
   session_estb_request["dnn"]           = dnn;
   session_estb_request["sNssai"]["sst"] = psc->snssai.sst;
   session_estb_request["sNssai"]["sd"]  = psc->snssai.sd;
@@ -625,7 +625,7 @@ void amf_sbi::handle_pdu_session_initial_request(
   session_estb_request["servingNetwork"]["mcc"] = psc->plmn.mcc;
   session_estb_request["servingNetwork"]["mnc"] = psc->plmn.mnc;
   session_estb_request["anType"]                = "3GPP_ACCESS";  // TODO
-  // session_estb_request["ratType"]               = "NR";
+  session_estb_request["ratType"]               = "NR";
   // session_estb_request["selMode"]               = "VERIFIED";
   // session_estb_request["epsInterworkingInd"]    = "NONE";
 
