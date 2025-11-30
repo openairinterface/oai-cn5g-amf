@@ -1044,8 +1044,18 @@ void amf_http2_server::n1_n2_message_transfer_handler(
     itti_msg->is_ppi_set = false;
   }
 
+  response_json          = {};
+  response_json["cause"] = "N1_N2_TRANSFER_INITIATED";
+  // n1_n2_message_transfer_cause_e2str[N1_N2_TRANSFER_INITIATED];
   // Send response to the NF Service Consumer (e.g., SMF)
-  res.write_head(code);
+  // res.write_head(code);
+  // res.end(response_json.dump().c_str());
+  header_map h;
+  h.insert(std::make_pair<std::string, header_value>(
+      "Content-Type", {"application/json", false}));
+
+  res.write_head(
+      static_cast<uint32_t>(oai::common::sbi::http_status_code::OK), h);
   res.end(response_json.dump().c_str());
 
   // Process N1N2 Message Transfer Request in AMF APP

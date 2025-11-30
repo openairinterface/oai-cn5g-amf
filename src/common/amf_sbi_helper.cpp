@@ -128,11 +128,25 @@ bool amf_sbi_helper::get_smf_pdu_session_context_uri(
 
   Logger::amf_sbi().debug(
       "smf_info, context location %s", psc->smf_info.context_location);
-  std::size_t found = psc->smf_info.context_location.find("/");
-  if (found != 0)
-    smf_uri = psc->smf_info.context_location;
-  else
-    smf_uri = psc->smf_info.uri_root + psc->smf_info.context_location;
+  // std::size_t found = psc->smf_info.context_location.find("/");
+
+  std::size_t found = psc->smf_info.context_location.find_last_of("/");
+
+  if (found != 0) {
+    // smf_uri = psc->smf_info.context_location;
+    std::string ref        = psc->smf_info.context_location.substr(found + 1);
+    std::string first_part = psc->smf_info.context_location.substr(0, found);
+    smf_uri                = first_part + "/urn:uuid:" + ref;
+
+    Logger::amf_sbi().error(
+        "smf_info, context location %s, %s, %s", first_part, ref, smf_uri);
+  }
+
+  else {
+    smf_uri =
+        psc->smf_info.uri_root + "urn:uuid:" + psc->smf_info.context_location;
+  }
+
   return true;
 }
 
