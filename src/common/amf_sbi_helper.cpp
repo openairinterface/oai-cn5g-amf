@@ -211,8 +211,9 @@ std::string amf_sbi_helper::get_udm_ue_context_in_smf_data_retrieval_uri(
 //------------------------------------------------------------------------------
 std::string amf_sbi_helper::get_pcf_am_policy_association_uri(
     const nf_addr_t& pcf_addr) {
-  return pcf_addr.uri_root + PcfAmPolicyControlBase + pcf_addr.api_version +
-         PcfAmPolicyControlPathPolicies;
+  // return pcf_addr.uri_root + PcfAmPolicyControlBase + pcf_addr.api_version +
+  return "http://10.100.200.6:8000" + PcfAmPolicyControlBase +
+         pcf_addr.api_version + PcfAmPolicyControlPathPolicies;
 }
 
 //------------------------------------------------------------------------------

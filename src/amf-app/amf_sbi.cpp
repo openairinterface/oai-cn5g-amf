@@ -625,6 +625,7 @@ void amf_sbi::handle_pdu_session_initial_request(
   session_estb_request["servingNetwork"]["mcc"] = psc->plmn.mcc;
   session_estb_request["servingNetwork"]["mnc"] = psc->plmn.mnc;
   session_estb_request["anType"]                = "3GPP_ACCESS";  // TODO
+  session_estb_request["accessType"]            = "3GPP_ACCESS";  // TODO
   session_estb_request["ratType"]               = "NR";
   // session_estb_request["selMode"]               = "VERIFIED";
   // session_estb_request["epsInterworkingInd"]    = "NONE";
@@ -677,6 +678,7 @@ void amf_sbi::handle_pdu_session_initial_request(
   nlohmann::json user_location_json = {};
   to_json(user_location_json, user_location);
   session_estb_request["ueLocation"] = user_location_json;
+  session_estb_request["ueTimeZone"] = "+00:00";
 
   std::string json_part = session_estb_request.dump();
   Logger::amf_sbi().debug("Message body %s", json_part.c_str());
@@ -1353,8 +1355,15 @@ bool amf_sbi::handle_itti_message(itti_sbi_am_policy_association& itti_msg) {
   std::string uri =
       amf_sbi_helper::get_pcf_am_policy_association_uri(uc->pcf_addr);
 
+  Logger::amf_sbi().error("Send AM Policy Association to PCF: %s", uri.c_str());
+
   nlohmann::json json_data = {};
   to_json(json_data, itti_msg.policy_assoc_req);
+  json_data["supi"]               = "imsi-208930000000001";
+  json_data["accessType"]         = "3GPP_ACCESS";
+  json_data["ratType"]            = "NR";
+  json_data["servingPlmn"]["mcc"] = "208";
+  json_data["servingPlmn"]["mnc"] = "93";
 
   std::string body             = json_data.dump();
   nlohmann::json response_json = {};
