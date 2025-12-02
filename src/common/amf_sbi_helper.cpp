@@ -138,7 +138,7 @@ bool amf_sbi_helper::get_smf_pdu_session_context_uri(
     std::string first_part = psc->smf_info.context_location.substr(0, found);
     smf_uri                = first_part + "/urn:uuid:" + ref;
 
-    Logger::amf_sbi().error(
+    Logger::amf_sbi().debug(
         "smf_info, context location %s, %s, %s", first_part, ref, smf_uri);
   }
 
@@ -212,7 +212,7 @@ std::string amf_sbi_helper::get_udm_ue_context_in_smf_data_retrieval_uri(
 std::string amf_sbi_helper::get_pcf_am_policy_association_uri(
     const nf_addr_t& pcf_addr) {
   return pcf_addr.uri_root + PcfAmPolicyControlBase + pcf_addr.api_version +
-         pcf_addr.api_version + PcfAmPolicyControlPathPolicies;
+         PcfAmPolicyControlPathPolicies;
 }
 
 //------------------------------------------------------------------------------
