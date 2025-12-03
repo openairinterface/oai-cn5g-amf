@@ -25,14 +25,13 @@
 #include "3gpp_23.003.h"
 
 #include <nlohmann/json.hpp>
+#include <optional>
 #include <string>
 
 #include "3gpp_24.501.hpp"
+#include "logger.hpp"
 #include "string.hpp"
 #include "thread_sched.hpp"
-
-// for CURL
-constexpr auto CURL_MIME_BOUNDARY = "----Boundary";
 
 #define BUFFER_SIZE_8192 8192
 #define BUFFER_SIZE_4096 4096
@@ -66,19 +65,6 @@ constexpr uint64_t SECONDS_SINCE_FIRST_EPOCH = 2208988800;
 #define NAS_MESSAGE_DOWNLINK 1
 #define NAS_MESSAGE_UPLINK 0
 
-#define JSON_CONTENT_ID_MIME "root"
-#define N1_SM_CONTENT_ID "n1SmMsg"
-#define N2_SM_CONTENT_ID "n2msg"
-#define N2_NRPPa_CONTENT_ID "n2NrppaMsg"
-
-typedef enum {
-  PlainNasMsg                                              = 0x0,
-  IntegrityProtected                                       = 0x1,
-  IntegrityProtectedAndCiphered                            = 0x2,
-  IntegrityProtectedWithNew5GNASSecurityContext            = 0x3,
-  IntegrityProtectedAndCipheredWithNew5GNASSecurityContext = 0x4,
-} SecurityHeaderType_t;
-
 constexpr uint32_t DEFAULT_HTTP1_PORT  = 80;
 constexpr uint32_t DEFAULT_HTTP2_PORT  = 8080;
 constexpr auto DEFAULT_SBI_API_VERSION = "v1";
@@ -86,10 +72,16 @@ constexpr auto DEFAULT_SUPI_TYPE =
     "imsi";  // Set to "imsi" when supporting both IMSI and NAI as SUPI
 
 constexpr auto DEFAULT_SST = 1;
-constexpr auto DEFAULT_DNN = "default";
 
 constexpr auto kSbiResponseJsonData         = "jsonData";
 constexpr auto kSbiResponseHttpResponseCode = "httpResponseCode";
+constexpr auto kSbiResponseHeaderLocation   = "httpResponseLocation";
+
+typedef struct response_data_s {
+  std::optional<nlohmann::json> json_data;
+  uint32_t response_code;
+  std::optional<std::string> location;
+} response_data_t;
 
 typedef struct auth_conf_s {
   std::string mysql_server;
@@ -132,11 +124,11 @@ typedef struct auth_conf_s {
 } auth_conf_t;
 
 typedef struct itti_cfg_s {
-  util::thread_sched_params itti_timer_sched_params;
-  util::thread_sched_params sx_sched_params;
-  util::thread_sched_params s5s8_sched_params;
-  util::thread_sched_params pgw_app_sched_params;
-  util::thread_sched_params async_cmd_sched_params;
+  oai::utils::thread_sched_params itti_timer_sched_params;
+  oai::utils::thread_sched_params sx_sched_params;
+  oai::utils::thread_sched_params s5s8_sched_params;
+  oai::utils::thread_sched_params pgw_app_sched_params;
+  oai::utils::thread_sched_params async_cmd_sched_params;
 } itti_cfg_t;
 
 typedef struct plmn_support_item_s {

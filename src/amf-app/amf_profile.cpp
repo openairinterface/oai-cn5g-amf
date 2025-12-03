@@ -21,7 +21,7 @@
 
 #include "amf_profile.hpp"
 
-#include "amf_config_yaml.hpp"
+#include "amf_config.hpp"
 #include "conversions.hpp"
 #include "logger.hpp"
 #include "string.hpp"
@@ -299,6 +299,10 @@ void amf_profile::delete_nf_services() {
   nf_services.clear();
 }
 
+void amf_profile::add_nf_service_list(const oai::common::sbi::nf_service_t& n) {
+  nf_service_list.emplace(std::make_pair(n.service_instance_id, n));
+}
+
 //------------------------------------------------------------------------------
 void amf_profile::set_custom_info(const nlohmann::json& c) {
   custom_info = c;
@@ -328,8 +332,16 @@ void amf_profile::display() const {
   if (nf_services.size() > 0) {
     Logger::amf_app().debug("\tNF Service");
   }
-  for (auto service : nf_services) {
+  for (const auto& service : nf_services) {
     Logger::amf_app().debug("\t\t%s", service.to_string().c_str());
+  }
+
+  if (nf_service_list.size() > 0) {
+    Logger::amf_app().debug("\tNF Service List");
+  }
+  for (const auto& service : nf_service_list) {
+    Logger::amf_app().debug("\t\t%s", service.first.c_str());
+    Logger::amf_app().debug("\t\t\t%s", service.second.to_string().c_str());
   }
 
   if (!custom_info.empty()) {
@@ -342,7 +354,7 @@ void amf_profile::display() const {
       "\t\tAMF Set ID: %s, AMF Region ID: %s", amf_info.amf_set_id,
       amf_info.amf_region_id);
 
-  for (auto g : amf_info.guami_list) {
+  for (const auto& g : amf_info.guami_list) {
     Logger::amf_app().debug("\t\tAMF GUAMI List, AMF_ID: %s", g.amf_id);
     Logger::amf_app().debug(
         "\t\tAMF GUAMI List, PLMN (MCC: %s, MNC: %s)", g.plmn.mcc.c_str(),
@@ -356,7 +368,7 @@ void amf_profile::to_json(nlohmann::json& data) const {
 
   // NF services
   data["nfServices"] = nlohmann::json::array();
-  for (auto service : nf_services) {
+  for (const auto& service : nf_services) {
     nlohmann::json srv_tmp       = {};
     srv_tmp["serviceInstanceId"] = service.service_instance_id;
     srv_tmp["serviceName"]       = service.service_name;
@@ -383,6 +395,34 @@ void amf_profile::to_json(nlohmann::json& data) const {
     data["nfServices"].push_back(srv_tmp);
   }
 
+  // NF service list
+  data["nfServiceList"] = {};
+  for (const auto& service : nf_service_list) {
+    nlohmann::json srv_tmp       = {};
+    srv_tmp["serviceInstanceId"] = service.second.service_instance_id;
+    srv_tmp["serviceName"]       = service.second.service_name;
+    srv_tmp["versions"]          = nlohmann::json::array();
+    for (auto v : service.second.versions) {
+      nlohmann::json v_tmp     = {};
+      v_tmp["apiVersionInUri"] = v.api_version_in_uri;
+      v_tmp["apiFullVersion"]  = v.api_full_version;
+      srv_tmp["versions"].push_back(v_tmp);
+    }
+    srv_tmp["scheme"]          = service.second.scheme;
+    srv_tmp["nfServiceStatus"] = service.second.nf_service_status;
+    // IP endpoints
+    srv_tmp["ipEndPoints"] = nlohmann::json::array();
+    for (auto endpoint : service.second.ip_endpoints) {
+      nlohmann::json ep_tmp = {};
+      ep_tmp["ipv4Address"] = nlohmann::json::array();
+      ep_tmp["ipv4Address"] = inet_ntoa(endpoint.ipv4_address);
+      ep_tmp["transport"]   = endpoint.transport;
+      ep_tmp["port"]        = endpoint.port;
+      srv_tmp["ipEndPoints"].push_back(ep_tmp);
+    }
+    data["nfServiceList"][service.first] = srv_tmp;
+  }
+
   data["custom_info"] = custom_info;
 
   // AMF info
@@ -390,7 +430,7 @@ void amf_profile::to_json(nlohmann::json& data) const {
   data["amfInfo"]["amfRegionId"] = amf_info.amf_region_id;
   // guamiList
   data["amfInfo"]["guamiList"] = nlohmann::json::array();
-  for (auto guami : amf_info.guami_list) {
+  for (const auto& guami : amf_info.guami_list) {
     nlohmann::json tmp   = {};
     tmp["amfId"]         = guami.amf_id;
     tmp["plmnId"]["mnc"] = guami.plmn.mnc;

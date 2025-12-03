@@ -52,14 +52,19 @@ class amf_conv : public oai::utils::conv {
   static std::string get_serving_network_name(
       const std::string& mnc, const std::string& mcc);
   static std::string uint32_to_hex_string_full_format(uint32_t value);
-  static std::string tmsi_to_guti(
-      const std::string& mcc, const std::string& mnc, uint8_t region_id,
-      const std::string& _5g_s_tmsi);
-  static std::string tmsi_to_guti(
-      const std::string& mcc, const std::string& mnc, uint8_t region_id,
-      uint16_t amf_set_id, uint8_t amf_pointer, const std::string& tmsi);
+  template<class T>
+  static std::string int_to_hex_string_format(T value, uint8_t size) {
+    if (size > sizeof(T)) return {};
+    char hex_str[size + 1];
+    sprintf(hex_str, "%X", value);
+    std::string out = std::string(hex_str);
+    if (out.size() % 2 == 1) out = "0" + out;
+    return ("0x" + out);
+  }
   static std::string imsi_to_supi(const std::string& imsi);
   static std::string get_imsi(
       const std::string& mcc, const std::string& mnc, const std::string& msin);
+  static void octet_stream_2_hex_stream(
+      uint8_t* buf, int len, std::string& out);
 };
 #endif /* FILE_CONVERSIONS_HPP_SEEN */

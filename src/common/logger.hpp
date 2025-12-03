@@ -23,10 +23,8 @@
 
 #include "logger_base.hpp"
 
-static const std::string ASYNC_CMD          = "async_cmd";
 static const std::string AMF_APP            = "amf_app";
 static const std::string CONFIG             = "config";
-static const std::string SYSTEM             = "system";
 static const std::string SCTP               = "sctp";
 static const std::string NAS_MM             = "nas_mm";
 static const std::string NGAP               = "ngap";
@@ -43,13 +41,9 @@ class Logger : public oai::logger::logger_common {
       const std::string& name, const bool log_stdout, const bool log_rot_file) {
     oai::logger::logger_common(name, log_stdout, log_rot_file);
     oai::logger::logger_registry::register_logger(
-        name, ASYNC_CMD, log_stdout, log_rot_file);
-    oai::logger::logger_registry::register_logger(
         name, AMF_APP, log_stdout, log_rot_file);
     oai::logger::logger_registry::register_logger(
         name, CONFIG, log_stdout, log_rot_file);
-    oai::logger::logger_registry::register_logger(
-        name, SYSTEM, log_stdout, log_rot_file);
     oai::logger::logger_registry::register_logger(
         name, SCTP, log_stdout, log_rot_file);
     oai::logger::logger_registry::register_logger(
@@ -81,17 +75,11 @@ class Logger : public oai::logger::logger_common {
     return oai::logger::logger_registry::should_log(level);
   }
 
-  static const oai::logger::printf_logger& async_cmd() {
-    return oai::logger::logger_registry::get_logger(ASYNC_CMD);
-  }
   static const oai::logger::printf_logger& amf_app() {
     return oai::logger::logger_registry::get_logger(AMF_APP);
   }
   static const oai::logger::printf_logger& config() {
     return oai::logger::logger_registry::get_logger(CONFIG);
-  }
-  static const oai::logger::printf_logger& system() {
-    return oai::logger::logger_registry::get_logger(SYSTEM);
   }
   static const oai::logger::printf_logger& sctp() {
     return oai::logger::logger_registry::get_logger(SCTP);

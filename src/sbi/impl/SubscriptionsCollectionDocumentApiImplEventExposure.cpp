@@ -16,13 +16,13 @@
 #include "amf_config.hpp"
 #include "3gpp_conversions.hpp"
 
-extern amf_config amf_cfg;
+extern std::unique_ptr<oai::config::amf_config> amf_cfg;
 
 namespace oai {
 namespace amf {
 namespace api {
 
-using namespace oai::model::amf;
+using namespace oai::_3gpp::model;
 using namespace amf_application;
 using namespace config;
 
@@ -55,7 +55,6 @@ void SubscriptionsCollectionDocumentApiImplEventExposure::create_subscription(
       std::make_shared<itti_sbi_event_exposure_request>(
           TASK_AMF_SBI, TASK_AMF_APP);
   itti_msg->event_exposure = event_exposure;
-  itti_msg->http_version   = 1;
 
   evsub_id_t sub_id = m_amf_app->handle_event_exposure_subscription(itti_msg);
 
@@ -66,9 +65,9 @@ void SubscriptionsCollectionDocumentApiImplEventExposure::create_subscription(
 
   if (sub_id != -1) {
     std::string location =
-        std::string(inet_ntoa(*((struct in_addr*) &amf_cfg.sbi.addr4))) + ":" +
-        std::to_string(amf_cfg.sbi.port) + base +
-        amf_cfg.sbi.api_version.value_or(DEFAULT_SBI_API_VERSION) +
+        std::string(inet_ntoa(*((struct in_addr*) &amf_cfg->sbi.addr4))) + ":" +
+        std::to_string(amf_cfg->sbi.port) + base +
+        amf_cfg->sbi.api_version.value_or(DEFAULT_SBI_API_VERSION) +
         "/namf-evts/" + std::to_string(sub_id);
 
     json_data["subscriptionId"] = location;

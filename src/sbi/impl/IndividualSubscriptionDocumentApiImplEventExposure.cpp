@@ -17,7 +17,7 @@ namespace oai {
 namespace amf {
 namespace api {
 
-using namespace oai::model::common;
+using namespace oai::_3gpp::model;
 
 IndividualSubscriptionDocumentApiImplEventExposure::
     IndividualSubscriptionDocumentApiImplEventExposure(

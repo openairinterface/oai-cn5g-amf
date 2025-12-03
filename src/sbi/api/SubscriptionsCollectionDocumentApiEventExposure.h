@@ -38,7 +38,7 @@ class SubscriptionsCollectionDocumentApiEventExposure {
   virtual ~SubscriptionsCollectionDocumentApiEventExposure() = default;
   void init();
 
-  const std::string base = amf_sbi_helper::AmfEventExposureServiceBase;
+  const std::string base = amf_sbi_helper::AmfEventExposureServiceBase();
 
  private:
   void setupRoutes();
@@ -75,7 +75,7 @@ class SubscriptionsCollectionDocumentApiEventExposure {
   /// </remarks>
   /// <param name="amfCreateEventSubscription"></param>
   virtual void create_subscription(
-      const oai::model::amf::AmfCreateEventSubscription&
+      const oai::_3gpp::model::AmfCreateEventSubscription&
           amfCreateEventSubscription,
       Pistache::Http::ResponseWriter& response) = 0;
 };

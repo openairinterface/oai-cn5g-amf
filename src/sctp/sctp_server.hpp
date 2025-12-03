@@ -39,6 +39,14 @@ extern "C" {
 #define SCTP_RC_NORMAL_READ 0
 #define SCTP_RC_DISCONNECT 1
 
+// Default SCTP values
+// Please refer to https://man7.org/linux/man-pages/man7/sctp.7.html, for more
+// info)
+#define SCTP_OUT_STREAMS 16
+#define SCTP_IN_STREAMS 16
+#define SCTP_MAX_ATTEMPTS 8
+#define SCTP_TIMEOUT 60000  // in milliseconds
+
 namespace sctp {
 
 typedef uint16_t sctp_stream_id_t;
@@ -90,6 +98,7 @@ class sctp_server {
   void start_receive(sctp_application* app);
   int sctp_send_msg(
       sctp_assoc_id_t sctp_assoc_id, sctp_stream_id_t stream, bstring* payload);
+  void sctp_set_ttl(uint32_t sctp_ttl);
 
  private:
   static void* sctp_receiver_thread(void* arg);
@@ -107,6 +116,7 @@ class sctp_server {
       int sock, struct sockaddr** remote_addr, int* nb_remote_addresses);
   sctp_association_t* sctp_is_assoc_in_list(sctp_assoc_id_t assoc_id);
 
+  uint32_t sctp_ttl;
   int socket_;
   sctp_application* app_;
   pthread_t thread_;

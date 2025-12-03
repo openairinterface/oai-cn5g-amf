@@ -1,5 +1,31 @@
 # RELEASE NOTES: #
 
+## v2.2.0 -- December 2025 ##
+
+* Features
+  - AMF Location Service APIs
+  - AMF Mobile Terminated Service APIs
+  - AMF Status Change APIs
+  - AM Policy Association Retrieval/Update/Termination
+  - SMF Selection Subscription Data Retrieval
+  - Access and Mobility Subscription Data Retrieval
+  - UE Context In SMF Data Retrieval
+  - AMF Registration for 3GPP Access
+  - PCF discovery
+  - TLS support
+* Fixes
+  - Address UE-originated deregistration request in race condition
+  - Integrity check for Security Mode complete
+  - NR Cell ID
+  - MCC, MNC with 3 digits
+  - Release NAS signalling after the completion of the registration procedure: FOR is set to nN Follow-on request pending
+  - Use SUPI as UE identity
+  - Disable SCTP delays to support multiple UEs at the same time
+* Tech Debt
+  - Add support for Ubuntu 24.04
+  - Add support for RHEL 10, update container images to UBI 10
+  - Fix build issue in non-containerized environment
+
 ## v2.1.0 -- August 2024 ##
 
 * Features

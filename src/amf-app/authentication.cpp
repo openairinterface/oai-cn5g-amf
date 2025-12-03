@@ -34,7 +34,7 @@ extern "C" {
 
 using namespace amf_application;
 using namespace oai::config;
-extern amf_config amf_cfg;
+extern std::unique_ptr<oai::config::amf_config> amf_cfg;
 
 // Static variables
 uint8_t authentication::no_random_delta = 0;
@@ -135,7 +135,7 @@ bool authentication::authentication_vectors_generator_in_udm(
 void authentication::generate_random(uint8_t* random_p, ssize_t length) {
   gmp_randinit_default(random_state.state);
   gmp_randseed_ui(random_state.state, time(NULL));
-  if (amf_cfg.auth_para.random) {
+  if (amf_cfg->auth_para.random) {
     Logger::authentication().debug("Database config random -> true");
     random_t random_nb;
     mpz_init(random_nb);
@@ -308,10 +308,10 @@ bool authentication::connect_to_mysql() {
   const int mysql_reconnect_val = 1;
 
   pthread_mutex_init(&db_desc.db_cs_mutex, NULL);
-  db_desc.server   = amf_cfg.auth_para.mysql_server;
-  db_desc.user     = amf_cfg.auth_para.mysql_user;
-  db_desc.password = amf_cfg.auth_para.mysql_pass;
-  db_desc.database = amf_cfg.auth_para.mysql_db;
+  db_desc.server   = amf_cfg->auth_para.mysql_server;
+  db_desc.user     = amf_cfg->auth_para.mysql_user;
+  db_desc.password = amf_cfg->auth_para.mysql_pass;
+  db_desc.database = amf_cfg->auth_para.mysql_db;
   db_desc.db_conn  = mysql_init(NULL);
   mysql_options(db_desc.db_conn, MYSQL_OPT_RECONNECT, &mysql_reconnect_val);
   if (!mysql_real_connect(

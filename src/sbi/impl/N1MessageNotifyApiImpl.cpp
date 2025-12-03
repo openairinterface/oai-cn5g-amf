@@ -23,7 +23,7 @@ namespace oai {
 namespace amf {
 namespace api {
 
-using namespace oai::model::amf;
+using namespace oai::_3gpp::model;
 
 N1MessageNotifyApiImpl::N1MessageNotifyApiImpl(
     std::shared_ptr<Pistache::Rest::Router> rtr,
@@ -46,10 +46,9 @@ void N1MessageNotifyApiImpl::receive_n1_message_notification(
   itti_msg->notification_msg = notificationData;
   itti_msg->ue_id            = supi;
   itti_msg->n1sm             = n1sm_str;
-  itti_msg->http_version     = 1;
 
-  oai::model::common::ProblemDetails problem_details = {};
-  uint32_t http_code                                 = {0};
+  oai::_3gpp::model::ProblemDetails problem_details = {};
+  uint32_t http_code                                = {0};
 
   // Send response
   response.send(Pistache::Http::Code::No_Content);

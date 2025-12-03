@@ -27,7 +27,6 @@
 #include "AssignEbiData.h"
 #include "AssignEbiError.h"
 #include "AssignedEbiData.h"
-#include "Inline_object.h"
 #include "ProblemDetails.h"
 #include "UEContextRelease.h"
 #include "UeContextCreateError.h"
@@ -37,12 +36,13 @@
 #include "UeRegStatusUpdateReqData.h"
 #include "UeRegStatusUpdateRspData.h"
 #include "amf_sbi_helper.hpp"
+#include "Inline_object.h"
 
 namespace oai {
 namespace amf {
 namespace api {
 
-using namespace oai::model::amf;
+using namespace oai::_3gpp::model;
 
 class IndividualUeContextDocumentApi {
  public:
@@ -50,7 +50,7 @@ class IndividualUeContextDocumentApi {
   virtual ~IndividualUeContextDocumentApi() {}
   void init();
 
-  const std::string base = amf_sbi_helper::AmfCommunicationServiceBase;
+  const std::string base = amf_sbi_helper::AmfCommunicationServiceBase();
 
  private:
   void setupRoutes();

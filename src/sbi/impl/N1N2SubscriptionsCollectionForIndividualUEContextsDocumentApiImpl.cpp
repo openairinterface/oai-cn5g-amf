@@ -22,7 +22,7 @@ namespace oai {
 namespace amf {
 namespace api {
 
-using namespace oai::model::amf;
+using namespace oai::_3gpp::model;
 
 N1N2SubscriptionsCollectionForIndividualUEContextsDocumentApiImpl::
     N1N2SubscriptionsCollectionForIndividualUEContextsDocumentApiImpl(
@@ -56,7 +56,6 @@ void N1N2SubscriptionsCollectionForIndividualUEContextsDocumentApiImpl::
 
   itti_msg->ue_cxt_id         = ueContextId;
   itti_msg->subscription_data = ueN1N2InfoSubscriptionCreateData;
-  itti_msg->http_version      = 1;
   itti_msg->promise_id        = promise_id;
 
   int ret = itti_inst->send_msg(itti_msg);
@@ -76,18 +75,18 @@ void N1N2SubscriptionsCollectionForIndividualUEContextsDocumentApiImpl::
     // process data
     std::string location        = {};
     uint32_t http_response_code = 0;
-    if (result.find("location") != result.end()) {
-      location = result["location"].get<std::string>();
+    if (result.find(kSbiResponseHeaderLocation) != result.end()) {
+      location = result[kSbiResponseHeaderLocation].get<std::string>();
     }
 
-    if (result.find("httpResponseCode") != result.end()) {
-      http_response_code = result["httpResponseCode"].get<int>();
+    if (result.find(kSbiResponseHttpResponseCode) != result.end()) {
+      http_response_code = result[kSbiResponseHttpResponseCode].get<int>();
     }
 
     // UeN1N2InfoSubscriptionCreatedData
     nlohmann::json json_data = {};
-    if (result.find("createdData") != result.end()) {
-      json_data = result["createdData"];
+    if (result.find(kSbiResponseJsonData) != result.end()) {
+      json_data = result[kSbiResponseJsonData];
     }
 
     if (http_response_code == oai::common::sbi::http_status_code::CREATED) {

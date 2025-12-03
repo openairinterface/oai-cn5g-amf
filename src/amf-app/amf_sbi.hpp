@@ -23,17 +23,17 @@
 #define _AMF_SBI_H_
 
 #include "3gpp_29.500.h"
-#include "AuthenticationInfo.h"
-#include "UEAuthenticationCtx.h"
+#include "http_definitions.hpp"
 #include "itti_msg_sbi.hpp"
 #include "pdu_session_context.hpp"
+#include "ue_context.hpp"
 
 namespace amf_application {
 
 class amf_sbi {
  public:
   amf_sbi();
-  ~amf_sbi();
+  virtual ~amf_sbi();
 
   /*
    * Handle ITTI message (Nsmf_PDUSessionCreateSMContext) to create a new PDU
@@ -164,6 +164,73 @@ class amf_sbi {
   void handle_itti_message(itti_sbi_ue_authentication_confirmation& itti_msg);
 
   /*
+   * Handle ITTI message to trigger AMF Registration for 3GPP Access towards UDM
+   * @param [itti_sbi_register_with_udm&]: ITTI message
+   * @return void
+   */
+  void handle_itti_message(itti_sbi_register_with_udm& itti_msg);
+
+  /*
+   * Handle ITTI message to Retrieve a UE's Access and Mobility Subscription
+   * Data from UDM
+   * @param [itti_sbi_retrieve_am_data&]: ITTI message
+   * @return void
+   */
+  void handle_itti_message(itti_sbi_retrieve_am_data& itti_msg);
+
+  /*
+   * Handle ITTI message to retrieve a UE's SMF Selection Subscription Data from
+   * UDM
+   * @param [itti_sbi_retrieve_smf_selection_subscription_data&]: ITTI message
+   * @return void
+   */
+  void handle_itti_message(
+      itti_sbi_retrieve_smf_selection_subscription_data& itti_msg);
+
+  /*
+   * Handle ITTI message to discover PCF's info from the corresponding NRF
+   * @param [itti_sbi_pcf_discovery&]: ITTI message
+   * @return void
+   */
+  bool handle_itti_message(itti_sbi_pcf_discovery& itti_msg);
+
+  /*
+   * Handle ITTI message to perform AM Policy Association with PCF
+   * @param [itti_sbi_am_policy_association&]: ITTI message
+   * @return void
+   */
+  bool handle_itti_message(itti_sbi_am_policy_association& itti_msg);
+
+  /*
+   * Handle ITTI message to perform AM Policy Association Termination with PCF
+   * @param [itti_sbi_am_policy_association_termination&]: ITTI message
+   * @return void
+   */
+  bool handle_itti_message(
+      itti_sbi_am_policy_association_termination& itti_msg);
+
+  /*
+   * Handle ITTI message to update the AM Policy Association with PCF
+   * @param [itti_sbi_am_policy_association_update&]: ITTI message
+   * @return void
+   */
+  bool handle_itti_message(itti_sbi_am_policy_association_update& itti_msg);
+
+  /*
+   * Handle ITTI message to retrieve the AM Policy Association with PCF
+   * @param [itti_sbi_am_policy_association_update&]: ITTI message
+   * @return void
+   */
+  bool handle_itti_message(itti_sbi_am_policy_association_retrieval& itti_msg);
+
+  /*
+   * Handle ITTI message to retrieve a UE's UE Context In SMF Data
+   * @param [itti_sbi_ue_context_in_smf_data_retrieval&]: ITTI message
+   * @return void
+   */
+  bool handle_itti_message(itti_sbi_ue_context_in_smf_data_retrieval& itti_msg);
+
+  /*
    * Handle request to create a new PDU Session
    * @param [const std::string&] supi: SUPI
    * @param [std::shared_ptr<pdu_session_context>&] psc: Pointer to the PDU
@@ -177,7 +244,8 @@ class amf_sbi {
   void handle_pdu_session_initial_request(
       const std::string& supi, std::shared_ptr<pdu_session_context>& psc,
       const std::string& smf_uri_root, const std::string& smf_api_version,
-      bstring sm_msg, const std::string& dnn);
+      bstring sm_msg, const std::string& dnn,
+      const std::shared_ptr<ue_context>& uc);
 
   /*
    * Send SM Context response error to AMF
@@ -250,7 +318,7 @@ class amf_sbi {
       const std::string& json_data, const std::string& n1sm_msg,
       const std::string& n2sm_msg, bool is_multipart, std::string& body);
   /*
-   * CURL client to send request to the HTTP server
+   * Send a HTTP request to the HTTP server
    * @param [const std::string&] remote_uri: Server's Address
    * @param [const std::string&] json_data: Json data (msg body)
    * @param [const std::string&] n1sm_msg: N1 SM message
@@ -261,14 +329,14 @@ class amf_sbi {
    * @param [uint32_t] promise_id: Promise ID
    * @return void
    */
-  bool curl_http_client(
+  bool send_http_request(
       const std::string& remote_uri, const std::string& json_data,
       const std::string& n1sm_msg, const std::string& n2sm_msg,
       const std::string& supi, uint8_t pdu_session_id, uint8_t http_version = 1,
       const uint32_t& promise_id = 0);
 
   /*
-   * CURL client to send request to the HTTP server
+   * Send a HTTP request to the HTTP server
    * @param [const std::string&] remote_uri: Server's Address
    * @param [oai::common::sbi::method_e] method: HTTP method
    * @param [const std::string&] msg_body: Msg body
@@ -277,13 +345,13 @@ class amf_sbi {
    * @param [uint8_t] http_version: HTTP versioin
    * @return void
    */
-  void curl_http_client(
+  void send_http_request(
       const std::string& remote_uri, oai::common::sbi::method_e method,
       const std::string& msg_body, nlohmann::json& response_json,
       uint32_t& response_code, uint8_t http_version = 1);
 
   /*
-   * CURL client to send request to the HTTP server
+   * Send a HTTP request to the HTTP server
    * @param [const std::string&] remote_uri: Server's Address
    * @param [std::string&] json_data: Msg body
    * @param [std::string&] n1sm_msg: N1 SM message
@@ -293,10 +361,14 @@ class amf_sbi {
    * @param [uint32_t] promise_id: Promise ID
    * @return void
    */
-  void curl_http_client(
+  void send_http_request(
       const std::string& remote_uri, std::string& json_data,
       std::string& n1sm_msg, std::string& n2sm_msg, uint8_t http_version,
       uint32_t& response_code, const uint32_t& promise_id = 0);
+
+  void send_http_request(
+      const std::string& remote_uri, const oai::common::sbi::method_e method,
+      const std::string& msg_body, oai::http::response& http_response);
 };
 
 }  // namespace amf_application

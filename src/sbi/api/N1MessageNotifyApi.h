@@ -32,7 +32,7 @@ namespace oai {
 namespace amf {
 namespace api {
 
-using namespace oai::model::amf;
+using namespace oai::_3gpp::model;
 
 class N1MessageNotifyApi {
  public:
@@ -40,7 +40,7 @@ class N1MessageNotifyApi {
   virtual ~N1MessageNotifyApi() {}
   void init();
 
-  const std::string base = amf_sbi_helper::AmfCommunicationServiceBase;
+  const std::string base = amf_sbi_helper::AmfCommunicationServiceBase();
 
  private:
   void setupRoutes();

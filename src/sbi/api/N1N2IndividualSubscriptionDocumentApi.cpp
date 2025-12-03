@@ -16,13 +16,13 @@
 #include "Helpers.h"
 #include "amf_config.hpp"
 
-extern oai::config::amf_config amf_cfg;
+extern std::unique_ptr<oai::config::amf_config> amf_cfg;
 
 namespace oai {
 namespace amf {
 namespace api {
 
-using namespace oai::model::common::helpers;
+using namespace oai::_3gpp::model::helpers;
 
 N1N2IndividualSubscriptionDocumentApi::N1N2IndividualSubscriptionDocumentApi(
     std::shared_ptr<Pistache::Rest::Router> rtr) {

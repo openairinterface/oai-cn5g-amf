@@ -68,6 +68,7 @@ class nas_context {
   uint8_t ngksi;  // 4 bits
 
   std::string imsi;  // TODO: use SUPI instead
+  std::string supi;
   std::optional<oai::nas::IMEI_IMEISV_t> imeisv;
   std::optional<std::string> guti;
 
@@ -95,6 +96,7 @@ class nas_context {
   bool is_common_procedure_for_identification_running;
   bool is_common_procedure_for_security_mode_control_running;
   bool is_common_procedure_for_nas_transport_running;
+  uint8_t nas_message_for_current_procedure_running;
 
   // Security-related parameters
 #define MAX_5GS_AUTH_VECTORS 1

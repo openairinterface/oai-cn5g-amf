@@ -35,7 +35,7 @@ constexpr auto kStatisticGnbStatusDisconnected = "Disconnected";
 typedef struct {
   uint32_t gnb_id;
   // TODO: list of PLMNs
-  std::vector<SupportedTaItem_t> plmn_list;
+  std::vector<SupportedTaItem> plmn_list;
   std::string mcc;
   std::string mnc;
   std::string gnb_name;
@@ -45,12 +45,13 @@ typedef struct {
   std::string plmn_to_string() const {
     std::string s = {};
     for (auto supported_item : plmn_list) {
-      s.append("TAC " + std::to_string(supported_item.tac));
-      for (auto plmn_slice : supported_item.plmnSliceSupportList) {
-        s.append("( MCC " + plmn_slice.mcc);
-        s.append(", MNC " + plmn_slice.mnc);
-        for (auto slice : plmn_slice.sliceList) {
-          s.append("(SST " + slice.sst + ", SD " + slice.sd + "),");
+      s.append("TAC " + std::to_string(supported_item.getTac().get()));
+      for (auto plmn_slice : supported_item.getBroadcastPlmnList()) {
+        s.append("( MCC " + plmn_slice.getPlmn().getMcc());
+        s.append(", MNC " + plmn_slice.getPlmn().getMnc());
+        for (auto slice : plmn_slice.getSNssai()) {
+          s.append(
+              "(SST " + slice.getSstStr() + ", SD " + slice.getSd() + "),");
         }
         s.append(")");
       }
@@ -64,12 +65,12 @@ typedef struct ue_info_s {
   cm_state_t cm_status;
   _5gmm_state_t register_status;
   uint32_t ranid;
-  long amfid;
+  uint64_t amfid;
   std::string imsi;
   std::string guti;
   std::string mcc;
   std::string mnc;
-  uint32_t cellId;
+  uint64_t cellId;
 } ue_info_t;
 
 constexpr uint8_t kStatisticsIndent             = 3;
@@ -80,7 +81,7 @@ constexpr uint8_t kStatisticsHalfIeLengthForUe  = 10;
 class statistics {
  public:
   statistics();
-  ~statistics();
+  virtual ~statistics();
 
   /*
    * Display the statistic information for gNB and UE

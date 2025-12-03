@@ -35,7 +35,7 @@ namespace amf_application {
 class amf_n2 : public oai::ngap::ngap_app {
  public:
   amf_n2(const std::string& address, const uint16_t port_num);
-  ~amf_n2();
+  virtual ~amf_n2();
 
   /*
    * Handle ITTI message (New SCTP Association)
@@ -267,14 +267,14 @@ class amf_n2 : public oai::ngap::ngap_app {
 
   /*
    * Get list of common PLMN between AMF and gNB
-   * @param [const std::vector<SupportedTaItem_t>&] list: Supported TA list from
+   * @param [const std::vector<SupportedTaItem>&] list: Supported TA list from
    * gNB
-   * @param [std::vector<SupportedTaItem_t>&] result: list of common TA
+   * @param [std::vector<SupportedTaItem>&] result: list of common TA
    * @return true if there's at least 1 common TA, otherwise return false
    */
   bool get_common_plmn(
-      const std::vector<SupportedTaItem_t>& list,
-      std::vector<SupportedTaItem_t>& result);
+      const std::vector<SupportedTaItem>& list,
+      std::vector<SupportedTaItem>& result);
 
   /*
    * Get list of common S-NSSAIs between AMF and gNB to be used by UE
@@ -394,16 +394,17 @@ class amf_n2 : public oai::ngap::ngap_app {
   /*
    * Fill the content of N2InformationNotification with the corresponding info
    * @param [const std::string&] subscription_id: Subscription ID
-   * @param [const oai::model::amf::NgapIeType_anyOf::eNgapIeType_anyOf&]
+   * @param [const oai::_3gpp::model::NgapIeType_anyOf::eNgapIeType_anyOf&]
    * ngap_ie_type: Type of NGAP Ie
-   * @param [oai::model::amf::N2InformationNotification&] n2_info_notification:
-   * N2InformationNotification
+   * @param [oai::_3gpp::model::N2InformationNotification&]
+   * n2_info_notification: N2InformationNotification
    * @return void
    */
   void fill_n2_information_notification(
       const std::string& subscription_id,
-      const oai::model::amf::NgapIeType_anyOf::eNgapIeType_anyOf& ngap_ie_type,
-      oai::model::amf::N2InformationNotification& n2_info_notification);
+      const oai::_3gpp::model::NgapIeType_anyOf::eNgapIeType_anyOf&
+          ngap_ie_type,
+      oai::_3gpp::model::N2InformationNotification& n2_info_notification);
 
  private:
   // <RAN UE NGAP ID, gNB ID> <-> UE Context

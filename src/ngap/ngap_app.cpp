@@ -29,15 +29,19 @@
 extern "C" {
 #include "Ngap_InitiatingMessage.h"
 #include "Ngap_NGAP-PDU.h"
+#include "constr_TYPE.h"
 }
 
 using namespace sctp;
 using namespace oai::config;
 using namespace oai::ngap;
 
+extern std::unique_ptr<oai::config::amf_config> amf_cfg;
+
 //------------------------------------------------------------------------------
 ngap_app::ngap_app(const std::string& address, const uint16_t port_num)
     : ppid_(60), sctp_s_38412(address.c_str(), port_num) {
+  sctp_s_38412.sctp_set_ttl(amf_cfg->sctp_ttl);
   sctp_s_38412.start_receive(this);
   Logger::ngap().info(
       "Set N2 AMF IPv4 Addr %s, port %d", address.c_str(), port_num);
@@ -57,17 +61,15 @@ void ngap_app::handle_receive(
 
   Ngap_NGAP_PDU_t* ngap_msg_pdu =
       (Ngap_NGAP_PDU_t*) calloc(1, sizeof(Ngap_NGAP_PDU_t));
-  asn_dec_rval_t dec_ret;
-
-  dec_ret = aper_decode(
+  asn_dec_rval_t dec_ret = aper_decode(
       NULL, &asn_DEF_Ngap_NGAP_PDU, (void**) &ngap_msg_pdu, bdata(payload),
       blength(payload), 0, 0);
 
-  Logger::ngap().debug(
-      "Decoded NGAP message, procedure code %d, present %d",
-      ngap_msg_pdu->choice.initiatingMessage->procedureCode,
-      ngap_msg_pdu->present);
-  ngap_utils::print_asn_msg(&asn_DEF_Ngap_NGAP_PDU, ngap_msg_pdu);
+  if (dec_ret.code != RC_OK) {
+    Logger::ngap().error("Decode NGAP message failed");
+    ASN_STRUCT_FREE(asn_DEF_Ngap_NGAP_PDU, &ngap_msg_pdu);
+    return;
+  }
 
   if ((ngap_msg_pdu->choice.initiatingMessage->procedureCode >
        (NGAP_PROCEDURE_CODE_MAX_VALUE - 1)) or
@@ -76,6 +78,24 @@ void ngap_app::handle_receive(
         "Invalid procedure code %d or present %d",
         ngap_msg_pdu->choice.initiatingMessage->procedureCode,
         ngap_msg_pdu->present);
+    ASN_STRUCT_FREE(asn_DEF_Ngap_NGAP_PDU, &ngap_msg_pdu);
+    return;
+  }
+
+  Logger::ngap().debug(
+      "Decoded NGAP message, procedure code %d, present %d",
+      ngap_msg_pdu->choice.initiatingMessage->procedureCode,
+      ngap_msg_pdu->present);
+  ngap_utils::print_asn_msg(&asn_DEF_Ngap_NGAP_PDU, ngap_msg_pdu);
+
+  // If no handler available
+  if (messages_callback[ngap_msg_pdu->choice.initiatingMessage->procedureCode]
+                       [ngap_msg_pdu->present - 1] == nullptr) {
+    Logger::ngap().error(
+        "No handler available for procedure code %d and present %d",
+        ngap_msg_pdu->choice.initiatingMessage->procedureCode,
+        ngap_msg_pdu->present);
+    ASN_STRUCT_FREE(asn_DEF_Ngap_NGAP_PDU, &ngap_msg_pdu);
     return;
   }
 
@@ -83,6 +103,7 @@ void ngap_app::handle_receive(
   (*messages_callback[ngap_msg_pdu->choice.initiatingMessage->procedureCode]
                      [ngap_msg_pdu->present - 1])(
       assoc_id, stream, ngap_msg_pdu);
+  ASN_STRUCT_FREE_CONTENTS_ONLY(asn_DEF_Ngap_NGAP_PDU, &ngap_msg_pdu);
 }
 
 //------------------------------------------------------------------------------
@@ -156,8 +177,8 @@ bool ngap_app::assoc_id_2_gnb_context(
 
 //------------------------------------------------------------------------------
 std::vector<sctp::sctp_assoc_id_t> ngap_app::get_all_assoc_ids() {
-  std::shared_lock lock(m_assoc2gnb_context);
   std::vector<sctp::sctp_assoc_id_t> assoc_ids;
+  std::shared_lock lock(m_assoc2gnb_context);
   for (auto& it : assoc2gnb_context) {
     assoc_ids.push_back(it.first);
   }
@@ -167,7 +188,7 @@ std::vector<sctp::sctp_assoc_id_t> ngap_app::get_all_assoc_ids() {
 //------------------------------------------------------------------------------
 void ngap_app::set_assoc_id_2_gnb_context(
     const sctp_assoc_id_t& assoc_id, std::shared_ptr<gnb_context> gc) {
-  std::shared_lock lock(m_assoc2gnb_context);
+  std::unique_lock lock(m_assoc2gnb_context);
   assoc2gnb_context[assoc_id] = gc;
   return;
 }

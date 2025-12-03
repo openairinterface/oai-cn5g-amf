@@ -34,7 +34,7 @@ namespace amf_application {
 // Signal for UE Location Report
 // SUPI, User Location, HTTP version
 typedef bs2::signal_type<
-    void(std::string, oai::model::common::UserLocation, uint8_t),
+    void(std::string, oai::_3gpp::model::UserLocation, uint8_t),
     bs2::keywords::mutex_type<bs2::dummy_mutex>>::type ue_location_report_sig_t;
 
 // TODO: Presence-In-AOI-Report
@@ -73,7 +73,7 @@ typedef bs2::signal_type<
 // Signal for Communication Failure Report
 // SUPI, Communication Failure codes, HTTP version
 typedef bs2::signal_type<
-    void(std::string, oai::model::amf::CommunicationFailure, uint8_t),
+    void(std::string, oai::_3gpp::model::CommunicationFailure, uint8_t),
     bs2::keywords::mutex_type<bs2::dummy_mutex>>::type
     ue_communication_failure_sig_t;
 

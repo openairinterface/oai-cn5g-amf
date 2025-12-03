@@ -175,26 +175,6 @@ std::string amf_conv::uint32_to_hex_string_full_format(uint32_t value) {
 }
 
 //------------------------------------------------------------------------------
-std::string amf_conv::tmsi_to_guti(
-    const std::string& mcc, const std::string& mnc, uint8_t region_id,
-    const std::string& _5g_s_tmsi) {
-  std::string region_id_str = {};
-  int_to_string_hex(region_id, region_id_str, 2);  // Region ID: 8 bits
-  return {mcc + mnc + region_id_str + _5g_s_tmsi};
-}
-
-//------------------------------------------------------------------------------
-std::string amf_conv::tmsi_to_guti(
-    const std::string& mcc, const std::string& mnc, uint8_t region_id,
-    uint16_t amf_set_id, uint8_t amf_pointer, const std::string& tmsi) {
-  uint32_t amf_id        = {};
-  std::string amf_id_str = {};
-  get_amf_id(region_id, amf_set_id, amf_pointer, amf_id);
-  int_to_string_hex(amf_id, amf_id_str, 6);  // AMF ID: 24 bits
-  return {mcc + mnc + amf_id_str + tmsi};
-}
-
-//------------------------------------------------------------------------------
 std::string amf_conv::imsi_to_supi(const std::string& imsi) {
   std::string supi_type = DEFAULT_SUPI_TYPE;
   if (!supi_type.empty()) return {supi_type + "-" + imsi};
@@ -205,4 +185,17 @@ std::string amf_conv::imsi_to_supi(const std::string& imsi) {
 std::string amf_conv::get_imsi(
     const std::string& mcc, const std::string& mnc, const std::string& msin) {
   return {mcc + mnc + msin};
+}
+
+//------------------------------------------------------------------------------
+void amf_conv::octet_stream_2_hex_stream(
+    uint8_t* buf, int len, std::string& out) {
+  out       = "";
+  char* tmp = (char*) calloc(1, 2 * len * sizeof(uint8_t) + 1);
+  for (int i = 0; i < len; i++) {
+    sprintf(tmp + 2 * i, "%02x", buf[i]);
+  }
+  tmp[2 * len] = '\0';
+  out          = tmp;
+  Logger::amf_sbi().debug("Buffer: %s", out.c_str());
 }

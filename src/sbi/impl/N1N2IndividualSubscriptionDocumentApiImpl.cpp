@@ -51,7 +51,6 @@ void N1N2IndividualSubscriptionDocumentApiImpl::n1_n2_message_un_subscribe(
 
   itti_msg->ue_cxt_id       = ueContextId;
   itti_msg->subscription_id = subscriptionId;
-  itti_msg->http_version    = 1;
   itti_msg->promise_id      = promise_id;
 
   int ret = itti_inst->send_msg(itti_msg);
@@ -70,8 +69,8 @@ void N1N2IndividualSubscriptionDocumentApiImpl::n1_n2_message_un_subscribe(
     nlohmann::json result = result_opt.value();
     // process data
     uint32_t http_response_code = 0;
-    if (result.find("httpResponseCode") != result.end()) {
-      http_response_code = result["httpResponseCode"].get<int>();
+    if (result.find(kSbiResponseHttpResponseCode) != result.end()) {
+      http_response_code = result[kSbiResponseHttpResponseCode].get<int>();
     }
 
     if (http_response_code == oai::common::sbi::http_status_code::NO_CONTENT) {

@@ -33,7 +33,7 @@ namespace oai {
 namespace amf {
 namespace api {
 
-using namespace oai::model::amf;
+using namespace oai::_3gpp::model;
 
 class IndividualSubscriptionDocumentApiEventExposure {
  public:
@@ -42,7 +42,7 @@ class IndividualSubscriptionDocumentApiEventExposure {
   virtual ~IndividualSubscriptionDocumentApiEventExposure() = default;
   void init();
 
-  const std::string base = amf_sbi_helper::AmfEventExposureServiceBase;
+  const std::string base = amf_sbi_helper::AmfEventExposureServiceBase();
 
  private:
   void setupRoutes();
@@ -95,7 +95,8 @@ class IndividualSubscriptionDocumentApiEventExposure {
   /// modified</param> <param name="AmfUpdateEventOptionItem"></param>
   virtual void modify_subscription(
       const std::string& subscriptionId,
-      const oai::model::amf::AmfUpdateEventOptionItem& amfUpdateEventOptionItem,
+      const oai::_3gpp::model::AmfUpdateEventOptionItem&
+          amfUpdateEventOptionItem,
       Pistache::Http::ResponseWriter& response) = 0;
 };
 

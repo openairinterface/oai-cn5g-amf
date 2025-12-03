@@ -29,7 +29,7 @@ namespace oai {
 namespace amf {
 namespace api {
 
-using namespace oai::model::amf;
+using namespace oai::_3gpp::model;
 
 N1N2MessageCollectionDocumentApiImpl::N1N2MessageCollectionDocumentApiImpl(
     std::shared_ptr<Pistache::Rest::Router> rtr,
@@ -38,7 +38,7 @@ N1N2MessageCollectionDocumentApiImpl::N1N2MessageCollectionDocumentApiImpl(
 
 void N1N2MessageCollectionDocumentApiImpl::n1_n2_message_transfer(
     const std::string& ueContextId,
-    std::unordered_map<std::string, mime_part>& parts,
+    std::unordered_map<std::string, oai::utils::mime_part>& parts,
     Pistache::Http::ResponseWriter& response) {
   Logger::amf_server().debug(
       "Receive N1N2MessageTransfer Request, handling...");
@@ -51,7 +51,7 @@ void N1N2MessageCollectionDocumentApiImpl::n1_n2_message_transfer(
   std::string supi = ueContextId;
 
   N1N2MessageTransferReqData n1N2MessageTransferReqData = {};
-  nlohmann::json::parse(parts[JSON_CONTENT_ID_MIME].body.c_str())
+  nlohmann::json::parse(parts[oai::utils::JSON_CONTENT_ID_MIME].body.c_str())
       .get_to(n1N2MessageTransferReqData);
 
   bool request_valid = true;

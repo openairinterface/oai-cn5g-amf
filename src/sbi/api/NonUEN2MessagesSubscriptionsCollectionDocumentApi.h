@@ -33,7 +33,7 @@ namespace oai {
 namespace amf {
 namespace api {
 
-using namespace oai::model::amf;
+using namespace oai::_3gpp::model;
 
 class NonUEN2MessagesSubscriptionsCollectionDocumentApi {
  public:
@@ -42,7 +42,7 @@ class NonUEN2MessagesSubscriptionsCollectionDocumentApi {
   virtual ~NonUEN2MessagesSubscriptionsCollectionDocumentApi() {}
   void init();
 
-  const std::string base = amf_sbi_helper::AmfCommunicationServiceBase;
+  const std::string base = amf_sbi_helper::AmfCommunicationServiceBase();
 
  private:
   void setupRoutes();

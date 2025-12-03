@@ -17,14 +17,14 @@
 #include "amf_config.hpp"
 #include "logger.hpp"
 
-extern oai::config::amf_config amf_cfg;
+extern std::unique_ptr<oai::config::amf_config> amf_cfg;
 
 namespace oai {
 namespace amf {
 namespace api {
 
-using namespace oai::model::common::helpers;
-using namespace oai::model::amf;
+using namespace oai::_3gpp::model::helpers;
+using namespace oai::_3gpp::model;
 
 N1N2MessageCollectionDocumentApi::N1N2MessageCollectionDocumentApi(
     std::shared_ptr<Pistache::Rest::Router> rtr) {
@@ -62,10 +62,10 @@ void N1N2MessageCollectionDocumentApi::n1_n2_message_transfer_handler(
   // Getting the body param
 
   // simple parser
-  mime_parser sp = {};
+  oai::utils::mime_parser sp = {};
   sp.parse(request.body());
 
-  std::unordered_map<std::string, mime_part> parts = {};
+  std::unordered_map<std::string, oai::utils::mime_part> parts = {};
   sp.get_mime_parts(parts);
   uint8_t size = parts.size();
   Logger::amf_server().debug("Number of MIME parts %d", size);

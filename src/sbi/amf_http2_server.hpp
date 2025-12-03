@@ -37,10 +37,15 @@
 #include "pistache/http.h"
 #include "pistache/router.h"
 #include "uint_generator.hpp"
+#include "PolicyUpdate.h"
+#include "TerminationNotification.h"
+#include "SubscriptionData.h"
+#include "UeContextInfoClass.h"
+#include "RequestLocInfo.h"
 
 using namespace nghttp2::asio_http2;
 using namespace nghttp2::asio_http2::server;
-using namespace oai::model::amf;
+using namespace oai::_3gpp::model;
 
 class amf_http2_server {
  public:
@@ -57,11 +62,13 @@ class amf_http2_server {
 
   void n1_n2_message_transfer_handler(
       const std::string& ueContextId,
-      std::unordered_map<std::string, mime_part>& parts, const response& res);
+      std::unordered_map<std::string, oai::utils::mime_part>& parts,
+      const response& res);
 
   void n1_message_notify_handler(
       const std::string& ueContextId,
-      std::unordered_map<std::string, mime_part>& parts, const response& res);
+      std::unordered_map<std::string, oai::utils::mime_part>& parts,
+      const response& res);
 
   void n1_n2_message_subscribe_handler(
       const std::string& ueContextId,
@@ -79,6 +86,15 @@ class amf_http2_server {
   void non_ue_n2_info_unsubscribe_handler(
       const std::string& subscriptionId, const response& response);
 
+  void amf_status_change_subscribe_handler(
+      const SubscriptionData& subscription_data, const response& res);
+
+  void amf_status_change_unsubscribe_handler(
+      const std::string& subscription_id, const response& res);
+  void amf_status_change_subscribe_modify_handler(
+      const std::string& subscription_id,
+      const SubscriptionData& subscription_data, const response& res);
+
   void status_notify_handler(
       const std::string& ueContextId, uint8_t pduSessionId,
       const SmContextStatusNotification& statusNotification,
@@ -89,7 +105,27 @@ class amf_http2_server {
   void update_configuration_handler(
       nlohmann::json& configuration_info, const response& response);
 
+  void update_policy_notification_handler(
+      const std::string& ue_context_id, const PolicyUpdate& policy_update,
+      const response& res);
+
+  void terminate_policy_notification_handler(
+      const std::string& ue_context_id,
+      const TerminationNotification& termination_notification,
+      const response& res);
+
+  void provide_domain_selection_info_handler(
+      const std::string& ue_context_id,
+      const oai::_3gpp::model::UeContextInfoClass& ue_context_info_class,
+      const response& res);
+
+  void provide_location_info_handler(
+      const std::string& ue_context_id,
+      const oai::_3gpp::model::RequestLocInfo& request_loc_info,
+      const response& res);
+
   void stop();
+  void send_response(const response& res, uint32_t response_code);
 
  private:
   oai::utils::uint_generator<uint32_t> m_promise_id_generator;

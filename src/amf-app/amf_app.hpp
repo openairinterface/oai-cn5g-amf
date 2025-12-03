@@ -42,9 +42,10 @@
 #include "itti_msg_sbi.hpp"
 #include "ue_context.hpp"
 #include "uint_generator.hpp"
+#include "StatusChange.h"
 
 using namespace oai::config;
-using namespace oai::model::amf;
+using namespace oai::_3gpp::model;
 
 namespace amf_application {
 
@@ -70,8 +71,6 @@ class amf_app {
       amf_event_subscriptions;
   mutable std::shared_mutex m_amf_event_subscriptions;
 
-  oai::utils::uint_generator<uint32_t> tmsi_generator;
-
   std::map<uint64_t, std::shared_ptr<ue_context>> amf_ue_ngap_id2ue_ctx;
   mutable std::shared_mutex m_amf_ue_ngap_id2ue_ctx;
   std::map<std::string, std::shared_ptr<ue_context>> ue_ctx_key;
@@ -87,22 +86,28 @@ class amf_app {
   oai::utils::uint_generator<uint32_t> n1n2sub_id_generator;
   std::map<
       std::pair<std::string, uint32_t>,
-      std::shared_ptr<oai::model::amf::UeN1N2InfoSubscriptionCreateData>>
+      std::shared_ptr<oai::_3gpp::model::UeN1N2InfoSubscriptionCreateData>>
       n1n2_message_subscribe;
   mutable std::shared_mutex m_n1n2_message_subscribe;
 
   std::map<
       n1n2sub_id_t,
-      std::shared_ptr<oai::model::amf::NonUeN2InfoSubscriptionCreateData>>
+      std::shared_ptr<oai::_3gpp::model::NonUeN2InfoSubscriptionCreateData>>
       non_ue_n2_info_subscribe;
   mutable std::shared_mutex m_non_ue_n2_info_subscribe;
 
   std::unordered_set<std::string> registered_nrfs;
 
+  oai::utils::uint_generator<uint32_t> amf_status_change_sub_id_generator;
+
+  std::map<std::string, std::shared_ptr<oai::_3gpp::model::SubscriptionData>>
+      amf_status_change_subscriptions;
+  mutable std::shared_mutex m_amf_status_change_subscriptions;
+
  public:
-  explicit amf_app(const amf_config& amf_cfg);
+  explicit amf_app();
   amf_app(amf_app const&) = delete;
-  ~amf_app();
+  virtual ~amf_app();
   void operator=(amf_app const&) = delete;
 
   void start();
@@ -200,21 +205,217 @@ class amf_app {
    * @param [itti_sbi_register_nf_instance_response&]: ITTI message
    * @return void
    */
-  void handle_itti_message(itti_sbi_register_nf_instance_response& r);
+  void handle_itti_message(itti_sbi_register_nf_instance_response& itti_msg);
 
   /*
    * Handle ITTI message (Update NF Instance Response)
    * @param [itti_sbi_update_nf_instance_response&]: ITTI message
    * @return void
    */
-  void handle_itti_message(itti_sbi_update_nf_instance_response& r);
+  void handle_itti_message(itti_sbi_update_nf_instance_response& itti_msg);
 
   /*
    * Handle ITTI message (Deregister NF Instance Response)
    * @param [itti_sbi_deregister_nf_instance_response&]: ITTI message
    * @return void
    */
-  void handle_itti_message(itti_sbi_deregister_nf_instance_response& r);
+  void handle_itti_message(itti_sbi_deregister_nf_instance_response& itti_msg);
+
+  /*
+   * Handle ITTI message (Register with UDM Response)
+   * @param [itti_sbi_register_with_udm_response&]: ITTI message
+   * @return void
+   */
+  void handle_itti_message(itti_sbi_register_with_udm_response& itti_msg);
+
+  /*
+   * Handle ITTI message (Retrieve AM Data Response)
+   * @param [itti_sbi_retrieve_am_data_response&]: ITTI message
+   * @return void
+   */
+  void handle_itti_message(itti_sbi_retrieve_am_data_response& itti_msg);
+
+  /*
+   * Handle ITTI message (retrieve a UE's SMF Selection Subscription Data)
+   * @param [itti_sbi_retrieve_smf_selection_subscription_data_response&]: ITTI
+   * message
+   * @return void
+   */
+  void handle_itti_message(
+      itti_sbi_retrieve_smf_selection_subscription_data_response& itti_msg);
+
+  /*
+   * Handle ITTI message (AM Policy Association response)
+   * @param [itti_sbi_am_policy_association_response&]: ITTI
+   * message
+   * @return void
+   */
+  void handle_itti_message(itti_sbi_am_policy_association_response& itti_msg);
+
+  /*
+   * Handle ITTI message (AM Policy Association Termination response)
+   * @param [itti_sbi_am_policy_association_termination_response&]: ITTI
+   * message
+   * @return void
+   */
+  void handle_itti_message(
+      itti_sbi_am_policy_association_termination_response& itti_msg);
+
+  /*
+   * Handle ITTI message (AM Policy Association Update response)
+   * @param [itti_sbi_am_policy_association_update_response&]: ITTI
+   * message
+   * @return void
+   */
+  void handle_itti_message(
+      itti_sbi_am_policy_association_update_response& itti_msg);
+
+  /*
+   * Handle ITTI message (AM Policy Association Retrieval response)
+   * @param [itti_sbi_am_policy_association_retrieval_response&]: ITTI
+   * message
+   * @return void
+   */
+  void handle_itti_message(
+      itti_sbi_am_policy_association_retrieval_response& itti_msg);
+
+  /*
+   * Handle ITTI message (AM Policy Update Notification)
+   * @param [itti_sbi_am_policy_update_notification&]: ITTI
+   * message
+   * @return void
+   */
+  void handle_itti_message(itti_sbi_am_policy_update_notification& itti_msg);
+
+  /*
+   * Handle ITTI message (AM Policy Association Termination Notification)
+   * @param [itti_sbi_am_policy_association_termination_notification&]: ITTI
+   * message
+   * @return void
+   */
+  void handle_itti_message(
+      itti_sbi_am_policy_association_termination_notification& itti_msg);
+
+  /*
+   * Handle ITTI message (UE Context In SMF Data Retrieval response)
+   * @param [itti_sbi_ue_context_in_smf_data_retrieval_response&]: ITTI
+   * message
+   * @return void
+   */
+  void handle_itti_message(
+      itti_sbi_ue_context_in_smf_data_retrieval_response& itti_msg);
+
+  /*
+   * Handle ITTI message (AMF Status Change Subscribe Request)
+   * @param [itti_sbi_amf_status_change_subscribe_request&]: ITTI
+   * message
+   * @return void
+   */
+  void handle_itti_message(
+      itti_sbi_amf_status_change_subscribe_request& itti_msg);
+
+  /*
+   * Handle ITTI message (AMF Status Change Unsubscribe Request)
+   * @param [itti_sbi_amf_status_change_unsubscribe_request&]: ITTI
+   * message
+   * @return void
+   */
+  void handle_itti_message(
+      itti_sbi_amf_status_change_unsubscribe_request& itti_msg);
+
+  /*
+   * Handle ITTI message (AMF Status Change Subscribe Modify)
+   * @param [itti_sbi_amf_status_change_subscribe_modify&]: ITTI
+   * message
+   * @return void
+   */
+  void handle_itti_message(
+      itti_sbi_amf_status_change_subscribe_modify& itti_msg);
+
+  /*
+   * Handle ITTI message (Provide Domain Selection Info)
+   * @param [itti_sbi_provide_domain_selection_info&]: ITTI
+   * message
+   * @return void
+   */
+  void handle_itti_message(itti_sbi_provide_domain_selection_info& itti_msg);
+
+  /*
+   * Handle ITTI message (Provide Location Info)
+   * @param [itti_sbi_provide_location_info&]: ITTI
+   * message
+   * @return void
+   */
+  void handle_itti_message(itti_sbi_provide_location_info& itti_msg);
+
+  /*
+   * Trigger AMF Registration for 3GPP Access towards UDM
+   * @param [std::shared_ptr<ue_context>&] uc: UE context
+   * @return void
+   */
+  void register_3gpp_access(std::shared_ptr<ue_context>& uc) const;
+
+  /*
+   * Retrieve a UE's Access and Mobility Subscription Data from UDM
+   * @param [std::shared_ptr<ue_context>&] uc: UE context
+   * @return void
+   */
+  void get_access_and_mobility_subscription_data(
+      std::shared_ptr<ue_context>& uc) const;
+
+  /*
+   * Request to retrieve a SMF Selection Subcription Data from UDM
+   * @param [std::shared_ptr<ue_context>&] uc: UE context
+   * @return void
+   */
+  void get_smf_selection_subscription_data(
+      std::shared_ptr<ue_context>& uc) const;
+
+  /*
+   * Perform PCF discovery to retrieve PCF's info from the corresponding NRF
+   * @param [std::shared_ptr<ue_context>&] uc: UE context
+   * @return void
+   */
+  void discover_pcf(std::shared_ptr<ue_context>& uc);
+
+  /*
+   * Perform AM Policy Association with the PCF
+   * @param [std::shared_ptr<ue_context>&] uc: UE context
+   * @return void
+   */
+  void perform_am_policy_association(std::shared_ptr<ue_context>& uc);
+
+  /*
+   * Perform AM Policy Association Termination with the PCF
+   * @param [std::shared_ptr<ue_context>&] uc: UE context
+   * @return void
+   */
+  void perform_am_policy_association_termination(
+      const std::shared_ptr<ue_context>& uc);
+
+  /*
+   * Obtain updated policies for an AM Policy Association Termination with the
+   * PCF
+   * @param [std::shared_ptr<ue_context>&] uc: UE context
+   * @return void
+   */
+  void perform_am_policy_association_update(
+      const std::shared_ptr<ue_context>& uc);
+
+  /*
+   * Retrieve policies for an AM Policy Association with the
+   * PCF
+   * @param [std::shared_ptr<ue_context>&] uc: UE context
+   * @return void
+   */
+  void get_am_policy_association(const std::shared_ptr<ue_context>& uc);
+
+  /*
+   * Retrieve UE Context In SMF Data with the UDM
+   * @param [std::shared_ptr<ue_context>&] uc: UE context
+   * @return void
+   */
+  void get_ue_context_in_smf_data(const std::shared_ptr<ue_context>& uc);
 
   /*
    * Get the current AMF's configuration
@@ -308,20 +509,20 @@ class amf_app {
    * Update PDU Session Context status
    * @param [const std::string&] supi: UE SUPI
    * @param [uint8_t] pdu_session_id: PDU Session ID
-   * @param [const oai::model::amf::SmContextStatusNotification&]
+   * @param [const oai::_3gpp::model::SmContextStatusNotification&]
    * statusNotification: Notification information received from SMF
    * @return true if success, otherwise false
    */
   bool update_pdu_sessions_context(
       const std::string& supi, uint8_t pdu_session_id,
-      const oai::model::amf::SmContextStatusNotification& statusNotification);
+      const oai::_3gpp::model::SmContextStatusNotification& statusNotification);
 
   /*
-   * Generate a TMSI value for UE
+   * Generate a random TMSI
    * @param void
    * @return generated value in uint32_t
    */
-  uint32_t generate_tmsi();
+  uint32_t generate_random_tmsi();
 
   /*
    * Create a 5G GUTI from PLMN/TMSI
@@ -354,14 +555,15 @@ class amf_app {
    * Add an N1N2MessageSubscribe subscription to the list
    * @param [const std::string&] ue_ctx_id: UE Context ID
    * @param [const n1n2sub_id_t&] sub_id: Subscription ID
-   * @param [std::shared_ptr<oai::model::amf::UeN1N2InfoSubscriptionCreateData>]
-   * oai::model::amf::UeN1N2InfoSubscriptionCreateData: a shared pointer stored
-   * information of the subscription
+   * @param
+   * [std::shared_ptr<oai::_3gpp::model::UeN1N2InfoSubscriptionCreateData>]
+   * oai::_3gpp::model::UeN1N2InfoSubscriptionCreateData: a shared pointer
+   * stored information of the subscription
    * @return void
    */
   void add_n1n2_message_subscription(
       const std::string& ue_ctx_id, const n1n2sub_id_t& sub_id,
-      std::shared_ptr<oai::model::amf::UeN1N2InfoSubscriptionCreateData>&
+      std::shared_ptr<oai::_3gpp::model::UeN1N2InfoSubscriptionCreateData>&
           subscription);
 
   /*
@@ -378,40 +580,39 @@ class amf_app {
    * Find the subscriptions matched with certain conditions
    * @param [const std::string&] ue_ctx_id: UE Context ID
    * @param
-   * [std::optional<oai::model::amf::N1MessageClass_anyOf::eN1MessageClass_anyOf>&]
+   * [std::optional<oai::_3gpp::model::N1MessageClass_anyOf::eN1MessageClass_anyOf>&]
    * n1_message_class: Type of N1 Message
    * @param
-   * [std::optional<oai::model::amf::N2InformationClass_anyOf::eN2InformationClass_anyOf>&]
+   * [std::optional<oai::_3gpp::model::N2InformationClass_anyOf::eN2InformationClass_anyOf>&]
    * n2_info_class: Type of N2 Message
    * @param [std::map<n1n2sub_id_t,
-   * std::shared_ptr<oai::model::amf::UeN1N2InfoSubscriptionCreateData>>&]
+   * std::shared_ptr<oai::_3gpp::model::UeN1N2InfoSubscriptionCreateData>>&]
    * subscriptions: list of subscriptions matched
    * @return void
    */
   void find_n1n2_info_subscriptions(
       const std::string& ue_ctx_id,
       std::optional<
-          oai::model::amf::N1MessageClass_anyOf::eN1MessageClass_anyOf>&
+          oai::_3gpp::model::N1MessageClass_anyOf::eN1MessageClass_anyOf>&
           n1_message_class,
-      std::optional<
-          oai::model::amf::N2InformationClass_anyOf::eN2InformationClass_anyOf>&
-          n2_info_class,
+      std::optional<oai::_3gpp::model::N2InformationClass_anyOf::
+                        eN2InformationClass_anyOf>& n2_info_class,
       std::map<
           n1n2sub_id_t,
-          std::shared_ptr<oai::model::amf::UeN1N2InfoSubscriptionCreateData>>&
+          std::shared_ptr<oai::_3gpp::model::UeN1N2InfoSubscriptionCreateData>>&
           subscriptions);
 
   /*
    * Add an NonUEN2InfoSubscribe subscription to the list
    * @param [const n1n2sub_id_t&] sub_id: Subscription ID
    * @param
-   * [std::shared_ptr<oai::model::amf::NonUeN2InfoSubscriptionCreateData>]
+   * [std::shared_ptr<oai::_3gpp::model::NonUeN2InfoSubscriptionCreateData>]
    * subscription_data: a shared pointer stored information of the subscription
    * @return void
    */
   void add_non_ue_n2_info_subscription(
       const n1n2sub_id_t& sub_id,
-      std::shared_ptr<oai::model::amf::NonUeN2InfoSubscriptionCreateData>&
+      std::shared_ptr<oai::_3gpp::model::NonUeN2InfoSubscriptionCreateData>&
           subscription_data);
 
   /*
@@ -426,20 +627,21 @@ class amf_app {
    * Find the subscriptions matched with certain conditions
    * @param [const std::string&] nf_id: NF Id
    * @param
-   * [std::optional<oai::model::amf::N2InformationClass_anyOf::eN2InformationClass_anyOf>&]
+   * [std::optional<oai::_3gpp::model::N2InformationClass_anyOf::eN2InformationClass_anyOf>&]
    * n2_info_class: Type of N2 Message
    * @param [std::map<n1n2sub_id_t,
-   * std::shared_ptr<oai::model::amf::NonUeN2InfoSubscriptionCreateData>>&]
+   * std::shared_ptr<oai::_3gpp::model::NonUeN2InfoSubscriptionCreateData>>&]
    * subscriptions: list of subscriptions matched
    * @return void
    */
   void find_non_ue_n2_info_subscriptions(
       const std::string& nf_id,
-      const oai::model::amf::N2InformationClass_anyOf::
+      const oai::_3gpp::model::N2InformationClass_anyOf::
           eN2InformationClass_anyOf& n2_info_class,
       std::map<
           n1n2sub_id_t,
-          std::shared_ptr<oai::model::amf::NonUeN2InfoSubscriptionCreateData>>&
+          std::shared_ptr<
+              oai::_3gpp::model::NonUeN2InfoSubscriptionCreateData>>&
           subscriptions);
 
   /*
@@ -482,13 +684,13 @@ class amf_app {
   /*
    * Handle NF status notification (e.g., when an UPF becomes available)
    * @param [std::shared_ptr<itti_sbi_notification_data>& ] msg: message
-   * @param [oai::model::amf::ProblemDetails& ] problem_details
+   * @param [oai::_3gpp::model::ProblemDetails& ] problem_details
    * @param [uint32_t&] http_code
    * @return true if handle successfully, otherwise return false
    */
   bool handle_nf_status_notification(
       std::shared_ptr<itti_sbi_notification_data>& msg,
-      oai::model::common::ProblemDetails& problem_details, uint32_t& http_code);
+      oai::_3gpp::model::ProblemDetails& problem_details, uint32_t& http_code);
 
   /*
    * Handle a request to determine location from LMF
@@ -616,6 +818,18 @@ class amf_app {
   }
 
   /*
+   * Generate an unique value for promise id and associate this generated id
+   * with the promise itself
+   * @param [const uint32_t] pid: promise id
+   * @param [const boost::shared_ptr<boost::promise<nlohmann::json>>&] p:
+   * promise
+   * @return void
+   */
+  void store_promise(
+      uint32_t& pid,
+      const boost::shared_ptr<boost::promise<nlohmann::json>>& p);
+
+  /*
    * Trigger the response from API server
    * @param [const uint32_t] pid: promise id
    * @param [const nlohmann::json&] json_data: result for the corresponding
@@ -665,6 +879,63 @@ class amf_app {
    * @return NF instance in string format
    */
   std::string get_nf_instance() const;
+
+  /*
+   * Generate an AMFStatusChangeSubscribe ID
+   * @param [void]
+   * @return the generated reference
+   */
+  std::string generate_amf_status_change_sub_id_generator();
+
+  /*
+   * Store an AMF Status Change Subcription
+   * @param [const std::string&] subscription_id: Subscription ID
+   * @param [const std::shared_ptr<oai::_3gpp::model::SubscriptionData>&] sd: a
+   * shared pointer stored information of the subscription
+   * @return the generated reference
+   */
+  void add_amf_status_change_subscription(
+      const std::string& subscription_id,
+      const std::shared_ptr<oai::_3gpp::model::SubscriptionData>& sd);
+
+  /*
+   * Remove an AMF Status Change Subcription
+   * @param [const std::string&] subscription_id: Subscription ID
+   * @return true if success otherwise return false
+   */
+  bool remove_amf_status_change_subscription(
+      const std::string& subscription_id);
+
+  /*
+   * Update an AMF Status Change Subcription
+   * @param [const std::string&] subscription_id: Subscription ID
+   * @param [const std::shared_ptr<oai::_3gpp::model::SubscriptionData>&] sd: a
+   * shared pointer stored information of the subscription
+   * @return true if success otherwise return false
+   */
+
+  bool update_amf_status_change_subscription(
+      const std::string& subscription_id,
+      const std::shared_ptr<oai::_3gpp::model::SubscriptionData>& sd);
+
+  /*
+   * Get a list of AMF Status Change Subscription URIs based on the GUAMI list
+   * @param [const std::vector<oai::_3gpp::model::Guami>&] guamis: list of
+   * GUAMIs
+   * @return a vector of notification URIs
+   */
+
+  std::vector<std::string> get_amf_status_change_subscription_uris(
+      const std::vector<oai::_3gpp::model::Guami>& guamis);
+
+  /*
+   * Perform AMF Status Change Notification to the subscribed NF instances
+   * @param [const oai::_3gpp::model::StatusChange&] status_change: status
+   * change information
+   * @return void
+   */
+  void perform_amf_status_change_notification(
+      const oai::_3gpp::model::StatusChange& status_change);
 };
 
 }  // namespace amf_application

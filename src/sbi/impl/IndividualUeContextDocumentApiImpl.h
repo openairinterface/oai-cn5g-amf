@@ -32,7 +32,6 @@
 #include "AssignEbiData.h"
 #include "AssignEbiError.h"
 #include "AssignedEbiData.h"
-#include "Inline_object.h"
 #include "ProblemDetails.h"
 #include "UEContextRelease.h"
 #include "UeContextCreateError.h"
@@ -49,7 +48,7 @@ namespace oai {
 namespace amf {
 namespace api {
 
-using namespace oai::model::amf;
+using namespace oai::_3gpp::model;
 
 class IndividualUeContextDocumentApiImpl
     : public oai::amf::api::IndividualUeContextDocumentApi {

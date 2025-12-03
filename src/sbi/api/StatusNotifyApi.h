@@ -38,7 +38,7 @@
 
 namespace oai::amf::api {
 
-using namespace oai::model::amf;
+using namespace oai::_3gpp::model;
 
 class StatusNotifyApi {
  public:
@@ -46,7 +46,7 @@ class StatusNotifyApi {
   virtual ~StatusNotifyApi() {}
   void init();
 
-  const std::string base = amf_sbi_helper::AmfStatusNotifyServiceBase;
+  const std::string base = amf_sbi_helper::AmfStatusNotifyServiceBase();
 
  private:
   void setupRoutes();

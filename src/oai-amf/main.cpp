@@ -23,19 +23,17 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <unistd.h>
-#include <iostream>
 
+#include <chrono>
 #include <cstring>
 #include <iostream>
 #include <string>
 #include <thread>
-#include <chrono>
 
-#include "amf_http1_server.hpp"
-#include "amf_http2_server.hpp"
 #include "amf_app.hpp"
 #include "amf_config.hpp"
-#include "amf_config_yaml.hpp"
+#include "amf_http1_server.hpp"
+#include "amf_http2_server.hpp"
 #include "amf_statistics.hpp"
 #include "http_client.hpp"
 #include "itti.hpp"
@@ -49,7 +47,6 @@
 using namespace oai::config;
 using namespace amf_application;
 
-amf_config amf_cfg;
 itti_mw* itti_inst    = nullptr;
 amf_app* amf_app_inst = nullptr;
 statistics stacs;
@@ -59,7 +56,7 @@ amf_http2_server* http2_server = nullptr;
 
 std::shared_ptr<oai::http::http_client> http_client_inst = nullptr;
 
-std::unique_ptr<amf_config_yaml> amf_cfg_yaml;
+std::unique_ptr<amf_config> amf_cfg;
 std::unique_ptr<lttng_configuration> lttng_config_yaml;
 
 //------------------------------------------------------------------------------
@@ -155,34 +152,33 @@ int main(int argc, char** argv) {
   std::signal(SIGINT, amf_signal_handler);
 
   Logger::system().debug("Parsing the configuration file, file type YAML.");
-  amf_cfg_yaml = std::make_unique<amf_config_yaml>(
+  amf_cfg = std::make_unique<amf_config>(
       conf_file_name, Options::getlogStdout(), Options::getlogRotFilelog());
-  if (!amf_cfg_yaml->init()) {
+  if (!amf_cfg->init()) {
     Logger::system().error("Reading the configuration failed. Exiting.");
     return 1;
   }
-  amf_cfg_yaml->pre_process();
-  amf_cfg_yaml->display();
   // Convert from YAML to internal structure
-  amf_cfg_yaml->to_amf_config(amf_cfg);
+  amf_cfg->pre_process();
+  amf_cfg->display();
 
   itti_inst = new itti_mw();
-  itti_inst->start(amf_cfg.itti.itti_timer_sched_params);
+  itti_inst->start(amf_cfg->itti.itti_timer_sched_params);
 
   // HTTP Client
   http_client_inst = oai::http::http_client::create_instance(
-      Logger::amf_sbi(), amf_cfg.http_request_timeout, amf_cfg.sbi.if_name,
-      amf_cfg.support_features.http_version);
+      Logger::amf_sbi(), amf_cfg->http_request_timeout, amf_cfg->sbi.if_name,
+      amf_cfg->support_features.http_version, amf_cfg->enable_tls());
 
-  amf_app_inst = new amf_app(amf_cfg);
+  amf_app_inst = new amf_app();
   amf_app_inst->start();
 
   Logger::amf_app().debug("Initiating AMF server endpoints");
-  if (amf_cfg.support_features.http_version == 1) {
+  if (amf_cfg->support_features.http_version == 1) {
     // AMF HTTP1 server
     Pistache::Address addr(
-        std::string(inet_ntoa(*((struct in_addr*) &amf_cfg.sbi.addr4))),
-        Pistache::Port(amf_cfg.sbi.port));
+        std::string(inet_ntoa(*((struct in_addr*) &amf_cfg->sbi.addr4))),
+        Pistache::Port(amf_cfg->sbi.port));
     http1_server = new amf_http1_server(addr, amf_app_inst);
     http1_server->init(2);
     std::thread amf_http1_manager(&amf_http1_server::start, http1_server);
@@ -190,7 +186,7 @@ int main(int argc, char** argv) {
   } else {
     // AMF HTTP2 server
     http2_server = new amf_http2_server(
-        oai::utils::conv::toString(amf_cfg.sbi.addr4), amf_cfg.sbi.port,
+        oai::utils::conv::toString(amf_cfg->sbi.addr4), amf_cfg->sbi.port,
         amf_app_inst);
     std::thread amf_http2_manager(&amf_http2_server::start, http2_server);
     amf_http2_manager.join();

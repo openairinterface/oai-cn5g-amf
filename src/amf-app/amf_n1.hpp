@@ -46,7 +46,7 @@ namespace amf_application {
 class amf_n1 {
  public:
   amf_n1();
-  ~amf_n1();
+  virtual ~amf_n1();
 
   /*
    * Handle ITTI message
@@ -64,7 +64,7 @@ class amf_n1 {
 
   /*
    * Handle NAS Establishment Request (Registration Request, Service Request)
-   * @param [SecurityHeaderType_t] type: Security Header Type
+   * @param [uint8_t] security_header_type: Security Header Type
    * @param [std::shared_ptr<nas_context>] nc: Shared pointer to the NAS context
    * @param [uint32_t] ran_ue_ngap_id: RAN UE NGAP Id
    * @param [uint64_t] amf_ue_ngap_id: AMF UE NGAP Id
@@ -74,7 +74,7 @@ class amf_n1 {
    * @return void
    */
   void nas_signalling_establishment_request_handle(
-      SecurityHeaderType_t type, std::shared_ptr<nas_context> nc,
+      uint8_t security_header_type, std::shared_ptr<nas_context> nc,
       uint32_t ran_ue_ngap_id, uint64_t amf_ue_ngap_id, bstring plain_msg,
       std::string snn, uint8_t ulCount);
 
@@ -84,23 +84,24 @@ class amf_n1 {
    * @param [const uint32_t] ran_ue_ngap_id: RAN UE NGAP Id
    * @param [const uint64_t] amf_ue_ngap_id: AMF UE NGAP Id
    * @param [bstring] plain_msg: NAS message in plain text
+   * @param [uint8_t] security_header_type: Security header type
    * @param [const plmn_t&] plmn: PLMN
    * @return void
    */
   void uplink_nas_msg_handle(
       const uint32_t ran_ue_ngap_id, const uint64_t amf_ue_ngap_id,
-      bstring plain_msg, const plmn_t& plmn);
+      bstring plain_msg, uint8_t security_header_type, const plmn_t& plmn);
 
   /*
    * Get Security Header Type (2 bytes) from NAS message
-   * @param [SecurityHeaderType_t&] type: Security Header Type
+   * @param [uint8_t&] type: Security Header Type
    * @param [uint8_t*] buffer: NAS message
    * @param [uint32_t] length: Length of NAS message
    * @return true if can decode with an appropriate Security Header Type,
    * otherwise return false
    */
   bool check_security_header_type(
-      SecurityHeaderType_t& type, const uint8_t* buffer, const uint32_t length);
+      uint8_t& type, const uint8_t* buffer, const uint32_t length);
 
   /*
    * Get UE NAS context associated with a GUTI if the context exists and is not
@@ -509,36 +510,36 @@ class amf_n1 {
   /*
    * Get the Slice Selection Subscription Data (from UDM/configuration file)
    * @param [std::shared_ptr<nas_context>&] nc: Pointer to the UE NAS Context
-   * @param [oai::model::amf::Nssai&] nssai: NSSAI
+   * @param [oai::_3gpp::model::Nssai&] nssai: NSSAI
    * @return true if can get NSSAI from UDM/configuration file
    */
   bool get_slice_selection_subscription_data(
-      const std::shared_ptr<nas_context>& nc, oai::model::amf::Nssai& nssai);
+      const std::shared_ptr<nas_context>& nc, oai::_3gpp::model::Nssai& nssai);
 
   /*
    * Get the Slice Selection Subscription Data from the configuration file
    * @param [std::shared_ptr<nas_context>&] nc: Pointer to the UE NAS Context
-   * @param [oai::model::amf::Nssai&] nssai: NSSAI
+   * @param [oai::_3gpp::model::Nssai&] nssai: NSSAI
    * @return true if can get NSSAI from the configuration file
    */
   bool get_slice_selection_subscription_data_from_conf_file(
-      const std::shared_ptr<nas_context>& nc, oai::model::amf::Nssai& nssai);
+      const std::shared_ptr<nas_context>& nc, oai::_3gpp::model::Nssai& nssai);
 
   /*
    * Verify whether the current AMF can process the Subscribed NSSAIs or not
    * @param [const std::shared_ptr<nas_context>&] nc: Pointer to the UE NAS
    * Context
-   * @param [oai::model::amf::Nssai&] nssai: NSSAI
+   * @param [oai::_3gpp::model::Nssai&] nssai: NSSAI
    * @return true if AMF can process, otherwise return false
    */
   bool check_subscribed_nssai(
-      const std::shared_ptr<nas_context>& nc, oai::model::amf::Nssai& nssai);
+      const std::shared_ptr<nas_context>& nc, oai::_3gpp::model::Nssai& nssai);
 
   /*
    * Verify whether the current AMF can process the Requested NSSAIs or not
    * @param [const std::shared_ptr<nas_context>&] nc: Pointer to the UE NAS
    * Context
-   * @param [oai::model::amf::Nssai&] nssai: NSSAI
+   * @param [oai::_3gpp::model::Nssai&] nssai: NSSAI
    * @return true if AMF can process, otherwise return false
    */
   bool check_requested_nssai(const std::shared_ptr<nas_context>& nc);
@@ -548,16 +549,16 @@ class amf_n1 {
    * @param [const std::shared_ptr<nas_context>&] nc: Pointer to the UE NAS
    * Context
    * @param [const std::string&] nf_instance_id: NF instance ID
-   * @param [const oai::model::amf::SliceInfoForRegistration&] slice_info: Slice
-   * information
-   * @param [oai::model::amf::AuthorizedNetworkSliceInfo&]
+   * @param [const oai::_3gpp::model::SliceInfoForRegistration&] slice_info:
+   * Slice information
+   * @param [oai::_3gpp::model::AuthorizedNetworkSliceInfo&]
    * authorized_network_slice_info: Authorized NSSAI
    * @return true if can get Network Selection Data from NSSF/configuration file
    */
   bool get_network_slice_selection(
       const std::shared_ptr<nas_context>& nc, const std::string& nf_instance_id,
-      const oai::model::amf::SliceInfoForRegistration& slice_info,
-      oai::model::amf::AuthorizedNetworkSliceInfo&
+      const oai::_3gpp::model::SliceInfoForRegistration& slice_info,
+      oai::_3gpp::model::AuthorizedNetworkSliceInfo&
           authorized_network_slice_info);
 
   /*
@@ -565,16 +566,16 @@ class amf_n1 {
    * @param [const std::shared_ptr<nas_context>&] nc: Pointer to the UE NAS
    * Context
    * @param [const std::string&] nf_instance_id: NF instance ID
-   * @param [const oai::model::amf::SliceInfoForRegistration&] slice_info: Slice
-   * information
-   * @param [oai::model::amf::AuthorizedNetworkSliceInfo&]
+   * @param [const oai::_3gpp::model::SliceInfoForRegistration&] slice_info:
+   * Slice information
+   * @param [oai::_3gpp::model::AuthorizedNetworkSliceInfo&]
    * authorized_network_slice_info: Authorized Network Slice Info
    * @return true if can get Network Selection Data from the configuration file
    */
   bool get_network_slice_selection_from_conf_file(
       const std::string& nf_instance_id,
-      const oai::model::amf::SliceInfoForRegistration& slice_info,
-      oai::model::amf::AuthorizedNetworkSliceInfo&
+      const oai::_3gpp::model::SliceInfoForRegistration& slice_info,
+      oai::_3gpp::model::AuthorizedNetworkSliceInfo&
           authorized_network_slice_info) const;
 
   /*
@@ -582,13 +583,13 @@ class amf_n1 {
    * information (from NSSF/Conf file)
    * @param [const std::shared_ptr<nas_context>&] nc: Pointer to the UE NAS
    * Context
-   * @param [oai::model::amf::AuthorizedNetworkSliceInfo&]
+   * @param [oai::_3gpp::model::AuthorizedNetworkSliceInfo&]
    * authorized_network_slice_info: Authorized NSSAI
    * @return true if can get the Target AMF info, otherwise return false
    */
   bool get_target_amf(
       const std::shared_ptr<nas_context>& nc, std::string& target_amf,
-      const oai::model::amf::AuthorizedNetworkSliceInfo&
+      const oai::_3gpp::model::AuthorizedNetworkSliceInfo&
           authorized_network_slice_info);
 
   /*
@@ -674,13 +675,13 @@ class amf_n1 {
    * Handle the UE Location Change event to trigger the notification to the
    * subscribed NFs
    * @param [std::string] supi: SUPI
-   * @param [oai::model::amf::UserLocation] user_location: User location
+   * @param [oai::_3gpp::model::UserLocation] user_location: User location
    * information
    * @param [uint8_t] http_version: HTTP version (for the notification)
    * @return void
    */
   void handle_ue_location_change(
-      std::string supi, oai::model::common::UserLocation, uint8_t http_version);
+      std::string supi, oai::_3gpp::model::UserLocation, uint8_t http_version);
 
   /*
    * Handle the UE Reachability Status Change event to trigger the notification
@@ -736,13 +737,13 @@ class amf_n1 {
    * Handle the UE Communication Failure event to trigger the notification to
    * the subscribed NFs
    * @param [std::string] supi: SUPI
-   * @param [oai::model::amf::CommunicationFailure] comm_failure: Communication
-   * Failure reason
+   * @param [oai::_3gpp::model::CommunicationFailure] comm_failure:
+   * Communication Failure reason
    * @param [uint8_t] http_version: HTTP version (for the notification)
    * @return void
    */
   void handle_ue_communication_failure_change(
-      std::string supi, oai::model::amf::CommunicationFailure,
+      std::string supi, oai::_3gpp::model::CommunicationFailure,
       uint8_t http_version);
 
   /*
@@ -786,11 +787,12 @@ class amf_n1 {
    * @param [const uint32_t] ran_ue_ngap_id: RAN UE NGAP ID
    * @param [const uint64_t] amf_ue_ngap_id: AMF UE NGAP ID
    * @param [bstring] plain_msg: NAS Authentication Response message
+   * @param [uint8_t] security_header_type: Security Header Type
    * @return void
    */
   void authentication_response_handle(
       const uint32_t ran_ue_ngap_id, const uint64_t amf_ue_ngap_id,
-      bstring plain_msg);
+      bstring plain_msg, uint8_t security_header_type);
 
   /*
    * Handle Authentication Failure message
@@ -808,11 +810,12 @@ class amf_n1 {
    * @param [const uint32_t] ran_ue_ngap_id: RAN UE NGAP ID
    * @param [const uint64_t] amf_ue_ngap_id: AMF UE NGAP ID
    * @param [bstring] nas_msg: NAS Security Mode Complete message
+   * @param [uint8_t] security_header_type: Security Header Type
    * @return void
    */
   void security_mode_complete_handle(
       const uint32_t ran_ue_ngap_id, const uint64_t amf_ue_ngap_id,
-      bstring nas_msg);
+      bstring nas_msg, uint8_t security_header_type);
 
   /*
    * Handle Security Mode Reject message
@@ -909,7 +912,7 @@ class amf_n1 {
       const uint64_t amf_ue_ngap_id);
 
   /*
-   * Send ITTI message DL NAS Buffer to task N2
+   * Create Registration Reject message and send to the UE (using TASK N2)
    * @param [const uint32_t] ran_ue_ngap_id: RAN UE NGAP ID
    * @param [const uint64_t] amf_ue_ngap_id: AMF UE NGAP ID
    * @param [uint8_t] cause_value: Value for Cause IE in NAS message
@@ -920,6 +923,17 @@ class amf_n1 {
       const uint8_t cause_value);
 
   /*
+   * Create Authentication Reject message and send to the UE (using TASK N2)
+   * @param [const uint32_t] ran_ue_ngap_id: RAN UE NGAP ID
+   * @param [const uint64_t] amf_ue_ngap_id: AMF UE NGAP ID
+   * @param [uint8_t] cause_value: Value for Cause IE in NAS message
+   * @return void
+   */
+  void send_authentication_reject_msg(
+      const uint32_t ran_ue_ngap_id, const uint64_t amf_ue_ngap_id,
+      uint8_t cause_value);
+
+  /*
    * Get NAS's message type from message buffer
    * @param [uint8_t*] buf: pointer to the NAS buffer
    * @param [uint32_t] len: Length of the NAS buffer
@@ -927,11 +941,37 @@ class amf_n1 {
    */
   uint8_t get_nas_message_type(uint8_t* buf, uint32_t len);
 
+  /*
+   * Set PDU Session Status
+   * @param [uint8_t] pdu_session_id: PDU Session ID
+   * @param [uint16_t&] pdu_session_status: PDU Session Status
+   * @return void
+   */
   void set_pdu_session_status_inactive(
       uint8_t pdu_session_id, uint16_t& pdu_session_status);
 
+  /*
+   * Set PDU Session Reactivation Result
+   * @param [uint8_t] pdu_session_id: PDU Session ID
+   * @param [uint16_t&] pdu_session_reactivation_result: PDU Session
+   * Reactivation Result
+   * @return void
+   */
   void set_pdu_session_reactivation_result(
       uint8_t pdu_session_id, uint16_t& pdu_session_reactivation_result);
+
+  /*
+   * Verify the current message according to the on-going NAS procedure
+   * @param [const std::shared_ptr<nas_context>&] nc: pointer to UE NAS context
+   * @param [uint8_t] message_type: NAS message type
+   * @param [uint8_t] security_header_type: Security Header Type
+   * @note This function is used to verify whether the current NAS message is
+   * expected according to the current NAS procedure or not
+   * @return bool, true if yes, otherwise return false
+   */
+  bool check_nas_message_for_current_procedure_running(
+      const std::shared_ptr<nas_context>& nc, uint8_t message_type,
+      uint8_t security_header_type);
 
   // for Event Handling
   amf_event event_sub;

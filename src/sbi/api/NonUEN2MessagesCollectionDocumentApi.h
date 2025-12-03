@@ -35,7 +35,7 @@ namespace oai {
 namespace amf {
 namespace api {
 
-using namespace oai::model::amf;
+using namespace oai::_3gpp::model;
 
 class NonUEN2MessagesCollectionDocumentApi {
  public:
@@ -43,7 +43,7 @@ class NonUEN2MessagesCollectionDocumentApi {
   virtual ~NonUEN2MessagesCollectionDocumentApi() {}
   void init();
 
-  const std::string base = amf_sbi_helper::AmfCommunicationServiceBase;
+  const std::string base = amf_sbi_helper::AmfCommunicationServiceBase();
 
  private:
   void setupRoutes();
@@ -65,7 +65,7 @@ class NonUEN2MessagesCollectionDocumentApi {
   /// </remarks>
   /// <param name="n2InformationTransferReqData"></param>
   virtual void non_ue_n2_message_transfer(
-      std::unordered_map<std::string, mime_part>& parts,
+      std::unordered_map<std::string, oai::utils::mime_part>& parts,
       Pistache::Http::ResponseWriter& response) = 0;
 };
 

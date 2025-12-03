@@ -29,7 +29,7 @@ extern itti_mw* itti_inst;
 
 namespace oai::amf::api {
 
-using namespace oai::model::amf;
+using namespace oai::_3gpp::model;
 
 AMFConfigurationApiImpl::AMFConfigurationApiImpl(
     std::shared_ptr<Pistache::Rest::Router> rtr, amf_app* amf_app_inst)
@@ -53,8 +53,7 @@ void AMFConfigurationApiImpl::read_configuration(
       std::make_shared<itti_sbi_amf_configuration>(
           TASK_AMF_SBI, TASK_AMF_APP, promise_id);
 
-  itti_msg->http_version = 1;
-  itti_msg->promise_id   = promise_id;
+  itti_msg->promise_id = promise_id;
 
   int ret = itti_inst->send_msg(itti_msg);
   if (0 != ret) {
@@ -74,13 +73,13 @@ void AMFConfigurationApiImpl::read_configuration(
     uint32_t http_response_code = 0;
     nlohmann::json json_data    = {};
 
-    if (result.find("httpResponseCode") != result.end()) {
-      http_response_code = result["httpResponseCode"].get<int>();
+    if (result.find(kSbiResponseHttpResponseCode) != result.end()) {
+      http_response_code = result[kSbiResponseHttpResponseCode].get<int>();
     }
 
     if (http_response_code == oai::common::sbi::http_status_code::OK) {
-      if (result.find("content") != result.end()) {
-        json_data = result["content"];
+      if (result.find(kSbiResponseJsonData) != result.end()) {
+        json_data = result[kSbiResponseJsonData];
       }
       response.headers().add<Pistache::Http::Header::ContentType>(
           Pistache::Http::Mime::MediaType("application/json"));
@@ -121,7 +120,6 @@ void AMFConfigurationApiImpl::update_configuration(
       std::make_shared<itti_sbi_update_amf_configuration>(
           TASK_AMF_SBI, TASK_AMF_APP, promise_id);
 
-  itti_msg->http_version  = 1;
   itti_msg->promise_id    = promise_id;
   itti_msg->configuration = configuration_info;
 
@@ -142,13 +140,13 @@ void AMFConfigurationApiImpl::update_configuration(
     uint32_t http_response_code = 0;
     nlohmann::json json_data    = {};
 
-    if (result.find("httpResponseCode") != result.end()) {
-      http_response_code = result["httpResponseCode"].get<int>();
+    if (result.find(kSbiResponseHttpResponseCode) != result.end()) {
+      http_response_code = result[kSbiResponseHttpResponseCode].get<int>();
     }
 
     if (http_response_code == oai::common::sbi::http_status_code::OK) {
-      if (result.find("content") != result.end()) {
-        json_data = result["content"];
+      if (result.find(kSbiResponseJsonData) != result.end()) {
+        json_data = result[kSbiResponseJsonData];
       }
       response.headers().add<Pistache::Http::Header::ContentType>(
           Pistache::Http::Mime::MediaType("application/json"));

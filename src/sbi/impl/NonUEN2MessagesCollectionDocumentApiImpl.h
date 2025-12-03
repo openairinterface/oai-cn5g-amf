@@ -41,7 +41,7 @@ namespace oai {
 namespace amf {
 namespace api {
 
-using namespace oai::model::amf;
+using namespace oai::_3gpp::model;
 
 class NonUEN2MessagesCollectionDocumentApiImpl
     : public oai::amf::api::NonUEN2MessagesCollectionDocumentApi {
@@ -52,7 +52,7 @@ class NonUEN2MessagesCollectionDocumentApiImpl
   ~NonUEN2MessagesCollectionDocumentApiImpl() {}
 
   void non_ue_n2_message_transfer(
-      std::unordered_map<std::string, mime_part>& parts,
+      std::unordered_map<std::string, oai::utils::mime_part>& parts,
       Pistache::Http::ResponseWriter& response);
 
  private:
