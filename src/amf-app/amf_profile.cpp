@@ -393,7 +393,7 @@ void amf_profile::to_json(nlohmann::json& data) const {
         srv_tmp["ipEndPoints"].push_back(ep_tmp);
       }
       */
-    srv_tmp["apiPrefix"] = "http://10.100.200.16:8080";
+    srv_tmp["apiPrefix"] = "http://192.168.70.132:8080";
 
     data["nfServices"].push_back(srv_tmp);
   }
