@@ -31,11 +31,11 @@
 | 3      | N8            | :heavy_check_mark: | Interface to/from UDM (e.g., retrieve UE subscription data)               |
 | 4      | N11           | :heavy_check_mark: | Interface to/from SMF (e.g., N1N2MessageTransfer, PDU Session Services)   |
 | 5      | N14           | :x:                | Interface between AMFs                                                    |
-| 6      | N15           | :x:                | Interface between AMF and PCF                                             |
+| 6      | N15           | :heavy_check_mark: | Interface between AMF and PCF                                             |
 
 # 3. OAI AMF Feature List #
 
-Based on document **3GPP TS 23.501 V16.0.0 §6.2.1**.
+Based on document **3GPP TS 23.501 V16.14.0 §6.2.1**.
 
 | **ID** | **Classification**                                                  | **Status**         | **Comments**                                |
 | ------ | ------------------------------------------------------------------- | ------------------ | ------------------------------------------- |
