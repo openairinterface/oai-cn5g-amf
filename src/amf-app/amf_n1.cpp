@@ -796,7 +796,7 @@ void amf_n1::identity_response_handle(
   // TODO: avoid accessing member function directly
   oai::nas::SUCI_imsi_t imsi = {};
   identity_response->Get5gsMobileIdentity().GetSuciWithSupiImsi(imsi);
-  imsi_str = imsi.mcc + imsi.mnc + imsi.msin;
+  imsi_str = imsi.mcc + imsi.mnc + imsi.scheme_output;
   Logger::amf_n1().debug("Identity Response: SUCI (%s)", imsi_str.c_str());
 
   std::string ue_context_key =
@@ -1685,9 +1685,22 @@ bool amf_n1::registration_request_handle(
           itti_inst->timer_remove(nc->implicit_deregistration_timer);
         }
 
-        nc->imsi            = amf_conv::get_imsi(imsi.mcc, imsi.mnc, imsi.msin);
-        nc->is_imsi_present = true;
-        nc->supi            = amf_conv::imsi_to_supi(nc->imsi);
+        if (imsi.protection_scheme_id != kNullScheme) {
+          Logger::amf_n1().debug(
+              "SUCI protection scheme ID: %d", imsi.protection_scheme_id);
+
+          nc->supi = "suci-" + imsi.mcc + "-" + imsi.mnc + "-" + "0000" + "-" +
+                     std::to_string(imsi.protection_scheme_id) + "-" +
+                     std::to_string(imsi.home_network_pki) + "-" +
+                     imsi.scheme_output;
+
+        } else {
+          Logger::amf_n1().debug("SUCI protection scheme: null scheme");
+          nc->imsi = amf_conv::get_imsi(imsi.mcc, imsi.mnc, imsi.scheme_output);
+          nc->is_imsi_present = true;
+          nc->supi            = amf_conv::imsi_to_supi(nc->imsi);
+        }
+
         Logger::amf_n1().debug("Received IMSI %s", nc->imsi.c_str());
 
         // Trigger UE Reachability Status Notify
