@@ -1689,11 +1689,13 @@ bool amf_n1::registration_request_handle(
           Logger::amf_n1().debug(
               "SUCI protection scheme ID: %d", imsi.protection_scheme_id);
 
-          nc->supi = "suci-" + imsi.mcc + "-" + imsi.mnc + "-" + "0000" + "-" +
-                     std::to_string(imsi.protection_scheme_id) + "-" +
+          // TODO: remove hardcoded "0000" for routing indicator
+          nc->supi = "suci-0-" + imsi.mcc + "-" + imsi.mnc + "-" + "0000" +
+                     "-" + std::to_string(imsi.protection_scheme_id) + "-" +
                      std::to_string(imsi.home_network_pki) + "-" +
                      imsi.scheme_output;
-
+          // nc->is_imsi_present = true;
+          nc->is_5g_suci_present = true;
         } else {
           Logger::amf_n1().debug("SUCI protection scheme: null scheme");
           nc->imsi = amf_conv::get_imsi(imsi.mcc, imsi.mnc, imsi.scheme_output);
@@ -2294,7 +2296,7 @@ bool amf_n1::run_registration_procedure(
   }
 
   nc->is_specific_procedure_for_registration_running = true;
-  if (nc->is_imsi_present) {
+  if (nc->is_imsi_present or nc->is_5g_suci_present) {
     Logger::amf_n1().debug("SUCI SUPI format IMSI is available");
     if (!nc->is_auth_vectors_present) {
       Logger::amf_n1().debug(
@@ -2622,7 +2624,9 @@ bool amf_n1::_5g_aka_confirmation_from_ausf(
             "amf_n1", "5G AV: kseaf", nc->_5g_av[0].kseaf,
             AUTH_VECTOR_LENGTH_OCTETS);
         oai::utils::utils::free_wrapper((void**) &kseaf_hex);
-
+        // TODO: Get this info from AUSF (to be updated later)
+        nc->imsi = "208950000000035";
+        nc->supi = "imsi-208950000000035";
         Logger::amf_n1().debug("Deriving Kamf");
         for (int i = 0; i < MAX_5GS_AUTH_VECTORS; i++) {
           Authentication_5gaka::derive_kamf(
@@ -2774,7 +2778,7 @@ void amf_n1::authentication_response_handle(
   uint8_t nas_message_type = kAuthenticationResponse;
   if (!check_nas_message_for_current_procedure_running(
           nc, kAuthenticationResponse, security_header_type)) {
-    if (nc->is_imsi_present)
+    if (nc->is_imsi_present or nc->is_5g_suci_present)
       // Send Authentication Reject with appropriate cause
       send_authentication_reject_msg(
           ran_ue_ngap_id, amf_ue_ngap_id, k5gmmCauseSemanticallyIncorrect);

@@ -25,8 +25,6 @@
 
 //------------------------------------------------------------------------------
 nas_context::nas_context() : _5g_he_av(), _5g_av(), kamf(), _5gmm_capability() {
-  is_imsi_present                                    = false;
-  is_auth_vectors_present                            = false;
   auts                                               = nullptr;
   ctx_avaliability_ind                               = false;
   amf_ue_ngap_id                                     = INVALID_AMF_UE_NGAP_ID;
@@ -49,6 +47,7 @@ nas_context::nas_context() : _5g_he_av(), _5g_av(), kamf(), _5gmm_capability() {
   is_current_security_available                         = false;
   registration_attempt_counter                          = 0;
   is_imsi_present                                       = false;
+  is_5g_suci_present                                    = false;
   is_5g_guti_present                                    = false;
   is_auth_vectors_present                               = false;
   to_be_register_by_new_suci                            = false;
