@@ -182,6 +182,14 @@ std::string amf_conv::imsi_to_supi(const std::string& imsi) {
 }
 
 //------------------------------------------------------------------------------
+std::string amf_conv::supi_to_imsi(const std::string& supi) {
+  std::size_t pos = supi.find("-");
+  if ((pos != std::string::npos) && (pos < supi.length()))
+    return supi.substr(pos + 1);
+  return supi;
+}
+
+//------------------------------------------------------------------------------
 std::string amf_conv::get_imsi(
     const std::string& mcc, const std::string& mnc, const std::string& msin) {
   return {mcc + mnc + msin};

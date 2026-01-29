@@ -2624,9 +2624,27 @@ bool amf_n1::_5g_aka_confirmation_from_ausf(
             "amf_n1", "5G AV: kseaf", nc->_5g_av[0].kseaf,
             AUTH_VECTOR_LENGTH_OCTETS);
         oai::utils::utils::free_wrapper((void**) &kseaf_hex);
-        // TODO: Get this info from AUSF (to be updated later)
-        nc->imsi = "208950000000035";
-        nc->supi = "imsi-208950000000035";
+
+        if (confirmation_data_response.supiIsSet()) {
+          Logger::amf_n1().debug("SUCI %s", nc->supi);
+          // Update SUPI and context
+          std::string old_supi = nc->supi;
+          nc->supi             = confirmation_data_response.getSupi();
+          set_supi_2_nas_context(nc->supi, nc);
+          nc->imsi = amf_conv::supi_to_imsi(nc->supi);
+
+          // Update UE CONTEXT if necessary
+          std::shared_ptr<ue_context> uc = {};
+          if (amf_app_inst->supi_2_ue_context(old_supi, uc)) {
+            uc->supi = nc->supi;
+            amf_app_inst->set_supi_2_ue_context(nc->supi, uc);
+            set_supi_2_amf_id(nc->supi, uc->amf_ue_ngap_id);
+            set_supi_2_ran_id(nc->supi, uc->ran_ue_ngap_id);
+          }
+
+          Logger::amf_n1().debug("SUPI %s, IMSI %s", nc->supi, nc->imsi);
+        }
+
         Logger::amf_n1().debug("Deriving Kamf");
         for (int i = 0; i < MAX_5GS_AUTH_VECTORS; i++) {
           Authentication_5gaka::derive_kamf(

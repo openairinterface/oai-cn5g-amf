@@ -62,6 +62,7 @@ class amf_conv : public oai::utils::conv {
     return ("0x" + out);
   }
   static std::string imsi_to_supi(const std::string& imsi);
+  static std::string supi_to_imsi(const std::string& supi);
   static std::string get_imsi(
       const std::string& mcc, const std::string& mnc, const std::string& msin);
   static void octet_stream_2_hex_stream(
