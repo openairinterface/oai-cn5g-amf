@@ -240,7 +240,8 @@ void statistics::update_ue_info(const ue_info_t& ue_info) {
 
   std::unique_lock lock(m_ue_infos);
   if (!ue_info.imsi.empty() && !ue_info.supi.empty()) {
-    ue_infos.erase(ue_info.supi);
+    // Remove old SUPI entry if exists
+    if (ue_infos.count(ue_info.supi) > 0) ue_infos.erase(ue_info.supi);
     Logger::amf_app().debug(
         "UE SUPI %s has been successfully erased!", ue_info.supi.c_str());
   }
