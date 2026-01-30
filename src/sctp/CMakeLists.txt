@@ -31,6 +31,7 @@ include_directories(${SRC_TOP_DIR}/${MOUNTED_COMMON}/ngap/libngap)
 include_directories(${SRC_TOP_DIR}/${MOUNTED_COMMON}/utils)
 include_directories(${SRC_TOP_DIR}/${MOUNTED_COMMON}/utils/bstr)
 
+
 add_library (AMF_SCTP STATIC
 ${CMAKE_CURRENT_SOURCE_DIR}/sctp_server.cpp
  )

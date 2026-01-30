@@ -68,6 +68,7 @@ typedef struct ue_info_s {
   uint64_t amfid;
   std::string imsi;
   std::string guti;
+  std::string supi;
   std::string mcc;
   std::string mnc;
   uint64_t cellId;

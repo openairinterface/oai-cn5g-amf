@@ -164,7 +164,7 @@ std::string statistics::get_ues_info() const {
   out.append(inner_indent)
       .append(ie_to_string(kStatisticsHalfIndexColLength, "Index"))
       .append(ie_to_string(kStatisticsHalfIeLengthForUe, "5GMM State"))
-      .append(ie_to_string(kStatisticsHalfIeLengthForUe, "IMSI"))
+      .append(ie_to_string(2 * kStatisticsHalfIeLengthForUe, "IMSI"))
       .append(ie_to_string(kStatisticsHalfIeLengthForUe, "GUTI"))
       .append(ie_to_string(kStatisticsHalfIeLengthForUe, "RAN UE NGAP ID"))
       .append(ie_to_string(kStatisticsHalfIeLengthForUe, "AMF UE NGAP ID"))
@@ -176,7 +176,7 @@ std::string statistics::get_ues_info() const {
     out.append(inner_indent)
         .append(ie_to_string(kStatisticsHalfIndexColLength, "-"))
         .append(ie_to_string(kStatisticsHalfIeLengthForUe, "-"))
-        .append(ie_to_string(kStatisticsHalfIeLengthForUe, "-"))
+        .append(ie_to_string(2 * kStatisticsHalfIeLengthForUe, "-"))
         .append(ie_to_string(kStatisticsHalfIeLengthForUe, "-"))
         .append(ie_to_string(kStatisticsHalfIeLengthForUe, "-"))
         .append(ie_to_string(kStatisticsHalfIeLengthForUe, "-"))
@@ -189,6 +189,8 @@ std::string statistics::get_ues_info() const {
       std::string cell_id_str = {};
       oai::utils::conv::int_to_string_hex(
           ue.second.cellId, cell_id_str, 9);  // 36 bits
+      std::string ue_id =
+          ue.second.imsi.empty() ? ue.second.supi : ue.second.imsi;
 
       std::string plmn = ue.second.mcc + "," + ue.second.mnc;
       out.append(inner_indent)
@@ -197,7 +199,7 @@ std::string statistics::get_ues_info() const {
           .append(ie_to_string(
               kStatisticsHalfIeLengthForUe,
               nas_context::fivegmm_state_to_string(ue.second.register_status)))
-          .append(ie_to_string(kStatisticsHalfIeLengthForUe, ue.second.imsi))
+          .append(ie_to_string(2 * kStatisticsHalfIeLengthForUe, ue_id))
           .append(ie_to_string(kStatisticsHalfIeLengthForUe, ue.second.guti))
           .append(ie_to_string(
               kStatisticsHalfIeLengthForUe,
@@ -221,22 +223,37 @@ std::string statistics::get_ues_info() const {
 
 //------------------------------------------------------------------------------
 void statistics::update_ue_info(const ue_info_t& ue_info) {
-  if (!(ue_info.imsi.size() > 0)) {
-    Logger::amf_app().warn("Update UE Info with invalid IMSI");
+  if (ue_info.imsi.empty() && ue_info.supi.empty()) {
+    Logger::amf_app().debug("Update UE Info with invalid IMSI/SUPI");
     return;
   }
 
-  std::unique_lock lock(m_ue_infos);
-  if (ue_infos.count(ue_info.imsi) > 0) {
-    ue_infos.at(ue_info.imsi) = ue_info;
+  std::string ue_id = {};
+  if (ue_info.imsi.empty()) {
     Logger::amf_app().debug(
-        "The UE's Info (IMSI %s) has been successfully updated!",
-        ue_info.imsi.c_str());
+        "Update UE Info with empty IMSI, using SUPI (%s) instead",
+        ue_info.supi.c_str());
+    ue_id = ue_info.supi;
   } else {
-    ue_infos.emplace(std::make_pair(ue_info.imsi, ue_info));
+    ue_id = ue_info.imsi;
+  }
+
+  std::unique_lock lock(m_ue_infos);
+  if (!ue_info.imsi.empty() && !ue_info.supi.empty()) {
+    ue_infos.erase(ue_info.supi);
     Logger::amf_app().debug(
-        "A new UE (IMSI %s) has been successfully added!",
-        ue_info.imsi.c_str());
+        "UE SUPI %s has been successfully erased!", ue_info.supi.c_str());
+  }
+
+  if (ue_infos.count(ue_id) > 0) {
+    ue_infos.at(ue_id) = ue_info;
+    Logger::amf_app().info(
+        "The UE's Info (UE_ID %s) has been successfully updated!",
+        ue_id.c_str());
+  } else {
+    ue_infos.emplace(std::make_pair(ue_id, ue_info));
+    Logger::amf_app().info(
+        "A new UE (UE_ID %s) has been successfully added!", ue_id.c_str());
   }
 }
 

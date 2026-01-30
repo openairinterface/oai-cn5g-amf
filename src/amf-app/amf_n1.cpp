@@ -850,6 +850,7 @@ void amf_n1::identity_response_handle(
     ue_item.ranid           = ran_ue_ngap_id;
     ue_item.amfid           = amf_ue_ngap_id;
     ue_item.imsi            = nc->imsi;
+    ue_item.supi            = nc->supi;
     if (nc->guti.has_value()) ue_item.guti = nc->guti.value();
 
     // Find UE context
@@ -1546,6 +1547,7 @@ bool amf_n1::service_request_handle(
     ue_item.ranid           = ran_ue_ngap_id;
     ue_item.amfid           = amf_ue_ngap_id;
     ue_item.imsi            = nc->imsi;
+    ue_item.supi            = nc->supi;
     if (nc->guti.has_value()) ue_item.guti = nc->guti.value();
     ue_item.mcc    = uc->cgi.mcc;
     ue_item.mnc    = uc->cgi.mnc;
@@ -1688,22 +1690,16 @@ bool amf_n1::registration_request_handle(
         if (imsi.protection_scheme_id != kNullScheme) {
           Logger::amf_n1().debug(
               "SUCI protection scheme ID: %d", imsi.protection_scheme_id);
-
-          // TODO: remove hardcoded "0000" for routing indicator
-          nc->supi = "suci-0-" + imsi.mcc + "-" + imsi.mnc + "-" + "0000" +
-                     "-" + std::to_string(imsi.protection_scheme_id) + "-" +
-                     std::to_string(imsi.home_network_pki) + "-" +
-                     imsi.scheme_output;
-          // nc->is_imsi_present = true;
+          nc->supi               = amf_conv::suci_to_supi(imsi);
           nc->is_5g_suci_present = true;
         } else {
-          Logger::amf_n1().debug("SUCI protection scheme: null scheme");
+          Logger::amf_n1().debug("SUCI protection scheme: Null scheme");
           nc->imsi = amf_conv::get_imsi(imsi.mcc, imsi.mnc, imsi.scheme_output);
           nc->is_imsi_present = true;
           nc->supi            = amf_conv::imsi_to_supi(nc->imsi);
         }
-
-        Logger::amf_n1().debug("Received IMSI %s", nc->imsi.c_str());
+        Logger::amf_n1().debug("Received IMSI %s ", nc->imsi.c_str());
+        Logger::amf_n1().debug("SUPI %s ", nc->supi.c_str());
 
         // Trigger UE Reachability Status Notify
         if (!nc->supi.empty()) {
@@ -1738,12 +1734,13 @@ bool amf_n1::registration_request_handle(
         ue_item.ranid           = ran_ue_ngap_id;
         ue_item.amfid           = amf_ue_ngap_id;
         ue_item.imsi            = nc->imsi;
+        ue_item.supi            = nc->supi;
         if (nc->guti.has_value()) ue_item.guti = nc->guti.value();
         ue_item.mcc    = uc->cgi.mcc;
         ue_item.mnc    = uc->cgi.mnc;
         ue_item.cellId = uc->cgi.nrCellId;
-
         stacs.update_ue_info(ue_item);
+
         set_5gmm_state(nc, _5GMM_COMMON_PROCEDURE_INITIATED);
       }
     } break;
@@ -1869,12 +1866,14 @@ bool amf_n1::registration_request_handle(
 
   // Update statistics
   if (uc) {
+    // Update 5GMM state
     ue_info_t ue_item;
     ue_item.cm_status       = CM_CONNECTED;
     ue_item.register_status = _5GMM_REGISTERED;
     ue_item.ranid           = ran_ue_ngap_id;
     ue_item.amfid           = amf_ue_ngap_id;
     ue_item.imsi            = nc->imsi;
+    ue_item.supi            = nc->supi;
     if (nc->guti.has_value()) ue_item.guti = nc->guti.value();
     ue_item.mcc    = uc->cgi.mcc;
     ue_item.mnc    = uc->cgi.mnc;
@@ -2641,6 +2640,22 @@ bool amf_n1::_5g_aka_confirmation_from_ausf(
             set_supi_2_amf_id(nc->supi, uc->amf_ue_ngap_id);
             set_supi_2_ran_id(nc->supi, uc->ran_ue_ngap_id);
           }
+
+          // Update UE statistics
+          ue_info_t ue_item;
+          ue_item.cm_status       = CM_CONNECTED;
+          ue_item.register_status = _5GMM_REGISTERED;
+          ue_item.ranid           = uc->ran_ue_ngap_id;
+          ue_item.amfid           = uc->amf_ue_ngap_id;
+          ue_item.imsi            = nc->imsi;
+          ue_item.supi            = old_supi;
+          if (nc->guti.has_value()) ue_item.guti = nc->guti.value();
+          ue_item.mcc    = uc->cgi.mcc;
+          ue_item.mnc    = uc->cgi.mnc;
+          ue_item.cellId = uc->cgi.nrCellId;
+
+          stacs.update_ue_info(ue_item);
+          stacs.display();
 
           Logger::amf_n1().debug("SUPI %s, IMSI %s", nc->supi, nc->imsi);
         }
