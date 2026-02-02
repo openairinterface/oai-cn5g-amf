@@ -28,7 +28,7 @@
 #---------------------------------------------------------------------
 # BUILDER IMAGE
 #---------------------------------------------------------------------
-FROM registry.access.redhat.com/ubi9/ubi:latest AS oai-amf-builder
+FROM registry.redhat.io/ubi9/ubi:latest AS oai-amf-builder
 
 ENV IS_DOCKERFILE=1
 # Copy the entitlements
@@ -79,7 +79,7 @@ FROM mikefarah/yq:latest as yq-source
 #---------------------------------------------------------------------
 # TARGET IMAGE
 #---------------------------------------------------------------------
-FROM registry.access.redhat.com/ubi9/ubi-minimal:latest as oai-amf
+FROM registry.redhat.io/ubi9/ubi-minimal:latest as oai-amf
 ENV TZ=Europe/Paris
 # We install some debug tools for the moment in addition of mandatory libraries
 
