@@ -646,6 +646,15 @@ void amf_n1::uplink_nas_msg_handle(
   uint8_t message_type =
       get_nas_message_type((uint8_t*) bdata(plain_msg), blength(plain_msg));
 
+  std::shared_ptr<nas_context> nc = {};
+
+  if (message_type != kAuthenticationFailure) {
+    // Reset the failure counter
+    if (amf_ue_id_2_nas_context(amf_ue_ngap_id, nc)) {
+      nc->registration_attempt_counter = 0;
+    }
+  }
+
   switch (message_type) {
     case kAuthenticationResponse: {
       Logger::amf_n1().debug(
@@ -699,7 +708,6 @@ void amf_n1::uplink_nas_msg_handle(
     case kServiceRequest: {
       Logger::amf_n1().debug(
           "Received Service Request message (UplinkNasTransport), handling...");
-      std::shared_ptr<nas_context> nc = {};
       if (amf_ue_id_2_nas_context(amf_ue_ngap_id, nc)) {
         uint8_t service_reject_cause = k5gmmCauseProtocolErrorUnspecified;
         if (!service_request_handle(
@@ -718,7 +726,6 @@ void amf_n1::uplink_nas_msg_handle(
       Logger::amf_n1().debug("Received Registration Request, handling...");
       std::string snn = amf_conv::get_serving_network_name(plmn.mnc, plmn.mcc);
       Logger::amf_n1().debug("Serving network name %s", snn.c_str());
-      std::shared_ptr<nas_context> nc = {};
       if (amf_ue_id_2_nas_context(amf_ue_ngap_id, nc)) {
         uint8_t cause = k5gmmCauseProtocolErrorUnspecified;
         if (!registration_request_handle(
@@ -2858,6 +2865,8 @@ void amf_n1::authentication_failure_handle(
     send_registration_reject_msg(
         ran_ue_ngap_id, amf_ue_ngap_id,
         k5gmmCauseIllegalUe);  // cause?
+                               // Reset the failure counter
+    nc->registration_attempt_counter = 0;
     return;
   }
 
@@ -2871,6 +2880,8 @@ void amf_n1::authentication_failure_handle(
     Logger::nas_mm().error("Decode Registration Request message error");
     send_registration_reject_msg(
         ran_ue_ngap_id, amf_ue_ngap_id, k5gmmCauseSemanticallyIncorrect);
+    // Reset the failure counter
+    nc->registration_attempt_counter = 0;
     return;
   }
 
@@ -2880,6 +2891,8 @@ void amf_n1::authentication_failure_handle(
     send_registration_reject_msg(
         ran_ue_ngap_id, amf_ue_ngap_id,
         k5gmmCauseInvalidMandatoryInfo);  // cause?
+                                          // Reset the failure counter
+    nc->registration_attempt_counter = 0;
     return;
   }
 
@@ -2895,7 +2908,11 @@ void amf_n1::authentication_failure_handle(
       oai::utils::output_wrapper::print_buffer(
           "amf_n1", "Received AUTS", (uint8_t*) bdata(auts), blength(auts));
 
-      if (auth_vectors_generator(nc)) {
+      // Increase the counter of authentication failure
+      nc->registration_attempt_counter++;
+
+      if (auth_vectors_generator(nc) and
+          (nc->registration_attempt_counter < 2)) {
         handle_auth_vector_successful_result(nc);
       } else {
         Logger::amf_n1().error("Request Authentication Vectors failure");
@@ -2910,6 +2927,7 @@ void amf_n1::authentication_failure_handle(
       Logger::amf_n1().debug(
           "ngKSI already in use, select a new ngKSI and restart the "
           "Authentication procedure!");
+
       // select new ngKSI and resend Authentication Request
       ngksi_t ngksi =
           (nc->ngksi + 1) % (NGKSI_MAX_VALUE + 1);  // To be verified
@@ -2917,7 +2935,9 @@ void amf_n1::authentication_failure_handle(
 
       if (!nc->security_ctx.has_value()) {
         Logger::amf_n1().error("No Security Context found");
-        // TODO:
+        send_registration_reject_msg(
+            nc->ran_ue_ngap_id, nc->amf_ue_ngap_id,
+            k5gmmCauseInvalidMandatoryInfo);
         return;
       }
       int vindex = nc->security_ctx.value().vector_pointer;
@@ -2937,6 +2957,8 @@ void amf_n1::authentication_failure_handle(
     default: {
       Logger::amf_n1().warn(
           "Unknown Authentication Failure's cause %d", mm_cause);
+      // Reset the failure counter
+      nc->registration_attempt_counter = 0;
       // TODO:
     }
   }
