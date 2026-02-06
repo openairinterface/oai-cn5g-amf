@@ -63,8 +63,8 @@ void amf_http2_server::start() {
           amf_cfg->get_tls_config().get_cert_key_path() + "/amf.key";
       std::string certificate_file =
           amf_cfg->get_tls_config().get_cert_certificate_path() + "/amf.crt";
-      Logger::amf_server().error("THINH %s", key_file);
-      Logger::amf_server().error("THINH %s", certificate_file);
+      Logger::amf_server().debug("Keyfile %s", key_file);
+      Logger::amf_server().debug("Certificate_file %s", certificate_file);
 
       tls.use_private_key_file(key_file, boost::asio::ssl::context::pem);
       tls.use_certificate_chain_file(certificate_file);
