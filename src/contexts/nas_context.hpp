@@ -119,6 +119,9 @@ class nas_context {
   bool get_kamf(uint8_t index, uint8_t (&k)[AUTH_VECTOR_LENGTH_OCTETS]) const;
   static std::string fivegmm_state_to_string(const _5gmm_state_t& state);
   static std::string cm_state_to_string(const cm_state_t& state);
+
+  // AUSF endpoint
+  std::optional<std::string> ausf_auth_uri;
 };
 
 #endif
