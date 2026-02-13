@@ -4037,8 +4037,8 @@ void amf_n1::ul_nas_transport_handle(
       // TODO: Only use the first one for now if there's multiple requested
       // NSSAI since we don't know which slice associated with this PDU
       // session
-      if (nc->allowed_nssai.size() > 0) {
-        snssai = nc->allowed_nssai[0];
+      if (nc->requested_nssai.size() > 0) {
+        snssai = nc->requested_nssai[0];
         Logger::amf_n1().debug(
             "Use first Requested S-NSSAI %s", snssai.ToString().c_str());
       } else {
