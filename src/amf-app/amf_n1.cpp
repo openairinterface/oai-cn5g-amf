@@ -796,25 +796,9 @@ void amf_n1::identity_response_handle(
   // TODO: avoid accessing member function directly
   oai::nas::SUCI_imsi_t imsi = {};
   identity_response->Get5gsMobileIdentity().GetSuciWithSupiImsi(imsi);
-  imsi_str = imsi.mcc + imsi.mnc + imsi.scheme_output;
-  Logger::amf_n1().debug("Identity Response: SUCI (%s)", imsi_str.c_str());
 
-  std::string ue_context_key =
-      amf_conv::get_ue_context_key(ran_ue_ngap_id, amf_ue_ngap_id);
-
-  std::shared_ptr<ue_context> uc = {};
-  if (amf_app_inst->ran_amf_id_2_ue_context(ue_context_key, uc)) {
-    // Update UE context
-    uc->supi = amf_conv::imsi_to_supi(imsi_str);
-    // associate SUPI with UC
-    // Verify if there's PDU session info in the old context
-    std::shared_ptr<ue_context> old_uc = {};
-    if (amf_app_inst->supi_2_ue_context(uc->supi, old_uc)) {
-      uc->copy_pdu_sessions(old_uc);
-    }
-    amf_app_inst->set_supi_2_ue_context(uc->supi, uc);
-    Logger::amf_n1().debug("Update UC context, SUPI %s", uc->supi.c_str());
-  }
+  // imsi_str = imsi.mcc + imsi.mnc + imsi.scheme_output;
+  // Logger::amf_n1().debug("Identity Response: SUCI (%s)", imsi_str.c_str());
 
   std::shared_ptr<nas_context> nc = {};
   if (amf_ue_id_2_nas_context(amf_ue_ngap_id, nc)) {
@@ -827,14 +811,44 @@ void amf_n1::identity_response_handle(
     nc->ctx_avaliability_ind = false;
   }
 
-  // Update Nas Context
+  if (imsi.protection_scheme_id != kNullScheme) {
+    Logger::amf_n1().debug(
+        "SUCI protection scheme ID: %d", imsi.protection_scheme_id);
+    nc->supi               = amf_conv::suci_to_supi(imsi);
+    nc->is_5g_suci_present = true;
+  } else {
+    Logger::amf_n1().debug("SUCI protection scheme: Null scheme");
+    nc->imsi = amf_conv::get_imsi(imsi.mcc, imsi.mnc, imsi.scheme_output);
+    nc->is_imsi_present = true;
+    nc->supi            = amf_conv::imsi_to_supi(nc->imsi);
+  }
+
+  Logger::amf_n1().debug("Received IMSI %s ", nc->imsi.c_str());
+  Logger::amf_n1().debug("Identity Response: SUPI %s ", nc->supi.c_str());
+
+  // Update UE context if exists
+  std::string ue_context_key =
+      amf_conv::get_ue_context_key(ran_ue_ngap_id, amf_ue_ngap_id);
+
+  std::shared_ptr<ue_context> uc = {};
+  if (amf_app_inst->ran_amf_id_2_ue_context(ue_context_key, uc)) {
+    // Update UE context
+    uc->supi = nc->supi;
+    // associate SUPI with UC
+    // Verify if there's PDU session info in the old context
+    std::shared_ptr<ue_context> old_uc = {};
+    if (amf_app_inst->supi_2_ue_context(uc->supi, old_uc)) {
+      uc->copy_pdu_sessions(old_uc);
+    }
+    amf_app_inst->set_supi_2_ue_context(uc->supi, uc);
+    Logger::amf_n1().debug("Update UC context, SUPI %s", uc->supi.c_str());
+  }
+
+  // Update Nas Context if exists
   nc->ctx_avaliability_ind = true;
   nc->nas_status           = CM_CONNECTED;
   nc->amf_ue_ngap_id       = amf_ue_ngap_id;
   nc->ran_ue_ngap_id       = ran_ue_ngap_id;
-  nc->is_imsi_present      = true;
-  nc->imsi                 = imsi_str;
-  nc->supi                 = amf_conv::imsi_to_supi(nc->imsi);
   set_supi_2_amf_id(nc->supi, amf_ue_ngap_id);
   set_supi_2_ran_id(nc->supi, ran_ue_ngap_id);
   // Stop Mobile Reachable Timer/Implicit Deregistration Timer
