@@ -2669,7 +2669,7 @@ bool amf_n1::_5g_aka_confirmation_from_ausf(
           ue_item.cellId = uc->cgi.nrCellId;
 
           stacs.update_ue_info(ue_item);
-          stacs.display();
+          // stacs.display();
 
           Logger::amf_n1().debug("SUPI %s, IMSI %s", nc->supi, nc->imsi);
         }
