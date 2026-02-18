@@ -47,7 +47,6 @@ void amf_support_features::from_yaml(const YAML::Node& node) {
   if (node[AMF_CONFIG_SUPPORT_FEATURES_ENABLE_NSSF]) {
     m_enable_nssf.from_yaml(node[AMF_CONFIG_SUPPORT_FEATURES_ENABLE_NSSF]);
   }
-
   if (node[AMF_CONFIG_SUPPORT_FEATURES_ENABLE_PCF]) {
     m_enable_pcf.from_yaml(node[AMF_CONFIG_SUPPORT_FEATURES_ENABLE_PCF]);
   }
@@ -1006,8 +1005,8 @@ void amf_config::pre_process() {
 
   // Parse the "Super" option - "enable_simple_scenario"
   if (amf_local->get_support_features().get_option_enable_simple_scenario()) {
-    support_features.enable_nf_registration = false;
     support_features.enable_simple_scenario = true;
+    support_features.enable_nf_registration = false;
     support_features.enable_nssf            = false;  // TODO: to be removed
     support_features.enable_pcf             = false;
     support_features.enable_access_and_mobility_subscription_data_retrieval =
