@@ -50,12 +50,8 @@ constexpr auto AMF_CONFIG_SUPPORT_FEATURES_ENABLE_SIMPLE_SCENARIO_LABEL =
     "Enable Simple Scenario";
 constexpr auto AMF_CONFIG_SUPPORT_FEATURES_ENABLE_NSSF       = "enable_nssf";
 constexpr auto AMF_CONFIG_SUPPORT_FEATURES_ENABLE_NSSF_LABEL = "Enable NSSF";
-constexpr auto AMF_CONFIG_SUPPORT_FEATURES_ENABLE_SMF_SELECTION =
-    "enable_smf_selection";
-constexpr auto AMF_CONFIG_SUPPORT_FEATURES_ENABLE_SMF_SELECTION_LABEL =
-    "Enable SMF Selection";
-constexpr auto AMF_CONFIG_SUPPORT_FEATURES_ENABLE_PCF       = "enable_pcf";
-constexpr auto AMF_CONFIG_SUPPORT_FEATURES_ENABLE_PCF_LABEL = "Enable PCF";
+constexpr auto AMF_CONFIG_SUPPORT_FEATURES_ENABLE_PCF        = "enable_pcf";
+constexpr auto AMF_CONFIG_SUPPORT_FEATURES_ENABLE_PCF_LABEL  = "Enable PCF";
 constexpr auto
     AMF_CONFIG_SUPPORT_FEATURES_ENABLE_ACCESS_AND_MOBILITY_SUBSCRIPTION_DATA_RETRIEVAL =
         "enable_access_and_mobility_subscription_data_retrieval";
@@ -176,7 +172,6 @@ class amf_support_features : public config_type {
  private:
   option_config_value m_enable_simple_scenario{};
   option_config_value m_enable_nssf{};
-  option_config_value m_enable_smf_selection{};
   option_config_value m_enable_pcf{};
   option_config_value
       m_enable_access_and_mobility_subscription_data_retrieval{};
@@ -191,7 +186,6 @@ class amf_support_features : public config_type {
   [[nodiscard]] std::string to_string(const std::string& indent) const override;
   [[nodiscard]] bool get_option_enable_simple_scenario() const;
   [[nodiscard]] bool get_option_enable_nssf() const;
-  [[nodiscard]] bool get_option_enable_smf_selection() const;
   [[nodiscard]] bool get_option_enable_pcf() const;
   [[nodiscard]] bool
   get_option_enable_access_and_mobility_subscription_data_retrieval() const;
@@ -300,8 +294,7 @@ class supported_encryption_algorithms : public config_type {
 
 typedef struct support_features_s {
   bool enable_nf_registration;
-  bool enable_smf_selection;
-  bool enable_external_ausf_udm;
+  bool enable_simple_scenario;
   bool enable_nssf;
   bool enable_lmf;
   bool enable_pcf;
@@ -311,13 +304,12 @@ typedef struct support_features_s {
 
   uint8_t http_version;
   nlohmann::json to_json() const {
-    nlohmann::json json_data              = {};
-    json_data["enable_nf_registration"]   = this->enable_nf_registration;
-    json_data["enable_smf_selection"]     = this->enable_smf_selection;
-    json_data["enable_external_ausf_udm"] = this->enable_external_ausf_udm;
-    json_data["enable_nssf"]              = this->enable_nssf;
-    json_data["enable_lmf"]               = this->enable_lmf;
-    json_data["enable_pcf"]               = this->enable_pcf;
+    nlohmann::json json_data            = {};
+    json_data["enable_simple_scenario"] = this->enable_simple_scenario;
+    json_data["enable_nf_registration"] = this->enable_nf_registration;
+    json_data["enable_nssf"]            = this->enable_nssf;
+    json_data["enable_lmf"]             = this->enable_lmf;
+    json_data["enable_pcf"]             = this->enable_pcf;
     json_data["enable_smf_selection_subscription_data_retrieval"] =
         this->enable_smf_selection_subscription_data_retrieval;
     json_data["enable_ue_context_in_smf_data_retrieval"] =
@@ -330,17 +322,13 @@ typedef struct support_features_s {
 
   void from_json(nlohmann::json& json_data) {
     try {
+      if (json_data.find("enable_simple_scenario") != json_data.end()) {
+        this->enable_simple_scenario =
+            json_data["enable_simple_scenario"].get<bool>();
+      }
       if (json_data.find("enable_nf_registration") != json_data.end()) {
         this->enable_nf_registration =
             json_data["enable_nf_registration"].get<bool>();
-      }
-      if (json_data.find("enable_smf_selection") != json_data.end()) {
-        this->enable_smf_selection =
-            json_data["enable_smf_selection"].get<bool>();
-      }
-      if (json_data.find("enable_external_ausf_udm") != json_data.end()) {
-        this->enable_external_ausf_udm =
-            json_data["enable_external_ausf_udm"].get<bool>();
       }
       if (json_data.find("enable_nssf") != json_data.end()) {
         this->enable_nssf = json_data["enable_nssf"].get<bool>();

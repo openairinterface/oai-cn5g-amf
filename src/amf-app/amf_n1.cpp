@@ -2361,7 +2361,7 @@ bool amf_n1::run_registration_procedure(
 //------------------------------------------------------------------------------
 bool amf_n1::auth_vectors_generator(std::shared_ptr<nas_context>& nc) {
   Logger::amf_n1().debug("Start to generate Authentication Vectors");
-  if (amf_cfg->support_features.enable_external_ausf_udm) {
+  if (!amf_cfg->support_features.enable_simple_scenario) {
     // get authentication vectors from AUSF
     if (!get_authentication_vectors_from_ausf(nc)) return false;
   } else {  // Generate locally
@@ -2791,7 +2791,7 @@ void amf_n1::authentication_response_handle(
     Logger::amf_n1().warn(
         "Cannot receive AuthenticationResponseParameter (RES*)");
   } else {
-    if (amf_cfg->support_features.enable_external_ausf_udm) {
+    if (!amf_cfg->support_features.enable_simple_scenario) {
       // std::string data = bdata(resStar);
       if (!_5g_aka_confirmation_from_ausf(nc, resStar)) isAuthOk = false;
     } else {
@@ -5593,7 +5593,7 @@ bool amf_n1::check_subscribed_nssai(
 bool amf_n1::get_slice_selection_subscription_data(
     const std::shared_ptr<nas_context>& nc, oai::_3gpp::model::Nssai& nssai) {
   // TODO: UDM selection (from NRF or configuration file)
-  if (amf_cfg->support_features.enable_external_ausf_udm) {
+  if (!amf_cfg->support_features.enable_simple_scenario) {
     Logger::amf_n1().debug(
         "Get the Slice Selection Subscription Data from UDM");
 
@@ -5872,9 +5872,7 @@ bool amf_n1::get_target_amf(
     // TODO:
   }
 
-  if (amf_cfg->support_features
-          .enable_smf_selection) {  // TODO: define new option for external
-                                    // NRF
+  if (!amf_cfg->support_features.enable_simple_scenario) {
     // use NRF's URI from conf file if not available
     if (nrf_amf_set.empty()) {
       amf_sbi_helper::get_nrf_disc_search_nf_instances_uri(

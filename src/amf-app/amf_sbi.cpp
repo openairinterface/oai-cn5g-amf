@@ -495,7 +495,7 @@ void amf_sbi::handle_itti_message(itti_nsmf_pdusession_create_sm_context& smf) {
   std::string smf_uri_root    = {};
   std::string smf_api_version = oai::common::sbi::kDefaultSbiApiVersion;
   if (!psc->smf_info.info_available) {
-    if (amf_cfg->support_features.enable_smf_selection) {
+    if (!amf_cfg->support_features.enable_simple_scenario) {
       // Find NRF's URI
       std::string nrf_uri = {};
       if (!amf_sbi::get_nrf_uri(psc->snssai, psc->plmn, psc->dnn, nrf_uri)) {

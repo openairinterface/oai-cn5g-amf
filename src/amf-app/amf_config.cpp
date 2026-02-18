@@ -47,15 +47,11 @@ void amf_support_features::from_yaml(const YAML::Node& node) {
   if (node[AMF_CONFIG_SUPPORT_FEATURES_ENABLE_NSSF]) {
     m_enable_nssf.from_yaml(node[AMF_CONFIG_SUPPORT_FEATURES_ENABLE_NSSF]);
   }
-  if (node[AMF_CONFIG_SUPPORT_FEATURES_ENABLE_SMF_SELECTION]) {
-    m_enable_smf_selection.from_yaml(
-        node[AMF_CONFIG_SUPPORT_FEATURES_ENABLE_SMF_SELECTION]);
-  }
   if (node[AMF_CONFIG_SUPPORT_FEATURES_ENABLE_PCF]) {
     m_enable_pcf.from_yaml(node[AMF_CONFIG_SUPPORT_FEATURES_ENABLE_PCF]);
   }
   if (node[AMF_CONFIG_SUPPORT_FEATURES_ENABLE_ACCESS_AND_MOBILITY_SUBSCRIPTION_DATA_RETRIEVAL]) {
-    m_enable_smf_selection.from_yaml(
+    m_enable_access_and_mobility_subscription_data_retrieval.from_yaml(
         node[AMF_CONFIG_SUPPORT_FEATURES_ENABLE_ACCESS_AND_MOBILITY_SUBSCRIPTION_DATA_RETRIEVAL]);
   }
   if (node[AMF_CONFIG_SUPPORT_FEATURES_ENABLE_SMF_SELECTION_SUBSCRIPTION_DATA_RETRIEVAL]) {
@@ -88,14 +84,6 @@ std::string amf_support_features::to_string(const std::string& indent) const {
       BASE_FORMATTER, INNER_LIST_ELEM,
       AMF_CONFIG_SUPPORT_FEATURES_ENABLE_NSSF_LABEL, inner_width,
       enable_nssf_string));
-
-  std::string enable_smf_selection_string = m_enable_smf_selection.get_value() ?
-                                                AMF_CONFIG_OPTION_YES_STR :
-                                                AMF_CONFIG_OPTION_NO_STR;
-  out.append(indent).append(fmt::format(
-      BASE_FORMATTER, INNER_LIST_ELEM,
-      AMF_CONFIG_SUPPORT_FEATURES_ENABLE_SMF_SELECTION_LABEL, inner_width,
-      enable_smf_selection_string));
 
   std::string enable_pcf_string = m_enable_pcf.get_value() ?
                                       AMF_CONFIG_OPTION_YES_STR :
@@ -144,11 +132,6 @@ bool amf_support_features::get_option_enable_simple_scenario() const {
 //------------------------------------------------------------------------------
 bool amf_support_features::get_option_enable_nssf() const {
   return m_enable_nssf.get_value();
-}
-
-//------------------------------------------------------------------------------
-bool amf_support_features::get_option_enable_smf_selection() const {
-  return m_enable_smf_selection.get_value();
 }
 
 //------------------------------------------------------------------------------
@@ -967,11 +950,10 @@ amf_config::amf_config(
   plmn_list             = {};
   auth_para             = {};
   nas_cfg               = {};
-  support_features.enable_nf_registration   = false;
-  support_features.enable_smf_selection     = false;
-  support_features.enable_external_ausf_udm = false;
-  support_features.enable_nssf              = false;
-  support_features.enable_lmf               = false;
+  support_features.enable_simple_scenario = false;
+  support_features.enable_nf_registration = false;
+  support_features.enable_nssf            = false;
+  support_features.enable_lmf             = false;
   support_features.enable_access_and_mobility_subscription_data_retrieval =
       false;
   support_features.enable_smf_selection_subscription_data_retrieval = false;
@@ -1023,20 +1005,17 @@ void amf_config::pre_process() {
 
   // Parse the "Super" option - "enable_simple_scenario"
   if (amf_local->get_support_features().get_option_enable_simple_scenario()) {
-    support_features.enable_nf_registration   = false;
-    support_features.enable_smf_selection     = false;
-    support_features.enable_external_ausf_udm = false;
-    support_features.enable_nssf              = false;  // TODO: to be removed
-    support_features.enable_pcf               = false;
+    support_features.enable_simple_scenario = true;
+    support_features.enable_nf_registration = false;
+    support_features.enable_nssf            = false;  // TODO: to be removed
+    support_features.enable_pcf             = false;
     support_features.enable_access_and_mobility_subscription_data_retrieval =
         false;
     support_features.enable_smf_selection_subscription_data_retrieval = false;
     support_features.enable_ue_context_in_smf_data_retrieval          = false;
   } else {  // parse the other options
+    support_features.enable_simple_scenario = false;
     support_features.enable_nf_registration = register_nrf();
-    support_features.enable_smf_selection =
-        amf_local->get_support_features().get_option_enable_smf_selection();
-    support_features.enable_external_ausf_udm = true;  // To be removed
     support_features.enable_nssf =
         amf_local->get_support_features().get_option_enable_nssf();
     support_features.enable_pcf =
@@ -1263,14 +1242,13 @@ void amf_config::display() {
     }
   }
 
-  Logger::config().info(
-      "- Default DNN.................: %s", default_dnn.c_str());
+  Logger::config().info("- Default DNN..............: %s", default_dnn.c_str());
   Logger::config().info(
       "- Emergency Support .......: %s", is_emergency_support ?
                                              AMF_CONFIG_OPTION_YES_STR :
                                              AMF_CONFIG_OPTION_NO_STR);
 
-  if (!support_features.enable_external_ausf_udm) {
+  if (support_features.enable_simple_scenario) {
     Logger::config().info("- Database: ");
     Logger::config().info(
         "    MySQL Server Addr .....: %s", auth_para.mysql_server.c_str());
@@ -1296,18 +1274,16 @@ void amf_config::display() {
     Logger::config().info(
         "    API version............: %s", sbi.api_version.value().c_str());
 
-  if (!support_features.enable_smf_selection) {
+  if (support_features.enable_simple_scenario) {
     Logger::config().info("- SMF:");
-    Logger::config().info(
-        "    URI root ...............: %s", smf_addr.uri_root);
+    Logger::config().info("    URI root ..............: %s", smf_addr.uri_root);
     Logger::config().info(
         "    API version ...........: %s", smf_addr.api_version.c_str());
   }
 
   if (support_features.enable_nf_registration) {
-    Logger::config().info("- NRF:");
-    Logger::config().info(
-        "    URI root ...............: %s", nrf_addr.uri_root);
+    Logger::config().info("- Default NRF:");
+    Logger::config().info("    URI root ..............: %s", nrf_addr.uri_root);
     Logger::config().info(
         "    API version ...........: %s", nrf_addr.api_version.c_str());
   }
@@ -1315,30 +1291,28 @@ void amf_config::display() {
   if (support_features.enable_nssf) {
     Logger::config().info("- NSSF:");
     Logger::config().info(
-        "    URI root ...............: %s", nssf_addr.uri_root);
+        "    URI root ..............: %s", nssf_addr.uri_root);
     Logger::config().info(
         "    API version ...........: %s", nssf_addr.api_version.c_str());
   }
 
   if (support_features.enable_pcf) {
-    Logger::config().info("- PCF:");
-    Logger::config().info(
-        "    URI root ...............: %s", pcf_addr.uri_root);
+    Logger::config().info("- Default PCF:");
+    Logger::config().info("    URI root ..............: %s", pcf_addr.uri_root);
     Logger::config().info(
         "    API version ...........: %s", pcf_addr.api_version.c_str());
   }
 
-  if (support_features.enable_external_ausf_udm) {
+  if (!support_features.enable_simple_scenario) {
     // AUSF
-    Logger::config().info("- AUSF:");
+    Logger::config().info("- Default AUSF:");
     Logger::config().info(
-        "    URI root ...............: %s", ausf_addr.uri_root);
+        "    URI root ..............: %s", ausf_addr.uri_root);
     Logger::config().info(
         "    API version ...........: %s", ausf_addr.api_version.c_str());
     // UDM
-    Logger::config().info("- UDM:");
-    Logger::config().info(
-        "    URI root ...............: %s", udm_addr.uri_root);
+    Logger::config().info("- Default UDM:");
+    Logger::config().info("    URI root ..............: %s", udm_addr.uri_root);
     Logger::config().info(
         "    API version ...........: %s", udm_addr.api_version.c_str());
   }
@@ -1354,21 +1328,13 @@ void amf_config::display() {
 
   Logger::config().info("- Supported Features:");
   Logger::config().info(
+      "    Enable Simple Scenario.: %s",
+      support_features.enable_simple_scenario ? AMF_CONFIG_OPTION_YES_STR :
+                                                AMF_CONFIG_OPTION_NO_STR);
+  Logger::config().info(
       "    NF Registration .......: %s",
       support_features.enable_nf_registration ? AMF_CONFIG_OPTION_YES_STR :
                                                 AMF_CONFIG_OPTION_NO_STR);
-  Logger::config().info(
-      "    SMF Selection .........: %s", support_features.enable_smf_selection ?
-                                             AMF_CONFIG_OPTION_YES_STR :
-                                             AMF_CONFIG_OPTION_NO_STR);
-  Logger::config().info(
-      "    External AUSF .........: %s",
-      support_features.enable_external_ausf_udm ? AMF_CONFIG_OPTION_YES_STR :
-                                                  AMF_CONFIG_OPTION_NO_STR);
-  Logger::config().info(
-      "    External UDM ..........: %s",
-      support_features.enable_external_ausf_udm ? AMF_CONFIG_OPTION_YES_STR :
-                                                  AMF_CONFIG_OPTION_NO_STR);
   Logger::config().info(
       "    External NSSF .........: %s", support_features.enable_nssf ?
                                              AMF_CONFIG_OPTION_YES_STR :
@@ -1420,7 +1386,7 @@ void amf_config::to_json(nlohmann::json& json_data) const {
                                           AMF_CONFIG_OPTION_YES_STR :
                                           AMF_CONFIG_OPTION_NO_STR;
 
-  if (!support_features.enable_external_ausf_udm) {
+  if (support_features.enable_simple_scenario) {
     json_data["auth_para"] = auth_para.to_json();
   }
 
@@ -1439,7 +1405,7 @@ void amf_config::to_json(nlohmann::json& json_data) const {
     json_data["nssf"] = nssf_addr.to_json();
   }
 
-  if (support_features.enable_external_ausf_udm) {
+  if (!support_features.enable_simple_scenario) {
     json_data["ausf"] = ausf_addr.to_json();
     json_data["udm"]  = udm_addr.to_json();
   }
@@ -1534,7 +1500,7 @@ bool amf_config::from_json(nlohmann::json& json_data) {
       }
     }
 
-    if (support_features.enable_external_ausf_udm) {
+    if (!support_features.enable_simple_scenario) {
       if (json_data.find("ausf") != json_data.end()) {
         ausf_addr.from_json(json_data["ausf"]);
       }
