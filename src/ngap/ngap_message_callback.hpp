@@ -56,7 +56,7 @@ typedef int (*ngap_message_decoded_callback)(
 
 typedef void (*ngap_event_callback)(const sctp_assoc_id_t assoc_id);
 
-constexpr uint8_t NGAP_PROCEDURE_CODE_MAX_VALUE = 55;
+constexpr uint8_t NGAP_PROCEDURE_CODE_MAX_VALUE = 66;
 constexpr uint8_t NGAP_PRESENT_MAX_VALUE        = 3;
 
 //------------------------------------------------------------------------------
@@ -1366,7 +1366,18 @@ ngap_message_decoded_callback
         {secondary_rat_data_usage_report, 0,
          0},       /*52 SecondaryRATDataUsageReport*/
         {0, 0, 0}, /*53 UplinkRIMInformationTransfer*/
-        {0, 0, 0}  /*54 DownlinkRIMInformationTransfer*/
+        {0, 0, 0}, /*54 DownlinkRIMInformationTransfer*/
+        {0, 0, 0}, /*55 RetrieveUEInformation*/
+        {0, 0, 0}, /*56 UEInformationTransfer*/
+        {0, 0, 0}, /*57 RANCPRelocationIndication*/
+        {0, 0, 0}, /*58 UEContextResume*/
+        {0, 0, 0}, /*59 UEContextSuspend*/
+        {0, 0, 0}, /*60 UERadioCapabilityIDMapping*/
+        {0, 0, 0}, /*61 HandoverSuccess*/
+        {0, 0, 0}, /*62 UplinkRANEarlyStatusTransfer*/
+        {0, 0, 0}, /*63 DownlinkRANEarlyStatusTransfer*/
+        {0, 0, 0}, /*64 AMFCPRelocationIndication*/
+        {0, 0, 0}  /*65 ConnectionEstablishmentIndication*/
 };
 
 //------------------------------------------------------------------------------
