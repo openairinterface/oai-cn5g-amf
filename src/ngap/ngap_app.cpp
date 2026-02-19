@@ -67,7 +67,8 @@ void ngap_app::handle_receive(
 
   if (dec_ret.code != RC_OK) {
     Logger::ngap().error("Decode NGAP message failed");
-    if (ngap_msg_pdu) ASN_STRUCT_FREE(asn_DEF_Ngap_NGAP_PDU, ngap_msg_pdu);
+    if (ngap_msg_pdu)
+      ASN_STRUCT_FREE_CONTENTS_ONLY(asn_DEF_Ngap_NGAP_PDU, ngap_msg_pdu);
     return;
   }
 
@@ -78,7 +79,8 @@ void ngap_app::handle_receive(
         "Invalid procedure code %d or present %d",
         ngap_msg_pdu->choice.initiatingMessage->procedureCode,
         ngap_msg_pdu->present);
-    if (ngap_msg_pdu) ASN_STRUCT_FREE(asn_DEF_Ngap_NGAP_PDU, ngap_msg_pdu);
+    if (ngap_msg_pdu)
+      ASN_STRUCT_FREE_CONTENTS_ONLY(asn_DEF_Ngap_NGAP_PDU, ngap_msg_pdu);
     return;
   }
 
@@ -95,7 +97,8 @@ void ngap_app::handle_receive(
         "No handler available for procedure code %d and present %d",
         ngap_msg_pdu->choice.initiatingMessage->procedureCode,
         ngap_msg_pdu->present);
-    if (ngap_msg_pdu) ASN_STRUCT_FREE(asn_DEF_Ngap_NGAP_PDU, ngap_msg_pdu);
+    if (ngap_msg_pdu)
+      ASN_STRUCT_FREE_CONTENTS_ONLY(asn_DEF_Ngap_NGAP_PDU, ngap_msg_pdu);
     return;
   }
 
