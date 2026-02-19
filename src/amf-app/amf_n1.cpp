@@ -4124,7 +4124,6 @@ void amf_n1::ul_nas_transport_handle(
         itti_msg->dnn            = bstrcpy(dnn);
         itti_msg->sm_msg         = bstrcpy(sm_msg);
         itti_msg->snssai.sst     = snssai.sst;
-        itti_msg->snssai.sd      = snssai.sd;
         itti_msg->plmn.mnc       = plmn.mnc;
         itti_msg->plmn.mcc       = plmn.mcc;
 
