@@ -115,7 +115,6 @@ amf:
                                # set it to "yes" to use with the minimalist deployment scenario (including only AMF/SMF and UPF) by using the internal AUSF/UDM implemented inside AMF. 
                                # There's no NRF in this scenario, SMF info is taken from "nfs" section.
     enable_nssf: no
-    enable_smf_selection: yes
   relative_capacity: 30
   statistics_timer_interval: 20  #in seconds
   emergency_support: false
