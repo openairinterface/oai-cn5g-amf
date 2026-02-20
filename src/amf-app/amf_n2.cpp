@@ -1075,7 +1075,7 @@ void amf_n2::handle_itti_message(
   // Mobility Restriction List
   oai::ngap::PlmnId plmn_id = {};
   plmn_id.set(amf_cfg->guami.mcc, amf_cfg->guami.mnc);
-  msg->setMobilityRestrictionList(plmn_id);
+  // msg->setMobilityRestrictionList(plmn_id);
 
   // IMEISV
   if (nc->imeisv.has_value()) {
