@@ -3224,10 +3224,14 @@ void amf_n1::security_mode_complete_handle(
 
   // Step 14a. Figure 4.2.2.2.2-1: Registration procedure@3GPP TS 23.502
   // AMF registers with the UDM using Nudm_UECM_Registration for 3GPP Access
-  amf_app_inst->register_3gpp_access(uc);
+  // TODO: temporarily comment out
+  // should add a new flag in conf file to enable this
+  // amf_app_inst->register_3gpp_access(uc);
 
   // Step 14b. Figure 4.2.2.2.2-1: Registration procedure@3GPP TS 23.502
   // Retrieving the Access and Mobility Subscription data from UDM
+  // TODO:
+  /*
   if (amf_cfg->support_features
           .enable_access_and_mobility_subscription_data_retrieval)
     amf_app_inst->get_access_and_mobility_subscription_data(uc);
@@ -3242,14 +3246,15 @@ void amf_n1::security_mode_complete_handle(
   // Retrieving UE context in SMF data
   if (amf_cfg->support_features.enable_ue_context_in_smf_data_retrieval)
     amf_app_inst->get_ue_context_in_smf_data(uc);
-
+*/
   // TODO: Step 14b. Retrieve the LCS mobile origination
 
   // Step 15: PCF discovery and selection
   amf_app_inst->discover_pcf(uc);
 
   // Step 16: Perform an AM Policy Association Establishment/Modification
-  amf_app_inst->perform_am_policy_association(uc);
+  // TODO: comment out temporarily
+  // amf_app_inst->perform_am_policy_association(uc);
 
   // Process Uplink Data Status / PDU Session status
   uint16_t uplink_data_status              = 0x0000;
