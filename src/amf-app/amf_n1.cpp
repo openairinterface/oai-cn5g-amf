@@ -4127,6 +4127,10 @@ void amf_n1::ul_nas_transport_handle(
         itti_msg->plmn.mnc       = plmn.mnc;
         itti_msg->plmn.mcc       = plmn.mcc;
 
+        // Convert SD to hex string format
+        if (snssai.length == SST_LENGTH) {
+          snssai.sd = SD_NO_VALUE;
+        }
         ngap_utils::sd_int_to_string_hex(snssai.sd, itti_msg->snssai.sd);
 
         int ret = itti_inst->send_msg(itti_msg);
