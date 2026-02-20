@@ -61,14 +61,18 @@ void ngap_app::handle_receive(
 
   Ngap_NGAP_PDU_t* ngap_msg_pdu =
       (Ngap_NGAP_PDU_t*) calloc(1, sizeof(Ngap_NGAP_PDU_t));
+  if (!ngap_msg_pdu) {
+    Logger::ngap().error("Failed to allocate memory for NGAP PDU");
+    return;
+  }
+
   asn_dec_rval_t dec_ret = aper_decode(
       NULL, &asn_DEF_Ngap_NGAP_PDU, (void**) &ngap_msg_pdu, bdata(payload),
       blength(payload), 0, 0);
 
   if (dec_ret.code != RC_OK) {
     Logger::ngap().error("Decode NGAP message failed");
-    if (ngap_msg_pdu)
-      ASN_STRUCT_FREE_CONTENTS_ONLY(asn_DEF_Ngap_NGAP_PDU, ngap_msg_pdu);
+    ASN_STRUCT_FREE(asn_DEF_Ngap_NGAP_PDU, ngap_msg_pdu);
     return;
   }
 
@@ -79,8 +83,7 @@ void ngap_app::handle_receive(
         "Invalid procedure code %d or present %d",
         ngap_msg_pdu->choice.initiatingMessage->procedureCode,
         ngap_msg_pdu->present);
-    if (ngap_msg_pdu)
-      ASN_STRUCT_FREE_CONTENTS_ONLY(asn_DEF_Ngap_NGAP_PDU, ngap_msg_pdu);
+    ASN_STRUCT_FREE(asn_DEF_Ngap_NGAP_PDU, ngap_msg_pdu);
     return;
   }
 
@@ -97,8 +100,7 @@ void ngap_app::handle_receive(
         "No handler available for procedure code %d and present %d",
         ngap_msg_pdu->choice.initiatingMessage->procedureCode,
         ngap_msg_pdu->present);
-    if (ngap_msg_pdu)
-      ASN_STRUCT_FREE_CONTENTS_ONLY(asn_DEF_Ngap_NGAP_PDU, ngap_msg_pdu);
+    ASN_STRUCT_FREE(asn_DEF_Ngap_NGAP_PDU, ngap_msg_pdu);
     return;
   }
 
@@ -106,6 +108,8 @@ void ngap_app::handle_receive(
   (*messages_callback[ngap_msg_pdu->choice.initiatingMessage->procedureCode]
                      [ngap_msg_pdu->present - 1])(
       assoc_id, stream, ngap_msg_pdu);
+  // Typically, NGAP PDU will be freed in the handler, but in case it is not,
+  // free it here to avoid memory leak
   if (ngap_msg_pdu)
     ASN_STRUCT_FREE_CONTENTS_ONLY(asn_DEF_Ngap_NGAP_PDU, ngap_msg_pdu);
 }
