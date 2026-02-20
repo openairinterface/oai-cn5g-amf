@@ -70,6 +70,16 @@ constexpr auto
 constexpr auto
     AMF_CONFIG_SUPPORT_FEATURES_ENABLE_UE_CONTEXT_IN_SMF_DATA_RETRIEVAL_LABEL =
         "Enable UE Context in SMF Data Retrieval";
+constexpr auto
+    AMF_CONFIG_SUPPORT_FEATURES_ENABLE_AMF_REGISTRATION_FOR_3GPP_ACCESS =
+        "enable_amf_registration_for_3gpp_access";
+constexpr auto
+    AMF_CONFIG_SUPPORT_FEATURES_ENABLE_AMF_REGISTRATION_FOR_3GPP_ACCESS_LABEL =
+        "Enable AMF Registration for 3GPP Access";
+constexpr auto AMF_CONFIG_SUPPORT_FEATURES_ENABLE_AM_POLICY_ASSOCIATION =
+    "enable_am_policy_association";
+constexpr auto AMF_CONFIG_SUPPORT_FEATURES_ENABLE_AM_POLICY_ASSOCIATION_LABEL =
+    "Enable AM Policy Association";
 constexpr auto AMF_CONFIG_RELATIVE_CAPACITY       = "relative_capacity";
 constexpr auto AMF_CONFIG_RELATIVE_CAPACITY_LABEL = "Relative Capacity";
 constexpr auto AMF_CONFIG_STATISTICS_TIMER_INTERVAL =
@@ -177,6 +187,8 @@ class amf_support_features : public config_type {
       m_enable_access_and_mobility_subscription_data_retrieval{};
   option_config_value m_enable_smf_selection_subscription_data_retrieval{};
   option_config_value m_enable_ue_context_in_smf_data_retrieval{};
+  option_config_value m_enable_amf_registration_for_3gpp_access{};
+  option_config_value m_enable_am_policy_association{};
 
  public:
   explicit amf_support_features();
@@ -192,6 +204,8 @@ class amf_support_features : public config_type {
   [[nodiscard]] bool
   get_option_enable_smf_selection_subscription_data_retrieval() const;
   [[nodiscard]] bool get_option_enable_ue_context_in_smf_data_retrieval() const;
+  [[nodiscard]] bool get_option_enable_amf_registration_for_3gpp_access() const;
+  [[nodiscard]] bool get_option_enable_am_policy_association() const;
 };
 
 class guami : public config_type {
@@ -301,6 +315,8 @@ typedef struct support_features_s {
   bool enable_smf_selection_subscription_data_retrieval;
   bool enable_ue_context_in_smf_data_retrieval;
   bool enable_access_and_mobility_subscription_data_retrieval;
+  bool enable_amf_registration_for_3gpp_access;
+  bool enable_am_policy_association;
 
   uint8_t http_version;
   nlohmann::json to_json() const {
@@ -316,6 +332,10 @@ typedef struct support_features_s {
         this->enable_ue_context_in_smf_data_retrieval;
     json_data["enable_access_and_mobility_subscription_data_retrieval"] =
         this->enable_access_and_mobility_subscription_data_retrieval;
+    json_data["enable_amf_registration_for_3gpp_access"] =
+        this->enable_amf_registration_for_3gpp_access;
+    json_data["enable_am_policy_association"] =
+        this->enable_am_policy_association;
     json_data["http_version"] = this->http_version;
     return json_data;
   }
@@ -356,6 +376,15 @@ typedef struct support_features_s {
         this->enable_access_and_mobility_subscription_data_retrieval =
             json_data["enable_access_and_mobility_subscription_data_retrieval"]
                 .get<bool>();
+      }
+      if (json_data.find("enable_amf_registration_for_3gpp_access") !=
+          json_data.end()) {
+        this->enable_amf_registration_for_3gpp_access =
+            json_data["enable_amf_registration_for_3gpp_access"].get<bool>();
+      }
+      if (json_data.find("enable_am_policy_association") != json_data.end()) {
+        this->enable_am_policy_association =
+            json_data["enable_am_policy_association"].get<bool>();
       }
       if (json_data.find("http_version") != json_data.end()) {
         this->http_version = json_data["http_version"].get<int>();

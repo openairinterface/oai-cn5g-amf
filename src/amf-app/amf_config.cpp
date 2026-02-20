@@ -62,6 +62,14 @@ void amf_support_features::from_yaml(const YAML::Node& node) {
     m_enable_ue_context_in_smf_data_retrieval.from_yaml(
         node[AMF_CONFIG_SUPPORT_FEATURES_ENABLE_UE_CONTEXT_IN_SMF_DATA_RETRIEVAL]);
   }
+  if (node[AMF_CONFIG_SUPPORT_FEATURES_ENABLE_AMF_REGISTRATION_FOR_3GPP_ACCESS]) {
+    m_enable_amf_registration_for_3gpp_access.from_yaml(
+        node[AMF_CONFIG_SUPPORT_FEATURES_ENABLE_AMF_REGISTRATION_FOR_3GPP_ACCESS]);
+  }
+  if (node[AMF_CONFIG_SUPPORT_FEATURES_ENABLE_AM_POLICY_ASSOCIATION]) {
+    m_enable_am_policy_association.from_yaml(
+        node[AMF_CONFIG_SUPPORT_FEATURES_ENABLE_AM_POLICY_ASSOCIATION]);
+  }
 }
 
 //------------------------------------------------------------------------------
@@ -121,6 +129,23 @@ std::string amf_support_features::to_string(const std::string& indent) const {
       AMF_CONFIG_SUPPORT_FEATURES_ENABLE_UE_CONTEXT_IN_SMF_DATA_RETRIEVAL_LABEL,
       inner_width, enable_ue_context_in_smf_data_retrieval_string));
 
+  std::string enable_amf_registration_for_3gpp_access_string =
+      m_enable_amf_registration_for_3gpp_access.get_value() ?
+          AMF_CONFIG_OPTION_YES_STR :
+          AMF_CONFIG_OPTION_NO_STR;
+  out.append(indent).append(fmt::format(
+      BASE_FORMATTER, INNER_LIST_ELEM,
+      AMF_CONFIG_SUPPORT_FEATURES_ENABLE_AMF_REGISTRATION_FOR_3GPP_ACCESS_LABEL,
+      inner_width, enable_amf_registration_for_3gpp_access_string));
+
+  std::string enable_am_policy_association_string =
+      m_enable_am_policy_association.get_value() ? AMF_CONFIG_OPTION_YES_STR :
+                                                   AMF_CONFIG_OPTION_NO_STR;
+  out.append(indent).append(fmt::format(
+      BASE_FORMATTER, INNER_LIST_ELEM,
+      AMF_CONFIG_SUPPORT_FEATURES_ENABLE_AM_POLICY_ASSOCIATION_LABEL,
+      inner_width, enable_am_policy_association_string));
+
   return out;
 }
 
@@ -155,6 +180,17 @@ bool amf_support_features::
 bool amf_support_features::get_option_enable_ue_context_in_smf_data_retrieval()
     const {
   return m_enable_ue_context_in_smf_data_retrieval.get_value();
+}
+
+//------------------------------------------------------------------------------
+bool amf_support_features::get_option_enable_amf_registration_for_3gpp_access()
+    const {
+  return m_enable_amf_registration_for_3gpp_access.get_value();
+}
+
+//------------------------------------------------------------------------------
+bool amf_support_features::get_option_enable_am_policy_association() const {
+  return m_enable_am_policy_association.get_value();
 }
 
 //------------------------------------------------------------------------------
@@ -958,6 +994,8 @@ amf_config::amf_config(
       false;
   support_features.enable_smf_selection_subscription_data_retrieval = false;
   support_features.enable_ue_context_in_smf_data_retrieval          = false;
+  support_features.enable_amf_registration_for_3gpp_access          = false;
+  support_features.enable_am_policy_association                     = false;
   support_features.http_version = 2;  // HTTP/2 by default
   is_emergency_support          = false;
 }
@@ -1007,12 +1045,14 @@ void amf_config::pre_process() {
   if (amf_local->get_support_features().get_option_enable_simple_scenario()) {
     support_features.enable_simple_scenario = true;
     support_features.enable_nf_registration = false;
-    support_features.enable_nssf            = false;  // TODO: to be removed
+    support_features.enable_nssf            = false;
     support_features.enable_pcf             = false;
     support_features.enable_access_and_mobility_subscription_data_retrieval =
         false;
     support_features.enable_smf_selection_subscription_data_retrieval = false;
     support_features.enable_ue_context_in_smf_data_retrieval          = false;
+    support_features.enable_amf_registration_for_3gpp_access          = false;
+    support_features.enable_am_policy_association                     = false;
   } else {  // parse the other options
     support_features.enable_simple_scenario = false;
     support_features.enable_nf_registration = register_nrf();
@@ -1029,6 +1069,12 @@ void amf_config::pre_process() {
     support_features.enable_ue_context_in_smf_data_retrieval =
         amf_local->get_support_features()
             .get_option_enable_ue_context_in_smf_data_retrieval();
+    support_features.enable_amf_registration_for_3gpp_access =
+        amf_local->get_support_features()
+            .get_option_enable_amf_registration_for_3gpp_access();
+    support_features.enable_am_policy_association =
+        amf_local->get_support_features()
+            .get_option_enable_am_policy_association();
   }
 
   support_features.http_version = get_http_version();
