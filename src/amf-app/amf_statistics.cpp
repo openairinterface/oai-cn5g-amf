@@ -164,7 +164,7 @@ std::string statistics::get_ues_info() const {
   out.append(inner_indent)
       .append(ie_to_string(kStatisticsHalfIndexColLength, "Index"))
       .append(ie_to_string(kStatisticsHalfIeLengthForUe, "5GMM State"))
-      .append(ie_to_string(2 * kStatisticsHalfIeLengthForUe, "IMSI"))
+      .append(ie_to_string(2 * kStatisticsHalfIeLengthForUe, "IMSI/SUPI"))
       .append(ie_to_string(kStatisticsHalfIeLengthForUe, "GUTI"))
       .append(ie_to_string(kStatisticsHalfIeLengthForUe, "RAN UE NGAP ID"))
       .append(ie_to_string(kStatisticsHalfIeLengthForUe, "AMF UE NGAP ID"))

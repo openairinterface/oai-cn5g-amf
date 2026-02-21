@@ -5416,6 +5416,9 @@ bool amf_n1::reroute_registration_request(
   Logger::amf_n1().debug(
       "Verifying whether this AMF can handle the request...");
 
+  // TODO: disable this function for now
+  return false;
+
   /*
   // Check if the AMF can serve all the requested S-NSSAIs
   if (check_requested_nssai(nc)) {
