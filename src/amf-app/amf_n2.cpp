@@ -601,7 +601,7 @@ void amf_n2::handle_itti_message(
       itti_msg->assoc_id);
 
   // Store gNB info for statistic purpose
-  stacs.add_gnb(gc);
+  // stacs.add_gnb(gc);
 
   // TODO: Do we need to store gNB context in UDSF (if available)?
 
@@ -651,7 +651,7 @@ void amf_n2::handle_itti_message(std::shared_ptr<itti_ng_reset>& itti_msg) {
           ue_context->ran_ue_ngap_id, gc->gnb_id);
     }
 
-    stacs.display();
+    // stacs.display();
   } else if (
       reset_type.getResetType() == Ngap_ResetType_PR_partOfNG_Interface) {
     // TODO:
@@ -724,12 +724,12 @@ void amf_n2::handle_itti_message(std::shared_ptr<itti_ng_shutdown>& itti_msg) {
 
   // Delete gNB context and update statistic
   remove_gnb_context(itti_msg->assoc_id);
-  stacs.update_gnb(gc, kStatisticGnbStatusDisconnected);
+  // stacs.update_gnb(gc, kStatisticGnbStatusDisconnected);
 
   Logger::amf_n2().debug(
       "Remove gNB with association id %d, gnb_id 0x%x", itti_msg->assoc_id,
       gc->gnb_id);
-  stacs.display();
+  // stacs.display();
   return;
 }
 
@@ -2805,7 +2805,7 @@ void amf_n2::remove_ue_context_with_ran_ue_ngap_id(
   if (amf_n1_inst->amf_ue_id_2_nas_context(unc->amf_ue_ngap_id, nc)) {
     // TODO: Verify where it's current context
     // Remove all NAS context
-    stacs.update_5gmm_state(nc, _5GMM_DEREGISTERED);
+    // stacs.update_5gmm_state(nc, _5GMM_DEREGISTERED);
 
     // Trigger UE Loss of Connectivity Status Notify
     Logger::amf_n2().debug(
@@ -2886,7 +2886,7 @@ void amf_n2::remove_ue_context_with_amf_ue_ngap_id(
   if (amf_n1_inst->amf_ue_id_2_nas_context(amf_ue_ngap_id, nc)) {
     // Remove all NAS context
     // Update UE status
-    stacs.update_5gmm_state(nc, _5GMM_DEREGISTERED);
+    // stacs.update_5gmm_state(nc, _5GMM_DEREGISTERED);
 
     // Trigger UE Loss of Connectivity Status Notify
     Logger::amf_n2().debug(

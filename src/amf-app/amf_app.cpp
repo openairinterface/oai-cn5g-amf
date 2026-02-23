@@ -360,7 +360,7 @@ void amf_app_task(void*) {
               tid = itti_inst->timer_setup(
                   amf_cfg->statistics_interval, 0, TASK_AMF_APP,
                   TASK_AMF_APP_PERIODIC_STATISTICS);
-              stacs.display();
+              // stacs.display();
               break;
             case TASK_AMF_APP_TIMEOUT_NRF_HEARTBEAT:
               amf_app_inst->timer_nrf_heartbeat_timeout(

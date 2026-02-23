@@ -1456,9 +1456,9 @@ bool amf_n1::service_request_handle(
       return false;
     } else {
       // Update 5GMM State
-      stacs.update_5gmm_state(nc, _5GMM_REGISTERED);
+      // stacs.update_5gmm_state(nc, _5GMM_REGISTERED);
       set_5gmm_state(nc, _5GMM_REGISTERED);
-      stacs.display();
+      // stacs.display();
     }
     oai::utils::utils::bdestroy_wrapper(&protected_nas);
 
@@ -1556,7 +1556,7 @@ bool amf_n1::service_request_handle(
       return false;
     }
     // Update 5GMM State
-    stacs.update_5gmm_state(nc, _5GMM_REGISTERED);
+    // stacs.update_5gmm_state(nc, _5GMM_REGISTERED);
     set_5gmm_state(nc, _5GMM_REGISTERED);
 
     ue_info_t ue_item;
@@ -1616,9 +1616,9 @@ void amf_n1::send_service_reject(
         dnt->get_msg_name());
   } else {
     // Update 5GMM State
-    stacs.update_5gmm_state(nc, _5GMM_DEREGISTERED);
+    // stacs.update_5gmm_state(nc, _5GMM_DEREGISTERED);
     set_5gmm_state(nc, _5GMM_DEREGISTERED);
-    stacs.display();
+    // stacs.display();
   }
 
   return;
@@ -3461,9 +3461,9 @@ void amf_n1::security_mode_complete_handle(
       "registered to the network",
       nc->imsi.c_str(), guti.c_str(), ran_ue_ngap_id, amf_ue_ngap_id);
 
-  stacs.update_5gmm_state(nc, _5GMM_REGISTERED);
+  // stacs.update_5gmm_state(nc, _5GMM_REGISTERED);
   set_5gmm_state(nc, _5GMM_REGISTERED);
-  stacs.display();
+  // stacs.display();
 
   // Trigger UE location Status Notify
   trigger_ue_location_report(ran_ue_ngap_id, amf_ue_ngap_id);
@@ -3972,9 +3972,9 @@ void amf_n1::ue_initiate_de_registration_handle(
     usleep(200000);
   }
 
-  stacs.update_5gmm_state(nc, _5GMM_DEREGISTERED);
+  // stacs.update_5gmm_state(nc, _5GMM_DEREGISTERED);
   set_5gmm_state(nc, _5GMM_DEREGISTERED);
-  stacs.display();
+  // stacs.display();
 
   // Trigger UE Registration Status Notify
   Logger::amf_n1().debug(
@@ -4001,7 +4001,7 @@ void amf_n1::ue_initiate_de_registration_handle(
   // amf_ue_ngap_id);
 
   // Update 5GMM state
-  stacs.update_5gmm_state(nc, _5GMM_DEREGISTERED);
+  // stacs.update_5gmm_state(nc, _5GMM_DEREGISTERED);
 
   // Remove NC context
   if (remove_amf_ue_ngap_id_2_nas_context(amf_ue_ngap_id)) {
