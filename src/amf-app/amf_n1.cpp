@@ -881,7 +881,7 @@ void amf_n1::identity_response_handle(
       ue_item.cellId = uc->cgi.nrCellId;
     }
 
-    stacs.update_ue_info(ue_item);
+    // stacs.update_ue_info(ue_item);
     set_5gmm_state(nc, _5GMM_COMMON_PROCEDURE_INITIATED);
 
     Logger::amf_n1().debug(
@@ -1571,8 +1571,8 @@ bool amf_n1::service_request_handle(
     ue_item.mnc    = uc->cgi.mnc;
     ue_item.cellId = uc->cgi.nrCellId;
 
-    stacs.update_ue_info(ue_item);
-    stacs.display();
+    // stacs.update_ue_info(ue_item);
+    // stacs.display();
 
     event_sub.ue_registration_state(
         nc->supi, _5GMM_REGISTERED, amf_cfg->support_features.http_version,
@@ -1757,7 +1757,7 @@ bool amf_n1::registration_request_handle(
         ue_item.mcc    = uc->cgi.mcc;
         ue_item.mnc    = uc->cgi.mnc;
         ue_item.cellId = uc->cgi.nrCellId;
-        stacs.update_ue_info(ue_item);
+        // stacs.update_ue_info(ue_item);
 
         set_5gmm_state(nc, _5GMM_COMMON_PROCEDURE_INITIATED);
       }
@@ -1897,8 +1897,8 @@ bool amf_n1::registration_request_handle(
     ue_item.mnc    = uc->cgi.mnc;
     ue_item.cellId = uc->cgi.nrCellId;
 
-    stacs.update_ue_info(ue_item);
-    stacs.display();
+    // stacs.update_ue_info(ue_item);
+    // stacs.display();
 
     event_sub.ue_registration_state(
         nc->supi, _5GMM_REGISTERED, amf_cfg->support_features.http_version,
@@ -2672,8 +2672,8 @@ bool amf_n1::_5g_aka_confirmation_from_ausf(
           ue_item.mnc    = uc->cgi.mnc;
           ue_item.cellId = uc->cgi.nrCellId;
 
-          stacs.update_ue_info(ue_item);
-          stacs.display();
+          // stacs.update_ue_info(ue_item);
+          // stacs.display();
 
           Logger::amf_n1().debug("SUPI %s, IMSI %s", nc->supi, nc->imsi);
         }
