@@ -113,6 +113,7 @@ class nas_context {
   // parameters present
   bool is_imsi_present;
   bool is_5g_guti_present;
+  bool is_5g_suci_present;
   bool is_auth_vectors_present;
   bool to_be_register_by_new_suci;
 
