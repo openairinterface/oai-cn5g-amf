@@ -2624,8 +2624,6 @@ bool amf_n1::_5g_aka_confirmation_from_ausf(
       Logger::amf_n1().debug(
           "Got ConfirmationDataResponse from AUSF: %s",
           result[kSbiResponseJsonData].dump());
-      // Unset SUPI
-      confirmation_data_response.unsetSupi();
       try {
         from_json(result[kSbiResponseJsonData], confirmation_data_response);
         is_result_available = true;
@@ -2645,10 +2643,10 @@ bool amf_n1::_5g_aka_confirmation_from_ausf(
         oai::utils::utils::free_wrapper((void**) &kseaf_hex);
 
         std::string new_supi = confirmation_data_response.getSupi();
-        if (confirmation_data_response.supiIsSet() and !new_supi.empty()) {
+        if (confirmation_data_response.supiIsSet()) {
           // Update SUPI and context
           std::string old_supi = nc->supi;
-          if (!boost::iequals(old_supi, new_supi)) {
+          if (new_supi.compare(old_supi) != 0) {
             Logger::amf_n1().debug(
                 "Update SUPI, Old SUPI %s, new SUPI %s", old_supi, new_supi);
             nc->supi = new_supi;

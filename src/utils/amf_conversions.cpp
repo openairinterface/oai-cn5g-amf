@@ -189,8 +189,7 @@ std::string amf_conv::suci_to_supi(const oai::nas::SUCI_imsi_t& suci) {
 //------------------------------------------------------------------------------
 std::string amf_conv::imsi_to_supi(const std::string& imsi) {
   std::string supi_type = DEFAULT_SUPI_TYPE;
-  if (!supi_type.empty()) return {supi_type + "-" + imsi};
-  return imsi;
+  return {supi_type + "-" + imsi};
 }
 
 //------------------------------------------------------------------------------
