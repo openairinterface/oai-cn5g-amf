@@ -2642,7 +2642,7 @@ bool amf_n1::_5g_aka_confirmation_from_ausf(
             AUTH_VECTOR_LENGTH_OCTETS);
         oai::utils::utils::free_wrapper((void**) &kseaf_hex);
 
-        if (confirmation_data_response.supiIsSet()) {
+        if (false) {
           Logger::amf_n1().debug("SUPI %s", nc->supi);
           // Update SUPI and context
           std::string old_supi = nc->supi;
