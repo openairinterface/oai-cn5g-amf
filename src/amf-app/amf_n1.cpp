@@ -2646,7 +2646,6 @@ bool amf_n1::_5g_aka_confirmation_from_ausf(
 
         std::string new_supi = confirmation_data_response.getSupi();
         if (confirmation_data_response.supiIsSet() and !new_supi.empty()) {
-          Logger::amf_n1().debug("SUPI %s", nc->supi);
           // Update SUPI and context
           std::string old_supi = nc->supi;
           if (!boost::iequals(old_supi, new_supi)) {
@@ -2661,25 +2660,26 @@ bool amf_n1::_5g_aka_confirmation_from_ausf(
               amf_app_inst->set_supi_2_ue_context(nc->supi, uc);
               set_supi_2_amf_id(nc->supi, uc->amf_ue_ngap_id);
               set_supi_2_ran_id(nc->supi, uc->ran_ue_ngap_id);
+
+              // Update UE statistics
+              ue_info_t ue_item;
+              ue_item.cm_status       = CM_CONNECTED;
+              ue_item.register_status = _5GMM_REGISTERED;
+              ue_item.ranid           = uc->ran_ue_ngap_id;
+              ue_item.amfid           = uc->amf_ue_ngap_id;
+              ue_item.imsi            = nc->imsi;
+              ue_item.supi            = old_supi;
+              if (nc->guti.has_value()) ue_item.guti = nc->guti.value();
+              ue_item.mcc    = uc->cgi.mcc;
+              ue_item.mnc    = uc->cgi.mnc;
+              ue_item.cellId = uc->cgi.nrCellId;
+
+              stacs.update_ue_info(ue_item);
+              stacs.display();
             }
-
-            // Update UE statistics
-            ue_info_t ue_item;
-            ue_item.cm_status       = CM_CONNECTED;
-            ue_item.register_status = _5GMM_REGISTERED;
-            ue_item.ranid           = uc->ran_ue_ngap_id;
-            ue_item.amfid           = uc->amf_ue_ngap_id;
-            ue_item.imsi            = nc->imsi;
-            ue_item.supi            = old_supi;
-            if (nc->guti.has_value()) ue_item.guti = nc->guti.value();
-            ue_item.mcc    = uc->cgi.mcc;
-            ue_item.mnc    = uc->cgi.mnc;
-            ue_item.cellId = uc->cgi.nrCellId;
-
-            stacs.update_ue_info(ue_item);
-            stacs.display();
           }
 
+          Logger::amf_n1().debug("Old SUPI %s", old_supi);
           Logger::amf_n1().debug("SUPI %s, IMSI %s", nc->supi, nc->imsi);
         }
 
