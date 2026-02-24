@@ -2624,6 +2624,8 @@ bool amf_n1::_5g_aka_confirmation_from_ausf(
       Logger::amf_n1().debug(
           "Got ConfirmationDataResponse from AUSF: %s",
           result[kSbiResponseJsonData].dump());
+      // Unset SUPI
+      confirmation_data_response.unsetSupi();
       try {
         from_json(result[kSbiResponseJsonData], confirmation_data_response);
         is_result_available = true;
@@ -2642,13 +2644,14 @@ bool amf_n1::_5g_aka_confirmation_from_ausf(
             AUTH_VECTOR_LENGTH_OCTETS);
         oai::utils::utils::free_wrapper((void**) &kseaf_hex);
 
-        if (false) {
+        std::string new_supi = confirmation_data_response.getSupi();
+        if (confirmation_data_response.supiIsSet() and !new_supi.empty()) {
           Logger::amf_n1().debug("SUPI %s", nc->supi);
           // Update SUPI and context
           std::string old_supi = nc->supi;
-          nc->supi             = confirmation_data_response.getSupi();
-          nc->imsi             = amf_conv::supi_to_imsi(nc->supi);
-          if (!boost::iequals(old_supi, nc->supi)) {
+          if (!boost::iequals(old_supi, new_supi)) {
+            nc->supi = new_supi;
+            nc->imsi = amf_conv::supi_to_imsi(new_supi);
             set_supi_2_nas_context(nc->supi, nc);
 
             // Update UE CONTEXT if necessary
