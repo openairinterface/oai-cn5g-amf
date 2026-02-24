@@ -2649,6 +2649,8 @@ bool amf_n1::_5g_aka_confirmation_from_ausf(
           // Update SUPI and context
           std::string old_supi = nc->supi;
           if (!boost::iequals(old_supi, new_supi)) {
+            Logger::amf_n1().debug(
+                "Update SUPI, Old SUPI %s, new SUPI %s", old_supi, new_supi);
             nc->supi = new_supi;
             nc->imsi = amf_conv::supi_to_imsi(new_supi);
             set_supi_2_nas_context(nc->supi, nc);
@@ -2858,7 +2860,6 @@ void amf_n1::authentication_response_handle(
         "Cannot receive AuthenticationResponseParameter (RES*)");
   } else {
     if (!amf_cfg->support_features.enable_simple_scenario) {
-      // std::string data = bdata(resStar);
       if (!_5g_aka_confirmation_from_ausf(nc, resStar)) isAuthOk = false;
     } else {
       // Get stored XRES*
