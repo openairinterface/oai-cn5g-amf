@@ -3050,27 +3050,25 @@ bool amf_n1::start_security_mode_control_procedure(
         "Using IntegrityProtectedWithNewSecurityContext for "
         "SecurityModeControl "
         "message");
-    nas_secu_ctx security_ctx_value      = nc->security_ctx.value();
-    security_ctx_value.ngksi             = nc->ngksi;
-    security_ctx_value.dl_count.overflow = 0;
-    security_ctx_value.dl_count.seq_num  = 0;
-    security_ctx_value.ul_count.overflow = 0;
-    security_ctx_value.ul_count.seq_num  = 0;
+    nc->security_ctx.value().ngksi             = nc->ngksi;
+    nc->security_ctx.value().dl_count.overflow = 0;
+    nc->security_ctx.value().dl_count.seq_num  = 0;
+    nc->security_ctx.value().ul_count.overflow = 0;
+    nc->security_ctx.value().ul_count.seq_num  = 0;
     security_select_algorithms(
         nc->ue_security_capability.GetEa(), nc->ue_security_capability.GetIa(),
         amf_nea, amf_nia);
-    security_ctx_value.nas_algs.integrity  = amf_nia;
-    security_ctx_value.nas_algs.encryption = amf_nea;
-    security_ctx_value.sc_type             = SECURITY_CTX_TYPE_FULL_NATIVE;
+    nc->security_ctx.value().nas_algs.integrity  = amf_nia;
+    nc->security_ctx.value().nas_algs.encryption = amf_nea;
+    nc->security_ctx.value().sc_type = SECURITY_CTX_TYPE_FULL_NATIVE;
     Authentication_5gaka::derive_knas(
-        NAS_INT_ALG, security_ctx_value.nas_algs.integrity,
-        nc->kamf[security_ctx_value.vector_pointer],
-        security_ctx_value.knas_int);
+        NAS_INT_ALG, nc->security_ctx.value().nas_algs.integrity,
+        nc->kamf[nc->security_ctx.value().vector_pointer],
+        nc->security_ctx.value().knas_int);
     Authentication_5gaka::derive_knas(
-        NAS_ENC_ALG, security_ctx_value.nas_algs.encryption,
-        nc->kamf[security_ctx_value.vector_pointer],
-        security_ctx_value.knas_enc);
-    nc->security_ctx = std::make_optional<nas_secu_ctx>(security_ctx_value);
+        NAS_ENC_ALG, nc->security_ctx.value().nas_algs.encryption,
+        nc->kamf[nc->security_ctx.value().vector_pointer],
+        nc->security_ctx.value().knas_enc);
     security_context_is_new           = true;
     nc->is_current_security_available = true;
   }
