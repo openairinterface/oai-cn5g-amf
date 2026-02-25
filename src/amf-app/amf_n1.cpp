@@ -3247,7 +3247,8 @@ void amf_n1::security_mode_complete_handle(
 
   // Step 14a. Figure 4.2.2.2.2-1: Registration procedure@3GPP TS 23.502
   // AMF registers with the UDM using Nudm_UECM_Registration for 3GPP Access
-  amf_app_inst->register_3gpp_access(uc);
+  // TODO: Disable temprarily
+  // amf_app_inst->register_3gpp_access(uc);
 
   // Step 14b. Figure 4.2.2.2.2-1: Registration procedure@3GPP TS 23.502
   // Retrieving the Access and Mobility Subscription data from UDM
