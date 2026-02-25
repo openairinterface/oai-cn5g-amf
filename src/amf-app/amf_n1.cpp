@@ -3273,7 +3273,8 @@ void amf_n1::security_mode_complete_handle(
   amf_app_inst->discover_pcf(uc);
 
   // Step 16: Perform an AM Policy Association Establishment/Modification
-  amf_app_inst->perform_am_policy_association(uc);
+  // TODO:Disable temprarily
+  // amf_app_inst->perform_am_policy_association(uc);
 
   // Process Uplink Data Status / PDU Session status
   uint16_t uplink_data_status              = 0x0000;
