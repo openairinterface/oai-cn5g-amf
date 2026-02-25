@@ -3070,7 +3070,7 @@ bool amf_n1::start_security_mode_control_procedure(
         NAS_ENC_ALG, security_ctx_value.nas_algs.encryption,
         nc->kamf[security_ctx_value.vector_pointer],
         security_ctx_value.knas_enc);
-    nc->security_ctx = std : make_optional<nas_secu_ctx>(security_ctx_value);
+    nc->security_ctx = std::make_optional<nas_secu_ctx>(security_ctx_value);
     security_context_is_new           = true;
     nc->is_current_security_available = true;
   }
