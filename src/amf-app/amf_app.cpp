@@ -360,7 +360,7 @@ void amf_app_task(void*) {
               tid = itti_inst->timer_setup(
                   amf_cfg->statistics_interval, 0, TASK_AMF_APP,
                   TASK_AMF_APP_PERIODIC_STATISTICS);
-              // stacs.display();
+              stacs.display();
               break;
             case TASK_AMF_APP_TIMEOUT_NRF_HEARTBEAT:
               amf_app_inst->timer_nrf_heartbeat_timeout(
@@ -439,11 +439,11 @@ bool amf_app::supi_2_ue_context(
     const std::string& supi, std::shared_ptr<ue_context>& uc) const {
   std::shared_lock lock(m_supi2ue_ctx);
   if (supi2ue_ctx.count(supi) > 0) {
-    if (supi2ue_ctx.at(supi) == nullptr) {
+    uc = supi2ue_ctx.at(supi);
+    if (uc == nullptr) {
       Logger::amf_app().warn("No UE context with UE SUPI %s", supi.c_str());
       return false;
     }
-    uc = supi2ue_ctx.at(supi);
     return true;
   }
   Logger::amf_app().warn("No UE context with UE SUPI %s", supi.c_str());

@@ -881,7 +881,7 @@ void amf_n1::identity_response_handle(
       ue_item.cellId = uc->cgi.nrCellId;
     }
 
-    // stacs.update_ue_info(ue_item);
+    stacs.update_ue_info(ue_item);
     set_5gmm_state(nc, _5GMM_COMMON_PROCEDURE_INITIATED);
 
     Logger::amf_n1().debug(
@@ -1456,9 +1456,9 @@ bool amf_n1::service_request_handle(
       return false;
     } else {
       // Update 5GMM State
-      // stacs.update_5gmm_state(nc, _5GMM_REGISTERED);
+      stacs.update_5gmm_state(nc, _5GMM_REGISTERED);
       set_5gmm_state(nc, _5GMM_REGISTERED);
-      // stacs.display();
+      stacs.display();
     }
     oai::utils::utils::bdestroy_wrapper(&protected_nas);
 
@@ -1556,7 +1556,7 @@ bool amf_n1::service_request_handle(
       return false;
     }
     // Update 5GMM State
-    // stacs.update_5gmm_state(nc, _5GMM_REGISTERED);
+    stacs.update_5gmm_state(nc, _5GMM_REGISTERED);
     set_5gmm_state(nc, _5GMM_REGISTERED);
 
     ue_info_t ue_item;
@@ -1571,8 +1571,8 @@ bool amf_n1::service_request_handle(
     ue_item.mnc    = uc->cgi.mnc;
     ue_item.cellId = uc->cgi.nrCellId;
 
-    // stacs.update_ue_info(ue_item);
-    // stacs.display();
+    stacs.update_ue_info(ue_item);
+    stacs.display();
 
     event_sub.ue_registration_state(
         nc->supi, _5GMM_REGISTERED, amf_cfg->support_features.http_version,
@@ -1616,9 +1616,9 @@ void amf_n1::send_service_reject(
         dnt->get_msg_name());
   } else {
     // Update 5GMM State
-    // stacs.update_5gmm_state(nc, _5GMM_DEREGISTERED);
+    stacs.update_5gmm_state(nc, _5GMM_DEREGISTERED);
     set_5gmm_state(nc, _5GMM_DEREGISTERED);
-    // stacs.display();
+    stacs.display();
   }
 
   return;
@@ -1757,7 +1757,7 @@ bool amf_n1::registration_request_handle(
         ue_item.mcc    = uc->cgi.mcc;
         ue_item.mnc    = uc->cgi.mnc;
         ue_item.cellId = uc->cgi.nrCellId;
-        // stacs.update_ue_info(ue_item);
+        stacs.update_ue_info(ue_item);
 
         set_5gmm_state(nc, _5GMM_COMMON_PROCEDURE_INITIATED);
       }
@@ -1897,8 +1897,8 @@ bool amf_n1::registration_request_handle(
     ue_item.mnc    = uc->cgi.mnc;
     ue_item.cellId = uc->cgi.nrCellId;
 
-    // stacs.update_ue_info(ue_item);
-    // stacs.display();
+    stacs.update_ue_info(ue_item);
+    stacs.display();
 
     event_sub.ue_registration_state(
         nc->supi, _5GMM_REGISTERED, amf_cfg->support_features.http_version,
@@ -2642,39 +2642,44 @@ bool amf_n1::_5g_aka_confirmation_from_ausf(
             AUTH_VECTOR_LENGTH_OCTETS);
         oai::utils::utils::free_wrapper((void**) &kseaf_hex);
 
+        std::string new_supi = confirmation_data_response.getSupi();
         if (confirmation_data_response.supiIsSet()) {
-          Logger::amf_n1().debug("SUCI %s", nc->supi);
           // Update SUPI and context
           std::string old_supi = nc->supi;
-          nc->supi             = confirmation_data_response.getSupi();
-          set_supi_2_nas_context(nc->supi, nc);
-          nc->imsi = amf_conv::supi_to_imsi(nc->supi);
+          if (new_supi.compare(old_supi) != 0) {
+            Logger::amf_n1().debug(
+                "Update SUPI, Old SUPI %s, new SUPI %s", old_supi, new_supi);
+            nc->supi = new_supi;
+            nc->imsi = amf_conv::supi_to_imsi(new_supi);
+            set_supi_2_nas_context(nc->supi, nc);
 
-          // Update UE CONTEXT if necessary
-          std::shared_ptr<ue_context> uc = {};
-          if (amf_app_inst->supi_2_ue_context(old_supi, uc)) {
-            uc->supi = nc->supi;
-            amf_app_inst->set_supi_2_ue_context(nc->supi, uc);
-            set_supi_2_amf_id(nc->supi, uc->amf_ue_ngap_id);
-            set_supi_2_ran_id(nc->supi, uc->ran_ue_ngap_id);
+            // Update UE CONTEXT if necessary
+            std::shared_ptr<ue_context> uc = {};
+            if (amf_app_inst->supi_2_ue_context(old_supi, uc)) {
+              uc->supi = nc->supi;
+              amf_app_inst->set_supi_2_ue_context(nc->supi, uc);
+              set_supi_2_amf_id(nc->supi, uc->amf_ue_ngap_id);
+              set_supi_2_ran_id(nc->supi, uc->ran_ue_ngap_id);
+
+              // Update UE statistics
+              ue_info_t ue_item;
+              ue_item.cm_status       = CM_CONNECTED;
+              ue_item.register_status = _5GMM_REGISTERED;
+              ue_item.ranid           = uc->ran_ue_ngap_id;
+              ue_item.amfid           = uc->amf_ue_ngap_id;
+              ue_item.imsi            = nc->imsi;
+              ue_item.supi            = old_supi;
+              if (nc->guti.has_value()) ue_item.guti = nc->guti.value();
+              ue_item.mcc    = uc->cgi.mcc;
+              ue_item.mnc    = uc->cgi.mnc;
+              ue_item.cellId = uc->cgi.nrCellId;
+
+              stacs.update_ue_info(ue_item);
+              stacs.display();
+            }
           }
 
-          // Update UE statistics
-          ue_info_t ue_item;
-          ue_item.cm_status       = CM_CONNECTED;
-          ue_item.register_status = _5GMM_REGISTERED;
-          ue_item.ranid           = uc->ran_ue_ngap_id;
-          ue_item.amfid           = uc->amf_ue_ngap_id;
-          ue_item.imsi            = nc->imsi;
-          ue_item.supi            = old_supi;
-          if (nc->guti.has_value()) ue_item.guti = nc->guti.value();
-          ue_item.mcc    = uc->cgi.mcc;
-          ue_item.mnc    = uc->cgi.mnc;
-          ue_item.cellId = uc->cgi.nrCellId;
-
-          // stacs.update_ue_info(ue_item);
-          // stacs.display();
-
+          Logger::amf_n1().debug("Old SUPI %s", old_supi);
           Logger::amf_n1().debug("SUPI %s, IMSI %s", nc->supi, nc->imsi);
         }
 
@@ -2853,7 +2858,6 @@ void amf_n1::authentication_response_handle(
         "Cannot receive AuthenticationResponseParameter (RES*)");
   } else {
     if (!amf_cfg->support_features.enable_simple_scenario) {
-      // std::string data = bdata(resStar);
       if (!_5g_aka_confirmation_from_ausf(nc, resStar)) isAuthOk = false;
     } else {
       // Get stored XRES*
@@ -3461,9 +3465,9 @@ void amf_n1::security_mode_complete_handle(
       "registered to the network",
       nc->imsi.c_str(), guti.c_str(), ran_ue_ngap_id, amf_ue_ngap_id);
 
-  // stacs.update_5gmm_state(nc, _5GMM_REGISTERED);
+  stacs.update_5gmm_state(nc, _5GMM_REGISTERED);
   set_5gmm_state(nc, _5GMM_REGISTERED);
-  // stacs.display();
+  stacs.display();
 
   // Trigger UE location Status Notify
   trigger_ue_location_report(ran_ue_ngap_id, amf_ue_ngap_id);
@@ -3972,9 +3976,9 @@ void amf_n1::ue_initiate_de_registration_handle(
     usleep(200000);
   }
 
-  // stacs.update_5gmm_state(nc, _5GMM_DEREGISTERED);
+  stacs.update_5gmm_state(nc, _5GMM_DEREGISTERED);
   set_5gmm_state(nc, _5GMM_DEREGISTERED);
-  // stacs.display();
+  stacs.display();
 
   // Trigger UE Registration Status Notify
   Logger::amf_n1().debug(
@@ -4001,7 +4005,7 @@ void amf_n1::ue_initiate_de_registration_handle(
   // amf_ue_ngap_id);
 
   // Update 5GMM state
-  // stacs.update_5gmm_state(nc, _5GMM_DEREGISTERED);
+  stacs.update_5gmm_state(nc, _5GMM_DEREGISTERED);
 
   // Remove NC context
   if (remove_amf_ue_ngap_id_2_nas_context(amf_ue_ngap_id)) {
@@ -5415,9 +5419,6 @@ bool amf_n1::reroute_registration_request(
 
   Logger::amf_n1().debug(
       "Verifying whether this AMF can handle the request...");
-
-  // TODO: disable this function for now
-  return false;
 
   /*
   // Check if the AMF can serve all the requested S-NSSAIs
