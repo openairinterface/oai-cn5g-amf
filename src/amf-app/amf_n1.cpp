@@ -2625,27 +2625,27 @@ bool amf_n1::_5g_aka_confirmation_from_ausf(
           "Got ConfirmationDataResponse from AUSF: %s",
           result[kSbiResponseJsonData].dump());
       try {
-        from_json(result[kSbiResponseJsonData], confirmation_data_response);
+        // from_json(result[kSbiResponseJsonData], confirmation_data_response);
         is_result_available = true;
 
-        if (confirmation_data_response.getAuthResult().getValue() !=
-            AuthResult::eAuthResult::AUTHENTICATION_SUCCESS) {
+        if ((result[kSbiResponseJsonData]["authResult"].get<std::string>())
+                .compare("AUTHENTICATION_SUCCESS") != 0) {
           return false;
         }
 
-        if (!confirmation_data_response.kseafIsSet()) return false;
         unsigned char* kseaf_hex = amf_conv::format_string_as_hex(
-            confirmation_data_response.getKseaf());
+            result[kSbiResponseJsonData]["kseaf"].get<std::string>());
+
         memcpy(nc->_5g_av[0].kseaf, kseaf_hex, AUTH_VECTOR_LENGTH_OCTETS);
         oai::utils::output_wrapper::print_buffer(
             "amf_n1", "5G AV: kseaf", nc->_5g_av[0].kseaf,
             AUTH_VECTOR_LENGTH_OCTETS);
         oai::utils::utils::free_wrapper((void**) &kseaf_hex);
 
-        std::string new_supi = confirmation_data_response.getSupi();
-        confirmation_data_response
-            .unsetSupi();  // TODO: for testing purpose, remove it later
-        if (confirmation_data_response.supiIsSet()) {
+        std::string new_supi =
+            result[kSbiResponseJsonData]["supi"].get<std::string>();
+
+        if (!new_supi.empty()) {
           // Update SUPI and context
           std::string old_supi = nc->supi;
           if (new_supi.compare(old_supi) != 0) {
