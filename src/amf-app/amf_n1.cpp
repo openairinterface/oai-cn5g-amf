@@ -2413,7 +2413,7 @@ bool amf_n1::get_authentication_vectors_from_ausf(
   Logger::amf_n1().debug("Get Authentication Vectors from AUSF");
   // TODO: remove naked ptr
 
-  UEAuthenticationCtx ue_authentication_ctx    = {};
+  // UEAuthenticationCtx ue_authentication_ctx    = {};
   AuthenticationInfo authentication_info       = {};
   ResynchronizationInfo resynchronization_info = {};
 
@@ -2489,8 +2489,71 @@ bool amf_n1::get_authentication_vectors_from_ausf(
       Logger::amf_n1().debug(
           "Got UE Authentication from AUSF: %s",
           result[kSbiResponseJsonData].dump());
+      auto ue_authentication_ctx_json = result[kSbiResponseJsonData];
       try {
-        from_json(result[kSbiResponseJsonData], ue_authentication_ctx);
+        // Process the response
+        unsigned char* r5g_auth_data_rand = amf_conv::format_string_as_hex(
+            (ue_authentication_ctx_json["5gAuthData"]["rand"])
+                .get<std::string>());
+        memcpy(nc->_5g_av[0].rand, r5g_auth_data_rand, RAND_LENGTH_OCTETS);
+        rand_record[nc->supi] =
+            (ue_authentication_ctx_json["5gAuthData"]["rand"])
+                .get<std::string>();
+
+        oai::utils::output_wrapper::print_buffer(
+            "amf_n1", "5G AV: RAND", nc->_5g_av[0].rand, RAND_LENGTH_OCTETS);
+        oai::utils::utils::free_wrapper((void**) &r5g_auth_data_rand);
+
+        unsigned char* r5g_auth_data_autn = amf_conv::format_string_as_hex(
+            (ue_authentication_ctx_json["5gAuthData"]["autn"])
+                .get<std::string>());
+
+        memcpy(nc->_5g_av[0].autn, r5g_auth_data_autn, AUTN_LENGTH_OCTETS);
+        oai::utils::output_wrapper::print_buffer(
+            "amf_n1", "5G AV: AUTN", nc->_5g_av[0].autn, AUTN_LENGTH_OCTETS);
+        oai::utils::utils::free_wrapper((void**) &r5g_auth_data_autn);
+
+        unsigned char* r5g_auth_data_hxresstar = amf_conv::format_string_as_hex(
+            (ue_authentication_ctx_json["5gAuthData"]["hxresStar"])
+                .get<std::string>());
+        memcpy(
+            nc->_5g_av[0].hxresStar, r5g_auth_data_hxresstar,
+            HXRES_LENGTH_OCTETS);
+        oai::utils::output_wrapper::print_buffer(
+            "amf_n1", "5G AV: hxres*", nc->_5g_av[0].hxresStar,
+            HXRES_LENGTH_OCTETS);
+        oai::utils::utils::free_wrapper((void**) &r5g_auth_data_hxresstar);
+        /*
+                std::map<std::string, LinksValueSchema>::iterator iter;
+                iter = (ue_authentication_ctx.getLinks()).find("5g-aka");
+
+                if (iter != (ue_authentication_ctx.getLinks()).end()) {
+                  nc->href = iter->second.getHref();
+                  Logger::amf_n1().info("Links is: %s", nc->href);
+                } else {
+                  Logger::amf_n1().error("Not found 5G_AKA");
+                  return false;
+                }
+        */
+
+        for (auto& [key, val] :
+             (ue_authentication_ctx_json["_links"]).items()) {
+          if (key == "5g-aka") {
+            nc->href = val["href"].get<std::string>();
+            Logger::amf_n1().info("Links is: %s", nc->href);
+          }
+        }
+
+        /*
+                // Check Serving Network Name if available
+                if (ue_authentication_ctx.servingNetworkNameIsSet()) {
+                  if (!boost::iequals(
+                          nc->serving_network,
+                          ue_authentication_ctx.getServingNetworkName())) {
+                    return false;
+                  }
+                }
+        */
         is_result_available = true;
       } catch (std::exception& e) {
         Logger::amf_n1().warn("Could not parse UE Authentication from Json");
@@ -2509,49 +2572,6 @@ bool amf_n1::get_authentication_vectors_from_ausf(
   if (!is_result_available) {
     Logger::amf_n1().info("Could not get expected response from AUSF");
     return false;
-  }
-
-  // Process the response
-  unsigned char* r5g_auth_data_rand = amf_conv::format_string_as_hex(
-      ue_authentication_ctx.getR5gAuthData().getRand());
-  memcpy(nc->_5g_av[0].rand, r5g_auth_data_rand, RAND_LENGTH_OCTETS);
-  rand_record[nc->supi] = ue_authentication_ctx.getR5gAuthData().getRand();
-  oai::utils::output_wrapper::print_buffer(
-      "amf_n1", "5G AV: RAND", nc->_5g_av[0].rand, RAND_LENGTH_OCTETS);
-  oai::utils::utils::free_wrapper((void**) &r5g_auth_data_rand);
-
-  unsigned char* r5g_auth_data_autn = amf_conv::format_string_as_hex(
-      ue_authentication_ctx.getR5gAuthData().getAutn());
-  memcpy(nc->_5g_av[0].autn, r5g_auth_data_autn, AUTN_LENGTH_OCTETS);
-  oai::utils::output_wrapper::print_buffer(
-      "amf_n1", "5G AV: AUTN", nc->_5g_av[0].autn, AUTN_LENGTH_OCTETS);
-  oai::utils::utils::free_wrapper((void**) &r5g_auth_data_autn);
-
-  unsigned char* r5g_auth_data_hxresstar = amf_conv::format_string_as_hex(
-      ue_authentication_ctx.getR5gAuthData().getHxresStar());
-  memcpy(nc->_5g_av[0].hxresStar, r5g_auth_data_hxresstar, HXRES_LENGTH_OCTETS);
-  oai::utils::output_wrapper::print_buffer(
-      "amf_n1", "5G AV: hxres*", nc->_5g_av[0].hxresStar, HXRES_LENGTH_OCTETS);
-  oai::utils::utils::free_wrapper((void**) &r5g_auth_data_hxresstar);
-
-  std::map<std::string, LinksValueSchema>::iterator iter;
-  iter = (ue_authentication_ctx.getLinks()).find("5g-aka");
-
-  if (iter != (ue_authentication_ctx.getLinks()).end()) {
-    nc->href = iter->second.getHref();
-    Logger::amf_n1().info("Links is: %s", nc->href);
-  } else {
-    Logger::amf_n1().error("Not found 5G_AKA");
-    return false;
-  }
-
-  // Check Serving Network Name if available
-  if (ue_authentication_ctx.servingNetworkNameIsSet()) {
-    if (!boost::iequals(
-            nc->serving_network,
-            ue_authentication_ctx.getServingNetworkName())) {
-      return false;
-    }
   }
 
   return true;
