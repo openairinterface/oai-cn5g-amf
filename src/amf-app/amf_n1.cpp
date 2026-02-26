@@ -2582,10 +2582,12 @@ bool amf_n1::_5g_aka_confirmation_from_ausf(
   Logger::amf_n1().info("resStar_s (%s)", res_star_s);
 
   nlohmann::json confirmation_data_json = {};
-  ConfirmationData confirmation_data    = {};
-  confirmation_data.setResStar(res_star_string);
+  // ConfirmationData confirmation_data    = {};
+  // confirmation_data.setResStar(res_star_string);
 
-  to_json(confirmation_data_json, confirmation_data);
+  // to_json(confirmation_data_json, confirmation_data);
+
+  confirmation_data_json["resStar"] = res_star_string;
 
   // Send Confirmation Data to AUSF
   // Generate a promise and associate this promise to the ITTI message
