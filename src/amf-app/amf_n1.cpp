@@ -2612,96 +2612,97 @@ bool amf_n1::_5g_aka_confirmation_from_ausf(
   }
 
   // Wait and process the response
-  ConfirmationDataResponse confirmation_data_response = {};
-  bool is_result_available                            = true;
+  // ConfirmationDataResponse confirmation_data_response = {};
+  bool is_result_available = true;
   // Wait for the response available and process accordingly
   std::optional<nlohmann::json> result_opt = std::nullopt;
   oai::utils::utils::wait_for_result(f, result_opt);
   if (result_opt.has_value()) {
-    nlohmann::json result = result_opt.value();
     Logger::amf_n1().debug("Got result for promise ID %ld", promise_id);
-    if (result.find(kSbiResponseJsonData) != result.end()) {
+    //  if (result.find(kSbiResponseJsonData) != result.end()) {
+    //    Logger::amf_n1().debug(
+    //        "Got ConfirmationDataResponse from AUSF: %s",
+    //        result[kSbiResponseJsonData].dump());
+    try {
+      nlohmann::json result = (result_opt.value())[kSbiResponseJsonData];
       Logger::amf_n1().debug(
-          "Got ConfirmationDataResponse from AUSF: %s",
-          result[kSbiResponseJsonData].dump());
-      try {
-        // from_json(result[kSbiResponseJsonData], confirmation_data_response);
-        is_result_available = true;
+          "Got ConfirmationDataResponse from AUSF: %s", result.dump());
+      // from_json(result[kSbiResponseJsonData], confirmation_data_response);
+      is_result_available = true;
 
-        if ((result[kSbiResponseJsonData]["authResult"].get<std::string>())
-                .compare("AUTHENTICATION_SUCCESS") != 0) {
-          return false;
-        }
-
-        unsigned char* kseaf_hex = amf_conv::format_string_as_hex(
-            result[kSbiResponseJsonData]["kseaf"].get<std::string>());
-
-        memcpy(nc->_5g_av[0].kseaf, kseaf_hex, AUTH_VECTOR_LENGTH_OCTETS);
-        oai::utils::output_wrapper::print_buffer(
-            "amf_n1", "5G AV: kseaf", nc->_5g_av[0].kseaf,
-            AUTH_VECTOR_LENGTH_OCTETS);
-        oai::utils::utils::free_wrapper((void**) &kseaf_hex);
-
-        std::string new_supi =
-            result[kSbiResponseJsonData]["supi"].get<std::string>();
-
-        if (!new_supi.empty()) {
-          // Update SUPI and context
-          std::string old_supi = nc->supi;
-          if (new_supi.compare(old_supi) != 0) {
-            Logger::amf_n1().debug(
-                "Update SUPI, Old SUPI %s, new SUPI %s", old_supi, new_supi);
-            nc->supi = new_supi;
-            nc->imsi = amf_conv::supi_to_imsi(new_supi);
-            set_supi_2_nas_context(nc->supi, nc);
-
-            // Update UE CONTEXT if necessary
-            std::shared_ptr<ue_context> uc = {};
-            if (amf_app_inst->supi_2_ue_context(old_supi, uc)) {
-              uc->supi = nc->supi;
-              amf_app_inst->set_supi_2_ue_context(nc->supi, uc);
-              set_supi_2_amf_id(nc->supi, uc->amf_ue_ngap_id);
-              set_supi_2_ran_id(nc->supi, uc->ran_ue_ngap_id);
-
-              // Update UE statistics
-              ue_info_t ue_item;
-              ue_item.cm_status       = CM_CONNECTED;
-              ue_item.register_status = _5GMM_REGISTERED;
-              ue_item.ranid           = uc->ran_ue_ngap_id;
-              ue_item.amfid           = uc->amf_ue_ngap_id;
-              ue_item.imsi            = nc->imsi;
-              ue_item.supi            = old_supi;
-              if (nc->guti.has_value()) ue_item.guti = nc->guti.value();
-              ue_item.mcc    = uc->cgi.mcc;
-              ue_item.mnc    = uc->cgi.mnc;
-              ue_item.cellId = uc->cgi.nrCellId;
-
-              stacs.update_ue_info(ue_item);
-              stacs.display();
-            }
-          }
-
-          Logger::amf_n1().debug("Old SUPI %s", old_supi);
-          Logger::amf_n1().debug("SUPI %s, IMSI %s", nc->supi, nc->imsi);
-        }
-
-        Logger::amf_n1().debug("Deriving Kamf");
-        for (int i = 0; i < MAX_5GS_AUTH_VECTORS; i++) {
-          Authentication_5gaka::derive_kamf(
-              nc->imsi, nc->_5g_av[i].kseaf, nc->kamf[i],
-              0x0000);  // second parameter: abba
-          oai::utils::output_wrapper::print_buffer(
-              "amf_n1", "Kamf", nc->kamf[i], AUTH_VECTOR_LENGTH_OCTETS);
-        }
-
-      } catch (std::exception& e) {
-        Logger::amf_n1().warn(
-            "Could not parse Confirmation Data Response from Json");
-        is_result_available = false;
+      if ((result["authResult"].get<std::string>())
+              .compare("AUTHENTICATION_SUCCESS") != 0) {
+        return false;
       }
-    } else {
+
+      unsigned char* kseaf_hex =
+          amf_conv::format_string_as_hex(result["kseaf"].get<std::string>());
+
+      memcpy(nc->_5g_av[0].kseaf, kseaf_hex, AUTH_VECTOR_LENGTH_OCTETS);
+      oai::utils::output_wrapper::print_buffer(
+          "amf_n1", "5G AV: kseaf", nc->_5g_av[0].kseaf,
+          AUTH_VECTOR_LENGTH_OCTETS);
+      oai::utils::utils::free_wrapper((void**) &kseaf_hex);
+
+      std::string new_supi = result["supi"].get<std::string>();
+
+      if (!new_supi.empty()) {
+        // Update SUPI and context
+        std::string old_supi = nc->supi;
+        if (new_supi.compare(old_supi) != 0) {
+          Logger::amf_n1().debug(
+              "Update SUPI, Old SUPI %s, new SUPI %s", old_supi, new_supi);
+          nc->supi = new_supi;
+          nc->imsi = amf_conv::supi_to_imsi(new_supi);
+          set_supi_2_nas_context(nc->supi, nc);
+
+          // Update UE CONTEXT if necessary
+          std::shared_ptr<ue_context> uc = {};
+          if (amf_app_inst->supi_2_ue_context(old_supi, uc)) {
+            uc->supi = nc->supi;
+            amf_app_inst->set_supi_2_ue_context(nc->supi, uc);
+            set_supi_2_amf_id(nc->supi, uc->amf_ue_ngap_id);
+            set_supi_2_ran_id(nc->supi, uc->ran_ue_ngap_id);
+
+            // Update UE statistics
+            ue_info_t ue_item;
+            ue_item.cm_status       = CM_CONNECTED;
+            ue_item.register_status = _5GMM_REGISTERED;
+            ue_item.ranid           = uc->ran_ue_ngap_id;
+            ue_item.amfid           = uc->amf_ue_ngap_id;
+            ue_item.imsi            = nc->imsi;
+            ue_item.supi            = old_supi;
+            if (nc->guti.has_value()) ue_item.guti = nc->guti.value();
+            ue_item.mcc    = uc->cgi.mcc;
+            ue_item.mnc    = uc->cgi.mnc;
+            ue_item.cellId = uc->cgi.nrCellId;
+
+            stacs.update_ue_info(ue_item);
+            stacs.display();
+          }
+        }
+
+        Logger::amf_n1().debug("Old SUPI %s", old_supi);
+        Logger::amf_n1().debug("SUPI %s, IMSI %s", nc->supi, nc->imsi);
+      }
+
+      Logger::amf_n1().debug("Deriving Kamf");
+      for (int i = 0; i < MAX_5GS_AUTH_VECTORS; i++) {
+        Authentication_5gaka::derive_kamf(
+            nc->imsi, nc->_5g_av[i].kseaf, nc->kamf[i],
+            0x0000);  // second parameter: abba
+        oai::utils::output_wrapper::print_buffer(
+            "amf_n1", "Kamf", nc->kamf[i], AUTH_VECTOR_LENGTH_OCTETS);
+      }
+
+    } catch (std::exception& e) {
+      Logger::amf_n1().warn(
+          "Could not parse Confirmation Data Response from Json");
       is_result_available = false;
     }
+    // } else {
+    // is_result_available = false;
+    // }
 
   } else {
     Logger::amf_n1().debug(
