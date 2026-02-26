@@ -2643,6 +2643,8 @@ bool amf_n1::_5g_aka_confirmation_from_ausf(
         oai::utils::utils::free_wrapper((void**) &kseaf_hex);
 
         std::string new_supi = confirmation_data_response.getSupi();
+        confirmation_data_response
+            .unsetSupi();  // TODO: for testing purpose, remove it later
         if (confirmation_data_response.supiIsSet()) {
           // Update SUPI and context
           std::string old_supi = nc->supi;
