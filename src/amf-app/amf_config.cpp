@@ -44,6 +44,10 @@ void amf_support_features::from_yaml(const YAML::Node& node) {
     m_enable_simple_scenario.from_yaml(
         node[AMF_CONFIG_SUPPORT_FEATURES_ENABLE_SIMPLE_SCENARIO]);
   }
+  if (node[AMF_CONFIG_SUPPORT_FEATURES_ENABLE_ADVANCED_FEATURES]) {
+    m_enable_advanced_features.from_yaml(
+        node[AMF_CONFIG_SUPPORT_FEATURES_ENABLE_ADVANCED_FEATURES]);
+  }
   if (node[AMF_CONFIG_SUPPORT_FEATURES_ENABLE_NSSF]) {
     m_enable_nssf.from_yaml(node[AMF_CONFIG_SUPPORT_FEATURES_ENABLE_NSSF]);
   }
@@ -53,18 +57,6 @@ void amf_support_features::from_yaml(const YAML::Node& node) {
   if (node[AMF_CONFIG_SUPPORT_FEATURES_ENABLE_ACCESS_AND_MOBILITY_SUBSCRIPTION_DATA_RETRIEVAL]) {
     m_enable_access_and_mobility_subscription_data_retrieval.from_yaml(
         node[AMF_CONFIG_SUPPORT_FEATURES_ENABLE_ACCESS_AND_MOBILITY_SUBSCRIPTION_DATA_RETRIEVAL]);
-  }
-  if (node[AMF_CONFIG_SUPPORT_FEATURES_ENABLE_SMF_SELECTION_SUBSCRIPTION_DATA_RETRIEVAL]) {
-    m_enable_smf_selection_subscription_data_retrieval.from_yaml(
-        node[AMF_CONFIG_SUPPORT_FEATURES_ENABLE_SMF_SELECTION_SUBSCRIPTION_DATA_RETRIEVAL]);
-  }
-  if (node[AMF_CONFIG_SUPPORT_FEATURES_ENABLE_UE_CONTEXT_IN_SMF_DATA_RETRIEVAL]) {
-    m_enable_ue_context_in_smf_data_retrieval.from_yaml(
-        node[AMF_CONFIG_SUPPORT_FEATURES_ENABLE_UE_CONTEXT_IN_SMF_DATA_RETRIEVAL]);
-  }
-  if (node[AMF_CONFIG_SUPPORT_FEATURES_ENABLE_AMF_REGISTRATION_FOR_3GPP_ACCESS]) {
-    m_enable_amf_registration_for_3gpp_access.from_yaml(
-        node[AMF_CONFIG_SUPPORT_FEATURES_ENABLE_AMF_REGISTRATION_FOR_3GPP_ACCESS]);
   }
   if (node[AMF_CONFIG_SUPPORT_FEATURES_ENABLE_AM_POLICY_ASSOCIATION]) {
     m_enable_am_policy_association.from_yaml(
@@ -84,6 +76,14 @@ std::string amf_support_features::to_string(const std::string& indent) const {
       BASE_FORMATTER, INNER_LIST_ELEM,
       AMF_CONFIG_SUPPORT_FEATURES_ENABLE_SIMPLE_SCENARIO_LABEL, inner_width,
       enable_simple_scenario_string));
+
+  std::string enable_advanced_features_string =
+      m_enable_advanced_features.get_value() ? AMF_CONFIG_OPTION_YES_STR :
+                                               AMF_CONFIG_OPTION_NO_STR;
+  out.append(indent).append(fmt::format(
+      BASE_FORMATTER, INNER_LIST_ELEM,
+      AMF_CONFIG_SUPPORT_FEATURES_ENABLE_ADVANCED_FEATURES_LABEL, inner_width,
+      enable_advanced_features_string));
 
   std::string enable_nssf_string = m_enable_nssf.get_value() ?
                                        AMF_CONFIG_OPTION_YES_STR :
@@ -111,33 +111,6 @@ std::string amf_support_features::to_string(const std::string& indent) const {
       inner_width,
       enable_access_and_mobility_subscription_data_retrieval_string));
 
-  std::string enable_smf_selection_subscription_data_retrieval_string =
-      m_enable_smf_selection_subscription_data_retrieval.get_value() ?
-          AMF_CONFIG_OPTION_YES_STR :
-          AMF_CONFIG_OPTION_NO_STR;
-  out.append(indent).append(fmt::format(
-      BASE_FORMATTER, INNER_LIST_ELEM,
-      AMF_CONFIG_SUPPORT_FEATURES_ENABLE_SMF_SELECTION_SUBSCRIPTION_DATA_RETRIEVAL_LABEL,
-      inner_width, enable_smf_selection_subscription_data_retrieval_string));
-
-  std::string enable_ue_context_in_smf_data_retrieval_string =
-      m_enable_ue_context_in_smf_data_retrieval.get_value() ?
-          AMF_CONFIG_OPTION_YES_STR :
-          AMF_CONFIG_OPTION_NO_STR;
-  out.append(indent).append(fmt::format(
-      BASE_FORMATTER, INNER_LIST_ELEM,
-      AMF_CONFIG_SUPPORT_FEATURES_ENABLE_UE_CONTEXT_IN_SMF_DATA_RETRIEVAL_LABEL,
-      inner_width, enable_ue_context_in_smf_data_retrieval_string));
-
-  std::string enable_amf_registration_for_3gpp_access_string =
-      m_enable_amf_registration_for_3gpp_access.get_value() ?
-          AMF_CONFIG_OPTION_YES_STR :
-          AMF_CONFIG_OPTION_NO_STR;
-  out.append(indent).append(fmt::format(
-      BASE_FORMATTER, INNER_LIST_ELEM,
-      AMF_CONFIG_SUPPORT_FEATURES_ENABLE_AMF_REGISTRATION_FOR_3GPP_ACCESS_LABEL,
-      inner_width, enable_amf_registration_for_3gpp_access_string));
-
   std::string enable_am_policy_association_string =
       m_enable_am_policy_association.get_value() ? AMF_CONFIG_OPTION_YES_STR :
                                                    AMF_CONFIG_OPTION_NO_STR;
@@ -155,6 +128,11 @@ bool amf_support_features::get_option_enable_simple_scenario() const {
 }
 
 //------------------------------------------------------------------------------
+bool amf_support_features::get_option_enable_advanced_features() const {
+  return m_enable_advanced_features.get_value();
+}
+
+//------------------------------------------------------------------------------
 bool amf_support_features::get_option_enable_nssf() const {
   return m_enable_nssf.get_value();
 }
@@ -168,24 +146,6 @@ bool amf_support_features::get_option_enable_pcf() const {
 bool amf_support_features::
     get_option_enable_access_and_mobility_subscription_data_retrieval() const {
   return m_enable_access_and_mobility_subscription_data_retrieval.get_value();
-}
-
-//------------------------------------------------------------------------------
-bool amf_support_features::
-    get_option_enable_smf_selection_subscription_data_retrieval() const {
-  return m_enable_smf_selection_subscription_data_retrieval.get_value();
-}
-
-//------------------------------------------------------------------------------
-bool amf_support_features::get_option_enable_ue_context_in_smf_data_retrieval()
-    const {
-  return m_enable_ue_context_in_smf_data_retrieval.get_value();
-}
-
-//------------------------------------------------------------------------------
-bool amf_support_features::get_option_enable_amf_registration_for_3gpp_access()
-    const {
-  return m_enable_amf_registration_for_3gpp_access.get_value();
 }
 
 //------------------------------------------------------------------------------
@@ -986,18 +946,16 @@ amf_config::amf_config(
   plmn_list             = {};
   auth_para             = {};
   nas_cfg               = {};
-  support_features.enable_simple_scenario = false;
-  support_features.enable_nf_registration = false;
-  support_features.enable_nssf            = false;
-  support_features.enable_lmf             = false;
+  support_features.enable_simple_scenario   = false;
+  support_features.enable_advanced_features = false;
+  support_features.enable_nf_registration   = false;
+  support_features.enable_nssf              = false;
+  support_features.enable_lmf               = false;
   support_features.enable_access_and_mobility_subscription_data_retrieval =
       false;
-  support_features.enable_smf_selection_subscription_data_retrieval = false;
-  support_features.enable_ue_context_in_smf_data_retrieval          = false;
-  support_features.enable_amf_registration_for_3gpp_access          = false;
-  support_features.enable_am_policy_association                     = false;
-  support_features.http_version = 2;  // HTTP/2 by default
-  is_emergency_support          = false;
+  support_features.enable_am_policy_association = false;
+  support_features.http_version                 = 2;  // HTTP/2 by default
+  is_emergency_support                          = false;
 }
 
 //------------------------------------------------------------------------------
@@ -1043,18 +1001,18 @@ void amf_config::pre_process() {
 
   // Parse the "Super" option - "enable_simple_scenario"
   if (amf_local->get_support_features().get_option_enable_simple_scenario()) {
-    support_features.enable_simple_scenario = true;
-    support_features.enable_nf_registration = false;
-    support_features.enable_nssf            = false;
-    support_features.enable_pcf             = false;
+    support_features.enable_simple_scenario   = true;
+    support_features.enable_advanced_features = false;
+    support_features.enable_nf_registration   = false;
+    support_features.enable_nssf              = false;
+    support_features.enable_pcf               = false;
     support_features.enable_access_and_mobility_subscription_data_retrieval =
         false;
-    support_features.enable_smf_selection_subscription_data_retrieval = false;
-    support_features.enable_ue_context_in_smf_data_retrieval          = false;
-    support_features.enable_amf_registration_for_3gpp_access          = false;
-    support_features.enable_am_policy_association                     = false;
+    support_features.enable_am_policy_association = false;
   } else {  // parse the other options
     support_features.enable_simple_scenario = false;
+    support_features.enable_advanced_features =
+        amf_local->get_support_features().get_option_enable_advanced_features();
     support_features.enable_nf_registration = register_nrf();
     support_features.enable_nssf =
         amf_local->get_support_features().get_option_enable_nssf();
@@ -1063,15 +1021,6 @@ void amf_config::pre_process() {
     support_features.enable_access_and_mobility_subscription_data_retrieval =
         amf_local->get_support_features()
             .get_option_enable_access_and_mobility_subscription_data_retrieval();
-    support_features.enable_smf_selection_subscription_data_retrieval =
-        amf_local->get_support_features()
-            .get_option_enable_smf_selection_subscription_data_retrieval();
-    support_features.enable_ue_context_in_smf_data_retrieval =
-        amf_local->get_support_features()
-            .get_option_enable_ue_context_in_smf_data_retrieval();
-    support_features.enable_amf_registration_for_3gpp_access =
-        amf_local->get_support_features()
-            .get_option_enable_amf_registration_for_3gpp_access();
     support_features.enable_am_policy_association =
         amf_local->get_support_features()
             .get_option_enable_am_policy_association();
@@ -1377,6 +1326,12 @@ void amf_config::display() {
       "    Enable Simple Scenario.: %s",
       support_features.enable_simple_scenario ? AMF_CONFIG_OPTION_YES_STR :
                                                 AMF_CONFIG_OPTION_NO_STR);
+
+  Logger::config().info(
+      "    Enable Advanced Features: %s",
+      support_features.enable_advanced_features ? AMF_CONFIG_OPTION_YES_STR :
+                                                  AMF_CONFIG_OPTION_NO_STR);
+
   Logger::config().info(
       "    NF Registration .......: %s",
       support_features.enable_nf_registration ? AMF_CONFIG_OPTION_YES_STR :

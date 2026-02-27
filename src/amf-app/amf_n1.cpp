@@ -2543,16 +2543,15 @@ bool amf_n1::get_authentication_vectors_from_ausf(
         }
       }
 
-      /*
-              // Check Serving Network Name if available
-              if (ue_authentication_ctx.servingNetworkNameIsSet()) {
-                if (!boost::iequals(
-                        nc->serving_network,
-                        ue_authentication_ctx.getServingNetworkName())) {
-                  return false;
-                }
-              }
-      */
+      // Check Serving Network Name if available
+
+      if (!boost::iequals(
+              nc->serving_network,
+              (ue_authentication_ctx_json["servingNetworkName"])
+                  .get<std::string>())) {
+        return false;
+      }
+
       is_result_available = true;
     } catch (std::exception& e) {
       Logger::amf_n1().warn("Could not parse UE Authentication from Json");
@@ -2667,12 +2666,13 @@ bool amf_n1::_5g_aka_confirmation_from_ausf(
 
       std::string new_supi = result["supi"].get<std::string>();
 
-      if (!new_supi.empty()) {
+      if (!new_supi.empty() &&
+          amf_cfg->support_features.enable_advanced_features) {
         // Update SUPI and context
         std::string old_supi = nc->supi;
         if (new_supi.compare(old_supi) != 0) {
           Logger::amf_n1().debug(
-              "Update SUPI, Old SUPI %s, new SUPI %s", old_supi, new_supi);
+              "Update SUPI, old SUPI %s, new SUPI %s", old_supi, new_supi);
           nc->supi = new_supi;
           nc->imsi = amf_conv::supi_to_imsi(new_supi);
           set_supi_2_nas_context(nc->supi, nc);
@@ -3271,7 +3271,7 @@ void amf_n1::security_mode_complete_handle(
 
   // Step 14a. Figure 4.2.2.2.2-1: Registration procedure@3GPP TS 23.502
   // AMF registers with the UDM using Nudm_UECM_Registration for 3GPP Access
-  if (amf_cfg->support_features.enable_amf_registration_for_3gpp_access)
+  if (amf_cfg->support_features.enable_advanced_features)
     amf_app_inst->register_3gpp_access(uc);
 
   // Step 14b. Figure 4.2.2.2.2-1: Registration procedure@3GPP TS 23.502
@@ -3282,13 +3282,12 @@ void amf_n1::security_mode_complete_handle(
 
   // Step 14b. Figure 4.2.2.2.2-1: Registration procedure@3GPP TS 23.502
   // Retrieving SMF Selection Subscription data from UDM
-  if (amf_cfg->support_features
-          .enable_smf_selection_subscription_data_retrieval)
+  if (amf_cfg->support_features.enable_advanced_features)
     amf_app_inst->get_smf_selection_subscription_data(uc);
 
   // Step 14b. Figure 4.2.2.2.2-1: Registration procedure@3GPP TS 23.502
   // Retrieving UE context in SMF data
-  if (amf_cfg->support_features.enable_ue_context_in_smf_data_retrieval)
+  if (amf_cfg->support_features.enable_advanced_features)
     amf_app_inst->get_ue_context_in_smf_data(uc);
 
   // TODO: Step 14b. Retrieve the LCS mobile origination
