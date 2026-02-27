@@ -1757,8 +1757,8 @@ bool amf_n1::registration_request_handle(
         ue_item.mcc    = uc->cgi.mcc;
         ue_item.mnc    = uc->cgi.mnc;
         ue_item.cellId = uc->cgi.nrCellId;
-
         stacs.update_ue_info(ue_item);
+
         set_5gmm_state(nc, _5GMM_COMMON_PROCEDURE_INITIATED);
       }
     } break;
@@ -2643,7 +2643,8 @@ bool amf_n1::_5g_aka_confirmation_from_ausf(
         oai::utils::utils::free_wrapper((void**) &kseaf_hex);
 
         std::string new_supi = confirmation_data_response.getSupi();
-        if (false) {
+        if (!new_supi.empty() &&
+            amf_cfg->support_features.enable_advanced_features) {
           // Update SUPI and context
           std::string old_supi = nc->supi;
           if (new_supi.compare(old_supi) != 0) {
@@ -3247,8 +3248,8 @@ void amf_n1::security_mode_complete_handle(
 
   // Step 14a. Figure 4.2.2.2.2-1: Registration procedure@3GPP TS 23.502
   // AMF registers with the UDM using Nudm_UECM_Registration for 3GPP Access
-  // TODO: Disable temprarily
-  // amf_app_inst->register_3gpp_access(uc);
+  if (amf_cfg->support_features.enable_advanced_features)
+    amf_app_inst->register_3gpp_access(uc);
 
   // Step 14b. Figure 4.2.2.2.2-1: Registration procedure@3GPP TS 23.502
   // Retrieving the Access and Mobility Subscription data from UDM
@@ -3258,13 +3259,12 @@ void amf_n1::security_mode_complete_handle(
 
   // Step 14b. Figure 4.2.2.2.2-1: Registration procedure@3GPP TS 23.502
   // Retrieving SMF Selection Subscription data from UDM
-  if (amf_cfg->support_features
-          .enable_smf_selection_subscription_data_retrieval)
+  if (amf_cfg->support_features.enable_advanced_features)
     amf_app_inst->get_smf_selection_subscription_data(uc);
 
   // Step 14b. Figure 4.2.2.2.2-1: Registration procedure@3GPP TS 23.502
   // Retrieving UE context in SMF data
-  if (amf_cfg->support_features.enable_ue_context_in_smf_data_retrieval)
+  if (amf_cfg->support_features.enable_advanced_features)
     amf_app_inst->get_ue_context_in_smf_data(uc);
 
   // TODO: Step 14b. Retrieve the LCS mobile origination
@@ -3273,8 +3273,8 @@ void amf_n1::security_mode_complete_handle(
   amf_app_inst->discover_pcf(uc);
 
   // Step 16: Perform an AM Policy Association Establishment/Modification
-  // TODO:Disable temprarily
-  // amf_app_inst->perform_am_policy_association(uc);
+  if (amf_cfg->support_features.enable_am_policy_association)
+    amf_app_inst->perform_am_policy_association(uc);
 
   // Process Uplink Data Status / PDU Session status
   uint16_t uplink_data_status              = 0x0000;

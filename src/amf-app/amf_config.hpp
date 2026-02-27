@@ -52,24 +52,20 @@ constexpr auto AMF_CONFIG_SUPPORT_FEATURES_ENABLE_NSSF       = "enable_nssf";
 constexpr auto AMF_CONFIG_SUPPORT_FEATURES_ENABLE_NSSF_LABEL = "Enable NSSF";
 constexpr auto AMF_CONFIG_SUPPORT_FEATURES_ENABLE_PCF        = "enable_pcf";
 constexpr auto AMF_CONFIG_SUPPORT_FEATURES_ENABLE_PCF_LABEL  = "Enable PCF";
+constexpr auto AMF_CONFIG_SUPPORT_FEATURES_ENABLE_ADVANCED_FEATURES =
+    "enable_advanced_features";
+constexpr auto AMF_CONFIG_SUPPORT_FEATURES_ENABLE_ADVANCED_FEATURES_LABEL =
+    "Enable Advanced Features";
 constexpr auto
     AMF_CONFIG_SUPPORT_FEATURES_ENABLE_ACCESS_AND_MOBILITY_SUBSCRIPTION_DATA_RETRIEVAL =
         "enable_access_and_mobility_subscription_data_retrieval";
 constexpr auto
     AMF_CONFIG_SUPPORT_FEATURES_ENABLE_ACCESS_AND_MOBILITY_SUBSCRIPTION_DATA_RETRIEVAL_LABEL =
         "Enable Access and Mobility Subscription Data Retrieval";
-constexpr auto
-    AMF_CONFIG_SUPPORT_FEATURES_ENABLE_SMF_SELECTION_SUBSCRIPTION_DATA_RETRIEVAL =
-        "enable_smf_selection_subscription_data_retrieval";
-constexpr auto
-    AMF_CONFIG_SUPPORT_FEATURES_ENABLE_SMF_SELECTION_SUBSCRIPTION_DATA_RETRIEVAL_LABEL =
-        "Enable SMF Selection Subscription Data Retrieval";
-constexpr auto
-    AMF_CONFIG_SUPPORT_FEATURES_ENABLE_UE_CONTEXT_IN_SMF_DATA_RETRIEVAL =
-        "enable_ue_context_in_smf_data_retrieval";
-constexpr auto
-    AMF_CONFIG_SUPPORT_FEATURES_ENABLE_UE_CONTEXT_IN_SMF_DATA_RETRIEVAL_LABEL =
-        "Enable UE Context in SMF Data Retrieval";
+constexpr auto AMF_CONFIG_SUPPORT_FEATURES_ENABLE_AM_POLICY_ASSOCIATION =
+    "enable_am_policy_association";
+constexpr auto AMF_CONFIG_SUPPORT_FEATURES_ENABLE_AM_POLICY_ASSOCIATION_LABEL =
+    "Enable AM Policy Association";
 constexpr auto AMF_CONFIG_RELATIVE_CAPACITY       = "relative_capacity";
 constexpr auto AMF_CONFIG_RELATIVE_CAPACITY_LABEL = "Relative Capacity";
 constexpr auto AMF_CONFIG_STATISTICS_TIMER_INTERVAL =
@@ -171,12 +167,12 @@ namespace oai::config {
 class amf_support_features : public config_type {
  private:
   option_config_value m_enable_simple_scenario{};
+  option_config_value m_enable_advanced_features{};
   option_config_value m_enable_nssf{};
   option_config_value m_enable_pcf{};
   option_config_value
       m_enable_access_and_mobility_subscription_data_retrieval{};
-  option_config_value m_enable_smf_selection_subscription_data_retrieval{};
-  option_config_value m_enable_ue_context_in_smf_data_retrieval{};
+  option_config_value m_enable_am_policy_association{};
 
  public:
   explicit amf_support_features();
@@ -185,13 +181,12 @@ class amf_support_features : public config_type {
 
   [[nodiscard]] std::string to_string(const std::string& indent) const override;
   [[nodiscard]] bool get_option_enable_simple_scenario() const;
+  [[nodiscard]] bool get_option_enable_advanced_features() const;
   [[nodiscard]] bool get_option_enable_nssf() const;
   [[nodiscard]] bool get_option_enable_pcf() const;
   [[nodiscard]] bool
   get_option_enable_access_and_mobility_subscription_data_retrieval() const;
-  [[nodiscard]] bool
-  get_option_enable_smf_selection_subscription_data_retrieval() const;
-  [[nodiscard]] bool get_option_enable_ue_context_in_smf_data_retrieval() const;
+  [[nodiscard]] bool get_option_enable_am_policy_association() const;
 };
 
 class guami : public config_type {
@@ -295,27 +290,26 @@ class supported_encryption_algorithms : public config_type {
 typedef struct support_features_s {
   bool enable_nf_registration;
   bool enable_simple_scenario;
+  bool enable_advanced_features;
   bool enable_nssf;
   bool enable_lmf;
   bool enable_pcf;
-  bool enable_smf_selection_subscription_data_retrieval;
-  bool enable_ue_context_in_smf_data_retrieval;
   bool enable_access_and_mobility_subscription_data_retrieval;
+  bool enable_am_policy_association;
 
   uint8_t http_version;
   nlohmann::json to_json() const {
-    nlohmann::json json_data            = {};
-    json_data["enable_simple_scenario"] = this->enable_simple_scenario;
-    json_data["enable_nf_registration"] = this->enable_nf_registration;
-    json_data["enable_nssf"]            = this->enable_nssf;
-    json_data["enable_lmf"]             = this->enable_lmf;
-    json_data["enable_pcf"]             = this->enable_pcf;
-    json_data["enable_smf_selection_subscription_data_retrieval"] =
-        this->enable_smf_selection_subscription_data_retrieval;
-    json_data["enable_ue_context_in_smf_data_retrieval"] =
-        this->enable_ue_context_in_smf_data_retrieval;
+    nlohmann::json json_data              = {};
+    json_data["enable_simple_scenario"]   = this->enable_simple_scenario;
+    json_data["enable_advanced_features"] = this->enable_advanced_features;
+    json_data["enable_nf_registration"]   = this->enable_nf_registration;
+    json_data["enable_nssf"]              = this->enable_nssf;
+    json_data["enable_lmf"]               = this->enable_lmf;
+    json_data["enable_pcf"]               = this->enable_pcf;
     json_data["enable_access_and_mobility_subscription_data_retrieval"] =
         this->enable_access_and_mobility_subscription_data_retrieval;
+    json_data["enable_am_policy_association"] =
+        this->enable_am_policy_association;
     json_data["http_version"] = this->http_version;
     return json_data;
   }
@@ -326,6 +320,11 @@ typedef struct support_features_s {
         this->enable_simple_scenario =
             json_data["enable_simple_scenario"].get<bool>();
       }
+      if (json_data.find("enable_advanced_features") != json_data.end()) {
+        this->enable_advanced_features =
+            json_data["enable_advanced_features"].get<bool>();
+      }
+
       if (json_data.find("enable_nf_registration") != json_data.end()) {
         this->enable_nf_registration =
             json_data["enable_nf_registration"].get<bool>();
@@ -339,23 +338,16 @@ typedef struct support_features_s {
       if (json_data.find("enable_pcf") != json_data.end()) {
         this->enable_pcf = json_data["enable_pcf"].get<bool>();
       }
-      if (json_data.find("enable_smf_selection_subscription_data_retrieval") !=
-          json_data.end()) {
-        this->enable_smf_selection_subscription_data_retrieval =
-            json_data["enable_smf_selection_subscription_data_retrieval"]
-                .get<bool>();
-      }
-      if (json_data.find("enable_ue_context_in_smf_data_retrieval") !=
-          json_data.end()) {
-        this->enable_ue_context_in_smf_data_retrieval =
-            json_data["enable_ue_context_in_smf_data_retrieval"].get<bool>();
-      }
       if (json_data.find(
               "enable_access_and_mobility_subscription_data_retrieval") !=
           json_data.end()) {
         this->enable_access_and_mobility_subscription_data_retrieval =
             json_data["enable_access_and_mobility_subscription_data_retrieval"]
                 .get<bool>();
+      }
+      if (json_data.find("enable_am_policy_association") != json_data.end()) {
+        this->enable_am_policy_association =
+            json_data["enable_am_policy_association"].get<bool>();
       }
       if (json_data.find("http_version") != json_data.end()) {
         this->http_version = json_data["http_version"].get<int>();
