@@ -803,25 +803,6 @@ void amf_n1::identity_response_handle(
   // TODO: avoid accessing member function directly
   oai::nas::SUCI_imsi_t imsi = {};
   identity_response->Get5gsMobileIdentity().GetSuciWithSupiImsi(imsi);
-  imsi_str = imsi.mcc + imsi.mnc + imsi.msin;
-  Logger::amf_n1().debug("Identity Response: SUCI (%s)", imsi_str.c_str());
-
-  std::string ue_context_key =
-      amf_conv::get_ue_context_key(ran_ue_ngap_id, amf_ue_ngap_id);
-
-  std::shared_ptr<ue_context> uc = {};
-  if (amf_app_inst->ran_amf_id_2_ue_context(ue_context_key, uc)) {
-    // Update UE context
-    uc->supi = amf_conv::imsi_to_supi(imsi_str);
-    // associate SUPI with UC
-    // Verify if there's PDU session info in the old context
-    std::shared_ptr<ue_context> old_uc = {};
-    if (amf_app_inst->supi_2_ue_context(uc->supi, old_uc)) {
-      uc->copy_pdu_sessions(old_uc);
-    }
-    amf_app_inst->set_supi_2_ue_context(uc->supi, uc);
-    Logger::amf_n1().debug("Update UC context, SUPI %s", uc->supi.c_str());
-  }
 
   std::shared_ptr<nas_context> nc = {};
   if (amf_ue_id_2_nas_context(amf_ue_ngap_id, nc)) {
@@ -834,14 +815,44 @@ void amf_n1::identity_response_handle(
     nc->ctx_avaliability_ind = false;
   }
 
-  // Update Nas Context
+  if (imsi.protection_scheme_id != kNullScheme) {
+    Logger::amf_n1().debug(
+        "SUCI protection scheme ID: %d", imsi.protection_scheme_id);
+    nc->supi               = amf_conv::suci_to_supi(imsi);
+    nc->is_5g_suci_present = true;
+  } else {
+    Logger::amf_n1().debug("SUCI protection scheme: Null scheme");
+    nc->imsi = amf_conv::get_imsi(imsi.mcc, imsi.mnc, imsi.scheme_output);
+    nc->is_imsi_present = true;
+    nc->supi            = amf_conv::imsi_to_supi(nc->imsi);
+  }
+
+  Logger::amf_n1().debug("Received IMSI %s ", nc->imsi.c_str());
+  Logger::amf_n1().debug("Identity Response: SUPI %s ", nc->supi.c_str());
+
+  // Update UE context if exists
+  std::string ue_context_key =
+      amf_conv::get_ue_context_key(ran_ue_ngap_id, amf_ue_ngap_id);
+
+  std::shared_ptr<ue_context> uc = {};
+  if (amf_app_inst->ran_amf_id_2_ue_context(ue_context_key, uc)) {
+    // Update UE context
+    uc->supi = nc->supi;
+    // associate SUPI with UC
+    // Verify if there's PDU session info in the old context
+    std::shared_ptr<ue_context> old_uc = {};
+    if (amf_app_inst->supi_2_ue_context(uc->supi, old_uc)) {
+      uc->copy_pdu_sessions(old_uc);
+    }
+    amf_app_inst->set_supi_2_ue_context(uc->supi, uc);
+    Logger::amf_n1().debug("Update UC context, SUPI %s", uc->supi.c_str());
+  }
+
+  // Update Nas Context if exists
   nc->ctx_avaliability_ind = true;
   nc->nas_status           = CM_CONNECTED;
   nc->amf_ue_ngap_id       = amf_ue_ngap_id;
   nc->ran_ue_ngap_id       = ran_ue_ngap_id;
-  nc->is_imsi_present      = true;
-  nc->imsi                 = imsi_str;
-  nc->supi                 = amf_conv::imsi_to_supi(nc->imsi);
   set_supi_2_amf_id(nc->supi, amf_ue_ngap_id);
   set_supi_2_ran_id(nc->supi, ran_ue_ngap_id);
   // Stop Mobile Reachable Timer/Implicit Deregistration Timer
@@ -857,6 +868,7 @@ void amf_n1::identity_response_handle(
     ue_item.ranid           = ran_ue_ngap_id;
     ue_item.amfid           = amf_ue_ngap_id;
     ue_item.imsi            = nc->imsi;
+    ue_item.supi            = nc->supi;
     if (nc->guti.has_value()) ue_item.guti = nc->guti.value();
 
     // Find UE context
@@ -1553,6 +1565,7 @@ bool amf_n1::service_request_handle(
     ue_item.ranid           = ran_ue_ngap_id;
     ue_item.amfid           = amf_ue_ngap_id;
     ue_item.imsi            = nc->imsi;
+    ue_item.supi            = nc->supi;
     if (nc->guti.has_value()) ue_item.guti = nc->guti.value();
     ue_item.mcc    = uc->cgi.mcc;
     ue_item.mnc    = uc->cgi.mnc;
@@ -1692,10 +1705,19 @@ bool amf_n1::registration_request_handle(
           itti_inst->timer_remove(nc->implicit_deregistration_timer);
         }
 
-        nc->imsi            = amf_conv::get_imsi(imsi.mcc, imsi.mnc, imsi.msin);
-        nc->is_imsi_present = true;
-        nc->supi            = amf_conv::imsi_to_supi(nc->imsi);
-        Logger::amf_n1().debug("Received IMSI %s", nc->imsi.c_str());
+        if (imsi.protection_scheme_id != kNullScheme) {
+          Logger::amf_n1().debug(
+              "SUCI protection scheme ID: %d", imsi.protection_scheme_id);
+          nc->supi               = amf_conv::suci_to_supi(imsi);
+          nc->is_5g_suci_present = true;
+        } else {
+          Logger::amf_n1().debug("SUCI protection scheme: Null scheme");
+          nc->imsi = amf_conv::get_imsi(imsi.mcc, imsi.mnc, imsi.scheme_output);
+          nc->is_imsi_present = true;
+          nc->supi            = amf_conv::imsi_to_supi(nc->imsi);
+        }
+        Logger::amf_n1().debug("Received IMSI %s ", nc->imsi.c_str());
+        Logger::amf_n1().debug("SUPI %s ", nc->supi.c_str());
 
         // Trigger UE Reachability Status Notify
         if (!nc->supi.empty()) {
@@ -1730,12 +1752,13 @@ bool amf_n1::registration_request_handle(
         ue_item.ranid           = ran_ue_ngap_id;
         ue_item.amfid           = amf_ue_ngap_id;
         ue_item.imsi            = nc->imsi;
+        ue_item.supi            = nc->supi;
         if (nc->guti.has_value()) ue_item.guti = nc->guti.value();
         ue_item.mcc    = uc->cgi.mcc;
         ue_item.mnc    = uc->cgi.mnc;
         ue_item.cellId = uc->cgi.nrCellId;
-
         stacs.update_ue_info(ue_item);
+
         set_5gmm_state(nc, _5GMM_COMMON_PROCEDURE_INITIATED);
       }
     } break;
@@ -1861,12 +1884,14 @@ bool amf_n1::registration_request_handle(
 
   // Update statistics
   if (uc) {
+    // Update 5GMM state
     ue_info_t ue_item;
     ue_item.cm_status       = CM_CONNECTED;
     ue_item.register_status = _5GMM_REGISTERED;
     ue_item.ranid           = ran_ue_ngap_id;
     ue_item.amfid           = amf_ue_ngap_id;
     ue_item.imsi            = nc->imsi;
+    ue_item.supi            = nc->supi;
     if (nc->guti.has_value()) ue_item.guti = nc->guti.value();
     ue_item.mcc    = uc->cgi.mcc;
     ue_item.mnc    = uc->cgi.mnc;
@@ -2288,7 +2313,7 @@ bool amf_n1::run_registration_procedure(
   }
 
   nc->is_specific_procedure_for_registration_running = true;
-  if (nc->is_imsi_present) {
+  if (nc->is_imsi_present or nc->is_5g_suci_present) {
     Logger::amf_n1().debug("SUCI SUPI format IMSI is available");
     if (!nc->is_auth_vectors_present) {
       Logger::amf_n1().debug(
@@ -2617,6 +2642,48 @@ bool amf_n1::_5g_aka_confirmation_from_ausf(
             AUTH_VECTOR_LENGTH_OCTETS);
         oai::utils::utils::free_wrapper((void**) &kseaf_hex);
 
+        std::string new_supi = confirmation_data_response.getSupi();
+        if (!new_supi.empty() &&
+            amf_cfg->support_features.enable_advanced_features) {
+          // Update SUPI and context
+          std::string old_supi = nc->supi;
+          if (new_supi.compare(old_supi) != 0) {
+            Logger::amf_n1().debug(
+                "Update SUPI, Old SUPI %s, new SUPI %s", old_supi, new_supi);
+            nc->supi = new_supi;
+            nc->imsi = amf_conv::supi_to_imsi(new_supi);
+            set_supi_2_nas_context(nc->supi, nc);
+
+            // Update UE CONTEXT if necessary
+            std::shared_ptr<ue_context> uc = {};
+            if (amf_app_inst->supi_2_ue_context(old_supi, uc)) {
+              uc->supi = nc->supi;
+              amf_app_inst->set_supi_2_ue_context(nc->supi, uc);
+              set_supi_2_amf_id(nc->supi, uc->amf_ue_ngap_id);
+              set_supi_2_ran_id(nc->supi, uc->ran_ue_ngap_id);
+
+              // Update UE statistics
+              ue_info_t ue_item;
+              ue_item.cm_status       = CM_CONNECTED;
+              ue_item.register_status = _5GMM_REGISTERED;
+              ue_item.ranid           = uc->ran_ue_ngap_id;
+              ue_item.amfid           = uc->amf_ue_ngap_id;
+              ue_item.imsi            = nc->imsi;
+              ue_item.supi            = old_supi;
+              if (nc->guti.has_value()) ue_item.guti = nc->guti.value();
+              ue_item.mcc    = uc->cgi.mcc;
+              ue_item.mnc    = uc->cgi.mnc;
+              ue_item.cellId = uc->cgi.nrCellId;
+
+              stacs.update_ue_info(ue_item);
+              stacs.display();
+            }
+          }
+
+          Logger::amf_n1().debug("Old SUPI %s", old_supi);
+          Logger::amf_n1().debug("SUPI %s, IMSI %s", nc->supi, nc->imsi);
+        }
+
         Logger::amf_n1().debug("Deriving Kamf");
         for (int i = 0; i < MAX_5GS_AUTH_VECTORS; i++) {
           Authentication_5gaka::derive_kamf(
@@ -2768,7 +2835,7 @@ void amf_n1::authentication_response_handle(
   uint8_t nas_message_type = kAuthenticationResponse;
   if (!check_nas_message_for_current_procedure_running(
           nc, kAuthenticationResponse, security_header_type)) {
-    if (nc->is_imsi_present)
+    if (nc->is_imsi_present or nc->is_5g_suci_present)
       // Send Authentication Reject with appropriate cause
       send_authentication_reject_msg(
           ran_ue_ngap_id, amf_ue_ngap_id, k5gmmCauseSemanticallyIncorrect);
@@ -2792,7 +2859,6 @@ void amf_n1::authentication_response_handle(
         "Cannot receive AuthenticationResponseParameter (RES*)");
   } else {
     if (!amf_cfg->support_features.enable_simple_scenario) {
-      // std::string data = bdata(resStar);
       if (!_5g_aka_confirmation_from_ausf(nc, resStar)) isAuthOk = false;
     } else {
       // Get stored XRES*
@@ -3182,7 +3248,8 @@ void amf_n1::security_mode_complete_handle(
 
   // Step 14a. Figure 4.2.2.2.2-1: Registration procedure@3GPP TS 23.502
   // AMF registers with the UDM using Nudm_UECM_Registration for 3GPP Access
-  amf_app_inst->register_3gpp_access(uc);
+  if (amf_cfg->support_features.enable_advanced_features)
+    amf_app_inst->register_3gpp_access(uc);
 
   // Step 14b. Figure 4.2.2.2.2-1: Registration procedure@3GPP TS 23.502
   // Retrieving the Access and Mobility Subscription data from UDM
@@ -3192,13 +3259,12 @@ void amf_n1::security_mode_complete_handle(
 
   // Step 14b. Figure 4.2.2.2.2-1: Registration procedure@3GPP TS 23.502
   // Retrieving SMF Selection Subscription data from UDM
-  if (amf_cfg->support_features
-          .enable_smf_selection_subscription_data_retrieval)
+  if (amf_cfg->support_features.enable_advanced_features)
     amf_app_inst->get_smf_selection_subscription_data(uc);
 
   // Step 14b. Figure 4.2.2.2.2-1: Registration procedure@3GPP TS 23.502
   // Retrieving UE context in SMF data
-  if (amf_cfg->support_features.enable_ue_context_in_smf_data_retrieval)
+  if (amf_cfg->support_features.enable_advanced_features)
     amf_app_inst->get_ue_context_in_smf_data(uc);
 
   // TODO: Step 14b. Retrieve the LCS mobile origination
@@ -3207,7 +3273,8 @@ void amf_n1::security_mode_complete_handle(
   amf_app_inst->discover_pcf(uc);
 
   // Step 16: Perform an AM Policy Association Establishment/Modification
-  amf_app_inst->perform_am_policy_association(uc);
+  if (amf_cfg->support_features.enable_am_policy_association)
+    amf_app_inst->perform_am_policy_association(uc);
 
   // Process Uplink Data Status / PDU Session status
   uint16_t uplink_data_status              = 0x0000;

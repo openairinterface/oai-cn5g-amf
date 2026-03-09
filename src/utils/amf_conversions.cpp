@@ -175,10 +175,29 @@ std::string amf_conv::uint32_to_hex_string_full_format(uint32_t value) {
 }
 
 //------------------------------------------------------------------------------
+std::string amf_conv::suci_to_supi(const oai::nas::SUCI_imsi_t& suci) {
+  // Please refer to 3GPP TS 23.003, Section 2.2B
+  std::string routing_indicator = "0000";
+  if (suci.routing_indicator.has_value()) {
+    routing_indicator = suci.routing_indicator.value();
+  }
+  return "suci-0-" + suci.mcc + "-" + suci.mnc + "-" + routing_indicator + "-" +
+         std::to_string(suci.protection_scheme_id) + "-" +
+         std::to_string(suci.home_network_pki) + "-" + suci.scheme_output;
+}
+
+//------------------------------------------------------------------------------
 std::string amf_conv::imsi_to_supi(const std::string& imsi) {
   std::string supi_type = DEFAULT_SUPI_TYPE;
-  if (!supi_type.empty()) return {supi_type + "-" + imsi};
-  return imsi;
+  return {supi_type + "-" + imsi};
+}
+
+//------------------------------------------------------------------------------
+std::string amf_conv::supi_to_imsi(const std::string& supi) {
+  std::size_t pos = supi.find("-");
+  if ((pos != std::string::npos) && (pos < supi.length()))
+    return supi.substr(pos + 1);
+  return supi;
 }
 
 //------------------------------------------------------------------------------
