@@ -22,9 +22,13 @@
 #include "nas_context.hpp"
 
 #include "amf.hpp"
+#include "bstrlib.h"
 
 //------------------------------------------------------------------------------
-nas_context::nas_context() : _5g_he_av(), _5g_av(), kamf(), _5gmm_capability() {
+nas_context::nas_context()
+    : _5g_he_av(), _5g_av(), kamf(), kgNB(), _5gmm_capability() {
+  is_imsi_present                                    = false;
+  is_auth_vectors_present                            = false;
   auts                                               = nullptr;
   ctx_avaliability_ind                               = false;
   amf_ue_ngap_id                                     = INVALID_AMF_UE_NGAP_ID;
@@ -60,6 +64,7 @@ nas_context::nas_context() : _5g_he_av(), _5g_av(), kamf(), _5gmm_capability() {
   href                                                  = {};
   imeisv                                                = std::nullopt;
   guti                                                  = std::nullopt;
+  is_kgNB_set                                           = false;
 }
 
 //------------------------------------------------------------------------------

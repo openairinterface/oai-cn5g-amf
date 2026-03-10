@@ -1872,8 +1872,6 @@ bool amf_n2::handle_itti_message(
     return false;
   }
 
-  unc->ncc = nc->security_ctx.value().ul_count.seq_num & 0x07;
-
   uint8_t kamf[AUTH_VECTOR_LENGTH_OCTETS];
   uint8_t kgnb[AUTH_VECTOR_LENGTH_OCTETS];
   if (!nc->get_kamf(nc->security_ctx.value().vector_pointer, kamf)) {
@@ -1886,11 +1884,22 @@ bool amf_n2::handle_itti_message(
       "Handover Required, Uplink count (%d)",
       nc->security_ctx.value().ul_count.seq_num);
   uint8_t knh[AUTH_VECTOR_LENGTH_OCTETS];
+  /* Dirty fix for NCC handling as per 3GPP TS 33.501 §6.9: NCC is a 3-bit value
+   * (0..7), but 0 and 1 are reserved. This workaround ensures only 2..7 are
+   * sent. NH derivation is not optimized. */
+  uint16_t temp_ncc = (unc->ncc + 1) % 8;
+  // Reserve NCC:0 and NCC:1 TS 33.501 6.9
+  if (temp_ncc == 0 || temp_ncc == 1) {
+    unc->ncc += (temp_ncc == 0) ? 3 : 2;
+    temp_ncc = 2;
+  } else {
+    unc->ncc += 1;
+  }
   Authentication_5gaka::handover_ncc_derive_knh(
-      ulcount, 0x01, kamf, kgnb, knh,
-      unc->ncc);  // TODO: remove hardcoded value
+      ulcount, 0x01, kamf, kgnb, knh, unc->ncc, nc->is_kgNB_set,
+      nc->kgNB);  // TODO: remove hardcoded value
   bstring knh_bs = blk2bstr(knh, AUTH_VECTOR_LENGTH_OCTETS);
-  handover_request->setSecurityContext(unc->ncc /*NCC count*/, knh_bs);
+  handover_request->setSecurityContext(temp_ncc /*NCC count*/, knh_bs);
 
   Logger::amf_n2().debug(
       "Received Handover Required for UE (SUPI %s)", nc->supi.c_str());

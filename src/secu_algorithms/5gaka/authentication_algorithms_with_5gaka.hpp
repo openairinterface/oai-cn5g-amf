@@ -153,7 +153,8 @@ class Authentication_5gaka {
       uint32_t uplinkCount, uint8_t accessType,
       uint8_t kamf[AUTH_VECTOR_LENGTH_OCTETS],
       uint8_t (&kgnb)[AUTH_VECTOR_LENGTH_OCTETS],
-      uint8_t (&knh)[AUTH_VECTOR_LENGTH_OCTETS], int ncc);
+      uint8_t (&knh)[AUTH_VECTOR_LENGTH_OCTETS], int ncc, bool is_prev_kgnb_set,
+      uint8_t (&prev_kgnb)[AUTH_VECTOR_LENGTH_OCTETS]);
   static uint8_t* sqn_ms_derive(
       const uint8_t opc[16], uint8_t* key, uint8_t* auts, uint8_t* rand);
 
