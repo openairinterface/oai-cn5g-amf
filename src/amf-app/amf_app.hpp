@@ -61,7 +61,6 @@ class amf_app {
   inline static uint32_t amf_app_ue_ngap_id_generator = 1;
   amf_profile nf_instance_profile;
   std::string amf_instance_id;
-  // timer_id_t timer_nrf_heartbeat;
   std::map<std::string, timer_id_t> timer_nrfs_heartbeat;
 
   oai::utils::uint_generator<uint32_t> evsub_id_generator;
@@ -71,17 +70,15 @@ class amf_app {
       amf_event_subscriptions;
   mutable std::shared_mutex m_amf_event_subscriptions;
 
-  std::map<uint64_t, std::shared_ptr<ue_context>> amf_ue_ngap_id2ue_ctx;
-  mutable std::shared_mutex m_amf_ue_ngap_id2ue_ctx;
-  std::map<std::string, std::shared_ptr<ue_context>> ue_ctx_key;
-  mutable std::shared_mutex m_ue_ctx_key;
+  std::map<std::string, std::shared_ptr<ue_context>> ue_contexts;
+  mutable std::shared_mutex m_ue_contexts;
 
   std::map<std::string, std::shared_ptr<ue_context>> supi2ue_ctx;
   mutable std::shared_mutex m_supi2ue_ctx;
 
-  mutable std::shared_mutex m_curl_handle_responses_sbi;
+  mutable std::shared_mutex m_sbi_response_handlers;
   std::map<uint32_t, boost::shared_ptr<boost::promise<nlohmann::json>>>
-      curl_handle_responses_sbi;
+      sbi_response_handlers;
 
   oai::utils::uint_generator<uint32_t> n1n2sub_id_generator;
   std::map<
@@ -111,6 +108,7 @@ class amf_app {
   void operator=(amf_app const&) = delete;
 
   void start();
+
   /**
    * Stop all the ongoing processes and send NF deregistration towards NRF
    */
@@ -350,48 +348,49 @@ class amf_app {
 
   /*
    * Trigger AMF Registration for 3GPP Access towards UDM
-   * @param [std::shared_ptr<ue_context>&] uc: UE context
+   * @param [const std::shared_ptr<ue_context>&] uc: UE context
    * @return void
    */
-  void register_3gpp_access(std::shared_ptr<ue_context>& uc) const;
+  void register_3gpp_access(const std::shared_ptr<ue_context>& uc) const;
 
   /*
    * Retrieve a UE's Access and Mobility Subscription Data from UDM
-   * @param [std::shared_ptr<ue_context>&] uc: UE context
+   * @param [const std::shared_ptr<ue_context>&] uc: UE context
    * @return void
    */
   void get_access_and_mobility_subscription_data(
-      std::shared_ptr<ue_context>& uc) const;
+      const std::shared_ptr<ue_context>& uc) const;
 
   /*
    * Request to retrieve a SMF Selection Subcription Data from UDM
-   * @param [std::shared_ptr<ue_context>&] uc: UE context
+   * @param [const std::shared_ptr<ue_context>&] uc: UE context
    * @return void
    */
   void get_smf_selection_subscription_data(
-      std::shared_ptr<ue_context>& uc) const;
+      const std::shared_ptr<ue_context>& uc) const;
 
   /*
    * Perform PCF discovery to retrieve PCF's info from the corresponding NRF
    * @param [std::shared_ptr<ue_context>&] uc: UE context
    * @return void
    */
-  void discover_pcf(std::shared_ptr<ue_context>& uc);
+  void discover_pcf(std::shared_ptr<ue_context>& uc) const;
 
   /*
    * Perform AM Policy Association with the PCF
-   * @param [std::shared_ptr<ue_context>&] uc: UE context
+   * @param [const std::shared_ptr<ue_context>&] uc: UE context
    * @return void
    */
-  void perform_am_policy_association(std::shared_ptr<ue_context>& uc);
+  void perform_am_policy_association(
+      const std::shared_ptr<ue_context>& uc) const;
 
   /*
    * Perform AM Policy Association Termination with the PCF
-   * @param [std::shared_ptr<ue_context>&] uc: UE context
+   * @param [const std::shared_ptr<ue_context>&] uc: UE context
    * @return void
    */
   void perform_am_policy_association_termination(
-      const std::shared_ptr<ue_context>& uc);
+      const std::shared_ptr<ue_context>& uc) const;
 
   /*
    * Obtain updated policies for an AM Policy Association Termination with the
@@ -400,7 +399,7 @@ class amf_app {
    * @return void
    */
   void perform_am_policy_association_update(
-      const std::shared_ptr<ue_context>& uc);
+      const std::shared_ptr<ue_context>& uc) const;
 
   /*
    * Retrieve policies for an AM Policy Association with the
@@ -408,21 +407,21 @@ class amf_app {
    * @param [std::shared_ptr<ue_context>&] uc: UE context
    * @return void
    */
-  void get_am_policy_association(const std::shared_ptr<ue_context>& uc);
+  void get_am_policy_association(const std::shared_ptr<ue_context>& uc) const;
 
   /*
    * Retrieve UE Context In SMF Data with the UDM
    * @param [std::shared_ptr<ue_context>&] uc: UE context
    * @return void
    */
-  void get_ue_context_in_smf_data(const std::shared_ptr<ue_context>& uc);
+  void get_ue_context_in_smf_data(const std::shared_ptr<ue_context>& uc) const;
 
   /*
    * Get the current AMF's configuration
    * @param [nlohmann::json&]: json_data: Store AMF configuration
    * @return true if success, otherwise return false
    */
-  bool read_amf_configuration(nlohmann::json& json_data);
+  bool read_amf_configuration(nlohmann::json& json_data) const;
 
   /*
    * Update AMF configuration
@@ -432,46 +431,40 @@ class amf_app {
   bool update_amf_configuration(nlohmann::json& json_data);
 
   /*
-   * Get number of registered UEs to this AMF
-   * @param [uint32_t&]: num_ues: Store the number of registered UEs
-   * @return void
+   * Find the UE Context associated with RAN UE NGAP ID and AMF UE NGAP ID
+   * @param [uint32_t] ran_ue_ngap_id: RAN UE NGAP ID
+   * @param [uint64_t] amf_ue_ngap_id: AMF UE NGAP ID
+   * @return the ue_context if found, otherwise return nullptr
    */
-  void get_number_registered_ues(uint32_t& num_ues) const;
+  std::shared_ptr<ue_context> get_ue_context(
+      uint32_t ran_ue_ngap_id, uint64_t amf_ue_ngap_id) const;
 
   /*
-   * Get number of registered UEs to this AMF
-   * @param void
-   * @return: number of registered UEs
-   */
-  uint32_t get_number_registered_ues() const;
-
-  /*
-   * Get UE context associated with an UE Context Key and verify if this pointer
-   * is nullptr
-   * @param [const std::string&] ue_context_key: UE Context Key
-   * @param [std::shared_ptr<ue_context>&] uc: pointer to UE context if exist
-   * @return true if UE Context exist and not null
-   */
-  bool ran_amf_id_2_ue_context(
-      const std::string& ue_context_key, std::shared_ptr<ue_context>& uc) const;
-
-  /*
-   * Store an UE context associated with UE Context Key
-   * @param [const std::string&] ue_context_key: UE Context Key
+   * Store an UE context associated with RAN UE NGAP ID and AMF UE NGAP ID
+   * @param [uint32_t] ran_ue_ngap_id: RAN UE NGAP ID
+   * @param [uint64_t] amf_ue_ngap_id: AMF UE NGAP ID
    * @param [std::shared_ptr<ue_context>&] uc: pointer to UE context
    * @return void
    */
-  void set_ran_amf_id_2_ue_context(
-      const std::string& ue_context_key, const std::shared_ptr<ue_context>& uc);
+  void set_ue_context(
+      uint32_t ran_ue_ngap_id, uint64_t amf_ue_ngap_id,
+      const std::shared_ptr<ue_context>& uc);
 
   /*
-   * Get UE context associated with a SUPI
-   * @param [const std::string&] supi: SUPI
-   * @param [std::shared_ptr<ue_context>&] uc: pointer to UE context if exist
-   * @return true if UE Context exist and not null
+   * Remove UE context associated with RAN UE NGAP ID and AMF UE NGAP ID
+   * @param [uint32_t] ran_ue_ngap_id: RAN UE NGAP ID
+   * @param [uint64_t] amf_ue_ngap_id: AMF UE NGAP ID
+   * @return true if successful, otherwise return false
    */
-  bool supi_2_ue_context(
-      const std::string& supi, std::shared_ptr<ue_context>& uc) const;
+
+  bool remove_ue_context(uint32_t ran_ue_ngap_id, uint64_t amf_ue_ngap_id);
+
+  /*
+   * Find the UE Context associated with SUPI
+   * @param [const std::string&] supi: SUPI
+   * @return the ue_context if found, otherwise return nullptr
+   */
+  std::shared_ptr<ue_context> get_ue_context(const std::string& supi) const;
 
   /*
    * Store an UE context associated with a SUPI
@@ -479,20 +472,20 @@ class amf_app {
    * @param [const std::shared_ptr<ue_context>&] uc: pointer to UE context
    * @return void
    */
-  void set_supi_2_ue_context(
+  void set_ue_context(
       const std::string& supi, const std::shared_ptr<ue_context>& uc);
 
   /*
-   * Find a PDU Session Context associated with a SUPI and a PDU Session ID
+   * Get a PDU Session Context associated with a SUPI and a PDU Session ID
    * @param [const std::string&] supi: UE SUPI
    * @param [ const std::uint8_t] pdu_session_id: PDU Session ID
    * @param [const std::shared_ptr<pdu_session_context>&] psc: pointer to the
    * PDU Session Context
    * @return true if found, otherwise false
    */
-  bool find_pdu_session_context(
+  bool get_pdu_session_context(
       const std::string& supi, const std::uint8_t pdu_session_id,
-      std::shared_ptr<pdu_session_context>& psc);
+      std::shared_ptr<pdu_session_context>& psc) const;
 
   /*
    * Get a list of PDU Session Contexts associated with a SUPI
@@ -503,7 +496,7 @@ class amf_app {
    */
   bool get_pdu_sessions_context(
       const std::string& supi,
-      std::vector<std::shared_ptr<pdu_session_context>>& sessions_ctx);
+      std::vector<std::shared_ptr<pdu_session_context>>& sessions_ctx) const;
 
   /*
    * Update PDU Session Context status
@@ -656,7 +649,7 @@ class amf_app {
    * @param [const std::string&] nrf_uri: NRF's URI
    * @return void
    */
-  void register_to_nrf(const std::string& nrf_uri) const;
+  void register_to_nrf(const std::string& nrf_uri);
 
   /*
    * Get a list of suitable NRFs from a NSSF
@@ -771,7 +764,7 @@ class amf_app {
    * @param [void]
    * @return void
    */
-  void deregister_to_nrf() const;
+  void deregister_to_nrf();
 
   /*
    * Handle Heartbeat timeout
@@ -789,17 +782,6 @@ class amf_app {
    */
   void timer_nrf_registration_timeout(
       timer_id_t timer_id, std::string arg2_user);
-
-  /*
-   * Store the promise
-   * @param [const uint32_t] pid: promise id
-   * @param [const boost::shared_ptr<boost::promise<nlohmann::json>>&] p:
-   * promise
-   * @return void
-   */
-  void add_promise(
-      const uint32_t pid,
-      const boost::shared_ptr<boost::promise<nlohmann::json>>& p);
 
   /*
    * Remove the promise
@@ -830,7 +812,7 @@ class amf_app {
       const boost::shared_ptr<boost::promise<nlohmann::json>>& p);
 
   /*
-   * Trigger the response from API server
+   * Trigger the response from API server and remove the corresponding promise
    * @param [const uint32_t] pid: promise id
    * @param [const nlohmann::json&] json_data: result for the corresponding
    * promise
@@ -926,7 +908,7 @@ class amf_app {
    */
 
   std::vector<std::string> get_amf_status_change_subscription_uris(
-      const std::vector<oai::_3gpp::model::Guami>& guamis);
+      const std::vector<oai::_3gpp::model::Guami>& guamis) const;
 
   /*
    * Perform AMF Status Change Notification to the subscribed NF instances
@@ -935,7 +917,7 @@ class amf_app {
    * @return void
    */
   void perform_amf_status_change_notification(
-      const oai::_3gpp::model::StatusChange& status_change);
+      const oai::_3gpp::model::StatusChange& status_change) const;
 };
 
 }  // namespace amf_application

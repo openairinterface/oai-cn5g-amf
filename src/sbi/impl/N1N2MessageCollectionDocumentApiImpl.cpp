@@ -111,7 +111,7 @@ void N1N2MessageCollectionDocumentApiImpl::n1_n2_message_transfer(
             "Key for PDU Session Context: SUPI (%s)", supi.c_str());
         std::shared_ptr<pdu_session_context> psc = {};
 
-        if (!amf_app_inst->find_pdu_session_context(
+        if (!amf_app_inst->get_pdu_session_context(
                 supi, (uint8_t) n1N2MessageTransferReqData.getPduSessionId(),
                 psc)) {
           send_response(code, response_json, response);
@@ -202,7 +202,7 @@ void N1N2MessageCollectionDocumentApiImpl::n1_n2_message_transfer(
         Logger::amf_server().debug(
             "Key for PDU Session Context: SUPI (%s)", supi.c_str());
         std::shared_ptr<pdu_session_context> psc = {};
-        if (!amf_app_inst->find_pdu_session_context(
+        if (!amf_app_inst->get_pdu_session_context(
                 supi, (uint8_t) n1N2MessageTransferReqData.getPduSessionId(),
                 psc)) {
           send_response(code, response_json, response);

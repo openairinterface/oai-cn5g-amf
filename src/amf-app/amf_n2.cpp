@@ -326,11 +326,8 @@ void amf_n2::handle_itti_message(std::shared_ptr<itti_paging>& itti_msg) {
 
   // Get UE NGAP Context
   std::shared_ptr<ue_ngap_context> unc = {};
-  std::string ue_context_key           = amf_conv::get_ue_context_key(
-      itti_msg->ran_ue_ngap_id, itti_msg->amf_ue_ngap_id);
-
   if (!ran_ue_id_2_ue_ngap_context(
-          itti_msg->ran_ue_ngap_id, ue_context_key, unc))
+          itti_msg->ran_ue_ngap_id, itti_msg->amf_ue_ngap_id, unc))
     return;
 
   if (unc->amf_ue_ngap_id != itti_msg->amf_ue_ngap_id) {
@@ -536,11 +533,7 @@ void amf_n2::handle_itti_message(
 
   // Send NG SETUP RESPONSE message
   Logger::amf_n2().debug("Encoding NG_SETUP_RESPONSE ...");
-  auto buffer = new (std::nothrow) uint8_t[BUFFER_SIZE_1024]();
-  if (buffer == nullptr) {
-    Logger::amf_n2().error("Error when allocating buffer!");
-    return;
-  }
+  std::vector<uint8_t> buffer(BUFFER_SIZE_1024, 0);
 
   NgSetupResponseMsg ngSetupResp = {};
   ngSetupResp.setAmfName(amf_cfg->amf_name);
@@ -582,7 +575,7 @@ void amf_n2::handle_itti_message(
   if (ue_retention_info.has_value() and ue_retention_option)
     ngSetupResp.setUeRetentionInformation(ue_retention_info.value());
 
-  int encoded = ngSetupResp.Encode(buffer, BUFFER_SIZE_1024);
+  int encoded = ngSetupResp.Encode(buffer.data(), BUFFER_SIZE_1024);
 
   if (encoded < 1) {
     Logger::amf_n2().error("Encode NG Setup Response message error!");
@@ -592,7 +585,7 @@ void amf_n2::handle_itti_message(
     return;
   }
 
-  bstring b = blk2bstr(buffer, encoded);
+  bstring b = blk2bstr(buffer.data(), encoded);
   sctp_s_38412.sctp_send_msg(itti_msg->assoc_id, itti_msg->stream, &b);
   Logger::amf_n2().debug("Sending NG_SETUP_RESPONSE Ok");
   gc->ng_state = NGAP_READY;
@@ -605,7 +598,6 @@ void amf_n2::handle_itti_message(
 
   // TODO: Do we need to store gNB context in UDSF (if available)?
 
-  // delete[] buffer;//Free in destructor of NgapMessage
   oai::utils::utils::bdestroy_wrapper(&b);
   return;
 }
@@ -679,6 +671,10 @@ void amf_n2::handle_itti_message(std::shared_ptr<itti_ng_reset>& itti_msg) {
 
   uint8_t buffer[BUFFER_SIZE_512];
   int encoded_size = ng_reset_ack->Encode(buffer, BUFFER_SIZE_512);
+  if ((encoded_size < 0) || (encoded_size > BUFFER_SIZE_512)) {
+    Logger::amf_n2().error("Encoding failed or buffer too small");
+    return;
+  }
 
   bstring b = blk2bstr(buffer, encoded_size);
   sctp_s_38412.sctp_send_msg(gc->sctp_assoc_id, itti_msg->stream, &b);
@@ -705,11 +701,9 @@ void amf_n2::handle_itti_message(std::shared_ptr<itti_ng_shutdown>& itti_msg) {
   // Release all PDUs session for the associated UEs
   for (auto context : ue_contexts) {
     // Get UE Context
-    std::string ue_context_key = amf_conv::get_ue_context_key(
+    std::shared_ptr<ue_context> uc = amf_app_inst->get_ue_context(
         context->ran_ue_ngap_id, context->amf_ue_ngap_id);
-    std::shared_ptr<ue_context> uc = {};
-
-    if (!amf_app_inst->ran_amf_id_2_ue_context(ue_context_key, uc)) {
+    if (uc == nullptr) {
       continue;
     }
     amf_app_inst->trigger_pdu_session_up_deactivation(uc);
@@ -821,7 +815,7 @@ void amf_n2::handle_itti_message(
   std::shared_ptr<ue_ngap_context> unc = {};
   if (!ran_ue_id_2_ue_ngap_context(ran_ue_ngap_id, gc->gnb_id, unc)) {
     Logger::amf_n2().debug(
-        "Create a new UE NGAP context with ran_ue_ngap_id " GNB_UE_NGAP_ID_FMT,
+        "Create a new UE NGAP context with ran_ue_ngap_id " RAN_UE_NGAP_ID_FMT,
         ran_ue_ngap_id);
     unc = std::shared_ptr<ue_ngap_context>(new ue_ngap_context());
     unc.get()->sctp_stream_recv = init_ue_msg->stream;
@@ -832,7 +826,7 @@ void amf_n2::handle_itti_message(
   // Store related information into UE NGAP context
   unc->ran_ue_ngap_id   = ran_ue_ngap_id;
   unc->sctp_stream_recv = init_ue_msg->stream;
-  unc->sctp_stream_send == gc->next_sctp_stream;
+  unc->sctp_stream_send = gc->next_sctp_stream;
   gc->next_sctp_stream += 1;
   if (gc->next_sctp_stream >= gc->instreams) gc->next_sctp_stream = 1;
   unc->gnb_assoc_id = init_ue_msg->assoc_id;
@@ -843,12 +837,9 @@ void amf_n2::handle_itti_message(
       init_ue_msg->init_ue_message->getRrcEstablishmentCause();
 
   // UE Context Request (Optional)
-  // TODO: use std::optional
-  if (init_ue_msg->init_ue_message->getUeContextRequest() == -1) {
+  itti_msg->ue_ctx_req = init_ue_msg->init_ue_message->getUeContextRequest();
+  if (!itti_msg->ue_ctx_req) {
     Logger::amf_n2().warn("IE UeContextRequest not present");
-    itti_msg->ueCtxReq = -1;  // not present, TODO with optional
-  } else {
-    itti_msg->ueCtxReq = init_ue_msg->init_ue_message->getUeContextRequest();
   }
 
   // 5G-S-TMSI (Optional)
@@ -874,25 +865,20 @@ void amf_n2::handle_itti_message(
   if (unc->initial_ue_msg.buf) {
     Logger::amf_n2().debug(
         "Store InitialUEMessage for Reroute NAS (if necessary)");
-    auto initial_ue_msg_buf = new (std::nothrow) uint8_t[BUFFER_SIZE_1024]();
-    if (initial_ue_msg_buf == nullptr) {
-      Logger::amf_n2().error("Error when allocating buffer!");
-      return;
-    }
+    std::vector<uint8_t> initial_ue_msg_buf(BUFFER_SIZE_1024, 0);
 
-    int encoded_size = 0;
-    init_ue_msg->init_ue_message->Encode(initial_ue_msg_buf, encoded_size);
+    int encoded_size = init_ue_msg->init_ue_message->Encode(
+        initial_ue_msg_buf.data(), BUFFER_SIZE_1024);
 
     if (encoded_size > 0) {
       Logger::amf_n2().debug("Encoded InitialUEMessage size %d", encoded_size);
       memcpy(
-          (void*) unc->initial_ue_msg.buf, (void*) initial_ue_msg_buf,
+          (void*) unc->initial_ue_msg.buf, initial_ue_msg_buf.data(),
           encoded_size);
       oai::utils::output_wrapper::print_buffer(
           "ngap", "InitialUEMessage", unc->initial_ue_msg.buf, encoded_size);
       unc->initial_ue_msg.size = encoded_size;
     }
-    // delete[] initial_ue_msg_buf;//Free in destructor of NgapMessage
   }
 
   itti_msg->gnb_id         = gc->gnb_id;
@@ -979,11 +965,9 @@ void amf_n2::handle_itti_message(
 
   // Get UE NGAP Context
   std::shared_ptr<ue_ngap_context> unc = {};
-  std::string ue_context_key           = amf_conv::get_ue_context_key(
-      dl_nas_transport->ran_ue_ngap_id, dl_nas_transport->amf_ue_ngap_id);
-
   if (!ran_ue_id_2_ue_ngap_context(
-          dl_nas_transport->ran_ue_ngap_id, ue_context_key, unc))
+          dl_nas_transport->ran_ue_ngap_id, dl_nas_transport->amf_ue_ngap_id,
+          unc))
     return;
 
   std::shared_ptr<gnb_context> gc = {};
@@ -1003,7 +987,11 @@ void amf_n2::handle_itti_message(
 
   uint8_t buffer[BUFFER_SIZE_1024];
   int encoded_size = ngap_msg->Encode(buffer, BUFFER_SIZE_1024);
-  bstring b        = blk2bstr(buffer, encoded_size);
+  if ((encoded_size < 0) || (encoded_size > BUFFER_SIZE_1024)) {
+    Logger::amf_n2().error("Encoding failed or buffer too small");
+    return;
+  }
+  bstring b = blk2bstr(buffer, encoded_size);
   sctp_s_38412.sctp_send_msg(gc->sctp_assoc_id, unc->sctp_stream_send, &b);
   oai::utils::utils::bdestroy_wrapper(&b);
 }
@@ -1015,11 +1003,8 @@ void amf_n2::handle_itti_message(
 
   // Get UE NGAP Context
   std::shared_ptr<ue_ngap_context> unc = {};
-  std::string ue_context_key           = amf_conv::get_ue_context_key(
-      itti_msg->ran_ue_ngap_id, itti_msg->amf_ue_ngap_id);
-
   if (!ran_ue_id_2_ue_ngap_context(
-          itti_msg->ran_ue_ngap_id, ue_context_key, unc))
+          itti_msg->ran_ue_ngap_id, itti_msg->amf_ue_ngap_id, unc))
     return;
 
   unc->ncc                        = 1;
@@ -1079,12 +1064,12 @@ void amf_n2::handle_itti_message(
 
   // IMEISV
   if (nc->imeisv.has_value()) {
-    Logger::nas_mm().debug(
+    Logger::amf_n2().debug(
         "Set IMEISV InitialContextSetupRequestMsg: %s",
         nc->imeisv.value().identity.c_str());
     msg->setMaskedImeisv(nc->imeisv.value().identity);
   } else {
-    Logger::nas_mm().debug("No IMEISV info available");
+    Logger::amf_n2().debug("No IMEISV info available");
   }
 
   msg->setNasPdu(itti_msg->nas);
@@ -1114,7 +1099,7 @@ void amf_n2::handle_itti_message(
         // Get S_NSSAI from PDU Session Context
         std::shared_ptr<pdu_session_context> psc = {};
 
-        if (!amf_app_inst->find_pdu_session_context(nc->supi, p.first, psc)) {
+        if (!amf_app_inst->get_pdu_session_context(nc->supi, p.first, psc)) {
           item.sNssai.sst = std::to_string(DEFAULT_SST);
           item.sNssai.sd  = std::to_string(SD_NO_VALUE);
         } else {
@@ -1150,7 +1135,11 @@ void amf_n2::handle_itti_message(
 
   uint8_t buffer[BUFFER_SIZE_2048];
   int encoded_size = msg->Encode(buffer, BUFFER_SIZE_2048);
-  bstring b        = blk2bstr(buffer, encoded_size);
+  if ((encoded_size < 0) || (encoded_size > BUFFER_SIZE_2048)) {
+    Logger::amf_n2().error("Encoding failed or buffer too small");
+    return;
+  }
+  bstring b = blk2bstr(buffer, encoded_size);
   sctp_s_38412.sctp_send_msg(gc->sctp_assoc_id, unc->sctp_stream_send, &b);
   oai::utils::utils::bdestroy_wrapper(&b);
 }
@@ -1162,11 +1151,8 @@ void amf_n2::handle_itti_message(
 
   // Get UE NGAP Context
   std::shared_ptr<ue_ngap_context> unc = {};
-  std::string ue_context_key           = amf_conv::get_ue_context_key(
-      itti_msg->ran_ue_ngap_id, itti_msg->amf_ue_ngap_id);
-
   if (!ran_ue_id_2_ue_ngap_context(
-          itti_msg->ran_ue_ngap_id, ue_context_key, unc))
+          itti_msg->ran_ue_ngap_id, itti_msg->amf_ue_ngap_id, unc))
     return;
 
   std::shared_ptr<gnb_context> gc = {};
@@ -1189,17 +1175,16 @@ void amf_n2::handle_itti_message(
   psrsr->setAmfUeNgapId(itti_msg->amf_ue_ngap_id);
   psrsr->setRanUeNgapId(itti_msg->ran_ue_ngap_id);
 
+  std::vector<PDUSessionResourceSetupRequestItem_t> list;
   if (!itti_msg->pdu_sessions.empty()) {
-    std::vector<PDUSessionResourceSetupRequestItem_t> list;
     for (auto& p : itti_msg->pdu_sessions) {
       PDUSessionResourceSetupRequestItem_t item = {};
       item.pduSessionId                         = p.first;
-      item.nasPdu                               = bstrcpy(itti_msg->nas);
 
       // Get SNSSAI info from PDU Session Context
       item.sNssai.sd                           = {};
       std::shared_ptr<pdu_session_context> psc = {};
-      if (!amf_app_inst->find_pdu_session_context(nc->supi, p.first, psc)) {
+      if (!amf_app_inst->get_pdu_session_context(nc->supi, p.first, psc)) {
         // TODO: get from N1N2msgTranferMsg
         Logger::amf_n2().debug(
             "Using default value for S_NSSAI (SST, SD) %s, %s",
@@ -1216,6 +1201,7 @@ void amf_n2::handle_itti_message(
 
       if (p.second.is_n2sm_available) {
         if (blength(p.second.n2sm) != 0) {
+          item.nasPdu = bstrcpy(itti_msg->nas);
           ngap_utils::bstring_2_octet_string(
               p.second.n2sm, item.pduSessionResourceSetupRequestTransfer);
           list.push_back(item);
@@ -1231,14 +1217,18 @@ void amf_n2::handle_itti_message(
   psrsr->setUeAggregateMaxBitRate(
       UE_AGGREGATE_MAXIMUM_BIT_RATE_DL, UE_AGGREGATE_MAXIMUM_BIT_RATE_UL);
 
-  auto buffer = new (std::nothrow) uint8_t[BUFFER_SIZE_4096]();
-  if (buffer == nullptr) {
-    Logger::amf_n2().error("Error when allocating buffer!");
+  uint8_t* buffer  = nullptr;
+  int encoded_size = 0;
+  psrsr->encode2NewBuffer(buffer, encoded_size);
+  if (encoded_size < 0) {
+    Logger::amf_n2().error("Encoding failed");
+    if (buffer) free(buffer);
+    for (auto& item : list) {
+      oai::utils::utils::bdestroy_wrapper(&item.nasPdu);
+    }
     return;
   }
 
-  int encoded_size = 0;
-  psrsr->encode2NewBuffer(buffer, encoded_size);
   oai::utils::output_wrapper::print_buffer(
       "amf_n2", "N2 SM buffer data:", buffer, encoded_size);
   Logger::amf_n2().debug(" (%d bytes) \n", encoded_size);
@@ -1246,7 +1236,11 @@ void amf_n2::handle_itti_message(
   bstring b = blk2bstr(buffer, encoded_size);
   sctp_s_38412.sctp_send_msg(gc->sctp_assoc_id, unc->sctp_stream_send, &b);
   oai::utils::utils::bdestroy_wrapper(&b);
-  // delete[] buffer;//Free in destructor of NgapMessage
+  free(buffer);
+  buffer = nullptr;
+  for (auto& item : list) {
+    oai::utils::utils::bdestroy_wrapper(&item.nasPdu);
+  }
 }
 
 //------------------------------------------------------------------------------
@@ -1256,11 +1250,8 @@ void amf_n2::handle_itti_message(
 
   // Get UE NGAP Context
   std::shared_ptr<ue_ngap_context> unc = {};
-  std::string ue_context_key           = amf_conv::get_ue_context_key(
-      itti_msg->ran_ue_ngap_id, itti_msg->amf_ue_ngap_id);
-
   if (!ran_ue_id_2_ue_ngap_context(
-          itti_msg->ran_ue_ngap_id, ue_context_key, unc))
+          itti_msg->ran_ue_ngap_id, itti_msg->amf_ue_ngap_id, unc))
     return;
 
   std::shared_ptr<gnb_context> gc = {};
@@ -1292,14 +1283,15 @@ void amf_n2::handle_itti_message(
 
   modify_request_msg->setPduSessionResourceModifyRequestList(list);
 
-  auto buffer = new (std::nothrow) uint8_t[BUFFER_SIZE_4096]();
-  if (buffer == nullptr) {
-    Logger::amf_n2().error("Error when allocating buffer!");
-    return;
-  }
-
+  uint8_t* buffer  = nullptr;
   int encoded_size = 0;
   modify_request_msg->encode2NewBuffer(buffer, encoded_size);
+  if (encoded_size < 0) {
+    Logger::amf_n2().error("Encoding failed");
+    if (buffer) free(buffer);
+    oai::utils::utils::bdestroy_wrapper(&item.nasPdu);
+    return;
+  }
   oai::utils::output_wrapper::print_buffer(
       "amf_n2", "N2 SM buffer data:", buffer, encoded_size);
   Logger::amf_n2().debug(" (%d bytes) \n", encoded_size);
@@ -1308,7 +1300,9 @@ void amf_n2::handle_itti_message(
   sctp_s_38412.sctp_send_msg(gc->sctp_assoc_id, unc->sctp_stream_send, &b);
   // free memory
   oai::utils::utils::bdestroy_wrapper(&b);
-  // delete[] buffer;//Free in destructor of NgapMessage
+  free(buffer);
+  buffer = nullptr;
+  oai::utils::utils::bdestroy_wrapper(&item.nasPdu);
 }
 
 //------------------------------------------------------------------------------
@@ -1318,11 +1312,8 @@ void amf_n2::handle_itti_message(
 
   // Get UE NGAP Context
   std::shared_ptr<ue_ngap_context> unc = {};
-  std::string ue_context_key           = amf_conv::get_ue_context_key(
-      itti_msg->ran_ue_ngap_id, itti_msg->amf_ue_ngap_id);
-
   if (!ran_ue_id_2_ue_ngap_context(
-          itti_msg->ran_ue_ngap_id, ue_context_key, unc))
+          itti_msg->ran_ue_ngap_id, itti_msg->amf_ue_ngap_id, unc))
     return;
 
   std::shared_ptr<gnb_context> gc = {};
@@ -1348,14 +1339,14 @@ void amf_n2::handle_itti_message(
   list.push_back(item);
   release_cmd_msg->setPduSessionResourceToReleaseList(list);
 
-  auto buffer = new (std::nothrow) uint8_t[BUFFER_SIZE_4096]();
-  if (buffer == nullptr) {
-    Logger::amf_n2().error("Error when allocating buffer!");
-    return;
-  }
-
+  uint8_t* buffer  = nullptr;
   int encoded_size = 0;
   release_cmd_msg->encode2NewBuffer(buffer, encoded_size);
+  if (encoded_size < 0) {
+    Logger::amf_n2().error("Encoding failed");
+    if (buffer) free(buffer);
+    return;
+  }
   oai::utils::output_wrapper::print_buffer(
       "amf_n2", "N2 SM buffer data:", buffer, encoded_size);
   Logger::amf_n2().debug(" (%d bytes) \n", encoded_size);
@@ -1364,7 +1355,8 @@ void amf_n2::handle_itti_message(
   sctp_s_38412.sctp_send_msg(gc->sctp_assoc_id, unc->sctp_stream_send, &b);
   // free memory
   oai::utils::utils::bdestroy_wrapper(&b);
-  // delete[] buffer;//Free in destructor of NgapMessage
+  free(buffer);
+  buffer = nullptr;
 }
 
 //------------------------------------------------------------------------------
@@ -1403,7 +1395,12 @@ void amf_n2::handle_itti_message(
 
   uint8_t buffer[BUFFER_SIZE_512];
   int encoded_size = ueCtxRelCmd->Encode(buffer, BUFFER_SIZE_512);
-  bstring b        = blk2bstr(buffer, encoded_size);
+  if ((encoded_size < 0) || (encoded_size > BUFFER_SIZE_512)) {
+    Logger::amf_n2().error("Encoding failed or buffer too small");
+    return;
+  }
+
+  bstring b = blk2bstr(buffer, encoded_size);
 
   sctp_s_38412.sctp_send_msg(itti_msg->assoc_id, itti_msg->stream, &b);
   oai::utils::utils::bdestroy_wrapper(&b);
@@ -1416,11 +1413,8 @@ void amf_n2::handle_itti_message(
 
   // Get UE NGAP Context
   std::shared_ptr<ue_ngap_context> unc = {};
-  std::string ue_context_key           = amf_conv::get_ue_context_key(
-      itti_msg->ran_ue_ngap_id, itti_msg->amf_ue_ngap_id);
-
   if (!ran_ue_id_2_ue_ngap_context(
-          itti_msg->ran_ue_ngap_id, ue_context_key, unc))
+          itti_msg->ran_ue_ngap_id, itti_msg->amf_ue_ngap_id, unc))
     return;
 
   std::shared_ptr<gnb_context> gc = {};
@@ -1445,6 +1439,10 @@ void amf_n2::handle_itti_message(
 
   uint8_t buffer[BUFFER_SIZE_256];
   int encoded_size = ueCtxRelCmd->Encode(buffer, BUFFER_SIZE_256);
+  if ((encoded_size < 0) || (encoded_size > BUFFER_SIZE_256)) {
+    Logger::amf_n2().error("Encoding failed or buffer too small");
+    return;
+  }
 
   bstring b = blk2bstr(buffer, encoded_size);
   sctp_s_38412.sctp_send_msg(gc->sctp_assoc_id, unc->sctp_stream_send, &b);
@@ -1530,16 +1528,15 @@ void amf_n2::handle_itti_message(
   uint32_t ran_ue_ngap_id = itti_msg->ue_ctx_rel_cpl->getRanUeNgapId();
 
   Logger::amf_n2().debug(
-      "UE Context Release Complete ran_ue_ngap_id (" GNB_UE_NGAP_ID_FMT
+      "UE Context Release Complete ran_ue_ngap_id (" RAN_UE_NGAP_ID_FMT
       ") amf_ue_ngap_id (" AMF_UE_NGAP_ID_FMT ")",
       ran_ue_ngap_id, amf_ue_ngap_id);
 
   // Get UE Context
-  std::string ue_context_key =
-      amf_conv::get_ue_context_key(ran_ue_ngap_id, amf_ue_ngap_id);
-  std::shared_ptr<ue_context> uc = {};
+  std::shared_ptr<ue_context> uc =
+      amf_app_inst->get_ue_context(ran_ue_ngap_id, amf_ue_ngap_id);
 
-  if (!amf_app_inst->ran_amf_id_2_ue_context(ue_context_key, uc)) return;
+  if (uc == nullptr) return;
 
   std::shared_ptr<ue_ngap_context> unc = {};
   if (!amf_ue_id_2_ue_ngap_context(amf_ue_ngap_id, unc)) return;
@@ -1642,23 +1639,22 @@ void amf_n2::handle_itti_message(
   }
 */
   // Send PDUSessionUpdateSMContextRequest to SMF for each PDU session
-  std::map<uint32_t, boost::shared_future<nlohmann::json>> curl_responses;
+  std::map<uint32_t, boost::shared_future<nlohmann::json>> smf_responses;
 
   for (auto pdu_session : pdu_sessions_to_be_released) {
     Logger::amf_n2().debug(
         "Trigger PDU Ssesion Deactivation, PDU Session ID %d",
         pdu_session.pduSessionId);
     // Generate a promise and associate this promise to the curl handle
-    uint32_t promise_id = amf_app_inst->generate_promise_id();
-    Logger::amf_n2().debug("Promise ID generated %d", promise_id);
-
+    uint32_t promise_id = {};
     boost::shared_ptr<boost::promise<nlohmann::json>> p =
         boost::make_shared<boost::promise<nlohmann::json>>();
     boost::shared_future<nlohmann::json> f = p->get_future();
 
     // Store the future to be processed later
-    amf_app_inst->add_promise(promise_id, p);
-    curl_responses.emplace(pdu_session.pduSessionId, f);
+    amf_app_inst->store_promise(promise_id, p);
+    Logger::amf_n2().debug("Promise ID generated %d", promise_id);
+    smf_responses.emplace(pdu_session.pduSessionId, f);
 
     Logger::amf_n2().debug(
         "Sending ITTI to trigger PDUSessionUpdateSMContextRequest to SMF to "
@@ -1678,23 +1674,23 @@ void amf_n2::handle_itti_message(
 
     int ret = itti_inst->send_msg(itti_n11_msg);
     if (0 != ret) {
-      Logger::ngap().error(
+      Logger::amf_n2().error(
           "Could not send ITTI message %s to task TASK_AMF_SBI",
           itti_n11_msg->get_msg_name());
     }
   }
 
   bool is_up_activated = true;
-  while (!curl_responses.empty()) {
+  while (!smf_responses.empty()) {
     // Wait for the result available and process accordingly
     std::optional<nlohmann::json> result_opt = std::nullopt;
     oai::utils::utils::wait_for_result(
-        curl_responses.begin()->second, result_opt);
+        smf_responses.begin()->second, result_opt);
 
     if (result_opt.has_value()) {
       nlohmann::json result_json = result_opt.value();
-      Logger::amf_server().debug(
-          "Got result for PDU Session Id %d", curl_responses.begin()->first);
+      Logger::amf_n2().debug(
+          "Got result for PDU Session Id %d", smf_responses.begin()->first);
       uint32_t http_response_code = 0;
       if (result_json.find(kSbiResponseHttpResponseCode) != result_json.end()) {
         http_response_code =
@@ -1703,19 +1699,21 @@ void amf_n2::handle_itti_message(
             (http_response_code ==
              oai::common::sbi::http_status_code::NO_CONTENT)) {
           uc->set_up_cnx_state(
-              curl_responses.begin()->first,
+              smf_responses.begin()->first,
               up_cnx_state_e::UPCNX_STATE_DEACTIVATED);
         }
       } else {
         is_up_activated = false;
-        Logger::ngap().warn("Couldn't get the HTTP response code");
+        Logger::amf_n2().warn("Couldn't get the HTTP response code");
       }
     } else {
       is_up_activated = false;
-      Logger::ngap().warn("Couldn't get the HTTP response");
+      Logger::amf_n2().warn("Couldn't get the HTTP response");
     }
 
-    curl_responses.erase(curl_responses.begin());
+    // Remove the promise from the list since the result is processed or not
+    // available
+    smf_responses.erase(smf_responses.begin());
   }
 
   // Remove UE NGAP context
@@ -1900,7 +1898,7 @@ bool amf_n2::handle_itti_message(
       nc->kgNB);  // TODO: remove hardcoded value
   bstring knh_bs = blk2bstr(knh, AUTH_VECTOR_LENGTH_OCTETS);
   handover_request->setSecurityContext(temp_ncc /*NCC count*/, knh_bs);
-
+  oai::utils::utils::bdestroy_wrapper(&knh_bs);
   Logger::amf_n2().debug(
       "Received Handover Required for UE (SUPI %s)", nc->supi.c_str());
 
@@ -1908,14 +1906,14 @@ bool amf_n2::handle_itti_message(
   std::vector<PDUSessionResourceItem_t> pdu_session_resource_list;
   if (!itti_msg->handover_req->getPduSessionResourceList(
           pDUSessionResourceListHORqd)) {
-    Logger::ngap().warn(
+    Logger::amf_n2().warn(
         "Decoding PDU Session Resource List IE error or IE missing");
   }
 
   std::vector<PduSessionResourceItem> item_ho_required_list;
   pDUSessionResourceListHORqd.get(item_ho_required_list);
 
-  std::map<uint8_t, boost::shared_future<nlohmann::json>> curl_responses;
+  std::map<uint8_t, boost::shared_future<nlohmann::json>> smf_responses;
 
   // Send PDUSessionUpdateSMContextRequest to SMF for all PDU sessions included
   // in HO Required message
@@ -1926,21 +1924,20 @@ bool amf_n2::handle_itti_message(
     uint8_t pdu_session_id_value = 0;
     pdu_session_id.get(pdu_session_id_value);
 
-    Logger::ngap().debug("PDU Session ID %d", pdu_session_id_value);
+    Logger::amf_n2().debug("PDU Session ID %d", pdu_session_id_value);
     std::shared_ptr<pdu_session_context> psc = {};
-    if (amf_app_inst->find_pdu_session_context(
+    if (amf_app_inst->get_pdu_session_context(
             nc->supi, pdu_session_id_value, psc)) {
       // Generate a promise and associate this promise to the curl handle
-      uint32_t promise_id = amf_app_inst->generate_promise_id();
-      Logger::amf_n2().debug("Promise ID generated %d", promise_id);
-
+      uint32_t promise_id = {};
       boost::shared_ptr<boost::promise<nlohmann::json>> p =
           boost::make_shared<boost::promise<nlohmann::json>>();
       boost::shared_future<nlohmann::json> f = p->get_future();
 
       // Store the future to be processed later
-      curl_responses.emplace(psc->pdu_session_id, f);
-      amf_app_inst->add_promise(promise_id, p);
+      amf_app_inst->store_promise(promise_id, p);
+      smf_responses.emplace(psc->pdu_session_id, f);
+      Logger::amf_n2().debug("Promise ID generated %d", promise_id);
 
       Logger::amf_n2().debug(
           "Sending ITTI to trigger PDUSessionUpdateSMContextRequest to SMF to "
@@ -1960,7 +1957,7 @@ bool amf_n2::handle_itti_message(
 
       int ret = itti_inst->send_msg(itti_msg);
       if (0 != ret) {
-        Logger::ngap().error(
+        Logger::amf_n2().error(
             "Could not send ITTI message %s to task TASK_AMF_SBI",
             itti_msg->get_msg_name());
       }
@@ -1971,25 +1968,35 @@ bool amf_n2::handle_itti_message(
   // Wait until receiving all responses from SMFs before sending Handover
   std::vector<PDUSessionResourceSetupRequestItem_t> list;
 
+  auto free_list_bufs = [&list]() {
+    for (auto& item : list) {
+      if (item.pduSessionResourceSetupRequestTransfer.buf) {
+        free(item.pduSessionResourceSetupRequestTransfer.buf);
+        item.pduSessionResourceSetupRequestTransfer.buf  = nullptr;
+        item.pduSessionResourceSetupRequestTransfer.size = 0;
+      }
+    }
+  };
+
   // Wait for the response available and process accordingly
   bool result = true;
-  while (!curl_responses.empty()) {
+  while (!smf_responses.empty()) {
     std::optional<nlohmann::json> result_json_opt = std::nullopt;
     oai::utils::utils::wait_for_result(
-        curl_responses.begin()->second, result_json_opt);
+        smf_responses.begin()->second, result_json_opt);
     if (result_json_opt.has_value()) {
       nlohmann::json result_json = result_json_opt.value();
 
       if (result_json.find("n2sm") != result_json.end()) {
         std::string n2_sm = {};
         n2_sm             = result_json["n2sm"].get<std::string>();
-        Logger::ngap().debug(
-            "Got result for PDU Session ID %d", curl_responses.begin()->first);
+        Logger::amf_n2().debug(
+            "Got result for PDU Session ID %d", smf_responses.begin()->first);
         result = result && true;
 
         std::shared_ptr<pdu_session_context> psc = {};
-        if (amf_app_inst->find_pdu_session_context(
-                nc->supi, curl_responses.begin()->first, psc)) {
+        if (amf_app_inst->get_pdu_session_context(
+                nc->supi, smf_responses.begin()->first, psc)) {
           PDUSessionResourceSetupRequestItem_t item = {};
           item.pduSessionId                         = psc->pdu_session_id;
           item.sNssai.sst = std::to_string(psc->snssai.sst);
@@ -2011,7 +2018,9 @@ bool amf_n2::handle_itti_message(
       result = false;
     }
 
-    curl_responses.erase(curl_responses.begin());
+    // Remove the promise from the list since the result is processed or not
+    // available
+    smf_responses.erase(smf_responses.begin());
   }
   // TODO: process result
 
@@ -2020,16 +2029,25 @@ bool amf_n2::handle_itti_message(
 
   uint8_t buffer[BUFFER_SIZE_8192];
   int encoded_size = handover_request->Encode(buffer, BUFFER_SIZE_8192);
-  bstring b        = blk2bstr(buffer, encoded_size);
+  if ((encoded_size < 0) || (encoded_size > BUFFER_SIZE_8192)) {
+    Logger::amf_n2().error("Encoding failed or buffer too small");
+    free_list_bufs();
+    return false;
+  }
+
+  bstring b                              = blk2bstr(buffer, encoded_size);
   std::shared_ptr<gnb_context> gc_target = {};
   if (!gnb_id_2_gnb_context(gnb_id_value, gc_target)) {
     Logger::amf_n2().warn("Could not find Target's gNB context!");
+    oai::utils::utils::bdestroy_wrapper(&b);
+    free_list_bufs();
     return false;
   }
 
   unc->target_gnb_assoc_id = gc_target->sctp_assoc_id;
   sctp_s_38412.sctp_send_msg(gc_target->sctp_assoc_id, 0, &b);
   oai::utils::utils::bdestroy_wrapper(&b);
+  free_list_bufs();
   return true;
 }
 
@@ -2041,7 +2059,7 @@ void amf_n2::handle_itti_message(
   uint64_t amf_ue_ngap_id = itti_msg->handover_request_ack->getAmfUeNgapId();
   uint32_t ran_ue_ngap_id = itti_msg->handover_request_ack->getRanUeNgapId();
   Logger::amf_n2().debug(
-      "Handover Request Ack ran_ue_ngap_id (" GNB_UE_NGAP_ID_FMT
+      "Handover Request Ack ran_ue_ngap_id (" RAN_UE_NGAP_ID_FMT
       ") amf_ue_ngap_id (" AMF_UE_NGAP_ID_FMT ")",
       ran_ue_ngap_id, amf_ue_ngap_id);
 
@@ -2064,7 +2082,7 @@ void amf_n2::handle_itti_message(
   std::vector<PDUSessionResourceAdmittedItem_t> list;
   if (!itti_msg->handover_request_ack->getPduSessionResourceAdmittedList(
           list)) {
-    Logger::ngap().error(
+    Logger::amf_n2().error(
         "Decoding HandoverRequestACK getPduSessionResourceList IE error");
     return;
   }
@@ -2077,19 +2095,17 @@ void amf_n2::handle_itti_message(
 
   // Send PDUSessionUpdateSMContextRequest to SMF for all associated PDU
   // sessions
-  std::map<uint8_t, boost::shared_future<nlohmann::json>> curl_responses;
+  std::map<uint8_t, boost::shared_future<nlohmann::json>> smf_responses;
 
   for (auto pdu_session_resource : list) {
     // Generate a promise and associate this promise to the curl handle
-    uint32_t promise_id = amf_app_inst->generate_promise_id();
-    Logger::amf_n2().debug("Promise ID generated %d", promise_id);
-
-    auto p = boost::make_shared<boost::promise<nlohmann::json>>();
+    uint32_t promise_id = {};
+    auto p              = boost::make_shared<boost::promise<nlohmann::json>>();
     boost::shared_future<nlohmann::json> f = p->get_future();
-
     // Store the future to be processed later
-    amf_app_inst->add_promise(promise_id, p);
-    curl_responses.emplace(pdu_session_resource.pduSessionId, f);
+    amf_app_inst->store_promise(promise_id, p);
+    Logger::amf_n2().debug("Promise ID generated %d", promise_id);
+    smf_responses.emplace(pdu_session_resource.pduSessionId, f);
 
     Logger::amf_n2().debug(
         "Sending ITTI to trigger PDUSessionUpdateSMContextRequest to SMF to "
@@ -2110,7 +2126,7 @@ void amf_n2::handle_itti_message(
 
     int ret = itti_inst->send_msg(itti_msg);
     if (0 != ret) {
-      Logger::ngap().error(
+      Logger::amf_n2().error(
           "Could not send ITTI message %s to task TASK_AMF_SBI",
           itti_msg->get_msg_name());
     }
@@ -2129,20 +2145,20 @@ void amf_n2::handle_itti_message(
   // TODO: wait for response from SMF and transfer T-RAN N3 information/ or
   // T-UPF to the source gNB
   bool result = true;
-  while (!curl_responses.empty()) {
+  while (!smf_responses.empty()) {
     std::optional<nlohmann::json> result_json_opt = std::nullopt;
     oai::utils::utils::wait_for_result(
-        curl_responses.begin()->second, result_json_opt);
+        smf_responses.begin()->second, result_json_opt);
     if (result_json_opt.has_value()) {
       nlohmann::json result_json = result_json_opt.value();
       if (result_json.find("n2sm") != result_json.end()) {
         std::string n2_sm = {};
         n2_sm             = result_json["n2sm"].get<std::string>();
-        Logger::ngap().debug(
-            "Got result for PDU Session ID %d", curl_responses.begin()->first);
+        Logger::amf_n2().debug(
+            "Got result for PDU Session ID %d", smf_responses.begin()->first);
 
         result                                 = result && true;
-        uint8_t pdu_session_id_value           = curl_responses.begin()->first;
+        uint8_t pdu_session_id_value           = smf_responses.begin()->first;
         unsigned int data_len                  = n2_sm.length();
         PduSessionId pdu_session_id            = {};
         OCTET_STRING_t handoverCommandTransfer = {};
@@ -2154,7 +2170,7 @@ void amf_n2::handle_itti_message(
         handoverList.set(handoverItemList);
 
         std::shared_ptr<pdu_session_context> psc = {};
-        if (amf_app_inst->find_pdu_session_context(
+        if (amf_app_inst->get_pdu_session_context(
                 nc->supi, pdu_session_id_value, psc)) {
           psc->is_ho_accepted = true;
         }
@@ -2163,7 +2179,9 @@ void amf_n2::handle_itti_message(
       }
     }
 
-    curl_responses.erase(curl_responses.begin());
+    // Remove the promise from the list since the result is processed or not
+    // available
+    smf_responses.erase(smf_responses.begin());
   }
 
   handovercommand->setPduSessionResourceHandoverList(handoverList);
@@ -2171,7 +2189,11 @@ void amf_n2::handle_itti_message(
 
   uint8_t buffer[BUFFER_SIZE_1024];
   int encoded_size = handovercommand->Encode(buffer, BUFFER_SIZE_1024);
-  bstring b        = blk2bstr(buffer, encoded_size);
+  if ((encoded_size < 0) || (encoded_size > BUFFER_SIZE_1024)) {
+    Logger::amf_n2().error("Encoding failed or buffer too small");
+    return;
+  }
+  bstring b = blk2bstr(buffer, encoded_size);
   sctp_s_38412.sctp_send_msg(unc->gnb_assoc_id, 0, &b);
   oai::utils::utils::bdestroy_wrapper(&b);
 }
@@ -2184,7 +2206,7 @@ void amf_n2::handle_itti_message(
   uint64_t amf_ue_ngap_id = itti_msg->handover_notify->getAmfUeNgapId();
   uint32_t ran_ue_ngap_id = itti_msg->handover_notify->getRanUeNgapId();
   Logger::amf_n2().debug(
-      "Handover Notify ran_ue_ngap_id (" GNB_UE_NGAP_ID_FMT
+      "Handover Notify ran_ue_ngap_id (" RAN_UE_NGAP_ID_FMT
       ") amf_ue_ngap_id (" AMF_UE_NGAP_ID_FMT ")",
       ran_ue_ngap_id, amf_ue_ngap_id);
 
@@ -2212,13 +2234,15 @@ void amf_n2::handle_itti_message(
   std::shared_ptr<nas_context> nc = {};
   if (!amf_n1_inst->amf_ue_id_2_nas_context(amf_ue_ngap_id, nc)) return;
 
-  uint32_t old_ran_ue_ngap_id    = unc->ran_ue_ngap_id;
-  std::shared_ptr<ue_context> uc = {};
-  std::string ue_context_key =
-      amf_conv::get_ue_context_key(old_ran_ue_ngap_id, amf_ue_ngap_id);
-  if (!amf_app_inst->ran_amf_id_2_ue_context(ue_context_key, uc)) {
-    Logger::amf_app().debug(
-        "No existing UE Context, with %s", ue_context_key.c_str());
+  uint32_t old_ran_ue_ngap_id = unc->ran_ue_ngap_id;
+  std::shared_ptr<ue_context> uc =
+      amf_app_inst->get_ue_context(old_ran_ue_ngap_id, amf_ue_ngap_id);
+
+  if (uc == nullptr) {
+    Logger::amf_n2().debug(
+        "No existing UE context with amf_ue_ngap_id " AMF_UE_NGAP_ID_FMT
+        ", ran_ue_ngap_id " RAN_UE_NGAP_ID_FMT,
+        amf_ue_ngap_id, ran_ue_ngap_id);
   }
 
   // Get PDU Session Context
@@ -2228,20 +2252,19 @@ void amf_n2::handle_itti_message(
   }
 
   // Send PDUSessionUpdateSMContextRequest to SMF for accepted PDU sessions
-  std::map<uint8_t, boost::shared_future<nlohmann::json>> curl_responses;
+  std::map<uint8_t, boost::shared_future<nlohmann::json>> smf_responses;
 
   for (auto pdu_session : sessions_ctx) {
     if (pdu_session->is_ho_accepted) {
       // Generate a promise and associate this promise to the curl handle
-      uint32_t promise_id = amf_app_inst->generate_promise_id();
-      Logger::amf_n2().debug("Promise ID generated %d", promise_id);
-
+      uint32_t promise_id = {};
       auto p = boost::make_shared<boost::promise<nlohmann::json>>();
       boost::shared_future<nlohmann::json> f = p->get_future();
 
       // Store the future to be processed later
-      amf_app_inst->add_promise(promise_id, p);
-      curl_responses.emplace(pdu_session->pdu_session_id, f);
+      amf_app_inst->store_promise(promise_id, p);
+      Logger::amf_n2().debug("Promise ID generated %d", promise_id);
+      smf_responses.emplace(pdu_session->pdu_session_id, f);
 
       Logger::amf_n2().debug(
           "Sending ITTI to trigger PDUSessionUpdateSMContextRequest to SMF to "
@@ -2265,7 +2288,7 @@ void amf_n2::handle_itti_message(
 
       int ret = itti_inst->send_msg(itti_n11_msg);
       if (0 != ret) {
-        Logger::ngap().error(
+        Logger::amf_n2().error(
             "Could not send ITTI message %s to task TASK_AMF_SBI",
             itti_n11_msg->get_msg_name());
       }
@@ -2274,16 +2297,16 @@ void amf_n2::handle_itti_message(
 
   // Wait for the response available and process accordingly
   bool result = true;
-  while (!curl_responses.empty()) {
+  while (!smf_responses.empty()) {
     // Wait for the result available and process accordingly
     std::optional<nlohmann::json> result_json_opt = std::nullopt;
     oai::utils::utils::wait_for_result(
-        curl_responses.begin()->second, result_json_opt);
+        smf_responses.begin()->second, result_json_opt);
 
     if (result_json_opt.has_value()) {
       nlohmann::json result_json = result_json_opt.value();
-      Logger::amf_server().debug(
-          "Got result for promise ID %d", curl_responses.begin()->first);
+      Logger::amf_n2().debug(
+          "Got result for promise ID %d", smf_responses.begin()->first);
       uint32_t pdu_session_id = 0;
       if (result_json.find("pduSessionId") != result_json.end()) {
         result         = result && true;
@@ -2295,11 +2318,13 @@ void amf_n2::handle_itti_message(
       result = false;
     }
 
-    curl_responses.erase(curl_responses.begin());
+    // Remove the promise from the list since the result is processed or not
+    // available
+    smf_responses.erase(smf_responses.begin());
   }
 
   // Send UE Release Command to Source gNB
-  Logger::ngap().info("Send UE Release Command to source gNB");
+  Logger::amf_n2().info("Send UE Release Command to source gNB");
   auto ueContextReleaseCommand = std::make_unique<UeContextReleaseCommandMsg>();
   ueContextReleaseCommand->setUeNgapIdPair(amf_ue_ngap_id, old_ran_ue_ngap_id);
   ueContextReleaseCommand->setCauseRadioNetwork(
@@ -2307,7 +2332,12 @@ void amf_n2::handle_itti_message(
 
   uint8_t buffer[BUFFER_SIZE_1024];
   int encoded_size = ueContextReleaseCommand->Encode(buffer, BUFFER_SIZE_1024);
-  bstring b        = blk2bstr(buffer, encoded_size);
+  if ((encoded_size < 0) || (encoded_size > BUFFER_SIZE_1024)) {
+    Logger::amf_n2().error("Encoding failed or buffer too small");
+    return;
+  }
+
+  bstring b = blk2bstr(buffer, encoded_size);
 
   sctp_s_38412.sctp_send_msg(unc->gnb_assoc_id, 0, &b);
   oai::utils::utils::bdestroy_wrapper(&b);
@@ -2328,9 +2358,7 @@ void amf_n2::handle_itti_message(
   uc->ran_ue_ngap_id = ran_ue_ngap_id;
   uc->gnb_id         = gc->gnb_id;
 
-  std::string new_ue_context_key =
-      amf_conv::get_ue_context_key(ran_ue_ngap_id, amf_ue_ngap_id);
-  amf_app_inst->set_ran_amf_id_2_ue_context(new_ue_context_key, uc);
+  amf_app_inst->set_ue_context(ran_ue_ngap_id, amf_ue_ngap_id, uc);
 
   // Retrieve new location from the UE and notify generate location change
   // signal
@@ -2400,7 +2428,8 @@ void amf_n2::handle_itti_message(
   DrbStatusDl status_dl = {};
   DrbStatusUl status_ul = {};
   Ngap_DRB_ID_t drb_id  = {};
-  drb_subject_item_list[0].get(drb_id, status_ul, status_dl);
+  if (drb_subject_item_list.size() > 0)
+    drb_subject_item_list[0].get(drb_id, status_ul, status_dl);
   // TODO:dRBStatusUL18 or dRBStatusUL12
   std::optional<DrbStatusUl18> status_ul_18 = {};
   // TODO: DRBStatusDL18 or DRBStatusDL18
@@ -2426,8 +2455,12 @@ void amf_n2::handle_itti_message(
   dl_ran_status_transfer->setRanStatusTransferTransparentContainer(
       amf_drb_id, amf_ul_pdcp, amf_hfn_ul_pdcp, amf_dl_pdcp, amf_hfn_dl_pdcp);
   uint8_t buffer[BUFFER_SIZE_1024];
-  int encode_size = dl_ran_status_transfer->Encode(buffer, BUFFER_SIZE_1024);
-  bstring b       = blk2bstr(buffer, encode_size);
+  int encoded_size = dl_ran_status_transfer->Encode(buffer, BUFFER_SIZE_1024);
+  if ((encoded_size < 0) || (encoded_size > BUFFER_SIZE_1024)) {
+    Logger::amf_n2().error("Encoding failed or buffer too small");
+    return;
+  }
+  bstring b = blk2bstr(buffer, encoded_size);
   sctp_s_38412.sctp_send_msg(unc->target_gnb_assoc_id, 0, &b);
   oai::utils::utils::bdestroy_wrapper(&b);
 }
@@ -2438,11 +2471,8 @@ void amf_n2::handle_itti_message(std::shared_ptr<itti_rereoute_nas>& itti_msg) {
 
   // Get UE NGAP Context
   std::shared_ptr<ue_ngap_context> unc = {};
-  std::string ue_context_key           = amf_conv::get_ue_context_key(
-      itti_msg->ran_ue_ngap_id, itti_msg->amf_ue_ngap_id);
-
   if (!ran_ue_id_2_ue_ngap_context(
-          itti_msg->ran_ue_ngap_id, ue_context_key, unc))
+          itti_msg->ran_ue_ngap_id, itti_msg->amf_ue_ngap_id, unc))
     return;
 
   if (unc->amf_ue_ngap_id != itti_msg->amf_ue_ngap_id) {
@@ -2480,11 +2510,8 @@ void amf_n2::handle_itti_message(
 
   // Get UE NGAP Context
   std::shared_ptr<ue_ngap_context> unc = {};
-  std::string ue_context_key           = amf_conv::get_ue_context_key(
-      itti_msg->ran_ue_ngap_id, itti_msg->amf_ue_ngap_id);
-
   if (!ran_ue_id_2_ue_ngap_context(
-          itti_msg->ran_ue_ngap_id, ue_context_key, unc))
+          itti_msg->ran_ue_ngap_id, itti_msg->amf_ue_ngap_id, unc))
     return;
 
   std::shared_ptr<gnb_context> gc = {};
@@ -2568,11 +2595,8 @@ void amf_n2::handle_itti_message(
 
   // Get UE NGAP Context
   std::shared_ptr<ue_ngap_context> unc = {};
-  std::string ue_context_key           = amf_conv::get_ue_context_key(
-      itti_msg->ran_ue_ngap_id, itti_msg->amf_ue_ngap_id);
-
   if (!ran_ue_id_2_ue_ngap_context(
-          itti_msg->ran_ue_ngap_id, ue_context_key, unc))
+          itti_msg->ran_ue_ngap_id, itti_msg->amf_ue_ngap_id, unc))
     return;
 
   std::shared_ptr<gnb_context> gc = {};
@@ -2583,8 +2607,9 @@ void amf_n2::handle_itti_message(
   }
 
   // Find subscribed LMFs
-  std::shared_ptr<ue_context> uc = {};
-  if (!amf_app_inst->ran_amf_id_2_ue_context(ue_context_key, uc)) return;
+  std::shared_ptr<ue_context> uc = amf_app_inst->get_ue_context(
+      itti_msg->ran_ue_ngap_id, itti_msg->amf_ue_ngap_id);
+  if (uc == nullptr) return;
 
   std::optional<oai::_3gpp::model::N1MessageClass_anyOf::eN1MessageClass_anyOf>
       n1_message_class = std::nullopt;
@@ -2698,12 +2723,16 @@ void amf_n2::send_handover_preparation_failure(
   auto ho_preparation_failure_msg =
       std::make_unique<HandoverPreparationFailure>();
   ho_preparation_failure_msg->setAmfUeNgapId(amf_ue_ngap_id);
-  ho_preparation_failure_msg->setRanUeNgapId(amf_ue_ngap_id);
+  ho_preparation_failure_msg->setRanUeNgapId(ran_ue_ngap_id);
   ho_preparation_failure_msg->setCause(Ngap_Cause_PR_NOTHING);
 
   uint8_t buffer[BUFFER_SIZE_1024];
   int encoded_size =
       ho_preparation_failure_msg->Encode(buffer, BUFFER_SIZE_1024);
+  if ((encoded_size < 0) || (encoded_size > BUFFER_SIZE_1024)) {
+    Logger::amf_n2().error("Encoding failed or buffer too small");
+    return;
+  }
   bstring b = blk2bstr(buffer, encoded_size);
 
   sctp_s_38412.sctp_send_msg(gnb_assoc_id, 0, &b);
@@ -2715,25 +2744,20 @@ template<typename T>
 void amf_n2::send_ng_setup_failure(
     const T& cause, const e_Ngap_TimeToWait& time_to_wait,
     const sctp_assoc_id_t& assoc_id, const sctp_stream_id_t& stream_id) {
-  auto buffer = new (std::nothrow) uint8_t[BUFFER_SIZE_1024]();
-  if (buffer == nullptr) {
-    Logger::amf_n2().error("Error when allocating buffer!");
-    return;
-  }
+  std::vector<uint8_t> buffer(BUFFER_SIZE_1024, 0);
 
   NgSetupFailureMsg ngSetupFailure = {};
   ngSetupFailure.set(cause, time_to_wait);
-  int encoded = ngSetupFailure.Encode((uint8_t*) buffer, BUFFER_SIZE_1024);
+  int encoded = ngSetupFailure.Encode(buffer.data(), BUFFER_SIZE_1024);
 
   if (encoded < 1) {
     Logger::amf_n2().error("Encode NG Setup Failure message error!");
     return;
   }
 
-  bstring b = blk2bstr(buffer, encoded);
+  bstring b = blk2bstr(buffer.data(), encoded);
   sctp_s_38412.sctp_send_msg(assoc_id, stream_id, &b);
   oai::utils::utils::bdestroy_wrapper(&b);
-  // delete[] buffer;//Free in destructor of NgapMessage
 }
 
 //------------------------------------------------------------------------------
@@ -2749,7 +2773,7 @@ bool amf_n2::ran_ue_id_2_ue_ngap_context(
     }
   }
   Logger::amf_n2().warn(
-      "No UE NGAP context with ran_ue_ngap_id " GNB_UE_NGAP_ID_FMT
+      "No UE NGAP context with ran_ue_ngap_id " RAN_UE_NGAP_ID_FMT
       ", gnb_id " GNB_ID_FMT "",
       ran_ue_ngap_id, gnb_id);
   return false;
@@ -2757,11 +2781,12 @@ bool amf_n2::ran_ue_id_2_ue_ngap_context(
 
 //------------------------------------------------------------------------------
 bool amf_n2::ran_ue_id_2_ue_ngap_context(
-    uint32_t ran_ue_ngap_id, const std::string& ue_context_key,
+    uint32_t ran_ue_ngap_id, uint64_t amf_ue_ngap_id,
     std::shared_ptr<ue_ngap_context>& unc) const {
   // Get UE Context
-  std::shared_ptr<ue_context> uc = {};
-  if (!amf_app_inst->ran_amf_id_2_ue_context(ue_context_key, uc)) return false;
+  std::shared_ptr<ue_context> uc =
+      amf_app_inst->get_ue_context(ran_ue_ngap_id, amf_ue_ngap_id);
+  if (uc == nullptr) return false;
 
   auto ue_id = std::make_pair(ran_ue_ngap_id, uc->gnb_id);
   std::shared_lock lock(m_ranid2uecontext);
@@ -2772,9 +2797,11 @@ bool amf_n2::ran_ue_id_2_ue_ngap_context(
     }
   }
   Logger::amf_n2().warn(
-      "No UE NGAP context with ran_ue_ngap_id " GNB_UE_NGAP_ID_FMT
-      ", ue_context_key %s",
-      ran_ue_ngap_id, ue_context_key.c_str());
+      "No UE NGAP context with AMF UE NGAP ID "
+      "(" AMF_UE_NGAP_ID_FMT
+      "), RAN UE NGAP ID "
+      "(" RAN_UE_NGAP_ID_FMT ")",
+      amf_ue_ngap_id, ran_ue_ngap_id);
   return false;
 }
 
@@ -2795,7 +2822,7 @@ void amf_n2::remove_ran_ue_ngap_id_2_ngap_context(
   if (ranid2uecontext.count(ue_id) > 0) {
     ranid2uecontext.erase(ue_id);
     Logger::amf_n2().debug(
-        "Removed UE NGAP context with ran_ue_ngap_id " GNB_UE_NGAP_ID_FMT
+        "Removed UE NGAP context with ran_ue_ngap_id " RAN_UE_NGAP_ID_FMT
         ", gnb_id " GNB_ID_FMT "",
         ran_ue_ngap_id, gnb_id);
   }
@@ -2910,11 +2937,10 @@ void amf_n2::remove_ue_context_with_amf_ue_ngap_id(
     amf_n1_inst->remove_amf_ue_ngap_id_2_nas_context(amf_ue_ngap_id);
     // Remove NGAP context related to RAN UE NGAP ID
     // Get UE Context
-    std::string ue_context_key =
-        amf_conv::get_ue_context_key(nc->ran_ue_ngap_id, amf_ue_ngap_id);
-    std::shared_ptr<ue_context> uc = {};
+    std::shared_ptr<ue_context> uc =
+        amf_app_inst->get_ue_context(nc->ran_ue_ngap_id, amf_ue_ngap_id);
 
-    if (!amf_app_inst->ran_amf_id_2_ue_context(ue_context_key, uc)) return;
+    if (uc == nullptr) return;
     remove_ran_ue_ngap_id_2_ngap_context(nc->ran_ue_ngap_id, uc->gnb_id);
 
   } else {

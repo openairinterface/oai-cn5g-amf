@@ -58,7 +58,7 @@ class itti_nas_signalling_establishment_request : public itti_msg_amf_app {
       const task_id_t origin, const task_id_t destination)
       : itti_msg_amf_app(NAS_SIG_ESTAB_REQ, origin, destination) {
     rrc_cause            = 0;
-    ueCtxReq             = 0;
+    ue_ctx_req           = 0;
     cgi                  = {};
     tai                  = {};
     nas_buf              = nullptr;
@@ -69,7 +69,7 @@ class itti_nas_signalling_establishment_request : public itti_msg_amf_app {
       const itti_nas_signalling_establishment_request& i)
       : itti_msg_amf_app(i) {
     rrc_cause            = i.rrc_cause;
-    ueCtxReq             = i.ueCtxReq;
+    ue_ctx_req           = i.ue_ctx_req;
     cgi                  = i.cgi;
     tai                  = i.tai;
     nas_buf              = i.nas_buf;
@@ -78,7 +78,7 @@ class itti_nas_signalling_establishment_request : public itti_msg_amf_app {
   }
 
   int rrc_cause;
-  int ueCtxReq;
+  int ue_ctx_req;
   NrCgi_t cgi;
   Tai_t tai;
   bstring nas_buf;

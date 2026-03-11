@@ -389,7 +389,7 @@ void plmn_support_item::from_yaml(const YAML::Node& node) {
   }
 
   if (!node[AMF_CONFIG_NSSAI].IsSequence()) {
-    Logger::amf_app().warn("Could not parse %s", AMF_CONFIG_NSSAI_LABEL);
+    Logger::config().warn("Could not parse %s", AMF_CONFIG_NSSAI_LABEL);
   } else {
     for (int i = 0; i < node[AMF_CONFIG_NSSAI].size(); i++) {
       s_nssai snssai(1);
@@ -469,7 +469,7 @@ supported_integrity_algorithms::supported_integrity_algorithms() {
 void supported_integrity_algorithms::from_yaml(const YAML::Node& node) {
   bool no_item_available = false;
   if (!node.IsSequence()) {
-    Logger::amf_app().warn(
+    Logger::config().warn(
         "Could not parse %s", AMF_CONFIG_SUPPORTED_INTEGRITY_ALGORITHMS_LABEL);
     no_item_available = true;
   } else {
@@ -537,7 +537,7 @@ supported_encryption_algorithms::supported_encryption_algorithms() {
 void supported_encryption_algorithms::from_yaml(const YAML::Node& node) {
   bool no_item_available = false;
   if (!node.IsSequence()) {
-    Logger::amf_app().warn(
+    Logger::config().warn(
         "Could not parse %s", AMF_CONFIG_SUPPORTED_ENCRYPTION_ALGORITHMS_LABEL);
     no_item_available = true;
   } else {
@@ -674,7 +674,7 @@ void amf::from_yaml(const YAML::Node& node) {
 
     if (key == AMF_CONFIG_SERVED_GUAMI_LIST) {
       if (!elem.second.IsSequence()) {
-        Logger::amf_app().warn("Could not parse %s", key);
+        Logger::config().warn("Could not parse %s", key);
       } else {
         for (int i = 0; i < elem.second.size(); i++) {
           guami g(AMF_CONFIG_TEST_PLMN_MCC, AMF_CONFIG_TEST_PLMN_MNC);
@@ -686,7 +686,7 @@ void amf::from_yaml(const YAML::Node& node) {
 
     if (key == AMF_CONFIG_PLMN_SUPPORT_LIST) {
       if (!elem.second.IsSequence()) {
-        Logger::amf_app().warn("Could not parse %s", key);
+        Logger::config().warn("Could not parse %s", key);
       } else {
         for (int i = 0; i < elem.second.size(); i++) {
           plmn_support_item plmn_item(
@@ -1523,11 +1523,11 @@ bool amf_config::from_json(nlohmann::json& json_data) {
     }
 
   } catch (nlohmann::detail::exception& e) {
-    Logger::amf_app().error(
+    Logger::config().error(
         "Exception when reading configuration from json %s", e.what());
     return false;
   } catch (std::exception& e) {
-    Logger::amf_app().error(
+    Logger::config().error(
         "Exception when reading configuration from json %s", e.what());
     return false;
   }

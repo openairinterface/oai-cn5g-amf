@@ -34,13 +34,12 @@ void NonUEN2MessageNotificationIndividualSubscriptionDocumentApiImpl::
       "Subscription ID %s", n2NotifySubscriptionId.c_str());
 
   // Generate a promise and associate this promise to the ITTI message
-  uint32_t promise_id = m_amf_app->generate_promise_id();
-  Logger::amf_n1().debug("Promise ID generated %d", promise_id);
-
+  uint32_t promise_id = {};
   boost::shared_ptr<boost::promise<nlohmann::json>> p =
       boost::make_shared<boost::promise<nlohmann::json>>();
   boost::shared_future<nlohmann::json> f = p->get_future();
-  m_amf_app->add_promise(promise_id, p);
+  m_amf_app->store_promise(promise_id, p);
+  Logger::amf_server().debug("Promise ID generated %d", promise_id);
 
   // Handle the NonUEN2InfoUnsubscribe in amf_app
   std::shared_ptr<itti_sbi_non_ue_n2_info_unsubscribe> itti_msg =
@@ -88,6 +87,9 @@ void NonUEN2MessageNotificationIndividualSubscriptionDocumentApiImpl::
   } else {
     response.send(Pistache::Http::Code::Gateway_Timeout);
   }
+  // Remove the promise from the list since the result is processed or not
+  // available
+  m_amf_app->remove_promise(promise_id);
 }
 
 }  // namespace api
