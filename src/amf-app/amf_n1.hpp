@@ -107,7 +107,7 @@ class amf_n1 {
    * Get UE NAS context associated with a GUTI if the context exists and is not
    * null
    * @param [const std::string&] guti: UE GUTI
-   * @param [std::shared_ptr<nas_context>&] nc: UE NAS Context
+   * @param [std::shared_ptr<nas_context>&] nc: Retrieved UE NAS Context
    * @return true if the context exists and is not null, otherwise return false
    */
   bool guti_2_nas_context(
@@ -407,27 +407,6 @@ class amf_n1 {
   void initialize_registration_accept(
       std::unique_ptr<oai::nas::RegistrationAccept>& registration_accept,
       const std::shared_ptr<nas_context>& nc);
-
-  /*
-   * Find the UE Context associated with a NAS Context
-   * @param [const std::shared_ptr<nas_context>&] nc: Pointer to the UE NAS
-   * Context
-   * @param [std::shared_ptr<ue_context>&] uc: Pointer to the UE Context
-   * @return true if found, otherwise return false
-   */
-  bool find_ue_context(
-      const std::shared_ptr<nas_context>& nc, std::shared_ptr<ue_context>& uc);
-
-  /*
-   * Find the UE Context associated with RAN UE NGAP ID and AMF UE NGAP ID
-   * @param [uint32_t] ran_ue_ngap_id: RAN UE NGAP ID
-   * @param [uint64_t] amf_ue_ngap_id: AMF UE NGAP ID
-   * @param [std::shared_ptr<ue_context>&] uc: Pointer to the UE Context
-   * @return true if found, otherwise return false
-   */
-  bool find_ue_context(
-      uint32_t ran_ue_ngap_id, uint64_t amf_ue_ngap_id,
-      std::shared_ptr<ue_context>& uc);
 
   // Timers handling related functions
   /*
@@ -854,7 +833,7 @@ class amf_n1 {
       const uint64_t amf_ue_ngap_id, bstring nas, uint8_t& cause);
 
   /*
-   * Handle Service Request message
+   * Handle Service Request message with explicit uplink NAS count
    * @param [std::shared_ptr<nas_context>&] nc: Pointer to the NAS context
    * @param [const uint32_t] ran_ue_ngap_id: RAN UE NGAP ID
    * @param [const uint64_t] amf_ue_ngap_id: AMF UE NGAP ID
@@ -973,8 +952,11 @@ class amf_n1 {
       const std::shared_ptr<nas_context>& nc, uint8_t message_type,
       uint8_t security_header_type);
 
-  // for Event Handling
   amf_event event_sub;
+
+ private:
+  // for Event Handling
+
   bs2::connection ee_ue_location_report_connection;
   bs2::connection ee_ue_reachability_status_connection;
   bs2::connection ee_ue_registration_state_connection;
@@ -982,20 +964,22 @@ class amf_n1 {
   bs2::connection ee_ue_loss_of_connectivity_connection;
   bs2::connection ee_ue_communication_failure_connection;
 
- private:
   std::map<long, std::shared_ptr<nas_context>>
       amfueid2nas_context;  // amf ue ngap id
   mutable std::shared_mutex m_amfueid2nas_context;
 
   std::map<std::string, std::shared_ptr<nas_context>> supi2nas_context;
-  std::map<std::string, long> supi2amfId;
-  std::map<std::string, uint32_t> supi2ranId;
   mutable std::shared_mutex m_nas_context;
+  std::map<std::string, long> supi2amfId;
+  mutable std::shared_mutex m_supi2amfId;
+  std::map<std::string, uint32_t> supi2ranId;
+  mutable std::shared_mutex m_supi2ranId;
 
   std::map<std::string, std::shared_ptr<nas_context>> guti2nas_context;
   mutable std::shared_mutex m_guti2nas_context;
 
   static std::map<std::string, std::string> rand_record;
+  mutable std::shared_mutex m_rand_record;
 };
 }  // namespace amf_application
 

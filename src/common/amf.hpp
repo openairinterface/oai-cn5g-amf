@@ -41,7 +41,7 @@
 #define BUFFER_SIZE_256 256
 
 #define GNB_ID_FMT "%" PRIu32
-#define GNB_UE_NGAP_ID_FMT "%" PRIu32
+#define RAN_UE_NGAP_ID_FMT "%" PRIu32
 #define AMF_UE_NGAP_ID_FMT "%" PRIu64
 
 constexpr uint64_t INVALID_AMF_UE_NGAP_ID = 0x010000000000;  // 2^40

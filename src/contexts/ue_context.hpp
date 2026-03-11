@@ -45,7 +45,7 @@ class ue_context {
  public:
   ue_context();
   virtual ~ue_context(){};
-  bool find_pdu_session_context(
+  bool get_pdu_session_context(
       std::uint8_t session_id,
       std::shared_ptr<pdu_session_context>& context) const;
   void add_pdu_session_context(
@@ -65,7 +65,7 @@ class ue_context {
   std::string supi;
   uint32_t tmsi;
 
-  e_Ngap_RRCEstablishmentCause rrc_estb_cause;
+  uint8_t rrc_estb_cause;
   bool is_ue_context_request;
   NrCgi_t cgi;
   Tai_t tai;

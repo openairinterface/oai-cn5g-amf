@@ -147,7 +147,12 @@ void amf_n1_task(void*) {
 
 //------------------------------------------------------------------------------
 amf_n1::amf_n1()
-    : m_amfueid2nas_context(), m_nas_context(), m_guti2nas_context() {
+    : m_amfueid2nas_context(),
+      m_nas_context(),
+      m_guti2nas_context(),
+      m_supi2amfId(),
+      m_supi2ranId(),
+      m_rand_record() {
   if (itti_inst->create_task(TASK_AMF_N1, amf_n1_task, nullptr)) {
     Logger::amf_n1().error("Cannot create task TASK_AMF_N1");
     throw std::runtime_error("Cannot create task TASK_AMF_N1");
@@ -188,7 +193,7 @@ amf_n1::amf_n1()
       event_sub.subscribe_ue_communication_failure(boost::bind(
           &amf_n1::handle_ue_communication_failure_change, this, _1, _2, _3));
 
-  Logger::amf_n1().startup("amf_n1 started");
+  Logger::amf_n1().startup("AMF N1 started");
 }
 
 //------------------------------------------------------------------------------
@@ -260,7 +265,7 @@ void amf_n1::handle_itti_message(itti_downlink_nas_transfer& itti_msg) {
       if (!amf_ue_id_2_nas_context(amf_ue_ngap_id, nc)) return;
 
       std::shared_ptr<pdu_session_context> psc = {};
-      if (!amf_app_inst->find_pdu_session_context(
+      if (!amf_app_inst->get_pdu_session_context(
               nc->supi, itti_msg.pdu_session_id, psc))
         return;
 
@@ -275,8 +280,9 @@ void amf_n1::handle_itti_message(itti_downlink_nas_transfer& itti_msg) {
       }
 
     } else {
-      std::shared_ptr<ue_context> uc = {};
-      if (!find_ue_context(ran_ue_ngap_id, amf_ue_ngap_id, uc)) return;
+      std::shared_ptr<ue_context> uc =
+          amf_app_inst->get_ue_context(ran_ue_ngap_id, amf_ue_ngap_id);
+      if (uc == nullptr) return;
 
       if (uc->is_ue_context_request) {
         // PDU SESSION RESOURCE SETUP_REQUEST
@@ -357,9 +363,6 @@ void amf_n1::handle_itti_message(itti_uplink_nas_data_ind& nas_data_ind) {
   uint64_t amf_ue_ngap_id = nas_data_ind.amf_ue_ngap_id;
   uint32_t ran_ue_ngap_id = nas_data_ind.ran_ue_ngap_id;
 
-  std::string nas_context_key = amf_conv::get_ue_context_key(
-      ran_ue_ngap_id, amf_ue_ngap_id);  // key for nas_context, option 1
-
   std::string snn =
       amf_conv::get_serving_network_name(nas_data_ind.mnc, nas_data_ind.mcc);
   Logger::amf_n1().debug("Serving network name %s", snn.c_str());
@@ -391,14 +394,14 @@ void amf_n1::handle_itti_message(itti_uplink_nas_data_ind& nas_data_ind) {
           "Old AMF UE NGAP ID "
           "(" AMF_UE_NGAP_ID_FMT
           "), RAN UE NGAP ID "
-          "(" GNB_UE_NGAP_ID_FMT ")",
+          "(" RAN_UE_NGAP_ID_FMT ")",
           nc->old_amf_ue_ngap_id, nc->old_ran_ue_ngap_id);
 
       Logger::amf_n1().debug(
           "New AMF UE NGAP ID "
           "(" AMF_UE_NGAP_ID_FMT
           "), RAN UE NGAP ID "
-          "(" GNB_UE_NGAP_ID_FMT ")",
+          "(" RAN_UE_NGAP_ID_FMT ")",
           nc->amf_ue_ngap_id, nc->ran_ue_ngap_id);
 
       set_amf_ue_ngap_id_2_nas_context(amf_ue_ngap_id, nc);
@@ -427,6 +430,7 @@ void amf_n1::handle_itti_message(itti_uplink_nas_data_ind& nas_data_ind) {
           security_header_type, (uint8_t*) bdata(received_nas_msg),
           blength(received_nas_msg))) {
     Logger::amf_n1().error("Not 5GS MOBILITY MANAGEMENT message");
+    oai::utils::utils::bdestroy_wrapper(&received_nas_msg);
     return;
   }
 
@@ -471,10 +475,12 @@ void amf_n1::handle_itti_message(itti_uplink_nas_data_ind& nas_data_ind) {
       if (nc == nullptr) {
         Logger::amf_n1().debug(
             "Abnormal condition: NAS context does not exist ...");
+        oai::utils::utils::bdestroy_wrapper(&received_nas_msg);
         return;
       }
       if (!nc->security_ctx.has_value()) {
         Logger::amf_n1().error("No Security Context found");
+        oai::utils::utils::bdestroy_wrapper(&received_nas_msg);
         return;
       }
 
@@ -501,6 +507,7 @@ void amf_n1::handle_itti_message(itti_uplink_nas_data_ind& nas_data_ind) {
         }
         if (!isMatched) {
           Logger::amf_n1().error("Received message not integrity matched");
+          oai::utils::utils::bdestroy_wrapper(&received_nas_msg);
           return;
         }
       }
@@ -515,12 +522,14 @@ void amf_n1::handle_itti_message(itti_uplink_nas_data_ind& nas_data_ind) {
               decoded_plain_msg)) {
         Logger::amf_n1().error("Decrypt NAS message failure");
         oai::utils::utils::bdestroy_wrapper(&ciphered);
+        oai::utils::utils::bdestroy_wrapper(&received_nas_msg);
         return;
       }
       oai::utils::utils::bdestroy_wrapper(&ciphered);
     } break;
     default: {
       Logger::amf_n1().error("Unknown NAS Message Type");
+      oai::utils::utils::bdestroy_wrapper(&received_nas_msg);
       return;
     }
   }
@@ -531,11 +540,13 @@ void amf_n1::handle_itti_message(itti_uplink_nas_data_ind& nas_data_ind) {
 
   if (nas_data_ind.is_nas_signalling_estab_req) {
     Logger::amf_n1().debug("Received NAS Signalling Establishment request...");
+    oai::utils::utils::bdestroy_wrapper(&received_nas_msg);
     nas_signalling_establishment_request_handle(
         security_header_type, nc, nas_data_ind.ran_ue_ngap_id,
         nas_data_ind.amf_ue_ngap_id, decoded_plain_msg, snn, ulCount);
   } else {
     Logger::amf_n1().debug("Received Uplink NAS message...");
+    oai::utils::utils::bdestroy_wrapper(&received_nas_msg);
     uplink_nas_msg_handle(
         nas_data_ind.ran_ue_ngap_id, nas_data_ind.amf_ue_ngap_id,
         decoded_plain_msg, security_header_type, plmn);
@@ -831,20 +842,18 @@ void amf_n1::identity_response_handle(
   Logger::amf_n1().debug("Identity Response: SUPI %s ", nc->supi.c_str());
 
   // Update UE context if exists
-  std::string ue_context_key =
-      amf_conv::get_ue_context_key(ran_ue_ngap_id, amf_ue_ngap_id);
-
-  std::shared_ptr<ue_context> uc = {};
-  if (amf_app_inst->ran_amf_id_2_ue_context(ue_context_key, uc)) {
+  std::shared_ptr<ue_context> uc =
+      amf_app_inst->get_ue_context(ran_ue_ngap_id, amf_ue_ngap_id);
+  if (uc != nullptr) {
     // Update UE context
     uc->supi = nc->supi;
     // associate SUPI with UC
     // Verify if there's PDU session info in the old context
-    std::shared_ptr<ue_context> old_uc = {};
-    if (amf_app_inst->supi_2_ue_context(uc->supi, old_uc)) {
+    std::shared_ptr<ue_context> old_uc = amf_app_inst->get_ue_context(uc->supi);
+    if (old_uc) {
       uc->copy_pdu_sessions(old_uc);
     }
-    amf_app_inst->set_supi_2_ue_context(uc->supi, uc);
+    amf_app_inst->set_ue_context(uc->supi, uc);
     Logger::amf_n1().debug("Update UC context, SUPI %s", uc->supi.c_str());
   }
 
@@ -871,11 +880,7 @@ void amf_n1::identity_response_handle(
     ue_item.supi            = nc->supi;
     if (nc->guti.has_value()) ue_item.guti = nc->guti.value();
 
-    // Find UE context
-    std::shared_ptr<ue_context> uc = {};
-    if (!find_ue_context(ran_ue_ngap_id, amf_ue_ngap_id, uc)) {
-      Logger::amf_n1().warn("Cannot find the UE context");
-    } else {
+    if (uc != nullptr) {
       ue_item.mcc    = uc->cgi.mcc;
       ue_item.mnc    = uc->cgi.mnc;
       ue_item.cellId = uc->cgi.nrCellId;
@@ -902,9 +907,10 @@ void amf_n1::identity_response_handle(
 bool amf_n1::service_request_handle(
     std::shared_ptr<nas_context> nc, const uint32_t ran_ue_ngap_id,
     const uint64_t amf_ue_ngap_id, bstring nas, uint8_t& service_reject_cause) {
-  std::shared_ptr<ue_context> uc = {};
+  std::shared_ptr<ue_context> uc =
+      amf_app_inst->get_ue_context(ran_ue_ngap_id, amf_ue_ngap_id);
 
-  if (!find_ue_context(ran_ue_ngap_id, amf_ue_ngap_id, uc)) {
+  if (uc == nullptr) {
     service_reject_cause = k5gmmCauseUeIdentityCannotBeDerived;
     return false;
   }
@@ -913,7 +919,7 @@ bool amf_n1::service_request_handle(
   auto service_request = std::make_unique<ServiceRequest>();
   int decoded_size =
       service_request->Decode((uint8_t*) bdata(nas), blength(nas));
-  // oai::utils::utils::bdestroy_wrapper(&nas);
+  oai::utils::utils::bdestroy_wrapper(&nas);
 
   // Validate Service Request message
   if ((decoded_size != KEncodeDecodeError)) {
@@ -925,8 +931,7 @@ bool amf_n1::service_request_handle(
           uc->tai.mcc, uc->tai.mnc, amf_cfg->guami.region_id, amf_set_id,
           amf_pointer, tmsi);
 
-      Logger::amf_app().debug(
-          "GUTI %s, 5G-TMSI %s", guti.c_str(), tmsi.c_str());
+      Logger::amf_n1().debug("GUTI %s, 5G-TMSI %s", guti.c_str(), tmsi.c_str());
     }
   }
 
@@ -954,7 +959,7 @@ bool amf_n1::service_request_handle(
 
   Logger::amf_n1().debug(
       "amf_ue_ngap_id " AMF_UE_NGAP_ID_FMT
-      ", ran_ue_ngap_id " GNB_UE_NGAP_ID_FMT,
+      ", ran_ue_ngap_id " RAN_UE_NGAP_ID_FMT,
       amf_ue_ngap_id, ran_ue_ngap_id);
   Logger::amf_n1().debug(
       "Key for PDU Session context: SUPI %s", nc->supi.c_str());
@@ -1072,7 +1077,7 @@ bool amf_n1::service_request_handle(
 
     for (auto& pdu_session_id : pdu_session_to_be_activated) {
       std::shared_ptr<pdu_session_context> psc = {};
-      if (!amf_app_inst->find_pdu_session_context(
+      if (!amf_app_inst->get_pdu_session_context(
               nc->supi, pdu_session_id, psc)) {
         Logger::amf_n1().warn(
             "No PDU Session Context with PDU Session ID %d", pdu_session_id);
@@ -1142,9 +1147,10 @@ bool amf_n1::service_request_handle(
     std::shared_ptr<nas_context> nc, const uint32_t ran_ue_ngap_id,
     const uint64_t amf_ue_ngap_id, bstring nas, uint8_t ulCount,
     uint8_t& service_reject_cause) {
-  std::shared_ptr<ue_context> uc = {};
+  std::shared_ptr<ue_context> uc =
+      amf_app_inst->get_ue_context(ran_ue_ngap_id, amf_ue_ngap_id);
 
-  if (!find_ue_context(ran_ue_ngap_id, amf_ue_ngap_id, uc)) {
+  if (uc == nullptr) {
     service_reject_cause = k5gmmCauseUeIdentityCannotBeDerived;
     return false;
   }
@@ -1154,7 +1160,7 @@ bool amf_n1::service_request_handle(
       std::make_unique<ServiceRequest>();
   int decoded_size =
       service_request->Decode((uint8_t*) bdata(nas), blength(nas));
-  // oai::utils::utils::bdestroy_wrapper(&nas);
+  oai::utils::utils::bdestroy_wrapper(&nas);
 
   // Get the old security context if necessary
   if ((decoded_size != KEncodeDecodeError) and (!nc->guti.has_value())) {
@@ -1165,13 +1171,12 @@ bool amf_n1::service_request_handle(
       std::string guti = amf_conv::tmsi_to_guti(
           uc->tai.mcc, uc->tai.mnc, amf_cfg->guami.region_id, amf_set_id,
           amf_pointer, tmsi);
-      Logger::amf_app().debug(
-          "GUTI %s, 5G-TMSI %s", guti.c_str(), tmsi.c_str());
+      Logger::amf_n1().debug("GUTI %s, 5G-TMSI %s", guti.c_str(), tmsi.c_str());
 
       // Get Security Context from old NAS Context if neccesary
       std::shared_ptr<nas_context> old_nc = {};
       if (guti_2_nas_context(guti, old_nc)) {
-        Logger::amf_app().debug("Get Security Context from old NAS Context");
+        Logger::amf_n1().debug("Get Security Context from old NAS Context");
         nc->security_ctx =
             std::make_optional<nas_secu_ctx>(old_nc->security_ctx.value());
         // Copy Kamf
@@ -1182,7 +1187,7 @@ bool amf_n1::service_request_handle(
         }
 
         nc->security_ctx.value().ul_count.seq_num = ulCount;
-        Logger::amf_app().debug(
+        Logger::amf_n1().debug(
             "Get Security Context from old NAS Context: ulcount %d", ulCount);
         nc->imsi               = old_nc->imsi;
         nc->supi               = old_nc->supi;
@@ -1214,12 +1219,12 @@ bool amf_n1::service_request_handle(
         nc->ue_security_capability = old_nc->ue_security_capability;
 
         Logger::amf_n1().debug(
-            "Current ran_ue_ngap_id (" GNB_UE_NGAP_ID_FMT
+            "Current ran_ue_ngap_id (" RAN_UE_NGAP_ID_FMT
             "), current amf_ue_ngap_id (" AMF_UE_NGAP_ID_FMT ")",
             nc->ran_ue_ngap_id, nc->amf_ue_ngap_id);
 
         Logger::amf_n1().debug(
-            "Old ran_ue_ngap_id (" GNB_UE_NGAP_ID_FMT
+            "Old ran_ue_ngap_id (" RAN_UE_NGAP_ID_FMT
             "), old amf_ue_ngap_id (" AMF_UE_NGAP_ID_FMT ")",
             nc->old_ran_ue_ngap_id, nc->old_amf_ue_ngap_id);
       }
@@ -1249,19 +1254,19 @@ bool amf_n1::service_request_handle(
 
   Logger::amf_n1().debug(
       "amf_ue_ngap_id " AMF_UE_NGAP_ID_FMT
-      ", ran_ue_ngap_id " GNB_UE_NGAP_ID_FMT,
+      ", ran_ue_ngap_id " RAN_UE_NGAP_ID_FMT,
       amf_ue_ngap_id, ran_ue_ngap_id);
   Logger::amf_n1().debug(
       "Key for PDU Session context: SUPI %s", nc->supi.c_str());
 
   // Get the status of PDU Session context
-  std::shared_ptr<ue_context> old_uc = {};
-  if (amf_app_inst->supi_2_ue_context(nc->supi, old_uc)) {
+  std::shared_ptr<ue_context> old_uc = amf_app_inst->get_ue_context(nc->supi);
+  if (old_uc) {
     uc->copy_pdu_sessions(old_uc);
   }
 
   // Associate SUPI with UC
-  amf_app_inst->set_supi_2_ue_context(nc->supi, uc);
+  amf_app_inst->set_ue_context(nc->supi, uc);
 
   // First send UEContextReleaseCommand to release old NAS signalling
   if (((nc->old_ran_ue_ngap_id != nc->ran_ue_ngap_id) and
@@ -1271,21 +1276,23 @@ bool amf_n1::service_request_handle(
         "necessary");
 
     // Get UE Context
-    std::string ue_context_key = amf_conv::get_ue_context_key(
+    std::shared_ptr<ue_context> old_uc_tmp = amf_app_inst->get_ue_context(
         nc->old_ran_ue_ngap_id, nc->old_amf_ue_ngap_id);
-    std::shared_ptr<ue_context> uc = {};
-
-    if (!amf_app_inst->ran_amf_id_2_ue_context(ue_context_key, uc)) {
-      Logger::amf_app().error(
-          "No UE context for ran_amf_id %s, exit", ue_context_key.c_str());
+    if (old_uc_tmp == nullptr) {
+      Logger::amf_n1().error(
+          "No UE context for AMF UE NGAP ID "
+          "(" AMF_UE_NGAP_ID_FMT
+          "), RAN UE NGAP ID "
+          "(" RAN_UE_NGAP_ID_FMT ")",
+          nc->old_amf_ue_ngap_id, nc->old_ran_ue_ngap_id);
     } else {
       // uc->copy_pdu_sessions(old_uc);
 
       std::shared_ptr<ue_ngap_context> unc = {};
       if (!amf_n2_inst->ran_ue_id_2_ue_ngap_context(
-              nc->old_ran_ue_ngap_id, uc->gnb_id, unc)) {
+              nc->old_ran_ue_ngap_id, old_uc_tmp->gnb_id, unc)) {
         Logger::amf_n1().warn(
-            "No UE NGAP context with ran_ue_ngap_id (" GNB_UE_NGAP_ID_FMT ")",
+            "No UE NGAP context with ran_ue_ngap_id (" RAN_UE_NGAP_ID_FMT ")",
             nc->old_ran_ue_ngap_id);
       } else {
         auto itti_msg = std::make_shared<itti_ue_context_release_command>(
@@ -1293,7 +1300,8 @@ bool amf_n1::service_request_handle(
         itti_msg->amf_ue_ngap_id = nc->old_amf_ue_ngap_id;
         itti_msg->ran_ue_ngap_id = nc->old_ran_ue_ngap_id;
         itti_msg->cause.setChoiceOfCause(Ngap_Cause_PR_radioNetwork);
-        itti_msg->cause.set(3);  // TODO: remove hardcoded value cause nas(3)
+        itti_msg->cause.set(
+            Ngap_CauseRadioNetwork_release_due_to_ngran_generated_reason);
 
         int ret = itti_inst->send_msg(itti_msg);
         if (0 != ret) {
@@ -1468,7 +1476,7 @@ bool amf_n1::service_request_handle(
 
     for (auto& pdu_session_id : pdu_session_to_be_activated) {
       std::shared_ptr<pdu_session_context> psc = {};
-      if (!amf_app_inst->find_pdu_session_context(
+      if (!amf_app_inst->get_pdu_session_context(
               nc->supi, pdu_session_id, psc)) {
         Logger::amf_n1().warn(
             "No PDU Session Context with PDU Session ID %d", pdu_session_id);
@@ -1635,6 +1643,7 @@ bool amf_n1::registration_request_handle(
       registration_request->Decode((uint8_t*) bdata(reg), blength(reg));
   if (decoded_size == KEncodeDecodeError) {
     Logger::nas_mm().error("Decode Registration Request message error");
+    oai::utils::utils::bdestroy_wrapper(&reg);
     cause = k5gmmCauseSemanticallyIncorrect;
     return false;
   }
@@ -1644,8 +1653,9 @@ bool amf_n1::registration_request_handle(
   nc->registration_request_is_set = true;
 
   // Find UE context
-  std::shared_ptr<ue_context> uc = {};
-  if (!find_ue_context(ran_ue_ngap_id, amf_ue_ngap_id, uc)) {
+  std::shared_ptr<ue_context> uc =
+      amf_app_inst->get_ue_context(ran_ue_ngap_id, amf_ue_ngap_id);
+  if (uc == nullptr) {
     cause = k5gmmCauseIllegalUe;  // TODO: verify the cause
     return false;
   }
@@ -1653,7 +1663,7 @@ bool amf_n1::registration_request_handle(
   if (!amf_n2_inst->ran_ue_id_2_ue_ngap_context(
           ran_ue_ngap_id, uc->gnb_id, unc)) {
     Logger::amf_n1().debug(
-        "No existed UE NGAP context with ran_ue_ngap_id (" GNB_UE_NGAP_ID_FMT
+        "No existed UE NGAP context with ran_ue_ngap_id (" RAN_UE_NGAP_ID_FMT
         "), amf_ue_ngap_id (" AMF_UE_NGAP_ID_FMT ")",
         ran_ue_ngap_id, amf_ue_ngap_id);
     return false;
@@ -2015,13 +2025,14 @@ bool amf_n1::registration_request_handle(
     if (uplink_data_status_opt.has_value() or
         pdu_session_status_opt.has_value()) {
       // Verify if there's PDU session info in the old context
-      std::shared_ptr<ue_context> old_uc = {};
-      if (amf_app_inst->supi_2_ue_context(uc->supi, old_uc)) {
+      std::shared_ptr<ue_context> old_uc =
+          amf_app_inst->get_ue_context(uc->supi);
+      if (old_uc) {
         uc->copy_pdu_sessions(old_uc);
       }
     }
 
-    amf_app_inst->set_supi_2_ue_context(nc->supi, uc);
+    amf_app_inst->set_ue_context(nc->supi, uc);
     Logger::amf_n1().debug("Update UC context, SUPI %s", nc->supi.c_str());
   }
 
@@ -2106,13 +2117,13 @@ bool amf_n1::remove_amf_ue_ngap_id_2_nas_context(
 //------------------------------------------------------------------------------
 void amf_n1::set_supi_2_amf_id(
     const std::string& supi, const uint64_t& amf_ue_ngap_id) {
-  std::unique_lock lock(m_nas_context);
+  std::unique_lock lock(m_supi2amfId);
   supi2amfId[supi] = amf_ue_ngap_id;
 }
 
 //------------------------------------------------------------------------------
 bool amf_n1::supi_2_amf_id(const std::string& supi, uint64_t& amf_ue_ngap_id) {
-  std::shared_lock lock(m_nas_context);
+  std::shared_lock lock(m_supi2amfId);
   if (supi2amfId.count(supi) > 0) {
     amf_ue_ngap_id = supi2amfId.at(supi);
     return true;
@@ -2123,7 +2134,7 @@ bool amf_n1::supi_2_amf_id(const std::string& supi, uint64_t& amf_ue_ngap_id) {
 
 //------------------------------------------------------------------------------
 bool amf_n1::remove_supi_2_amf_id(const std::string& supi) {
-  std::unique_lock lock(m_nas_context);
+  std::unique_lock lock(m_supi2amfId);
   if (supi2amfId.count(supi) > 0) {
     supi2amfId.erase(supi);
     return true;
@@ -2135,13 +2146,13 @@ bool amf_n1::remove_supi_2_amf_id(const std::string& supi) {
 //------------------------------------------------------------------------------
 void amf_n1::set_supi_2_ran_id(
     const std::string& supi, const uint32_t& ran_ue_ngap_id) {
-  std::unique_lock lock(m_nas_context);
+  std::unique_lock lock(m_supi2ranId);
   supi2ranId[supi] = ran_ue_ngap_id;
 }
 
 //------------------------------------------------------------------------------
 bool amf_n1::supi_2_ran_id(const std::string& supi, uint32_t& ran_ue_ngap_id) {
-  std::shared_lock lock(m_nas_context);
+  std::shared_lock lock(m_supi2ranId);
   if (supi2amfId.count(supi) > 0) {
     ran_ue_ngap_id = supi2ranId.at(supi);
     return true;
@@ -2152,7 +2163,7 @@ bool amf_n1::supi_2_ran_id(const std::string& supi, uint32_t& ran_ue_ngap_id) {
 
 //------------------------------------------------------------------------------
 bool amf_n1::remove_supi_2_ran_id(const std::string& supi) {
-  std::unique_lock lock(m_nas_context);
+  std::unique_lock lock(m_supi2ranId);
   if (supi2ranId.count(supi) > 0) {
     supi2ranId.erase(supi);
     return true;
@@ -2259,11 +2270,13 @@ void amf_n1::send_registration_reject_msg(
 
   bstring b = blk2bstr(buffer, encoded_size);
   itti_send_dl_nas_buffer_to_task_n2(b, ran_ue_ngap_id, amf_ue_ngap_id);
+  oai::utils::utils::bdestroy_wrapper(&b);
 
   // Trigger CommunicationFailure Report notify
   oai::_3gpp::model::CommunicationFailure comm_failure = {};
-  std::shared_ptr<ue_context> uc                       = {};
-  if (!find_ue_context(ran_ue_ngap_id, amf_ue_ngap_id, uc)) {
+  std::shared_ptr<ue_context> uc =
+      amf_app_inst->get_ue_context(ran_ue_ngap_id, amf_ue_ngap_id);
+  if (uc == nullptr) {
     Logger::amf_n1().warn(
         "Cannot find the UE context, unable to notify CommunicationFailure "
         "Report");
@@ -2300,6 +2313,7 @@ void amf_n1::send_authentication_reject_msg(
 
   bstring b = blk2bstr(buffer, encoded_size);
   itti_send_dl_nas_buffer_to_task_n2(b, ran_ue_ngap_id, amf_ue_ngap_id);
+  oai::utils::utils::bdestroy_wrapper(&b);
 }
 
 //------------------------------------------------------------------------------
@@ -2441,7 +2455,10 @@ bool amf_n1::get_authentication_vectors_from_ausf(
     Logger::amf_n1().info("ausf_s (%s)", auts_s);
 
     std::map<std::string, std::string>::iterator iter;
-    iter = rand_record.find(nc->supi);
+    {
+      const std::lock_guard<std::shared_mutex> lock(m_rand_record);
+      iter = rand_record.find(nc->supi);
+    }
     if (iter != rand_record.end()) {
       authentication_info_rand = iter->second;
       Logger::amf_n1().info("rand_s (%s)", authentication_info_rand.c_str());
@@ -2457,12 +2474,12 @@ bool amf_n1::get_authentication_vectors_from_ausf(
 
   // Get UE Authentication from AUSF
   // Generate a promise and associate this promise to the ITTI message
-  uint32_t promise_id = amf_app_inst->generate_promise_id();
-  Logger::amf_n1().debug("Promise ID generated %d", promise_id);
+  uint32_t promise_id = {};
   boost::shared_ptr<boost::promise<nlohmann::json>> p =
       boost::make_shared<boost::promise<nlohmann::json>>();
   boost::shared_future<nlohmann::json> f = p->get_future();
-  amf_app_inst->add_promise(promise_id, p);
+  amf_app_inst->store_promise(promise_id, p);
+  Logger::amf_n1().debug("Promise ID generated %d", promise_id);
 
   std::shared_ptr<itti_sbi_ue_authentication_request> itti_msg =
       std::make_shared<itti_sbi_ue_authentication_request>(
@@ -2501,10 +2518,13 @@ bool amf_n1::get_authentication_vectors_from_ausf(
     }
 
   } else {
-    Logger::amf_n1().debug(
-        "Could not get Authorized Network Slice Info from NSSF");
+    Logger::amf_n1().debug("Could not get UE Authentication from AUSF");
     is_result_available = false;
   }
+
+  // Remove the promise from the list since the result is processed or not
+  // available
+  amf_app_inst->remove_promise(promise_id);
 
   if (!is_result_available) {
     Logger::amf_n1().info("Could not get expected response from AUSF");
@@ -2514,8 +2534,16 @@ bool amf_n1::get_authentication_vectors_from_ausf(
   // Process the response
   unsigned char* r5g_auth_data_rand = amf_conv::format_string_as_hex(
       ue_authentication_ctx.getR5gAuthData().getRand());
+  if (!r5g_auth_data_rand) {
+    Logger::amf_n1().error("Failed to decode RAND");
+    return false;
+  }
   memcpy(nc->_5g_av[0].rand, r5g_auth_data_rand, RAND_LENGTH_OCTETS);
-  rand_record[nc->supi] = ue_authentication_ctx.getR5gAuthData().getRand();
+  {
+    const std::lock_guard<std::shared_mutex> lock(m_rand_record);
+    rand_record[nc->supi] = ue_authentication_ctx.getR5gAuthData().getRand();
+  }
+
   oai::utils::output_wrapper::print_buffer(
       "amf_n1", "5G AV: RAND", nc->_5g_av[0].rand, RAND_LENGTH_OCTETS);
   oai::utils::utils::free_wrapper((void**) &r5g_auth_data_rand);
@@ -2564,11 +2592,15 @@ bool amf_n1::_5g_aka_confirmation_from_ausf(
   if (!nc) return false;
   std::string res_star_string = {};
 
-  std::map<std::string, std::string>::iterator iter;
-  iter = rand_record.find(nc->supi);
-  if (iter != rand_record.end()) {
-    rand_record.erase(iter);
+  {
+    std::map<std::string, std::string>::iterator iter;
+    const std::lock_guard<std::shared_mutex> lock(m_rand_record);
+    iter = rand_record.find(nc->supi);
+    if (iter != rand_record.end()) {
+      rand_record.erase(iter);
+    }
   }
+
   uint8_t res_star_len    = blength(resStar);
   uint8_t* res_star_value = (uint8_t*) bdata(resStar);
   char* res_star_s        = (char*) malloc(res_star_len * 2 + 1);
@@ -2580,6 +2612,7 @@ bool amf_n1::_5g_aka_confirmation_from_ausf(
   oai::utils::output_wrapper::print_buffer(
       "amf_n1", "resStar", res_star_value, res_star_len);
   Logger::amf_n1().info("resStar_s (%s)", res_star_s);
+  oai::utils::utils::free_wrapper((void**) &res_star_s);
 
   nlohmann::json confirmation_data_json = {};
   ConfirmationData confirmation_data    = {};
@@ -2589,12 +2622,12 @@ bool amf_n1::_5g_aka_confirmation_from_ausf(
 
   // Send Confirmation Data to AUSF
   // Generate a promise and associate this promise to the ITTI message
-  uint32_t promise_id = amf_app_inst->generate_promise_id();
-  Logger::amf_n1().debug("Promise ID generated %d", promise_id);
+  uint32_t promise_id = {};
   boost::shared_ptr<boost::promise<nlohmann::json>> p =
       boost::make_shared<boost::promise<nlohmann::json>>();
   boost::shared_future<nlohmann::json> f = p->get_future();
-  amf_app_inst->add_promise(promise_id, p);
+  amf_app_inst->store_promise(promise_id, p);
+  Logger::amf_n1().debug("Promise ID generated %d", promise_id);
 
   std::shared_ptr<itti_sbi_ue_authentication_confirmation> itti_msg =
       std::make_shared<itti_sbi_ue_authentication_confirmation>(
@@ -2655,10 +2688,11 @@ bool amf_n1::_5g_aka_confirmation_from_ausf(
             set_supi_2_nas_context(nc->supi, nc);
 
             // Update UE CONTEXT if necessary
-            std::shared_ptr<ue_context> uc = {};
-            if (amf_app_inst->supi_2_ue_context(old_supi, uc)) {
+            std::shared_ptr<ue_context> uc =
+                amf_app_inst->get_ue_context(old_supi);
+            if (uc != nullptr) {
               uc->supi = nc->supi;
-              amf_app_inst->set_supi_2_ue_context(nc->supi, uc);
+              amf_app_inst->set_ue_context(nc->supi, uc);
               set_supi_2_amf_id(nc->supi, uc->amf_ue_ngap_id);
               set_supi_2_ran_id(nc->supi, uc->ran_ue_ngap_id);
 
@@ -2708,6 +2742,10 @@ bool amf_n1::_5g_aka_confirmation_from_ausf(
     is_result_available = false;
   }
 
+  // Remove the promise from the list since the result is processed or not
+  // available
+  amf_app_inst->remove_promise(promise_id);
+
   if (!is_result_available) {
     Logger::amf_n1().info("Could not get expected response from AUSF");
     return false;
@@ -2736,7 +2774,7 @@ void amf_n1::handle_auth_vector_successful_result(
   if (!start_authentication_procedure(nc, vindex, nc->ngksi)) {
     Logger::amf_n1().error("Start Authentication Procedure Failure, reject...");
     Logger::amf_n1().error(
-        "Ran_ue_ngap_id " GNB_UE_NGAP_ID_FMT, nc->ran_ue_ngap_id);
+        "Ran_ue_ngap_id " RAN_UE_NGAP_ID_FMT, nc->ran_ue_ngap_id);
     send_registration_reject_msg(
         nc->ran_ue_ngap_id, nc->amf_ue_ngap_id,
         k5gmmCauseInvalidMandatoryInfo);  // cause?
@@ -2794,6 +2832,7 @@ bool amf_n1::start_authentication_procedure(
   Logger::amf_n1().debug(
       "amf_ue_ngap_id " AMF_UE_NGAP_ID_FMT, nc->amf_ue_ngap_id);
   itti_send_dl_nas_buffer_to_task_n2(b, nc->ran_ue_ngap_id, nc->amf_ue_ngap_id);
+  oai::utils::utils::bdestroy_wrapper(&b);
   return true;
 }
 
@@ -2946,6 +2985,7 @@ void amf_n1::authentication_failure_handle(
     Logger::nas_mm().error("Decode Registration Request message error");
     send_registration_reject_msg(
         ran_ue_ngap_id, amf_ue_ngap_id, k5gmmCauseSemanticallyIncorrect);
+    oai::utils::utils::bdestroy_wrapper(&plain_msg);
     // Reset the failure counter
     nc->registration_attempt_counter = 0;
     return;
@@ -3011,7 +3051,7 @@ void amf_n1::authentication_failure_handle(
         Logger::amf_n1().error(
             "Start Authentication procedure failure, reject...");
         Logger::amf_n1().error(
-            "Ran_ue_ngap_id " GNB_UE_NGAP_ID_FMT, nc->ran_ue_ngap_id);
+            "Ran_ue_ngap_id " RAN_UE_NGAP_ID_FMT, nc->ran_ue_ngap_id);
         send_registration_reject_msg(
             nc->ran_ue_ngap_id, nc->amf_ue_ngap_id,
             k5gmmCauseInvalidMandatoryInfo);
@@ -3146,8 +3186,9 @@ void amf_n1::security_mode_complete_handle(
     bstring nas_msg, uint8_t security_header_type) {
   Logger::amf_n1().debug("Handling Security Mode Complete ...");
 
-  std::shared_ptr<ue_context> uc = {};
-  if (!find_ue_context(ran_ue_ngap_id, amf_ue_ngap_id, uc)) return;
+  std::shared_ptr<ue_context> uc =
+      amf_app_inst->get_ue_context(ran_ue_ngap_id, amf_ue_ngap_id);
+  if (uc == nullptr) return;
 
   std::shared_ptr<nas_context> nc = {};
   if (!amf_ue_id_2_nas_context(amf_ue_ngap_id, nc)) return;
@@ -3207,8 +3248,7 @@ void amf_n1::security_mode_complete_handle(
       auto registration_request = std::make_unique<RegistrationRequest>();
       registration_request->Decode(
           (uint8_t*) bdata(nas_msg_container), blength(nas_msg_container));
-      // oai::utils::utils::bdestroy_wrapper(&nas_msg_container);  // free
-      // buffer
+      oai::utils::utils::bdestroy_wrapper(&nas_msg_container);
 
       // Get Requested NSSAI (Optional IE), if provided
       if (registration_request->GetRequestedNssai(nc->requested_nssai)) {
@@ -3228,6 +3268,9 @@ void amf_n1::security_mode_complete_handle(
       pdu_session_status_opt = registration_request->GetPduSessionStatus();
       if (!pdu_session_status_opt.has_value())
         Logger::amf_n1().debug("Optional IE PDUSessionStatus is not present");
+    } else {
+      // Free nas_msg_container for unhandled message types
+      oai::utils::utils::bdestroy_wrapper(&nas_msg_container);
     }
   }
 
@@ -3333,8 +3376,7 @@ void amf_n1::security_mode_complete_handle(
   std::map<uint8_t, pdu_session_info_t> pdu_sessions;
   for (auto& pdu_session_id : pdu_session_to_be_activated) {
     std::shared_ptr<pdu_session_context> psc = {};
-    if (!amf_app_inst->find_pdu_session_context(
-            uc->supi, pdu_session_id, psc)) {
+    if (!amf_app_inst->get_pdu_session_context(uc->supi, pdu_session_id, psc)) {
       Logger::amf_n1().warn(
           "No PDU Session Context with PDU Session ID %d", pdu_session_id);
     }
@@ -3398,7 +3440,7 @@ void amf_n1::security_mode_complete_handle(
     // TODO: Use DownlinkNasTransport to convey Registration Accept
     Logger::amf_n1().debug(
         "UE Context is not requested, UE with "
-        "ran_ue_ngap_id " GNB_UE_NGAP_ID_FMT
+        "ran_ue_ngap_id " RAN_UE_NGAP_ID_FMT
         ", "
         "amf_ue_ngap_id " AMF_UE_NGAP_ID_FMT " attached",
         ran_ue_ngap_id, amf_ue_ngap_id);
@@ -3511,8 +3553,9 @@ void amf_n1::registration_complete_handle(
     bstring nas_msg) {
   Logger::amf_n1().debug("Received Registration Complete message, processing");
 
-  std::shared_ptr<ue_context> uc = {};
-  if (!find_ue_context(ran_ue_ngap_id, amf_ue_ngap_id, uc)) return;
+  std::shared_ptr<ue_context> uc =
+      amf_app_inst->get_ue_context(ran_ue_ngap_id, amf_ue_ngap_id);
+  if (uc == nullptr) return;
 
   std::shared_ptr<nas_context> nc = {};
   if (!amf_ue_id_2_nas_context(amf_ue_ngap_id, nc)) return;
@@ -3700,6 +3743,10 @@ void amf_n1::encode_nas_message_protected(
 bool amf_n1::nas_message_integrity_protected(
     nas_secu_ctx& nsc, uint8_t direction, uint8_t* input_nas, int input_nas_len,
     uint32_t& mac32) {
+  if (!input_nas || input_nas_len < 1) {
+    Logger::amf_n1().error("Invalid NAS message");
+    return false;
+  }
   uint32_t count = 0x00000000;
   if (direction) {
     count = 0x00000000 | ((nsc.dl_count.overflow & 0x0000ffff) << 8) |
@@ -3855,9 +3902,10 @@ void amf_n1::ue_initiate_de_registration_handle(
   // Send request to SMF to release the established PDU sessions if needed
   // Get list of PDU sessions
   std::vector<std::shared_ptr<pdu_session_context>> sessions_ctx;
-  std::shared_ptr<ue_context> uc = {};
+  std::shared_ptr<ue_context> uc =
+      amf_app_inst->get_ue_context(nc->ran_ue_ngap_id, nc->amf_ue_ngap_id);
 
-  if (!find_ue_context(nc, uc)) return;
+  if (uc == nullptr) return;
 
   // Get old NAS context and get the corresponding GUTI
   // SUPI from GUTI
@@ -3888,16 +3936,15 @@ void amf_n1::ue_initiate_de_registration_handle(
                 TASK_AMF_N1, TASK_AMF_SBI);
 
         // Generate a promise and associate this promise to the ITTI message
-        uint32_t promise_id = amf_app_inst->generate_promise_id();
-        Logger::amf_n1().debug("Promise ID generated %d", promise_id);
-
+        uint32_t promise_id = {};
         boost::shared_ptr<boost::promise<nlohmann::json>> p =
             boost::make_shared<boost::promise<nlohmann::json>>();
         boost::shared_future<nlohmann::json> f = p->get_future();
 
         // Store the future to be processed later
+        amf_app_inst->store_promise(promise_id, p);
         smf_responses.emplace(promise_id, f);
-        amf_app_inst->add_promise(promise_id, p);
+        Logger::amf_n1().debug("Promise ID generated %d", promise_id);
 
         itti_msg->supi             = uc->supi;
         itti_msg->pdu_session_id   = session->pdu_session_id;
@@ -3914,13 +3961,15 @@ void amf_n1::ue_initiate_de_registration_handle(
 
       // Wait for the response available and process accordingly
       while (!smf_responses.empty()) {
+        // Save promise ID before erasing so we can remove it from global store
+        uint32_t current_promise_id = smf_responses.begin()->first;
         // Wait for the result available and process accordingly
         std::optional<nlohmann::json> result = std::nullopt;
         oai::utils::utils::wait_for_result(
             smf_responses.begin()->second, result);
 
         if (result.has_value()) {
-          Logger::amf_server().debug(
+          Logger::amf_n1().debug(
               "Got result for promise ID %d", smf_responses.begin()->first);
           nlohmann::json result_json  = result.value();
           uint32_t http_response_code = 0;
@@ -3942,7 +3991,9 @@ void amf_n1::ue_initiate_de_registration_handle(
             // TODO:
           }
         }
-
+        // Remove the promise from the list since the result is processed or not
+        // available
+        amf_app_inst->remove_promise(current_promise_id);
         smf_responses.erase(smf_responses.begin());
       }
 
@@ -3979,6 +4030,7 @@ void amf_n1::ue_initiate_de_registration_handle(
 
     bstring b = blk2bstr(buffer, encoded_size);
     itti_send_dl_nas_buffer_to_task_n2(b, ran_ue_ngap_id, amf_ue_ngap_id);
+    oai::utils::utils::bdestroy_wrapper(&b);
     // sleep 200ms
     usleep(200000);
   }
@@ -4057,8 +4109,7 @@ void amf_n1::ue_initiate_de_registration_handle(
   itti_msg->amf_ue_ngap_id = amf_ue_ngap_id;
   itti_msg->ran_ue_ngap_id = ran_ue_ngap_id;
   itti_msg->cause.setChoiceOfCause(Ngap_Cause_PR_nas);
-  itti_msg->cause.set(
-      2);  // TODO: remove hardcoded value cause nas(2)--deregister
+  itti_msg->cause.set(Ngap_CauseNas_deregister);
 
   int ret = itti_inst->send_msg(itti_msg);
   if (0 != ret) {
@@ -4131,9 +4182,9 @@ void amf_n1::ul_nas_transport_handle(
         if (!found) {
           std::vector<struct SNSSAI_s> common_nssais;
           // Find UE Context
-          std::shared_ptr<ue_context> uc = {};
-          if (!find_ue_context(nc->ran_ue_ngap_id, nc->amf_ue_ngap_id, uc))
-            return;
+          std::shared_ptr<ue_context> uc = amf_app_inst->get_ue_context(
+              nc->ran_ue_ngap_id, nc->amf_ue_ngap_id);
+          if (uc == nullptr) return;
 
           amf_n2_inst->get_common_NSSAI(
               nc->ran_ue_ngap_id, uc->gnb_id, common_nssais);
@@ -4219,6 +4270,7 @@ void amf_n1::ul_nas_transport_handle(
         Logger::amf_n1().debug("Transport message un supported");
       }
     }
+    oai::utils::utils::bdestroy_wrapper(&dnn);
 
   } else {
     switch (payload_type) {
@@ -4256,8 +4308,9 @@ bool amf_n1::run_mobility_registration_update_procedure(
     std::shared_ptr<nas_context>& nc,
     const std::optional<uint16_t>& uplink_data_status_opt,
     const std::optional<uint16_t>& pdu_session_status_opt, uint8_t& cause) {
-  std::shared_ptr<ue_context> uc = {};
-  if (!find_ue_context(nc, uc)) {
+  std::shared_ptr<ue_context> uc =
+      amf_app_inst->get_ue_context(nc->ran_ue_ngap_id, nc->amf_ue_ngap_id);
+  if (uc == nullptr) {
     cause = k5gmmCauseIllegalUe;  // TODO: verify the cause
     return false;
   }
@@ -4301,8 +4354,7 @@ bool amf_n1::run_mobility_registration_update_procedure(
   std::map<uint8_t, pdu_session_info_t> pdu_sessions;
   for (auto& pdu_session_id : pdu_session_to_be_activated) {
     std::shared_ptr<pdu_session_context> psc = {};
-    if (!amf_app_inst->find_pdu_session_context(
-            uc->supi, pdu_session_id, psc)) {
+    if (!amf_app_inst->get_pdu_session_context(uc->supi, pdu_session_id, psc)) {
       Logger::amf_n1().warn(
           "No PDU Session Context with PDU Session ID %d", pdu_session_id);
     }
@@ -4365,7 +4417,7 @@ bool amf_n1::run_mobility_registration_update_procedure(
     // TODO: Use DownlinkNasTransport to convey Registration Accept
     Logger::amf_n1().debug(
         "UE Context is not requested, UE with "
-        "ran_ue_ngap_id " GNB_UE_NGAP_ID_FMT
+        "ran_ue_ngap_id " RAN_UE_NGAP_ID_FMT
         ", "
         "amf_ue_ngap_id " AMF_UE_NGAP_ID_FMT " attached",
         nc->ran_ue_ngap_id, nc->amf_ue_ngap_id);
@@ -4455,8 +4507,9 @@ bool amf_n1::run_periodic_registration_update_procedure(
   initialize_registration_accept(reg_accept, nc);
 
   // Get UE context
-  std::shared_ptr<ue_context> uc = {};
-  if (!find_ue_context(nc, uc)) {
+  std::shared_ptr<ue_context> uc =
+      amf_app_inst->get_ue_context(nc->ran_ue_ngap_id, nc->amf_ue_ngap_id);
+  if (uc == nullptr) {
     cause = k5gmmCauseIllegalUe;  // TODO: verify the cause
     return false;
   }
@@ -4531,6 +4584,7 @@ bool amf_n1::run_periodic_registration_update_procedure(
 
   if (decoded_size == KEncodeDecodeError) {
     Logger::nas_mm().error("Decode Registration Request message error");
+    oai::utils::utils::bdestroy_wrapper(&nas_msg);
     cause = k5gmmCauseSemanticallyIncorrect;
     return false;
   }
@@ -4540,8 +4594,9 @@ bool amf_n1::run_periodic_registration_update_procedure(
   initialize_registration_accept(reg_accept, nc);
 
   // Get UE context
-  std::shared_ptr<ue_context> uc = {};
-  if (!find_ue_context(nc, uc)) {
+  std::shared_ptr<ue_context> uc =
+      amf_app_inst->get_ue_context(nc->ran_ue_ngap_id, nc->amf_ue_ngap_id);
+  if (uc == nullptr) {
     cause = k5gmmCauseIllegalUe;  // TODO: verify the cause
     return false;
   }
@@ -4624,7 +4679,7 @@ void amf_n1::get_5gmm_state(
 //------------------------------------------------------------------------------
 void amf_n1::set_5gcm_state(
     std::shared_ptr<nas_context>& nc, const cm_state_t& state) {
-  std::shared_lock lock(m_nas_context);
+  std::unique_lock lock(m_nas_context);
   nc->nas_status = state;
 }
 
@@ -5041,8 +5096,9 @@ void amf_n1::handle_ue_loss_of_connectivity_change(
 void amf_n1::trigger_ue_location_report(
     const uint32_t ran_ue_ngap_id, const uint64_t amf_ue_ngap_id) {
   // Find UE context
-  std::shared_ptr<ue_context> uc = {};
-  if (!find_ue_context(ran_ue_ngap_id, amf_ue_ngap_id, uc)) return;
+  std::shared_ptr<ue_context> uc =
+      amf_app_inst->get_ue_context(ran_ue_ngap_id, amf_ue_ngap_id);
+  if (uc == nullptr) return;
 
   std::shared_ptr<ue_ngap_context> unc = {};
   if (amf_n2_inst->ran_ue_id_2_ue_ngap_context(
@@ -5116,7 +5172,7 @@ void amf_n1::get_pdu_session_to_be_activated(
     if (status_bits.test(i)) {
       if (i <= 7)
         pdu_session_to_be_activated.push_back(8 + i);
-      else if (i > 8)
+      else if (i >= 8)
         pdu_session_to_be_activated.push_back(i - 8);
     }
   }
@@ -5147,8 +5203,9 @@ void amf_n1::initialize_registration_accept(
   registration_accept->SetLadnInformation(ladn_information);
 
   // Find UE Context
-  std::shared_ptr<ue_context> uc = {};
-  if (!find_ue_context(nc->ran_ue_ngap_id, nc->amf_ue_ngap_id, uc)) return;
+  std::shared_ptr<ue_context> uc =
+      amf_app_inst->get_ue_context(nc->ran_ue_ngap_id, nc->amf_ue_ngap_id);
+  if (uc == nullptr) return;
 
   // TAI List
   std::vector<p_tai_t> tai_list;
@@ -5251,32 +5308,6 @@ void amf_n1::initialize_registration_accept(
 }
 
 //------------------------------------------------------------------------------
-bool amf_n1::find_ue_context(
-    const std::shared_ptr<nas_context>& nc, std::shared_ptr<ue_context>& uc) {
-  std::string ue_context_key =
-      amf_conv::get_ue_context_key(nc->ran_ue_ngap_id, nc->amf_ue_ngap_id);
-
-  Logger::amf_n1().debug(
-      "Key for UE context search: %s", ue_context_key.c_str());
-
-  if (!amf_app_inst->ran_amf_id_2_ue_context(ue_context_key, uc)) return false;
-
-  return true;
-}
-
-//------------------------------------------------------------------------------
-bool amf_n1::find_ue_context(
-    uint32_t ran_ue_ngap_id, uint64_t amf_ue_ngap_id,
-    std::shared_ptr<ue_context>& uc) {
-  std::string ue_context_key =
-      amf_conv::get_ue_context_key(ran_ue_ngap_id, amf_ue_ngap_id);
-
-  if (!amf_app_inst->ran_amf_id_2_ue_context(ue_context_key, uc)) return false;
-
-  return true;
-}
-
-//------------------------------------------------------------------------------
 void amf_n1::mobile_reachable_timer_timeout(
     timer_id_t& timer_id, const std::string amf_ue_ngap_id_str) {
   uint64_t amf_ue_ngap_id = INVALID_AMF_UE_NGAP_ID;
@@ -5335,9 +5366,10 @@ void amf_n1::implicit_deregistration_timer_timeout(
   // Access Type) to the UE
 
   // Send PDU Session Release SM Context Request to SMF for each PDU Session
-  std::shared_ptr<ue_context> uc = {};
+  std::shared_ptr<ue_context> uc =
+      amf_app_inst->get_ue_context(nc->ran_ue_ngap_id, nc->amf_ue_ngap_id);
 
-  if (!find_ue_context(nc->ran_ue_ngap_id, nc->amf_ue_ngap_id, uc)) return;
+  if (uc == nullptr) return;
 
   std::vector<std::shared_ptr<pdu_session_context>> pdu_sessions;
   if (!uc->get_pdu_sessions_context(pdu_sessions)) return;
@@ -5522,9 +5554,9 @@ bool amf_n1::reroute_registration_request(
 
 //------------------------------------------------------------------------------
 bool amf_n1::check_requested_nssai(const std::shared_ptr<nas_context>& nc) {
-  std::shared_ptr<ue_context> uc = {};
-  if (!find_ue_context(nc->ran_ue_ngap_id, nc->amf_ue_ngap_id, uc))
-    return false;
+  std::shared_ptr<ue_context> uc =
+      amf_app_inst->get_ue_context(nc->ran_ue_ngap_id, nc->amf_ue_ngap_id);
+  if (uc == nullptr) return false;
 
   // If there no requested NSSAIs
   if (nc->requested_nssai.size() == 0) {
@@ -5567,9 +5599,9 @@ bool amf_n1::check_subscribed_nssai(
       "Verifying whether this AMF can handle Requested/Subscribed S-NSSAIs");
   // Check if the AMF can serve all the requested/subscribed S-NSSAIs
 
-  std::shared_ptr<ue_context> uc = {};
-  if (!find_ue_context(nc->ran_ue_ngap_id, nc->amf_ue_ngap_id, uc))
-    return false;
+  std::shared_ptr<ue_context> uc =
+      amf_app_inst->get_ue_context(nc->ran_ue_ngap_id, nc->amf_ue_ngap_id);
+  if (uc == nullptr) return false;
 
   bool result = false;
 
@@ -5675,22 +5707,22 @@ bool amf_n1::get_slice_selection_subscription_data(
     Logger::amf_n1().debug(
         "Get the Slice Selection Subscription Data from UDM");
 
-    std::shared_ptr<ue_context> uc = {};
-    if (!find_ue_context(nc->ran_ue_ngap_id, nc->amf_ue_ngap_id, uc))
-      return false;
+    std::shared_ptr<ue_context> uc =
+        amf_app_inst->get_ue_context(nc->ran_ue_ngap_id, nc->amf_ue_ngap_id);
+    if (uc == nullptr) return false;
 
     auto itti_msg =
         std::make_shared<itti_sbi_slice_selection_subscription_data>(
             TASK_AMF_N1, TASK_AMF_SBI);
 
     // Generate a promise and associate this promise to the ITTI message
-    uint32_t promise_id = amf_app_inst->generate_promise_id();
-    Logger::amf_n1().debug("Promise ID generated %d", promise_id);
+    uint32_t promise_id = {};
 
     boost::shared_ptr<boost::promise<nlohmann::json>> p =
         boost::make_shared<boost::promise<nlohmann::json>>();
     boost::shared_future<nlohmann::json> f = p->get_future();
-    amf_app_inst->add_promise(promise_id, p);
+    amf_app_inst->store_promise(promise_id, p);
+    Logger::amf_n1().debug("Promise ID generated %d", promise_id);
 
     itti_msg->supi       = nc->supi;
     itti_msg->plmn.mcc   = uc->cgi.mcc;
@@ -5707,6 +5739,8 @@ bool amf_n1::get_slice_selection_subscription_data(
     // Wait for the response available and process accordingly
     std::optional<nlohmann::json> result = std::nullopt;
     oai::utils::utils::wait_for_result(f, result);
+    // Remove the promise
+    amf_app_inst->remove_promise(promise_id);
     if (result.has_value()) {
       nlohmann::json nssai_json = result.value();
       Logger::amf_n1().debug("Got NSSAI from UDM: %s", nssai_json.dump());
@@ -5760,9 +5794,9 @@ bool amf_n1::get_slice_selection_subscription_data_from_conf_file(
   // NSSAIs
 
   // Get UE context
-  std::shared_ptr<ue_context> uc = {};
-  if (!find_ue_context(nc->ran_ue_ngap_id, nc->amf_ue_ngap_id, uc))
-    return false;
+  std::shared_ptr<ue_context> uc =
+      amf_app_inst->get_ue_context(nc->ran_ue_ngap_id, nc->amf_ue_ngap_id);
+  if (uc == nullptr) return false;
 
   // Get UE NGAP Context
   std::shared_ptr<ue_ngap_context> unc = {};
@@ -5832,9 +5866,9 @@ bool amf_n1::get_network_slice_selection(
   Logger::amf_n1().debug(
       "Get the Network Slice Selection Information from NSSF");
 
-  std::shared_ptr<ue_context> uc = {};
-  if (!find_ue_context(nc->ran_ue_ngap_id, nc->amf_ue_ngap_id, uc))
-    return false;
+  std::shared_ptr<ue_context> uc =
+      amf_app_inst->get_ue_context(nc->ran_ue_ngap_id, nc->amf_ue_ngap_id);
+  if (uc == nullptr) return false;
 
   if (amf_cfg->support_features.enable_nssf) {
     // Get Authorized Network Slice Info from an  external NSSF
@@ -5843,13 +5877,13 @@ bool amf_n1::get_network_slice_selection(
             TASK_AMF_N1, TASK_AMF_SBI);
 
     // Generate a promise and associate this promise to the ITTI message
-    uint32_t promise_id = amf_app_inst->generate_promise_id();
-    Logger::amf_n1().debug("Promise ID generated %d", promise_id);
+    uint32_t promise_id = {};
 
     boost::shared_ptr<boost::promise<nlohmann::json>> p =
         boost::make_shared<boost::promise<nlohmann::json>>();
     boost::shared_future<nlohmann::json> f = p->get_future();
-    amf_app_inst->add_promise(promise_id, p);
+    amf_app_inst->store_promise(promise_id, p);
+    Logger::amf_n1().debug("Promise ID generated %d", promise_id);
 
     itti_msg->nf_instance_id = nf_instance_id;
     itti_msg->slice_info     = slice_info;
@@ -5870,6 +5904,8 @@ bool amf_n1::get_network_slice_selection(
     // Wait for the response available and process accordingly
     std::optional<nlohmann::json> result_opt = std::nullopt;
     oai::utils::utils::wait_for_result(f, result_opt);
+    // Remove the promise
+    amf_app_inst->remove_promise(promise_id);
     if (result_opt.has_value()) {
       nlohmann::json result = result_opt.value();
       Logger::amf_n1().debug("Got result for promise ID %ld", promise_id);
@@ -5965,13 +6001,12 @@ bool amf_n1::get_target_amf(
             TASK_AMF_N1, TASK_AMF_SBI);
 
     // Generate a promise and associate this promise to the ITTI message
-    uint32_t promise_id = amf_app_inst->generate_promise_id();
-    Logger::amf_n1().debug("Promise ID generated %d", promise_id);
-
+    uint32_t promise_id = {};
     boost::shared_ptr<boost::promise<nlohmann::json>> p =
         boost::make_shared<boost::promise<nlohmann::json>>();
     boost::shared_future<nlohmann::json> f = p->get_future();
-    amf_app_inst->add_promise(promise_id, p);
+    amf_app_inst->store_promise(promise_id, p);
+    Logger::amf_n1().debug("Promise ID generated %d", promise_id);
 
     itti_msg->target_amf_set        = target_amf_set;
     itti_msg->target_amf_set_is_set = true;
@@ -5989,6 +6024,8 @@ bool amf_n1::get_target_amf(
     // Wait for the response available and process accordingly
     std::optional<nlohmann::json> result = std::nullopt;
     oai::utils::utils::wait_for_result(f, result);
+    // Remove the promise
+    amf_app_inst->remove_promise(promise_id);
     if (result.has_value()) {
       nlohmann::json amf_candidate_list = result.value();
       Logger::amf_n1().debug(
@@ -6112,8 +6149,8 @@ bool amf_n1::get_amf_set_id(
     return false;
   } else {
     try {
-      amf_set_id = std::stoul(words[3].substr(0, 1), nullptr, 16)
-                   << 8 + std::stoul(words[3].substr(1, 2), nullptr, 16);
+      amf_set_id = (std::stoul(words[3].substr(0, 1), nullptr, 16) << 8) +
+                   std::stoul(words[3].substr(1, 2), nullptr, 16);
     } catch (const std::exception& e) {
       Logger::amf_n1().warn(
           "Error when converting from string to int for AMF Set ID, "

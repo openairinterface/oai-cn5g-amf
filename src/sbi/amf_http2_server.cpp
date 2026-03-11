@@ -782,8 +782,7 @@ void amf_http2_server::create_event_subscription_handler(
 
   h.insert(std::make_pair<std::string, header_value>(
       "Content-Type", {"application/json", false}));
-  res.write_head(
-      static_cast<uint32_t>(oai::common::sbi::http_status_code::CREATED), h);
+  res.write_head(oai::common::sbi::http_status_code::CREATED, h);
   res.end(json_data.dump().c_str());
 }
 
@@ -798,7 +797,7 @@ void amf_http2_server::n1_n2_message_transfer_handler(
   nlohmann::json response_json = {};
   response_json["cause"] =
       n1_n2_message_transfer_cause_e2str[N1_N2_TRANSFER_INITIATED];
-  uint32_t code = static_cast<uint32_t>(oai::common::sbi::http_status_code::OK);
+  uint32_t code = oai::common::sbi::http_status_code::OK;
 
   std::string supi = ueContextId;
 
@@ -866,7 +865,7 @@ void amf_http2_server::n1_n2_message_transfer_handler(
             "Key for PDU Session Context: SUPI (%s)", supi.c_str());
         std::shared_ptr<pdu_session_context> psc = {};
 
-        if (!amf_app_inst->find_pdu_session_context(
+        if (!amf_app_inst->get_pdu_session_context(
                 supi, (uint8_t) n1N2MessageTransferReqData.getPduSessionId(),
                 psc)) {
           res.write_head(code);
@@ -934,8 +933,7 @@ void amf_http2_server::n1_n2_message_transfer_handler(
       } break;
 
       default: {
-        res.write_head(static_cast<uint32_t>(
-            oai::common::sbi::http_status_code::BAD_REQUEST));
+        res.write_head(oai::common::sbi::http_status_code::BAD_REQUEST);
         res.end(
             "N1N2MessageCollectionDocumentApiImpl::n1_n2_message_transfer API "
             "(Unsupported N2 Message Class)");
@@ -955,7 +953,7 @@ void amf_http2_server::n1_n2_message_transfer_handler(
         Logger::amf_server().debug(
             "Key for PDU Session Context: SUPI (%s)", supi.c_str());
         std::shared_ptr<pdu_session_context> psc = {};
-        if (!amf_app_inst->find_pdu_session_context(
+        if (!amf_app_inst->get_pdu_session_context(
                 supi, (uint8_t) n1N2MessageTransferReqData.getPduSessionId(),
                 psc)) {
           res.write_head(code);
@@ -997,8 +995,7 @@ void amf_http2_server::n1_n2_message_transfer_handler(
       case N1MessageClass_anyOf::eN1MessageClass_anyOf::LPP: {
         // N1 LPP Container Present
         // TODO:
-        res.write_head(static_cast<uint32_t>(
-            oai::common::sbi::http_status_code::BAD_REQUEST));
+        res.write_head(oai::common::sbi::http_status_code::BAD_REQUEST);
         res.end(
             "N1N2MessageCollectionDocumentApiImpl::n1_n2_message_transfer API "
             "(Unsupported N1 Message Class: LPP)");
@@ -1007,8 +1004,7 @@ void amf_http2_server::n1_n2_message_transfer_handler(
 
       default: {
         // TODO:
-        res.write_head(static_cast<uint32_t>(
-            oai::common::sbi::http_status_code::BAD_REQUEST));
+        res.write_head(oai::common::sbi::http_status_code::BAD_REQUEST);
         res.end(
             "N1N2MessageCollectionDocumentApiImpl::n1_n2_message_transfer API "
             "(Unsupported N1 Message Class)");
@@ -1021,15 +1017,14 @@ void amf_http2_server::n1_n2_message_transfer_handler(
     response_json["cause"] =
         n1_n2_message_transfer_cause_e2str[N1_MSG_NOT_TRANSFERRED];
     // Send response to the NF Service Consumer (e.g., SMF)
-    res.write_head(
-        static_cast<uint32_t>(oai::common::sbi::http_status_code::BAD_REQUEST));
+    res.write_head(oai::common::sbi::http_status_code::BAD_REQUEST);
     res.end(response_json.dump().c_str());
     return;
   }
 
   response_json["cause"] =
       n1_n2_message_transfer_cause_e2str[N1_N2_TRANSFER_INITIATED];
-  code = static_cast<uint32_t>(oai::common::sbi::http_status_code::OK);
+  code = oai::common::sbi::http_status_code::OK;
 
   // For Paging
   if (n1N2MessageTransferReqData.ppiIsSet()) {
@@ -1037,7 +1032,7 @@ void amf_http2_server::n1_n2_message_transfer_handler(
     itti_msg->ppi        = n1N2MessageTransferReqData.getPpi();
     response_json["cause"] =
         n1_n2_message_transfer_cause_e2str[ATTEMPTING_TO_REACH_UE];
-    code = static_cast<uint32_t>(oai::common::sbi::http_status_code::ACCEPTED);
+    code = oai::common::sbi::http_status_code::ACCEPTED;
   } else {
     itti_msg->is_ppi_set = false;
   }
@@ -1070,8 +1065,7 @@ void amf_http2_server::n1_message_notify_handler(
   nlohmann::json response_json = {};
   response_json["cause"] =
       n1_n2_message_transfer_cause_e2str[N1_N2_TRANSFER_INITIATED];
-  uint32_t code =
-      static_cast<uint32_t>(oai::common::sbi::http_status_code::NO_CONTENT);
+  uint32_t code = oai::common::sbi::http_status_code::NO_CONTENT;
 
   std::string supi                            = ueContextId;
   N1MessageNotification n1MessageNotification = {};
@@ -1096,8 +1090,7 @@ void amf_http2_server::n1_message_notify_handler(
 
       if (parts.count(n1_content_id) == 0 ||
           parts[n1_content_id].body.size() == 0) {
-        code = static_cast<uint32_t>(
-            oai::common::sbi::http_status_code::BAD_REQUEST);
+        code = oai::common::sbi::http_status_code::BAD_REQUEST;
         response_json["cause"] =
             n1_n2_message_transfer_cause_e2str[N1_MSG_NOT_TRANSFERRED];
       } else {
@@ -1112,8 +1105,7 @@ void amf_http2_server::n1_message_notify_handler(
     } break;
 
     default: {
-      code = static_cast<uint32_t>(
-          oai::common::sbi::http_status_code::BAD_REQUEST);
+      code = oai::common::sbi::http_status_code::BAD_REQUEST;
       response_json["cause"] =
           n1_n2_message_transfer_cause_e2str[N1_MSG_NOT_TRANSFERRED];
     }
@@ -1146,13 +1138,12 @@ void amf_http2_server::n1_n2_message_subscribe_handler(
   header_map h;
 
   // Generate a promise and associate this promise to the ITTI message
-  uint32_t promise_id = m_amf_app->generate_promise_id();
-  Logger::amf_n1().debug("Promise ID generated %d", promise_id);
-
+  uint32_t promise_id = {};
   boost::shared_ptr<boost::promise<nlohmann::json>> p =
       boost::make_shared<boost::promise<nlohmann::json>>();
   boost::shared_future<nlohmann::json> f = p->get_future();
-  m_amf_app->add_promise(promise_id, p);
+  m_amf_app->store_promise(promise_id, p);
+  Logger::amf_n1().debug("Promise ID generated %d", promise_id);
 
   // Handle the N1N2SubscribeMessage in amf_app
   std::shared_ptr<itti_sbi_n1n2_message_subscribe> itti_msg =
@@ -1200,9 +1191,7 @@ void amf_http2_server::n1_n2_message_subscribe_handler(
       h.insert(std::make_pair<std::string, header_value>(
           "Content-Type", {"application/json", false}));
 
-      res.write_head(
-          static_cast<uint32_t>(oai::common::sbi::http_status_code::CREATED),
-          h);
+      res.write_head(oai::common::sbi::http_status_code::CREATED, h);
       res.end(json_data.dump().c_str());
 
     } else {
@@ -1211,6 +1200,10 @@ void amf_http2_server::n1_n2_message_subscribe_handler(
   } else {
     send_response(res, oai::common::sbi::http_status_code::GATEWAY_TIMEOUT);
   }
+
+  // Remove the promise from the list since the result is processed or not
+  // available
+  amf_app_inst->remove_promise(promise_id);
 }
 
 //------------------------------------------------------------------------------
@@ -1225,13 +1218,12 @@ void amf_http2_server::n1_n2_message_unsubscribe_handler(
   header_map h;
 
   // Generate a promise and associate this promise to the ITTI message
-  uint32_t promise_id = m_amf_app->generate_promise_id();
-  Logger::amf_n1().debug("Promise ID generated %d", promise_id);
-
+  uint32_t promise_id = {};
   boost::shared_ptr<boost::promise<nlohmann::json>> p =
       boost::make_shared<boost::promise<nlohmann::json>>();
   boost::shared_future<nlohmann::json> f = p->get_future();
-  m_amf_app->add_promise(promise_id, p);
+  m_amf_app->store_promise(promise_id, p);
+  Logger::amf_server().debug("Promise ID generated %d", promise_id);
 
   // Handle the N1N2UnsubscribeMessage in amf_app
   std::shared_ptr<itti_sbi_n1n2_message_unsubscribe> itti_msg =
@@ -1277,12 +1269,12 @@ void amf_http2_server::n1_n2_message_unsubscribe_handler(
       res.end(json_data.dump().c_str());
     }
   } else {
-    res.write_head(
-        static_cast<uint32_t>(
-            oai::common::sbi::http_status_code::GATEWAY_TIMEOUT),
-        h);
+    res.write_head(oai::common::sbi::http_status_code::GATEWAY_TIMEOUT, h);
     res.end();
   }
+  // Remove the promise from the list since the result is processed or not
+  // available
+  amf_app_inst->remove_promise(promise_id);
 }
 
 //------------------------------------------------------------------------------
@@ -1294,13 +1286,13 @@ void amf_http2_server::non_ue_n2_info_subscribe_handler(
   header_map h;
 
   // Generate a promise and associate this promise to the ITTI message
-  uint32_t promise_id = m_amf_app->generate_promise_id();
-  Logger::amf_n1().debug("Promise ID generated %d", promise_id);
+  uint32_t promise_id = {};
 
   boost::shared_ptr<boost::promise<nlohmann::json>> p =
       boost::make_shared<boost::promise<nlohmann::json>>();
   boost::shared_future<nlohmann::json> f = p->get_future();
-  m_amf_app->add_promise(promise_id, p);
+  m_amf_app->store_promise(promise_id, p);
+  Logger::amf_server().debug("Promise ID generated %d", promise_id);
 
   // Handle the NonUeN2InfoSubscribe in amf_app
   std::shared_ptr<itti_sbi_non_ue_n2_info_subscribe> itti_msg =
@@ -1347,9 +1339,7 @@ void amf_http2_server::non_ue_n2_info_subscribe_handler(
       h.insert(std::make_pair<std::string, header_value>(
           "Content-Type", {"application/json", false}));
 
-      res.write_head(
-          static_cast<uint32_t>(oai::common::sbi::http_status_code::CREATED),
-          h);
+      res.write_head(oai::common::sbi::http_status_code::CREATED, h);
       res.end(json_data.dump().c_str());
 
     } else {
@@ -1358,6 +1348,9 @@ void amf_http2_server::non_ue_n2_info_subscribe_handler(
   } else {
     send_response(res, oai::common::sbi::http_status_code::GATEWAY_TIMEOUT);
   }
+  // Remove the promise from the list since the result is processed or not
+  // available
+  amf_app_inst->remove_promise(promise_id);
 }
 
 //------------------------------------------------------------------------------
@@ -1369,13 +1362,12 @@ void amf_http2_server::non_ue_n2_info_unsubscribe_handler(
   header_map h;
 
   // Generate a promise and associate this promise to the ITTI message
-  uint32_t promise_id = m_amf_app->generate_promise_id();
-  Logger::amf_n1().debug("Promise ID generated %d", promise_id);
-
+  uint32_t promise_id = {};
   boost::shared_ptr<boost::promise<nlohmann::json>> p =
       boost::make_shared<boost::promise<nlohmann::json>>();
   boost::shared_future<nlohmann::json> f = p->get_future();
-  m_amf_app->add_promise(promise_id, p);
+  m_amf_app->store_promise(promise_id, p);
+  Logger::amf_server().debug("Promise ID generated %d", promise_id);
 
   // Handle the NonUEN2InfoUnsubscribe in amf_app
   std::shared_ptr<itti_sbi_non_ue_n2_info_unsubscribe> itti_msg =
@@ -1423,6 +1415,9 @@ void amf_http2_server::non_ue_n2_info_unsubscribe_handler(
     res.write_head(oai::common::sbi::http_status_code::GATEWAY_TIMEOUT, h);
     res.end();
   }
+  // Remove the promise from the list since the result is processed or not
+  // available
+  amf_app_inst->remove_promise(promise_id);
 }
 
 //------------------------------------------------------------------------------
@@ -1483,9 +1478,7 @@ void amf_http2_server::amf_status_change_subscribe_handler(
 
       h.insert(std::make_pair<std::string, header_value>(
           "Content-Type", {"application/json", false}));
-      res.write_head(
-          static_cast<uint32_t>(oai::common::sbi::http_status_code::CREATED),
-          h);
+      res.write_head(oai::common::sbi::http_status_code::CREATED, h);
       res.end(json_data.dump().c_str());
 
     } else {
@@ -1501,6 +1494,9 @@ void amf_http2_server::amf_status_change_subscribe_handler(
   } else {
     send_response(res, oai::common::sbi::http_status_code::GATEWAY_TIMEOUT);
   }
+  // Remove the promise from the list since the result is processed or not
+  // available
+  amf_app_inst->remove_promise(promise_id);
 }
 
 //------------------------------------------------------------------------------
@@ -1565,6 +1561,9 @@ void amf_http2_server::amf_status_change_unsubscribe_handler(
   } else {
     send_response(res, oai::common::sbi::http_status_code::GATEWAY_TIMEOUT);
   }
+  // Remove the promise from the list since the result is processed or not
+  // available
+  amf_app_inst->remove_promise(promise_id);
 }
 
 //------------------------------------------------------------------------------
@@ -1642,6 +1641,9 @@ void amf_http2_server::amf_status_change_subscribe_modify_handler(
   } else {
     send_response(res, oai::common::sbi::http_status_code::GATEWAY_TIMEOUT);
   }
+  // Remove the promise from the list since the result is processed or not
+  // available
+  amf_app_inst->remove_promise(promise_id);
 }
 
 //------------------------------------------------------------------------------
@@ -1653,13 +1655,12 @@ void amf_http2_server::status_notify_handler(
   header_map h;
 
   // Generate a promise and associate this promise to the ITTI message
-  uint32_t promise_id = m_amf_app->generate_promise_id();
-  Logger::amf_n1().debug("Promise ID generated %d", promise_id);
-
+  uint32_t promise_id = {};
   boost::shared_ptr<boost::promise<nlohmann::json>> p =
       boost::make_shared<boost::promise<nlohmann::json>>();
   boost::shared_future<nlohmann::json> f = p->get_future();
-  m_amf_app->add_promise(promise_id, p);
+  m_amf_app->store_promise(promise_id, p);
+  Logger::amf_server().debug("Promise ID generated %d", promise_id);
 
   // Handle the PDU Session Release in amf_app
   std::shared_ptr<itti_sbi_pdu_session_release_notif> itti_msg =
@@ -1716,6 +1717,9 @@ void amf_http2_server::status_notify_handler(
   } else {
     send_response(res, oai::common::sbi::http_status_code::GATEWAY_TIMEOUT);
   }
+  // Remove the promise from the list since the result is processed or not
+  // available
+  amf_app_inst->remove_promise(promise_id);
 }
 //------------------------------------------------------------------------------
 void amf_http2_server::get_configuration_handler(const response& res) {
@@ -1723,13 +1727,13 @@ void amf_http2_server::get_configuration_handler(const response& res) {
   header_map h;
 
   // Generate a promise and associate this promise to the ITTI message
-  uint32_t promise_id = m_amf_app->generate_promise_id();
-  Logger::amf_n1().debug("Promise ID generated %d", promise_id);
+  uint32_t promise_id = {};
 
   boost::shared_ptr<boost::promise<nlohmann::json>> p =
       boost::make_shared<boost::promise<nlohmann::json>>();
   boost::shared_future<nlohmann::json> f = p->get_future();
-  m_amf_app->add_promise(promise_id, p);
+  m_amf_app->store_promise(promise_id, p);
+  Logger::amf_server().debug("Promise ID generated %d", promise_id);
 
   // Handle the AMFConfiguration in amf_app
   std::shared_ptr<itti_sbi_amf_configuration> itti_msg =
@@ -1782,6 +1786,9 @@ void amf_http2_server::get_configuration_handler(const response& res) {
   } else {
     send_response(res, oai::common::sbi::http_status_code::GATEWAY_TIMEOUT);
   }
+  // Remove the promise from the list since the result is processed or not
+  // available
+  amf_app_inst->remove_promise(promise_id);
 }
 
 //------------------------------------------------------------------------------
@@ -1792,13 +1799,13 @@ void amf_http2_server::update_configuration_handler(
   Logger::amf_server().debug("Update AMFConfiguration, handling...");
 
   // Generate a promise and associate this promise to the ITTI message
-  uint32_t promise_id = m_amf_app->generate_promise_id();
-  Logger::amf_n1().debug("Promise ID generated %d", promise_id);
+  uint32_t promise_id = {};
 
   boost::shared_ptr<boost::promise<nlohmann::json>> p =
       boost::make_shared<boost::promise<nlohmann::json>>();
   boost::shared_future<nlohmann::json> f = p->get_future();
-  m_amf_app->add_promise(promise_id, p);
+  m_amf_app->store_promise(promise_id, p);
+  Logger::amf_server().debug("Promise ID generated %d", promise_id);
 
   // Handle the AMFConfiguration in amf_app
   std::shared_ptr<itti_sbi_update_amf_configuration> itti_msg =
@@ -1852,6 +1859,9 @@ void amf_http2_server::update_configuration_handler(
   } else {
     send_response(res, oai::common::sbi::http_status_code::GATEWAY_TIMEOUT);
   }
+  // Remove the promise from the list since the result is processed or not
+  // available
+  amf_app_inst->remove_promise(promise_id);
 }
 
 //------------------------------------------------------------------------------
@@ -1863,13 +1873,13 @@ void amf_http2_server::update_policy_notification_handler(
   header_map h;
 
   // Generate a promise and associate this promise to the ITTI message
-  uint32_t promise_id = m_amf_app->generate_promise_id();
-  Logger::amf_n1().debug("Promise ID generated %d", promise_id);
+  uint32_t promise_id = {};
 
   boost::shared_ptr<boost::promise<nlohmann::json>> p =
       boost::make_shared<boost::promise<nlohmann::json>>();
   boost::shared_future<nlohmann::json> f = p->get_future();
-  m_amf_app->add_promise(promise_id, p);
+  m_amf_app->store_promise(promise_id, p);
+  Logger::amf_server().debug("Promise ID generated %d", promise_id);
 
   // Handle the PolicyUpdateNotification in amf_app
   std::shared_ptr<itti_sbi_am_policy_update_notification> itti_msg =
@@ -1925,6 +1935,9 @@ void amf_http2_server::update_policy_notification_handler(
   } else {
     send_response(res, oai::common::sbi::http_status_code::GATEWAY_TIMEOUT);
   }
+  // Remove the promise from the list since the result is processed or not
+  // available
+  amf_app_inst->remove_promise(promise_id);
 }
 
 //------------------------------------------------------------------------------
@@ -1937,13 +1950,12 @@ void amf_http2_server::terminate_policy_notification_handler(
   header_map h;
 
   // Generate a promise and associate this promise to the ITTI message
-  uint32_t promise_id = m_amf_app->generate_promise_id();
-  Logger::amf_n1().debug("Promise ID generated %d", promise_id);
-
+  uint32_t promise_id = {};
   boost::shared_ptr<boost::promise<nlohmann::json>> p =
       boost::make_shared<boost::promise<nlohmann::json>>();
   boost::shared_future<nlohmann::json> f = p->get_future();
-  m_amf_app->add_promise(promise_id, p);
+  m_amf_app->store_promise(promise_id, p);
+  Logger::amf_server().debug("Promise ID generated %d", promise_id);
 
   // Handle the policyAssocitionTerminationRequestNotification in amf_app
   std::shared_ptr<itti_sbi_am_policy_association_termination_notification>
@@ -2000,6 +2012,9 @@ void amf_http2_server::terminate_policy_notification_handler(
   } else {
     send_response(res, oai::common::sbi::http_status_code::GATEWAY_TIMEOUT);
   }
+  // Remove the promise from the list since the result is processed or not
+  // available
+  amf_app_inst->remove_promise(promise_id);
 }
 
 //------------------------------------------------------------------------------
@@ -2012,13 +2027,12 @@ void amf_http2_server::provide_domain_selection_info_handler(
   header_map h;
 
   // Generate a promise and associate this promise to the ITTI message
-  uint32_t promise_id = m_amf_app->generate_promise_id();
-  Logger::amf_n1().debug("Promise ID generated %d", promise_id);
-
+  uint32_t promise_id = {};
   boost::shared_ptr<boost::promise<nlohmann::json>> p =
       boost::make_shared<boost::promise<nlohmann::json>>();
   boost::shared_future<nlohmann::json> f = p->get_future();
-  m_amf_app->add_promise(promise_id, p);
+  m_amf_app->store_promise(promise_id, p);
+  Logger::amf_server().debug("Promise ID generated %d", promise_id);
 
   // Handle the request in amf_app
   auto itti_msg = std::make_shared<itti_sbi_provide_domain_selection_info>(
@@ -2073,6 +2087,9 @@ void amf_http2_server::provide_domain_selection_info_handler(
   } else {
     send_response(res, oai::common::sbi::http_status_code::GATEWAY_TIMEOUT);
   }
+  // Remove the promise from the list since the result is processed or not
+  // available
+  amf_app_inst->remove_promise(promise_id);
 }
 
 //------------------------------------------------------------------------------
@@ -2085,13 +2102,12 @@ void amf_http2_server::provide_location_info_handler(
   header_map h;
 
   // Generate a promise and associate this promise to the ITTI message
-  uint32_t promise_id = m_amf_app->generate_promise_id();
-  Logger::amf_n1().debug("Promise ID generated %d", promise_id);
-
+  uint32_t promise_id = {};
   boost::shared_ptr<boost::promise<nlohmann::json>> p =
       boost::make_shared<boost::promise<nlohmann::json>>();
   boost::shared_future<nlohmann::json> f = p->get_future();
-  m_amf_app->add_promise(promise_id, p);
+  m_amf_app->store_promise(promise_id, p);
+  Logger::amf_server().debug("Promise ID generated %d", promise_id);
 
   // Handle the request in amf_app
   auto itti_msg = std::make_shared<itti_sbi_provide_location_info>(
@@ -2146,6 +2162,9 @@ void amf_http2_server::provide_location_info_handler(
   } else {
     send_response(res, oai::common::sbi::http_status_code::GATEWAY_TIMEOUT);
   }
+  // Remove the promise from the list since the result is processed or not
+  // available
+  amf_app_inst->remove_promise(promise_id);
 }
 
 //------------------------------------------------------------------------------

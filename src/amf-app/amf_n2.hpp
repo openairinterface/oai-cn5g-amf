@@ -35,6 +35,10 @@ namespace amf_application {
 class amf_n2 : public oai::ngap::ngap_app {
  public:
   amf_n2(const std::string& address, const uint16_t port_num);
+
+  /**
+   * Destructor
+   */
   virtual ~amf_n2();
 
   /*
@@ -55,7 +59,7 @@ class amf_n2 : public oai::ngap::ngap_app {
 
   /*
    * Handle ITTI message (NG Reset)
-   * @param [std::shared_ptr<itti_downlink_nas_transfer>&]: ITTI message
+   * @param [std::shared_ptr<itti_ng_reset>&]: ITTI message
    * @return void
    */
   void handle_itti_message(std::shared_ptr<itti_ng_reset>&);
@@ -279,6 +283,7 @@ class amf_n2 : public oai::ngap::ngap_app {
   /*
    * Get list of common S-NSSAIs between AMF and gNB to be used by UE
    * @param [const uint32_t&] ran_ue_ngap_id: RAN UE NGAP ID
+   * @param [uint32_t] gnb_id: gNB ID
    * @param [std::vector<oai::nas::SNSSAI_t>&] common_nssai: list of common
    * S-NSSAIs
    * @return void
@@ -304,14 +309,13 @@ class amf_n2 : public oai::ngap::ngap_app {
    * Get the UE NGAP context associated with a RAN UE NGAP ID if it exists and
    * not null
    * @param [uint32_t&] ran_ue_ngap_id: RAN UE NGAP ID
-   * @param [const std::string&] ue_context_key: UE context key from AMF UE NGAP
-   * ID and RAN UE NGAP ID
-   * @param [const std::shared_ptr<ue_ngap_context>&] unc: shared pointer to the
+   * @param [uint64_t] amf_ue_ngap_id: AMF UE NGAP ID
+   * @param [std::shared_ptr<ue_ngap_context>&] unc: shared pointer to the
    * existing UE NGAP context
    * @return true if the context exists and is not null, otherwise return false
    */
   bool ran_ue_id_2_ue_ngap_context(
-      uint32_t ran_ue_ngap_id, const std::string& ue_context_key,
+      uint32_t ran_ue_ngap_id, uint64_t amf_ue_ngap_id,
       std::shared_ptr<ue_ngap_context>& unc) const;
 
   /*
@@ -375,7 +379,7 @@ class amf_n2 : public oai::ngap::ngap_app {
 
   /*
    * Remove UE Context associated with a AMF UE NGAP ID
-   * @param [const unsigned uint64_t&] amf_ue_ngap_id: AMF UE NGAP ID
+   * @param [const uint64_t&] amf_ue_ngap_id: AMF UE NGAP ID
    * @return void
    */
   void remove_ue_context_with_amf_ue_ngap_id(const uint64_t& amf_ue_ngap_id);
@@ -413,7 +417,7 @@ class amf_n2 : public oai::ngap::ngap_app {
   mutable std::shared_mutex m_ranid2uecontext;
 
   // AMF UE ID <-> UE Context
-  std::map<unsigned long, std::shared_ptr<ue_ngap_context>> amfueid2uecontext;
+  std::map<uint64_t, std::shared_ptr<ue_ngap_context>> amfueid2uecontext;
   mutable std::shared_mutex m_amfueid2uecontext;
 };
 

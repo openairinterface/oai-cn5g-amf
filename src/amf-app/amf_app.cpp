@@ -77,15 +77,11 @@ void amf_app_task(void*);
 
 //------------------------------------------------------------------------------
 amf_app::amf_app()
-    : m_amf_ue_ngap_id2ue_ctx(),
-      m_ue_ctx_key(),
-      m_supi2ue_ctx(),
-      m_curl_handle_responses_sbi() {
-  amf_ue_ngap_id2ue_ctx     = {};
-  ue_ctx_key                = {};
-  supi2ue_ctx               = {};
-  curl_handle_responses_sbi = {};
-  registered_nrfs           = {};
+    : m_ue_contexts(), m_supi2ue_ctx(), m_sbi_response_handlers() {
+  ue_contexts           = {};
+  supi2ue_ctx           = {};
+  sbi_response_handlers = {};
+  registered_nrfs       = {};
 
   Logger::amf_app().startup("Creating AMF application functionality layer");
   if (itti_inst->create_task(TASK_AMF_APP, amf_app_task, nullptr)) {
@@ -401,7 +397,7 @@ void amf_app::start() {
 
 //------------------------------------------------------------------------------
 void amf_app::stop() {
-  if (amf_app_inst) {
+  if (amf_app_inst and amf_cfg->support_features.enable_nf_registration) {
     amf_app_inst->deregister_to_nrf();
   }
 }
@@ -414,65 +410,79 @@ uint64_t amf_app::generate_amf_ue_ngap_id() {
 }
 
 //------------------------------------------------------------------------------
-bool amf_app::ran_amf_id_2_ue_context(
-    const std::string& ue_context_key, std::shared_ptr<ue_context>& uc) const {
-  std::shared_lock lock(m_ue_ctx_key);
-  if (ue_ctx_key.count(ue_context_key) > 0) {
-    if (ue_ctx_key.at(ue_context_key) == nullptr) return false;
-    uc = ue_ctx_key.at(ue_context_key);
+std::shared_ptr<ue_context> amf_app::get_ue_context(
+    uint32_t ran_ue_ngap_id, uint64_t amf_ue_ngap_id) const {
+  std::string ue_context_key =
+      amf_conv::get_ue_context_key(ran_ue_ngap_id, amf_ue_ngap_id);
+  Logger::amf_app().debug(
+      "Key for UE context search: %s", ue_context_key.c_str());
+
+  std::shared_lock lock(m_ue_contexts);
+  if (ue_contexts.count(ue_context_key) > 0) {
+    return ue_contexts.at(ue_context_key);
+  }
+
+  return nullptr;
+}
+
+//------------------------------------------------------------------------------
+void amf_app::set_ue_context(
+    uint32_t ran_ue_ngap_id, uint64_t amf_ue_ngap_id,
+    const std::shared_ptr<ue_context>& uc) {
+  std::string ue_context_key =
+      amf_conv::get_ue_context_key(ran_ue_ngap_id, amf_ue_ngap_id);
+
+  std::unique_lock lock(m_ue_contexts);
+  ue_contexts[ue_context_key] = uc;
+}
+
+//------------------------------------------------------------------------------
+bool amf_app::remove_ue_context(
+    uint32_t ran_ue_ngap_id, uint64_t amf_ue_ngap_id) {
+  std::string ue_context_key =
+      amf_conv::get_ue_context_key(ran_ue_ngap_id, amf_ue_ngap_id);
+  std::unique_lock lock(m_ue_contexts);
+  if (ue_contexts.count(ue_context_key) > 0) {
+    ue_contexts.erase(ue_context_key);
     return true;
   }
-  Logger::amf_app().warn(
-      "No existing UE context associated with key %s", ue_context_key.c_str());
   return false;
 }
 
 //------------------------------------------------------------------------------
-void amf_app::set_ran_amf_id_2_ue_context(
-    const std::string& ue_context_key, const std::shared_ptr<ue_context>& uc) {
-  std::unique_lock lock(m_ue_ctx_key);
-  ue_ctx_key[ue_context_key] = uc;
-}
-
-//------------------------------------------------------------------------------
-bool amf_app::supi_2_ue_context(
-    const std::string& supi, std::shared_ptr<ue_context>& uc) const {
+std::shared_ptr<ue_context> amf_app::get_ue_context(
+    const std::string& supi) const {
   std::shared_lock lock(m_supi2ue_ctx);
   if (supi2ue_ctx.count(supi) > 0) {
-    uc = supi2ue_ctx.at(supi);
-    if (uc == nullptr) {
-      Logger::amf_app().warn("No UE context with UE SUPI %s", supi.c_str());
-      return false;
-    }
-    return true;
+    return supi2ue_ctx.at(supi);
   }
-  Logger::amf_app().warn("No UE context with UE SUPI %s", supi.c_str());
-  return false;
+  Logger::amf_app().warn("No UE context with UE SUPI %s", supi);
+  return nullptr;
 }
 
 //------------------------------------------------------------------------------
-void amf_app::set_supi_2_ue_context(
+void amf_app::set_ue_context(
     const std::string& supi, const std::shared_ptr<ue_context>& uc) {
   std::unique_lock lock(m_supi2ue_ctx);
   supi2ue_ctx[supi] = uc;
 }
 
 //------------------------------------------------------------------------------
-bool amf_app::find_pdu_session_context(
+bool amf_app::get_pdu_session_context(
     const std::string& supi, const std::uint8_t pdu_session_id,
-    std::shared_ptr<pdu_session_context>& psc) {
-  std::shared_ptr<ue_context> uc = {};
-  if (!supi_2_ue_context(supi, uc)) return false;
-  if (!uc->find_pdu_session_context(pdu_session_id, psc)) return false;
+    std::shared_ptr<pdu_session_context>& psc) const {
+  std::shared_ptr<ue_context> uc = get_ue_context(supi);
+  if (!uc) return false;
+  if (!uc->get_pdu_session_context(pdu_session_id, psc)) return false;
   return true;
 }
 
 //------------------------------------------------------------------------------
 bool amf_app::get_pdu_sessions_context(
     const std::string& supi,
-    std::vector<std::shared_ptr<pdu_session_context>>& sessions_ctx) {
-  std::shared_ptr<ue_context> uc = {};
-  if (!supi_2_ue_context(supi, uc)) return false;
+    std::vector<std::shared_ptr<pdu_session_context>>& sessions_ctx) const {
+  std::shared_ptr<ue_context> uc = get_ue_context(supi);
+  if (!uc) return false;
   if (!uc->get_pdu_sessions_context(sessions_ctx)) return false;
   return true;
 }
@@ -481,8 +491,8 @@ bool amf_app::get_pdu_sessions_context(
 bool amf_app::update_pdu_sessions_context(
     const std::string& supi, uint8_t pdu_session_id,
     const oai::_3gpp::model::SmContextStatusNotification& statusNotification) {
-  std::shared_ptr<ue_context> uc = {};
-  if (!supi_2_ue_context(supi, uc)) return false;
+  std::shared_ptr<ue_context> uc = get_ue_context(supi);
+  if (!uc) return false;
   auto pdu_session_status = statusNotification.getStatus().getEnumValue();
   if (pdu_session_status == oai::_3gpp::model::SmContextStatus_anyOf::
                                 eSmContextStatus_anyOf::RELEASED) {
@@ -501,6 +511,7 @@ n1n2sub_id_t amf_app::generate_n1n2_message_subscription_id() {
   return n1n2sub_id_generator.get_uid();
 }
 
+//------------------------------------------------------------------------------
 std::string amf_app::generate_amf_status_change_sub_id_generator() {
   return std::to_string(amf_status_change_sub_id_generator.get_uid());
 }
@@ -551,6 +562,7 @@ void amf_app::handle_itti_message(
 
       uint32_t msg_len = dl->GetLength();
       Logger::nas_mm().debug("Size of DL NAS Transport message %ld", msg_len);
+      if (msg_len == 0) return;
       uint8_t nas[msg_len] = {0};
       int encoded_size     = dl->Encode(nas, msg_len);
       oai::utils::output_wrapper::print_buffer(
@@ -610,8 +622,7 @@ void amf_app::handle_itti_message(
 //------------------------------------------------------------------------------
 void amf_app::handle_itti_message(
     itti_nas_signalling_establishment_request& itti_msg) {
-  uint64_t amf_ue_ngap_id        = INVALID_AMF_UE_NGAP_ID;
-  std::shared_ptr<ue_context> uc = {};
+  uint64_t amf_ue_ngap_id = INVALID_AMF_UE_NGAP_ID;
 
   // Generate amf_ue_ngap_id if necessary
   if ((amf_ue_ngap_id = itti_msg.amf_ue_ngap_id) == INVALID_AMF_UE_NGAP_ID) {
@@ -619,14 +630,17 @@ void amf_app::handle_itti_message(
   }
 
   // Get UE context, if the context doesn't exist, create a new one
-  std::string ue_context_key =
-      amf_conv::get_ue_context_key(itti_msg.ran_ue_ngap_id, amf_ue_ngap_id);
-  if (!ran_amf_id_2_ue_context(ue_context_key, uc)) {
+  std::shared_ptr<ue_context> uc =
+      get_ue_context(itti_msg.ran_ue_ngap_id, amf_ue_ngap_id);
+  if (uc == nullptr) {
     Logger::amf_app().debug(
-        "No existing UE Context, Create a new one with ran_amf_id %s",
-        ue_context_key.c_str());
+        "No existing UE Context, Create a new one with "
+        "amf_ue_ngap_id " AMF_UE_NGAP_ID_FMT
+        ", ran_ue_ngap_id " RAN_UE_NGAP_ID_FMT,
+        amf_ue_ngap_id, itti_msg.ran_ue_ngap_id);
+
     uc = std::make_shared<ue_context>();
-    set_ran_amf_id_2_ue_context(ue_context_key, uc);
+    set_ue_context(itti_msg.ran_ue_ngap_id, amf_ue_ngap_id, uc);
   }
 
   // Update AMF UE NGAP ID
@@ -635,7 +649,7 @@ void amf_app::handle_itti_message(
           itti_msg.ran_ue_ngap_id, itti_msg.gnb_id, unc)) {
     Logger::amf_app().error(
         "Could not find UE NGAP Context with ran_ue_ngap_id "
-        "(" GNB_UE_NGAP_ID_FMT
+        "(" RAN_UE_NGAP_ID_FMT
         "), gNB ID "
         "(" GNB_ID_FMT ")",
         itti_msg.ran_ue_ngap_id, itti_msg.gnb_id);
@@ -645,18 +659,13 @@ void amf_app::handle_itti_message(
   }
 
   // Store related information
-  uc->cgi = itti_msg.cgi;
-  uc->tai = itti_msg.tai;
-  if (itti_msg.rrc_cause != -1)
-    uc->rrc_estb_cause = (e_Ngap_RRCEstablishmentCause) itti_msg.rrc_cause;
-  if (itti_msg.ueCtxReq == -1)
-    uc->is_ue_context_request = false;
-  else
-    uc->is_ue_context_request = true;
-
-  uc->ran_ue_ngap_id = itti_msg.ran_ue_ngap_id;
-  uc->amf_ue_ngap_id = amf_ue_ngap_id;
-  uc->gnb_id         = itti_msg.gnb_id;
+  uc->cgi                   = itti_msg.cgi;
+  uc->tai                   = itti_msg.tai;
+  uc->rrc_estb_cause        = itti_msg.rrc_cause;
+  uc->is_ue_context_request = itti_msg.ue_ctx_req;
+  uc->ran_ue_ngap_id        = itti_msg.ran_ue_ngap_id;
+  uc->amf_ue_ngap_id        = amf_ue_ngap_id;
+  uc->gnb_id                = itti_msg.gnb_id;
 
   std::string guti   = {};
   bool is_guti_valid = false;
@@ -756,7 +765,8 @@ void amf_app::handle_itti_message(itti_sbi_n1_message_notification& itti_msg) {
   if (ue_ctx.supiIsSet()) {
     supi = ue_ctx.getSupi();
     // Update UE Context
-    if (!supi_2_ue_context(supi, uc)) {
+    uc = get_ue_context(supi);
+    if (!uc) {
       // Create a new UE Context
       Logger::amf_app().debug(
           "No existing UE Context, Create a new one with SUPI %s",
@@ -765,7 +775,7 @@ void amf_app::handle_itti_message(itti_sbi_n1_message_notification& itti_msg) {
       uc->amf_ue_ngap_id = INVALID_AMF_UE_NGAP_ID;
       uc->supi           = supi;
       uc->gnb_id         = gnb_id;
-      set_supi_2_ue_context(supi, uc);
+      set_ue_context(supi, uc);
     }
   }
 
@@ -783,18 +793,20 @@ void amf_app::handle_itti_message(itti_sbi_n1_message_notification& itti_msg) {
     }
   }
 
-  std::string ue_context_key =
-      amf_conv::get_ue_context_key(ran_ue_ngap_id, amf_ue_ngap_id);
-  if (!ran_amf_id_2_ue_context(ue_context_key, uc)) {
-    if (!uc) {
-      // Create a new UE Context
-      Logger::amf_app().debug(
-          "Create a new UE Context with UE Context Key",
-          ue_context_key.c_str());
-      uc         = std::make_shared<ue_context>();
-      uc->gnb_id = gnb_id;
-    }
-    set_ran_amf_id_2_ue_context(ue_context_key, uc);
+  if (get_ue_context(ran_ue_ngap_id, amf_ue_ngap_id) == nullptr) {
+    // Create a new UE Context
+    Logger::amf_app().debug(
+        "Create a new UE Context with AMF UE NGAP ID "
+        "(" AMF_UE_NGAP_ID_FMT
+        "), RAN UE NGAP ID "
+        "(" RAN_UE_NGAP_ID_FMT ")",
+        amf_ue_ngap_id, ran_ue_ngap_id);
+
+    uc         = std::make_shared<ue_context>();
+    uc->gnb_id = gnb_id;
+    set_ue_context(ran_ue_ngap_id, amf_ue_ngap_id, uc);
+  } else {
+    uc = get_ue_context(ran_ue_ngap_id, amf_ue_ngap_id);
   }
 
   // Update info for UE context
@@ -813,7 +825,7 @@ void amf_app::handle_itti_message(itti_sbi_n1_message_notification& itti_msg) {
       rrc_cause = 0;
     }
 
-    uc->rrc_estb_cause = (e_Ngap_RRCEstablishmentCause) rrc_cause;
+    uc->rrc_estb_cause = rrc_cause;
   }
   // ueContextRequest
   uc->is_ue_context_request = registration_context.isUeContextRequest();
@@ -823,7 +835,7 @@ void amf_app::handle_itti_message(itti_sbi_n1_message_notification& itti_msg) {
   std::shared_ptr<ue_ngap_context> unc = {};
   if (!amf_n2_inst->ran_ue_id_2_ue_ngap_context(ran_ue_ngap_id, gnb_id, unc)) {
     Logger::amf_app().debug(
-        "Create a new UE NGAP context with ran_ue_ngap_id " GNB_UE_NGAP_ID_FMT,
+        "Create a new UE NGAP context with ran_ue_ngap_id " RAN_UE_NGAP_ID_FMT,
         ran_ue_ngap_id);
     unc = std::shared_ptr<ue_ngap_context>(new ue_ngap_context());
     amf_n2_inst->set_ran_ue_ngap_id_2_ue_ngap_context(
@@ -888,7 +900,7 @@ void amf_app::handle_itti_message(itti_sbi_n1n2_message_subscribe& itti_msg) {
   nlohmann::json response_data        = {};
   response_data[kSbiResponseJsonData] = created_data;
   response_data[kSbiResponseHttpResponseCode] =
-      static_cast<uint32_t>(oai::common::sbi::http_status_code::CREATED);
+      oai::common::sbi::http_status_code::CREATED;
   response_data[kSbiResponseHeaderLocation] = location;
 
   // Notify to the result
@@ -907,10 +919,10 @@ void amf_app::handle_itti_message(itti_sbi_n1n2_message_unsubscribe& itti_msg) {
   if (remove_n1n2_message_subscription(
           itti_msg.ue_cxt_id, itti_msg.subscription_id)) {
     response_data[kSbiResponseHttpResponseCode] =
-        static_cast<uint32_t>(oai::common::sbi::http_status_code::NO_CONTENT);
+        oai::common::sbi::http_status_code::NO_CONTENT;
   } else {
     response_data[kSbiResponseHttpResponseCode] =
-        static_cast<uint32_t>(oai::common::sbi::http_status_code::BAD_REQUEST);
+        oai::common::sbi::http_status_code::BAD_REQUEST;
     oai::_3gpp::model::ProblemDetails problem_details = {};
     // TODO set problem_details
     to_json(response_data["ProblemDetails"], problem_details);
@@ -950,7 +962,7 @@ void amf_app::handle_itti_message(itti_sbi_non_ue_n2_info_subscribe& itti_msg) {
   nlohmann::json response_data        = {};
   response_data[kSbiResponseJsonData] = created_data;
   response_data[kSbiResponseHttpResponseCode] =
-      static_cast<uint32_t>(oai::common::sbi::http_status_code::CREATED);
+      oai::common::sbi::http_status_code::CREATED;
   response_data[kSbiResponseHeaderLocation] = location;
 
   // Notify to the result
@@ -969,10 +981,10 @@ void amf_app::handle_itti_message(
   nlohmann::json response_data = {};
   if (remove_non_ue_n2_info_subscription(itti_msg.subscription_id)) {
     response_data[kSbiResponseHttpResponseCode] =
-        static_cast<uint32_t>(oai::common::sbi::http_status_code::NO_CONTENT);
+        oai::common::sbi::http_status_code::NO_CONTENT;
   } else {
     response_data[kSbiResponseHttpResponseCode] =
-        static_cast<uint32_t>(oai::common::sbi::http_status_code::BAD_REQUEST);
+        oai::common::sbi::http_status_code::BAD_REQUEST;
     oai::_3gpp::model::ProblemDetails problem_details = {};
     // TODO set problem_details
     to_json(response_data["ProblemDetails"], problem_details);
@@ -995,13 +1007,12 @@ void amf_app::handle_itti_message(
           itti_msg.ue_id, itti_msg.pdu_session_id,
           itti_msg.smContextStatusNotification)) {
     Logger::amf_app().debug("Update PDU Session Release successfully");
-
     response_data[kSbiResponseHttpResponseCode] =
-        static_cast<uint32_t>(oai::common::sbi::http_status_code::NO_CONTENT);
+        oai::common::sbi::http_status_code::NO_CONTENT;
 
   } else {
     response_data[kSbiResponseHttpResponseCode] =
-        static_cast<uint32_t>(oai::common::sbi::http_status_code::NO_CONTENT);
+        oai::common::sbi::http_status_code::NO_CONTENT;
     // TODO check if we set problem_details
     Logger::amf_app().debug("Update PDU Session Release failed");
   }
@@ -1025,10 +1036,10 @@ void amf_app::handle_itti_message(itti_sbi_amf_configuration& itti_msg) {
         "AMF configuration:\n %s",
         response_data[kSbiResponseJsonData].dump().c_str());
     response_data[kSbiResponseHttpResponseCode] =
-        static_cast<uint32_t>(oai::common::sbi::http_status_code::OK);
+        oai::common::sbi::http_status_code::OK;
   } else {
     response_data[kSbiResponseHttpResponseCode] =
-        static_cast<uint32_t>(oai::common::sbi::http_status_code::BAD_REQUEST);
+        oai::common::sbi::http_status_code::BAD_REQUEST;
     oai::_3gpp::model::ProblemDetails problem_details = {};
     // TODO set problem_details
     to_json(response_data["ProblemDetails"], problem_details);
@@ -1054,7 +1065,7 @@ void amf_app::handle_itti_message(itti_sbi_update_amf_configuration& itti_msg) {
         "AMF configuration:\n %s",
         response_data[kSbiResponseJsonData].dump().c_str());
     response_data[kSbiResponseHttpResponseCode] =
-        static_cast<uint32_t>(oai::common::sbi::http_status_code::OK);
+        oai::common::sbi::http_status_code::OK;
 
     // Update AMF profile
     generate_amf_profile();
@@ -1065,7 +1076,7 @@ void amf_app::handle_itti_message(itti_sbi_update_amf_configuration& itti_msg) {
 
   } else {
     response_data[kSbiResponseHttpResponseCode] =
-        static_cast<uint32_t>(oai::common::sbi::http_status_code::BAD_REQUEST);
+        oai::common::sbi::http_status_code::BAD_REQUEST;
     oai::_3gpp::model::ProblemDetails problem_details = {};
     // TODO set problem_details
     to_json(response_data["ProblemDetails"], problem_details);
@@ -1168,8 +1179,8 @@ void amf_app::handle_itti_message(itti_sbi_register_with_udm_response& r) {
     // Store location
     if (r.response_data.find(kSbiResponseHeaderLocation) !=
         r.response_data.end()) {
-      std::shared_ptr<ue_context> uc = {};
-      if (supi_2_ue_context(r.supi, uc)) {
+      std::shared_ptr<ue_context> uc = get_ue_context(r.supi);
+      if (uc) {
         uc->amf_3gpp_access_location =
             r.response_data[kSbiResponseHeaderLocation].get<std::string>();
       }
@@ -1195,8 +1206,8 @@ void amf_app::handle_itti_message(itti_sbi_retrieve_am_data_response& r) {
   if (response_code == oai::common::sbi::http_status_code::OK) {
     // Store Access and Mobility Subscription Data
     if (r.response_data.find(kSbiResponseJsonData) != r.response_data.end()) {
-      std::shared_ptr<ue_context> uc = {};
-      if (supi_2_ue_context(r.supi, uc)) {
+      std::shared_ptr<ue_context> uc = get_ue_context(r.supi);
+      if (uc) {
         try {
           oai::_3gpp::model::AccessAndMobilitySubscriptionData am_data = {};
           from_json(r.response_data[kSbiResponseJsonData], am_data);
@@ -1231,8 +1242,8 @@ void amf_app::handle_itti_message(
   if (response_code == oai::common::sbi::http_status_code::OK) {
     // Store Access and Mobility Subscription Data
     if (r.response_data.find(kSbiResponseJsonData) != r.response_data.end()) {
-      std::shared_ptr<ue_context> uc = {};
-      if (supi_2_ue_context(r.supi, uc)) {
+      std::shared_ptr<ue_context> uc = get_ue_context(r.supi);
+      if (uc) {
         try {
           oai::_3gpp::model::SmfSelectionSubscriptionData
               smf_selection_subscription_data = {};
@@ -1268,8 +1279,8 @@ void amf_app::handle_itti_message(itti_sbi_am_policy_association_response& r) {
   if (response_code == oai::common::sbi::http_status_code::OK) {
     // Store PolicyAssociation
     if (r.response_data.find(kSbiResponseJsonData) != r.response_data.end()) {
-      std::shared_ptr<ue_context> uc = {};
-      if (supi_2_ue_context(r.supi, uc)) {
+      std::shared_ptr<ue_context> uc = get_ue_context(r.supi);
+      if (uc) {
         try {
           oai::_3gpp::model::PolicyAssociation policy_association = {};
           from_json(r.response_data[kSbiResponseJsonData], policy_association);
@@ -1311,8 +1322,8 @@ void amf_app::handle_itti_message(
 
   if (response_code == oai::common::sbi::http_status_code::NO_CONTENT) {
     // Remove PolicyAssociation
-    std::shared_ptr<ue_context> uc = {};
-    if (supi_2_ue_context(r.supi, uc)) {
+    std::shared_ptr<ue_context> uc = get_ue_context(r.supi);
+    if (uc) {
       uc->policy_association_location = {};
       uc->policy_association          = {};
     }
@@ -1335,8 +1346,8 @@ void amf_app::handle_itti_message(
     // Process Policy Update
 
     if (r.response_data.find(kSbiResponseJsonData) != r.response_data.end()) {
-      std::shared_ptr<ue_context> uc = {};
-      if (supi_2_ue_context(r.supi, uc)) {
+      std::shared_ptr<ue_context> uc = get_ue_context(r.supi);
+      if (uc) {
         try {
           oai::_3gpp::model::PolicyUpdate policy_update = {};
           from_json(r.response_data[kSbiResponseJsonData], policy_update);
@@ -1374,8 +1385,8 @@ void amf_app::handle_itti_message(
     // Process PolicyAssociation and update the UE context
 
     if (r.response_data.find(kSbiResponseJsonData) != r.response_data.end()) {
-      std::shared_ptr<ue_context> uc = {};
-      if (supi_2_ue_context(r.supi, uc)) {
+      std::shared_ptr<ue_context> uc = get_ue_context(r.supi);
+      if (uc) {
         try {
           oai::_3gpp::model::PolicyAssociation policy_association = {};
           from_json(r.response_data[kSbiResponseJsonData], policy_association);
@@ -1400,8 +1411,8 @@ void amf_app::handle_itti_message(
 
   nlohmann::json response_data = {};
 
-  std::shared_ptr<ue_context> uc = {};
-  if (supi_2_ue_context(itti_msg.supi, uc)) {
+  std::shared_ptr<ue_context> uc = get_ue_context(itti_msg.supi);
+  if (uc) {
     // TODO: Store the updated policy association in the UE context
     oai::_3gpp::model::PolicyAssociation policy_association = {};
     uc->policy_association =
@@ -1412,12 +1423,12 @@ void amf_app::handle_itti_message(
     oai::_3gpp::model::AmRequestedValueRep am_requested_value_rep = {};
 
     response_data[kSbiResponseHttpResponseCode] =
-        static_cast<uint32_t>(oai::common::sbi::http_status_code::OK);
+        oai::common::sbi::http_status_code::OK;
     to_json(response_data[kSbiResponseJsonData], am_requested_value_rep);
 
   } else {
     response_data[kSbiResponseHttpResponseCode] =
-        static_cast<uint32_t>(oai::common::sbi::http_status_code::BAD_REQUEST);
+        oai::common::sbi::http_status_code::BAD_REQUEST;
     oai::_3gpp::model::ProblemDetails problem_details = {};
     // TODO set problem_details
     to_json(response_data[kSbiResponseJsonData], problem_details);
@@ -1439,12 +1450,12 @@ void amf_app::handle_itti_message(
   nlohmann::json response_data = {};
   // Process the Termination Notification and clear the policy association
 
-  std::shared_ptr<ue_context> uc = {};
-  if (supi_2_ue_context(itti_msg.supi, uc)) {
+  std::shared_ptr<ue_context> uc = get_ue_context(itti_msg.supi);
+  if (uc) {
     uc->policy_association = std::nullopt;
   } else {
     response_data[kSbiResponseHttpResponseCode] =
-        static_cast<uint32_t>(oai::common::sbi::http_status_code::BAD_REQUEST);
+        oai::common::sbi::http_status_code::BAD_REQUEST;
     oai::_3gpp::model::ProblemDetails problem_details = {};
     // TODO set problem_details
     to_json(response_data[kSbiResponseJsonData], problem_details);
@@ -1473,8 +1484,8 @@ void amf_app::handle_itti_message(
     // Process the response
 
     if (r.response_data.find(kSbiResponseJsonData) != r.response_data.end()) {
-      std::shared_ptr<ue_context> uc = {};
-      if (supi_2_ue_context(r.supi, uc)) {
+      std::shared_ptr<ue_context> uc = get_ue_context(r.supi);
+      if (uc) {
         try {
           oai::_3gpp::model::UeContextInSmfData ue_context = {};
           from_json(r.response_data[kSbiResponseJsonData], ue_context);
@@ -1507,7 +1518,7 @@ void amf_app::handle_itti_message(
 
   nlohmann::json response_data = {};
   response_data[kSbiResponseHttpResponseCode] =
-      static_cast<uint32_t>(oai::common::sbi::http_status_code::CREATED);
+      oai::common::sbi::http_status_code::CREATED;
   response_data[kSbiResponseHeaderLocation] =
       amf_sbi_helper::get_amf_status_change_subscribe_uri(
           amf_cfg->sbi, amf_status_change_sub_id);
@@ -1621,8 +1632,8 @@ void amf_app::handle_itti_message(itti_sbi_provide_location_info& itti_msg) {
   nlohmann::json response_data = {};
   uint32_t response_code = oai::common::sbi::http_status_code::BAD_REQUEST;
 
-  std::shared_ptr<ue_context> uc = {};
-  if (supi_2_ue_context(itti_msg.ue_context_id, uc)) {
+  std::shared_ptr<ue_context> uc = get_ue_context(itti_msg.ue_context_id);
+  if (uc) {
     oai::_3gpp::model::ProvideLocInfo provide_loc_info = {};
     // Current Loc
     provide_loc_info.setCurrentLoc(true);
@@ -1686,7 +1697,8 @@ void amf_app::handle_itti_message(itti_sbi_provide_location_info& itti_msg) {
 }
 
 //------------------------------------------------------------------------------
-void amf_app::register_3gpp_access(std::shared_ptr<ue_context>& uc) const {
+void amf_app::register_3gpp_access(
+    const std::shared_ptr<ue_context>& uc) const {
   Logger::amf_app().debug("AMF registers for 3GPP access with UDM");
 
   oai::_3gpp::model::Amf3GppAccessRegistration registration_data = {};
@@ -1743,7 +1755,7 @@ void amf_app::register_3gpp_access(std::shared_ptr<ue_context>& uc) const {
 
 //------------------------------------------------------------------------------
 void amf_app::get_access_and_mobility_subscription_data(
-    std::shared_ptr<ue_context>& uc) const {
+    const std::shared_ptr<ue_context>& uc) const {
   Logger::amf_app().debug(
       "Retrieving a UE's Access and Mobility Subscription Data from UDM");
 
@@ -1818,6 +1830,10 @@ void amf_app::get_access_and_mobility_subscription_data(
     is_result_available = false;
   }
 
+  // Remove the promise from the list since the result is processed or not
+  // available
+  amf_app_inst->remove_promise(promise_id);
+
   if (!is_result_available) {
     Logger::amf_app().warn(
         "Could not get Access and Mobility Subscription Data from UDM");
@@ -1826,7 +1842,7 @@ void amf_app::get_access_and_mobility_subscription_data(
 
 //------------------------------------------------------------------------------
 void amf_app::get_smf_selection_subscription_data(
-    std::shared_ptr<ue_context>& uc) const {
+    const std::shared_ptr<ue_context>& uc) const {
   Logger::amf_app().debug(
       "Retrieving SMF Selection Subscription Data from UDM");
 
@@ -1850,7 +1866,7 @@ void amf_app::get_smf_selection_subscription_data(
 }
 
 //------------------------------------------------------------------------------
-void amf_app::discover_pcf(std::shared_ptr<ue_context>& uc) {
+void amf_app::discover_pcf(std::shared_ptr<ue_context>& uc) const {
   Logger::amf_app().debug("Discovering PCF for the UE");
   // TODO: enable PCF discovery feature flag:
   // amf_cfg->support_features.enable_pcf_discovery
@@ -1970,6 +1986,10 @@ void amf_app::discover_pcf(std::shared_ptr<ue_context>& uc) {
       is_result_available = false;
     }
 
+    // Remove the promise from the list since the result is processed or not
+    // available
+    amf_app_inst->remove_promise(promise_id);
+
     if (!is_result_available) {
       Logger::amf_app().warn("Could not get Search Result from NRF");
     }
@@ -1980,7 +2000,8 @@ void amf_app::discover_pcf(std::shared_ptr<ue_context>& uc) {
 }
 
 //------------------------------------------------------------------------------
-void amf_app::perform_am_policy_association(std::shared_ptr<ue_context>& uc) {
+void amf_app::perform_am_policy_association(
+    const std::shared_ptr<ue_context>& uc) const {
   Logger::amf_app().debug("Perform AM Policy Association with PCF for the UE");
 
   oai::_3gpp::model::PolicyAssociationRequest policy_assc_request = {};
@@ -2011,7 +2032,7 @@ void amf_app::perform_am_policy_association(std::shared_ptr<ue_context>& uc) {
 
 //------------------------------------------------------------------------------
 void amf_app::perform_am_policy_association_termination(
-    const std::shared_ptr<ue_context>& uc) {
+    const std::shared_ptr<ue_context>& uc) const {
   Logger::amf_app().debug(
       "Perform AM Policy Association Termination with PCF for the UE");
 
@@ -2032,7 +2053,7 @@ void amf_app::perform_am_policy_association_termination(
 
 //------------------------------------------------------------------------------
 void amf_app::perform_am_policy_association_update(
-    const std::shared_ptr<ue_context>& uc) {
+    const std::shared_ptr<ue_context>& uc) const {
   Logger::amf_app().debug(
       "Perform AM Policy Association Update with PCF for the UE");
 
@@ -2058,7 +2079,8 @@ void amf_app::perform_am_policy_association_update(
 }
 
 //------------------------------------------------------------------------------
-void amf_app::get_am_policy_association(const std::shared_ptr<ue_context>& uc) {
+void amf_app::get_am_policy_association(
+    const std::shared_ptr<ue_context>& uc) const {
   Logger::amf_app().debug("Retrieve AM Policy Association for the UE");
 
   // Send request to SBI to trigger AM Policy Associtiation Retrieval with PCF
@@ -2078,7 +2100,7 @@ void amf_app::get_am_policy_association(const std::shared_ptr<ue_context>& uc) {
 
 //------------------------------------------------------------------------------
 void amf_app::get_ue_context_in_smf_data(
-    const std::shared_ptr<ue_context>& uc) {
+    const std::shared_ptr<ue_context>& uc) const {
   Logger::amf_app().debug("Retrieve UE Context In SMF Data");
 
   // Send request to SBI to trigger UE Context In SMF Data Retrieval with UDM
@@ -2095,7 +2117,7 @@ void amf_app::get_ue_context_in_smf_data(
 }
 
 //---------------------------------------------------------------------------------------------
-bool amf_app::read_amf_configuration(nlohmann::json& json_data) {
+bool amf_app::read_amf_configuration(nlohmann::json& json_data) const {
   amf_cfg->to_json(json_data);
   return true;
 }
@@ -2108,19 +2130,6 @@ bool amf_app::update_amf_configuration(nlohmann::json& json_data) {
     return false;
   }
   return amf_cfg->from_json(json_data);
-}
-
-//---------------------------------------------------------------------------------------------
-void amf_app::get_number_registered_ues(uint32_t& num_ues) const {
-  std::shared_lock lock(m_amf_ue_ngap_id2ue_ctx);
-  num_ues = amf_ue_ngap_id2ue_ctx.size();
-  return;
-}
-
-//---------------------------------------------------------------------------------------------
-uint32_t amf_app::get_number_registered_ues() const {
-  std::shared_lock lock(m_amf_ue_ngap_id2ue_ctx);
-  return amf_ue_ngap_id2ue_ctx.size();
 }
 
 //---------------------------------------------------------------------------------------------
@@ -2290,9 +2299,9 @@ bool amf_app::generate_5g_guti(
     const uint32_t ranid, const long amfid, std::string& mcc, std::string& mnc,
     uint32_t& tmsi) {
   std::string ue_context_key     = amf_conv::get_ue_context_key(ranid, amfid);
-  std::shared_ptr<ue_context> uc = {};
+  std::shared_ptr<ue_context> uc = get_ue_context(ranid, amfid);
 
-  if (!ran_amf_id_2_ue_context(ue_context_key, uc)) return false;
+  if (uc == nullptr) return false;
 
   mcc      = uc->tai.mcc;
   mnc      = uc->tai.mnc;
@@ -2371,16 +2380,14 @@ void amf_app::handle_determine_location_request() {
     input_data["supi"]        = kvp.first;
 
     // Generate a promise and associate this promise to the ITTI message
-    uint32_t promise_id = generate_promise_id();
+    uint32_t promise_id = {};
+    auto p              = boost::make_shared<boost::promise<nlohmann::json>>();
+    boost::shared_future<nlohmann::json> f = p->get_future();
+    store_promise(promise_id, p);
     Logger::amf_app().debug("Promise ID generated %d", promise_id);
 
     auto itti_msg = std::make_shared<itti_sbi_determine_location_request>(
         TASK_AMF_APP, TASK_AMF_SBI, promise_id);
-
-    auto p = boost::make_shared<boost::promise<nlohmann::json>>();
-    boost::shared_future<nlohmann::json> f = p->get_future();
-    add_promise(promise_id, p);
-
     itti_msg->input_data = input_data;
     itti_msg->promise_id = promise_id;
 
@@ -2415,10 +2422,16 @@ void amf_app::handle_determine_location_request() {
       Logger::amf_app().error(
           "Determine Location failed (SUPI: %s)...\n", kvp.first);
     }
+
+    // Remove the promise from the list since the result is processed or not
+    // available
+    amf_app_inst->remove_promise(promise_id);
   }
 }
 //------------------------------------------------------------------------------
 void amf_app::generate_uuid() {
+  std::shared_mutex m_generate_uuid;
+  std::unique_lock lock(m_generate_uuid);
   amf_instance_id = to_string(boost::uuids::random_generator()());
 }
 
@@ -2443,7 +2456,6 @@ bool amf_app::remove_event_subscription(const evsub_id_t& sub_id) {
           "Found an event subscription (Event ID %d)",
           (uint8_t) std::get<0>(it->first));
       amf_event_subscriptions.erase(it++);
-      // it = amf_event_subscriptions.erase(it)
       return true;
     } else {
       ++it;
@@ -2605,7 +2617,7 @@ void amf_app::register_to_nrf() {
 }
 
 //---------------------------------------------------------------------------------------------
-void amf_app::register_to_nrf(const std::string& nrf_uri) const {
+void amf_app::register_to_nrf(const std::string& nrf_uri) {
   // Send request to SBI to send NF registration to NRF
   Logger::amf_app().debug(
       "Send ITTI msg to SBI task to trigger the registration request towards "
@@ -2638,15 +2650,14 @@ void amf_app::get_nrfs(std::unordered_set<std::string>& nrfs) {
                 TASK_AMF_APP, TASK_AMF_SBI);
 
         // Generate a promise and associate this promise to the ITTI message
-        uint32_t promise_id = amf_app_inst->generate_promise_id();
-        Logger::amf_app().debug("Promise ID generated %d", promise_id);
-
+        uint32_t promise_id = {};
         auto p = boost::make_shared<boost::promise<nlohmann::json>>();
         boost::shared_future<nlohmann::json> f = p->get_future();
+        store_promise(promise_id, p);
+        Logger::amf_app().debug("Promise ID generated %d", promise_id);
 
         // Store the future to be processed later
         nssf_responses.emplace(promise_id, f);
-        add_promise(promise_id, p);
 
         itti_msg->nf_instance_id = amf_instance_id;
         itti_msg->plmn.mcc       = plmn.mcc;
@@ -2701,6 +2712,7 @@ void amf_app::get_nrfs(std::unordered_set<std::string>& nrfs) {
           }
         }
       }
+      // Remove the promise from the list
       nssf_responses.erase(nssf_responses.begin());
     }
 
@@ -2716,7 +2728,7 @@ void amf_app::get_nrfs(std::unordered_set<std::string>& nrfs) {
 }
 
 //------------------------------------------------------------------------------
-void amf_app::deregister_to_nrf() const {
+void amf_app::deregister_to_nrf() {
   Logger::amf_app().debug(
       "Send ITTI msg to SBI task to trigger the deregistration request to NRF");
 
@@ -2737,7 +2749,7 @@ void amf_app::deregister_to_nrf() const {
 //---------------------------------------------------------------------------------------------
 void amf_app::timer_nrf_heartbeat_timeout(
     timer_id_t timer_id, std::string nrf_uri) {
-  Logger::amf_app().debug("Send ITTI msg to SBI task to trigger NRF Heartbeat");
+  // Send ITTI msg to SBI task to trigger NRF Heartbeat
 
   auto itti_msg = std::make_shared<itti_sbi_update_nf_instance_request>(
       TASK_AMF_APP, TASK_AMF_SBI);
@@ -2768,11 +2780,9 @@ void amf_app::timer_nrf_registration_timeout(
 }
 
 //---------------------------------------------------------------------------------------------
-void amf_app::add_promise(
-    const uint32_t pid,
-    const boost::shared_ptr<boost::promise<nlohmann::json>>& p) {
-  std::unique_lock lock(m_curl_handle_responses_sbi);
-  curl_handle_responses_sbi.emplace(pid, p);
+void amf_app::remove_promise(const uint32_t pid) {
+  std::unique_lock lock(m_sbi_response_handlers);
+  sbi_response_handlers.erase(pid);
 }
 
 //---------------------------------------------------------------------------------------------
@@ -2780,8 +2790,8 @@ void amf_app::store_promise(
     uint32_t& pid, const boost::shared_ptr<boost::promise<nlohmann::json>>& p) {
   // Generate promise ID
   pid = generate_promise_id();
-  std::unique_lock lock(m_curl_handle_responses_sbi);
-  curl_handle_responses_sbi.emplace(pid, p);
+  std::unique_lock lock(m_sbi_response_handlers);
+  sbi_response_handlers.emplace(pid, p);
 }
 
 //------------------------------------------------------------------------------
@@ -2791,11 +2801,11 @@ void amf_app::trigger_process_response(
       "Trigger process response: Set promise with ID %u "
       "to ready",
       pid);
-  std::unique_lock lock(m_curl_handle_responses_sbi);
-  if (curl_handle_responses_sbi.count(pid) > 0) {
-    curl_handle_responses_sbi[pid]->set_value(json_data);
+  std::unique_lock lock(m_sbi_response_handlers);
+  if (sbi_response_handlers.count(pid) > 0) {
+    sbi_response_handlers[pid]->set_value(json_data);
     // Remove this promise from list
-    curl_handle_responses_sbi.erase(pid);
+    sbi_response_handlers.erase(pid);
   }
 }
 
@@ -2813,15 +2823,13 @@ void amf_app::trigger_pdu_session_release(
           TASK_AMF_N2, TASK_AMF_SBI);
 
       // Generate a promise and associate this promise to the ITTI message
-      uint32_t promise_id = generate_promise_id();
-      Logger::amf_app().debug("Promise ID generated %d", promise_id);
-
+      uint32_t promise_id = {};
       auto p = boost::make_shared<boost::promise<nlohmann::json>>();
       boost::shared_future<nlohmann::json> f = p->get_future();
-
       // Store the future to be processed later
+      amf_app_inst->store_promise(promise_id, p);
       smf_responses.emplace(promise_id, f);
-      amf_app_inst->add_promise(promise_id, p);
+      Logger::amf_app().debug("Promise ID generated %d", promise_id);
 
       itti_msg->supi             = uc->supi;
       itti_msg->pdu_session_id   = session->pdu_session_id;
@@ -2864,6 +2872,8 @@ void amf_app::trigger_pdu_session_release(
           // TODO:
         }
       }
+      // Remove the promise from the list since the result is processed or not
+      // available
       smf_responses.erase(smf_responses.begin());
     }
 
@@ -2880,19 +2890,18 @@ void amf_app::trigger_pdu_session_up_deactivation(
   std::vector<std::shared_ptr<pdu_session_context>> sessions_ctx;
   if (uc->get_pdu_sessions_context(sessions_ctx)) {
     // Send PDUSessionUpdateSMContextRequest to SMF for each PDU session
-    std::map<uint32_t, boost::shared_future<nlohmann::json>> curl_responses;
+    std::map<uint32_t, boost::shared_future<nlohmann::json>> smf_responses;
     for (auto session : sessions_ctx) {
       Logger::amf_app().debug("PDU Session ID %d", session->pdu_session_id);
       // Generate a promise and associate this promise to the curl handle
-      uint32_t promise_id = generate_promise_id();
-      Logger::amf_app().debug("Promise ID generated %d", promise_id);
-
+      uint32_t promise_id = {};
       auto p = boost::make_shared<boost::promise<nlohmann::json>>();
       boost::shared_future<nlohmann::json> f = p->get_future();
 
       // Store the future to be processed later
-      curl_responses.emplace(session->pdu_session_id, f);
-      amf_app_inst->add_promise(promise_id, p);
+      amf_app_inst->store_promise(promise_id, p);
+      smf_responses.emplace(session->pdu_session_id, f);
+      Logger::amf_app().debug("Promise ID generated %d", promise_id);
 
       Logger::amf_app().debug(
           "Sending ITTI to trigger PDUSessionUpdateSMContextRequest to SMF to "
@@ -2920,17 +2929,17 @@ void amf_app::trigger_pdu_session_up_deactivation(
     }
 
     bool is_up_activated = true;
-    while (!curl_responses.empty()) {
+    while (!smf_responses.empty()) {
       // Wait for the result available and process accordingly
       std::optional<nlohmann::json> result_opt = std::nullopt;
       oai::utils::utils::wait_for_result(
-          curl_responses.begin()->second, result_opt);
+          smf_responses.begin()->second, result_opt);
 
       if (result_opt.has_value()) {
         nlohmann::json result = result_opt.value();
         Logger::amf_app().debug(
             "Got result from a promise with PDU Session Id %d, json content %s",
-            curl_responses.begin()->first, result.dump());
+            smf_responses.begin()->first, result.dump());
 
         uint32_t http_response_code = 0;
         if (result.find(kSbiResponseHttpResponseCode) != result.end()) {
@@ -2941,7 +2950,7 @@ void amf_app::trigger_pdu_session_up_deactivation(
               (http_response_code ==
                oai::common::sbi::http_status_code::NO_CONTENT)) {
             uc->set_up_cnx_state(
-                curl_responses.begin()->first,
+                smf_responses.begin()->first,
                 up_cnx_state_e::UPCNX_STATE_DEACTIVATED);
           }
 
@@ -2953,8 +2962,9 @@ void amf_app::trigger_pdu_session_up_deactivation(
         is_up_activated = false;
         Logger::amf_app().warn("Could not get the HTTP response code");
       }
-
-      curl_responses.erase(curl_responses.begin());
+      // Remove the promise from the list since the result is processed or not
+      // available
+      smf_responses.erase(smf_responses.begin());
     }
   } else {
     Logger::amf_app().debug("No PDU session available");
@@ -2970,19 +2980,18 @@ bool amf_app::trigger_pdu_session_up_activation(
   std::vector<std::shared_ptr<pdu_session_context>> sessions_ctx;
   if (uc->get_pdu_sessions_context(sessions_ctx)) {
     // Send PDUSessionUpdateSMContextRequest to SMF for each PDU session
-    std::map<uint32_t, boost::shared_future<nlohmann::json>> curl_responses;
+    std::map<uint32_t, boost::shared_future<nlohmann::json>> smf_responses;
     for (auto session : sessions_ctx) {
       Logger::amf_app().debug("PDU Session ID %d", session->pdu_session_id);
-      // Generate a promise and associate this promise to the curl handle
-      uint32_t promise_id = generate_promise_id();
-      Logger::amf_app().debug("Promise ID generated %d", promise_id);
-
+      // Generate a promise and associate this promise to the response handler
+      uint32_t promise_id = {};
       auto p = boost::make_shared<boost::promise<nlohmann::json>>();
       boost::shared_future<nlohmann::json> f = p->get_future();
 
       // Store the future to be processed later
-      curl_responses.emplace(session->pdu_session_id, f);
-      amf_app_inst->add_promise(promise_id, p);
+      amf_app_inst->store_promise(promise_id, p);
+      smf_responses.emplace(session->pdu_session_id, f);
+      Logger::amf_app().debug("Promise ID generated %d", promise_id);
 
       Logger::amf_app().debug(
           "Sending ITTI to trigger PDUSessionUpdateSMContextRequest to SMF to "
@@ -3010,17 +3019,17 @@ bool amf_app::trigger_pdu_session_up_activation(
       }
     }
 
-    while (!curl_responses.empty()) {
+    while (!smf_responses.empty()) {
       // Wait for the result available and process accordingly
       std::optional<nlohmann::json> result_opt = std::nullopt;
       oai::utils::utils::wait_for_result(
-          curl_responses.begin()->second, result_opt);
+          smf_responses.begin()->second, result_opt);
 
       if (result_opt.has_value()) {
         nlohmann::json result = result_opt.value();
         Logger::amf_app().debug(
             "Got result from a promise for PDU session Id %d, json content %s",
-            curl_responses.begin()->first, result.dump());
+            smf_responses.begin()->first, result.dump());
 
         uint32_t http_response_code = 0;
         if (result.find(kSbiResponseHttpResponseCode) != result.end()) {
@@ -3029,14 +3038,14 @@ bool amf_app::trigger_pdu_session_up_activation(
               (http_response_code ==
                oai::common::sbi::http_status_code::NO_CONTENT)) {
             uc->set_up_cnx_state(
-                curl_responses.begin()->first,
+                smf_responses.begin()->first,
                 up_cnx_state_e::UPCNX_STATE_ACTIVATED);
             activation_result = activation_result && true;
           } else {
             Logger::amf_app().warn(
                 "Failed to activate the UP for this PDU session (PDU Session "
                 "Id %d)!",
-                curl_responses.begin()->first);
+                smf_responses.begin()->first);
             activation_result = false;
           }
         }
@@ -3044,8 +3053,9 @@ bool amf_app::trigger_pdu_session_up_activation(
         Logger::amf_app().warn("Could not get response from SMF");
         activation_result = false;
       }
-
-      curl_responses.erase(curl_responses.begin());
+      // Remove the promise from the list since the result is processed or not
+      // available
+      smf_responses.erase(smf_responses.begin());
     }
   } else {
     Logger::amf_app().debug("No PDU session available");
@@ -3059,17 +3069,15 @@ bool amf_app::trigger_pdu_session_up_activation(
   Logger::amf_app().debug("Trigger PDU Session UP Activation towards SMF");
 
   std::shared_ptr<pdu_session_context> psc = {};
-  if (uc->find_pdu_session_context(pdu_session_id, psc)) {
+  if (uc->get_pdu_session_context(pdu_session_id, psc)) {
     // Send PDUSessionUpdateSMContextRequest to SMF
     Logger::amf_app().debug("PDU Session ID %d", pdu_session_id);
     // Generate a promise and associate this promise to the curl handle
-    uint32_t promise_id = generate_promise_id();
-    Logger::amf_app().debug("Promise ID generated %d", promise_id);
-
-    auto p = boost::make_shared<boost::promise<nlohmann::json>>();
+    uint32_t promise_id = {};
+    auto p              = boost::make_shared<boost::promise<nlohmann::json>>();
     boost::shared_future<nlohmann::json> f = p->get_future();
-
-    amf_app_inst->add_promise(promise_id, p);
+    amf_app_inst->store_promise(promise_id, p);
+    Logger::amf_app().debug("Promise ID generated %d", promise_id);
 
     Logger::amf_app().debug(
         "Sending ITTI to trigger PDUSessionUpdateSMContextRequest to SMF to "
@@ -3125,6 +3133,10 @@ bool amf_app::trigger_pdu_session_up_activation(
       Logger::amf_app().warn("Could not get response from SMF");
     }
 
+    // Remove the promise from the list since the result is processed or not
+    // available
+    amf_app_inst->remove_promise(promise_id);
+
   } else {
     Logger::amf_app().warn("Could not find PDU session info");
   }
@@ -3165,7 +3177,7 @@ bool amf_app::update_amf_status_change_subscription(
 
 //------------------------------------------------------------------------------
 std::vector<std::string> amf_app::get_amf_status_change_subscription_uris(
-    const std::vector<oai::_3gpp::model::Guami>& guamis) {
+    const std::vector<oai::_3gpp::model::Guami>& guamis) const {
   std::vector<std::string> uris;
   // TODO: filter the subscriptions based on the guami list
   std::shared_lock lock(m_amf_status_change_subscriptions);
@@ -3179,7 +3191,7 @@ std::vector<std::string> amf_app::get_amf_status_change_subscription_uris(
 
 //------------------------------------------------------------------------------
 void amf_app::perform_amf_status_change_notification(
-    const oai::_3gpp::model::StatusChange& status_change) {
+    const oai::_3gpp::model::StatusChange& status_change) const {
   // Prepare the info
   oai::_3gpp::model::AmfStatusChangeNotification
       amf_status_change_notification               = {};

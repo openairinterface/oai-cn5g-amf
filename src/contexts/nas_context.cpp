@@ -22,6 +22,7 @@
 #include "nas_context.hpp"
 
 #include "amf.hpp"
+#include "utils.hpp"
 #include "bstrlib.h"
 
 //------------------------------------------------------------------------------
@@ -68,7 +69,10 @@ nas_context::nas_context()
 }
 
 //------------------------------------------------------------------------------
-nas_context::~nas_context() {}
+nas_context::~nas_context() {
+  oai::utils::utils::bdestroy_wrapper(&registration_request);
+  oai::utils::utils::bdestroy_wrapper(&auts);
+}
 
 //------------------------------------------------------------------------------
 bool nas_context::get_kamf(
