@@ -1952,6 +1952,16 @@ bool amf_n1::registration_request_handle(
   // registration updating procedure
   auto ue_security_capability = registration_request->GetUeSecurityCapability();
   if (ue_security_capability.has_value()) {
+    uint8_t amf_nea = kEa0_5g;
+    uint8_t amf_nia = kIa0_5g;
+    // Decide which ea/ia alg used by UE, which is supported by network
+    if (!security_select_algorithms(
+            (ue_security_capability.value()).GetEa(),
+            (ue_security_capability.value()).GetIa(), amf_nea, amf_nia)) {
+      Logger::amf_n1().debug(
+          "UE security capabilities invalid or unacceptable");
+      return false;
+    }
     nc->ue_security_capability = ue_security_capability.value();
   }
 
@@ -3078,10 +3088,17 @@ bool amf_n1::start_security_mode_control_procedure(
   bool security_context_is_new                              = false;
   uint8_t amf_nea                                           = kEa0_5g;
   uint8_t amf_nia                                           = kIa0_5g;
-  // Decide which ea/ia alg used by UE, which is supported by network
 
   if (!nc->security_ctx.has_value()) {
     Logger::amf_n1().error("No Security Context found");
+    return false;
+  }
+
+  // Decide which ea/ia alg used by UE, which is supported by network
+  if (!security_select_algorithms(
+          nc->ue_security_capability.GetEa(),
+          nc->ue_security_capability.GetIa(), amf_nea, amf_nia)) {
+    Logger::amf_n1().debug("Couldn't find a security algorithm for this UE");
     return false;
   }
 
@@ -3091,14 +3108,11 @@ bool amf_n1::start_security_mode_control_procedure(
         "Using IntegrityProtectedWithNewSecurityContext for "
         "SecurityModeControl "
         "message");
-    nc->security_ctx.value().ngksi             = nc->ngksi;
-    nc->security_ctx.value().dl_count.overflow = 0;
-    nc->security_ctx.value().dl_count.seq_num  = 0;
-    nc->security_ctx.value().ul_count.overflow = 0;
-    nc->security_ctx.value().ul_count.seq_num  = 0;
-    security_select_algorithms(
-        nc->ue_security_capability.GetEa(), nc->ue_security_capability.GetIa(),
-        amf_nea, amf_nia);
+    nc->security_ctx.value().ngksi               = nc->ngksi;
+    nc->security_ctx.value().dl_count.overflow   = 0;
+    nc->security_ctx.value().dl_count.seq_num    = 0;
+    nc->security_ctx.value().ul_count.overflow   = 0;
+    nc->security_ctx.value().ul_count.seq_num    = 0;
     nc->security_ctx.value().nas_algs.integrity  = amf_nia;
     nc->security_ctx.value().nas_algs.encryption = amf_nea;
     nc->security_ctx.value().sc_type = SECURITY_CTX_TYPE_FULL_NATIVE;
