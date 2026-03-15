@@ -25,47 +25,86 @@
 #include "utils.hpp"
 #include "bstrlib.h"
 
+const char* nas_procedure_type_to_string(nas_procedure_type_e type) {
+  switch (type) {
+    case nas_procedure_type_e::AUTHENTICATION:
+      return "AUTHENTICATION";
+    case nas_procedure_type_e::SECURITY_MODE_CONTROL:
+      return "SECURITY_MODE_CONTROL";
+    case nas_procedure_type_e::IDENTIFICATION:
+      return "IDENTIFICATION";
+    case nas_procedure_type_e::CONFIGURATION_UPDATE:
+      return "CONFIGURATION_UPDATE";
+    case nas_procedure_type_e::NAS_TRANSPORT:
+      return "NAS_TRANSPORT";
+    case nas_procedure_type_e::_5GMM_STATUS:
+      return "_5GMM_STATUS";
+    case nas_procedure_type_e::REGISTRATION_INITIAL:
+      return "REGISTRATION_INITIAL";
+    case nas_procedure_type_e::REGISTRATION_MOBILITY:
+      return "REGISTRATION_MOBILITY";
+    case nas_procedure_type_e::REGISTRATION_PERIODIC:
+      return "REGISTRATION_PERIODIC";
+    case nas_procedure_type_e::DEREGISTRATION_UE:
+      return "DEREGISTRATION_UE";
+    case nas_procedure_type_e::DEREGISTRATION_NETWORK:
+      return "DEREGISTRATION_NETWORK";
+    case nas_procedure_type_e::SERVICE_REQUEST:
+      return "SERVICE_REQUEST";
+    case nas_procedure_type_e::PAGING:
+      return "PAGING";
+    case nas_procedure_type_e::NOTIFICATION:
+      return "NOTIFICATION";
+    default:
+      return "UNKNOWN_PROCEDURE";
+  }
+}
+
 //------------------------------------------------------------------------------
 nas_context::nas_context()
     : _5g_he_av(), _5g_av(), kamf(), kgNB(), _5gmm_capability() {
-  is_imsi_present                                    = false;
-  is_auth_vectors_present                            = false;
-  auts                                               = nullptr;
-  ctx_avaliability_ind                               = false;
-  amf_ue_ngap_id                                     = INVALID_AMF_UE_NGAP_ID;
-  ran_ue_ngap_id                                     = 0;
-  old_amf_ue_ngap_id                                 = INVALID_AMF_UE_NGAP_ID;
-  old_ran_ue_ngap_id                                 = 0;
-  _5gmm_state                                        = {};
-  registration_type                                  = 0;
-  follow_on_req_pending_ind                          = false;
-  ngksi                                              = 0;
-  ue_security_capability                             = {};
-  is_specific_procedure_for_registration_running     = false;
-  is_specific_procedure_for_deregistration_running   = false;
-  is_specific_procedure_for_eCell_inactivity_running = false;
-  is_common_procedure_for_authentication_running     = false;
-  is_common_procedure_for_identification_running     = false;
-  is_common_procedure_for_security_mode_control_running = false;
-  is_common_procedure_for_nas_transport_running         = false;
-  security_ctx                                          = std::nullopt;
-  is_current_security_available                         = false;
-  registration_attempt_counter                          = 0;
-  is_imsi_present                                       = false;
-  is_5g_suci_present                                    = false;
-  is_5g_guti_present                                    = false;
-  is_auth_vectors_present                               = false;
-  to_be_register_by_new_suci                            = false;
-  registration_request_is_set                           = false;
-  registration_request                                  = nullptr;
-  nas_status                                            = CM_IDLE;
-  is_mobile_reachable_timer_timeout                     = false;
-  mobile_reachable_timer                                = ITTI_INVALID_TIMER_ID;
-  implicit_deregistration_timer                         = ITTI_INVALID_TIMER_ID;
-  href                                                  = {};
-  imeisv                                                = std::nullopt;
-  guti                                                  = std::nullopt;
-  is_kgNB_set                                           = false;
+  is_imsi_present                    = false;
+  is_auth_vectors_present            = false;
+  auts                               = nullptr;
+  ctx_avaliability_ind               = false;
+  amf_ue_ngap_id                     = INVALID_AMF_UE_NGAP_ID;
+  ran_ue_ngap_id                     = 0;
+  old_amf_ue_ngap_id                 = INVALID_AMF_UE_NGAP_ID;
+  old_ran_ue_ngap_id                 = 0;
+  _5gmm_state                        = _5GMM_DEREGISTERED;
+  registration_type                  = 0;
+  follow_on_req_pending_ind          = false;
+  ngksi                              = 0;
+  ue_security_capability             = {};
+  security_ctx                       = std::nullopt;
+  is_current_security_available      = false;
+  registration_attempt_counter       = 0;
+  is_imsi_present                    = false;
+  is_5g_suci_present                 = false;
+  is_5g_guti_present                 = false;
+  is_auth_vectors_present            = false;
+  to_be_register_by_new_suci         = false;
+  registration_request_is_set        = false;
+  registration_request               = nullptr;
+  nas_status                         = CM_IDLE;
+  is_mobile_reachable_timer_timeout  = false;
+  mobile_reachable_timer             = ITTI_INVALID_TIMER_ID;
+  implicit_deregistration_timer      = ITTI_INVALID_TIMER_ID;
+  procedure_ctx.specific_procedure   = nas_procedure_type_e::NONE;
+  procedure_ctx.common_procedure     = nas_procedure_type_e::NONE;
+  procedure_ctx.prior_state          = _5GMM_DEREGISTERED;
+  procedure_ctx.dereg_switch_off     = false;
+  procedure_ctx.dereg_cause          = 0;
+  procedure_ctx.retransmission_count = 0;
+  for (size_t i = 0; i < kNasTimerCount; ++i) {
+    nas_timers[i].itti_timer_id        = 0;
+    nas_timers[i].retransmission_count = 0;
+    nas_timers[i].is_running           = false;
+  }
+  href        = {};
+  imeisv      = std::nullopt;
+  guti        = std::nullopt;
+  is_kgNB_set = false;
 }
 
 //------------------------------------------------------------------------------

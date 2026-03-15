@@ -38,6 +38,9 @@
 #include "itti.hpp"
 #include "itti_msg_n1.hpp"
 #include "nas_context.hpp"
+#include "nas_procedure_manager.hpp"
+#include "nas_state_machine.hpp"
+#include "nas_timer_manager.hpp"
 #include "pdu_session_context.hpp"
 #include "ue_context.hpp"
 
@@ -475,6 +478,16 @@ class amf_n1 {
   void implicit_deregistration_timer_timeout(
       timer_id_t timer_id, std::string amf_ue_ngap_id_str);
 
+  // NAS procedure timer expiry handlers (Phase 2 — stubs; full logic in Phase
+  // 6)
+  void handle_t3550_expiry(timer_id_t timer_id, std::string amf_ue_ngap_id_str);
+  void handle_t3560_expiry(timer_id_t timer_id, std::string amf_ue_ngap_id_str);
+  void handle_t3570_expiry(timer_id_t timer_id, std::string amf_ue_ngap_id_str);
+  void handle_t3522_expiry(timer_id_t timer_id, std::string amf_ue_ngap_id_str);
+  void handle_t3555_expiry(timer_id_t timer_id, std::string amf_ue_ngap_id_str);
+  void handle_t3513_expiry(timer_id_t timer_id, std::string amf_ue_ngap_id_str);
+  void handle_t3565_expiry(timer_id_t timer_id, std::string amf_ue_ngap_id_str);
+
   // NETWORK SLICING RELATED FUNCTIONS
 
   /*
@@ -648,6 +661,17 @@ class amf_n1 {
    */
   void get_5gcm_state(
       const std::shared_ptr<nas_context>& nc, cm_state_t& state) const;
+
+  /*
+   * Handle a NAS 5GMM state machine event and drive the state transition.
+   * Does NOT acquire m_nas_context — caller must hold the lock if needed.
+   * On success, updates statistics and fires event subscription notifications.
+   * @param [std::shared_ptr<nas_context>&] nc: NAS context
+   * @param [oai::amf::nas::nas_event_e] event: The NAS event
+   * @return transition_result_t
+   */
+  oai::amf::nas::transition_result_t handle_nas_event(
+      std::shared_ptr<nas_context>& nc, oai::amf::nas::nas_event_e event);
 
   // Event Exposure-related functions
   /*
@@ -980,6 +1004,10 @@ class amf_n1 {
 
   static std::map<std::string, std::string> rand_record;
   mutable std::shared_mutex m_rand_record;
+
+  oai::amf::nas::nas_state_machine nas_state_machine_;
+  nas_timer_manager nas_timer_manager_;
+  nas_procedure_manager nas_procedure_manager_;
 };
 }  // namespace amf_application
 

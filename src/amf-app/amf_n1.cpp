@@ -67,6 +67,7 @@
 #include "sha256.hpp"
 #include "utils.hpp"
 #include "AuthenticationReject.hpp"
+#include "nas_state_machine.hpp"
 
 using namespace amf_application;
 using namespace boost::placeholders;
@@ -123,6 +124,27 @@ void amf_n1_task(void*) {
               amf_n1_inst->implicit_deregistration_timer_timeout(
                   to->timer_id, to->arg2_user);
               break;
+            case TASK_AMF_T3550_TIMER_EXPIRE:
+              amf_n1_inst->handle_t3550_expiry(to->timer_id, to->arg2_user);
+              break;
+            case TASK_AMF_T3560_TIMER_EXPIRE:
+              amf_n1_inst->handle_t3560_expiry(to->timer_id, to->arg2_user);
+              break;
+            case TASK_AMF_T3570_TIMER_EXPIRE:
+              amf_n1_inst->handle_t3570_expiry(to->timer_id, to->arg2_user);
+              break;
+            case TASK_AMF_T3522_TIMER_EXPIRE:
+              amf_n1_inst->handle_t3522_expiry(to->timer_id, to->arg2_user);
+              break;
+            case TASK_AMF_T3555_TIMER_EXPIRE:
+              amf_n1_inst->handle_t3555_expiry(to->timer_id, to->arg2_user);
+              break;
+            case TASK_AMF_T3513_TIMER_EXPIRE:
+              amf_n1_inst->handle_t3513_expiry(to->timer_id, to->arg2_user);
+              break;
+            case TASK_AMF_T3565_TIMER_EXPIRE:
+              amf_n1_inst->handle_t3565_expiry(to->timer_id, to->arg2_user);
+              break;
             default:
               Logger::amf_n1().info(
                   "No handler for timer(%d) with arg1_user(%d) ", to->timer_id,
@@ -152,7 +174,8 @@ amf_n1::amf_n1()
       m_guti2nas_context(),
       m_supi2amfId(),
       m_supi2ranId(),
-      m_rand_record() {
+      m_rand_record(),
+      nas_timer_manager_(itti_inst) {
   if (itti_inst->create_task(TASK_AMF_N1, amf_n1_task, nullptr)) {
     Logger::amf_n1().error("Cannot create task TASK_AMF_N1");
     throw std::runtime_error("Cannot create task TASK_AMF_N1");
@@ -887,7 +910,9 @@ void amf_n1::identity_response_handle(
     }
 
     stacs.update_ue_info(ue_item);
-    set_5gmm_state(nc, _5GMM_COMMON_PROCEDURE_INITIATED);
+    handle_nas_event(
+        nc, oai::amf::nas::nas_event_e::IDENTIFICATION_RESPONSE_RECEIVED);
+    nas_procedure_manager_.complete_common_procedure(*nc);
 
     Logger::amf_n1().debug(
         "Signal the UE Registration State Event notification for SUPI %s",
@@ -1137,6 +1162,10 @@ bool amf_n1::service_request_handle(
       service_reject_cause = k5gmmCauseCongestion;
       return false;
     }
+
+    // Update NAS State machine
+    handle_nas_event(nc, oai::amf::nas::nas_event_e::SERVICE_ACCEPT_SENT);
+
     oai::utils::utils::bdestroy_wrapper(&protected_nas);
   }
   return true;
@@ -1463,9 +1492,8 @@ bool amf_n1::service_request_handle(
       service_reject_cause = k5gmmCauseCongestion;
       return false;
     } else {
-      // Update 5GMM State
-      stacs.update_5gmm_state(nc, _5GMM_REGISTERED);
-      set_5gmm_state(nc, _5GMM_REGISTERED);
+      // Update NAS State machine
+      handle_nas_event(nc, oai::amf::nas::nas_event_e::SERVICE_ACCEPT_SENT);
       stacs.display();
     }
     oai::utils::utils::bdestroy_wrapper(&protected_nas);
@@ -1563,9 +1591,9 @@ bool amf_n1::service_request_handle(
       service_reject_cause = k5gmmCauseCongestion;
       return false;
     }
-    // Update 5GMM State
-    stacs.update_5gmm_state(nc, _5GMM_REGISTERED);
-    set_5gmm_state(nc, _5GMM_REGISTERED);
+
+    // Update NAS State machine
+    handle_nas_event(nc, oai::amf::nas::nas_event_e::SERVICE_ACCEPT_SENT);
 
     ue_info_t ue_item;
     ue_item.cm_status       = CM_CONNECTED;
@@ -1623,9 +1651,8 @@ void amf_n1::send_service_reject(
         "Could not send ITTI message %s to task TASK_AMF_N2",
         dnt->get_msg_name());
   } else {
-    // Update 5GMM State
-    stacs.update_5gmm_state(nc, _5GMM_DEREGISTERED);
-    set_5gmm_state(nc, _5GMM_DEREGISTERED);
+    // Update NAS State machine
+    handle_nas_event(nc, oai::amf::nas::nas_event_e::SERVICE_REJECT_SENT);
     stacs.display();
   }
 
@@ -1768,8 +1795,6 @@ bool amf_n1::registration_request_handle(
         ue_item.mnc    = uc->cgi.mnc;
         ue_item.cellId = uc->cgi.nrCellId;
         stacs.update_ue_info(ue_item);
-
-        set_5gmm_state(nc, _5GMM_COMMON_PROCEDURE_INITIATED);
       }
     } break;
 
@@ -2280,6 +2305,12 @@ void amf_n1::send_registration_reject_msg(
 
   bstring b = blk2bstr(buffer, encoded_size);
   itti_send_dl_nas_buffer_to_task_n2(b, ran_ue_ngap_id, amf_ue_ngap_id);
+  // Update NAS State machine
+  std::shared_ptr<nas_context> nc = {};
+  if (amf_ue_id_2_nas_context(amf_ue_ngap_id, nc) && nc) {
+    handle_nas_event(nc, oai::amf::nas::nas_event_e::REGISTRATION_REJECT_SENT);
+  }
+
   oai::utils::utils::bdestroy_wrapper(&b);
 
   // Trigger CommunicationFailure Report notify
@@ -2323,6 +2354,14 @@ void amf_n1::send_authentication_reject_msg(
 
   bstring b = blk2bstr(buffer, encoded_size);
   itti_send_dl_nas_buffer_to_task_n2(b, ran_ue_ngap_id, amf_ue_ngap_id);
+
+  // Update NAS State machine
+  std::shared_ptr<nas_context> nc = {};
+  if (amf_ue_id_2_nas_context(amf_ue_ngap_id, nc) && nc) {
+    handle_nas_event(
+        nc, oai::amf::nas::nas_event_e::AUTHENTICATION_REJECT_SENT);
+  }
+
   oai::utils::utils::bdestroy_wrapper(&b);
 }
 
@@ -2336,8 +2375,11 @@ bool amf_n1::run_registration_procedure(
     return false;
   }
 
-  nc->is_specific_procedure_for_registration_running = true;
   if (nc->is_imsi_present or nc->is_5g_suci_present) {
+    handle_nas_event(
+        nc, oai::amf::nas::nas_event_e::REGISTRATION_REQUEST_RECEIVED);
+    nas_procedure_manager_.start_specific_procedure(
+        *nc, nas_procedure_type_e::REGISTRATION_INITIAL);
     Logger::amf_n1().debug("SUCI SUPI format IMSI is available");
     if (!nc->is_auth_vectors_present) {
       Logger::amf_n1().debug(
@@ -2403,6 +2445,14 @@ bool amf_n1::run_registration_procedure(
       cause = k5gmmCauseCongestion;
       return false;
     }
+
+    // §5.4.3.2: start T3570 and record this as a running Identification proc
+    nas_timer_manager_.start_timer(
+        nas_timer_type_e::T3570, nc, nc->amf_ue_ngap_id);
+    handle_nas_event(
+        nc, oai::amf::nas::nas_event_e::IDENTIFICATION_REQUEST_SENT);
+    nas_procedure_manager_.start_common_procedure(
+        *nc, nas_procedure_type_e::IDENTIFICATION);
   }
   return true;
 }
@@ -2798,14 +2848,16 @@ bool amf_n1::start_authentication_procedure(
     std::shared_ptr<nas_context>& nc, int vindex, uint8_t ngksi) {
   Logger::amf_n1().debug("Starting Authentication procedure");
   if (check_nas_common_procedure_on_going(nc)) {
-    Logger::amf_n1().error("Existed NAS common procedure on going, reject...");
+    Logger::amf_n1().error(
+        "Existed NAS common procedure on going (%s), reject...",
+        nas_procedure_type_to_string(
+            nas_procedure_manager_.get_active_common(*nc)));
     send_registration_reject_msg(
         nc->ran_ue_ngap_id, nc->amf_ue_ngap_id,
         k5gmmCauseInvalidMandatoryInfo);  // cause?
     return false;
   }
 
-  nc->is_common_procedure_for_authentication_running = true;
   auto auth_request = std::make_unique<AuthenticationRequest>();
   auth_request->SetNgKsi(kNasKeySetIdentifierNative, ngksi);
   uint8_t abba[2];
@@ -2843,29 +2895,19 @@ bool amf_n1::start_authentication_procedure(
       "amf_ue_ngap_id " AMF_UE_NGAP_ID_FMT, nc->amf_ue_ngap_id);
   itti_send_dl_nas_buffer_to_task_n2(b, nc->ran_ue_ngap_id, nc->amf_ue_ngap_id);
   oai::utils::utils::bdestroy_wrapper(&b);
+  // Start T3560, fire AUTHENTICATION_REQUEST_SENT event
+  nas_timer_manager_.start_timer(
+      nas_timer_type_e::T3560, nc, nc->amf_ue_ngap_id);
+  handle_nas_event(nc, oai::amf::nas::nas_event_e::AUTHENTICATION_REQUEST_SENT);
+  nas_procedure_manager_.start_common_procedure(
+      *nc, nas_procedure_type_e::AUTHENTICATION);
   return true;
 }
 
 //------------------------------------------------------------------------------
 bool amf_n1::check_nas_common_procedure_on_going(
     std::shared_ptr<nas_context>& nc) {
-  if (nc->is_common_procedure_for_authentication_running) {
-    Logger::amf_n1().debug("Existed Authentication procedure is running");
-    return true;
-  }
-  if (nc->is_common_procedure_for_identification_running) {
-    Logger::amf_n1().debug("Existed Identification procedure is running");
-    return true;
-  }
-  if (nc->is_common_procedure_for_security_mode_control_running) {
-    Logger::amf_n1().debug("Existed SMC procedure is running");
-    return true;
-  }
-  if (nc->is_common_procedure_for_nas_transport_running) {
-    Logger::amf_n1().debug("Existed NAS transport procedure is running");
-    return true;
-  }
-  return false;
+  return nas_procedure_manager_.is_common_procedure_running(*nc);
 }
 
 //------------------------------------------------------------------------------
@@ -2893,9 +2935,11 @@ void amf_n1::authentication_response_handle(
   Logger::amf_n1().info(
       "Found nas_context (%p) with amf_ue_ngap_id (" AMF_UE_NGAP_ID_FMT ")",
       (void*) nc.get(), amf_ue_ngap_id);
-  // Stop timer? common procedure finished!
-  nc->is_common_procedure_for_authentication_running = false;
-  // MM state: COMMON-PROCEDURE-INITIATED -> DEREGISTRED
+  // Stop T3560, fire AUTHENTICATION_RESPONSE_RECEIVED event
+  nas_timer_manager_.stop_timer(nas_timer_type_e::T3560, nc);
+  handle_nas_event(
+      nc, oai::amf::nas::nas_event_e::AUTHENTICATION_RESPONSE_RECEIVED);
+  // MM state: COMMON-PROCEDURE-INITIATED -> REGISTRED
   // Decode AUTHENTICATION RESPONSE message
   auto auth_response = std::make_unique<AuthenticationResponse>();
 
@@ -2960,9 +3004,13 @@ void amf_n1::authentication_response_handle(
     send_registration_reject_msg(
         ran_ue_ngap_id, amf_ue_ngap_id,
         k5gmmCauseIllegalUe);  // cause?
+    nas_procedure_manager_.complete_common_procedure(*nc);
     return;
   } else {
     Logger::amf_n1().debug("Authentication successful by network!");
+    // Update NAS State machine
+    nas_procedure_manager_.complete_common_procedure(*nc);
+
     // TODO: To verify UE/AMF behavior according to 3GPP TS 24.501
     // if (!nc->is_current_security_available) {
     if (!start_security_mode_control_procedure(nc)) {
@@ -2985,8 +3033,12 @@ void amf_n1::authentication_failure_handle(
     return;
   }
 
-  nc->is_common_procedure_for_authentication_running = false;
-  // 1. decode AUTHENTICATION FAILURE message
+  // Stop T3560, fire AUTHENTICATION_FAILURE_RECEIVED event
+  nas_timer_manager_.stop_timer(nas_timer_type_e::T3560, nc);
+  handle_nas_event(
+      nc, oai::amf::nas::nas_event_e::AUTHENTICATION_FAILURE_RECEIVED);
+  nas_procedure_manager_.complete_common_procedure(*nc);
+  // Decode AUTHENTICATION FAILURE message
   auto auth_failure = std::make_unique<AuthenticationFailure>();
 
   int decoded_size =
@@ -3036,6 +3088,7 @@ void amf_n1::authentication_failure_handle(
             nc->ran_ue_ngap_id, nc->amf_ue_ngap_id,
             k5gmmCauseIllegalUe);  // cause?
       }
+      // nas_procedure_manager_.complete_common_procedure(*nc);
       // authentication_failure_synch_failure_handle(nc, auts);
     } break;
 
@@ -3084,10 +3137,9 @@ void amf_n1::authentication_failure_handle(
 bool amf_n1::start_security_mode_control_procedure(
     std::shared_ptr<nas_context>& nc) {
   Logger::amf_n1().debug("Start Security Mode Control procedure");
-  nc->is_common_procedure_for_security_mode_control_running = true;
-  bool security_context_is_new                              = false;
-  uint8_t amf_nea                                           = kEa0_5g;
-  uint8_t amf_nia                                           = kIa0_5g;
+  bool security_context_is_new = false;
+  uint8_t amf_nea              = kEa0_5g;
+  uint8_t amf_nia              = kIa0_5g;
 
   if (!nc->security_ctx.has_value()) {
     Logger::amf_n1().error("No Security Context found");
@@ -3102,8 +3154,7 @@ bool amf_n1::start_security_mode_control_procedure(
     return false;
   }
 
-  if (nc->security_ctx.value().sc_type == SECURITY_CTX_TYPE_NOT_AVAILABLE &&
-      nc->is_common_procedure_for_security_mode_control_running) {
+  if (nc->security_ctx.value().sc_type == SECURITY_CTX_TYPE_NOT_AVAILABLE) {
     Logger::amf_n1().debug(
         "Using IntegrityProtectedWithNewSecurityContext for "
         "SecurityModeControl "
@@ -3163,6 +3214,12 @@ bool amf_n1::start_security_mode_control_procedure(
       (uint8_t*) bdata(protected_nas), blength(protected_nas));
   itti_send_dl_nas_buffer_to_task_n2(
       protected_nas, nc->ran_ue_ngap_id, nc->amf_ue_ngap_id);
+  // Start T3560, fire SECURITY_MODE_COMMAND_SENT event
+  nas_timer_manager_.start_timer(
+      nas_timer_type_e::T3560, nc, nc->amf_ue_ngap_id);
+  handle_nas_event(nc, oai::amf::nas::nas_event_e::SECURITY_MODE_COMMAND_SENT);
+  nas_procedure_manager_.start_common_procedure(
+      *nc, nas_procedure_type_e::SECURITY_MODE_CONTROL);
   return true;
 }
 
@@ -3215,10 +3272,17 @@ void amf_n1::security_mode_complete_handle(
         ran_ue_ngap_id, amf_ue_ngap_id, k5gmmCauseSemanticallyIncorrect);
   };
 
+  // Update NAS state machine
+  handle_nas_event(
+      nc, oai::amf::nas::nas_event_e::SECURITY_MODE_COMPLETE_RECEIVED);
+  nas_procedure_manager_.complete_common_procedure(*nc);
+
   if (security_header_type == kPlain5gsMessage) {
     Logger::amf_n1().debug(
         "Security Mode Complete message is not integrity protected, sending "
         "registration reject message");
+    handle_nas_event(nc, oai::amf::nas::nas_event_e::REGISTRATION_REJECT_SENT);
+
     // Send Registration Reject message
     return send_registration_reject_msg(
         ran_ue_ngap_id, amf_ue_ngap_id,
@@ -3292,6 +3356,7 @@ void amf_n1::security_mode_complete_handle(
   // Registration Request to a target AMF
   bool reroute_result = true;
   if (reroute_registration_request(nc, reroute_result)) {
+    // TODO: Update NAS State machine
     return;
   }
 
@@ -3361,7 +3426,8 @@ void amf_n1::security_mode_complete_handle(
   if (!amf_app_inst->generate_5g_guti(
           ran_ue_ngap_id, amf_ue_ngap_id, mcc, mnc, tmsi)) {
     Logger::amf_n1().error("Generate 5G GUTI error, exit!");
-    // TODO:
+    uint8_t cause_value = 111;  // Protocol error, unspecified, to be verified
+    send_registration_reject_msg(ran_ue_ngap_id, amf_ue_ngap_id, cause_value);
     return;
   }
   registration_accept->Set5gGuti(
@@ -3379,10 +3445,11 @@ void amf_n1::security_mode_complete_handle(
 
   set_guti_2_nas_context(guti, nc);
   nc->guti = std::make_optional<std::string>(guti);
-  nc->is_common_procedure_for_security_mode_control_running = false;
 
   if (!nc->security_ctx.has_value()) {
     Logger::amf_n1().error("No Security Context found");
+    uint8_t cause_value = 111;  // Protocol error, unspecified, to be verified
+    send_registration_reject_msg(ran_ue_ngap_id, amf_ue_ngap_id, cause_value);
     return;
   }
 
@@ -3441,6 +3508,8 @@ void amf_n1::security_mode_complete_handle(
   int encoded_size        = registration_accept->Encode(buffer, msg_len);
   if (encoded_size == KEncodeDecodeError) {
     Logger::nas_mm().error("Encode Registration Accept message error");
+    uint8_t cause_value = 111;  // Protocol error, unspecified, to be verified
+    send_registration_reject_msg(ran_ue_ngap_id, amf_ue_ngap_id, cause_value);
     return;
   }
   oai::utils::output_wrapper::print_buffer(
@@ -3450,6 +3519,7 @@ void amf_n1::security_mode_complete_handle(
       nc->security_ctx.value(), false, kIntegrityProtectedAndCiphered,
       NAS_MESSAGE_DOWNLINK, buffer, encoded_size, protected_nas);
 
+  bool itti_msg_is_sent = true;
   if (!uc->is_ue_context_request) {
     // TODO: Use DownlinkNasTransport to convey Registration Accept
     Logger::amf_n1().debug(
@@ -3473,6 +3543,7 @@ void amf_n1::security_mode_complete_handle(
       Logger::amf_n1().error(
           "Could not send ITTI message %s to task TASK_AMF_N2",
           dnt->get_msg_name());
+      itti_msg_is_sent = false;
     }
   } else {
     // use InitialContextSetupRequest to convey Registration Accept
@@ -3480,6 +3551,8 @@ void amf_n1::security_mode_complete_handle(
     uint8_t kgnb[AUTH_VECTOR_LENGTH_OCTETS];
     if (!nc->get_kamf(nc->security_ctx.value().vector_pointer, kamf)) {
       Logger::amf_n1().warn("No Kamf found");
+      uint8_t cause_value = 111;  // Protocol error, unspecified, to be verified
+      send_registration_reject_msg(ran_ue_ngap_id, amf_ue_ngap_id, cause_value);
       return;
     }
     uint32_t ulcount = nc->security_ctx.value().ul_count.seq_num |
@@ -3520,6 +3593,7 @@ void amf_n1::security_mode_complete_handle(
       Logger::amf_n1().error(
           "Could not send ITTI message %s to task TASK_AMF_N2",
           itti_msg->get_msg_name());
+      itti_msg_is_sent = false;
     }
   }
 
@@ -3528,21 +3602,24 @@ void amf_n1::security_mode_complete_handle(
       "registered to the network",
       nc->imsi.c_str(), guti.c_str(), ran_ue_ngap_id, amf_ue_ngap_id);
 
-  stacs.update_5gmm_state(nc, _5GMM_REGISTERED);
-  set_5gmm_state(nc, _5GMM_REGISTERED);
+  if (!itti_msg_is_sent) {
+    uint8_t cause_value = 111;  // Protocol error, unspecified, to be verified
+    send_registration_reject_msg(ran_ue_ngap_id, amf_ue_ngap_id, cause_value);
+    return;
+  }
+  // §5.5.1.2.4: Registration Accept carries a new 5G-GUTI — start T3550 and
+  // enter state 5GMM-COMMON-PROCEDURE-INITIATED until Registration Complete
+  nas_timer_manager_.start_timer(
+      nas_timer_type_e::T3550, nc, nc->amf_ue_ngap_id);
+  handle_nas_event(
+      nc, oai::amf::nas::nas_event_e::REGISTRATION_ACCEPT_SENT_WITH_T3550);
   stacs.display();
 
   // Trigger UE location Status Notify
   trigger_ue_location_report(ran_ue_ngap_id, amf_ue_ngap_id);
 
-  // Trigger UE Registration Status Notify
-  Logger::amf_n1().debug(
-      "Signal the UE Registration State Event notification for SUPI %s",
-      nc->supi.c_str());
-  event_sub.ue_registration_state(
-      nc->supi, _5GMM_REGISTERED, amf_cfg->support_features.http_version,
-      ran_ue_ngap_id, amf_ue_ngap_id);
-
+  // Registration state and connectivity notifications are deferred until
+  // Registration Complete is received (see registration_complete_handle).
   // Trigger UE Connectivity Status Notify
   Logger::amf_n1().debug(
       "Signal the UE Connectivity Status Event notification for SUPI %s",
@@ -3557,6 +3634,12 @@ void amf_n1::security_mode_reject_handle(
     bstring nas_msg) {
   Logger::amf_n1().debug(
       "Receiving Security Mode Reject message, handling ...");
+  // Update NAS State machine
+  std::shared_ptr<nas_context> nc = {};
+  if (amf_ue_id_2_nas_context(amf_ue_ngap_id, nc) && nc) {
+    handle_nas_event(
+        nc, oai::amf::nas::nas_event_e::SECURITY_MODE_REJECT_RECEIVED);
+  }
   // TODO:
   return;
 }
@@ -3588,10 +3671,21 @@ void amf_n1::registration_complete_handle(
     return;
   }
 
-  // TODO: Stop timer T3550 and Change to state 5GMM-REGISTERED. The 5G-GUTI,
-  // if sent in the REGISTRATION ACCEPT message, shall be considered as valid,
-  // and the UE radio capability ID, if sent in the REGISTRATION ACCEPT, shall
-  // be considered as valid.
+  // §5.5.1.2.4 L5753 / §5.5.1.3.4: stop T3550, accept the new GUTI, and
+  // transition to 5GMM-REGISTERED
+  nas_timer_manager_.stop_timer(nas_timer_type_e::T3550, nc);
+  handle_nas_event(
+      nc, oai::amf::nas::nas_event_e::REGISTRATION_COMPLETE_RECEIVED);
+  nas_procedure_manager_.complete_common_procedure(*nc);
+  nas_procedure_manager_.complete_specific_procedure(*nc);
+
+  // Notify subscribers that the UE is now fully REGISTERED
+  Logger::amf_n1().debug(
+      "Signal the UE Registration State Event notification for SUPI %s",
+      nc->supi.c_str());
+  event_sub.ue_registration_state(
+      nc->supi, _5GMM_REGISTERED, amf_cfg->support_features.http_version,
+      ran_ue_ngap_id, amf_ue_ngap_id);
 
   // Check follow-on-request indicator
   if (!nc->follow_on_req_pending_ind and
@@ -4049,8 +4143,9 @@ void amf_n1::ue_initiate_de_registration_handle(
     usleep(200000);
   }
 
-  stacs.update_5gmm_state(nc, _5GMM_DEREGISTERED);
-  set_5gmm_state(nc, _5GMM_DEREGISTERED);
+  handle_nas_event(
+      nc, oai::amf::nas::nas_event_e::UE_DEREGISTRATION_REQUEST_RECEIVED);
+  nas_procedure_manager_.abort_specific_procedure(*nc);
   stacs.display();
 
   // Trigger UE Registration Status Notify
@@ -4077,8 +4172,8 @@ void amf_n1::ue_initiate_de_registration_handle(
   // event_sub.ue_loss_of_connectivity(supi, PURGED, 1, ran_ue_ngap_id,
   // amf_ue_ngap_id);
 
-  // Update 5GMM state
-  stacs.update_5gmm_state(nc, _5GMM_DEREGISTERED);
+  // Stop all procedure timers to prevent stale callbacks after deregistration
+  nas_timer_manager_.stop_all_procedure_timers(nc);
 
   // Remove NC context
   if (remove_amf_ue_ngap_id_2_nas_context(amf_ue_ngap_id)) {
@@ -4677,10 +4772,60 @@ bool amf_n1::run_periodic_registration_update_procedure(
 void amf_n1::set_5gmm_state(
     std::shared_ptr<nas_context>& nc, const _5gmm_state_t& state) {
   Logger::amf_n1().debug(
+      "[DEPRECATED] set_5gmm_state(%d) — migrate to handle_nas_event()",
+      static_cast<int>(state));
+  Logger::amf_n1().debug(
       "Set 5GMM state to %s",
       nas_context::fivegmm_state_to_string(state).c_str());
   std::unique_lock lock(m_nas_context);
   nc->_5gmm_state = state;
+}
+
+//------------------------------------------------------------------------------
+oai::amf::nas::transition_result_t amf_n1::handle_nas_event(
+    std::shared_ptr<nas_context>& nc, oai::amf::nas::nas_event_e event) {
+  // NOTE: Caller MUST hold m_nas_context lock if thread safety is needed.
+  // This function does NOT acquire m_nas_context to avoid deadlock.
+  if (!nc) return {};
+
+  oai::amf::nas::transition_result_t result =
+      nas_state_machine_.handle_event(*nc, event);
+
+  if (!result.allowed) {
+    Logger::amf_n1().warn(
+        "NAS state transition rejected: state=%d event=%s: %s",
+        static_cast<int>(result.old_state),
+        oai::amf::nas::nas_event_to_string(event),
+        result.reject_reason.c_str());
+    return result;
+  }
+
+  // Update statistics on state change
+  if (result.old_state != result.new_state) {
+    stacs.update_5gmm_state(nc, result.new_state);
+  }
+
+  // Fire event subscription notifications
+  if (result.new_state == _5GMM_REGISTERED &&
+      result.old_state != _5GMM_REGISTERED) {
+    event_sub.ue_registration_state(
+        nc->supi, _5GMM_REGISTERED, amf_cfg->support_features.http_version,
+        nc->ran_ue_ngap_id, nc->amf_ue_ngap_id);
+  } else if (
+      result.new_state == _5GMM_DEREGISTERED &&
+      result.old_state != _5GMM_DEREGISTERED) {
+    event_sub.ue_registration_state(
+        nc->supi, _5GMM_DEREGISTERED, amf_cfg->support_features.http_version,
+        nc->ran_ue_ngap_id, nc->amf_ue_ngap_id);
+  }
+
+  Logger::amf_n1().info(
+      "5GMM state transition: %s -> %s (event: [%s])",
+      nas_context::fivegmm_state_to_string(result.old_state),
+      nas_context::fivegmm_state_to_string(result.new_state),
+      oai::amf::nas::nas_event_to_string(event));
+
+  return result;
 }
 
 //------------------------------------------------------------------------------
@@ -5420,6 +5565,11 @@ void amf_n1::implicit_deregistration_timer_timeout(
         "Could not send ITTI message %s to task TASK_AMF_N2",
         itti_msg_cxt_release->get_msg_name());
   }
+
+  // Stop all procedure timers and update state to DEREGISTERED per §5.3.7 and
+  // Table 10.2.2 implicit deregistration
+  nas_timer_manager_.stop_all_procedure_timers(nc);
+  handle_nas_event(nc, oai::amf::nas::nas_event_e::IMPLICIT_DEREGISTRATION);
 
   // Trigger UE Connectivity Status Notify
   Logger::amf_n1().debug(
@@ -6405,4 +6555,224 @@ bool amf_n1::check_nas_message_for_current_procedure_running(
   }
 
   return true;
+}
+
+// ---------------------------------------------------------------------------
+// Helper: parse amf_ue_ngap_id string and retrieve the NAS context.
+// Returns false (and logs a warning) if the string is malformed or the
+// context does not exist — callers must treat false as a no-op.
+// ---------------------------------------------------------------------------
+static bool resolve_nas_context_for_timer(
+    const std::string& amf_ue_ngap_id_str, uint64_t& amf_ue_ngap_id_out,
+    std::shared_ptr<nas_context>& nc_out, amf_n1* self) {
+  try {
+    amf_ue_ngap_id_out = static_cast<uint64_t>(std::stol(amf_ue_ngap_id_str));
+  } catch (const std::exception& e) {
+    Logger::amf_n1().warn(
+        "Timer expiry: cannot parse AMF UE NGAP ID '%s': %s",
+        amf_ue_ngap_id_str.c_str(), e.what());
+    return false;
+  }
+  if (!self->amf_ue_id_2_nas_context(amf_ue_ngap_id_out, nc_out)) {
+    Logger::amf_n1().warn(
+        "Timer expiry: NAS context not found for AMF UE NGAP ID %lu",
+        amf_ue_ngap_id_out);
+    return false;
+  }
+  return true;
+}
+
+// ---------------------------------------------------------------------------
+// T3550 — Registration Accept retransmit  (§5.5.1.2.4 / Table 10.2.2)
+// ---------------------------------------------------------------------------
+void amf_n1::handle_t3550_expiry(
+    timer_id_t timer_id, std::string amf_ue_ngap_id_str) {
+  Logger::amf_n1().debug(
+      "T3550 (Registration Accept) expiry for UE %s",
+      amf_ue_ngap_id_str.c_str());
+
+  uint64_t amf_ue_ngap_id = INVALID_AMF_UE_NGAP_ID;
+  std::shared_ptr<nas_context> nc;
+  if (!resolve_nas_context_for_timer(
+          amf_ue_ngap_id_str, amf_ue_ngap_id, nc, this))
+    return;
+
+  bool needs_retx = nas_timer_manager_.handle_expiry(
+      nas_timer_type_e::T3550, nc, amf_ue_ngap_id);
+  if (needs_retx) {
+    // TODO (Phase 6 retransmit): re-send Registration Accept message
+    Logger::amf_n1().debug(
+        "T3550 retransmit #%u for UE %lu",
+        nc->nas_timers[static_cast<size_t>(nas_timer_type_e::T3550)]
+            .retransmission_count,
+        amf_ue_ngap_id);
+  } else {
+    // §5.5.1.2.8c: 5th expiry — AMF shall consider Registration as complete
+    Logger::amf_n1().warn(
+        "T3550 final expiry for UE %lu — treating registration as complete",
+        amf_ue_ngap_id);
+    handle_nas_event(nc, oai::amf::nas::nas_event_e::T3550_FINAL_EXPIRY);
+    nas_procedure_manager_.complete_specific_procedure(*nc);
+  }
+}
+
+// ---------------------------------------------------------------------------
+// T3560 — Authentication Request / Security Mode Command retransmit
+//          (§5.4.1.3.7 / §5.4.2.7 / Table 10.2.2)
+// ---------------------------------------------------------------------------
+void amf_n1::handle_t3560_expiry(
+    timer_id_t timer_id, std::string amf_ue_ngap_id_str) {
+  Logger::amf_n1().debug(
+      "T3560 (Auth Request / SMC) expiry for UE %s",
+      amf_ue_ngap_id_str.c_str());
+
+  uint64_t amf_ue_ngap_id = INVALID_AMF_UE_NGAP_ID;
+  std::shared_ptr<nas_context> nc;
+  if (!resolve_nas_context_for_timer(
+          amf_ue_ngap_id_str, amf_ue_ngap_id, nc, this))
+    return;
+
+  bool needs_retx = nas_timer_manager_.handle_expiry(
+      nas_timer_type_e::T3560, nc, amf_ue_ngap_id);
+  if (needs_retx) {
+    // TODO (Phase 6 retransmit): re-send Auth Request or SMC
+    Logger::amf_n1().debug(
+        "T3560 retransmit #%u for UE %lu",
+        nc->nas_timers[static_cast<size_t>(nas_timer_type_e::T3560)]
+            .retransmission_count,
+        amf_ue_ngap_id);
+  } else {
+    // Determine whether this was an Authentication or SMC procedure
+    nas_procedure_type_e active_common = nc->procedure_ctx.common_procedure;
+    if (active_common == nas_procedure_type_e::AUTHENTICATION) {
+      // §5.4.1.3.7b: treat security as failed, abort registration
+      Logger::amf_n1().warn(
+          "T3560 final expiry (auth) for UE %lu — aborting registration",
+          amf_ue_ngap_id);
+      handle_nas_event(nc, oai::amf::nas::nas_event_e::T3560_FINAL_EXPIRY_AUTH);
+      nas_procedure_manager_.abort_specific_procedure(*nc);
+    } else {
+      // §5.4.2.7b: SMC final expiry — abort SMC only, specific procedure
+      // continues
+      Logger::amf_n1().warn(
+          "T3560 final expiry (SMC) for UE %lu — aborting SMC", amf_ue_ngap_id);
+      handle_nas_event(nc, oai::amf::nas::nas_event_e::T3560_FINAL_EXPIRY_SMC);
+      nas_procedure_manager_.abort_common_procedure(*nc);
+    }
+  }
+}
+
+// ---------------------------------------------------------------------------
+// T3570 — Identity Request retransmit  (§5.4.3.6 / Table 10.2.2)
+// ---------------------------------------------------------------------------
+void amf_n1::handle_t3570_expiry(
+    timer_id_t timer_id, std::string amf_ue_ngap_id_str) {
+  Logger::amf_n1().debug(
+      "T3570 (Identity Request) expiry for UE %s", amf_ue_ngap_id_str.c_str());
+
+  uint64_t amf_ue_ngap_id = INVALID_AMF_UE_NGAP_ID;
+  std::shared_ptr<nas_context> nc;
+  if (!resolve_nas_context_for_timer(
+          amf_ue_ngap_id_str, amf_ue_ngap_id, nc, this))
+    return;
+
+  bool needs_retx = nas_timer_manager_.handle_expiry(
+      nas_timer_type_e::T3570, nc, amf_ue_ngap_id);
+  if (needs_retx) {
+    // TODO (Phase 6 retransmit): re-send Identity Request
+    Logger::amf_n1().debug(
+        "T3570 retransmit #%u for UE %lu",
+        nc->nas_timers[static_cast<size_t>(nas_timer_type_e::T3570)]
+            .retransmission_count,
+        amf_ue_ngap_id);
+  } else {
+    // §5.4.3.6b: 5th expiry — abort identification and the enclosing specific
+    Logger::amf_n1().warn(
+        "T3570 final expiry for UE %lu — aborting identification",
+        amf_ue_ngap_id);
+    handle_nas_event(nc, oai::amf::nas::nas_event_e::T3570_FINAL_EXPIRY);
+    nas_procedure_manager_.abort_common_procedure(*nc);
+    nas_procedure_manager_.abort_specific_procedure(*nc);
+  }
+}
+
+// ---------------------------------------------------------------------------
+// T3522 — NW-initiated Deregistration Request retransmit  (§5.5.2.3.5)
+// ---------------------------------------------------------------------------
+void amf_n1::handle_t3522_expiry(
+    timer_id_t timer_id, std::string amf_ue_ngap_id_str) {
+  Logger::amf_n1().debug(
+      "T3522 (NW-initiated Deregistration) expiry for UE %s",
+      amf_ue_ngap_id_str.c_str());
+
+  uint64_t amf_ue_ngap_id = INVALID_AMF_UE_NGAP_ID;
+  std::shared_ptr<nas_context> nc;
+  if (!resolve_nas_context_for_timer(
+          amf_ue_ngap_id_str, amf_ue_ngap_id, nc, this))
+    return;
+
+  // Guard: this timer is only valid while the UE is in DEREGISTERED_INITIATED
+  if (nc->_5gmm_state != _5GMM_DEREGISTERED_INITIATED) {
+    Logger::amf_n1().debug(
+        "T3522 expiry ignored — UE %lu not in DEREGISTERED_INITIATED state",
+        amf_ue_ngap_id);
+    return;
+  }
+
+  bool needs_retx = nas_timer_manager_.handle_expiry(
+      nas_timer_type_e::T3522, nc, amf_ue_ngap_id);
+  if (needs_retx) {
+    // TODO (Phase 6 retransmit): re-send NW Deregistration Request
+    Logger::amf_n1().debug(
+        "T3522 retransmit #%u for UE %lu",
+        nc->nas_timers[static_cast<size_t>(nas_timer_type_e::T3522)]
+            .retransmission_count,
+        amf_ue_ngap_id);
+  } else {
+    // §5.5.2.3.5a: 5th expiry — UE considered deregistered at AMF side
+    Logger::amf_n1().warn(
+        "T3522 final expiry for UE %lu — treating UE as deregistered",
+        amf_ue_ngap_id);
+    handle_nas_event(nc, oai::amf::nas::nas_event_e::T3522_FINAL_EXPIRY);
+    nas_procedure_manager_.abort_specific_procedure(*nc);
+  }
+}
+
+// ---------------------------------------------------------------------------
+// T3555 — Configuration Update Command retransmit  (§5.4.4.6)
+// TODO: implement retransmit once Configuration Update Command encoding is
+//       available; for now only the final-expiry state update is stubbed.
+// ---------------------------------------------------------------------------
+void amf_n1::handle_t3555_expiry(
+    timer_id_t timer_id, std::string amf_ue_ngap_id_str) {
+  Logger::amf_n1().debug(
+      "T3555 (Configuration Update Command) expiry for UE %s — "
+      "retransmit not yet implemented",
+      amf_ue_ngap_id_str.c_str());
+  // TODO (Phase 6): implement T3555 retransmit / final-expiry handling
+}
+
+// ---------------------------------------------------------------------------
+// T3513 — Paging retransmit  (§5.6.2.2.1)
+// T3513 has discretionary retransmit (max_retransmissions = 0) — no
+// final-expiry state change required by the spec; the paging attempt simply
+// fails silently from the AMF perspective.
+// ---------------------------------------------------------------------------
+void amf_n1::handle_t3513_expiry(
+    timer_id_t timer_id, std::string amf_ue_ngap_id_str) {
+  Logger::amf_n1().debug(
+      "T3513 (Paging) expiry for UE %s — retransmit not yet implemented",
+      amf_ue_ngap_id_str.c_str());
+  // TODO (Phase 6): implement T3513 paging retransmit handling
+}
+
+// ---------------------------------------------------------------------------
+// T3565 — Notification retransmit  (§5.6.3)
+// ---------------------------------------------------------------------------
+void amf_n1::handle_t3565_expiry(
+    timer_id_t timer_id, std::string amf_ue_ngap_id_str) {
+  Logger::amf_n1().debug(
+      "T3565 (Notification) expiry for UE %s — retransmit not yet implemented",
+      amf_ue_ngap_id_str.c_str());
+  // TODO (Phase 6): implement T3565 Notification retransmit handling
 }
