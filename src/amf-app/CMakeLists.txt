@@ -31,6 +31,9 @@ add_library (AMF_APP STATIC
   amf_statistics.cpp
   amf_subscription.cpp
   authentication.cpp
+  nas_procedure_manager.cpp
+  nas_state_machine.cpp
+  nas_timer_manager.cpp
   ${SRC_TOP_DIR}/ngap/ngap_app.cpp
 )
 

@@ -2842,6 +2842,8 @@ void amf_n2::remove_ue_context_with_ran_ue_ngap_id(
     // TODO: Verify where it's current context
     // Remove all NAS context
     stacs.update_5gmm_state(nc, _5GMM_DEREGISTERED);
+    nc->_5gmm_state = _5GMM_DEREGISTERED;  // §5.1.3.2.3.2: context removed
+                                           // implies DEREGISTERED
 
     // Trigger UE Loss of Connectivity Status Notify
     Logger::amf_n2().debug(
@@ -2923,6 +2925,8 @@ void amf_n2::remove_ue_context_with_amf_ue_ngap_id(
     // Remove all NAS context
     // Update UE status
     stacs.update_5gmm_state(nc, _5GMM_DEREGISTERED);
+    nc->_5gmm_state = _5GMM_DEREGISTERED;  // §5.1.3.2.3.2: context removed
+                                           // implies DEREGISTERED
 
     // Trigger UE Loss of Connectivity Status Notify
     Logger::amf_n2().debug(
