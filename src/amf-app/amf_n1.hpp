@@ -478,8 +478,7 @@ class amf_n1 {
   void implicit_deregistration_timer_timeout(
       timer_id_t timer_id, std::string amf_ue_ngap_id_str);
 
-  // NAS procedure timer expiry handlers (Phase 2 — stubs; full logic in Phase
-  // 6)
+  // NAS procedure timer expiry handlers
   void handle_t3550_expiry(timer_id_t timer_id, std::string amf_ue_ngap_id_str);
   void handle_t3560_expiry(timer_id_t timer_id, std::string amf_ue_ngap_id_str);
   void handle_t3570_expiry(timer_id_t timer_id, std::string amf_ue_ngap_id_str);
@@ -627,24 +626,6 @@ class amf_n1 {
   bool get_amf_set_id(const std::string& target_amf_set, uint16_t& amf_set_id);
 
   /*
-   * Update the 5GMM state
-   * @param [std::shared_ptr<nas_context>&] nc: Pointer to the NAS context
-   * @param [const _5gmm_state_t&] state: 5GMM state
-   * @return void
-   */
-  void set_5gmm_state(
-      std::shared_ptr<nas_context>& nc, const _5gmm_state_t& state);
-
-  /*
-   * Get the 5GMM state
-   * @param [std::shared_ptr<nas_context>&] nc: Pointer to the NAS context
-   * @param [const _5gmm_state_t&] state: 5GMM state
-   * @return void
-   */
-  void get_5gmm_state(
-      const std::shared_ptr<nas_context>& nc, _5gmm_state_t& state) const;
-
-  /*
    * Update the 5G CM state
    * @param [std::shared_ptr<nas_context>&] nc: Pointer to the NAS context
    * @param [const cm_state_t&] state: 5G CM state
@@ -665,7 +646,8 @@ class amf_n1 {
   /*
    * Handle a NAS 5GMM state machine event and drive the state transition.
    * Does NOT acquire m_nas_context — caller must hold the lock if needed.
-   * On success, updates statistics and fires event subscription notifications.
+   * On success, updates statistics and triggers event subscription
+   * notifications.
    * @param [std::shared_ptr<nas_context>&] nc: NAS context
    * @param [oai::amf::nas::nas_event_e] event: The NAS event
    * @return transition_result_t
