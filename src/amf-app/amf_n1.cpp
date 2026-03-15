@@ -2895,7 +2895,7 @@ bool amf_n1::start_authentication_procedure(
       "amf_ue_ngap_id " AMF_UE_NGAP_ID_FMT, nc->amf_ue_ngap_id);
   itti_send_dl_nas_buffer_to_task_n2(b, nc->ran_ue_ngap_id, nc->amf_ue_ngap_id);
   oai::utils::utils::bdestroy_wrapper(&b);
-  // Start T3560, fire AUTHENTICATION_REQUEST_SENT event
+  // Start T3560, enter AUTHENTICATION_REQUEST_SENT event
   nas_timer_manager_.start_timer(
       nas_timer_type_e::T3560, nc, nc->amf_ue_ngap_id);
   handle_nas_event(nc, oai::amf::nas::nas_event_e::AUTHENTICATION_REQUEST_SENT);
@@ -2935,7 +2935,7 @@ void amf_n1::authentication_response_handle(
   Logger::amf_n1().info(
       "Found nas_context (%p) with amf_ue_ngap_id (" AMF_UE_NGAP_ID_FMT ")",
       (void*) nc.get(), amf_ue_ngap_id);
-  // Stop T3560, fire AUTHENTICATION_RESPONSE_RECEIVED event
+  // Stop T3560, enter AUTHENTICATION_RESPONSE_RECEIVED event
   nas_timer_manager_.stop_timer(nas_timer_type_e::T3560, nc);
   handle_nas_event(
       nc, oai::amf::nas::nas_event_e::AUTHENTICATION_RESPONSE_RECEIVED);
@@ -3033,7 +3033,7 @@ void amf_n1::authentication_failure_handle(
     return;
   }
 
-  // Stop T3560, fire AUTHENTICATION_FAILURE_RECEIVED event
+  // Stop T3560, enter AUTHENTICATION_FAILURE_RECEIVED event
   nas_timer_manager_.stop_timer(nas_timer_type_e::T3560, nc);
   handle_nas_event(
       nc, oai::amf::nas::nas_event_e::AUTHENTICATION_FAILURE_RECEIVED);
@@ -3214,7 +3214,7 @@ bool amf_n1::start_security_mode_control_procedure(
       (uint8_t*) bdata(protected_nas), blength(protected_nas));
   itti_send_dl_nas_buffer_to_task_n2(
       protected_nas, nc->ran_ue_ngap_id, nc->amf_ue_ngap_id);
-  // Start T3560, fire SECURITY_MODE_COMMAND_SENT event
+  // Start T3560, enter SECURITY_MODE_COMMAND_SENT event
   nas_timer_manager_.start_timer(
       nas_timer_type_e::T3560, nc, nc->amf_ue_ngap_id);
   handle_nas_event(nc, oai::amf::nas::nas_event_e::SECURITY_MODE_COMMAND_SENT);
@@ -4769,19 +4769,7 @@ bool amf_n1::run_periodic_registration_update_procedure(
 }
 
 //------------------------------------------------------------------------------
-void amf_n1::set_5gmm_state(
-    std::shared_ptr<nas_context>& nc, const _5gmm_state_t& state) {
-  Logger::amf_n1().debug(
-      "[DEPRECATED] set_5gmm_state(%d) — migrate to handle_nas_event()",
-      static_cast<int>(state));
-  Logger::amf_n1().debug(
-      "Set 5GMM state to %s",
-      nas_context::fivegmm_state_to_string(state).c_str());
-  std::unique_lock lock(m_nas_context);
-  nc->_5gmm_state = state;
-}
 
-//------------------------------------------------------------------------------
 oai::amf::nas::transition_result_t amf_n1::handle_nas_event(
     std::shared_ptr<nas_context>& nc, oai::amf::nas::nas_event_e event) {
   // NOTE: Caller MUST hold m_nas_context lock if thread safety is needed.
@@ -4805,7 +4793,7 @@ oai::amf::nas::transition_result_t amf_n1::handle_nas_event(
     stacs.update_5gmm_state(nc, result.new_state);
   }
 
-  // Fire event subscription notifications
+  // Trigger event subscription notifications
   if (result.new_state == _5GMM_REGISTERED &&
       result.old_state != _5GMM_REGISTERED) {
     event_sub.ue_registration_state(
@@ -4826,13 +4814,6 @@ oai::amf::nas::transition_result_t amf_n1::handle_nas_event(
       oai::amf::nas::nas_event_to_string(event));
 
   return result;
-}
-
-//------------------------------------------------------------------------------
-void amf_n1::get_5gmm_state(
-    const std::shared_ptr<nas_context>& nc, _5gmm_state_t& state) const {
-  std::shared_lock lock(m_nas_context);
-  state = nc->_5gmm_state;
 }
 
 //------------------------------------------------------------------------------
@@ -6558,7 +6539,7 @@ bool amf_n1::check_nas_message_for_current_procedure_running(
 }
 
 // ---------------------------------------------------------------------------
-// Helper: parse amf_ue_ngap_id string and retrieve the NAS context.
+// parse amf_ue_ngap_id string and retrieve the NAS context.
 // Returns false (and logs a warning) if the string is malformed or the
 // context does not exist — callers must treat false as a no-op.
 // ---------------------------------------------------------------------------
@@ -6600,7 +6581,7 @@ void amf_n1::handle_t3550_expiry(
   bool needs_retx = nas_timer_manager_.handle_expiry(
       nas_timer_type_e::T3550, nc, amf_ue_ngap_id);
   if (needs_retx) {
-    // TODO (Phase 6 retransmit): re-send Registration Accept message
+    // TODO: re-send Registration Accept message
     Logger::amf_n1().debug(
         "T3550 retransmit #%u for UE %lu",
         nc->nas_timers[static_cast<size_t>(nas_timer_type_e::T3550)]
@@ -6635,7 +6616,7 @@ void amf_n1::handle_t3560_expiry(
   bool needs_retx = nas_timer_manager_.handle_expiry(
       nas_timer_type_e::T3560, nc, amf_ue_ngap_id);
   if (needs_retx) {
-    // TODO (Phase 6 retransmit): re-send Auth Request or SMC
+    // TODO: re-send Auth Request or SMC
     Logger::amf_n1().debug(
         "T3560 retransmit #%u for UE %lu",
         nc->nas_timers[static_cast<size_t>(nas_timer_type_e::T3560)]
@@ -6679,7 +6660,7 @@ void amf_n1::handle_t3570_expiry(
   bool needs_retx = nas_timer_manager_.handle_expiry(
       nas_timer_type_e::T3570, nc, amf_ue_ngap_id);
   if (needs_retx) {
-    // TODO (Phase 6 retransmit): re-send Identity Request
+    // TODO: re-send Identity Request
     Logger::amf_n1().debug(
         "T3570 retransmit #%u for UE %lu",
         nc->nas_timers[static_cast<size_t>(nas_timer_type_e::T3570)]
@@ -6722,7 +6703,7 @@ void amf_n1::handle_t3522_expiry(
   bool needs_retx = nas_timer_manager_.handle_expiry(
       nas_timer_type_e::T3522, nc, amf_ue_ngap_id);
   if (needs_retx) {
-    // TODO (Phase 6 retransmit): re-send NW Deregistration Request
+    // TODO: re-send NW Deregistration Request
     Logger::amf_n1().debug(
         "T3522 retransmit #%u for UE %lu",
         nc->nas_timers[static_cast<size_t>(nas_timer_type_e::T3522)]
@@ -6749,7 +6730,7 @@ void amf_n1::handle_t3555_expiry(
       "T3555 (Configuration Update Command) expiry for UE %s — "
       "retransmit not yet implemented",
       amf_ue_ngap_id_str.c_str());
-  // TODO (Phase 6): implement T3555 retransmit / final-expiry handling
+  // TODO implement T3555 retransmit / final-expiry handling
 }
 
 // ---------------------------------------------------------------------------
@@ -6763,7 +6744,7 @@ void amf_n1::handle_t3513_expiry(
   Logger::amf_n1().debug(
       "T3513 (Paging) expiry for UE %s — retransmit not yet implemented",
       amf_ue_ngap_id_str.c_str());
-  // TODO (Phase 6): implement T3513 paging retransmit handling
+  // TODO: implement T3513 paging retransmit handling
 }
 
 // ---------------------------------------------------------------------------
@@ -6774,5 +6755,5 @@ void amf_n1::handle_t3565_expiry(
   Logger::amf_n1().debug(
       "T3565 (Notification) expiry for UE %s — retransmit not yet implemented",
       amf_ue_ngap_id_str.c_str());
-  // TODO (Phase 6): implement T3565 Notification retransmit handling
+  // TODO: implement T3565 Notification retransmit handling
 }
