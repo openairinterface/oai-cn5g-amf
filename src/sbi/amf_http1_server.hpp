@@ -1,3 +1,7 @@
+/*
+ * SPDX-License-Identifier: LicenseRef-CSSL-1.0
+ */
+
 #ifndef FILE_AMF_HTTP1_SERVER_SEEN
 #define FILE_AMF_HTTP1_SERVER_SEEN
 
