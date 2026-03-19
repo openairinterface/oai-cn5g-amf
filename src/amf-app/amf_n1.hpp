@@ -655,6 +655,15 @@ class amf_n1 {
   oai::amf::nas::transition_result_t handle_nas_event(
       std::shared_ptr<nas_context>& nc, oai::amf::nas::nas_event_e event);
 
+  /*
+   * Check nas event transition possibility without state change
+   * @param [uint64_t] amf_ue_ngap_id: AMF UE NGAP Id
+   * @param [oai::amf::nas::nas_event_e] event: The NAS event
+   * @return true if the transition is possible, otherwise return false
+   */
+  bool check_nas_event(
+      const uint64_t amf_ue_ngap_id, oai::amf::nas::nas_event_e event);
+
   // Event Exposure-related functions
   /*
    * Handle the UE Location Change event to trigger the notification to the

@@ -295,4 +295,20 @@ transition_result_t nas_state_machine::handle_event(
   return {true, old_state, t->to_state, std::string()};
 }
 
+// ============================================================
+// Check nas event transition possibility without state change
+// ============================================================
+
+transition_result_t check_nas_event(nas_context& nc, nas_event_e event) const {
+  _5gmm_state_t old_state   = nc._5gmm_state;
+  const nas_transition_t* t = find_transition(old_state, event, nc);
+  if (!t) {
+    return {
+        false, old_state, old_state,
+        std::string("No transition: state=") +
+            std::to_string(static_cast<int>(old_state)) +
+            " event=" + nas_event_to_string(event)};
+  }
+  return {true, old_state, t->to_state, std::string()};
+}
 }  // namespace oai::amf::nas

@@ -826,17 +826,20 @@ bool amf_n1::check_security_header_type(
 void amf_n1::identity_response_handle(
     const uint32_t ran_ue_ngap_id, const uint64_t amf_ue_ngap_id,
     bstring plain_msg) {
+  // Verify NAS state machine is in correct state to process the message, if
+  // not, drop the message
+  if (!check_nas_event(
+          amf_ue_ngap_id,
+          oai::amf::nas::nas_event_e::IDENTIFICATION_RESPONSE_RECEIVED)) {
+    return;
+  }
+
   auto identity_response = std::make_unique<IdentityResponse>();
   if (!identity_response->Decode(
           (uint8_t*) bdata(plain_msg), blength(plain_msg))) {
     Logger::amf_n1().error("Decode Identity Response error");
     return;
   }
-
-  std::string imsi_str = {};
-  // TODO: avoid accessing member function directly
-  oai::nas::SUCI_imsi_t imsi = {};
-  identity_response->Get5gsMobileIdentity().GetSuciWithSupiImsi(imsi);
 
   std::shared_ptr<nas_context> nc = {};
   if (amf_ue_id_2_nas_context(amf_ue_ngap_id, nc)) {
@@ -848,6 +851,11 @@ void amf_n1::identity_response_handle(
     set_amf_ue_ngap_id_2_nas_context(amf_ue_ngap_id, nc);
     nc->ctx_avaliability_ind = false;
   }
+
+  std::string imsi_str = {};
+  // TODO: avoid accessing member function directly
+  oai::nas::SUCI_imsi_t imsi = {};
+  identity_response->Get5gsMobileIdentity().GetSuciWithSupiImsi(imsi);
 
   if (imsi.protection_scheme_id != kNullScheme) {
     Logger::amf_n1().debug(
@@ -932,6 +940,15 @@ void amf_n1::identity_response_handle(
 bool amf_n1::service_request_handle(
     std::shared_ptr<nas_context> nc, const uint32_t ran_ue_ngap_id,
     const uint64_t amf_ue_ngap_id, bstring nas, uint8_t& service_reject_cause) {
+  // Verify NAS state machine is in correct state to process the message, if
+  // not, drop the message
+  if (!check_nas_event(
+          amf_ue_ngap_id,
+          oai::amf::nas::nas_event_e::SERVICE_REQUEST_RECEIVED)) {
+    service_reject_cause = k5gmmCauseMessageNotCompatible;
+    return false;
+  }
+
   std::shared_ptr<ue_context> uc =
       amf_app_inst->get_ue_context(ran_ue_ngap_id, amf_ue_ngap_id);
 
@@ -1176,6 +1193,15 @@ bool amf_n1::service_request_handle(
     std::shared_ptr<nas_context> nc, const uint32_t ran_ue_ngap_id,
     const uint64_t amf_ue_ngap_id, bstring nas, uint8_t ulCount,
     uint8_t& service_reject_cause) {
+  // Verify NAS state machine is in correct state to process the message, if
+  // not, drop the message
+  if (!check_nas_event(
+          amf_ue_ngap_id,
+          oai::amf::nas::nas_event_e::SERVICE_REQUEST_RECEIVED)) {
+    service_reject_cause = k5gmmCauseMessageNotCompatible;
+    return false;
+  }
+
   std::shared_ptr<ue_context> uc =
       amf_app_inst->get_ue_context(ran_ue_ngap_id, amf_ue_ngap_id);
 
@@ -2914,6 +2940,17 @@ bool amf_n1::check_nas_common_procedure_on_going(
 void amf_n1::authentication_response_handle(
     const uint32_t ran_ue_ngap_id, const uint64_t amf_ue_ngap_id,
     bstring plain_msg, uint8_t security_header_type) {
+  // Verify NAS state machine is in correct state to process the message, if
+  // not, drop the message
+  if (!check_nas_event(
+          amf_ue_ngap_id,
+          oai::amf::nas::nas_event_e::AUTHENTICATION_RESPONSE_RECEIVED)) {
+    // Send Authentication Reject with appropriate cause
+    send_authentication_reject_msg(
+        ran_ue_ngap_id, amf_ue_ngap_id, k5gmmCauseMessageNotCompatible);
+    return;
+  }
+
   std::shared_ptr<nas_context> nc = {};
 
   if (!amf_ue_id_2_nas_context(amf_ue_ngap_id, nc)) {
@@ -3256,6 +3293,17 @@ void amf_n1::security_mode_complete_handle(
     const uint32_t ran_ue_ngap_id, const uint64_t amf_ue_ngap_id,
     bstring nas_msg, uint8_t security_header_type) {
   Logger::amf_n1().debug("Handling Security Mode Complete ...");
+
+  // Verify NAS state machine is in correct state to process the message, if
+  // not, drop the message
+  if (!check_nas_event(
+          amf_ue_ngap_id,
+          oai::amf::nas::nas_event_e::SECURITY_MODE_COMPLETE_RECEIVED)) {
+    // Send Registration Reject with appropriate cause
+    send_registration_reject_msg(
+        ran_ue_ngap_id, amf_ue_ngap_id, k5gmmCauseMessageNotCompatible);
+    return;
+  }
 
   std::shared_ptr<ue_context> uc =
       amf_app_inst->get_ue_context(ran_ue_ngap_id, amf_ue_ngap_id);
@@ -3634,13 +3682,25 @@ void amf_n1::security_mode_reject_handle(
     bstring nas_msg) {
   Logger::amf_n1().debug(
       "Receiving Security Mode Reject message, handling ...");
-  // Update NAS State machine
+
+  // Verify NAS state machine is in correct state to process the message, if
+  // not, drop the message
+  if (!check_nas_event(
+          amf_ue_ngap_id,
+          oai::amf::nas::nas_event_e::SECURITY_MODE_REJECT_RECEIVED)) {
+    // Send Registration Reject with appropriate cause
+    send_registration_reject_msg(
+        ran_ue_ngap_id, amf_ue_ngap_id, k5gmmCauseMessageNotCompatible);
+    return;
+  }
+
   std::shared_ptr<nas_context> nc = {};
   if (amf_ue_id_2_nas_context(amf_ue_ngap_id, nc) && nc) {
+    // Update NAS State machine
     handle_nas_event(
         nc, oai::amf::nas::nas_event_e::SECURITY_MODE_REJECT_RECEIVED);
+    // TODO:
   }
-  // TODO:
   return;
 }
 
@@ -3649,6 +3709,17 @@ void amf_n1::registration_complete_handle(
     const uint32_t ran_ue_ngap_id, const uint64_t amf_ue_ngap_id,
     bstring nas_msg) {
   Logger::amf_n1().debug("Received Registration Complete message, processing");
+
+  // Verify NAS state machine is in correct state to process the message, if
+  // not, drop the message
+  if (!check_nas_event(
+          amf_ue_ngap_id,
+          oai::amf::nas::nas_event_e::REGISTRATION_COMPLETE_RECEIVED)) {
+    // Send Registration Reject with appropriate cause
+    send_registration_reject_msg(
+        ran_ue_ngap_id, amf_ue_ngap_id, k5gmmCauseMessageNotCompatible);
+    return;
+  }
 
   std::shared_ptr<ue_context> uc =
       amf_app_inst->get_ue_context(ran_ue_ngap_id, amf_ue_ngap_id);
@@ -3983,6 +4054,14 @@ bool amf_n1::nas_message_cipher_protected(
 void amf_n1::ue_initiate_de_registration_handle(
     const uint32_t ran_ue_ngap_id, const uint64_t amf_ue_ngap_id, bstring nas) {
   Logger::amf_n1().debug("Handling UE-initiated De-registration Request");
+
+  // Verify NAS state machine is in correct state to process the message, if
+  // not, drop the message
+  if (!check_nas_event(
+          amf_ue_ngap_id,
+          oai::amf::nas::nas_event_e::UE_DEREGISTRATION_REQUEST_RECEIVED)) {
+    return;
+  }
 
   std::shared_ptr<nas_context> nc = {};
   if (!amf_ue_id_2_nas_context(amf_ue_ngap_id, nc)) return;
@@ -4769,7 +4848,6 @@ bool amf_n1::run_periodic_registration_update_procedure(
 }
 
 //------------------------------------------------------------------------------
-
 oai::amf::nas::transition_result_t amf_n1::handle_nas_event(
     std::shared_ptr<nas_context>& nc, oai::amf::nas::nas_event_e event) {
   // NOTE: Caller MUST hold m_nas_context lock if thread safety is needed.
@@ -4781,8 +4859,8 @@ oai::amf::nas::transition_result_t amf_n1::handle_nas_event(
 
   if (!result.allowed) {
     Logger::amf_n1().warn(
-        "NAS state transition rejected: state=%d event=%s: %s",
-        static_cast<int>(result.old_state),
+        "5GMM state transition rejected: state=%s, event=%s, reason%s",
+        nas_context::fivegmm_state_to_string(result.old_state),
         oai::amf::nas::nas_event_to_string(event),
         result.reject_reason.c_str());
     return result;
@@ -4814,6 +4892,40 @@ oai::amf::nas::transition_result_t amf_n1::handle_nas_event(
       oai::amf::nas::nas_event_to_string(event));
 
   return result;
+}
+
+//------------------------------------------------------------------------------
+bool amf_n1::check_nas_event(
+    const uint64_t amf_ue_ngap_id, oai::amf::nas::nas_event_e event) {
+  // NOTE: Caller MUST hold m_nas_context lock if thread safety is needed.
+  // This function does NOT acquire m_nas_context to avoid deadlock.
+
+  // Get NAS context
+  std::shared_ptr<nas_context> nc = {};
+  if (!amf_ue_id_2_nas_context(amf_ue_ngap_id, nc)) {
+    return false;
+  }
+
+  if (!nc) return false;
+
+  oai::amf::nas::transition_result_t result =
+      nas_state_machine_.check_nas_event(*nc, event);
+
+  if (!result.allowed) {
+    Logger::amf_n1().warn(
+        "5GMM state transition: not valid, state=%s, event=%s, reason=%s",
+        nas_context::fivegmm_state_to_string(result.old_state),
+        oai::amf::nas::nas_event_to_string(event),
+        result.reject_reason.c_str());
+    return false;
+  }
+
+  Logger::amf_n1().warn(
+      "5GMM state transition: valid,  from state=%s, event=%s, to state=%s",
+      nas_context::fivegmm_state_to_string(result.old_state),
+      oai::amf::nas::nas_event_to_string(event),
+      nas_context::fivegmm_state_to_string(result.new_state));
+  return true;
 }
 
 //------------------------------------------------------------------------------

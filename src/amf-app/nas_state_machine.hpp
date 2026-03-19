@@ -127,6 +127,9 @@ class nas_state_machine {
   const nas_transition_t* find_transition(
       _5gmm_state_t state, nas_event_e event, const nas_context& nc) const;
 
+  // Check nas event transition possibility without state change
+  transition_result_t check_nas_event(nas_context& nc, nas_event_e event) const;
+
  private:
   void build_transition_table();
 
