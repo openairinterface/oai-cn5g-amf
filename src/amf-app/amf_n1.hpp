@@ -256,8 +256,7 @@ class amf_n1 {
   bool run_mobility_registration_update_procedure(
       std::shared_ptr<nas_context>& nc,
       const std::optional<uint16_t>& uplink_data_status_opt,
-      const std::optional<uint16_t>& pdu_session_status_opt,
-      uint8_t& cause);
+      const std::optional<uint16_t>& pdu_session_status_opt, uint8_t& cause);
 
   /*
    * Perform Periodic Registration Update procedure
@@ -270,8 +269,7 @@ class amf_n1 {
    */
   bool run_periodic_registration_update_procedure(
       std::shared_ptr<nas_context>& nc,
-      const std::optional<uint16_t>& pdu_session_status_opt,
-      uint8_t& cause);
+      const std::optional<uint16_t>& pdu_session_status_opt, uint8_t& cause);
 
   /*
    * Perform Periodic Registration Update procedure
@@ -282,8 +280,7 @@ class amf_n1 {
    * @return true if success, otherwise return false
    */
   bool run_periodic_registration_update_procedure(
-      std::shared_ptr<nas_context>& nc, bstring& nas_msg,
-      uint8_t& cause);
+      std::shared_ptr<nas_context>& nc, bstring& nas_msg, uint8_t& cause);
 
   /*
    * Generate the Authentication Vectors (either from AUSF(UDM) or generate

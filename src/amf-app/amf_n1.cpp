@@ -696,8 +696,7 @@ void amf_n1::uplink_nas_msg_handle(
               ran_ue_ngap_id, amf_ue_ngap_id, plain_msg, security_header_type,
               cause)) {
         // Send Authentication Reject with the appropriate cause
-        send_authentication_reject_msg(
-            ran_ue_ngap_id, amf_ue_ngap_id, cause);
+        send_authentication_reject_msg(ran_ue_ngap_id, amf_ue_ngap_id, cause);
         nas_procedure_manager_.complete_common_procedure(*nc);
       }
       break;
@@ -708,8 +707,7 @@ void amf_n1::uplink_nas_msg_handle(
         if (!authentication_failure_handle(
                 ran_ue_ngap_id, amf_ue_ngap_id, plain_msg, cause)) {
           // Send Authentication Reject with the appropriate cause
-          send_authentication_reject_msg(
-              ran_ue_ngap_id, amf_ue_ngap_id, cause);
+          send_authentication_reject_msg(ran_ue_ngap_id, amf_ue_ngap_id, cause);
           nas_procedure_manager_.complete_common_procedure(*nc);
         }
       } break;
@@ -721,8 +719,7 @@ void amf_n1::uplink_nas_msg_handle(
                 ran_ue_ngap_id, amf_ue_ngap_id, plain_msg, security_header_type,
                 cause)) {
           // Send Registration Reject with the appropriate cause
-          send_registration_reject_msg(
-              ran_ue_ngap_id, amf_ue_ngap_id, cause);
+          send_registration_reject_msg(ran_ue_ngap_id, amf_ue_ngap_id, cause);
         }
       } break;
 
@@ -761,8 +758,7 @@ void amf_n1::uplink_nas_msg_handle(
             "Received Registration Complete message, handling...");
         if (!registration_complete_handle(
                 ran_ue_ngap_id, amf_ue_ngap_id, plain_msg, cause)) {
-          send_registration_reject_msg(
-              ran_ue_ngap_id, amf_ue_ngap_id, cause);
+          send_registration_reject_msg(ran_ue_ngap_id, amf_ue_ngap_id, cause);
         }
       } break;
 
@@ -772,8 +768,7 @@ void amf_n1::uplink_nas_msg_handle(
             "handling...");
         if (amf_ue_id_2_nas_context(amf_ue_ngap_id, nc)) {
           if (!service_request_handle(
-                  nc, ran_ue_ngap_id, amf_ue_ngap_id, plain_msg,
-                  cause)) {
+                  nc, ran_ue_ngap_id, amf_ue_ngap_id, plain_msg, cause)) {
             // Send Service Reject with appropriate cause
             send_service_reject(nc, cause);
           }
@@ -790,11 +785,9 @@ void amf_n1::uplink_nas_msg_handle(
         Logger::amf_n1().debug("Serving network name %s", snn.c_str());
         if (amf_ue_id_2_nas_context(amf_ue_ngap_id, nc)) {
           if (!registration_request_handle(
-                  nc, ran_ue_ngap_id, amf_ue_ngap_id, snn, plain_msg,
-                  cause)) {
+                  nc, ran_ue_ngap_id, amf_ue_ngap_id, snn, plain_msg, cause)) {
             // Send Registration Reject with appropriate cause
-            send_registration_reject_msg(
-                ran_ue_ngap_id, amf_ue_ngap_id, cause);
+            send_registration_reject_msg(ran_ue_ngap_id, amf_ue_ngap_id, cause);
           }
 
         } else {
@@ -1140,9 +1133,8 @@ bool amf_n1::service_request_handle(
   if (pdu_session_to_be_activated.size() == 0) {
     // TODO: should be updated
     Logger::amf_n1().debug("There is no PDU session to be activated");
-    cause =
-        k5gmmCauseInsufficientUpResourcesForThePduSession;  // TODO: verify
-                                                            // the cause
+    cause = k5gmmCauseInsufficientUpResourcesForThePduSession;  // TODO: verify
+                                                                // the cause
     return false;
   } else {
     // Contact SMF to activate UP for these sessions
@@ -1527,7 +1519,7 @@ bool amf_n1::service_request_handle(
     if (!nc->get_kamf(nc->security_ctx.value().vector_pointer, kamf)) {
       Logger::amf_n1().warn("No Kamf found");
       cause = k5gmmCauseSecurityModeRejectedUnspecified;  // TODO: verify
-                                                                 // the cause
+                                                          // the cause
       return false;
     }
     uint32_t ulcount = nc->security_ctx.value().ul_count.seq_num |
@@ -1626,7 +1618,7 @@ bool amf_n1::service_request_handle(
     if (!nc->get_kamf(nc->security_ctx.value().vector_pointer, kamf)) {
       Logger::amf_n1().warn("No Kamf found");
       cause = k5gmmCauseSecurityModeRejectedUnspecified;  // TODO: verify
-                                                                 // the cause
+                                                          // the cause
       return false;
     }
     uint32_t ulcount = nc->security_ctx.value().ul_count.seq_num |
@@ -1969,8 +1961,7 @@ bool amf_n1::registration_request_handle(
 
       if (unc) unc.reset();
 
-      cause =
-          k5gmmCauseUeIdentityCannotBeDerived;  // TODO: verify the cause
+      cause = k5gmmCauseUeIdentityCannotBeDerived;  // TODO: verify the cause
       return false;
     }
   } else {
@@ -2153,8 +2144,7 @@ bool amf_n1::registration_request_handle(
     case kPeriodicRegistrationUpdating: {
       Logger::amf_n1().debug("Handling Periodic Registration Update...");
       if (is_messagecontainer)
-        return run_periodic_registration_update_procedure(
-            nc, nas_msg, cause);
+        return run_periodic_registration_update_procedure(nc, nas_msg, cause);
       else {
         uint16_t pdu_session_status = 0x0000;
         if (pdu_session_status_opt.has_value())
@@ -3262,8 +3252,7 @@ bool amf_n1::authentication_failure_handle(
 
       int vindex = nc->security_ctx.value().vector_pointer;
       nas_procedure_manager_.complete_common_procedure(*nc);
-      return start_authentication_procedure(
-          nc, vindex, nc->ngksi, cause);
+      return start_authentication_procedure(nc, vindex, nc->ngksi, cause);
     } break;
 
     case k5gmmCauseMacFailure: {
@@ -4696,8 +4685,7 @@ void amf_n1::ul_nas_transport_handle(
 bool amf_n1::run_mobility_registration_update_procedure(
     std::shared_ptr<nas_context>& nc,
     const std::optional<uint16_t>& uplink_data_status_opt,
-    const std::optional<uint16_t>& pdu_session_status_opt,
-    uint8_t& cause) {
+    const std::optional<uint16_t>& pdu_session_status_opt, uint8_t& cause) {
   // Verify NAS state machine is in correct state to process the message, if
   // not, drop the message
   if (!check_nas_event(
@@ -4902,8 +4890,7 @@ bool amf_n1::run_mobility_registration_update_procedure(
 //------------------------------------------------------------------------------
 bool amf_n1::run_periodic_registration_update_procedure(
     std::shared_ptr<nas_context>& nc,
-    const std::optional<uint16_t>& pdu_session_status_opt,
-    uint8_t& cause) {
+    const std::optional<uint16_t>& pdu_session_status_opt, uint8_t& cause) {
   // Verify NAS state machine is in correct state to process the message, if
   // not, drop the message
   if (!check_nas_event(
