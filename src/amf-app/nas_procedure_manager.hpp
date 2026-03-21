@@ -52,7 +52,9 @@ class nas_procedure_manager {
   nas_procedure_type_e abort_common_procedure(nas_context& nc) const;
 
   // Complete/abort the entire specific procedure (including any nested common)
-  void complete_specific_procedure(nas_context& nc) const;
+  void complete_specific_procedure(
+      nas_context& nc,
+      nas_procedure_type_e type = nas_procedure_type_e::NONE) const;
   void abort_specific_procedure(nas_context& nc) const;
 
   // Check if a new procedure would collide with the running one, resolving per

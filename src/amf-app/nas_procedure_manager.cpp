@@ -72,9 +72,15 @@ nas_procedure_type_e nas_procedure_manager::abort_common_procedure(
   return prev;
 }
 
-void nas_procedure_manager::complete_specific_procedure(nas_context& nc) const {
-  nc.procedure_ctx.specific_procedure = nas_procedure_type_e::NONE;
-  nc.procedure_ctx.common_procedure   = nas_procedure_type_e::NONE;
+void nas_procedure_manager::complete_specific_procedure(
+    nas_context& nc, nas_procedure_type_e type) const {
+  if (type == nas_procedure_type_e::NONE) {
+    nc.procedure_ctx.specific_procedure = nas_procedure_type_e::NONE;
+    nc.procedure_ctx.common_procedure   = nas_procedure_type_e::NONE;
+  } else if (nc.procedure_ctx.specific_procedure == type) {
+    nc.procedure_ctx.specific_procedure = nas_procedure_type_e::NONE;
+    nc.procedure_ctx.common_procedure   = nas_procedure_type_e::NONE;
+  }
 }
 
 void nas_procedure_manager::abort_specific_procedure(nas_context& nc) const {
