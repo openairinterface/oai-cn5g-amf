@@ -634,6 +634,7 @@ void amf_n1::nas_signalling_establishment_request_handle(
               nc, ran_ue_ngap_id, amf_ue_ngap_id, snn, plain_msg, cause)) {
         // Send Registration Reject with appropriate cause
         send_registration_reject_msg(ran_ue_ngap_id, amf_ue_ngap_id, cause);
+        nas_procedure_manager_.complete_specific_procedure(*nc);
       }
     } break;
 
@@ -655,6 +656,7 @@ void amf_n1::nas_signalling_establishment_request_handle(
               nc, ran_ue_ngap_id, amf_ue_ngap_id, plain_msg, ulCount, cause)) {
         // Send Service Reject with appropriate cause
         send_service_reject(nc, cause);
+        nas_procedure_manager_.complete_specific_procedure(*nc);
       }
     } break;
 
@@ -662,8 +664,10 @@ void amf_n1::nas_signalling_establishment_request_handle(
       Logger::amf_n1().debug(
           "Received InitialUeMessage De-registration Request message, "
           "handling...");
-      ue_initiate_de_registration_handle(
-          ran_ue_ngap_id, amf_ue_ngap_id, plain_msg, cause);
+      if (!ue_initiate_de_registration_handle(
+              ran_ue_ngap_id, amf_ue_ngap_id, plain_msg, cause)) {
+        nas_procedure_manager_.complete_specific_procedure(*nc);
+      }
     } break;
 
     default:
@@ -721,6 +725,7 @@ void amf_n1::uplink_nas_msg_handle(
           // Send Registration Reject with the appropriate cause
           // send_registration_reject_msg(ran_ue_ngap_id, amf_ue_ngap_id,
           // cause);
+          nas_procedure_manager_.complete_common_procedure(*nc);
         }
       } break;
 
@@ -729,6 +734,7 @@ void amf_n1::uplink_nas_msg_handle(
             "Received Security Mode Reject message, handling...");
         if (!security_mode_reject_handle(
                 ran_ue_ngap_id, amf_ue_ngap_id, plain_msg, cause)) {
+          nas_procedure_manager_.complete_common_procedure(*nc);
           // TODO:
         }
       } break;
@@ -743,15 +749,21 @@ void amf_n1::uplink_nas_msg_handle(
       case kDeregistrationRequestUeOriginating: {
         Logger::amf_n1().debug(
             "Received De-registration Request message, handling...");
-        ue_initiate_de_registration_handle(
-            ran_ue_ngap_id, amf_ue_ngap_id, plain_msg, cause);
+        if (!ue_initiate_de_registration_handle(
+                ran_ue_ngap_id, amf_ue_ngap_id, plain_msg, cause)) {
+          nas_procedure_manager_.complete_common_procedure(*nc);
+          // TODO:
+        }
       } break;
 
       case kIdentityResponse: {
         Logger::amf_n1().debug(
             "Received Identity Response message, handling...");
-        identity_response_handle(
-            ran_ue_ngap_id, amf_ue_ngap_id, plain_msg, cause);
+        if (!identity_response_handle(
+                ran_ue_ngap_id, amf_ue_ngap_id, plain_msg, cause)) {
+          nas_procedure_manager_.complete_common_procedure(*nc);
+          // TODO:
+        }
       } break;
 
       case kRegistrationComplete: {
@@ -760,6 +772,7 @@ void amf_n1::uplink_nas_msg_handle(
         if (!registration_complete_handle(
                 ran_ue_ngap_id, amf_ue_ngap_id, plain_msg, cause)) {
           send_registration_reject_msg(ran_ue_ngap_id, amf_ue_ngap_id, cause);
+          nas_procedure_manager_.complete_specific_procedure(*nc);
         }
       } break;
 
@@ -772,6 +785,7 @@ void amf_n1::uplink_nas_msg_handle(
                   nc, ran_ue_ngap_id, amf_ue_ngap_id, plain_msg, cause)) {
             // Send Service Reject with appropriate cause
             send_service_reject(nc, cause);
+            nas_procedure_manager_.complete_specific_procedure(*nc);
           }
 
         } else {
@@ -789,6 +803,7 @@ void amf_n1::uplink_nas_msg_handle(
                   nc, ran_ue_ngap_id, amf_ue_ngap_id, snn, plain_msg, cause)) {
             // Send Registration Reject with appropriate cause
             send_registration_reject_msg(ran_ue_ngap_id, amf_ue_ngap_id, cause);
+            nas_procedure_manager_.complete_specific_procedure(*nc);
           }
 
         } else {
@@ -945,6 +960,9 @@ bool amf_n1::identity_response_handle(
     }
 
     stacs.update_ue_info(ue_item);
+
+    // Stop T3570, enter IDENTIFICATION_RESPONSE_RECEIVED event
+    nas_timer_manager_.stop_timer(nas_timer_type_e::T3570, nc);
     handle_nas_event(
         nc, oai::amf::nas::nas_event_e::IDENTIFICATION_RESPONSE_RECEIVED);
     nas_procedure_manager_.complete_common_procedure(*nc);
@@ -981,6 +999,10 @@ bool amf_n1::service_request_handle(
     cause = k5gmmCauseUeIdentityCannotBeDerived;
     return false;
   }
+
+  handle_nas_event(nc, oai::amf::nas::nas_event_e::SERVICE_REQUEST_RECEIVED);
+  nas_procedure_manager_.start_specific_procedure(
+      *nc, nas_procedure_type_e::SERVICE_REQUEST);
 
   // Decode Service Request to get 5G-TMSI
   auto service_request = std::make_unique<ServiceRequest>();
@@ -1211,6 +1233,8 @@ bool amf_n1::service_request_handle(
 
     oai::utils::utils::bdestroy_wrapper(&protected_nas);
   }
+
+  nas_procedure_manager_.complete_specific_procedure(*nc);
   return true;
 }
 
@@ -1235,6 +1259,10 @@ bool amf_n1::service_request_handle(
     cause = k5gmmCauseUeIdentityCannotBeDerived;
     return false;
   }
+
+  handle_nas_event(nc, oai::amf::nas::nas_event_e::SERVICE_REQUEST_RECEIVED);
+  nas_procedure_manager_.start_specific_procedure(
+      *nc, nas_procedure_type_e::SERVICE_REQUEST);
 
   // Decode Service Request to get 5G-TMSI
   std::unique_ptr<ServiceRequest> service_request =
@@ -1671,6 +1699,8 @@ bool amf_n1::service_request_handle(
 
     oai::utils::utils::bdestroy_wrapper(&protected_nas);
   }
+
+  nas_procedure_manager_.complete_specific_procedure(*nc);
 
   return true;
 }
@@ -4218,6 +4248,11 @@ bool amf_n1::ue_initiate_de_registration_handle(
     return false;
   }
 
+  handle_nas_event(
+      nc, oai::amf::nas::nas_event_e::UE_DEREGISTRATION_REQUEST_RECEIVED);
+  nas_procedure_manager_.start_common_procedure(
+      *nc, nas_procedure_type_e::DEREGISTRATION_UE);
+
   std::string guti = {};
   // TODO: validate 5G Mobile Identity
   uint8_t mobile_id_type = 0;
@@ -4405,9 +4440,9 @@ bool amf_n1::ue_initiate_de_registration_handle(
     usleep(200000);
   }
 
-  handle_nas_event(
-      nc, oai::amf::nas::nas_event_e::UE_DEREGISTRATION_REQUEST_RECEIVED);
+  // Update NAS state machine/procedure manager
   nas_procedure_manager_.abort_specific_procedure(*nc);
+
   stacs.display();
 
   // Trigger UE Registration Status Notify
