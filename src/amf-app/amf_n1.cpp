@@ -719,7 +719,8 @@ void amf_n1::uplink_nas_msg_handle(
                 ran_ue_ngap_id, amf_ue_ngap_id, plain_msg, security_header_type,
                 cause)) {
           // Send Registration Reject with the appropriate cause
-          send_registration_reject_msg(ran_ue_ngap_id, amf_ue_ngap_id, cause);
+          // send_registration_reject_msg(ran_ue_ngap_id, amf_ue_ngap_id,
+          // cause);
         }
       } break;
 
