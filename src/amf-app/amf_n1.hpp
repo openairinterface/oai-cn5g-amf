@@ -235,8 +235,8 @@ class amf_n1 {
   /*
    * Perform Registration procedure
    * @param [std::shared_ptr<nas_context>&] nc: Pointer to the UE NAS Context
-   * @param [uint8_t&] cause: 5GMM cause when Registration Request procedure not
-   * accepted by the network
+   * @param [uint8_t&] cause: 5GMM cause when Registration Request
+   * procedure not accepted by the network
    * @return true if accepted by the network, otherwise return false
    */
   bool run_registration_procedure(
@@ -249,8 +249,8 @@ class amf_n1 {
    * Status
    * @param [const std::optional<uint16_t>&] pdu_session_status_opt: PDU Session
    * Status
-   * @param [uint8_t&] cause: 5GMM cause when Registration Request procedure not
-   * accepted by the network
+   * @param [uint8_t&] cause: 5GMM cause when Registration Request
+   * procedure not accepted by the network
    * @return true if accepted by the network, otherwise return false
    */
   bool run_mobility_registration_update_procedure(
@@ -263,8 +263,8 @@ class amf_n1 {
    * @param [std::shared_ptr<nas_context>&] nc: Pointer to the UE NAS Context
    * @param [const std::optional<uint16_t>&] pdu_session_status_opt: PDU Session
    * Status
-   * @param [uint8_t&] cause: 5GMM cause when Registration Request procedure not
-   * accepted by the network
+   * @param [uint8_t&] cause: 5GMM cause when Registration Request
+   * procedure not accepted by the network
    * @return true if success, otherwise return false
    */
   bool run_periodic_registration_update_procedure(
@@ -275,8 +275,8 @@ class amf_n1 {
    * Perform Periodic Registration Update procedure
    * @param [std::shared_ptr<nas_context>&] nc: Pointer to the UE NAS Context
    * @param [bstring&] nas_msg: NAS message
-   * @param [uint8_t&] cause: 5GMM cause when Registration Request procedure not
-   * accepted by the network
+   * @param [uint8_t&] cause: 5GMM cause when Registration Request
+   * procedure not accepted by the network
    * @return true if success, otherwise return false
    */
   bool run_periodic_registration_update_procedure(
@@ -309,26 +309,44 @@ class amf_n1 {
   /*
    * Handle the Authentication Vector to setup security context with the UE
    * @param [std::shared_ptr<nas_context>&] nc: Pointer to the UE NAS Context
-   * @return void
+   * @param [uint8_t&] cause: 5GMM cause
+   * @return true if successful, otherwise, false
    */
-  void handle_auth_vector_successful_result(std::shared_ptr<nas_context>& nc);
+  bool handle_auth_vector_successful_result(
+      std::shared_ptr<nas_context>& nc, uint8_t& cause);
+
+  /*
+   * Start the Identification procedure
+   * @param [std::shared_ptr<nas_context>&] nc: Pointer to the UE NAS Context
+   * @param [uint8_t&] cause: 5GMM cause when Identification Request
+   * cannot be processed by the network
+   * @return true if successful, otherwise, false
+   */
+  bool start_identification_procedure(
+      std::shared_ptr<nas_context>& nc, uint8_t& cause);
 
   /*
    * Start the Authenticatio procedure
    * @param [std::shared_ptr<nas_context>&] nc: Pointer to the UE NAS Context
    * @param [int] vindex: vindex
    * @param [uint8_t] ngksi: ngksi
+   * @param [uint8_t&] cause: 5GMM cause when Authentication Request
+   * cannot be processed by the network
    * @return true if successful, otherwise, false
    */
   bool start_authentication_procedure(
-      std::shared_ptr<nas_context>& nc, int vindex, uint8_t ngksi);
+      std::shared_ptr<nas_context>& nc, int vindex, uint8_t ngksi,
+      uint8_t& cause);
 
   /*
    * Perform the Security Mode Control procedure
    * @param [std::shared_ptr<nas_context>&] nc: Pointer to the UE NAS Context
+   * @param [uint8_t&] cause: 5GMM cause when Security Mode Control
+   * cannot be processed by the network
    * @return true if successful, otherwise return false
    */
-  bool start_security_mode_control_procedure(std::shared_ptr<nas_context>& nc);
+  bool start_security_mode_control_procedure(
+      std::shared_ptr<nas_context>& nc, uint8_t& cause);
 
   /*
    * Verify whether a common nas procedure is running
@@ -655,6 +673,15 @@ class amf_n1 {
   oai::amf::nas::transition_result_t handle_nas_event(
       std::shared_ptr<nas_context>& nc, oai::amf::nas::nas_event_e event);
 
+  /*
+   * Check nas event transition possibility without state change
+   * @param [uint64_t] amf_ue_ngap_id: AMF UE NGAP Id
+   * @param [oai::amf::nas::nas_event_e] event: The NAS event
+   * @return true if the transition is possible, otherwise return false
+   */
+  bool check_nas_event(
+      const uint64_t amf_ue_ngap_id, oai::amf::nas::nas_event_e event);
+
   // Event Exposure-related functions
   /*
    * Handle the UE Location Change event to trigger the notification to the
@@ -745,11 +772,11 @@ class amf_n1 {
    * @param [const uint32_t] ran_ue_ngap_id: RAN UE NGAP ID
    * @param [const uint64_t] amf_ue_ngap_id: AMF UE NGAP ID
    * @param [bstring] nas: NAS message
-   * @return void
+   * @return true if accepted by the network, otherwise return false
    */
-  void ue_initiate_de_registration_handle(
-      const uint32_t ran_ue_ngap_id, const uint64_t amf_ue_ngap_id,
-      bstring nas);
+  bool ue_initiate_de_registration_handle(
+      const uint32_t ran_ue_ngap_id, const uint64_t amf_ue_ngap_id, bstring nas,
+      uint8_t& cause);
 
   /*
    * Handle Registration Request message
@@ -758,8 +785,8 @@ class amf_n1 {
    * @param [const uint64_t] amf_ue_ngap_id: AMF UE NGAP ID
    * @param [const std::string&] snn: Serving Network
    * @param [bstring] reg: NAS Registration Request message
-   * @param [uint8_t&] cause: 5GMM cause when Registration Request procedure not
-   * accepted by the network
+   * @param [uint8_t&] cause: 5GMM cause when Registration Request
+   * procedure not accepted by the network
    * @return true if accepted by the network, otherwise return false
    */
   bool registration_request_handle(
@@ -773,22 +800,26 @@ class amf_n1 {
    * @param [const uint64_t] amf_ue_ngap_id: AMF UE NGAP ID
    * @param [bstring] plain_msg: NAS Authentication Response message
    * @param [uint8_t] security_header_type: Security Header Type
-   * @return void
+   * @param [uint8_t&] cause: 5GMM cause when Authentication Response
+   * procedure not accepted by the network
+   * @return true if accepted by the network, otherwise return false
    */
-  void authentication_response_handle(
+  bool authentication_response_handle(
       const uint32_t ran_ue_ngap_id, const uint64_t amf_ue_ngap_id,
-      bstring plain_msg, uint8_t security_header_type);
+      bstring plain_msg, uint8_t security_header_type, uint8_t& cause);
 
   /*
    * Handle Authentication Failure message
    * @param [const uint32_t] ran_ue_ngap_id: RAN UE NGAP ID
    * @param [const uint64_t] amf_ue_ngap_id: AMF UE NGAP ID
    * @param [bstring] plain_msg: NAS Authentication Failure message
-   * @return void
+   * @param [uint8_t&] cause: 5GMM cause when Authentication Failure
+   * procedure not accepted by the network
+   * @return true if accepted by the network, otherwise return false
    */
-  void authentication_failure_handle(
+  bool authentication_failure_handle(
       const uint32_t ran_ue_ngap_id, const uint64_t amf_ue_ngap_id,
-      bstring plain_msg);
+      bstring plain_msg, uint8_t& cause);
 
   /*
    * Handle Security Mode Complete message
@@ -796,33 +827,39 @@ class amf_n1 {
    * @param [const uint64_t] amf_ue_ngap_id: AMF UE NGAP ID
    * @param [bstring] nas_msg: NAS Security Mode Complete message
    * @param [uint8_t] security_header_type: Security Header Type
-   * @return void
+   * @param [uint8_t&] cause: 5GMM cause when Security Mode Complete
+   * procedure not accepted by the network
+   * @return true if accepted by the network, otherwise return false
    */
-  void security_mode_complete_handle(
+  bool security_mode_complete_handle(
       const uint32_t ran_ue_ngap_id, const uint64_t amf_ue_ngap_id,
-      bstring nas_msg, uint8_t security_header_type);
+      bstring nas_msg, uint8_t security_header_type, uint8_t& cause);
 
   /*
    * Handle Security Mode Reject message
    * @param [const uint32_t] ran_ue_ngap_id: RAN UE NGAP ID
    * @param [const uint64_t] amf_ue_ngap_id: AMF UE NGAP ID
    * @param [bstring] nas_msg: NAS Security Mode Reject message
-   * @return void
+   * @param [uint8_t&] cause: 5GMM cause when Security Mode Reject
+   * procedure not accepted by the network
+   * @return true if accepted by the network, otherwise return false
    */
-  void security_mode_reject_handle(
+  bool security_mode_reject_handle(
       const uint32_t ran_ue_ngap_id, const uint64_t amf_ue_ngap_id,
-      bstring nas_msg);
+      bstring nas_msg, uint8_t& cause);
 
   /*
    * Handle Registration Complete message
    * @param [const uint32_t] ran_ue_ngap_id: RAN UE NGAP ID
    * @param [const uint64_t] amf_ue_ngap_id: AMF UE NGAP ID
    * @param [bstring] nas: NAS message
-   * @return void
+   * @param [uint8_t&] cause: 5GMM cause when Registration Complete
+   * procedure not accepted by the network
+   * @return true if accepted by the network, otherwise return false
    */
-  void registration_complete_handle(
+  bool registration_complete_handle(
       const uint32_t ran_ue_ngap_id, const uint64_t amf_ue_ngap_id,
-      bstring nas_msg);
+      bstring nas_msg, uint8_t& cause);
 
   /*
    * Handle Service Request message
@@ -830,8 +867,8 @@ class amf_n1 {
    * @param [const uint32_t] ran_ue_ngap_id: RAN UE NGAP ID
    * @param [const uint64_t] amf_ue_ngap_id: AMF UE NGAP ID
    * @param [bstring] nas: NAS Service Request message
-   * @param [uint8_t&] cause: 5GMM cause when service request procedure not
-   * accepted by the network
+   * @param [uint8_t&] cause: 5GMM cause when service request procedure
+   * not accepted by the network
    * @return true if process the request successfully, otherwise return false
    */
   bool service_request_handle(
@@ -845,8 +882,8 @@ class amf_n1 {
    * @param [const uint64_t] amf_ue_ngap_id: AMF UE NGAP ID
    * @param [bstring] nas: NAS Service Request message
    * @param [uint8_t] ulCount: Uplink NAS count
-   * @param [uint8_t&] cause: 5GMM cause when service request procedure not
-   * accepted by the network
+   * @param [uint8_t&] cause: 5GMM cause when service request procedure
+   * not accepted by the network
    * @return true if process the request successfully, otherwise return false
    */
   bool service_request_handle(
@@ -867,11 +904,13 @@ class amf_n1 {
    * @param [const uint32_t] ran_ue_ngap_id: RAN UE NGAP ID
    * @param [const uint64_t] amf_ue_ngap_id: AMF UE NGAP ID
    * @param [bstring] nas: NAS Service Request message
-   * @return void
+   * @param [uint8_t&] cause: 5GMM cause when Identity Response procedure
+   * not accepted by the network
+   * @return true if accepted by the network, otherwise return false
    */
-  void identity_response_handle(
+  bool identity_response_handle(
       const uint32_t ran_ue_ngap_id, const uint64_t amf_ue_ngap_id,
-      bstring plain_msg);
+      bstring plain_msg, uint8_t& cause);
 
   /*
    * Handle UL NAS Transport message
@@ -890,9 +929,9 @@ class amf_n1 {
    * @param [bstring&] nas_msg: NAS message
    * @param [const uint32_t] ran_ue_ngap_id: RAN UE NGAP ID
    * @param [const uint64_t] amf_ue_ngap_id: AMF UE NGAP ID
-   * @return void
+   * @return true if successful, otherwise return false
    */
-  void itti_send_dl_nas_buffer_to_task_n2(
+  bool itti_send_dl_nas_buffer_to_task_n2(
       bstring& nas_msg, const uint32_t ran_ue_ngap_id,
       const uint64_t amf_ue_ngap_id);
 
