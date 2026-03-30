@@ -1,6 +1,15 @@
-# RELEASE NOTES: #
+<!-- SPDX-License-Identifier: CC-BY-4.0 -->
 
-## v2.2.0 -- December 2025 ##
+# RELEASE NOTES:
+
+## v2.2.1 -- March 2026
+
+* Change of license from OAI Public License v1.1 to CSSL v1.0
+* Re-license documentation to the CC-BY-4.0 License
+* Re-license orchestration files (docker compose yaml files, health scripts, openshift build files)
+   and CI-scripts under the MIT License
+
+## v2.2.0 -- December 2025
 
 * Features
   - AMF Location Service APIs
@@ -26,7 +35,7 @@
   - Add support for RHEL 10, update container images to UBI 10
   - Fix build issue in non-containerized environment
 
-## v2.1.0 -- August 2024 ##
+## v2.1.0 -- August 2024
 
 * Features
   - Adding NRPPA protocol support
@@ -66,7 +75,7 @@
   - Separate all in one implementation
   - HTTP client cpr library refactoring effort
 
-## v2.0.1 -- January 2024 ##
+## v2.0.1 -- January 2024
 
 * Features
   - NGAP AMF status indication
@@ -82,7 +91,7 @@
   - Refactor promise handling
   - Removing dependencies to libconfig++ (Only YAML file can be read as configuration)
 
-## v2.0.0 -- December 2023 ##
+## v2.0.0 -- December 2023
 
 * Features
   - Support YAML configuration file
@@ -91,7 +100,7 @@
   - Update API Server name/structure
   - N2 info notify
   - Updated NGAP library to 38.413 V16.14.0
-  - Location Report Notification for N2 Handover 
+  - Location Report Notification for N2 Handover
   - LMF Determine Location & DownlinkUeAssociatedNrppaTranport support
 * Fixes
   - Fixed: Add NSSAI info in AMF profile to send to NRF
@@ -114,7 +123,7 @@
   - Code refactoring: ITTI between SBI and other tasks, NGAP IEs
   - Code cleanup: NAS IEs, N2, removed usused code, Used new instead of malloc/calloc for N2
 
-## v1.5.1 -- May 2023 ##
+## v1.5.1 -- May 2023
 
 * Fix Service Request handling (Service Type: Signalling)
 * Fix N2 handover
@@ -136,7 +145,7 @@
 * Published image on Docker-Hub is using now Ubuntu-20 as base image
   * We will soon obsolete the build system for Ubuntu18.04
 
-## v1.5.0 -- January 2023 ##
+## v1.5.0 -- January 2023
 
 * Minimal fix for Decoding RegistrationRequest from COTS UE
 * Fix small issue for NGAP lib
@@ -158,20 +167,20 @@
 * release mode does not use libasan anymore --> allocation of 20T virtual memory is no longer done
 * Ubuntu22 and cgroup2 support
 
-## v1.4.0 -- July 2022 ##
+## v1.4.0 -- July 2022
 
 * Fix SCTP NG Shutdown issue
 * Fix 100% CPU consumption issue
 * Fix RAN UE ID display
 * Fix issue for TMSI and GUTI value
-* Fix for handling S-NSSAI 
+* Fix for handling S-NSSAI
 * Remove OPC value from AMF configuration
 * Support for Ubuntu 20.04 bare-metal installation
 * Official images produced by CI are pushed to `oaisoftwarealliance` Docker-Hub Team account
 * Reduce image size
 
 
-## v1.3.0 -- January 2022 ##
+## v1.3.0 -- January 2022
 
 * Periodic Registration Update
 * Support for Event Exposure (Registration State Report)
@@ -188,13 +197,13 @@
 * Fix MCC such as 001
 * Docker optimization
 
-## v1.2.1 -- October 2021 ##
+## v1.2.1 -- October 2021
 
 * Fix build issue
 * Tentative fix for ngKSI already in use
 * Initial implementation for Mobility registration update
 
-## v1.2.0 -- September 2021 ##
+## v1.2.0 -- September 2021
 
 * AUSF connection
 * Support PDU Session Resource Modify procedure
@@ -205,7 +214,7 @@
 * Fix N2 Handover
 * Fix Paging procedures
 
-## v1.1.0 -- July 2021 ##
+## v1.1.0 -- July 2021
 
 * Session Release
 * NRF registration
@@ -214,7 +223,7 @@
 * Bug fixes
 * Full support for Ubuntu18 and RHEL8
 
-## v1.0.0 -- September 2020 ##
+## v1.0.0 -- September 2020
 
 * Initial release
 

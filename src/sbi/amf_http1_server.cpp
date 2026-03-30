@@ -1,3 +1,7 @@
+/*
+ * SPDX-License-Identifier: LicenseRef-CSSL-1.0
+ */
+
 #include "amf_http1_server.hpp"
 #include "logger.hpp"
 
