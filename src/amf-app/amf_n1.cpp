@@ -414,6 +414,26 @@ void amf_n1::handle_itti_message(itti_uplink_nas_data_ind& nas_data_ind) {
       set_supi_2_amf_id(nc->supi, amf_ue_ngap_id);
       set_supi_2_ran_id(nc->supi, ran_ue_ngap_id);
       set_supi_2_nas_context(nc->supi, nc);
+
+      // Update UE statistics
+      ue_info_t ue_item;
+      ue_item.cm_status       = CM_CONNECTED;
+      ue_item.register_status = _5GMM_REGISTERED;
+      ue_item.ranid           = nc->ran_ue_ngap_id;
+      ue_item.amfid           = nc->amf_ue_ngap_id;
+      ue_item.imsi            = nc->imsi;
+      ue_item.supi            = nc->supi;
+      if (nc->guti.has_value()) ue_item.guti = nc->guti.value();
+      ue_item.mcc = plmn.mcc;
+      ue_item.mnc = plmn.mnc;
+
+      stacs.update_ue_info(ue_item);
+      stacs.display();
+
+      event_sub.ue_registration_state(
+          nc->supi, _5GMM_REGISTERED, amf_cfg->support_features.http_version,
+          ran_ue_ngap_id, amf_ue_ngap_id);
+
     } else {
       Logger::amf_n1().error(
           "No existing nas_context with GUTI %s", nas_data_ind.guti.c_str());
