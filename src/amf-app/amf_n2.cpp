@@ -8,7 +8,7 @@
 #include <boost/chrono/duration.hpp>
 
 #include "3gpp_24.501.hpp"
-#include "DefaultPagingDrx.hpp"
+#include "PagingDrx.hpp"
 #include "DownlinkNasTransport.hpp"
 #include "DownlinkNonUeAssociatedNrppaTransport.hpp"
 #include "DownlinkRanStatusTransfer.hpp"

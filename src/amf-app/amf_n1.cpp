@@ -3757,6 +3757,9 @@ bool amf_n1::security_mode_complete_handle(
   // Set NAS message for current procedure running
   nc->nas_message_for_current_procedure_running = kRegistrationAccept;
 
+  // §5.3.16 TS 24.501: reset PPF=TRUE on successful registration
+  nc->ppf_3gpp = true;
+
   // Encode Registration Accept
   bstring protected_nas = nullptr;
   uint32_t msg_len      = registration_accept->GetLength();
@@ -5921,6 +5924,10 @@ void amf_n1::mobile_reachable_timer_timeout(
   if (!amf_ue_id_2_nas_context(amf_ue_ngap_id, nc)) return;
 
   set_mobile_reachable_timer_timeout(nc, true);
+
+  // §5.3.16 TS 24.501 / §5.3.4.1 TS 23.501: clear PPF on Mobile Reachable Timer
+  // expiry
+  nc->ppf_3gpp = false;
 
   // Trigger UE Loss of Connectivity Status Notify
   Logger::amf_n1().debug(
