@@ -120,7 +120,8 @@ class itti_n1n2_message_transfer_request : public itti_msg_amf_app {
   std::string n2sm_info_type;
   bool is_ppi_set;
   uint8_t ppi;
-  std::string n1n2_failure_txf_notif_uri;  // TS 29.518 §5.4.6 failure notify
+  std::string n1n2_failure_txf_notif_uri;  // TS 29.518 §6.1.5.6 N1N2 Transfer
+                                           // Failure Notification
   // other parameters
 };
 

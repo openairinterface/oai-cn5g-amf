@@ -143,7 +143,7 @@ class nas_context {
   timer_id_t mobile_reachable_timer;
   timer_id_t implicit_deregistration_timer;
 
-  // Paging Proceed Flag — §5.6.2.1 TS 24.501
+  // Paging proceed flag  (reachable or not for paging)
   bool ppf_3gpp = true;  // final T3513 expiry/ implicit deregistration)
 
   // Paging lifecycle state — §5.6.2 TS 24.501

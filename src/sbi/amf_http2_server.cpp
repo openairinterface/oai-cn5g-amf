@@ -1020,6 +1020,12 @@ void amf_http2_server::n1_n2_message_transfer_handler(
     itti_msg->is_ppi_set = false;
   }
 
+  // Store n1n2FailureTxfNotifURI
+  if (n1N2MessageTransferReqData.n1n2FailureTxfNotifURIIsSet()) {
+    itti_msg->n1n2_failure_txf_notif_uri =
+        n1N2MessageTransferReqData.getN1n2FailureTxfNotifURI();
+  }
+
   // Send response to the NF Service Consumer (e.g., SMF)
   res.write_head(code);
   res.end(response_json.dump().c_str());

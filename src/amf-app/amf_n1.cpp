@@ -1015,8 +1015,8 @@ bool amf_n1::service_request_handle(
       *nc, nas_procedure_type_e::SERVICE_REQUEST);
 
   // Paging teardown on Service Request (TS 24.501 §5.6.1)
-  bool was_paging_ongoing_1 = nc->is_paging_ongoing && !nc->paging_completed;
-  if (was_paging_ongoing_1) {
+  bool was_paging_ongoing = nc->is_paging_ongoing && !nc->paging_completed;
+  if (was_paging_ongoing) {
     Logger::amf_n1().info(
         "Service Request: stopping T3513, clearing paging state for UE %lu",
         amf_ue_ngap_id);
@@ -1028,7 +1028,7 @@ bool amf_n1::service_request_handle(
     handle_ue_reachability_status_change(
         nc->supi, CM_CONNECTED, amf_cfg->support_features.http_version);
   }
-  // Restore PPF unconditionally — UE proved reachability (TS 24.501 §5.6.1)
+  // Restore PPF unconditionally — UE proved reachability
   nc->ppf_3gpp = true;
 
   // Decode Service Request to get 5G-TMSI
@@ -1261,8 +1261,7 @@ bool amf_n1::service_request_handle(
     oai::utils::utils::bdestroy_wrapper(&protected_nas);
   }
 
-  // deliver queued N1/N2 paging messages (TS 24.501 §5.6.1 / TS 23.502
-  // §4.2.3.2)
+  // deliver queued N1/N2 paging messages
   deliver_pending_paging_messages(nc, ran_ue_ngap_id, amf_ue_ngap_id);
 
   nas_procedure_manager_.complete_specific_procedure(*nc);
@@ -1295,9 +1294,9 @@ bool amf_n1::service_request_handle(
   nas_procedure_manager_.start_specific_procedure(
       *nc, nas_procedure_type_e::SERVICE_REQUEST);
 
-  // Paging teardown on Service Request (TS 24.501 §5.6.1)
-  bool was_paging_ongoing_2 = nc->is_paging_ongoing && !nc->paging_completed;
-  if (was_paging_ongoing_2) {
+  // Paging teardown on Service Request
+  bool was_paging_ongoing = nc->is_paging_ongoing && !nc->paging_completed;
+  if (was_paging_ongoing) {
     Logger::amf_n1().info(
         "Service Request: stopping T3513, clearing paging state for UE %lu",
         amf_ue_ngap_id);
@@ -1309,7 +1308,7 @@ bool amf_n1::service_request_handle(
     handle_ue_reachability_status_change(
         nc->supi, CM_CONNECTED, amf_cfg->support_features.http_version);
   }
-  // Restore PPF unconditionally — UE proved reachability (TS 24.501 §5.6.1)
+  // Restore PPF unconditionally — UE proved reachability
   nc->ppf_3gpp = true;
 
   // Decode Service Request to get 5G-TMSI
@@ -1748,8 +1747,7 @@ bool amf_n1::service_request_handle(
     oai::utils::utils::bdestroy_wrapper(&protected_nas);
   }
 
-  // deliver queued N1/N2 paging messages (TS 24.501 §5.6.1 / TS 23.502
-  // §4.2.3.2)
+  // deliver queued N1/N2 paging messages
   deliver_pending_paging_messages(nc, ran_ue_ngap_id, amf_ue_ngap_id);
 
   nas_procedure_manager_.complete_specific_procedure(*nc);
@@ -3757,7 +3755,7 @@ bool amf_n1::security_mode_complete_handle(
   // Set NAS message for current procedure running
   nc->nas_message_for_current_procedure_running = kRegistrationAccept;
 
-  // §5.3.16 TS 24.501: reset PPF=TRUE on successful registration
+  // Reset PPF=TRUE on successful registration
   nc->ppf_3gpp = true;
 
   // Encode Registration Accept
@@ -3970,7 +3968,7 @@ bool amf_n1::registration_complete_handle(
   nas_procedure_manager_.complete_specific_procedure(*nc);
 
   // drain queued N1/N2 messages — handles messages queued during
-  // _5GMM_COMMON_PROCEDURE_INITIATED (TS 23.502 §4.2.3.3)
+  // _5GMM_COMMON_PROCEDURE_INITIATED
   if (!nc->pending_paging_messages.empty()) {
     Logger::amf_n1().info(
         "Post-registration: delivering %zu queued N1/N2 messages for UE %lu",
@@ -5898,13 +5896,7 @@ void amf_n1::initialize_registration_accept(
   registration_accept->SetConfiguredNssai(
       allowed_nssais);  // TODO: use Allowed NSSAIs for now
 
-  // T21: Grant MICO mode here when AMF policy and subscription data allow it.
-  // Requires: (1) UE requested MICO in RegistrationRequest (ie_mico_indication_
-  //           set), and (2) micoAllowed=true from
-  //           AccessAndMobilitySubscriptionData.
-  // When granted:
-  //   registration_accept->SetMicoIndication(/*sprti=*/false, /*raai=*/false);
-  //   nc->is_mico_mode = true;
+  // TODO: MICO mode
   return;
 }
 
@@ -5925,8 +5917,7 @@ void amf_n1::mobile_reachable_timer_timeout(
 
   set_mobile_reachable_timer_timeout(nc, true);
 
-  // §5.3.16 TS 24.501 / §5.3.4.1 TS 23.501: clear PPF on Mobile Reachable Timer
-  // expiry
+  // Clear PPF on Mobile Reachable Timer expiry
   nc->ppf_3gpp = false;
 
   // Trigger UE Loss of Connectivity Status Notify
@@ -7211,7 +7202,6 @@ void amf_n1::handle_t3555_expiry(
 // ---------------------------------------------------------------------------
 // start_paging_timer — start T3513 after NGAP Paging is sent
 // Called from amf_n2::handle_itti_message(itti_paging) via amf_n1_inst.
-// §5.6.2.2 TS 24.501
 // ---------------------------------------------------------------------------
 void amf_n1::start_paging_timer(
     std::shared_ptr<nas_context>& nc, uint64_t amf_ue_ngap_id) {
@@ -7444,7 +7434,6 @@ void amf_n1::send_n1n2_transfer_status_callback(
 // ---------------------------------------------------------------------------
 // handle_t3513_final_expiry — all retransmissions exhausted
 // Sets PPF=FALSE, clears paging state, drains pending message queue.
-// §5.6.2.2 TS 24.501 / §4.2.3.3 TS 23.502
 // ---------------------------------------------------------------------------
 void amf_n1::handle_t3513_final_expiry(
     std::shared_ptr<nas_context>& nc, uint64_t amf_ue_ngap_id) {
@@ -7462,7 +7451,7 @@ void amf_n1::handle_t3513_final_expiry(
       "setting PPF=FALSE",
       amf_ue_ngap_id, kPagingMaxRetransmissions);
 
-  // §5.6.2.2 TS 24.501: set PPF=FALSE
+  // Clear PPF (Paging Proceed Flag)
   nc->ppf_3gpp = false;
 
   // Clear paging state
@@ -7515,8 +7504,7 @@ void amf_n1::handle_t3513_final_expiry(
 // deliver_pending_paging_messages
 // Drains the pending N1/N2 message queue and re-dispatches each message
 // through the normal (non-paging) N1N2 delivery path.
-// Called from service_request_handle (§5.6.1) and registration_complete_handle.
-// TS 24.501 §5.6.1 / TS 23.502 §4.2.3.2–§4.2.3.3
+// Called from service_request_handle and registration_complete_handle.
 // ---------------------------------------------------------------------------
 void amf_n1::deliver_pending_paging_messages(
     std::shared_ptr<nas_context>& nc, uint32_t ran_ue_ngap_id,

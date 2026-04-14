@@ -344,7 +344,7 @@ void amf_n2::handle_itti_message(std::shared_ptr<itti_paging>& itti_msg) {
       unc->s_setid, unc->s_pointer, unc->s_tmsi);
   paging_msg.setUePagingIdentity(unc->s_setid, unc->s_pointer, unc->s_tmsi);
 
-  // Build TAI list for paging (fan-out on retransmission)
+  // Build TAI list for paging
   std::vector<Tai_t> tai_list_for_paging;
   if (!itti_msg->is_retransmission || unc->registration_area_tai_list.empty()) {
     Tai_t t = {};
@@ -380,14 +380,12 @@ void amf_n2::handle_itti_message(std::shared_ptr<itti_paging>& itti_msg) {
     Logger::amf_n2().debug("Paging Priority set from PPI=%d", itti_msg->ppi);
   }
 
-  // Assistance Data for Paging — include if previously stored
-  // (PagingOrigin not set — 3GPP-only paging, current scope)
-  if (!unc->paging_assistance_data.empty()) {
-    paging_msg.setPagingAssistanceData(unc->paging_assistance_data);
-  }
+  // TODO: Assistance Data for Paging — include if previously stored
+  // TODO: PagingOrigin not set — 3GPP-only paging, current scope
 
-  uint8_t buffer[BUFFER_SIZE_512];
-  int encoded_size = paging_msg.Encode(buffer, BUFFER_SIZE_512);
+  uint16_t buffer_size = BUFFER_SIZE_1024;
+  uint8_t buffer[buffer_size];
+  int encoded_size = paging_msg.Encode(buffer, buffer_size);
   if (encoded_size <= 0) {
     Logger::amf_n2().error(
         "Failed to encode NGAP Paging message for UE " AMF_UE_NGAP_ID_FMT,
@@ -446,7 +444,7 @@ void amf_n2::handle_itti_message(std::shared_ptr<itti_paging>& itti_msg) {
 
   oai::utils::utils::bdestroy_wrapper(&b);
 
-  // Start T3513 paging timer after NGAP Paging is sent (TS 24.501 §5.6.2.2)
+  // Start T3513 paging timer after NGAP Paging is sent
   amf_n1_inst->start_paging_timer(nc, itti_msg->amf_ue_ngap_id);
 }
 
