@@ -51,9 +51,6 @@ class amf_app {
  private:
   inline static uint32_t amf_app_ue_ngap_id_generator = 1;
 
-  // Paging queue depth limit, TODO: make it configurable
-  static constexpr uint8_t kPagingMaxPendingMessages = 8;
-
   // Enqueue a pending N1/N2 message from an N1N2MessageTransfer request.
   // Drops the oldest message (with warning) if the queue is already full.
   void enqueue_pending_n1n2(

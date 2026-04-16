@@ -281,7 +281,6 @@ typedef struct support_features_s {
   bool enable_am_policy_association;
 
   uint8_t http_version;
-  bool allow_http_callback_uris = false;
   nlohmann::json to_json() const {
     nlohmann::json json_data              = {};
     json_data["enable_simple_scenario"]   = this->enable_simple_scenario;

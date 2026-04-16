@@ -66,6 +66,13 @@ typedef struct response_data_s {
   std::optional<std::string> location;
 } response_data_t;
 
+// Paging timer management
+// Max retransmissions before PPF=FALSE
+static constexpr uint8_t kPagingMaxRetransmissions = 2;
+static constexpr uint32_t kPagingT3513IntervalSec  = 6;  // seconds per attempt
+// Paging queue depth limit, TODO: make it configurable
+static constexpr uint8_t kPagingMaxPendingMessages = 8;
+
 typedef struct auth_conf_s {
   std::string mysql_server;
   std::string mysql_user;

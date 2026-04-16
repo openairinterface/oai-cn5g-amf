@@ -6008,6 +6008,9 @@ void amf_n1::implicit_deregistration_timer_timeout(
   nas_timer_manager_.stop_all_procedure_timers(nc);
   handle_nas_event(nc, oai::amf::nas::nas_event_e::IMPLICIT_DEREGISTRATION);
 
+  // Clear PPF on Implicit Deregistration Timer expiry
+  nc->ppf_3gpp = false;
+
   // Trigger UE Connectivity Status Notify
   Logger::amf_n1().debug(
       "Signal the UE Connectivity Status Event notification for SUPI %s",
@@ -7207,8 +7210,8 @@ void amf_n1::start_paging_timer(
     std::shared_ptr<nas_context>& nc, uint64_t amf_ue_ngap_id) {
   nas_timer_manager_.start_timer(nas_timer_type_e::T3513, nc, amf_ue_ngap_id);
   Logger::amf_n1().debug(
-      "T3513 started for UE %lu (paging timer — 6 s, max %u retx)",
-      amf_ue_ngap_id, kPagingMaxRetransmissions);
+      "T3513 started for UE %lu (paging timer — %u s, max %u retx)",
+      amf_ue_ngap_id, kPagingT3513IntervalSec, kPagingMaxRetransmissions);
 }
 
 // ---------------------------------------------------------------------------
@@ -7278,17 +7281,8 @@ void amf_n1::handle_t3513_expiry(
 // ---------------------------------------------------------------------------
 // helpers
 // ---------------------------------------------------------------------------
-bool amf_n1::validate_callback_uri(const std::string& uri, bool allow_http) {
+bool amf_n1::validate_callback_uri(const std::string& uri) {
   if (uri.empty()) return false;
-
-  // Require HTTPS; optionally allow HTTP in dev/test mode
-  if (uri.rfind("https://", 0) != 0) {
-    if (!allow_http || uri.rfind("http://", 0) != 0) {
-      Logger::amf_n1().warn(
-          "Callback URI rejected (not HTTPS): %s", uri.c_str());
-      return false;
-    }
-  }
 
   // Extract authority (host[:port]) from URI
   size_t auth_start = uri.find("//");
@@ -7332,73 +7326,16 @@ bool amf_n1::validate_callback_uri(const std::string& uri, bool allow_http) {
     return false;
   }
 
-  bool is_safe = true;
-  for (struct addrinfo* p = res; p != nullptr; p = p->ai_next) {
-    if (p->ai_family == AF_INET) {
-      auto* sa      = reinterpret_cast<struct sockaddr_in*>(p->ai_addr);
-      uint32_t addr = ntohl(sa->sin_addr.s_addr);
-      // 0/8 (this network), 10/8, 100.64/10 (CGNAT), 127/8 loopback,
-      // 169.254/16 (link-local), 172.16/12, 192.168/16,
-      // 240/4 (reserved), 255.255.255.255 (broadcast)
-      if ((addr >> 24) == 0 ||       // 0.0.0.0/8
-          (addr >> 24) == 10 ||      // 10/8
-          (addr >> 22) == 0x191 ||   // 100.64/10 CGNAT
-          (addr >> 24) == 127 ||     // 127/8 loopback
-          (addr >> 16) == 0xA9FE ||  // 169.254/16 link-local
-          (addr >> 20) == 0xAC1 ||   // 172.16/12
-          (addr >> 16) == 0xC0A8 ||  // 192.168/16
-          (addr >> 4) == 0xFFFFFFF   // 240.0.0.0/4 reserved
-      ) {
-        is_safe = false;
-        break;
-      }
-    } else if (p->ai_family == AF_INET6) {
-      auto* sa6        = reinterpret_cast<struct sockaddr_in6*>(p->ai_addr);
-      const uint8_t* a = sa6->sin6_addr.s6_addr;
-      // ::  unspecified
-      // ::1 loopback
-      // fe80::/10 link-local
-      // fc00::/7 ULA
-      // ff00::/8 multicast
-      // ::ffff:0:0/96 IPv4-mapped → re-check mapped IPv4 address
-      if (IN6_IS_ADDR_UNSPECIFIED(&sa6->sin6_addr) ||
-          IN6_IS_ADDR_LOOPBACK(&sa6->sin6_addr) ||
-          IN6_IS_ADDR_LINKLOCAL(&sa6->sin6_addr) ||
-          IN6_IS_ADDR_MULTICAST(&sa6->sin6_addr) ||
-          (a[0] & 0xFE) == 0xFC) {  // fc00::/7 ULA
-        is_safe = false;
-        break;
-      }
-      // IPv4-mapped IPv6 (::ffff:x.x.x.x) — re-validate mapped IPv4
-      if (IN6_IS_ADDR_V4MAPPED(&sa6->sin6_addr)) {
-        uint32_t v4 = ntohl(*reinterpret_cast<const uint32_t*>(&a[12]));
-        if ((v4 >> 24) == 0 || (v4 >> 24) == 10 || (v4 >> 22) == 0x191 ||
-            (v4 >> 24) == 127 || (v4 >> 16) == 0xA9FE || (v4 >> 20) == 0xAC1 ||
-            (v4 >> 16) == 0xC0A8 || (v4 >> 4) == 0xFFFFFFF) {
-          is_safe = false;
-          break;
-        }
-      }
-    }
-  }
-  freeaddrinfo(res);
-
-  if (!is_safe) {
-    Logger::amf_n1().warn(
-        "Callback URI %s rejected: resolves to private/loopback address "
-        "(SSRF protection)",
-        uri.c_str());
-  }
-  return is_safe;
+  // TODO: check Ipv4/Ipv6 address
+  return true;
 }
 
 //------------------------------------------------------------------------------
 void amf_n1::send_n1n2_transfer_status_callback(
-    const std::string& callback_uri, const std::string& status,
-    bool allow_http) {
+    const std::string& callback_uri, const std::string& status) {
   if (callback_uri.empty()) return;
 
-  if (!validate_callback_uri(callback_uri, allow_http)) {
+  if (!validate_callback_uri(callback_uri)) {
     Logger::amf_n1().warn(
         "N1N2 transfer status callback to %s rejected by SSRF validation",
         callback_uri.c_str());
@@ -7475,8 +7412,7 @@ void amf_n1::handle_t3513_final_expiry(
     if (!cb_uri.empty()) {
       try {
         send_n1n2_transfer_status_callback(
-            cb_uri, "UE_NOT_REACHABLE_FOR_SESSION",
-            amf_cfg->support_features.allow_http_callback_uris);
+            cb_uri, "UE_NOT_REACHABLE_FOR_SESSION");
       } catch (const std::exception& e) {
         Logger::amf_n1().error(
             "T3513 final expiry: callback to %s threw: %s — continuing drain",
@@ -7543,8 +7479,7 @@ void amf_n1::deliver_pending_paging_messages(
     // notify caller that the N1/N2 transfer was initiated
     if (!msg.callback_uri.empty()) {
       send_n1n2_transfer_status_callback(
-          msg.callback_uri, "N1_N2_TRANSFER_INITIATED",
-          amf_cfg->support_features.allow_http_callback_uris);
+          msg.callback_uri, "N1_N2_TRANSFER_INITIATED");
     }
   }
 }
