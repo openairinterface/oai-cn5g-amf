@@ -84,11 +84,6 @@ class ue_ngap_context {
   uint32_t release_gnb;
   bstring ue_radio_cap_ind;
   std::map<uint8_t, OCTET_STRING_t> pdu_sessions_to_be_released;
-
-  // Raw APER-encoded AssistanceDataForPaging bytes, extracted from
-  // UEContextReleaseComplete (TS 38.413 §9.3.1.62).
-  // Populated by TODO parser; used in paging fan-out when non-empty.
-  std::vector<uint8_t> paging_assistance_data;
 };
 
 #endif

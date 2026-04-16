@@ -7312,7 +7312,7 @@ bool amf_n1::validate_callback_uri(const std::string& uri) {
     return false;
   }
 
-  // DNS-resolve the host and check for private/loopback ranges (SSRF guard)
+  // DNS-resolve the host and check
   struct addrinfo hints = {};
   hints.ai_family       = AF_UNSPEC;
   hints.ai_socktype     = SOCK_STREAM;
@@ -7337,8 +7337,7 @@ void amf_n1::send_n1n2_transfer_status_callback(
 
   if (!validate_callback_uri(callback_uri)) {
     Logger::amf_n1().warn(
-        "N1N2 transfer status callback to %s rejected by SSRF validation",
-        callback_uri.c_str());
+        "N1N2 transfer status callback to %s rejected", callback_uri.c_str());
     return;
   }
 
