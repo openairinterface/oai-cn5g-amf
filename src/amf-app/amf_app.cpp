@@ -500,20 +500,160 @@ std::string amf_app::generate_amf_status_change_sub_id_generator() {
 }
 
 //------------------------------------------------------------------------------
+void amf_app::enqueue_pending_n1n2(
+    std::shared_ptr<nas_context>& nc,
+    const itti_n1n2_message_transfer_request& itti_msg) {
+  if (nc->pending_paging_messages.size() >= kPagingMaxPendingMessages) {
+    Logger::amf_app().warn(
+        "Pending paging queue full for UE %s — dropping oldest message",
+        itti_msg.supi.c_str());
+    nc->pending_paging_messages.pop();
+  }
+  pending_n1n2_msg_t msg;
+  msg.n1sm           = itti_msg.is_n1sm_set ? bstrcpy(itti_msg.n1sm) : nullptr;
+  msg.n2sm           = itti_msg.is_n2sm_set ? bstrcpy(itti_msg.n2sm) : nullptr;
+  msg.n2sm_info_type = itti_msg.n2sm_info_type;
+  msg.pdu_session_id = itti_msg.pdu_session_id;
+  msg.ppi            = itti_msg.ppi;
+  msg.callback_uri   = itti_msg.n1n2_failure_txf_notif_uri;
+  nc->pending_paging_messages.push(std::move(msg));
+}
+
+//------------------------------------------------------------------------------
 void amf_app::handle_itti_message(
     itti_n1n2_message_transfer_request& itti_msg) {
   if (itti_msg.is_ppi_set) {  // Paging procedure
     Logger::amf_app().info(
-        "Handle ITTI N1N2 Message Transfer Request for Paging");
+        "Handle N1N2 Message Transfer — Paging trigger for SUPI %s",
+        itti_msg.supi.c_str());
+
+    // 1. Get NAS context
+    uint64_t amf_ue_ngap_id = INVALID_AMF_UE_NGAP_ID;
+    amf_n1_inst->supi_2_amf_id(itti_msg.supi, amf_ue_ngap_id);
+    std::shared_ptr<nas_context> nc = {};
+    if (!amf_n1_inst->amf_ue_id_2_nas_context(amf_ue_ngap_id, nc)) {
+      Logger::amf_app().warn(
+          "No NAS context for SUPI %s (amf_ue_ngap_id=%lu) — cannot page",
+          itti_msg.supi.c_str(), amf_ue_ngap_id);
+      return;
+    }
+
+    // 2. Check 5GMM state — must be REGISTERED to page or deliver
+    if (nc->_5gmm_state != _5GMM_REGISTERED) {
+      Logger::amf_app().info(
+          "UE SUPI %s not 5GMM-REGISTERED (state=%s) — queuing, deliver on "
+          "registration",
+          itti_msg.supi.c_str(),
+          nas_context::fivegmm_state_to_string(nc->_5gmm_state).c_str());
+      enqueue_pending_n1n2(nc, itti_msg);
+      return;
+    }
+
+    // 3. Check CM state
+    if (nc->nas_status == CM_CONNECTED) {
+      Logger::amf_app().info(
+          "UE SUPI %s is CM-CONNECTED — delivering N1/N2 directly",
+          itti_msg.supi.c_str());
+      // TS 23.502 §4.2.3.3: CM-CONNECTED → forward N1/N2 directly without
+      // paging. Build itti_downlink_nas_transfer mirroring the is_n1sm_set /
+      // is_n2sm_set branch below (no fall-through possible in if/else-if).
+      auto dl_msg = std::make_shared<itti_downlink_nas_transfer>(
+          TASK_AMF_APP, TASK_AMF_N1);
+      if (itti_msg.is_n1sm_set) {
+        auto dl = std::make_unique<DlNasTransport>();
+        dl->SetPayloadContainerType(kN1SmInformation);
+        dl->SetPayloadContainer(
+            (uint8_t*) bdata(bstrcpy(itti_msg.n1sm)), blength(itti_msg.n1sm));
+        dl->SetPduSessionId(itti_msg.pdu_session_id);
+        uint32_t msg_len = dl->GetLength();
+        if (msg_len == 0) return;
+        uint8_t nas[msg_len] = {0};
+        int encoded_size     = dl->Encode(nas, msg_len);
+        dl_msg->dl_nas       = blk2bstr(nas, encoded_size);
+      }
+      if (!itti_msg.is_n2sm_set) {
+        dl_msg->is_n2sm_set = false;
+      } else {
+        dl_msg->n2sm           = bstrcpy(itti_msg.n2sm);
+        dl_msg->pdu_session_id = itti_msg.pdu_session_id;
+        dl_msg->is_n2sm_set    = true;
+        dl_msg->n2sm_info_type = itti_msg.n2sm_info_type;
+      }
+      dl_msg->amf_ue_ngap_id = amf_ue_ngap_id;
+      amf_n1_inst->supi_2_ran_id(itti_msg.supi, dl_msg->ran_ue_ngap_id);
+      int ret = itti_inst->send_msg(dl_msg);
+      if (ret != RETURNok) {
+        Logger::amf_app().error(
+            "Could not send ITTI downlink_nas_transfer for CM-CONNECTED UE %s",
+            itti_msg.supi.c_str());
+      }
+      return;
+    }
+
+    // --- CM-IDLE path ---
+
+    // 4. Check PPF (Paging Proceed Flag) — TS 24.501 §5.6.2.1
+    if (!nc->ppf_3gpp) {
+      Logger::amf_app().info(
+          "PPF=FALSE for SUPI %s — UE not reachable, rejecting N1N2 transfer",
+          itti_msg.supi.c_str());
+      // T17 will send N1N2MessageTransferStatus callback here
+      return;
+    }
+
+    // 5. Check Mobile Reachable Timer timeout
+    if (nc->is_mobile_reachable_timer_timeout) {
+      Logger::amf_app().info(
+          "Mobile Reachable Timer expired for SUPI %s — UE not reachable",
+          itti_msg.supi.c_str());
+      return;
+    }
+
+    // 6. Queue N1/N2 message for post-paging delivery
+    enqueue_pending_n1n2(nc, itti_msg);
+
+    // 7. If paging already ongoing, merge PPI and skip re-trigger
+    if (nc->is_paging_ongoing) {
+      Logger::amf_app().info(
+          "Paging already ongoing for SUPI %s — message queued, PPI updated",
+          itti_msg.supi.c_str());
+      if (itti_msg.ppi < nc->paging_effective_ppi) {
+        nc->paging_effective_ppi = itti_msg.ppi;  // lower value = higher prio
+      }
+      return;
+    }
+
+    // MICO Mode guard — TS 24.501 §5.5.1.3
+    // For MICO UEs, there is no network-initiated paging; queue for
+    // UE-initiated delivery
+    if (nc->is_mico_mode) {
+      Logger::amf_app().info(
+          "UE SUPI %s is in MICO mode — queuing N1/N2 for UE-initiated "
+          "delivery "
+          "(no paging)",
+          itti_msg.supi.c_str());
+      // Message already queued above; skip paging trigger
+      return;
+    }
+
+    // 8. Initiate new paging cycle
+    nc->is_paging_ongoing    = true;
+    nc->paging_completed     = false;
+    nc->paging_effective_ppi = itti_msg.ppi;
+
     auto paging_msg = std::make_shared<itti_paging>(TASK_AMF_APP, TASK_AMF_N2);
-    amf_n1_inst->supi_2_amf_id(itti_msg.supi, paging_msg->amf_ue_ngap_id);
+    paging_msg->amf_ue_ngap_id = amf_ue_ngap_id;
     amf_n1_inst->supi_2_ran_id(itti_msg.supi, paging_msg->ran_ue_ngap_id);
+    paging_msg->ppi               = itti_msg.ppi;
+    paging_msg->is_ppi_set        = true;
+    paging_msg->is_retransmission = false;
 
     int ret = itti_inst->send_msg(paging_msg);
     if (ret != RETURNok) {
       Logger::amf_app().error(
-          "Could not send ITTI message %s to task TASK_AMF_N2",
-          paging_msg->get_msg_name());
+          "Could not send ITTI paging to TASK_AMF_N2 for SUPI %s",
+          itti_msg.supi.c_str());
+      nc->is_paging_ongoing = false;
     }
   } else if (itti_msg.is_nrppa_pdu_set) {
     Logger::amf_app().info(

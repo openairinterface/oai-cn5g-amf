@@ -11,6 +11,8 @@
 #include "nas_security_context.hpp"
 #include "Struct.hpp"
 #include <cstdint>
+#include <queue>
+#include <string>
 
 typedef enum {
   _5GMM_STATE_MIN     = 0,
@@ -81,6 +83,50 @@ struct nas_timer_instance_t {
 static constexpr size_t kNasTimerCount =
     7;  // T3550, T3560, T3570, T3522, T3555, T3513, T3565
 
+// Pending N1/N2 message for delivery after paging response — §4.2.3.3 TS 23.502
+struct pending_n1n2_msg_t {
+  bstring n1sm = nullptr;
+  bstring n2sm = nullptr;
+  std::string n2sm_info_type;
+  uint8_t pdu_session_id = 0;
+  uint8_t ppi            = 0;
+  std::string callback_uri;
+
+  ~pending_n1n2_msg_t() {
+    if (n1sm) bdestroy(n1sm);
+    if (n2sm) bdestroy(n2sm);
+  }
+
+  pending_n1n2_msg_t() = default;
+  pending_n1n2_msg_t(pending_n1n2_msg_t&& o) noexcept
+      : n1sm(o.n1sm),
+        n2sm(o.n2sm),
+        n2sm_info_type(std::move(o.n2sm_info_type)),
+        pdu_session_id(o.pdu_session_id),
+        ppi(o.ppi),
+        callback_uri(std::move(o.callback_uri)) {
+    o.n1sm = nullptr;
+    o.n2sm = nullptr;
+  }
+  pending_n1n2_msg_t& operator=(pending_n1n2_msg_t&& o) noexcept {
+    if (this != &o) {
+      if (n1sm) bdestroy(n1sm);
+      if (n2sm) bdestroy(n2sm);
+      n1sm           = o.n1sm;
+      n2sm           = o.n2sm;
+      n2sm_info_type = std::move(o.n2sm_info_type);
+      pdu_session_id = o.pdu_session_id;
+      ppi            = o.ppi;
+      callback_uri   = std::move(o.callback_uri);
+      o.n1sm         = nullptr;
+      o.n2sm         = nullptr;
+    }
+    return *this;
+  }
+  pending_n1n2_msg_t(const pending_n1n2_msg_t&) = delete;
+  pending_n1n2_msg_t& operator=(const pending_n1n2_msg_t&) = delete;
+};
+
 class nas_context {
  public:
   nas_context();
@@ -96,6 +142,19 @@ class nas_context {
   bool is_mobile_reachable_timer_timeout;
   timer_id_t mobile_reachable_timer;
   timer_id_t implicit_deregistration_timer;
+
+  // Paging Proceed Flag — §5.6.2.1 TS 24.501
+  bool ppf_3gpp = true;  // final T3513 expiry/ implicit deregistration)
+
+  // Paging lifecycle state — §5.6.2 TS 24.501
+  bool is_paging_ongoing       = false;
+  uint8_t paging_effective_ppi = 0;
+  bool paging_completed        = false;
+  bool is_mico_mode =
+      false;  // T21: true when MICO mode is negotiated (TS 24.501 §5.5.1.3)
+
+  // Pending N1/N2 messages awaiting delivery after paging response
+  std::queue<pending_n1n2_msg_t> pending_paging_messages;
 
   // NAS procedure context — replaces boolean flags per §5.1.3.2.3
   nas_procedure_context_t procedure_ctx;

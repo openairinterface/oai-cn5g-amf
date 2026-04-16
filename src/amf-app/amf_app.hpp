@@ -18,6 +18,7 @@
 #include "UeN1N2InfoSubscriptionCreateData.h"
 #include "amf_config.hpp"
 #include "amf_msg.hpp"
+#include "nas_context.hpp"
 #include "amf_profile.hpp"
 #include "amf_subscription.hpp"
 #include "itti.hpp"
@@ -49,6 +50,15 @@ namespace amf_application {
 class amf_app {
  private:
   inline static uint32_t amf_app_ue_ngap_id_generator = 1;
+
+  // Paging queue depth limit — §4.2.3.3 TS 23.502
+  static constexpr uint8_t kPagingMaxPendingMessages = 8;
+
+  // Enqueue a pending N1/N2 message from an N1N2MessageTransfer request.
+  // Drops the oldest message (with warning) if the queue is already full.
+  void enqueue_pending_n1n2(
+      std::shared_ptr<nas_context>& nc,
+      const itti_n1n2_message_transfer_request& itti_msg);
   amf_profile nf_instance_profile;
   std::string amf_instance_id;
   std::map<std::string, timer_id_t> timer_nrfs_heartbeat;

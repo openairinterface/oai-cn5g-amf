@@ -74,15 +74,16 @@ class itti_n1n2_message_transfer_request : public itti_msg_amf_app {
   itti_n1n2_message_transfer_request(
       const task_id_t origin, const task_id_t destination)
       : itti_msg_amf_app(N1N2_MESSAGE_TRANSFER_REQ, origin, destination) {
-    supi             = {};
-    n1sm             = nullptr;
-    n2sm             = nullptr;
-    nrppa_pdu        = nullptr;
-    routing_id       = nullptr;
-    is_n2sm_set      = false;
-    is_n1sm_set      = false;
-    is_nrppa_pdu_set = false;
-    is_ppi_set       = false;
+    supi                       = {};
+    n1sm                       = nullptr;
+    n2sm                       = nullptr;
+    nrppa_pdu                  = nullptr;
+    routing_id                 = nullptr;
+    is_n2sm_set                = false;
+    is_n1sm_set                = false;
+    is_nrppa_pdu_set           = false;
+    is_ppi_set                 = false;
+    n1n2_failure_txf_notif_uri = {};
 
     n2sm_info_type = {};
     pdu_session_id = 0;
@@ -101,9 +102,10 @@ class itti_n1n2_message_transfer_request : public itti_msg_amf_app {
     is_nrppa_pdu_set = i.is_nrppa_pdu_set;
     is_ppi_set       = i.is_ppi_set;
 
-    n2sm_info_type = i.n2sm_info_type;
-    pdu_session_id = i.pdu_session_id;
-    ppi            = i.ppi;
+    n2sm_info_type             = i.n2sm_info_type;
+    pdu_session_id             = i.pdu_session_id;
+    ppi                        = i.ppi;
+    n1n2_failure_txf_notif_uri = i.n1n2_failure_txf_notif_uri;
   }
 
   std::string supi;
@@ -118,6 +120,7 @@ class itti_n1n2_message_transfer_request : public itti_msg_amf_app {
   std::string n2sm_info_type;
   bool is_ppi_set;
   uint8_t ppi;
+  std::string n1n2_failure_txf_notif_uri;  // TS 29.518 §5.4.6 failure notify
   // other parameters
 };
 

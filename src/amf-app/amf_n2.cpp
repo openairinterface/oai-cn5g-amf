@@ -327,8 +327,10 @@ void amf_n2::handle_itti_message(std::shared_ptr<itti_paging>& itti_msg) {
   std::shared_ptr<nas_context> nc = {};
   if (!amf_n1_inst->amf_ue_id_2_nas_context(itti_msg->amf_ue_ngap_id, nc)) {
     Logger::amf_n2().warn(
-        "No existed nas_context with amf_ue_ngap_id(" AMF_UE_NGAP_ID_FMT ")",
+        "No existed nas_context with amf_ue_ngap_id(" AMF_UE_NGAP_ID_FMT
+        "), skipping paging",
         itti_msg->amf_ue_ngap_id);
+    return;
   }
   // Network stops sending paging messages since the mobile reachable timer
   // expires
@@ -342,23 +344,110 @@ void amf_n2::handle_itti_message(std::shared_ptr<itti_paging>& itti_msg) {
       unc->s_setid, unc->s_pointer, unc->s_tmsi);
   paging_msg.setUePagingIdentity(unc->s_setid, unc->s_pointer, unc->s_tmsi);
 
-  std ::vector<struct Tai_s> list;
-  Tai_t tai = {};
-  tai.mcc   = unc->tai.mcc;
-  tai.mnc   = unc->tai.mnc;
-  tai.tac   = unc->tai.tac;
+  // Build TAI list for paging (fan-out on retransmission)
+  std::vector<Tai_t> tai_list_for_paging;
+  if (!itti_msg->is_retransmission || unc->registration_area_tai_list.empty()) {
+    Tai_t t = {};
+    t.mcc   = unc->tai.mcc;
+    t.mnc   = unc->tai.mnc;
+    t.tac   = unc->tai.tac;
+    tai_list_for_paging.push_back(t);
+    Logger::amf_n2().debug(
+        "Paging TAI list: single TAI (mcc=%s mnc=%s tac=%u)", t.mcc.c_str(),
+        t.mnc.c_str(), t.tac);
+  } else {
+    tai_list_for_paging = unc->registration_area_tai_list;
+    Logger::amf_n2().debug(
+        "Paging TAI list: registration area (%zu TAIs)",
+        tai_list_for_paging.size());
+  }
+  paging_msg.setTaiListForPaging(tai_list_for_paging);
 
-  list.push_back(tai);
-  paging_msg.setTaiListForPaging(list);
+  // Paging DRX — use the default DRX of the UE's last-serving gNB
+  {
+    std::shared_ptr<gnb_context> last_gc = {};
+    if (assoc_id_2_gnb_context(unc->gnb_assoc_id, last_gc)) {
+      paging_msg.setPagingDrx(last_gc->default_paging_drx);
+      Logger::amf_n2().debug(
+          "Paging DRX set from last-serving gNB (assoc_id=%d, drx=%d)",
+          unc->gnb_assoc_id, static_cast<int>(last_gc->default_paging_drx));
+    }
+  }
+
+  // Paging Priority — set from Paging Policy Indicator when provided
+  if (itti_msg->is_ppi_set) {
+    paging_msg.setPagingPriority(itti_msg->ppi);
+    Logger::amf_n2().debug("Paging Priority set from PPI=%d", itti_msg->ppi);
+  }
+
+  // Assistance Data for Paging — include if previously stored
+  // (PagingOrigin not set — 3GPP-only paging, current scope)
+  if (!unc->paging_assistance_data.empty()) {
+    paging_msg.setPagingAssistanceData(unc->paging_assistance_data);
+  }
 
   uint8_t buffer[BUFFER_SIZE_512];
   int encoded_size = paging_msg.Encode(buffer, BUFFER_SIZE_512);
-  bstring b        = blk2bstr(buffer, encoded_size);
+  if (encoded_size <= 0) {
+    Logger::amf_n2().error(
+        "Failed to encode NGAP Paging message for UE " AMF_UE_NGAP_ID_FMT,
+        itti_msg->amf_ue_ngap_id);
+    return;
+  }
+  bstring b = blk2bstr(buffer, encoded_size);
+  if (!b) {
+    Logger::amf_n2().error(
+        "Failed to allocate bstring for NGAP Paging message for "
+        "UE " AMF_UE_NGAP_ID_FMT,
+        itti_msg->amf_ue_ngap_id);
+    return;
+  }
 
-  amf_n2_inst->sctp_s_38412.sctp_send_msg(
-      unc->gnb_assoc_id, unc->sctp_stream_send, &b);
+  // Fan-out — send to every gNB that supports at least one TAI in the list
+  auto all_assoc_ids = get_all_assoc_ids();
+  int paging_sent    = 0;
+  for (const auto& assoc_id : all_assoc_ids) {
+    std::shared_ptr<gnb_context> gc = {};
+    if (!assoc_id_2_gnb_context(assoc_id, gc)) continue;
+
+    bool gnb_matches = false;
+    for (const auto& ta_item : gc->supported_ta_list) {
+      uint32_t gnb_tac = ta_item.getTac().get();
+      for (const auto& tai : tai_list_for_paging) {
+        if (gnb_tac == tai.tac) {
+          gnb_matches = true;
+          break;
+        }
+      }
+      if (gnb_matches) break;
+    }
+
+    if (gnb_matches) {
+      bstring b_copy = bstrcpy(b);
+      if (!b_copy) {
+        Logger::amf_n2().warn(
+            "Failed to copy paging bstring for gNB (assoc_id=%d), skipping",
+            assoc_id);
+        continue;
+      }
+      amf_n2_inst->sctp_s_38412.sctp_send_msg(assoc_id, 0, &b_copy);
+      oai::utils::utils::bdestroy_wrapper(&b_copy);
+      paging_sent++;
+      Logger::amf_n2().debug("Paging sent to gNB (assoc_id=%d)", assoc_id);
+    }
+  }
+
+  if (paging_sent == 0) {
+    Logger::amf_n2().warn(
+        "No gNB matched paging TAI list for amf_ue_ngap_id(" AMF_UE_NGAP_ID_FMT
+        ")",
+        itti_msg->amf_ue_ngap_id);
+  }
 
   oai::utils::utils::bdestroy_wrapper(&b);
+
+  // Start T3513 paging timer after NGAP Paging is sent (TS 24.501 §5.6.2.2)
+  amf_n1_inst->start_paging_timer(nc, itti_msg->amf_ue_ngap_id);
 }
 
 //------------------------------------------------------------------------------
