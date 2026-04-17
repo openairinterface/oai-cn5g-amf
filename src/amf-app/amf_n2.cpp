@@ -380,11 +380,8 @@ void amf_n2::handle_itti_message(std::shared_ptr<itti_paging>& itti_msg) {
     Logger::amf_n2().debug("Paging Priority set from PPI=%d", itti_msg->ppi);
   }
 
-  // Assistance Data for Paging — include if previously stored
-  // (PagingOrigin not set — 3GPP-only paging, current scope)
-  if (!unc->paging_assistance_data.empty()) {
-    paging_msg.setPagingAssistanceData(unc->paging_assistance_data);
-  }
+  // TODO: Assistance Data for Paging — include if previously stored
+  // TODO: PagingOrigin
 
   uint8_t buffer[BUFFER_SIZE_512];
   int encoded_size = paging_msg.Encode(buffer, BUFFER_SIZE_512);
