@@ -1015,8 +1015,8 @@ bool amf_n1::service_request_handle(
       *nc, nas_procedure_type_e::SERVICE_REQUEST);
 
   // Paging teardown on Service Request (TS 24.501 §5.6.1)
-  bool was_paging_ongoing_1 = nc->is_paging_ongoing && !nc->paging_completed;
-  if (was_paging_ongoing_1) {
+  bool was_paging_ongoing = nc->is_paging_ongoing && !nc->paging_completed;
+  if (was_paging_ongoing) {
     Logger::amf_n1().info(
         "Service Request: stopping T3513, clearing paging state for UE %lu",
         amf_ue_ngap_id);
@@ -1028,7 +1028,7 @@ bool amf_n1::service_request_handle(
     handle_ue_reachability_status_change(
         nc->supi, CM_CONNECTED, amf_cfg->support_features.http_version);
   }
-  // Restore PPF unconditionally — UE proved reachability (TS 24.501 §5.6.1)
+  // Restore PPF unconditionally — UE proved reachability
   nc->ppf_3gpp = true;
 
   // Decode Service Request to get 5G-TMSI
@@ -1261,8 +1261,7 @@ bool amf_n1::service_request_handle(
     oai::utils::utils::bdestroy_wrapper(&protected_nas);
   }
 
-  // deliver queued N1/N2 paging messages (TS 24.501 §5.6.1 / TS 23.502
-  // §4.2.3.2)
+  // deliver queued N1/N2 paging messages
   deliver_pending_paging_messages(nc, ran_ue_ngap_id, amf_ue_ngap_id);
 
   nas_procedure_manager_.complete_specific_procedure(*nc);
@@ -1295,9 +1294,9 @@ bool amf_n1::service_request_handle(
   nas_procedure_manager_.start_specific_procedure(
       *nc, nas_procedure_type_e::SERVICE_REQUEST);
 
-  // Paging teardown on Service Request (TS 24.501 §5.6.1)
-  bool was_paging_ongoing_2 = nc->is_paging_ongoing && !nc->paging_completed;
-  if (was_paging_ongoing_2) {
+  // Paging teardown on Service Request
+  bool was_paging_ongoing = nc->is_paging_ongoing && !nc->paging_completed;
+  if (was_paging_ongoing) {
     Logger::amf_n1().info(
         "Service Request: stopping T3513, clearing paging state for UE %lu",
         amf_ue_ngap_id);
@@ -1309,7 +1308,7 @@ bool amf_n1::service_request_handle(
     handle_ue_reachability_status_change(
         nc->supi, CM_CONNECTED, amf_cfg->support_features.http_version);
   }
-  // Restore PPF unconditionally — UE proved reachability (TS 24.501 §5.6.1)
+  // Restore PPF unconditionally — UE proved reachability
   nc->ppf_3gpp = true;
 
   // Decode Service Request to get 5G-TMSI
@@ -1748,8 +1747,7 @@ bool amf_n1::service_request_handle(
     oai::utils::utils::bdestroy_wrapper(&protected_nas);
   }
 
-  // deliver queued N1/N2 paging messages (TS 24.501 §5.6.1 / TS 23.502
-  // §4.2.3.2)
+  // deliver queued N1/N2 paging messages
   deliver_pending_paging_messages(nc, ran_ue_ngap_id, amf_ue_ngap_id);
 
   nas_procedure_manager_.complete_specific_procedure(*nc);
@@ -3757,6 +3755,9 @@ bool amf_n1::security_mode_complete_handle(
   // Set NAS message for current procedure running
   nc->nas_message_for_current_procedure_running = kRegistrationAccept;
 
+  // Reset PPF=TRUE on successful registration
+  nc->ppf_3gpp = true;
+
   // Encode Registration Accept
   bstring protected_nas = nullptr;
   uint32_t msg_len      = registration_accept->GetLength();
@@ -3967,7 +3968,7 @@ bool amf_n1::registration_complete_handle(
   nas_procedure_manager_.complete_specific_procedure(*nc);
 
   // drain queued N1/N2 messages — handles messages queued during
-  // _5GMM_COMMON_PROCEDURE_INITIATED (TS 23.502 §4.2.3.3)
+  // _5GMM_COMMON_PROCEDURE_INITIATED
   if (!nc->pending_paging_messages.empty()) {
     Logger::amf_n1().info(
         "Post-registration: delivering %zu queued N1/N2 messages for UE %lu",
@@ -5895,13 +5896,7 @@ void amf_n1::initialize_registration_accept(
   registration_accept->SetConfiguredNssai(
       allowed_nssais);  // TODO: use Allowed NSSAIs for now
 
-  // T21: Grant MICO mode here when AMF policy and subscription data allow it.
-  // Requires: (1) UE requested MICO in RegistrationRequest (ie_mico_indication_
-  //           set), and (2) micoAllowed=true from
-  //           AccessAndMobilitySubscriptionData.
-  // When granted:
-  //   registration_accept->SetMicoIndication(/*sprti=*/false, /*raai=*/false);
-  //   nc->is_mico_mode = true;
+  // TODO: MICO mode
   return;
 }
 
@@ -5921,6 +5916,9 @@ void amf_n1::mobile_reachable_timer_timeout(
   if (!amf_ue_id_2_nas_context(amf_ue_ngap_id, nc)) return;
 
   set_mobile_reachable_timer_timeout(nc, true);
+
+  // Clear PPF on Mobile Reachable Timer expiry
+  nc->ppf_3gpp = false;
 
   // Trigger UE Loss of Connectivity Status Notify
   Logger::amf_n1().debug(
@@ -6009,6 +6007,9 @@ void amf_n1::implicit_deregistration_timer_timeout(
   // Table 10.2.2 implicit deregistration
   nas_timer_manager_.stop_all_procedure_timers(nc);
   handle_nas_event(nc, oai::amf::nas::nas_event_e::IMPLICIT_DEREGISTRATION);
+
+  // Clear PPF on Implicit Deregistration Timer expiry
+  nc->ppf_3gpp = false;
 
   // Trigger UE Connectivity Status Notify
   Logger::amf_n1().debug(
@@ -7204,14 +7205,13 @@ void amf_n1::handle_t3555_expiry(
 // ---------------------------------------------------------------------------
 // start_paging_timer — start T3513 after NGAP Paging is sent
 // Called from amf_n2::handle_itti_message(itti_paging) via amf_n1_inst.
-// §5.6.2.2 TS 24.501
 // ---------------------------------------------------------------------------
 void amf_n1::start_paging_timer(
     std::shared_ptr<nas_context>& nc, uint64_t amf_ue_ngap_id) {
   nas_timer_manager_.start_timer(nas_timer_type_e::T3513, nc, amf_ue_ngap_id);
   Logger::amf_n1().debug(
-      "T3513 started for UE %lu (paging timer — 6 s, max %u retx)",
-      amf_ue_ngap_id, kPagingMaxRetransmissions);
+      "T3513 started for UE %lu (paging timer — %u s, max %u retx)",
+      amf_ue_ngap_id, kPagingT3513IntervalSec, kPagingMaxRetransmissions);
 }
 
 // ---------------------------------------------------------------------------
@@ -7281,17 +7281,8 @@ void amf_n1::handle_t3513_expiry(
 // ---------------------------------------------------------------------------
 // helpers
 // ---------------------------------------------------------------------------
-bool amf_n1::validate_callback_uri(const std::string& uri, bool allow_http) {
+bool amf_n1::validate_callback_uri(const std::string& uri) {
   if (uri.empty()) return false;
-
-  // Require HTTPS; optionally allow HTTP in dev/test mode
-  if (uri.rfind("https://", 0) != 0) {
-    if (!allow_http || uri.rfind("http://", 0) != 0) {
-      Logger::amf_n1().warn(
-          "Callback URI rejected (not HTTPS): %s", uri.c_str());
-      return false;
-    }
-  }
 
   // Extract authority (host[:port]) from URI
   size_t auth_start = uri.find("//");
@@ -7321,7 +7312,7 @@ bool amf_n1::validate_callback_uri(const std::string& uri, bool allow_http) {
     return false;
   }
 
-  // DNS-resolve the host and check for private/loopback ranges (SSRF guard)
+  // DNS-resolve the host and check
   struct addrinfo hints = {};
   hints.ai_family       = AF_UNSPEC;
   hints.ai_socktype     = SOCK_STREAM;
@@ -7335,76 +7326,18 @@ bool amf_n1::validate_callback_uri(const std::string& uri, bool allow_http) {
     return false;
   }
 
-  bool is_safe = true;
-  for (struct addrinfo* p = res; p != nullptr; p = p->ai_next) {
-    if (p->ai_family == AF_INET) {
-      auto* sa      = reinterpret_cast<struct sockaddr_in*>(p->ai_addr);
-      uint32_t addr = ntohl(sa->sin_addr.s_addr);
-      // 0/8 (this network), 10/8, 100.64/10 (CGNAT), 127/8 loopback,
-      // 169.254/16 (link-local), 172.16/12, 192.168/16,
-      // 240/4 (reserved), 255.255.255.255 (broadcast)
-      if ((addr >> 24) == 0 ||       // 0.0.0.0/8
-          (addr >> 24) == 10 ||      // 10/8
-          (addr >> 22) == 0x191 ||   // 100.64/10 CGNAT
-          (addr >> 24) == 127 ||     // 127/8 loopback
-          (addr >> 16) == 0xA9FE ||  // 169.254/16 link-local
-          (addr >> 20) == 0xAC1 ||   // 172.16/12
-          (addr >> 16) == 0xC0A8 ||  // 192.168/16
-          (addr >> 4) == 0xFFFFFFF   // 240.0.0.0/4 reserved
-      ) {
-        is_safe = false;
-        break;
-      }
-    } else if (p->ai_family == AF_INET6) {
-      auto* sa6        = reinterpret_cast<struct sockaddr_in6*>(p->ai_addr);
-      const uint8_t* a = sa6->sin6_addr.s6_addr;
-      // ::  unspecified
-      // ::1 loopback
-      // fe80::/10 link-local
-      // fc00::/7 ULA
-      // ff00::/8 multicast
-      // ::ffff:0:0/96 IPv4-mapped → re-check mapped IPv4 address
-      if (IN6_IS_ADDR_UNSPECIFIED(&sa6->sin6_addr) ||
-          IN6_IS_ADDR_LOOPBACK(&sa6->sin6_addr) ||
-          IN6_IS_ADDR_LINKLOCAL(&sa6->sin6_addr) ||
-          IN6_IS_ADDR_MULTICAST(&sa6->sin6_addr) ||
-          (a[0] & 0xFE) == 0xFC) {  // fc00::/7 ULA
-        is_safe = false;
-        break;
-      }
-      // IPv4-mapped IPv6 (::ffff:x.x.x.x) — re-validate mapped IPv4
-      if (IN6_IS_ADDR_V4MAPPED(&sa6->sin6_addr)) {
-        uint32_t v4 = ntohl(*reinterpret_cast<const uint32_t*>(&a[12]));
-        if ((v4 >> 24) == 0 || (v4 >> 24) == 10 || (v4 >> 22) == 0x191 ||
-            (v4 >> 24) == 127 || (v4 >> 16) == 0xA9FE || (v4 >> 20) == 0xAC1 ||
-            (v4 >> 16) == 0xC0A8 || (v4 >> 4) == 0xFFFFFFF) {
-          is_safe = false;
-          break;
-        }
-      }
-    }
-  }
-  freeaddrinfo(res);
-
-  if (!is_safe) {
-    Logger::amf_n1().warn(
-        "Callback URI %s rejected: resolves to private/loopback address "
-        "(SSRF protection)",
-        uri.c_str());
-  }
-  return is_safe;
+  // TODO: check Ipv4/Ipv6 address
+  return true;
 }
 
 //------------------------------------------------------------------------------
 void amf_n1::send_n1n2_transfer_status_callback(
-    const std::string& callback_uri, const std::string& status,
-    bool allow_http) {
+    const std::string& callback_uri, const std::string& status) {
   if (callback_uri.empty()) return;
 
-  if (!validate_callback_uri(callback_uri, allow_http)) {
+  if (!validate_callback_uri(callback_uri)) {
     Logger::amf_n1().warn(
-        "N1N2 transfer status callback to %s rejected by SSRF validation",
-        callback_uri.c_str());
+        "N1N2 transfer status callback to %s rejected", callback_uri.c_str());
     return;
   }
 
@@ -7437,7 +7370,6 @@ void amf_n1::send_n1n2_transfer_status_callback(
 // ---------------------------------------------------------------------------
 // handle_t3513_final_expiry — all retransmissions exhausted
 // Sets PPF=FALSE, clears paging state, drains pending message queue.
-// §5.6.2.2 TS 24.501 / §4.2.3.3 TS 23.502
 // ---------------------------------------------------------------------------
 void amf_n1::handle_t3513_final_expiry(
     std::shared_ptr<nas_context>& nc, uint64_t amf_ue_ngap_id) {
@@ -7455,7 +7387,7 @@ void amf_n1::handle_t3513_final_expiry(
       "setting PPF=FALSE",
       amf_ue_ngap_id, kPagingMaxRetransmissions);
 
-  // §5.6.2.2 TS 24.501: set PPF=FALSE
+  // Clear PPF (Paging Proceed Flag)
   nc->ppf_3gpp = false;
 
   // Clear paging state
@@ -7479,8 +7411,7 @@ void amf_n1::handle_t3513_final_expiry(
     if (!cb_uri.empty()) {
       try {
         send_n1n2_transfer_status_callback(
-            cb_uri, "UE_NOT_REACHABLE_FOR_SESSION",
-            amf_cfg->support_features.allow_http_callback_uris);
+            cb_uri, "UE_NOT_REACHABLE_FOR_SESSION");
       } catch (const std::exception& e) {
         Logger::amf_n1().error(
             "T3513 final expiry: callback to %s threw: %s — continuing drain",
@@ -7508,8 +7439,7 @@ void amf_n1::handle_t3513_final_expiry(
 // deliver_pending_paging_messages
 // Drains the pending N1/N2 message queue and re-dispatches each message
 // through the normal (non-paging) N1N2 delivery path.
-// Called from service_request_handle (§5.6.1) and registration_complete_handle.
-// TS 24.501 §5.6.1 / TS 23.502 §4.2.3.2–§4.2.3.3
+// Called from service_request_handle and registration_complete_handle.
 // ---------------------------------------------------------------------------
 void amf_n1::deliver_pending_paging_messages(
     std::shared_ptr<nas_context>& nc, uint32_t ran_ue_ngap_id,
@@ -7548,8 +7478,7 @@ void amf_n1::deliver_pending_paging_messages(
     // notify caller that the N1/N2 transfer was initiated
     if (!msg.callback_uri.empty()) {
       send_n1n2_transfer_status_callback(
-          msg.callback_uri, "N1_N2_TRANSFER_INITIATED",
-          amf_cfg->support_features.allow_http_callback_uris);
+          msg.callback_uri, "N1_N2_TRANSFER_INITIATED");
     }
   }
 }

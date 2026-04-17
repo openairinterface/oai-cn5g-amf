@@ -3,6 +3,7 @@
  */
 
 #include "nas_timer_manager.hpp"
+#include "amf.hpp"
 
 #include <string>
 
@@ -40,7 +41,8 @@ const nas_timer_config_t
         {nas_timer_type_e::T3555, 6, 4, 10u, "T3555"},
         // idx 5 — T3513: Paging (§5.6.2.2.1); max_retransmissions=2 per plan §2
         // itti_task_id = TASK_AMF_T3513_TIMER_EXPIRE = 11
-        {nas_timer_type_e::T3513, 6, 2, 11u, "T3513"},
+        {nas_timer_type_e::T3513, kPagingT3513IntervalSec,
+         kPagingMaxRetransmissions, 11u, "T3513"},
         // idx 6 — T3565: Notification (§5.6.3)
         // itti_task_id = TASK_AMF_T3565_TIMER_EXPIRE = 12
         {nas_timer_type_e::T3565, 6, 4, 12u, "T3565"},

@@ -143,7 +143,7 @@ class nas_context {
   timer_id_t mobile_reachable_timer;
   timer_id_t implicit_deregistration_timer;
 
-  // Paging Proceed Flag — §5.6.2.1 TS 24.501
+  // Paging proceed flag  (reachable or not for paging)
   bool ppf_3gpp = true;  // final T3513 expiry/ implicit deregistration)
 
   // Paging lifecycle state — §5.6.2 TS 24.501
@@ -151,7 +151,7 @@ class nas_context {
   uint8_t paging_effective_ppi = 0;
   bool paging_completed        = false;
   bool is_mico_mode =
-      false;  // T21: true when MICO mode is negotiated (TS 24.501 §5.5.1.3)
+      false;  // true when MICO mode is negotiated (TS 24.501 §5.5.1.3)
 
   // Pending N1/N2 messages awaiting delivery after paging response
   std::queue<pending_n1n2_msg_t> pending_paging_messages;

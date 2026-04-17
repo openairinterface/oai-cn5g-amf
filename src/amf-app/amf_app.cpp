@@ -554,9 +554,7 @@ void amf_app::handle_itti_message(
       Logger::amf_app().info(
           "UE SUPI %s is CM-CONNECTED — delivering N1/N2 directly",
           itti_msg.supi.c_str());
-      // TS 23.502 §4.2.3.3: CM-CONNECTED → forward N1/N2 directly without
-      // paging. Build itti_downlink_nas_transfer mirroring the is_n1sm_set /
-      // is_n2sm_set branch below (no fall-through possible in if/else-if).
+      // CM-CONNECTED → forward N1/N2 directly without paging
       auto dl_msg = std::make_shared<itti_downlink_nas_transfer>(
           TASK_AMF_APP, TASK_AMF_N1);
       if (itti_msg.is_n1sm_set) {
@@ -592,12 +590,12 @@ void amf_app::handle_itti_message(
 
     // --- CM-IDLE path ---
 
-    // 4. Check PPF (Paging Proceed Flag) — TS 24.501 §5.6.2.1
+    // 4. Verify whether UE is reachable
     if (!nc->ppf_3gpp) {
       Logger::amf_app().info(
           "PPF=FALSE for SUPI %s — UE not reachable, rejecting N1N2 transfer",
           itti_msg.supi.c_str());
-      // T17 will send N1N2MessageTransferStatus callback here
+      // TODO: send N1N2MessageTransferStatus callback with cause UE_UNREACHABLE
       return;
     }
 
@@ -623,9 +621,8 @@ void amf_app::handle_itti_message(
       return;
     }
 
-    // MICO Mode guard — TS 24.501 §5.5.1.3
-    // For MICO UEs, there is no network-initiated paging; queue for
-    // UE-initiated delivery
+    // MICO Mode guard — For MICO UEs, there is no network-initiated paging;
+    // queue for UE-initiated delivery
     if (nc->is_mico_mode) {
       Logger::amf_app().info(
           "UE SUPI %s is in MICO mode — queuing N1/N2 for UE-initiated "
@@ -655,6 +652,7 @@ void amf_app::handle_itti_message(
           itti_msg.supi.c_str());
       nc->is_paging_ongoing = false;
     }
+
   } else if (itti_msg.is_nrppa_pdu_set) {
     Logger::amf_app().info(
         "Handle ITTI N1N2 Message Transfer Request for NRPPa PDU");

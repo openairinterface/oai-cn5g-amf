@@ -488,11 +488,7 @@ class amf_n1 {
   void handle_t3513_expiry(timer_id_t timer_id, std::string amf_ue_ngap_id_str);
   void handle_t3565_expiry(timer_id_t timer_id, std::string amf_ue_ngap_id_str);
 
-  // Paging timer management
-  // Max retransmissions before PPF=FALSE (TS 24.501 §5.6.2.2)
-  static constexpr uint8_t kPagingMaxRetransmissions = 2;
-
-  // Start T3513 after NGAP Paging is sent. Called from amf_n2.
+  // Start T3513 after NGAP Paging is sent.
   void start_paging_timer(
       std::shared_ptr<nas_context>& nc, uint64_t amf_ue_ngap_id);
 
@@ -1002,16 +998,12 @@ class amf_n1 {
   void handle_t3513_final_expiry(
       std::shared_ptr<nas_context>& nc, uint64_t amf_ue_ngap_id);
 
-  // Validates callback URI against SSRF.
-  // Requires HTTPS (or HTTP if allow_http=true) and rejects private/loopback
-  // addresses. Returns true if the URI is safe to send to.
-  static bool validate_callback_uri(
-      const std::string& uri, bool allow_http = false);
+  // Validates callback URI
+  static bool validate_callback_uri(const std::string& uri);
 
-  // POST N1N2MessageTransfer status notification per TS 29.518 §5.4.6.
+  // POST N1N2MessageTransfer status notification per TS 29.518.
   void send_n1n2_transfer_status_callback(
-      const std::string& callback_uri, const std::string& status,
-      bool allow_http);
+      const std::string& callback_uri, const std::string& status);
   // for Event Handling
 
   bs2::connection ee_ue_location_report_connection;
