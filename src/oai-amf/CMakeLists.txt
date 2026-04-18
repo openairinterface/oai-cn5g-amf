@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: LicenseRef-CSSL-1.0
 
-cmake_minimum_required (VERSION 3.0.2)
+cmake_minimum_required (VERSION 3.16.3)
 
 ###########################################
 # macros to define options as there is numerous options in oai
@@ -361,9 +361,22 @@ ENDIF(STATIC_LINKING)
 target_link_libraries(amf ${ASAN}
       -Wl,--start-group AMF_APP AMF_COMMON_TYPES CONTEXTS AMF_SCTP NGAP_LIB_C NGAP_LIB_C_IES AMF_NGAP AMF_NAS AMF_SECU_5GAKA AMF_SECU_NAS AMF_UTILS AMF_SBI_SERVER sctp fmt spdlog -Wl,--end-group pthread ${NETTLE_LIBRARIES} ${MySQL_LIBRARY} ${CRYPTO_LIBRARIES} ${OPENSSL_LIBRARIES} nghttp2_asio boost_system boost_thread boost_chrono ssl crypt gmp pistache curl yaml-cpp cpr::cpr)
 
+# PCH: nlohmann/json is included by nearly every translation unit
+target_precompile_headers(amf PRIVATE <nlohmann/json.hpp>)
+
 add_boolean_option(USE_LTTNG  False "Activate the LTTNG tracer, a debugging/monitoring framework" ON)
 if (USE_LTTNG)
     message("Using the lttng build variant")
     add_definitions("-DLOGGER_CAN_USE_LTTNG")
     target_link_libraries(amf -ldl lttng-ust)
 endif ()
+
+# ---------- Unity build pilot: model files (opt-in) ----------
+option(AMF_UNITY_BUILD_MODEL_PILOT "Enable unity builds for model files (batch size 50)" OFF)
+if(AMF_UNITY_BUILD_MODEL_PILOT)
+  set_target_properties(amf PROPERTIES
+    UNITY_BUILD ON
+    UNITY_BUILD_BATCH_SIZE 50
+  )
+endif()
+# ------------------------------------------------------------
