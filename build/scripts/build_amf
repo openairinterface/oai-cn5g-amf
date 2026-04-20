@@ -42,7 +42,7 @@ function help()
 	  echo_error "  -h, --help                                Print this help."
 	  echo_error "  -I, --install-deps                        Check installed software necessary to build and run AMF (support $SUPPORTED_DISTRO)."
 	  echo_error "  -i, --install-min-deps                    Check installed software necessary to run a statically linked AMF (support $SUPPORTED_DISTRO)."
-	  echo_error "  -j, --jobs                                Multiple jobs for compiling."
+	  echo_error "  -j, --jobs [N]                            Multiple jobs for compiling (default: nproc)."
 	  echo_error "  -v, --verbose                             Build process verbose."
 	  echo_error "  -V, --Verbose                             CMake only build process verbose, display compilation warnings and errors."
 	  echo_error " "
@@ -108,9 +108,28 @@ function main()
         var_check_install_min_deps=1
         shift;
         ;;
-      -j | --jobs)
-        make_args="$make_args -j`nproc`"
+      --jobs=*)
+        jobs_count="${1#*=}"
+        if [[ ! "$jobs_count" =~ ^[0-9]+$ ]]; then
+          echo_error "Invalid jobs value: $jobs_count"
+          return 1
+        fi
+        make_args="$make_args -j${jobs_count}"
         shift;
+        ;;
+      -j[0-9]*)
+        jobs_count="${1#-j}"
+        make_args="$make_args -j${jobs_count}"
+        shift;
+        ;;
+      -j | --jobs)
+        if [[ -n "$2" && "$2" =~ ^[0-9]+$ ]]; then
+          make_args="$make_args -j${2}"
+          shift 2;
+        else
+          make_args="$make_args -j`nproc`"
+          shift;
+        fi
         ;;
       -v | --verbose)
         echo "Make build process verbose"
@@ -193,9 +212,60 @@ function main()
     mkdir -m 777 -p -v build
   fi
 
+  local CMAKE_GENERATOR_ARGS=()
+  local desired_gen="Unix Makefiles"
+  local effective_gen=""
+  local cached_gen=""
+  local build_dir=$OPENAIRCN_DIR/build/amf/build
+  local cache_file=$build_dir/CMakeCache.txt
+  local config_stamp=$build_dir/.build_amf_last_config
+  local build_system_file=""
+  local configure_fingerprint=""
+  local previous_fingerprint=""
+  local -i should_configure=1
+
+  # Detect Ninja; fall back to cmake default generator (Unix Makefiles) if not found
+  if command -v ninja >/dev/null 2>&1; then
+    CMAKE_GENERATOR_ARGS=(-G Ninja)
+    desired_gen="Ninja"
+  fi
+  effective_gen="$desired_gen"
+
+  # Detect generator mismatch to avoid a confusing CMake configure failure when
+  # an existing build tree was configured with a different generator (e.g. the
+  # user previously built with Make and Ninja is now auto-selected). Keep using
+  # the cached generator unless the user requests --clean.
+  if [[ -f "$cache_file" ]]; then
+    cached_gen=$(grep "^CMAKE_GENERATOR:INTERNAL=" "$cache_file" 2>/dev/null | cut -d= -f2)
+    if [[ -n "$cached_gen" && "$cached_gen" != "$desired_gen" ]]; then
+      echo_warning "Generator mismatch (cached=${cached_gen}, desired=${desired_gen}). Reusing cached generator; run with --clean to switch."
+      CMAKE_GENERATOR_ARGS=(-G "$cached_gen")
+      effective_gen="$cached_gen"
+    fi
+  fi
+
+  if [[ "$effective_gen" == "Ninja" ]]; then
+    build_system_file="$build_dir/build.ninja"
+  else
+    build_system_file="$build_dir/Makefile"
+  fi
+
+  configure_fingerprint="cmake_args=${cmake_args};generator=${effective_gen}"
+  if [[ -f "$cache_file" && -f "$build_system_file" && -f "$config_stamp" ]]; then
+    previous_fingerprint=$(cat "$config_stamp")
+    if [[ "$previous_fingerprint" == "$configure_fingerprint" ]]; then
+      should_configure=0
+    fi
+  fi
+
   cd ./build
-  $CMAKE $cmake_args .. > /dev/null
-  ret=$?;[[ $ret -ne 0 ]] && return $ret
+  if [[ $should_configure -eq 1 ]]; then
+    $CMAKE $cmake_args "${CMAKE_GENERATOR_ARGS[@]}" .. > /dev/null
+    ret=$?;[[ $ret -ne 0 ]] && return $ret
+    printf "%s\n" "$configure_fingerprint" > "$config_stamp"
+  elif [[ $verbose -eq 1 ]]; then
+    echo_info "Skipping CMake configure (generator and CMake arguments unchanged)"
+  fi
   compilations amf amf $OPENAIRCN_DIR/build/amf/build/amf $verbose
   ret=$?;[[ $ret -ne 0 ]] && return $ret
   # For daemon should not be group writable

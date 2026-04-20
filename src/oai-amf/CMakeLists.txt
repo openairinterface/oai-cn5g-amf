@@ -361,8 +361,9 @@ ENDIF(STATIC_LINKING)
 target_link_libraries(amf ${ASAN}
       -Wl,--start-group AMF_APP AMF_COMMON_TYPES CONTEXTS AMF_SCTP NGAP_LIB_C NGAP_LIB_C_IES AMF_NGAP AMF_NAS AMF_SECU_5GAKA AMF_SECU_NAS AMF_UTILS AMF_SBI_SERVER sctp fmt spdlog -Wl,--end-group pthread ${NETTLE_LIBRARIES} ${MySQL_LIBRARY} ${CRYPTO_LIBRARIES} ${OPENSSL_LIBRARIES} nghttp2_asio boost_system boost_thread boost_chrono ssl crypt gmp pistache curl yaml-cpp cpr::cpr)
 
-# PCH: nlohmann/json is included by nearly every translation unit
-target_precompile_headers(amf PRIVATE <nlohmann/json.hpp>)
+# PCH: nlohmann/json is included by nearly every C++ translation unit.
+# Restrict PCH to C++ to avoid compiling this C++-only header in C mode.
+target_precompile_headers(amf PRIVATE "$<$<COMPILE_LANGUAGE:CXX>:${SRC_TOP_DIR}/oai-amf/amf_pch.hpp>")
 
 add_boolean_option(USE_LTTNG  False "Activate the LTTNG tracer, a debugging/monitoring framework" ON)
 if (USE_LTTNG)
