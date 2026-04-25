@@ -190,6 +190,9 @@ class amf_n2 : public oai::ngap::ngap_app {
    */
   void handle_itti_message(std::shared_ptr<itti_paging>& itti_msg);
 
+  bool has_paging_targets(
+      uint64_t amf_ue_ngap_id, uint32_t ran_ue_ngap_id, bool is_retransmission);
+
   /*
    * Handle ITTI message (DownlinkUEAssociatedNRPPaTransport)
    * @param [std::shared_ptr<itti_downlink_ue_associated_nrppa_transport>&]:
@@ -394,6 +397,12 @@ class amf_n2 : public oai::ngap::ngap_app {
       oai::_3gpp::model::N2InformationNotification& n2_info_notification);
 
  private:
+  std::vector<Tai_t> build_paging_tai_list(
+      const std::shared_ptr<ue_ngap_context>& unc,
+      bool is_retransmission) const;
+  std::vector<sctp_assoc_id_t> resolve_paging_targets(
+      const std::vector<Tai_t>& tai_list_for_paging);
+
   // <RAN UE NGAP ID, gNB ID> <-> UE Context
   std::map<std::pair<uint32_t, uint32_t>, std::shared_ptr<ue_ngap_context>>
       ranid2uecontext;

@@ -70,8 +70,13 @@ typedef struct response_data_s {
 // Max retransmissions before PPF=FALSE
 static constexpr uint8_t kPagingMaxRetransmissions = 2;
 static constexpr uint32_t kPagingT3513IntervalSec  = 6;  // seconds per attempt
-// Paging queue depth limit, TODO: make it configurable
-static constexpr uint8_t kPagingMaxPendingMessages = 8;
+// Paging queue depth limit default. Controller code owns the admission policy.
+static constexpr uint8_t kPagingMaxPendingMessagesDefault           = 8;
+static constexpr uint32_t kPagingRegistrationDeferTimeoutSecDefault = 30;
+static constexpr uint32_t kPagingTemporaryUnreachableDeferTimeoutSecDefault =
+    30;
+static constexpr bool kPagingEnableSubscriptionNotificationsDefault = true;
+static constexpr bool kPagingEnableExtendedNgapIesDefault           = true;
 
 typedef struct auth_conf_s {
   std::string mysql_server;

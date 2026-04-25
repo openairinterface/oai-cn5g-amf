@@ -33,6 +33,45 @@ extern std::unique_ptr<oai::config::amf_config> amf_cfg;
 extern itti_mw* itti_inst;
 extern amf_app* amf_app_inst;
 
+namespace {
+nlohmann::json make_n1n2_success_body(
+    const amf_application::paging::admission_result& result) {
+  N1N2MessageTransferRspData rsp = {};
+  N1N2MessageTransferCause cause = {};
+  cause.setEnumValue(result.cause);
+  rsp.setCause(cause);
+  auto body = nlohmann::json(rsp);
+  if (result.cause ==
+          N1N2MessageTransferCause_anyOf::eN1N2MessageTransferCause_anyOf::
+              WAITING_FOR_ASYNCHRONOUS_TRANSFER &&
+      result.max_waiting_time.has_value()) {
+    body["maxWaitingTime"] = result.max_waiting_time.value();
+  }
+  return body;
+}
+
+nlohmann::json make_n1n2_error_body(
+    const amf_application::paging::admission_result& result) {
+  ProblemDetails problem = {};
+  problem.setStatus(result.http_status_code);
+  if (!result.problem_cause.empty()) {
+    problem.setCause(result.problem_cause);
+  }
+  if (!result.problem_detail.empty()) {
+    problem.setDetail(result.problem_detail);
+  }
+
+  N1N2MessageTransferError error = {};
+  error.setError(problem);
+  if (result.max_waiting_time.has_value()) {
+    N1N2MsgTxfrErrDetail detail = {};
+    detail.setMaxWaitingTime(result.max_waiting_time.value());
+    error.setErrInfo(detail);
+  }
+  return nlohmann::json(error);
+}
+}  // namespace
+
 //------------------------------------------------------------------------------
 void amf_http2_server::start() {
   boost::system::error_code ec;
@@ -1005,19 +1044,40 @@ void amf_http2_server::n1_n2_message_transfer_handler(
     return;
   }
 
-  response_json["cause"] =
-      n1_n2_message_transfer_cause_e2str[N1_N2_TRANSFER_INITIATED];
-  code = oai::common::sbi::http_status_code::OK;
-
-  // For Paging
   if (n1N2MessageTransferReqData.ppiIsSet()) {
     itti_msg->is_ppi_set = true;
     itti_msg->ppi        = n1N2MessageTransferReqData.getPpi();
-    response_json["cause"] =
-        n1_n2_message_transfer_cause_e2str[ATTEMPTING_TO_REACH_UE];
-    code = oai::common::sbi::http_status_code::ACCEPTED;
   } else {
     itti_msg->is_ppi_set = false;
+  }
+
+  itti_msg->is_skip_ind_set = n1N2MessageTransferReqData.skipIndIsSet();
+  if (itti_msg->is_skip_ind_set) {
+    itti_msg->skip_ind = n1N2MessageTransferReqData.isSkipInd();
+  }
+
+  itti_msg->is_last_msg_indication_set =
+      n1N2MessageTransferReqData.lastMsgIndicationIsSet();
+  if (itti_msg->is_last_msg_indication_set) {
+    itti_msg->last_msg_indication =
+        n1N2MessageTransferReqData.isLastMsgIndication();
+  }
+
+  itti_msg->is_lcs_correlation_id_set =
+      n1N2MessageTransferReqData.lcsCorrelationIdIsSet();
+  if (itti_msg->is_lcs_correlation_id_set) {
+    itti_msg->lcs_correlation_id =
+        n1N2MessageTransferReqData.getLcsCorrelationId();
+  }
+
+  itti_msg->is_arp_set = n1N2MessageTransferReqData.arpIsSet();
+  if (itti_msg->is_arp_set) {
+    itti_msg->arp = n1N2MessageTransferReqData.getArp();
+  }
+
+  itti_msg->is_r5qi_set = n1N2MessageTransferReqData.r5qiIsSet();
+  if (itti_msg->is_r5qi_set) {
+    itti_msg->r5qi = static_cast<uint8_t>(n1N2MessageTransferReqData.getR5qi());
   }
 
   // Store n1n2FailureTxfNotifURI
@@ -1026,16 +1086,64 @@ void amf_http2_server::n1_n2_message_transfer_handler(
         n1N2MessageTransferReqData.getN1n2FailureTxfNotifURI();
   }
 
-  // Send response to the NF Service Consumer (e.g., SMF)
-  res.write_head(code);
-  res.end(response_json.dump().c_str());
+  itti_msg->is_smf_reallocation_ind_set =
+      n1N2MessageTransferReqData.smfReallocationIndIsSet();
+  if (itti_msg->is_smf_reallocation_ind_set) {
+    itti_msg->smf_reallocation_ind =
+        n1N2MessageTransferReqData.isSmfReallocationInd();
+  }
 
-  // Process N1N2 Message Transfer Request in AMF APP
-  int ret = itti_inst->send_msg(itti_msg);
-  if (0 != ret) {
-    Logger::amf_server().error(
-        "Could not send ITTI message %s to task TASK_AMF_N2",
-        itti_msg->get_msg_name());
+  itti_msg->is_area_of_validity_set =
+      n1N2MessageTransferReqData.areaOfValidityIsSet();
+  if (itti_msg->is_area_of_validity_set) {
+    itti_msg->area_of_validity = n1N2MessageTransferReqData.getAreaOfValidity();
+  }
+
+  itti_msg->is_supported_features_set =
+      n1N2MessageTransferReqData.supportedFeaturesIsSet();
+  if (itti_msg->is_supported_features_set) {
+    itti_msg->supported_features =
+        n1N2MessageTransferReqData.getSupportedFeatures();
+  }
+
+  itti_msg->is_old_guami_set = n1N2MessageTransferReqData.oldGuamiIsSet();
+  if (itti_msg->is_old_guami_set) {
+    itti_msg->old_guami = n1N2MessageTransferReqData.getOldGuami();
+  }
+
+  itti_msg->is_ma_accepted_ind_set =
+      n1N2MessageTransferReqData.maAcceptedIndIsSet();
+  if (itti_msg->is_ma_accepted_ind_set) {
+    itti_msg->ma_accepted_ind = n1N2MessageTransferReqData.isMaAcceptedInd();
+  }
+
+  itti_msg->is_ext_buf_support_set =
+      n1N2MessageTransferReqData.extBufSupportIsSet();
+  if (itti_msg->is_ext_buf_support_set) {
+    itti_msg->ext_buf_support = n1N2MessageTransferReqData.isExtBufSupport();
+  }
+
+  itti_msg->is_target_access_set =
+      n1N2MessageTransferReqData.targetAccessIsSet();
+  if (itti_msg->is_target_access_set) {
+    itti_msg->target_access = n1N2MessageTransferReqData.getTargetAccess();
+  }
+
+  itti_msg->is_nf_id_set = n1N2MessageTransferReqData.nfIdIsSet();
+  if (itti_msg->is_nf_id_set) {
+    itti_msg->nf_id = n1N2MessageTransferReqData.getNfId();
+  }
+
+  auto result = amf_app_inst->handle_n1n2_message_transfer_request(*itti_msg);
+  header_map h;
+  h.emplace("content-type", header_value{"application/json"});
+  code = result.http_status_code;
+  if (result.is_error) {
+    res.write_head(code, h);
+    res.end(make_n1n2_error_body(result).dump().c_str());
+  } else {
+    res.write_head(code, h);
+    res.end(make_n1n2_success_body(result).dump().c_str());
   }
 
   oai::utils::utils::bdestroy_wrapper(&n1sm);

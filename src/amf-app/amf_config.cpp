@@ -579,6 +579,130 @@ void supported_encryption_algorithms::validate() {
 }
 
 //------------------------------------------------------------------------------
+paging_options::paging_options() {
+  m_max_transactions_per_ue = int_config_value(
+      AMF_CONFIG_PAGING_MAX_TRANSACTIONS_PER_UE,
+      AMF_CONFIG_PAGING_MAX_TRANSACTIONS_PER_UE_DEFAULT_VALUE);
+  m_max_transactions_per_ue.set_validation_interval(
+      AMF_CONFIG_PAGING_MAX_TRANSACTIONS_PER_UE_MIN_VALUE,
+      AMF_CONFIG_PAGING_MAX_TRANSACTIONS_PER_UE_MAX_VALUE);
+  m_registration_defer_timeout_sec = int_config_value(
+      AMF_CONFIG_PAGING_REGISTRATION_DEFER_TIMEOUT_SEC,
+      AMF_CONFIG_PAGING_REGISTRATION_DEFER_TIMEOUT_SEC_DEFAULT_VALUE);
+  m_registration_defer_timeout_sec.set_validation_interval(
+      AMF_CONFIG_PAGING_REGISTRATION_DEFER_TIMEOUT_SEC_MIN_VALUE,
+      AMF_CONFIG_PAGING_REGISTRATION_DEFER_TIMEOUT_SEC_MAX_VALUE);
+  m_temporary_unreachable_defer_timeout_sec = int_config_value(
+      AMF_CONFIG_PAGING_TEMPORARY_UNREACHABLE_DEFER_TIMEOUT_SEC,
+      AMF_CONFIG_PAGING_TEMPORARY_UNREACHABLE_DEFER_TIMEOUT_SEC_DEFAULT_VALUE);
+  m_temporary_unreachable_defer_timeout_sec.set_validation_interval(
+      AMF_CONFIG_PAGING_TEMPORARY_UNREACHABLE_DEFER_TIMEOUT_SEC_MIN_VALUE,
+      AMF_CONFIG_PAGING_TEMPORARY_UNREACHABLE_DEFER_TIMEOUT_SEC_MAX_VALUE);
+  m_enable_subscription_notifications = option_config_value(
+      AMF_CONFIG_PAGING_ENABLE_SUBSCRIPTION_NOTIFICATIONS,
+      AMF_CONFIG_PAGING_ENABLE_SUBSCRIPTION_NOTIFICATIONS_DEFAULT_VALUE);
+  m_enable_extended_ngap_ies = option_config_value(
+      AMF_CONFIG_PAGING_ENABLE_EXTENDED_NGAP_IES,
+      AMF_CONFIG_PAGING_ENABLE_EXTENDED_NGAP_IES_DEFAULT_VALUE);
+  m_set = true;
+}
+
+//------------------------------------------------------------------------------
+void paging_options::from_yaml(const YAML::Node& node) {
+  if (node[AMF_CONFIG_PAGING_MAX_TRANSACTIONS_PER_UE]) {
+    m_max_transactions_per_ue.from_yaml(
+        node[AMF_CONFIG_PAGING_MAX_TRANSACTIONS_PER_UE]);
+  }
+  if (node[AMF_CONFIG_PAGING_REGISTRATION_DEFER_TIMEOUT_SEC]) {
+    m_registration_defer_timeout_sec.from_yaml(
+        node[AMF_CONFIG_PAGING_REGISTRATION_DEFER_TIMEOUT_SEC]);
+  }
+  if (node[AMF_CONFIG_PAGING_TEMPORARY_UNREACHABLE_DEFER_TIMEOUT_SEC]) {
+    m_temporary_unreachable_defer_timeout_sec.from_yaml(
+        node[AMF_CONFIG_PAGING_TEMPORARY_UNREACHABLE_DEFER_TIMEOUT_SEC]);
+  }
+  if (node[AMF_CONFIG_PAGING_ENABLE_SUBSCRIPTION_NOTIFICATIONS]) {
+    m_enable_subscription_notifications.from_yaml(
+        node[AMF_CONFIG_PAGING_ENABLE_SUBSCRIPTION_NOTIFICATIONS]);
+  }
+  if (node[AMF_CONFIG_PAGING_ENABLE_EXTENDED_NGAP_IES]) {
+    m_enable_extended_ngap_ies.from_yaml(
+        node[AMF_CONFIG_PAGING_ENABLE_EXTENDED_NGAP_IES]);
+  }
+}
+
+//------------------------------------------------------------------------------
+void paging_options::validate() {
+  if (!m_set) return;
+  m_max_transactions_per_ue.validate();
+  m_registration_defer_timeout_sec.validate();
+  m_temporary_unreachable_defer_timeout_sec.validate();
+}
+
+//------------------------------------------------------------------------------
+std::string paging_options::to_string(const std::string& indent) const {
+  std::string out;
+  unsigned int inner_width = get_inner_width(indent.length());
+
+  out.append(indent).append(fmt::format(
+      BASE_FORMATTER, INNER_LIST_ELEM,
+      AMF_CONFIG_PAGING_MAX_TRANSACTIONS_PER_UE_LABEL, inner_width,
+      m_max_transactions_per_ue.get_value()));
+  out.append(indent).append(fmt::format(
+      BASE_FORMATTER, EMPTY_LIST_ELEM,
+      AMF_CONFIG_PAGING_REGISTRATION_DEFER_TIMEOUT_SEC_LABEL, inner_width,
+      m_registration_defer_timeout_sec.get_value()));
+  out.append(indent).append(fmt::format(
+      BASE_FORMATTER, EMPTY_LIST_ELEM,
+      AMF_CONFIG_PAGING_TEMPORARY_UNREACHABLE_DEFER_TIMEOUT_SEC_LABEL,
+      inner_width, m_temporary_unreachable_defer_timeout_sec.get_value()));
+
+  std::string subscription_notifications =
+      m_enable_subscription_notifications.get_value() ?
+          AMF_CONFIG_OPTION_YES_STR :
+          AMF_CONFIG_OPTION_NO_STR;
+  out.append(indent).append(fmt::format(
+      BASE_FORMATTER, EMPTY_LIST_ELEM,
+      AMF_CONFIG_PAGING_ENABLE_SUBSCRIPTION_NOTIFICATIONS_LABEL, inner_width,
+      subscription_notifications));
+
+  std::string extended_ngap_ies = m_enable_extended_ngap_ies.get_value() ?
+                                      AMF_CONFIG_OPTION_YES_STR :
+                                      AMF_CONFIG_OPTION_NO_STR;
+  out.append(indent).append(fmt::format(
+      BASE_FORMATTER, EMPTY_LIST_ELEM,
+      AMF_CONFIG_PAGING_ENABLE_EXTENDED_NGAP_IES_LABEL, inner_width,
+      extended_ngap_ies));
+
+  return out;
+}
+
+//------------------------------------------------------------------------------
+uint32_t paging_options::get_max_transactions_per_ue() const {
+  return m_max_transactions_per_ue.get_value();
+}
+
+//------------------------------------------------------------------------------
+uint32_t paging_options::get_registration_defer_timeout_sec() const {
+  return m_registration_defer_timeout_sec.get_value();
+}
+
+//------------------------------------------------------------------------------
+uint32_t paging_options::get_temporary_unreachable_defer_timeout_sec() const {
+  return m_temporary_unreachable_defer_timeout_sec.get_value();
+}
+
+//------------------------------------------------------------------------------
+bool paging_options::get_enable_subscription_notifications() const {
+  return m_enable_subscription_notifications.get_value();
+}
+
+//------------------------------------------------------------------------------
+bool paging_options::get_enable_extended_ngap_ies() const {
+  return m_enable_extended_ngap_ies.get_value();
+}
+
+//------------------------------------------------------------------------------
 amf::amf(
     const std::string& name, const std::string& host, const sbi_interface& sbi,
     const local_interface& local)
@@ -637,6 +761,10 @@ void amf::from_yaml(const YAML::Node& node) {
 
     if (key == AMF_CONFIG_DEFAULT_DNN) {
       m_default_dnn.from_yaml(elem.second);
+    }
+
+    if (key == AMF_CONFIG_PAGING) {
+      m_paging_options.from_yaml(elem.second);
     }
 
     if (key == AMF_CONFIG_RELATIVE_CAPACITY) {
@@ -725,6 +853,10 @@ std::string amf::to_string(const std::string& indent) const {
       .append("(ms)");
 
   out.append(inner_indent)
+      .append(fmt::format("{} {}\n", OUTER_LIST_ELEM, AMF_CONFIG_PAGING_LABEL));
+  out.append(m_paging_options.to_string(inner_indent + indent));
+
+  out.append(inner_indent)
       .append(fmt::format(
           "{} {}\n", OUTER_LIST_ELEM, AMF_CONFIG_SUPPORT_FEATURES_LABEL));
   out.append(m_amf_support_features.to_string(inner_indent + indent));
@@ -784,6 +916,7 @@ void amf::validate() {
   }
   m_supported_integrity_algorithms.validate();
   m_supported_encryption_algorithms.validate();
+  m_paging_options.validate();
   m_n2.validate();
 }
 
@@ -850,6 +983,11 @@ const uint32_t amf::get_sctp_ttl() const {
 //------------------------------------------------------------------------------
 const std::string amf::get_default_dnn() const {
   return m_default_dnn.get_value();
+}
+
+//------------------------------------------------------------------------------
+paging_options amf::get_paging() const {
+  return m_paging_options;
 }
 
 //------------------------------------------------------------------------------
@@ -938,7 +1076,17 @@ amf_config::amf_config(
       false;
   support_features.enable_am_policy_association = false;
   support_features.http_version                 = 2;  // HTTP/2 by default
-  is_emergency_support                          = false;
+  paging.max_transactions_per_ue =
+      AMF_CONFIG_PAGING_MAX_TRANSACTIONS_PER_UE_DEFAULT_VALUE;
+  paging.registration_defer_timeout_sec =
+      AMF_CONFIG_PAGING_REGISTRATION_DEFER_TIMEOUT_SEC_DEFAULT_VALUE;
+  paging.temporary_unreachable_defer_timeout_sec =
+      AMF_CONFIG_PAGING_TEMPORARY_UNREACHABLE_DEFER_TIMEOUT_SEC_DEFAULT_VALUE;
+  paging.enable_subscription_notifications =
+      AMF_CONFIG_PAGING_ENABLE_SUBSCRIPTION_NOTIFICATIONS_DEFAULT_VALUE;
+  paging.enable_extended_ngap_ies =
+      AMF_CONFIG_PAGING_ENABLE_EXTENDED_NGAP_IES_DEFAULT_VALUE;
+  is_emergency_support = false;
 }
 
 //------------------------------------------------------------------------------
@@ -1010,6 +1158,16 @@ void amf_config::pre_process() {
   }
 
   support_features.http_version = get_http_version();
+  paging.max_transactions_per_ue =
+      amf_local->get_paging().get_max_transactions_per_ue();
+  paging.registration_defer_timeout_sec =
+      amf_local->get_paging().get_registration_defer_timeout_sec();
+  paging.temporary_unreachable_defer_timeout_sec =
+      amf_local->get_paging().get_temporary_unreachable_defer_timeout_sec();
+  paging.enable_subscription_notifications =
+      amf_local->get_paging().get_enable_subscription_notifications();
+  paging.enable_extended_ngap_ies =
+      amf_local->get_paging().get_enable_extended_ngap_ies();
 
   for (const auto& i : amf_local->get_guami_list()) {
     guami_full_format_t guami_item = {};
@@ -1329,6 +1487,22 @@ void amf_config::display() {
 
   Logger::config().info(
       "    HTTP version...........: %d", support_features.http_version);
+  Logger::config().info("- Paging:");
+  Logger::config().info(
+      "    Max Transactions/UE ...: %u", paging.max_transactions_per_ue);
+  Logger::config().info(
+      "    Registration Defer (s).: %u", paging.registration_defer_timeout_sec);
+  Logger::config().info(
+      "    Temp Unreachable (s)...: %u",
+      paging.temporary_unreachable_defer_timeout_sec);
+  Logger::config().info(
+      "    Outcome Notifications..: %s",
+      paging.enable_subscription_notifications ? AMF_CONFIG_OPTION_YES_STR :
+                                                 AMF_CONFIG_OPTION_NO_STR);
+  Logger::config().info(
+      "    Extended NGAP IEs......: %s", paging.enable_extended_ngap_ies ?
+                                             AMF_CONFIG_OPTION_YES_STR :
+                                             AMF_CONFIG_OPTION_NO_STR);
   Logger::config().info(
       "- Log Level ...............: %s",
       spdlog::level::to_string_view(amf_log_level));
@@ -1378,6 +1552,7 @@ void amf_config::to_json(nlohmann::json& json_data) const {
   json_data["sbi"] = sbi.to_json();
 
   json_data["support_features_options"] = support_features.to_json();
+  json_data["paging"]                   = paging.to_json();
 
   json_data["smf"] = smf_addr.to_json();
 
@@ -1466,6 +1641,9 @@ bool amf_config::from_json(nlohmann::json& json_data) {
 
     if (json_data.find("support_features_options") != json_data.end()) {
       support_features.from_json(json_data["support_features_options"]);
+    }
+    if (json_data.find("paging") != json_data.end()) {
+      paging.from_json(json_data["paging"]);
     }
 
     if (json_data.find("smf") != json_data.end()) {

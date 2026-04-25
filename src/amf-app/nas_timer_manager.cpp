@@ -96,9 +96,14 @@ void nas_timer_manager::stop_timer(
     nas_timer_type_e type, std::shared_ptr<nas_context>& nc) {
   size_t idx = static_cast<size_t>(type);
 
-  if (!nc->nas_timers[idx].is_running) return;
+  if (!nc->nas_timers[idx].is_running &&
+      nc->nas_timers[idx].itti_timer_id == ITTI_INVALID_TIMER_ID) {
+    return;
+  }
 
-  itti_->timer_remove(nc->nas_timers[idx].itti_timer_id);
+  if (nc->nas_timers[idx].is_running) {
+    itti_->timer_remove(nc->nas_timers[idx].itti_timer_id);
+  }
   nc->nas_timers[idx].itti_timer_id        = ITTI_INVALID_TIMER_ID;
   nc->nas_timers[idx].is_running           = false;
   nc->nas_timers[idx].retransmission_count = 0;

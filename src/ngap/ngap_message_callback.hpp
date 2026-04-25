@@ -1296,7 +1296,7 @@ ngap_message_decoded_callback
          ngap_handle_ng_setup_failure}, /*21 NGSetup*/
         {overload_start, 0, 0},         /*22 OverloadStart*/
         {overload_stop, 0, 0},          /*23 OverloadStop*/
-        {paging, 0, 0},                 /*24 Paging*/
+        {::paging, 0, 0},               /*24 Paging*/
         {ngap_amf_handle_path_switch_request,
          ngap_handle_path_switch_request_ack,
          ngap_handle_path_switch_request_failure}, /*25 PathSwitchRequest*/

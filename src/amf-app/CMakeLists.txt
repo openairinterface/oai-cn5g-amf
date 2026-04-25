@@ -5,6 +5,7 @@ add_library (AMF_APP STATIC
   amf_config.cpp
   amf_n1.cpp
   amf_n2.cpp
+  paging_controller.cpp
   amf_sbi.cpp
   amf_event.cpp
   amf_profile.cpp
@@ -17,6 +18,8 @@ add_library (AMF_APP STATIC
   nas_timer_manager.cpp
   ${SRC_TOP_DIR}/ngap/ngap_app.cpp
 )
+
+target_link_libraries(AMF_APP PUBLIC nlohmann_json::nlohmann_json yaml-cpp)
 
 target_include_directories(AMF_APP PUBLIC ${SRC_TOP_DIR}/amf-app)
 target_include_directories(AMF_APP PUBLIC ${SRC_TOP_DIR}/common)
@@ -51,3 +54,7 @@ target_include_directories(AMF_APP PUBLIC ${SRC_TOP_DIR}/${MOUNTED_COMMON}/utils
 
 include(${SRC_TOP_DIR}/${MOUNTED_COMMON}/model/amf.cmake)
 include(${SRC_TOP_DIR}/${MOUNTED_COMMON}/utils/utils.cmake)
+
+if(BUILD_TESTING)
+  add_subdirectory(test)
+endif()
