@@ -1152,18 +1152,8 @@ bool amf_n1::service_request_handle(
     return false;
   }
 
-  complete_paging_response_transition(
-      nc, ran_ue_ngap_id, amf_ue_ngap_id, "Service Request", false);
-
   // Otherwise, continue to process Service Request message
   set_amf_ue_ngap_id_2_nas_context(amf_ue_ngap_id, nc);
-
-  if (!nc->security_ctx.has_value()) {
-    Logger::amf_n1().error("No Security Context found");
-    cause =
-        k5gmmCauseSecurityModeRejectedUnspecified;  // TODO: verify the cause
-    return false;
-  }
 
   // Prepare Service Accept
   auto service_accept = std::make_unique<ServiceAccept>();
@@ -1375,6 +1365,8 @@ bool amf_n1::service_request_handle(
     oai::utils::utils::bdestroy_wrapper(&protected_nas);
   }
 
+  complete_paging_response_transition(
+      nc, ran_ue_ngap_id, amf_ue_ngap_id, "Service Request", false);
   complete_reconnect_follow_up(
       nc, ran_ue_ngap_id, amf_ue_ngap_id, page_triggered_reconnect);
 
@@ -1493,18 +1485,8 @@ bool amf_n1::service_request_handle(
     return false;
   }
 
-  complete_paging_response_transition(
-      nc, ran_ue_ngap_id, amf_ue_ngap_id, "Service Request", false);
-
   // Otherwise, continue to process Service Request message
   set_amf_ue_ngap_id_2_nas_context(amf_ue_ngap_id, nc);
-
-  if (!nc->security_ctx.has_value()) {
-    Logger::amf_n1().error("No Security Context found");
-    cause =
-        k5gmmCauseSecurityModeRejectedUnspecified;  // TODO: verify the cause
-    return false;
-  }
 
   // Update UE context
   uc->supi = nc->supi;
@@ -1868,6 +1850,8 @@ bool amf_n1::service_request_handle(
     oai::utils::utils::bdestroy_wrapper(&protected_nas);
   }
 
+  complete_paging_response_transition(
+      nc, ran_ue_ngap_id, amf_ue_ngap_id, "Service Request", false);
   complete_reconnect_follow_up(
       nc, ran_ue_ngap_id, amf_ue_ngap_id, page_triggered_reconnect);
 
@@ -4094,6 +4078,22 @@ bool amf_n1::registration_complete_handle(
         "%lu",
         nc->awaiting_registration_messages.size(), amf_ue_ngap_id);
     deliver_awaiting_registration_messages(nc, ran_ue_ngap_id, amf_ue_ngap_id);
+  }
+
+  // If a paging cycle is still active when Registration Complete is
+  // received (UE responded to paging with a Registration Request), terminate
+  // the paging cycle now.  Without this call, T3513 keeps running and
+  // eventually fires handle_t3513_final_expiry() which incorrectly sets
+  // ppf_3gpp=false and sends failure callbacks for an already-reconnected UE.
+  // TS 23.502 §4.2.3.3: the paging procedure MUST complete when the UE
+  // reconnects successfully, regardless of the reconnect message type.
+  if (nc->is_paging_ongoing && !nc->paging_completed) {
+    Logger::amf_n1().debug(
+        "UE %lu completed Registration during active paging cycle — "
+        "terminating paging via complete_paging_response_transition",
+        amf_ue_ngap_id);
+    complete_paging_response_transition(
+        nc, ran_ue_ngap_id, amf_ue_ngap_id, "Registration Complete", false);
   }
 
   complete_reconnect_follow_up(nc, ran_ue_ngap_id, amf_ue_ngap_id, false);
