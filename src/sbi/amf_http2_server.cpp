@@ -1083,7 +1083,23 @@ void amf_http2_server::n1_message_notify_handler(
       }
     } break;
 
-    case N1MessageClass_anyOf::eN1MessageClass_anyOf::LPP: {
+    case N1MessageClass_anyOf::eN1MessageClass_anyOf::LPP: { //UPLINK
+
+      std::string n1_content_id = n1MessageNotification.getN1MessageContainer()
+                                      .getN1MessageContent()
+                                      .getContentId();
+      Logger::amf_server().debug("N1 Content Id: %s", n1_content_id.c_str());
+      if (parts.count(n1_content_id) == 0 ||
+          parts[n1_content_id].body.size() == 0) {
+        code = oai::common::sbi::http_status_code::BAD_REQUEST;
+        response_json["cause"] =
+            n1_n2_message_transfer_cause_e2str[N1_MSG_NOT_TRANSFERRED];
+      } else {
+        itti_msg->notification_msg = n1MessageNotification;
+        itti_msg->ue_id            = supi;
+        itti_msg->n1sm             = parts[n1_content_id].body;
+      }
+
       // TODO:
     } break;
 

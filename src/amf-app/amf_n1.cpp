@@ -3,6 +3,7 @@
  */
 
 #include "amf_n1.hpp"
+#include <nlohmann/json.hpp>
 
 #include <bitset>
 
@@ -72,6 +73,19 @@ extern statistics stacs;
 std::map<std::string, std::string> amf_n1::rand_record = {};
 
 void amf_n1_task(void*);
+
+// LUCAAA
+//------------------------------------------------------------------------------
+void octet_stream_2_hex_stream_bis(uint8_t* buf, int len, std::string& out) {
+  out = "";
+  char* tmp = (char*) calloc(1, 2 * len * sizeof(uint8_t) + 1);
+  for (int i = 0; i < len; i++) {
+    sprintf(tmp + 2 * i, "%02x", buf[i]);
+  }
+  tmp[2 * len] = '\0';
+  out = tmp;
+  Logger::amf_n1().debug("LPP - Buffer: %s", out.c_str());
+}
 
 //------------------------------------------------------------------------------
 void amf_n1_task(void*) {
@@ -4562,6 +4576,7 @@ void amf_n1::ul_nas_transport_handle(
   }
 
   bstring sm_msg = nullptr;
+  bstring lpp_msg = nullptr;
 
   if (((request_type & 0x07) == kPduSessionInitialRequest) or
       ((request_type & 0x07) == kExistingPduSession)) {
@@ -4713,6 +4728,56 @@ void amf_n1::ul_nas_transport_handle(
         }
 
       } break;
+      case kLtePositioningProtocol: {
+        // Get payload container
+        ul_nas->GetPayloadContainer(lpp_msg);
+        
+        uint32_t response_code = 0;
+        nlohmann::json LPP_JSON = {};
+        std::string n1_msg = {};
+        std::string n2_msg = {};
+        std::string url = {};
+        
+        
+        // LPP_JSON = {
+        //   {"n1NotifySubscriptionId", "1"},
+        //   {"n1MessageContainer", {
+        //     {"n1MessageClass", "LPP"},
+        //     {"n1MessageContent", {
+        //       {"contentId", "n1Msg"}
+        //     }}
+        //   }}
+        // };
+
+        LPP_JSON["n1NotifySubscriptionId"] = "1";
+        LPP_JSON["n1MessageContainer"]["n1MessageClass"] = "LPP";
+        LPP_JSON["n1MessageContainer"]["n1MessageContent"]["contentId"] =
+            "n1Msg";
+        std::string json_part = LPP_JSON.dump();
+        uint8_t http_version = 1;
+
+        // url =inet_ntoa(*((struct in_addr*) &lmf_addr.ipv4_addr)) + ":" + std::to_string(lmf_addr.port) + "/nlmf/notifyN1"
+        // url = "192.168.170.129:9090/nlmf/notifyN1"; // indirizzo ip LMF STATICO
+        url = "192.168.70.139:9090/nlmf/notifyN1"; // indirizzo ip LMF STATICO
+        // n1_msg = "stringa_di_test_n1";  
+        // n2_msg = "stringa_di_test_n2";  
+
+        // Solo la riga octet_stream_2_hex_stream non funziona, 
+        octet_stream_2_hex_stream_bis(
+            (uint8_t*) bdata(lpp_msg), blength(lpp_msg), n1_msg);
+
+        // Se metto la riga sotto si rompe, anche se metto la riga octet_stream_2_hex_stream
+        amf_sbi_inst->send_http_request(
+            url, json_part, n1_msg, n2_msg, http_version, response_code);
+        if (response_code == 204) {
+          Logger::amf_n1().debug("Sent notification successfully! LPP");
+        }
+
+
+      } break;
+
+
+
       default: {
         Logger::amf_n1().debug("Transport message is not supported");
       }

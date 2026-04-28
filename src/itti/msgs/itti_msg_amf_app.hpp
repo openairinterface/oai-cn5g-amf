@@ -75,12 +75,14 @@ class itti_n1n2_message_transfer_request : public itti_msg_amf_app {
       const task_id_t origin, const task_id_t destination)
       : itti_msg_amf_app(N1N2_MESSAGE_TRANSFER_REQ, origin, destination) {
     supi             = {};
+    n1lpp            = nullptr;
     n1sm             = nullptr;
     n2sm             = nullptr;
     nrppa_pdu        = nullptr;
     routing_id       = nullptr;
     is_n2sm_set      = false;
     is_n1sm_set      = false;
+    is_n1lpp_set     = false;
     is_nrppa_pdu_set = false;
     is_ppi_set       = false;
 
@@ -92,12 +94,14 @@ class itti_n1n2_message_transfer_request : public itti_msg_amf_app {
       const itti_n1n2_message_transfer_request& i)
       : itti_msg_amf_app(i) {
     supi             = i.supi;
+    n1lpp            = i.n1lpp;
     n1sm             = i.n1sm;
     n2sm             = i.n2sm;
     nrppa_pdu        = i.nrppa_pdu;
     routing_id       = i.routing_id;
     is_n2sm_set      = i.is_n2sm_set;
     is_n1sm_set      = i.is_n1sm_set;
+    is_n1lpp_set     = i.is_n1lpp_set;
     is_nrppa_pdu_set = i.is_nrppa_pdu_set;
     is_ppi_set       = i.is_ppi_set;
 
@@ -107,12 +111,14 @@ class itti_n1n2_message_transfer_request : public itti_msg_amf_app {
   }
 
   std::string supi;
+  bstring n1lpp;
   bstring n1sm;
   bstring n2sm;
   bstring nrppa_pdu;
   bstring routing_id;
   bool is_n2sm_set;
   bool is_n1sm_set;
+  bool is_n1lpp_set;
   bool is_nrppa_pdu_set;
   uint8_t pdu_session_id;
   std::string n2sm_info_type;
