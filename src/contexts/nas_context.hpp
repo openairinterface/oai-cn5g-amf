@@ -124,6 +124,7 @@ class nas_context {
       temporarily_unreachable_messages;
   timer_id_t temporary_unreachable_timer = ITTI_INVALID_TIMER_ID;
   std::optional<uint16_t> page_reconnect_allowed_pdu_session_status;
+  bool page_reconnect_guti_refresh_pending = false;
 
   // NAS procedure context — replaces boolean flags per §5.1.3.2.3
   nas_procedure_context_t procedure_ctx;

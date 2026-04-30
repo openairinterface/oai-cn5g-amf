@@ -688,7 +688,8 @@ void amf_n1::nas_signalling_establishment_request_handle(
       if (nc && nc->security_ctx.has_value())
         nc->security_ctx.value().ul_count.seq_num = ulCount;
       if (!registration_request_handle(
-              nc, ran_ue_ngap_id, amf_ue_ngap_id, snn, plain_msg, cause)) {
+              nc, ran_ue_ngap_id, amf_ue_ngap_id, snn, plain_msg,
+              security_header_type, cause)) {
         // Send Registration Reject with appropriate cause
         send_registration_reject_msg(ran_ue_ngap_id, amf_ue_ngap_id, cause);
         nas_procedure_manager_.complete_specific_procedure(*nc);
@@ -710,7 +711,8 @@ void amf_n1::nas_signalling_establishment_request_handle(
       if (nc && nc->security_ctx.has_value())
         nc->security_ctx.value().ul_count.seq_num = ulCount;
       if (!service_request_handle(
-              nc, ran_ue_ngap_id, amf_ue_ngap_id, plain_msg, ulCount, cause)) {
+              nc, ran_ue_ngap_id, amf_ue_ngap_id, plain_msg, ulCount,
+              security_header_type != kPlain5gsMessage, cause)) {
         // Send Service Reject with appropriate cause
         send_service_reject(nc, cause);
         nas_procedure_manager_.complete_specific_procedure(*nc);
@@ -827,7 +829,8 @@ void amf_n1::uplink_nas_msg_handle(
         Logger::amf_n1().debug(
             "Received Registration Complete message, handling...");
         if (!registration_complete_handle(
-                ran_ue_ngap_id, amf_ue_ngap_id, plain_msg, cause)) {
+                ran_ue_ngap_id, amf_ue_ngap_id, plain_msg, security_header_type,
+                cause)) {
           send_registration_reject_msg(ran_ue_ngap_id, amf_ue_ngap_id, cause);
           nas_procedure_manager_.complete_specific_procedure(*nc);
         }
@@ -839,7 +842,8 @@ void amf_n1::uplink_nas_msg_handle(
             "handling...");
         if (amf_ue_id_2_nas_context(amf_ue_ngap_id, nc)) {
           if (!service_request_handle(
-                  nc, ran_ue_ngap_id, amf_ue_ngap_id, plain_msg, cause)) {
+                  nc, ran_ue_ngap_id, amf_ue_ngap_id, plain_msg,
+                  security_header_type != kPlain5gsMessage, cause)) {
             // Send Service Reject with appropriate cause
             send_service_reject(nc, cause);
             nas_procedure_manager_.complete_specific_procedure(*nc);
@@ -872,10 +876,20 @@ void amf_n1::uplink_nas_msg_handle(
           break;
         }
 
-        complete_paging_response_transition(
-            nc, ran_ue_ngap_id, amf_ue_ngap_id, "Control Plane Service Request",
-            false);
-        if (page_triggered_reconnect) {
+        const bool terminal_paging_response = can_complete_paging_response(
+            nc, paging::paging_response_class::CONTROL_PLANE_SERVICE_REQUEST,
+            security_header_type != kPlain5gsMessage, false);
+        if (terminal_paging_response) {
+          complete_paging_response_transition(
+              nc, ran_ue_ngap_id, amf_ue_ngap_id,
+              "Control Plane Service Request", false);
+        } else if (page_triggered_reconnect) {
+          Logger::amf_n1().warn(
+              "Control Plane Service Request for UE %lu is non-terminal for "
+              "paging because the NAS response was not integrity checked",
+              amf_ue_ngap_id);
+        }
+        if (page_triggered_reconnect && terminal_paging_response) {
           complete_reconnect_follow_up(
               nc, ran_ue_ngap_id, amf_ue_ngap_id, true);
         }
@@ -894,7 +908,8 @@ void amf_n1::uplink_nas_msg_handle(
         Logger::amf_n1().debug("Serving network name %s", snn.c_str());
         if (amf_ue_id_2_nas_context(amf_ue_ngap_id, nc)) {
           if (!registration_request_handle(
-                  nc, ran_ue_ngap_id, amf_ue_ngap_id, snn, plain_msg, cause)) {
+                  nc, ran_ue_ngap_id, amf_ue_ngap_id, snn, plain_msg,
+                  security_header_type, cause)) {
             // Send Registration Reject with appropriate cause
             send_registration_reject_msg(ran_ue_ngap_id, amf_ue_ngap_id, cause);
             nas_procedure_manager_.complete_specific_procedure(*nc);
@@ -1099,7 +1114,8 @@ bool amf_n1::identity_response_handle(
 //------------------------------------------------------------------------------
 bool amf_n1::service_request_handle(
     std::shared_ptr<nas_context> nc, const uint32_t ran_ue_ngap_id,
-    const uint64_t amf_ue_ngap_id, bstring nas, uint8_t& cause) {
+    const uint64_t amf_ue_ngap_id, bstring nas,
+    bool paging_response_integrity_checked, uint8_t& cause) {
   const bool page_triggered_reconnect =
       nc && nc->is_paging_ongoing && !nc->paging_completed;
 
@@ -1285,11 +1301,40 @@ bool amf_n1::service_request_handle(
 
   // No PDU Sessions To Be Activated
   if (pdu_session_to_be_activated.size() == 0) {
-    // TODO: should be updated
     Logger::amf_n1().debug("There is no PDU session to be activated");
-    cause = k5gmmCauseInsufficientUpResourcesForThePduSession;  // TODO: verify
-                                                                // the cause
-    return false;
+    uint32_t msg_len = service_accept->GetLength();
+    Logger::nas_mm().debug("Size of Service Accept message %ld", msg_len);
+    uint8_t buffer[msg_len] = {0};
+    int encoded_size        = service_accept->Encode(buffer, msg_len);
+    if (encoded_size == KEncodeDecodeError) {
+      Logger::nas_mm().error("Encode Service Accept message error");
+      cause = k5gmmCauseProtocolErrorUnspecified;
+      return false;
+    }
+
+    bstring protected_nas = nullptr;
+    encode_nas_message_protected(
+        nc->security_ctx.value(), false, kIntegrityProtectedAndCiphered,
+        NAS_MESSAGE_DOWNLINK, buffer, encoded_size, protected_nas);
+
+    auto itti_msg =
+        std::make_shared<itti_dl_nas_transport>(TASK_AMF_N1, TASK_AMF_N2);
+    itti_msg->ran_ue_ngap_id = ran_ue_ngap_id;
+    itti_msg->amf_ue_ngap_id = amf_ue_ngap_id;
+    itti_msg->nas            = bstrcpy(protected_nas);
+
+    int ret = itti_inst->send_msg(itti_msg);
+    if (0 != ret) {
+      Logger::amf_n1().error(
+          "Could not send ITTI message %s to task TASK_AMF_N2",
+          itti_msg->get_msg_name());
+      oai::utils::utils::bdestroy_wrapper(&protected_nas);
+      cause = k5gmmCauseCongestion;
+      return false;
+    }
+
+    handle_nas_event(nc, oai::amf::nas::nas_event_e::SERVICE_ACCEPT_SENT);
+    oai::utils::utils::bdestroy_wrapper(&protected_nas);
   } else {
     // Contact SMF to activate UP for these sessions
     // PDU SESSION RESOURCE SETUP_REQUEST
@@ -1365,10 +1410,20 @@ bool amf_n1::service_request_handle(
     oai::utils::utils::bdestroy_wrapper(&protected_nas);
   }
 
-  complete_paging_response_transition(
-      nc, ran_ue_ngap_id, amf_ue_ngap_id, "Service Request", false);
-  complete_reconnect_follow_up(
-      nc, ran_ue_ngap_id, amf_ue_ngap_id, page_triggered_reconnect);
+  const bool terminal_paging_response = can_complete_paging_response(
+      nc, paging::paging_response_class::SERVICE_REQUEST,
+      paging_response_integrity_checked, false);
+  if (terminal_paging_response) {
+    complete_paging_response_transition(
+        nc, ran_ue_ngap_id, amf_ue_ngap_id, "Service Request", false);
+    complete_reconnect_follow_up(
+        nc, ran_ue_ngap_id, amf_ue_ngap_id, page_triggered_reconnect);
+  } else if (page_triggered_reconnect) {
+    Logger::amf_n1().warn(
+        "Service Request for UE %lu is non-terminal for paging because the "
+        "NAS response was not integrity checked",
+        amf_ue_ngap_id);
+  }
 
   nas_procedure_manager_.complete_specific_procedure(*nc);
   return true;
@@ -1378,7 +1433,7 @@ bool amf_n1::service_request_handle(
 bool amf_n1::service_request_handle(
     std::shared_ptr<nas_context> nc, const uint32_t ran_ue_ngap_id,
     const uint64_t amf_ue_ngap_id, bstring nas, uint8_t ulCount,
-    uint8_t& cause) {
+    bool paging_response_integrity_checked, uint8_t& cause) {
   const bool page_triggered_reconnect =
       nc && nc->is_paging_ongoing && !nc->paging_completed;
 
@@ -1850,10 +1905,20 @@ bool amf_n1::service_request_handle(
     oai::utils::utils::bdestroy_wrapper(&protected_nas);
   }
 
-  complete_paging_response_transition(
-      nc, ran_ue_ngap_id, amf_ue_ngap_id, "Service Request", false);
-  complete_reconnect_follow_up(
-      nc, ran_ue_ngap_id, amf_ue_ngap_id, page_triggered_reconnect);
+  const bool terminal_paging_response = can_complete_paging_response(
+      nc, paging::paging_response_class::SERVICE_REQUEST,
+      paging_response_integrity_checked, false);
+  if (terminal_paging_response) {
+    complete_paging_response_transition(
+        nc, ran_ue_ngap_id, amf_ue_ngap_id, "Service Request", false);
+    complete_reconnect_follow_up(
+        nc, ran_ue_ngap_id, amf_ue_ngap_id, page_triggered_reconnect);
+  } else if (page_triggered_reconnect) {
+    Logger::amf_n1().warn(
+        "Service Request for UE %lu is non-terminal for paging because the "
+        "NAS response was not integrity checked",
+        amf_ue_ngap_id);
+  }
 
   nas_procedure_manager_.complete_specific_procedure(*nc);
 
@@ -1903,7 +1968,7 @@ void amf_n1::send_service_reject(
 bool amf_n1::registration_request_handle(
     std::shared_ptr<nas_context>& nc, const uint32_t ran_ue_ngap_id,
     const uint64_t amf_ue_ngap_id, const std::string& snn, bstring reg,
-    uint8_t& cause) {
+    uint8_t security_header_type, uint8_t& cause) {
   // Decode Registration Request message
   auto registration_request = std::make_unique<RegistrationRequest>();
   int decoded_size =
@@ -2252,6 +2317,20 @@ bool amf_n1::registration_request_handle(
   // PDU Session Status
   std::optional<uint16_t> pdu_session_status_opt =
       registration_request->GetPduSessionStatus();
+  std::optional<uint16_t> allowed_pdu_session_status_opt = {};
+  if (active_paging_targets_non_3gpp_access(nc)) {
+    // RegistrationRequest currently exposes no presence bit for this IE; for
+    // non-3GPP paging, preserve the decoded value so the all-zero case remains
+    // a valid scoped paging response instead of being treated as absent.
+    allowed_pdu_session_status_opt =
+        registration_request->GetAllowedPduSessionStatus();
+    nc->page_reconnect_allowed_pdu_session_status =
+        allowed_pdu_session_status_opt;
+    Logger::amf_n1().debug(
+        "Registration Request carries Allowed PDU Session Status 0x%04x for "
+        "non-3GPP associated paging on UE %lu",
+        allowed_pdu_session_status_opt.value(), amf_ue_ngap_id);
+  }
 
   bstring nas_msg = nullptr;
   bool is_messagecontainer =
@@ -2314,30 +2393,38 @@ bool amf_n1::registration_request_handle(
     Logger::amf_n1().debug("Update UC context, SUPI %s", nc->supi.c_str());
   }
 
-  // Store NAS information into nas_context
-  // Run the corresponding registration procedure
+  const bool integrity_checked =
+      security_header_type != kPlain5gsMessage && nc->security_ctx.has_value();
+  bool registration_security_exception = false;
+  bool registration_result             = false;
+
+  // Store NAS information into nas_context and run the corresponding
+  // registration procedure.
   switch (reg_type) {
     case kInitialRegistration: {
-      return run_registration_procedure(nc, cause);
+      registration_result = run_registration_procedure(nc, cause);
     } break;
 
     case kMobilityRegistrationUpdating: {
       Logger::amf_n1().debug("Handling Mobility Registration Update...");
-      return run_mobility_registration_update_procedure(
+      registration_result = run_mobility_registration_update_procedure(
           nc, uplink_data_status_opt, pdu_session_status_opt, cause);
+      registration_security_exception = registration_result;
     } break;
 
     case kPeriodicRegistrationUpdating: {
       Logger::amf_n1().debug("Handling Periodic Registration Update...");
       if (is_messagecontainer)
-        return run_periodic_registration_update_procedure(nc, nas_msg, cause);
+        registration_result =
+            run_periodic_registration_update_procedure(nc, nas_msg, cause);
       else {
         uint16_t pdu_session_status = 0x0000;
         if (pdu_session_status_opt.has_value())
           pdu_session_status = pdu_session_status_opt.value();
-        return run_periodic_registration_update_procedure(
+        registration_result = run_periodic_registration_update_procedure(
             nc, pdu_session_status, cause);
       }
+      registration_security_exception = registration_result;
     } break;
 
     case kEmergencyRegistration: {
@@ -2347,6 +2434,7 @@ bool amf_n1::registration_request_handle(
         cause = k5gmmCause5gsServicesNotAllowed;
         return false;
       }
+      registration_result = true;
     } break;
 
     default: {
@@ -2355,7 +2443,25 @@ bool amf_n1::registration_request_handle(
       return false;
     }
   }
-  return true;
+
+  if (registration_result &&
+      can_complete_paging_response(
+          nc, paging::paging_response_class::REGISTRATION_REQUEST,
+          integrity_checked,
+          registration_security_exception ||
+              allowed_pdu_session_status_opt.has_value())) {
+    nc->page_reconnect_guti_refresh_pending = true;
+    complete_paging_response_transition(
+        nc, ran_ue_ngap_id, amf_ue_ngap_id, "Registration Request", false);
+  } else if (
+      registration_result && nc && nc->is_paging_ongoing &&
+      !nc->paging_completed) {
+    Logger::amf_n1().debug(
+        "Registration Request remains non-terminal for active paging on UE %lu",
+        amf_ue_ngap_id);
+  }
+
+  return registration_result;
 }
 
 //------------------------------------------------------------------------------
@@ -4023,7 +4129,7 @@ bool amf_n1::security_mode_reject_handle(
 //------------------------------------------------------------------------------
 bool amf_n1::registration_complete_handle(
     const uint32_t ran_ue_ngap_id, const uint64_t amf_ue_ngap_id,
-    bstring nas_msg, uint8_t& cause) {
+    bstring nas_msg, uint8_t security_header_type, uint8_t& cause) {
   Logger::amf_n1().debug("Received Registration Complete message, processing");
 
   // Verify NAS state machine is in correct state to process the message, if
@@ -4087,16 +4193,30 @@ bool amf_n1::registration_complete_handle(
   // ppf_3gpp=false and sends failure callbacks for an already-reconnected UE.
   // TS 23.502 §4.2.3.3: the paging procedure MUST complete when the UE
   // reconnects successfully, regardless of the reconnect message type.
-  if (nc->is_paging_ongoing && !nc->paging_completed) {
+  const bool page_triggered_registration_complete =
+      nc->is_paging_ongoing && !nc->paging_completed;
+  const bool page_reconnect_guti_refresh =
+      page_triggered_registration_complete ||
+      nc->page_reconnect_guti_refresh_pending;
+  if (page_triggered_registration_complete &&
+      can_complete_paging_response(
+          nc, paging::paging_response_class::REGISTRATION_COMPLETE,
+          security_header_type != kPlain5gsMessage, false)) {
     Logger::amf_n1().debug(
-        "UE %lu completed Registration during active paging cycle — "
+        "UE %lu completed Registration during active paging cycle - "
         "terminating paging via complete_paging_response_transition",
         amf_ue_ngap_id);
     complete_paging_response_transition(
         nc, ran_ue_ngap_id, amf_ue_ngap_id, "Registration Complete", false);
+  } else if (page_triggered_registration_complete) {
+    Logger::amf_n1().warn(
+        "Registration Complete for UE %lu did not satisfy terminal paging "
+        "gates; T3513 remains active",
+        amf_ue_ngap_id);
   }
 
-  complete_reconnect_follow_up(nc, ran_ue_ngap_id, amf_ue_ngap_id, false);
+  complete_reconnect_follow_up(
+      nc, ran_ue_ngap_id, amf_ue_ngap_id, page_reconnect_guti_refresh);
 
   // Notify subscribers that the UE is now fully REGISTERED
   Logger::amf_n1().debug(
@@ -7164,6 +7284,8 @@ paging::paging_response_class amf_n1::classify_paging_response(
       return paging::paging_response_class::CONTROL_PLANE_SERVICE_REQUEST;
     case kRegistrationRequest:
       return paging::paging_response_class::REGISTRATION_REQUEST;
+    case kRegistrationComplete:
+      return paging::paging_response_class::REGISTRATION_COMPLETE;
     case kMessageTypeNotification:
       return paging::paging_response_class::NOTIFICATION;
     case kMessageTypeNotificationResponse:
@@ -7171,6 +7293,62 @@ paging::paging_response_class amf_n1::classify_paging_response(
     default:
       return paging::paging_response_class::NON_QUALIFYING;
   }
+}
+
+//------------------------------------------------------------------------------
+bool amf_n1::active_paging_targets_non_3gpp_access(
+    const std::shared_ptr<nas_context>& nc) const {
+  if (!nc) {
+    return false;
+  }
+
+  for (const auto& transaction : nc->pending_paging_messages) {
+    if (transaction.target_access.has_value() &&
+        transaction.target_access.value().getValue() ==
+            AccessType::eAccessType::NON_3GPP_ACCESS) {
+      return true;
+    }
+  }
+  return false;
+}
+
+//------------------------------------------------------------------------------
+bool amf_n1::can_complete_paging_response(
+    const std::shared_ptr<nas_context>& nc,
+    paging::paging_response_class response_class,
+    bool integrity_checked_nas_response,
+    bool registration_security_exception) const {
+  if (!nc || !nc->is_paging_ongoing || nc->paging_completed) {
+    return false;
+  }
+
+  const auto gate = paging::gate_for_response(response_class);
+  if (gate.lower_layer_terminal) {
+    return true;
+  }
+
+  if (!gate.terminal_candidate &&
+      !(gate.allows_registration_security_success &&
+        registration_security_exception) &&
+      !(gate.allows_non_3gpp_allowed_status &&
+        active_paging_targets_non_3gpp_access(nc))) {
+    Logger::amf_n1().debug(
+        "%s classified as non-terminal for active paging on UE %lu", gate.name,
+        nc->amf_ue_ngap_id);
+    return false;
+  }
+
+  if (gate.requires_integrity_checked_nas && !integrity_checked_nas_response &&
+      !(gate.allows_registration_security_success &&
+        registration_security_exception)) {
+    Logger::amf_n1().warn(
+        "%s cannot stop T3513 for UE %lu without an integrity-checked NAS "
+        "response or a qualifying registration/security exception",
+        gate.name, nc->amf_ue_ngap_id);
+    return false;
+  }
+
+  return true;
 }
 
 //------------------------------------------------------------------------------
@@ -7219,6 +7397,7 @@ void amf_n1::complete_reconnect_follow_up(
   deliver_pending_paging_messages(nc, ran_ue_ngap_id, amf_ue_ngap_id);
   wake_temporary_unreachable_messages(nc, ran_ue_ngap_id, amf_ue_ngap_id);
   nc->page_reconnect_allowed_pdu_session_status.reset();
+  nc->page_reconnect_guti_refresh_pending = false;
   sync_paging_queue_depth_metrics(nc);
 }
 
@@ -7416,6 +7595,24 @@ void amf_n1::start_paging_timer(
   Logger::amf_n1().debug(
       "T3513 started for UE %lu (paging timer — %u s, max %u retx)",
       amf_ue_ngap_id, kPagingT3513IntervalSec, kPagingMaxRetransmissions);
+}
+
+// ---------------------------------------------------------------------------
+void amf_n1::complete_ngap_resume_paging_response(
+    uint64_t amf_ue_ngap_id, uint32_t ran_ue_ngap_id) {
+  std::shared_ptr<nas_context> nc = {};
+  if (!amf_ue_id_2_nas_context(amf_ue_ngap_id, nc) || !nc) {
+    return;
+  }
+
+  if (!can_complete_paging_response(
+          nc, paging::paging_response_class::NGAP_RESUME, false, false)) {
+    return;
+  }
+
+  complete_paging_response_transition(
+      nc, ran_ue_ngap_id, amf_ue_ngap_id, "NGAP Resume", false);
+  complete_reconnect_follow_up(nc, ran_ue_ngap_id, amf_ue_ngap_id, true);
 }
 
 // ---------------------------------------------------------------------------

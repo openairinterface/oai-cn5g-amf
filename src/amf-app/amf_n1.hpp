@@ -491,6 +491,8 @@ class amf_n1 {
   // Start T3513 after NGAP Paging is sent.
   void start_paging_timer(
       std::shared_ptr<nas_context>& nc, uint64_t amf_ue_ngap_id);
+  void complete_ngap_resume_paging_response(
+      uint64_t amf_ue_ngap_id, uint32_t ran_ue_ngap_id);
   void schedule_awaiting_registration_expiry(
       std::shared_ptr<nas_context>& nc, uint64_t amf_ue_ngap_id);
   void handle_awaiting_registration_expiry(
@@ -794,7 +796,7 @@ class amf_n1 {
   bool registration_request_handle(
       std::shared_ptr<nas_context>& nc, const uint32_t ran_ue_ngap_id,
       const uint64_t amf_ue_ngap_id, const std::string& snn, bstring reg,
-      uint8_t& cause);
+      uint8_t security_header_type, uint8_t& cause);
 
   /*
    * Handle Authentication Response message
@@ -861,7 +863,7 @@ class amf_n1 {
    */
   bool registration_complete_handle(
       const uint32_t ran_ue_ngap_id, const uint64_t amf_ue_ngap_id,
-      bstring nas_msg, uint8_t& cause);
+      bstring nas_msg, uint8_t security_header_type, uint8_t& cause);
 
   /*
    * Handle Service Request message
@@ -875,7 +877,8 @@ class amf_n1 {
    */
   bool service_request_handle(
       std::shared_ptr<nas_context> nc, const uint32_t ran_ue_ngap_id,
-      const uint64_t amf_ue_ngap_id, bstring nas, uint8_t& cause);
+      const uint64_t amf_ue_ngap_id, bstring nas,
+      bool paging_response_integrity_checked, uint8_t& cause);
 
   /*
    * Handle Service Request message with explicit uplink NAS count
@@ -891,7 +894,7 @@ class amf_n1 {
   bool service_request_handle(
       std::shared_ptr<nas_context> nc, const uint32_t ran_ue_ngap_id,
       const uint64_t amf_ue_ngap_id, bstring nas, uint8_t ulCount,
-      uint8_t& cause);
+      bool paging_response_integrity_checked, uint8_t& cause);
 
   /*
    * Send Service Reject to the UE
@@ -1012,6 +1015,13 @@ class amf_n1 {
       uint64_t amf_ue_ngap_id);
   paging::paging_response_class classify_paging_response(
       uint8_t message_type) const;
+  bool can_complete_paging_response(
+      const std::shared_ptr<nas_context>& nc,
+      paging::paging_response_class response_class,
+      bool integrity_checked_nas_response,
+      bool registration_security_exception) const;
+  bool active_paging_targets_non_3gpp_access(
+      const std::shared_ptr<nas_context>& nc) const;
   void complete_paging_response_transition(
       std::shared_ptr<nas_context>& nc, uint32_t ran_ue_ngap_id,
       uint64_t amf_ue_ngap_id, const char* transition_name,

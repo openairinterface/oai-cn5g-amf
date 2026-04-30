@@ -32,10 +32,63 @@ enum class paging_response_class {
   SERVICE_REQUEST,
   CONTROL_PLANE_SERVICE_REQUEST,
   REGISTRATION_REQUEST,
+  REGISTRATION_COMPLETE,
   NOTIFICATION,
   NOTIFICATION_RESPONSE,
   NGAP_RESUME
 };
+
+struct paging_response_gate {
+  paging_response_class response_class = paging_response_class::NON_QUALIFYING;
+  bool terminal_candidate              = false;
+  bool requires_integrity_checked_nas  = false;
+  bool allows_registration_security_success = false;
+  bool allows_non_3gpp_allowed_status       = false;
+  bool lower_layer_terminal                 = false;
+  const char* name                          = "NON_QUALIFYING";
+};
+
+constexpr paging_response_gate gate_for_response(
+    paging_response_class response_class) {
+  switch (response_class) {
+    case paging_response_class::SERVICE_REQUEST:
+      return {response_class,   true, true, false, false, false,
+              "SERVICE_REQUEST"};
+    case paging_response_class::CONTROL_PLANE_SERVICE_REQUEST:
+      return {
+          response_class,
+          true,
+          true,
+          false,
+          false,
+          false,
+          "CONTROL_PLANE_SERVICE_REQUEST"};
+    case paging_response_class::REGISTRATION_REQUEST:
+      return {response_class,        false, false, true, true, false,
+              "REGISTRATION_REQUEST"};
+    case paging_response_class::REGISTRATION_COMPLETE:
+      return {response_class,         true, true, false, false, false,
+              "REGISTRATION_COMPLETE"};
+    case paging_response_class::NGAP_RESUME:
+      return {response_class, true, false, false, false, true, "NGAP_RESUME"};
+    case paging_response_class::NOTIFICATION:
+      return {response_class, false, false,         false,
+              false,          false, "NOTIFICATION"};
+    case paging_response_class::NOTIFICATION_RESPONSE:
+      return {response_class,         false, false, false, false, false,
+              "NOTIFICATION_RESPONSE"};
+    case paging_response_class::NON_QUALIFYING:
+    default:
+      return {
+          paging_response_class::NON_QUALIFYING,
+          false,
+          false,
+          false,
+          false,
+          false,
+          "NON_QUALIFYING"};
+  }
+}
 
 enum class paging_outcome {
   DIRECT_DELIVERY = 0,
