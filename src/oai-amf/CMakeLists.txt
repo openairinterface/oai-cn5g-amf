@@ -278,25 +278,7 @@ ENDIF( NOT MySQL_FOUND )
 
 # Local-prefix third-party dependencies
 find_package(cpr CONFIG REQUIRED)
-find_package(nlohmann_json CONFIG REQUIRED)
-find_package(yaml-cpp CONFIG REQUIRED)
 
-function(oai_import_target_includes imported_target)
-  if(NOT TARGET ${imported_target})
-    message(FATAL_ERROR "Required imported target ${imported_target} is not available")
-  endif()
-
-  get_target_property(_imported_target_includes ${imported_target} INTERFACE_INCLUDE_DIRECTORIES)
-  if(_imported_target_includes AND NOT _imported_target_includes STREQUAL "_imported_target_includes-NOTFOUND")
-    include_directories(SYSTEM ${_imported_target_includes})
-  endif()
-endfunction()
-
-oai_import_target_includes(cpr::cpr)
-oai_import_target_includes(nlohmann_json::nlohmann_json)
-oai_import_target_includes(yaml-cpp)
-
-include(CTest)
 
 ################################################################
 # Add sub modules
@@ -377,7 +359,7 @@ IF(STATIC_LINKING)
 ENDIF(STATIC_LINKING)
 
 target_link_libraries(amf ${ASAN}
-      -Wl,--start-group AMF_APP AMF_COMMON_TYPES CONTEXTS AMF_SCTP NGAP_LIB_C NGAP_LIB_C_IES AMF_NGAP AMF_NAS AMF_SECU_5GAKA AMF_SECU_NAS AMF_UTILS AMF_SBI_SERVER sctp fmt spdlog -Wl,--end-group pthread ${NETTLE_LIBRARIES} ${MySQL_LIBRARY} ${CRYPTO_LIBRARIES} ${OPENSSL_LIBRARIES} nghttp2_asio boost_system boost_thread boost_chrono ssl crypt gmp pistache curl yaml-cpp nlohmann_json::nlohmann_json cpr::cpr)
+      -Wl,--start-group AMF_APP AMF_COMMON_TYPES CONTEXTS AMF_SCTP NGAP_LIB_C NGAP_LIB_C_IES AMF_NGAP AMF_NAS AMF_SECU_5GAKA AMF_SECU_NAS AMF_UTILS AMF_SBI_SERVER sctp fmt spdlog -Wl,--end-group pthread ${NETTLE_LIBRARIES} ${MySQL_LIBRARY} ${CRYPTO_LIBRARIES} ${OPENSSL_LIBRARIES} nghttp2_asio boost_system boost_thread boost_chrono ssl crypt gmp pistache curl yaml-cpp cpr::cpr)
 
 add_boolean_option(USE_LTTNG  False "Activate the LTTNG tracer, a debugging/monitoring framework" ON)
 if (USE_LTTNG)
