@@ -8,17 +8,81 @@
 #include <cstddef>
 #include <memory>
 
+#include "amf_config.hpp"
+
 #include "NgapIesStruct.hpp"
 #include "nas_context.hpp"
 #include "paging_types.hpp"
 
+extern std::unique_ptr<oai::config::amf_config> amf_cfg;
+
 namespace amf_application {
+
+static paging::admission_result make_dispatch_failure_result(
+    const std::string& detail) {
+  paging::admission_result result;
+  result.decision         = paging::admission_decision::REJECT;
+  result.http_status_code = 503;
+  result.cause            = oai::_3gpp::model::N1N2MessageTransferCause_anyOf::
+      eN1N2MessageTransferCause_anyOf::FAILURE_CAUSE_UNSPECIFIED;
+  result.is_error       = true;
+  result.problem_cause  = "SYSTEM_FAILURE";
+  result.problem_detail = detail;
+  return result;
+}
+
+static paging::admission_result make_no_paging_target_result() {
+  paging::admission_result result;
+  result.decision         = paging::admission_decision::REJECT;
+  result.http_status_code = 504;
+  result.cause            = oai::_3gpp::model::N1N2MessageTransferCause_anyOf::
+      eN1N2MessageTransferCause_anyOf::AN_NOT_RESPONDING;
+  result.is_error       = true;
+  result.problem_cause  = "AN_NOT_RESPONDING";
+  result.problem_detail = "No matching NG-RAN target was found for paging.";
+  return result;
+}
+
+static paging::admission_result make_n2_forwarding_blocked_result(
+    const std::string& detail) {
+  paging::admission_result result;
+  result.decision         = paging::admission_decision::REJECT;
+  result.http_status_code = 409;
+  result.cause            = oai::_3gpp::model::N1N2MessageTransferCause_anyOf::
+      eN1N2MessageTransferCause_anyOf::N2_MSG_NOT_TRANSFERRED;
+  result.is_error       = true;
+  result.problem_cause  = "N2_MSG_NOT_TRANSFERRED";
+  result.problem_detail = detail;
+  return result;
+}
+
+static size_t get_paging_max_transactions_per_ue() {
+  if (amf_cfg && amf_cfg->paging.max_transactions_per_ue > 0) {
+    return amf_cfg->paging.max_transactions_per_ue;
+  }
+  return AMF_CONFIG_PAGING_MAX_TRANSACTIONS_PER_UE_DEFAULT_VALUE;
+}
+
+static uint32_t get_paging_registration_defer_timeout_sec() {
+  if (amf_cfg && amf_cfg->paging.registration_defer_timeout_sec > 0) {
+    return amf_cfg->paging.registration_defer_timeout_sec;
+  }
+  return AMF_CONFIG_PAGING_REGISTRATION_DEFER_TIMEOUT_SEC_DEFAULT_VALUE;
+}
+
+static uint32_t get_paging_temporary_unreachable_defer_timeout_sec() {
+  if (amf_cfg && amf_cfg->paging.temporary_unreachable_defer_timeout_sec > 0) {
+    return amf_cfg->paging.temporary_unreachable_defer_timeout_sec;
+  }
+  return AMF_CONFIG_PAGING_TEMPORARY_UNREACHABLE_DEFER_TIMEOUT_SEC_DEFAULT_VALUE;
+}
 
 class paging_controller {
  public:
-  explicit paging_controller(
+  paging_controller(
       size_t max_transactions_per_ue, uint32_t registration_defer_timeout_sec,
       uint32_t temporary_unreachable_defer_timeout_sec);
+  paging_controller();
 
   paging::admission_result admit_transfer(
       const std::shared_ptr<nas_context>& nc,

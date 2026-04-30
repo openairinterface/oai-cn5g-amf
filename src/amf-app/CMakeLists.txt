@@ -19,8 +19,6 @@ add_library (AMF_APP STATIC
   ${SRC_TOP_DIR}/ngap/ngap_app.cpp
 )
 
-target_link_libraries(AMF_APP PUBLIC nlohmann_json::nlohmann_json yaml-cpp)
-
 target_include_directories(AMF_APP PUBLIC ${SRC_TOP_DIR}/amf-app)
 target_include_directories(AMF_APP PUBLIC ${SRC_TOP_DIR}/common)
 target_include_directories(AMF_APP PUBLIC ${SRC_TOP_DIR}/common/unicode)
@@ -54,7 +52,3 @@ target_include_directories(AMF_APP PUBLIC ${SRC_TOP_DIR}/${MOUNTED_COMMON}/utils
 
 include(${SRC_TOP_DIR}/${MOUNTED_COMMON}/model/amf.cmake)
 include(${SRC_TOP_DIR}/${MOUNTED_COMMON}/utils/utils.cmake)
-
-if(BUILD_TESTING)
-  add_subdirectory(test)
-endif()

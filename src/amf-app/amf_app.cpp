@@ -58,88 +58,12 @@ extern statistics stacs;
 
 void amf_app_task(void*);
 
-namespace {
-static paging::admission_result make_dispatch_failure_result(
-    const std::string& detail) {
-  paging::admission_result result;
-  result.decision         = paging::admission_decision::REJECT;
-  result.http_status_code = 503;
-  result.cause            = oai::_3gpp::model::N1N2MessageTransferCause_anyOf::
-      eN1N2MessageTransferCause_anyOf::FAILURE_CAUSE_UNSPECIFIED;
-  result.is_error       = true;
-  result.problem_cause  = "SYSTEM_FAILURE";
-  result.problem_detail = detail;
-  return result;
-}
-
-static paging::admission_result make_no_paging_target_result() {
-  paging::admission_result result;
-  result.decision         = paging::admission_decision::REJECT;
-  result.http_status_code = 504;
-  result.cause            = oai::_3gpp::model::N1N2MessageTransferCause_anyOf::
-      eN1N2MessageTransferCause_anyOf::AN_NOT_RESPONDING;
-  result.is_error       = true;
-  result.problem_cause  = "AN_NOT_RESPONDING";
-  result.problem_detail = "No matching NG-RAN target was found for paging.";
-  return result;
-}
-
-static paging::admission_result make_n2_forwarding_blocked_result(
-    const std::string& detail) {
-  paging::admission_result result;
-  result.decision         = paging::admission_decision::REJECT;
-  result.http_status_code = 409;
-  result.cause            = oai::_3gpp::model::N1N2MessageTransferCause_anyOf::
-      eN1N2MessageTransferCause_anyOf::N2_MSG_NOT_TRANSFERRED;
-  result.is_error       = true;
-  result.problem_cause  = "N2_MSG_NOT_TRANSFERRED";
-  result.problem_detail = detail;
-  return result;
-}
-
-static void publish_transfer_outcome(
-    const std::string& supi, paging::paging_outcome outcome,
-    const std::string& cause, std::optional<uint32_t> ran_ue_ngap_id = {},
-    std::optional<uint64_t> amf_ue_ngap_id = {}) {
-  if (!amf_n1_inst || supi.empty()) {
-    return;
-  }
-
-  amf_n1_inst->publish_paging_outcome(
-      supi, outcome, cause, ran_ue_ngap_id, amf_ue_ngap_id);
-}
-
-static size_t get_paging_max_transactions_per_ue() {
-  if (amf_cfg && amf_cfg->paging.max_transactions_per_ue > 0) {
-    return amf_cfg->paging.max_transactions_per_ue;
-  }
-  return AMF_CONFIG_PAGING_MAX_TRANSACTIONS_PER_UE_DEFAULT_VALUE;
-}
-
-static uint32_t get_paging_registration_defer_timeout_sec() {
-  if (amf_cfg && amf_cfg->paging.registration_defer_timeout_sec > 0) {
-    return amf_cfg->paging.registration_defer_timeout_sec;
-  }
-  return AMF_CONFIG_PAGING_REGISTRATION_DEFER_TIMEOUT_SEC_DEFAULT_VALUE;
-}
-
-static uint32_t get_paging_temporary_unreachable_defer_timeout_sec() {
-  if (amf_cfg && amf_cfg->paging.temporary_unreachable_defer_timeout_sec > 0) {
-    return amf_cfg->paging.temporary_unreachable_defer_timeout_sec;
-  }
-  return AMF_CONFIG_PAGING_TEMPORARY_UNREACHABLE_DEFER_TIMEOUT_SEC_DEFAULT_VALUE;
-}
-}  // namespace
-
 //------------------------------------------------------------------------------
 amf_app::amf_app()
     : m_ue_contexts(),
       m_supi2ue_ctx(),
       m_sbi_response_handlers(),
-      paging_ctrl_(
-          get_paging_max_transactions_per_ue(),
-          get_paging_registration_defer_timeout_sec(),
-          get_paging_temporary_unreachable_defer_timeout_sec()) {
+      paging_ctrl_() {
   ue_contexts           = {};
   supi2ue_ctx           = {};
   sbi_response_handlers = {};
@@ -684,7 +608,7 @@ paging::admission_result amf_app::handle_n1n2_message_transfer(
     result.problem_cause = "N1_MSG_NOT_TRANSFERRED";
     result.problem_detail =
         "No UE-associated N1 or N2 transfer payload was provided.";
-    publish_transfer_outcome(
+    amf_n1_inst->publish_paging_outcome(
         itti_msg.supi, paging::paging_outcome::REJECTED, result.problem_cause);
     return result;
   }
@@ -697,7 +621,7 @@ paging::admission_result amf_app::handle_n1n2_message_transfer(
     auto result =
         paging_ctrl_.admit_transfer(nc, itti_msg.to_paging_transaction());
     if (result.decision == paging::admission_decision::REJECT) {
-      publish_transfer_outcome(
+      amf_n1_inst->publish_paging_outcome(
           itti_msg.supi, paging::paging_outcome::REJECTED,
           result.problem_cause.empty() ? "UE_NOT_REACHABLE_FOR_SESSION" :
                                          result.problem_cause);
@@ -722,7 +646,7 @@ paging::admission_result amf_app::handle_n1n2_message_transfer(
       !amf_n2_inst->has_paging_targets(
           amf_ue_ngap_id, ran_ue_ngap_id, paging_was_ongoing)) {
     auto result = make_no_paging_target_result();
-    publish_transfer_outcome(
+    amf_n1_inst->publish_paging_outcome(
         itti_msg.supi, paging::paging_outcome::NO_TARGET, "AN_NOT_RESPONDING",
         ran_ue_ngap_id, amf_ue_ngap_id);
     return result;
@@ -747,7 +671,7 @@ paging::admission_result amf_app::handle_n1n2_message_transfer(
       if (block_n2_forwarding) {
         if (!itti_msg.is_n1sm_set) {
           auto blocked = make_n2_forwarding_blocked_result(n2_rejection_reason);
-          publish_transfer_outcome(
+          amf_n1_inst->publish_paging_outcome(
               itti_msg.supi, paging::paging_outcome::REJECTED,
               blocked.problem_cause, ran_ue_ngap_id, amf_ue_ngap_id);
           return blocked;
@@ -765,12 +689,12 @@ paging::admission_result amf_app::handle_n1n2_message_transfer(
               *direct_msg, amf_ue_ngap_id, ran_ue_ngap_id)) {
         auto dispatch_failure = make_dispatch_failure_result(
             "Failed to dispatch direct N1/N2 delivery.");
-        publish_transfer_outcome(
+        amf_n1_inst->publish_paging_outcome(
             itti_msg.supi, paging::paging_outcome::REJECTED,
             dispatch_failure.problem_cause, ran_ue_ngap_id, amf_ue_ngap_id);
         return dispatch_failure;
       }
-      publish_transfer_outcome(
+      amf_n1_inst->publish_paging_outcome(
           itti_msg.supi, paging::paging_outcome::DIRECT_DELIVERY,
           "N1_N2_TRANSFER_INITIATED", ran_ue_ngap_id, amf_ue_ngap_id);
       break;
@@ -785,7 +709,7 @@ paging::admission_result amf_app::handle_n1n2_message_transfer(
           }
           auto dispatch_failure = make_dispatch_failure_result(
               "Failed to dispatch the initial paging trigger.");
-          publish_transfer_outcome(
+          amf_n1_inst->publish_paging_outcome(
               itti_msg.supi, paging::paging_outcome::REJECTED,
               dispatch_failure.problem_cause, ran_ue_ngap_id, amf_ue_ngap_id);
           return dispatch_failure;
@@ -796,7 +720,7 @@ paging::admission_result amf_app::handle_n1n2_message_transfer(
       if (nc) {
         amf_n1_inst->schedule_awaiting_registration_expiry(nc, amf_ue_ngap_id);
       }
-      publish_transfer_outcome(
+      amf_n1_inst->publish_paging_outcome(
           itti_msg.supi, paging::paging_outcome::DEFERRED_AWAITING_REGISTRATION,
           "WAITING_FOR_ASYNCHRONOUS_TRANSFER", ran_ue_ngap_id, amf_ue_ngap_id);
       break;
@@ -804,12 +728,12 @@ paging::admission_result amf_app::handle_n1n2_message_transfer(
       if (nc) {
         amf_n1_inst->schedule_temporary_unreachable_expiry(nc, amf_ue_ngap_id);
       }
-      publish_transfer_outcome(
+      amf_n1_inst->publish_paging_outcome(
           itti_msg.supi, paging::paging_outcome::DEFERRED_TEMPORARY_UNREACHABLE,
           "WAITING_FOR_ASYNCHRONOUS_TRANSFER", ran_ue_ngap_id, amf_ue_ngap_id);
       break;
     case paging::admission_decision::REJECT:
-      publish_transfer_outcome(
+      amf_n1_inst->publish_paging_outcome(
           itti_msg.supi, paging::paging_outcome::REJECTED,
           result.problem_cause.empty() ? "FAILURE_CAUSE_UNSPECIFIED" :
                                          result.problem_cause,

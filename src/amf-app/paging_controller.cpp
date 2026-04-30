@@ -25,6 +25,13 @@ paging_controller::paging_controller(
       temporary_unreachable_defer_timeout_sec_(
           temporary_unreachable_defer_timeout_sec) {}
 
+paging_controller::paging_controller() {
+  max_transactions_per_ue_        = get_paging_max_transactions_per_ue();
+  registration_defer_timeout_sec_ = get_paging_registration_defer_timeout_sec();
+  temporary_unreachable_defer_timeout_sec_ =
+      get_paging_temporary_unreachable_defer_timeout_sec();
+}
+
 paging::admission_result paging_controller::admit_transfer(
     const std::shared_ptr<nas_context>& nc,
     paging::paging_transaction&& transaction) const {
