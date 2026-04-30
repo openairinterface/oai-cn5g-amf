@@ -11,6 +11,9 @@
 #include "nas_security_context.hpp"
 #include "Struct.hpp"
 #include <cstdint>
+#include <deque>
+#include <string>
+#include "paging_types.hpp"
 
 typedef enum {
   _5GMM_STATE_MIN     = 0,
@@ -96,6 +99,32 @@ class nas_context {
   bool is_mobile_reachable_timer_timeout;
   timer_id_t mobile_reachable_timer;
   timer_id_t implicit_deregistration_timer;
+
+  // Paging proceed flag  (reachable or not for paging)
+  bool ppf_3gpp = true;  // final T3513 expiry/ implicit deregistration)
+
+  // Paging lifecycle state — §5.6.2 TS 24.501
+  bool is_paging_ongoing       = false;
+  bool paging_priority_present = false;
+  uint8_t paging_effective_ppi = 0;
+  bool paging_completed        = false;
+  bool is_mico_mode =
+      false;  // true when MICO mode is negotiated (TS 24.501 §5.5.1.3)
+
+  // Paging-triggered transfers awaiting delivery after paging response.
+  std::deque<amf_application::paging::paging_transaction>
+      pending_paging_messages;
+  // Accepted transfers deferred until registration finishes.
+  std::deque<amf_application::paging::paging_transaction>
+      awaiting_registration_messages;
+  timer_id_t awaiting_registration_timer = ITTI_INVALID_TIMER_ID;
+  // Accepted transfers deferred while the UE is temporarily unreachable
+  // (for example MICO/eDRX-like low-power reachability restrictions).
+  std::deque<amf_application::paging::paging_transaction>
+      temporarily_unreachable_messages;
+  timer_id_t temporary_unreachable_timer = ITTI_INVALID_TIMER_ID;
+  std::optional<uint16_t> page_reconnect_allowed_pdu_session_status;
+  bool page_reconnect_guti_refresh_pending = false;
 
   // NAS procedure context — replaces boolean flags per §5.1.3.2.3
   nas_procedure_context_t procedure_ctx;

@@ -3,6 +3,7 @@
  */
 
 #include "nas_timer_manager.hpp"
+#include "amf.hpp"
 
 #include <string>
 
@@ -21,29 +22,30 @@
 // Indices MUST match the nas_timer_type_e enum in nas_timer_manager.hpp.
 // The itti_task_id values match TASK_AMF_T35xx_TIMER_EXPIRE in amf_app.hpp.
 // ---------------------------------------------------------------------------
-const nas_timer_config_t kTimerConfigs[static_cast<size_t>(
-    nas_timer_type_e::NAS_TIMER_COUNT)] = {
-    // idx 0 — T3550: Registration Accept (§5.5.1.2.4)
-    // itti_task_id = TASK_AMF_T3550_TIMER_EXPIRE = 6
-    {nas_timer_type_e::T3550, 6, 4, 6u, "T3550"},
-    // idx 1 — T3560: Auth Request / SMC (§5.4.1.3.7 / §5.4.2.7)
-    // itti_task_id = TASK_AMF_T3560_TIMER_EXPIRE = 7
-    {nas_timer_type_e::T3560, 6, 4, 7u, "T3560"},
-    // idx 2 — T3570: Identity Request (§5.4.3.6)
-    // itti_task_id = TASK_AMF_T3570_TIMER_EXPIRE = 8
-    {nas_timer_type_e::T3570, 6, 4, 8u, "T3570"},
-    // idx 3 — T3522: NW-initiated Deregistration Request (§5.5.2.3.5)
-    // itti_task_id = TASK_AMF_T3522_TIMER_EXPIRE = 9
-    {nas_timer_type_e::T3522, 6, 4, 9u, "T3522"},
-    // idx 4 — T3555: Configuration Update Command (§5.4.4.6)
-    // itti_task_id = TASK_AMF_T3555_TIMER_EXPIRE = 10
-    {nas_timer_type_e::T3555, 6, 4, 10u, "T3555"},
-    // idx 5 — T3513: Paging (§5.6.2.2.1); max_retransmissions=0 → discretionary
-    // itti_task_id = TASK_AMF_T3513_TIMER_EXPIRE = 11
-    {nas_timer_type_e::T3513, 6, 0, 11u, "T3513"},
-    // idx 6 — T3565: Notification (§5.6.3)
-    // itti_task_id = TASK_AMF_T3565_TIMER_EXPIRE = 12
-    {nas_timer_type_e::T3565, 6, 4, 12u, "T3565"},
+const nas_timer_config_t
+    kTimerConfigs[static_cast<size_t>(nas_timer_type_e::NAS_TIMER_COUNT)] = {
+        // idx 0 — T3550: Registration Accept (§5.5.1.2.4)
+        // itti_task_id = TASK_AMF_T3550_TIMER_EXPIRE = 6
+        {nas_timer_type_e::T3550, 6, 4, 6u, "T3550"},
+        // idx 1 — T3560: Auth Request / SMC (§5.4.1.3.7 / §5.4.2.7)
+        // itti_task_id = TASK_AMF_T3560_TIMER_EXPIRE = 7
+        {nas_timer_type_e::T3560, 6, 4, 7u, "T3560"},
+        // idx 2 — T3570: Identity Request (§5.4.3.6)
+        // itti_task_id = TASK_AMF_T3570_TIMER_EXPIRE = 8
+        {nas_timer_type_e::T3570, 6, 4, 8u, "T3570"},
+        // idx 3 — T3522: NW-initiated Deregistration Request (§5.5.2.3.5)
+        // itti_task_id = TASK_AMF_T3522_TIMER_EXPIRE = 9
+        {nas_timer_type_e::T3522, 6, 4, 9u, "T3522"},
+        // idx 4 — T3555: Configuration Update Command (§5.4.4.6)
+        // itti_task_id = TASK_AMF_T3555_TIMER_EXPIRE = 10
+        {nas_timer_type_e::T3555, 6, 4, 10u, "T3555"},
+        // idx 5 — T3513: Paging (§5.6.2.2.1); max_retransmissions=2 per plan §2
+        // itti_task_id = TASK_AMF_T3513_TIMER_EXPIRE = 11
+        {nas_timer_type_e::T3513, kPagingT3513IntervalSec,
+         kPagingMaxRetransmissions, 11u, "T3513"},
+        // idx 6 — T3565: Notification (§5.6.3)
+        // itti_task_id = TASK_AMF_T3565_TIMER_EXPIRE = 12
+        {nas_timer_type_e::T3565, 6, 4, 12u, "T3565"},
 };
 
 // ---------------------------------------------------------------------------
@@ -94,9 +96,14 @@ void nas_timer_manager::stop_timer(
     nas_timer_type_e type, std::shared_ptr<nas_context>& nc) {
   size_t idx = static_cast<size_t>(type);
 
-  if (!nc->nas_timers[idx].is_running) return;
+  if (!nc->nas_timers[idx].is_running &&
+      nc->nas_timers[idx].itti_timer_id == ITTI_INVALID_TIMER_ID) {
+    return;
+  }
 
-  itti_->timer_remove(nc->nas_timers[idx].itti_timer_id);
+  if (nc->nas_timers[idx].is_running) {
+    itti_->timer_remove(nc->nas_timers[idx].itti_timer_id);
+  }
   nc->nas_timers[idx].itti_timer_id        = ITTI_INVALID_TIMER_ID;
   nc->nas_timers[idx].is_running           = false;
   nc->nas_timers[idx].retransmission_count = 0;

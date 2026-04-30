@@ -60,7 +60,10 @@ void amf_app_task(void*);
 
 //------------------------------------------------------------------------------
 amf_app::amf_app()
-    : m_ue_contexts(), m_supi2ue_ctx(), m_sbi_response_handlers() {
+    : m_ue_contexts(),
+      m_supi2ue_ctx(),
+      m_sbi_response_handlers(),
+      paging_ctrl_() {
   ue_contexts           = {};
   supi2ue_ctx           = {};
   sbi_response_handlers = {};
@@ -500,22 +503,85 @@ std::string amf_app::generate_amf_status_change_sub_id_generator() {
 }
 
 //------------------------------------------------------------------------------
-void amf_app::handle_itti_message(
-    itti_n1n2_message_transfer_request& itti_msg) {
-  if (itti_msg.is_ppi_set) {  // Paging procedure
-    Logger::amf_app().info(
-        "Handle ITTI N1N2 Message Transfer Request for Paging");
-    auto paging_msg = std::make_shared<itti_paging>(TASK_AMF_APP, TASK_AMF_N2);
-    amf_n1_inst->supi_2_amf_id(itti_msg.supi, paging_msg->amf_ue_ngap_id);
-    amf_n1_inst->supi_2_ran_id(itti_msg.supi, paging_msg->ran_ue_ngap_id);
+bool amf_app::send_direct_n1n2_transfer(
+    const itti_n1n2_message_transfer_request& itti_msg, uint64_t amf_ue_ngap_id,
+    uint32_t ran_ue_ngap_id) {
+  auto dl_msg =
+      std::make_shared<itti_downlink_nas_transfer>(TASK_AMF_APP, TASK_AMF_N1);
 
-    int ret = itti_inst->send_msg(paging_msg);
-    if (ret != RETURNok) {
-      Logger::amf_app().error(
-          "Could not send ITTI message %s to task TASK_AMF_N2",
-          paging_msg->get_msg_name());
-    }
-  } else if (itti_msg.is_nrppa_pdu_set) {
+  if (itti_msg.is_n1sm_set) {
+    auto dl = std::make_unique<DlNasTransport>();
+    dl->SetPayloadContainerType(kN1SmInformation);
+    dl->SetPayloadContainer(
+        (uint8_t*) bdata(itti_msg.n1sm), blength(itti_msg.n1sm));
+    dl->SetPduSessionId(itti_msg.pdu_session_id);
+
+    uint32_t msg_len = dl->GetLength();
+    Logger::nas_mm().debug("Size of DL NAS Transport message %ld", msg_len);
+    if (msg_len == 0) return false;
+    uint8_t nas[msg_len] = {0};
+    int encoded_size     = dl->Encode(nas, msg_len);
+    oai::utils::output_wrapper::print_buffer(
+        "amf_app", "N1N2 message transfer", nas, encoded_size);
+    dl_msg->dl_nas = blk2bstr(nas, encoded_size);
+  }
+
+  if (!itti_msg.is_n2sm_set) {
+    dl_msg->is_n2sm_set = false;
+  } else {
+    dl_msg->n2sm           = bstrcpy(itti_msg.n2sm);
+    dl_msg->pdu_session_id = itti_msg.pdu_session_id;
+    dl_msg->is_n2sm_set    = true;
+    dl_msg->n2sm_info_type = itti_msg.n2sm_info_type;
+  }
+
+  dl_msg->amf_ue_ngap_id = amf_ue_ngap_id;
+  dl_msg->ran_ue_ngap_id = ran_ue_ngap_id;
+
+  int ret = itti_inst->send_msg(dl_msg);
+  if (ret != RETURNok) {
+    Logger::amf_app().error(
+        "Could not send ITTI message %s to task TASK_AMF_N1",
+        dl_msg->get_msg_name());
+    return false;
+  }
+  return true;
+}
+
+//------------------------------------------------------------------------------
+bool amf_app::start_paging_for_ue(
+    const std::string& supi, uint64_t amf_ue_ngap_id, uint32_t ran_ue_ngap_id,
+    const std::shared_ptr<nas_context>& nc, bool is_retransmission) {
+  auto paging_msg = std::make_shared<itti_paging>(TASK_AMF_APP, TASK_AMF_N2);
+  paging_msg->amf_ue_ngap_id    = amf_ue_ngap_id;
+  paging_msg->ran_ue_ngap_id    = ran_ue_ngap_id;
+  paging_msg->ppi               = nc->paging_effective_ppi;
+  paging_msg->is_ppi_set        = nc->paging_priority_present;
+  paging_msg->is_retransmission = is_retransmission;
+
+  int ret = itti_inst->send_msg(paging_msg);
+  if (ret != RETURNok) {
+    Logger::amf_app().error(
+        "Could not send ITTI paging to TASK_AMF_N2 for SUPI %s", supi.c_str());
+    nc->is_paging_ongoing       = false;
+    nc->paging_priority_present = false;
+    nc->paging_effective_ppi    = 0;
+    return false;
+  }
+  return true;
+}
+
+//------------------------------------------------------------------------------
+paging::admission_result amf_app::handle_n1n2_message_transfer(
+    const itti_n1n2_message_transfer_request& itti_msg) {
+  if (itti_msg.is_nrppa_pdu_set) {
+    paging::admission_result result;
+    result.decision         = paging::admission_decision::DIRECT_DELIVERY;
+    result.http_status_code = 200;
+    result.cause = oai::_3gpp::model::N1N2MessageTransferCause_anyOf::
+        eN1N2MessageTransferCause_anyOf::N1_N2_TRANSFER_INITIATED;
+    result.is_error = false;
+
     Logger::amf_app().info(
         "Handle ITTI N1N2 Message Transfer Request for NRPPa PDU");
     auto dl_msg = std::make_shared<itti_downlink_ue_associated_nrppa_transport>(
@@ -530,49 +596,178 @@ void amf_app::handle_itti_message(
           "Could not send ITTI message %s to task TASK_AMF_N2",
           dl_msg->get_msg_name());
     }
-  } else if (itti_msg.is_n1sm_set or itti_msg.is_n2sm_set) {
-    Logger::amf_app().info("Handle ITTI N1N2 Message Transfer Request");
-    auto dl_msg =
-        std::make_shared<itti_downlink_nas_transfer>(TASK_AMF_APP, TASK_AMF_N1);
-
-    if (itti_msg.is_n1sm_set) {
-      // Encode DL NAS TRANSPORT message(NAS message)
-      auto dl = std::make_unique<DlNasTransport>();
-      dl->SetPayloadContainerType(kN1SmInformation);
-      dl->SetPayloadContainer(
-          (uint8_t*) bdata(bstrcpy(itti_msg.n1sm)), blength(itti_msg.n1sm));
-      dl->SetPduSessionId(itti_msg.pdu_session_id);
-
-      uint32_t msg_len = dl->GetLength();
-      Logger::nas_mm().debug("Size of DL NAS Transport message %ld", msg_len);
-      if (msg_len == 0) return;
-      uint8_t nas[msg_len] = {0};
-      int encoded_size     = dl->Encode(nas, msg_len);
-      oai::utils::output_wrapper::print_buffer(
-          "amf_app", "N1N2 message transfer", nas, encoded_size);
-      dl_msg->dl_nas = blk2bstr(nas, encoded_size);
-    }
-
-    if (!itti_msg.is_n2sm_set) {
-      dl_msg->is_n2sm_set = false;
-    } else {
-      dl_msg->n2sm           = bstrcpy(itti_msg.n2sm);
-      dl_msg->pdu_session_id = itti_msg.pdu_session_id;
-      dl_msg->is_n2sm_set    = true;
-      dl_msg->n2sm_info_type = itti_msg.n2sm_info_type;
-    }
-    amf_n1_inst->supi_2_amf_id(itti_msg.supi, dl_msg->amf_ue_ngap_id);
-    amf_n1_inst->supi_2_ran_id(itti_msg.supi, dl_msg->ran_ue_ngap_id);
-
-    int ret = itti_inst->send_msg(dl_msg);
-    if (ret != RETURNok) {
-      Logger::amf_app().error(
-          "Could not send ITTI message %s to task TASK_AMF_N1",
-          dl_msg->get_msg_name());
-    }
-  } else {
-    Logger::amf_app().warn("Unknown N1N2 Message Transfer Request type");
+    return result;
   }
+
+  if (!(itti_msg.is_n1sm_set || itti_msg.is_n2sm_set)) {
+    paging::admission_result result;
+    result.decision         = paging::admission_decision::REJECT;
+    result.http_status_code = 400;
+    result.cause = oai::_3gpp::model::N1N2MessageTransferCause_anyOf::
+        eN1N2MessageTransferCause_anyOf::N1_MSG_NOT_TRANSFERRED;
+    result.problem_cause = "N1_MSG_NOT_TRANSFERRED";
+    result.problem_detail =
+        "No UE-associated N1 or N2 transfer payload was provided.";
+    amf_n1_inst->publish_paging_outcome(
+        itti_msg.supi, paging::paging_outcome::REJECTED, result.problem_cause);
+    return result;
+  }
+
+  uint64_t amf_ue_ngap_id         = INVALID_AMF_UE_NGAP_ID;
+  uint32_t ran_ue_ngap_id         = 0;
+  std::shared_ptr<nas_context> nc = {};
+  if (!amf_n1_inst->supi_2_amf_id(itti_msg.supi, amf_ue_ngap_id) ||
+      !amf_n1_inst->amf_ue_id_2_nas_context(amf_ue_ngap_id, nc)) {
+    auto result =
+        paging_ctrl_.admit_transfer(nc, itti_msg.to_paging_transaction());
+    if (result.decision == paging::admission_decision::REJECT) {
+      amf_n1_inst->publish_paging_outcome(
+          itti_msg.supi, paging::paging_outcome::REJECTED,
+          result.problem_cause.empty() ? "UE_NOT_REACHABLE_FOR_SESSION" :
+                                         result.problem_cause);
+    }
+    return result;
+  }
+  if (!amf_n1_inst->supi_2_ran_id(itti_msg.supi, ran_ue_ngap_id)) {
+    ran_ue_ngap_id = nc->ran_ue_ngap_id;
+  }
+
+  if (!nc->temporarily_unreachable_messages.empty() &&
+      nc->_5gmm_state == _5GMM_REGISTERED && nc->ppf_3gpp &&
+      !nc->is_mobile_reachable_timer_timeout && !nc->is_mico_mode) {
+    amf_n1_inst->wake_temporary_unreachable_messages(
+        nc, ran_ue_ngap_id, amf_ue_ngap_id);
+  }
+
+  const bool paging_was_ongoing = nc->is_paging_ongoing;
+  if (nc->_5gmm_state == _5GMM_REGISTERED && nc->nas_status != CM_CONNECTED &&
+      nc->ppf_3gpp && !nc->is_mobile_reachable_timer_timeout &&
+      !nc->is_mico_mode &&
+      !amf_n2_inst->has_paging_targets(
+          amf_ue_ngap_id, ran_ue_ngap_id, paging_was_ongoing)) {
+    auto result = make_no_paging_target_result();
+    amf_n1_inst->publish_paging_outcome(
+        itti_msg.supi, paging::paging_outcome::NO_TARGET, "AN_NOT_RESPONDING",
+        ran_ue_ngap_id, amf_ue_ngap_id);
+    return result;
+  }
+
+  auto result =
+      paging_ctrl_.admit_transfer(nc, itti_msg.to_paging_transaction());
+  switch (result.decision) {
+    case paging::admission_decision::DIRECT_DELIVERY: {
+      std::shared_ptr<ue_context> uc =
+          get_ue_context(ran_ue_ngap_id, amf_ue_ngap_id);
+      std::string n2_rejection_reason;
+      bool block_n2_forwarding = false;
+      if (itti_msg.is_n2sm_set && uc) {
+        block_n2_forwarding = !can_forward_n2_sm_over_3gpp_access(
+            itti_msg.to_paging_transaction(), uc->tai,
+            nc->page_reconnect_allowed_pdu_session_status, n2_rejection_reason);
+      }
+
+      const itti_n1n2_message_transfer_request* direct_msg = &itti_msg;
+      itti_n1n2_message_transfer_request direct_msg_without_n2(itti_msg);
+      if (block_n2_forwarding) {
+        if (!itti_msg.is_n1sm_set) {
+          auto blocked = make_n2_forwarding_blocked_result(n2_rejection_reason);
+          amf_n1_inst->publish_paging_outcome(
+              itti_msg.supi, paging::paging_outcome::REJECTED,
+              blocked.problem_cause, ran_ue_ngap_id, amf_ue_ngap_id);
+          return blocked;
+        }
+        Logger::amf_app().warn(
+            "Skipping N2 SM forwarding for SUPI %s while still delivering N1 "
+            "payload: %s",
+            itti_msg.supi.c_str(), n2_rejection_reason.c_str());
+        direct_msg_without_n2.is_n2sm_set = false;
+        direct_msg_without_n2.n2sm        = nullptr;
+        direct_msg                        = &direct_msg_without_n2;
+      }
+
+      if (!send_direct_n1n2_transfer(
+              *direct_msg, amf_ue_ngap_id, ran_ue_ngap_id)) {
+        auto dispatch_failure = make_dispatch_failure_result(
+            "Failed to dispatch direct N1/N2 delivery.");
+        amf_n1_inst->publish_paging_outcome(
+            itti_msg.supi, paging::paging_outcome::REJECTED,
+            dispatch_failure.problem_cause, ran_ue_ngap_id, amf_ue_ngap_id);
+        return dispatch_failure;
+      }
+      amf_n1_inst->publish_paging_outcome(
+          itti_msg.supi, paging::paging_outcome::DIRECT_DELIVERY,
+          "N1_N2_TRANSFER_INITIATED", ran_ue_ngap_id, amf_ue_ngap_id);
+      break;
+    }
+    case paging::admission_decision::PAGING:
+      if (result.trigger_paging) {
+        if (!start_paging_for_ue(
+                itti_msg.supi, amf_ue_ngap_id, ran_ue_ngap_id, nc,
+                paging_was_ongoing)) {
+          if (!nc->pending_paging_messages.empty()) {
+            nc->pending_paging_messages.pop_back();
+          }
+          auto dispatch_failure = make_dispatch_failure_result(
+              "Failed to dispatch the initial paging trigger.");
+          amf_n1_inst->publish_paging_outcome(
+              itti_msg.supi, paging::paging_outcome::REJECTED,
+              dispatch_failure.problem_cause, ran_ue_ngap_id, amf_ue_ngap_id);
+          return dispatch_failure;
+        }
+      }
+      break;
+    case paging::admission_decision::DEFER_AWAITING_REGISTRATION:
+      if (nc) {
+        amf_n1_inst->schedule_awaiting_registration_expiry(nc, amf_ue_ngap_id);
+      }
+      amf_n1_inst->publish_paging_outcome(
+          itti_msg.supi, paging::paging_outcome::DEFERRED_AWAITING_REGISTRATION,
+          "WAITING_FOR_ASYNCHRONOUS_TRANSFER", ran_ue_ngap_id, amf_ue_ngap_id);
+      break;
+    case paging::admission_decision::DEFER_TEMPORARY_UNREACHABLE:
+      if (nc) {
+        amf_n1_inst->schedule_temporary_unreachable_expiry(nc, amf_ue_ngap_id);
+      }
+      amf_n1_inst->publish_paging_outcome(
+          itti_msg.supi, paging::paging_outcome::DEFERRED_TEMPORARY_UNREACHABLE,
+          "WAITING_FOR_ASYNCHRONOUS_TRANSFER", ran_ue_ngap_id, amf_ue_ngap_id);
+      break;
+    case paging::admission_decision::REJECT:
+      amf_n1_inst->publish_paging_outcome(
+          itti_msg.supi, paging::paging_outcome::REJECTED,
+          result.problem_cause.empty() ? "FAILURE_CAUSE_UNSPECIFIED" :
+                                         result.problem_cause,
+          ran_ue_ngap_id, amf_ue_ngap_id);
+    default:
+      break;
+  }
+  return result;
+}
+
+//------------------------------------------------------------------------------
+void amf_app::handle_itti_message(
+    itti_n1n2_message_transfer_request& itti_msg) {
+  auto result = handle_n1n2_message_transfer(itti_msg);
+  if (result.is_error) {
+    Logger::amf_app().warn(
+        "Rejected N1N2 transfer for SUPI %s with cause %s",
+        itti_msg.supi.c_str(), result.problem_cause.c_str());
+  }
+}
+
+//------------------------------------------------------------------------------
+paging::admission_result amf_app::handle_n1n2_message_transfer_request(
+    const itti_n1n2_message_transfer_request& itti_msg) {
+  return handle_n1n2_message_transfer(itti_msg);
+}
+
+bool amf_app::can_forward_n2_sm_over_3gpp_access(
+    const paging::paging_transaction& transaction,
+    const oai::ngap::Tai_t& current_tai,
+    const std::optional<uint16_t>& allowed_pdu_session_status,
+    std::string& rejection_reason) const {
+  return paging_ctrl_.can_forward_n2_sm_over_3gpp_access(
+      transaction, current_tai, allowed_pdu_session_status, rejection_reason);
 }
 
 //------------------------------------------------------------------------------

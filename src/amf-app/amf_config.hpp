@@ -88,6 +88,28 @@ constexpr auto AMF_CONFIG_SCTP_TTL                = "sctp_ttl";
 constexpr auto AMF_CONFIG_SCTP_TTL_LABEL          = "SCTP TTL";
 constexpr auto AMF_CONFIG_DEFAULT_DNN             = "default_dnn";
 constexpr auto AMF_CONFIG_DEFAULT_DNN_LABEL       = "Default DNN";
+constexpr auto AMF_CONFIG_PAGING                  = "paging";
+constexpr auto AMF_CONFIG_PAGING_LABEL            = "Paging";
+constexpr auto AMF_CONFIG_PAGING_MAX_TRANSACTIONS_PER_UE =
+    "max_transactions_per_ue";
+constexpr auto AMF_CONFIG_PAGING_MAX_TRANSACTIONS_PER_UE_LABEL =
+    "Max Transactions Per UE";
+constexpr auto AMF_CONFIG_PAGING_REGISTRATION_DEFER_TIMEOUT_SEC =
+    "registration_defer_timeout_sec";
+constexpr auto AMF_CONFIG_PAGING_REGISTRATION_DEFER_TIMEOUT_SEC_LABEL =
+    "Registration Defer Timeout";
+constexpr auto AMF_CONFIG_PAGING_TEMPORARY_UNREACHABLE_DEFER_TIMEOUT_SEC =
+    "temporary_unreachable_defer_timeout_sec";
+constexpr auto AMF_CONFIG_PAGING_TEMPORARY_UNREACHABLE_DEFER_TIMEOUT_SEC_LABEL =
+    "Temporary Unreachable Defer Timeout";
+constexpr auto AMF_CONFIG_PAGING_ENABLE_SUBSCRIPTION_NOTIFICATIONS =
+    "enable_subscription_notifications";
+constexpr auto AMF_CONFIG_PAGING_ENABLE_SUBSCRIPTION_NOTIFICATIONS_LABEL =
+    "Enable Subscription Notifications";
+constexpr auto AMF_CONFIG_PAGING_ENABLE_EXTENDED_NGAP_IES =
+    "enable_extended_ngap_ies";
+constexpr auto AMF_CONFIG_PAGING_ENABLE_EXTENDED_NGAP_IES_LABEL =
+    "Enable Extended NGAP IEs";
 
 constexpr auto AMF_CONFIG_SUPPORTED_INTEGRITY_ALGORITHMS =
     "supported_integrity_algorithms";
@@ -125,6 +147,16 @@ constexpr uint32_t AMF_CONFIG_STATISTICS_TIMER_INTERVAL_MIN_VALUE =
     5;  // in seconds
 constexpr uint32_t AMF_CONFIG_STATISTICS_TIMER_INTERVAL_MAX_VALUE =
     600;  // in seconds
+constexpr uint32_t AMF_CONFIG_PAGING_MAX_TRANSACTIONS_PER_UE_MIN_VALUE = 1;
+constexpr uint32_t AMF_CONFIG_PAGING_MAX_TRANSACTIONS_PER_UE_MAX_VALUE = 1024;
+constexpr uint32_t AMF_CONFIG_PAGING_REGISTRATION_DEFER_TIMEOUT_SEC_MIN_VALUE =
+    1;
+constexpr uint32_t AMF_CONFIG_PAGING_REGISTRATION_DEFER_TIMEOUT_SEC_MAX_VALUE =
+    3600;
+constexpr uint32_t
+    AMF_CONFIG_PAGING_TEMPORARY_UNREACHABLE_DEFER_TIMEOUT_SEC_MIN_VALUE = 1;
+constexpr uint32_t
+    AMF_CONFIG_PAGING_TEMPORARY_UNREACHABLE_DEFER_TIMEOUT_SEC_MAX_VALUE = 3600;
 
 // Default values
 constexpr auto AMF_CONFIG_INSTANCE_ID_DEFAULT_VALUE       = 1;
@@ -142,6 +174,19 @@ constexpr auto AMF_CONFIG_SCTP_TTL_DEFAULT_VALUE          = 100;
 constexpr uint32_t AMF_CONFIG_STATISTICS_TIMER_INTERVAL_DEFAULT_VALUE =
     20;  // in seconds
 constexpr auto AMF_CONFIG_DEFAULT_DNN_VALUE = "default";
+constexpr uint32_t AMF_CONFIG_PAGING_MAX_TRANSACTIONS_PER_UE_DEFAULT_VALUE =
+    kPagingMaxPendingMessagesDefault;
+constexpr uint32_t
+    AMF_CONFIG_PAGING_REGISTRATION_DEFER_TIMEOUT_SEC_DEFAULT_VALUE =
+        kPagingRegistrationDeferTimeoutSecDefault;
+constexpr uint32_t
+    AMF_CONFIG_PAGING_TEMPORARY_UNREACHABLE_DEFER_TIMEOUT_SEC_DEFAULT_VALUE =
+        kPagingTemporaryUnreachableDeferTimeoutSecDefault;
+constexpr bool
+    AMF_CONFIG_PAGING_ENABLE_SUBSCRIPTION_NOTIFICATIONS_DEFAULT_VALUE =
+        kPagingEnableSubscriptionNotificationsDefault;
+constexpr bool AMF_CONFIG_PAGING_ENABLE_EXTENDED_NGAP_IES_DEFAULT_VALUE =
+    kPagingEnableExtendedNgapIesDefault;
 
 using namespace oai::common::sbi;
 
@@ -270,6 +315,29 @@ class supported_encryption_algorithms : public config_type {
       const;
 };
 
+class paging_options : public config_type {
+ private:
+  int_config_value m_max_transactions_per_ue{};
+  int_config_value m_registration_defer_timeout_sec{};
+  int_config_value m_temporary_unreachable_defer_timeout_sec{};
+  option_config_value m_enable_subscription_notifications{};
+  option_config_value m_enable_extended_ngap_ies{};
+
+ public:
+  explicit paging_options();
+
+  void from_yaml(const YAML::Node& node) override;
+
+  void validate() override;
+
+  [[nodiscard]] std::string to_string(const std::string& indent) const override;
+  [[nodiscard]] uint32_t get_max_transactions_per_ue() const;
+  [[nodiscard]] uint32_t get_registration_defer_timeout_sec() const;
+  [[nodiscard]] uint32_t get_temporary_unreachable_defer_timeout_sec() const;
+  [[nodiscard]] bool get_enable_subscription_notifications() const;
+  [[nodiscard]] bool get_enable_extended_ngap_ies() const;
+};
+
 typedef struct support_features_s {
   bool enable_nf_registration;
   bool enable_simple_scenario;
@@ -342,6 +410,57 @@ typedef struct support_features_s {
 
 } support_features_t;
 
+typedef struct paging_cfg_s {
+  uint32_t max_transactions_per_ue;
+  uint32_t registration_defer_timeout_sec;
+  uint32_t temporary_unreachable_defer_timeout_sec;
+  bool enable_subscription_notifications;
+  bool enable_extended_ngap_ies;
+
+  nlohmann::json to_json() const {
+    nlohmann::json json_data             = {};
+    json_data["max_transactions_per_ue"] = this->max_transactions_per_ue;
+    json_data["registration_defer_timeout_sec"] =
+        this->registration_defer_timeout_sec;
+    json_data["temporary_unreachable_defer_timeout_sec"] =
+        this->temporary_unreachable_defer_timeout_sec;
+    json_data["enable_subscription_notifications"] =
+        this->enable_subscription_notifications;
+    json_data["enable_extended_ngap_ies"] = this->enable_extended_ngap_ies;
+    return json_data;
+  }
+
+  void from_json(nlohmann::json& json_data) {
+    try {
+      if (json_data.find("max_transactions_per_ue") != json_data.end()) {
+        this->max_transactions_per_ue =
+            json_data["max_transactions_per_ue"].get<uint32_t>();
+      }
+      if (json_data.find("registration_defer_timeout_sec") != json_data.end()) {
+        this->registration_defer_timeout_sec =
+            json_data["registration_defer_timeout_sec"].get<uint32_t>();
+      }
+      if (json_data.find("temporary_unreachable_defer_timeout_sec") !=
+          json_data.end()) {
+        this->temporary_unreachable_defer_timeout_sec =
+            json_data["temporary_unreachable_defer_timeout_sec"]
+                .get<uint32_t>();
+      }
+      if (json_data.find("enable_subscription_notifications") !=
+          json_data.end()) {
+        this->enable_subscription_notifications =
+            json_data["enable_subscription_notifications"].get<bool>();
+      }
+      if (json_data.find("enable_extended_ngap_ies") != json_data.end()) {
+        this->enable_extended_ngap_ies =
+            json_data["enable_extended_ngap_ies"].get<bool>();
+      }
+    } catch (std::exception& e) {
+      Logger::amf_app().error("%s", e.what());
+    }
+  }
+} paging_cfg_t;
+
 class amf : public nf {
  private:
   int_config_value m_instance_id;
@@ -358,6 +477,7 @@ class amf : public nf {
   local_interface m_n2;
   int_config_value m_sctp_ttl;
   string_config_value m_default_dnn;
+  paging_options m_paging_options;
 
  public:
   explicit amf(
@@ -384,6 +504,7 @@ class amf : public nf {
   [[nodiscard]] const local_interface& get_n2() const;
   [[nodiscard]] const uint32_t get_sctp_ttl() const;
   [[nodiscard]] const std::string get_default_dnn() const;
+  [[nodiscard]] paging_options get_paging() const;
 };
 
 class amf_config : public config {
@@ -439,6 +560,7 @@ class amf_config : public config {
   auth_conf_t auth_para;
   nas_conf_t nas_cfg;
   support_features_t support_features;
+  paging_cfg_t paging;
   nf_addr_t smf_addr;
   nf_addr_t nrf_addr;
   nf_addr_t ausf_addr;

@@ -73,6 +73,8 @@ nas_context::nas_context()
   is_mobile_reachable_timer_timeout  = false;
   mobile_reachable_timer             = ITTI_INVALID_TIMER_ID;
   implicit_deregistration_timer      = ITTI_INVALID_TIMER_ID;
+  awaiting_registration_timer        = ITTI_INVALID_TIMER_ID;
+  temporary_unreachable_timer        = ITTI_INVALID_TIMER_ID;
   procedure_ctx.specific_procedure   = nas_procedure_type_e::NONE;
   procedure_ctx.common_procedure     = nas_procedure_type_e::NONE;
   procedure_ctx.prior_state          = _5GMM_DEREGISTERED;

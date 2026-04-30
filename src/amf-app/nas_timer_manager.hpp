@@ -21,8 +21,8 @@ enum class nas_timer_type_e : uint8_t {
   T3570 = 2,  // §5.4.3.6: Identity Request (6 s, 4 retx)
   T3522 = 3,  // §5.5.2.3.5: NW-initiated Deregistration Request (6 s, 4 retx)
   T3555 = 4,  // §5.4.4.6: Configuration Update Command (6 s, 4 retx)
-  T3513 = 5,  // §5.6.2.2.1: Paging (discretionary retx — max = 0)
-  T3565 = 6,  // §5.6.3: Notification (6 s, 4 retx)
+  T3513 = 5,  // §5.6.2.2.1: Paging (6 s, max 2 retx → final expiry → PPF=FALSE)
+  T3565           = 6,  // §5.6.3: Notification (6 s, 4 retx)
   NAS_TIMER_COUNT = 7
 };
 

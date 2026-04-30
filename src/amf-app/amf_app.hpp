@@ -18,6 +18,8 @@
 #include "UeN1N2InfoSubscriptionCreateData.h"
 #include "amf_config.hpp"
 #include "amf_msg.hpp"
+#include "nas_context.hpp"
+#include "paging_controller.hpp"
 #include "amf_profile.hpp"
 #include "amf_subscription.hpp"
 #include "itti.hpp"
@@ -45,13 +47,25 @@ namespace amf_application {
 #define TASK_AMF_T3555_TIMER_EXPIRE (10)
 #define TASK_AMF_T3513_TIMER_EXPIRE (11)
 #define TASK_AMF_T3565_TIMER_EXPIRE (12)
+#define TASK_AMF_TEMPORARY_UNREACHABLE_DEFER_TIMER_EXPIRE (13)
+#define TASK_AMF_AWAITING_REGISTRATION_DEFER_TIMER_EXPIRE (14)
 
 class amf_app {
  private:
   inline static uint32_t amf_app_ue_ngap_id_generator = 1;
+
+  paging::admission_result handle_n1n2_message_transfer(
+      const itti_n1n2_message_transfer_request& itti_msg);
+  bool send_direct_n1n2_transfer(
+      const itti_n1n2_message_transfer_request& itti_msg,
+      uint64_t amf_ue_ngap_id, uint32_t ran_ue_ngap_id);
+  bool start_paging_for_ue(
+      const std::string& supi, uint64_t amf_ue_ngap_id, uint32_t ran_ue_ngap_id,
+      const std::shared_ptr<nas_context>& nc, bool is_retransmission = false);
   amf_profile nf_instance_profile;
   std::string amf_instance_id;
   std::map<std::string, timer_id_t> timer_nrfs_heartbeat;
+  paging_controller paging_ctrl_;
 
   oai::utils::uint_generator<uint32_t> evsub_id_generator;
   std::map<
@@ -124,6 +138,14 @@ class amf_app {
    * @return void
    */
   void handle_itti_message(itti_n1n2_message_transfer_request& itti_msg);
+
+  paging::admission_result handle_n1n2_message_transfer_request(
+      const itti_n1n2_message_transfer_request& itti_msg);
+  bool can_forward_n2_sm_over_3gpp_access(
+      const paging::paging_transaction& transaction,
+      const oai::ngap::Tai_t& current_tai,
+      const std::optional<uint16_t>& allowed_pdu_session_status,
+      std::string& rejection_reason) const;
 
   /*
    * Handle ITTI message (NonUeN2MessageTransferRequest)

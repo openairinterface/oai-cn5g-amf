@@ -488,6 +488,27 @@ class amf_n1 {
   void handle_t3513_expiry(timer_id_t timer_id, std::string amf_ue_ngap_id_str);
   void handle_t3565_expiry(timer_id_t timer_id, std::string amf_ue_ngap_id_str);
 
+  // Start T3513 after NGAP Paging is sent.
+  void start_paging_timer(
+      std::shared_ptr<nas_context>& nc, uint64_t amf_ue_ngap_id);
+  void complete_ngap_resume_paging_response(
+      uint64_t amf_ue_ngap_id, uint32_t ran_ue_ngap_id);
+  void schedule_awaiting_registration_expiry(
+      std::shared_ptr<nas_context>& nc, uint64_t amf_ue_ngap_id);
+  void handle_awaiting_registration_expiry(
+      timer_id_t timer_id, std::string amf_ue_ngap_id_str);
+  void schedule_temporary_unreachable_expiry(
+      std::shared_ptr<nas_context>& nc, uint64_t amf_ue_ngap_id);
+  void wake_temporary_unreachable_messages(
+      std::shared_ptr<nas_context>& nc, uint32_t ran_ue_ngap_id,
+      uint64_t amf_ue_ngap_id);
+  void handle_temporary_unreachable_expiry(
+      timer_id_t timer_id, std::string amf_ue_ngap_id_str);
+  void publish_paging_outcome(
+      const std::string& supi, paging::paging_outcome outcome,
+      const std::string& cause, std::optional<uint32_t> ran_ue_ngap_id = {},
+      std::optional<uint64_t> amf_ue_ngap_id = {});
+
   // NETWORK SLICING RELATED FUNCTIONS
 
   /*
@@ -775,7 +796,7 @@ class amf_n1 {
   bool registration_request_handle(
       std::shared_ptr<nas_context>& nc, const uint32_t ran_ue_ngap_id,
       const uint64_t amf_ue_ngap_id, const std::string& snn, bstring reg,
-      uint8_t& cause);
+      uint8_t security_header_type, uint8_t& cause);
 
   /*
    * Handle Authentication Response message
@@ -842,7 +863,7 @@ class amf_n1 {
    */
   bool registration_complete_handle(
       const uint32_t ran_ue_ngap_id, const uint64_t amf_ue_ngap_id,
-      bstring nas_msg, uint8_t& cause);
+      bstring nas_msg, uint8_t security_header_type, uint8_t& cause);
 
   /*
    * Handle Service Request message
@@ -856,7 +877,8 @@ class amf_n1 {
    */
   bool service_request_handle(
       std::shared_ptr<nas_context> nc, const uint32_t ran_ue_ngap_id,
-      const uint64_t amf_ue_ngap_id, bstring nas, uint8_t& cause);
+      const uint64_t amf_ue_ngap_id, bstring nas,
+      bool paging_response_integrity_checked, uint8_t& cause);
 
   /*
    * Handle Service Request message with explicit uplink NAS count
@@ -872,7 +894,7 @@ class amf_n1 {
   bool service_request_handle(
       std::shared_ptr<nas_context> nc, const uint32_t ran_ue_ngap_id,
       const uint64_t amf_ue_ngap_id, bstring nas, uint8_t ulCount,
-      uint8_t& cause);
+      bool paging_response_integrity_checked, uint8_t& cause);
 
   /*
    * Send Service Reject to the UE
@@ -983,6 +1005,60 @@ class amf_n1 {
   amf_event event_sub;
 
  private:
+  // Deliver pending N1/N2 paging messages after UE re-connects.
+  // Called from service_request_handle and registration_complete_handle.
+  void deliver_pending_paging_messages(
+      std::shared_ptr<nas_context>& nc, uint32_t ran_ue_ngap_id,
+      uint64_t amf_ue_ngap_id);
+  void deliver_awaiting_registration_messages(
+      std::shared_ptr<nas_context>& nc, uint32_t ran_ue_ngap_id,
+      uint64_t amf_ue_ngap_id);
+  paging::paging_response_class classify_paging_response(
+      uint8_t message_type) const;
+  bool can_complete_paging_response(
+      const std::shared_ptr<nas_context>& nc,
+      paging::paging_response_class response_class,
+      bool integrity_checked_nas_response,
+      bool registration_security_exception) const;
+  bool active_paging_targets_non_3gpp_access(
+      const std::shared_ptr<nas_context>& nc) const;
+  void complete_paging_response_transition(
+      std::shared_ptr<nas_context>& nc, uint32_t ran_ue_ngap_id,
+      uint64_t amf_ue_ngap_id, const char* transition_name,
+      bool deliver_pending_messages);
+  void complete_reconnect_follow_up(
+      std::shared_ptr<nas_context>& nc, uint32_t ran_ue_ngap_id,
+      uint64_t amf_ue_ngap_id, bool send_configuration_update);
+
+  // Handle the terminal outcome of T3513 (all retransmissions exhausted).
+  // Sets PPF=FALSE, drains pending message queue, triggers reachability event.
+  void handle_t3513_final_expiry(
+      std::shared_ptr<nas_context>& nc, uint64_t amf_ue_ngap_id,
+      paging::paging_outcome outcome = paging::paging_outcome::PAGING_TIMEOUT,
+      const std::string& cause       = "UE_NOT_RESPONDING");
+  void stop_awaiting_registration_timer(std::shared_ptr<nas_context>& nc);
+  void stop_temporary_unreachable_timer(std::shared_ptr<nas_context>& nc);
+  bool dispatch_deferred_transaction(
+      std::shared_ptr<nas_context>& nc,
+      const paging::paging_transaction& transaction, uint32_t ran_ue_ngap_id,
+      uint64_t amf_ue_ngap_id, const char* queue_name);
+  void fail_deferred_transactions(
+      std::shared_ptr<nas_context>& nc,
+      std::deque<paging::paging_transaction>& queue,
+      const std::string& terminal_status, uint64_t amf_ue_ngap_id,
+      const char* queue_name);
+  void expire_awaiting_registration_messages(
+      std::shared_ptr<nas_context>& nc, uint64_t amf_ue_ngap_id);
+  void maybe_send_configuration_update_with_new_guti(
+      std::shared_ptr<nas_context>& nc, uint32_t ran_ue_ngap_id,
+      uint64_t amf_ue_ngap_id);
+
+  // Validates callback URI
+  static bool validate_callback_uri(const std::string& uri);
+
+  // POST N1N2MessageTransfer status notification per TS 29.518.
+  bool send_n1n2_transfer_status_callback(
+      const std::string& callback_uri, const std::string& status);
   // for Event Handling
 
   bs2::connection ee_ue_location_report_connection;

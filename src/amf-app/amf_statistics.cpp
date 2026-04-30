@@ -20,6 +20,7 @@ void statistics::display() {
   std::string out = {};
   out.append(get_gnbs_info());
   out.append(get_ues_info());
+  out.append(get_paging_info());
   Logger::amf_app().info(out);
 }
 
@@ -205,6 +206,104 @@ std::string statistics::get_ues_info() const {
 }
 
 //------------------------------------------------------------------------------
+std::string statistics::get_paging_info() const {
+  std::string out          = {};
+  std::string inner_indent = fmt::format("{:<{}}", "", kStatisticsIndent);
+  uint8_t number_cols      = 2;
+  uint8_t header_length    = kStatisticsHalfIndexColLength * 2 +
+                          kStatisticsHalfIeLengthForGnb * 2 * number_cols +
+                          number_cols;
+
+  size_t paging_depth                = 0;
+  size_t awaiting_registration_depth = 0;
+  size_t temporary_unreachable_depth = 0;
+  {
+    std::shared_lock lock(m_paging_queue_depths);
+    for (const auto& [supi, depth] : paging_queue_depths) {
+      paging_depth += depth.paging_depth;
+      awaiting_registration_depth += depth.awaiting_registration_depth;
+      temporary_unreachable_depth += depth.temporary_unreachable_depth;
+    }
+  }
+
+  auto append_counter_row = [&](const std::string& name, uint64_t value) {
+    out.append(inner_indent)
+        .append(ie_to_string(kStatisticsHalfIndexColLength, name))
+        .append(ie_to_string(
+            kStatisticsHalfIeLengthForGnb * 2, std::to_string(value)))
+        .append(ie_to_string(
+            kStatisticsHalfIeLengthForGnb * 2 - kStatisticsHalfIndexColLength,
+            ""))
+        .append("|\n");
+  };
+
+  out.append("\n");
+  out.append(inner_indent)
+      .append(header_to_string(header_length, ""))
+      .append("|\n");
+  out.append(inner_indent)
+      .append(header_to_string(header_length, "Paging Metrics"))
+      .append("|\n");
+  out.append(inner_indent)
+      .append(ie_to_string(kStatisticsHalfIndexColLength, "Metric"))
+      .append(ie_to_string(kStatisticsHalfIeLengthForGnb, "Value"))
+      .append(ie_to_string(kStatisticsHalfIeLengthForGnb, ""))
+      .append("|\n");
+
+  append_counter_row(
+      "requests",
+      paging_metrics.requests_total.load(std::memory_order_relaxed));
+  append_counter_row(
+      "direct",
+      paging_metrics.direct_deliveries_total.load(std::memory_order_relaxed));
+  append_counter_row(
+      "cycles", paging_metrics.cycles_total.load(std::memory_order_relaxed));
+  append_counter_row(
+      "retries", paging_metrics.retries_total.load(std::memory_order_relaxed));
+  append_counter_row(
+      "successes",
+      paging_metrics.successes_total.load(std::memory_order_relaxed));
+  append_counter_row(
+      "timeouts",
+      paging_metrics.timeouts_total.load(std::memory_order_relaxed));
+  append_counter_row(
+      "rejections",
+      paging_metrics.rejections_total.load(std::memory_order_relaxed));
+  append_counter_row(
+      "defer-reg", paging_metrics.deferred_registration_total.load(
+                       std::memory_order_relaxed));
+  append_counter_row(
+      "defer-temp", paging_metrics.deferred_temporary_unreachable_total.load(
+                        std::memory_order_relaxed));
+  append_counter_row(
+      "no-target",
+      paging_metrics.no_target_total.load(std::memory_order_relaxed));
+  append_counter_row(
+      "page-qfull",
+      paging_metrics.paging_queue_full_total.load(std::memory_order_relaxed));
+  append_counter_row(
+      "await-qfull", paging_metrics.awaiting_registration_queue_full_total.load(
+                         std::memory_order_relaxed));
+  append_counter_row(
+      "temp-qfull", paging_metrics.temporary_unreachable_queue_full_total.load(
+                        std::memory_order_relaxed));
+  append_counter_row(
+      "cb-ok",
+      paging_metrics.callback_success_total.load(std::memory_order_relaxed));
+  append_counter_row(
+      "cb-fail",
+      paging_metrics.callback_failures_total.load(std::memory_order_relaxed));
+  append_counter_row("queue", paging_depth);
+  append_counter_row("await-reg", awaiting_registration_depth);
+  append_counter_row("temp-unr", temporary_unreachable_depth);
+
+  out.append(inner_indent)
+      .append(header_to_string(header_length, ""))
+      .append("|\n");
+  return out;
+}
+
+//------------------------------------------------------------------------------
 void statistics::update_ue_info(const ue_info_t& ue_info) {
   if (ue_info.imsi.empty() && ue_info.supi.empty()) {
     Logger::amf_app().debug("Update UE Info with invalid IMSI/SUPI");
@@ -317,4 +416,105 @@ void statistics::update_gnb(
 uint32_t statistics::get_number_connected_gnbs() const {
   std::shared_lock lock(m_gnbs);
   return gnbs.size();
+}
+
+//------------------------------------------------------------------------------
+void statistics::increment_paging_requests() {
+  paging_metrics.requests_total.fetch_add(1, std::memory_order_relaxed);
+}
+
+//------------------------------------------------------------------------------
+void statistics::increment_paging_direct_deliveries() {
+  paging_metrics.direct_deliveries_total.fetch_add(
+      1, std::memory_order_relaxed);
+}
+
+//------------------------------------------------------------------------------
+void statistics::increment_paging_cycles() {
+  paging_metrics.cycles_total.fetch_add(1, std::memory_order_relaxed);
+}
+
+//------------------------------------------------------------------------------
+void statistics::increment_paging_retries() {
+  paging_metrics.retries_total.fetch_add(1, std::memory_order_relaxed);
+}
+
+//------------------------------------------------------------------------------
+void statistics::increment_paging_successes() {
+  paging_metrics.successes_total.fetch_add(1, std::memory_order_relaxed);
+}
+
+//------------------------------------------------------------------------------
+void statistics::increment_paging_timeouts() {
+  paging_metrics.timeouts_total.fetch_add(1, std::memory_order_relaxed);
+}
+
+//------------------------------------------------------------------------------
+void statistics::increment_paging_rejections() {
+  paging_metrics.rejections_total.fetch_add(1, std::memory_order_relaxed);
+}
+
+//------------------------------------------------------------------------------
+void statistics::increment_paging_deferred_registration() {
+  paging_metrics.deferred_registration_total.fetch_add(
+      1, std::memory_order_relaxed);
+}
+
+//------------------------------------------------------------------------------
+void statistics::increment_paging_deferred_temporary_unreachable() {
+  paging_metrics.deferred_temporary_unreachable_total.fetch_add(
+      1, std::memory_order_relaxed);
+}
+
+//------------------------------------------------------------------------------
+void statistics::increment_paging_no_target() {
+  paging_metrics.no_target_total.fetch_add(1, std::memory_order_relaxed);
+}
+
+//------------------------------------------------------------------------------
+void statistics::increment_paging_queue_full() {
+  paging_metrics.paging_queue_full_total.fetch_add(
+      1, std::memory_order_relaxed);
+}
+
+//------------------------------------------------------------------------------
+void statistics::increment_awaiting_registration_queue_full() {
+  paging_metrics.awaiting_registration_queue_full_total.fetch_add(
+      1, std::memory_order_relaxed);
+}
+
+//------------------------------------------------------------------------------
+void statistics::increment_temporary_unreachable_queue_full() {
+  paging_metrics.temporary_unreachable_queue_full_total.fetch_add(
+      1, std::memory_order_relaxed);
+}
+
+//------------------------------------------------------------------------------
+void statistics::increment_paging_callback_successes() {
+  paging_metrics.callback_success_total.fetch_add(1, std::memory_order_relaxed);
+}
+
+//------------------------------------------------------------------------------
+void statistics::increment_paging_callback_failures() {
+  paging_metrics.callback_failures_total.fetch_add(
+      1, std::memory_order_relaxed);
+}
+
+//------------------------------------------------------------------------------
+void statistics::update_paging_queue_depths(
+    const std::string& supi, size_t paging_depth,
+    size_t awaiting_registration_depth, size_t temporary_unreachable_depth) {
+  if (supi.empty()) {
+    return;
+  }
+
+  std::unique_lock lock(m_paging_queue_depths);
+  if ((paging_depth == 0) && (awaiting_registration_depth == 0) &&
+      (temporary_unreachable_depth == 0)) {
+    paging_queue_depths.erase(supi);
+    return;
+  }
+
+  paging_queue_depths[supi] = paging_queue_depth_t{
+      paging_depth, awaiting_registration_depth, temporary_unreachable_depth};
 }
