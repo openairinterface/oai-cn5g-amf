@@ -81,6 +81,14 @@ class statistics {
     std::atomic<uint64_t> temporary_unreachable_queue_full_total{0};
     std::atomic<uint64_t> callback_success_total{0};
     std::atomic<uint64_t> callback_failures_total{0};
+    // TTI send failure on T3513/T3565 retransmit path
+    std::atomic<uint64_t> send_failed_total{0};
+    // TS 29.518 §6.1.5.6 N1N2TransferFailureNotification outcomes
+    std::atomic<uint64_t> failure_notify_sent_total{0};
+    std::atomic<uint64_t> failure_notify_failed_total{0};
+    // Notifications dropped because the in-flight
+    // detached-thread cap (kFailureNotifyMaxInflight=64) was reached.
+    std::atomic<uint64_t> failure_notify_dropped_total{0};
   };
 
   statistics();
@@ -186,6 +194,13 @@ class statistics {
   void increment_temporary_unreachable_queue_full();
   void increment_paging_callback_successes();
   void increment_paging_callback_failures();
+  // Count ITTI send failures on T3513/T3565 retransmit path
+  void increment_paging_send_failed();
+  // TS 29.518 §6.1.5.6 N1N2TransferFailureNotification outcomes
+  void increment_paging_failure_notify_sent();
+  void increment_paging_failure_notify_failed();
+  // Dropped notifications (in-flight cap reached)
+  void increment_paging_failure_notify_dropped();
   void update_paging_queue_depths(
       const std::string& supi, size_t paging_depth,
       size_t awaiting_registration_depth, size_t temporary_unreachable_depth);

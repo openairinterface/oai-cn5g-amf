@@ -129,9 +129,10 @@ struct paging_transaction {
   std::optional<bool> ext_buf_support;
   std::optional<oai::_3gpp::model::AccessType> target_access;
   std::optional<std::string> nf_id;
-  bool deferred_expiry_set = false;
-  std::chrono::system_clock::time_point deferred_expiry_at =
-      std::chrono::system_clock::time_point::min();
+  // Deferred_expiry_set removed — use deferred_expiry_at.has_value()
+  // as the validity flag.  Previously both fields were written together, making
+  // the bool redundant.
+  std::optional<std::chrono::system_clock::time_point> deferred_expiry_at;
 };
 
 struct admission_result {

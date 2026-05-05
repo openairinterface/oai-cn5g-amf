@@ -5,6 +5,7 @@
 #include "amf_sbi.hpp"
 
 #include <nlohmann/json.hpp>
+#include "failure_notify_client.hpp"
 
 #include "3gpp_24.501.hpp"
 #include "3gpp_29.500.h"
@@ -297,6 +298,16 @@ void amf_sbi_task(void*) {
         amf_sbi_inst->handle_itti_message(std::ref(*m));
       } break;
 
+      // Track C — TS 23.502 §5.2.2.2.7A / TS 29.518 §6.1.5.6
+      case N1N2_TRANSFER_FAILURE_NOTIFICATION: {
+        Logger::amf_sbi().info(
+            "Receive N1N2TransferFailureNotification request, handling ...");
+        itti_n1n2_transfer_failure_notification* m =
+            dynamic_cast<itti_n1n2_transfer_failure_notification*>(msg);
+        if (!m) break;
+        amf_sbi_inst->handle_itti_message(std::ref(*m));
+      } break;
+
       case TERMINATE: {
         if (itti_msg_terminate* terminate =
                 dynamic_cast<itti_msg_terminate*>(msg)) {
@@ -314,6 +325,19 @@ void amf_sbi_task(void*) {
 
 //------------------------------------------------------------------------------
 amf_sbi::amf_sbi() {
+  // Construct a dedicated http_client with request_type_e::ASYNC for failure
+  // notifications so that send_http_request() dispatches to
+  // send_async_http_request() internally and returns without blocking
+  // TASK_AMF_SBI.  The global http_client_inst (SIMPLE mode) must not be used
+  // here because it serialises all paging final-expiry POSTs against the entire
+  // SBI event loop. TS 23.502 §5.2.2.2.7A / TS 29.518 §6.1.5.6
+  auto notify_http = std::make_shared<oai::http::http_client>(
+      Logger::amf_sbi(), amf_cfg->http_request_timeout, amf_cfg->sbi.if_name,
+      amf_cfg->support_features.http_version, amf_cfg->enable_tls(),
+      oai::http::request_type_e::ASYNC);
+  failure_notify_client_ =
+      std::make_unique<oai::amf::failure_notify_client>(std::move(notify_http));
+
   if (itti_inst->create_task(TASK_AMF_SBI, amf_sbi_task, nullptr)) {
     Logger::amf_sbi().error("Cannot create task TASK_AMF_SBI");
     throw std::runtime_error("Cannot create task TASK_AMF_SBI");
@@ -2223,4 +2247,20 @@ void amf_sbi::create_multipart_content(
     body         = json_data;
     is_multipart = false;
   }
+}
+
+//------------------------------------------------------------------------------
+// TS 23.502 §5.2.2.2.7A / TS 29.518 §6.1.5.6
+// Routes the failure notification through the failure_notify_client.
+//------------------------------------------------------------------------------
+void amf_sbi::handle_itti_message(
+    itti_n1n2_transfer_failure_notification& itti_msg) {
+  if (!failure_notify_client_) {
+    Logger::amf_sbi().error(
+        "handle_itti_message(N1N2TransferFailureNotification): "
+        "failure_notify_client_ is null — notification dropped for SUPI %s",
+        itti_msg.supi.c_str());
+    return;
+  }
+  failure_notify_client_->send(itti_msg);
 }

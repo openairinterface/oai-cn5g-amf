@@ -130,6 +130,36 @@ amf:
     - "NEA0"
     - "NEA1"
     - "NEA2"
+  paging:
+    # T3513: Network-triggered service request supervision (TS 24.501 §5.6.2.2.1).
+    # Range 1..60 s. Operator-discretionary; 6 s is a common FR1/TDD starting point.
+    t3513_interval_sec: 6
+    # 0 = no discretionary retransmissions before PPF=FALSE (TS 24.501 §5.6.2.2.1 allows 0).
+    t3513_max_retransmissions: 0
+    # T3565: Notification procedure timer (TS 24.501 §5.6.3.4). Body building is
+    # deferred; knob is parsed now so reconfig does not require code change.
+    t3565_interval_sec: 6
+    t3565_max_retransmissions: 4  # TS 24.501 §5.6.3.4 default
+    # Staged paging: attempt narrow (registration-area) scope first, then widen
+    # to full tracking-area scope (TS 23.502 §4.2.3.3).
+    staged_paging_enabled: true
+    # How long to wait for a response from the narrow-scope attempt before widening.
+    narrow_paging_first_hop_timeout_sec: 4
+    # NGAP Paging Priority IE is encoded only when arp.priorityLevel <= this value
+    # (TS 23.501 §5.6.3 / TS 23.502 §4.2.3.3 NOTE 4). Range 1..15.
+    arp_priority_threshold_for_pri_paging: 8
+    # Default paging DRX cycle sent to gNBs (TS 38.413 id-PagingDRX).
+    # Accepted values: v32, v64, v128, v256 (radio frames).
+    default_paging_drx: v128
+    # Number of initial retransmissions that use the OLD 5G-S-TMSI before
+    # switching to the new one. Per TS 24.501 §5.5.1.3.8 NOTE, threshold is
+    # implementation-defined. Range 0..10. Default 2.
+    narrow_attempts_using_old_5g_stmsi: 2    
+    max_transactions_per_ue: 8
+    registration_defer_timeout_sec: 30
+    temporary_unreachable_defer_timeout_sec: 30
+    enable_subscription_notifications: yes
+    enable_extended_ngap_ies: yes
 
 smf:
   ue_mtu: 1500

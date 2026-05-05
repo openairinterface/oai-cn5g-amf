@@ -5,6 +5,7 @@
 #include "amf_n2.hpp"
 
 #include <deque>
+#include <unordered_map>
 
 #include <boost/chrono/chrono.hpp>
 #include <boost/chrono/duration.hpp>
@@ -36,6 +37,7 @@
 #include "UeContextReleaseCommand.hpp"
 #include "amf_app.hpp"
 #include "amf_config.hpp"
+#include "nas_timer_manager.hpp"
 #include "amf_conversions.hpp"
 #include "amf_n1.hpp"
 #include "amf_sbi.hpp"
@@ -424,11 +426,16 @@ void amf_n2::handle_itti_message(std::shared_ptr<itti_paging>& itti_msg) {
     return;
 
   if (unc->amf_ue_ngap_id != itti_msg->amf_ue_ngap_id) {
+    // UE-context mismatch: the NGAP context found by ran_ue_ngap_id belongs
+    // to a different AMF UE NGAP ID than the paging request targets.
+    // Continuing would page the wrong UE — reject early: TS 38.413 §9.2.5.1
+    // requires correct UE identity in Paging PDU).
     Logger::amf_n2().error(
-        "The requested UE (amf_ue_ngap_id: " AMF_UE_NGAP_ID_FMT
-        ") is not valid, existed UE "
-        "which's amf_ue_ngap_id (" AMF_UE_NGAP_ID_FMT ")",
-        itti_msg->amf_ue_ngap_id, unc->amf_ue_ngap_id);
+        "Paging aborted: context amf_ue_ngap_id " AMF_UE_NGAP_ID_FMT
+        " does not match requested amf_ue_ngap_id " AMF_UE_NGAP_ID_FMT
+        " — dropping paging to avoid wrong-UE page",
+        unc->amf_ue_ngap_id, itti_msg->amf_ue_ngap_id);
+    return;
   }
 
   // TODO: check UE reachability status
@@ -449,9 +456,28 @@ void amf_n2::handle_itti_message(std::shared_ptr<itti_paging>& itti_msg) {
   }
 
   PagingMsg paging_msg = {};
+
+  // 5G-S-TMSI selection: TS 24.501 §5.5.1.3.8 NOTE.
+  // For the first narrow_attempts_using_old_5g_stmsi retransmissions use the
+  // OLD 5G-S-TMSI when available; subsequent retransmissions use the NEW one.
+  // TODO TS 24.501 §5.5.1.3.8 NOTE: capture old 5G-S-TMSI from registration
+  //   in nas_context (old_setid / old_pointer / old_tmsi fields on
+  //   ue_ngap_context). Those fields do not yet exist — the old-identity path
+  //   is intentionally not taken here until they are added in a follow-up.
+  const uint8_t t3513_attempt_count =
+      nc->nas_timers[static_cast<uint8_t>(nas_timer_type_e::T3513)]
+          .retransmission_count;
+  const bool use_old_5g_s_tmsi =
+      (nc->old_amf_ue_ngap_id != 0) &&
+      (t3513_attempt_count <
+       static_cast<uint8_t>(
+           amf_cfg->paging.narrow_attempts_using_old_5g_stmsi));
+  (void) use_old_5g_s_tmsi;  // suppress unused-variable warning until old
+                             // fields exist
+
   Logger::amf_n2().debug(
-      " UE NGAP Context, s_setid (%d), s_pointer (%d), s_tmsi (%d)",
-      unc->s_setid, unc->s_pointer, unc->s_tmsi);
+      " UE NGAP Context, s_setid (%s), s_pointer (%s), s_tmsi (%s)",
+      unc->s_setid.c_str(), unc->s_pointer.c_str(), unc->s_tmsi.c_str());
   paging_msg.setUePagingIdentity(unc->s_setid, unc->s_pointer, unc->s_tmsi);
 
   // Build TAI list for paging
@@ -469,21 +495,77 @@ void amf_n2::handle_itti_message(std::shared_ptr<itti_paging>& itti_msg) {
   }
   paging_msg.setTaiListForPaging(tai_list_for_paging);
 
-  // Paging DRX — use the default DRX of the UE's last-serving gNB
+  // Paging DRX — three-tier preference: UE-specific > gNB default > AMF config.
+  // TS 23.502 §4.2.3.3 step 4b
   {
-    std::shared_ptr<gnb_context> last_gc = {};
-    if (assoc_id_2_gnb_context(unc->gnb_assoc_id, last_gc)) {
-      paging_msg.setPagingDrx(last_gc->default_paging_drx);
+    // Build a small lookup for the AMF-configured DRX string-to-enum
+    // conversion.
+    static const std::unordered_map<std::string, e_Ngap_PagingDRX>
+        kDrxStringToEnum = {
+            {"v32", Ngap_PagingDRX_v32},
+            {"v64", Ngap_PagingDRX_v64},
+            {"v128", Ngap_PagingDRX_v128},
+            {"v256", Ngap_PagingDRX_v256},
+        };
+
+    if (nc->ue_specific_paging_drx.has_value()) {
+      // Prefer UE-negotiated DRX from Registration Request
+      paging_msg.setPagingDrx(nc->ue_specific_paging_drx.value());
       Logger::amf_n2().debug(
-          "Paging DRX set from last-serving gNB (assoc_id=%d, drx=%d)",
-          unc->gnb_assoc_id, static_cast<int>(last_gc->default_paging_drx));
+          "Paging DRX set from UE-specific negotiated value (%d)",
+          static_cast<int>(nc->ue_specific_paging_drx.value()));
+    } else {
+      std::shared_ptr<gnb_context> last_gc = {};
+      if (assoc_id_2_gnb_context(unc->gnb_assoc_id, last_gc)) {
+        // Fall back to gNB-advertised default DRX
+        paging_msg.setPagingDrx(last_gc->default_paging_drx);
+        Logger::amf_n2().debug(
+            "Paging DRX set from last-serving gNB (assoc_id=%d, drx=%d)",
+            unc->gnb_assoc_id, static_cast<int>(last_gc->default_paging_drx));
+      } else {
+        // Final fallback: operator-configured AMF default
+        const auto& drx_str = amf_cfg->paging.default_paging_drx;
+        auto it             = kDrxStringToEnum.find(drx_str);
+        if (it != kDrxStringToEnum.end()) {
+          paging_msg.setPagingDrx(it->second);
+          Logger::amf_n2().debug(
+              "Paging DRX set from AMF config default (%s)", drx_str.c_str());
+        } else {
+          Logger::amf_n2().warn(
+              "Unknown default_paging_drx value '%s'; omitting PagingDRX IE",
+              drx_str.c_str());
+        }
+      }
     }
   }
 
-  // Paging Priority — set from Paging Policy Indicator when provided
+  // Paging Priority — set from Paging Policy Indicator when provided AND ARP
+  // indicates priority service. TS 23.502 §4.2.3.3 NOTE 4
   if (itti_msg->is_ppi_set) {
-    paging_msg.setPagingPriority(itti_msg->ppi);
-    Logger::amf_n2().debug("Paging Priority set from PPI=%d", itti_msg->ppi);
+    bool arp_qualifies = false;
+    if (itti_msg->arp.has_value()) {
+      // ARP priority level: 1 = highest, 15 = lowest. Encode PPI only when
+      // the level is at or above the configured threshold.
+      // TS 23.502 §4.2.3.3 NOTE 4
+      arp_qualifies =
+          (itti_msg->arp.value().getPriorityLevel() <=
+           static_cast<int32_t>(
+               amf_cfg->paging.arp_priority_threshold_for_pri_paging));
+    }
+    if (arp_qualifies) {
+      paging_msg.setPagingPriority(itti_msg->ppi);
+      Logger::amf_n2().debug(
+          "Paging Priority set from PPI=%d (arp.priorityLevel=%d <= "
+          "threshold=%u)",
+          itti_msg->ppi, itti_msg->arp.value().getPriorityLevel(),
+          amf_cfg->paging.arp_priority_threshold_for_pri_paging);
+    } else {
+      Logger::amf_n2().debug(
+          "Paging Priority suppressed: PPI=%d but ARP does not qualify "
+          "(arp.present=%s, threshold=%u)",
+          itti_msg->ppi, itti_msg->arp.has_value() ? "yes" : "no",
+          amf_cfg->paging.arp_priority_threshold_for_pri_paging);
+    }
   }
 
   if (amf_cfg->paging.enable_extended_ngap_ies &&

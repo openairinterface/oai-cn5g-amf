@@ -604,6 +604,55 @@ paging_options::paging_options() {
   m_enable_extended_ngap_ies = option_config_value(
       AMF_CONFIG_PAGING_ENABLE_EXTENDED_NGAP_IES,
       AMF_CONFIG_PAGING_ENABLE_EXTENDED_NGAP_IES_DEFAULT_VALUE);
+  m_t3513_interval_sec = int_config_value(
+      AMF_CONFIG_PAGING_T3513_INTERVAL_SEC,
+      AMF_CONFIG_PAGING_T3513_INTERVAL_SEC_DEFAULT_VALUE);
+  m_t3513_interval_sec.set_validation_interval(
+      AMF_CONFIG_PAGING_T3513_INTERVAL_SEC_MIN_VALUE,
+      AMF_CONFIG_PAGING_T3513_INTERVAL_SEC_MAX_VALUE);
+  m_t3513_max_retransmissions = int_config_value(
+      AMF_CONFIG_PAGING_T3513_MAX_RETRANSMISSIONS,
+      AMF_CONFIG_PAGING_T3513_MAX_RETRANSMISSIONS_DEFAULT_VALUE);
+  m_t3513_max_retransmissions.set_validation_interval(
+      AMF_CONFIG_PAGING_T3513_MAX_RETRANSMISSIONS_MIN_VALUE,
+      AMF_CONFIG_PAGING_T3513_MAX_RETRANSMISSIONS_MAX_VALUE);
+  m_t3565_interval_sec = int_config_value(
+      AMF_CONFIG_PAGING_T3565_INTERVAL_SEC,
+      AMF_CONFIG_PAGING_T3565_INTERVAL_SEC_DEFAULT_VALUE);
+  m_t3565_interval_sec.set_validation_interval(
+      AMF_CONFIG_PAGING_T3565_INTERVAL_SEC_MIN_VALUE,
+      AMF_CONFIG_PAGING_T3565_INTERVAL_SEC_MAX_VALUE);
+  m_t3565_max_retransmissions = int_config_value(
+      AMF_CONFIG_PAGING_T3565_MAX_RETRANSMISSIONS,
+      AMF_CONFIG_PAGING_T3565_MAX_RETRANSMISSIONS_DEFAULT_VALUE);
+  m_t3565_max_retransmissions.set_validation_interval(
+      AMF_CONFIG_PAGING_T3565_MAX_RETRANSMISSIONS_MIN_VALUE,
+      AMF_CONFIG_PAGING_T3565_MAX_RETRANSMISSIONS_MAX_VALUE);
+  m_staged_paging_enabled = option_config_value(
+      AMF_CONFIG_PAGING_STAGED_PAGING_ENABLED,
+      AMF_CONFIG_PAGING_STAGED_PAGING_ENABLED_DEFAULT_VALUE);
+  m_narrow_paging_first_hop_timeout_sec = int_config_value(
+      AMF_CONFIG_PAGING_NARROW_PAGING_FIRST_HOP_TIMEOUT_SEC,
+      AMF_CONFIG_PAGING_NARROW_PAGING_FIRST_HOP_TIMEOUT_SEC_DEFAULT_VALUE);
+  m_narrow_paging_first_hop_timeout_sec.set_validation_interval(
+      AMF_CONFIG_PAGING_NARROW_PAGING_FIRST_HOP_TIMEOUT_SEC_MIN_VALUE,
+      AMF_CONFIG_PAGING_NARROW_PAGING_FIRST_HOP_TIMEOUT_SEC_MAX_VALUE);
+  m_arp_priority_threshold_for_pri_paging = int_config_value(
+      AMF_CONFIG_PAGING_ARP_PRIORITY_THRESHOLD_FOR_PRI_PAGING,
+      AMF_CONFIG_PAGING_ARP_PRIORITY_THRESHOLD_FOR_PRI_PAGING_DEFAULT_VALUE);
+  m_arp_priority_threshold_for_pri_paging.set_validation_interval(
+      AMF_CONFIG_PAGING_ARP_PRIORITY_THRESHOLD_FOR_PRI_PAGING_MIN_VALUE,
+      AMF_CONFIG_PAGING_ARP_PRIORITY_THRESHOLD_FOR_PRI_PAGING_MAX_VALUE);
+  m_default_paging_drx = string_config_value(
+      AMF_CONFIG_PAGING_DEFAULT_PAGING_DRX,
+      AMF_CONFIG_PAGING_DEFAULT_PAGING_DRX_DEFAULT_VALUE);
+  // Old-vs-new 5G-S-TMSI threshold (TS 24.501 §5.5.1.3.8 NOTE)
+  m_narrow_attempts_using_old_5g_stmsi = int_config_value(
+      AMF_CONFIG_PAGING_NARROW_ATTEMPTS_USING_OLD_5G_STMSI,
+      AMF_CONFIG_PAGING_NARROW_ATTEMPTS_USING_OLD_5G_STMSI_DEFAULT_VALUE);
+  m_narrow_attempts_using_old_5g_stmsi.set_validation_interval(
+      AMF_CONFIG_PAGING_NARROW_ATTEMPTS_USING_OLD_5G_STMSI_MIN_VALUE,
+      AMF_CONFIG_PAGING_NARROW_ATTEMPTS_USING_OLD_5G_STMSI_MAX_VALUE);
   m_set = true;
 }
 
@@ -629,6 +678,39 @@ void paging_options::from_yaml(const YAML::Node& node) {
     m_enable_extended_ngap_ies.from_yaml(
         node[AMF_CONFIG_PAGING_ENABLE_EXTENDED_NGAP_IES]);
   }
+  if (node[AMF_CONFIG_PAGING_T3513_INTERVAL_SEC]) {
+    m_t3513_interval_sec.from_yaml(node[AMF_CONFIG_PAGING_T3513_INTERVAL_SEC]);
+  }
+  if (node[AMF_CONFIG_PAGING_T3513_MAX_RETRANSMISSIONS]) {
+    m_t3513_max_retransmissions.from_yaml(
+        node[AMF_CONFIG_PAGING_T3513_MAX_RETRANSMISSIONS]);
+  }
+  if (node[AMF_CONFIG_PAGING_T3565_INTERVAL_SEC]) {
+    m_t3565_interval_sec.from_yaml(node[AMF_CONFIG_PAGING_T3565_INTERVAL_SEC]);
+  }
+  if (node[AMF_CONFIG_PAGING_T3565_MAX_RETRANSMISSIONS]) {
+    m_t3565_max_retransmissions.from_yaml(
+        node[AMF_CONFIG_PAGING_T3565_MAX_RETRANSMISSIONS]);
+  }
+  if (node[AMF_CONFIG_PAGING_STAGED_PAGING_ENABLED]) {
+    m_staged_paging_enabled.from_yaml(
+        node[AMF_CONFIG_PAGING_STAGED_PAGING_ENABLED]);
+  }
+  if (node[AMF_CONFIG_PAGING_NARROW_PAGING_FIRST_HOP_TIMEOUT_SEC]) {
+    m_narrow_paging_first_hop_timeout_sec.from_yaml(
+        node[AMF_CONFIG_PAGING_NARROW_PAGING_FIRST_HOP_TIMEOUT_SEC]);
+  }
+  if (node[AMF_CONFIG_PAGING_ARP_PRIORITY_THRESHOLD_FOR_PRI_PAGING]) {
+    m_arp_priority_threshold_for_pri_paging.from_yaml(
+        node[AMF_CONFIG_PAGING_ARP_PRIORITY_THRESHOLD_FOR_PRI_PAGING]);
+  }
+  if (node[AMF_CONFIG_PAGING_DEFAULT_PAGING_DRX]) {
+    m_default_paging_drx.from_yaml(node[AMF_CONFIG_PAGING_DEFAULT_PAGING_DRX]);
+  }
+  if (node[AMF_CONFIG_PAGING_NARROW_ATTEMPTS_USING_OLD_5G_STMSI]) {
+    m_narrow_attempts_using_old_5g_stmsi.from_yaml(
+        node[AMF_CONFIG_PAGING_NARROW_ATTEMPTS_USING_OLD_5G_STMSI]);
+  }
 }
 
 //------------------------------------------------------------------------------
@@ -637,6 +719,21 @@ void paging_options::validate() {
   m_max_transactions_per_ue.validate();
   m_registration_defer_timeout_sec.validate();
   m_temporary_unreachable_defer_timeout_sec.validate();
+  m_t3513_interval_sec.validate();
+  m_t3513_max_retransmissions.validate();
+  m_t3565_interval_sec.validate();
+  m_t3565_max_retransmissions.validate();
+  m_narrow_paging_first_hop_timeout_sec.validate();
+  m_arp_priority_threshold_for_pri_paging.validate();
+  // Validate that default_paging_drx is one of the four NGAP-defined DRX keys.
+  // e_Ngap_PagingDRX: v32=0, v64=1, v128=2, v256=3 (TS 38.413).
+  const auto& drx = m_default_paging_drx.get_value();
+  if (drx != "v32" && drx != "v64" && drx != "v128" && drx != "v256") {
+    throw std::runtime_error(fmt::format(
+        "{} must be one of {{v32, v64, v128, v256}}, got: {}",
+        AMF_CONFIG_PAGING_DEFAULT_PAGING_DRX, drx));
+  }
+  m_narrow_attempts_using_old_5g_stmsi.validate();
 }
 
 //------------------------------------------------------------------------------
@@ -674,6 +771,48 @@ std::string paging_options::to_string(const std::string& indent) const {
       AMF_CONFIG_PAGING_ENABLE_EXTENDED_NGAP_IES_LABEL, inner_width,
       extended_ngap_ies));
 
+  out.append(indent).append(fmt::format(
+      BASE_FORMATTER, EMPTY_LIST_ELEM,
+      AMF_CONFIG_PAGING_T3513_INTERVAL_SEC_LABEL, inner_width,
+      m_t3513_interval_sec.get_value()));
+  out.append(indent).append(fmt::format(
+      BASE_FORMATTER, EMPTY_LIST_ELEM,
+      AMF_CONFIG_PAGING_T3513_MAX_RETRANSMISSIONS_LABEL, inner_width,
+      m_t3513_max_retransmissions.get_value()));
+  out.append(indent).append(fmt::format(
+      BASE_FORMATTER, EMPTY_LIST_ELEM,
+      AMF_CONFIG_PAGING_T3565_INTERVAL_SEC_LABEL, inner_width,
+      m_t3565_interval_sec.get_value()));
+  out.append(indent).append(fmt::format(
+      BASE_FORMATTER, EMPTY_LIST_ELEM,
+      AMF_CONFIG_PAGING_T3565_MAX_RETRANSMISSIONS_LABEL, inner_width,
+      m_t3565_max_retransmissions.get_value()));
+
+  std::string staged_paging = m_staged_paging_enabled.get_value() ?
+                                  AMF_CONFIG_OPTION_YES_STR :
+                                  AMF_CONFIG_OPTION_NO_STR;
+  out.append(indent).append(fmt::format(
+      BASE_FORMATTER, EMPTY_LIST_ELEM,
+      AMF_CONFIG_PAGING_STAGED_PAGING_ENABLED_LABEL, inner_width,
+      staged_paging));
+
+  out.append(indent).append(fmt::format(
+      BASE_FORMATTER, EMPTY_LIST_ELEM,
+      AMF_CONFIG_PAGING_NARROW_PAGING_FIRST_HOP_TIMEOUT_SEC_LABEL, inner_width,
+      m_narrow_paging_first_hop_timeout_sec.get_value()));
+  out.append(indent).append(fmt::format(
+      BASE_FORMATTER, EMPTY_LIST_ELEM,
+      AMF_CONFIG_PAGING_ARP_PRIORITY_THRESHOLD_FOR_PRI_PAGING_LABEL,
+      inner_width, m_arp_priority_threshold_for_pri_paging.get_value()));
+  out.append(indent).append(fmt::format(
+      BASE_FORMATTER, EMPTY_LIST_ELEM,
+      AMF_CONFIG_PAGING_DEFAULT_PAGING_DRX_LABEL, inner_width,
+      m_default_paging_drx.get_value()));
+  out.append(indent).append(fmt::format(
+      BASE_FORMATTER, EMPTY_LIST_ELEM,
+      AMF_CONFIG_PAGING_NARROW_ATTEMPTS_USING_OLD_5G_STMSI_LABEL, inner_width,
+      m_narrow_attempts_using_old_5g_stmsi.get_value()));
+
   return out;
 }
 
@@ -700,6 +839,51 @@ bool paging_options::get_enable_subscription_notifications() const {
 //------------------------------------------------------------------------------
 bool paging_options::get_enable_extended_ngap_ies() const {
   return m_enable_extended_ngap_ies.get_value();
+}
+
+//------------------------------------------------------------------------------
+uint32_t paging_options::get_t3513_interval_sec() const {
+  return m_t3513_interval_sec.get_value();
+}
+
+//------------------------------------------------------------------------------
+uint32_t paging_options::get_t3513_max_retransmissions() const {
+  return m_t3513_max_retransmissions.get_value();
+}
+
+//------------------------------------------------------------------------------
+uint32_t paging_options::get_t3565_interval_sec() const {
+  return m_t3565_interval_sec.get_value();
+}
+
+//------------------------------------------------------------------------------
+uint32_t paging_options::get_t3565_max_retransmissions() const {
+  return m_t3565_max_retransmissions.get_value();
+}
+
+//------------------------------------------------------------------------------
+bool paging_options::get_staged_paging_enabled() const {
+  return m_staged_paging_enabled.get_value();
+}
+
+//------------------------------------------------------------------------------
+uint32_t paging_options::get_narrow_paging_first_hop_timeout_sec() const {
+  return m_narrow_paging_first_hop_timeout_sec.get_value();
+}
+
+//------------------------------------------------------------------------------
+uint32_t paging_options::get_arp_priority_threshold_for_pri_paging() const {
+  return m_arp_priority_threshold_for_pri_paging.get_value();
+}
+
+//------------------------------------------------------------------------------
+std::string paging_options::get_default_paging_drx() const {
+  return m_default_paging_drx.get_value();
+}
+
+//------------------------------------------------------------------------------
+uint32_t paging_options::get_narrow_attempts_using_old_5g_stmsi() const {
+  return m_narrow_attempts_using_old_5g_stmsi.get_value();
 }
 
 //------------------------------------------------------------------------------
@@ -1168,6 +1352,21 @@ void amf_config::pre_process() {
       amf_local->get_paging().get_enable_subscription_notifications();
   paging.enable_extended_ngap_ies =
       amf_local->get_paging().get_enable_extended_ngap_ies();
+  paging.t3513_interval_sec = amf_local->get_paging().get_t3513_interval_sec();
+  paging.t3513_max_retransmissions =
+      amf_local->get_paging().get_t3513_max_retransmissions();
+  paging.t3565_interval_sec = amf_local->get_paging().get_t3565_interval_sec();
+  paging.t3565_max_retransmissions =
+      amf_local->get_paging().get_t3565_max_retransmissions();
+  paging.staged_paging_enabled =
+      amf_local->get_paging().get_staged_paging_enabled();
+  paging.narrow_paging_first_hop_timeout_sec =
+      amf_local->get_paging().get_narrow_paging_first_hop_timeout_sec();
+  paging.arp_priority_threshold_for_pri_paging =
+      amf_local->get_paging().get_arp_priority_threshold_for_pri_paging();
+  paging.default_paging_drx = amf_local->get_paging().get_default_paging_drx();
+  paging.narrow_attempts_using_old_5g_stmsi =
+      amf_local->get_paging().get_narrow_attempts_using_old_5g_stmsi();
 
   for (const auto& i : amf_local->get_guami_list()) {
     guami_full_format_t guami_item = {};

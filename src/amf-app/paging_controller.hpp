@@ -18,64 +18,14 @@ extern std::unique_ptr<oai::config::amf_config> amf_cfg;
 
 namespace amf_application {
 
-static paging::admission_result make_dispatch_failure_result(
-    const std::string& detail) {
-  paging::admission_result result;
-  result.decision         = paging::admission_decision::REJECT;
-  result.http_status_code = 503;
-  result.cause            = oai::_3gpp::model::N1N2MessageTransferCause_anyOf::
-      eN1N2MessageTransferCause_anyOf::FAILURE_CAUSE_UNSPECIFIED;
-  result.is_error       = true;
-  result.problem_cause  = "SYSTEM_FAILURE";
-  result.problem_detail = detail;
-  return result;
-}
-
-static paging::admission_result make_no_paging_target_result() {
-  paging::admission_result result;
-  result.decision         = paging::admission_decision::REJECT;
-  result.http_status_code = 504;
-  result.cause            = oai::_3gpp::model::N1N2MessageTransferCause_anyOf::
-      eN1N2MessageTransferCause_anyOf::AN_NOT_RESPONDING;
-  result.is_error       = true;
-  result.problem_cause  = "AN_NOT_RESPONDING";
-  result.problem_detail = "No matching NG-RAN target was found for paging.";
-  return result;
-}
-
-static paging::admission_result make_n2_forwarding_blocked_result(
-    const std::string& detail) {
-  paging::admission_result result;
-  result.decision         = paging::admission_decision::REJECT;
-  result.http_status_code = 409;
-  result.cause            = oai::_3gpp::model::N1N2MessageTransferCause_anyOf::
-      eN1N2MessageTransferCause_anyOf::N2_MSG_NOT_TRANSFERRED;
-  result.is_error       = true;
-  result.problem_cause  = "N2_MSG_NOT_TRANSFERRED";
-  result.problem_detail = detail;
-  return result;
-}
-
-static size_t get_paging_max_transactions_per_ue() {
-  if (amf_cfg && amf_cfg->paging.max_transactions_per_ue > 0) {
-    return amf_cfg->paging.max_transactions_per_ue;
-  }
-  return AMF_CONFIG_PAGING_MAX_TRANSACTIONS_PER_UE_DEFAULT_VALUE;
-}
-
-static uint32_t get_paging_registration_defer_timeout_sec() {
-  if (amf_cfg && amf_cfg->paging.registration_defer_timeout_sec > 0) {
-    return amf_cfg->paging.registration_defer_timeout_sec;
-  }
-  return AMF_CONFIG_PAGING_REGISTRATION_DEFER_TIMEOUT_SEC_DEFAULT_VALUE;
-}
-
-static uint32_t get_paging_temporary_unreachable_defer_timeout_sec() {
-  if (amf_cfg && amf_cfg->paging.temporary_unreachable_defer_timeout_sec > 0) {
-    return amf_cfg->paging.temporary_unreachable_defer_timeout_sec;
-  }
-  return AMF_CONFIG_PAGING_TEMPORARY_UNREACHABLE_DEFER_TIMEOUT_SEC_DEFAULT_VALUE;
-}
+// B4 — free-function helpers declared here, defined in paging_controller.cpp
+// to avoid ODR-bloat from static definitions in a shared header.
+// (TS 23.502 §5.2.2.2.7 cause→HTTP map)
+paging::admission_result make_dispatch_failure_result(
+    const std::string& detail);
+paging::admission_result make_no_paging_target_result();
+paging::admission_result make_n2_forwarding_blocked_result(
+    const std::string& detail);
 
 class paging_controller {
  public:

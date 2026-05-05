@@ -9,6 +9,7 @@
 #include <string>
 
 #include "NgapIesStruct.hpp"
+#include "N1N2MessageTransferCause_anyOf.h"
 #include "itti_msg.hpp"
 #include "GlobalRanNodeId.hpp"
 #include "paging_types.hpp"
@@ -303,6 +304,50 @@ class itti_n1n2_message_transfer_request : public itti_msg_amf_app {
             blk2bstr(
                 tx.routing_id_payload.data(), tx.routing_id_payload.size());
   }
+};
+
+// TS 23.502 §5.2.2.2.7A / TS 29.518 §6.1.5.6
+// Carries the information needed for the Namf_Communication
+// N1N2TransferFailureNotification callback.  Owner: TASK_AMF_SBI
+// (uses http_client::send_http_request — non-blocking from caller's
+//  perspective because it runs inside the SBI task thread).
+class itti_n1n2_transfer_failure_notification : public itti_msg_amf_app {
+ public:
+  itti_n1n2_transfer_failure_notification(
+      const task_id_t origin, const task_id_t destination)
+      : itti_msg_amf_app(
+            N1N2_TRANSFER_FAILURE_NOTIFICATION, origin, destination) {}
+
+  itti_n1n2_transfer_failure_notification(
+      const itti_n1n2_transfer_failure_notification& i)
+      : itti_msg_amf_app(i) {
+    supi                  = i.supi;
+    failure_txf_notif_uri = i.failure_txf_notif_uri;
+    cause                 = i.cause;
+    max_waiting_time      = i.max_waiting_time;
+    pdu_session_id        = i.pdu_session_id;
+    ng_ap_cause           = i.ng_ap_cause;
+  }
+
+  std::string supi;
+
+  // Mandatory: the n1n2FailureTxfNotifURI provided by the Trigger NF
+  std::string failure_txf_notif_uri;
+
+  // Mandatory: notification cause per TS 29.518 §6.1.5.6 Table 6.1.5.6-1
+  oai::_3gpp::model::N1N2MessageTransferCause_anyOf::
+      eN1N2MessageTransferCause_anyOf cause =
+          oai::_3gpp::model::N1N2MessageTransferCause_anyOf::
+              eN1N2MessageTransferCause_anyOf::INVALID_VALUE_OPENAPI_GENERATED;
+
+  // Optional: deferred-queue expiry in seconds
+  std::optional<int32_t> max_waiting_time;
+
+  // Optional: echoed back PDU session ID (zero = not set)
+  uint8_t pdu_session_id = 0;
+
+  // Optional
+  std::optional<std::string> ng_ap_cause;
 };
 
 class itti_non_ue_n2_message_transfer_request : public itti_msg_amf_app {

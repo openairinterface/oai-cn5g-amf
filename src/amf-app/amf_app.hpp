@@ -59,6 +59,22 @@ class amf_app {
   bool send_direct_n1n2_transfer(
       const itti_n1n2_message_transfer_request& itti_msg,
       uint64_t amf_ue_ngap_id, uint32_t ran_ue_ngap_id);
+  /*
+   * Single chokepoint for all DIRECT_DELIVERY dispatches.
+   * Applies the N2-SM 3GPP-access gate, reconstructs the ITTI message from
+   * the transaction, and calls send_direct_n1n2_transfer.
+   * Does NOT touch nc->paging_queues_mutex — callers must release it first.
+   * (TS 23.502 §5.2.2.2.7 / §4.2.3.3)
+   * @param [const std::shared_ptr<nas_context>&] nc      UE NAS context
+   * @param [paging::paging_transaction]          tx      Transaction (by value;
+   *                                                       moved in by caller)
+   * @param [uint64_t] amf_ue_ngap_id  AMF UE NGAP ID
+   * @param [uint32_t] ran_ue_ngap_id  RAN UE NGAP ID
+   * @return true on successful ITTI dispatch, false on any failure
+   */
+  bool dispatch_direct_n1n2_transfer(
+      const std::shared_ptr<nas_context>& nc, paging::paging_transaction tx,
+      uint64_t amf_ue_ngap_id, uint32_t ran_ue_ngap_id);
   bool start_paging_for_ue(
       const std::string& supi, uint64_t amf_ue_ngap_id, uint32_t ran_ue_ngap_id,
       const std::shared_ptr<nas_context>& nc, bool is_retransmission = false);
@@ -146,6 +162,29 @@ class amf_app {
       const oai::ngap::Tai_t& current_tai,
       const std::optional<uint16_t>& allowed_pdu_session_status,
       std::string& rejection_reason) const;
+
+  /*
+   * Drain pending_paging_messages after paging-triggered reconnect.
+   * Called from amf_n1 after a successful integrity-checked SERVICE REQUEST
+   * or INITIAL CONTEXT SETUP RESPONSE closes the paging window.
+   * (TS 23.502 §5.2.2.2.7 / §4.2.3.3)
+   * @param [const std::shared_ptr<nas_context>&] nc: UE NAS context
+   * @param [std::optional<uint16_t>] allowed_pdu_session_status: bitmap of
+   *   PDU sessions permitted on current 3GPP access (from SERVICE REQUEST);
+   *   absent means all sessions are eligible.
+   */
+  void on_paging_response_success(
+      const std::shared_ptr<nas_context>& nc,
+      std::optional<uint16_t> allowed_pdu_session_status);
+
+  /*
+   * Drain awaiting_registration_messages after REGISTRATION COMPLETE.
+   * Called from amf_n1 when REGISTRATION COMPLETE is received and the UE
+   * had N1/N2 transfers deferred during registration.
+   * (TS 23.502 §5.2.2.2.7 §4.2.3.3)
+   * @param [const std::shared_ptr<nas_context>&] nc: UE NAS context
+   */
+  void on_registration_complete_drain(const std::shared_ptr<nas_context>& nc);
 
   /*
    * Handle ITTI message (NonUeN2MessageTransferRequest)

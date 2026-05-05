@@ -293,6 +293,21 @@ std::string statistics::get_paging_info() const {
   append_counter_row(
       "cb-fail",
       paging_metrics.callback_failures_total.load(std::memory_order_relaxed));
+  // ITTI send-failure counter added here alongside the other paging_* counters
+  append_counter_row(
+      "send-fail",
+      paging_metrics.send_failed_total.load(std::memory_order_relaxed));
+  // TS 29.518 §6.1.5.6, N1N2TransferFailureNotification outcome counters.
+  append_counter_row(
+      "fn-sent",
+      paging_metrics.failure_notify_sent_total.load(std::memory_order_relaxed));
+  append_counter_row(
+      "fn-fail", paging_metrics.failure_notify_failed_total.load(
+                     std::memory_order_relaxed));
+  // Dropped notifications (in-flight cap reached)
+  append_counter_row(
+      "fn-drop", paging_metrics.failure_notify_dropped_total.load(
+                     std::memory_order_relaxed));
   append_counter_row("queue", paging_depth);
   append_counter_row("await-reg", awaiting_registration_depth);
   append_counter_row("temp-unr", temporary_unreachable_depth);
@@ -497,6 +512,31 @@ void statistics::increment_paging_callback_successes() {
 //------------------------------------------------------------------------------
 void statistics::increment_paging_callback_failures() {
   paging_metrics.callback_failures_total.fetch_add(
+      1, std::memory_order_relaxed);
+}
+
+//------------------------------------------------------------------------------
+void statistics::increment_paging_send_failed() {
+  paging_metrics.send_failed_total.fetch_add(1, std::memory_order_relaxed);
+}
+
+//------------------------------------------------------------------------------
+// TS 29.518 §6.1.5.6 N1N2TransferFailureNotification outcomes
+void statistics::increment_paging_failure_notify_sent() {
+  paging_metrics.failure_notify_sent_total.fetch_add(
+      1, std::memory_order_relaxed);
+}
+
+//------------------------------------------------------------------------------
+void statistics::increment_paging_failure_notify_failed() {
+  paging_metrics.failure_notify_failed_total.fetch_add(
+      1, std::memory_order_relaxed);
+}
+
+//------------------------------------------------------------------------------
+// Dropped notifications (in-flight cap reached)
+void statistics::increment_paging_failure_notify_dropped() {
+  paging_metrics.failure_notify_dropped_total.fetch_add(
       1, std::memory_order_relaxed);
 }
 

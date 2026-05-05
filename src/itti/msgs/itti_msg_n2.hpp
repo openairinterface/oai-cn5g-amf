@@ -20,6 +20,8 @@
 #include "sctp_server.hpp"
 #include "utils.hpp"
 #include "GlobalRanNodeId.h"
+#include "Arp.h"
+#include <optional>
 
 using namespace oai::ngap;
 using namespace sctp;
@@ -385,6 +387,7 @@ class itti_paging : public itti_msg_n2 {
     ppi               = 0;
     is_ppi_set        = false;
     is_retransmission = false;
+    arp               = std::nullopt;
   }
   itti_paging(const itti_paging& i) : itti_msg_n2(i) {
     ran_ue_ngap_id    = i.ran_ue_ngap_id;
@@ -392,6 +395,7 @@ class itti_paging : public itti_msg_n2 {
     ppi               = i.ppi;
     is_ppi_set        = i.is_ppi_set;
     is_retransmission = i.is_retransmission;
+    arp               = i.arp;
   }
 
  public:
@@ -400,6 +404,8 @@ class itti_paging : public itti_msg_n2 {
   uint8_t ppi;             // Paging Policy Indicator (0-7)
   bool is_ppi_set;         // Whether PPI was provided
   bool is_retransmission;  // TRUE = T3513 retransmit (use full RA)
+  // ARP carried for PPI gating — TS 23.502 §4.2.3.3 NOTE 4
+  std::optional<oai::_3gpp::model::Arp> arp;
 };
 
 class itti_handover_request_ack : public itti_msg_n2 {

@@ -46,41 +46,43 @@ const char* nas_procedure_type_to_string(nas_procedure_type_e type) {
 //------------------------------------------------------------------------------
 nas_context::nas_context()
     : _5g_he_av(), _5g_av(), kamf(), kgNB(), _5gmm_capability() {
-  is_imsi_present                    = false;
-  is_auth_vectors_present            = false;
-  auts                               = nullptr;
-  ctx_avaliability_ind               = false;
-  amf_ue_ngap_id                     = INVALID_AMF_UE_NGAP_ID;
-  ran_ue_ngap_id                     = 0;
-  old_amf_ue_ngap_id                 = INVALID_AMF_UE_NGAP_ID;
-  old_ran_ue_ngap_id                 = 0;
-  _5gmm_state                        = _5GMM_DEREGISTERED;
-  registration_type                  = 0;
-  follow_on_req_pending_ind          = false;
-  ngksi                              = 0;
-  ue_security_capability             = {};
-  security_ctx                       = std::nullopt;
-  is_current_security_available      = false;
-  registration_attempt_counter       = 0;
-  is_imsi_present                    = false;
-  is_5g_suci_present                 = false;
-  is_5g_guti_present                 = false;
-  is_auth_vectors_present            = false;
-  to_be_register_by_new_suci         = false;
-  registration_request_is_set        = false;
-  registration_request               = nullptr;
-  nas_status                         = CM_IDLE;
-  is_mobile_reachable_timer_timeout  = false;
-  mobile_reachable_timer             = ITTI_INVALID_TIMER_ID;
-  implicit_deregistration_timer      = ITTI_INVALID_TIMER_ID;
-  awaiting_registration_timer        = ITTI_INVALID_TIMER_ID;
-  temporary_unreachable_timer        = ITTI_INVALID_TIMER_ID;
-  procedure_ctx.specific_procedure   = nas_procedure_type_e::NONE;
-  procedure_ctx.common_procedure     = nas_procedure_type_e::NONE;
-  procedure_ctx.prior_state          = _5GMM_DEREGISTERED;
-  procedure_ctx.dereg_switch_off     = false;
-  procedure_ctx.dereg_cause          = 0;
-  procedure_ctx.retransmission_count = 0;
+  is_imsi_present                     = false;
+  is_auth_vectors_present             = false;
+  auts                                = nullptr;
+  ctx_avaliability_ind                = false;
+  amf_ue_ngap_id                      = INVALID_AMF_UE_NGAP_ID;
+  ran_ue_ngap_id                      = 0;
+  old_amf_ue_ngap_id                  = INVALID_AMF_UE_NGAP_ID;
+  old_ran_ue_ngap_id                  = 0;
+  _5gmm_state                         = _5GMM_DEREGISTERED;
+  registration_type                   = 0;
+  follow_on_req_pending_ind           = false;
+  ngksi                               = 0;
+  ue_security_capability              = {};
+  security_ctx                        = std::nullopt;
+  is_current_security_available       = false;
+  registration_attempt_counter        = 0;
+  is_imsi_present                     = false;
+  is_5g_suci_present                  = false;
+  is_5g_guti_present                  = false;
+  is_auth_vectors_present             = false;
+  to_be_register_by_new_suci          = false;
+  registration_request_is_set         = false;
+  registration_request                = nullptr;
+  nas_status                          = CM_IDLE;
+  is_mobile_reachable_timer_timeout   = false;
+  mobile_reachable_timer              = ITTI_INVALID_TIMER_ID;
+  implicit_deregistration_timer       = ITTI_INVALID_TIMER_ID;
+  awaiting_registration_timer         = ITTI_INVALID_TIMER_ID;
+  awaiting_registration_timer_running = false;
+  temporary_unreachable_timer         = ITTI_INVALID_TIMER_ID;
+  temp_unreachable_timer_running      = false;
+  procedure_ctx.specific_procedure    = nas_procedure_type_e::NONE;
+  procedure_ctx.common_procedure      = nas_procedure_type_e::NONE;
+  procedure_ctx.prior_state           = _5GMM_DEREGISTERED;
+  procedure_ctx.dereg_switch_off      = false;
+  procedure_ctx.dereg_cause           = 0;
+  procedure_ctx.retransmission_count  = 0;
   for (size_t i = 0; i < kNasTimerCount; ++i) {
     nas_timers[i].itti_timer_id        = 0;
     nas_timers[i].retransmission_count = 0;
@@ -94,6 +96,9 @@ nas_context::nas_context()
 
 //------------------------------------------------------------------------------
 nas_context::~nas_context() {
+  // Reset timer-running flags on teardown
+  awaiting_registration_timer_running = false;
+  temp_unreachable_timer_running      = false;
   oai::utils::utils::bdestroy_wrapper(&registration_request);
   oai::utils::utils::bdestroy_wrapper(&auts);
 }

@@ -1010,11 +1010,20 @@ class amf_n1 {
   void deliver_pending_paging_messages(
       std::shared_ptr<nas_context>& nc, uint32_t ran_ue_ngap_id,
       uint64_t amf_ue_ngap_id);
-  void deliver_awaiting_registration_messages(
-      std::shared_ptr<nas_context>& nc, uint32_t ran_ue_ngap_id,
-      uint64_t amf_ue_ngap_id);
+  // G6: deliver_awaiting_registration_messages removed — its only caller was
+  // replaced by amf_app_inst->on_registration_complete_drain(nc) in Track B.
   paging::paging_response_class classify_paging_response(
       uint8_t message_type) const;
+  // Classify a Service Request by its Service Type IE value.
+  // Returns SERVICE_REQUEST for all spec-defined Service Type values;
+  // NON_QUALIFYING only for unknown/reserved values.
+  // TS 24.501 §5.6.1, Table 9.11.3.50.1.
+  paging::paging_response_class classify_paging_response_for_service_type(
+      uint8_t service_type) const;
+  // Returns true when service_type bypasses non-emergency admission gates.
+  // True for Emergency(3), Emergency Fallback(4), High-Priority Access(5),
+  // Elevated Signalling(6). TS 24.501 §5.6.1.
+  bool is_priority_service_type(uint8_t service_type) const;
   bool can_complete_paging_response(
       const std::shared_ptr<nas_context>& nc,
       paging::paging_response_class response_class,

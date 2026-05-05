@@ -5,17 +5,17 @@ add_library (AMF_APP STATIC
   amf_config.cpp
   amf_n1.cpp
   amf_n2.cpp
-  paging_controller.cpp
   amf_sbi.cpp
   amf_event.cpp
   amf_profile.cpp
   amf_statistics.cpp
-  amf_statistics.cpp
   amf_subscription.cpp
   authentication.cpp
+  failure_notify_client.cpp
   nas_procedure_manager.cpp
   nas_state_machine.cpp
   nas_timer_manager.cpp
+  paging_controller.cpp
   ${SRC_TOP_DIR}/ngap/ngap_app.cpp
 )
 
