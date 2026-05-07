@@ -8,10 +8,11 @@
 #include <optional>
 #include <string>
 
+#include "amf.hpp"
 #include "NgapIesStruct.hpp"
 #include "N1N2MessageTransferCause_anyOf.h"
 #include "itti_msg.hpp"
-#include "GlobalRanNodeId.hpp"
+#include "../../common-src/model/GlobalRanNodeId.h"
 #include "paging_types.hpp"
 using namespace oai::ngap;
 #include "bstrlib.h"

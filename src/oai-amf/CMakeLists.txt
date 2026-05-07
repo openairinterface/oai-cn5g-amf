@@ -277,8 +277,7 @@ IF( NOT MySQL_FOUND )
 ENDIF( NOT MySQL_FOUND )
 
 # Local-prefix third-party dependencies
-find_package(cpr CONFIG REQUIRED)
-find_package(nlohmann_json CONFIG REQUIRED)
+find_package(cpr REQUIRED)
 
 
 ################################################################

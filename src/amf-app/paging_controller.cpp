@@ -14,9 +14,9 @@
 
 using namespace oai::_3gpp::model;
 
-namespace amf_application {
-
 extern statistics stacs;
+
+namespace amf_application {
 
 // ---------------------------------------------------------------------------
 // B4 — config accessors (moved from header to avoid ODR-bloat)

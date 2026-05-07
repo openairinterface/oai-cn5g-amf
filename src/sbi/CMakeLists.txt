@@ -38,9 +38,3 @@ file(GLOB AMF_API_SERVER_src_files
 add_library(AMF_SBI_SERVER STATIC
            ${AMF_API_SERVER_src_files})
 
-target_link_libraries(
-  AMF_SBI_SERVER PUBLIC
-  cpr::cpr
-  nlohmann_json::nlohmann_json
-  yaml-cpp
-)
