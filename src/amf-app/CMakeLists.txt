@@ -12,19 +12,21 @@ add_library (AMF_APP STATIC
   amf_subscription.cpp
   authentication.cpp
   failure_notify_client.cpp
-  nas_procedure_manager.cpp
-  nas_state_machine.cpp
-  nas_timer_manager.cpp
-  paging_controller.cpp
+  ${SRC_TOP_DIR}/nas/nas_procedure_manager.cpp
+  ${SRC_TOP_DIR}/nas/nas_state_machine.cpp
+  ${SRC_TOP_DIR}/nas/nas_timer_manager.cpp
+  paging/paging_controller.cpp
   ${SRC_TOP_DIR}/ngap/ngap_app.cpp
 )
 
 target_include_directories(AMF_APP PUBLIC ${SRC_TOP_DIR}/amf-app)
+target_include_directories(AMF_APP PUBLIC ${SRC_TOP_DIR}/amf-app/paging)
 target_include_directories(AMF_APP PUBLIC ${SRC_TOP_DIR}/common)
 target_include_directories(AMF_APP PUBLIC ${SRC_TOP_DIR}/common/unicode)
 target_include_directories(AMF_APP PUBLIC ${SRC_TOP_DIR}/contexts)
 target_include_directories(AMF_APP PUBLIC ${SRC_TOP_DIR}/itti)
 target_include_directories(AMF_APP PUBLIC ${SRC_TOP_DIR}/itti/msgs)
+target_include_directories(AMF_APP PUBLIC ${SRC_TOP_DIR}/nas)
 target_include_directories(AMF_APP PUBLIC ${SRC_TOP_DIR}/ngap)
 target_include_directories(AMF_APP PUBLIC ${SRC_TOP_DIR}/sbi)
 target_include_directories(AMF_APP PUBLIC ${SRC_TOP_DIR}/sbi/api)

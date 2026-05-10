@@ -3,6 +3,7 @@
 set(AMF_API_SERVER_DIR "${SRC_TOP_DIR}/sbi")
 
 include_directories(${SRC_TOP_DIR}/amf-app)
+include_directories(${SRC_TOP_DIR}/amf-app/paging)
 include_directories(${SRC_TOP_DIR}/common)
 include_directories(${SRC_TOP_DIR}/contexts)
 include_directories(${SRC_TOP_DIR}/itti)

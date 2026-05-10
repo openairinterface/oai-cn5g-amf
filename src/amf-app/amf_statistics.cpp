@@ -20,7 +20,6 @@ void statistics::display() {
   std::string out = {};
   out.append(get_gnbs_info());
   out.append(get_ues_info());
-  out.append(get_paging_info());
   Logger::amf_app().info(out);
 }
 

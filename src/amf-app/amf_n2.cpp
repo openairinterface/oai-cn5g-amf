@@ -523,7 +523,7 @@ void amf_n2::handle_itti_message(std::shared_ptr<itti_paging>& itti_msg) {
             "Paging DRX set from last-serving gNB (assoc_id=%d, drx=%d)",
             unc->gnb_assoc_id, static_cast<int>(last_gc->default_paging_drx));
       } else {
-        // Final fallback: operator-configured AMF default
+        // fallback: operator-configured AMF default
         const auto& drx_str = amf_cfg->paging.default_paging_drx;
         auto it             = kDrxStringToEnum.find(drx_str);
         if (it != kDrxStringToEnum.end()) {
@@ -610,10 +610,9 @@ void amf_n2::handle_itti_message(std::shared_ptr<itti_paging>& itti_msg) {
     free_octet_string(ue_radio_capability_for_paging_of_eutra);
   }
 
-  // Task-4 scope is intentionally narrowed to the currently implemented
-  // capability-aware optional paging IEs: Paging Origin and
-  // UE Radio Capability For Paging. Assistance-data/recommended-cell/WUS/CE
-  // related IEs remain explicitly deferred in the plan artifacts.
+  // TODO: Paging Origin and UE Radio Capability For Paging.
+  // Assistance-data/recommended-cell/WUS/CE related IEs remain explicitly
+  // deferred in the plan artifacts.
 
   uint16_t buffer_size = BUFFER_SIZE_1024;
   uint8_t buffer[buffer_size];

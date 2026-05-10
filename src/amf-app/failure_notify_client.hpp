@@ -20,7 +20,7 @@ namespace oai::amf {
 // Builds a spec-conformant JSON body (N1N2MsgTxfrFailureNotification schema)
 // and POSTs it to the n1n2FailureTxfNotifURI supplied by the Trigger NF.
 //
-// -- Threading model (Track C refine 1 / Track G10 cleanup pass) --
+// Threading model
 //
 // The HTTP POST is dispatched on a detached std::thread so that send()
 // returns immediately without blocking TASK_AMF_SBI.  The http_client is
@@ -29,7 +29,7 @@ namespace oai::amf {
 // detached thread is required for true non-blocking behaviour.  All data
 // needed by the thread is captured by value.
 //
-// -- In-flight thread cap (Track G10 cleanup pass) --
+// In-flight thread cap
 //
 // A file-scope std::atomic<int> (g_inflight_notify_count) limits concurrent
 // detached threads to kFailureNotifyMaxInflight = 64.  The cap prevents OS

@@ -75,9 +75,30 @@ class amf_app {
   bool dispatch_direct_n1n2_transfer(
       const std::shared_ptr<nas_context>& nc, paging::paging_transaction tx,
       uint64_t amf_ue_ngap_id, uint32_t ran_ue_ngap_id);
+
+  /*
+   * Start_paging_for_ue — send the initial ITTI paging trigger to TASK_AMF_N2.
+   * On send failure the function:
+   *   - Rolls back the last enqueued pending_paging_messages entry (if any).
+   *     This centralises queue rollback so callers do not also pop on failure
+   *   - Clears paging state on nc.
+   *   - Returns false.
+   * The bstring payloads on paging_transaction are owned by the deque entry;
+   * paging_transaction's destructor frees them via bdestroy_wrapper, so callers
+   * must NOT call bdestroy on them after pop_back.
+   * @param [const std::string&] supi           SUPI of the UE to be paged
+   * @param [uint64_t] amf_ue_ngap_id  AMF UE NGAP ID
+   * @param [uint32_t] ran_ue_ngap_id  RAN UE NGAP ID
+   * @param [const std::shared_ptr<nas_context>&] nc      UE NAS context
+   * @param [bool] is_retransmission  True if this paging trigger is a
+   * retransmission
+   * @return true on successful paging
+   */
+
   bool start_paging_for_ue(
       const std::string& supi, uint64_t amf_ue_ngap_id, uint32_t ran_ue_ngap_id,
       const std::shared_ptr<nas_context>& nc, bool is_retransmission = false);
+
   amf_profile nf_instance_profile;
   std::string amf_instance_id;
   std::map<std::string, timer_id_t> timer_nrfs_heartbeat;

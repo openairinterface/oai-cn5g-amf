@@ -398,7 +398,7 @@ class paging_options : public config_type {
   int_config_value m_temporary_unreachable_defer_timeout_sec{};
   option_config_value m_enable_subscription_notifications{};
   option_config_value m_enable_extended_ngap_ies{};
-  // Operator-tunable timer and policy knobs
+  // Operator-tunable timer
   int_config_value m_t3513_interval_sec{};
   int_config_value m_t3513_max_retransmissions{};
   int_config_value m_t3565_interval_sec{};

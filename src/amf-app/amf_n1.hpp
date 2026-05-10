@@ -1010,7 +1010,7 @@ class amf_n1 {
   void deliver_pending_paging_messages(
       std::shared_ptr<nas_context>& nc, uint32_t ran_ue_ngap_id,
       uint64_t amf_ue_ngap_id);
-  // G6: deliver_awaiting_registration_messages removed — its only caller was
+  // deliver_awaiting_registration_messages removed — its only caller was
   // replaced by amf_app_inst->on_registration_complete_drain(nc) in Track B.
   paging::paging_response_class classify_paging_response(
       uint8_t message_type) const;
@@ -1065,11 +1065,7 @@ class amf_n1 {
   // Validates callback URI
   static bool validate_callback_uri(const std::string& uri);
 
-  // POST N1N2MessageTransfer status notification per TS 29.518.
-  bool send_n1n2_transfer_status_callback(
-      const std::string& callback_uri, const std::string& status);
   // for Event Handling
-
   bs2::connection ee_ue_location_report_connection;
   bs2::connection ee_ue_reachability_status_connection;
   bs2::connection ee_ue_registration_state_connection;

@@ -550,17 +550,6 @@ bool amf_app::send_direct_n1n2_transfer(
 }
 
 //------------------------------------------------------------------------------
-// dispatch_direct_n1n2_transfer — single chokepoint for all DIRECT_DELIVERY
-// dispatches (TS 23.502 §5.2.2.2.7 / §4.2.3.3).
-//
-// Applies the N2-SM AllowedPDUSessionStatus gate, reconstructs the ITTI
-// message from the paging_transaction via from_paging_transaction(), then
-// calls send_direct_n1n2_transfer().  Does not touch paging_queues_mutex;
-// callers must release the mutex before calling this.
-//
-// Returns true on successful ITTI dispatch, false on any failure (callers may
-// send a failure notification or log as appropriate).
-//------------------------------------------------------------------------------
 bool amf_app::dispatch_direct_n1n2_transfer(
     const std::shared_ptr<nas_context>& nc, paging::paging_transaction tx,
     uint64_t amf_ue_ngap_id, uint32_t ran_ue_ngap_id) {
@@ -570,8 +559,8 @@ bool amf_app::dispatch_direct_n1n2_transfer(
     std::shared_ptr<ue_context> uc =
         get_ue_context(ran_ue_ngap_id, amf_ue_ngap_id);
     if (uc) {
-      std::string rejection_reason;
-      const bool blocked = !can_forward_n2_sm_over_3gpp_access(
+      std::string rejection_reason = {};
+      const bool blocked           = !can_forward_n2_sm_over_3gpp_access(
           tx, uc->tai,
           nc ? nc->page_reconnect_allowed_pdu_session_status : std::nullopt,
           rejection_reason);
@@ -601,18 +590,6 @@ bool amf_app::dispatch_direct_n1n2_transfer(
 }
 
 //------------------------------------------------------------------------------
-// start_paging_for_ue — send the initial ITTI paging trigger to TASK_AMF_N2.
-//
-// On send failure the function:
-//   - Rolls back the last enqueued pending_paging_messages entry (if any).
-//     This centralises queue rollback so callers do not also pop on failure
-//   - Clears paging state on nc.
-//   - Returns false.
-//
-// The bstring payloads on paging_transaction are owned by the deque entry;
-// paging_transaction's destructor frees them via bdestroy_wrapper, so callers
-// must NOT call bdestroy on them after pop_back.
-//------------------------------------------------------------------------------
 bool amf_app::start_paging_for_ue(
     const std::string& supi, uint64_t amf_ue_ngap_id, uint32_t ran_ue_ngap_id,
     const std::shared_ptr<nas_context>& nc, bool is_retransmission) {
@@ -631,15 +608,12 @@ bool amf_app::start_paging_for_ue(
     Logger::amf_app().error(
         "Could not send ITTI paging to TASK_AMF_N2 for SUPI %s", supi.c_str());
     // Roll back the pending queue entry pushed by admit_transfer.
-    // paging_transaction's destructor handles bstring cleanup — do not
-    // double-free by calling bdestroy here.
     {
-      // Protect pop against concurrent reads from TASK_AMF_N1.
       std::lock_guard<std::mutex> lk(nc->paging_queues_mutex);
       if (!nc->pending_paging_messages.empty()) {
         nc->pending_paging_messages.pop_back();
       }
-    }  // release paging_queues_mutex
+    }
     nc->is_paging_ongoing       = false;
     nc->paging_priority_present = false;
     nc->paging_effective_ppi    = 0;
@@ -655,7 +629,7 @@ paging::admission_result amf_app::handle_n1n2_message_transfer(
   if (itti_msg.is_nrppa_pdu_set) {
     paging::admission_result result;
     result.decision         = paging::admission_decision::DIRECT_DELIVERY;
-    result.http_status_code = 200;
+    result.http_status_code = oai::common::sbi::http_status_code::OK;
     result.cause = oai::_3gpp::model::N1N2MessageTransferCause_anyOf::
         eN1N2MessageTransferCause_anyOf::N1_N2_TRANSFER_INITIATED;
     result.is_error = false;
@@ -680,7 +654,7 @@ paging::admission_result amf_app::handle_n1n2_message_transfer(
   if (!(itti_msg.is_n1sm_set || itti_msg.is_n2sm_set)) {
     paging::admission_result result;
     result.decision         = paging::admission_decision::REJECT;
-    result.http_status_code = 400;
+    result.http_status_code = oai::common::sbi::http_status_code::BAD_REQUEST;
     result.cause = oai::_3gpp::model::N1N2MessageTransferCause_anyOf::
         eN1N2MessageTransferCause_anyOf::N1_MSG_NOT_TRANSFERRED;
     result.problem_cause = "N1_MSG_NOT_TRANSFERRED";
@@ -691,10 +665,7 @@ paging::admission_result amf_app::handle_n1n2_message_transfer(
     return result;
   }
 
-  // Single admit_transfer call site (TS 23.502 §5.2.2.2.7).
-  // Look up nc once; reject 404 immediately if not found — do NOT call
-  // admit_transfer with a null context (that caused double-enqueue on the
-  // old code path that fell through after the early return).
+  // Look up nc once; reject 404 immediately if not found
   uint64_t amf_ue_ngap_id         = INVALID_AMF_UE_NGAP_ID;
   uint32_t ran_ue_ngap_id         = 0;
   std::shared_ptr<nas_context> nc = {};
@@ -703,7 +674,7 @@ paging::admission_result amf_app::handle_n1n2_message_transfer(
     // No NAS context — reject with 404 CONTEXT_NOT_FOUND before any FSM call.
     paging::admission_result not_found;
     not_found.decision         = paging::admission_decision::REJECT;
-    not_found.http_status_code = 404;
+    not_found.http_status_code = oai::common::sbi::http_status_code::NOT_FOUND;
     not_found.cause = oai::_3gpp::model::N1N2MessageTransferCause_anyOf::
         eN1N2MessageTransferCause_anyOf::UE_NOT_REACHABLE_FOR_SESSION;
     not_found.is_error      = true;
@@ -725,8 +696,9 @@ paging::admission_result amf_app::handle_n1n2_message_transfer(
   if (itti_msg.is_n1sm_set || itti_msg.is_n2sm_set) {
     if (itti_msg.pdu_session_id == 0) {
       paging::admission_result bad_req;
-      bad_req.decision         = paging::admission_decision::REJECT;
-      bad_req.http_status_code = 400;
+      bad_req.decision = paging::admission_decision::REJECT;
+      bad_req.http_status_code =
+          oai::common::sbi::http_status_code::BAD_REQUEST;
       bad_req.cause = oai::_3gpp::model::N1N2MessageTransferCause_anyOf::
           eN1N2MessageTransferCause_anyOf::N1_MSG_NOT_TRANSFERRED;
       bad_req.is_error      = true;
@@ -743,8 +715,9 @@ paging::admission_result amf_app::handle_n1n2_message_transfer(
       // TODO enforce stricter pdu_session_id existence on nc
       // when per-UE PDU session map is available directly on nas_context.
       paging::admission_result bad_req;
-      bad_req.decision         = paging::admission_decision::REJECT;
-      bad_req.http_status_code = 400;
+      bad_req.decision = paging::admission_decision::REJECT;
+      bad_req.http_status_code =
+          oai::common::sbi::http_status_code::BAD_REQUEST;
       bad_req.cause = oai::_3gpp::model::N1N2MessageTransferCause_anyOf::
           eN1N2MessageTransferCause_anyOf::N1_MSG_NOT_TRANSFERRED;
       bad_req.is_error      = true;
@@ -785,7 +758,6 @@ paging::admission_result amf_app::handle_n1n2_message_transfer(
     return result;
   }
 
-  // Single call to admit_transfer — exactly one call on every code path.
   auto result =
       paging_ctrl_.admit_transfer(nc, itti_msg.to_paging_transaction());
   switch (result.decision) {
@@ -822,7 +794,7 @@ paging::admission_result amf_app::handle_n1n2_message_transfer(
           }
         }
       }
-      // Dispatch through the shared helper (N2-gate already applied above).
+      // Dispatch through the shared helper.
       if (!dispatch_direct_n1n2_transfer(
               nc, std::move(direct_tx), amf_ue_ngap_id, ran_ue_ngap_id)) {
         auto dispatch_failure = make_dispatch_failure_result(
@@ -839,9 +811,7 @@ paging::admission_result amf_app::handle_n1n2_message_transfer(
     }
     case paging::admission_decision::PAGING:
       if (result.trigger_paging) {
-        // start_paging_for_ue owns the queue rollback on send failure —
-        // it pops the pending entry pushed by admit_transfer before returning
-        // false.  No caller-side pop needed here.
+        // start_paging_for_ue owns the queue rollback on send failure
         if (!start_paging_for_ue(
                 itti_msg.supi, amf_ue_ngap_id, ran_ue_ngap_id, nc,
                 paging_was_ongoing)) {
@@ -877,7 +847,7 @@ paging::admission_result amf_app::handle_n1n2_message_transfer(
                                          result.problem_cause,
           ran_ue_ngap_id, amf_ue_ngap_id);
       if (!itti_msg.n1n2_failure_txf_notif_uri.empty()) {
-        // C4 — TS 23.502 §5.2.2.2.7A / TS 29.518 §6.1.5.6
+        // TS 23.502 §5.2.2.2.7A / TS 29.518 §6.1.5.6
         auto fail_notif =
             std::make_shared<itti_n1n2_transfer_failure_notification>(
                 TASK_AMF_APP, TASK_AMF_SBI);
@@ -928,6 +898,7 @@ paging::admission_result amf_app::handle_n1n2_message_transfer_request(
   return handle_n1n2_message_transfer(itti_msg);
 }
 
+//------------------------------------------------------------------------------
 bool amf_app::can_forward_n2_sm_over_3gpp_access(
     const paging::paging_transaction& transaction,
     const oai::ngap::Tai_t& current_tai,
@@ -938,10 +909,6 @@ bool amf_app::can_forward_n2_sm_over_3gpp_access(
 }
 
 //------------------------------------------------------------------------------
-// Drain pending_paging_messages after paging-triggered reconnect.
-// TS 23.502 §5.2.2.2.7 / §4.2.3.3.
-// Called from amf_n1 via amf_app_inst->on_paging_response_success(...).
-//------------------------------------------------------------------------------
 void amf_app::on_paging_response_success(
     const std::shared_ptr<nas_context>& nc,
     std::optional<uint16_t> allowed_pdu_session_status) {
@@ -951,8 +918,6 @@ void amf_app::on_paging_response_success(
 
   // Stop the awaiting-registration defer timer if it is running — the UE is
   // now CM-CONNECTED so there is no need to wait for registration to complete.
-  // Guard with *_running flag, matching the pattern
-  // at amf_n1::stop_awaiting_registration_timer (amf_n1.cpp:8416-8421).
   if (nc->awaiting_registration_timer_running &&
       nc->awaiting_registration_timer != ITTI_INVALID_TIMER_ID) {
     itti_inst->timer_remove(nc->awaiting_registration_timer);
@@ -969,8 +934,8 @@ void amf_app::on_paging_response_success(
     std::lock_guard<std::mutex> lk(nc->paging_queues_mutex);
     if (nc->pending_paging_messages.empty()) return;
     snapshot = std::move(nc->pending_paging_messages);
-    // nc->pending_paging_messages is now empty (moved-from deque)
-  }  // release paging_queues_mutex
+    // nc->pending_paging_messages is now empty
+  }
 
   const uint64_t amf_ue_ngap_id = nc->amf_ue_ngap_id;
   const uint32_t ran_ue_ngap_id = nc->ran_ue_ngap_id;
@@ -1002,7 +967,7 @@ void amf_app::on_paging_response_success(
                 amf_ue_ngap_id, transaction.pdu_session_id,
                 rejection_reason.c_str());
             if (!transaction.failure_notification_uri.empty()) {
-              // C4 — TS 23.502 §5.2.2.2.7A / TS 29.518 §6.1.5.6
+              // TS 23.502 §5.2.2.2.7A / TS 29.518 §6.1.5.6
               auto fail_notif =
                   std::make_shared<itti_n1n2_transfer_failure_notification>(
                       TASK_AMF_APP, TASK_AMF_SBI);
@@ -1048,7 +1013,7 @@ void amf_app::on_paging_response_success(
           "message for PDU session %u, UE %lu",
           transaction.pdu_session_id, amf_ue_ngap_id);
       if (!transaction.failure_notification_uri.empty()) {
-        // C4 — TS 23.502 §5.2.2.2.7A / TS 29.518 §6.1.5.6
+        // TS 23.502 §5.2.2.2.7A / TS 29.518 §6.1.5.6
         auto fail_notif =
             std::make_shared<itti_n1n2_transfer_failure_notification>(
                 TASK_AMF_APP, TASK_AMF_SBI);
@@ -1071,20 +1036,16 @@ void amf_app::on_paging_response_success(
 }
 
 //------------------------------------------------------------------------------
-// Drain awaiting_registration_messages after REGISTRATION COMPLETE.
-// TS 23.502 §5.2.2.2.7 / §4.2.3.3.
-// Called from amf_n1 via amf_app_inst->on_registration_complete_drain(nc).
-//------------------------------------------------------------------------------
 void amf_app::on_registration_complete_drain(
     const std::shared_ptr<nas_context>& nc) {
   if (!nc) return;
 
   // Stop the awaiting-registration defer timer.
   // Guard with *_running flag, matching the pattern
-  // used by amf_n1::stop_awaiting_registration_timer (amf_n1.cpp:8416-8421).
+  // used by amf_n1::stop_awaiting_registration_timer.
   // Checking only != ITTI_INVALID_TIMER_ID (the original form) is safe at
   // runtime because timer_remove on an expired/invalid ID is idempotent, but
-  // it diverges from the _running-flag invariant introduced by G2.  Both
+  // it diverges from the _running-flag invariant.  Both
   // guards are required here so that a stale timer ID that was already removed
   // on expiry (awaiting_registration_timer_running=false,
   // awaiting_registration_timer=ITTI_INVALID_TIMER_ID is NOT guaranteed in all
@@ -1141,7 +1102,7 @@ void amf_app::on_registration_complete_drain(
           "%u (%s) for UE %lu",
           result.http_status_code, result.problem_cause.c_str(),
           amf_ue_ngap_id);
-      // C4 — TS 23.502 §5.2.2.2.7A / TS 29.518 §6.1.5.6
+      // TS 23.502 §5.2.2.2.7A / TS 29.518 §6.1.5.6
       if (!fail_uri.empty()) {
         auto fail_notif =
             std::make_shared<itti_n1n2_transfer_failure_notification>(
