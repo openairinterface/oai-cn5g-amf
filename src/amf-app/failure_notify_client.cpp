@@ -19,7 +19,7 @@
 extern statistics stacs;
 
 namespace {
-// Track G10 (cleanup pass): hard cap on concurrently running detached
+// Hard cap on concurrently running detached
 // failure-notification threads.
 //
 // Design: std::atomic<int> with compare-exchange (C++17 compatible; the
@@ -100,7 +100,7 @@ void failure_notify_client::send(
     return;
   }
 
-  // Minimal syntactic URI validity check (C5 — no blocking getaddrinfo).
+  // Minimal syntactic URI validity check (no blocking getaddrinfo).
   // We require at least "http://" or "https://" followed by a non-empty host.
   // DNS resolution is deferred to http_client at send time (async timeout).
   {
@@ -152,13 +152,13 @@ void failure_notify_client::send(
   const std::string body_str = body.dump();
 
   Logger::amf_sbi().info(
-      "[Track C] N1N2TransferFailureNotification: POST %s  cause=%s  supi=%s",
+      "N1N2TransferFailureNotification: POST %s  cause=%s  supi=%s",
       m.failure_txf_notif_uri.c_str(), cause_to_string(m.cause),
       m.supi.c_str());
   Logger::amf_sbi().debug(
-      "[Track C] N1N2TransferFailureNotification body: %s", body_str.c_str());
+      "N1N2TransferFailureNotification body: %s", body_str.c_str());
 
-  // Track C refine 1 (FAIL-1 fix): dispatch the blocking HTTP POST on a
+  // Dispatch the blocking HTTP POST on a
   // detached thread so TASK_AMF_SBI is not stalled for up to
   // http_request_timeout ms per fan-out notification.
   //
@@ -170,7 +170,7 @@ void failure_notify_client::send(
   // counted), uri/body/supi are std::string copies.
   // (TS 23.502 §5.2.2.2.7A)
   //
-  // Track G10 (cleanup pass): attempt to increment the in-flight counter
+  // Attempt to increment the in-flight counter
   // before spawning.  If the cap (kFailureNotifyMaxInflight=64) is already
   // reached, drop the notification, log a warning, and update the dropped
   // counter instead of spawning a thread that could exhaust OS handles.
@@ -182,7 +182,7 @@ void failure_notify_client::send(
     while (true) {
       if (current >= kFailureNotifyMaxInflight) {
         Logger::amf_sbi().warn(
-            "[Track G10] N1N2TransferFailureNotification: in-flight cap (%d) "
+            "N1N2TransferFailureNotification: in-flight cap (%d) "
             "reached — dropping notification for supi=%s uri=%s",
             kFailureNotifyMaxInflight, m.supi.c_str(),
             m.failure_txf_notif_uri.c_str());
@@ -203,7 +203,7 @@ void failure_notify_client::send(
   std::shared_ptr<oai::http::http_client> http_ref = http_;
 
   std::thread([http_ref, captured_uri, captured_supi, body_str]() mutable {
-    // Track G10: always decrement on exit regardless of outcome so the slot
+    // Always decrement on exit regardless of outcome so the slot
     // is released for the next notification.
     struct InFlightGuard {
       ~InFlightGuard() {
@@ -222,7 +222,7 @@ void failure_notify_client::send(
       if (status_code == static_cast<uint32_t>(
                              oai::common::sbi::http_status_code::NO_RESPONSE)) {
         Logger::amf_sbi().error(
-            "[Track C] N1N2TransferFailureNotification: no response from %s "
+            "N1N2TransferFailureNotification: no response from %s "
             "(supi=%s)",
             captured_uri.c_str(), captured_supi.c_str());
         stacs.increment_paging_failure_notify_failed();
@@ -232,7 +232,7 @@ void failure_notify_client::send(
       const bool success = (status_code >= 200) && (status_code < 300);
       if (!success) {
         Logger::amf_sbi().warn(
-            "[Track C] N1N2TransferFailureNotification: HTTP %u from %s "
+            "N1N2TransferFailureNotification: HTTP %u from %s "
             "(supi=%s)",
             status_code, captured_uri.c_str(), captured_supi.c_str());
         stacs.increment_paging_failure_notify_failed();
@@ -240,20 +240,20 @@ void failure_notify_client::send(
       }
 
       Logger::amf_sbi().info(
-          "[Track C] N1N2TransferFailureNotification: HTTP %u from %s "
+          "N1N2TransferFailureNotification: HTTP %u from %s "
           "(supi=%s) — sent",
           status_code, captured_uri.c_str(), captured_supi.c_str());
       stacs.increment_paging_failure_notify_sent();
 
     } catch (const std::exception& ex) {
       Logger::amf_sbi().error(
-          "[Track C] N1N2TransferFailureNotification: exception posting to %s "
+          "N1N2TransferFailureNotification: exception posting to %s "
           "(supi=%s): %s",
           captured_uri.c_str(), captured_supi.c_str(), ex.what());
       stacs.increment_paging_failure_notify_failed();
     } catch (...) {
       Logger::amf_sbi().error(
-          "[Track C] N1N2TransferFailureNotification: unknown exception "
+          "N1N2TransferFailureNotification: unknown exception "
           "posting to %s (supi=%s)",
           captured_uri.c_str(), captured_supi.c_str());
       stacs.increment_paging_failure_notify_failed();

@@ -19,7 +19,7 @@ extern statistics stacs;
 namespace amf_application {
 
 // ---------------------------------------------------------------------------
-// B4 — config accessors (moved from header to avoid ODR-bloat)
+// Config accessors (moved from header to avoid ODR-bloat)
 // ---------------------------------------------------------------------------
 static size_t get_paging_max_transactions_per_ue() {
   if (amf_cfg && amf_cfg->paging.max_transactions_per_ue > 0) {
@@ -28,6 +28,7 @@ static size_t get_paging_max_transactions_per_ue() {
   return AMF_CONFIG_PAGING_MAX_TRANSACTIONS_PER_UE_DEFAULT_VALUE;
 }
 
+//------------------------------------------------------------------------------
 static uint32_t get_paging_registration_defer_timeout_sec() {
   if (amf_cfg && amf_cfg->paging.registration_defer_timeout_sec > 0) {
     return amf_cfg->paging.registration_defer_timeout_sec;
@@ -35,6 +36,7 @@ static uint32_t get_paging_registration_defer_timeout_sec() {
   return AMF_CONFIG_PAGING_REGISTRATION_DEFER_TIMEOUT_SEC_DEFAULT_VALUE;
 }
 
+//------------------------------------------------------------------------------
 static uint32_t get_paging_temporary_unreachable_defer_timeout_sec() {
   if (amf_cfg && amf_cfg->paging.temporary_unreachable_defer_timeout_sec > 0) {
     return amf_cfg->paging.temporary_unreachable_defer_timeout_sec;
@@ -43,7 +45,7 @@ static uint32_t get_paging_temporary_unreachable_defer_timeout_sec() {
 }
 
 // ---------------------------------------------------------------------------
-// B4 — free-function result helpers (moved from header; TS 23.502 §5.2.2.2.7)
+// Free-function result helpers (moved from header; TS 23.502 §5.2.2.2.7)
 // ---------------------------------------------------------------------------
 paging::admission_result make_dispatch_failure_result(
     const std::string& detail) {
@@ -58,6 +60,7 @@ paging::admission_result make_dispatch_failure_result(
   return result;
 }
 
+//------------------------------------------------------------------------------
 paging::admission_result make_no_paging_target_result() {
   paging::admission_result result;
   result.decision         = paging::admission_decision::REJECT;
@@ -70,6 +73,7 @@ paging::admission_result make_no_paging_target_result() {
   return result;
 }
 
+//------------------------------------------------------------------------------
 paging::admission_result make_n2_forwarding_blocked_result(
     const std::string& detail) {
   paging::admission_result result;
@@ -83,6 +87,7 @@ paging::admission_result make_n2_forwarding_blocked_result(
   return result;
 }
 
+//------------------------------------------------------------------------------
 paging_controller::paging_controller(
     size_t max_transactions_per_ue, uint32_t registration_defer_timeout_sec,
     uint32_t temporary_unreachable_defer_timeout_sec)
@@ -91,6 +96,7 @@ paging_controller::paging_controller(
       temporary_unreachable_defer_timeout_sec_(
           temporary_unreachable_defer_timeout_sec) {}
 
+//------------------------------------------------------------------------------
 paging_controller::paging_controller() {
   max_transactions_per_ue_        = get_paging_max_transactions_per_ue();
   registration_defer_timeout_sec_ = get_paging_registration_defer_timeout_sec();
@@ -98,10 +104,11 @@ paging_controller::paging_controller() {
       get_paging_temporary_unreachable_defer_timeout_sec();
 }
 
+//------------------------------------------------------------------------------
 paging::admission_result paging_controller::admit_transfer(
     const std::shared_ptr<nas_context>& nc,
     paging::paging_transaction&& transaction) const {
-  // B4 — cause→HTTP map per TS 23.502 §5.2.2.2.7 plan table.
+  // Cause→HTTP map per TS 23.502 §5.2.2.2.7 plan table.
   if (!nc) {
     // REJECT (no UE): 404 / CONTEXT_NOT_FOUND
     return make_reject_result(
@@ -123,12 +130,13 @@ paging::admission_result paging_controller::admit_transfer(
           "UE context exists but registration is not in progress.");
     }
 
-    // Track G3: set optional directly (deferred_expiry_set removed).
+    // Set optional directly (deferred_expiry_set removed).
     transaction.deferred_expiry_at =
         std::chrono::system_clock::now() +
         std::chrono::seconds(registration_defer_timeout_sec_);
     {
-      // Track G1: protect awaiting_registration_messages push.
+      // Protect awaiting_registration_messages push.
+
       std::lock_guard<std::mutex> lk(nc->paging_queues_mutex);
       if (!enqueue_for_registration(nc, std::move(transaction))) {
         // Queue full — 503 / SYSTEM_FAILURE per plan "REJECT (other)" row
@@ -176,12 +184,12 @@ paging::admission_result paging_controller::admit_transfer(
 
   if (nc->is_mico_mode) {
     if (transaction.ext_buf_support.value_or(false)) {
-      // Track G3: set optional directly (deferred_expiry_set removed).
+      // Set optional directly (deferred_expiry_set removed).
       transaction.deferred_expiry_at =
           std::chrono::system_clock::now() +
           std::chrono::seconds(temporary_unreachable_defer_timeout_sec_);
       {
-        // Track G1: protect temporarily_unreachable_messages push.
+        // Protect temporarily_unreachable_messages push.
         std::lock_guard<std::mutex> lk(nc->paging_queues_mutex);
         if (!enqueue_for_temporary_unreachable(nc, std::move(transaction))) {
           // Queue full — 503 / SYSTEM_FAILURE
@@ -226,7 +234,7 @@ paging::admission_result paging_controller::admit_transfer(
   result.is_error = false;
 
   {
-    // Track G1: protect pending_paging_messages push + subsequent .back()
+    // Protect pending_paging_messages push + subsequent .back()
     // read as a single critical section.  The .back() read and the priority
     // update must be atomic with the push to avoid a drain on TASK_AMF_N1
     // popping the entry between push and read.
@@ -279,6 +287,7 @@ paging::admission_result paging_controller::admit_transfer(
   return result;
 }
 
+//------------------------------------------------------------------------------
 bool paging_controller::is_registration_in_progress(
     const nas_context& nc) const {
   switch (nc.procedure_ctx.specific_procedure) {
@@ -293,6 +302,7 @@ bool paging_controller::is_registration_in_progress(
   return nc._5gmm_state == _5GMM_COMMON_PROCEDURE_INITIATED;
 }
 
+//------------------------------------------------------------------------------
 bool paging_controller::enqueue_for_paging(
     const std::shared_ptr<nas_context>& nc,
     paging::paging_transaction&& transaction) const {
@@ -310,6 +320,7 @@ bool paging_controller::enqueue_for_paging(
   return true;
 }
 
+//------------------------------------------------------------------------------
 bool paging_controller::enqueue_for_registration(
     const std::shared_ptr<nas_context>& nc,
     paging::paging_transaction&& transaction) const {
@@ -326,6 +337,7 @@ bool paging_controller::enqueue_for_registration(
   return true;
 }
 
+//------------------------------------------------------------------------------
 bool paging_controller::enqueue_for_temporary_unreachable(
     const std::shared_ptr<nas_context>& nc,
     paging::paging_transaction&& transaction) const {
@@ -342,6 +354,7 @@ bool paging_controller::enqueue_for_temporary_unreachable(
   return true;
 }
 
+//------------------------------------------------------------------------------
 bool paging_controller::can_forward_n2_sm_over_3gpp_access(
     const paging::paging_transaction& transaction,
     const oai::ngap::Tai_t& current_tai,
@@ -377,6 +390,7 @@ bool paging_controller::can_forward_n2_sm_over_3gpp_access(
   return true;
 }
 
+//------------------------------------------------------------------------------
 paging::admission_result paging_controller::make_reject_result(
     uint32_t http_status_code,
     N1N2MessageTransferCause_anyOf::eN1N2MessageTransferCause_anyOf cause,
@@ -391,6 +405,7 @@ paging::admission_result paging_controller::make_reject_result(
   return result;
 }
 
+//------------------------------------------------------------------------------
 bool paging_controller::matches_area_of_validity(
     const AreaOfValidity& area_of_validity,
     const oai::ngap::Tai_t& current_tai) const {
@@ -413,6 +428,7 @@ bool paging_controller::matches_area_of_validity(
   return area_of_validity.getTaiList().empty();
 }
 
+//------------------------------------------------------------------------------
 bool paging_controller::is_pdu_session_allowed_on_3gpp_access(
     uint8_t pdu_session_id, uint16_t allowed_pdu_session_status) const {
   if (pdu_session_id == 0 || pdu_session_id > 15) {

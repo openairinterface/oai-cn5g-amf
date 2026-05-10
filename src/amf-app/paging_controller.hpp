@@ -18,7 +18,7 @@ extern std::unique_ptr<oai::config::amf_config> amf_cfg;
 
 namespace amf_application {
 
-// B4 — free-function helpers declared here, defined in paging_controller.cpp
+// Free-function helpers declared here, defined in paging_controller.cpp
 // to avoid ODR-bloat from static definitions in a shared header.
 // (TS 23.502 §5.2.2.2.7 cause→HTTP map)
 paging::admission_result make_dispatch_failure_result(

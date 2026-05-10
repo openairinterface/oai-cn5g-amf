@@ -1065,11 +1065,7 @@ class amf_n1 {
   // Validates callback URI
   static bool validate_callback_uri(const std::string& uri);
 
-  // POST N1N2MessageTransfer status notification per TS 29.518.
-  bool send_n1n2_transfer_status_callback(
-      const std::string& callback_uri, const std::string& status);
   // for Event Handling
-
   bs2::connection ee_ue_location_report_connection;
   bs2::connection ee_ue_reachability_status_connection;
   bs2::connection ee_ue_registration_state_connection;

@@ -298,7 +298,7 @@ void amf_sbi_task(void*) {
         amf_sbi_inst->handle_itti_message(std::ref(*m));
       } break;
 
-      // Track C — TS 23.502 §5.2.2.2.7A / TS 29.518 §6.1.5.6
+      // TS 23.502 §5.2.2.2.7A / TS 29.518 §6.1.5.6
       case N1N2_TRANSFER_FAILURE_NOTIFICATION: {
         Logger::amf_sbi().info(
             "Receive N1N2TransferFailureNotification request, handling ...");
