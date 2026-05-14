@@ -1793,7 +1793,9 @@ void amf_n1::try_restore_pdu_sessions_from_udsf(
       udsf_result.value("http_response_code", static_cast<uint32_t>(0));
   std::string udsf_status = udsf_result.value("udsf_status", "http_error");
 
-  if (udsf_status == "found" && http_code == 200 &&
+  if (udsf_status == "found" &&
+      http_code ==
+          static_cast<uint32_t>(oai::common::sbi::http_status_code::OK) &&
       udsf_result.contains("body") && !udsf_result["body"].empty()) {
     try {
       const auto& blocks  = udsf_result["body"].at("blocks");
@@ -1823,7 +1825,10 @@ void amf_n1::try_restore_pdu_sessions_from_udsf(
           "reason=decode_error error=%s",
           supi.c_str(), http_code, e.what());
     }
-  } else if (udsf_status == "not_found" || http_code == 404) {
+  } else if (
+      udsf_status == "not_found" ||
+      http_code == static_cast<uint32_t>(
+                       oai::common::sbi::http_status_code::NOT_FOUND)) {
     Logger::amf_n1().debug(
         "UDSF op=get supi=%s http_status=%u fallback=new_context "
         "reason=not_found",
