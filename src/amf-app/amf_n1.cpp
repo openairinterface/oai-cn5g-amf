@@ -43,6 +43,7 @@
 #include "itti.hpp"
 #include "itti_msg_n2.hpp"
 #include "itti_msg_sbi.hpp"
+#include "itti_msg_udsf.hpp"
 #include "logger.hpp"
 #include "nas_algorithms.hpp"
 #include "ngap_utils.hpp"
@@ -928,6 +929,8 @@ bool amf_n1::identity_response_handle(
     std::shared_ptr<ue_context> old_uc = amf_app_inst->get_ue_context(uc->supi);
     if (old_uc) {
       uc->copy_pdu_sessions(old_uc);
+    } else if (amf_cfg->support_features.enable_udsf) {
+      try_restore_pdu_sessions_from_udsf(uc->supi, uc);
     }
     amf_app_inst->set_ue_context(uc->supi, uc);
     Logger::amf_n1().debug("Update UC context, SUPI %s", uc->supi.c_str());
@@ -1748,6 +1751,91 @@ void amf_n1::send_service_reject(
 }
 
 //------------------------------------------------------------------------------
+void amf_n1::try_restore_pdu_sessions_from_udsf(
+    const std::string& supi, const std::shared_ptr<ue_context>& uc) {
+  uint32_t udsf_promise_id = {};
+  boost::shared_ptr<boost::promise<nlohmann::json>> udsf_p =
+      boost::make_shared<boost::promise<nlohmann::json>>();
+  boost::shared_future<nlohmann::json> udsf_f = udsf_p->get_future();
+  amf_app_inst->store_promise(udsf_promise_id, udsf_p);
+  Logger::amf_n1().debug(
+      "UDSF restore: promise ID %u for SUPI %s", udsf_promise_id, supi.c_str());
+
+  auto itti_get = std::make_shared<itti_nudsf_get_ue_context_request>(
+      TASK_AMF_N1, TASK_AMF_SBI, udsf_promise_id);
+  itti_get->supi       = supi;
+  itti_get->realm      = amf_cfg->support_features.udsf_realm;
+  itti_get->storage_id = amf_cfg->support_features.udsf_storage_id;
+
+  int ret = itti_inst->send_msg(itti_get);
+  if (0 != ret) {
+    Logger::amf_n1().error(
+        "UDSF op=get supi=%s fallback=new_context reason=itti_send_failed",
+        supi.c_str());
+    amf_app_inst->remove_promise(udsf_promise_id);
+    return;
+  }
+
+  std::optional<nlohmann::json> udsf_result_opt = std::nullopt;
+  oai::utils::utils::wait_for_result(udsf_f, udsf_result_opt);
+
+  if (!udsf_result_opt.has_value()) {
+    amf_app_inst->remove_promise(udsf_promise_id);
+    Logger::amf_n1().warn(
+        "UDSF op=get supi=%s fallback=new_context reason=timeout "
+        "timeout_ms=%u",
+        supi.c_str(), oai::utils::KFutureStatusTimeoutMs);
+    return;
+  }
+
+  const auto& udsf_result = udsf_result_opt.value();
+  uint32_t http_code =
+      udsf_result.value("http_response_code", static_cast<uint32_t>(0));
+  std::string udsf_status = udsf_result.value("udsf_status", "http_error");
+
+  if (udsf_status == "found" && http_code == 200 &&
+      udsf_result.contains("body") && !udsf_result["body"].empty()) {
+    try {
+      const auto& blocks  = udsf_result["body"].at("blocks");
+      bool uc_block_found = false;
+      for (const auto& blk : blocks) {
+        if (blk.value("Content-Id", "") == "ue_context") {
+          uc_block_found   = true;
+          auto restored_uc = std::make_shared<ue_context>();
+          nlohmann::json uc_json =
+              nlohmann::json::parse(blk["content"].get<std::string>());
+          restored_uc->from_json(uc_json);
+          uc->copy_pdu_sessions(restored_uc);
+          Logger::amf_n1().info(
+              "UDSF restore: merged PDU sessions for SUPI %s", supi.c_str());
+          break;
+        }
+      }
+      if (!uc_block_found) {
+        Logger::amf_n1().warn(
+            "UDSF op=get supi=%s http_status=%u fallback=new_context "
+            "reason=missing_ue_context_block",
+            supi.c_str(), http_code);
+      }
+    } catch (const std::exception& e) {
+      Logger::amf_n1().warn(
+          "UDSF op=get supi=%s http_status=%u fallback=new_context "
+          "reason=decode_error error=%s",
+          supi.c_str(), http_code, e.what());
+    }
+  } else if (udsf_status == "not_found" || http_code == 404) {
+    Logger::amf_n1().debug(
+        "UDSF op=get supi=%s http_status=%u fallback=new_context "
+        "reason=not_found",
+        supi.c_str(), http_code);
+  } else {
+    Logger::amf_n1().warn(
+        "UDSF op=get supi=%s http_status=%u fallback=new_context reason=%s",
+        supi.c_str(), http_code, udsf_status.c_str());
+  }
+}
+
+//------------------------------------------------------------------------------
 bool amf_n1::registration_request_handle(
     std::shared_ptr<nas_context>& nc, const uint32_t ran_ue_ngap_id,
     const uint64_t amf_ue_ngap_id, const std::string& snn, bstring reg,
@@ -2155,6 +2243,8 @@ bool amf_n1::registration_request_handle(
           amf_app_inst->get_ue_context(uc->supi);
       if (old_uc) {
         uc->copy_pdu_sessions(old_uc);
+      } else if (amf_cfg->support_features.enable_udsf) {
+        try_restore_pdu_sessions_from_udsf(uc->supi, uc);
       }
     }
 
@@ -3925,6 +4015,35 @@ bool amf_n1::registration_complete_handle(
       nc->supi, _5GMM_REGISTERED, amf_cfg->support_features.http_version,
       ran_ue_ngap_id, amf_ue_ngap_id);
 
+  // Store UE context to UDSF (if enabled) - fire-and-forget
+  if (amf_cfg->support_features.enable_udsf) {
+    nlohmann::json record;
+    record["meta"]["tags"]["recordId"] = nlohmann::json::array({nc->supi});
+    record["meta"]["tags"]["ueId"]     = nlohmann::json::array({nc->supi});
+    record["meta"]["ttl"]              = "0";
+    nlohmann::json blocks              = nlohmann::json::array();
+    nlohmann::json uc_block;
+    uc_block["Content-Id"]   = "ue_context";
+    uc_block["Content-Type"] = "application/json";
+    uc_block["content"]      = uc->to_json().dump();
+    blocks.push_back(uc_block);
+    record["blocks"] = blocks;
+
+    auto itti_udsf = std::make_shared<itti_nudsf_store_ue_context_request>(
+        TASK_AMF_N1, TASK_AMF_SBI);
+    itti_udsf->supi       = nc->supi;
+    itti_udsf->realm      = amf_cfg->support_features.udsf_realm;
+    itti_udsf->storage_id = amf_cfg->support_features.udsf_storage_id;
+    itti_udsf->body       = record;
+
+    int ret = itti_inst->send_msg(itti_udsf);
+    if (0 != ret) {
+      Logger::amf_n1().error(
+          "Could not send ITTI message %s to task TASK_AMF_SBI",
+          itti_udsf->get_msg_name());
+    }
+  }
+
   // Check follow-on-request indicator
   if (!nc->follow_on_req_pending_ind and
       (nc->registration_type == kInitialRegistration)) {
@@ -4474,6 +4593,22 @@ bool amf_n1::ue_initiate_de_registration_handle(
 
   // Stop all procedure timers to prevent stale callbacks after deregistration
   nas_timer_manager_.stop_all_procedure_timers(nc);
+
+  // Delete UE context from UDSF on Deregistration
+  if (amf_cfg->support_features.enable_udsf && !nc->supi.empty()) {
+    auto itti_del = std::make_shared<itti_nudsf_delete_ue_context_request>(
+        TASK_AMF_N1, TASK_AMF_SBI);
+    itti_del->supi       = nc->supi;
+    itti_del->realm      = amf_cfg->support_features.udsf_realm;
+    itti_del->storage_id = amf_cfg->support_features.udsf_storage_id;
+
+    int ret = itti_inst->send_msg(itti_del);
+    if (0 != ret) {
+      Logger::amf_n1().error(
+          "Could not send NUDSF_DELETE_UE_CONTEXT_REQUEST for SUPI %s",
+          nc->supi.c_str());
+    }
+  }
 
   // Remove NC context
   if (remove_amf_ue_ngap_id_2_nas_context(amf_ue_ngap_id)) {

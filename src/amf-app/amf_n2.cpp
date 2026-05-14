@@ -40,6 +40,7 @@
 #include "amf_statistics.hpp"
 #include "itti.hpp"
 #include "itti_msg_amf_app.hpp"
+#include "itti_msg_udsf.hpp"
 #include "logger.hpp"
 #include "ngap_utils.hpp"
 #include "output_wrapper.hpp"
@@ -2342,6 +2343,41 @@ void amf_n2::handle_itti_message(
   uc->gnb_id         = gc->gnb_id;
 
   amf_app_inst->set_ue_context(ran_ue_ngap_id, amf_ue_ngap_id, uc);
+
+  // Store updated UE context to UDSF after successful handover
+  // (fire-and-forget)
+  if (result && amf_cfg->support_features.enable_udsf && uc != nullptr) {
+    nlohmann::json record;
+    record["meta"]["tags"]["recordId"] = nlohmann::json::array({nc->supi});
+    record["meta"]["tags"]["ueId"]     = nlohmann::json::array({nc->supi});
+    record["meta"]["ttl"]              = "0";
+    nlohmann::json blocks              = nlohmann::json::array();
+    nlohmann::json uc_block;
+    uc_block["Content-Id"]   = "ue_context";
+    uc_block["Content-Type"] = "application/json";
+    uc_block["content"]      = uc->to_json().dump();
+    blocks.push_back(uc_block);
+    record["blocks"] = blocks;
+
+    auto itti_udsf = std::make_shared<itti_nudsf_store_ue_context_request>(
+        TASK_NGAP, TASK_AMF_SBI);
+    itti_udsf->supi       = nc->supi;
+    itti_udsf->realm      = amf_cfg->support_features.udsf_realm;
+    itti_udsf->storage_id = amf_cfg->support_features.udsf_storage_id;
+    itti_udsf->body       = record;
+
+    int ret = itti_inst->send_msg(itti_udsf);
+    if (0 != ret) {
+      Logger::amf_n2().error(
+          "Could not send ITTI message %s to task TASK_AMF_SBI",
+          itti_udsf->get_msg_name());
+    }
+  } else if (amf_cfg->support_features.enable_udsf && !result) {
+    Logger::amf_n2().debug(
+        "UDSF op=store trigger=handover supi=%s skipped "
+        "reason=smf_update_failed fallback=none",
+        nc ? nc->supi.c_str() : "unknown");
+  }
 
   // Retrieve new location from the UE and notify generate location change
   // signal

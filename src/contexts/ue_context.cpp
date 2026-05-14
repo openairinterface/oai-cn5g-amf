@@ -4,6 +4,8 @@
 
 #include "ue_context.hpp"
 
+#include <nlohmann/json.hpp>
+
 #include "amf.hpp"
 #include "logger.hpp"
 
@@ -84,4 +86,98 @@ bool ue_context::set_up_cnx_state(
     return true;
   }
   return false;
+}
+
+//------------------------------------------------------------------------------
+nlohmann::json ue_context::to_json() const {
+  nlohmann::json j;
+  j["ran_ue_ngap_id"]              = ran_ue_ngap_id;
+  j["amf_ue_ngap_id"]              = amf_ue_ngap_id;
+  j["gnb_id"]                      = gnb_id;
+  j["supi"]                        = supi;
+  j["tmsi"]                        = tmsi;
+  j["rrc_estb_cause"]              = rrc_estb_cause;
+  j["is_ue_context_request"]       = is_ue_context_request;
+  j["amf_3gpp_access_location"]    = amf_3gpp_access_location;
+  j["policy_association_location"] = policy_association_location;
+
+  j["cgi"]["mcc"]        = cgi.mcc;
+  j["cgi"]["mnc"]        = cgi.mnc;
+  j["cgi"]["nr_cell_id"] = cgi.nrCellId;
+
+  j["tai"]["mcc"] = tai.mcc;
+  j["tai"]["mnc"] = tai.mnc;
+  j["tai"]["tac"] = static_cast<uint32_t>(tai.tac);
+
+  if (nrf_uri.has_value()) {
+    j["nrf_uri"] = nrf_uri.value();
+  } else {
+    j["nrf_uri"] = nullptr;
+  }
+
+  j["pcf_addr"] = pcf_addr.to_json();
+
+  nlohmann::json pdu_array = nlohmann::json::array();
+  {
+    std::shared_lock<std::shared_mutex> lock(m_pdu_session);
+    for (const auto& [id, psc] : pdu_sessions) {
+      pdu_array.push_back(psc->to_json());
+    }
+  }
+  j["pdu_sessions"] = pdu_array;
+
+  return j;
+}
+
+//------------------------------------------------------------------------------
+void ue_context::from_json(const nlohmann::json& j) {
+  if (j.contains("ran_ue_ngap_id"))
+    ran_ue_ngap_id = j["ran_ue_ngap_id"].get<uint32_t>();
+  if (j.contains("amf_ue_ngap_id"))
+    amf_ue_ngap_id = j["amf_ue_ngap_id"].get<uint64_t>();
+  if (j.contains("gnb_id")) gnb_id = j["gnb_id"].get<uint32_t>();
+  if (j.contains("supi")) supi = j["supi"].get<std::string>();
+  if (j.contains("tmsi")) tmsi = j["tmsi"].get<uint32_t>();
+  if (j.contains("rrc_estb_cause"))
+    rrc_estb_cause = j["rrc_estb_cause"].get<uint8_t>();
+  if (j.contains("is_ue_context_request"))
+    is_ue_context_request = j["is_ue_context_request"].get<bool>();
+  if (j.contains("amf_3gpp_access_location"))
+    amf_3gpp_access_location = j["amf_3gpp_access_location"].get<std::string>();
+  if (j.contains("policy_association_location"))
+    policy_association_location =
+        j["policy_association_location"].get<std::string>();
+  if (j.contains("nrf_uri")) {
+    if (!j["nrf_uri"].is_null()) {
+      nrf_uri = j["nrf_uri"].get<std::string>();
+    } else {
+      nrf_uri = std::nullopt;
+    }
+  }
+  if (j.contains("pcf_addr")) {
+    auto pcf_copy = const_cast<nlohmann::json&>(j)["pcf_addr"];
+    pcf_addr.from_json(pcf_copy);
+  }
+
+  if (j.contains("cgi")) {
+    if (j["cgi"].contains("mcc")) cgi.mcc = j["cgi"]["mcc"].get<std::string>();
+    if (j["cgi"].contains("mnc")) cgi.mnc = j["cgi"]["mnc"].get<std::string>();
+    if (j["cgi"].contains("nr_cell_id"))
+      cgi.nrCellId = j["cgi"]["nr_cell_id"].get<uint64_t>();
+  }
+
+  if (j.contains("tai")) {
+    if (j["tai"].contains("mcc")) tai.mcc = j["tai"]["mcc"].get<std::string>();
+    if (j["tai"].contains("mnc")) tai.mnc = j["tai"]["mnc"].get<std::string>();
+    if (j["tai"].contains("tac"))
+      tai.tac = j["tai"]["tac"].get<uint32_t>() & 0x00FFFFFF;
+  }
+
+  if (j.contains("pdu_sessions") && j["pdu_sessions"].is_array()) {
+    for (const auto& psc_json : j["pdu_sessions"]) {
+      auto psc = std::make_shared<pdu_session_context>();
+      psc->from_json(psc_json);
+      add_pdu_session_context(psc->pdu_session_id, psc);
+    }
+  }
 }

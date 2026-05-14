@@ -1012,6 +1012,9 @@ class amf_n1 {
   oai::amf::nas::nas_state_machine nas_state_machine_;
   nas_timer_manager nas_timer_manager_;
   nas_procedure_manager nas_procedure_manager_;
+
+  void try_restore_pdu_sessions_from_udsf(
+      const std::string& supi, const std::shared_ptr<ue_context>& uc);
 };
 }  // namespace amf_application
 

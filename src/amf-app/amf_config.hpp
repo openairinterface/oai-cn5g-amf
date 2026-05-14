@@ -49,6 +49,17 @@ constexpr auto AMF_CONFIG_SUPPORT_FEATURES_ENABLE_AM_POLICY_ASSOCIATION =
     "enable_am_policy_association";
 constexpr auto AMF_CONFIG_SUPPORT_FEATURES_ENABLE_AM_POLICY_ASSOCIATION_LABEL =
     "Enable AM Policy Association";
+constexpr auto AMF_CONFIG_SUPPORT_FEATURES_ENABLE_UDSF       = "enable_udsf";
+constexpr auto AMF_CONFIG_SUPPORT_FEATURES_ENABLE_UDSF_LABEL = "Enable UDSF";
+constexpr auto AMF_CONFIG_SUPPORT_FEATURES_ENABLE_UDSF_SELECTION =
+    "enable_udsf_selection";
+constexpr auto AMF_CONFIG_SUPPORT_FEATURES_ENABLE_UDSF_SELECTION_LABEL =
+    "Enable UDSF Selection";
+constexpr auto AMF_CONFIG_SUPPORT_FEATURES_UDSF_REALM       = "udsf_realm";
+constexpr auto AMF_CONFIG_SUPPORT_FEATURES_UDSF_REALM_LABEL = "UDSF Realm";
+constexpr auto AMF_CONFIG_SUPPORT_FEATURES_UDSF_STORAGE_ID  = "udsf_storage_id";
+constexpr auto AMF_CONFIG_SUPPORT_FEATURES_UDSF_STORAGE_ID_LABEL =
+    "UDSF Storage ID";
 constexpr auto AMF_CONFIG_RELATIVE_CAPACITY       = "relative_capacity";
 constexpr auto AMF_CONFIG_RELATIVE_CAPACITY_LABEL = "Relative Capacity";
 constexpr auto AMF_CONFIG_STATISTICS_TIMER_INTERVAL =
@@ -156,6 +167,10 @@ class amf_support_features : public config_type {
   option_config_value
       m_enable_access_and_mobility_subscription_data_retrieval{};
   option_config_value m_enable_am_policy_association{};
+  option_config_value m_enable_udsf{};
+  option_config_value m_enable_udsf_selection{};
+  string_config_value m_udsf_realm{};
+  string_config_value m_udsf_storage_id{};
 
  public:
   explicit amf_support_features();
@@ -170,6 +185,10 @@ class amf_support_features : public config_type {
   [[nodiscard]] bool
   get_option_enable_access_and_mobility_subscription_data_retrieval() const;
   [[nodiscard]] bool get_option_enable_am_policy_association() const;
+  [[nodiscard]] bool get_option_enable_udsf() const;
+  [[nodiscard]] bool get_option_enable_udsf_selection() const;
+  [[nodiscard]] std::string get_udsf_realm() const;
+  [[nodiscard]] std::string get_udsf_storage_id() const;
 };
 
 class guami : public config_type {
@@ -279,6 +298,10 @@ typedef struct support_features_s {
   bool enable_pcf;
   bool enable_access_and_mobility_subscription_data_retrieval;
   bool enable_am_policy_association;
+  bool enable_udsf;
+  bool enable_udsf_selection;
+  std::string udsf_realm;
+  std::string udsf_storage_id;
 
   uint8_t http_version;
   nlohmann::json to_json() const {
@@ -293,7 +316,11 @@ typedef struct support_features_s {
         this->enable_access_and_mobility_subscription_data_retrieval;
     json_data["enable_am_policy_association"] =
         this->enable_am_policy_association;
-    json_data["http_version"] = this->http_version;
+    json_data["enable_udsf"]           = this->enable_udsf;
+    json_data["enable_udsf_selection"] = this->enable_udsf_selection;
+    json_data["udsf_realm"]            = this->udsf_realm;
+    json_data["udsf_storage_id"]       = this->udsf_storage_id;
+    json_data["http_version"]          = this->http_version;
     return json_data;
   }
 
@@ -331,6 +358,19 @@ typedef struct support_features_s {
       if (json_data.find("enable_am_policy_association") != json_data.end()) {
         this->enable_am_policy_association =
             json_data["enable_am_policy_association"].get<bool>();
+      }
+      if (json_data.find("enable_udsf") != json_data.end()) {
+        this->enable_udsf = json_data["enable_udsf"].get<bool>();
+      }
+      if (json_data.find("enable_udsf_selection") != json_data.end()) {
+        this->enable_udsf_selection =
+            json_data["enable_udsf_selection"].get<bool>();
+      }
+      if (json_data.find("udsf_realm") != json_data.end()) {
+        this->udsf_realm = json_data["udsf_realm"].get<std::string>();
+      }
+      if (json_data.find("udsf_storage_id") != json_data.end()) {
+        this->udsf_storage_id = json_data["udsf_storage_id"].get<std::string>();
       }
       if (json_data.find("http_version") != json_data.end()) {
         this->http_version = json_data["http_version"].get<int>();
@@ -446,7 +486,7 @@ class amf_config : public config {
   nf_addr_t nssf_addr;
   nf_addr_t lmf_addr;
   nf_addr_t pcf_addr;
-
+  nf_addr_t udsf_addr;
   std::string default_dnn;
 };
 

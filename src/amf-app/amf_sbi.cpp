@@ -4,6 +4,7 @@
 
 #include "amf_sbi.hpp"
 
+#include <chrono>
 #include <nlohmann/json.hpp>
 
 #include "3gpp_24.501.hpp"
@@ -295,6 +296,27 @@ void amf_sbi_task(void*) {
             dynamic_cast<itti_sbi_ue_context_in_smf_data_retrieval*>(msg);
         if (!m) break;
         amf_sbi_inst->handle_itti_message(std::ref(*m));
+      } break;
+
+      case NUDSF_STORE_UE_CONTEXT_REQUEST: {
+        Logger::amf_sbi().debug(
+            "Receive NUDSF_STORE_UE_CONTEXT_REQUEST, handling ...");
+        auto* m = dynamic_cast<itti_nudsf_store_ue_context_request*>(msg);
+        if (m) amf_sbi_inst->handle_nudsf_store_ue_context(std::ref(*m));
+      } break;
+
+      case NUDSF_GET_UE_CONTEXT_REQUEST: {
+        Logger::amf_sbi().debug(
+            "Receive NUDSF_GET_UE_CONTEXT_REQUEST, handling ...");
+        auto* m = dynamic_cast<itti_nudsf_get_ue_context_request*>(msg);
+        if (m) amf_sbi_inst->handle_nudsf_get_ue_context(std::ref(*m));
+      } break;
+
+      case NUDSF_DELETE_UE_CONTEXT_REQUEST: {
+        Logger::amf_sbi().debug(
+            "Receive NUDSF_DELETE_UE_CONTEXT_REQUEST, handling ...");
+        auto* m = dynamic_cast<itti_nudsf_delete_ue_context_request*>(msg);
+        if (m) amf_sbi_inst->handle_nudsf_delete_ue_context(std::ref(*m));
       } break;
 
       case TERMINATE: {
@@ -2222,5 +2244,136 @@ void amf_sbi::create_multipart_content(
   } else {
     body         = json_data;
     is_multipart = false;
+  }
+}
+
+//------------------------------------------------------------------------------
+void amf_sbi::handle_nudsf_store_ue_context(
+    itti_nudsf_store_ue_context_request& itti_msg) {
+  Logger::amf_sbi().debug(
+      "Store UE context to UDSF for SUPI %s", itti_msg.supi.c_str());
+
+  std::string uri = amf_sbi_helper::get_udsf_record_uri(
+      amf_cfg->udsf_addr, itti_msg.realm, itti_msg.storage_id, itti_msg.supi);
+
+  oai::http::response http_response = {};
+
+  auto start = std::chrono::steady_clock::now();
+  bool ret   = send_http_request(
+      uri, oai::common::sbi::method_e::PUT, itti_msg.body.dump(),
+      http_response);
+  auto elapsed_ms = std::chrono::duration_cast<std::chrono::milliseconds>(
+                        std::chrono::steady_clock::now() - start)
+                        .count();
+  uint32_t response_code = http_response.status_code;
+
+  if (!ret ||
+      (response_code != oai::common::sbi::http_status_code::CREATED &&
+       response_code != oai::common::sbi::http_status_code::NO_CONTENT)) {
+    Logger::amf_sbi().warn(
+        "UDSF op=store supi=%s endpoint=%s http_status=%u elapsed_ms=%ld "
+        "fallback=in_memory_only reason=%s",
+        itti_msg.supi.c_str(), uri.c_str(), response_code, elapsed_ms,
+        (response_code == oai::common::sbi::http_status_code::NO_RESPONSE) ?
+            "no_response" :
+            "http_error");
+  } else {
+    Logger::amf_sbi().debug(
+        "UDSF op=store supi=%s endpoint=%s http_status=%u elapsed_ms=%ld "
+        "fallback=none reason=success",
+        itti_msg.supi.c_str(), uri.c_str(), response_code, elapsed_ms);
+  }
+}
+
+//------------------------------------------------------------------------------
+void amf_sbi::handle_nudsf_get_ue_context(
+    itti_nudsf_get_ue_context_request& itti_msg) {
+  Logger::amf_sbi().debug(
+      "Retrieve UE context from UDSF for SUPI %s", itti_msg.supi.c_str());
+
+  std::string uri = amf_sbi_helper::get_udsf_record_uri(
+      amf_cfg->udsf_addr, itti_msg.realm, itti_msg.storage_id, itti_msg.supi);
+
+  oai::http::response http_response = {};
+
+  auto start = std::chrono::steady_clock::now();
+  send_http_request(uri, oai::common::sbi::method_e::GET, "", http_response);
+  auto elapsed_ms = std::chrono::duration_cast<std::chrono::milliseconds>(
+                        std::chrono::steady_clock::now() - start)
+                        .count();
+  uint32_t response_code = http_response.status_code;
+
+  nlohmann::json promise_result;
+  promise_result["http_response_code"] = response_code;
+  promise_result["body"]               = nlohmann::json{};
+  promise_result["udsf_status"]        = "http_error";
+
+  if (response_code == oai::common::sbi::http_status_code::NO_RESPONSE) {
+    promise_result["udsf_status"] = "no_response";
+  } else if (response_code == oai::common::sbi::http_status_code::NOT_FOUND) {
+    promise_result["udsf_status"] = "not_found";
+  } else if (response_code == oai::common::sbi::http_status_code::OK) {
+    if (http_response.body.empty()) {
+      promise_result["udsf_status"] = "decode_error";
+    } else {
+      try {
+        promise_result["body"] = nlohmann::json::parse(http_response.body);
+        promise_result["udsf_status"] = "found";
+      } catch (const nlohmann::json::exception& e) {
+        promise_result["udsf_status"]  = "decode_error";
+        promise_result["decode_error"] = e.what();
+      }
+    }
+  } else if (response_code == oai::common::sbi::http_status_code::NO_CONTENT) {
+    promise_result["udsf_status"] = "protocol_error";
+  }
+
+  // Resolve the promise so TASK_AMF_N1 can unblock from wait_for_result()
+  amf_app_inst->trigger_process_response(itti_msg.promise_id, promise_result);
+
+  std::string status = promise_result["udsf_status"].get<std::string>();
+  Logger::amf_sbi().debug(
+      "UDSF op=get supi=%s endpoint=%s http_status=%u elapsed_ms=%ld "
+      "promise_id=%u status=%s fallback=%s",
+      itti_msg.supi.c_str(), uri.c_str(), response_code, elapsed_ms,
+      itti_msg.promise_id, status.c_str(),
+      (status == "found") ? "none" : "new_context");
+}
+
+//------------------------------------------------------------------------------
+void amf_sbi::handle_nudsf_delete_ue_context(
+    itti_nudsf_delete_ue_context_request& itti_msg) {
+  Logger::amf_sbi().debug(
+      "Delete UE context from UDSF for SUPI %s", itti_msg.supi.c_str());
+
+  std::string uri = amf_sbi_helper::get_udsf_record_uri(
+      amf_cfg->udsf_addr, itti_msg.realm, itti_msg.storage_id, itti_msg.supi);
+
+  oai::http::response http_response = {};
+
+  auto start = std::chrono::steady_clock::now();
+  send_http_request(uri, oai::common::sbi::method_e::DELETE, "", http_response);
+  auto elapsed_ms = std::chrono::duration_cast<std::chrono::milliseconds>(
+                        std::chrono::steady_clock::now() - start)
+                        .count();
+  uint32_t response_code = http_response.status_code;
+
+  if (response_code == oai::common::sbi::http_status_code::NO_CONTENT ||
+      response_code == oai::common::sbi::http_status_code::NOT_FOUND) {
+    Logger::amf_sbi().debug(
+        "UDSF op=delete supi=%s endpoint=%s http_status=%u elapsed_ms=%ld "
+        "fallback=none reason=%s",
+        itti_msg.supi.c_str(), uri.c_str(), response_code, elapsed_ms,
+        (response_code == oai::common::sbi::http_status_code::NOT_FOUND) ?
+            "already_absent" :
+            "success");
+  } else {
+    Logger::amf_sbi().warn(
+        "UDSF op=delete supi=%s endpoint=%s http_status=%u elapsed_ms=%ld "
+        "fallback=record_may_remain reason=%s",
+        itti_msg.supi.c_str(), uri.c_str(), response_code, elapsed_ms,
+        (response_code == oai::common::sbi::http_status_code::NO_RESPONSE) ?
+            "no_response" :
+            "http_error");
   }
 }

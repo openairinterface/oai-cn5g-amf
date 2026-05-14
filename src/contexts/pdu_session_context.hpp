@@ -5,6 +5,8 @@
 #ifndef _PDU_SESSION_CONTEXT_H_
 #define _PDU_SESSION_CONTEXT_H_
 
+#include <nlohmann/json.hpp>
+
 #include "3gpp_29.502.h"
 #include "amf.hpp"
 #include "bstrlib.h"
@@ -22,6 +24,10 @@ class pdu_session_context {
  public:
   pdu_session_context();
   ~pdu_session_context();
+
+  // UDSF serialization helpers
+  nlohmann::json to_json() const;
+  void from_json(const nlohmann::json& j);
 
   uint32_t ran_ue_ngap_id;
   uint64_t amf_ue_ngap_id;
