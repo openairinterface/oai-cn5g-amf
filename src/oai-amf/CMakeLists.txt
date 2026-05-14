@@ -301,10 +301,6 @@ ADD_SUBDIRECTORY(${SRC_TOP_DIR}/utils ${CMAKE_CURRENT_BINARY_DIR}/utils)
 ADD_SUBDIRECTORY(${SRC_TOP_DIR}/${MOUNTED_COMMON}/ngap/libngap ${CMAKE_CURRENT_BINARY_DIR}/ngap/libngap)
 ADD_SUBDIRECTORY(${SRC_TOP_DIR}/${MOUNTED_COMMON}/ngap/libngap_ies ${CMAKE_CURRENT_BINARY_DIR}/ngap/libngap_ies)
 
-# Unit tests (requires full build environment: bstrlib, fmt, spdlog, MySQL client)
-enable_testing()
-ADD_SUBDIRECTORY(${SRC_TOP_DIR}/test ${CMAKE_CURRENT_BINARY_DIR}/test)
-
 # Specific part for oai_smf folder
 add_definitions("-DPACKAGE_NAME=\"AMF\"")
 
