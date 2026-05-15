@@ -508,9 +508,8 @@ void amf_n2::handle_itti_message(
     get_ue_ngap_contexts(itti_msg->assoc_id, ue_contexts);
 
     for (auto ue_context : ue_contexts) {
-      remove_ue_context_with_amf_ue_ngap_id(ue_context->amf_ue_ngap_id);
-      remove_ue_context_with_ran_ue_ngap_id(
-          ue_context->ran_ue_ngap_id, gc->gnb_id);
+      release_ngap_context_only(
+          ue_context->amf_ue_ngap_id, ue_context->ran_ue_ngap_id, gc->gnb_id);
     }
   }
 
@@ -621,9 +620,8 @@ void amf_n2::handle_itti_message(std::shared_ptr<itti_ng_reset>& itti_msg) {
     get_ue_ngap_contexts(itti_msg->assoc_id, ue_contexts);
 
     for (auto ue_context : ue_contexts) {
-      remove_ue_context_with_amf_ue_ngap_id(ue_context->amf_ue_ngap_id);
-      remove_ue_context_with_ran_ue_ngap_id(
-          ue_context->ran_ue_ngap_id, gc->gnb_id);
+      release_ngap_context_only(
+          ue_context->amf_ue_ngap_id, ue_context->ran_ue_ngap_id, gc->gnb_id);
     }
 
     stacs.display();
@@ -636,9 +634,17 @@ void amf_n2::handle_itti_message(std::shared_ptr<itti_ng_reset>& itti_msg) {
       uint64_t amf_ue_ngap_id = INVALID_AMF_UE_NGAP_ID;
       uint32_t ran_ue_ngap_id = 0;
       if (ue.getAmfUeNgapId(amf_ue_ngap_id)) {
-        remove_ue_context_with_amf_ue_ngap_id(amf_ue_ngap_id);
+        std::shared_ptr<ue_ngap_context> unc = {};
+        if (amf_ue_id_2_ue_ngap_context(amf_ue_ngap_id, unc)) {
+          release_ngap_context_only(
+              unc->amf_ue_ngap_id, unc->ran_ue_ngap_id, gc->gnb_id);
+        }
       } else if (ue.getRanUeNgapId(ran_ue_ngap_id)) {
-        remove_ue_context_with_ran_ue_ngap_id(ran_ue_ngap_id, gc->gnb_id);
+        std::shared_ptr<ue_ngap_context> unc = {};
+        if (ran_ue_id_2_ue_ngap_context(ran_ue_ngap_id, gc->gnb_id, unc)) {
+          release_ngap_context_only(
+              unc->amf_ue_ngap_id, ran_ue_ngap_id, gc->gnb_id);
+        }
       }
     }
   }
@@ -694,9 +700,8 @@ void amf_n2::handle_itti_message(std::shared_ptr<itti_ng_shutdown>& itti_msg) {
 
   // Remove UEs' contexts
   for (auto ue_context : ue_contexts) {
-    remove_ue_context_with_amf_ue_ngap_id(ue_context->amf_ue_ngap_id);
-    remove_ue_context_with_ran_ue_ngap_id(
-        ue_context->ran_ue_ngap_id, gc->gnb_id);
+    release_ngap_context_only(
+        ue_context->amf_ue_ngap_id, ue_context->ran_ue_ngap_id, gc->gnb_id);
   }
 
   // Delete gNB context and update statistic
@@ -2809,6 +2814,28 @@ void amf_n2::remove_ran_ue_ngap_id_2_ngap_context(
         ", gnb_id " GNB_ID_FMT "",
         ran_ue_ngap_id, gnb_id);
   }
+}
+
+//------------------------------------------------------------------------------
+void amf_n2::release_ngap_context_only(
+    const uint64_t& amf_ue_ngap_id, const uint32_t& ran_ue_ngap_id,
+    const uint32_t& gnb_id) {
+  std::shared_ptr<nas_context> nc = {};
+
+  if (amf_n1_inst->amf_ue_id_2_nas_context(amf_ue_ngap_id, nc)) {
+    Logger::amf_n2().info(
+        "Releasing NGAP/N2 context only for SUPI %s. Keep 5GMM state, set "
+        "CM-IDLE.",
+        nc->supi.c_str());
+    amf_n1_inst->set_5gcm_state(nc, CM_IDLE);
+  } else {
+    Logger::amf_n2().warn(
+        "No nas_context found for amf_ue_ngap_id(" AMF_UE_NGAP_ID_FMT ")",
+        amf_ue_ngap_id);
+  }
+
+  remove_ran_ue_ngap_id_2_ngap_context(ran_ue_ngap_id, gnb_id);
+  remove_amf_ue_ngap_id_2_ue_ngap_context(amf_ue_ngap_id);
 }
 
 //------------------------------------------------------------------------------
