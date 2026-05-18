@@ -11,6 +11,8 @@
 #include "nas_security_context.hpp"
 #include "Struct.hpp"
 #include <cstdint>
+#include <optional>
+#include <vector>
 
 typedef enum {
   _5GMM_STATE_MIN     = 0,
@@ -81,6 +83,20 @@ struct nas_timer_instance_t {
 static constexpr size_t kNasTimerCount =
     7;  // T3550, T3560, T3570, T3522, T3555, T3513, T3565
 
+// ---------------------------------------------------------------------------
+// Pending UCU record (TS 24.501 §5.4.4)
+// Stored while a Configuration Update Command with ACK bit set is in-flight
+// (state UcuAwaitAck).  Cleared when Configuration Update Complete is
+// received, or on T3555 final expiry (abort).
+// ---------------------------------------------------------------------------
+struct pending_ucu_t {
+  std::vector<uint8_t> cuc_pdu;  // Encoded (protected) CUC NAS PDU
+  uint8_t retry_count;           // Times CUC has been (re-)sent
+  bool ack_requested;            // true when ACK bit was set in CUI IE
+
+  pending_ucu_t() : retry_count(0), ack_requested(false) {}
+};
+
 class nas_context {
  public:
   nas_context();
@@ -113,6 +129,44 @@ class nas_context {
   std::optional<std::string> guti;
 
   std::uint8_t _5gmm_capability[13];
+
+  // Release 17 UE capability bits (TS 24.501 table 9.11.3.1.1 octet 7).
+  // Default false = feature unsupported (covers missing IE and legacy UEs).
+  bool nas_ue_supports_nssrg                = false;
+  bool nas_ue_supports_nsag                 = false;
+  bool nas_ue_supports_uas                  = false;
+  bool nas_ue_supports_mps_indicator_update = false;
+
+  // NSSRG state — Stage 5 (TS 24.501 §4.6.2.2, §5.5.1.2, §5.5.1.3, §9.11.3.82)
+  // True after NSSRG-based access restriction has been applied this session.
+  bool nssrg_restriction_applied = false;
+  // Per-S-NSSAI subscribed NSSRG lists, keyed by (SST, SD).
+  // Populated from UDM SubscribedSnssai::subscribedNsSrgList when
+  // enable_nssrg=true.  Empty entries mean no NSSRG restriction for that
+  // S-NSSAI.
+  std::vector<std::pair<oai::nas::SNSSAI_t, std::vector<std::string>>>
+      subscribed_nssrg_lists;
+
+  // MPS state — Stage 7 (TS 24.501 §4.5.2, §4.5.2A, §5.4.4.2, §8.2.19.35,
+  //             §9.11.3.91)
+  // Tracks whether MPS priority / access identity 1 is currently valid for
+  // this UE.  Set from subscription data or operator policy when
+  // enable_mps_indicator_update=true.  trigger_mps_indicator_update() compares
+  // this value against the new desired state to decide whether a CUC Priority
+  // Indicator IE needs to be sent.
+  // TODO(Stage 8): populate from Nudm_SDM subscription data when available.
+  bool mps_priority_active = false;
+
+  // NSAG state — Stage 6 (TS 24.501 §4.6.2.6, §5.5.1.2, §5.4.4.2, §9.11.3.87)
+  // Raw NSAG information content bytes obtained from the NSSF response
+  // (AuthorizedNetworkSliceInfo::nsagInfos), to be encoded as the
+  // NsagInformation IE in Registration Accept (IEI 0x7C) or CUC (IEI 0x73).
+  // Empty when enable_nsag=false or NSSF did not return nsagInfos.
+  std::vector<uint8_t> subscribed_nsag_info;
+  // True after NSAG information has been delivered to this UE (either via
+  // Registration Accept or Configuration Update Command).
+  bool nsag_info_applied = false;
+
   oai::nas::UeSecurityCapability ue_security_capability;
 
   std::vector<oai::nas::SNSSAI_t> requested_nssai;
@@ -155,6 +209,10 @@ class nas_context {
   bool get_kamf(uint8_t index, uint8_t (&k)[AUTH_VECTOR_LENGTH_OCTETS]) const;
   static std::string fivegmm_state_to_string(const _5gmm_state_t& state);
   static std::string cm_state_to_string(const cm_state_t& state);
+
+  // Pending UCU record — present while an acknowledged CUC is in-flight
+  // (§5.4.4: UcuAwaitAck state).  nullopt means no UCU pending.
+  std::optional<pending_ucu_t> pending_ucu_;
 };
 
 #endif

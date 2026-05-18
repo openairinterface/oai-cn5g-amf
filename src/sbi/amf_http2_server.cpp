@@ -614,6 +614,44 @@ void amf_http2_server::start() {
         });
       });
 
+  // Nudm_SDM_Notification callback
+  // http://<amf>:<port>/namf-callback/v1/<supi>/nudm-sdm-notification
+  server.handle(
+      amf_sbi_helper::AmfCallbackBase() +
+          amf_sbi_helper::AmfCallbackPathNudmSdmNotification,
+      [&](const request& request, const response& res) {
+        request.on_data([&](const uint8_t* data, std::size_t len) {
+          std::string msg((char*) data, len);
+          try {
+            std::vector<std::string> split_result;
+            boost::split(
+                split_result, request.uri().path, boost::is_any_of("/"));
+            if (request.method().compare("POST") == 0 && len > 0) {
+              // URL: /namf-callback/v1/<supi>/nudm-sdm-notification
+              // split_result[size-2] == <supi>
+              if (split_result.size() < 2) {
+                Logger::amf_server().warn("Requested URL is not implemented");
+                return send_response(
+                    res, oai::common::sbi::http_status_code::NOT_IMPLEMENTED);
+              }
+              std::string supi = split_result[split_result.size() - 2];
+              nlohmann::json notification_json = nlohmann::json::parse(msg);
+              this->nudm_sdm_notification_handler(supi, notification_json, res);
+            } else {
+              Logger::amf_server().warn(
+                  "Invalid request (error: Invalid Request Method or empty "
+                  "body)!");
+              return send_response(
+                  res, oai::common::sbi::http_status_code::BAD_REQUEST);
+            }
+          } catch (std::exception& e) {
+            Logger::amf_server().warn("Invalid request (error: %s)!", e.what());
+            return send_response(
+                res, oai::common::sbi::http_status_code::BAD_REQUEST);
+          }
+        });
+      });
+
   // AMF Mobile Terminated Service
   //  /ue-contexts/{ueContextId}
   server.handle(
@@ -1992,6 +2030,72 @@ void amf_http2_server::terminate_policy_notification_handler(
       res.end(json_data.dump().c_str());
     }
 
+  } else {
+    send_response(res, oai::common::sbi::http_status_code::GATEWAY_TIMEOUT);
+  }
+  // Remove the promise from the list since the result is processed or not
+  // available
+  amf_app_inst->remove_promise(promise_id);
+}
+
+//------------------------------------------------------------------------------
+void amf_http2_server::nudm_sdm_notification_handler(
+    const std::string& supi, const nlohmann::json& notification_json,
+    const response& res) {
+  Logger::amf_server().debug(
+      "Receive a Nudm_SDM_Notification for SUPI %s, handling...", supi.c_str());
+  header_map h;
+
+  // Generate a promise and associate this promise to the ITTI message
+  uint32_t promise_id = {};
+  boost::shared_ptr<boost::promise<nlohmann::json>> p =
+      boost::make_shared<boost::promise<nlohmann::json>>();
+  boost::shared_future<nlohmann::json> f = p->get_future();
+  m_amf_app->store_promise(promise_id, p);
+  Logger::amf_server().debug("Promise ID generated %d", promise_id);
+
+  // Forward the notification to AMF app via ITTI
+  std::shared_ptr<itti_sbi_nudm_sdm_notification> itti_msg =
+      std::make_shared<itti_sbi_nudm_sdm_notification>(
+          TASK_AMF_SBI, TASK_AMF_APP, promise_id);
+
+  itti_msg->promise_id        = promise_id;
+  itti_msg->supi              = supi;
+  itti_msg->notification_data = notification_json;
+
+  int ret = itti_inst->send_msg(itti_msg);
+  if (0 != ret) {
+    Logger::amf_server().error(
+        "Could not send ITTI message %s to task TASK_AMF_APP",
+        itti_msg->get_msg_name());
+  }
+
+  // Wait for the response available and process accordingly
+  std::optional<nlohmann::json> result_opt = std::nullopt;
+  oai::utils::utils::wait_for_result(f, result_opt);
+
+  if (result_opt.has_value()) {
+    Logger::amf_server().debug("Got result for promise ID %d", promise_id);
+    nlohmann::json result = result_opt.value();
+
+    uint32_t http_response_code = 0;
+    if (result.find(kSbiResponseHttpResponseCode) != result.end()) {
+      http_response_code = result[kSbiResponseHttpResponseCode].get<int>();
+    }
+
+    if (http_response_code == oai::common::sbi::http_status_code::NO_CONTENT) {
+      res.write_head(http_response_code);
+      res.end();
+    } else {
+      // Problem details or other status
+      nlohmann::json json_data = {};
+      if (result.find(kSbiResponseJsonData) != result.end()) {
+        json_data = result[kSbiResponseJsonData];
+      }
+      h.emplace("content-type", header_value{"application/problem+json"});
+      res.write_head(http_response_code, h);
+      res.end(json_data.dump().c_str());
+    }
   } else {
     send_response(res, oai::common::sbi::http_status_code::GATEWAY_TIMEOUT);
   }

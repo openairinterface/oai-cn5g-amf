@@ -199,6 +199,15 @@ class amf_sbi_helper : public sbi_helper {
   static std::string get_pcf_policy_update_notification_uri(
       const std::string& supi);
 
+  /*
+   * Get the URI of AMF Callback for Nudm_SDM_Notification
+   * (TS 23.502 §4.2.2.2.2 step 14b, TS 29.503 §5.2.3.3.3)
+   * @param [const std::string&] supi: UE SUPI
+   * @return URI in string format
+   */
+  static std::string get_udm_sdm_notification_callback_uri(
+      const std::string& supi);
+
   static std::string get_pcf_am_policy_individual_association_uri(
       const nf_addr_t& pcf_addr, std::string policy_association_id);
 };

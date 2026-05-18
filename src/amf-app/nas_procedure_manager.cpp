@@ -122,6 +122,11 @@ collision_action_e nas_procedure_manager::check_collision(
   }
 
   // Configuration Update collisions §5.4.4.6c-e
+  // Reviewed against TS 24.501 V17.10.1 §5.4.4.6 (Stage 4 review, Task 4.6):
+  //   §5.4.4.6c: Deregistration (UE- or NW-initiated) → abort UCU  ✓
+  //   §5.4.4.6d: Registration (Initial/Mobility/Periodic) → abort UCU  ✓
+  //   §5.4.4.6e: Service Request may progress simultaneously  ✓
+  // No gap found against V17.10.1.
   if (ctx.common_procedure == nas_procedure_type_e::CONFIGURATION_UPDATE) {
     if (new_proc == nas_procedure_type_e::DEREGISTRATION_UE ||
         new_proc == nas_procedure_type_e::DEREGISTRATION_NETWORK)
