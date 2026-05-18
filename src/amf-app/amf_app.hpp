@@ -285,6 +285,22 @@ class amf_app {
       itti_sbi_am_policy_association_termination_notification& itti_msg);
 
   /*
+   * Handle ITTI message (Nudm_SDM Notification)
+   * @param [itti_sbi_nudm_sdm_notification&]: ITTI message
+   * @return void
+   */
+  void handle_itti_message(itti_sbi_nudm_sdm_notification& itti_msg);
+
+  /*
+   * Subscribe for UDM SDM notifications for a given UE
+   * (TS 23.502 §4.2.2.2.2 step 14b, TS 29.503 §5.2.3.3.3)
+   * @param [const std::shared_ptr<ue_context>&] uc: UE context
+   * @return void
+   */
+  void subscribe_sdm_notifications(
+      const std::shared_ptr<ue_context>& uc) const;
+
+  /*
    * Handle ITTI message (UE Context In SMF Data Retrieval response)
    * @param [itti_sbi_ue_context_in_smf_data_retrieval_response&]: ITTI
    * message

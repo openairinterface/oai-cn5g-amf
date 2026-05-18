@@ -3641,6 +3641,11 @@ bool amf_n1::security_mode_complete_handle(
   if (amf_cfg->support_features.enable_am_policy_association)
     amf_app_inst->perform_am_policy_association(uc);
 
+  // Step 14b (TS 23.502 §4.2.2.2.2): Nudm_SDM_Subscribe — subscribe for
+  // subscriber-data change notifications so the AMF can send a Configuration
+  // Update Command when the UDM pushes an SDM notification.
+  amf_app_inst->subscribe_sdm_notifications(uc);
+
   // Process Uplink Data Status / PDU Session status
   uint16_t uplink_data_status              = 0x0000;
   uint16_t pdu_session_status              = 0x0000;
@@ -4717,6 +4722,18 @@ void amf_n1::ul_nas_transport_handle(
       case kN1SmInformation: {
         // Get payload container
         ul_nas->GetPayloadContainer(sm_msg);
+
+        // NOTE: N1 SM information forwarding behavior when enable_uas_uuaa_mm=false
+        // -------------------------------------------------------------------------
+        // When the UAS/UUAA-MM feature flag is disabled (default), N1 SM information
+        // is forwarded to SMF opaquely without local 5GSM decode or UUAA-MM boundary
+        // enforcement. AMF does not validate CAA-level device ID or apply aerial UE
+        // authorization rules to PDU session establishment.
+        //
+        // To enable UAS-boundary enforcement (aerial UE subscription checks, PDU
+        // session rejection for non-authorized CAA-level IDs, etc.), set
+        // enable_uas_uuaa_mm=true in the configuration. This gates the UAS enforcement
+        // logic in the Nudm_SDM_Notification handler (Stage 8).
 
         auto itti_msg =
             std::make_shared<itti_nsmf_pdusession_create_sm_context>(
@@ -6271,10 +6288,8 @@ bool amf_n1::reroute_registration_request(
   // Task 6.2: Extract NSAG information from NSSF response.
   // Per TS 23.502 §4.2.4.2 and TS 29.531 §6.1.6.2.6: if the NSSF response
   // contains nsagInfos and the UE supports NSAG, store the NSAG data as raw
-  // bytes so it can be encoded in the NsagInformation IE during Registration
-  // Accept building (Task 6.4).
-  // The NsagInfo model provides per-NSAG-group S-NSSAI list and optional TAI
-  // list; we encode a compact binary representation here.
+  // bytes (TS 24.501 §9.11.3.87 wire format) so it can be encoded directly
+  // as the NsagInformation IE content in Registration Accept (Task 6.4).
   // TS 24.501 §4.6.2.6: if TAI list is absent the NSAG is valid in the
   // sending PLMN and equivalent PLMNs; if present it scopes validity.
   if (amf_cfg->support_features.enable_nsag && nc->nas_ue_supports_nsag &&
@@ -6304,58 +6319,180 @@ bool amf_n1::reroute_registration_request(
           tai_entry_count);
     }
 
-    // Encode as a compact binary sequence understood by NsagInformation IE:
-    // For each NSAG entry (up to 32):
-    //   [num_nsag_ids (1 octet)]
-    //   [nsag_id (1 octet each)]
-    //   [num_snssais (1 octet)]
-    //   [sst (1 octet) per S-NSSAI]
-    //   [has_tai_list (1 octet): 0x01 if TAI list present, 0x00 otherwise]
-    // (TAI list encoding deferred — presence is flagged; full TAI binary
-    //  encoding per §9.11.3.87 is a follow-up task.)
-    // TS 24.501 §4.6.2.6: absence of TAI list means NSAG is valid in
-    // the serving PLMN and all equivalent PLMNs.
-    std::vector<uint8_t> nsag_raw;
-    size_t tai_encoded = 0;
-    for (size_t i = 0; i < num_entries; ++i) {
-      const auto& entry = nsag_infos[i];
+    // Encode NSAG entries using TS 24.501 §9.11.3.87 over-the-air wire format.
+    // Each NsagInfo may carry multiple NSAG IDs sharing the same S-NSSAI list
+    // and TAI list; the spec requires ONE NSAG identifier per wire entry, so
+    // we emit one wire entry per NSAG ID in each NsagInfo object.
+    //
+    // Wire format per entry (TS 24.501 table 9.11.3.87-1):
+    //   [1] entry_length  — number of octets that follow in this entry
+    //   [1] nsag_id       — NSAG identifier (0x01..0xFF)
+    //   [1] snssai_list_length — byte count of the S-NSSAI list that follows
+    //   [1+1..4] per S-NSSAI: [content_length (1)] [SST (1)] [SD (3, optional)]
+    //            SD is omitted when sdIsSet()==false or SD==0xFFFFFF (wildcard)
+    //   [1] nsag_priority — 1=highest (NsagInfo model has no priority field;
+    //                       TODO: use NsagInfo priority when model exposes it)
+    //   optional TAI list (when entry has TAI list and the 4-entry limit allows):
+    //     [1] tai_list_length — byte count of the encoded TAI list
+    //     TAI list encoded as §9.11.3.9 type-00 (partial TA list of one PLMN):
+    //       for each TAI: [type_and_count (1)] [PLMN (3)] [TAC (3)]
+    //       type byte = 0x00 | (0 TAIs – 1) = 0x00 for one TAI per sub-entry
+    //
+    // TS 24.501 §4.6.2.6: if TAI list is absent the NSAG is valid in the
+    // sending PLMN and all equivalent PLMNs; if present it scopes validity.
 
-      // NSAG IDs
-      const auto& ids = entry.getNsagIds();
-      uint8_t id_count =
-          static_cast<uint8_t>(std::min(ids.size(), size_t(255)));
-      nsag_raw.push_back(id_count);
-      for (size_t j = 0; j < id_count; ++j) {
-        nsag_raw.push_back(static_cast<uint8_t>(ids[j] & 0xFF));
+    // Helper: encode one S-NSSAI into a temporary byte vector.
+    // Returns [content_len (1)] [SST (1)] [SD (3, if present)].
+    auto encode_snssai_bytes =
+        [](const oai::_3gpp::model::Snssai& s) -> std::vector<uint8_t> {
+      std::vector<uint8_t> v;
+      bool has_sd =
+          s.sdIsSet() &&
+          (static_cast<uint32_t>(s.getSdInt()) != SD_DEFAULT_VALUE_INT);
+      uint8_t content_len = has_sd ? 4 : 1;  // SST + optional 3-byte SD
+      v.push_back(content_len);
+      v.push_back(static_cast<uint8_t>(s.getSst() & 0xFF));
+      if (has_sd) {
+        uint32_t sd = static_cast<uint32_t>(s.getSdInt());
+        v.push_back(static_cast<uint8_t>((sd >> 16) & 0xFF));
+        v.push_back(static_cast<uint8_t>((sd >> 8) & 0xFF));
+        v.push_back(static_cast<uint8_t>(sd & 0xFF));
       }
+      return v;
+    };
 
-      // S-NSSAI list
-      const auto& snssais = entry.getSnssaiList();
-      uint8_t sn_count =
-          static_cast<uint8_t>(std::min(snssais.size(), size_t(255)));
-      nsag_raw.push_back(sn_count);
-      for (size_t k = 0; k < sn_count; ++k) {
-        nsag_raw.push_back(static_cast<uint8_t>(snssais[k].getSst() & 0xFF));
-      }
+    // Helper: encode a TAI list as §9.11.3.9 type-00 sub-entries.
+    // Returns the raw bytes (no length prefix) or empty on failure.
+    auto encode_tai_list_bytes =
+        [](const std::vector<oai::_3gpp::model::Tai>& tais)
+        -> std::vector<uint8_t> {
+      std::vector<uint8_t> v;
+      for (const auto& tai : tais) {
+        // Type-00 sub-entry: type/count byte = 0x00 (type=00, count=1–1=0),
+        // then 3-byte PLMN, then 3-byte TAC.
+        v.push_back(0x00);  // type-00, one TAI
 
-      // TAI list presence flag (enforce maximum 4 with TAI)
-      bool has_tai = entry.taiListIsSet() && !entry.getTaiList().empty() &&
-                     (tai_encoded < 4);
-      if (has_tai) {
-        ++tai_encoded;
-        nsag_raw.push_back(0x01);
-        Logger::amf_n1().debug(
-            "NSAG: entry %zu has TAI list (%zu TAIs)", i,
-            entry.getTaiList().size());
-      } else {
-        // No TAI list (or limit exceeded): NSAG valid in sending PLMN
-        // per TS 24.501 §4.6.2.6
-        nsag_raw.push_back(0x00);
-        if (entry.taiListIsSet() && !entry.getTaiList().empty() &&
-            tai_encoded >= 4) {
-          Logger::amf_n1().warn(
-              "NSAG: entry %zu TAI list omitted (already at 4-entry limit)", i);
+        const auto& plmn = tai.getPlmnId();
+        const std::string& mcc = plmn.getMcc();  // e.g. "208"
+        const std::string& mnc = plmn.getMnc();  // e.g. "93" or "093"
+        // PLMN encoding (TS 24.008 §10.5.1.13):
+        //   octet 1: MCC digit 2 | (MCC digit 1 << 4)
+        //   octet 2: MNC digit 3 (or 0xF for 2-digit MNC) | (MCC digit 3 << 4)
+        //   octet 3: MNC digit 2 | (MNC digit 1 << 4)
+        if (mcc.size() < 3) {
+          // Malformed PLMN — skip this TAI
+          return {};
         }
+        uint8_t mcc1 = static_cast<uint8_t>(mcc[0] - '0');
+        uint8_t mcc2 = static_cast<uint8_t>(mcc[1] - '0');
+        uint8_t mcc3 = static_cast<uint8_t>(mcc[2] - '0');
+        uint8_t mnc1 = 0, mnc2 = 0, mnc3 = 0xF;
+        if (mnc.size() >= 2) {
+          mnc1 = static_cast<uint8_t>(mnc[0] - '0');
+          mnc2 = static_cast<uint8_t>(mnc[1] - '0');
+        }
+        if (mnc.size() >= 3) {
+          mnc3 = static_cast<uint8_t>(mnc[2] - '0');
+        }
+        v.push_back(static_cast<uint8_t>((mcc2 << 4) | mcc1));
+        v.push_back(static_cast<uint8_t>((mnc3 << 4) | mcc3));
+        v.push_back(static_cast<uint8_t>((mnc2 << 4) | mnc1));
+
+        // TAC: 3-byte hex string per model (e.g. "000001")
+        const std::string& tac_str = tai.getTac();
+        uint32_t tac_val           = 0;
+        try {
+          tac_val = static_cast<uint32_t>(std::stoul(tac_str, nullptr, 16));
+        } catch (...) {
+          // Malformed TAC — skip this entry
+          return {};
+        }
+        v.push_back(static_cast<uint8_t>((tac_val >> 16) & 0xFF));
+        v.push_back(static_cast<uint8_t>((tac_val >> 8) & 0xFF));
+        v.push_back(static_cast<uint8_t>(tac_val & 0xFF));
+      }
+      return v;
+    };
+
+    std::vector<uint8_t> nsag_raw;
+    size_t tai_encoded    = 0;
+    size_t wire_entry_cnt = 0;
+
+    for (size_t i = 0; i < num_entries && wire_entry_cnt < kNsagInformationMaxEntries;
+         ++i) {
+      const auto& entry      = nsag_infos[i];
+      const auto& ids        = entry.getNsagIds();
+      const auto& snssais    = entry.getSnssaiList();
+
+      // Build S-NSSAI list bytes (shared by all IDs in this NsagInfo)
+      std::vector<uint8_t> snssai_list_bytes;
+      for (const auto& s : snssais) {
+        auto s_bytes = encode_snssai_bytes(s);
+        snssai_list_bytes.insert(
+            snssai_list_bytes.end(), s_bytes.begin(), s_bytes.end());
+      }
+      uint8_t snssai_list_len =
+          static_cast<uint8_t>(std::min(snssai_list_bytes.size(), size_t(255)));
+
+      // Build optional TAI list bytes (shared by all IDs in this NsagInfo)
+      std::vector<uint8_t> tai_bytes;
+      bool encode_tai = entry.taiListIsSet() && !entry.getTaiList().empty() &&
+                        (tai_encoded < 4);
+      if (encode_tai) {
+        tai_bytes = encode_tai_list_bytes(entry.getTaiList());
+        if (tai_bytes.empty()) {
+          Logger::amf_n1().warn(
+              "NSAG: entry %zu TAI list encoding failed — omitting TAI list",
+              i);
+          encode_tai = false;
+        } else {
+          ++tai_encoded;
+          Logger::amf_n1().debug(
+              "NSAG: entry %zu TAI list encoded (%zu bytes for %zu TAIs)", i,
+              tai_bytes.size(), entry.getTaiList().size());
+        }
+      } else if (
+          entry.taiListIsSet() && !entry.getTaiList().empty() &&
+          tai_encoded >= 4) {
+        Logger::amf_n1().warn(
+            "NSAG: entry %zu TAI list omitted (4-entry limit reached)", i);
+      }
+
+      // Emit one wire entry per NSAG ID in this NsagInfo
+      for (size_t j = 0;
+           j < ids.size() && wire_entry_cnt < kNsagInformationMaxEntries; ++j) {
+        uint8_t nsag_id = static_cast<uint8_t>(ids[j] & 0xFF);
+
+        // Compute entry_length:
+        //   1 (nsag_id) + 1 (snssai_list_len) + snssai_list_len
+        //   + 1 (priority) + optional (1 + tai_bytes.size())
+        uint8_t entry_length =
+            static_cast<uint8_t>(1 + 1 + snssai_list_len + 1);
+        if (encode_tai && !tai_bytes.empty()) {
+          entry_length = static_cast<uint8_t>(
+              entry_length + 1 + std::min(tai_bytes.size(), size_t(255)));
+        }
+
+        nsag_raw.push_back(entry_length);
+        nsag_raw.push_back(nsag_id);
+        nsag_raw.push_back(snssai_list_len);
+        nsag_raw.insert(
+            nsag_raw.end(), snssai_list_bytes.begin(),
+            snssai_list_bytes.begin() + snssai_list_len);
+
+        // TODO: use per-entry NSAG priority when NsagInfo model exposes it
+        nsag_raw.push_back(0x01);  // priority 1 (highest)
+
+        if (encode_tai && !tai_bytes.empty()) {
+          uint8_t tai_list_len =
+              static_cast<uint8_t>(std::min(tai_bytes.size(), size_t(255)));
+          nsag_raw.push_back(tai_list_len);
+          nsag_raw.insert(
+              nsag_raw.end(), tai_bytes.begin(),
+              tai_bytes.begin() + tai_list_len);
+        }
+
+        ++wire_entry_cnt;
       }
     }
 

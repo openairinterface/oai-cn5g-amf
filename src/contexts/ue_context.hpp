@@ -66,6 +66,14 @@ class ue_context {
   oai::common::sbi::nf_addr_t pcf_addr;
   std::optional<oai::_3gpp::model::PolicyAssociation> policy_association;
   std::string policy_association_location;
+
+  // UDM SDM subscription (Nudm_SDM_Subscribe, TS 29.503 §5.2.3.3.3)
+  // Populated with the Location header value from the 201 Created response.
+  // Empty when no subscription is active (e.g. before step 14b completes).
+  std::string udm_sdm_subscription_id;
+  // Set when an SDM notification arrives while the UE is CM-IDLE so that
+  // a Configuration Update Command can be sent on the next NAS connection.
+  bool pending_sdm_update = false;
 };
 
 #endif

@@ -14,7 +14,7 @@ namespace oai::amf::nas {
 
 // ============================================================
 // NAS Events
-// Corresponding to NAS messages and timer expiries per 3GPP TS 24.501 v16.14.0
+// Corresponding to NAS messages and timer expiries per 3GPP TS 24.501 V17.10.1
 // ============================================================
 enum class nas_event_e : uint8_t {
   // Registration (§5.5.1)

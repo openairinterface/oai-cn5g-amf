@@ -34,7 +34,7 @@ typedef enum {
 
 // ---- NAS procedure type tracking (replaces boolean flags) ----
 // Per §5.1.3.2.3: the network side has no sub-states; track active procedure
-// instead. (3GPP TS 24.501 v16.14.0 §5.1.3.2.3 defines only 4 main states on
+// instead. (3GPP TS 24.501 V17.10.1 §5.1.3.2.3 defines only 4 main states on
 // the network side)
 
 enum class nas_procedure_type_e : uint8_t {
@@ -158,9 +158,10 @@ class nas_context {
   bool mps_priority_active = false;
 
   // NSAG state — Stage 6 (TS 24.501 §4.6.2.6, §5.5.1.2, §5.4.4.2, §9.11.3.87)
-  // Raw NSAG information content bytes obtained from the NSSF response
-  // (AuthorizedNetworkSliceInfo::nsagInfos), to be encoded as the
-  // NsagInformation IE in Registration Accept (IEI 0x7C) or CUC (IEI 0x73).
+  // Raw NSAG information content bytes in TS 24.501 §9.11.3.87 over-the-air
+  // wire format, obtained from the NSSF response (AuthorizedNetworkSliceInfo::
+  // nsagInfos).  These bytes are used directly as the NsagInformation IE
+  // content in Registration Accept (IEI 0x7C) or CUC (IEI 0x73).
   // Empty when enable_nsag=false or NSSF did not return nsagInfos.
   std::vector<uint8_t> subscribed_nsag_info;
   // True after NSAG information has been delivered to this UE (either via

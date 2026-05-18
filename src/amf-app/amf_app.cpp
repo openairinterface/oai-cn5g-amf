@@ -37,6 +37,7 @@
 #include "PcfInfo.h"
 #include "PolicyUpdate.h"
 #include "AmRequestedValueRep.h"
+#include "SdmSubscription.h"
 #include "UeContextInSmfData.h"
 #include "UeContextInfo.h"
 #include "ProvideLocInfo.h"
@@ -280,6 +281,13 @@ void amf_app_task(void*) {
         itti_sbi_am_policy_association_termination_notification* m =
             dynamic_cast<
                 itti_sbi_am_policy_association_termination_notification*>(msg);
+        amf_app_inst->handle_itti_message(std::ref(*m));
+      } break;
+
+      case SBI_NUDM_SDM_NOTIFICATION: {
+        Logger::amf_app().debug("Received SBI_NUDM_SDM_NOTIFICATION");
+        itti_sbi_nudm_sdm_notification* m =
+            dynamic_cast<itti_sbi_nudm_sdm_notification*>(msg);
         amf_app_inst->handle_itti_message(std::ref(*m));
       } break;
 
@@ -1453,6 +1461,40 @@ void amf_app::handle_itti_message(
 
 //------------------------------------------------------------------------------
 void amf_app::handle_itti_message(
+    itti_sbi_nudm_sdm_notification& itti_msg) {
+  Logger::amf_app().debug(
+      "Handle SBI_NUDM_SDM_NOTIFICATION for SUPI %s", itti_msg.supi.c_str());
+
+  nlohmann::json response_data = {};
+
+  std::shared_ptr<ue_context> uc = get_ue_context(itti_msg.supi);
+  if (uc) {
+    Logger::amf_app().debug(
+        "SDM notification for SUPI %s, notification_data = %s",
+        itti_msg.supi.c_str(), itti_msg.notification_data.dump().c_str());
+    // TODO: UCU trigger — Stage 8 follow-up
+    Logger::amf_app().info(
+        "Subscription data change notification received — UCU trigger pending "
+        "implementation in Stage 8 follow-up");
+    response_data[kSbiResponseHttpResponseCode] =
+        oai::common::sbi::http_status_code::NO_CONTENT;
+  } else {
+    Logger::amf_app().warn(
+        "No UE context found for SUPI %s in SDM notification",
+        itti_msg.supi.c_str());
+    response_data[kSbiResponseHttpResponseCode] =
+        oai::common::sbi::http_status_code::NOT_FOUND;
+  }
+
+  // Notify to the result
+  if (itti_msg.promise_id > 0) {
+    trigger_process_response(itti_msg.promise_id, response_data);
+    return;
+  }
+}
+
+//------------------------------------------------------------------------------
+void amf_app::handle_itti_message(
     itti_sbi_ue_context_in_smf_data_retrieval_response& r) {
   Logger::amf_app().debug(
       "Handle SBI_UE_CONTEXT_IN_SMF_DATA_RETRIEVAL_RESPONSE response");
@@ -2004,6 +2046,48 @@ void amf_app::perform_am_policy_association(
           TASK_AMF_APP, TASK_AMF_SBI);
 
   itti_msg->policy_assoc_req = policy_assc_request;
+
+  int ret = itti_inst->send_msg(itti_msg);
+  if (0 != ret) {
+    Logger::amf_app().error(
+        "Could not send ITTI message %s to task TASK_AMF_SBI",
+        itti_msg->get_msg_name());
+  }
+}
+
+//------------------------------------------------------------------------------
+void amf_app::subscribe_sdm_notifications(
+    const std::shared_ptr<ue_context>& uc) const {
+  Logger::amf_app().debug(
+      "Subscribe for UDM SDM notifications for SUPI %s", uc->supi.c_str());
+
+  // Build monitored resource URIs (TS 29.503 §5.2.3.3.3)
+  // Re-use existing URI helpers to avoid duplicating the fmt-format logic
+  std::vector<std::string> monitored_uris = {
+      amf_sbi_helper::get_udm_slice_selection_subscription_data_retrieval_uri(
+          amf_cfg->udm_addr, uc->supi),
+      amf_sbi_helper::get_udm_am_data_retrieval_uri(
+          amf_cfg->udm_addr, uc->supi)};
+
+  if (amf_cfg->support_features.enable_uas_uuaa_mm) {
+    // UAS-data resource (TS 29.503 §5.2.3)
+    monitored_uris.push_back(
+        amf_cfg->udm_addr.uri_root + amf_sbi_helper::UdmSdmBase +
+        amf_cfg->udm_addr.api_version + "/" + uc->supi + "/uas-data");
+  }
+
+  // Build SdmSubscription object
+  oai::_3gpp::model::SdmSubscription sdm_sub = {};
+  sdm_sub.setCallbackReference(
+      amf_sbi_helper::get_udm_sdm_notification_callback_uri(uc->supi));
+  sdm_sub.setNfInstanceId(amf_instance_id);
+  sdm_sub.setMonitoredResourceUris(monitored_uris);
+
+  // Create and send ITTI message to SBI task
+  std::shared_ptr<itti_sbi_sdm_subscribe> itti_msg =
+      std::make_shared<itti_sbi_sdm_subscribe>(TASK_AMF_APP, TASK_AMF_SBI);
+  itti_msg->supi    = uc->supi;
+  itti_msg->sdm_sub = sdm_sub;
 
   int ret = itti_inst->send_msg(itti_msg);
   if (0 != ret) {

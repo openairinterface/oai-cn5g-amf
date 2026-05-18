@@ -73,7 +73,7 @@ void nas_procedure_manager::abort_specific_procedure(nas_context& nc) const {
 }
 
 // ---------------------------------------------------------------------------
-// Collision resolution per 3GPP TS 24.501 v16.14.0
+// Collision resolution per 3GPP TS 24.501 V17.10.1
 // ---------------------------------------------------------------------------
 
 collision_action_e nas_procedure_manager::check_collision(

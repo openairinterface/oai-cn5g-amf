@@ -214,6 +214,14 @@ class amf_sbi {
   void handle_itti_message(itti_sbi_ue_context_in_smf_data_retrieval& itti_msg);
 
   /*
+   * Handle ITTI message to subscribe for UDM SDM notifications
+   * (TS 23.502 §4.2.2.2.2 step 14b, TS 29.503 §5.2.3.3.3)
+   * @param [itti_sbi_sdm_subscribe&]: ITTI message
+   * @return void
+   */
+  void handle_itti_message(itti_sbi_sdm_subscribe& itti_msg);
+
+  /*
    * Handle request to create a new PDU Session
    * @param [const std::string&] supi: SUPI
    * @param [std::shared_ptr<pdu_session_context>&] psc: Pointer to the PDU
