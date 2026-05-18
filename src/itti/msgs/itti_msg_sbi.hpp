@@ -32,6 +32,7 @@
 #include "UeContextInfoClass.h"
 #include "RequestLocInfo.h"
 #include "SdmSubscription.h"
+#include "ModificationNotification.h"
 #include <nlohmann/json.hpp>
 
 using namespace amf_application;
@@ -1339,20 +1340,20 @@ class itti_sbi_nudm_sdm_notification : public itti_sbi_msg {
       : itti_sbi_msg(SBI_NUDM_SDM_NOTIFICATION, orig, dest),
         promise_id(pid),
         supi(),
-        notification_data() {}
+        notification() {}
 
   itti_sbi_nudm_sdm_notification(const itti_sbi_nudm_sdm_notification& i)
       : itti_sbi_msg(i) {
-    promise_id        = i.promise_id;
-    supi              = i.supi;
-    notification_data = i.notification_data;
+    promise_id   = i.promise_id;
+    supi         = i.supi;
+    notification = i.notification;
   }
   virtual ~itti_sbi_nudm_sdm_notification() = default;
   const char* get_msg_name() { return "SBI_NUDM_SDM_NOTIFICATION"; }
 
   std::string supi;
   uint32_t promise_id;
-  nlohmann::json notification_data;  // raw ModificationNotification JSON
+  oai::_3gpp::model::ModificationNotification notification;
 };
 
 class itti_sbi_sdm_subscribe : public itti_sbi_msg {
@@ -1369,6 +1370,25 @@ class itti_sbi_sdm_subscribe : public itti_sbi_msg {
 
   std::string supi;
   oai::_3gpp::model::SdmSubscription sdm_sub;
+};
+
+class itti_sbi_sdm_unsubscribe : public itti_sbi_msg {
+ public:
+  itti_sbi_sdm_unsubscribe(const task_id_t orig, const task_id_t dest)
+      : itti_sbi_msg(SBI_SDM_UNSUBSCRIBE, orig, dest),
+        supi(),
+        subscription_id() {}
+
+  itti_sbi_sdm_unsubscribe(const itti_sbi_sdm_unsubscribe& i)
+      : itti_sbi_msg(i) {
+    supi            = i.supi;
+    subscription_id = i.subscription_id;
+  }
+  virtual ~itti_sbi_sdm_unsubscribe() = default;
+  const char* get_msg_name() { return "SBI_SDM_UNSUBSCRIBE"; }
+
+  std::string supi;
+  std::string subscription_id;  // full Location URI returned by UDM subscribe
 };
 
 class itti_sbi_ue_context_in_smf_data_retrieval : public itti_sbi_msg {

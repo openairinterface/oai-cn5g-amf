@@ -27,6 +27,9 @@
 #include "uint_generator.hpp"
 #include "StatusChange.h"
 
+// Forward declaration — full type needed only in amf_app.cpp
+class nas_context;
+
 using namespace oai::config;
 using namespace oai::_3gpp::model;
 
@@ -297,7 +300,16 @@ class amf_app {
    * @param [const std::shared_ptr<ue_context>&] uc: UE context
    * @return void
    */
-  void subscribe_sdm_notifications(
+  void subscribe_sdm_notifications(const std::shared_ptr<ue_context>& uc) const;
+
+  /*
+   * Unsubscribe from UDM SDM notifications for a given UE
+   * (TS 29.503 §5.2.3.3.4 Nudm_SDM_Unsubscribe).  Called on UE
+   * deregistration when udm_sdm_subscription_id is non-empty.
+   * @param [const std::shared_ptr<ue_context>&] uc: UE context
+   * @return void
+   */
+  void unsubscribe_sdm_notifications(
       const std::shared_ptr<ue_context>& uc) const;
 
   /*
@@ -360,12 +372,17 @@ class amf_app {
   void register_3gpp_access(const std::shared_ptr<ue_context>& uc) const;
 
   /*
-   * Retrieve a UE's Access and Mobility Subscription Data from UDM
+   * Retrieve a UE's Access and Mobility Subscription Data from UDM.
+   * When enable_mps_indicator_update is true, populates nc->mps_priority_active
+   * from the mpsPriority field in AccessAndMobilitySubscriptionData
+   * (TS 29.503).
    * @param [const std::shared_ptr<ue_context>&] uc: UE context
+   * @param [const std::shared_ptr<nas_context>&] nc: NAS context (MPS field)
    * @return void
    */
   void get_access_and_mobility_subscription_data(
-      const std::shared_ptr<ue_context>& uc) const;
+      const std::shared_ptr<ue_context>& uc,
+      const std::shared_ptr<nas_context>& nc) const;
 
   /*
    * Request to retrieve a SMF Selection Subcription Data from UDM

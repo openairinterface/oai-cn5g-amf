@@ -99,7 +99,8 @@ class amf_http2_server {
       const response& res);
 
   void nudm_sdm_notification_handler(
-      const std::string& supi, const nlohmann::json& notification_json,
+      const std::string& supi,
+      const oai::_3gpp::model::ModificationNotification& notification,
       const response& res);
 
   void provide_domain_selection_info_handler(

@@ -3617,10 +3617,12 @@ bool amf_n1::security_mode_complete_handle(
     amf_app_inst->register_3gpp_access(uc);
 
   // Step 14b. Figure 4.2.2.2.2-1: Registration procedure@3GPP TS 23.502
-  // Retrieving the Access and Mobility Subscription data from UDM
+  // Retrieving the Access and Mobility Subscription data from UDM.
+  // nc is passed so that mps_priority_active can be populated from
+  // the mpsPriority field when enable_mps_indicator_update is true.
   if (amf_cfg->support_features
           .enable_access_and_mobility_subscription_data_retrieval)
-    amf_app_inst->get_access_and_mobility_subscription_data(uc);
+    amf_app_inst->get_access_and_mobility_subscription_data(uc, nc);
 
   // Step 14b. Figure 4.2.2.2.2-1: Registration procedure@3GPP TS 23.502
   // Retrieving SMF Selection Subscription data from UDM
@@ -3644,7 +3646,19 @@ bool amf_n1::security_mode_complete_handle(
   // Step 14b (TS 23.502 §4.2.2.2.2): Nudm_SDM_Subscribe — subscribe for
   // subscriber-data change notifications so the AMF can send a Configuration
   // Update Command when the UDM pushes an SDM notification.
-  amf_app_inst->subscribe_sdm_notifications(uc);
+  // Guard: only subscribe when AM subscription data retrieval is enabled
+  // (i.e., UDM is actually contacted during registration).  Without this
+  // guard the AMF would POST to UDM even when UDM interaction is disabled,
+  // which would cause a spurious 404 / connection error.
+  if (amf_cfg->support_features
+          .enable_access_and_mobility_subscription_data_retrieval) {
+    amf_app_inst->subscribe_sdm_notifications(uc);
+  } else {
+    Logger::amf_n1().debug(
+        "Skipping Nudm_SDM_Subscribe for SUPI %s: "
+        "enable_access_and_mobility_subscription_data_retrieval=false",
+        uc->supi.c_str());
+  }
 
   // Process Uplink Data Status / PDU Session status
   uint16_t uplink_data_status              = 0x0000;
@@ -4479,6 +4493,11 @@ bool amf_n1::ue_initiate_de_registration_handle(
   // TODO: AMF-nitiated AM Policy Association Termination (if exist)
   // TODO: AMF-initiated UE Policy Association Termination (if exist)
 
+  // Nudm_SDM_Unsubscribe (TS 29.503 §5.2.3.3.4): delete SDM subscription
+  // when the UE deregisters so UDM stops sending change notifications.
+  if (uc && !uc->udm_sdm_subscription_id.empty())
+    amf_app_inst->unsubscribe_sdm_notifications(uc);
+
   // Check Deregistration type
   uint8_t dereg_type = 0;
   dereg_request->GetDeregistrationType(dereg_type);
@@ -4723,17 +4742,19 @@ void amf_n1::ul_nas_transport_handle(
         // Get payload container
         ul_nas->GetPayloadContainer(sm_msg);
 
-        // NOTE: N1 SM information forwarding behavior when enable_uas_uuaa_mm=false
+        // NOTE: N1 SM information forwarding behavior when
+        // enable_uas_uuaa_mm=false
         // -------------------------------------------------------------------------
-        // When the UAS/UUAA-MM feature flag is disabled (default), N1 SM information
-        // is forwarded to SMF opaquely without local 5GSM decode or UUAA-MM boundary
-        // enforcement. AMF does not validate CAA-level device ID or apply aerial UE
-        // authorization rules to PDU session establishment.
+        // When the UAS/UUAA-MM feature flag is disabled (default), N1 SM
+        // information is forwarded to SMF opaquely without local 5GSM decode or
+        // UUAA-MM boundary enforcement. AMF does not validate CAA-level device
+        // ID or apply aerial UE authorization rules to PDU session
+        // establishment.
         //
-        // To enable UAS-boundary enforcement (aerial UE subscription checks, PDU
-        // session rejection for non-authorized CAA-level IDs, etc.), set
-        // enable_uas_uuaa_mm=true in the configuration. This gates the UAS enforcement
-        // logic in the Nudm_SDM_Notification handler (Stage 8).
+        // To enable UAS-boundary enforcement (aerial UE subscription checks,
+        // PDU session rejection for non-authorized CAA-level IDs, etc.), set
+        // enable_uas_uuaa_mm=true in the configuration. This gates the UAS
+        // enforcement logic in the Nudm_SDM_Notification handler (Stage 8).
 
         auto itti_msg =
             std::make_shared<itti_nsmf_pdusession_create_sm_context>(
@@ -6332,7 +6353,8 @@ bool amf_n1::reroute_registration_request(
     //            SD is omitted when sdIsSet()==false or SD==0xFFFFFF (wildcard)
     //   [1] nsag_priority — 1=highest (NsagInfo model has no priority field;
     //                       TODO: use NsagInfo priority when model exposes it)
-    //   optional TAI list (when entry has TAI list and the 4-entry limit allows):
+    //   optional TAI list (when entry has TAI list and the 4-entry limit
+    //   allows):
     //     [1] tai_list_length — byte count of the encoded TAI list
     //     TAI list encoded as §9.11.3.9 type-00 (partial TA list of one PLMN):
     //       for each TAI: [type_and_count (1)] [PLMN (3)] [TAC (3)]
@@ -6346,9 +6368,8 @@ bool amf_n1::reroute_registration_request(
     auto encode_snssai_bytes =
         [](const oai::_3gpp::model::Snssai& s) -> std::vector<uint8_t> {
       std::vector<uint8_t> v;
-      bool has_sd =
-          s.sdIsSet() &&
-          (static_cast<uint32_t>(s.getSdInt()) != SD_DEFAULT_VALUE_INT);
+      bool has_sd = s.sdIsSet() && (static_cast<uint32_t>(s.getSdInt()) !=
+                                    SD_DEFAULT_VALUE_INT);
       uint8_t content_len = has_sd ? 4 : 1;  // SST + optional 3-byte SD
       v.push_back(content_len);
       v.push_back(static_cast<uint8_t>(s.getSst() & 0xFF));
@@ -6372,7 +6393,7 @@ bool amf_n1::reroute_registration_request(
         // then 3-byte PLMN, then 3-byte TAC.
         v.push_back(0x00);  // type-00, one TAI
 
-        const auto& plmn = tai.getPlmnId();
+        const auto& plmn       = tai.getPlmnId();
         const std::string& mcc = plmn.getMcc();  // e.g. "208"
         const std::string& mnc = plmn.getMnc();  // e.g. "93" or "093"
         // PLMN encoding (TS 24.008 §10.5.1.13):
@@ -6418,11 +6439,11 @@ bool amf_n1::reroute_registration_request(
     size_t tai_encoded    = 0;
     size_t wire_entry_cnt = 0;
 
-    for (size_t i = 0; i < num_entries && wire_entry_cnt < kNsagInformationMaxEntries;
-         ++i) {
-      const auto& entry      = nsag_infos[i];
-      const auto& ids        = entry.getNsagIds();
-      const auto& snssais    = entry.getSnssaiList();
+    for (size_t i = 0;
+         i < num_entries && wire_entry_cnt < kNsagInformationMaxEntries; ++i) {
+      const auto& entry   = nsag_infos[i];
+      const auto& ids     = entry.getNsagIds();
+      const auto& snssais = entry.getSnssaiList();
 
       // Build S-NSSAI list bytes (shared by all IDs in this NsagInfo)
       std::vector<uint8_t> snssai_list_bytes;

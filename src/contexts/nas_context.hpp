@@ -137,6 +137,13 @@ class nas_context {
   bool nas_ue_supports_uas                  = false;
   bool nas_ue_supports_mps_indicator_update = false;
 
+  // UAS/UUAA-MM authorization state — Stage 9 (TS 24.501 §4.22.2, §4.22.3)
+  // Set from Nudm_SDM_Notification AerialUeSubscriptionInfo when
+  // enable_uas_uuaa_mm=true.  Default false (not authorized).  When revoked,
+  // AMF blocks PDU session creation to aerial-service DNNs and triggers
+  // deregistration or CUC per Stage 9 boundary.
+  bool uas_authorized = false;
+
   // NSSRG state — Stage 5 (TS 24.501 §4.6.2.2, §5.5.1.2, §5.5.1.3, §9.11.3.82)
   // True after NSSRG-based access restriction has been applied this session.
   bool nssrg_restriction_applied = false;
@@ -150,11 +157,12 @@ class nas_context {
   // MPS state — Stage 7 (TS 24.501 §4.5.2, §4.5.2A, §5.4.4.2, §8.2.19.35,
   //             §9.11.3.91)
   // Tracks whether MPS priority / access identity 1 is currently valid for
-  // this UE.  Set from subscription data or operator policy when
-  // enable_mps_indicator_update=true.  trigger_mps_indicator_update() compares
-  // this value against the new desired state to decide whether a CUC Priority
-  // Indicator IE needs to be sent.
-  // TODO(Stage 8): populate from Nudm_SDM subscription data when available.
+  // this UE.  Populated from the mpsPriority field of
+  // AccessAndMobilitySubscriptionData (TS 29.503 §5.2.2.2.1) during initial
+  // registration when enable_mps_indicator_update=true.
+  // trigger_mps_indicator_update() compares this value against the new desired
+  // state to decide whether a CUC Priority Indicator IE needs to be sent.
+  // Updated on Nudm_SDM_Notification — see Stage 8 SDM notification handler.
   bool mps_priority_active = false;
 
   // NSAG state — Stage 6 (TS 24.501 §4.6.2.6, §5.5.1.2, §5.4.4.2, §9.11.3.87)

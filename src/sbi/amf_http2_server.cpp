@@ -635,8 +635,9 @@ void amf_http2_server::start() {
                     res, oai::common::sbi::http_status_code::NOT_IMPLEMENTED);
               }
               std::string supi = split_result[split_result.size() - 2];
-              nlohmann::json notification_json = nlohmann::json::parse(msg);
-              this->nudm_sdm_notification_handler(supi, notification_json, res);
+              oai::_3gpp::model::ModificationNotification notification = {};
+              nlohmann::json::parse(msg).get_to(notification);
+              this->nudm_sdm_notification_handler(supi, notification, res);
             } else {
               Logger::amf_server().warn(
                   "Invalid request (error: Invalid Request Method or empty "
@@ -2040,7 +2041,8 @@ void amf_http2_server::terminate_policy_notification_handler(
 
 //------------------------------------------------------------------------------
 void amf_http2_server::nudm_sdm_notification_handler(
-    const std::string& supi, const nlohmann::json& notification_json,
+    const std::string& supi,
+    const oai::_3gpp::model::ModificationNotification& notification,
     const response& res) {
   Logger::amf_server().debug(
       "Receive a Nudm_SDM_Notification for SUPI %s, handling...", supi.c_str());
@@ -2059,9 +2061,9 @@ void amf_http2_server::nudm_sdm_notification_handler(
       std::make_shared<itti_sbi_nudm_sdm_notification>(
           TASK_AMF_SBI, TASK_AMF_APP, promise_id);
 
-  itti_msg->promise_id        = promise_id;
-  itti_msg->supi              = supi;
-  itti_msg->notification_data = notification_json;
+  itti_msg->promise_id   = promise_id;
+  itti_msg->supi         = supi;
+  itti_msg->notification = notification;
 
   int ret = itti_inst->send_msg(itti_msg);
   if (0 != ret) {
