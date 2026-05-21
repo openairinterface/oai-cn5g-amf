@@ -4755,12 +4755,7 @@ void amf_n1::ul_nas_transport_handle(
         std::string json_part = LPP_JSON.dump();
         uint8_t http_version  = 1;
 
-        // url =inet_ntoa(*((struct in_addr*) &lmf_addr.ipv4_addr)) + ":" +
-        // std::to_string(lmf_addr.port) + "/nlmf/notifyN1" url =
-        // "192.168.170.129:9090/nlmf/notifyN1"; // indirizzo ip LMF STATICO
-        url = "192.168.70.139:9090/nlmf/notifyN1";  // indirizzo ip LMF STATICO
-        // n1_msg = "stringa_di_test_n1";
-        // n2_msg = "stringa_di_test_n2";
+        url = amf_cfg->lmf_addr.uri_root + "/nlmf/notifyN1";
 
         // Solo la riga octet_stream_2_hex_stream non funziona,
         octet_stream_2_hex_stream_bis(
