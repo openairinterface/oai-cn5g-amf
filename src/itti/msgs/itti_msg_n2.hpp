@@ -5,10 +5,23 @@
 #ifndef _ITTI_MSG_N2_H_
 #define _ITTI_MSG_N2_H_
 
+#include "BroadcastSessionModificationFailure.hpp"
+#include "BroadcastSessionModificationResponse.hpp"
+#include "BroadcastSessionReleaseRequired.hpp"
+#include "BroadcastSessionReleaseResponse.hpp"
+#include "BroadcastSessionSetupFailure.hpp"
+#include "BroadcastSessionSetupResponse.hpp"
+#include "DistributionReleaseRequest.hpp"
+#include "DistributionSetupRequest.hpp"
 #include "HandoverNotifyMsg.hpp"
 #include "HandoverRequestAck.hpp"
 #include "HandoverRequiredMsg.hpp"
 #include "InitialUeMessage.hpp"
+#include "MulticastSessionActivationFailure.hpp"
+#include "MulticastSessionActivationResponse.hpp"
+#include "MulticastSessionDeactivationResponse.hpp"
+#include "MulticastSessionUpdateFailure.hpp"
+#include "MulticastSessionUpdateResponse.hpp"
 #include "PathSwitchRequest.hpp"
 #include "PathSwitchRequestAck.hpp"
 #include "UeContextModificationFailure.hpp"
@@ -647,6 +660,104 @@ class itti_ue_context_modification_failure : public itti_msg_n2 {
   virtual ~itti_ue_context_modification_failure() {}
 
   std::shared_ptr<UeContextModificationFailureMsg> ue_ctx_mod_fail;
+};
+
+// MBS ITTI message classes (Stage 7a)
+
+class itti_broadcast_session_setup_response : public itti_msg_n2 {
+ public:
+  itti_broadcast_session_setup_response(const task_id_t o, const task_id_t d)
+      : itti_msg_n2(BROADCAST_SESSION_SETUP_RESPONSE, o, d) {}
+  std::shared_ptr<BroadcastSessionSetupResponseMsg> resp;
+};
+
+class itti_broadcast_session_setup_failure : public itti_msg_n2 {
+ public:
+  itti_broadcast_session_setup_failure(const task_id_t o, const task_id_t d)
+      : itti_msg_n2(BROADCAST_SESSION_SETUP_FAILURE, o, d) {}
+  std::shared_ptr<BroadcastSessionSetupFailureMsg> fail;
+};
+
+class itti_broadcast_session_modification_response : public itti_msg_n2 {
+ public:
+  itti_broadcast_session_modification_response(
+      const task_id_t o, const task_id_t d)
+      : itti_msg_n2(BROADCAST_SESSION_MODIFICATION_RESPONSE, o, d) {}
+  std::shared_ptr<BroadcastSessionModificationResponseMsg> resp;
+};
+
+class itti_broadcast_session_modification_failure : public itti_msg_n2 {
+ public:
+  itti_broadcast_session_modification_failure(
+      const task_id_t o, const task_id_t d)
+      : itti_msg_n2(BROADCAST_SESSION_MODIFICATION_FAILURE, o, d) {}
+  std::shared_ptr<BroadcastSessionModificationFailureMsg> fail;
+};
+
+class itti_broadcast_session_release_response : public itti_msg_n2 {
+ public:
+  itti_broadcast_session_release_response(const task_id_t o, const task_id_t d)
+      : itti_msg_n2(BROADCAST_SESSION_RELEASE_RESPONSE, o, d) {}
+  std::shared_ptr<BroadcastSessionReleaseResponseMsg> resp;
+};
+
+class itti_broadcast_session_release_required : public itti_msg_n2 {
+ public:
+  itti_broadcast_session_release_required(const task_id_t o, const task_id_t d)
+      : itti_msg_n2(BROADCAST_SESSION_RELEASE_REQUIRED, o, d) {}
+  std::shared_ptr<BroadcastSessionReleaseRequiredMsg> ind;
+};
+
+class itti_distribution_setup_request : public itti_msg_n2 {
+ public:
+  itti_distribution_setup_request(const task_id_t o, const task_id_t d)
+      : itti_msg_n2(DISTRIBUTION_SETUP_REQUEST, o, d) {}
+  std::shared_ptr<DistributionSetupRequestMsg> req;
+};
+
+class itti_distribution_release_request : public itti_msg_n2 {
+ public:
+  itti_distribution_release_request(const task_id_t o, const task_id_t d)
+      : itti_msg_n2(DISTRIBUTION_RELEASE_REQUEST, o, d) {}
+  std::shared_ptr<DistributionReleaseRequestMsg> req;
+};
+
+class itti_multicast_session_activation_response : public itti_msg_n2 {
+ public:
+  itti_multicast_session_activation_response(
+      const task_id_t o, const task_id_t d)
+      : itti_msg_n2(MULTICAST_SESSION_ACTIVATION_RESPONSE, o, d) {}
+  std::shared_ptr<MulticastSessionActivationResponseMsg> resp;
+};
+
+class itti_multicast_session_activation_failure : public itti_msg_n2 {
+ public:
+  itti_multicast_session_activation_failure(
+      const task_id_t o, const task_id_t d)
+      : itti_msg_n2(MULTICAST_SESSION_ACTIVATION_FAILURE, o, d) {}
+  std::shared_ptr<MulticastSessionActivationFailureMsg> fail;
+};
+
+class itti_multicast_session_deactivation_response : public itti_msg_n2 {
+ public:
+  itti_multicast_session_deactivation_response(
+      const task_id_t o, const task_id_t d)
+      : itti_msg_n2(MULTICAST_SESSION_DEACTIVATION_RESPONSE, o, d) {}
+  std::shared_ptr<MulticastSessionDeactivationResponseMsg> resp;
+};
+
+class itti_multicast_session_update_response : public itti_msg_n2 {
+ public:
+  itti_multicast_session_update_response(const task_id_t o, const task_id_t d)
+      : itti_msg_n2(MULTICAST_SESSION_UPDATE_RESPONSE, o, d) {}
+  std::shared_ptr<MulticastSessionUpdateResponseMsg> resp;
+};
+
+class itti_multicast_session_update_failure : public itti_msg_n2 {
+ public:
+  itti_multicast_session_update_failure(const task_id_t o, const task_id_t d)
+      : itti_msg_n2(MULTICAST_SESSION_UPDATE_FAILURE, o, d) {}
+  std::shared_ptr<MulticastSessionUpdateFailureMsg> fail;
 };
 
 #endif

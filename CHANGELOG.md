@@ -2,6 +2,36 @@
 
 # RELEASE NOTES:
 
+## [Unreleased]
+
+### Added
+- Align NGAP procedure handling with 3GPP TS 38.413 v17.10.0
+- New NGAP procedures: BroadcastSessionSetup/Modification/Release (Request/Response),
+  DistributionSetup/Release (Request/Response), MulticastSessionActivation/Deactivation/Update (Request/Response),
+  MulticastGroupPaging, BroadcastSessionReleaseRequired (codes 66-75, feature-gated via enable_mbs_ngap)
+- New NGAP IEs: RedCapIndication (9.3.1.228), NPNAccessInformation (9.3.3.46),
+  FiveGProSeAuthorized (9.3.1.233), FiveGProSeUePC5AggregateMaximumBitRate (9.3.1.148 type),
+  FiveGProSePC5QoSParameters (9.3.1.234), TimeSynchronisationAssistanceInfo (9.3.1.220),
+  UESliceMaximumBitRateList (9.3.1.231), QMCConfigurationInformation (9.3.1.223),
+  QMCDeactivation, TargetNSSAIInformation (9.3.1.229),
+  ManagementBasedMDTPLMNList (9.3.1.168), ManagementBasedMDTPLMNModificationList (9.3.1.243),
+  IABAuthorized (9.3.1.129), IABSupported (ENUMERATED), ExtendedAMFName (9.3.3.51),
+  TAINSAGSupportList (9.3.1.238), NRPagingeDRXInformation (9.3.1.227),
+  PagingCause, PEIPSAssistanceInformation (9.3.1.232), NotifySourceNgRanNode
+- New CauseRadioNetwork values: redcap-ue-not-supported, unknown-MBS-Session-ID,
+  indicated-MBS-session-area-information-not-served-by-the-gNB,
+  inconsistent-slice-info-for-the-session, misaligned-association-for-multicast-unicast
+- Missing pre-Rel-17 wrappers created: PathSwitchRequest, PathSwitchRequestAck,
+  UEContextModificationRequest/Response/Failure
+- New wrapper: AmfConfigurationUpdateMsg (was TODO stub)
+- Completed Rel-16 optional IEs: UE Radio Capability ID, IAB Authorized
+- Feature gate: enable_mbs_ngap (default: false) in support_features_options
+
+### Fixed
+- Critical interoperability bug: InitialUeMessage.cpp, Paging.cpp, HandoverNotifyMsg.cpp
+  default cases changed from early-exit return to break, preventing silent IE loss
+  when unknown IEs appear before known IEs in ordered protocolIEs list
+
 ## v2.2.1 -- April 2026
 
 * Build and CI fixes for RHEL 9 based environments
