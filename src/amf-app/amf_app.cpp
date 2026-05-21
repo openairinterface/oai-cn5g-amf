@@ -561,7 +561,7 @@ void amf_app::handle_itti_message(
       dl_msg->is_n2sm_set    = true;
       dl_msg->n2sm_info_type = itti_msg.n2sm_info_type;
     }
-    
+
     amf_n1_inst->supi_2_amf_id(itti_msg.supi, dl_msg->amf_ue_ngap_id);
     amf_n1_inst->supi_2_ran_id(itti_msg.supi, dl_msg->ran_ue_ngap_id);
 
@@ -595,7 +595,7 @@ void amf_app::handle_itti_message(
       Logger::amf_app().error(
           "Could not send ITTI message %s to task TASK_AMF_N1",
           dl_msg->get_msg_name());
-    }  
+    }
   } else {
     Logger::amf_app().warn("Unknown N1N2 Message Transfer Request type");
   }

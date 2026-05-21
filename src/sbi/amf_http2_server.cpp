@@ -1083,7 +1083,7 @@ void amf_http2_server::n1_message_notify_handler(
       }
     } break;
 
-    case N1MessageClass_anyOf::eN1MessageClass_anyOf::LPP: { //UPLINK
+    case N1MessageClass_anyOf::eN1MessageClass_anyOf::LPP: {  // UPLINK
 
       std::string n1_content_id = n1MessageNotification.getN1MessageContainer()
                                       .getN1MessageContent()
