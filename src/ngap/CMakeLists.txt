@@ -5,6 +5,10 @@ file(GLOB AMF_NGAP_src_files
   ${SRC_TOP_DIR}/${MOUNTED_COMMON}/ngap/ngap_ies/*.cpp
   ${SRC_TOP_DIR}/${MOUNTED_COMMON}/ngap/utils/*.cpp
 )
+list(APPEND AMF_NGAP_src_files
+  ${SRC_TOP_DIR}/${MOUNTED_COMMON}/ngap/ngap_ies/NgapUeRadioCapabilityId.cpp
+)
+list(REMOVE_DUPLICATES AMF_NGAP_src_files)
 add_library (AMF_NGAP STATIC
   ${AMF_NGAP_src_files}
 )
