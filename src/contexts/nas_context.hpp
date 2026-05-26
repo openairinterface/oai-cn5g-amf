@@ -66,7 +66,7 @@ struct nas_procedure_context_t {
   nas_procedure_type_e specific_procedure;  // The active specific procedure
   nas_procedure_type_e
       common_procedure;  // The active common procedure nested within specific
-  _5gmm_state_t prior_state;     // 5GMM state before entering CPI (B-1/B-2 fix)
+  _5gmm_state_t prior_state;     // 5GMM state before entering CPI
   bool dereg_switch_off;         // From DEREGISTRATION REQUEST "switch off" IE
   uint8_t dereg_cause;           // 5GMM cause from DEREGISTRATION REQUEST
   uint8_t retransmission_count;  // For the active procedure's timer
@@ -130,47 +130,27 @@ class nas_context {
 
   std::uint8_t _5gmm_capability[13];
 
-  // Release 17 UE capability bits (TS 24.501 table 9.11.3.1.1 octet 7).
-  // Default false = feature unsupported (covers missing IE and legacy UEs).
+  // NAS Rel 17.10 UE capability bits (TS 24.501 table 9.11.3.1.1 octet 7).
+  // Default false = feature unsupported
   bool nas_ue_supports_nssrg                = false;
   bool nas_ue_supports_nsag                 = false;
   bool nas_ue_supports_uas                  = false;
   bool nas_ue_supports_mps_indicator_update = false;
 
-  // UAS/UUAA-MM authorization state — Stage 9 (TS 24.501 §4.22.2, §4.22.3)
-  // Set from Nudm_SDM_Notification AerialUeSubscriptionInfo when
-  // enable_uas_uuaa_mm=true.  Default false (not authorized).  When revoked,
-  // AMF blocks PDU session creation to aerial-service DNNs and triggers
-  // deregistration or CUC per Stage 9 boundary.
+  // UAS/UUAA-MM authorization state (TS 24.501 §4.22.2, §4.22.3)
   bool uas_authorized = false;
 
-  // NSSRG state — Stage 5 (TS 24.501 §4.6.2.2, §5.5.1.2, §5.5.1.3, §9.11.3.82)
-  // True after NSSRG-based access restriction has been applied this session.
+  // NSSRG state (TS 24.501 §4.6.2.2, §5.5.1.2, §5.5.1.3, §9.11.3.82)
   bool nssrg_restriction_applied = false;
   // Per-S-NSSAI subscribed NSSRG lists, keyed by (SST, SD).
-  // Populated from UDM SubscribedSnssai::subscribedNsSrgList when
-  // enable_nssrg=true.  Empty entries mean no NSSRG restriction for that
-  // S-NSSAI.
   std::vector<std::pair<oai::nas::SNSSAI_t, std::vector<std::string>>>
       subscribed_nssrg_lists;
 
-  // MPS state — Stage 7 (TS 24.501 §4.5.2, §4.5.2A, §5.4.4.2, §8.2.19.35,
+  // MPS state — (TS 24.501 §4.5.2, §4.5.2A, §5.4.4.2, §8.2.19.35,
   //             §9.11.3.91)
-  // Tracks whether MPS priority / access identity 1 is currently valid for
-  // this UE.  Populated from the mpsPriority field of
-  // AccessAndMobilitySubscriptionData (TS 29.503 §5.2.2.2.1) during initial
-  // registration when enable_mps_indicator_update=true.
-  // trigger_mps_indicator_update() compares this value against the new desired
-  // state to decide whether a CUC Priority Indicator IE needs to be sent.
-  // Updated on Nudm_SDM_Notification — see Stage 8 SDM notification handler.
   bool mps_priority_active = false;
 
-  // NSAG state — Stage 6 (TS 24.501 §4.6.2.6, §5.5.1.2, §5.4.4.2, §9.11.3.87)
-  // Raw NSAG information content bytes in TS 24.501 §9.11.3.87 over-the-air
-  // wire format, obtained from the NSSF response (AuthorizedNetworkSliceInfo::
-  // nsagInfos).  These bytes are used directly as the NsagInformation IE
-  // content in Registration Accept (IEI 0x7C) or CUC (IEI 0x73).
-  // Empty when enable_nsag=false or NSSF did not return nsagInfos.
+  // NSAG state — (TS 24.501 §4.6.2.6, §5.5.1.2, §5.4.4.2, §9.11.3.87)
   std::vector<uint8_t> subscribed_nsag_info;
   // True after NSAG information has been delivered to this UE (either via
   // Registration Accept or Configuration Update Command).

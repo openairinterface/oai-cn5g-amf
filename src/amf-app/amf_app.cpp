@@ -1498,9 +1498,7 @@ void amf_app::handle_itti_message(itti_sbi_nudm_sdm_notification& itti_msg) {
     Logger::amf_app().debug(
         "SDM notification: changed resource URI = %s", resource_id.c_str());
 
-    // -----------------------------------------------------------------
-    // a. Subscribed NSSAI change  (/nssai)
-    // -----------------------------------------------------------------
+    // Subscribed NSSAI change  (/nssai)
     if (resource_id.find("/nssai") != std::string::npos) {
       Logger::amf_app().info(
           "NSSAI change notification for SUPI %s", itti_msg.supi.c_str());
@@ -1510,7 +1508,8 @@ void amf_app::handle_itti_message(itti_sbi_nudm_sdm_notification& itti_msg) {
           // The UE will re-register to pick up the updated NSSAI.
           // Acknowledgement is requested so the AMF can track completion.
           Logger::amf_app().info(
-              "Triggering CUC for NSSAI update for SUPI %s",
+              "Triggering Configuration Update Command for NSSAI update for "
+              "SUPI %s",
               itti_msg.supi.c_str());
           if (!amf_n1_inst->send_configuration_update_command(nc, true)) {
             Logger::amf_app().warn(
@@ -1521,13 +1520,15 @@ void amf_app::handle_itti_message(itti_sbi_nudm_sdm_notification& itti_msg) {
         } else {
           Logger::amf_app().debug(
               "UE %s is not in CM-CONNECTED/REGISTERED state — deferring "
-              "NSSAI UCU, setting pending_sdm_update",
+              "Configuration Update Command for NSSAI update, setting "
+              "pending_sdm_update",
               itti_msg.supi.c_str());
           uc->pending_sdm_update = true;
         }
       } else {
         Logger::amf_app().warn(
-            "No NAS context for SUPI %s — cannot trigger UCU for NSSAI "
+            "No NAS context for SUPI %s — cannot trigger Configuration Update "
+            "Command for NSSAI "
             "change; setting pending_sdm_update",
             itti_msg.supi.c_str());
         uc->pending_sdm_update = true;
@@ -1535,20 +1536,18 @@ void amf_app::handle_itti_message(itti_sbi_nudm_sdm_notification& itti_msg) {
       continue;
     }
 
-    // -----------------------------------------------------------------
-    // b. AM data change  (/am-data)
-    // -----------------------------------------------------------------
+    // AM data change  (/am-data)
     if (resource_id.find("/am-data") != std::string::npos) {
       Logger::amf_app().info(
           "AM-data change notification for SUPI %s", itti_msg.supi.c_str());
       if (nc && amf_cfg->support_features.enable_mps_indicator_update) {
         // The notification does not carry the full AM data body in the
         // NotifyItem, so we cannot determine the new MPS state from the
-        // notification alone.  Re-fetch is the correct approach; for now
-        // we trigger trigger_mps_indicator_update with the current known
-        // value to at least synchronise the UE if it is connected.
-        // A proper re-fetch via get_access_and_mobility_subscription_data
-        // should be added as a follow-up.
+        // notification alone. For now we trigger trigger_mps_indicator_update
+        // with the current known value to at least synchronise the UE if it is
+        // connected. A proper re-fetch via
+        // get_access_and_mobility_subscription_data should be added as a
+        // follow-up.
         Logger::amf_app().debug(
             "MPS indicator update enabled — notifying UE for SUPI %s",
             itti_msg.supi.c_str());
@@ -1564,9 +1563,7 @@ void amf_app::handle_itti_message(itti_sbi_nudm_sdm_notification& itti_msg) {
       continue;
     }
 
-    // -----------------------------------------------------------------
-    // c. UAS data change  (/uas-data) — only when enable_uas_uuaa_mm=true
-    // -----------------------------------------------------------------
+    // UAS data change  (/uas-data) — only when enable_uas_uuaa_mm=true
     if (resource_id.find("/uas-data") != std::string::npos) {
       if (!amf_cfg->support_features.enable_uas_uuaa_mm) {
         Logger::amf_app().debug(
@@ -1577,11 +1574,9 @@ void amf_app::handle_itti_message(itti_sbi_nudm_sdm_notification& itti_msg) {
       }
       Logger::amf_app().info(
           "UAS-data change notification for SUPI %s", itti_msg.supi.c_str());
-      // Stage 9 enforcement: set nc->uas_authorized based on the updated
-      // AerialUeSubscriptionInfo carried in the ChangeItems.  Full
-      // AerialUeSubscriptionInfo parsing is deferred to Stage 9; for now
-      // flag a pending update so the CUC is sent on next connection.
-      // TODO (Stage 9): parse ChangeItem body into AerialUeSubscriptionInfo
+      // Set nc->uas_authorized based on the updated
+      // AerialUeSubscriptionInfo carried in the ChangeItems.
+      // TODO: parse ChangeItem body into AerialUeSubscriptionInfo
       //                 and update nc->uas_authorized accordingly.
       if (ue_is_connected) {
         Logger::amf_app().warn(
@@ -1955,7 +1950,6 @@ void amf_app::get_access_and_mobility_subscription_data(
             is_result_available = true;
             // Populate MPS priority from AM subscription data (TS 29.503
             // §5.2.2.2.1 mpsPriority field; TS 23.502 §4.2.2.2.2 step 14b).
-            // Only update when the feature gate is enabled and nc is valid.
             if (amf_cfg->support_features.enable_mps_indicator_update &&
                 nc != nullptr) {
               bool mps_active =
@@ -2191,8 +2185,7 @@ void amf_app::subscribe_sdm_notifications(
   Logger::amf_app().debug(
       "Subscribe for UDM SDM notifications for SUPI %s", uc->supi.c_str());
 
-  // Build monitored resource URIs (TS 29.503 §5.2.3.3.3)
-  // Re-use existing URI helpers to avoid duplicating the fmt-format logic
+  // Build resource URIs (TS 29.503 §5.2.3.3.3)
   std::vector<std::string> monitored_uris = {
       amf_sbi_helper::get_udm_slice_selection_subscription_data_retrieval_uri(
           amf_cfg->udm_addr, uc->supi),

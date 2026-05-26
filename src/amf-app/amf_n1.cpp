@@ -3618,8 +3618,6 @@ bool amf_n1::security_mode_complete_handle(
 
   // Step 14b. Figure 4.2.2.2.2-1: Registration procedure@3GPP TS 23.502
   // Retrieving the Access and Mobility Subscription data from UDM.
-  // nc is passed so that mps_priority_active can be populated from
-  // the mpsPriority field when enable_mps_indicator_update is true.
   if (amf_cfg->support_features
           .enable_access_and_mobility_subscription_data_retrieval)
     amf_app_inst->get_access_and_mobility_subscription_data(uc, nc);
@@ -3646,18 +3644,9 @@ bool amf_n1::security_mode_complete_handle(
   // Step 14b (TS 23.502 §4.2.2.2.2): Nudm_SDM_Subscribe — subscribe for
   // subscriber-data change notifications so the AMF can send a Configuration
   // Update Command when the UDM pushes an SDM notification.
-  // Guard: only subscribe when AM subscription data retrieval is enabled
-  // (i.e., UDM is actually contacted during registration).  Without this
-  // guard the AMF would POST to UDM even when UDM interaction is disabled,
-  // which would cause a spurious 404 / connection error.
   if (amf_cfg->support_features
           .enable_access_and_mobility_subscription_data_retrieval) {
     amf_app_inst->subscribe_sdm_notifications(uc);
-  } else {
-    Logger::amf_n1().debug(
-        "Skipping Nudm_SDM_Subscribe for SUPI %s: "
-        "enable_access_and_mobility_subscription_data_retrieval=false",
-        uc->supi.c_str());
   }
 
   // Process Uplink Data Status / PDU Session status
@@ -4007,25 +3996,6 @@ bool amf_n1::registration_complete_handle(
     }
   }
 
-  // UCU TRIGGER AFTER REGISTRATION — DISABLED FOR UERANSIM COMPATIBILITY
-  //
-  // Sending a Configuration Update Command (CUC) immediately after
-  // Registration Accept causes an interoperability issue with UERANSIM:
-  // UERANSIM does not accept the first PDU Session Establishment Accept when
-  // a CUC is injected at this point; it sends a duplicate PDU Session
-  // Establishment Request and only accepts the second Accept.
-  //
-  // This block is kept as a reference implementation only.  To enable it for
-  // a specific feature, set the corresponding flag in support_features (see
-  // amf_config.hpp):
-  //   enable_nssrg               — send NSSRG information (TS 24.501
-  //   §9.11.3.82) enable_nsag                — send NSAG information (TS 24.501
-  //   §9.11.3.87) enable_mps_indicator_update — send priority indicator
-  //   (TS 24.501 §9.11.3.91) enable_ue_policy_delivery  — send UE policy
-  //   delivery (TS 24.501 §5.4.4)
-  //
-  // The CUC helper send_configuration_update_command() (see amf_n1.hpp/cpp)
-  // is the intended call site for all of the above features.
   Logger::amf_n1().debug(
       "Do not sending Configuration Update Command in this version!");
   /*
@@ -4219,7 +4189,7 @@ bool amf_n1::nas_message_integrity_protected(
     } break;
 
     default: {
-      // Stage 3: NIA3-NIA7 are not implemented; reject to prevent silent bypass
+      // NIA3-NIA7 are not implemented; reject to prevent silent bypass
       Logger::amf_n1().error(
           "Unsupported NAS integrity algorithm 0x%x; rejecting message",
           nsc.nas_algs.integrity & 0x0f);
@@ -4289,7 +4259,7 @@ bool amf_n1::nas_message_cipher_protected(
     } break;
 
     default: {
-      // Stage 3: NEA3-NEA7 are not implemented; reject to prevent silent bypass
+      // NEA3-NEA7 are not implemented; reject to prevent silent bypass
       Logger::amf_n1().error(
           "Unsupported NAS encryption algorithm 0x%x; rejecting message",
           nsc.nas_algs.encryption & 0x0f);
@@ -4741,21 +4711,6 @@ void amf_n1::ul_nas_transport_handle(
       case kN1SmInformation: {
         // Get payload container
         ul_nas->GetPayloadContainer(sm_msg);
-
-        // NOTE: N1 SM information forwarding behavior when
-        // enable_uas_uuaa_mm=false
-        // -------------------------------------------------------------------------
-        // When the UAS/UUAA-MM feature flag is disabled (default), N1 SM
-        // information is forwarded to SMF opaquely without local 5GSM decode or
-        // UUAA-MM boundary enforcement. AMF does not validate CAA-level device
-        // ID or apply aerial UE authorization rules to PDU session
-        // establishment.
-        //
-        // To enable UAS-boundary enforcement (aerial UE subscription checks,
-        // PDU session rejection for non-authorized CAA-level IDs, etc.), set
-        // enable_uas_uuaa_mm=true in the configuration. This gates the UAS
-        // enforcement logic in the Nudm_SDM_Notification handler (Stage 8).
-
         auto itti_msg =
             std::make_shared<itti_nsmf_pdusession_create_sm_context>(
                 TASK_AMF_N1, TASK_AMF_SBI);
@@ -5921,19 +5876,8 @@ void amf_n1::initialize_registration_accept(
   registration_accept->SetConfiguredNssai(
       allowed_nssais);  // TODO: use Allowed NSSAIs for now
 
-  // Task 5.4: Enforce NSSRG constraints — log restriction and mark context.
-  // Per TS 24.501 §4.6.2.2 and §5.5.1.2: if NSSRG is enabled and the UE
-  // supports NSSRG, the AMF must enforce common-NSSRG access restrictions on
-  // the allowed NSSAI.  The slice selection above (get_common_NSSAI) already
-  // intersects the UE's subscribed/requested slices with those supported by the
-  // current registration area; the NSSRG dimension is an additional per-access
-  // restriction.  If subscribed NSSRG data is available it was stored in
-  // nc->subscribed_nssrg_lists during get_slice_selection_subscription_data().
-  // For slices that appear in the allowed NSSAI but have NSSRG restrictions,
-  // the UE is expected to honour those restrictions using the NssrgInformation
-  // IE delivered in this Registration Accept (see Task 5.5 below).
-  // We set nssrg_restriction_applied so that later procedures (CUC, UCU) know
-  // the UE has already received NSSRG information.
+  // Enforce NSSRG constraints — We set nssrg_restriction_applied so that later
+  // procedures (CUC, UCU) know the UE has already received NSSRG information.
   if (amf_cfg->support_features.enable_nssrg) {
     if (nc->nas_ue_supports_nssrg && !nc->subscribed_nssrg_lists.empty()) {
       Logger::amf_n1().debug(
@@ -5953,15 +5897,7 @@ void amf_n1::initialize_registration_accept(
     }
   }
 
-  // Task 5.5: Encode NSSRG Information IE in Registration Accept.
-  // Conditions (all must hold, per TS 24.501 §5.5.1.2.4 and §9.11.3.82):
-  //   1. enable_nssrg feature gate is ON.
-  //   2. UE indicated NSSRG support in 5GMM Capability (octet 7 bit 1).
-  //   3. Subscribed NSSRG data is available (populated from UDM).
-  // The NssrgInformation IE content is opaque raw bytes per §9.11.3.82.
-  // Currently encoded as an empty-content placeholder (infrastructure ready
-  // from Stage 2); structured binary encoding of NSSRG IDs requires further
-  // UDM data mapping work beyond scope of this stage.
+  // Encode NSSRG Information IE in Registration Accept.
   if (amf_cfg->support_features.enable_nssrg && nc->nas_ue_supports_nssrg &&
       !nc->subscribed_nssrg_lists.empty()) {
     oai::nas::NssrgInformation nssrg_ie(kIeiNssrgInformation);
@@ -6001,18 +5937,10 @@ void amf_n1::initialize_registration_accept(
     }
   }
 
-  // Tasks 6.3 + 6.4: Encode NSAG Information IE in Registration Accept.
-  // Conditions (all must hold, per TS 24.501 §5.5.1.2.4, §4.6.2.6,
-  //   §8.2.7.51, §9.11.3.87):
-  //   1. enable_nsag feature gate is ON.
-  //   2. UE indicated NSAG support in 5GMM Capability (octet 7 bit 6).
-  //   3. NSAG data is available (populated from NSSF nsagInfos in Task 6.2).
-  //   4. Content is at least kNsagInformationMinimumContentLength bytes
-  //      (Task 6.6 — log and skip malformed/too-short NSAG data).
-  // Use IEI kIeiNsagInformationRegistrationAccept (0x7C) — NOT 0x73 (CUC).
+  // Encode NSAG Information IE in Registration Accept.
   if (amf_cfg->support_features.enable_nsag) {
     if (!nc->nas_ue_supports_nsag) {
-      // Task 6.3: Never send NSAG to non-supporting UEs
+      // Never send NSAG to non-supporting UEs
       Logger::amf_n1().debug(
           "NSAG: UE %lu does not support NSAG — skipping NsagInformation IE",
           nc->amf_ue_ngap_id);
@@ -6024,14 +5952,13 @@ void amf_n1::initialize_registration_accept(
     } else if (
         nc->subscribed_nsag_info.size() <
         kNsagInformationMinimumContentLength) {
-      // Task 6.6: Log and omit malformed/too-short NSAG data
       Logger::amf_n1().warn(
           "NSAG: subscribed_nsag_info for UE %lu is %zu bytes (minimum %u "
           "required per §9.11.3.87) — skipping malformed NsagInformation IE",
           nc->amf_ue_ngap_id, nc->subscribed_nsag_info.size(),
           kNsagInformationMinimumContentLength);
     } else {
-      // Task 6.4: Encode NsagInformation IE with IEI 0x7C
+      // Encode NsagInformation IE with IEI 0x7C
       oai::nas::NsagInformation nsag_ie(kIeiNsagInformationRegistrationAccept);
       nsag_ie.SetValue(nc->subscribed_nsag_info);
       registration_accept->SetNsagInformation(nsag_ie);
@@ -6244,7 +6171,7 @@ bool amf_n1::reroute_registration_request(
     SubscribedSnssai subscribed_snssai = {};
     subscribed_snssai.setSubscribedSnssai(n);
     subscribed_snssai.setDefaultIndication(true);
-    // Task 5.3: attach per-S-NSSAI NSSRG lists when enable_nssrg is active
+    // Attach per-S-NSSAI NSSRG lists when enable_nssrg is active
     if (amf_cfg->support_features.enable_nssrg) {
       for (const auto& nssrg_entry : nc->subscribed_nssrg_lists) {
         if (nssrg_entry.first.sst == static_cast<uint8_t>(n.getSst()) &&
@@ -6261,7 +6188,7 @@ bool amf_n1::reroute_registration_request(
   }
   slice_info.setSubscribedNssai(subscribed_snssais);
 
-  // Task 5.3: Populate NSSRG indicator fields in the NSSF request.
+  // Populate NSSRG indicator fields in the NSSF request.
   // ueSupNssrgInd — UE supports NSSRG (TS 29.531 §6.1.6.2.6)
   // suppressNssrgInd — suppress NSSRG in NSSF response when UE does not
   //                    support NSSRG (TS 23.502 §4.2.2.2.2 step 4a)
@@ -6275,7 +6202,7 @@ bool amf_n1::reroute_registration_request(
         !nc->nas_ue_supports_nssrg ? "true" : "false");
   }
 
-  // Task 6.2: Populate NSAG indicator field in the NSSF request.
+  // Populate NSAG indicator field in the NSSF request.
   // nsagSupported signals to NSSF whether this UE supports NSAG grouping
   // (TS 29.531 §6.1.6.2.6, TS 23.502 §4.2.4.2).
   // Only set when enable_nsag=true to avoid unexpected NSSF responses in
@@ -6306,11 +6233,11 @@ bool amf_n1::reroute_registration_request(
     return false;
   }
 
-  // Task 6.2: Extract NSAG information from NSSF response.
+  // Extract NSAG information from NSSF response.
   // Per TS 23.502 §4.2.4.2 and TS 29.531 §6.1.6.2.6: if the NSSF response
   // contains nsagInfos and the UE supports NSAG, store the NSAG data as raw
   // bytes (TS 24.501 §9.11.3.87 wire format) so it can be encoded directly
-  // as the NsagInformation IE content in Registration Accept (Task 6.4).
+  // as the NsagInformation IE content in Registration Accept.
   // TS 24.501 §4.6.2.6: if TAI list is absent the NSAG is valid in the
   // sending PLMN and equivalent PLMNs; if present it scopes validity.
   if (amf_cfg->support_features.enable_nsag && nc->nas_ue_supports_nsag &&
@@ -6340,31 +6267,21 @@ bool amf_n1::reroute_registration_request(
           tai_entry_count);
     }
 
-    // Encode NSAG entries using TS 24.501 §9.11.3.87 over-the-air wire format.
+    // Encode NSAG entries (TS 24.501 §9.11.3.87)
     // Each NsagInfo may carry multiple NSAG IDs sharing the same S-NSSAI list
-    // and TAI list; the spec requires ONE NSAG identifier per wire entry, so
-    // we emit one wire entry per NSAG ID in each NsagInfo object.
+    // and TAI list; the spec requires ONE NSAG identifier per entry, so
+    // we emit one entry per NSAG ID in each NsagInfo object.
     //
-    // Wire format per entry (TS 24.501 table 9.11.3.87-1):
+    // Format per entry (TS 24.501 table 9.11.3.87-1):
     //   [1] entry_length  — number of octets that follow in this entry
     //   [1] nsag_id       — NSAG identifier (0x01..0xFF)
     //   [1] snssai_list_length — byte count of the S-NSSAI list that follows
     //   [1+1..4] per S-NSSAI: [content_length (1)] [SST (1)] [SD (3, optional)]
     //            SD is omitted when sdIsSet()==false or SD==0xFFFFFF (wildcard)
     //   [1] nsag_priority — 1=highest (NsagInfo model has no priority field;
-    //                       TODO: use NsagInfo priority when model exposes it)
-    //   optional TAI list (when entry has TAI list and the 4-entry limit
-    //   allows):
-    //     [1] tai_list_length — byte count of the encoded TAI list
-    //     TAI list encoded as §9.11.3.9 type-00 (partial TA list of one PLMN):
-    //       for each TAI: [type_and_count (1)] [PLMN (3)] [TAC (3)]
-    //       type byte = 0x00 | (0 TAIs – 1) = 0x00 for one TAI per sub-entry
-    //
     // TS 24.501 §4.6.2.6: if TAI list is absent the NSAG is valid in the
     // sending PLMN and all equivalent PLMNs; if present it scopes validity.
 
-    // Helper: encode one S-NSSAI into a temporary byte vector.
-    // Returns [content_len (1)] [SST (1)] [SD (3, if present)].
     auto encode_snssai_bytes =
         [](const oai::_3gpp::model::Snssai& s) -> std::vector<uint8_t> {
       std::vector<uint8_t> v;
@@ -6382,7 +6299,7 @@ bool amf_n1::reroute_registration_request(
       return v;
     };
 
-    // Helper: encode a TAI list as §9.11.3.9 type-00 sub-entries.
+    // Encode a TAI list as §9.11.3.9 type-00 sub-entries.
     // Returns the raw bytes (no length prefix) or empty on failure.
     auto encode_tai_list_bytes =
         [](const std::vector<oai::_3gpp::model::Tai>& tais)
@@ -6779,19 +6696,11 @@ bool amf_n1::get_slice_selection_subscription_data(
         nc->subscribed_snssai.push_back(tmp);
       }
 
-      // Task 5.2: Retrieve per-S-NSSAI NSSRG lists from UDM subscription data.
-      // Nssai::additionalSnssaiData (map keyed by S-NSSAI string) carries
-      // subscribedNsSrgList per TS 29.503 clause 5.2.3.
-      // Only populated when enable_nssrg=true to avoid unnecessary overhead.
+      // Retrieve per-S-NSSAI NSSRG lists from UDM subscription data.
       if (amf_cfg->support_features.enable_nssrg &&
           nssai.additionalSnssaiDataIsSet()) {
         auto additional_data = nssai.getAdditionalSnssaiData();
         nc->subscribed_nssrg_lists.clear();
-        // Iterate the additionalSnssaiData map directly; each entry whose value
-        // has a subscribedNsSrgList is stored in the NAS context keyed by an
-        // SNSSAI_t reconstructed from the map entry's Snssai.
-        // The map key is the S-NSSAI string (e.g. "01" or "01-000001"), not
-        // used for lookup here — we match by iterating all entries.
         for (const auto& kv : additional_data) {
           const auto& add_data = kv.second;
           if (!add_data.subscribedNsSrgListIsSet()) continue;
@@ -7642,33 +7551,6 @@ void amf_n1::handle_t3522_expiry(
 }
 
 // ---------------------------------------------------------------------------
-// send_configuration_update_command — Task 4.1
-//
-// Builds and sends a Configuration Update Command (CUC) NAS message.
-//
-// When ack_requested is true:
-//   - Sets the ACK bit in the Configuration Update Indication IE
-//     (§9.11.3.18: bit ACKI = 1).
-//   - Stores the encoded protected PDU in nc->pending_ucu_ for retransmission.
-//   - Starts T3555 (§5.4.4.2 step 3).
-//   - Sets nas_message_for_current_procedure_running =
-//   kConfigurationUpdateCommand.
-//   - Starts the CONFIGURATION_UPDATE common procedure in the procedure
-//   manager.
-//
-// When ack_requested is false (no-ack CUC, §5.4.4.3):
-//   - Does NOT start T3555.
-//   - Does NOT store pending_ucu_.
-//   - Clears any transient UCU state from a previous send.
-//
-// The helper only populates the Configuration Update Indication IE.  Callers
-// who need NSSRG, NSAG, priority indicator, or other IEs must extend this
-// function or call ConfigurationUpdateCommand setters before invoking
-// send_configuration_update_command() — this design mirrors how
-// initialize_registration_accept() is called before send_registration_accept().
-//
-// Returns true on success, false if encoding or security protection failed.
-// ---------------------------------------------------------------------------
 bool amf_n1::send_configuration_update_command(
     std::shared_ptr<nas_context>& nc, bool ack_requested) {
   Logger::amf_n1().debug(
@@ -7682,7 +7564,7 @@ bool amf_n1::send_configuration_update_command(
     return false;
   }
 
-  // Build the CUC NAS message
+  // Build the ConfigurationUpdateCommand NAS message
   auto cuc = std::make_unique<oai::nas::ConfigurationUpdateCommand>();
 
   // Set Configuration Update Indication IE — ACK bit per §9.11.3.18
@@ -7737,7 +7619,7 @@ bool amf_n1::send_configuration_update_command(
     nas_procedure_manager_.start_common_procedure(
         *nc, nas_procedure_type_e::CONFIGURATION_UPDATE);
 
-    // Send the CUC
+    // Send the ConfigurationUpdateCommand
     itti_send_dl_nas_buffer_to_task_n2(
         protected_nas, nc->ran_ue_ngap_id, nc->amf_ue_ngap_id);
 
@@ -7761,20 +7643,6 @@ bool amf_n1::send_configuration_update_command(
   return true;
 }
 
-// ---------------------------------------------------------------------------
-// send_configuration_update_command (NSSRG overload) — Task 5.6
-//
-// Extends the base send_configuration_update_command() with an optional
-// NssrgInformation IE.  When nssrg_ie has a value and both the feature gate
-// (enable_nssrg) and UE capability (nas_ue_supports_nssrg) are true, the IE
-// is included in the CUC NAS message before encoding.
-//
-// This mirrors the pattern used in initialize_registration_accept() for
-// Registration Accept (Task 5.5).  The caller is responsible for checking
-// whether NSSRG data is available and building the NssrgInformation IE.
-//
-// All other behaviour (ACK/no-ack, T3555, pending_ucu_) is identical to the
-// base overload.
 // ---------------------------------------------------------------------------
 bool amf_n1::send_configuration_update_command(
     std::shared_ptr<nas_context>& nc, bool ack_requested,
@@ -7803,7 +7671,7 @@ bool amf_n1::send_configuration_update_command(
   oai::nas::ConfigurationUpdateIndication cui(false, ack_requested);
   cuc->SetConfigurationUpdateIndication(cui);
 
-  // Task 5.6: Attach NSSRG Information IE when all conditions are met.
+  // Attach NSSRG Information IE when all conditions are met.
   // Per TS 24.501 §5.4.4: the CUC may carry NssrgInformation to update the
   // UE's NSSRG-based slice restrictions following a subscription change.
   if (nssrg_ie.has_value() && amf_cfg->support_features.enable_nssrg &&
@@ -7877,22 +7745,6 @@ bool amf_n1::send_configuration_update_command(
 }
 
 // ---------------------------------------------------------------------------
-// send_configuration_update_command (NSAG overload) — Task 6.5
-//
-// Extends send_configuration_update_command() with an optional NsagInformation
-// IE.  When nsag_ie has a value and both the feature gate (enable_nsag) and
-// UE capability (nas_ue_supports_nsag) are true, the IE is included in the
-// CUC NAS message before encoding.
-//
-// Per TS 24.501 §4.6.2.6 and §5.4.4.2:
-//   - NSAG information is only sent via CUC over 3GPP access.
-//   - Acknowledgement MUST be requested when NSAG is sent via CUC.
-//   - IEI 0x73 (kIeiNsagInformationCuc) is used — NEVER 0x7C (RA).
-//
-// Task 6.6 (minimum-length guard): the caller must validate content length
-// before constructing nsag_ie; this function will not include the IE if the
-// content is shorter than kNsagInformationMinimumContentLength.
-// ---------------------------------------------------------------------------
 bool amf_n1::send_configuration_update_command(
     std::shared_ptr<nas_context>& nc, bool ack_requested,
     const std::optional<oai::nas::NsagInformation>& nsag_ie) {
@@ -7901,7 +7753,7 @@ bool amf_n1::send_configuration_update_command(
                       amf_cfg->support_features.enable_nsag &&
                       nc->nas_ue_supports_nsag;
 
-  // Task 6.6: skip malformed/too-short NSAG content
+  // Skip malformed/too-short NSAG content
   if (include_nsag && nsag_ie.value().GetValue().size() <
                           kNsagInformationMinimumContentLength) {
     Logger::amf_n1().warn(
@@ -7912,7 +7764,7 @@ bool amf_n1::send_configuration_update_command(
     include_nsag = false;
   }
 
-  // Per TS 24.501 §4.6.2.6: acknowledgement is mandatory when NSAG is sent
+  // TS 24.501 §4.6.2.6: Acknowledgement is mandatory when NSAG is sent
   // via CUC.  Log a warning if the caller forgot to set ack_requested=true.
   if (include_nsag && !ack_requested) {
     Logger::amf_n1().warn(
@@ -7942,7 +7794,7 @@ bool amf_n1::send_configuration_update_command(
   oai::nas::ConfigurationUpdateIndication cui(false, ack_requested);
   cuc->SetConfigurationUpdateIndication(cui);
 
-  // Task 6.5: Attach NSAG Information IE with IEI 0x73 (CUC) when conditions
+  // Attach NSAG Information IE with IEI 0x73 (CUC) when conditions
   // are met.  NSAG via CUC is only sent over 3GPP access (§4.6.2.6).
   // The AMF currently handles only 3GPP-access UEs (registration_type and
   // session context are 3GPP-only), satisfying the access-type gate.
@@ -8022,22 +7874,6 @@ bool amf_n1::send_configuration_update_command(
 }
 
 // ---------------------------------------------------------------------------
-// send_configuration_update_command (Priority Indicator overload) — Task 7.4
-//
-// Extends send_configuration_update_command() with an optional
-// PriorityIndicator IE.  When priority_ie has a value and both the feature gate
-// (enable_mps_indicator_update) and UE capability
-// (nas_ue_supports_mps_indicator_update) are true, the Priority Indicator IE is
-// included in the CUC NAS message before encoding.
-//
-// Per TS 24.501 §5.4.4.2 and §8.2.19.35:
-//   - The Priority Indicator IE (IEI 0xE-, Type 1 TV) carries the MPSI bit.
-//   - Acknowledgement is optional for MPS updates (ack_requested=false
-//   default).
-//   - MPSI=1 encodes as 0xE1; MPSI=0 as 0xE0 (spare bits forced to zero by
-//     Type1NasIeFormatTv base class — see Stage 2 test
-//     rel1710PriorityIndicatorEncodeDecodeValue).
-// ---------------------------------------------------------------------------
 bool amf_n1::send_configuration_update_command(
     std::shared_ptr<nas_context>& nc, bool ack_requested,
     const std::optional<oai::nas::PriorityIndicator>& priority_ie) {
@@ -8068,7 +7904,7 @@ bool amf_n1::send_configuration_update_command(
   oai::nas::ConfigurationUpdateIndication cui(false, ack_requested);
   cuc->SetConfigurationUpdateIndication(cui);
 
-  // Task 7.4: Attach Priority Indicator IE (IEI 0xE-, Type 1 TV) when
+  // Attach Priority Indicator IE (IEI 0xE-, Type 1 TV) when
   // conditions are met.  MPSI=1 → access identity 1 valid; MPSI=0 → not valid.
   if (include_priority) {
     cuc->SetPriorityIndicator(priority_ie.value().GetMpsi());
@@ -8144,22 +7980,6 @@ bool amf_n1::send_configuration_update_command(
 }
 
 // ---------------------------------------------------------------------------
-// trigger_mps_indicator_update — Task 7.3
-//
-// Called when the AMF detects that the MPS priority / access identity 1
-// validity state for a UE has changed (e.g. from subscription update or
-// operator policy).
-//
-// Per TS 24.501 §4.5.2 and §4.5.2A:
-//   - If the UE supports MPSIU (nas_ue_supports_mps_indicator_update) AND
-//     enable_mps_indicator_update is enabled:
-//       Send a CUC with Priority Indicator IE reflecting the new state.
-//   - If the UE does NOT support MPSIU:
-//       Log the registration-request fallback path required by §4.5.2A.
-//       Do NOT force re-registration from here — that is AMF-external behavior
-//       outside the NAS layer.
-//   - If new_mps_priority == nc->mps_priority_active: no change, skip.
-// ---------------------------------------------------------------------------
 void amf_n1::trigger_mps_indicator_update(
     std::shared_ptr<nas_context> nc, bool new_mps_priority) {
   if (!amf_cfg->support_features.enable_mps_indicator_update) {
@@ -8189,7 +8009,7 @@ void amf_n1::trigger_mps_indicator_update(
     return;
   }
 
-  // All conditions met: update state and send CUC with Priority Indicator IE
+  // Update state and send CUC with Priority Indicator IE
   nc->mps_priority_active = new_mps_priority;
   Logger::amf_n1().info(
       "trigger_mps_indicator_update: sending CUC Priority Indicator (MPSI=%u) "
@@ -8206,16 +8026,6 @@ void amf_n1::trigger_mps_indicator_update(
       nc, false, std::optional<oai::nas::PriorityIndicator>(priority_ie));
 }
 
-// ---------------------------------------------------------------------------
-// configuration_update_complete_handle — Task 4.4
-//
-// Handles a Configuration Update Complete message received from the UE.
-// Per TS 24.501 §5.4.4.3 (network-requested Configuration Update with ack):
-//   - Decodes and validates the message.
-//   - Stops T3555.
-//   - Completes the CONFIGURATION_UPDATE common procedure.
-//   - Applies any pending context updates stored in pending_ucu_.
-//   - Clears pending_ucu_.
 // ---------------------------------------------------------------------------
 bool amf_n1::configuration_update_complete_handle(
     const uint32_t ran_ue_ngap_id, const uint64_t amf_ue_ngap_id,
@@ -8266,19 +8076,6 @@ bool amf_n1::configuration_update_complete_handle(
   return true;
 }
 
-// ---------------------------------------------------------------------------
-// T3555 — Configuration Update Command retransmit  (§5.4.4.6)
-//
-// On each expiry (while retry count is below max), retransmit the stored CUC
-// from pending_ucu_.cuc_pdu and restart T3555 (handled by handle_expiry()).
-// On final expiry (retry count >= max), fire T3555_FINAL_EXPIRY, abort the
-// pending UCU, restore prior state by completing/aborting the common procedure,
-// and clear pending_ucu_.
-//
-// Note: T3550 retransmit (Registration Accept) is a pre-existing gap —
-// its stub at handle_t3550_expiry() still contains a TODO comment and is
-// intentionally not implemented in this stage.  T3555 retransmit is
-// implemented here based on the stored pending_ucu_ PDU.
 // ---------------------------------------------------------------------------
 void amf_n1::handle_t3555_expiry(
     timer_id_t timer_id, std::string amf_ue_ngap_id_str) {
@@ -8342,11 +8139,6 @@ void amf_n1::handle_t3555_expiry(
   }
 }
 
-// ---------------------------------------------------------------------------
-// T3513 — Paging retransmit  (§5.6.2.2.1)
-// T3513 has discretionary retransmit (max_retransmissions = 0) — no
-// final-expiry state change required by the spec; the paging attempt simply
-// fails silently from the AMF perspective.
 // ---------------------------------------------------------------------------
 void amf_n1::handle_t3513_expiry(
     timer_id_t timer_id, std::string amf_ue_ngap_id_str) {

@@ -98,11 +98,7 @@ amf:
     enable_nssf: no
     enable_advanced_features: no # set it to yes to enable such advanced features e.g., SUCI support, SMF Selection Subscription Data Retrieval,
                                  # UE Context in SMF Data Retrieval, AMF Registration for 3GPP Access
-    # Rel-17 granular feature gates (default no to preserve current behavior)
-    enable_nssrg: no              # Network Slice-Specific Registration Group (3GPP TS 23.501 Rel-17)
-    enable_nsag: no               # Network Slice Access Group (3GPP TS 23.501 Rel-17)
-    enable_mps_indicator_update: no # MPS Indicator update via UCU (3GPP TS 24.501 Rel-17)
-    enable_uas_uuaa_mm: no        # UAS/UUAA-MM authentication (3GPP TS 24.501 Rel-17)
+    # NAS Rel-17 granular features
     enable_local_5gsm_decode: no  # Local 5GSM container decoding in AMF (3GPP TS 24.501 Rel-17)
     enable_ue_policy_delivery: no # UE Policy delivery via UE Configuration Update (3GPP TS 24.501 Rel-17)
   relative_capacity: 30

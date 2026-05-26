@@ -27,7 +27,7 @@
 #include "uint_generator.hpp"
 #include "StatusChange.h"
 
-// Forward declaration — full type needed only in amf_app.cpp
+// Forward declaration
 class nas_context;
 
 using namespace oai::config;

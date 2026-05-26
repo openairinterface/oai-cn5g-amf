@@ -982,10 +982,6 @@ class amf_n1 {
 
   amf_event event_sub;
 
-  // -------------------------------------------------------------------------
-  // Configuration Update Command / UCU procedure helpers (§5.4.4)
-  // -------------------------------------------------------------------------
-
   /*
    * Build and send a Configuration Update Command (CUC) to the UE.
    * When ack_requested is true:
@@ -1003,7 +999,7 @@ class amf_n1 {
 
   /*
    * Send a Configuration Update Command with optional NSSRG information IE
-   * (Task 5.6, Stage 5: TS 24.501 §5.4.4 + §9.11.3.82).
+   * (TS 24.501 §5.4.4 + §9.11.3.82).
    * When nssrg_ie is provided the CUC will include the NssrgInformation IE,
    * which is sent only when enable_nssrg=true and the UE supports NSSRG.
    * @param [std::shared_ptr<nas_context>&] nc: pointer to the UE NAS context
@@ -1018,7 +1014,7 @@ class amf_n1 {
 
   /*
    * Send a Configuration Update Command with NSAG information IE
-   * (Task 6.5, Stage 6: TS 24.501 §5.4.4 + §4.6.2.6 + §9.11.3.87).
+   * (TS 24.501 §5.4.4 + §4.6.2.6 + §9.11.3.87).
    * When nsag_ie is provided the CUC will include the NsagInformation IE,
    * which is sent only when enable_nsag=true, the UE supports NSAG, and
    * the UE is on 3GPP access (TS 24.501 §4.6.2.6 — NSAG via CUC is 3GPP
@@ -1038,7 +1034,7 @@ class amf_n1 {
 
   /*
    * Send a Configuration Update Command with optional Priority Indicator IE
-   * (Task 7.4, Stage 7: TS 24.501 §5.4.4.2 + §8.2.19.35 + §9.11.3.91).
+   * (TS 24.501 §5.4.4.2 + §8.2.19.35 + §9.11.3.91).
    * When priority_ie is provided the CUC will include the PriorityIndicator IE,
    * which is sent only when enable_mps_indicator_update=true and the UE
    * supports MPSIU (nas_ue_supports_mps_indicator_update=true).
@@ -1055,7 +1051,7 @@ class amf_n1 {
       const std::optional<oai::nas::PriorityIndicator>& priority_ie);
 
   /*
-   * Trigger an MPS indicator update via CUC (Task 7.3, Stage 7).
+   * Trigger an MPS indicator update via CUC (TS 24.501 §4.5.2 + §4.5.2A).
    * Per TS 24.501 §4.5.2 and §4.5.2A: when access identity 1 validity changes
    * the AMF shall update the UE Priority Indicator via CUC if the UE supports
    * MPSIU and enable_mps_indicator_update is enabled; otherwise it logs the

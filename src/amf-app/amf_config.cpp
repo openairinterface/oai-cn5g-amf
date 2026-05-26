@@ -45,7 +45,7 @@ void amf_support_features::from_yaml(const YAML::Node& node) {
     m_enable_am_policy_association.from_yaml(
         node[AMF_CONFIG_SUPPORT_FEATURES_ENABLE_AM_POLICY_ASSOCIATION]);
   }
-  // Stage 3: Rel-17 granular feature gates
+  // NAS Rel 17.10 features
   if (node[AMF_CONFIG_SUPPORT_FEATURES_ENABLE_NSSRG]) {
     m_enable_nssrg.from_yaml(node[AMF_CONFIG_SUPPORT_FEATURES_ENABLE_NSSRG]);
   }
@@ -125,7 +125,7 @@ std::string amf_support_features::to_string(const std::string& indent) const {
       AMF_CONFIG_SUPPORT_FEATURES_ENABLE_AM_POLICY_ASSOCIATION_LABEL,
       inner_width, enable_am_policy_association_string));
 
-  // Stage 3: Rel-17 granular feature gates
+  // NAS Rel 17.10 features
   std::string enable_nssrg_string = m_enable_nssrg.get_value() ?
                                         AMF_CONFIG_OPTION_YES_STR :
                                         AMF_CONFIG_OPTION_NO_STR;
@@ -207,8 +207,6 @@ bool amf_support_features::
 bool amf_support_features::get_option_enable_am_policy_association() const {
   return m_enable_am_policy_association.get_value();
 }
-
-// Stage 3: Rel-17 granular feature gate accessors
 
 //------------------------------------------------------------------------------
 bool amf_support_features::get_option_enable_nssrg() const {
@@ -1041,7 +1039,7 @@ amf_config::amf_config(
   support_features.enable_access_and_mobility_subscription_data_retrieval =
       false;
   support_features.enable_am_policy_association = false;
-  // Stage 3: Rel-17 granular feature gates default to false
+  // NAS Rel 17.10 features, default to false
   support_features.enable_nssrg                = false;
   support_features.enable_nsag                 = false;
   support_features.enable_mps_indicator_update = false;
@@ -1118,7 +1116,6 @@ void amf_config::pre_process() {
     support_features.enable_am_policy_association =
         amf_local->get_support_features()
             .get_option_enable_am_policy_association();
-    // Stage 3: Rel-17 granular feature gates
     support_features.enable_nssrg =
         amf_local->get_support_features().get_option_enable_nssrg();
     support_features.enable_nsag =
@@ -1234,7 +1231,7 @@ void amf_config::pre_process() {
   }
 
   // NAS conf
-  // Stage 3: Only NIA0, NIA1, NIA2 are implemented; warn and filter NIA3-NIA7
+  // Only NIA0, NIA1, NIA2 are implemented; warn and filter NIA3-NIA7
   for (const auto& s : amf_local->get_supported_integrity_algorithms()) {
     if (!s.compare("NIA0")) {
       nas_cfg.prefered_integrity_algorithm.push_back(_5g_ia_e::_5G_IA0);
@@ -1260,7 +1257,7 @@ void amf_config::pre_process() {
     nas_cfg.prefered_integrity_algorithm.push_back(_5g_ia_e::_5G_IA2);
   }
 
-  // Stage 3: Only NEA0, NEA1, NEA2 are implemented; warn and filter NEA3-NEA7
+  // Only NEA0, NEA1, NEA2 are implemented; warn and filter NEA3-NEA7
   for (const auto& s : amf_local->get_supported_encryption_algorithms()) {
     if (!s.compare("NEA0")) {
       nas_cfg.prefered_ciphering_algorithm.push_back(_5g_ea_e::_5G_EA0);
@@ -1438,33 +1435,6 @@ void amf_config::display() {
 
   Logger::config().info(
       "    HTTP version...........: %d", support_features.http_version);
-
-  // Stage 3: Log Rel-17 granular feature gates
-  Logger::config().info("- Rel-17 Feature Gates:");
-  Logger::config().info(
-      "    NSSRG .................: %s", support_features.enable_nssrg ?
-                                             AMF_CONFIG_OPTION_YES_STR :
-                                             AMF_CONFIG_OPTION_NO_STR);
-  Logger::config().info(
-      "    NSAG ..................: %s", support_features.enable_nsag ?
-                                             AMF_CONFIG_OPTION_YES_STR :
-                                             AMF_CONFIG_OPTION_NO_STR);
-  Logger::config().info(
-      "    MPS Indicator Update ..: %s",
-      support_features.enable_mps_indicator_update ? AMF_CONFIG_OPTION_YES_STR :
-                                                     AMF_CONFIG_OPTION_NO_STR);
-  Logger::config().info(
-      "    UAS/UUAA-MM ...........: %s", support_features.enable_uas_uuaa_mm ?
-                                             AMF_CONFIG_OPTION_YES_STR :
-                                             AMF_CONFIG_OPTION_NO_STR);
-  Logger::config().info(
-      "    Local 5GSM Decode .....: %s",
-      support_features.enable_local_5gsm_decode ? AMF_CONFIG_OPTION_YES_STR :
-                                                  AMF_CONFIG_OPTION_NO_STR);
-  Logger::config().info(
-      "    UE Policy Delivery ....: %s",
-      support_features.enable_ue_policy_delivery ? AMF_CONFIG_OPTION_YES_STR :
-                                                   AMF_CONFIG_OPTION_NO_STR);
 
   Logger::config().info(
       "- Log Level ...............: %s",

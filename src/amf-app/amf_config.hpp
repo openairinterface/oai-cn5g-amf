@@ -50,7 +50,7 @@ constexpr auto AMF_CONFIG_SUPPORT_FEATURES_ENABLE_AM_POLICY_ASSOCIATION =
 constexpr auto AMF_CONFIG_SUPPORT_FEATURES_ENABLE_AM_POLICY_ASSOCIATION_LABEL =
     "Enable AM Policy Association";
 
-// Stage 3: Rel-17 granular feature gates (default false)
+// NAS Rel 17.10 features (default false)
 constexpr auto AMF_CONFIG_SUPPORT_FEATURES_ENABLE_NSSRG       = "enable_nssrg";
 constexpr auto AMF_CONFIG_SUPPORT_FEATURES_ENABLE_NSSRG_LABEL = "Enable NSSRG";
 constexpr auto AMF_CONFIG_SUPPORT_FEATURES_ENABLE_NSAG        = "enable_nsag";
@@ -178,7 +178,6 @@ class amf_support_features : public config_type {
   option_config_value
       m_enable_access_and_mobility_subscription_data_retrieval{};
   option_config_value m_enable_am_policy_association{};
-  // Stage 3: Rel-17 granular feature gates
   option_config_value m_enable_nssrg{};
   option_config_value m_enable_nsag{};
   option_config_value m_enable_mps_indicator_update{};
@@ -199,7 +198,6 @@ class amf_support_features : public config_type {
   [[nodiscard]] bool
   get_option_enable_access_and_mobility_subscription_data_retrieval() const;
   [[nodiscard]] bool get_option_enable_am_policy_association() const;
-  // Stage 3: Rel-17 granular feature gate accessors
   [[nodiscard]] bool get_option_enable_nssrg() const;
   [[nodiscard]] bool get_option_enable_nsag() const;
   [[nodiscard]] bool get_option_enable_mps_indicator_update() const;
@@ -315,7 +313,6 @@ typedef struct support_features_s {
   bool enable_pcf;
   bool enable_access_and_mobility_subscription_data_retrieval;
   bool enable_am_policy_association;
-  // Stage 3: Rel-17 granular feature gates
   bool enable_nssrg;
   bool enable_nsag;
   bool enable_mps_indicator_update;
@@ -336,7 +333,6 @@ typedef struct support_features_s {
         this->enable_access_and_mobility_subscription_data_retrieval;
     json_data["enable_am_policy_association"] =
         this->enable_am_policy_association;
-    // Stage 3: Rel-17 granular feature gates
     json_data["enable_nssrg"] = this->enable_nssrg;
     json_data["enable_nsag"]  = this->enable_nsag;
     json_data["enable_mps_indicator_update"] =
@@ -383,7 +379,7 @@ typedef struct support_features_s {
         this->enable_am_policy_association =
             json_data["enable_am_policy_association"].get<bool>();
       }
-      // Stage 3: Rel-17 granular feature gates
+      // NAS Rel 17.10 features
       if (json_data.find("enable_nssrg") != json_data.end()) {
         this->enable_nssrg = json_data["enable_nssrg"].get<bool>();
       }
