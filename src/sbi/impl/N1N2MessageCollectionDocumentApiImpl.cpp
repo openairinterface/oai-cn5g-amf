@@ -267,6 +267,14 @@ void N1N2MessageCollectionDocumentApiImpl::n1_n2_message_transfer(
         itti_msg->n1lpp        = bstrcpy(n1lpp);
         itti_msg->is_n1lpp_set = true;
 
+        if (n1N2MessageTransferReqData.lcsCorrelationIdIsSet()) {
+          itti_msg->lcs_correlation_id = std::make_optional<std::string>(
+              n1N2MessageTransferReqData.getLcsCorrelationId());
+          Logger::amf_server().debug(
+              "LCS Correlation ID: %s",
+              n1N2MessageTransferReqData.getLcsCorrelationId().c_str());
+        }
+
       } break;
         // N1 LPP Container Present
         // TODO:

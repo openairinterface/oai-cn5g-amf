@@ -581,6 +581,12 @@ void amf_app::handle_itti_message(
     dl->SetPayloadContainerType(kLtePositioningProtocol);
     dl->SetPayloadContainer(
         (uint8_t*) bdata(bstrcpy(itti_msg.n1lpp)), blength(itti_msg.n1lpp));
+    if (itti_msg.lcs_correlation_id.has_value()) {
+      bstring lcs_correlation_id = nullptr;
+      amf_conv::msg_str_2_msg_hex(
+          itti_msg.lcs_correlation_id.value(), lcs_correlation_id);
+      dl->SetAdditionalInformation(lcs_correlation_id);
+    }
 
     uint8_t nas[BUFFER_SIZE_1024];
     int encoded_size = dl->Encode(nas, BUFFER_SIZE_1024);

@@ -86,9 +86,10 @@ class itti_n1n2_message_transfer_request : public itti_msg_amf_app {
     is_nrppa_pdu_set = false;
     is_ppi_set       = false;
 
-    n2sm_info_type = {};
-    pdu_session_id = 0;
-    ppi            = 0;
+    n2sm_info_type     = {};
+    pdu_session_id     = 0;
+    ppi                = 0;
+    lcs_correlation_id = std::nullopt;
   }
   itti_n1n2_message_transfer_request(
       const itti_n1n2_message_transfer_request& i)
@@ -105,9 +106,10 @@ class itti_n1n2_message_transfer_request : public itti_msg_amf_app {
     is_nrppa_pdu_set = i.is_nrppa_pdu_set;
     is_ppi_set       = i.is_ppi_set;
 
-    n2sm_info_type = i.n2sm_info_type;
-    pdu_session_id = i.pdu_session_id;
-    ppi            = i.ppi;
+    n2sm_info_type     = i.n2sm_info_type;
+    pdu_session_id     = i.pdu_session_id;
+    ppi                = i.ppi;
+    lcs_correlation_id = i.lcs_correlation_id;
   }
 
   std::string supi;
@@ -125,6 +127,7 @@ class itti_n1n2_message_transfer_request : public itti_msg_amf_app {
   bool is_ppi_set;
   uint8_t ppi;
   // other parameters
+  std::optional<std::string> lcs_correlation_id;
 };
 
 class itti_non_ue_n2_message_transfer_request : public itti_msg_amf_app {
