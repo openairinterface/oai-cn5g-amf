@@ -64,4 +64,3 @@ Based on document **3GPP TS 23.501 V16.14.0 §6.2.1**.
 | 20     | Provisioning of external parameters                                 | :x:                |                                             |
 | 21     | Support non-3GPP access networks                                    | :x:                |                                             |
 
-
