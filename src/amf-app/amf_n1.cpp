@@ -74,19 +74,6 @@ std::map<std::string, std::string> amf_n1::rand_record = {};
 
 void amf_n1_task(void*);
 
-// LUCAAA
-//------------------------------------------------------------------------------
-void octet_stream_2_hex_stream_bis(uint8_t* buf, int len, std::string& out) {
-  out       = "";
-  char* tmp = (char*) calloc(1, 2 * len * sizeof(uint8_t) + 1);
-  for (int i = 0; i < len; i++) {
-    sprintf(tmp + 2 * i, "%02x", buf[i]);
-  }
-  tmp[2 * len] = '\0';
-  out          = tmp;
-  Logger::amf_n1().debug("LPP - Buffer: %s", out.c_str());
-}
-
 //------------------------------------------------------------------------------
 void amf_n1_task(void*) {
   const task_id_t task_id = TASK_AMF_N1;
@@ -4738,16 +4725,7 @@ void amf_n1::ul_nas_transport_handle(
         std::string n2_msg      = {};
         std::string url         = {};
 
-        // LPP_JSON = {
-        //   {"n1NotifySubscriptionId", "1"},
-        //   {"n1MessageContainer", {
-        //     {"n1MessageClass", "LPP"},
-        //     {"n1MessageContent", {
-        //       {"contentId", "n1Msg"}
-        //     }}
-        //   }}
-        // };
-
+        // TODO: remove hardcoded values
         LPP_JSON["n1NotifySubscriptionId"]               = "1";
         LPP_JSON["n1MessageContainer"]["n1MessageClass"] = "LPP";
         LPP_JSON["n1MessageContainer"]["n1MessageContent"]["contentId"] =
@@ -4757,12 +4735,9 @@ void amf_n1::ul_nas_transport_handle(
 
         url = amf_cfg->lmf_addr.uri_root + "/nlmf/notifyN1";
 
-        // Solo la riga octet_stream_2_hex_stream non funziona,
-        octet_stream_2_hex_stream_bis(
+        amf_conv::octet_stream_2_hex_stream_bis(
             (uint8_t*) bdata(lpp_msg), blength(lpp_msg), n1_msg);
 
-        // Se metto la riga sotto si rompe, anche se metto la riga
-        // octet_stream_2_hex_stream
         amf_sbi_inst->send_http_request(
             url, json_part, n1_msg, n2_msg, http_version, response_code);
         if (response_code == 204) {
