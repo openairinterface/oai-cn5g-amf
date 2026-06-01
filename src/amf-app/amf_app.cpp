@@ -2687,7 +2687,7 @@ void amf_app::get_nrfs(std::unordered_set<std::string>& nrfs) {
               from_json(
                   authorized_network_slice_info["nsiInformation"],
                   nsi_information);
-              nrfs.insert(nsi_information.getNrfNfMgtUri());
+              nrfs.insert(nsi_information.getNrfId());
             } catch (std::exception& e) {
               Logger::amf_app().warn(
                   "Could not parse NSI Information from Json");
