@@ -332,6 +332,16 @@ class amf_n2 : public oai::ngap::ngap_app {
       uint32_t ran_ue_ngap_id, uint32_t gnb_id);
 
   /*
+   * Release only NGAP/N2 context (set CM-IDLE, keep NAS/5GMM state).
+   * Use for NG RESET, NG_SETUP cleanup, SCTP shutdown.
+   * NOT for explicit deregistration (use
+   * remove_ue_context_with_amf_ue_ngap_id).
+   */
+  void release_ngap_context_only(
+      const uint64_t& amf_ue_ngap_id, const uint32_t& ran_ue_ngap_id,
+      const uint32_t& gnb_id);
+
+  /*
    * Get UE NGAP context associated with a AMF UE NGAP ID if the context exists
    * and is not null
    * @param [const uint64_t&] amf_ue_ngap_id: AMF UE NGAP ID
