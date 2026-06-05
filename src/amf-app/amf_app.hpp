@@ -373,9 +373,6 @@ class amf_app {
 
   /*
    * Retrieve a UE's Access and Mobility Subscription Data from UDM.
-   * When enable_mps_indicator_update is true, populates nc->mps_priority_active
-   * from the mpsPriority field in AccessAndMobilitySubscriptionData
-   * (TS 29.503).
    * @param [const std::shared_ptr<ue_context>&] uc: UE context
    * @param [const std::shared_ptr<nas_context>&] nc: NAS context (MPS field)
    * @return void

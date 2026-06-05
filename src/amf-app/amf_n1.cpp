@@ -5876,8 +5876,7 @@ void amf_n1::initialize_registration_accept(
   registration_accept->SetConfiguredNssai(
       allowed_nssais);  // TODO: use Allowed NSSAIs for now
 
-  // Enforce NSSRG constraints — We set nssrg_restriction_applied so that later
-  // procedures (CUC, UCU) know the UE has already received NSSRG information.
+  // Enforce NSSRG constraints
   if (amf_cfg->support_features.enable_nssrg) {
     if (nc->nas_ue_supports_nssrg && !nc->subscribed_nssrg_lists.empty()) {
       Logger::amf_n1().debug(
@@ -5901,12 +5900,6 @@ void amf_n1::initialize_registration_accept(
   if (amf_cfg->support_features.enable_nssrg && nc->nas_ue_supports_nssrg &&
       !nc->subscribed_nssrg_lists.empty()) {
     oai::nas::NssrgInformation nssrg_ie(kIeiNssrgInformation);
-    // Encode NSSRG data: for each S-NSSAI with NSSRG values, append a minimal
-    // per-slice NSSRG record: [SST (1 octet)] [num_nssrg (1 octet)] followed
-    // by [NSSRG_value (2 octets each, big-endian) per the NSSRG list].
-    // This encoding is an AMF-internal best-effort; a fully standards-compliant
-    // binary encoding of §9.11.3.82 requires complete NSSRG ID mapping from
-    // the UDM model and is deferred to a future sub-task.
     std::vector<uint8_t> nssrg_content;
     for (const auto& entry : nc->subscribed_nssrg_lists) {
       if (entry.second.empty()) continue;
@@ -5953,7 +5946,7 @@ void amf_n1::initialize_registration_accept(
         nc->subscribed_nsag_info.size() <
         kNsagInformationMinimumContentLength) {
       Logger::amf_n1().warn(
-          "NSAG: subscribed_nsag_info for UE %lu is %zu bytes (minimum %u "
+          "NSAG: subscribed_nsag_info for UE %lu is %lu bytes (minimum %u "
           "required per §9.11.3.87) — skipping malformed NsagInformation IE",
           nc->amf_ue_ngap_id, nc->subscribed_nsag_info.size(),
           kNsagInformationMinimumContentLength);
@@ -5964,7 +5957,7 @@ void amf_n1::initialize_registration_accept(
       registration_accept->SetNsagInformation(nsag_ie);
       nc->nsag_info_applied = true;
       Logger::amf_n1().debug(
-          "NSAG: added NsagInformation IE (IEI=0x7C, %zu content bytes) to "
+          "NSAG: added NsagInformation IE (IEI=0x7C, %lu content bytes) to "
           "Registration Accept for UE %lu",
           nc->subscribed_nsag_info.size(), nc->amf_ue_ngap_id);
     }
@@ -6234,12 +6227,6 @@ bool amf_n1::reroute_registration_request(
   }
 
   // Extract NSAG information from NSSF response.
-  // Per TS 23.502 §4.2.4.2 and TS 29.531 §6.1.6.2.6: if the NSSF response
-  // contains nsagInfos and the UE supports NSAG, store the NSAG data as raw
-  // bytes (TS 24.501 §9.11.3.87 wire format) so it can be encoded directly
-  // as the NsagInformation IE content in Registration Accept.
-  // TS 24.501 §4.6.2.6: if TAI list is absent the NSAG is valid in the
-  // sending PLMN and equivalent PLMNs; if present it scopes validity.
   if (amf_cfg->support_features.enable_nsag && nc->nas_ue_supports_nsag &&
       authorized_network_slice_info.nsagInfosIsSet()) {
     const auto& nsag_infos = authorized_network_slice_info.getNsagInfos();
@@ -6268,20 +6255,6 @@ bool amf_n1::reroute_registration_request(
     }
 
     // Encode NSAG entries (TS 24.501 §9.11.3.87)
-    // Each NsagInfo may carry multiple NSAG IDs sharing the same S-NSSAI list
-    // and TAI list; the spec requires ONE NSAG identifier per entry, so
-    // we emit one entry per NSAG ID in each NsagInfo object.
-    //
-    // Format per entry (TS 24.501 table 9.11.3.87-1):
-    //   [1] entry_length  — number of octets that follow in this entry
-    //   [1] nsag_id       — NSAG identifier (0x01..0xFF)
-    //   [1] snssai_list_length — byte count of the S-NSSAI list that follows
-    //   [1+1..4] per S-NSSAI: [content_length (1)] [SST (1)] [SD (3, optional)]
-    //            SD is omitted when sdIsSet()==false or SD==0xFFFFFF (wildcard)
-    //   [1] nsag_priority — 1=highest (NsagInfo model has no priority field;
-    // TS 24.501 §4.6.2.6: if TAI list is absent the NSAG is valid in the
-    // sending PLMN and all equivalent PLMNs; if present it scopes validity.
-
     auto encode_snssai_bytes =
         [](const oai::_3gpp::model::Snssai& s) -> std::vector<uint8_t> {
       std::vector<uint8_t> v;
@@ -6300,7 +6273,6 @@ bool amf_n1::reroute_registration_request(
     };
 
     // Encode a TAI list as §9.11.3.9 type-00 sub-entries.
-    // Returns the raw bytes (no length prefix) or empty on failure.
     auto encode_tai_list_bytes =
         [](const std::vector<oai::_3gpp::model::Tai>& tais)
         -> std::vector<uint8_t> {
@@ -6362,7 +6334,7 @@ bool amf_n1::reroute_registration_request(
       const auto& ids     = entry.getNsagIds();
       const auto& snssais = entry.getSnssaiList();
 
-      // Build S-NSSAI list bytes (shared by all IDs in this NsagInfo)
+      // S-NSSAI list bytes
       std::vector<uint8_t> snssai_list_bytes;
       for (const auto& s : snssais) {
         auto s_bytes = encode_snssai_bytes(s);
@@ -6372,7 +6344,7 @@ bool amf_n1::reroute_registration_request(
       uint8_t snssai_list_len =
           static_cast<uint8_t>(std::min(snssai_list_bytes.size(), size_t(255)));
 
-      // Build optional TAI list bytes (shared by all IDs in this NsagInfo)
+      // TAI list bytes
       std::vector<uint8_t> tai_bytes;
       bool encode_tai = entry.taiListIsSet() && !entry.getTaiList().empty() &&
                         (tai_encoded < 4);
@@ -6396,7 +6368,7 @@ bool amf_n1::reroute_registration_request(
             "NSAG: entry %zu TAI list omitted (4-entry limit reached)", i);
       }
 
-      // Emit one wire entry per NSAG ID in this NsagInfo
+      // NSAG ID
       for (size_t j = 0;
            j < ids.size() && wire_entry_cnt < kNsagInformationMaxEntries; ++j) {
         uint8_t nsag_id = static_cast<uint8_t>(ids[j] & 0xFF);
@@ -7552,24 +7524,93 @@ void amf_n1::handle_t3522_expiry(
 
 // ---------------------------------------------------------------------------
 bool amf_n1::send_configuration_update_command(
-    std::shared_ptr<nas_context>& nc, bool ack_requested) {
+    std::shared_ptr<nas_context>& nc, bool ack_requested,
+    const std::optional<oai::nas::NssrgInformation>& nssrg_ie,
+    const std::optional<oai::nas::NsagInformation>& nsag_ie,
+    const std::optional<oai::nas::PriorityIndicator>& priority_ie) {
   Logger::amf_n1().debug(
-      "Preparing Configuration Update Command (ack=%s) for UE %lu",
+      "Preparing Configuration Update Command (CUC), ack=%s for UE %lu",
       ack_requested ? "true" : "false", nc->amf_ue_ngap_id);
+
+  // NSSRG
+  bool include_nssrg = nssrg_ie.has_value() &&
+                       amf_cfg->support_features.enable_nssrg &&
+                       nc->nas_ue_supports_nssrg;
+
+  // NSAG IE
+  bool include_nsag = nsag_ie.has_value() &&
+                      amf_cfg->support_features.enable_nsag &&
+                      nc->nas_ue_supports_nsag;
+
+  // Skip malformed/too-short NSAG content
+  if (include_nsag && nsag_ie.value().GetValue().size() <
+                          kNsagInformationMinimumContentLength) {
+    Logger::amf_n1().warn(
+        "CUC with NsagInformation for UE %lu: NsagInformation content is %zu "
+        "bytes (minimum %u "
+        "per §9.11.3.87) — skipping malformed IE in CUC",
+        nc->amf_ue_ngap_id, nsag_ie.value().GetValue().size(),
+        kNsagInformationMinimumContentLength);
+    include_nsag = false;
+  }
+
+  // TS 24.501 §4.6.2.6: Acknowledgement is mandatory when NSAG
+  if (include_nsag && !ack_requested) {
+    Logger::amf_n1().warn(
+        "CUC with NsagInformation for UE %lu: ack_requested=false "
+        "overridden to true per TS 24.501 §4.6.2.6",
+        nc->amf_ue_ngap_id);
+    ack_requested = true;
+  }
+
+  // Priority
+  bool include_priority =
+      priority_ie.has_value() &&
+      amf_cfg->support_features.enable_mps_indicator_update &&
+      nc->nas_ue_supports_mps_indicator_update;
 
   if (!nc->security_ctx.has_value()) {
     Logger::amf_n1().error(
-        "send_configuration_update_command: no security context for UE %lu",
+        "Send_configuration_update_command: no security context for "
+        "UE %lu",
         nc->amf_ue_ngap_id);
     return false;
   }
 
-  // Build the ConfigurationUpdateCommand NAS message
+  // Build ConfigurationUpdateCommand message
   auto cuc = std::make_unique<oai::nas::ConfigurationUpdateCommand>();
 
-  // Set Configuration Update Indication IE — ACK bit per §9.11.3.18
+  // Configuration Update Indication IE — ACK bit per §9.11.3.18
   oai::nas::ConfigurationUpdateIndication cui(false, ack_requested);
   cuc->SetConfigurationUpdateIndication(cui);
+
+  // NSSRG Information IE
+  if (include_nssrg) {
+    cuc->SetNssrgInformation(nssrg_ie.value());
+    Logger::amf_n1().debug(
+        "NssrgInformation IE included in CUC for UE %lu", nc->amf_ue_ngap_id);
+  }
+
+  // NSAG Information IE
+  if (include_nsag) {
+    // Clone the IE and ensure it uses the CUC IEI (0x73, not 0x7C)
+    oai::nas::NsagInformation cuc_nsag_ie(kIeiNsagInformationCuc);
+    cuc_nsag_ie.SetValue(nsag_ie.value().GetValue());
+    cuc->SetNsagInformation(cuc_nsag_ie);
+    Logger::amf_n1().debug(
+        "NsagInformation IE (IEI=0x73, %zu bytes) included in CUC "
+        "for UE %lu",
+        nsag_ie.value().GetValue().size(), nc->amf_ue_ngap_id);
+  }
+
+  // Priority Indicator IE
+  if (include_priority) {
+    cuc->SetPriorityIndicator(priority_ie.value().GetMpsi());
+    Logger::amf_n1().debug(
+        "MPS: Priority Indicator IE (MPSI=%u, IEI=0xE-) included in CUC "
+        "for UE %lu",
+        priority_ie.value().GetMpsi(), nc->amf_ue_ngap_id);
+  }
 
   // Encode into a raw buffer
   uint32_t msg_len  = cuc->GetLength();
@@ -7602,7 +7643,6 @@ bool amf_n1::send_configuration_update_command(
   }
 
   if (ack_requested) {
-    // Store the protected PDU for retransmission (pending_ucu_)
     pending_ucu_t ucu;
     ucu.ack_requested = true;
     ucu.retry_count   = 0;
@@ -7610,368 +7650,23 @@ bool amf_n1::send_configuration_update_command(
         reinterpret_cast<uint8_t*>(bdata(protected_nas)),
         reinterpret_cast<uint8_t*>(bdata(protected_nas)) +
             blength(protected_nas));
-    nc->pending_ucu_ = ucu;
-
-    // Record procedure message type
+    nc->pending_ucu_                              = ucu;
     nc->nas_message_for_current_procedure_running = kConfigurationUpdateCommand;
-
-    // Start CONFIGURATION_UPDATE common procedure in procedure manager
     nas_procedure_manager_.start_common_procedure(
         *nc, nas_procedure_type_e::CONFIGURATION_UPDATE);
-
-    // Send the ConfigurationUpdateCommand
     itti_send_dl_nas_buffer_to_task_n2(
         protected_nas, nc->ran_ue_ngap_id, nc->amf_ue_ngap_id);
-
-    // Start T3555 (§5.4.4.2 step 3)
     nas_timer_manager_.start_timer(
         nas_timer_type_e::T3555, nc, nc->amf_ue_ngap_id);
     Logger::amf_n1().debug(
         "T3555 started — awaiting Configuration Update Complete from UE %lu",
         nc->amf_ue_ngap_id);
   } else {
-    // No-ack CUC: send and clear transient state
     nc->pending_ucu_ = std::nullopt;
     itti_send_dl_nas_buffer_to_task_n2(
         protected_nas, nc->ran_ue_ngap_id, nc->amf_ue_ngap_id);
     Logger::amf_n1().debug(
         "Configuration Update Command (no-ack) sent to UE %lu",
-        nc->amf_ue_ngap_id);
-  }
-
-  oai::utils::utils::bdestroy_wrapper(&protected_nas);
-  return true;
-}
-
-// ---------------------------------------------------------------------------
-bool amf_n1::send_configuration_update_command(
-    std::shared_ptr<nas_context>& nc, bool ack_requested,
-    const std::optional<oai::nas::NssrgInformation>& nssrg_ie) {
-  Logger::amf_n1().debug(
-      "Preparing Configuration Update Command (ack=%s, nssrg=%s) for UE %lu",
-      ack_requested ? "true" : "false",
-      (nssrg_ie.has_value() && amf_cfg->support_features.enable_nssrg &&
-       nc->nas_ue_supports_nssrg) ?
-          "yes" :
-          "no",
-      nc->amf_ue_ngap_id);
-
-  if (!nc->security_ctx.has_value()) {
-    Logger::amf_n1().error(
-        "send_configuration_update_command(nssrg): no security context for "
-        "UE %lu",
-        nc->amf_ue_ngap_id);
-    return false;
-  }
-
-  // Build the CUC NAS message
-  auto cuc = std::make_unique<oai::nas::ConfigurationUpdateCommand>();
-
-  // Configuration Update Indication IE — ACK bit per §9.11.3.18
-  oai::nas::ConfigurationUpdateIndication cui(false, ack_requested);
-  cuc->SetConfigurationUpdateIndication(cui);
-
-  // Attach NSSRG Information IE when all conditions are met.
-  // Per TS 24.501 §5.4.4: the CUC may carry NssrgInformation to update the
-  // UE's NSSRG-based slice restrictions following a subscription change.
-  if (nssrg_ie.has_value() && amf_cfg->support_features.enable_nssrg &&
-      nc->nas_ue_supports_nssrg) {
-    cuc->SetNssrgInformation(nssrg_ie.value());
-    Logger::amf_n1().debug(
-        "NSSRG: NssrgInformation IE included in CUC for UE %lu",
-        nc->amf_ue_ngap_id);
-  }
-
-  // Encode into a raw buffer
-  uint32_t msg_len  = cuc->GetLength();
-  uint8_t* buf_heap = new uint8_t[msg_len]();
-  int encoded_size  = cuc->Encode(buf_heap, static_cast<int>(msg_len));
-  if (encoded_size == KEncodeDecodeError) {
-    Logger::amf_n1().error(
-        "send_configuration_update_command(nssrg): encode error for UE %lu",
-        nc->amf_ue_ngap_id);
-    delete[] buf_heap;
-    return false;
-  }
-  oai::utils::output_wrapper::print_buffer(
-      "amf_n1", "Configuration Update Command (NSSRG) message buffer", buf_heap,
-      encoded_size);
-
-  // Apply NAS security protection
-  bstring protected_nas = nullptr;
-  encode_nas_message_protected(
-      nc->security_ctx.value(), false, kIntegrityProtectedAndCiphered,
-      NAS_MESSAGE_DOWNLINK, buf_heap, encoded_size, protected_nas);
-  delete[] buf_heap;
-
-  if (!protected_nas) {
-    Logger::amf_n1().error(
-        "send_configuration_update_command(nssrg): security protection "
-        "failed for UE %lu",
-        nc->amf_ue_ngap_id);
-    return false;
-  }
-
-  if (ack_requested) {
-    pending_ucu_t ucu;
-    ucu.ack_requested = true;
-    ucu.retry_count   = 0;
-    ucu.cuc_pdu.assign(
-        reinterpret_cast<uint8_t*>(bdata(protected_nas)),
-        reinterpret_cast<uint8_t*>(bdata(protected_nas)) +
-            blength(protected_nas));
-    nc->pending_ucu_                              = ucu;
-    nc->nas_message_for_current_procedure_running = kConfigurationUpdateCommand;
-    nas_procedure_manager_.start_common_procedure(
-        *nc, nas_procedure_type_e::CONFIGURATION_UPDATE);
-    itti_send_dl_nas_buffer_to_task_n2(
-        protected_nas, nc->ran_ue_ngap_id, nc->amf_ue_ngap_id);
-    nas_timer_manager_.start_timer(
-        nas_timer_type_e::T3555, nc, nc->amf_ue_ngap_id);
-    Logger::amf_n1().debug(
-        "T3555 started — awaiting Configuration Update Complete from UE %lu",
-        nc->amf_ue_ngap_id);
-  } else {
-    nc->pending_ucu_ = std::nullopt;
-    itti_send_dl_nas_buffer_to_task_n2(
-        protected_nas, nc->ran_ue_ngap_id, nc->amf_ue_ngap_id);
-    Logger::amf_n1().debug(
-        "Configuration Update Command with NSSRG (no-ack) sent to UE %lu",
-        nc->amf_ue_ngap_id);
-  }
-
-  oai::utils::utils::bdestroy_wrapper(&protected_nas);
-  return true;
-}
-
-// ---------------------------------------------------------------------------
-bool amf_n1::send_configuration_update_command(
-    std::shared_ptr<nas_context>& nc, bool ack_requested,
-    const std::optional<oai::nas::NsagInformation>& nsag_ie) {
-  // Determine whether NSAG IE will actually be included
-  bool include_nsag = nsag_ie.has_value() &&
-                      amf_cfg->support_features.enable_nsag &&
-                      nc->nas_ue_supports_nsag;
-
-  // Skip malformed/too-short NSAG content
-  if (include_nsag && nsag_ie.value().GetValue().size() <
-                          kNsagInformationMinimumContentLength) {
-    Logger::amf_n1().warn(
-        "NSAG: NsagInformation content for UE %lu is %zu bytes (minimum %u "
-        "per §9.11.3.87) — skipping malformed IE in CUC",
-        nc->amf_ue_ngap_id, nsag_ie.value().GetValue().size(),
-        kNsagInformationMinimumContentLength);
-    include_nsag = false;
-  }
-
-  // TS 24.501 §4.6.2.6: Acknowledgement is mandatory when NSAG is sent
-  // via CUC.  Log a warning if the caller forgot to set ack_requested=true.
-  if (include_nsag && !ack_requested) {
-    Logger::amf_n1().warn(
-        "NSAG: CUC with NsagInformation for UE %lu: ack_requested=false "
-        "overridden to true per TS 24.501 §4.6.2.6",
-        nc->amf_ue_ngap_id);
-    ack_requested = true;
-  }
-
-  Logger::amf_n1().debug(
-      "Preparing Configuration Update Command (ack=%s, nsag=%s) for UE %lu",
-      ack_requested ? "true" : "false", include_nsag ? "yes" : "no",
-      nc->amf_ue_ngap_id);
-
-  if (!nc->security_ctx.has_value()) {
-    Logger::amf_n1().error(
-        "send_configuration_update_command(nsag): no security context for "
-        "UE %lu",
-        nc->amf_ue_ngap_id);
-    return false;
-  }
-
-  // Build the CUC NAS message
-  auto cuc = std::make_unique<oai::nas::ConfigurationUpdateCommand>();
-
-  // Configuration Update Indication IE — ACK bit per §9.11.3.18
-  oai::nas::ConfigurationUpdateIndication cui(false, ack_requested);
-  cuc->SetConfigurationUpdateIndication(cui);
-
-  // Attach NSAG Information IE with IEI 0x73 (CUC) when conditions
-  // are met.  NSAG via CUC is only sent over 3GPP access (§4.6.2.6).
-  // The AMF currently handles only 3GPP-access UEs (registration_type and
-  // session context are 3GPP-only), satisfying the access-type gate.
-  if (include_nsag) {
-    // Clone the IE and ensure it uses the CUC IEI (0x73, not 0x7C)
-    oai::nas::NsagInformation cuc_nsag_ie(kIeiNsagInformationCuc);
-    cuc_nsag_ie.SetValue(nsag_ie.value().GetValue());
-    cuc->SetNsagInformation(cuc_nsag_ie);
-    Logger::amf_n1().debug(
-        "NSAG: NsagInformation IE (IEI=0x73, %zu bytes) included in CUC "
-        "for UE %lu",
-        nsag_ie.value().GetValue().size(), nc->amf_ue_ngap_id);
-  }
-
-  // Encode into a raw buffer
-  uint32_t msg_len  = cuc->GetLength();
-  uint8_t* buf_heap = new uint8_t[msg_len]();
-  int encoded_size  = cuc->Encode(buf_heap, static_cast<int>(msg_len));
-  if (encoded_size == KEncodeDecodeError) {
-    Logger::amf_n1().error(
-        "send_configuration_update_command(nsag): encode error for UE %lu",
-        nc->amf_ue_ngap_id);
-    delete[] buf_heap;
-    return false;
-  }
-  oai::utils::output_wrapper::print_buffer(
-      "amf_n1", "Configuration Update Command (NSAG) message buffer", buf_heap,
-      encoded_size);
-
-  // Apply NAS security protection
-  bstring protected_nas = nullptr;
-  encode_nas_message_protected(
-      nc->security_ctx.value(), false, kIntegrityProtectedAndCiphered,
-      NAS_MESSAGE_DOWNLINK, buf_heap, encoded_size, protected_nas);
-  delete[] buf_heap;
-
-  if (!protected_nas) {
-    Logger::amf_n1().error(
-        "send_configuration_update_command(nsag): security protection "
-        "failed for UE %lu",
-        nc->amf_ue_ngap_id);
-    return false;
-  }
-
-  if (ack_requested) {
-    pending_ucu_t ucu;
-    ucu.ack_requested = true;
-    ucu.retry_count   = 0;
-    ucu.cuc_pdu.assign(
-        reinterpret_cast<uint8_t*>(bdata(protected_nas)),
-        reinterpret_cast<uint8_t*>(bdata(protected_nas)) +
-            blength(protected_nas));
-    nc->pending_ucu_                              = ucu;
-    nc->nas_message_for_current_procedure_running = kConfigurationUpdateCommand;
-    nas_procedure_manager_.start_common_procedure(
-        *nc, nas_procedure_type_e::CONFIGURATION_UPDATE);
-    itti_send_dl_nas_buffer_to_task_n2(
-        protected_nas, nc->ran_ue_ngap_id, nc->amf_ue_ngap_id);
-    nas_timer_manager_.start_timer(
-        nas_timer_type_e::T3555, nc, nc->amf_ue_ngap_id);
-    Logger::amf_n1().debug(
-        "T3555 started — awaiting Configuration Update Complete from UE %lu "
-        "(NSAG CUC, ack requested)",
-        nc->amf_ue_ngap_id);
-    if (include_nsag) nc->nsag_info_applied = true;
-  } else {
-    nc->pending_ucu_ = std::nullopt;
-    itti_send_dl_nas_buffer_to_task_n2(
-        protected_nas, nc->ran_ue_ngap_id, nc->amf_ue_ngap_id);
-    Logger::amf_n1().debug(
-        "Configuration Update Command with NSAG (no-ack) sent to UE %lu",
-        nc->amf_ue_ngap_id);
-  }
-
-  oai::utils::utils::bdestroy_wrapper(&protected_nas);
-  return true;
-}
-
-// ---------------------------------------------------------------------------
-bool amf_n1::send_configuration_update_command(
-    std::shared_ptr<nas_context>& nc, bool ack_requested,
-    const std::optional<oai::nas::PriorityIndicator>& priority_ie) {
-  // Determine whether Priority Indicator IE will actually be included
-  bool include_priority =
-      priority_ie.has_value() &&
-      amf_cfg->support_features.enable_mps_indicator_update &&
-      nc->nas_ue_supports_mps_indicator_update;
-
-  Logger::amf_n1().debug(
-      "Preparing Configuration Update Command (ack=%s, mps_priority=%s) "
-      "for UE %lu",
-      ack_requested ? "true" : "false", include_priority ? "yes" : "no",
-      nc->amf_ue_ngap_id);
-
-  if (!nc->security_ctx.has_value()) {
-    Logger::amf_n1().error(
-        "send_configuration_update_command(priority): no security context "
-        "for UE %lu",
-        nc->amf_ue_ngap_id);
-    return false;
-  }
-
-  // Build the CUC NAS message
-  auto cuc = std::make_unique<oai::nas::ConfigurationUpdateCommand>();
-
-  // Configuration Update Indication IE — ACK bit per §9.11.3.18
-  oai::nas::ConfigurationUpdateIndication cui(false, ack_requested);
-  cuc->SetConfigurationUpdateIndication(cui);
-
-  // Attach Priority Indicator IE (IEI 0xE-, Type 1 TV) when
-  // conditions are met.  MPSI=1 → access identity 1 valid; MPSI=0 → not valid.
-  if (include_priority) {
-    cuc->SetPriorityIndicator(priority_ie.value().GetMpsi());
-    Logger::amf_n1().debug(
-        "MPS: Priority Indicator IE (MPSI=%u, IEI=0xE-) included in CUC "
-        "for UE %lu",
-        priority_ie.value().GetMpsi(), nc->amf_ue_ngap_id);
-  }
-
-  // Encode into a raw buffer
-  uint32_t msg_len  = cuc->GetLength();
-  uint8_t* buf_heap = new uint8_t[msg_len]();
-  int encoded_size  = cuc->Encode(buf_heap, static_cast<int>(msg_len));
-  if (encoded_size == KEncodeDecodeError) {
-    Logger::amf_n1().error(
-        "send_configuration_update_command(priority): encode error for "
-        "UE %lu",
-        nc->amf_ue_ngap_id);
-    delete[] buf_heap;
-    return false;
-  }
-  oai::utils::output_wrapper::print_buffer(
-      "amf_n1", "Configuration Update Command (Priority) message buffer",
-      buf_heap, encoded_size);
-
-  // Apply NAS security protection
-  bstring protected_nas = nullptr;
-  encode_nas_message_protected(
-      nc->security_ctx.value(), false, kIntegrityProtectedAndCiphered,
-      NAS_MESSAGE_DOWNLINK, buf_heap, encoded_size, protected_nas);
-  delete[] buf_heap;
-
-  if (!protected_nas) {
-    Logger::amf_n1().error(
-        "send_configuration_update_command(priority): security protection "
-        "failed for UE %lu",
-        nc->amf_ue_ngap_id);
-    return false;
-  }
-
-  if (ack_requested) {
-    pending_ucu_t ucu;
-    ucu.ack_requested = true;
-    ucu.retry_count   = 0;
-    ucu.cuc_pdu.assign(
-        reinterpret_cast<uint8_t*>(bdata(protected_nas)),
-        reinterpret_cast<uint8_t*>(bdata(protected_nas)) +
-            blength(protected_nas));
-    nc->pending_ucu_                              = ucu;
-    nc->nas_message_for_current_procedure_running = kConfigurationUpdateCommand;
-    nas_procedure_manager_.start_common_procedure(
-        *nc, nas_procedure_type_e::CONFIGURATION_UPDATE);
-    itti_send_dl_nas_buffer_to_task_n2(
-        protected_nas, nc->ran_ue_ngap_id, nc->amf_ue_ngap_id);
-    nas_timer_manager_.start_timer(
-        nas_timer_type_e::T3555, nc, nc->amf_ue_ngap_id);
-    Logger::amf_n1().debug(
-        "T3555 started — awaiting Configuration Update Complete from UE %lu "
-        "(Priority CUC, ack requested)",
-        nc->amf_ue_ngap_id);
-  } else {
-    nc->pending_ucu_ = std::nullopt;
-    itti_send_dl_nas_buffer_to_task_n2(
-        protected_nas, nc->ran_ue_ngap_id, nc->amf_ue_ngap_id);
-    Logger::amf_n1().debug(
-        "Configuration Update Command with Priority Indicator (no-ack) "
-        "sent to UE %lu",
         nc->amf_ue_ngap_id);
   }
 
@@ -8023,7 +7718,8 @@ void amf_n1::trigger_mps_indicator_update(
   // Per §5.4.4.2: acknowledgement is optional for MPS updates;
   // use ack_requested=false (lower-priority update).
   send_configuration_update_command(
-      nc, false, std::optional<oai::nas::PriorityIndicator>(priority_ie));
+      nc, false, std::nullopt, std::nullopt,
+      std::optional<oai::nas::PriorityIndicator>(priority_ie));
 }
 
 // ---------------------------------------------------------------------------

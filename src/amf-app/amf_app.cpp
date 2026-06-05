@@ -1487,7 +1487,7 @@ void amf_app::handle_itti_message(itti_sbi_nudm_sdm_notification& itti_msg) {
 
   const auto& notify_items = itti_msg.notification.getNotifyItems();
   Logger::amf_app().debug(
-      "SDM notification for SUPI %s: %zu changed resource(s)",
+      "SDM notification for SUPI %s: %lu changed resource(s)",
       itti_msg.supi.c_str(), notify_items.size());
 
   bool ue_is_connected = nc && (nc->_5gmm_state == _5GMM_REGISTERED) &&
@@ -1511,7 +1511,8 @@ void amf_app::handle_itti_message(itti_sbi_nudm_sdm_notification& itti_msg) {
               "Triggering Configuration Update Command for NSSAI update for "
               "SUPI %s",
               itti_msg.supi.c_str());
-          if (!amf_n1_inst->send_configuration_update_command(nc, true)) {
+          if (!amf_n1_inst->send_configuration_update_command(
+                  nc, true, std::nullopt, std::nullopt, std::nullopt)) {
             Logger::amf_app().warn(
                 "send_configuration_update_command failed for SUPI %s",
                 itti_msg.supi.c_str());
@@ -1543,11 +1544,8 @@ void amf_app::handle_itti_message(itti_sbi_nudm_sdm_notification& itti_msg) {
       if (nc && amf_cfg->support_features.enable_mps_indicator_update) {
         // The notification does not carry the full AM data body in the
         // NotifyItem, so we cannot determine the new MPS state from the
-        // notification alone. For now we trigger trigger_mps_indicator_update
-        // with the current known value to at least synchronise the UE if it is
-        // connected. A proper re-fetch via
-        // get_access_and_mobility_subscription_data should be added as a
-        // follow-up.
+        // notification alone.
+        // TODO: Add get_access_and_mobility_subscription_data
         Logger::amf_app().debug(
             "MPS indicator update enabled — notifying UE for SUPI %s",
             itti_msg.supi.c_str());
@@ -2185,7 +2183,6 @@ void amf_app::subscribe_sdm_notifications(
   Logger::amf_app().debug(
       "Subscribe for UDM SDM notifications for SUPI %s", uc->supi.c_str());
 
-  // Build resource URIs (TS 29.503 §5.2.3.3.3)
   std::vector<std::string> monitored_uris = {
       amf_sbi_helper::get_udm_slice_selection_subscription_data_retrieval_uri(
           amf_cfg->udm_addr, uc->supi),
@@ -2199,7 +2196,6 @@ void amf_app::subscribe_sdm_notifications(
         amf_cfg->udm_addr.api_version + "/" + uc->supi + "/uas-data");
   }
 
-  // Build SdmSubscription object
   oai::_3gpp::model::SdmSubscription sdm_sub = {};
   sdm_sub.setCallbackReference(
       amf_sbi_helper::get_udm_sdm_notification_callback_uri(uc->supi));

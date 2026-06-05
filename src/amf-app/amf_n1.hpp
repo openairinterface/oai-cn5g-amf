@@ -992,62 +992,18 @@ class amf_n1 {
    *   - Sends and clears transient state immediately.
    * @param [std::shared_ptr<nas_context>&] nc: pointer to the UE NAS context
    * @param [bool] ack_requested: whether to request UE acknowledgement
-   * @return true if the CUC was encoded and sent successfully
-   */
-  bool send_configuration_update_command(
-      std::shared_ptr<nas_context>& nc, bool ack_requested);
-
-  /*
-   * Send a Configuration Update Command with optional NSSRG information IE
-   * (TS 24.501 §5.4.4 + §9.11.3.82).
-   * When nssrg_ie is provided the CUC will include the NssrgInformation IE,
-   * which is sent only when enable_nssrg=true and the UE supports NSSRG.
-   * @param [std::shared_ptr<nas_context>&] nc: pointer to the UE NAS context
-   * @param [bool] ack_requested: whether to request UE acknowledgement
    * @param [const std::optional<oai::nas::NssrgInformation>&] nssrg_ie:
    *        optional NSSRG Information IE to include in the CUC
-   * @return true if the CUC was encoded and sent successfully
-   */
-  bool send_configuration_update_command(
-      std::shared_ptr<nas_context>& nc, bool ack_requested,
-      const std::optional<oai::nas::NssrgInformation>& nssrg_ie);
-
-  /*
-   * Send a Configuration Update Command with NSAG information IE
-   * (TS 24.501 §5.4.4 + §4.6.2.6 + §9.11.3.87).
-   * When nsag_ie is provided the CUC will include the NsagInformation IE,
-   * which is sent only when enable_nsag=true, the UE supports NSAG, and
-   * the UE is on 3GPP access (TS 24.501 §4.6.2.6 — NSAG via CUC is 3GPP
-   * access only).  Acknowledgement is always requested when NSAG is sent
-   * via CUC (TS 24.501 §4.6.2.6: UE must acknowledge NSAG reception).
-   * Uses IEI kIeiNsagInformationCuc (0x73) — NOT 0x7C (Registration Accept).
-   * @param [std::shared_ptr<nas_context>&] nc: pointer to the UE NAS context
-   * @param [bool] ack_requested: whether to request UE acknowledgement
-   *        (should always be true when nsag_ie is provided)
    * @param [const std::optional<oai::nas::NsagInformation>&] nsag_ie:
    *        optional NSAG Information IE to include in the CUC
-   * @return true if the CUC was encoded and sent successfully
-   */
-  bool send_configuration_update_command(
-      std::shared_ptr<nas_context>& nc, bool ack_requested,
-      const std::optional<oai::nas::NsagInformation>& nsag_ie);
-
-  /*
-   * Send a Configuration Update Command with optional Priority Indicator IE
-   * (TS 24.501 §5.4.4.2 + §8.2.19.35 + §9.11.3.91).
-   * When priority_ie is provided the CUC will include the PriorityIndicator IE,
-   * which is sent only when enable_mps_indicator_update=true and the UE
-   * supports MPSIU (nas_ue_supports_mps_indicator_update=true).
-   * Per TS 24.501 §5.4.4.2: acknowledgement is optional for MPS indicator
-   * updates; ack_requested defaults to false for this lower-priority update.
-   * @param [std::shared_ptr<nas_context>&] nc: pointer to the UE NAS context
-   * @param [bool] ack_requested: whether to request UE acknowledgement
    * @param [const std::optional<oai::nas::PriorityIndicator>&] priority_ie:
    *        optional Priority Indicator IE to include in the CUC
    * @return true if the CUC was encoded and sent successfully
    */
   bool send_configuration_update_command(
       std::shared_ptr<nas_context>& nc, bool ack_requested,
+      const std::optional<oai::nas::NssrgInformation>& nssrg_ie,
+      const std::optional<oai::nas::NsagInformation>& nsag_ie,
       const std::optional<oai::nas::PriorityIndicator>& priority_ie);
 
   /*
