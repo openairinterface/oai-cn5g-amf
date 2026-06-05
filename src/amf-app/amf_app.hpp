@@ -296,15 +296,13 @@ class amf_app {
 
   /*
    * Subscribe for UDM SDM notifications for a given UE
-   * (TS 23.502 §4.2.2.2.2 step 14b, TS 29.503 §5.2.3.3.3)
    * @param [const std::shared_ptr<ue_context>&] uc: UE context
    * @return void
    */
   void subscribe_sdm_notifications(const std::shared_ptr<ue_context>& uc) const;
 
   /*
-   * Unsubscribe from UDM SDM notifications for a given UE
-   * (TS 29.503 §5.2.3.3.4 Nudm_SDM_Unsubscribe).  Called on UE
+   * Unsubscribe from UDM SDM notifications for a given UE.  Called on UE
    * deregistration when udm_sdm_subscription_id is non-empty.
    * @param [const std::shared_ptr<ue_context>&] uc: UE context
    * @return void

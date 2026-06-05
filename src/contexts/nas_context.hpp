@@ -199,8 +199,7 @@ class nas_context {
   static std::string fivegmm_state_to_string(const _5gmm_state_t& state);
   static std::string cm_state_to_string(const cm_state_t& state);
 
-  // Pending UCU record — present while an acknowledged CUC is in-flight
-  // (§5.4.4: UcuAwaitAck state).  nullopt means no UCU pending.
+  // Pending UCU record — present while an acknowledged CUC is in-flight.
   std::optional<pending_ucu_t> pending_ucu_;
 };
 

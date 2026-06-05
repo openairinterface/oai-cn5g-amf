@@ -92,15 +92,12 @@ amf:
   amf_name: "OAI-AMF"
   # This really depends on if we want to keep the "mini" version or not
   support_features_options:
-    enable_simple_scenario: no #"no" by default with the normal deployment scenarios with AMF/SMF/UPF/AUSF/UDM/UDR/NRF.
-                               # set it to "yes" to use with the minimalist deployment scenario (including only AMF/SMF and UPF) by using the internal AUSF/UDM implemented inside AMF.
+    enable_simple_scenario: no #"no" by default with the normal deployment scenarios with AMF/SMF/UPF/AUSF/UDM/UDR/NRF. 
+                               # set it to "yes" to use with the minimalist deployment scenario (including only AMF/SMF and UPF) by using the internal AUSF/UDM implemented inside AMF. 
                                # There's no NRF in this scenario, SMF info is taken from "nfs" section.
     enable_nssf: no
-    enable_advanced_features: no # set it to yes to enable such advanced features e.g., SUCI support, SMF Selection Subscription Data Retrieval,
+    enable_advanced_features: no # set it to yes to enable such advanced features e.g., SUCI support, SMF Selection Subscription Data Retrieval,   
                                  # UE Context in SMF Data Retrieval, AMF Registration for 3GPP Access
-    # NAS Rel-17 granular features
-    enable_local_5gsm_decode: no  # Local 5GSM container decoding in AMF (3GPP TS 24.501 Rel-17)
-    enable_ue_policy_delivery: no # UE Policy delivery via UE Configuration Update (3GPP TS 24.501 Rel-17)
   relative_capacity: 30
   statistics_timer_interval: 20  #in seconds
   emergency_support: false

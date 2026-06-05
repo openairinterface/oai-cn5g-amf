@@ -2078,7 +2078,6 @@ bool amf_n1::registration_request_handle(
   nc->_5gmm_capability[0] = _5g_mm_cap;
 
   // Extract Release 17 capability bits from the full IE (octet 7).
-  // Missing IE or absent octet 7 both default to false (unsupported).
   nc->nas_ue_supports_nssrg                = false;
   nc->nas_ue_supports_nsag                 = false;
   nc->nas_ue_supports_uas                  = false;
@@ -5876,21 +5875,21 @@ void amf_n1::initialize_registration_accept(
   registration_accept->SetConfiguredNssai(
       allowed_nssais);  // TODO: use Allowed NSSAIs for now
 
-  // Enforce NSSRG constraints
+  // NSSRG
   if (amf_cfg->support_features.enable_nssrg) {
     if (nc->nas_ue_supports_nssrg && !nc->subscribed_nssrg_lists.empty()) {
       Logger::amf_n1().debug(
-          "NSSRG: applying NSSRG-based access restriction for UE %lu "
+          "Applying NSSRG-based access restriction for UE %lu "
           "(NSSRG data present for %zu S-NSSAI(s))",
           nc->amf_ue_ngap_id, nc->subscribed_nssrg_lists.size());
       nc->nssrg_restriction_applied = true;
     } else if (!nc->nas_ue_supports_nssrg) {
       Logger::amf_n1().debug(
-          "NSSRG: UE %lu does not support NSSRG — skipping NSSRG IE",
+          "UE %lu does not support NSSRG — skipping NSSRG IE",
           nc->amf_ue_ngap_id);
     } else {
       Logger::amf_n1().debug(
-          "NSSRG: enable_nssrg=true but no NSSRG subscription data for "
+          "Enable_nssrg=true but no NSSRG subscription data for "
           "UE %lu — skipping NSSRG IE",
           nc->amf_ue_ngap_id);
     }
@@ -5924,7 +5923,7 @@ void amf_n1::initialize_registration_accept(
       nssrg_ie.SetValue(nssrg_content);
       registration_accept->SetNssrgInformation(nssrg_ie);
       Logger::amf_n1().debug(
-          "NSSRG: added NssrgInformation IE (%zu content bytes) to "
+          "Added NssrgInformation IE (%zu content bytes) to "
           "Registration Accept for UE %lu",
           nssrg_content.size(), nc->amf_ue_ngap_id);
     }
@@ -5935,18 +5934,18 @@ void amf_n1::initialize_registration_accept(
     if (!nc->nas_ue_supports_nsag) {
       // Never send NSAG to non-supporting UEs
       Logger::amf_n1().debug(
-          "NSAG: UE %lu does not support NSAG — skipping NsagInformation IE",
+          "UE %lu does not support NSAG — skipping NsagInformation IE",
           nc->amf_ue_ngap_id);
     } else if (nc->subscribed_nsag_info.empty()) {
       Logger::amf_n1().debug(
-          "NSAG: enable_nsag=true but no NSAG data available for UE %lu "
+          "Enable_nsag=true but no NSAG data available for UE %lu "
           "— skipping NsagInformation IE",
           nc->amf_ue_ngap_id);
     } else if (
         nc->subscribed_nsag_info.size() <
         kNsagInformationMinimumContentLength) {
       Logger::amf_n1().warn(
-          "NSAG: subscribed_nsag_info for UE %lu is %lu bytes (minimum %u "
+          "Subscribed_nsag_info for UE %lu is %lu bytes (minimum %u "
           "required per §9.11.3.87) — skipping malformed NsagInformation IE",
           nc->amf_ue_ngap_id, nc->subscribed_nsag_info.size(),
           kNsagInformationMinimumContentLength);
@@ -5957,7 +5956,7 @@ void amf_n1::initialize_registration_accept(
       registration_accept->SetNsagInformation(nsag_ie);
       nc->nsag_info_applied = true;
       Logger::amf_n1().debug(
-          "NSAG: added NsagInformation IE (IEI=0x7C, %lu content bytes) to "
+          "Added NsagInformation IE (IEI=0x7C, %lu content bytes) to "
           "Registration Accept for UE %lu",
           nc->subscribed_nsag_info.size(), nc->amf_ue_ngap_id);
     }
@@ -6182,28 +6181,21 @@ bool amf_n1::reroute_registration_request(
   slice_info.setSubscribedNssai(subscribed_snssais);
 
   // Populate NSSRG indicator fields in the NSSF request.
-  // ueSupNssrgInd — UE supports NSSRG (TS 29.531 §6.1.6.2.6)
-  // suppressNssrgInd — suppress NSSRG in NSSF response when UE does not
-  //                    support NSSRG (TS 23.502 §4.2.2.2.2 step 4a)
   if (amf_cfg->support_features.enable_nssrg) {
     slice_info.setUeSupNssrgInd(nc->nas_ue_supports_nssrg);
     // Suppress NSSRG in NSSF output when UE does not support NSSRG
     slice_info.setSuppressNssrgInd(!nc->nas_ue_supports_nssrg);
     Logger::amf_n1().debug(
-        "NSSRG: ueSupNssrgInd=%s suppressNssrgInd=%s in NSSF request",
+        "UeSupNssrgInd=%s suppressNssrgInd=%s in NSSF request",
         nc->nas_ue_supports_nssrg ? "true" : "false",
         !nc->nas_ue_supports_nssrg ? "true" : "false");
   }
 
   // Populate NSAG indicator field in the NSSF request.
-  // nsagSupported signals to NSSF whether this UE supports NSAG grouping
-  // (TS 29.531 §6.1.6.2.6, TS 23.502 §4.2.4.2).
-  // Only set when enable_nsag=true to avoid unexpected NSSF responses in
-  // deployments where NSAG is not configured.
   if (amf_cfg->support_features.enable_nsag) {
     slice_info.setNsagSupported(nc->nas_ue_supports_nsag);
     Logger::amf_n1().debug(
-        "NSAG: nsagSupported=%s in NSSF request",
+        "NsagSupported=%s in NSSF request",
         nc->nas_ue_supports_nsag ? "true" : "false");
   }
 
@@ -6235,7 +6227,7 @@ bool amf_n1::reroute_registration_request(
     // Enforce maximum 32 NSAG entries per TS 24.501 §9.11.3.87
     if (num_entries > kNsagInformationMaxEntries) {
       Logger::amf_n1().warn(
-          "NSAG: NSSF returned %zu NSAG entries; truncating to %u (max per "
+          "NSSF returned %zu NSAG entries; truncating to %u (max per "
           "TS 24.501 §9.11.3.87)",
           num_entries, kNsagInformationMaxEntries);
       num_entries = kNsagInformationMaxEntries;
@@ -6249,7 +6241,7 @@ bool amf_n1::reroute_registration_request(
     }
     if (tai_entry_count > 4) {
       Logger::amf_n1().warn(
-          "NSAG: %zu NSAG entries have TAI list; maximum is 4 per "
+          "%zu NSAG entries have TAI list; maximum is 4 per "
           "TS 24.501 §9.11.3.87 — extra TAI lists will be omitted",
           tai_entry_count);
     }
@@ -6352,20 +6344,19 @@ bool amf_n1::reroute_registration_request(
         tai_bytes = encode_tai_list_bytes(entry.getTaiList());
         if (tai_bytes.empty()) {
           Logger::amf_n1().warn(
-              "NSAG: entry %zu TAI list encoding failed — omitting TAI list",
-              i);
+              "Entry %zu TAI list encoding failed — omitting TAI list", i);
           encode_tai = false;
         } else {
           ++tai_encoded;
           Logger::amf_n1().debug(
-              "NSAG: entry %zu TAI list encoded (%zu bytes for %zu TAIs)", i,
+              "Entry %zu TAI list encoded (%zu bytes for %zu TAIs)", i,
               tai_bytes.size(), entry.getTaiList().size());
         }
       } else if (
           entry.taiListIsSet() && !entry.getTaiList().empty() &&
           tai_encoded >= 4) {
         Logger::amf_n1().warn(
-            "NSAG: entry %zu TAI list omitted (4-entry limit reached)", i);
+            "Entry %zu TAI list omitted (4-entry limit reached)", i);
       }
 
       // NSAG ID
@@ -6408,14 +6399,14 @@ bool amf_n1::reroute_registration_request(
 
     nc->subscribed_nsag_info = std::move(nsag_raw);
     Logger::amf_n1().debug(
-        "NSAG: stored %zu bytes of NSAG information from NSSF response "
+        "Stored %zu bytes of NSAG information from NSSF response "
         "(%zu entries) for UE %lu",
         nc->subscribed_nsag_info.size(), num_entries, nc->amf_ue_ngap_id);
   } else if (
       amf_cfg->support_features.enable_nsag && nc->nas_ue_supports_nsag &&
       !authorized_network_slice_info.nsagInfosIsSet()) {
     Logger::amf_n1().debug(
-        "NSAG: NSSF response does not contain nsagInfos for UE %lu",
+        "NSSF response does not contain nsagInfos for UE %lu",
         nc->amf_ue_ngap_id);
   }
 
@@ -7580,7 +7571,7 @@ bool amf_n1::send_configuration_update_command(
   // Build ConfigurationUpdateCommand message
   auto cuc = std::make_unique<oai::nas::ConfigurationUpdateCommand>();
 
-  // Configuration Update Indication IE — ACK bit per §9.11.3.18
+  // Configuration Update Indication IE
   oai::nas::ConfigurationUpdateIndication cui(false, ack_requested);
   cuc->SetConfigurationUpdateIndication(cui);
 

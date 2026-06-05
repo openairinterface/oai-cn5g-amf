@@ -1010,8 +1010,7 @@ class amf_n1 {
    * Trigger an MPS indicator update via CUC (TS 24.501 §4.5.2 + §4.5.2A).
    * Per TS 24.501 §4.5.2 and §4.5.2A: when access identity 1 validity changes
    * the AMF shall update the UE Priority Indicator via CUC if the UE supports
-   * MPSIU and enable_mps_indicator_update is enabled; otherwise it logs the
-   * registration-request fallback path (§4.5.2A).
+   * MPSIU and enable_mps_indicator_update is enabled;
    * @param [std::shared_ptr<nas_context>] nc: pointer to the UE NAS context
    * @param [bool] new_mps_priority: new desired MPS priority/access-identity-1
    *        validity state (true = valid, false = not valid)

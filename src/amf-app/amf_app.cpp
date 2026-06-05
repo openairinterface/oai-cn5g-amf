@@ -1510,12 +1510,12 @@ void amf_app::handle_itti_message(itti_sbi_nudm_sdm_notification& itti_msg) {
           Logger::amf_app().info(
               "Triggering Configuration Update Command for NSSAI update for "
               "SUPI %s",
-              itti_msg.supi.c_str());
+              itti_msg.supi);
           if (!amf_n1_inst->send_configuration_update_command(
                   nc, true, std::nullopt, std::nullopt, std::nullopt)) {
             Logger::amf_app().warn(
                 "send_configuration_update_command failed for SUPI %s",
-                itti_msg.supi.c_str());
+                itti_msg.supi);
             uc->pending_sdm_update = true;
           }
         } else {
@@ -1523,7 +1523,7 @@ void amf_app::handle_itti_message(itti_sbi_nudm_sdm_notification& itti_msg) {
               "UE %s is not in CM-CONNECTED/REGISTERED state — deferring "
               "Configuration Update Command for NSSAI update, setting "
               "pending_sdm_update",
-              itti_msg.supi.c_str());
+              itti_msg.supi);
           uc->pending_sdm_update = true;
         }
       } else {
@@ -1531,7 +1531,7 @@ void amf_app::handle_itti_message(itti_sbi_nudm_sdm_notification& itti_msg) {
             "No NAS context for SUPI %s — cannot trigger Configuration Update "
             "Command for NSSAI "
             "change; setting pending_sdm_update",
-            itti_msg.supi.c_str());
+            itti_msg.supi);
         uc->pending_sdm_update = true;
       }
       continue;
@@ -1540,15 +1540,12 @@ void amf_app::handle_itti_message(itti_sbi_nudm_sdm_notification& itti_msg) {
     // AM data change  (/am-data)
     if (resource_id.find("/am-data") != std::string::npos) {
       Logger::amf_app().info(
-          "AM-data change notification for SUPI %s", itti_msg.supi.c_str());
+          "AM-data change notification for SUPI %s", itti_msg.supi);
       if (nc && amf_cfg->support_features.enable_mps_indicator_update) {
-        // The notification does not carry the full AM data body in the
-        // NotifyItem, so we cannot determine the new MPS state from the
-        // notification alone.
         // TODO: Add get_access_and_mobility_subscription_data
         Logger::amf_app().debug(
             "MPS indicator update enabled — notifying UE for SUPI %s",
-            itti_msg.supi.c_str());
+            itti_msg.supi);
         if (ue_is_connected) {
           amf_n1_inst->trigger_mps_indicator_update(
               nc, nc->mps_priority_active);
@@ -1571,25 +1568,22 @@ void amf_app::handle_itti_message(itti_sbi_nudm_sdm_notification& itti_msg) {
         continue;
       }
       Logger::amf_app().info(
-          "UAS-data change notification for SUPI %s", itti_msg.supi.c_str());
-      // Set nc->uas_authorized based on the updated
-      // AerialUeSubscriptionInfo carried in the ChangeItems.
+          "UAS-data change notification for SUPI %s", itti_msg.supi);
       // TODO: parse ChangeItem body into AerialUeSubscriptionInfo
       //                 and update nc->uas_authorized accordingly.
       if (ue_is_connected) {
         Logger::amf_app().warn(
-            "UAS-data changed for connected UE %s — UCU for UAS requires "
-            "Stage 9 implementation; setting pending_sdm_update",
-            itti_msg.supi.c_str());
+            "UAS-data changed for connected UE %s, setting pending_sdm_update",
+            itti_msg.supi);
       }
       uc->pending_sdm_update = true;
       continue;
     }
 
-    // Unrecognised resource — log and continue
+    // Unrecognised resource
     Logger::amf_app().debug(
         "SDM notification: unrecognised resource URI %s — ignoring",
-        resource_id.c_str());
+        resource_id);
   }
 
   response_data[kSbiResponseHttpResponseCode] =
@@ -1946,8 +1940,8 @@ void amf_app::get_access_and_mobility_subscription_data(
           try {
             from_json(result[kSbiResponseJsonData], am_data);
             is_result_available = true;
-            // Populate MPS priority from AM subscription data (TS 29.503
-            // §5.2.2.2.1 mpsPriority field; TS 23.502 §4.2.2.2.2 step 14b).
+            // Populate MPS priority from AM subscription data (TS 23.502
+            // §4.2.2.2.2 step 14b).
             if (amf_cfg->support_features.enable_mps_indicator_update &&
                 nc != nullptr) {
               bool mps_active =
@@ -1955,7 +1949,7 @@ void amf_app::get_access_and_mobility_subscription_data(
               nc->mps_priority_active = mps_active;
               Logger::amf_app().debug(
                   "AM subscription data: mps_priority_active set to %s for "
-                  "UE (amf_ue_ngap_id=%lu)",
+                  "UE (amf_ue_ngap_id= " AMF_UE_NGAP_ID_FMT ")",
                   mps_active ? "true" : "false", nc->amf_ue_ngap_id);
             }
             // TODO: store AM Data
