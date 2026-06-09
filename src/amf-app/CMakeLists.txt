@@ -16,6 +16,7 @@ add_library (AMF_APP STATIC
   nas_state_machine.cpp
   nas_timer_manager.cpp
   ${SRC_TOP_DIR}/ngap/ngap_app.cpp
+  ${SRC_TOP_DIR}/ngap/ngap_message_callback.cpp
 )
 
 target_include_directories(AMF_APP PUBLIC ${SRC_TOP_DIR}/amf-app)
