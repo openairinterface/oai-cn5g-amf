@@ -11,6 +11,13 @@
 #include "nas_security_context.hpp"
 #include "Struct.hpp"
 #include <cstdint>
+#include <deque>
+#include <mutex>
+#include <optional>
+#include <string>
+#include "paging_types.hpp"
+#include "Arp.h"
+#include "Ngap_PagingDRX.h"
 
 typedef enum {
   _5GMM_STATE_MIN     = 0,
@@ -96,6 +103,50 @@ class nas_context {
   bool is_mobile_reachable_timer_timeout;
   timer_id_t mobile_reachable_timer;
   timer_id_t implicit_deregistration_timer;
+
+  // Paging proceed flag  (reachable or not for paging)
+  bool ppf_3gpp = true;  // final T3513 expiry/ implicit deregistration)
+
+  // Paging lifecycle state — §5.6.2 TS 24.501
+  bool is_paging_ongoing       = false;
+  bool paging_priority_present = false;
+  uint8_t paging_effective_ppi = 0;
+  bool paging_completed        = false;
+  // ARP of the highest-priority queued transaction (for PPI gating).
+  // Absent when no queued transaction carries an ARP. TS 23.502 §4.2.3.3 NOTE 4
+  std::optional<oai::_3gpp::model::Arp> paging_effective_arp;
+  // UE-specific Paging DRX negotiated at Registration (TS 23.502 §4.2.3.3 step
+  // 4b). Absent until UE provides 5GS DRX Parameters IE in Registration
+  // Request.
+  std::optional<e_Ngap_PagingDRX> ue_specific_paging_drx;
+  bool is_mico_mode =
+      false;  // true when MICO mode is negotiated (TS 24.501 §5.5.1.3)
+
+  // Protects pending_paging_messages, awaiting_registration_messages,
+  // temporarily_unreachable_messages — mutated from TASK_AMF_APP and
+  // TASK_AMF_N1 / TASK_AMF_SBI.  mutable so const methods can lock.
+  mutable std::mutex paging_queues_mutex;
+
+  // Paging-triggered transfers awaiting delivery after paging response.
+  std::deque<amf_application::paging::paging_transaction>
+      pending_paging_messages;
+  // Accepted transfers deferred until registration finishes.
+  std::deque<amf_application::paging::paging_transaction>
+      awaiting_registration_messages;
+  timer_id_t awaiting_registration_timer = ITTI_INVALID_TIMER_ID;
+  // True while awaiting_registration_timer is live to avoid
+  // stale-ID races on stop paths.
+  bool awaiting_registration_timer_running = false;
+  // Accepted transfers deferred while the UE is temporarily unreachable
+  // (for example MICO/eDRX-like low-power reachability restrictions).
+  std::deque<amf_application::paging::paging_transaction>
+      temporarily_unreachable_messages;
+  timer_id_t temporary_unreachable_timer = ITTI_INVALID_TIMER_ID;
+  // True while temporary_unreachable_timer is live to avoid
+  // stale-ID races on stop paths.
+  bool temp_unreachable_timer_running = false;
+  std::optional<uint16_t> page_reconnect_allowed_pdu_session_status;
+  bool page_reconnect_guti_refresh_pending = false;
 
   // NAS procedure context — replaces boolean flags per §5.1.3.2.3
   nas_procedure_context_t procedure_ctx;

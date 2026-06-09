@@ -4,6 +4,9 @@
 
 #include "amf_n2.hpp"
 
+#include <deque>
+#include <unordered_map>
+
 #include <boost/chrono/chrono.hpp>
 #include <boost/chrono/duration.hpp>
 
@@ -34,6 +37,7 @@
 #include "UeContextReleaseCommand.hpp"
 #include "amf_app.hpp"
 #include "amf_config.hpp"
+#include "nas_timer_manager.hpp"
 #include "amf_conversions.hpp"
 #include "amf_n1.hpp"
 #include "amf_sbi.hpp"
@@ -60,6 +64,55 @@ extern amf_app* amf_app_inst;
 extern statistics stacs;
 
 void amf_n2_task(void*);
+
+namespace {
+bool tai_matches_supported_ta(
+    const Tai_t& tai, const SupportedTaItem& supported_ta) {
+  if (supported_ta.getTac().get() != tai.tac) {
+    return false;
+  }
+
+  for (const auto& broadcast_plmn : supported_ta.getBroadcastPlmnList()) {
+    const auto plmn = broadcast_plmn.getPlmn();
+    if (plmn.getMcc() == tai.mcc && plmn.getMnc() == tai.mnc) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
+void free_octet_string(OCTET_STRING_t& value) {
+  oai::utils::utils::free_wrapper(reinterpret_cast<void**>(&value.buf));
+  value.size = 0;
+}
+
+void store_octet_string_as_bstring(
+    const OCTET_STRING_t& source, bstring& target) {
+  oai::utils::utils::bdestroy_wrapper(&target);
+  if (!ngap_utils::check_octet_string(source)) {
+    return;
+  }
+
+  target = blk2bstr(source.buf, source.size);
+}
+
+bool paging_queue_targets_non_3gpp(
+    const std::deque<paging::paging_transaction>& queue) {
+  for (const auto& transaction : queue) {
+    if (!transaction.target_access.has_value()) {
+      continue;
+    }
+
+    if (transaction.target_access.value().getValue() ==
+        AccessType::eAccessType::NON_3GPP_ACCESS) {
+      return true;
+    }
+  }
+
+  return false;
+}
+}  // namespace
 
 //------------------------------------------------------------------------------
 void amf_n2_task(void* args_p) {
@@ -304,6 +357,65 @@ amf_n2::amf_n2(const std::string& address, const uint16_t port_num)
 amf_n2::~amf_n2() {}
 
 //------------------------------------------------------------------------------
+std::vector<Tai_t> amf_n2::build_paging_tai_list(
+    const std::shared_ptr<ue_ngap_context>& unc, bool is_retransmission) const {
+  std::vector<Tai_t> tai_list_for_paging = {};
+
+  if (!is_retransmission || unc->registration_area_tai_list.empty()) {
+    Tai_t tai = {};
+    tai.mcc   = unc->tai.mcc;
+    tai.mnc   = unc->tai.mnc;
+    tai.tac   = unc->tai.tac;
+    tai_list_for_paging.push_back(tai);
+    return tai_list_for_paging;
+  }
+
+  return unc->registration_area_tai_list;
+}
+
+//------------------------------------------------------------------------------
+std::vector<sctp_assoc_id_t> amf_n2::resolve_paging_targets(
+    const std::vector<Tai_t>& tai_list_for_paging) {
+  std::vector<sctp_assoc_id_t> matched_assoc_ids = {};
+  const auto all_assoc_ids                       = get_all_assoc_ids();
+
+  for (const auto& assoc_id : all_assoc_ids) {
+    std::shared_ptr<gnb_context> gc = {};
+    if (!assoc_id_2_gnb_context(assoc_id, gc)) continue;
+
+    bool gnb_matches = false;
+    for (const auto& supported_ta : gc->supported_ta_list) {
+      for (const auto& tai : tai_list_for_paging) {
+        if (tai_matches_supported_ta(tai, supported_ta)) {
+          gnb_matches = true;
+          break;
+        }
+      }
+      if (gnb_matches) break;
+    }
+
+    if (gnb_matches) {
+      matched_assoc_ids.push_back(assoc_id);
+    }
+  }
+
+  return matched_assoc_ids;
+}
+
+//------------------------------------------------------------------------------
+bool amf_n2::has_paging_targets(
+    uint64_t amf_ue_ngap_id, uint32_t ran_ue_ngap_id, bool is_retransmission) {
+  std::shared_ptr<ue_ngap_context> unc = {};
+  if (!ran_ue_id_2_ue_ngap_context(ran_ue_ngap_id, amf_ue_ngap_id, unc)) {
+    return false;
+  }
+
+  const auto tai_list_for_paging =
+      build_paging_tai_list(unc, is_retransmission);
+  return !resolve_paging_targets(tai_list_for_paging).empty();
+}
+
+//------------------------------------------------------------------------------
 void amf_n2::handle_itti_message(std::shared_ptr<itti_paging>& itti_msg) {
   Logger::amf_n2().debug("Handle Paging message...");
 
@@ -314,11 +426,16 @@ void amf_n2::handle_itti_message(std::shared_ptr<itti_paging>& itti_msg) {
     return;
 
   if (unc->amf_ue_ngap_id != itti_msg->amf_ue_ngap_id) {
+    // UE-context mismatch: the NGAP context found by ran_ue_ngap_id belongs
+    // to a different AMF UE NGAP ID than the paging request targets.
+    // Continuing would page the wrong UE — reject early: TS 38.413 §9.2.5.1
+    // requires correct UE identity in Paging PDU).
     Logger::amf_n2().error(
-        "The requested UE (amf_ue_ngap_id: " AMF_UE_NGAP_ID_FMT
-        ") is not valid, existed UE "
-        "which's amf_ue_ngap_id (" AMF_UE_NGAP_ID_FMT ")",
-        itti_msg->amf_ue_ngap_id, unc->amf_ue_ngap_id);
+        "Paging aborted: context amf_ue_ngap_id " AMF_UE_NGAP_ID_FMT
+        " does not match requested amf_ue_ngap_id " AMF_UE_NGAP_ID_FMT
+        " — dropping paging to avoid wrong-UE page",
+        unc->amf_ue_ngap_id, itti_msg->amf_ue_ngap_id);
+    return;
   }
 
   // TODO: check UE reachability status
@@ -327,8 +444,10 @@ void amf_n2::handle_itti_message(std::shared_ptr<itti_paging>& itti_msg) {
   std::shared_ptr<nas_context> nc = {};
   if (!amf_n1_inst->amf_ue_id_2_nas_context(itti_msg->amf_ue_ngap_id, nc)) {
     Logger::amf_n2().warn(
-        "No existed nas_context with amf_ue_ngap_id(" AMF_UE_NGAP_ID_FMT ")",
+        "No existed nas_context with amf_ue_ngap_id(" AMF_UE_NGAP_ID_FMT
+        "), skipping paging",
         itti_msg->amf_ue_ngap_id);
+    return;
   }
   // Network stops sending paging messages since the mobile reachable timer
   // expires
@@ -337,28 +456,219 @@ void amf_n2::handle_itti_message(std::shared_ptr<itti_paging>& itti_msg) {
   }
 
   PagingMsg paging_msg = {};
+
+  // 5G-S-TMSI selection: TS 24.501 §5.5.1.3.8 NOTE.
+  // For the first narrow_attempts_using_old_5g_stmsi retransmissions use the
+  // OLD 5G-S-TMSI when available; subsequent retransmissions use the NEW one.
+  // TODO TS 24.501 §5.5.1.3.8 NOTE: capture old 5G-S-TMSI from registration
+  //   in nas_context (old_setid / old_pointer / old_tmsi fields on
+  //   ue_ngap_context). Those fields do not yet exist — the old-identity path
+  //   is intentionally not taken here until they are added in a follow-up.
+  const uint8_t t3513_attempt_count =
+      nc->nas_timers[static_cast<uint8_t>(nas_timer_type_e::T3513)]
+          .retransmission_count;
+  const bool use_old_5g_s_tmsi =
+      (nc->old_amf_ue_ngap_id != 0) &&
+      (t3513_attempt_count <
+       static_cast<uint8_t>(
+           amf_cfg->paging.narrow_attempts_using_old_5g_stmsi));
+  (void) use_old_5g_s_tmsi;  // suppress unused-variable warning until old
+                             // fields exist
+
   Logger::amf_n2().debug(
-      " UE NGAP Context, s_setid (%d), s_pointer (%d), s_tmsi (%d)",
-      unc->s_setid, unc->s_pointer, unc->s_tmsi);
+      " UE NGAP Context, s_setid (%s), s_pointer (%s), s_tmsi (%s)",
+      unc->s_setid.c_str(), unc->s_pointer.c_str(), unc->s_tmsi.c_str());
   paging_msg.setUePagingIdentity(unc->s_setid, unc->s_pointer, unc->s_tmsi);
 
-  std ::vector<struct Tai_s> list;
-  Tai_t tai = {};
-  tai.mcc   = unc->tai.mcc;
-  tai.mnc   = unc->tai.mnc;
-  tai.tac   = unc->tai.tac;
+  // Build TAI list for paging
+  const auto tai_list_for_paging =
+      build_paging_tai_list(unc, itti_msg->is_retransmission);
+  if (!itti_msg->is_retransmission || unc->registration_area_tai_list.empty()) {
+    const auto& t = tai_list_for_paging.front();
+    Logger::amf_n2().debug(
+        "Paging TAI list: single TAI (mcc=%s mnc=%s tac=%u)", t.mcc.c_str(),
+        t.mnc.c_str(), t.tac);
+  } else {
+    Logger::amf_n2().debug(
+        "Paging TAI list: registration area (%zu TAIs)",
+        tai_list_for_paging.size());
+  }
+  paging_msg.setTaiListForPaging(tai_list_for_paging);
 
-  list.push_back(tai);
-  paging_msg.setTaiListForPaging(list);
+  // Paging DRX — three-tier preference: UE-specific > gNB default > AMF config.
+  // TS 23.502 §4.2.3.3 step 4b
+  {
+    // Build a small lookup for the AMF-configured DRX string-to-enum
+    // conversion.
+    static const std::unordered_map<std::string, e_Ngap_PagingDRX>
+        kDrxStringToEnum = {
+            {"v32", Ngap_PagingDRX_v32},
+            {"v64", Ngap_PagingDRX_v64},
+            {"v128", Ngap_PagingDRX_v128},
+            {"v256", Ngap_PagingDRX_v256},
+        };
 
-  uint8_t buffer[BUFFER_SIZE_512];
-  int encoded_size = paging_msg.Encode(buffer, BUFFER_SIZE_512);
-  bstring b        = blk2bstr(buffer, encoded_size);
+    if (nc->ue_specific_paging_drx.has_value()) {
+      // Prefer UE-negotiated DRX from Registration Request
+      paging_msg.setPagingDrx(nc->ue_specific_paging_drx.value());
+      Logger::amf_n2().debug(
+          "Paging DRX set from UE-specific negotiated value (%d)",
+          static_cast<int>(nc->ue_specific_paging_drx.value()));
+    } else {
+      std::shared_ptr<gnb_context> last_gc = {};
+      if (assoc_id_2_gnb_context(unc->gnb_assoc_id, last_gc)) {
+        // Fall back to gNB-advertised default DRX
+        paging_msg.setPagingDrx(last_gc->default_paging_drx);
+        Logger::amf_n2().debug(
+            "Paging DRX set from last-serving gNB (assoc_id=%d, drx=%d)",
+            unc->gnb_assoc_id, static_cast<int>(last_gc->default_paging_drx));
+      } else {
+        // fallback: operator-configured AMF default
+        const auto& drx_str = amf_cfg->paging.default_paging_drx;
+        auto it             = kDrxStringToEnum.find(drx_str);
+        if (it != kDrxStringToEnum.end()) {
+          paging_msg.setPagingDrx(it->second);
+          Logger::amf_n2().debug(
+              "Paging DRX set from AMF config default (%s)", drx_str.c_str());
+        } else {
+          Logger::amf_n2().warn(
+              "Unknown default_paging_drx value '%s'; omitting PagingDRX IE",
+              drx_str.c_str());
+        }
+      }
+    }
+  }
 
-  amf_n2_inst->sctp_s_38412.sctp_send_msg(
-      unc->gnb_assoc_id, unc->sctp_stream_send, &b);
+  // Paging Priority — set from Paging Policy Indicator when provided AND ARP
+  // indicates priority service. TS 23.502 §4.2.3.3 NOTE 4
+  if (itti_msg->is_ppi_set) {
+    bool arp_qualifies = false;
+    if (itti_msg->arp.has_value()) {
+      // ARP priority level: 1 = highest, 15 = lowest. Encode PPI only when
+      // the level is at or above the configured threshold.
+      // TS 23.502 §4.2.3.3 NOTE 4
+      arp_qualifies =
+          (itti_msg->arp.value().getPriorityLevel() <=
+           static_cast<int32_t>(
+               amf_cfg->paging.arp_priority_threshold_for_pri_paging));
+    }
+    if (arp_qualifies) {
+      paging_msg.setPagingPriority(itti_msg->ppi);
+      Logger::amf_n2().debug(
+          "Paging Priority set from PPI=%d (arp.priorityLevel=%d <= "
+          "threshold=%u)",
+          itti_msg->ppi, itti_msg->arp.value().getPriorityLevel(),
+          amf_cfg->paging.arp_priority_threshold_for_pri_paging);
+    } else {
+      Logger::amf_n2().debug(
+          "Paging Priority suppressed: PPI=%d but ARP does not qualify "
+          "(arp.present=%s, threshold=%u)",
+          itti_msg->ppi, itti_msg->arp.has_value() ? "yes" : "no",
+          amf_cfg->paging.arp_priority_threshold_for_pri_paging);
+    }
+  }
+
+  if (amf_cfg->paging.enable_extended_ngap_ies &&
+      paging_queue_targets_non_3gpp(nc->pending_paging_messages)) {
+    paging_msg.setPagingOrigin(Ngap_PagingOrigin_non_3gpp);
+    Logger::amf_n2().debug(
+        "Paging Origin set to non-3GPP from queued paging transaction source");
+  }
+
+  if (amf_cfg->paging.enable_extended_ngap_ies &&
+      (ngap_utils::check_bstring(unc->ue_radio_cap_for_paging_nr) ||
+       ngap_utils::check_bstring(unc->ue_radio_cap_for_paging_eutra))) {
+    OCTET_STRING_t ue_radio_capability_for_paging_of_nr    = {};
+    OCTET_STRING_t ue_radio_capability_for_paging_of_eutra = {};
+
+    if (ngap_utils::check_bstring(unc->ue_radio_cap_for_paging_nr)) {
+      ngap_utils::bstring_2_octet_string(
+          unc->ue_radio_cap_for_paging_nr,
+          ue_radio_capability_for_paging_of_nr);
+    }
+    if (ngap_utils::check_bstring(unc->ue_radio_cap_for_paging_eutra)) {
+      ngap_utils::bstring_2_octet_string(
+          unc->ue_radio_cap_for_paging_eutra,
+          ue_radio_capability_for_paging_of_eutra);
+    }
+
+    paging_msg.setUeRadioCapabilityForPaging(
+        ue_radio_capability_for_paging_of_nr,
+        ue_radio_capability_for_paging_of_eutra);
+    Logger::amf_n2().debug(
+        "Paging includes UE Radio Capability For Paging "
+        "(nr=%s, eutra=%s)",
+        ngap_utils::check_octet_string(ue_radio_capability_for_paging_of_nr) ?
+            "yes" :
+            "no",
+        ngap_utils::check_octet_string(
+            ue_radio_capability_for_paging_of_eutra) ?
+            "yes" :
+            "no");
+
+    free_octet_string(ue_radio_capability_for_paging_of_nr);
+    free_octet_string(ue_radio_capability_for_paging_of_eutra);
+  }
+
+  // TODO: Paging Origin and UE Radio Capability For Paging.
+  // Assistance-data/recommended-cell/WUS/CE related IEs remain explicitly
+  // deferred in the plan artifacts.
+
+  uint16_t buffer_size = BUFFER_SIZE_1024;
+  uint8_t buffer[buffer_size];
+  int encoded_size = paging_msg.Encode(buffer, buffer_size);
+  if (encoded_size <= 0) {
+    Logger::amf_n2().error(
+        "Failed to encode NGAP Paging message for UE " AMF_UE_NGAP_ID_FMT,
+        itti_msg->amf_ue_ngap_id);
+    return;
+  }
+  bstring b = blk2bstr(buffer, encoded_size);
+  if (!b) {
+    Logger::amf_n2().error(
+        "Failed to allocate bstring for NGAP Paging message for "
+        "UE " AMF_UE_NGAP_ID_FMT,
+        itti_msg->amf_ue_ngap_id);
+    return;
+  }
+
+  const auto matched_assoc_ids = resolve_paging_targets(tai_list_for_paging);
+  if (matched_assoc_ids.empty()) {
+    Logger::amf_n2().warn(
+        "No gNB matched paging TAI list for amf_ue_ngap_id(" AMF_UE_NGAP_ID_FMT
+        ")",
+        itti_msg->amf_ue_ngap_id);
+    oai::utils::utils::bdestroy_wrapper(&b);
+    return;
+  }
+
+  int paging_sent = 0;
+  for (const auto& assoc_id : matched_assoc_ids) {
+    bstring b_copy = bstrcpy(b);
+    if (!b_copy) {
+      Logger::amf_n2().warn(
+          "Failed to copy paging bstring for gNB (assoc_id=%d), skipping",
+          assoc_id);
+      continue;
+    }
+    amf_n2_inst->sctp_s_38412.sctp_send_msg(assoc_id, 0, &b_copy);
+    oai::utils::utils::bdestroy_wrapper(&b_copy);
+    paging_sent++;
+    Logger::amf_n2().debug("Paging sent to gNB (assoc_id=%d)", assoc_id);
+  }
 
   oai::utils::utils::bdestroy_wrapper(&b);
+
+  if (paging_sent == 0) {
+    Logger::amf_n2().warn(
+        "Paging fan-out resolved targets but did not send any NGAP paging for "
+        "amf_ue_ngap_id(" AMF_UE_NGAP_ID_FMT ")",
+        itti_msg->amf_ue_ngap_id);
+    return;
+  }
+
+  // Start T3513 paging timer after NGAP Paging is sent.
+  amf_n1_inst->start_paging_timer(nc, itti_msg->amf_ue_ngap_id);
 }
 
 //------------------------------------------------------------------------------
@@ -1587,8 +1897,18 @@ void amf_n2::handle_itti_message(
     return;
   }
 
-  // TODO: User Location Information IE
-  // TODO: Information on Recommended Cells & RAN Nodes for Paging IE
+  NrCgi_t cgi = {};
+  Tai_t tai   = {};
+  if (itti_msg->ue_ctx_rel_cpl->getUserLocationInfoNr(cgi, tai)) {
+    unc->tai = tai;
+    Logger::amf_n2().debug(
+        "Updated idle paging source TAI from UE Context Release Complete "
+        "(mcc=%s, mnc=%s, tac=%u)",
+        unc->tai.mcc.c_str(), unc->tai.mnc.c_str(), unc->tai.tac);
+  }
+
+  // Recommended Cells/RAN Nodes for Paging retention remains deferred beyond
+  // the narrowed Task-4 optional-IE scope.
 
   // TODO: Process Secondary RAT Usage Information IE if available
 
@@ -1729,7 +2049,32 @@ void amf_n2::handle_itti_message(
   std::shared_ptr<ue_ngap_context> unc = {};
   if (!ran_ue_id_2_ue_ngap_context(ran_ue_ngap_id, gc->gnb_id, unc)) return;
 
+  oai::utils::utils::bdestroy_wrapper(&unc->ue_radio_cap_ind);
   unc->ue_radio_cap_ind = blk2bstr(ue_radio_cap.buf, ue_radio_cap.size);
+
+  OCTET_STRING_t ue_radio_cap_for_paging_of_nr    = {};
+  OCTET_STRING_t ue_radio_cap_for_paging_of_eutra = {};
+  if (itti_msg->ue_radio_cap_info_ind->getUeRadioCapabilityForPaging(
+          ue_radio_cap_for_paging_of_nr, ue_radio_cap_for_paging_of_eutra)) {
+    store_octet_string_as_bstring(
+        ue_radio_cap_for_paging_of_nr, unc->ue_radio_cap_for_paging_nr);
+    store_octet_string_as_bstring(
+        ue_radio_cap_for_paging_of_eutra, unc->ue_radio_cap_for_paging_eutra);
+    Logger::amf_n2().debug(
+        "Stored UE Radio Capability For Paging in UE context "
+        "(nr=%s, eutra=%s)",
+        ngap_utils::check_bstring(unc->ue_radio_cap_for_paging_nr) ? "yes" :
+                                                                     "no",
+        ngap_utils::check_bstring(unc->ue_radio_cap_for_paging_eutra) ? "yes" :
+                                                                        "no");
+  } else {
+    oai::utils::utils::bdestroy_wrapper(&unc->ue_radio_cap_for_paging_nr);
+    oai::utils::utils::bdestroy_wrapper(&unc->ue_radio_cap_for_paging_eutra);
+  }
+
+  free_octet_string(ue_radio_cap_for_paging_of_nr);
+  free_octet_string(ue_radio_cap_for_paging_of_eutra);
+  free_octet_string(ue_radio_cap);
 }
 
 //------------------------------------------------------------------------------

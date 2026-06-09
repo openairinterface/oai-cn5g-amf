@@ -66,6 +66,35 @@ typedef struct response_data_s {
   std::optional<std::string> location;
 } response_data_t;
 
+// Paging timer management
+// Default fallback only — runtime config in amf_cfg->paging (Track F).
+// Track E consumer plumbing will replace direct uses with runtime values.
+static constexpr uint8_t kPagingMaxRetransmissions = 2;
+static constexpr uint32_t kPagingT3513IntervalSec  = 6;  // seconds per attempt
+
+// T3565 (Notification) defaults — discretionary per TS 24.501 §5.6.3.4.
+// Runtime values exposed via paging_cfg_t::t3565_interval_sec / _max_retx.
+static constexpr uint32_t kPagingT3565IntervalSec       = 6;
+static constexpr uint8_t kPagingT3565MaxRetransmissions = 4;
+
+// Staged paging (narrow→wide) per TS 23.502 §4.2.3.3.
+static constexpr uint32_t kPagingNarrowFirstHopTimeoutSec = 4;
+
+// PPI encoded in NGAP only when arp.priorityLevel <= this threshold.
+// Operator-tunable to limit paging-priority to truly urgent bearers only.
+static constexpr uint8_t kPagingArpPriorityThresholdForPriPaging = 8;
+
+// Paging queue depth limit default. Controller code owns the admission policy.
+static constexpr uint8_t kPagingMaxPendingMessagesDefault           = 8;
+static constexpr uint32_t kPagingRegistrationDeferTimeoutSecDefault = 30;
+static constexpr uint32_t kPagingTemporaryUnreachableDeferTimeoutSecDefault =
+    30;
+static constexpr bool kPagingEnableSubscriptionNotificationsDefault = true;
+static constexpr bool kPagingEnableExtendedNgapIesDefault           = true;
+// Default paging DRX cycle (v128 = 128 radio frames ≈ 1.28 s).
+// Must be a valid e_Ngap_PagingDRX string key ("v32","v64","v128","v256").
+static constexpr auto kPagingDefaultDrx = "v128";
+
 typedef struct auth_conf_s {
   std::string mysql_server;
   std::string mysql_user;

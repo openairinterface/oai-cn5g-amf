@@ -9,21 +9,24 @@ add_library (AMF_APP STATIC
   amf_event.cpp
   amf_profile.cpp
   amf_statistics.cpp
-  amf_statistics.cpp
   amf_subscription.cpp
   authentication.cpp
-  nas_procedure_manager.cpp
-  nas_state_machine.cpp
-  nas_timer_manager.cpp
+  failure_notify_client.cpp
+  ${SRC_TOP_DIR}/nas/nas_procedure_manager.cpp
+  ${SRC_TOP_DIR}/nas/nas_state_machine.cpp
+  ${SRC_TOP_DIR}/nas/nas_timer_manager.cpp
+  paging/paging_controller.cpp
   ${SRC_TOP_DIR}/ngap/ngap_app.cpp
 )
 
 target_include_directories(AMF_APP PUBLIC ${SRC_TOP_DIR}/amf-app)
+target_include_directories(AMF_APP PUBLIC ${SRC_TOP_DIR}/amf-app/paging)
 target_include_directories(AMF_APP PUBLIC ${SRC_TOP_DIR}/common)
 target_include_directories(AMF_APP PUBLIC ${SRC_TOP_DIR}/common/unicode)
 target_include_directories(AMF_APP PUBLIC ${SRC_TOP_DIR}/contexts)
 target_include_directories(AMF_APP PUBLIC ${SRC_TOP_DIR}/itti)
 target_include_directories(AMF_APP PUBLIC ${SRC_TOP_DIR}/itti/msgs)
+target_include_directories(AMF_APP PUBLIC ${SRC_TOP_DIR}/nas)
 target_include_directories(AMF_APP PUBLIC ${SRC_TOP_DIR}/ngap)
 target_include_directories(AMF_APP PUBLIC ${SRC_TOP_DIR}/sbi)
 target_include_directories(AMF_APP PUBLIC ${SRC_TOP_DIR}/sbi/api)
@@ -37,7 +40,6 @@ target_include_directories(AMF_APP PUBLIC ${SRC_TOP_DIR}/${MOUNTED_COMMON}/commo
 target_include_directories(AMF_APP PUBLIC ${SRC_TOP_DIR}/${MOUNTED_COMMON}/config)
 target_include_directories(AMF_APP PUBLIC ${SRC_TOP_DIR}/${MOUNTED_COMMON}/http)
 target_include_directories(AMF_APP PUBLIC ${SRC_TOP_DIR}/${MOUNTED_COMMON}/logger)
-#target_include_directories(AMF_APP PUBLIC ${SRC_TOP_DIR}/${MOUNTED_COMMON}/model)
 target_include_directories(AMF_APP PUBLIC ${SRC_TOP_DIR}/${MOUNTED_COMMON}/nas/ies)
 target_include_directories(AMF_APP PUBLIC ${SRC_TOP_DIR}/${MOUNTED_COMMON}/nas/common)
 target_include_directories(AMF_APP PUBLIC ${SRC_TOP_DIR}/${MOUNTED_COMMON}/nas/5gmm-msgs)

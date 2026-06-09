@@ -3,6 +3,7 @@
 set(AMF_API_SERVER_DIR "${SRC_TOP_DIR}/sbi")
 
 include_directories(${SRC_TOP_DIR}/amf-app)
+include_directories(${SRC_TOP_DIR}/amf-app/paging)
 include_directories(${SRC_TOP_DIR}/common)
 include_directories(${SRC_TOP_DIR}/contexts)
 include_directories(${SRC_TOP_DIR}/itti)
@@ -10,13 +11,13 @@ include_directories(${SRC_TOP_DIR}/itti/msgs)
 include_directories(${SRC_TOP_DIR}/sbi)
 include_directories(${SRC_TOP_DIR}/sbi/api)
 include_directories(${SRC_TOP_DIR}/sbi/impl)
+include_directories(${SRC_TOP_DIR}/secu_algorithms/5gaka)
 include_directories(${SRC_TOP_DIR}/utils)
 include_directories(${SRC_TOP_DIR}/${MOUNTED_COMMON}/3gpp)
 include_directories(${SRC_TOP_DIR}/${MOUNTED_COMMON}/common)
 include_directories(${SRC_TOP_DIR}/${MOUNTED_COMMON}/config)
 include_directories(${SRC_TOP_DIR}/${MOUNTED_COMMON}/logger)
 include_directories(${SRC_TOP_DIR}/${MOUNTED_COMMON}/http)
-#include_directories(${SRC_TOP_DIR}/${MOUNTED_COMMON}/model)
 include_directories(${SRC_TOP_DIR}/${MOUNTED_COMMON}/nas/ies)
 include_directories(${SRC_TOP_DIR}/${MOUNTED_COMMON}/nas/common)
 include_directories(${SRC_TOP_DIR}/${MOUNTED_COMMON}/nas/utils)
@@ -37,3 +38,4 @@ file(GLOB AMF_API_SERVER_src_files
 
 add_library(AMF_SBI_SERVER STATIC
            ${AMF_API_SERVER_src_files})
+

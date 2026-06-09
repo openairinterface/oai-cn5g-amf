@@ -276,8 +276,9 @@ IF( NOT MySQL_FOUND )
   MESSAGE( SEND_ERROR "MySQL Client is required" )
 ENDIF( NOT MySQL_FOUND )
 
-#CPR
+# Local-prefix third-party dependencies
 find_package(cpr REQUIRED)
+
 
 ################################################################
 # Add sub modules
@@ -324,7 +325,6 @@ include_directories(${SRC_TOP_DIR}/${MOUNTED_COMMON}/config)
 include_directories(${SRC_TOP_DIR}/${MOUNTED_COMMON}/common)
 include_directories(${SRC_TOP_DIR}/${MOUNTED_COMMON}/http)
 include_directories(${SRC_TOP_DIR}/${MOUNTED_COMMON}/logger)
-#include_directories(${SRC_TOP_DIR}/${MOUNTED_COMMON}/model)
 include_directories(${SRC_TOP_DIR}/${MOUNTED_COMMON}/nas/ies)
 include_directories(${SRC_TOP_DIR}/${MOUNTED_COMMON}/nas/common)
 include_directories(${SRC_TOP_DIR}/${MOUNTED_COMMON}/nas/5gmm-msgs)

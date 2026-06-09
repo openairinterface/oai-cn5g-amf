@@ -130,6 +130,11 @@ amf:
     - "NEA0"
     - "NEA1"
     - "NEA2"
+  paging:
+    t3513_interval_sec: 6
+    t3565_interval_sec: 6
+    t3565_max_retransmissions: 4    
+    default_paging_drx: v128 
 
 smf:
   ue_mtu: 1500

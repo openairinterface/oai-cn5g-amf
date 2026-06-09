@@ -2,8 +2,8 @@
  * SPDX-License-Identifier: LicenseRef-CSSL-1.0
  */
 
-#ifndef _5GAKA_H_
-#define _5GAKA_H_
+#ifndef _AUTHENTICATION_5GAKA_H_
+#define _AUTHENTICATION_5GAKA_H_
 
 #include <gmp.h>
 #include <pthread.h>

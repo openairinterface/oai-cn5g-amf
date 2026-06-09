@@ -21,12 +21,15 @@ enum class nas_timer_type_e : uint8_t {
   T3570 = 2,  // §5.4.3.6: Identity Request (6 s, 4 retx)
   T3522 = 3,  // §5.5.2.3.5: NW-initiated Deregistration Request (6 s, 4 retx)
   T3555 = 4,  // §5.4.4.6: Configuration Update Command (6 s, 4 retx)
-  T3513 = 5,  // §5.6.2.2.1: Paging (discretionary retx — max = 0)
-  T3565 = 6,  // §5.6.3: Notification (6 s, 4 retx)
+  T3513 = 5,  // §5.6.2.2.1: Paging (6 s, max 2 retx → final expiry → PPF=FALSE)
+  T3565           = 6,  // §5.6.3: Notification (6 s, 4 retx)
   NAS_TIMER_COUNT = 7
 };
 
-// Per-timer static configuration (populated in nas_timer_manager.cpp).
+// Per-timer static configuration.
+// Non-paging entries (T3550..T3555) are compile-time constants.
+// Paging entries (T3513, T3565) are runtime-initialised from amf_cfg in the
+// nas_timer_manager constructor (TS 24.501 §5.6.2.2.1).
 struct nas_timer_config_t {
   nas_timer_type_e type;
   uint32_t interval_sec;        // Default interval per 3GPP Table 10.2.2
@@ -55,22 +58,39 @@ class nas_timer_manager {
   void stop_timer(nas_timer_type_e type, std::shared_ptr<nas_context>& nc);
 
   // Handle a timer expiry event dispatched from the ITTI TIME_OUT handler.
-  // Increments the retransmission counter and restarts the ITTI timer if
-  // more retransmissions remain.
-  // Returns true  — timer restarted; caller MUST retransmit the NAS message.
+  // Increments the retransmission counter.
+  //
+  // When auto_restart is true (default, used by T3550/T3560/T3570/T3522/T3555):
+  //   restarts the ITTI timer automatically before returning.
+  //
+  // When auto_restart is false (used by T3513/T3565 — TS 24.501 §5.6.2.2.1):
+  //   the timer is NOT restarted here.  The caller must send the paging/notify
+  //   ITTI message first, and only on send success call start_timer() for the
+  //   next attempt.  On send failure the caller invokes the terminal path
+  //   directly (PPF=false, drain queues, failure notify).
+  //
+  // Returns true  — should retransmit; caller MUST retransmit the NAS message.
   // Returns false — final expiry; caller MUST take the terminal action.
   bool handle_expiry(
       nas_timer_type_e type, std::shared_ptr<nas_context>& nc,
-      uint64_t amf_ue_ngap_id);
+      uint64_t amf_ue_ngap_id, bool auto_restart = true);
 
   // Stop all NAS procedure timers for a UE (call on deregistration / context
   // release to avoid stale ITTI timer callbacks).
   void stop_all_procedure_timers(std::shared_ptr<nas_context>& nc);
 
+  // Retrieve the live interval (seconds) for a timer type.
+  // Used by callers that need to log runtime-configured values.
+  uint32_t get_interval_sec(nas_timer_type_e type) const;
+
+  // Retrieve the live max_retransmissions for a timer type.
+  uint8_t get_max_retransmissions(nas_timer_type_e type) const;
+
  private:
   itti_mw* itti_ = nullptr;
-};
 
-// Global config table — definitions in nas_timer_manager.cpp.
-extern const nas_timer_config_t
-    kTimerConfigs[static_cast<size_t>(nas_timer_type_e::NAS_TIMER_COUNT)];
+  // Runtime-initialised table — one entry per nas_timer_type_e value.
+  // Indices MUST match nas_timer_type_e; see nas_timer_manager.cpp.
+  nas_timer_config_t
+      timer_configs_[static_cast<size_t>(nas_timer_type_e::NAS_TIMER_COUNT)]{};
+};

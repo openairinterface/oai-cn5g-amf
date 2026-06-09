@@ -4,7 +4,10 @@
 
 #include "amf_n1.hpp"
 
+#include <algorithm>
 #include <bitset>
+#include <chrono>
+#include <mutex>
 
 #include "3gpp_24.501.hpp"
 #include "AmfEventReport.h"
@@ -16,6 +19,8 @@
 #include "ConfigurationUpdateCommand.hpp"
 #include "ConfirmationData.h"
 #include "ConfirmationDataResponse.h"
+#include "ControlPlaneServiceRequest.hpp"
+#include "N1N2MessageTransferError.h"
 #include "DeregistrationAccept.hpp"
 #include "DeregistrationRequest.hpp"
 #include "IdentityRequest.hpp"
@@ -36,11 +41,13 @@
 #include "amf_config.hpp"
 #include "amf_conversions.hpp"
 #include "amf_n2.hpp"
+#include "Ngap_PagingDRX.h"
 #include "amf_sbi.hpp"
 #include "amf_sbi_helper.hpp"
 #include "authentication.hpp"
 #include "bstrlib.h"
 #include "itti.hpp"
+#include "itti_msg_amf_app.hpp"
 #include "itti_msg_n2.hpp"
 #include "itti_msg_sbi.hpp"
 #include "logger.hpp"
@@ -51,6 +58,12 @@
 #include "utils.hpp"
 #include "AuthenticationReject.hpp"
 #include "nas_state_machine.hpp"
+
+#include <arpa/inet.h>
+#include <netdb.h>
+#include <sys/socket.h>
+
+#include "http_client.hpp"
 
 using namespace amf_application;
 using namespace boost::placeholders;
@@ -67,11 +80,103 @@ extern std::unique_ptr<oai::config::amf_config> amf_cfg;
 extern amf_app* amf_app_inst;
 extern amf_n2* amf_n2_inst;
 extern statistics stacs;
+extern std::shared_ptr<oai::http::http_client> http_client_inst;
 
 // Static variables
 std::map<std::string, std::string> amf_n1::rand_record = {};
 
 void amf_n1_task(void*);
+
+// TS 24.501 §9.11.3.50.1 — Service Type IE codepoints
+constexpr uint8_t kServiceTypeSignalling           = 0x0;
+constexpr uint8_t kServiceTypeData                 = 0x1;
+constexpr uint8_t kServiceTypeMobileTerminatedServ = 0x2;
+constexpr uint8_t kServiceTypeEmergency            = 0x3;
+constexpr uint8_t kServiceTypeEmergencyServicesFB  = 0x4;
+constexpr uint8_t kServiceTypeHighPriorityAccess   = 0x5;
+constexpr uint8_t kServiceTypeElevatedSignalling   = 0x6;
+
+namespace {
+constexpr const char* kNoPagingTargetTransferCause = "AN_NOT_RESPONDING";
+
+void sync_paging_queue_depth_metrics(const std::shared_ptr<nas_context>& nc) {
+  if (!nc || nc->supi.empty()) {
+    return;
+  }
+
+  // Brief lock to read all three queue sizes atomically.
+  size_t paging_depth = 0, await_depth = 0, temp_depth = 0;
+  {
+    std::lock_guard<std::mutex> lk(nc->paging_queues_mutex);
+    paging_depth = nc->pending_paging_messages.size();
+    await_depth  = nc->awaiting_registration_messages.size();
+    temp_depth   = nc->temporarily_unreachable_messages.size();
+  }
+  stacs.update_paging_queue_depths(
+      nc->supi, paging_depth, await_depth, temp_depth);
+}
+
+// Map a cause string (as used by legacy call sites) to the typed enum.
+// TS 29.518 §6.1.5.6 Table 6.1.5.6-1 valid notification causes.
+using CauseEnum = oai::_3gpp::model::N1N2MessageTransferCause_anyOf::
+    eN1N2MessageTransferCause_anyOf;
+
+CauseEnum cause_string_to_enum(const std::string& cause) {
+  if (cause == "ATTEMPTING_TO_REACH_UE")
+    return CauseEnum::ATTEMPTING_TO_REACH_UE;
+  if (cause == "WAITING_FOR_ASYNCHRONOUS_TRANSFER")
+    return CauseEnum::WAITING_FOR_ASYNCHRONOUS_TRANSFER;
+  if (cause == "UE_NOT_RESPONDING") return CauseEnum::UE_NOT_RESPONDING;
+  if (cause == "N1_MSG_NOT_TRANSFERRED")
+    return CauseEnum::N1_MSG_NOT_TRANSFERRED;
+  if (cause == "N2_MSG_NOT_TRANSFERRED")
+    return CauseEnum::N2_MSG_NOT_TRANSFERRED;
+  if (cause == "UE_NOT_REACHABLE_FOR_SESSION")
+    return CauseEnum::UE_NOT_REACHABLE_FOR_SESSION;
+  if (cause == "TEMPORARY_REJECT_REGISTRATION_ONGOING")
+    return CauseEnum::TEMPORARY_REJECT_REGISTRATION_ONGOING;
+  if (cause == "TEMPORARY_REJECT_HANDOVER_ONGOING")
+    return CauseEnum::TEMPORARY_REJECT_HANDOVER_ONGOING;
+  if (cause == "REJECTION_DUE_TO_PAGING_RESTRICTION")
+    return CauseEnum::REJECTION_DUE_TO_PAGING_RESTRICTION;
+  if (cause == "AN_NOT_RESPONDING") return CauseEnum::AN_NOT_RESPONDING;
+  // Default: covers "FAILURE_CAUSE_UNSPECIFIED" and any unknown string
+  return CauseEnum::FAILURE_CAUSE_UNSPECIFIED;
+}
+
+// Build and dispatch an itti_n1n2_transfer_failure_notification to
+// TASK_AMF_SBI so that failure_notify_client posts the correct
+// TS 29.518 §6.1.5.6 body (not the N1N2MessageTransferError envelope).
+//
+// @param supi           UE SUPI (for logging)
+// @param uri            n1n2FailureTxfNotifURI from the paging_transaction
+// @param cause_str      cause string — will be mapped to the typed enum
+// @param pdu_session_id echoed PDU session ID (may be 0)
+// @param max_wait_secs  optional deferred-queue expiry in seconds
+void emit_failure_notification_via_itti(
+    const std::string& supi, const std::string& uri,
+    const std::string& cause_str, uint8_t pdu_session_id = 0,
+    std::optional<int32_t> max_wait_secs = std::nullopt) {
+  if (uri.empty()) return;
+
+  auto itti_msg = std::make_shared<itti_n1n2_transfer_failure_notification>(
+      TASK_AMF_N1, TASK_AMF_SBI);
+  itti_msg->supi                  = supi;
+  itti_msg->failure_txf_notif_uri = uri;
+  itti_msg->cause                 = cause_string_to_enum(cause_str);
+  itti_msg->pdu_session_id        = pdu_session_id;
+  itti_msg->max_waiting_time      = max_wait_secs;
+
+  int ret = itti_inst->send_msg(itti_msg);
+  if (ret != 0) {
+    Logger::amf_n1().error(
+        "emit_failure_notification_via_itti: failed to send ITTI message "
+        "for SUPI %s URI %s cause %s",
+        supi.c_str(), uri.c_str(), cause_str.c_str());
+  }
+}
+
+}  // namespace
 
 //------------------------------------------------------------------------------
 void amf_n1_task(void*) {
@@ -127,6 +232,14 @@ void amf_n1_task(void*) {
               break;
             case TASK_AMF_T3565_TIMER_EXPIRE:
               amf_n1_inst->handle_t3565_expiry(to->timer_id, to->arg2_user);
+              break;
+            case TASK_AMF_AWAITING_REGISTRATION_DEFER_TIMER_EXPIRE:
+              amf_n1_inst->handle_awaiting_registration_expiry(
+                  to->timer_id, to->arg2_user);
+              break;
+            case TASK_AMF_TEMPORARY_UNREACHABLE_DEFER_TIMER_EXPIRE:
+              amf_n1_inst->handle_temporary_unreachable_expiry(
+                  to->timer_id, to->arg2_user);
               break;
             default:
               Logger::amf_n1().info(
@@ -629,12 +742,31 @@ void amf_n1::nas_signalling_establishment_request_handle(
   uint8_t cause = k5gmmCauseProtocolErrorUnspecified;
   switch (message_type) {
     case kRegistrationRequest: {
+      // TS 24.501 §5.5.1.3.7 NOTE 1: Registration Request while paging
+      // is ongoing is terminal for T3513.  Stop the timer now; pending paging
+      // messages MUST NOT be drained until REGISTRATION COMPLETE arrives (to
+      // avoid delivering them before the UE has a valid context).
+      if (nc && nc->is_paging_ongoing && !nc->paging_completed) {
+        Logger::amf_n1().info(
+            "Registration Request during active paging on UE %lu — stopping "
+            "T3513 (TS 24.501 §5.5.1.3.7 NOTE 1)",
+            amf_ue_ngap_id);
+        nas_timer_manager_.stop_timer(nas_timer_type_e::T3513, nc);
+        nc->is_paging_ongoing = false;
+        // Pending paging messages are held; they will be drained at
+        // REGISTRATION COMPLETE via
+        // amf_app_inst->on_registration_complete_drain(nc) — see
+        // registration_complete_handle().  Do NOT drain here: the UE has not
+        // yet confirmed a new 5G-GUTI and the NAS context is not fully
+        // re-established (TS 24.501 §5.5.1.3.7 NOTE 1).
+      }
       Logger::amf_n1().debug(
           "Received Registration Request message, handling...");
       if (nc && nc->security_ctx.has_value())
         nc->security_ctx.value().ul_count.seq_num = ulCount;
       if (!registration_request_handle(
-              nc, ran_ue_ngap_id, amf_ue_ngap_id, snn, plain_msg, cause)) {
+              nc, ran_ue_ngap_id, amf_ue_ngap_id, snn, plain_msg,
+              security_header_type, cause)) {
         // Send Registration Reject with appropriate cause
         send_registration_reject_msg(ran_ue_ngap_id, amf_ue_ngap_id, cause);
         nas_procedure_manager_.complete_specific_procedure(*nc);
@@ -656,7 +788,8 @@ void amf_n1::nas_signalling_establishment_request_handle(
       if (nc && nc->security_ctx.has_value())
         nc->security_ctx.value().ul_count.seq_num = ulCount;
       if (!service_request_handle(
-              nc, ran_ue_ngap_id, amf_ue_ngap_id, plain_msg, ulCount, cause)) {
+              nc, ran_ue_ngap_id, amf_ue_ngap_id, plain_msg, ulCount,
+              security_header_type != kPlain5gsMessage, cause)) {
         // Send Service Reject with appropriate cause
         send_service_reject(nc, cause);
         nas_procedure_manager_.complete_specific_procedure(*nc);
@@ -773,7 +906,8 @@ void amf_n1::uplink_nas_msg_handle(
         Logger::amf_n1().debug(
             "Received Registration Complete message, handling...");
         if (!registration_complete_handle(
-                ran_ue_ngap_id, amf_ue_ngap_id, plain_msg, cause)) {
+                ran_ue_ngap_id, amf_ue_ngap_id, plain_msg, security_header_type,
+                cause)) {
           send_registration_reject_msg(ran_ue_ngap_id, amf_ue_ngap_id, cause);
           nas_procedure_manager_.complete_specific_procedure(*nc);
         }
@@ -785,7 +919,8 @@ void amf_n1::uplink_nas_msg_handle(
             "handling...");
         if (amf_ue_id_2_nas_context(amf_ue_ngap_id, nc)) {
           if (!service_request_handle(
-                  nc, ran_ue_ngap_id, amf_ue_ngap_id, plain_msg, cause)) {
+                  nc, ran_ue_ngap_id, amf_ue_ngap_id, plain_msg,
+                  security_header_type != kPlain5gsMessage, cause)) {
             // Send Service Reject with appropriate cause
             send_service_reject(nc, cause);
             nas_procedure_manager_.complete_specific_procedure(*nc);
@@ -796,14 +931,62 @@ void amf_n1::uplink_nas_msg_handle(
         }
       } break;
 
+      case kControlPlaneServiceRequest: {
+        Logger::amf_n1().debug(
+            "Received Control Plane Service Request message, handling...");
+        if (!amf_ue_id_2_nas_context(amf_ue_ngap_id, nc) || !nc) {
+          Logger::amf_n1().debug("No NAS context available");
+          break;
+        }
+        const bool page_triggered_reconnect =
+            nc->is_paging_ongoing && !nc->paging_completed;
+
+        auto cp_service_request =
+            std::make_unique<ControlPlaneServiceRequest>();
+        const int decoded_size = cp_service_request->Decode(
+            (uint8_t*) bdata(plain_msg), blength(plain_msg));
+        if (decoded_size == KEncodeDecodeError) {
+          Logger::amf_n1().warn(
+              "Malformed Control Plane Service Request received while paging "
+              "is active for UE %lu - keeping paging active",
+              amf_ue_ngap_id);
+          break;
+        }
+
+        const bool terminal_paging_response = can_complete_paging_response(
+            nc, paging::paging_response_class::CONTROL_PLANE_SERVICE_REQUEST,
+            security_header_type != kPlain5gsMessage, false);
+        if (terminal_paging_response) {
+          complete_paging_response_transition(
+              nc, ran_ue_ngap_id, amf_ue_ngap_id,
+              "Control Plane Service Request", false);
+        } else if (page_triggered_reconnect) {
+          Logger::amf_n1().warn(
+              "Control Plane Service Request for UE %lu is non-terminal for "
+              "paging because the NAS response was not integrity checked",
+              amf_ue_ngap_id);
+        }
+        if (page_triggered_reconnect && terminal_paging_response) {
+          complete_reconnect_follow_up(
+              nc, ran_ue_ngap_id, amf_ue_ngap_id, true);
+        }
+      } break;
+
       case kRegistrationRequest: {
+        if (nc && nc->is_paging_ongoing && !nc->paging_completed) {
+          Logger::amf_n1().debug(
+              "Registration Request classified as non-terminal for active "
+              "paging on UE %lu",
+              amf_ue_ngap_id);
+        }
         Logger::amf_n1().debug("Received Registration Request, handling...");
         std::string snn =
             amf_conv::get_serving_network_name(plmn.mnc, plmn.mcc);
         Logger::amf_n1().debug("Serving network name %s", snn.c_str());
         if (amf_ue_id_2_nas_context(amf_ue_ngap_id, nc)) {
           if (!registration_request_handle(
-                  nc, ran_ue_ngap_id, amf_ue_ngap_id, snn, plain_msg, cause)) {
+                  nc, ran_ue_ngap_id, amf_ue_ngap_id, snn, plain_msg,
+                  security_header_type, cause)) {
             // Send Registration Reject with appropriate cause
             send_registration_reject_msg(ran_ue_ngap_id, amf_ue_ngap_id, cause);
             nas_procedure_manager_.complete_specific_procedure(*nc);
@@ -812,6 +995,29 @@ void amf_n1::uplink_nas_msg_handle(
         } else {
           Logger::amf_n1().debug("No NAS context available");
         }
+      } break;
+
+      case kMessageTypeNotification: {
+        if (nc && nc->is_paging_ongoing && !nc->paging_completed) {
+          Logger::amf_n1().debug(
+              "Notification classified as non-terminal for active paging on "
+              "UE %lu",
+              amf_ue_ngap_id);
+        }
+        Logger::amf_n1().debug(
+            "Received Notification message while paging state remains active");
+      } break;
+
+      case kMessageTypeNotificationResponse: {
+        if (nc && nc->is_paging_ongoing && !nc->paging_completed) {
+          Logger::amf_n1().debug(
+              "Notification Response classified as non-terminal for active "
+              "paging on UE %lu",
+              amf_ue_ngap_id);
+        }
+        Logger::amf_n1().debug(
+            "Received Notification Response message while paging state "
+            "remains active");
       } break;
 
       default: {
@@ -985,7 +1191,11 @@ bool amf_n1::identity_response_handle(
 //------------------------------------------------------------------------------
 bool amf_n1::service_request_handle(
     std::shared_ptr<nas_context> nc, const uint32_t ran_ue_ngap_id,
-    const uint64_t amf_ue_ngap_id, bstring nas, uint8_t& cause) {
+    const uint64_t amf_ue_ngap_id, bstring nas,
+    bool paging_response_integrity_checked, uint8_t& cause) {
+  const bool page_triggered_reconnect =
+      nc && nc->is_paging_ongoing && !nc->paging_completed;
+
   // Verify NAS state machine is in correct state to process the message, if
   // not, drop the message
   if (!check_nas_event(
@@ -1014,6 +1224,7 @@ bool amf_n1::service_request_handle(
   oai::utils::utils::bdestroy_wrapper(&nas);
 
   // Validate Service Request message
+  uint8_t service_type = kServiceTypeSignalling;  // default; overridden below
   if ((decoded_size != KEncodeDecodeError)) {
     uint16_t amf_set_id = {};
     uint8_t amf_pointer = {};
@@ -1024,6 +1235,9 @@ bool amf_n1::service_request_handle(
           amf_pointer, tmsi);
       Logger::amf_n1().debug("GUTI %s, 5G-TMSI %s", guti.c_str(), tmsi.c_str());
     }
+    // Decode Service Type IE per TS 24.501 §5.6.1 / Table 9.11.3.50.1
+    service_request->GetServiceType(service_type);
+    Logger::amf_n1().debug("Service Type 0x%x", service_type);
   }
 
   // If there's no appropriate context, send Service Reject
@@ -1037,13 +1251,6 @@ bool amf_n1::service_request_handle(
 
   // Otherwise, continue to process Service Request message
   set_amf_ue_ngap_id_2_nas_context(amf_ue_ngap_id, nc);
-
-  if (!nc->security_ctx.has_value()) {
-    Logger::amf_n1().error("No Security Context found");
-    cause =
-        k5gmmCauseSecurityModeRejectedUnspecified;  // TODO: verify the cause
-    return false;
-  }
 
   // Prepare Service Accept
   auto service_accept = std::make_unique<ServiceAccept>();
@@ -1062,6 +1269,8 @@ bool amf_n1::service_request_handle(
   // PDU Session Status
   std::optional<uint16_t> pdu_session_status_opt =
       service_request->GetPduSessionStatus();
+  std::optional<uint16_t> allowed_pdu_session_status_opt =
+      service_request->GetAllowedPduSessionStatus();
 
   // Get PDU session status from Service Request
   if (!uplink_data_status_opt.has_value() or
@@ -1117,6 +1326,15 @@ bool amf_n1::service_request_handle(
             if (!pdu_session_status_opt.has_value())
               Logger::nas_mm().debug("IE PDU Session Status is not present");
           }
+
+          if (!allowed_pdu_session_status_opt.has_value()) {
+            allowed_pdu_session_status_opt =
+                service_request_nas->GetAllowedPduSessionStatus();
+            if (!allowed_pdu_session_status_opt.has_value()) {
+              Logger::nas_mm().debug(
+                  "IE Allowed PDU Session Status is not present");
+            }
+          }
         } break;
 
         default:
@@ -1124,6 +1342,13 @@ bool amf_n1::service_request_handle(
               "NAS Message Container, unknown NAS message 0x%x", message_type);
       }
     }
+  }
+
+  if (page_triggered_reconnect) {
+    nc->page_reconnect_allowed_pdu_session_status =
+        allowed_pdu_session_status_opt;
+  } else {
+    nc->page_reconnect_allowed_pdu_session_status.reset();
   }
 
   uint16_t pdu_session_status = 0x0000;
@@ -1134,13 +1359,21 @@ bool amf_n1::service_request_handle(
   if (uplink_data_status_opt.has_value())
     uplink_data_status = uplink_data_status_opt.value();
 
+  // TS 24.501 §5.6.1: Signalling-only SR must NOT activate PDU sessions
+  // even if Uplink Data Status IE is present.
   std::vector<uint8_t> pdu_session_to_be_activated = {};
-  if (uplink_data_status_opt.has_value())
-    get_pdu_session_to_be_activated(
-        uplink_data_status, pdu_session_to_be_activated);
-  else if (pdu_session_status_opt.has_value())
-    get_pdu_session_to_be_activated(
-        pdu_session_status, pdu_session_to_be_activated);
+  if (service_type != kServiceTypeSignalling) {
+    if (uplink_data_status_opt.has_value())
+      get_pdu_session_to_be_activated(
+          uplink_data_status, pdu_session_to_be_activated);
+    else if (pdu_session_status_opt.has_value())
+      get_pdu_session_to_be_activated(
+          pdu_session_status, pdu_session_to_be_activated);
+  } else {
+    Logger::amf_n1().debug(
+        "Service Type=Signalling — skipping PDU session activation per TS "
+        "24.501 §5.6.1");
+  }
 
   // Set default value for PDU Session Reactivation Result
   uint16_t pdu_session_reactivation_result = 0x0000;
@@ -1157,11 +1390,40 @@ bool amf_n1::service_request_handle(
 
   // No PDU Sessions To Be Activated
   if (pdu_session_to_be_activated.size() == 0) {
-    // TODO: should be updated
     Logger::amf_n1().debug("There is no PDU session to be activated");
-    cause = k5gmmCauseInsufficientUpResourcesForThePduSession;  // TODO: verify
-                                                                // the cause
-    return false;
+    uint32_t msg_len = service_accept->GetLength();
+    Logger::nas_mm().debug("Size of Service Accept message %ld", msg_len);
+    uint8_t buffer[msg_len] = {0};
+    int encoded_size        = service_accept->Encode(buffer, msg_len);
+    if (encoded_size == KEncodeDecodeError) {
+      Logger::nas_mm().error("Encode Service Accept message error");
+      cause = k5gmmCauseProtocolErrorUnspecified;
+      return false;
+    }
+
+    bstring protected_nas = nullptr;
+    encode_nas_message_protected(
+        nc->security_ctx.value(), false, kIntegrityProtectedAndCiphered,
+        NAS_MESSAGE_DOWNLINK, buffer, encoded_size, protected_nas);
+
+    auto itti_msg =
+        std::make_shared<itti_dl_nas_transport>(TASK_AMF_N1, TASK_AMF_N2);
+    itti_msg->ran_ue_ngap_id = ran_ue_ngap_id;
+    itti_msg->amf_ue_ngap_id = amf_ue_ngap_id;
+    itti_msg->nas            = bstrcpy(protected_nas);
+
+    int ret = itti_inst->send_msg(itti_msg);
+    if (0 != ret) {
+      Logger::amf_n1().error(
+          "Could not send ITTI message %s to task TASK_AMF_N2",
+          itti_msg->get_msg_name());
+      oai::utils::utils::bdestroy_wrapper(&protected_nas);
+      cause = k5gmmCauseCongestion;
+      return false;
+    }
+
+    handle_nas_event(nc, oai::amf::nas::nas_event_e::SERVICE_ACCEPT_SENT);
+    oai::utils::utils::bdestroy_wrapper(&protected_nas);
   } else {
     // Contact SMF to activate UP for these sessions
     // PDU SESSION RESOURCE SETUP_REQUEST
@@ -1237,6 +1499,35 @@ bool amf_n1::service_request_handle(
     oai::utils::utils::bdestroy_wrapper(&protected_nas);
   }
 
+  const bool terminal_paging_response = can_complete_paging_response(
+      nc, paging::paging_response_class::SERVICE_REQUEST,
+      paging_response_integrity_checked, false);
+  if (terminal_paging_response) {
+    // complete_paging_response_transition sets nas_status=CM_CONNECTED,
+    // is_paging_ongoing=false, stops T3513.
+    complete_paging_response_transition(
+        nc, ran_ue_ngap_id, amf_ue_ngap_id, "Service Request", false);
+    complete_reconnect_follow_up(
+        nc, ran_ue_ngap_id, amf_ue_ngap_id, page_triggered_reconnect);
+  } else if (page_triggered_reconnect) {
+    Logger::amf_n1().warn(
+        "Service Request for UE %lu is non-terminal for paging because the "
+        "NAS response was not integrity checked",
+        amf_ue_ngap_id);
+  } else {
+    // Non-paging Service Request success: flip CM state to CONNECTED.
+    // TS 24.501 §5.6.1: UE transitions to CM-CONNECTED on SERVICE ACCEPT.
+    if (nc->nas_status != CM_CONNECTED) {
+      set_5gcm_state(nc, CM_CONNECTED);
+    }
+    // Stop T3513 in case it was running (defensive; not paging path here).
+    nas_timer_manager_.stop_timer(nas_timer_type_e::T3513, nc);
+    // Drain any queued paging messages.  On a non-paging Service Request
+    // pending_paging_messages is empty, so on_paging_response_success returns
+    // immediately; passing nullopt (AllowedPDUSessionStatus absent) is correct.
+    amf_app_inst->on_paging_response_success(nc, std::nullopt);
+  }
+
   nas_procedure_manager_.complete_specific_procedure(*nc);
   return true;
 }
@@ -1245,7 +1536,10 @@ bool amf_n1::service_request_handle(
 bool amf_n1::service_request_handle(
     std::shared_ptr<nas_context> nc, const uint32_t ran_ue_ngap_id,
     const uint64_t amf_ue_ngap_id, bstring nas, uint8_t ulCount,
-    uint8_t& cause) {
+    bool paging_response_integrity_checked, uint8_t& cause) {
+  const bool page_triggered_reconnect =
+      nc && nc->is_paging_ongoing && !nc->paging_completed;
+
   // Verify NAS state machine is in correct state to process the message, if
   // not, drop the message
   if (!check_nas_event(
@@ -1274,6 +1568,13 @@ bool amf_n1::service_request_handle(
       service_request->Decode((uint8_t*) bdata(nas), blength(nas));
   oai::utils::utils::bdestroy_wrapper(&nas);
 
+  // Extract Service Type IE per TS 24.501 §5.6.1 / Table 9.11.3.50.1
+  uint8_t service_type = kServiceTypeSignalling;
+  if (decoded_size != KEncodeDecodeError) {
+    service_request->GetServiceType(service_type);
+    Logger::amf_n1().debug("Service Type 0x%x", service_type);
+  }
+
   // Get the old security context if necessary
   if ((decoded_size != KEncodeDecodeError) and (!nc->guti.has_value())) {
     uint16_t amf_set_id = {};
@@ -1288,6 +1589,40 @@ bool amf_n1::service_request_handle(
       // Get Security Context from old NAS Context if neccesary
       std::shared_ptr<nas_context> old_nc = {};
       if (guti_2_nas_context(guti, old_nc)) {
+        // TS 24.501 §5.6.1.4: validate incoming ngKSI against stored value
+        uint8_t sr_ngksi = kNasKeySetIdentifierNotAvailable;
+        service_request->GetNgKsi(sr_ngksi);
+        if (old_nc->security_ctx.has_value() &&
+            sr_ngksi != kNasKeySetIdentifierNotAvailable &&
+            sr_ngksi != old_nc->ngksi) {
+          Logger::amf_n1().warn(
+              "ngKSI mismatch: SR ngKSI=0x%x stored ngKSI=0x%x — sending "
+              "SERVICE REJECT and starting authentication (TS 24.501 §5.6.1.4)",
+              sr_ngksi, old_nc->ngksi);
+          // Do NOT copy old security context when ngKSI mismatches.
+          nc->imsi               = old_nc->imsi;
+          nc->supi               = old_nc->supi;
+          nc->old_ran_ue_ngap_id = old_nc->ran_ue_ngap_id;
+          nc->old_amf_ue_ngap_id = old_nc->amf_ue_ngap_id;
+          set_amf_ue_ngap_id_2_nas_context(amf_ue_ngap_id, nc);
+          uc->supi = nc->supi;
+          set_supi_2_amf_id(nc->supi, amf_ue_ngap_id);
+          set_supi_2_ran_id(nc->supi, ran_ue_ngap_id);
+          cause =
+              k5gmmCauseTemporarilyNotAuthorizedForThisSnpn;  // TODO: verify
+                                                              // cause value
+          send_service_reject(nc, cause);
+          // Start fresh authentication after reject.
+          start_authentication_procedure(
+              nc,
+              nc->security_ctx.has_value() ?
+                  nc->security_ctx.value().vector_pointer :
+                  0,
+              nc->ngksi, cause);
+          nas_procedure_manager_.complete_specific_procedure(*nc);
+          return false;
+        }
+
         Logger::amf_n1().debug("Get Security Context from old NAS Context");
         nc->security_ctx =
             std::make_optional<nas_secu_ctx>(old_nc->security_ctx.value());
@@ -1351,13 +1686,6 @@ bool amf_n1::service_request_handle(
 
   // Otherwise, continue to process Service Request message
   set_amf_ue_ngap_id_2_nas_context(amf_ue_ngap_id, nc);
-
-  if (!nc->security_ctx.has_value()) {
-    Logger::amf_n1().error("No Security Context found");
-    cause =
-        k5gmmCauseSecurityModeRejectedUnspecified;  // TODO: verify the cause
-    return false;
-  }
 
   // Update UE context
   uc->supi = nc->supi;
@@ -1434,6 +1762,8 @@ bool amf_n1::service_request_handle(
   // Get PDU session status from Service Request
   std::optional<uint16_t> pdu_session_status_opt =
       service_request->GetPduSessionStatus();
+  std::optional<uint16_t> allowed_pdu_session_status_opt =
+      service_request->GetAllowedPduSessionStatus();
 
   if (!uplink_data_status_opt.has_value() or
       !pdu_session_status_opt.has_value()) {
@@ -1490,6 +1820,15 @@ bool amf_n1::service_request_handle(
               Logger::nas_mm().debug("IE PDU Session Status is not present");
           }
 
+          if (!allowed_pdu_session_status_opt.has_value()) {
+            allowed_pdu_session_status_opt =
+                service_request_nas->GetAllowedPduSessionStatus();
+            if (!allowed_pdu_session_status_opt.has_value()) {
+              Logger::nas_mm().debug(
+                  "IE Allowed PDU Session Status is not present");
+            }
+          }
+
         } break;
 
         default:
@@ -1497,6 +1836,13 @@ bool amf_n1::service_request_handle(
               "NAS Message Container, unknown NAS message 0x%x", message_type);
       }
     }
+  }
+
+  if (page_triggered_reconnect) {
+    nc->page_reconnect_allowed_pdu_session_status =
+        allowed_pdu_session_status_opt;
+  } else {
+    nc->page_reconnect_allowed_pdu_session_status.reset();
   }
 
   uint16_t pdu_session_status = 0x0000;
@@ -1507,13 +1853,21 @@ bool amf_n1::service_request_handle(
   if (uplink_data_status_opt.has_value())
     uplink_data_status = uplink_data_status_opt.value();
 
+  // TS 24.501 §5.6.1: Signalling-only SR must NOT activate PDU sessions
+  // even if Uplink Data Status IE is present.
   std::vector<uint8_t> pdu_session_to_be_activated = {};
-  if (uplink_data_status_opt.has_value())
-    get_pdu_session_to_be_activated(
-        uplink_data_status, pdu_session_to_be_activated);
-  else if (pdu_session_status_opt.has_value())
-    get_pdu_session_to_be_activated(
-        pdu_session_status, pdu_session_to_be_activated);
+  if (service_type != kServiceTypeSignalling) {
+    if (uplink_data_status_opt.has_value())
+      get_pdu_session_to_be_activated(
+          uplink_data_status, pdu_session_to_be_activated);
+    else if (pdu_session_status_opt.has_value())
+      get_pdu_session_to_be_activated(
+          pdu_session_status, pdu_session_to_be_activated);
+  } else {
+    Logger::amf_n1().debug(
+        "Service Type=Signalling — skipping PDU session activation per TS "
+        "24.501 §5.6.1");
+  }
 
   // Set default value for PDU Session Reactivation Result
   uint16_t pdu_session_reactivation_result = 0x0000;
@@ -1703,6 +2057,35 @@ bool amf_n1::service_request_handle(
     oai::utils::utils::bdestroy_wrapper(&protected_nas);
   }
 
+  const bool terminal_paging_response = can_complete_paging_response(
+      nc, paging::paging_response_class::SERVICE_REQUEST,
+      paging_response_integrity_checked, false);
+  if (terminal_paging_response) {
+    // complete_paging_response_transition sets nas_status=CM_CONNECTED,
+    // is_paging_ongoing=false, stops T3513.
+    complete_paging_response_transition(
+        nc, ran_ue_ngap_id, amf_ue_ngap_id, "Service Request", false);
+    complete_reconnect_follow_up(
+        nc, ran_ue_ngap_id, amf_ue_ngap_id, page_triggered_reconnect);
+  } else if (page_triggered_reconnect) {
+    Logger::amf_n1().warn(
+        "Service Request for UE %lu is non-terminal for paging because the "
+        "NAS response was not integrity checked",
+        amf_ue_ngap_id);
+  } else {
+    // Non-paging Service Request success: flip CM state to CONNECTED.
+    // TS 24.501 §5.6.1: UE transitions to CM-CONNECTED on SERVICE ACCEPT.
+    if (nc->nas_status != CM_CONNECTED) {
+      set_5gcm_state(nc, CM_CONNECTED);
+    }
+    // Stop T3513 in case it was running (defensive; not paging path here).
+    nas_timer_manager_.stop_timer(nas_timer_type_e::T3513, nc);
+    // Drain any queued paging messages.  On a non-paging Service Request
+    // pending_paging_messages is empty, so on_paging_response_success returns
+    // immediately; passing nullopt (AllowedPDUSessionStatus absent) is correct.
+    amf_app_inst->on_paging_response_success(nc, std::nullopt);
+  }
+
   nas_procedure_manager_.complete_specific_procedure(*nc);
 
   return true;
@@ -1728,8 +2111,32 @@ void amf_n1::send_service_reject(
   oai::utils::output_wrapper::print_buffer(
       "amf_n1", "Service-Reject message buffer", buffer, encoded_size);
 
+  // TS 24.501 §5.6.1.5: SERVICE REJECT with cause #28 (Restricted
+  // service area), #31 (Redirection to EPC required) or #76 (CAG restrictions)
+  // MUST be integrity-protected; UE will silently discard plain-text otherwise.
+  const bool needs_integrity =
+      (cause == k5gmmCauseRestrictedServiceArea ||     // #28
+       cause == k5gmmCauseRedirectionToEpcRequired ||  // #31
+       cause ==
+           k5gmmCauseNotAuthorizedForThisCagOrAuthorizedForCagCellsOnly) &&  // #76
+      nc->security_ctx.has_value();
+
   auto dnt = std::make_shared<itti_dl_nas_transport>(TASK_AMF_N1, TASK_AMF_N2);
-  dnt->nas = blk2bstr(buffer, encoded_size);
+
+  if (needs_integrity) {
+    bstring protected_nas = nullptr;
+    encode_nas_message_protected(
+        nc->security_ctx.value(), false, kIntegrityProtectedAndCiphered,
+        NAS_MESSAGE_DOWNLINK, buffer, encoded_size, protected_nas);
+    dnt->nas = bstrcpy(protected_nas);
+    oai::utils::utils::bdestroy_wrapper(&protected_nas);
+    Logger::amf_n1().debug(
+        "SERVICE REJECT cause %d sent integrity-protected (TS 24.501 §5.6.1.5)",
+        cause);
+  } else {
+    dnt->nas = blk2bstr(buffer, encoded_size);
+  }
+
   dnt->amf_ue_ngap_id = nc->amf_ue_ngap_id;
   dnt->ran_ue_ngap_id = nc->ran_ue_ngap_id;
 
@@ -1751,7 +2158,7 @@ void amf_n1::send_service_reject(
 bool amf_n1::registration_request_handle(
     std::shared_ptr<nas_context>& nc, const uint32_t ran_ue_ngap_id,
     const uint64_t amf_ue_ngap_id, const std::string& snn, bstring reg,
-    uint8_t& cause) {
+    uint8_t security_header_type, uint8_t& cause) {
   // Decode Registration Request message
   auto registration_request = std::make_unique<RegistrationRequest>();
   int decoded_size =
@@ -2081,6 +2488,41 @@ bool amf_n1::registration_request_handle(
     nc->ue_security_capability = ue_security_capability.value();
   }
 
+  // Capture UE-specific Paging DRX from 5GS DRX Parameters IE if present.
+  // TS 23.502 §4.2.3.3 step 4b: prefer UE-negotiated DRX over gNB default.
+  {
+    // Map the NAS DRX value byte (TS 24.501 §9.11.3.2A) to e_Ngap_PagingDRX.
+    uint8_t drx_val           = registration_request->Get5gsDrxParameters();
+    e_Ngap_PagingDRX ngap_drx = Ngap_PagingDRX_v128;
+    bool drx_present          = true;
+    switch (drx_val) {
+      case 0x01:
+        ngap_drx = Ngap_PagingDRX_v32;
+        break;
+      case 0x02:
+        ngap_drx = Ngap_PagingDRX_v64;
+        break;
+      case 0x03:
+        ngap_drx = Ngap_PagingDRX_v128;
+        break;
+      case 0x04:
+        ngap_drx = Ngap_PagingDRX_v256;
+        break;
+      default:
+        drx_present = false;
+        break;
+    }
+    if (drx_present) {
+      nc->ue_specific_paging_drx = ngap_drx;
+      Logger::amf_n1().debug(
+          "UE-specific Paging DRX captured from Registration Request "
+          "(5GS DRX Parameters=0x%02x → Ngap_PagingDRX=%d)",
+          drx_val, static_cast<int>(ngap_drx));
+    } else {
+      nc->ue_specific_paging_drx = std::nullopt;
+    }
+  }
+
   // Get Requested NSSAI (Optional IE), if provided
   if (!registration_request->GetRequestedNssai(nc->requested_nssai)) {
     Logger::amf_n1().debug("No Optional IE RequestedNssai available");
@@ -2100,6 +2542,20 @@ bool amf_n1::registration_request_handle(
   // PDU Session Status
   std::optional<uint16_t> pdu_session_status_opt =
       registration_request->GetPduSessionStatus();
+  std::optional<uint16_t> allowed_pdu_session_status_opt = {};
+  if (active_paging_targets_non_3gpp_access(nc)) {
+    // RegistrationRequest currently exposes no presence bit for this IE; for
+    // non-3GPP paging, preserve the decoded value so the all-zero case remains
+    // a valid scoped paging response instead of being treated as absent.
+    allowed_pdu_session_status_opt =
+        registration_request->GetAllowedPduSessionStatus();
+    nc->page_reconnect_allowed_pdu_session_status =
+        allowed_pdu_session_status_opt;
+    Logger::amf_n1().debug(
+        "Registration Request carries Allowed PDU Session Status 0x%04x for "
+        "non-3GPP associated paging on UE %lu",
+        allowed_pdu_session_status_opt.value(), amf_ue_ngap_id);
+  }
 
   bstring nas_msg = nullptr;
   bool is_messagecontainer =
@@ -2162,30 +2618,38 @@ bool amf_n1::registration_request_handle(
     Logger::amf_n1().debug("Update UC context, SUPI %s", nc->supi.c_str());
   }
 
-  // Store NAS information into nas_context
-  // Run the corresponding registration procedure
+  const bool integrity_checked =
+      security_header_type != kPlain5gsMessage && nc->security_ctx.has_value();
+  bool registration_security_exception = false;
+  bool registration_result             = false;
+
+  // Store NAS information into nas_context and run the corresponding
+  // registration procedure.
   switch (reg_type) {
     case kInitialRegistration: {
-      return run_registration_procedure(nc, cause);
+      registration_result = run_registration_procedure(nc, cause);
     } break;
 
     case kMobilityRegistrationUpdating: {
       Logger::amf_n1().debug("Handling Mobility Registration Update...");
-      return run_mobility_registration_update_procedure(
+      registration_result = run_mobility_registration_update_procedure(
           nc, uplink_data_status_opt, pdu_session_status_opt, cause);
+      registration_security_exception = registration_result;
     } break;
 
     case kPeriodicRegistrationUpdating: {
       Logger::amf_n1().debug("Handling Periodic Registration Update...");
       if (is_messagecontainer)
-        return run_periodic_registration_update_procedure(nc, nas_msg, cause);
+        registration_result =
+            run_periodic_registration_update_procedure(nc, nas_msg, cause);
       else {
         uint16_t pdu_session_status = 0x0000;
         if (pdu_session_status_opt.has_value())
           pdu_session_status = pdu_session_status_opt.value();
-        return run_periodic_registration_update_procedure(
+        registration_result = run_periodic_registration_update_procedure(
             nc, pdu_session_status, cause);
       }
+      registration_security_exception = registration_result;
     } break;
 
     case kEmergencyRegistration: {
@@ -2195,6 +2659,7 @@ bool amf_n1::registration_request_handle(
         cause = k5gmmCause5gsServicesNotAllowed;
         return false;
       }
+      registration_result = true;
     } break;
 
     default: {
@@ -2203,7 +2668,25 @@ bool amf_n1::registration_request_handle(
       return false;
     }
   }
-  return true;
+
+  if (registration_result &&
+      can_complete_paging_response(
+          nc, paging::paging_response_class::REGISTRATION_REQUEST,
+          integrity_checked,
+          registration_security_exception ||
+              allowed_pdu_session_status_opt.has_value())) {
+    nc->page_reconnect_guti_refresh_pending = true;
+    complete_paging_response_transition(
+        nc, ran_ue_ngap_id, amf_ue_ngap_id, "Registration Request", false);
+  } else if (
+      registration_result && nc && nc->is_paging_ongoing &&
+      !nc->paging_completed) {
+    Logger::amf_n1().debug(
+        "Registration Request remains non-terminal for active paging on UE %lu",
+        amf_ue_ngap_id);
+  }
+
+  return registration_result;
 }
 
 //------------------------------------------------------------------------------
@@ -3708,6 +4191,9 @@ bool amf_n1::security_mode_complete_handle(
   // Set NAS message for current procedure running
   nc->nas_message_for_current_procedure_running = kRegistrationAccept;
 
+  // Reset PPF=TRUE on successful registration
+  nc->ppf_3gpp = true;
+
   // Encode Registration Accept
   bstring protected_nas = nullptr;
   uint32_t msg_len      = registration_accept->GetLength();
@@ -3868,7 +4354,7 @@ bool amf_n1::security_mode_reject_handle(
 //------------------------------------------------------------------------------
 bool amf_n1::registration_complete_handle(
     const uint32_t ran_ue_ngap_id, const uint64_t amf_ue_ngap_id,
-    bstring nas_msg, uint8_t& cause) {
+    bstring nas_msg, uint8_t security_header_type, uint8_t& cause) {
   Logger::amf_n1().debug("Received Registration Complete message, processing");
 
   // Verify NAS state machine is in correct state to process the message, if
@@ -3916,6 +4402,46 @@ bool amf_n1::registration_complete_handle(
       nc, oai::amf::nas::nas_event_e::REGISTRATION_COMPLETE_RECEIVED);
   nas_procedure_manager_.complete_common_procedure(*nc);
   nas_procedure_manager_.complete_specific_procedure(*nc);
+
+  // Re-admit all deferred awaiting-registration messages now that the UE
+  // is 5GMM-REGISTERED.  on_registration_complete_drain runs admit_transfer on
+  // every entry so the current CM state (CONNECTED or IDLE-NORMAL) is honoured
+  // and the correct outcome (DIRECT_DELIVERY, PAGING, or REJECT) is chosen per
+  // TS 23.502 §5.2.2.2.7 / §4.2.3.3.  This supersedes the single-entry
+  // deliver_awaiting_registration_messages re-dispatch.
+  amf_app_inst->on_registration_complete_drain(nc);
+
+  // If a paging cycle is still active when Registration Complete is
+  // received (UE responded to paging with a Registration Request), terminate
+  // the paging cycle now.  Without this call, T3513 keeps running and
+  // eventually fires handle_t3513_final_expiry() which incorrectly sets
+  // ppf_3gpp=false and sends failure callbacks for an already-reconnected UE.
+  // TS 23.502 §4.2.3.3: the paging procedure MUST complete when the UE
+  // reconnects successfully, regardless of the reconnect message type.
+  const bool page_triggered_registration_complete =
+      nc->is_paging_ongoing && !nc->paging_completed;
+  const bool page_reconnect_guti_refresh =
+      page_triggered_registration_complete ||
+      nc->page_reconnect_guti_refresh_pending;
+  if (page_triggered_registration_complete &&
+      can_complete_paging_response(
+          nc, paging::paging_response_class::REGISTRATION_COMPLETE,
+          security_header_type != kPlain5gsMessage, false)) {
+    Logger::amf_n1().debug(
+        "UE %lu completed Registration during active paging cycle - "
+        "terminating paging via complete_paging_response_transition",
+        amf_ue_ngap_id);
+    complete_paging_response_transition(
+        nc, ran_ue_ngap_id, amf_ue_ngap_id, "Registration Complete", false);
+  } else if (page_triggered_registration_complete) {
+    Logger::amf_n1().warn(
+        "Registration Complete for UE %lu did not satisfy terminal paging "
+        "gates; T3513 remains active",
+        amf_ue_ngap_id);
+  }
+
+  complete_reconnect_follow_up(
+      nc, ran_ue_ngap_id, amf_ue_ngap_id, page_reconnect_guti_refresh);
 
   // Notify subscribers that the UE is now fully REGISTERED
   Logger::amf_n1().debug(
@@ -5737,6 +6263,32 @@ void amf_n1::initialize_registration_accept(
   }
   registration_accept->SetTaiList(tai_list);
 
+  // populate registration_area_tai_list in UE NGAP context for paging fan-out.
+  // TS 23.502 §4.2.3.3 step 4b: use the TAI List from Registration Accept,
+  // not the AMF-wide PLMN config, so UE-specific restrictions are respected.
+  {
+    std::shared_ptr<ue_ngap_context> unc_reg = {};
+    if (amf_n2_inst->ran_ue_id_2_ue_ngap_context(
+            nc->ran_ue_ngap_id, uc->gnb_id, unc_reg)) {
+      unc_reg->registration_area_tai_list.clear();
+      // Convert p_tai_t (NAS encoding type) to Tai_t (NGAP type).
+      // Both carry the same set of TAIs that were encoded in Registration
+      // Accept.
+      for (const auto& p : tai_list) {
+        // A p_tai_t entry can have multiple PLMNs × multiple TACs; expand all.
+        for (const auto& plmn : p.plmn_list) {
+          for (const auto& tac : p.tac_list) {
+            Tai_t t = {};
+            t.mcc   = plmn.mcc;
+            t.mnc   = plmn.mnc;
+            t.tac   = tac;
+            unc_reg->registration_area_tai_list.push_back(t);
+          }
+        }
+      }
+    }
+  }
+
   // Network Feature Support
   // TODO: remove hardcoded values
   registration_accept->Set5gsNetworkFeatureSupport(
@@ -5820,6 +6372,8 @@ void amf_n1::initialize_registration_accept(
   registration_accept->SetRejectedNssai(rejected_nssais);
   registration_accept->SetConfiguredNssai(
       allowed_nssais);  // TODO: use Allowed NSSAIs for now
+
+  // TODO: MICO mode
   return;
 }
 
@@ -5840,6 +6394,9 @@ void amf_n1::mobile_reachable_timer_timeout(
 
   set_mobile_reachable_timer_timeout(nc, true);
 
+  // Clear PPF on Mobile Reachable Timer expiry
+  nc->ppf_3gpp = false;
+
   // Trigger UE Loss of Connectivity Status Notify
   Logger::amf_n1().debug(
       "Signal the UE Loss of Connectivity Event notification for SUPI %s",
@@ -5848,6 +6405,23 @@ void amf_n1::mobile_reachable_timer_timeout(
       nc->supi, MAX_DETECTION_TIME_EXPIRED,
       amf_cfg->support_features.http_version, nc->ran_ue_ngap_id,
       amf_ue_ngap_id);
+
+  // TS 29.518 §6.1.5.6 Table 6.1.5.6-1: UE_NOT_RESPONDING is the spec-correct
+  // cause for paging/reachability exhaustion (UE did not respond).
+  // UE_NOT_REACHABLE_FOR_SESSION is only correct for synchronous PPF=FALSE
+  // rejects, not for deferred-transfer drain on timer expiry.
+  {
+    // Snapshot under lock before draining.
+    std::deque<amf_application::paging::paging_transaction> temp_snap;
+    {
+      std::lock_guard<std::mutex> lk(nc->paging_queues_mutex);
+      temp_snap = std::move(nc->temporarily_unreachable_messages);
+    }
+    fail_deferred_transactions(
+        nc, temp_snap, "UE_NOT_RESPONDING", amf_ue_ngap_id,
+        "temporary-unreachable");
+  }
+  stop_temporary_unreachable_timer(nc);
 
   // TODO: Start the implicit de-registration timer
   timer_id_t tid = itti_inst->timer_setup(
@@ -5927,6 +6501,25 @@ void amf_n1::implicit_deregistration_timer_timeout(
   // Table 10.2.2 implicit deregistration
   nas_timer_manager_.stop_all_procedure_timers(nc);
   handle_nas_event(nc, oai::amf::nas::nas_event_e::IMPLICIT_DEREGISTRATION);
+
+  // Clear PPF on Implicit Deregistration Timer expiry
+  nc->ppf_3gpp = false;
+
+  // TS 29.518 §6.1.5.6 Table 6.1.5.6-1: use UE_NOT_RESPONDING (UE did not
+  // respond) for deferred-transfer drain on implicit deregistration — these
+  // messages were waiting for a paging response that never came.
+  {
+    // Snapshot under lock before draining.
+    std::deque<amf_application::paging::paging_transaction> temp_snap;
+    {
+      std::lock_guard<std::mutex> lk(nc->paging_queues_mutex);
+      temp_snap = std::move(nc->temporarily_unreachable_messages);
+    }
+    fail_deferred_transactions(
+        nc, temp_snap, "UE_NOT_RESPONDING", amf_ue_ngap_id,
+        "temporary-unreachable");
+  }
+  stop_temporary_unreachable_timer(nc);
 
   // Trigger UE Connectivity Status Notify
   Logger::amf_n1().debug(
@@ -6939,8 +7532,168 @@ static bool resolve_nas_context_for_timer(
   return true;
 }
 
-// ---------------------------------------------------------------------------
-// T3550 — Registration Accept retransmit  (§5.5.1.2.4 / Table 10.2.2)
+//------------------------------------------------------------------------------
+paging::paging_response_class amf_n1::classify_paging_response(
+    uint8_t message_type) const {
+  switch (message_type) {
+    case kServiceRequest:
+      return paging::paging_response_class::SERVICE_REQUEST;
+    case kControlPlaneServiceRequest:
+      return paging::paging_response_class::CONTROL_PLANE_SERVICE_REQUEST;
+    case kRegistrationRequest:
+      return paging::paging_response_class::REGISTRATION_REQUEST;
+    case kRegistrationComplete:
+      return paging::paging_response_class::REGISTRATION_COMPLETE;
+    case kMessageTypeNotification:
+      return paging::paging_response_class::NOTIFICATION;
+    case kMessageTypeNotificationResponse:
+      return paging::paging_response_class::NOTIFICATION_RESPONSE;
+    default:
+      return paging::paging_response_class::NON_QUALIFYING;
+  }
+}
+
+//------------------------------------------------------------------------------
+paging::paging_response_class amf_n1::classify_paging_response_for_service_type(
+    uint8_t service_type) const {
+  switch (service_type) {
+    case kServiceTypeSignalling:
+    case kServiceTypeData:
+    case kServiceTypeMobileTerminatedServ:
+    case kServiceTypeEmergency:
+    case kServiceTypeEmergencyServicesFB:
+    case kServiceTypeHighPriorityAccess:
+    case kServiceTypeElevatedSignalling:
+      return paging::paging_response_class::SERVICE_REQUEST;
+    default:
+      return paging::paging_response_class::NON_QUALIFYING;
+  }
+}
+
+//------------------------------------------------------------------------------
+bool amf_n1::is_priority_service_type(uint8_t service_type) const {
+  return service_type == kServiceTypeEmergency ||
+         service_type == kServiceTypeEmergencyServicesFB ||
+         service_type == kServiceTypeHighPriorityAccess ||
+         service_type == kServiceTypeElevatedSignalling;
+}
+
+//------------------------------------------------------------------------------
+bool amf_n1::active_paging_targets_non_3gpp_access(
+    const std::shared_ptr<nas_context>& nc) const {
+  if (!nc) {
+    return false;
+  }
+
+  // Iterate under lock; this is a read-only scan.
+  std::lock_guard<std::mutex> lk(nc->paging_queues_mutex);
+  for (const auto& transaction : nc->pending_paging_messages) {
+    if (transaction.target_access.has_value() &&
+        transaction.target_access.value().getValue() ==
+            AccessType::eAccessType::NON_3GPP_ACCESS) {
+      return true;
+    }
+  }
+  return false;
+}
+
+//------------------------------------------------------------------------------
+bool amf_n1::can_complete_paging_response(
+    const std::shared_ptr<nas_context>& nc,
+    paging::paging_response_class response_class,
+    bool integrity_checked_nas_response,
+    bool registration_security_exception) const {
+  if (!nc || !nc->is_paging_ongoing || nc->paging_completed) {
+    return false;
+  }
+
+  const auto gate = paging::gate_for_response(response_class);
+  if (gate.lower_layer_terminal) {
+    return true;
+  }
+
+  if (!gate.terminal_candidate &&
+      !(gate.allows_registration_security_success &&
+        registration_security_exception) &&
+      !(gate.allows_non_3gpp_allowed_status &&
+        active_paging_targets_non_3gpp_access(nc))) {
+    Logger::amf_n1().debug(
+        "%s classified as non-terminal for active paging on UE %lu", gate.name,
+        nc->amf_ue_ngap_id);
+    return false;
+  }
+
+  if (gate.requires_integrity_checked_nas && !integrity_checked_nas_response &&
+      !(gate.allows_registration_security_success &&
+        registration_security_exception)) {
+    Logger::amf_n1().warn(
+        "%s cannot stop T3513 for UE %lu without an integrity-checked NAS "
+        "response or a qualifying registration/security exception",
+        gate.name, nc->amf_ue_ngap_id);
+    return false;
+  }
+
+  return true;
+}
+
+//------------------------------------------------------------------------------
+void amf_n1::complete_paging_response_transition(
+    std::shared_ptr<nas_context>& nc, uint32_t ran_ue_ngap_id,
+    uint64_t amf_ue_ngap_id, const char* transition_name,
+    bool deliver_pending_messages) {
+  if (!nc || !nc->is_paging_ongoing || nc->paging_completed) {
+    return;
+  }
+
+  Logger::amf_n1().info(
+      "%s: stopping T3513, clearing paging state for UE %lu", transition_name,
+      amf_ue_ngap_id);
+  nc->paging_completed        = true;
+  nc->nas_status              = CM_CONNECTED;
+  nc->ppf_3gpp                = true;
+  nc->is_paging_ongoing       = false;
+  nc->paging_priority_present = false;
+  nc->paging_effective_ppi    = 0;
+  nas_timer_manager_.stop_timer(nas_timer_type_e::T3513, nc);
+
+  publish_paging_outcome(
+      nc->supi, paging::paging_outcome::PAGING_SUCCESS, transition_name,
+      ran_ue_ngap_id, amf_ue_ngap_id);
+
+  bool needs_drain = false;
+  {
+    // Brief lock to check emptiness before entering the drain.
+    std::lock_guard<std::mutex> lk(nc->paging_queues_mutex);
+    needs_drain =
+        deliver_pending_messages && !nc->pending_paging_messages.empty();
+  }
+  if (needs_drain) {
+    complete_reconnect_follow_up(nc, ran_ue_ngap_id, amf_ue_ngap_id, false);
+  }
+
+  sync_paging_queue_depth_metrics(nc);
+}
+
+//------------------------------------------------------------------------------
+void amf_n1::complete_reconnect_follow_up(
+    std::shared_ptr<nas_context>& nc, uint32_t ran_ue_ngap_id,
+    uint64_t amf_ue_ngap_id, bool send_configuration_update) {
+  if (!nc) {
+    return;
+  }
+
+  if (send_configuration_update) {
+    maybe_send_configuration_update_with_new_guti(
+        nc, ran_ue_ngap_id, amf_ue_ngap_id);
+  }
+
+  deliver_pending_paging_messages(nc, ran_ue_ngap_id, amf_ue_ngap_id);
+  wake_temporary_unreachable_messages(nc, ran_ue_ngap_id, amf_ue_ngap_id);
+  nc->page_reconnect_allowed_pdu_session_status.reset();
+  nc->page_reconnect_guti_refresh_pending = false;
+  sync_paging_queue_depth_metrics(nc);
+}
+
 // ---------------------------------------------------------------------------
 void amf_n1::handle_t3550_expiry(
     timer_id_t timer_id, std::string amf_ue_ngap_id_str) {
@@ -6973,9 +7726,6 @@ void amf_n1::handle_t3550_expiry(
   }
 }
 
-// ---------------------------------------------------------------------------
-// T3560 — Authentication Request / Security Mode Command retransmit
-//          (§5.4.1.3.7 / §5.4.2.7 / Table 10.2.2)
 // ---------------------------------------------------------------------------
 void amf_n1::handle_t3560_expiry(
     timer_id_t timer_id, std::string amf_ue_ngap_id_str) {
@@ -7030,8 +7780,6 @@ void amf_n1::handle_t3560_expiry(
 }
 
 // ---------------------------------------------------------------------------
-// T3570 — Identity Request retransmit  (§5.4.3.6 / Table 10.2.2)
-// ---------------------------------------------------------------------------
 void amf_n1::handle_t3570_expiry(
     timer_id_t timer_id, std::string amf_ue_ngap_id_str) {
   Logger::amf_n1().debug(
@@ -7063,8 +7811,6 @@ void amf_n1::handle_t3570_expiry(
   }
 }
 
-// ---------------------------------------------------------------------------
-// T3522 — NW-initiated Deregistration Request retransmit  (§5.5.2.3.5)
 // ---------------------------------------------------------------------------
 void amf_n1::handle_t3522_expiry(
     timer_id_t timer_id, std::string amf_ue_ngap_id_str) {
@@ -7106,10 +7852,6 @@ void amf_n1::handle_t3522_expiry(
 }
 
 // ---------------------------------------------------------------------------
-// T3555 — Configuration Update Command retransmit  (§5.4.4.6)
-// TODO: implement retransmit once Configuration Update Command encoding is
-//       available; for now only the final-expiry state update is stubbed.
-// ---------------------------------------------------------------------------
 void amf_n1::handle_t3555_expiry(
     timer_id_t timer_id, std::string amf_ue_ngap_id_str) {
   Logger::amf_n1().debug(
@@ -7120,21 +7862,836 @@ void amf_n1::handle_t3555_expiry(
 }
 
 // ---------------------------------------------------------------------------
-// T3513 — Paging retransmit  (§5.6.2.2.1)
-// T3513 has discretionary retransmit (max_retransmissions = 0) — no
-// final-expiry state change required by the spec; the paging attempt simply
-// fails silently from the AMF perspective.
+void amf_n1::start_paging_timer(
+    std::shared_ptr<nas_context>& nc, uint64_t amf_ue_ngap_id) {
+  nas_timer_manager_.start_timer(nas_timer_type_e::T3513, nc, amf_ue_ngap_id);
+  publish_paging_outcome(
+      nc->supi, paging::paging_outcome::PAGING_ACCEPTED,
+      "ATTEMPTING_TO_REACH_UE", nc->ran_ue_ngap_id, amf_ue_ngap_id);
+  sync_paging_queue_depth_metrics(nc);
+  Logger::amf_n1().debug(
+      "T3513 started for UE %lu (paging timer — %u s, max %u retx)",
+      amf_ue_ngap_id,
+      nas_timer_manager_.get_interval_sec(nas_timer_type_e::T3513),
+      nas_timer_manager_.get_max_retransmissions(nas_timer_type_e::T3513));
+}
+
+// ---------------------------------------------------------------------------
+void amf_n1::complete_ngap_resume_paging_response(
+    uint64_t amf_ue_ngap_id, uint32_t ran_ue_ngap_id) {
+  std::shared_ptr<nas_context> nc = {};
+  if (!amf_ue_id_2_nas_context(amf_ue_ngap_id, nc) || !nc) {
+    return;
+  }
+
+  if (!can_complete_paging_response(
+          nc, paging::paging_response_class::NGAP_RESUME, false, false)) {
+    return;
+  }
+
+  complete_paging_response_transition(
+      nc, ran_ue_ngap_id, amf_ue_ngap_id, "NGAP Resume", false);
+  complete_reconnect_follow_up(nc, ran_ue_ngap_id, amf_ue_ngap_id, true);
+}
+
 // ---------------------------------------------------------------------------
 void amf_n1::handle_t3513_expiry(
     timer_id_t timer_id, std::string amf_ue_ngap_id_str) {
   Logger::amf_n1().debug(
-      "T3513 (Paging) expiry for UE %s — retransmit not yet implemented",
-      amf_ue_ngap_id_str.c_str());
-  // TODO: implement T3513 paging retransmit handling
+      "T3513 (Paging) expiry for UE %s", amf_ue_ngap_id_str.c_str());
+
+  uint64_t amf_ue_ngap_id = INVALID_AMF_UE_NGAP_ID;
+  std::shared_ptr<nas_context> nc;
+  if (!resolve_nas_context_for_timer(
+          amf_ue_ngap_id_str, amf_ue_ngap_id, nc, this))
+    return;
+
+  // Stale check: paging no longer ongoing (Service Request already handled)
+  if (!nc->is_paging_ongoing) {
+    Logger::amf_n1().debug(
+        "T3513 expiry: paging no longer ongoing for UE %lu — ignoring stale "
+        "event",
+        amf_ue_ngap_id);
+    return;
+  }
+
+  // Idempotency: paging cycle already had a terminal outcome
+  if (nc->paging_completed) {
+    Logger::amf_n1().debug(
+        "T3513 expiry: paging already completed for UE %lu — ignoring",
+        amf_ue_ngap_id);
+    return;
+  }
+
+  // handle_expiry() increments retx counter; auto_restart=false means the
+  // timer is NOT restarted here — see TS 24.501 §5.6.2.2.1.
+  // The timer is restarted below only after the ITTI send succeeds.
+  if (!amf_n2_inst->has_paging_targets(
+          amf_ue_ngap_id, nc->ran_ue_ngap_id, true)) {
+    Logger::amf_n1().warn(
+        "T3513 expiry: no paging targets remain for UE %lu - treating as final "
+        "expiry",
+        amf_ue_ngap_id);
+    handle_t3513_final_expiry(
+        nc, amf_ue_ngap_id, paging::paging_outcome::NO_TARGET,
+        kNoPagingTargetTransferCause);
+    return;
+  }
+
+  // Pass auto_restart=false so the manager does NOT restart the ITTI timer
+  // before we know whether the paging ITTI send succeeds.
+  bool should_retransmit = nas_timer_manager_.handle_expiry(
+      nas_timer_type_e::T3513, nc, amf_ue_ngap_id, /*auto_restart=*/false);
+
+  if (should_retransmit) {
+    stacs.increment_paging_retries();
+    Logger::amf_n1().info(
+        "T3513: retransmitting paging for UE %lu (attempt %u/%u)",
+        amf_ue_ngap_id,
+        nc->nas_timers[static_cast<size_t>(nas_timer_type_e::T3513)]
+            .retransmission_count,
+        nas_timer_manager_.get_max_retransmissions(nas_timer_type_e::T3513));
+
+    // Re-trigger paging with is_retransmission=true.
+    // Timer restart happens AFTER a successful send (TS 24.501 §5.6.2.2.1).
+    auto paging_msg = std::make_shared<itti_paging>(TASK_AMF_N1, TASK_AMF_N2);
+    paging_msg->amf_ue_ngap_id    = amf_ue_ngap_id;
+    paging_msg->ran_ue_ngap_id    = nc->ran_ue_ngap_id;
+    paging_msg->ppi               = nc->paging_effective_ppi;
+    paging_msg->is_ppi_set        = nc->paging_priority_present;
+    paging_msg->is_retransmission = true;
+    int ret                       = itti_inst->send_msg(paging_msg);
+    if (ret != RETURNok) {
+      // ITTI send failed — timer stays stopped.  Treat as terminal: PPF=false,
+      // drain queues, emit failure notify.  Increment send-failure counter.
+      Logger::amf_n1().warn(
+          "T3513: could not send retransmit paging ITTI message for UE %lu — "
+          "treating as final expiry",
+          amf_ue_ngap_id);
+      stacs.increment_paging_send_failed();
+      handle_t3513_final_expiry(nc, amf_ue_ngap_id);
+      return;
+    }
+    // Send succeeded — restart the timer to supervise this retransmit attempt.
+    // Preserve the retransmission count so handle_expiry correctly tracks
+    // remaining attempts: save before start_timer (which resets to 0), restore
+    // after so the next expiry increments from the correct baseline.
+    const uint8_t saved_retx_count =
+        nc->nas_timers[static_cast<size_t>(nas_timer_type_e::T3513)]
+            .retransmission_count;
+    nas_timer_manager_.start_timer(nas_timer_type_e::T3513, nc, amf_ue_ngap_id);
+    nc->nas_timers[static_cast<size_t>(nas_timer_type_e::T3513)]
+        .retransmission_count = saved_retx_count;
+  } else {
+    // Final expiry
+    handle_t3513_final_expiry(nc, amf_ue_ngap_id);
+  }
 }
 
 // ---------------------------------------------------------------------------
-// T3565 — Notification retransmit  (§5.6.3)
+// helpers
+// ---------------------------------------------------------------------------
+// TS 23.502 §5.2.2.2.7A: the spec does not require the producer to
+// DNS-resolve the failure-notify URI before using it.  The original
+// getaddrinfo() call blocked TASK_AMF_N1 for up to ~5 s on DNS timeout,
+// which stalled all paging FSM events for every UE.
+//
+// Replaced with a syntactic validity check: require a well-formed http(s)://
+// URI with a non-empty authority.  DNS resolution (and any resulting timeout)
+// is deferred to http_client at send time (runs in TASK_AMF_SBI).
+bool amf_n1::validate_callback_uri(const std::string& uri) {
+  if (uri.empty()) return false;
+
+  // Require http:// or https:// scheme
+  const bool has_http = (uri.size() > 7 && uri.substr(0, 7) == "http://") ||
+                        (uri.size() > 8 && uri.substr(0, 8) == "https://");
+  if (!has_http) {
+    Logger::amf_n1().warn(
+        "validate_callback_uri: missing http(s):// scheme in '%s'",
+        uri.c_str());
+    return false;
+  }
+
+  // Require a non-empty authority (host) after "://"
+  const size_t auth_start = uri.find("//") + 2;
+  if (auth_start >= uri.size() || uri[auth_start] == '/' ||
+      uri[auth_start] == '\0') {
+    Logger::amf_n1().warn(
+        "validate_callback_uri: empty authority in '%s'", uri.c_str());
+    return false;
+  }
+
+  return true;
+}
+
+//------------------------------------------------------------------------------
+void amf_n1::publish_paging_outcome(
+    const std::string& supi, paging::paging_outcome outcome,
+    const std::string& cause, std::optional<uint32_t> ran_ue_ngap_id,
+    std::optional<uint64_t> amf_ue_ngap_id) {
+  if (supi.empty()) {
+    return;
+  }
+
+  std::shared_ptr<nas_context> nc = {};
+  if (supi_2_nas_context(supi, nc)) {
+    sync_paging_queue_depth_metrics(nc);
+  }
+
+  switch (outcome) {
+    case paging::paging_outcome::DIRECT_DELIVERY:
+      stacs.increment_paging_requests();
+      stacs.increment_paging_direct_deliveries();
+      break;
+    case paging::paging_outcome::PAGING_ACCEPTED:
+      stacs.increment_paging_requests();
+      stacs.increment_paging_cycles();
+      break;
+    case paging::paging_outcome::PAGING_SUCCESS:
+      stacs.increment_paging_successes();
+      break;
+    case paging::paging_outcome::PAGING_TIMEOUT:
+      stacs.increment_paging_timeouts();
+      break;
+    case paging::paging_outcome::DEFERRED_AWAITING_REGISTRATION:
+      stacs.increment_paging_requests();
+      stacs.increment_paging_deferred_registration();
+      break;
+    case paging::paging_outcome::DEFERRED_AWAITING_REGISTRATION_EXPIRED:
+      break;
+    case paging::paging_outcome::DEFERRED_TEMPORARY_UNREACHABLE:
+      stacs.increment_paging_requests();
+      stacs.increment_paging_deferred_temporary_unreachable();
+      break;
+    case paging::paging_outcome::DEFERRED_TEMPORARY_UNREACHABLE_EXPIRED:
+      break;
+    case paging::paging_outcome::REJECTED:
+      stacs.increment_paging_requests();
+      stacs.increment_paging_rejections();
+      break;
+    case paging::paging_outcome::NO_TARGET:
+      stacs.increment_paging_no_target();
+      break;
+  }
+
+  if (!amf_cfg || !amf_cfg->paging.enable_subscription_notifications) {
+    Logger::amf_n1().debug(
+        "Paging subscription notifications disabled for outcome %u on SUPI %s",
+        static_cast<unsigned>(outcome), supi.c_str());
+    return;
+  }
+
+  switch (outcome) {
+    case paging::paging_outcome::PAGING_SUCCESS:
+      handle_ue_reachability_status_change(
+          supi, CM_CONNECTED, amf_cfg->support_features.http_version);
+      break;
+    case paging::paging_outcome::DEFERRED_AWAITING_REGISTRATION:
+    case paging::paging_outcome::DEFERRED_TEMPORARY_UNREACHABLE:
+      handle_ue_reachability_status_change(
+          supi, CM_IDLE, amf_cfg->support_features.http_version);
+      break;
+    case paging::paging_outcome::PAGING_TIMEOUT:
+    case paging::paging_outcome::NO_TARGET:
+      handle_ue_reachability_status_change(
+          supi, CM_IDLE, amf_cfg->support_features.http_version);
+      [[fallthrough]];
+    case paging::paging_outcome::DEFERRED_AWAITING_REGISTRATION_EXPIRED:
+    case paging::paging_outcome::DEFERRED_TEMPORARY_UNREACHABLE_EXPIRED:
+    case paging::paging_outcome::REJECTED: {
+      if (!cause.empty()) {
+        oai::_3gpp::model::CommunicationFailure comm_failure = {};
+        comm_failure.setNasReleaseCode(cause);
+        handle_ue_communication_failure_change(
+            supi, comm_failure, amf_cfg->support_features.http_version);
+      }
+    } break;
+    default:
+      break;
+  }
+
+  Logger::amf_n1().debug(
+      "Published paging outcome %u for SUPI %s (cause=%s, ran=%u, amf=%lu)",
+      static_cast<unsigned>(outcome), supi.c_str(), cause.c_str(),
+      ran_ue_ngap_id.value_or(0), amf_ue_ngap_id.value_or(0));
+}
+
+// ---------------------------------------------------------------------------
+void amf_n1::handle_t3513_final_expiry(
+    std::shared_ptr<nas_context>& nc, uint64_t amf_ue_ngap_id,
+    paging::paging_outcome outcome, const std::string& cause) {
+  // Idempotency — single terminal outcome per paging cycle
+  if (nc->paging_completed) {
+    Logger::amf_n1().debug(
+        "T3513 final expiry: paging already completed for UE %lu — skipping",
+        amf_ue_ngap_id);
+    return;
+  }
+  nc->paging_completed = true;
+
+  Logger::amf_n1().warn(
+      "T3513 final expiry: UE %lu not responding after %u retransmissions — "
+      "setting PPF=FALSE",
+      amf_ue_ngap_id,
+      nas_timer_manager_.get_max_retransmissions(nas_timer_type_e::T3513));
+
+  // Clear PPF (Paging Proceed Flag)
+  nc->ppf_3gpp = false;
+
+  // Clear any active or stale T3513 bookkeeping on every terminal path.
+  nas_timer_manager_.stop_timer(nas_timer_type_e::T3513, nc);
+
+  // Clear paging state
+  nc->is_paging_ongoing       = false;
+  nc->paging_priority_present = false;
+  nc->paging_effective_ppi    = 0;
+
+  // TS 29.518 §6.1.5.6 Table 6.1.5.6-1: use UE_NOT_RESPONDING for T3513
+  // final-expiry paths — the UE did not respond to paging.
+  // UE_NOT_REACHABLE_FOR_SESSION is only correct for synchronous PPF=FALSE
+  // rejects, not for the paging-timeout callback path.
+  const std::string terminal_callback_status =
+      (outcome == paging::paging_outcome::NO_TARGET) ?
+          kNoPagingTargetTransferCause :
+          "UE_NOT_RESPONDING";
+
+  // Drain and discard pending N1/N2 messages.
+  // Snapshot both queues under a single lock, then iterate outside.
+  std::deque<amf_application::paging::paging_transaction> pending_snapshot;
+  std::deque<amf_application::paging::paging_transaction> temp_snapshot;
+  {
+    std::lock_guard<std::mutex> lk(nc->paging_queues_mutex);
+    pending_snapshot = std::move(nc->pending_paging_messages);
+    temp_snapshot    = std::move(nc->temporarily_unreachable_messages);
+  }  // release paging_queues_mutex
+
+  while (!pending_snapshot.empty()) {
+    const std::string cb_uri =
+        pending_snapshot.front().failure_notification_uri;
+    const uint8_t pdu_session_id = pending_snapshot.front().pdu_session_id;
+    pending_snapshot.pop_front();
+
+    Logger::amf_n1().debug(
+        "T3513 final expiry: discarding queued N1/N2 message for UE %lu "
+        "(pdu_session_id=%u)",
+        amf_ue_ngap_id, pdu_session_id);
+
+    // TS 29.518 §6.1.5.6: emit spec-correct failure notification via ITTI
+    // (non-blocking — queued to TASK_AMF_SBI; no need for try/catch here)
+    if (!cb_uri.empty()) {
+      emit_failure_notification_via_itti(
+          nc->supi, cb_uri, terminal_callback_status, pdu_session_id);
+    }
+  }
+
+  fail_deferred_transactions(
+      nc, temp_snapshot, terminal_callback_status, amf_ue_ngap_id,
+      "temporary-unreachable");
+  stop_temporary_unreachable_timer(nc);
+
+  Logger::amf_n1().info(
+      "T3513 final expiry: UE %lu is unreachable", amf_ue_ngap_id);
+  publish_paging_outcome(
+      nc->supi, outcome, cause, nc->ran_ue_ngap_id, amf_ue_ngap_id);
+  sync_paging_queue_depth_metrics(nc);
+
+  Logger::amf_n1().debug(
+      "T3513 final expiry: paging state cleared for UE %lu", amf_ue_ngap_id);
+}
+
+// ---------------------------------------------------------------------------
+// deliver_pending_paging_messages
+// Drains the pending N1/N2 message queue and re-dispatches each message
+// through the normal (non-paging) N1N2 delivery path.
+// Called from service_request_handle and registration_complete_handle.
+// ---------------------------------------------------------------------------
+void amf_n1::deliver_pending_paging_messages(
+    std::shared_ptr<nas_context>& nc, uint32_t ran_ue_ngap_id,
+    uint64_t amf_ue_ngap_id) {
+  // Snapshot under lock; dispatch_deferred_transaction may do ITTI
+  // sends — don't hold the mutex for that.
+  std::deque<amf_application::paging::paging_transaction> snapshot;
+  {
+    std::lock_guard<std::mutex> lk(nc->paging_queues_mutex);
+    if (nc->pending_paging_messages.empty()) return;
+    snapshot = std::move(nc->pending_paging_messages);
+  }
+
+  Logger::amf_n1().info(
+      "Delivering %zu queued N1/N2 paging messages for UE %lu", snapshot.size(),
+      amf_ue_ngap_id);
+
+  while (!snapshot.empty()) {
+    auto msg = std::move(snapshot.front());
+    snapshot.pop_front();
+    dispatch_deferred_transaction(
+        nc, msg, ran_ue_ngap_id, amf_ue_ngap_id, "pending-paging");
+  }
+  sync_paging_queue_depth_metrics(nc);
+}
+
+// ---------------------------------------------------------------------------
+bool amf_n1::dispatch_deferred_transaction(
+    std::shared_ptr<nas_context>& nc,
+    const paging::paging_transaction& transaction, uint32_t ran_ue_ngap_id,
+    uint64_t amf_ue_ngap_id, const char* queue_name) {
+  auto itti_msg = std::make_shared<itti_n1n2_message_transfer_request>(
+      TASK_AMF_N1, TASK_AMF_APP);
+  itti_msg->from_paging_transaction(transaction);
+  itti_msg->supi       = nc->supi;
+  itti_msg->is_ppi_set = false;
+  itti_msg->ppi        = 0;
+
+  std::shared_ptr<ue_context> uc =
+      amf_app_inst->get_ue_context(ran_ue_ngap_id, amf_ue_ngap_id);
+  if (!uc) {
+    Logger::amf_n1().warn(
+        "Skipping %s deferred N1/N2 re-dispatch for UE %lu because UE "
+        "context is missing",
+        queue_name, amf_ue_ngap_id);
+    if (!transaction.failure_notification_uri.empty()) {
+      // TS 29.518 §6.1.5.6: emit spec-correct failure notification.
+      // UE_NOT_RESPONDING: UE context is gone after paging exhaustion —
+      // the UE did not respond to paging.
+      emit_failure_notification_via_itti(
+          nc->supi, transaction.failure_notification_uri, "UE_NOT_RESPONDING",
+          transaction.pdu_session_id);
+    }
+    return false;
+  }
+
+  if (transaction.has_n2sm) {
+    std::string rejection_reason;
+    if (!amf_app_inst->can_forward_n2_sm_over_3gpp_access(
+            transaction, uc->tai, nc->page_reconnect_allowed_pdu_session_status,
+            rejection_reason)) {
+      if (!transaction.has_n1sm) {
+        Logger::amf_n1().warn(
+            "Discarding %s deferred N2-only transfer for UE %lu: %s",
+            queue_name, amf_ue_ngap_id, rejection_reason.c_str());
+        if (!transaction.failure_notification_uri.empty()) {
+          // TS 29.518 §6.1.5.6
+          emit_failure_notification_via_itti(
+              nc->supi, transaction.failure_notification_uri,
+              "N2_MSG_NOT_TRANSFERRED", transaction.pdu_session_id);
+        }
+        return false;
+      }
+
+      Logger::amf_n1().warn(
+          "Re-dispatching %s deferred transfer for UE %lu without N2 SM: %s",
+          queue_name, amf_ue_ngap_id, rejection_reason.c_str());
+      itti_msg->is_n2sm_set = false;
+      itti_msg->n2sm        = nullptr;
+    }
+  }
+
+  int ret = itti_inst->send_msg(itti_msg);
+  if (0 != ret) {
+    Logger::amf_n1().error(
+        "dispatch_deferred_transaction: failed to re-dispatch %s transfer "
+        "for PDU session %u, UE %lu",
+        queue_name, transaction.pdu_session_id, amf_ue_ngap_id);
+    if (!transaction.failure_notification_uri.empty()) {
+      // TS 29.518 §6.1.5.6
+      emit_failure_notification_via_itti(
+          nc->supi, transaction.failure_notification_uri,
+          "FAILURE_CAUSE_UNSPECIFIED", transaction.pdu_session_id);
+    }
+    return false;
+  }
+  return true;
+}
+
+// ---------------------------------------------------------------------------
+void amf_n1::fail_deferred_transactions(
+    std::shared_ptr<nas_context>& nc,
+    std::deque<paging::paging_transaction>& queue,
+    const std::string& terminal_status, uint64_t amf_ue_ngap_id,
+    const char* queue_name) {
+  while (!queue.empty()) {
+    auto transaction = std::move(queue.front());
+    queue.pop_front();
+    Logger::amf_n1().debug(
+        "Failing %s deferred transfer for UE %lu (pdu_session_id=%u) with "
+        "status %s",
+        queue_name, amf_ue_ngap_id, transaction.pdu_session_id,
+        terminal_status.c_str());
+    if (!transaction.failure_notification_uri.empty()) {
+      // TS 29.518 §6.1.5.6: emit spec-correct failure notification
+      emit_failure_notification_via_itti(
+          nc->supi, transaction.failure_notification_uri, terminal_status,
+          transaction.pdu_session_id);
+    }
+  }
+
+  sync_paging_queue_depth_metrics(nc);
+}
+
+// ---------------------------------------------------------------------------
+void amf_n1::stop_awaiting_registration_timer(
+    std::shared_ptr<nas_context>& nc) {
+  // Guard with *_running flag to avoid stale-ID races on the stop
+  // path (timer_remove on an already-expired ID is a no-op on some ITTI
+  // backends but can log spurious warnings on others).
+  if (nc->awaiting_registration_timer_running &&
+      nc->awaiting_registration_timer != ITTI_INVALID_TIMER_ID) {
+    itti_inst->timer_remove(nc->awaiting_registration_timer);
+    nc->awaiting_registration_timer         = ITTI_INVALID_TIMER_ID;
+    nc->awaiting_registration_timer_running = false;
+  }
+}
+
+// ---------------------------------------------------------------------------
+void amf_n1::schedule_awaiting_registration_expiry(
+    std::shared_ptr<nas_context>& nc, uint64_t amf_ue_ngap_id) {
+  std::chrono::system_clock::time_point front_expiry;
+  {
+    std::lock_guard<std::mutex> lk(nc->paging_queues_mutex);
+    if (nc->awaiting_registration_messages.empty()) {
+      stop_awaiting_registration_timer(nc);
+      sync_paging_queue_depth_metrics(nc);
+      return;
+    }
+    // Read optional value (has_value guaranteed — only enqueued with it set).
+    front_expiry =
+        nc->awaiting_registration_messages.front().deferred_expiry_at.value_or(
+            std::chrono::system_clock::now());
+  }
+
+  stop_awaiting_registration_timer(nc);
+
+  const auto now = std::chrono::system_clock::now();
+  auto expiry_at = front_expiry;
+  if (expiry_at <= now) {
+    expiry_at = now;
+  }
+
+  const auto wait_seconds =
+      std::chrono::duration_cast<std::chrono::seconds>(expiry_at - now);
+  nc->awaiting_registration_timer = itti_inst->timer_setup(
+      static_cast<uint32_t>(std::max<int64_t>(1, wait_seconds.count())), 0,
+      TASK_AMF_N1, TASK_AMF_AWAITING_REGISTRATION_DEFER_TIMER_EXPIRE,
+      std::to_string(amf_ue_ngap_id));
+  nc->awaiting_registration_timer_running = true;
+  Logger::amf_n1().debug(
+      "Scheduled awaiting-registration deferred expiry timer (%u) for UE %lu",
+      nc->awaiting_registration_timer, amf_ue_ngap_id);
+  sync_paging_queue_depth_metrics(nc);
+}
+
+// ---------------------------------------------------------------------------
+void amf_n1::expire_awaiting_registration_messages(
+    std::shared_ptr<nas_context>& nc, uint64_t amf_ue_ngap_id) {
+  const auto now = std::chrono::system_clock::now();
+  // Pop-one-at-a-time under lock rather than snapshot because we
+  // stop as soon as the front is not yet expired (ordered queue).
+  while (true) {
+    amf_application::paging::paging_transaction expired;
+    {
+      std::lock_guard<std::mutex> lk(nc->paging_queues_mutex);
+      // Use .has_value() instead of removed deferred_expiry_set.
+      if (nc->awaiting_registration_messages.empty() ||
+          !nc->awaiting_registration_messages.front()
+               .deferred_expiry_at.has_value() ||
+          nc->awaiting_registration_messages.front()
+                  .deferred_expiry_at.value() > now) {
+        break;
+      }
+      expired = std::move(nc->awaiting_registration_messages.front());
+      nc->awaiting_registration_messages.pop_front();
+    }
+    // Lock released — safe to do ITTI/log work.
+    Logger::amf_n1().warn(
+        "Awaiting-registration deferred transfer expired for UE %lu "
+        "(pdu_session_id=%u)",
+        amf_ue_ngap_id, expired.pdu_session_id);
+    if (!expired.failure_notification_uri.empty()) {
+      // TS 29.518 §6.1.5.6
+      emit_failure_notification_via_itti(
+          nc->supi, expired.failure_notification_uri,
+          "TEMPORARY_REJECT_REGISTRATION_ONGOING", expired.pdu_session_id);
+    }
+    publish_paging_outcome(
+        nc->supi,
+        paging::paging_outcome::DEFERRED_AWAITING_REGISTRATION_EXPIRED,
+        "TEMPORARY_REJECT_REGISTRATION_ONGOING", nc->ran_ue_ngap_id,
+        amf_ue_ngap_id);
+  }
+
+  // schedule_awaiting_registration_expiry / stop timer reads the front of the
+  // queue — that read is protected inside schedule_awaiting_registration_expiry
+  // which calls stop first, then reads under lock.
+  schedule_awaiting_registration_expiry(nc, amf_ue_ngap_id);
+  sync_paging_queue_depth_metrics(nc);
+}
+
+// ---------------------------------------------------------------------------
+void amf_n1::handle_awaiting_registration_expiry(
+    timer_id_t timer_id, std::string amf_ue_ngap_id_str) {
+  uint64_t amf_ue_ngap_id = INVALID_AMF_UE_NGAP_ID;
+  std::shared_ptr<nas_context> nc;
+  if (!resolve_nas_context_for_timer(
+          amf_ue_ngap_id_str, amf_ue_ngap_id, nc, this)) {
+    return;
+  }
+
+  if (nc->awaiting_registration_timer != timer_id &&
+      nc->awaiting_registration_timer != ITTI_INVALID_TIMER_ID) {
+    Logger::amf_n1().debug(
+        "Ignoring stale awaiting-registration timer (%u) for UE %lu", timer_id,
+        amf_ue_ngap_id);
+    return;
+  }
+
+  nc->awaiting_registration_timer         = ITTI_INVALID_TIMER_ID;
+  nc->awaiting_registration_timer_running = false;
+  expire_awaiting_registration_messages(nc, amf_ue_ngap_id);
+}
+
+// ---------------------------------------------------------------------------
+void amf_n1::stop_temporary_unreachable_timer(
+    std::shared_ptr<nas_context>& nc) {
+  // Guard with *_running flag to avoid stale-ID races.
+  if (nc->temp_unreachable_timer_running &&
+      nc->temporary_unreachable_timer != ITTI_INVALID_TIMER_ID) {
+    itti_inst->timer_remove(nc->temporary_unreachable_timer);
+    nc->temporary_unreachable_timer    = ITTI_INVALID_TIMER_ID;
+    nc->temp_unreachable_timer_running = false;
+  }
+}
+
+// ---------------------------------------------------------------------------
+void amf_n1::schedule_temporary_unreachable_expiry(
+    std::shared_ptr<nas_context>& nc, uint64_t amf_ue_ngap_id) {
+  // Read emptiness + front under lock.
+  std::chrono::system_clock::time_point front_expiry;
+  {
+    std::lock_guard<std::mutex> lk(nc->paging_queues_mutex);
+    if (nc->temporarily_unreachable_messages.empty()) {
+      stop_temporary_unreachable_timer(nc);
+      sync_paging_queue_depth_metrics(nc);
+      return;
+    }
+    // Read optional value.
+    front_expiry =
+        nc->temporarily_unreachable_messages.front()
+            .deferred_expiry_at.value_or(std::chrono::system_clock::now());
+  }
+
+  stop_temporary_unreachable_timer(nc);
+
+  const auto now = std::chrono::system_clock::now();
+  auto expiry_at = front_expiry;
+  if (expiry_at <= now) {
+    expiry_at = now;
+  }
+
+  const auto wait_seconds =
+      std::chrono::duration_cast<std::chrono::seconds>(expiry_at - now);
+  nc->temporary_unreachable_timer = itti_inst->timer_setup(
+      static_cast<uint32_t>(std::max<int64_t>(1, wait_seconds.count())), 0,
+      TASK_AMF_N1, TASK_AMF_TEMPORARY_UNREACHABLE_DEFER_TIMER_EXPIRE,
+      std::to_string(amf_ue_ngap_id));
+  nc->temp_unreachable_timer_running = true;
+  Logger::amf_n1().debug(
+      "Scheduled temporary-unreachable deferred expiry timer (%u) for UE %lu",
+      nc->temporary_unreachable_timer, amf_ue_ngap_id);
+  sync_paging_queue_depth_metrics(nc);
+}
+
+// ---------------------------------------------------------------------------
+void amf_n1::wake_temporary_unreachable_messages(
+    std::shared_ptr<nas_context>& nc, uint32_t ran_ue_ngap_id,
+    uint64_t amf_ue_ngap_id) {
+  const auto now = std::chrono::system_clock::now();
+
+  // Pop-one-at-a-time under lock for the expiry-drain sub-loop.
+  while (true) {
+    amf_application::paging::paging_transaction expired;
+    {
+      std::lock_guard<std::mutex> lk(nc->paging_queues_mutex);
+      if (nc->temporarily_unreachable_messages.empty() ||
+          // Use .has_value() instead of removed deferred_expiry_set.
+          !nc->temporarily_unreachable_messages.front()
+               .deferred_expiry_at.has_value() ||
+          nc->temporarily_unreachable_messages.front()
+                  .deferred_expiry_at.value() > now) {
+        break;
+      }
+      expired = std::move(nc->temporarily_unreachable_messages.front());
+      nc->temporarily_unreachable_messages.pop_front();
+    }
+    Logger::amf_n1().warn(
+        "Temporary-unreachable deferred transfer expired for UE %lu "
+        "(pdu_session_id=%u)",
+        amf_ue_ngap_id, expired.pdu_session_id);
+    if (!expired.failure_notification_uri.empty()) {
+      // TS 29.518 §6.1.5.6.
+      // REJECTION_DUE_TO_PAGING_RESTRICTION when PPF=true but paging is
+      // restricted; UE_NOT_RESPONDING (not UE_NOT_REACHABLE_FOR_SESSION) when
+      // the UE is genuinely unreachable — UE did not respond to paging.
+      emit_failure_notification_via_itti(
+          nc->supi, expired.failure_notification_uri,
+          (nc->ppf_3gpp && !nc->is_mobile_reachable_timer_timeout) ?
+              "REJECTION_DUE_TO_PAGING_RESTRICTION" :
+              "UE_NOT_RESPONDING",
+          expired.pdu_session_id);
+    }
+    publish_paging_outcome(
+        nc->supi,
+        paging::paging_outcome::DEFERRED_TEMPORARY_UNREACHABLE_EXPIRED,
+        nc->ppf_3gpp && !nc->is_mobile_reachable_timer_timeout ?
+            "REJECTION_DUE_TO_PAGING_RESTRICTION" :
+            "UE_NOT_RESPONDING",
+        ran_ue_ngap_id, amf_ue_ngap_id);
+  }
+
+  // Check remaining queue under lock to decide next action.
+  bool queue_empty    = false;
+  bool deferred_again = false;
+  size_t wake_count   = 0;
+  {
+    std::lock_guard<std::mutex> lk(nc->paging_queues_mutex);
+    queue_empty    = nc->temporarily_unreachable_messages.empty();
+    deferred_again = nc->is_mico_mode || !nc->ppf_3gpp ||
+                     nc->is_mobile_reachable_timer_timeout;
+    wake_count = nc->temporarily_unreachable_messages.size();
+  }
+
+  if (queue_empty) {
+    stop_temporary_unreachable_timer(nc);
+    sync_paging_queue_depth_metrics(nc);
+    return;
+  }
+
+  if (deferred_again) {
+    schedule_temporary_unreachable_expiry(nc, amf_ue_ngap_id);
+    return;
+  }
+
+  Logger::amf_n1().info(
+      "Waking %zu temporary-unreachable deferred N1/N2 messages for UE %lu",
+      wake_count, amf_ue_ngap_id);
+
+  stop_temporary_unreachable_timer(nc);
+
+  // Snapshot the remaining items under lock for dispatch.
+  std::deque<amf_application::paging::paging_transaction> snapshot;
+  {
+    std::lock_guard<std::mutex> lk(nc->paging_queues_mutex);
+    snapshot = std::move(nc->temporarily_unreachable_messages);
+  }
+  while (!snapshot.empty()) {
+    auto msg = std::move(snapshot.front());
+    snapshot.pop_front();
+    dispatch_deferred_transaction(
+        nc, msg, ran_ue_ngap_id, amf_ue_ngap_id, "temporary-unreachable");
+  }
+  sync_paging_queue_depth_metrics(nc);
+}
+
+// Deliver_awaiting_registration_messages removed — its only caller in
+// registration_complete_handle was replaced by
+// amf_app_inst->on_registration_complete_drain(nc).  That method
+// drains the full queue with correct FSM re-evaluation instead of
+// re-dispatching only the head entry via a raw ITTI send.
+
+// ---------------------------------------------------------------------------
+void amf_n1::handle_temporary_unreachable_expiry(
+    timer_id_t timer_id, std::string amf_ue_ngap_id_str) {
+  uint64_t amf_ue_ngap_id = INVALID_AMF_UE_NGAP_ID;
+  std::shared_ptr<nas_context> nc;
+  if (!resolve_nas_context_for_timer(
+          amf_ue_ngap_id_str, amf_ue_ngap_id, nc, this)) {
+    return;
+  }
+
+  nc->temporary_unreachable_timer    = ITTI_INVALID_TIMER_ID;
+  nc->temp_unreachable_timer_running = false;
+  wake_temporary_unreachable_messages(nc, nc->ran_ue_ngap_id, amf_ue_ngap_id);
+}
+
+// ---------------------------------------------------------------------------
+void amf_n1::maybe_send_configuration_update_with_new_guti(
+    std::shared_ptr<nas_context>& nc, uint32_t ran_ue_ngap_id,
+    uint64_t amf_ue_ngap_id) {
+  if (!nc || !nc->security_ctx.has_value()) {
+    return;
+  }
+
+  std::string mcc = {};
+  std::string mnc = {};
+  uint32_t tmsi   = 0;
+  if (!amf_app_inst->generate_5g_guti(
+          ran_ue_ngap_id, amf_ue_ngap_id, mcc, mnc, tmsi)) {
+    Logger::amf_n1().warn(
+        "Could not generate a new 5G-GUTI for page-triggered reconnect UE %lu",
+        amf_ue_ngap_id);
+    return;
+  }
+
+  const std::string old_guti = nc->guti.value_or("");
+  const std::string new_guti = amf_conv::tmsi_to_guti(
+      mcc, mnc, amf_cfg->guami.region_id, amf_cfg->guami.amf_set_id,
+      amf_cfg->guami.amf_pointer, amf_conv::tmsi_to_string(tmsi));
+  if (old_guti == new_guti) {
+    return;
+  }
+
+  auto configuration_update_command =
+      std::make_unique<ConfigurationUpdateCommand>();
+  configuration_update_command->Set5gGuti(
+      mcc, mnc, amf_cfg->guami.region_id, amf_cfg->guami.amf_set_id,
+      amf_cfg->guami.amf_pointer, tmsi);
+  configuration_update_command->SetFullNameForNetwork("OpenAirInterface");
+  configuration_update_command->SetShortNameForNetwork("OAI");
+
+  uint32_t msg_len        = configuration_update_command->GetLength();
+  uint8_t buffer[msg_len] = {0};
+  int encoded_size =
+      configuration_update_command->Encode(buffer, static_cast<int>(msg_len));
+  if (encoded_size == KEncodeDecodeError) {
+    Logger::amf_n1().warn(
+        "Encoding Configuration Update Command failed for UE %lu",
+        amf_ue_ngap_id);
+    return;
+  }
+
+  bstring protected_nas = nullptr;
+  encode_nas_message_protected(
+      nc->security_ctx.value(), false, kIntegrityProtectedAndCiphered,
+      NAS_MESSAGE_DOWNLINK, buffer, encoded_size, protected_nas);
+
+  auto dnt = std::make_shared<itti_dl_nas_transport>(TASK_AMF_N1, TASK_AMF_N2);
+  dnt->nas = bstrcpy(protected_nas);
+  dnt->amf_ue_ngap_id = amf_ue_ngap_id;
+  dnt->ran_ue_ngap_id = ran_ue_ngap_id;
+
+  int ret = itti_inst->send_msg(dnt);
+  if (0 != ret) {
+    Logger::amf_n1().error(
+        "Could not send ITTI message %s to task TASK_AMF_N2",
+        dnt->get_msg_name());
+    oai::utils::utils::bdestroy_wrapper(&protected_nas);
+    return;
+  }
+
+  if (!old_guti.empty()) {
+    remove_guti_2_nas_context(old_guti);
+  }
+  set_guti_2_nas_context(new_guti, nc);
+  nc->guti = std::make_optional<std::string>(new_guti);
+  nas_timer_manager_.start_timer(nas_timer_type_e::T3555, nc, amf_ue_ngap_id);
+
+  Logger::amf_n1().info(
+      "Sent Configuration Update Command with new 5G-GUTI %s after "
+      "page-triggered reconnect for UE %lu",
+      new_guti.c_str(), amf_ue_ngap_id);
+
+  oai::utils::utils::bdestroy_wrapper(&protected_nas);
+}
+
 // ---------------------------------------------------------------------------
 void amf_n1::handle_t3565_expiry(
     timer_id_t timer_id, std::string amf_ue_ngap_id_str) {
@@ -7142,5 +8699,7 @@ void amf_n1::handle_t3565_expiry(
       "T3565 (Notification) expiry for UE %s — retransmit not yet "
       "implemented",
       amf_ue_ngap_id_str.c_str());
-  // TODO: implement T3565 Notification retransmit handling
+  // TODO (TS 24.501 §5.6.3): implement T3565 Notification retransmit.
+  // When implemented, call handle_expiry with auto_restart=false so the timer
+  // is restarted only after a successful ITTI send.
 }

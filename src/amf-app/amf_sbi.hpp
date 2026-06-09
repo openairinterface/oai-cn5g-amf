@@ -5,8 +5,12 @@
 #ifndef _AMF_SBI_H_
 #define _AMF_SBI_H_
 
+#include <memory>
+
 #include "3gpp_29.500.h"
+#include "failure_notify_client.hpp"
 #include "http_definitions.hpp"
+#include "itti_msg_amf_app.hpp"
 #include "itti_msg_sbi.hpp"
 #include "pdu_session_context.hpp"
 #include "ue_context.hpp"
@@ -379,6 +383,18 @@ class amf_sbi {
   bool send_http_request(
       const std::string& remote_uri, const oai::common::sbi::method_e method,
       const std::string& msg_body, oai::http::response& http_response);
+
+  /*
+   * Handle ITTI message to send N1N2TransferFailureNotification to Trigger NF
+   * (TS 23.502 §5.2.2.2.7A / TS 29.518 §6.1.5.6)
+   * @param [itti_n1n2_transfer_failure_notification&]: ITTI message
+   * @return void
+   */
+  void handle_itti_message(itti_n1n2_transfer_failure_notification& itti_msg);
+
+ private:
+  // TS 29.518 §6.1.5.6 N1N2TransferFailureNotification producer
+  std::unique_ptr<oai::amf::failure_notify_client> failure_notify_client_;
 };
 
 }  // namespace amf_application

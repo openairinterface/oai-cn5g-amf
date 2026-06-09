@@ -1,5 +1,7 @@
 # SPDX-License-Identifier: LicenseRef-CSSL-1.0
 
+include_directories(${SRC_TOP_DIR}/amf-app)
+include_directories(${SRC_TOP_DIR}/amf-app/paging)
 include_directories(${SRC_TOP_DIR}/common)
 include_directories(${SRC_TOP_DIR}/common/unicode)
 include_directories(${SRC_TOP_DIR}/contexts)
@@ -13,7 +15,6 @@ include_directories(${SRC_TOP_DIR}/${MOUNTED_COMMON}/3gpp)
 include_directories(${SRC_TOP_DIR}/${MOUNTED_COMMON}/common)
 include_directories(${SRC_TOP_DIR}/${MOUNTED_COMMON}/config)
 include_directories(${SRC_TOP_DIR}/${MOUNTED_COMMON}/logger)
-#include_directories(${SRC_TOP_DIR}/${MOUNTED_COMMON}/model)
 include_directories(${SRC_TOP_DIR}/${MOUNTED_COMMON}/ngap/libngap)
 include_directories(${SRC_TOP_DIR}/${MOUNTED_COMMON}/ngap/libngap_ies)
 include_directories(${SRC_TOP_DIR}/${MOUNTED_COMMON}/ngap/ngap_ies)
