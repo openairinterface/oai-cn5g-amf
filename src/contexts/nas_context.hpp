@@ -150,7 +150,8 @@ class nas_context {
   //             §9.11.3.91)
   bool mps_priority_active = false;
 
-  // NSAG state — (TS 24.501 §4.6.2.6, §5.5.1.2, §5.4.4.2, §9.11.3.87)
+  // Network Slice AS Group (NSAG) state — (TS 24.501 §4.6.2.6, §5.5.1.2,
+  // §5.4.4.2, §9.11.3.87)
   std::vector<uint8_t> subscribed_nsag_info;
   // True after NSAG information has been delivered to this UE (either via
   // Registration Accept or Configuration Update Command).

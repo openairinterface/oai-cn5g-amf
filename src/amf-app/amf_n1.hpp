@@ -984,12 +984,6 @@ class amf_n1 {
 
   /*
    * Build and send a Configuration Update Command (CUC) to the UE.
-   * When ack_requested is true:
-   *   - Sets the ACK bit in the Configuration Update Indication IE.
-   *   - Stores the encoded CUC PDU in nc->pending_ucu_ for retransmission.
-   *   - Starts T3555.
-   * When ack_requested is false:
-   *   - Sends and clears transient state immediately.
    * @param [std::shared_ptr<nas_context>&] nc: pointer to the UE NAS context
    * @param [bool] ack_requested: whether to request UE acknowledgement
    * @param [const std::optional<oai::nas::NssrgInformation>&] nssrg_ie:
@@ -1008,9 +1002,7 @@ class amf_n1 {
 
   /*
    * Trigger an MPS indicator update via CUC (TS 24.501 §4.5.2 + §4.5.2A).
-   * Per TS 24.501 §4.5.2 and §4.5.2A: when access identity 1 validity changes
-   * the AMF shall update the UE Priority Indicator via CUC if the UE supports
-   * MPSIU and enable_mps_indicator_update is enabled;
+   * Per TS 24.501 §4.5.2 and §4.5.2A.
    * @param [std::shared_ptr<nas_context>] nc: pointer to the UE NAS context
    * @param [bool] new_mps_priority: new desired MPS priority/access-identity-1
    *        validity state (true = valid, false = not valid)
@@ -1030,6 +1022,10 @@ class amf_n1 {
   bool configuration_update_complete_handle(
       const uint32_t ran_ue_ngap_id, const uint64_t amf_ue_ngap_id,
       bstring nas_msg, uint8_t& cause);
+
+  void set_subscribed_nsag_info(
+      const std::vector<oai::_3gpp::model::NsagInfo>& nsag_infos,
+      std::vector<uint8_t>& subscribed_nsag_info);
 
  private:
   // for Event Handling

@@ -1514,7 +1514,7 @@ void amf_app::handle_itti_message(itti_sbi_nudm_sdm_notification& itti_msg) {
           if (!amf_n1_inst->send_configuration_update_command(
                   nc, true, std::nullopt, std::nullopt, std::nullopt)) {
             Logger::amf_app().warn(
-                "send_configuration_update_command failed for SUPI %s",
+                "Could not send Configuration Update Command for SUPI %s",
                 itti_msg.supi);
             uc->pending_sdm_update = true;
           }
@@ -1562,8 +1562,8 @@ void amf_app::handle_itti_message(itti_sbi_nudm_sdm_notification& itti_msg) {
     if (resource_id.find("/uas-data") != std::string::npos) {
       if (!amf_cfg->support_features.enable_uas_uuaa_mm) {
         Logger::amf_app().debug(
-            "UAS-data notification for SUPI %s but enable_uas_uuaa_mm=false "
-            "— ignoring",
+            "UAS-data notification for SUPI %s but enable_uas_uuaa_mm=false - "
+            "ignoring",
             itti_msg.supi.c_str());
         continue;
       }
@@ -1582,7 +1582,7 @@ void amf_app::handle_itti_message(itti_sbi_nudm_sdm_notification& itti_msg) {
 
     // Unrecognised resource
     Logger::amf_app().debug(
-        "SDM notification: unrecognised resource URI %s — ignoring",
+        "SDM notification: unrecognised resource URI %s - ignoring",
         resource_id);
   }
 
@@ -2215,7 +2215,7 @@ void amf_app::unsubscribe_sdm_notifications(
     const std::shared_ptr<ue_context>& uc) const {
   if (uc->udm_sdm_subscription_id.empty()) {
     Logger::amf_app().debug(
-        "No UDM SDM subscription active for SUPI %s — skip unsubscribe",
+        "No UDM SDM subscription active for SUPI %s - skip unsubscribe",
         uc->supi.c_str());
     return;
   }

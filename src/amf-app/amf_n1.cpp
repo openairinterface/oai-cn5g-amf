@@ -5885,12 +5885,12 @@ void amf_n1::initialize_registration_accept(
       nc->nssrg_restriction_applied = true;
     } else if (!nc->nas_ue_supports_nssrg) {
       Logger::amf_n1().debug(
-          "UE %lu does not support NSSRG — skipping NSSRG IE",
+          "UE %lu does not support NSSRG - skipping NSSRG IE",
           nc->amf_ue_ngap_id);
     } else {
       Logger::amf_n1().debug(
           "Enable_nssrg=true but no NSSRG subscription data for "
-          "UE %lu — skipping NSSRG IE",
+          "UE %lu - skipping NSSRG IE",
           nc->amf_ue_ngap_id);
     }
   }
@@ -5913,7 +5913,7 @@ void amf_n1::initialize_registration_accept(
           nssrg_content.push_back(static_cast<uint8_t>((val >> 8) & 0xFF));
           nssrg_content.push_back(static_cast<uint8_t>(val & 0xFF));
         } catch (...) {
-          // Non-numeric NSSRG identifier — skip safely
+          // Non-numeric NSSRG identifier - skip safely
           nssrg_content.push_back(0x00);
           nssrg_content.push_back(0x00);
         }
@@ -5934,19 +5934,19 @@ void amf_n1::initialize_registration_accept(
     if (!nc->nas_ue_supports_nsag) {
       // Never send NSAG to non-supporting UEs
       Logger::amf_n1().debug(
-          "UE %lu does not support NSAG — skipping NsagInformation IE",
+          "UE %lu does not support NSAG - skipping NsagInformation IE",
           nc->amf_ue_ngap_id);
     } else if (nc->subscribed_nsag_info.empty()) {
       Logger::amf_n1().debug(
           "Enable_nsag=true but no NSAG data available for UE %lu "
-          "— skipping NsagInformation IE",
+          "- skipping NsagInformation IE",
           nc->amf_ue_ngap_id);
     } else if (
         nc->subscribed_nsag_info.size() <
         kNsagInformationMinimumContentLength) {
       Logger::amf_n1().warn(
           "Subscribed_nsag_info for UE %lu is %lu bytes (minimum %u "
-          "required per §9.11.3.87) — skipping malformed NsagInformation IE",
+          "required per §9.11.3.87) - skipping malformed NsagInformation IE",
           nc->amf_ue_ngap_id, nc->subscribed_nsag_info.size(),
           kNsagInformationMinimumContentLength);
     } else {
@@ -6221,183 +6221,8 @@ bool amf_n1::reroute_registration_request(
   // Extract NSAG information from NSSF response.
   if (amf_cfg->support_features.enable_nsag && nc->nas_ue_supports_nsag &&
       authorized_network_slice_info.nsagInfosIsSet()) {
-    const auto& nsag_infos = authorized_network_slice_info.getNsagInfos();
-    size_t num_entries     = nsag_infos.size();
-
-    // Enforce maximum 32 NSAG entries per TS 24.501 §9.11.3.87
-    if (num_entries > kNsagInformationMaxEntries) {
-      Logger::amf_n1().warn(
-          "NSSF returned %zu NSAG entries; truncating to %u (max per "
-          "TS 24.501 §9.11.3.87)",
-          num_entries, kNsagInformationMaxEntries);
-      num_entries = kNsagInformationMaxEntries;
-    }
-
-    // Count entries with TAI list — maximum 4 allowed per §9.11.3.87
-    size_t tai_entry_count = 0;
-    for (size_t i = 0; i < num_entries; ++i) {
-      if (nsag_infos[i].taiListIsSet() && !nsag_infos[i].getTaiList().empty())
-        ++tai_entry_count;
-    }
-    if (tai_entry_count > 4) {
-      Logger::amf_n1().warn(
-          "%zu NSAG entries have TAI list; maximum is 4 per "
-          "TS 24.501 §9.11.3.87 — extra TAI lists will be omitted",
-          tai_entry_count);
-    }
-
-    // Encode NSAG entries (TS 24.501 §9.11.3.87)
-    auto encode_snssai_bytes =
-        [](const oai::_3gpp::model::Snssai& s) -> std::vector<uint8_t> {
-      std::vector<uint8_t> v;
-      bool has_sd = s.sdIsSet() && (static_cast<uint32_t>(s.getSdInt()) !=
-                                    SD_DEFAULT_VALUE_INT);
-      uint8_t content_len = has_sd ? 4 : 1;  // SST + optional 3-byte SD
-      v.push_back(content_len);
-      v.push_back(static_cast<uint8_t>(s.getSst() & 0xFF));
-      if (has_sd) {
-        uint32_t sd = static_cast<uint32_t>(s.getSdInt());
-        v.push_back(static_cast<uint8_t>((sd >> 16) & 0xFF));
-        v.push_back(static_cast<uint8_t>((sd >> 8) & 0xFF));
-        v.push_back(static_cast<uint8_t>(sd & 0xFF));
-      }
-      return v;
-    };
-
-    // Encode a TAI list as §9.11.3.9 type-00 sub-entries.
-    auto encode_tai_list_bytes =
-        [](const std::vector<oai::_3gpp::model::Tai>& tais)
-        -> std::vector<uint8_t> {
-      std::vector<uint8_t> v;
-      for (const auto& tai : tais) {
-        // Type-00 sub-entry: type/count byte = 0x00 (type=00, count=1–1=0),
-        // then 3-byte PLMN, then 3-byte TAC.
-        v.push_back(0x00);  // type-00, one TAI
-
-        const auto& plmn       = tai.getPlmnId();
-        const std::string& mcc = plmn.getMcc();  // e.g. "208"
-        const std::string& mnc = plmn.getMnc();  // e.g. "93" or "093"
-        // PLMN encoding (TS 24.008 §10.5.1.13):
-        //   octet 1: MCC digit 2 | (MCC digit 1 << 4)
-        //   octet 2: MNC digit 3 (or 0xF for 2-digit MNC) | (MCC digit 3 << 4)
-        //   octet 3: MNC digit 2 | (MNC digit 1 << 4)
-        if (mcc.size() < 3) {
-          // Malformed PLMN — skip this TAI
-          return {};
-        }
-        uint8_t mcc1 = static_cast<uint8_t>(mcc[0] - '0');
-        uint8_t mcc2 = static_cast<uint8_t>(mcc[1] - '0');
-        uint8_t mcc3 = static_cast<uint8_t>(mcc[2] - '0');
-        uint8_t mnc1 = 0, mnc2 = 0, mnc3 = 0xF;
-        if (mnc.size() >= 2) {
-          mnc1 = static_cast<uint8_t>(mnc[0] - '0');
-          mnc2 = static_cast<uint8_t>(mnc[1] - '0');
-        }
-        if (mnc.size() >= 3) {
-          mnc3 = static_cast<uint8_t>(mnc[2] - '0');
-        }
-        v.push_back(static_cast<uint8_t>((mcc2 << 4) | mcc1));
-        v.push_back(static_cast<uint8_t>((mnc3 << 4) | mcc3));
-        v.push_back(static_cast<uint8_t>((mnc2 << 4) | mnc1));
-
-        // TAC: 3-byte hex string per model (e.g. "000001")
-        const std::string& tac_str = tai.getTac();
-        uint32_t tac_val           = 0;
-        try {
-          tac_val = static_cast<uint32_t>(std::stoul(tac_str, nullptr, 16));
-        } catch (...) {
-          // Malformed TAC — skip this entry
-          return {};
-        }
-        v.push_back(static_cast<uint8_t>((tac_val >> 16) & 0xFF));
-        v.push_back(static_cast<uint8_t>((tac_val >> 8) & 0xFF));
-        v.push_back(static_cast<uint8_t>(tac_val & 0xFF));
-      }
-      return v;
-    };
-
-    std::vector<uint8_t> nsag_raw;
-    size_t tai_encoded    = 0;
-    size_t wire_entry_cnt = 0;
-
-    for (size_t i = 0;
-         i < num_entries && wire_entry_cnt < kNsagInformationMaxEntries; ++i) {
-      const auto& entry   = nsag_infos[i];
-      const auto& ids     = entry.getNsagIds();
-      const auto& snssais = entry.getSnssaiList();
-
-      // S-NSSAI list bytes
-      std::vector<uint8_t> snssai_list_bytes;
-      for (const auto& s : snssais) {
-        auto s_bytes = encode_snssai_bytes(s);
-        snssai_list_bytes.insert(
-            snssai_list_bytes.end(), s_bytes.begin(), s_bytes.end());
-      }
-      uint8_t snssai_list_len =
-          static_cast<uint8_t>(std::min(snssai_list_bytes.size(), size_t(255)));
-
-      // TAI list bytes
-      std::vector<uint8_t> tai_bytes;
-      bool encode_tai = entry.taiListIsSet() && !entry.getTaiList().empty() &&
-                        (tai_encoded < 4);
-      if (encode_tai) {
-        tai_bytes = encode_tai_list_bytes(entry.getTaiList());
-        if (tai_bytes.empty()) {
-          Logger::amf_n1().warn(
-              "Entry %zu TAI list encoding failed — omitting TAI list", i);
-          encode_tai = false;
-        } else {
-          ++tai_encoded;
-          Logger::amf_n1().debug(
-              "Entry %zu TAI list encoded (%zu bytes for %zu TAIs)", i,
-              tai_bytes.size(), entry.getTaiList().size());
-        }
-      } else if (
-          entry.taiListIsSet() && !entry.getTaiList().empty() &&
-          tai_encoded >= 4) {
-        Logger::amf_n1().warn(
-            "Entry %zu TAI list omitted (4-entry limit reached)", i);
-      }
-
-      // NSAG ID
-      for (size_t j = 0;
-           j < ids.size() && wire_entry_cnt < kNsagInformationMaxEntries; ++j) {
-        uint8_t nsag_id = static_cast<uint8_t>(ids[j] & 0xFF);
-
-        // Compute entry_length:
-        //   1 (nsag_id) + 1 (snssai_list_len) + snssai_list_len
-        //   + 1 (priority) + optional (1 + tai_bytes.size())
-        uint8_t entry_length =
-            static_cast<uint8_t>(1 + 1 + snssai_list_len + 1);
-        if (encode_tai && !tai_bytes.empty()) {
-          entry_length = static_cast<uint8_t>(
-              entry_length + 1 + std::min(tai_bytes.size(), size_t(255)));
-        }
-
-        nsag_raw.push_back(entry_length);
-        nsag_raw.push_back(nsag_id);
-        nsag_raw.push_back(snssai_list_len);
-        nsag_raw.insert(
-            nsag_raw.end(), snssai_list_bytes.begin(),
-            snssai_list_bytes.begin() + snssai_list_len);
-
-        // TODO: use per-entry NSAG priority when NsagInfo model exposes it
-        nsag_raw.push_back(0x01);  // priority 1 (highest)
-
-        if (encode_tai && !tai_bytes.empty()) {
-          uint8_t tai_list_len =
-              static_cast<uint8_t>(std::min(tai_bytes.size(), size_t(255)));
-          nsag_raw.push_back(tai_list_len);
-          nsag_raw.insert(
-              nsag_raw.end(), tai_bytes.begin(),
-              tai_bytes.begin() + tai_list_len);
-        }
-
-        ++wire_entry_cnt;
-      }
-    }
-
-    nc->subscribed_nsag_info = std::move(nsag_raw);
+    set_subscribed_nsag_info(
+        authorized_network_slice_info.getNsagInfos(), nc->subscribed_nsag_info);
     Logger::amf_n1().debug(
         "Stored %zu bytes of NSAG information from NSSF response "
         "(%zu entries) for UE %lu",
@@ -7584,7 +7409,6 @@ bool amf_n1::send_configuration_update_command(
 
   // NSAG Information IE
   if (include_nsag) {
-    // Clone the IE and ensure it uses the CUC IEI (0x73, not 0x7C)
     oai::nas::NsagInformation cuc_nsag_ie(kIeiNsagInformationCuc);
     cuc_nsag_ie.SetValue(nsag_ie.value().GetValue());
     cuc->SetNsagInformation(cuc_nsag_ie);
@@ -7609,7 +7433,7 @@ bool amf_n1::send_configuration_update_command(
   int encoded_size  = cuc->Encode(buf_heap, static_cast<int>(msg_len));
   if (encoded_size == KEncodeDecodeError) {
     Logger::amf_n1().error(
-        "send_configuration_update_command: encode error for UE %lu",
+        "Configuration Update Command: encoding error for UE %lu",
         nc->amf_ue_ngap_id);
     delete[] buf_heap;
     return false;
@@ -7627,14 +7451,14 @@ bool amf_n1::send_configuration_update_command(
 
   if (!protected_nas) {
     Logger::amf_n1().error(
-        "send_configuration_update_command: security protection failed for UE "
+        "Configuration Update Command: security protection failed for UE "
         "%lu",
         nc->amf_ue_ngap_id);
     return false;
   }
 
   if (ack_requested) {
-    pending_ucu_t ucu;
+    pending_ucu_t ucu = {};
     ucu.ack_requested = true;
     ucu.retry_count   = 0;
     ucu.cuc_pdu.assign(
@@ -7670,8 +7494,7 @@ void amf_n1::trigger_mps_indicator_update(
     std::shared_ptr<nas_context> nc, bool new_mps_priority) {
   if (!amf_cfg->support_features.enable_mps_indicator_update) {
     Logger::amf_n1().debug(
-        "trigger_mps_indicator_update: enable_mps_indicator_update=false — "
-        "skipping for UE %lu",
+        "MPS indicator update disabled - skipping for UE %lu",
         nc->amf_ue_ngap_id);
     return;
   }
@@ -7679,17 +7502,17 @@ void amf_n1::trigger_mps_indicator_update(
   if (nc->mps_priority_active == new_mps_priority) {
     // No state change — nothing to send
     Logger::amf_n1().debug(
-        "trigger_mps_indicator_update: MPS priority unchanged (%s) for "
-        "UE %lu — no CUC needed",
+        "MPS priority unchanged (%s) for "
+        "UE %lu - no CUC needed",
         new_mps_priority ? "active" : "inactive", nc->amf_ue_ngap_id);
     return;
   }
 
   if (!nc->nas_ue_supports_mps_indicator_update) {
     // Per TS 24.501 §4.5.2A: UE that does not support MPSIU must re-register
-    // to receive the updated MPS state.  The AMF cannot push a CUC for this.
+    // to receive the updated MPS state. The AMF cannot push a CUC for this.
     Logger::amf_n1().info(
-        "trigger_mps_indicator_update: UE %lu does not support MPSIU — "
+        "UE %lu does not support MPSIU - "
         "MPS change requires new registration (per TS 24.501 §4.5.2A)",
         nc->amf_ue_ngap_id);
     return;
@@ -7698,7 +7521,7 @@ void amf_n1::trigger_mps_indicator_update(
   // Update state and send CUC with Priority Indicator IE
   nc->mps_priority_active = new_mps_priority;
   Logger::amf_n1().info(
-      "trigger_mps_indicator_update: sending CUC Priority Indicator (MPSI=%u) "
+      "Sending CUC Priority Indicator (MPSI=%u) "
       "to UE %lu (TS 24.501 §5.4.4.2, §8.2.19.35)",
       new_mps_priority ? 1u : 0u, nc->amf_ue_ngap_id);
 
@@ -7723,7 +7546,7 @@ bool amf_n1::configuration_update_complete_handle(
   std::shared_ptr<nas_context> nc;
   if (!amf_ue_id_2_nas_context(amf_ue_ngap_id, nc)) {
     Logger::amf_n1().error(
-        "configuration_update_complete_handle: NAS context not found for "
+        "Configuration Update Complete: NAS context not found for "
         "UE %lu",
         amf_ue_ngap_id);
     cause = k5gmmCauseUeIdentityCannotBeDerived;
@@ -7747,8 +7570,6 @@ bool amf_n1::configuration_update_complete_handle(
 
   // Apply and clear pending UCU context updates
   if (nc->pending_ucu_.has_value()) {
-    // Future: apply acknowledgement-dependent context updates here
-    // (e.g. confirm NSSRG/NSAG changes, trigger Nudm_SDM_Info)
     nc->pending_ucu_ = std::nullopt;
     Logger::amf_n1().debug(
         "Pending UCU cleared after successful acknowledgement from UE %lu",
@@ -7780,7 +7601,7 @@ void amf_n1::handle_t3555_expiry(
   // successful Configuration Update Complete was already processed).
   if (!nc->pending_ucu_.has_value()) {
     Logger::amf_n1().debug(
-        "T3555 expiry ignored — no pending UCU for UE %lu (already completed?)",
+        "T3555 expiry ignored - no pending UCU for UE %lu (already completed?)",
         amf_ue_ngap_id);
     return;
   }
@@ -7812,7 +7633,7 @@ void amf_n1::handle_t3555_expiry(
         "T3555 final expiry for UE %lu — aborting Configuration Update",
         amf_ue_ngap_id);
 
-    // Fire T3555_FINAL_EXPIRY state machine event
+    // Handle T3555_FINAL_EXPIRY state machine event
     handle_nas_event(nc, oai::amf::nas::nas_event_e::T3555_FINAL_EXPIRY);
 
     // Clear pending UCU and restore prior state
@@ -7845,4 +7666,184 @@ void amf_n1::handle_t3565_expiry(
       "implemented",
       amf_ue_ngap_id_str.c_str());
   // TODO: implement T3565 Notification retransmit handling
+}
+
+void amf_n1::set_subscribed_nsag_info(
+    const std::vector<oai::_3gpp::model::NsagInfo>& nsag_infos,
+    std::vector<uint8_t>& subscribed_nsag_info) {
+  size_t num_entries = nsag_infos.size();
+
+  // Enforce maximum 32 NSAG entries per TS 24.501 §9.11.3.87
+  if (num_entries > kNsagInformationMaxEntries) {
+    Logger::amf_n1().warn(
+        "NSSF returned %zu NSAG entries; truncating to %u (max per "
+        "TS 24.501 §9.11.3.87)",
+        num_entries, kNsagInformationMaxEntries);
+    num_entries = kNsagInformationMaxEntries;
+  }
+
+  // Count entries with TAI list — maximum 4 allowed per §9.11.3.87
+  size_t tai_entry_count = 0;
+  for (size_t i = 0; i < num_entries; ++i) {
+    if (nsag_infos[i].taiListIsSet() && !nsag_infos[i].getTaiList().empty())
+      ++tai_entry_count;
+  }
+  if (tai_entry_count > 4) {
+    Logger::amf_n1().warn(
+        "%zu NSAG entries have TAI list; maximum is 4 per "
+        "TS 24.501 §9.11.3.87 - extra TAI lists will be omitted",
+        tai_entry_count);
+  }
+
+  // Encode NSAG entries (TS 24.501 §9.11.3.87)
+  auto encode_snssai_bytes =
+      [](const oai::_3gpp::model::Snssai& s) -> std::vector<uint8_t> {
+    std::vector<uint8_t> v;
+    bool has_sd = s.sdIsSet() &&
+                  (static_cast<uint32_t>(s.getSdInt()) != SD_DEFAULT_VALUE_INT);
+    uint8_t content_len = has_sd ? 4 : 1;  // SST + optional 3-byte SD
+    v.push_back(content_len);
+    v.push_back(static_cast<uint8_t>(s.getSst() & 0xFF));
+    if (has_sd) {
+      uint32_t sd = static_cast<uint32_t>(s.getSdInt());
+      v.push_back(static_cast<uint8_t>((sd >> 16) & 0xFF));
+      v.push_back(static_cast<uint8_t>((sd >> 8) & 0xFF));
+      v.push_back(static_cast<uint8_t>(sd & 0xFF));
+    }
+    return v;
+  };
+
+  // Encode a TAI list as §9.11.3.9 type-00 sub-entries.
+  auto encode_tai_list_bytes =
+      [](const std::vector<oai::_3gpp::model::Tai>& tais)
+      -> std::vector<uint8_t> {
+    std::vector<uint8_t> v;
+    for (const auto& tai : tais) {
+      // Type-00 sub-entry: type/count byte = 0x00 (type=00, count=1–1=0),
+      // then 3-byte PLMN, then 3-byte TAC.
+      v.push_back(0x00);  // type-00, one TAI
+
+      const auto& plmn       = tai.getPlmnId();
+      const std::string& mcc = plmn.getMcc();  // e.g. "208"
+      const std::string& mnc = plmn.getMnc();  // e.g. "93" or "093"
+      // PLMN encoding (TS 24.008 §10.5.1.13):
+      //   octet 1: MCC digit 2 | (MCC digit 1 << 4)
+      //   octet 2: MNC digit 3 (or 0xF for 2-digit MNC) | (MCC digit 3 << 4)
+      //   octet 3: MNC digit 2 | (MNC digit 1 << 4)
+      if (mcc.size() < 3) {
+        // Malformed PLMN — skip this TAI
+        return {};
+      }
+      uint8_t mcc1 = static_cast<uint8_t>(mcc[0] - '0');
+      uint8_t mcc2 = static_cast<uint8_t>(mcc[1] - '0');
+      uint8_t mcc3 = static_cast<uint8_t>(mcc[2] - '0');
+      uint8_t mnc1 = 0, mnc2 = 0, mnc3 = 0xF;
+      if (mnc.size() >= 2) {
+        mnc1 = static_cast<uint8_t>(mnc[0] - '0');
+        mnc2 = static_cast<uint8_t>(mnc[1] - '0');
+      }
+      if (mnc.size() >= 3) {
+        mnc3 = static_cast<uint8_t>(mnc[2] - '0');
+      }
+      v.push_back(static_cast<uint8_t>((mcc2 << 4) | mcc1));
+      v.push_back(static_cast<uint8_t>((mnc3 << 4) | mcc3));
+      v.push_back(static_cast<uint8_t>((mnc2 << 4) | mnc1));
+
+      // TAC: 3-byte hex string per model (e.g. "000001")
+      const std::string& tac_str = tai.getTac();
+      uint32_t tac_val           = 0;
+      try {
+        tac_val = static_cast<uint32_t>(std::stoul(tac_str, nullptr, 16));
+      } catch (...) {
+        // Malformed TAC — skip this entry
+        return {};
+      }
+      v.push_back(static_cast<uint8_t>((tac_val >> 16) & 0xFF));
+      v.push_back(static_cast<uint8_t>((tac_val >> 8) & 0xFF));
+      v.push_back(static_cast<uint8_t>(tac_val & 0xFF));
+    }
+    return v;
+  };
+
+  std::vector<uint8_t> nsag_raw;
+  size_t tai_encoded    = 0;
+  size_t wire_entry_cnt = 0;
+
+  for (size_t i = 0;
+       i < num_entries && wire_entry_cnt < kNsagInformationMaxEntries; ++i) {
+    const auto& entry   = nsag_infos[i];
+    const auto& ids     = entry.getNsagIds();
+    const auto& snssais = entry.getSnssaiList();
+
+    // S-NSSAI list bytes
+    std::vector<uint8_t> snssai_list_bytes;
+    for (const auto& s : snssais) {
+      auto s_bytes = encode_snssai_bytes(s);
+      snssai_list_bytes.insert(
+          snssai_list_bytes.end(), s_bytes.begin(), s_bytes.end());
+    }
+    uint8_t snssai_list_len =
+        static_cast<uint8_t>(std::min(snssai_list_bytes.size(), size_t(255)));
+
+    // TAI list bytes
+    std::vector<uint8_t> tai_bytes;
+    bool encode_tai = entry.taiListIsSet() && !entry.getTaiList().empty() &&
+                      (tai_encoded < 4);
+    if (encode_tai) {
+      tai_bytes = encode_tai_list_bytes(entry.getTaiList());
+      if (tai_bytes.empty()) {
+        Logger::amf_n1().warn(
+            "Entry %zu TAI list encoding failed — omitting TAI list", i);
+        encode_tai = false;
+      } else {
+        ++tai_encoded;
+        Logger::amf_n1().debug(
+            "Entry %zu TAI list encoded (%zu bytes for %zu TAIs)", i,
+            tai_bytes.size(), entry.getTaiList().size());
+      }
+    } else if (
+        entry.taiListIsSet() && !entry.getTaiList().empty() &&
+        tai_encoded >= 4) {
+      Logger::amf_n1().warn(
+          "Entry %zu TAI list omitted (4-entry limit reached)", i);
+    }
+
+    // NSAG ID
+    for (size_t j = 0;
+         j < ids.size() && wire_entry_cnt < kNsagInformationMaxEntries; ++j) {
+      uint8_t nsag_id = static_cast<uint8_t>(ids[j] & 0xFF);
+
+      // Compute entry_length:
+      //   1 (nsag_id) + 1 (snssai_list_len) + snssai_list_len
+      //   + 1 (priority) + optional (1 + tai_bytes.size())
+      uint8_t entry_length = static_cast<uint8_t>(1 + 1 + snssai_list_len + 1);
+      if (encode_tai && !tai_bytes.empty()) {
+        entry_length = static_cast<uint8_t>(
+            entry_length + 1 + std::min(tai_bytes.size(), size_t(255)));
+      }
+
+      nsag_raw.push_back(entry_length);
+      nsag_raw.push_back(nsag_id);
+      nsag_raw.push_back(snssai_list_len);
+      nsag_raw.insert(
+          nsag_raw.end(), snssai_list_bytes.begin(),
+          snssai_list_bytes.begin() + snssai_list_len);
+
+      // TODO: use per-entry NSAG priority when NsagInfo model exposes it
+      nsag_raw.push_back(0x01);  // priority 1 (highest)
+
+      if (encode_tai && !tai_bytes.empty()) {
+        uint8_t tai_list_len =
+            static_cast<uint8_t>(std::min(tai_bytes.size(), size_t(255)));
+        nsag_raw.push_back(tai_list_len);
+        nsag_raw.insert(
+            nsag_raw.end(), tai_bytes.begin(),
+            tai_bytes.begin() + tai_list_len);
+      }
+
+      ++wire_entry_cnt;
+    }
+  }
+
+  subscribed_nsag_info = std::move(nsag_raw);
 }
