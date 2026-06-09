@@ -154,7 +154,6 @@ std::string amf_sbi_helper::get_amf_callback_deregistration_notification_uri(
   get_fmt_format_form(
       AmfCallbackPathDeregistrationNotification, fmr_format_str);
   return amf_cfg->sbi.get_ipv4_root() + AmfCallbackBase() +
-         amf_cfg->sbi.api_version.value_or(DEFAULT_SBI_API_VERSION) +
          fmt::format(fmr_format_str, supi);
 }
 
@@ -191,7 +190,6 @@ std::string amf_sbi_helper::get_pcf_policy_update_notification_uri(
   get_fmt_format_form(AmfCallbackPathPolicyUpdateNotification, fmr_format_str);
 
   return amf_cfg->sbi.get_ipv4_root() + AmfCallbackBase() +
-         amf_cfg->sbi.api_version.value_or(DEFAULT_SBI_API_VERSION) +
          fmt::format(fmr_format_str, supi);
 }
 
