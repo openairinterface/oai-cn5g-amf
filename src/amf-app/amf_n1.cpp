@@ -6224,9 +6224,8 @@ bool amf_n1::reroute_registration_request(
     set_subscribed_nsag_info(
         authorized_network_slice_info.getNsagInfos(), nc->subscribed_nsag_info);
     Logger::amf_n1().debug(
-        "Stored %zu bytes of NSAG information from NSSF response "
-        "(%zu entries) for UE %lu",
-        nc->subscribed_nsag_info.size(), num_entries, nc->amf_ue_ngap_id);
+        "Stored %zu bytes of NSAG information from NSSF response for UE %lu",
+        nc->subscribed_nsag_info.size(), nc->amf_ue_ngap_id);
   } else if (
       amf_cfg->support_features.enable_nsag && nc->nas_ue_supports_nsag &&
       !authorized_network_slice_info.nsagInfosIsSet()) {
