@@ -15,9 +15,9 @@
 
 #include "3gpp_29.500.h"
 #include "itti.hpp"
+#include "amf_sbi_promise.hpp"
 #include "utils.hpp"
 
-extern itti_mw* itti_inst;
 namespace oai {
 namespace amf {
 namespace api {
@@ -40,47 +40,23 @@ void N1N2SubscriptionsCollectionForIndividualUEContextsDocumentApiImpl::
   Logger::amf_server().debug("Receive N1N2MessageSubscribe, handling...");
   Logger::amf_server().debug("UE Context ID (%s)", ueContextId.c_str());
 
-  // Generate a promise and associate this promise to the ITTI message
-  uint32_t promise_id = {};
-  boost::shared_ptr<boost::promise<nlohmann::json>> p =
-      boost::make_shared<boost::promise<nlohmann::json>>();
-  boost::shared_future<nlohmann::json> f = p->get_future();
-  m_amf_app->store_promise(promise_id, p);
-  Logger::amf_server().debug("Promise ID generated %d", promise_id);
+  oai::amf::sbi::sbi_result_t result_data = oai::amf::sbi::sbi_send_recv(
+      m_amf_app, [&](uint32_t promise_id) -> std::shared_ptr<itti_msg> {
+        // Handle the N1N2SubscribeMessage in amf_app
+        std::shared_ptr<itti_sbi_n1n2_message_subscribe> itti_msg =
+            std::make_shared<itti_sbi_n1n2_message_subscribe>(
+                TASK_AMF_SBI, TASK_AMF_APP, promise_id);
+        itti_msg->ue_cxt_id         = ueContextId;
+        itti_msg->subscription_data = ueN1N2InfoSubscriptionCreateData;
+        itti_msg->promise_id        = promise_id;
+        return itti_msg;
+      });
 
-  // Handle the N1N2SubscribeMessage in amf_app
-  std::shared_ptr<itti_sbi_n1n2_message_subscribe> itti_msg =
-      std::make_shared<itti_sbi_n1n2_message_subscribe>(
-          TASK_AMF_SBI, TASK_AMF_APP, promise_id);
-
-  itti_msg->ue_cxt_id         = ueContextId;
-  itti_msg->subscription_data = ueN1N2InfoSubscriptionCreateData;
-  itti_msg->promise_id        = promise_id;
-
-  int ret = itti_inst->send_msg(itti_msg);
-  if (0 != ret) {
-    Logger::amf_server().error(
-        "Could not send ITTI message %s to task TASK_AMF_APP",
-        itti_msg->get_msg_name());
-  }
-
-  // Wait for the result available and process accordingly
-  std::optional<nlohmann::json> result_opt = std::nullopt;
-  oai::utils::utils::wait_for_result(f, result_opt);
-
-  if (result_opt.has_value()) {
-    Logger::amf_server().debug("Got result for promise ID %d", promise_id);
-    nlohmann::json result = result_opt.value();
+  if (result_data.has_result) {
+    nlohmann::json& result = result_data.body;
     // process data
-    std::string location        = {};
-    uint32_t http_response_code = 0;
-    if (result.find(kSbiResponseHeaderLocation) != result.end()) {
-      location = result[kSbiResponseHeaderLocation].get<std::string>();
-    }
-
-    if (result.find(kSbiResponseHttpResponseCode) != result.end()) {
-      http_response_code = result[kSbiResponseHttpResponseCode].get<int>();
-    }
+    std::string location        = result_data.location;
+    uint32_t http_response_code = result_data.http_code;
 
     // UeN1N2InfoSubscriptionCreatedData
     nlohmann::json json_data = {};
@@ -101,9 +77,6 @@ void N1N2SubscriptionsCollectionForIndividualUEContextsDocumentApiImpl::
     // TODO:
     response.send(Pistache::Http::Code::Gateway_Timeout);
   }
-  // Remove the promise from the list since the result is processed or not
-  // available
-  m_amf_app->remove_promise(promise_id);
 }
 
 }  // namespace api

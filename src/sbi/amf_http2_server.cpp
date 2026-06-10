@@ -15,6 +15,7 @@
 #include "amf_config.hpp"
 #include "amf_conversions.hpp"
 #include "amf_sbi_helper.hpp"
+#include "amf_sbi_promise.hpp"
 #include "logger.hpp"
 #include "output_wrapper.hpp"
 #include "utils.hpp"
@@ -1120,47 +1121,23 @@ void amf_http2_server::n1_n2_message_subscribe_handler(
 
   header_map h;
 
-  // Generate a promise and associate this promise to the ITTI message
-  uint32_t promise_id = {};
-  boost::shared_ptr<boost::promise<nlohmann::json>> p =
-      boost::make_shared<boost::promise<nlohmann::json>>();
-  boost::shared_future<nlohmann::json> f = p->get_future();
-  m_amf_app->store_promise(promise_id, p);
-  Logger::amf_n1().debug("Promise ID generated %d", promise_id);
+  oai::amf::sbi::sbi_result_t result_data = oai::amf::sbi::sbi_send_recv(
+      m_amf_app, [&](uint32_t promise_id) -> std::shared_ptr<itti_msg> {
+        // Handle the N1N2SubscribeMessage in amf_app
+        std::shared_ptr<itti_sbi_n1n2_message_subscribe> itti_msg =
+            std::make_shared<itti_sbi_n1n2_message_subscribe>(
+                TASK_AMF_SBI, TASK_AMF_APP, promise_id);
+        itti_msg->ue_cxt_id         = ueContextId;
+        itti_msg->subscription_data = ueN1N2InfoSubscriptionCreateData;
+        itti_msg->promise_id        = promise_id;
+        return itti_msg;
+      });
 
-  // Handle the N1N2SubscribeMessage in amf_app
-  std::shared_ptr<itti_sbi_n1n2_message_subscribe> itti_msg =
-      std::make_shared<itti_sbi_n1n2_message_subscribe>(
-          TASK_AMF_SBI, TASK_AMF_APP, promise_id);
-
-  itti_msg->ue_cxt_id         = ueContextId;
-  itti_msg->subscription_data = ueN1N2InfoSubscriptionCreateData;
-  itti_msg->promise_id        = promise_id;
-
-  int ret = itti_inst->send_msg(itti_msg);
-  if (0 != ret) {
-    Logger::amf_server().error(
-        "Could not send ITTI message %s to task TASK_AMF_APP",
-        itti_msg->get_msg_name());
-  }
-
-  // Wait for the result available and process accordingly
-  std::optional<nlohmann::json> result_opt = std::nullopt;
-  oai::utils::utils::wait_for_result(f, result_opt);
-
-  if (result_opt.has_value()) {
-    Logger::amf_server().debug("Got result for promise ID %d", promise_id);
-    nlohmann::json result = result_opt.value();
+  if (result_data.has_result) {
+    nlohmann::json& result = result_data.body;
     // process data
-    std::string location        = {};
-    uint32_t http_response_code = 0;
-    if (result.find(kSbiResponseHeaderLocation) != result.end()) {
-      location = result[kSbiResponseHeaderLocation].get<std::string>();
-    }
-
-    if (result.find(kSbiResponseHttpResponseCode) != result.end()) {
-      http_response_code = result[kSbiResponseHttpResponseCode].get<int>();
-    }
+    std::string location        = result_data.location;
+    uint32_t http_response_code = result_data.http_code;
 
     // UeN1N2InfoSubscriptionCreatedData
     nlohmann::json json_data = {};
@@ -1183,10 +1160,6 @@ void amf_http2_server::n1_n2_message_subscribe_handler(
   } else {
     send_response(res, oai::common::sbi::http_status_code::GATEWAY_TIMEOUT);
   }
-
-  // Remove the promise from the list since the result is processed or not
-  // available
-  amf_app_inst->remove_promise(promise_id);
 }
 
 //------------------------------------------------------------------------------
@@ -1200,44 +1173,23 @@ void amf_http2_server::n1_n2_message_unsubscribe_handler(
 
   header_map h;
 
-  // Generate a promise and associate this promise to the ITTI message
-  uint32_t promise_id = {};
-  boost::shared_ptr<boost::promise<nlohmann::json>> p =
-      boost::make_shared<boost::promise<nlohmann::json>>();
-  boost::shared_future<nlohmann::json> f = p->get_future();
-  m_amf_app->store_promise(promise_id, p);
-  Logger::amf_server().debug("Promise ID generated %d", promise_id);
+  oai::amf::sbi::sbi_result_t result_data = oai::amf::sbi::sbi_send_recv(
+      m_amf_app, [&](uint32_t promise_id) -> std::shared_ptr<itti_msg> {
+        // Handle the N1N2UnsubscribeMessage in amf_app
+        std::shared_ptr<itti_sbi_n1n2_message_unsubscribe> itti_msg =
+            std::make_shared<itti_sbi_n1n2_message_unsubscribe>(
+                TASK_AMF_SBI, TASK_AMF_APP, promise_id);
+        itti_msg->ue_cxt_id       = ueContextId;
+        itti_msg->subscription_id = subscriptionId;
+        itti_msg->promise_id      = promise_id;
+        return itti_msg;
+      });
 
-  // Handle the N1N2UnsubscribeMessage in amf_app
-  std::shared_ptr<itti_sbi_n1n2_message_unsubscribe> itti_msg =
-      std::make_shared<itti_sbi_n1n2_message_unsubscribe>(
-          TASK_AMF_SBI, TASK_AMF_APP, promise_id);
-
-  itti_msg->ue_cxt_id       = ueContextId;
-  itti_msg->subscription_id = subscriptionId;
-  itti_msg->promise_id      = promise_id;
-
-  int ret = itti_inst->send_msg(itti_msg);
-  if (0 != ret) {
-    Logger::amf_server().error(
-        "Could not send ITTI message %s to task TASK_AMF_APP",
-        itti_msg->get_msg_name());
-  }
-
-  // Wait for the result available and process accordingly
-  std::optional<nlohmann::json> result_opt = std::nullopt;
-  oai::utils::utils::wait_for_result(f, result_opt);
-
-  if (result_opt.has_value()) {
-    Logger::amf_server().debug("Got result for promise ID %d", promise_id);
-    nlohmann::json result = result_opt.value();
+  if (result_data.has_result) {
+    nlohmann::json& result = result_data.body;
     // process data
-    uint32_t http_response_code = 0;
+    uint32_t http_response_code = result_data.http_code;
     nlohmann::json json_data    = {};
-
-    if (result.find(kSbiResponseHttpResponseCode) != result.end()) {
-      http_response_code = result[kSbiResponseHttpResponseCode].get<int>();
-    }
 
     if (http_response_code == oai::common::sbi::http_status_code::NO_CONTENT) {
       send_response(res, http_response_code);
@@ -1255,9 +1207,6 @@ void amf_http2_server::n1_n2_message_unsubscribe_handler(
     res.write_head(oai::common::sbi::http_status_code::GATEWAY_TIMEOUT, h);
     res.end();
   }
-  // Remove the promise from the list since the result is processed or not
-  // available
-  amf_app_inst->remove_promise(promise_id);
 }
 
 //------------------------------------------------------------------------------
@@ -1268,47 +1217,22 @@ void amf_http2_server::non_ue_n2_info_subscribe_handler(
 
   header_map h;
 
-  // Generate a promise and associate this promise to the ITTI message
-  uint32_t promise_id = {};
+  oai::amf::sbi::sbi_result_t result_data = oai::amf::sbi::sbi_send_recv(
+      m_amf_app, [&](uint32_t promise_id) -> std::shared_ptr<itti_msg> {
+        // Handle the NonUeN2InfoSubscribe in amf_app
+        std::shared_ptr<itti_sbi_non_ue_n2_info_subscribe> itti_msg =
+            std::make_shared<itti_sbi_non_ue_n2_info_subscribe>(
+                TASK_AMF_SBI, TASK_AMF_APP, promise_id);
+        itti_msg->subscription_data = subscriptionCreateData;
+        itti_msg->promise_id        = promise_id;
+        return itti_msg;
+      });
 
-  boost::shared_ptr<boost::promise<nlohmann::json>> p =
-      boost::make_shared<boost::promise<nlohmann::json>>();
-  boost::shared_future<nlohmann::json> f = p->get_future();
-  m_amf_app->store_promise(promise_id, p);
-  Logger::amf_server().debug("Promise ID generated %d", promise_id);
-
-  // Handle the NonUeN2InfoSubscribe in amf_app
-  std::shared_ptr<itti_sbi_non_ue_n2_info_subscribe> itti_msg =
-      std::make_shared<itti_sbi_non_ue_n2_info_subscribe>(
-          TASK_AMF_SBI, TASK_AMF_APP, promise_id);
-
-  itti_msg->subscription_data = subscriptionCreateData;
-  itti_msg->promise_id        = promise_id;
-
-  int ret = itti_inst->send_msg(itti_msg);
-  if (0 != ret) {
-    Logger::amf_server().error(
-        "Could not send ITTI message %s to task TASK_AMF_APP",
-        itti_msg->get_msg_name());
-  }
-
-  // Wait for the result available and process accordingly
-  std::optional<nlohmann::json> result_opt = std::nullopt;
-  oai::utils::utils::wait_for_result(f, result_opt);
-
-  if (result_opt.has_value()) {
-    Logger::amf_server().debug("Got result for promise ID %d", promise_id);
-    nlohmann::json result = result_opt.value();
+  if (result_data.has_result) {
+    nlohmann::json& result = result_data.body;
     // process data
-    std::string location        = {};
-    uint32_t http_response_code = 0;
-    if (result.find(kSbiResponseHeaderLocation) != result.end()) {
-      location = result[kSbiResponseHeaderLocation].get<std::string>();
-    }
-
-    if (result.find(kSbiResponseHttpResponseCode) != result.end()) {
-      http_response_code = result[kSbiResponseHttpResponseCode].get<int>();
-    }
+    std::string location        = result_data.location;
+    uint32_t http_response_code = result_data.http_code;
 
     // NonUeN2InfoSubscriptionCreatedData
     nlohmann::json json_data = {};
@@ -1331,9 +1255,6 @@ void amf_http2_server::non_ue_n2_info_subscribe_handler(
   } else {
     send_response(res, oai::common::sbi::http_status_code::GATEWAY_TIMEOUT);
   }
-  // Remove the promise from the list since the result is processed or not
-  // available
-  amf_app_inst->remove_promise(promise_id);
 }
 
 //------------------------------------------------------------------------------
@@ -1344,43 +1265,22 @@ void amf_http2_server::non_ue_n2_info_unsubscribe_handler(
 
   header_map h;
 
-  // Generate a promise and associate this promise to the ITTI message
-  uint32_t promise_id = {};
-  boost::shared_ptr<boost::promise<nlohmann::json>> p =
-      boost::make_shared<boost::promise<nlohmann::json>>();
-  boost::shared_future<nlohmann::json> f = p->get_future();
-  m_amf_app->store_promise(promise_id, p);
-  Logger::amf_server().debug("Promise ID generated %d", promise_id);
+  oai::amf::sbi::sbi_result_t result_data = oai::amf::sbi::sbi_send_recv(
+      m_amf_app, [&](uint32_t promise_id) -> std::shared_ptr<itti_msg> {
+        // Handle the NonUEN2InfoUnsubscribe in amf_app
+        std::shared_ptr<itti_sbi_non_ue_n2_info_unsubscribe> itti_msg =
+            std::make_shared<itti_sbi_non_ue_n2_info_unsubscribe>(
+                TASK_AMF_SBI, TASK_AMF_APP, promise_id);
+        itti_msg->subscription_id = subscriptionId;
+        itti_msg->promise_id      = promise_id;
+        return itti_msg;
+      });
 
-  // Handle the NonUEN2InfoUnsubscribe in amf_app
-  std::shared_ptr<itti_sbi_non_ue_n2_info_unsubscribe> itti_msg =
-      std::make_shared<itti_sbi_non_ue_n2_info_unsubscribe>(
-          TASK_AMF_SBI, TASK_AMF_APP, promise_id);
-
-  itti_msg->subscription_id = subscriptionId;
-  itti_msg->promise_id      = promise_id;
-
-  int ret = itti_inst->send_msg(itti_msg);
-  if (0 != ret) {
-    Logger::amf_server().error(
-        "Could not send ITTI message %s to task TASK_AMF_APP",
-        itti_msg->get_msg_name());
-  }
-
-  // Wait for the result available and process accordingly
-  std::optional<nlohmann::json> result_opt = std::nullopt;
-  oai::utils::utils::wait_for_result(f, result_opt);
-
-  if (result_opt.has_value()) {
-    Logger::amf_server().debug("Got result for promise ID %d", promise_id);
-    nlohmann::json result = result_opt.value();
+  if (result_data.has_result) {
+    nlohmann::json& result = result_data.body;
     // process data
-    uint32_t http_response_code = 0;
+    uint32_t http_response_code = result_data.http_code;
     nlohmann::json json_data    = {};
-
-    if (result.find(kSbiResponseHttpResponseCode) != result.end()) {
-      http_response_code = result[kSbiResponseHttpResponseCode].get<int>();
-    }
 
     if (http_response_code == oai::common::sbi::http_status_code::NO_CONTENT) {
       send_response(res, http_response_code);
@@ -1398,9 +1298,6 @@ void amf_http2_server::non_ue_n2_info_unsubscribe_handler(
     res.write_head(oai::common::sbi::http_status_code::GATEWAY_TIMEOUT, h);
     res.end();
   }
-  // Remove the promise from the list since the result is processed or not
-  // available
-  amf_app_inst->remove_promise(promise_id);
 }
 
 //------------------------------------------------------------------------------
@@ -1410,42 +1307,22 @@ void amf_http2_server::amf_status_change_subscribe_handler(
 
   header_map h;
 
-  // Generate a promise and associate this promise to the ITTI message
-  uint32_t promise_id = {};
-  boost::shared_ptr<boost::promise<nlohmann::json>> p =
-      boost::make_shared<boost::promise<nlohmann::json>>();
-  m_amf_app->store_promise(promise_id, p);
-  boost::shared_future<nlohmann::json> f = p->get_future();
-  Logger::amf_app().debug("Promise ID generated %ld", promise_id);
+  oai::amf::sbi::sbi_result_t result_data = oai::amf::sbi::sbi_send_recv(
+      m_amf_app, [&](uint32_t promise_id) -> std::shared_ptr<itti_msg> {
+        // Handle the AMFStatusChangeSubscription in amf_app
+        std::shared_ptr<itti_sbi_amf_status_change_subscribe_request> itti_msg =
+            std::make_shared<itti_sbi_amf_status_change_subscribe_request>(
+                AMF_SERVER, TASK_AMF_APP, promise_id);
+        itti_msg->subscription_data = subscription_data;
+        itti_msg->promise_id        = promise_id;
+        return itti_msg;
+      });
 
-  // Handle the AMFStatusChangeSubscription in amf_app
-  std::shared_ptr<itti_sbi_amf_status_change_subscribe_request> itti_msg =
-      std::make_shared<itti_sbi_amf_status_change_subscribe_request>(
-          AMF_SERVER, TASK_AMF_APP, promise_id);
-  itti_msg->subscription_data = subscription_data;
-  itti_msg->promise_id        = promise_id;
-
-  int ret = itti_inst->send_msg(itti_msg);
-  if (0 != ret) {
-    Logger::amf_server().error(
-        "Could not send ITTI message %s to task TASK_AMF_APP",
-        itti_msg->get_msg_name());
-  }
-
-  // Wait for the response available and process accordingly
-  std::optional<nlohmann::json> result_opt = std::nullopt;
-  oai::utils::utils::wait_for_result(f, result_opt);
-
-  if (result_opt.has_value()) {
-    Logger::amf_server().debug("Got result for promise ID %d", promise_id);
-    nlohmann::json result = result_opt.value();
+  if (result_data.has_result) {
+    nlohmann::json& result = result_data.body;
     // process data
-    uint32_t http_response_code = 0;
+    uint32_t http_response_code = result_data.http_code;
     nlohmann::json json_data    = {};
-
-    if (result.find(kSbiResponseHttpResponseCode) != result.end()) {
-      http_response_code = result[kSbiResponseHttpResponseCode].get<int>();
-    }
 
     if (http_response_code == oai::common::sbi::http_status_code::CREATED) {
       if (result.find(kSbiResponseJsonData) != result.end()) {
@@ -1477,9 +1354,6 @@ void amf_http2_server::amf_status_change_subscribe_handler(
   } else {
     send_response(res, oai::common::sbi::http_status_code::GATEWAY_TIMEOUT);
   }
-  // Remove the promise from the list since the result is processed or not
-  // available
-  amf_app_inst->remove_promise(promise_id);
 }
 
 //------------------------------------------------------------------------------
@@ -1488,42 +1362,23 @@ void amf_http2_server::amf_status_change_unsubscribe_handler(
   Logger::amf_server().info("Received AMFStatusChangeUnsubscribe Request");
   header_map h;
 
-  // Generate a promise and associate this promise to the ITTI message
-  uint32_t promise_id = {};
-  boost::shared_ptr<boost::promise<nlohmann::json>> p =
-      boost::make_shared<boost::promise<nlohmann::json>>();
-  m_amf_app->store_promise(promise_id, p);
-  boost::shared_future<nlohmann::json> f = p->get_future();
-  Logger::amf_app().debug("Promise ID generated %ld", promise_id);
+  oai::amf::sbi::sbi_result_t result_data = oai::amf::sbi::sbi_send_recv(
+      m_amf_app, [&](uint32_t promise_id) -> std::shared_ptr<itti_msg> {
+        // Handle the AMFStatusChangeUnsubscribe in amf_app
+        std::shared_ptr<itti_sbi_amf_status_change_unsubscribe_request>
+            itti_msg = std::make_shared<
+                itti_sbi_amf_status_change_unsubscribe_request>(
+                AMF_SERVER, TASK_AMF_APP, promise_id);
+        itti_msg->subscription_id = subscription_id;
+        itti_msg->promise_id      = promise_id;
+        return itti_msg;
+      });
 
-  // Handle the AMFStatusChangeUnsubscribe in amf_app
-  std::shared_ptr<itti_sbi_amf_status_change_unsubscribe_request> itti_msg =
-      std::make_shared<itti_sbi_amf_status_change_unsubscribe_request>(
-          AMF_SERVER, TASK_AMF_APP, promise_id);
-  itti_msg->subscription_id = subscription_id;
-  itti_msg->promise_id      = promise_id;
-
-  int ret = itti_inst->send_msg(itti_msg);
-  if (0 != ret) {
-    Logger::amf_server().error(
-        "Could not send ITTI message %s to task TASK_AMF_APP",
-        itti_msg->get_msg_name());
-  }
-
-  // Wait for the response available and process accordingly
-  std::optional<nlohmann::json> result_opt = std::nullopt;
-  oai::utils::utils::wait_for_result(f, result_opt);
-
-  if (result_opt.has_value()) {
-    Logger::amf_server().debug("Got result for promise ID %d", promise_id);
-    nlohmann::json result = result_opt.value();
+  if (result_data.has_result) {
+    nlohmann::json& result = result_data.body;
     // process data
-    uint32_t http_response_code = 0;
+    uint32_t http_response_code = result_data.http_code;
     nlohmann::json json_data    = {};
-
-    if (result.find(kSbiResponseHttpResponseCode) != result.end()) {
-      http_response_code = result[kSbiResponseHttpResponseCode].get<int>();
-    }
 
     if (http_response_code == oai::common::sbi::http_status_code::NO_CONTENT) {
       h.insert(std::make_pair<std::string, header_value>(
@@ -1544,9 +1399,6 @@ void amf_http2_server::amf_status_change_unsubscribe_handler(
   } else {
     send_response(res, oai::common::sbi::http_status_code::GATEWAY_TIMEOUT);
   }
-  // Remove the promise from the list since the result is processed or not
-  // available
-  amf_app_inst->remove_promise(promise_id);
 }
 
 //------------------------------------------------------------------------------
@@ -1557,43 +1409,23 @@ void amf_http2_server::amf_status_change_subscribe_modify_handler(
 
   header_map h;
 
-  // Generate a promise and associate this promise to the ITTI message
-  uint32_t promise_id = {};
-  boost::shared_ptr<boost::promise<nlohmann::json>> p =
-      boost::make_shared<boost::promise<nlohmann::json>>();
-  m_amf_app->store_promise(promise_id, p);
-  boost::shared_future<nlohmann::json> f = p->get_future();
-  Logger::amf_app().debug("Promise ID generated %ld", promise_id);
+  oai::amf::sbi::sbi_result_t result_data = oai::amf::sbi::sbi_send_recv(
+      m_amf_app, [&](uint32_t promise_id) -> std::shared_ptr<itti_msg> {
+        // Handle the AMFStatusChangeSubscription in amf_app
+        std::shared_ptr<itti_sbi_amf_status_change_subscribe_modify> itti_msg =
+            std::make_shared<itti_sbi_amf_status_change_subscribe_modify>(
+                AMF_SERVER, TASK_AMF_APP, promise_id);
+        itti_msg->subscription_id   = subscription_id;
+        itti_msg->subscription_data = subscription_data;
+        itti_msg->promise_id        = promise_id;
+        return itti_msg;
+      });
 
-  // Handle the AMFStatusChangeSubscription in amf_app
-  std::shared_ptr<itti_sbi_amf_status_change_subscribe_modify> itti_msg =
-      std::make_shared<itti_sbi_amf_status_change_subscribe_modify>(
-          AMF_SERVER, TASK_AMF_APP, promise_id);
-  itti_msg->subscription_id   = subscription_id;
-  itti_msg->subscription_data = subscription_data;
-  itti_msg->promise_id        = promise_id;
-
-  int ret = itti_inst->send_msg(itti_msg);
-  if (0 != ret) {
-    Logger::amf_server().error(
-        "Could not send ITTI message %s to task TASK_AMF_APP",
-        itti_msg->get_msg_name());
-  }
-
-  // Wait for the response available and process accordingly
-  std::optional<nlohmann::json> result_opt = std::nullopt;
-  oai::utils::utils::wait_for_result(f, result_opt);
-
-  if (result_opt.has_value()) {
-    Logger::amf_server().debug("Got result for promise ID %d", promise_id);
-    nlohmann::json result = result_opt.value();
+  if (result_data.has_result) {
+    nlohmann::json& result = result_data.body;
     // process data
-    uint32_t http_response_code = 0;
+    uint32_t http_response_code = result_data.http_code;
     nlohmann::json json_data    = {};
-
-    if (result.find(kSbiResponseHttpResponseCode) != result.end()) {
-      http_response_code = result[kSbiResponseHttpResponseCode].get<int>();
-    }
 
     if (http_response_code == oai::common::sbi::http_status_code::OK) {
       if (result.find(kSbiResponseJsonData) != result.end()) {
@@ -1624,9 +1456,6 @@ void amf_http2_server::amf_status_change_subscribe_modify_handler(
   } else {
     send_response(res, oai::common::sbi::http_status_code::GATEWAY_TIMEOUT);
   }
-  // Remove the promise from the list since the result is processed or not
-  // available
-  amf_app_inst->remove_promise(promise_id);
 }
 
 //------------------------------------------------------------------------------
@@ -1637,45 +1466,24 @@ void amf_http2_server::status_notify_handler(
   Logger::amf_server().debug("Receive an NF Status Notify, handling...");
   header_map h;
 
-  // Generate a promise and associate this promise to the ITTI message
-  uint32_t promise_id = {};
-  boost::shared_ptr<boost::promise<nlohmann::json>> p =
-      boost::make_shared<boost::promise<nlohmann::json>>();
-  boost::shared_future<nlohmann::json> f = p->get_future();
-  m_amf_app->store_promise(promise_id, p);
-  Logger::amf_server().debug("Promise ID generated %d", promise_id);
+  oai::amf::sbi::sbi_result_t result_data = oai::amf::sbi::sbi_send_recv(
+      m_amf_app, [&](uint32_t promise_id) -> std::shared_ptr<itti_msg> {
+        // Handle the PDU Session Release in amf_app
+        std::shared_ptr<itti_sbi_pdu_session_release_notif> itti_msg =
+            std::make_shared<itti_sbi_pdu_session_release_notif>(
+                TASK_AMF_SBI, TASK_AMF_APP, promise_id);
+        itti_msg->promise_id                  = promise_id;
+        itti_msg->ue_id                       = ueContextId;
+        itti_msg->pdu_session_id              = pduSessionId;
+        itti_msg->smContextStatusNotification = statusNotification;
+        return itti_msg;
+      });
 
-  // Handle the PDU Session Release in amf_app
-  std::shared_ptr<itti_sbi_pdu_session_release_notif> itti_msg =
-      std::make_shared<itti_sbi_pdu_session_release_notif>(
-          TASK_AMF_SBI, TASK_AMF_APP, promise_id);
-
-  itti_msg->promise_id                  = promise_id;
-  itti_msg->ue_id                       = ueContextId;
-  itti_msg->pdu_session_id              = pduSessionId;
-  itti_msg->smContextStatusNotification = statusNotification;
-
-  int ret = itti_inst->send_msg(itti_msg);
-  if (0 != ret) {
-    Logger::amf_server().error(
-        "Could not send ITTI message %s to task TASK_AMF_APP",
-        itti_msg->get_msg_name());
-  }
-
-  // Wait for the response available and process accordingly
-  std::optional<nlohmann::json> result_opt = std::nullopt;
-  oai::utils::utils::wait_for_result(f, result_opt);
-
-  if (result_opt.has_value()) {
-    Logger::amf_server().debug("Got result for promise ID %d", promise_id);
-    nlohmann::json result = result_opt.value();
+  if (result_data.has_result) {
+    nlohmann::json& result = result_data.body;
     // process data
-    uint32_t http_response_code = 0;
+    uint32_t http_response_code = result_data.http_code;
     nlohmann::json json_data    = {};
-
-    if (result.find(kSbiResponseHttpResponseCode) != result.end()) {
-      http_response_code = result[kSbiResponseHttpResponseCode].get<int>();
-    }
 
     if (http_response_code == oai::common::sbi::http_status_code::OK) {
       if (result.find(kSbiResponseJsonData) != result.end()) {
@@ -1700,52 +1508,27 @@ void amf_http2_server::status_notify_handler(
   } else {
     send_response(res, oai::common::sbi::http_status_code::GATEWAY_TIMEOUT);
   }
-  // Remove the promise from the list since the result is processed or not
-  // available
-  amf_app_inst->remove_promise(promise_id);
 }
 //------------------------------------------------------------------------------
 void amf_http2_server::get_configuration_handler(const response& res) {
   Logger::amf_server().debug("Get AMFConfiguration, handling...");
   header_map h;
 
-  // Generate a promise and associate this promise to the ITTI message
-  uint32_t promise_id = {};
+  oai::amf::sbi::sbi_result_t result_data = oai::amf::sbi::sbi_send_recv(
+      m_amf_app, [&](uint32_t promise_id) -> std::shared_ptr<itti_msg> {
+        // Handle the AMFConfiguration in amf_app
+        std::shared_ptr<itti_sbi_amf_configuration> itti_msg =
+            std::make_shared<itti_sbi_amf_configuration>(
+                TASK_AMF_SBI, TASK_AMF_APP, promise_id);
+        itti_msg->promise_id = promise_id;
+        return itti_msg;
+      });
 
-  boost::shared_ptr<boost::promise<nlohmann::json>> p =
-      boost::make_shared<boost::promise<nlohmann::json>>();
-  boost::shared_future<nlohmann::json> f = p->get_future();
-  m_amf_app->store_promise(promise_id, p);
-  Logger::amf_server().debug("Promise ID generated %d", promise_id);
-
-  // Handle the AMFConfiguration in amf_app
-  std::shared_ptr<itti_sbi_amf_configuration> itti_msg =
-      std::make_shared<itti_sbi_amf_configuration>(
-          TASK_AMF_SBI, TASK_AMF_APP, promise_id);
-
-  itti_msg->promise_id = promise_id;
-
-  int ret = itti_inst->send_msg(itti_msg);
-  if (0 != ret) {
-    Logger::amf_server().error(
-        "Could not send ITTI message %s to task TASK_AMF_APP",
-        itti_msg->get_msg_name());
-  }
-
-  // Wait for the response available and process accordingly
-  std::optional<nlohmann::json> result_opt = std::nullopt;
-  oai::utils::utils::wait_for_result(f, result_opt);
-
-  if (result_opt.has_value()) {
-    Logger::amf_server().debug("Got result for promise ID %d", promise_id);
-    nlohmann::json result = result_opt.value();
+  if (result_data.has_result) {
+    nlohmann::json& result = result_data.body;
     // process data
-    uint32_t http_response_code = 0;
+    uint32_t http_response_code = result_data.http_code;
     nlohmann::json json_data    = {};
-
-    if (result.find(kSbiResponseHttpResponseCode) != result.end()) {
-      http_response_code = result[kSbiResponseHttpResponseCode].get<int>();
-    }
 
     if (http_response_code == oai::common::sbi::http_status_code::OK) {
       if (result.find(kSbiResponseJsonData) != result.end()) {
@@ -1769,9 +1552,6 @@ void amf_http2_server::get_configuration_handler(const response& res) {
   } else {
     send_response(res, oai::common::sbi::http_status_code::GATEWAY_TIMEOUT);
   }
-  // Remove the promise from the list since the result is processed or not
-  // available
-  amf_app_inst->remove_promise(promise_id);
 }
 
 //------------------------------------------------------------------------------
@@ -1781,45 +1561,23 @@ void amf_http2_server::update_configuration_handler(
 
   Logger::amf_server().debug("Update AMFConfiguration, handling...");
 
-  // Generate a promise and associate this promise to the ITTI message
-  uint32_t promise_id = {};
+  oai::amf::sbi::sbi_result_t result_data = oai::amf::sbi::sbi_send_recv(
+      m_amf_app, [&](uint32_t promise_id) -> std::shared_ptr<itti_msg> {
+        // Handle the AMFConfiguration in amf_app
+        std::shared_ptr<itti_sbi_update_amf_configuration> itti_msg =
+            std::make_shared<itti_sbi_update_amf_configuration>(
+                TASK_AMF_SBI, TASK_AMF_APP, promise_id);
+        itti_msg->promise_id    = promise_id;
+        itti_msg->configuration = configuration_info;
+        return itti_msg;
+      });
 
-  boost::shared_ptr<boost::promise<nlohmann::json>> p =
-      boost::make_shared<boost::promise<nlohmann::json>>();
-  boost::shared_future<nlohmann::json> f = p->get_future();
-  m_amf_app->store_promise(promise_id, p);
-  Logger::amf_server().debug("Promise ID generated %d", promise_id);
-
-  // Handle the AMFConfiguration in amf_app
-  std::shared_ptr<itti_sbi_update_amf_configuration> itti_msg =
-      std::make_shared<itti_sbi_update_amf_configuration>(
-          TASK_AMF_SBI, TASK_AMF_APP, promise_id);
-
-  itti_msg->promise_id    = promise_id;
-  itti_msg->configuration = configuration_info;
-
-  int ret = itti_inst->send_msg(itti_msg);
-  if (0 != ret) {
-    Logger::amf_server().error(
-        "Could not send ITTI message %s to task TASK_AMF_APP",
-        itti_msg->get_msg_name());
-  }
-
-  // Wait for the response available and process accordingly
-  std::optional<nlohmann::json> result_opt = std::nullopt;
-  oai::utils::utils::wait_for_result(f, result_opt);
-
-  if (result_opt.has_value()) {
-    Logger::amf_server().debug("Got result for promise ID %d", promise_id);
-    nlohmann::json result = result_opt.value();
+  if (result_data.has_result) {
+    nlohmann::json& result = result_data.body;
 
     // process data
-    uint32_t http_response_code = {0};
+    uint32_t http_response_code = result_data.http_code;
     nlohmann::json json_data    = {};
-
-    if (result.find(kSbiResponseHttpResponseCode) != result.end()) {
-      http_response_code = result[kSbiResponseHttpResponseCode].get<int>();
-    }
 
     if (http_response_code == oai::common::sbi::http_status_code::OK) {
       if (result.find(kSbiResponseJsonData) != result.end()) {
@@ -1842,9 +1600,6 @@ void amf_http2_server::update_configuration_handler(
   } else {
     send_response(res, oai::common::sbi::http_status_code::GATEWAY_TIMEOUT);
   }
-  // Remove the promise from the list since the result is processed or not
-  // available
-  amf_app_inst->remove_promise(promise_id);
 }
 
 //------------------------------------------------------------------------------
@@ -1855,45 +1610,23 @@ void amf_http2_server::update_policy_notification_handler(
       "Receive an PolicyUpdateNotification, handling...");
   header_map h;
 
-  // Generate a promise and associate this promise to the ITTI message
-  uint32_t promise_id = {};
+  oai::amf::sbi::sbi_result_t result_data = oai::amf::sbi::sbi_send_recv(
+      m_amf_app, [&](uint32_t promise_id) -> std::shared_ptr<itti_msg> {
+        // Handle the PolicyUpdateNotification in amf_app
+        std::shared_ptr<itti_sbi_am_policy_update_notification> itti_msg =
+            std::make_shared<itti_sbi_am_policy_update_notification>(
+                TASK_AMF_SBI, TASK_AMF_APP, promise_id);
+        itti_msg->promise_id    = promise_id;
+        itti_msg->supi          = ue_context_id;
+        itti_msg->policy_update = policy_update;
+        return itti_msg;
+      });
 
-  boost::shared_ptr<boost::promise<nlohmann::json>> p =
-      boost::make_shared<boost::promise<nlohmann::json>>();
-  boost::shared_future<nlohmann::json> f = p->get_future();
-  m_amf_app->store_promise(promise_id, p);
-  Logger::amf_server().debug("Promise ID generated %d", promise_id);
-
-  // Handle the PolicyUpdateNotification in amf_app
-  std::shared_ptr<itti_sbi_am_policy_update_notification> itti_msg =
-      std::make_shared<itti_sbi_am_policy_update_notification>(
-          TASK_AMF_SBI, TASK_AMF_APP, promise_id);
-
-  itti_msg->promise_id    = promise_id;
-  itti_msg->supi          = ue_context_id;
-  itti_msg->policy_update = policy_update;
-
-  int ret = itti_inst->send_msg(itti_msg);
-  if (0 != ret) {
-    Logger::amf_server().error(
-        "Could not send ITTI message %s to task TASK_AMF_APP",
-        itti_msg->get_msg_name());
-  }
-
-  // Wait for the response available and process accordingly
-  std::optional<nlohmann::json> result_opt = std::nullopt;
-  oai::utils::utils::wait_for_result(f, result_opt);
-
-  if (result_opt.has_value()) {
-    Logger::amf_server().debug("Got result for promise ID %d", promise_id);
-    nlohmann::json result = result_opt.value();
+  if (result_data.has_result) {
+    nlohmann::json& result = result_data.body;
     // process data
-    uint32_t http_response_code = 0;
+    uint32_t http_response_code = result_data.http_code;
     nlohmann::json json_data    = {};
-
-    if (result.find(kSbiResponseHttpResponseCode) != result.end()) {
-      http_response_code = result[kSbiResponseHttpResponseCode].get<int>();
-    }
 
     if (http_response_code == oai::common::sbi::http_status_code::OK) {
       if (result.find(kSbiResponseJsonData) != result.end()) {
@@ -1918,9 +1651,6 @@ void amf_http2_server::update_policy_notification_handler(
   } else {
     send_response(res, oai::common::sbi::http_status_code::GATEWAY_TIMEOUT);
   }
-  // Remove the promise from the list since the result is processed or not
-  // available
-  amf_app_inst->remove_promise(promise_id);
 }
 
 //------------------------------------------------------------------------------
@@ -1932,45 +1662,24 @@ void amf_http2_server::terminate_policy_notification_handler(
       "Receive an policyAssocitionTerminationRequestNotification, handling...");
   header_map h;
 
-  // Generate a promise and associate this promise to the ITTI message
-  uint32_t promise_id = {};
-  boost::shared_ptr<boost::promise<nlohmann::json>> p =
-      boost::make_shared<boost::promise<nlohmann::json>>();
-  boost::shared_future<nlohmann::json> f = p->get_future();
-  m_amf_app->store_promise(promise_id, p);
-  Logger::amf_server().debug("Promise ID generated %d", promise_id);
+  oai::amf::sbi::sbi_result_t result_data = oai::amf::sbi::sbi_send_recv(
+      m_amf_app, [&](uint32_t promise_id) -> std::shared_ptr<itti_msg> {
+        // Handle the policyAssocitionTerminationRequestNotification in amf_app
+        std::shared_ptr<itti_sbi_am_policy_association_termination_notification>
+            itti_msg = std::make_shared<
+                itti_sbi_am_policy_association_termination_notification>(
+                TASK_AMF_SBI, TASK_AMF_APP, promise_id);
+        itti_msg->promise_id               = promise_id;
+        itti_msg->supi                     = ue_context_id;
+        itti_msg->termination_notification = termination_notification;
+        return itti_msg;
+      });
 
-  // Handle the policyAssocitionTerminationRequestNotification in amf_app
-  std::shared_ptr<itti_sbi_am_policy_association_termination_notification>
-      itti_msg = std::make_shared<
-          itti_sbi_am_policy_association_termination_notification>(
-          TASK_AMF_SBI, TASK_AMF_APP, promise_id);
-
-  itti_msg->promise_id               = promise_id;
-  itti_msg->supi                     = ue_context_id;
-  itti_msg->termination_notification = termination_notification;
-
-  int ret = itti_inst->send_msg(itti_msg);
-  if (0 != ret) {
-    Logger::amf_server().error(
-        "Could not send ITTI message %s to task TASK_AMF_APP",
-        itti_msg->get_msg_name());
-  }
-
-  // Wait for the response available and process accordingly
-  std::optional<nlohmann::json> result_opt = std::nullopt;
-  oai::utils::utils::wait_for_result(f, result_opt);
-
-  if (result_opt.has_value()) {
-    Logger::amf_server().debug("Got result for promise ID %d", promise_id);
-    nlohmann::json result = result_opt.value();
+  if (result_data.has_result) {
+    nlohmann::json& result = result_data.body;
     // process data
-    uint32_t http_response_code = 0;
+    uint32_t http_response_code = result_data.http_code;
     nlohmann::json json_data    = {};
-
-    if (result.find(kSbiResponseHttpResponseCode) != result.end()) {
-      http_response_code = result[kSbiResponseHttpResponseCode].get<int>();
-    }
 
     if (http_response_code == oai::common::sbi::http_status_code::OK) {
       if (result.find(kSbiResponseJsonData) != result.end()) {
@@ -1995,9 +1704,6 @@ void amf_http2_server::terminate_policy_notification_handler(
   } else {
     send_response(res, oai::common::sbi::http_status_code::GATEWAY_TIMEOUT);
   }
-  // Remove the promise from the list since the result is processed or not
-  // available
-  amf_app_inst->remove_promise(promise_id);
 }
 
 //------------------------------------------------------------------------------
@@ -2009,43 +1715,23 @@ void amf_http2_server::provide_domain_selection_info_handler(
       "Receive an Provide Domain Selection Info request, handling...");
   header_map h;
 
-  // Generate a promise and associate this promise to the ITTI message
-  uint32_t promise_id = {};
-  boost::shared_ptr<boost::promise<nlohmann::json>> p =
-      boost::make_shared<boost::promise<nlohmann::json>>();
-  boost::shared_future<nlohmann::json> f = p->get_future();
-  m_amf_app->store_promise(promise_id, p);
-  Logger::amf_server().debug("Promise ID generated %d", promise_id);
+  oai::amf::sbi::sbi_result_t result_data = oai::amf::sbi::sbi_send_recv(
+      m_amf_app, [&](uint32_t promise_id) -> std::shared_ptr<itti_msg> {
+        // Handle the request in amf_app
+        auto itti_msg =
+            std::make_shared<itti_sbi_provide_domain_selection_info>(
+                TASK_AMF_SBI, TASK_AMF_APP, promise_id);
+        itti_msg->promise_id            = promise_id;
+        itti_msg->ue_context_id         = ue_context_id;
+        itti_msg->ue_context_info_class = ue_context_info_class;
+        return itti_msg;
+      });
 
-  // Handle the request in amf_app
-  auto itti_msg = std::make_shared<itti_sbi_provide_domain_selection_info>(
-      TASK_AMF_SBI, TASK_AMF_APP, promise_id);
-
-  itti_msg->promise_id            = promise_id;
-  itti_msg->ue_context_id         = ue_context_id;
-  itti_msg->ue_context_info_class = ue_context_info_class;
-
-  int ret = itti_inst->send_msg(itti_msg);
-  if (0 != ret) {
-    Logger::amf_server().error(
-        "Could not send ITTI message %s to task TASK_AMF_APP",
-        itti_msg->get_msg_name());
-  }
-
-  // Wait for the response available and process accordingly
-  std::optional<nlohmann::json> result_opt = std::nullopt;
-  oai::utils::utils::wait_for_result(f, result_opt);
-
-  if (result_opt.has_value()) {
-    Logger::amf_server().debug("Got result for promise ID %d", promise_id);
-    nlohmann::json result = result_opt.value();
+  if (result_data.has_result) {
+    nlohmann::json& result = result_data.body;
     // process data
-    uint32_t http_response_code = 0;
+    uint32_t http_response_code = result_data.http_code;
     nlohmann::json json_data    = {};
-
-    if (result.find(kSbiResponseHttpResponseCode) != result.end()) {
-      http_response_code = result[kSbiResponseHttpResponseCode].get<int>();
-    }
 
     if (http_response_code == oai::common::sbi::http_status_code::OK) {
       if (result.find(kSbiResponseJsonData) != result.end()) {
@@ -2070,9 +1756,6 @@ void amf_http2_server::provide_domain_selection_info_handler(
   } else {
     send_response(res, oai::common::sbi::http_status_code::GATEWAY_TIMEOUT);
   }
-  // Remove the promise from the list since the result is processed or not
-  // available
-  amf_app_inst->remove_promise(promise_id);
 }
 
 //------------------------------------------------------------------------------
@@ -2084,43 +1767,22 @@ void amf_http2_server::provide_location_info_handler(
       "Receive an Provide Location Info request, handling...");
   header_map h;
 
-  // Generate a promise and associate this promise to the ITTI message
-  uint32_t promise_id = {};
-  boost::shared_ptr<boost::promise<nlohmann::json>> p =
-      boost::make_shared<boost::promise<nlohmann::json>>();
-  boost::shared_future<nlohmann::json> f = p->get_future();
-  m_amf_app->store_promise(promise_id, p);
-  Logger::amf_server().debug("Promise ID generated %d", promise_id);
+  oai::amf::sbi::sbi_result_t result_data = oai::amf::sbi::sbi_send_recv(
+      m_amf_app, [&](uint32_t promise_id) -> std::shared_ptr<itti_msg> {
+        // Handle the request in amf_app
+        auto itti_msg = std::make_shared<itti_sbi_provide_location_info>(
+            TASK_AMF_SBI, TASK_AMF_APP, promise_id);
+        itti_msg->promise_id       = promise_id;
+        itti_msg->ue_context_id    = ue_context_id;
+        itti_msg->request_loc_info = request_loc_info;
+        return itti_msg;
+      });
 
-  // Handle the request in amf_app
-  auto itti_msg = std::make_shared<itti_sbi_provide_location_info>(
-      TASK_AMF_SBI, TASK_AMF_APP, promise_id);
-
-  itti_msg->promise_id       = promise_id;
-  itti_msg->ue_context_id    = ue_context_id;
-  itti_msg->request_loc_info = request_loc_info;
-
-  int ret = itti_inst->send_msg(itti_msg);
-  if (0 != ret) {
-    Logger::amf_server().error(
-        "Could not send ITTI message %s to task TASK_AMF_APP",
-        itti_msg->get_msg_name());
-  }
-
-  // Wait for the response available and process accordingly
-  std::optional<nlohmann::json> result_opt = std::nullopt;
-  oai::utils::utils::wait_for_result(f, result_opt);
-
-  if (result_opt.has_value()) {
-    Logger::amf_server().debug("Got result for promise ID %d", promise_id);
-    nlohmann::json result = result_opt.value();
+  if (result_data.has_result) {
+    nlohmann::json& result = result_data.body;
     // process data
-    uint32_t http_response_code = 0;
+    uint32_t http_response_code = result_data.http_code;
     nlohmann::json json_data    = {};
-
-    if (result.find(kSbiResponseHttpResponseCode) != result.end()) {
-      http_response_code = result[kSbiResponseHttpResponseCode].get<int>();
-    }
 
     if (http_response_code == oai::common::sbi::http_status_code::OK) {
       if (result.find(kSbiResponseJsonData) != result.end()) {
@@ -2145,9 +1807,6 @@ void amf_http2_server::provide_location_info_handler(
   } else {
     send_response(res, oai::common::sbi::http_status_code::GATEWAY_TIMEOUT);
   }
-  // Remove the promise from the list since the result is processed or not
-  // available
-  amf_app_inst->remove_promise(promise_id);
 }
 
 //------------------------------------------------------------------------------

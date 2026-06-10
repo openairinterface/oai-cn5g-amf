@@ -31,6 +31,7 @@ include(${SRC_TOP_DIR}/${MOUNTED_COMMON}/model/amf.cmake)
 file(GLOB AMF_API_SERVER_src_files
     ${AMF_API_SERVER_DIR}/amf_http1_server.cpp
     ${AMF_API_SERVER_DIR}/amf_http2_server.cpp
+    ${AMF_API_SERVER_DIR}/amf_sbi_promise.cpp
     ${AMF_API_SERVER_DIR}/api/*.cpp
     ${AMF_API_SERVER_DIR}/impl/*.cpp
 )
