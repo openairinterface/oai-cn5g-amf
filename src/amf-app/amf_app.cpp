@@ -59,10 +59,7 @@ extern statistics stacs;
 void amf_app_task(void*);
 
 //------------------------------------------------------------------------------
-amf_app::amf_app()
-    : m_ue_contexts(), m_supi2ue_ctx(), m_sbi_response_handlers() {
-  ue_contexts           = {};
-  supi2ue_ctx           = {};
+amf_app::amf_app() : m_sbi_response_handlers() {
   sbi_response_handlers = {};
   registered_nrfs       = {};
 
@@ -400,12 +397,7 @@ std::shared_ptr<ue_context> amf_app::get_ue_context(
   Logger::amf_app().debug(
       "Key for UE context search: %s", ue_context_key.c_str());
 
-  std::shared_lock lock(m_ue_contexts);
-  if (ue_contexts.count(ue_context_key) > 0) {
-    return ue_contexts.at(ue_context_key);
-  }
-
-  return nullptr;
+  return ue_context_store_.find(ue_context_key);
 }
 
 //------------------------------------------------------------------------------
@@ -415,8 +407,7 @@ void amf_app::set_ue_context(
   std::string ue_context_key =
       amf_conv::get_ue_context_key(ran_ue_ngap_id, amf_ue_ngap_id);
 
-  std::unique_lock lock(m_ue_contexts);
-  ue_contexts[ue_context_key] = uc;
+  ue_context_store_.upsert(ue_context_key, uc);
 }
 
 //------------------------------------------------------------------------------
@@ -424,30 +415,23 @@ bool amf_app::remove_ue_context(
     uint32_t ran_ue_ngap_id, uint64_t amf_ue_ngap_id) {
   std::string ue_context_key =
       amf_conv::get_ue_context_key(ran_ue_ngap_id, amf_ue_ngap_id);
-  std::unique_lock lock(m_ue_contexts);
-  if (ue_contexts.count(ue_context_key) > 0) {
-    ue_contexts.erase(ue_context_key);
-    return true;
-  }
-  return false;
+  return ue_context_store_.remove(ue_context_key);
 }
 
 //------------------------------------------------------------------------------
 std::shared_ptr<ue_context> amf_app::get_ue_context(
     const std::string& supi) const {
-  std::shared_lock lock(m_supi2ue_ctx);
-  if (supi2ue_ctx.count(supi) > 0) {
-    return supi2ue_ctx.at(supi);
+  std::shared_ptr<ue_context> uc = ue_context_store_.find_by_supi(supi);
+  if (!uc) {
+    Logger::amf_app().warn("No UE context with UE SUPI %s", supi);
   }
-  Logger::amf_app().warn("No UE context with UE SUPI %s", supi);
-  return nullptr;
+  return uc;
 }
 
 //------------------------------------------------------------------------------
 void amf_app::set_ue_context(
     const std::string& supi, const std::shared_ptr<ue_context>& uc) {
-  std::unique_lock lock(m_supi2ue_ctx);
-  supi2ue_ctx[supi] = uc;
+  ue_context_store_.bind_supi(supi, uc);
 }
 
 //------------------------------------------------------------------------------
@@ -613,18 +597,10 @@ void amf_app::handle_itti_message(
   }
 
   // Get UE context, if the context doesn't exist, create a new one
+  std::string ue_context_key =
+      amf_conv::get_ue_context_key(itti_msg.ran_ue_ngap_id, amf_ue_ngap_id);
   std::shared_ptr<ue_context> uc =
-      get_ue_context(itti_msg.ran_ue_ngap_id, amf_ue_ngap_id);
-  if (uc == nullptr) {
-    Logger::amf_app().debug(
-        "No existing UE Context, Create a new one with "
-        "amf_ue_ngap_id " AMF_UE_NGAP_ID_FMT
-        ", ran_ue_ngap_id " RAN_UE_NGAP_ID_FMT,
-        amf_ue_ngap_id, itti_msg.ran_ue_ngap_id);
-
-    uc = std::make_shared<ue_context>();
-    set_ue_context(itti_msg.ran_ue_ngap_id, amf_ue_ngap_id, uc);
-  }
+      ue_context_store_.get_or_create(ue_context_key);
 
   // Update AMF UE NGAP ID
   std::shared_ptr<ue_ngap_context> unc = {};
@@ -776,23 +752,13 @@ void amf_app::handle_itti_message(itti_sbi_n1_message_notification& itti_msg) {
     }
   }
 
-  if (get_ue_context(ran_ue_ngap_id, amf_ue_ngap_id) == nullptr) {
-    // Create a new UE Context
-    Logger::amf_app().debug(
-        "Create a new UE Context with AMF UE NGAP ID "
-        "(" AMF_UE_NGAP_ID_FMT
-        "), RAN UE NGAP ID "
-        "(" RAN_UE_NGAP_ID_FMT ")",
-        amf_ue_ngap_id, ran_ue_ngap_id);
-
-    uc         = std::make_shared<ue_context>();
-    uc->gnb_id = gnb_id;
-    set_ue_context(ran_ue_ngap_id, amf_ue_ngap_id, uc);
-  } else {
-    uc = get_ue_context(ran_ue_ngap_id, amf_ue_ngap_id);
-  }
+  // Get UE context, if the context doesn't exist, create a new one
+  std::string ue_context_key =
+      amf_conv::get_ue_context_key(ran_ue_ngap_id, amf_ue_ngap_id);
+  uc = ue_context_store_.get_or_create(ue_context_key);
 
   // Update info for UE context
+  uc->gnb_id         = gnb_id;
   uc->amf_ue_ngap_id = amf_ue_ngap_id;
   uc->ran_ue_ngap_id = ran_ue_ngap_id;
   // RrcEstCause
@@ -2358,9 +2324,9 @@ bool amf_app::handle_nf_status_notification(
 
 //------------------------------------------------------------------------------
 void amf_app::handle_determine_location_request() {
-  for (const auto& kvp : supi2ue_ctx) {
+  for (const auto& supi : ue_context_store_.all_supis()) {
     nlohmann::json input_data = {};
-    input_data["supi"]        = kvp.first;
+    input_data["supi"]        = supi;
 
     // Generate a promise and associate this promise to the ITTI message
     uint32_t promise_id = {};
@@ -2398,12 +2364,12 @@ void amf_app::handle_determine_location_request() {
           location_data_json.end()) {
         ;
         Logger::amf_app().info(
-            "Determine Location Response (SUPI: %s) : \n%s", kvp.first,
+            "Determine Location Response (SUPI: %s) : \n%s", supi.c_str(),
             location_data_json[kSbiResponseJsonData].dump(2).c_str());
       }
     } else {
       Logger::amf_app().error(
-          "Determine Location failed (SUPI: %s)...\n", kvp.first);
+          "Determine Location failed (SUPI: %s)...\n", supi.c_str());
     }
 
     // Remove the promise from the list since the result is processed or not

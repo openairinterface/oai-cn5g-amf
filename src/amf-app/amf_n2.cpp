@@ -705,7 +705,7 @@ void amf_n2::handle_itti_message(std::shared_ptr<itti_ng_shutdown>& itti_msg) {
   }
 
   // Delete gNB context and update statistic
-  remove_gnb_context(itti_msg->assoc_id);
+  remove_gnb_context(gc);
   stacs.update_gnb(gc, kStatisticGnbStatusDisconnected);
 
   Logger::amf_n2().debug(
@@ -2851,9 +2851,9 @@ void amf_n2::remove_ue_context_with_ran_ue_ngap_id(
   if (amf_n1_inst->amf_ue_id_2_nas_context(unc->amf_ue_ngap_id, nc)) {
     // TODO: Verify where it's current context
     // Remove all NAS context
-    stacs.update_5gmm_state(nc, _5GMM_DEREGISTERED);
-    nc->_5gmm_state = _5GMM_DEREGISTERED;  // §5.1.3.2.3.2: context removed
-                                           // implies DEREGISTERED
+
+    amf_n1_inst->handle_nas_event(
+        nc, oai::amf::nas::nas_event_e::IMPLICIT_DEREGISTRATION);
 
     // Trigger UE Loss of Connectivity Status Notify
     Logger::amf_n2().debug(
@@ -2934,9 +2934,9 @@ void amf_n2::remove_ue_context_with_amf_ue_ngap_id(
   if (amf_n1_inst->amf_ue_id_2_nas_context(amf_ue_ngap_id, nc)) {
     // Remove all NAS context
     // Update UE status
-    stacs.update_5gmm_state(nc, _5GMM_DEREGISTERED);
-    nc->_5gmm_state = _5GMM_DEREGISTERED;  // §5.1.3.2.3.2: context removed
-                                           // implies DEREGISTERED
+
+    amf_n1_inst->handle_nas_event(
+        nc, oai::amf::nas::nas_event_e::IMPLICIT_DEREGISTRATION);
 
     // Trigger UE Loss of Connectivity Status Notify
     Logger::amf_n2().debug(

@@ -4506,6 +4506,19 @@ bool amf_n1::ue_initiate_de_registration_handle(
         dereg_request->Get5gGuti().c_str());
   }
 
+  // Remove the amf_app UE context
+  if (amf_app_inst->remove_ue_context(ran_ue_ngap_id, amf_ue_ngap_id)) {
+    Logger::amf_n1().debug(
+        "Deleted UE context associated with "
+        "amf_ue_ngap_id " AMF_UE_NGAP_ID_FMT,
+        amf_ue_ngap_id);
+  } else {
+    Logger::amf_n1().debug(
+        "Could not delete UE context associated with "
+        "amf_ue_ngap_id " AMF_UE_NGAP_ID_FMT,
+        amf_ue_ngap_id);
+  }
+
   // TODO: AMF to AN: N2 UE Context Release Request
   // AMF sends N2 UE Release command to NG-RAN with Cause set to
   // Deregistration to release N2 signalling connection

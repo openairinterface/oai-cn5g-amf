@@ -24,6 +24,7 @@
 #include "itti_msg_amf_app.hpp"
 #include "itti_msg_sbi.hpp"
 #include "ue_context.hpp"
+#include "ue_context_store.hpp"
 #include "uint_generator.hpp"
 #include "StatusChange.h"
 
@@ -60,11 +61,7 @@ class amf_app {
       amf_event_subscriptions;
   mutable std::shared_mutex m_amf_event_subscriptions;
 
-  std::map<std::string, std::shared_ptr<ue_context>> ue_contexts;
-  mutable std::shared_mutex m_ue_contexts;
-
-  std::map<std::string, std::shared_ptr<ue_context>> supi2ue_ctx;
-  mutable std::shared_mutex m_supi2ue_ctx;
+  ue_context_store ue_context_store_;
 
   mutable std::shared_mutex m_sbi_response_handlers;
   std::map<uint32_t, boost::shared_ptr<boost::promise<nlohmann::json>>>

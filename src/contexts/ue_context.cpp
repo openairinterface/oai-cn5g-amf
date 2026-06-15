@@ -50,7 +50,13 @@ void ue_context::add_pdu_session_context(
 
 //------------------------------------------------------------------------------
 void ue_context::copy_pdu_sessions(const std::shared_ptr<ue_context>& ue_ctx) {
-  pdu_sessions = ue_ctx->pdu_sessions;
+  std::map<std::uint8_t, std::shared_ptr<pdu_session_context>> snapshot;
+  {
+    std::shared_lock lock(ue_ctx->m_pdu_session);
+    snapshot = ue_ctx->pdu_sessions;
+  }
+  std::unique_lock lock(m_pdu_session);
+  pdu_sessions = std::move(snapshot);
 }
 
 //------------------------------------------------------------------------------
@@ -77,11 +83,15 @@ bool ue_context::remove_pdu_sessions_context(uint8_t pdu_session_id) {
 //------------------------------------------------------------------------------
 bool ue_context::set_up_cnx_state(
     uint8_t pdu_session_id, const up_cnx_state_e& state) {
-  std::shared_ptr<pdu_session_context> psc = {};
-  if (get_pdu_session_context(pdu_session_id, psc)) {
-    std::unique_lock lock(m_pdu_session);
-    psc->up_cnx_state = state;
-    return true;
+  std::unique_lock lock(m_pdu_session);
+  if (pdu_sessions.count(pdu_session_id) > 0) {
+    std::shared_ptr<pdu_session_context> psc = pdu_sessions.at(pdu_session_id);
+    if (psc != nullptr) {
+      psc->up_cnx_state = state;
+      return true;
+    }
   }
+  Logger::amf_app().warn(
+      "No PDU Session Context with PDU Session ID %d", pdu_session_id);
   return false;
 }
