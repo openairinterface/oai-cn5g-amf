@@ -321,7 +321,22 @@ void amf_n2::handle_itti_message(std::shared_ptr<itti_paging>& itti_msg) {
         itti_msg->amf_ue_ngap_id, unc->amf_ue_ngap_id);
   }
 
-  // TODO: check UE reachability status
+  // TODO [AMF-PAGING]: CM state not checked and PPI/5QI/ARP not forwarded to NGAP Paging
+  //
+  // Task 3.1: Carry PPI from N1N2MessageTransfer through itti_paging struct to this handler
+  //   - itti_paging currently drops ppi; add ppi/5qi/arp_priority_level fields to the struct
+  //   - If is_ppi_set: call paging_msg.setRanPagingPriority(ppi) [TS 38.413 §9.3.1.56]
+  //   - If is_qos_paging: call derive_paging_priority(arp, 5qi) → setRanPagingPriority()
+  //     using TS 23.501 Table 5.4.3.3-1 mapping [TS 23.501 §5.4.3.3]
+  //
+  // Task 3.2: Implement derive_paging_priority() helper
+  //   - Input: ARP priority level (1-15), 5QI resource type (GBR/non-GBR)
+  //   - Output: RANPagingPriority (1-8) per TS 23.501 Table 5.4.3.3-1, or nullopt if no priority
+  //
+  // Task 3.4: Multi-TAI paging — replace single unc->tai with all TAIs in UE registration area
+  //   - Build TAIListForPaging from UE registration area [TS 38.413 §9.3.3.1]
+  //
+  // Standards: TS 23.501 §5.4.3.1, §5.4.3.2, §5.4.3.3, TS 38.413 §8.6.4, §9.3.1.56
 
   // get NAS context
   std::shared_ptr<nas_context> nc = {};
@@ -1065,7 +1080,10 @@ void amf_n2::handle_itti_message(
   if (itti_msg->is_sr or !itti_msg->pdu_sessions.empty()) {
     // Set UE Radio Capability if available
     if (unc->ue_radio_cap_ind) {
-      // TODO: Disable this for the moment
+      // TODO [AMF-N2-QOS]: Re-enable UE Radio Capability in InitialContextSetupRequest
+      // Task 2.5: Uncomment setUeRadioCapability() — IE is populated from UE context
+      //   which stores the capability from the Registration Request [TS 38.413 §9.3.1.73]
+      //   Include when available; omit cleanly when absent (optional IE)
       // msg->setUeRadioCapability(bstrcpy(unc->ue_radio_cap_ind));
     }
 
@@ -1099,7 +1117,8 @@ void amf_n2::handle_itti_message(
             "S_NSSAI (SST, SD) %s, %s", item.sNssai.sst.c_str(),
             item.sNssai.sd.c_str());
 
-        // TODO: NAS PDU
+        // TODO [AMF-N2-QOS]: NAS PDU not attached to PDU session resource setup list item
+        // Task 2: Attach nasPdu = bstrcpy(itti_msg->nas) to each item before push_back [TS 38.413 §8.2.1.2]
         if (p.second.is_n2sm_available) {
           if (blength(p.second.n2sm) != 0) {
             ngap_utils::bstring_2_octet_string(
@@ -1113,11 +1132,16 @@ void amf_n2::handle_itti_message(
 
       if (list.size() > 0) msg->setPduSessionResourceSetupRequestList(list);
 
-      // UEAggregateMaximumBitRate
+      // TODO [AMF-N2-QOS]: UE-AMBR hardcoded — use dynamic value from UE context
+      // Task 2.3: Replace constant with ue_context->ue_ambr_dl / ue_ambr_ul sourced from UDM
+      //   or SMF N1N2MessageTransfer request (see amf.hpp UE_AGGREGATE_MAXIMUM_BIT_RATE_DL/UL)
+      //   Fall back to constant only when has_ue_ambr = false, and log a warning [TS 38.413 §9.3.1.47]
       msg->setUeAggregateMaxBitRate(
           UE_AGGREGATE_MAXIMUM_BIT_RATE_DL, UE_AGGREGATE_MAXIMUM_BIT_RATE_UL);
 
-      // TODO: Mobility RestrictionList
+      // TODO [AMF-N2-QOS]: Mobility RestrictionList IE missing from InitialContextSetupRequest
+      // Task 2.6: Encode forbiddenAreas, serviceAreaRestriction from UE AM subscription data
+      //   as RatRestrictions, ForbiddenAreaInformation, ServiceAreaInformation IEs [TS 38.413 §9.3.1.52]
     }
   }
 
@@ -1173,7 +1197,10 @@ void amf_n2::handle_itti_message(
       item.sNssai.sd                           = {};
       std::shared_ptr<pdu_session_context> psc = {};
       if (!amf_app_inst->get_pdu_session_context(nc->supi, p.first, psc)) {
-        // TODO: get from N1N2msgTranferMsg
+        // TODO [AMF-N2-QOS]: NSSAI fallback uses default instead of value from N1N2MessageTransfer
+        // Task 2.4: Pass NSSAI from N1N2MessageTransfer request into the ITTI message and use it here
+        //   Use DEFAULT_SST/SD_NO_VALUE only as a true fallback when N1N2 request also omits NSSAI
+        //   [TS 38.413 §9.3.1.50]
         Logger::amf_n2().debug(
             "Using default value for S_NSSAI (SST, SD) %s, %s",
             item.sNssai.sst.c_str(), item.sNssai.sd.c_str());
@@ -1202,6 +1229,10 @@ void amf_n2::handle_itti_message(
     if (list.size() > 0) psrsr->setPduSessionResourceSetupRequestList(list);
   }
 
+  // TODO [AMF-N2-QOS]: UE-AMBR hardcoded — use dynamic value from UE context
+  // Task 2.3: Replace constant with ue_context->ue_ambr_dl / ue_ambr_ul sourced from UDM
+  //   or SMF N1N2MessageTransfer request (see amf.hpp UE_AGGREGATE_MAXIMUM_BIT_RATE_DL/UL)
+  //   Fall back to constant only when has_ue_ambr = false, and log a warning [TS 38.413 §9.3.1.47]
   psrsr->setUeAggregateMaxBitRate(
       UE_AGGREGATE_MAXIMUM_BIT_RATE_DL, UE_AGGREGATE_MAXIMUM_BIT_RATE_UL);
 
@@ -1821,6 +1852,10 @@ bool amf_n2::handle_itti_message(
   handover_request->setCause(
       Ngap_Cause_PR_radioNetwork,
       Ngap_CauseRadioNetwork_handover_desirable_for_radio_reason);
+  // TODO [AMF-N2-QOS]: UE-AMBR hardcoded — use dynamic value from UE context
+  // Task 2.3: Replace constant with ue_context->ue_ambr_dl / ue_ambr_ul sourced from UDM
+  //   or SMF N1N2MessageTransfer request (see amf.hpp UE_AGGREGATE_MAXIMUM_BIT_RATE_DL/UL)
+  //   Fall back to constant only when has_ue_ambr = false, and log a warning [TS 38.413 §9.3.1.47]
   handover_request->setUeAggregateMaximumBitRate(
       UE_AGGREGATE_MAXIMUM_BIT_RATE_DL, UE_AGGREGATE_MAXIMUM_BIT_RATE_UL);
   handover_request->setUeSecurityCapabilities(

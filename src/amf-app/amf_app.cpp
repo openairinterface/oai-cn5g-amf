@@ -990,13 +990,24 @@ void amf_app::handle_itti_message(
           itti_msg.ue_id, itti_msg.pdu_session_id,
           itti_msg.smContextStatusNotification)) {
     Logger::amf_app().debug("Update PDU Session Release successfully");
+
+    // TODO [AMF-RELEASE]: SmContextStatusNotification RELEASED does not trigger N2 tear-down
+    // Task 5.1: After local context cleanup, check if UE has an active N2 context for this PDU session:
+    //   - If yes: build itti_pdu_session_resource_release_command and send to TASK_AMF_N2
+    //     amf_n2::handle_itti_message(itti_pdu_session_resource_release_command) at amf_n2.cpp:1297
+    //     already encodes and sends NGAP PDU SESSION RESOURCE RELEASE COMMAND [TS 38.413 §8.2.5]
+    //   - If no active N2 context: skip N2 release, only local cleanup needed
+    // Without this, RAN-side bearers are leaked on every SMF-notified PDU session release
+    // Standards: TS 23.502 §4.3.4, TS 38.413 §8.2.5, TS 29.502 §5.6.2.5
     response_data[kSbiResponseHttpResponseCode] =
         oai::common::sbi::http_status_code::NO_CONTENT;
 
   } else {
+    // TODO [AMF-RELEASE]: Populate ProblemDetails on update failure
+    // Task 5.3: Return 500 Internal Server Error with ProblemDetails body instead of 204
+    //   when update_pdu_sessions_context() fails [TS 29.500 §5.2.2]
     response_data[kSbiResponseHttpResponseCode] =
         oai::common::sbi::http_status_code::NO_CONTENT;
-    // TODO check if we set problem_details
     Logger::amf_app().debug("Update PDU Session Release failed");
   }
 

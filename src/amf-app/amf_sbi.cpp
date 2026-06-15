@@ -533,10 +533,31 @@ void amf_sbi::handle_itti_message(itti_nsmf_pdusession_create_sm_context& smf) {
           nc->supi, psc, smf_uri_root, smf_api_version, smf.sm_msg, dnn, uc);
     } break;
     case kExistingPduSession: {
-      // TODO:
+      // TODO [AMF-N11-MODIFY]: Handle existing PDU session re-establishment
+      // Task 1.1: Look up existing PDU session context by PDU session ID and route to
+      //   kPduSessionTypeModificationRequest logic [TS 23.502 §4.3.3.2, TS 29.502 §5.6.2.2]
     } break;
     case kPduSessionTypeModificationRequest: {
-      // TODO:
+      // TODO [AMF-N11-MODIFY]: Implement PCF/SMF-initiated QoS modification path — currently a stub
+      // This is the BLOCKING gap for the full PCF→SMF→AMF→UE/RAN QoS chain.
+      //
+      // Task 1.2: Check UE CM state [TS 23.501 §5.3.2]
+      //   - CM-CONNECTED → Task 1.3: relay N1 NAS-SM + N2 NGAP via existing DL NAS TRANSPORT and
+      //     PDU SESSION RESOURCE MODIFY REQUEST handlers [TS 23.502 §4.3.3.2 step 5b]
+      //   - CM-IDLE       → Task 1.4: store pending N1+N2 blobs, forward paging assistance data (Phase 3)
+      //
+      // Task 1.3 (CM-CONNECTED): build itti_downlink_nas_transfer with n2sm_info_type="PDU_RES_MOD_REQ",
+      //   send to TASK_AMF_N1 which routes to amf_n2::handle_itti_message(itti_pdu_session_resource_modify_request)
+      //   [amf_n1.cpp:262, amf_n2.cpp:1235]
+      //
+      // Task 1.4 (CM-IDLE): store N1+N2 blobs in PDU session context; dispatch itti_paging with
+      //   ppi/5qi/arp fields (Phase 3); deliver stored blobs after UE Service Request completes
+      //
+      // Task 1.5: return 200 OK with N1N2MessageTransferRspData
+      //   cause="N1_N2_TRANSFER_INITIATED" (CM-CONNECTED) or "UE_NOT_REACHABLE" (CM-IDLE)
+      //   [TS 29.518 §6.3.5.4]
+      //
+      // Standards: TS 23.501 §5.6.2, TS 23.502 §4.3.3.2, TS 29.518 §6.3.5
     } break;
     default: {
       // TODO: should be removed
@@ -603,10 +624,15 @@ void amf_sbi::handle_pdu_session_initial_request(
   session_estb_request["sNssai"]["sst"] = psc->snssai.sst;
   session_estb_request["sNssai"]["sd"]  = psc->snssai.sd;
   session_estb_request["pduSessionId"]  = psc->pdu_session_id;
+  // TODO [AMF-N11-MODIFY]: Derive requestType from SM NAS message type, not hardcoded
+  // Task 1.1: Set "INITIAL_REQUEST", "EXISTING_PDU_SESSION", or "MODIFICATION_REQUEST"
+  //   based on the NAS SM message header decoded from sm_msg [TS 29.502 §5.6.2.2]
   session_estb_request["requestType"] = "INITIAL_REQUEST";  // TODO: from SM_MSG
   session_estb_request["servingNfId"] = amf_app_inst->get_nf_instance();
   session_estb_request["servingNetwork"]["mcc"] = psc->plmn.mcc;
   session_estb_request["servingNetwork"]["mnc"] = psc->plmn.mnc;
+  // TODO [AMF-N11-MODIFY]: Derive anType from UE context access type
+  // Task 1.1: Set "3GPP_ACCESS" or "NON_3GPP_ACCESS" from ue_context access type [TS 23.501 §5.6.1]
   session_estb_request["anType"]                = "3GPP_ACCESS";  // TODO
   session_estb_request["ratType"]               = "NR";
   session_estb_request["selMode"]               = "VERIFIED";
@@ -690,6 +716,16 @@ void amf_sbi::handle_itti_message(
   Logger::amf_sbi().debug("SMF's URI: %s", remote_uri.c_str());
 
   nlohmann::json pdu_session_release_request;
+  // TODO [AMF-RELEASE]: Complete Nsmf_PDUSession_ReleaseSMContext request body — four fields unpopulated
+  // Task 5.2: Populate all required fields [TS 29.502 §5.6.2.3]:
+  //   - cause: derive from triggering event (REL_DUE_TO_REACTIVATION, REL_DUE_TO_NGRAN_UP_CHANGE,
+  //     REL_DUE_TO_UE_NOT_AVAILABLE) — pass from ITTI release message, not hardcoded
+  //   - 5gMmCauseValue: map NAS 5GMM cause integer from UE Deregistration Request [TS 24.501 §9.11.3.2]
+  //   - userLocation: encode last known UE User Location Information IE [TS 38.413 §9.3.1.96]
+  //     sourced from ue_context->last_user_location (updated on each UL NAS TRANSPORT)
+  //   - n2SmInfo + n2SmInfoType: include pduSessionResourceReleaseResponseTransfer blob when release
+  //     was triggered by RAN, set n2SmInfoType = "PDU_RES_REL_RSP" [TS 29.502 §5.6.2.3]
+  // Standards: TS 29.502 §5.6.2.3, TS 38.413 §9.3.1.96, TS 24.501 §9.11.3.2
   pdu_session_release_request["cause"] = "REL_DUE_TO_REACTIVATION";  // TODO:
   // pdu_session_release_request["ngApCause"] = "radioNetwork";
   // TODO: 5gMmCauseValue
