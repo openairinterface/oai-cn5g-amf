@@ -27,7 +27,7 @@
 
 #include <N1N2SubscriptionsCollectionForIndividualUEContextsDocumentApi.h>
 
-#include <pistache/optional.h>
+#include <optional>
 
 #include "ProblemDetails.h"
 #include "UeN1N2InfoSubscriptionCreateData.h"

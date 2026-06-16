@@ -27,7 +27,7 @@
 
 #include <SubscriptionsCollectionDocumentApi.h>
 
-#include <pistache/optional.h>
+#include <optional>
 
 #include "ProblemDetails.h"
 #include "SubscriptionData.h"

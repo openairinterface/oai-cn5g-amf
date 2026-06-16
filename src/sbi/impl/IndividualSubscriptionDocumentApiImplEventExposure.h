@@ -27,7 +27,7 @@
 
 #include <IndividualSubscriptionDocumentApiEventExposure.h>
 
-#include <pistache/optional.h>
+#include <optional>
 
 #include "AmfUpdatedEventSubscription.h"
 //#include "OneOfarrayAmfUpdateEventOptionItem.h"
