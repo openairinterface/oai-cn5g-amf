@@ -227,6 +227,122 @@ class amf_n2 : public oai::ngap::ngap_app {
   void handle_itti_message(
       std::shared_ptr<itti_uplink_non_ue_associated_nrppa_transport>& itti_msg);
 
+  // =========================================================================
+  // MBS NGAP stub handlers (Rel-17, TS 38.413 procedure codes 66-75)
+  // Full implementation deferred (enable_mbs_ngap feature gate).
+  // =========================================================================
+
+  /*
+   * Handle ITTI message (BroadcastSessionSetupResponse)
+   * @param [std::shared_ptr<itti_broadcast_session_setup_response>&]: ITTI msg
+   * @return void
+   */
+  void handle_itti_message(
+      std::shared_ptr<itti_broadcast_session_setup_response>& itti_msg);
+
+  /*
+   * Handle ITTI message (BroadcastSessionSetupFailure)
+   * @param [std::shared_ptr<itti_broadcast_session_setup_failure>&]: ITTI msg
+   * @return void
+   */
+  void handle_itti_message(
+      std::shared_ptr<itti_broadcast_session_setup_failure>& itti_msg);
+
+  /*
+   * Handle ITTI message (BroadcastSessionModificationResponse)
+   * @param [std::shared_ptr<itti_broadcast_session_modification_response>&]:
+   * ITTI msg
+   * @return void
+   */
+  void handle_itti_message(
+      std::shared_ptr<itti_broadcast_session_modification_response>& itti_msg);
+
+  /*
+   * Handle ITTI message (BroadcastSessionModificationFailure)
+   * @param [std::shared_ptr<itti_broadcast_session_modification_failure>&]:
+   * ITTI msg
+   * @return void
+   */
+  void handle_itti_message(
+      std::shared_ptr<itti_broadcast_session_modification_failure>& itti_msg);
+
+  /*
+   * Handle ITTI message (BroadcastSessionReleaseResponse)
+   * @param [std::shared_ptr<itti_broadcast_session_release_response>&]: ITTI
+   * msg
+   * @return void
+   */
+  void handle_itti_message(
+      std::shared_ptr<itti_broadcast_session_release_response>& itti_msg);
+
+  /*
+   * Handle ITTI message (BroadcastSessionReleaseRequired)
+   * @param [std::shared_ptr<itti_broadcast_session_release_required>&]: ITTI
+   * msg
+   * @return void
+   */
+  void handle_itti_message(
+      std::shared_ptr<itti_broadcast_session_release_required>& itti_msg);
+
+  /*
+   * Handle ITTI message (DistributionSetupRequest)
+   * @param [std::shared_ptr<itti_distribution_setup_request>&]: ITTI msg
+   * @return void
+   */
+  void handle_itti_message(
+      std::shared_ptr<itti_distribution_setup_request>& itti_msg);
+
+  /*
+   * Handle ITTI message (DistributionReleaseRequest)
+   * @param [std::shared_ptr<itti_distribution_release_request>&]: ITTI msg
+   * @return void
+   */
+  void handle_itti_message(
+      std::shared_ptr<itti_distribution_release_request>& itti_msg);
+
+  /*
+   * Handle ITTI message (MulticastSessionActivationResponse)
+   * @param [std::shared_ptr<itti_multicast_session_activation_response>&]:
+   * ITTI msg
+   * @return void
+   */
+  void handle_itti_message(
+      std::shared_ptr<itti_multicast_session_activation_response>& itti_msg);
+
+  /*
+   * Handle ITTI message (MulticastSessionActivationFailure)
+   * @param [std::shared_ptr<itti_multicast_session_activation_failure>&]:
+   * ITTI msg
+   * @return void
+   */
+  void handle_itti_message(
+      std::shared_ptr<itti_multicast_session_activation_failure>& itti_msg);
+
+  /*
+   * Handle ITTI message (MulticastSessionDeactivationResponse)
+   * @param [std::shared_ptr<itti_multicast_session_deactivation_response>&]:
+   * ITTI msg
+   * @return void
+   */
+  void handle_itti_message(
+      std::shared_ptr<itti_multicast_session_deactivation_response>& itti_msg);
+
+  /*
+   * Handle ITTI message (MulticastSessionUpdateResponse)
+   * @param [std::shared_ptr<itti_multicast_session_update_response>&]: ITTI msg
+   * @return void
+   */
+  void handle_itti_message(
+      std::shared_ptr<itti_multicast_session_update_response>& itti_msg);
+
+  /*
+   * Handle ITTI message (MulticastSessionUpdateFailure)
+   * @param [std::shared_ptr<itti_multicast_session_update_failure>&]: ITTI msg
+   * @return void
+   */
+  void handle_itti_message(
+      std::shared_ptr<itti_multicast_session_update_failure>& itti_msg);
+
   /*
    * Send Handover Preparaton Failure message
    * @param [const uint64_t] amf_ue_ngap_id: AMF UE NGAP ID

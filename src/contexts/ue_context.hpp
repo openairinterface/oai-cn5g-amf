@@ -66,6 +66,19 @@ class ue_context {
   oai::common::sbi::nf_addr_t pcf_addr;
   std::optional<oai::_3gpp::model::PolicyAssociation> policy_association;
   std::string policy_association_location;
+
+  // Rel-17: RedCap Indication (id-RedCapIndication, 9.3.1.234).
+  // Set from InitialUEMessage/PathSwitchRequest/HandoverRequestAck via amf_n2.
+  void setRedCapInd(bool value) {
+    m_red_cap_ind        = value;
+    m_red_cap_ind_is_set = true;
+  }
+  bool isRedCapInd() const { return m_red_cap_ind; }
+  bool redCapIndIsSet() const { return m_red_cap_ind_is_set; }
+
+ private:
+  bool m_red_cap_ind{false};
+  bool m_red_cap_ind_is_set{false};
 };
 
 #endif

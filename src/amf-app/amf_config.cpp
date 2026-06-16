@@ -34,6 +34,10 @@ void amf_support_features::from_yaml(const YAML::Node& node) {
   if (node[AMF_CONFIG_SUPPORT_FEATURES_ENABLE_NSSF]) {
     m_enable_nssf.from_yaml(node[AMF_CONFIG_SUPPORT_FEATURES_ENABLE_NSSF]);
   }
+  if (node[AMF_CONFIG_SUPPORT_FEATURES_ENABLE_MBS_NGAP]) {
+    m_enable_mbs_ngap.from_yaml(
+        node[AMF_CONFIG_SUPPORT_FEATURES_ENABLE_MBS_NGAP]);
+  }
   if (node[AMF_CONFIG_SUPPORT_FEATURES_ENABLE_PCF]) {
     m_enable_pcf.from_yaml(node[AMF_CONFIG_SUPPORT_FEATURES_ENABLE_PCF]);
   }
@@ -75,6 +79,14 @@ std::string amf_support_features::to_string(const std::string& indent) const {
       BASE_FORMATTER, INNER_LIST_ELEM,
       AMF_CONFIG_SUPPORT_FEATURES_ENABLE_NSSF_LABEL, inner_width,
       enable_nssf_string));
+
+  std::string enable_mbs_ngap_string = m_enable_mbs_ngap.get_value() ?
+                                           AMF_CONFIG_OPTION_YES_STR :
+                                           AMF_CONFIG_OPTION_NO_STR;
+  out.append(indent).append(fmt::format(
+      BASE_FORMATTER, INNER_LIST_ELEM,
+      AMF_CONFIG_SUPPORT_FEATURES_ENABLE_MBS_NGAP_LABEL, inner_width,
+      enable_mbs_ngap_string));
 
   std::string enable_pcf_string = m_enable_pcf.get_value() ?
                                       AMF_CONFIG_OPTION_YES_STR :
@@ -118,6 +130,11 @@ bool amf_support_features::get_option_enable_advanced_features() const {
 //------------------------------------------------------------------------------
 bool amf_support_features::get_option_enable_nssf() const {
   return m_enable_nssf.get_value();
+}
+
+//------------------------------------------------------------------------------
+bool amf_support_features::get_option_enable_mbs_ngap() const {
+  return m_enable_mbs_ngap.get_value();
 }
 
 //------------------------------------------------------------------------------
@@ -933,6 +950,7 @@ amf_config::amf_config(
   support_features.enable_advanced_features = false;
   support_features.enable_nf_registration   = false;
   support_features.enable_nssf              = false;
+  support_features.enable_mbs_ngap          = false;
   support_features.enable_lmf               = false;
   support_features.enable_access_and_mobility_subscription_data_retrieval =
       false;
@@ -977,6 +995,7 @@ void amf_config::pre_process() {
   pid_dir       = amf_local->get_pid_directory();
   amf_name      = amf_local->get_amf_name();
   amf_log_level = spdlog::level::from_str(log_level());
+  // extended_amf_name is parsed optionally from cfg via from_json or yaml
 
   relative_amf_capacity = amf_local->get_relative_capacity();
   statistics_interval   = amf_local->get_statistics_timer_interval();
@@ -989,6 +1008,7 @@ void amf_config::pre_process() {
     support_features.enable_nf_registration   = false;
     support_features.enable_nssf              = false;
     support_features.enable_pcf               = false;
+    support_features.enable_mbs_ngap          = false;
     support_features.enable_access_and_mobility_subscription_data_retrieval =
         false;
     support_features.enable_am_policy_association = false;
@@ -999,6 +1019,8 @@ void amf_config::pre_process() {
     support_features.enable_nf_registration = register_nrf();
     support_features.enable_nssf =
         amf_local->get_support_features().get_option_enable_nssf();
+    support_features.enable_mbs_ngap =
+        amf_local->get_support_features().get_option_enable_mbs_ngap();
     support_features.enable_pcf =
         amf_local->get_support_features().get_option_enable_pcf();
     support_features.enable_access_and_mobility_subscription_data_retrieval =
@@ -1324,6 +1346,10 @@ void amf_config::display() {
                                              AMF_CONFIG_OPTION_YES_STR :
                                              AMF_CONFIG_OPTION_NO_STR);
   Logger::config().info(
+      "    MBS NGAP (codes 66-75).: %s", support_features.enable_mbs_ngap ?
+                                             AMF_CONFIG_OPTION_YES_STR :
+                                             AMF_CONFIG_OPTION_NO_STR);
+  Logger::config().info(
       "    External LMF ..........: %s",
       support_features.enable_lmf ? "Yes" : "No");
 
@@ -1350,12 +1376,13 @@ void amf_config::display() {
 
 //------------------------------------------------------------------------------
 void amf_config::to_json(nlohmann::json& json_data) const {
-  json_data["instance"]    = instance;
-  json_data["log_level"]   = amf_log_level;
-  json_data["amf_name"]    = amf_name;
-  json_data["default_dnn"] = default_dnn;
-  json_data["guami"]       = guami.to_json();
-  json_data["guami_list"]  = nlohmann::json::array();
+  json_data["instance"]          = instance;
+  json_data["log_level"]         = amf_log_level;
+  json_data["amf_name"]          = amf_name;
+  json_data["extended_amf_name"] = extended_amf_name;
+  json_data["default_dnn"]       = default_dnn;
+  json_data["guami"]             = guami.to_json();
+  json_data["guami_list"]        = nlohmann::json::array();
   for (auto s : guami_list) {
     json_data["guami_list"].push_back(s.to_json());
   }
@@ -1416,6 +1443,9 @@ bool amf_config::from_json(nlohmann::json& json_data) {
     }
     if (json_data.find("amf_name") != json_data.end()) {
       amf_name = json_data["amf_name"].get<std::string>();
+    }
+    if (json_data.find("extended_amf_name") != json_data.end()) {
+      extended_amf_name = json_data["extended_amf_name"].get<std::string>();
     }
     if (json_data.find("default_dnn") != json_data.end()) {
       amf_name = json_data["default_dnn"].get<std::string>();

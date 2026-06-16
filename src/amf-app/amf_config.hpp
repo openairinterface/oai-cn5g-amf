@@ -24,6 +24,7 @@ constexpr auto AMF_CONFIG_PID_DIRECTORY       = "pid_directory";
 constexpr auto AMF_CONFIG_PID_DIRECTORY_LABEL = "PID Directory";
 constexpr auto AMF_CONFIG_AMF_NAME            = "amf_name";
 constexpr auto AMF_CONFIG_AMF_NAME_LABEL      = "AMF Name";
+constexpr auto AMF_CONFIG_EXTENDED_AMF_NAME   = "extended_amf_name";
 
 constexpr auto AMF_CONFIG_SUPPORT_FEATURES       = "support_features_options";
 constexpr auto AMF_CONFIG_SUPPORT_FEATURES_LABEL = "Support Features Options";
@@ -33,8 +34,11 @@ constexpr auto AMF_CONFIG_SUPPORT_FEATURES_ENABLE_SIMPLE_SCENARIO_LABEL =
     "Enable Simple Scenario";
 constexpr auto AMF_CONFIG_SUPPORT_FEATURES_ENABLE_NSSF       = "enable_nssf";
 constexpr auto AMF_CONFIG_SUPPORT_FEATURES_ENABLE_NSSF_LABEL = "Enable NSSF";
-constexpr auto AMF_CONFIG_SUPPORT_FEATURES_ENABLE_PCF        = "enable_pcf";
-constexpr auto AMF_CONFIG_SUPPORT_FEATURES_ENABLE_PCF_LABEL  = "Enable PCF";
+constexpr auto AMF_CONFIG_SUPPORT_FEATURES_ENABLE_MBS_NGAP = "enable_mbs_ngap";
+constexpr auto AMF_CONFIG_SUPPORT_FEATURES_ENABLE_MBS_NGAP_LABEL =
+    "Enable MBS NGAP";
+constexpr auto AMF_CONFIG_SUPPORT_FEATURES_ENABLE_PCF       = "enable_pcf";
+constexpr auto AMF_CONFIG_SUPPORT_FEATURES_ENABLE_PCF_LABEL = "Enable PCF";
 constexpr auto AMF_CONFIG_SUPPORT_FEATURES_ENABLE_ADVANCED_FEATURES =
     "enable_advanced_features";
 constexpr auto AMF_CONFIG_SUPPORT_FEATURES_ENABLE_ADVANCED_FEATURES_LABEL =
@@ -156,6 +160,7 @@ class amf_support_features : public config_type {
   option_config_value
       m_enable_access_and_mobility_subscription_data_retrieval{};
   option_config_value m_enable_am_policy_association{};
+  option_config_value m_enable_mbs_ngap{};  // Rel-17 MBS NGAP (codes 66-75)
 
  public:
   explicit amf_support_features();
@@ -170,6 +175,7 @@ class amf_support_features : public config_type {
   [[nodiscard]] bool
   get_option_enable_access_and_mobility_subscription_data_retrieval() const;
   [[nodiscard]] bool get_option_enable_am_policy_association() const;
+  [[nodiscard]] bool get_option_enable_mbs_ngap() const;
 };
 
 class guami : public config_type {
@@ -279,6 +285,7 @@ typedef struct support_features_s {
   bool enable_pcf;
   bool enable_access_and_mobility_subscription_data_retrieval;
   bool enable_am_policy_association;
+  bool enable_mbs_ngap;  // Rel-17 MBS NGAP (TS 38.413 procedure codes 66-75)
 
   uint8_t http_version;
   nlohmann::json to_json() const {
@@ -293,7 +300,8 @@ typedef struct support_features_s {
         this->enable_access_and_mobility_subscription_data_retrieval;
     json_data["enable_am_policy_association"] =
         this->enable_am_policy_association;
-    json_data["http_version"] = this->http_version;
+    json_data["enable_mbs_ngap"] = this->enable_mbs_ngap;
+    json_data["http_version"]    = this->http_version;
     return json_data;
   }
 
@@ -331,6 +339,9 @@ typedef struct support_features_s {
       if (json_data.find("enable_am_policy_association") != json_data.end()) {
         this->enable_am_policy_association =
             json_data["enable_am_policy_association"].get<bool>();
+      }
+      if (json_data.find("enable_mbs_ngap") != json_data.end()) {
+        this->enable_mbs_ngap = json_data["enable_mbs_ngap"].get<bool>();
       }
       if (json_data.find("http_version") != json_data.end()) {
         this->http_version = json_data["http_version"].get<int>();
@@ -431,6 +442,8 @@ class amf_config : public config {
   uint32_t http_request_timeout;
   unsigned int statistics_interval;
   std::string amf_name;
+  std::string
+      extended_amf_name;  // Rel-17 ExtendedAMFName (9.3.3.51); empty = not set
   guami_full_format_t guami;
   std::vector<guami_full_format_t> guami_list;
   unsigned int relative_amf_capacity;

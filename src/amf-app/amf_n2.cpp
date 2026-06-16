@@ -32,6 +32,26 @@
 #include "PduSessionResourceSetupRequest.hpp"
 #include "RerouteNasRequest.hpp"
 #include "UeContextReleaseCommand.hpp"
+// Rel-17 IE wrappers for Stage 8 bridges
+#include "ExtendedAmfName.hpp"
+#include "FiveGProSeAuthorized.hpp"
+#include "RedCapIndication.hpp"
+#include "TaiNsagSupportList.hpp"
+#include "UeSliceMaximumBitRateList.hpp"
+// MBS NGAP message wrappers (Rel-17)
+#include "BroadcastSessionModificationFailure.hpp"
+#include "BroadcastSessionModificationResponse.hpp"
+#include "BroadcastSessionReleaseRequired.hpp"
+#include "BroadcastSessionReleaseResponse.hpp"
+#include "BroadcastSessionSetupFailure.hpp"
+#include "BroadcastSessionSetupResponse.hpp"
+#include "DistributionReleaseRequest.hpp"
+#include "DistributionSetupRequest.hpp"
+#include "MulticastSessionActivationFailure.hpp"
+#include "MulticastSessionActivationResponse.hpp"
+#include "MulticastSessionDeactivationResponse.hpp"
+#include "MulticastSessionUpdateFailure.hpp"
+#include "MulticastSessionUpdateResponse.hpp"
 #include "amf_app.hpp"
 #include "amf_config.hpp"
 #include "amf_conversions.hpp"
@@ -272,6 +292,122 @@ void amf_n2_task(void* args_p) {
             "handling");
         auto msg_ptr = std::dynamic_pointer_cast<
             itti_uplink_non_ue_associated_nrppa_transport>(shared_msg);
+        amf_n2_inst->handle_itti_message(msg_ptr);
+      } break;
+
+      // MBS NGAP dispatch cases (Rel-17, procedure codes 66-75)
+      case BROADCAST_SESSION_SETUP_RESPONSE: {
+        Logger::amf_n2().info(
+            "Received Broadcast Session Setup Response message, handling");
+        auto msg_ptr =
+            std::dynamic_pointer_cast<itti_broadcast_session_setup_response>(
+                shared_msg);
+        amf_n2_inst->handle_itti_message(msg_ptr);
+      } break;
+
+      case BROADCAST_SESSION_SETUP_FAILURE: {
+        Logger::amf_n2().info(
+            "Received Broadcast Session Setup Failure message, handling");
+        auto msg_ptr =
+            std::dynamic_pointer_cast<itti_broadcast_session_setup_failure>(
+                shared_msg);
+        amf_n2_inst->handle_itti_message(msg_ptr);
+      } break;
+
+      case BROADCAST_SESSION_MODIFICATION_RESPONSE: {
+        Logger::amf_n2().info(
+            "Received Broadcast Session Modification Response message, "
+            "handling");
+        auto msg_ptr = std::dynamic_pointer_cast<
+            itti_broadcast_session_modification_response>(shared_msg);
+        amf_n2_inst->handle_itti_message(msg_ptr);
+      } break;
+
+      case BROADCAST_SESSION_MODIFICATION_FAILURE: {
+        Logger::amf_n2().info(
+            "Received Broadcast Session Modification Failure message, "
+            "handling");
+        auto msg_ptr = std::dynamic_pointer_cast<
+            itti_broadcast_session_modification_failure>(shared_msg);
+        amf_n2_inst->handle_itti_message(msg_ptr);
+      } break;
+
+      case BROADCAST_SESSION_RELEASE_RESPONSE: {
+        Logger::amf_n2().info(
+            "Received Broadcast Session Release Response message, handling");
+        auto msg_ptr =
+            std::dynamic_pointer_cast<itti_broadcast_session_release_response>(
+                shared_msg);
+        amf_n2_inst->handle_itti_message(msg_ptr);
+      } break;
+
+      case BROADCAST_SESSION_RELEASE_REQUIRED: {
+        Logger::amf_n2().info(
+            "Received Broadcast Session Release Required indication, handling");
+        auto msg_ptr =
+            std::dynamic_pointer_cast<itti_broadcast_session_release_required>(
+                shared_msg);
+        amf_n2_inst->handle_itti_message(msg_ptr);
+      } break;
+
+      case DISTRIBUTION_SETUP_REQUEST: {
+        Logger::amf_n2().info(
+            "Received Distribution Setup Request message, handling");
+        auto msg_ptr =
+            std::dynamic_pointer_cast<itti_distribution_setup_request>(
+                shared_msg);
+        amf_n2_inst->handle_itti_message(msg_ptr);
+      } break;
+
+      case DISTRIBUTION_RELEASE_REQUEST: {
+        Logger::amf_n2().info(
+            "Received Distribution Release Request message, handling");
+        auto msg_ptr =
+            std::dynamic_pointer_cast<itti_distribution_release_request>(
+                shared_msg);
+        amf_n2_inst->handle_itti_message(msg_ptr);
+      } break;
+
+      case MULTICAST_SESSION_ACTIVATION_RESPONSE: {
+        Logger::amf_n2().info(
+            "Received Multicast Session Activation Response message, handling");
+        auto msg_ptr = std::dynamic_pointer_cast<
+            itti_multicast_session_activation_response>(shared_msg);
+        amf_n2_inst->handle_itti_message(msg_ptr);
+      } break;
+
+      case MULTICAST_SESSION_ACTIVATION_FAILURE: {
+        Logger::amf_n2().info(
+            "Received Multicast Session Activation Failure message, handling");
+        auto msg_ptr = std::dynamic_pointer_cast<
+            itti_multicast_session_activation_failure>(shared_msg);
+        amf_n2_inst->handle_itti_message(msg_ptr);
+      } break;
+
+      case MULTICAST_SESSION_DEACTIVATION_RESPONSE: {
+        Logger::amf_n2().info(
+            "Received Multicast Session Deactivation Response message, "
+            "handling");
+        auto msg_ptr = std::dynamic_pointer_cast<
+            itti_multicast_session_deactivation_response>(shared_msg);
+        amf_n2_inst->handle_itti_message(msg_ptr);
+      } break;
+
+      case MULTICAST_SESSION_UPDATE_RESPONSE: {
+        Logger::amf_n2().info(
+            "Received Multicast Session Update Response message, handling");
+        auto msg_ptr =
+            std::dynamic_pointer_cast<itti_multicast_session_update_response>(
+                shared_msg);
+        amf_n2_inst->handle_itti_message(msg_ptr);
+      } break;
+
+      case MULTICAST_SESSION_UPDATE_FAILURE: {
+        Logger::amf_n2().info(
+            "Received Multicast Session Update Failure message, handling");
+        auto msg_ptr =
+            std::dynamic_pointer_cast<itti_multicast_session_update_failure>(
+                shared_msg);
         amf_n2_inst->handle_itti_message(msg_ptr);
       } break;
 
@@ -556,6 +692,32 @@ void amf_n2::handle_itti_message(
 
   if (ue_retention_info.has_value() and ue_retention_option)
     ngSetupResp.setUeRetentionInformation(ue_retention_info.value());
+
+  // Task 8.5 — ExtendedAMFName from AMF config (Rel-17, id-ExtendedAMFName).
+  // SECURITY: source from amf_cfg->extended_amf_name only — never echo gNB.
+  if (!amf_cfg->extended_amf_name.empty()) {
+    ExtendedAmfName ext_name{};
+    if (ext_name.set(amf_cfg->extended_amf_name)) {
+      ngSetupResp.setExtendedAmfName(ext_name);
+      Logger::amf_n2().debug(
+          "Set ExtendedAMFName in NgSetupResponse: %s",
+          amf_cfg->extended_amf_name.c_str());
+    }
+  }
+
+  // Task 8.4 — TAINSAGSupportList from AMF config, stored per gNB (Rel-17).
+  // SECURITY: sourced from AMF configuration (not UE input), stored in
+  // gnb_context to record what was advertised to each gNB.
+  // TODO Stage 8: populate TaiNsagSupportList from amf_cfg.nsag_entries when
+  // the config schema adds NSAG support (no nsag_entries field exists yet).
+  // Wiring skeleton kept in place for future enablement:
+  // {
+  //   TaiNsagSupportList nsag_list_ie{};
+  //   if (nsag_list_ie.buildFromConfig(*amf_cfg)) {
+  //     ngSetupResp.setTaiNsagSupportList(nsag_list_ie);
+  //     gc->nsag_support_list = nsag_list_ie;
+  //   }
+  // }
 
   int encoded = ngSetupResp.Encode(buffer.data(), BUFFER_SIZE_1024);
 
@@ -849,6 +1011,21 @@ void amf_n2::handle_itti_message(
     return;
   }
 
+  // Task 8.1 — RedCap Indication bridge (Rel-17, id-RedCapIndication)
+  // ue_context is not yet established at InitialUEMessage time; store in
+  // ue_ngap_context and propagate to ue_context in later handlers.
+  // The Rel-17 enum has a single value (redcap=0); presence of the IE
+  // is sufficient to conclude the UE is a RedCap device.
+  {
+    RedCapIndication redCap{};
+    if (init_ue_msg->init_ue_message->getRedCapIndication(redCap)) {
+      unc->red_cap_ind = true;  // IE present → UE is RedCap
+      Logger::amf_n2().debug(
+          "[RAN UE ID " RAN_UE_NGAP_ID_FMT "] RedCap Indication: true",
+          ran_ue_ngap_id);
+    }
+  }
+
   // Store InitialUEMessage for Rereoute NAS later
   if (unc->initial_ue_msg.buf) {
     Logger::amf_n2().debug(
@@ -1120,6 +1297,39 @@ void amf_n2::handle_itti_message(
       // TODO: Mobility RestrictionList
     }
   }
+
+  // Task 8.2 — ProSe Authorization bridge (Rel-17, id-FiveGProSeAuthorized).
+  // Source: UDM-provided ProSe context in ue_context (gated by
+  // proseContextIsSet()). FiveGProSeAuthorized::set() accepts the raw
+  // Ngap_FiveG_ProSeAuthorized_t struct only; high-level setters (
+  // setDirectDiscovery, setDirectComm, etc.) are not yet implemented on the
+  // wrapper. TODO Stage 8: add set(ProseContext) overload to
+  // FiveGProSeAuthorized when oai::_3gpp::model::UeContext is stored alongside
+  // the app ue_context.
+  {
+    std::shared_ptr<ue_context> uc = amf_app_inst->get_ue_context(
+        itti_msg->ran_ue_ngap_id, itti_msg->amf_ue_ngap_id);
+    if (uc) {
+      // TODO Stage 8: if (uc->proseContextIsSet()) {
+      //   auto prose_ctx = uc->getProseContext();
+      //   FiveGProSeAuthorized prose_ie{};
+      //   // populate prose_ie from prose_ctx via raw struct conversion
+      //   msg->setFiveGProSeAuthorized(prose_ie);
+      // }
+      // ProSe bridge deferred: app ue_context does not yet embed the
+      // oai::_3gpp::model::UeContext that carries proseContextIsSet().
+    }
+  }
+
+  // Task 8.3 — Per-Slice MBR bridge (Rel-17, id-UESliceMaximumBitRateList).
+  // TODO Stage 8: ue_context::getSubUeSliceMbrList() does not exist.
+  // Bridge deferred until the AMF subscription data flow populates this field.
+  // Example wiring (uncomment when API exists):
+  //   auto slice_mbr_list = uc->getSubUeSliceMbrList();
+  //   if (!slice_mbr_list.empty()) {
+  //     UeSliceMaximumBitRateList mbr_list_ie{};
+  //     msg->setUeSliceMaximumBitRateList(mbr_list_ie);
+  //   }
 
   uint8_t buffer[BUFFER_SIZE_2048];
   int encoded_size = msg->Encode(buffer, BUFFER_SIZE_2048);
@@ -2012,6 +2222,19 @@ bool amf_n2::handle_itti_message(
   }
   // TODO: process result
 
+  // Task 8.2 — ProSe Authorization bridge (Rel-17, id-FiveGProSeAuthorized)
+  // in HandoverRequest build path.
+  // TODO Stage 8: app ue_context does not yet embed
+  // oai::_3gpp::model::UeContext. Once the ProSe subscription data path is
+  // available via nc->supi, wire as:
+  //   std::shared_ptr<ue_context> uc =
+  //       amf_app_inst->get_ue_context(nc->supi);
+  //   if (uc && uc->proseContextIsSet()) {
+  //     FiveGProSeAuthorized prose_ie{};
+  //     // populate from uc->getProseContext() via raw struct conversion
+  //     handover_request->setFiveGProSeAuthorized(prose_ie);
+  //   }
+
   // Request to Target RAN
   handover_request->setPduSessionResourceSetupList(list);
 
@@ -2066,6 +2289,22 @@ void amf_n2::handle_itti_message(
   if (!amf_ue_id_2_ue_ngap_context(amf_ue_ngap_id, unc)) return;
 
   unc->target_ran_ue_ngap_id = ran_ue_ngap_id;  // store target RAN ID
+
+  // Task 8.1 — RedCap Indication bridge (Rel-17, id-RedCapIndication)
+  // IE present → UE is a RedCap device; store in ue_context.
+  {
+    RedCapIndication redCap{};
+    if (itti_msg->handover_request_ack->getRedCapIndication(redCap)) {
+      std::shared_ptr<ue_context> uc =
+          amf_app_inst->get_ue_context(ran_ue_ngap_id, amf_ue_ngap_id);
+      if (uc) {
+        uc->setRedCapInd(true);  // IE present → UE is RedCap
+        Logger::amf_n2().debug(
+            "[UE " AMF_UE_NGAP_ID_FMT "] RedCap Indication (HoReqAck): true",
+            amf_ue_ngap_id);
+      }
+    }
+  }
 
   std::vector<PDUSessionResourceAdmittedItem_t> list;
   if (!itti_msg->handover_request_ack->getPduSessionResourceAdmittedList(
@@ -3104,4 +3343,116 @@ void amf_n2::fill_n2_information_notification(
   }
 
   n2_info_notification.setN2InfoContainer(n2_info_container);
+}
+
+// ===========================================================================
+// MBS NGAP stub handlers (Rel-17, TS 38.413 procedure codes 66-75)
+// Full MBS session management logic is deferred (enable_mbs_ngap feature gate).
+// ===========================================================================
+
+//------------------------------------------------------------------------------
+void amf_n2::handle_itti_message(
+    std::shared_ptr<itti_broadcast_session_setup_response>& itti_msg) {
+  Logger::amf_n2().debug("Handle ITTI Broadcast Session Setup Response");
+  // TODO: MBS session management (TS 23.247 semantics) — update MBS session
+  // state on successful setup. Full implementation deferred
+  // (enable_mbs_ngap feature gate).
+}
+
+//------------------------------------------------------------------------------
+void amf_n2::handle_itti_message(
+    std::shared_ptr<itti_broadcast_session_setup_failure>& itti_msg) {
+  Logger::amf_n2().warn("Handle ITTI Broadcast Session Setup Failure");
+  // TODO: handle failure, log cause.
+  // Full implementation deferred (enable_mbs_ngap feature gate).
+}
+
+//------------------------------------------------------------------------------
+void amf_n2::handle_itti_message(
+    std::shared_ptr<itti_broadcast_session_modification_response>& itti_msg) {
+  Logger::amf_n2().debug("Handle ITTI Broadcast Session Modification Response");
+  // TODO: MBS session management — update MBS session state on successful
+  // modification. Full implementation deferred (enable_mbs_ngap feature gate).
+}
+
+//------------------------------------------------------------------------------
+void amf_n2::handle_itti_message(
+    std::shared_ptr<itti_broadcast_session_modification_failure>& itti_msg) {
+  Logger::amf_n2().warn("Handle ITTI Broadcast Session Modification Failure");
+  // TODO: handle failure, log cause.
+  // Full implementation deferred (enable_mbs_ngap feature gate).
+}
+
+//------------------------------------------------------------------------------
+void amf_n2::handle_itti_message(
+    std::shared_ptr<itti_broadcast_session_release_response>& itti_msg) {
+  Logger::amf_n2().debug("Handle ITTI Broadcast Session Release Response");
+  // TODO: MBS session management — clean up MBS session context on release.
+  // Full implementation deferred (enable_mbs_ngap feature gate).
+}
+
+//------------------------------------------------------------------------------
+void amf_n2::handle_itti_message(
+    std::shared_ptr<itti_broadcast_session_release_required>& itti_msg) {
+  Logger::amf_n2().debug("Handle ITTI Broadcast Session Release Required");
+  // TODO: MBS session management (TS 23.247 semantics) — initiate release
+  // procedure upon gNB indication. Full implementation deferred
+  // (enable_mbs_ngap feature gate).
+}
+
+//------------------------------------------------------------------------------
+void amf_n2::handle_itti_message(
+    std::shared_ptr<itti_distribution_setup_request>& itti_msg) {
+  Logger::amf_n2().debug("Handle ITTI Distribution Setup Request");
+  // TODO: MBS session management (TS 23.247 semantics) — validate MBS session
+  // ID before forwarding. Full implementation deferred
+  // (enable_mbs_ngap feature gate).
+}
+
+//------------------------------------------------------------------------------
+void amf_n2::handle_itti_message(
+    std::shared_ptr<itti_distribution_release_request>& itti_msg) {
+  Logger::amf_n2().debug("Handle ITTI Distribution Release Request");
+  // TODO: MBS session management — validate and process distribution release.
+  // Full implementation deferred (enable_mbs_ngap feature gate).
+}
+
+//------------------------------------------------------------------------------
+void amf_n2::handle_itti_message(
+    std::shared_ptr<itti_multicast_session_activation_response>& itti_msg) {
+  Logger::amf_n2().debug("Handle ITTI Multicast Session Activation Response");
+  // TODO: MBS session management (TS 23.247 semantics).
+  // Full implementation deferred (enable_mbs_ngap feature gate).
+}
+
+//------------------------------------------------------------------------------
+void amf_n2::handle_itti_message(
+    std::shared_ptr<itti_multicast_session_activation_failure>& itti_msg) {
+  Logger::amf_n2().warn("Handle ITTI Multicast Session Activation Failure");
+  // TODO: handle failure, log cause.
+  // Full implementation deferred (enable_mbs_ngap feature gate).
+}
+
+//------------------------------------------------------------------------------
+void amf_n2::handle_itti_message(
+    std::shared_ptr<itti_multicast_session_deactivation_response>& itti_msg) {
+  Logger::amf_n2().debug("Handle ITTI Multicast Session Deactivation Response");
+  // TODO: MBS session management. Full implementation deferred
+  // (enable_mbs_ngap feature gate).
+}
+
+//------------------------------------------------------------------------------
+void amf_n2::handle_itti_message(
+    std::shared_ptr<itti_multicast_session_update_response>& itti_msg) {
+  Logger::amf_n2().debug("Handle ITTI Multicast Session Update Response");
+  // TODO: MBS session management.
+  // Full implementation deferred (enable_mbs_ngap feature gate).
+}
+
+//------------------------------------------------------------------------------
+void amf_n2::handle_itti_message(
+    std::shared_ptr<itti_multicast_session_update_failure>& itti_msg) {
+  Logger::amf_n2().warn("Handle ITTI Multicast Session Update Failure");
+  // TODO: handle failure, log cause.
+  // Full implementation deferred (enable_mbs_ngap feature gate).
 }

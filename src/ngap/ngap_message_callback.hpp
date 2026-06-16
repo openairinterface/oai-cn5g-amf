@@ -9,12 +9,31 @@
 #include "NgReset.hpp"
 #include "NgResetAck.hpp"
 #include "NgSetupRequest.hpp"
+#include "PathSwitchRequest.hpp"
+#include "PathSwitchRequestAck.hpp"
 #include "PduSessionResourceModifyResponse.hpp"
 #include "PduSessionResourceReleaseResponse.hpp"
 #include "PduSessionResourceSetupResponse.hpp"
 #include "PduSessionResourceSetupUnsuccessfulTransfer.hpp"
+#include "UeContextModificationFailure.hpp"
+#include "UeContextModificationRequest.hpp"
+#include "UeContextModificationResponse.hpp"
 #include "UplinkNonUeAssociatedNrppaTransport.hpp"
 #include "UplinkUeAssociatedNrppaTransport.hpp"
+// MBS NGAP message wrappers (Rel-17, TS 38.413 procedure codes 66-75)
+#include "BroadcastSessionModificationFailure.hpp"
+#include "BroadcastSessionModificationResponse.hpp"
+#include "BroadcastSessionReleaseRequired.hpp"
+#include "BroadcastSessionReleaseResponse.hpp"
+#include "BroadcastSessionSetupFailure.hpp"
+#include "BroadcastSessionSetupResponse.hpp"
+#include "DistributionReleaseRequest.hpp"
+#include "DistributionSetupRequest.hpp"
+#include "MulticastSessionActivationFailure.hpp"
+#include "MulticastSessionActivationResponse.hpp"
+#include "MulticastSessionDeactivationResponse.hpp"
+#include "MulticastSessionUpdateFailure.hpp"
+#include "MulticastSessionUpdateResponse.hpp"
 #include "amf_app.hpp"
 #include "amf_conversions.hpp"
 #include "amf_n1.hpp"
@@ -32,6 +51,7 @@ using namespace amf_application;
 extern itti_mw* itti_inst;
 extern amf_n1* amf_n1_inst;
 extern amf_app* amf_app_inst;
+extern std::unique_ptr<oai::config::amf_config> amf_cfg;
 
 typedef int (*ngap_message_decoded_callback)(
     const sctp_assoc_id_t assoc_id, const sctp_stream_id_t stream,
@@ -39,8 +59,9 @@ typedef int (*ngap_message_decoded_callback)(
 
 typedef void (*ngap_event_callback)(const sctp_assoc_id_t assoc_id);
 
-constexpr uint8_t NGAP_PROCEDURE_CODE_MAX_VALUE = 66;
-constexpr uint8_t NGAP_PRESENT_MAX_VALUE        = 3;
+constexpr uint8_t NGAP_PROCEDURE_CODE_MAX_VALUE =
+    76;  // covers codes 0-75 (Rel-17 MBS added)
+constexpr uint8_t NGAP_PRESENT_MAX_VALUE = 3;
 
 //------------------------------------------------------------------------------
 int ngap_amf_handle_ng_setup_request(
@@ -915,8 +936,17 @@ int ngap_amf_handle_path_switch_request(
     const sctp_assoc_id_t assoc_id, const sctp_stream_id_t stream,
     struct Ngap_NGAP_PDU* message_p) {
   Logger::ngap().debug("Sending ITTI Path Switch Request to TASK_AMF_N2");
-  // TODO:
-  return RETURNok;
+  auto req = std::make_shared<PathSwitchRequestMsg>();
+  if (!req->decode(message_p)) {
+    Logger::ngap().error("Decoding PathSwitchRequest error");
+    return RETURNerror;
+  }
+  auto itti_msg =
+      std::make_shared<itti_path_switch_request>(TASK_NGAP, TASK_AMF_N2);
+  itti_msg->assoc_id        = assoc_id;
+  itti_msg->stream          = stream;
+  itti_msg->path_switch_req = req;
+  return (itti_inst->send_msg(itti_msg) == 0) ? RETURNok : RETURNerror;
 }
 
 //------------------------------------------------------------------------------
@@ -924,8 +954,17 @@ int ngap_handle_path_switch_request_ack(
     const sctp_assoc_id_t assoc_id, const sctp_stream_id_t stream,
     struct Ngap_NGAP_PDU* message_p) {
   Logger::ngap().debug("Handling Path Switch Request Ack (AMF->AN)");
-  // TODO:
-  return RETURNok;
+  auto req = std::make_shared<PathSwitchRequestAckMsg>();
+  if (!req->decode(message_p)) {
+    Logger::ngap().error("Decoding PathSwitchRequestAck error");
+    return RETURNerror;
+  }
+  auto itti_msg =
+      std::make_shared<itti_path_switch_request_ack>(TASK_NGAP, TASK_AMF_N2);
+  itti_msg->assoc_id            = assoc_id;
+  itti_msg->stream              = stream;
+  itti_msg->path_switch_req_ack = req;
+  return (itti_inst->send_msg(itti_msg) == 0) ? RETURNok : RETURNerror;
 }
 
 //------------------------------------------------------------------------------
@@ -1080,9 +1119,19 @@ int trace_start(
 int ue_context_modification_request(
     const sctp_assoc_id_t assoc_id, const sctp_stream_id_t stream,
     struct Ngap_NGAP_PDU* message_p) {
-  Logger::ngap().debug("Handling UE Context Modification Request (AMF->AN)");
-  // TODO:
-  return RETURNok;
+  Logger::ngap().debug(
+      "Sending ITTI UE Context Modification Request to TASK_AMF_N2");
+  auto req = std::make_shared<UeContextModificationRequestMsg>();
+  if (!req->decode(message_p)) {
+    Logger::ngap().error("Decoding UEContextModificationRequest error");
+    return RETURNerror;
+  }
+  auto itti_msg = std::make_shared<itti_ue_context_modification_request>(
+      TASK_NGAP, TASK_AMF_N2);
+  itti_msg->assoc_id       = assoc_id;
+  itti_msg->stream         = stream;
+  itti_msg->ue_ctx_mod_req = req;
+  return (itti_inst->send_msg(itti_msg) == 0) ? RETURNok : RETURNerror;
 }
 
 //------------------------------------------------------------------------------
@@ -1091,8 +1140,17 @@ int ue_context_modification_response(
     struct Ngap_NGAP_PDU* message_p) {
   Logger::ngap().debug(
       "Sending ITTI UE Context Modification Response to TASK_AMF_N2");
-  // TODO:
-  return RETURNok;
+  auto resp = std::make_shared<UeContextModificationResponseMsg>();
+  if (!resp->decode(message_p)) {
+    Logger::ngap().error("Decoding UEContextModificationResponse error");
+    return RETURNerror;
+  }
+  auto itti_msg = std::make_shared<itti_ue_context_modification_response>(
+      TASK_NGAP, TASK_AMF_N2);
+  itti_msg->assoc_id        = assoc_id;
+  itti_msg->stream          = stream;
+  itti_msg->ue_ctx_mod_resp = resp;
+  return (itti_inst->send_msg(itti_msg) == 0) ? RETURNok : RETURNerror;
 }
 
 //------------------------------------------------------------------------------
@@ -1101,8 +1159,17 @@ int ue_context_modification_failure(
     struct Ngap_NGAP_PDU* message_p) {
   Logger::ngap().debug(
       "Sending ITTI UE Context Modification Failure to TASK_AMF_N2");
-  // TODO:
-  return RETURNok;
+  auto fail = std::make_shared<UeContextModificationFailureMsg>();
+  if (!fail->decode(message_p)) {
+    Logger::ngap().error("Decoding UEContextModificationFailure error");
+    return RETURNerror;
+  }
+  auto itti_msg = std::make_shared<itti_ue_context_modification_failure>(
+      TASK_NGAP, TASK_AMF_N2);
+  itti_msg->assoc_id        = assoc_id;
+  itti_msg->stream          = stream;
+  itti_msg->ue_ctx_mod_fail = fail;
+  return (itti_inst->send_msg(itti_msg) == 0) ? RETURNok : RETURNerror;
 }
 
 //------------------------------------------------------------------------------
@@ -1258,6 +1325,415 @@ int secondary_rat_data_usage_report(
   return RETURNok;
 }
 
+// ===========================================================================
+// MBS NGAP callback functions (Rel-17, TS 38.413 procedure codes 66-75)
+// Feature-gated via amf_cfg->support_features.enable_mbs_ngap
+// Deferred note: The protocol-level DistributionSetupFailure response for
+// code 69 when MBS is disabled is not yet sent (Stage 8 concern). Currently
+// all feature-gated paths warn-log and return RETURNok.
+// ===========================================================================
+
+//------------------------------------------------------------------------------
+// Code 66: BroadcastSessionModification (AMF-initiated; gNB sends
+// Response/Failure)
+int ngap_amf_handle_broadcast_session_modification_response(
+    const sctp_assoc_id_t assoc_id, const sctp_stream_id_t stream,
+    struct Ngap_NGAP_PDU* message_p) {
+  if (!amf_cfg->support_features.enable_mbs_ngap) {
+    Logger::ngap().warn(
+        "MBS disabled: dropping BroadcastSessionModificationResponse");
+    return RETURNok;
+  }
+  auto resp = std::make_shared<BroadcastSessionModificationResponseMsg>();
+  if (!resp->decode(message_p)) {
+    Logger::ngap().error(
+        "Decoding BroadcastSessionModificationResponse message error");
+    return RETURNerror;
+  }
+  auto itti_msg =
+      std::make_shared<itti_broadcast_session_modification_response>(
+          TASK_NGAP, TASK_AMF_N2);
+  itti_msg->assoc_id = assoc_id;
+  itti_msg->stream   = stream;
+  itti_msg->resp     = resp;
+  int ret            = itti_inst->send_msg(itti_msg);
+  if (0 != ret) {
+    Logger::ngap().error(
+        "Could not send ITTI message %s to task TASK_AMF_N2",
+        itti_msg->get_msg_name());
+    return RETURNerror;
+  }
+  return RETURNok;
+}
+
+//------------------------------------------------------------------------------
+int ngap_amf_handle_broadcast_session_modification_failure(
+    const sctp_assoc_id_t assoc_id, const sctp_stream_id_t stream,
+    struct Ngap_NGAP_PDU* message_p) {
+  if (!amf_cfg->support_features.enable_mbs_ngap) {
+    Logger::ngap().warn(
+        "MBS disabled: dropping BroadcastSessionModificationFailure");
+    return RETURNok;
+  }
+  auto fail = std::make_shared<BroadcastSessionModificationFailureMsg>();
+  if (!fail->decode(message_p)) {
+    Logger::ngap().error(
+        "Decoding BroadcastSessionModificationFailure message error");
+    return RETURNerror;
+  }
+  auto itti_msg = std::make_shared<itti_broadcast_session_modification_failure>(
+      TASK_NGAP, TASK_AMF_N2);
+  itti_msg->assoc_id = assoc_id;
+  itti_msg->stream   = stream;
+  itti_msg->fail     = fail;
+  int ret            = itti_inst->send_msg(itti_msg);
+  if (0 != ret) {
+    Logger::ngap().error(
+        "Could not send ITTI message %s to task TASK_AMF_N2",
+        itti_msg->get_msg_name());
+    return RETURNerror;
+  }
+  return RETURNok;
+}
+
+//------------------------------------------------------------------------------
+// Code 67: BroadcastSessionRelease (AMF-initiated; gNB sends Response only)
+int ngap_amf_handle_broadcast_session_release_response(
+    const sctp_assoc_id_t assoc_id, const sctp_stream_id_t stream,
+    struct Ngap_NGAP_PDU* message_p) {
+  if (!amf_cfg->support_features.enable_mbs_ngap) {
+    Logger::ngap().warn(
+        "MBS disabled: dropping BroadcastSessionReleaseResponse");
+    return RETURNok;
+  }
+  auto resp = std::make_shared<BroadcastSessionReleaseResponseMsg>();
+  if (!resp->decode(message_p)) {
+    Logger::ngap().error(
+        "Decoding BroadcastSessionReleaseResponse message error");
+    return RETURNerror;
+  }
+  auto itti_msg = std::make_shared<itti_broadcast_session_release_response>(
+      TASK_NGAP, TASK_AMF_N2);
+  itti_msg->assoc_id = assoc_id;
+  itti_msg->stream   = stream;
+  itti_msg->resp     = resp;
+  int ret            = itti_inst->send_msg(itti_msg);
+  if (0 != ret) {
+    Logger::ngap().error(
+        "Could not send ITTI message %s to task TASK_AMF_N2",
+        itti_msg->get_msg_name());
+    return RETURNerror;
+  }
+  return RETURNok;
+}
+
+//------------------------------------------------------------------------------
+// Code 68: BroadcastSessionSetup (AMF-initiated; gNB sends Response/Failure)
+int ngap_amf_handle_broadcast_session_setup_response(
+    const sctp_assoc_id_t assoc_id, const sctp_stream_id_t stream,
+    struct Ngap_NGAP_PDU* message_p) {
+  if (!amf_cfg->support_features.enable_mbs_ngap) {
+    Logger::ngap().warn("MBS disabled: dropping BroadcastSessionSetupResponse");
+    return RETURNok;
+  }
+  auto resp = std::make_shared<BroadcastSessionSetupResponseMsg>();
+  if (!resp->decode(message_p)) {
+    Logger::ngap().error(
+        "Decoding BroadcastSessionSetupResponse message error");
+    return RETURNerror;
+  }
+  auto itti_msg = std::make_shared<itti_broadcast_session_setup_response>(
+      TASK_NGAP, TASK_AMF_N2);
+  itti_msg->assoc_id = assoc_id;
+  itti_msg->stream   = stream;
+  itti_msg->resp     = resp;
+  int ret            = itti_inst->send_msg(itti_msg);
+  if (0 != ret) {
+    Logger::ngap().error(
+        "Could not send ITTI message %s to task TASK_AMF_N2",
+        itti_msg->get_msg_name());
+    return RETURNerror;
+  }
+  return RETURNok;
+}
+
+//------------------------------------------------------------------------------
+int ngap_amf_handle_broadcast_session_setup_failure(
+    const sctp_assoc_id_t assoc_id, const sctp_stream_id_t stream,
+    struct Ngap_NGAP_PDU* message_p) {
+  if (!amf_cfg->support_features.enable_mbs_ngap) {
+    Logger::ngap().warn("MBS disabled: dropping BroadcastSessionSetupFailure");
+    return RETURNok;
+  }
+  auto fail = std::make_shared<BroadcastSessionSetupFailureMsg>();
+  if (!fail->decode(message_p)) {
+    Logger::ngap().error("Decoding BroadcastSessionSetupFailure message error");
+    return RETURNerror;
+  }
+  auto itti_msg = std::make_shared<itti_broadcast_session_setup_failure>(
+      TASK_NGAP, TASK_AMF_N2);
+  itti_msg->assoc_id = assoc_id;
+  itti_msg->stream   = stream;
+  itti_msg->fail     = fail;
+  int ret            = itti_inst->send_msg(itti_msg);
+  if (0 != ret) {
+    Logger::ngap().error(
+        "Could not send ITTI message %s to task TASK_AMF_N2",
+        itti_msg->get_msg_name());
+    return RETURNerror;
+  }
+  return RETURNok;
+}
+
+//------------------------------------------------------------------------------
+// Code 69: DistributionSetup (gNB-initiated; AMF sends Response/Failure)
+// Deferred: When MBS is disabled, a DistributionSetupFailure with
+// cause=message_not_compatible_with_receiver_state should be sent (Stage 8).
+// Currently warn-log + RETURNok is used for simplicity.
+int ngap_amf_handle_distribution_setup_request(
+    const sctp_assoc_id_t assoc_id, const sctp_stream_id_t stream,
+    struct Ngap_NGAP_PDU* message_p) {
+  if (!amf_cfg->support_features.enable_mbs_ngap) {
+    Logger::ngap().warn(
+        "MBS disabled: rejecting DistributionSetupRequest (Stage 8 will send "
+        "DistributionSetupFailure)");
+    return RETURNok;
+  }
+  auto req = std::make_shared<DistributionSetupRequestMsg>();
+  if (!req->decode(message_p)) {
+    Logger::ngap().error("Decoding DistributionSetupRequest message error");
+    return RETURNerror;
+  }
+  auto itti_msg =
+      std::make_shared<itti_distribution_setup_request>(TASK_NGAP, TASK_AMF_N2);
+  itti_msg->assoc_id = assoc_id;
+  itti_msg->stream   = stream;
+  itti_msg->req      = req;
+  int ret            = itti_inst->send_msg(itti_msg);
+  if (0 != ret) {
+    Logger::ngap().error(
+        "Could not send ITTI message %s to task TASK_AMF_N2",
+        itti_msg->get_msg_name());
+    return RETURNerror;
+  }
+  return RETURNok;
+}
+
+//------------------------------------------------------------------------------
+// Code 70: DistributionRelease (gNB-initiated; AMF sends Response)
+int ngap_amf_handle_distribution_release_request(
+    const sctp_assoc_id_t assoc_id, const sctp_stream_id_t stream,
+    struct Ngap_NGAP_PDU* message_p) {
+  if (!amf_cfg->support_features.enable_mbs_ngap) {
+    Logger::ngap().warn("MBS disabled: rejecting DistributionReleaseRequest");
+    return RETURNok;
+  }
+  auto req = std::make_shared<DistributionReleaseRequestMsg>();
+  if (!req->decode(message_p)) {
+    Logger::ngap().error("Decoding DistributionReleaseRequest message error");
+    return RETURNerror;
+  }
+  auto itti_msg = std::make_shared<itti_distribution_release_request>(
+      TASK_NGAP, TASK_AMF_N2);
+  itti_msg->assoc_id = assoc_id;
+  itti_msg->stream   = stream;
+  itti_msg->req      = req;
+  int ret            = itti_inst->send_msg(itti_msg);
+  if (0 != ret) {
+    Logger::ngap().error(
+        "Could not send ITTI message %s to task TASK_AMF_N2",
+        itti_msg->get_msg_name());
+    return RETURNerror;
+  }
+  return RETURNok;
+}
+
+//------------------------------------------------------------------------------
+// Code 71: MulticastSessionActivation (AMF-initiated; gNB sends
+// Response/Failure)
+int ngap_amf_handle_multicast_session_activation_response(
+    const sctp_assoc_id_t assoc_id, const sctp_stream_id_t stream,
+    struct Ngap_NGAP_PDU* message_p) {
+  if (!amf_cfg->support_features.enable_mbs_ngap) {
+    Logger::ngap().warn(
+        "MBS disabled: dropping MulticastSessionActivationResponse");
+    return RETURNok;
+  }
+  auto resp = std::make_shared<MulticastSessionActivationResponseMsg>();
+  if (!resp->decode(message_p)) {
+    Logger::ngap().error(
+        "Decoding MulticastSessionActivationResponse message error");
+    return RETURNerror;
+  }
+  auto itti_msg = std::make_shared<itti_multicast_session_activation_response>(
+      TASK_NGAP, TASK_AMF_N2);
+  itti_msg->assoc_id = assoc_id;
+  itti_msg->stream   = stream;
+  itti_msg->resp     = resp;
+  int ret            = itti_inst->send_msg(itti_msg);
+  if (0 != ret) {
+    Logger::ngap().error(
+        "Could not send ITTI message %s to task TASK_AMF_N2",
+        itti_msg->get_msg_name());
+    return RETURNerror;
+  }
+  return RETURNok;
+}
+
+//------------------------------------------------------------------------------
+int ngap_amf_handle_multicast_session_activation_failure(
+    const sctp_assoc_id_t assoc_id, const sctp_stream_id_t stream,
+    struct Ngap_NGAP_PDU* message_p) {
+  if (!amf_cfg->support_features.enable_mbs_ngap) {
+    Logger::ngap().warn(
+        "MBS disabled: dropping MulticastSessionActivationFailure");
+    return RETURNok;
+  }
+  auto fail = std::make_shared<MulticastSessionActivationFailureMsg>();
+  if (!fail->decode(message_p)) {
+    Logger::ngap().error(
+        "Decoding MulticastSessionActivationFailure message error");
+    return RETURNerror;
+  }
+  auto itti_msg = std::make_shared<itti_multicast_session_activation_failure>(
+      TASK_NGAP, TASK_AMF_N2);
+  itti_msg->assoc_id = assoc_id;
+  itti_msg->stream   = stream;
+  itti_msg->fail     = fail;
+  int ret            = itti_inst->send_msg(itti_msg);
+  if (0 != ret) {
+    Logger::ngap().error(
+        "Could not send ITTI message %s to task TASK_AMF_N2",
+        itti_msg->get_msg_name());
+    return RETURNerror;
+  }
+  return RETURNok;
+}
+
+//------------------------------------------------------------------------------
+// Code 72: MulticastSessionDeactivation (AMF-initiated; gNB sends Response
+// only)
+int ngap_amf_handle_multicast_session_deactivation_response(
+    const sctp_assoc_id_t assoc_id, const sctp_stream_id_t stream,
+    struct Ngap_NGAP_PDU* message_p) {
+  if (!amf_cfg->support_features.enable_mbs_ngap) {
+    Logger::ngap().warn(
+        "MBS disabled: dropping MulticastSessionDeactivationResponse");
+    return RETURNok;
+  }
+  auto resp = std::make_shared<MulticastSessionDeactivationResponseMsg>();
+  if (!resp->decode(message_p)) {
+    Logger::ngap().error(
+        "Decoding MulticastSessionDeactivationResponse message error");
+    return RETURNerror;
+  }
+  auto itti_msg =
+      std::make_shared<itti_multicast_session_deactivation_response>(
+          TASK_NGAP, TASK_AMF_N2);
+  itti_msg->assoc_id = assoc_id;
+  itti_msg->stream   = stream;
+  itti_msg->resp     = resp;
+  int ret            = itti_inst->send_msg(itti_msg);
+  if (0 != ret) {
+    Logger::ngap().error(
+        "Could not send ITTI message %s to task TASK_AMF_N2",
+        itti_msg->get_msg_name());
+    return RETURNerror;
+  }
+  return RETURNok;
+}
+
+//------------------------------------------------------------------------------
+// Code 73: MulticastSessionUpdate (AMF-initiated; gNB sends Response/Failure)
+int ngap_amf_handle_multicast_session_update_response(
+    const sctp_assoc_id_t assoc_id, const sctp_stream_id_t stream,
+    struct Ngap_NGAP_PDU* message_p) {
+  if (!amf_cfg->support_features.enable_mbs_ngap) {
+    Logger::ngap().warn(
+        "MBS disabled: dropping MulticastSessionUpdateResponse");
+    return RETURNok;
+  }
+  auto resp = std::make_shared<MulticastSessionUpdateResponseMsg>();
+  if (!resp->decode(message_p)) {
+    Logger::ngap().error(
+        "Decoding MulticastSessionUpdateResponse message error");
+    return RETURNerror;
+  }
+  auto itti_msg = std::make_shared<itti_multicast_session_update_response>(
+      TASK_NGAP, TASK_AMF_N2);
+  itti_msg->assoc_id = assoc_id;
+  itti_msg->stream   = stream;
+  itti_msg->resp     = resp;
+  int ret            = itti_inst->send_msg(itti_msg);
+  if (0 != ret) {
+    Logger::ngap().error(
+        "Could not send ITTI message %s to task TASK_AMF_N2",
+        itti_msg->get_msg_name());
+    return RETURNerror;
+  }
+  return RETURNok;
+}
+
+//------------------------------------------------------------------------------
+int ngap_amf_handle_multicast_session_update_failure(
+    const sctp_assoc_id_t assoc_id, const sctp_stream_id_t stream,
+    struct Ngap_NGAP_PDU* message_p) {
+  if (!amf_cfg->support_features.enable_mbs_ngap) {
+    Logger::ngap().warn("MBS disabled: dropping MulticastSessionUpdateFailure");
+    return RETURNok;
+  }
+  auto fail = std::make_shared<MulticastSessionUpdateFailureMsg>();
+  if (!fail->decode(message_p)) {
+    Logger::ngap().error(
+        "Decoding MulticastSessionUpdateFailure message error");
+    return RETURNerror;
+  }
+  auto itti_msg = std::make_shared<itti_multicast_session_update_failure>(
+      TASK_NGAP, TASK_AMF_N2);
+  itti_msg->assoc_id = assoc_id;
+  itti_msg->stream   = stream;
+  itti_msg->fail     = fail;
+  int ret            = itti_inst->send_msg(itti_msg);
+  if (0 != ret) {
+    Logger::ngap().error(
+        "Could not send ITTI message %s to task TASK_AMF_N2",
+        itti_msg->get_msg_name());
+    return RETURNerror;
+  }
+  return RETURNok;
+}
+
+//------------------------------------------------------------------------------
+// Code 75: BroadcastSessionReleaseRequired (gNB-initiated indication, Class 2)
+int ngap_amf_handle_broadcast_session_release_required(
+    const sctp_assoc_id_t assoc_id, const sctp_stream_id_t stream,
+    struct Ngap_NGAP_PDU* message_p) {
+  if (!amf_cfg->support_features.enable_mbs_ngap) {
+    Logger::ngap().warn(
+        "MBS disabled: dropping BroadcastSessionReleaseRequired indication");
+    return RETURNok;
+  }
+  auto ind = std::make_shared<BroadcastSessionReleaseRequiredMsg>();
+  if (!ind->decode(message_p)) {
+    Logger::ngap().error(
+        "Decoding BroadcastSessionReleaseRequired message error");
+    return RETURNerror;
+  }
+  auto itti_msg = std::make_shared<itti_broadcast_session_release_required>(
+      TASK_NGAP, TASK_AMF_N2);
+  itti_msg->assoc_id = assoc_id;
+  itti_msg->stream   = stream;
+  itti_msg->ind      = ind;
+  int ret            = itti_inst->send_msg(itti_msg);
+  if (0 != ret) {
+    Logger::ngap().error(
+        "Could not send ITTI message %s to task TASK_AMF_N2",
+        itti_msg->get_msg_name());
+    return RETURNerror;
+  }
+  return RETURNok;
+}
+
 //------------------------------------------------------------------------------
 ngap_message_decoded_callback
     messages_callback[NGAP_PROCEDURE_CODE_MAX_VALUE][NGAP_PRESENT_MAX_VALUE] = {
@@ -1360,7 +1836,32 @@ ngap_message_decoded_callback
         {0, 0, 0}, /*62 UplinkRANEarlyStatusTransfer*/
         {0, 0, 0}, /*63 DownlinkRANEarlyStatusTransfer*/
         {0, 0, 0}, /*64 AMFCPRelocationIndication*/
-        {0, 0, 0}  /*65 ConnectionEstablishmentIndication*/
+        {0, 0, 0}, /*65 ConnectionEstablishmentIndication*/
+        // MBS NGAP procedures (Rel-17, TS 38.413 §8.x)
+        {nullptr, ngap_amf_handle_broadcast_session_modification_response,
+         ngap_amf_handle_broadcast_session_modification_failure}, /*66
+                                                                     BroadcastSessionModification*/
+        {nullptr, ngap_amf_handle_broadcast_session_release_response,
+         nullptr}, /*67 BroadcastSessionRelease*/
+        {nullptr, ngap_amf_handle_broadcast_session_setup_response,
+         ngap_amf_handle_broadcast_session_setup_failure}, /*68
+                                                              BroadcastSessionSetup*/
+        {ngap_amf_handle_distribution_setup_request, nullptr,
+         nullptr}, /*69 DistributionSetup*/
+        {ngap_amf_handle_distribution_release_request, nullptr,
+         nullptr}, /*70 DistributionRelease*/
+        {nullptr, ngap_amf_handle_multicast_session_activation_response,
+         ngap_amf_handle_multicast_session_activation_failure}, /*71
+                                                                   MulticastSessionActivation*/
+        {nullptr, ngap_amf_handle_multicast_session_deactivation_response,
+         nullptr}, /*72 MulticastSessionDeactivation*/
+        {nullptr, ngap_amf_handle_multicast_session_update_response,
+         ngap_amf_handle_multicast_session_update_failure}, /*73
+                                                               MulticastSessionUpdate*/
+        {nullptr, nullptr,
+         nullptr}, /*74 MulticastGroupPaging (AMF-initiated unidirectional)*/
+        {ngap_amf_handle_broadcast_session_release_required, nullptr,
+         nullptr} /*75 BroadcastSessionReleaseRequired*/
 };
 
 //------------------------------------------------------------------------------

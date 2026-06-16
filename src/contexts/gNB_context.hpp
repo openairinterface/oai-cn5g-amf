@@ -12,6 +12,7 @@
 #include "NgapIesStruct.hpp"
 #include "sctp_server.hpp"
 #include "SupportedTaItem.hpp"
+#include "TaiNsagSupportList.hpp"
 
 extern "C" {
 #include "Ngap_PagingDRX.h"
@@ -46,6 +47,10 @@ class gnb_context {
   sctp_stream_id_t next_sctp_stream;
   sctp_stream_id_t instreams;
   sctp_stream_id_t outstreams;
+
+  // Rel-17: NSAG support advertised to this gNB in NgSetupResponse.
+  // Sourced from AMF configuration (not UE input).
+  std::optional<TaiNsagSupportList> nsag_support_list;
 };
 
 #endif
