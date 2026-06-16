@@ -520,6 +520,38 @@ void amf_app::handle_itti_message(
       dl_msg->is_n2sm_set    = true;
       dl_msg->n2sm_info_type = itti_msg.n2sm_info_type;
     }
+
+    amf_n1_inst->supi_2_amf_id(itti_msg.supi, dl_msg->amf_ue_ngap_id);
+    amf_n1_inst->supi_2_ran_id(itti_msg.supi, dl_msg->ran_ue_ngap_id);
+
+    int ret = itti_inst->send_msg(dl_msg);
+    if (ret != RETURNok) {
+      Logger::amf_app().error(
+          "Could not send ITTI message %s to task TASK_AMF_N1",
+          dl_msg->get_msg_name());
+    }
+  } else if (itti_msg.is_n1lpp_set) {
+    Logger::amf_app().info("Handle ITTI N1N2 Message Transfer Request LPP-NAS");
+    std::shared_ptr<itti_downlink_nas_transfer> dl_msg =
+        std::make_shared<itti_downlink_nas_transfer>(TASK_AMF_APP, TASK_AMF_N1);
+    // Encode DL NAS TRANSPORT message(NAS message)
+    auto dl = std::make_unique<DlNasTransport>();
+    dl->SetHeader(kPlain5gsMessage);
+    dl->SetPayloadContainerType(kLtePositioningProtocol);
+    dl->SetPayloadContainer(
+        (uint8_t*) bdata(bstrcpy(itti_msg.n1lpp)), blength(itti_msg.n1lpp));
+    if (itti_msg.lcs_correlation_id.has_value()) {
+      bstring lcs_correlation_id = nullptr;
+      amf_conv::msg_str_2_msg_hex(
+          itti_msg.lcs_correlation_id.value(), lcs_correlation_id);
+      dl->SetAdditionalInformation(lcs_correlation_id);
+    }
+
+    uint8_t nas[BUFFER_SIZE_1024];
+    int encoded_size = dl->Encode(nas, BUFFER_SIZE_1024);
+    oai::utils::output_wrapper::print_buffer(
+        "amf_app", "N1N2 message transfer", nas, encoded_size);
+    dl_msg->dl_nas = blk2bstr(nas, encoded_size);
     amf_n1_inst->supi_2_amf_id(itti_msg.supi, dl_msg->amf_ue_ngap_id);
     amf_n1_inst->supi_2_ran_id(itti_msg.supi, dl_msg->ran_ue_ngap_id);
 
