@@ -27,7 +27,7 @@
 
 #include <NonUEN2MessagesSubscriptionsCollectionDocumentApi.h>
 
-#include <pistache/optional.h>
+#include <optional>
 
 #include "NonUeN2InfoSubscriptionCreateData.h"
 #include "NonUeN2InfoSubscriptionCreatedData.h"
