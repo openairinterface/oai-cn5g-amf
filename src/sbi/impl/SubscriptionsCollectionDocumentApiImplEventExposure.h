@@ -27,7 +27,7 @@
 
 #include <SubscriptionsCollectionDocumentApiEventExposure.h>
 
-#include <pistache/optional.h>
+#include <optional>
 
 #include "AmfCreateEventSubscription.h"
 #include "AmfCreatedEventSubscription.h"

@@ -18,7 +18,7 @@ source $THIS_SCRIPT_PATH/../common-build/installation/build_helper.cpr
 #arg1 is force (0 or 1) (no interactive script)
 #arg2 is debug (0 or 1) (install debug libraries)
 check_install_amf_deps(){
-   
+
   if [ $1 -gt 0 ]; then
     OPTION="-y"
   else
@@ -76,11 +76,8 @@ check_install_amf_deps(){
   # Libraries
   if [[ $OS_DISTRO == "ubuntu" ]]; then
     case "$(get_distribution_release)" in
-      "ubuntu20.04")
-        specific_packages="libasio-dev libboost-all-dev libasan5"
-        ;;
-      "ubuntu22.04")
-        specific_packages="libasio-dev libboost-all-dev libasan6"
+      "ubuntu24.04")
+        specific_packages="libasio-dev libboost-all-dev libasan8"
         ;;
     esac
     # removed libspdlog-dev
@@ -100,7 +97,8 @@ check_install_amf_deps(){
       libcurl4 \
       net-tools \
       pkg-config \
-      ninja-build"
+      ninja-build \
+      meson"
   elif [[ "$OS_BASEDISTRO" == "fedora" ]]; then
     PACKAGE_LIST="\
       mysql \
@@ -119,6 +117,7 @@ check_install_amf_deps(){
       libcurl-devel \
       pkgconfig \
       ninja-build \
+      meson \
       libasan"
   else
     echo_fatal "$OS_DISTRO is not a supported distribution."
@@ -143,22 +142,17 @@ check_install_amf_deps(){
 
   install_nghttp2_from_git $1 $2
   ret=$?;[[ $ret -ne 0 ]] && return $ret
-  
+
   install_cpr_from_git $1 $2
   ret=$?;[[ $ret -ne 0 ]] && return $ret
-  
+
   # latest usage of yaml-cpp suggests that we should be using 0.7+ version
   # To be sure, let's install from source all the time for the moment
   if [[ $OS_DISTRO == "ubuntu" ]]; then
     case "$(get_distribution_release)" in
-      "ubuntu20.04")
-        # definitely, 0.6.2 as PPA installed is not enough
-        install_libyaml_cpp_from_git $1 $2
-        ret=$?;[[ $ret -ne 0 ]] && return $ret
-        ;;
-      "ubuntu22.04")
-        # not sure about 0.7.0
-        #$SUDO $INSTALLER install $OPTION libyaml-cpp0.7 libyaml-cpp-dev
+      "ubuntu24.04")
+        # probably 0.8.0
+        #$SUDO $INSTALLER install $OPTION libyaml-cpp0.8 libyaml-cpp-dev
         install_libyaml_cpp_from_git $1 $2
         ret=$?;[[ $ret -ne 0 ]] && return $ret
         ;;
@@ -169,7 +163,7 @@ check_install_amf_deps(){
     install_libyaml_cpp_from_git $1 $2
     ret=$?;[[ $ret -ne 0 ]] && return $ret
   fi
-  
+
   $SUDO ldconfig
   return 0
 
@@ -188,7 +182,7 @@ get_distribution_release() {
 
 check_platform_for_lttng() {
   local distribution=$(get_distribution_release)
-  if [[ "$distribution" == "ubuntu18.04" || "$distribution" == "ubuntu20.04" || "$distribution" == "ubuntu22.04" ]]; then
+  if [[ "$distribution" == "ubuntu24.04" ]]; then
       return 1
   fi
   return 0
