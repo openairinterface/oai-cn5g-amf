@@ -19,6 +19,14 @@ namespace oai::config {
 //------------------------------------------------------------------------------
 amf_support_features::amf_support_features() {
   m_set = true;
+  m_enable_udsf =
+      option_config_value(AMF_CONFIG_SUPPORT_FEATURES_ENABLE_UDSF, false);
+  m_enable_udsf_selection = option_config_value(
+      AMF_CONFIG_SUPPORT_FEATURES_ENABLE_UDSF_SELECTION, false);
+  m_udsf_realm =
+      string_config_value(AMF_CONFIG_SUPPORT_FEATURES_UDSF_REALM, "amf-realm");
+  m_udsf_storage_id = string_config_value(
+      AMF_CONFIG_SUPPORT_FEATURES_UDSF_STORAGE_ID, "ue-context");
 }
 
 //------------------------------------------------------------------------------
@@ -44,6 +52,20 @@ void amf_support_features::from_yaml(const YAML::Node& node) {
   if (node[AMF_CONFIG_SUPPORT_FEATURES_ENABLE_AM_POLICY_ASSOCIATION]) {
     m_enable_am_policy_association.from_yaml(
         node[AMF_CONFIG_SUPPORT_FEATURES_ENABLE_AM_POLICY_ASSOCIATION]);
+  }
+  if (node[AMF_CONFIG_SUPPORT_FEATURES_ENABLE_UDSF]) {
+    m_enable_udsf.from_yaml(node[AMF_CONFIG_SUPPORT_FEATURES_ENABLE_UDSF]);
+  }
+  if (node[AMF_CONFIG_SUPPORT_FEATURES_ENABLE_UDSF_SELECTION]) {
+    m_enable_udsf_selection.from_yaml(
+        node[AMF_CONFIG_SUPPORT_FEATURES_ENABLE_UDSF_SELECTION]);
+  }
+  if (node[AMF_CONFIG_SUPPORT_FEATURES_UDSF_REALM]) {
+    m_udsf_realm.from_yaml(node[AMF_CONFIG_SUPPORT_FEATURES_UDSF_REALM]);
+  }
+  if (node[AMF_CONFIG_SUPPORT_FEATURES_UDSF_STORAGE_ID]) {
+    m_udsf_storage_id.from_yaml(
+        node[AMF_CONFIG_SUPPORT_FEATURES_UDSF_STORAGE_ID]);
   }
 }
 
@@ -102,6 +124,22 @@ std::string amf_support_features::to_string(const std::string& indent) const {
       AMF_CONFIG_SUPPORT_FEATURES_ENABLE_AM_POLICY_ASSOCIATION_LABEL,
       inner_width, enable_am_policy_association_string));
 
+  std::string enable_udsf_string = m_enable_udsf.get_value() ?
+                                       AMF_CONFIG_OPTION_YES_STR :
+                                       AMF_CONFIG_OPTION_NO_STR;
+  out.append(indent).append(fmt::format(
+      BASE_FORMATTER, INNER_LIST_ELEM,
+      AMF_CONFIG_SUPPORT_FEATURES_ENABLE_UDSF_LABEL, inner_width,
+      enable_udsf_string));
+
+  std::string enable_udsf_selection_string =
+      m_enable_udsf_selection.get_value() ? AMF_CONFIG_OPTION_YES_STR :
+                                            AMF_CONFIG_OPTION_NO_STR;
+  out.append(indent).append(fmt::format(
+      BASE_FORMATTER, INNER_LIST_ELEM,
+      AMF_CONFIG_SUPPORT_FEATURES_ENABLE_UDSF_SELECTION_LABEL, inner_width,
+      enable_udsf_selection_string));
+
   return out;
 }
 
@@ -134,6 +172,26 @@ bool amf_support_features::
 //------------------------------------------------------------------------------
 bool amf_support_features::get_option_enable_am_policy_association() const {
   return m_enable_am_policy_association.get_value();
+}
+
+//------------------------------------------------------------------------------
+bool amf_support_features::get_option_enable_udsf() const {
+  return m_enable_udsf.get_value();
+}
+
+//------------------------------------------------------------------------------
+bool amf_support_features::get_option_enable_udsf_selection() const {
+  return m_enable_udsf_selection.get_value();
+}
+
+//------------------------------------------------------------------------------
+std::string amf_support_features::get_udsf_realm() const {
+  return m_udsf_realm.get_value();
+}
+
+//------------------------------------------------------------------------------
+std::string amf_support_features::get_udsf_storage_id() const {
+  return m_udsf_storage_id.get_value();
 }
 
 //------------------------------------------------------------------------------
@@ -860,7 +918,8 @@ amf_config::amf_config(
   m_used_sbi_values = {
       oai::config::AMF_CONFIG_NAME, oai::config::AUSF_CONFIG_NAME,
       oai::config::SMF_CONFIG_NAME, oai::config::UDM_CONFIG_NAME,
-      oai::config::NRF_CONFIG_NAME, oai::config::NSSF_CONFIG_NAME};
+      oai::config::NRF_CONFIG_NAME, oai::config::NSSF_CONFIG_NAME,
+      oai::config::UDSF_CONFIG_NAME};
   m_used_config_values = {
       oai::config::LOG_LEVEL_CONFIG_NAME, oai::config::REGISTER_NF_CONFIG_NAME,
       oai::config::NF_CONFIG_HTTP_NAME,   oai::config::NF_LIST_CONFIG_NAME,
@@ -895,6 +954,10 @@ amf_config::amf_config(
       "NSSF", "oai-nssf", sbi_interface("SBI", "oai-nssf", 80, "v1", ""));
   add_nf("nssf", m_nssf);
 
+  auto m_udsf = std::make_shared<nf>(
+      "UDSF", "oai-udsf", sbi_interface("SBI", "oai-udsf", 8080, "v1", ""));
+  add_nf(oai::config::UDSF_CONFIG_NAME, m_udsf);
+
   update_used_nfs();
   smf_addr.ipv4_addr.s_addr  = INADDR_ANY;
   smf_addr.port              = DEFAULT_HTTP2_PORT;
@@ -917,6 +980,9 @@ amf_config::amf_config(
   pcf_addr.ipv4_addr.s_addr  = INADDR_ANY;
   pcf_addr.port              = DEFAULT_HTTP2_PORT;
   pcf_addr.api_version       = DEFAULT_SBI_API_VERSION;
+  udsf_addr.ipv4_addr.s_addr = INADDR_ANY;
+  udsf_addr.port             = DEFAULT_HTTP2_PORT;
+  udsf_addr.api_version      = DEFAULT_SBI_API_VERSION;
   instance                   = 0;
   amf_log_level              = spdlog::level::debug;
   n2                         = {};
@@ -937,6 +1003,10 @@ amf_config::amf_config(
   support_features.enable_access_and_mobility_subscription_data_retrieval =
       false;
   support_features.enable_am_policy_association = false;
+  support_features.enable_udsf                  = false;
+  support_features.enable_udsf_selection        = false;
+  support_features.udsf_realm                   = "amf-realm";
+  support_features.udsf_storage_id              = "ue-context";
   support_features.http_version                 = 2;  // HTTP/2 by default
   is_emergency_support                          = false;
 }
@@ -992,6 +1062,8 @@ void amf_config::pre_process() {
     support_features.enable_access_and_mobility_subscription_data_retrieval =
         false;
     support_features.enable_am_policy_association = false;
+    support_features.enable_udsf                  = false;
+    support_features.enable_udsf_selection        = false;
   } else {  // parse the other options
     support_features.enable_simple_scenario = false;
     support_features.enable_advanced_features =
@@ -1007,6 +1079,14 @@ void amf_config::pre_process() {
     support_features.enable_am_policy_association =
         amf_local->get_support_features()
             .get_option_enable_am_policy_association();
+    support_features.enable_udsf =
+        amf_local->get_support_features().get_option_enable_udsf();
+    support_features.enable_udsf_selection =
+        amf_local->get_support_features().get_option_enable_udsf_selection();
+    support_features.udsf_realm =
+        amf_local->get_support_features().get_udsf_realm();
+    support_features.udsf_storage_id =
+        amf_local->get_support_features().get_udsf_storage_id();
   }
 
   support_features.http_version = get_http_version();
@@ -1105,6 +1185,13 @@ void amf_config::pre_process() {
     pcf_addr.api_version = get_nf(PCF_CONFIG_NAME)->get_sbi().get_api_version();
     pcf_addr.uri_root =
         get_nf(PCF_CONFIG_NAME)->get_sbi().get_url(amf_cfg->enable_tls());
+  }
+
+  if (get_nf(oai::config::UDSF_CONFIG_NAME)) {
+    udsf_addr.api_version =
+        get_nf(oai::config::UDSF_CONFIG_NAME)->get_sbi().get_api_version();
+    udsf_addr.uri_root =
+        get_nf(oai::config::UDSF_CONFIG_NAME)->get_url(amf_cfg->enable_tls());
   }
 
   // NAS conf
@@ -1276,9 +1363,22 @@ void amf_config::display() {
 
   if (support_features.enable_pcf) {
     Logger::config().info("- Default PCF:");
-    Logger::config().info("    URI root ..............: %s", pcf_addr.uri_root);
+    Logger::config().info(
+        "    URI root ..............: %s", pcf_addr.uri_root.c_str());
     Logger::config().info(
         "    API version ...........: %s", pcf_addr.api_version.c_str());
+  }
+
+  if (support_features.enable_udsf) {
+    Logger::config().info("- Default UDSF:");
+    Logger::config().info(
+        "    URI root ..............: %s", udsf_addr.uri_root.c_str());
+    Logger::config().info(
+        "    API version ...........: %s", udsf_addr.api_version.c_str());
+    Logger::config().info(
+        "    Realm / Storage .......: %s / %s",
+        support_features.udsf_realm.c_str(),
+        support_features.udsf_storage_id.c_str());
   }
 
   if (!support_features.enable_simple_scenario) {
@@ -1398,6 +1498,8 @@ void amf_config::to_json(nlohmann::json& json_data) const {
     json_data["pcf"] = pcf_addr.to_json();
   }
 
+  json_data["udsf"] = udsf_addr.to_json();
+
   json_data["supported_nas_algorithms"] = nas_cfg.to_json();
   if (support_features.enable_lmf) {
     json_data["lmf"] = lmf_addr.to_json();
@@ -1503,6 +1605,10 @@ bool amf_config::from_json(nlohmann::json& json_data) {
       if (json_data.find("pcf") != json_data.end()) {
         pcf_addr.from_json(json_data["pcf"]);
       }
+    }
+
+    if (json_data.find("udsf") != json_data.end()) {
+      udsf_addr.from_json(json_data["udsf"]);
     }
 
   } catch (nlohmann::detail::exception& e) {

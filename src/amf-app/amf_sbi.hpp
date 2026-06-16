@@ -8,6 +8,7 @@
 #include "3gpp_29.500.h"
 #include "http_definitions.hpp"
 #include "itti_msg_sbi.hpp"
+#include "itti_msg_udsf.hpp"
 #include "pdu_session_context.hpp"
 #include "ue_context.hpp"
 
@@ -379,6 +380,12 @@ class amf_sbi {
   bool send_http_request(
       const std::string& remote_uri, const oai::common::sbi::method_e method,
       const std::string& msg_body, oai::http::response& http_response);
+
+  void handle_nudsf_store_ue_context(
+      itti_nudsf_store_ue_context_request& itti_msg);
+  void handle_nudsf_get_ue_context(itti_nudsf_get_ue_context_request& itti_msg);
+  void handle_nudsf_delete_ue_context(
+      itti_nudsf_delete_ue_context_request& itti_msg);
 };
 
 }  // namespace amf_application

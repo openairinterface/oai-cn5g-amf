@@ -12,6 +12,8 @@
 #include <mutex>
 #include <shared_mutex>
 
+#include <nlohmann/json.hpp>
+
 #include "NgapIesStruct.hpp"
 #include "pdu_session_context.hpp"
 //#include "AccessAndMobilitySubscriptionData.h"
@@ -40,6 +42,10 @@ class ue_context {
 
   bool remove_pdu_sessions_context(uint8_t pdu_session_id);
   bool set_up_cnx_state(uint8_t pdu_session_id, const up_cnx_state_e& state);
+
+  // UDSF serialization helpers
+  nlohmann::json to_json() const;
+  void from_json(const nlohmann::json& j);
 
  public:
   uint32_t ran_ue_ngap_id;  // 32bits

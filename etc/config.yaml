@@ -76,6 +76,12 @@ nfs:
       port: 8080
       api_version: v1
       interface_name: eth0
+  udsf:
+    host: oai-udsf
+    sbi:
+      port: 8080
+      api_version: v1
+      interface_name: eth0
 
 
 #### Common for UDR and AMF
@@ -98,6 +104,10 @@ amf:
     enable_nssf: no
     enable_advanced_features: no # set it to yes to enable such advanced features e.g., SUCI support, SMF Selection Subscription Data Retrieval,   
                                  # UE Context in SMF Data Retrieval, AMF Registration for 3GPP Access
+    enable_udsf: no
+    enable_udsf_selection: no
+    udsf_realm: "amf-realm"
+    udsf_storage_id: "ue-context"
   relative_capacity: 30
   statistics_timer_interval: 20  #in seconds
   emergency_support: false
