@@ -24,6 +24,7 @@
 #include "amf_sbi_helper.hpp"
 #include "amf_statistics.hpp"
 #include "itti.hpp"
+#include "itti_dispatch.hpp"
 #include "ngap_app.hpp"
 #include "output_wrapper.hpp"
 #include "utils.hpp"
@@ -123,213 +124,171 @@ void amf_app_task(void*) {
     switch (msg->msg_type) {
       case NAS_SIG_ESTAB_REQ: {
         Logger::amf_app().debug("Received NAS_SIG_ESTAB_REQ");
-        itti_nas_signalling_establishment_request* m =
-            dynamic_cast<itti_nas_signalling_establishment_request*>(msg);
-        amf_app_inst->handle_itti_message(std::ref(*m));
+        itti_dispatch<itti_nas_signalling_establishment_request>(
+            msg, [&](auto& m) { amf_app_inst->handle_itti_message(m); });
       } break;
 
       case N1N2_MESSAGE_TRANSFER_REQ: {
         Logger::amf_app().debug("Received N1N2_MESSAGE_TRANSFER_REQ");
-        itti_n1n2_message_transfer_request* m =
-            dynamic_cast<itti_n1n2_message_transfer_request*>(msg);
-        amf_app_inst->handle_itti_message(std::ref(*m));
+        itti_dispatch<itti_n1n2_message_transfer_request>(
+            msg, [&](auto& m) { amf_app_inst->handle_itti_message(m); });
       } break;
 
       case NON_UE_N2_MESSAGE_TRANSFER_REQ: {
         Logger::amf_app().debug("Received NON_UE_N2_MESSAGE_TRANSFER_REQ");
-        itti_non_ue_n2_message_transfer_request* m =
-            dynamic_cast<itti_non_ue_n2_message_transfer_request*>(msg);
-        amf_app_inst->handle_itti_message(std::ref(*m));
+        itti_dispatch<itti_non_ue_n2_message_transfer_request>(
+            msg, [&](auto& m) { amf_app_inst->handle_itti_message(m); });
       } break;
 
       case SBI_N1_MESSAGE_NOTIFICATION: {
         Logger::amf_app().debug("Received SBI_N1_MESSAGE_NOTIFICATION");
-        itti_sbi_n1_message_notification* m =
-            dynamic_cast<itti_sbi_n1_message_notification*>(msg);
-        amf_app_inst->handle_itti_message(std::ref(*m));
+        itti_dispatch<itti_sbi_n1_message_notification>(
+            msg, [&](auto& m) { amf_app_inst->handle_itti_message(m); });
       } break;
 
       case SBI_N1N2_MESSAGE_SUBSCRIBE: {
         Logger::amf_app().debug("Received SBI_N1N2_MESSAGE_SUBSCRIBE");
-        itti_sbi_n1n2_message_subscribe* m =
-            dynamic_cast<itti_sbi_n1n2_message_subscribe*>(msg);
-        amf_app_inst->handle_itti_message(std::ref(*m));
+        itti_dispatch<itti_sbi_n1n2_message_subscribe>(
+            msg, [&](auto& m) { amf_app_inst->handle_itti_message(m); });
       } break;
 
       case SBI_N1N2_MESSAGE_UNSUBSCRIBE: {
         Logger::amf_app().debug("Received SBI_N1N2_MESSAGE_UNSUBSCRIBE");
-        itti_sbi_n1n2_message_unsubscribe* m =
-            dynamic_cast<itti_sbi_n1n2_message_unsubscribe*>(msg);
-        amf_app_inst->handle_itti_message(std::ref(*m));
+        itti_dispatch<itti_sbi_n1n2_message_unsubscribe>(
+            msg, [&](auto& m) { amf_app_inst->handle_itti_message(m); });
       } break;
 
       case SBI_NON_UE_N2_INFO_SUBSCRIBE: {
         Logger::amf_app().debug("Received SBI_NON_UE_N2_INFO_SUBSCRIBE");
-        itti_sbi_non_ue_n2_info_subscribe* m =
-            dynamic_cast<itti_sbi_non_ue_n2_info_subscribe*>(msg);
-        amf_app_inst->handle_itti_message(std::ref(*m));
+        itti_dispatch<itti_sbi_non_ue_n2_info_subscribe>(
+            msg, [&](auto& m) { amf_app_inst->handle_itti_message(m); });
       } break;
 
       case SBI_NON_UE_N2_INFO_UNSUBSCRIBE: {
         Logger::amf_app().debug("Received SBI_NON_UE_N2_INFO_UNSUBSCRIBE");
-        itti_sbi_non_ue_n2_info_unsubscribe* m =
-            dynamic_cast<itti_sbi_non_ue_n2_info_unsubscribe*>(msg);
-        amf_app_inst->handle_itti_message(std::ref(*m));
+        itti_dispatch<itti_sbi_non_ue_n2_info_unsubscribe>(
+            msg, [&](auto& m) { amf_app_inst->handle_itti_message(m); });
       } break;
 
       case SBI_PDU_SESSION_RELEASE_NOTIF: {
         Logger::amf_app().debug("Received SBI_PDU_SESSION_RELEASE_NOTIF");
-        itti_sbi_pdu_session_release_notif* m =
-            dynamic_cast<itti_sbi_pdu_session_release_notif*>(msg);
-        amf_app_inst->handle_itti_message(std::ref(*m));
+        itti_dispatch<itti_sbi_pdu_session_release_notif>(
+            msg, [&](auto& m) { amf_app_inst->handle_itti_message(m); });
       } break;
 
       case SBI_AMF_CONFIGURATION: {
         Logger::amf_app().debug("Received SBI_AMF_CONFIGURATION");
-        itti_sbi_amf_configuration* m =
-            dynamic_cast<itti_sbi_amf_configuration*>(msg);
-        amf_app_inst->handle_itti_message(std::ref(*m));
+        itti_dispatch<itti_sbi_amf_configuration>(
+            msg, [&](auto& m) { amf_app_inst->handle_itti_message(m); });
       } break;
 
       case SBI_UPDATE_AMF_CONFIGURATION: {
         Logger::amf_app().debug("Received SBI_UPDATE_AMF_CONFIGURATION");
-        itti_sbi_update_amf_configuration* m =
-            dynamic_cast<itti_sbi_update_amf_configuration*>(msg);
-        amf_app_inst->handle_itti_message(std::ref(*m));
+        itti_dispatch<itti_sbi_update_amf_configuration>(
+            msg, [&](auto& m) { amf_app_inst->handle_itti_message(m); });
       } break;
 
       case SBI_REGISTER_NF_INSTANCE_RESPONSE: {
         Logger::amf_app().debug("Received SBI_REGISTER_NF_INSTANCE_RESPONSE");
-        itti_sbi_register_nf_instance_response* m =
-            dynamic_cast<itti_sbi_register_nf_instance_response*>(msg);
-        amf_app_inst->handle_itti_message(std::ref(*m));
+        itti_dispatch<itti_sbi_register_nf_instance_response>(
+            msg, [&](auto& m) { amf_app_inst->handle_itti_message(m); });
       } break;
 
       case SBI_UPDATE_NF_INSTANCE_RESPONSE: {
         Logger::amf_app().debug("Received SBI_UPDATE_NF_INSTANCE_RESPONSE");
-        itti_sbi_update_nf_instance_response* m =
-            dynamic_cast<itti_sbi_update_nf_instance_response*>(msg);
-        amf_app_inst->handle_itti_message(std::ref(*m));
+        itti_dispatch<itti_sbi_update_nf_instance_response>(
+            msg, [&](auto& m) { amf_app_inst->handle_itti_message(m); });
       } break;
 
       case SBI_DEREGISTER_NF_INSTANCE_RESPONSE: {
         Logger::amf_app().debug("Received SBI_DEREGISTER_NF_INSTANCE_RESPONSE");
-        itti_sbi_deregister_nf_instance_response* m =
-            dynamic_cast<itti_sbi_deregister_nf_instance_response*>(msg);
-        amf_app_inst->handle_itti_message(std::ref(*m));
+        itti_dispatch<itti_sbi_deregister_nf_instance_response>(
+            msg, [&](auto& m) { amf_app_inst->handle_itti_message(m); });
       } break;
 
       case SBI_REGISTER_WITH_UDM_RESPONSE: {
         Logger::amf_app().debug("Received SBI_REGISTER_WITH_UDM_RESPONSE");
-        itti_sbi_register_with_udm_response* m =
-            dynamic_cast<itti_sbi_register_with_udm_response*>(msg);
-        amf_app_inst->handle_itti_message(std::ref(*m));
+        itti_dispatch<itti_sbi_register_with_udm_response>(
+            msg, [&](auto& m) { amf_app_inst->handle_itti_message(m); });
       } break;
 
       case SBI_RETRIEVE_AM_DATA_RESPONSE: {
         Logger::amf_app().debug("Received SBI_RETRIEVE_AM_DATA_RESPONSE");
-        itti_sbi_retrieve_am_data_response* m =
-            dynamic_cast<itti_sbi_retrieve_am_data_response*>(msg);
-        amf_app_inst->handle_itti_message(std::ref(*m));
+        itti_dispatch<itti_sbi_retrieve_am_data_response>(
+            msg, [&](auto& m) { amf_app_inst->handle_itti_message(m); });
       } break;
 
       case SBI_RETRIEVE_SMF_SELECTION_SUBSCRIPTION_DATA_RESPONSE: {
         Logger::amf_app().debug(
             "Received SBI_RETRIEVE_SMF_SELECTION_SUBSCRIPTION_DATA_RESPONSE");
-        itti_sbi_retrieve_smf_selection_subscription_data_response* m =
-            dynamic_cast<
-                itti_sbi_retrieve_smf_selection_subscription_data_response*>(
-                msg);
-        amf_app_inst->handle_itti_message(std::ref(*m));
+        itti_dispatch<
+            itti_sbi_retrieve_smf_selection_subscription_data_response>(
+            msg, [&](auto& m) { amf_app_inst->handle_itti_message(m); });
       } break;
 
       case SBI_AM_POLICY_ASSOCIATION_RESPONSE: {
         Logger::amf_app().debug("Received SBI_AM_POLICY_ASSOCIATION_RESPONSE");
-        itti_sbi_am_policy_association_response* m =
-            dynamic_cast<itti_sbi_am_policy_association_response*>(msg);
-        amf_app_inst->handle_itti_message(std::ref(*m));
+        itti_dispatch<itti_sbi_am_policy_association_response>(
+            msg, [&](auto& m) { amf_app_inst->handle_itti_message(m); });
       } break;
 
       case SBI_AM_POLICY_ASSOCIATION_TERMINATION_RESPONSE: {
         Logger::amf_app().debug(
             "Received SBI_AM_POLICY_ASSOCIATION_TERMINATION_RESPONSE");
-        itti_sbi_am_policy_association_termination_response* m =
-            dynamic_cast<itti_sbi_am_policy_association_termination_response*>(
-                msg);
-        amf_app_inst->handle_itti_message(std::ref(*m));
+        itti_dispatch<itti_sbi_am_policy_association_termination_response>(
+            msg, [&](auto& m) { amf_app_inst->handle_itti_message(m); });
       } break;
 
       case SBI_AM_POLICY_ASSOCIATION_UPDATE_RESPONSE: {
         Logger::amf_app().debug(
             "Received SBI_AM_POLICY_ASSOCIATION_UPDATE_RESPONSE");
-        itti_sbi_am_policy_association_update_response* m =
-            dynamic_cast<itti_sbi_am_policy_association_update_response*>(msg);
-        amf_app_inst->handle_itti_message(std::ref(*m));
+        itti_dispatch<itti_sbi_am_policy_association_update_response>(
+            msg, [&](auto& m) { amf_app_inst->handle_itti_message(m); });
       } break;
 
       case SBI_AM_POLICY_UPDATE_NOTIFICATION: {
         Logger::amf_app().debug("Received SBI_AM_POLICY_UPDATE_NOTIFICATION");
-        itti_sbi_am_policy_update_notification* m =
-            dynamic_cast<itti_sbi_am_policy_update_notification*>(msg);
-        amf_app_inst->handle_itti_message(std::ref(*m));
+        itti_dispatch<itti_sbi_am_policy_update_notification>(
+            msg, [&](auto& m) { amf_app_inst->handle_itti_message(m); });
       } break;
 
       case SBI_AM_POLICY_ASSOCIATION_TERMINATION_NOTIFICATION: {
         Logger::amf_app().debug(
             "Received SBI_AM_POLICY_ASSOCIATION_TERMINATION_NOTIFICATION");
-        itti_sbi_am_policy_association_termination_notification* m =
-            dynamic_cast<
-                itti_sbi_am_policy_association_termination_notification*>(msg);
-        amf_app_inst->handle_itti_message(std::ref(*m));
+        itti_dispatch<itti_sbi_am_policy_association_termination_notification>(
+            msg, [&](auto& m) { amf_app_inst->handle_itti_message(m); });
       } break;
 
       case SBI_UE_CONTEXT_IN_SMF_DATA_RETRIEVAL_RESPONSE: {
         Logger::amf_app().debug(
             "Received SBI_UE_CONTEXT_IN_SMF_DATA_RETRIEVAL_RESPONSE");
-        itti_sbi_ue_context_in_smf_data_retrieval_response* m =
-            dynamic_cast<itti_sbi_ue_context_in_smf_data_retrieval_response*>(
-                msg);
-        amf_app_inst->handle_itti_message(std::ref(*m));
+        itti_dispatch<itti_sbi_ue_context_in_smf_data_retrieval_response>(
+            msg, [&](auto& m) { amf_app_inst->handle_itti_message(m); });
       } break;
 
       case SBI_AMF_STATUS_CHANGE_SUBSCRIBE_REQUEST: {
-        itti_sbi_amf_status_change_subscribe_request* m =
-            dynamic_cast<itti_sbi_amf_status_change_subscribe_request*>(msg);
-        Logger::amf_app().debug("Received %s", m->get_msg_name());
-
-        amf_app_inst->handle_itti_message(std::ref(*m));
+        itti_dispatch<itti_sbi_amf_status_change_subscribe_request>(
+            msg, [&](auto& m) { amf_app_inst->handle_itti_message(m); });
       } break;
 
       case SBI_AMF_STATUS_CHANGE_UNSUBSCRIBE_REQUEST: {
-        itti_sbi_amf_status_change_unsubscribe_request* m =
-            dynamic_cast<itti_sbi_amf_status_change_unsubscribe_request*>(msg);
-        Logger::amf_app().debug("Received %s", m->get_msg_name());
-
-        amf_app_inst->handle_itti_message(std::ref(*m));
+        itti_dispatch<itti_sbi_amf_status_change_unsubscribe_request>(
+            msg, [&](auto& m) { amf_app_inst->handle_itti_message(m); });
       } break;
 
       case SBI_AMF_STATUS_CHANGE_SUBSCRIBE_MODIFY: {
-        itti_sbi_amf_status_change_subscribe_modify* m =
-            dynamic_cast<itti_sbi_amf_status_change_subscribe_modify*>(msg);
-        Logger::amf_app().debug("Received %s", m->get_msg_name());
-
-        amf_app_inst->handle_itti_message(std::ref(*m));
+        itti_dispatch<itti_sbi_amf_status_change_subscribe_modify>(
+            msg, [&](auto& m) { amf_app_inst->handle_itti_message(m); });
       } break;
 
       case SBI_PROVIDE_DOMAIN_SELECTION_INFO: {
-        itti_sbi_provide_domain_selection_info* m =
-            dynamic_cast<itti_sbi_provide_domain_selection_info*>(msg);
-        Logger::amf_app().debug("Received %s", m->get_msg_name());
-
-        amf_app_inst->handle_itti_message(std::ref(*m));
+        itti_dispatch<itti_sbi_provide_domain_selection_info>(
+            msg, [&](auto& m) { amf_app_inst->handle_itti_message(m); });
       } break;
 
       case SBI_PROVIDE_LOCATION_INFO: {
-        itti_sbi_provide_location_info* m =
-            dynamic_cast<itti_sbi_provide_location_info*>(msg);
-        Logger::amf_app().debug("Received %s", m->get_msg_name());
-
-        amf_app_inst->handle_itti_message(std::ref(*m));
+        itti_dispatch<itti_sbi_provide_location_info>(
+            msg, [&](auto& m) { amf_app_inst->handle_itti_message(m); });
       } break;
 
       case TIME_OUT: {
