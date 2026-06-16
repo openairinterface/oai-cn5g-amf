@@ -27,7 +27,7 @@
 
 #include <N1N2MessageCollectionDocumentApi.h>
 
-#include <pistache/optional.h>
+#include <optional>
 
 #include "N1N2MessageTransferError.h"
 #include "N1N2MessageTransferReqData.h"
