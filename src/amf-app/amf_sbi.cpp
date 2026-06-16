@@ -18,6 +18,7 @@
 #include "amf_sbi_helper.hpp"
 #include "http_client.hpp"
 #include "itti.hpp"
+#include "itti_dispatch.hpp"
 #include "itti_msg_amf_app.hpp"
 #include "itti_msg_n2.hpp"
 #include "mime_parser.hpp"
@@ -48,253 +49,201 @@ void amf_sbi_task(void*) {
     switch (msg->msg_type) {
       case NSMF_PDU_SESSION_CREATE_SM_CTX: {
         Logger::amf_sbi().info("Running ITTI_SMF_PDU_SESSION_CREATE_SM_CTX");
-        itti_nsmf_pdusession_create_sm_context* m =
-            dynamic_cast<itti_nsmf_pdusession_create_sm_context*>(msg);
-        if (!m) break;
-        amf_sbi_inst->handle_itti_message(std::ref(*m));
+        itti_dispatch<itti_nsmf_pdusession_create_sm_context>(
+            msg, [&](auto& m) { amf_sbi_inst->handle_itti_message(m); });
       } break;
 
       case NSMF_PDU_SESSION_UPDATE_SM_CTX: {
         Logger::amf_sbi().info(
             "Receive Nsmf_PDUSessionUpdateSMContext, handling ...");
-        itti_nsmf_pdusession_update_sm_context* m =
-            dynamic_cast<itti_nsmf_pdusession_update_sm_context*>(msg);
-        if (!m) break;
-        amf_sbi_inst->handle_itti_message(std::ref(*m));
+        itti_dispatch<itti_nsmf_pdusession_update_sm_context>(
+            msg, [&](auto& m) { amf_sbi_inst->handle_itti_message(m); });
       } break;
 
       case NSMF_PDU_SESSION_RELEASE_SM_CTX: {
         Logger::amf_sbi().info(
             "Receive Nsmf_PDUSessionReleaseSMContext, handling ...");
-        itti_nsmf_pdusession_release_sm_context* m =
-            dynamic_cast<itti_nsmf_pdusession_release_sm_context*>(msg);
-        if (!m) break;
-        amf_sbi_inst->handle_itti_message(std::ref(*m));
+        itti_dispatch<itti_nsmf_pdusession_release_sm_context>(
+            msg, [&](auto& m) { amf_sbi_inst->handle_itti_message(m); });
       } break;
 
       case PDU_SESSION_RESOURCE_SETUP_RESPONSE: {
         Logger::amf_sbi().info(
             "Receive PDU Session Resource Setup response, handling ...");
-        itti_pdu_session_resource_setup_response* m =
-            dynamic_cast<itti_pdu_session_resource_setup_response*>(msg);
-        if (!m) break;
-        amf_sbi_inst->handle_itti_message(std::ref(*m));
+        itti_dispatch<itti_pdu_session_resource_setup_response>(
+            msg, [&](auto& m) { amf_sbi_inst->handle_itti_message(m); });
       } break;
 
       case SBI_REGISTER_NF_INSTANCE_REQUEST: {
         Logger::amf_sbi().info(
             "Receive Register NF Instance Request, handling ...");
-        itti_sbi_register_nf_instance_request* m =
-            dynamic_cast<itti_sbi_register_nf_instance_request*>(msg);
-        if (!m) break;
-        amf_sbi_inst->handle_itti_message(std::ref(*m));
+        itti_dispatch<itti_sbi_register_nf_instance_request>(
+            msg, [&](auto& m) { amf_sbi_inst->handle_itti_message(m); });
       } break;
 
       case SBI_UPDATE_NF_INSTANCE_REQUEST: {
         Logger::amf_sbi().info(
             "Receive Update NF Instance Request, handling ...");
-        itti_sbi_update_nf_instance_request* m =
-            dynamic_cast<itti_sbi_update_nf_instance_request*>(msg);
-        if (!m) break;
-        amf_sbi_inst->handle_itti_message(std::ref(*m));
+        itti_dispatch<itti_sbi_update_nf_instance_request>(
+            msg, [&](auto& m) { amf_sbi_inst->handle_itti_message(m); });
       } break;
 
       case SBI_DEREGISTER_NF_INSTANCE_REQUEST: {
         Logger::amf_sbi().info(
             "Receive Deregister NF Instance Request, handling ...");
-        itti_sbi_deregister_nf_instance_request* m =
-            dynamic_cast<itti_sbi_deregister_nf_instance_request*>(msg);
-        if (!m) break;
-        amf_sbi_inst->handle_itti_message(std::ref(*m));
+        itti_dispatch<itti_sbi_deregister_nf_instance_request>(
+            msg, [&](auto& m) { amf_sbi_inst->handle_itti_message(m); });
       } break;
 
       case SBI_NOTIFY_SUBSCRIBED_EVENT: {
         Logger::amf_sbi().info(
             "Receive Notify Subscribed Event Request, handling ...");
-        itti_sbi_notify_subscribed_event* m =
-            dynamic_cast<itti_sbi_notify_subscribed_event*>(msg);
-        if (!m) break;
-        amf_sbi_inst->handle_itti_message(std::ref(*m));
+        itti_dispatch<itti_sbi_notify_subscribed_event>(
+            msg, [&](auto& m) { amf_sbi_inst->handle_itti_message(m); });
       } break;
 
       case SBI_SLICE_SELECTION_SUBSCRIPTION_DATA: {
         Logger::amf_sbi().info(
             "Receive Slice Selection Subscription Data Retrieval Request, "
             "handling ...");
-        itti_sbi_slice_selection_subscription_data* m =
-            dynamic_cast<itti_sbi_slice_selection_subscription_data*>(msg);
-        if (!m) break;
-        amf_sbi_inst->handle_itti_message(std::ref(*m));
+        itti_dispatch<itti_sbi_slice_selection_subscription_data>(
+            msg, [&](auto& m) { amf_sbi_inst->handle_itti_message(m); });
       } break;
 
       case SBI_NETWORK_SLICE_SELECTION_INFORMATION: {
         Logger::amf_sbi().info(
             "Receive Network Slice Selection Information Request, "
             "handling ...");
-        itti_sbi_network_slice_selection_information* m =
-            dynamic_cast<itti_sbi_network_slice_selection_information*>(msg);
-        if (!m) break;
-        amf_sbi_inst->handle_itti_message(std::ref(*m));
+        itti_dispatch<itti_sbi_network_slice_selection_information>(
+            msg, [&](auto& m) { amf_sbi_inst->handle_itti_message(m); });
       } break;
 
       case SBI_NETWORK_SLICE_SELECTION_DISCOVERY: {
         Logger::amf_sbi().info(
             "Receive Network Slice Selection Discovery, "
             "handling ...");
-        itti_sbi_network_slice_selection_discovery* m =
-            dynamic_cast<itti_sbi_network_slice_selection_discovery*>(msg);
-        if (!m) break;
-        amf_sbi_inst->handle_itti_message(std::ref(*m));
+        itti_dispatch<itti_sbi_network_slice_selection_discovery>(
+            msg, [&](auto& m) { amf_sbi_inst->handle_itti_message(m); });
       } break;
 
       case SBI_N1_MESSAGE_NOTIFY: {
         Logger::amf_sbi().info(
             "Receive N1 Message Notify message, "
             "handling ...");
-        itti_sbi_n1_message_notify* m =
-            dynamic_cast<itti_sbi_n1_message_notify*>(msg);
-        if (!m) break;
-        amf_sbi_inst->handle_itti_message(std::ref(*m));
+        itti_dispatch<itti_sbi_n1_message_notify>(
+            msg, [&](auto& m) { amf_sbi_inst->handle_itti_message(m); });
       } break;
 
       case SBI_N2_INFO_NOTIFY: {
         Logger::amf_sbi().info(
             "Receive N2 Info Notify message, "
             "handling ...");
-        itti_sbi_n2_info_notify* m =
-            dynamic_cast<itti_sbi_n2_info_notify*>(msg);
-        if (!m) break;
-        amf_sbi_inst->handle_itti_message(std::ref(*m));
+        itti_dispatch<itti_sbi_n2_info_notify>(
+            msg, [&](auto& m) { amf_sbi_inst->handle_itti_message(m); });
       } break;
 
       case SBI_NF_INSTANCE_DISCOVERY: {
         Logger::amf_sbi().info(
             "Receive N1 NF Instance Discovery message, "
             "handling ...");
-        itti_sbi_nf_instance_discovery* m =
-            dynamic_cast<itti_sbi_nf_instance_discovery*>(msg);
-        if (!m) break;
-        amf_sbi_inst->handle_itti_message(std::ref(*m));
+        itti_dispatch<itti_sbi_nf_instance_discovery>(
+            msg, [&](auto& m) { amf_sbi_inst->handle_itti_message(m); });
       } break;
 
       case SBI_DETERMINE_LOCATION_REQUEST: {
         Logger::amf_sbi().info(
             "Receive Determine Location Request message, "
             "handling ...");
-        itti_sbi_determine_location_request* m =
-            dynamic_cast<itti_sbi_determine_location_request*>(msg);
-        if (!m) break;
-        amf_sbi_inst->handle_itti_message(std::ref(*m));
+        itti_dispatch<itti_sbi_determine_location_request>(
+            msg, [&](auto& m) { amf_sbi_inst->handle_itti_message(m); });
       } break;
 
       case SBI_UE_AUTHENTICATION_REQUEST: {
         Logger::amf_sbi().info(
             "Receive UE Authentication Request message, "
             "handling ...");
-        itti_sbi_ue_authentication_request* m =
-            dynamic_cast<itti_sbi_ue_authentication_request*>(msg);
-        if (!m) break;
-        amf_sbi_inst->handle_itti_message(std::ref(*m));
+        itti_dispatch<itti_sbi_ue_authentication_request>(
+            msg, [&](auto& m) { amf_sbi_inst->handle_itti_message(m); });
       } break;
 
       case SBI_UE_AUTHENTICATION_CONFIRMATION: {
         Logger::amf_sbi().info(
             "Receive UE Authentication Confirmation message, "
             "handling ...");
-        itti_sbi_ue_authentication_confirmation* m =
-            dynamic_cast<itti_sbi_ue_authentication_confirmation*>(msg);
-        if (!m) break;
-        amf_sbi_inst->handle_itti_message(std::ref(*m));
+        itti_dispatch<itti_sbi_ue_authentication_confirmation>(
+            msg, [&](auto& m) { amf_sbi_inst->handle_itti_message(m); });
       } break;
 
       case SBI_REGISTER_WITH_UDM: {
         Logger::amf_sbi().info(
             "Receive AMF Registration for 3GPP Access message, "
             "handling ...");
-        itti_sbi_register_with_udm* m =
-            dynamic_cast<itti_sbi_register_with_udm*>(msg);
-        if (!m) break;
-        amf_sbi_inst->handle_itti_message(std::ref(*m));
+        itti_dispatch<itti_sbi_register_with_udm>(
+            msg, [&](auto& m) { amf_sbi_inst->handle_itti_message(m); });
       } break;
 
       case SBI_RETRIEVE_AM_DATA: {
         Logger::amf_sbi().info(
             "Receive Access and Mobility Subscription Data Retrieval message, "
             "handling ...");
-        itti_sbi_retrieve_am_data* m =
-            dynamic_cast<itti_sbi_retrieve_am_data*>(msg);
-        if (!m) break;
-        amf_sbi_inst->handle_itti_message(std::ref(*m));
+        itti_dispatch<itti_sbi_retrieve_am_data>(
+            msg, [&](auto& m) { amf_sbi_inst->handle_itti_message(m); });
       } break;
 
       case SBI_RETRIEVE_SMF_SELECTION_SUBSCRIPTION_DATA: {
         Logger::amf_sbi().info(
             "Receive SMF Selection Subscription Data Retrieval message, "
             "handling ...");
-        itti_sbi_retrieve_smf_selection_subscription_data* m =
-            dynamic_cast<itti_sbi_retrieve_smf_selection_subscription_data*>(
-                msg);
-        if (!m) break;
-        amf_sbi_inst->handle_itti_message(std::ref(*m));
+        itti_dispatch<itti_sbi_retrieve_smf_selection_subscription_data>(
+            msg, [&](auto& m) { amf_sbi_inst->handle_itti_message(m); });
       } break;
 
       case SBI_PCF_DISCOVERY: {
         Logger::amf_sbi().info(
             "Receive PCF Discovery message, "
             "handling ...");
-        itti_sbi_pcf_discovery* m = dynamic_cast<itti_sbi_pcf_discovery*>(msg);
-        if (!m) break;
-        amf_sbi_inst->handle_itti_message(std::ref(*m));
+        itti_dispatch<itti_sbi_pcf_discovery>(
+            msg, [&](auto& m) { amf_sbi_inst->handle_itti_message(m); });
       } break;
 
       case SBI_AM_POLICY_ASSOCIATION: {
         Logger::amf_sbi().info(
             "Receive AM Policy Association message, "
             "handling ...");
-        itti_sbi_am_policy_association* m =
-            dynamic_cast<itti_sbi_am_policy_association*>(msg);
-        if (!m) break;
-        amf_sbi_inst->handle_itti_message(std::ref(*m));
+        itti_dispatch<itti_sbi_am_policy_association>(
+            msg, [&](auto& m) { amf_sbi_inst->handle_itti_message(m); });
       } break;
 
       case SBI_AM_POLICY_ASSOCIATION_TERMINATION: {
         Logger::amf_sbi().info(
             "Receive AM Policy Association Termination message, "
             "handling ...");
-        itti_sbi_am_policy_association_termination* m =
-            dynamic_cast<itti_sbi_am_policy_association_termination*>(msg);
-        if (!m) break;
-        amf_sbi_inst->handle_itti_message(std::ref(*m));
+        itti_dispatch<itti_sbi_am_policy_association_termination>(
+            msg, [&](auto& m) { amf_sbi_inst->handle_itti_message(m); });
       } break;
 
       case SBI_AM_POLICY_ASSOCIATION_UPDATE: {
         Logger::amf_sbi().info(
             "Receive AM Policy Association Update message, "
             "handling ...");
-        itti_sbi_am_policy_association_update* m =
-            dynamic_cast<itti_sbi_am_policy_association_update*>(msg);
-        if (!m) break;
-        amf_sbi_inst->handle_itti_message(std::ref(*m));
+        itti_dispatch<itti_sbi_am_policy_association_update>(
+            msg, [&](auto& m) { amf_sbi_inst->handle_itti_message(m); });
       } break;
 
       case SBI_AM_POLICY_ASSOCIATION_RETRIEVAL: {
         Logger::amf_sbi().info(
             "Receive AM Policy Association Retrieval message, "
             "handling ...");
-        itti_sbi_am_policy_association_retrieval* m =
-            dynamic_cast<itti_sbi_am_policy_association_retrieval*>(msg);
-        if (!m) break;
-        amf_sbi_inst->handle_itti_message(std::ref(*m));
+        itti_dispatch<itti_sbi_am_policy_association_retrieval>(
+            msg, [&](auto& m) { amf_sbi_inst->handle_itti_message(m); });
       } break;
 
       case SBI_UE_CONTEXT_IN_SMF_DATA_RETRIEVAL: {
         Logger::amf_sbi().info(
             "Receive UE Context In SMF Data Retrieval message, "
             "handling ...");
-        itti_sbi_ue_context_in_smf_data_retrieval* m =
-            dynamic_cast<itti_sbi_ue_context_in_smf_data_retrieval*>(msg);
-        if (!m) break;
-        amf_sbi_inst->handle_itti_message(std::ref(*m));
+        itti_dispatch<itti_sbi_ue_context_in_smf_data_retrieval>(
+            msg, [&](auto& m) { amf_sbi_inst->handle_itti_message(m); });
       } break;
 
       case TERMINATE: {
