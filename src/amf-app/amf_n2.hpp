@@ -5,6 +5,11 @@
 #ifndef _AMF_N2_H_
 #define _AMF_N2_H_
 
+#include <map>
+#include <memory>
+#include <mutex>
+#include <utility>
+
 #include "amf.hpp"
 #include "itti_msg_n2.hpp"
 #include "ngap_app.hpp"
@@ -404,14 +409,11 @@ class amf_n2 : public oai::ngap::ngap_app {
       oai::_3gpp::model::N2InformationNotification& n2_info_notification);
 
  private:
-  // <RAN UE NGAP ID, gNB ID> <-> UE Context
+  // Store the pending UE NGAP context associated with a RAN UE NGAP ID and gNB
+  // ID
   std::map<std::pair<uint32_t, uint32_t>, std::shared_ptr<ue_ngap_context>>
-      ranid2uecontext;
-  mutable std::shared_mutex m_ranid2uecontext;
-
-  // AMF UE ID <-> UE Context
-  std::map<uint64_t, std::shared_ptr<ue_ngap_context>> amfueid2uecontext;
-  mutable std::shared_mutex m_amfueid2uecontext;
+      pending_ngap_by_ran_gnb_;
+  mutable std::mutex m_pending_ngap_;
 };
 
 }  // namespace amf_application

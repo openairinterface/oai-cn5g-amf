@@ -386,36 +386,31 @@ void amf_app::stop() {
 uint64_t amf_app::generate_amf_ue_ngap_id() {
   uint64_t tmp = 0;
   tmp          = __sync_fetch_and_add(&amf_app_ue_ngap_id_generator, 1);
-  return tmp & 0x00ffffffff;  // 40 bits
+  return tmp & 0xffffffffff;  // 40 bits
 }
 
 //------------------------------------------------------------------------------
 std::shared_ptr<ue_context> amf_app::get_ue_context(
     uint32_t ran_ue_ngap_id, uint64_t amf_ue_ngap_id) const {
-  std::string ue_context_key =
-      amf_conv::get_ue_context_key(ran_ue_ngap_id, amf_ue_ngap_id);
+  (void) ran_ue_ngap_id;  // key is amf_ue_ngap_id (no composite key)
   Logger::amf_app().debug(
-      "Key for UE context search: %s", ue_context_key.c_str());
-
-  return ue_context_store_.find(ue_context_key);
+      "Key for UE context search: " AMF_UE_NGAP_ID_FMT, amf_ue_ngap_id);
+  return ue_context_store_.find(amf_ue_ngap_id);
 }
 
 //------------------------------------------------------------------------------
 void amf_app::set_ue_context(
     uint32_t ran_ue_ngap_id, uint64_t amf_ue_ngap_id,
     const std::shared_ptr<ue_context>& uc) {
-  std::string ue_context_key =
-      amf_conv::get_ue_context_key(ran_ue_ngap_id, amf_ue_ngap_id);
-
-  ue_context_store_.upsert(ue_context_key, uc);
+  (void) ran_ue_ngap_id;  // key is amf_ue_ngap_id
+  ue_context_store_.upsert(amf_ue_ngap_id, uc);
 }
 
 //------------------------------------------------------------------------------
 bool amf_app::remove_ue_context(
     uint32_t ran_ue_ngap_id, uint64_t amf_ue_ngap_id) {
-  std::string ue_context_key =
-      amf_conv::get_ue_context_key(ran_ue_ngap_id, amf_ue_ngap_id);
-  return ue_context_store_.remove(ue_context_key);
+  (void) ran_ue_ngap_id;  // key is amf_ue_ngap_id
+  return ue_context_store_.remove(amf_ue_ngap_id);
 }
 
 //------------------------------------------------------------------------------
@@ -432,6 +427,64 @@ std::shared_ptr<ue_context> amf_app::get_ue_context(
 void amf_app::set_ue_context(
     const std::string& supi, const std::shared_ptr<ue_context>& uc) {
   ue_context_store_.bind_supi(supi, uc);
+}
+
+//------------------------------------------------------------------------------
+std::shared_ptr<ue_context> amf_app::find_ue_by_amf_ue_ngap_id(
+    uint64_t amf_ue_ngap_id) const {
+  return ue_context_store_.find(amf_ue_ngap_id);
+}
+
+//------------------------------------------------------------------------------
+std::shared_ptr<ue_context> amf_app::find_ue_by_guti(
+    const std::string& guti) const {
+  return ue_context_store_.find_by_guti(guti);
+}
+
+//------------------------------------------------------------------------------
+std::shared_ptr<ue_context> amf_app::find_ue_by_ran_gnb(
+    uint32_t ran_ue_ngap_id, uint32_t gnb_id) const {
+  return ue_context_store_.find_by_ran_gnb(ran_ue_ngap_id, gnb_id);
+}
+
+//------------------------------------------------------------------------------
+void amf_app::bind_guti(
+    const std::string& guti, const std::shared_ptr<ue_context>& uc) {
+  ue_context_store_.bind_guti(guti, uc);
+}
+
+//------------------------------------------------------------------------------
+void amf_app::bind_ran_gnb(
+    uint32_t ran_ue_ngap_id, uint32_t gnb_id,
+    const std::shared_ptr<ue_context>& uc) {
+  ue_context_store_.bind_ran_gnb(ran_ue_ngap_id, gnb_id, uc);
+}
+
+//------------------------------------------------------------------------------
+void amf_app::unbind_guti(const std::string& guti) {
+  ue_context_store_.unbind_guti(guti);
+}
+
+//------------------------------------------------------------------------------
+void amf_app::unbind_supi(const std::string& supi) {
+  ue_context_store_.unbind_supi(supi);
+}
+
+//------------------------------------------------------------------------------
+void amf_app::unbind_ran_gnb(uint32_t ran_ue_ngap_id, uint32_t gnb_id) {
+  ue_context_store_.unbind_ran_gnb(ran_ue_ngap_id, gnb_id);
+}
+
+//------------------------------------------------------------------------------
+void amf_app::for_each_ue_context(
+    const std::function<void(const std::shared_ptr<ue_context>&)>& fn) const {
+  ue_context_store_.for_each(fn);
+}
+
+//------------------------------------------------------------------------------
+std::shared_ptr<ue_context> amf_app::rekey_ue_context(
+    uint64_t old_amf_ue_ngap_id, uint64_t new_amf_ue_ngap_id) {
+  return ue_context_store_.rekey(old_amf_ue_ngap_id, new_amf_ue_ngap_id);
 }
 
 //------------------------------------------------------------------------------
@@ -597,10 +650,13 @@ void amf_app::handle_itti_message(
   }
 
   // Get UE context, if the context doesn't exist, create a new one
-  std::string ue_context_key =
-      amf_conv::get_ue_context_key(itti_msg.ran_ue_ngap_id, amf_ue_ngap_id);
   std::shared_ptr<ue_context> uc =
-      ue_context_store_.get_or_create(ue_context_key);
+      ue_context_store_.get_or_create(amf_ue_ngap_id);
+
+  // Store IDs
+  uc->ran_ue_ngap_id = itti_msg.ran_ue_ngap_id;
+  uc->amf_ue_ngap_id = amf_ue_ngap_id;
+  uc->gnb_id         = itti_msg.gnb_id;
 
   // Update AMF UE NGAP ID
   std::shared_ptr<ue_ngap_context> unc = {};
@@ -622,9 +678,6 @@ void amf_app::handle_itti_message(
   uc->tai                   = itti_msg.tai;
   uc->rrc_estb_cause        = itti_msg.rrc_cause;
   uc->is_ue_context_request = itti_msg.ue_ctx_req;
-  uc->ran_ue_ngap_id        = itti_msg.ran_ue_ngap_id;
-  uc->amf_ue_ngap_id        = amf_ue_ngap_id;
-  uc->gnb_id                = itti_msg.gnb_id;
 
   std::string guti   = {};
   bool is_guti_valid = false;
@@ -753,9 +806,7 @@ void amf_app::handle_itti_message(itti_sbi_n1_message_notification& itti_msg) {
   }
 
   // Get UE context, if the context doesn't exist, create a new one
-  std::string ue_context_key =
-      amf_conv::get_ue_context_key(ran_ue_ngap_id, amf_ue_ngap_id);
-  uc = ue_context_store_.get_or_create(ue_context_key);
+  uc = ue_context_store_.get_or_create(amf_ue_ngap_id);
 
   // Update info for UE context
   uc->gnb_id         = gnb_id;
@@ -2247,7 +2298,6 @@ uint32_t amf_app::generate_random_tmsi() {
 bool amf_app::generate_5g_guti(
     const uint32_t ranid, const long amfid, std::string& mcc, std::string& mnc,
     uint32_t& tmsi) {
-  std::string ue_context_key     = amf_conv::get_ue_context_key(ranid, amfid);
   std::shared_ptr<ue_context> uc = get_ue_context(ranid, amfid);
 
   if (uc == nullptr) return false;

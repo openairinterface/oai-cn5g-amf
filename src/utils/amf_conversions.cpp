@@ -129,14 +129,6 @@ void amf_conv::to_lower(bstring& b_str) {
 }
 
 //------------------------------------------------------------------------------
-std::string amf_conv::get_ue_context_key(
-    const uint32_t ran_ue_ngap_id, uint64_t amf_ue_ngap_id) {
-  return (
-      "app_ue_ranid_" + std::to_string(ran_ue_ngap_id) + ":amfid_" +
-      std::to_string(amf_ue_ngap_id));
-}
-
-//------------------------------------------------------------------------------
 std::string amf_conv::get_serving_network_name(
     const std::string& mnc, const std::string& mcc) {
   std::string snn = {};

@@ -6,6 +6,11 @@
 
 #include "amf.hpp"
 #include "logger.hpp"
+// Complete definitions of the nested sub-contexts are only required in this TU,
+// where the out-of-line destructor instantiates the shared_ptr<...>
+// destructors.
+#include "nas_context.hpp"
+#include "ue_ngap_context.hpp"
 
 //------------------------------------------------------------------------------
 ue_context::ue_context() {
@@ -13,7 +18,10 @@ ue_context::ue_context() {
   amf_ue_ngap_id        = INVALID_AMF_UE_NGAP_ID;
   gnb_id                = 0;
   supi                  = {};
+  guti                  = {};
   tmsi                  = 0;
+  nas_ctx               = nullptr;
+  ngap_ctx              = nullptr;
   rrc_estb_cause        = {};
   is_ue_context_request = false;
   cgi                   = {};
@@ -22,6 +30,11 @@ ue_context::ue_context() {
   nrf_uri               = std::nullopt;
   pcf_addr              = {};
 }
+
+//------------------------------------------------------------------------------
+// Defined out of line so that the shared_ptr<nas_context>/<ue_ngap_context>
+// member destructors are instantiated here, where the complete types are known.
+ue_context::~ue_context() {}
 
 //------------------------------------------------------------------------------
 bool ue_context::get_pdu_session_context(

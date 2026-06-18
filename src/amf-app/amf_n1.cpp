@@ -152,22 +152,11 @@ void amf_n1_task(void*) {
 
 //------------------------------------------------------------------------------
 amf_n1::amf_n1()
-    : m_amfueid2nas_context(),
-      m_nas_context(),
-      m_guti2nas_context(),
-      m_supi2amfId(),
-      m_supi2ranId(),
-      m_rand_record(),
-      nas_timer_manager_(itti_inst) {
+    : m_nas_context(), m_rand_record(), nas_timer_manager_(itti_inst) {
   if (itti_inst->create_task(TASK_AMF_N1, amf_n1_task, nullptr)) {
     Logger::amf_n1().error("Cannot create task TASK_AMF_N1");
     throw std::runtime_error("Cannot create task TASK_AMF_N1");
   }
-  amfueid2nas_context = {};
-  supi2nas_context    = {};
-  supi2amfId          = {};
-  supi2ranId          = {};
-  guti2nas_context    = {};
 
   // EventExposure: subscribe to UE Location Report
   ee_ue_location_report_connection = event_sub.subscribe_ue_location_report(
@@ -390,11 +379,15 @@ void amf_n1::handle_itti_message(itti_uplink_nas_data_ind& nas_data_ind) {
           "amf_ue_ngap_id/ran_ue_ngap_id",
           guti.c_str());
 
+      // GUTI re-registration rekey
+      const uint64_t old_amf_ue_ngap_id = nc->amf_ue_ngap_id;
+      const uint32_t old_ran_ue_ngap_id = nc->ran_ue_ngap_id;
+
       nc->guti               = std::make_optional<std::string>(guti);
       nc->old_amf_ue_ngap_id = nc->amf_ue_ngap_id;
       nc->old_ran_ue_ngap_id = nc->ran_ue_ngap_id;
-      nc->amf_ue_ngap_id     = nas_data_ind.amf_ue_ngap_id;
-      nc->ran_ue_ngap_id     = nas_data_ind.ran_ue_ngap_id;
+      nc->amf_ue_ngap_id     = amf_ue_ngap_id;
+      nc->ran_ue_ngap_id     = ran_ue_ngap_id;
 
       Logger::amf_n1().debug(
           "Old AMF UE NGAP ID "
@@ -410,9 +403,10 @@ void amf_n1::handle_itti_message(itti_uplink_nas_data_ind& nas_data_ind) {
           "(" RAN_UE_NGAP_ID_FMT ")",
           nc->amf_ue_ngap_id, nc->ran_ue_ngap_id);
 
-      set_amf_ue_ngap_id_2_nas_context(amf_ue_ngap_id, nc);
-      set_supi_2_amf_id(nc->supi, amf_ue_ngap_id);
-      set_supi_2_ran_id(nc->supi, ran_ue_ngap_id);
+      rekey_nas_owner_on_guti_rereg(
+          guti, old_amf_ue_ngap_id, amf_ue_ngap_id, old_ran_ue_ngap_id,
+          nc->ran_ue_ngap_id);
+
       set_supi_2_nas_context(nc->supi, nc);
 
       // Update UE statistics
@@ -1909,12 +1903,17 @@ bool amf_n1::registration_request_handle(
       } else if (guti_2_nas_context(guti, nc)) {
         Logger::amf_n1().debug(
             "NAS context existed with GUTI %s", guti.c_str());
-        set_amf_ue_ngap_id_2_nas_context(amf_ue_ngap_id, nc);
+        const uint64_t old_amf_ue_ngap_id = nc->amf_ue_ngap_id;
+        const uint32_t old_ran_ue_ngap_id = nc->ran_ue_ngap_id;
         // Update NAS context
         nc->amf_ue_ngap_id = amf_ue_ngap_id;
         nc->ran_ue_ngap_id = ran_ue_ngap_id;
-        set_supi_2_amf_id(nc->supi, amf_ue_ngap_id);
-        set_supi_2_ran_id(nc->supi, ran_ue_ngap_id);
+        // Reassign the context with the new info
+        if (auto old_uc = rekey_nas_owner_on_guti_rereg(
+                guti, old_amf_ue_ngap_id, amf_ue_ngap_id, old_ran_ue_ngap_id,
+                ran_ue_ngap_id)) {
+          uc = old_uc;
+        }
         nc->is_auth_vectors_present       = false;
         nc->is_current_security_available = false;
         if (nc->security_ctx.has_value())
@@ -1971,11 +1970,16 @@ bool amf_n1::registration_request_handle(
   if (nc == nullptr) {
     // try to get the GUTI -> nas_context
     if (guti_2_nas_context(guti, nc)) {
-      set_amf_ue_ngap_id_2_nas_context(amf_ue_ngap_id, nc);
-      nc->amf_ue_ngap_id = amf_ue_ngap_id;
-      nc->ran_ue_ngap_id = ran_ue_ngap_id;
-      set_supi_2_amf_id(nc->supi, amf_ue_ngap_id);
-      set_supi_2_ran_id(nc->supi, ran_ue_ngap_id);
+      // GUTI re-registration rekey
+      const uint64_t old_amf_id = nc->amf_ue_ngap_id;
+      const uint32_t old_ran    = nc->ran_ue_ngap_id;
+      nc->amf_ue_ngap_id        = amf_ue_ngap_id;
+      nc->ran_ue_ngap_id        = ran_ue_ngap_id;
+      // Reassign the old context with the new ids
+      if (auto old_uc = rekey_nas_owner_on_guti_rereg(
+              guti, old_amf_id, amf_ue_ngap_id, old_ran, ran_ue_ngap_id)) {
+        uc = old_uc;
+      }
 
       nc->is_auth_vectors_present       = false;
       nc->is_current_security_available = false;
@@ -2207,155 +2211,188 @@ bool amf_n1::registration_request_handle(
 }
 
 //------------------------------------------------------------------------------
+std::shared_ptr<ue_context> amf_n1::rekey_nas_owner_on_guti_rereg(
+    const std::string& guti, uint64_t old_amf_ue_ngap_id,
+    uint64_t new_amf_ue_ngap_id, uint32_t old_ran_ue_ngap_id,
+    uint32_t new_ran_ue_ngap_id) {
+  auto uc_old = amf_app_inst->find_ue_by_guti(guti);
+  auto uc_new = amf_app_inst->find_ue_by_amf_ue_ngap_id(new_amf_ue_ngap_id);
+
+  if (!uc_old) {
+    // Nothing to rekey
+    Logger::amf_n1().warn(
+        "GUTI re-reg rekey: no UC context exist %s — skipping", guti.c_str());
+    return nullptr;
+  }
+
+  // Check the old context's key: the old context should currently be keyed by
+  // old_amf_ue_ngap_id
+  if (uc_old->amf_ue_ngap_id != old_amf_ue_ngap_id) {
+    Logger::amf_n1().debug(
+        "GUTI re-reg rekey: old amf_ue_ngap_id (" AMF_UE_NGAP_ID_FMT
+        ") != captured old_amf_ue_ngap_id (" AMF_UE_NGAP_ID_FMT ") for GUTI %s",
+        uc_old->amf_ue_ngap_id, old_amf_ue_ngap_id, guti.c_str());
+  }
+
+  // Store the old gNB Id before any overwrite
+  const uint32_t old_gnb_id = uc_old->gnb_id;
+
+  uint32_t new_gnb_id = old_gnb_id;
+  if (uc_new && uc_new.get() != uc_old.get()) {
+    // Update context
+    uc_old->ngap_ctx = uc_new->ngap_ctx;
+    new_gnb_id       = uc_new->gnb_id;
+    uc_old->gnb_id   = uc_new->gnb_id;
+  }
+  uc_old->ran_ue_ngap_id = new_ran_ue_ngap_id;
+
+  // Rekey the context
+  if (old_amf_ue_ngap_id != new_amf_ue_ngap_id) {
+    amf_app_inst->rekey_ue_context(old_amf_ue_ngap_id, new_amf_ue_ngap_id);
+  }
+
+  // Rebind the <ran,gnb> secondary to the old context and drop the old link.
+  amf_app_inst->bind_ran_gnb(new_ran_ue_ngap_id, new_gnb_id, uc_old);
+  if (old_ran_ue_ngap_id != new_ran_ue_ngap_id || old_gnb_id != new_gnb_id) {
+    amf_app_inst->unbind_ran_gnb(old_ran_ue_ngap_id, old_gnb_id);
+  }
+
+  // Return the old context (now under new_amf_ue_ngap_id)
+  return uc_old;
+}
+
+//------------------------------------------------------------------------------
 bool amf_n1::amf_ue_id_2_nas_context(
     const uint64_t& amf_ue_ngap_id, std::shared_ptr<nas_context>& nc) const {
-  std::shared_lock lock(m_amfueid2nas_context);
-  if (amfueid2nas_context.count(amf_ue_ngap_id) > 0) {
-    if (amfueid2nas_context.at(amf_ue_ngap_id) != nullptr) {
-      nc = amfueid2nas_context.at(amf_ue_ngap_id);
-      return true;
-    }
+  auto uc = amf_app_inst->find_ue_by_amf_ue_ngap_id(amf_ue_ngap_id);
+  if (!uc || !uc->nas_ctx) {
+    Logger::amf_n1().warn(
+        "No NAS context with amf_ue_ngap_id " AMF_UE_NGAP_ID_FMT "",
+        amf_ue_ngap_id);
+    return false;
   }
-  Logger::amf_n1().warn(
-      "No NAS context with amf_ue_ngap_id " AMF_UE_NGAP_ID_FMT "",
-      amf_ue_ngap_id);
-  return false;
+  nc = uc->nas_ctx;
+  return true;
 }
 
 //------------------------------------------------------------------------------
 void amf_n1::set_amf_ue_ngap_id_2_nas_context(
     const uint64_t& amf_ue_ngap_id, std::shared_ptr<nas_context> nc) {
-  std::unique_lock lock(m_amfueid2nas_context);
-  amfueid2nas_context[amf_ue_ngap_id] = nc;
+  auto uc = amf_app_inst->find_ue_by_amf_ue_ngap_id(amf_ue_ngap_id);
+  if (!uc) {
+    Logger::amf_n1().warn(
+        "set_amf_ue_ngap_id_2_nas_context: no ue_context for "
+        "amf_ue_ngap_id " AMF_UE_NGAP_ID_FMT " — NAS context not attached",
+        amf_ue_ngap_id);
+    return;
+  }
+  uc->nas_ctx = nc;
 }
 
 //------------------------------------------------------------------------------
 bool amf_n1::remove_amf_ue_ngap_id_2_nas_context(
     const uint64_t& amf_ue_ngap_id) {
-  std::unique_lock lock(m_amfueid2nas_context);
-  if (amfueid2nas_context.count(amf_ue_ngap_id) > 0) {
-    amfueid2nas_context.erase(amf_ue_ngap_id);
-    return true;
+  auto uc = amf_app_inst->find_ue_by_amf_ue_ngap_id(amf_ue_ngap_id);
+  if (!uc || !uc->nas_ctx) {
+    return false;
   }
-  return false;
+  uc->nas_ctx = nullptr;
+  return true;
 }
 
 //------------------------------------------------------------------------------
 void amf_n1::set_supi_2_amf_id(
     const std::string& supi, const uint64_t& amf_ue_ngap_id) {
-  std::unique_lock lock(m_supi2amfId);
-  supi2amfId[supi] = amf_ue_ngap_id;
+  (void) supi;
+  (void) amf_ue_ngap_id;
 }
 
 //------------------------------------------------------------------------------
 bool amf_n1::supi_2_amf_id(const std::string& supi, uint64_t& amf_ue_ngap_id) {
-  std::shared_lock lock(m_supi2amfId);
-  if (supi2amfId.count(supi) > 0) {
-    amf_ue_ngap_id = supi2amfId.at(supi);
-    return true;
-  } else {
-    return false;
-  }
-}
-
-//------------------------------------------------------------------------------
-bool amf_n1::remove_supi_2_amf_id(const std::string& supi) {
-  std::unique_lock lock(m_supi2amfId);
-  if (supi2amfId.count(supi) > 0) {
-    supi2amfId.erase(supi);
-    return true;
-  } else {
-    return false;
-  }
+  auto uc = amf_app_inst->get_ue_context(supi);  // find_by_supi
+  if (!uc) return false;
+  if (uc->amf_ue_ngap_id == INVALID_AMF_UE_NGAP_ID) return false;
+  amf_ue_ngap_id = uc->amf_ue_ngap_id;
+  return true;
 }
 
 //------------------------------------------------------------------------------
 void amf_n1::set_supi_2_ran_id(
     const std::string& supi, const uint32_t& ran_ue_ngap_id) {
-  std::unique_lock lock(m_supi2ranId);
-  supi2ranId[supi] = ran_ue_ngap_id;
+  (void) supi;
+  (void) ran_ue_ngap_id;
 }
 
 //------------------------------------------------------------------------------
 bool amf_n1::supi_2_ran_id(const std::string& supi, uint32_t& ran_ue_ngap_id) {
-  std::shared_lock lock(m_supi2ranId);
-  if (supi2amfId.count(supi) > 0) {
-    ran_ue_ngap_id = supi2ranId.at(supi);
-    return true;
-  } else {
-    return false;
-  }
-}
-
-//------------------------------------------------------------------------------
-bool amf_n1::remove_supi_2_ran_id(const std::string& supi) {
-  std::unique_lock lock(m_supi2ranId);
-  if (supi2ranId.count(supi) > 0) {
-    supi2ranId.erase(supi);
-    return true;
-  } else {
-    return false;
-  }
+  auto uc = amf_app_inst->get_ue_context(supi);  // find_by_supi
+  if (!uc) return false;
+  if (uc->amf_ue_ngap_id == INVALID_AMF_UE_NGAP_ID) return false;
+  ran_ue_ngap_id = uc->ran_ue_ngap_id;
+  return true;
 }
 
 //------------------------------------------------------------------------------
 bool amf_n1::guti_2_nas_context(
     const std::string& guti, std::shared_ptr<nas_context>& nc) const {
-  std::shared_lock lock(m_guti2nas_context);
-  if (guti2nas_context.count(guti) > 0) {
-    if (guti2nas_context.at(guti) != nullptr) {
-      nc = guti2nas_context.at(guti);
-      return true;
-    }
-  }
-  return false;
+  auto uc = amf_app_inst->find_ue_by_guti(guti);
+  if (!uc || !uc->nas_ctx) return false;
+  nc = uc->nas_ctx;
+  return true;
 }
 
 //------------------------------------------------------------------------------
 void amf_n1::set_guti_2_nas_context(
     const std::string& guti, const std::shared_ptr<nas_context>& nc) {
-  std::unique_lock lock(m_guti2nas_context);
-  guti2nas_context[guti] = nc;
+  if (!nc) return;
+  auto uc = amf_app_inst->find_ue_by_amf_ue_ngap_id(nc->amf_ue_ngap_id);
+  if (!uc) {
+    Logger::amf_n1().warn(
+        "set_guti_2_nas_context: no ue_context for amf_ue_ngap_id "
+        "" AMF_UE_NGAP_ID_FMT " — GUTI %s not bound",
+        nc->amf_ue_ngap_id, guti.c_str());
+    return;
+  }
+  uc->guti = guti;
+  amf_app_inst->bind_guti(guti, uc);
 }
 
 //------------------------------------------------------------------------------
 bool amf_n1::remove_guti_2_nas_context(const std::string& guti) {
-  std::unique_lock lock(m_guti2nas_context);
-  if (guti2nas_context.count(guti) > 0) {
-    guti2nas_context.erase(guti);
-    return true;
-  }
-  return false;
+  amf_app_inst->unbind_guti(guti);
+  return true;
 }
 
 //------------------------------------------------------------------------------
 bool amf_n1::supi_2_nas_context(
     const std::string& imsi, std::shared_ptr<nas_context>& nc) const {
-  std::shared_lock lock(m_nas_context);
-  if (supi2nas_context.count(imsi) > 0) {
-    if (!supi2nas_context.at(imsi)) return false;
-    nc = supi2nas_context.at(imsi);
-    return true;
-  } else {
-    return false;
-  }
+  auto uc = amf_app_inst->get_ue_context(imsi);  // find_by_supi
+  if (!uc || !uc->nas_ctx) return false;
+  nc = uc->nas_ctx;
+  return true;
 }
 
 //------------------------------------------------------------------------------
 void amf_n1::set_supi_2_nas_context(
     const std::string& imsi, const std::shared_ptr<nas_context>& nc) {
-  std::unique_lock lock(m_nas_context);
-  supi2nas_context[imsi] = nc;
+  if (!nc) return;
+  auto uc = amf_app_inst->find_ue_by_amf_ue_ngap_id(nc->amf_ue_ngap_id);
+  if (!uc) {
+    Logger::amf_n1().warn(
+        "set_supi_2_nas_context: no ue_context for amf_ue_ngap_id "
+        "" AMF_UE_NGAP_ID_FMT " — SUPI %s not bound",
+        nc->amf_ue_ngap_id, imsi.c_str());
+    return;
+  }
+  uc->supi    = imsi;
+  uc->nas_ctx = nc;
+  amf_app_inst->set_ue_context(imsi, uc);  // bind_supi
 }
 
 //------------------------------------------------------------------------------
 bool amf_n1::remove_supi_2_nas_context(const std::string& imsi) {
-  std::unique_lock lock(m_nas_context);
-  if (supi2nas_context.count(imsi) > 0) {
-    supi2nas_context.erase(imsi);
-    return true;
-  }
-  return false;
+  amf_app_inst->unbind_supi(imsi);
+  return true;
 }
 
 //------------------------------------------------------------------------------
@@ -3652,7 +3689,8 @@ bool amf_n1::security_mode_complete_handle(
 
   // registration_accept->SetT3512Value(0x5, T3512_TIMER_VALUE_MIN);
 
-  set_guti_2_nas_context(guti, nc);
+  uc->guti = guti;
+  amf_app_inst->bind_guti(guti, uc);
   nc->guti = std::make_optional<std::string>(guti);
 
   if (!nc->security_ctx.has_value()) {
