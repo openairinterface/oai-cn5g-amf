@@ -142,40 +142,6 @@ class amf_n1 {
   bool remove_amf_ue_ngap_id_2_nas_context(const uint64_t& amf_ue_ngap_id);
 
   /*
-   * Store the mapping between SUPI and AMF UE NGAP ID
-   * @param [const std::string&] SUPI: UE SUPI
-   *@param [const uint64_t& ] amf_ue_ngap_id: AMF UE NGAP ID
-   * @return void
-   */
-  void set_supi_2_amf_id(
-      const std::string& supi, const uint64_t& amf_ue_ngap_id);
-
-  /*
-   * Get AMF UE NGAP ID
-   * @param [const std::string&] SUPI: UE SUPI
-   * @param [uint64_t& ] amf_ue_ngap_id: AMF UE NGAP ID
-   * @return true if success
-   */
-  bool supi_2_amf_id(const std::string& supi, uint64_t& amf_ue_ngap_id);
-
-  /*
-   * Store the mapping between SUPI and RAN UE NGAP ID
-   * @param [const std::string&] SUPI: UE SUPI
-   *@param [const uint32_t&] ran_ue_ngap_id: RAN UE NGAP ID
-   * @return void
-   */
-  void set_supi_2_ran_id(
-      const std::string& supi, const uint32_t& ran_ue_ngap_id);
-
-  /*
-   * Get RAN UE NGAP ID
-   * @param [const std::string&] SUPI: UE SUPI
-   * @param [uint32_t& ] ran_ue_ngap_id: RAN UE NGAP ID
-   * @return true if success
-   */
-  bool supi_2_ran_id(const std::string& supi, uint32_t& ran_ue_ngap_id);
-
-  /*
    * Get UE NAS context associated with an SUPI
    * @param [const std::string&] imsi: UE SUPI
    * @param [const std::shared_ptr<nas_context>&] nc: pointer to UE NAS context

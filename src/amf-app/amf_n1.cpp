@@ -932,8 +932,6 @@ bool amf_n1::identity_response_handle(
   nc->nas_status           = CM_CONNECTED;
   nc->amf_ue_ngap_id       = amf_ue_ngap_id;
   nc->ran_ue_ngap_id       = ran_ue_ngap_id;
-  set_supi_2_amf_id(nc->supi, amf_ue_ngap_id);
-  set_supi_2_ran_id(nc->supi, ran_ue_ngap_id);
   // Stop Mobile Reachable Timer/Implicit Deregistration Timer
   itti_inst->timer_remove(nc->mobile_reachable_timer);
   itti_inst->timer_remove(nc->implicit_deregistration_timer);
@@ -1355,8 +1353,6 @@ bool amf_n1::service_request_handle(
 
   // Update UE context
   uc->supi = nc->supi;
-  set_supi_2_amf_id(nc->supi, amf_ue_ngap_id);
-  set_supi_2_ran_id(nc->supi, ran_ue_ngap_id);
 
   Logger::amf_n1().debug(
       "amf_ue_ngap_id " AMF_UE_NGAP_ID_FMT
@@ -1851,9 +1847,6 @@ bool amf_n1::registration_request_handle(
               nc->supi, CM_CONNECTED, amf_cfg->support_features.http_version);
         }
 
-        // Get SUPI and associate with AMF UE NGAP ID/RAN UE NGAP ID
-        set_supi_2_amf_id(nc->supi, amf_ue_ngap_id);
-        set_supi_2_ran_id(nc->supi, ran_ue_ngap_id);
         // Update UE context
         uc->supi = nc->supi;
 
@@ -2297,38 +2290,6 @@ bool amf_n1::remove_amf_ue_ngap_id_2_nas_context(
     return false;
   }
   uc->nas_ctx = nullptr;
-  return true;
-}
-
-//------------------------------------------------------------------------------
-void amf_n1::set_supi_2_amf_id(
-    const std::string& supi, const uint64_t& amf_ue_ngap_id) {
-  (void) supi;
-  (void) amf_ue_ngap_id;
-}
-
-//------------------------------------------------------------------------------
-bool amf_n1::supi_2_amf_id(const std::string& supi, uint64_t& amf_ue_ngap_id) {
-  auto uc = amf_app_inst->get_ue_context(supi);  // find_by_supi
-  if (!uc) return false;
-  if (uc->amf_ue_ngap_id == INVALID_AMF_UE_NGAP_ID) return false;
-  amf_ue_ngap_id = uc->amf_ue_ngap_id;
-  return true;
-}
-
-//------------------------------------------------------------------------------
-void amf_n1::set_supi_2_ran_id(
-    const std::string& supi, const uint32_t& ran_ue_ngap_id) {
-  (void) supi;
-  (void) ran_ue_ngap_id;
-}
-
-//------------------------------------------------------------------------------
-bool amf_n1::supi_2_ran_id(const std::string& supi, uint32_t& ran_ue_ngap_id) {
-  auto uc = amf_app_inst->get_ue_context(supi);  // find_by_supi
-  if (!uc) return false;
-  if (uc->amf_ue_ngap_id == INVALID_AMF_UE_NGAP_ID) return false;
-  ran_ue_ngap_id = uc->ran_ue_ngap_id;
   return true;
 }
 
@@ -2896,8 +2857,6 @@ bool amf_n1::_5g_aka_confirmation_from_ausf(
             if (uc != nullptr) {
               uc->supi = nc->supi;
               amf_app_inst->set_ue_context(nc->supi, uc);
-              set_supi_2_amf_id(nc->supi, uc->amf_ue_ngap_id);
-              set_supi_2_ran_id(nc->supi, uc->ran_ue_ngap_id);
 
               // Update UE statistics
               ue_info_t ue_item;
