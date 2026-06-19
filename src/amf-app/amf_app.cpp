@@ -543,8 +543,6 @@ void amf_app::handle_itti_message(
     Logger::amf_app().info(
         "Handle ITTI N1N2 Message Transfer Request for Paging");
     auto paging_msg = std::make_shared<itti_paging>(TASK_AMF_APP, TASK_AMF_N2);
-    amf_n1_inst->supi_2_amf_id(itti_msg.supi, paging_msg->amf_ue_ngap_id);
-    amf_n1_inst->supi_2_ran_id(itti_msg.supi, paging_msg->ran_ue_ngap_id);
 
     int ret = itti_inst->send_msg(paging_msg);
     if (ret != RETURNok) {
@@ -559,9 +557,7 @@ void amf_app::handle_itti_message(
         TASK_AMF_APP, TASK_AMF_N2);
     dl_msg->nrppa_pdu  = bstrcpy(itti_msg.nrppa_pdu);
     dl_msg->routing_id = bstrcpy(itti_msg.routing_id);
-    amf_n1_inst->supi_2_amf_id(itti_msg.supi, dl_msg->amf_ue_ngap_id);
-    amf_n1_inst->supi_2_ran_id(itti_msg.supi, dl_msg->ran_ue_ngap_id);
-    int ret = itti_inst->send_msg(dl_msg);
+    int ret            = itti_inst->send_msg(dl_msg);
     if (ret != RETURNok) {
       Logger::amf_app().error(
           "Could not send ITTI message %s to task TASK_AMF_N2",
@@ -598,8 +594,6 @@ void amf_app::handle_itti_message(
       dl_msg->is_n2sm_set    = true;
       dl_msg->n2sm_info_type = itti_msg.n2sm_info_type;
     }
-    amf_n1_inst->supi_2_amf_id(itti_msg.supi, dl_msg->amf_ue_ngap_id);
-    amf_n1_inst->supi_2_ran_id(itti_msg.supi, dl_msg->ran_ue_ngap_id);
 
     int ret = itti_inst->send_msg(dl_msg);
     if (ret != RETURNok) {
