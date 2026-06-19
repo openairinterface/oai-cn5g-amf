@@ -1562,7 +1562,6 @@ void amf_n2::handle_itti_message(
     // Get the current AMF UE NGAP ID and compare with the one from
     // UEContextReleaseComplete
     uint64_t current_amf_ue_ngap_id = INVALID_AMF_UE_NGAP_ID;
-    amf_n1_inst->supi_2_amf_id(nc->supi, current_amf_ue_ngap_id);
     if (current_amf_ue_ngap_id != amf_ue_ngap_id) {
       // Remove UE NGAP context
       Logger::amf_n2().debug("UE Context Release Complete for the old context");
