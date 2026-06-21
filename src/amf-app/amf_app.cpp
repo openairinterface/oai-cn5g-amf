@@ -543,6 +543,8 @@ void amf_app::handle_itti_message(
     Logger::amf_app().info(
         "Handle ITTI N1N2 Message Transfer Request for Paging");
     auto paging_msg = std::make_shared<itti_paging>(TASK_AMF_APP, TASK_AMF_N2);
+    paging_msg->amf_ue_ngap_id = itti_msg.amf_ue_ngap_id;
+    paging_msg->ran_ue_ngap_id = itti_msg.ran_ue_ngap_id;
 
     int ret = itti_inst->send_msg(paging_msg);
     if (ret != RETURNok) {
@@ -555,6 +557,9 @@ void amf_app::handle_itti_message(
         "Handle ITTI N1N2 Message Transfer Request for NRPPa PDU");
     auto dl_msg = std::make_shared<itti_downlink_ue_associated_nrppa_transport>(
         TASK_AMF_APP, TASK_AMF_N2);
+    dl_msg->amf_ue_ngap_id = itti_msg.amf_ue_ngap_id;
+    dl_msg->ran_ue_ngap_id = itti_msg.ran_ue_ngap_id;
+
     dl_msg->nrppa_pdu  = bstrcpy(itti_msg.nrppa_pdu);
     dl_msg->routing_id = bstrcpy(itti_msg.routing_id);
     int ret            = itti_inst->send_msg(dl_msg);
@@ -568,6 +573,8 @@ void amf_app::handle_itti_message(
     auto dl_msg =
         std::make_shared<itti_downlink_nas_transfer>(TASK_AMF_APP, TASK_AMF_N1);
 
+    dl_msg->amf_ue_ngap_id = itti_msg.amf_ue_ngap_id;
+    dl_msg->ran_ue_ngap_id = itti_msg.ran_ue_ngap_id;
     if (itti_msg.is_n1sm_set) {
       // Encode DL NAS TRANSPORT message(NAS message)
       auto dl = std::make_unique<DlNasTransport>();
