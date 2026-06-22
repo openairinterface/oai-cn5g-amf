@@ -1518,12 +1518,6 @@ void amf_n2::handle_itti_message(
       ") amf_ue_ngap_id (" AMF_UE_NGAP_ID_FMT ")",
       ran_ue_ngap_id, amf_ue_ngap_id);
 
-  // Get UE Context
-  std::shared_ptr<ue_context> uc =
-      amf_app_inst->get_ue_context(ran_ue_ngap_id, amf_ue_ngap_id);
-
-  if (uc == nullptr) return;
-
   std::shared_ptr<ue_ngap_context> unc = {};
   if (!amf_ue_id_2_ue_ngap_context(amf_ue_ngap_id, unc)) return;
 
@@ -1531,6 +1525,24 @@ void amf_n2::handle_itti_message(
   if (!assoc_id_2_gnb_context(itti_msg->assoc_id, gc)) {
     Logger::amf_n2().error(
         "gNB with assoc_id (%d) is illegal", itti_msg->assoc_id);
+    return;
+  }
+
+  // Get UE Context
+  std::shared_ptr<ue_context> uc =
+      amf_app_inst->get_ue_context(ran_ue_ngap_id, amf_ue_ngap_id);
+
+  if (uc == nullptr) {
+    // UE context has already been torn down (e.g. a completed UE-initiated
+    // de-registration removed it before this Release Complete arrived). The
+    // CM-state/PDU bookkeeping below is no longer relevant, but the NGAP-layer
+    // context must still be released to avoid leaking it.
+    Logger::amf_n2().debug(
+        "No UE context for amf_ue_ngap_id (" AMF_UE_NGAP_ID_FMT
+        "); releasing NGAP context after UE Context Release Complete",
+        amf_ue_ngap_id);
+    remove_amf_ue_ngap_id_2_ue_ngap_context(amf_ue_ngap_id);
+    remove_ran_ue_ngap_id_2_ngap_context(ran_ue_ngap_id, gc->gnb_id);
     return;
   }
 

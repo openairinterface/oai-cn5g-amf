@@ -663,7 +663,7 @@ void amf_n1::nas_signalling_establishment_request_handle(
           "handling...");
       if (!ue_initiate_de_registration_handle(
               ran_ue_ngap_id, amf_ue_ngap_id, plain_msg, cause)) {
-        nas_procedure_manager_.complete_specific_procedure(*nc);
+        if (nc) nas_procedure_manager_.complete_specific_procedure(*nc);
       }
     } break;
 
@@ -748,7 +748,7 @@ void amf_n1::uplink_nas_msg_handle(
             "Received De-registration Request message, handling...");
         if (!ue_initiate_de_registration_handle(
                 ran_ue_ngap_id, amf_ue_ngap_id, plain_msg, cause)) {
-          nas_procedure_manager_.complete_common_procedure(*nc);
+          if (nc) nas_procedure_manager_.complete_common_procedure(*nc);
           // TODO:
         }
       } break;
@@ -4299,8 +4299,12 @@ bool amf_n1::ue_initiate_de_registration_handle(
   // Send request to SMF to release the established PDU sessions if needed
   // Get list of PDU sessions
   std::vector<std::shared_ptr<pdu_session_context>> sessions_ctx;
+  // Use the validated IDs from the incoming message (already checked above via
+  // check_nas_event/amf_ue_id_2_nas_context). The UE context store is keyed by
+  // amf_ue_ngap_id; relying on nc->amf_ue_ngap_id here would miss the context
+  // after a GUTI re-registration rekey, dropping the de-registration silently.
   std::shared_ptr<ue_context> uc =
-      amf_app_inst->get_ue_context(nc->ran_ue_ngap_id, nc->amf_ue_ngap_id);
+      amf_app_inst->get_ue_context(ran_ue_ngap_id, amf_ue_ngap_id);
 
   if (uc == nullptr) {
     cause = k5gmmCauseIllegalUe;
