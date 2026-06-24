@@ -1716,6 +1716,19 @@ void amf_n2::handle_itti_message(
   // Remove UE NGAP context
   remove_amf_ue_ngap_id_2_ue_ngap_context(amf_ue_ngap_id);
   remove_ran_ue_ngap_id_2_ngap_context(ran_ue_ngap_id, gc->gnb_id);
+
+  // Remove the amf_app UE context
+  if (amf_app_inst->remove_ue_context(ran_ue_ngap_id, amf_ue_ngap_id)) {
+    Logger::amf_n2().debug(
+        "Deleted UE context associated with "
+        "amf_ue_ngap_id " AMF_UE_NGAP_ID_FMT,
+        amf_ue_ngap_id);
+  } else {
+    Logger::amf_n2().debug(
+        "Could not delete UE context associated with "
+        "amf_ue_ngap_id " AMF_UE_NGAP_ID_FMT,
+        amf_ue_ngap_id);
+  }
 }
 
 //------------------------------------------------------------------------------
