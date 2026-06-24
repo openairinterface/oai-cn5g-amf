@@ -2266,6 +2266,41 @@ bool amf_n1::supi_2_amf_id(const std::string& supi, uint64_t& amf_ue_ngap_id) {
 }
 
 //------------------------------------------------------------------------------
+cm_state_t amf_n1::get_ue_cm_state(const std::string& supi) {
+  // TODO [AMF-N11-MODIFY]: Implement UE CM state check
+  // Reference: - Phase 1, Task 1.2 (UE CM State Check)
+  //
+  // Task 1.2: UE CM State Check
+  //   - Read nas_context->nas_status field from UE NAS context
+  //   - Map NAS status to CM state:
+  //     - CM_CONNECTED: NAS registration complete and UE context active
+  //     - CM_IDLE: UE context released (post-UEContextReleaseComplete)
+  //   - Return CM_CONNECTED or CM_IDLE enumeration value
+  //   - Handle edge case: UE context not found → treat as CM_IDLE
+  //
+  // Standards:
+  //   - TS 23.501 §5.3.2 (CM state machine: CM-CONNECTED vs CM-IDLE)
+  //
+  // [QOS-MOCK] Phase 1 — UE CM state check ([AMF-N11-MODIFY], Task 1.2). Mocks
+  // the Task 1.2 TODO above:
+  //   - Reads nas_context->nas_status — done for real via a simple lookup
+  //     (SUPI → amf_ue_ngap_id → nas_context). No mock data needed here.
+  //   - Edge case (no NAS context found): MOCKED — treated as CM_CONNECTED so
+  //     the mock network-initiated relay path proceeds (the real impl treats a
+  //     missing context as CM_IDLE and triggers paging) [TS 23.501 §5.3.2].
+  uint64_t amf_ue_ngap_id         = INVALID_AMF_UE_NGAP_ID;
+  std::shared_ptr<nas_context> nc = {};
+  if (!supi_2_amf_id(supi, amf_ue_ngap_id) ||
+      !amf_ue_id_2_nas_context(amf_ue_ngap_id, nc) || !nc) {
+    Logger::amf_n1().warn(
+        "[QOS-MOCK] No NAS context for SUPI %s; assuming CM_CONNECTED",
+        supi.c_str());
+    return CM_CONNECTED;
+  }
+  return nc->nas_status;
+}
+
+//------------------------------------------------------------------------------
 bool amf_n1::remove_supi_2_amf_id(const std::string& supi) {
   std::unique_lock lock(m_supi2amfId);
   if (supi2amfId.count(supi) > 0) {

@@ -62,6 +62,48 @@ extern statistics stacs;
 void amf_n2_task(void*);
 
 //------------------------------------------------------------------------------
+// TODO [AMF-N2-QOS]: Source UE-AMBR dynamically for all N2 messages
+// Reference: Phase 2: N2 QoS Message Completeness
+//
+// Task 2.3: Dynamic UE-AMBR in All N2 Messages
+//   - Replace hardcoded UE_AGGREGATE_MAXIMUM_BIT_RATE_DL/UL at all
+//     setUeAggregateMaxBitRate() call sites with ue_context->ue_ambr_dl/ue_ambr_ul
+//   - If has_ue_ambr is false, use the constant and log a warning
+//   - Fallback precedence: SMF-provided > UDM-subscribed > compile-time default
+//
+// Standards:
+//   - TS 38.413 §9.3.1.47 (UE Aggregate Maximum Bit Rate IE)
+//
+// [QOS-MOCK] Phase 2 helper — resolve the dynamic UE-AMBR for a UE
+// ([AMF-N2-QOS], Task 2.3). Mocks the Task 2.3 TODO above:
+//   - Centralises UE-AMBR sourcing for the setUeAggregateMaxBitRate() call
+//     sites: reads ue_ambr_dl/ue_ambr_ul from the UE context (real lookup) and
+//     falls back to the compile-time constant + warning when has_ue_ambr is
+//     false — done for real.
+//   - The values themselves are MOCKED (seeded in ue_context.cpp; see the
+//     Task 2.1/2.2 [QOS-MOCK] note there), not fetched from UDM or the SMF.
+static void resolve_ue_ambr(
+    uint32_t ran_ue_ngap_id, uint64_t amf_ue_ngap_id, uint64_t& dl,
+    uint64_t& ul) {
+  std::shared_ptr<ue_context> uc =
+      amf_app_inst->get_ue_context(ran_ue_ngap_id, amf_ue_ngap_id);
+  if (uc && uc->has_ue_ambr) {
+    dl = uc->ue_ambr_dl;
+    ul = uc->ue_ambr_ul;
+    Logger::amf_n2().debug(
+        "[QOS-MOCK] Using dynamic UE-AMBR from UE context (DL %lu, UL %lu bps)",
+        dl, ul);
+  } else {
+    dl = UE_AGGREGATE_MAXIMUM_BIT_RATE_DL;
+    ul = UE_AGGREGATE_MAXIMUM_BIT_RATE_UL;
+    Logger::amf_n2().warn(
+        "[QOS-MOCK] UE-AMBR not available in UE context; falling back to "
+        "compile-time constant (DL %lu, UL %lu bps)",
+        dl, ul);
+  }
+}
+
+//------------------------------------------------------------------------------
 void amf_n2_task(void* args_p) {
   const task_id_t task_id = TASK_AMF_N2;
   itti_inst->notify_task_ready(task_id);
@@ -1133,11 +1175,19 @@ void amf_n2::handle_itti_message(
       if (list.size() > 0) msg->setPduSessionResourceSetupRequestList(list);
 
       // TODO [AMF-N2-QOS]: UE-AMBR hardcoded — use dynamic value from UE context
+      // Reference: Phase 2: N2 QoS Message Completeness
       // Task 2.3: Replace constant with ue_context->ue_ambr_dl / ue_ambr_ul sourced from UDM
       //   or SMF N1N2MessageTransfer request (see amf.hpp UE_AGGREGATE_MAXIMUM_BIT_RATE_DL/UL)
       //   Fall back to constant only when has_ue_ambr = false, and log a warning [TS 38.413 §9.3.1.47]
-      msg->setUeAggregateMaxBitRate(
-          UE_AGGREGATE_MAXIMUM_BIT_RATE_DL, UE_AGGREGATE_MAXIMUM_BIT_RATE_UL);
+      //
+      // [QOS-MOCK] Phase 2 ([AMF-N2-QOS], Task 2.3): UE-AMBR now sourced
+      // dynamically from the UE context (mock values seeded in ue_context),
+      // with fallback to the constant when has_ue_ambr is false.
+      uint64_t ue_ambr_dl = 0, ue_ambr_ul = 0;
+      resolve_ue_ambr(
+          itti_msg->ran_ue_ngap_id, itti_msg->amf_ue_ngap_id, ue_ambr_dl,
+          ue_ambr_ul);
+      msg->setUeAggregateMaxBitRate(ue_ambr_dl, ue_ambr_ul);
 
       // TODO [AMF-N2-QOS]: Mobility RestrictionList IE missing from InitialContextSetupRequest
       // Task 2.6: Encode forbiddenAreas, serviceAreaRestriction from UE AM subscription data
@@ -1230,11 +1280,18 @@ void amf_n2::handle_itti_message(
   }
 
   // TODO [AMF-N2-QOS]: UE-AMBR hardcoded — use dynamic value from UE context
+  // Reference: Phase 2: N2 QoS Message Completeness
   // Task 2.3: Replace constant with ue_context->ue_ambr_dl / ue_ambr_ul sourced from UDM
   //   or SMF N1N2MessageTransfer request (see amf.hpp UE_AGGREGATE_MAXIMUM_BIT_RATE_DL/UL)
   //   Fall back to constant only when has_ue_ambr = false, and log a warning [TS 38.413 §9.3.1.47]
-  psrsr->setUeAggregateMaxBitRate(
-      UE_AGGREGATE_MAXIMUM_BIT_RATE_DL, UE_AGGREGATE_MAXIMUM_BIT_RATE_UL);
+  //
+  // [QOS-MOCK] Phase 2 ([AMF-N2-QOS], Task 2.3): dynamic UE-AMBR from UE
+  // context (mock values), fallback to constant when has_ue_ambr is false.
+  uint64_t ue_ambr_dl = 0, ue_ambr_ul = 0;
+  resolve_ue_ambr(
+      itti_msg->ran_ue_ngap_id, itti_msg->amf_ue_ngap_id, ue_ambr_dl,
+      ue_ambr_ul);
+  psrsr->setUeAggregateMaxBitRate(ue_ambr_dl, ue_ambr_ul);
 
   uint8_t* buffer  = nullptr;
   int encoded_size = 0;
@@ -1301,6 +1358,27 @@ void amf_n2::handle_itti_message(
   list.push_back(item);
 
   modify_request_msg->setPduSessionResourceModifyRequestList(list);
+
+  // TODO [AMF-N2-QOS]: Add UE-AMBR to PDU SESSION RESOURCE MODIFY REQUEST
+  // Reference: Phase 2: N2 QoS Message Completeness
+  //
+  // Task 2.3: Add setUeAggregateMaxBitRate() to PDU SESSION RESOURCE MODIFY
+  //   REQUEST — the current implementation omits the IE entirely for the modify
+  //   path; include it when the UE-AMBR is known (from UE context).
+  //
+  // Standards:
+  //   - TS 38.413 §8.2.3.2 (PDU SESSION RESOURCE MODIFY REQUEST)
+  //   - TS 38.413 §9.3.1.47 (UE Aggregate Maximum Bit Rate IE)
+  //
+  // [QOS-MOCK] Phase 2 ([AMF-N2-QOS], Task 2.3): the spec allows an optional
+  // UE Aggregate Maximum Bit Rate IE on PDU SESSION RESOURCE MODIFY REQUEST,
+  // but PduSessionResourceModifyRequestMsg does not expose a
+  // setUeAggregateMaxBitRate() method. Wiring it would require adding the IE
+  // setter + ASN.1 encoding (real NGAP encoder work, not mock data), so it is
+  // intentionally NOT set here (out of mock scope). The dynamic UE-AMBR mock is
+  // applied on the N2 messages that already carry the IE
+  // (InitialContextSetupRequest, PDU SESSION RESOURCE SETUP REQUEST,
+  // HandoverRequest).
 
   uint8_t* buffer  = nullptr;
   int encoded_size = 0;
@@ -1853,11 +1931,16 @@ bool amf_n2::handle_itti_message(
       Ngap_Cause_PR_radioNetwork,
       Ngap_CauseRadioNetwork_handover_desirable_for_radio_reason);
   // TODO [AMF-N2-QOS]: UE-AMBR hardcoded — use dynamic value from UE context
+  // Reference: Phase 2: N2 QoS Message Completeness
   // Task 2.3: Replace constant with ue_context->ue_ambr_dl / ue_ambr_ul sourced from UDM
   //   or SMF N1N2MessageTransfer request (see amf.hpp UE_AGGREGATE_MAXIMUM_BIT_RATE_DL/UL)
   //   Fall back to constant only when has_ue_ambr = false, and log a warning [TS 38.413 §9.3.1.47]
-  handover_request->setUeAggregateMaximumBitRate(
-      UE_AGGREGATE_MAXIMUM_BIT_RATE_DL, UE_AGGREGATE_MAXIMUM_BIT_RATE_UL);
+  //
+  // [QOS-MOCK] Phase 2 ([AMF-N2-QOS], Task 2.3): dynamic UE-AMBR from UE
+  // context (mock values), fallback to constant when has_ue_ambr is false.
+  uint64_t ho_ue_ambr_dl = 0, ho_ue_ambr_ul = 0;
+  resolve_ue_ambr(ran_ue_ngap_id, amf_ue_ngap_id, ho_ue_ambr_dl, ho_ue_ambr_ul);
+  handover_request->setUeAggregateMaximumBitRate(ho_ue_ambr_dl, ho_ue_ambr_ul);
   handover_request->setUeSecurityCapabilities(
       0xe000, 0xe000, 0xe000, 0xe000);  // TODO: remove hardcoded values
 
