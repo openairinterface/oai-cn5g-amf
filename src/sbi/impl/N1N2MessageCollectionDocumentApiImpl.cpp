@@ -51,8 +51,15 @@ void N1N2MessageCollectionDocumentApiImpl::n1_n2_message_transfer(
   std::string supi = ueContextId;
 
   N1N2MessageTransferReqData n1N2MessageTransferReqData = {};
-  nlohmann::json::parse(parts[oai::utils::JSON_CONTENT_ID_MIME].body.c_str())
-      .get_to(n1N2MessageTransferReqData);
+  try {
+    nlohmann::json::parse(parts[oai::utils::JSON_CONTENT_ID_MIME].body.c_str())
+        .get_to(n1N2MessageTransferReqData);
+  } catch (const std::exception& e) {
+    Logger::amf_server().error(
+        "Failed to parse N1N2MessageTransferReqData JSON: %s", e.what());
+    send_response(code, response_json, response);
+    return;
+  }
 
   bool request_valid = true;
   bstring n1sm       = nullptr;

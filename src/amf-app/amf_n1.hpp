@@ -159,6 +159,13 @@ class amf_n1 {
   bool supi_2_amf_id(const std::string& supi, uint64_t& amf_ue_ngap_id);
 
   /*
+   * Get the UE Connection Management (CM) state for a SUPI [TS 23.501 §5.3.2]
+   * @param [const std::string&] supi: UE SUPI
+   * @return CM_CONNECTED or CM_IDLE (defaults to CM_CONNECTED if no context)
+   */
+  cm_state_t get_ue_cm_state(const std::string& supi);
+
+  /*
    * Remove AMF UE NGAP ID from the map with SUPI
    * @param [const std::string&] SUPI: UE SUPI
    * @return true if success
