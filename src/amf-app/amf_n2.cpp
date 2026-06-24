@@ -290,13 +290,11 @@ void amf_n2_task(void* args_p) {
 
 //------------------------------------------------------------------------------
 amf_n2::amf_n2(const std::string& address, const uint16_t port_num)
-    : ngap_app(address, port_num), m_ranid2uecontext(), m_amfueid2uecontext() {
+    : ngap_app(address, port_num) {
   if (itti_inst->create_task(TASK_AMF_N2, amf_n2_task, nullptr)) {
     Logger::amf_n2().error("Cannot create task TASK_AMF_N2");
     throw std::runtime_error("Cannot create task TASK_AMF_N2");
   }
-  ranid2uecontext   = {};
-  amfueid2uecontext = {};
   Logger::amf_n2().startup("amf_n2 started");
 }
 
@@ -705,7 +703,7 @@ void amf_n2::handle_itti_message(std::shared_ptr<itti_ng_shutdown>& itti_msg) {
   }
 
   // Delete gNB context and update statistic
-  remove_gnb_context(itti_msg->assoc_id);
+  remove_gnb_context(gc);
   stacs.update_gnb(gc, kStatisticGnbStatusDisconnected);
 
   Logger::amf_n2().debug(
@@ -1520,12 +1518,6 @@ void amf_n2::handle_itti_message(
       ") amf_ue_ngap_id (" AMF_UE_NGAP_ID_FMT ")",
       ran_ue_ngap_id, amf_ue_ngap_id);
 
-  // Get UE Context
-  std::shared_ptr<ue_context> uc =
-      amf_app_inst->get_ue_context(ran_ue_ngap_id, amf_ue_ngap_id);
-
-  if (uc == nullptr) return;
-
   std::shared_ptr<ue_ngap_context> unc = {};
   if (!amf_ue_id_2_ue_ngap_context(amf_ue_ngap_id, unc)) return;
 
@@ -1533,6 +1525,24 @@ void amf_n2::handle_itti_message(
   if (!assoc_id_2_gnb_context(itti_msg->assoc_id, gc)) {
     Logger::amf_n2().error(
         "gNB with assoc_id (%d) is illegal", itti_msg->assoc_id);
+    return;
+  }
+
+  // Get UE Context
+  std::shared_ptr<ue_context> uc =
+      amf_app_inst->get_ue_context(ran_ue_ngap_id, amf_ue_ngap_id);
+
+  if (uc == nullptr) {
+    // UE context has already been torn down (e.g. a completed UE-initiated
+    // de-registration removed it before this Release Complete arrived). The
+    // CM-state/PDU bookkeeping below is no longer relevant, but the NGAP-layer
+    // context must still be released to avoid leaking it.
+    Logger::amf_n2().debug(
+        "No UE context for amf_ue_ngap_id (" AMF_UE_NGAP_ID_FMT
+        "); releasing NGAP context after UE Context Release Complete",
+        amf_ue_ngap_id);
+    remove_amf_ue_ngap_id_2_ue_ngap_context(amf_ue_ngap_id);
+    remove_ran_ue_ngap_id_2_ngap_context(ran_ue_ngap_id, gc->gnb_id);
     return;
   }
 
@@ -1564,7 +1574,6 @@ void amf_n2::handle_itti_message(
     // Get the current AMF UE NGAP ID and compare with the one from
     // UEContextReleaseComplete
     uint64_t current_amf_ue_ngap_id = INVALID_AMF_UE_NGAP_ID;
-    amf_n1_inst->supi_2_amf_id(nc->supi, current_amf_ue_ngap_id);
     if (current_amf_ue_ngap_id != amf_ue_ngap_id) {
       // Remove UE NGAP context
       Logger::amf_n2().debug("UE Context Release Complete for the old context");
@@ -1707,6 +1716,19 @@ void amf_n2::handle_itti_message(
   // Remove UE NGAP context
   remove_amf_ue_ngap_id_2_ue_ngap_context(amf_ue_ngap_id);
   remove_ran_ue_ngap_id_2_ngap_context(ran_ue_ngap_id, gc->gnb_id);
+
+  // Remove the amf_app UE context
+  if (amf_app_inst->remove_ue_context(ran_ue_ngap_id, amf_ue_ngap_id)) {
+    Logger::amf_n2().debug(
+        "Deleted UE context associated with "
+        "amf_ue_ngap_id " AMF_UE_NGAP_ID_FMT,
+        amf_ue_ngap_id);
+  } else {
+    Logger::amf_n2().debug(
+        "Could not delete UE context associated with "
+        "amf_ue_ngap_id " AMF_UE_NGAP_ID_FMT,
+        amf_ue_ngap_id);
+  }
 }
 
 //------------------------------------------------------------------------------
@@ -2342,9 +2364,15 @@ void amf_n2::handle_itti_message(
   // update NAS Context
   nc->ran_ue_ngap_id = ran_ue_ngap_id;
 
-  // update User Context
+  // update the context
+  auto old_ran       = uc->ran_ue_ngap_id;
+  auto old_gnb       = uc->gnb_id;
   uc->ran_ue_ngap_id = ran_ue_ngap_id;
   uc->gnb_id         = gc->gnb_id;
+
+  // Remove the old mapping and add the new mapping for the UE context
+  amf_app_inst->unbind_ran_gnb(old_ran, old_gnb);
+  amf_app_inst->bind_ran_gnb(uc->ran_ue_ngap_id, uc->gnb_id, uc);
 
   amf_app_inst->set_ue_context(ran_ue_ngap_id, amf_ue_ngap_id, uc);
 
@@ -2752,14 +2780,24 @@ void amf_n2::send_ng_setup_failure(
 bool amf_n2::ran_ue_id_2_ue_ngap_context(
     uint32_t ran_ue_ngap_id, uint32_t gnb_id,
     std::shared_ptr<ue_ngap_context>& unc) const {
-  auto ue_id = std::make_pair(ran_ue_ngap_id, gnb_id);
-  std::shared_lock lock(m_ranid2uecontext);
-  if (ranid2uecontext.count(ue_id) > 0) {
-    if (ranid2uecontext.at(ue_id) != nullptr) {
-      unc = ranid2uecontext.at(ue_id);
+  std::shared_ptr<ue_context> uc =
+      amf_app_inst->find_ue_by_ran_gnb(ran_ue_ngap_id, gnb_id);
+  if (uc != nullptr && uc->ngap_ctx != nullptr) {
+    unc = uc->ngap_ctx;
+    return true;
+  }
+
+  // If there's no context, check the pending one
+  {
+    std::lock_guard<std::mutex> lock(m_pending_ngap_);
+    auto it =
+        pending_ngap_by_ran_gnb_.find(std::make_pair(ran_ue_ngap_id, gnb_id));
+    if (it != pending_ngap_by_ran_gnb_.end() && it->second != nullptr) {
+      unc = it->second;
       return true;
     }
   }
+
   Logger::amf_n2().warn(
       "No UE NGAP context with ran_ue_ngap_id " RAN_UE_NGAP_ID_FMT
       ", gnb_id " GNB_ID_FMT "",
@@ -2771,49 +2809,56 @@ bool amf_n2::ran_ue_id_2_ue_ngap_context(
 bool amf_n2::ran_ue_id_2_ue_ngap_context(
     uint32_t ran_ue_ngap_id, uint64_t amf_ue_ngap_id,
     std::shared_ptr<ue_ngap_context>& unc) const {
-  // Get UE Context
   std::shared_ptr<ue_context> uc =
       amf_app_inst->get_ue_context(ran_ue_ngap_id, amf_ue_ngap_id);
-  if (uc == nullptr) return false;
-
-  auto ue_id = std::make_pair(ran_ue_ngap_id, uc->gnb_id);
-  std::shared_lock lock(m_ranid2uecontext);
-  if (ranid2uecontext.count(ue_id) > 0) {
-    if (ranid2uecontext.at(ue_id) != nullptr) {
-      unc = ranid2uecontext.at(ue_id);
-      return true;
-    }
+  if (uc == nullptr || uc->ngap_ctx == nullptr) {
+    Logger::amf_n2().warn(
+        "No UE NGAP context with AMF UE NGAP ID "
+        "(" AMF_UE_NGAP_ID_FMT
+        "), RAN UE NGAP ID "
+        "(" RAN_UE_NGAP_ID_FMT ")",
+        amf_ue_ngap_id, ran_ue_ngap_id);
+    return false;
   }
-  Logger::amf_n2().warn(
-      "No UE NGAP context with AMF UE NGAP ID "
-      "(" AMF_UE_NGAP_ID_FMT
-      "), RAN UE NGAP ID "
-      "(" RAN_UE_NGAP_ID_FMT ")",
-      amf_ue_ngap_id, ran_ue_ngap_id);
-  return false;
+  unc = uc->ngap_ctx;
+  return true;
 }
 
 //------------------------------------------------------------------------------
 void amf_n2::set_ran_ue_ngap_id_2_ue_ngap_context(
     uint32_t ran_ue_ngap_id, uint32_t gnb_id,
     const std::shared_ptr<ue_ngap_context>& unc) {
-  auto ue_id = std::make_pair(ran_ue_ngap_id, gnb_id);
-  std::unique_lock lock(m_ranid2uecontext);
-  ranid2uecontext[ue_id] = unc;
+  if (!unc) return;
+
+  // On the Initial-UE-Message path the amf_ue_ngap_id is still INVALID
+  // Use the pending list instead
+  if (unc->amf_ue_ngap_id == INVALID_AMF_UE_NGAP_ID) {
+    std::lock_guard<std::mutex> lock(m_pending_ngap_);
+    pending_ngap_by_ran_gnb_[std::make_pair(ran_ue_ngap_id, gnb_id)] = unc;
+    return;
+  }
+
+  // Otherwise get set the context with the AMF UE NGAP ID
+  std::shared_ptr<ue_context> uc =
+      amf_app_inst->find_ue_by_amf_ue_ngap_id(unc->amf_ue_ngap_id);
+  if (uc == nullptr) return;
+
+  uc->ngap_ctx = unc;
+  amf_app_inst->bind_ran_gnb(ran_ue_ngap_id, gnb_id, uc);
 }
 
 //------------------------------------------------------------------------------
 void amf_n2::remove_ran_ue_ngap_id_2_ngap_context(
     uint32_t ran_ue_ngap_id, uint32_t gnb_id) {
-  auto ue_id = std::make_pair(ran_ue_ngap_id, gnb_id);
-  std::unique_lock lock(m_ranid2uecontext);
-  if (ranid2uecontext.count(ue_id) > 0) {
-    ranid2uecontext.erase(ue_id);
-    Logger::amf_n2().debug(
-        "Removed UE NGAP context with ran_ue_ngap_id " RAN_UE_NGAP_ID_FMT
-        ", gnb_id " GNB_ID_FMT "",
-        ran_ue_ngap_id, gnb_id);
+  amf_app_inst->unbind_ran_gnb(ran_ue_ngap_id, gnb_id);
+  {
+    std::lock_guard<std::mutex> lock(m_pending_ngap_);
+    pending_ngap_by_ran_gnb_.erase(std::make_pair(ran_ue_ngap_id, gnb_id));
   }
+  Logger::amf_n2().debug(
+      "Removed UE NGAP <ran,gnb> alias with ran_ue_ngap_id " RAN_UE_NGAP_ID_FMT
+      ", gnb_id " GNB_ID_FMT "",
+      ran_ue_ngap_id, gnb_id);
 }
 
 //------------------------------------------------------------------------------
@@ -2834,8 +2879,19 @@ void amf_n2::release_ngap_context_only(
         amf_ue_ngap_id);
   }
 
-  remove_ran_ue_ngap_id_2_ngap_context(ran_ue_ngap_id, gnb_id);
-  remove_amf_ue_ngap_id_2_ue_ngap_context(amf_ue_ngap_id);
+  // CM-IDLE: keep the context and uc->nas_ctx alive so the UE can be re-paged.
+  // Clear ONLY the NGAP sub-context
+  std::shared_ptr<ue_context> uc =
+      amf_app_inst->find_ue_by_amf_ue_ngap_id(amf_ue_ngap_id);
+  if (uc != nullptr) {
+    uc->ngap_ctx = nullptr;
+  }
+  amf_app_inst->unbind_ran_gnb(ran_ue_ngap_id, gnb_id);
+
+  {
+    std::lock_guard<std::mutex> lock(m_pending_ngap_);
+    pending_ngap_by_ran_gnb_.erase(std::make_pair(ran_ue_ngap_id, gnb_id));
+  }
 }
 
 //------------------------------------------------------------------------------
@@ -2846,14 +2902,13 @@ void amf_n2::remove_ue_context_with_ran_ue_ngap_id(
 
   if (!ran_ue_id_2_ue_ngap_context(ran_ue_ngap_id, gnb_id, unc)) return;
 
+  const uint64_t amf_ue_ngap_id = unc->amf_ue_ngap_id;
+
   // Remove all NAS context if still exist
   std::shared_ptr<nas_context> nc = {};
-  if (amf_n1_inst->amf_ue_id_2_nas_context(unc->amf_ue_ngap_id, nc)) {
-    // TODO: Verify where it's current context
-    // Remove all NAS context
-    stacs.update_5gmm_state(nc, _5GMM_DEREGISTERED);
-    nc->_5gmm_state = _5GMM_DEREGISTERED;  // §5.1.3.2.3.2: context removed
-                                           // implies DEREGISTERED
+  if (amf_n1_inst->amf_ue_id_2_nas_context(amf_ue_ngap_id, nc)) {
+    amf_n1_inst->handle_nas_event(
+        nc, oai::amf::nas::nas_event_e::IMPLICIT_DEREGISTRATION);
 
     // Trigger UE Loss of Connectivity Status Notify
     Logger::amf_n2().debug(
@@ -2861,82 +2916,120 @@ void amf_n2::remove_ue_context_with_ran_ue_ngap_id(
         nc->supi.c_str());
     amf_n1_inst->event_sub.ue_loss_of_connectivity(
         nc->supi, DEREGISTERED, amf_cfg->support_features.http_version,
-        ran_ue_ngap_id, unc->amf_ue_ngap_id);
-
-    amf_n1_inst->remove_supi_2_nas_context(nc->supi);
-    // TODO:  remove_guti_2_nas_context(guti);
-    amf_n1_inst->remove_amf_ue_ngap_id_2_nas_context(unc->amf_ue_ngap_id);
-    // Update UE status
-
+        ran_ue_ngap_id, amf_ue_ngap_id);
   } else {
     Logger::amf_n2().warn(
         "No existed nas_context with amf_ue_ngap_id(" AMF_UE_NGAP_ID_FMT ")",
-        unc->amf_ue_ngap_id);
+        amf_ue_ngap_id);
   }
 
-  // Remove NGAP context
-  remove_amf_ue_ngap_id_2_ue_ngap_context(unc->amf_ue_ngap_id);
-  remove_ran_ue_ngap_id_2_ngap_context(ran_ue_ngap_id, gnb_id);
+  // Full release: drop the context and purge every index (by_amf_id_, by_supi_
+  // via uc->supi, by_guti_ via uc->guti, by_ran_gnb_ via <uc->ran,uc->gnb>).
+  // This also frees the nested nas_ctx/ngap_ctx.
+  amf_app_inst->remove_ue_context(ran_ue_ngap_id, amf_ue_ngap_id);
+  {
+    std::lock_guard<std::mutex> lock(m_pending_ngap_);
+    pending_ngap_by_ran_gnb_.erase(std::make_pair(ran_ue_ngap_id, gnb_id));
+  }
 }
 
 //------------------------------------------------------------------------------
 void amf_n2::get_ue_ngap_contexts(
     const sctp_assoc_id_t& gnb_assoc_id,
     std::vector<std::shared_ptr<ue_ngap_context>>& ue_contexts) {
-  std::shared_lock lock(m_ranid2uecontext);
-  for (auto ue : ranid2uecontext) {
-    if (ue.second->gnb_assoc_id == gnb_assoc_id)
-      ue_contexts.push_back(ue.second);
-  }
+  amf_app_inst->for_each_ue_context([&](const std::shared_ptr<ue_context>& uc) {
+    // Skip CM-IDLE UEs (no NGAP context) - fixes the null-deref.
+    if (!uc || uc->ngap_ctx == nullptr) return;
+    if (uc->ngap_ctx->gnb_assoc_id == gnb_assoc_id)
+      ue_contexts.push_back(uc->ngap_ctx);
+  });
 }
 
 //------------------------------------------------------------------------------
 bool amf_n2::amf_ue_id_2_ue_ngap_context(
     const uint64_t& amf_ue_ngap_id,
     std::shared_ptr<ue_ngap_context>& unc) const {
-  std::shared_lock lock(m_amfueid2uecontext);
-  if (amfueid2uecontext.count(amf_ue_ngap_id) > 0) {
-    unc = amfueid2uecontext.at(amf_ue_ngap_id);
-    if (unc != nullptr) {
-      return true;
-    }
+  std::shared_ptr<ue_context> uc =
+      amf_app_inst->find_ue_by_amf_ue_ngap_id(amf_ue_ngap_id);
+  if (uc == nullptr || uc->ngap_ctx == nullptr) {
+    Logger::amf_n2().error(
+        "No UE NGAP context with amf_ue_ngap_id " AMF_UE_NGAP_ID_FMT "",
+        amf_ue_ngap_id);
+    return false;
   }
-  Logger::amf_n2().error(
-      "No UE NGAP context with amf_ue_ngap_id " AMF_UE_NGAP_ID_FMT "",
-      amf_ue_ngap_id);
-  return false;
+  unc = uc->ngap_ctx;
+  return true;
 }
 
 //------------------------------------------------------------------------------
 void amf_n2::set_amf_ue_ngap_id_2_ue_ngap_context(
     const uint64_t& amf_ue_ngap_id, std::shared_ptr<ue_ngap_context> unc) {
-  std::unique_lock lock(m_amfueid2uecontext);
-  amfueid2uecontext[amf_ue_ngap_id] = unc;
+  if (amf_ue_ngap_id == INVALID_AMF_UE_NGAP_ID || !unc) return;
+
+  std::shared_ptr<ue_context> uc =
+      amf_app_inst->find_ue_by_amf_ue_ngap_id(amf_ue_ngap_id);
+  if (uc == nullptr) {
+    // remove pending context
+    {
+      std::lock_guard<std::mutex> lock(m_pending_ngap_);
+      for (auto it = pending_ngap_by_ran_gnb_.begin();
+           it != pending_ngap_by_ran_gnb_.end();) {
+        if (it->second == unc)
+          it = pending_ngap_by_ran_gnb_.erase(it);
+        else
+          ++it;
+      }
+    }
+    Logger::amf_n2().warn(
+        "No ue_context for amf_ue_ngap_id " AMF_UE_NGAP_ID_FMT
+        " while promoting NGAP context; erased pending entry",
+        amf_ue_ngap_id);
+    return;
+  }
+
+  uc->ngap_ctx = unc;
+  amf_app_inst->bind_ran_gnb(unc->ran_ue_ngap_id, uc->gnb_id, uc);
+
+  // Store NGAP context in uc->ngap_ctx. Erase the pending one
+  {
+    std::lock_guard<std::mutex> lock(m_pending_ngap_);
+    for (auto it = pending_ngap_by_ran_gnb_.begin();
+         it != pending_ngap_by_ran_gnb_.end();) {
+      if (it->second == unc)
+        it = pending_ngap_by_ran_gnb_.erase(it);
+      else
+        ++it;
+    }
+  }
 }
 
 //------------------------------------------------------------------------------
 void amf_n2::remove_amf_ue_ngap_id_2_ue_ngap_context(
     const uint64_t& amf_ue_ngap_id) {
-  std::unique_lock lock(m_amfueid2uecontext);
-  if (amfueid2uecontext.count(amf_ue_ngap_id) > 0) {
-    amfueid2uecontext.erase(amf_ue_ngap_id);
-    Logger::amf_n2().debug(
-        "Removed UE NGAP context with amf_ue_ngap_id " AMF_UE_NGAP_ID_FMT "",
-        amf_ue_ngap_id);
-  }
+  if (amf_ue_ngap_id == INVALID_AMF_UE_NGAP_ID) return;
+  std::shared_ptr<ue_context> uc =
+      amf_app_inst->find_ue_by_amf_ue_ngap_id(amf_ue_ngap_id);
+  if (uc == nullptr) return;
+  uc->ngap_ctx = nullptr;
+  Logger::amf_n2().debug(
+      "Removed UE NGAP context with amf_ue_ngap_id " AMF_UE_NGAP_ID_FMT "",
+      amf_ue_ngap_id);
 }
 
 //------------------------------------------------------------------------------
 void amf_n2::remove_ue_context_with_amf_ue_ngap_id(
     const uint64_t& amf_ue_ngap_id) {
+  // Verify ran_ue_ngap_id/gnb_id before removing the context
+  std::shared_ptr<ue_context> uc =
+      amf_app_inst->find_ue_by_amf_ue_ngap_id(amf_ue_ngap_id);
+  const uint32_t ran_ue_ngap_id = uc ? uc->ran_ue_ngap_id : 0;
+  const uint32_t gnb_id         = uc ? uc->gnb_id : 0;
+
   // Remove all NAS context if still exist
   std::shared_ptr<nas_context> nc = {};
   if (amf_n1_inst->amf_ue_id_2_nas_context(amf_ue_ngap_id, nc)) {
-    // Remove all NAS context
-    // Update UE status
-    stacs.update_5gmm_state(nc, _5GMM_DEREGISTERED);
-    nc->_5gmm_state = _5GMM_DEREGISTERED;  // §5.1.3.2.3.2: context removed
-                                           // implies DEREGISTERED
+    amf_n1_inst->handle_nas_event(
+        nc, oai::amf::nas::nas_event_e::IMPLICIT_DEREGISTRATION);
 
     // Trigger UE Loss of Connectivity Status Notify
     Logger::amf_n2().debug(
@@ -2945,25 +3038,21 @@ void amf_n2::remove_ue_context_with_amf_ue_ngap_id(
     amf_n1_inst->event_sub.ue_loss_of_connectivity(
         nc->supi, DEREGISTERED, amf_cfg->support_features.http_version,
         nc->ran_ue_ngap_id, amf_ue_ngap_id);
-
-    amf_n1_inst->remove_supi_2_nas_context(nc->supi);
-    // TODO:  remove_guti_2_nas_context(guti);
-    amf_n1_inst->remove_amf_ue_ngap_id_2_nas_context(amf_ue_ngap_id);
-    // Remove NGAP context related to RAN UE NGAP ID
-    // Get UE Context
-    std::shared_ptr<ue_context> uc =
-        amf_app_inst->get_ue_context(nc->ran_ue_ngap_id, amf_ue_ngap_id);
-
-    if (uc == nullptr) return;
-    remove_ran_ue_ngap_id_2_ngap_context(nc->ran_ue_ngap_id, uc->gnb_id);
-
   } else {
     Logger::amf_n2().warn(
         "No existed nas_context with amf_ue_ngap_id(" AMF_UE_NGAP_ID_FMT ")",
         amf_ue_ngap_id);
   }
-  // Remove NGAP context
-  remove_amf_ue_ngap_id_2_ue_ngap_context(amf_ue_ngap_id);
+
+  // Full release: drop the context and purge every index (by_amf_id_, by_supi_,
+  // by_guti_, by_ran_gnb_), freeing the nested nas_ctx/ngap_ctx.
+  amf_app_inst->remove_ue_context(ran_ue_ngap_id, amf_ue_ngap_id);
+
+  // Erase pending one as well, if any
+  {
+    std::lock_guard<std::mutex> lock(m_pending_ngap_);
+    pending_ngap_by_ran_gnb_.erase(std::make_pair(ran_ue_ngap_id, gnb_id));
+  }
 }
 
 //------------------------------------------------------------------------------

@@ -24,10 +24,18 @@ extern "C" {
 
 using namespace oai::ngap;
 
+// Forward declarations
+class nas_context;
+class ue_ngap_context;
+
 class ue_context {
  public:
   ue_context();
-  virtual ~ue_context(){};
+  virtual ~ue_context();
+  ue_context(const ue_context&) = delete;
+  ue_context(ue_context&&)      = delete;
+  ue_context& operator=(const ue_context&) = delete;
+  ue_context& operator=(ue_context&&) = delete;
   bool get_pdu_session_context(
       std::uint8_t session_id,
       std::shared_ptr<pdu_session_context>& context) const;
@@ -43,10 +51,15 @@ class ue_context {
 
  public:
   uint32_t ran_ue_ngap_id;  // 32bits
-  uint64_t amf_ue_ngap_id;  // 40bits
+  uint64_t amf_ue_ngap_id;  // 40 bits
   uint32_t gnb_id;
   std::string supi;
+  std::string guti;  // GUTI (empty = unset)
   uint32_t tmsi;
+
+  // Nested sub-contexts
+  std::shared_ptr<nas_context> nas_ctx{};
+  std::shared_ptr<ue_ngap_context> ngap_ctx{};
 
   uint8_t rrc_estb_cause;
   bool is_ue_context_request;
